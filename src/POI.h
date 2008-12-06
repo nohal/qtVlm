@@ -73,6 +73,7 @@ class POI : public QWidget
         void slot_editPOI();
         void slot_setWP();
         void slotDelPoi();
+        void slot_meteoPOI();
 
     signals:
         void signalOpenMeteotablePOI(POI *poi);
@@ -107,6 +108,7 @@ class POI : public QWidget
         QAction * ac_edit;
         QAction * ac_setWp;
         QAction * ac_delPoi;
+        QAction * ac_meteo;
         void createPopUpMenu(void);
 };
 

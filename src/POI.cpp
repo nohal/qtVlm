@@ -196,7 +196,9 @@ void  POI::timerClickEvent()
     if (countClick==1)
     {
         // Single clic : Meteotable for this Point Of Interest
-        emit signalOpenMeteotablePOI(this);
+        //emit signalOpenMeteotablePOI(this);
+        slot_editPOI();
+        
     }
     countClick = 0;
 }
@@ -210,11 +212,15 @@ void POI::createPopUpMenu(void)
 {
     popup = new QMenu(parent);
 
-    ac_edit = new QAction("Editer",popup);
+    ac_edit = new QAction(tr("Editer"),popup);
     popup->addAction(ac_edit);
     connect(ac_edit,SIGNAL(triggered()),this,SLOT(slot_editPOI()));
 
-    ac_setWp = new QAction("POI->WP",popup);
+    ac_meteo = new QAction(tr("MeteoTable"),popup);
+    popup->addAction(ac_meteo);
+    connect(ac_meteo,SIGNAL(triggered()),this,SLOT(slot_meteoPOI()));
+
+    ac_setWp = new QAction(tr("POI->WP"),popup);
     popup->addAction(ac_setWp);
     connect(ac_setWp,SIGNAL(triggered()),this,SLOT(slot_setWP()));
 }
@@ -222,6 +228,11 @@ void POI::createPopUpMenu(void)
 void POI::slot_editPOI()
 {
     new POI_Editor(this, owner, parent);
+}
+
+void POI::slot_meteoPOI()
+{
+    emit signalOpenMeteotablePOI(this);
 }
 
 void POI::slot_setWP()
