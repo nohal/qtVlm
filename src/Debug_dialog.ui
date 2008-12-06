@@ -1,0 +1,28 @@
+<ui version="4.0" >
+ <class>Debug_ui</class>
+ <widget class="QDialog" name="Debug_ui" >
+  <property name="geometry" >
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>581</width>
+    <height>300</height>
+   </rect>
+  </property>
+  <property name="windowTitle" >
+   <string>Debug</string>
+  </property>
+  <widget class="QListWidget" name="txt_list" >
+   <property name="geometry" >
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>581</width>
+     <height>301</height>
+    </rect>
+   </property>
+  </widget>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>

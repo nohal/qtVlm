@@ -1,0 +1,70 @@
+SHA-1 v0.2 (2005-06-21)
+by Michael D. Leonhard
+http://tamale.net/sha1
+
+* Introduction
+
+This is a C++ class that implements the Secure Hash Algorithm SHA-1.  The
+purpose of the algorithm is to calculate a strong hash of given bit string.
+By "strong", we mean that it is very difficult to find a different bit string
+that results in the same hash.  It is similarly difficult, using only the hash,
+to determine the original bit string.  SHA-1 produces a 20 byte (160 bit) hash.
+
+* Class Usage
+
+The class is called SHA1.  The API consists of four methods:
+
+SHA1::SHA1() is the class constructor
+
+void SHA1::addBytes( const char* data, int num )
+  Processes bytes into the hash.
+  - data is a pointer to the first byte to be added. The bytes are not modified.
+  - num is the number of bytes to process.
+
+unsigned char* SHA1::getDigest()
+  Completes the hashing process and returns the final hash.  The SHA1 instance
+  should not be used after calling this method.
+  Returns a pointer to a 20-byte hash.  Release the memory with free().
+
+static void SHA1::hexPrinter( unsigned char* c, int l )
+  Is a utility method that prints bytes to stdout in hexadecimal format.
+  - c is a pointer to the first byte to be printed. The bytes are not modified.
+  - l is the number of bytes to print.
+
+* Example
+
+The following program will print one line to stdout:
+ a9 99 3e 36 47 06 81 6a ba 3e 25 71 78 50 c2 6c 9c d0 d8 9d
+
+#include <string.h>
+#include <stdlib.h>
+#include "sha1.h"
+int main(int argc, char *argv[])
+{
+	#define BYTES "abc"
+	SHA1* sha1 = new SHA1();
+	sha1->addBytes( BYTES, strlen( BYTES ) );
+	unsigned char* digest = sha1->getDigest();
+	sha1->hexPrinter( digest, 20 );
+	delete sha1;
+	free( digest );
+}
+
+* Why I Wrote It
+
+I needed an SHA-1 implementation for C++ and couldn't find a free one, so I
+wrote my own. I wrote the Python version first and then the C++ one.  The
+source code has an open source license (the so-called "MIT License") which
+allows it to be used in commercial software.
+
+* Links
+
+Secure Hash Standard (FIP 180-1) is the official document from the U.S.
+government which defines the algorithm:
+http://www.itl.nist.gov/fipspubs/fip180-1.htm
+
+Wikipedia has a very helpful article on SHA:
+http://en.wikipedia.org/wiki/SHA
+
+The MIT License:
+http://www.opensource.org/licenses/mit-license.php

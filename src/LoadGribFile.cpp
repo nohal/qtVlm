@@ -1,0 +1,266 @@
+/**********************************************************************
+qtVlm: Virtual Loup de mer GUI
+Copyright (C) 2008 - Christophe Thomas aka Oxygen77
+
+http://qtvlm.sf.net
+
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+Original code: zyGrib: meteorological GRIB file viewer
+Copyright (C) 2008 - Jacques Zaninetti - http://zygrib.free.fr
+
+***********************************************************************/
+
+#include <QApplication>
+#include <QTextStream>
+#include <QDomDocument>
+#include <QStringList>
+
+#include <cassert>
+
+#include "LoadGribFile.h"
+#include "Util.h"
+#include "Version.h"
+#include "sha1/sha1.h"
+
+//-------------------------------------------------------------------------------
+LoadGribFile::LoadGribFile()
+{
+    step = 0;
+
+    zygriblog = "a07622b82b18524d2088c9b272bb3feeb0eb1737";
+    zygribpwd = "61c9b2b17db77a27841bbeeabff923448b0f6388";
+
+    inetManager = new QNetworkAccessManager(this);
+    step1_InetReply=step2_InetReply=NULL;
+    assert(inetManager);
+
+    host = "http://zygrib.free.fr";
+
+
+    // connect(http, SIGNAL(done(bool)), this, SLOT(done(bool)));
+    connect(inetManager, SIGNAL(finished ( QNetworkReply *)),
+            this, SLOT(requestFinished (QNetworkReply *)));
+    /*connect(http, SIGNAL(dataReadProgress (int, int)),
+            this, SLOT(dataReadProgress (int, int)));*/
+}
+//-------------------------------------------------------------------------------
+LoadGribFile::~LoadGribFile () {
+    if (inetManager != NULL)
+        delete inetManager;
+}
+
+//-------------------------------------------------------------------------------
+void LoadGribFile::stop () {
+    if(step1_InetReply)
+        step1_InetReply->abort();
+    if(step2_InetReply)
+        step1_InetReply->abort();
+}
+
+//-------------------------------------------------------------------------------
+void LoadGribFile::dataReadProgress (qint64 done , qint64  total) {
+    emit signalGribReadProgress(step, done, total);
+}
+
+//-------------------------------------------------------------------------------
+void LoadGribFile::getGribFile(
+        float x0, float y0, float x1, float y1,
+        float resolution, int interval, int days,
+        bool wind, bool pressure, bool rain, bool cloud, bool temp, bool humid)
+{
+    QString page;
+
+    step1_InetReply=step2_InetReply=NULL;
+
+    //----------------------------------------------------------------
+    // Etape 1 : Demande la création du fichier Grib (nom en retour)
+    //----------------------------------------------------------------
+    QString parameters = "";
+    if (wind) {
+        parameters += "W";
+    }
+    if (pressure) {
+        parameters += "P";
+    }
+    if (rain) {
+        parameters += "R";
+    }
+    if (cloud) {
+        parameters += "C";
+    }
+    if (temp) {
+        parameters += "T";
+    }
+    if (humid) {
+        parameters += "H";
+    }
+
+    if (parameters != "")
+    {
+        int proxyType = Util::getSetting("httpUseProxy", 0).toInt();
+
+        switch(proxyType)
+        {
+            /* 0 => no proxy => nothing to do */
+            case 1:
+                /* basic proxy */
+                inetProxy = new QNetworkProxy(QNetworkProxy::DefaultProxy,
+                        Util::getSetting("httpProxyHostname", "").toString(),
+                        Util::getSetting("httpProxyPort", 0).toInt(),
+                        Util::getSetting("httpProxyUsername", "").toString(),
+                        Util::getSetting("httpProxyUserPassword", "").toString());
+                inetManager->setProxy(*inetProxy);
+                break;
+            case 2:
+                /* IE proxy*/
+                QList<QNetworkProxy> proxyList = QNetworkProxyFactory::systemProxyForQuery(QNetworkProxyQuery(host));
+                QListIterator<QNetworkProxy> i (proxyList);
+
+                inetProxy = &(proxyList.first());
+
+                inetProxy->setUser(Util::getSetting("httpProxyUsername", "").toString());
+                inetProxy->setPassword(Util::getSetting("httpProxyUserPassword", "").toString());
+
+                inetManager->setProxy(*inetProxy);
+                break;
+        }
+
+        step = 1;
+        emit signalGribSendMessage(tr("Préparation du fichier sur le serveur"));
+        emit signalGribReadProgress(step, 0, 0);
+        QTextStream(&page) << host
+                           << "/noaa/getzygribfile.php?"
+                           << "but=prepfile"
+                           << "&la1=" << floor(y0)
+                           << "&la2=" << ceil(y1)
+                           << "&lo1=" << floor(x0)
+                           << "&lo2=" << ceil(x1)
+                           << "&res=" << resolution
+                           << "&hrs=" << interval
+                           << "&jrs=" << days
+                           << "&par=" << parameters
+                           << "&l=" << zygriblog
+                           << "&m=" << zygribpwd
+                           << "&client=" << Version::getCompleteName()
+                           ;
+        step1_InetReply=inetManager->get(QNetworkRequest(QUrl(page)));
+        connect(step1_InetReply,SIGNAL(downloadProgress(qint64 , qint64)),this, SIGNAL(dataReadProgress (qint64,qint64)));
+    }
+    // Suite de la séquence de récupération dans requestFinished()
+}
+
+//-------------------------------------------------------------------------------
+void LoadGribFile::requestFinished ( QNetworkReply * inetReply)
+{
+    disconnect(inetReply,SIGNAL(downloadProgress(qint64 , qint64)),this, SIGNAL(dataReadProgress (qint64,qint64)));
+    QString page;
+    if (inetReply->error() != QNetworkReply::NoError) {
+        emit signalGribLoadError(QString("Http error: %1").arg(inetReply->error()));
+    }
+    else if(inetReply == step1_InetReply)
+    {
+        //-------------------------------------------
+        // Retour de l'étape 1 : préparation du fichier
+        //-------------------------------------------
+        QString strbuf = inetReply->readAll();
+        QStringList lsbuf = strbuf.split("\n");
+
+/****
+status:ok
+params:par=WPRT&lo1=-14.8&lo2=6.3&la1=51.9&la2=40.8&jrs=5&hrs=6&res=1
+file:20080504_165912_286.grb
+size:50694
+checksum:8685dcce3aef8dd717a7963c0f1e44f10aef6267
+gfs_run_date:20080504
+gfs_run_hour:6
+***********/
+        QString status;
+
+        for (int i=0; i < lsbuf.size(); i++)
+        {
+            QStringList lsval = lsbuf.at(i).split(":");
+            if (lsval.size() == 2) {
+                if (lsval.at(0) == "status")
+                    status = lsval.at(1);
+                else if (lsval.at(0) == "file")
+                    fileName = QString(lsval.at(1)).replace(".grb","%20");
+                else if (lsval.at(0) == "size")
+                    fileSize = lsval.at(1).toInt();
+                else if (lsval.at(0) == "checksum")
+                    checkSumSHA1 = lsval.at(1);
+            }
+        }
+
+        //--------------------------------------------------
+        // Etape 2 : Demande le contenu du fichier Grib
+        //--------------------------------------------------
+        if (status == "ok") {
+            step = 2;
+            emit signalGribSendMessage(tr("GetFileContent"));
+            emit signalGribReadProgress(0, 0, fileSize);
+            QString s;
+            s = tr("Taille totale : ") + s.sprintf("%d",fileSize/1024) + " ko";
+            emit signalGribSendMessage(s);
+            emit signalGribStartLoadData();
+
+            QTextStream(&page) << host
+                               << "/noaa/24O76/"+fileName;
+            //printf("PAGE='%s'\n",qPrintable(page));
+
+            step1_InetReply=NULL;
+            step2_InetReply=inetManager->get(QNetworkRequest(QUrl(page)));
+            connect(step2_InetReply,SIGNAL(downloadProgress(qint64 , qint64)),this, SIGNAL(dataReadProgress (qint64,qint64)));
+
+        }
+        else {
+            emit signalGribLoadError(tr("Pas de fichier créé sur le serveur."));
+        }
+    }
+    else if(inetReply == step2_InetReply)
+    {
+        //--------------------------------------------------
+        // Reçu le contenu du fichier Grib
+        //--------------------------------------------------
+        arrayContent = inetReply->readAll();
+        QString content= arrayContent;
+        //--------------------------------------------------
+        // Vérifie le checksum
+        //--------------------------------------------------
+        emit signalGribSendMessage(tr("CheckSum control"));
+        SHA1 sha1;
+        unsigned char * digest;
+        sha1.addBytes( arrayContent.data(), arrayContent.size() );
+        digest = sha1.getDigest();
+        assert( digest );
+        QString s, strsha1 = "";
+        for (int i=0; i<20; i++) {
+            strsha1 += s.sprintf("%02x", digest[i]);
+        }
+        free( digest );
+        if (strsha1 == checkSumSHA1)
+        {
+            //--------------------------------------------------
+            // Signale la fin du téléchargement
+            //--------------------------------------------------
+            emit signalGribDataReceived(&arrayContent, fileName.replace("%20",".grb"));
+            emit signalGribSendMessage(tr("Terminé"));
+        }
+        else {
+            emit signalGribLoadError(tr("Checksum incorrect."));
+        }
+    }
+}
+
+
