@@ -47,17 +47,13 @@ class POI : public QWidget
 { Q_OBJECT
     public:
 
-        POI (QString seralizedPOI,
-                    Projection *proj, QWidget *ownerMeteotable, QWidget *parentWindow);
-
-        POI(uint code, QString name, float lon, float lat,
+        POI(QString name, float lon, float lat,
                     Projection *proj, QWidget *ownerMeteotable, QWidget *parentWindow, int type, float wph=-1);
 
         ~POI();
 
         void setProjection(Projection *proj);
 
-        uint    getCode()      {return code;}
         QString getName()      {return name;}
         float   getLongitude() {return lon;}
         float   getLatitude()  {return lat;}
@@ -68,8 +64,6 @@ class POI : public QWidget
         void setLongitude (float lon) {this->lon=lon;}
         void setLatitude  (float lat) {this->lat=lat;}
         void setWph       (float wph) {this->wph=wph;}
-
-        QString serialize();
 
         void doChgWP(float lat,float lon, float wph);
 
@@ -87,7 +81,6 @@ class POI : public QWidget
         void delPOI_list(POI*);
 
     private:
-        unsigned int code;
         QString      name;
         float        lon, lat,wph;
         Projection   *proj;
@@ -115,8 +108,6 @@ class POI : public QWidget
         QAction * ac_setWp;
         QAction * ac_delPoi;
         void createPopUpMenu(void);
-
-        bool needDelete;
 };
 
 //===================================================================
@@ -143,7 +134,7 @@ class POI_Editor : public QDialog
         POI_Editor(POI *poi, QWidget *ownerMeteotable,QWidget *parent);
 
         // Constructor for edit and create a new POI
-        POI_Editor(uint code, float lon, float lat,
+        POI_Editor(float lon, float lat,
                     Projection *proj, QWidget *ownerMeteotable, QWidget *parentWindow);
 
         ~POI_Editor();

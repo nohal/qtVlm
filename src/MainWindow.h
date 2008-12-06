@@ -42,6 +42,7 @@ Copyright (C) 2008 - Jacques Zaninetti - http://zygrib.free.fr
 #include "POI.h"
 #include "paramVLM.h"
 #include "POI_input.h"
+#include "xmlPOIData.h"
 
 //#include "VlmGetData.h"
 #include "boatAccount_dialog.h"
@@ -164,6 +165,8 @@ class MainWindow: public QMainWindow
         boatAccount* selectedBoat;
         paramVLM * param;
         POI_input * poi_input_dialog;
+
+        xml_POIData * xmlPOI;
 
         QList<POI*> poi_list;
 

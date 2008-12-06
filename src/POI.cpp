@@ -33,45 +33,10 @@ Copyright (C) 2008 - Jacques Zaninetti - http://zygrib.free.fr
 #include "MainWindow.h"
 
 //-------------------------------------------------------------------------------
-POI::POI (QString seralizedPOI,
-                 Projection *proj, QWidget *ownerMeteotable, QWidget *parentWindow)
-    : QWidget(parentWindow)
-{
-    QStringList  lst = seralizedPOI.split(";");
-
-    this->code = lst[0].toUInt();
-    this->parent = parentWindow;
-    this->owner = ownerMeteotable;
-    this->name = QString( QByteArray::fromBase64(lst[1].toUtf8()) );
-    this->lon = lst[2].toFloat();
-    this->lat = lst[3].toFloat();
-    if(lst.size()==5)
-      this->type = lst[4].toInt();
-    else
-      this->type = POI_STD;
-    if(lst.size()==6)
-      this->wph = lst[5].toFloat();
-    else
-      this->wph = -1;
-    setProjection(proj);
-    createWidget();
-    connect(proj, SIGNAL(projectionUpdated(Projection *)), this, SLOT(projectionUpdated(Projection *)) );
-    connect(this, SIGNAL(signalOpenMeteotablePOI(POI*)),
-                            ownerMeteotable, SLOT(slotOpenMeteotablePOI(POI*)));
-    connect(this,SIGNAL(chgWP(float,float,float)),ownerMeteotable,SLOT(slotChgWP(float,float,float)));
-
-
-    connect(this,SIGNAL(addPOI_list(POI*)),ownerMeteotable,SLOT(addPOI_list(POI*)));
-    connect(this,SIGNAL(delPOI_list(POI*)),ownerMeteotable,SLOT(delPOI_list(POI*)));
-    
-}
-
-//-------------------------------------------------------------------------------
-POI::POI(uint code, QString name, float lon, float lat,
+POI::POI(QString name, float lon, float lat,
                  Projection *proj, QWidget *ownerMeteotable, QWidget *parentWindow, int type, float wph)
     : QWidget(parentWindow)
 {
-    this->code = code;
     this->parent = parentWindow;
     this->owner = ownerMeteotable;
     this->name = name;
@@ -124,24 +89,6 @@ void POI::createWidget()
     setAutoFillBackground (false);
 
     createPopUpMenu();
-}
-
-//-------------------------------------------------------------------------------
-// serialized POI = "code;base64(name);lon;lat"
-QString POI::serialize()
-{
-    QString r;
-    QByteArray b64 = name.toUtf8().toBase64();
-    QString sb64 (b64);
-
-    r = QString("%1;%2;%3;%4;%5;%6")
-            .arg(code)
-            .arg(sb64)
-            .arg(lon)
-            .arg(lat)
-            .arg(type)
-            .arg(wph);
-    return r;
 }
 
 //-------------------------------------------------------------------------------
@@ -267,7 +214,7 @@ void POI::createPopUpMenu(void)
     popup->addAction(ac_edit);
     connect(ac_edit,SIGNAL(triggered()),this,SLOT(slot_editPOI()));
 
-    ac_setWp = new QAction("Rendre WP",popup);
+    ac_setWp = new QAction("POI->WP",popup);
     popup->addAction(ac_setWp);
     connect(ac_setWp,SIGNAL(triggered()),this,SLOT(slot_setWP()));
 }
@@ -342,13 +289,13 @@ void DegreeMinuteEditor::setValue(float val)
 //-------------------------------------------------------
 // POI_Editor: Constructor for edit and create a new POI
 //-------------------------------------------------------
-POI_Editor::POI_Editor(uint code, float lon, float lat,
+POI_Editor::POI_Editor(float lon, float lat,
                 Projection *proj, QWidget *ownerMeteotable, QWidget *parentWindow)
     : QDialog(parentWindow)
 {
     modeCreation = true;
     setWindowTitle(tr("Nouveau Point d'Intérêt"));
-    this->poi = new POI(code, tr("POI %1").arg(code), lon, lat, proj, ownerMeteotable, parentWindow, POI_STD,-1);
+    this->poi = new POI(tr("POI"), lon, lat, proj, ownerMeteotable, parentWindow, POI_STD,-1);
     assert(this->poi);
     createInterface();
     setModal(false);
@@ -393,7 +340,7 @@ void POI_Editor::btOkClicked()
     else
         poi->setWph(editWph->text().toFloat());
     poi->projectionUpdated(NULL);
-    Util::setSettingPOI(poi->getCode(), poi->serialize());
+    
     if (modeCreation) {
         poi->show();
         emit addPOI_list(poi);
@@ -417,7 +364,7 @@ void POI_Editor::btDeleteClicked()
             tr("La destruction d'un point d'intérêt est définitive.\n\nEtes-vous sûr ?"),
             QMessageBox::Yes | QMessageBox::No);
         if (rep == QMessageBox::Yes) {
-            Util::deleteSettingPOI(poi->getCode());
+            
             delPOI_list(poi);
             delete poi;
             delete this;
@@ -499,8 +446,8 @@ void POI_Editor::createInterface()
     btOk = new QPushButton(tr("Valider"), this);
     btCancel = new QPushButton(tr("Annuler"), this);
     btDelete = new QPushButton(tr("Supprimer ce POI"), this);
-    btPaste = new QPushButton(tr("Paste"), this);
-    btSaveWP = new QPushButton(tr("Save WP"), this);
+    btPaste = new QPushButton(tr("Coller"), this);
+    btSaveWP = new QPushButton(tr("POI->WP"), this);
         laybts->addWidget(btOk);
         laybts->addWidget(btCancel);
         laybts->addWidget(btDelete);

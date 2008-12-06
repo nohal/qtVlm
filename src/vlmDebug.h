@@ -27,6 +27,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "ui_Debug_dialog.h"
 
+#include "Util.h"
+
 class vlmDebug : public QDialog, public Ui::Debug_ui
 {
     Q_OBJECT
@@ -34,6 +36,9 @@ class vlmDebug : public QDialog, public Ui::Debug_ui
         vlmDebug(QWidget * parent = 0);
         void clearList(void);
         void addLine(QString txt);
+
+    public slots:
+        void paramChanged(void);
 };
 
 

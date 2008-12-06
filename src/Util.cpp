@@ -45,73 +45,7 @@ QVariant Util::getSetting(const QString &key, const QVariant &defaultValue)
      settings.endGroup();
      return val;
 }
-//---------------------------------------------------------------------
-uint Util::getNewCodePOI()
-{
-	QSettings settings("qtVlm");
-	settings.beginGroup("poi");
-	uint v, max = 0;
-	QString key;
-	QStringList slist = settings.childKeys();
- 	for (int i=0; i<slist.size(); ++i)
- 	{
-  		key = slist.at(i);
-  		v = key.toUInt();
-  		if (v > max)
-  			max = v;
-	}
-	settings.endGroup();
-	return max+1;
-}
-//---------------------------------------------------------------------
-void Util::setSettingPOI(uint code, const QString &serialized)
-{
-     QSettings settings("qtVlm");
-     settings.beginGroup("poi");
-     QString key;
-     key.setNum(code);
-     settings.setValue(key, serialized);
-     settings.endGroup();
-}
-//---------------------------------------------------------------------
-QList<uint> Util::getSettingAllCodesPOIs()
-{
-	QList<uint> reslist;
-	QSettings settings("qtVlm");
-	settings.beginGroup("poi");
-	QString key;
-	QStringList slist = settings.childKeys();
- 	for (int i=0; i<slist.size(); ++i)
- 	{
-  		key = slist.at(i);
-  		reslist.append(key.toUInt());
-	}
-	settings.endGroup();
-	return reslist;
-}
-//---------------------------------------------------------------------
-QString Util::getSettingPOI(uint code)
-{
-     QSettings settings("qtVlm");
-     settings.beginGroup("poi");
-     QString key;
-     key.setNum(code);
-     QString val = settings.value(key, "").toString();
-     settings.endGroup();
-     return val;
-}
-//---------------------------------------------------------------------
-void Util::deleteSettingPOI(uint code)
-{
-     QSettings settings("qtVlm");
-     settings.beginGroup("poi");
-     QString key;
-     key.setNum(code);
-     settings.remove(key);
-     settings.endGroup();
-}
-    
-    
+
 //======================================================================
 QString Util::formatTemperature(float tempKelvin)
 {
@@ -382,12 +316,5 @@ bool Util::getWP(float * lat,float * lon, float * wph)
         *lon=list2[0].toFloat();
     if(wph)
         *wph=list2[1].toFloat();
+    return true;
 }
-
-
-
-
-
-
-
-

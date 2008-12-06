@@ -386,6 +386,8 @@ MainWindow::MainWindow(int w, int h, QWidget *parent)
       selectedBoat = NULL;
 
       connect(param,SIGNAL(paramVLMChanged()),VLMBoard,SLOT(paramChanged()));
+      connect(param,SIGNAL(paramVLMChanged()),dbg,SLOT(paramChanged()));
+      
       connect(poi_input_dialog,SIGNAL(addPOI(float,float,float)),this,SLOT(slotAddPOI(float,float,float)));
 
     //---------------------------------------------------------
@@ -395,34 +397,9 @@ MainWindow::MainWindow(int w, int h, QWidget *parent)
     InitActionsStatus();
 
     // POI's
-    POI *poi;
-    
     poi_list.clear();
-    
-    bool visible = Util::getSetting("showPOIs", true).toBool();
-    QList<uint> lscodes = Util::getSettingAllCodesPOIs();
-    for (int i=0; i < lscodes.size(); ++i) {
-        uint code = lscodes.at(i);
-        QString  serialized = Util::getSettingPOI(code);
-        QStringList  lst = serialized.split(";");
-        showMessage(QString("%1: %2").arg(i).arg(serialized));
-        if(lst.size()<5)
-        {
-            serialized+=";0;-1";
-            Util::setSettingPOI(code, serialized);
-        }
-        else if(lst.size()<6)
-        {
-            serialized+=";-1";
-            Util::setSettingPOI(code, serialized);
-        }
-        //printf("%d : %s\n", code, qPrintable(serialized));
-        poi = new POI(serialized, proj, this, terre);
-        poi->setVisible(visible);
-        addPOI_list(poi);
-    }
-
-
+    xmlPOI = new xml_POIData(proj,this,terre);
+    xmlPOI->readData(poi_list,"poi.dat");
     //------------------------------------------------
     // sync all boat
     slotVLM_Sync();
@@ -442,6 +419,7 @@ MainWindow::~MainWindow()
     Util::setSetting("gribFileName",  gribFileName);
     Util::setSetting("gribFilePath",  gribFilePath);
 
+    xmlPOI->writeData(poi_list,"poi.dat");
 
     delete boatAcc;
 }
@@ -489,7 +467,7 @@ void MainWindow::slotCreatePOI()
 {
     float lon, lat;
     proj->screen2map(mouseClicX,mouseClicY, &lon, &lat);
-    new POI_Editor(Util::getNewCodePOI(), lon, lat, proj, this, terre);
+    new POI_Editor(lon, lat, proj, this, terre);
 }
 //-------------------------------------------------
 void MainWindow::slotOpenMeteotablePOI(POI* poi)
@@ -1004,12 +982,11 @@ void MainWindow::slotAccountListUpdated(void)
 void MainWindow::slotAddPOI(float lat,float lon, float wph)
 {
     POI * poi;
-    uint code=Util::getNewCodePOI();
-    poi = new POI(code,QString("POI %1").arg(code),lon,lat, proj, this, terre,POI_STD,wph);
+    poi = new POI(QString(tr("POI")),lon,lat, proj, this, terre,POI_STD,wph);
 #warning il faudrait recup la config comme ds le constructeur
     poi->setVisible(true);
     poi->projectionUpdated(NULL);
-    Util::setSettingPOI(poi->getCode(), poi->serialize());
+    
     addPOI_list(poi);
 }
 
@@ -1062,7 +1039,7 @@ void MainWindow::slotDelPOIs(void)
             if(lat1<=lat && lat<=lat0 && lon0<=lon && lon<=lon1)
             {
                 showMessage("removed");
-                Util::deleteSettingPOI(poi->getCode());
+                
                 delPOI_list(poi);
                 delete poi;
                 sup++;

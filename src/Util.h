@@ -43,12 +43,6 @@ class Util
     static void     setSetting(const QString &key, const QVariant &value);
     static QVariant getSetting(const QString &key, const QVariant &defaultValue);
 	
-	static uint        getNewCodePOI();
-    static void        setSettingPOI(uint code, const QString &serialized);
-    static QList<uint> getSettingAllCodesPOIs();
-    static QString     getSettingPOI(uint code);
-    static void        deleteSettingPOI(uint code);
-    
     //-------------------------------------------------
     static QString formatDegres(float x);           // 123.4 -> 123°24.00'
     static QString formatPosition(float x, float y);    // 123°24.00'W 45°67.89'N

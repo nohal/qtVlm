@@ -26,7 +26,8 @@ vlmDebug::vlmDebug(QWidget * parent) : QDialog(parent)
 {
     setupUi(this);
 
-    show();
+    if(Util::getSetting("debugEnable", "0").toString()=="1")
+        show();
 
     txt_list->clear();
 }
@@ -42,3 +43,12 @@ void vlmDebug::addLine(QString txt)
     repaint();
     update();
 }
+
+void vlmDebug::paramChanged(void)
+{
+    if(Util::getSetting("debugEnable", "0").toString()=="1")
+        show();
+    else
+        hide();
+}
+

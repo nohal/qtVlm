@@ -19,12 +19,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ***********************************************************************/
 
 #include <QMessageBox>
+#include <QByteArray>
 
 #include "xmlBoatData.h"
 
 #define VERSION_NUMBER    0
-#define DOM_FILE_TYPE     "zygVLM_config"
-#define ROOT_NAME         "zygVLM_boat"
+#define DOM_FILE_TYPE     "qtVLM_config"
+#define ROOT_NAME         "qtVLM_boat"
 #define VERSION_NAME      "Version"
 #define BOAT_GROUP_NAME   "Boat"
 #define LOGIN_NAME        "Login"
@@ -70,7 +71,7 @@ bool xml_boatData::writeBoatData(QList<boatAccount*> & boat_list,QString fname)
 		  
 		  tag = doc.createElement(PASS_NAME);
 		  group.appendChild(tag);
-		  t = doc.createTextNode(acc->getPass());
+		  t = doc.createTextNode(acc->getPass().toAscii().toBase64());
 		  tag.appendChild(t);
 		  
           tag = doc.createElement(ACTIVATED_NAME);
@@ -178,7 +179,7 @@ bool xml_boatData::readBoatData(QList<boatAccount*> & boat_list,QString fname)
 				   {
 					  dataNode = subNode.firstChild();
                       if(dataNode.nodeType() == QDomNode::TextNode)
-						  pass = dataNode.toText().data();
+						  pass = QByteArray::fromBase64(dataNode.toText().data().toAscii());
 				   }
                    if(subNode.toElement().tagName() == ACTIVATED_NAME)
 				   {

@@ -47,6 +47,7 @@ HEADERS += \
            Util.h \
            Version.h \
            xmlBoatData.h \
+           xmlPOIData.h \
            zuFile.h \
            vlmDebug.h
 FORMS += boatAccount_dialog.ui Debug_dialog.ui BoardVLM_part1.ui BoardVLM_part2.ui \
@@ -81,6 +82,7 @@ SOURCES += \
            Terrain.cpp \
            Util.cpp \
            xmlBoatData.cpp \
+           xmlPOIData.cpp \
            zuFile.cpp \
            vlmDebug.cpp
 

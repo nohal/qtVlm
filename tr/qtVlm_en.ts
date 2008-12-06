@@ -976,6 +976,10 @@ Are you sure ?</translation>
         <source>http://www.zygrib.org</source>
         <translation></translation>
     </message>
+    <message>
+        <source>POI</source>
+        <translation>POI</translation>
+    </message>
 </context>
 <context>
     <name>MenuBar</name>
@@ -1621,7 +1625,7 @@ Are you sure ?</translation>
     </message>
     <message>
         <source>POI %1</source>
-        <translation>POI %1</translation>
+        <translation type="obsolete">POI %1</translation>
     </message>
     <message>
         <source>@ Wph</source>
@@ -1629,11 +1633,23 @@ Are you sure ?</translation>
     </message>
     <message>
         <source>Paste</source>
-        <translation>Paste</translation>
+        <translation type="obsolete">Paste</translation>
     </message>
     <message>
         <source>Save WP</source>
-        <translation>Save WP</translation>
+        <translation type="obsolete">Save WP</translation>
+    </message>
+    <message>
+        <source>POI</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Coller</source>
+        <translation>Paste</translation>
+    </message>
+    <message>
+        <source>POI-&gt;WP</source>
+        <translation>POI-&gt;WP</translation>
     </message>
 </context>
 <context>
@@ -1685,6 +1701,10 @@ Are you sure ?</translation>
         <source>Lecture de paramï¿½tre bateau</source>
         <translation>Reading boat parameter</translation>
     </message>
+    <message>
+        <source>Lecture de parametre bateau</source>
+        <translation>Reading boat parameter</translation>
+    </message>
 </context>
 <context>
     <name>Terrain</name>
@@ -1720,7 +1740,7 @@ Are you sure ?</translation>
     <name>VLM_param_ui</name>
     <message>
         <source>Dialog</source>
-        <translation>Dialog</translation>
+        <translation type="obsolete">Dialog</translation>
     </message>
     <message>
         <source>Emulation de GPS</source>
@@ -1737,6 +1757,18 @@ Are you sure ?</translation>
     <message>
         <source>Type de trame</source>
         <translation>Type of nmea phrase</translation>
+    </message>
+    <message>
+        <source>Parametrage VLM</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Debug</source>
+        <translation>Debug</translation>
+    </message>
+    <message>
+        <source>Activer la fenetre de debug</source>
+        <translation></translation>
     </message>
 </context>
 <context>
@@ -2057,6 +2089,15 @@ Are you sure ?</translation>
     <message>
         <source>Cancel</source>
         <translation>Cancel</translation>
+    </message>
+</context>
+<context>
+    <name>xml_boatData</name>
+    <message>
+        <source>Erreur ligne %1, colonne %2:
+%3</source>
+        <translation>Error line %1, column %2:
+%3</translation>
     </message>
 </context>
 </TS>
