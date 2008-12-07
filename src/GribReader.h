@@ -87,6 +87,7 @@ class GribReader
         void clean_vector(std::vector<GribRecord *> &ls);
         void clean_all_vectors();
         float  getHoursBeetweenGribRecords();   // delay in hours
+        void readGribFileContent();
 };
 
 

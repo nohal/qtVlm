@@ -84,12 +84,41 @@ void GribReader::openFile(const std::string fname)
     //--------------------------------------------------------
     // Ouverture du fichier
     //--------------------------------------------------------
-    file = zu_open(fname.c_str(), "rb");
+    file = zu_open(fname.c_str(), "rb", ZU_COMPRESS_AUTO);
     if (file == NULL) {
         ok = false;
         erreur("Can't open file: %s", fname.c_str());
         return;
     }
+    readGribFileContent();
+    
+    // Essaie d'autres compressions (extension non reconnue ?)
+    if (! ok) {
+        if (file != NULL)
+            zu_close(file);
+        file = zu_open(fname.c_str(), "rb", ZU_COMPRESS_BZIP);
+        if (file != NULL)
+            readGribFileContent();
+    }
+    if (! ok) {
+        if (file != NULL)
+            zu_close(file);
+        file = zu_open(fname.c_str(), "rb", ZU_COMPRESS_GZIP);
+        if (file != NULL)
+            readGribFileContent();
+    }
+    if (! ok) {
+        if (file != NULL)
+            zu_close(file);
+        file = zu_open(fname.c_str(), "rb", ZU_COMPRESS_NONE);
+        if (file != NULL)
+            readGribFileContent();
+    }
+}
+    
+//---------------------------------------------------------------------------------
+void GribReader::readGribFileContent()
+{
     fileSize = zu_filesize(file);
     //--------------------------------------------------------
     // Lecture de l'ensemble des GribRecord du fichier
@@ -131,16 +160,22 @@ void GribReader::openFile(const std::string fname)
                 case GRB_PRECIP_TOT :
                     if (ls_GRB_PRECIP_TOT.size()==0) {
                         GribRecord *r2 = new GribRecord(*rec);
-                        r2->setCurrentDate(firstdate);    // 1er enregistrement factice
-                        ls_GRB_PRECIP_TOT.push_back(r2);
+                        if(r2!=NULL)
+                        {
+                            r2->setCurrentDate(firstdate);    // 1er enregistrement factice
+                            ls_GRB_PRECIP_TOT.push_back(r2);
+                        }
                     }
                     ls_GRB_PRECIP_TOT.push_back(rec);
                     break;
                 case GRB_CLOUD_TOT :
                     if (ls_GRB_CLOUD_TOT.size()==0) {
                         GribRecord *r2 = new GribRecord(*rec);
-                        r2->setCurrentDate(firstdate);    // 1er enregistrement factice
-                        ls_GRB_CLOUD_TOT.push_back(r2);
+                        if(r2!=NULL)
+                        {
+                            r2->setCurrentDate(firstdate);    // 1er enregistrement factice
+                            ls_GRB_CLOUD_TOT.push_back(r2);
+                        }
                     }
                     ls_GRB_CLOUD_TOT.push_back(rec);
                     break;

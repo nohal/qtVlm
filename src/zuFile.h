@@ -39,6 +39,7 @@ extern "C" {
 #include <zlib.h>
 #include <bzlib.h>
 
+#define ZU_COMPRESS_AUTO  -1
 #define ZU_COMPRESS_NONE   0
 #define ZU_COMPRESS_GZIP   1
 #define ZU_COMPRESS_BZIP   2
@@ -59,7 +60,7 @@ typedef struct
 } ZUFILE;
 
 
-ZUFILE * zu_open(const char *fname, const char *mode);
+ZUFILE * zu_open(const char *fname, const char *mode,int type=ZU_COMPRESS_AUTO);
 int    zu_close(ZUFILE *f);
 
 int    zu_can_read_file(const char *fname);

@@ -46,8 +46,7 @@ LoadGribFile::LoadGribFile()
     step1_InetReply=step2_InetReply=NULL;
     assert(inetManager);
 
-    host = "http://zygrib.free.fr";
-
+    host = "http://www.zygrib.org";
 
     // connect(http, SIGNAL(done(bool)), this, SLOT(done(bool)));
     connect(inetManager, SIGNAL(finished ( QNetworkReply *)),
@@ -153,7 +152,7 @@ void LoadGribFile::getGribFile(
                            << "&par=" << parameters
                            << "&l=" << zygriblog
                            << "&m=" << zygribpwd
-                           << "&client=" << Version::getCompleteName()
+                           << "&client=" << "zyGrib-3.0.0"
                            ;
         step1_InetReply=inetManager->get(QNetworkRequest(QUrl(page)));
         connect(step1_InetReply,SIGNAL(downloadProgress(qint64 , qint64)),this, SIGNAL(dataReadProgress (qint64,qint64)));
@@ -167,7 +166,7 @@ void LoadGribFile::requestFinished ( QNetworkReply * inetReply)
     disconnect(inetReply,SIGNAL(downloadProgress(qint64 , qint64)),this, SIGNAL(dataReadProgress (qint64,qint64)));
     QString page;
     if (inetReply->error() != QNetworkReply::NoError) {
-        emit signalGribLoadError(QString("Http error: %1").arg(inetReply->error()));
+        emit signalGribLoadError(QString("Http error: %1 (step=%2)").arg(inetReply->error()).arg(step));
     }
     else if(inetReply == step1_InetReply)
     {
@@ -216,7 +215,7 @@ gfs_run_hour:6
             emit signalGribStartLoadData();
 
             QTextStream(&page) << host
-                               << "/noaa/24O76/"+fileName;
+                               << "/noaa/313O562/"+fileName;
             //printf("PAGE='%s'\n",qPrintable(page));
 
             step1_InetReply=NULL;
@@ -225,7 +224,7 @@ gfs_run_hour:6
 
         }
         else {
-            emit signalGribLoadError(tr("Pas de fichier créé sur le serveur."));
+            emit signalGribLoadError(tr("Pas de fichier créé sur le serveur:")+status);
         }
     }
     else if(inetReply == step2_InetReply)

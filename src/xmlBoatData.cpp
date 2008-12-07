@@ -23,7 +23,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "xmlBoatData.h"
 
-#define VERSION_NUMBER    0
+#define VERSION_NUMBER    1
 #define DOM_FILE_TYPE     "qtVLM_config"
 #define ROOT_NAME         "qtVLM_boat"
 #define VERSION_NAME      "Version"
@@ -31,6 +31,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #define LOGIN_NAME        "Login"
 #define PASS_NAME         "Pass"
 #define ACTIVATED_NAME    "Activated"
+
+#define OLD_DOM_FILE_TYPE "zygVLM_config"
+#define OLD_ROOT_NAME     "zygVLM_boat"
 
 xml_boatData::xml_boatData(Projection * proj,QWidget * main, QWidget * parent)
 : QWidget(parent)
@@ -100,6 +103,8 @@ bool xml_boatData::readBoatData(QList<boatAccount*> & boat_list,QString fname)
      int errorLine;
      int errorColumn;
 	 bool hasVersion = false;
+     bool forceWrite = false;
+     int version=VERSION_NUMBER;
 
      QFile file(fname);
      
@@ -115,7 +120,7 @@ bool xml_boatData::readBoatData(QList<boatAccount*> & boat_list,QString fname)
 	 QDomDocument doc;
 	 if(!doc.setContent(&file,true,&errorStr,&errorLine,&errorColumn))
 	 {
-        QMessageBox::warning(0,QObject::tr("Lecture de param�tre bateau"),
+        QMessageBox::warning(0,QObject::tr("Lecture de parametre bateau"),
              QString("Erreur ligne %1, colonne %2:\n%3")
 			 .arg(errorLine)
 			 .arg(errorColumn)
@@ -126,7 +131,7 @@ bool xml_boatData::readBoatData(QList<boatAccount*> & boat_list,QString fname)
 	 showMessage("Process root");
 
 	 QDomElement root = doc.documentElement();
-	 if(root.tagName() != ROOT_NAME)
+	 if(root.tagName() != ROOT_NAME && root.tagName() != OLD_ROOT_NAME)
 	 {
          showMessage("Wrong root name: " + root.tagName());
 	     return false;
@@ -144,18 +149,8 @@ bool xml_boatData::readBoatData(QList<boatAccount*> & boat_list,QString fname)
 			  dataNode = node.firstChild();
 			  if(dataNode.nodeType() == QDomNode::TextNode)
 			  {
-				  int version = dataNode.toText().data().toInt();
-				  if(version != VERSION_NUMBER)
-				  {
-					  showMessage("Bad version");
-                      boat_list.clear();;
-					  return false;
-				  }
-				  else
-				  {
-					  showMessage("Ok version");
-				      hasVersion = true;
-	              }
+				  version = dataNode.toText().data().toInt();
+                  hasVersion = true;
 			  }
 		  }
 		  else if(node.toElement().tagName() == BOAT_GROUP_NAME)
@@ -179,7 +174,16 @@ bool xml_boatData::readBoatData(QList<boatAccount*> & boat_list,QString fname)
 				   {
 					  dataNode = subNode.firstChild();
                       if(dataNode.nodeType() == QDomNode::TextNode)
-						  pass = QByteArray::fromBase64(dataNode.toText().data().toAscii());
+                      {
+                          if(version==0)
+                          {
+                              pass = dataNode.toText().data();
+                              showMessage("Processing old version of password");
+                              forceWrite=true;
+                          }
+                          else
+						      pass = QByteArray::fromBase64(dataNode.toText().data().toAscii());
+                      }
 				   }
                    if(subNode.toElement().tagName() == ACTIVATED_NAME)
 				   {
@@ -207,6 +211,8 @@ bool xml_boatData::readBoatData(QList<boatAccount*> & boat_list,QString fname)
 	 if(hasVersion)
 	 {
 		 showMessage("all ok");
+         if(forceWrite)
+             writeBoatData(boat_list,fname);
 	 	 return true;
 	 }
 	 else

@@ -32,7 +32,7 @@ Copyright (C) 2008 - Jacques Zaninetti - http://zygrib.free.fr
 //-------------------------------------------------------------------------------
 DialogServerStatus::DialogServerStatus() : QDialog()
 {
-    host = "zygrib.free.fr";
+    host = "www.zygrib.org";
     QString page = "/noaa/getGfsRunInfo.php";
     
     setWindowTitle(tr("Serveur"));
