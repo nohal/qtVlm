@@ -67,7 +67,7 @@ class Util
     static float  BeaufortToKmh_F(float bf);
 
     static void paramProxy(QNetworkAccessManager *inetManager,QString host);
-    static bool getWP(float * lat,float * lon, float * wph=0);
+    static bool getWP(float * lat,float * lon, float * wph, int * tStamp);
 
     //-------------------------------------------------
     template <typename T>

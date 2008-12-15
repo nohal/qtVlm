@@ -44,6 +44,7 @@ Copyright (C) 2008 - Jacques Zaninetti - http://zygrib.free.fr
 #include "boatAccount_dialog.h"
 #include "BoardVLM.h"
 
+
 //-----------------------------------------------------------
 void MainWindow::InitActionsStatus()
 {
@@ -228,7 +229,8 @@ void MainWindow::connectSignals()
     connect(mb->acVLMParamBoat, SIGNAL(triggered()), this, SLOT(slotVLM_ParamBoat()));
     connect(mb->acVLMParam, SIGNAL(triggered()), this, SLOT(slotVLM_Param()));
     connect(mb->acVLMSync, SIGNAL(triggered()), this, SLOT(slotVLM_Sync()));
-    connect(mb->acVLMTest, SIGNAL(triggered()), this, SLOT(slotVLM_Test()));
+    if(mb->acVLMTest)
+        connect(mb->acVLMTest, SIGNAL(triggered()), this, SLOT(slotVLM_Test()));
     connect(mb->acPOIinput, SIGNAL(triggered()), this, SLOT(slotPOIinput()));
     //connect(vlmData,SIGNAL(showMessage(QString)),this,SLOT(slotShowMessage(QString)));
 
@@ -388,7 +390,8 @@ MainWindow::MainWindow(int w, int h, QWidget *parent)
       connect(param,SIGNAL(paramVLMChanged()),VLMBoard,SLOT(paramChanged()));
       connect(param,SIGNAL(paramVLMChanged()),dbg,SLOT(paramChanged()));
       
-      connect(poi_input_dialog,SIGNAL(addPOI(float,float,float)),this,SLOT(slotAddPOI(float,float,float)));
+      connect(poi_input_dialog,SIGNAL(addPOI(float,float,float,int,bool)),
+              this,SLOT(slotAddPOI(float,float,float,int,bool)));
 
     //---------------------------------------------------------
     // Active les actions
@@ -467,7 +470,8 @@ void MainWindow::slotCreatePOI()
 {
     float lon, lat;
     proj->screen2map(mouseClicX,mouseClicY, &lon, &lat);
-    new POI_Editor(lon, lat, proj, this, terre);
+    POI_Editor * edt = new POI_Editor(lon, lat, proj, this, terre);
+    delete edt;
 }
 //-------------------------------------------------
 void MainWindow::slotOpenMeteotablePOI(POI* poi)
@@ -979,10 +983,11 @@ void MainWindow::slotAccountListUpdated(void)
         menuBar->cbBoatList->setCurrentIndex(menuBar->cbBoatList->findText(selectedBoat->getLogin()));
 }
 
-void MainWindow::slotAddPOI(float lat,float lon, float wph)
+void MainWindow::slotAddPOI(float lat,float lon, float wph,int timestamp,bool useTimeStamp)
 {
     POI * poi;
-    poi = new POI(QString(tr("POI")),lon,lat, proj, this, terre,POI_STD,wph);
+    poi = new POI(QString(tr("POI")),lon,lat, proj,
+                  this, terre,POI_STD,wph,timestamp,useTimeStamp);
 #warning il faudrait recup la config comme ds le constructeur
     poi->setVisible(true);
     poi->projectionUpdated(NULL);
@@ -993,18 +998,19 @@ void MainWindow::slotAddPOI(float lat,float lon, float wph)
 void MainWindow::slotpastePOI()
 {
     float lon, lat,wph;
+    int tstamp;
 
-    if(!Util::getWP(&lat,&lon,&wph))
+    if(!Util::getWP(&lat,&lon,&wph,&tstamp))
         return;
-
-    slotAddPOI(lat,lon,wph);
+    
+    slotAddPOI(lat,lon,wph,tstamp,tstamp!=-1);
 }
 
 void MainWindow::slotChgWP(float lat,float lon, float wph)
 {
     if(VLMBoard)
     {
-        showMessage(QString("set WP from PIO %1,%2,%3").arg(lat).arg(lon).arg(wph));
+        showMessage(QString("set WP from POI %1,%2,%3").arg(lat).arg(lon).arg(wph));
         VLMBoard->setWP(lat,lon,wph);
     }
     else
@@ -1025,7 +1031,13 @@ void MainWindow::slotDelPOIs(void)
         QListIterator<POI*> i (poi_list);
         int num=0,sup=0;
 
-        showMessage(QString("%1,%2->%3,%4").arg(lat0).arg(lon0).arg(lat1).arg(lon1));
+        int rep = QMessageBox::question (this,
+            tr("Suppression de POI"),
+             tr("La destruction d'un point d'intérêt est définitive.\n\nEtes-vous sûr ?"),
+            QMessageBox::Yes | QMessageBox::No);
+        if (rep != QMessageBox::Yes)
+            return;
+        
         while(i.hasNext())
         {
             POI * poi = i.next();

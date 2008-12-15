@@ -199,7 +199,11 @@ MenuBar::MenuBar(QWidget *parent)
         acVLMParam = addAction(menuVLM,"Settings","","","");
         acVLMSync = addAction(menuVLM,"Boat sync","","","");
         acPOIinput = addAction(menuVLM,"Input POI","","","");
+#if 0
         acVLMTest = addAction(menuVLM,"Test","","","");
+#else
+        acVLMTest = NULL;
+#endif
 
     addMenu(menuVLM);
 

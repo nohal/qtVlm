@@ -26,8 +26,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 POI_input::POI_input(QWidget * parent) : QDialog(parent)
 {
     setupUi(this);
-
 }
+
+
 
 void POI_input::txtHasChanged(void)
 {
@@ -36,13 +37,14 @@ void POI_input::txtHasChanged(void)
         nbValid->setText("0/0 valid WP");
         return;
     }
+    
     QStringList lsbuf,lsval1,lsval2;
     int nbOk=0;
     lsbuf = POI_list->toPlainText().split("\n");
     for (int i=0; i < lsbuf.size(); i++)
     {
         lsval1 = lsbuf.at(i).split(",");
-        if(lsval1.size()==2)
+        if(lsval1.size()==2 || lsval1.size()==3)
         {
             lsval2 = lsval1[1].split("@");
             if(lsval2.size()==2)
@@ -51,6 +53,7 @@ void POI_input::txtHasChanged(void)
     }
     nbValid->setText(QString("%1/%2 valid WP").arg(nbOk).arg(lsbuf.size()));
 }
+
 
 void POI_input::done(int result)
 {
@@ -61,11 +64,17 @@ void POI_input::done(int result)
         for (int i=0; i < lsbuf.size(); i++)
         {
             lsval1 = lsbuf.at(i).split(",");
-            if(lsval1.size()==2)
+            if(lsval1.size()==2 || lsval1.size()==3)
             {
                 lsval2 = lsval1[1].split("@");
                 if(lsval2.size()==2)
-                    emit addPOI(lsval1[0].toFloat(),lsval2[0].toFloat(),lsval2[1].toFloat());
+                {
+                    if(lsval1.size()==2)
+                        emit addPOI(lsval1[0].toFloat(),lsval2[0].toFloat(),lsval2[1].toFloat(),-1,false);
+                    else
+                        emit addPOI(lsval1[0].toFloat(),lsval2[0].toFloat(),lsval2[1].toFloat(),lsval1[2].toInt(),true);
+                }
+                    
             }
         }
     }

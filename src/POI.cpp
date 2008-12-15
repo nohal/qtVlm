@@ -34,7 +34,8 @@ Copyright (C) 2008 - Jacques Zaninetti - http://zygrib.free.fr
 
 //-------------------------------------------------------------------------------
 POI::POI(QString name, float lon, float lat,
-                 Projection *proj, QWidget *ownerMeteotable, QWidget *parentWindow, int type, float wph)
+                 Projection *proj, QWidget *ownerMeteotable, QWidget *parentWindow,
+                 int type, float wph,int tstamp,bool useTstamp)
     : QWidget(parentWindow)
 {
     this->parent = parentWindow;
@@ -44,9 +45,14 @@ POI::POI(QString name, float lon, float lat,
     this->lat = lat;
     this->wph=wph;
     this->type = type;
+    this->timeStamp=tstamp;
+    this->useTstamp=useTstamp;
+
+    connect(this,SIGNAL(showMessage(QString)),ownerMeteotable,SLOT(slotShowMessage(QString)));
 
     setProjection(proj);
     createWidget();
+    
     connect(proj, SIGNAL(projectionUpdated(Projection * )), this, SLOT(projectionUpdated(Projection *)) );
     connect(this, SIGNAL(signalOpenMeteotablePOI(POI*)),
                             ownerMeteotable, SLOT(slotOpenMeteotablePOI(POI*)));
@@ -55,6 +61,7 @@ POI::POI(QString name, float lon, float lat,
     connect(this,SIGNAL(addPOI_list(POI*)),ownerMeteotable,SLOT(addPOI_list(POI*)));
     connect(this,SIGNAL(delPOI_list(POI*)),ownerMeteotable,SLOT(delPOI_list(POI*)));
 
+    setName(name);
 }
 
 POI::~POI()
@@ -95,8 +102,18 @@ void POI::createWidget()
 void POI::setName(QString name)
 {
     this->name=name;
-    label->setText(name);
-    setToolTip(tr("Point d'intérêt : ")+name);
+    QString str;
+    QDateTime tm;
+    tm.setTimeSpec(Qt::UTC);
+    tm.setTime_t(getTimeStamp());
+    if(getUseTimeStamp())
+        str=QString("WP %1")
+                .arg(tm.toString("dd-hh:mm"));
+    else
+        str=name;
+    
+    label->setText(str);
+    setToolTip(tr("Point d'intérêt : ")+str);
     adjustSize();
 }
 
@@ -179,14 +196,14 @@ void  POI::mouseReleaseEvent(QMouseEvent *e)
         if (countClick==2)
         {
             // Double Clic : Edit this Point Of Interest
-            new POI_Editor(this, owner, parent);
+            POI_Editor * edt = new POI_Editor(this, owner, parent);
+            delete edt;
             countClick = 0;
         }
     }
     else if (e->button() == Qt::RightButton)
     {
         // Right clic : Edit this Point Of Interest
-        //new POI_Editor(this, parent);
         popup->exec(QCursor::pos());
     }
 }
@@ -227,7 +244,8 @@ void POI::createPopUpMenu(void)
 
 void POI::slot_editPOI()
 {
-    new POI_Editor(this, owner, parent);
+    POI_Editor * edt = new POI_Editor(this, owner, parent);
+    delete edt;
 }
 
 void POI::slot_meteoPOI()
@@ -237,7 +255,6 @@ void POI::slot_meteoPOI()
 
 void POI::slot_setWP()
 {
-    //showMessage(QString("changing WP %1,%2,%3").arg(lat).arg(lon).arg(wph));
     emit chgWP(lat,lon,wph);
 }
 
@@ -306,13 +323,19 @@ POI_Editor::POI_Editor(float lon, float lat,
 {
     modeCreation = true;
     setWindowTitle(tr("Nouveau Point d'Intérêt"));
-    this->poi = new POI(tr("POI"), lon, lat, proj, ownerMeteotable, parentWindow, POI_STD,-1);
+    this->poi = new POI(tr("POI"), lon, lat, proj, ownerMeteotable,
+                        parentWindow, POI_STD,-1,-1,false);
     assert(this->poi);
+
+    connect(this,SIGNAL(showMessage(QString)),ownerMeteotable,SLOT(slotShowMessage(QString)));
+    
     createInterface();
-    setModal(false);
+    //setModal(true);
     connect(this,SIGNAL(addPOI_list(POI*)),ownerMeteotable,SLOT(addPOI_list(POI*)));
     connect(this,SIGNAL(delPOI_list(POI*)),ownerMeteotable,SLOT(delPOI_list(POI*)));
-    show();
+    
+    //show();
+    exec();
 }
 //-------------------------------------------------------
 // POI_Editor: Constructor for edit an existing POI
@@ -324,11 +347,15 @@ POI_Editor::POI_Editor(POI *poi_, QWidget *ownerMeteotable, QWidget *parent)
     modeCreation = false;
     setWindowTitle(tr("Point d'Intérêt : ")+poi->getName());
 
+    connect(this,SIGNAL(showMessage(QString)),ownerMeteotable,SLOT(slotShowMessage(QString)));
+    
     createInterface();
-    setModal(false);
+    //exsetModal(true);
     connect(this,SIGNAL(addPOI_list(POI*)),ownerMeteotable,SLOT(addPOI_list(POI*)));
     connect(this,SIGNAL(delPOI_list(POI*)),ownerMeteotable,SLOT(delPOI_list(POI*)));
-    show();
+    
+    //show();
+    exec();
 }
 //---------------------------------------
 POI_Editor::~POI_Editor()
@@ -343,9 +370,16 @@ void POI_Editor::reject()
 //---------------------------------------
 void POI_Editor::btOkClicked()
 {
+    QDateTime tm = editTStamp->dateTime();
+
+    tm.setTimeSpec(Qt::UTC);
+    poi->setTimeStamp(tm.toTime_t());
+    poi->setUseTimeStamp(chk_tstamp->checkState()==Qt::Checked);
+
     poi->setName( (editName->text()).trimmed() );
     poi->setLongitude(editLon->getValue());
     poi->setLatitude (editLat->getValue());
+            
     if(editWph->text().isEmpty())
         poi->setWph(-1);
     else
@@ -356,7 +390,8 @@ void POI_Editor::btOkClicked()
         poi->show();
         emit addPOI_list(poi);
     }
-    delete this;
+    //delete this;
+    done(QDialog::Accepted);
 }
 //---------------------------------------
 void POI_Editor::btCancelClicked()
@@ -364,7 +399,8 @@ void POI_Editor::btCancelClicked()
     if (modeCreation) {
         delete poi;
     }
-    delete this;
+    done(QDialog::Rejected);
+    //delete this;
 }
 //---------------------------------------
 void POI_Editor::btDeleteClicked()
@@ -378,22 +414,43 @@ void POI_Editor::btDeleteClicked()
             
             delPOI_list(poi);
             delete poi;
-            delete this;
+            //delete this;
         }
     }
     else {
         delete poi;
-        delete this;
+        //delete this;
     }
+    done(QDialog::Accepted);
 }
 
 void POI_Editor::btPasteClicked()
 {
     float lat,lon,wph;
-    if(!Util::getWP(&lat,&lon,&wph))
+    int tstamp;
+    if(!Util::getWP(&lat,&lon,&wph,&tstamp))
         return;
     editLon->setValue(lon);
     editLat->setValue(lat);
+    
+    if(tstamp==-1)
+    {
+        QDateTime tm = QDateTime::currentDateTime().toUTC();
+        editTStamp->setDateTime(tm);
+        chk_tstamp->setCheckState(Qt::Unchecked);
+    }
+    else
+    {
+        QDateTime tm;
+        tm.setTimeSpec(Qt::UTC);
+        tm.setTime_t(tstamp);
+        editTStamp->setDateTime(tm);
+        editTStamp->setTimeSpec(Qt::UTC);
+        chk_tstamp->setCheckState(Qt::Checked);
+        /*editTStamp->setEnabled(poi->getUseTimeStamp());
+        editName->setEnabled(!poi->getUseTimeStamp());*/
+    }
+    
     if(wph<0 || wph > 360)
         editWph->setText(QString());
     else
@@ -409,6 +466,12 @@ void POI_Editor::btSaveWPClicked()
         wph=editWph->text().toFloat();
     poi->doChgWP(editLat->getValue(),editLon->getValue(),wph);
     btOkClicked();
+}
+
+void POI_Editor::chkTStamp_chg(int state)
+{
+    editTStamp->setEnabled(state==Qt::Checked);
+    editName->setEnabled(state!=Qt::Checked);
 }
 
 //---------------------------------------
@@ -450,6 +513,32 @@ void POI_Editor::createInterface()
         vbox->addWidget(editWph);
     gbox->setLayout(vbox);
     layout->addWidget(gbox);
+
+    gbox = new QGroupBox(tr("Date/Heure de passage"));
+        vbox = new QVBoxLayout();
+        chk_tstamp = new QCheckBox(tr("Activer"),this);
+        editTStamp = new QDateTimeEdit(this);
+        if(poi->getTimeStamp()!=-1)
+        {
+            QDateTime tm = QDateTime::fromTime_t(poi->getTimeStamp());
+            editTStamp->setDateTime(tm);
+            editTStamp->setTimeSpec(Qt::UTC);
+        }
+        else
+        {
+            QDateTime tm = QDateTime::currentDateTime().toUTC();
+            editTStamp->setDateTime(tm);
+        }
+        
+        chk_tstamp->setCheckState(poi->getUseTimeStamp()?Qt::Checked:Qt::Unchecked);
+        editTStamp->setEnabled(poi->getUseTimeStamp());
+        editName->setEnabled(!poi->getUseTimeStamp());
+    vbox->addWidget(chk_tstamp);    
+    vbox->addWidget(editTStamp);
+    gbox->setLayout(vbox);
+    layout->addWidget(gbox);
+    
+    
     //------------------------
     QWidget *btsbox = new QWidget(this);
     QHBoxLayout *laybts = new QHBoxLayout();
@@ -472,6 +561,8 @@ void POI_Editor::createInterface()
     connect(btDelete, SIGNAL(clicked()), this, SLOT(btDeleteClicked()));
     connect(btPaste, SIGNAL(clicked()), this, SLOT(btPasteClicked()));
     connect(btSaveWP, SIGNAL(clicked()), this, SLOT(btSaveWPClicked()));
+
+    connect(chk_tstamp, SIGNAL(stateChanged(int)), this, SLOT(chkTStamp_chg(int)));
     //------------------------
     setLayout(layout);
 }

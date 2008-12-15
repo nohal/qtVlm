@@ -6,12 +6,12 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>288</width>
+    <width>290</width>
     <height>280</height>
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Dialog</string>
+   <string>Liste de POI - LAT,LON@WPH</string>
   </property>
   <widget class="QDialogButtonBox" name="buttonBox">
    <property name="geometry">
@@ -37,6 +37,12 @@
      <width>281</width>
      <height>231</height>
     </rect>
+   </property>
+   <property name="toolTip">
+    <string>Coller ou inserer des POI au format LAT,LON@WPH</string>
+   </property>
+   <property name="plainText">
+    <string/>
    </property>
   </widget>
   <widget class="QLabel" name="nbValid">
@@ -82,7 +88,7 @@
      <y>260</y>
     </hint>
     <hint type="destinationlabel">
-     <x>286</x>
+     <x>187</x>
      <y>274</y>
     </hint>
    </hints>

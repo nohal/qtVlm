@@ -103,8 +103,8 @@ class MainWindow: public QMainWindow
         void slotAccountListUpdated(void);
         void slotBoatUpdated(boatAccount * boat);
         void slotpastePOI();
-        void slotChgWP(float lat,float lon, float wph=-1);
-        void slotAddPOI(float lat,float lon, float wph=-1);
+        void slotChgWP(float lat,float lon, float wph);
+        void slotAddPOI(float lat,float lon, float wph,int timestamp,bool useTimeStamp);
         void slotPOIinput(void);
         void slotDelPOIs(void);
 
