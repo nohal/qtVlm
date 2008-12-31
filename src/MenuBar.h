@@ -131,8 +131,10 @@ public:
     QAction *acVLMParam;
     QAction *acVLMParamBoat;
     QAction *acPOIinput;
+	QAction *acPOIimport;
     QAction *acVLMSync;
     QAction *acVLMTest;
+    QAction *acPOISave;
 
 
     //-------------------------------------
@@ -152,7 +154,8 @@ private:
     QMenu *menuView;
     QMenu *menuMap;
     QMenu *menuOptions;
-    QMenu *menuVLM;
+    QMenu *menuBoat;
+    QMenu *menuPOI;
     QMenu *menuHelp;
 
     std::vector<time_t> listGribDates;

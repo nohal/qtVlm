@@ -29,6 +29,7 @@ Copyright (C) 2008 - Jacques Zaninetti - http://zygrib.free.fr
 #include <QMouseEvent>
 #include <QPaintEvent>
 #include <QPainter>
+#include <QMessageBox>
 
 #include "Terrain.h"
 #include "Orthodromie.h"
@@ -48,6 +49,7 @@ Terrain::Terrain(QWidget *parent, Projection *proj_)
     assert(timerResize);
     timerResize->setSingleShot(true);
     connect(timerResize, SIGNAL(timeout()), this, SLOT(slotTimerResize()));
+    connect(this,SIGNAL(showMessage(QString)),parent,SLOT(slotShowMessage(QString)));
 
     //---------------------------------------------------------------------
     showCountriesBorders  = Util::getSetting("showCountriesBorders", true).toBool();
@@ -55,27 +57,27 @@ Terrain::Terrain(QWidget *parent, Projection *proj_)
     showRivers   = Util::getSetting("showRivers", false).toBool();
     showCitiesNamesLevel = Util::getSetting("showCitiesNamesLevel", 0).toInt();
     showCountriesNames = Util::getSetting("showCountriesNames", false).toBool();
-    
+
     showIsobars  = Util::getSetting("showIsobars", true).toBool();
     showIsobarsLabels = Util::getSetting("showIsobarsLabels", false).toBool();
     isobarsStep = Util::getSetting("isobarsStep", 2).toInt();
     showPressureMinMax = Util::getSetting("showPressureMinMax", false).toBool();
-    
+
     showWindColorMap  = Util::getSetting("showWindColorMap", true).toBool();
     showRainColorMap  = Util::getSetting("showRainColorMap", false).toBool();
     showCloudColorMap  = Util::getSetting("showCloudColorMap", false).toBool();
     showHumidColorMap  = Util::getSetting("showHumidColorMap", false).toBool();
-    
+
     colorMapSmooth = Util::getSetting("colorMapSmooth", true).toBool();
     showWindArrows  = Util::getSetting("showWindArrows", true).toBool();
     showBarbules = Util::getSetting("showBarbules", true).toBool();
-    
+
     showTemperatureLabels = Util::getSetting("showTemperatureLabels", false).toBool();
     showGribGrid = Util::getSetting("showGribGrid", false).toBool();
     //----------------------------------------------------------------------------
 
     imgEarth = NULL;
-    
+
     imgWind  = NULL;
     imgAll   = NULL;
     isEarthMapValid = false;
@@ -87,44 +89,44 @@ Terrain::Terrain(QWidget *parent, Projection *proj_)
     gribPlot = new GribPlot();
     assert(gribPlot);
     setIsobarsStep(isobarsStep);
-    
+
     gisReader = new GisReader();
     assert(gisReader);
-    
+
     isSelectionZoneEnCours = false;
     setPalette(QPalette(backgroundColor));
     setAutoFillBackground(true);
-    
+
     setMouseTracking(true);
     setFocusPolicy(Qt::StrongFocus);
 
-	updateGraphicsParameters();
+    updateGraphicsParameters();
 }
 
 //-------------------------------------------
 void Terrain::updateGraphicsParameters()
-{            
+{
     backgroundColor  = Util::getSetting("backgroundColor", QColor(0,0,45)).value<QColor>();
     seaColor  = Util::getSetting("seaColor", QColor(50,50,150)).value<QColor>();
     landColor = Util::getSetting("landColor", QColor(200,200,120)).value<QColor>();
-    
+
     seaBordersPen.setColor(Util::getSetting("seaBordersLineColor", QColor(40,45,30)).value<QColor>());
     seaBordersPen.setWidthF(Util::getSetting("seaBordersLineWidth", 1.8).toDouble());
-    
+
     boundariesPen.setColor(Util::getSetting("boundariesLineColor", QColor(40,40,40)).value<QColor>());
     boundariesPen.setWidthF(Util::getSetting("boundariesLineWidth", 1.4).toDouble());
-    
+
     riversPen.setColor(Util::getSetting("riversLineColor", QColor(50,50,150)).value<QColor>());
     riversPen.setWidthF(Util::getSetting("riversLineWidth", 1.0).toDouble());
-    
+
     isobarsPen.setColor(Util::getSetting("isobarsLineColor", QColor(80,80,80)).value<QColor>());
     isobarsPen.setWidthF(Util::getSetting("isobarsLineWidth", 2.0).toDouble());
-    
+
     int v = 180;
     selectColor     = QColor(v,v,v);
-    
+
     isEarthMapValid = false;
-	mustRedraw = true;
+    mustRedraw = true;
     update();
 }
 
@@ -140,13 +142,13 @@ void Terrain::setGSHHS_map(GshhsReader *map)
 //-------------------------------------------------------
 bool Terrain::draw_GSHHSandGRIB(QPainter &pntGlobal)
 {
- 	bool longJob = false;   
+    bool longJob = false;
     if (mustRedraw  ||  !isEarthMapValid  || !isWindMapValid)
     {
         pleaseWait = true;
         QCursor oldcursor = cursor();
         setCursor(Qt::WaitCursor);
-        
+
             if (imgAll != NULL) {
                 delete imgAll;
                 imgAll = NULL;
@@ -154,7 +156,7 @@ bool Terrain::draw_GSHHSandGRIB(QPainter &pntGlobal)
             imgAll = new QPixmap(proj->getW(), proj->getH());
             assert(imgAll);
             QPainter pnt(imgAll);
-			pnt.setRenderHint(QPainter::Antialiasing, true);
+            pnt.setRenderHint(QPainter::Antialiasing, true);
 
             //===================================================
             // Dessin du fond de carte et des données GRIB
@@ -165,24 +167,24 @@ bool Terrain::draw_GSHHSandGRIB(QPainter &pntGlobal)
                     delete imgEarth;
                     imgEarth = NULL;
                 }
-                
+
                 imgEarth = new QPixmap(proj->getW(), proj->getH());
                 assert(imgEarth);
-                
+
                 if (gshhsReader != NULL)
                 {
-                	QPainter pnt1(imgEarth);
-					pnt1.setRenderHint(QPainter::Antialiasing, true);
+                    QPainter pnt1(imgEarth);
+                    pnt1.setRenderHint(QPainter::Antialiasing, true);
                     gshhsReader->drawBackground(pnt1, proj, seaColor, backgroundColor);
                     gshhsReader->drawContinents(pnt1, proj, seaColor, landColor);
                 }
             }
             pnt.drawPixmap(0,0, *imgEarth);
-            
+
             //===================================================
             // Dessin des données GRIB
             //===================================================
-            
+
             gribPlot->show_GRIB_CoverZone(pnt, proj);
 
             windArrowsColor.setRgb(255, 255, 255);
@@ -204,9 +206,9 @@ bool Terrain::draw_GSHHSandGRIB(QPainter &pntGlobal)
                 windArrowsColor.setRgb(180, 180, 80);
                 gribPlot->draw_HUMID_Color(pnt, proj, colorMapSmooth);
             }
-            
-            if (showIsobars) {    
-				pnt.setPen(isobarsPen);
+
+            if (showIsobars) {
+                pnt.setPen(isobarsPen);
                 gribPlot->draw_PRESSURE_Isobars(pnt, proj);
             }
 
@@ -223,22 +225,22 @@ bool Terrain::draw_GSHHSandGRIB(QPainter &pntGlobal)
             if (showTemperatureLabels) {
                 gribPlot->draw_TEMPERATURE_Labels (pnt, proj);
             }
-           
-            
+
+
             //===================================================
             // Dessin des bordures et frontières
-            //===================================================   
+            //===================================================
             if (gshhsReader != NULL)
             {
-				pnt.setPen(seaBordersPen);
-				gshhsReader->drawSeaBorders(pnt, proj);
+                pnt.setPen(seaBordersPen);
+                gshhsReader->drawSeaBorders(pnt, proj);
 
                 if (showCountriesBorders) {
-					pnt.setPen(boundariesPen);
-					gshhsReader->drawBoundaries(pnt, proj);
+                    pnt.setPen(boundariesPen);
+                    gshhsReader->drawBoundaries(pnt, proj);
                 }
                 if (showRivers) {
-					pnt.setPen(riversPen);
+                    pnt.setPen(riversPen);
                     gshhsReader->drawRivers(pnt, proj);
                 }
             }
@@ -252,23 +254,23 @@ bool Terrain::draw_GSHHSandGRIB(QPainter &pntGlobal)
 
             //===================================================
             // Grille GRIB
-            //===================================================   
+            //===================================================
             if (showGribGrid) {
                 gribPlot->draw_GribGrid(pnt, proj);
             }
             //===================================================
             // Dates de la prévision
-            //===================================================   
+            //===================================================
             gribPlot->draw_ForecastDates(pnt, proj);
 
-            //===================================================   
+            //===================================================
             isEarthMapValid = true;
             isWindMapValid = true;
             mustRedraw = false;
-        
+
         setCursor(oldcursor);
         pleaseWait = false;
-		longJob = true;    
+        longJob = true;
     }
     // Recopie l'image complète
     pntGlobal.drawPixmap(0,0, *imgAll);
@@ -291,7 +293,7 @@ void Terrain::draw_OrthodromieSegment(QPainter &pnt,
     if (y0 <-90+eps) y0 =-90+eps;
     if (y1 > 90-eps) y1 = 90-eps;
     if (y1 <-90+eps) y1 =-90+eps;
-    
+
     if (fabs(x0-x1)>180)  // il faut faire le tour du monde par derrière
     {
         if (x0 < x1) {
@@ -310,12 +312,12 @@ void Terrain::draw_OrthodromieSegment(QPainter &pnt,
         if (abs(i0-i1) > 10)
         {
             float xm, ym;
-            
+
             ortho = new Orthodromie(x0, y0, x1, y1);
             ortho->getMidPoint(&xm, &ym);
             delete ortho;
             ortho = NULL;
-            
+
             xm *= 180.0/M_PI;
             ym *= 180.0/M_PI;
             while (ym > 90)
@@ -712,7 +714,10 @@ void Terrain::mousePressEvent (QMouseEvent * e) {
 }
 //---------------------------------------------------------
 void Terrain::mouseReleaseEvent (QMouseEvent * e) {
+
+
 //printf("release\n");
+//
     float x0, y0, x1, y1;
     if (isSelectionZoneEnCours)
     {
@@ -730,12 +735,15 @@ void Terrain::mouseReleaseEvent (QMouseEvent * e) {
         }
         else {
             emit mouseClicked(e);
+            //QMessageBox::information (NULL,"after","test 2");
         }
     }
     else {
         emit mouseClicked(e);
+        //QMessageBox::information (NULL,"after","test 3");
     }
-}
+    }
+
 
 //---------------------------------------------------------
 void Terrain::mouseMoveEvent (QMouseEvent * e) {
@@ -760,7 +768,7 @@ void Terrain::resizeEvent (QResizeEvent * /*e*/)
     isWindMapValid = false;
     isResizing = true;
 
-	// Evite les multiples update() pendant les changements de taille
+    // Evite les multiples update() pendant les changements de taille
     timerResize->stop();
     timerResize->start(100);
 
@@ -840,16 +848,16 @@ void Terrain::slot_Go_Down()
 //---------------------------------------------------------
 void Terrain::setShowPOIs(bool show)
 {
-	Util::setSetting("showPOIs", show);
-	// list of all the POI's
-	QList<POI*> lpois = findChildren <POI*>();
-	for (int i=0; i<lpois.size(); i++)
-	{
-		if (show)
-			lpois.at(i)->setVisible(true);
-		else
-			lpois.at(i)->setVisible(false);
-	}
+    Util::setSetting("showPOIs", show);
+    // list of all the POI's
+    QList<POI*> lpois = findChildren <POI*>();
+    for (int i=0; i<lpois.size(); i++)
+    {
+        if (show)
+            lpois.at(i)->setVisible(true);
+        else
+            lpois.at(i)->setVisible(false);
+    }
 }
 
 
@@ -859,11 +867,11 @@ void Terrain::setShowPOIs(bool show)
 void Terrain::paintEvent(QPaintEvent * /*event*/)
 {
     QPainter pnt(this);
-    
+
     QColor transp;
     int r = 100;
     bool longJob = false;
-    
+
     if (!isResizing)
     {
         // Draw the map
@@ -878,7 +886,7 @@ void Terrain::paintEvent(QPaintEvent * /*event*/)
             proj->map2screen(selX0, selY0, &x0, &y0);
             proj->map2screen(selX1, selY1, &x1, &y1);
             pnt.drawRect(x0, y0, x1-x0, y1-y0);
-            
+
             if (showOrthodromie)
             {
                 QPen penLine(QColor(Qt::white));
@@ -889,7 +897,7 @@ void Terrain::paintEvent(QPaintEvent * /*event*/)
         }
 
     }
-    
+
     if (pleaseWait) {
         // Write the message "please wait..." on the map
         QFont fontWait("Helvetica", 12, QFont::Bold, true);

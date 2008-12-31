@@ -107,6 +107,8 @@ class MainWindow: public QMainWindow
         void slotAddPOI(float lat,float lon, float wph,int timestamp,bool useTimeStamp);
         void slotPOIinput(void);
         void slotDelPOIs(void);
+        void slotBoatSave(void);
+		void slotPOIimport(void);
 
         void addPOI_list(POI * poi);
         void delPOI_list(POI * poi);

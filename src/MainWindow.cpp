@@ -234,10 +234,14 @@ void MainWindow::connectSignals()
     connect(mb->acPOIinput, SIGNAL(triggered()), this, SLOT(slotPOIinput()));
     //connect(vlmData,SIGNAL(showMessage(QString)),this,SLOT(slotShowMessage(QString)));
 
+    connect(mb->acPOIimport, SIGNAL(triggered()), this, SLOT(slotPOIimport()));
+
     connect(&dialogProxy, SIGNAL(proxyUpdated()), this, SLOT(slotProxyUpdated()));
 
     connect(mb->cbBoatList, SIGNAL(activated(QString)),
             this, SLOT(slotChgBoat(QString)));
+
+    connect(mb->acPOISave, SIGNAL(triggered()), this, SLOT(slotBoatSave()));
 
     //-------------------------------------
     // Autres objets de l'interface
@@ -389,7 +393,7 @@ MainWindow::MainWindow(int w, int h, QWidget *parent)
 
       connect(param,SIGNAL(paramVLMChanged()),VLMBoard,SLOT(paramChanged()));
       connect(param,SIGNAL(paramVLMChanged()),dbg,SLOT(paramChanged()));
-      
+
       connect(poi_input_dialog,SIGNAL(addPOI(float,float,float,int,bool)),
               this,SLOT(slotAddPOI(float,float,float,int,bool)));
 
@@ -603,7 +607,7 @@ void MainWindow::slotHelp_APropos() {
             tr("A propos"),
             tr("qtVlm : GUI pour Virtual loup de mer")
             +"\nhttp://www.virtual-loup-de-mer.org\n"+
-            
+
             tr("Version : ")+Version::getVersion()
                     +"      "+Version::getDate()
             +"\n"+ tr("Licence : GNU GPL v3")
@@ -828,8 +832,8 @@ void MainWindow::statusBar_showSelectedZone()
 //--------------------------------------------------------------
 void MainWindow::slotMouseClicked(QMouseEvent * e)
 {
-statusBar_showSelectedZone();
-
+    statusBar_showSelectedZone();
+    showMessage(QString("in mouse click %1").arg(e->isAccepted()==true?"accepted":"rejected"));
     mouseClicX = e->x();
     mouseClicY = e->y();
     switch (e->button()) {
@@ -837,26 +841,28 @@ statusBar_showSelectedZone();
             break;
         }
         case Qt::MidButton :   // Centre la carte sur le point
+            //e->accept();
             proj->setCentralPixel(e->x(), e->y());
             emit signalProjectionUpdated(proj);
             break;
 
         case Qt::RightButton : // Réaffiche la carte en entier
-/*            proj->init(terre->width(), terre->height(), 0,0);
-            emit signalProjectionUpdated(proj);*/
-            // Affiche un menu popup
-            /* check if we should display delete POIs*/
             float a,b,c,d;
+            //e->accept();
             if(terre->getSelectedRectangle(&a,&b,&c,&d))
                 menuBar->ac_delPOIs->setEnabled(true);
             else
                 menuBar->ac_delPOIs->setEnabled(false);
             menuPopupBtRight->exec(QCursor::pos());
+            e->accept();
+
+            //QMessageBox::information (NULL,"after","test");
             break;
 
         default :
             break;
     }
+    showMessage(QString("out mouse click %1").arg(e->isAccepted()==true?"accepted":"rejected"));
 }
 //--------------------------------------------------------------
 void MainWindow::slotMouseMoved(QMouseEvent * e) {
@@ -914,12 +920,14 @@ void MainWindow::slotBoatUpdated(boatAccount * boat)
     if(boat == selectedBoat)
     {
         VLMBoard->boatUpdate(boat);
+        proj->setCenterInMap(boat->getLon(),boat->getLat());
+        terre->setProjection(proj);
     }
 }
 
 void MainWindow::slotVLM_Test(void)
 {
-    
+
 }
 
 void MainWindow::showMessage(QString msg) {
@@ -991,7 +999,7 @@ void MainWindow::slotAddPOI(float lat,float lon, float wph,int timestamp,bool us
 #warning il faudrait recup la config comme ds le constructeur
     poi->setVisible(true);
     poi->projectionUpdated(NULL);
-    
+
     addPOI_list(poi);
 }
 
@@ -1000,9 +1008,9 @@ void MainWindow::slotpastePOI()
     float lon, lat,wph;
     int tstamp;
 
-    if(!Util::getWP(&lat,&lon,&wph,&tstamp))
+    if(!Util::getWPClipboard(&lat,&lon,&wph,&tstamp))
         return;
-    
+
     slotAddPOI(lat,lon,wph,tstamp,tstamp!=-1);
 }
 
@@ -1037,7 +1045,7 @@ void MainWindow::slotDelPOIs(void)
             QMessageBox::Yes | QMessageBox::No);
         if (rep != QMessageBox::Yes)
             return;
-        
+
         while(i.hasNext())
         {
             POI * poi = i.next();
@@ -1046,12 +1054,12 @@ void MainWindow::slotDelPOIs(void)
             showMessage(QString("%1: %2 => %3,%4")
                     .arg(num).arg(poi->getName())
                     .arg(lat).arg(lon));
-            
-            
+
+
             if(lat1<=lat && lat<=lat0 && lon0<=lon && lon<=lon1)
             {
                 showMessage("removed");
-                
+
                 delPOI_list(poi);
                 delete poi;
                 sup++;
@@ -1065,4 +1073,14 @@ void MainWindow::slotDelPOIs(void)
     {
         showMessage("No selection");
     }
+}
+
+void MainWindow::slotBoatSave(void)
+{
+    xmlPOI->writeData(poi_list,"poi.dat");
+}
+
+void MainWindow::slotPOIimport(void)
+{
+    xmlPOI->importZyGrib(poi_list);
 }

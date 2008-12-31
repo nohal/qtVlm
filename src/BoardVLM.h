@@ -54,6 +54,7 @@ class boardVLM_part2: public QWidget , public Ui::boardVLM_part2_ui
         void doVmg();
         void doPaste();
         void updateNxtVac();
+        void doCopy();
 
     signals:
         void showMessage(QString msg);
@@ -75,7 +76,7 @@ class boardVLM: public QWidget , public Ui::boardVLM_part1_ui
         static QString pos2String(int type,float value);
 
         void showGribPointInfo(const GribPointInfo &pf);
-        
+
 
     public slots:
         void chgHeading();
@@ -108,7 +109,7 @@ class boardVLM: public QWidget , public Ui::boardVLM_part1_ui
 
         QTimer * timer;
         QTimer * GPS_timer;
-		
+
         boardVLM_part2 * board2;
 
         /*GPS emul param*/

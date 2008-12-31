@@ -39,10 +39,10 @@ Copyright (C) 2008 - Jacques Zaninetti - http://zygrib.free.fr
 class Util
 {
     public:
-    
+
     static void     setSetting(const QString &key, const QVariant &value);
     static QVariant getSetting(const QString &key, const QVariant &defaultValue);
-	
+
     //-------------------------------------------------
     static QString formatDegres(float x);           // 123.4 -> 123°24.00'
     static QString formatPosition(float x, float y);    // 123°24.00'W 45°67.89'N
@@ -50,12 +50,12 @@ class Util
     static QString formatLatitude(float y);
 
     static QString formatDateLong(time_t t);
-    
+
     static QString formatDateTimeLong(time_t t);
     static QString formatDateTimeShort(time_t t);
     static QString formatDateTime_date(time_t t);
     static QString formatDateTime_hour(time_t t);
-    
+
     static QString formatSpeed(float meterspersecond);
     static QString formatDistance(float mille);
     static QString formatTemperature(float tempKelvin);
@@ -67,13 +67,14 @@ class Util
     static float  BeaufortToKmh_F(float bf);
 
     static void paramProxy(QNetworkAccessManager *inetManager,QString host);
-    static bool getWP(float * lat,float * lon, float * wph, int * tStamp);
+    static bool getWPClipboard(float * lat,float * lon, float * wph, int * tStamp);
+    static void setWPClipboard(float lat,float lon, float wph);
 
     //-------------------------------------------------
     template <typename T>
         static bool isInRange(T v, T min, T max)
                     { return (v>=min && v<=max); }
-    
+
     //-------------------------------------------------
     template <typename T>
         static T inRange(T v, T min, T max)
@@ -82,7 +83,7 @@ class Util
                         else if (v>=max) return max;
                         else return v;
                     }
-    
+
     //-------------------------------------------------
     template <typename T>
         static void cleanListPointers( std::list<T *> & ls)

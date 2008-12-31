@@ -208,6 +208,25 @@
      <string>Paste</string>
     </property>
    </widget>
+   <widget class="QPushButton" name="btn_paste_2">
+    <property name="geometry">
+     <rect>
+      <x>110</x>
+      <y>110</y>
+      <width>75</width>
+      <height>23</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <weight>50</weight>
+      <bold>false</bold>
+     </font>
+    </property>
+    <property name="text">
+     <string>Copy</string>
+    </property>
+   </widget>
   </widget>
   <widget class="QGroupBox" name="groupBox_3">
    <property name="geometry">
@@ -500,7 +519,7 @@
    <property name="title">
     <string>Map</string>
    </property>
-   <widget class="QWidget" name="">
+   <widget class="QWidget" name="layoutWidget">
     <property name="geometry">
      <rect>
       <x>6</x>
@@ -700,7 +719,7 @@
    <property name="title">
     <string>Pilotage</string>
    </property>
-   <widget class="QWidget" name="">
+   <widget class="QWidget" name="layoutWidget">
     <property name="geometry">
      <rect>
       <x>7</x>
@@ -952,6 +971,22 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>btn_paste_2</sender>
+   <signal>clicked()</signal>
+   <receiver>boardVLM_part2_ui</receiver>
+   <slot>doCopy()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>153</x>
+     <y>201</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>229</x>
+     <y>200</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>chgLat()</slot>
@@ -961,5 +996,6 @@
   <slot>doVmg()</slot>
   <slot>doPilotOrtho()</slot>
   <slot>doPaste()</slot>
+  <slot>doCopy()</slot>
  </slots>
 </ui>

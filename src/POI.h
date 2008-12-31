@@ -82,6 +82,7 @@ class POI : public QWidget
         void slot_setWP();
         void slotDelPoi();
         void slot_meteoPOI();
+        void slot_copy();
 
     signals:
         void signalOpenMeteotablePOI(POI *poi);
@@ -120,6 +121,7 @@ class POI : public QWidget
         QAction * ac_setWp;
         QAction * ac_delPoi;
         QAction * ac_meteo;
+        QAction * ac_copy;
         void createPopUpMenu(void);
 };
 
@@ -164,15 +166,17 @@ class POI_Editor : public QDialog
         void closeEvent(QCloseEvent *) {delete this;};
 
         void createInterface();
-        QPushButton *btOk, *btCancel, *btDelete, *btPaste, *btSaveWP;
+        QPushButton *btOk, *btCancel, *btDelete, *btPaste, *btCopy, *btSaveWP;
 
     private slots:
         void reject();
+        //void done(int result);
 
         void btOkClicked();
         void btCancelClicked();
         void btDeleteClicked();
         void btPasteClicked();
+        void btCopyClicked();
         void btSaveWPClicked();
         void chkTStamp_chg(int);
 
@@ -180,7 +184,7 @@ class POI_Editor : public QDialog
         void addPOI_list(POI*);
         void delPOI_list(POI*);
         void showMessage(QString);
-        
+
 };
 
 

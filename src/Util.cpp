@@ -127,7 +127,7 @@ QString Util::formatDegres(float x)     // 123.4 -> 123°24.00'
 {
     QString tunit = Util::getSetting("unitsPosition", "").toString();
     QString unit = (tunit=="") ? QObject::tr("dd°mm'ss\"") : tunit;
-    
+
     QString r;
     if (unit == QObject::tr("dd°mm,mm'"))
     {
@@ -158,51 +158,51 @@ QString Util::formatDegres(float x)     // 123.4 -> 123°24.00'
 //---------------------------------------------------------------------
 QString Util::formatPosition(float x, float y)  // 123°24.00'W 45°67.89'N
 {
-	return formatLongitude(x)+" "+formatLatitude(y);
+    return formatLongitude(x)+" "+formatLatitude(y);
 }
 //---------------------------------------------------------------------
 QString Util::formatLongitude(float x)
 {
     QString dir = Util::getSetting("longitudeDirection", "").toString();
     if (dir == "Ouest positive")
-    	return formatDegres(-x)+"W";
-	else if (dir == "Est positive")
-    	return formatDegres(x)+"E";
-	else {
-		// Mode automatique
-		if (x > 0) {
-			while (x > 360)
-				x -= 360;
-			if (x <= 180)
-    			return formatDegres(x)+"E";
-			else
-    			return formatDegres(360-x)+"W";
-		}
-		else {
-			while (x < -360)
-				x += 360;
-			if (x >= -180)
-	    		return formatDegres(-x)+"W";
-			else
-    			return formatDegres(x+360)+"E";
-		}
-	}
+        return formatDegres(-x)+"W";
+    else if (dir == "Est positive")
+        return formatDegres(x)+"E";
+    else {
+        // Mode automatique
+        if (x > 0) {
+            while (x > 360)
+                x -= 360;
+            if (x <= 180)
+                return formatDegres(x)+"E";
+            else
+                return formatDegres(360-x)+"W";
+        }
+        else {
+            while (x < -360)
+                x += 360;
+            if (x >= -180)
+                return formatDegres(-x)+"W";
+            else
+                return formatDegres(x+360)+"E";
+        }
+    }
 }
 //---------------------------------------------------------------------
 QString Util::formatLatitude(float y)
 {
     QString dir = Util::getSetting("latitudeDirection", "").toString();
     if (dir == "Sud positive")
-	    return formatDegres(-y)+"S";
-	else if (dir == "Nord positive")
-	    return formatDegres(y)+"N";
-	else {
-		// Mode automatique
-		if (y > 0)
-		    return formatDegres(y)+"N";
-		else	
-	    	return formatDegres(-y)+"S";
-	}
+        return formatDegres(-y)+"S";
+    else if (dir == "Nord positive")
+        return formatDegres(y)+"N";
+    else {
+        // Mode automatique
+        if (y > 0)
+            return formatDegres(y)+"N";
+        else
+            return formatDegres(-y)+"S";
+    }
 }
 //---------------------------------------------------------------------
 QString Util::formatPercentValue(float v)
@@ -211,7 +211,7 @@ QString Util::formatPercentValue(float v)
     if (v<0)
         v=0;
     else if (v>100)
-        v=100;    
+        v=100;
     r.sprintf("%d %%", (int)floor(v+0.5));
     return r;
 }
@@ -221,22 +221,22 @@ QString Util::formatDateLong(time_t t)
     QDateTime dt;
     dt.setTime_t(t);
     QLocale loc;
-    
-	if (loc.language()==QLocale::French)
-	    return loc.toString(dt.date(), "ddd dd-MM-yyyy");
-	else
-	    return loc.toString(dt.date(), "ddd yyyy-MM-dd");
+
+    if (loc.language()==QLocale::French)
+        return loc.toString(dt.date(), "ddd dd-MM-yyyy");
+    else
+        return loc.toString(dt.date(), "ddd yyyy-MM-dd");
 }
 //---------------------------------------------------------------------
-QString Util::formatDateTimeLong(time_t t) 
+QString Util::formatDateTimeLong(time_t t)
 {
     QDateTime dt;
     dt.setTime_t(t);
     QLocale loc;
-	if (loc.language()==QLocale::French)
-	    return loc.toString(dt.date(), "ddd dd-MM-yyyy ") + dt.toString("HH:mm UTC");
-	else
-	    return loc.toString(dt.date(), "ddd yyyy-MM-dd ") + dt.toString("HH:mm UTC");
+    if (loc.language()==QLocale::French)
+        return loc.toString(dt.date(), "ddd dd-MM-yyyy ") + dt.toString("HH:mm UTC");
+    else
+        return loc.toString(dt.date(), "ddd yyyy-MM-dd ") + dt.toString("HH:mm UTC");
 }
 //---------------------------------------------------------------------
 QString Util::formatDateTimeShort(time_t t)
@@ -244,10 +244,10 @@ QString Util::formatDateTimeShort(time_t t)
     QDateTime dt;
     dt.setTime_t(t);
     QLocale loc;
-	if (loc.language()==QLocale::French)
-	    return dt.toString("dd-MM-yyyy hh:mm UTC");
-	else
-	    return dt.toString("yyyy-MM-dd hh:mm UTC");
+    if (loc.language()==QLocale::French)
+        return dt.toString("dd-MM-yyyy hh:mm UTC");
+    else
+        return dt.toString("yyyy-MM-dd hh:mm UTC");
 }
 //---------------------------------------------------------------------
 QString Util::formatDateTime_date(time_t t)
@@ -255,10 +255,10 @@ QString Util::formatDateTime_date(time_t t)
     QDateTime dt;
     dt.setTime_t(t);
     QLocale loc;
-	if (loc.language()==QLocale::French)
-	    return dt.toString("dd-MM-yyyy");
-	else
-	    return dt.toString("yyyy-MM-dd");
+    if (loc.language()==QLocale::French)
+        return dt.toString("dd-MM-yyyy");
+    else
+        return dt.toString("yyyy-MM-dd");
 }
 //---------------------------------------------------------------------
 QString Util::formatDateTime_hour(time_t t)
@@ -299,7 +299,7 @@ void Util::paramProxy(QNetworkAccessManager *inetManager,QString host)
     }
 }
 
-bool Util::getWP(float * lat,float * lon, float * wph, int * tstamp)
+bool Util::getWPClipboard(float * lat,float * lon, float * wph, int * tstamp)
 {
     QClipboard *clipboard = QApplication::clipboard();
     QString WP_txt = clipboard->text();
@@ -323,6 +323,14 @@ bool Util::getWP(float * lat,float * lon, float * wph, int * tstamp)
         else
             *tstamp=-1;
     }
-    
+
     return true;
+}
+
+void Util::setWPClipboard(float lat,float lon, float wph)
+{
+    if(wph==-1)
+        QApplication::clipboard()->setText(QString("%1,%2").arg(lat).arg(lon));
+    else
+        QApplication::clipboard()->setText(QString("%1,%2@%3").arg(lat).arg(lon).arg(wph));
 }

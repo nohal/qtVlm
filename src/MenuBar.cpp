@@ -174,6 +174,7 @@ MenuBar::MenuBar(QWidget *parent)
         acOptions_Units = addAction(menuOptions, tr("Unités"),tr("Ctrl+U"),tr(""),"");
         acOptions_GraphicsParams = addAction(menuOptions,
                             tr("Paramètres graphiques"),tr("Ctrl+G"),tr(""),"");
+        acVLMParam = addAction(menuOptions,tr("Param�tres VLM"),"","","");
 
         QMenu *menuLanguage = new QMenu(tr("Language"));
             acOptions_GroupLanguage = new QActionGroup(menuLanguage);
@@ -185,27 +186,39 @@ MenuBar::MenuBar(QWidget *parent)
 
     addMenu(menuOptions);
 
+
+    menuBoat = new QMenu(tr("Bateau"));
+        acVLMParamBoat = addAction(menuBoat,tr("Boat settings"),"","","");
+        acVLMSync = addAction(menuBoat,tr("Boat sync"),"","","");
+    addMenu(menuBoat);
+
+    menuPOI = new QMenu(tr("POI"));
+        acPOIinput = addAction(menuPOI,tr("POI en masse"),"","","");
+        acPOISave = addAction(menuPOI,tr("Sauvegarder"),"","","");
+
+        QMenu *menuImportPoi = new QMenu(tr("Importer"));
+        //acPOI_import = new QActionGroup(menuPOI);
+        acPOIimport = addAction(menuImportPoi,tr("Importer de zyGrib"),"","","");
+
+        menuPOI->addMenu(menuImportPoi);
+
+
+
+
+#if 0
+        acVLMTest = addAction(menuPOI,"Test","","","");
+#else
+        acVLMTest = NULL;
+#endif
+    addMenu(menuPOI);
+
+
     //-------------------------------------
     menuHelp = new QMenu(tr("Aide"));
         acHelp_Help = addAction(menuHelp, tr("Aide"),tr("Ctrl+H"),tr(""),"img/help.png");
         acHelp_APropos = addAction(menuHelp, tr("A propos de qtVlm"),tr(""),tr(""),"");
         acHelp_AProposQT = addAction(menuHelp, tr("A propos de QT"),tr(""),tr(""),"");
     addMenu(menuHelp);
-
-    addSeparator();
-
-    menuVLM = new QMenu("VLM");
-        acVLMParamBoat = addAction(menuVLM,"Boat settings","","","");
-        acVLMParam = addAction(menuVLM,"Settings","","","");
-        acVLMSync = addAction(menuVLM,"Boat sync","","","");
-        acPOIinput = addAction(menuVLM,"Input POI","","","");
-#if 0
-        acVLMTest = addAction(menuVLM,"Test","","","");
-#else
-        acVLMTest = NULL;
-#endif
-
-    addMenu(menuVLM);
 
 
     //-------------------------------------

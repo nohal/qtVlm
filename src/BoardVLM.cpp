@@ -698,11 +698,20 @@ void boardVLM_part2::doPaste()
     float lat,lon,wph;
     if(!currentBoat)
         return;
-    if(!Util::getWP(&lat,&lon,&wph,NULL)) /*no need to get timestamp*/
+    if(!Util::getWPClipboard(&lat,&lon,&wph,NULL)) /*no need to get timestamp*/
         return;
     WP_lat->setText(QString().setNum(lat));
     WP_lon->setText(QString().setNum(lon));
     WP_heading->setText(QString().setNum(wph));
+}
+
+void boardVLM_part2::doCopy()
+{
+    if(!currentBoat)
+        return;
+    Util::setWPClipboard(WP_lat->text().toFloat(),WP_lon->text().toFloat(),
+        WP_heading->text().toFloat());
+
 }
 
 /*********************/

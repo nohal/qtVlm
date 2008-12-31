@@ -52,7 +52,7 @@ POI::POI(QString name, float lon, float lat,
 
     setProjection(proj);
     createWidget();
-    
+
     connect(proj, SIGNAL(projectionUpdated(Projection * )), this, SLOT(projectionUpdated(Projection *)) );
     connect(this, SIGNAL(signalOpenMeteotablePOI(POI*)),
                             ownerMeteotable, SLOT(slotOpenMeteotablePOI(POI*)));
@@ -83,7 +83,7 @@ void POI::createWidget()
     layout->setSpacing(0);
 
     label = new QLabel(name, this);
-    label->setFont(QFont("Helvetica",10));
+    label->setFont(QFont("Helvetica",9));
 
     QPalette p;
     p.setBrush(QPalette::Active, QPalette::WindowText, fgcolor);
@@ -107,11 +107,10 @@ void POI::setName(QString name)
     tm.setTimeSpec(Qt::UTC);
     tm.setTime_t(getTimeStamp());
     if(getUseTimeStamp())
-        str=QString("WP %1")
-                .arg(tm.toString("dd-hh:mm"));
+        str=tm.toString("dd-hh:mm");
     else
         str=name;
-    
+
     label->setText(str);
     setToolTip(tr("Point d'intérêt : ")+str);
     adjustSize();
@@ -167,7 +166,7 @@ void  POI::enterEvent (QEvent *)
 {
     enterCursor = cursor();
     setCursor(Qt::PointingHandCursor);
-    
+
 }
 //-------------------------------------------------------------------------------
 void  POI::leaveEvent (QEvent *)
@@ -205,6 +204,7 @@ void  POI::mouseReleaseEvent(QMouseEvent *e)
     {
         // Right clic : Edit this Point Of Interest
         popup->exec(QCursor::pos());
+        e->accept();
     }
 }
 //-------------------------------------------------------------------------------
@@ -215,7 +215,7 @@ void  POI::timerClickEvent()
         // Single clic : Meteotable for this Point Of Interest
         //emit signalOpenMeteotablePOI(this);
         slot_editPOI();
-        
+
     }
     countClick = 0;
 }
@@ -233,6 +233,14 @@ void POI::createPopUpMenu(void)
     popup->addAction(ac_edit);
     connect(ac_edit,SIGNAL(triggered()),this,SLOT(slot_editPOI()));
 
+    ac_delPoi = new QAction(tr("Supprimer"),popup);
+    popup->addAction(ac_delPoi);
+    connect(ac_delPoi,SIGNAL(triggered()),this,SLOT(slotDelPoi()));
+
+    ac_copy = new QAction(tr("Copier"),popup);
+    popup->addAction(ac_copy);
+    connect(ac_copy,SIGNAL(triggered()),this,SLOT(slot_copy()));
+
     ac_meteo = new QAction(tr("MeteoTable"),popup);
     popup->addAction(ac_meteo);
     connect(ac_meteo,SIGNAL(triggered()),this,SLOT(slot_meteoPOI()));
@@ -248,6 +256,11 @@ void POI::slot_editPOI()
     delete edt;
 }
 
+void POI::slot_copy()
+{
+    Util::setWPClipboard(lat,lon,wph);
+}
+
 void POI::slot_meteoPOI()
 {
     emit signalOpenMeteotablePOI(this);
@@ -260,7 +273,15 @@ void POI::slot_setWP()
 
 void POI::slotDelPoi()
 {
+    int rep = QMessageBox::question (this,
+            tr("Détruire le POI"),
+            tr("La destruction d'un point d'intérêt est définitive.\n\nEtes-vous sûr ?"),
+            QMessageBox::Yes | QMessageBox::No);
+    if (rep == QMessageBox::Yes) {
 
+        delPOI_list(this);
+        close();
+    }
 }
 
 //=====================================================
@@ -328,12 +349,12 @@ POI_Editor::POI_Editor(float lon, float lat,
     assert(this->poi);
 
     connect(this,SIGNAL(showMessage(QString)),ownerMeteotable,SLOT(slotShowMessage(QString)));
-    
+
     createInterface();
     //setModal(true);
     connect(this,SIGNAL(addPOI_list(POI*)),ownerMeteotable,SLOT(addPOI_list(POI*)));
     connect(this,SIGNAL(delPOI_list(POI*)),ownerMeteotable,SLOT(delPOI_list(POI*)));
-    
+
     //show();
     exec();
 }
@@ -348,12 +369,12 @@ POI_Editor::POI_Editor(POI *poi_, QWidget *ownerMeteotable, QWidget *parent)
     setWindowTitle(tr("Point d'Intérêt : ")+poi->getName());
 
     connect(this,SIGNAL(showMessage(QString)),ownerMeteotable,SLOT(slotShowMessage(QString)));
-    
+
     createInterface();
     //exsetModal(true);
     connect(this,SIGNAL(addPOI_list(POI*)),ownerMeteotable,SLOT(addPOI_list(POI*)));
     connect(this,SIGNAL(delPOI_list(POI*)),ownerMeteotable,SLOT(delPOI_list(POI*)));
-    
+
     //show();
     exec();
 }
@@ -365,8 +386,18 @@ POI_Editor::~POI_Editor()
 //---------------------------------------
 void POI_Editor::reject()
 {
-    btCancelClicked();
+    QMessageBox::information (NULL,"Test","Test");
+    if (modeCreation) {
+        delete poi;
+    }
+    QDialog::reject();
 }
+
+/*void POI_Editor::done(int result)
+{
+
+}*/
+
 //---------------------------------------
 void POI_Editor::btOkClicked()
 {
@@ -379,13 +410,13 @@ void POI_Editor::btOkClicked()
     poi->setName( (editName->text()).trimmed() );
     poi->setLongitude(editLon->getValue());
     poi->setLatitude (editLat->getValue());
-            
+
     if(editWph->text().isEmpty())
         poi->setWph(-1);
     else
         poi->setWph(editWph->text().toFloat());
     poi->projectionUpdated(NULL);
-    
+
     if (modeCreation) {
         poi->show();
         emit addPOI_list(poi);
@@ -411,10 +442,9 @@ void POI_Editor::btDeleteClicked()
             tr("La destruction d'un point d'intérêt est définitive.\n\nEtes-vous sûr ?"),
             QMessageBox::Yes | QMessageBox::No);
         if (rep == QMessageBox::Yes) {
-            
+
             delPOI_list(poi);
-            delete poi;
-            //delete this;
+            poi->close();
         }
     }
     else {
@@ -428,11 +458,11 @@ void POI_Editor::btPasteClicked()
 {
     float lat,lon,wph;
     int tstamp;
-    if(!Util::getWP(&lat,&lon,&wph,&tstamp))
+    if(!Util::getWPClipboard(&lat,&lon,&wph,&tstamp))
         return;
     editLon->setValue(lon);
     editLat->setValue(lat);
-    
+
     if(tstamp==-1)
     {
         QDateTime tm = QDateTime::currentDateTime().toUTC();
@@ -450,11 +480,17 @@ void POI_Editor::btPasteClicked()
         /*editTStamp->setEnabled(poi->getUseTimeStamp());
         editName->setEnabled(!poi->getUseTimeStamp());*/
     }
-    
+
     if(wph<0 || wph > 360)
         editWph->setText(QString());
     else
         editWph->setText(QString().setNum(wph));
+}
+
+void POI_Editor::btCopyClicked()
+{
+    Util::setWPClipboard(editLat->getValue(),editLon->getValue(),
+        editWph->text().isEmpty()?-1:editWph->text().toFloat());
 }
 
 void POI_Editor::btSaveWPClicked()
@@ -529,16 +565,16 @@ void POI_Editor::createInterface()
             QDateTime tm = QDateTime::currentDateTime().toUTC();
             editTStamp->setDateTime(tm);
         }
-        
+
         chk_tstamp->setCheckState(poi->getUseTimeStamp()?Qt::Checked:Qt::Unchecked);
         editTStamp->setEnabled(poi->getUseTimeStamp());
         editName->setEnabled(!poi->getUseTimeStamp());
-    vbox->addWidget(chk_tstamp);    
+    vbox->addWidget(chk_tstamp);
     vbox->addWidget(editTStamp);
     gbox->setLayout(vbox);
     layout->addWidget(gbox);
-    
-    
+
+
     //------------------------
     QWidget *btsbox = new QWidget(this);
     QHBoxLayout *laybts = new QHBoxLayout();
@@ -547,11 +583,13 @@ void POI_Editor::createInterface()
     btCancel = new QPushButton(tr("Annuler"), this);
     btDelete = new QPushButton(tr("Supprimer ce POI"), this);
     btPaste = new QPushButton(tr("Coller"), this);
+    btCopy = new QPushButton(tr("Copier"), this);
     btSaveWP = new QPushButton(tr("POI->WP"), this);
         laybts->addWidget(btOk);
         laybts->addWidget(btCancel);
         laybts->addWidget(btDelete);
         laybts->addWidget(btPaste);
+        laybts->addWidget(btCopy);
         laybts->addWidget(btSaveWP);
     btsbox->setLayout(laybts);
     layout->addWidget(btsbox);
@@ -560,6 +598,7 @@ void POI_Editor::createInterface()
     connect(btCancel, SIGNAL(clicked()), this, SLOT(btCancelClicked()));
     connect(btDelete, SIGNAL(clicked()), this, SLOT(btDeleteClicked()));
     connect(btPaste, SIGNAL(clicked()), this, SLOT(btPasteClicked()));
+    connect(btCopy, SIGNAL(clicked()), this, SLOT(btCopyClicked()));
     connect(btSaveWP, SIGNAL(clicked()), this, SLOT(btSaveWPClicked()));
 
     connect(chk_tstamp, SIGNAL(stateChanged(int)), this, SLOT(chkTStamp_chg(int)));
