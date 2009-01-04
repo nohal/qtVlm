@@ -21,6 +21,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "boatAccount.h"
 #include "MainWindow.h"
+#include "Polar.h"
 
 #define VLM_NO_REQUEST  -1
 #define VLM_REQUEST_IDU  0
@@ -30,11 +31,14 @@ boatAccount::boatAccount(QString login, QString pass, bool activated,Projection 
     : QWidget(parentWindow)
 {
     this->parent=parentWindow;
+    this->mainWindow=main;
 
     boat_name="NO NAME";
     boat_id=race_id=-1;
     isSync = false;
     selected = false;
+    polarName="";
+    polarData=NULL;
 
     this->proj = proj;
     connect(proj, SIGNAL(projectionUpdated(Projection *)), this,
@@ -420,4 +424,16 @@ void boatAccount::setParam(QString login, QString pass, bool activated)
 {
     setStatus(activated);
     setParam(login,pass);
+}
+
+void boatAccount::setPolar(QString polar)
+{
+    this->polarName=polar;
+    if(polar.isEmpty())
+    {
+        showMessage("No polar to load");
+        return;
+    }
+    if(polarData!=NULL) delete polarData;
+    polarData=new Polar(polarName,mainWindow);
 }

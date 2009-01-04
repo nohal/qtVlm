@@ -80,10 +80,10 @@ class boardVLM: public QWidget , public Ui::boardVLM_part1_ui
 
     public slots:
         void chgHeading();
-        void headingUpdated();
+        void headingUpdated(double heading);
         void doVirer();
         void chgAngle();
-        void angleUpdated();
+        void angleUpdated(double angle);
         void doSynch();
         void synch_GPS();
 
@@ -114,6 +114,9 @@ class boardVLM: public QWidget , public Ui::boardVLM_part1_ui
 
         /*GPS emul param*/
         QString COM;
+
+        /* heading /angle user update */
+        bool isComputing;
 };
 
 

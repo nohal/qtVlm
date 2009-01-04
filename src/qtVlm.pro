@@ -41,6 +41,7 @@ HEADERS += \
            paramVLM.h \
            POI.h \
            POI_input.h \
+           Polar.h \
            Projection.h \
            sha1/sha1.h \
            Terrain.h \
@@ -77,6 +78,7 @@ SOURCES += \
            paramVLM.cpp \
            POI.cpp \
            POI_input.cpp \
+           Polar.cpp \
            Projection.cpp \
            sha1/sha1.cpp \
            Terrain.cpp \

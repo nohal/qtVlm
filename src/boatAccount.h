@@ -33,6 +33,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <QNetworkProxy>
 
 #include "Projection.h"
+#include "Polar.h"
 
 class boatAccount: public QWidget
 {Q_OBJECT
@@ -44,6 +45,7 @@ class boatAccount: public QWidget
         void setStatus(bool activated);
         void setParam(QString login, QString pass);
         void setParam(QString login, QString pass, bool activated);
+        void setPolar(QString polar);
 
         void unSelectBoat(void);
 
@@ -78,7 +80,9 @@ class boatAccount: public QWidget
         QString getScore(void)       {    return score; }
         int getPrevVac(void)         {    return prevVac; }
         int getNextVac(void)         {    return nextVac; }
-
+        QString getPolarName(void)   {    return polarName; }
+        Polar * getPolarData(void)   {    return polarData; }
+        
         void updateProxy(void);
 
     public slots:
@@ -103,12 +107,15 @@ class boatAccount: public QWidget
         QString pass;
         bool activated;
 
+        
+
         bool selected;
 
         int boat_id;
         int race_id;
         int pilotType;
         QString pilotString;
+        
         float lat,lon;
         float speed,avg,heading;
         float dnm,loch,ortho,loxo,vmg;
@@ -133,6 +140,7 @@ class boatAccount: public QWidget
         bool      isSync;
 
         QWidget * parent;
+        QWidget * mainWindow;
 
         QMenu *popup;
         QAction * ac_select;
@@ -152,6 +160,10 @@ class boatAccount: public QWidget
         int currentRequest;
 
         QNetworkAccessManager *inetManager;
+
+        /* polar data */
+        Polar * polarData;
+        QString polarName;
 };
 
 #endif

@@ -45,6 +45,8 @@ boardVLM::boardVLM(QMainWindow * mainWin,QWidget * parent) : QWidget(parent)
 {
     setupUi(this);
 
+    isComputing = false;
+
     connect(this,SIGNAL(showMessage(QString)),mainWin,SLOT(slotShowMessage(QString)));
 
     timer = new QTimer(this);
@@ -147,6 +149,8 @@ void boardVLM::boatUpdate(boatAccount * boat)
     if(boat == NULL)
         return;
 
+    isComputing = true;
+    
     float WPLat = boat->getWPLat();
     float WPLon = boat->getWPLon();
     float dirAngle;
@@ -193,6 +197,7 @@ void boardVLM::boatUpdate(boatAccount * boat)
 
     board2->boatUpdate(boat);
     btn_Synch->setStyleSheet(QString::fromUtf8("background-color: rgb(85, 255, 127);"));
+    isComputing = false;
 }
 
 QString boardVLM::pos2String(int type,float value)
@@ -227,9 +232,104 @@ void boardVLM::chgHeading()
     sendCmd(VLM_CMD_HD,editHeading->value(),0,0);
 }
 
-void boardVLM::headingUpdated()
+void boardVLM::headingUpdated(double heading)
 {
-    /* heading value has change => update speed and angle */
+    if(!currentBoat) /*no current boat, nothing to do*/
+        return;
+
+    if(isComputing) return;
+    isComputing=true;
+
+    showMessage("Heading updated: "+QString().setNum(heading));
+    
+    if(heading==currentBoat->getHeading())
+    {
+        showMessage("Retour au heading de VLM");
+        /* setting back to VLM value */
+        speed->setText(QString().setNum(currentBoat->getSpeed()));
+        speed->setStyleSheet(QString::fromUtf8("color: rgb(255, 0, 0);"));
+        float val=currentBoat->getHeading()-currentBoat->getWindDir();
+        float angle = currentBoat->getTWA();
+        calcAngleSign(val,angle);
+        editAngle->setValue(angle);
+    }
+    else
+    {
+        /* heading value has changed => compute angle */
+        float angle=heading-currentBoat->getWindDir();
+        if(qAbs(angle)>180)
+        {
+            if(angle<0)
+                angle=360+angle;
+            else
+                angle=angle-360;
+        }
+        /* set new angle */
+        editAngle->setValue(angle);
+        showMessage("New angle: "+QString().setNum(angle));
+
+        /* compute speed if a polar is known */
+        if(currentBoat->getPolarData())
+        {
+            float newSpeed=currentBoat->getPolarData()->getSpeed(currentBoat->getWindSpeed(),angle);
+            speed->setText(QString().setNum(((float)qRound(newSpeed*100))/100));
+            speed->setStyleSheet(QString::fromUtf8("color: rgb(85, 255, 0);"));
+            showMessage("New speed: "+QString().setNum(newSpeed));
+        }
+        else
+            speed->setStyleSheet(QString::fromUtf8("color: rgb(255, 170, 127);"));
+    }
+
+    isComputing=false;
+}
+
+void boardVLM::angleUpdated(double angle)
+{
+    if(!currentBoat) /*no current boat, nothing to do*/
+        return;
+
+    if(isComputing) return;
+    isComputing=true;
+
+    showMessage("Angle updated: "+QString().setNum(angle));
+    
+    /* compute VLM angle */
+    float val=currentBoat->getHeading()-currentBoat->getWindDir();
+    float oldAngle=currentBoat->getTWA();
+    calcAngleSign(val,oldAngle);
+    oldAngle=((float)qRound(oldAngle*10))/10;
+
+    showMessage("Old angle updated: "+QString().setNum(oldAngle));
+     
+    if(angle==oldAngle)
+    {
+        showMessage("Retour à l'Angle de VLM");
+        /* setting back to VLM value */
+        speed->setText(QString().setNum(currentBoat->getSpeed()));
+        editHeading->setValue(currentBoat->getHeading());
+        speed->setStyleSheet(QString::fromUtf8("color: rgb(255, 0, 0);"));
+    }
+    else
+    {
+        /* angle has changed */
+        /* compute heading */
+        float heading = currentBoat->getWindDir() + angle;
+        if(heading<0) heading+=360;
+        else if(heading>360) heading-=360;
+        editHeading->setValue(heading);
+        showMessage("New heading: "+QString().setNum(heading));
+        /* compute speed if a polar is known */
+        if(currentBoat->getPolarData())
+        {
+            float newSpeed=currentBoat->getPolarData()->getSpeed(currentBoat->getWindSpeed(),angle);
+            speed->setText(QString().setNum(((float)qRound(newSpeed*100))/100));
+            speed->setStyleSheet(QString::fromUtf8("color: rgb(85, 255, 0);"));
+            showMessage("New speed: "+QString().setNum(newSpeed));
+        }
+        else
+            speed->setStyleSheet(QString::fromUtf8("color: rgb(255, 170, 127);"));
+    }
+    isComputing=false;
 }
 
 void boardVLM::doVirer()
@@ -241,11 +341,6 @@ void boardVLM::doVirer()
 void boardVLM::chgAngle()
 {
     sendCmd(VLM_CMD_ANG,editAngle->value(),0,0);
-}
-
-void boardVLM::angleUpdated()
-{
-    /* angle value has change => update speed and heading */
 }
 
 void boardVLM::doSynch()

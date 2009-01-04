@@ -31,6 +31,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #define LOGIN_NAME        "Login"
 #define PASS_NAME         "Pass"
 #define ACTIVATED_NAME    "Activated"
+#define POLAR_NAME        "Polar"
 
 #define OLD_DOM_FILE_TYPE "zygVLM_config"
 #define OLD_ROOT_NAME     "zygVLM_boat"
@@ -82,6 +83,13 @@ bool xml_boatData::writeBoatData(QList<boatAccount*> & boat_list,QString fname)
 		  bool status = acc->getStatus();
 		  t = doc.createTextNode(status?"1":"0");
 		  tag.appendChild(t);
+
+          tag = doc.createElement(POLAR_NAME);
+          group.appendChild(tag);
+          QString polarName = acc->getPolarName();
+          if(polarName.isEmpty()) polarName="none";
+          t = doc.createTextNode(polarName);
+          tag.appendChild(t);
      }
      
      QFile file(fname);
@@ -159,6 +167,7 @@ bool xml_boatData::readBoatData(QList<boatAccount*> & boat_list,QString fname)
 			  QString login = "";
 		      QString pass = "";
 			  QString activated = "";
+              QString polar="";
 			  showMessage("Processing subnodes");
 			  while(!subNode.isNull())
 			  {
@@ -191,6 +200,16 @@ bool xml_boatData::readBoatData(QList<boatAccount*> & boat_list,QString fname)
                       if(dataNode.nodeType() == QDomNode::TextNode)
 						  activated = dataNode.toText().data();
 				   }
+                   if(subNode.toElement().tagName() == POLAR_NAME)
+                   {
+                      dataNode = subNode.firstChild();
+                      if(dataNode.nodeType() == QDomNode::TextNode)
+                      {
+                          polar = dataNode.toText().data();
+                          showMessage("Polar:"+polar);
+                          if(polar=="none") polar="";
+                      }
+                   }
 				   subNode = subNode.nextSibling();
 			  }
 			  if(!login.isEmpty() && !pass.isEmpty() && ! activated.isEmpty())
@@ -199,6 +218,7 @@ bool xml_boatData::readBoatData(QList<boatAccount*> & boat_list,QString fname)
                               .arg(pass).arg(activated));
                    boatAccount * acc = new boatAccount(login,pass,activated == "1",
                     		   proj,main,parent);
+                   acc->setPolar(polar);
 
                    boat_list.append(acc);
 			  }

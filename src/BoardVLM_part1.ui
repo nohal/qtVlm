@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>235</width>
-    <height>521</height>
+    <height>523</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -859,8 +859,40 @@
      <y>98</y>
     </hint>
     <hint type="destinationlabel">
-     <x>283</x>
+     <x>234</x>
      <y>134</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>editHeading</sender>
+   <signal>valueChanged(double)</signal>
+   <receiver>boardVLM_part1_ui</receiver>
+   <slot>headingUpdated(double)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>173</x>
+     <y>185</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>296</x>
+     <y>201</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>editAngle</sender>
+   <signal>valueChanged(double)</signal>
+   <receiver>boardVLM_part1_ui</receiver>
+   <slot>angleUpdated(double)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>183</x>
+     <y>497</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>292</x>
+     <y>480</y>
     </hint>
    </hints>
   </connection>
@@ -868,8 +900,8 @@
  <slots>
   <slot>chgHeading()</slot>
   <slot>chgAngle()</slot>
-  <slot>angleUpdated()</slot>
-  <slot>headingUpdated()</slot>
+  <slot>angleUpdated(double)</slot>
+  <slot>headingUpdated(double)</slot>
   <slot>doVirer()</slot>
   <slot>doSynch()</slot>
   <slot>synch_GPS()</slot>
