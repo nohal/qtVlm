@@ -987,6 +987,54 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>WP_lat</sender>
+   <signal>returnPressed()</signal>
+   <receiver>boardVLM_part2_ui</receiver>
+   <slot>doSaveWP()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>89</x>
+     <y>105</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>229</x>
+     <y>122</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>WP_lon</sender>
+   <signal>returnPressed()</signal>
+   <receiver>boardVLM_part2_ui</receiver>
+   <slot>doSaveWP()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>86</x>
+     <y>137</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>229</x>
+     <y>168</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>WP_heading</sender>
+   <signal>returnPressed()</signal>
+   <receiver>boardVLM_part2_ui</receiver>
+   <slot>doSaveWP()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>77</x>
+     <y>168</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>229</x>
+     <y>213</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>chgLat()</slot>
@@ -997,5 +1045,6 @@
   <slot>doPilotOrtho()</slot>
   <slot>doPaste()</slot>
   <slot>doCopy()</slot>
+  <slot>doEnterPressed()</slot>
  </slots>
 </ui>

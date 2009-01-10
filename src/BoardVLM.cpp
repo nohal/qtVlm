@@ -48,6 +48,7 @@ boardVLM::boardVLM(QMainWindow * mainWin,QWidget * parent) : QWidget(parent)
     isComputing = false;
 
     connect(this,SIGNAL(showMessage(QString)),mainWin,SLOT(slotShowMessage(QString)));
+    connect(mainWin,SIGNAL(setChangeStatus(bool)),this,SLOT(setChangeStatus(bool)));
 
     timer = new QTimer(this);
     timer->setSingleShot(true);
@@ -56,8 +57,6 @@ boardVLM::boardVLM(QMainWindow * mainWin,QWidget * parent) : QWidget(parent)
     GPS_timer = new QTimer(this);
     GPS_timer->setSingleShot(true);
     connect(GPS_timer,SIGNAL(timeout()),this, SLOT(synch_GPS()));
-
-    //btn_MS->setStyleSheet("QPushButton#checked { background-color: rgb(170, 255, 255);}");
 
     QDockWidget * VLMDock = new QDockWidget("VLM 1");
     VLMDock->setWidget(this);
@@ -73,7 +72,10 @@ boardVLM::boardVLM(QMainWindow * mainWin,QWidget * parent) : QWidget(parent)
 
     connect(board2,SIGNAL(sendCmd(int,float,float,float)),this,SLOT(sendCmd(int,float,float,float)));
 
-
+    /* edit field keyPress */
+    connect(editHeading,SIGNAL(hasEvent()),this,SLOT(edtSpinBox_key()));
+    connect(editAngle,SIGNAL(hasEvent()),this,SLOT(edtSpinBox_key()));
+    
     QString str;
     str.sprintf("%c",176);
 
@@ -198,6 +200,12 @@ void boardVLM::boatUpdate(boatAccount * boat)
     board2->boatUpdate(boat);
     btn_Synch->setStyleSheet(QString::fromUtf8("background-color: rgb(85, 255, 127);"));
     isComputing = false;
+    speed->setStyleSheet(QString::fromUtf8("color: rgb(255, 0, 0);"));
+    label_6->setStyleSheet(QString::fromUtf8("color: rgb(255, 0, 0);"));
+    setChangeStatus(boat->getLockStatus());
+
+    /* send data as a GPS */
+    synch_GPS();
 }
 
 QString boardVLM::pos2String(int type,float value)
@@ -240,14 +248,15 @@ void boardVLM::headingUpdated(double heading)
     if(isComputing) return;
     isComputing=true;
 
-    showMessage("Heading updated: "+QString().setNum(heading));
+    showMessage(QString("heading: cur=%1, new=%2").arg((float)heading).arg(currentBoat->getHeading()));
     
-    if(heading==currentBoat->getHeading())
+    if((float)heading==currentBoat->getHeading())
     {
-        showMessage("Retour au heading de VLM");
         /* setting back to VLM value */
+        showMessage("Back to VLM value");
         speed->setText(QString().setNum(currentBoat->getSpeed()));
         speed->setStyleSheet(QString::fromUtf8("color: rgb(255, 0, 0);"));
+        label_6->setStyleSheet(QString::fromUtf8("color: rgb(255, 0, 0);"));
         float val=currentBoat->getHeading()-currentBoat->getWindDir();
         float angle = currentBoat->getTWA();
         calcAngleSign(val,angle);
@@ -266,7 +275,6 @@ void boardVLM::headingUpdated(double heading)
         }
         /* set new angle */
         editAngle->setValue(angle);
-        showMessage("New angle: "+QString().setNum(angle));
 
         /* compute speed if a polar is known */
         if(currentBoat->getPolarData())
@@ -274,10 +282,13 @@ void boardVLM::headingUpdated(double heading)
             float newSpeed=currentBoat->getPolarData()->getSpeed(currentBoat->getWindSpeed(),angle);
             speed->setText(QString().setNum(((float)qRound(newSpeed*100))/100));
             speed->setStyleSheet(QString::fromUtf8("color: rgb(85, 255, 0);"));
-            showMessage("New speed: "+QString().setNum(newSpeed));
+            label_6->setStyleSheet(QString::fromUtf8("color: rgb(85, 255, 0);"));
         }
         else
+        {
             speed->setStyleSheet(QString::fromUtf8("color: rgb(255, 170, 127);"));
+            label_6->setStyleSheet(QString::fromUtf8("color: rgb(255, 170, 127);"));
+        }
     }
 
     isComputing=false;
@@ -291,23 +302,19 @@ void boardVLM::angleUpdated(double angle)
     if(isComputing) return;
     isComputing=true;
 
-    showMessage("Angle updated: "+QString().setNum(angle));
-    
-    /* compute VLM angle */
+/* compute VLM angle */
     float val=currentBoat->getHeading()-currentBoat->getWindDir();
     float oldAngle=currentBoat->getTWA();
     calcAngleSign(val,oldAngle);
     oldAngle=((float)qRound(oldAngle*10))/10;
 
-    showMessage("Old angle updated: "+QString().setNum(oldAngle));
-     
-    if(angle==oldAngle)
+if(angle==oldAngle)
     {
-        showMessage("Retour à l'Angle de VLM");
-        /* setting back to VLM value */
+/* setting back to VLM value */
         speed->setText(QString().setNum(currentBoat->getSpeed()));
         editHeading->setValue(currentBoat->getHeading());
         speed->setStyleSheet(QString::fromUtf8("color: rgb(255, 0, 0);"));
+        label_6->setStyleSheet(QString::fromUtf8("color: rgb(255, 0, 0);"));
     }
     else
     {
@@ -317,17 +324,19 @@ void boardVLM::angleUpdated(double angle)
         if(heading<0) heading+=360;
         else if(heading>360) heading-=360;
         editHeading->setValue(heading);
-        showMessage("New heading: "+QString().setNum(heading));
-        /* compute speed if a polar is known */
+/* compute speed if a polar is known */
         if(currentBoat->getPolarData())
         {
             float newSpeed=currentBoat->getPolarData()->getSpeed(currentBoat->getWindSpeed(),angle);
             speed->setText(QString().setNum(((float)qRound(newSpeed*100))/100));
             speed->setStyleSheet(QString::fromUtf8("color: rgb(85, 255, 0);"));
-            showMessage("New speed: "+QString().setNum(newSpeed));
+            label_6->setStyleSheet(QString::fromUtf8("color: rgb(85, 255, 0);"));
         }
         else
+        {
             speed->setStyleSheet(QString::fromUtf8("color: rgb(255, 170, 127);"));
+            label_6->setStyleSheet(QString::fromUtf8("color: rgb(255, 170, 127);"));
+        }
     }
     isComputing=false;
 }
@@ -349,8 +358,6 @@ void boardVLM::doSynch()
     {
         btn_Synch->setStyleSheet(QString::fromUtf8("background-color: rgb(255, 0, 0);"));
         currentBoat->getData();
-        //boatUpdate(currentBoat);
-
     }
 }
 
@@ -361,6 +368,7 @@ void boardVLM::synch_GPS()
 
   if(chk_GPS->isChecked())
   {
+      showMessage("Starting gps synch");
       QextSerialPort * port = new QextSerialPort(COM);
       port->setBaudRate(BAUD19200);
       port->setFlowControl(FLOW_OFF);
@@ -405,6 +413,17 @@ void boardVLM::synch_GPS()
     }
     else
         showMessage("btn not checked => not sending");
+}
+
+void boardVLM::setChangeStatus(bool status)
+{
+    bool st=!status;
+    btn_chgHeading->setEnabled(st);
+    editHeading->setEnabled(st);
+    chgAngle_2->setEnabled(st);
+    btn_chgAngle->setEnabled(st);
+    editAngle->setEnabled(st);
+    board2->setChangeStatus(status);
 }
 
 /*********************/
@@ -571,7 +590,6 @@ void boardVLM::chkResult(void)
     if(done)
     {
         currentRequest=VLM_NO_REQUEST;
-        //btn_Synch->setStyleSheet(QString::fromUtf8("background-color: rgb(85, 255, 127);"));
         boatUpdate(currentBoat);
     }
     else
@@ -587,6 +605,17 @@ void boardVLM::chkResult(void)
         showMessage("Retry...");
         timer->start(1000);
     }
+}
+
+void boardVLM::edtSpinBox_key()
+{
+    QObject *s = sender();
+    if(s==NULL) return;
+    
+    if(s==editHeading)
+        chgHeading();
+    else if(s==editAngle)
+        chgAngle();
 }
 
 /************************/
@@ -680,10 +709,7 @@ void boardVLM_part2::boatUpdate(boatAccount * boat)
     nbS-=m*60;
 
     txt.sprintf("(%dj %02dh%02dm%02ds)",j,h,m,nbS);
-
-
     pilotETA->setText(dtm.toString("dd-MM-yyyy, HH:mm:ss")+ " " +txt);
-
 
     dnm->setText(QString().setNum(boat->getDnm()));
     ortho->setText(QString().setNum(boat->getOrtho()));
@@ -706,6 +732,20 @@ void boardVLM_part2::updateNxtVac()
     if(nxtVac_cnt<0)
         nxtVac_cnt=300;
     nextVac->setText(QString().setNum(nxtVac_cnt));
+}
+
+void boardVLM_part2::setChangeStatus(bool status)
+{
+    bool st=!status;
+    btn_clear->setEnabled(st);
+    btn_saveWP->setEnabled(st);
+    btn_paste->setEnabled(st);
+    btn_paste_2->setEnabled(st);
+    goPilotOrtho->setEnabled(st);
+    WP_heading->setEnabled(st);
+    WP_lat->setEnabled(st);
+    WP_lon->setEnabled(st);
+    goVMG->setEnabled(st);
 }
 
 void boardVLM_part2::doPilotOrtho()
@@ -807,6 +847,31 @@ void boardVLM_part2::doCopy()
     Util::setWPClipboard(WP_lat->text().toFloat(),WP_lon->text().toFloat(),
         WP_heading->text().toFloat());
 
+}
+
+/************************/
+/* Board custom spinBox */
+
+
+tool_edtSpinBox::tool_edtSpinBox(QWidget * parent): QDoubleSpinBox(parent)
+{
+    this->parent=parent;
+}
+
+void tool_edtSpinBox::keyPressEvent ( QKeyEvent * event )
+{
+    QKeyEvent *ke = static_cast<QKeyEvent *>(event);
+    if (ke->key() == Qt::Key_Return || ke->key() == Qt::Key_Enter)
+    {
+        emit hasEvent();
+        return;
+    }
+    QDoubleSpinBox::keyPressEvent(event);
+}
+
+void tool_edtSpinBox::keyReleaseEvent ( QKeyEvent * event )
+{
+    QDoubleSpinBox::keyReleaseEvent (event);
 }
 
 /*********************/

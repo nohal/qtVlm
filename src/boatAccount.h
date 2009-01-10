@@ -46,6 +46,7 @@ class boatAccount: public QWidget
         void setParam(QString login, QString pass);
         void setParam(QString login, QString pass, bool activated);
         void setPolar(QString polar);
+        void setLockStatus(bool status);
 
         void unSelectBoat(void);
 
@@ -82,12 +83,14 @@ class boatAccount: public QWidget
         int getNextVac(void)         {    return nextVac; }
         QString getPolarName(void)   {    return polarName; }
         Polar * getPolarData(void)   {    return polarData; }
+        bool getLockStatus(void)     {    return changeLocked;}
         
         void updateProxy(void);
 
     public slots:
         void projectionUpdated(Projection * proj);
         void requestFinished (QNetworkReply*);
+        //void requestError(QNetworkReply::NetworkError);
         void requestNeedProxy(QNetworkProxy  proxy,QAuthenticator * authenticator);
         void requestNeedAuth(QNetworkReply* reply,QAuthenticator* authenticator);
         void selectBoat();
@@ -96,18 +99,21 @@ class boatAccount: public QWidget
         void showMessage(QString msg);
         void boatSelected(boatAccount*);
         void boatUpdated(boatAccount*);
+        void boatLockStatusChanged(boatAccount*,bool);
 
     private:
         void createWidget(void);
         void setLabelText(QString name);
         void updateBoatData(void);
         void doRequest(int requestCmd);
+        void updateHeadingPoint(void);
 
         QString login;
         QString pass;
         bool activated;
+        bool changeLocked;
 
-        
+        int estime;
 
         bool selected;
 
@@ -124,6 +130,10 @@ class boatAccount: public QWidget
         float WPLat,WPLon,WPHd;
         QString ETA;
         QString score;
+
+        float heading_lat;
+        float heading_lon;
+        float current_heading;
 
         int prevVac;
         int nextVac;
@@ -160,7 +170,7 @@ class boatAccount: public QWidget
         int currentRequest;
 
         QNetworkAccessManager *inetManager;
-
+        QNetworkReply * curNetReply;
         /* polar data */
         Polar * polarData;
         QString polarName;

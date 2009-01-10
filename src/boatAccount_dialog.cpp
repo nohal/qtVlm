@@ -25,6 +25,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "xmlBoatData.h"
 
+#define ROLE_PASS      Qt::UserRole
+#define ROLE_ACTIVATED Qt::UserRole+1
+#define ROLE_POLAR     Qt::UserRole+2
+#define ROLE_LOCKED    Qt::UserRole+3
+
 boatAccount_dialog::boatAccount_dialog(QList<boatAccount*> & acc_list, Projection * proj, QWidget * main, QWidget * parent) : QDialog(parent)
 {
     setupUi(this);
@@ -62,6 +67,8 @@ boatAccount_dialog::~boatAccount_dialog()
 
 }
 
+
+
 void boatAccount_dialog::initList(QList<boatAccount*> & acc_list)
 {
     this->acc_list = & acc_list;
@@ -75,10 +82,12 @@ void boatAccount_dialog::initList(QList<boatAccount*> & acc_list)
     {
         boatAccount * acc = i.next();
         QListWidgetItem * item = new QListWidgetItem(acc->getLogin(),list_boat);
-        item->setData(Qt::UserRole,acc->getPass());
-        item->setData(Qt::UserRole+1,
+        item->setData(ROLE_PASS,acc->getPass());
+        item->setData(ROLE_ACTIVATED,
                       (acc->getStatus()?Qt::Checked:Qt::Unchecked));
-        item->setData(Qt::UserRole+2,acc->getPolarName());
+        item->setData(ROLE_POLAR,acc->getPolarName());
+        item->setData(ROLE_LOCKED,
+                      (acc->getLockStatus()?Qt::Checked:Qt::Unchecked));
     }
 
     blank = new QListWidgetItem("<Nouveau>",list_boat);
@@ -113,9 +122,11 @@ void boatAccount_dialog::slot_accHasChanged(void)
 {
     QListWidgetItem * curItem = list_boat->currentItem();
     if(curItem != blank && (edit_login->text() != curItem->text()
-            || edit_pass->text() != curItem->data(Qt::UserRole).toString()
-            || enable_state->checkState() != ((Qt::CheckState)curItem->data(Qt::UserRole+1).toInt()))
-            || polarList->currentText() != curItem->data(Qt::UserRole).toString())
+            || edit_pass->text() != curItem->data(ROLE_PASS).toString()
+            || enable_state->checkState() != ((Qt::CheckState)curItem->data(ROLE_ACTIVATED).toInt()))
+            || polarList->currentText() != curItem->data(ROLE_PASS).toString()
+            || lockChange->checkState() != ((Qt::CheckState)curItem->data(ROLE_LOCKED).toInt())
+      )
         btn_accChg->setEnabled(true);
     else
         btn_accChg->setEnabled(false);
@@ -146,9 +157,10 @@ void boatAccount_dialog::done(int result)
                 QListWidgetItem * item = list_boat->item(i);
                 boatAccount * acc = acc_list->at(i);
                 acc->setParam(item->text(),
-                    item->data(Qt::UserRole).toString(),
-                    ((Qt::CheckState)item->data(Qt::UserRole+1).toInt())==Qt::Checked);
-                acc->setPolar(item->data(Qt::UserRole+2).toString());
+                    item->data(ROLE_PASS).toString(),
+                    ((Qt::CheckState)item->data(ROLE_ACTIVATED).toInt())==Qt::Checked);
+                acc->setPolar(item->data(ROLE_POLAR).toString());
+                acc->setLockStatus(((Qt::CheckState)item->data(ROLE_LOCKED).toInt())==Qt::Checked);
                 if(acc->getStatus())
                     acc->getData();
             }
@@ -168,10 +180,11 @@ void boatAccount_dialog::done(int result)
                 {
                     QListWidgetItem * item = list_boat->item(i);
                     boatAccount * acc = new boatAccount(item->text(),
-                        item->data(Qt::UserRole).toString(),
-                        ((Qt::CheckState)item->data(Qt::UserRole+1).toInt())==Qt::Checked,
+                        item->data(ROLE_PASS).toString(),
+                        ((Qt::CheckState)item->data(ROLE_ACTIVATED).toInt())==Qt::Checked,
                          proj,main,parent);
-                    acc->setPolar(item->data(Qt::UserRole+2).toString());
+                    acc->setPolar(item->data(ROLE_POLAR).toString());
+                    acc->setLockStatus(((Qt::CheckState)item->data(ROLE_LOCKED).toInt())==Qt::Checked);
                     acc_list->append(acc);
                     if(acc->getStatus())
                         acc->getData();
@@ -185,6 +198,7 @@ void boatAccount_dialog::done(int result)
     QDialog::done(result);
 }
 
+/* add boat button */
 void boatAccount_dialog::slot_addBoat(void)
 {
      /* empty login or empty password*/
@@ -195,19 +209,22 @@ void boatAccount_dialog::slot_addBoat(void)
      if(list_boat->findItems(edit_login->text(),Qt::MatchFixedString).isEmpty())
      {
         QListWidgetItem * item = new QListWidgetItem(edit_login->text());
-        item->setData(Qt::UserRole,edit_pass->text());
-        item->setData(Qt::UserRole+1,enable_state->checkState());
-        item->setData(Qt::UserRole+2,polarList->currentIndex()==0?QString():polarList->currentText());
+        item->setData(ROLE_PASS,edit_pass->text());
+        item->setData(ROLE_ACTIVATED,enable_state->checkState());
+        item->setData(ROLE_POLAR,polarList->currentIndex()==0?QString():polarList->currentText());
+        item->setData(ROLE_LOCKED,lockChange->checkState());
         list_boat->insertItem(list_boat->count()-1,item);
         list_boat->setCurrentItem(item);
         edit_login->setText("");
         edit_pass->setText("");
         polarList->setCurrentIndex(0);
         enable_state->setCheckState(Qt::Unchecked);
+        lockChange->setCheckState(Qt::Unchecked);
      }
      btn_accChg->setEnabled(false);
 }
 
+/* del boat button */
 void boatAccount_dialog::slot_delBoat(void)
 {
      QListWidgetItem * item = list_boat->currentItem();
@@ -217,6 +234,7 @@ void boatAccount_dialog::slot_delBoat(void)
         edit_pass->setText("");
         polarList->setCurrentIndex(0);
         enable_state->setCheckState(Qt::Unchecked);
+        lockChange->setCheckState(Qt::Unchecked);
         delete(item);
         if(list_boat->currentItem() == blank)
         {
@@ -227,19 +245,22 @@ void boatAccount_dialog::slot_delBoat(void)
      btn_accChg->setEnabled(false);
 }
 
+/* Modify button */
 void boatAccount_dialog::slot_chgBoat(void)
 {
      QListWidgetItem * item = list_boat->currentItem();
      if(item)
      {
         item->setText(edit_login->text());
-        item->setData(Qt::UserRole,edit_pass->text());
-        item->setData(Qt::UserRole+1,enable_state->checkState());
-        item->setData(Qt::UserRole+2,polarList->currentIndex()==0?QString():polarList->currentText());
+        item->setData(ROLE_PASS,edit_pass->text());
+        item->setData(ROLE_ACTIVATED,enable_state->checkState());
+        item->setData(ROLE_POLAR,polarList->currentIndex()==0?QString():polarList->currentText());
+        item->setData(ROLE_LOCKED,lockChange->checkState());
      }
      btn_accChg->setEnabled(false);
 }
 
+/* changing selection */
 void  boatAccount_dialog::slot_selectItem( QListWidgetItem * item)
 {
      if(item==blank)
@@ -248,15 +269,17 @@ void  boatAccount_dialog::slot_selectItem( QListWidgetItem * item)
           edit_pass->setText("");
           polarList->setCurrentIndex(0);
           enable_state->setCheckState(Qt::Unchecked);
+          lockChange->setCheckState(Qt::Unchecked);
           btn_accChg->setEnabled(false);
           btn_accDel->setEnabled(false);
      }
      else
      {
          edit_login->setText(item->text());
-         edit_pass->setText(item->data(Qt::UserRole).toString());
-         polarList->setCurrentIndex(item->data(Qt::UserRole+2).toString().isEmpty()?0:polarList->findText(item->data(Qt::UserRole+2).toString()));
-         enable_state->setCheckState((Qt::CheckState)item->data(Qt::UserRole+1).toInt());
+         edit_pass->setText(item->data(ROLE_PASS).toString());
+         polarList->setCurrentIndex(item->data(ROLE_POLAR).toString().isEmpty()?0:polarList->findText(item->data(ROLE_POLAR).toString()));
+         enable_state->setCheckState((Qt::CheckState)item->data(ROLE_ACTIVATED).toInt());
+         lockChange->setCheckState((Qt::CheckState)item->data(ROLE_LOCKED).toInt());
          btn_accDel->setEnabled(true);
      }
 }

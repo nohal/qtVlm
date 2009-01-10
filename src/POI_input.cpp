@@ -78,6 +78,6 @@ void POI_input::done(int result)
             }
         }
     }
-    QDialog::done(result);
     POI_list->clear();
+    QDialog::done(result);
 }

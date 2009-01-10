@@ -25,6 +25,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <QHBoxLayout>
 #include <QImage>
 #include <QPainter>
+#include <QDoubleSpinBox>
 
 class tool_navCenter: public QWidget
 { Q_OBJECT
@@ -85,5 +86,20 @@ class tool_windStation: public QWidget
 
 };
 
+class tool_edtSpinBox: public QDoubleSpinBox
+{ Q_OBJECT
+    public:
+        tool_edtSpinBox(QWidget * parent=0);
+        
+    signals:
+        void hasEvent(void);
+        
+    protected:
+        void keyPressEvent ( QKeyEvent * event );
+        void keyReleaseEvent ( QKeyEvent * event );
+
+    private:
+        QWidget * parent;
+};
 
 #endif

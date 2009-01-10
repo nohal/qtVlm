@@ -42,6 +42,7 @@ class boardVLM_part2: public QWidget , public Ui::boardVLM_part2_ui
     public:
         boardVLM_part2(QWidget * parent=0);
         void boatUpdate(boatAccount * boat);
+        void setChangeStatus(bool status);
 
         void showGribPointInfo(const GribPointInfo &pf);
 
@@ -92,6 +93,9 @@ class boardVLM: public QWidget , public Ui::boardVLM_part1_ui
         void chkResult(void);
         void setWP(float lat,float lon,float wph=-1);
         void paramChanged(void);
+        void setChangeStatus(bool);
+
+        void edtSpinBox_key(void);
 
     signals:
         void showMessage(QString msg);

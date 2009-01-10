@@ -397,6 +397,8 @@ MainWindow::MainWindow(int w, int h, QWidget *parent)
       connect(poi_input_dialog,SIGNAL(addPOI(float,float,float,int,bool)),
               this,SLOT(slotAddPOI(float,float,float,int,bool)));
 
+      poi_editor=new POI_Editor(this,terre);
+
     //---------------------------------------------------------
     // Active les actions
     //---------------------------------------------------------
@@ -474,8 +476,7 @@ void MainWindow::slotCreatePOI()
 {
     float lon, lat;
     proj->screen2map(mouseClicX,mouseClicY, &lon, &lat);
-    POI_Editor * edt = new POI_Editor(lon, lat, proj, this, terre);
-    delete edt;
+    emit newPOI(lon,lat,proj);
 }
 //-------------------------------------------------
 void MainWindow::slotOpenMeteotablePOI(POI* poi)
@@ -953,7 +954,6 @@ void MainWindow::slotSelectBoat(boatAccount* newSelect)
             proj->setCenterInMap(newSelect->getLon(),newSelect->getLat());
             terre->setProjection(proj);
             newSelect->getData();
-            //VLMBoard->boatUpdate(newSelect);
         }
         menuBar->cbBoatList->setCurrentIndex(menuBar->cbBoatList->findText(newSelect->getLogin()));
     }
@@ -980,6 +980,7 @@ void MainWindow::slotChgBoat(QString login)
         if(acc->getLogin() == login && acc->getStatus())
         {
             acc->selectBoat();
+            break;
         }
     }
 }
@@ -1083,4 +1084,24 @@ void MainWindow::slotBoatSave(void)
 void MainWindow::slotPOIimport(void)
 {
     xmlPOI->importZyGrib(poi_list);
+}
+
+void MainWindow::slotBoatLockStatusChanged(boatAccount* boat,bool status)
+{
+    if(boat==selectedBoat)
+    {
+        emit setChangeStatus(status);
+    }
+}
+
+bool MainWindow::getBoatLockStatus(void)
+{
+    if(!selectedBoat)
+        return false;
+    return selectedBoat->getLockStatus();
+}
+
+void MainWindow::slotEditPOI(POI * poi)
+{
+    emit editPOI(poi);
 }

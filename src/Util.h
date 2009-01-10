@@ -36,6 +36,14 @@ Copyright (C) 2008 - Jacques Zaninetti - http://zygrib.free.fr
 #include <QLocale>
 #include <QNetworkAccessManager>
 
+#define PI     M_PI
+#define PI_2   M_PI_2
+#define PI_4   M_PI_4
+#define TWO_PI M_PI * 2
+
+#define degToRad(angle) (((angle)/180.0) * PI)
+#define radToDeg(angle) (((angle)*180.0) / PI)
+
 class Util
 {
     public:
@@ -69,6 +77,10 @@ class Util
     static void paramProxy(QNetworkAccessManager *inetManager,QString host);
     static bool getWPClipboard(float * lat,float * lon, float * wph, int * tStamp);
     static void setWPClipboard(float lat,float lon, float wph);
+    static void getCoordFromDistanceAngle(float latitude, float longitude,
+             float distance,float heading, float * res_lat,float * res_lon);
+    static void getCoordFromDistanceAngle2(float latitude, float longitude,
+             float distance,float heading, float * res_lat,float * res_lon);
 
     //-------------------------------------------------
     template <typename T>

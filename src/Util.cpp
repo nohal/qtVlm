@@ -334,3 +334,56 @@ void Util::setWPClipboard(float lat,float lon, float wph)
     else
         QApplication::clipboard()->setText(QString("%1,%2@%3").arg(lat).arg(lon).arg(wph));
 }
+
+void Util::getCoordFromDistanceAngle2(float latitude, float longitude,
+             float distance,float heading, float * res_lat,float * res_lon)
+{
+    double ld, la;
+    *res_lat = latitude + degToRad( (cos(heading)*distance)/60.0 );
+    if (fabs(*res_lat - latitude) > degToRad(0.001))
+    {
+        ld = log(tan(M_PI_4 + (latitude/2.0)));
+        la = log(tan(M_PI_4 + (*res_lat/2.0)));
+        *res_lon = longitude + (la-ld)*tan(heading);
+    }
+    else
+    {
+        *res_lon = longitude
+                +sin(heading)*degToRad(distance/(60.0*cos(latitude)));
+    }
+}
+
+void Util::getCoordFromDistanceAngle(float latitude, float longitude,
+             float distance,float heading, float * res_lat,float * res_lon)
+{
+    float lat,lon;
+    float ratio;
+
+    if(!res_lat || !res_lon)
+        return;
+    
+    latitude = degToRad(lat);
+    longitude = fmod(degToRad(lon), TWO_PI);
+    heading = degToRad(heading);
+
+    getCoordFromDistanceAngle2(latitude,longitude,distance,heading,&lat,&lon);
+
+    if (fabs(lat) > degToRad(80.0))
+    {
+        ratio = (degToRad(80.0)-fabs(latitude)) / (fabs(lat)-fabs(latitude));
+        distance *= ratio;
+        getCoordFromDistanceAngle2(latitude,longitude,distance,heading,&lat,&lon);
+    }
+    
+    if (lon > PI)
+    {
+        lon -= TWO_PI;
+    }
+    else if (lon < -PI)
+    {
+        lon += TWO_PI;
+    }
+
+    *res_lat=radToDeg(lat);
+    *res_lon=radToDeg(lon);
+}

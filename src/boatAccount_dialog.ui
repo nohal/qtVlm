@@ -88,11 +88,22 @@
          </layout>
         </item>
         <item>
-         <widget class="QCheckBox" name="enable_state">
-          <property name="text">
-           <string>Actif</string>
-          </property>
-         </widget>
+         <layout class="QHBoxLayout" name="horizontalLayout_2">
+          <item>
+           <widget class="QCheckBox" name="enable_state">
+            <property name="text">
+             <string>Actif</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QCheckBox" name="lockChange">
+            <property name="text">
+             <string>Bloquer modif</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
         </item>
         <item>
          <layout class="QHBoxLayout" name="horizontalLayout">
@@ -223,7 +234,6 @@
   <tabstop>list_boat</tabstop>
   <tabstop>edit_login</tabstop>
   <tabstop>edit_pass</tabstop>
-  <tabstop>enable_state</tabstop>
   <tabstop>btn_accAdd</tabstop>
   <tabstop>btn_accChg</tabstop>
   <tabstop>btn_accDel</tabstop>

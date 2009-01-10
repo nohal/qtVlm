@@ -39,6 +39,9 @@ boatAccount::boatAccount(QString login, QString pass, bool activated,Projection 
     selected = false;
     polarName="";
     polarData=NULL;
+    changeLocked=false;
+    estime=10;
+    curNetReply=NULL;
 
     this->proj = proj;
     connect(proj, SIGNAL(projectionUpdated(Projection *)), this,
@@ -55,10 +58,10 @@ boatAccount::boatAccount(QString login, QString pass, bool activated,Projection 
         show();
 
     connect(ac_select,SIGNAL(triggered()),this,SLOT(selectBoat()));
-
     connect(this,SIGNAL(boatSelected(boatAccount*)),main,SLOT(slotSelectBoat(boatAccount*)));
-
     connect(this,SIGNAL(boatUpdated(boatAccount*)),main,SLOT(slotBoatUpdated(boatAccount*)));
+    connect(this,SIGNAL(boatLockStatusChanged(boatAccount*,bool)),
+            main,SLOT(slotBoatLockStatusChanged(boatAccount*,bool)));
 
     /* init http inetManager */
 
@@ -74,7 +77,7 @@ boatAccount::boatAccount(QString login, QString pass, bool activated,Projection 
         connect(inetManager, SIGNAL(authenticationRequired(QNetworkReply* ,QAuthenticator* )),
             this,SLOT(requestNeedAuth(QNetworkReply*,QAuthenticator*)));
 
-        updateProxy();
+        Util::paramProxy(inetManager,host);
     }
 #else
      inetManager = NULL;
@@ -93,6 +96,10 @@ void boatAccount::updateProxy(void)
 {
     /* update connection */
     Util::paramProxy(inetManager,host);
+#warning bad fix: we are forcing a new request
+    currentRequest=VLM_NO_REQUEST;
+    
+    doRequest(VLM_REQUEST_IDU);
 }
 
 void boatAccount::selectBoat()
@@ -152,7 +159,9 @@ void boatAccount::doRequest(int requestCmd)
         currentRequest = requestCmd;
         showMessage("Doing inet request: " + page);
 
-        inetManager->get(QNetworkRequest(QUrl(page)));
+        /*curNetReply=*/inetManager->get(QNetworkRequest(QUrl(page)));
+        /*connect(curNetReply,SIGNAL(error(QNetworkReply::NetworkError)),
+                this,SLOT(requestError(QNetworkReply::NetworkError)));*/
     }
     else
     {
@@ -166,9 +175,33 @@ void boatAccount::doRequest(int requestCmd)
          updateBoatData();
     }
 }
+/*
+void boatAccount::requestError(QNetworkReply::NetworkError code)
+{
+    if(curNetReply!=NULL)
+    {
+        emit showMessage("inet Error: "+curNetReply->errorString()
+                        +"- code="+QString().setNum(code));
+        disconnect(curNetReply,SIGNAL(error(QNetworkReply::NetworkError)),
+                   this,SLOT(requestError(QNetworkReply::NetworkError)));
+        curNetReply=NULL;
+    }
+    else
+        emit showMessage("inet Error (no netreply object!) code="+QString().setNum(code));
+    currentRequest=VLM_NO_REQUEST;
+}
+*/
+
 
 void boatAccount::requestFinished ( QNetworkReply* inetReply)
 {
+    /*if(curNetReply!=NULL)
+    {
+        disconnect(curNetReply,SIGNAL(error(QNetworkReply::NetworkError)),
+                   this,SLOT(requestError(QNetworkReply::NetworkError)));
+        curNetReply=NULL;
+    }*/
+    
     if (inetReply->error() != QNetworkReply::NoError) {
         emit showMessage("Error doing inetGet:" + QString().setNum(inetReply->error()));
         currentRequest=VLM_NO_REQUEST;
@@ -267,13 +300,15 @@ void boatAccount::requestFinished ( QNetworkReply* inetReply)
 
                 lat = latitude/1000;
                 lon = longitude/1000;
+                current_heading = heading;
+                /* compute heading point */
                 updateBoatData();
                 currentRequest=VLM_NO_REQUEST;
                 emit boatUpdated(this);
                 break;
         }
-
     }
+    //delete inetReply;
 }
 
 void boatAccount::requestNeedProxy(QNetworkProxy ,QAuthenticator * )
@@ -291,6 +326,13 @@ void boatAccount::updateBoatData()
     setLabelText(login);
     updatePosition();
     update();
+}
+
+void boatAccount::updateHeadingPoint(void)
+{
+    Util::getCoordFromDistanceAngle(lat,lon,estime,current_heading,
+                                   &heading_lat,&heading_lon);
+    
 }
 
 void boatAccount::createWidget()
@@ -429,11 +471,25 @@ void boatAccount::setParam(QString login, QString pass, bool activated)
 void boatAccount::setPolar(QString polar)
 {
     this->polarName=polar;
+    if(polarData!=NULL)
+    {
+        delete polarData;
+        polarData=NULL;
+    }
+    
     if(polar.isEmpty())
     {
         showMessage("No polar to load");
         return;
     }
-    if(polarData!=NULL) delete polarData;
     polarData=new Polar(polarName,mainWindow);
+}
+
+void boatAccount::setLockStatus(bool status)
+{
+    if(status!=changeLocked)
+    {
+        changeLocked=status;
+        emit boatLockStatusChanged(this,status);
+    }
 }

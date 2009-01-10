@@ -40,6 +40,7 @@ HEADERS += \
            Orthodromie.h \
            paramVLM.h \
            POI.h \
+           POI_editor.h \
            POI_input.h \
            Polar.h \
            Projection.h \
@@ -52,7 +53,7 @@ HEADERS += \
            zuFile.h \
            vlmDebug.h
 FORMS += boatAccount_dialog.ui Debug_dialog.ui BoardVLM_part1.ui BoardVLM_part2.ui \
-            paramVLM.ui POI_input.ui
+            paramVLM.ui POI_input.ui POI_editor.ui
 SOURCES += \
            BoardVLM.cpp \
            boatAccount_dialog.cpp \
@@ -77,6 +78,7 @@ SOURCES += \
            Orthodromie.cpp \
            paramVLM.cpp \
            POI.cpp \
+           POI_editor.cpp \
            POI_input.cpp \
            Polar.cpp \
            Projection.cpp \

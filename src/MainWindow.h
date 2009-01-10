@@ -47,6 +47,7 @@ Copyright (C) 2008 - Jacques Zaninetti - http://zygrib.free.fr
 //#include "VlmGetData.h"
 #include "boatAccount_dialog.h"
 #include "vlmDebug.h"
+#include "POI_editor.h"
 
 class MainWindow: public QMainWindow
 {
@@ -57,6 +58,7 @@ class MainWindow: public QMainWindow
         ~MainWindow();
 
         void openGribFile(QString fileName, bool zoom=true);
+        bool getBoatLockStatus(void);
 
     public slots:
         void slotOpenMeteotable();
@@ -109,13 +111,19 @@ class MainWindow: public QMainWindow
         void slotDelPOIs(void);
         void slotBoatSave(void);
 		void slotPOIimport(void);
+        void slotBoatLockStatusChanged(boatAccount*,bool);
 
         void addPOI_list(POI * poi);
         void delPOI_list(POI * poi);
 
+        void slotEditPOI(POI *);
+
     signals:
         void signalProjectionUpdated(Projection *proj);
         void signalMapQuality(int quality);
+        void setChangeStatus(bool);
+        void editPOI(POI *);
+        void newPOI(float,float,Projection *);
 
     private:
         GshhsReader *gshhsReader;
@@ -171,6 +179,8 @@ class MainWindow: public QMainWindow
         xml_POIData * xmlPOI;
 
         QList<POI*> poi_list;
+
+        POI_Editor * poi_editor;
 
 };
 

@@ -32,6 +32,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #define PASS_NAME         "Pass"
 #define ACTIVATED_NAME    "Activated"
 #define POLAR_NAME        "Polar"
+#define LOCK_NAME         "Lock"
 
 #define OLD_DOM_FILE_TYPE "zygVLM_config"
 #define OLD_ROOT_NAME     "zygVLM_boat"
@@ -83,6 +84,12 @@ bool xml_boatData::writeBoatData(QList<boatAccount*> & boat_list,QString fname)
 		  bool status = acc->getStatus();
 		  t = doc.createTextNode(status?"1":"0");
 		  tag.appendChild(t);
+
+          tag = doc.createElement(LOCK_NAME);
+          group.appendChild(tag);
+          status = acc->getLockStatus();
+          t = doc.createTextNode(status?"1":"0");
+          tag.appendChild(t);
 
           tag = doc.createElement(POLAR_NAME);
           group.appendChild(tag);
@@ -168,6 +175,7 @@ bool xml_boatData::readBoatData(QList<boatAccount*> & boat_list,QString fname)
 		      QString pass = "";
 			  QString activated = "";
               QString polar="";
+              bool locked=false;
 			  showMessage("Processing subnodes");
 			  while(!subNode.isNull())
 			  {
@@ -210,6 +218,12 @@ bool xml_boatData::readBoatData(QList<boatAccount*> & boat_list,QString fname)
                           if(polar=="none") polar="";
                       }
                    }
+                   if(subNode.toElement().tagName() == LOCK_NAME)
+                   {
+                      dataNode = subNode.firstChild();
+                      if(dataNode.nodeType() == QDomNode::TextNode)
+                          locked = dataNode.toText().data() == "1";
+                   }
 				   subNode = subNode.nextSibling();
 			  }
 			  if(!login.isEmpty() && !pass.isEmpty() && ! activated.isEmpty())
@@ -219,6 +233,7 @@ bool xml_boatData::readBoatData(QList<boatAccount*> & boat_list,QString fname)
                    boatAccount * acc = new boatAccount(login,pass,activated == "1",
                     		   proj,main,parent);
                    acc->setPolar(polar);
+                   acc->setLockStatus(locked);
 
                    boat_list.append(acc);
 			  }

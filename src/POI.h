@@ -25,19 +25,11 @@ Copyright (C) 2008 - Jacques Zaninetti - http://zygrib.free.fr
 #ifndef POI_H
 #define POI_H
 
-#include <QFrame>
-#include <QGridLayout>
+
 #include <QLabel>
 #include <QPainter>
 #include <QMouseEvent>
-#include <QLineEdit>
-#include <QDoubleSpinBox>
-#include <QGroupBox>
-#include <QDialog>
-#include <QPushButton>
-#include <QDateTimeEdit>
-#include <QCheckBox>
-
+#include <QMenu>
 
 #define POI_STD  0
 #define POI_BOAT 1
@@ -89,6 +81,7 @@ class POI : public QWidget
         void chgWP(float,float,float);
         void addPOI_list(POI*);
         void delPOI_list(POI*);
+        void editPOI(POI*);
         void showMessage(QString);
 
     private:
@@ -124,68 +117,5 @@ class POI : public QWidget
         QAction * ac_copy;
         void createPopUpMenu(void);
 };
-
-//===================================================================
-class DegreeMinuteEditor : public QWidget
-{ Q_OBJECT
-    public:
-        DegreeMinuteEditor(float val, QWidget *parent,
-                            int degreMin=-359, int degreMax=359);
-        float getValue();
-        void setValue(float val);
-
-    private:
-        QSpinBox        *angDeg;
-        QDoubleSpinBox  *angMin;
-};
-
-
-//===================================================================
-class POI_Editor : public QDialog
-{ Q_OBJECT
-    public:
-
-        // Constructor for edit an existing POI
-        POI_Editor(POI *poi, QWidget *ownerMeteotable,QWidget *parent);
-
-        // Constructor for edit and create a new POI
-        POI_Editor(float lon, float lat,
-                    Projection *proj, QWidget *ownerMeteotable, QWidget *parentWindow);
-
-        ~POI_Editor();
-
-    private:
-        POI   *poi;
-        bool  modeCreation;
-        QLineEdit          *editName;
-        QLineEdit          *editWph;
-        DegreeMinuteEditor *editLon, *editLat;
-        QDateTimeEdit      *editTStamp;
-        QCheckBox          *chk_tstamp;
-
-        void closeEvent(QCloseEvent *) {delete this;};
-
-        void createInterface();
-        QPushButton *btOk, *btCancel, *btDelete, *btPaste, *btCopy, *btSaveWP;
-
-    private slots:
-        void reject();
-        //void done(int result);
-
-        void btOkClicked();
-        void btCancelClicked();
-        void btDeleteClicked();
-        void btPasteClicked();
-        void btCopyClicked();
-        void btSaveWPClicked();
-        void chkTStamp_chg(int);
-
-    signals:
-        void addPOI_list(POI*);
-        void delPOI_list(POI*);
-        void showMessage(QString);
-
-};
-
 
 #endif

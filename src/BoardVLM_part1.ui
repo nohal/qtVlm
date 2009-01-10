@@ -147,7 +147,7 @@
       <string>Angle</string>
      </property>
     </widget>
-    <widget class="QDoubleSpinBox" name="editAngle">
+    <widget class="tool_edtSpinBox" name="editAngle">
      <property name="geometry">
       <rect>
        <x>6</x>
@@ -330,6 +330,9 @@
      <enum>QFrame::Raised</enum>
     </property>
     <widget class="QPushButton" name="btn_chgHeading">
+     <property name="enabled">
+      <bool>true</bool>
+     </property>
      <property name="geometry">
       <rect>
        <x>10</x>
@@ -419,8 +422,11 @@
      <property name="text">
       <string>Heading</string>
      </property>
+     <property name="checkable">
+      <bool>false</bool>
+     </property>
     </widget>
-    <widget class="QDoubleSpinBox" name="editHeading">
+    <widget class="tool_edtSpinBox" name="editHeading">
      <property name="geometry">
       <rect>
        <x>10</x>
@@ -772,6 +778,11 @@
    <extends>QWidget</extends>
    <header>BoardVLM_tools.h</header>
    <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>tool_edtSpinBox</class>
+   <extends>QDoubleSpinBox</extends>
+   <header>BoardVLM_tools.h</header>
   </customwidget>
  </customwidgets>
  <tabstops>
