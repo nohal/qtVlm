@@ -84,6 +84,8 @@ class boatAccount: public QWidget
         QString getPolarName(void)   {    return polarName; }
         Polar * getPolarData(void)   {    return polarData; }
         bool getLockStatus(void)     {    return changeLocked;}
+        QStringList * getPilototo(void) { return &pilototo; }
+        bool getHasPilototo(void)    { return hasPilototo; }
         
         void updateProxy(void);
 
@@ -174,6 +176,9 @@ class boatAccount: public QWidget
         /* polar data */
         Polar * polarData;
         QString polarName;
+        
+        QStringList pilototo;
+        bool hasPilototo;
 };
 
 #endif

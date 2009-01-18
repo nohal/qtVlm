@@ -34,6 +34,7 @@ Copyright (C) 2008 - Jacques Zaninetti - http://zygrib.free.fr
 #include <QMessageBox>
 #include <QComboBox>
 #include <QDockWidget>
+#include <QRegExp>
 
 #include "MainWindow.h"
 #include "MeteoTable.h"
@@ -232,6 +233,8 @@ void MainWindow::connectSignals()
     if(mb->acVLMTest)
         connect(mb->acVLMTest, SIGNAL(triggered()), this, SLOT(slotVLM_Test()));
     connect(mb->acPOIinput, SIGNAL(triggered()), this, SLOT(slotPOIinput()));
+    connect(mb->acPilototo, SIGNAL(triggered()), this, SLOT(slotPilototo()));
+    
     //connect(vlmData,SIGNAL(showMessage(QString)),this,SLOT(slotShowMessage(QString)));
 
     connect(mb->acPOIimport, SIGNAL(triggered()), this, SLOT(slotPOIimport()));
@@ -383,11 +386,13 @@ MainWindow::MainWindow(int w, int h, QWidget *parent)
     //---------------------------------------------------------
 
       boatAcc = new boatAccount_dialog(acc_list,proj,this,terre);
-      param = new paramVLM(this);
-      poi_input_dialog = new POI_input(this);
+      param = new paramVLM(terre);
+      poi_input_dialog = new POI_input(terre);
       menuBar->getBoatList(acc_list);
 
       VLMBoard = new boardVLM(this);
+      connect(this,SIGNAL(boatUpdated(boatAccount*)),
+              VLMBoard,SLOT(boatUpdated(boatAccount*)));
 
       selectedBoat = NULL;
 
@@ -398,6 +403,14 @@ MainWindow::MainWindow(int w, int h, QWidget *parent)
               this,SLOT(slotAddPOI(float,float,float,int,bool)));
 
       poi_editor=new POI_Editor(this,terre);
+      
+      pilototo = new Pilototo(terre);
+      connect(this,SIGNAL(editInstructions()),
+              pilototo,SLOT(editInstructions()));
+      connect(pilototo,SIGNAL(showMessage(QString)),this,
+                SLOT(slotShowMessage(QString)));
+      connect(this,SIGNAL(boatUpdated(boatAccount*)),
+              pilototo,SLOT(boatUpdated(boatAccount*)));
 
     //---------------------------------------------------------
     // Active les actions
@@ -911,6 +924,7 @@ void MainWindow::slotVLM_Sync(void) {
             if(acc==selectedBoat)
             {
                 menuBar->cbBoatList->setCurrentIndex(menuBar->cbBoatList->findText(acc->getLogin()));
+                menuBar->acPilototo->setEnabled(!acc->getLockStatus());
             }
         }
     }
@@ -920,15 +934,28 @@ void MainWindow::slotBoatUpdated(boatAccount * boat)
 {
     if(boat == selectedBoat)
     {
-        VLMBoard->boatUpdate(boat);
+        //VLMBoard->boatUpdate(boat);
         proj->setCenterInMap(boat->getLon(),boat->getLat());
         terre->setProjection(proj);
+        emit boatUpdated(boat);
     }
 }
 
 void MainWindow::slotVLM_Test(void)
 {
+    QRegExp rExp("Lng([^()]+,[^()]+)");
+    QString str="var polyline = new GPolyline([\nnew GLatLng(30.733152594875,-29.654266837543),\nnew GLatLng(30.724722363119,-29.671254186304),\nnew GLatLng(30.715564620176,-29.684743348127),\nnew GLatLng(30.706321798934,-29.698356535475),\nnew GLatLng(30.696901017068,-29.712230500628),";
 
+    if(rExp.indexIn(str)!=-1)
+    {
+        QStringList list=rExp.capturedTexts();
+        QStringList::Iterator it = list.begin();
+        while(it!=list.end()) {
+            showMessage("|"+*it+"|");
+            ++it;
+        }
+    }
+    
 }
 
 void MainWindow::showMessage(QString msg) {
@@ -954,7 +981,10 @@ void MainWindow::slotSelectBoat(boatAccount* newSelect)
             proj->setCenterInMap(newSelect->getLon(),newSelect->getLat());
             terre->setProjection(proj);
             newSelect->getData();
+            menuBar->acPilototo->setEnabled(!newSelect->getLockStatus());
         }
+        else
+            menuBar->acPilototo->setEnabled(false);
         menuBar->cbBoatList->setCurrentIndex(menuBar->cbBoatList->findText(newSelect->getLogin()));
     }
 }
@@ -969,6 +999,7 @@ void MainWindow::slotProxyUpdated(void)
         acc->updateProxy();
     }
     VLMBoard->updateProxy();
+    pilototo->updateProxy();
 }
 
 void MainWindow::slotChgBoat(QString login)
@@ -1091,6 +1122,8 @@ void MainWindow::slotBoatLockStatusChanged(boatAccount* boat,bool status)
     if(boat==selectedBoat)
     {
         emit setChangeStatus(status);
+        showMessage(QString("boat lock  is ")+(status?"true":"false"));
+        menuBar->acPilototo->setEnabled(!status);
     }
 }
 
@@ -1104,4 +1137,15 @@ bool MainWindow::getBoatLockStatus(void)
 void MainWindow::slotEditPOI(POI * poi)
 {
     emit editPOI(poi);
+}
+
+void MainWindow::slotPilototo(void)
+{
+    if(!selectedBoat) return;
+    if(!getBoatLockStatus())
+    {
+        selectedBoat->getData();
+        emit editInstructions();
+        //pilototo->boatUpdated(selectedBoat);
+    }
 }

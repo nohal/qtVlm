@@ -387,3 +387,30 @@ void Util::getCoordFromDistanceAngle(float latitude, float longitude,
     *res_lat=radToDeg(lat);
     *res_lon=radToDeg(lon);
 }
+
+QString Util::pos2String(int type,float value)
+{
+    QString str;
+    int d,m,s;
+    float l;
+    l=value<0?-value:value;
+    d=(int)l;
+    m=(int)((l-d)*60);
+    s=(int)((l-d-(float)m/60)*3600);
+
+    if(type==TYPE_LON)
+        str.sprintf("%03d%c%02d'%02d\"%s",d,176,m,s,value<0?"W":"E");
+    else
+        str.sprintf("%02d%c%02d'%02d\"%s",d,176,m,s,value<0?"S":"N");
+    return str;
+}
+
+QString Util::getHost()
+{
+#if 1
+       return "http://www.virtual-loup-de-mer.org";
+#else
+       return "http://testing.virtual-loup-de-mer.org";
+#endif
+}
+

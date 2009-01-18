@@ -42,6 +42,8 @@ boatAccount::boatAccount(QString login, QString pass, bool activated,Projection 
     changeLocked=false;
     estime=10;
     curNetReply=NULL;
+    pilototo.clear();
+    hasPilototo=false;
 
     this->proj = proj;
     connect(proj, SIGNAL(projectionUpdated(Projection *)), this,
@@ -69,7 +71,7 @@ boatAccount::boatAccount(QString login, QString pass, bool activated,Projection 
     inetManager = new QNetworkAccessManager(this);
     if(inetManager)
     {
-        host = "http://www.virtual-loup-de-mer.org";
+        host = Util::getHost();
         connect(inetManager, SIGNAL(finished(QNetworkReply*)),
             this, SLOT(requestFinished (QNetworkReply*)));
         connect(inetManager, SIGNAL(proxyAuthenticationRequired(QNetworkProxy , QAuthenticator * )),
@@ -201,6 +203,8 @@ void boatAccount::requestFinished ( QNetworkReply* inetReply)
                    this,SLOT(requestError(QNetworkReply::NetworkError)));
         curNetReply=NULL;
     }*/
+
+    hasPilototo=false;
     
     if (inetReply->error() != QNetworkReply::NoError) {
         emit showMessage("Error doing inetGet:" + QString().setNum(inetReply->error()));
@@ -212,8 +216,12 @@ void boatAccount::requestFinished ( QNetworkReply* inetReply)
         // Retour de l'étape 1 : préparation du fichier
         //-------------------------------------------
 
-
+        pilototo.clear();
+        for(int i=0;i<5;i++)
+            pilototo.append("none");
+        
         QString strbuf = inetReply->readAll();
+        //showMessage(strbuf);
         QStringList lsbuf;
         float latitude=0,longitude=0;
 
@@ -295,6 +303,31 @@ void boatAccount::requestFinished ( QNetworkReply* inetReply)
                             prevVac = lsval.at(1).toInt();
                         else if(lsval.at(0) == "NUP")
                             nextVac = lsval.at(1).toInt();
+                        else if(lsval.at(0) == "PIL1")
+                        {
+                            hasPilototo=true;
+                            pilototo[0] = lsval.at(1);
+                        }
+                        else if(lsval.at(0) == "PIL2")
+                        {
+                            hasPilototo=true;
+                            pilototo[1] = lsval.at(1);
+                        }
+                        else if(lsval.at(0) == "PIL3")
+                        {
+                            hasPilototo=true;
+                            pilototo[2] = lsval.at(1);
+                        }
+                        else if(lsval.at(0) == "PIL4")
+                        {
+                            hasPilototo=true;
+                            pilototo[3] = lsval.at(1);
+                        }
+                        else if(lsval.at(0) == "PIL5")
+                        {
+                            hasPilototo=true;
+                            pilototo[4] = lsval.at(1);
+                        }
                     }
                 }
 

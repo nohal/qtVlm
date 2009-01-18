@@ -48,6 +48,7 @@ Copyright (C) 2008 - Jacques Zaninetti - http://zygrib.free.fr
 #include "boatAccount_dialog.h"
 #include "vlmDebug.h"
 #include "POI_editor.h"
+#include "Pilototo.h"
 
 class MainWindow: public QMainWindow
 {
@@ -112,6 +113,7 @@ class MainWindow: public QMainWindow
         void slotBoatSave(void);
 		void slotPOIimport(void);
         void slotBoatLockStatusChanged(boatAccount*,bool);
+        void slotPilototo(void);
 
         void addPOI_list(POI * poi);
         void delPOI_list(POI * poi);
@@ -124,6 +126,8 @@ class MainWindow: public QMainWindow
         void setChangeStatus(bool);
         void editPOI(POI *);
         void newPOI(float,float,Projection *);
+        void editInstructions(void);
+        void boatUpdated(boatAccount*);
 
     private:
         GshhsReader *gshhsReader;
@@ -181,6 +185,8 @@ class MainWindow: public QMainWindow
         QList<POI*> poi_list;
 
         POI_Editor * poi_editor;
+
+        Pilototo * pilototo;
 
 };
 

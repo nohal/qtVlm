@@ -39,6 +39,8 @@ HEADERS += \
            MeteoTable.h \
            Orthodromie.h \
            paramVLM.h \
+           Pilototo.h \
+           Pilototo_param.h \
            POI.h \
            POI_editor.h \
            POI_input.h \
@@ -53,7 +55,8 @@ HEADERS += \
            zuFile.h \
            vlmDebug.h
 FORMS += boatAccount_dialog.ui Debug_dialog.ui BoardVLM_part1.ui BoardVLM_part2.ui \
-            paramVLM.ui POI_input.ui POI_editor.ui
+            paramVLM.ui POI_input.ui POI_editor.ui Pilototo_param.ui instructions.ui \
+            Pilototo.ui
 SOURCES += \
            BoardVLM.cpp \
            boatAccount_dialog.cpp \
@@ -77,6 +80,8 @@ SOURCES += \
            MeteoTable.cpp \
            Orthodromie.cpp \
            paramVLM.cpp \
+           Pilototo.cpp \
+           Pilototo_param.cpp \
            POI.cpp \
            POI_editor.cpp \
            POI_input.cpp \

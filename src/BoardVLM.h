@@ -41,7 +41,7 @@ class boardVLM_part2: public QWidget , public Ui::boardVLM_part2_ui
     Q_OBJECT
     public:
         boardVLM_part2(QWidget * parent=0);
-        void boatUpdate(boatAccount * boat);
+        void boatUpdated(boatAccount * boat);
         void setChangeStatus(bool status);
 
         void showGribPointInfo(const GribPointInfo &pf);
@@ -56,10 +56,12 @@ class boardVLM_part2: public QWidget , public Ui::boardVLM_part2_ui
         void doPaste();
         void updateNxtVac();
         void doCopy();
+        void doPilototo();
 
     signals:
         void showMessage(QString msg);
         void sendCmd(int cmdNum,float,float,float);
+        void go_pilototo(void);
 
     private:
         boatAccount * currentBoat;
@@ -71,10 +73,8 @@ class boardVLM: public QWidget , public Ui::boardVLM_part1_ui
 { Q_OBJECT
     public:
         boardVLM(QMainWindow * mainWin,QWidget * parent=0);
-        void boatUpdate(boatAccount * boat);
+        
         void updateProxy(void);
-
-        static QString pos2String(int type,float value);
 
         void showGribPointInfo(const GribPointInfo &pf);
 
@@ -96,6 +96,8 @@ class boardVLM: public QWidget , public Ui::boardVLM_part1_ui
         void setChangeStatus(bool);
 
         void edtSpinBox_key(void);
+        
+        void boatUpdated(boatAccount * boat);
 
     signals:
         void showMessage(QString msg);

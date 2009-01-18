@@ -44,6 +44,9 @@ Copyright (C) 2008 - Jacques Zaninetti - http://zygrib.free.fr
 #define degToRad(angle) (((angle)/180.0) * PI)
 #define radToDeg(angle) (((angle)*180.0) / PI)
 
+#define TYPE_LON 1
+#define TYPE_LAT 2
+
 class Util
 {
     public:
@@ -81,7 +84,9 @@ class Util
              float distance,float heading, float * res_lat,float * res_lon);
     static void getCoordFromDistanceAngle2(float latitude, float longitude,
              float distance,float heading, float * res_lat,float * res_lon);
-
+    static QString pos2String(int type,float value);
+    static QString getHost();
+    
     //-------------------------------------------------
     template <typename T>
         static bool isInRange(T v, T min, T max)

@@ -135,6 +135,7 @@ public:
     QAction *acVLMSync;
     QAction *acVLMTest;
     QAction *acPOISave;
+    QAction *acPilototo;
 
 
     //-------------------------------------

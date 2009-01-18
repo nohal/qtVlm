@@ -24,9 +24,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "BoardVLM.h"
 #include <qextserialport.h>
 #include "Orthodromie.h"
-
-#define TYPE_LON 1
-#define TYPE_LAT 2
+#include "Util.h"
 
 #define VLM_NO_REQUEST     -1
 #define VLM_REQUEST_LOGIN  0
@@ -40,6 +38,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #define VLM_CMD_VMG    5
 
 #define MAX_RETRY 5
+
+#define SPEED_COLOR_UPDATE    "color: rgb(100, 200, 0);"
+#define SPEED_COLOR_VLM       "color: rgb(255, 0, 0);"
+#define SPEED_COLOR_NO_POLAR  "color: rgb(255, 170, 127);"
 
 boardVLM::boardVLM(QMainWindow * mainWin,QWidget * parent) : QWidget(parent)
 {
@@ -69,6 +71,7 @@ boardVLM::boardVLM(QMainWindow * mainWin,QWidget * parent) : QWidget(parent)
     VLMDock2->setWidget(board2);
     VLMDock2->setAllowedAreas(Qt::RightDockWidgetArea|Qt::LeftDockWidgetArea);
     mainWin->addDockWidget(Qt::RightDockWidgetArea,VLMDock2);
+    connect(board2,SIGNAL(go_pilototo()),mainWin,SLOT(slotPilototo()));
 
     connect(board2,SIGNAL(sendCmd(int,float,float,float)),this,SLOT(sendCmd(int,float,float,float)));
 
@@ -86,7 +89,7 @@ boardVLM::boardVLM(QMainWindow * mainWin,QWidget * parent) : QWidget(parent)
     inetManager = new QNetworkAccessManager(this);
     if(inetManager)
     {
-        host = "http://www.virtual-loup-de-mer.org";
+        host = Util::getHost();
         connect(inetManager, SIGNAL(finished(QNetworkReply*)),
             this, SLOT(requestFinished (QNetworkReply*)));
         updateProxy();
@@ -143,7 +146,7 @@ void boardVLM::showGribPointInfo(const GribPointInfo &pf)
     showMessage(QString("new val %1").arg(ANGLE));\
 }
 
-void boardVLM::boatUpdate(boatAccount * boat)
+void boardVLM::boatUpdated(boatAccount * boat)
 {
     float angle;
 
@@ -192,37 +195,20 @@ void boardVLM::boatUpdate(boatAccount * boat)
 
 
     /* boat position */
-    latitude->setText(pos2String(TYPE_LAT,boat->getLat()));
-    longitude->setText(pos2String(TYPE_LON,boat->getLon()));
+    latitude->setText(Util::pos2String(TYPE_LAT,boat->getLat()));
+    longitude->setText(Util::pos2String(TYPE_LON,boat->getLon()));
 
     /* update board2 */
 
-    board2->boatUpdate(boat);
+    board2->boatUpdated(boat);
     btn_Synch->setStyleSheet(QString::fromUtf8("background-color: rgb(85, 255, 127);"));
     isComputing = false;
-    speed->setStyleSheet(QString::fromUtf8("color: rgb(255, 0, 0);"));
-    label_6->setStyleSheet(QString::fromUtf8("color: rgb(255, 0, 0);"));
+    speed->setStyleSheet(QString::fromUtf8(SPEED_COLOR_VLM));
+    label_6->setStyleSheet(QString::fromUtf8(SPEED_COLOR_VLM));
     setChangeStatus(boat->getLockStatus());
 
     /* send data as a GPS */
     synch_GPS();
-}
-
-QString boardVLM::pos2String(int type,float value)
-{
-    QString str;
-    int d,m,s;
-    float l;
-    l=value<0?-value:value;
-    d=(int)l;
-    m=(int)((l-d)*60);
-    s=(int)((l-d-(float)m/60)*3600);
-
-    if(type==TYPE_LON)
-        str.sprintf("%03d%c%02d'%02d\"%s",d,176,m,s,value<0?"W":"E");
-    else
-        str.sprintf("%02d%c%02d'%02d\"%s",d,176,m,s,value<0?"S":"N");
-    return str;
 }
 
 void boardVLM::setWP(float lat,float lon,float wph)
@@ -255,8 +241,8 @@ void boardVLM::headingUpdated(double heading)
         /* setting back to VLM value */
         showMessage("Back to VLM value");
         speed->setText(QString().setNum(currentBoat->getSpeed()));
-        speed->setStyleSheet(QString::fromUtf8("color: rgb(255, 0, 0);"));
-        label_6->setStyleSheet(QString::fromUtf8("color: rgb(255, 0, 0);"));
+        speed->setStyleSheet(QString::fromUtf8(SPEED_COLOR_VLM));
+        label_6->setStyleSheet(QString::fromUtf8(SPEED_COLOR_VLM));
         float val=currentBoat->getHeading()-currentBoat->getWindDir();
         float angle = currentBoat->getTWA();
         calcAngleSign(val,angle);
@@ -281,13 +267,13 @@ void boardVLM::headingUpdated(double heading)
         {
             float newSpeed=currentBoat->getPolarData()->getSpeed(currentBoat->getWindSpeed(),angle);
             speed->setText(QString().setNum(((float)qRound(newSpeed*100))/100));
-            speed->setStyleSheet(QString::fromUtf8("color: rgb(85, 255, 0);"));
-            label_6->setStyleSheet(QString::fromUtf8("color: rgb(85, 255, 0);"));
+            speed->setStyleSheet(QString::fromUtf8(SPEED_COLOR_UPDATE));
+            label_6->setStyleSheet(QString::fromUtf8(SPEED_COLOR_UPDATE));
         }
         else
         {
-            speed->setStyleSheet(QString::fromUtf8("color: rgb(255, 170, 127);"));
-            label_6->setStyleSheet(QString::fromUtf8("color: rgb(255, 170, 127);"));
+            speed->setStyleSheet(QString::fromUtf8(SPEED_COLOR_NO_POLAR));
+            label_6->setStyleSheet(QString::fromUtf8(SPEED_COLOR_NO_POLAR));
         }
     }
 
@@ -308,13 +294,13 @@ void boardVLM::angleUpdated(double angle)
     calcAngleSign(val,oldAngle);
     oldAngle=((float)qRound(oldAngle*10))/10;
 
-if(angle==oldAngle)
+    if(angle==oldAngle)
     {
 /* setting back to VLM value */
         speed->setText(QString().setNum(currentBoat->getSpeed()));
         editHeading->setValue(currentBoat->getHeading());
-        speed->setStyleSheet(QString::fromUtf8("color: rgb(255, 0, 0);"));
-        label_6->setStyleSheet(QString::fromUtf8("color: rgb(255, 0, 0);"));
+        speed->setStyleSheet(QString::fromUtf8(SPEED_COLOR_VLM));
+        label_6->setStyleSheet(QString::fromUtf8(SPEED_COLOR_VLM));
     }
     else
     {
@@ -329,13 +315,13 @@ if(angle==oldAngle)
         {
             float newSpeed=currentBoat->getPolarData()->getSpeed(currentBoat->getWindSpeed(),angle);
             speed->setText(QString().setNum(((float)qRound(newSpeed*100))/100));
-            speed->setStyleSheet(QString::fromUtf8("color: rgb(85, 255, 0);"));
-            label_6->setStyleSheet(QString::fromUtf8("color: rgb(85, 255, 0);"));
+            speed->setStyleSheet(QString::fromUtf8(SPEED_COLOR_UPDATE));
+            label_6->setStyleSheet(QString::fromUtf8(SPEED_COLOR_UPDATE));
         }
         else
         {
-            speed->setStyleSheet(QString::fromUtf8("color: rgb(255, 170, 127);"));
-            label_6->setStyleSheet(QString::fromUtf8("color: rgb(255, 170, 127);"));
+            speed->setStyleSheet(QString::fromUtf8(SPEED_COLOR_NO_POLAR));
+            label_6->setStyleSheet(QString::fromUtf8(SPEED_COLOR_NO_POLAR));
         }
     }
     isComputing=false;
@@ -590,7 +576,7 @@ void boardVLM::chkResult(void)
     if(done)
     {
         currentRequest=VLM_NO_REQUEST;
-        boatUpdate(currentBoat);
+        boatUpdated(currentBoat);
     }
     else
     {
@@ -642,7 +628,7 @@ boardVLM_part2::boardVLM_part2(QWidget * parent) : QWidget(parent)
     connect(timer,SIGNAL(timeout()),this, SLOT(updateNxtVac()));
 }
 
-void boardVLM_part2::boatUpdate(boatAccount * boat)
+void boardVLM_part2::boatUpdated(boatAccount * boat)
 {
     currentBoat = boat;
 
@@ -724,6 +710,25 @@ void boardVLM_part2::boatUpdate(boatAccount * boat)
     nextVac->setText(QString().setNum(boat->getNextVac()));
     nxtVac_cnt=boat->getNextVac();
     timer->start(1000);
+
+    /* compute nb Pilototo instructions */
+    QStringList * lst = boat->getPilototo();
+    QString pilototo_txt=tr("Pilototo");
+    if(boat->getHasPilototo())
+    {
+        int nb=0;
+        for(int i=0;i<lst->count();i++)
+            if(lst->at(i)!="none") nb++;
+        if(nb!=0)
+            pilototo_txt=pilototo_txt+" ("+QString().setNum(nb)+")";
+        goPilototo->setToolTip("");
+    }
+    else
+    {
+        goPilototo->setToolTip(tr("Imp. de lire le pilototo de VLM"));
+        pilototo_txt=pilototo_txt+" (!)";
+    }
+    goPilototo->setText(pilototo_txt);
 }
 
 void boardVLM_part2::updateNxtVac()
@@ -746,6 +751,7 @@ void boardVLM_part2::setChangeStatus(bool status)
     WP_lat->setEnabled(st);
     WP_lon->setEnabled(st);
     goVMG->setEnabled(st);
+    goPilototo->setEnabled(st);
 }
 
 void boardVLM_part2::doPilotOrtho()
@@ -772,7 +778,7 @@ void boardVLM_part2::chgLat()
     else
     {
         float val = WP_lat->text().toFloat();
-        WP_conv_lat->setText(boardVLM::pos2String(TYPE_LAT,val));
+        WP_conv_lat->setText(Util::pos2String(TYPE_LAT,val));
     }
 }
 
@@ -783,7 +789,7 @@ void boardVLM_part2::chgLon()
     else
     {
         float val = WP_lon->text().toFloat();
-        WP_conv_lon->setText(boardVLM::pos2String(TYPE_LON,val));
+        WP_conv_lon->setText(Util::pos2String(TYPE_LON,val));
     }
 }
 
@@ -805,8 +811,8 @@ void boardVLM_part2::showGribPointInfo(const GribPointInfo &pf)
 {
     QString s, res;
 
-    map_lon->setText(boardVLM::pos2String(TYPE_LON,pf.x));
-    map_lat->setText(boardVLM::pos2String(TYPE_LAT,pf.y));
+    map_lon->setText(Util::pos2String(TYPE_LON,pf.x));
+    map_lat->setText(Util::pos2String(TYPE_LAT,pf.y));
 
     if (pf.hasWind()) {
         float v = sqrt(pf.vx*pf.vx + pf.vy*pf.vy);
@@ -847,6 +853,11 @@ void boardVLM_part2::doCopy()
     Util::setWPClipboard(WP_lat->text().toFloat(),WP_lon->text().toFloat(),
         WP_heading->text().toFloat());
 
+}
+
+void boardVLM_part2::doPilototo()
+{
+    emit go_pilototo();
 }
 
 /************************/
