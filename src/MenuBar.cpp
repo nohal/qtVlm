@@ -374,7 +374,12 @@ void MenuBar::getBoatList(QList<boatAccount*> & acc_list)
     {
         boatAccount * acc = i.next();
         if(acc->getStatus())
-            cbBoatList->addItem(acc->getLogin());
+        {
+            if(acc->getAliasState())
+                cbBoatList->addItem(acc->getAlias() + "(" + acc->getLogin() + ")");
+            else
+                cbBoatList->addItem(acc->getLogin());
+        }
     }
 }
 

@@ -189,10 +189,20 @@ void boardVLM::boatUpdated(boatAccount * boat)
     windAngle->setValues(boat->getHeading(),boat->getWindDir(),boat->getWindSpeed(), dirAngle);
 
     /* boat info */
-    boatID_str->setText(boat->getLogin() + "(" + boat->getBoatId() + ")");
+    if(boat->getAliasState())
+        boatID_str->setText(boat->getAlias() + " (" + boat->getBoatId() + ")");
+    else
+        boatID_str->setText(boat->getLogin() + " (" + boat->getBoatId() + ")");
+    
     boatName->setText(boat->getBoatName());
     boatScore->setText(boat->getScore());
 
+    QString polar_str=boat->getCurrentPolarName();
+    if(boat->getPolarState())
+        polar_str+= " ("+tr("forcé")+")";
+    if(!boat->getPolarData())
+        polar_str+= " ("+tr("erreur")+")";
+    polarName->setText(polar_str);
 
     /* boat position */
     latitude->setText(Util::pos2String(TYPE_LAT,boat->getLat()));

@@ -241,8 +241,8 @@ void MainWindow::connectSignals()
 
     connect(&dialogProxy, SIGNAL(proxyUpdated()), this, SLOT(slotProxyUpdated()));
 
-    connect(mb->cbBoatList, SIGNAL(activated(QString)),
-            this, SLOT(slotChgBoat(QString)));
+    connect(mb->cbBoatList, SIGNAL(activated(int)),
+            this, SLOT(slotChgBoat(int)));
 
     connect(mb->acPOISave, SIGNAL(triggered()), this, SLOT(slotBoatSave()));
 
@@ -908,10 +908,11 @@ void MainWindow::slotVLM_Sync(void) {
     //dbg->addLine("calling getBoatInfo");
     bool hasFirstActivated = selectedBoat!=NULL;
     QListIterator<boatAccount*> i (acc_list);
+    int cnt=0;
     while(i.hasNext())
     {
         boatAccount * acc = i.next();
-        if(acc->getStatus() )
+        if(acc->getStatus())
         {
             acc->getData();
             if(!hasFirstActivated)
@@ -923,9 +924,10 @@ void MainWindow::slotVLM_Sync(void) {
 
             if(acc==selectedBoat)
             {
-                menuBar->cbBoatList->setCurrentIndex(menuBar->cbBoatList->findText(acc->getLogin()));
+                menuBar->cbBoatList->setCurrentIndex(cnt);
                 menuBar->acPilototo->setEnabled(!acc->getLockStatus());
             }
+            cnt++;
         }
     }
 }
@@ -985,7 +987,19 @@ void MainWindow::slotSelectBoat(boatAccount* newSelect)
         }
         else
             menuBar->acPilototo->setEnabled(false);
-        menuBar->cbBoatList->setCurrentIndex(menuBar->cbBoatList->findText(newSelect->getLogin()));
+
+        int cnt=0;
+        for(int i=0;i<acc_list.count();i++)
+        {
+            if(acc_list[i] == newSelect)
+            {
+                menuBar->cbBoatList->setCurrentIndex(cnt);
+                break;
+            }
+            if(acc_list[i]->getStatus())
+                cnt++;
+        }
+        
     }
 }
 
@@ -1002,16 +1016,21 @@ void MainWindow::slotProxyUpdated(void)
     pilototo->updateProxy();
 }
 
-void MainWindow::slotChgBoat(QString login)
+void MainWindow::slotChgBoat(int num)
 {
     QListIterator<boatAccount*> i (acc_list);
+    int cnt=0;
     while(i.hasNext())
     {
         boatAccount * acc = i.next();
-        if(acc->getLogin() == login && acc->getStatus())
+        if(acc->getStatus())
         {
-            acc->selectBoat();
-            break;
+            if(cnt==num)
+            {
+                acc->selectBoat();
+                break;
+            }
+            cnt++;
         }
     }
 }
@@ -1019,8 +1038,14 @@ void MainWindow::slotChgBoat(QString login)
 void MainWindow::slotAccountListUpdated(void)
 {
     menuBar->getBoatList(acc_list);
-    if(selectedBoat)
-        menuBar->cbBoatList->setCurrentIndex(menuBar->cbBoatList->findText(selectedBoat->getLogin()));
+    menuBar->cbBoatList->setCurrentIndex(0);
+    for(int i=0;i<acc_list.count();i++)
+        if(acc_list[i]->getStatus())
+        {
+            acc_list[i]->getData();
+            break;
+        }
+        
 }
 
 void MainWindow::slotAddPOI(float lat,float lon, float wph,int timestamp,bool useTimeStamp)

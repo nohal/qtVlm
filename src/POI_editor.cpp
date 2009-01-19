@@ -92,7 +92,7 @@ void POI_Editor::initPOI(void)
     setValue(POI_EDT_LAT,poi->getLatitude());
     if(poi->getTimeStamp()!=-1)
     {
-        QDateTime tm = QDateTime::fromTime_t(poi->getTimeStamp());
+        QDateTime tm= QDateTime::fromTime_t(poi->getTimeStamp());
         editTStamp->setDateTime(tm);
         editTStamp->setTimeSpec(Qt::UTC);
     }

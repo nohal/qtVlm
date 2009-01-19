@@ -87,6 +87,16 @@ void Pilototo_param::modeChanged(int mode)
     {
         angle->setEnabled(true);
         position_grp->setEnabled(false);
+        if(mode==0)
+        {
+            angle->setMinimum(0);
+            angle->setMaximum(360);
+        }
+        else
+        {
+            angle->setMinimum(-180);
+            angle->setMaximum(180);
+        }
     }
     else
     {

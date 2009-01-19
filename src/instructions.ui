@@ -62,7 +62,7 @@
    <item row="0" column="4">
     <widget class="QDateTimeEdit" name="horodate"/>
    </item>
-   <item row="0" column="5">
+   <item row="0" column="6">
     <widget class="QPushButton" name="btn_paste">
      <property name="sizePolicy">
       <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
@@ -81,7 +81,7 @@
      </property>
     </widget>
    </item>
-   <item row="0" column="6">
+   <item row="0" column="7">
     <widget class="QPushButton" name="btn_edit">
      <property name="maximumSize">
       <size>
@@ -107,6 +107,19 @@
      </property>
      <property name="text">
       <string>V</string>
+     </property>
+    </widget>
+   </item>
+   <item row="0" column="5">
+    <widget class="QPushButton" name="pushButton">
+     <property name="maximumSize">
+      <size>
+       <width>20</width>
+       <height>16777215</height>
+      </size>
+     </property>
+     <property name="text">
+      <string>H</string>
      </property>
     </widget>
    </item>
@@ -137,7 +150,7 @@
    <slot>pastePOI()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>524</x>
+     <x>439</x>
      <y>33</y>
     </hint>
     <hint type="destinationlabel">
@@ -153,7 +166,7 @@
    <slot>editInstruction()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>609</x>
+     <x>524</x>
      <y>33</y>
     </hint>
     <hint type="destinationlabel">
@@ -185,12 +198,28 @@
    <slot>dateTime_changed(QDateTime)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>398</x>
-     <y>27</y>
+     <x>357</x>
+     <y>30</y>
     </hint>
     <hint type="destinationlabel">
      <x>421</x>
      <y>42</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>pushButton</sender>
+   <signal>clicked()</signal>
+   <receiver>instruction_ui</receiver>
+   <slot>maintenant()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>580</x>
+     <y>20</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>615</x>
+     <y>4</y>
     </hint>
    </hints>
   </connection>
@@ -201,5 +230,6 @@
   <slot>editInstruction()</slot>
   <slot>validateModif()</slot>
   <slot>dateTime_changed(QDateTime)</slot>
+  <slot>maintenant()</slot>
  </slots>
 </ui>

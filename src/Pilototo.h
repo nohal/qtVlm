@@ -76,6 +76,7 @@ class Pilototo_instruction : public QWidget, public Ui::instruction_ui
         void pastePOI(void);
         void validateModif(void);
         void dateTime_changed(QDateTime);
+        void maintenant(void);
 
     signals:
         void doDelInstruction(Pilototo_instruction*);

@@ -190,7 +190,7 @@ void Pilototo::boatUpdated(boatAccount * boat)
     if(!boat->getHasPilototo())
         QMessageBox::information (this,
             tr("Pilototo"),
-            tr("La récupération des données pilototo de VLM n'a pas fonctionnée\nVous pouvez ajouter des instructions mais sans voir le resultat dans QtVlm"),
+            tr("La récupération des données pilototo de VLM n'a pas fonctionné\nVous pouvez ajouter des instructions mais sans voir le resultat dans QtVlm"),
             QMessageBox::Ok);
     
     for(int i=0;i<list->count();i++)
@@ -270,7 +270,7 @@ void Pilototo::done(int result)
         {
             int rep = QMessageBox::question (this,
             tr("Instructions non Validées"),
-            tr("Il reste des instructions non validées. Elles ne seront pas envoyée à VLM\nContinuer la sauvegarde?"),
+            tr("Il reste des instructions non validées. Elles ne seront pas envoyées à VLM\nContinuer la sauvegarde?"),
             QMessageBox::Yes | QMessageBox::No);
             if (rep == QMessageBox::No)
                 return;
@@ -396,8 +396,7 @@ void Pilototo::updateTime(void)
 {
     QFontMetrics fmt(curTime->font());
     QDateTime tm = QDateTime::currentDateTime().toUTC();
-    QString data=tm.toString("(ddd) dd/MM/yyyy hh:mm:ss")
-            +" "+QString().setNum(tm.toTime_t());
+    QString data=tm.toString("(ddd) dd/MM/yyyy hh:mm:ss");
     curTime->setMinimumWidth(fmt.width(data)+10);
     curTime->setText(data);
 }
@@ -601,16 +600,16 @@ void Pilototo_instruction::editInstruction(void)
 void Pilototo_instruction::pastePOI(void)
 {
     float lat,lon,wph;
-    int tstamp;
-    if(!Util::getWPClipboard(&lat,&lon,&wph,&tstamp))
+    int tstamp_int;
+    if(!Util::getWPClipboard(&lat,&lon,&wph,&tstamp_int))
         return;
     
     this->lat = lat;
     this->lon = lon;
     mode=2; /*default mode : ortho */
     
-    if(tstamp!=-1)
-        this->tstamp.setTime_t(tstamp);
+    if(tstamp_int!=-1)
+        tstamp.setTime_t(tstamp_int);
 
     if(wph<0 || wph > 360)
         this->wph=-1;
@@ -673,14 +672,20 @@ QString Pilototo_instruction::getPip(void)
         case 3:
             if(wph==-1)
                 txt=QString("%1,%2")
-                        .arg(Util::pos2String(TYPE_LAT,lat))
-                        .arg(Util::pos2String(TYPE_LON,lon));
+                        .arg(lat)
+                        .arg(lon);
             else
                 txt=QString("%1,%2@%3")
-                        .arg(Util::pos2String(TYPE_LAT,lat))
-                        .arg(Util::pos2String(TYPE_LON,lon))
+                        .arg(lat)
+                        .arg(lon)
                         .arg(wph);
             break;
     }
     return txt;
+}
+
+void Pilototo_instruction::maintenant(void)
+{
+    tstamp = QDateTime::currentDateTime().toUTC();
+    horodate->setDateTime(tstamp);
 }

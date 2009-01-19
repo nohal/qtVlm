@@ -102,7 +102,7 @@ class MainWindow: public QMainWindow
         void slotShowMessage(QString msg);
         void slotSelectBoat(boatAccount* newSelect);
         void slotProxyUpdated(void);
-        void slotChgBoat(QString);
+        void slotChgBoat(int);
         void slotAccountListUpdated(void);
         void slotBoatUpdated(boatAccount * boat);
         void slotpastePOI();

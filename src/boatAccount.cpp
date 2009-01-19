@@ -44,6 +44,10 @@ boatAccount::boatAccount(QString login, QString pass, bool activated,Projection 
     curNetReply=NULL;
     pilototo.clear();
     hasPilototo=false;
+    polarVlm="";
+    forcePolar=false;
+    alias="";
+    useAlias=false;
 
     this->proj = proj;
     connect(proj, SIGNAL(projectionUpdated(Projection *)), this,
@@ -328,12 +332,15 @@ void boatAccount::requestFinished ( QNetworkReply* inetReply)
                             hasPilototo=true;
                             pilototo[4] = lsval.at(1);
                         }
+                        else if(lsval.at(0) == "POL")
+                            polarVlm = lsval.at(1);
                     }
                 }
 
                 lat = latitude/1000;
                 lon = longitude/1000;
                 current_heading = heading;
+                showMessage("Data for " + QString().setNum(boat_id) + " received");
                 /* compute heading point */
                 updateBoatData();
                 currentRequest=VLM_NO_REQUEST;
@@ -356,9 +363,23 @@ void boatAccount::requestNeedAuth(QNetworkReply* ,QAuthenticator* )
 
 void boatAccount::updateBoatData()
 {
-    setLabelText(login);
+    updateBoatName();
+    reloadPolar();
     updatePosition();
     update();
+}
+
+void boatAccount::updateBoatName()
+{
+    QString txt;
+    if(getAliasState())
+        txt=(alias.isEmpty()?login:alias);
+    else
+        txt=login;
+
+    label->setText(txt);
+
+     adjustSize();
 }
 
 void boatAccount::updateHeadingPoint(void)
@@ -414,12 +435,6 @@ void boatAccount::projectionUpdated(Projection * proj)
     //emit showMessage("Projection update");
     this->proj=proj;
     updatePosition();
-}
-
-void boatAccount::setLabelText(QString name)
-{
-     label->setText(name);
-     adjustSize();
 }
 
 void  boatAccount::paintEvent(QPaintEvent *)
@@ -501,21 +516,42 @@ void boatAccount::setParam(QString login, QString pass, bool activated)
     setParam(login,pass);
 }
 
-void boatAccount::setPolar(QString polar)
+void boatAccount::reloadPolar(void)
 {
-    this->polarName=polar;
     if(polarData!=NULL)
     {
         delete polarData;
         polarData=NULL;
     }
     
-    if(polar.isEmpty())
+    if(forcePolar)
     {
-        showMessage("No polar to load");
-        return;
+        if(polarName.isEmpty())
+        {
+            showMessage("No User polar to load");
+            return;
+        }
+        showMessage("Loading forced polar: " + polarName);
+        polarData=new Polar(polarName,mainWindow);
     }
-    polarData=new Polar(polarName,mainWindow);
+    else
+    {
+        if(polarVlm.isEmpty())
+        {
+            showMessage("No VLM polar to load");
+            return;
+        }
+        showMessage("Loading polar: " + polarVlm);
+        polarData=new Polar(polarVlm,mainWindow);
+    }
+}
+
+void boatAccount::setPolar(bool state,QString polar)
+{
+    this->polarName=polar;
+    forcePolar=state;
+    
+    reloadPolar();
 }
 
 void boatAccount::setLockStatus(bool status)
@@ -525,4 +561,10 @@ void boatAccount::setLockStatus(bool status)
         changeLocked=status;
         emit boatLockStatusChanged(this,status);
     }
+}
+
+void boatAccount::setAlias(bool state,QString alias)
+{
+    useAlias=state;
+    this->alias=alias;
 }

@@ -186,6 +186,8 @@ private:
 
     bool pleaseWait;     // long task in progress
 
+    bool drawingMap;
+
 };
 
 #endif

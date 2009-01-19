@@ -33,6 +33,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #define ACTIVATED_NAME    "Activated"
 #define POLAR_NAME        "Polar"
 #define LOCK_NAME         "Lock"
+#define POLAR_CHK_NAME    "UsePolar"
+#define ALIAS_CHK_NAME    "UseAlias"
+#define ALIAS_NAME        "Alias"
 
 #define OLD_DOM_FILE_TYPE "zygVLM_config"
 #define OLD_ROOT_NAME     "zygVLM_boat"
@@ -97,6 +100,23 @@ bool xml_boatData::writeBoatData(QList<boatAccount*> & boat_list,QString fname)
           if(polarName.isEmpty()) polarName="none";
           t = doc.createTextNode(polarName);
           tag.appendChild(t);
+
+          tag = doc.createElement(ALIAS_NAME);
+          group.appendChild(tag);
+          t = doc.createTextNode(acc->getAlias());
+          tag.appendChild(t);
+
+          tag = doc.createElement(ALIAS_CHK_NAME);
+          group.appendChild(tag);
+          status = acc->getAliasState();
+          t = doc.createTextNode(status?"1":"0");
+          tag.appendChild(t);
+
+          tag = doc.createElement(POLAR_CHK_NAME);
+          group.appendChild(tag);
+          status = acc->getPolarState();
+          t = doc.createTextNode(status?"1":"0");
+          tag.appendChild(t);
      }
      
      QFile file(fname);
@@ -120,7 +140,7 @@ bool xml_boatData::readBoatData(QList<boatAccount*> & boat_list,QString fname)
 	 bool hasVersion = false;
      bool forceWrite = false;
      int version=VERSION_NUMBER;
-
+     
      QFile file(fname);
      
      showMessage("Read xml");
@@ -176,6 +196,9 @@ bool xml_boatData::readBoatData(QList<boatAccount*> & boat_list,QString fname)
 			  QString activated = "";
               QString polar="";
               bool locked=false;
+              bool chk_polar=false;
+              bool chk_alias=false;
+              QString alias="";
 			  showMessage("Processing subnodes");
 			  while(!subNode.isNull())
 			  {
@@ -224,6 +247,26 @@ bool xml_boatData::readBoatData(QList<boatAccount*> & boat_list,QString fname)
                       if(dataNode.nodeType() == QDomNode::TextNode)
                           locked = dataNode.toText().data() == "1";
                    }
+                   if(subNode.toElement().tagName() == ALIAS_CHK_NAME)
+                   {
+                      dataNode = subNode.firstChild();
+                      if(dataNode.nodeType() == QDomNode::TextNode)
+                          chk_alias = dataNode.toText().data() == "1";
+                   }
+                   if(subNode.toElement().tagName() == POLAR_CHK_NAME)
+                   {
+                      dataNode = subNode.firstChild();
+                      if(dataNode.nodeType() == QDomNode::TextNode)
+                          chk_polar = dataNode.toText().data() == "1";
+                   }
+                   if(subNode.toElement().tagName() == ALIAS_NAME)
+                   {
+                      dataNode = subNode.firstChild();
+                      if(dataNode.nodeType() == QDomNode::TextNode)
+                          alias = dataNode.toText().data();
+                   }
+
+                   
 				   subNode = subNode.nextSibling();
 			  }
 			  if(!login.isEmpty() && !pass.isEmpty() && ! activated.isEmpty())
@@ -232,7 +275,8 @@ bool xml_boatData::readBoatData(QList<boatAccount*> & boat_list,QString fname)
                               .arg(pass).arg(activated));
                    boatAccount * acc = new boatAccount(login,pass,activated == "1",
                     		   proj,main,parent);
-                   acc->setPolar(polar);
+                   acc->setPolar(chk_polar,polar);
+                   acc->setAlias(chk_alias,alias);
                    acc->setLockStatus(locked);
 
                    boat_list.append(acc);

@@ -45,8 +45,9 @@ class boatAccount: public QWidget
         void setStatus(bool activated);
         void setParam(QString login, QString pass);
         void setParam(QString login, QString pass, bool activated);
-        void setPolar(QString polar);
+        void setPolar(bool state,QString polar);
         void setLockStatus(bool status);
+        void setAlias(bool state,QString alias);
 
         void unSelectBoat(void);
 
@@ -86,7 +87,12 @@ class boatAccount: public QWidget
         bool getLockStatus(void)     {    return changeLocked;}
         QStringList * getPilototo(void) { return &pilototo; }
         bool getHasPilototo(void)    { return hasPilototo; }
+        bool getAliasState(void)     { return useAlias; }
+        bool getPolarState(void)     { return forcePolar; }
+        QString getAlias(void)       { return alias; }
         
+        QString getCurrentPolarName(void) { return (forcePolar?polarName:polarVlm); }
+
         void updateProxy(void);
 
     public slots:
@@ -109,6 +115,8 @@ class boatAccount: public QWidget
         void updateBoatData(void);
         void doRequest(int requestCmd);
         void updateHeadingPoint(void);
+        void reloadPolar(void);
+        void updateBoatName(void);
 
         QString login;
         QString pass;
@@ -132,6 +140,7 @@ class boatAccount: public QWidget
         float WPLat,WPLon,WPHd;
         QString ETA;
         QString score;
+        QString polarVlm;
 
         float heading_lat;
         float heading_lon;
@@ -176,6 +185,10 @@ class boatAccount: public QWidget
         /* polar data */
         Polar * polarData;
         QString polarName;
+        bool forcePolar;
+
+        QString alias;
+        bool useAlias;
         
         QStringList pilototo;
         bool hasPilototo;

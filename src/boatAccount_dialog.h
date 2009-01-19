@@ -45,6 +45,8 @@ class boatAccount_dialog : public QDialog, public Ui::boatAccount_dialog
         void slot_chgBoat(void);
         void slot_selectItem(QListWidgetItem * item);
         void slot_accHasChanged(void);
+        void chkAlias_changed(int);
+        void chkPolar_changed(int);
 
     signals:
         void vlmSync(void);

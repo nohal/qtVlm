@@ -42,6 +42,7 @@ Terrain::Terrain(QWidget *parent, Projection *proj_)
     : QWidget(parent)
 {
     quality = 0;
+    drawingMap=false;
     selX0 = selY0 = 0;
     selX1 = selY1 = 0;
     isResizing = true;
@@ -672,15 +673,32 @@ void Terrain::setCurrentDate(time_t t)
 //---------------------------------------------------------
 void  Terrain::keyPressEvent (QKeyEvent *e)
 {
-    if (e->modifiers() == Qt::ControlModifier) {
-        setCursor(Qt::SizeAllCursor);
-    }
-    else if (e->modifiers() == Qt::ShiftModifier) {
-        setCursor(Qt::UpArrowCursor);
-    }
-    else {
+    if(e->key() == Qt::Key_Minus || e->key() == Qt::Key_M)
+    {
+        if(!drawingMap)
+            slot_Zoom_Out();
         setCursor(Qt::CrossCursor);
     }
+    else if(e->key() == Qt::Key_Plus || e->key() == Qt::Key_P)
+    {
+        if(!drawingMap)
+            slot_Zoom_In();
+        setCursor(Qt::CrossCursor);
+    }
+    else
+    {
+        if (e->modifiers() == Qt::ControlModifier) {
+            setCursor(Qt::SizeAllCursor);
+        }
+        else if (e->modifiers() == Qt::ShiftModifier) {
+            setCursor(Qt::UpArrowCursor);
+        }
+        else {
+            setCursor(Qt::CrossCursor);
+        }
+    }
+
+    
 }
 void  Terrain::keyReleaseEvent (QKeyEvent *e)
 {
@@ -872,9 +890,10 @@ void Terrain::paintEvent(QPaintEvent * /*event*/)
     int r = 100;
     bool longJob = false;
 
-    if (!isResizing)
+    if (!isResizing && !drawingMap)
     {
         // Draw the map
+        drawingMap = true;
         longJob = draw_GSHHSandGRIB(pnt);
 
         if (selX0!=selX1 && selY0!=selY1) {
@@ -895,7 +914,7 @@ void Terrain::paintEvent(QPaintEvent * /*event*/)
                 draw_Orthodromie(pnt);
             }
         }
-
+        drawingMap=false;
     }
 
     if (pleaseWait) {
