@@ -95,5 +95,11 @@ SOURCES += \
            zuFile.cpp \
            vlmDebug.cpp
 
-unix:DEFINES   = _TTY_POSIX_
-win32:DEFINES  = _TTY_WIN_ QWT_DLL QT_DLL
+DEFINES = QT_$$[QT_VERSION]
+
+DEFINES ~= s/\./_
+DEFINES ~= s/-.*/
+
+unix:DEFINES   += _TTY_POSIX_
+win32:DEFINES  += _TTY_WIN_ QWT_DLL QT_DLL
+

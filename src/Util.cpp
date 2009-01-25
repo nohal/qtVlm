@@ -25,8 +25,9 @@ Copyright (C) 2008 - Jacques Zaninetti - http://zygrib.free.fr
 #include <QStringList>
 #include <QNetworkProxy>
 #include <QUrl>
-#include "Util.h"
 #include <QClipboard>
+
+#include "Util.h"
 
 //---------------------------------------------------------------------
 void Util::setSetting(const QString &key, const QVariant &value)
@@ -274,7 +275,10 @@ void Util::paramProxy(QNetworkAccessManager *inetManager,QString host)
     /* update connection */
 
     int proxyType = Util::getSetting("httpUseProxy", 0).toInt();
+    
+
     QNetworkProxy * inetProxy;
+
     switch(proxyType)
     {
         case 1:
@@ -286,6 +290,7 @@ void Util::paramProxy(QNetworkAccessManager *inetManager,QString host)
                     Util::getSetting("httpProxyUserPassword", "").toString());
             inetManager->setProxy(*inetProxy);
             break;
+#ifdef QT_4_5_0
         case 2:
             /* IE proxy*/
             QList<QNetworkProxy> proxyList =QNetworkProxyFactory::systemProxyForQuery(QNetworkProxyQuery(QUrl(host)));
@@ -296,6 +301,7 @@ void Util::paramProxy(QNetworkAccessManager *inetManager,QString host)
 
             inetManager->setProxy(*inetProxy);
             break;
+#endif
     }
 }
 
@@ -362,8 +368,8 @@ void Util::getCoordFromDistanceAngle(float latitude, float longitude,
     if(!res_lat || !res_lon)
         return;
     
-    latitude = degToRad(lat);
-    longitude = fmod(degToRad(lon), TWO_PI);
+    latitude = degToRad(latitude);
+    longitude = fmod(degToRad(longitude), TWO_PI);
     heading = degToRad(heading);
 
     getCoordFromDistanceAngle2(latitude,longitude,distance,heading,&lat,&lon);
@@ -405,12 +411,29 @@ QString Util::pos2String(int type,float value)
     return str;
 }
 
+
 QString Util::getHost()
 {
+    QString host;
+
+    host="http://";
+            
 #if 1
-       return "http://www.virtual-loup-de-mer.org";
+       return host+"www.virtual-loup-de-mer.org";
 #else
-       return "http://testing.virtual-loup-de-mer.org";
+       return host+"testing.virtual-loup-de-mer.org";
 #endif
 }
 
+void Util::computePos(Projection * proj, float lat, float lon, int * x, int * y)
+{
+    if (proj->isPointVisible(lon, lat)) {      // tour du monde ?
+        proj->map2screen(lon, lat, x, y);
+    }
+    else if (proj->isPointVisible(lon-360, lat)) {
+        proj->map2screen(lon-360, lat, x, y);
+    }
+    else {
+        proj->map2screen(lon+360, lat, x, y);
+    }
+}

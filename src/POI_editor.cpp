@@ -181,7 +181,7 @@ void POI_Editor::btPasteClicked()
         tm.setTimeSpec(Qt::UTC);
         tm.setTime_t(tstamp);
         editTStamp->setDateTime(tm);
-        editTStamp->setTimeSpec(Qt::UTC);
+	editTStamp->setTimeSpec(Qt::UTC);
         chk_tstamp->setCheckState(Qt::Checked);
     }
 

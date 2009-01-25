@@ -18,9 +18,7 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ***********************************************************************/
 
-#include <QNetworkAccessManager>
-#include <QNetworkReply>
-#include <QNetworkProxy>
+#include <QTextStream>
 
 #include "Util.h"
 #include "Pilototo.h"
@@ -49,18 +47,15 @@ Pilototo::Pilototo(QWidget * parent):QDialog(parent)
                              );
 
     /* inet init */
-#if 1
     inetManager = new QNetworkAccessManager(this);
     if(inetManager)
     {
         host = Util::getHost();
         connect(inetManager, SIGNAL(finished(QNetworkReply*)),
             this, SLOT(requestFinished (QNetworkReply*)));
-        updateProxy();
+        Util::paramProxy(inetManager,host);
     }
-#else
-    inetManager = NULL;
-#endif
+
     currentRequest = VLM_NO_REQUEST;
     currentList = NULL;
 }
@@ -316,7 +311,7 @@ void Pilototo::sendPilototo(QStringList * cmdList)
         currentList=cmdList;
         QString page;
         QTextStream(&page) << host
-                    << "/myboat.php?"
+                        << "/myboat.php?"
                         << "pseudo=" << boat->getLogin()
                         << "&password=" << boat->getPass()
                         << "&lang=fr&type=login"
@@ -333,12 +328,12 @@ void Pilototo::sendPilototo(QStringList * cmdList)
     }
 }
 
-void Pilototo::requestFinished (QNetworkReply * inetReply)
+void Pilototo::requestFinished ( QNetworkReply* inetReply)
 {
     QString page;
     QString data;
     if (inetReply->error() != QNetworkReply::NoError) {
-        emit showMessage("Error doing inetGet for Pilototo:" + QString().setNum(inetReply->error()));
+        emit showMessage("Error doing inetGet:" + QString().setNum(inetReply->error()));
         currentRequest=VLM_NO_REQUEST;
     }
     else

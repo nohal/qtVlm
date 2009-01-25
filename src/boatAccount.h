@@ -30,10 +30,36 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <QNetworkAccessManager>
 #include <QNetworkReply>
-#include <QNetworkProxy>
+
 
 #include "Projection.h"
 #include "Polar.h"
+
+class boatAccount;
+
+class Estime : public QWidget
+{Q_OBJECT
+    public:
+        Estime(Projection * proj,QWidget *parentWindow=0);
+        void setBoatPosition(float lat, float lon);
+        void setHeading(float heading);
+        void projectionUpdate(Projection * proj);
+
+    signals:
+        void showMessage(QString msg);
+
+    private:
+        void  paintEvent(QPaintEvent *event);
+        float lat,lon;
+        float heading;
+        int estime;
+        
+        int i,j;
+
+        Projection * proj;
+
+        void updateCoordinates(void);
+};
 
 class boatAccount: public QWidget
 {Q_OBJECT
@@ -98,9 +124,7 @@ class boatAccount: public QWidget
     public slots:
         void projectionUpdated(Projection * proj);
         void requestFinished (QNetworkReply*);
-        //void requestError(QNetworkReply::NetworkError);
-        void requestNeedProxy(QNetworkProxy  proxy,QAuthenticator * authenticator);
-        void requestNeedAuth(QNetworkReply* reply,QAuthenticator* authenticator);
+        
         void selectBoat();
 
     signals:
@@ -114,7 +138,6 @@ class boatAccount: public QWidget
         void setLabelText(QString name);
         void updateBoatData(void);
         void doRequest(int requestCmd);
-        void updateHeadingPoint(void);
         void reloadPolar(void);
         void updateBoatName(void);
 
@@ -122,8 +145,6 @@ class boatAccount: public QWidget
         QString pass;
         bool activated;
         bool changeLocked;
-
-        int estime;
 
         bool selected;
 
@@ -157,7 +178,6 @@ class boatAccount: public QWidget
         QLabel    *label;
         QColor    bgcolor,fgcolor;
         QCursor   enterCursor;
-        int       pi, pj;
         bool      isSync;
 
         QWidget * parent;
@@ -176,8 +196,7 @@ class boatAccount: public QWidget
 
         /* http connection */
         QString host;
-        QBuffer    ioBuffer;
-
+        
         int currentRequest;
 
         QNetworkAccessManager *inetManager;
@@ -192,6 +211,9 @@ class boatAccount: public QWidget
         
         QStringList pilototo;
         bool hasPilototo;
+
+        int estime_i,estime_j;
+        Estime * boat_estime;
 };
 
 #endif

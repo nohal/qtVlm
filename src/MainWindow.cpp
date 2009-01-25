@@ -945,9 +945,9 @@ void MainWindow::slotBoatUpdated(boatAccount * boat)
 
 void MainWindow::slotVLM_Test(void)
 {
-    QRegExp rExp("Lng([^()]+,[^()]+)");
     QString str="var polyline = new GPolyline([\nnew GLatLng(30.733152594875,-29.654266837543),\nnew GLatLng(30.724722363119,-29.671254186304),\nnew GLatLng(30.715564620176,-29.684743348127),\nnew GLatLng(30.706321798934,-29.698356535475),\nnew GLatLng(30.696901017068,-29.712230500628),";
 
+    /*
     if(rExp.indexIn(str)!=-1)
     {
         QStringList list=rExp.capturedTexts();
@@ -957,7 +957,7 @@ void MainWindow::slotVLM_Test(void)
             ++it;
         }
     }
-    
+    */
 }
 
 void MainWindow::showMessage(QString msg) {

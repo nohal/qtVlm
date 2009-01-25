@@ -28,6 +28,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <QPainter>
 #include <QMainWindow>
 
+#include <QNetworkAccessManager>
+#include <QNetworkReply>
+
 #include "boatAccount.h"
 #include "ui_BoardVLM_part1.h"
 #include "ui_BoardVLM_part2.h"

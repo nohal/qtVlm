@@ -24,6 +24,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <QList>
 #include <QMessageBox>
 
+
+#include <QNetworkAccessManager>
+#include <QNetworkReply>
+
 #include "Pilototo_param.h"
 #include "boatAccount.h"
 
@@ -126,7 +130,7 @@ class Pilototo : public QDialog, public Ui::pilototo_ui
         void instructionUpdated(void);
         void boatUpdated(boatAccount * boat);
         void updateTime(void);
-        void requestFinished (QNetworkReply * inetReply);
+        void requestFinished (QNetworkReply*);
 
     private slots:
         void addInstruction(void);

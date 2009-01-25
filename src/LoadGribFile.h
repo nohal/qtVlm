@@ -32,12 +32,13 @@ Download GRIB File on zygrib.free.fr
 #ifndef LOADGRIBFILE_H
 #define LOADGRIBFILE_H
 
+#include <stdlib.h>
+
 #include <QObject>
 #include <QBuffer>
 
 #include <QNetworkAccessManager>
 #include <QNetworkReply>
-#include <QNetworkProxy>
 
 class LoadGribFile : public QObject
 { Q_OBJECT
@@ -53,15 +54,12 @@ class LoadGribFile : public QObject
 
     private:
         QNetworkAccessManager *inetManager;
-        QNetworkProxy * inetProxy;
+
         QNetworkReply * step1_InetReply;
         QNetworkReply * step2_InetReply;
 
         QString host;
         QByteArray arrayContent;
-
-        //int     idFileName;    // id des requêtes
-        int     idGribContent;
 
         QString GribContent;
         QString fileName;
@@ -72,10 +70,8 @@ class LoadGribFile : public QObject
         QString zygriblog;
         QString zygribpwd;
 
-        //QBuffer    ioBuffer;
-
     public slots:
-        void requestFinished (QNetworkReply *);
+        void requestFinished (QNetworkReply*);
         void dataReadProgress (qint64 done, qint64 total );
 
     signals:

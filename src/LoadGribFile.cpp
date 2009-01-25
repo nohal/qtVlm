@@ -47,12 +47,10 @@ LoadGribFile::LoadGribFile()
     assert(inetManager);
 
     host = "http://www.zygrib.org";
+    Util::paramProxy(inetManager,host);
 
-    // connect(http, SIGNAL(done(bool)), this, SLOT(done(bool)));
     connect(inetManager, SIGNAL(finished ( QNetworkReply *)),
             this, SLOT(requestFinished (QNetworkReply *)));
-    /*connect(http, SIGNAL(dataReadProgress (int, int)),
-            this, SLOT(dataReadProgress (int, int)));*/
 }
 //-------------------------------------------------------------------------------
 LoadGribFile::~LoadGribFile () {
@@ -69,7 +67,8 @@ void LoadGribFile::stop () {
 }
 
 //-------------------------------------------------------------------------------
-void LoadGribFile::dataReadProgress (qint64 done , qint64  total) {
+void LoadGribFile::dataReadProgress (qint64 done , qint64  total)
+{
     emit signalGribReadProgress(step, done, total);
 }
 
@@ -81,7 +80,7 @@ void LoadGribFile::getGribFile(
 {
     QString page;
 
-    step1_InetReply=step2_InetReply=NULL;
+    
 
     //----------------------------------------------------------------
     // Etape 1 : Demande la création du fichier Grib (nom en retour)
@@ -108,38 +107,13 @@ void LoadGribFile::getGribFile(
 
     if (parameters != "")
     {
-        int proxyType = Util::getSetting("httpUseProxy", 0).toInt();
-
-        switch(proxyType)
-        {
-            /* 0 => no proxy => nothing to do */
-            case 1:
-                /* basic proxy */
-                inetProxy = new QNetworkProxy(QNetworkProxy::DefaultProxy,
-                        Util::getSetting("httpProxyHostname", "").toString(),
-                        Util::getSetting("httpProxyPort", 0).toInt(),
-                        Util::getSetting("httpProxyUsername", "").toString(),
-                        Util::getSetting("httpProxyUserPassword", "").toString());
-                inetManager->setProxy(*inetProxy);
-                break;
-            case 2:
-                /* IE proxy*/
-                QList<QNetworkProxy> proxyList = QNetworkProxyFactory::systemProxyForQuery(QNetworkProxyQuery(host));
-                QListIterator<QNetworkProxy> i (proxyList);
-
-                inetProxy = &(proxyList.first());
-
-                inetProxy->setUser(Util::getSetting("httpProxyUsername", "").toString());
-                inetProxy->setPassword(Util::getSetting("httpProxyUserPassword", "").toString());
-
-                inetManager->setProxy(*inetProxy);
-                break;
-        }
+        Util::paramProxy(inetManager,host);
 
         step = 1;
         emit signalGribSendMessage(tr("Préparation du fichier sur le serveur"));
         emit signalGribReadProgress(step, 0, 0);
-        QTextStream(&page) << host
+        QTextStream(&page)
+                           << host
                            << "/noaa/getzygribfile.php?"
                            << "but=prepfile"
                            << "&la1=" << floor(y0)
@@ -154,6 +128,7 @@ void LoadGribFile::getGribFile(
                            << "&m=" << zygribpwd
                            << "&client=" << "zyGrib-3.0.0"
                            ;
+        step1_InetReply=step2_InetReply=NULL;
         step1_InetReply=inetManager->get(QNetworkRequest(QUrl(page)));
         connect(step1_InetReply,SIGNAL(downloadProgress(qint64 , qint64)),this, SIGNAL(dataReadProgress (qint64,qint64)));
     }
@@ -161,7 +136,7 @@ void LoadGribFile::getGribFile(
 }
 
 //-------------------------------------------------------------------------------
-void LoadGribFile::requestFinished ( QNetworkReply * inetReply)
+void LoadGribFile::requestFinished ( QNetworkReply* inetReply)
 {
     disconnect(inetReply,SIGNAL(downloadProgress(qint64 , qint64)),this, SIGNAL(dataReadProgress (qint64,qint64)));
     QString page;
@@ -214,14 +189,14 @@ gfs_run_hour:6
             emit signalGribSendMessage(s);
             emit signalGribStartLoadData();
 
-            QTextStream(&page) << host
-                               << "/noaa/313O562/"+fileName;
+            QTextStream(&page)
+                           << host
+                           << "/noaa/313O562/"+fileName;
             //printf("PAGE='%s'\n",qPrintable(page));
 
             step1_InetReply=NULL;
             step2_InetReply=inetManager->get(QNetworkRequest(QUrl(page)));
             connect(step2_InetReply,SIGNAL(downloadProgress(qint64 , qint64)),this, SIGNAL(dataReadProgress (qint64,qint64)));
-
         }
         else {
             emit signalGribLoadError(tr("Pas de fichier créé sur le serveur:")+status);
@@ -247,7 +222,7 @@ gfs_run_hour:6
         for (int i=0; i<20; i++) {
             strsha1 += s.sprintf("%02x", digest[i]);
         }
-        free( digest );
+        free(digest);
         if (strsha1 == checkSumSHA1)
         {
             //--------------------------------------------------

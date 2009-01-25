@@ -85,18 +85,15 @@ boardVLM::boardVLM(QMainWindow * mainWin,QWidget * parent) : QWidget(parent)
     deg_unit_1->setText(str);
 
     /* inet init */
-#if 1
+
     inetManager = new QNetworkAccessManager(this);
     if(inetManager)
     {
         host = Util::getHost();
         connect(inetManager, SIGNAL(finished(QNetworkReply*)),
             this, SLOT(requestFinished (QNetworkReply*)));
-        updateProxy();
+        Util::paramProxy(inetManager,host);
     }
-#else
-    inetManager = NULL;
-#endif
 
 
     currentRequest = VLM_NO_REQUEST;
@@ -442,8 +439,9 @@ void boardVLM::sendCmd(int cmdNum,float  val1,float val2, float val3)
         cmd_val2=val2;
         cmd_val3=val3;
         QString page;
-        QTextStream(&page) << host
-                    << "/myboat.php?"
+        QTextStream(&page)
+                           << host
+                        << "/myboat.php?"
                         << "pseudo=" << currentBoat->getLogin()
                         << "&password=" << currentBoat->getPass()
                         << "&lang=fr&type=login"
@@ -464,7 +462,7 @@ void boardVLM::sendCmd(int cmdNum,float  val1,float val2, float val3)
     }
 }
 
-void boardVLM::requestFinished (QNetworkReply * inetReply)
+void boardVLM::requestFinished ( QNetworkReply* inetReply)
 {
     QString page;
     if (inetReply->error() != QNetworkReply::NoError) {
@@ -527,7 +525,7 @@ void boardVLM::requestFinished (QNetworkReply * inetReply)
                         break;
                 }
                 showMessage("Request: " + page);
-                inetManager->get(QNetworkRequest(QUrl(page)));
+        inetManager->get(QNetworkRequest(QUrl(page)));
                 break;
             case VLM_DO_REQUEST:
                 emit showMessage("Request done");
@@ -629,6 +627,7 @@ boardVLM_part2::boardVLM_part2(QWidget * parent) : QWidget(parent)
     deg_unit_2->setText(str);
     deg_unit_3->setText(str);
     deg_unit_4->setText(str);
+    deg_unit_5->setText(str);
 
     WP_conv_lat->setText("");
     WP_conv_lon->setText("");
@@ -648,6 +647,8 @@ void boardVLM_part2::boatUpdated(boatAccount * boat)
     int nbS,j,h,m;
     QString txt;
 
+    float angle_val;
+        
     timer->stop();
 
     emit showMessage(QString("WP: lat=%1 lon=%2 @%3").arg(WPLat).arg(WPLon).arg(WPHd));
@@ -711,6 +712,16 @@ void boardVLM_part2::boatUpdated(boatAccount * boat)
     ortho->setText(QString().setNum(boat->getOrtho()));
     loxo->setText(QString().setNum(boat->getLoxo()));
     vmg->setText(QString().setNum(boat->getVmg()));
+    
+    angle_val=boat->getOrtho()-boat->getWindDir();    
+    if(qAbs(angle_val)>180)
+    {
+	if(angle_val<0)
+	    angle_val=360+angle_val;
+	else
+	    angle_val=angle_val-360;
+    }
+    angle->setText(QString().setNum(angle_val));
 
     QDateTime lastVac_date;
     lastVac_date.setTime_t(boat->getPrevVac());

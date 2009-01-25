@@ -36,6 +36,8 @@ Copyright (C) 2008 - Jacques Zaninetti - http://zygrib.free.fr
 #include <QLocale>
 #include <QNetworkAccessManager>
 
+#include "Projection.h"
+
 #define PI     M_PI
 #define PI_2   M_PI_2
 #define PI_4   M_PI_4
@@ -86,6 +88,7 @@ class Util
              float distance,float heading, float * res_lat,float * res_lon);
     static QString pos2String(int type,float value);
     static QString getHost();
+    static void computePos(Projection * proj, float lat, float lon, int * x, int * y);
     
     //-------------------------------------------------
     template <typename T>

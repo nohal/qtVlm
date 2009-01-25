@@ -67,31 +67,40 @@ DialogProxy::DialogProxy() : QDialog()
     lineProxyUsername->setText(Util::getSetting("httpProxyUsername", "").toString());
     lineProxyUserPassword->setText(Util::getSetting("httpProxyUserPassword", "").toString());
     
-    int usep = Util::getSetting("httpUseProxy", 0).toInt(); 
+    int usep = Util::getSetting("httpUseProxy", 0).toInt();
+    if(usep==2) usep=1;
     switch(usep)
     {
        case 0:
             btUseProxy->setChecked(false);
             btDontUseProxy->setChecked(true);
+#ifdef QT_4_5_0
             btUseIECfg->setChecked(false);
+#endif
             break;
        case 1:
             btUseProxy->setChecked(true);
             btDontUseProxy->setChecked(false);
+#ifdef QT_4_5_0
             btUseIECfg->setChecked(false);
+#endif
             break;
+#ifdef QT_4_5_0
        case 2:
             btUseProxy->setChecked(false);
             btDontUseProxy->setChecked(false);
             btUseIECfg->setChecked(true);
             break;
+#endif
     }
     slotUseProxyChanged();
     
     //===============================================================
     connect(btUseProxy, SIGNAL(clicked()), this, SLOT(slotUseProxyChanged()));
     connect(btDontUseProxy, SIGNAL(clicked()), this, SLOT(slotUseProxyChanged()));
+#ifdef QT_4_5_0
     connect(btUseIECfg, SIGNAL(clicked()), this, SLOT(slotUseProxyChanged()));
+#endif
     connect(btCancel, SIGNAL(clicked()), this, SLOT(slotBtCancel()));
     connect(btOK, SIGNAL(clicked()), this, SLOT(slotBtOK()));
 }
@@ -100,7 +109,11 @@ DialogProxy::DialogProxy() : QDialog()
 void DialogProxy::slotUseProxyChanged()
 {
     bool usep = btUseProxy->isChecked();
+#ifdef QT_4_5_0
     bool useIe = btUseIECfg->isChecked();
+#else
+    bool useIe = false;
+#endif
     lineProxyHostname->setEnabled(usep);
     lineProxyPort->setEnabled(usep);
     lineProxyUsername->setEnabled(usep|useIe);
@@ -110,7 +123,12 @@ void DialogProxy::slotUseProxyChanged()
 //-------------------------------------------------------------------------------
 void DialogProxy::slotBtOK()
 {
-    Util::setSetting("httpUseProxy", btUseProxy->isChecked()?1:btUseIECfg->isChecked()?2:0);
+#ifdef QT_4_5_0
+    int proxyType=btUseProxy->isChecked()?1:btUseIECfg->isChecked()?2:0;
+#else
+    int proxyType=btUseProxy->isChecked()?1:0;
+#endif
+    Util::setSetting("httpUseProxy",proxyType);
     Util::setSetting("httpProxyHostname", lineProxyHostname->text());
     Util::setSetting("httpProxyPort", lineProxyPort->text());
     Util::setSetting("httpProxyUsername", lineProxyUsername->text());
@@ -141,10 +159,12 @@ QFrame *DialogProxy::createFrameGui(QWidget *parent)
     grp->addButton(btDontUseProxy);
     lay->addWidget( btDontUseProxy,    lig,0,   1, 2);
     lig ++;
+#ifdef QT_4_5_0
     btUseIECfg = new QRadioButton(tr("Utilise les parametres de IE"), frm);
     grp->addButton(btUseIECfg);
     lay->addWidget(btUseIECfg,    lig,0,   1, 2);
     lig++;
+#endif
     btUseProxy     = new QRadioButton(tr("Connexion à travers un proxy"), frm);
     grp->addButton(btUseProxy);
     lay->addWidget( btUseProxy,    lig,0,   1, 2);
