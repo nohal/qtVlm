@@ -323,7 +323,7 @@ void Pilototo::sendPilototo(QStringList * cmdList)
     }
     else
     {
-        emit showMessage(QString("error can't send pilototo manager=%1 current state:%2 nb instr:%3").arg((int)inetManager)
+        emit showMessage(QString("error can't send pilototo (current state:%2 nb instr:%3)")
                                         .arg(currentRequest).arg(cmdList->count()));
     }
 }

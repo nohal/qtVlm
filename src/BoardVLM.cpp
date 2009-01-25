@@ -454,11 +454,7 @@ void boardVLM::sendCmd(int cmdNum,float  val1,float val2, float val3)
     }
     else
     {
-        emit showMessage(QString("error sendCmd %1 %2 %3").arg((int)inetManager)
-                                        .arg(currentRequest)
-                                        .arg((int)currentBoat)
-
-                        );
+        emit showMessage(QString("error sendCmd %2").arg(currentRequest));
     }
 }
 
@@ -549,7 +545,6 @@ void boardVLM::chkResult(void)
     {
         case VLM_CMD_HD:
             data=currentBoat->getHeading();
-            //data=((float)((int)(data*10)))/10;
             showMessage(QString("HD cur=%1 should be %2 pilot %3").arg(data)
                     .arg(cmd_val1).arg(currentBoat->getPilotType()));
             if(data == cmd_val1 && currentBoat->getPilotType() == 1)
@@ -559,7 +554,6 @@ void boardVLM::chkResult(void)
             data = currentBoat->getTWA();
             val=currentBoat->getHeading()-currentBoat->getWindDir();
             calcAngleSign(val,data);
-            //data=((float)((int)(data*10)))/10;
 
             showMessage(QString("ANG cur=%1 should be %2 pilot %3").arg(data)
                     .arg(cmd_val1).arg(currentBoat->getPilotType()));
