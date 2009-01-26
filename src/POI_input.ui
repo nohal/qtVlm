@@ -6,7 +6,7 @@
     <x>0</x>
     <y>0</y>
     <width>290</width>
-    <height>279</height>
+    <height>276</height>
    </rect>
   </property>
   <property name="windowTitle" >
@@ -25,7 +25,23 @@
     <enum>Qt::Horizontal</enum>
    </property>
    <property name="standardButtons" >
-    <set>QDialogButtonBox::Cancel|QDialogButtonBox::NoButton|QDialogButtonBox::Ok</set>
+    <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
+   </property>
+  </widget>
+  <widget class="QPlainTextEdit" name="POI_list" >
+   <property name="geometry" >
+    <rect>
+     <x>4</x>
+     <y>5</y>
+     <width>281</width>
+     <height>231</height>
+    </rect>
+   </property>
+   <property name="toolTip" >
+    <string>Coller ou inserer des POI au format LAT,LON@WPH</string>
+   </property>
+   <property name="plainText" >
+    <string/>
    </property>
   </widget>
   <widget class="QLabel" name="nbValid" >
@@ -39,16 +55,6 @@
    </property>
    <property name="text" >
     <string>0/0 valid WP</string>
-   </property>
-  </widget>
-  <widget class="QTextEdit" name="POI_list" >
-   <property name="geometry" >
-    <rect>
-     <x>0</x>
-     <y>10</y>
-     <width>281</width>
-     <height>221</height>
-    </rect>
    </property>
   </widget>
  </widget>
@@ -86,5 +92,24 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>POI_list</sender>
+   <signal>textChanged()</signal>
+   <receiver>POI_input_ui</receiver>
+   <slot>txtHasChanged()</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>104</x>
+     <y>171</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>60</x>
+     <y>277</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
+ <slots>
+  <slot>txtHasChanged()</slot>
+ </slots>
 </ui>

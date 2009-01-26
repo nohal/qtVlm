@@ -31,6 +31,7 @@ Copyright (C) 2008 - Jacques Zaninetti - http://zygrib.free.fr
 #include <set>
 
 #include "boatAccount.h"
+#include "DialogLoadGrib.h"
 
 class MenuBar : public QMenuBar
 {
@@ -66,9 +67,6 @@ public:
     QAction *acFile_Quit;
 
     QAction *acView_WindColors;
-    QAction *acView_RainColors;
-    QAction *acView_CloudColors;
-    QAction *acView_HumidColors;
     QAction *acView_ColorMapSmooth;
 
     QAction *acView_WindArrow;
@@ -85,7 +83,10 @@ public:
         QAction *acView_IsobarsStep10;
     QAction *acView_IsobarsLabels;
     QAction *acView_PressureMinMax;
+
+#ifdef HAS_TEMP
     QAction *acView_TemperatureLabels;
+#endif
 
     QAction *acView_GribGrid;
 

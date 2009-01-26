@@ -41,7 +41,7 @@ Copyright (C) 2008 - Jacques Zaninetti - http://zygrib.free.fr
 #include "Util.h"
 #include "Orthodromie.h"
 #include "Version.h"
-
+#include "DialogLoadGrib.h"
 #include "boatAccount_dialog.h"
 #include "BoardVLM.h"
 
@@ -55,19 +55,16 @@ void MainWindow::InitActionsStatus()
     menuBar->acMap_Orthodromie->setChecked(Util::getSetting("showOrthodromie", false).toBool());
 
     menuBar->acView_WindColors->setChecked(Util::getSetting("showWindColorMap", true).toBool());
-    menuBar->acView_RainColors->setChecked(Util::getSetting("showRainColorMap", false).toBool());
-    menuBar->acView_CloudColors->setChecked(Util::getSetting("showCloudColorMap", false).toBool());
-    menuBar->acView_HumidColors->setChecked(Util::getSetting("showHumidColorMap", false).toBool());
-
     menuBar->acView_ColorMapSmooth->setChecked(Util::getSetting("colorMapSmooth", true).toBool());
     menuBar->acView_WindArrow->setChecked(Util::getSetting("showWindArrows", true).toBool());
     menuBar->acView_Barbules->setChecked(Util::getSetting("showBarbules", true).toBool());
-
     menuBar->setIsobarsStep(Util::getSetting("isobarsStep", 2).toInt());
     terre->setIsobarsStep(Util::getSetting("isobarsStep", 2).toInt());
 
     menuBar->acView_GribGrid->setChecked(Util::getSetting("showGribGrid", false).toBool());
+#ifdef HAS_TEMP
     menuBar->acView_TemperatureLabels->setChecked(Util::getSetting("showTemperatureLabels", false).toBool());
+#endif
 
     menuBar->acView_Isobars->setChecked(Util::getSetting("showIsobars", true).toBool());
     menuBar->acView_IsobarsLabels->setChecked(Util::getSetting("showIsobarsLabels", false).toBool());
@@ -177,12 +174,6 @@ void MainWindow::connectSignals()
     //-------------------------------------------------------
     connect(mb->acView_WindColors, SIGNAL(triggered(bool)),
             this,  SLOT(slotWindColors(bool)));
-    connect(mb->acView_RainColors, SIGNAL(triggered(bool)),
-            this,  SLOT(slotRainColors(bool)));
-    connect(mb->acView_CloudColors, SIGNAL(triggered(bool)),
-            this,  SLOT(slotCloudColors(bool)));
-    connect(mb->acView_HumidColors, SIGNAL(triggered(bool)),
-            this,  SLOT(slotHumidColors(bool)));
 
     connect(mb->acView_ColorMapSmooth, SIGNAL(triggered(bool)),
             terre,  SLOT(setColorMapSmooth(bool)));
@@ -193,10 +184,10 @@ void MainWindow::connectSignals()
             this,  SLOT(slotWindArrows(bool)));
     connect(mb->acView_Barbules, SIGNAL(triggered(bool)),
             terre,  SLOT(setBarbules(bool)));
-
+#ifdef HAS_TEMP
     connect(mb->acView_TemperatureLabels, SIGNAL(triggered(bool)),
             terre,  SLOT(slotTemperatureLabels(bool)));
-
+#endif
     connect(mb->acView_Isobars, SIGNAL(triggered(bool)),
             terre,  SLOT(setDrawIsobars(bool)));
     connect(mb->acView_GroupIsobarsStep, SIGNAL(triggered(QAction *)),
@@ -783,43 +774,9 @@ void MainWindow::slotWindArrows(bool b)
 //-------------------------------------------------
 void MainWindow::slotWindColors(bool b)
 {
-    if (b==true) {
-        menuBar->acView_RainColors->setChecked(false);
-        menuBar->acView_CloudColors->setChecked(false);
-        menuBar->acView_HumidColors->setChecked(false);
-    }
     terre->setDrawWindColors(b);
 }
-//-------------------------------------------------
-void MainWindow::slotRainColors(bool b)
-{
-    if (b==true) {
-        menuBar->acView_WindColors->setChecked(false);
-        menuBar->acView_CloudColors->setChecked(false);
-        menuBar->acView_HumidColors->setChecked(false);
-    }
-    terre->setDrawRainColors(b);
-}
-//-------------------------------------------------
-void MainWindow::slotCloudColors(bool b)
-{
-    if (b==true) {
-        menuBar->acView_WindColors->setChecked(false);
-        menuBar->acView_RainColors->setChecked(false);
-        menuBar->acView_HumidColors->setChecked(false);
-    }
-    terre->setDrawCloudColors(b);
-}
-//-------------------------------------------------
-void MainWindow::slotHumidColors(bool b)
-{
-    if (b==true) {
-        menuBar->acView_WindColors->setChecked(false);
-        menuBar->acView_RainColors->setChecked(false);
-        menuBar->acView_CloudColors->setChecked(false);
-    }
-    terre->setDrawHumidColors(b);
-}
+
 //-------------------------------------------------
 void MainWindow::statusBar_showSelectedZone()
 {

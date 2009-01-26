@@ -55,15 +55,6 @@ MenuBar::MenuBar(QWidget *parent)
 
         acView_WindColors = addActionCheck(menuView, tr("Carte du vent"), tr(""),
                     tr(""));
-        acView_RainColors = addActionCheck(menuView, tr("Carte des précipitations"), tr(""),
-                    tr(""));
-        acView_CloudColors = addActionCheck(menuView, tr("Couverture nuageuse"), tr(""),
-                    tr(""));
-        acView_HumidColors = addActionCheck(menuView, tr("Carte de l'humidité relative"), tr(""),
-                    tr(""));
-
-        //--------------------------------
-        menuView->addSeparator();
         acView_ColorMapSmooth = addActionCheck(menuView, tr("Dégradés de couleurs"), tr(""),
                     tr(""));
         acView_WindArrow = addActionCheck(menuView, tr("Flèches du vent"), tr(""),
@@ -71,9 +62,11 @@ MenuBar::MenuBar(QWidget *parent)
         acView_Barbules = addActionCheck(menuView, tr("Barbules"), tr(""),
                     tr("Afficher les barbules sur les flèches de vent"));
         //--------------------------------
+#ifdef HAS_TEMP
         menuView->addSeparator();
         acView_TemperatureLabels = addActionCheck(menuView, tr("Température"), tr("Ctrl+T"),
                     tr(""));
+#endif
         //--------------------------------
         menuView->addSeparator();
         acView_Isobars = addActionCheck(menuView, tr("Isobares"), tr(""),

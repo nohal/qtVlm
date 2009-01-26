@@ -84,10 +84,6 @@ class MainWindow: public QMainWindow
         void slotDateGribChanged_prev();
 
         void slotWindColors(bool b);
-        void slotRainColors(bool b);
-        void slotCloudColors(bool b);
-        void slotHumidColors(bool b);
-
         void slotWindArrows(bool b);
 
         void slotOptions_Language();

@@ -37,6 +37,8 @@ Copyright (C) 2008 - Jacques Zaninetti - http://zygrib.free.fr
 #include <QFileDialog>
 #include <QTime>
 
+//#define HAS_TEMP
+
 #include "LoadGribFile.h"
 
 class DialogLoadGrib : public QDialog
@@ -77,10 +79,9 @@ class DialogLoadGrib : public QDialog
 
         QCheckBox *chkWind;
         QCheckBox *chkPressure;
-        QCheckBox *chkRain;
-        QCheckBox *chkCloud;
+#ifdef HAS_TEMP
         QCheckBox *chkTemp;
-        QCheckBox *chkHumid;
+#endif
 
         QPushButton *btOK;
         QPushButton *btCancel;
@@ -93,7 +94,10 @@ class DialogLoadGrib : public QDialog
 
         float   xmin,ymin,xmax,ymax,resolution;
         int     interval,days;
-        bool    rain, cloud, pressure, wind, temp, humid;
+        bool    pressure, wind;
+#ifdef HAS_TEMP
+	bool    temp;
+#endif
         void    updateParameters();
 
 

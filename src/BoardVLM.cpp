@@ -760,7 +760,6 @@ void boardVLM_part2::setChangeStatus(bool status)
     btn_clear->setEnabled(st);
     btn_saveWP->setEnabled(st);
     btn_paste->setEnabled(st);
-    btn_paste_2->setEnabled(st);
     goPilotOrtho->setEnabled(st);
     WP_heading->setEnabled(st);
     WP_lat->setEnabled(st);
