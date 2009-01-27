@@ -77,6 +77,7 @@ class MainWindow: public QMainWindow
         void slotGribFileReceived(QString fileName);
 
         void slotMouseClicked(QMouseEvent * e);
+        void slotMouseDblClicked(QMouseEvent * e);
         void slotMouseMoved(QMouseEvent * e);
 
         void slotDateGribChanged(int id);
@@ -107,7 +108,7 @@ class MainWindow: public QMainWindow
         void slotPOIinput(void);
         void slotDelPOIs(void);
         void slotBoatSave(void);
-		void slotPOIimport(void);
+        void slotPOIimport(void);
         void slotBoatLockStatusChanged(boatAccount*,bool);
         void slotPilototo(void);
 

@@ -97,7 +97,7 @@ void boatAccount::updateProxy(void)
     Util::paramProxy(inetManager,host);
 #warning bad fix: we are forcing a new request
     currentRequest=VLM_NO_REQUEST;
-    
+
     doRequest(VLM_REQUEST_IDU);
 }
 
@@ -423,10 +423,18 @@ void  boatAccount::mousePressEvent(QMouseEvent * e)
         // Right clic : Edit this Point Of Interest
         popup->exec(QCursor::pos());
     }
+    else if(e->button() == Qt::LeftButton)
+    {
+        selectBoat();
+    }
 }
 
-void  boatAccount::mouseDoubleClickEvent(QMouseEvent *)
+void  boatAccount::mouseDoubleClickEvent(QMouseEvent * e)
 {
+    if(e->button() == Qt::LeftButton)
+    {
+        selectBoat();
+    }
 }
 
 void  boatAccount::mouseReleaseEvent(QMouseEvent *)
@@ -469,11 +477,11 @@ void boatAccount::reloadPolar(void)
 {
     if(polarData!=NULL)
     {
-	/* are we trying to load the same polar ? */
+    /* are we trying to load the same polar ? */
         delete polarData;
         polarData=NULL;
     }
-    
+
     if(forcePolar)
     {
         if(polarName.isEmpty())
@@ -500,7 +508,7 @@ void boatAccount::setPolar(bool state,QString polar)
 {
     this->polarName=polar;
     forcePolar=state;
-    
+
     reloadPolar();
 }
 
@@ -553,7 +561,7 @@ void Estime::updateCoordinates(void)
 {
     float tmp_lat,tmp_lon;
     int org_i,org_j,e_i,e_j;
-    
+
     Util::getCoordFromDistanceAngle(lat,lon,estime,heading,&tmp_lat,&tmp_lon);
     Util::computePos(proj,tmp_lat,tmp_lon,&e_i,&e_j);
     showMessage(QString("i=%1, j=%2, e_i=%3, e_j=%4").arg(i).arg(j).arg(e_i).arg(e_j));
@@ -569,7 +577,7 @@ void Estime::updateCoordinates(void)
 void Estime::paintEvent(QPaintEvent *)
 {
     QPainter pnt(this);
-    
+
     int x=pos().x();
     int y=pos().y();
     int w=width();
@@ -578,7 +586,7 @@ void Estime::paintEvent(QPaintEvent *)
     showMessage(QString("Estime x=%1, y=%2, w=%3, h=%4").arg(x).arg(y).arg(w).arg(h));
 
     pnt.setPen(QPen(Qt::black, 12));
-    
+
     if((i==x && j==y) || (i==(x+w) && j==(y+h)))
     {
         showMessage("draw type 1");

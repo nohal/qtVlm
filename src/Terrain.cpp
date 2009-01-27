@@ -698,7 +698,7 @@ void  Terrain::keyPressEvent (QKeyEvent *e)
         }
     }
 
-    
+
 }
 void  Terrain::keyReleaseEvent (QKeyEvent *e)
 {
@@ -760,8 +760,12 @@ void Terrain::mouseReleaseEvent (QMouseEvent * e) {
         emit mouseClicked(e);
         //QMessageBox::information (NULL,"after","test 3");
     }
-    }
+}
 
+void Terrain::mouseDoubleClickEvent(QMouseEvent * event)
+{
+    emit mouseDblClicked(event);
+}
 
 //---------------------------------------------------------
 void Terrain::mouseMoveEvent (QMouseEvent * e) {

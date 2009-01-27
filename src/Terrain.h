@@ -101,6 +101,7 @@ public slots :
 signals:
     void selectionOK(float x0, float y0, float x1, float y1);
     void mouseClicked(QMouseEvent * e);
+    void mouseDblClicked(QMouseEvent * e);
     void mouseMoved(QMouseEvent * e);
     void showMessage(QString);
 
@@ -135,6 +136,7 @@ private:
 
     void  mousePressEvent (QMouseEvent * e);
     void  mouseReleaseEvent (QMouseEvent * e);
+    void  mouseDoubleClickEvent(QMouseEvent * event);
     void  mouseMoveEvent (QMouseEvent * e);
     void  enterEvent (QEvent * e);
     void  leaveEvent (QEvent * e);

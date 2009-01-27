@@ -225,7 +225,7 @@ void MainWindow::connectSignals()
         connect(mb->acVLMTest, SIGNAL(triggered()), this, SLOT(slotVLM_Test()));
     connect(mb->acPOIinput, SIGNAL(triggered()), this, SLOT(slotPOIinput()));
     connect(mb->acPilototo, SIGNAL(triggered()), this, SLOT(slotPilototo()));
-    
+
     //connect(vlmData,SIGNAL(showMessage(QString)),this,SLOT(slotShowMessage(QString)));
 
     connect(mb->acPOIimport, SIGNAL(triggered()), this, SLOT(slotPOIimport()));
@@ -263,6 +263,8 @@ void MainWindow::connectSignals()
             this,  SLOT(slotMouseClicked(QMouseEvent *)));
     connect(terre, SIGNAL(mouseMoved(QMouseEvent *)),
             this,  SLOT(slotMouseMoved(QMouseEvent *)));
+    connect(terre,SIGNAL(mouseDblClicked(QMouseEvent *)),
+            this,  SLOT(slotMouseDblClicked(QMouseEvent *)));
     //-----------------------------------------------------------
     connect(&dialogLoadGrib, SIGNAL(signalGribFileReceived(QString)),
             this,  SLOT(slotGribFileReceived(QString)));
@@ -394,7 +396,7 @@ MainWindow::MainWindow(int w, int h, QWidget *parent)
               this,SLOT(slotAddPOI(float,float,float,int,bool)));
 
       poi_editor=new POI_Editor(this,terre);
-      
+
       pilototo = new Pilototo(terre);
       connect(this,SIGNAL(editInstructions()),
               pilototo,SLOT(editInstructions()));
@@ -850,6 +852,18 @@ void MainWindow::slotMouseMoved(QMouseEvent * e) {
     }
 }
 
+void MainWindow::slotMouseDblClicked(QMouseEvent * e)
+{
+    int clicX = e->x();
+    int clicY = e->y();
+    float lon, lat;
+    if(e->button()==Qt::LeftButton)
+    {
+        proj->screen2map(clicX,clicY, &lon, &lat);
+        emit newPOI(lon,lat,proj);
+    }
+}
+
 void MainWindow::slotVLM_ParamBoat(void) {
 
     boatAcc->initList(acc_list);
@@ -956,7 +970,7 @@ void MainWindow::slotSelectBoat(boatAccount* newSelect)
             if(acc_list[i]->getStatus())
                 cnt++;
         }
-        
+
     }
 }
 
@@ -1002,7 +1016,7 @@ void MainWindow::slotAccountListUpdated(void)
             acc_list[i]->getData();
             break;
         }
-        
+
 }
 
 void MainWindow::slotAddPOI(float lat,float lon, float wph,int timestamp,bool useTimeStamp)
