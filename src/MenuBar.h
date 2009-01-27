@@ -45,6 +45,7 @@ public:
 
     void updateListeDates(std::set<time_t> *setDates);
     time_t  getDateGribById(int id);
+    int  getNearestDateGrib(time_t tm);
 
     void getBoatList(QList<boatAccount*> & acc_list);
 
@@ -145,6 +146,7 @@ public:
     QComboBox *cbDatesGrib;      // Choix de la date à afficher
     QAction *acDatesGrib_prev;
     QAction *acDatesGrib_next;
+    QAction *acDatesGrib_now;
 
 
     QComboBox *cbBoatList;

@@ -83,6 +83,7 @@ class MainWindow: public QMainWindow
         void slotDateGribChanged(int id);
         void slotDateGribChanged_next();
         void slotDateGribChanged_prev();
+	void slotDateGribChanged_now();
 
         void slotWindColors(bool b);
         void slotWindArrows(bool b);

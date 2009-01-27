@@ -246,6 +246,8 @@ void MainWindow::connectSignals()
             this, SLOT(slotDateGribChanged_next()));
     connect(mb->acDatesGrib_prev, SIGNAL(triggered()),
             this, SLOT(slotDateGribChanged_prev()));
+    connect(mb->acDatesGrib_now, SIGNAL(triggered()),
+            this, SLOT(slotDateGribChanged_now()));
 
 
     //-------------------------------------
@@ -339,6 +341,7 @@ MainWindow::MainWindow(int w, int h, QWidget *parent)
     toolBar->addSeparator();
     toolBar->addWidget(menuBar->cbDatesGrib);
     toolBar->addAction(menuBar->acDatesGrib_prev);
+    toolBar->addAction(menuBar->acDatesGrib_now);
     toolBar->addAction(menuBar->acDatesGrib_next);
     toolBar->addSeparator();
     toolBar->addAction(menuBar->acMap_Zoom_In);
@@ -458,7 +461,8 @@ void MainWindow::openGribFile(QString fileName, bool zoom)
         setWindowTitle(tr("qtVlm - ")+ QFileInfo(fileName).fileName());
         std::set<time_t> *listeDates = terre->getGribPlot()->getListDates();
         menuBar->updateListeDates(listeDates);
-        slotDateGribChanged(0);
+        //slotDateGribChanged(0);
+	slotDateGribChanged_now();
         gribFileName = fileName;
     }
     else {
@@ -740,6 +744,7 @@ void MainWindow::slotFile_Info_GRIB()
 void MainWindow::slotDateGribChanged(int id)
 {
     time_t tps = menuBar->getDateGribById(id);
+    showMessage(QString("grib date: %1").arg(tps));
     //printf("id= %d : %s\n",id, qPrintable(formatDateTimeLong(tps)));
     terre->setCurrentDate( tps );
 
@@ -747,6 +752,16 @@ void MainWindow::slotDateGribChanged(int id)
     menuBar->acDatesGrib_prev->setEnabled( (id > 0) );
     menuBar->acDatesGrib_next->setEnabled( (id < menuBar->cbDatesGrib->count()-1) );
 }
+//-------------------------------------------------
+void MainWindow::slotDateGribChanged_now()
+{
+    time_t tps=QDateTime::currentDateTime().toUTC().toTime_t();
+    int id=menuBar->getNearestDateGrib(tps);
+    menuBar->cbDatesGrib->setCurrentIndex(id);
+    slotDateGribChanged(id);
+    
+}
+
 //-------------------------------------------------
 void MainWindow::slotDateGribChanged_next()
 {

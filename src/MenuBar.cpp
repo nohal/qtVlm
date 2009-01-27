@@ -223,6 +223,8 @@ MenuBar::MenuBar(QWidget *parent)
     acDatesGrib_next = addAction( NULL,
             tr("Prévision suivante [page suiv]"),tr("PgDown"),tr(""),"img/1rightarrow.png");
 
+    acDatesGrib_now = addAction( NULL,tr("Now"),tr(""),tr(""),"");
+
     cbDatesGrib = new QComboBox();
     cbDatesGrib->setSizeAdjustPolicy(QComboBox::AdjustToContents);
 
@@ -352,6 +354,15 @@ time_t  MenuBar::getDateGribById(int id)
         return listGribDates[id];
     else
         return (time_t)0;
+}
+
+int MenuBar::getNearestDateGrib(time_t tm)
+{
+    int id=0;
+    if(listGribDates[0]>tm) return 0;
+    while((uint)id<listGribDates.size() && listGribDates[id] < tm) id++;
+    if(listGribDates[id] < tm) return id;
+    else return id-1;
 }
 
 //------------- VLM part
