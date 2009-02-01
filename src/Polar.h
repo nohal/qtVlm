@@ -32,6 +32,7 @@ class Polar : public QObject
         Polar(QString fname,QWidget *parentWindow);
 
         void setPolarName(QString fname);
+        QString getName() { if(loaded) return name; else return ""; }
         float getSpeed(float windSpeed, float angle);
 
     private:

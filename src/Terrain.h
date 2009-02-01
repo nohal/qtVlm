@@ -34,6 +34,7 @@ Copyright (C) 2008 - Jacques Zaninetti - http://zygrib.free.fr
 #include "GisReader.h"
 #include "GribPlot.h"
 #include "Projection.h"
+#include "boatAccount.h"
 
 class Terrain : public QWidget
 {
@@ -52,6 +53,8 @@ public:
 
     bool  getSelectedRectangle (float *x0, float *y0, float *x1, float *y1);
     bool  getSelectedLine      (float *x0, float *y0, float *x1, float *y1);
+    
+    void setBoatList(QList<boatAccount*> & boat_list) {this->boat_list=&boat_list; update();}
 
 
 
@@ -191,6 +194,10 @@ private:
     bool pleaseWait;     // long task in progress
 
     bool drawingMap;
+    
+    
+    QList<boatAccount*> * boat_list;
+    void drawEstime(QPainter &pnt);
 
 };
 

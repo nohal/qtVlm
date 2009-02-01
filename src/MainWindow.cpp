@@ -382,6 +382,8 @@ MainWindow::MainWindow(int w, int h, QWidget *parent)
       poi_input_dialog = new POI_input(terre);
       menuBar->getBoatList(acc_list);
 
+      terre->setBoatList(acc_list);
+
       VLMBoard = new boardVLM(this);
       connect(this,SIGNAL(boatHasUpdated(boatAccount*)),
               VLMBoard,SLOT(boatUpdated(boatAccount*)));

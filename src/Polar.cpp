@@ -73,8 +73,9 @@ void Polar::setPolarName(QString fname)
         clearPolar();
     
     loaded=false;
-    fname = "polar/"+fname+".pol";
     name=fname;
+    fname = "polar/"+fname+".pol";
+    
     QFile file(fname);
     if (!file.open(QIODevice::ReadOnly | QIODevice::Text ))
     {
@@ -177,7 +178,7 @@ void Polar::setPolarName(QString fname)
         }
         polar_data.append(dataLine);
     }
-
+    loaded=true;
     file.close();
 }
 

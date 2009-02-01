@@ -30,6 +30,7 @@ Copyright (C) 2008 - Jacques Zaninetti - http://zygrib.free.fr
 #include <QPaintEvent>
 #include <QPainter>
 #include <QMessageBox>
+#include <QDebug>
 
 #include "Terrain.h"
 #include "Orthodromie.h"
@@ -284,7 +285,7 @@ void Terrain::draw_OrthodromieSegment(QPainter &pnt,
                             int recurs
                             )
 {
-    if (recurs > 100)
+    if (recurs > 20) // this is bugging under win :100)
         return;
     Orthodromie *ortho;
     int i0,j0, i1,j1, im,jm;
@@ -339,6 +340,45 @@ void Terrain::draw_OrthodromieSegment(QPainter &pnt,
 void Terrain::draw_Orthodromie(QPainter &pnt)
 {
     draw_OrthodromieSegment(pnt, selX0, selY0, selX1, selY1);
+}
+
+void Terrain::drawEstime(QPainter &pnt)
+{
+    QListIterator<boatAccount*> i (*boat_list);
+    
+    QPen cur_pen=pnt.pen();
+    QPen penLine1(QColor(Qt::black),1,Qt::DotLine);
+    penLine1.setWidthF(1.6);
+    QPen penLine2(QColor(Qt::darkMagenta),1,Qt::DotLine);
+    penLine2.setWidthF(1.6);   
+
+    int estime = Util::getSetting("estimeLen",100).toInt();
+
+    while(i.hasNext())
+    {
+        boatAccount * boat = i.next();
+        if(boat->getStatus())
+        {
+            float lat,lon,tmp_lat,tmp_lon,WPLat,WPLon;            
+            lat=boat->getLat();
+            lon=boat->getLon();
+            WPLat=boat->getWPLat();
+            WPLon=boat->getWPLon();
+            Util::getCoordFromDistanceAngle(lat,lon,estime,boat->getHeading(),&tmp_lat,&tmp_lon);
+            pnt.setPen(penLine1);
+            draw_OrthodromieSegment(pnt, lon,lat,tmp_lon,tmp_lat);
+            /* draw ortho to wp */
+            if(WPLat != 0 && WPLon != 0)
+            {
+                pnt.setPen(penLine2);
+                draw_OrthodromieSegment(pnt, lon,lat,WPLon,WPLat);
+            }
+            /*qWarning() << "boat: " << boat->getLogin() 
+                << "(" << lat << "," << lon << ") (" 
+                << tmp_lat << "," << tmp_lon << ")";*/
+        }
+    }
+    pnt.setPen(cur_pen);
 }
 
 //---------------------------------------------------------
@@ -922,6 +962,7 @@ void Terrain::paintEvent(QPaintEvent * /*event*/)
                 draw_Orthodromie(pnt);
             }
         }
+        drawEstime(pnt);
         drawingMap=false;
     }
 

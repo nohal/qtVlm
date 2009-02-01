@@ -48,8 +48,6 @@ boatAccount::boatAccount(QString login, QString pass, bool activated,Projection 
     alias="";
     useAlias=false;
 
-    boat_estime = new Estime(proj,parent);
-
     this->proj = proj;
     connect(proj, SIGNAL(projectionUpdated(Projection *)), this,
             SLOT(projectionUpdated(Projection *)) );
@@ -61,10 +59,7 @@ boatAccount::boatAccount(QString login, QString pass, bool activated,Projection 
     createWidget();
 
     if(activated)
-    {
         show();
-        boat_estime->show();
-    }
 
     connect(ac_select,SIGNAL(triggered()),this,SLOT(selectBoat()));
     connect(this,SIGNAL(boatSelected(boatAccount*)),main,SLOT(slotSelectBoat(boatAccount*)));
@@ -227,7 +222,22 @@ void boatAccount::requestFinished ( QNetworkReply* inetReply)
                         else if (lsval.at(0) == "IDB")
                             boat_name = lsval.at(1);
                         else if (lsval.at(0) == "RAC")
+                        {
                             race_id = lsval.at(1).toInt();
+                            if(race_id==0)
+                            {
+                                latitude = longitude = speed = heading = avg = 0;
+                                dnm = loch = ortho = loxo = vmg = windDir = 0;
+                                windSpeed = WPLat = WPLon = TWA = prevVac = 0;
+                                nextVac = 0;
+                                race_name = "";
+                                WPHd = -1;
+                                pilotType = 1;
+                                pilotString = "";
+                                score = "";
+                                hasPilototo=false;
+                            }
+                        }
                         else if (lsval.at(0) == "LAT")
                             latitude = lsval.at(1).toFloat();
                         else if (lsval.at(0) == "LON")
@@ -373,14 +383,12 @@ void boatAccount::updatePosition(void)
     boat_i-=3;
     boat_j-=(height()/2);
     move(boat_i, boat_j);
-    boat_estime->setBoatData(lat,lon,current_heading);
     update();
 }
 
 void boatAccount::projectionUpdated(Projection * proj)
 {
     this->proj=proj;
-    boat_estime->projectionUpdate(proj);
     if(activated)
         updatePosition();
 }
@@ -402,8 +410,6 @@ void  boatAccount::paintEvent(QPaintEvent *)
     pen.setWidth(1);
     pnt.setPen(pen);
     pnt.drawRect(9,0,width()-10,height()-1);
-
-    //boat_estime->update();
 }
 
 void  boatAccount::enterEvent (QEvent *)
@@ -455,7 +461,6 @@ void boatAccount::setStatus(bool activated)
 {
      this->activated=activated;
      setVisible(activated);
-     boat_estime->setVisible(activated);
 }
 
 void boatAccount::setParam(QString login, QString pass)
@@ -474,29 +479,44 @@ void boatAccount::setParam(QString login, QString pass, bool activated)
 
 void boatAccount::reloadPolar(void)
 {
-    if(polarData!=NULL)
-    {
-    /* are we trying to load the same polar ? */
-        delete polarData;
-        polarData=NULL;
-    }
-
     if(forcePolar)
     {
         if(polarName.isEmpty())
         {
+            if(polarData!=NULL)
+            {
+                delete polarData;
+                polarData=NULL;
+            }
             qWarning("No User polar to load");
             return;
-        }
-        qWarning() << "Loading forced polar: " << polarName;
+        }        
+        if(polarData != NULL && polarName == polarData->getName())
+            return;        
+        if(polarData!=NULL)
+            delete polarData;        
+        qWarning() << "Loading forced polar: " << polarName;        
         polarData=new Polar(polarName,mainWindow);
     }
     else
     {
         if(polarVlm.isEmpty())
         {
+            if(polarData!=NULL)
+            {
+                delete polarData;
+                polarData=NULL;
+            }
             qWarning("No VLM polar to load");
             return;
+        }
+        if(polarData != NULL && polarVlm == polarData->getName())
+            return;
+        
+        if(polarData!=NULL)
+        {
+            qWarning() << "Old polar:" << polarData->getName();            
+            delete polarData;
         }
         qWarning() << "Loading polar: " << polarVlm;
         polarData=new Polar(polarVlm,mainWindow);
@@ -524,69 +544,4 @@ void boatAccount::setAlias(bool state,QString alias)
 {
     useAlias=state;
     this->alias=alias;
-}
-
-Estime::Estime(Projection * proj,QWidget * parent):QWidget(parent)
-{
-    lat=0;
-    lon=0;
-    heading=0;
-    estime=100;
-    b_i=b_j=e_i=e_j=0;
-    this->proj = proj;
-    hide();
-}
-
-void Estime::projectionUpdate(Projection * proj)
-{
-    this->proj=proj;
-    /* nothing else to do, boat will send its update */
-}
-
-void Estime::setBoatData(float lat, float lon,float heading)
-{
-    this->lat=lat;
-    this->lon=lon;
-    this->heading=heading;
-    updateCoordinates();
-}
-
-void Estime::updateCoordinates(void)
-{
-    float tmp_lat,tmp_lon;
-    int org_i,org_j;
-    int size;
-
-    Util::computePos(proj,lat,lon,&b_i,&b_j);
-    Util::getCoordFromDistanceAngle(lat,lon,estime,heading,&tmp_lat,&tmp_lon);
-    qWarning("(%f,%f)->(%f,%f)",lat,lon,tmp_lat,tmp_lon);
-    Util::computePos(proj,tmp_lat,tmp_lon,&e_i,&e_j);
-    qWarning("b_i=%d, b_j=%d, e_i=%d, e_j=%d (estime=%d,heading=%f)",b_i,b_j,e_i,e_j,estime,heading);
-    /* move widget */
-    org_i=qMin(b_i,e_i);
-    org_j=qMin(b_j,e_j);
-
-    size=qMax(qAbs(b_i-e_i),qAbs(b_j-e_j));
-
-    qWarning("org_i=%d, org_j=%d",org_i,org_j);
-
-    /*set size and position */
-    setGeometry(org_i,org_j,size,size);
-
-    /* define local coord of line */
-    b_i=b_i-org_i;
-    b_j=b_j-org_j;
-
-    e_i=e_i-org_i;
-    e_j=e_j-org_j;
-}
-
-void Estime::paintEvent(QPaintEvent *)
-{
-    QPainter pnt(this);
-
-    qWarning("Estime x1=%d, y1=%d, x2=%d, y2=%d",b_i,b_j,e_i,e_j);
-
-    pnt.setPen(QPen(Qt::black, 2));
-    //pnt.drawLine(b_i,b_j,e_i,e_j);
 }

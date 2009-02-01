@@ -35,28 +35,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "Projection.h"
 #include "Polar.h"
 
-class boatAccount;
-
-class Estime : public QWidget
-{Q_OBJECT
-    public:
-        Estime(Projection * proj,QWidget *parentWindow=0);
-        void setBoatData(float lat, float lon,float heading);
-        void projectionUpdate(Projection * proj);
-
-    private:
-        void  paintEvent(QPaintEvent *event);
-        float lat,lon;
-        float heading;
-        int estime;
-        
-        int e_i,e_j,b_i,b_j;
-
-        Projection * proj;
-
-        void updateCoordinates(void);
-};
-
 class boatAccount: public QWidget
 {Q_OBJECT
     public:
@@ -206,9 +184,6 @@ class boatAccount: public QWidget
         
         QStringList pilototo;
         bool hasPilototo;
-
-        int estime_i,estime_j;
-        Estime * boat_estime;
 };
 
 #endif
