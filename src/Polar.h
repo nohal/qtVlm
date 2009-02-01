@@ -33,10 +33,7 @@ class Polar : public QObject
 
         void setPolarName(QString fname);
         float getSpeed(float windSpeed, float angle);
-               
-    signals:
-        void showMessage(QString);
-        
+
     private:
         QList<float*> polar_data;
         bool loaded;

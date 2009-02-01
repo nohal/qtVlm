@@ -63,7 +63,6 @@ Q_OBJECT
 	
 	signals:
 		void projectionUpdated(Projection *);
-		void showMessage(QString msg);
 
     private:
         int W, H;     // taille de la fenêtre (pixels)

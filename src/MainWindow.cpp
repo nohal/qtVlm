@@ -35,6 +35,7 @@ Copyright (C) 2008 - Jacques Zaninetti - http://zygrib.free.fr
 #include <QComboBox>
 #include <QDockWidget>
 #include <QRegExp>
+#include <QDebug>
 
 #include "MainWindow.h"
 #include "MeteoTable.h"
@@ -226,8 +227,6 @@ void MainWindow::connectSignals()
     connect(mb->acPOIinput, SIGNAL(triggered()), this, SLOT(slotPOIinput()));
     connect(mb->acPilototo, SIGNAL(triggered()), this, SLOT(slotPilototo()));
 
-    //connect(vlmData,SIGNAL(showMessage(QString)),this,SLOT(slotShowMessage(QString)));
-
     connect(mb->acPOIimport, SIGNAL(triggered()), this, SLOT(slotPOIimport()));
 
     connect(&dialogProxy, SIGNAL(proxyUpdated()), this, SLOT(slotProxyUpdated()));
@@ -266,7 +265,9 @@ void MainWindow::connectSignals()
     connect(terre, SIGNAL(mouseMoved(QMouseEvent *)),
             this,  SLOT(slotMouseMoved(QMouseEvent *)));
     connect(terre,SIGNAL(mouseDblClicked(QMouseEvent *)),
-            this,  SLOT(slotMouseDblClicked(QMouseEvent *)));
+            this, SLOT(slotMouseDblClicked(QMouseEvent *)));
+    connect(terre,SIGNAL(showContextualMenu(QContextMenuEvent *)),
+            this, SLOT(slotShowContextualMenu(QContextMenuEvent *)));
     //-----------------------------------------------------------
     connect(&dialogLoadGrib, SIGNAL(signalGribFileReceived(QString)),
             this,  SLOT(slotGribFileReceived(QString)));
@@ -284,9 +285,7 @@ MainWindow::MainWindow(int w, int h, QWidget *parent)
 {
     setWindowTitle("QtVlm");
 
-    dbg = new vlmDebug();
-    showMessage("QtVlm debug console by oxy");
-
+    qWarning() <<  "Starting qtVlm";
     //--------------------------------------------------
     resize( Util::getSetting("mainWindowSize", QSize(w,h)).toSize() );
     move  ( Util::getSetting("mainWindowPos", QPoint()).toPoint() );
@@ -301,10 +300,7 @@ MainWindow::MainWindow(int w, int h, QWidget *parent)
     float prcy = (float) Util::getSetting("projectionCY", 0.0).toDouble();
     float scale = (float) Util::getSetting("projectionScale", 0.5).toDouble();
     proj->setCenterInMap(prcx,prcy);
-    //showMessage(QString("center in map: %1,%2 (scale=%3)").arg(prcx).arg(prcy).arg(scale));
     proj->setScale(scale);
-
-    connect(proj,SIGNAL(showMessage(QString)),this,SLOT(slotShowMessage(QString)));
 
     //--------------------------------------------------
     terre = new Terrain(this, proj);
@@ -387,13 +383,12 @@ MainWindow::MainWindow(int w, int h, QWidget *parent)
       menuBar->getBoatList(acc_list);
 
       VLMBoard = new boardVLM(this);
-      connect(this,SIGNAL(boatUpdated(boatAccount*)),
+      connect(this,SIGNAL(boatHasUpdated(boatAccount*)),
               VLMBoard,SLOT(boatUpdated(boatAccount*)));
 
       selectedBoat = NULL;
 
       connect(param,SIGNAL(paramVLMChanged()),VLMBoard,SLOT(paramChanged()));
-      connect(param,SIGNAL(paramVLMChanged()),dbg,SLOT(paramChanged()));
 
       connect(poi_input_dialog,SIGNAL(addPOI(float,float,float,int,bool)),
               this,SLOT(slotAddPOI(float,float,float,int,bool)));
@@ -403,9 +398,7 @@ MainWindow::MainWindow(int w, int h, QWidget *parent)
       pilototo = new Pilototo(terre);
       connect(this,SIGNAL(editInstructions()),
               pilototo,SLOT(editInstructions()));
-      connect(pilototo,SIGNAL(showMessage(QString)),this,
-                SLOT(slotShowMessage(QString)));
-      connect(this,SIGNAL(boatUpdated(boatAccount*)),
+      connect(this,SIGNAL(boatHasUpdated(boatAccount*)),
               pilototo,SLOT(boatUpdated(boatAccount*)));
 
     //---------------------------------------------------------
@@ -744,8 +737,6 @@ void MainWindow::slotFile_Info_GRIB()
 void MainWindow::slotDateGribChanged(int id)
 {
     time_t tps = menuBar->getDateGribById(id);
-    showMessage(QString("grib date: %1").arg(tps));
-    //printf("id= %d : %s\n",id, qPrintable(formatDateTimeLong(tps)));
     terre->setCurrentDate( tps );
 
     // Ajuste les actions disponibles
@@ -821,7 +812,6 @@ void MainWindow::statusBar_showSelectedZone()
 void MainWindow::slotMouseClicked(QMouseEvent * e)
 {
     statusBar_showSelectedZone();
-    showMessage(QString("in mouse click %1").arg(e->isAccepted()==true?"accepted":"rejected"));
     mouseClicX = e->x();
     mouseClicY = e->y();
     switch (e->button()) {
@@ -829,28 +819,12 @@ void MainWindow::slotMouseClicked(QMouseEvent * e)
             break;
         }
         case Qt::MidButton :   // Centre la carte sur le point
-            //e->accept();
             proj->setCentralPixel(e->x(), e->y());
             emit signalProjectionUpdated(proj);
             break;
-
-        case Qt::RightButton : // Réaffiche la carte en entier
-            float a,b,c,d;
-            //e->accept();
-            if(terre->getSelectedRectangle(&a,&b,&c,&d))
-                menuBar->ac_delPOIs->setEnabled(true);
-            else
-                menuBar->ac_delPOIs->setEnabled(false);
-            menuPopupBtRight->exec(QCursor::pos());
-            e->accept();
-
-            //QMessageBox::information (NULL,"after","test");
-            break;
-
         default :
             break;
     }
-    showMessage(QString("out mouse click %1").arg(e->isAccepted()==true?"accepted":"rejected"));
 }
 //--------------------------------------------------------------
 void MainWindow::slotMouseMoved(QMouseEvent * e) {
@@ -869,14 +843,27 @@ void MainWindow::slotMouseMoved(QMouseEvent * e) {
 
 void MainWindow::slotMouseDblClicked(QMouseEvent * e)
 {
-    int clicX = e->x();
-    int clicY = e->y();
+    mouseClicX = e->x();
+    mouseClicY = e->y();
     float lon, lat;
     if(e->button()==Qt::LeftButton)
     {
-        proj->screen2map(clicX,clicY, &lon, &lat);
-        emit newPOI(lon,lat,proj);
+        proj->screen2map(mouseClicX,mouseClicY, &lon, &lat);
+        slotAddPOI(lat,lon,-1,-1,false);
+        //emit newPOI(lon,lat,proj);
     }
+}
+
+void MainWindow::slotShowContextualMenu(QContextMenuEvent * e)
+{
+    float a,b,c,d;
+    mouseClicX = e->x();
+    mouseClicY = e->y();
+    if(terre->getSelectedRectangle(&a,&b,&c,&d))
+        menuBar->ac_delPOIs->setEnabled(true);
+    else
+        menuBar->ac_delPOIs->setEnabled(false);
+    menuPopupBtRight->exec(QCursor::pos());
 }
 
 void MainWindow::slotVLM_ParamBoat(void) {
@@ -925,47 +912,24 @@ void MainWindow::slotBoatUpdated(boatAccount * boat)
         //VLMBoard->boatUpdate(boat);
         proj->setCenterInMap(boat->getLon(),boat->getLat());
         terre->setProjection(proj);
-        emit boatUpdated(boat);
+        emit boatHasUpdated(boat);
     }
 }
 
 void MainWindow::slotVLM_Test(void)
 {
-    QString str="var polyline = new GPolyline([\nnew GLatLng(30.733152594875,-29.654266837543),\nnew GLatLng(30.724722363119,-29.671254186304),\nnew GLatLng(30.715564620176,-29.684743348127),\nnew GLatLng(30.706321798934,-29.698356535475),\nnew GLatLng(30.696901017068,-29.712230500628),";
 
-    /*
-    if(rExp.indexIn(str)!=-1)
-    {
-        QStringList list=rExp.capturedTexts();
-        QStringList::Iterator it = list.begin();
-        while(it!=list.end()) {
-            showMessage("|"+*it+"|");
-            ++it;
-        }
-    }
-    */
-}
-
-void MainWindow::showMessage(QString msg) {
-    dbg->addLine(msg);
-}
-
-
-void MainWindow::slotShowMessage(QString msg) {
-    showMessage(msg);
 }
 
 void MainWindow::slotSelectBoat(boatAccount* newSelect)
 {
     if(newSelect != selectedBoat)
     {
-        showMessage("New boat selected: " + newSelect->getLogin());
         if(selectedBoat)
             selectedBoat->unSelectBoat();
         selectedBoat=newSelect;
         if(newSelect->getStatus())
         {
-            showMessage("Update");
             proj->setCenterInMap(newSelect->getLon(),newSelect->getLat());
             terre->setProjection(proj);
             newSelect->getData();
@@ -991,7 +955,6 @@ void MainWindow::slotSelectBoat(boatAccount* newSelect)
 
 void MainWindow::slotProxyUpdated(void)
 {
-    showMessage("Updating proxy config for all boat");
     QListIterator<boatAccount*> i (acc_list);
     while(i.hasNext())
     {
@@ -1060,12 +1023,7 @@ void MainWindow::slotpastePOI()
 void MainWindow::slotChgWP(float lat,float lon, float wph)
 {
     if(VLMBoard)
-    {
-        showMessage(QString("set WP from POI %1,%2,%3").arg(lat).arg(lon).arg(wph));
         VLMBoard->setWP(lat,lon,wph);
-    }
-    else
-        showMessage("No VLMBoard for slotChgWP");
 }
 
 void MainWindow::slotPOIinput(void)
@@ -1094,15 +1052,9 @@ void MainWindow::slotDelPOIs(void)
             POI * poi = i.next();
             lat=poi->getLatitude();
             lon=poi->getLongitude();
-            showMessage(QString("%1: %2 => %3,%4")
-                    .arg(num).arg(poi->getName())
-                    .arg(lat).arg(lon));
-
 
             if(lat1<=lat && lat<=lat0 && lon0<=lon && lon<=lon1)
             {
-                showMessage("removed");
-
                 delPOI_list(poi);
                 delete poi;
                 sup++;
@@ -1110,11 +1062,6 @@ void MainWindow::slotDelPOIs(void)
 
             num++;
         }
-        showMessage(QString("Remove %1/%2 POI").arg(sup).arg(num));
-    }
-    else
-    {
-        showMessage("No selection");
     }
 }
 
@@ -1133,7 +1080,6 @@ void MainWindow::slotBoatLockStatusChanged(boatAccount* boat,bool status)
     if(boat==selectedBoat)
     {
         emit setChangeStatus(status);
-        showMessage(QString("boat lock  is ")+(status?"true":"false"));
         menuBar->acPilototo->setEnabled(!status);
     }
 }
@@ -1157,6 +1103,5 @@ void MainWindow::slotPilototo(void)
     {
         selectedBoat->getData();
         emit editInstructions();
-        //pilototo->boatUpdated(selectedBoat);
     }
 }

@@ -38,9 +38,6 @@ class xml_POIData: public QWidget
             bool readData(QList<POI*> & poi_list,QString fname);
 			void importZyGrib(QList<POI*> & poi_list);
 
-	  signals:
-            void showMessage(QString msg);
-
       private:
             Projection * proj;
             QWidget * main, * parent;

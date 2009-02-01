@@ -28,15 +28,10 @@ paramVLM::paramVLM(QWidget * parent) : QDialog(parent)
     setupUi(this);
 
     /* adding list of supported NMEA sentences*/
-    lst_trame->addItem("GLL");
 
     chk_activateEmulation->setCheckState(
          Util::getSetting("gpsEmulEnable", "0").toString()=="1"?Qt::Checked:Qt::Unchecked);
     serialName->setText(Util::getSetting("serialName", "COM2").toString());
-    lst_trame->setCurrentIndex(lst_trame->findText(Util::getSetting("nmeaType", "GLL").toString()));
-
-    chk_activateDebug->setCheckState(
-         Util::getSetting("debugEnable", "0").toString()=="1"?Qt::Checked:Qt::Unchecked);
 }
 
 void paramVLM::done(int result)
@@ -45,8 +40,6 @@ void paramVLM::done(int result)
     {
         Util::setSetting("gpsEmulEnable",chk_activateEmulation->checkState()==Qt::Checked?"1":"0");
         Util::setSetting("serialName", serialName->text());
-        Util::setSetting("nmeaType",lst_trame->currentText());
-        Util::setSetting("debugEnable",chk_activateDebug->checkState()==Qt::Checked?"1":"0");
         emit paramVLMChanged();
     }
     QDialog::done(result);

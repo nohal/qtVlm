@@ -50,7 +50,6 @@ class boatAccount_dialog : public QDialog, public Ui::boatAccount_dialog
 
     signals:
         void vlmSync(void);
-        void showMessage(QString str);
         void accountListUpdated(void);
 
     private:

@@ -58,7 +58,6 @@ boatAccount_dialog::boatAccount_dialog(QList<boatAccount*> & acc_list, Projectio
     connect(list_boat,SIGNAL(itemClicked(QListWidgetItem *)),
     this, SLOT(slot_selectItem(QListWidgetItem *)));
 
-    connect(this,SIGNAL(showMessage(QString)), main, SLOT(slotShowMessage(QString)));
     connect(this,SIGNAL(accountListUpdated()), main, SLOT(slotAccountListUpdated()));
 
     /* sync boat position */
@@ -166,7 +165,6 @@ void boatAccount_dialog::done(int result)
         {
             int commonLen = qMin(list_boat->count()-1,acc_list->count());
             int i;
-            showMessage("Common account: " + QString().setNum(commonLen));
             for(i=0;i<commonLen;i++)
             {
                 QListWidgetItem * item = list_boat->item(i);
@@ -185,7 +183,6 @@ void boatAccount_dialog::done(int result)
 
             if(list_boat->count()-1<acc_list->count())
             { /* need to remove account */
-                showMessage("Remove account: " + QString().setNum(acc_list->count()-commonLen));
                 while(acc_list->count()!=commonLen)
                 {
                     delete acc_list->last();
@@ -195,7 +192,6 @@ void boatAccount_dialog::done(int result)
 
             if(list_boat->count()-1>acc_list->count())
             { /* need to create account */
-                showMessage("Add account: " + QString().setNum(acc_list->count()-commonLen));
                 for(/*nothing*/;i<list_boat->count()-1;i++)
                 {
                     QListWidgetItem * item = list_boat->item(i);

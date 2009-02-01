@@ -52,9 +52,9 @@ HEADERS += \
            Version.h \
            xmlBoatData.h \
            xmlPOIData.h \
-           zuFile.h \
-           vlmDebug.h
-FORMS += boatAccount_dialog.ui Debug_dialog.ui BoardVLM_part1.ui BoardVLM_part2.ui \
+           zuFile.h
+           
+FORMS += boatAccount_dialog.ui BoardVLM_part1.ui BoardVLM_part2.ui \
             paramVLM.ui POI_input.ui POI_editor.ui Pilototo_param.ui instructions.ui \
             Pilototo.ui
 SOURCES += \
@@ -92,8 +92,7 @@ SOURCES += \
            Util.cpp \
            xmlBoatData.cpp \
            xmlPOIData.cpp \
-           zuFile.cpp \
-           vlmDebug.cpp
+           zuFile.cpp
 
 DEFINES = QT_$$[QT_VERSION]
 

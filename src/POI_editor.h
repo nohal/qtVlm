@@ -49,7 +49,6 @@ class POI_Editor : public QDialog, public Ui::POI_editor_ui
     signals:
         void addPOI_list(POI*);
         void delPOI_list(POI*);
-        void showMessage(QString);
 
     private:
         POI   *poi;

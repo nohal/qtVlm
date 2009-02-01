@@ -50,7 +50,6 @@ Terrain::Terrain(QWidget *parent, Projection *proj_)
     assert(timerResize);
     timerResize->setSingleShot(true);
     connect(timerResize, SIGNAL(timeout()), this, SLOT(slotTimerResize()));
-    connect(this,SIGNAL(showMessage(QString)),parent,SLOT(slotShowMessage(QString)));
 
     //---------------------------------------------------------------------
     showCountriesBorders  = Util::getSetting("showCountriesBorders", true).toBool();
@@ -778,6 +777,11 @@ void Terrain::mouseMoveEvent (QMouseEvent * e) {
         update();
     }
     emit mouseMoved(e);
+}
+
+void Terrain::contextMenuEvent(QContextMenuEvent * event)
+{
+    emit showContextualMenu(event);
 }
 
 //---------------------------------------------------------

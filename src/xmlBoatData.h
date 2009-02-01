@@ -37,14 +37,9 @@ class xml_boatData: public QWidget
             bool writeBoatData(QList<boatAccount*> & boat_list,QString fname);
             bool readBoatData(QList<boatAccount*> & boat_list,QString fname);
 
-	  signals:
-            void showMessage(QString msg);
-            
       private:
             Projection * proj;
             QWidget * main, * parent;
-      
-      
 };
 
 #endif

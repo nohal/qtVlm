@@ -20,6 +20,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <QMessageBox>
 #include <QByteArray>
+#include <QDebug>
 
 #include "xmlBoatData.h"
 
@@ -46,7 +47,6 @@ xml_boatData::xml_boatData(Projection * proj,QWidget * main, QWidget * parent)
 	this->proj=proj;
 	this->main=main;
 	this->parent=parent;
-	connect(this,SIGNAL(showMessage(QString)),main,SLOT(slotShowMessage(QString)));
 }
 
 bool xml_boatData::writeBoatData(QList<boatAccount*> & boat_list,QString fname)
@@ -142,12 +142,10 @@ bool xml_boatData::readBoatData(QList<boatAccount*> & boat_list,QString fname)
      int version=VERSION_NUMBER;
      
      QFile file(fname);
-     
-     showMessage("Read xml");
 
      if (!file.open(QIODevice::ReadOnly | QIODevice::Text ))
          return false;
-         
+
 	 boat_list.clear();
 
      //QTextStream in(&file);
@@ -163,12 +161,10 @@ bool xml_boatData::readBoatData(QList<boatAccount*> & boat_list,QString fname)
 		return false;
 	 }
 
-	 showMessage("Process root");
-
 	 QDomElement root = doc.documentElement();
 	 if(root.tagName() != ROOT_NAME && root.tagName() != OLD_ROOT_NAME)
 	 {
-         showMessage("Wrong root name: " + root.tagName());
+         qWarning() << "Wrong root name: " << root.tagName();
 	     return false;
 	 }
 	 
@@ -178,7 +174,6 @@ bool xml_boatData::readBoatData(QList<boatAccount*> & boat_list,QString fname)
 	 
 	 while(!node.isNull())
 	 {
-		  showMessage("Processing: " + node.toElement().tagName());
 		  if(node.toElement().tagName() == VERSION_NAME)
 		  {
 			  dataNode = node.firstChild();
@@ -199,11 +194,9 @@ bool xml_boatData::readBoatData(QList<boatAccount*> & boat_list,QString fname)
               bool chk_polar=false;
               bool chk_alias=false;
               QString alias="";
-			  showMessage("Processing subnodes");
+
 			  while(!subNode.isNull())
 			  {
-				   showMessage("Sub node: "+subNode.toElement().tagName());
-				   
 				   if(subNode.toElement().tagName() == LOGIN_NAME)
 				   {
 					  dataNode = subNode.firstChild();
@@ -218,7 +211,6 @@ bool xml_boatData::readBoatData(QList<boatAccount*> & boat_list,QString fname)
                           if(version==0)
                           {
                               pass = dataNode.toText().data();
-                              showMessage("Processing old version of password");
                               forceWrite=true;
                           }
                           else
@@ -237,7 +229,6 @@ bool xml_boatData::readBoatData(QList<boatAccount*> & boat_list,QString fname)
                       if(dataNode.nodeType() == QDomNode::TextNode)
                       {
                           polar = dataNode.toText().data();
-                          showMessage("Polar:"+polar);
                           if(polar=="none") polar="";
                       }
                    }
@@ -271,8 +262,7 @@ bool xml_boatData::readBoatData(QList<boatAccount*> & boat_list,QString fname)
 			  }
 			  if(!login.isEmpty() && !pass.isEmpty() && ! activated.isEmpty())
 			  {
-				   showMessage(QString("Boat info present => create item %1 %2 %3").arg(login)
-                              .arg(pass).arg(activated));
+				   qWarning() << "Boat info present => create item " <<  login << " state " << activated;
                    boatAccount * acc = new boatAccount(login,pass,activated == "1",
                     		   proj,main,parent);
                    acc->setPolar(chk_polar,polar);
@@ -282,21 +272,20 @@ bool xml_boatData::readBoatData(QList<boatAccount*> & boat_list,QString fname)
                    boat_list.append(acc);
 			  }
 			  else
-                   showMessage("Incomplete boat info");
+                   qWarning("Incomplete boat info");
 		  }
 		  node = node.nextSibling();
 	 }
 
 	 if(hasVersion)
 	 {
-		 showMessage("all ok");
          if(forceWrite)
              writeBoatData(boat_list,fname);
 	 	 return true;
 	 }
 	 else
 	 {
-		 showMessage("no version");
+		 qWarning("no version");
          boat_list.clear();
          return false;
 	 }

@@ -19,6 +19,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ***********************************************************************/
 
 #include <QTextStream>
+#include <QDebug>
 
 #include "Util.h"
 #include "Pilototo.h"
@@ -39,7 +40,7 @@ Pilototo::Pilototo(QWidget * parent):QDialog(parent)
     layout()->setSizeConstraint(QLayout::SetFixedSize);
     frameLayout = new QVBoxLayout(frame);
     frameLayout->setSizeConstraint(QLayout::SetFixedSize);
-    
+
     waitBox = new QMessageBox(QMessageBox::Question,
                              tr("Pilototo"),
                              tr("Chargement des instructions VLM en cours"),
@@ -78,7 +79,6 @@ void Pilototo::updateDrawList(void)
         added = false;
         if(instr->getHasChanged())
         { /* date have not been validated */
-            showMessage(QString().setNum(i) + " not validated");
             /* search for the first not validated item */
             bool found = false;
             int j;
@@ -92,40 +92,34 @@ void Pilototo::updateDrawList(void)
             }
             if(!found) /* not added yet => append */
             {
-                showMessage(QString().setNum(i) + " appended as no other unvalidated item");
                 drawList.append(instr);
             }
             else
             {
-                showMessage(QString().setNum(i) + " searching where to insert in unvalidated item list");
                 /* order not validated items by tstamp */
                 for(/*not changing j*/;j<drawList.count();j++)
                 {
                     if(drawList[j]->getTstamp() > instr->getTstamp())
                     {
                         drawList.insert(j,instr);
-                        showMessage(QString().setNum(i) + " adding at "+QString().setNum(j));
                         added=true;
                         break;
                     }
                 }
                 if(!added) /* not added yet => append */
                 {
-                    showMessage(QString().setNum(i) + " appended as end of unvalidated list reached");
                     drawList.append(instr);
                 }
             }
         }
         else
         { /* date have been validated */
-            showMessage(QString().setNum(i) + " validated");
             for(int j=0;j<drawList.count();j++)
             {
                 if(drawList[j]->getHasChanged())
                 {
                     /* j item is not validated => add just before */
                     drawList.insert(j,instr);
-                    showMessage(QString().setNum(i) + " (end of validated reached) adding at "+QString().setNum(j));
                     added=true;
                     break;
                 }
@@ -134,24 +128,19 @@ void Pilototo::updateDrawList(void)
                 {
                     /* j item is later than i */
                     drawList.insert(j,instr);
-                    showMessage(QString().setNum(i) + " adding at "+QString().setNum(j));
                     added=true;
                     break;
                 }
             }
             if(!added)
             {
-                showMessage(QString().setNum(i) + " appended as end of list reached");
                 drawList.append(instr);
             }
         }
-
-        showMessage("Next instruction");
     }
-    showMessage("Finish");
 
     /* we now have the list of items to be shown => adding them to grid layout */
-   
+
     for(int j=0;j<drawList.count();j++)
     {
         frameLayout->addWidget(drawList[j], j, 0);
@@ -191,7 +180,6 @@ void Pilototo::boatUpdated(boatAccount * boat)
     for(int i=0;i<list->count();i++)
     {
         QString instr_txt=list->at(i);
-        showMessage("Processing : "+instr_txt);
         if(instr_txt!="none")
         {
             QStringList instr_buf = instr_txt.split(",");
@@ -204,7 +192,6 @@ void Pilototo::boatUpdated(boatAccount * boat)
                 instr->setTstamp(instr_buf.at(1).toInt());
                 mode=instr_buf.at(2).toInt()-1;
                 instr->setMode(mode);
-                showMessage("Mode : "+QString().setNum(mode));
                 if(mode == 0 || mode == 1)
                 {
                     instr->setAngle(instr_buf.at(3).toFloat());
@@ -316,15 +303,11 @@ void Pilototo::sendPilototo(QStringList * cmdList)
                         << "&password=" << boat->getPass()
                         << "&lang=fr&type=login"
                         ;
-
-        emit showMessage(QString("login for cmd pilototo param: %2 instructions").arg(currentList->count()));
-
         inetManager->get(QNetworkRequest(QUrl(page)));
     }
     else
     {
-        emit showMessage(QString("error can't send pilototo (current state:%2 nb instr:%3)")
-                                        .arg(currentRequest).arg(cmdList->count()));
+        qWarning("error can't send pilototo (current state:%d nb instr:%d)",currentRequest,cmdList->count());
     }
 }
 
@@ -333,7 +316,7 @@ void Pilototo::requestFinished ( QNetworkReply* inetReply)
     QString page;
     QString data;
     if (inetReply->error() != QNetworkReply::NoError) {
-        emit showMessage("Error doing inetGet:" + QString().setNum(inetReply->error()));
+         qWarning() << "Error doing inetGet:" <<inetReply->error();
         currentRequest=VLM_NO_REQUEST;
     }
     else
@@ -343,7 +326,6 @@ void Pilototo::requestFinished ( QNetworkReply* inetReply)
             case VLM_NO_REQUEST:
                 return;
             case VLM_REQUEST_LOGIN:
-                emit showMessage("Login done");
             case VLM_DO_REQUEST:
                 currentRequest=VLM_DO_REQUEST;
                 if(currentList->isEmpty())
@@ -351,7 +333,6 @@ void Pilototo::requestFinished ( QNetworkReply* inetReply)
                     /*we have processed all cmd*/
                     currentRequest=VLM_NO_REQUEST;
                     delete currentList;
-                    emit showMessage("All instructions send");
                     /* ask for an update of boat data*/
                     boat->getData();
                 }
@@ -360,8 +341,6 @@ void Pilototo::requestFinished ( QNetworkReply* inetReply)
                     QTextStream(&page) << host
                             << "/pilototo.php";
                     data = currentList->takeFirst();
-
-                    emit showMessage("Request: " + page + "data: " + data);
                     inetManager->post(QNetworkRequest(QUrl(page)),data.toAscii());
                 }
                 break;

@@ -62,7 +62,6 @@ class boardVLM_part2: public QWidget , public Ui::boardVLM_part2_ui
         void doPilototo();
 
     signals:
-        void showMessage(QString msg);
         void sendCmd(int cmdNum,float,float,float);
         void go_pilototo(void);
 
@@ -99,11 +98,8 @@ class boardVLM: public QWidget , public Ui::boardVLM_part1_ui
         void setChangeStatus(bool);
 
         void edtSpinBox_key(void);
-        
-        void boatUpdated(boatAccount * boat);
 
-    signals:
-        void showMessage(QString msg);
+        void boatUpdated(boatAccount * boat);
 
     private:
         QNetworkAccessManager *inetManager;

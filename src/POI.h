@@ -82,7 +82,6 @@ class POI : public QWidget
         void addPOI_list(POI*);
         void delPOI_list(POI*);
         void editPOI(POI*);
-        void showMessage(QString);
 
     private:
         QString      name;
@@ -108,6 +107,7 @@ class POI : public QWidget
         void  mousePressEvent(QMouseEvent * e);
         void  mouseDoubleClickEvent(QMouseEvent * e);
         void  mouseReleaseEvent(QMouseEvent * e);
+        void  contextMenuEvent(QContextMenuEvent * event);
 
         QMenu *popup;
         QAction * ac_edit;

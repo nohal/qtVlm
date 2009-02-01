@@ -48,8 +48,6 @@ POI::POI(QString name, float lon, float lat,
     this->timeStamp=tstamp;
     this->useTstamp=useTstamp;
 
-    connect(this,SIGNAL(showMessage(QString)),ownerMeteotable,SLOT(slotShowMessage(QString)));
-
     setProjection(proj);
     createWidget();
 
@@ -202,15 +200,16 @@ void  POI::mouseReleaseEvent(QMouseEvent *e)
             countClick = 0;
         }
     }
-    else if (e->button() == Qt::RightButton)
-    {
-        // is currentBoat locked ?
-        ac_setWp->setEnabled(!((MainWindow*)owner)->getBoatLockStatus());
-        // Right clic : Edit this Point Of Interest
-        popup->exec(QCursor::pos());
-        e->accept();
-    }
 }
+
+void POI::contextMenuEvent(QContextMenuEvent *)
+{
+    // is currentBoat locked ?
+    ac_setWp->setEnabled(!((MainWindow*)owner)->getBoatLockStatus());
+    // Right clic : Edit this Point Of Interest
+    popup->exec(QCursor::pos());
+}
+
 //-------------------------------------------------------------------------------
 void  POI::timerClickEvent()
 {

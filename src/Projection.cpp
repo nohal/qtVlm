@@ -170,10 +170,8 @@ void Projection::updateBoundaries() {
     xmin = x0;
     ymax = y0;
     ymin = y1;
-    
+
 	emit projectionUpdated(this);
-	//emit showMessage("[Proj] update proj (" + QString().setNum((long)this)+")");
-    //printf("Projection::updateBoundaries %g %g\n", xmin, xmax);
 	
 	coefremp = 10000.0*fabs( ((xmax-xmin)*(ymax-ymin)) / (getW()*getH()) );
 }

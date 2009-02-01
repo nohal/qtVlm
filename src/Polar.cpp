@@ -21,19 +21,18 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <QMessageBox>
 #include <QFile>
 #include <QTextStream>
+#include <QDebug>
 
 #include "Polar.h"
 
-Polar::Polar(QWidget *parentWindow)
+Polar::Polar(QWidget *)
 {
     loaded=false;
-    connect(this,SIGNAL(showMessage(QString)),parentWindow,SLOT(slotShowMessage(QString)));
 }
 
-Polar::Polar(QString fname,QWidget *parentWindow)
+Polar::Polar(QString fname,QWidget *)
 {
     loaded=false;
-    connect(this,SIGNAL(showMessage(QString)),parentWindow,SLOT(slotShowMessage(QString)));
     setPolarName(fname);
 }
 
@@ -97,7 +96,6 @@ void Polar::setPolarName(QString fname)
     }
     list = line.split(";");
     nbWindSpeedVal=list.count()-1;
-    showMessage("Polar " + fname + " - nb col:" + QString().setNum(nbWindSpeedVal));
     getInt(1,windSpeed_min);
     
     getInt(2,val); /*we use val var as this can be the max*/
@@ -110,8 +108,6 @@ void Polar::setPolarName(QString fname)
         file.close();
         return;
     }
-    showMessage(QString("Polar wind speed: min=%1,step=%2")
-            .arg(windSpeed_min).arg(windSpeed_step));
     /*control that step is constant*/
     for(int i=3;i<list.count();i++)
     {
@@ -127,8 +123,6 @@ void Polar::setPolarName(QString fname)
         prev=val;
     }
     windSpeed_max=val; /* val could have bee set in the loop or before windSpeed_step computation*/
-
-    showMessage(QString("Polar wind speed: max=%1").arg(windSpeed_max));
     /* we can now read the polar data */
     nbWindAngleVal=0;
     while(true)
@@ -138,8 +132,7 @@ void Polar::setPolarName(QString fname)
         list = line.split(";");
         if(list.count()!=(nbWindSpeedVal+1))
         {
-            showMessage(QString("line %1: wrong number of data: %2 => nxtLine")
-            .arg(nbWindAngleVal).arg(list.count()));
+            qWarning() << "line " << nbWindAngleVal << " wrong number of data: " << list.count() << "  => nxtLine";
             continue;
         }
         nbWindAngleVal++;
@@ -161,8 +154,6 @@ void Polar::setPolarName(QString fname)
                     clearPolar();
                     return;
                 }
-                showMessage(QString("Polar wind Angle: min=%1,step=%2")
-                    .arg(windAngle_min).arg(windAngle_step));
             }
             else if(windAngle_step != (val-prev)) /* we have to check if step is constant */
             {
@@ -187,11 +178,7 @@ void Polar::setPolarName(QString fname)
         polar_data.append(dataLine);
     }
 
-    showMessage(QString("%1 line read, Angle min=%2, max=%3,step=%4").arg(nbWindAngleVal)
-            .arg(windAngle_min).arg(windAngle_max).arg(windAngle_step));
-    
     file.close();
-    
 }
 
 void Polar::printPolar(void)
@@ -201,7 +188,7 @@ void Polar::printPolar(void)
         QString str=QString().setNum(j*windAngle_step)+"\t";
         for(int i=0;i<(windSpeed_max-windSpeed_min)/windSpeed_step;i++)
             str+=(QString().setNum((polar_data[j])[i])+"\t");
-        showMessage(str);
+        qWarning()<< str;
     }
 }
 
@@ -229,17 +216,11 @@ float Polar::getSpeed(float windSpeed, float angle)
     val=(int)angle;
     infAngle_idx =(float)((val-windAngle_min)/windAngle_step);
 
-    showMessage(QString("Searching %1,%2 in speed (%3-%4), angle (%5,%6)")
-            .arg(angle).arg(windSpeed).arg(infSpeed_idx*windSpeed_step).arg((infSpeed_idx+1)*windSpeed_step)
-            .arg(infAngle_idx*windAngle_step).arg((infAngle_idx+1)*windAngle_step));
-
     /* find data */
     a = (polar_data[infAngle_idx])[infSpeed_idx];
     b = (polar_data[infAngle_idx+1])[infSpeed_idx];
     c = (polar_data[infAngle_idx])[infSpeed_idx+1];
     d = (polar_data[infAngle_idx+1])[infSpeed_idx+1];
-
-    showMessage(QString("Data a=%1,b=%2,c=%3,d=%4").arg(a).arg(b).arg(c).arg(d));
 
     /* compute speed: linear interpolation on angle (constant wind speed) and then on wind speed */
     infSpeed = a + (angle-(windAngle_min+infAngle_idx*windAngle_step))*(b-a)/(windAngle_step);

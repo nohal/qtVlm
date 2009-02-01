@@ -46,7 +46,6 @@ Copyright (C) 2008 - Jacques Zaninetti - http://zygrib.free.fr
 
 //#include "VlmGetData.h"
 #include "boatAccount_dialog.h"
-#include "vlmDebug.h"
 #include "POI_editor.h"
 #include "Pilototo.h"
 
@@ -79,11 +78,12 @@ class MainWindow: public QMainWindow
         void slotMouseClicked(QMouseEvent * e);
         void slotMouseDblClicked(QMouseEvent * e);
         void slotMouseMoved(QMouseEvent * e);
+        void slotShowContextualMenu(QContextMenuEvent *);
 
         void slotDateGribChanged(int id);
         void slotDateGribChanged_next();
         void slotDateGribChanged_prev();
-	void slotDateGribChanged_now();
+        void slotDateGribChanged_now();
 
         void slotWindColors(bool b);
         void slotWindArrows(bool b);
@@ -97,7 +97,6 @@ class MainWindow: public QMainWindow
         void slotVLM_ParamBoat(void);
         void slotVLM_Param(void);
         void slotVLM_Test(void);
-        void slotShowMessage(QString msg);
         void slotSelectBoat(boatAccount* newSelect);
         void slotProxyUpdated(void);
         void slotChgBoat(int);
@@ -125,7 +124,7 @@ class MainWindow: public QMainWindow
         void editPOI(POI *);
         void newPOI(float,float,Projection *);
         void editInstructions(void);
-        void boatUpdated(boatAccount*);
+        void boatHasUpdated(boatAccount*);
 
     private:
         GshhsReader *gshhsReader;
@@ -167,12 +166,8 @@ class MainWindow: public QMainWindow
 
         void closeEvent(QCloseEvent *) {QApplication::quit();};
 
-        void showMessage(QString msg);
-
         QList<boatAccount*> acc_list;
-//        VlmGetData * vlmData;
         boatAccount_dialog * boatAcc;
-        vlmDebug * dbg;
         boardVLM * VLMBoard;
         boatAccount* selectedBoat;
         paramVLM * param;

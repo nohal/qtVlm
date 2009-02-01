@@ -134,10 +134,6 @@ class Pilototo : public QDialog, public Ui::pilototo_ui
 
     private slots:
         void addInstruction(void);
-        
-        
-    signals:
-        void showMessage(QString msg);
 
     private:
         QWidget * parent;

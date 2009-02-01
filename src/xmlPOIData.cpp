@@ -20,6 +20,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <QMessageBox>
 #include <QSettings>
+#include <QDebug>
 
 #include "xmlPOIData.h"
 
@@ -43,7 +44,6 @@ xml_POIData::xml_POIData(Projection * proj,QWidget * main, QWidget * parent)
     this->proj=proj;
     this->main=main;
     this->parent=parent;
-    connect(this,SIGNAL(showMessage(QString)),main,SLOT(slotShowMessage(QString)));
 }
 
 bool xml_POIData::writeData(QList<POI*> & poi_list,QString fname)
@@ -185,9 +185,7 @@ bool xml_POIData::readData(QList<POI*> & poi_list,QString fname)
      bool needSave=false;
      int version=VERSION_NUMBER;
 
-    poi_list.clear();
-
-     showMessage("Read xml");
+     poi_list.clear();
 
      QFile file(fname);
      if (!file.open(QIODevice::ReadOnly | QIODevice::Text ))
@@ -206,12 +204,10 @@ bool xml_POIData::readData(QList<POI*> & poi_list,QString fname)
         return false;
      }
 
-     showMessage("Process root");
-
      QDomElement root = doc.documentElement();
      if(root.tagName() != ROOT_NAME)
      {
-         showMessage("Wrong root name: " + root.tagName());
+         qWarning() << "Wrong root name: " << root.tagName();
          return false;
      }
 
@@ -221,7 +217,6 @@ bool xml_POIData::readData(QList<POI*> & poi_list,QString fname)
 
      while(!node.isNull())
      {
-          showMessage("Processing: " + node.toElement().tagName());
           if(node.toElement().tagName() == VERSION_NAME)
           {
               dataNode = node.firstChild();
@@ -230,13 +225,12 @@ bool xml_POIData::readData(QList<POI*> & poi_list,QString fname)
                   version = dataNode.toText().data().toInt();
                   if(version != VERSION_NUMBER && version !=0)
                   {
-                      showMessage("Bad version");
+                      qWarning("Bad version");
                       poi_list.clear();;
                       return false;
                   }
                   else
                   {
-                      showMessage("Ok version");
                       hasVersion = true;
                   }
               }
@@ -250,11 +244,8 @@ bool xml_POIData::readData(QList<POI*> & poi_list,QString fname)
               int tstamp=-1;
               bool useTstamp=false;
 
-              showMessage("Processing subnodes");
               while(!subNode.isNull())
               {
-                   showMessage("Sub node: "+subNode.toElement().tagName());
-
                    if(subNode.toElement().tagName() == POI_NAME)
                    {
                       dataNode = subNode.firstChild();
@@ -313,14 +304,14 @@ bool xml_POIData::readData(QList<POI*> & poi_list,QString fname)
               }
               if(!name.isEmpty() && lat!=-1 && lon != -1 && type != -1)
               {
-                   showMessage(QString("POI info present => create item %1 %2,%3@%4 - type=%6").arg(name)
-                              .arg(lat).arg(lon).arg(wph).arg(type));
+                   qWarning() << "POI info present => create item " << name << " " 
+                        << lat << "," << lon << "@" << wph << " -type: " << type;
                    POI * poi = new POI(name,lon,lat,proj,main,parent,type,wph,tstamp,useTstamp);
                    poi->setVisible(true);
                    poi_list.append(poi);
               }
               else
-                   showMessage("Incomplete boat info");
+                   qWarning("Incomplete boat info");
           }
           node = node.nextSibling();
      }
@@ -330,12 +321,11 @@ bool xml_POIData::readData(QList<POI*> & poi_list,QString fname)
 
      if(hasVersion)
      {
-         showMessage("all ok");
          return true;
      }
      else
      {
-         showMessage("no version");
+         qWarning("no version");
          poi_list.clear();
          return false;
      }

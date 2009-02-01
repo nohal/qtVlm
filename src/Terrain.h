@@ -103,7 +103,7 @@ signals:
     void mouseClicked(QMouseEvent * e);
     void mouseDblClicked(QMouseEvent * e);
     void mouseMoved(QMouseEvent * e);
-    void showMessage(QString);
+    void showContextualMenu(QContextMenuEvent * event);
 
 private:
     //-----------------------------------------------
@@ -140,6 +140,8 @@ private:
     void  mouseMoveEvent (QMouseEvent * e);
     void  enterEvent (QEvent * e);
     void  leaveEvent (QEvent * e);
+
+    void contextMenuEvent(QContextMenuEvent * event);
 
     void zoomOnGribFile();
 

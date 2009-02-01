@@ -167,7 +167,7 @@ MenuBar::MenuBar(QWidget *parent)
         acOptions_Units = addAction(menuOptions, tr("Unités"),tr("Ctrl+U"),tr(""),"");
         acOptions_GraphicsParams = addAction(menuOptions,
                             tr("Paramètres graphiques"),tr("Ctrl+G"),tr(""),"");
-        acVLMParam = addAction(menuOptions,tr("Param�tres VLM"),"","","");
+        acVLMParam = addAction(menuOptions,tr("Paramètres VLM"),"","","");
 
         QMenu *menuLanguage = new QMenu(tr("Language"));
             acOptions_GroupLanguage = new QActionGroup(menuLanguage);

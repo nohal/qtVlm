@@ -20,6 +20,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <QtGui>
 #include <QMessageBox>
+#include <QDebug>
 
 #include "BoardVLM.h"
 #include <qextserialport.h>
@@ -49,7 +50,6 @@ boardVLM::boardVLM(QMainWindow * mainWin,QWidget * parent) : QWidget(parent)
 
     isComputing = false;
 
-    connect(this,SIGNAL(showMessage(QString)),mainWin,SLOT(slotShowMessage(QString)));
     connect(mainWin,SIGNAL(setChangeStatus(bool)),this,SLOT(setChangeStatus(bool)));
 
     timer = new QTimer(this);
@@ -66,7 +66,6 @@ boardVLM::boardVLM(QMainWindow * mainWin,QWidget * parent) : QWidget(parent)
     mainWin->addDockWidget(Qt::LeftDockWidgetArea,VLMDock);
 
     board2 = new boardVLM_part2();
-    connect(board2,SIGNAL(showMessage(QString)),mainWin,SLOT(slotShowMessage(QString)));
     QDockWidget * VLMDock2 = new QDockWidget("VLM 2");
     VLMDock2->setWidget(board2);
     VLMDock2->setAllowedAreas(Qt::RightDockWidgetArea|Qt::LeftDockWidgetArea);
@@ -129,7 +128,6 @@ void boardVLM::showGribPointInfo(const GribPointInfo &pf)
 }
 
 #define calcAngleSign(VAL,ANGLE) { \
-    showMessage(QString("comp %1, VLM %2").arg(VAL).arg(ANGLE));\
     if(qAbs(VAL)>180)              \
     {                              \
         if(VAL>0)                  \
@@ -140,7 +138,6 @@ void boardVLM::showGribPointInfo(const GribPointInfo &pf)
         if(VAL<0)                  \
             ANGLE=-ANGLE;          \
     }                              \
-    showMessage(QString("new val %1").arg(ANGLE));\
 }
 
 void boardVLM::boatUpdated(boatAccount * boat)
@@ -178,7 +175,6 @@ void boardVLM::boatUpdated(boatAccount * boat)
     {
         Orthodromie orth = Orthodromie(boat->getLon(),boat->getLat(),WPLon,WPLat);
         dirAngle = orth.getAzimutDeg();
-        showMessage("Angle to WP: " + QString().setNum(dirAngle));
     }
     else
         dirAngle=-1;
@@ -222,7 +218,7 @@ void boardVLM::setWP(float lat,float lon,float wph)
 {
     if(!currentBoat)
     {
-        showMessage("No current boat for setWP");
+        qWarning("No current boat for setWP");
         return;
     }
     sendCmd(VLM_CMD_WP,lat,lon,wph);
@@ -241,12 +237,10 @@ void boardVLM::headingUpdated(double heading)
     if(isComputing) return;
     isComputing=true;
 
-    showMessage(QString("heading: cur=%1, new=%2").arg((float)heading).arg(currentBoat->getHeading()));
     
     if((float)heading==currentBoat->getHeading())
     {
         /* setting back to VLM value */
-        showMessage("Back to VLM value");
         speed->setText(QString().setNum(currentBoat->getSpeed()));
         speed->setStyleSheet(QString::fromUtf8(SPEED_COLOR_VLM));
         label_6->setStyleSheet(QString::fromUtf8(SPEED_COLOR_VLM));
@@ -354,6 +348,16 @@ void boardVLM::doSynch()
     }
 }
 
+#define CHKSUM(DATA) ({             \
+    char __c=0;                     \
+    char * __str=DATA.toAscii().data(); \
+    while(*__str) {                 \
+        __c^=*__str;                \
+        __str++;                    \
+    }                               \
+    __c;                            \
+})
+
 void boardVLM::synch_GPS()
 {
   if(!currentBoat)
@@ -361,51 +365,57 @@ void boardVLM::synch_GPS()
 
   if(chk_GPS->isChecked())
   {
-      showMessage("Starting gps synch");
-      QextSerialPort * port = new QextSerialPort(COM);
-      port->setBaudRate(BAUD19200);
-      port->setFlowControl(FLOW_OFF);
-      port->setParity(PAR_NONE);
-      port->setDataBits(DATA_8);
-      port->setStopBits(STOP_1);
+        QextSerialPort * port = new QextSerialPort(COM);
+        port->setBaudRate(BAUD19200);
+        port->setFlowControl(FLOW_OFF);
+        port->setParity(PAR_NONE);
+        port->setDataBits(DATA_8);
+        port->setStopBits(STOP_1);
 
-      port->open(QIODevice::ReadWrite);
+        port->open(QIODevice::ReadWrite);
 
-      if(!port->isOpen())
-      {
-          showMessage("Port not open");
-          return;
-      }
-      showMessage("Port ok");
+        if(!port->isOpen())
+        {
+            qWarning("Serial Port not open");
+            return;
+        }
 
-      QString data1;
-      QString data;
-      float lat=qAbs(currentBoat->getLat());
-      int deg=((int)lat);
-      lat=(lat-deg)*60;
-      deg=deg*100;
-      lat=lat+deg;
-      float lon=qAbs(currentBoat->getLon());
-      deg=((int)lon);
-      lon=(lon-deg)*60;
-      deg=deg*100;
-      lon=lon+deg;
-      QDateTime now = QDateTime::currentDateTime();
+        QString data1;
+        QString data;
+        QString data2;
+        char ch;
+        float lat=qAbs(currentBoat->getLat());
+        int deg=((int)lat);
+        lat=(lat-deg)*60;
+        deg=deg*100;
+        lat=lat+deg;
+        float lon=qAbs(currentBoat->getLon());
+        deg=((int)lon);
+        lon=(lon-deg)*60;
+        deg=deg*100;
+        lon=lon+deg;
+        QDateTime now = QDateTime::currentDateTime();
 
-      data1.sprintf("%04.2f,%s,%05.2f,%s,",lat,currentBoat->getLat()<0?"S":"N",lon,currentBoat->getLon()<0?"W":"E");
+        data1.sprintf("%07.2f,%s,%08.2f,%s,",lat,currentBoat->getLat()<0?"S":"N",lon,currentBoat->getLon()<0?"W":"E");
+        data2.sprintf("%05.1f,%05.1f,",currentBoat->getSpeed(),currentBoat->getHeading());
 
-      for(int i=0;i<15;i++)
-      {
-          data="$GPGLL,"+data1+now.toString("HHmmss")+",A\x0D\x0A";
-          now.addSecs(1);
-          port->write(data.toAscii(),data.length());
-      }
+        data="GPGLL,"+data1+now.toString("HHmmss")+",A";
+        ch=(char)CHKSUM(data);
+        data="$"+data+"*"+QString().setNum(ch,16);
+        qWarning() << "GPS-GLL: " << data;
+        data=data+"\x0D\x0A";
+        port->write(data.toAscii(),data.length());
 
-      delete port;
-      GPS_timer->start(30*1000);
+        data="GPRMC,"+now.toString("HHmmss")+",A,"+data1+data2+now.toString("ddMMyy")+",000.0,E";
+        ch=(char)CHKSUM(data);
+        data="$"+data+"*"+QString().setNum(ch,16);
+        qWarning() << "GPS-RMC: " << data;
+        data=data+"\x0D\x0A";
+        port->write(data.toAscii(),data.length());
+
+        delete port;
+        GPS_timer->start(30*1000);
     }
-    else
-        showMessage("btn not checked => not sending");
 }
 
 void boardVLM::setChangeStatus(bool status)
@@ -447,14 +457,15 @@ void boardVLM::sendCmd(int cmdNum,float  val1,float val2, float val3)
                         << "&lang=fr&type=login"
                         ;
 
-        emit showMessage(QString("login for cmd %1 (%2,%3,%4)").arg(cmdNum).arg(cmd_val1)
-                        .arg(cmd_val2).arg(cmd_val3));
+        qWarning() << "login for cmd " << cmdNum << "(" << cmd_val1 << "," 
+                                                 << cmd_val2 << ","
+                                                 << cmd_val3 << ")";
 
         inetManager->get(QNetworkRequest(QUrl(page)));
     }
     else
     {
-        emit showMessage(QString("error sendCmd %2").arg(currentRequest));
+        qWarning() <<  "error sendCmd " << currentRequest;
     }
 }
 
@@ -462,7 +473,7 @@ void boardVLM::requestFinished ( QNetworkReply* inetReply)
 {
     QString page;
     if (inetReply->error() != QNetworkReply::NoError) {
-        emit showMessage("Error doing inetGet:" + QString().setNum(inetReply->error()));
+        qWarning() <<  "Error doing inetGet:" << inetReply->error();
         btn_Synch->setStyleSheet(QString::fromUtf8("background-color: rgb(85, 255, 127);"));
         currentRequest=VLM_NO_REQUEST;
     }
@@ -474,8 +485,6 @@ void boardVLM::requestFinished ( QNetworkReply* inetReply)
                 btn_Synch->setStyleSheet(QString::fromUtf8("background-color: rgb(85, 255, 127);"));
                 return;
             case VLM_REQUEST_LOGIN:
-                emit showMessage("Login done");
-                //emit showMessage(inetReply->readAll());
                 currentRequest=VLM_DO_REQUEST;
 
                 switch(currentCmdNum)
@@ -520,13 +529,12 @@ void boardVLM::requestFinished ( QNetworkReply* inetReply)
                                 ;
                         break;
                 }
-                showMessage("Request: " + page);
-        inetManager->get(QNetworkRequest(QUrl(page)));
+                qWarning() << "Send cmd: " << page;
+                inetManager->get(QNetworkRequest(QUrl(page)));
                 break;
             case VLM_DO_REQUEST:
-                emit showMessage("Request done");
-                //emit showMessage(inetReply->readAll());
                 currentRequest=VLM_WAIT_RESULT;
+                qWarning() << "Request done";
                 /* update boat info */
                 nbRetry=0;
                 timer->start(1000);
@@ -545,8 +553,6 @@ void boardVLM::chkResult(void)
     {
         case VLM_CMD_HD:
             data=currentBoat->getHeading();
-            showMessage(QString("HD cur=%1 should be %2 pilot %3").arg(data)
-                    .arg(cmd_val1).arg(currentBoat->getPilotType()));
             if(data == cmd_val1 && currentBoat->getPilotType() == 1)
                 done=true;
             break;
@@ -555,18 +561,14 @@ void boardVLM::chkResult(void)
             val=currentBoat->getHeading()-currentBoat->getWindDir();
             calcAngleSign(val,data);
 
-            showMessage(QString("ANG cur=%1 should be %2 pilot %3").arg(data)
-                    .arg(cmd_val1).arg(currentBoat->getPilotType()));
             if(((int)data) == ((int)cmd_val1) && currentBoat->getPilotType() == 2)
                 done=true;
             break;
         case VLM_CMD_VMG:
-            showMessage(QString("Pilot cur=%1 should be 4").arg(currentBoat->getPilotType()));
             if(currentBoat->getPilotType() == 4)
                 done=true;
             break;
         case VLM_CMD_ORTHO:
-            showMessage(QString("Pilot cur=%1 should be 3").arg(currentBoat->getPilotType()));
             if(currentBoat->getPilotType() == 3)
                 done=true;
             break;
@@ -585,12 +587,12 @@ void boardVLM::chkResult(void)
         nbRetry++;
         if(nbRetry>MAX_RETRY)
         {
-            showMessage("Failed to synch");
+            qWarning("Failed to synch");
             currentRequest=VLM_NO_REQUEST;
             btn_Synch->setStyleSheet(QString::fromUtf8("background-color: rgb(255, 170, 0);"));
             return;
         }
-        showMessage("Retry...");
+        qWarning("Retry...");
         timer->start(1000);
     }
 }
@@ -642,10 +644,8 @@ void boardVLM_part2::boatUpdated(boatAccount * boat)
     QString txt;
 
     float angle_val;
-        
-    timer->stop();
 
-    emit showMessage(QString("WP: lat=%1 lon=%2 @%3").arg(WPLat).arg(WPLon).arg(WPHd));
+    timer->stop();
 
     if(WPLat == 0 && WPLon == 0)
     {

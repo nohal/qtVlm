@@ -45,7 +45,6 @@ POI_Editor::POI_Editor(QWidget *ownerMeteotable, QWidget *parent)
     this->ownerMeteotable=ownerMeteotable;
     modeCreation=false;
 
-    connect(this,SIGNAL(showMessage(QString)),ownerMeteotable,SLOT(slotShowMessage(QString)));
     connect(this,SIGNAL(addPOI_list(POI*)),ownerMeteotable,SLOT(addPOI_list(POI*)));
     connect(this,SIGNAL(delPOI_list(POI*)),ownerMeteotable,SLOT(delPOI_list(POI*)));
 
@@ -233,8 +232,6 @@ void POI_Editor::setValue(int type,float val)
 {
     int   deg = (int) trunc(val);
     float min = 60.0*fabs(val-trunc(val));
-    showMessage(QString("Set %1 val: deg=%2,min=%3").arg(type==POI_EDT_LAT?"LAT":"LON")
-            .arg(deg).arg(min));
     if(type==POI_EDT_LAT)
     {
         lat_deg->setValue(deg);

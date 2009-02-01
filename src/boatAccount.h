@@ -41,12 +41,8 @@ class Estime : public QWidget
 {Q_OBJECT
     public:
         Estime(Projection * proj,QWidget *parentWindow=0);
-        void setBoatPosition(float lat, float lon);
-        void setHeading(float heading);
+        void setBoatData(float lat, float lon,float heading);
         void projectionUpdate(Projection * proj);
-
-    signals:
-        void showMessage(QString msg);
 
     private:
         void  paintEvent(QPaintEvent *event);
@@ -54,7 +50,7 @@ class Estime : public QWidget
         float heading;
         int estime;
         
-        int i,j;
+        int e_i,e_j,b_i,b_j;
 
         Projection * proj;
 
@@ -66,8 +62,7 @@ class boatAccount: public QWidget
     public:
         boatAccount(QString login, QString pass, bool state,Projection * proj,QWidget * main,QWidget *parentWindow=0);
         ~boatAccount(void);
-
-        void updatePosition(void);
+        
         void setStatus(bool activated);
         void setParam(QString login, QString pass);
         void setParam(QString login, QString pass, bool activated);
@@ -128,7 +123,6 @@ class boatAccount: public QWidget
         void selectBoat();
 
     signals:
-        void showMessage(QString msg);
         void boatSelected(boatAccount*);
         void boatUpdated(boatAccount*);
         void boatLockStatusChanged(boatAccount*,bool);
@@ -163,8 +157,6 @@ class boatAccount: public QWidget
         QString score;
         QString polarVlm;
 
-        float heading_lat;
-        float heading_lon;
         float current_heading;
 
         int prevVac;
@@ -193,6 +185,9 @@ class boatAccount: public QWidget
         void  mousePressEvent(QMouseEvent * e);
         void  mouseDoubleClickEvent(QMouseEvent * e);
         void  mouseReleaseEvent(QMouseEvent * e);
+        void  contextMenuEvent(QContextMenuEvent * event);
+
+        void updatePosition(void);
 
         /* http connection */
         QString host;
