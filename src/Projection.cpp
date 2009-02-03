@@ -33,6 +33,7 @@ Copyright (C) 2008 - Jacques Zaninetti - http://zygrib.free.fr
 Projection::Projection(int w, int h, float cx, float cy) {
     scalemax = 50000;
     dscale = 1.2;
+    locked=false;
     init(w, h, cx, cy);
 }
 //--------------------------------------------------------------
@@ -52,12 +53,20 @@ void Projection::init(int w, int h, float cx, float cy) {
     updateBoundaries();
 }
 
+void Projection::setLock(bool val)
+{
+    //locked=val;
+    locked=false;
+}
+
 //--------------------------------------------------------------
 // Ajustements
 //--------------------------------------------------------------
 void Projection::setCentralPixel(int i, int j)
 {
     float x, y;
+    if(locked)
+        return;
     screen2map(i, j, &x, &y);
     while (x > 180.0) {
         x -= 360.0;
@@ -72,6 +81,8 @@ void Projection::setCentralPixel(int i, int j)
 //--------------------------------------------------------------
 void Projection::setCenterInMap(float x, float y)
 {
+    if(locked)
+        return;
     while (x > 180.0) {
         x -= 360.0;
     }
@@ -84,6 +95,8 @@ void Projection::setCenterInMap(float x, float y)
 }
 //--------------------------------------------------------------
 void Projection::setScreenSize(int w, int h) {
+    if(locked)
+        return;
     W = w;
     H = h;
     updateBoundaries();
@@ -93,6 +106,8 @@ void Projection::setScreenSize(int w, int h) {
 void Projection::updateZoneSelected(float x0, float y0, float x1, float y1)
 {
     // Nouvelle position du centre
+    if(locked)
+        return;
     CX = (x0+x1)/2.0;
     CY = (y0+y1)/2.0;
     
@@ -170,10 +185,13 @@ void Projection::updateBoundaries() {
     xmin = x0;
     ymax = y0;
     ymin = y1;
+    
+    emit projectionUpdated(this);
 
-	emit projectionUpdated(this);
-	
-	coefremp = 10000.0*fabs( ((xmax-xmin)*(ymax-ymin)) / (getW()*getH()) );
+    if((getW()*getH())!=0)
+        coefremp = 10000.0*fabs( ((xmax-xmin)*(ymax-ymin)) / (getW()*getH()) );
+    else
+        coefremp = 10000.0;    
 }
 
 

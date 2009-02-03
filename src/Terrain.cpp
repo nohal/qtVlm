@@ -373,9 +373,6 @@ void Terrain::drawEstime(QPainter &pnt)
                 pnt.setPen(penLine2);
                 draw_OrthodromieSegment(pnt, lon,lat,WPLon,WPLat);
             }
-            /*qWarning() << "boat: " << boat->getLogin() 
-                << "(" << lat << "," << lon << ") (" 
-                << tmp_lat << "," << tmp_lon << ")";*/
         }
     }
     pnt.setPen(cur_pen);
@@ -710,38 +707,41 @@ void Terrain::setCurrentDate(time_t t)
 //---------------------------------------------------------
 // Events
 //---------------------------------------------------------
+
+void Terrain::keyModif(QKeyEvent *e)
+{
+    if (e->modifiers() == Qt::ControlModifier) {
+        setCursor(Qt::SizeAllCursor);
+    }
+    else if (e->modifiers() == Qt::ShiftModifier) {
+        setCursor(Qt::UpArrowCursor);
+    }
+    else {
+        setCursor(Qt::CrossCursor);
+    }
+}
+
 void  Terrain::keyPressEvent (QKeyEvent *e)
 {
     if(e->key() == Qt::Key_Minus || e->key() == Qt::Key_M)
     {
-        if(!drawingMap)
-            slot_Zoom_Out();
+        slot_Zoom_Out();
         setCursor(Qt::CrossCursor);
     }
     else if(e->key() == Qt::Key_Plus || e->key() == Qt::Key_P)
     {
-        if(!drawingMap)
-            slot_Zoom_In();
+        slot_Zoom_In();
         setCursor(Qt::CrossCursor);
     }
     else
     {
-        if (e->modifiers() == Qt::ControlModifier) {
-            setCursor(Qt::SizeAllCursor);
-        }
-        else if (e->modifiers() == Qt::ShiftModifier) {
-            setCursor(Qt::UpArrowCursor);
-        }
-        else {
-            setCursor(Qt::CrossCursor);
-        }
+        keyModif(e);
     }
-
-
 }
+
 void  Terrain::keyReleaseEvent (QKeyEvent *e)
 {
-    this->keyPressEvent(e);
+    keyModif(e);
 }
 //---------------------------------------------------------
 void Terrain::enterEvent (QEvent * /*e*/) {
@@ -851,11 +851,15 @@ void Terrain::slotTimerResize () {
 //---------------------------------------------------------
 void Terrain::slot_Zoom_In()
 {
+    if(isResizing || drawingMap)
+        return;
     proj->zoom(1.3);
     setProjection(proj);
 }
 void Terrain::slot_Zoom_Out()
 {
+    if(isResizing || drawingMap)
+        return;
     proj->zoom(0.7);
     setProjection(proj);
 }
@@ -863,6 +867,7 @@ void Terrain::slot_Zoom_Out()
 void Terrain::slot_Zoom_Sel()
 {
     float x0, y0, x1, y1;
+
     if (getSelectedRectangle(&x0,&y0, &x1,&y1))
     {
         // zoom sur la zone sélectionnée
@@ -886,27 +891,37 @@ void Terrain::slot_Zoom_Sel()
 //---------------------------------------------------------
 void Terrain::slot_Zoom_All()
 {
+    if(isResizing || drawingMap)
+        return;
     proj->init(this->width(), this->height(), 0,0);
     setProjection(proj);
 }
 //------------------------------------------------
 void Terrain::slot_Go_Left()
 {
+    if(isResizing || drawingMap)
+        return;
     proj->move( 0.2, 0);
     setProjection(proj);
 }
 void Terrain::slot_Go_Right()
 {
+    if(isResizing || drawingMap)
+        return;
     proj->move(-0.2, 0);
     setProjection(proj);
 }
 void Terrain::slot_Go_Up()
 {
+    if(isResizing || drawingMap)
+        return;
     proj->move(0,  -0.2);
     setProjection(proj);
 }
 void Terrain::slot_Go_Down()
 {
+    if(isResizing || drawingMap)
+        return;
     proj->move(0,  0.2);
     setProjection(proj);
 }
@@ -942,6 +957,7 @@ void Terrain::paintEvent(QPaintEvent * /*event*/)
     {
         // Draw the map
         drawingMap = true;
+        proj->setLock(true);
         longJob = draw_GSHHSandGRIB(pnt);
 
         if (selX0!=selX1 && selY0!=selY1) {
@@ -963,6 +979,7 @@ void Terrain::paintEvent(QPaintEvent * /*event*/)
             }
         }
         drawEstime(pnt);
+        proj->setLock(false);
         drawingMap=false;
     }
 

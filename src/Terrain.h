@@ -136,6 +136,7 @@ private:
 
     void  keyPressEvent (QKeyEvent *e);
     void  keyReleaseEvent (QKeyEvent *e);
+    void  keyModif(QKeyEvent *e);
 
     void  mousePressEvent (QMouseEvent * e);
     void  mouseReleaseEvent (QMouseEvent * e);

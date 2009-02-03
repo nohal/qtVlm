@@ -60,6 +60,8 @@ Q_OBJECT
         virtual void init(int w, int h, float cx, float cy);
         virtual void zoom (float k);
         virtual void move (float dx, float dy);
+
+        virtual void setLock(bool val);
 	
 	signals:
 		void projectionUpdated(Projection *);
@@ -73,6 +75,8 @@ Q_OBJECT
         float scalemax;    // échelle maxi
         float dscale;	   // rapport scaley/scalex
 		float coefremp;		// Coefficient de remplissage (surface_visible/pixels)
+
+        bool locked;
 
         virtual void updateBoundaries();
 };
