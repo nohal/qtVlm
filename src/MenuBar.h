@@ -102,7 +102,6 @@ public:
         QAction *acMap_CitiesNames2;
         QAction *acMap_CitiesNames3;
         QAction *acMap_CitiesNames4;
-    QAction *acMap_ShowPOIs;
 
     QActionGroup *acMap_GroupQuality;
         QAction *acMap_Quality1;

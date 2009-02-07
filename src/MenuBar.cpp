@@ -135,8 +135,6 @@ MenuBar::MenuBar(QWidget *parent)
             acMap_GroupCitiesNames->addAction(acMap_CitiesNames4);
             menuMap->addMenu(menuCitiesNames);
 
-        acMap_ShowPOIs = addActionCheck(menuMap, tr("Points d'intérêt"), tr(""), tr("Afficher les Points d'intérêt"));
-
         menuMap->addSeparator();
         acMap_Zoom_In = addAction(menuMap,  tr("Augmenter l'échelle de la carte"), tr(""),
                         tr("Augmenter l'échelle de la carte"), "img/viewmag+.png");
@@ -361,8 +359,9 @@ int MenuBar::getNearestDateGrib(time_t tm)
     int id=0;
     if(listGribDates[0]>tm) return 0;
     while((uint)id<listGribDates.size() && listGribDates[id] < tm) id++;
-    if(listGribDates[id] < tm) return id;
-    else return id-1;
+    return id-1;
+    /*if(listGribDates[id] < tm) return id;
+    else return id-1;*/
 }
 
 //------------- VLM part

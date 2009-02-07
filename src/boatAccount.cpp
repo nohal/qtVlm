@@ -47,10 +47,11 @@ boatAccount::boatAccount(QString login, QString pass, bool activated,Projection 
     forcePolar=false;
     alias="";
     useAlias=false;
+    forceEstime=false;
 
     this->proj = proj;
-    connect(proj, SIGNAL(projectionUpdated(Projection *)), this,
-            SLOT(projectionUpdated(Projection *)) );
+    connect(parentWindow, SIGNAL(projectionUpdated()), this,
+            SLOT(projectionUpdated()) );
 
     createPopUpMenu();
 
@@ -61,7 +62,9 @@ boatAccount::boatAccount(QString login, QString pass, bool activated,Projection 
     if(activated)
         show();
 
-    connect(ac_select,SIGNAL(triggered()),this,SLOT(selectBoat()));
+    connect(ac_select,SIGNAL(triggered()),this,SLOT(selectBoat()));    
+    connect(ac_estime,SIGNAL(triggered()),this,SLOT(toggleEstime()));
+    
     connect(this,SIGNAL(boatSelected(boatAccount*)),main,SLOT(slotSelectBoat(boatAccount*)));
     connect(this,SIGNAL(boatUpdated(boatAccount*)),main,SLOT(slotBoatUpdated(boatAccount*)));
     connect(this,SIGNAL(boatLockStatusChanged(boatAccount*,bool)),
@@ -108,6 +111,12 @@ void boatAccount::selectBoat()
 void boatAccount::unSelectBoat()
 {
     selected = false;
+    update();
+}
+
+void boatAccount::toggleEstime()
+{
+    forceEstime=!forceEstime;
     update();
 }
 
@@ -386,9 +395,8 @@ void boatAccount::updatePosition(void)
     update();
 }
 
-void boatAccount::projectionUpdated(Projection * proj)
+void boatAccount::projectionUpdated()
 {
-    this->proj=proj;
     if(activated)
         updatePosition();
 }
@@ -443,6 +451,16 @@ void  boatAccount::mouseReleaseEvent(QMouseEvent *)
 
 void boatAccount::contextMenuEvent(QContextMenuEvent *)
 {
+    if(!selected)
+    {
+        if(forceEstime)
+            ac_estime->setText(tr("Cacher estime"));
+        else
+            ac_estime->setText(tr("Afficher estime"));
+        ac_estime->setEnabled(true);
+    }
+    else
+        ac_estime->setEnabled(false);
     popup->exec(QCursor::pos());
 }
 
@@ -452,6 +470,9 @@ void boatAccount::createPopUpMenu(void)
 
     ac_select = new QAction("Selectionner",popup);
     popup->addAction(ac_select);
+    
+    ac_estime = new QAction("Afficher estime",popup);
+    popup->addAction(ac_estime);
 
     /*ac_change = new QAction("Changer",popup);
     popup->addAction(ac_change);*/

@@ -76,9 +76,6 @@ void MainWindow::InitActionsStatus()
     menuBar->setCitiesNamesLevel(Util::getSetting("showCitiesNamesLevel", 0).toInt());
     terre->setCitiesNamesLevel(Util::getSetting("showCitiesNamesLevel", 0).toInt());
 
-    menuBar->acMap_ShowPOIs->setChecked(Util::getSetting("showPOIs", true).toBool());
-    terre->setShowPOIs(Util::getSetting("showPOIs", true).toBool());
-
     //----------------------------------------------------------------------
     QString lang = Util::getSetting("appLanguage", "none").toString();
     if (lang == "fr")
@@ -169,9 +166,6 @@ void MainWindow::connectSignals()
     connect(mb->acMap_Go_Down, SIGNAL(triggered()),
             terre,  SLOT(slot_Go_Down()));
 
-    connect(mb->acMap_ShowPOIs, SIGNAL(triggered(bool)),
-            terre,  SLOT(setShowPOIs(bool)));
-
     //-------------------------------------------------------
     connect(mb->acView_WindColors, SIGNAL(triggered(bool)),
             this,  SLOT(slotWindColors(bool)));
@@ -254,10 +248,6 @@ void MainWindow::connectSignals()
     //-------------------------------------
     connect(this, SIGNAL(signalMapQuality(int)),
             terre,  SLOT(setMapQuality(int)));
-    connect(this, SIGNAL(signalProjectionUpdated(Projection *)),
-            terre,  SLOT(setProjection(Projection *)));
-
-
 
     //-----------------------------------------------------------
     connect(terre, SIGNAL(mouseClicked(QMouseEvent *)),
@@ -276,7 +266,8 @@ void MainWindow::connectSignals()
 //----------------------------------------------------
 void MainWindow::slotGribFileReceived(QString fileName)
 {
-    openGribFile(fileName, true);
+    bool zoom =  (Util::getSetting("gribZoomOnLoad",0).toInt()==1);
+    openGribFile(fileName, zoom);
 }
 
 //=============================================================
@@ -415,7 +406,7 @@ MainWindow::MainWindow(int w, int h, QWidget *parent)
     xmlPOI->readData(poi_list,"poi.dat");
     //------------------------------------------------
     // sync all boat
-    slotVLM_Sync();
+    slotVLM_Sync();        
 }
 
 //-----------------------------------------------
@@ -479,9 +470,9 @@ void MainWindow::openGribFile(QString fileName, bool zoom)
 //-------------------------------------------------
 void MainWindow::slotCreatePOI()
 {
-    float lon, lat;
+    double lon, lat;
     proj->screen2map(mouseClicX,mouseClicY, &lon, &lat);
-    emit newPOI(lon,lat,proj);
+    emit newPOI((float)lon,(float)lat,proj);
 }
 //-------------------------------------------------
 void MainWindow::slotOpenMeteotablePOI(POI* poi)
@@ -493,9 +484,9 @@ void MainWindow::slotOpenMeteotablePOI(POI* poi)
 //-------------------------------------------------
 void MainWindow::slotOpenMeteotable()
 {
-    float lon, lat;
+    double lon, lat;
     proj->screen2map(mouseClicX,mouseClicY, &lon, &lat);
-    new MeteoTableDialog(terre->getGribPlot(), lon, lat);
+    new MeteoTableDialog(terre->getGribPlot(), (float)lon, (float)lat);
 }
 
 //-------------------------------------------------
@@ -647,7 +638,8 @@ void MainWindow::slotFile_Open()
     {
         QFileInfo finfo(fileName);
         gribFilePath = finfo.absolutePath();
-        openGribFile(fileName, true);
+        bool zoom =  (Util::getSetting("gribZoomOnLoad",0).toInt()==1);
+        openGribFile(fileName, zoom);
     }
 }
 //-------------------------------------------------
@@ -821,8 +813,7 @@ void MainWindow::slotMouseClicked(QMouseEvent * e)
             break;
         }
         case Qt::MidButton :   // Centre la carte sur le point
-            proj->setCentralPixel(e->x(), e->y());
-            emit signalProjectionUpdated(proj);
+            terre->setCentralPixel(e->x(), e->y());
             break;
         default :
             break;
@@ -830,7 +821,7 @@ void MainWindow::slotMouseClicked(QMouseEvent * e)
 }
 //--------------------------------------------------------------
 void MainWindow::slotMouseMoved(QMouseEvent * e) {
-    float xx, yy;
+    double xx, yy;
     proj->screen2map(e->x(), e->y(), &xx, &yy);
     if (terre->isSelectingZone())
     {
@@ -838,7 +829,7 @@ void MainWindow::slotMouseMoved(QMouseEvent * e) {
     }
     else
     {
-        GribPointInfo  pf = terre->getGribPlot()->getGribPointInfo(xx,yy);
+        GribPointInfo  pf = terre->getGribPlot()->getGribPointInfo((float)xx,(float)yy);
         VLMBoard->showGribPointInfo(pf);
     }
 }
@@ -847,11 +838,11 @@ void MainWindow::slotMouseDblClicked(QMouseEvent * e)
 {
     mouseClicX = e->x();
     mouseClicY = e->y();
-    float lon, lat;
+    double lon, lat;
     if(e->button()==Qt::LeftButton)
     {
         proj->screen2map(mouseClicX,mouseClicY, &lon, &lat);
-        slotAddPOI(lat,lon,-1,-1,false);
+        slotAddPOI((float)lat,(float)lon,-1,-1,false);
         //emit newPOI(lon,lat,proj);
     }
 }
@@ -911,9 +902,7 @@ void MainWindow::slotBoatUpdated(boatAccount * boat)
 {
     if(boat == selectedBoat)
     {
-        //VLMBoard->boatUpdate(boat);
-        proj->setCenterInMap(boat->getLon(),boat->getLat());
-        terre->setProjection(proj);
+        terre->setCenterInMap(boat->getLon(),boat->getLat());
         emit boatHasUpdated(boat);
     }
 }
@@ -932,8 +921,6 @@ void MainWindow::slotSelectBoat(boatAccount* newSelect)
         selectedBoat=newSelect;
         if(newSelect->getStatus())
         {
-            proj->setCenterInMap(newSelect->getLon(),newSelect->getLat());
-            terre->setProjection(proj);
             newSelect->getData();
             menuBar->acPilototo->setEnabled(!newSelect->getLockStatus());
         }
@@ -1004,10 +991,6 @@ void MainWindow::slotAddPOI(float lat,float lon, float wph,int timestamp,bool us
     POI * poi;
     poi = new POI(QString(tr("POI")),lon,lat, proj,
                   this, terre,POI_STD,wph,timestamp,useTimeStamp);
-#warning il faudrait recup la config comme ds le constructeur
-    poi->setVisible(true);
-    poi->projectionUpdated(NULL);
-
     addPOI_list(poi);
 }
 

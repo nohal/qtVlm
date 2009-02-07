@@ -32,6 +32,7 @@ paramVLM::paramVLM(QWidget * parent) : QDialog(parent)
          Util::getSetting("gpsEmulEnable", "0").toString()=="1"?Qt::Checked:Qt::Unchecked);
     serialName->setText(Util::getSetting("serialName", "COM2").toString());
     estimeLen->setValue(Util::getSetting("estimeLen",100).toInt());
+    chk_gribZoomOnLoad->setCheckState(Util::getSetting("gribZoomOnLoad",0).toInt()==1?Qt::Checked:Qt::Unchecked);
 }
 
 void paramVLM::done(int result)
@@ -41,6 +42,7 @@ void paramVLM::done(int result)
         Util::setSetting("gpsEmulEnable",chk_activateEmulation->checkState()==Qt::Checked?"1":"0");
         Util::setSetting("serialName", serialName->text());
         Util::setSetting("estimeLen", QString().setNum(estimeLen->value()));
+        Util::setSetting("gribZoomOnLoad",chk_gribZoomOnLoad->checkState()==Qt::Checked?"1":"0");
         emit paramVLMChanged();
     }
     QDialog::done(result);

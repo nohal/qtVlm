@@ -273,6 +273,7 @@ bool Terrain::draw_GSHHSandGRIB(QPainter &pntGlobal)
         pleaseWait = false;
         longJob = true;
     }
+
     // Recopie l'image complète
     pntGlobal.drawPixmap(0,0, *imgAll);
     return longJob;
@@ -285,7 +286,7 @@ void Terrain::draw_OrthodromieSegment(QPainter &pnt,
                             int recurs
                             )
 {
-    if (recurs > 20) // this is bugging under win :100)
+    if (recurs > 10) // this is bugging under win :100)
         return;
     Orthodromie *ortho;
     int i0,j0, i1,j1, im,jm;
@@ -357,7 +358,7 @@ void Terrain::drawEstime(QPainter &pnt)
     while(i.hasNext())
     {
         boatAccount * boat = i.next();
-        if(boat->getStatus())
+        if(boat->getStatus() && ( boat->getIsSelected() || boat->getForceEstime()))
         {
             float lat,lon,tmp_lat,tmp_lon,WPLat,WPLon;            
             lat=boat->getLat();
@@ -387,14 +388,13 @@ void Terrain::indicateWaitingMap()
 }
 
 //-------------------------------------------------------
-void Terrain::setProjection(Projection *proj_)
+void Terrain::setProjection()
 {
-//printf("Terrain::setProjection\n");
     indicateWaitingMap();
-    proj = proj_;
     isEarthMapValid = false;
     isWindMapValid = false;
     update();
+    emit projectionUpdated();
 }
 
 //=========================================================
@@ -680,6 +680,7 @@ void Terrain::zoomOnGribFile()
             mh = fabs(x0-x1)*0.05;
             mv = fabs(y0-y1)*0.05;
             proj->updateZoneSelected(x0-mh,y0-mv, x1+mh,y1+mv);
+            setProjection();
         }
     }
 }
@@ -760,12 +761,13 @@ void Terrain::mousePressEvent (QMouseEvent * e) {
     if (e->button() == Qt::LeftButton)
     {
         // Début de sélection de zone rectangulaire
+        double x,y;
         isSelectionZoneEnCours = true;
-        proj->screen2map(e->x(),e->y(), &selX1, &selY1);
+        proj->screen2map(e->x(),e->y(), &x, &y);
 /*        selX1 = floor(selX1*12)/12;
         selY1 = ceil (selY1*12)/12;*/
-        selX0 = selX1;
-        selY0 = selY1;
+        selX0 = selX1=(float)x;
+        selY0 = selY1=(float)y;
         update();
     }
 }
@@ -776,10 +778,13 @@ void Terrain::mouseReleaseEvent (QMouseEvent * e) {
 //printf("release\n");
 //
     float x0, y0, x1, y1;
+    double x,y;
     if (isSelectionZoneEnCours)
     {
         isSelectionZoneEnCours = false;
-        proj->screen2map(e->x(),e->y(), &selX1, &selY1);
+        proj->screen2map(e->x(),e->y(), &x, &y);
+        selX1=x;
+        selY1=y;
 /*        selX1 = ceil (selX1*12)/12;
         selY1 = floor(selY1*12)/12;*/
         if (getSelectedRectangle(&x0,&y0, &x1,&y1))
@@ -809,9 +814,12 @@ void Terrain::mouseDoubleClickEvent(QMouseEvent * event)
 //---------------------------------------------------------
 void Terrain::mouseMoveEvent (QMouseEvent * e) {
 //printf("move %d %d\n",e->x(),e->y());
+    double x,y;
     if (isSelectionZoneEnCours)
     {
-        proj->screen2map(e->x(),e->y(), &selX1, &selY1);
+        proj->screen2map(e->x(),e->y(), &x, &y);
+        selX1=x;
+        selY1=y;
 /*        selX1 = ceil (selX1*12)/12;
         selY1 = floor(selY1*12)/12;*/
         update();
@@ -833,35 +841,33 @@ void Terrain::resizeEvent (QResizeEvent * /*e*/)
     isEarthMapValid = false;
     isWindMapValid = false;
     isResizing = true;
-
+    
     // Evite les multiples update() pendant les changements de taille
     timerResize->stop();
     timerResize->start(100);
-
-//    update();
 }
 //---------------------------------------------------------
 void Terrain::slotTimerResize () {
     if (isResizing) {
 //printf("timer update\n");
         isResizing = false;
-        update();
+        setProjection();
     }
 }
 //---------------------------------------------------------
 void Terrain::slot_Zoom_In()
 {
-    if(isResizing || drawingMap)
+    if(isResizing /*|| drawingMap*/)
         return;
     proj->zoom(1.3);
-    setProjection(proj);
+    setProjection();
 }
 void Terrain::slot_Zoom_Out()
 {
-    if(isResizing || drawingMap)
+    if(isResizing)
         return;
-    proj->zoom(0.7);
-    setProjection(proj);
+    proj->zoom(1/1.3);
+    setProjection();
 }
 //---------------------------------------------------------
 void Terrain::slot_Zoom_Sel()
@@ -872,7 +878,7 @@ void Terrain::slot_Zoom_Sel()
     {
         // zoom sur la zone sélectionnée
         proj->updateZoneSelected(x0,y0, x1,y1);
-        setProjection(proj);
+        setProjection();
         isSelectionZoneEnCours = false;
         selX0 = selY0 = 0;
         selX1 = selY1 = 0;
@@ -891,55 +897,53 @@ void Terrain::slot_Zoom_Sel()
 //---------------------------------------------------------
 void Terrain::slot_Zoom_All()
 {
-    if(isResizing || drawingMap)
+    if(isResizing /*|| drawingMap*/)
         return;
     proj->init(this->width(), this->height(), 0,0);
-    setProjection(proj);
+    setProjection();
 }
 //------------------------------------------------
 void Terrain::slot_Go_Left()
 {
-    if(isResizing || drawingMap)
+    if(isResizing /*|| drawingMap*/)
         return;
     proj->move( 0.2, 0);
-    setProjection(proj);
+    setProjection();
 }
 void Terrain::slot_Go_Right()
 {
-    if(isResizing || drawingMap)
+    if(isResizing /*|| drawingMap*/)
         return;
     proj->move(-0.2, 0);
-    setProjection(proj);
+    setProjection();
 }
 void Terrain::slot_Go_Up()
 {
-    if(isResizing || drawingMap)
+    if(isResizing /*|| drawingMap*/)
         return;
     proj->move(0,  -0.2);
-    setProjection(proj);
+    setProjection();
 }
 void Terrain::slot_Go_Down()
 {
-    if(isResizing || drawingMap)
+    if(isResizing /*|| drawingMap*/)
         return;
     proj->move(0,  0.2);
-    setProjection(proj);
+    setProjection();
 }
 
-//---------------------------------------------------------
-void Terrain::setShowPOIs(bool show)
+void Terrain::setCentralPixel(int i, int j)
 {
-    Util::setSetting("showPOIs", show);
-    // list of all the POI's
-    QList<POI*> lpois = findChildren <POI*>();
-    for (int i=0; i<lpois.size(); i++)
-    {
-        if (show)
-            lpois.at(i)->setVisible(true);
-        else
-            lpois.at(i)->setVisible(false);
-    }
+   proj->setCentralPixel(i,j);
+   setProjection();
 }
+
+void Terrain::setCenterInMap(float x, float y)
+{
+        proj->setCenterInMap(x,y);
+        setProjection();
+}
+
 
 
 //---------------------------------------------------------
@@ -957,7 +961,6 @@ void Terrain::paintEvent(QPaintEvent * /*event*/)
     {
         // Draw the map
         drawingMap = true;
-        proj->setLock(true);
         longJob = draw_GSHHSandGRIB(pnt);
 
         if (selX0!=selX1 && selY0!=selY1) {
@@ -979,7 +982,6 @@ void Terrain::paintEvent(QPaintEvent * /*event*/)
             }
         }
         drawEstime(pnt);
-        proj->setLock(false);
         drawingMap=false;
     }
 
@@ -999,7 +1001,6 @@ void Terrain::paintEvent(QPaintEvent * /*event*/)
         pnt.drawRect(rect);
         pnt.drawText(rect, Qt::AlignHCenter|Qt::AlignVCenter , txt);
     }
-
 }
 
 

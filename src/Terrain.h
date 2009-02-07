@@ -60,7 +60,7 @@ public:
 
 public slots :
     // Map
-    void setProjection(Projection *);
+    void setProjection();
     void setDrawRivers(bool);
     void setDrawCountriesBorders(bool);
     void setDrawOrthodromie(bool);
@@ -75,8 +75,9 @@ public slots :
     void slot_Go_Right();
     void slot_Go_Up();
     void slot_Go_Down();
+    void setCentralPixel(int i, int j);
+    void setCenterInMap(float x, float y);
 
-    void setShowPOIs(bool);
     void updateGraphicsParameters();
 
     // Grib
@@ -107,6 +108,7 @@ signals:
     void mouseDblClicked(QMouseEvent * e);
     void mouseMoved(QMouseEvent * e);
     void showContextualMenu(QContextMenuEvent * event);
+    void projectionUpdated();
 
 private:
     //-----------------------------------------------

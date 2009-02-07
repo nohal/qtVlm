@@ -54,8 +54,8 @@ Copyright (C) 2008 - Jacques Zaninetti - http://zygrib.free.fr
 //==========================================================
 class GshhsPoint {
     public:
-        float lon, lat;    // longitude, latitude
-        GshhsPoint(float lo, float la) {
+        double lon, lat;    // longitude, latitude
+        GshhsPoint(double lo, double la) {
             lon = lo;
             lat = la;
         }
@@ -79,7 +79,7 @@ class GshhsPolygon
         int id;				/* Unique polygon id number, starting at 0 */
         int n;				/* Number of points in this polygon */
         int flag;			/* level + version << 8 + greenwich << 16 + source << 24 */
-        float west, east, south, north;	/* min/max extent in DEGREES */
+        double west, east, south, north;	/* min/max extent in DEGREES */
         int area;			/* Area of polygon in 1/10 km^2 */
         //----------------------
         std::list<GshhsPoint *> lsPoints;
@@ -145,26 +145,26 @@ class GshhsReader
         // Listes de polygones
         // Pour chaque type, une liste par niveau de qualité,
         // pour éviter les relectures de fichier (pb mémoire ?)
-        std::list<GshhsPolygon*> lsPoly_level1  [5];
-        std::list<GshhsPolygon*> lsPoly_level2  [5];
-        std::list<GshhsPolygon*> lsPoly_level3  [5];
-        std::list<GshhsPolygon*> lsPoly_level4  [5];
-        std::list<GshhsPolygon*> lsPoly_boundaries [5];
-        std::list<GshhsPolygon*> lsPoly_rivers  [5];
+        std::list<GshhsPolygon*> * lsPoly_level1  [5];
+        std::list<GshhsPolygon*> * lsPoly_level2  [5];
+        std::list<GshhsPolygon*> * lsPoly_level3  [5];
+        std::list<GshhsPolygon*> * lsPoly_level4  [5];
+        std::list<GshhsPolygon*> * lsPoly_boundaries [5];
+        std::list<GshhsPolygon*> * lsPoly_rivers  [5];
 
         std::list<GshhsPolygon*> & getList_level(int level);
         std::list<GshhsPolygon*> & getList_boundaries();
         std::list<GshhsPolygon*> & getList_rivers();
         //-----------------------------------------------------
                 
-        int GSHHS_scaledPoints(GshhsPolygon *pol, QPoint *pts, float decx,
+        int GSHHS_scaledPoints(GshhsPolygon *pol, QPoint *pts, double decx,
                                 Projection *proj
         );
         void GsshDrawPolygons(QPainter &pnt, std::list<GshhsPolygon*> &lst,
                                 Projection *proj
         );
         void GsshDrawLines(QPainter &pnt, std::list<GshhsPolygon*> &lst,
-                                Projection *proj
+                                Projection *proj, bool isClosed
         );
         void clearLists();
     

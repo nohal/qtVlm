@@ -357,7 +357,7 @@ void GribPlot::draw_RAIN_Color(QPainter &pnt, const Projection *proj, bool smoot
         
     
     int i, j;
-    float x, y, v;
+    double x, y, v;
     int W = proj->getW();
     int H = proj->getH();
 
@@ -409,7 +409,7 @@ void GribPlot::draw_CLOUD_Color(QPainter &pnt, const Projection *proj, bool smoo
         return;
     
     int i, j;
-    float x, y, v;
+    double x, y, v;
     int W = proj->getW();
     int H = proj->getH();
     QRgb   rgb;
@@ -444,7 +444,7 @@ void GribPlot::draw_HUMID_Color(QPainter &pnt, const Projection *proj, bool smoo
         return;
     
     int i, j;
-    float x, y, v;
+    double x, y, v;
     int W = proj->getW();
     int H = proj->getH();
     QRgb   rgb;
@@ -484,7 +484,7 @@ void GribPlot::draw_WIND_Color(QPainter &pnt, const Projection *proj, bool smoot
         
     
     int i, j;
-    float x, y, vx, vy, v;
+    double x, y, vx, vy, v;
     int W = proj->getW();
     int H = proj->getH();
     
@@ -532,7 +532,7 @@ void GribPlot::draw_WIND_Arrows
     if (recx == NULL || recy == NULL)
         return;        
     int i, j;
-    float x, y, vx, vy;
+    double x, y, vx, vy;
     int W = proj->getW();
     int H = proj->getH();
     int space =  barbules ? windBarbuleSpace : windArrowSpace;
@@ -860,7 +860,7 @@ void GribPlot::draw_TEMPERATURE_Labels(QPainter &pnt, const Projection *proj)
     pnt.setFont(fontTemperatureLabels);
     pnt.setPen(QColor(0,0,0));
     
-    float x, y, v;
+    double x, y, v;
     int i, j, dimin, djmin;
     dimin = 50;
     djmin = 30;

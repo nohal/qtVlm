@@ -48,8 +48,6 @@ class POI : public QWidget
 
         ~POI();
 
-        void setProjection(Projection *proj);
-
         QString getName()         {return name;}
         float   getLongitude()    {return lon;}
         float   getLatitude()     {return lat;}
@@ -68,7 +66,7 @@ class POI : public QWidget
         void doChgWP(float lat,float lon, float wph);
 
     public slots:
-        void projectionUpdated(Projection *);
+        void updateProjection();
         void timerClickEvent();
         void slot_editPOI();
         void slot_setWP();

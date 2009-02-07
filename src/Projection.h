@@ -33,8 +33,8 @@ Q_OBJECT
         Projection(int w, int h, float lon, float lat);
         virtual ~Projection() {}
 
-        virtual void screen2map(int i, int j, float *x, float *y) const;
-        virtual void map2screen(float x, float y, int *i, int *j) const;
+        virtual void screen2map(int i, int j, double *x, double *y) const;
+        virtual void map2screen(double x, double y, int *i, int *j) const;
         
         virtual int   getW()  const   {return W;};    // taille de l'écran
         virtual int   getH()  const   {return H;};
@@ -61,11 +61,6 @@ Q_OBJECT
         virtual void zoom (float k);
         virtual void move (float dx, float dy);
 
-        virtual void setLock(bool val);
-	
-	signals:
-		void projectionUpdated(Projection *);
-
     private:
         int W, H;     // taille de la fenêtre (pixels)
         
@@ -76,28 +71,26 @@ Q_OBJECT
         float dscale;	   // rapport scaley/scalex
 		float coefremp;		// Coefficient de remplissage (surface_visible/pixels)
 
-        bool locked;
-
         virtual void updateBoundaries();
 };
 
 
 //===============================================================================
-inline void Projection::map2screen(float x, float y, int *i, int *j) const
+inline void Projection::map2screen(double x, double y, int *i, int *j) const
 {
-    float scaley = scale*dscale;
+    double scaley = scale*dscale;
     
     *i =  W/2 + (int) (scale * (x-CX) + 0.5);
     *j =  H/2 - (int) (scaley * (y-CY) + 0.5);
 }
 
 //-------------------------------------------------------------------------------
-inline void Projection::screen2map(int i, int j, float *x, float *y) const
+inline void Projection::screen2map(int i, int j, double *x, double *y) const
 {
-    float scaley = scale*dscale;
+    double scaley = scale*dscale;
     
-    *x = (float)(i - W/2 + scale*CX)/ scale;
-    *y = (float)(H/2 -j + scaley * CY)/ scaley;
+    *x = (double)(i - W/2 + scale*CX)/ scale;
+    *y = (double)(H/2 -j + scaley * CY)/ scaley;
 }
 
 //-------------------------------------------------------------------------------

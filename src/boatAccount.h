@@ -89,16 +89,19 @@ class boatAccount: public QWidget
         bool getAliasState(void)     { return useAlias; }
         bool getPolarState(void)     { return forcePolar; }
         QString getAlias(void)       { return alias; }
+        bool getForceEstime(void)    { return forceEstime; }
+        bool getIsSelected(void)     { return selected; }
         
         QString getCurrentPolarName(void) { return (forcePolar?polarName:polarVlm); }
 
         void updateProxy(void);
 
     public slots:
-        void projectionUpdated(Projection * proj);
+        void projectionUpdated();
         void requestFinished (QNetworkReply*);
         
         void selectBoat();
+        void toggleEstime();
 
     signals:
         void boatSelected(boatAccount*);
@@ -155,6 +158,7 @@ class boatAccount: public QWidget
 
         QMenu *popup;
         QAction * ac_select;
+        QAction * ac_estime;
         void createPopUpMenu(void);
 
         void  paintEvent(QPaintEvent *event);
@@ -184,6 +188,8 @@ class boatAccount: public QWidget
         
         QStringList pilototo;
         bool hasPilototo;
+        
+        bool forceEstime;
 };
 
 #endif

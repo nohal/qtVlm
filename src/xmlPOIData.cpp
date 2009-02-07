@@ -156,7 +156,6 @@ void xml_POIData::importZyGrib(QList<POI*> & poi_list)
                 POI * poi = new POI(QString(QByteArray::fromBase64(lst[1].toUtf8())),
                                     lst[2].toFloat(),lst[3].toFloat(),proj,main,parent,
                                     lst[4].toInt(),lst[5].toInt(),-1,false);
-                poi->setVisible(true);
                 poi_list.append(poi);
                 /*removing zyGrib POI*/
                 if (rep == QMessageBox::Yes)
@@ -307,7 +306,6 @@ bool xml_POIData::readData(QList<POI*> & poi_list,QString fname)
                    qWarning() << "POI info present => create item " << name << " " 
                         << lat << "," << lon << "@" << wph << " -type: " << type;
                    POI * poi = new POI(name,lon,lat,proj,main,parent,type,wph,tstamp,useTstamp);
-                   poi->setVisible(true);
                    poi_list.append(poi);
               }
               else

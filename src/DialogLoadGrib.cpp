@@ -111,9 +111,6 @@ void DialogLoadGrib::slotGribMessage(QString msg)
 //----------------------------------------------------
 void DialogLoadGrib::slotGribDataReceived(QByteArray *content, QString fileName)
 {
-    //openGribFile(fileName);
-    //    printf("\nFileReceived : %s\n", qPrintable(fileName));
-
     fileName = QFileDialog::getSaveFileName(this,
                  tr("Sauvegarde du fichier GRIB"), "grib/"+fileName, "");
                  

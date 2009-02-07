@@ -27,6 +27,7 @@ Copyright (C) 2008 - Jacques Zaninetti - http://zygrib.free.fr
 
 #include <QTimer>
 #include <QMessageBox>
+#include <QDebug>
 
 #include "POI.h"
 #include "Util.h"
@@ -48,10 +49,11 @@ POI::POI(QString name, float lon, float lat,
     this->timeStamp=tstamp;
     this->useTstamp=useTstamp;
 
-    setProjection(proj);
+    this->proj = proj;
+    updateProjection();
     createWidget();
 
-    connect(proj, SIGNAL(projectionUpdated(Projection * )), this, SLOT(projectionUpdated(Projection *)) );
+    connect(parentWindow, SIGNAL(projectionUpdated()), this, SLOT(updateProjection()) );
     connect(this, SIGNAL(signalOpenMeteotablePOI(POI*)),
                             ownerMeteotable, SLOT(slotOpenMeteotablePOI(POI*)));
     
@@ -118,9 +120,8 @@ void POI::setName(QString name)
 }
 
 //-------------------------------------------------------------------------------
-void POI::setProjection( Projection *proj)
-{
-    this->proj = proj;
+void POI::updateProjection()
+{    
     if (proj->isPointVisible(lon, lat)) {      // tour du monde ?
         proj->map2screen(lon, lat, &pi, &pj);
     }
@@ -133,12 +134,6 @@ void POI::setProjection( Projection *proj)
 
     int dy = height()/2;
     move(pi-3, pj-dy);
-}
-
-//-------------------------------------------------------------------------------
-void POI::projectionUpdated(Projection * )
-{
-    setProjection(proj);
 }
 
 //-------------------------------------------------------------------------------
@@ -159,7 +154,6 @@ void  POI::paintEvent(QPaintEvent *)
     pen.setWidth(1);
     pnt.setPen(pen);
     pnt.drawRect(9,0,width()-10,height()-1);
-
 }
 
 //-------------------------------------------------------------------------------

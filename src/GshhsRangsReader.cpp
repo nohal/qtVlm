@@ -153,17 +153,22 @@ void GshhsRangsCell::readSegmentRim(
 
 //=======================================================================================
 //=======================================================================================
-void GshhsRangsCell::drawMapPlain(QPainter &pnt, float dx, QPoint *pts, Projection *proj,
+void GshhsRangsCell::drawMapPlain(QPainter &pnt, double dx, QPoint *pts, Projection *proj,
             QColor seaColor, QColor landColor )
 {
 // if (!(x0cell==x0debug && y0cell==y0debug))
 // return;
-//pnt.setPen(Qt::white);
+
 
     std::list<GshhsRangsPolygon *>::iterator iterPolygons;
     std::list<GshhsRangsPoint *>::iterator iterPoints;
     GshhsRangsPolygon *poly;
     int xx, yy, oxx=0, oyy=0, nbpts;
+    
+    QPen landPen(landColor);
+    landPen.setWidthF(1.4);
+	
+	pnt.setRenderHint(QPainter::Antialiasing, true);
         
     for (iterPolygons=lsPolygons.begin(); iterPolygons!=lsPolygons.end(); iterPolygons++)
     {
@@ -186,17 +191,20 @@ void GshhsRangsCell::drawMapPlain(QPainter &pnt, float dx, QPoint *pts, Projecti
         }
         nbpts = j;
 
-        if (poly->interior==1 || poly->interior==3)
+        if (poly->interior==1 || poly->interior==3) {
             pnt.setBrush(landColor);
-        else
+			pnt.setPen(landPen);
+		}
+        else {
             pnt.setBrush(seaColor);
-        
+			pnt.setPen(Qt::transparent);
+        }
         pnt.drawPolygon(pts, nbpts);
     }
 }
 
 //------------------------------------------------------------------------
-void GshhsRangsCell::drawSeaBorderLines(QPainter &pnt, float dx, Projection *proj)
+void GshhsRangsCell::drawSeaBorderLines(QPainter &pnt, double dx, Projection *proj)
 {
     std::list<GshhsRangsPolygon *>::iterator iterPolygons;
     std::list<GshhsRangsPoint *>::iterator iterPoints;
@@ -210,7 +218,7 @@ void GshhsRangsCell::drawSeaBorderLines(QPainter &pnt, float dx, Projection *pro
 		
 		GshhsRangsPoint *pt;
 		QPoint  pstart, p0, p1;		// points on screen
-		float	xstart, ystart, x0,y0,  x1,y1;    // world coordinate
+		double	xstart, ystart, x0,y0,  x1,y1;    // world coordinate
 		bool	p0_isCellBorder=true, p1_isCellBorder=true;
 		bool	pstart_isCellBorder;
         

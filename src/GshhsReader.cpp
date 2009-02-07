@@ -22,6 +22,8 @@ Copyright (C) 2008 - Jacques Zaninetti - http://zygrib.free.fr
 
 ***********************************************************************/
 
+#include <QDebug>
+
 #include "GshhsReader.h"
 
 //==========================================================
@@ -41,11 +43,11 @@ GshhsPolygon::GshhsPolygon(ZUFILE *file_)
     area  = readInt4();
     greenwich = readInt2();
     readInt2();   // source
-//printf("%d %d %d\n", id, n, ok);
+
     antarctic = (west==0 && east==360);
     if (ok)
     {
-		float x, y=-90;
+		double x, y=-90;
         
         for (int i=0; i<n; i++) {
             x = readInt4() * 1e-6;
@@ -89,7 +91,7 @@ GshhsPolygon_WDB::GshhsPolygon_WDB(ZUFILE *file_)
     antarctic = false;
     if (ok) {
         for (int i=0; i<n; i++) {
-            float x, y;
+            double x, y;
             x = readInt4() * 1e-6;
             if (greenwich && x > 270)
                 x -= 360;
@@ -124,6 +126,15 @@ GshhsReader::GshhsReader(std::string fpath_, int quality)
     fpath = fpath_;
     gshhsRangsReader = new GshhsRangsReader(fpath);
     isUsingRangsReader = true;
+    for (int qual=0; qual<5; qual++)
+    {
+        lsPoly_level1[qual] = new std::list<GshhsPolygon*>;
+        lsPoly_level2[qual] = new std::list<GshhsPolygon*>;
+        lsPoly_level3[qual] = new std::list<GshhsPolygon*>;
+        lsPoly_level4[qual] = new std::list<GshhsPolygon*>;
+        lsPoly_boundaries[qual] = new std::list<GshhsPolygon*>;
+        lsPoly_rivers[qual] = new std::list<GshhsPolygon*>;
+    }
     userPreferredQuality = quality;
     setQuality(quality);
 }
@@ -138,41 +149,42 @@ void GshhsReader::clearLists() {
     std::list<GshhsPolygon*>::iterator itp;
     for (int qual=0; qual<5; qual++)
     {
-        for (itp=lsPoly_level1[qual].begin(); itp != lsPoly_level1[qual].end(); itp++) {
+        for (itp=lsPoly_level1[qual]->begin(); itp != lsPoly_level1[qual]->end(); itp++) {
             delete *itp;
             *itp = NULL;
         }
-        for (itp=lsPoly_level2[qual].begin(); itp != lsPoly_level2[qual].end(); itp++) {
+        for (itp=lsPoly_level2[qual]->begin(); itp != lsPoly_level2[qual]->end(); itp++) {
             delete *itp;
             *itp = NULL;
         }
-        for (itp=lsPoly_level3[qual].begin(); itp != lsPoly_level3[qual].end(); itp++) {
+        for (itp=lsPoly_level3[qual]->begin(); itp != lsPoly_level3[qual]->end(); itp++) {
             delete *itp;
             *itp = NULL;
         }
-        for (itp=lsPoly_level4[qual].begin(); itp != lsPoly_level4[qual].end(); itp++) {
+        for (itp=lsPoly_level4[qual]->begin(); itp != lsPoly_level4[qual]->end(); itp++) {
             delete *itp;
             *itp = NULL;
         }
-        for (itp=lsPoly_boundaries[qual].begin(); itp != lsPoly_boundaries[qual].end(); itp++) {
+        for (itp=lsPoly_boundaries[qual]->begin(); itp != lsPoly_boundaries[qual]->end(); itp++) {
             delete *itp;
             *itp = NULL;
         }
-        for (itp=lsPoly_rivers[qual].begin(); itp != lsPoly_rivers[qual].end(); itp++) {
+        for (itp=lsPoly_rivers[qual]->begin(); itp != lsPoly_rivers[qual]->end(); itp++) {
             delete *itp;
             *itp = NULL;
         }
-        lsPoly_level1[qual].clear();
-        lsPoly_level2[qual].clear();
-        lsPoly_level3[qual].clear();
-        lsPoly_level4[qual].clear();
-        lsPoly_boundaries[qual].clear();
-        lsPoly_rivers[qual].clear();
+        lsPoly_level1[qual]->clear();
+        lsPoly_level2[qual]->clear();
+        lsPoly_level3[qual]->clear();
+        lsPoly_level4[qual]->clear();
+        lsPoly_boundaries[qual]->clear();
+        lsPoly_rivers[qual]->clear();
     }
 }
 //-----------------------------------------------------------------------
 // extension du nom de fichier gshhs selon la qualité
-std::string GshhsReader::getNameExtension(int quality) {
+std::string GshhsReader::getNameExtension(int quality)
+{
     std::string ext;
     switch (quality) {
         case 0: ext = "c"; break;
@@ -233,10 +245,12 @@ void GshhsReader::readGshhsFiles()
     std::string fname;
     ZUFILE *file;
     bool   ok;
+    int qual=quality;
 
 	// Bordures des continents (4 niveaux) (gshhs_[clihf].b)
-	if (lsPoly_level1[quality].size() == 0) { // on ne lit qu'une fois le fichier
-		fname = getFileName_gshhs(quality);
+	if (lsPoly_level1[quality]->size() == 0) { // on ne lit qu'une fois le fichier
+		fname = getFileName_gshhs(qual);
+        //qWarning("Reading %s",fname.c_str());
 		file = zu_open(fname.c_str(), "rb");
 		if (file != NULL) {
 			
@@ -246,16 +260,15 @@ void GshhsReader::readGshhsFiles()
 				ok = poly->isOk();
 				if (ok) {
 					switch (poly->getLevel()) {
-						case 1: lsPoly_level1[quality].push_back(poly); break;
-						case 2: lsPoly_level2[quality].push_back(poly); break;
-						case 3: lsPoly_level3[quality].push_back(poly); break;
-						case 4: lsPoly_level4[quality].push_back(poly); break;
+						case 1: lsPoly_level1[qual]->push_back(poly); break;
+						case 2: lsPoly_level2[qual]->push_back(poly); break;
+						case 3: lsPoly_level3[qual]->push_back(poly); break;
+						case 4: lsPoly_level4[qual]->push_back(poly); break;
 					}
 				}
 			}
 			zu_close(file);
 		}
-		//printf("GshhsReader::readGshhsFiles(%d)\n", quality);
 	}
 }
 
@@ -277,13 +290,12 @@ void GshhsReader::setQuality(int quality_) // 5 levels: 0=low ... 4=full
     else if (quality > 4) quality = 4;
     
     gshhsRangsReader->setQuality(quality);
-
     if (!isUsingRangsReader) {
 	    readGshhsFiles();
     }
         
     // Frontières politiques
-    if (lsPoly_boundaries[quality].size() == 0) { // on ne lit qu'une fois le fichier
+    if (lsPoly_boundaries[quality]->size() == 0) { // on ne lit qu'une fois le fichier
         fname = getFileName_boundaries(quality);
         file = zu_open(fname.c_str(), "rb");
         if (file != NULL) {
@@ -293,7 +305,7 @@ void GshhsReader::setQuality(int quality_) // 5 levels: 0=low ... 4=full
                 ok = poly->isOk();
                 if (ok) {
                     if (poly->getLevel() < 2) 
-                        lsPoly_boundaries[quality].push_back(poly);
+                        lsPoly_boundaries[quality]->push_back(poly);
                 }
 
             }
@@ -301,7 +313,7 @@ void GshhsReader::setQuality(int quality_) // 5 levels: 0=low ... 4=full
         }
     }
     // Rivières
-    if (lsPoly_rivers[quality].size() == 0) { // on ne lit qu'une fois le fichier
+    if (lsPoly_rivers[quality]->size() == 0) { // on ne lit qu'une fois le fichier
         fname = getFileName_rivers(quality);
         file = zu_open(fname.c_str(), "rb");
         if (file != NULL) {
@@ -310,7 +322,7 @@ void GshhsReader::setQuality(int quality_) // 5 levels: 0=low ... 4=full
                 GshhsPolygon *poly = new GshhsPolygon_WDB(file);
                 ok = poly->isOk();
                 if (ok) {
-                    lsPoly_rivers[quality].push_back(poly);
+                    lsPoly_rivers[quality]->push_back(poly);
                 }
 
             }
@@ -322,27 +334,27 @@ void GshhsReader::setQuality(int quality_) // 5 levels: 0=low ... 4=full
 //-----------------------------------------------------------------------
 std::list<GshhsPolygon*> & GshhsReader::getList_level(int level) {
     switch (level) {
-        case 1: return lsPoly_level1[quality];
-        case 2: return lsPoly_level2[quality];
-        case 3: return lsPoly_level3[quality];
-        case 4: return lsPoly_level4[quality];
-        default: return lsPoly_level1[quality];
+        case 1: return * lsPoly_level1[quality];
+        case 2: return * lsPoly_level2[quality];
+        case 3: return * lsPoly_level3[quality];
+        case 4: return * lsPoly_level4[quality];
+        default: return * lsPoly_level1[quality];
     }
 }
 //-----------------------------------------------------------------------
 std::list<GshhsPolygon*> & GshhsReader::getList_boundaries() {
-    return lsPoly_boundaries[quality];
+    return * lsPoly_boundaries[quality];
 }
 //-----------------------------------------------------------------------
 std::list<GshhsPolygon*> & GshhsReader::getList_rivers() {
-    return lsPoly_rivers[quality];
+    return * lsPoly_rivers[quality];
 }
         
 //=====================================================================
 // Dessin de la carte
 //=====================================================================
 int GshhsReader::GSHHS_scaledPoints(
-            GshhsPolygon *pol, QPoint *pts, float decx,
+            GshhsPolygon *pol, QPoint *pts, double decx,
             Projection *proj
         )
 {
@@ -365,6 +377,8 @@ int GshhsReader::GSHHS_scaledPoints(
     std::list<GshhsPoint *>::iterator itp;
     int xx, yy, oxx=0, oyy=0;
     int j = 0;
+    int i=0;
+    bool a = false;
     
     for  (itp=(pol->lsPoints).begin(); itp!=(pol->lsPoints).end(); itp++)
     {
@@ -372,7 +386,9 @@ int GshhsReader::GSHHS_scaledPoints(
         y = (*itp)->lat;
         // Ajustement d'échelle
         proj->map2screen(x, y, &xx, &yy);
-        if (j==0 || (oxx!=xx || oyy!=yy))  // élimine les ponts trop proches
+
+
+        if (j==0 || (oxx!=xx || oyy!=yy))  // élimine les points trop proches
         {
             oxx = xx;
             oyy = yy;
@@ -380,6 +396,7 @@ int GshhsReader::GSHHS_scaledPoints(
             pts[j].setY(yy);
             j ++;
         }
+    i++;
     }
     return j;
 }
@@ -398,10 +415,9 @@ void GshhsReader::GsshDrawPolygons(QPainter &pnt, std::list<GshhsPolygon*> &lst,
     int nbmax = 10000;
     pts = new QPoint[nbmax];
     assert(pts);
-    
+
     for  (i=0, iter=lst.begin(); iter!=lst.end(); iter++,i++) {
         pol = *iter;
-        
         if (nbmax < pol->n+2) {
             nbmax = pol->n+2;
             pts = new QPoint[nbmax];
@@ -410,11 +426,11 @@ void GshhsReader::GsshDrawPolygons(QPainter &pnt, std::list<GshhsPolygon*> &lst,
         
         nbp = GSHHS_scaledPoints(pol, pts, 0, proj);
         if (nbp > 3)
-            pnt.drawPolygon(pts, nbp);
+             pnt.drawPolygon(pts, nbp);
             
         nbp = GSHHS_scaledPoints(pol, pts, -360, proj);
         if (nbp > 3)
-            pnt.drawPolygon(pts, nbp);   // nbp-1 car boucle ds fichier gshhs
+            pnt.drawPolygon(pts, nbp);
     }
 
     delete [] pts;
@@ -422,7 +438,7 @@ void GshhsReader::GsshDrawPolygons(QPainter &pnt, std::list<GshhsPolygon*> &lst,
 
 //-----------------------------------------------------------------------
 void GshhsReader::GsshDrawLines(QPainter &pnt, std::list<GshhsPolygon*> &lst,
-                                Projection *proj
+                                Projection *proj, bool isClosed
         )
 {
     std::list<GshhsPolygon*>::iterator iter;
@@ -447,35 +463,39 @@ void GshhsReader::GsshDrawLines(QPainter &pnt, std::list<GshhsPolygon*> &lst,
 		
 		//--------------------------------------------------------------
         nbp = GSHHS_scaledPoints(pol, pts, 0, proj);
-        if (pol->isAntarctic()) {
-            // Ne pas tracer les bords artificiels qui rejoignent le pôle
-            // ajoutés lors de la création des polygones (2 au début, 1 à la fin).
-            pts ++;
-            nbp -= 2;
-            if (nbp > 1)
-                pnt.drawPolyline(pts, nbp);
-            pts --;
-        }
-        else {
-            if (nbp > 1)
-                pnt.drawPolyline(pts, nbp);
-        }
+		if (nbp > 1) {
+			if (pol->isAntarctic()) {
+				// Ne pas tracer les bords artificiels qui rejoignent le pôle
+				// ajoutés lors de la création des polygones (2 au début, 1 à la fin).
+				pts ++;
+				nbp -= 2;
+				pnt.drawPolyline(pts, nbp);
+				pts --;
+			}
+			else {
+				pnt.drawPolyline(pts, nbp);
+				if (isClosed)
+					pnt.drawLine(pts[0], pts[nbp-1]);
+			}
+		}
         
 		//--------------------------------------------------------------
         nbp = GSHHS_scaledPoints(pol, pts, -360, proj);
-        if (pol->isAntarctic()) {
-            // Ne pas tracer les bords artificiels qui rejoignent le pôle
-            // ajoutés lors de la création des polygones (2 au début, 1 à la fin).
-            pts ++;
-            nbp -= 2;
-            if (nbp > 1)
-                pnt.drawPolyline(pts, nbp);
-            pts --;
-        }
-        else {
-            if (nbp > 1)
-                pnt.drawPolyline(pts, nbp);
-        }
+		if (nbp > 1) {
+			if (pol->isAntarctic()) {
+				// Ne pas tracer les bords artificiels qui rejoignent le pôle
+				// ajoutés lors de la création des polygones (2 au début, 1 à la fin).
+				pts ++;
+				nbp -= 2;
+				pnt.drawPolyline(pts, nbp);
+				pts --;
+			}
+			else {
+				pnt.drawPolyline(pts, nbp);
+				if (isClosed)
+					pnt.drawLine(pts[0], pts[nbp-1]);
+			}
+		}
     }
     delete [] pts;
 }
@@ -496,6 +516,9 @@ void GshhsReader::drawBackground( QPainter &pnt, Projection *proj,
     int x0,y0,x1,y1;
     proj->map2screen(0,90, &x0,&y0);
     proj->map2screen(0,-90, &x1,&y1);
+
+	//printf("drawBackground y0=%d y1=%d\n", y0,y1);
+    
     pnt.drawRect(0, y0, proj->getW(), y1-y0);
 
 }
@@ -545,27 +568,27 @@ void GshhsReader::drawSeaBorders( QPainter &pnt, Projection *proj)
     readGshhsFiles();
     
     // Continents (level 1)
-    GsshDrawLines(pnt, getList_level(1), proj);
+    GsshDrawLines(pnt, getList_level(1), proj, true);
     // Grands lacs (level 2)
-    GsshDrawLines(pnt, getList_level(2), proj);
+    GsshDrawLines(pnt, getList_level(2), proj, true);
     // Terres dans les grands lacs (level 3)
-    GsshDrawLines(pnt, getList_level(3), proj);
+    GsshDrawLines(pnt, getList_level(3), proj, true);
     // Lacs dans les terres dans les grands lacs (level 4)
-    GsshDrawLines(pnt, getList_level(4), proj);
+    GsshDrawLines(pnt, getList_level(4), proj, true);
 }
 
 //-----------------------------------------------------------------------
 void GshhsReader::drawBoundaries( QPainter &pnt, Projection *proj)
 {
     // Frontières
-    GsshDrawLines(pnt, getList_boundaries(), proj);
+    GsshDrawLines(pnt, getList_boundaries(), proj, false);
 }
 
 //-----------------------------------------------------------------------
 void GshhsReader::drawRivers( QPainter &pnt, Projection *proj)
 {
     // Rivières
-    GsshDrawLines(pnt, getList_rivers(), proj);
+    GsshDrawLines(pnt, getList_rivers(), proj, false);
 }
 
 //-----------------------------------------------------------------------

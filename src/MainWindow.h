@@ -118,7 +118,6 @@ class MainWindow: public QMainWindow
         void slotEditPOI(POI *);
 
     signals:
-        void signalProjectionUpdated(Projection *proj);
         void signalMapQuality(int quality);
         void setChangeStatus(bool);
         void editPOI(POI *);

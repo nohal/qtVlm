@@ -39,13 +39,13 @@ Copyright (C) 2008 - Jacques Zaninetti - http://zygrib.free.fr
 class GshhsRangsPoint 
 {
     public :
-        GshhsRangsPoint(float x=0, float y=0, bool isCellBorder=false) {
+        GshhsRangsPoint(double x=0, double y=0, bool isCellBorder=false) {
             this->x = x;
             this->y = y;
             this->isCellBorder = isCellBorder;
         }
         
-        float x, y;
+        double x, y;
         bool  isCellBorder;
 };
 
@@ -77,10 +77,10 @@ class GshhsRangsCell
                 Util::cleanListPointers(lsPolygons);
             }
         
-        void  drawMapPlain(QPainter &pnt, float dx, QPoint *pts, Projection *proj,
+        void  drawMapPlain(QPainter &pnt, double dx, QPoint *pts, Projection *proj,
                     QColor seaColor, QColor landColor );
 
-        void  drawSeaBorderLines(QPainter &pnt, float dx, Projection *proj);
+        void  drawSeaBorderLines(QPainter &pnt, double dx, Projection *proj);
 		
 		uint  getPoligonSizeMax() {return poligonSizeMax;}
     
@@ -132,21 +132,21 @@ class GshhsRangsReader
 inline int GshhsRangsCell::readInt1(FILE *f)
 {
     unsigned char  buf;
-    fread(&buf, 1, 1, f);
+    (void) fread(&buf, 1, 1, f);
     return buf;
 }
 //--------------------------------------------------------
 inline int GshhsRangsCell::readInt2(FILE *f)
 {
     unsigned char buf[2];
-    fread(buf, 1, 2, f);
+    (void) fread(buf, 1, 2, f);
     return (buf[1]<<8) + (buf[0]);
 }
 //--------------------------------------------------------
 inline int GshhsRangsCell::readInt4(FILE *f)
 {
     unsigned char buf[4];
-    fread(buf, 1, 4, f);
+    (void) fread(buf, 1, 4, f);
     return (buf[3]<<24) + (buf[2]<<16) + (buf[1]<<8) + (buf[0]);
 }
 

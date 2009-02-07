@@ -24,6 +24,7 @@ Copyright (C) 2008 - Jacques Zaninetti - http://zygrib.free.fr
 
 #include <iostream>
 #include <cmath>
+#include <QDebug>
 
 #include "Projection.h"
 
@@ -33,9 +34,9 @@ Copyright (C) 2008 - Jacques Zaninetti - http://zygrib.free.fr
 Projection::Projection(int w, int h, float cx, float cy) {
     scalemax = 50000;
     dscale = 1.2;
-    locked=false;
     init(w, h, cx, cy);
 }
+
 //--------------------------------------------------------------
 void Projection::init(int w, int h, float cx, float cy) {
     CX = cx;
@@ -47,26 +48,17 @@ void Projection::init(int w, int h, float cx, float cy) {
     float sx, sy;
     sx = W/360.0;
     sy = H/180.0;
-//printf("scale %f",scale);
     scale = (sx<sy) ? sx : sy;
-//printf(" -> %f\n",scale);
     updateBoundaries();
 }
 
-void Projection::setLock(bool val)
-{
-    //locked=val;
-    locked=false;
-}
 
 //--------------------------------------------------------------
 // Ajustements
 //--------------------------------------------------------------
 void Projection::setCentralPixel(int i, int j)
 {
-    float x, y;
-    if(locked)
-        return;
+    double x, y;
     screen2map(i, j, &x, &y);
     while (x > 180.0) {
         x -= 360.0;
@@ -74,15 +66,13 @@ void Projection::setCentralPixel(int i, int j)
     while (x < -180.0) {
         x += 360.0;
     }
-    CX = x;
-    CY = y;
+    CX = (float)x;
+    CY = (float)y;
     updateBoundaries();
 }
 //--------------------------------------------------------------
 void Projection::setCenterInMap(float x, float y)
 {
-    if(locked)
-        return;
     while (x > 180.0) {
         x -= 360.0;
     }
@@ -95,8 +85,6 @@ void Projection::setCenterInMap(float x, float y)
 }
 //--------------------------------------------------------------
 void Projection::setScreenSize(int w, int h) {
-    if(locked)
-        return;
     W = w;
     H = h;
     updateBoundaries();
@@ -106,8 +94,6 @@ void Projection::setScreenSize(int w, int h) {
 void Projection::updateZoneSelected(float x0, float y0, float x1, float y1)
 {
     // Nouvelle position du centre
-    if(locked)
-        return;
     CX = (x0+x1)/2.0;
     CY = (y0+y1)/2.0;
     
@@ -151,7 +137,6 @@ void Projection::move(float dx, float dy)
 void Projection::zoom(float k)
 {
     setScale(scale*k);
-    //updateBoundaries();
 }
 
 //--------------------------------------------------------------
@@ -177,17 +162,16 @@ void Projection::setScale(float sc)
 //--------------------------------------------------------------
 void Projection::updateBoundaries() {
     // Extrémités de la zone
-    float x0,y0, x1,y1;
+    double x0,y0, x1,y1;
     screen2map(-1, -1, &x0, &y0);
     screen2map(getW()+1, getH()+1, &x1, &y1);
 
-    xmax = x1;
-    xmin = x0;
-    ymax = y0;
-    ymin = y1;
-    
-    emit projectionUpdated(this);
-
+    xmax = (float)x1;
+    xmin = (float)x0;
+    ymax = (float)y0;
+    ymin = (float)y1;
+#warning confirmer que l'on peut supprimer la ligne suivante    
+    //emit projectionUpdated(this);
     if((getW()*getH())!=0)
         coefremp = 10000.0*fabs( ((xmax-xmin)*(ymax-ymin)) / (getW()*getH()) );
     else

@@ -125,7 +125,7 @@ void POI_Editor::done(int result)
             poi->setWph(-1);
         else
             poi->setWph(editWph->text().toFloat());
-        poi->projectionUpdated(NULL);
+        poi->updateProjection();
 
         if (modeCreation) {
             poi->show();
