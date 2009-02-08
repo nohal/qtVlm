@@ -91,6 +91,7 @@ class boatAccount: public QWidget
         QString getAlias(void)       { return alias; }
         bool getForceEstime(void)    { return forceEstime; }
         bool getIsSelected(void)     { return selected; }
+        QString getRaceId(void)      { return QString().setNum(race_id); }
         
         QString getCurrentPolarName(void) { return (forcePolar?polarName:polarVlm); }
 
@@ -105,7 +106,7 @@ class boatAccount: public QWidget
 
     signals:
         void boatSelected(boatAccount*);
-        void boatUpdated(boatAccount*);
+        void boatUpdated(boatAccount*,bool);
         void boatLockStatusChanged(boatAccount*,bool);
 
     private:
@@ -177,7 +178,6 @@ class boatAccount: public QWidget
         int currentRequest;
 
         QNetworkAccessManager *inetManager;
-        QNetworkReply * curNetReply;
         /* polar data */
         Polar * polarData;
         QString polarName;

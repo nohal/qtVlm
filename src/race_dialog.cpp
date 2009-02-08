@@ -18,31 +18,41 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ***********************************************************************/
 
-#ifndef XML_BOAT_DATA_H
-#define XML_BOAT_DATA_H
+#include "race_dialog.h"
 
-#include <QObject>
-#include <QDomDocument>
-#include <QFile>
-#include <QTextStream>
+race_dialog::race_dialog(QWidget * parent) : QDialog(parent)
+{
+    setupUi(this);
+}
 
-class xml_boatData;
+race_dialog::~race_dialog()
+{
+    
+}
 
-#include "boatAccount.h"
-#include "Projection.h"
-#include "opponentBoat.h"
+void race_dialog::initList(QList<boatAccount*> & acc_list,QList<raceData*> & race_list)
+{
+    this->acc_list = & acc_list;
+    this->race_list = &race_list;
+}
 
-class xml_boatData: public QWidget
-{Q_OBJECT
+void race_dialog::done(int result)
+{
+    QDialog::done(result);
+}
 
-      public:
-            xml_boatData(Projection * proj,QWidget * main, QWidget * parent=0);
-            bool writeBoatData(QList<boatAccount*> & boat_list,QList<raceData*> & race_list,QString fname);
-            bool readBoatData(QList<boatAccount*> & boat_list,QList<raceData*> & race_list,QString fname);
+void race_dialog::chgRace(int id)
+{
 
-      private:
-            Projection * proj;
-            QWidget * main, * parent;
-};
+}
 
-#endif
+void race_dialog::addBoat(void)
+{
+    
+}
+
+void race_dialog::delBoat(void)
+{
+    
+}
+

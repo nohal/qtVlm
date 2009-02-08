@@ -179,9 +179,10 @@ MenuBar::MenuBar(QWidget *parent)
 
 
     menuBoat = new QMenu(tr("Bateau"));
-        acVLMParamBoat = addAction(menuBoat,tr("Boat settings"),"","","");
+        acVLMParamBoat = addAction(menuBoat,tr("Paramètres des bateaux"),"","","");
+        //acRace = addAction(menuBoat,tr("Paramètres des courses"),"","","");
         acVLMSync = addAction(menuBoat,tr("Boat sync"),"","","");
-        acPilototo = addAction(menuBoat,tr("Pilototo"),"","","");
+        acPilototo = addAction(menuBoat,tr("Pilototo"),"","","");        
     addMenu(menuBoat);
 
     menuPOI = new QMenu(tr("POI"));
@@ -360,8 +361,6 @@ int MenuBar::getNearestDateGrib(time_t tm)
     if(listGribDates[0]>tm) return 0;
     while((uint)id<listGribDates.size() && listGribDates[id] < tm) id++;
     return id-1;
-    /*if(listGribDates[id] < tm) return id;
-    else return id-1;*/
 }
 
 //------------- VLM part

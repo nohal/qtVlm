@@ -38,6 +38,7 @@ HEADERS += \
            MenuBar.h \
            MeteoTable.h \
            Orthodromie.h \
+           opponentBoat.h \
            paramVLM.h \
            Pilototo.h \
            Pilototo_param.h \
@@ -46,6 +47,7 @@ HEADERS += \
            POI_input.h \
            Polar.h \
            Projection.h \
+           race_dialog.h \
            sha1/sha1.h \
            Terrain.h \
            Util.h \
@@ -56,7 +58,7 @@ HEADERS += \
            
 FORMS += boatAccount_dialog.ui BoardVLM_part1.ui BoardVLM_part2.ui \
             paramVLM.ui POI_input.ui POI_editor.ui Pilototo_param.ui instructions.ui \
-            Pilototo.ui
+            Pilototo.ui race_dialog.ui
 SOURCES += \
            BoardVLM.cpp \
            boatAccount_dialog.cpp \
@@ -79,6 +81,7 @@ SOURCES += \
            MenuBar.cpp \
            MeteoTable.cpp \
            Orthodromie.cpp \
+           opponentBoat.cpp \
            paramVLM.cpp \
            Pilototo.cpp \
            Pilototo_param.cpp \
@@ -87,6 +90,7 @@ SOURCES += \
            POI_input.cpp \
            Polar.cpp \
            Projection.cpp \
+           race_dialog.cpp \
            sha1/sha1.cpp \
            Terrain.cpp \
            Util.cpp \

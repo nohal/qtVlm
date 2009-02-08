@@ -214,6 +214,7 @@ void MainWindow::connectSignals()
 
     //-------------------------------------------------------
     connect(mb->acVLMParamBoat, SIGNAL(triggered()), this, SLOT(slotVLM_ParamBoat()));
+    //connect(mb->acRace, SIGNAL(triggered()), this, SLOT(slotVLM_ParamRace()));
     connect(mb->acVLMParam, SIGNAL(triggered()), this, SLOT(slotVLM_Param()));
     connect(mb->acVLMSync, SIGNAL(triggered()), this, SLOT(slotVLM_Sync()));
     if(mb->acVLMTest)
@@ -368,7 +369,7 @@ MainWindow::MainWindow(int w, int h, QWidget *parent)
     // VLM init
     //---------------------------------------------------------
 
-      boatAcc = new boatAccount_dialog(acc_list,proj,this,terre);
+      boatAcc = new boatAccount_dialog(acc_list,race_list,proj,this,terre);
       param = new paramVLM(terre);
       poi_input_dialog = new POI_input(terre);
       menuBar->getBoatList(acc_list);
@@ -393,7 +394,9 @@ MainWindow::MainWindow(int w, int h, QWidget *parent)
               pilototo,SLOT(editInstructions()));
       connect(this,SIGNAL(boatHasUpdated(boatAccount*)),
               pilototo,SLOT(boatUpdated(boatAccount*)));
-
+      
+      raceParam = new race_dialog(terre);
+      opponents = new opponentList(proj,this,terre);
     //---------------------------------------------------------
     // Active les actions
     //---------------------------------------------------------
@@ -861,8 +864,14 @@ void MainWindow::slotShowContextualMenu(QContextMenuEvent * e)
 
 void MainWindow::slotVLM_ParamBoat(void) {
 
-    boatAcc->initList(acc_list);
+    boatAcc->initList(acc_list,race_list);
     boatAcc->exec();
+}
+
+void MainWindow::slotVLM_ParamRace(void)
+{
+    raceParam->initList(acc_list,race_list);
+    raceParam->exec();
 }
 
 void MainWindow::slotVLM_Param(void)
@@ -896,12 +905,28 @@ void MainWindow::slotVLM_Sync(void) {
             cnt++;
         }
     }
+    /* synch opponents */
+    opponents->refreshData();
 }
 
-void MainWindow::slotBoatUpdated(boatAccount * boat)
+void MainWindow::slotBoatUpdated(boatAccount * boat,bool newRace)
 {
     if(boat == selectedBoat)
     {
+        bool found=false;
+        if(newRace || opponents->getRaceId() != boat->getRaceId())
+        { /* load a new race */
+            for(int i=0;i<race_list.size();i++)
+                if(race_list[i]->idrace == boat->getRaceId())
+                {
+                    opponents->setBoatList(race_list[i]->oppList,race_list[i]->idrace);
+                    found=true;
+                    break;
+                }   
+            if(!found)
+                opponents->clear();
+        }
+            
         terre->setCenterInMap(boat->getLon(),boat->getLat());
         emit boatHasUpdated(boat);
     }
@@ -909,7 +934,7 @@ void MainWindow::slotBoatUpdated(boatAccount * boat)
 
 void MainWindow::slotVLM_Test(void)
 {
-
+    //oppLst->setBoatList("7802;7985;8025;8047;8833;9325","20080302");
 }
 
 void MainWindow::slotSelectBoat(boatAccount* newSelect)
@@ -920,13 +945,16 @@ void MainWindow::slotSelectBoat(boatAccount* newSelect)
             selectedBoat->unSelectBoat();
         selectedBoat=newSelect;
         if(newSelect->getStatus())
-        {
+        {            
             newSelect->getData();
             menuBar->acPilototo->setEnabled(!newSelect->getLockStatus());
         }
         else
             menuBar->acPilototo->setEnabled(false);
 
+        
+        
+        /* manage item of boat list */
         int cnt=0;
         for(int i=0;i<acc_list.count();i++)
         {
@@ -992,6 +1020,7 @@ void MainWindow::slotAddPOI(float lat,float lon, float wph,int timestamp,bool us
     poi = new POI(QString(tr("POI")),lon,lat, proj,
                   this, terre,POI_STD,wph,timestamp,useTimeStamp);
     addPOI_list(poi);
+    poi->show();
 }
 
 void MainWindow::slotpastePOI()
@@ -1089,4 +1118,12 @@ void MainWindow::slotPilototo(void)
         selectedBoat->getData();
         emit editInstructions();
     }
+}
+
+bool MainWindow::isBoat(QString idu)
+{
+    for(int i=0;i<acc_list.count();i++)
+        if(acc_list[i]->getBoatId() == idu)
+            return true;
+    return false;
 }

@@ -395,17 +395,31 @@ void boardVLM::synch_GPS()
         deg=deg*100;
         lon=lon+deg;
         QDateTime now = QDateTime::currentDateTime();
-
+        
+        /*preparing main content */
         data1.sprintf("%07.2f,%s,%08.2f,%s,",lat,currentBoat->getLat()<0?"S":"N",lon,currentBoat->getLon()<0?"W":"E");
         data2.sprintf("%05.1f,%05.1f,",currentBoat->getSpeed(),currentBoat->getHeading());
+        
+        /*sending it 10 times */
+        for(int i=0;i<10;i++)
+        {
+            data="GPGLL,"+data1+now.toString("HHmmss")+",A";
+            ch=(char)CHKSUM(data);
+            data="$"+data+"*"+QString().setNum(ch,16);
+            qWarning() << "GPS-GLL: " << data;
+            data=data+"\x0D\x0A";
+            port->write(data.toAscii(),data.length());
 
-        data="GPGLL,"+data1+now.toString("HHmmss")+",A";
-        ch=(char)CHKSUM(data);
-        data="$"+data+"*"+QString().setNum(ch,16);
-        qWarning() << "GPS-GLL: " << data;
-        data=data+"\x0D\x0A";
-        port->write(data.toAscii(),data.length());
-
+            data="GPRMC,"+now.toString("HHmmss")+",A,"+data1+data2+now.toString("ddMMyy")+",000.0,E";
+            ch=(char)CHKSUM(data);
+            data="$"+data+"*"+QString().setNum(ch,16);
+            qWarning() << "GPS-RMC: " << data;
+            data=data+"\x0D\x0A";
+            port->write(data.toAscii(),data.length());
+            
+            now.addSecs(1);
+        }
+        /* one last RMC to confirm speed */
         data="GPRMC,"+now.toString("HHmmss")+",A,"+data1+data2+now.toString("ddMMyy")+",000.0,E";
         ch=(char)CHKSUM(data);
         data="$"+data+"*"+QString().setNum(ch,16);
@@ -414,6 +428,7 @@ void boardVLM::synch_GPS()
         port->write(data.toAscii(),data.length());
 
         delete port;
+        /* we will send this again in 30 secs */
         GPS_timer->start(30*1000);
     }
 }

@@ -51,6 +51,9 @@ POI::POI(QString name, float lon, float lat,
 
     this->proj = proj;
     updateProjection();
+    
+    countClick = 0;
+    
     createWidget();
 
     connect(parentWindow, SIGNAL(projectionUpdated()), this, SLOT(updateProjection()) );
@@ -74,9 +77,7 @@ POI::~POI()
 
 //-------------------------------------------------------------------------------
 void POI::createWidget()
-{
-    countClick = 0;
-
+{ 
     fgcolor = QColor(0,0,0);
     int gr = 255;
     bgcolor = QColor(gr,gr,gr,150);

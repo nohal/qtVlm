@@ -66,13 +66,11 @@ boatAccount::boatAccount(QString login, QString pass, bool activated,Projection 
     connect(ac_estime,SIGNAL(triggered()),this,SLOT(toggleEstime()));
     
     connect(this,SIGNAL(boatSelected(boatAccount*)),main,SLOT(slotSelectBoat(boatAccount*)));
-    connect(this,SIGNAL(boatUpdated(boatAccount*)),main,SLOT(slotBoatUpdated(boatAccount*)));
+    connect(this,SIGNAL(boatUpdated(boatAccount*,bool)),main,SLOT(slotBoatUpdated(boatAccount*,bool)));
     connect(this,SIGNAL(boatLockStatusChanged(boatAccount*,bool)),
             main,SLOT(slotBoatLockStatusChanged(boatAccount*,bool)));
 
     /* init http inetManager */
-
-
     inetManager = new QNetworkAccessManager(this);
     if(inetManager)
     {
@@ -199,6 +197,7 @@ void boatAccount::requestFinished ( QNetworkReply* inetReply)
         QString strbuf = inetReply->readAll();
         QStringList lsbuf;
         float latitude=0,longitude=0;
+        bool newRace=false;
 
         switch(currentRequest)
         {
@@ -232,7 +231,10 @@ void boatAccount::requestFinished ( QNetworkReply* inetReply)
                             boat_name = lsval.at(1);
                         else if (lsval.at(0) == "RAC")
                         {
+                            if(race_id != lsval.at(1).toInt())
+                                newRace=true;
                             race_id = lsval.at(1).toInt();
+                            
                             if(race_id==0)
                             {
                                 latitude = longitude = speed = heading = avg = 0;
@@ -245,7 +247,7 @@ void boatAccount::requestFinished ( QNetworkReply* inetReply)
                                 pilotString = "";
                                 score = "";
                                 hasPilototo=false;
-                            }
+                            }                            
                         }
                         else if (lsval.at(0) == "LAT")
                             latitude = lsval.at(1).toFloat();
@@ -331,7 +333,7 @@ void boatAccount::requestFinished ( QNetworkReply* inetReply)
                 /* compute heading point */
                 updateBoatData();
                 currentRequest=VLM_NO_REQUEST;
-                emit boatUpdated(this);
+                emit boatUpdated(this,newRace);
                 break;
         }
     }

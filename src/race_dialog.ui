@@ -1,0 +1,337 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>race_dialog_ui</class>
+ <widget class="QDialog" name="race_dialog_ui">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>571</width>
+    <height>300</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Paramétre des courses</string>
+  </property>
+  <widget class="QWidget" name="layoutWidget">
+   <property name="geometry">
+    <rect>
+     <x>10</x>
+     <y>270</y>
+     <width>551</width>
+     <height>27</height>
+    </rect>
+   </property>
+   <layout class="QHBoxLayout" name="_2">
+    <item>
+     <spacer>
+      <property name="orientation">
+       <enum>Qt::Horizontal</enum>
+      </property>
+      <property name="sizeHint" stdset="0">
+       <size>
+        <width>40</width>
+        <height>20</height>
+       </size>
+      </property>
+     </spacer>
+    </item>
+    <item>
+     <widget class="QPushButton" name="btn_Ok">
+      <property name="text">
+       <string>OK</string>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <widget class="QPushButton" name="btn_cancel">
+      <property name="text">
+       <string>Cancel</string>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <spacer>
+      <property name="orientation">
+       <enum>Qt::Horizontal</enum>
+      </property>
+      <property name="sizeHint" stdset="0">
+       <size>
+        <width>40</width>
+        <height>20</height>
+       </size>
+      </property>
+     </spacer>
+    </item>
+   </layout>
+  </widget>
+  <widget class="QWidget" name="">
+   <property name="geometry">
+    <rect>
+     <x>10</x>
+     <y>40</y>
+     <width>559</width>
+     <height>224</height>
+    </rect>
+   </property>
+   <layout class="QHBoxLayout" name="horizontalLayout_3">
+    <item>
+     <layout class="QVBoxLayout" name="verticalLayout_3">
+      <item>
+       <layout class="QHBoxLayout" name="horizontalLayout">
+        <item>
+         <widget class="QLabel" name="label">
+          <property name="text">
+           <string>Bateaux dans la course</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <spacer name="horizontalSpacer">
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>40</width>
+            <height>20</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+        <item>
+         <widget class="QLabel" name="nbAvailable">
+          <property name="text">
+           <string>XXXX</string>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </item>
+      <item>
+       <widget class="QListView" name="availableBoat"/>
+      </item>
+     </layout>
+    </item>
+    <item>
+     <layout class="QVBoxLayout" name="verticalLayout">
+      <item>
+       <spacer name="verticalSpacer">
+        <property name="orientation">
+         <enum>Qt::Vertical</enum>
+        </property>
+        <property name="sizeHint" stdset="0">
+         <size>
+          <width>20</width>
+          <height>40</height>
+         </size>
+        </property>
+       </spacer>
+      </item>
+      <item>
+       <widget class="QToolButton" name="toolButton">
+        <property name="text">
+         <string>&gt;</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <spacer name="verticalSpacer_2">
+        <property name="orientation">
+         <enum>Qt::Vertical</enum>
+        </property>
+        <property name="sizeHint" stdset="0">
+         <size>
+          <width>20</width>
+          <height>40</height>
+         </size>
+        </property>
+       </spacer>
+      </item>
+      <item>
+       <widget class="QToolButton" name="toolButton_2">
+        <property name="text">
+         <string>&lt;</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <spacer name="verticalSpacer_3">
+        <property name="orientation">
+         <enum>Qt::Vertical</enum>
+        </property>
+        <property name="sizeHint" stdset="0">
+         <size>
+          <width>20</width>
+          <height>40</height>
+         </size>
+        </property>
+       </spacer>
+      </item>
+     </layout>
+    </item>
+    <item>
+     <layout class="QVBoxLayout" name="verticalLayout_2">
+      <item>
+       <layout class="QHBoxLayout" name="horizontalLayout_2">
+        <item>
+         <widget class="QLabel" name="label_2">
+          <property name="text">
+           <string>Bateaux séléctionnés</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <spacer name="horizontalSpacer_2">
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>40</width>
+            <height>20</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+        <item>
+         <widget class="QLabel" name="nbSelect">
+          <property name="text">
+           <string>XX</string>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </item>
+      <item>
+       <widget class="QListView" name="selecttedBoat"/>
+      </item>
+     </layout>
+    </item>
+   </layout>
+  </widget>
+  <widget class="QWidget" name="">
+   <property name="geometry">
+    <rect>
+     <x>10</x>
+     <y>10</y>
+     <width>551</width>
+     <height>22</height>
+    </rect>
+   </property>
+   <layout class="QHBoxLayout" name="horizontalLayout_4">
+    <item>
+     <widget class="QComboBox" name="race_liste"/>
+    </item>
+    <item>
+     <widget class="QLabel" name="nbRace">
+      <property name="text">
+       <string>XXX</string>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <spacer name="horizontalSpacer_3">
+      <property name="orientation">
+       <enum>Qt::Horizontal</enum>
+      </property>
+      <property name="sizeHint" stdset="0">
+       <size>
+        <width>40</width>
+        <height>20</height>
+       </size>
+      </property>
+     </spacer>
+    </item>
+   </layout>
+  </widget>
+ </widget>
+ <resources/>
+ <connections>
+  <connection>
+   <sender>race_liste</sender>
+   <signal>currentIndexChanged(int)</signal>
+   <receiver>race_dialog_ui</receiver>
+   <slot>chgRace(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>62</x>
+     <y>18</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>262</x>
+     <y>26</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>toolButton</sender>
+   <signal>clicked()</signal>
+   <receiver>race_dialog_ui</receiver>
+   <slot>addBoat()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>293</x>
+     <y>103</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>296</x>
+     <y>140</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>toolButton_2</sender>
+   <signal>clicked()</signal>
+   <receiver>race_dialog_ui</receiver>
+   <slot>delBoat()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>286</x>
+     <y>198</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>293</x>
+     <y>226</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>btn_Ok</sender>
+   <signal>clicked()</signal>
+   <receiver>race_dialog_ui</receiver>
+   <slot>accept()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>230</x>
+     <y>278</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>127</x>
+     <y>277</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>btn_cancel</sender>
+   <signal>clicked()</signal>
+   <receiver>race_dialog_ui</receiver>
+   <slot>reject()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>324</x>
+     <y>275</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>415</x>
+     <y>278</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
+ <slots>
+  <slot>chgRace(int)</slot>
+  <slot>addBoat()</slot>
+  <slot>delBoat()</slot>
+ </slots>
+</ui>

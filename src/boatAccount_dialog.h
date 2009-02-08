@@ -26,18 +26,23 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <QDialog>
 
 #include "ui_boatAccount_dialog.h"
+
+class boatAccount_dialog;
+
 #include "boatAccount.h"
 #include "Projection.h"
 #include "xmlBoatData.h"
+#include "opponentBoat.h"
 
 class boatAccount_dialog : public QDialog, public Ui::boatAccount_dialog
 {
     Q_OBJECT
     public:
-        boatAccount_dialog(QList<boatAccount*> & acc_list, Projection * proj,QWidget * main, QWidget * parent = 0);
+        boatAccount_dialog(QList<boatAccount*> & acc_list, QList<raceData*> & race_list,
+                            Projection * proj,QWidget * main, QWidget * parent = 0);
         ~boatAccount_dialog();
         void done(int result);
-        void initList(QList<boatAccount*> & acc_list);
+        void initList(QList<boatAccount*> & acc_list, QList<raceData*> & race_list);
 
     public slots:
         void slot_addBoat(void);
@@ -55,6 +60,7 @@ class boatAccount_dialog : public QDialog, public Ui::boatAccount_dialog
     private:
         QListWidgetItem * blank;
         QList<boatAccount*> * acc_list;
+        QList<raceData*> * race_list;
         Projection * proj;
         QWidget * main, * parent;
         xml_boatData * xmlData;

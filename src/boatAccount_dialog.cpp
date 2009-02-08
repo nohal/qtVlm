@@ -33,11 +33,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #define ROLE_ALIAS     Qt::UserRole+5
 #define ROLE_CHK_POLAR Qt::UserRole+6
 
-boatAccount_dialog::boatAccount_dialog(QList<boatAccount*> & acc_list, Projection * proj, QWidget * main, QWidget * parent) : QDialog(parent)
+boatAccount_dialog::boatAccount_dialog(QList<boatAccount*> & acc_list, QList<raceData*> & race_list, 
+                                        Projection * proj, QWidget * main, QWidget * parent) : QDialog(parent)
 {
     setupUi(this);
 
     this->acc_list = &acc_list;
+    this->race_list = &race_list;
     this->proj = proj;
     this->main=main;
     this->parent=parent;
@@ -45,7 +47,7 @@ boatAccount_dialog::boatAccount_dialog(QList<boatAccount*> & acc_list, Projectio
     /* load data */
 
     xmlData = new xml_boatData(proj,main,parent);
-    xmlData->readBoatData(*this->acc_list,"boatAcc.dat");
+    xmlData->readBoatData(*this->acc_list,*this->race_list,"boatAcc.dat");
 
     /* signal / slot init */
 
@@ -71,9 +73,10 @@ boatAccount_dialog::~boatAccount_dialog()
 
 
 
-void boatAccount_dialog::initList(QList<boatAccount*> & acc_list)
+void boatAccount_dialog::initList(QList<boatAccount*> & acc_list,QList<raceData*> & race_list)
 {
     this->acc_list = & acc_list;
+    this->race_list = &race_list;
 
     list_boat->clear();
     polarList->clear();
@@ -212,7 +215,7 @@ void boatAccount_dialog::done(int result)
 
         }
         emit accountListUpdated();
-        xmlData->writeBoatData(*acc_list,QString("boatAcc.dat"));
+        xmlData->writeBoatData(*acc_list,*race_list,QString("boatAcc.dat"));
     }
     
     list_boat->clear();

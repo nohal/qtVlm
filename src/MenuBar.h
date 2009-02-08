@@ -137,6 +137,7 @@ public:
     QAction *acVLMTest;
     QAction *acPOISave;
     QAction *acPilototo;
+    QAction *acRace;
 
 
     //-------------------------------------

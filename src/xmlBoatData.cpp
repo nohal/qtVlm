@@ -28,6 +28,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #define DOM_FILE_TYPE     "qtVLM_config"
 #define ROOT_NAME         "qtVLM_boat"
 #define VERSION_NAME      "Version"
+/* BOAT data */
 #define BOAT_GROUP_NAME   "Boat"
 #define LOGIN_NAME        "Login"
 #define PASS_NAME         "Pass"
@@ -37,6 +38,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #define POLAR_CHK_NAME    "UsePolar"
 #define ALIAS_CHK_NAME    "UseAlias"
 #define ALIAS_NAME        "Alias"
+/* RACE DATA */
+#define RACE_GROUP_NAME   "Race"
+#define RACEID_NAME       "raceId"
+#define OPPLIST_NAME      "oppList"
 
 #define OLD_DOM_FILE_TYPE "zygVLM_config"
 #define OLD_ROOT_NAME     "zygVLM_boat"
@@ -49,7 +54,7 @@ xml_boatData::xml_boatData(Projection * proj,QWidget * main, QWidget * parent)
 	this->parent=parent;
 }
 
-bool xml_boatData::writeBoatData(QList<boatAccount*> & boat_list,QString fname)
+bool xml_boatData::writeBoatData(QList<boatAccount*> & boat_list,QList<raceData*> & race_list,QString fname)
 {
      QDomDocument doc(DOM_FILE_TYPE);
  	 QDomElement root = doc.createElement(ROOT_NAME);
@@ -64,6 +69,7 @@ bool xml_boatData::writeBoatData(QList<boatAccount*> & boat_list,QString fname)
 	 t = doc.createTextNode(QString().setNum(VERSION_NUMBER));
      group.appendChild(t);
  	 
+     /* managing boat data */
  	 QListIterator<boatAccount*> i (boat_list);
      while(i.hasNext())
      {
@@ -119,6 +125,26 @@ bool xml_boatData::writeBoatData(QList<boatAccount*> & boat_list,QString fname)
           tag.appendChild(t);
      }
      
+     /* managing race info */
+     QListIterator<raceData*> j (race_list);
+     while(i.hasNext())
+     {
+          raceData * race_data = j.next();
+
+          group = doc.createElement(RACE_GROUP_NAME);
+          root.appendChild(group);
+          
+          tag = doc.createElement(RACEID_NAME);
+          group.appendChild(tag);
+          t = doc.createTextNode(race_data->idrace);
+          tag.appendChild(t);
+          
+          tag = doc.createElement(OPPLIST_NAME);
+          group.appendChild(tag);
+          t = doc.createTextNode(race_data->oppList);
+          tag.appendChild(t);
+     }
+     
      QFile file(fname);
      if (!file.open(QIODevice::ReadWrite | QIODevice::Text | QIODevice::Truncate))
          return false;
@@ -132,7 +158,7 @@ bool xml_boatData::writeBoatData(QList<boatAccount*> & boat_list,QString fname)
      return true;
 }
 
-bool xml_boatData::readBoatData(QList<boatAccount*> & boat_list,QString fname)
+bool xml_boatData::readBoatData(QList<boatAccount*> & boat_list,QList<raceData*> & race_list,QString fname)
 {
      QString  errorStr;
      int errorLine;
@@ -147,6 +173,7 @@ bool xml_boatData::readBoatData(QList<boatAccount*> & boat_list,QString fname)
          return false;
 
 	 boat_list.clear();
+     race_list.clear();
 
      //QTextStream in(&file);
 
@@ -274,13 +301,46 @@ bool xml_boatData::readBoatData(QList<boatAccount*> & boat_list,QString fname)
 			  else
                    qWarning("Incomplete boat info");
 		  }
-		  node = node.nextSibling();
+		  else if(node.toElement().tagName() == RACE_GROUP_NAME)
+          {
+              subNode = node.firstChild();
+              QString race = "";
+              QString opp_list = "";
+
+              while(!subNode.isNull())
+              {
+                   if(subNode.toElement().tagName() == RACEID_NAME)
+                   {
+                      dataNode = subNode.firstChild();
+                      if(dataNode.nodeType() == QDomNode::TextNode)
+                          race = dataNode.toText().data();
+                   }
+                   if(subNode.toElement().tagName() == OPPLIST_NAME)
+                   {
+                      dataNode = subNode.firstChild();
+                      if(dataNode.nodeType() == QDomNode::TextNode)
+                          opp_list = dataNode.toText().data();
+                   }
+                   subNode = subNode.nextSibling();
+              }
+              if(!race.isEmpty() && !opp_list.isEmpty())
+              {
+                  struct raceData * race_data = new raceData();
+                  qWarning() << "Race info present => id " <<  race << " opp list " << opp_list;
+                  race_data->idrace=race;
+                  race_data->oppList=opp_list;
+                  race_list.append(race_data);
+              }
+              else
+                  qWarning("Incomplete race info");
+          }
+          node = node.nextSibling();
 	 }
 
 	 if(hasVersion)
 	 {
          if(forceWrite)
-             writeBoatData(boat_list,fname);
+             writeBoatData(boat_list,race_list,fname);
 	 	 return true;
 	 }
 	 else

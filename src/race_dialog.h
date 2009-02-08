@@ -18,31 +18,37 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ***********************************************************************/
 
-#ifndef XML_BOAT_DATA_H
-#define XML_BOAT_DATA_H
 
-#include <QObject>
-#include <QDomDocument>
-#include <QFile>
-#include <QTextStream>
 
-class xml_boatData;
+#ifndef RACE_DIALOG_H
+#define RACE_DIALOG_H
 
-#include "boatAccount.h"
-#include "Projection.h"
+#include <QDialog>
+
+#include "ui_race_dialog.h"
+
+class race_dialog;
+
 #include "opponentBoat.h"
+#include "boatAccount.h"
 
-class xml_boatData: public QWidget
-{Q_OBJECT
-
-      public:
-            xml_boatData(Projection * proj,QWidget * main, QWidget * parent=0);
-            bool writeBoatData(QList<boatAccount*> & boat_list,QList<raceData*> & race_list,QString fname);
-            bool readBoatData(QList<boatAccount*> & boat_list,QList<raceData*> & race_list,QString fname);
-
-      private:
-            Projection * proj;
-            QWidget * main, * parent;
+class race_dialog : public QDialog, public Ui::race_dialog_ui
+{ Q_OBJECT    
+    public:
+        race_dialog(QWidget * parent = 0);
+        ~race_dialog();
+        void done(int result);
+        void initList(QList<boatAccount*> & acc_list,QList<raceData*> & race_list);
+        
+    public slots:
+        void chgRace(int id);
+        void addBoat(void);
+        void delBoat(void);
+        
+    private:
+        QList<boatAccount*> * acc_list;
+        QList<raceData*> * race_list;
+        
 };
 
 #endif

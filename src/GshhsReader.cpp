@@ -426,11 +426,23 @@ void GshhsReader::GsshDrawPolygons(QPainter &pnt, std::list<GshhsPolygon*> &lst,
         
         nbp = GSHHS_scaledPoints(pol, pts, 0, proj);
         if (nbp > 3)
+        {
+             /*if(quality==0)
+                 pnt.drawPolygon(pts, nbp);
+             else
+                 pnt.drawPolyline(pts, nbp);*/
              pnt.drawPolygon(pts, nbp);
-            
+        }
+    
         nbp = GSHHS_scaledPoints(pol, pts, -360, proj);
         if (nbp > 3)
-            pnt.drawPolygon(pts, nbp);
+        {
+            /*if(quality==0)
+                 pnt.drawPolygon(pts, nbp);
+             else
+                 pnt.drawPolyline(pts, nbp);*/
+             pnt.drawPolygon(pts, nbp);
+        }
     }
 
     delete [] pts;
@@ -538,6 +550,8 @@ void GshhsReader::drawContinents( QPainter &pnt, Projection *proj,
     }
     
     readGshhsFiles();
+
+    qWarning() << "quality = " << quality ;
     
     // Continents (level 1)
     pnt.setBrush(landColor);

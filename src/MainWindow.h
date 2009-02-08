@@ -48,6 +48,12 @@ Copyright (C) 2008 - Jacques Zaninetti - http://zygrib.free.fr
 #include "boatAccount_dialog.h"
 #include "POI_editor.h"
 #include "Pilototo.h"
+#include "race_dialog.h"
+
+class opponentList;
+class raceData;
+
+#include "opponentBoat.h"
 
 class MainWindow: public QMainWindow
 {
@@ -59,6 +65,7 @@ class MainWindow: public QMainWindow
 
         void openGribFile(QString fileName, bool zoom=true);
         bool getBoatLockStatus(void);
+        bool isBoat(QString idu);
 
     public slots:
         void slotOpenMeteotable();
@@ -95,13 +102,14 @@ class MainWindow: public QMainWindow
 
         void slotVLM_Sync(void);
         void slotVLM_ParamBoat(void);
+        void slotVLM_ParamRace(void);
         void slotVLM_Param(void);
         void slotVLM_Test(void);
         void slotSelectBoat(boatAccount* newSelect);
         void slotProxyUpdated(void);
         void slotChgBoat(int);
         void slotAccountListUpdated(void);
-        void slotBoatUpdated(boatAccount * boat);
+        void slotBoatUpdated(boatAccount * boat,bool newRace);
         void slotpastePOI();
         void slotChgWP(float lat,float lon, float wph);
         void slotAddPOI(float lat,float lon, float wph,int timestamp,bool useTimeStamp);
@@ -170,6 +178,7 @@ class MainWindow: public QMainWindow
         boardVLM * VLMBoard;
         boatAccount* selectedBoat;
         paramVLM * param;
+        race_dialog * raceParam;
         POI_input * poi_input_dialog;
 
         xml_POIData * xmlPOI;
@@ -179,7 +188,9 @@ class MainWindow: public QMainWindow
         POI_Editor * poi_editor;
 
         Pilototo * pilototo;
-
+        
+        opponentList * opponents;
+        QList<raceData*> race_list;
 };
 
 #endif
