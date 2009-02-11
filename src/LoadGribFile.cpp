@@ -129,7 +129,10 @@ void LoadGribFile::getGribFile(
                            << "&client=" << "zyGrib-3.0.0"
                            ;
         step1_InetReply=step2_InetReply=NULL;
-        step1_InetReply=inetManager->get(QNetworkRequest(QUrl(page)));
+        QNetworkRequest request;
+        request.setUrl(QUrl(page));
+        Util::addAgent(request);   
+        step1_InetReply=inetManager->get(request);
         connect(step1_InetReply,SIGNAL(downloadProgress(qint64 , qint64)),this, SIGNAL(dataReadProgress (qint64,qint64)));
     }
     // Suite de la séquence de récupération dans requestFinished()
@@ -195,7 +198,10 @@ gfs_run_hour:6
             //printf("PAGE='%s'\n",qPrintable(page));
 
             step1_InetReply=NULL;
-            step2_InetReply=inetManager->get(QNetworkRequest(QUrl(page)));
+            QNetworkRequest request;
+            request.setUrl(QUrl(page));
+            Util::addAgent(request);               
+            step2_InetReply=inetManager->get(request);;
             connect(step2_InetReply,SIGNAL(downloadProgress(qint64 , qint64)),this, SIGNAL(dataReadProgress (qint64,qint64)));
         }
         else {

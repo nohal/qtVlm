@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>328</width>
-    <height>267</height>
+    <height>356</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -21,7 +21,7 @@
    <property name="geometry">
     <rect>
      <x>10</x>
-     <y>230</y>
+     <y>320</y>
      <width>311</width>
      <height>32</height>
     </rect>
@@ -153,6 +153,42 @@
     </property>
    </widget>
   </widget>
+  <widget class="QGroupBox" name="groupBox_4">
+   <property name="geometry">
+    <rect>
+     <x>10</x>
+     <y>230</y>
+     <width>311</width>
+     <height>81</height>
+    </rect>
+   </property>
+   <property name="title">
+    <string>User agent</string>
+   </property>
+   <widget class="QCheckBox" name="chk_forceUserAgent">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>20</y>
+      <width>191</width>
+      <height>20</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Force user agent</string>
+    </property>
+   </widget>
+   <widget class="QLineEdit" name="userAgent">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>50</y>
+      <width>281</width>
+      <height>21</height>
+     </rect>
+    </property>
+   </widget>
+  </widget>
  </widget>
  <resources/>
  <connections>
@@ -164,7 +200,7 @@
    <hints>
     <hint type="sourcelabel">
      <x>248</x>
-     <y>254</y>
+     <y>344</y>
     </hint>
     <hint type="destinationlabel">
      <x>157</x>
@@ -180,7 +216,7 @@
    <hints>
     <hint type="sourcelabel">
      <x>316</x>
-     <y>260</y>
+     <y>350</y>
     </hint>
     <hint type="destinationlabel">
      <x>286</x>
@@ -188,5 +224,24 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>chk_forceUserAgent</sender>
+   <signal>stateChanged(int)</signal>
+   <receiver>VLM_param_ui</receiver>
+   <slot>forceUserAgent_changed(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>70</x>
+     <y>263</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>328</x>
+     <y>288</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
+ <slots>
+  <slot>forceUserAgent_changed(int)</slot>
+ </slots>
 </ui>

@@ -44,6 +44,8 @@ struct raceData {
       QString oppList;
 };
 
+#define RACE_MAX_BOAT 10
+
 class opponent : public QWidget
 {Q_OBJECT
     public:
@@ -85,7 +87,7 @@ class opponentList : public QObject
 {Q_OBJECT
     public:
         opponentList(Projection * proj,MainWindow * mainWin,QWidget *parentWindow=NULL);
-        void setBoatList(QString list_txt, QString race);
+        void setBoatList(QString list_txt, QString race, bool force);
         void refreshData(void);
         void clear(void);
         QString getRaceId();

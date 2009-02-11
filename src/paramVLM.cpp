@@ -33,6 +33,9 @@ paramVLM::paramVLM(QWidget * parent) : QDialog(parent)
     serialName->setText(Util::getSetting("serialName", "COM2").toString());
     estimeLen->setValue(Util::getSetting("estimeLen",100).toInt());
     chk_gribZoomOnLoad->setCheckState(Util::getSetting("gribZoomOnLoad",0).toInt()==1?Qt::Checked:Qt::Unchecked);
+    chk_forceUserAgent->setCheckState(Util::getSetting("forceUserAgent",0).toInt()==1?Qt::Checked:Qt::Unchecked);
+    userAgent->setText(Util::getSetting("userAgent", "").toString());
+    userAgent->setEnabled(Util::getSetting("forceUserAgent",0).toInt()==1);
 }
 
 void paramVLM::done(int result)
@@ -42,8 +45,15 @@ void paramVLM::done(int result)
         Util::setSetting("gpsEmulEnable",chk_activateEmulation->checkState()==Qt::Checked?"1":"0");
         Util::setSetting("serialName", serialName->text());
         Util::setSetting("estimeLen", QString().setNum(estimeLen->value()));
-        Util::setSetting("gribZoomOnLoad",chk_gribZoomOnLoad->checkState()==Qt::Checked?"1":"0");
+        Util::setSetting("forceUserAgent",chk_forceUserAgent->checkState()==Qt::Checked?"1":"0");
+        Util::setSetting("userAgent",userAgent->text());
         emit paramVLMChanged();
     }
     QDialog::done(result);
+}
+
+void paramVLM::forceUserAgent_changed(int newVal)
+{
+    qWarning("New val %d",newVal);
+    userAgent->setEnabled(newVal==Qt::Checked);
 }

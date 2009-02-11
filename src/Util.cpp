@@ -24,6 +24,7 @@ Copyright (C) 2008 - Jacques Zaninetti - http://zygrib.free.fr
 
 #include <QStringList>
 #include <QNetworkProxy>
+#include <QNetworkRequest>
 #include <QUrl>
 #include <QClipboard>
 
@@ -436,4 +437,11 @@ void Util::computePos(Projection * proj, float lat, float lon, int * x, int * y)
     else {
         proj->map2screen(lon+360, lat, x, y);
     }
+}
+
+void Util::addAgent(QNetworkRequest & request)
+{
+    if(Util::getSetting("forceUserAgent",0).toInt()==1 
+        && !Util::getSetting("userAgent", "").toString().isEmpty())
+        request.setRawHeader("User-Agent",Util::getSetting("userAgent", "").toString().toAscii());
 }

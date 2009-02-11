@@ -378,8 +378,7 @@ int GshhsReader::GSHHS_scaledPoints(
     int xx, yy, oxx=0, oyy=0;
     int j = 0;
     int i=0;
-    bool a = false;
-    
+        
     for  (itp=(pol->lsPoints).begin(); itp!=(pol->lsPoints).end(); itp++)
     {
         x = (*itp)->lon+decx;

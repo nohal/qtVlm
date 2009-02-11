@@ -180,7 +180,7 @@ MenuBar::MenuBar(QWidget *parent)
 
     menuBoat = new QMenu(tr("Bateau"));
         acVLMParamBoat = addAction(menuBoat,tr("Paramètres des bateaux"),"","","");
-        //acRace = addAction(menuBoat,tr("Paramètres des courses"),"","","");
+        acRace = addAction(menuBoat,tr("Paramètres des courses"),"","","");
         acVLMSync = addAction(menuBoat,tr("Boat sync"),"","","");
         acPilototo = addAction(menuBoat,tr("Pilototo"),"","","");        
     addMenu(menuBoat);

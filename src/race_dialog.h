@@ -32,10 +32,23 @@ class race_dialog;
 #include "opponentBoat.h"
 #include "boatAccount.h"
 
+struct boatParam {
+    QString login;
+    QString name;
+    QString user_id;
+    bool selected;
+};
+
+struct raceParam {
+    QString id;
+    QString name;
+    QList <boatParam*> boats;
+};
+
 class race_dialog : public QDialog, public Ui::race_dialog_ui
 { Q_OBJECT    
     public:
-        race_dialog(QWidget * parent = 0);
+        race_dialog(QWidget * main,QWidget * parent = 0);
         ~race_dialog();
         void done(int result);
         void initList(QList<boatAccount*> & acc_list,QList<raceData*> & race_list);
@@ -44,10 +57,40 @@ class race_dialog : public QDialog, public Ui::race_dialog_ui
         void chgRace(int id);
         void addBoat(void);
         void delBoat(void);
+        //void addAllBoat(void);
+        void delAllBoat(void);
+        void doSynch(void);
+        
+        void requestFinished (QNetworkReply*);
+        
+    signals:
+        void readBoat(void);
+        void writeBoat(void);
+        void updateOpponent(void);
         
     private:
         QList<boatAccount*> * acc_list;
         QList<raceData*> * race_list;
+        
+        QList<raceParam*> param_list;
+            
+        QMessageBox * waitBox;
+        
+        int numRace;
+        
+        void clear(void);
+        void getNextRace();
+        void mvBoat(QListWidget * from,QListWidget * to,bool withLimit);
+        void mvAllBoat(QListWidget * from,QListWidget * to);
+        
+        void saveData(bool);
+        
+        /* http connection */
+        QString host;        
+        int currentRequest;
+        int currentRace;
+        QStringList currentParam;
+        QNetworkAccessManager *inetManager;
         
 };
 

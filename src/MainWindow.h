@@ -124,6 +124,9 @@ class MainWindow: public QMainWindow
         void delPOI_list(POI * poi);
 
         void slotEditPOI(POI *);
+        void slotReadBoat(void);
+        void slotWriteBoat(void);
+        void slotUpdateOpponent(void);
 
     signals:
         void signalMapQuality(int quality);
@@ -180,7 +183,8 @@ class MainWindow: public QMainWindow
         paramVLM * param;
         race_dialog * raceParam;
         POI_input * poi_input_dialog;
-
+        
+        xml_boatData * xmlData;
         xml_POIData * xmlPOI;
 
         QList<POI*> poi_list;

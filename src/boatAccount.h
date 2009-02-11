@@ -92,6 +92,7 @@ class boatAccount: public QWidget
         bool getForceEstime(void)    { return forceEstime; }
         bool getIsSelected(void)     { return selected; }
         QString getRaceId(void)      { return QString().setNum(race_id); }
+        QString getRaceName(void)    { return race_name; }
         
         QString getCurrentPolarName(void) { return (forcePolar?polarName:polarVlm); }
 

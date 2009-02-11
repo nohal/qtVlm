@@ -35,6 +35,7 @@ class paramVLM : public QDialog, public Ui::VLM_param_ui
         void done(int result);
 
     public slots:
+        void forceUserAgent_changed(int newVal);
 
     signals:
         void paramVLMChanged(void);

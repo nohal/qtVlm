@@ -303,7 +303,10 @@ void Pilototo::sendPilototo(QStringList * cmdList)
                         << "&password=" << boat->getPass()
                         << "&lang=fr&type=login"
                         ;
-        inetManager->get(QNetworkRequest(QUrl(page)));
+        QNetworkRequest request;
+        request.setUrl(QUrl(page));
+        Util::addAgent(request);   
+        inetManager->get(request);
     }
     else
     {

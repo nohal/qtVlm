@@ -476,7 +476,10 @@ void boardVLM::sendCmd(int cmdNum,float  val1,float val2, float val3)
                                                  << cmd_val2 << ","
                                                  << cmd_val3 << ")";
 
-        inetManager->get(QNetworkRequest(QUrl(page)));
+        QNetworkRequest request;
+        request.setUrl(QUrl(page));
+        Util::addAgent(request);   
+        inetManager->get(request);
     }
     else
     {
@@ -487,6 +490,7 @@ void boardVLM::sendCmd(int cmdNum,float  val1,float val2, float val3)
 void boardVLM::requestFinished ( QNetworkReply* inetReply)
 {
     QString page;
+    QNetworkRequest request;
     if (inetReply->error() != QNetworkReply::NoError) {
         qWarning() <<  "Error doing inetGet:" << inetReply->error();
         btn_Synch->setStyleSheet(QString::fromUtf8("background-color: rgb(85, 255, 127);"));
@@ -545,7 +549,10 @@ void boardVLM::requestFinished ( QNetworkReply* inetReply)
                         break;
                 }
                 qWarning() << "Send cmd: " << page;
-                inetManager->get(QNetworkRequest(QUrl(page)));
+                
+                request.setUrl(QUrl(page));
+                Util::addAgent(request);   
+                inetManager->get(request);
                 break;
             case VLM_DO_REQUEST:
                 currentRequest=VLM_WAIT_RESULT;

@@ -127,7 +127,7 @@ bool xml_boatData::writeBoatData(QList<boatAccount*> & boat_list,QList<raceData*
      
      /* managing race info */
      QListIterator<raceData*> j (race_list);
-     while(i.hasNext())
+     while(j.hasNext())
      {
           raceData * race_data = j.next();
 
@@ -325,6 +325,17 @@ bool xml_boatData::readBoatData(QList<boatAccount*> & boat_list,QList<raceData*>
               }
               if(!race.isEmpty() && !opp_list.isEmpty())
               {
+                  /* control nb boats*/
+                  QStringList lst=opp_list.split(";");
+                  if(lst.size()>RACE_MAX_BOAT)
+                  {
+                      QMessageBox::warning(this,tr("Paramétrage des courses"),
+                                     tr("Nombre maximum de concurrent dépassé")+" ("+QString().setNum(RACE_MAX_BOAT)+")");
+                      while(lst.size()>RACE_MAX_BOAT)
+                          lst.removeLast();
+                      opp_list=lst.join(";");
+                  }
+                  
                   struct raceData * race_data = new raceData();
                   qWarning() << "Race info present => id " <<  race << " opp list " << opp_list;
                   race_data->idrace=race;

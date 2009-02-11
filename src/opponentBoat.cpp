@@ -205,7 +205,7 @@ QString opponentList::getRaceId()
     return opponent_list[0]->getRace();
 }
 
-void opponentList::setBoatList(QString list_txt,QString race)
+void opponentList::setBoatList(QString list_txt,QString race,bool force)
 {
     if(currentRequest!=OPP_NO_REQUEST)
     {
@@ -216,7 +216,7 @@ void opponentList::setBoatList(QString list_txt,QString race)
     /* is a list defined ? */
     if(opponent_list.size()>0)
     {        
-        if(opponent_list[0]->getRace() == race) /* it is the same race */
+        if(!force && opponent_list[0]->getRace() == race) /* it is the same race */
         { /* compare if same opp list */
             /* for now it is the same => refresh*/
             refreshData();
@@ -300,7 +300,11 @@ void opponentList::getNxtOppData()
                         << currentRace;
     currentOpponent++;  
     qWarning() << "ask for " << page;
-    inetManager->get(QNetworkRequest(QUrl(page)));
+    
+    QNetworkRequest request;
+    request.setUrl(QUrl(page));
+    Util::addAgent(request);   
+    inetManager->get(request);
 }
 
 void opponentList::requestFinished ( QNetworkReply* inetReply)

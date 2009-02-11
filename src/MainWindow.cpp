@@ -214,7 +214,7 @@ void MainWindow::connectSignals()
 
     //-------------------------------------------------------
     connect(mb->acVLMParamBoat, SIGNAL(triggered()), this, SLOT(slotVLM_ParamBoat()));
-    //connect(mb->acRace, SIGNAL(triggered()), this, SLOT(slotVLM_ParamRace()));
+    connect(mb->acRace, SIGNAL(triggered()), this, SLOT(slotVLM_ParamRace()));
     connect(mb->acVLMParam, SIGNAL(triggered()), this, SLOT(slotVLM_Param()));
     connect(mb->acVLMSync, SIGNAL(triggered()), this, SLOT(slotVLM_Sync()));
     if(mb->acVLMTest)
@@ -369,7 +369,12 @@ MainWindow::MainWindow(int w, int h, QWidget *parent)
     // VLM init
     //---------------------------------------------------------
 
-      boatAcc = new boatAccount_dialog(acc_list,race_list,proj,this,terre);
+      /* read boat Data */
+      xmlData = new xml_boatData(proj,this,terre);
+      xmlData->readBoatData(acc_list,race_list,"boatAcc.dat");
+
+      boatAcc = new boatAccount_dialog(proj,this,terre);
+      
       param = new paramVLM(terre);
       poi_input_dialog = new POI_input(terre);
       menuBar->getBoatList(acc_list);
@@ -395,7 +400,7 @@ MainWindow::MainWindow(int w, int h, QWidget *parent)
       connect(this,SIGNAL(boatHasUpdated(boatAccount*)),
               pilototo,SLOT(boatUpdated(boatAccount*)));
       
-      raceParam = new race_dialog(terre);
+      raceParam = new race_dialog(this, terre);
       opponents = new opponentList(proj,this,terre);
     //---------------------------------------------------------
     // Active les actions
@@ -919,7 +924,7 @@ void MainWindow::slotBoatUpdated(boatAccount * boat,bool newRace)
             for(int i=0;i<race_list.size();i++)
                 if(race_list[i]->idrace == boat->getRaceId())
                 {
-                    opponents->setBoatList(race_list[i]->oppList,race_list[i]->idrace);
+                    opponents->setBoatList(race_list[i]->oppList,race_list[i]->idrace,false);
                     found=true;
                     break;
                 }   
@@ -1126,4 +1131,36 @@ bool MainWindow::isBoat(QString idu)
         if(acc_list[i]->getBoatId() == idu)
             return true;
     return false;
+}
+
+void MainWindow::slotReadBoat(void)
+{
+    qWarning() << "read boat data";
+    xmlData->readBoatData(acc_list,race_list,QString("boatAcc.dat"));
+}
+
+void MainWindow::slotWriteBoat(void)
+{
+    qWarning() << "write boat data";
+    xmlData->writeBoatData(acc_list,race_list,QString("boatAcc.dat"));
+}
+
+void MainWindow::slotUpdateOpponent(void)
+{
+    bool found;
+    if(!selectedBoat)
+    {
+        opponents->clear();
+        return;
+    }
+    
+    for(int i=0;i<race_list.size();i++)
+        if(race_list[i]->idrace == selectedBoat->getRaceId())
+        {
+            opponents->setBoatList(race_list[i]->oppList,race_list[i]->idrace,true);
+            found=true;
+            break;
+        }   
+    if(!found)
+        opponents->clear();
 }

@@ -162,7 +162,10 @@ void boatAccount::doRequest(int requestCmd)
         currentRequest = requestCmd;
         qWarning() << "boat Acc Doing request: " << page;
 
-        inetManager->get(QNetworkRequest(QUrl(page)));
+        QNetworkRequest request;
+        request.setUrl(QUrl(page));
+        Util::addAgent(request);   
+        inetManager->get(request);
     }
     else
     {

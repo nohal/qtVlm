@@ -89,6 +89,7 @@ class Util
     static QString pos2String(int type,float value);
     static QString getHost();
     static void computePos(Projection * proj, float lat, float lon, int * x, int * y);
+    static void addAgent(QNetworkRequest & request);
     
     //-------------------------------------------------
     template <typename T>

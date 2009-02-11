@@ -38,8 +38,7 @@ class boatAccount_dialog : public QDialog, public Ui::boatAccount_dialog
 {
     Q_OBJECT
     public:
-        boatAccount_dialog(QList<boatAccount*> & acc_list, QList<raceData*> & race_list,
-                            Projection * proj,QWidget * main, QWidget * parent = 0);
+        boatAccount_dialog(Projection * proj,QWidget * main, QWidget * parent = 0);
         ~boatAccount_dialog();
         void done(int result);
         void initList(QList<boatAccount*> & acc_list, QList<raceData*> & race_list);
@@ -56,6 +55,7 @@ class boatAccount_dialog : public QDialog, public Ui::boatAccount_dialog
     signals:
         void vlmSync(void);
         void accountListUpdated(void);
+        void writeBoat(void);
 
     private:
         QListWidgetItem * blank;
@@ -63,8 +63,6 @@ class boatAccount_dialog : public QDialog, public Ui::boatAccount_dialog
         QList<raceData*> * race_list;
         Projection * proj;
         QWidget * main, * parent;
-        xml_boatData * xmlData;
-
 };
 
 
