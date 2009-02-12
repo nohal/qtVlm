@@ -100,6 +100,7 @@ void boatAccount_dialog::initList(QList<boatAccount*> & acc_list,QList<raceData*
     }
 
     blank = new QListWidgetItem("<Nouveau>",list_boat);
+    polarList->setEnabled(false);
     list_boat->setCurrentItem(blank);
     slot_selectItem(blank);
 
