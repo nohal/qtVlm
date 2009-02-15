@@ -894,6 +894,15 @@ void Terrain::slot_Zoom_Sel()
         update();
     }
 }
+
+void Terrain::clearSelection()
+{
+    isSelectionZoneEnCours=false;
+    selX0 = selX1 = 0;
+    selY0 = selY1 = 0;
+    update();
+}
+
 //---------------------------------------------------------
 void Terrain::slot_Zoom_All()
 {

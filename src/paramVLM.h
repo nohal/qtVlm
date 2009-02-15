@@ -36,12 +36,19 @@ class paramVLM : public QDialog, public Ui::VLM_param_ui
 
     public slots:
         void forceUserAgent_changed(int newVal);
+        void changeColor_POI(void);
+        void changeColor_qtBoat(void);
+        void changeColor_qtBoat_sel(void);
+        void changeColor_opp(void);        
 
     signals:
         void paramVLMChanged(void);
 
     private:
-
+        void changeColor(int type);
+        void setColor(QString color,int type);
+        
+        QString POI_color,qtBoat_color,qtBoat_sel_color,opp_color;
 };
 
 

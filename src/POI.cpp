@@ -55,6 +55,7 @@ POI::POI(QString name, float lon, float lat,
     countClick = 0;
     
     createWidget();
+    paramChanged();
 
     connect(parentWindow, SIGNAL(projectionUpdated()), this, SLOT(updateProjection()) );
     connect(this, SIGNAL(signalOpenMeteotablePOI(POI*)),
@@ -67,6 +68,8 @@ POI::POI(QString name, float lon, float lat,
 
     connect(this,SIGNAL(editPOI(POI*)),ownerMeteotable,SLOT(slotEditPOI(POI *)));
 
+    connect(ownerMeteotable,SIGNAL(paramVLMChanged()),this,SLOT(paramChanged()));
+    
     setName(name);
 }
 
@@ -145,10 +148,10 @@ void  POI::paintEvent(QPaintEvent *)
 
     pnt.fillRect(9,0, width()-10,height()-1, QBrush(bgcolor));
 
-    QPen pen(Qt::black);
+    QPen pen(myColor);
     pen.setWidth(4);
     pnt.setPen(pen);
-    pnt.fillRect(0,dy-3,7,7, QBrush(Qt::black));
+    pnt.fillRect(0,dy-3,7,7, QBrush(myColor));
 
     int g = 60;
     pen = QPen(QColor(g,g,g));
@@ -279,4 +282,10 @@ void POI::slotDelPoi()
         delPOI_list(this);
         close();
     }
+}
+
+void POI::paramChanged()
+{
+    myColor = QColor(Util::getSetting("POI_color",QColor(Qt::black).name()).toString());
+    update();
 }

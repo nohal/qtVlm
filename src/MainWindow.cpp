@@ -388,6 +388,8 @@ MainWindow::MainWindow(int w, int h, QWidget *parent)
       selectedBoat = NULL;
 
       connect(param,SIGNAL(paramVLMChanged()),VLMBoard,SLOT(paramChanged()));
+      
+      connect(param,SIGNAL(paramVLMChanged()),this,SLOT(slotParamChanged()));
 
       connect(poi_input_dialog,SIGNAL(addPOI(float,float,float,int,bool)),
               this,SLOT(slotAddPOI(float,float,float,int,bool)));
@@ -1081,6 +1083,7 @@ void MainWindow::slotDelPOIs(void)
 
             num++;
         }
+        terre->clearSelection();
     }
 }
 
@@ -1129,7 +1132,12 @@ bool MainWindow::isBoat(QString idu)
 {
     for(int i=0;i<acc_list.count();i++)
         if(acc_list[i]->getBoatId() == idu)
-            return true;
+        {
+            if(acc_list[i]->getStatus())
+                return true;
+            else
+                return false;
+        }
     return false;
 }
 
@@ -1163,4 +1171,9 @@ void MainWindow::slotUpdateOpponent(void)
         }   
     if(!found)
         opponents->clear();
+}
+
+void MainWindow::slotParamChanged(void)
+{
+       emit paramVLMChanged();
 }

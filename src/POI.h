@@ -73,6 +73,7 @@ class POI : public QWidget
         void slotDelPoi();
         void slot_meteoPOI();
         void slot_copy();
+        void paramChanged();
 
     signals:
         void signalOpenMeteotablePOI(POI *poi);
@@ -91,6 +92,7 @@ class POI : public QWidget
         QWidget   *parent;
         QWidget   *owner;
         QColor    bgcolor,fgcolor;
+        QColor    myColor;
         int type;
         int timeStamp;
         bool useTstamp;

@@ -27,24 +27,51 @@ paramVLM::paramVLM(QWidget * parent) : QDialog(parent)
 {
     setupUi(this);
 
-    /* adding list of supported NMEA sentences*/
-    chk_activateEmulation->setCheckState(
-         Util::getSetting("gpsEmulEnable", "0").toString()=="1"?Qt::Checked:Qt::Unchecked);
-    serialName->setText(Util::getSetting("serialName", "COM2").toString());
+    /* Drawing / affichage */
     estimeLen->setValue(Util::getSetting("estimeLen",100).toInt());
     chk_gribZoomOnLoad->setCheckState(Util::getSetting("gribZoomOnLoad",0).toInt()==1?Qt::Checked:Qt::Unchecked);
+    
+    opp_labelType->addItem(tr("Login"));
+    opp_labelType->addItem(tr("Nom"));
+    opp_labelType->addItem(tr("Numéro"));    
+    opp_labelType->setCurrentIndex(Util::getSetting("opp_labelType",0).toInt());
+    
+    /* Colors */
+
+    setColor(Util::getSetting("POI_Color",QColor(Qt::black).name()).toString(),0);
+    setColor(Util::getSetting("qtBoat_color",QColor(Qt::blue).name()).toString(),1);
+    setColor(Util::getSetting("qtBoat_sel_color",QColor(Qt::red).name()).toString(),2);
+    setColor(Util::getSetting("opp_color",QColor(Qt::green).name()).toString(),3);
+
+    /* advanced */
+    chk_activateEmulation->setCheckState(
+         Util::getSetting("gpsEmulEnable", "0").toString()=="1"?Qt::Checked:Qt::Unchecked);
+    serialName->setText(Util::getSetting("serialName", "COM2").toString());    
+    
     chk_forceUserAgent->setCheckState(Util::getSetting("forceUserAgent",0).toInt()==1?Qt::Checked:Qt::Unchecked);
     userAgent->setText(Util::getSetting("userAgent", "").toString());
     userAgent->setEnabled(Util::getSetting("forceUserAgent",0).toInt()==1);
+    
 }
 
 void paramVLM::done(int result)
 {
     if(result == QDialog::Accepted)
     {
-        Util::setSetting("gpsEmulEnable",chk_activateEmulation->checkState()==Qt::Checked?"1":"0");
-        Util::setSetting("serialName", serialName->text());
+        /*drawing*/
         Util::setSetting("estimeLen", QString().setNum(estimeLen->value()));
+        Util::setSetting("gribZoomOnLoad",chk_gribZoomOnLoad->checkState()==Qt::Checked?"1":"0");
+        Util::setSetting("opp_labelType",QString().setNum(opp_labelType->currentIndex()));
+        /* colors */
+
+        Util::setSetting("POI_Color",POI_color);
+        Util::setSetting("qtBoat_color",qtBoat_color);
+        Util::setSetting("qtBoat_sel_color",qtBoat_sel_color);
+        Util::setSetting("opp_color",opp_color);
+
+        /* advanced */
+        Util::setSetting("gpsEmulEnable",chk_activateEmulation->checkState()==Qt::Checked?"1":"0");
+        Util::setSetting("serialName", serialName->text());        
         Util::setSetting("forceUserAgent",chk_forceUserAgent->checkState()==Qt::Checked?"1":"0");
         Util::setSetting("userAgent",userAgent->text());
         emit paramVLMChanged();
@@ -57,3 +84,54 @@ void paramVLM::forceUserAgent_changed(int newVal)
     qWarning("New val %d",newVal);
     userAgent->setEnabled(newVal==Qt::Checked);
 }
+
+void paramVLM::changeColor_POI(void)
+{
+    changeColor(0);
+}
+
+void paramVLM::changeColor_qtBoat(void)
+{
+    changeColor(1);
+}
+
+void paramVLM::changeColor_qtBoat_sel(void)
+{
+    changeColor(2);
+}
+
+void paramVLM::changeColor_opp(void)
+{
+    changeColor(3);
+}
+
+void paramVLM::changeColor(int type)
+{
+    QColor color = QColorDialog::getColor(Qt::white, this);
+    setColor(color.name (),type);
+}
+
+void paramVLM::setColor(QString color,int type)
+{
+    QString style ="background-color: "+color;
+    switch(type)
+    {
+        case 0:
+            POI_frame->setStyleSheet(style);
+            POI_color=color;
+            break;
+        case 1:
+            qtBoat_frame->setStyleSheet(style);
+            qtBoat_color=color;
+            break;
+        case 2:
+            qtBoat_sel_frame->setStyleSheet(style);
+            qtBoat_sel_color=color;
+            break;
+        case 3:
+            opp_frame->setStyleSheet(style);
+            opp_color=color;
+            break;
+    }
+}
+

@@ -100,6 +100,7 @@ class boatAccount: public QWidget
 
     public slots:
         void projectionUpdated();
+        void paramChanged();
         void requestFinished (QNetworkReply*);
         
         void selectBoat();
@@ -152,6 +153,8 @@ class boatAccount: public QWidget
 
         QLabel    *label;
         QColor    bgcolor,fgcolor;
+        QColor    myColor;
+        QColor    selColor;
         QCursor   enterCursor;
         bool      isSync;
 

@@ -56,7 +56,7 @@ public:
     
     void setBoatList(QList<boatAccount*> & boat_list) {this->boat_list=&boat_list; update();}
 
-
+    void clearSelection();
 
 public slots :
     // Map

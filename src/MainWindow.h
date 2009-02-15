@@ -127,6 +127,7 @@ class MainWindow: public QMainWindow
         void slotReadBoat(void);
         void slotWriteBoat(void);
         void slotUpdateOpponent(void);
+        void slotParamChanged(void);
 
     signals:
         void signalMapQuality(int quality);
@@ -135,6 +136,7 @@ class MainWindow: public QMainWindow
         void newPOI(float,float,Projection *);
         void editInstructions(void);
         void boatHasUpdated(boatAccount*);
+        void paramVLMChanged();
 
     private:
         GshhsReader *gshhsReader;

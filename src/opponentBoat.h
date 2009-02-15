@@ -46,24 +46,30 @@ struct raceData {
 
 #define RACE_MAX_BOAT 10
 
+#define OPP_SHOW_LOGIN 0
+#define OPP_SHOW_NAME  1
+#define OPP_SHOW_IDU   2
+
 class opponent : public QWidget
 {Q_OBJECT
     public:
         opponent(QString idu,QString race, float lat, float lon, QString login,
-                            QString name,Projection * proj,QWidget *parentWindow=NULL);
-        opponent(QString idu,QString race,Projection * proj,QWidget *parentWindow=NULL);       
+                            QString name,Projection * proj,QWidget *main, QWidget *parentWindow=NULL);
+        opponent(QString idu,QString race,Projection * proj,QWidget *main, QWidget *parentWindow=NULL);       
         void init(bool isQtBoat,QString idu,QString race, float lat, float lon, QString login,
-                            QString name,Projection * proj,QWidget *parentWindow);
+                            QString name,Projection * proj,QWidget *main, QWidget *parentWindow);
                             
         QString getRace(void)    { return idrace; }
         QString getIduser(void)  { return idu; }
+        bool    getIsQtBoat()    { return isQtBoat; }
         
         void setNewData(float lat, float lon,QString name);
         void setIsQtBoat(bool status);
-        void setName(QString name);
+        void setName();
         
     public slots:
-        void updatePosition();
+        void updateProjection();
+        void paramChanged();
         
     private:
         float lat,lon;
@@ -76,10 +82,13 @@ class opponent : public QWidget
         bool isQtBoat;
         
         QColor    bgcolor,fgcolor;
+        QColor    myColor;
         int       pi, pj;
         QLabel    *label;
+        int       label_type;
         
-        void createWidget(void);
+        void createWidget(void);        
+        void updatePosition();
         void  paintEvent(QPaintEvent *event);
 };
 

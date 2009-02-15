@@ -34,18 +34,18 @@ Copyright (C) 2008 - Jacques Zaninetti - http://zygrib.free.fr
 ****************************************/
 
 opponent::opponent(QString idu,QString race, float lat, float lon, QString login,
-                            QString name,Projection * proj,QWidget *parentWindow):QWidget(parentWindow)
+                            QString name,Projection * proj,QWidget *main, QWidget *parentWindow):QWidget(parentWindow)
 {
-    init(false,idu,race,lat,lon,login,name,proj,parentWindow);    
+    init(false,idu,race,lat,lon,login,name,proj,main,parentWindow);    
 }
 
-opponent::opponent(QString idu,QString race,Projection * proj,QWidget *parentWindow):QWidget(parentWindow)
+opponent::opponent(QString idu,QString race,Projection * proj,QWidget *main, QWidget *parentWindow):QWidget(parentWindow)
 {
-    init(true,idu,race,0,0,"","",proj,parentWindow);    
+    init(true,idu,race,0,0,"","",proj,main,parentWindow);    
 }
 
 void opponent::init(bool isQtBoat,QString idu,QString race, float lat, float lon, QString login,
-                            QString name,Projection * proj,QWidget *parentWindow)
+                            QString name,Projection * proj,QWidget *main, QWidget *parentWindow)
 {
     this->idu=idu;
     this->idrace=race;
@@ -59,8 +59,11 @@ void opponent::init(bool isQtBoat,QString idu,QString race, float lat, float lon
     
     createWidget();
     updatePosition();
+    paramChanged();
     
-    connect(parentWindow, SIGNAL(projectionUpdated()), this, SLOT(updatePosition()));
+    connect(parentWindow, SIGNAL(projectionUpdated()), this, SLOT(updateProjection()));
+    connect(main,SIGNAL(paramVLMChanged()),this,SLOT(paramChanged()));
+    
     if(!isQtBoat)
         show();
 }
@@ -98,10 +101,10 @@ void  opponent::paintEvent(QPaintEvent *)
 
     pnt.fillRect(9,0, width()-10,height()-1, QBrush(bgcolor));
 
-    QPen pen(Qt::black);
+    QPen pen(myColor);
     pen.setWidth(4);
     pnt.setPen(pen);
-    pnt.fillRect(0,dy-3,7,7, QBrush(Qt::black));
+    pnt.fillRect(0,dy-3,7,7, QBrush(myColor));
 
     int g = 60;
     pen = QPen(QColor(g,g,g));
@@ -110,50 +113,80 @@ void  opponent::paintEvent(QPaintEvent *)
     pnt.drawRect(9,0,width()-10,height()-1);
 }
 
-void opponent::updatePosition()
-{    
-    if (proj->isPointVisible(lon, lat)) {      // tour du monde ?
-        proj->map2screen(lon, lat, &pi, &pj);
-    }
-    else if (proj->isPointVisible(lon-360, lat)) {
-        proj->map2screen(lon-360, lat, &pi, &pj);
-    }
-    else {
-        proj->map2screen(lon+360, lat, &pi, &pj);
-    }
-
-    int dy = height()/2;
-    move(pi-3, pj-dy);
+void opponent::updateProjection()
+{
+    updatePosition();
+    update();
 }
 
-void opponent::setName(QString name)
+void opponent::updatePosition()
+{    
+    int boat_i,boat_j;
+
+    Util::computePos(proj,lat,lon,&boat_i,&boat_j);
+    boat_i-=3;
+    boat_j-=(height()/2);
+    
+    qWarning() << name << ": at (" << boat_i << "," << boat_j << ") => " << lat << "," << lon;
+    
+    move(boat_i, boat_j);    
+}
+
+void opponent::setName()
 {
     this->name=name;
-    /* currently we are displaying idu not name */
+    QString str;
+    QString str2;
+    switch(label_type)
+    {
+        case OPP_SHOW_LOGIN:
+            str = login;
+            str2 = idu + " - " + name;
+            break;
+        case OPP_SHOW_NAME:
+            str = name;
+            str2 = idu + " - " + login;
+            break;
+        case OPP_SHOW_IDU:
+            str = idu;
+            str2 = login + " - " + name;
+            break;        
+    }
+    label->setText(str);
+    setToolTip(str2);
+    adjustSize();
 }
 
 void opponent::setNewData(float lat, float lon,QString name)
 {  
     bool needUpdate = false;
+    
     if(lat != this->lat || lon != this->lon)
     {
-       lat=this->lat;
-       lon=this->lon;
+       this->lat=lat;
+       this->lon=lon;
        updatePosition();
-       needUpdate = true;
-       qWarning() << idu << ": no update";
+       needUpdate = true;       
     }
         
     if(name != this->name)
     {
-        setName(name);
+        this->name=name;
+        setName();
+        needUpdate = true;
     }
         
     /* new data => we are not a qtVlm boat */
     if(isQtBoat)
+    {
         setIsQtBoat(false);
-    else if(needUpdate)
-        update();        
+        #warning why doing this ?
+    }
+    else
+    {
+        if(needUpdate)
+            update();
+    }
 }
 
 void opponent::setIsQtBoat(bool status)
@@ -165,6 +198,15 @@ void opponent::setIsQtBoat(bool status)
         hide();
     else
         show();
+}
+
+void opponent::paramChanged()
+{
+    myColor = QColor(Util::getSetting("opp_color",QColor(Qt::green).name()).toString());
+    label_type = Util::getSetting("opp_labelType",0).toInt();
+    setName();
+    if(isQtBoat)
+        update();
 }
 
 /****************************************
@@ -234,6 +276,8 @@ void opponentList::setBoatList(QString list_txt,QString race,bool force)
     
     if(currentList.size() > 0)
         getNxtOppData();
+    else
+        currentRequest=OPP_NO_REQUEST;
 }
 
 void opponentList::clear(void)
@@ -271,7 +315,6 @@ void opponentList::getNxtOppData()
     
     if(currentOpponent>=listSize)
     {
-        qWarning() << "getOpponents end of list";
         currentRequest=OPP_NO_REQUEST;
         return;
     }
@@ -283,7 +326,7 @@ void opponentList::getNxtOppData()
         if(currentMode==OPP_MODE_REFRESH)
             opponent_list[currentOpponent]->setIsQtBoat(true);
         else
-            opponent_list.append(new opponent(idu,currentRace,proj,parent));
+            opponent_list.append(new opponent(idu,currentRace,proj,mainWin,parent));
             
         currentOpponent++;
         getNxtOppData();
@@ -299,7 +342,7 @@ void opponentList::getNxtOppData()
                         << "&idraces="
                         << currentRace;
     currentOpponent++;  
-    qWarning() << "ask for " << page;
+    //qWarning() << "ask for " << page;
     
     QNetworkRequest request;
     request.setUrl(QUrl(page));
@@ -343,14 +386,14 @@ void opponentList::requestFinished ( QNetworkReply* inetReply)
                          {
                              idu = (currentMode==OPP_MODE_REFRESH?
                                  opponent_list[currentOpponent-1]->getIduser():currentList[currentOpponent-1]);
-                             qWarning() << login << "-" << name 
+                             /*qWarning() << login << "-" << name 
                                  << " at (" << lat << "," << lon << ") - idu"
-                                 << idu;
+                                 << idu ;*/
                              if(currentMode==OPP_MODE_REFRESH)
                                  opponent_list[currentOpponent-1]->setNewData(lat,lon,name);
                              else                                    
                                  opponent_list.append(new opponent(idu,currentRace,
-                                                                lat,lon,login,name,proj,parent));
+                                                                lat,lon,login,name,proj,mainWin,parent));
                          }
                      }
                  }

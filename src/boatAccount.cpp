@@ -58,6 +58,7 @@ boatAccount::boatAccount(QString login, QString pass, bool activated,Projection 
     currentRequest=VLM_NO_REQUEST;
 
     createWidget();
+    paramChanged();
 
     if(activated)
         show();
@@ -70,6 +71,8 @@ boatAccount::boatAccount(QString login, QString pass, bool activated,Projection 
     connect(this,SIGNAL(boatLockStatusChanged(boatAccount*,bool)),
             main,SLOT(slotBoatLockStatusChanged(boatAccount*,bool)));
 
+    connect(main,SIGNAL(paramVLMChanged()),this,SLOT(paramChanged()));
+            
     /* init http inetManager */
     inetManager = new QNetworkAccessManager(this);
     if(inetManager)
@@ -410,13 +413,15 @@ void  boatAccount::paintEvent(QPaintEvent *)
 {
     QPainter pnt(this);
     int dy = height()/2;
+    
+    //qWarning() << "qtBoat " << login << " paint";
 
     pnt.fillRect(9,0, width()-10,height()-1, QBrush(bgcolor));
 
-    QPen pen(selected?Qt::red:Qt::blue);
+    QPen pen(selected?selColor:myColor);
     pen.setWidth(4);
     pnt.setPen(pen);
-    pnt.fillRect(0,dy-3,7,7, QBrush(selected?Qt::red:Qt::blue));
+    pnt.fillRect(0,dy-3,7,7, QBrush(selected?selColor:myColor));
 
     int g = 60;
     pen = QPen(QColor(g,g,g));
@@ -571,3 +576,12 @@ void boatAccount::setAlias(bool state,QString alias)
     useAlias=state;
     this->alias=alias;
 }
+
+void boatAccount::paramChanged()
+{
+    myColor = QColor(Util::getSetting("qtBoat_color",QColor(Qt::blue).name()).toString());
+    selColor = QColor(Util::getSetting("qtBoat_sel_color",QColor(Qt::red).name()).toString());
+    if(activated)
+        update();
+}
+
