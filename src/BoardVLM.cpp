@@ -565,6 +565,8 @@ void boardVLM::requestFinished ( QNetworkReply* inetReply)
     }
 }
 
+
+
 void boardVLM::chkResult(void)
 {
     bool done=false;
@@ -575,7 +577,7 @@ void boardVLM::chkResult(void)
     {
         case VLM_CMD_HD:
             data=currentBoat->getHeading();
-            if(data == cmd_val1 && currentBoat->getPilotType() == 1)
+            if(compFloat(data,cmd_val1) && currentBoat->getPilotType() == 1)
                 done=true;
             break;
         case VLM_CMD_ANG:
@@ -594,8 +596,10 @@ void boardVLM::chkResult(void)
             if(currentBoat->getPilotType() == 3)
                 done=true;
             break;
-        case VLM_CMD_WP:
-            if(currentBoat->getWPLat()==cmd_val1 && currentBoat->getWPLon()==cmd_val2 && currentBoat->getWPHd()==cmd_val3)
+        case VLM_CMD_WP:            
+            if(compFloat(currentBoat->getWPLat(),cmd_val1) && 
+                compFloat(currentBoat->getWPLon(),cmd_val2) && 
+                compFloat(currentBoat->getWPHd(),cmd_val3))
                 done=true;
             break;
     }

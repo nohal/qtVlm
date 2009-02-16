@@ -47,6 +47,7 @@ class boatAccount: public QWidget
         void setPolar(bool state,QString polar);
         void setLockStatus(bool status);
         void setAlias(bool state,QString alias);
+        void setZoom(float zoom)   { this->zoom=zoom; };
 
         void unSelectBoat(void);
 
@@ -67,8 +68,6 @@ class boatAccount: public QWidget
         float getVmg(void)           {    return vmg; }
         float getWindDir(void)       {    return windDir; }
         float getWindSpeed(void)     {    return windSpeed; }
-        float getWPlat(void)         {    return WPlat; }
-        float getWPlon(void)         {    return WPlon; }
         QString getBoatId(void)      {    return QString().setNum(boat_id); }
         QString getBoatName(void)    {    return boat_name; }
         float getWPLat(void)         {    return WPLat; }
@@ -93,6 +92,7 @@ class boatAccount: public QWidget
         bool getIsSelected(void)     { return selected; }
         QString getRaceId(void)      { return QString().setNum(race_id); }
         QString getRaceName(void)    { return race_name; }
+        float getZoom(void)          { return zoom; }
         
         QString getCurrentPolarName(void) { return (forcePolar?polarName:polarVlm); }
 
@@ -134,9 +134,10 @@ class boatAccount: public QWidget
         float lat,lon;
         float speed,avg,heading;
         float dnm,loch,ortho,loxo,vmg;
-        float windDir,windSpeed,WPlat,WPlon;
+        float windDir,windSpeed;
         float TWA;
         float WPLat,WPLon,WPHd;
+        float zoom;
         QString ETA;
         QString score;
         QString polarVlm;

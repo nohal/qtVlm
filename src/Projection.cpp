@@ -156,6 +156,10 @@ void Projection::setScale(float sc)
     updateBoundaries();
 }
 
+float Projection::getScale()
+{
+    return scale;
+}
 
 //--------------------------------------------------------------
 // Intersection avec une zone de la carte

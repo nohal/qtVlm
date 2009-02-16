@@ -15,7 +15,7 @@
   </property>
   <property name="windowIcon">
    <iconset>
-    <normaloff>sailing-ship.ico</normaloff>sailing-ship.ico</iconset>
+    <normaloff>../../../../../.designer/backup/sailing-ship.ico</normaloff>../../../../../.designer/backup/sailing-ship.ico</iconset>
   </property>
   <widget class="QDialogButtonBox" name="buttonBox">
    <property name="geometry">
@@ -43,7 +43,7 @@
     </rect>
    </property>
    <property name="currentIndex">
-    <number>0</number>
+    <number>1</number>
    </property>
    <widget class="QWidget" name="tab">
     <attribute name="title">
@@ -167,10 +167,10 @@
     <widget class="QWidget" name="">
      <property name="geometry">
       <rect>
-       <x>11</x>
-       <y>11</y>
+       <x>20</x>
+       <y>20</y>
        <width>221</width>
-       <height>135</height>
+       <height>171</height>
       </rect>
      </property>
      <layout class="QGridLayout" name="gridLayout">
@@ -199,14 +199,14 @@
        </widget>
       </item>
       <item row="1" column="0">
-       <widget class="QLabel" name="label_4">
+       <widget class="QLabel" name="label_8">
         <property name="text">
-         <string>Bateau qtVlm</string>
+         <string>POI est WP</string>
         </property>
        </widget>
       </item>
       <item row="1" column="1">
-       <widget class="QFrame" name="qtBoat_frame">
+       <widget class="QFrame" name="POI_WP_frame">
         <property name="frameShape">
          <enum>QFrame::StyledPanel</enum>
         </property>
@@ -216,21 +216,21 @@
        </widget>
       </item>
       <item row="1" column="2">
-       <widget class="QPushButton" name="pushButton_2">
+       <widget class="QPushButton" name="pushButton_5">
         <property name="text">
          <string>Changer</string>
         </property>
        </widget>
       </item>
       <item row="2" column="0">
-       <widget class="QLabel" name="label_6">
+       <widget class="QLabel" name="label_4">
         <property name="text">
-         <string>Bateau qtVlm sel.</string>
+         <string>Bateau qtVlm</string>
         </property>
        </widget>
       </item>
       <item row="2" column="1">
-       <widget class="QFrame" name="qtBoat_sel_frame">
+       <widget class="QFrame" name="qtBoat_frame">
         <property name="frameShape">
          <enum>QFrame::StyledPanel</enum>
         </property>
@@ -240,21 +240,21 @@
        </widget>
       </item>
       <item row="2" column="2">
-       <widget class="QPushButton" name="pushButton_4">
+       <widget class="QPushButton" name="pushButton_2">
         <property name="text">
          <string>Changer</string>
         </property>
        </widget>
       </item>
       <item row="3" column="0">
-       <widget class="QLabel" name="label_5">
+       <widget class="QLabel" name="label_6">
         <property name="text">
-         <string>Concurrents</string>
+         <string>Bateau qtVlm sel.</string>
         </property>
        </widget>
       </item>
       <item row="3" column="1">
-       <widget class="QFrame" name="opp_frame">
+       <widget class="QFrame" name="qtBoat_sel_frame">
         <property name="frameShape">
          <enum>QFrame::StyledPanel</enum>
         </property>
@@ -264,6 +264,30 @@
        </widget>
       </item>
       <item row="3" column="2">
+       <widget class="QPushButton" name="pushButton_4">
+        <property name="text">
+         <string>Changer</string>
+        </property>
+       </widget>
+      </item>
+      <item row="4" column="0">
+       <widget class="QLabel" name="label_5">
+        <property name="text">
+         <string>Concurrents</string>
+        </property>
+       </widget>
+      </item>
+      <item row="4" column="1">
+       <widget class="QFrame" name="opp_frame">
+        <property name="frameShape">
+         <enum>QFrame::StyledPanel</enum>
+        </property>
+        <property name="frameShadow">
+         <enum>QFrame::Raised</enum>
+        </property>
+       </widget>
+      </item>
+      <item row="4" column="2">
        <widget class="QPushButton" name="pushButton_3">
         <property name="text">
          <string>Changer</string>
@@ -435,8 +459,8 @@
    <slot>changeColor_qtBoat()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>243</x>
-     <y>88</y>
+     <x>242</x>
+     <y>137</y>
     </hint>
     <hint type="destinationlabel">
      <x>348</x>
@@ -467,12 +491,28 @@
    <slot>changeColor_qtBoat_sel()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>221</x>
-     <y>136</y>
+     <x>242</x>
+     <y>173</y>
     </hint>
     <hint type="destinationlabel">
      <x>348</x>
      <y>145</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>pushButton_5</sender>
+   <signal>clicked()</signal>
+   <receiver>VLM_param_ui</receiver>
+   <slot>changeColor_POI_WP()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>228</x>
+     <y>88</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>347</x>
+     <y>69</y>
     </hint>
    </hints>
   </connection>
@@ -483,5 +523,6 @@
   <slot>changeColor_qtBoat()</slot>
   <slot>changeColor_opp()</slot>
   <slot>changeColor_qtBoat_sel()</slot>
+  <slot>changeColor_POI_WP()</slot>
  </slots>
 </ui>

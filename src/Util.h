@@ -49,6 +49,20 @@ Copyright (C) 2008 - Jacques Zaninetti - http://zygrib.free.fr
 #define TYPE_LON 1
 #define TYPE_LAT 2
 
+#define adjustFloat(VAR) ({ \
+    VAR = ((float)((int)(VAR*10000)))/10000; \
+    })
+
+#define compFloat(VAR1,VAR2) ({ \
+    bool _res;                 \
+    float _v1=VAR1;            \
+    adjustFloat(_v1);           \
+    float _v2=VAR2;            \
+    adjustFloat(_v2);           \
+    _res = (_v1==_v2);         \
+    _res;                      \
+    })
+
 class Util
 {
     public:

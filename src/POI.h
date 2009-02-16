@@ -74,6 +74,7 @@ class POI : public QWidget
         void slot_meteoPOI();
         void slot_copy();
         void paramChanged();
+        void WPChanged(float,float);
 
     signals:
         void signalOpenMeteotablePOI(POI *poi);
@@ -85,6 +86,7 @@ class POI : public QWidget
     private:
         QString      name;
         float        lon, lat,wph;
+        float        WPlon,WPlat;
         Projection   *proj;
         int       pi, pj;
         QCursor   enterCursor;
@@ -92,10 +94,11 @@ class POI : public QWidget
         QWidget   *parent;
         QWidget   *owner;
         QColor    bgcolor,fgcolor;
-        QColor    myColor;
+        QColor    myColor,wpColor;
         int type;
         int timeStamp;
         bool useTstamp;
+        bool isWp;
 
         void createWidget();
 
@@ -116,6 +119,9 @@ class POI : public QWidget
         QAction * ac_meteo;
         QAction * ac_copy;
         void createPopUpMenu(void);
+        
+        void chkIsWP(void);
+        void rmSignal(void);
 };
 
 #endif

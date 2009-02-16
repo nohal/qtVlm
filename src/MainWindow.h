@@ -66,6 +66,8 @@ class MainWindow: public QMainWindow
         void openGribFile(QString fileName, bool zoom=true);
         bool getBoatLockStatus(void);
         bool isBoat(QString idu);
+        
+        void getBoatWP(float * lat,float * lon);
 
     public slots:
         void slotOpenMeteotable();
@@ -137,6 +139,7 @@ class MainWindow: public QMainWindow
         void editInstructions(void);
         void boatHasUpdated(boatAccount*);
         void paramVLMChanged();
+        void WPChanged(float,float);
 
     private:
         GshhsReader *gshhsReader;

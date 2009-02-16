@@ -72,6 +72,7 @@ boatAccount::boatAccount(QString login, QString pass, bool activated,Projection 
             main,SLOT(slotBoatLockStatusChanged(boatAccount*,bool)));
 
     connect(main,SIGNAL(paramVLMChanged()),this,SLOT(paramChanged()));
+    connect(this,SIGNAL(WPChanged(float,float)),main,SLOT(slotWPChanged(float,float)));
             
     /* init http inetManager */
     inetManager = new QNetworkAccessManager(this);
@@ -90,6 +91,7 @@ boatAccount::~boatAccount()
 {
     if(inetManager)
         delete inetManager;
+    disconnect();
 }
 
 void boatAccount::updateProxy(void)
@@ -243,6 +245,7 @@ void boatAccount::requestFinished ( QNetworkReply* inetReply)
                             
                             if(race_id==0)
                             {
+                                qWarning() << "RAC=0";
                                 latitude = longitude = speed = heading = avg = 0;
                                 dnm = loch = ortho = loxo = vmg = windDir = 0;
                                 windSpeed = WPLat = WPLon = TWA = prevVac = 0;
@@ -333,7 +336,7 @@ void boatAccount::requestFinished ( QNetworkReply* inetReply)
 
                 lat = latitude/1000;
                 lon = longitude/1000;
-
+                
                 current_heading = heading;
                 qWarning() << "Data for " << boat_id << " received";
                 /* compute heading point */

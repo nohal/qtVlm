@@ -38,6 +38,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #define POLAR_CHK_NAME    "UsePolar"
 #define ALIAS_CHK_NAME    "UseAlias"
 #define ALIAS_NAME        "Alias"
+#define ZOOM_NAME         "Zoom"
 /* RACE DATA */
 #define RACE_GROUP_NAME   "Race"
 #define RACEID_NAME       "raceId"
@@ -122,6 +123,11 @@ bool xml_boatData::writeBoatData(QList<boatAccount*> & boat_list,QList<raceData*
           group.appendChild(tag);
           status = acc->getPolarState();
           t = doc.createTextNode(status?"1":"0");
+          tag.appendChild(t);
+          
+          tag = doc.createElement(ZOOM_NAME);
+          group.appendChild(tag);
+          t = doc.createTextNode(QString().setNum(acc->getZoom()));
           tag.appendChild(t);
      }
      
@@ -221,6 +227,7 @@ bool xml_boatData::readBoatData(QList<boatAccount*> & boat_list,QList<raceData*>
               bool chk_polar=false;
               bool chk_alias=false;
               QString alias="";
+              float zoom=-1;
 
 			  while(!subNode.isNull())
 			  {
@@ -283,6 +290,12 @@ bool xml_boatData::readBoatData(QList<boatAccount*> & boat_list,QList<raceData*>
                       if(dataNode.nodeType() == QDomNode::TextNode)
                           alias = dataNode.toText().data();
                    }
+                   if(subNode.toElement().tagName() == ZOOM_NAME)
+                   {
+                      dataNode = subNode.firstChild();
+                      if(dataNode.nodeType() == QDomNode::TextNode)
+                          zoom = dataNode.toText().data().toFloat();
+                   }
 
                    
 				   subNode = subNode.nextSibling();
@@ -295,7 +308,7 @@ bool xml_boatData::readBoatData(QList<boatAccount*> & boat_list,QList<raceData*>
                    acc->setPolar(chk_polar,polar);
                    acc->setAlias(chk_alias,alias);
                    acc->setLockStatus(locked);
-
+                   acc->setZoom(zoom);
                    boat_list.append(acc);
 			  }
 			  else

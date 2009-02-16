@@ -53,6 +53,7 @@ Q_OBJECT
         virtual bool isPointVisible (float x,float y) const;
 
         virtual void setScale(float sc);
+        virtual float getScale();
         virtual void setCentralPixel(int i, int j);
         virtual void setCenterInMap(float x, float y);
         virtual void setScreenSize(int w, int h);

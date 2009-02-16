@@ -434,6 +434,7 @@ MainWindow::~MainWindow()
     Util::setSetting("gribFilePath",  gribFilePath);
 
     xmlPOI->writeData(poi_list,"poi.dat");
+    slotWriteBoat();
 
     delete boatAcc;
 }
@@ -853,7 +854,6 @@ void MainWindow::slotMouseDblClicked(QMouseEvent * e)
     {
         proj->screen2map(mouseClicX,mouseClicY, &lon, &lat);
         slotAddPOI((float)lat,(float)lon,-1,-1,false);
-        //emit newPOI(lon,lat,proj);
     }
 }
 
@@ -888,7 +888,7 @@ void MainWindow::slotVLM_Param(void)
 
 void MainWindow::slotVLM_Sync(void) {
     //dbg->addLine("calling getBoatInfo");
-    bool hasFirstActivated = selectedBoat!=NULL;
+    bool hasFirstActivated = (selectedBoat!=NULL);
     QListIterator<boatAccount*> i (acc_list);
     int cnt=0;
     while(i.hasNext())
@@ -908,6 +908,8 @@ void MainWindow::slotVLM_Sync(void) {
             {
                 menuBar->cbBoatList->setCurrentIndex(cnt);
                 menuBar->acPilototo->setEnabled(!acc->getLockStatus());
+                if(selectedBoat->getZoom() !=-1)
+                    proj->setScale(selectedBoat->getZoom());
             }
             cnt++;
         }
@@ -936,6 +938,7 @@ void MainWindow::slotBoatUpdated(boatAccount * boat,bool newRace)
             
         terre->setCenterInMap(boat->getLon(),boat->getLat());
         emit boatHasUpdated(boat);
+        emit WPChanged(boat->getWPLat(),boat->getWPLon());
     }
 }
 
@@ -949,11 +952,16 @@ void MainWindow::slotSelectBoat(boatAccount* newSelect)
     if(newSelect != selectedBoat)
     {
         if(selectedBoat)
+        {
             selectedBoat->unSelectBoat();
+            selectedBoat->setZoom(proj->getScale());
+        }
         selectedBoat=newSelect;
         if(newSelect->getStatus())
         {            
             newSelect->getData();
+            if(newSelect->getZoom()!=-1)
+                proj->setScale(newSelect->getZoom());
             menuBar->acPilototo->setEnabled(!newSelect->getLockStatus());
         }
         else
@@ -1024,8 +1032,10 @@ void MainWindow::slotAccountListUpdated(void)
 void MainWindow::slotAddPOI(float lat,float lon, float wph,int timestamp,bool useTimeStamp)
 {
     POI * poi;
+    
     poi = new POI(QString(tr("POI")),lon,lat, proj,
                   this, terre,POI_STD,wph,timestamp,useTimeStamp);
+    
     addPOI_list(poi);
     poi->show();
 }
@@ -1175,5 +1185,21 @@ void MainWindow::slotUpdateOpponent(void)
 
 void MainWindow::slotParamChanged(void)
 {
-       emit paramVLMChanged();
+    emit paramVLMChanged();
+}
+
+void MainWindow::getBoatWP(float * lat,float * lon)
+{   
+   if(!lat || !lon)
+       return;
+   if(!selectedBoat)
+   {           
+       *lat=-1;
+       *lon=-1;
+   }
+   else
+   {
+       *lat = selectedBoat->getWPLat();
+       *lon = selectedBoat->getWPLon();
+   }
 }

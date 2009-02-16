@@ -39,6 +39,7 @@ paramVLM::paramVLM(QWidget * parent) : QDialog(parent)
     /* Colors */
 
     setColor(Util::getSetting("POI_Color",QColor(Qt::black).name()).toString(),0);
+    setColor(Util::getSetting("POI_WP_Color",QColor(Qt::red).name()).toString(),4);
     setColor(Util::getSetting("qtBoat_color",QColor(Qt::blue).name()).toString(),1);
     setColor(Util::getSetting("qtBoat_sel_color",QColor(Qt::red).name()).toString(),2);
     setColor(Util::getSetting("opp_color",QColor(Qt::green).name()).toString(),3);
@@ -65,7 +66,8 @@ void paramVLM::done(int result)
         /* colors */
 
         Util::setSetting("POI_Color",POI_color);
-        Util::setSetting("qtBoat_color",qtBoat_color);
+        Util::setSetting("POI_WP_Color",POI_WP_color);
+        Util::setSetting("qtBoat_color",qtBoat_color);        
         Util::setSetting("qtBoat_sel_color",qtBoat_sel_color);
         Util::setSetting("opp_color",opp_color);
 
@@ -105,6 +107,11 @@ void paramVLM::changeColor_opp(void)
     changeColor(3);
 }
 
+void paramVLM::changeColor_POI_WP(void)
+{
+    changeColor(4);
+}
+
 void paramVLM::changeColor(int type)
 {
     QColor color = QColorDialog::getColor(Qt::white, this);
@@ -131,6 +138,10 @@ void paramVLM::setColor(QString color,int type)
         case 3:
             opp_frame->setStyleSheet(style);
             opp_color=color;
+        case 4:
+            POI_WP_frame->setStyleSheet(style);
+            POI_WP_color=color;
+            break;
             break;
     }
 }

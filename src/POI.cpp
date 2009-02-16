@@ -48,9 +48,12 @@ POI::POI(QString name, float lon, float lat,
     this->type = type;
     this->timeStamp=tstamp;
     this->useTstamp=useTstamp;
+    
+    WPlon=WPlat=-1;
+    isWp=false;
 
     this->proj = proj;
-    updateProjection();
+    
     
     countClick = 0;
     
@@ -69,13 +72,41 @@ POI::POI(QString name, float lon, float lat,
     connect(this,SIGNAL(editPOI(POI*)),ownerMeteotable,SLOT(slotEditPOI(POI *)));
 
     connect(ownerMeteotable,SIGNAL(paramVLMChanged()),this,SLOT(paramChanged()));
+    connect(ownerMeteotable,SIGNAL(WPChanged(float,float)),this,SLOT(WPChanged(float,float)));
+    
+    ((MainWindow*)owner)->getBoatWP(&WPlat,&WPlon);
+    if(WPlat!=1)
+        adjustFloat(WPlat);
+    if(WPlon!=-1)
+        adjustFloat(WPlon);
     
     setName(name);
+    updateProjection();
+    chkIsWP();
 }
 
 POI::~POI()
 {
     //printf("delete POI_Editor\n");
+    qWarning() << "Delete POI";
+    //rmSignal();
+}
+
+void POI::rmSignal(void)
+{
+    disconnect(parent, SIGNAL(projectionUpdated()), this, SLOT(updateProjection()) );
+    disconnect(this, SIGNAL(signalOpenMeteotablePOI(POI*)),
+                            owner, SLOT(slotOpenMeteotablePOI(POI*)));
+    
+    disconnect(this,SIGNAL(chgWP(float,float,float)),owner,SLOT(slotChgWP(float,float,float)));
+
+    disconnect(this,SIGNAL(addPOI_list(POI*)),owner,SLOT(addPOI_list(POI*)));
+    disconnect(this,SIGNAL(delPOI_list(POI*)),owner,SLOT(delPOI_list(POI*)));
+
+    disconnect(this,SIGNAL(editPOI(POI*)),owner,SLOT(slotEditPOI(POI *)));
+
+    disconnect(owner,SIGNAL(paramVLMChanged()),this,SLOT(paramChanged()));
+    disconnect(owner,SIGNAL(WPChanged(float,float)),this,SLOT(WPChanged(float,float)));
 }
 
 //-------------------------------------------------------------------------------
@@ -148,10 +179,10 @@ void  POI::paintEvent(QPaintEvent *)
 
     pnt.fillRect(9,0, width()-10,height()-1, QBrush(bgcolor));
 
-    QPen pen(myColor);
+    QPen pen(isWp?wpColor:myColor);
     pen.setWidth(4);
     pnt.setPen(pen);
-    pnt.fillRect(0,dy-3,7,7, QBrush(myColor));
+    pnt.fillRect(0,dy-3,7,7, QBrush(isWp?wpColor:myColor));
 
     int g = 60;
     pen = QPen(QColor(g,g,g));
@@ -254,6 +285,7 @@ void POI::createPopUpMenu(void)
 void POI::slot_editPOI()
 {
     emit editPOI(this);
+    chkIsWP();
 }
 
 void POI::slot_copy()
@@ -280,12 +312,48 @@ void POI::slotDelPoi()
     if (rep == QMessageBox::Yes) {
 
         delPOI_list(this);
-        close();
+        rmSignal();
+        close();        
     }
 }
 
 void POI::paramChanged()
 {
     myColor = QColor(Util::getSetting("POI_color",QColor(Qt::black).name()).toString());
+    wpColor = QColor(Util::getSetting("POI_WP_color",QColor(Qt::red).name()).toString());
     update();
+}
+
+void POI::WPChanged(float tlat,float tlon)
+{
+    adjustFloat(tlat);
+    adjustFloat(tlon);
+    WPlat=tlat;
+    WPlon=tlon;
+    chkIsWP();
+}
+
+void POI::chkIsWP(void)
+{
+    float tlat=lat;
+    adjustFloat(tlat);
+    float tlon=lon;
+    adjustFloat(tlon);
+    
+    if(tlat==WPlat && tlon==WPlon)
+    {
+        if(!isWp)
+        {
+            isWp=true;
+            update();
+        }
+    }
+    else
+    {
+        if(isWp)
+        {
+            isWp=false;
+            update();
+        }
+    }
 }
