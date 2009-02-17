@@ -77,7 +77,7 @@ boardVLM::boardVLM(QMainWindow * mainWin,QWidget * parent) : QWidget(parent)
     /* edit field keyPress */
     connect(editHeading,SIGNAL(hasEvent()),this,SLOT(edtSpinBox_key()));
     connect(editAngle,SIGNAL(hasEvent()),this,SLOT(edtSpinBox_key()));
-    
+
     QString str;
     str.sprintf("%c",176);
 
@@ -149,7 +149,7 @@ void boardVLM::boatUpdated(boatAccount * boat)
         return;
 
     isComputing = true;
-    
+
     float WPLat = boat->getWPLat();
     float WPLon = boat->getWPLon();
     float dirAngle;
@@ -186,7 +186,7 @@ void boardVLM::boatUpdated(boatAccount * boat)
         boatID_str->setText(boat->getAlias() + " (" + boat->getBoatId() + ")");
     else
         boatID_str->setText(boat->getLogin() + " (" + boat->getBoatId() + ")");
-    
+
     boatName->setText(boat->getBoatName());
     boatScore->setText(boat->getScore());
 
@@ -237,7 +237,7 @@ void boardVLM::headingUpdated(double heading)
     if(isComputing) return;
     isComputing=true;
 
-    
+
     if((float)heading==currentBoat->getHeading())
     {
         /* setting back to VLM value */
@@ -374,11 +374,14 @@ void boardVLM::synch_GPS()
 
         port->open(QIODevice::ReadWrite);
 
+
         if(!port->isOpen())
         {
             qWarning("Serial Port not open");
             return;
         }
+
+        port->setTimeout(0,100);
 
         QString data1;
         QString data;
@@ -395,11 +398,11 @@ void boardVLM::synch_GPS()
         deg=deg*100;
         lon=lon+deg;
         QDateTime now = QDateTime::currentDateTime();
-        
+
         /*preparing main content */
         data1.sprintf("%07.2f,%s,%08.2f,%s,",lat,currentBoat->getLat()<0?"S":"N",lon,currentBoat->getLon()<0?"W":"E");
         data2.sprintf("%05.1f,%05.1f,",currentBoat->getSpeed(),currentBoat->getHeading());
-        
+
         /*sending it 10 times */
         for(int i=0;i<10;i++)
         {
@@ -408,15 +411,30 @@ void boardVLM::synch_GPS()
             data="$"+data+"*"+QString().setNum(ch,16);
             qWarning() << "GPS-GLL: " << data;
             data=data+"\x0D\x0A";
-            port->write(data.toAscii(),data.length());
+            if(port->write(data.toAscii(),data.length())!=data.length())
+            {
+                delete port;
+                chk_GPS->setCheckState(Qt::Unchecked);
+                QMessageBox::warning ( this, tr("GPS synchronisation"),
+                    tr("Impossible d'envoyer les donnees sur le port serie"));
+                return;
+            }
 
             data="GPRMC,"+now.toString("HHmmss")+",A,"+data1+data2+now.toString("ddMMyy")+",000.0,E";
             ch=(char)CHKSUM(data);
             data="$"+data+"*"+QString().setNum(ch,16);
             qWarning() << "GPS-RMC: " << data;
             data=data+"\x0D\x0A";
-            port->write(data.toAscii(),data.length());
-            
+            //port->write(data.toAscii(),data.length());
+            if(port->write(data.toAscii(),data.length())!=data.length())
+            {
+                delete port;
+                chk_GPS->setCheckState(Qt::Unchecked);
+                QMessageBox::warning ( this, tr("GPS synchronisation"),
+                    tr("Impossible d'envoyer les donnees sur le port serie"));
+                return;
+            }
+
             now.addSecs(1);
         }
         /* one last RMC to confirm speed */
@@ -425,7 +443,15 @@ void boardVLM::synch_GPS()
         data="$"+data+"*"+QString().setNum(ch,16);
         qWarning() << "GPS-RMC: " << data;
         data=data+"\x0D\x0A";
-        port->write(data.toAscii(),data.length());
+        //port->write(data.toAscii(),data.length());
+        if(port->write(data.toAscii(),data.length())!=data.length())
+        {
+            delete port;
+            chk_GPS->setCheckState(Qt::Unchecked);
+            QMessageBox::warning ( this, tr("GPS synchronisation"),
+                tr("Impossible d'envoyer les donnees sur le port serie"));
+            return;
+        }
 
         delete port;
         /* we will send this again in 30 secs */
@@ -472,13 +498,13 @@ void boardVLM::sendCmd(int cmdNum,float  val1,float val2, float val3)
                         << "&lang=fr&type=login"
                         ;
 
-        qWarning() << "login for cmd " << cmdNum << "(" << cmd_val1 << "," 
+        qWarning() << "login for cmd " << cmdNum << "(" << cmd_val1 << ","
                                                  << cmd_val2 << ","
                                                  << cmd_val3 << ")";
 
         QNetworkRequest request;
         request.setUrl(QUrl(page));
-        Util::addAgent(request);   
+        Util::addAgent(request);
         inetManager->get(request);
     }
     else
@@ -549,9 +575,9 @@ void boardVLM::requestFinished ( QNetworkReply* inetReply)
                         break;
                 }
                 qWarning() << "Send cmd: " << page;
-                
+
                 request.setUrl(QUrl(page));
-                Util::addAgent(request);   
+                Util::addAgent(request);
                 inetManager->get(request);
                 break;
             case VLM_DO_REQUEST:
@@ -596,9 +622,9 @@ void boardVLM::chkResult(void)
             if(currentBoat->getPilotType() == 3)
                 done=true;
             break;
-        case VLM_CMD_WP:            
-            if(compFloat(currentBoat->getWPLat(),cmd_val1) && 
-                compFloat(currentBoat->getWPLon(),cmd_val2) && 
+        case VLM_CMD_WP:
+            if(compFloat(currentBoat->getWPLat(),cmd_val1) &&
+                compFloat(currentBoat->getWPLon(),cmd_val2) &&
                 compFloat(currentBoat->getWPHd(),cmd_val3))
                 done=true;
             break;
@@ -627,7 +653,7 @@ void boardVLM::edtSpinBox_key()
 {
     QObject *s = sender();
     if(s==NULL) return;
-    
+
     if(s==editHeading)
         chgHeading();
     else if(s==editAngle)
@@ -732,14 +758,14 @@ void boardVLM_part2::boatUpdated(boatAccount * boat)
     ortho->setText(QString().setNum(boat->getOrtho()));
     loxo->setText(QString().setNum(boat->getLoxo()));
     vmg->setText(QString().setNum(boat->getVmg()));
-    
-    angle_val=boat->getOrtho()-boat->getWindDir();    
+
+    angle_val=boat->getOrtho()-boat->getWindDir();
     if(qAbs(angle_val)>180)
     {
-	if(angle_val<0)
-	    angle_val=360+angle_val;
-	else
-	    angle_val=angle_val-360;
+    if(angle_val<0)
+        angle_val=360+angle_val;
+    else
+        angle_val=angle_val-360;
     }
     angle->setText(QString().setNum(angle_val));
 

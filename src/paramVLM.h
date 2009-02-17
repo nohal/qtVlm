@@ -48,6 +48,7 @@ class paramVLM : public QDialog, public Ui::VLM_param_ui
     private:
         void changeColor(int type);
         void setColor(QString color,int type);
+        QColor getColor(int type);
         
         QString POI_color,POI_WP_color,qtBoat_color,qtBoat_sel_color,opp_color;
 };

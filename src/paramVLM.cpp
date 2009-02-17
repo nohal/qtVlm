@@ -114,8 +114,32 @@ void paramVLM::changeColor_POI_WP(void)
 
 void paramVLM::changeColor(int type)
 {
-    QColor color = QColorDialog::getColor(Qt::white, this);
-    setColor(color.name (),type);
+    QColor color = QColorDialog::getColor(getColor(type), this);
+    if(color.isValid())
+        setColor(color.name (),type);
+}
+
+QColor paramVLM::getColor(int type)
+{
+    switch(type)
+    {
+        case 0:
+            return QColor(POI_color);
+            break;
+        case 1:
+            return QColor(qtBoat_color);
+            break;
+        case 2:
+            return QColor(qtBoat_sel_color);
+            break;
+        case 3:
+            return QColor(opp_color);
+            break;
+        case 4:
+            return QColor(POI_WP_color);
+            break;            
+    }
+    return Qt::white;
 }
 
 void paramVLM::setColor(QString color,int type)
@@ -138,11 +162,11 @@ void paramVLM::setColor(QString color,int type)
         case 3:
             opp_frame->setStyleSheet(style);
             opp_color=color;
+            break;
         case 4:
             POI_WP_frame->setStyleSheet(style);
             POI_WP_color=color;
-            break;
-            break;
+            break;            
     }
 }
 

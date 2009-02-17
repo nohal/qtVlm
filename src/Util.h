@@ -50,7 +50,7 @@ Copyright (C) 2008 - Jacques Zaninetti - http://zygrib.free.fr
 #define TYPE_LAT 2
 
 #define adjustFloat(VAR) ({ \
-    VAR = ((float)((int)(VAR*10000)))/10000; \
+    VAR = ((float)((int)(VAR*1000)))/1000; \
     })
 
 #define compFloat(VAR1,VAR2) ({ \

@@ -75,10 +75,6 @@ POI::POI(QString name, float lon, float lat,
     connect(ownerMeteotable,SIGNAL(WPChanged(float,float)),this,SLOT(WPChanged(float,float)));
     
     ((MainWindow*)owner)->getBoatWP(&WPlat,&WPlon);
-    if(WPlat!=1)
-        adjustFloat(WPlat);
-    if(WPlon!=-1)
-        adjustFloat(WPlon);
     
     setName(name);
     updateProjection();
@@ -326,21 +322,14 @@ void POI::paramChanged()
 
 void POI::WPChanged(float tlat,float tlon)
 {
-    adjustFloat(tlat);
-    adjustFloat(tlon);
     WPlat=tlat;
     WPlon=tlon;
     chkIsWP();
 }
 
 void POI::chkIsWP(void)
-{
-    float tlat=lat;
-    adjustFloat(tlat);
-    float tlon=lon;
-    adjustFloat(tlon);
-    
-    if(tlat==WPlat && tlon==WPlon)
+{   
+    if(compFloat(lat,WPlat) && compFloat(lon,WPlon))
     {
         if(!isWp)
         {
