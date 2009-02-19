@@ -66,7 +66,7 @@ class MainWindow: public QMainWindow
         void openGribFile(QString fileName, bool zoom=true);
         bool getBoatLockStatus(void);
         bool isBoat(QString idu);
-        
+
         void getBoatWP(float * lat,float * lon);
 
     public slots:
@@ -130,6 +130,7 @@ class MainWindow: public QMainWindow
         void slotWriteBoat(void);
         void slotUpdateOpponent(void);
         void slotParamChanged(void);
+        void slotNewZoom(float zoom);
 
     signals:
         void signalMapQuality(int quality);
@@ -188,7 +189,7 @@ class MainWindow: public QMainWindow
         paramVLM * param;
         race_dialog * raceParam;
         POI_input * poi_input_dialog;
-        
+
         xml_boatData * xmlData;
         xml_POIData * xmlPOI;
 
@@ -197,7 +198,7 @@ class MainWindow: public QMainWindow
         POI_Editor * poi_editor;
 
         Pilototo * pilototo;
-        
+
         opponentList * opponents;
         QList<raceData*> race_list;
 };

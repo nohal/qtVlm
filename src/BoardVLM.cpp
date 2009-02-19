@@ -783,11 +783,22 @@ void boardVLM_part2::boatUpdated(boatAccount * boat)
     QString pilototo_txt=tr("Pilototo");
     if(boat->getHasPilototo())
     {
+        int nbPending=0;
         int nb=0;
         for(int i=0;i<lst->count();i++)
-            if(lst->at(i)!="none") nb++;
+            if(lst->at(i)!="none")
+            {
+                QStringList instr_buf = lst->at(i).split(",");
+                int mode=instr_buf.at(2).toInt()-1;
+                int pos =5;
+                if(mode == 0 || mode == 1)
+                    pos=4;
+                if(instr_buf.at(pos) == "pending")
+                    nbPending++;
+                nb++;
+            }
         if(nb!=0)
-            pilototo_txt=pilototo_txt+" ("+QString().setNum(nb)+")";
+            pilototo_txt=pilototo_txt+" ("+QString().setNum(nbPending)+"/"+QString().setNum(nb)+")";
         goPilototo->setToolTip("");
     }
     else

@@ -35,20 +35,20 @@ Q_OBJECT
 
         virtual void screen2map(int i, int j, double *x, double *y) const;
         virtual void map2screen(double x, double y, int *i, int *j) const;
-        
+
         virtual int   getW()  const   {return W;};    // taille de l'écran
         virtual int   getH()  const   {return H;};
-        virtual float getCX() const   {return CX;};   // centre 
+        virtual float getCX() const   {return CX;};   // centre
         virtual float getCY() const   {return CY;};
         virtual float getScale() const      {return scale;};
         virtual float getCoefremp() const   {return coefremp;};
-        
+
         // zone visible (longitude/latitude)
         virtual float getXmin() const   {return xmin;};
         virtual float getXmax() const   {return xmax;};
         virtual float getYmin() const   {return ymin;};
         virtual float getYmax() const   {return ymax;};
-        
+
         virtual bool intersect(float w,float e,float s,float n)  const;
         virtual bool isPointVisible (float x,float y) const;
 
@@ -62,9 +62,11 @@ Q_OBJECT
         virtual void zoom (float k);
         virtual void move (float dx, float dy);
 
+    signals:
+        void newZoom(float);
     private:
         int W, H;     // taille de la fenêtre (pixels)
-        
+
         float CX, CY;                  // centre de la vue (longitude/latitude)
         float xmin, xmax, ymax, ymin;  // fenêtre visible (repère longitude/latitude)
         float scale;       // échelle courante
@@ -80,7 +82,7 @@ Q_OBJECT
 inline void Projection::map2screen(double x, double y, int *i, int *j) const
 {
     double scaley = scale*dscale;
-    
+
     *i =  W/2 + (int) (scale * (x-CX) + 0.5);
     *j =  H/2 - (int) (scaley * (y-CY) + 0.5);
 }
@@ -89,7 +91,7 @@ inline void Projection::map2screen(double x, double y, int *i, int *j) const
 inline void Projection::screen2map(int i, int j, double *x, double *y) const
 {
     double scaley = scale*dscale;
-    
+
     *x = (double)(i - W/2 + scale*CX)/ scale;
     *y = (double)(H/2 -j + scaley * CY)/ scaley;
 }

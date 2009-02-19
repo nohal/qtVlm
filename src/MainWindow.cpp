@@ -294,6 +294,8 @@ MainWindow::MainWindow(int w, int h, QWidget *parent)
     proj->setCenterInMap(prcx,prcy);
     proj->setScale(scale);
 
+    connect(proj,SIGNAL(newZoom(float)),this,SLOT(slotNewZoom(float)));
+
     //--------------------------------------------------
     terre = new Terrain(this, proj);
     assert(terre);
@@ -374,7 +376,7 @@ MainWindow::MainWindow(int w, int h, QWidget *parent)
       xmlData->readBoatData(acc_list,race_list,"boatAcc.dat");
 
       boatAcc = new boatAccount_dialog(proj,this,terre);
-      
+
       param = new paramVLM(terre);
       poi_input_dialog = new POI_input(terre);
       menuBar->getBoatList(acc_list);
@@ -388,7 +390,7 @@ MainWindow::MainWindow(int w, int h, QWidget *parent)
       selectedBoat = NULL;
 
       connect(param,SIGNAL(paramVLMChanged()),VLMBoard,SLOT(paramChanged()));
-      
+
       connect(param,SIGNAL(paramVLMChanged()),this,SLOT(slotParamChanged()));
 
       connect(poi_input_dialog,SIGNAL(addPOI(float,float,float,int,bool)),
@@ -401,7 +403,7 @@ MainWindow::MainWindow(int w, int h, QWidget *parent)
               pilototo,SLOT(editInstructions()));
       connect(this,SIGNAL(boatHasUpdated(boatAccount*)),
               pilototo,SLOT(boatUpdated(boatAccount*)));
-      
+
       raceParam = new race_dialog(this, terre);
       opponents = new opponentList(proj,this,terre);
     //---------------------------------------------------------
@@ -416,7 +418,7 @@ MainWindow::MainWindow(int w, int h, QWidget *parent)
     xmlPOI->readData(poi_list,"poi.dat");
     //------------------------------------------------
     // sync all boat
-    slotVLM_Sync();        
+    slotVLM_Sync();
 }
 
 //-----------------------------------------------
@@ -755,7 +757,7 @@ void MainWindow::slotDateGribChanged_now()
     int id=menuBar->getNearestDateGrib(tps);
     menuBar->cbDatesGrib->setCurrentIndex(id);
     slotDateGribChanged(id);
-    
+
 }
 
 //-------------------------------------------------
@@ -891,6 +893,7 @@ void MainWindow::slotVLM_Sync(void) {
     bool hasFirstActivated = (selectedBoat!=NULL);
     QListIterator<boatAccount*> i (acc_list);
     int cnt=0;
+
     while(i.hasNext())
     {
         boatAccount * acc = i.next();
@@ -902,14 +905,14 @@ void MainWindow::slotVLM_Sync(void) {
                 hasFirstActivated=true;
                 selectedBoat=acc;
                 acc->selectBoat();
+                if(selectedBoat->getZoom() !=-1)
+                    proj->setScale(selectedBoat->getZoom());
             }
 
             if(acc==selectedBoat)
             {
                 menuBar->cbBoatList->setCurrentIndex(cnt);
                 menuBar->acPilototo->setEnabled(!acc->getLockStatus());
-                if(selectedBoat->getZoom() !=-1)
-                    proj->setScale(selectedBoat->getZoom());
             }
             cnt++;
         }
@@ -931,11 +934,11 @@ void MainWindow::slotBoatUpdated(boatAccount * boat,bool newRace)
                     opponents->setBoatList(race_list[i]->oppList,race_list[i]->idrace,false);
                     found=true;
                     break;
-                }   
+                }
             if(!found)
                 opponents->clear();
         }
-            
+
         terre->setCenterInMap(boat->getLon(),boat->getLat());
         emit boatHasUpdated(boat);
         emit WPChanged(boat->getWPLat(),boat->getWPLon());
@@ -958,7 +961,7 @@ void MainWindow::slotSelectBoat(boatAccount* newSelect)
         }
         selectedBoat=newSelect;
         if(newSelect->getStatus())
-        {            
+        {
             newSelect->getData();
             if(newSelect->getZoom()!=-1)
                 proj->setScale(newSelect->getZoom());
@@ -967,8 +970,8 @@ void MainWindow::slotSelectBoat(boatAccount* newSelect)
         else
             menuBar->acPilototo->setEnabled(false);
 
-        
-        
+
+
         /* manage item of boat list */
         int cnt=0;
         for(int i=0;i<acc_list.count();i++)
@@ -1032,10 +1035,10 @@ void MainWindow::slotAccountListUpdated(void)
 void MainWindow::slotAddPOI(float lat,float lon, float wph,int timestamp,bool useTimeStamp)
 {
     POI * poi;
-    
+
     poi = new POI(QString(tr("POI")),lon,lat, proj,
                   this, terre,POI_STD,wph,timestamp,useTimeStamp);
-    
+
     addPOI_list(poi);
     poi->show();
 }
@@ -1171,14 +1174,14 @@ void MainWindow::slotUpdateOpponent(void)
         opponents->clear();
         return;
     }
-    
+
     for(int i=0;i<race_list.size();i++)
         if(race_list[i]->idrace == selectedBoat->getRaceId())
         {
             opponents->setBoatList(race_list[i]->oppList,race_list[i]->idrace,true);
             found=true;
             break;
-        }   
+        }
     if(!found)
         opponents->clear();
 }
@@ -1189,11 +1192,11 @@ void MainWindow::slotParamChanged(void)
 }
 
 void MainWindow::getBoatWP(float * lat,float * lon)
-{   
+{
    if(!lat || !lon)
        return;
    if(!selectedBoat)
-   {           
+   {
        *lat=-1;
        *lon=-1;
    }
@@ -1202,4 +1205,10 @@ void MainWindow::getBoatWP(float * lat,float * lon)
        *lat = selectedBoat->getWPLat();
        *lon = selectedBoat->getWPLon();
    }
+}
+
+void MainWindow::slotNewZoom(float zoom)
+{
+    if(selectedBoat)
+        selectedBoat->setZoom(zoom);
 }

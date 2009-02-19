@@ -43,7 +43,7 @@ void Projection::init(int w, int h, float cx, float cy) {
     CY = cy;
     W = w;
     H = h;
-    
+
     // Echelle (garde la plus petite en largeur ou hauteur)
     float sx, sy;
     sx = W/360.0;
@@ -96,7 +96,7 @@ void Projection::updateZoneSelected(float x0, float y0, float x1, float y1)
     // Nouvelle position du centre
     CX = (x0+x1)/2.0;
     CY = (y0+y1)/2.0;
-    
+
     // sécurité
     if (x1 == x0) {
     	x1 = x0+0.1;
@@ -123,13 +123,13 @@ void Projection::move(float dx, float dy)
         CX -= 360.0;
     while (CX < -180.0)
         CX += 360.0;
-        
+
     CY = CY - dy*(ymax-ymin);
     if (CY > 90.0)
         CY = 90.0;
     if (CY < -90.0)
         CY = -90.0;
-        
+
     updateBoundaries();
 }
 
@@ -153,6 +153,7 @@ void Projection::setScale(float sc)
         scale = scaleall;
     if (scale > scalemax)
         scale = scalemax;
+    emit newZoom(scale);
     updateBoundaries();
 }
 
@@ -174,12 +175,12 @@ void Projection::updateBoundaries() {
     xmin = (float)x0;
     ymax = (float)y0;
     ymin = (float)y1;
-#warning confirmer que l'on peut supprimer la ligne suivante    
+#warning confirmer que l'on peut supprimer la ligne suivante
     //emit projectionUpdated(this);
     if((getW()*getH())!=0)
         coefremp = 10000.0*fabs( ((xmax-xmin)*(ymax-ymin)) / (getW()*getH()) );
     else
-        coefremp = 10000.0;    
+        coefremp = 10000.0;
 }
 
 
