@@ -175,8 +175,6 @@ void Projection::updateBoundaries() {
     xmin = (float)x0;
     ymax = (float)y0;
     ymin = (float)y1;
-#warning confirmer que l'on peut supprimer la ligne suivante
-    //emit projectionUpdated(this);
     if((getW()*getH())!=0)
         coefremp = 10000.0*fabs( ((xmax-xmin)*(ymax-ymin)) / (getW()*getH()) );
     else
