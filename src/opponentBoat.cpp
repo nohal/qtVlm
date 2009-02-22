@@ -463,7 +463,7 @@ QStringList opponentList::readData(QString in_data,int type)
 
 void opponentList::getTrace(QString buff,int nbVac, int step, QList<position*> * trace)
 {
-    QStringList lst,lst2;
+    QStringList lsval,lsval2;
     position * ptr;
 
     /* clear current trace*/
@@ -477,17 +477,17 @@ void opponentList::getTrace(QString buff,int nbVac, int step, QList<position*> *
     /* parse buff */
     if(buff.isEmpty())
         return;
-    lst = readData(buff,OPP_TYPE_POSITION);
-    for(int i=0;i<lst.size() && i<nbVac;i++)
+    lsval = readData(buff,OPP_TYPE_POSITION);
+    for(int i=0;i<lsval.size() && i<nbVac;i++)
     {
         if(i%step) /* not taking all vac*/
             continue;
-        lst2=lst[i].split(",");
-        if (lst2.size() == 2)
+        lsval2=lsval[i].split(",");
+        if (lsval2.size() == 2)
         {
             ptr=new position();
-            ptr->lat=lst2[0].toFloat();
-            ptr->lon=lst2[1].toFloat();
+            ptr->lat=lsval2[0].toFloat();
+            ptr->lon=lsval2[1].toFloat();
             trace->append(ptr);
         }
     }
