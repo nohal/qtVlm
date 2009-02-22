@@ -204,7 +204,7 @@ void boatAccount::doRequest(int requestCmd)
 
 void boatAccount::requestFinished ( QNetworkReply* inetReply)
 {
-    hasPilototo=false;
+
 
     if (inetReply->error() != QNetworkReply::NoError) {
         qWarning() << "Error doing inetGet:" << inetReply->error();
@@ -215,10 +215,6 @@ void boatAccount::requestFinished ( QNetworkReply* inetReply)
         //-------------------------------------------
         // Retour de l'étape 1 : préparation du fichier
         //-------------------------------------------
-
-        pilototo.clear();
-        for(int i=0;i<5;i++)
-            pilototo.append("none");
         QString strbuf = inetReply->readAll();
         QStringList lsbuf;
         float latitude=0,longitude=0;
@@ -244,6 +240,10 @@ void boatAccount::requestFinished ( QNetworkReply* inetReply)
                 }
                 break;
             case VLM_REQUEST_BOAT:
+                hasPilototo=false;
+                pilototo.clear();
+                for(int i=0;i<5;i++)
+                    pilototo.append("none");
                 lsbuf = strbuf.split("\n");
 
                 for (int i=0; i < lsbuf.size(); i++)

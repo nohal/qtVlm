@@ -403,7 +403,7 @@ void Terrain::drawBoats(QPainter &pnt)
             Util::computePos(proj,trace->at(i)->lat,trace->at(i)->lon,&x,&y);
             if(!proj->isInBounderies(x,y))
                 break;
-            pnt.fillRect(x-2,y-2,5,5,curColor);
+            pnt.fillRect(x-1,y-1,3,3,curColor);
             if(i!=0)
                 pnt.drawLine(x0,y0,x,y);
             x0=x;
@@ -433,7 +433,7 @@ void Terrain::drawOpponents(QPainter &pnt)
             Util::computePos(proj,trace->at(i)->lat,trace->at(i)->lon,&x,&y);
             if(!proj->isInBounderies(x,y))
                 break;
-            pnt.fillRect(x-2,y-2,5,5,myColor);
+            pnt.fillRect(x-1,y-1,3,3,myColor);
             if(i!=0)
                 pnt.drawLine(x0,y0,x,y);
             x0=x;
