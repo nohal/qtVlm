@@ -28,6 +28,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <QNetworkAccessManager>
 #include <QNetworkReply>
 
+class Pilototo;
+
 #include "Pilototo_param.h"
 #include "boatAccount.h"
 
@@ -47,7 +49,7 @@ class Pilototo_instruction : public QWidget, public Ui::instruction_ui
 {Q_OBJECT
     public:
         Pilototo_instruction(QWidget * main,QWidget * parent=0);
-        
+
         int   getMode(void)       { return mode; }
         float getAngle(void)      { return angle; }
         float getLat(void)        { return lat; }
@@ -86,7 +88,7 @@ class Pilototo_instruction : public QWidget, public Ui::instruction_ui
         void doDelInstruction(Pilototo_instruction*);
         void doEditInstruction(Pilototo_instruction*);
         void instructionUpdated(void);
-        
+
     private:
         int mode;
         float angle;
@@ -99,13 +101,13 @@ class Pilototo_instruction : public QWidget, public Ui::instruction_ui
 
         bool locked;
         bool hasChanged;
-        
+
         QWidget * parent;
         QWidget * pilototo;
 
         void updateText(void);
 
-        
+
 };
 
 /******************************
@@ -119,7 +121,7 @@ class Pilototo : public QDialog, public Ui::pilototo_ui
     public:
         Pilototo(QWidget * parent=0);
         void done(int);
-        
+
         void updateProxy(void);
 
         Pilototo_param * instructionEditor;
@@ -145,7 +147,7 @@ class Pilototo : public QDialog, public Ui::pilototo_ui
 
         boatAccount * boat;
         int nbInstruction;
-        
+
         void updateDrawList(void);
         void updateNbInstruction(void);
 

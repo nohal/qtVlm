@@ -36,12 +36,12 @@ Copyright (C) 2008 - Jacques Zaninetti - http://zygrib.free.fr
 opponent::opponent(QString idu,QString race, float lat, float lon, QString login,
                             QString name,Projection * proj,QWidget *main, QWidget *parentWindow):QWidget(parentWindow)
 {
-    init(false,idu,race,lat,lon,login,name,proj,main,parentWindow);    
+    init(false,idu,race,lat,lon,login,name,proj,main,parentWindow);
 }
 
 opponent::opponent(QString idu,QString race,Projection * proj,QWidget *main, QWidget *parentWindow):QWidget(parentWindow)
 {
-    init(true,idu,race,0,0,"","",proj,main,parentWindow);    
+    init(true,idu,race,0,0,"","",proj,main,parentWindow);
 }
 
 void opponent::init(bool isQtBoat,QString idu,QString race, float lat, float lon, QString login,
@@ -54,22 +54,26 @@ void opponent::init(bool isQtBoat,QString idu,QString race, float lat, float lon
     this->login=login;
     this->name=name;
     this->proj=proj;
-    
+
     this->isQtBoat = isQtBoat;
-    
+
+    trace.clear();
+
     createWidget();
-    updatePosition();
+    //updatePosition();
     paramChanged();
-    
-    connect(parentWindow, SIGNAL(projectionUpdated()), this, SLOT(updateProjection()));
-    connect(main,SIGNAL(paramVLMChanged()),this,SLOT(paramChanged()));
-    
+
     if(!isQtBoat)
         show();
+
+    connect(parentWindow, SIGNAL(projectionUpdated()), this, SLOT(updateProjection()));
+    connect(main,SIGNAL(paramVLMChanged()),this,SLOT(paramChanged()));
+
+    updatePosition();
 }
 
 void opponent::createWidget(void)
-{ 
+{
     fgcolor = QColor(0,0,0);
     int gr = 255;
     bgcolor = QColor(gr,gr,gr,150);
@@ -120,16 +124,16 @@ void opponent::updateProjection()
 }
 
 void opponent::updatePosition()
-{    
+{
     int boat_i,boat_j;
 
     Util::computePos(proj,lat,lon,&boat_i,&boat_j);
     boat_i-=3;
     boat_j-=(height()/2);
-    
+
     qWarning() << name << ": at (" << boat_i << "," << boat_j << ") => " << lat << "," << lon;
-    
-    move(boat_i, boat_j);    
+
+    move(boat_i, boat_j);
 }
 
 void opponent::setName()
@@ -150,7 +154,7 @@ void opponent::setName()
         case OPP_SHOW_IDU:
             str = idu;
             str2 = login + " - " + name;
-            break;        
+            break;
     }
     label->setText(str);
     setToolTip(str2);
@@ -158,24 +162,24 @@ void opponent::setName()
 }
 
 void opponent::setNewData(float lat, float lon,QString name)
-{  
+{
     bool needUpdate = false;
-    
+
     if(lat != this->lat || lon != this->lon)
     {
        this->lat=lat;
        this->lon=lon;
        updatePosition();
-       needUpdate = true;       
+       needUpdate = true;
     }
-        
+
     if(name != this->name)
     {
         this->name=name;
         setName();
         needUpdate = true;
     }
-        
+
     /* new data => we are not a qtVlm boat */
     if(isQtBoat)
     {
@@ -243,7 +247,7 @@ QString opponentList::getRaceId()
 {
     if(opponent_list.size()<=0)
         return "";
-    
+
     return opponent_list[0]->getRace();
 }
 
@@ -254,10 +258,10 @@ void opponentList::setBoatList(QString list_txt,QString race,bool force)
         qWarning() << "getOpponents request still running";
         return;
     }
-    
+
     /* is a list defined ? */
     if(opponent_list.size()>0)
-    {        
+    {
         if(!force && opponent_list[0]->getRace() == race) /* it is the same race */
         { /* compare if same opp list */
             /* for now it is the same => refresh*/
@@ -267,13 +271,13 @@ void opponentList::setBoatList(QString list_txt,QString race,bool force)
         /* clear current list */
         clear();
     }
-    
+
     currentRequest=OPP_BOAT_DATA;
     currentOpponent = 0;
     currentList = list_txt.split(";");
     currentRace = race;
     currentMode = OPP_MODE_NEWLIST;
-    
+
     if(currentList.size() > 0)
         getNxtOppData();
     else
@@ -287,7 +291,7 @@ void opponentList::clear(void)
               for(int i=0;i<opponent_list.size();i++)
                   delete opponent_list[i];
               opponent_list.clear();
-       }   
+       }
 }
 
 void opponentList::refreshData(void)
@@ -297,10 +301,10 @@ void opponentList::refreshData(void)
         qWarning() << "getOpponents request still running";
         return;
     }
-    
+
     if(opponent_list.size()<=0)
         return;
-    
+
     currentRequest=OPP_BOAT_DATA;
     currentRace = opponent_list[0]->getRace();
     currentOpponent = 0;
@@ -312,27 +316,28 @@ void opponentList::getNxtOppData()
 {
     int listSize = (currentMode==OPP_MODE_REFRESH?opponent_list.size():currentList.size());
     QString idu;
-    
+
     if(currentOpponent>=listSize)
     {
         currentRequest=OPP_NO_REQUEST;
+        parent->update();
         return;
     }
-    
+
     idu = (currentMode==OPP_MODE_REFRESH?opponent_list[currentOpponent]->getIduser():currentList[currentOpponent]);
-    
+
     if(mainWin->isBoat(idu))
     {
         if(currentMode==OPP_MODE_REFRESH)
             opponent_list[currentOpponent]->setIsQtBoat(true);
         else
             opponent_list.append(new opponent(idu,currentRace,proj,mainWin,parent));
-            
+
         currentOpponent++;
         getNxtOppData();
         return;
     }
-    
+
     QString page;
     QTextStream(&page) << host
                         << "/gmap/index.php?"
@@ -341,12 +346,13 @@ void opponentList::getNxtOppData()
                         << idu
                         << "&idraces="
                         << currentRace;
-    currentOpponent++;  
+    currentOpponent++;
     //qWarning() << "ask for " << page;
-    
+
     QNetworkRequest request;
     request.setUrl(QUrl(page));
-    Util::addAgent(request);   
+    Util::addAgent(request);
+    currentRequest=OPP_BOAT_DATA;
     inetManager->get(request);
 }
 
@@ -359,11 +365,13 @@ void opponentList::requestFinished ( QNetworkReply* inetReply)
     else
     {
          QString strbuf = inetReply->readAll();
+         QString page;
          QStringList list_res;
          QStringList lsval,lsval2;
          float lat,lon;
          QString login,name;
          QString idu;
+         QNetworkRequest request;
          switch(currentRequest)
          {
              case OPP_NO_REQUEST:
@@ -386,21 +394,37 @@ void opponentList::requestFinished ( QNetworkReply* inetReply)
                          {
                              idu = (currentMode==OPP_MODE_REFRESH?
                                  opponent_list[currentOpponent-1]->getIduser():currentList[currentOpponent-1]);
-                             /*qWarning() << login << "-" << name 
+                             /*qWarning() << login << "-" << name
                                  << " at (" << lat << "," << lon << ") - idu"
                                  << idu ;*/
                              if(currentMode==OPP_MODE_REFRESH)
                                  opponent_list[currentOpponent-1]->setNewData(lat,lon,name);
-                             else                                    
+                             else
                                  opponent_list.append(new opponent(idu,currentRace,
                                                                 lat,lon,login,name,proj,mainWin,parent));
+
                          }
                      }
                  }
-                 getNxtOppData();
+
+                 QTextStream(&page) << host
+                    << "/gmap/index.php?"
+                    << "type=ajax&riq=trj"
+                    << "&idusers="
+                    << idu
+                    << "&idraces="
+                    << currentRace;
+                 request.setUrl(QUrl(page));
+                 Util::addAgent(request);
+                 currentRequest=OPP_BOAT_TRJ;
+                 inetManager->get(request);
                  break;
              case OPP_BOAT_TRJ:
-                 
+                 if(currentMode==OPP_MODE_REFRESH)
+                     getTrace(strbuf,144,12,opponent_list[currentOpponent-1]->getTrace());
+                 else
+                     getTrace(strbuf,144,12,opponent_list.last()->getTrace());
+                 getNxtOppData();
                  break;
          }
     }
@@ -435,4 +459,36 @@ QStringList opponentList::readData(QString in_data,int type)
         }
     }
     return lst;
+}
+
+void opponentList::getTrace(QString buff,int nbVac, int step, QList<position*> * trace)
+{
+    QStringList lst,lst2;
+    position * ptr;
+
+    /* clear current trace*/
+    while(!trace->isEmpty())
+    {
+        delete trace->first();
+        trace->removeFirst();
+    }
+    trace->clear();
+
+    /* parse buff */
+    if(buff.isEmpty())
+        return;
+    lst = readData(buff,OPP_TYPE_POSITION);
+    for(int i=0;i<lst.size() && i<nbVac;i++)
+    {
+        if(i%step) /* not taking all vac*/
+            continue;
+        lst2=lst[i].split(",");
+        if (lst2.size() == 2)
+        {
+            ptr=new position();
+            ptr->lat=lst2[0].toFloat();
+            ptr->lon=lst2[1].toFloat();
+            trace->append(ptr);
+        }
+    }
 }

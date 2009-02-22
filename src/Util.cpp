@@ -276,7 +276,7 @@ void Util::paramProxy(QNetworkAccessManager *inetManager,QString host)
     /* update connection */
 
     int proxyType = Util::getSetting("httpUseProxy", 0).toInt();
-    
+
 
     QNetworkProxy * inetProxy;
 
@@ -368,7 +368,7 @@ void Util::getCoordFromDistanceAngle(float latitude, float longitude,
 
     if(!res_lat || !res_lon)
         return;
-    
+
     latitude = degToRad(latitude);
     longitude = fmod(degToRad(longitude), TWO_PI);
     heading = degToRad(heading);
@@ -381,7 +381,7 @@ void Util::getCoordFromDistanceAngle(float latitude, float longitude,
         distance *= ratio;
         getCoordFromDistanceAngle2(latitude,longitude,distance,heading,&lat,&lon);
     }
-    
+
     if (lon > PI)
     {
         lon -= TWO_PI;
@@ -418,7 +418,7 @@ QString Util::getHost()
     QString host;
 
     host="http://";
-            
+
 #if 1
        return host+"www.virtual-loup-de-mer.org";
 #else
@@ -441,7 +441,7 @@ void Util::computePos(Projection * proj, float lat, float lon, int * x, int * y)
 
 void Util::addAgent(QNetworkRequest & request)
 {
-    if(Util::getSetting("forceUserAgent",0).toInt()==1 
+    if(Util::getSetting("forceUserAgent",0).toInt()==1
         && !Util::getSetting("userAgent", "").toString().isEmpty())
         request.setRawHeader("User-Agent",Util::getSetting("userAgent", "").toString().toAscii());
 }

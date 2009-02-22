@@ -31,16 +31,18 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <QNetworkAccessManager>
 #include <QNetworkReply>
 
+class boatAccount;
 
 #include "Projection.h"
 #include "Polar.h"
+#include "opponentBoat.h"
 
 class boatAccount: public QWidget
 {Q_OBJECT
     public:
         boatAccount(QString login, QString pass, bool state,Projection * proj,QWidget * main,QWidget *parentWindow=0);
         ~boatAccount(void);
-        
+
         void setStatus(bool activated);
         void setParam(QString login, QString pass);
         void setParam(QString login, QString pass, bool activated);
@@ -93,7 +95,8 @@ class boatAccount: public QWidget
         QString getRaceId(void)      { return QString().setNum(race_id); }
         QString getRaceName(void)    { return race_name; }
         float getZoom(void)          { return zoom; }
-        
+        QList<position*> * getTrace(){ return &trace; }
+
         QString getCurrentPolarName(void) { return (forcePolar?polarName:polarVlm); }
 
         void updateProxy(void);
@@ -102,7 +105,7 @@ class boatAccount: public QWidget
         void projectionUpdated();
         void paramChanged();
         void requestFinished (QNetworkReply*);
-        
+
         void selectBoat();
         void toggleEstime();
 
@@ -110,6 +113,8 @@ class boatAccount: public QWidget
         void boatSelected(boatAccount*);
         void boatUpdated(boatAccount*,bool);
         void boatLockStatusChanged(boatAccount*,bool);
+        void getTrace(QString,int,int, QList<position*> *);
+        void WPChanged(float,float);
 
     private:
         void createWidget(void);
@@ -130,7 +135,7 @@ class boatAccount: public QWidget
         int race_id;
         int pilotType;
         QString pilotString;
-        
+
         float lat,lon;
         float speed,avg,heading;
         float dnm,loch,ortho,loxo,vmg;
@@ -179,7 +184,7 @@ class boatAccount: public QWidget
 
         /* http connection */
         QString host;
-        
+
         int currentRequest;
 
         QNetworkAccessManager *inetManager;
@@ -190,11 +195,14 @@ class boatAccount: public QWidget
 
         QString alias;
         bool useAlias;
-        
+
         QStringList pilototo;
         bool hasPilototo;
-        
+
         bool forceEstime;
+
+        /* positions*/
+        QList<position*> trace;
 };
 
 #endif

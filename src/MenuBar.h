@@ -30,6 +30,8 @@ Copyright (C) 2008 - Jacques Zaninetti - http://zygrib.free.fr
 
 #include <set>
 
+class MenuBar;
+
 #include "boatAccount.h"
 #include "DialogLoadGrib.h"
 

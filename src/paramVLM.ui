@@ -15,7 +15,7 @@
   </property>
   <property name="windowIcon">
    <iconset>
-    <normaloff>../../../../../.designer/backup/sailing-ship.ico</normaloff>../../../../../.designer/backup/sailing-ship.ico</iconset>
+    <normaloff>../../../../../../../../.designer/backup/sailing-ship.ico</normaloff>../../../../../../../../.designer/backup/sailing-ship.ico</iconset>
   </property>
   <widget class="QDialogButtonBox" name="buttonBox">
    <property name="geometry">
@@ -43,7 +43,7 @@
     </rect>
    </property>
    <property name="currentIndex">
-    <number>1</number>
+    <number>3</number>
    </property>
    <widget class="QWidget" name="tab">
     <attribute name="title">
@@ -164,7 +164,7 @@
     <attribute name="title">
      <string>Couleurs</string>
     </attribute>
-    <widget class="QWidget" name="">
+    <widget class="QWidget" name="layoutWidget">
      <property name="geometry">
       <rect>
        <x>20</x>
@@ -384,6 +384,11 @@
      </widget>
     </widget>
    </widget>
+   <widget class="QWidget" name="tab_4">
+    <attribute name="title">
+     <string>Trace</string>
+    </attribute>
+   </widget>
   </widget>
  </widget>
  <resources/>
@@ -475,8 +480,8 @@
    <slot>changeColor_opp()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>239</x>
-     <y>188</y>
+     <x>248</x>
+     <y>201</y>
     </hint>
     <hint type="destinationlabel">
      <x>347</x>
@@ -507,8 +512,8 @@
    <slot>changeColor_POI_WP()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>228</x>
-     <y>88</y>
+     <x>239</x>
+     <y>95</y>
     </hint>
     <hint type="destinationlabel">
      <x>347</x>

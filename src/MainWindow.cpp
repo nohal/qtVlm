@@ -406,6 +406,10 @@ MainWindow::MainWindow(int w, int h, QWidget *parent)
 
       raceParam = new race_dialog(this, terre);
       opponents = new opponentList(proj,this,terre);
+
+      connect(this,SIGNAL(getTrace(QString,int,int, QList<position*> *)),
+                           opponents,SLOT(getTrace(QString,int,int, QList<position*> *)));
+      terre->setOpponents(opponents);
     //---------------------------------------------------------
     // Active les actions
     //---------------------------------------------------------
@@ -1211,4 +1215,9 @@ void MainWindow::slotNewZoom(float zoom)
 {
     if(selectedBoat)
         selectedBoat->setZoom(zoom);
+}
+
+void MainWindow::slotGetTrace(QString buff,int nbVac, int step, QList<position*> * trace)
+{
+    emit getTrace(buff,nbVac,step,trace);
 }

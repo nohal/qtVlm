@@ -51,6 +51,7 @@ Q_OBJECT
 
         virtual bool intersect(float w,float e,float s,float n)  const;
         virtual bool isPointVisible (float x,float y) const;
+        virtual bool isInBounderies (int x,int y) const;
 
         virtual void setScale(float sc);
         virtual float getScale();
@@ -106,6 +107,12 @@ inline bool Projection::intersect (float w,float e,float s,float n) const
 inline bool Projection::isPointVisible (float x,float y) const
 {
     return (x<=xmax && x>=xmin && y<=ymax && y>=ymin);
+}
+
+//-------------------------------------------------------------------------------
+inline bool Projection::isInBounderies (int x,int y) const
+{
+    return (x>=0 && y>=0 && x<=W && y<=H);
 }
 
 #endif

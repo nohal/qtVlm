@@ -27,6 +27,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #define VLM_NO_REQUEST  -1
 #define VLM_REQUEST_IDU  0
 #define VLM_REQUEST_BOAT 1
+#define VLM_REQUEST_TRJ  2
 
 boatAccount::boatAccount(QString login, QString pass, bool activated,Projection * proj,QWidget * main, QWidget *parentWindow)
     : QWidget(parentWindow)
@@ -49,6 +50,8 @@ boatAccount::boatAccount(QString login, QString pass, bool activated,Projection 
     useAlias=false;
     forceEstime=false;
 
+    trace.clear();
+
     this->proj = proj;
     connect(parentWindow, SIGNAL(projectionUpdated()), this,
             SLOT(projectionUpdated()) );
@@ -63,9 +66,9 @@ boatAccount::boatAccount(QString login, QString pass, bool activated,Projection 
     if(activated)
         show();
 
-    connect(ac_select,SIGNAL(triggered()),this,SLOT(selectBoat()));    
+    connect(ac_select,SIGNAL(triggered()),this,SLOT(selectBoat()));
     connect(ac_estime,SIGNAL(triggered()),this,SLOT(toggleEstime()));
-    
+
     connect(this,SIGNAL(boatSelected(boatAccount*)),main,SLOT(slotSelectBoat(boatAccount*)));
     connect(this,SIGNAL(boatUpdated(boatAccount*,bool)),main,SLOT(slotBoatUpdated(boatAccount*,bool)));
     connect(this,SIGNAL(boatLockStatusChanged(boatAccount*,bool)),
@@ -73,7 +76,10 @@ boatAccount::boatAccount(QString login, QString pass, bool activated,Projection 
 
     connect(main,SIGNAL(paramVLMChanged()),this,SLOT(paramChanged()));
     connect(this,SIGNAL(WPChanged(float,float)),main,SLOT(slotWPChanged(float,float)));
-            
+
+    connect(this,SIGNAL(getTrace(QString,int,int, QList<position*> *)),
+             main,SLOT(slotGetTrace(QString,int,int, QList<position*> *)));
+
     /* init http inetManager */
     inetManager = new QNetworkAccessManager(this);
     if(inetManager)
@@ -163,13 +169,24 @@ void boatAccount::doRequest(int requestCmd)
                             << "&password=" << pass
                             ;
                 break;
+            case VLM_REQUEST_TRJ:
+                if(race_id==0)
+                    break;
+                QTextStream(&page) << host
+                            << "/gmap/index.php?"
+                            << "type=ajax&riq=trj"
+                            << "&idusers="
+                            << boat_id
+                            << "&idraces="
+                            << race_id;
+                break;
         }
         currentRequest = requestCmd;
         qWarning() << "boat Acc Doing request: " << page;
 
         QNetworkRequest request;
         request.setUrl(QUrl(page));
-        Util::addAgent(request);   
+        Util::addAgent(request);
         inetManager->get(request);
     }
     else
@@ -242,7 +259,7 @@ void boatAccount::requestFinished ( QNetworkReply* inetReply)
                             if(race_id != lsval.at(1).toInt())
                                 newRace=true;
                             race_id = lsval.at(1).toInt();
-                            
+
                             if(race_id==0)
                             {
                                 qWarning() << "RAC=0";
@@ -256,7 +273,7 @@ void boatAccount::requestFinished ( QNetworkReply* inetReply)
                                 pilotString = "";
                                 score = "";
                                 hasPilototo=false;
-                            }                            
+                            }
                         }
                         else if (lsval.at(0) == "LAT")
                             latitude = lsval.at(1).toFloat();
@@ -336,12 +353,20 @@ void boatAccount::requestFinished ( QNetworkReply* inetReply)
 
                 lat = latitude/1000;
                 lon = longitude/1000;
-                
+
                 current_heading = heading;
                 qWarning() << "Data for " << boat_id << " received";
                 /* compute heading point */
-                updateBoatData();
                 currentRequest=VLM_NO_REQUEST;
+                doRequest(VLM_REQUEST_TRJ);
+                break;
+            case VLM_REQUEST_TRJ:
+                qWarning() << "Get trj result";
+                emit getTrace(strbuf,144,12, &trace);
+                qWarning() << boat_id << ": " << trace.count() << " points";
+                currentRequest=VLM_NO_REQUEST;
+                /* we can now update everything */
+                updateBoatData();
                 emit boatUpdated(this,newRace);
                 break;
         }
@@ -416,7 +441,7 @@ void  boatAccount::paintEvent(QPaintEvent *)
 {
     QPainter pnt(this);
     int dy = height()/2;
-    
+
     //qWarning() << "qtBoat " << login << " paint";
 
     pnt.fillRect(9,0, width()-10,height()-1, QBrush(bgcolor));
@@ -483,7 +508,7 @@ void boatAccount::createPopUpMenu(void)
 
     ac_select = new QAction("Selectionner",popup);
     popup->addAction(ac_select);
-    
+
     ac_estime = new QAction("Afficher estime",popup);
     popup->addAction(ac_estime);
 
@@ -524,12 +549,12 @@ void boatAccount::reloadPolar(void)
             }
             qWarning("No User polar to load");
             return;
-        }        
+        }
         if(polarData != NULL && polarName == polarData->getName())
-            return;        
+            return;
         if(polarData!=NULL)
-            delete polarData;        
-        qWarning() << "Loading forced polar: " << polarName;        
+            delete polarData;
+        qWarning() << "Loading forced polar: " << polarName;
         polarData=new Polar(polarName,mainWindow);
     }
     else
@@ -546,10 +571,10 @@ void boatAccount::reloadPolar(void)
         }
         if(polarData != NULL && polarVlm == polarData->getName())
             return;
-        
+
         if(polarData!=NULL)
         {
-            qWarning() << "Old polar:" << polarData->getName();            
+            qWarning() << "Old polar:" << polarData->getName();
             delete polarData;
         }
         qWarning() << "Loading polar: " << polarVlm;

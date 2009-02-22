@@ -31,6 +31,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <QNetworkAccessManager>
 #include <QNetworkReply>
 
+class boardVLM_part2;
+class boardVLM;
+
 #include "boatAccount.h"
 #include "ui_BoardVLM_part1.h"
 #include "ui_BoardVLM_part2.h"
@@ -75,7 +78,7 @@ class boardVLM: public QWidget , public Ui::boardVLM_part1_ui
 { Q_OBJECT
     public:
         boardVLM(QMainWindow * mainWin,QWidget * parent=0);
-        
+
         void updateProxy(void);
 
         void showGribPointInfo(const GribPointInfo &pf);

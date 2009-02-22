@@ -343,15 +343,24 @@ void Terrain::draw_Orthodromie(QPainter &pnt)
     draw_OrthodromieSegment(pnt, selX0, selY0, selX1, selY1);
 }
 
-void Terrain::drawEstime(QPainter &pnt)
+void Terrain::drawBoats(QPainter &pnt)
 {
     QListIterator<boatAccount*> i (*boat_list);
-    
+
     QPen cur_pen=pnt.pen();
     QPen penLine1(QColor(Qt::black),1,Qt::DotLine);
     penLine1.setWidthF(1.6);
     QPen penLine2(QColor(Qt::darkMagenta),1,Qt::DotLine);
-    penLine2.setWidthF(1.6);   
+    penLine2.setWidthF(1.6);
+
+    QColor myColor = QColor(Util::getSetting("qtBoat_color",QColor(Qt::blue).name()).toString());
+    QColor selColor = QColor(Util::getSetting("qtBoat_sel_color",QColor(Qt::red).name()).toString());
+    QColor curColor;
+
+    QPen penLine3(myColor,1);
+    penLine3.setWidthF(1);
+    QPen penLine4(selColor,1);
+    penLine4.setWidthF(1);
 
     int estime = Util::getSetting("estimeLen",100).toInt();
 
@@ -360,7 +369,7 @@ void Terrain::drawEstime(QPainter &pnt)
         boatAccount * boat = i.next();
         if(boat->getStatus() && ( boat->getIsSelected() || boat->getForceEstime()))
         {
-            float lat,lon,tmp_lat,tmp_lon,WPLat,WPLon;            
+            float lat,lon,tmp_lat,tmp_lon,WPLat,WPLon;
             lat=boat->getLat();
             lon=boat->getLon();
             WPLat=boat->getWPLat();
@@ -374,6 +383,61 @@ void Terrain::drawEstime(QPainter &pnt)
                 pnt.setPen(penLine2);
                 draw_OrthodromieSegment(pnt, lon,lat,WPLon,WPLat);
             }
+        }
+        /*draw trace*/
+        QList<position*> * trace = boat->getTrace();
+        int x,y,x0=0,y0=0;
+        if(boat->getIsSelected())
+        {
+            pnt.setPen(penLine4);
+            curColor=selColor;
+        }
+        else
+        {
+            pnt.setPen(penLine3);
+            curColor=myColor;
+        }
+
+        for(int i=0;i<trace->size();i++)
+        {
+            Util::computePos(proj,trace->at(i)->lat,trace->at(i)->lon,&x,&y);
+            if(!proj->isInBounderies(x,y))
+                break;
+            pnt.fillRect(x-2,y-2,5,5,curColor);
+            if(i!=0)
+                pnt.drawLine(x0,y0,x,y);
+            x0=x;
+            y0=y;
+        }
+    }
+    pnt.setPen(cur_pen);
+}
+
+void Terrain::drawOpponents(QPainter &pnt)
+{
+    QColor myColor = QColor(Util::getSetting("opp_color",QColor(Qt::green).name()).toString());
+    QPen cur_pen=pnt.pen();
+    QPen penLine(QColor(myColor),1);
+    penLine.setWidthF(1);
+
+    QList<opponent*> * oppLst = opponents->getList();
+    QListIterator<opponent*> i (*oppLst);
+    while(i.hasNext())
+    {
+        opponent * opp = i.next();
+        QList<position*> * trace = opp->getTrace();
+        int x,y,x0=0,y0=0;
+        pnt.setPen(penLine);
+        for(int i=0;i<trace->size();i++)
+        {
+            Util::computePos(proj,trace->at(i)->lat,trace->at(i)->lon,&x,&y);
+            if(!proj->isInBounderies(x,y))
+                break;
+            pnt.fillRect(x-2,y-2,5,5,myColor);
+            if(i!=0)
+                pnt.drawLine(x0,y0,x,y);
+            x0=x;
+            y0=y;
         }
     }
     pnt.setPen(cur_pen);
@@ -841,7 +905,7 @@ void Terrain::resizeEvent (QResizeEvent * /*e*/)
     isEarthMapValid = false;
     isWindMapValid = false;
     isResizing = true;
-    
+
     // Evite les multiples update() pendant les changements de taille
     timerResize->stop();
     timerResize->start(100);
@@ -990,7 +1054,8 @@ void Terrain::paintEvent(QPaintEvent * /*event*/)
                 draw_Orthodromie(pnt);
             }
         }
-        drawEstime(pnt);
+        drawBoats(pnt);
+        drawOpponents(pnt);
         drawingMap=false;
     }
 
