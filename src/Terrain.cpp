@@ -398,8 +398,13 @@ void Terrain::drawBoats(QPainter &pnt)
             curColor=myColor;
         }
 
-        for(int i=0;i<trace->size();i++)
+        int nbVac=12*Util::getSetting("trace_length",12).toInt();
+        int step=Util::getSetting("trace_step",60/5-1).toInt()+1;
+
+        for(int i=0;i<trace->size() && i<nbVac;i++)
         {
+            if(i%step) /* not taking all vac*/
+                continue;
             Util::computePos(proj,trace->at(i)->lat,trace->at(i)->lon,&x,&y);
             if(!proj->isInBounderies(x,y))
                 break;
@@ -415,7 +420,14 @@ void Terrain::drawBoats(QPainter &pnt)
 
 void Terrain::drawOpponents(QPainter &pnt)
 {
-    QColor myColor = QColor(Util::getSetting("opp_color",QColor(Qt::green).name()).toString());
+    if(Util::getSetting("opp_trace","1")=="0")
+        return;
+
+
+    int nbVac=12*Util::getSetting("trace_length",12).toInt();
+    int step=Util::getSetting("trace_step",60/5-1).toInt()+1;
+
+    QColor myColor;
     QPen cur_pen=pnt.pen();
     QPen penLine(QColor(myColor),1);
     penLine.setWidthF(1);
@@ -425,11 +437,15 @@ void Terrain::drawOpponents(QPainter &pnt)
     while(i.hasNext())
     {
         opponent * opp = i.next();
+        myColor = opp->getColor();
+        penLine.setColor(myColor);
         QList<position*> * trace = opp->getTrace();
         int x,y,x0=0,y0=0;
         pnt.setPen(penLine);
-        for(int i=0;i<trace->size();i++)
+        for(int i=0;i<trace->size() && i<nbVac;i++)
         {
+            if(i%step) /* not taking all vac*/
+                continue;
             Util::computePos(proj,trace->at(i)->lat,trace->at(i)->lon,&x,&y);
             if(!proj->isInBounderies(x,y))
                 break;

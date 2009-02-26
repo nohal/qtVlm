@@ -113,7 +113,7 @@ class boatAccount: public QWidget
         void boatSelected(boatAccount*);
         void boatUpdated(boatAccount*,bool);
         void boatLockStatusChanged(boatAccount*,bool);
-        void getTrace(QString,int,int, QList<position*> *);
+        void getTrace(QString,QList<position*> *);
         void WPChanged(float,float);
 
     private:

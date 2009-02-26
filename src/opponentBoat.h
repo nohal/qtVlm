@@ -61,16 +61,17 @@ struct raceData {
 class opponent : public QWidget
 {Q_OBJECT
     public:
-        opponent(QString idu,QString race, float lat, float lon, QString login,
+        opponent(QColor color,QString idu,QString race, float lat, float lon, QString login,
                             QString name,Projection * proj,QWidget *main, QWidget *parentWindow=NULL);
-        opponent(QString idu,QString race,Projection * proj,QWidget *main, QWidget *parentWindow=NULL);
-        void init(bool isQtBoat,QString idu,QString race, float lat, float lon, QString login,
+        opponent(QColor color,QString idu,QString race,Projection * proj,QWidget *main, QWidget *parentWindow=NULL);
+        void init(QColor color, bool isQtBoat,QString idu,QString race, float lat, float lon, QString login,
                             QString name,Projection * proj,QWidget *main, QWidget *parentWindow);
 
         QString getRace(void)    { return idrace; }
         QString getIduser(void)  { return idu; }
         bool    getIsQtBoat()    { return isQtBoat; }
         QList<position*> * getTrace() { return &trace; }
+        QColor getColor() { return myColor; }
 
         void setNewData(float lat, float lon,QString name);
         void setIsQtBoat(bool status);
@@ -115,7 +116,7 @@ class opponentList : public QObject
 
     public slots:
         void requestFinished (QNetworkReply*);
-        void getTrace(QString buff,int nbVac, int step, QList<position*> * trace);
+        void getTrace(QString buff, QList<position*> * trace);
 
     private:
         QList<opponent*> opponent_list;
@@ -127,6 +128,7 @@ class opponentList : public QObject
         int currentOpponent;
         QString currentRace;
         int currentMode;
+        QColor colorTable[10];
 
         QStringList readData(QString in_data,int type);
         void getOpponents(QStringList opp_idu,QString idrace);

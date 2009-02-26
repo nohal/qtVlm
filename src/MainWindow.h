@@ -132,7 +132,7 @@ class MainWindow: public QMainWindow
         void slotUpdateOpponent(void);
         void slotParamChanged(void);
         void slotNewZoom(float zoom);
-        void slotGetTrace(QString buff,int nbVac, int step, QList<position*> * trace);
+        void slotGetTrace(QString buff,QList<position*> * trace);
 
     signals:
         void signalMapQuality(int quality);
@@ -143,7 +143,7 @@ class MainWindow: public QMainWindow
         void boatHasUpdated(boatAccount*);
         void paramVLMChanged();
         void WPChanged(float,float);
-        void getTrace(QString buff,int nbVac, int step, QList<position*> * trace);
+        void getTrace(QString buff,QList<position*> * trace);
 
     private:
         GshhsReader *gshhsReader;

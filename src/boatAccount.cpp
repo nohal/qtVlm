@@ -77,8 +77,8 @@ boatAccount::boatAccount(QString login, QString pass, bool activated,Projection 
     connect(main,SIGNAL(paramVLMChanged()),this,SLOT(paramChanged()));
     connect(this,SIGNAL(WPChanged(float,float)),main,SLOT(slotWPChanged(float,float)));
 
-    connect(this,SIGNAL(getTrace(QString,int,int, QList<position*> *)),
-             main,SLOT(slotGetTrace(QString,int,int, QList<position*> *)));
+    connect(this,SIGNAL(getTrace(QString,QList<position*> *)),
+             main,SLOT(slotGetTrace(QString,QList<position*> *)));
 
     /* init http inetManager */
     inetManager = new QNetworkAccessManager(this);
@@ -362,7 +362,7 @@ void boatAccount::requestFinished ( QNetworkReply* inetReply)
                 break;
             case VLM_REQUEST_TRJ:
                 qWarning() << "Get trj result";
-                emit getTrace(strbuf,144,12, &trace);
+                emit getTrace(strbuf,&trace);
                 qWarning() << boat_id << ": " << trace.count() << " points";
                 currentRequest=VLM_NO_REQUEST;
                 /* we can now update everything */

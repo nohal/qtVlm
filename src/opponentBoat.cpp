@@ -33,18 +33,18 @@ Copyright (C) 2008 - Jacques Zaninetti - http://zygrib.free.fr
 * Opponent methods
 ****************************************/
 
-opponent::opponent(QString idu,QString race, float lat, float lon, QString login,
+opponent::opponent(QColor color, QString idu,QString race, float lat, float lon, QString login,
                             QString name,Projection * proj,QWidget *main, QWidget *parentWindow):QWidget(parentWindow)
 {
-    init(false,idu,race,lat,lon,login,name,proj,main,parentWindow);
+    init(color,false,idu,race,lat,lon,login,name,proj,main,parentWindow);
 }
 
-opponent::opponent(QString idu,QString race,Projection * proj,QWidget *main, QWidget *parentWindow):QWidget(parentWindow)
+opponent::opponent(QColor color, QString idu,QString race,Projection * proj,QWidget *main, QWidget *parentWindow):QWidget(parentWindow)
 {
-    init(true,idu,race,0,0,"","",proj,main,parentWindow);
+    init(color,true,idu,race,0,0,"","",proj,main,parentWindow);
 }
 
-void opponent::init(bool isQtBoat,QString idu,QString race, float lat, float lon, QString login,
+void opponent::init(QColor color,bool isQtBoat,QString idu,QString race, float lat, float lon, QString login,
                             QString name,Projection * proj,QWidget *main, QWidget *parentWindow)
 {
     this->idu=idu;
@@ -58,6 +58,8 @@ void opponent::init(bool isQtBoat,QString idu,QString race, float lat, float lon
     this->isQtBoat = isQtBoat;
 
     trace.clear();
+
+    myColor = color;
 
     createWidget();
     //updatePosition();
@@ -206,7 +208,7 @@ void opponent::setIsQtBoat(bool status)
 
 void opponent::paramChanged()
 {
-    myColor = QColor(Util::getSetting("opp_color",QColor(Qt::green).name()).toString());
+    //myColor = QColor(Util::getSetting("opp_color",QColor(Qt::green).name()).toString());
     label_type = Util::getSetting("opp_labelType",0).toInt();
     setName();
     if(isQtBoat)
@@ -234,6 +236,30 @@ opponentList::opponentList(Projection * proj,MainWindow * mainWin,QWidget *paren
     /* init http inetManager */
     inetManager = new QNetworkAccessManager(this);
     currentRequest=OPP_NO_REQUEST;
+    /*colorTable[0] = QColor(85,0,0);
+    colorTable[1] = QColor(255,0,0);
+    colorTable[2] = QColor(170,0,255);
+    colorTable[3] = QColor(170,170,255);
+    colorTable[4] = QColor(170,170,0);
+    colorTable[5] = QColor(0,255,127);
+    colorTable[6] = QColor(255,85,127);
+    colorTable[7] = QColor(255,255,0);
+    colorTable[8] = QColor(0,85,127);
+    colorTable[9] = QColor(255,0,255);*/
+
+    colorTable[0] = QColor(170,0,0);
+    colorTable[1] = QColor(255,0,0);
+    colorTable[2] = QColor(170,0,128);
+    colorTable[3] = QColor(0,85,127);
+    colorTable[4] = QColor(255,85,0);
+    colorTable[5] = QColor(255,0,255);
+    colorTable[6] = QColor(85,85,0);
+    colorTable[7] = QColor(225,150,112);
+    colorTable[8] = QColor(0,85,0);
+    colorTable[9] = QColor(85,0,0);
+
+
+
     if(inetManager)
     {
         host = Util::getHost();
@@ -331,7 +357,7 @@ void opponentList::getNxtOppData()
         if(currentMode==OPP_MODE_REFRESH)
             opponent_list[currentOpponent]->setIsQtBoat(true);
         else
-            opponent_list.append(new opponent(idu,currentRace,proj,mainWin,parent));
+            opponent_list.append(new opponent(colorTable[currentOpponent],idu,currentRace,proj,mainWin,parent));
 
         currentOpponent++;
         getNxtOppData();
@@ -400,7 +426,7 @@ void opponentList::requestFinished ( QNetworkReply* inetReply)
                              if(currentMode==OPP_MODE_REFRESH)
                                  opponent_list[currentOpponent-1]->setNewData(lat,lon,name);
                              else
-                                 opponent_list.append(new opponent(idu,currentRace,
+                                 opponent_list.append(new opponent(colorTable[currentOpponent-1],idu,currentRace,
                                                                 lat,lon,login,name,proj,mainWin,parent));
 
                          }
@@ -421,9 +447,9 @@ void opponentList::requestFinished ( QNetworkReply* inetReply)
                  break;
              case OPP_BOAT_TRJ:
                  if(currentMode==OPP_MODE_REFRESH)
-                     getTrace(strbuf,144,12,opponent_list[currentOpponent-1]->getTrace());
+                     getTrace(strbuf,opponent_list[currentOpponent-1]->getTrace());
                  else
-                     getTrace(strbuf,144,12,opponent_list.last()->getTrace());
+                     getTrace(strbuf,opponent_list.last()->getTrace());
                  getNxtOppData();
                  break;
          }
@@ -461,7 +487,7 @@ QStringList opponentList::readData(QString in_data,int type)
     return lst;
 }
 
-void opponentList::getTrace(QString buff,int nbVac, int step, QList<position*> * trace)
+void opponentList::getTrace(QString buff, QList<position*> * trace)
 {
     QStringList lsval,lsval2;
     position * ptr;
@@ -478,10 +504,8 @@ void opponentList::getTrace(QString buff,int nbVac, int step, QList<position*> *
     if(buff.isEmpty())
         return;
     lsval = readData(buff,OPP_TYPE_POSITION);
-    for(int i=0;i<lsval.size() && i<nbVac;i++)
+    for(int i=0;i<lsval.size();i++)
     {
-        if(i%step) /* not taking all vac*/
-            continue;
         lsval2=lsval[i].split(",");
         if (lsval2.size() == 2)
         {

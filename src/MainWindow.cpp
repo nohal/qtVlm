@@ -407,8 +407,8 @@ MainWindow::MainWindow(int w, int h, QWidget *parent)
       raceParam = new race_dialog(this, terre);
       opponents = new opponentList(proj,this,terre);
 
-      connect(this,SIGNAL(getTrace(QString,int,int, QList<position*> *)),
-                           opponents,SLOT(getTrace(QString,int,int, QList<position*> *)));
+      connect(this,SIGNAL(getTrace(QString,QList<position*> *)),
+                           opponents,SLOT(getTrace(QString,QList<position*> *)));
       terre->setOpponents(opponents);
     //---------------------------------------------------------
     // Active les actions
@@ -465,7 +465,7 @@ void MainWindow::openGribFile(QString fileName, bool zoom)
         std::set<time_t> *listeDates = terre->getGribPlot()->getListDates();
         menuBar->updateListeDates(listeDates);
         //slotDateGribChanged(0);
-	slotDateGribChanged_now();
+    slotDateGribChanged_now();
         gribFileName = fileName;
     }
     else {
@@ -1217,7 +1217,7 @@ void MainWindow::slotNewZoom(float zoom)
         selectedBoat->setZoom(zoom);
 }
 
-void MainWindow::slotGetTrace(QString buff,int nbVac, int step, QList<position*> * trace)
+void MainWindow::slotGetTrace(QString buff,QList<position*> * trace)
 {
-    emit getTrace(buff,nbVac,step,trace);
+    emit getTrace(buff,trace);
 }

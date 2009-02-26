@@ -30,29 +30,36 @@ paramVLM::paramVLM(QWidget * parent) : QDialog(parent)
     /* Drawing / affichage */
     estimeLen->setValue(Util::getSetting("estimeLen",100).toInt());
     chk_gribZoomOnLoad->setCheckState(Util::getSetting("gribZoomOnLoad",0).toInt()==1?Qt::Checked:Qt::Unchecked);
-    
+
     opp_labelType->addItem(tr("Login"));
     opp_labelType->addItem(tr("Nom"));
-    opp_labelType->addItem(tr("Numéro"));    
+    opp_labelType->addItem(tr("Numéro"));
     opp_labelType->setCurrentIndex(Util::getSetting("opp_labelType",0).toInt());
-    
+
     /* Colors */
 
     setColor(Util::getSetting("POI_Color",QColor(Qt::black).name()).toString(),0);
     setColor(Util::getSetting("POI_WP_Color",QColor(Qt::red).name()).toString(),4);
     setColor(Util::getSetting("qtBoat_color",QColor(Qt::blue).name()).toString(),1);
     setColor(Util::getSetting("qtBoat_sel_color",QColor(Qt::red).name()).toString(),2);
-    setColor(Util::getSetting("opp_color",QColor(Qt::green).name()).toString(),3);
+    //setColor(Util::getSetting("opp_color",QColor(Qt::green).name()).toString(),3);
+
+    /* Trace */
+    for(int i=5;i<=61;i+=5)
+        trace_step->addItem(QString().setNum(i));
+    trace_step->setCurrentIndex(Util::getSetting("trace_step",60/5-1).toInt());
+    trace_length->setValue(Util::getSetting("trace_length",12).toInt());
+    chk_oppTrace->setCheckState(Util::getSetting("opp_trace","1").toInt()==1?Qt::Checked:Qt::Unchecked);
 
     /* advanced */
     chk_activateEmulation->setCheckState(
          Util::getSetting("gpsEmulEnable", "0").toString()=="1"?Qt::Checked:Qt::Unchecked);
-    serialName->setText(Util::getSetting("serialName", "COM2").toString());    
-    
+    serialName->setText(Util::getSetting("serialName", "COM2").toString());
+
     chk_forceUserAgent->setCheckState(Util::getSetting("forceUserAgent",0).toInt()==1?Qt::Checked:Qt::Unchecked);
     userAgent->setText(Util::getSetting("userAgent", "").toString());
     userAgent->setEnabled(Util::getSetting("forceUserAgent",0).toInt()==1);
-    
+
 }
 
 void paramVLM::done(int result)
@@ -67,13 +74,19 @@ void paramVLM::done(int result)
 
         Util::setSetting("POI_Color",POI_color);
         Util::setSetting("POI_WP_Color",POI_WP_color);
-        Util::setSetting("qtBoat_color",qtBoat_color);        
+        Util::setSetting("qtBoat_color",qtBoat_color);
         Util::setSetting("qtBoat_sel_color",qtBoat_sel_color);
-        Util::setSetting("opp_color",opp_color);
+        //Util::setSetting("opp_color",opp_color);
+
+        /* Trace */
+
+        Util::setSetting("trace_step",QString().setNum(trace_step->currentIndex()));
+        Util::setSetting("trace_length",QString().setNum(trace_length->value()));
+        Util::setSetting("opp_trace",chk_oppTrace->checkState()==Qt::Checked?"1":"0");
 
         /* advanced */
         Util::setSetting("gpsEmulEnable",chk_activateEmulation->checkState()==Qt::Checked?"1":"0");
-        Util::setSetting("serialName", serialName->text());        
+        Util::setSetting("serialName", serialName->text());
         Util::setSetting("forceUserAgent",chk_forceUserAgent->checkState()==Qt::Checked?"1":"0");
         Util::setSetting("userAgent",userAgent->text());
         emit paramVLMChanged();
@@ -102,10 +115,10 @@ void paramVLM::changeColor_qtBoat_sel(void)
     changeColor(2);
 }
 
-void paramVLM::changeColor_opp(void)
+/*void paramVLM::changeColor_opp(void)
 {
     changeColor(3);
-}
+}*/
 
 void paramVLM::changeColor_POI_WP(void)
 {
@@ -132,12 +145,12 @@ QColor paramVLM::getColor(int type)
         case 2:
             return QColor(qtBoat_sel_color);
             break;
-        case 3:
+/*        case 3:
             return QColor(opp_color);
-            break;
+            break;*/
         case 4:
             return QColor(POI_WP_color);
-            break;            
+            break;
     }
     return Qt::white;
 }
@@ -159,14 +172,14 @@ void paramVLM::setColor(QString color,int type)
             qtBoat_sel_frame->setStyleSheet(style);
             qtBoat_sel_color=color;
             break;
-        case 3:
+/*        case 3:
             opp_frame->setStyleSheet(style);
             opp_color=color;
-            break;
+            break;*/
         case 4:
             POI_WP_frame->setStyleSheet(style);
             POI_WP_color=color;
-            break;            
+            break;
     }
 }
 
