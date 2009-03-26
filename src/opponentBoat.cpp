@@ -428,28 +428,31 @@ void opponentList::requestFinished ( QNetworkReply* inetReply)
                              else
                                  opponent_list.append(new opponent(colorTable[currentOpponent-1],idu,currentRace,
                                                                 lat,lon,login,name,proj,mainWin,parent));
-
+                            QTextStream(&page) << host
+                            << "/gmap/index.php?"
+                            << "type=ajax&riq=trj"
+                            << "&idusers="
+                            << idu
+                            << "&idraces="
+                            << currentRace;
+                            request.setUrl(QUrl(page));
+                            Util::addAgent(request);
+                            currentRequest=OPP_BOAT_TRJ;
+                            inetManager->get(request);
+                            break;
                          }
                      }
                  }
-
-                 QTextStream(&page) << host
-                    << "/gmap/index.php?"
-                    << "type=ajax&riq=trj"
-                    << "&idusers="
-                    << idu
-                    << "&idraces="
-                    << currentRace;
-                 request.setUrl(QUrl(page));
-                 Util::addAgent(request);
-                 currentRequest=OPP_BOAT_TRJ;
-                 inetManager->get(request);
+                 getNxtOppData();
                  break;
              case OPP_BOAT_TRJ:
                  if(currentMode==OPP_MODE_REFRESH)
                      getTrace(strbuf,opponent_list[currentOpponent-1]->getTrace());
                  else
-                     getTrace(strbuf,opponent_list.last()->getTrace());
+                 {
+                     if(!opponent_list.isEmpty())
+                        getTrace(strbuf,opponent_list.last()->getTrace());
+                 }
                  getNxtOppData();
                  break;
          }

@@ -154,7 +154,11 @@ void boatAccount::doRequest(int requestCmd)
         {
             case VLM_REQUEST_BOAT:
                 if(boat_id==-1)
+                {
+                    currentRequest = VLM_NO_REQUEST;
+                    qWarning() << "boat Acc no request Boat Id for:" << login ;
                     return;
+                }
                 QTextStream(&page) << host
                             << "/getinfo.php?"
                             << "pseudo=" << login
@@ -171,7 +175,11 @@ void boatAccount::doRequest(int requestCmd)
                 break;
             case VLM_REQUEST_TRJ:
                 if(race_id==0)
-                    break;
+                {
+                    currentRequest = VLM_NO_REQUEST;
+                    qWarning() << "boat Acc no request TRJ for:" << login << " id=" << boat_id;
+                    return;
+                }
                 QTextStream(&page) << host
                             << "/gmap/index.php?"
                             << "type=ajax&riq=trj"

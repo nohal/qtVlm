@@ -1,6 +1,6 @@
 CONFIG += qt
 TEMPLATE = app
-TARGET = 
+TARGET =
 DEPENDPATH += .
 INCLUDEPATH += bzip2 zlib-1.2.3 qextserialport
 LIBS += -Lbzip2 -lbz2 -Lzlib-1.2.3 -lz -Lqextserialport/build -lqextserialport
@@ -55,14 +55,14 @@ HEADERS += \
            xmlBoatData.h \
            xmlPOIData.h \
            zuFile.h
-           
+
 FORMS += boatAccount_dialog.ui BoardVLM_part1.ui BoardVLM_part2.ui \
             paramVLM.ui POI_input.ui POI_editor.ui Pilototo_param.ui instructions.ui \
             Pilototo.ui race_dialog.ui
 SOURCES += \
            BoardVLM.cpp \
            boatAccount_dialog.cpp \
-           boatAccount.cpp \           
+           boatAccount.cpp \
            DialogGraphicsParams.cpp \
            DialogLoadGrib.cpp \
            DialogProxy.cpp \

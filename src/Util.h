@@ -63,6 +63,10 @@ Copyright (C) 2008 - Jacques Zaninetti - http://zygrib.free.fr
     _res;                      \
     })
 
+#define NB_URL 4
+extern QString url_name[NB_URL];
+extern QString url_str[NB_URL];
+
 class Util
 {
     public:
@@ -104,7 +108,7 @@ class Util
     static QString getHost();
     static void computePos(Projection * proj, float lat, float lon, int * x, int * y);
     static void addAgent(QNetworkRequest & request);
-    
+
     //-------------------------------------------------
     template <typename T>
         static bool isInRange(T v, T min, T max)

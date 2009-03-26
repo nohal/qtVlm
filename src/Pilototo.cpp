@@ -70,9 +70,9 @@ void Pilototo::updateDrawList(void)
         drawList[i]->hide();
         frameLayout->removeWidget(drawList[i]);
     }
-    
+
     drawList.clear();
-    
+
     for(int i=0;i<instructions_list.count();i++)
     {
         Pilototo_instruction * instr=instructions_list[i];
@@ -156,7 +156,7 @@ void Pilototo::editInstructions(void)
 {
     waitBox->exec();
 }
-        
+
 void Pilototo::boatUpdated(boatAccount * boat)
 {
     if(!waitBox->isVisible())
@@ -176,7 +176,7 @@ void Pilototo::boatUpdated(boatAccount * boat)
             tr("Pilototo"),
             tr("La récupération des données pilototo de VLM n'a pas fonctionné\nVous pouvez ajouter des instructions mais sans voir le resultat dans QtVlm"),
             QMessageBox::Ok);
-    
+
     for(int i=0;i<list->count();i++)
     {
         QString instr_txt=list->at(i);
@@ -207,7 +207,7 @@ void Pilototo::boatUpdated(boatAccount * boat)
                         instr->setWph(instr_buf2.at(1).toFloat());
                     }
                     else
-                    {   
+                    {
                         instr->setLon(instr_buf.at(4).toFloat());
                     }
                     pos=5;
@@ -221,13 +221,13 @@ void Pilototo::boatUpdated(boatAccount * boat)
         }
     }
 
-    
-    
+
+
     updateNbInstruction();
 
     /* init current time */
     updateTime();
-    
+
     updateDrawList();
 
     exec();
@@ -281,7 +281,7 @@ void Pilototo::done(int result)
         /* ready to send */
         sendPilototo(requestList);
     }
-    
+
     for(int i=0;i<instructions_list.count();i++)
         delete instructions_list[i];
 
@@ -305,7 +305,7 @@ void Pilototo::sendPilototo(QStringList * cmdList)
                         ;
         QNetworkRequest request;
         request.setUrl(QUrl(page));
-        Util::addAgent(request);   
+        Util::addAgent(request);
         inetManager->get(request);
     }
     else
@@ -344,7 +344,10 @@ void Pilototo::requestFinished ( QNetworkReply* inetReply)
                     QTextStream(&page) << host
                             << "/pilototo.php";
                     data = currentList->takeFirst();
-                    inetManager->post(QNetworkRequest(QUrl(page)),data.toAscii());
+                    QNetworkRequest request;
+                    request.setUrl(QUrl(page));
+                    Util::addAgent(request);
+                    inetManager->post(request,data.toAscii());
                 }
                 break;
         }
@@ -384,7 +387,7 @@ void Pilototo::delInstruction(Pilototo_instruction * instruction)
     if(ref!=-1)
         delList.append(ref);
     instructions_list.removeAll(instruction);
-    
+
     updateDrawList();
     updateNbInstruction();
 
@@ -394,7 +397,7 @@ void Pilototo::delInstruction(Pilototo_instruction * instruction)
 void Pilototo::updateNbInstruction(void)
 {
     nbInstruction=instructions_list.count();
-    
+
     if(nbInstruction==0)
         frame->hide();
     else
@@ -429,14 +432,14 @@ Pilototo_instruction::Pilototo_instruction(QWidget * main,QWidget * parent) : QW
     connect(this,SIGNAL(instructionUpdated()),
                 main,SLOT(instructionUpdated()));
     this->parent=parent;
-    
+
     /*QSizePolicy sizePolicy(QSizePolicy::Minimum, QSizePolicy::Minimum);
     sizePolicy.setHorizontalStretch(0);
     sizePolicy.setVerticalStretch(0);
     sizePolicy.setHeightForWidth(this->sizePolicy().hasHeightForWidth());
     setSizePolicy(sizePolicy);*/
     layout()->setContentsMargins(0,0,0,0);
-    
+
     updateHasChanged(true); /*instruction is not saved when created*/
     initVal();
 }
@@ -498,7 +501,7 @@ void Pilototo_instruction::updateText(void)
     QFontMetrics fmt(instructionText->font());
     QString final_txt;
     QString modeTxt,param;
-    
+
     switch(mode)
     {
         case 0:
@@ -550,7 +553,7 @@ void Pilototo_instruction::updateText(void)
             status_txt->setText(tr("Nouveau"));
             break;
     }
-    
+
     horodate->setDateTime(tstamp);
 }
 
@@ -580,11 +583,11 @@ void Pilototo_instruction::pastePOI(void)
     int tstamp_int;
     if(!Util::getWPClipboard(&lat,&lon,&wph,&tstamp_int))
         return;
-    
+
     this->lat = lat;
     this->lon = lon;
     mode=2; /*default mode : ortho */
-    
+
     if(tstamp_int!=-1)
         tstamp.setTime_t(tstamp_int);
 
@@ -638,7 +641,7 @@ void Pilototo_instruction::setTstamp(int val)
 QString Pilototo_instruction::getPip(void)
 {
     QString txt;
-    
+
     switch(mode)
     {
         case 0:

@@ -60,6 +60,14 @@ paramVLM::paramVLM(QWidget * parent) : QDialog(parent)
     userAgent->setText(Util::getSetting("userAgent", "").toString());
     userAgent->setEnabled(Util::getSetting("forceUserAgent",0).toInt()==1);
 
+    /*
+    url_list->addItem(tr("Standard: ")+"www.virtual-loup-de-mer.org");
+    url_list->addItem(tr("Secours: ")+"virtual-loup-de-mer.org");
+    url_list->addItem(tr("Test: ")+"testing.virtual-loup-de-mer.org");
+    */
+    for(int i=0;i<NB_URL;i++)
+        url_list->addItem(url_name[i]+": "+url_str[i]);
+    url_list->setCurrentIndex(Util::getSetting("vlm_url",0).toInt());
 }
 
 void paramVLM::done(int result)
@@ -89,6 +97,8 @@ void paramVLM::done(int result)
         Util::setSetting("serialName", serialName->text());
         Util::setSetting("forceUserAgent",chk_forceUserAgent->checkState()==Qt::Checked?"1":"0");
         Util::setSetting("userAgent",userAgent->text());
+        Util::setSetting("vlm_url",QString().setNum(url_list->currentIndex()));
+
         emit paramVLMChanged();
     }
     QDialog::done(result);
@@ -96,7 +106,6 @@ void paramVLM::done(int result)
 
 void paramVLM::forceUserAgent_changed(int newVal)
 {
-    qWarning("New val %d",newVal);
     userAgent->setEnabled(newVal==Qt::Checked);
 }
 

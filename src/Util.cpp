@@ -412,18 +412,18 @@ QString Util::pos2String(int type,float value)
     return str;
 }
 
+QString  url_name[NB_URL] = { "Std 1","Std 2","Std 3","Test"};
+QString  url_str[NB_URL] = { "s9.virtual-loup-de-mer.org","s9.virtual-loup-de-mer.org","s9.virtual-loup-de-mer.org",
+    "testing.virtual-loup-de-mer.org"};
 
 QString Util::getHost()
 {
     QString host;
+    int num = Util::getSetting("vlm_url",0).toInt();
 
     host="http://";
 
-#if 1
-       return host+"www.virtual-loup-de-mer.org";
-#else
-       return host+"testing.virtual-loup-de-mer.org";
-#endif
+    return host+url_str[num];
 }
 
 void Util::computePos(Projection * proj, float lat, float lon, int * x, int * y)
