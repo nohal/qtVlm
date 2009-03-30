@@ -109,7 +109,7 @@ class MainWindow: public QMainWindow
         void slotVLM_Param(void);
         void slotVLM_Test(void);
         void slotSelectBoat(boatAccount* newSelect);
-        void slotProxyUpdated(void);
+        void slotInetUpdated(void);
         void slotChgBoat(int);
         void slotAccountListUpdated(void);
         void slotBoatUpdated(boatAccount * boat,bool newRace);

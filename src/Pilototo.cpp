@@ -49,15 +49,8 @@ Pilototo::Pilototo(QWidget * parent):QDialog(parent)
 
     /* inet init */
     inetManager = new QNetworkAccessManager(this);
-    if(inetManager)
-    {
-        host = Util::getHost();
-        connect(inetManager, SIGNAL(finished(QNetworkReply*)),
-            this, SLOT(requestFinished (QNetworkReply*)));
-        Util::paramProxy(inetManager,host);
-    }
-
-    currentRequest = VLM_NO_REQUEST;
+    currentReply=NULL;
+    updateInet();
     currentList = NULL;
 }
 
@@ -290,10 +283,13 @@ void Pilototo::done(int result)
     QDialog::done(result);
 }
 
+
+
 void Pilototo::sendPilototo(QStringList * cmdList)
 {
     if(inetManager && currentRequest == VLM_NO_REQUEST && cmdList->count() > 0)
     {
+        resetInet();
         currentRequest=VLM_REQUEST_LOGIN;
         currentList=cmdList;
         QString page;
@@ -306,7 +302,10 @@ void Pilototo::sendPilototo(QStringList * cmdList)
         QNetworkRequest request;
         request.setUrl(QUrl(page));
         Util::addAgent(request);
-        inetManager->get(request);
+        currentReply=inetManager->get(request);
+        connect(currentReply, SIGNAL(finished()), this, SLOT(slotFinished()));
+        connect(currentReply, SIGNAL(error(QNetworkReply::NetworkError)),
+                 this, SLOT(slotError(QNetworkReply::NetworkError)));
     }
     else
     {
@@ -314,13 +313,42 @@ void Pilototo::sendPilototo(QStringList * cmdList)
     }
 }
 
+void Pilototo::resetInet(void)
+{
+    currentRequest=VLM_NO_REQUEST;
+    if(currentReply)
+    {
+        currentReply->disconnect();
+        currentReply->close();
+        currentReply->deleteLater();
+        currentReply=NULL;
+    }
+}
+
+void Pilototo::slotFinished()
+{
+    if(currentReply && currentRequest!=VLM_NO_REQUEST)
+        requestFinished(currentReply);
+    else
+        qWarning() << "Not processing reply: currentReply = " << currentReply << ", currentRequest=" << currentRequest;
+}
+
+void Pilototo::slotError(QNetworkReply::NetworkError error)
+{
+    qWarning() << "Error doing inetGet (1):" << error << " - " << (currentReply?currentReply->errorString():"");
+    resetInet();
+}
+
 void Pilototo::requestFinished ( QNetworkReply* inetReply)
 {
+    if(currentRequest==VLM_NO_REQUEST)
+        return;
     QString page;
     QString data;
-    if (inetReply->error() != QNetworkReply::NoError) {
-         qWarning() << "Error doing inetGet:" <<inetReply->error();
-        currentRequest=VLM_NO_REQUEST;
+    if (inetReply->error() != QNetworkReply::NoError)
+    {
+        qWarning() << "Error doing inetGet:" <<inetReply->error() << " - " << inetReply->errorString();
+        resetInet();
     }
     else
     {
@@ -330,7 +358,6 @@ void Pilototo::requestFinished ( QNetworkReply* inetReply)
                 return;
             case VLM_REQUEST_LOGIN:
             case VLM_DO_REQUEST:
-                currentRequest=VLM_DO_REQUEST;
                 if(currentList->isEmpty())
                 {
                     /*we have processed all cmd*/
@@ -341,23 +368,33 @@ void Pilototo::requestFinished ( QNetworkReply* inetReply)
                 }
                 else
                 {
+                    resetInet();
+                    currentRequest=VLM_DO_REQUEST;
                     QTextStream(&page) << host
                             << "/pilototo.php";
                     data = currentList->takeFirst();
                     QNetworkRequest request;
                     request.setUrl(QUrl(page));
                     Util::addAgent(request);
-                    inetManager->post(request,data.toAscii());
+                    currentReply=inetManager->get(request);
+                    connect(currentReply, SIGNAL(finished()), this, SLOT(slotFinished()));
+                    connect(currentReply, SIGNAL(error(QNetworkReply::NetworkError)),
+                            this, SLOT(slotError(QNetworkReply::NetworkError)));
                 }
                 break;
         }
     }
 }
 
-void Pilototo::updateProxy(void)
+void Pilototo::updateInet(void)
 {
     /* update connection */
-    Util::paramProxy(inetManager,host);
+    if(inetManager)
+    {
+        host=Util::getHost();
+        Util::paramProxy(inetManager,host);
+        resetInet();
+    }
 }
 
 void Pilototo::addInstruction(void)
@@ -432,12 +469,6 @@ Pilototo_instruction::Pilototo_instruction(QWidget * main,QWidget * parent) : QW
     connect(this,SIGNAL(instructionUpdated()),
                 main,SLOT(instructionUpdated()));
     this->parent=parent;
-
-    /*QSizePolicy sizePolicy(QSizePolicy::Minimum, QSizePolicy::Minimum);
-    sizePolicy.setHorizontalStretch(0);
-    sizePolicy.setVerticalStretch(0);
-    sizePolicy.setHeightForWidth(this->sizePolicy().hasHeightForWidth());
-    setSizePolicy(sizePolicy);*/
     layout()->setContentsMargins(0,0,0,0);
 
     updateHasChanged(true); /*instruction is not saved when created*/

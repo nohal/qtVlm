@@ -36,7 +36,7 @@ DialogProxy::DialogProxy() : QDialog()
     QLabel *label;
     QFrame *ftmp;
     frameGui = createFrameGui(this);
-    
+
     layout = new QGridLayout(this);
     int lig=0;
     //-------------------------
@@ -60,15 +60,19 @@ DialogProxy::DialogProxy() : QDialog()
     btCancel = new QPushButton(tr("Annuler"), this);
     layout->addWidget( btOK,    lig,0);
     layout->addWidget( btCancel, lig,1);
-    
+
     //===============================================================
     lineProxyHostname->setText(Util::getSetting("httpProxyHostname", "").toString());
     lineProxyPort->setText(Util::getSetting("httpProxyPort", "").toString());
     lineProxyUsername->setText(Util::getSetting("httpProxyUsername", "").toString());
     lineProxyUserPassword->setText(Util::getSetting("httpProxyUserPassword", "").toString());
-    
+
     int usep = Util::getSetting("httpUseProxy", 0).toInt();
+
+#ifndef QT_4_5_0
     if(usep==2) usep=1;
+#endif
+
     switch(usep)
     {
        case 0:
@@ -94,7 +98,7 @@ DialogProxy::DialogProxy() : QDialog()
 #endif
     }
     slotUseProxyChanged();
-    
+
     //===============================================================
     connect(btUseProxy, SIGNAL(clicked()), this, SLOT(slotUseProxyChanged()));
     connect(btDontUseProxy, SIGNAL(clicked()), this, SLOT(slotUseProxyChanged()));
@@ -183,7 +187,7 @@ QFrame *DialogProxy::createFrameGui(QWidget *parent)
     lay->addWidget( label,    lig,0, Qt::AlignRight);
     lineProxyPort = new QLineEdit(frm);
     lineProxyPort->setFixedWidth(60);
-    
+
     lineProxyPort->setValidator(new QIntValidator(0,65536, this));
     lay->addWidget( lineProxyPort, lig,1, Qt::AlignLeft);
     //-------------------------
@@ -203,7 +207,7 @@ QFrame *DialogProxy::createFrameGui(QWidget *parent)
     lig ++;
     label = new QLabel(tr("(* si nécessaire)"), frm);
     lay->addWidget( label,    lig,0, 2,1, Qt::AlignLeft);
-    
+
     return frm;
 }
 

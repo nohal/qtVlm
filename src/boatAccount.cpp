@@ -58,8 +58,6 @@ boatAccount::boatAccount(QString login, QString pass, bool activated,Projection 
 
     createPopUpMenu();
 
-    currentRequest=VLM_NO_REQUEST;
-
     createWidget();
     paramChanged();
 
@@ -82,32 +80,28 @@ boatAccount::boatAccount(QString login, QString pass, bool activated,Projection 
 
     /* init http inetManager */
     inetManager = new QNetworkAccessManager(this);
-    if(inetManager)
-    {
-        host = Util::getHost();
-        connect(inetManager, SIGNAL(finished(QNetworkReply*)),
-            this, SLOT(requestFinished (QNetworkReply*)));
-        Util::paramProxy(inetManager,host);
-    }
-
+    currentReply=NULL;
+    updateInet();
     setParam(login,pass,activated);
 }
 
 boatAccount::~boatAccount()
 {
+    resetInet();
     if(inetManager)
         delete inetManager;
     disconnect();
 }
 
-void boatAccount::updateProxy(void)
+void boatAccount::updateInet(void)
 {
     /* update connection */
-    Util::paramProxy(inetManager,host);
-#warning bad fix: we are forcing a new request
-    currentRequest=VLM_NO_REQUEST;
-
-    doRequest(VLM_REQUEST_IDU);
+    if(inetManager)
+    {
+        host=Util::getHost();
+        Util::paramProxy(inetManager,host);
+        resetInet();
+    }
 }
 
 void boatAccount::selectBoat()
@@ -156,7 +150,8 @@ void boatAccount::doRequest(int requestCmd)
                 if(boat_id==-1)
                 {
                     currentRequest = VLM_NO_REQUEST;
-                    qWarning() << "boat Acc no request Boat Id for:" << login ;
+                    qWarning() << "boat Acc no std request : Boat Id = -1 for:" << login ;
+                    doRequest(VLM_REQUEST_IDU);
                     return;
                 }
                 QTextStream(&page) << host
@@ -189,13 +184,20 @@ void boatAccount::doRequest(int requestCmd)
                             << race_id;
                 break;
         }
+
+        resetInet();
+
         currentRequest = requestCmd;
         qWarning() << "boat Acc Doing request: " << page;
 
         QNetworkRequest request;
         request.setUrl(QUrl(page));
         Util::addAgent(request);
-        inetManager->get(request);
+
+        currentReply=inetManager->get(request);
+        connect(currentReply, SIGNAL(finished()), this, SLOT(slotFinished()));
+        connect(currentReply, SIGNAL(error(QNetworkReply::NetworkError)),
+                 this, SLOT(slotError(QNetworkReply::NetworkError)));
     }
     else
     {
@@ -210,13 +212,40 @@ void boatAccount::doRequest(int requestCmd)
     }
 }
 
+void boatAccount::resetInet(void)
+{
+    currentRequest=VLM_NO_REQUEST;
+    if(currentReply)
+    {
+        currentReply->disconnect();
+        currentReply->close();
+        currentReply->deleteLater();
+        currentReply=NULL;
+    }
+}
+
+void boatAccount::slotFinished()
+{
+    if(currentReply && currentRequest!=VLM_NO_REQUEST)
+        requestFinished(currentReply);
+    else
+        qWarning() << "Not processing reply: currentReply = " << currentReply << ", currentRequest=" << currentRequest;
+}
+
+void boatAccount::slotError(QNetworkReply::NetworkError error)
+{
+    qWarning() << "Error doing inetGet (1):" << error << " - " << (currentReply?currentReply->errorString():"");
+    resetInet();
+}
+
 void boatAccount::requestFinished ( QNetworkReply* inetReply)
 {
-
+    if(currentRequest==VLM_NO_REQUEST)
+        return;
 
     if (inetReply->error() != QNetworkReply::NoError) {
-        qWarning() << "Error doing inetGet:" << inetReply->error();
-        currentRequest=VLM_NO_REQUEST;
+        qWarning() << "Error doing inetGet (2):" << inetReply->error() << " - " << inetReply->errorString();
+        resetInet();
     }
     else
     {
@@ -232,6 +261,7 @@ void boatAccount::requestFinished ( QNetworkReply* inetReply)
         {
             case VLM_REQUEST_IDU:
                 lsbuf = strbuf.split(";");
+                boat_id=-1;
                 for (int i=0; i < lsbuf.size(); i++)
                 {
                     QStringList lsval = lsbuf.at(i).split("=");
@@ -239,13 +269,18 @@ void boatAccount::requestFinished ( QNetworkReply* inetReply)
                         if (lsval.at(0) == "IDU")
                         {
                             boat_id = lsval.at(1).toInt();
-                            qWarning() << "Get boat id " << boat_id;
-                            currentRequest=VLM_NO_REQUEST;
-                            doRequest(VLM_REQUEST_BOAT);
                             break;
                         }
                     }
                 }
+                if(boat_id!=-1)
+                {
+                    qWarning() << "Get boat id " << boat_id;
+                    resetInet();
+                    doRequest(VLM_REQUEST_BOAT);
+                }
+                else
+                    resetInet();
                 break;
             case VLM_REQUEST_BOAT:
                 hasPilototo=false;
@@ -270,7 +305,6 @@ void boatAccount::requestFinished ( QNetworkReply* inetReply)
 
                             if(race_id==0)
                             {
-                                qWarning() << "RAC=0";
                                 latitude = longitude = speed = heading = avg = 0;
                                 dnm = loch = ortho = loxo = vmg = windDir = 0;
                                 windSpeed = WPLat = WPLon = TWA = prevVac = 0;
@@ -365,21 +399,20 @@ void boatAccount::requestFinished ( QNetworkReply* inetReply)
                 current_heading = heading;
                 qWarning() << "Data for " << boat_id << " received";
                 /* compute heading point */
-                currentRequest=VLM_NO_REQUEST;
+                resetInet();
                 doRequest(VLM_REQUEST_TRJ);
                 break;
             case VLM_REQUEST_TRJ:
                 qWarning() << "Get trj result";
                 emit getTrace(strbuf,&trace);
                 qWarning() << boat_id << ": " << trace.count() << " points";
-                currentRequest=VLM_NO_REQUEST;
+                resetInet();
                 /* we can now update everything */
                 updateBoatData();
                 emit boatUpdated(this,newRace);
                 break;
         }
     }
-    //delete inetReply;
 }
 
 void boatAccount::updateBoatData()

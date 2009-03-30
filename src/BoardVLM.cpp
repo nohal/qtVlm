@@ -86,16 +86,10 @@ boardVLM::boardVLM(QMainWindow * mainWin,QWidget * parent) : QWidget(parent)
     /* inet init */
 
     inetManager = new QNetworkAccessManager(this);
-    if(inetManager)
-    {
-        host = Util::getHost();
-        connect(inetManager, SIGNAL(finished(QNetworkReply*)),
-            this, SLOT(requestFinished (QNetworkReply*)));
-        Util::paramProxy(inetManager,host);
-    }
+    inetManager = new QNetworkAccessManager(this);
+    currentReply=NULL;
+    updateInet();
 
-
-    currentRequest = VLM_NO_REQUEST;
     currentBoat = NULL;
 
     chk_GPS->setEnabled(Util::getSetting("gpsEmulEnable", "0").toString()=="1");
@@ -120,6 +114,18 @@ void boardVLM::paramChanged(void)
     else
         chk_GPS->show();
     COM=Util::getSetting("serialName", "COM2").toString();
+}
+
+void boardVLM::resetInet(void)
+{
+    currentRequest=VLM_NO_REQUEST;
+    if(currentReply)
+    {
+        currentReply->disconnect();
+        currentReply->close();
+        currentReply->deleteLater();
+        currentReply=NULL;
+    }
 }
 
 void boardVLM::showGribPointInfo(const GribPointInfo &pf)
@@ -163,7 +169,6 @@ void boardVLM::boatUpdated(boatAccount * boat)
 
     editHeading->setValue(boat->getHeading());
     editAngle->setValue(angle);
-
 
     w_dir->setText(QString().setNum(boat->getWindDir()));
     w_speed->setText(QString().setNum(boat->getWindSpeed()));
@@ -473,10 +478,15 @@ void boardVLM::setChangeStatus(bool status)
 /*********************/
 /* http requests     */
 
-void boardVLM::updateProxy(void)
+void boardVLM::updateInet(void)
 {
     /* update connection */
-    Util::paramProxy(inetManager,host);
+    if(inetManager)
+    {
+        host=Util::getHost();
+        Util::paramProxy(inetManager,host);
+        resetInet();
+    }
 }
 
 void boardVLM::sendCmd(int cmdNum,float  val1,float val2, float val3)
@@ -484,6 +494,7 @@ void boardVLM::sendCmd(int cmdNum,float  val1,float val2, float val3)
     if(inetManager && currentRequest == VLM_NO_REQUEST && currentBoat)
     {
         btn_Synch->setStyleSheet(QString::fromUtf8("background-color: rgb(255, 0, 0);"));
+        resetInet();
         currentRequest=VLM_REQUEST_LOGIN;
         currentCmdNum=cmdNum;
         cmd_val1=val1;
@@ -505,22 +516,46 @@ void boardVLM::sendCmd(int cmdNum,float  val1,float val2, float val3)
         QNetworkRequest request;
         request.setUrl(QUrl(page));
         Util::addAgent(request);
-        inetManager->get(request);
+        currentReply=inetManager->get(request);
+        connect(currentReply, SIGNAL(finished()), this, SLOT(slotFinished()));
+        connect(currentReply, SIGNAL(error(QNetworkReply::NetworkError)),
+                 this, SLOT(slotError(QNetworkReply::NetworkError)));
     }
     else
     {
-        qWarning() <<  "error sendCmd " << currentRequest;
+        qWarning() <<  "error sendCmd " << currentRequest << " - bad state";
+        btn_Synch->setStyleSheet(QString::fromUtf8("background-color: rgb(85, 255, 127);"));
     }
+}
+
+void boardVLM::slotFinished()
+{
+    if(currentReply && currentRequest!=VLM_NO_REQUEST)
+        requestFinished(currentReply);
+    else
+    {
+        qWarning() << "Not processing reply: currentReply = " << currentReply << ", currentRequest=" << currentRequest;
+        btn_Synch->setStyleSheet(QString::fromUtf8("background-color: rgb(85, 255, 127);"));
+    }
+}
+
+void boardVLM::slotError(QNetworkReply::NetworkError error)
+{
+    qWarning() << "Error doing inetGet (1):" << error << " - " << (currentReply?currentReply->errorString():"");
+    btn_Synch->setStyleSheet(QString::fromUtf8("background-color: rgb(85, 255, 127);"));
+    resetInet();
 }
 
 void boardVLM::requestFinished ( QNetworkReply* inetReply)
 {
+    if(currentRequest==VLM_NO_REQUEST)
+        return;
     QString page;
     QNetworkRequest request;
     if (inetReply->error() != QNetworkReply::NoError) {
-        qWarning() <<  "Error doing inetGet:" << inetReply->error();
+        qWarning() <<  "Error doing inetGet (2):" << inetReply->error() << " - " << inetReply->errorString();
         btn_Synch->setStyleSheet(QString::fromUtf8("background-color: rgb(85, 255, 127);"));
-        currentRequest=VLM_NO_REQUEST;
+        resetInet();
     }
     else
     {
@@ -530,7 +565,6 @@ void boardVLM::requestFinished ( QNetworkReply* inetReply)
                 btn_Synch->setStyleSheet(QString::fromUtf8("background-color: rgb(85, 255, 127);"));
                 return;
             case VLM_REQUEST_LOGIN:
-                currentRequest=VLM_DO_REQUEST;
 
                 switch(currentCmdNum)
                 {
@@ -576,9 +610,14 @@ void boardVLM::requestFinished ( QNetworkReply* inetReply)
                 }
                 qWarning() << "Send cmd: " << page;
 
+                resetInet();
+                currentRequest=VLM_DO_REQUEST;
                 request.setUrl(QUrl(page));
                 Util::addAgent(request);
-                inetManager->get(request);
+                currentReply=inetManager->get(request);
+                connect(currentReply, SIGNAL(finished()), this, SLOT(slotFinished()));
+                connect(currentReply, SIGNAL(error(QNetworkReply::NetworkError)),
+                         this, SLOT(slotError(QNetworkReply::NetworkError)));
                 break;
             case VLM_DO_REQUEST:
                 currentRequest=VLM_WAIT_RESULT;
@@ -590,7 +629,6 @@ void boardVLM::requestFinished ( QNetworkReply* inetReply)
         }
     }
 }
-
 
 
 void boardVLM::chkResult(void)
@@ -631,7 +669,7 @@ void boardVLM::chkResult(void)
     }
     if(done)
     {
-        currentRequest=VLM_NO_REQUEST;
+        resetInet();
         boatUpdated(currentBoat);
     }
     else

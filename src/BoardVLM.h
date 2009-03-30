@@ -79,7 +79,7 @@ class boardVLM: public QWidget , public Ui::boardVLM_part1_ui
     public:
         boardVLM(QMainWindow * mainWin,QWidget * parent=0);
 
-        void updateProxy(void);
+        void updateInet(void);
 
         void showGribPointInfo(const GribPointInfo &pf);
 
@@ -94,6 +94,9 @@ class boardVLM: public QWidget , public Ui::boardVLM_part1_ui
         void synch_GPS();
 
         void requestFinished (QNetworkReply*);
+        void slotFinished();
+        void slotError(QNetworkReply::NetworkError error);
+
         void sendCmd(int cmdNum,float val1,float val2, float val3);
         void chkResult(void);
         void setWP(float lat,float lon,float wph=-1);
@@ -105,7 +108,9 @@ class boardVLM: public QWidget , public Ui::boardVLM_part1_ui
         void boatUpdated(boatAccount * boat);
 
     private:
+        void resetInet(void);
         QNetworkAccessManager *inetManager;
+        QNetworkReply * currentReply;
         QString host;
 
         int currentRequest;

@@ -224,7 +224,7 @@ void MainWindow::connectSignals()
 
     connect(mb->acPOIimport, SIGNAL(triggered()), this, SLOT(slotPOIimport()));
 
-    connect(&dialogProxy, SIGNAL(proxyUpdated()), this, SLOT(slotProxyUpdated()));
+    connect(&dialogProxy, SIGNAL(proxyUpdated()), this, SLOT(slotInetUpdated()));
 
     connect(mb->cbBoatList, SIGNAL(activated(int)),
             this, SLOT(slotChgBoat(int)));
@@ -392,6 +392,7 @@ MainWindow::MainWindow(int w, int h, QWidget *parent)
       connect(param,SIGNAL(paramVLMChanged()),VLMBoard,SLOT(paramChanged()));
 
       connect(param,SIGNAL(paramVLMChanged()),this,SLOT(slotParamChanged()));
+      connect(param, SIGNAL(inetUpdated()), this, SLOT(slotInetUpdated()));
 
       connect(poi_input_dialog,SIGNAL(addPOI(float,float,float,int,bool)),
               this,SLOT(slotAddPOI(float,float,float,int,bool)));
@@ -992,16 +993,20 @@ void MainWindow::slotSelectBoat(boatAccount* newSelect)
     }
 }
 
-void MainWindow::slotProxyUpdated(void)
+void MainWindow::slotInetUpdated(void)
 {
+    qWarning() << "Inet Updated";
     QListIterator<boatAccount*> i (acc_list);
     while(i.hasNext())
     {
         boatAccount * acc = i.next();
-        acc->updateProxy();
+        acc->updateInet();
     }
-    VLMBoard->updateProxy();
-    pilototo->updateProxy();
+    VLMBoard->updateInet();
+    pilototo->updateInet();
+    opponents->updateInet();
+    /*refreshing data*/
+    slotVLM_Sync();
 }
 
 void MainWindow::slotChgBoat(int num)

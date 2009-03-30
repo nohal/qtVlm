@@ -97,7 +97,12 @@ void paramVLM::done(int result)
         Util::setSetting("serialName", serialName->text());
         Util::setSetting("forceUserAgent",chk_forceUserAgent->checkState()==Qt::Checked?"1":"0");
         Util::setSetting("userAgent",userAgent->text());
+
+        int oldUrl = Util::getSetting("vlm_url",0).toInt();
         Util::setSetting("vlm_url",QString().setNum(url_list->currentIndex()));
+        qWarning() << "old url=" << oldUrl << " new=" << url_list->currentIndex();
+        if(oldUrl!=url_list->currentIndex())
+            emit inetUpdated();
 
         emit paramVLMChanged();
     }

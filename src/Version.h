@@ -25,22 +25,28 @@ Copyright (C) 2008 - Jacques Zaninetti - http://zygrib.free.fr
 #define VERSION_H
 
 
-#define QTVLM_VERSION_NUM   "1.5.0"
-#define QTVLM_VERSION_DATE  "2009-02-12"
+#define QTVLM_VERSION_NUM   "1.5.1"
+#define QTVLM_SUB_VERSION_NUM   "5"
+#define QTVLM_VERSION_DATE  "2009-03-30"
 
 #ifdef Q_OS_WIN32
 	#define QTVLM_APP_NAME   "qtVlm_win"
 #else
 	#define QTVLM_APP_NAME   "qtVlm"
 #endif
-        
+
 
 
 class Version {
 
     public:
         static QString getVersion() {
+#ifdef QTVLM_SUB_VERSION_NUM
+            return QString(QTVLM_VERSION_NUM)+"-"+QString(QTVLM_SUB_VERSION_NUM);
+#else
             return QString(QTVLM_VERSION_NUM);
+#endif
+
         }
         static QString getDate() {
             return QString(QTVLM_VERSION_DATE);

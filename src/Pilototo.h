@@ -122,7 +122,7 @@ class Pilototo : public QDialog, public Ui::pilototo_ui
         Pilototo(QWidget * parent=0);
         void done(int);
 
-        void updateProxy(void);
+        void updateInet(void);
 
         Pilototo_param * instructionEditor;
 
@@ -133,6 +133,8 @@ class Pilototo : public QDialog, public Ui::pilototo_ui
         void boatUpdated(boatAccount * boat);
         void updateTime(void);
         void requestFinished (QNetworkReply*);
+        void slotFinished();
+        void slotError(QNetworkReply::NetworkError error);
 
     private slots:
         void addInstruction(void);
@@ -152,9 +154,12 @@ class Pilototo : public QDialog, public Ui::pilototo_ui
         void updateNbInstruction(void);
 
         QNetworkAccessManager *inetManager;
+        QNetworkReply * currentReply;
         QString host;
         int currentRequest;
         QStringList * currentList;
+
+        void resetInet(void);
 
         void sendPilototo(QStringList * cmdList);
 };

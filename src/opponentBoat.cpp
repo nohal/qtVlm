@@ -233,9 +233,8 @@ opponentList::opponentList(Projection * proj,MainWindow * mainWin,QWidget *paren
     parent=parentWindow;
     this->mainWin=mainWin;
     this->proj=proj;
-    /* init http inetManager */
-    inetManager = new QNetworkAccessManager(this);
-    currentRequest=OPP_NO_REQUEST;
+
+
     /*colorTable[0] = QColor(85,0,0);
     colorTable[1] = QColor(255,0,0);
     colorTable[2] = QColor(170,0,255);
@@ -258,15 +257,10 @@ opponentList::opponentList(Projection * proj,MainWindow * mainWin,QWidget *paren
     colorTable[8] = QColor(0,85,0);
     colorTable[9] = QColor(85,0,0);
 
-
-
-    if(inetManager)
-    {
-        host = Util::getHost();
-        connect(inetManager, SIGNAL(finished(QNetworkReply*)),
-            this, SLOT(requestFinished (QNetworkReply*)));
-        Util::paramProxy(inetManager,host);
-    }
+    /* init http inetManager */
+    inetManager = new QNetworkAccessManager(this);
+    currentReply=NULL;
+    updateInet();
 }
 
 QString opponentList::getRaceId()
@@ -373,20 +367,63 @@ void opponentList::getNxtOppData()
                         << "&idraces="
                         << currentRace;
     currentOpponent++;
-    //qWarning() << "ask for " << page;
 
+    resetInet();
     QNetworkRequest request;
     request.setUrl(QUrl(page));
     Util::addAgent(request);
     currentRequest=OPP_BOAT_DATA;
-    inetManager->get(request);
+    currentReply=inetManager->get(request);
+    connect(currentReply, SIGNAL(finished()), this, SLOT(slotFinished()));
+    connect(currentReply, SIGNAL(error(QNetworkReply::NetworkError)),
+             this, SLOT(slotError(QNetworkReply::NetworkError)));
+}
+
+void opponentList::updateInet(void)
+{
+    /* update connection */
+    if(inetManager)
+    {
+        host=Util::getHost();
+        Util::paramProxy(inetManager,host);
+        resetInet();
+    }
+}
+
+void opponentList::resetInet(void)
+{
+    currentRequest=OPP_NO_REQUEST;
+    if(currentReply)
+    {
+        currentReply->disconnect();
+        currentReply->close();
+        currentReply->deleteLater();
+        currentReply=NULL;
+    }
+}
+
+void opponentList::slotFinished()
+{
+    if(currentReply && currentRequest!=OPP_NO_REQUEST)
+        requestFinished(currentReply);
+    else
+        qWarning() << "Not processing reply: currentReply = " << currentReply << ", currentRequest=" << currentRequest;
+}
+
+void opponentList::slotError(QNetworkReply::NetworkError error)
+{
+    qWarning() << "Error doing inetGet (1):" << error << " - " << (currentReply?currentReply->errorString():"");
+    resetInet();
 }
 
 void opponentList::requestFinished ( QNetworkReply* inetReply)
 {
+    if(currentRequest==OPP_NO_REQUEST)
+        return;
+
     if (inetReply->error() != QNetworkReply::NoError) {
-        qWarning() << "Error doing inet-Get:" << inetReply->error();
-        currentRequest=OPP_NO_REQUEST;
+        qWarning() << "Error doing inet-Get:" << inetReply->error() << " - " << inetReply->errorString();
+        resetInet();
     }
     else
     {
@@ -429,20 +466,25 @@ void opponentList::requestFinished ( QNetworkReply* inetReply)
                                  opponent_list.append(new opponent(colorTable[currentOpponent-1],idu,currentRace,
                                                                 lat,lon,login,name,proj,mainWin,parent));
                             QTextStream(&page) << host
-                            << "/gmap/index.php?"
-                            << "type=ajax&riq=trj"
-                            << "&idusers="
-                            << idu
-                            << "&idraces="
-                            << currentRace;
+                                << "/gmap/index.php?"
+                                << "type=ajax&riq=trj"
+                                << "&idusers="
+                                << idu
+                                << "&idraces="
+                                << currentRace;
+                            resetInet();
                             request.setUrl(QUrl(page));
                             Util::addAgent(request);
                             currentRequest=OPP_BOAT_TRJ;
-                            inetManager->get(request);
+                            currentReply=inetManager->get(request);
+                            connect(currentReply, SIGNAL(finished()), this, SLOT(slotFinished()));
+                            connect(currentReply, SIGNAL(error(QNetworkReply::NetworkError)),
+                                     this, SLOT(slotError(QNetworkReply::NetworkError)));
                             break;
                          }
                      }
                  }
+                 resetInet();
                  getNxtOppData();
                  break;
              case OPP_BOAT_TRJ:

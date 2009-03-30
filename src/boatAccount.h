@@ -28,8 +28,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <QBuffer>
 #include <QMenuBar>
 
+#include <QSslError>
 #include <QNetworkAccessManager>
 #include <QNetworkReply>
+
 
 class boatAccount;
 
@@ -99,12 +101,15 @@ class boatAccount: public QWidget
 
         QString getCurrentPolarName(void) { return (forcePolar?polarName:polarVlm); }
 
-        void updateProxy(void);
+        void updateInet(void);
 
     public slots:
         void projectionUpdated();
         void paramChanged();
+
         void requestFinished (QNetworkReply*);
+        void slotFinished();
+        void slotError(QNetworkReply::NetworkError error);
 
         void selectBoat();
         void toggleEstime();
@@ -121,6 +126,7 @@ class boatAccount: public QWidget
         void setLabelText(QString name);
         void updateBoatData(void);
         void doRequest(int requestCmd);
+        void resetInet(void);
         void reloadPolar(void);
         void updateBoatName(void);
 
@@ -188,6 +194,7 @@ class boatAccount: public QWidget
         int currentRequest;
 
         QNetworkAccessManager *inetManager;
+        QNetworkReply * currentReply;
         /* polar data */
         Polar * polarData;
         QString polarName;

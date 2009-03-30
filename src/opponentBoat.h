@@ -114,8 +114,12 @@ class opponentList : public QObject
         QString getRaceId();
         QList<opponent*> * getList(void) { return &opponent_list; };
 
+        void updateInet(void);
+
     public slots:
         void requestFinished (QNetworkReply*);
+        void slotFinished();
+        void slotError(QNetworkReply::NetworkError error);
         void getTrace(QString buff, QList<position*> * trace);
 
     private:
@@ -138,6 +142,8 @@ class opponentList : public QObject
         QString host;
         int currentRequest;
         QNetworkAccessManager *inetManager;
+        void resetInet(void);
+        QNetworkReply * currentReply;
 
         Projection * proj;
 };
