@@ -32,6 +32,7 @@ HEADERS += \
            GribPlot.h \
            GribReader.h \
            GribRecord.h \
+           inetConnexion.h \
            Isobar.h \
            LoadGribFile.h \
            MainWindow.h \
@@ -74,6 +75,7 @@ SOURCES += \
            GribPlot.cpp \
            GribReader.cpp \
            GribRecord.cpp \
+           inetConnexion.cpp \
            Isobar.cpp \
            LoadGribFile.cpp \
            main.cpp \

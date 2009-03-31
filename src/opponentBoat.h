@@ -29,10 +29,8 @@ Copyright (C) 2008 - Jacques Zaninetti - http://zygrib.free.fr
 #include <QWidget>
 #include <QLabel>
 
-#include <QNetworkAccessManager>
-#include <QNetworkReply>
-
 #include "Projection.h"
+#include "inetConnexion.h"
 
 class MainWindow;
 struct raceData;
@@ -104,7 +102,7 @@ class opponent : public QWidget
         void  paintEvent(QPaintEvent *event);
 };
 
-class opponentList : public QObject
+class opponentList : public QWidget
 {Q_OBJECT
     public:
         opponentList(Projection * proj,MainWindow * mainWin,QWidget *parentWindow=NULL);
@@ -117,9 +115,7 @@ class opponentList : public QObject
         void updateInet(void);
 
     public slots:
-        void requestFinished (QNetworkReply*);
-        void slotFinished();
-        void slotError(QNetworkReply::NetworkError error);
+        void requestFinished (int,QString);
         void getTrace(QString buff, QList<position*> * trace);
 
     private:
@@ -139,11 +135,7 @@ class opponentList : public QObject
         void getNxtOppData();
 
         /* http connection */
-        QString host;
-        int currentRequest;
-        QNetworkAccessManager *inetManager;
-        void resetInet(void);
-        QNetworkReply * currentReply;
+        inetConnexion * conn;
 
         Projection * proj;
 };

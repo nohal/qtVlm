@@ -84,11 +84,8 @@ boardVLM::boardVLM(QMainWindow * mainWin,QWidget * parent) : QWidget(parent)
     deg_unit_1->setText(str);
 
     /* inet init */
-
-    inetManager = new QNetworkAccessManager(this);
-    inetManager = new QNetworkAccessManager(this);
-    currentReply=NULL;
-    updateInet();
+    conn=new inetConnexion(this);
+    isWaiting=false;
 
     currentBoat = NULL;
 
@@ -114,18 +111,6 @@ void boardVLM::paramChanged(void)
     else
         chk_GPS->show();
     COM=Util::getSetting("serialName", "COM2").toString();
-}
-
-void boardVLM::resetInet(void)
-{
-    currentRequest=VLM_NO_REQUEST;
-    if(currentReply)
-    {
-        currentReply->disconnect();
-        currentReply->close();
-        currentReply->deleteLater();
-        currentReply=NULL;
-    }
 }
 
 void boardVLM::showGribPointInfo(const GribPointInfo &pf)
@@ -481,28 +466,20 @@ void boardVLM::setChangeStatus(bool status)
 void boardVLM::updateInet(void)
 {
     /* update connection */
-    if(inetManager)
-    {
-        host=Util::getHost();
-        Util::paramProxy(inetManager,host);
-        resetInet();
-    }
+    if(conn) conn->updateInet();
 }
 
 void boardVLM::sendCmd(int cmdNum,float  val1,float val2, float val3)
 {
-    if(inetManager && currentRequest == VLM_NO_REQUEST && currentBoat)
+    if(conn && currentBoat && !isWaiting && conn->isAvailable())
     {
         btn_Synch->setStyleSheet(QString::fromUtf8("background-color: rgb(255, 0, 0);"));
-        resetInet();
-        currentRequest=VLM_REQUEST_LOGIN;
         currentCmdNum=cmdNum;
         cmd_val1=val1;
         cmd_val2=val2;
         cmd_val3=val3;
         QString page;
         QTextStream(&page)
-                           << host
                         << "/myboat.php?"
                         << "pseudo=" << currentBoat->getLogin()
                         << "&password=" << currentBoat->getPass()
@@ -513,123 +490,78 @@ void boardVLM::sendCmd(int cmdNum,float  val1,float val2, float val3)
                                                  << cmd_val2 << ","
                                                  << cmd_val3 << ")";
 
-        QNetworkRequest request;
-        request.setUrl(QUrl(page));
-        Util::addAgent(request);
-        currentReply=inetManager->get(request);
-        connect(currentReply, SIGNAL(finished()), this, SLOT(slotFinished()));
-        connect(currentReply, SIGNAL(error(QNetworkReply::NetworkError)),
-                 this, SLOT(slotError(QNetworkReply::NetworkError)));
+        conn->doRequestGet(VLM_REQUEST_LOGIN,page);
     }
     else
     {
-        qWarning() <<  "error sendCmd " << currentRequest << " - bad state";
+        qWarning() <<  "error sendCmd " << cmdNum << " - bad state";
         btn_Synch->setStyleSheet(QString::fromUtf8("background-color: rgb(85, 255, 127);"));
     }
 }
 
-void boardVLM::slotFinished()
+void boardVLM::requestFinished (int currentRequest,QString)
 {
-    if(currentReply && currentRequest!=VLM_NO_REQUEST)
-        requestFinished(currentReply);
-    else
-    {
-        qWarning() << "Not processing reply: currentReply = " << currentReply << ", currentRequest=" << currentRequest;
-        btn_Synch->setStyleSheet(QString::fromUtf8("background-color: rgb(85, 255, 127);"));
-    }
-}
-
-void boardVLM::slotError(QNetworkReply::NetworkError error)
-{
-    qWarning() << "Error doing inetGet (1):" << error << " - " << (currentReply?currentReply->errorString():"");
-    btn_Synch->setStyleSheet(QString::fromUtf8("background-color: rgb(85, 255, 127);"));
-    resetInet();
-}
-
-void boardVLM::requestFinished ( QNetworkReply* inetReply)
-{
-    if(currentRequest==VLM_NO_REQUEST)
-        return;
     QString page;
     QNetworkRequest request;
-    if (inetReply->error() != QNetworkReply::NoError) {
-        qWarning() <<  "Error doing inetGet (2):" << inetReply->error() << " - " << inetReply->errorString();
-        btn_Synch->setStyleSheet(QString::fromUtf8("background-color: rgb(85, 255, 127);"));
-        resetInet();
-    }
-    else
+
+    switch(currentRequest)
     {
-        switch(currentRequest)
-        {
-            case VLM_NO_REQUEST:
-                btn_Synch->setStyleSheet(QString::fromUtf8("background-color: rgb(85, 255, 127);"));
-                return;
-            case VLM_REQUEST_LOGIN:
+        case VLM_REQUEST_LOGIN:
+            switch(currentCmdNum)
+            {
+                case VLM_CMD_HD:
+                    QTextStream(&page)
+                                << "/update_angle.php?expertcookie=yes&lang=fr&idusers="
+                                << currentBoat->getBoatId().toInt()
+                                << "&pilotmode=autopilot&boatheading="+QString().setNum(cmd_val1)
+                            ;
+                    break;
+                case VLM_CMD_ANG:
+                    QTextStream(&page)
+                                << "/update_angle.php?expertcookie=yes&lang=fr&idusers="
+                                << currentBoat->getBoatId().toInt()
+                                << "&pilotmode=windangle&pilotparameter="+QString().setNum(cmd_val1)
+                            ;
+                    break;
+                case VLM_CMD_VMG:
+                    QTextStream(&page)
+                                << "/update_angle.php?expertcookie=yes&lang=fr&idusers="
+                                << currentBoat->getBoatId().toInt()
+                                << "&pilotmode=bestvmg"
+                            ;
+                    break;
+                case VLM_CMD_ORTHO:
+                    QTextStream(&page)
+                                << "/update_angle.php?expertcookie=yes&lang=fr&idusers="
+                                << currentBoat->getBoatId().toInt()
+                                << "&pilotmode=orthodromic"
+                            ;
+                    break;
+                case VLM_CMD_WP:
+                    QTextStream(&page)
+                                << "/myboat.php?type=savemywp"
+                                << "&pseudo=" << currentBoat->getLogin()
+                                << "&password=" << currentBoat->getPass()
+                                << "&lang=fr"
+                                << "&targetlat="+QString().setNum(cmd_val1)
+                                << "&targetlong="+QString().setNum(cmd_val2)
+                                << "&targetandhdg="+QString().setNum(cmd_val3)
+                            ;
+                    break;
+            }
+            qWarning() << "Send cmd: " << page;
 
-                switch(currentCmdNum)
-                {
-                    case VLM_CMD_HD:
-                        QTextStream(&page) << host
-                                   << "/update_angle.php?expertcookie=yes&lang=fr&idusers="
-                                   << currentBoat->getBoatId().toInt()
-                                   << "&pilotmode=autopilot&boatheading="+QString().setNum(cmd_val1)
-                                ;
-                        break;
-                    case VLM_CMD_ANG:
-                        QTextStream(&page) << host
-                                   << "/update_angle.php?expertcookie=yes&lang=fr&idusers="
-                                   << currentBoat->getBoatId().toInt()
-                                   << "&pilotmode=windangle&pilotparameter="+QString().setNum(cmd_val1)
-                                ;
-                        break;
-                    case VLM_CMD_VMG:
-                        QTextStream(&page) << host
-                                   << "/update_angle.php?expertcookie=yes&lang=fr&idusers="
-                                   << currentBoat->getBoatId().toInt()
-                                   << "&pilotmode=bestvmg"
-                                ;
-                        break;
-                    case VLM_CMD_ORTHO:
-                        QTextStream(&page) << host
-                                   << "/update_angle.php?expertcookie=yes&lang=fr&idusers="
-                                   << currentBoat->getBoatId().toInt()
-                                   << "&pilotmode=orthodromic"
-                                ;
-                        break;
-                    case VLM_CMD_WP:
-                        QTextStream(&page) << host
-                                   << "/myboat.php?type=savemywp"
-                                   << "&pseudo=" << currentBoat->getLogin()
-                                   << "&password=" << currentBoat->getPass()
-                                   << "&lang=fr"
-                                   << "&targetlat="+QString().setNum(cmd_val1)
-                                   << "&targetlong="+QString().setNum(cmd_val2)
-                                   << "&targetandhdg="+QString().setNum(cmd_val3)
-                                ;
-                        break;
-                }
-                qWarning() << "Send cmd: " << page;
-
-                resetInet();
-                currentRequest=VLM_DO_REQUEST;
-                request.setUrl(QUrl(page));
-                Util::addAgent(request);
-                currentReply=inetManager->get(request);
-                connect(currentReply, SIGNAL(finished()), this, SLOT(slotFinished()));
-                connect(currentReply, SIGNAL(error(QNetworkReply::NetworkError)),
-                         this, SLOT(slotError(QNetworkReply::NetworkError)));
-                break;
-            case VLM_DO_REQUEST:
-                currentRequest=VLM_WAIT_RESULT;
-                qWarning() << "Request done";
-                /* update boat info */
-                nbRetry=0;
-                timer->start(1000);
-                break;
-        }
+            conn->doRequestGet(VLM_DO_REQUEST,page);
+            break;
+        case VLM_DO_REQUEST:
+            isWaiting=true;
+            qWarning() << "Request done";
+            /* update boat info */
+            nbRetry=0;
+            timer->start(1000);
+            break;
     }
 }
-
 
 void boardVLM::chkResult(void)
 {
@@ -669,7 +601,7 @@ void boardVLM::chkResult(void)
     }
     if(done)
     {
-        resetInet();
+        isWaiting=false;
         boatUpdated(currentBoat);
     }
     else
@@ -678,7 +610,7 @@ void boardVLM::chkResult(void)
         if(nbRetry>MAX_RETRY)
         {
             qWarning("Failed to synch");
-            currentRequest=VLM_NO_REQUEST;
+            isWaiting=false;
             btn_Synch->setStyleSheet(QString::fromUtf8("background-color: rgb(255, 170, 0);"));
             return;
         }

@@ -24,14 +24,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <QList>
 #include <QMessageBox>
 
-
-#include <QNetworkAccessManager>
-#include <QNetworkReply>
-
 class Pilototo;
 
 #include "Pilototo_param.h"
 #include "boatAccount.h"
+#include "inetConnexion.h"
 
 #define PILOTOTO_STATUS_DONE    0
 #define PILOTOTO_STATUS_PENDING 1
@@ -132,9 +129,7 @@ class Pilototo : public QDialog, public Ui::pilototo_ui
         void instructionUpdated(void);
         void boatUpdated(boatAccount * boat);
         void updateTime(void);
-        void requestFinished (QNetworkReply*);
-        void slotFinished();
-        void slotError(QNetworkReply::NetworkError error);
+        void requestFinished (int currentRequest,QString res);
 
     private slots:
         void addInstruction(void);
@@ -153,10 +148,7 @@ class Pilototo : public QDialog, public Ui::pilototo_ui
         void updateDrawList(void);
         void updateNbInstruction(void);
 
-        QNetworkAccessManager *inetManager;
-        QNetworkReply * currentReply;
-        QString host;
-        int currentRequest;
+        inetConnexion * conn;
         QStringList * currentList;
 
         void resetInet(void);

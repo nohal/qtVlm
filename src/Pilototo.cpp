@@ -48,9 +48,7 @@ Pilototo::Pilototo(QWidget * parent):QDialog(parent)
                              );
 
     /* inet init */
-    inetManager = new QNetworkAccessManager(this);
-    currentReply=NULL;
-    updateInet();
+    conn=new inetConnexion(this);
     currentList = NULL;
 }
 
@@ -287,114 +285,54 @@ void Pilototo::done(int result)
 
 void Pilototo::sendPilototo(QStringList * cmdList)
 {
-    if(inetManager && currentRequest == VLM_NO_REQUEST && cmdList->count() > 0)
+    if(conn && cmdList->count() > 0 && conn->isAvailable() )
     {
-        resetInet();
-        currentRequest=VLM_REQUEST_LOGIN;
         currentList=cmdList;
         QString page;
-        QTextStream(&page) << host
+        QTextStream(&page)
                         << "/myboat.php?"
                         << "pseudo=" << boat->getLogin()
                         << "&password=" << boat->getPass()
                         << "&lang=fr&type=login"
                         ;
-        QNetworkRequest request;
-        request.setUrl(QUrl(page));
-        Util::addAgent(request);
-        currentReply=inetManager->get(request);
-        connect(currentReply, SIGNAL(finished()), this, SLOT(slotFinished()));
-        connect(currentReply, SIGNAL(error(QNetworkReply::NetworkError)),
-                 this, SLOT(slotError(QNetworkReply::NetworkError)));
+        conn->doRequestGet(VLM_REQUEST_LOGIN,page);
     }
     else
     {
-        qWarning("error can't send pilototo (current state:%d nb instr:%d)",currentRequest,cmdList->count());
+        qWarning("error can't send pilototo (nb instr:%d)",cmdList->count());
     }
 }
 
-void Pilototo::resetInet(void)
+void Pilototo::requestFinished (int currentRequest,QString)
 {
-    currentRequest=VLM_NO_REQUEST;
-    if(currentReply)
-    {
-        currentReply->disconnect();
-        currentReply->close();
-        currentReply->deleteLater();
-        currentReply=NULL;
-    }
-}
-
-void Pilototo::slotFinished()
-{
-    if(currentReply && currentRequest!=VLM_NO_REQUEST)
-        requestFinished(currentReply);
-    else
-        qWarning() << "Not processing reply: currentReply = " << currentReply << ", currentRequest=" << currentRequest;
-}
-
-void Pilototo::slotError(QNetworkReply::NetworkError error)
-{
-    qWarning() << "Error doing inetGet (1):" << error << " - " << (currentReply?currentReply->errorString():"");
-    resetInet();
-}
-
-void Pilototo::requestFinished ( QNetworkReply* inetReply)
-{
-    if(currentRequest==VLM_NO_REQUEST)
-        return;
     QString page;
     QString data;
-    if (inetReply->error() != QNetworkReply::NoError)
+
+    switch(currentRequest)
     {
-        qWarning() << "Error doing inetGet:" <<inetReply->error() << " - " << inetReply->errorString();
-        resetInet();
-    }
-    else
-    {
-        switch(currentRequest)
-        {
-            case VLM_NO_REQUEST:
-                return;
-            case VLM_REQUEST_LOGIN:
-            case VLM_DO_REQUEST:
-                if(currentList->isEmpty())
-                {
-                    /*we have processed all cmd*/
-                    currentRequest=VLM_NO_REQUEST;
-                    delete currentList;
-                    /* ask for an update of boat data*/
-                    boat->getData();
-                }
-                else
-                {
-                    resetInet();
-                    currentRequest=VLM_DO_REQUEST;
-                    QTextStream(&page) << host
-                            << "/pilototo.php";
-                    data = currentList->takeFirst();
-                    QNetworkRequest request;
-                    request.setUrl(QUrl(page));
-                    Util::addAgent(request);
-                    currentReply=inetManager->get(request);
-                    connect(currentReply, SIGNAL(finished()), this, SLOT(slotFinished()));
-                    connect(currentReply, SIGNAL(error(QNetworkReply::NetworkError)),
-                            this, SLOT(slotError(QNetworkReply::NetworkError)));
-                }
-                break;
-        }
+        case VLM_REQUEST_LOGIN:
+        case VLM_DO_REQUEST:
+            if(currentList->isEmpty())
+            {
+                /*we have processed all cmd*/
+                delete currentList;
+                /* ask for an update of boat data*/
+                boat->getData();
+            }
+            else
+            {
+                QTextStream(&page) << "/pilototo.php";
+                data = currentList->takeFirst();
+                conn->doRequestPost(VLM_DO_REQUEST,page,data);
+            }
+            break;
     }
 }
 
 void Pilototo::updateInet(void)
 {
     /* update connection */
-    if(inetManager)
-    {
-        host=Util::getHost();
-        Util::paramProxy(inetManager,host);
-        resetInet();
-    }
+    if(conn) conn->updateInet();
 }
 
 void Pilototo::addInstruction(void)

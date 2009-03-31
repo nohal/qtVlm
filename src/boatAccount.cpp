@@ -79,29 +79,20 @@ boatAccount::boatAccount(QString login, QString pass, bool activated,Projection 
              main,SLOT(slotGetTrace(QString,QList<position*> *)));
 
     /* init http inetManager */
-    inetManager = new QNetworkAccessManager(this);
-    currentReply=NULL;
-    updateInet();
+    conn=new inetConnexion(this);
+
     setParam(login,pass,activated);
 }
 
 boatAccount::~boatAccount()
 {
-    resetInet();
-    if(inetManager)
-        delete inetManager;
     disconnect();
 }
 
 void boatAccount::updateInet(void)
 {
     /* update connection */
-    if(inetManager)
-    {
-        host=Util::getHost();
-        Util::paramProxy(inetManager,host);
-        resetInet();
-    }
+    if(conn) conn->updateInet();
 }
 
 void boatAccount::selectBoat()
@@ -133,12 +124,11 @@ void boatAccount::doRequest(int requestCmd)
     if(!activated)
         return;
 
-    if(inetManager)
+    if(conn)
     {
-        if(currentRequest != VLM_NO_REQUEST)
+        if(!conn->isAvailable() )
         {
-            qWarning() << "request already running " << login << " "
-                    << (currentRequest==VLM_REQUEST_BOAT?"boat":"idu");
+            qWarning() << "request already running for " << login ;
             return;
         }
 
@@ -149,21 +139,18 @@ void boatAccount::doRequest(int requestCmd)
             case VLM_REQUEST_BOAT:
                 if(boat_id==-1)
                 {
-                    currentRequest = VLM_NO_REQUEST;
                     qWarning() << "boat Acc no std request : Boat Id = -1 for:" << login ;
                     doRequest(VLM_REQUEST_IDU);
                     return;
                 }
-                QTextStream(&page) << host
-                            << "/getinfo.php?"
+                QTextStream(&page) << "/getinfo.php?"
                             << "pseudo=" << login
                             << "&password=" << pass
                             << "&idu="<< boat_id
                             ;
                 break;
             case VLM_REQUEST_IDU:
-                QTextStream(&page) << host
-                            << "/getinfo2.php?"
+                QTextStream(&page) << "/getinfo2.php?"
                             << "pseudo=" << login
                             << "&password=" << pass
                             ;
@@ -171,12 +158,10 @@ void boatAccount::doRequest(int requestCmd)
             case VLM_REQUEST_TRJ:
                 if(race_id==0)
                 {
-                    currentRequest = VLM_NO_REQUEST;
                     qWarning() << "boat Acc no request TRJ for:" << login << " id=" << boat_id;
                     return;
                 }
-                QTextStream(&page) << host
-                            << "/gmap/index.php?"
+                QTextStream(&page) << "/gmap/index.php?"
                             << "type=ajax&riq=trj"
                             << "&idusers="
                             << boat_id
@@ -185,19 +170,7 @@ void boatAccount::doRequest(int requestCmd)
                 break;
         }
 
-        resetInet();
-
-        currentRequest = requestCmd;
-        qWarning() << "boat Acc Doing request: " << page;
-
-        QNetworkRequest request;
-        request.setUrl(QUrl(page));
-        Util::addAgent(request);
-
-        currentReply=inetManager->get(request);
-        connect(currentReply, SIGNAL(finished()), this, SLOT(slotFinished()));
-        connect(currentReply, SIGNAL(error(QNetworkReply::NetworkError)),
-                 this, SLOT(slotError(QNetworkReply::NetworkError)));
+        conn->doRequestGet(requestCmd,page);
     }
     else
     {
@@ -212,206 +185,164 @@ void boatAccount::doRequest(int requestCmd)
     }
 }
 
-void boatAccount::resetInet(void)
+void boatAccount::requestFinished ( int currentRequest,QString res)
 {
-    currentRequest=VLM_NO_REQUEST;
-    if(currentReply)
+    //-------------------------------------------
+    // Retour de l'étape 1 : préparation du fichier
+    //-------------------------------------------
+    QStringList lsbuf;
+    float latitude=0,longitude=0;
+    bool newRace=false;
+
+    switch(currentRequest)
     {
-        currentReply->disconnect();
-        currentReply->close();
-        currentReply->deleteLater();
-        currentReply=NULL;
-    }
-}
-
-void boatAccount::slotFinished()
-{
-    if(currentReply && currentRequest!=VLM_NO_REQUEST)
-        requestFinished(currentReply);
-    else
-        qWarning() << "Not processing reply: currentReply = " << currentReply << ", currentRequest=" << currentRequest;
-}
-
-void boatAccount::slotError(QNetworkReply::NetworkError error)
-{
-    qWarning() << "Error doing inetGet (1):" << error << " - " << (currentReply?currentReply->errorString():"");
-    resetInet();
-}
-
-void boatAccount::requestFinished ( QNetworkReply* inetReply)
-{
-    if(currentRequest==VLM_NO_REQUEST)
-        return;
-
-    if (inetReply->error() != QNetworkReply::NoError) {
-        qWarning() << "Error doing inetGet (2):" << inetReply->error() << " - " << inetReply->errorString();
-        resetInet();
-    }
-    else
-    {
-        //-------------------------------------------
-        // Retour de l'étape 1 : préparation du fichier
-        //-------------------------------------------
-        QString strbuf = inetReply->readAll();
-        QStringList lsbuf;
-        float latitude=0,longitude=0;
-        bool newRace=false;
-
-        switch(currentRequest)
-        {
-            case VLM_REQUEST_IDU:
-                lsbuf = strbuf.split(";");
-                boat_id=-1;
-                for (int i=0; i < lsbuf.size(); i++)
-                {
-                    QStringList lsval = lsbuf.at(i).split("=");
-                    if (lsval.size() == 2) {
-                        if (lsval.at(0) == "IDU")
-                        {
-                            boat_id = lsval.at(1).toInt();
-                            break;
-                        }
+        case VLM_REQUEST_IDU:
+            lsbuf = res.split(";");
+            boat_id=-1;
+            for (int i=0; i < lsbuf.size(); i++)
+            {
+                QStringList lsval = lsbuf.at(i).split("=");
+                if (lsval.size() == 2) {
+                    if (lsval.at(0) == "IDU")
+                    {
+                        boat_id = lsval.at(1).toInt();
+                        break;
                     }
                 }
-                if(boat_id!=-1)
-                {
-                    qWarning() << "Get boat id " << boat_id;
-                    resetInet();
-                    doRequest(VLM_REQUEST_BOAT);
-                }
-                else
-                    resetInet();
-                break;
-            case VLM_REQUEST_BOAT:
-                hasPilototo=false;
-                pilototo.clear();
-                for(int i=0;i<5;i++)
-                    pilototo.append("none");
-                lsbuf = strbuf.split("\n");
+            }
+            if(boat_id!=-1)
+            {
+                qWarning() << "Get boat id " << boat_id;
+                doRequest(VLM_REQUEST_BOAT);
+            }
+            break;
+        case VLM_REQUEST_BOAT:
+            hasPilototo=false;
+            pilototo.clear();
+            for(int i=0;i<5;i++)
+                pilototo.append("none");
+            lsbuf = res.split("\n");
 
-                for (int i=0; i < lsbuf.size(); i++)
-                {
-                    QStringList lsval = lsbuf.at(i).split("=");
-                    if (lsval.size() == 2) {
-                        if (lsval.at(0) == "IDU")
-                            boat_id = lsval.at(1).toInt();
-                        else if (lsval.at(0) == "IDB")
-                            boat_name = lsval.at(1);
-                        else if (lsval.at(0) == "RAC")
-                        {
-                            if(race_id != lsval.at(1).toInt())
-                                newRace=true;
-                            race_id = lsval.at(1).toInt();
+            for (int i=0; i < lsbuf.size(); i++)
+            {
+                QStringList lsval = lsbuf.at(i).split("=");
+                if (lsval.size() == 2) {
+                    if (lsval.at(0) == "IDU")
+                        boat_id = lsval.at(1).toInt();
+                    else if (lsval.at(0) == "IDB")
+                        boat_name = lsval.at(1);
+                    else if (lsval.at(0) == "RAC")
+                    {
+                        if(race_id != lsval.at(1).toInt())
+                            newRace=true;
+                        race_id = lsval.at(1).toInt();
 
-                            if(race_id==0)
-                            {
-                                latitude = longitude = speed = heading = avg = 0;
-                                dnm = loch = ortho = loxo = vmg = windDir = 0;
-                                windSpeed = WPLat = WPLon = TWA = prevVac = 0;
-                                nextVac = 0;
-                                race_name = "";
-                                WPHd = -1;
-                                pilotType = 1;
-                                pilotString = "";
-                                score = "";
-                                hasPilototo=false;
-                            }
-                        }
-                        else if (lsval.at(0) == "LAT")
-                            latitude = lsval.at(1).toFloat();
-                        else if (lsval.at(0) == "LON")
-                            longitude = lsval.at(1).toFloat();
-                        else if (lsval.at(0) == "RAN")
-                            race_name = lsval.at(1);
-                        else if (lsval.at(0) == "BSP")
-                            speed = lsval.at(1).toFloat();
-                        else if (lsval.at(0) == "HDG")
-                            heading = lsval.at(1).toFloat();
-                        else if (lsval.at(0) == "AVG")
-                            avg = lsval.at(1).toFloat();
-                        else if (lsval.at(0) == "DNM")
-                            dnm = lsval.at(1).toFloat();
-                        else if (lsval.at(0) == "LOC")
-                            loch = lsval.at(1).toFloat();
-                        else if (lsval.at(0) == "ORT")
-                            ortho = lsval.at(1).toFloat();
-                        else if (lsval.at(0) == "LOX")
-                            loxo = lsval.at(1).toFloat();
-                        else if (lsval.at(0) == "VMG")
-                            vmg = lsval.at(1).toFloat();
-                        else if (lsval.at(0) == "TWD")
-                            windDir = lsval.at(1).toFloat();
-                        else if (lsval.at(0) == "TWS")
-                            windSpeed = lsval.at(1).toFloat();
-                        else if (lsval.at(0) == "WPLAT")
-                            WPLat = lsval.at(1).toFloat();
-                        else if (lsval.at(0) == "WPLON")
-                            WPLon = lsval.at(1).toFloat();
-                        else if (lsval.at(0) == "H@WP")
-                            WPHd = lsval.at(1).toFloat();
-                        else if(lsval.at(0) == "PIM")
-                            pilotType = lsval.at(1).toInt();
-                        else if(lsval.at(0) == "PIP")
-                            pilotString = lsval.at(1);
-                        else if(lsval.at(0) == "TWA")
-                            TWA = lsval.at(1).toFloat();
-                        else if(lsval.at(0) == "ETA")
-                            ETA = lsval.at(1);
-                        else if(lsval.at(0) == "POS")
-                            score = lsval.at(1);
-                        else if(lsval.at(0) == "LUP")
-                            prevVac = lsval.at(1).toInt();
-                        else if(lsval.at(0) == "NUP")
-                            nextVac = lsval.at(1).toInt();
-                        else if(lsval.at(0) == "PIL1")
+                        if(race_id==0)
                         {
-                            hasPilototo=true;
-                            pilototo[0] = lsval.at(1);
+                            latitude = longitude = speed = heading = avg = 0;
+                            dnm = loch = ortho = loxo = vmg = windDir = 0;
+                            windSpeed = WPLat = WPLon = TWA = prevVac = 0;
+                            nextVac = 0;
+                            race_name = "";
+                            WPHd = -1;
+                            pilotType = 1;
+                            pilotString = "";
+                            score = "";
+                            hasPilototo=false;
                         }
-                        else if(lsval.at(0) == "PIL2")
-                        {
-                            hasPilototo=true;
-                            pilototo[1] = lsval.at(1);
-                        }
-                        else if(lsval.at(0) == "PIL3")
-                        {
-                            hasPilototo=true;
-                            pilototo[2] = lsval.at(1);
-                        }
-                        else if(lsval.at(0) == "PIL4")
-                        {
-                            hasPilototo=true;
-                            pilototo[3] = lsval.at(1);
-                        }
-                        else if(lsval.at(0) == "PIL5")
-                        {
-                            hasPilototo=true;
-                            pilototo[4] = lsval.at(1);
-                        }
-                        else if(lsval.at(0) == "POL")
-                            polarVlm = lsval.at(1);
                     }
+                    else if (lsval.at(0) == "LAT")
+                        latitude = lsval.at(1).toFloat();
+                    else if (lsval.at(0) == "LON")
+                        longitude = lsval.at(1).toFloat();
+                    else if (lsval.at(0) == "RAN")
+                        race_name = lsval.at(1);
+                    else if (lsval.at(0) == "BSP")
+                        speed = lsval.at(1).toFloat();
+                    else if (lsval.at(0) == "HDG")
+                        heading = lsval.at(1).toFloat();
+                    else if (lsval.at(0) == "AVG")
+                        avg = lsval.at(1).toFloat();
+                    else if (lsval.at(0) == "DNM")
+                        dnm = lsval.at(1).toFloat();
+                    else if (lsval.at(0) == "LOC")
+                        loch = lsval.at(1).toFloat();
+                    else if (lsval.at(0) == "ORT")
+                        ortho = lsval.at(1).toFloat();
+                    else if (lsval.at(0) == "LOX")
+                        loxo = lsval.at(1).toFloat();
+                    else if (lsval.at(0) == "VMG")
+                        vmg = lsval.at(1).toFloat();
+                    else if (lsval.at(0) == "TWD")
+                        windDir = lsval.at(1).toFloat();
+                    else if (lsval.at(0) == "TWS")
+                        windSpeed = lsval.at(1).toFloat();
+                    else if (lsval.at(0) == "WPLAT")
+                        WPLat = lsval.at(1).toFloat();
+                    else if (lsval.at(0) == "WPLON")
+                        WPLon = lsval.at(1).toFloat();
+                    else if (lsval.at(0) == "H@WP")
+                        WPHd = lsval.at(1).toFloat();
+                    else if(lsval.at(0) == "PIM")
+                        pilotType = lsval.at(1).toInt();
+                    else if(lsval.at(0) == "PIP")
+                        pilotString = lsval.at(1);
+                    else if(lsval.at(0) == "TWA")
+                        TWA = lsval.at(1).toFloat();
+                    else if(lsval.at(0) == "ETA")
+                        ETA = lsval.at(1);
+                    else if(lsval.at(0) == "POS")
+                        score = lsval.at(1);
+                    else if(lsval.at(0) == "LUP")
+                        prevVac = lsval.at(1).toInt();
+                    else if(lsval.at(0) == "NUP")
+                        nextVac = lsval.at(1).toInt();
+                    else if(lsval.at(0) == "PIL1")
+                    {
+                        hasPilototo=true;
+                        pilototo[0] = lsval.at(1);
+                    }
+                    else if(lsval.at(0) == "PIL2")
+                    {
+                        hasPilototo=true;
+                        pilototo[1] = lsval.at(1);
+                    }
+                    else if(lsval.at(0) == "PIL3")
+                    {
+                        hasPilototo=true;
+                        pilototo[2] = lsval.at(1);
+                    }
+                    else if(lsval.at(0) == "PIL4")
+                    {
+                        hasPilototo=true;
+                        pilototo[3] = lsval.at(1);
+                    }
+                    else if(lsval.at(0) == "PIL5")
+                    {
+                        hasPilototo=true;
+                        pilototo[4] = lsval.at(1);
+                    }
+                    else if(lsval.at(0) == "POL")
+                        polarVlm = lsval.at(1);
                 }
+            }
 
-                lat = latitude/1000;
-                lon = longitude/1000;
+            lat = latitude/1000;
+            lon = longitude/1000;
 
-                current_heading = heading;
-                qWarning() << "Data for " << boat_id << " received";
-                /* compute heading point */
-                resetInet();
-                doRequest(VLM_REQUEST_TRJ);
-                break;
-            case VLM_REQUEST_TRJ:
-                qWarning() << "Get trj result";
-                emit getTrace(strbuf,&trace);
-                qWarning() << boat_id << ": " << trace.count() << " points";
-                resetInet();
-                /* we can now update everything */
-                updateBoatData();
-                emit boatUpdated(this,newRace);
-                break;
-        }
+            current_heading = heading;
+            qWarning() << "Data for " << boat_id << " received";
+            /* compute heading point */
+            doRequest(VLM_REQUEST_TRJ);
+            break;
+        case VLM_REQUEST_TRJ:
+            qWarning() << "Get trj result";
+            emit getTrace(res,&trace);
+            qWarning() << boat_id << ": " << trace.count() << " points";
+            /* we can now update everything */
+            updateBoatData();
+            emit boatUpdated(this,newRace);
+            break;
     }
 }
 

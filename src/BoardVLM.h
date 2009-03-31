@@ -28,9 +28,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <QPainter>
 #include <QMainWindow>
 
-#include <QNetworkAccessManager>
-#include <QNetworkReply>
-
 class boardVLM_part2;
 class boardVLM;
 
@@ -38,7 +35,7 @@ class boardVLM;
 #include "ui_BoardVLM_part1.h"
 #include "ui_BoardVLM_part2.h"
 #include "Util.h"
-
+#include "inetConnexion.h"
 #include "GribPlot.h"
 #include "Util.h"
 
@@ -78,9 +75,7 @@ class boardVLM: public QWidget , public Ui::boardVLM_part1_ui
 { Q_OBJECT
     public:
         boardVLM(QMainWindow * mainWin,QWidget * parent=0);
-
         void updateInet(void);
-
         void showGribPointInfo(const GribPointInfo &pf);
 
 
@@ -93,9 +88,7 @@ class boardVLM: public QWidget , public Ui::boardVLM_part1_ui
         void doSynch();
         void synch_GPS();
 
-        void requestFinished (QNetworkReply*);
-        void slotFinished();
-        void slotError(QNetworkReply::NetworkError error);
+        void requestFinished (int currentRequest,QString res);
 
         void sendCmd(int cmdNum,float val1,float val2, float val3);
         void chkResult(void);
@@ -108,15 +101,12 @@ class boardVLM: public QWidget , public Ui::boardVLM_part1_ui
         void boatUpdated(boatAccount * boat);
 
     private:
-        void resetInet(void);
-        QNetworkAccessManager *inetManager;
-        QNetworkReply * currentReply;
-        QString host;
-
+        inetConnexion * conn;
         int currentRequest;
         int currentCmdNum;
         float cmd_val1,cmd_val2,cmd_val3;
         int nbRetry;
+        bool isWaiting;
 
         boatAccount * currentBoat;
 

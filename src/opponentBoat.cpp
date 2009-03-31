@@ -228,7 +228,7 @@ void opponent::paramChanged()
 #define OPP_MODE_REFRESH   0
 #define OPP_MODE_NEWLIST   1
 
-opponentList::opponentList(Projection * proj,MainWindow * mainWin,QWidget *parentWindow) : QObject(parentWindow)
+opponentList::opponentList(Projection * proj,MainWindow * mainWin,QWidget *parentWindow) : QWidget(parentWindow)
 {
     parent=parentWindow;
     this->mainWin=mainWin;
@@ -258,9 +258,7 @@ opponentList::opponentList(Projection * proj,MainWindow * mainWin,QWidget *paren
     colorTable[9] = QColor(85,0,0);
 
     /* init http inetManager */
-    inetManager = new QNetworkAccessManager(this);
-    currentReply=NULL;
-    updateInet();
+    conn=new inetConnexion(this);
 }
 
 QString opponentList::getRaceId()
@@ -273,7 +271,7 @@ QString opponentList::getRaceId()
 
 void opponentList::setBoatList(QString list_txt,QString race,bool force)
 {
-    if(currentRequest!=OPP_NO_REQUEST)
+    if(conn && !conn->isAvailable())
     {
         qWarning() << "getOpponents request still running";
         return;
@@ -292,7 +290,7 @@ void opponentList::setBoatList(QString list_txt,QString race,bool force)
         clear();
     }
 
-    currentRequest=OPP_BOAT_DATA;
+    //currentRequest=OPP_BOAT_DATA;
     currentOpponent = 0;
     currentList = list_txt.split(";");
     currentRace = race;
@@ -300,8 +298,6 @@ void opponentList::setBoatList(QString list_txt,QString race,bool force)
 
     if(currentList.size() > 0)
         getNxtOppData();
-    else
-        currentRequest=OPP_NO_REQUEST;
 }
 
 void opponentList::clear(void)
@@ -316,7 +312,7 @@ void opponentList::clear(void)
 
 void opponentList::refreshData(void)
 {
-    if(currentRequest!=OPP_NO_REQUEST)
+    if(conn && !conn->isAvailable())
     {
         qWarning() << "getOpponents request still running";
         return;
@@ -325,7 +321,7 @@ void opponentList::refreshData(void)
     if(opponent_list.size()<=0)
         return;
 
-    currentRequest=OPP_BOAT_DATA;
+    //currentRequest=OPP_BOAT_DATA;
     currentRace = opponent_list[0]->getRace();
     currentOpponent = 0;
     currentMode=OPP_MODE_REFRESH;
@@ -339,7 +335,6 @@ void opponentList::getNxtOppData()
 
     if(currentOpponent>=listSize)
     {
-        currentRequest=OPP_NO_REQUEST;
         parent->update();
         return;
     }
@@ -359,7 +354,7 @@ void opponentList::getNxtOppData()
     }
 
     QString page;
-    QTextStream(&page) << host
+    QTextStream(&page)
                         << "/gmap/index.php?"
                         << "type=ajax&riq=pos"
                         << "&idusers="
@@ -368,136 +363,77 @@ void opponentList::getNxtOppData()
                         << currentRace;
     currentOpponent++;
 
-    resetInet();
-    QNetworkRequest request;
-    request.setUrl(QUrl(page));
-    Util::addAgent(request);
-    currentRequest=OPP_BOAT_DATA;
-    currentReply=inetManager->get(request);
-    connect(currentReply, SIGNAL(finished()), this, SLOT(slotFinished()));
-    connect(currentReply, SIGNAL(error(QNetworkReply::NetworkError)),
-             this, SLOT(slotError(QNetworkReply::NetworkError)));
+    conn->doRequestGet(OPP_BOAT_DATA,page);
 }
 
 void opponentList::updateInet(void)
 {
     /* update connection */
-    if(inetManager)
+    if(conn) conn->updateInet();
+}
+
+void opponentList::requestFinished (int currentRequest,QString res)
+{
+    QString page;
+    QStringList list_res;
+    QStringList lsval,lsval2;
+    float lat,lon;
+    QString login,name;
+    QString idu;
+
+    switch(currentRequest)
     {
-        host=Util::getHost();
-        Util::paramProxy(inetManager,host);
-        resetInet();
-    }
-}
+        case OPP_BOAT_DATA:
+            list_res=readData(res,OPP_TYPE_NAME);
+            if(list_res.size()>0)
+            {
+                /* only one data should be returned */
+                lsval=list_res[0].split(",");
+                list_res=readData(res,OPP_TYPE_POSITION);
+                lsval2=list_res[0].split(",");
+                if (lsval2.size() == 2)
+                {
+                    lat=lsval2[0].toFloat();
+                    lon=lsval2[1].toFloat();
+                    login=lsval[0].mid(4,lsval[0].size()-4-4);
+                    name=lsval[1].mid(5,lsval[1].size()-5-1);
+                    if(lat!=0 && lon !=0)
+                    {
+                        idu = (currentMode==OPP_MODE_REFRESH?
+                            opponent_list[currentOpponent-1]->getIduser():currentList[currentOpponent-1]);
+                        /*qWarning() << login << "-" << name
+                            << " at (" << lat << "," << lon << ") - idu"
+                            << idu ;*/
+                        if(currentMode==OPP_MODE_REFRESH)
+                            opponent_list[currentOpponent-1]->setNewData(lat,lon,name);
+                        else
+                            opponent_list.append(new opponent(colorTable[currentOpponent-1],idu,currentRace,
+                                                        lat,lon,login,name,proj,mainWin,parent));
+                    QTextStream(&page)
+                        << "/gmap/index.php?"
+                        << "type=ajax&riq=trj"
+                        << "&idusers="
+                        << idu
+                        << "&idraces="
+                        << currentRace;
 
-void opponentList::resetInet(void)
-{
-    currentRequest=OPP_NO_REQUEST;
-    if(currentReply)
-    {
-        currentReply->disconnect();
-        currentReply->close();
-        currentReply->deleteLater();
-        currentReply=NULL;
-    }
-}
-
-void opponentList::slotFinished()
-{
-    if(currentReply && currentRequest!=OPP_NO_REQUEST)
-        requestFinished(currentReply);
-    else
-        qWarning() << "Not processing reply: currentReply = " << currentReply << ", currentRequest=" << currentRequest;
-}
-
-void opponentList::slotError(QNetworkReply::NetworkError error)
-{
-    qWarning() << "Error doing inetGet (1):" << error << " - " << (currentReply?currentReply->errorString():"");
-    resetInet();
-}
-
-void opponentList::requestFinished ( QNetworkReply* inetReply)
-{
-    if(currentRequest==OPP_NO_REQUEST)
-        return;
-
-    if (inetReply->error() != QNetworkReply::NoError) {
-        qWarning() << "Error doing inet-Get:" << inetReply->error() << " - " << inetReply->errorString();
-        resetInet();
-    }
-    else
-    {
-         QString strbuf = inetReply->readAll();
-         QString page;
-         QStringList list_res;
-         QStringList lsval,lsval2;
-         float lat,lon;
-         QString login,name;
-         QString idu;
-         QNetworkRequest request;
-         switch(currentRequest)
-         {
-             case OPP_NO_REQUEST:
-                 return;
-             case OPP_BOAT_DATA:
-                 list_res=readData(strbuf,OPP_TYPE_NAME);
-                 if(list_res.size()>0)
-                 {
-                     /* only one data should be returned */
-                     lsval=list_res[0].split(",");
-                     list_res=readData(strbuf,OPP_TYPE_POSITION);
-                     lsval2=list_res[0].split(",");
-                     if (lsval2.size() == 2)
-                     {
-                         lat=lsval2[0].toFloat();
-                         lon=lsval2[1].toFloat();
-                         login=lsval[0].mid(4,lsval[0].size()-4-4);
-                         name=lsval[1].mid(5,lsval[1].size()-5-1);
-                         if(lat!=0 && lon !=0)
-                         {
-                             idu = (currentMode==OPP_MODE_REFRESH?
-                                 opponent_list[currentOpponent-1]->getIduser():currentList[currentOpponent-1]);
-                             /*qWarning() << login << "-" << name
-                                 << " at (" << lat << "," << lon << ") - idu"
-                                 << idu ;*/
-                             if(currentMode==OPP_MODE_REFRESH)
-                                 opponent_list[currentOpponent-1]->setNewData(lat,lon,name);
-                             else
-                                 opponent_list.append(new opponent(colorTable[currentOpponent-1],idu,currentRace,
-                                                                lat,lon,login,name,proj,mainWin,parent));
-                            QTextStream(&page) << host
-                                << "/gmap/index.php?"
-                                << "type=ajax&riq=trj"
-                                << "&idusers="
-                                << idu
-                                << "&idraces="
-                                << currentRace;
-                            resetInet();
-                            request.setUrl(QUrl(page));
-                            Util::addAgent(request);
-                            currentRequest=OPP_BOAT_TRJ;
-                            currentReply=inetManager->get(request);
-                            connect(currentReply, SIGNAL(finished()), this, SLOT(slotFinished()));
-                            connect(currentReply, SIGNAL(error(QNetworkReply::NetworkError)),
-                                     this, SLOT(slotError(QNetworkReply::NetworkError)));
-                            break;
-                         }
-                     }
-                 }
-                 resetInet();
-                 getNxtOppData();
-                 break;
-             case OPP_BOAT_TRJ:
-                 if(currentMode==OPP_MODE_REFRESH)
-                     getTrace(strbuf,opponent_list[currentOpponent-1]->getTrace());
-                 else
-                 {
-                     if(!opponent_list.isEmpty())
-                        getTrace(strbuf,opponent_list.last()->getTrace());
-                 }
-                 getNxtOppData();
-                 break;
-         }
+                    conn->doRequestGet(OPP_BOAT_TRJ,page);
+                    break;
+                    }
+                }
+            }
+            getNxtOppData();
+            break;
+        case OPP_BOAT_TRJ:
+            if(currentMode==OPP_MODE_REFRESH)
+                getTrace(res,opponent_list[currentOpponent-1]->getTrace());
+            else
+            {
+                if(!opponent_list.isEmpty())
+                getTrace(res,opponent_list.last()->getTrace());
+            }
+            getNxtOppData();
+            break;
     }
 }
 
