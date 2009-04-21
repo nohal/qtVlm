@@ -39,7 +39,7 @@ POI_Editor::POI_Editor(QWidget *ownerMeteotable, QWidget *parent)
     : QDialog(parent)
 {
     setupUi(this);
-    
+
     this->poi = NULL;
     this->parent=parent;
     this->ownerMeteotable=ownerMeteotable;
@@ -85,13 +85,15 @@ void POI_Editor::initPOI(void)
         editWph->setText(QString());
     else
          editWph->setText(QString().setNum(poi->getWph()));
-    
+
     btSaveWP->setEnabled(!((MainWindow*)ownerMeteotable)->getBoatLockStatus());
     setValue(POI_EDT_LON,poi->getLongitude());
     setValue(POI_EDT_LAT,poi->getLatitude());
     if(poi->getTimeStamp()!=-1)
     {
-        QDateTime tm= QDateTime::fromTime_t(poi->getTimeStamp());
+        QDateTime tm;
+        tm.setTimeSpec(Qt::UTC);
+        tm.setTime_t(poi->getTimeStamp());
         editTStamp->setDateTime(tm);
         editTStamp->setTimeSpec(Qt::UTC);
     }
@@ -164,7 +166,7 @@ void POI_Editor::btPasteClicked()
     int tstamp;
     if(!Util::getWPClipboard(&lat,&lon,&wph,&tstamp))
         return;
-    
+
     setValue(POI_EDT_LON,lon);
     setValue(POI_EDT_LAT,lat);
 

@@ -328,6 +328,7 @@ MainWindow::MainWindow(int w, int h, QWidget *parent)
     toolBar->addAction(menuBar->acFile_Quit);
     toolBar->addSeparator();
     toolBar->addAction(menuBar->acFile_Open);
+    toolBar->addAction(menuBar->acFile_Close);
     toolBar->addSeparator();
     toolBar->addWidget(menuBar->cbDatesGrib);
     toolBar->addAction(menuBar->acDatesGrib_prev);
@@ -480,6 +481,7 @@ void MainWindow::openGribFile(QString fileName, bool zoom)
                 + tr("ou il contient des données non reconnues,") + "\n"
                 + tr("ou...")
         );
+        setWindowTitle(tr("qtVlm"));
     }
 }
 
@@ -664,6 +666,7 @@ void MainWindow::slotFile_Open()
 void MainWindow::slotFile_Close() {
     gribFileName = "";
     terre->loadGribFile("", false);
+    setWindowTitle(tr("qtVlm"));
 }
 //========================================================================
 void MainWindow::slotFile_Load_GRIB()
