@@ -1,8 +1,6 @@
 /**********************************************************************
-qtVlm: Virtual Loup de mer GUI
-Copyright (C) 2008 - Christophe Thomas aka Oxygen77
-
-http://qtvlm.sf.net
+zyGrib: meteorological GRIB file viewer
+Copyright (C) 2008 - Jacques Zaninetti - http://www.zygrib.org
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -16,26 +14,43 @@ GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
-
-Original code: zyGrib: meteorological GRIB file viewer
-Copyright (C) 2008 - Jacques Zaninetti - http://zygrib.free.fr
-
 ***********************************************************************/
 
 #include "GribPlot.h"
 #include <QMessageBox>
 #include <QObject>
- 
+
 //----------------------------------------------------
-GribPlot::GribPlot()
+GribPlot::GribPlot(const GribPlot &model)
+{
+	initNewGribPlot (model.mustInterpolateValues, model.drawWindArrowsOnGribGrid);	
+        loadGribFile (model.fileName);
+	duplicateFirstCumulativeRecord (model.mustDuplicateFirstCumulativeRecord);
+}
+
+//----------------------------------------------------
+GribPlot::GribPlot(bool interpolateValues_, bool windArrowsOnGribGrid_)
+{
+	initNewGribPlot(interpolateValues_, windArrowsOnGribGrid_);
+}
+
+//----------------------------------------------------
+void GribPlot::initNewGribPlot(bool interpolateValues_, bool windArrowsOnGribGrid_)
 {
     gribReader = NULL;
     
+    mustInterpolateValues = interpolateValues_;
+    drawWindArrowsOnGribGrid = windArrowsOnGribGrid_;
+    
     mapColorTransp = 210;
-    isobarsStep = 4;
-    windArrowSpace = 30;      // distance mini entre flèches du vent (pixels)
+    
+    windArrowSpace = 28;      // distance mini entre flèches
+    windBarbuleSpace = 34;    // distance mini entre flèches
+    
+    windArrowSpaceOnGrid = 20;      // distance mini entre flèches
+    windBarbuleSpaceOnGrid = 28;    // distance mini entre flèches
+    
     windArrowSize = 14;       // longueur des flèches
-    windBarbuleSpace = 40;    // distance mini entre flèches du vent (pixels)
     windBarbuleSize = 26;     // longueur des flèches avec barbules
     
     // Color scale for wind in beaufort
@@ -53,120 +68,13 @@ GribPlot::GribPlot()
     windColor[11].setRgba(qRgba( 200,  50,  30,  mapColorTransp));
     windColor[12].setRgba(qRgba( 170,   0,  50,  mapColorTransp));
     windColor[13].setRgba(qRgba( 150,   0,  30,  mapColorTransp));
-    // Color scale for rain in mm/h
-    rainColor[ 0].setRgba(qRgba(255,255,255,  mapColorTransp));
-    rainColor[ 1].setRgba(qRgba(200,255,255,  mapColorTransp));
-    rainColor[ 2].setRgba(qRgba(150,255,255,  mapColorTransp));
-    rainColor[ 3].setRgba(qRgba(100,200,255,  mapColorTransp));
-    rainColor[ 4].setRgba(qRgba( 50,200,255,  mapColorTransp));
-    rainColor[ 5].setRgba(qRgba(  0,150,255,  mapColorTransp));
-    rainColor[ 6].setRgba(qRgba(  0,100,255,  mapColorTransp));
-    rainColor[ 7].setRgba(qRgba(  0, 50,255,  mapColorTransp));
-    rainColor[ 8].setRgba(qRgba( 50,  0,255,  mapColorTransp));
-    rainColor[ 9].setRgba(qRgba(100,  0,255,  mapColorTransp));
-    rainColor[10].setRgba(qRgba(150,  0,255,  mapColorTransp));
-    rainColor[11].setRgba(qRgba(200,  0,255,  mapColorTransp));
-    rainColor[12].setRgba(qRgba(250,  0,255,  mapColorTransp));
-    rainColor[13].setRgba(qRgba(200,  0,200,  mapColorTransp));
-    rainColor[14].setRgba(qRgba(150,  0,150,  mapColorTransp));
-    rainColor[15].setRgba(qRgba(100,  0,100,  mapColorTransp));
-    rainColor[16].setRgba(qRgba( 50,  0,50,  mapColorTransp));
 }
 //----------------------------------------------------
 GribPlot::~GribPlot() {
-    Util::cleanListPointers(listIsobars);
 }
+
 //--------------------------------------------------------------------------
-QRgb  GribPlot::getRainColor(float mm, bool smooth) {
-    QRgb rgb = 0;
-    int  ind;
-    float v = mm/5;  
-    float indf = cbrt(337.5*v);        // TODO better color map!!!!
-    
-    ind = (int) floor(Util::inRange(indf, 0.0f, 15.0f));
-    
-    if (smooth && ind<16) {
-        // Interpolation de couleur
-        QColor c1 = rainColor[ind];
-        QColor c2 = rainColor[ind+1];
-        float dcol = indf-ind;
-        rgb = qRgba(
-            (int)( (float) c1.red()  *(1.0-dcol) + dcol*c2.red()   +0.5),
-            (int)( (float) c1.green()*(1.0-dcol) + dcol*c2.green() +0.5),
-            (int)( (float) c1.blue() *(1.0-dcol) + dcol*c2.blue()  +0.5),
-            mapColorTransp
-            );
-    }
-    else {
-    
-    ind = (int) (indf + 0.5);
-    ind = Util::inRange(ind, 0, 15);
-        rgb = rainColor[ind].rgba();
-    }
-    return rgb;
-}
-//--------------------------------------------------------------------------
-QRgb  GribPlot::getCloudColor(float v, bool smooth) {
-    QRgb rgb = 0;
-    if (!smooth) {
-        v = 10.0*floor(v/10.0);
-    }
-    int r = 255 - (int)(1.6*v);
-    int g = 255 - (int)(1.6*v);
-    int b = 255 - (int)(2.0*v);
-    rgb = qRgba(r,g,b,  mapColorTransp);
-    return rgb;
-}
-//--------------------------------------------------------------------------
-QRgb  GribPlot::getHumidColor(float v, bool smooth) {
-    QRgb rgb = 0;
-    if (!smooth) {
-        v = 10.0*floor(v/10.0);
-    }
-    
-    //v = v*v*v/10000;
-    v = v*v/100;
-    
-    int r = 255 - (int)(2.4*v);
-    int g = 255 - (int)(2.4*v);
-    int b = 255 - (int)(1.2*v);
-    rgb = qRgba(r,g,b,  mapColorTransp);
-    return rgb;
-}
-//--------------------------------------------------------------------------
-QRgb  GribPlot::getTemperatureColor(float v, bool smooth)
-{
-	// Même échelle colorée que pour le vent
-	float x = v-273.15;
-	float t0 = -30;  // valeur mini de l'échelle
-	float t1 =  40;  // valeur maxi de l'échelle
-	float b0 = 0;    // min beauforts
-	float b1 = 12;   // max beauforts
-	float eqbeauf = b0 + (x-t0)*(b1-b0)/(t1-t0);
-	if (eqbeauf < 0)
-		eqbeauf = 0;
-	else if (eqbeauf > 12)
-		eqbeauf = 12;
-	return getWindColor(Util::BeaufortToKmh_F(eqbeauf), smooth);
-}
-//--------------------------------------------------------------------------
-QRgb  GribPlot::getPressureColor(float v, bool smooth)
-{
-	// Même échelle colorée que pour le vent
-	float x = v;
-	float t0 = 960;  // valeur mini de l'échelle
-	float t1 = 1050;  // valeur maxi de l'échelle
-	float b0 = 0;    // min beauforts
-	float b1 = 12;   // max beauforts
-	float eqbeauf = b0 + (x-t0)*(b1-b0)/(t1-t0);
-	if (eqbeauf < 0)
-		eqbeauf = 0;
-	else if (eqbeauf > 12)
-		eqbeauf = 12;
-	return getWindColor(Util::BeaufortToKmh_F(eqbeauf), smooth);
-}
-//--------------------------------------------------------------------------
-QRgb  GribPlot::getWindColor(float v, bool smooth) {
+QRgb  GribPlot::getWindColor(double v, bool smooth) {
     QRgb rgb = 0;
     int beauf;
     if (! smooth) {
@@ -175,10 +83,10 @@ QRgb  GribPlot::getWindColor(float v, bool smooth) {
     }
     else {
         // Interpolation de couleur
-        float fbeauf = Util::kmhToBeaufort_F(v);
+        double fbeauf = Util::kmhToBeaufort_F(v);
         QColor c1 = windColor[ (int) fbeauf ];
         QColor c2 = windColor[ (int) fbeauf +1 ];
-        float dcol = fbeauf-floor(fbeauf);
+        double dcol = fbeauf-floor(fbeauf);
         rgb = qRgba(
             (int)( c1.red()  *(1.0-dcol) + dcol*c2.red()   +0.5),
             (int)( c1.green()*(1.0-dcol) + dcol*c2.green() +0.5),
@@ -188,92 +96,69 @@ QRgb  GribPlot::getWindColor(float v, bool smooth) {
     }
     return rgb;
 }
+
 //----------------------------------------------------
 void GribPlot::loadGribFile(QString fileName)
 {
-    if (gribReader != NULL) {
-        listDates.clear();
-        gribReader->openFile(qPrintable(fileName));
-    }
-    else {        
-        gribReader = new GribReader(qPrintable(fileName));
-    }
+	this->fileName = fileName;
+	listDates.clear();
     
-    listDates = gribReader->getListDates();
-    setCurrentDate ( listDates.size()>0 ? *(listDates.begin()) : 0);
+    if (gribReader != NULL) {
+    	delete gribReader;
+        gribReader = NULL;
+    }
+	
+	gribReader = new GribReader(qPrintable(fileName));
+    if (gribReader != NULL  &&  gribReader->isOk())
+    {
+		listDates = gribReader->getListDates();
+		setCurrentDate ( listDates.size()>0 ? *(listDates.begin()) : 0);
+	}
+}
 
+//----------------------------------------------------
+void GribPlot::duplicateFirstCumulativeRecord( bool mustDuplicate )
+{
+	mustDuplicateFirstCumulativeRecord = mustDuplicate;
+    if (gribReader != NULL  &&  gribReader->isOk())
+    {
+		if (mustDuplicate) {
+			gribReader->copyFirstCumulativeRecord();
+		}
+		else {
+			gribReader->removeFirstCumulativeRecord();
+		}
+	}
+}
+
+//----------------------------------------------------
+void GribPlot::interpolateValues( bool b )
+{
+	mustInterpolateValues = b;
+}
+//----------------------------------------------------
+void GribPlot::windArrowsOnGribGrid( bool b )
+{
+	drawWindArrowsOnGribGrid = b;
 }
 
 //----------------------------------------------------
 void GribPlot::setCurrentDate(time_t t)
 {
     currentDate = t;
-    initIsobars();
-}
-//----------------------------------------------------
-void GribPlot::initIsobars()
-{
-    if (gribReader == NULL)
-        return;
-    GribRecord *rec = gribReader->getGribRecord(GRB_PRESS_MSL, currentDate);
-    if (rec == NULL)
-        return;
-    
-    Util::cleanListPointers(listIsobars);    
-    if (listIsobars.size() == 0) {
-        Isobar *isob;
-        for (float press=840; press<1120; press += isobarsStep)
-        {
-            isob = new Isobar(press*100, rec);
-            listIsobars.push_back(isob);
-        }
-    }
-}
-
-//==========================================================================
-GribPointInfo  GribPlot::getGribPointInfo(float x, float y)
-{
-    GribPointInfo pinfo(x, y, currentDate);
-    GribRecord *rec;
-    if (gribReader != NULL) {
-        if ( (rec = gribReader->getGribRecord(GRB_WIND_VX, currentDate)) != NULL)
-            pinfo.vx = rec->getInterpolatedValue(x,y);
-        if ( (rec = gribReader->getGribRecord(GRB_WIND_VY, currentDate)) != NULL)
-            pinfo.vy = rec->getInterpolatedValue(x,y);
-        if ( (rec = gribReader->getGribRecord(GRB_PRESS_MSL, currentDate)) != NULL)
-            pinfo.pressure = rec->getInterpolatedValue(x,y);
-        if ( (rec = gribReader->getGribRecord(GRB_TEMP, currentDate)) != NULL)
-            pinfo.temp = rec->getInterpolatedValue(x,y);
-        if ( (rec = gribReader->getGribRecord(GRB_PRECIP_TOT, currentDate)) != NULL)
-        {
-            float pluie = rec->getInterpolatedValue(x,y);
-            if (pluie != GRIB_NOTDEF) {
-                int duree = rec->getPeriodP2()-rec->getPeriodP1();
-                if (duree<=0)
-                        duree=1; // TODO !!!!!!!!!
-                if (duree > 0)
-                    pinfo.rain = pluie / duree;
-            }
-        }
-        if ( (rec = gribReader->getGribRecord(GRB_CLOUD_TOT, currentDate)) != NULL)
-            pinfo.cloud = rec->getInterpolatedValue(x,y);
-        if ( (rec = gribReader->getGribRecord(GRB_HUMID_REL, currentDate)) != NULL)
-            pinfo.humid = rec->getInterpolatedValue(x,y);
-    }
-    return pinfo;
 }
 
 //==========================================================================
 // Rectangle translucide sur la zone couverte par les données
-void GribPlot::show_GRIB_CoverZone(QPainter &pnt, const Projection *proj)
+void GribPlot::show_CoverZone(QPainter &pnt, const Projection *proj)
 {
     if (gribReader == NULL) {
         return;
     }
     
-    float x0,y0, x1,y1;
+    double x0,y0, x1,y1;
     int i, j, k,l;
-    if (gribReader->getGribExtension(&x0,&y0, &x1,&y1))
+    if (gribReader->getZoneExtension(&x0,&y0, &x1,&y1))
     {
         pnt.setPen(QColor(120, 120,120));
         pnt.setBrush(QColor(255,255,255,40));
@@ -285,33 +170,7 @@ void GribPlot::show_GRIB_CoverZone(QPainter &pnt, const Projection *proj)
         pnt.drawRect(i, j, k-i, l-j);
     }
 }
-//-------------------------------------------------------------
-// Dates de la prévision courante
-void GribPlot::draw_ForecastDates(QPainter &pnt, const Projection *proj)
-{
-    if (gribReader == NULL) {
-        return;
-    }
-    
-    if (gribReader->getNumberOfDates() > 0)
-    {
-        QString  tref = "Ref: "+Util::formatDateTimeLong(gribReader->getRefDate());
-        QString  tval = "Val: "+Util::formatDateTimeLong(this->getCurrentDate());
-        int dx = 0;
-        int dy = proj->getH() - 28;
-        pnt.setPen(QColor(255,255,255,100));
-        pnt.setBrush(QColor(255,255,255,100));
-        pnt.drawRect(dx,dy,186,28);
 
-        QFont font("TypeWriter", 11, QFont::Normal, false);
-        font.setStyleHint(QFont::TypeWriter);
-        font.setStretch(QFont::Condensed);
-        pnt.setFont(font);
-        pnt.setPen(QColor(30,30,30,255));
-        pnt.drawText(dx+3,dy+12, tref);
-        pnt.drawText(dx+3,dy+27, tval);
-    }
-}
 //-------------------------------------------------------------
 // Grille GRIB
 void GribPlot::draw_GribGrid(QPainter &pnt, const Projection *proj)
@@ -342,131 +201,155 @@ void GribPlot::draw_GribGrid(QPainter &pnt, const Projection *proj)
 }
 
 
-
 //--------------------------------------------------------------------------
-// Carte de couleurs des précipitations
+// Carte de couleurs générique en dimension 1
 //--------------------------------------------------------------------------
-void GribPlot::draw_RAIN_Color(QPainter &pnt, const Projection *proj, bool smooth)
+void GribPlot::drawColorMapGeneric_1D (
+		QPainter &pnt, const Projection *proj, bool smooth,
+		GribRecord *rec,
+		QRgb (GribPlot::*function_getColor) (double v, bool smooth)
+	)
 {
-    if (gribReader == NULL)
-        return;
-    GribRecord *rec;
-    rec = gribReader->getGribRecord(GRB_PRECIP_TOT, currentDate);
     if (rec == NULL)
         return;
-        
-    
     int i, j;
     double x, y, v;
     int W = proj->getW();
     int H = proj->getH();
-
     QRgb   rgb;
     QImage *image = new QImage(W,H,QImage::Format_ARGB32);
     image->fill( qRgba(0,0,0,0));
+/*    for (i=0; i<W; i++) {
+        for (j=0; j<H; j++) {
+            proj->screen2map(i,j, &x, &y);
+            if (! rec->isXInMap(x))
+                x += 360.0;    // tour complet ?
+            if (rec->isPointInMap(x, y)) {
+                v = rec->getInterpolatedValue(x, y, mustInterpolateValues);
+                if (v != GRIB_NOTDEF) {
+                    rgb = (this->*function_getColor) (v, smooth);
+                    image->setPixel(i,j, rgb);
+                }
+            }
+        }
+    }*/
+    for (i=0; i<W-1; i+=2) {
+        for (j=0; j<H-1; j+=2) {
+            proj->screen2map(i,j, &x, &y);
+            if (! rec->isXInMap(x))
+                x += 360.0;    // tour complet ?
+            if (rec->isPointInMap(x, y)) {
+                v = rec->getInterpolatedValue(x, y, mustInterpolateValues);
+                if (v != GRIB_NOTDEF) {
+                    rgb = (this->*function_getColor) (v, smooth);
+                    image->setPixel(i,  j, rgb);
+                    image->setPixel(i+1,j, rgb);
+                    image->setPixel(i,  j+1, rgb);
+                    image->setPixel(i+1,j+1, rgb);
+                }
+            }
+        }
+    }
+    
+    pnt.drawImage(0,0,*image);
+    delete image;
+}
 
-    // Zones colorées selon la force
-    for (i=0; i<W; i++)
-    {
-        for (j=0; j<H; j++)
+//--------------------------------------------------------------------------
+// Carte de couleurs générique en dimension 2
+//--------------------------------------------------------------------------
+void  GribPlot::drawColorMapGeneric_2D (
+		QPainter &pnt, const Projection *proj, bool smooth,
+		GribRecord *recx, GribRecord *recy,
+		QRgb (GribPlot::*function_getColor) (double v, bool smooth)
+	)
+{
+    if (recx == NULL || recy == NULL)
+        return;
+    int i, j;
+    double x, y, vx, vy, v;
+    int W = proj->getW();
+    int H = proj->getH();
+    QRgb   rgb;
+    QImage *image = new QImage(W,H,QImage::Format_ARGB32);
+    image->fill( qRgba(0,0,0,0));
+    for (i=0; i<W-1; i+=2) {
+        for (j=0; j<H-1; j+=2)
         {
             proj->screen2map(i,j, &x, &y);
             
-            if (! rec->isXInMap(x))
+            if (! recx->isXInMap(x))
                 x += 360.0;    // tour complet ?
                 
-            if (rec->isPointInMap(x, y))
+            if (recx->isPointInMap(x, y))
             {
-                v = rec->getInterpolatedValue(x, y);
-                if (v != GRIB_NOTDEF)
+                vx = recx->getInterpolatedValue(x, y, mustInterpolateValues);
+                vy = recy->getInterpolatedValue(x, y, mustInterpolateValues);
+
+                if (vx != GRIB_NOTDEF && vx != GRIB_NOTDEF)
                 {
-                    int duree = rec->getPeriodP2()-rec->getPeriodP1();
-                    if (duree<=0)
-                            duree=1; // TODO !!!!!!!!!
-                    if (duree > 0) {
-                        v = v / duree;
-                        rgb = getRainColor(v, smooth);
-                        image->setPixel(i,j, rgb);
-                    }
+                    v = sqrt(vx*vx+vy*vy)*3.6;		// m/s => km/h
+                    rgb = (this->*function_getColor) (v, smooth);
+                    image->setPixel(i,  j, rgb);
+                    image->setPixel(i+1,j, rgb);
+                    image->setPixel(i,  j+1, rgb);
+                    image->setPixel(i+1,j+1, rgb);
                 }
             }
         }
     }
-
-    pnt.drawImage(0,0,*image);
+	pnt.drawImage(0,0,*image);
     delete image;
 }
 
 //--------------------------------------------------------------------------
-// Carte de couleurs de la nébulosité
+// Carte de couleurs générique de la différence entre 2 champs
 //--------------------------------------------------------------------------
-void GribPlot::draw_CLOUD_Color(QPainter &pnt, const Projection *proj, bool smooth)
+void  GribPlot::drawColorMapGeneric_Abs_Delta_Data (
+		QPainter &pnt, const Projection *proj, bool smooth,
+		GribRecord *recx,
+		GribRecord *recy,
+		QRgb (GribPlot::*function_getColor) (double v, bool smooth)
+	)
 {
-    if (gribReader == NULL)
+    if (recx == NULL || recy == NULL)
         return;
-    GribRecord *rec = gribReader->getGribRecord(GRB_CLOUD_TOT, currentDate);
-    if (rec == NULL)
-        return;
-    
     int i, j;
-    double x, y, v;
+    double x, y, vx, vy, v;
     int W = proj->getW();
     int H = proj->getH();
     QRgb   rgb;
     QImage *image = new QImage(W,H,QImage::Format_ARGB32);
     image->fill( qRgba(0,0,0,0));
-    for (i=0; i<W; i++) {
-        for (j=0; j<H; j++) {
+    for (i=0; i<W-1; i+=2) {
+        for (j=0; j<H-1; j+=2)
+        {
             proj->screen2map(i,j, &x, &y);
-            if (! rec->isXInMap(x))
+            
+            if (! recx->isXInMap(x))
                 x += 360.0;    // tour complet ?
-            if (rec->isPointInMap(x, y)) {
-                v = rec->getInterpolatedValue(x, y);
-                if (v != GRIB_NOTDEF) {
-                    rgb = getCloudColor(v, smooth);
-                    image->setPixel(i,j, rgb);
+                
+            if (recx->isPointInMap(x, y))
+            {
+                vx = recx->getInterpolatedValue(x, y, mustInterpolateValues);
+                vy = recy->getInterpolatedValue(x, y, mustInterpolateValues);
+
+                if (vx != GRIB_NOTDEF && vx != GRIB_NOTDEF)
+                {
+                    v = fabs(vx-vy);
+                    rgb = (this->*function_getColor) (v, smooth);
+                    image->setPixel(i,  j, rgb);
+                    image->setPixel(i+1,j, rgb);
+                    image->setPixel(i,  j+1, rgb);
+                    image->setPixel(i+1,j+1, rgb);
                 }
             }
         }
     }
-    pnt.drawImage(0,0,*image);
+	pnt.drawImage(0,0,*image);
     delete image;
 }
-//--------------------------------------------------------------------------
-// Carte de couleurs de l'humidité relative
-//--------------------------------------------------------------------------
-void GribPlot::draw_HUMID_Color(QPainter &pnt, const Projection *proj, bool smooth)
-{
-    if (gribReader == NULL)
-        return;
-    GribRecord *rec = gribReader->getGribRecord(GRB_HUMID_REL, currentDate);
-    if (rec == NULL)
-        return;
-    
-    int i, j;
-    double x, y, v;
-    int W = proj->getW();
-    int H = proj->getH();
-    QRgb   rgb;
-    QImage *image = new QImage(W,H,QImage::Format_ARGB32);
-    image->fill( qRgba(0,0,0,0));
-    for (i=0; i<W; i++) {
-        for (j=0; j<H; j++) {
-            proj->screen2map(i,j, &x, &y);
-            if (! rec->isXInMap(x))
-                x += 360.0;    // tour complet ?
-            if (rec->isPointInMap(x, y)) {
-                v = rec->getInterpolatedValue(x, y);
-                if (v != GRIB_NOTDEF) {
-                    rgb = getHumidColor(v, smooth);
-                    image->setPixel(i,j, rgb);
-                }
-            }
-        }
-    }
-    pnt.drawImage(0,0,*image);
-    delete image;
-}
+
 
 //--------------------------------------------------------------------------
 // Carte de couleurs du vent
@@ -477,44 +360,9 @@ void GribPlot::draw_WIND_Color(QPainter &pnt, const Projection *proj, bool smoot
         return;
     }
     GribRecord *recx, *recy;
-    recx = gribReader->getGribRecord(GRB_WIND_VX, currentDate);
-    recy = gribReader->getGribRecord(GRB_WIND_VY, currentDate);
-    if (recx == NULL || recy == NULL)
-        return;
-        
-    
-    int i, j;
-    double x, y, vx, vy, v;
-    int W = proj->getW();
-    int H = proj->getH();
-    
-    QImage *image = new QImage(W,H,QImage::Format_ARGB32);
-    image->fill( qRgba(0,0,0,0));
-
-    // Zones colorées selon la force
-    for (i=0; i<W; i++) {
-        for (j=0; j<H; j++)
-        {
-            proj->screen2map(i,j, &x, &y);
-            
-            if (! recx->isXInMap(x))
-                x += 360.0;    // tour complet ?
-                
-            if (recx->isPointInMap(x, y))
-            {
-                vx = recx->getInterpolatedValue(x, y);
-                vy = recy->getInterpolatedValue(x, y);
-
-                if (vx != GRIB_NOTDEF && vx != GRIB_NOTDEF)
-                {
-                    v = sqrt(vx*vx+vy*vy)*3.6;
-                    image->setPixel(i,j, getWindColor(v, smooth));
-                }
-            }
-        }
-    }
-    pnt.drawImage(0,0,*image);
-    delete image;
+    recx = gribReader->getGribRecord(GRB_WIND_VX,LV_ABOV_GND,10,currentDate);
+    recy = gribReader->getGribRecord(GRB_WIND_VY,LV_ABOV_GND,10,currentDate);
+    drawColorMapGeneric_2D(pnt,proj,smooth, recx,recy, &GribPlot::getWindColor );
 }
 
 //--------------------------------------------------------------------------
@@ -527,42 +375,91 @@ void GribPlot::draw_WIND_Arrows
     }
     windArrowColor = arrowsColor;
 
-    GribRecord *recx = gribReader->getGribRecord(GRB_WIND_VX, currentDate);
-    GribRecord *recy = gribReader->getGribRecord(GRB_WIND_VY, currentDate);
+    GribRecord *recx = gribReader->getGribRecord(GRB_WIND_VX,LV_ABOV_GND,10,currentDate);
+    GribRecord *recy = gribReader->getGribRecord(GRB_WIND_VY,LV_ABOV_GND,10,currentDate);
     if (recx == NULL || recy == NULL)
         return;        
     int i, j;
     double x, y, vx, vy;
     int W = proj->getW();
     int H = proj->getH();
-    int space =  barbules ? windBarbuleSpace : windArrowSpace;
     
-    for (i=0; i<W; i+=space)
-    {
-        for (j=0; j<H; j+=space)
-        {
-            proj->screen2map(i,j, &x,&y);
-            if (! recx->isXInMap(x))
-                x += 360.0;   // tour du monde ?
-            
-            if (recx->isPointInMap(x,y)) {
-                vx = recx->getInterpolatedValue(x, y);
-                vy = recy->getInterpolatedValue(x, y);
-                if (vx != GRIB_NOTDEF && vy != GRIB_NOTDEF)
-                {
-                    if (barbules)
-                        drawWindArrowWithBarbs(pnt, i,j, vx,vy, (y<0), arrowsColor);
-                    else
-                        drawWindArrow(pnt, i,j, vx,vy);
-                }
-            }
-        }
+	int space;    
+    if (barbules)
+	    space =  drawWindArrowsOnGribGrid ? windBarbuleSpaceOnGrid : windBarbuleSpace;
+    else
+	    space =  drawWindArrowsOnGribGrid ? windArrowSpaceOnGrid : windArrowSpace;
+    
+    if (drawWindArrowsOnGribGrid)
+    {	// Flèches uniquement sur les points de la grille
+    	int oldi=-1000, oldj=-1000;
+    	for (int gi=0; gi<recx->getNi(); gi++)
+    	{
+			x = recx->getX(gi);
+			y = recx->getY(0);
+			proj->map2screen(x,y, &i,&j);
+			if (abs(i-oldi)>=space)
+			{
+				oldi = i;
+				for (int gj=0; gj<recx->getNj(); gj++)
+				{
+					x = recx->getX(gi);
+					y = recx->getY(gj);
+					proj->map2screen(x,y, &i,&j);
+					
+						//----------------------------------------------------------------------
+						if (! recx->isXInMap(x))
+							x += 360.0;   // tour du monde ?
+
+						if (recx->isPointInMap(x,y)) {
+							if (abs(j-oldj)>=space)
+							{
+								oldj = j;
+								vx = recx->getInterpolatedValue(x, y, mustInterpolateValues);
+								vy = recy->getInterpolatedValue(x, y, mustInterpolateValues);
+								if (vx != GRIB_NOTDEF && vy != GRIB_NOTDEF)
+								{
+									if (barbules)
+										drawWindArrowWithBarbs(pnt, i,j, vx,vy, (y<0), arrowsColor);
+									else
+										drawWindArrow(pnt, i,j, vx,vy);
+								}
+							}
+						}
+				}
+			}
+    	}
     }
+    else
+    {	// Flèches uniformément réparties sur l'écran
+		for (i=0; i<W; i+=space)
+		{
+			for (j=0; j<H; j+=space)
+			{
+				proj->screen2map(i,j, &x,&y);
+				//----------------------------------------------------------------------    			
+				if (! recx->isXInMap(x))
+					x += 360.0;   // tour du monde ?
+				if (recx->isPointInMap(x,y)) {
+					vx = recx->getInterpolatedValue(x, y, mustInterpolateValues);
+					vy = recy->getInterpolatedValue(x, y, mustInterpolateValues);
+					if (vx != GRIB_NOTDEF && vy != GRIB_NOTDEF)
+					{
+						if (barbules)
+							drawWindArrowWithBarbs(pnt, i,j, vx,vy, (y<0), arrowsColor);
+						else
+							drawWindArrow(pnt, i,j, vx,vy);
+					}
+				}
+				//----------------------------------------------------------------------    			
+			}
+		}
+	}
 }
 
 //-----------------------------------------------------------------------------
 void GribPlot::drawTransformedLine( QPainter &pnt,
-        float si, float co,int di, int dj, int i,int j, int k,int l)
+        double si, double co,int di, int dj, int i,int j, int k,int l)
 {
     int ii, jj, kk, ll;
     ii = (int) (i*co-j*si +0.5) + di;
@@ -579,10 +476,10 @@ void GribPlot::drawTransformedLine( QPainter &pnt,
         pnt.drawLine(ii, jj, kk, ll);
 }
 //-----------------------------------------------------------------------------
-void GribPlot::drawWindArrow(QPainter &pnt, int i, int j, float vx, float vy)
+void GribPlot::drawWindArrow(QPainter &pnt, int i, int j, double vx, double vy)
 {
-    float ang = atan2(vy, -vx);
-    float si=sin(ang),  co=cos(ang);
+    double ang = atan2(vy, -vx);
+    double si=sin(ang),  co=cos(ang);
     QPen pen( windArrowColor);
     pen.setWidth(2);
     pnt.setPen(pen);
@@ -594,19 +491,19 @@ void GribPlot::drawWindArrow(QPainter &pnt, int i, int j, float vx, float vy)
 //-----------------------------------------------------------------------------
 void GribPlot::drawWindArrowWithBarbs(
 			QPainter &pnt,
-			int i, int j, float vx, float vy,
+			int i, int j, double vx, double vy,
 			bool south,
 			QColor arrowColor
 	)
 {
-    float  vkn = sqrt(vx*vx+vy*vy)*3.6/1.852;
-    float ang = atan2(vy, -vx);
-    float si=sin(ang),  co=cos(ang);
+    double  vkn = sqrt(vx*vx+vy*vy)*3.6/1.852;
+    double ang = atan2(vy, -vx);
+    double si=sin(ang),  co=cos(ang);
     
     QPen pen( arrowColor);
     pen.setWidth(2);
     pnt.setPen(pen);
-    pnt.setBrush(Qt::transparent);
+    pnt.setBrush(Qt::NoBrush);
     
     if (vkn < 1)
     {
@@ -687,7 +584,7 @@ void GribPlot::drawWindArrowWithBarbs(
 }
 //---------------------------------------------------------------
 void GribPlot::drawPetiteBarbule(QPainter &pnt, bool south,
-                    float si, float co, int di, int dj, int b)
+                    double si, double co, int di, int dj, int b)
 {
     if (south)
         drawTransformedLine(pnt, si,co, di,dj,  b,0,  b+2, -5);
@@ -696,7 +593,7 @@ void GribPlot::drawPetiteBarbule(QPainter &pnt, bool south,
 }
 //---------------------------------------------------------------
 void GribPlot::drawGrandeBarbule(QPainter &pnt, bool south,
-                    float si, float co, int di, int dj, int b)
+                    double si, double co, int di, int dj, int b)
 {
     if (south)
         drawTransformedLine(pnt, si,co, di,dj,  b,0,  b+4,-10);
@@ -705,7 +602,7 @@ void GribPlot::drawGrandeBarbule(QPainter &pnt, bool south,
 }
 //---------------------------------------------------------------
 void GribPlot::drawTriangle(QPainter &pnt, bool south,
-                    float si, float co, int di, int dj, int b)
+                    double si, double co, int di, int dj, int b)
 {
     if (south) {
         drawTransformedLine(pnt, si,co, di,dj,  b,0,  b+4,-10);
@@ -716,168 +613,3 @@ void GribPlot::drawTriangle(QPainter &pnt, bool south,
         drawTransformedLine(pnt, si,co, di,dj,  b+8,0,  b+4,10);
     }
 }
-
-
-//==========================================================================
-// Pression
-//==========================================================================
-void GribPlot::draw_PRESSURE_Isobars(QPainter &pnt, const Projection *proj)
-{
-    if (gribReader == NULL) {
-        return;
-    }
-    GribRecord *rec = gribReader->getGribRecord(GRB_PRESS_MSL, currentDate);
-    if (rec == NULL)
-        return;    
-    
-    std::list<Isobar *>::iterator it;
-    for(it=listIsobars.begin(); it!=listIsobars.end(); it++)
-    {
-        (*it)->drawIsobar(pnt, proj);
-    }
-}
-//--------------------------------------------------------------------------
-void GribPlot::setIsobarsStep(int step)
-{
-    isobarsStep = step;
-    initIsobars();
-}
-//--------------------------------------------------------------------------
-void GribPlot::draw_PRESSURE_IsobarsLabels(QPainter &pnt, const Projection *proj)
-{
-    if (gribReader == NULL) {
-        return;
-    }
-    GribRecord *rec = gribReader->getGribRecord(GRB_PRESS_MSL, currentDate);
-    if (rec == NULL)
-        return;
-    
-    std::list<Isobar *>::iterator it;
-    
-    int nbseg = 0;
-    for(it=listIsobars.begin(); it!=listIsobars.end(); it++)
-    {
-        nbseg += (*it)->getNbSegments();
-    }
-
-    int nbpix, density, first;
-    nbpix = proj->getW()*proj->getH();
-    if (nbpix == 0)
-        return;
-    
-    float r = (float)nbseg/nbpix *1000;
-    
-    float dens = 10;
-    
-    density =  (int) (r*dens +0.5);
-    if (density < 20)
-        density = 20;
-
-    first = 0;
-//printf("nbpix=%d nbseg=%d density=%d\n", nbpix,nbseg,density);
-    
-    for(it=listIsobars.begin(); it!=listIsobars.end(); it++)
-    {
-        first += 20;
-        (*it)->drawIsobarLabels(pnt, proj, density, first);
-    }
-}
-
-//--------------------------------------------------------------------------
-void GribPlot::draw_PRESSURE_MinMax(QPainter &pnt, const Projection *proj)
-{
-    if (gribReader == NULL) {
-        return;
-    }
-    GribRecord *rec = gribReader->getGribRecord(GRB_PRESS_MSL, currentDate);
-    if (rec == NULL)
-        return;    
-    
-    int i, j, W, H, pi,pj;
-    float x, y, v;
-         
-    QFont fontPressureMinMax("Times", 18, QFont::Bold, true);
-    QFontMetrics fmet(fontPressureMinMax);
-    pnt.setPen(QColor(0,0,0));
-    pnt.setFont(fontPressureMinMax);
-    W = rec->getNi();
-    H = rec->getNj();
-
-    for (j=1; j<H-1; j++) {     // !!!! 1 to end-1
-        for (i=1; i<W-1; i++) {
-            v = rec->getValue( i, j );
-            if ( v < 101200
-                   && v < rec->getValue( i-1, j-1 )  // Minima local ?
-                   && v < rec->getValue( i-1, j   )
-                   && v < rec->getValue( i-1, j+1 )
-                   && v < rec->getValue( i  , j-1 )
-                   && v < rec->getValue( i  , j+1 )
-                   && v < rec->getValue( i+1, j-1 )
-                   && v < rec->getValue( i+1, j   )
-                   && v < rec->getValue( i+1, j+1 )
-            ) {
-                x = rec->getX(i);
-                y = rec->getY(j);
-                proj->map2screen(x,y, &pi, &pj);
-                pnt.drawText(pi-fmet.width('L')/2, pj+fmet.ascent()/2, "L");
-                proj->map2screen(x-360.0,y, &pi, &pj);
-                pnt.drawText(pi-fmet.width('L')/2, pj+fmet.ascent()/2, "L");
-            }
-            if ( v > 101200
-                   && v >= rec->getValue( i-1, j-1 )  // Maxima local ?
-                   && v >= rec->getValue( i-1, j   )
-                   && v >= rec->getValue( i-1, j+1 )
-                   && v >= rec->getValue( i  , j-1 )
-                   && v >= rec->getValue( i  , j+1 )
-                   && v >= rec->getValue( i+1, j-1 )
-                   && v >= rec->getValue( i+1, j   )
-                   && v >= rec->getValue( i+1, j+1 )
-            ) {
-                x = rec->getX(i);
-                y = rec->getY(j);
-                proj->map2screen(x,y, &pi, &pj);
-                pnt.drawText(pi-fmet.width('H')/2, pj+fmet.ascent()/2, "H");
-                proj->map2screen(x-360.0,y, &pi, &pj);
-                pnt.drawText(pi-fmet.width('H')/2, pj+fmet.ascent()/2, "H");
-            }
-        }
-    }
-}
-
-
-//--------------------------------------------------------------------------
-void GribPlot::draw_TEMPERATURE_Labels(QPainter &pnt, const Projection *proj)
-{
-    if (gribReader == NULL) {
-        return;
-    }
-    GribRecord *rec = gribReader->getGribRecord(GRB_TEMP, currentDate);
-    if (rec == NULL)
-        return;    
-    
-    QFont fontTemperatureLabels("Times", 9, QFont::Bold, true);
-    QFontMetrics fmet(fontTemperatureLabels);
-    pnt.setFont(fontTemperatureLabels);
-    pnt.setPen(QColor(0,0,0));
-    
-    double x, y, v;
-    int i, j, dimin, djmin;
-    dimin = 50;
-    djmin = 30;
-
-    for (j=0; j<proj->getH(); j+= djmin) {
-        for (i=0; i<proj->getW(); i+= dimin) {
-            proj->screen2map(i,j, &x,&y);
-                
-            v = rec->getInterpolatedValue(x, y);
-            if (v!= GRIB_NOTDEF) {
-                QString strtemp = Util::formatTemperature_short(v);
-                pnt.drawText(i-fmet.width("XXX")/2, j+fmet.ascent()/2, strtemp);
-            }
-
-        }
-    }
-}
-
-
-

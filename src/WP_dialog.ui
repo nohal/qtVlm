@@ -1,0 +1,374 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>WP_dialog_ui</class>
+ <widget class="QDialog" name="WP_dialog_ui">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>229</width>
+    <height>157</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Mon WP</string>
+  </property>
+  <widget class="QFrame" name="frame_3">
+   <property name="geometry">
+    <rect>
+     <x>10</x>
+     <y>10</y>
+     <width>121</width>
+     <height>101</height>
+    </rect>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">background-color: rgb(170, 170, 255);</string>
+   </property>
+   <property name="frameShape">
+    <enum>QFrame::StyledPanel</enum>
+   </property>
+   <property name="frameShadow">
+    <enum>QFrame::Raised</enum>
+   </property>
+   <widget class="QWidget" name="layoutWidget">
+    <property name="geometry">
+     <rect>
+      <x>5</x>
+      <y>5</y>
+      <width>111</width>
+      <height>89</height>
+     </rect>
+    </property>
+    <layout class="QGridLayout" name="gridLayout_4">
+     <item row="0" column="0">
+      <widget class="QLabel" name="label">
+       <property name="text">
+        <string>Lat</string>
+       </property>
+      </widget>
+     </item>
+     <item row="0" column="1">
+      <widget class="QLineEdit" name="WP_lat">
+       <property name="styleSheet">
+        <string notr="true">background-color: rgb(255, 255, 255);</string>
+       </property>
+       <property name="text">
+        <string/>
+       </property>
+      </widget>
+     </item>
+     <item row="1" column="0">
+      <widget class="QLabel" name="label_2">
+       <property name="text">
+        <string>Lon</string>
+       </property>
+      </widget>
+     </item>
+     <item row="1" column="1">
+      <widget class="QLineEdit" name="WP_lon">
+       <property name="styleSheet">
+        <string notr="true">background-color: rgb(255, 255, 255);</string>
+       </property>
+      </widget>
+     </item>
+     <item row="2" column="0">
+      <widget class="QLabel" name="label_3">
+       <property name="text">
+        <string>@WPH</string>
+       </property>
+      </widget>
+     </item>
+     <item row="2" column="1">
+      <widget class="QLineEdit" name="WP_heading">
+       <property name="styleSheet">
+        <string notr="true">background-color: rgb(255, 255, 255);</string>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </widget>
+  </widget>
+  <widget class="QLabel" name="WP_conv_lon">
+   <property name="geometry">
+    <rect>
+     <x>140</x>
+     <y>26</y>
+     <width>81</width>
+     <height>16</height>
+    </rect>
+   </property>
+   <property name="font">
+    <font>
+     <weight>50</weight>
+     <bold>false</bold>
+    </font>
+   </property>
+   <property name="text">
+    <string>000a00a00W</string>
+   </property>
+  </widget>
+  <widget class="QLabel" name="WP_conv_lat">
+   <property name="geometry">
+    <rect>
+     <x>140</x>
+     <y>7</y>
+     <width>211</width>
+     <height>20</height>
+    </rect>
+   </property>
+   <property name="font">
+    <font>
+     <weight>50</weight>
+     <bold>false</bold>
+    </font>
+   </property>
+   <property name="text">
+    <string>00a00a00N</string>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="btn_paste">
+   <property name="geometry">
+    <rect>
+     <x>140</x>
+     <y>43</y>
+     <width>75</width>
+     <height>20</height>
+    </rect>
+   </property>
+   <property name="font">
+    <font>
+     <weight>50</weight>
+     <bold>false</bold>
+    </font>
+   </property>
+   <property name="text">
+    <string>Paste</string>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="btn_clear">
+   <property name="geometry">
+    <rect>
+     <x>140</x>
+     <y>91</y>
+     <width>75</width>
+     <height>20</height>
+    </rect>
+   </property>
+   <property name="font">
+    <font>
+     <weight>50</weight>
+     <bold>false</bold>
+    </font>
+   </property>
+   <property name="text">
+    <string>Clear</string>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="btn_paste_2">
+   <property name="geometry">
+    <rect>
+     <x>140</x>
+     <y>67</y>
+     <width>75</width>
+     <height>20</height>
+    </rect>
+   </property>
+   <property name="font">
+    <font>
+     <weight>50</weight>
+     <bold>false</bold>
+    </font>
+   </property>
+   <property name="text">
+    <string>Copy</string>
+   </property>
+  </widget>
+  <widget class="QWidget" name="">
+   <property name="geometry">
+    <rect>
+     <x>10</x>
+     <y>120</y>
+     <width>211</width>
+     <height>27</height>
+    </rect>
+   </property>
+   <layout class="QHBoxLayout" name="horizontalLayout">
+    <item>
+     <spacer name="horizontalSpacer">
+      <property name="orientation">
+       <enum>Qt::Horizontal</enum>
+      </property>
+      <property name="sizeHint" stdset="0">
+       <size>
+        <width>40</width>
+        <height>20</height>
+       </size>
+      </property>
+     </spacer>
+    </item>
+    <item>
+     <widget class="QPushButton" name="btn_saveWP">
+      <property name="font">
+       <font>
+        <weight>50</weight>
+        <bold>false</bold>
+       </font>
+      </property>
+      <property name="text">
+       <string>Sauver</string>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <widget class="QPushButton" name="btn_saveWP_2">
+      <property name="font">
+       <font>
+        <weight>50</weight>
+        <bold>false</bold>
+       </font>
+      </property>
+      <property name="text">
+       <string>Annuler</string>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <spacer name="horizontalSpacer_3">
+      <property name="orientation">
+       <enum>Qt::Horizontal</enum>
+      </property>
+      <property name="sizeHint" stdset="0">
+       <size>
+        <width>40</width>
+        <height>20</height>
+       </size>
+      </property>
+     </spacer>
+    </item>
+   </layout>
+  </widget>
+ </widget>
+ <resources/>
+ <connections>
+  <connection>
+   <sender>btn_saveWP</sender>
+   <signal>clicked()</signal>
+   <receiver>WP_dialog_ui</receiver>
+   <slot>accept()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>42</x>
+     <y>139</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>14</x>
+     <y>126</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>btn_saveWP_2</sender>
+   <signal>clicked()</signal>
+   <receiver>WP_dialog_ui</receiver>
+   <slot>reject()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>178</x>
+     <y>136</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>206</x>
+     <y>137</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>btn_clear</sender>
+   <signal>clicked()</signal>
+   <receiver>WP_dialog_ui</receiver>
+   <slot>doClearWP()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>200</x>
+     <y>100</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>222</x>
+     <y>112</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>btn_paste_2</sender>
+   <signal>clicked()</signal>
+   <receiver>WP_dialog_ui</receiver>
+   <slot>doCopy()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>184</x>
+     <y>76</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>223</x>
+     <y>84</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>btn_paste</sender>
+   <signal>clicked()</signal>
+   <receiver>WP_dialog_ui</receiver>
+   <slot>doPaste()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>202</x>
+     <y>50</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>224</x>
+     <y>59</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>WP_lat</sender>
+   <signal>textChanged(QString)</signal>
+   <receiver>WP_dialog_ui</receiver>
+   <slot>chgLat()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>108</x>
+     <y>30</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>138</x>
+     <y>31</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>WP_lon</sender>
+   <signal>textChanged(QString)</signal>
+   <receiver>WP_dialog_ui</receiver>
+   <slot>chgLon()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>111</x>
+     <y>57</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>137</x>
+     <y>58</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
+ <slots>
+  <slot>chgLat()</slot>
+  <slot>chgLon()</slot>
+  <slot>doPaste()</slot>
+  <slot>doCopy()</slot>
+  <slot>doClearWP()</slot>
+ </slots>
+</ui>

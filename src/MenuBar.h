@@ -42,7 +42,6 @@ public:
     MenuBar(QWidget *parent);
 
     void setQuality(int q);
-    void setIsobarsStep(int step);
     void setCitiesNamesLevel(int level);
 
     void updateListeDates(std::set<time_t> *setDates);
@@ -58,7 +57,6 @@ public:
     // Actions des menus
     // Elements de l'interface (public c'est plus pratique)
     //---------------------------------------------------------
-    QAction *ac_OpenMeteotable;
     QAction *ac_CreatePOI;
     QAction *ac_pastePOI;
     QAction *ac_delPOIs;
@@ -74,23 +72,6 @@ public:
 
     QAction *acView_WindArrow;
     QAction *acView_Barbules;
-    QAction *acView_Isobars;
-    QActionGroup *acView_GroupIsobarsStep;
-        QAction *acView_IsobarsStep1;
-        QAction *acView_IsobarsStep2;
-        QAction *acView_IsobarsStep3;
-        QAction *acView_IsobarsStep4;
-        QAction *acView_IsobarsStep5;
-        QAction *acView_IsobarsStep6;
-        QAction *acView_IsobarsStep8;
-        QAction *acView_IsobarsStep10;
-    QAction *acView_IsobarsLabels;
-    QAction *acView_PressureMinMax;
-
-#ifdef HAS_TEMP
-    QAction *acView_TemperatureLabels;
-#endif
-
     QAction *acView_GribGrid;
 
     QAction *acMap_Orthodromie;
@@ -150,15 +131,12 @@ public:
     QAction *acDatesGrib_next;
     QAction *acDatesGrib_now;
 
-
-    QComboBox *cbBoatList;
-    QAction   *acVLMSync_menu;
+    QAction  *acVLMSync_menu;
 
 //------------------------------------------------------------------------
 private:
     QMenu *menuFile;
     QMenu *menuView;
-    QMenu *menuMap;
     QMenu *menuOptions;
     QMenu *menuBoat;
     QMenu *menuPOI;

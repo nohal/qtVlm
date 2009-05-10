@@ -7,6 +7,7 @@ LIBS += -Lbzip2 -lbz2 -Lzlib-1.2.3 -lz -Lqextserialport/build -lqextserialport
 MOC_DIR = objs
 OBJECTS_DIR = objs
 SOURCES_DIR = src
+DESTDIR = ../
 
 QT += network xml
 
@@ -30,14 +31,13 @@ HEADERS += \
            GshhsReader.h \
            GisReader.h \
            GribPlot.h \
+           GribPointInfo.h \
            GribReader.h \
            GribRecord.h \
            inetConnexion.h \
-           Isobar.h \
            LoadGribFile.h \
            MainWindow.h \
            MenuBar.h \
-           MeteoTable.h \
            Orthodromie.h \
            opponentBoat.h \
            paramVLM.h \
@@ -57,9 +57,9 @@ HEADERS += \
            xmlPOIData.h \
            zuFile.h
 
-FORMS += boatAccount_dialog.ui BoardVLM_part1.ui BoardVLM_part2.ui \
+FORMS += boatAccount_dialog.ui BoardVLM_part1.ui \
             paramVLM.ui POI_input.ui POI_editor.ui Pilototo_param.ui instructions.ui \
-            Pilototo.ui race_dialog.ui
+            Pilototo.ui race_dialog.ui WP_dialog.ui
 SOURCES += \
            BoardVLM.cpp \
            boatAccount_dialog.cpp \
@@ -73,15 +73,14 @@ SOURCES += \
            GshhsReader.cpp \
            GisReader.cpp \
            GribPlot.cpp \
+           GribPointInfo.cpp \
            GribReader.cpp \
            GribRecord.cpp \
            inetConnexion.cpp \
-           Isobar.cpp \
            LoadGribFile.cpp \
            main.cpp \
            MainWindow.cpp \
            MenuBar.cpp \
-           MeteoTable.cpp \
            Orthodromie.cpp \
            opponentBoat.cpp \
            paramVLM.cpp \

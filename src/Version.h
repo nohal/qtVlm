@@ -25,9 +25,9 @@ Copyright (C) 2008 - Jacques Zaninetti - http://zygrib.free.fr
 #define VERSION_H
 
 
-#define QTVLM_VERSION_NUM   "1.5.1"
-#define QTVLM_SUB_VERSION_NUM   "7"
-#define QTVLM_VERSION_DATE  "2009-04-21"
+#define QTVLM_VERSION_NUM   "1.5.2"
+#define QTVLM_SUB_VERSION_NUM   "0"
+#define QTVLM_VERSION_DATE  "2009-05-10"
 
 #ifdef Q_OS_WIN32
 	#define QTVLM_APP_NAME   "qtVlm_win"

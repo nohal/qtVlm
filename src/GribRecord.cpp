@@ -1,8 +1,6 @@
 /**********************************************************************
-qtVlm: Virtual Loup de mer GUI
-Copyright (C) 2008 - Christophe Thomas aka Oxygen77
-
-http://qtvlm.sf.net
+zyGrib: meteorological GRIB file viewer
+Copyright (C) 2008 - Jacques Zaninetti - http://www.zygrib.org
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -16,24 +14,47 @@ GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
-
-Original code: zyGrib: meteorological GRIB file viewer
-Copyright (C) 2008 - Jacques Zaninetti - http://zygrib.free.fr
-
 ***********************************************************************/
 
+#include <stdlib.h>
+
+#include <QDateTime>
+
 #include "GribRecord.h"
+		
+//-------------------------------------------------------------------------------
+// Adjust data type from different mete center
+//-------------------------------------------------------------------------------
+void  GribRecord::translateDataType()
+{
+	//------------------------
+	// NOAA GFS
+	//------------------------
+	if (idCenter==7 && idModel==96 && idGrid==4)
+	{
+		if (dataType == GRB_PRECIP_TOT) {	// mm/period -> mm/h
+			if (periodP2 > periodP1)
+				multiplyAllData( 1.0/(periodP2-periodP1) );
+		}
+		if (dataType == GRB_PRECIP_RATE) {	// mm/s -> mm/h
+			if (periodP2 > periodP1)
+				multiplyAllData( 3600.0 );
+		}
+
+	
+	}
+}
 
 //-------------------------------------------------------------------------------
 // Constructeur de recopie
 //-------------------------------------------------------------------------------
-GribRecord::GribRecord(GribRecord &rec)
+GribRecord::GribRecord(const GribRecord &rec)
 {
     *this = rec;
     // recopie les champs de bits
     if (rec.data != NULL) {
         int size = rec.Ni*rec.Nj;
-        this->data = new float[size];
+        this->data = new double[size];
         for (int i=0; i<size; i++)
             this->data[i] = rec.data[i];
     }
@@ -77,6 +98,23 @@ GribRecord::GribRecord(ZUFILE* file, int id_)
     if (ok) {
         zu_seek(file, seekStart+totalSize, SEEK_SET);
     }
+
+	translateDataType();
+	setDataType(dataType);
+}
+
+//------------------------------------------------------------------------------
+void  GribRecord::setDataType(const zuchar t)
+{
+	dataType = t;
+	dataKey = makeKey(dataType, levelType, levelValue);
+}
+//------------------------------------------------------------------------------
+std::string GribRecord::makeKey(int dataType,int levelType,int levelValue)
+{   // Make data type key  sample:'11-100-850'
+	char ktmp[32];
+	snprintf(ktmp, 32, "%d-%d-%d", dataType, levelType, levelValue);
+	return std::string(ktmp);
 }
 //-----------------------------------------
 GribRecord::~GribRecord()
@@ -89,8 +127,22 @@ GribRecord::~GribRecord()
         delete [] BMSbits;
         BMSbits = NULL;
     }
+    
+//if (dataType==GRB_TEMP) printf("record destroyed %s   %d\n", dataKey.c_str(), (int)curDate/3600);
 }
 
+//-------------------------------------------------------------------------------
+void  GribRecord::multiplyAllData(double k)
+{
+	for (zuint j=0; j<Nj; j++) {
+		for (zuint i=0; i<Ni; i++)
+		{
+			if (hasValue(i,j)) {
+				data[j*Ni+i] *= k;
+			}
+		}
+	}
+}
 
 //==============================================================
 // Lecture des données
@@ -101,11 +153,27 @@ GribRecord::~GribRecord()
 bool GribRecord::readGribSection0_IS(ZUFILE* file) {
     char strgrib[4];
     fileOffset0 = zu_tell(file);
-    if (zu_read(file, strgrib, 4) != 4) {
+
+	// Cherche le 1er 'G'
+	while ( (zu_read(file, strgrib, 1) == 1)
+		   		&&  (strgrib[0] != 'G') )
+	{ }
+	
+    if (strgrib[0] != 'G') {
         ok = false;
         eof = true;
         return false;
     }
+    if (zu_read(file, strgrib+1, 3) != 3) {
+        ok = false;
+        eof = true;
+        return false;
+    }
+/*    if (zu_read(file, strgrib, 4) != 4) {
+        ok = false;
+        eof = true;
+        return false;
+    }*/
     if (strncmp(strgrib, "GRIB", 4) != 0)  {
         erreur("readGribSection0_IS(): Unknown file header : %c%c%c%c",
                     strgrib[0],strgrib[1],strgrib[2],strgrib[3]);
@@ -137,24 +205,31 @@ bool GribRecord::readGribSection1_PDS(ZUFILE* file) {
     sectionSize1 = makeInt3(data1[0],data1[1],data1[2]);
     tableVersion = data1[3];
     idCenter = data1[4];
-    idGrid = data1[6];
-    dataType = data1[8];
-
+    idModel  = data1[5];
+    idGrid   = data1[6];
     hasGDS = (data1[7]&128)!=0;
     hasBMS = (data1[7]&64)!=0;
+    
+    dataType = data1[8];	 // octet 9 = parameters and units
+	levelType = data1[9];
+	levelValue = makeInt2(data1[10],data1[11]);
 
     refyear   = (data1[24]-1)*100+data1[12];
     refmonth  = data1[13];
     refday    = data1[14];
     refhour   = data1[15];
     refminute = data1[16];
-
+    
     refDate = makeDate(refyear,refmonth,refday,refhour,refminute,0);
+	sprintf(strRefDate, "%04d-%02d-%02d %02d:%02d", refyear,refmonth,refday,refhour,refminute);
+
     periodP1  = data1[18];
     periodP2  = data1[19];
     timeRange = data1[20];
     periodsec = periodSeconds(data1[17],data1[18],data1[19],timeRange);
     curDate = makeDate(refyear,refmonth,refday,refhour,refminute,periodsec);
+
+//if (dataType == GRB_PRECIP_TOT) printf("P1=%d p2=%d\n", periodP1,periodP2);    
     
     int decim;
     decim = (int)(((((zuint)data1[26]&0x7F)<<8)+(zuint)data1[27])&0x7FFF);
@@ -185,7 +260,9 @@ bool GribRecord::readGribSection2_GDS(ZUFILE* file) {
     PV = readChar(file); 			// byte 5
     gridType = readChar(file); 		// byte 6
 
-    if (gridType != 0) {
+    if (gridType != 0
+    		// && gridType != 4
+		) {
         erreur("Record %d: unknown grid type GDS(6) : %d",id,gridType);
         ok = false;
     }
@@ -198,54 +275,59 @@ bool GribRecord::readGribSection2_GDS(ZUFILE* file) {
     La2 = readSignedInt3(file)/1000.0;	// byte 18-19-20
     Lo2 = readSignedInt3(file)/1000.0;	// byte 21-22-23
 
-
     if (Lo1>=0 && Lo1<=180 && Lo2<0) {
         Lo2 += 360.0;    // cross the 180 deg meridien,beetwen alaska and russia
     }
 
     Di  = readSignedInt2(file)/1000.0;	// byte 24-25
     Dj  = readSignedInt2(file)/1000.0;	// byte 26-27
-
-// float Dii=Di;
-// float Djj=Dj;
-
+    
     while ( Lo1> Lo2   &&  Di >0) {   // horizontal size > 360 °
         Lo1 -= 360.0;
     }
-    
-    // Signed Di and Dj is better
-    Di = (Lo2>Lo1) ?  fabs(Di) :  -fabs(Di);
-    Dj = (La2>La1) ?  fabs(Dj) :  -fabs(Dj);
-
-    scanFlags = readChar(file);			// byte 28
-
     hasDiDj = (resolFlags&0x80) !=0;
     isEarthSpheric = (resolFlags&0x40) ==0;
     isUeastVnorth =  (resolFlags&0x08) ==0;
 
+    scanFlags = readChar(file);			// byte 28
     isScanIpositive = (scanFlags&0x80) ==0;
     isScanJpositive = (scanFlags&0x40) !=0;
     isAdjacentI     = (scanFlags&0x20) ==0;
     
-//    if (! hasDiDj) {
-        if (Ni<=1 || Nj<=1) {
-            erreur("Record %d: not found: Di and Dj : Ni=%d Nj=%d",id,Ni,Nj);
-            ok = false;
-        }
-        else {
-            Di = (Lo2-Lo1) / (Ni-1);
-            Dj = (La2-La1) / (Nj-1);
-        }
-//    }
-/*if (id==3) {
+   	if (Lo2 > Lo1) {
+	    lonMin = Lo1;
+	    lonMax = Lo2;
+	}
+  	else {
+	    lonMin = Lo2;
+	    lonMax = Lo1;
+	}
+   	if (La2 > La1) {
+	    latMin = La1;
+	    latMax = La2;
+	}
+  	else {
+	    latMin = La2;
+	    latMax = La1;
+	}    
+	if (Ni<=1 || Nj<=1) {
+		erreur("Record %d: Ni=%d Nj=%d",id,Ni,Nj);
+		ok = false;
+	}
+	else {
+		Di = (Lo2-Lo1) / (Ni-1);
+		Dj = (La2-La1) / (Nj-1);
+	}
+
+if (false) {
 printf("====\n");
 printf("Lo1=%f Lo2=%f    La1=%f La2=%f\n", Lo1,Lo2,La1,La2);
 printf("Ni=%d Nj=%d\n", Ni,Nj);
-printf("hasDiDj=%d  Dii,Djj=(%f,%f)  Di,Dj=(%f %f)\n", hasDiDj, Dii,Djj, Di,Dj);
+printf("hasDiDj=%d Di,Dj=(%f %f)\n", hasDiDj, Di,Dj);
 printf("hasBMS=%d\n", hasBMS);
 printf("isScanIpositive=%d isScanJpositive=%d isAdjacentI=%d\n",
                         isScanIpositive,isScanJpositive,isAdjacentI );
-}*/
+}
     return ok;
 }
 //----------------------------------------------
@@ -291,6 +373,8 @@ bool GribRecord::readGribSection4_BDS(ZUFILE* file) {
     isSimplePacking = (flags&0x80) ==0;
     isFloatValues   = (flags&0x80) ==0;
 
+//printf("BDS type=%3d - bits=%02d - level %3d - %d\n", dataType, nbBitsInPack, levelType,levelValue);
+
     if (! isGridData) {
         erreur("Record %d: need grid data",id);
         ok = false;
@@ -300,7 +384,7 @@ bool GribRecord::readGribSection4_BDS(ZUFILE* file) {
         ok = false;
     }
     if (! isFloatValues) {
-        erreur("Record %d: need float values",id);
+        erreur("Record %d: need double values",id);
         ok = false;
     }
     
@@ -309,7 +393,7 @@ bool GribRecord::readGribSection4_BDS(ZUFILE* file) {
     }
 
     // Allocate memory for the data
-    data = new float[Ni*Nj];   
+    data = new double[Ni*Nj];
     if (!data) {
         erreur("Record %d: out of memory",id);
         ok = false;
@@ -410,7 +494,7 @@ bool GribRecord::readGribSection5_ES(ZUFILE* file) {
 //==============================================================
 // Fonctions utiles
 //==============================================================
-float GribRecord::readFloat4(ZUFILE* file) {
+double GribRecord::readFloat4(ZUFILE* file) {
     unsigned char t[4];
     if (zu_read(file, t, 4) != 4) {
         ok = false;
@@ -418,7 +502,7 @@ float GribRecord::readFloat4(ZUFILE* file) {
         return 0;
     }
 
-    float val;
+    double val;
     int A = (zuint)t[0]&0x7F;
     int B = ((zuint)t[1]<<16)+((zuint)t[2]<<8)+(zuint)t[3];
 
@@ -491,6 +575,10 @@ zuint GribRecord::makeInt3(zuchar a, zuchar b, zuchar c) {
     return ((zuint)a<<16)+((zuint)b<<8)+(zuint)c;
 }
 //----------------------------------------------
+zuint GribRecord::makeInt2(zuchar b, zuchar c) {
+    return ((zuint)b<<8)+(zuint)c;
+}
+//----------------------------------------------
 zuint GribRecord::readPackedBits(zuchar *buf, zuint first, zuint nbBits)
 {
     zuint oct = first / 8;
@@ -501,6 +589,22 @@ zuint GribRecord::readPackedBits(zuchar *buf, zuint first, zuint nbBits)
     val = val >> (32-nbBits);
     return val;
 }
+
+//----------------------------------------------
+void  GribRecord::setRecordCurrentDate (time_t t)
+{
+	curDate = t;
+    
+    struct tm *date = gmtime(&t);
+    
+    zuint year   = date->tm_year+1900;
+    zuint month  = date->tm_mon+1;
+	zuint day    = date->tm_mday;
+	zuint hour   = date->tm_hour;
+	zuint minute = date->tm_min;
+	sprintf(strCurDate, "%04d-%02d-%02d %02d:%02d", year,month,day,hour,minute);
+}
+
 //----------------------------------------------
 time_t GribRecord::makeDate(
             zuint year,zuint month,zuint day,zuint hour,zuint min,zuint sec) {
@@ -512,9 +616,17 @@ time_t GribRecord::makeDate(
     date.tm_mon  = month-1;     /* month */
     date.tm_year = year-1900;   /* year */
     date.tm_wday   = 0;         /* day of the week */
-    date. tm_yday  = 0;         /* day in the year */
+    date.tm_yday   = 0;         /* day in the year */
     date.tm_isdst  = 0;         /* daylight saving time */
-    return mktime(&date);
+	
+	time_t   temps = -1;
+	char sdate[64];
+	sprintf(sdate, "%04d-%02d-%02d 00:00:00", year,month,day);
+    QDateTime dt = QDateTime::fromString(sdate, "yyyy-MM-dd HH:mm:ss");
+    dt.setTimeSpec(Qt::UTC);
+	dt = dt.addSecs (hour*3600+min*60+sec);
+	temps = dt.toTime_t();
+	return temps;
 }
 //----------------------------------------------
 zuint GribRecord::periodSeconds(zuchar unit,zuchar P1,zuchar P2,zuchar range) {
@@ -568,10 +680,10 @@ zuint GribRecord::periodSeconds(zuchar unit,zuchar P1,zuchar P2,zuchar range) {
 }
 
 
-//======================================================================
-float GribRecord::getInterpolatedValue(float px, float py) const
+//===============================================================================================
+double GribRecord::getInterpolatedValue(double px, double py, bool numericalInterpolation) const
 {
-    float val;
+    double val;
     if (!ok || Di==0 || Dj==0) {
         return GRIB_NOTDEF;
     }
@@ -584,7 +696,7 @@ float GribRecord::getInterpolatedValue(float px, float py) const
             }
         }
     }
-    float pi, pj;     // coord. in grid unit
+    double pi, pj;     // coord. in grid unit
     pi = (px-Lo1)/Di;
     pj = (py-La1)/Dj;
 
@@ -592,12 +704,6 @@ float GribRecord::getInterpolatedValue(float px, float py) const
     // 01 11
     int i0 = (int) pi;  // point 00
     int j0 = (int) pj;
-
-    // distances to 00
-    float dx = pi-i0;
-    float dy = pj-j0;
-    dx = (3.0 - 2.0*dx)*dx*dx;   // pseudo hermite interpolation
-    dy = (3.0 - 2.0*dy)*dy*dy;
     
     bool h00,h01,h10,h11;
     int nbval = 0;     // how many values in grid ?
@@ -613,8 +719,32 @@ float GribRecord::getInterpolatedValue(float px, float py) const
     if (nbval <3) {
         return GRIB_NOTDEF;
     }
+
+    // distances to 00
+    double dx = pi-i0;
+    double dy = pj-j0;
+
+	if (! numericalInterpolation)
+	{
+		if (dx < 0.5) {
+			if (dy < 0.5)
+				val = getValue(i0,   j0);
+			else
+				val = getValue(i0,   j0+1);
+		}
+		else {
+			if (dy < 0.5)
+				val = getValue(i0+1,   j0);
+			else
+				val = getValue(i0+1,   j0+1);
+		}
+		return val;
+	}
+	    
+    dx = (3.0 - 2.0*dx)*dx*dx;   // pseudo hermite interpolation
+    dy = (3.0 - 2.0*dy)*dy*dy;
     
-    float xa, xb, xc, kx, ky;
+    double xa, xb, xc, kx, ky;
     // Triangle :
     //   xa  xb
     //   xc
@@ -622,17 +752,13 @@ float GribRecord::getInterpolatedValue(float px, float py) const
     // ky = distance(xa,y)
     if (nbval == 4)
     {
-        float x00 = getValue(i0,   j0);
-        float x01 = getValue(i0,   j0+1);
-        float x10 = getValue(i0+1, j0);
-        float x11 = getValue(i0+1, j0+1);
-        val = ((1-dy)*x00 + dy*x01)*(1-dx)
-                    + ((1-dy)*x10+dy*(x11))*dx;
-
-        float x1 = (1.0-dx)*x00 + dx*x10;
-        float x2 = (1.0-dx)*x01 + dx*x11;
+        double x00 = getValue(i0,   j0);
+        double x01 = getValue(i0,   j0+1);
+        double x10 = getValue(i0+1, j0);
+        double x11 = getValue(i0+1, j0+1);
+        double x1 = (1.0-dx)*x00 + dx*x10;
+        double x2 = (1.0-dx)*x01 + dx*x11;
         val =  (1.0-dy)*x1 + dy*x2;
-        
         return val;
     }
     else {    
@@ -670,7 +796,7 @@ float GribRecord::getInterpolatedValue(float px, float py) const
             ky = dy;
         }
     }
-    float k = kx + ky;
+    double k = kx + ky;
     if (k<0 || k>1) {
         val = GRIB_NOTDEF;
     }
@@ -679,10 +805,10 @@ float GribRecord::getInterpolatedValue(float px, float py) const
     }
     else {
         // axes interpolation
-        float vx = k*xb + (1-k)*xa;
-        float vy = k*xc + (1-k)*xa;
+        double vx = k*xb + (1-k)*xa;
+        double vy = k*xc + (1-k)*xa;
         // diagonal interpolation
-        float k2 = kx / k;
+        double k2 = kx / k;
         val =  k2*vx + (1-k2)*vy;
     }
     return val;

@@ -1,8 +1,6 @@
 /**********************************************************************
-qtVlm: Virtual Loup de mer GUI
-Copyright (C) 2008 - Christophe Thomas aka Oxygen77
-
-http://qtvlm.sf.net
+zyGrib: meteorological GRIB file viewer
+Copyright (C) 2008 - Jacques Zaninetti - http://www.zygrib.org
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -16,10 +14,6 @@ GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
-
-Original code: zyGrib: meteorological GRIB file viewer
-Copyright (C) 2008 - Jacques Zaninetti - http://zygrib.free.fr
-
 ***********************************************************************/
 
 #include "GribReader.h"
@@ -29,16 +23,18 @@ Copyright (C) 2008 - Jacques Zaninetti - http://zygrib.free.fr
 GribReader::GribReader()
 {
     ok = false;
+	dewpointDataStatus = NO_DATA_IN_FILE;
 }
 //-------------------------------------------------------------------------------
 GribReader::GribReader(const std::string fname)
 {
+    ok = false;
+	dewpointDataStatus = NO_DATA_IN_FILE;
     if (fname != "") {
         openFile(fname);
     }
     else {
         clean_all_vectors();
-        ok = false;
     }
 }
 //-------------------------------------------------------------------------------
@@ -49,15 +45,13 @@ GribReader::~GribReader()
 //-------------------------------------------------------------------------------
 void GribReader::clean_all_vectors()
 {
-    clean_vector(ls_GRB_PRESS_MSL);
-    clean_vector(ls_GRB_TEMP);
-    clean_vector(ls_GRB_TEMP_DIEW);
-    clean_vector(ls_GRB_WIND_VX);
-    clean_vector(ls_GRB_WIND_VY);
-    clean_vector(ls_GRB_PRECIP_TOT);
-    clean_vector(ls_GRB_CLOUD_TOT);
-    clean_vector(ls_GRB_HUMID_REL);
-    clean_vector(ls_OTHER);
+	std::map < std::string, std::vector<GribRecord *>* >::iterator it;
+	for (it=mapGribRecords.begin(); it!=mapGribRecords.end(); it++) {
+		std::vector<GribRecord *> *ls = (*it).second;
+		clean_vector( *ls );
+		delete ls;
+	}
+	mapGribRecords.clear();
 }
 //-------------------------------------------------------------------------------
 void GribReader::clean_vector(std::vector<GribRecord *> &ls)
@@ -70,56 +64,22 @@ void GribReader::clean_vector(std::vector<GribRecord *> &ls)
     ls.clear();
 }
 
-//-------------------------------------------------------------------------------
-// Lecture complète d'un fichier GRIB
-//-------------------------------------------------------------------------------
-void GribReader::openFile(const std::string fname)
+//---------------------------------------------------------------------------------    
+void GribReader::storeRecordInMap(GribRecord *rec)
 {
-    debug("Open file: %s", fname.c_str());
-    
-    fileName = fname;
-    ok = false;
-    clean_all_vectors();
-    
-    //--------------------------------------------------------
-    // Ouverture du fichier
-    //--------------------------------------------------------
-    file = zu_open(fname.c_str(), "rb", ZU_COMPRESS_AUTO);
-    if (file == NULL) {
-        ok = false;
-        erreur("Can't open file: %s", fname.c_str());
-        return;
-    }
-    readGribFileContent();
-    
-    // Essaie d'autres compressions (extension non reconnue ?)
-    if (! ok) {
-        if (file != NULL)
-            zu_close(file);
-        file = zu_open(fname.c_str(), "rb", ZU_COMPRESS_BZIP);
-        if (file != NULL)
-            readGribFileContent();
-    }
-    if (! ok) {
-        if (file != NULL)
-            zu_close(file);
-        file = zu_open(fname.c_str(), "rb", ZU_COMPRESS_GZIP);
-        if (file != NULL)
-            readGribFileContent();
-    }
-    if (! ok) {
-        if (file != NULL)
-            zu_close(file);
-        file = zu_open(fname.c_str(), "rb", ZU_COMPRESS_NONE);
-        if (file != NULL)
-            readGribFileContent();
-    }
+	std::map <std::string, std::vector<GribRecord *>* >::iterator it;
+	it = mapGribRecords.find(rec->getKey());	
+	if (it == mapGribRecords.end())
+	{
+		mapGribRecords[rec->getKey()] = new std::vector<GribRecord *>;
+		assert(mapGribRecords[rec->getKey()]);
+	}	
+	mapGribRecords[rec->getKey()]->push_back(rec);
 }
-    
-//---------------------------------------------------------------------------------
-void GribReader::readGribFileContent()
+
+//---------------------------------------------------------------------------------    
+void GribReader::readAllGribRecords()
 {
-    fileSize = zu_filesize(file);
     //--------------------------------------------------------
     // Lecture de l'ensemble des GribRecord du fichier
     // et stockage dans les listes appropriées.
@@ -136,126 +96,320 @@ void GribReader::readGribFileContent()
             ok = true;   // au moins 1 record ok
             
             if (firstdate== -1)
-                firstdate = rec->getCurrentDate();
+                firstdate = rec->getRecordCurrentDate();
             
-            debug("Record %3d type=%3d %d",
-                    id, rec->getDataType(), rec->isEof() );
-            
-            switch(rec->getDataType()) {
-                case GRB_PRESS_MSL :
-                    ls_GRB_PRESS_MSL.push_back(rec);
-                    break;
-                case GRB_TEMP :
-                    ls_GRB_TEMP.push_back(rec);
-                    break;
-                case GRB_TEMP_DIEW :
-                    ls_GRB_TEMP_DIEW.push_back(rec);
-                    break;
-                case GRB_WIND_VX :
-                    ls_GRB_WIND_VX.push_back(rec);
-                    break;
-                case GRB_WIND_VY :
-                    ls_GRB_WIND_VY.push_back(rec);
-                    break;
-                case GRB_PRECIP_TOT :
-                    if (ls_GRB_PRECIP_TOT.size()==0) {
-                        GribRecord *r2 = new GribRecord(*rec);
-                        if(r2!=NULL)
-                        {
-                            r2->setCurrentDate(firstdate);    // 1er enregistrement factice
-                            ls_GRB_PRECIP_TOT.push_back(r2);
-                        }
-                    }
-                    ls_GRB_PRECIP_TOT.push_back(rec);
-                    break;
-                case GRB_CLOUD_TOT :
-                    if (ls_GRB_CLOUD_TOT.size()==0) {
-                        GribRecord *r2 = new GribRecord(*rec);
-                        if(r2!=NULL)
-                        {
-                            r2->setCurrentDate(firstdate);    // 1er enregistrement factice
-                            ls_GRB_CLOUD_TOT.push_back(r2);
-                        }
-                    }
-                    ls_GRB_CLOUD_TOT.push_back(rec);
-                    break;
-                case GRB_HUMID_REL :
-                    ls_GRB_HUMID_REL.push_back(rec);
-                    break;
-                default :
-                    ls_OTHER.push_back(rec);
-            }
+            if (//-----------------------------------------
+            		(rec->getDataType()==GRB_PRESSURE
+            			&& rec->getLevelType()==LV_MSL && rec->getLevelValue()==0)
+				//-----------------------------------------
+            	 || ( (rec->getDataType()==GRB_TMIN || rec->getDataType()==GRB_TMAX)
+            			&& rec->getLevelType()==LV_ABOV_GND && rec->getLevelValue()==2)
+				//-----------------------------------------
+            	 || (rec->getDataType()==GRB_TEMP
+            			&& rec->getLevelType()==LV_ABOV_GND && rec->getLevelValue()==2)
+            	 || (rec->getDataType()==GRB_TEMP
+            			&& rec->getLevelType()==LV_ISOBARIC
+            			&& (   rec->getLevelValue()==850
+            				|| rec->getLevelValue()==700
+            				|| rec->getLevelValue()==500
+            				|| rec->getLevelValue()==300 ) )
+				//-----------------------------------------
+            	 || ( (rec->getDataType()==GRB_WIND_VX || rec->getDataType()==GRB_WIND_VY)
+            			&& rec->getLevelType()==LV_ABOV_GND && rec->getLevelValue()==10)
+            	 || ( (rec->getDataType()==GRB_WIND_VX || rec->getDataType()==GRB_WIND_VY)
+            			&& rec->getLevelType()==LV_ISOBARIC
+            			&& (   rec->getLevelValue()==850
+            				|| rec->getLevelValue()==700
+            				|| rec->getLevelValue()==500
+            				|| rec->getLevelValue()==300 ) )
+				//-----------------------------------------
+            	 || (rec->getDataType()==GRB_HUMID_SPEC
+            			&& rec->getLevelType()==LV_ISOBARIC
+            			&& (   rec->getLevelValue()==850
+            				|| rec->getLevelValue()==700
+            				|| rec->getLevelValue()==500
+            				|| rec->getLevelValue()==300 ) )
+				//-----------------------------------------
+            	 || (rec->getDataType()==GRB_GEOPOT_HGT
+            			&& rec->getLevelType()==LV_ISOTHERM0 && rec->getLevelValue()==0)
+            	 || (rec->getDataType()==GRB_GEOPOT_HGT
+            			&& rec->getLevelType()==LV_ISOBARIC
+            			&& (   rec->getLevelValue()==850
+            				|| rec->getLevelValue()==700
+            				|| rec->getLevelValue()==500
+            				|| rec->getLevelValue()==300 ) )
+				//-----------------------------------------
+            	 || (rec->getDataType()==GRB_PRECIP_TOT
+            			&& rec->getLevelType()==LV_GND_SURF && rec->getLevelValue()==0)
+				//-----------------------------------------
+            	 || (rec->getDataType()==GRB_PRECIP_RATE
+            			&& rec->getLevelType()==LV_GND_SURF && rec->getLevelValue()==0)
+				//-----------------------------------------
+            	 || (rec->getDataType()==GRB_SNOW_DEPTH
+            			&& rec->getLevelType()==LV_GND_SURF && rec->getLevelValue()==0)
+				//-----------------------------------------
+            	 || (rec->getDataType()==GRB_SNOW_CATEG
+            			&& rec->getLevelType()==LV_GND_SURF && rec->getLevelValue()==0)
+				//-----------------------------------------
+            	 || (rec->getDataType()==GRB_FRZRAIN_CATEG
+            			&& rec->getLevelType()==LV_GND_SURF && rec->getLevelValue()==0)
+				//-----------------------------------------
+            	 || (rec->getDataType()==GRB_CLOUD_TOT
+            			&& rec->getLevelType()==LV_ATMOS_ALL && rec->getLevelValue()==0)
+				//-----------------------------------------
+            	 || (rec->getDataType()==GRB_HUMID_REL
+            			&& rec->getLevelType()==LV_ABOV_GND && rec->getLevelValue()==2)
+				//-----------------------------------------
+            	 || (rec->getDataType()==GRB_TPOT
+            			&& rec->getLevelType()==LV_SIGMA && rec->getLevelValue()==9950)
+			   )
+			{
+				storeRecordInMap(rec);
+			}
+			else {
+				fprintf(stderr,
+					"unknown record type: key=%s  idCenter==%d && idModel==%d && idGrid==%d\n",
+					rec->getKey().c_str(),
+					rec->getIdCenter(), rec->getIdModel(), rec->getIdGrid()
+					);
+			}
         }
-        else {
+        else {    // ! rec-isOk
             delete rec;
             rec = NULL;
         }
     } while (rec != NULL &&  !rec->isEof());
+}
+
+
+//---------------------------------------------------------------------------------    
+void  GribReader::copyFirstCumulativeRecord (int dataType,int levelType,int levelValue)
+{
+	time_t dateref = getRefDate();
+	GribRecord *rec = getGribRecord(dataType, levelType, levelValue, dateref);
+	if (rec == NULL)
+	{
+		rec = getFirstGribRecord(dataType, levelType, levelValue);
+		if (rec != NULL)
+		{
+			GribRecord *r2 = new GribRecord(*rec);
+			if (r2 != NULL) {
+				r2->setRecordCurrentDate (dateref);    // 1er enregistrement factice
+				storeRecordInMap(r2);
+			}
+		}
+	}
+}
+//---------------------------------------------------------------------------------    
+void  GribReader::removeFirstCumulativeRecord (int dataType,int levelType,int levelValue)
+{
+	time_t dateref = getRefDate();
+	GribRecord *rec = getFirstGribRecord(dataType, levelType, levelValue);
+	
+	if (rec!=NULL  &&  rec->getRecordCurrentDate() == dateref)
+	{
+		std::vector<GribRecord *> *liste = getListOfGribRecords(dataType, levelType, levelValue);		
+		if (liste != NULL) {
+			std::vector<GribRecord *>::iterator it;
+			for (it=liste->begin(); it!=liste->end() && (*it)!=rec; it++)
+			{
+			}
+			if ((*it) == rec) {
+				liste->erase(it);
+			}
+		}
+	}
+}
+//---------------------------------------------------------------------------------
+void  GribReader::copyFirstCumulativeRecord()
+{
+	copyFirstCumulativeRecord(GRB_TMIN, LV_ABOV_GND, 2);
+	copyFirstCumulativeRecord(GRB_TMAX, LV_ABOV_GND, 2);
+    copyFirstCumulativeRecord(GRB_CLOUD_TOT,   LV_ATMOS_ALL, 0);
+	copyFirstCumulativeRecord(GRB_PRECIP_TOT,  LV_GND_SURF, 0);
+	copyFirstCumulativeRecord(GRB_PRECIP_RATE, LV_GND_SURF, 0);
+	copyFirstCumulativeRecord(GRB_SNOW_CATEG,  LV_GND_SURF, 0);
+	copyFirstCumulativeRecord(GRB_FRZRAIN_CATEG, LV_GND_SURF, 0);
+}
+//---------------------------------------------------------------------------------    
+void  GribReader::removeFirstCumulativeRecord()
+{
+	removeFirstCumulativeRecord(GRB_TMIN, LV_ABOV_GND, 2);
+	removeFirstCumulativeRecord(GRB_TMAX, LV_ABOV_GND, 2);
+    removeFirstCumulativeRecord(GRB_CLOUD_TOT,   LV_ATMOS_ALL, 0);
+	removeFirstCumulativeRecord(GRB_PRECIP_TOT,  LV_GND_SURF, 0);
+	removeFirstCumulativeRecord(GRB_PRECIP_RATE, LV_GND_SURF, 0);
+	removeFirstCumulativeRecord(GRB_SNOW_CATEG,  LV_GND_SURF, 0);
+	removeFirstCumulativeRecord(GRB_FRZRAIN_CATEG, LV_GND_SURF, 0);
+}
+
+//---------------------------------------------------------------------------------    
+void GribReader::readGribFileContent()
+{
+    fileSize = zu_filesize(file);
+    readAllGribRecords();
     
     createListDates();
+    hoursBetweenRecords = computeHoursBeetweenGribRecords();
+
+	//-----------------------------------------------------
+	// Are dewpoint data in file ?
+	// If no, compute it with Magnus-Tetens formula, if possible.
+	//-----------------------------------------------------
+	dewpointDataStatus = DATA_IN_FILE;
+	if (getNumberOfGribRecords(GRB_DEWPOINT, LV_ABOV_GND, 2) == 0)
+	{
+		dewpointDataStatus = NO_DATA_IN_FILE;
+		if (  getNumberOfGribRecords(GRB_HUMID_REL, LV_ABOV_GND, 2) > 0
+		   && getNumberOfGribRecords(GRB_TEMP, LV_ABOV_GND, 2) > 0)
+		{
+			dewpointDataStatus = COMPUTED_DATA;
+			std::set<time_t>::iterator iter;
+			for (iter=setAllDates.begin(); iter!=setAllDates.end(); iter++)
+			{
+				time_t date = *iter;
+				GribRecord *recModel = getGribRecord(GRB_TEMP,LV_ABOV_GND,2,date);
+				if (recModel != NULL)
+				{
+					// Crée un GribRecord avec les dewpoints calculés
+					GribRecord *recDewpoint = new GribRecord(*recModel);
+					if (recDewpoint != NULL)
+					{
+						recDewpoint->setDataType(GRB_DEWPOINT);
+						for (zuint i=0; i<(zuint)recModel->getNi(); i++)
+							for (zuint j=0; j<(zuint)recModel->getNj(); j++)
+							{
+								double x = recModel->getX(i);
+								double y = recModel->getY(j);
+								double dp = computeDewPoint(x, y, date);
+								recDewpoint->setValue(i, j, dp);
+							}
+						storeRecordInMap(recDewpoint);
+					}
+				}
+			}
+		}
+	}
+	//-----------------------------------------------------
+}
+
+//---------------------------------------------------
+int GribReader::getDewpointDataStatus(int /*levelType*/,int /*levelValue*/)
+{
+
+	return dewpointDataStatus;
 }
 
 //---------------------------------------------------
 int GribReader::getTotalNumberOfGribRecords() {
-    return ls_GRB_PRESS_MSL.size() 
-                + ls_GRB_TEMP.size() 
-                + ls_GRB_TEMP_DIEW.size() 
-                + ls_GRB_WIND_VX.size() 
-                + ls_GRB_WIND_VY.size() 
-                + ls_GRB_PRECIP_TOT.size() 
-                + ls_GRB_CLOUD_TOT.size()
-                + ls_GRB_HUMID_REL.size()
-                + ls_OTHER.size() ;
+	int nb=0;
+	std::map < std::string, std::vector<GribRecord *>* >::iterator it;
+	for (it=mapGribRecords.begin(); it!=mapGribRecords.end(); it++)
+	{
+		nb += (*it).second->size();
+	}
+	return nb;
 }
+
 //---------------------------------------------------
-int GribReader::getNumberOfGribRecords(int type) {
-    switch(type) {
-        case GRB_PRESS_MSL :
-            return ls_GRB_PRESS_MSL.size();
-        case GRB_TEMP :
-            return ls_GRB_TEMP.size();
-        case GRB_TEMP_DIEW :
-            return ls_GRB_TEMP_DIEW.size();
-        case GRB_WIND_VX :
-            return ls_GRB_WIND_VX.size();
-        case GRB_WIND_VY :
-            return ls_GRB_WIND_VY.size();
-        case GRB_PRECIP_TOT :
-            return ls_GRB_PRECIP_TOT.size();
-        case GRB_CLOUD_TOT :
-            return ls_GRB_CLOUD_TOT.size();
-        case GRB_HUMID_REL :
-            return ls_GRB_HUMID_REL.size();
-        case GRB_UNDEFINED :
-            return ls_OTHER.size();
-        default :
-            return 0;
-    }
-}
-//---------------------------------------------------
-// Rectangle de la zone couverte par les données
-bool GribReader::getGribExtension(float *x0,float *y0, float *x1,float *y1)
+std::vector<GribRecord *> * GribReader::getFirstNonEmptyList()
 {
     std::vector<GribRecord *> *ls = NULL;
-    // Cherche une liste non vide
-    if (ls_GRB_WIND_VX.size()>0)
-        ls = &ls_GRB_WIND_VX;
-    else if(ls_GRB_WIND_VY.size()>0)
-        ls = &ls_GRB_WIND_VY;
-    else if(ls_GRB_PRESS_MSL.size()>0)
-        ls = &ls_GRB_PRESS_MSL;
-    else if(ls_GRB_TEMP.size()>0)
-        ls = &ls_GRB_TEMP;
-    else if(ls_GRB_TEMP_DIEW.size()>0)
-        ls = &ls_GRB_TEMP_DIEW;
-    else if(ls_GRB_PRECIP_TOT.size()>0)
-        ls = &ls_GRB_PRECIP_TOT;
-    else if(ls_GRB_CLOUD_TOT.size()>0)
-        ls = &ls_GRB_CLOUD_TOT;
-    else if(ls_GRB_HUMID_REL.size()>0)
-        ls = &ls_GRB_HUMID_REL;
-    else if(ls_OTHER.size()>0)
-        ls = &ls_OTHER;
+	std::map < std::string, std::vector<GribRecord *>* >::iterator it;
+	for (it=mapGribRecords.begin(); ls==NULL && it!=mapGribRecords.end(); it++)
+	{
+		if ((*it).second->size()>0)
+			ls = (*it).second;
+	}
+	return ls;
+}
+
+//---------------------------------------------------
+int GribReader::getNumberOfGribRecords(int dataType,int levelType,int levelValue)
+{
+	std::vector<GribRecord *> *liste = getListOfGribRecords(dataType,levelType,levelValue);
+	if (liste != NULL)
+		return liste->size();
+	else
+		return 0;
+}
+
+//---------------------------------------------------------------------
+std::vector<GribRecord *> * GribReader::getListOfGribRecords(int dataType,int levelType,int levelValue)
+{
+	std::string key = GribRecord::makeKey(dataType,levelType,levelValue);
+	if (mapGribRecords.find(key) != mapGribRecords.end())
+		return mapGribRecords[key];
+	else
+		return NULL;
+}
+//---------------------------------------------------------------------------
+double  GribReader::getTimeInterpolatedValue(int dataType,int levelType,int levelValue, double px, double py, time_t date)
+{
+	GribRecord *before, *after;
+	findGribsAroundDate (dataType,levelType,levelValue, date, &before, &after);
+	return get2GribsInterpolatedValueByDate(px, py, date, before, after);
+}
+
+//------------------------------------------------------------------
+void GribReader::findGribsAroundDate (int dataType,int levelType,int levelValue, time_t date,
+							GribRecord **before, GribRecord **after)
+{
+	// Cherche les GribRecord qui encadrent la date
+	std::vector<GribRecord *> *ls = getListOfGribRecords(dataType,levelType,levelValue);
+	*before = NULL;
+	*after  = NULL;
+	zuint nb = ls->size();
+	for (zuint i=0; i<nb && *before==NULL && *after==NULL; i++)
+	{
+		GribRecord *rec = (*ls)[i];
+		if (rec->getRecordCurrentDate() == date) {
+			*before = rec;
+			*after = rec;
+		}
+		else if (rec->getRecordCurrentDate() < date) {
+			*before = rec;
+		}
+		else if (rec->getRecordCurrentDate() > date  &&  *before != NULL) {
+			*after = rec;
+		}
+	}
+}
+
+//------------------------------------------------------------------
+double 	GribReader::get2GribsInterpolatedValueByDate (
+				double px, double py, time_t date,
+				GribRecord *before, GribRecord *after)
+{
+	double val = GRIB_NOTDEF;
+	if (before!=NULL && after!=NULL) {
+		if (before == after) {
+			val = before->getInterpolatedValue(px, py);
+		}
+		else {
+			time_t t1 = before->getRecordCurrentDate();
+			time_t t2 = after->getRecordCurrentDate();
+			if (t1 == t2) {
+				val = before->getInterpolatedValue(px, py);
+			}
+			else {
+				double v1 = before->getInterpolatedValue(px, py);
+				double v2 = after->getInterpolatedValue(px, py);
+				if (v1!=GRIB_NOTDEF && v2!=GRIB_NOTDEF) {
+					double k  = fabs( (double)(date-t1)/(t2-t1) );
+					val = (1.0-k)*v1 + k*v2;
+				}
+			}
+		}
+	}	
+	return val;
+}
+
+//---------------------------------------------------
+// Rectangle de la zone couverte par les données
+bool GribReader::getZoneExtension(double *x0,double *y0, double *x1,double *y1)
+{
+    std::vector<GribRecord *> *ls = getFirstNonEmptyList();
     if (ls != NULL) {
         GribRecord *rec = ls->at(0);
         if (rec != NULL) {
@@ -263,6 +417,16 @@ bool GribReader::getGribExtension(float *x0,float *y0, float *x1,float *y1)
             *y0 = rec->getY(0);
             *x1 = rec->getX( rec->getNi()-1 );
             *y1 = rec->getY( rec->getNj()-1 );
+            if (*x0 > *x1) {
+				double tmp = *x0;
+				*x0 = *x1;
+				*x1 = tmp;
+            }
+            if (*y0 > *y1) {
+				double tmp = *y0;
+				*y0 = *y1;
+				*y1 = tmp;
+            }
         }
         return true;
     }
@@ -274,26 +438,7 @@ bool GribReader::getGribExtension(float *x0,float *y0, float *x1,float *y1)
 // Premier GribRecord trouvé (pour récupérer la grille)
 GribRecord * GribReader::getFirstGribRecord()
 {
-    std::vector<GribRecord *> *ls = NULL;
-    // Cherche une liste non vide
-    if (ls_GRB_WIND_VX.size()>0)
-        ls = &ls_GRB_WIND_VX;
-    else if(ls_GRB_WIND_VY.size()>0)
-        ls = &ls_GRB_WIND_VY;
-    else if(ls_GRB_PRESS_MSL.size()>0)
-        ls = &ls_GRB_PRESS_MSL;
-    else if(ls_GRB_TEMP.size()>0)
-        ls = &ls_GRB_TEMP;
-    else if(ls_GRB_TEMP_DIEW.size()>0)
-        ls = &ls_GRB_TEMP_DIEW;
-    else if(ls_GRB_PRECIP_TOT.size()>0)
-        ls = &ls_GRB_PRECIP_TOT;
-    else if(ls_GRB_CLOUD_TOT.size()>0)
-        ls = &ls_GRB_CLOUD_TOT;
-    else if(ls_GRB_HUMID_REL.size()>0)
-        ls = &ls_GRB_HUMID_REL;
-    else if(ls_OTHER.size()>0)
-        ls = &ls_OTHER;
+    std::vector<GribRecord *> *ls = getFirstNonEmptyList();
     if (ls != NULL) {
         return ls->at(0);
     }
@@ -302,138 +447,147 @@ GribRecord * GribReader::getFirstGribRecord()
     }
 }
 //---------------------------------------------------
-// Délai en heures entre 2 records
-// On suppose qu'il est fixe pour tout le fichier !!!
-float GribReader::getHoursBeetweenGribRecords()
+// Premier GribRecord (par date) pour un type donné
+GribRecord * GribReader::getFirstGribRecord(int dataType,int levelType,int levelValue)
 {
-    std::vector<GribRecord *> *ls = NULL;
-    // Cherche une liste de 2 éléments
-    if (ls_GRB_WIND_VX.size()>1)
-        ls = &ls_GRB_WIND_VX;
-    else if(ls_GRB_WIND_VY.size()>1)
-        ls = &ls_GRB_WIND_VY;
-    else if(ls_GRB_PRESS_MSL.size()>1)
-        ls = &ls_GRB_PRESS_MSL;
-    else if(ls_GRB_TEMP.size()>1)
-        ls = &ls_GRB_TEMP;
-    else if(ls_GRB_TEMP_DIEW.size()>1)
-        ls = &ls_GRB_TEMP_DIEW;
-    else if(ls_GRB_PRECIP_TOT.size()>1)
-        ls = &ls_GRB_PRECIP_TOT;
-    else if(ls_GRB_CLOUD_TOT.size()>1)
-        ls = &ls_GRB_CLOUD_TOT;
-    else if(ls_GRB_HUMID_REL.size()>0)
-        ls = &ls_GRB_HUMID_REL;
-    else if(ls_OTHER.size()>1)
-        ls = &ls_OTHER;
-        
-    if (ls == NULL) {
-        return -1;
-    }
-    else {
-        time_t t0 = (*ls)[0]->getCurrentDate();
-        time_t t1 = (*ls)[1]->getCurrentDate();
-        return   abs(t1-t0) / 3600.0;
-    }
+	std::set<time_t>::iterator it;
+	GribRecord *rec = NULL;
+	for (it=setAllDates.begin(); rec==NULL && it!=setAllDates.end(); it++)
+	{
+		time_t date = *it;
+		rec = getGribRecord(dataType,levelType,levelValue, date);
+	}
+	return rec;
 }
 //---------------------------------------------------
-GribRecord * GribReader::getGribRecord(int type, time_t date)
+// Délai en heures entre 2 records
+// On suppose qu'il est fixe pour tout le fichier !!!
+double GribReader::computeHoursBeetweenGribRecords()
 {
-    std::vector<GribRecord *> *ls = NULL;
-    bool lsok = true;
-    switch(type) {
-        case GRB_PRESS_MSL :
-            ls = &ls_GRB_PRESS_MSL;
-            break;
-        case GRB_TEMP :
-            ls = &ls_GRB_TEMP;
-            break;
-        case GRB_TEMP_DIEW :
-            ls = &ls_GRB_TEMP_DIEW;
-            break;
-        case GRB_WIND_VX :
-            ls = &ls_GRB_WIND_VX;
-            break;
-        case GRB_WIND_VY :
-            ls = &ls_GRB_WIND_VY;
-            break;
-        case GRB_PRECIP_TOT :
-            ls = &ls_GRB_PRECIP_TOT;
-            break;
-        case GRB_CLOUD_TOT :
-            ls = &ls_GRB_CLOUD_TOT;
-            break;
-        case GRB_HUMID_REL :
-            ls = &ls_GRB_HUMID_REL;
-            break;
-        default :
-            ls = &ls_OTHER;
-            lsok = false;
+	double res = 1;
+    std::vector<GribRecord *> *ls = getFirstNonEmptyList();
+    if (ls != NULL) {
+        time_t t0 = (*ls)[0]->getRecordCurrentDate();
+        time_t t1 = (*ls)[1]->getRecordCurrentDate();
+        res = abs(t1-t0) / 3600.0;
+        if (res < 1)
+        	res = 1;  
     }
-    if (lsok) {
+    return res;
+}
+//---------------------------------------------------
+GribRecord * GribReader::getGribRecord(int dataType,int levelType,int levelValue, time_t date)
+{
+    std::vector<GribRecord *> *ls = getListOfGribRecords(dataType,levelType,levelValue);
+    if (ls != NULL) {
         // Cherche le premier enregistrement à la bonne date
         GribRecord *res = NULL;
-        unsigned int nb = ls->size();
-        for (unsigned int i=0; i<nb && res==NULL; i++) {
-            if ((*ls)[i]->getCurrentDate() == date)
+        zuint nb = ls->size();
+        for (zuint i=0; i<nb && res==NULL; i++) {
+            if ((*ls)[i]->getRecordCurrentDate() == date)
                 res = (*ls)[i];
         }
         return res;
     }
     else {
-        //  TODO : return GribRecord number num of type 'type' in  ls_OTHER
         return NULL;
     }
 }
 
-//=========================================================================
+//-------------------------------------------------------
 // Génère la liste des dates pour lesquelles des prévisions existent
 void GribReader::createListDates()
-{
-    // Le set assure l'ordre et l'unicité des dates
+{   // Le set assure l'ordre et l'unicité des dates
     setAllDates.clear();
-    
-    std::vector<GribRecord *> *tab;
-    unsigned int i;
-    tab = & ls_GRB_PRESS_MSL;
-    for (i=0; i<tab->size(); i++) {
-        setAllDates.insert( tab->at(i)->getCurrentDate());
-    }
-    tab = & ls_GRB_TEMP;
-    for (i=0; i<tab->size(); i++) {
-        setAllDates.insert( tab->at(i)->getCurrentDate());
-    }
-    tab = & ls_GRB_TEMP_DIEW;
-    for (i=0; i<tab->size(); i++) {
-        setAllDates.insert( tab->at(i)->getCurrentDate());
-    }
-    tab = & ls_GRB_WIND_VX;
-    for (i=0; i<tab->size(); i++) {
-        setAllDates.insert( tab->at(i)->getCurrentDate());
-    }
-    tab = & ls_GRB_WIND_VY;
-    for (i=0; i<tab->size(); i++) {
-        setAllDates.insert( tab->at(i)->getCurrentDate());
-    }
-    tab = & ls_GRB_PRECIP_TOT;
-    for (i=0; i<tab->size(); i++) {
-        setAllDates.insert( tab->at(i)->getCurrentDate());
-    }
-    tab = & ls_GRB_CLOUD_TOT;
-    for (i=0; i<tab->size(); i++) {
-        setAllDates.insert( tab->at(i)->getCurrentDate());
-    }
-    tab = & ls_GRB_HUMID_REL;
-    for (i=0; i<tab->size(); i++) {
-        setAllDates.insert( tab->at(i)->getCurrentDate());
-    }
-//     tab = & ls_OTHER;    // TODO
-//     for (i=0; i<tab->size(); i++) {
-//         setAllDates.insert( tab->at(i)->getCurrentDate());
-//     }
+	std::map < std::string, std::vector<GribRecord *>* >::iterator it;
+	for (it=mapGribRecords.begin(); it!=mapGribRecords.end(); it++)
+	{
+		std::vector<GribRecord *> *ls = (*it).second;
+		for (zuint i=0; i<ls->size(); i++) {
+			setAllDates.insert( ls->at(i)->getRecordCurrentDate() );
+		}
+	}
+}
 
+//-------------------------------------------------------
+double GribReader::computeDewPoint(double lon, double lat, time_t now)
+{
+	double diewpoint = GRIB_NOTDEF;
+
+	GribRecord *recTempDiew =  getGribRecord(GRB_DEWPOINT,LV_ABOV_GND,2,now);
+	if (recTempDiew != NULL)
+	{
+		// GRIB file contains diew point data
+		diewpoint = recTempDiew->getInterpolatedValue(lon, lat);
+	}
+	else
+	{	
+		// Compute diew point with Magnus-Tetens formula
+		GribRecord *recTemp =  getGribRecord(GRB_TEMP,LV_ABOV_GND,2,now);
+		GribRecord *recHumid = getGribRecord(GRB_HUMID_REL,LV_ABOV_GND,2,now);
+		if (recTemp && recHumid)
+		{
+			double temp = recTemp->getInterpolatedValue(lon, lat);
+			double humid = recHumid->getInterpolatedValue(lon, lat);
+			if (temp != GRIB_NOTDEF && humid != GRIB_NOTDEF)
+			{
+				double a = 17.27;
+				double b = 237.7;
+				double t  = temp-273.15;
+				double rh = humid;
+				//if ( t>0 && t<60 && rh>0.01)
+				{
+					double alpha = a*t/(b+t)+log(rh/100.0);
+					diewpoint = b*alpha/(a-alpha);
+					diewpoint += 273.15;
+				}
+			}
+		}
+	}
+	return diewpoint;
 }
 
 
-
+//-------------------------------------------------------------------------------
+// Lecture complète d'un fichier GRIB
+//-------------------------------------------------------------------------------
+void GribReader::openFile(const std::string fname)
+{
+    debug("Open file: %s", fname.c_str());
+    fileName = fname;
+    ok = false;
+    clean_all_vectors();
+    //--------------------------------------------------------
+    // Ouverture du fichier
+    //--------------------------------------------------------
+    file = zu_open(fname.c_str(), "rb", ZU_COMPRESS_AUTO);
+    if (file == NULL) {
+        erreur("Can't open file: %s", fname.c_str());
+        return;
+    }
+    readGribFileContent();
+    
+    // Essaie d'autres compressions (extension non reconnue ?)
+ 	if (! ok) {
+    	if (file != NULL)
+			zu_close(file);
+    	file = zu_open(fname.c_str(), "rb", ZU_COMPRESS_BZIP);
+    	if (file != NULL)
+    		readGribFileContent();
+    }
+ 	if (! ok) {
+    	if (file != NULL)
+			zu_close(file);
+    	file = zu_open(fname.c_str(), "rb", ZU_COMPRESS_GZIP);
+    	if (file != NULL)
+    		readGribFileContent();
+    }
+ 	if (! ok) {
+    	if (file != NULL)
+			zu_close(file);
+    	file = zu_open(fname.c_str(), "rb", ZU_COMPRESS_NONE);
+    	if (file != NULL)
+    		readGribFileContent();
+    }
+}
 

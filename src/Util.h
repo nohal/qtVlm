@@ -31,6 +31,7 @@ Copyright (C) 2008 - Jacques Zaninetti - http://zygrib.free.fr
 #include <QApplication>
 #include <QObject>
 #include <QString>
+#include <QDir>
 #include <QDateTime>
 #include <QSettings>
 #include <QLocale>
@@ -73,6 +74,7 @@ class Util
 
     static void     setSetting(const QString &key, const QVariant &value);
     static QVariant getSetting(const QString &key, const QVariant &defaultValue);
+    static bool     isDirWritable(const QDir &dir);
 
     //-------------------------------------------------
     static QString formatDegres(float x);           // 123.4 -> 123°24.00'
@@ -86,6 +88,8 @@ class Util
     static QString formatDateTimeShort(time_t t);
     static QString formatDateTime_date(time_t t);
     static QString formatDateTime_hour(time_t t);
+    static QString formatTime(time_t t);
+    static QDateTime applyTimeZone(time_t t, QString *suffix);
 
     static QString formatSpeed(float meterspersecond);
     static QString formatDistance(float mille);

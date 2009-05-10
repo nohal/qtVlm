@@ -58,23 +58,15 @@ Terrain::Terrain(QWidget *parent, Projection *proj_)
     showRivers   = Util::getSetting("showRivers", false).toBool();
     showCitiesNamesLevel = Util::getSetting("showCitiesNamesLevel", 0).toInt();
     showCountriesNames = Util::getSetting("showCountriesNames", false).toBool();
-
-    showIsobars  = Util::getSetting("showIsobars", true).toBool();
-    showIsobarsLabels = Util::getSetting("showIsobarsLabels", false).toBool();
-    isobarsStep = Util::getSetting("isobarsStep", 2).toInt();
-    showPressureMinMax = Util::getSetting("showPressureMinMax", false).toBool();
-
     showWindColorMap  = Util::getSetting("showWindColorMap", true).toBool();
-    showRainColorMap  = Util::getSetting("showRainColorMap", false).toBool();
-    showCloudColorMap  = Util::getSetting("showCloudColorMap", false).toBool();
-    showHumidColorMap  = Util::getSetting("showHumidColorMap", false).toBool();
 
     colorMapSmooth = Util::getSetting("colorMapSmooth", true).toBool();
     showWindArrows  = Util::getSetting("showWindArrows", true).toBool();
     showBarbules = Util::getSetting("showBarbules", true).toBool();
-
-    showTemperatureLabels = Util::getSetting("showTemperatureLabels", false).toBool();
     showGribGrid = Util::getSetting("showGribGrid", false).toBool();
+
+    interpolateValues = Util::getSetting("interpolateValues", true).toBool();
+    windArrowsOnGribGrid = Util::getSetting("windArrowsOnGribGrid", false).toBool();
     //----------------------------------------------------------------------------
 
     imgEarth = NULL;
@@ -87,10 +79,8 @@ Terrain::Terrain(QWidget *parent, Projection *proj_)
 
     proj = proj_;
     gshhsReader = NULL;
-    gribPlot = new GribPlot();
+    gribPlot = new GribPlot(interpolateValues, windArrowsOnGribGrid);
     assert(gribPlot);
-    setIsobarsStep(isobarsStep);
-
     gisReader = new GisReader();
     assert(gisReader);
 
@@ -119,9 +109,6 @@ void Terrain::updateGraphicsParameters()
 
     riversPen.setColor(Util::getSetting("riversLineColor", QColor(50,50,150)).value<QColor>());
     riversPen.setWidthF(Util::getSetting("riversLineWidth", 1.0).toDouble());
-
-    isobarsPen.setColor(Util::getSetting("isobarsLineColor", QColor(80,80,80)).value<QColor>());
-    isobarsPen.setWidthF(Util::getSetting("isobarsLineWidth", 2.0).toDouble());
 
     int v = 180;
     selectColor     = QColor(v,v,v);
@@ -186,7 +173,7 @@ bool Terrain::draw_GSHHSandGRIB(QPainter &pntGlobal)
             // Dessin des données GRIB
             //===================================================
 
-            gribPlot->show_GRIB_CoverZone(pnt, proj);
+            gribPlot->show_CoverZone(pnt, proj);
 
             windArrowsColor.setRgb(255, 255, 255);
 
@@ -195,36 +182,9 @@ bool Terrain::draw_GSHHSandGRIB(QPainter &pntGlobal)
                 gribPlot->draw_WIND_Color(pnt, proj, colorMapSmooth);
 //printf("time showWindColorMap=%d\n", t1.elapsed());
             }
-            else if (showRainColorMap) {
-                windArrowsColor.setRgb(140, 120, 100);
-                gribPlot->draw_RAIN_Color(pnt, proj, colorMapSmooth);
-            }
-            else if (showCloudColorMap) {
-                windArrowsColor.setRgb(180, 180, 80);
-                gribPlot->draw_CLOUD_Color(pnt, proj, colorMapSmooth);
-            }
-            else if (showHumidColorMap) {
-                windArrowsColor.setRgb(180, 180, 80);
-                gribPlot->draw_HUMID_Color(pnt, proj, colorMapSmooth);
-            }
-
-            if (showIsobars) {
-                pnt.setPen(isobarsPen);
-                gribPlot->draw_PRESSURE_Isobars(pnt, proj);
-            }
 
             if (showWindArrows) {
                 gribPlot->draw_WIND_Arrows(pnt, proj, showBarbules, windArrowsColor);
-            }
-
-            if (showIsobarsLabels) {
-                gribPlot->draw_PRESSURE_IsobarsLabels(pnt, proj);
-            }
-            if (showPressureMinMax) {
-                gribPlot->draw_PRESSURE_MinMax (pnt, proj);
-            }
-            if (showTemperatureLabels) {
-                gribPlot->draw_TEMPERATURE_Labels (pnt, proj);
             }
 
 
@@ -262,7 +222,7 @@ bool Terrain::draw_GSHHSandGRIB(QPainter &pntGlobal)
             //===================================================
             // Dates de la prévision
             //===================================================
-            gribPlot->draw_ForecastDates(pnt, proj);
+            //gribPlot->draw_ForecastDates(pnt, proj);
 
             //===================================================
             isEarthMapValid = true;
@@ -486,15 +446,7 @@ void Terrain::setDrawRivers(bool b) {
         update();
     }
 }
-//-------------------------------------------------------
-void Terrain::slotTemperatureLabels(bool b) {
-    if (showTemperatureLabels != b) {
-        showTemperatureLabels = b;
-        Util::setSetting("showTemperatureLabels", b);
-        mustRedraw = true;
-        update();
-    }
-}
+
 //-------------------------------------------------------
 void Terrain::setDrawCountriesBorders(bool b) {
     if (showCountriesBorders != b) {
@@ -556,65 +508,6 @@ void Terrain::setDrawWindColors (bool b) {
     if (showWindColorMap != b) {
         showWindColorMap = b;
         Util::setSetting("showWindColorMap", b);
-        if (b==true) {     // Désactive les autres cartes en couleurs
-            showRainColorMap = false;
-            Util::setSetting("showRainColorMap", false);
-            showCloudColorMap = false;
-            Util::setSetting("showCloudColorMap", false);
-            showHumidColorMap = false;
-            Util::setSetting("showHumidColorMap", false);
-        }
-        mustRedraw = true;
-        update();
-    }
-}
-//-------------------------------------------------------
-void Terrain::setDrawRainColors (bool b) {
-    if (showRainColorMap != b) {
-        showRainColorMap = b;
-        Util::setSetting("showRainColorMap", b);
-        if (b==true) {     // Désactive les autres cartes en couleurs
-            showWindColorMap = false;
-            Util::setSetting("showWindColorMap", false);
-            showCloudColorMap = false;
-            Util::setSetting("showCloudColorMap", false);
-            showHumidColorMap = false;
-            Util::setSetting("showHumidColorMap", false);
-        }
-        mustRedraw = true;
-        update();
-    }
-}
-//-------------------------------------------------------
-void Terrain::setDrawCloudColors (bool b) {
-    if (showCloudColorMap != b) {
-        showCloudColorMap = b;
-        Util::setSetting("showCloudColorMap", b);
-        if (b==true) {     // Désactive les autres cartes en couleurs
-            showWindColorMap = false;
-            Util::setSetting("showWindColorMap", false);
-            showRainColorMap = false;
-            Util::setSetting("showRainColorMap", false);
-            showHumidColorMap = false;
-            Util::setSetting("showHumidColorMap", false);
-        }
-        mustRedraw = true;
-        update();
-    }
-}
-//-------------------------------------------------------
-void Terrain::setDrawHumidColors (bool b) {
-    if (showHumidColorMap != b) {
-        showHumidColorMap = b;
-        Util::setSetting("showHumidColorMap", b);
-        if (b==true) {     // Désactive les autres cartes en couleurs
-            showWindColorMap = false;
-            Util::setSetting("showWindColorMap", false);
-            showRainColorMap = false;
-            Util::setSetting("showRainColorMap", false);
-            showCloudColorMap = false;
-            Util::setSetting("showCloudColorMap", false);
-        }
         mustRedraw = true;
         update();
     }
@@ -651,44 +544,6 @@ void Terrain::setGribGrid (bool b) {
     if (showGribGrid != b) {
         showGribGrid = b;
         Util::setSetting("showGribGrid", b);
-        mustRedraw = true;
-        update();
-    }
-}
-//-------------------------------------------------------
-void Terrain::setPressureMinMax (bool b) {
-    if (showPressureMinMax != b) {
-        showPressureMinMax = b;
-        Util::setSetting("showPressureMinMax", b);
-        mustRedraw = true;
-        update();
-    }
-}
-
-//-------------------------------------------------------
-void Terrain::setDrawIsobars(bool b) {
-    if (showIsobars != b) {
-        showIsobars = b;
-        Util::setSetting("showIsobars", b);
-        mustRedraw = true;
-        update();
-    }
-}
-//-------------------------------------------------------
-void Terrain::setIsobarsStep(int step)
-{
-    if (gribPlot != NULL) {
-        gribPlot->setIsobarsStep(step);
-        Util::setSetting("isobarsStep", step);
-        mustRedraw = true;
-        update();
-    }
-}
-//-------------------------------------------------------
-void Terrain::setDrawIsobarsLabels(bool b) {
-    if (showIsobarsLabels != b) {
-        showIsobarsLabels = b;
-        Util::setSetting("showIsobarsLabels", b);
         mustRedraw = true;
         update();
     }
@@ -754,8 +609,8 @@ void Terrain::zoomOnGribFile()
 {
     GribReader * gribReader= gribPlot->getGribReader();
     if (gribReader != NULL) {
-        float x0,y0, x1,y1, mh, mv;
-        if (gribReader->getGribExtension(&x0,&y0, &x1,&y1))
+        double x0,y0, x1,y1, mh, mv;
+        if (gribReader->getZoneExtension(&x0,&y0, &x1,&y1))
         {
             mh = fabs(x0-x1)*0.05;
             mv = fabs(y0-y1)*0.05;

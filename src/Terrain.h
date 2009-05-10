@@ -69,7 +69,6 @@ public slots :
     void setDrawCountriesBorders(bool);
     void setDrawOrthodromie(bool);
     void setCountriesNames(bool);
-    void slotTemperatureLabels(bool);
     void setMapQuality(int q);
     void slot_Zoom_In();
     void slot_Zoom_Out();
@@ -88,9 +87,6 @@ public slots :
     void loadGribFile(QString fileName, bool zoom);
 
     void setDrawWindColors    (bool);
-    void setDrawRainColors    (bool);
-    void setDrawCloudColors   (bool);
-    void setDrawHumidColors   (bool);
 
     void setColorMapSmooth (bool);
     void setDrawWindArrows    (bool);
@@ -98,10 +94,6 @@ public slots :
 
     void setGribGrid          (bool);
     void setCitiesNamesLevel  (int level);
-    void setDrawIsobars       (bool);
-    void setDrawIsobarsLabels (bool);
-    void setIsobarsStep(int step);
-    void setPressureMinMax   (bool);
 
     void slotTimerResize();
     void slotMustRedraw();
@@ -131,7 +123,7 @@ private:
     bool        isWindMapValid;
     bool        mustRedraw;
     QCursor     enterCursor;
-    bool    isResizing;
+    bool        isResizing;
 
     void  draw_OrthodromieSegment
             (QPainter &pnt, float x0,float y0, float x1,float y1, int recurs=0);
@@ -163,13 +155,11 @@ private:
     QColor  selectColor;
     QColor  windArrowsColor;
 
-    QPen    isobarsPen;
     QPen    seaBordersPen;
     QPen    boundariesPen;
     QPen    riversPen;
 
     int     quality;
-    int     isobarsStep;
 
     //-----------------------------------------------
     // Flags indiquant les éléments à dessiner
@@ -177,22 +167,16 @@ private:
     bool  showCountriesBorders;
     bool  showRivers;
     bool  showOrthodromie;
+    bool  interpolateValues;
+    bool  windArrowsOnGribGrid;
 
     bool  showWindColorMap;
-    bool  showRainColorMap;
-    bool  showCloudColorMap;
-    bool  showHumidColorMap;
-
-    bool  showIsobars;
-    bool  showIsobarsLabels;
     bool  colorMapSmooth;
     bool  showWindArrows;
     bool  showBarbules;
-    bool  showGribGrid;
-    bool  showPressureMinMax;
+    bool  showGribGrid;    
     int   showCitiesNamesLevel;
     bool  showCountriesNames;
-    bool  showTemperatureLabels;
 
     //-----------------------------------------------
     bool draw_GSHHSandGRIB(QPainter &painter);

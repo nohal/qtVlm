@@ -6,7 +6,6 @@ all:
 	cd src/zlib-1.2.3; qmake; make
 	cd src/qextserialport; qmake; make
 	cd src; qmake; make
-	cp src/qtVlm .
 
 clean:
 	cd src/bzip2; qmake; make clean

@@ -27,7 +27,6 @@ Copyright (C) 2008 - Jacques Zaninetti - http://zygrib.free.fr
 #include <QNetworkRequest>
 #include <QUrl>
 #include <QClipboard>
-
 #include "Util.h"
 
 //---------------------------------------------------------------------
@@ -37,6 +36,7 @@ void Util::setSetting(const QString &key, const QVariant &value)
      settings.beginGroup("main");
      settings.setValue(key, value);
      settings.endGroup();
+    //Settings::setUserSetting(key, value);
 }
 //---------------------------------------------------------------------
 QVariant Util::getSetting(const QString &key, const QVariant &defaultValue)
@@ -46,6 +46,28 @@ QVariant Util::getSetting(const QString &key, const QVariant &defaultValue)
      QVariant val = settings.value(key, defaultValue);
      settings.endGroup();
      return val;
+    //return Settings::getUserSetting(key, defaultValue);
+}
+
+//======================================================================
+bool Util::isDirWritable (const QDir &dir)
+{
+        if (! dir.exists())
+                return false;
+
+        // try yo write a file
+        FILE *fd;
+        QString tmpfname = dir.absolutePath() + "/jgj13642hygg54hjgiouhg43.tmp";
+        fd = fopen( qPrintable(tmpfname), "w");
+        if (fd != NULL
+                        && fwrite(&tmpfname,1,1,fd)==1 )
+        {
+                fclose(fd);
+                unlink( qPrintable(tmpfname) );
+                return true;
+        }
+        else
+                return false;
 }
 
 //======================================================================
@@ -270,6 +292,50 @@ QString Util::formatDateTime_hour(time_t t)
     return dt.toString("hh:mm UTC");
 }
 
+
+//---------------------------------------------------------------------
+QString Util::formatTime(time_t t)
+{
+        QString suffix;
+    QDateTime dt = applyTimeZone(t, &suffix);
+    return dt.toString("hh:mm ")+suffix;
+}
+
+//---------------------------------------------------------------------
+QDateTime Util::applyTimeZone(time_t t, QString *suffix)
+{
+    QDateTime dt;
+    dt.setTime_t(t);
+    //dt.setTimeSpec(Qt::UTC);
+        dt = dt.toUTC();
+
+        QString tmzone =  Util::getSetting("timeZone", "UTC").toString();
+        if (tmzone == "LOC") {
+                dt = dt.toLocalTime();
+                if (suffix != NULL)
+                        *suffix = "LOC";
+        }
+        else if (tmzone.left(4)=="UTC+" || tmzone.left(4)=="UTC-")
+        {    // UTC-12 UTC-11 ... UTC+1 UTC+2 UTC+3 ... UTC+14
+                int dec = tmzone.mid(3,-1).toInt();
+                if (dec==0 || dec<-12 || dec>14) {
+                        if (suffix != NULL)
+                                *suffix = "UTC";
+                }
+                else {
+                        dt = dt.addSecs(dec*3600);
+                        if (suffix != NULL)
+                                *suffix = tmzone;
+                }
+        }
+        else
+        {	// default timezone : UTC
+                if (suffix != NULL)
+                        *suffix = "UTC";
+        }
+
+    return dt;
+}
 
 void Util::paramProxy(QNetworkAccessManager *inetManager,QString host)
 {

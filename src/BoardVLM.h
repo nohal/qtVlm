@@ -28,47 +28,35 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <QPainter>
 #include <QMainWindow>
 
-class boardVLM_part2;
 class boardVLM;
 
 #include "boatAccount.h"
 #include "ui_BoardVLM_part1.h"
-#include "ui_BoardVLM_part2.h"
+#include "ui_WP_dialog.h"
 #include "Util.h"
 #include "inetConnexion.h"
 #include "GribPlot.h"
 #include "Util.h"
 
-class boardVLM_part2: public QWidget , public Ui::boardVLM_part2_ui
-{
-    Q_OBJECT
+class WP_dialog: public QDialog, public Ui::WP_dialog_ui
+{ Q_OBJECT
     public:
-        boardVLM_part2(QWidget * parent=0);
-        void boatUpdated(boatAccount * boat);
-        void setChangeStatus(bool status);
-
-        void showGribPointInfo(const GribPointInfo &pf);
+        WP_dialog(QWidget * parent=0);
+        void show_WPdialog(boatAccount * boat);
 
     public slots:
-        void doSaveWP();
-        void doClearWP();
         void chgLat();
         void chgLon();
-        void doPilotOrtho();
-        void doVmg();
         void doPaste();
-        void updateNxtVac();
         void doCopy();
-        void doPilototo();
+        void done(int result);
+        void doClearWP();
 
     signals:
         void sendCmd(int cmdNum,float,float,float);
-        void go_pilototo(void);
 
     private:
         boatAccount * currentBoat;
-        QTimer * timer;
-        int nxtVac_cnt;
 };
 
 class boardVLM: public QWidget , public Ui::boardVLM_part1_ui
@@ -76,16 +64,20 @@ class boardVLM: public QWidget , public Ui::boardVLM_part1_ui
     public:
         boardVLM(QMainWindow * mainWin,QWidget * parent=0);
         void updateInet(void);
-        void showGribPointInfo(const GribPointInfo &pf);
-
+        void updateBoatList(QList<boatAccount*> & acc_list);
+        void setSelectedBoatIndex(int index);
 
     public slots:
         void chgHeading();
         void headingUpdated(double heading);
-        void doVirer();
         void chgAngle();
         void angleUpdated(double angle);
-        void doSynch();
+        void doSync();
+        void doVirer();
+        void doPilotOrtho();
+        void doVmg();
+        void doWP_edit();
+        void disp_boatInfo();
         void synch_GPS();
 
         void requestFinished (int currentRequest,QString res);
@@ -100,20 +92,28 @@ class boardVLM: public QWidget , public Ui::boardVLM_part1_ui
 
         void boatUpdated(boatAccount * boat);
 
+    signals:
+        void VLM_Sync(void);
+
     private:
         inetConnexion * conn;
         int currentRequest;
         int currentCmdNum;
-        float cmd_val1,cmd_val2,cmd_val3;
         int nbRetry;
         bool isWaiting;
+
+        float cmd_val1,cmd_val2,cmd_val3;
+        float computeWPdir(boatAccount * boat);
+        void update_btnWP(void);
 
         boatAccount * currentBoat;
 
         QTimer * timer;
         QTimer * GPS_timer;
 
-        boardVLM_part2 * board2;
+        WP_dialog * wpDialog;
+
+        QString default_styleSheet;
 
         /*GPS emul param*/
         QString COM;

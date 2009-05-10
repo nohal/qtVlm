@@ -122,6 +122,18 @@ void Pilototo_param::pastePOI(void)
         editWph->setText(QString().setNum(wph));
 }
 
+void Pilototo_param::copyPOI(void)
+{
+    float lat=getValue(EDT_LAT);
+    float lon=getValue(EDT_LON);
+    float wph;
+    if(editWph->text().isEmpty())
+        wph=-1;
+    else
+        wph=editWph->text().toFloat();
+    Util::setWPClipboard(lat,lon,wph);
+}
+
 void Pilototo_param::selectPOI(void)
 {
     /* to be done later */

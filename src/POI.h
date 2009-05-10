@@ -71,13 +71,11 @@ class POI : public QWidget
         void slot_editPOI();
         void slot_setWP();
         void slotDelPoi();
-        void slot_meteoPOI();
         void slot_copy();
         void paramChanged();
         void WPChanged(float,float);
 
     signals:
-        void signalOpenMeteotablePOI(POI *poi);
         void chgWP(float,float,float);
         void addPOI_list(POI*);
         void delPOI_list(POI*);

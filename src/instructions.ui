@@ -9,7 +9,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>619</width>
+    <width>682</width>
     <height>43</height>
    </rect>
   </property>
@@ -81,7 +81,7 @@
      </property>
     </widget>
    </item>
-   <item row="0" column="7">
+   <item row="0" column="8">
     <widget class="QPushButton" name="btn_edit">
      <property name="maximumSize">
       <size>
@@ -120,6 +120,13 @@
      </property>
      <property name="text">
       <string>H</string>
+     </property>
+    </widget>
+   </item>
+   <item row="0" column="7">
+    <widget class="QPushButton" name="pushButton_2">
+     <property name="text">
+      <string>Copy</string>
      </property>
     </widget>
    </item>
@@ -166,7 +173,7 @@
    <slot>editInstruction()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>524</x>
+     <x>672</x>
      <y>33</y>
     </hint>
     <hint type="destinationlabel">
@@ -214,12 +221,28 @@
    <slot>maintenant()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>580</x>
-     <y>20</y>
+     <x>417</x>
+     <y>29</y>
     </hint>
     <hint type="destinationlabel">
      <x>615</x>
      <y>4</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>pushButton_2</sender>
+   <signal>clicked()</signal>
+   <receiver>instruction_ui</receiver>
+   <slot>copyPOI()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>573</x>
+     <y>17</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>596</x>
+     <y>13</y>
     </hint>
    </hints>
   </connection>
@@ -231,5 +254,6 @@
   <slot>validateModif()</slot>
   <slot>dateTime_changed(QDateTime)</slot>
   <slot>maintenant()</slot>
+  <slot>copyPOI()</slot>
  </slots>
 </ui>

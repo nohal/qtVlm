@@ -39,6 +39,7 @@ class Pilototo_param : public QDialog, public Ui::pilototo_param_ui
         void modeChanged(int);
         void pastePOI(void);
         void selectPOI(void);
+        void copyPOI(void);
 
         void editInstruction(Pilototo_instruction *);
         

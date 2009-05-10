@@ -44,9 +44,6 @@
      </item>
      <item>
       <widget class="QSpinBox" name="lon_deg">
-       <property name="value">
-        <number>0</number>
-       </property>
        <property name="suffix">
         <string> °</string>
        </property>
@@ -59,17 +56,20 @@
        <property name="maximum">
         <number>359</number>
        </property>
+       <property name="value">
+        <number>0</number>
+       </property>
       </widget>
      </item>
      <item>
       <widget class="QDoubleSpinBox" name="lon_min">
-       <property name="value">
-        <double>59.990000000000002</double>
-       </property>
        <property name="suffix">
         <string> '</string>
        </property>
        <property name="maximum">
+        <double>59.990000000000002</double>
+       </property>
+       <property name="value">
         <double>59.990000000000002</double>
        </property>
       </widget>
@@ -117,9 +117,6 @@
      </item>
      <item>
       <widget class="QSpinBox" name="lat_deg">
-       <property name="value">
-        <number>0</number>
-       </property>
        <property name="suffix">
         <string> °</string>
        </property>
@@ -132,17 +129,20 @@
        <property name="maximum">
         <number>89</number>
        </property>
+       <property name="value">
+        <number>0</number>
+       </property>
       </widget>
      </item>
      <item>
       <widget class="QDoubleSpinBox" name="lat_min">
-       <property name="value">
-        <double>59.990000000000002</double>
-       </property>
        <property name="suffix">
         <string> '</string>
        </property>
        <property name="maximum">
+        <double>59.990000000000002</double>
+       </property>
+       <property name="value">
         <double>59.990000000000002</double>
        </property>
       </widget>
@@ -152,7 +152,7 @@
    <widget class="QPushButton" name="btn_pastePOI">
     <property name="geometry">
      <rect>
-      <x>10</x>
+      <x>8</x>
       <y>110</y>
       <width>75</width>
       <height>25</height>
@@ -165,7 +165,7 @@
    <widget class="QPushButton" name="btn_selectPOI">
     <property name="geometry">
      <rect>
-      <x>100</x>
+      <x>86</x>
       <y>110</y>
       <width>121</width>
       <height>25</height>
@@ -173,6 +173,19 @@
     </property>
     <property name="text">
      <string>Selectionner un POI</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="btn_copyPOI">
+    <property name="geometry">
+     <rect>
+      <x>210</x>
+      <y>110</y>
+      <width>75</width>
+      <height>25</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Copier</string>
     </property>
    </widget>
   </widget>
@@ -351,10 +364,27 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>btn_copyPOI</sender>
+   <signal>clicked()</signal>
+   <receiver>pilototo_param_ui</receiver>
+   <slot>copyPOI()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>285</x>
+     <y>200</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>272</x>
+     <y>233</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>modeChanged(int)</slot>
   <slot>pastePOI()</slot>
   <slot>selectPOI()</slot>
+  <slot>copyPOI()</slot>
  </slots>
 </ui>

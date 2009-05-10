@@ -568,6 +568,12 @@ void Pilototo_instruction::pastePOI(void)
     updateText();
 }
 
+void Pilototo_instruction::copyPOI(void)
+{
+    if(mode==2 || mode==3)
+        Util::setWPClipboard(lat,lon,wph);
+}
+
 void Pilototo_instruction::dateTime_changed(QDateTime tm)
 {
     if(tm!=tstamp)

@@ -73,7 +73,7 @@ boatAccount::boatAccount(QString login, QString pass, bool activated,Projection 
             main,SLOT(slotBoatLockStatusChanged(boatAccount*,bool)));
 
     connect(main,SIGNAL(paramVLMChanged()),this,SLOT(paramChanged()));
-    connect(this,SIGNAL(WPChanged(float,float)),main,SLOT(slotWPChanged(float,float)));
+    //connect(this,SIGNAL(WPChanged(float,float)),main,SLOT(slotWPChanged(float,float)));
 
     connect(this,SIGNAL(getTrace(QString,QList<position*> *)),
              main,SLOT(slotGetTrace(QString,QList<position*> *)));

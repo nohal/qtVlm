@@ -1,8 +1,6 @@
 /**********************************************************************
-qtVlm: Virtual Loup de mer GUI
-Copyright (C) 2008 - Christophe Thomas aka Oxygen77
-
-http://qtvlm.sf.net
+zyGrib: meteorological GRIB file viewer
+Copyright (C) 2008 - Jacques Zaninetti - http://www.zygrib.org
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -16,10 +14,6 @@ GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
-
-Original code: zyGrib: meteorological GRIB file viewer
-Copyright (C) 2008 - Jacques Zaninetti - http://zygrib.free.fr
-
 ***********************************************************************/
 
 
@@ -43,75 +37,147 @@ Elément de base d'un fichier GRIB
 #define zuint  unsigned int
 #define zuchar unsigned char
 
-#define GRIB_NOTDEF -999999999   
+#define GRIB_NOTDEF -999999999
 
-//-------------------------------------
-// dataTypes
-//-------------------------------------
-#define GRB_PRESS_MSL    2    /* Pa   */
-#define GRB_TEMP        11    /* K    */
-#define GRB_TEMP_DIEW   17    /* K    */
-#define GRB_WIND_VX     33    /* m/s  */
-#define GRB_WIND_VY     34    /* m/s  */
-#define GRB_PRECIP_TOT  61    /* l/m2 */
-#define GRB_CLOUD_TOT   71    /* % */
-#define GRB_HUMID_REL   52    /* % */
+//--------------------------------------------------------
+// dataTypes	Cf function translateDataType()
+//--------------------------------------------------------
+#define GRB_PRESSURE        2   /* Pa     */
+#define GRB_GEOPOT_HGT      7   /* gpm    */
+#define GRB_TEMP           11   /* K      */
+#define GRB_TPOT           13   /* K      */
+#define GRB_TMAX           15   /* K      */
+#define GRB_TMIN           16   /* K      */
+#define GRB_DEWPOINT       17   /* K      */
+#define GRB_WIND_VX        33   /* m/s    */
+#define GRB_WIND_VY        34   /* m/s    */
+#define GRB_HUMID_SPEC     51   /* kg/kg  */
+#define GRB_HUMID_REL      52   /* %      */
+#define GRB_PRECIP_RATE    59   /* l/m2/s */
+#define GRB_PRECIP_TOT     61   /* l/m2   */
+#define GRB_SNOW_DEPTH     66   /* m      */
+#define GRB_CLOUD_TOT      71   /* %      */
+#define GRB_FRZRAIN_CATEG 141   /* 1=yes 0=no */
+#define GRB_SNOW_CATEG    143   /* 1=yes 0=no */
 
-#define GRB_UNDEFINED   -1
+#define GRB_WIND_XY2D      250   /* private : GRB_WIND_VX+GRB_WIND_VX */
+#define GRB_DIFF_TEMPDEW   251   /* private : GRB_TEMP-GRB_DEWPOINT */
 
+//--------------------------------------------------------
+// Levels types (altitude reference)
+//--------------------------------------------------------
+#define LV_GND_SURF    1
+#define LV_ISOTHERM0   4
+#define LV_ISOBARIC  100
+#define LV_MSL       102
+#define LV_ABOV_GND  105
+#define LV_SIGMA     107
+#define LV_ATMOS_ALL 200
+
+
+//----------------------------------------------
+class GribCode
+{
+	public:
+		static zuint makeCode (zuchar dataType, zuchar levelType, zuint levelValue) {
+			return ((levelValue&0xFFFF)<<16)+((levelType&0xFF)<<8)+dataType;
+		}
+		static zuchar getDataType (zuint code) {
+			return code&0xFF;
+		}
+		static zuchar getLevelType (zuint code) {
+			return (code>>8)&0xFF;
+		}
+		static zuint getLevelValue (zuint code) {
+			return (code>>16)&0xFFFF;
+		}
+};
+
+//----------------------------------------------
 class GribRecord
 {
     public:
         GribRecord(ZUFILE* file, int id_);
-        GribRecord(GribRecord &rec);
+        GribRecord(const GribRecord &rec);
         ~GribRecord();
         
-        inline bool  isOk()  const   {return ok;};
-        inline bool  isEof() const   {return eof;};
+        bool  isOk()  const   {return ok;};
+        bool  isEof() const   {return eof;};
         
         //-----------------------------------------
-        inline int    getDataType() const  { return dataType; }
-        inline int    getPeriodP1() const  { return periodP1; }
-        inline int    getPeriodP2() const  { return periodP2; }
+        zuchar  getDataType() const         { return dataType; }
+        void    setDataType(const zuchar t);
+        
+        zuchar  getLevelType() const   { return levelType; }
+        zuint   getLevelValue() const  { return levelValue; }
+        
+        //-----------------------------------------
+		void    translateDataType();  // adapte les codes des différents centres météo
+        //-----------------------------------------
+        
+        zuchar   getIdCenter() const  { return idCenter; }
+        zuchar   getIdModel() const   { return idModel; }
+        zuchar   getIdGrid() const    { return idGrid; }
+        
+        //-----------------------------------------
+        std::string getKey() const  { return dataKey; }
+		static std::string makeKey(int dataType,int levelType,int levelValue);
+        
+        //-----------------------------------------
+        int    getPeriodP1() const  { return periodP1; }
+        int    getPeriodP2() const  { return periodP2; }
 
         // Nombre de points de la grille
-        inline int    getNi() const     { return Ni; }
-        inline int    getNj() const     { return Nj; }
-        inline float  getDi() const     { return Di; }
-        inline float  getDj() const     { return Dj; }
+        int    getNi() const     { return Ni; }
+        int    getNj() const     { return Nj; }
+        double  getDi() const    { return Di; }
+        double  getDj() const    { return Dj; }
         
         // Valeur pour un point de la grille
-        float getValue(int i, int j) const  { return ok ? data[j*Ni+i] : GRIB_NOTDEF;};
+        double getValue(int i, int j) const  { return ok ? data[j*Ni+i] : GRIB_NOTDEF;}
+        
+        void setValue(zuint i, zuint j, double v)
+        		{ if (i<Ni && j<Nj)
+        			data[j*Ni+i] = v; }
         
         // Valeur pour un point quelconque
-        float  getInterpolatedValue(float px, float py) const;
+        double  getInterpolatedValue(double px, double py,
+        							  bool numericalInterpolation=true) const;
 
         // coordonnées d'un point de la grille
-        inline float  getX(int i) const   { return ok ? Lo1+i*Di : GRIB_NOTDEF;}
-        inline float  getY(int j) const   { return ok ? La1+j*Dj : GRIB_NOTDEF;}
+        inline double  getX(int i) const   { return ok ? Lo1+i*Di : GRIB_NOTDEF;}
+        inline double  getY(int j) const   { return ok ? La1+j*Dj : GRIB_NOTDEF;}
+        
+        double  getLatMin() const   { return latMin;}
+        double  getLonMin() const   { return lonMin;}
+        double  getLatMax() const   { return latMax;}
+        double  getLonMax() const   { return lonMax;}
 
         // Le point est-il à l'intérieur de la grille ?
-        inline bool   isPointInMap(float x, float y) const;
-        inline bool   isXInMap(float x) const;
-        inline bool   isYInMap(float y) const;
-        
+        inline bool   isPointInMap(double x, double y) const;
+        inline bool   isXInMap(double x) const;
+        inline bool   isYInMap(double y) const;
         // La valeur est-elle définie (grille à trous) ?
         inline bool   hasValue(int i, int j) const;
         
         // Date de référence (création du fichier)
-        inline time_t getReferenceDate() const   { return refDate; } 
+        time_t getRecordRefDate () const         { return refDate; }
+        const char* getStrRecordRefDate () const { return strRefDate; }
         
         // Date courante des prévisions
-        inline time_t getCurrentDate() const     { return curDate; } 
-        inline void  setCurrentDate(time_t t)    { curDate = t; }
+        time_t getRecordCurrentDate () const     { return curDate; }
+        const char* getStrRecordCurDate () const { return strCurDate; }
+        void  setRecordCurrentDate (time_t t);
     
-        inline time_t getRefDate() const     { return refDate; }
 
 
     private:
         int    id;    // unique identifiant
         bool   ok;    // validité des données
         bool   eof;   // fin de fichier atteinte lors de la lecture
+		std::string dataKey;
+		char   strRefDate [32];
+		char   strCurDate [32];
 
         //---------------------------------------------
         // SECTION 0: THE INDICATOR SECTION (IS)
@@ -124,9 +190,12 @@ class GribRecord
         zuint  sectionSize1;
         zuchar tableVersion;
         zuchar data1[28];
-        zuint  idCenter;
+        zuchar idCenter;
+        zuchar idModel;
         zuchar idGrid;
-        zuchar dataType;      // type of data
+        zuchar dataType;      // octet 9 = parameters and units
+        zuchar levelType;
+        zuint  levelValue;
         bool   hasGDS;
         bool   hasBMS;
         zuint  refyear, refmonth, refday, refhour, refminute;
@@ -135,15 +204,16 @@ class GribRecord
         zuint  periodsec;     // period in seconds
         time_t refDate;      // C reference date
         time_t curDate;      // C current date
-        float  decimalFactorD;
+        double  decimalFactorD;
         // SECTION 2: THE GRID DESCRIPTION SECTION (GDS)
         zuint  fileOffset2;
         zuint  sectionSize2;
         zuchar NV, PV;
         zuchar gridType;
         zuint  Ni, Nj;
-        float La1, Lo1, La2, Lo2;
-        float Di, Dj;
+        double La1, Lo1, La2, Lo2;
+		double latMin, lonMin, latMax, lonMax;
+        double Di, Dj;
         zuchar resolFlags, scanFlags;
         bool  hasDiDj;
         bool  isEarthSpheric;
@@ -163,10 +233,10 @@ class GribRecord
         bool  isSimplePacking;
         bool  isFloatValues;
         int   scaleFactorE;
-        float scaleFactorEpow2;
-        float refValue;
+        double scaleFactorEpow2;
+        double refValue;
         zuint  nbBitsInPack;
-        float  *data;
+        double  *data;
         // SECTION 5: END SECTION (ES)
         
         //---------------------------------------------
@@ -183,17 +253,20 @@ class GribRecord
         // Fonctions utiles
         //---------------------------------------------
         zuchar readChar(ZUFILE* file);
-        int   readSignedInt3(ZUFILE* file);
-        int   readSignedInt2(ZUFILE* file);
+        int    readSignedInt3(ZUFILE* file);
+        int    readSignedInt2(ZUFILE* file);
         zuint  readInt2(ZUFILE* file);
         zuint  readInt3(ZUFILE* file);
-        float readFloat4(ZUFILE* file);
+        double readFloat4(ZUFILE* file);
         
         zuint  readPackedBits(zuchar *buf, zuint first, zuint nbBits);
         zuint  makeInt3(zuchar a, zuchar b, zuchar c);
+        zuint  makeInt2(zuchar b, zuchar c);
         
         time_t makeDate(zuint year,zuint month,zuint day,zuint hour,zuint min,zuint sec);
-        zuint   periodSeconds(zuchar unit, zuchar P1, zuchar P2, zuchar range);
+        zuint  periodSeconds(zuchar unit, zuchar P1, zuchar P2, zuchar range);
+        void   multiplyAllData(double k);
+
 
 };
 
@@ -220,7 +293,7 @@ inline bool   GribRecord::hasValue(int i, int j) const
 }
 
 //-----------------------------------------------------------------
-inline bool GribRecord::isPointInMap(float x, float y) const
+inline bool GribRecord::isPointInMap(double x, double y) const
 {
     return isXInMap(x) && isYInMap(y);
 /*    if (Dj < 0)
@@ -229,7 +302,7 @@ inline bool GribRecord::isPointInMap(float x, float y) const
         return x>=Lo1 && y>=La1 && x<=Lo1+(Ni-1)*Di && y<=La1+(Nj-1)*Dj;*/
 }
 //-----------------------------------------------------------------
-inline bool GribRecord::isXInMap(float x) const
+inline bool GribRecord::isXInMap(double x) const
 {
 //    return x>=Lo1 && x<=Lo1+(Ni-1)*Di;
 //printf ("%f %f %f\n", Lo1, Lo2, x);
@@ -239,7 +312,7 @@ inline bool GribRecord::isXInMap(float x) const
         return x>=Lo2 && x<=Lo1;
 }
 //-----------------------------------------------------------------
-inline bool GribRecord::isYInMap(float y) const
+inline bool GribRecord::isYInMap(double y) const
 {
     if (Dj < 0)
         return y<=La1 && y>=La2;

@@ -52,7 +52,7 @@ class tool_windAngle: public QWidget
     public:
         tool_windAngle(QWidget * parent=0);
         void draw(QPainter * painter);
-        void setValues(float heading,float windDir, float windSpeed, float WPdir);
+        void setValues(float heading,float windDir, float windSpeed, float WPdir,float newHeading);
         
     protected:
         void paintEvent(QPaintEvent * event);
@@ -61,8 +61,9 @@ class tool_windAngle: public QWidget
         QImage *img_fond;
         QImage *img_compas;
         QImage *img_boat;
+        QImage *img_boat2;
         int w,h;
-        float heading,windDir,windSpeed,WPdir;
+        float heading,windDir,windSpeed,WPdir,newHeading;
 
         QColor windSpeed_toColor(void);
 

@@ -61,9 +61,7 @@ POI::POI(QString name, float lon, float lat,
     paramChanged();
 
     connect(parentWindow, SIGNAL(projectionUpdated()), this, SLOT(updateProjection()) );
-    connect(this, SIGNAL(signalOpenMeteotablePOI(POI*)),
-                            ownerMeteotable, SLOT(slotOpenMeteotablePOI(POI*)));
-    
+
     connect(this,SIGNAL(chgWP(float,float,float)),ownerMeteotable,SLOT(slotChgWP(float,float,float)));
 
     connect(this,SIGNAL(addPOI_list(POI*)),ownerMeteotable,SLOT(addPOI_list(POI*)));
@@ -83,17 +81,12 @@ POI::POI(QString name, float lon, float lat,
 
 POI::~POI()
 {
-    //printf("delete POI_Editor\n");
-    qWarning() << "Delete POI";
-    //rmSignal();
 }
 
 void POI::rmSignal(void)
 {
     disconnect(parent, SIGNAL(projectionUpdated()), this, SLOT(updateProjection()) );
-    disconnect(this, SIGNAL(signalOpenMeteotablePOI(POI*)),
-                            owner, SLOT(slotOpenMeteotablePOI(POI*)));
-    
+
     disconnect(this,SIGNAL(chgWP(float,float,float)),owner,SLOT(slotChgWP(float,float,float)));
 
     disconnect(this,SIGNAL(addPOI_list(POI*)),owner,SLOT(addPOI_list(POI*)));
@@ -240,10 +233,7 @@ void  POI::timerClickEvent()
 {
     if (countClick==1)
     {
-        // Single clic : Meteotable for this Point Of Interest
-        //emit signalOpenMeteotablePOI(this);
         slot_editPOI();
-
     }
     countClick = 0;
 }
@@ -269,10 +259,6 @@ void POI::createPopUpMenu(void)
     popup->addAction(ac_copy);
     connect(ac_copy,SIGNAL(triggered()),this,SLOT(slot_copy()));
 
-    ac_meteo = new QAction(tr("MeteoTable"),popup);
-    popup->addAction(ac_meteo);
-    connect(ac_meteo,SIGNAL(triggered()),this,SLOT(slot_meteoPOI()));
-
     ac_setWp = new QAction(tr("POI->WP"),popup);
     popup->addAction(ac_setWp);
     connect(ac_setWp,SIGNAL(triggered()),this,SLOT(slot_setWP()));
@@ -287,11 +273,6 @@ void POI::slot_editPOI()
 void POI::slot_copy()
 {
     Util::setWPClipboard(lat,lon,wph);
-}
-
-void POI::slot_meteoPOI()
-{
-    emit signalOpenMeteotablePOI(this);
 }
 
 void POI::slot_setWP()

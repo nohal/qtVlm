@@ -45,7 +45,6 @@ Copyright (C) 2008 - Jacques Zaninetti - http://zygrib.free.fr
 #include "xmlPOIData.h"
 #include "xmlBoatData.h"
 
-//#include "VlmGetData.h"
 #include "boatAccount_dialog.h"
 #include "POI_editor.h"
 #include "Pilototo.h"
@@ -71,9 +70,7 @@ class MainWindow: public QMainWindow
         void getBoatWP(float * lat,float * lon);
 
     public slots:
-        void slotOpenMeteotable();
         void slotCreatePOI();
-        void slotOpenMeteotablePOI(POI*);
 
         void slotFile_Open();
         void slotFile_Close();
@@ -82,7 +79,6 @@ class MainWindow: public QMainWindow
         void slotFile_Quit();
         void slotMap_Quality();
         void slotMap_CitiesNames();
-        void slotIsobarsStep();
         void slotGribFileReceived(QString fileName);
 
         void slotMouseClicked(QMouseEvent * e);
@@ -134,6 +130,8 @@ class MainWindow: public QMainWindow
         void slotNewZoom(float zoom);
         void slotGetTrace(QString buff,QList<position*> * trace);
 
+        void updateNxtVac();
+
     signals:
         void signalMapQuality(int quality);
         void setChangeStatus(bool);
@@ -161,27 +159,27 @@ class MainWindow: public QMainWindow
         MenuBar      *menuBar;
         QToolBar     *toolBar;
         QStatusBar   *statusBar;
+        QLabel       *stBar_label_1;
+        QLabel       *stBar_label_2;
+        QLabel       *stBar_label_3;
+
+        QLabel       * tool_ETA;
 
         QMenu    *menuPopupBtRight;
 
-        void        connectSignals();
-        void        InitActionsStatus();
-        void        statusBar_showSelectedZone();
-        QString    dataPresentInGrib(GribReader* grib, int type);
+        void     connectSignals();
+        void     InitActionsStatus();
+        void     statusBar_showSelectedZone();
+        void     statusBar_showPF(const GribPointInfo &pf);
+        QString  dataPresentInGrib(GribReader* grib, int type);
+        void     updatePilototo_Btn(boatAccount * boat);
 
         int mouseClicX, mouseClicY;
 
-        //---------------------------------------------
-        QLabel     lbLon;
-        QLabel     lbLat;
-        QLabel     lbPres;
-        QLabel     lbTemp;
-        QLabel     lbWindDir;
-        QLabel     lbWindSpeed;
-        QLabel     lbWindBf;
-        QLabel     lbRain;
-        QLabel     lbCloud;
-        QLabel     lbHumid;
+        /* Vacation count*/
+        QTimer * timer;
+        int nxtVac_cnt;
+        void drawVacInfo(void);
 
         void closeEvent(QCloseEvent *) {QApplication::quit();};
 
