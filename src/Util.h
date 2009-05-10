@@ -74,7 +74,6 @@ class Util
 
     static void     setSetting(const QString &key, const QVariant &value);
     static QVariant getSetting(const QString &key, const QVariant &defaultValue);
-    static bool     isDirWritable(const QDir &dir);
 
     //-------------------------------------------------
     static QString formatDegres(float x);           // 123.4 -> 123°24.00'

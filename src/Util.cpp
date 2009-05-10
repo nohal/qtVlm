@@ -50,27 +50,6 @@ QVariant Util::getSetting(const QString &key, const QVariant &defaultValue)
 }
 
 //======================================================================
-bool Util::isDirWritable (const QDir &dir)
-{
-        if (! dir.exists())
-                return false;
-
-        // try yo write a file
-        FILE *fd;
-        QString tmpfname = dir.absolutePath() + "/jgj13642hygg54hjgiouhg43.tmp";
-        fd = fopen( qPrintable(tmpfname), "w");
-        if (fd != NULL
-                        && fwrite(&tmpfname,1,1,fd)==1 )
-        {
-                fclose(fd);
-                unlink( qPrintable(tmpfname) );
-                return true;
-        }
-        else
-                return false;
-}
-
-//======================================================================
 QString Util::formatTemperature(float tempKelvin)
 {
     QString tunit = Util::getSetting("unitsTemp", "").toString();
