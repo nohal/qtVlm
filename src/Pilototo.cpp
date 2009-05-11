@@ -139,9 +139,6 @@ void Pilototo::updateDrawList(void)
         frameLayout->addWidget(drawList[j], j, 0);
         drawList[j]->show();
     }
-    /*frameLayout->update();
-    layout()->update();
-    update();*/
 }
 
 /* init pilototo editor */
@@ -153,13 +150,8 @@ void Pilototo::editInstructions(void)
 /*init piloto editor after selecting a POI*/
 void Pilototo::editInstructionsPOI(Pilototo_instruction * instruction,POI * poi)
 {
-    qWarning() << "Pilototo, edit instr: " << instruction << " for poi: "<< poi;
     show();    
-    if(poi)
-        instructionEditor->editInstructionPOI(instruction,poi);
-    else
-        instructionEditor->editInstruction(instruction);
-    exec();
+    instructionEditor->editInstructionPOI(instruction,poi);
 }
 
 void Pilototo::doSelectPOI(Pilototo_instruction * instruction)

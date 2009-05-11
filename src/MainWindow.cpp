@@ -323,8 +323,6 @@ MainWindow::MainWindow(int w, int h, QWidget *parent)
     tool_ETA->setFont(font);
     toolBar->addWidget(tool_ETA);
 
-
-
     //--------------------------------------------------
     setMenuBar(menuBar);
     setStatusBar(statusBar);
@@ -356,6 +354,7 @@ MainWindow::MainWindow(int w, int h, QWidget *parent)
       param = new paramVLM(terre);
       poi_input_dialog = new POI_input(terre);
       selPOI_instruction=NULL;
+      isSelectingWP=false;
 
       terre->setBoatList(acc_list);
 
@@ -1038,22 +1037,34 @@ void MainWindow::slotSelectPOI(Pilototo_instruction * instruction)
     slotBoatLockStatusChanged(selectedBoat,selectedBoat->getLockStatus());
 }
 
-Pilototo_instruction * MainWindow::get_selPOI_instruction()
+void MainWindow::slotSelectWP_POI()
 {
-    return selPOI_instruction;
+    isSelectingWP=true;    
+    slotBoatLockStatusChanged(selectedBoat,selectedBoat->getLockStatus());
+}
+
+bool MainWindow::get_selPOI_instruction()
+{
+    return ((selPOI_instruction!=NULL) || (isSelectingWP));
 }
 
 void MainWindow::slotPOIselected(POI* poi)
 {
     if(selPOI_instruction)
     {
-        qWarning() << "Poi selected:" << poi;
         Pilototo_instruction * tmp=selPOI_instruction;
         selPOI_instruction=NULL;
         updatePilototo_Btn(selectedBoat);
         slotBoatLockStatusChanged(selectedBoat,selectedBoat->getLockStatus());
         emit editInstructionsPOI(tmp,poi);
     }
+    else if(isSelectingWP)
+    {
+        isSelectingWP=false;
+        slotBoatLockStatusChanged(selectedBoat,selectedBoat->getLockStatus());
+        emit editWP_POI(poi);
+    }
+
 }
 
 void MainWindow::slotSelectBoat(boatAccount* newSelect)
@@ -1228,11 +1239,22 @@ void MainWindow::slotBoatLockStatusChanged(boatAccount* boat,bool status)
         {
             emit setChangeStatus(true);
             menuBar->acPilototo->setEnabled(true);
+            menuBar->acVLMSync->setEnabled(false);
+            btn_Pilototo->setEnabled(true);
+        }
+        else if(isSelectingWP)
+        {
+            emit setChangeStatus(true);
+            menuBar->acPilototo->setEnabled(false);
+            menuBar->acVLMSync->setEnabled(false);
+            btn_Pilototo->setEnabled(false);
         }
         else
         {
             emit setChangeStatus(status);
             menuBar->acPilototo->setEnabled(!status);
+            menuBar->acVLMSync->setEnabled(true);
+            btn_Pilototo->setEnabled(!status);
         }
     }
 }
@@ -1257,7 +1279,6 @@ void MainWindow::slotPilototo(void)
 
     if(selPOI_instruction)
     {
-        qWarning() << "Ouverture simple";
         slotPOIselected(NULL);
     }
     else

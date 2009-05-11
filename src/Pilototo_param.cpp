@@ -71,14 +71,17 @@ void Pilototo_param::editInstructionPOI(Pilototo_instruction * instruction,POI *
     /*mode->setCurrentIndex(instruction->getMode());
     angle->setValue(instruction->getAngle());*/
 
-    setValue(EDT_LAT,poi->getLatitude());
-    setValue(EDT_LON,poi->getLongitude());
+    if(poi)
+    {
+        setValue(EDT_LAT,poi->getLatitude());
+        setValue(EDT_LON,poi->getLongitude());
 
-    val=poi->getWph();
-    if(val==-1)
-        editWph->setText(QString());
-    else
-        editWph->setText(QString().setNum(val));
+        val=poi->getWph();
+        if(val==-1)
+            editWph->setText(QString());
+        else
+            editWph->setText(QString().setNum(val));
+    }
     exec();
 }
 

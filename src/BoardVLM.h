@@ -37,6 +37,7 @@ class boardVLM;
 #include "inetConnexion.h"
 #include "GribPlot.h"
 #include "Util.h"
+#include "POI.h"
 
 class WP_dialog: public QDialog, public Ui::WP_dialog_ui
 { Q_OBJECT
@@ -51,12 +52,16 @@ class WP_dialog: public QDialog, public Ui::WP_dialog_ui
         void doCopy();
         void done(int result);
         void doClearWP();
+        void doSelPOI();
+        void show_WPdialog(POI * poi);
 
     signals:
         void sendCmd(int cmdNum,float,float,float);
+        void selectPOI(void);
 
     private:
         boatAccount * currentBoat;
+        void initDialog(float WPLat,float WPLon,float WPHd);
 };
 
 class boardVLM: public QWidget , public Ui::boardVLM_part1_ui

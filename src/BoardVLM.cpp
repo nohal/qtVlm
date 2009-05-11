@@ -70,6 +70,8 @@ boardVLM::boardVLM(QMainWindow * mainWin,QWidget * parent) : QWidget(parent)
     /* wpDialog */
     wpDialog = new WP_dialog();
     connect(wpDialog,SIGNAL(sendCmd(int,float,float,float)),this,SLOT(sendCmd(int,float,float,float)));
+    connect(wpDialog,SIGNAL(selectPOI()),mainWin,SLOT(slotSelectWP_POI()));
+    connect(mainWin,SIGNAL(editWP_POI(POI*)),wpDialog,SLOT(show_WPdialog(POI *)));
 
     /* edit field keyPress */
     connect(editHeading,SIGNAL(hasEvent()),this,SLOT(edtSpinBox_key()));
@@ -604,13 +606,14 @@ void boardVLM::setChangeStatus(bool status)
     bool st=!status;
     btn_chgHeading->setEnabled(st);
     editHeading->setEnabled(st);
-    /*chgAngle_2->setEnabled(st);*/
+    btn_virer->setEnabled(st);
     btn_chgAngle->setEnabled(st);
     editAngle->setEnabled(st);    
     goPilotOrtho->setEnabled(st);
     goVMG->setEnabled(st);
     btn_WP->setEnabled(st);
     boatList->setEnabled(!((MainWindow*)mainWin)->get_selPOI_instruction());
+    btn_Synch->setEnabled(!((MainWindow*)mainWin)->get_selPOI_instruction());
 }
 
 /*********************/
@@ -800,10 +803,20 @@ void WP_dialog::show_WPdialog(boatAccount * boat)
 {
     currentBoat=boat;
 
-    float WPLat = boat->getWPLat();
-    float WPLon = boat->getWPLon();
-    float WPHd = boat->getWPHd();
+    initDialog(boat->getWPLat(),boat->getWPLon(),boat->getWPHd());
 
+    exec();
+}
+
+void WP_dialog::show_WPdialog(POI * poi)
+{
+    if(poi)
+        initDialog(poi->getLatitude(),poi->getLongitude(),poi->getWph());
+    exec();
+}
+
+void WP_dialog::initDialog(float WPLat,float WPLon,float WPHd)
+{
     if(WPLat == 0 && WPLon == 0)
     {
         WP_lat->setText("");
@@ -819,8 +832,6 @@ void WP_dialog::show_WPdialog(boatAccount * boat)
         else
             WP_heading->setText(QString().setNum(WPHd));
     }
-
-    exec();
 }
 
 void WP_dialog::done(int result)
@@ -885,6 +896,12 @@ void WP_dialog::doCopy()
         WP_heading->text().toFloat());
     QDialog::done(QDialog::Rejected);
 
+}
+
+void WP_dialog::doSelPOI()
+{
+    emit selectPOI();
+    QDialog::done(QDialog::Rejected);
 }
 
 /************************/
