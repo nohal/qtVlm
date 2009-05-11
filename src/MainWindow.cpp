@@ -144,17 +144,7 @@ void MainWindow::connectSignals()
     connect(mb->acMap_Zoom_Sel, SIGNAL(triggered()),
             terre,  SLOT(slot_Zoom_Sel()));
     connect(mb->acMap_Zoom_All, SIGNAL(triggered()),
-            terre,  SLOT(slot_Zoom_All()));
-
-    connect(mb->acMap_Go_Left, SIGNAL(triggered()),
-            terre,  SLOT(slot_Go_Left()));
-    connect(mb->acMap_Go_Right, SIGNAL(triggered()),
-            terre,  SLOT(slot_Go_Right()));
-    connect(mb->acMap_Go_Up, SIGNAL(triggered()),
-            terre,  SLOT(slot_Go_Up()));
-    connect(mb->acMap_Go_Down, SIGNAL(triggered()),
-            terre,  SLOT(slot_Go_Down()));
-
+            terre,  SLOT(slot_Zoom_All()));    
     //-------------------------------------------------------
     connect(mb->acView_WindColors, SIGNAL(triggered(bool)),
             this,  SLOT(slotWindColors(bool)));
@@ -1307,7 +1297,7 @@ void MainWindow::slotWriteBoat(void)
 
 void MainWindow::slotUpdateOpponent(void)
 {
-    bool found;
+    bool found=false;
     if(!selectedBoat)
     {
         opponents->clear();

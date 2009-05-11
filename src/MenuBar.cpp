@@ -170,15 +170,6 @@ MenuBar::MenuBar(QWidget *parent)
     acMap_Zoom_All = addAction(NULL, tr("Afficher la carte entière"), tr(""),
                                tr("Afficher la carte entière"), "img/viewmag1.png");
 
-    acMap_Go_Left = addAction(NULL,  tr("Vers la gauche"), tr("LEFT"),
-                              tr("Déplacement"), "img/back.png");
-    acMap_Go_Right = addAction(NULL,  tr("Vers la droite"), tr("RIGHT"),
-                               tr("Déplacement"), "img/forward.png");
-    acMap_Go_Up   = addAction(NULL,  tr("Vers le haut"), tr("UP"),
-                              tr("Déplacement"), "img/up.png");
-    acMap_Go_Down = addAction(NULL,  tr("Vers le bas"), tr("DOWN"),
-                              tr("Déplacement"), "img/down.png");
-
     acDatesGrib_prev = addAction( NULL,
             tr("Prévision précédente [page préc]"),tr("PgUp"),tr(""),"img/1leftarrow.png");
     acDatesGrib_next = addAction( NULL,

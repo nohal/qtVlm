@@ -96,10 +96,6 @@ public:
     QAction *acMap_Zoom_Out;
     QAction *acMap_Zoom_Sel;
     QAction *acMap_Zoom_All;
-    QAction *acMap_Go_Left;
-    QAction *acMap_Go_Right;
-    QAction *acMap_Go_Up;
-    QAction *acMap_Go_Down;
 
     QAction *acOptions_Proxy;
     QAction *acOptions_Units;
