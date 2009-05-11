@@ -658,20 +658,36 @@ void Terrain::keyModif(QKeyEvent *e)
 }
 
 void  Terrain::keyPressEvent (QKeyEvent *e)
-{
-    if(e->key() == Qt::Key_Minus || e->key() == Qt::Key_M)
+{    
+    switch(e->key())
     {
-        slot_Zoom_Out();
-        setCursor(Qt::CrossCursor);
-    }
-    else if(e->key() == Qt::Key_Plus || e->key() == Qt::Key_P)
-    {
-        slot_Zoom_In();
-        setCursor(Qt::CrossCursor);
-    }
-    else
-    {
-        keyModif(e);
+        case Qt::Key_Minus:
+        case Qt::Key_M:
+            slot_Zoom_Out();
+            setCursor(Qt::CrossCursor);
+            break;
+        case Qt::Key_Plus:
+        case Qt::Key_P:
+            slot_Zoom_In();
+            setCursor(Qt::CrossCursor);
+            break;
+        case Qt::Key_Up:
+            slot_Go_Up();
+            break;
+        case Qt::Key_Down:
+            slot_Go_Down();
+            break;
+        case Qt::Key_Left:
+            slot_Go_Left();
+            break;
+        case Qt::Key_Right:
+            slot_Go_Right();
+            break;
+        case Qt::Key_Escape:
+            emit POI_selectAborted(NULL);
+            break;
+        default:
+            keyModif(e);
     }
 }
 

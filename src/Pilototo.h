@@ -25,6 +25,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <QMessageBox>
 
 class Pilototo;
+class Pilototo_instruction;
+class Pilototo_param;
 
 #include "Pilototo_param.h"
 #include "boatAccount.h"
@@ -39,8 +41,6 @@ class Pilototo;
 * widget + data structure
 ******************************/
 #include "ui_instructions.h"
-
-class Pilototo_param;
 
 class Pilototo_instruction : public QWidget, public Ui::instruction_ui
 {Q_OBJECT
@@ -117,7 +117,7 @@ class Pilototo_instruction : public QWidget, public Ui::instruction_ui
 class Pilototo : public QDialog, public Ui::pilototo_ui
 {Q_OBJECT
     public:
-        Pilototo(QWidget * parent=0);
+        Pilototo(QWidget *main,QWidget * parent=0);
         void done(int);
 
         void updateInet(void);
@@ -127,10 +127,15 @@ class Pilototo : public QDialog, public Ui::pilototo_ui
     public slots:
         void delInstruction(Pilototo_instruction *);
         void editInstructions(void);
+        void editInstructionsPOI(Pilototo_instruction * instruction,POI * poi);
         void instructionUpdated(void);
         void boatUpdated(boatAccount * boat);
         void updateTime(void);
         void requestFinished (int currentRequest,QString res);
+        void doSelectPOI(Pilototo_instruction * instruction);
+
+    signals:
+        void selectPOI(Pilototo_instruction *);
 
     private slots:
         void addInstruction(void);

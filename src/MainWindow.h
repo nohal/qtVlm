@@ -68,6 +68,7 @@ class MainWindow: public QMainWindow
         bool isBoat(QString idu);
 
         void getBoatWP(float * lat,float * lon);
+        Pilototo_instruction * get_selPOI_instruction();
 
     public slots:
         void slotCreatePOI();
@@ -129,6 +130,8 @@ class MainWindow: public QMainWindow
         void slotParamChanged(void);
         void slotNewZoom(float zoom);
         void slotGetTrace(QString buff,QList<position*> * trace);
+        void slotSelectPOI(Pilototo_instruction * instruction);
+        void slotPOIselected(POI* poi);
 
         void updateNxtVac();
 
@@ -138,6 +141,7 @@ class MainWindow: public QMainWindow
         void editPOI(POI *);
         void newPOI(float,float,Projection *);
         void editInstructions(void);
+        void editInstructionsPOI(Pilototo_instruction * ,POI*);
         void boatHasUpdated(boatAccount*);
         void paramVLMChanged();
         void WPChanged(float,float);
@@ -164,6 +168,7 @@ class MainWindow: public QMainWindow
         QLabel       *stBar_label_3;
 
         QLabel       * tool_ETA;
+        QPushButton  * btn_Pilototo;
 
         QMenu    *menuPopupBtRight;
 
@@ -175,6 +180,8 @@ class MainWindow: public QMainWindow
         void     updatePilototo_Btn(boatAccount * boat);
 
         int mouseClicX, mouseClicY;
+
+        void  keyPressEvent (QKeyEvent *e);
 
         /* Vacation count*/
         QTimer * timer;
@@ -202,6 +209,8 @@ class MainWindow: public QMainWindow
 
         opponentList * opponents;
         QList<raceData*> race_list;
+
+        Pilototo_instruction * selPOI_instruction;
 };
 
 #endif

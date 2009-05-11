@@ -96,6 +96,8 @@ class boardVLM: public QWidget , public Ui::boardVLM_part1_ui
         void VLM_Sync(void);
 
     private:
+        QMainWindow * mainWin;
+
         inetConnexion * conn;
         int currentRequest;
         int currentCmdNum;

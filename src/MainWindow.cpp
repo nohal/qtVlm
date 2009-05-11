@@ -232,6 +232,8 @@ void MainWindow::connectSignals()
             this, SLOT(slotMouseDblClicked(QMouseEvent *)));
     connect(terre,SIGNAL(showContextualMenu(QContextMenuEvent *)),
             this, SLOT(slotShowContextualMenu(QContextMenuEvent *)));
+    connect(terre,SIGNAL(POI_selectAborted(POI*)),
+            this, SLOT(slotPOIselected(POI*)));
     //-----------------------------------------------------------
     connect(&dialogLoadGrib, SIGNAL(signalGribFileReceived(QString)),
             this,  SLOT(slotGribFileReceived(QString)));
@@ -320,12 +322,18 @@ MainWindow::MainWindow(int w, int h, QWidget *parent)
     toolBar->addAction(menuBar->acMap_Zoom_Out);
     toolBar->addAction(menuBar->acMap_Zoom_Sel);
     toolBar->addAction(menuBar->acMap_Zoom_All);
+
     toolBar->addSeparator();
-    toolBar->addAction(menuBar->acPilototo);
+    btn_Pilototo = new QPushButton(tr("Pilototo"),toolBar);
+    btn_Pilototo->setStyleSheet(QString::fromUtf8("background-color: rgb(255, 255, 127);"));
+    toolBar->addWidget(btn_Pilototo);
+    connect(btn_Pilototo,SIGNAL(clicked()),this, SLOT(slotPilototo()));
 
     tool_ETA = new QLabel("", toolBar);
     tool_ETA->setFont(font);
     toolBar->addWidget(tool_ETA);
+
+
 
     //--------------------------------------------------
     setMenuBar(menuBar);
@@ -357,6 +365,7 @@ MainWindow::MainWindow(int w, int h, QWidget *parent)
 
       param = new paramVLM(terre);
       poi_input_dialog = new POI_input(terre);
+      selPOI_instruction=NULL;
 
       terre->setBoatList(acc_list);
 
@@ -377,9 +386,11 @@ MainWindow::MainWindow(int w, int h, QWidget *parent)
 
       poi_editor=new POI_Editor(this,terre);
 
-      pilototo = new Pilototo(terre);
+      pilototo = new Pilototo(this,terre);
       connect(this,SIGNAL(editInstructions()),
               pilototo,SLOT(editInstructions()));
+      connect(this,SIGNAL(editInstructionsPOI(Pilototo_instruction * ,POI * )),
+              pilototo,SLOT(editInstructionsPOI(Pilototo_instruction * ,POI * )));
       connect(this,SIGNAL(boatHasUpdated(boatAccount*)),
               pilototo,SLOT(boatUpdated(boatAccount*)));
 
@@ -768,16 +779,19 @@ void MainWindow::statusBar_showSelectedZone()
 
 void MainWindow::updatePilototo_Btn(boatAccount * boat)
 {
-    /* compute nb Pilototo instructions */
-    QStringList * lst = boat->getPilototo();
-    QString pilototo_txt=tr("Pilototo");
-    if(boat->getHasPilototo())
+    if(!selPOI_instruction)
     {
-        int nbPending=0;
-        int nb=0;
-        for(int i=0;i<lst->count();i++)
-            if(lst->at(i)!="none")
-            {
+        /* compute nb Pilototo instructions */
+        QStringList * lst = boat->getPilototo();
+        QString pilototo_txt=tr("Pilototo");
+        QString pilototo_toolTip="";
+        if(boat->getHasPilototo())
+        {
+            int nbPending=0;
+            int nb=0;
+            for(int i=0;i<lst->count();i++)
+                if(lst->at(i)!="none")
+                {
                 QStringList instr_buf = lst->at(i).split(",");
                 int mode=instr_buf.at(2).toInt()-1;
                 int pos =5;
@@ -787,16 +801,24 @@ void MainWindow::updatePilototo_Btn(boatAccount * boat)
                     nbPending++;
                 nb++;
             }
-        if(nb!=0)
-            pilototo_txt=pilototo_txt+" ("+QString().setNum(nbPending)+"/"+QString().setNum(nb)+")";
-        menuBar->acPilototo->setToolTip("");
+            if(nb!=0)
+                pilototo_txt=pilototo_txt+" ("+QString().setNum(nbPending)+"/"+QString().setNum(nb)+")";
+        }
+        else
+        {
+            pilototo_toolTip=tr("Imp. de lire le pilototo de VLM");
+            pilototo_txt=pilototo_txt+" (!)";
+        }
+        menuBar->acPilototo->setText(pilototo_txt);
+        menuBar->acPilototo->setToolTip(pilototo_toolTip);
+        btn_Pilototo->setText(pilototo_txt);
+        btn_Pilototo->setToolTip(pilototo_toolTip);
     }
     else
     {
-        menuBar->acPilototo->setToolTip(tr("Imp. de lire le pilototo de VLM"));
-        pilototo_txt=pilototo_txt+" (!)";
+        menuBar->acPilototo->setText(tr("Séléction de POI"));
+        btn_Pilototo->setText(tr("Séléction de POI"));
     }
-    menuBar->acPilototo->setText(pilototo_txt);
 }
 
 void MainWindow::statusBar_showPF(const GribPointInfo &pf)
@@ -844,6 +866,16 @@ void MainWindow::drawVacInfo(void)
         lastVac_date.setTimeSpec(Qt::UTC);
         stBar_label_3->setText("- "+ tr("Vacation de la dernière synchro") + ": " + lastVac_date.toString("dd-MM-yyyy, HH:mm:ss") + " - "+
                                tr("Prochaine vac dans") + ": " + QString().setNum(nxtVac_cnt) + "s");
+    }
+}
+
+void  MainWindow::keyPressEvent (QKeyEvent *e)
+{
+    switch(e->key())
+    {
+        case Qt::Key_Escape:
+            slotPOIselected(NULL);
+            break;
     }
 }
 
@@ -996,7 +1028,7 @@ void MainWindow::slotBoatUpdated(boatAccount * boat,bool newRace)
         m=nbS/60;
         nbS-=m*60;
         txt.sprintf("(%dj %02dh%02dm%02ds)",j,h,m,nbS);
-        tool_ETA->setText(tr("Arrivée WP")+": " +dtm.toString("dd-MM-yyyy, HH:mm:ss")+ " " +txt);
+        tool_ETA->setText(tr(" Arrivée WP")+": " +dtm.toString("dd-MM-yyyy, HH:mm:ss")+ " " +txt);
 
         updatePilototo_Btn(boat);
         emit boatHasUpdated(boat);
@@ -1007,6 +1039,31 @@ void MainWindow::slotBoatUpdated(boatAccount * boat,bool newRace)
 void MainWindow::slotVLM_Test(void)
 {
     //oppLst->setBoatList("7802;7985;8025;8047;8833;9325","20080302");
+}
+
+void MainWindow::slotSelectPOI(Pilototo_instruction * instruction)
+{
+    selPOI_instruction=instruction;
+    updatePilototo_Btn(selectedBoat);
+    slotBoatLockStatusChanged(selectedBoat,selectedBoat->getLockStatus());
+}
+
+Pilototo_instruction * MainWindow::get_selPOI_instruction()
+{
+    return selPOI_instruction;
+}
+
+void MainWindow::slotPOIselected(POI* poi)
+{
+    if(selPOI_instruction)
+    {
+        qWarning() << "Poi selected:" << poi;
+        Pilototo_instruction * tmp=selPOI_instruction;
+        selPOI_instruction=NULL;
+        updatePilototo_Btn(selectedBoat);
+        slotBoatLockStatusChanged(selectedBoat,selectedBoat->getLockStatus());
+        emit editInstructionsPOI(tmp,poi);
+    }
 }
 
 void MainWindow::slotSelectBoat(boatAccount* newSelect)
@@ -1177,8 +1234,16 @@ void MainWindow::slotBoatLockStatusChanged(boatAccount* boat,bool status)
 {
     if(boat==selectedBoat)
     {
-        emit setChangeStatus(status);
-        menuBar->acPilototo->setEnabled(!status);
+        if(selPOI_instruction)
+        {
+            emit setChangeStatus(true);
+            menuBar->acPilototo->setEnabled(true);
+        }
+        else
+        {
+            emit setChangeStatus(status);
+            menuBar->acPilototo->setEnabled(!status);
+        }
     }
 }
 
@@ -1186,6 +1251,8 @@ bool MainWindow::getBoatLockStatus(void)
 {
     if(!selectedBoat)
         return false;
+    if(selPOI_instruction)
+        return true;
     return selectedBoat->getLockStatus();
 }
 
@@ -1197,10 +1264,19 @@ void MainWindow::slotEditPOI(POI * poi)
 void MainWindow::slotPilototo(void)
 {
     if(!selectedBoat) return;
-    if(!getBoatLockStatus())
+
+    if(selPOI_instruction)
     {
-        selectedBoat->getData();
-        emit editInstructions();
+        qWarning() << "Ouverture simple";
+        slotPOIselected(NULL);
+    }
+    else
+    {
+        if(!getBoatLockStatus())
+        {
+            selectedBoat->getData();
+            emit editInstructions();
+        }
     }
 }
 

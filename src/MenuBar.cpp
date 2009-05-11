@@ -84,7 +84,12 @@ MenuBar::MenuBar(QWidget *parent)
         acPOIimport = addAction(menuImportPoi,tr("Importer de zyGrib"),"","","");
 
         menuPOI->addMenu(menuImportPoi);
-
+#if 0
+        acVLMTest = addAction(menuPOI,"Test","","","");
+#else
+        acVLMTest = NULL;
+#endif
+    addMenu(menuPOI);
 
 
 
@@ -141,18 +146,6 @@ MenuBar::MenuBar(QWidget *parent)
         menuOptions->addMenu(menuLanguage);
 
     addMenu(menuOptions);
-
-
-
-
-
-#if 0
-        acVLMTest = addAction(menuPOI,"Test","","","");
-#else
-        acVLMTest = NULL;
-#endif
-    addMenu(menuPOI);
-
 
     //-------------------------------------
     menuHelp = new QMenu(tr("Aide"));

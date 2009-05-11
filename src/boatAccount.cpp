@@ -445,7 +445,8 @@ void  boatAccount::mousePressEvent(QMouseEvent * e)
 {
     if(e->button() == Qt::LeftButton)
     {
-        selectBoat();
+        if(!((MainWindow*)mainWindow)->get_selPOI_instruction())
+            selectBoat();
     }
 }
 
@@ -461,6 +462,15 @@ void  boatAccount::mouseReleaseEvent(QMouseEvent *)
 
 void boatAccount::contextMenuEvent(QContextMenuEvent *)
 {
+    int nb=0;
+    if(!((MainWindow*)mainWindow)->get_selPOI_instruction())
+    {
+        ac_select->setEnabled(true);
+        nb++;
+    }
+    else
+        ac_select->setEnabled(false);
+
     if(!selected)
     {
         if(forceEstime)
@@ -468,10 +478,12 @@ void boatAccount::contextMenuEvent(QContextMenuEvent *)
         else
             ac_estime->setText(tr("Afficher estime"));
         ac_estime->setEnabled(true);
+        nb++;
     }
     else
         ac_estime->setEnabled(false);
-    popup->exec(QCursor::pos());
+    if(nb)
+        popup->exec(QCursor::pos());
 }
 
 void boatAccount::createPopUpMenu(void)

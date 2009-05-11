@@ -38,6 +38,7 @@ class Terrain;
 #include "Projection.h"
 #include "boatAccount.h"
 #include "opponentBoat.h"
+#include "POI.h"
 
 class Terrain : public QWidget
 {
@@ -105,6 +106,7 @@ signals:
     void mouseMoved(QMouseEvent * e);
     void showContextualMenu(QContextMenuEvent * event);
     void projectionUpdated();
+    void POI_selectAborted(POI*);
 
 private:
     //-----------------------------------------------

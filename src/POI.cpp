@@ -69,6 +69,8 @@ POI::POI(QString name, float lon, float lat,
 
     connect(this,SIGNAL(editPOI(POI*)),ownerMeteotable,SLOT(slotEditPOI(POI *)));
 
+    connect(this,SIGNAL(selectPOI(POI*)),ownerMeteotable,SLOT(slotPOIselected(POI*)));
+
     connect(ownerMeteotable,SIGNAL(paramVLMChanged()),this,SLOT(paramChanged()));
     connect(ownerMeteotable,SIGNAL(WPChanged(float,float)),this,SLOT(WPChanged(float,float)));
     
@@ -214,7 +216,11 @@ void  POI::mouseReleaseEvent(QMouseEvent *e)
         if (countClick==2)
         {
             // Double Clic : Edit this Point Of Interest
-            emit editPOI(this);
+
+            if(((MainWindow*)owner)->get_selPOI_instruction())
+                emit selectPOI(this);
+            else
+                emit editPOI(this);
             countClick = 0;
         }
     }
@@ -233,7 +239,10 @@ void  POI::timerClickEvent()
 {
     if (countClick==1)
     {
-        slot_editPOI();
+        if(((MainWindow*)owner)->get_selPOI_instruction())
+                emit selectPOI(this);
+        else
+            slot_editPOI();
     }
     countClick = 0;
 }

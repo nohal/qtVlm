@@ -30,7 +30,7 @@ Pilototo_param::Pilototo_param(QWidget *parent) : QDialog(parent)
 {
     setupUi(this);
     instruction=NULL;
-    btn_selectPOI->setEnabled(false);
+    //btn_selectPOI->setEnabled(false);
     
     mode->addItem(tr("Cap constant (1)"));
     mode->addItem(tr("Angle du vent (2)"));
@@ -44,6 +44,8 @@ void Pilototo_param::editInstruction(Pilototo_instruction * instruction)
     
     this->instruction=instruction;
 
+    qWarning() << "Edit instruction std";
+
     mode->setCurrentIndex(instruction->getMode());
     angle->setValue(instruction->getAngle());
     
@@ -51,6 +53,28 @@ void Pilototo_param::editInstruction(Pilototo_instruction * instruction)
     setValue(EDT_LON,instruction->getLon());
 
     val=instruction->getWph();
+    if(val==-1)
+        editWph->setText(QString());
+    else
+        editWph->setText(QString().setNum(val));
+    exec();
+}
+
+void Pilototo_param::editInstructionPOI(Pilototo_instruction * instruction,POI * poi)
+{
+    float val;
+
+    this->instruction=instruction;
+
+    qWarning() << "Edit instruction with POI";
+
+    /*mode->setCurrentIndex(instruction->getMode());
+    angle->setValue(instruction->getAngle());*/
+
+    setValue(EDT_LAT,poi->getLatitude());
+    setValue(EDT_LON,poi->getLongitude());
+
+    val=poi->getWph();
     if(val==-1)
         editWph->setText(QString());
     else
@@ -136,7 +160,8 @@ void Pilototo_param::copyPOI(void)
 
 void Pilototo_param::selectPOI(void)
 {
-    /* to be done later */
+    emit doSelectPOI(instruction);
+    QDialog::done(QDialog::Rejected);
 }
 
 float Pilototo_param::getValue(int type)

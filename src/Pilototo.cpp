@@ -28,12 +28,14 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #define VLM_REQUEST_LOGIN  0
 #define VLM_DO_REQUEST     1
 
-Pilototo::Pilototo(QWidget * parent):QDialog(parent)
+Pilototo::Pilototo(QWidget *main,QWidget * parent):QDialog(parent)
 {
     setupUi(this);
     this->parent=parent;
 
     instructionEditor = new Pilototo_param(this);
+    connect(instructionEditor,SIGNAL(doSelectPOI(Pilototo_instruction *)),this,SLOT(doSelectPOI(Pilototo_instruction *)));
+    connect(this,SIGNAL(selectPOI(Pilototo_instruction *)),main,SLOT(slotSelectPOI(Pilototo_instruction *)));
 
     instructions_list.clear();
 
@@ -146,6 +148,24 @@ void Pilototo::updateDrawList(void)
 void Pilototo::editInstructions(void)
 {
     waitBox->exec();
+}
+
+/*init piloto editor after selecting a POI*/
+void Pilototo::editInstructionsPOI(Pilototo_instruction * instruction,POI * poi)
+{
+    qWarning() << "Pilototo, edit instr: " << instruction << " for poi: "<< poi;
+    show();    
+    if(poi)
+        instructionEditor->editInstructionPOI(instruction,poi);
+    else
+        instructionEditor->editInstruction(instruction);
+    exec();
+}
+
+void Pilototo::doSelectPOI(Pilototo_instruction * instruction)
+{
+    emit selectPOI(instruction);
+    QDialog::done(QDialog::Rejected);
 }
 
 void Pilototo::boatUpdated(boatAccount * boat)

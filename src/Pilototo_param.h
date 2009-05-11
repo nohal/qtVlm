@@ -22,6 +22,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #define PILOTOTO_PARAM_H
 
 #include "Pilototo.h"
+#include "POI.h"
 
 #include "ui_Pilototo_param.h"
 
@@ -35,14 +36,19 @@ class Pilototo_param : public QDialog, public Ui::pilototo_param_ui
         
         void done(int);
 
+    public slots:
+        void editInstruction(Pilototo_instruction *);
+        void editInstructionPOI(Pilototo_instruction *,POI*);
+
     private slots:
         void modeChanged(int);
         void pastePOI(void);
         void selectPOI(void);
         void copyPOI(void);
 
-        void editInstruction(Pilototo_instruction *);
-        
+    signals:
+        void doSelectPOI(Pilototo_instruction *);
+
     private:
         Pilototo_instruction * instruction;
 

@@ -49,6 +49,7 @@ boardVLM::boardVLM(QMainWindow * mainWin,QWidget * parent) : QWidget(parent)
     setupUi(this);
 
     isComputing = false;
+    this->mainWin = mainWin;
 
     connect(mainWin,SIGNAL(setChangeStatus(bool)),this,SLOT(setChangeStatus(bool)));
     connect(this,SIGNAL(VLM_Sync()),mainWin,SLOT(slotVLM_Sync()));
@@ -609,6 +610,7 @@ void boardVLM::setChangeStatus(bool status)
     goPilotOrtho->setEnabled(st);
     goVMG->setEnabled(st);
     btn_WP->setEnabled(st);
+    boatList->setEnabled(!((MainWindow*)mainWin)->get_selPOI_instruction());
 }
 
 /*********************/

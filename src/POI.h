@@ -80,6 +80,7 @@ class POI : public QWidget
         void addPOI_list(POI*);
         void delPOI_list(POI*);
         void editPOI(POI*);
+        void selectPOI(POI*);
 
     private:
         QString      name;
