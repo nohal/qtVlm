@@ -36,6 +36,8 @@ paramVLM::paramVLM(QWidget * parent) : QDialog(parent)
     opp_labelType->addItem(tr("Numéro"));
     opp_labelType->setCurrentIndex(Util::getSetting("opp_labelType",0).toInt());
 
+    chk_manualClipping->setCheckState(Util::getSetting("manualClipping",0).toInt()==1?Qt::Checked:Qt::Unchecked);
+
     /* Colors */
 
     setColor(Util::getSetting("POI_Color",QColor(Qt::black).name()).toString(),0);
@@ -78,6 +80,8 @@ void paramVLM::done(int result)
         Util::setSetting("estimeLen", QString().setNum(estimeLen->value()));
         Util::setSetting("gribZoomOnLoad",chk_gribZoomOnLoad->checkState()==Qt::Checked?"1":"0");
         Util::setSetting("opp_labelType",QString().setNum(opp_labelType->currentIndex()));
+        Util::setSetting("manualClipping",chk_manualClipping->checkState()==Qt::Checked?"1":"0");
+
         /* colors */
 
         Util::setSetting("POI_Color",POI_color);

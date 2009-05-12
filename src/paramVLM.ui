@@ -43,7 +43,7 @@
     </rect>
    </property>
    <property name="currentIndex">
-    <number>3</number>
+    <number>0</number>
    </property>
    <widget class="QWidget" name="tab">
     <attribute name="title">
@@ -156,6 +156,32 @@
         <width>79</width>
         <height>22</height>
        </rect>
+      </property>
+     </widget>
+    </widget>
+    <widget class="QGroupBox" name="groupBox_7">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>190</y>
+       <width>311</width>
+       <height>51</height>
+      </rect>
+     </property>
+     <property name="title">
+      <string>Manual Clipping</string>
+     </property>
+     <widget class="QCheckBox" name="chk_manualClipping">
+      <property name="geometry">
+       <rect>
+        <x>10</x>
+        <y>20</y>
+        <width>221</width>
+        <height>20</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Activer le nouvel algo de clipping</string>
       </property>
      </widget>
     </widget>

@@ -141,8 +141,7 @@ class GribRecord
         			data[j*Ni+i] = v; }
         
         // Valeur pour un point quelconque
-        double  getInterpolatedValue(double px, double py,
-        							  bool numericalInterpolation=true) const;
+        double  getInterpolatedValue(double px, double py,bool numericalInterpolation=true) const;
 
         // coordonnées d'un point de la grille
         inline double  getX(int i) const   { return ok ? Lo1+i*Di : GRIB_NOTDEF;}

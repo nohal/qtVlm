@@ -26,12 +26,15 @@ Copyright (C) 2008 - Jacques Zaninetti - http://zygrib.free.fr
 
 #include "GshhsReader.h"
 
+#define FILL_POLY 1
+#define NO_FILL_POLY 1
+
 //==========================================================
 // GshhsPolygon  (compatible avec le format .rim de RANGS)
 //==========================================================
 GshhsPolygon::GshhsPolygon(ZUFILE *file_)
 {
- 	file  = file_;
+    file  = file_;
     ok = true;
     id    = readInt4();
     n     = readInt4();
@@ -47,8 +50,8 @@ GshhsPolygon::GshhsPolygon(ZUFILE *file_)
     antarctic = (west==0 && east==360);
     if (ok)
     {
-		double x, y=-90;
-        
+        double x, y=-90;
+
         for (int i=0; i<n; i++) {
             x = readInt4() * 1e-6;
             if (greenwich && x > 270)
@@ -57,17 +60,17 @@ GshhsPolygon::GshhsPolygon(ZUFILE *file_)
             lsPoints.push_back(new GshhsPoint(x,y));
 /*if (antarctic)
 {
-	printf("x %12.8f %12.8f\n", x,y);
+    printf("x %12.8f %12.8f\n", x,y);
 }*/
         }
-        
-    	// force l'Antarctic à être un "rectangle" qui passe par le pôle
+
+        // force l'Antarctic à être un "rectangle" qui passe par le pôle
         if (antarctic) {
-        	lsPoints.push_front(new GshhsPoint(360, y));
-        	lsPoints.push_front(new GshhsPoint(360,-90));
+            lsPoints.push_front(new GshhsPoint(360, y));
+            lsPoints.push_front(new GshhsPoint(360,-90));
             lsPoints.push_back(new GshhsPoint(0,-90));
         }
-    
+
     }
 }
 
@@ -86,7 +89,7 @@ GshhsPolygon_WDB::GshhsPolygon_WDB(ZUFILE *file_)
     south = readInt4() * 1e-6;
     north = readInt4() * 1e-6;
     area  = readInt4();
-    
+
     greenwich = false;
     antarctic = false;
     if (ok) {
@@ -137,6 +140,7 @@ GshhsReader::GshhsReader(std::string fpath_, int quality)
     }
     userPreferredQuality = quality;
     setQuality(quality);
+    mode=0;
 }
 
 // Destructeur
@@ -201,13 +205,13 @@ std::string GshhsReader::getFileName_gshhs(int quality)
 /*    std::string fname, ext;
     ext = getNameExtension(quality);
     fname = fpath+"/"+"gshhs_" + ext + ".b";*/
-    
+
     // Lit le .rim de RANGS à la place du fichier initial
     char txtn[16];
     if (quality < 0)   quality = 0;
     if (quality > 4)   quality = 4;
     snprintf(txtn, 10, "%d", 4-quality);   // précision inversée :(
-    
+
     std::string fname;
     fname = fpath+"/"+"gshhs_" + txtn + ".rim";
 
@@ -247,35 +251,35 @@ void GshhsReader::readGshhsFiles()
     bool   ok;
     int qual=quality;
 
-	// Bordures des continents (4 niveaux) (gshhs_[clihf].b)
-	if (lsPoly_level1[quality]->size() == 0) { // on ne lit qu'une fois le fichier
-		fname = getFileName_gshhs(qual);
+    // Bordures des continents (4 niveaux) (gshhs_[clihf].b)
+    if (lsPoly_level1[quality]->size() == 0) { // on ne lit qu'une fois le fichier
+        fname = getFileName_gshhs(qual);
         //qWarning("Reading %s",fname.c_str());
-		file = zu_open(fname.c_str(), "rb");
-		if (file != NULL) {
-			
-			ok = true;
-			while (ok) {
-				GshhsPolygon *poly = new GshhsPolygon(file);
-				ok = poly->isOk();
-				if (ok) {
-					switch (poly->getLevel()) {
-						case 1: lsPoly_level1[qual]->push_back(poly); break;
-						case 2: lsPoly_level2[qual]->push_back(poly); break;
-						case 3: lsPoly_level3[qual]->push_back(poly); break;
-						case 4: lsPoly_level4[qual]->push_back(poly); break;
-					}
-				}
-			}
-			zu_close(file);
-		}
-	}
+        file = zu_open(fname.c_str(), "rb");
+        if (file != NULL) {
+
+            ok = true;
+            while (ok) {
+                GshhsPolygon *poly = new GshhsPolygon(file);
+                ok = poly->isOk();
+                if (ok) {
+                    switch (poly->getLevel()) {
+                        case 1: lsPoly_level1[qual]->push_back(poly); break;
+                        case 2: lsPoly_level2[qual]->push_back(poly); break;
+                        case 3: lsPoly_level3[qual]->push_back(poly); break;
+                        case 4: lsPoly_level4[qual]->push_back(poly); break;
+                    }
+                }
+            }
+            zu_close(file);
+        }
+    }
 }
 
 //-----------------------------------------------------------------------
 void GshhsReader::setUserPreferredQuality(int quality_) // 5 levels: 0=low ... 4=full
 {
-	userPreferredQuality = quality_;
+    userPreferredQuality = quality_;
 }
 
 //-----------------------------------------------------------------------
@@ -288,12 +292,12 @@ void GshhsReader::setQuality(int quality_) // 5 levels: 0=low ... 4=full
     quality = quality_;
     if (quality < 0) quality = 0;
     else if (quality > 4) quality = 4;
-    
+
     gshhsRangsReader->setQuality(quality);
     if (!isUsingRangsReader) {
-	    readGshhsFiles();
+        readGshhsFiles();
     }
-        
+
     // Frontières politiques
     if (lsPoly_boundaries[quality]->size() == 0) { // on ne lit qu'une fois le fichier
         fname = getFileName_boundaries(quality);
@@ -304,7 +308,7 @@ void GshhsReader::setQuality(int quality_) // 5 levels: 0=low ... 4=full
                 GshhsPolygon *poly = new GshhsPolygon_WDB(file);
                 ok = poly->isOk();
                 if (ok) {
-                    if (poly->getLevel() < 2) 
+                    if (poly->getLevel() < 2)
                         lsPoly_boundaries[quality]->push_back(poly);
                 }
 
@@ -349,10 +353,13 @@ std::list<GshhsPolygon*> & GshhsReader::getList_boundaries() {
 std::list<GshhsPolygon*> & GshhsReader::getList_rivers() {
     return * lsPoly_rivers[quality];
 }
-        
+
 //=====================================================================
 // Dessin de la carte
 //=====================================================================
+
+#define IS_IN(x,y,w,h) (x>=0 && y>=0 && x<=w && y<=h)
+
 int GshhsReader::GSHHS_scaledPoints(
             GshhsPolygon *pol, QPoint *pts, double decx,
             Projection *proj
@@ -372,20 +379,22 @@ int GshhsReader::GSHHS_scaledPoints(
     if (a1==a2 && b1==b2) {
         return 0;
     }
-    
+
     double x, y;
     std::list<GshhsPoint *>::iterator itp;
     int xx, yy, oxx=0, oyy=0;
     int j = 0;
-    int i=0;
-        
+
     for  (itp=(pol->lsPoints).begin(); itp!=(pol->lsPoints).end(); itp++)
     {
         x = (*itp)->lon+decx;
         y = (*itp)->lat;
         // Ajustement d'échelle
+
         proj->map2screen(x, y, &xx, &yy);
 
+        /*if(!IS_IN(xx,yy,w,h))
+            continue;*/
 
         if (j==0 || (oxx!=xx || oyy!=yy))  // élimine les points trop proches
         {
@@ -395,22 +404,438 @@ int GshhsReader::GSHHS_scaledPoints(
             pts[j].setY(yy);
             j ++;
         }
-    i++;
     }
     return j;
 }
 
+//=====================================================================
+// Dessin de la carte
+//=====================================================================
+
+
+bool GshhsReader::segIntersect(double Ax, double Ay, double Bx, double By,
+                                double Cx, double Cy, double Dx, double Dy, double * res_x, double * res_y)
+{
+    if(!res_x || !res_y)
+        return false;
+    double r,s;
+    r=((Ay-Cy)*(Dx-Cx)-(Ax-Cx)*(Dy-Cy))/((Bx-Ax)*(Dy-Cy)-(By-Ay)*(Dx-Cx));
+    s=((Ay-Cy)*(Bx-Ax)-(Ax-Cx)*(By-Ay))/((Bx-Ax)*(Dy-Cy)-(By-Ay)*(Dx-Cx));
+    if(0<=r && r<=1 && 0<=s && s <=1)
+    {
+        //qWarning() << "r=" << r << ", s=" << s;
+        *res_x=Ax+r*(Bx-Ax);
+        *res_y=Ay+r*(By-Ay);
+        return true;
+    }
+    else
+        return false;
+
+}
+
+bool GshhsReader::addIntersect(double xx,double yy,double oxx,double oyy,clipPoint * A, clipPoint * B,clipPoint ** lst,bool isIn)
+{
+    double Ix,Iy;
+    bool added=false;
+    if(segIntersect(xx,yy,oxx,oyy,A->x,A->y,B->x,B->y,&Ix,&Iy))
+    {
+        int dim,sig;
+
+        /*qWarning() << "Isec: " << oxx << "," << oyy << "-" << xx << "," << yy << " is:" << Ix
+            << "," << Iy  << " going In " << !isIn;*/
+
+        if(Ix==A->x && Iy==A->y)
+        {
+            A->isIntersection=true;
+            A->goingIn=!isIn;
+            if(*lst)
+                (*lst)->append(A);
+            *lst=A;
+            added=true;
+        }
+        else if(Ix==B->x && Iy==B->y)
+        {
+            B->isIntersection=true;
+            B->goingIn=!isIn;
+            if(*lst)
+                (*lst)->append(B);
+            *lst=B;
+            added=true;
+        }
+        else
+        {
+            if(A->y==B->y)
+            {
+                dim=1;
+                if(A->x<B->x) sig=1;
+                else sig=-1;
+            }
+            else
+            {
+                dim=2;
+                if(A->y<B->y) sig=1;
+                else sig=-1;
+            }
+
+            clipPoint * pt = new clipPoint(Ix,Iy,true,!isIn);
+            clipPoint * prec=A;
+            for(clipPoint * l=A->nextBorder;l!=B;l=l->nextBorder)
+            {
+                double val=(sig)*(dim==1?l->x:l->y);
+
+                if( val > (sig)*(dim==1?Ix:Iy))
+                {
+                    prec->appendBorder(pt);
+                    if(*lst)
+                        (*lst)->append(pt);
+                    *lst=pt;
+                    added=true;
+                    break;
+                }
+                prec=l;
+            }
+            if(!added)
+            {
+                double val=(sig)*(dim==1?B->x:B->y);
+                if( val > (sig)*(dim==1?Ix:Iy))
+                {
+                    prec->appendBorder(pt);
+                    if(*lst)
+                        (*lst)->append(pt);
+                    *lst=pt;
+                    added=true;
+                }
+            }
+        }
+        if(added)
+            return true;
+        else
+        {
+            //qWarning() << "Not adding isec !!!";
+            return false;
+        }
+    }
+    return false;
+}
+
+void GshhsReader::GSHHS_scaleAndClip(QPainter &pnt, GshhsPolygon *pol, QPoint *pts, double decx,Projection *proj,
+                                     int order,int fillType)
+{
+    clipPoint* clipList=NULL;
+    clipPoint* borderList=NULL;
+
+    bool allIn = true;
+    // Elimine les polygones en dehors de la zone visible
+    if (! proj->intersect(pol->west+decx, pol->east+decx, pol->south, pol->north)) {
+        //printf("%f %f   -  %f %f \n", pol->west+decx, pol->east+decx, pol->south, pol->north);
+        return ;
+    }
+
+    // Elimine les polygones trop petits
+    int a1, b1;
+    int a2, b2;
+    proj->map2screen(pol->west+decx, pol->north, &a1, &b1);
+    proj->map2screen(pol->east+decx, pol->south, &a2, &b2);
+    if (a1==a2 && b1==b2) {
+        return ;
+    }
+
+    int x, y;
+    int ox=-1000,oy=-1000;
+    std::list<GshhsPoint *>::iterator itp;
+    double xx, yy, oxx, oyy;
+    bool isIn,oIsIn;
+    int nbPts=0;
+
+    //qWarning() << "nb points init: " << (pol->lsPoints).size();
+    //qWarning() << "screen: " << w << " " << h;
+    clipPoint *A,*B,*C,*D;
+    if(order==0)
+    {
+        A=new clipPoint(proj->getXmin(),proj->getYmax());
+        B=new clipPoint(proj->getXmin(),proj->getYmin());
+        C=new clipPoint(proj->getXmax(),proj->getYmin());
+        D=new clipPoint(proj->getXmax(),proj->getYmax());
+    }
+    else
+    {
+        A=new clipPoint(proj->getXmin(),proj->getYmax());
+        B=new clipPoint(proj->getXmax(),proj->getYmax());
+        C=new clipPoint(proj->getXmax(),proj->getYmin());
+        D=new clipPoint(proj->getXmin(),proj->getYmin());
+    }
+
+    /* creating bording list*/
+    borderList=A;
+    borderList->appendBorder(B);
+    B->appendBorder(C);
+    C->appendBorder(D);
+
+    /* first point*/
+    itp=(pol->lsPoints).begin();
+    if(itp==(pol->lsPoints).end()) /*no point in the list*/
+        return;
+    xx = (*itp)->lon+decx;
+    yy = (*itp)->lat;
+    //proj->map2screen(x, y, &xx, &yy);
+
+    /*init prev point to something different to first point */
+    oxx=xx+5;
+    oyy=yy+5;
+
+    /*are we starting inside / outside drawing zone*/
+    isIn=proj->isPointVisible(xx,yy);
+
+    if(!isIn) /*first point outside => not all point inside */
+        allIn=false;
+
+    /*if(isIn)
+        qWarning() << "Starting inside";
+    else
+        qWarning() << "Starting outside";*/
+
+    for  (/*nothing*/; itp!=(pol->lsPoints).end(); itp++)
+    {
+        xx = (*itp)->lon+decx;
+        yy = (*itp)->lat;
+
+        /*entry or exit from drawing zone ?*/
+        oIsIn=isIn;
+        isIn=proj->isPointVisible(xx,yy);
+        if(!isIn)
+            allIn=false;
+
+        if(isIn!=oIsIn)
+        {
+            /* let's find intersection */
+            if(!addIntersect(xx,yy,oxx,oyy,A,B,&clipList,oIsIn)
+                && !addIntersect(xx,yy,oxx,oyy,B,C,&clipList,oIsIn)
+                && !addIntersect(xx,yy,oxx,oyy,C,D,&clipList,oIsIn)
+                && !addIntersect(xx,yy,oxx,oyy,D,A,&clipList,oIsIn))
+            {
+                qWarning() << "Intersect not found!";
+            }
+            else
+                nbPts++;
+        }
+
+        if(isIn)
+        {
+            clipPoint * ptr = new clipPoint(xx,yy);
+            if(clipList)
+                clipList->append(ptr);
+            clipList=ptr;
+            nbPts++;
+        }
+
+        /* saving new point */
+        oxx = xx;
+        oyy = yy;
+    }
+
+    /*if(clipList)
+        qWarning() << "Scan of polygon finished, nb points: " << clipList->count() << " (" << nbPts << ") border:"
+            << borderList->countBorder();*/
+
+    //qWarning() << "border: " << borderList->printBorder();
+
+    if(nbPts <= 3 || clipList==NULL)
+    {
+        //qWarning() << "Not enough point to draw a filled polygon";
+    }
+    else if(allIn)
+    {
+        //qWarning() << "All points are inside";
+        int j=0;
+        ox=oy=-1000;
+        for(clipPoint * ptr=clipList->next;ptr!=clipList;ptr=ptr->next)
+        {
+            proj->map2screen(ptr->x, ptr->y, &x, &y);
+            if(ox!=x || oy!=y)
+            {
+                pts[j].setX(x);
+                pts[j].setY(y);
+                j++;
+                ox=x;
+                oy=y;
+            }
+        }
+        if(fillType==FILL_POLY)
+            pnt.drawPolygon(pts, j);
+        else
+            pnt.drawPolyline(pts, j);
+    }
+    else
+    {
+        /* searching for the first border going from outside -> inside*/
+        //qWarning() << "drawing list of polygons ";
+        clipPoint * start=NULL;
+        if(clipList->isIntersection && clipList->goingIn)
+            start=clipList;
+        else
+            for(clipPoint * ptr=clipList->next;ptr!=clipList;ptr=ptr->next)
+            {
+                if(ptr->isIntersection && ptr->goingIn)
+                {
+                    start=ptr;
+                    break;
+                }
+            }
+
+        if(!start)
+        {
+            //qWarning() << "Can't find a start point";
+            goto error_end;
+        }
+        else
+        {
+            /*qWarning() << "Start is " << start->x << "," << start->y << " intersect " << start->isIntersection
+               << ", going in " << start->goingIn << ", visited " << start->visited;*/
+            /* we have a start, adding it to draw polygon */
+            proj->map2screen(start->x, start->y, &x, &y);
+            pts[0].setX(x);
+            pts[0].setY(y);
+            ox=x;
+            oy=y;
+            start->visited=true;
+
+            clipPoint * ptr = start->next;
+            int j=1; /*index in polygon*/
+
+            while(!ptr->visited)
+            {
+                /* ajout du point */
+                proj->map2screen(ptr->x, ptr->y, &x, &y);
+                if(ox!=x || oy!=y)
+                {
+                    pts[j].setX(x);
+                    pts[j].setY(y);
+                    j++;
+                    ox=x;
+                    oy=y;
+                }
+                ptr->visited=true;
+
+                if(ptr->isIntersection) /* border reached */
+                {
+                    /*qWarning() << "New intersection: " << ptr->x << "," << ptr->y << ", going in "
+                        << ptr->goingIn << ", visited " << ptr->visited;*/
+                    if(ptr->goingIn)
+                    {
+                       //qWarning() << "error we are in and finding an entering intersection";
+                       goto error_end;
+                    }
+                    else
+                    {
+                        /*adding border points*/
+                        clipPoint * ptr2;
+                        for(ptr2=ptr->nextBorder;!ptr2->isIntersection && ptr2!=start;ptr2=ptr2->nextBorder)
+                        {
+                            //qWarning() << "Adding border " << ptr2->x << "," << ptr2->y;
+                            proj->map2screen(ptr2->x, ptr2->y, &x, &y);
+                            if(ox!=x || oy!=y)
+                            {
+                                pts[j].setX(x);
+                                pts[j].setY(y);
+                                j++;
+                                ox=x;
+                                oy=y;
+                            }
+                            ptr2->visited=true;
+                        }
+                        if(ptr2==start)
+                        {
+                            //qWarning() << "Drawing " << j << " points";
+                            pnt.drawPolygon(pts, j);
+                            start=ptr;
+                            /* searching next not visited going in point */
+                            for(ptr=ptr->next;ptr!=start && (ptr->visited||!ptr->isIntersection);ptr=ptr->next) /*nothing*/;
+                            if(ptr==start)
+                            {
+                                //qWarning() << "can't find a new start";
+                                break;
+                            }
+                            start=ptr;
+                            /* adding first point */
+                            /*qWarning() << "New Start is " << start->x << "," << start->y
+                                        << " intersect " << start->isIntersection  << ", going in "
+                                        << start->goingIn << ", visited " << start->visited;*/
+                            proj->map2screen(ptr->x, ptr->y, &x, &y);
+                            pts[0].setX(x);
+                            pts[0].setY(y);
+                            start->visited=true;
+                            ptr=start->next;
+                            j=1;
+                            ox=x;
+                            oy=y;
+                        }
+                        else if(ptr2->isIntersection)
+                        {
+                            if(!ptr2->goingIn)
+                            {
+                                //qWarning() << "next intersect not going in: " << ptr2->x << "," << ptr2->y;;
+                                goto error_end;
+                            }
+                            /* ajout du point */
+                            /*qWarning() << "Isec as a ptr2" << ptr2->x << "," << ptr2->y
+                                << " intersect " << ptr2->isIntersection  << ", going in "
+                                << ptr2->goingIn << ", visited " << ptr2->visited;*/
+                            proj->map2screen(ptr2->x, ptr2->y, &x, &y);
+                            if(ox!=x || oy!=y)
+                            {
+                                pts[j].setX(x);
+                                pts[j].setY(y);
+                                j++;
+                                ox=x;
+                                oy=y;
+                            }
+                            ptr2->visited=true;
+                            ptr=ptr2->next; /* à la prochaine iteration on le prendra en compte*/
+                        }
+                        else
+                        {
+                            qWarning() << "We should not be here !!";
+                            return;
+                        }
+                    }
+                }
+                else
+                {
+                    //qWarning() << "Adding point " << ptr->x << "," << ptr->y;
+                    ptr=ptr->next;
+                }
+            }
+        }
+    }
+
+    //qWarning() << "All finished for this polygon";
+
+error_end:
+    /*clean border and clipList */
+    if(clipList)
+    {
+        clipList->clearList();
+        delete clipList;
+    }
+
+    delete A;
+    delete B;
+    delete C;
+    delete D;
+
+    return ;
+}
+
 //-----------------------------------------------------------------------
 void GshhsReader::GsshDrawPolygons(QPainter &pnt, std::list<GshhsPolygon*> &lst,
-                                Projection *proj
-        )
+                                    Projection *proj,int order)
 {
     std::list<GshhsPolygon*>::iterator iter;
     GshhsPolygon *pol;
     QPoint *pts = NULL;
     int i;
     int nbp;
-    
+
     int nbmax = 10000;
     pts = new QPoint[nbmax];
     assert(pts);
@@ -422,25 +847,21 @@ void GshhsReader::GsshDrawPolygons(QPainter &pnt, std::list<GshhsPolygon*> &lst,
             pts = new QPoint[nbmax];
             assert(pts);
         }
-        
-        nbp = GSHHS_scaledPoints(pol, pts, 0, proj);
-        if (nbp > 3)
+
+        if(mode==1)
         {
-             /*if(quality==0)
-                 pnt.drawPolygon(pts, nbp);
-             else
-                 pnt.drawPolyline(pts, nbp);*/
-             pnt.drawPolygon(pts, nbp);
+            GSHHS_scaleAndClip(pnt, pol, pts, 0, proj,order,FILL_POLY);
+            GSHHS_scaleAndClip(pnt, pol, pts, -360, proj,order,FILL_POLY);
         }
-    
-        nbp = GSHHS_scaledPoints(pol, pts, -360, proj);
-        if (nbp > 3)
+        else
         {
-            /*if(quality==0)
-                 pnt.drawPolygon(pts, nbp);
-             else
-                 pnt.drawPolyline(pts, nbp);*/
-             pnt.drawPolygon(pts, nbp);
+            nbp = GSHHS_scaledPoints(pol, pts, 0, proj);
+            if (nbp > 3)
+                pnt.drawPolygon(pts,nbp);
+
+            nbp = GSHHS_scaledPoints(pol, pts, -360, proj);
+            if (nbp > 3)
+                pnt.drawPolygon(pts, nbp);
         }
     }
 
@@ -449,64 +870,80 @@ void GshhsReader::GsshDrawPolygons(QPainter &pnt, std::list<GshhsPolygon*> &lst,
 
 //-----------------------------------------------------------------------
 void GshhsReader::GsshDrawLines(QPainter &pnt, std::list<GshhsPolygon*> &lst,
-                                Projection *proj, bool isClosed
-        )
+                                Projection *proj, bool isClosed, int order, int mode)
 {
     std::list<GshhsPolygon*>::iterator iter;
     GshhsPolygon *pol;
     QPoint *pts = NULL;
     int i;
     int nbp;
-    
+
     int nbmax = 10000;
     pts = new QPoint[nbmax];
     assert(pts);
-    
+
     for  (i=0, iter=lst.begin(); iter!=lst.end(); iter++,i++) {
         pol = *iter;
-        
+
         if (nbmax < pol->n+2) {
             nbmax = pol->n+2;
             pts = new QPoint[nbmax];
             assert(pts);
         }
-        
-		
-		//--------------------------------------------------------------
+
+/*
+        //--------------------------------------------------------------
         nbp = GSHHS_scaledPoints(pol, pts, 0, proj);
-		if (nbp > 1) {
-			if (pol->isAntarctic()) {
-				// Ne pas tracer les bords artificiels qui rejoignent le pôle
-				// ajoutés lors de la création des polygones (2 au début, 1 à la fin).
-				pts ++;
-				nbp -= 2;
-				pnt.drawPolyline(pts, nbp);
-				pts --;
-			}
-			else {
-				pnt.drawPolyline(pts, nbp);
-				if (isClosed)
-					pnt.drawLine(pts[0], pts[nbp-1]);
-			}
-		}
-        
-		//--------------------------------------------------------------
+        if (nbp > 1) {
+            if (pol->isAntarctic()) {
+                // Ne pas tracer les bords artificiels qui rejoignent le pôle
+                // ajoutés lors de la création des polygones (2 au début, 1 à la fin).
+                pts ++;
+                nbp -= 2;
+                pnt.drawPolyline(pts, nbp);
+                pts --;
+            }
+            else {
+                pnt.drawPolyline(pts, nbp);
+                if (isClosed)
+                    pnt.drawLine(pts[0], pts[nbp-1]);
+            }
+        }
+
+        //--------------------------------------------------------------
         nbp = GSHHS_scaledPoints(pol, pts, -360, proj);
-		if (nbp > 1) {
-			if (pol->isAntarctic()) {
-				// Ne pas tracer les bords artificiels qui rejoignent le pôle
-				// ajoutés lors de la création des polygones (2 au début, 1 à la fin).
-				pts ++;
-				nbp -= 2;
-				pnt.drawPolyline(pts, nbp);
-				pts --;
-			}
-			else {
-				pnt.drawPolyline(pts, nbp);
-				if (isClosed)
-					pnt.drawLine(pts[0], pts[nbp-1]);
-			}
-		}
+        if (nbp > 1) {
+            if (pol->isAntarctic()) {
+                // Ne pas tracer les bords artificiels qui rejoignent le pôle
+                // ajoutés lors de la création des polygones (2 au début, 1 à la fin).
+                pts ++;
+                nbp -= 2;
+                pnt.drawPolyline(pts, nbp);
+                pts --;
+            }
+            else {
+                pnt.drawPolyline(pts, nbp);
+                if (isClosed)
+                    pnt.drawLine(pts[0], pts[nbp-1]);
+            }
+        }*/
+        if(mode==1)
+        {
+            GSHHS_scaleAndClip(pnt, pol, pts, 0, proj,order,NO_FILL_POLY);
+            GSHHS_scaleAndClip(pnt, pol, pts, -360, proj,order,NO_FILL_POLY);
+        }
+        else
+        {
+            nbp = GSHHS_scaledPoints(pol, pts, 0, proj);
+            if (nbp > 1)
+                pnt.drawPolyline(pts,nbp);
+
+            nbp = GSHHS_scaledPoints(pol, pts, -360, proj);
+            if (nbp > 1)
+                pnt.drawPolyline(pts, nbp);
+        }
+
+
     }
     delete [] pts;
 }
@@ -520,7 +957,7 @@ void GshhsReader::drawBackground( QPainter &pnt, Projection *proj,
     pnt.setBrush(backgroundColor);
     pnt.setPen(backgroundColor);
     pnt.drawRect(0,0,proj->getW(), proj->getH());
-    
+
     // océans bleus (peint toute la zone entre les 2 pôles)
     pnt.setBrush(seaColor);
     pnt.setPen(seaColor);
@@ -528,8 +965,6 @@ void GshhsReader::drawBackground( QPainter &pnt, Projection *proj,
     proj->map2screen(0,90, &x0,&y0);
     proj->map2screen(0,-90, &x1,&y1);
 
-	//printf("drawBackground y0=%d y1=%d\n", y0,y1);
-    
     pnt.drawRect(0, y0, proj->getW(), y1-y0);
 
 }
@@ -539,93 +974,164 @@ void GshhsReader::drawContinents( QPainter &pnt, Projection *proj,
             QColor seaColor, QColor landColor
         )
 {
-	selectBestQuality(proj);
-	
+    selectBestQuality(proj);
+
+    mode=(Util::getSetting("manualClipping",0).toInt());
+
     pnt.setPen(Qt::transparent);
 
     if (isUsingRangsReader) {
         gshhsRangsReader->drawGshhsRangsMapPlain(pnt, proj, seaColor, landColor);
         return;
     }
-    
+
     readGshhsFiles();
 
-    qWarning() << "quality = " << quality ;
-    
+    //qWarning() << "quality = " << quality ;
+
     // Continents (level 1)
     pnt.setBrush(landColor);
-    GsshDrawPolygons(pnt, getList_level(1), proj);
+    GsshDrawPolygons(pnt, getList_level(1), proj,0);
     // Grands lacs (level 2)
     pnt.setBrush(seaColor);
-    GsshDrawPolygons(pnt, getList_level(2), proj);
+    GsshDrawPolygons(pnt, getList_level(2), proj,1);
     // Terres dans les grands lacs (level 3)
     pnt.setBrush(landColor);
-    GsshDrawPolygons(pnt, getList_level(3), proj);
+    GsshDrawPolygons(pnt, getList_level(3), proj,0);
     // Lacs dans les terres dans les grands lacs (level 4)
-    pnt.setBrush(seaColor);
-    GsshDrawPolygons(pnt, getList_level(4), proj);
+    /*pnt.setBrush(seaColor);
+    GsshDrawPolygons(pnt, getList_level(4), proj,1);*/
 }
 
 //-----------------------------------------------------------------------
 void GshhsReader::drawSeaBorders( QPainter &pnt, Projection *proj)
 {
-	selectBestQuality(proj);
+    selectBestQuality(proj);
 
     pnt.setBrush(Qt::transparent);
-    
+
+    mode=(Util::getSetting("manualClipping",0).toInt());
+
     if (isUsingRangsReader) {
        gshhsRangsReader->drawGshhsRangsMapSeaBorders(pnt, proj);
        return;
     }
-    
+
     readGshhsFiles();
-    
+
     // Continents (level 1)
-    GsshDrawLines(pnt, getList_level(1), proj, true);
+    GsshDrawLines(pnt, getList_level(1), proj, true,0,mode);
     // Grands lacs (level 2)
-    GsshDrawLines(pnt, getList_level(2), proj, true);
+    GsshDrawLines(pnt, getList_level(2), proj, true,1,mode);
     // Terres dans les grands lacs (level 3)
-    GsshDrawLines(pnt, getList_level(3), proj, true);
+    GsshDrawLines(pnt, getList_level(3), proj, true,0,mode);
     // Lacs dans les terres dans les grands lacs (level 4)
-    GsshDrawLines(pnt, getList_level(4), proj, true);
+    //GsshDrawLines(pnt, getList_level(4), proj, true);
 }
 
 //-----------------------------------------------------------------------
 void GshhsReader::drawBoundaries( QPainter &pnt, Projection *proj)
 {
     // Frontières
-    GsshDrawLines(pnt, getList_boundaries(), proj, false);
+    GsshDrawLines(pnt, getList_boundaries(), proj, false,0,0);
 }
 
 //-----------------------------------------------------------------------
 void GshhsReader::drawRivers( QPainter &pnt, Projection *proj)
 {
     // Rivières
-    GsshDrawLines(pnt, getList_rivers(), proj, false);
+    GsshDrawLines(pnt, getList_rivers(), proj, false,0,0);
 }
 
 //-----------------------------------------------------------------------
 void GshhsReader::selectBestQuality(Projection *proj)
 {
-	isUsingRangsReader = proj->getCoefremp()<10;
+    isUsingRangsReader = proj->getCoefremp()<10;
 
-	int bestQuality = 0;
-	
-	if (proj->getCoefremp() > 50)
-		bestQuality = 0;
-	else if (proj->getCoefremp() > 5)
-		bestQuality = 1;
-	else if (proj->getCoefremp() > 0.2)
-		bestQuality = 2;
-	else if (proj->getCoefremp() > 0.005)
-		bestQuality = 3;
-	else
-		bestQuality = 4;
-	
-	if (bestQuality > userPreferredQuality)
-		setQuality(userPreferredQuality);
-	else
-		setQuality(bestQuality);
+    int bestQuality = 0;
+
+    if (proj->getCoefremp() > 50)
+        bestQuality = 0;
+    else if (proj->getCoefremp() > 5)
+        bestQuality = 1;
+    else if (proj->getCoefremp() > 0.2)
+        bestQuality = 2;
+    else if (proj->getCoefremp() > 0.005)
+        bestQuality = 3;
+    else
+        bestQuality = 4;
+
+    if (bestQuality > userPreferredQuality)
+        setQuality(userPreferredQuality);
+    else
+        setQuality(bestQuality);
 
 }
 
+
+//---------------------------------------------------------
+// ClipPoint class
+
+void clipPoint::clearList(void)
+{
+    clipPoint * ptr = this->next;
+    clipPoint * prec;
+    this->next=NULL;
+    while(ptr!=this)
+    {
+        prec=ptr;
+        ptr=ptr->next;
+        delete prec;
+    }
+}
+
+void clipPoint::append(clipPoint * ptr)
+{
+    ptr->next=this->next;
+    this->next=ptr;
+}
+
+void clipPoint::appendBorder(clipPoint * ptr)
+{
+    ptr->nextBorder=this->nextBorder;
+    this->nextBorder=ptr;
+}
+
+void clipPoint::init(double x, double y, bool type, bool dir)
+{
+    this->x=x;
+    this->y=y;
+    this->isIntersection=type;
+    this->goingIn=dir;
+    next=this;
+    nextBorder=this;
+    visited=false;
+}
+
+int clipPoint::count(void)
+{
+    int cnt;
+    clipPoint * ptr=this->next;
+    for(cnt=1;ptr!=this;ptr=ptr->next) cnt++;
+    return cnt;
+}
+
+int clipPoint::countBorder(void)
+{
+    int cnt;
+    clipPoint * ptr=this->nextBorder;
+    for(cnt=1;ptr!=this;ptr=ptr->nextBorder) cnt++;
+    return cnt;
+}
+
+QString clipPoint::printBorder(void)
+{
+    QString res="";
+    clipPoint * ptr=this;
+    do {
+        QTextStream(&res) << "(" << ptr->x << "," << ptr->y << ") ";
+        ptr=ptr->nextBorder;
+    }
+    while(ptr!=this);
+    return res;
+}
