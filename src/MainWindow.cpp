@@ -321,6 +321,7 @@ MainWindow::MainWindow(int w, int h, QWidget *parent)
 
     tool_ETA = new QLabel("", toolBar);
     tool_ETA->setFont(font);
+    tool_ETA->setStyleSheet("color: rgb(0, 0, 255);");
     toolBar->addWidget(tool_ETA);
 
     //--------------------------------------------------

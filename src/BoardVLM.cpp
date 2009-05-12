@@ -483,6 +483,8 @@ void boardVLM::disp_boatInfo()
                              (currentBoat->getAliasState()?tr("Alias:")+ " " + currentBoat->getAlias() + "\n":"") +
                              tr("ID:") + " " + currentBoat->getBoatId() + "\n" +
                              tr("Nom:") + " " + currentBoat->getBoatName() + "\n" +
+                             tr("Email:") + " " + currentBoat->getEmail() + "\n" +
+                             tr("Course:") + " (" + currentBoat->getRaceId() + ") " + currentBoat->getRaceName() + "\n" +
                              tr("Score:") + " " + currentBoat->getScore() + "\n" +
                              tr("Polaire:") + " " + polar_str
                              );

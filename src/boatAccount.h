@@ -95,6 +95,7 @@ class boatAccount: public QWidget
         QString getRaceName(void)    { return race_name; }
         float getZoom(void)          { return zoom; }
         QList<position*> * getTrace(){ return &trace; }
+        QString getEmail(void)       { return email; }
 
         QString getCurrentPolarName(void) { return (forcePolar?polarName:polarVlm); }
 
@@ -125,6 +126,7 @@ class boatAccount: public QWidget
 
         QString login;
         QString pass;
+        QString email;
         bool activated;
         bool changeLocked;
 

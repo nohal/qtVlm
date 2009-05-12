@@ -324,6 +324,8 @@ void boatAccount::requestFinished ( int currentRequest,QString res)
                     }
                     else if(lsval.at(0) == "POL")
                         polarVlm = lsval.at(1);
+                    else if(lsval.at(0) == "EML")
+                        email = lsval.at(1);
                 }
             }
 
