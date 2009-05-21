@@ -133,7 +133,7 @@ void opponent::updatePosition()
     boat_i-=3;
     boat_j-=(height()/2);
 
-    qWarning() << name << ": at (" << boat_i << "," << boat_j << ") => " << lat << "," << lon;
+    //qWarning() << name << ": at (" << boat_i << "," << boat_j << ") => " << lat << "," << lon;
 
     move(boat_i, boat_j);
 }

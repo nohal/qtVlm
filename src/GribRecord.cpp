@@ -17,7 +17,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ***********************************************************************/
 
 #include <stdlib.h>
-
+#include <QDebug>
 #include <QDateTime>
 
 #include "GribRecord.h"
@@ -73,6 +73,7 @@ GribRecord::GribRecord(ZUFILE* file, int id_)
     data    = NULL;
     BMSbits = NULL;
     eof     = false;
+    isFull = false;
     
     ok = readGribSection0_IS(file);
     
@@ -99,8 +100,8 @@ GribRecord::GribRecord(ZUFILE* file, int id_)
         zu_seek(file, seekStart+totalSize, SEEK_SET);
     }
 
-	translateDataType();
-	setDataType(dataType);
+    translateDataType();
+    setDataType(dataType);
 }
 
 //------------------------------------------------------------------------------
@@ -281,10 +282,16 @@ bool GribRecord::readGribSection2_GDS(ZUFILE* file) {
 
     Di  = readSignedInt2(file)/1000.0;	// byte 24-25
     Dj  = readSignedInt2(file)/1000.0;	// byte 26-27
-    
+
     while ( Lo1> Lo2   &&  Di >0) {   // horizontal size > 360 °
         Lo1 -= 360.0;
     }
+
+    double val=Lo2+Di;
+    while(val>=360) val-=360;
+    if(val==Lo1)
+        isFull=true;
+
     hasDiDj = (resolFlags&0x80) !=0;
     isEarthSpheric = (resolFlags&0x40) ==0;
     isUeastVnorth =  (resolFlags&0x08) ==0;
@@ -704,16 +711,21 @@ double GribRecord::getInterpolatedValue(double px, double py, bool numericalInte
     // 01 11
     int i0 = (int) pi;  // point 00
     int j0 = (int) pj;
+
+    int i1=i0+1;
+
+    if(isFull && px>=Lo2)
+        i1=0;
     
     bool h00,h01,h10,h11;
     int nbval = 0;     // how many values in grid ?
     if ((h00=hasValue(i0,   j0)))
         nbval ++;
-    if ((h10=hasValue(i0+1, j0)))
+    if ((h10=hasValue(i1, j0)))
         nbval ++;
     if ((h01=hasValue(i0,   j0+1)))
         nbval ++;
-    if ((h11=hasValue(i0+1, j0+1)))
+    if ((h11=hasValue(i1, j0+1)))
         nbval ++;
 
     if (nbval <3) {
@@ -734,9 +746,9 @@ double GribRecord::getInterpolatedValue(double px, double py, bool numericalInte
 		}
 		else {
 			if (dy < 0.5)
-				val = getValue(i0+1,   j0);
+                                val = getValue(i1,   j0);
 			else
-				val = getValue(i0+1,   j0+1);
+                                val = getValue(i1,   j0+1);
 		}
 		return val;
 	}
@@ -754,8 +766,8 @@ double GribRecord::getInterpolatedValue(double px, double py, bool numericalInte
     {
         double x00 = getValue(i0,   j0);
         double x01 = getValue(i0,   j0+1);
-        double x10 = getValue(i0+1, j0);
-        double x11 = getValue(i0+1, j0+1);
+        double x10 = getValue(i1, j0);
+        double x11 = getValue(i1, j0+1);
         double x1 = (1.0-dx)*x00 + dx*x10;
         double x2 = (1.0-dx)*x01 + dx*x11;
         val =  (1.0-dy)*x1 + dy*x2;
@@ -765,16 +777,16 @@ double GribRecord::getInterpolatedValue(double px, double py, bool numericalInte
         // here nbval==3, check the corner without data
         if (!h00) {
             //printf("! h00  %f %f\n", dx,dy);
-            xa = getValue(i0+1, j0+1);   // A = point 11
+            xa = getValue(i1, j0+1);   // A = point 11
             xb = getValue(i0,   j0+1);   // B = point 01
-            xc = getValue(i0+1, j0);     // C = point 10
+            xc = getValue(i1, j0);     // C = point 10
             kx = 1-dx;
             ky = 1-dy;
         }
         else if (!h01) {
             //printf("! h01  %f %f\n", dx,dy);
-            xa = getValue(i0+1, j0);     // A = point 10
-            xb = getValue(i0+1, j0+1);   // B = point 11
+            xa = getValue(i1, j0);     // A = point 10
+            xb = getValue(i1, j0+1);   // B = point 11
             xc = getValue(i0,   j0);     // C = point 00
             kx = dy;
             ky = 1-dx;
@@ -783,14 +795,14 @@ double GribRecord::getInterpolatedValue(double px, double py, bool numericalInte
             //printf("! h10  %f %f\n", dx,dy);
             xa = getValue(i0,   j0+1);     // A = point 01
             xb = getValue(i0,   j0);       // B = point 00
-            xc = getValue(i0+1, j0+1);     // C = point 11
+            xc = getValue(i1, j0+1);     // C = point 11
             kx = 1-dy;
             ky = dx;
         }
         else {
             //printf("! h11  %f %f\n", dx,dy);
             xa = getValue(i0,   j0);    // A = point 00
-            xb = getValue(i0+1, j0);    // B = point 10
+            xb = getValue(i1, j0);    // B = point 10
             xc = getValue(i0,   j0+1);  // C = point 01
             kx = dx;
             ky = dy;

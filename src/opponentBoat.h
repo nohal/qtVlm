@@ -50,7 +50,7 @@ struct raceData {
       QString oppList;
 };
 
-#define RACE_MAX_BOAT 10
+#define RACE_MAX_BOAT 15
 
 #define OPP_SHOW_LOGIN 0
 #define OPP_SHOW_NAME  1

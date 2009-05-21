@@ -84,7 +84,7 @@ void inetConnexion::doRequest(int type,int requestNum,QString requestUrl,QString
     page=host+requestUrl;
     currentRequest=requestNum;
 
-    qWarning() << "boat Acc Doing request: " << page;
+    //qWarning() << "boat Acc Doing request: " << page;
 
     QNetworkRequest request;
     request.setUrl(QUrl(page));

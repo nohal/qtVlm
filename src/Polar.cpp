@@ -213,9 +213,9 @@ float Polar::getSpeed(float windSpeed, float angle)
 
     /* find index in data structure */
     val=(int)windSpeed;
-    infSpeed_idx =(float)((val-windSpeed_min)/windSpeed_step);
+    infSpeed_idx=((float)(val-windSpeed_min)/windSpeed_step);
     val=(int)angle;
-    infAngle_idx =(float)((val-windAngle_min)/windAngle_step);
+    infAngle_idx =((float)(val-windAngle_min)/windAngle_step);
 
     /* find data */
     a = (polar_data[infAngle_idx])[infSpeed_idx];

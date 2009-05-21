@@ -36,7 +36,8 @@ boatAccount::boatAccount(QString login, QString pass, bool activated,Projection 
     this->mainWindow=main;
 
     boat_name="NO NAME";
-    boat_id=race_id=-1;
+    boat_id=-1;
+    race_id=0;
     isSync = false;
     selected = false;
     polarName="";
@@ -212,7 +213,7 @@ void boatAccount::requestFinished ( int currentRequest,QString res)
             }
             if(boat_id!=-1)
             {
-                qWarning() << "Get boat id " << boat_id;
+                //qWarning() << "Get boat id " << boat_id;
                 doRequest(VLM_REQUEST_BOAT);
             }
             break;
@@ -333,14 +334,14 @@ void boatAccount::requestFinished ( int currentRequest,QString res)
             lon = longitude/1000;
 
             current_heading = heading;
-            qWarning() << "Data for " << boat_id << " received";
+            //qWarning() << "Data for " << boat_id << " received";
             /* compute heading point */
             doRequest(VLM_REQUEST_TRJ);
             break;
         case VLM_REQUEST_TRJ:
-            qWarning() << "Get trj result";
+            //qWarning() << "Get trj result";
             emit getTrace(res,&trace);
-            qWarning() << boat_id << ": " << trace.count() << " points";
+            //qWarning() << boat_id << ": " << trace.count() << " points";
             /* we can now update everything */
             updateBoatData();
             emit boatUpdated(this,newRace);
@@ -353,6 +354,7 @@ void boatAccount::updateBoatData()
     updateBoatName();
     reloadPolar();
     updatePosition();
+    updateHint();
     //update();
 }
 
@@ -403,6 +405,30 @@ void boatAccount::updatePosition(void)
     boat_j-=(height()/2);
     move(boat_i, boat_j);
     update();
+}
+
+void boatAccount::updateHint(void)
+{
+    QString str;
+    /* adding score */
+    str = getScore() + " - Spd: " + QString().setNum(getSpeed()) + " - ";
+    switch(getPilotType())
+    {
+        case 1: /*heading*/
+            str += tr("Hdg") + ": " + getPilotString() + tr("°");
+            break;
+        case 2: /*constant angle*/
+            str += tr("Angle") + ": " + getPilotString()+ tr("°");
+            break;
+        case 3: /*pilotortho*/
+            str += tr("Ortho" ) + "-> " + getPilotString();
+            break;
+        case 4: /*VMG*/
+            str += tr("BVMG") + "-> " + getPilotString();
+            break;
+    }
+
+    setToolTip(str);
 }
 
 void boatAccount::projectionUpdated()
@@ -533,14 +559,14 @@ void boatAccount::reloadPolar(void)
                 delete polarData;
                 polarData=NULL;
             }
-            qWarning("No User polar to load");
+            //qWarning("No User polar to load");
             return;
         }
         if(polarData != NULL && polarName == polarData->getName())
             return;
         if(polarData!=NULL)
             delete polarData;
-        qWarning() << "Loading forced polar: " << polarName;
+        //qWarning() << "Loading forced polar: " << polarName;
         polarData=new Polar(polarName,mainWindow);
     }
     else
@@ -552,7 +578,7 @@ void boatAccount::reloadPolar(void)
                 delete polarData;
                 polarData=NULL;
             }
-            qWarning("No VLM polar to load");
+            //qWarning("No VLM polar to load");
             return;
         }
         if(polarData != NULL && polarVlm == polarData->getName())
@@ -560,10 +586,10 @@ void boatAccount::reloadPolar(void)
 
         if(polarData!=NULL)
         {
-            qWarning() << "Old polar:" << polarData->getName();
+            //qWarning() << "Old polar:" << polarData->getName();
             delete polarData;
         }
-        qWarning() << "Loading polar: " << polarVlm;
+        //qWarning() << "Loading polar: " << polarVlm;
         polarData=new Polar(polarVlm,mainWindow);
     }
 }

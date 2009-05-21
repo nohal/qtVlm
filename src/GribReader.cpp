@@ -18,6 +18,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "GribReader.h"
 #include <cassert>
+#include <QDebug>
 
 //-------------------------------------------------------------------------------
 GribReader::GribReader()
@@ -413,9 +414,12 @@ bool GribReader::getZoneExtension(double *x0,double *y0, double *x1,double *y1)
     if (ls != NULL) {
         GribRecord *rec = ls->at(0);
         if (rec != NULL) {
+            if(rec->getIsFull())
+                return false;
+
             *x0 = rec->getX(0);
-            *y0 = rec->getY(0);
             *x1 = rec->getX( rec->getNi()-1 );
+            *y0 = rec->getY(0);
             *y1 = rec->getY( rec->getNj()-1 );
             if (*x0 > *x1) {
 				double tmp = *x0;

@@ -123,6 +123,7 @@ class boatAccount: public QWidget
         void updateBoatData(void);
         void reloadPolar(void);
         void updateBoatName(void);
+        void updateHint(void);
 
         QString login;
         QString pass;

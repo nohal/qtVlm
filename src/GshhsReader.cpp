@@ -548,21 +548,44 @@ void GshhsReader::GSHHS_scaleAndClip(QPainter &pnt, GshhsPolygon *pol, QPoint *p
     int nbPts=0;
 
     //qWarning() << "nb points init: " << (pol->lsPoints).size();
-    //qWarning() << "screen: " << w << " " << h;
+
+
+    float xMin,xMax,yMin,yMax,a;
+    xMin=(proj->getXmin()<-180?-180:proj->getXmin());
+    xMax=(proj->getXmax()>180?180:proj->getXmax());
+    //if(xMin>xMax) { a=xMax;xMax=xMin;xMin=a; }
+    yMin=(proj->getYmin()<-90?-90:proj->getYmin());
+    yMax=(proj->getYmax()>90?90:proj->getYmax());
+    //if(yMin>yMax) { a=yMax;yMax=yMin;yMin=a; }
+
+    int x0,y0,x1,y1;
+    qWarning() << "screen: " << proj->getW() << " " << proj->getH();
+    proj->map2screen(proj->getXmin(),proj->getYmin(), &x0,&y0);
+    proj->map2screen(proj->getXmax(),proj->getYmax(), &x1,&y1);
+    qWarning() << "min: " << proj->getXmin() << " " << proj->getYmin() << " - " << x0 << " " << y0;
+    qWarning() << "max: " << proj->getXmax() << " " << proj->getYmax() << " - " << x1 << " " << y1;
+    proj->map2screen(xMin,yMin, &x0,&y0);
+    proj->map2screen(xMax,yMax, &x1,&y1);
+    qWarning() << "min: " << xMin << " " << yMin << " - " << x0 << " " << y0;
+    qWarning() << "max: " << xMax << " " << yMax << " - " << x1 << " " << y1;
+    proj->map2screen(0,90, &x0,&y0);
+    proj->map2screen(0,-90, &x1,&y1);
+    qWarning() << "sea: " << 0 << " " << y0 << " - " << proj->getW() << y1;
+
     clipPoint *A,*B,*C,*D;
     if(order==0)
     {
-        A=new clipPoint(proj->getXmin(),proj->getYmax());
-        B=new clipPoint(proj->getXmin(),proj->getYmin());
-        C=new clipPoint(proj->getXmax(),proj->getYmin());
-        D=new clipPoint(proj->getXmax(),proj->getYmax());
+        A=new clipPoint(xMin,yMax);
+        B=new clipPoint(xMin,yMin);
+        C=new clipPoint(xMax,yMin);
+        D=new clipPoint(xMax,yMax);
     }
     else
     {
-        A=new clipPoint(proj->getXmin(),proj->getYmax());
-        B=new clipPoint(proj->getXmax(),proj->getYmax());
-        C=new clipPoint(proj->getXmax(),proj->getYmin());
-        D=new clipPoint(proj->getXmin(),proj->getYmin());
+        A=new clipPoint(xMin,yMax);
+        B=new clipPoint(xMax,yMax);
+        C=new clipPoint(xMax,yMin);
+        D=new clipPoint(xMin,yMin);
     }
 
     /* creating bording list*/
@@ -746,7 +769,10 @@ void GshhsReader::GSHHS_scaleAndClip(QPainter &pnt, GshhsPolygon *pol, QPoint *p
                         if(ptr2==start)
                         {
                             //qWarning() << "Drawing " << j << " points";
-                            pnt.drawPolygon(pts, j);
+                            if(fillType==FILL_POLY)
+                                pnt.drawPolygon(pts, j);
+                            else
+                                pnt.drawPolyline(pts, j);
                             start=ptr;
                             /* searching next not visited going in point */
                             for(ptr=ptr->next;ptr!=start && (ptr->visited||!ptr->isIntersection);ptr=ptr->next) /*nothing*/;
@@ -966,7 +992,6 @@ void GshhsReader::drawBackground( QPainter &pnt, Projection *proj,
     proj->map2screen(0,-90, &x1,&y1);
 
     pnt.drawRect(0, y0, proj->getW(), y1-y0);
-
 }
 
 //-----------------------------------------------------------------------

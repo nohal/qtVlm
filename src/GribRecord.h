@@ -158,6 +158,7 @@ class GribRecord
         inline bool   isYInMap(double y) const;
         // La valeur est-elle définie (grille à trous) ?
         inline bool   hasValue(int i, int j) const;
+        bool getIsFull() {return isFull; }
         
         // Date de référence (création du fichier)
         time_t getRecordRefDate () const         { return refDate; }
@@ -174,9 +175,11 @@ class GribRecord
         int    id;    // unique identifiant
         bool   ok;    // validité des données
         bool   eof;   // fin de fichier atteinte lors de la lecture
-		std::string dataKey;
-		char   strRefDate [32];
-		char   strCurDate [32];
+        std::string dataKey;
+        char   strRefDate [32];
+        char   strCurDate [32];
+
+        bool isFull; /* true if grib is covering all lat */
 
         //---------------------------------------------
         // SECTION 0: THE INDICATOR SECTION (IS)
@@ -211,8 +214,8 @@ class GribRecord
         zuchar gridType;
         zuint  Ni, Nj;
         double La1, Lo1, La2, Lo2;
-		double latMin, lonMin, latMax, lonMax;
-        double Di, Dj;
+        double latMin, lonMin, latMax, lonMax;
+        double Di, Dj;        
         zuchar resolFlags, scanFlags;
         bool  hasDiDj;
         bool  isEarthSpheric;
@@ -305,10 +308,15 @@ inline bool GribRecord::isXInMap(double x) const
 {
 //    return x>=Lo1 && x<=Lo1+(Ni-1)*Di;
 //printf ("%f %f %f\n", Lo1, Lo2, x);
+    double a=0;
+
+    if(isFull)
+        a=Di;
+
     if (Di > 0)
-        return x>=Lo1 && x<=Lo2;
+        return x>=Lo1 && x<=(Lo2+a);
     else
-        return x>=Lo2 && x<=Lo1;
+        return x>=(Lo2+a) && x<=Lo1;
 }
 //-----------------------------------------------------------------
 inline bool GribRecord::isYInMap(double y) const

@@ -75,6 +75,9 @@ void race_dialog::initList(QList<boatAccount*> & acc_list_ptr,QList<raceData*> &
     for(int i=0;i<acc_list->size();i++)
     {
         bool found = false;
+
+        //qWarning() << acc_list->at(i)->getLogin() << " " << acc_list->at(i)->getStatus() << " " << acc_list->at(i)->getRaceId();
+
         if(!acc_list->at(i)->getStatus() || acc_list->at(i)->getRaceId() == "0")
             continue;
         
