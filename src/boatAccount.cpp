@@ -135,7 +135,7 @@ void boatAccount::doRequest(int requestCmd)
         if(!conn->isAvailable() )
         {
             qWarning() << "request already running for " << login ;
-            updating=false;
+            //updating=false;
             return;
         }
 

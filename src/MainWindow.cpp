@@ -983,6 +983,7 @@ void MainWindow::slotVLM_Sync(void) {
 
 void MainWindow::slotBoatUpdated(boatAccount * boat,bool newRace)
 {
+    //qWarning() << "Boat updated " << boat->getLogin();
     if(boat == selectedBoat)
     {
         bool found=false;
@@ -1027,6 +1028,7 @@ void MainWindow::slotBoatUpdated(boatAccount * boat,bool newRace)
         emit boatHasUpdated(boat);
         emit WPChanged(boat->getWPLat(),boat->getWPLon());
     }
+    //qWarning() << "Boat " << boat->getLogin() << " done";
 }
 
 void MainWindow::slotVLM_Test(void)

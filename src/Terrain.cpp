@@ -305,6 +305,7 @@ void Terrain::draw_Orthodromie(QPainter &pnt)
 
 void Terrain::drawBoats(QPainter &pnt)
 {
+    //qWarning() << "Drawing boats";
     QListIterator<boatAccount*> i (*boat_list);
 
     QPen cur_pen=pnt.pen();
@@ -327,7 +328,7 @@ void Terrain::drawBoats(QPainter &pnt)
     while(i.hasNext())
     {
         boatAccount * boat = i.next();
-        if(boat->getStatus() && ( boat->getIsSelected() || boat->getForceEstime()))
+        if(!boat->isUpdating() && boat->getStatus() && ( boat->getIsSelected() || boat->getForceEstime()))
         {
             float lat,lon,tmp_lat,tmp_lon,WPLat,WPLon;
             lat=boat->getLat();
@@ -376,13 +377,16 @@ void Terrain::drawBoats(QPainter &pnt)
         }
     }
     pnt.setPen(cur_pen);
+    //qWarning() << "Drawing boats done";
 }
 
 void Terrain::drawOpponents(QPainter &pnt)
 {
+    //qWarning() << "Drawing Opp";
     if(Util::getSetting("opp_trace","1")=="0")
         return;
 
+    //qWarning() << "Drawing st2";
 
     int nbVac=12*Util::getSetting("trace_length",12).toInt();
     int step=Util::getSetting("trace_step",60/5-1).toInt()+1;
@@ -417,6 +421,7 @@ void Terrain::drawOpponents(QPainter &pnt)
         }
     }
     pnt.setPen(cur_pen);
+    //qWarning() << "Drawing Opp done";
 }
 
 //---------------------------------------------------------

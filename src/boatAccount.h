@@ -96,6 +96,7 @@ class boatAccount: public QWidget
         float getZoom(void)          { return zoom; }
         QList<position*> * getTrace(){ return &trace; }
         QString getEmail(void)       { return email; }
+        bool isUpdating()            { return updating; }
 
         QString getCurrentPolarName(void) { return (forcePolar?polarName:polarVlm); }
 
