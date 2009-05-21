@@ -56,8 +56,8 @@ void opponent::init(QColor color,bool isQtBoat,QString idu,QString race, float l
     this->proj=proj;
 
     this->isQtBoat = isQtBoat;
-
-    trace.clear();
+    while (!trace.isEmpty())
+        delete trace.takeFirst();
 
     myColor = color;
 
@@ -307,12 +307,8 @@ void opponentList::setBoatList(QString list_txt,QString race,bool force)
 
 void opponentList::clear(void)
 {
-       if(opponent_list.size() > 0)
-       {
-              for(int i=0;i<opponent_list.size();i++)
-                  delete opponent_list[i];
-              opponent_list.clear();
-       }
+    while (!opponent_list.isEmpty())
+        delete opponent_list.takeFirst();
 }
 
 void opponentList::refreshData(void)
@@ -479,12 +475,8 @@ void opponentList::getTrace(QString buff, QList<position*> * trace)
     position * ptr;
 
     /* clear current trace*/
-    while(!trace->isEmpty())
-    {
-        delete trace->first();
-        trace->removeFirst();
-    }
-    trace->clear();
+    while (!trace->isEmpty())
+        delete trace->takeFirst();
 
     /* parse buff */
     if(buff.isEmpty())

@@ -167,7 +167,10 @@ void boardVLM::boatUpdated(boatAccount * boat)
 
     currentBoat = boat;
 
-    angle_val = boat->getTWA();
+    if(boat->getPilotType() == 2)
+        angle_val = boat->getPilotString().toFloat();
+    else
+        angle_val = boat->getTWA();
 
     calcAngleSign(val,angle_val);
 
@@ -240,8 +243,8 @@ void boardVLM::boatUpdated(boatAccount * boat)
 
 void boardVLM::updateBoatList(QList<boatAccount*> & acc_list)
 {
-    while (boatList->count() > 0)
-        boatList->removeItem(0);
+
+    boatList->clear();
 
     QListIterator<boatAccount*> i (acc_list);
 
@@ -261,6 +264,7 @@ void boardVLM::updateBoatList(QList<boatAccount*> & acc_list)
 void boardVLM::setSelectedBoatIndex(int index)
 {
     boatList->setCurrentIndex(index);
+    qWarning() << "Current index: " << index << " " << boatList->itemText(index);
 }
 
 void boardVLM::setWP(float lat,float lon,float wph)

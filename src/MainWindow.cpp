@@ -334,7 +334,9 @@ MainWindow::MainWindow(int w, int h, QWidget *parent)
     QString fname = Util::getSetting("gribFileName", "").toString();
     if (fname != "" && QFile::exists(fname))
     {
+        qWarning() << "Opening grib :" << fname;
         openGribFile(fname, false);
+        qWarning() << "Grib opened";
     }
 
     //---------------------------------------------------------
@@ -402,7 +404,8 @@ MainWindow::MainWindow(int w, int h, QWidget *parent)
     InitActionsStatus();
 
     // POI's
-    poi_list.clear();
+    while (!poi_list.isEmpty())
+        delete poi_list.takeFirst();
     xmlPOI = new xml_POIData(proj,this,terre);
     xmlPOI->readData(poi_list,"poi.dat");
     //------------------------------------------------
@@ -450,7 +453,7 @@ void MainWindow::openGribFile(QString fileName, bool zoom)
         std::set<time_t> *listeDates = terre->getGribPlot()->getListDates();
         menuBar->updateListeDates(listeDates);
         //slotDateGribChanged(0);
-    slotDateGribChanged_now();
+        slotDateGribChanged_now();
         gribFileName = fileName;
     }
     else {
@@ -1142,16 +1145,16 @@ void MainWindow::slotChgBoat(int num)
 }
 
 void MainWindow::slotAccountListUpdated(void)
-{
-    VLMBoard->updateBoatList(acc_list);
-    VLMBoard->setSelectedBoatIndex(0);
+{    
     for(int i=0;i<acc_list.count();i++)
         if(acc_list[i]->getStatus())
         {
             acc_list[i]->getData();
             break;
         }
-
+    VLMBoard->updateBoatList(acc_list);
+    VLMBoard->setSelectedBoatIndex(0);
+    slotChgBoat(0);
 }
 
 void MainWindow::slotAddPOI(float lat,float lon, float wph,int timestamp,bool useTimeStamp)
@@ -1309,6 +1312,7 @@ void MainWindow::slotReadBoat(void)
 {
     qWarning() << "read boat data";
     xmlData->readBoatData(acc_list,race_list,QString("boatAcc.dat"));
+    slotAccountListUpdated();
 }
 
 void MainWindow::slotWriteBoat(void)

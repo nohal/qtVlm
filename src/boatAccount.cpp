@@ -50,6 +50,7 @@ boatAccount::boatAccount(QString login, QString pass, bool activated,Projection 
     alias="";
     useAlias=false;
     forceEstime=false;
+    updating=false;
 
     trace.clear();
 
@@ -117,19 +118,24 @@ void boatAccount::toggleEstime()
 
 void boatAccount::getData(void)
 {
+    updating=true;
     doRequest(VLM_REQUEST_BOAT);
 }
 
 void boatAccount::doRequest(int requestCmd)
 {
     if(!activated)
+    {
+        updating=false;
         return;
+    }
 
     if(conn)
     {
         if(!conn->isAvailable() )
         {
             qWarning() << "request already running for " << login ;
+            updating=false;
             return;
         }
 
@@ -182,6 +188,7 @@ void boatAccount::doRequest(int requestCmd)
          lat = 0;
          lon = 0;
          race_name = "Test race";
+         updating=false;
          updateBoatData();
     }
 }
@@ -344,6 +351,7 @@ void boatAccount::requestFinished ( int currentRequest,QString res)
             //qWarning() << boat_id << ": " << trace.count() << " points";
             /* we can now update everything */
             updateBoatData();
+            updating=false;
             emit boatUpdated(this,newRace);
             break;
     }

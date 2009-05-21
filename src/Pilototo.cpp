@@ -37,7 +37,8 @@ Pilototo::Pilototo(QWidget *main,QWidget * parent):QDialog(parent)
     connect(instructionEditor,SIGNAL(doSelectPOI(Pilototo_instruction *)),this,SLOT(doSelectPOI(Pilototo_instruction *)));
     connect(this,SIGNAL(selectPOI(Pilototo_instruction *)),main,SLOT(slotSelectPOI(Pilototo_instruction *)));
 
-    instructions_list.clear();
+    while (!instructions_list.isEmpty())
+        delete instructions_list.takeFirst();
 
     layout()->setSizeConstraint(QLayout::SetFixedSize);
     frameLayout = new QVBoxLayout(frame);
@@ -170,9 +171,12 @@ void Pilototo::boatUpdated(boatAccount * boat)
     int pos;
 
     QStringList * list = boat->getPilototo();
+
     delList.clear();
-    drawList.clear();
-    instructions_list.clear();
+    while (!drawList.isEmpty())
+        delete drawList.takeFirst();
+    while (!instructions_list.isEmpty())
+        delete instructions_list.takeFirst();
 
     if(!boat->getHasPilototo())
         QMessageBox::information (this,
@@ -285,10 +289,8 @@ void Pilototo::done(int result)
         sendPilototo(requestList);
     }
 
-    for(int i=0;i<instructions_list.count();i++)
-        delete instructions_list[i];
-
-    instructions_list.clear();
+    while (!instructions_list.isEmpty())
+        delete instructions_list.takeFirst();
 
     QDialog::done(result);
 }

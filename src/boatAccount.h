@@ -130,6 +130,7 @@ class boatAccount: public QWidget
         QString email;
         bool activated;
         bool changeLocked;
+        bool updating;
 
         void doRequest(int request);
 

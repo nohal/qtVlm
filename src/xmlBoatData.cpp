@@ -178,8 +178,10 @@ bool xml_boatData::readBoatData(QList<boatAccount*> & boat_list,QList<raceData*>
      if (!file.open(QIODevice::ReadOnly | QIODevice::Text ))
          return false;
 
-	 boat_list.clear();
-     race_list.clear();
+     while (!boat_list.isEmpty())
+        delete boat_list.takeFirst();
+     while (!race_list.isEmpty())
+        delete race_list.takeFirst();
 
      //QTextStream in(&file);
 
@@ -363,15 +365,16 @@ bool xml_boatData::readBoatData(QList<boatAccount*> & boat_list,QList<raceData*>
 
 	 if(hasVersion)
 	 {
-         if(forceWrite)
-             writeBoatData(boat_list,race_list,fname);
-	 	 return true;
+             if(forceWrite)
+                 writeBoatData(boat_list,race_list,fname);
+             return true;
 	 }
 	 else
 	 {
-		 qWarning("no version");
-         boat_list.clear();
-         return false;
+             qWarning("no version");
+             while (!boat_list.isEmpty())
+                 delete boat_list.takeFirst();
+             return false;
 	 }
 }
 
