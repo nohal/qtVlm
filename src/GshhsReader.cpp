@@ -64,7 +64,7 @@ GshhsPolygon::GshhsPolygon(ZUFILE *file_)
 }*/
         }
 
-        // force l'Antarctic à être un "rectangle" qui passe par le pôle
+        // force l'Antarctic �  être un "rectangle" qui passe par le pôle
         if (antarctic) {
             lsPoints.push_front(new GshhsPoint(360, y));
             lsPoints.push_front(new GshhsPoint(360,-90));
@@ -206,7 +206,7 @@ std::string GshhsReader::getFileName_gshhs(int quality)
     ext = getNameExtension(quality);
     fname = fpath+"/"+"gshhs_" + ext + ".b";*/
 
-    // Lit le .rim de RANGS à la place du fichier initial
+    // Lit le .rim de RANGS �  la place du fichier initial
     char txtn[16];
     if (quality < 0)   quality = 0;
     if (quality > 4)   quality = 4;
@@ -550,7 +550,7 @@ void GshhsReader::GSHHS_scaleAndClip(QPainter &pnt, GshhsPolygon *pol, QPoint *p
     //qWarning() << "nb points init: " << (pol->lsPoints).size();
 
 
-    float xMin,xMax,yMin,yMax,a;
+    float xMin,xMax,yMin,yMax;
     xMin=(proj->getXmin()<-180?-180:proj->getXmin());
     xMax=(proj->getXmax()>180?180:proj->getXmax());
     //if(xMin>xMax) { a=xMax;xMax=xMin;xMin=a; }
@@ -816,7 +816,7 @@ void GshhsReader::GSHHS_scaleAndClip(QPainter &pnt, GshhsPolygon *pol, QPoint *p
                                 oy=y;
                             }
                             ptr2->visited=true;
-                            ptr=ptr2->next; /* à la prochaine iteration on le prendra en compte*/
+                            ptr=ptr2->next; /* �  la prochaine iteration on le prendra en compte*/
                         }
                         else
                         {
@@ -923,7 +923,7 @@ void GshhsReader::GsshDrawLines(QPainter &pnt, std::list<GshhsPolygon*> &lst,
         if (nbp > 1) {
             if (pol->isAntarctic()) {
                 // Ne pas tracer les bords artificiels qui rejoignent le pôle
-                // ajoutés lors de la création des polygones (2 au début, 1 à la fin).
+                // ajoutés lors de la création des polygones (2 au début, 1 �  la fin).
                 pts ++;
                 nbp -= 2;
                 pnt.drawPolyline(pts, nbp);
@@ -941,7 +941,7 @@ void GshhsReader::GsshDrawLines(QPainter &pnt, std::list<GshhsPolygon*> &lst,
         if (nbp > 1) {
             if (pol->isAntarctic()) {
                 // Ne pas tracer les bords artificiels qui rejoignent le pôle
-                // ajoutés lors de la création des polygones (2 au début, 1 à la fin).
+                // ajoutés lors de la création des polygones (2 au début, 1 �  la fin).
                 pts ++;
                 nbp -= 2;
                 pnt.drawPolyline(pts, nbp);

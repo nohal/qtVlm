@@ -128,7 +128,7 @@ class opponentList : public QWidget
         int currentOpponent;
         QString currentRace;
         int currentMode;
-        QColor colorTable[10];
+        QColor colorTable[RACE_MAX_BOAT];
 
         QStringList readData(QString in_data,int type);
         void getOpponents(QStringList opp_idu,QString idrace);

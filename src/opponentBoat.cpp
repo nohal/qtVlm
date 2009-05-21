@@ -256,6 +256,11 @@ opponentList::opponentList(Projection * proj,MainWindow * mainWin,QWidget *paren
     colorTable[7] = QColor(225,150,112);
     colorTable[8] = QColor(0,85,0);
     colorTable[9] = QColor(85,0,0);
+    colorTable[10] = QColor(255,0,255);
+    colorTable[11] = QColor(255,255,0);
+    colorTable[12] = QColor(255,85,127);
+    colorTable[13] = QColor(170,170,255);
+    colorTable[14] = QColor(170,0,255);
 
     /* init http inetManager */
     conn=new inetConnexion(this);
