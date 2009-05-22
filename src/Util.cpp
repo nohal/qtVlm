@@ -315,8 +315,11 @@ QDateTime Util::applyTimeZone(time_t t, QString *suffix)
 
     return dt;
 }
-
+#ifdef QT_4_5_0
 void Util::paramProxy(QNetworkAccessManager *inetManager,QString host)
+#else
+void Util::paramProxy(QNetworkAccessManager *inetManager,QString *)
+#endif
 {
     /* update connection */
 

@@ -37,8 +37,10 @@ Pilototo::Pilototo(QWidget *main,QWidget * parent):QDialog(parent)
     connect(instructionEditor,SIGNAL(doSelectPOI(Pilototo_instruction *)),this,SLOT(doSelectPOI(Pilototo_instruction *)));
     connect(this,SIGNAL(selectPOI(Pilototo_instruction *)),main,SLOT(slotSelectPOI(Pilototo_instruction *)));
 
-    while (!instructions_list.isEmpty())
-        delete instructions_list.takeFirst();
+
+    instructions_list.clear();
+    drawList.clear();
+    delList.clear();
 
     layout()->setSizeConstraint(QLayout::SetFixedSize);
     frameLayout = new QVBoxLayout(frame);
@@ -172,9 +174,9 @@ void Pilototo::boatUpdated(boatAccount * boat)
 
     QStringList * list = boat->getPilototo();
 
-    delList.clear();
-    while (!drawList.isEmpty())
-        delete drawList.takeFirst();
+    delList.clear(); /* this is a list of int => no delete*/
+    drawList.clear(); /*all item are also in instructions_list */
+
     while (!instructions_list.isEmpty())
         delete instructions_list.takeFirst();
 

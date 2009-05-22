@@ -170,9 +170,10 @@ void boardVLM::boatUpdated(boatAccount * boat)
     if(boat->getPilotType() == 2)
         angle_val = boat->getPilotString().toFloat();
     else
+    {
         angle_val = boat->getTWA();
-
-    calcAngleSign(val,angle_val);
+        calcAngleSign(val,angle_val);
+    }
 
     editHeading->setValue(boat->getHeading());
     editAngle->setValue(angle_val);
