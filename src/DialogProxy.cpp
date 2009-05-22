@@ -69,7 +69,7 @@ DialogProxy::DialogProxy() : QDialog()
 
     int usep = Util::getSetting("httpUseProxy", 0).toInt();
 
-#ifndef QT_4_5_0
+#ifndef QT_4_5
     if(usep==2) usep=1;
 #endif
 
@@ -78,18 +78,18 @@ DialogProxy::DialogProxy() : QDialog()
        case 0:
             btUseProxy->setChecked(false);
             btDontUseProxy->setChecked(true);
-#ifdef QT_4_5_0
+#ifdef QT_4_5
             btUseIECfg->setChecked(false);
 #endif
             break;
        case 1:
             btUseProxy->setChecked(true);
             btDontUseProxy->setChecked(false);
-#ifdef QT_4_5_0
+#ifdef QT_4_5
             btUseIECfg->setChecked(false);
 #endif
             break;
-#ifdef QT_4_5_0
+#ifdef QT_4_5
        case 2:
             btUseProxy->setChecked(false);
             btDontUseProxy->setChecked(false);
@@ -102,7 +102,7 @@ DialogProxy::DialogProxy() : QDialog()
     //===============================================================
     connect(btUseProxy, SIGNAL(clicked()), this, SLOT(slotUseProxyChanged()));
     connect(btDontUseProxy, SIGNAL(clicked()), this, SLOT(slotUseProxyChanged()));
-#ifdef QT_4_5_0
+#ifdef QT_4_5
     connect(btUseIECfg, SIGNAL(clicked()), this, SLOT(slotUseProxyChanged()));
 #endif
     connect(btCancel, SIGNAL(clicked()), this, SLOT(slotBtCancel()));
@@ -113,7 +113,7 @@ DialogProxy::DialogProxy() : QDialog()
 void DialogProxy::slotUseProxyChanged()
 {
     bool usep = btUseProxy->isChecked();
-#ifdef QT_4_5_0
+#ifdef QT_4_5
     bool useIe = btUseIECfg->isChecked();
 #else
     bool useIe = false;
@@ -127,7 +127,7 @@ void DialogProxy::slotUseProxyChanged()
 //-------------------------------------------------------------------------------
 void DialogProxy::slotBtOK()
 {
-#ifdef QT_4_5_0
+#ifdef QT_4_5
     int proxyType=btUseProxy->isChecked()?1:btUseIECfg->isChecked()?2:0;
 #else
     int proxyType=btUseProxy->isChecked()?1:0;
@@ -163,7 +163,7 @@ QFrame *DialogProxy::createFrameGui(QWidget *parent)
     grp->addButton(btDontUseProxy);
     lay->addWidget( btDontUseProxy,    lig,0,   1, 2);
     lig ++;
-#ifdef QT_4_5_0
+#ifdef QT_4_5
     btUseIECfg = new QRadioButton(tr("Utilise les parametres de IE"), frm);
     grp->addButton(btUseIECfg);
     lay->addWidget(btUseIECfg,    lig,0,   1, 2);
