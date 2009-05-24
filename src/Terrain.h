@@ -164,7 +164,7 @@ private:
     int     quality;
 
     //-----------------------------------------------
-    // Flags indiquant les éléments à dessiner
+    // Flags indiquant les éléments �  dessiner
     //-----------------------------------------------
     bool  showCountriesBorders;
     bool  showRivers;

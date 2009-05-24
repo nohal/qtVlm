@@ -205,7 +205,8 @@ void MainWindow::connectSignals()
             this, SLOT(slotDateGribChanged_prev()));
     connect(mb->acDatesGrib_now, SIGNAL(triggered()),
             this, SLOT(slotDateGribChanged_now()));
-
+    connect(mb->boatList, SIGNAL(activated(int)),
+            this, SLOT(slotChgBoat(int)));
 
     //-------------------------------------
     // Autres signaux
@@ -314,6 +315,8 @@ MainWindow::MainWindow(int w, int h, QWidget *parent)
     toolBar->addAction(menuBar->acMap_Zoom_All);
 
     toolBar->addSeparator();
+    toolBar->addWidget(menuBar->boatList);
+    toolBar->addSeparator();
     btn_Pilototo = new QPushButton(tr("Pilototo"),toolBar);
     btn_Pilototo->setStyleSheet(QString::fromUtf8("background-color: rgb(255, 255, 127);"));
     toolBar->addWidget(btn_Pilototo);
@@ -360,11 +363,12 @@ MainWindow::MainWindow(int w, int h, QWidget *parent)
       isSelectingWP=false;
 
       terre->setBoatList(acc_list);
+      menuBar->updateBoatList(acc_list);
 
       VLMBoard = new boardVLM(this);
       connect(this,SIGNAL(boatHasUpdated(boatAccount*)),
               VLMBoard,SLOT(boatUpdated(boatAccount*)));
-      VLMBoard->updateBoatList(acc_list);
+      //VLMBoard->updateBoatList(acc_list);
 
       selectedBoat = NULL;
 
@@ -971,7 +975,7 @@ void MainWindow::slotVLM_Sync(void) {
 
             if(acc==selectedBoat)
             {
-                VLMBoard->setSelectedBoatIndex(cnt);
+                menuBar->setSelectedBoatIndex(cnt);
                 menuBar->acPilototo->setEnabled(!acc->getLockStatus());
             }
             cnt++;
@@ -1039,6 +1043,7 @@ void MainWindow::slotVLM_Test(void)
 void MainWindow::slotSelectPOI(Pilototo_instruction * instruction)
 {
     selPOI_instruction=instruction;
+    menuBar->boatList->setEnabled(false);
     updatePilototo_Btn(selectedBoat);
     slotBoatLockStatusChanged(selectedBoat,selectedBoat->getLockStatus());
 }
@@ -1046,6 +1051,7 @@ void MainWindow::slotSelectPOI(Pilototo_instruction * instruction)
 void MainWindow::slotSelectWP_POI()
 {
     isSelectingWP=true;    
+    menuBar->boatList->setEnabled(false);
     slotBoatLockStatusChanged(selectedBoat,selectedBoat->getLockStatus());
 }
 
@@ -1061,12 +1067,14 @@ void MainWindow::slotPOIselected(POI* poi)
         Pilototo_instruction * tmp=selPOI_instruction;
         selPOI_instruction=NULL;
         updatePilototo_Btn(selectedBoat);
+        menuBar->boatList->setEnabled(true);
         slotBoatLockStatusChanged(selectedBoat,selectedBoat->getLockStatus());
         emit editInstructionsPOI(tmp,poi);
     }
     else if(isSelectingWP)
     {
         isSelectingWP=false;
+        menuBar->boatList->setEnabled(true);
         slotBoatLockStatusChanged(selectedBoat,selectedBoat->getLockStatus());
         emit editWP_POI(poi);
     }
@@ -1101,7 +1109,7 @@ void MainWindow::slotSelectBoat(boatAccount* newSelect)
         {
             if(acc_list[i] == newSelect)
             {
-                VLMBoard->setSelectedBoatIndex(cnt);
+                menuBar->setSelectedBoatIndex(cnt);
                 break;
             }
             if(acc_list[i]->getStatus())
@@ -1154,8 +1162,8 @@ void MainWindow::slotAccountListUpdated(void)
             acc_list[i]->getData();
             break;
         }
-    VLMBoard->updateBoatList(acc_list);
-    VLMBoard->setSelectedBoatIndex(0);
+    menuBar->updateBoatList(acc_list);
+    menuBar->setSelectedBoatIndex(0);
     slotChgBoat(0);
 }
 

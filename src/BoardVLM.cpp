@@ -94,14 +94,14 @@ boardVLM::boardVLM(QMainWindow * mainWin,QWidget * parent) : QWidget(parent)
 
     currentBoat = NULL;
 
-    boatList->setSizeAdjustPolicy(QComboBox::AdjustToContents);
+    //boatList->setSizeAdjustPolicy(QComboBox::AdjustToContents);
     /*finfo = cbBoatList->fontInfo();
     QFont font2("", finfo.pointSize(), QFont::Normal, false);
     font2.setStyleHint(QFont::TypeWriter);
     font2.setStretch(QFont::SemiCondensed);
     cbBoatList->setFont(font2);*/
-    connect(boatList, SIGNAL(activated(int)),
-            mainWin, SLOT(slotChgBoat(int)));
+    /*connect(boatList, SIGNAL(activated(int)),
+            mainWin, SLOT(slotChgBoat(int)));*/
 
     chk_GPS->setEnabled(Util::getSetting("gpsEmulEnable", "0").toString()=="1");
     if(!chk_GPS->isEnabled())
@@ -186,6 +186,13 @@ void boardVLM::boatUpdated(boatAccount * boat)
 
     windAngle->setValues(boat->getHeading(),boat->getWindDir(),boat->getWindSpeed(), computeWPdir(boat), -1);
 
+    boatName->setText(boat->getBoatName());
+
+    if(boat->getAliasState())
+        boatName->setText(boat->getAlias() + " (" + boat->getLogin() + " - " + boat->getBoatId() + ")");
+    else
+        boatName->setText(boat->getLogin() + " ("  + boat->getBoatId() + ")");
+
     boatScore->setText(boat->getScore());
 
     /* boat position */
@@ -240,32 +247,6 @@ void boardVLM::boatUpdated(boatAccount * boat)
 
     /* send data as a GPS */
     synch_GPS();
-}
-
-void boardVLM::updateBoatList(QList<boatAccount*> & acc_list)
-{
-
-    boatList->clear();
-
-    QListIterator<boatAccount*> i (acc_list);
-
-    while(i.hasNext())
-    {
-        boatAccount * acc = i.next();
-        if(acc->getStatus())
-        {
-            if(acc->getAliasState())
-                boatList->addItem(acc->getAlias() + "(" + acc->getLogin() + ")");
-            else
-                boatList->addItem(acc->getLogin());
-        }
-    }
-}
-
-void boardVLM::setSelectedBoatIndex(int index)
-{
-    boatList->setCurrentIndex(index);
-    qWarning() << "Current index: " << index << " " << boatList->itemText(index);
 }
 
 void boardVLM::setWP(float lat,float lon,float wph)
@@ -619,7 +600,6 @@ void boardVLM::setChangeStatus(bool status)
     goPilotOrtho->setEnabled(st);
     goVMG->setEnabled(st);
     btn_WP->setEnabled(st);
-    boatList->setEnabled(!((MainWindow*)mainWin)->get_selPOI_instruction());
     btn_Synch->setEnabled(!((MainWindow*)mainWin)->get_selPOI_instruction());
 }
 

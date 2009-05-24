@@ -57,7 +57,7 @@ HEADERS += \
            xmlPOIData.h \
            zuFile.h
 
-FORMS += boatAccount_dialog.ui BoardVLM_part1.ui \
+FORMS += boatAccount_dialog.ui BoardVLM.ui \
             paramVLM.ui POI_input.ui POI_editor.ui Pilototo_param.ui instructions.ui \
             Pilototo.ui race_dialog.ui WP_dialog.ui
 SOURCES += \

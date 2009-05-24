@@ -48,7 +48,8 @@ public:
     time_t  getDateGribById(int id);
     int  getNearestDateGrib(time_t tm);
 
-    void getBoatList(QList<boatAccount*> & acc_list);
+    void updateBoatList(QList<boatAccount*> & acc_list);
+    void setSelectedBoatIndex(int index);
 
 
     QMenu * createPopupBtRight(QWidget *parent);
@@ -122,7 +123,8 @@ public:
     //-------------------------------------
     // Autres objets de l'interface
     //-------------------------------------
-    QComboBox *cbDatesGrib;      // Choix de la date Ã  afficher
+    QComboBox *cbDatesGrib;      // Choix de la date Ã  afficher
+    QComboBox *boatList;
     QAction *acDatesGrib_prev;
     QAction *acDatesGrib_next;
     QAction *acDatesGrib_now;

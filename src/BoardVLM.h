@@ -31,7 +31,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 class boardVLM;
 
 #include "boatAccount.h"
-#include "ui_BoardVLM_part1.h"
+#include "ui_BoardVLM.h"
 #include "ui_WP_dialog.h"
 #include "Util.h"
 #include "inetConnexion.h"
@@ -64,13 +64,11 @@ class WP_dialog: public QDialog, public Ui::WP_dialog_ui
         void initDialog(float WPLat,float WPLon,float WPHd);
 };
 
-class boardVLM: public QWidget , public Ui::boardVLM_part1_ui
+class boardVLM: public QWidget , public Ui::boardVLM_ui
 { Q_OBJECT
     public:
         boardVLM(QMainWindow * mainWin,QWidget * parent=0);
-        void updateInet(void);
-        void updateBoatList(QList<boatAccount*> & acc_list);
-        void setSelectedBoatIndex(int index);
+        void updateInet(void);        
 
     public slots:
         void chgHeading();

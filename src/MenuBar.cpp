@@ -185,6 +185,15 @@ MenuBar::MenuBar(QWidget *parent)
     font.setStyleHint(QFont::TypeWriter);
     font.setStretch(QFont::SemiCondensed);
     cbDatesGrib->setFont(font);
+
+    boatList = new QComboBox();
+    boatList->setSizeAdjustPolicy(QComboBox::AdjustToContents);
+    QFontInfo finfo2 = boatList->fontInfo();
+    QFont font2("", finfo2.pointSize(), QFont::Normal, false);
+    font2.setStyleHint(QFont::TypeWriter);
+    font2.setStretch(QFont::SemiCondensed);
+    boatList->setFont(font2);
+
 }
 
 
@@ -257,13 +266,13 @@ void MenuBar::setCitiesNamesLevel(int level) {
 void MenuBar::updateListeDates(std::set<time_t> *setDates)
 {
     listGribDates.clear();
-    // Construit un vector Ã  partir du set (plus pratique)
+    // Construit un vector Ã  partir du set (plus pratique)
     std::set<time_t>::iterator its;
     for (its=setDates->begin(); its!=setDates->end(); its++) {
         listGribDates.push_back(*its);
     }
 
-    // Met Ã  jour les item du QComboBox
+    // Met Ã  jour les item du QComboBox
     while (cbDatesGrib->count() > 0) {
         cbDatesGrib->removeItem(0);
     }
@@ -290,4 +299,36 @@ int MenuBar::getNearestDateGrib(time_t tm)
     if(listGribDates[0]>tm) return 0;
     while((uint)id<listGribDates.size() && listGribDates[id] < tm) id++;
     return id-1;
+}
+//------------------------------------------------------------
+void MenuBar::updateBoatList(QList<boatAccount*> & acc_list)
+{
+    //qWarning() << "Boat list cnt " << boatList->count();
+    while(boatList->count())
+        boatList->removeItem(0);
+    //boatList->clear();
+
+    QListIterator<boatAccount*> i (acc_list);
+
+    while(i.hasNext())
+    {
+        boatAccount * acc = i.next();
+        //qWarning() << "Boat: " << acc->getLogin();
+        if(acc->getStatus())
+        {
+            //qWarning() << "Adding it";
+            if(acc->getAliasState())
+                boatList->addItem(acc->getAlias() + "(" + acc->getLogin() + ")");
+            else
+                boatList->addItem(acc->getLogin());
+        }
+    }
+
+    //qWarning() << "Boat list cnt after: " << boatList->count() << " Status " << boatList->isEnabled();
+}
+
+void MenuBar::setSelectedBoatIndex(int index)
+{
+    boatList->setCurrentIndex(index);
+    //qWarning() << "Current index: " << index << " " << boatList->itemText(index);
 }
