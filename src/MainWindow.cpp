@@ -317,10 +317,10 @@ MainWindow::MainWindow(int w, int h, QWidget *parent)
     toolBar->addSeparator();
     toolBar->addWidget(menuBar->boatList);
     toolBar->addSeparator();
-    btn_Pilototo = new QPushButton(tr("Pilototo"),toolBar);
+    /*btn_Pilototo = new QPushButton(tr("Pilototo"),toolBar);
     btn_Pilototo->setStyleSheet(QString::fromUtf8("background-color: rgb(255, 255, 127);"));
     toolBar->addWidget(btn_Pilototo);
-    connect(btn_Pilototo,SIGNAL(clicked()),this, SLOT(slotPilototo()));
+    connect(btn_Pilototo,SIGNAL(clicked()),this, SLOT(slotPilototo()));*/
 
     tool_ETA = new QLabel("", toolBar);
     tool_ETA->setFont(font);
@@ -619,7 +619,11 @@ void MainWindow::slotFile_Open()
 void MainWindow::slotFile_Close() {
     gribFileName = "";
     terre->loadGribFile("", false);
+    menuBar->clearListeDates();
+    menuBar->acDatesGrib_prev->setEnabled(1);
+    menuBar->acDatesGrib_next->setEnabled(1);
     setWindowTitle(tr("qtVlm"));
+
 }
 //========================================================================
 void MainWindow::slotFile_Load_GRIB()
@@ -714,8 +718,11 @@ void MainWindow::slotDateGribChanged_now()
 {
     time_t tps=QDateTime::currentDateTime().toUTC().toTime_t();
     int id=menuBar->getNearestDateGrib(tps);
-    menuBar->cbDatesGrib->setCurrentIndex(id);
-    slotDateGribChanged(id);
+    if(menuBar->cbDatesGrib->count() != 0)
+    {
+        menuBar->cbDatesGrib->setCurrentIndex(id);
+        slotDateGribChanged(id);
+    }
 
 }
 
@@ -808,13 +815,13 @@ void MainWindow::updatePilototo_Btn(boatAccount * boat)
         }
         menuBar->acPilototo->setText(pilototo_txt);
         menuBar->acPilototo->setToolTip(pilototo_toolTip);
-        btn_Pilototo->setText(pilototo_txt);
-        btn_Pilototo->setToolTip(pilototo_toolTip);
+        VLMBoard->btn_Pilototo->setText(pilototo_txt);
+        VLMBoard->btn_Pilototo->setToolTip(pilototo_toolTip);
     }
     else
     {
         menuBar->acPilototo->setText(tr("Séléction de POI"));
-        btn_Pilototo->setText(tr("Séléction de POI"));
+        VLMBoard->btn_Pilototo->setText(tr("Séléction de POI"));
     }
 }
 
@@ -1254,21 +1261,21 @@ void MainWindow::slotBoatLockStatusChanged(boatAccount* boat,bool status)
             emit setChangeStatus(true);
             menuBar->acPilototo->setEnabled(true);
             menuBar->acVLMSync->setEnabled(false);
-            btn_Pilototo->setEnabled(true);
+            VLMBoard->btn_Pilototo->setEnabled(true);
         }
         else if(isSelectingWP)
         {
             emit setChangeStatus(true);
             menuBar->acPilototo->setEnabled(false);
             menuBar->acVLMSync->setEnabled(false);
-            btn_Pilototo->setEnabled(false);
+            VLMBoard->btn_Pilototo->setEnabled(false);
         }
         else
         {
             emit setChangeStatus(status);
             menuBar->acPilototo->setEnabled(!status);
             menuBar->acVLMSync->setEnabled(true);
-            btn_Pilototo->setEnabled(!status);
+            VLMBoard->btn_Pilototo->setEnabled(!status);
         }
     }
 }

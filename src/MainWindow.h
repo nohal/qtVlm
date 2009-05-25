@@ -170,7 +170,7 @@ class MainWindow: public QMainWindow
         QLabel       *stBar_label_3;
 
         QLabel       * tool_ETA;
-        QPushButton  * btn_Pilototo;
+        //QPushButton  * btn_Pilototo;
 
         QMenu    *menuPopupBtRight;
 

@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>235</width>
-    <height>592</height>
+    <height>700</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -32,7 +32,7 @@
    <property name="geometry">
     <rect>
      <x>8</x>
-     <y>246</y>
+     <y>269</y>
      <width>224</width>
      <height>188</height>
     </rect>
@@ -54,7 +54,7 @@
    <property name="geometry">
     <rect>
      <x>8</x>
-     <y>436</y>
+     <y>459</y>
      <width>221</width>
      <height>77</height>
     </rect>
@@ -89,7 +89,7 @@
     <widget class="QPushButton" name="btn_chgAngle">
      <property name="geometry">
       <rect>
-       <x>3</x>
+       <x>5</x>
        <y>6</y>
        <width>51</width>
        <height>20</height>
@@ -105,7 +105,7 @@
     <widget class="tool_edtSpinBox" name="editAngle">
      <property name="geometry">
       <rect>
-       <x>2</x>
+       <x>4</x>
        <y>30</y>
        <width>81</width>
        <height>21</height>
@@ -136,7 +136,7 @@
     <widget class="QPushButton" name="btn_virer">
      <property name="geometry">
       <rect>
-       <x>59</x>
+       <x>61</x>
        <y>6</y>
        <width>24</width>
        <height>20</height>
@@ -265,7 +265,7 @@
    <property name="geometry">
     <rect>
      <x>10</x>
-     <y>100</y>
+     <y>123</y>
      <width>221</width>
      <height>91</height>
     </rect>
@@ -282,10 +282,10 @@
    <widget class="QFrame" name="frame">
     <property name="geometry">
      <rect>
-      <x>116</x>
-      <y>19</y>
-      <width>91</width>
-      <height>52</height>
+      <x>122</x>
+      <y>22</y>
+      <width>86</width>
+      <height>57</height>
      </rect>
     </property>
     <property name="autoFillBackground">
@@ -480,12 +480,12 @@
      </property>
     </widget>
    </widget>
-   <widget class="QWidget" name="layoutWidget_1">
+   <widget class="QWidget" name="">
     <property name="geometry">
      <rect>
-      <x>0</x>
-      <y>19</y>
-      <width>113</width>
+      <x>6</x>
+      <y>20</y>
+      <width>106</width>
       <height>62</height>
      </rect>
     </property>
@@ -528,7 +528,7 @@
        </property>
       </widget>
      </item>
-     <item row="0" column="2" colspan="2">
+     <item row="0" column="2">
       <widget class="QLabel" name="label_6">
        <property name="font">
         <font>
@@ -578,7 +578,7 @@
        </property>
       </widget>
      </item>
-     <item row="1" column="2" colspan="2">
+     <item row="1" column="2">
       <widget class="QLabel" name="label_7">
        <property name="font">
         <font>
@@ -606,7 +606,7 @@
        </property>
       </widget>
      </item>
-     <item row="2" column="1" colspan="2">
+     <item row="2" column="1">
       <widget class="QLabel" name="loch">
        <property name="font">
         <font>
@@ -624,7 +624,7 @@
        </property>
       </widget>
      </item>
-     <item row="2" column="3">
+     <item row="2" column="2">
       <widget class="QLabel" name="label_8">
        <property name="font">
         <font>
@@ -645,7 +645,7 @@
    <property name="geometry">
     <rect>
      <x>8</x>
-     <y>195</y>
+     <y>218</y>
      <width>221</width>
      <height>20</height>
     </rect>
@@ -668,7 +668,7 @@
    <property name="geometry">
     <rect>
      <x>8</x>
-     <y>219</y>
+     <y>242</y>
      <width>105</width>
      <height>20</height>
     </rect>
@@ -687,7 +687,7 @@
    <property name="geometry">
     <rect>
      <x>122</x>
-     <y>219</y>
+     <y>242</y>
      <width>105</width>
      <height>20</height>
     </rect>
@@ -706,8 +706,8 @@
    <property name="geometry">
     <rect>
      <x>10</x>
-     <y>518</y>
-     <width>225</width>
+     <y>541</y>
+     <width>221</width>
      <height>66</height>
     </rect>
    </property>
@@ -958,8 +958,8 @@
     <rect>
      <x>10</x>
      <y>40</y>
-     <width>211</width>
-     <height>58</height>
+     <width>223</width>
+     <height>80</height>
     </rect>
    </property>
    <layout class="QHBoxLayout" name="horizontalLayout_2">
@@ -1003,6 +1003,13 @@
     </item>
     <item>
      <layout class="QVBoxLayout" name="verticalLayout">
+      <item>
+       <widget class="QPushButton" name="btn_Pilototo">
+        <property name="text">
+         <string>Pilototo</string>
+        </property>
+       </widget>
+      </item>
       <item>
        <widget class="QCheckBox" name="chk_GPS">
         <property name="text">

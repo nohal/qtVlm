@@ -49,6 +49,7 @@ public:
     int  getNearestDateGrib(time_t tm);
 
     void updateBoatList(QList<boatAccount*> & acc_list);
+    void clearListeDates(void);
     void setSelectedBoatIndex(int index);
 
 

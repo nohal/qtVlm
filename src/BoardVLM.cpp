@@ -103,6 +103,9 @@ boardVLM::boardVLM(QMainWindow * mainWin,QWidget * parent) : QWidget(parent)
     /*connect(boatList, SIGNAL(activated(int)),
             mainWin, SLOT(slotChgBoat(int)));*/
 
+    btn_Pilototo->setStyleSheet(QString::fromUtf8("background-color: rgb(255, 255, 127);"));
+    connect(btn_Pilototo,SIGNAL(clicked()),mainWin, SLOT(slotPilototo()));
+
     chk_GPS->setEnabled(Util::getSetting("gpsEmulEnable", "0").toString()=="1");
     if(!chk_GPS->isEnabled())
     {

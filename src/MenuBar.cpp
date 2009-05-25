@@ -284,6 +284,12 @@ void MenuBar::updateListeDates(std::set<time_t> *setDates)
         cbDatesGrib->addItem(str);
     }
 }
+
+void MenuBar::clearListeDates(void)
+{
+    listGribDates.clear();
+    cbDatesGrib->clear();
+}
 //------------------------------------------------------------
 time_t  MenuBar::getDateGribById(int id)
 {
