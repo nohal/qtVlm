@@ -242,6 +242,7 @@ MainWindow::MainWindow(int w, int h, QWidget *parent)
     : QMainWindow(parent)
 {
     setWindowTitle("QtVlm");
+    selectedBoat = NULL;
 
     qWarning() <<  "Starting qtVlm";
     //--------------------------------------------------
@@ -370,7 +371,7 @@ MainWindow::MainWindow(int w, int h, QWidget *parent)
               VLMBoard,SLOT(boatUpdated(boatAccount*)));
       //VLMBoard->updateBoatList(acc_list);
 
-      selectedBoat = NULL;
+
 
       connect(param,SIGNAL(paramVLMChanged()),VLMBoard,SLOT(paramChanged()));
 
@@ -451,10 +452,10 @@ void MainWindow::delPOI_list(POI * poi)
 void MainWindow::openGribFile(QString fileName, bool zoom)
 {
     terre->loadGribFile(fileName, zoom);
-    if (terre->getGribPlot()->isGribReaderOk())
+    if (terre->getGrib()->isGribOk())
     {
         setWindowTitle(tr("qtVlm - ")+ QFileInfo(fileName).fileName());
-        std::set<time_t> *listeDates = terre->getGribPlot()->getListDates();
+        std::set<time_t> *listeDates = terre->getGrib()->getListDates();
         menuBar->updateListeDates(listeDates);
         //slotDateGribChanged(0);
         slotDateGribChanged_now();
@@ -643,7 +644,7 @@ void MainWindow::slotFile_Load_GRIB()
 
 
 //-----------------------------------------------
-QString MainWindow::dataPresentInGrib(GribReader* grib, int type)
+QString MainWindow::dataPresentInGrib(Grib* grib, int type)
 {
     if(type!=GRB_WIND_VX)
         return tr("non");
@@ -658,14 +659,14 @@ QString MainWindow::dataPresentInGrib(GribReader* grib, int type)
 void MainWindow::slotFile_Info_GRIB()
 {
     QString msg;
-    if (! terre->getGribPlot()->isGribReaderOk())
+    if (! terre->getGrib()->isGribOk())
     {
         QMessageBox::information (this,
             tr("Informations sur le fichier GRIB"),
             tr("Aucun fichir GRIB n'est chargé."));
     }
     else {
-        GribReader * grib = terre->getGribPlot()->getGribReader();
+        Grib * grib = terre->getGrib();
 
         msg += tr("Fichier : %1\n") .arg(grib->getFileName().c_str());
         msg += tr("Taille : %1 octets\n") .arg(grib->getFileSize());
@@ -674,9 +675,9 @@ void MainWindow::slotFile_Info_GRIB()
         msg += tr("%1 enregistrements, ").arg(grib->getTotalNumberOfGribRecords());
         msg += tr("%1 dates :\n").arg(grib->getNumberOfDates());
 
-        std::set<time_t> sdates = grib->getListDates();
-        msg += tr("    du %1\n").arg( Util::formatDateTimeLong(*(sdates.begin())) );
-        msg += tr("    au %1\n").arg( Util::formatDateTimeLong(*(sdates.rbegin())) );
+        std::set<time_t> * sdates = grib->getListDates();
+        msg += tr("    du %1\n").arg( Util::formatDateTimeLong(*(sdates->begin())) );
+        msg += tr("    au %1\n").arg( Util::formatDateTimeLong(*(sdates->rbegin())) );
 
         msg += tr("\n");
         msg += tr("Données disponibles :\n");        
@@ -716,13 +717,6 @@ void MainWindow::slotDateGribChanged(int id)
 //-------------------------------------------------
 void MainWindow::slotDateGribChanged_now()
 {
-    time_t tps=QDateTime::currentDateTime().toUTC().toTime_t();
-    int id=menuBar->getNearestDateGrib(tps);
-    if(menuBar->cbDatesGrib->count() != 0)
-    {
-        menuBar->cbDatesGrib->setCurrentIndex(id);
-        slotDateGribChanged(id);
-    }
 
 }
 
@@ -825,31 +819,24 @@ void MainWindow::updatePilototo_Btn(boatAccount * boat)
     }
 }
 
-void MainWindow::statusBar_showPF(const GribPointInfo &pf)
+void MainWindow::statusBar_showWindData(double x,double y)
 {
     QString s, res;
+    double a,b;
 
     statusBar->clearMessage();
-    stBar_label_1->setText(Util::pos2String(TYPE_LON,pf.x) + ", " + Util::pos2String(TYPE_LAT,pf.y));
+    stBar_label_1->setText(Util::pos2String(TYPE_LON,x) + ", " + Util::pos2String(TYPE_LAT,y));
 
-    if (pf.hasWind()) {
-
+    if(terre->getGrib()->isGribOk() && terre->getGrib()->getInterpolatedValue_byDates(x,y,
+                                          terre->getGrib()->getCurrentDate(),&a,&b))
+    {
         res = "- " + tr("Vent") + ": ";
-
-        float v = sqrt(pf.vx*pf.vx + pf.vy*pf.vy);
-
-        float dir = -atan2(-pf.vx, pf.vy) *180.0/M_PI + 180;
-        if (dir < 0)
-            dir += 360.0;
-        if (dir >= 360)
-            dir -= 360.0;
-
-        s.sprintf("%.0f", dir);
+        s.sprintf("%.0f", radToDeg(b));
         res += s+tr("°")+", ";
-        s.sprintf("%.1f",v*3.6/1.852);
+        s.sprintf("%.1f",a);
         res += s+" kts";
-        stBar_label_2->setText(res);
     }
+    stBar_label_2->setText(res);
 }
 
 void MainWindow::updateNxtVac(void)
@@ -910,9 +897,7 @@ void MainWindow::slotMouseMoved(QMouseEvent * e) {
     }
     else
     {
-        GribPointInfo  pf(terre->getGribPlot()->getGribReader(),
-                xx, yy, terre->getGribPlot()->getCurrentDate() );
-        statusBar_showPF(pf);
+        statusBar_showWindData(xx, yy);
         drawVacInfo();
     }
 }

@@ -64,9 +64,6 @@ Terrain::Terrain(QWidget *parent, Projection *proj_)
     showWindArrows  = Util::getSetting("showWindArrows", true).toBool();
     showBarbules = Util::getSetting("showBarbules", true).toBool();
     showGribGrid = Util::getSetting("showGribGrid", false).toBool();
-
-    interpolateValues = Util::getSetting("interpolateValues", true).toBool();
-    windArrowsOnGribGrid = Util::getSetting("windArrowsOnGribGrid", false).toBool();
     //----------------------------------------------------------------------------
 
     imgEarth = NULL;
@@ -79,8 +76,8 @@ Terrain::Terrain(QWidget *parent, Projection *proj_)
 
     proj = proj_;
     gshhsReader = NULL;
-    gribPlot = new GribPlot(interpolateValues, windArrowsOnGribGrid);
-    assert(gribPlot);
+    grib = new Grib();
+    assert(grib);
     gisReader = new GisReader();
     assert(gisReader);
 
@@ -172,21 +169,10 @@ bool Terrain::draw_GSHHSandGRIB(QPainter &pntGlobal)
             //===================================================
             // Dessin des données GRIB
             //===================================================
-
-            gribPlot->show_CoverZone(pnt, proj);
-
+#warning remove this class property
             windArrowsColor.setRgb(255, 255, 255);
 
-            if (showWindColorMap) {
-//QTime t1 = QTime::currentTime();
-                gribPlot->draw_WIND_Color(pnt, proj, colorMapSmooth);
-//printf("time showWindColorMap=%d\n", t1.elapsed());
-            }
-
-            if (showWindArrows) {
-                gribPlot->draw_WIND_Arrows(pnt, proj, showBarbules, windArrowsColor);
-            }
-
+            grib->draw_WIND_Color(pnt, proj, colorMapSmooth,showWindColorMap,showWindArrows,showBarbules, windArrowsColor);
 
             //===================================================
             // Dessin des bordures et frontières
@@ -212,17 +198,6 @@ bool Terrain::draw_GSHHSandGRIB(QPainter &pntGlobal)
             if (showCitiesNamesLevel > 0) {
                 gisReader->drawCitiesNames(pnt, proj, showCitiesNamesLevel);
             }
-
-            //===================================================
-            // Grille GRIB
-            //===================================================
-            if (showGribGrid) {
-                gribPlot->draw_GribGrid(pnt, proj);
-            }
-            //===================================================
-            // Dates de la prévision
-            //===================================================
-            //gribPlot->draw_ForecastDates(pnt, proj);
 
             //===================================================
             isEarthMapValid = true;
@@ -597,7 +572,7 @@ bool  Terrain::getSelectedLine(float *x0, float *y0, float *x1, float *y1)
 void Terrain::loadGribFile(QString fileName, bool zoom)
 {
     indicateWaitingMap();
-    gribPlot->loadGribFile(fileName);
+    grib->loadGribFile(fileName);
     isSelectionZoneEnCours = false;
     selX0 = selY0 = 0;
     selX1 = selY1 = 0;
@@ -612,10 +587,9 @@ void Terrain::loadGribFile(QString fileName, bool zoom)
 //---------------------------------------------------------
 void Terrain::zoomOnGribFile()
 {
-    GribReader * gribReader= gribPlot->getGribReader();
-    if (gribReader != NULL) {
+    if (grib != NULL && grib->isGribOk()) {
         double x0,y0, x1,y1, mh, mv;
-        if (gribReader->getZoneExtension(&x0,&y0, &x1,&y1))
+        if (grib->getZoneExtension(&x0,&y0, &x1,&y1))
         {
             mh = fabs(x0-x1)*0.05;
             mv = fabs(y0-y1)*0.05;
@@ -635,10 +609,10 @@ void Terrain::slotMustRedraw()
 //---------------------------------------------------------
 void Terrain::setCurrentDate(time_t t)
 {
-    if (gribPlot->getCurrentDate() != t)
+    if (grib->getCurrentDate() != t)
     {
         indicateWaitingMap();
-        gribPlot->setCurrentDate(t);
+        grib->setCurrentDate(t);
         isWindMapValid = false;
         update();
     }

@@ -30,9 +30,7 @@ HEADERS += \
            GshhsRangsReader.h \
            GshhsReader.h \
            GisReader.h \
-           GribPlot.h \
-           GribPointInfo.h \
-           GribReader.h \
+           Grib.h \
            GribRecord.h \
            inetConnexion.h \
            LoadGribFile.h \
@@ -72,9 +70,7 @@ SOURCES += \
            GshhsRangsReader.cpp \
            GshhsReader.cpp \
            GisReader.cpp \
-           GribPlot.cpp \
-           GribPointInfo.cpp \
-           GribReader.cpp \
+           Grib.cpp \
            GribRecord.cpp \
            inetConnexion.cpp \
            LoadGribFile.cpp \

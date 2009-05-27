@@ -47,6 +47,9 @@ Copyright (C) 2008 - Jacques Zaninetti - http://zygrib.free.fr
 #define degToRad(angle) (((angle)/180.0) * PI)
 #define radToDeg(angle) (((angle)*180.0) / PI)
 
+#define msToKts(speed) (1.9438445*(speed))
+#define ktsToMs(speed) (0.51444444*(speed))
+
 #define TYPE_LON 1
 #define TYPE_LAT 2
 

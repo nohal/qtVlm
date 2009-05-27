@@ -35,7 +35,6 @@ class boardVLM;
 #include "ui_WP_dialog.h"
 #include "Util.h"
 #include "inetConnexion.h"
-#include "GribPlot.h"
 #include "Util.h"
 #include "POI.h"
 

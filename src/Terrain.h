@@ -34,7 +34,7 @@ class Terrain;
 
 #include "GshhsReader.h"
 #include "GisReader.h"
-#include "GribPlot.h"
+#include "Grib.h"
 #include "Projection.h"
 #include "boatAccount.h"
 #include "opponentBoat.h"
@@ -48,7 +48,7 @@ public:
     Terrain(QWidget *parent, Projection *proj);
 
     void       setGSHHS_map(GshhsReader *map);
-    GribPlot * getGribPlot()     {return gribPlot;};
+    Grib * getGrib()     {return grib;};
     void       setCurrentDate( time_t t);
 
     void  indicateWaitingMap();    // Affiche un message d'attente
@@ -113,7 +113,7 @@ private:
     GshhsReader *gshhsReader;
     GisReader   *gisReader;
     Projection  *proj;
-    GribPlot    *gribPlot;
+    Grib        *grib;
     QTimer      *timerResize;
 
     QPixmap     *imgEarth;   // images précalculées pour accélérer l'affichage

@@ -177,8 +177,8 @@ class MainWindow: public QMainWindow
         void     connectSignals();
         void     InitActionsStatus();
         void     statusBar_showSelectedZone();
-        void     statusBar_showPF(const GribPointInfo &pf);
-        QString  dataPresentInGrib(GribReader* grib, int type);
+        void     statusBar_showWindData(double x,double y);
+        QString  dataPresentInGrib(Grib* grib, int type);
         void     updatePilototo_Btn(boatAccount * boat);
 
         int mouseClicX, mouseClicY;
