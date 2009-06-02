@@ -16,7 +16,7 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ***********************************************************************/
 
-#include <complex.h>
+#include <complex>
 #include <math.h>
 
 #include <cassert>
@@ -327,13 +327,14 @@ bool Grib::getInterpolationParam(time_t now,time_t * t1,time_t * t2,GribRecord *
     return false;
 }
 
-#  define _transform_u_v(a, b)			\
-  c = -b - _Complex_I * a;			\
-  a = msToKts(cabs(c));                         \
-  b = carg(c);					\
+#  define _transform_u_v(a, b)	{		\
+  std::complex<double> c(-b,-a);		\
+  a = msToKts(std::abs(c));                     \
+  b = std::arg(c);			        \
   if (b < 0) {					\
     b += TWO_PI;				\
-  }
+  }                                             \
+}
 
  #define _check_angle_interp(a)			\
   if (a > PI) {					\
@@ -394,7 +395,6 @@ bool Grib::getInterpolatedValue_record(double d_long, double d_lat, GribRecord *
     double u01,u23,v01,v23;
     double u_val,v_val;
     double angle;
-    double complex c;
 
     if(!u || !v || !recU || !recV)
         return false;
@@ -590,12 +590,12 @@ void Grib::draw_WIND_Color(QPainter &pnt, const Projection *proj, bool smooth,
     int i, j, k, l;
     double u,v,x,y;
     double x0,y0, x1,y1;
-    double * u_tab, * v_tab;
-    bool * y_tab;
+    double * u_tab=NULL, * v_tab=NULL;
+    bool * y_tab=NULL;
     int W = proj->getW();
     int H = proj->getH();
-    int space;
-    int W_s,H_s;
+    int space=0;
+    int W_s=0,H_s=0;
 
     GribRecord *recU1,*recV1,*recU2,*recV2;
     time_t t1,t2;
@@ -718,9 +718,9 @@ void Grib::drawCartouche(QPainter &pnt)
     pnt.setBrush(transpcolor);
     pnt.setFont(fontbig);
     pnt.setPen(transpcolor);
-    pnt.drawRect(0,0,190,fSize+3+4);
+    pnt.drawRect(3,3,190,fSize+3+4);
     pnt.setPen(textcolor);
-    pnt.drawText(3, fSize+3, Util::formatDateTimeLong(currentDate));// forecast validity date
+    pnt.drawText(10, fSize+6, Util::formatDateTimeLong(currentDate));// forecast validity date
 }
 
 //-----------------------------------------------------------------------------
@@ -732,7 +732,7 @@ void Grib::drawTransformedLine( QPainter &pnt,
     jj = (int) (i*si+j*co +0.5) + dj;
     kk = (int) (k*co-l*si +0.5) + di;
     ll = (int) (k*si+l*co +0.5) + dj;
-    // Clip forcé à cause d'un bug qpixmap sous windows
+    // Clip forcé �  cause d'un bug qpixmap sous windows
     int w = pnt.device()->width();
     int h = pnt.device()->height();
     if (       Util::isInRange(ii, 0, w)
