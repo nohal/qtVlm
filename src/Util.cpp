@@ -222,6 +222,7 @@ QString Util::formatPercentValue(float v)
 QString Util::formatDateLong(time_t t)
 {
     QDateTime dt;
+    dt.setTimeSpec(Qt::UTC);
     dt.setTime_t(t);
     QLocale loc;
 
@@ -234,6 +235,7 @@ QString Util::formatDateLong(time_t t)
 QString Util::formatDateTimeLong(time_t t)
 {
     QDateTime dt;
+    dt.setTimeSpec(Qt::UTC);
     dt.setTime_t(t);
     QLocale loc;
     if (loc.language()==QLocale::French)
@@ -245,6 +247,7 @@ QString Util::formatDateTimeLong(time_t t)
 QString Util::formatDateTimeShort(time_t t)
 {
     QDateTime dt;
+    dt.setTimeSpec(Qt::UTC);
     dt.setTime_t(t);
     QLocale loc;
     if (loc.language()==QLocale::French)
@@ -256,6 +259,7 @@ QString Util::formatDateTimeShort(time_t t)
 QString Util::formatDateTime_date(time_t t)
 {
     QDateTime dt;
+    dt.setTimeSpec(Qt::UTC);
     dt.setTime_t(t);
     QLocale loc;
     if (loc.language()==QLocale::French)
@@ -267,54 +271,11 @@ QString Util::formatDateTime_date(time_t t)
 QString Util::formatDateTime_hour(time_t t)
 {
     QDateTime dt;
+    dt.setTimeSpec(Qt::UTC);
     dt.setTime_t(t);
     return dt.toString("hh:mm UTC");
 }
 
-
-//---------------------------------------------------------------------
-QString Util::formatTime(time_t t)
-{
-        QString suffix;
-    QDateTime dt = applyTimeZone(t, &suffix);
-    return dt.toString("hh:mm ")+suffix;
-}
-
-//---------------------------------------------------------------------
-QDateTime Util::applyTimeZone(time_t t, QString *suffix)
-{
-    QDateTime dt;
-    dt.setTime_t(t);
-    //dt.setTimeSpec(Qt::UTC);
-        dt = dt.toUTC();
-
-        QString tmzone =  Util::getSetting("timeZone", "UTC").toString();
-        if (tmzone == "LOC") {
-                dt = dt.toLocalTime();
-                if (suffix != NULL)
-                        *suffix = "LOC";
-        }
-        else if (tmzone.left(4)=="UTC+" || tmzone.left(4)=="UTC-")
-        {    // UTC-12 UTC-11 ... UTC+1 UTC+2 UTC+3 ... UTC+14
-                int dec = tmzone.mid(3,-1).toInt();
-                if (dec==0 || dec<-12 || dec>14) {
-                        if (suffix != NULL)
-                                *suffix = "UTC";
-                }
-                else {
-                        dt = dt.addSecs(dec*3600);
-                        if (suffix != NULL)
-                                *suffix = tmzone;
-                }
-        }
-        else
-        {	// default timezone : UTC
-                if (suffix != NULL)
-                        *suffix = "UTC";
-        }
-
-    return dt;
-}
 #ifdef QT_4_5
 void Util::paramProxy(QNetworkAccessManager *inetManager,QString host)
 #else

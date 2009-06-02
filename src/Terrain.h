@@ -30,6 +30,7 @@ Copyright (C) 2008 - Jacques Zaninetti - http://zygrib.free.fr
 #include <QBitmap>
 #include <QTimer>
 
+
 class Terrain;
 
 #include "GshhsReader.h"
@@ -39,6 +40,7 @@ class Terrain;
 #include "boatAccount.h"
 #include "opponentBoat.h"
 #include "POI.h"
+#include "dialog_gribDate.h"
 
 class Terrain : public QWidget
 {
@@ -49,7 +51,8 @@ public:
 
     void       setGSHHS_map(GshhsReader *map);
     Grib * getGrib()     {return grib;};
-    void       setCurrentDate( time_t t);
+    void       setCurrentDate(time_t t);
+    time_t getCurrentDate(void);
 
     void  indicateWaitingMap();    // Affiche un message d'attente
 
@@ -60,6 +63,8 @@ public:
 
     void setBoatList(QList<boatAccount*> & boat_list) {this->boat_list=&boat_list; update();}
     void setOpponents(opponentList * opponents) { this->opponents=opponents; };
+
+    void showGribDate_dialog(void);
 
     void clearSelection();
 
@@ -193,6 +198,8 @@ private:
     opponentList * opponents;
     void drawBoats(QPainter &pnt);
     void drawOpponents(QPainter &pnt);
+
+    dialog_gribDate * gribDateDialog;
 
 };
 

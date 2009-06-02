@@ -16,46 +16,34 @@ GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
-
-Original code zyGrib: meteorological GRIB file viewer
-Copyright (C) 2008 - Jacques Zaninetti - http://zygrib.free.fr
 ***********************************************************************/
 
-#ifndef VERSION_H
-#define VERSION_H
+#ifndef DIALOG_GRIBDATE_H
+#define DIALOG_GRIBDATE_H
 
+#include <set>
+#include <vector>
 
-#define QTVLM_VERSION_NUM   "1.5.2"
-#define QTVLM_SUB_VERSION_NUM   "6"
-#define QTVLM_VERSION_DATE  "2009-06-02"
+#include <QDialog>
 
-#ifdef Q_OS_WIN32
-	#define QTVLM_APP_NAME   "qtVlm_win"
-#else
-	#define QTVLM_APP_NAME   "qtVlm"
-#endif
+#include "ui_dialog_gribDate.h"
 
-
-
-class Version {
-
+class dialog_gribDate : public QDialog, public Ui::dialog_gribDate_ui
+{
+    Q_OBJECT
     public:
-        static QString getVersion() {
-#ifdef QTVLM_SUB_VERSION_NUM
-            return QString(QTVLM_VERSION_NUM)+"-"+QString(QTVLM_SUB_VERSION_NUM);
-#else
-            return QString(QTVLM_VERSION_NUM);
-#endif
+        dialog_gribDate(QWidget * parent = 0);
+        void done(int res);
+        void showDialog(time_t current,std::set<time_t>  * listGribDates,time_t * result);
 
-        }
-        static QString getDate() {
-            return QString(QTVLM_VERSION_DATE);
-        }
-        static QString getCompleteName() {
-            return QString(QString(QTVLM_APP_NAME)+"-"+QTVLM_VERSION_NUM);
-        }
+    public slots:
+        void listChanged(int index);
+        void paramChanged(QDateTime date);
+
+    private:
+        std::vector<time_t> listGribDates;
+        time_t startTime;
+        time_t * result;
 };
 
-
-
-#endif
+#endif // DIALOG_GRIBDATE_H

@@ -71,6 +71,8 @@ POI::POI(QString name, float lon, float lat,
 
     connect(this,SIGNAL(selectPOI(POI*)),ownerMeteotable,SLOT(slotPOIselected(POI*)));
 
+    connect(this,SIGNAL(setGribDate(int)),ownerMeteotable,SLOT(slotSetGribDate(int)));
+
     connect(ownerMeteotable,SIGNAL(paramVLMChanged()),this,SLOT(paramChanged()));
     connect(ownerMeteotable,SIGNAL(WPChanged(float,float)),this,SLOT(WPChanged(float,float)));
     
@@ -95,6 +97,8 @@ void POI::rmSignal(void)
     disconnect(this,SIGNAL(delPOI_list(POI*)),owner,SLOT(delPOI_list(POI*)));
 
     disconnect(this,SIGNAL(editPOI(POI*)),owner,SLOT(slotEditPOI(POI *)));
+
+    disconnect(this,SIGNAL(setGribDate(int)),owner,SLOT(slotSetGribDate(int)));
 
     disconnect(owner,SIGNAL(paramVLMChanged()),this,SLOT(paramChanged()));
     disconnect(owner,SIGNAL(WPChanged(float,float)),this,SLOT(WPChanged(float,float)));
@@ -230,6 +234,7 @@ void POI::contextMenuEvent(QContextMenuEvent *)
 {
     // is currentBoat locked ?
     ac_setWp->setEnabled(!((MainWindow*)owner)->getBoatLockStatus());
+    ac_setGribDate->setEnabled(useTstamp);
     // Right clic : Edit this Point Of Interest
     popup->exec(QCursor::pos());
 }
@@ -271,6 +276,10 @@ void POI::createPopUpMenu(void)
     ac_setWp = new QAction(tr("POI->WP"),popup);
     popup->addAction(ac_setWp);
     connect(ac_setWp,SIGNAL(triggered()),this,SLOT(slot_setWP()));
+
+    ac_setGribDate= new QAction(tr("Set Date"),popup);
+    popup->addAction(ac_setGribDate);
+    connect(ac_setGribDate,SIGNAL(triggered()),this,SLOT(slot_setGribDate()));
 }
 
 void POI::slot_editPOI()
@@ -287,6 +296,12 @@ void POI::slot_copy()
 void POI::slot_setWP()
 {
     emit chgWP(lat,lon,wph);
+}
+
+void POI::slot_setGribDate()
+{
+    if(useTstamp)
+        emit setGribDate(timeStamp);
 }
 
 void POI::slotDelPoi()

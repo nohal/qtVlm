@@ -87,10 +87,12 @@ class MainWindow: public QMainWindow
         void slotMouseMoved(QMouseEvent * e);
         void slotShowContextualMenu(QContextMenuEvent *);
 
-        void slotDateGribChanged(int id);
+        void  slotDateStepChanged(int);
         void slotDateGribChanged_next();
         void slotDateGribChanged_prev();
         void slotDateGribChanged_now();
+        void slotDateGribChanged_sel();
+        void slotSetGribDate(int);
 
         void slotWindColors(bool b);
         void slotWindArrows(bool b);
@@ -160,6 +162,9 @@ class MainWindow: public QMainWindow
         DialogProxy     dialogProxy;
         DialogUnits     dialogUnits;
         DialogGraphicsParams dialogGraphicsParams;
+
+        void updatePrevNext(void);
+        int getGribStep(void);
 
         Terrain      *terre;
         MenuBar      *menuBar;

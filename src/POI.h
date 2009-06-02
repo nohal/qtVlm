@@ -70,6 +70,7 @@ class POI : public QWidget
         void timerClickEvent();
         void slot_editPOI();
         void slot_setWP();
+        void slot_setGribDate();
         void slotDelPoi();
         void slot_copy();
         void paramChanged();
@@ -81,6 +82,7 @@ class POI : public QWidget
         void delPOI_list(POI*);
         void editPOI(POI*);
         void selectPOI(POI*);
+        void setGribDate(int);
 
     private:
         QString      name;
@@ -114,6 +116,7 @@ class POI : public QWidget
         QMenu *popup;
         QAction * ac_edit;
         QAction * ac_setWp;
+        QAction * ac_setGribDate;
         QAction * ac_delPoi;
         QAction * ac_meteo;
         QAction * ac_copy;

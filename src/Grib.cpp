@@ -78,19 +78,48 @@ Grib::~Grib()
         clean_all_vectors();
 }
 
-#warning should unify with openFile
 void Grib::loadGribFile(QString fileName)
 {
     this->fileName = fileName;
-
-    if(ok)
-        clean_all_vectors();
 
     ok=false;
     fname = qPrintable(fileName);
     if (fname != "")
     {
-        openFile();
+        debug("Open file: %s", fname.c_str());
+        clean_all_vectors();
+        //--------------------------------------------------------
+        // Ouverture du fichier
+        //--------------------------------------------------------
+        file = zu_open(fname.c_str(), "rb", ZU_COMPRESS_AUTO);
+        if (file == NULL) {
+            erreur("Can't open file: %s", fname.c_str());
+            return;
+        }
+        readGribFileContent();
+
+        // Essaie d'autres compressions (extension non reconnue ?)
+        if (! ok) {
+            if (file != NULL)
+                zu_close(file);
+            file = zu_open(fname.c_str(), "rb", ZU_COMPRESS_BZIP);
+            if (file != NULL)
+                readGribFileContent();
+        }
+        if (! ok) {
+            if (file != NULL)
+                zu_close(file);
+            file = zu_open(fname.c_str(), "rb", ZU_COMPRESS_GZIP);
+            if (file != NULL)
+                readGribFileContent();
+        }
+        if (! ok) {
+            if (file != NULL)
+                zu_close(file);
+            file = zu_open(fname.c_str(), "rb", ZU_COMPRESS_NONE);
+            if (file != NULL)
+                readGribFileContent();
+        }
         setCurrentDate ( setAllDates.size()>0 ? *(setAllDates.begin()) : 0);
     }
 }
@@ -485,13 +514,26 @@ double Grib::computeHoursBeetweenGribRecords()
 // Génère la liste des dates pour lesquelles des prévisions existent
 void Grib::createListDates()
 {   // Le set assure l'ordre et l'unicité des dates
+    minDate=-1;
+    maxDate=-1;
     setAllDates.clear();
     std::map < std::string, std::vector<GribRecord *>* >::iterator it;
     for (it=mapGribRecords.begin(); it!=mapGribRecords.end(); it++)
     {
         std::vector<GribRecord *> *ls = (*it).second;
-        for (zuint i=0; i<ls->size(); i++) {
-            setAllDates.insert( ls->at(i)->getRecordCurrentDate() );
+        for (zuint i=0; i<ls->size(); i++)
+        {
+            time_t cur=ls->at(i)->getRecordCurrentDate();
+            if(minDate==-1)
+                minDate=cur;
+            else if(minDate > cur)
+                    minDate=cur;
+            if(maxDate==-1)
+                maxDate = cur;
+            else
+                if(maxDate < cur)
+                    maxDate=cur;
+            setAllDates.insert( cur );
         }
     }
 }
@@ -501,41 +543,7 @@ void Grib::createListDates()
 //-------------------------------------------------------------------------------
 void Grib::openFile()
 {
-    debug("Open file: %s", fname.c_str());
-    ok = false;
-    clean_all_vectors();
-    //--------------------------------------------------------
-    // Ouverture du fichier
-    //--------------------------------------------------------
-    file = zu_open(fname.c_str(), "rb", ZU_COMPRESS_AUTO);
-    if (file == NULL) {
-        erreur("Can't open file: %s", fname.c_str());
-        return;
-    }
-    readGribFileContent();
-    
-    // Essaie d'autres compressions (extension non reconnue ?)
- 	if (! ok) {
-    	if (file != NULL)
-			zu_close(file);
-    	file = zu_open(fname.c_str(), "rb", ZU_COMPRESS_BZIP);
-    	if (file != NULL)
-    		readGribFileContent();
-    }
- 	if (! ok) {
-    	if (file != NULL)
-			zu_close(file);
-    	file = zu_open(fname.c_str(), "rb", ZU_COMPRESS_GZIP);
-    	if (file != NULL)
-    		readGribFileContent();
-    }
- 	if (! ok) {
-    	if (file != NULL)
-			zu_close(file);
-    	file = zu_open(fname.c_str(), "rb", ZU_COMPRESS_NONE);
-    	if (file != NULL)
-    		readGribFileContent();
-    }
+
 }
 
 
@@ -641,10 +649,7 @@ void Grib::draw_WIND_Color(QPainter &pnt, const Projection *proj, bool smooth,
             {
                 proj->screen2map(i,j, &x, &y);
                 if(getInterpolatedValue_byDates(x,y,currentDate,t1,t2,recU1,recV1,recU2,recV2,&u,&v))
-                //if(getInterpolatedValue_byDates(x,y,currentDate,&u,&v))
                 {
-                    if(i==0 && j==0)
-                        qWarning() << "Vent 1: " << radToDeg(v) << "(" << v << ") v=" << u;
                     if(showWindArrows && i%space==0 && j%space==0)
                     {
                         int i_s=i/space;
@@ -699,6 +704,23 @@ void Grib::draw_WIND_Color(QPainter &pnt, const Projection *proj, bool smooth,
         delete y_tab;
     }
 
+}
+
+void Grib::drawCartouche(QPainter &pnt)
+{
+    if (!ok) return;
+    int fSize=12;    
+    QFont fontbig("TypeWriter", fSize, QFont::Bold, false);
+    fontbig.setStyleHint(QFont::TypeWriter);
+    fontbig.setStretch(QFont::Condensed);
+    QColor   transpcolor(255,255,255,120);
+    QColor   textcolor(20,20,20,255);
+    pnt.setBrush(transpcolor);
+    pnt.setFont(fontbig);
+    pnt.setPen(transpcolor);
+    pnt.drawRect(0,0,190,fSize+3+4);
+    pnt.setPen(textcolor);
+    pnt.drawText(3, fSize+3, Util::formatDateTimeLong(currentDate));// forecast validity date
 }
 
 //-----------------------------------------------------------------------------

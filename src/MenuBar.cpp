@@ -175,24 +175,30 @@ MenuBar::MenuBar(QWidget *parent)
     acDatesGrib_next = addAction( NULL,
             tr("Prévision suivante [page suiv]"),tr("PgDown"),tr(""),"img/1rightarrow.png");
 
-    acDatesGrib_now = addAction( NULL,tr("Now"),tr(""),tr(""),"");
+    datesGrib_now = new QPushButton(tr("Now"));
+    datesGrib_sel = new QPushButton(tr("Select"));
 
-    cbDatesGrib = new QComboBox();
-    cbDatesGrib->setSizeAdjustPolicy(QComboBox::AdjustToContents);
+    cbGribStep = new QComboBox();
 
-    QFontInfo finfo = cbDatesGrib->fontInfo();
+    QFontInfo finfo = cbGribStep->fontInfo();
     QFont font("", finfo.pointSize(), QFont::Normal, false);
     font.setStyleHint(QFont::TypeWriter);
     font.setStretch(QFont::SemiCondensed);
-    cbDatesGrib->setFont(font);
+
+    cbGribStep->setSizeAdjustPolicy(QComboBox::AdjustToContents);
+    cbGribStep->setFont(font);
+    cbGribStep->addItem(tr("15 m"));
+    cbGribStep->addItem(tr("30 m"));
+    cbGribStep->addItem(tr("1 h"));
+    cbGribStep->addItem(tr("2 h"));
+    cbGribStep->addItem(tr("3 h"));
+    cbGribStep->addItem(tr("6 h"));
+    cbGribStep->addItem(tr("12 h"));
+
 
     boatList = new QComboBox();
-    boatList->setSizeAdjustPolicy(QComboBox::AdjustToContents);
-    QFontInfo finfo2 = boatList->fontInfo();
-    QFont font2("", finfo2.pointSize(), QFont::Normal, false);
-    font2.setStyleHint(QFont::TypeWriter);
-    font2.setStretch(QFont::SemiCondensed);
-    boatList->setFont(font2);
+    boatList->setSizeAdjustPolicy(QComboBox::AdjustToContents);   
+    boatList->setFont(font);
 
 }
 
@@ -261,8 +267,10 @@ void MenuBar::setCitiesNamesLevel(int level) {
     }
 }
 
+
 //------------------------------------------------------------
 // Génère la liste des dates des Records du fichier GRIB
+#if 0
 void MenuBar::updateListeDates(std::set<time_t> *setDates)
 {
     listGribDates.clear();
@@ -276,6 +284,7 @@ void MenuBar::updateListeDates(std::set<time_t> *setDates)
     while (cbDatesGrib->count() > 0) {
         cbDatesGrib->removeItem(0);
     }
+
     std::vector<time_t>::iterator it;
     for (it=listGribDates.begin(); it!=listGribDates.end(); it++) {
         time_t tps = *it;
@@ -290,6 +299,8 @@ void MenuBar::clearListeDates(void)
     listGribDates.clear();
     cbDatesGrib->clear();
 }
+
+
 //------------------------------------------------------------
 time_t  MenuBar::getDateGribById(int id)
 {
@@ -306,7 +317,9 @@ int MenuBar::getNearestDateGrib(time_t tm)
     while((uint)id<listGribDates.size() && listGribDates[id] < tm) id++;
     return id-1;
 }
+#endif
 //------------------------------------------------------------
+
 void MenuBar::updateBoatList(QList<boatAccount*> & acc_list)
 {
     //qWarning() << "Boat list cnt " << boatList->count();

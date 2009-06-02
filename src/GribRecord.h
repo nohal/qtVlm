@@ -166,10 +166,6 @@ class GribRecord
         
         // Date courante des prévisions
         time_t getRecordCurrentDate () const     { return curDate; }
-        const char* getStrRecordCurDate () const { return strCurDate; }
-        void  setRecordCurrentDate (time_t t);
-    
-
 
     private:
         int    id;    // unique identifiant

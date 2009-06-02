@@ -1023,11 +1023,11 @@
     </item>
    </layout>
   </widget>
-  <widget class="QWidget" name="">
+  <widget class="QWidget" name="layoutWidget">
    <property name="geometry">
     <rect>
-     <x>9</x>
-     <y>59</y>
+     <x>8</x>
+     <y>40</y>
      <width>149</width>
      <height>53</height>
     </rect>
@@ -1069,59 +1069,65 @@
     </item>
    </layout>
   </widget>
-  <widget class="QWidget" name="">
+  <widget class="QPushButton" name="btn_Pilototo">
+   <property name="geometry">
+    <rect>
+     <x>13</x>
+     <y>97</y>
+     <width>211</width>
+     <height>21</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Pilototo (x/x)</string>
+   </property>
+  </widget>
+  <widget class="QCheckBox" name="chk_GPS">
    <property name="geometry">
     <rect>
      <x>170</x>
-     <y>40</y>
-     <width>61</width>
-     <height>87</height>
+     <y>42</y>
+     <width>47</width>
+     <height>20</height>
     </rect>
    </property>
-   <layout class="QVBoxLayout" name="verticalLayout">
-    <item>
-     <widget class="QPushButton" name="btn_Pilototo">
-      <property name="text">
-       <string>Pilototo</string>
-      </property>
-     </widget>
-    </item>
-    <item>
-     <widget class="QCheckBox" name="chk_GPS">
-      <property name="text">
-       <string>GPS</string>
-      </property>
-     </widget>
-    </item>
-    <item>
-     <widget class="QPushButton" name="btn_Synch">
-      <property name="sizePolicy">
-       <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
-        <horstretch>0</horstretch>
-        <verstretch>0</verstretch>
-       </sizepolicy>
-      </property>
-      <property name="minimumSize">
-       <size>
-        <width>60</width>
-        <height>0</height>
-       </size>
-      </property>
-      <property name="maximumSize">
-       <size>
-        <width>20</width>
-        <height>16777215</height>
-       </size>
-      </property>
-      <property name="styleSheet">
-       <string notr="true">background-color: rgb(255, 255, 127);</string>
-      </property>
-      <property name="text">
-       <string>VLM Sync</string>
-      </property>
-     </widget>
-    </item>
-   </layout>
+   <property name="text">
+    <string>GPS</string>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="btn_Synch">
+   <property name="geometry">
+    <rect>
+     <x>170</x>
+     <y>68</y>
+     <width>60</width>
+     <height>23</height>
+    </rect>
+   </property>
+   <property name="sizePolicy">
+    <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+     <horstretch>0</horstretch>
+     <verstretch>0</verstretch>
+    </sizepolicy>
+   </property>
+   <property name="minimumSize">
+    <size>
+     <width>60</width>
+     <height>0</height>
+    </size>
+   </property>
+   <property name="maximumSize">
+    <size>
+     <width>20</width>
+     <height>16777215</height>
+    </size>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">background-color: rgb(255, 255, 127);</string>
+   </property>
+   <property name="text">
+    <string>VLM Sync</string>
+   </property>
   </widget>
  </widget>
  <customwidgets>

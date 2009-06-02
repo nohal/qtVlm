@@ -44,9 +44,9 @@ public:
     void setQuality(int q);
     void setCitiesNamesLevel(int level);
 
-    void updateListeDates(std::set<time_t> *setDates);
+    /*void updateListeDates(std::set<time_t> *setDates);
     time_t  getDateGribById(int id);
-    int  getNearestDateGrib(time_t tm);
+    int  getNearestDateGrib(time_t tm);*/
 
     void updateBoatList(QList<boatAccount*> & acc_list);
     void clearListeDates(void);
@@ -124,11 +124,12 @@ public:
     //-------------------------------------
     // Autres objets de l'interface
     //-------------------------------------
-    QComboBox *cbDatesGrib;      // Choix de la date Ã  afficher
+    QComboBox *cbGribStep;
     QComboBox *boatList;
     QAction *acDatesGrib_prev;
     QAction *acDatesGrib_next;
-    QAction *acDatesGrib_now;
+    QPushButton * datesGrib_now;
+    QPushButton * datesGrib_sel;
 
     QAction  *acVLMSync_menu;
 
@@ -141,7 +142,7 @@ private:
     QMenu *menuPOI;
     QMenu *menuHelp;
 
-    std::vector<time_t> listGribDates;
+    //std::vector<time_t> listGribDates;
 
     QAction* addAction(QWidget *menu,
                     QString title, QString shortcut, QString statustip,

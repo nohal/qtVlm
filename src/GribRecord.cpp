@@ -601,43 +601,13 @@ zuint GribRecord::readPackedBits(zuchar *buf, zuint first, zuint nbBits)
 }
 
 //----------------------------------------------
-void  GribRecord::setRecordCurrentDate (time_t t)
+time_t GribRecord::makeDate(zuint year,zuint month,zuint day,zuint hour,zuint min,zuint sec)
 {
-	curDate = t;
-    
-    struct tm *date = gmtime(&t);
-    
-    zuint year   = date->tm_year+1900;
-    zuint month  = date->tm_mon+1;
-	zuint day    = date->tm_mday;
-	zuint hour   = date->tm_hour;
-	zuint minute = date->tm_min;
-	sprintf(strCurDate, "%04d-%02d-%02d %02d:%02d", year,month,day,hour,minute);
+    QDateTime dt = QDateTime(QDate(year,month,day),QTime(hour,0,0),Qt::UTC);
+    dt = dt.addSecs(min*60+sec);
+    return dt.toTime_t();
 }
 
-//----------------------------------------------
-time_t GribRecord::makeDate(
-            zuint year,zuint month,zuint day,zuint hour,zuint min,zuint sec) {
-    struct tm date;
-    date.tm_sec  = sec;         /* seconds */
-    date.tm_min  = min;         /* minutes */
-    date.tm_hour = hour;        /* hours */
-    date.tm_mday = day;         /* day of the month */
-    date.tm_mon  = month-1;     /* month */
-    date.tm_year = year-1900;   /* year */
-    date.tm_wday   = 0;         /* day of the week */
-    date.tm_yday   = 0;         /* day in the year */
-    date.tm_isdst  = 0;         /* daylight saving time */
-	
-	time_t   temps = -1;
-	char sdate[64];
-	sprintf(sdate, "%04d-%02d-%02d 00:00:00", year,month,day);
-    QDateTime dt = QDateTime::fromString(sdate, "yyyy-MM-dd HH:mm:ss");
-    dt.setTimeSpec(Qt::UTC);
-	dt = dt.addSecs (hour*3600+min*60+sec);
-	temps = dt.toTime_t();
-	return temps;
-}
 //----------------------------------------------
 zuint GribRecord::periodSeconds(zuchar unit,zuchar P1,zuchar P2,zuchar range) {
     zuint res, dur;

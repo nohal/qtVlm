@@ -67,7 +67,9 @@ class Grib
         int        getNumberOfDates()      {return setAllDates.size();}
         time_t     getRefDate()            {return setAllDates.size()>0 ?
                                                        *setAllDates.begin() : 0;}
-        
+        time_t     getMinDate()            {return ok?minDate:-1; }
+        time_t     getMaxDate()            {return ok?maxDate:-1; }
+
         // Valeur pour un point et une date quelconques
 
         bool getInterpolatedValue_byDates(double d_long, double d_lat, time_t now,double * u, double * v);
@@ -75,14 +77,13 @@ class Grib
         // Rectangle de la zone couverte par les données
         bool getZoneExtension (double *x0,double *y0, double *x1,double *y1);
 
-        bool        isGribOk()   {return ok;}
-
         void        setCurrentDate(time_t t);
         time_t      getCurrentDate()         {return currentDate;}
 
         // Carte de couleurs du vent
         void draw_WIND_Color(QPainter &pnt, const Projection *proj, bool smooth,
                                bool showWindColorMap, bool showWindArrows,bool barbules, QColor arrowsColor);
+        void drawCartouche(QPainter &pnt);
 
         enum GribFileDataStatus { DATA_IN_FILE, NO_DATA_IN_FILE, COMPUTED_DATA };
 
@@ -113,6 +114,8 @@ class Grib
         QString 	fileName;
 
         time_t  	currentDate;
+        time_t          minDate;
+        time_t          maxDate;
 
         QColor windColor[14];        // couleur selon la force du vent en beauforts
         QColor rainColor[17];

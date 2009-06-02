@@ -89,6 +89,8 @@ Terrain::Terrain(QWidget *parent, Projection *proj_)
     setFocusPolicy(Qt::StrongFocus);
 
     updateGraphicsParameters();
+
+    gribDateDialog = new dialog_gribDate();
 }
 
 //-------------------------------------------
@@ -198,6 +200,10 @@ bool Terrain::draw_GSHHSandGRIB(QPainter &pntGlobal)
             if (showCitiesNamesLevel > 0) {
                 gisReader->drawCitiesNames(pnt, proj, showCitiesNamesLevel);
             }
+
+            //===================================================
+
+            grib->drawCartouche(pnt);
 
             //===================================================
             isEarthMapValid = true;
@@ -587,7 +593,7 @@ void Terrain::loadGribFile(QString fileName, bool zoom)
 //---------------------------------------------------------
 void Terrain::zoomOnGribFile()
 {
-    if (grib != NULL && grib->isGribOk()) {
+    if (grib != NULL && grib->isOk()) {
         double x0,y0, x1,y1, mh, mv;
         if (grib->getZoneExtension(&x0,&y0, &x1,&y1))
         {
@@ -617,6 +623,24 @@ void Terrain::setCurrentDate(time_t t)
         update();
     }
 }
+
+time_t Terrain::getCurrentDate(void)
+{
+    if(grib->isOk())
+        return grib->getCurrentDate();
+    return 0;
+}
+
+void Terrain::showGribDate_dialog(void)
+{
+    if(gribDateDialog && grib->isOk())
+    {
+        time_t res;
+        gribDateDialog->showDialog(grib->getCurrentDate(),grib->getListDates(),&res);
+        setCurrentDate(res);
+    }
+}
+
 
 
 //---------------------------------------------------------
@@ -942,6 +966,3 @@ void Terrain::paintEvent(QPaintEvent * /*event*/)
         pnt.drawText(rect, Qt::AlignHCenter|Qt::AlignVCenter , txt);
     }
 }
-
-
-

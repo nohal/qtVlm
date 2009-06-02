@@ -90,8 +90,6 @@ class Util
     static QString formatDateTimeShort(time_t t);
     static QString formatDateTime_date(time_t t);
     static QString formatDateTime_hour(time_t t);
-    static QString formatTime(time_t t);
-    static QDateTime applyTimeZone(time_t t, QString *suffix);
 
     static QString formatSpeed(float meterspersecond);
     static QString formatDistance(float mille);
