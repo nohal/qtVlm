@@ -39,6 +39,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #define ALIAS_CHK_NAME    "UseAlias"
 #define ALIAS_NAME        "Alias"
 #define ZOOM_NAME         "Zoom"
+#define ESTIME_NAME       "Estime"
 /* RACE DATA */
 #define RACE_GROUP_NAME   "Race"
 #define RACEID_NAME       "raceId"
@@ -128,6 +129,12 @@ bool xml_boatData::writeBoatData(QList<boatAccount*> & boat_list,QList<raceData*
           tag = doc.createElement(ZOOM_NAME);
           group.appendChild(tag);
           t = doc.createTextNode(QString().setNum(acc->getZoom()));
+          tag.appendChild(t);
+
+          tag = doc.createElement(ESTIME_NAME);
+          group.appendChild(tag);
+          status = acc->getForceEstime();
+          t = doc.createTextNode(status?"1":"0");
           tag.appendChild(t);
      }
      
@@ -220,161 +227,168 @@ bool xml_boatData::readBoatData(QList<boatAccount*> & boat_list,QList<raceData*>
 		  }
 		  else if(node.toElement().tagName() == BOAT_GROUP_NAME)
 		  {
-			  subNode = node.firstChild();
-			  QString login = "";
-		      QString pass = "";
-			  QString activated = "";
-              QString polar="";
-              bool locked=false;
-              bool chk_polar=false;
-              bool chk_alias=false;
-              QString alias="";
-              float zoom=-1;
+                      subNode = node.firstChild();
+                      QString login = "";
+                      QString pass = "";
+                      QString activated = "";
+                      QString polar="";
+                      bool locked=false;
+                      bool chk_polar=false;
+                      bool chk_alias=false;
+                      bool force_estime=false;
+                      QString alias="";
+                      float zoom=-1;
 
-			  while(!subNode.isNull())
-			  {
-				   if(subNode.toElement().tagName() == LOGIN_NAME)
-				   {
-					  dataNode = subNode.firstChild();
-                      if(dataNode.nodeType() == QDomNode::TextNode)
-						  login = dataNode.toText().data();
-				   }
-				   if(subNode.toElement().tagName() == PASS_NAME)
-				   {
-					  dataNode = subNode.firstChild();
-                      if(dataNode.nodeType() == QDomNode::TextNode)
+                      while(!subNode.isNull())
                       {
-                          if(version==0)
+                          if(subNode.toElement().tagName() == LOGIN_NAME)
                           {
-                              pass = dataNode.toText().data();
-                              forceWrite=true;
+                              dataNode = subNode.firstChild();
+                              if(dataNode.nodeType() == QDomNode::TextNode)
+                                  login = dataNode.toText().data();
                           }
-                          else
-						      pass = QByteArray::fromBase64(dataNode.toText().data().toAscii());
+                          if(subNode.toElement().tagName() == PASS_NAME)
+                          {
+                              dataNode = subNode.firstChild();
+                              if(dataNode.nodeType() == QDomNode::TextNode)
+                              {
+                                  if(version==0)
+                                  {
+                                      pass = dataNode.toText().data();
+                                      forceWrite=true;
+                                  }
+                                  else
+                                      pass = QByteArray::fromBase64(dataNode.toText().data().toAscii());
+                              }
+                          }
+                          if(subNode.toElement().tagName() == ACTIVATED_NAME)
+                          {
+                              dataNode = subNode.firstChild();
+                              if(dataNode.nodeType() == QDomNode::TextNode)
+                                  activated = dataNode.toText().data();
+                          }
+                          if(subNode.toElement().tagName() == POLAR_NAME)
+                          {
+                              dataNode = subNode.firstChild();
+                              if(dataNode.nodeType() == QDomNode::TextNode)
+                              {
+                                  polar = dataNode.toText().data();
+                                  if(polar=="none") polar="";
+                              }
+                          }
+                          if(subNode.toElement().tagName() == LOCK_NAME)
+                          {
+                              dataNode = subNode.firstChild();
+                              if(dataNode.nodeType() == QDomNode::TextNode)
+                                  locked = dataNode.toText().data() == "1";
+                          }
+                          if(subNode.toElement().tagName() == ALIAS_CHK_NAME)
+                          {
+                              dataNode = subNode.firstChild();
+                              if(dataNode.nodeType() == QDomNode::TextNode)
+                                  chk_alias = dataNode.toText().data() == "1";
+                          }
+                          if(subNode.toElement().tagName() == POLAR_CHK_NAME)
+                          {
+                              dataNode = subNode.firstChild();
+                              if(dataNode.nodeType() == QDomNode::TextNode)
+                                  chk_polar = dataNode.toText().data() == "1";
+                          }
+                          if(subNode.toElement().tagName() == ALIAS_NAME)
+                          {
+                              dataNode = subNode.firstChild();
+                              if(dataNode.nodeType() == QDomNode::TextNode)
+                                  alias = dataNode.toText().data();
+                          }
+                          if(subNode.toElement().tagName() == ZOOM_NAME)
+                          {
+                              dataNode = subNode.firstChild();
+                              if(dataNode.nodeType() == QDomNode::TextNode)
+                                  zoom = dataNode.toText().data().toFloat();
+                          }
+                          if(subNode.toElement().tagName() == ESTIME_NAME)
+                          {
+                              dataNode = subNode.firstChild();
+                              if(dataNode.nodeType() == QDomNode::TextNode)
+                                  force_estime = dataNode.toText().data() == "1";
+                          }
+
+                          subNode = subNode.nextSibling();
                       }
-				   }
-                   if(subNode.toElement().tagName() == ACTIVATED_NAME)
-				   {
-					  dataNode = subNode.firstChild();
-                      if(dataNode.nodeType() == QDomNode::TextNode)
-						  activated = dataNode.toText().data();
-				   }
-                   if(subNode.toElement().tagName() == POLAR_NAME)
-                   {
-                      dataNode = subNode.firstChild();
-                      if(dataNode.nodeType() == QDomNode::TextNode)
+                      if(!login.isEmpty() && !pass.isEmpty() && ! activated.isEmpty())
                       {
-                          polar = dataNode.toText().data();
-                          if(polar=="none") polar="";
+                          qWarning() << "Boat info present => create item " <<  login << " state " << activated;
+                          boatAccount * acc = new boatAccount(login,pass,activated == "1",
+                                                              proj,main,parent);
+                          acc->setPolar(chk_polar,polar);
+                          acc->setAlias(chk_alias,alias);
+                          acc->setLockStatus(locked);
+                          acc->setZoom(zoom);
+                          acc->setForceEstime(force_estime);
+                          boat_list.append(acc);
                       }
-                   }
-                   if(subNode.toElement().tagName() == LOCK_NAME)
-                   {
-                      dataNode = subNode.firstChild();
-                      if(dataNode.nodeType() == QDomNode::TextNode)
-                          locked = dataNode.toText().data() == "1";
-                   }
-                   if(subNode.toElement().tagName() == ALIAS_CHK_NAME)
-                   {
-                      dataNode = subNode.firstChild();
-                      if(dataNode.nodeType() == QDomNode::TextNode)
-                          chk_alias = dataNode.toText().data() == "1";
-                   }
-                   if(subNode.toElement().tagName() == POLAR_CHK_NAME)
-                   {
-                      dataNode = subNode.firstChild();
-                      if(dataNode.nodeType() == QDomNode::TextNode)
-                          chk_polar = dataNode.toText().data() == "1";
-                   }
-                   if(subNode.toElement().tagName() == ALIAS_NAME)
-                   {
-                      dataNode = subNode.firstChild();
-                      if(dataNode.nodeType() == QDomNode::TextNode)
-                          alias = dataNode.toText().data();
-                   }
-                   if(subNode.toElement().tagName() == ZOOM_NAME)
-                   {
-                      dataNode = subNode.firstChild();
-                      if(dataNode.nodeType() == QDomNode::TextNode)
-                          zoom = dataNode.toText().data().toFloat();
-                   }
-
-                   
-				   subNode = subNode.nextSibling();
-			  }
-			  if(!login.isEmpty() && !pass.isEmpty() && ! activated.isEmpty())
-			  {
-				   qWarning() << "Boat info present => create item " <<  login << " state " << activated;
-                   boatAccount * acc = new boatAccount(login,pass,activated == "1",
-                    		   proj,main,parent);
-                   acc->setPolar(chk_polar,polar);
-                   acc->setAlias(chk_alias,alias);
-                   acc->setLockStatus(locked);
-                   acc->setZoom(zoom);
-                   boat_list.append(acc);
-			  }
-			  else
-                   qWarning("Incomplete boat info");
-		  }
-		  else if(node.toElement().tagName() == RACE_GROUP_NAME)
-          {
-              subNode = node.firstChild();
-              QString race = "";
-              QString opp_list = "";
-
-              while(!subNode.isNull())
-              {
-                   if(subNode.toElement().tagName() == RACEID_NAME)
-                   {
-                      dataNode = subNode.firstChild();
-                      if(dataNode.nodeType() == QDomNode::TextNode)
-                          race = dataNode.toText().data();
-                   }
-                   if(subNode.toElement().tagName() == OPPLIST_NAME)
-                   {
-                      dataNode = subNode.firstChild();
-                      if(dataNode.nodeType() == QDomNode::TextNode)
-                          opp_list = dataNode.toText().data();
-                   }
-                   subNode = subNode.nextSibling();
-              }
-              if(!race.isEmpty() && !opp_list.isEmpty())
-              {
-                  /* control nb boats*/
-                  QStringList lst=opp_list.split(";");
-                  if(lst.size()>RACE_MAX_BOAT)
-                  {
-                      QMessageBox::warning(this,tr("Paramétrage des courses"),
-                                     tr("Nombre maximum de concurrent dépassé")+" ("+QString().setNum(RACE_MAX_BOAT)+")");
-                      while(lst.size()>RACE_MAX_BOAT)
-                          lst.removeLast();
-                      opp_list=lst.join(";");
+                      else
+                          qWarning("Incomplete boat info");
                   }
-                  
-                  struct raceData * race_data = new raceData();
-                  qWarning() << "Race info present => id " <<  race << " opp list " << opp_list;
-                  race_data->idrace=race;
-                  race_data->oppList=opp_list;
-                  race_list.append(race_data);
-              }
-              else
-                  qWarning("Incomplete race info");
-          }
-          node = node.nextSibling();
-	 }
+                  else if(node.toElement().tagName() == RACE_GROUP_NAME)
+                  {
+                      subNode = node.firstChild();
+                      QString race = "";
+                      QString opp_list = "";
 
-	 if(hasVersion)
-	 {
+                      while(!subNode.isNull())
+                      {
+                          if(subNode.toElement().tagName() == RACEID_NAME)
+                          {
+                              dataNode = subNode.firstChild();
+                              if(dataNode.nodeType() == QDomNode::TextNode)
+                                  race = dataNode.toText().data();
+                          }
+                          if(subNode.toElement().tagName() == OPPLIST_NAME)
+                          {
+                              dataNode = subNode.firstChild();
+                              if(dataNode.nodeType() == QDomNode::TextNode)
+                                  opp_list = dataNode.toText().data();
+                          }
+                          subNode = subNode.nextSibling();
+                      }
+                      if(!race.isEmpty() && !opp_list.isEmpty())
+                      {
+                          /* control nb boats*/
+                          QStringList lst=opp_list.split(";");
+                          if(lst.size()>RACE_MAX_BOAT)
+                          {
+                              QMessageBox::warning(this,tr("Paramétrage des courses"),
+                                                   tr("Nombre maximum de concurrent dépassé")+" ("+QString().setNum(RACE_MAX_BOAT)+")");
+                              while(lst.size()>RACE_MAX_BOAT)
+                                  lst.removeLast();
+                              opp_list=lst.join(";");
+                          }
+
+                          struct raceData * race_data = new raceData();
+                          qWarning() << "Race info present => id " <<  race << " opp list " << opp_list;
+                          race_data->idrace=race;
+                          race_data->oppList=opp_list;
+                          race_list.append(race_data);
+                      }
+                      else
+                          qWarning("Incomplete race info");
+                  }
+                  node = node.nextSibling();
+              }
+
+         if(hasVersion)
+         {
              if(forceWrite)
                  writeBoatData(boat_list,race_list,fname);
              return true;
-	 }
-	 else
-	 {
+         }
+         else
+         {
              qWarning("no version");
              while (!boat_list.isEmpty())
                  delete boat_list.takeFirst();
              return false;
-	 }
+         }
 }
 

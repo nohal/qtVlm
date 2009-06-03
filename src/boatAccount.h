@@ -49,6 +49,7 @@ class boatAccount: public QWidget
         void setLockStatus(bool status);
         void setAlias(bool state,QString alias);
         void setZoom(float zoom)   { this->zoom=zoom; };
+        void setForceEstime(bool force_estime) { this->forceEstime=force_estime;};
 
         void unSelectBoat(void);
 
