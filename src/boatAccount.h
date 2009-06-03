@@ -117,6 +117,8 @@ class boatAccount: public QWidget
         void boatLockStatusChanged(boatAccount*,bool);
         void getTrace(QString,QList<position*> *);
         void WPChanged(float,float);
+        void getPolar(QString fname,Polar ** ptr);
+        void releasePolar(QString fname);
 
     private:
         void createWidget(void);

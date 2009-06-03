@@ -25,14 +25,16 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "Polar.h"
 
-Polar::Polar(QWidget *)
+Polar::Polar()
 {
     loaded=false;
+    nbUsed=0;
 }
 
-Polar::Polar(QString fname,QWidget *)
+Polar::Polar(QString fname)
 {
     loaded=false;
+    nbUsed=0;
     setPolarName(fname);
 }
 
@@ -239,5 +241,80 @@ void Polar::clearPolar(void)
     {
         delete polar_data.last();
         polar_data.removeLast();
+    }
+}
+
+polarList::polarList(void)
+{
+    polars.clear();
+}
+
+polarList::~polarList(void)
+{
+    while(polars.count())
+        delete polars.first();
+    polars.clear();
+}
+
+Polar * polarList::needPolar(QString fname)
+{
+    if(fname=="")
+        return NULL;
+
+    Polar * res=NULL;
+    QListIterator<Polar*> i (polars);
+
+    while(i.hasNext())
+    {
+        Polar * item = i.next();
+        if(item->getName()==fname)
+        {
+            res=item;
+            item->nbUsed++;
+            break;
+        }
+    }
+    if(!res)
+    {
+        res = new Polar(fname);
+        if(res)
+        {
+            res->nbUsed++;
+            polars.append(res);
+        }
+    }
+
+    return res;
+}
+
+void polarList::releasePolar(QString fname)
+{
+    QListIterator<Polar*> i (polars);
+    while(i.hasNext())
+    {
+        Polar * item = i.next();
+        if(item->getName()==fname)
+        {
+            item->nbUsed--;
+            if(item->nbUsed==0)
+            {
+                polars.removeAll(item);
+                delete item;
+            }
+            break;
+        }
+    }
+}
+
+void polarList::stats(void)
+{
+    qWarning() << "Nb polar: " << polars.count();
+    QListIterator<Polar*> i (polars);
+    int k=0;
+    while(i.hasNext())
+    {
+        Polar * item = i.next();
+        qWarning() << k << ": " << item->getName() << "(nb used=" << item->nbUsed << ")";
+        k++;
     }
 }

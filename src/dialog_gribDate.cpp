@@ -35,6 +35,8 @@ dialog_gribDate::dialog_gribDate(QWidget * parent) : QDialog(parent)
 
 void dialog_gribDate::showDialog(time_t current,std::set<time_t>  * listGrib,time_t * result)
 {    
+
+
     if(!result)
         return;
     this->result=result;
@@ -65,11 +67,15 @@ void dialog_gribDate::showDialog(time_t current,std::set<time_t>  * listGrib,tim
     int index=-1;
     int i=0;
     dateList->addItem("");
+
+    qWarning() << "Current " << current;
+
     for (it=listGribDates.begin(); it!=listGribDates.end(); it++)
     {        
         time_t tps = *it;
         QString str = Util::formatDateTimeLong(tps);
         dateList->addItem(str);
+        qWarning() << i << " - tps " << tps;
         if(tps==current)
             index=i;
         i++;
@@ -78,12 +84,14 @@ void dialog_gribDate::showDialog(time_t current,std::set<time_t>  * listGrib,tim
         if(max==-1) max=tps;
         else if(max<tps) max=tps;
     }
+    listIsChanging=true;
     if(index!=-1)
-        dateList->setCurrentIndex(index);
+        dateList->setCurrentIndex(index+1);
     else
         dateList->setCurrentIndex(0);
-    dateParam->setDateTime(dt);
 
+    dateParam->setDateTime(dt);
+    listIsChanging=false;
     dt.setTime_t(min);
     dateParam->setMinimumDateTime(dt);
     dt.setTime_t(max);
@@ -109,11 +117,14 @@ void dialog_gribDate::listChanged(int index)
         QDateTime dt;
         dt.setTimeSpec(Qt::UTC);
         dt.setTime_t(listGribDates[index]);
+        listIsChanging=true;
         dateParam->setDateTime(dt);
+        listIsChanging=false;
     }
 }
 
 void dialog_gribDate::paramChanged(QDateTime)
 {
-    dateList->setCurrentIndex(0);
+    if(!listIsChanging)
+        dateList->setCurrentIndex(0);
 }

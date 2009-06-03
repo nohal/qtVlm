@@ -49,6 +49,7 @@ Copyright (C) 2008 - Jacques Zaninetti - http://zygrib.free.fr
 #include "POI_editor.h"
 #include "Pilototo.h"
 #include "race_dialog.h"
+#include "Polar.h"
 
 class opponentList;
 class raceData;
@@ -138,6 +139,9 @@ class MainWindow: public QMainWindow
 
         void updateNxtVac();
 
+        void getPolar(QString fname,Polar ** ptr);
+        void releasePolar(QString fname);
+
     signals:
         void signalMapQuality(int quality);
         void setChangeStatus(bool);
@@ -219,6 +223,8 @@ class MainWindow: public QMainWindow
 
         Pilototo_instruction * selPOI_instruction;
         bool isSelectingWP;
+
+        polarList * polar_list;
 };
 
 #endif

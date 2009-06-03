@@ -80,6 +80,9 @@ boatAccount::boatAccount(QString login, QString pass, bool activated,Projection 
     connect(this,SIGNAL(getTrace(QString,QList<position*> *)),
              main,SLOT(slotGetTrace(QString,QList<position*> *)));
 
+    connect(this,SIGNAL(getPolar(QString,Polar**)),main,SLOT(getPolar(QString,Polar**)));
+    connect(this,SIGNAL(releasePolar(QString)),main,SLOT(releasePolar(QString)));
+
     /* init http inetManager */
     conn=new inetConnexion(this);
 
@@ -89,6 +92,8 @@ boatAccount::boatAccount(QString login, QString pass, bool activated,Projection 
 boatAccount::~boatAccount()
 {
     disconnect();
+    if(polarData)
+        emit releasePolar(polarData->getName());
 }
 
 void boatAccount::updateInet(void)
@@ -564,18 +569,18 @@ void boatAccount::reloadPolar(void)
         {
             if(polarData!=NULL)
             {
-                delete polarData;
+                emit releasePolar(polarData->getName());
                 polarData=NULL;
             }
-            //qWarning("No User polar to load");
+            //qWarning() << login << " No User polar to load";
             return;
         }
         if(polarData != NULL && polarName == polarData->getName())
             return;
         if(polarData!=NULL)
-            delete polarData;
-        //qWarning() << "Loading forced polar: " << polarName;
-        polarData=new Polar(polarName,mainWindow);
+            emit releasePolar(polarData->getName());
+        //qWarning() << login << " Loading forced polar: " << polarName;
+        emit getPolar(polarName,&polarData);
     }
     else
     {
@@ -583,10 +588,10 @@ void boatAccount::reloadPolar(void)
         {
             if(polarData!=NULL)
             {
-                delete polarData;
+                emit releasePolar(polarData->getName());
                 polarData=NULL;
             }
-            //qWarning("No VLM polar to load");
+            //qWarning() << login << " No VLM polar to load";
             return;
         }
         if(polarData != NULL && polarVlm == polarData->getName())
@@ -594,11 +599,12 @@ void boatAccount::reloadPolar(void)
 
         if(polarData!=NULL)
         {
-            //qWarning() << "Old polar:" << polarData->getName();
-            delete polarData;
+            //qWarning() << login << " Old polar:" << polarData->getName();
+            emit releasePolar(polarData->getName());
+            polarData=NULL;
         }
-        //qWarning() << "Loading polar: " << polarVlm;
-        polarData=new Polar(polarVlm,mainWindow);
+        //qWarning() << login << " Loading polar: " << polarVlm;
+        emit getPolar(polarVlm,&polarData);
     }
 }
 
@@ -606,8 +612,14 @@ void boatAccount::setPolar(bool state,QString polar)
 {
     this->polarName=polar;
     forcePolar=state;
+    if(activated)
+        reloadPolar();
+    else if(polarData)
+    {
+        emit releasePolar(polarData->getName());
+        polarData=NULL;
+    }
 
-    reloadPolar();
 }
 
 void boatAccount::setLockStatus(bool status)

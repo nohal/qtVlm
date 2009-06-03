@@ -28,12 +28,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 class Polar : public QObject
 {Q_OBJECT
     public:
-        Polar(QWidget *parentWindow);
-        Polar(QString fname,QWidget *parentWindow);
+        Polar(void);
+        Polar(QString fname);
 
-        void setPolarName(QString fname);
         QString getName() { if(loaded) return name; else return ""; }
         float getSpeed(float windSpeed, float angle);
+
+        int nbUsed;
 
     private:
         QList<float*> polar_data;
@@ -44,7 +45,23 @@ class Polar : public QObject
         int windAngle_min,windAngle_max,windAngle_step;
 
         void clearPolar(void);
+        void setPolarName(QString fname);
         void printPolar(void);
+};
+
+class polarList : public QObject
+{ Q_OBJECT
+    public:
+        polarList(void);
+        ~polarList(void);
+
+        Polar * needPolar(QString fname);
+        void releasePolar(QString fname);
+
+        void stats(void);
+
+    private:
+        QList<Polar*> polars;
 };
 
 #endif

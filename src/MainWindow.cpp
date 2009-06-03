@@ -363,57 +363,59 @@ MainWindow::MainWindow(int w, int h, QWidget *parent)
     //---------------------------------------------------------
     // VLM init
     //---------------------------------------------------------
+    /* list of polar structure */
+    polar_list = new polarList();
 
-      /* read boat Data */
-      xmlData = new xml_boatData(proj,this,terre);
-      xmlData->readBoatData(acc_list,race_list,"boatAcc.dat");
+    /* read boat Data */
+    xmlData = new xml_boatData(proj,this,terre);
+    xmlData->readBoatData(acc_list,race_list,"boatAcc.dat");
 
-      boatAcc = new boatAccount_dialog(proj,this,terre);
+    boatAcc = new boatAccount_dialog(proj,this,terre);
 
-      param = new paramVLM(terre);
-      poi_input_dialog = new POI_input(terre);
-      selPOI_instruction=NULL;
-      isSelectingWP=false;
+    param = new paramVLM(terre);
+    poi_input_dialog = new POI_input(terre);
+    selPOI_instruction=NULL;
+    isSelectingWP=false;
 
-      terre->setBoatList(acc_list);
-      menuBar->updateBoatList(acc_list);
+    terre->setBoatList(acc_list);
+    menuBar->updateBoatList(acc_list);
 
-      VLMBoard = new boardVLM(this);
-      connect(this,SIGNAL(boatHasUpdated(boatAccount*)),
-              VLMBoard,SLOT(boatUpdated(boatAccount*)));
-      //VLMBoard->updateBoatList(acc_list);
+    VLMBoard = new boardVLM(this);
+    connect(this,SIGNAL(boatHasUpdated(boatAccount*)),
+            VLMBoard,SLOT(boatUpdated(boatAccount*)));
+    //VLMBoard->updateBoatList(acc_list);
 
 
 
-      connect(param,SIGNAL(paramVLMChanged()),VLMBoard,SLOT(paramChanged()));
+    connect(param,SIGNAL(paramVLMChanged()),VLMBoard,SLOT(paramChanged()));
 
-      connect(param,SIGNAL(paramVLMChanged()),this,SLOT(slotParamChanged()));
-      connect(param, SIGNAL(inetUpdated()), this, SLOT(slotInetUpdated()));
+    connect(param,SIGNAL(paramVLMChanged()),this,SLOT(slotParamChanged()));
+    connect(param, SIGNAL(inetUpdated()), this, SLOT(slotInetUpdated()));
 
-      connect(poi_input_dialog,SIGNAL(addPOI(float,float,float,int,bool)),
-              this,SLOT(slotAddPOI(float,float,float,int,bool)));
+    connect(poi_input_dialog,SIGNAL(addPOI(float,float,float,int,bool)),
+            this,SLOT(slotAddPOI(float,float,float,int,bool)));
 
-      poi_editor=new POI_Editor(this,terre);
+    poi_editor=new POI_Editor(this,terre);
 
-      pilototo = new Pilototo(this,terre);
-      connect(this,SIGNAL(editInstructions()),
-              pilototo,SLOT(editInstructions()));
-      connect(this,SIGNAL(editInstructionsPOI(Pilototo_instruction * ,POI * )),
-              pilototo,SLOT(editInstructionsPOI(Pilototo_instruction * ,POI * )));
-      connect(this,SIGNAL(boatHasUpdated(boatAccount*)),
-              pilototo,SLOT(boatUpdated(boatAccount*)));
+    pilototo = new Pilototo(this,terre);
+    connect(this,SIGNAL(editInstructions()),
+            pilototo,SLOT(editInstructions()));
+    connect(this,SIGNAL(editInstructionsPOI(Pilototo_instruction * ,POI * )),
+            pilototo,SLOT(editInstructionsPOI(Pilototo_instruction * ,POI * )));
+    connect(this,SIGNAL(boatHasUpdated(boatAccount*)),
+            pilototo,SLOT(boatUpdated(boatAccount*)));
 
-      raceParam = new race_dialog(this, terre);
-      opponents = new opponentList(proj,this,terre);
+    raceParam = new race_dialog(this, terre);
+    opponents = new opponentList(proj,this,terre);
 
-      connect(this,SIGNAL(getTrace(QString,QList<position*> *)),
-                           opponents,SLOT(getTrace(QString,QList<position*> *)));
-      terre->setOpponents(opponents);
+    connect(this,SIGNAL(getTrace(QString,QList<position*> *)),
+            opponents,SLOT(getTrace(QString,QList<position*> *)));
+    terre->setOpponents(opponents);
 
-      timer = new QTimer(this);
-      timer->setSingleShot(false);
-      nxtVac_cnt=0;
-      connect(timer,SIGNAL(timeout()),this, SLOT(updateNxtVac()));
+    timer = new QTimer(this);
+    timer->setSingleShot(false);
+    nxtVac_cnt=0;
+    connect(timer,SIGNAL(timeout()),this, SLOT(updateNxtVac()));
     //---------------------------------------------------------
     // Active les actions
     //---------------------------------------------------------
@@ -764,6 +766,10 @@ void MainWindow::updatePrevNext(void)
 void MainWindow::slotDateGribChanged_now()
 {
     time_t tps=QDateTime::currentDateTime().toUTC().toTime_t();
+    time_t min=terre->getGrib()->getMinDate();
+    time_t max=terre->getGrib()->getMaxDate();
+    if(tps<min) tps=min;
+    if(tps>max) tps=max;
     terre->setCurrentDate( tps );
     updatePrevNext();
 }
@@ -1448,4 +1454,20 @@ void MainWindow::slotNewZoom(float zoom)
 void MainWindow::slotGetTrace(QString buff,QList<position*> * trace)
 {
     emit getTrace(buff,trace);
+}
+
+
+void MainWindow::getPolar(QString fname,Polar ** ptr)
+{
+    if(ptr)
+    {
+        *ptr=polar_list->needPolar(fname);
+    }    
+    //polar_list->stats();
+}
+
+void MainWindow::releasePolar(QString fname)
+{
+    polar_list->releasePolar(fname);
+    //polar_list->stats();
 }

@@ -44,6 +44,7 @@ class dialog_gribDate : public QDialog, public Ui::dialog_gribDate_ui
         std::vector<time_t> listGribDates;
         time_t startTime;
         time_t * result;
+        bool listIsChanging;
 };
 
 #endif // DIALOG_GRIBDATE_H
