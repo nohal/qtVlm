@@ -47,7 +47,6 @@ class Grib
         ~Grib();
         
         void  loadGribFile(QString fileName);
-        void  openFile();
         bool  isOk()                 {return ok;}
         long  getFileSize()          {return fileSize;}
         std::string getFileName()    {return fname;}
@@ -77,12 +76,12 @@ class Grib
         // Rectangle de la zone couverte par les données
         bool getZoneExtension (double *x0,double *y0, double *x1,double *y1);
 
-        void        setCurrentDate(time_t t);
+        void setCurrentDate(time_t t) { currentDate = t; }
         time_t      getCurrentDate()         {return currentDate;}
 
         // Carte de couleurs du vent
         void draw_WIND_Color(QPainter &pnt, const Projection *proj, bool smooth,
-                               bool showWindColorMap, bool showWindArrows,bool barbules, QColor arrowsColor);
+                               bool showWindColorMap, bool showWindArrows,bool barbules);
         void drawCartouche(QPainter &pnt);
 
         enum GribFileDataStatus { DATA_IN_FILE, NO_DATA_IN_FILE, COMPUTED_DATA };
@@ -109,8 +108,6 @@ class Grib
         void clean_all_vectors();
         std::vector<GribRecord *> * getFirstNonEmptyList();
 
-
-
         QString 	fileName;
 
         time_t  	currentDate;
@@ -120,8 +117,6 @@ class Grib
         QColor windColor[14];        // couleur selon la force du vent en beauforts
         QColor rainColor[17];
         int    mapColorTransp;
-
-        QColor windArrowColor;        // couleur des flèches du vent
 
         int    windArrowSpace;        // distance mini entre flèches (pixels)
         int    windArrowSpaceOnGrid;  // distance mini entre flèches si affichage sur grille
@@ -149,8 +144,7 @@ class Grib
         void drawWindArrowWithBarbs(
                                 QPainter &pnt, int i, int j,
                                 double vkn, double ang,
-                                bool south,
-                                QColor arrowColor=Qt::white);
+                                bool south);
 
         void drawTransformedLine( QPainter &pnt,
                 double si, double co,int di, int dj, int i,int j, int k,int l);

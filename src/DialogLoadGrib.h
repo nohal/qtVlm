@@ -33,7 +33,6 @@ Copyright (C) 2008 - Jacques Zaninetti - http://zygrib.free.fr
 #include <QCheckBox>
 #include <QComboBox>
 #include <QPushButton>
-#include <QProgressBar>
 #include <QFileDialog>
 #include <QTime>
 
@@ -54,7 +53,6 @@ class DialogLoadGrib : public QDialog
         void slotBtCancel();
         void slotBtServerStatus();
         void slotGribDataReceived(QByteArray *content, QString fileName);
-        void slotGribReadProgress(int step, int done, int total);
         void slotGribFileError(QString error);
         void slotGribMessage(QString msg);
         void slotGribStartLoadData();
@@ -77,17 +75,10 @@ class DialogLoadGrib : public QDialog
         QComboBox *cbInterval;
         QComboBox *cbDays;
 
-        QCheckBox *chkWind;
-        QCheckBox *chkPressure;
-#ifdef HAS_TEMP
-        QCheckBox *chkTemp;
-#endif
-
         QPushButton *btOK;
         QPushButton *btCancel;
         QPushButton *btServerStatus;
 
-        QProgressBar *progressBar;
         QLabel       *labelMsg;
 
         QFrame *createFrameButtonsZone(QWidget *parent);

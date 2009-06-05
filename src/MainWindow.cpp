@@ -58,11 +58,6 @@ void MainWindow::InitActionsStatus()
     menuBar->acView_ColorMapSmooth->setChecked(Util::getSetting("colorMapSmooth", true).toBool());
     menuBar->acView_WindArrow->setChecked(Util::getSetting("showWindArrows", true).toBool());
     menuBar->acView_Barbules->setChecked(Util::getSetting("showBarbules", true).toBool());
-
-    menuBar->acView_GribGrid->setChecked(Util::getSetting("showGribGrid", false).toBool());
-
-    menuBar->acMap_CountriesNames->setChecked(Util::getSetting("showCountriesNames", false).toBool());
-
     menuBar->setCitiesNamesLevel(Util::getSetting("showCitiesNamesLevel", 0).toInt());
     terre->setCitiesNamesLevel(Util::getSetting("showCitiesNamesLevel", 0).toInt());
 
@@ -158,8 +153,6 @@ void MainWindow::connectSignals()
             this,  SLOT(slotWindArrows(bool)));
     connect(mb->acView_Barbules, SIGNAL(triggered(bool)),
             terre,  SLOT(setBarbules(bool)));
-    connect(mb->acView_GribGrid, SIGNAL(triggered(bool)),
-            terre,  SLOT(setGribGrid(bool)));
 
     //-------------------------------------------------------
     connect(mb->acOptions_Units, SIGNAL(triggered()), &dialogUnits, SLOT(exec()));
@@ -1110,7 +1103,7 @@ void MainWindow::slotBoatUpdated(boatAccount * boat,bool newRace)
 
 void MainWindow::slotVLM_Test(void)
 {
-    //oppLst->setBoatList("7802;7985;8025;8047;8833;9325","20080302");
+    qWarning() << "Testing";
 }
 
 void MainWindow::slotSelectPOI(Pilototo_instruction * instruction)
@@ -1470,4 +1463,9 @@ void MainWindow::releasePolar(QString fname)
 {
     polar_list->releasePolar(fname);
     //polar_list->stats();
+}
+
+void MainWindow::chkVLMGrib(void)
+{
+
 }

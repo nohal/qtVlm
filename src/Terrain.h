@@ -97,8 +97,6 @@ public slots :
     void setColorMapSmooth (bool);
     void setDrawWindArrows    (bool);
     void setBarbules          (bool);
-
-    void setGribGrid          (bool);
     void setCitiesNamesLevel  (int level);
 
     void slotTimerResize();
@@ -181,7 +179,6 @@ private:
     bool  colorMapSmooth;
     bool  showWindArrows;
     bool  showBarbules;
-    bool  showGribGrid;    
     int   showCitiesNamesLevel;
     bool  showCountriesNames;
 

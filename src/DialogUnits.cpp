@@ -71,10 +71,6 @@ DialogUnits::DialogUnits() : QDialog()
     ind = (tunit=="") ? 0 : cbWindSpeedUnit->findText(tunit);
     cbWindSpeedUnit->setCurrentIndex( ind );
 
-    tunit = Util::getSetting("unitsTemp",   "").toString();
-    ind = (tunit=="") ? 0 : cbTempUnit->findText(tunit);
-    cbTempUnit->setCurrentIndex( ind );
-
     tunit = Util::getSetting("unitsPosition", "").toString();
     ind = (tunit=="") ? 0 : cbPositionUnit->findText(tunit);
     cbPositionUnit->setCurrentIndex( ind );
@@ -99,23 +95,19 @@ DialogUnits::DialogUnits() : QDialog()
 //-------------------------------------------------------------------------------
 void DialogUnits::slotBtOK()
 {
-	QComboBox *cb;
-	
-	cb = cbWindSpeedUnit;
+    QComboBox *cb;
+
+    cb = cbWindSpeedUnit;
     Util::setSetting("unitsWindSpeed", cb->itemData(cb->currentIndex()).toString());
-    cb = cbTempUnit;
-    Util::setSetting("unitsTemp",      cb->itemData(cb->currentIndex()).toString());
     cb = cbPositionUnit;
     Util::setSetting("unitsPosition",  cb->itemData(cb->currentIndex()).toString());
     cb = cbDistanceUnit;
     Util::setSetting("unitsDistance",  cb->itemData(cb->currentIndex()).toString());
 
- 	cb = cbLongitude;
+    cb = cbLongitude;
     Util::setSetting("longitudeDirection",  cb->itemData(cb->currentIndex()).toString());
     cb = cbLatitude;
     Util::setSetting("latitudeDirection",  cb->itemData(cb->currentIndex()).toString());
-
-    
     accept();
 }
 //-------------------------------------------------------------------------------
@@ -144,16 +136,6 @@ QFrame *DialogUnits::createFrameGui(QWidget *parent)
     cbWindSpeedUnit->addItem( tr("nœuds"), "nœuds");
     cbWindSpeedUnit->setMinimumWidth (sizemin);
     lay->addWidget( cbWindSpeedUnit, lig,1, Qt::AlignLeft);
-    //-------------------------
-    lig ++;
-    label = new QLabel(tr("Température :"), frm);
-    lay->addWidget( label,    lig,0, Qt::AlignRight);
-    cbTempUnit = new QComboBox(this);
-    cbTempUnit->addItem( tr("°C"),  "°C");
-    cbTempUnit->addItem( tr("°F"),  "°F");
-    cbTempUnit->addItem( tr("°K"),  "°K");
-    cbTempUnit->setMinimumWidth (sizemin);
-    lay->addWidget( cbTempUnit, lig,1, Qt::AlignLeft);
     //-------------------------
     lig ++;
     label = new QLabel(tr("Distances :"), frm);

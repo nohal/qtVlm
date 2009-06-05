@@ -257,9 +257,7 @@ bool xml_POIData::readData(QList<POI*> & poi_list,QString fname)
                       if(dataNode.nodeType() == QDomNode::TextNode)
                           lat = dataNode.toText().data().toFloat();
                    }
-#warning should remove LON_NAME_OLD in a while
-                   if(subNode.toElement().tagName() == LON_NAME
-                      || subNode.toElement().tagName() == LON_NAME_OLD)
+                   if(subNode.toElement().tagName() == LON_NAME)
                    {
                       dataNode = subNode.firstChild();
                       if(dataNode.nodeType() == QDomNode::TextNode)
@@ -277,27 +275,19 @@ bool xml_POIData::readData(QList<POI*> & poi_list,QString fname)
                       if(dataNode.nodeType() == QDomNode::TextNode)
                           type = dataNode.toText().data().toInt();
                    }
-#warning should remove V0 part
-                    if(hasVersion && version==0)
-                    {
-                        tstamp=-1;
-                        useTstamp=false;
-                    }
-                    else
-                    {
-                        if(subNode.toElement().tagName() == TSTAMP_NAME)
-                        {
-                            dataNode = subNode.firstChild();
-                            if(dataNode.nodeType() == QDomNode::TextNode)
-                                tstamp = dataNode.toText().data().toInt();
-                        }
-                        if(subNode.toElement().tagName() == USETSTAMP_NAME)
-                        {
-                            dataNode = subNode.firstChild();
-                            if(dataNode.nodeType() == QDomNode::TextNode)
-                                useTstamp = dataNode.toText().data().toInt()==1;
-                        }
-                    }
+
+                   if(subNode.toElement().tagName() == TSTAMP_NAME)
+                   {
+                       dataNode = subNode.firstChild();
+                       if(dataNode.nodeType() == QDomNode::TextNode)
+                           tstamp = dataNode.toText().data().toInt();
+                   }
+                   if(subNode.toElement().tagName() == USETSTAMP_NAME)
+                   {
+                       dataNode = subNode.firstChild();
+                       if(dataNode.nodeType() == QDomNode::TextNode)
+                           useTstamp = dataNode.toText().data().toInt()==1;
+                   }
 
                    subNode = subNode.nextSibling();
               }

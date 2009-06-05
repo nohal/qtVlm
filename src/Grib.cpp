@@ -180,29 +180,9 @@ void Grib::readAllGribRecords()
             if (firstdate== -1)
                 firstdate = rec->getRecordCurrentDate();
             
-            if (//-----------------------------------------
-                    ( (rec->getDataType()==GRB_WIND_VX || rec->getDataType()==GRB_WIND_VY)
+            if ((rec->getDataType()==GRB_WIND_VX || rec->getDataType()==GRB_WIND_VY)
                       && rec->getLevelType()==LV_ABOV_GND && rec->getLevelValue()==10)
-                    || ( (rec->getDataType()==GRB_WIND_VX || rec->getDataType()==GRB_WIND_VY)
-                         && rec->getLevelType()==LV_ISOBARIC
-                         && (   rec->getLevelValue()==850
-                                || rec->getLevelValue()==700
-                                || rec->getLevelValue()==500
-                                || rec->getLevelValue()==300 ) )
-                    )
-            {
                 storeRecordInMap(rec);
-            }
-#if 0
-            else
-            {
-                qWarning(stderr,
-                        "unknown record type: key=%s  idCenter==%d && idModel==%d && idGrid==%d\n",
-                        rec->getKey().c_str(),
-                        rec->getIdCenter(), rec->getIdModel(), rec->getIdGrid()
-                        );
-            }
-#endif
         }
         else {    // ! rec-isOk
             delete rec;
@@ -538,16 +518,6 @@ void Grib::createListDates()
     }
 }
 
-//-------------------------------------------------------------------------------
-// Lecture complète d'un fichier GRIB
-//-------------------------------------------------------------------------------
-void Grib::openFile()
-{
-
-}
-
-
-
 /* Plot */
 //--------------------------------------------------------------------------
 QRgb Grib::getWindColor(double v, bool smooth)
@@ -574,17 +544,11 @@ QRgb Grib::getWindColor(double v, bool smooth)
     return rgb;
 }
 
-//----------------------------------------------------
-void Grib::setCurrentDate(time_t t)
-{
-    currentDate = t;
-}
-
 //--------------------------------------------------------------------------
 // Carte de couleurs du vent
 //--------------------------------------------------------------------------
 void Grib::draw_WIND_Color(QPainter &pnt, const Projection *proj, bool smooth,
-                               bool showWindColorMap, bool showWindArrows,bool barbules, QColor arrowsColor)
+                               bool showWindColorMap, bool showWindArrows,bool barbules)
 {
 
     int i, j, k, l;
@@ -606,9 +570,6 @@ void Grib::draw_WIND_Color(QPainter &pnt, const Projection *proj, bool smooth,
 
     if(!getInterpolationParam(currentDate,&t1,&t2,&recU1,&recV1,&recU2,&recV2))
         return;
-
-    #warning we should remove this useless class property
-    windArrowColor=arrowsColor;
 
     if(showWindArrows)
     {
@@ -693,7 +654,7 @@ void Grib::draw_WIND_Color(QPainter &pnt, const Projection *proj, bool smooth,
                 if(u==-1)
                     continue;
                 if (barbules)
-                    drawWindArrowWithBarbs(pnt, i*space,j*space, u,v, y_tab[i*H_s+j], arrowsColor);
+                    drawWindArrowWithBarbs(pnt, i*space,j*space, u,v, y_tab[i*H_s+j]);
                 else
                     drawWindArrow(pnt, i,j, v);
 
@@ -746,7 +707,7 @@ void Grib::drawWindArrow(QPainter &pnt, int i, int j, double ang)
 {
     ang-=PI_2;
     double si=sin(ang),  co=cos(ang);
-    QPen pen( windArrowColor);
+    QPen pen( QColor(255, 255, 255));
     pen.setWidth(2);
     pnt.setPen(pen);
     drawTransformedLine(pnt, si,co, i-windArrowSize/2,j,  0,0, windArrowSize, 0);   // hampe
@@ -758,14 +719,12 @@ void Grib::drawWindArrow(QPainter &pnt, int i, int j, double ang)
 void Grib::drawWindArrowWithBarbs(
                         QPainter &pnt,
                         int i, int j, double vkn, double ang,
-                        bool south,
-                        QColor arrowColor
-        )
+                        bool south)
 {
     ang-=PI_2;
     double si=sin(ang),  co=cos(ang);
 
-    QPen pen( arrowColor);
+    QPen pen( QColor(255,255,255));
     pen.setWidth(2);
     pnt.setPen(pen);
     pnt.setBrush(Qt::NoBrush);

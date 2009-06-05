@@ -48,8 +48,7 @@ class LoadGribFile : public QObject
 
         void getGribFile(
                     float x0, float y0, float x1, float y1,
-                    float resolution, int interval, int days,
-                    bool wind, bool pressure, bool rain, bool cloud, bool temp, bool humid);
+                    float resolution, int interval, int days);
         void stop();
 
     private:
@@ -72,11 +71,9 @@ class LoadGribFile : public QObject
 
     public slots:
         void requestFinished (QNetworkReply*);
-        void dataReadProgress (qint64 done, qint64 total );
 
     signals:
         void signalGribDataReceived(QByteArray *content, QString);
-        void signalGribReadProgress(int step, int done, int total);
         void signalGribSendMessage(QString msg);
         void signalGribStartLoadData();
         void signalGribLoadError(QString msg);

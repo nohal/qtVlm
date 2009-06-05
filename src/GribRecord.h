@@ -111,10 +111,6 @@ class GribRecord
         zuchar  getLevelType() const   { return levelType; }
         zuint   getLevelValue() const  { return levelValue; }
         
-        //-----------------------------------------
-		void    translateDataType();  // adapte les codes des différents centres météo
-        //-----------------------------------------
-        
         zuchar   getIdCenter() const  { return idCenter; }
         zuchar   getIdModel() const   { return idModel; }
         zuchar   getIdGrid() const    { return idGrid; }
@@ -263,7 +259,6 @@ class GribRecord
         
         time_t makeDate(zuint year,zuint month,zuint day,zuint hour,zuint min,zuint sec);
         zuint  periodSeconds(zuchar unit, zuchar P1, zuchar P2, zuchar range);
-        void   multiplyAllData(double k);
 
 
 };

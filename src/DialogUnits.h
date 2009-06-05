@@ -53,7 +53,6 @@ class DialogUnits : public QDialog
         QPushButton *btCancel;
 
         QComboBox *cbWindSpeedUnit;
-        QComboBox *cbTempUnit;
         QComboBox *cbPositionUnit;
         QComboBox *cbDistanceUnit;
         

@@ -63,7 +63,6 @@ Terrain::Terrain(QWidget *parent, Projection *proj_)
     colorMapSmooth = Util::getSetting("colorMapSmooth", true).toBool();
     showWindArrows  = Util::getSetting("showWindArrows", true).toBool();
     showBarbules = Util::getSetting("showBarbules", true).toBool();
-    showGribGrid = Util::getSetting("showGribGrid", false).toBool();
     //----------------------------------------------------------------------------
 
     imgEarth = NULL;
@@ -171,10 +170,8 @@ bool Terrain::draw_GSHHSandGRIB(QPainter &pntGlobal)
             //===================================================
             // Dessin des données GRIB
             //===================================================
-#warning remove this class property
-            windArrowsColor.setRgb(255, 255, 255);
 
-            grib->draw_WIND_Color(pnt, proj, colorMapSmooth,showWindColorMap,showWindArrows,showBarbules, windArrowsColor);
+            grib->draw_WIND_Color(pnt, proj, colorMapSmooth,showWindColorMap,showWindArrows,showBarbules);
 
             //===================================================
             // Dessin des bordures et frontières
@@ -521,15 +518,6 @@ void Terrain::setBarbules (bool b) {
     if (showBarbules != b) {
         showBarbules = b;
         Util::setSetting("showBarbules", b);
-        mustRedraw = true;
-        update();
-    }
-}
-//-------------------------------------------------------
-void Terrain::setGribGrid (bool b) {
-    if (showGribGrid != b) {
-        showGribGrid = b;
-        Util::setSetting("showGribGrid", b);
         mustRedraw = true;
         update();
     }

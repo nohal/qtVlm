@@ -141,6 +141,7 @@ class MainWindow: public QMainWindow
 
         void getPolar(QString fname,Polar ** ptr);
         void releasePolar(QString fname);
+        void chkVLMGrib(void);
 
     signals:
         void signalMapQuality(int quality);

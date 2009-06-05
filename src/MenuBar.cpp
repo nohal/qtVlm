@@ -61,9 +61,6 @@ MenuBar::MenuBar(QWidget *parent)
                     tr("Afficher les flèches de direction du vent"));
         acView_Barbules = addActionCheck(menuView, tr("Barbules"), tr(""),
                     tr("Afficher les barbules sur les flèches de vent"));
-        menuView->addSeparator();
-        acView_GribGrid = addActionCheck(menuView, tr("Grille GRIB"), tr(""),
-                            tr("Montrer les positions des données du fichier GRIB"));
     addMenu(menuView);
 
     //-------------------------------------

@@ -67,81 +67,48 @@ void LoadGribFile::stop () {
 }
 
 //-------------------------------------------------------------------------------
-void LoadGribFile::dataReadProgress (qint64 done , qint64  total)
-{
-    emit signalGribReadProgress(step, done, total);
-}
-
-//-------------------------------------------------------------------------------
 void LoadGribFile::getGribFile(
         float x0, float y0, float x1, float y1,
-        float resolution, int interval, int days,
-        bool wind, bool pressure, bool rain, bool cloud, bool temp, bool humid)
+        float resolution, int interval, int days)
 {
     QString page;
-
-    
 
     //----------------------------------------------------------------
     // Etape 1 : Demande la création du fichier Grib (nom en retour)
     //----------------------------------------------------------------
-    QString parameters = "";
-    if (wind) {
-        parameters += "W";
-    }
-    if (pressure) {
-        parameters += "P";
-    }
-    if (rain) {
-        parameters += "R";
-    }
-    if (cloud) {
-        parameters += "C";
-    }
-    if (temp) {
-        parameters += "T";
-    }
-    if (humid) {
-        parameters += "H";
-    }
 
-    if (parameters != "")
-    {
-        Util::paramProxy(inetManager,host);
+    Util::paramProxy(inetManager,host);
 
-        step = 1;
-        emit signalGribSendMessage(tr("Préparation du fichier sur le serveur"));
-        emit signalGribReadProgress(step, 0, 0);
-        QTextStream(&page)
-                           << host
-                           << "/noaa/getzygribfile.php?"
-                           << "but=prepfile"
-                           << "&la1=" << floor(y0)
-                           << "&la2=" << ceil(y1)
-                           << "&lo1=" << floor(x0)
-                           << "&lo2=" << ceil(x1)
-                           << "&res=" << resolution
-                           << "&hrs=" << interval
-                           << "&jrs=" << days
-                           << "&par=" << parameters
-                           << "&l=" << zygriblog
-                           << "&m=" << zygribpwd
-                           << "&client=" << "zyGrib-3.0.0"
-                           ;
-        step1_InetReply=step2_InetReply=NULL;
-        QNetworkRequest request;
-        request.setUrl(QUrl(page));
-        Util::addAgent(request);   
-        step1_InetReply=inetManager->get(request);
-        connect(step1_InetReply,SIGNAL(downloadProgress(qint64 , qint64)),this, SIGNAL(dataReadProgress (qint64,qint64)));
-    }
+    step = 1;
+    emit signalGribSendMessage(tr("Préparation du fichier sur le serveur"));
+    QTextStream(&page)
+            << host
+            << "/noaa/getzygribfile.php?"
+            << "but=prepfile"
+            << "&la1=" << floor(y0)
+            << "&la2=" << ceil(y1)
+            << "&lo1=" << floor(x0)
+            << "&lo2=" << ceil(x1)
+            << "&res=" << resolution
+            << "&hrs=" << interval
+            << "&jrs=" << days
+            << "&par=W"
+            << "&l=" << zygriblog
+            << "&m=" << zygribpwd
+            << "&client=" << "zyGrib-3.0.0"
+            ;
+    step1_InetReply=step2_InetReply=NULL;
+    QNetworkRequest request;
+    request.setUrl(QUrl(page));
+    Util::addAgent(request);
+    step1_InetReply=inetManager->get(request);
+
     // Suite de la séquence de récupération dans requestFinished()
 }
 
 //-------------------------------------------------------------------------------
 void LoadGribFile::requestFinished ( QNetworkReply* inetReply)
 {
-    disconnect(inetReply,SIGNAL(downloadProgress(qint64 , qint64)),this, SIGNAL(dataReadProgress (qint64,qint64)));
     QString page;
     if (inetReply->error() != QNetworkReply::NoError) {
         emit signalGribLoadError(QString("Http error: %1 (step=%2)").arg(inetReply->error()).arg(step));
@@ -186,7 +153,6 @@ gfs_run_hour:6
         if (status == "ok") {
             step = 2;
             emit signalGribSendMessage(tr("GetFileContent"));
-            emit signalGribReadProgress(0, 0, fileSize);
             QString s;
             s = tr("Taille totale : ") + s.sprintf("%d",fileSize/1024) + " ko";
             emit signalGribSendMessage(s);
@@ -201,8 +167,7 @@ gfs_run_hour:6
             QNetworkRequest request;
             request.setUrl(QUrl(page));
             Util::addAgent(request);               
-            step2_InetReply=inetManager->get(request);;
-            connect(step2_InetReply,SIGNAL(downloadProgress(qint64 , qint64)),this, SIGNAL(dataReadProgress (qint64,qint64)));
+            step2_InetReply=inetManager->get(request);
         }
         else {
             emit signalGribLoadError(tr("Pas de fichier créé sur le serveur:")+status);

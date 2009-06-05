@@ -74,7 +74,6 @@ public:
 
     QAction *acView_WindArrow;
     QAction *acView_Barbules;
-    QAction *acView_GribGrid;
 
     QAction *acMap_Orthodromie;
     QAction *acMap_Rivers;

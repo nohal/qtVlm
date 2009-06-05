@@ -106,7 +106,6 @@ void race_dialog::initList(QList<boatAccount*> & acc_list_ptr,QList<raceData*> &
     /* get boat list */
     if(currentRequest != RACE_NO_REQUEST)
     {
-#warning mettre un message d erreur
         qWarning() << "request already running";
         return;
     }

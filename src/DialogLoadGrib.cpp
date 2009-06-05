@@ -42,12 +42,6 @@ DialogLoadGrib::DialogLoadGrib() : QDialog()
     loadInProgress = false;
     QFrame * frameButtonsZone = createFrameButtonsZone(this);
 
-    pressure = true;
-    wind = true;
-#ifdef HAS_TEMP
-    temp = true;
-#endif
-
     QGridLayout  *lay = new QGridLayout(this);
     assert(lay);
     lay->addWidget( frameButtonsZone,1,0, Qt::AlignLeft);
@@ -58,8 +52,6 @@ DialogLoadGrib::DialogLoadGrib() : QDialog()
 
     connect(loadgrib, SIGNAL(signalGribDataReceived(QByteArray *, QString)),
             this,  SLOT(slotGribDataReceived(QByteArray *, QString)));
-    connect(loadgrib, SIGNAL(signalGribReadProgress(int, int, int)),
-            this,  SLOT(slotGribReadProgress(int, int, int)));
     connect(loadgrib, SIGNAL(signalGribLoadError(QString)),
             this,  SLOT(slotGribFileError(QString)));
     connect(loadgrib, SIGNAL(signalGribSendMessage(QString)),
@@ -83,16 +75,6 @@ DialogLoadGrib::DialogLoadGrib() : QDialog()
             this,  SLOT(slotParameterUpdated()));
     connect(cbDays, SIGNAL(activated(int)),
             this,  SLOT(slotParameterUpdated()));
-    
-    connect(chkWind, SIGNAL(stateChanged(int)),
-            this,  SLOT(slotParameterUpdated()));
-    connect(chkPressure, SIGNAL(stateChanged(int)),
-            this,  SLOT(slotParameterUpdated()));
-#ifdef HAS_TEMP
-    connect(chkTemp, SIGNAL(stateChanged(int)),
-            this,  SLOT(slotParameterUpdated()));
-#endif
-                
 }
 
 //-------------------------------------------------------------------------------
@@ -147,7 +129,6 @@ void DialogLoadGrib::slotGribDataReceived(QByteArray *content, QString fileName)
         loadInProgress = false;
         btCancel->setText(tr("Annuler"));
         btOK->setEnabled(true);
-        slotGribReadProgress(1,0,100);
     }
 }
 
@@ -172,31 +153,6 @@ void DialogLoadGrib::slotGribFileError(QString error)
 void DialogLoadGrib::slotGribStartLoadData()
 {
     timeLoad.start();
-}
-
-//----------------------------------------------------
-void DialogLoadGrib::slotGribReadProgress(int step, int done, int total)
-{
-    if (step < 2) {
-        progressBar->setRange(0,1000);
-        progressBar->setValue(step);
-    }
-    else {
-        progressBar->setRange(0,total);
-        progressBar->setValue(done);
-/****
-        // temps estimé
-        int elapsed = timeLoad.elapsed();
-        QTime duree(0,0);
-        duree = duree.addMSecs(elapsed);
-        QString eta = duree.toString("HH:mm:ss");
-     ****/
-        
-        slotGribMessage(tr("Taille : %1 ko    Reçus : %2 ko ")
-                .arg( total/1024 )
-                .arg( done/1024 )
-        );
-    }
 }
 
 //-------------------------------------------------------------------------------
@@ -236,22 +192,10 @@ void DialogLoadGrib::updateParameters()
         ymin = ym + 2*resolution;
         ymax = ym - 2*resolution;
     }
-
-    wind     = chkWind->isChecked();
-    pressure = chkPressure->isChecked();
-#ifdef HAS_TEMP
-    temp     = chkTemp->isChecked();
-#endif
 	
 	Util::setSetting("downloadIndResolution", cbResolution->currentIndex());
 	Util::setSetting("downloadIndInterval",  cbInterval->currentIndex());
-	Util::setSetting("downloadIndNbDays",  cbDays->currentIndex());
-	
-	Util::setSetting("downloadWind",  wind);
-	Util::setSetting("downloadPressure", pressure);
-#ifdef HAS_TEMP
-	Util::setSetting("downloadTemp",  temp);
-#endif
+        Util::setSetting("downloadIndNbDays",  cbDays->currentIndex());
 }
 
 //-------------------------------------------------------------------------------
@@ -264,25 +208,14 @@ void DialogLoadGrib::slotParameterUpdated()
     
     // Nombre de GribRecords
     int nbrec = (int) days*24/interval +1;
-    int nbPress = pressure ?  nbrec   : 0;
-    int nbWind  = wind     ?  2*nbrec : 0;
-#ifdef HAS_TEMP
-    int nbTemp  = temp     ?  nbrec   : 0;
-#endif
-    
-//    int estime = (nbWind+nbPress+nbRain+nbCloud+nbTemp) * (nbx*nby*2+84);
+    int nbWind  = 2*nbrec;
+
     int head = 84;
     int estime = 0;
     int nbits;
 
-#ifdef HAS_TEMP
-    nbits = 11;
-    estime += nbTemp*(head+(nbits*npts)/8+2 );
-#endif
     nbits = 13;
     estime += nbWind*(head+(nbits*npts)/8+2 );
-    nbits = 16;
-    estime += nbPress*(head+(nbits*npts)/8+2 );
 
     estime = estime/1024;
     slotGribMessage(tr("Taille estimée : environ %1 ko").arg(estime) );
@@ -301,13 +234,7 @@ void DialogLoadGrib::slotBtOK()
 
     loadInProgress = true;
     btOK->setEnabled(false);
-#ifdef HAS_TEMP
-    loadgrib->getGribFile(
-            xmin,ymin,xmax,ymax,resolution,interval,days, wind,pressure,false,false,temp,false);
-#else
-  loadgrib->getGribFile(
-            xmin,ymin,xmax,ymax,resolution,interval,days, wind,pressure,false,false,false,false);
-#endif
+    loadgrib->getGribFile(xmin,ymin,xmax,ymax,resolution,interval,days);
 }
 //-------------------------------------------------------------------------------
 void DialogLoadGrib::slotBtServerStatus()
@@ -324,8 +251,6 @@ void DialogLoadGrib::slotBtCancel()
         loadInProgress = false;
         loadgrib->stop();
         btCancel->setText(tr("Annuler"));
-        progressBar->setRange(0,100);
-        progressBar->setValue(0);
         slotParameterUpdated();
     }
     else {
@@ -340,8 +265,6 @@ void DialogLoadGrib::setZone(float x0, float y0, float x1, float y1)
     sbSouth->setValue(y1);
     sbWest->setValue(x0);
     sbEast->setValue(x1);
-    progressBar->setRange(0,100);
-    progressBar->setValue(0);
     slotParameterUpdated();
 }
 
@@ -411,32 +334,12 @@ QFrame *DialogLoadGrib::createFrameButtonsZone(QWidget *parent)
 	ind = Util::inRange(ind, 0, cbDays->count()-1);
     cbDays->setCurrentIndex(ind);
 
-    chkWind     = new QCheckBox(tr("Vent"));
-    assert(chkWind);
-    chkPressure = new QCheckBox(tr("Pression"));
-    assert(chkPressure);
-
-#ifdef HAS_TEMP
-    chkTemp     = new QCheckBox(tr("Température"));
-    assert(chkTemp);
-#endif
-    
-    chkWind->setChecked    (Util::getSetting("downloadWind", true).toBool());
-    chkPressure->setChecked(Util::getSetting("downloadPressure", true).toBool());
-
-#ifdef HAS_TEMP
-    chkTemp->setChecked    (Util::getSetting("downloadTemp", true).toBool());
-#endif
-
     btOK     = new QPushButton(tr("Télécharger le fichier GRIB"), this);
     assert(btOK);
     btCancel = new QPushButton(tr("Annuler"), this);
     assert(btCancel);
     btServerStatus = new QPushButton(tr("Statut du serveur"), this);
     assert(btServerStatus);
-
-    progressBar = new QProgressBar();
-    assert(progressBar);
 
     lig = 0;
     lay->addWidget( new QLabel(tr("Latitude min :")), lig, 0,  Qt::AlignRight);
@@ -456,25 +359,17 @@ QFrame *DialogLoadGrib::createFrameButtonsZone(QWidget *parent)
     lay->addWidget( new QLabel(tr("Résolution :")), lig,0, Qt::AlignRight);
     lay->addWidget( cbResolution, lig, 1, Qt::AlignLeft );
     lay->addWidget( new QLabel(tr(" °")), lig,2, Qt::AlignLeft);
-    lay->addWidget( chkWind, lig,3, Qt::AlignLeft);
     lig ++;
     lay->addWidget( new QLabel(tr("Intervalle :")), lig,0, Qt::AlignRight);
     lay->addWidget( cbInterval, lig, 1, Qt::AlignLeft );
     lay->addWidget( new QLabel(tr(" heures")), lig,2, Qt::AlignLeft);
-    lay->addWidget( chkPressure, lig,3, Qt::AlignLeft);
     lig ++;
     lay->addWidget( new QLabel(tr("Durée :")), lig,0, Qt::AlignRight);
     lay->addWidget( cbDays, lig, 1, Qt::AlignLeft );
-    lay->addWidget( new QLabel(tr(" jours")), lig,2, Qt::AlignLeft); 
-#ifdef HAS_TEMP   
-    lay->addWidget( chkTemp, lig,3, Qt::AlignLeft);
-#endif
+    lay->addWidget( new QLabel(tr(" jours")), lig,2, Qt::AlignLeft);
     //-------------------------
     lig ++;
     ftmp = new QFrame(this); ftmp->setFrameShape(QFrame::HLine); lay->addWidget( ftmp, lig,0, 1, -1);
-    //-------------------------
-    lig ++;
-    lay->addWidget( progressBar, lig,0, 1, -1);
     //-------------------------
     lig ++;
     labelMsg = new QLabel();

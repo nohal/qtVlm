@@ -26,29 +26,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "GribRecord.h"
 		
 //-------------------------------------------------------------------------------
-// Adjust data type from different mete center
-//-------------------------------------------------------------------------------
-void  GribRecord::translateDataType()
-{
-	//------------------------
-	// NOAA GFS
-	//------------------------
-	if (idCenter==7 && idModel==96 && idGrid==4)
-	{
-		if (dataType == GRB_PRECIP_TOT) {	// mm/period -> mm/h
-			if (periodP2 > periodP1)
-				multiplyAllData( 1.0/(periodP2-periodP1) );
-		}
-		if (dataType == GRB_PRECIP_RATE) {	// mm/s -> mm/h
-			if (periodP2 > periodP1)
-				multiplyAllData( 3600.0 );
-		}
-
-	
-	}
-}
-
-//-------------------------------------------------------------------------------
 // Constructeur de recopie
 //-------------------------------------------------------------------------------
 GribRecord::GribRecord(const GribRecord &rec)
@@ -102,8 +79,6 @@ GribRecord::GribRecord(ZUFILE* file, int id_)
     if (ok) {
         zu_seek(file, seekStart+totalSize, SEEK_SET);
     }
-
-    translateDataType();
     setDataType(dataType);
 }
 
@@ -131,21 +106,6 @@ GribRecord::~GribRecord()
         delete [] BMSbits;
         BMSbits = NULL;
     }
-    
-//if (dataType==GRB_TEMP) printf("record destroyed %s   %d\n", dataKey.c_str(), (int)curDate/3600);
-}
-
-//-------------------------------------------------------------------------------
-void  GribRecord::multiplyAllData(double k)
-{
-	for (zuint j=0; j<Nj; j++) {
-		for (zuint i=0; i<Ni; i++)
-		{
-			if (hasValue(i,j)) {
-				data[j*Ni+i] *= k;
-			}
-		}
-	}
 }
 
 //==============================================================
@@ -173,11 +133,7 @@ bool GribRecord::readGribSection0_IS(ZUFILE* file) {
         eof = true;
         return false;
     }
-/*    if (zu_read(file, strgrib, 4) != 4) {
-        ok = false;
-        eof = true;
-        return false;
-    }*/
+
     if (strncmp(strgrib, "GRIB", 4) != 0)  {
         erreur("readGribSection0_IS(): Unknown file header : %c%c%c%c",
                     strgrib[0],strgrib[1],strgrib[2],strgrib[3]);
@@ -495,11 +451,6 @@ bool GribRecord::readGribSection5_ES(ZUFILE* file) {
     }
     return ok;
 }
-
-
-
-
-
 
 //==============================================================
 // Fonctions utiles
