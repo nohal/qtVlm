@@ -59,85 +59,85 @@ struct raceData {
 class opponent : public QWidget
 {Q_OBJECT
     public:
-        opponent(QColor color,QString idu,QString race, float lat, float lon, QString login,
-                            QString name,Projection * proj,QWidget *main, QWidget *parentWindow=NULL);
-        opponent(QColor color,QString idu,QString race,Projection * proj,QWidget *main, QWidget *parentWindow=NULL);
-        void init(QColor color, bool isQtBoat,QString idu,QString race, float lat, float lon, QString login,
-                            QString name,Projection * proj,QWidget *main, QWidget *parentWindow);
+	opponent(QColor color,QString idu,QString race, float lat, float lon, QString login,
+			    QString name,Projection * proj,QWidget *main, QWidget *parentWindow=NULL);
+	opponent(QColor color,QString idu,QString race,Projection * proj,QWidget *main, QWidget *parentWindow=NULL);
+	void init(QColor color, bool isQtBoat,QString idu,QString race, float lat, float lon, QString login,
+			    QString name,Projection * proj,QWidget *main, QWidget *parentWindow);
 
-        QString getRace(void)    { return idrace; }
-        QString getIduser(void)  { return idu; }
-        bool    getIsQtBoat()    { return isQtBoat; }
-        QList<position*> * getTrace() { return &trace; }
-        QColor getColor() { return myColor; }
+	QString getRace(void)    { return idrace; }
+	QString getIduser(void)  { return idu; }
+	bool    getIsQtBoat()    { return isQtBoat; }
+	QList<position*> * getTrace() { return &trace; }
+	QColor getColor() { return myColor; }
 
-        void setNewData(float lat, float lon,QString name);
-        void setIsQtBoat(bool status);
-        void setName();
+	void setNewData(float lat, float lon,QString name);
+	void setIsQtBoat(bool status);
+	void setName();
 
     public slots:
-        void updateProjection();
-        void paramChanged();
+	void updateProjection();
+	void paramChanged();
 
     private:
-        float lat,lon;
-        QString name;
-        QString login;
-        QString idu;
-        QString idrace;
-        Projection * proj;
+	float lat,lon;
+	QString name;
+	QString login;
+	QString idu;
+	QString idrace;
+	Projection * proj;
 
-        bool isQtBoat;
+	bool isQtBoat;
 
-        QColor    bgcolor,fgcolor;
-        QColor    myColor;
-        int       pi, pj;
-        QLabel    *label;
-        int       label_type;
+	QColor    bgcolor,fgcolor;
+	QColor    myColor;
+	int       pi, pj;
+	QLabel    *label;
+	int       label_type;
 
-        QList<position*>  trace;
+	QList<position*>  trace;
 
-        void createWidget(void);
-        void updatePosition();
-        void  paintEvent(QPaintEvent *event);
+	void createWidget(void);
+	void updatePosition();
+	void  paintEvent(QPaintEvent *event);
 };
 
 class opponentList : public QWidget
 {Q_OBJECT
     public:
-        opponentList(Projection * proj,MainWindow * mainWin,QWidget *parentWindow=NULL);
-        void setBoatList(QString list_txt, QString race, bool force);
-        void refreshData(void);
-        void clear(void);
-        QString getRaceId();
-        QList<opponent*> * getList(void) { return &opponent_list; };
+	opponentList(Projection * proj,MainWindow * mainWin,QWidget *parentWindow=NULL);
+	void setBoatList(QString list_txt, QString race, bool force);
+	void refreshData(void);
+	void clear(void);
+	QString getRaceId();
+	QList<opponent*> * getList(void) { return &opponent_list; };
 
-        void updateInet(void);
+	void updateInet(void);
 
     public slots:
-        void requestFinished (int,QString);
-        void getTrace(QString buff, QList<position*> * trace);
+	void requestFinished (int,QByteArray);
+	void getTrace(QString buff, QList<position*> * trace);
 
     private:
-        QList<opponent*> opponent_list;
+	QList<opponent*> opponent_list;
 
-        QWidget * parent;
-        MainWindow * mainWin;
+	QWidget * parent;
+	MainWindow * mainWin;
 
-        QStringList currentList;
-        int currentOpponent;
-        QString currentRace;
-        int currentMode;
-        QColor colorTable[RACE_MAX_BOAT];
+	QStringList currentList;
+	int currentOpponent;
+	QString currentRace;
+	int currentMode;
+	QColor colorTable[RACE_MAX_BOAT];
 
-        QStringList readData(QString in_data,int type);
-        void getOpponents(QStringList opp_idu,QString idrace);
-        void getNxtOppData();
+	QStringList readData(QString in_data,int type);
+	void getOpponents(QStringList opp_idu,QString idrace);
+	void getNxtOppData();
 
-        /* http connection */
-        inetConnexion * conn;
+	/* http connection */
+	inetConnexion * conn;
 
-        Projection * proj;
+	Projection * proj;
 };
 
 

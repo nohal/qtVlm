@@ -47,10 +47,10 @@ Pilototo::Pilototo(QWidget *main,QWidget * parent):QDialog(parent)
     frameLayout->setSizeConstraint(QLayout::SetFixedSize);
 
     waitBox = new QMessageBox(QMessageBox::Question,
-                             tr("Pilototo"),
-                             tr("Chargement des instructions VLM en cours"),
-                             QMessageBox::Cancel,this
-                             );
+			     tr("Pilototo"),
+			     tr("Chargement des instructions VLM en cours"),
+			     QMessageBox::Cancel,this
+			     );
 
     /* inet init */
     conn=new inetConnexion(this);
@@ -63,84 +63,84 @@ void Pilototo::updateDrawList(void)
     /* remove all instruction from screen */
     for(int i=0;i<drawList.count();i++)
     {
-        drawList[i]->hide();
-        frameLayout->removeWidget(drawList[i]);
+	drawList[i]->hide();
+	frameLayout->removeWidget(drawList[i]);
     }
 
     drawList.clear();
 
     for(int i=0;i<instructions_list.count();i++)
     {
-        Pilototo_instruction * instr=instructions_list[i];
-        added = false;
-        if(instr->getHasChanged())
-        { /* date have not been validated */
-            /* search for the first not validated item */
-            bool found = false;
-            int j;
-            for(j=0;j<drawList.count();j++)
-            {
-                if(drawList[j]->getHasChanged())
-                {
-                    found=true;
-                    break;
-                }
-            }
-            if(!found) /* not added yet => append */
-            {
-                drawList.append(instr);
-            }
-            else
-            {
-                /* order not validated items by tstamp */
-                for(/*not changing j*/;j<drawList.count();j++)
-                {
-                    if(drawList[j]->getTstamp() > instr->getTstamp())
-                    {
-                        drawList.insert(j,instr);
-                        added=true;
-                        break;
-                    }
-                }
-                if(!added) /* not added yet => append */
-                {
-                    drawList.append(instr);
-                }
-            }
-        }
-        else
-        { /* date have been validated */
-            for(int j=0;j<drawList.count();j++)
-            {
-                if(drawList[j]->getHasChanged())
-                {
-                    /* j item is not validated => add just before */
-                    drawList.insert(j,instr);
-                    added=true;
-                    break;
-                }
+	Pilototo_instruction * instr=instructions_list[i];
+	added = false;
+	if(instr->getHasChanged())
+	{ /* date have not been validated */
+	    /* search for the first not validated item */
+	    bool found = false;
+	    int j;
+	    for(j=0;j<drawList.count();j++)
+	    {
+		if(drawList[j]->getHasChanged())
+		{
+		    found=true;
+		    break;
+		}
+	    }
+	    if(!found) /* not added yet => append */
+	    {
+		drawList.append(instr);
+	    }
+	    else
+	    {
+		/* order not validated items by tstamp */
+		for(/*not changing j*/;j<drawList.count();j++)
+		{
+		    if(drawList[j]->getTstamp() > instr->getTstamp())
+		    {
+			drawList.insert(j,instr);
+			added=true;
+			break;
+		    }
+		}
+		if(!added) /* not added yet => append */
+		{
+		    drawList.append(instr);
+		}
+	    }
+	}
+	else
+	{ /* date have been validated */
+	    for(int j=0;j<drawList.count();j++)
+	    {
+		if(drawList[j]->getHasChanged())
+		{
+		    /* j item is not validated => add just before */
+		    drawList.insert(j,instr);
+		    added=true;
+		    break;
+		}
 
-                if(drawList[j]->getTstamp() > instr->getTstamp())
-                {
-                    /* j item is later than i */
-                    drawList.insert(j,instr);
-                    added=true;
-                    break;
-                }
-            }
-            if(!added)
-            {
-                drawList.append(instr);
-            }
-        }
+		if(drawList[j]->getTstamp() > instr->getTstamp())
+		{
+		    /* j item is later than i */
+		    drawList.insert(j,instr);
+		    added=true;
+		    break;
+		}
+	    }
+	    if(!added)
+	    {
+		drawList.append(instr);
+	    }
+	}
     }
 
     /* we now have the list of items to be shown => adding them to grid layout */
 
     for(int j=0;j<drawList.count();j++)
     {
-        frameLayout->addWidget(drawList[j], j, 0);
-        drawList[j]->show();
+	frameLayout->addWidget(drawList[j], j, 0);
+	drawList[j]->show();
     }
 }
 
@@ -153,7 +153,7 @@ void Pilototo::editInstructions(void)
 /*init piloto editor after selecting a POI*/
 void Pilototo::editInstructionsPOI(Pilototo_instruction * instruction,POI * poi)
 {
-    show();    
+    show();
     instructionEditor->editInstructionPOI(instruction,poi);
 }
 
@@ -166,7 +166,7 @@ void Pilototo::doSelectPOI(Pilototo_instruction * instruction)
 void Pilototo::boatUpdated(boatAccount * boat)
 {
     if(!waitBox->isVisible())
-        return;
+	return;
     waitBox->hide();
     this->boat=boat;
     int mode;
@@ -178,56 +178,56 @@ void Pilototo::boatUpdated(boatAccount * boat)
     drawList.clear(); /*all item are also in instructions_list */
 
     while (!instructions_list.isEmpty())
-        delete instructions_list.takeFirst();
+	delete instructions_list.takeFirst();
 
     if(!boat->getHasPilototo())
-        QMessageBox::information (this,
-            tr("Pilototo"),
-            tr("La récupération des données pilototo de VLM n'a pas fonctionné\nVous pouvez ajouter des instructions mais sans voir le resultat dans QtVlm"),
-            QMessageBox::Ok);
+	QMessageBox::information (this,
+	    tr("Pilototo"),
+	    tr("La récupération des données pilototo de VLM n'a pas fonctionné\nVous pouvez ajouter des instructions mais sans voir le resultat dans QtVlm"),
+	    QMessageBox::Ok);
 
     for(int i=0;i<list->count();i++)
     {
-        QString instr_txt=list->at(i);
-        if(instr_txt!="none")
-        {
-            QStringList instr_buf = instr_txt.split(",");
+	QString instr_txt=list->at(i);
+	if(instr_txt!="none")
+	{
+	    QStringList instr_buf = instr_txt.split(",");
 
-            if(instr_buf.count() == 6 || instr_buf.count() == 5)
-            {
-                Pilototo_instruction * instr = new Pilototo_instruction(this,frame);
-                instructions_list.append(instr);
-                instr->setRef(instr_buf.at(0).toInt());
-                instr->setTstamp(instr_buf.at(1).toInt());
-                mode=instr_buf.at(2).toInt()-1;
-                instr->setMode(mode);
-                if(mode == 0 || mode == 1)
-                {
-                    instr->setAngle(instr_buf.at(3).toFloat());
-                    pos=4;
-                }
-                else
-                {
-                    instr->setLat(instr_buf.at(3).toFloat());
-                    QStringList instr_buf2 = instr_buf.at(4).split("@");
-                    if(instr_buf2.count() == 2)
-                    {
-                        instr->setLon(instr_buf2.at(0).toFloat());
-                        instr->setWph(instr_buf2.at(1).toFloat());
-                    }
-                    else
-                    {
-                        instr->setLon(instr_buf.at(4).toFloat());
-                    }
-                    pos=5;
-                }
-                if(instr_buf.at(pos) == "done")
-                    instr->setStatus(PILOTOTO_STATUS_DONE);
-                else if(instr_buf.at(pos) == "pending")
-                    instr->setStatus(PILOTOTO_STATUS_PENDING);
-                instr->updateHasChanged(false);
-            }
-        }
+	    if(instr_buf.count() == 6 || instr_buf.count() == 5)
+	    {
+		Pilototo_instruction * instr = new Pilototo_instruction(this,frame);
+		instructions_list.append(instr);
+		instr->setRef(instr_buf.at(0).toInt());
+		instr->setTstamp(instr_buf.at(1).toInt());
+		mode=instr_buf.at(2).toInt()-1;
+		instr->setMode(mode);
+		if(mode == 0 || mode == 1)
+		{
+		    instr->setAngle(instr_buf.at(3).toFloat());
+		    pos=4;
+		}
+		else
+		{
+		    instr->setLat(instr_buf.at(3).toFloat());
+		    QStringList instr_buf2 = instr_buf.at(4).split("@");
+		    if(instr_buf2.count() == 2)
+		    {
+			instr->setLon(instr_buf2.at(0).toFloat());
+			instr->setWph(instr_buf2.at(1).toFloat());
+		    }
+		    else
+		    {
+			instr->setLon(instr_buf.at(4).toFloat());
+		    }
+		    pos=5;
+		}
+		if(instr_buf.at(pos) == "done")
+		    instr->setStatus(PILOTOTO_STATUS_DONE);
+		else if(instr_buf.at(pos) == "pending")
+		    instr->setStatus(PILOTOTO_STATUS_PENDING);
+		instr->updateHasChanged(false);
+	    }
+	}
     }
 
 
@@ -246,53 +246,53 @@ void Pilototo::done(int result)
 {
     if(result==QDialog::Accepted)
     {
-        /* checking if there is un validated instructions */
-        bool hasUnValidated =false;
-        for(int i=0;i<instructions_list.count();i++)
-        {
-            if(instructions_list[i]->getHasChanged())
-            {
-                hasUnValidated=true;
-                break;
-            }
-        }
+	/* checking if there is un validated instructions */
+	bool hasUnValidated =false;
+	for(int i=0;i<instructions_list.count();i++)
+	{
+	    if(instructions_list[i]->getHasChanged())
+	    {
+		hasUnValidated=true;
+		break;
+	    }
+	}
 
-        if(hasUnValidated)
-        {
-            int rep = QMessageBox::question (this,
-            tr("Instructions non Validées"),
-            tr("Il reste des instructions non validées. Elles ne seront pas envoyées à VLM\nContinuer la sauvegarde?"),
-            QMessageBox::Yes | QMessageBox::No);
-            if (rep == QMessageBox::No)
-                return;
-        }
-        /* creating list of pilototo.php requests*/
-        QStringList * requestList= new QStringList();
-        /* processing del */
-        for(int i=0;i<delList.count();i++)
-            requestList->append("action=efface&lang=fr&taskid="+QString().setNum(delList[i]));
-        /* processing others */
-        for(int i=0;i<instructions_list.count();i++)
-        {
-            Pilototo_instruction * instr=instructions_list[i];
-            if(!instr->getHasChanged())
-            { /* only processing activated and validated instructions */
-                QString txt;
-                if(instr->getRef()!=-1) /* updating */
-                    txt="action=modifie&lang=fr&taskid="+QString().setNum(instr->getRef());
-                else /* adding */
-                    txt="action=ajoute&lang=fr";
-                txt=txt+QString("&pim=%1&pip=%2&time=%3").arg(instr->getMode()+1)
-                        .arg(instr->getPip()).arg(instr->getTstamp());
-                requestList->append(txt);
-            }
-        }
-        /* ready to send */
-        sendPilototo(requestList);
+	if(hasUnValidated)
+	{
+	    int rep = QMessageBox::question (this,
+	    tr("Instructions non Validées"),
+	    tr("Il reste des instructions non validées. Elles ne seront pas envoyées à VLM\nContinuer la sauvegarde?"),
+	    QMessageBox::Yes | QMessageBox::No);
+	    if (rep == QMessageBox::No)
+		return;
+	}
+	/* creating list of pilototo.php requests*/
+	QStringList * requestList= new QStringList();
+	/* processing del */
+	for(int i=0;i<delList.count();i++)
+	    requestList->append("action=efface&lang=fr&taskid="+QString().setNum(delList[i]));
+	/* processing others */
+	for(int i=0;i<instructions_list.count();i++)
+	{
+	    Pilototo_instruction * instr=instructions_list[i];
+	    if(!instr->getHasChanged())
+	    { /* only processing activated and validated instructions */
+		QString txt;
+		if(instr->getRef()!=-1) /* updating */
+		    txt="action=modifie&lang=fr&taskid="+QString().setNum(instr->getRef());
+		else /* adding */
+		    txt="action=ajoute&lang=fr";
+		txt=txt+QString("&pim=%1&pip=%2&time=%3").arg(instr->getMode()+1)
+			.arg(instr->getPip()).arg(instr->getTstamp());
+		requestList->append(txt);
+	    }
+	}
+	/* ready to send */
+	sendPilototo(requestList);
     }
 
     while (!instructions_list.isEmpty())
-        delete instructions_list.takeFirst();
+	delete instructions_list.takeFirst();
 
     QDialog::done(result);
 }
@@ -303,45 +303,45 @@ void Pilototo::sendPilototo(QStringList * cmdList)
 {
     if(conn && cmdList->count() > 0 && conn->isAvailable() )
     {
-        currentList=cmdList;
-        QString page;
-        QTextStream(&page)
-                        << "/myboat.php?"
-                        << "pseudo=" << boat->getLogin()
-                        << "&password=" << boat->getPass()
-                        << "&lang=fr&type=login"
-                        ;
-        conn->doRequestGet(VLM_REQUEST_LOGIN,page);
+	currentList=cmdList;
+	QString page;
+	QTextStream(&page)
+			<< "/myboat.php?"
+			<< "pseudo=" << boat->getLogin()
+			<< "&password=" << boat->getPass()
+			<< "&lang=fr&type=login"
+			;
+	conn->doRequestGet(VLM_REQUEST_LOGIN,page);
     }
     else
     {
-        qWarning("error can't send pilototo (nb instr:%d)",cmdList->count());
+	qWarning("error can't send pilototo (nb instr:%d)",cmdList->count());
     }
 }
 
-void Pilototo::requestFinished (int currentRequest,QString)
+void Pilototo::requestFinished (int currentRequest,QByteArray)
 {
     QString page;
     QString data;
 
     switch(currentRequest)
     {
-        case VLM_REQUEST_LOGIN:
-        case VLM_DO_REQUEST:
-            if(currentList->isEmpty())
-            {
-                /*we have processed all cmd*/
-                delete currentList;
-                /* ask for an update of boat data*/
-                boat->getData();
-            }
-            else
-            {
-                QTextStream(&page) << "/pilototo.php";
-                data = currentList->takeFirst();
-                conn->doRequestPost(VLM_DO_REQUEST,page,data);
-            }
-            break;
+	case VLM_REQUEST_LOGIN:
+	case VLM_DO_REQUEST:
+	    if(currentList->isEmpty())
+	    {
+		/*we have processed all cmd*/
+		delete currentList;
+		/* ask for an update of boat data*/
+		boat->getData();
+	    }
+	    else
+	    {
+		QTextStream(&page) << "/pilototo.php";
+		data = currentList->takeFirst();
+		conn->doRequestPost(VLM_DO_REQUEST,page,data);
+	    }
+	    break;
     }
 }
 
@@ -355,11 +355,11 @@ void Pilototo::addInstruction(void)
 {
     if(nbInstruction<=5)
     {
-        Pilototo_instruction * instr = new Pilototo_instruction(this,frame);
-        instructions_list.append(instr);
-        instr->initVal();
-        updateDrawList();
-        updateNbInstruction();
+	Pilototo_instruction * instr = new Pilototo_instruction(this,frame);
+	instructions_list.append(instr);
+	instr->initVal();
+	updateDrawList();
+	updateNbInstruction();
     }
 }
 
@@ -376,7 +376,7 @@ void Pilototo::delInstruction(Pilototo_instruction * instruction)
 {
     int ref=instruction->getRef();
     if(ref!=-1)
-        delList.append(ref);
+	delList.append(ref);
     instructions_list.removeAll(instruction);
 
     updateDrawList();
@@ -390,17 +390,17 @@ void Pilototo::updateNbInstruction(void)
     nbInstruction=instructions_list.count();
 
     if(nbInstruction==0)
-        frame->hide();
+	frame->hide();
     else
-        frame->show();
+	frame->show();
 
     if(nbInstruction==5)
-        btn_addInstruction->setEnabled(false);
+	btn_addInstruction->setEnabled(false);
     else
-        btn_addInstruction->setEnabled(true);
+	btn_addInstruction->setEnabled(true);
 
     txt_nbInstructions->setText(QString().setNum(nbInstruction)+"/5 "
-            +(nbInstruction>1?tr("instructions"):tr("instruction")));
+	    +(nbInstruction>1?tr("instructions"):tr("instruction")));
 }
 
 void Pilototo::instructionUpdated(void)
@@ -417,11 +417,11 @@ Pilototo_instruction::Pilototo_instruction(QWidget * main,QWidget * parent) : QW
 {
     setupUi(this);
     connect(this,SIGNAL(doEditInstruction(Pilototo_instruction*)),
-                ((Pilototo*)main)->instructionEditor,SLOT(editInstruction(Pilototo_instruction*)));
+		((Pilototo*)main)->instructionEditor,SLOT(editInstruction(Pilototo_instruction*)));
     connect(this,SIGNAL(doDelInstruction(Pilototo_instruction*)),
-                main,SLOT(delInstruction(Pilototo_instruction *)));
+		main,SLOT(delInstruction(Pilototo_instruction *)));
     connect(this,SIGNAL(instructionUpdated()),
-                main,SLOT(instructionUpdated()));
+		main,SLOT(instructionUpdated()));
     this->parent=parent;
     layout()->setContentsMargins(0,0,0,0);
 
@@ -450,9 +450,9 @@ void Pilototo_instruction::initVal(void)
 {                         \
     if(VAR!=val)          \
     {                     \
-        VAR=val;          \
-        updateHasChanged(true); \
-        updateText();     \
+	VAR=val;          \
+	updateHasChanged(true); \
+	updateText();     \
     }                     \
 }
 
@@ -489,38 +489,38 @@ void Pilototo_instruction::updateText(void)
 
     switch(mode)
     {
-        case 0:
-            modeTxt="Cap";
-            param=QString().setNum(angle)+" °";
-            break;
-        case 1:
-            modeTxt="Angle";
-            param=QString().setNum(angle)+" °";
-            break;
-        case 2:
-            modeTxt="Ortho";
-            if(wph==-1)
-                param=QString("%1,%2")
-                        .arg(Util::pos2String(TYPE_LAT,lat))
-                        .arg(Util::pos2String(TYPE_LON,lon));
-            else
-                param=QString("%1,%2@%3")
-                        .arg(Util::pos2String(TYPE_LAT,lat))
-                        .arg(Util::pos2String(TYPE_LON,lon))
-                        .arg(wph);
-            break;
-        case 3:
-            modeTxt="BVMG";
-            if(wph==-1)
-                param=QString("%1,%2")
-                        .arg(Util::pos2String(TYPE_LAT,lat))
-                        .arg(Util::pos2String(TYPE_LON,lon));
-            else
-                param=QString("%1,%2@%3")
-                        .arg(Util::pos2String(TYPE_LAT,lat))
-                        .arg(Util::pos2String(TYPE_LON,lon))
-                        .arg(wph);
-            break;
+	case 0:
+	    modeTxt="Cap";
+	    param=QString().setNum(angle)+" °";
+	    break;
+	case 1:
+	    modeTxt="Angle";
+	    param=QString().setNum(angle)+" °";
+	    break;
+	case 2:
+	    modeTxt="Ortho";
+	    if(wph==-1)
+		param=QString("%1,%2")
+			.arg(Util::pos2String(TYPE_LAT,lat))
+			.arg(Util::pos2String(TYPE_LON,lon));
+	    else
+		param=QString("%1,%2@%3")
+			.arg(Util::pos2String(TYPE_LAT,lat))
+			.arg(Util::pos2String(TYPE_LON,lon))
+			.arg(wph);
+	    break;
+	case 3:
+	    modeTxt="BVMG";
+	    if(wph==-1)
+		param=QString("%1,%2")
+			.arg(Util::pos2String(TYPE_LAT,lat))
+			.arg(Util::pos2String(TYPE_LON,lon));
+	    else
+		param=QString("%1,%2@%3")
+			.arg(Util::pos2String(TYPE_LAT,lat))
+			.arg(Util::pos2String(TYPE_LON,lon))
+			.arg(wph);
+	    break;
     }
     final_txt=modeTxt+" = "+param;
     instructionText->setMinimumWidth( fmt.width(final_txt)+20 );
@@ -528,15 +528,15 @@ void Pilototo_instruction::updateText(void)
 
     switch(status)
     {
-        case PILOTOTO_STATUS_DONE:
-            status_txt->setText(tr("Passee"));
-            break;
-        case PILOTOTO_STATUS_PENDING:
-            status_txt->setText(tr("En-cours"));
-            break;
-        case PILOTOTO_STATUS_NEW:
-            status_txt->setText(tr("Nouveau"));
-            break;
+	case PILOTOTO_STATUS_DONE:
+	    status_txt->setText(tr("Passee"));
+	    break;
+	case PILOTOTO_STATUS_PENDING:
+	    status_txt->setText(tr("En-cours"));
+	    break;
+	case PILOTOTO_STATUS_NEW:
+	    status_txt->setText(tr("Nouveau"));
+	    break;
     }
 
     horodate->setDateTime(tstamp);
@@ -547,9 +547,9 @@ void Pilototo_instruction::updateHasChanged(bool status)
     hasChanged = status;
     btn_validate->setEnabled(status);
     if(status)
-        btn_validate->setStyleSheet(QString::fromUtf8("background-color: rgb(255, 0, 0);"));
+	btn_validate->setStyleSheet(QString::fromUtf8("background-color: rgb(255, 0, 0);"));
     else
-        btn_validate->setStyleSheet(QString::fromUtf8("background-color: rgb(85, 255, 127);"));
+	btn_validate->setStyleSheet(QString::fromUtf8("background-color: rgb(85, 255, 127);"));
 }
 
 void Pilototo_instruction::delInstruction(void)
@@ -567,19 +567,19 @@ void Pilototo_instruction::pastePOI(void)
     float lat,lon,wph;
     int tstamp_int;
     if(!Util::getWPClipboard(&lat,&lon,&wph,&tstamp_int))
-        return;
+	return;
 
     this->lat = lat;
     this->lon = lon;
     mode=2; /*default mode : ortho */
 
     if(tstamp_int!=-1)
-        tstamp.setTime_t(tstamp_int);
+	tstamp.setTime_t(tstamp_int);
 
     if(wph<0 || wph > 360)
-        this->wph=-1;
+	this->wph=-1;
     else
-        this->wph=wph;
+	this->wph=wph;
     updateHasChanged(true);
     updateText();
 }
@@ -587,13 +587,13 @@ void Pilototo_instruction::pastePOI(void)
 void Pilototo_instruction::copyPOI(void)
 {
     if(mode==2 || mode==3)
-        Util::setWPClipboard(lat,lon,wph);
+	Util::setWPClipboard(lat,lon,wph);
 }
 
 void Pilototo_instruction::dateTime_changed(QDateTime tm)
 {
     if(tm!=tstamp)
-        updateHasChanged(true);
+	updateHasChanged(true);
     tstamp=tm;
 }
 
@@ -605,9 +605,9 @@ void Pilototo_instruction::setLock(bool status)
     btn_paste->setEnabled(!status);
     btn_edit->setEnabled(!status);
     if(status)
-        btn_validate->setEnabled(!status);
+	btn_validate->setEnabled(!status);
     else
-        updateHasChanged(hasChanged);
+	updateHasChanged(hasChanged);
 }
 
 void Pilototo_instruction::validateModif(void)
@@ -635,22 +635,22 @@ QString Pilototo_instruction::getPip(void)
 
     switch(mode)
     {
-        case 0:
-        case 1:
-            txt=QString().setNum(angle);
-            break;
-        case 2:
-        case 3:
-            if(wph==-1)
-                txt=QString("%1,%2")
-                        .arg(lat)
-                        .arg(lon);
-            else
-                txt=QString("%1,%2@%3")
-                        .arg(lat)
-                        .arg(lon)
-                        .arg(wph);
-            break;
+	case 0:
+	case 1:
+	    txt=QString().setNum(angle);
+	    break;
+	case 2:
+	case 3:
+	    if(wph==-1)
+		txt=QString("%1,%2")
+			.arg(lat)
+			.arg(lon);
+	    else
+		txt=QString("%1,%2@%3")
+			.arg(lat)
+			.arg(lon)
+			.arg(wph);
+	    break;
     }
     return txt;
 }

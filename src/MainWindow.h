@@ -37,6 +37,7 @@ Copyright (C) 2008 - Jacques Zaninetti - http://zygrib.free.fr
 
 #include "DialogGraphicsParams.h"
 #include "DialogLoadGrib.h"
+#include "DialogVLM_grib.h"
 #include "DialogProxy.h"
 #include "DialogUnits.h"
 #include "POI.h"
@@ -141,7 +142,7 @@ class MainWindow: public QMainWindow
 
         void getPolar(QString fname,Polar ** ptr);
         void releasePolar(QString fname);
-        void chkVLMGrib(void);
+        void slotLoadVLMGrib(void);
 
     signals:
         void signalMapQuality(int quality);
@@ -226,6 +227,8 @@ class MainWindow: public QMainWindow
         bool isSelectingWP;
 
         polarList * polar_list;
+
+        DialogVLM_grib * loadVLM_grib;
 };
 
 #endif

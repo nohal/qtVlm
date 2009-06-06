@@ -1,6 +1,6 @@
 CONFIG += qt
 TEMPLATE = app
-TARGET = 
+TARGET =
 DEPENDPATH += .
 INCLUDEPATH += bzip2 \
     zlib-1.2.3 \
@@ -57,7 +57,8 @@ HEADERS += BoardVLM.h \
     xmlBoatData.h \
     xmlPOIData.h \
     zuFile.h \
-    dialog_gribDate.h
+    dialog_gribDate.h \
+    DialogVLM_grib.h
 FORMS += boatAccount_dialog.ui \
     BoardVLM.ui \
     paramVLM.ui \
@@ -68,7 +69,9 @@ FORMS += boatAccount_dialog.ui \
     Pilototo.ui \
     race_dialog.ui \
     WP_dialog.ui \
-    dialog_gribDate.ui
+    dialog_gribDate.ui \
+    DialogVLM_grib.ui \
+    inetConn_progessDialog.ui
 SOURCES += BoardVLM.cpp \
     boatAccount_dialog.cpp \
     boatAccount.cpp \
@@ -104,7 +107,8 @@ SOURCES += BoardVLM.cpp \
     xmlBoatData.cpp \
     xmlPOIData.cpp \
     zuFile.cpp \
-    dialog_gribDate.cpp
+    dialog_gribDate.cpp \
+    DialogVLM_grib.cpp
 DEFINES = QT_$$[QT_VERSION]
 DEFINES ~= s/\./_
 DEFINES ~= s/-.*/

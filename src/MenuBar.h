@@ -66,6 +66,7 @@ public:
     QAction *acFile_Open;
     QAction *acFile_Close;
     QAction *acFile_Load_GRIB;
+    QAction *acFile_Load_VLM_GRIB;
     QAction *acFile_Info_GRIB;
     QAction *acFile_Quit;
 

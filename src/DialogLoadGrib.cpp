@@ -37,7 +37,7 @@ DialogLoadGrib::DialogLoadGrib() : QDialog()
 {
     loadgrib = new LoadGribFile();
     assert(loadgrib);
-    
+
     setWindowTitle(tr("Téléchargement"));
     loadInProgress = false;
     QFrame * frameButtonsZone = createFrameButtonsZone(this);
@@ -51,37 +51,37 @@ DialogLoadGrib::DialogLoadGrib() : QDialog()
     connect(btServerStatus, SIGNAL(clicked()), this, SLOT(slotBtServerStatus()));
 
     connect(loadgrib, SIGNAL(signalGribDataReceived(QByteArray *, QString)),
-            this,  SLOT(slotGribDataReceived(QByteArray *, QString)));
+	    this,  SLOT(slotGribDataReceived(QByteArray *, QString)));
     connect(loadgrib, SIGNAL(signalGribLoadError(QString)),
-            this,  SLOT(slotGribFileError(QString)));
+	    this,  SLOT(slotGribFileError(QString)));
     connect(loadgrib, SIGNAL(signalGribSendMessage(QString)),
-            this,  SLOT(slotGribMessage(QString)));
+	    this,  SLOT(slotGribMessage(QString)));
     connect(loadgrib, SIGNAL(signalGribStartLoadData()),
-            this,  SLOT(slotGribStartLoadData()));
-            
+	    this,  SLOT(slotGribStartLoadData()));
+
     //------------------------------------------------------
     connect(sbNorth, SIGNAL(valueChanged(double)),
-            this,  SLOT(slotParameterUpdated()));
+	    this,  SLOT(slotParameterUpdated()));
     connect(sbSouth, SIGNAL(valueChanged(double)),
-            this,  SLOT(slotParameterUpdated()));
+	    this,  SLOT(slotParameterUpdated()));
     connect(sbWest, SIGNAL(valueChanged(double)),
-            this,  SLOT(slotParameterUpdated()));
+	    this,  SLOT(slotParameterUpdated()));
     connect(sbEast, SIGNAL(valueChanged(double)),
-            this,  SLOT(slotParameterUpdated()));
-            
+	    this,  SLOT(slotParameterUpdated()));
+
     connect(cbResolution, SIGNAL(activated(int)),
-            this,  SLOT(slotParameterUpdated()));
+	    this,  SLOT(slotParameterUpdated()));
     connect(cbInterval, SIGNAL(activated(int)),
-            this,  SLOT(slotParameterUpdated()));
+	    this,  SLOT(slotParameterUpdated()));
     connect(cbDays, SIGNAL(activated(int)),
-            this,  SLOT(slotParameterUpdated()));
+	    this,  SLOT(slotParameterUpdated()));
 }
 
 //-------------------------------------------------------------------------------
 DialogLoadGrib::~DialogLoadGrib()
 {
     if (loadgrib != NULL)
-        delete loadgrib;
+	delete loadgrib;
 }
 
 //----------------------------------------------------
@@ -94,41 +94,41 @@ void DialogLoadGrib::slotGribMessage(QString msg)
 void DialogLoadGrib::slotGribDataReceived(QByteArray *content, QString fileName)
 {
     fileName = QFileDialog::getSaveFileName(this,
-                 tr("Sauvegarde du fichier GRIB"), "grib/"+fileName, "");
-                 
+		 tr("Sauvegarde du fichier GRIB"), "grib/"+fileName, "");
+
     if (fileName != "")
     {
-        QFile *saveFile = new QFile(fileName);
-        assert(saveFile);
-        bool ok;
-        qint64 nb = 0;
-        ok = saveFile->open(QIODevice::WriteOnly);
-        if (ok) {
-            nb = saveFile->write(*content);
-            if (nb > 0) {
-                saveFile->close();
-            }
-        }
-        if (ok && nb>0) {
-            emit signalGribFileReceived(fileName);
-            loadInProgress = false;
-            btCancel->setText(tr("Annuler"));
-            btOK->setEnabled(true);
-            accept();
-        }
-        else {
-            QMessageBox::critical (this,
-                    tr("Erreur"),
-                    tr("Ecriture du fichier impossible."));
-        }
+	QFile *saveFile = new QFile(fileName);
+	assert(saveFile);
+	bool ok;
+	qint64 nb = 0;
+	ok = saveFile->open(QIODevice::WriteOnly);
+	if (ok) {
+	    nb = saveFile->write(*content);
+	    if (nb > 0) {
+		saveFile->close();
+	    }
+	}
+	if (ok && nb>0) {
+	    emit signalGribFileReceived(fileName);
+	    loadInProgress = false;
+	    btCancel->setText(tr("Annuler"));
+	    btOK->setEnabled(true);
+	    accept();
+	}
+	else {
+	    QMessageBox::critical (this,
+		    tr("Erreur"),
+		    tr("Ecriture du fichier impossible."));
+	}
     }
     else {
-        QMessageBox::critical (this,
-                tr("Erreur"),
-                tr("Opération abandonnée."));
-        loadInProgress = false;
-        btCancel->setText(tr("Annuler"));
-        btOK->setEnabled(true);
+	QMessageBox::critical (this,
+		tr("Erreur"),
+		tr("Opération abandonnée."));
+	loadInProgress = false;
+	btCancel->setText(tr("Annuler"));
+	btOK->setEnabled(true);
     }
 }
 
@@ -136,13 +136,13 @@ void DialogLoadGrib::slotGribDataReceived(QByteArray *content, QString fileName)
 void DialogLoadGrib::slotGribFileError(QString error)
 {
     if (! loadInProgress)
-        return;
-        
-    QString s;    
+	return;
+
+    QString s;
     QMessageBox::critical (this,
-                    tr("Erreur"),
-                    tr("Erreur : ") + error );
-    
+		    tr("Erreur"),
+		    tr("Erreur : ") + error );
+
     loadInProgress = false;
     btCancel->setText(tr("Annuler"));
     btOK->setEnabled(true);
@@ -159,7 +159,7 @@ void DialogLoadGrib::slotGribStartLoadData()
 void DialogLoadGrib::updateParameters()
 {
     float tmp, xm, ym;
-    
+
     xmin = sbWest->cleanText().toFloat();
     xmax = sbEast->cleanText().toFloat();
     ymin = sbNorth->cleanText().toFloat();
@@ -170,42 +170,42 @@ void DialogLoadGrib::updateParameters()
     days       = cbDays->currentText().toInt();
 
     if (xmin > xmax) {
-        tmp = xmin;   xmin = xmax;   xmax = tmp;
+	tmp = xmin;   xmin = xmax;   xmax = tmp;
     }
     if (ymin < ymax) {    // échelle Y inversée (90=nord)
-        tmp = ymin;   ymin = ymax;   ymax = tmp;
+	tmp = ymin;   ymin = ymax;   ymax = tmp;
     }
     // trop grand ?
     if (fabs(xmax-xmin) >=360)
-        xmax = xmin+359.9;
+	xmax = xmin+359.9;
     if (fabs(ymin-ymax) >=180)
-        ymin = ymax+179.9;
-    
+	ymin = ymax+179.9;
+
     // trop petit ?
     if (fabs(xmax-xmin) < 2*resolution) {
-        xm = (xmin+xmax)/2;
-        xmin = xm - 2*resolution;
-        xmax = xm + 2*resolution;
+	xm = (xmin+xmax)/2;
+	xmin = xm - 2*resolution;
+	xmax = xm + 2*resolution;
     }
     if (fabs(ymin-ymax) < 2*resolution) {
-        ym = (ymin+ymax)/2;
-        ymin = ym + 2*resolution;
-        ymax = ym - 2*resolution;
+	ym = (ymin+ymax)/2;
+	ymin = ym + 2*resolution;
+	ymax = ym - 2*resolution;
     }
-	
+
 	Util::setSetting("downloadIndResolution", cbResolution->currentIndex());
 	Util::setSetting("downloadIndInterval",  cbInterval->currentIndex());
-        Util::setSetting("downloadIndNbDays",  cbDays->currentIndex());
+	Util::setSetting("downloadIndNbDays",  cbDays->currentIndex());
 }
 
 //-------------------------------------------------------------------------------
 void DialogLoadGrib::slotParameterUpdated()
 {
     updateParameters();
-    
+
     int npts = (int) (  ceil(fabs(xmax-xmin)/resolution)
-                       * ceil(fabs(ymax-ymin)/resolution) );
-    
+		       * ceil(fabs(ymax-ymin)/resolution) );
+
     // Nombre de GribRecords
     int nbrec = (int) days*24/interval +1;
     int nbWind  = 2*nbrec;
@@ -219,11 +219,11 @@ void DialogLoadGrib::slotParameterUpdated()
 
     estime = estime/1024;
     slotGribMessage(tr("Taille estimée : environ %1 ko").arg(estime) );
-    
+
     if (estime == 0)
-        btOK->setEnabled(false);
+	btOK->setEnabled(false);
     else
-        btOK->setEnabled(true);
+	btOK->setEnabled(true);
 
 }
 
@@ -248,13 +248,13 @@ void DialogLoadGrib::slotBtCancel()
 {
     if (loadInProgress)
     {
-        loadInProgress = false;
-        loadgrib->stop();
-        btCancel->setText(tr("Annuler"));
-        slotParameterUpdated();
+	loadInProgress = false;
+	loadgrib->stop();
+	btCancel->setText(tr("Annuler"));
+	slotParameterUpdated();
     }
     else {
-        reject();
+	reject();
     }
 }
 
@@ -285,7 +285,7 @@ QFrame *DialogLoadGrib::createFrameButtonsZone(QWidget *parent)
     sbNorth->setMaximum(90);
     sbNorth->setSuffix(tr(" °N"));
     sbNorth->setMinimumWidth (sizemin);
-    
+
     sbSouth = new QDoubleSpinBox(this);
     assert(sbSouth);
     sbSouth->setDecimals(0);
@@ -293,7 +293,7 @@ QFrame *DialogLoadGrib::createFrameButtonsZone(QWidget *parent)
     sbSouth->setMaximum(90);
     sbSouth->setSuffix(tr(" °N"));
     sbSouth->setMinimumWidth (sizemin);
-    
+
     sbWest = new QDoubleSpinBox(this);
     assert(sbWest);
     sbWest->setDecimals(0);
@@ -301,7 +301,7 @@ QFrame *DialogLoadGrib::createFrameButtonsZone(QWidget *parent)
     sbWest->setMaximum(360);
     sbWest->setSuffix(tr(" °E"));
     sbWest->setMinimumWidth (sizemin);
-    
+
     sbEast = new QDoubleSpinBox(this);
     assert(sbEast);
     sbEast->setDecimals(0);
@@ -317,7 +317,7 @@ QFrame *DialogLoadGrib::createFrameButtonsZone(QWidget *parent)
 	ind = Util::getSetting("downloadIndResolution", 1).toInt();
 	ind = Util::inRange(ind, 0, cbResolution->count()-1);
     cbResolution->setCurrentIndex(ind);
-    
+
     cbInterval = new QComboBox(this);
     assert(cbInterval);
     cbInterval->addItems(QStringList()<< "3" << "6" << "12" << "24");
@@ -325,12 +325,12 @@ QFrame *DialogLoadGrib::createFrameButtonsZone(QWidget *parent)
 	ind = Util::getSetting("downloadIndInterval", 1).toInt();
 	ind = Util::inRange(ind, 0, cbInterval->count()-1);
     cbInterval->setCurrentIndex(ind);
-    
+
     cbDays = new QComboBox(this);
     assert(cbDays);
     cbDays->addItems(QStringList()<< "1"<<"2"<<"3"<<"4"<<"5"<<"6"<<"7");
     cbDays->setMinimumWidth (sizemin);
-	ind = Util::getSetting("downloadIndNbDays", 4).toInt();	
+	ind = Util::getSetting("downloadIndNbDays", 4).toInt();
 	ind = Util::inRange(ind, 0, cbDays->count()-1);
     cbDays->setCurrentIndex(ind);
 

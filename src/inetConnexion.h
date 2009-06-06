@@ -24,37 +24,59 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <QNetworkAccessManager>
 #include <QNetworkReply>
 #include <QWidget>
+#include <QDialog>
 #include <QDebug>
 
 #include "Util.h"
 
+#include "ui_inetConn_progessDialog.h"
+
+class inetConn_progressDialog : public QDialog, public Ui::inetConn_progressDialog_ui
+{
+    Q_OBJECT
+    public:
+	inetConn_progressDialog(QWidget * parent = 0);
+	void showDialog(QString name);
+
+    public slots:
+	void updateProgress(qint64 bytesReceived, qint64 bytesTotal);
+};
+
 class inetConnexion : public QWidget
 { Q_OBJECT
     public:
-        inetConnexion(QWidget * parent);
-        ~inetConnexion(void);
-        void doRequestGet(int requestNum,QString requestUrl);
-        void doRequestPost(int requestNum,QString requestUrl,QString data);
-        bool isAvailable(void);
-        void updateInet(void);
+	inetConnexion(QWidget * parent);
+	inetConnexion(QString specHost,QWidget * parent);
+	~inetConnexion(void);
+	void initConn(QWidget * parent);
+	void doRequestGet(int requestNum,QString requestUrl);
+	void doRequestGetProgress(int requestNum,QString requestUrl);
+	void doRequestPost(int requestNum,QString requestUrl,QString data);
+	bool isAvailable(void);
+	void updateInet(void);
 
     public slots:
-        void slotFinished();
-        void slotError(QNetworkReply::NetworkError error);
+	void slotFinished();
+	void slotError(QNetworkReply::NetworkError error);
+	void slotProgess(qint64 bytesReceived, qint64 bytesTotal );
 
     signals:
-        void requestFinished(int,QString);
+	void requestFinished(int,QByteArray);
 
     private:
-        QString host;
-        bool hasRequest;
-        int currentRequest;
-        QNetworkAccessManager *inetManager;
-        QNetworkReply * currentReply;
+	QString host;
+	bool hasSpecHost;
+	bool hasRequest;
+	bool hasProgress;
+	int currentRequest;
+	QNetworkAccessManager *inetManager;
+	QNetworkReply * currentReply;
+
+	inetConn_progressDialog * progressDialog;
 
 
-        void resetInet(void);
-        void doRequest(int type,int requestNum,QString requestUrl,QString data);
+	void resetInet(void);
+	void doRequest(int type,int requestNum,QString requestUrl,QString data);
 };
 
 #endif

@@ -45,65 +45,65 @@ class Pilototo_param;
 class Pilototo_instruction : public QWidget, public Ui::instruction_ui
 {Q_OBJECT
     public:
-        Pilototo_instruction(QWidget * main,QWidget * parent=0);
+	Pilototo_instruction(QWidget * main,QWidget * parent=0);
 
-        int   getMode(void)       { return mode; }
-        float getAngle(void)      { return angle; }
-        float getLat(void)        { return lat; }
-        float getLon(void)        { return lon; }
-        float getWph(void)        { return wph; }
-        bool  getLockStatus(void) { return locked; }
-        int   getRef(void)        { return ref; }
-        int   getStatus(void)     { return status; }
-        int   getTstamp(void)     { return tstamp.toTime_t(); }
-        bool  getHasChanged(void) { return hasChanged; }
-        QString getPip(void);
+	int   getMode(void)       { return mode; }
+	float getAngle(void)      { return angle; }
+	float getLat(void)        { return lat; }
+	float getLon(void)        { return lon; }
+	float getWph(void)        { return wph; }
+	bool  getLockStatus(void) { return locked; }
+	int   getRef(void)        { return ref; }
+	int   getStatus(void)     { return status; }
+	int   getTstamp(void)     { return tstamp.toTime_t(); }
+	bool  getHasChanged(void) { return hasChanged; }
+	QString getPip(void);
 
-        void setMode(int val);
-        void setAngle(float val);
-        void setLat(float val);
-        void setLon(float val);
-        void setWph(float val);
-        void setLock(bool status);
-        void setStatus(int val);
-        void setTstamp(int val);
+	void setMode(int val);
+	void setAngle(float val);
+	void setLat(float val);
+	void setLon(float val);
+	void setWph(float val);
+	void setLock(bool status);
+	void setStatus(int val);
+	void setTstamp(int val);
 
-        void setRef(int val) { ref=val; }
+	void setRef(int val) { ref=val; }
 
-        void initVal(void);
-        void updateHasChanged(bool status);
+	void initVal(void);
+	void updateHasChanged(bool status);
 
     private slots:
-        void delInstruction(void);
-        void editInstruction(void);
-        void pastePOI(void);
-        void copyPOI(void);
-        void validateModif(void);
-        void dateTime_changed(QDateTime);
-        void maintenant(void);
+	void delInstruction(void);
+	void editInstruction(void);
+	void pastePOI(void);
+	void copyPOI(void);
+	void validateModif(void);
+	void dateTime_changed(QDateTime);
+	void maintenant(void);
 
     signals:
-        void doDelInstruction(Pilototo_instruction*);
-        void doEditInstruction(Pilototo_instruction*);
-        void instructionUpdated(void);
+	void doDelInstruction(Pilototo_instruction*);
+	void doEditInstruction(Pilototo_instruction*);
+	void instructionUpdated(void);
 
     private:
-        int mode;
-        float angle;
-        float lat;
-        float lon;
-        float wph;
-        QDateTime tstamp;
-        int ref;
-        int status;
+	int mode;
+	float angle;
+	float lat;
+	float lon;
+	float wph;
+	QDateTime tstamp;
+	int ref;
+	int status;
 
-        bool locked;
-        bool hasChanged;
+	bool locked;
+	bool hasChanged;
 
-        QWidget * parent;
-        QWidget * pilototo;
+	QWidget * parent;
+	QWidget * pilototo;
 
-        void updateText(void);
+	void updateText(void);
 
 
 };
@@ -117,49 +117,49 @@ class Pilototo_instruction : public QWidget, public Ui::instruction_ui
 class Pilototo : public QDialog, public Ui::pilototo_ui
 {Q_OBJECT
     public:
-        Pilototo(QWidget *main,QWidget * parent=0);
-        void done(int);
+	Pilototo(QWidget *main,QWidget * parent=0);
+	void done(int);
 
-        void updateInet(void);
+	void updateInet(void);
 
-        Pilototo_param * instructionEditor;
+	Pilototo_param * instructionEditor;
 
     public slots:
-        void delInstruction(Pilototo_instruction *);
-        void editInstructions(void);
-        void editInstructionsPOI(Pilototo_instruction * instruction,POI * poi);
-        void instructionUpdated(void);
-        void boatUpdated(boatAccount * boat);
-        void updateTime(void);
-        void requestFinished (int currentRequest,QString res);
-        void doSelectPOI(Pilototo_instruction * instruction);
+	void delInstruction(Pilototo_instruction *);
+	void editInstructions(void);
+	void editInstructionsPOI(Pilototo_instruction * instruction,POI * poi);
+	void instructionUpdated(void);
+	void boatUpdated(boatAccount * boat);
+	void updateTime(void);
+	void requestFinished (int currentRequest,QByteArray res);
+	void doSelectPOI(Pilototo_instruction * instruction);
 
     signals:
-        void selectPOI(Pilototo_instruction *);
+	void selectPOI(Pilototo_instruction *);
 
     private slots:
-        void addInstruction(void);
+	void addInstruction(void);
 
     private:
-        QWidget * parent;
-        QList<Pilototo_instruction*> instructions_list;
-        QList<Pilototo_instruction*> drawList;
-        QList<int> delList;
-        QMessageBox * waitBox;
-        QVBoxLayout * frameLayout;
+	QWidget * parent;
+	QList<Pilototo_instruction*> instructions_list;
+	QList<Pilototo_instruction*> drawList;
+	QList<int> delList;
+	QMessageBox * waitBox;
+	QVBoxLayout * frameLayout;
 
-        boatAccount * boat;
-        int nbInstruction;
+	boatAccount * boat;
+	int nbInstruction;
 
-        void updateDrawList(void);
-        void updateNbInstruction(void);
+	void updateDrawList(void);
+	void updateNbInstruction(void);
 
-        inetConnexion * conn;
-        QStringList * currentList;
+	inetConnexion * conn;
+	QStringList * currentList;
 
-        void resetInet(void);
+	void resetInet(void);
 
-        void sendPilototo(QStringList * cmdList);
+	void sendPilototo(QStringList * cmdList);
 };
 
 #endif

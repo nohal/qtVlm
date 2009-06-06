@@ -34,85 +34,85 @@ race_dialog::race_dialog(QWidget * main,QWidget * parent) : QDialog(parent)
     availableBoat->setSelectionMode(QAbstractItemView::ExtendedSelection);
     selectedBoat->setSortingEnabled(true);
     selectedBoat->setSelectionMode(QAbstractItemView::ExtendedSelection);
-    
+
     connect(this,SIGNAL(readBoat()),main,SLOT(slotReadBoat()));
     connect(this,SIGNAL(writeBoat()),main,SLOT(slotWriteBoat()));
     connect(this,SIGNAL(updateOpponent()),main,SLOT(slotUpdateOpponent()));
-    
+
     /* init http inetManager */
     inetManager = new QNetworkAccessManager(this);
     currentRequest=RACE_NO_REQUEST;
     if(inetManager)
     {
-        host = Util::getHost();
-        connect(inetManager, SIGNAL(finished(QNetworkReply*)),
-            this, SLOT(requestFinished (QNetworkReply*)));
-        Util::paramProxy(inetManager,host);
+	host = Util::getHost();
+	connect(inetManager, SIGNAL(finished(QNetworkReply*)),
+	    this, SLOT(requestFinished (QNetworkReply*)));
+	Util::paramProxy(inetManager,host);
     }
-    
+
     waitBox = new QMessageBox(QMessageBox::Information,
-                             tr("Paramétrage des courses"),
-                             tr("Chargement des courses et des bateaux"),
-                             QMessageBox::Cancel,this
-                             );
+			     tr("Paramétrage des courses"),
+			     tr("Chargement des courses et des bateaux"),
+			     QMessageBox::Cancel,this
+			     );
 }
 
 race_dialog::~race_dialog()
 {
-    
+
 }
 
 void race_dialog::initList(QList<boatAccount*> & acc_list_ptr,QList<raceData*> & race_list_ptr)
 {
     this->acc_list = & acc_list_ptr;
     this->race_list = &race_list_ptr;
-    
+
     qWarning() << "init list";
-    
+
     clear();
-    
+
     /* determines the list of race */
     for(int i=0;i<acc_list->size();i++)
     {
-        bool found = false;
+	bool found = false;
 
-        //qWarning() << acc_list->at(i)->getLogin() << " " << acc_list->at(i)->getStatus() << " " << acc_list->at(i)->getRaceId();
+	//qWarning() << acc_list->at(i)->getLogin() << " " << acc_list->at(i)->getStatus() << " " << acc_list->at(i)->getRaceId();
 
-        if(!acc_list->at(i)->getStatus() || acc_list->at(i)->getRaceId() == "0")
-            continue;
-        
-        for(int j=0;j<param_list.size();j++)
-            if(param_list[j]->id == acc_list->at(i)->getRaceId())
-            {
-                found=true;
-                break;
-            }
-        if(!found)
-        {
-            raceParam * ptr = new raceParam();
-            ptr->id=acc_list->at(i)->getRaceId();
-            ptr->name=acc_list->at(i)->getRaceName();
-            ptr->boats.clear();
-            param_list.append(ptr);
-        }
+	if(!acc_list->at(i)->getStatus() || acc_list->at(i)->getRaceId() == "0")
+	    continue;
+
+	for(int j=0;j<param_list.size();j++)
+	    if(param_list[j]->id == acc_list->at(i)->getRaceId())
+	    {
+		found=true;
+		break;
+	    }
+	if(!found)
+	{
+	    raceParam * ptr = new raceParam();
+	    ptr->id=acc_list->at(i)->getRaceId();
+	    ptr->name=acc_list->at(i)->getRaceName();
+	    ptr->boats.clear();
+	    param_list.append(ptr);
+	}
     }
     /* init list of races */
     chooser_raceList->clear();
-    
+
     for(int j=0;j<param_list.size();j++)
-        chooser_raceList->addItem(param_list[j]->name,param_list[j]->id);
-    nbRace->setText(QString().setNum(param_list.size()));    
-    
+	chooser_raceList->addItem(param_list[j]->name,param_list[j]->id);
+    nbRace->setText(QString().setNum(param_list.size()));
+    #warning should use inetConn here !!!
     /* get boat list */
     if(currentRequest != RACE_NO_REQUEST)
     {
-        qWarning() << "request already running";
-        return;
+	qWarning() << "request already running";
+	return;
     }
     currentRace=-1;
     currentRequest=RACE_LIST_BOAT;
     getNextRace();
-    
+
     waitBox->exec();
     #warning should cancel current request if cancel is pressed
 }
@@ -122,76 +122,76 @@ void race_dialog::getNextRace()
     currentRace++;
     if(currentRace>=param_list.size())
     {
-        /* finished */
-        waitBox->hide();
-        numRace=-1;
-        chgRace(0);
-        currentRequest=RACE_NO_REQUEST;
-        return;
+	/* finished */
+	waitBox->hide();
+	numRace=-1;
+	chgRace(0);
+	currentRequest=RACE_NO_REQUEST;
+	return;
     }
-    
+
     /* let's find this race in the param from boatAcc.dat*/
     currentParam.clear();
     for(int i=0;i<race_list->size();i++)
-        if(race_list->at(i)->idrace==param_list[currentRace]->id)
-        {
-            currentParam=race_list->at(i)->oppList.split(";");
-            break;
-        }
-    
+	if(race_list->at(i)->idrace==param_list[currentRace]->id)
+	{
+	    currentParam=race_list->at(i)->oppList.split(";");
+	    break;
+	}
+
     QString page;
     QTextStream(&page) << host
-                        << "/getuserlist.php?"
-                        << "idr="
-                        << param_list[currentRace]->id;
+			<< "/getuserlist.php?"
+			<< "idr="
+			<< param_list[currentRace]->id;
     qWarning() << "ask for " << page;
     QNetworkRequest request;
     request.setUrl(QUrl(page));
-    Util::addAgent(request);   
+    Util::addAgent(request);
     inetManager->get(request);
 }
 
 void race_dialog::requestFinished (QNetworkReply * inetReply)
 {
     if (inetReply->error() != QNetworkReply::NoError) {
-        qWarning() << "Error doing inet-Get:" << inetReply->error();
-        currentRequest=RACE_NO_REQUEST;
+	qWarning() << "Error doing inet-Get:" << inetReply->error();
+	currentRequest=RACE_NO_REQUEST;
     }
     else
     {
-         QString strbuf = inetReply->readAll();
-         QStringList list_res;
-         QStringList boat;
-         int i;
-         struct boatParam * ptr;
-         switch(currentRequest)
-         {
-             case RACE_NO_REQUEST:
-                 return;
-             case RACE_LIST_BOAT:
-                 list_res=strbuf.split("\n");
-                 //qWarning() << (list_res.size()-4) << " boats in race";
-                 for(i=5;i<list_res.size();i++)
-                 {
-                     boat=list_res[i].split(";");
-                     if(boat.size() < 5) /* not enough data => next line */
-                     {
-                         //qWarning() << "Skip boat only " << boat.size() << " data (should be 5)";
-                         continue;
-                     }                     
-                     ptr = new boatParam();
-                     /* ex: 6936;Aarizia 4;Petit Navire;Nova_Scotia;79.94.105.194 */
-                     ptr->login=boat[1];
-                     ptr->name=boat[2];
-                     ptr->user_id=boat[0];
-                     ptr->selected=currentParam.contains(boat[0]);
-                     param_list[currentRace]->boats.append(ptr);
-                 }
-                 //qWarning() << "boat list size: " << param_list[currentRace]->boats.size();
-                 /* next race */
-                getNextRace();
-                 break;
-         }
+	 QString strbuf = inetReply->readAll();
+	 QStringList list_res;
+	 QStringList boat;
+	 int i;
+	 struct boatParam * ptr;
+	 switch(currentRequest)
+	 {
+	     case RACE_NO_REQUEST:
+		 return;
+	     case RACE_LIST_BOAT:
+		 list_res=strbuf.split("\n");
+		 //qWarning() << (list_res.size()-4) << " boats in race";
+		 for(i=5;i<list_res.size();i++)
+		 {
+		     boat=list_res[i].split(";");
+		     if(boat.size() < 5) /* not enough data => next line */
+		     {
+			 //qWarning() << "Skip boat only " << boat.size() << " data (should be 5)";
+			 continue;
+		     }
+		     ptr = new boatParam();
+		     /* ex: 6936;Aarizia 4;Petit Navire;Nova_Scotia;79.94.105.194 */
+		     ptr->login=boat[1];
+		     ptr->name=boat[2];
+		     ptr->user_id=boat[0];
+		     ptr->selected=currentParam.contains(boat[0]);
+		     param_list[currentRace]->boats.append(ptr);
+		 }
+		 //qWarning() << "boat list size: " << param_list[currentRace]->boats.size();
+		 /* next race */
+		getNextRace();
+		 break;
+	 }
     }
 }
 
@@ -199,10 +199,10 @@ void race_dialog::clear(void)
 {
     for(int i=0;i<param_list.size();i++)
     {
-        for(int j=0;j<param_list[i]->boats.size();j++)
-            delete param_list[i]->boats[j];        
-        param_list[i]->boats.clear();
-        delete param_list[i];
+	for(int j=0;j<param_list[i]->boats.size();j++)
+	    delete param_list[i]->boats[j];
+	param_list[i]->boats.clear();
+	delete param_list[i];
     }
     param_list.clear();
 }
@@ -210,11 +210,11 @@ void race_dialog::clear(void)
 void race_dialog::done(int result)
 {
     if(result == QDialog::Accepted)
-        saveData(true);
+	saveData(true);
     else
     {
-        emit readBoat();
-        emit updateOpponent();
+	emit readBoat();
+	emit updateOpponent();
     }
     QDialog::done(result);
 }
@@ -232,31 +232,31 @@ void race_dialog::saveData(bool save)
     struct raceData * ptr;
     /* removing all races */
     for(int i=0;i<race_list->size();i++)
-        delete race_list->at(i);
+	delete race_list->at(i);
     race_list->clear();
-    
+
     /* forcing sync of currently displayed race*/
     chgRace(-1);
-    
+
     /* saving races */
     for(int i=0;i<param_list.size();i++)
     {
-        boats.clear();
-        for(int j=0;j<param_list[i]->boats.size();j++)
-            if(param_list[i]->boats[j]->selected)
-                boats.append(param_list[i]->boats[j]->user_id);
-            
-        if(!boats.isEmpty())
-        {
-           ptr = new raceData();
-           ptr->idrace=param_list[i]->id;
-           ptr->oppList=boats.join(";");
-           race_list->append(ptr);
-        }
+	boats.clear();
+	for(int j=0;j<param_list[i]->boats.size();j++)
+	    if(param_list[i]->boats[j]->selected)
+		boats.append(param_list[i]->boats[j]->user_id);
+
+	if(!boats.isEmpty())
+	{
+	   ptr = new raceData();
+	   ptr->idrace=param_list[i]->id;
+	   ptr->oppList=boats.join(";");
+	   race_list->append(ptr);
+	}
     }
-   
+
     if(save)
-        emit writeBoat();
+	emit writeBoat();
     emit updateOpponent();
 }
 
@@ -264,51 +264,51 @@ void race_dialog::chgRace(int id)
 {
     if(numRace!=-1)
     {
-        /* changement du select des boat */
-        struct boatParam * ptr;
-        for(int i=0;i<selectedBoat->count();i++)
-        {
-            ptr=reinterpret_cast<struct boatParam *>(qvariant_cast<void*>(selectedBoat->item(i)->data(Qt::UserRole)));
-            ptr->selected=true;
-        }
+	/* changement du select des boat */
+	struct boatParam * ptr;
+	for(int i=0;i<selectedBoat->count();i++)
+	{
+	    ptr=reinterpret_cast<struct boatParam *>(qvariant_cast<void*>(selectedBoat->item(i)->data(Qt::UserRole)));
+	    ptr->selected=true;
+	}
     }
-    
+
     /* find race data */
     if(id < 0 || id >= chooser_raceList->count())
     {
-        qWarning() << "chgRace: Bad id :" << id;
-        return;
+	qWarning() << "chgRace: Bad id :" << id;
+	return;
     }
-    
+
     QString idRace = chooser_raceList->itemData(id).toString();
-    
+
     for(numRace=0;numRace<param_list.size();numRace++)
-        if(param_list[numRace]->id == idRace)
-            break;
+	if(param_list[numRace]->id == idRace)
+	    break;
     if(numRace==param_list.size())
     {
-        qWarning() << "chgRace: id not found";
-        return;
+	qWarning() << "chgRace: id not found";
+	return;
     }
-    
+
     availableBoat->clear();
     selectedBoat->clear();
-    
+
     QListWidgetItem * ptr;
     for(int i=0;i<param_list[numRace]->boats.size();i++)
-    {        
-        ptr=new QListWidgetItem(param_list[numRace]->boats[i]->login + " - " + param_list[numRace]->boats[i]->user_id);        
-        ptr->setData(Qt::UserRole,QVariant(QMetaType::VoidStar, &param_list[numRace]->boats[i]));
-        if(param_list[numRace]->boats[i]->selected)
-            selectedBoat->addItem(ptr);
-        else
-            availableBoat->addItem(ptr);
-        param_list[numRace]->boats[i]->selected=false;
+    {
+	ptr=new QListWidgetItem(param_list[numRace]->boats[i]->login + " - " + param_list[numRace]->boats[i]->user_id);
+	ptr->setData(Qt::UserRole,QVariant(QMetaType::VoidStar, &param_list[numRace]->boats[i]));
+	if(param_list[numRace]->boats[i]->selected)
+	    selectedBoat->addItem(ptr);
+	else
+	    availableBoat->addItem(ptr);
+	param_list[numRace]->boats[i]->selected=false;
     }
-    
+
     nbAvailable->setText(QString().setNum(availableBoat->count()));
     nbSelect->setText(QString().setNum(selectedBoat->count())+"/"+QString().setNum(RACE_MAX_BOAT));
-    
+
     availableBoat->clearSelection();
     selectedBoat->clearSelection();
 }
@@ -329,17 +329,17 @@ void race_dialog::mvBoat(QListWidget * from,QListWidget * to,bool withLimit)
     QListWidgetItem * item;
     QListIterator<QListWidgetItem*> i (selItem);
     while(i.hasNext())
-    {      
-        if(withLimit && selectedBoat->count()>=RACE_MAX_BOAT)
-        {
-               QMessageBox::warning(this,tr("Paramétrage des courses"),
-                                     tr("Nombre maximum de concurrent dépassé")+" ("
-                                     +QString().setNum(RACE_MAX_BOAT)+")");
-               break;
-        }        
-        item = i.next();
-        from->takeItem(from->row(item));
-        to->addItem(item);
+    {
+	if(withLimit && selectedBoat->count()>=RACE_MAX_BOAT)
+	{
+	       QMessageBox::warning(this,tr("Paramétrage des courses"),
+				     tr("Nombre maximum de concurrent dépassé")+" ("
+				     +QString().setNum(RACE_MAX_BOAT)+")");
+	       break;
+	}
+	item = i.next();
+	from->takeItem(from->row(item));
+	to->addItem(item);
     }
     nbAvailable->setText(QString().setNum(availableBoat->count()));
     nbSelect->setText(QString().setNum(selectedBoat->count())+"/"+QString().setNum(RACE_MAX_BOAT));
@@ -360,7 +360,7 @@ void race_dialog::delAllBoat(void)
 void race_dialog::mvAllBoat(QListWidget * from,QListWidget * to)
 {
     while(from->count())
-        to->addItem(from->takeItem(0));
+	to->addItem(from->takeItem(0));
     nbAvailable->setText(QString().setNum(availableBoat->count()));
     nbSelect->setText(QString().setNum(selectedBoat->count())+"/"+QString().setNum(RACE_MAX_BOAT));
     availableBoat->clearSelection();

@@ -34,7 +34,7 @@ Copyright (C) 2008 - Jacques Zaninetti - http://zygrib.free.fr
 ****************************************/
 
 opponent::opponent(QColor color, QString idu,QString race, float lat, float lon, QString login,
-                            QString name,Projection * proj,QWidget *main, QWidget *parentWindow):QWidget(parentWindow)
+			    QString name,Projection * proj,QWidget *main, QWidget *parentWindow):QWidget(parentWindow)
 {
     init(color,false,idu,race,lat,lon,login,name,proj,main,parentWindow);
 }
@@ -45,7 +45,7 @@ opponent::opponent(QColor color, QString idu,QString race,Projection * proj,QWid
 }
 
 void opponent::init(QColor color,bool isQtBoat,QString idu,QString race, float lat, float lon, QString login,
-                            QString name,Projection * proj,QWidget *main, QWidget *parentWindow)
+			    QString name,Projection * proj,QWidget *main, QWidget *parentWindow)
 {
     this->idu=idu;
     this->idrace=race;
@@ -57,7 +57,7 @@ void opponent::init(QColor color,bool isQtBoat,QString idu,QString race, float l
 
     this->isQtBoat = isQtBoat;
     while (!trace.isEmpty())
-        delete trace.takeFirst();
+	delete trace.takeFirst();
 
     myColor = color;
 
@@ -66,7 +66,7 @@ void opponent::init(QColor color,bool isQtBoat,QString idu,QString race, float l
     paramChanged();
 
     if(!isQtBoat)
-        show();
+	show();
 
     connect(parentWindow, SIGNAL(projectionUpdated()), this, SLOT(updateProjection()));
     connect(main,SIGNAL(paramVLMChanged()),this,SLOT(paramChanged()));
@@ -101,7 +101,7 @@ void opponent::createWidget(void)
 void  opponent::paintEvent(QPaintEvent *)
 {
     if(isQtBoat)
-        return;
+	return;
     QPainter pnt(this);
     int dy = height()/2;
 
@@ -145,18 +145,18 @@ void opponent::setName()
     QString str2;
     switch(label_type)
     {
-        case OPP_SHOW_LOGIN:
-            str = login;
-            str2 = idu + " - " + name;
-            break;
-        case OPP_SHOW_NAME:
-            str = name;
-            str2 = idu + " - " + login;
-            break;
-        case OPP_SHOW_IDU:
-            str = idu;
-            str2 = login + " - " + name;
-            break;
+	case OPP_SHOW_LOGIN:
+	    str = login;
+	    str2 = idu + " - " + name;
+	    break;
+	case OPP_SHOW_NAME:
+	    str = name;
+	    str2 = idu + " - " + login;
+	    break;
+	case OPP_SHOW_IDU:
+	    str = idu;
+	    str2 = login + " - " + name;
+	    break;
     }
     label->setText(str);
     setToolTip(str2);
@@ -177,33 +177,33 @@ void opponent::setNewData(float lat, float lon,QString name)
 
     if(name != this->name)
     {
-        this->name=name;
-        setName();
-        needUpdate = true;
+	this->name=name;
+	setName();
+	needUpdate = true;
     }
 
     /* new data => we are not a qtVlm boat */
     if(isQtBoat)
     {
-        setIsQtBoat(false);
-        #warning why doing this ?
+	setIsQtBoat(false);
+	#warning why doing this ?
     }
     else
     {
-        if(needUpdate)
-            update();
+	if(needUpdate)
+	    update();
     }
 }
 
 void opponent::setIsQtBoat(bool status)
 {
     if(status == isQtBoat)
-        return;
+	return;
     isQtBoat=status;
     if(isQtBoat)
-        hide();
+	hide();
     else
-        show();
+	show();
 }
 
 void opponent::paramChanged()
@@ -212,7 +212,7 @@ void opponent::paramChanged()
     label_type = Util::getSetting("opp_labelType",0).toInt();
     setName();
     if(isQtBoat)
-        update();
+	update();
 }
 
 /****************************************
@@ -269,7 +269,7 @@ opponentList::opponentList(Projection * proj,MainWindow * mainWin,QWidget *paren
 QString opponentList::getRaceId()
 {
     if(opponent_list.size()<=0)
-        return "";
+	return "";
 
     return opponent_list[0]->getRace();
 }
@@ -278,21 +278,21 @@ void opponentList::setBoatList(QString list_txt,QString race,bool force)
 {
     if(conn && !conn->isAvailable())
     {
-        qWarning() << "getOpponents request still running";
-        return;
+	qWarning() << "getOpponents request still running";
+	return;
     }
 
     /* is a list defined ? */
     if(opponent_list.size()>0)
     {
-        if(!force && opponent_list[0]->getRace() == race) /* it is the same race */
-        { /* compare if same opp list */
-            /* for now it is the same => refresh*/
-            refreshData();
-            return;
-        }
-        /* clear current list */
-        clear();
+	if(!force && opponent_list[0]->getRace() == race) /* it is the same race */
+	{ /* compare if same opp list */
+	    /* for now it is the same => refresh*/
+	    refreshData();
+	    return;
+	}
+	/* clear current list */
+	clear();
     }
 
     //currentRequest=OPP_BOAT_DATA;
@@ -302,25 +302,25 @@ void opponentList::setBoatList(QString list_txt,QString race,bool force)
     currentMode = OPP_MODE_NEWLIST;
 
     if(currentList.size() > 0)
-        getNxtOppData();
+	getNxtOppData();
 }
 
 void opponentList::clear(void)
 {
     while (!opponent_list.isEmpty())
-        delete opponent_list.takeFirst();
+	delete opponent_list.takeFirst();
 }
 
 void opponentList::refreshData(void)
 {
     if(conn && !conn->isAvailable())
     {
-        qWarning() << "getOpponents request still running";
-        return;
+	qWarning() << "getOpponents request still running";
+	return;
     }
 
     if(opponent_list.size()<=0)
-        return;
+	return;
 
     //currentRequest=OPP_BOAT_DATA;
     currentRace = opponent_list[0]->getRace();
@@ -336,32 +336,32 @@ void opponentList::getNxtOppData()
 
     if(currentOpponent>=listSize)
     {
-        parent->update();
-        return;
+	parent->update();
+	return;
     }
 
     idu = (currentMode==OPP_MODE_REFRESH?opponent_list[currentOpponent]->getIduser():currentList[currentOpponent]);
 
     if(mainWin->isBoat(idu))
     {
-        if(currentMode==OPP_MODE_REFRESH)
-            opponent_list[currentOpponent]->setIsQtBoat(true);
-        else
-            opponent_list.append(new opponent(colorTable[currentOpponent],idu,currentRace,proj,mainWin,parent));
+	if(currentMode==OPP_MODE_REFRESH)
+	    opponent_list[currentOpponent]->setIsQtBoat(true);
+	else
+	    opponent_list.append(new opponent(colorTable[currentOpponent],idu,currentRace,proj,mainWin,parent));
 
-        currentOpponent++;
-        getNxtOppData();
-        return;
+	currentOpponent++;
+	getNxtOppData();
+	return;
     }
 
     QString page;
     QTextStream(&page)
-                        << "/gmap/index.php?"
-                        << "type=ajax&riq=pos"
-                        << "&idusers="
-                        << idu
-                        << "&idraces="
-                        << currentRace;
+			<< "/gmap/index.php?"
+			<< "type=ajax&riq=pos"
+			<< "&idusers="
+			<< idu
+			<< "&idraces="
+			<< currentRace;
     currentOpponent++;
 
     conn->doRequestGet(OPP_BOAT_DATA,page);
@@ -373,7 +373,7 @@ void opponentList::updateInet(void)
     if(conn) conn->updateInet();
 }
 
-void opponentList::requestFinished (int currentRequest,QString res)
+void opponentList::requestFinished (int currentRequest,QByteArray res_byte)
 {
     QString page;
     QStringList list_res;
@@ -381,60 +381,61 @@ void opponentList::requestFinished (int currentRequest,QString res)
     float lat,lon;
     QString login,name;
     QString idu;
+    QString res(res_byte);
 
     switch(currentRequest)
     {
-        case OPP_BOAT_DATA:
-            list_res=readData(res,OPP_TYPE_NAME);
-            if(list_res.size()>0)
-            {
-                /* only one data should be returned */
-                lsval=list_res[0].split(",");
-                list_res=readData(res,OPP_TYPE_POSITION);
-                lsval2=list_res[0].split(",");
-                if (lsval2.size() == 2)
-                {
-                    lat=lsval2[0].toFloat();
-                    lon=lsval2[1].toFloat();
-                    login=lsval[0].mid(4,lsval[0].size()-4-4);
-                    name=lsval[1].mid(5,lsval[1].size()-5-1);
-                    if(lat!=0 && lon !=0)
-                    {
-                        idu = (currentMode==OPP_MODE_REFRESH?
-                            opponent_list[currentOpponent-1]->getIduser():currentList[currentOpponent-1]);
-                        /*qWarning() << login << "-" << name
-                            << " at (" << lat << "," << lon << ") - idu"
-                            << idu ;*/
-                        if(currentMode==OPP_MODE_REFRESH)
-                            opponent_list[currentOpponent-1]->setNewData(lat,lon,name);
-                        else
-                            opponent_list.append(new opponent(colorTable[currentOpponent-1],idu,currentRace,
-                                                        lat,lon,login,name,proj,mainWin,parent));
-                    QTextStream(&page)
-                        << "/gmap/index.php?"
-                        << "type=ajax&riq=trj"
-                        << "&idusers="
-                        << idu
-                        << "&idraces="
-                        << currentRace;
+	case OPP_BOAT_DATA:
+	    list_res=readData(res,OPP_TYPE_NAME);
+	    if(list_res.size()>0)
+	    {
+		/* only one data should be returned */
+		lsval=list_res[0].split(",");
+		list_res=readData(res,OPP_TYPE_POSITION);
+		lsval2=list_res[0].split(",");
+		if (lsval2.size() == 2)
+		{
+		    lat=lsval2[0].toFloat();
+		    lon=lsval2[1].toFloat();
+		    login=lsval[0].mid(4,lsval[0].size()-4-4);
+		    name=lsval[1].mid(5,lsval[1].size()-5-1);
+		    if(lat!=0 && lon !=0)
+		    {
+			idu = (currentMode==OPP_MODE_REFRESH?
+			    opponent_list[currentOpponent-1]->getIduser():currentList[currentOpponent-1]);
+			/*qWarning() << login << "-" << name
+			    << " at (" << lat << "," << lon << ") - idu"
+			    << idu ;*/
+			if(currentMode==OPP_MODE_REFRESH)
+			    opponent_list[currentOpponent-1]->setNewData(lat,lon,name);
+			else
+			    opponent_list.append(new opponent(colorTable[currentOpponent-1],idu,currentRace,
+							lat,lon,login,name,proj,mainWin,parent));
+		    QTextStream(&page)
+			<< "/gmap/index.php?"
+			<< "type=ajax&riq=trj"
+			<< "&idusers="
+			<< idu
+			<< "&idraces="
+			<< currentRace;
 
-                    conn->doRequestGet(OPP_BOAT_TRJ,page);
-                    break;
-                    }
-                }
-            }
-            getNxtOppData();
-            break;
-        case OPP_BOAT_TRJ:
-            if(currentMode==OPP_MODE_REFRESH)
-                getTrace(res,opponent_list[currentOpponent-1]->getTrace());
-            else
-            {
-                if(!opponent_list.isEmpty())
-                getTrace(res,opponent_list.last()->getTrace());
-            }
-            getNxtOppData();
-            break;
+		    conn->doRequestGet(OPP_BOAT_TRJ,page);
+		    break;
+		    }
+		}
+	    }
+	    getNxtOppData();
+	    break;
+	case OPP_BOAT_TRJ:
+	    if(currentMode==OPP_MODE_REFRESH)
+		getTrace(res,opponent_list[currentOpponent-1]->getTrace());
+	    else
+	    {
+		if(!opponent_list.isEmpty())
+		getTrace(res,opponent_list.last()->getTrace());
+	    }
+	    getNxtOppData();
+	    break;
     }
 }
 
@@ -443,9 +444,9 @@ QStringList opponentList::readData(QString in_data,int type)
     QString begin_str;
     QString end_str = ")";
     if(type==OPP_TYPE_POSITION)
-        begin_str = "GLatLng(";
+	begin_str = "GLatLng(";
     else
-        begin_str = "openInfoWindowHtml(";
+	begin_str = "openInfoWindowHtml(";
     QString sub_str;
     QStringList lst;
     bool stop=false;
@@ -453,18 +454,18 @@ QStringList opponentList::readData(QString in_data,int type)
     int end;
     while(!stop)
     {
-        pos = in_data.indexOf(begin_str,pos);
-        if(pos==-1)
-            stop=true;
-        else
-        {
-            pos+=begin_str.size();
-            end = in_data.indexOf(end_str,pos);
-            if(end==-1)
-                continue;
-            lst.append(QString(in_data.mid(pos,end-pos)));
-            pos=end;
-        }
+	pos = in_data.indexOf(begin_str,pos);
+	if(pos==-1)
+	    stop=true;
+	else
+	{
+	    pos+=begin_str.size();
+	    end = in_data.indexOf(end_str,pos);
+	    if(end==-1)
+		continue;
+	    lst.append(QString(in_data.mid(pos,end-pos)));
+	    pos=end;
+	}
     }
     return lst;
 }
@@ -476,21 +477,21 @@ void opponentList::getTrace(QString buff, QList<position*> * trace)
 
     /* clear current trace*/
     while (!trace->isEmpty())
-        delete trace->takeFirst();
+	delete trace->takeFirst();
 
     /* parse buff */
     if(buff.isEmpty())
-        return;
+	return;
     lsval = readData(buff,OPP_TYPE_POSITION);
     for(int i=0;i<lsval.size();i++)
     {
-        lsval2=lsval[i].split(",");
-        if (lsval2.size() == 2)
-        {
-            ptr=new position();
-            ptr->lat=lsval2[0].toFloat();
-            ptr->lon=lsval2[1].toFloat();
-            trace->append(ptr);
-        }
+	lsval2=lsval[i].split(",");
+	if (lsval2.size() == 2)
+	{
+	    ptr=new position();
+	    ptr->lat=lsval2[0].toFloat();
+	    ptr->lon=lsval2[1].toFloat();
+	    trace->append(ptr);
+	}
     }
 }

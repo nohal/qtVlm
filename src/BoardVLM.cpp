@@ -62,7 +62,7 @@ boardVLM::boardVLM(QMainWindow * mainWin,QWidget * parent) : QWidget(parent)
     GPS_timer->setSingleShot(true);
     connect(GPS_timer,SIGNAL(timeout()),this, SLOT(synch_GPS()));
 
-    QDockWidget * VLMDock = new QDockWidget("VLM 1");
+    QDockWidget * VLMDock = new QDockWidget("Virtual Loup de Mer");
     VLMDock->setWidget(this);
     VLMDock->setAllowedAreas(Qt::RightDockWidgetArea|Qt::LeftDockWidgetArea);
     mainWin->addDockWidget(Qt::LeftDockWidgetArea,VLMDock);
@@ -599,7 +599,7 @@ void boardVLM::setChangeStatus(bool status)
     editHeading->setEnabled(st);
     btn_virer->setEnabled(st);
     btn_chgAngle->setEnabled(st);
-    editAngle->setEnabled(st);    
+    editAngle->setEnabled(st);
     goPilotOrtho->setEnabled(st);
     goVMG->setEnabled(st);
     btn_WP->setEnabled(st);
@@ -645,7 +645,7 @@ void boardVLM::sendCmd(int cmdNum,float  val1,float val2, float val3)
     }
 }
 
-void boardVLM::requestFinished (int currentRequest,QString)
+void boardVLM::requestFinished (int currentRequest,QByteArray)
 {
     QString page;
     QNetworkRequest request;
