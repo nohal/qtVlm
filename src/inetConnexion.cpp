@@ -180,6 +180,7 @@ void inetConn_progressDialog::showDialog(QString name)
     fileName->setText(name);
     progress->reset();
     progress_txt->setText("0/0 Kb");
+    setWindowModality(Qt::ApplicationModal);
     show();
 }
 
