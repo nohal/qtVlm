@@ -32,11 +32,11 @@ inetConnexion::inetConnexion(QWidget * parent) : QWidget(parent)
 inetConnexion::inetConnexion(QString specHost,QWidget * parent) : QWidget(parent)
 {
     if(specHost.isEmpty())
-	hasSpecHost=false;
+        hasSpecHost=false;
     else
     {
-	hasSpecHost=true;
-	host=specHost;
+        hasSpecHost=true;
+        host=specHost;
     }
     initConn(parent);
 }
@@ -54,17 +54,17 @@ inetConnexion::~inetConnexion(void)
 {
     resetInet();
     if(inetManager)
-	delete inetManager;
+        delete inetManager;
 }
 
 void inetConnexion::updateInet(void)
 {
     if(inetManager)
     {
-	if(!hasSpecHost)
-	    host=Util::getHost();
-	Util::paramProxy(inetManager,host);
-	resetInet();
+        if(!hasSpecHost)
+            host=Util::getHost();
+        Util::paramProxy(inetManager,host);
+        resetInet();
     }
 }
 
@@ -78,10 +78,10 @@ void inetConnexion::resetInet(void)
     hasRequest=false;
     if(currentReply)
     {
-	currentReply->disconnect();
-	currentReply->close();
-	currentReply->deleteLater();
-	currentReply=NULL;
+        currentReply->disconnect();
+        currentReply->close();
+        currentReply->deleteLater();
+        currentReply=NULL;
     }
 }
 
@@ -120,12 +120,12 @@ void inetConnexion::doRequest(int type,int requestNum,QString requestUrl,QString
     Util::addAgent(request);
 
     if(type==REQUEST_POST)
-	currentReply=inetManager->post(request,data.toAscii());
+        currentReply=inetManager->post(request,data.toAscii());
     else
-	currentReply=inetManager->get(request);
+        currentReply=inetManager->get(request);
     connect(currentReply, SIGNAL(finished()), this, SLOT(slotFinished()));
     connect(currentReply, SIGNAL(error(QNetworkReply::NetworkError)),
-	     this, SLOT(slotError(QNetworkReply::NetworkError)));
+             this, SLOT(slotError(QNetworkReply::NetworkError)));
     connect(currentReply,SIGNAL(downloadProgress(qint64,qint64)),this,SLOT(slotProgess(qint64,qint64)));
 }
 
@@ -134,22 +134,22 @@ void inetConnexion::slotFinished()
     progressDialog->hide();
     if(currentReply && hasRequest)
     {
-	if (currentReply->error() != QNetworkReply::NoError) {
-	    qWarning() << "Error doing inetGet (2):" << currentReply->error() << " - " << currentReply->errorString();
-	    resetInet();
-	}
-	else
-	{
-	    //qWarning() << "Received : " << currentReply->size();
-	    QByteArray res=currentReply->readAll();
-	    resetInet();
-	    emit requestFinished(currentRequest,res);
-	}
+        if (currentReply->error() != QNetworkReply::NoError) {
+            qWarning() << "Error doing inetGet (2):" << currentReply->error() << " - " << currentReply->errorString();
+            resetInet();
+        }
+        else
+        {
+            //qWarning() << "Received : " << currentReply->size();
+            QByteArray res=currentReply->readAll();
+            resetInet();
+            emit requestFinished(currentRequest,res);
+        }
     }
     else
     {
-	qWarning() << "Not processing reply: currentReply = " << currentReply << ", hasRequest=" << hasRequest;
-	resetInet();
+        qWarning() << "Not processing reply: currentReply = " << currentReply << ", hasRequest=" << hasRequest;
+        resetInet();
     }
 }
 
@@ -163,7 +163,7 @@ void inetConnexion::slotError(QNetworkReply::NetworkError error)
 void inetConnexion::slotProgess(qint64 bytesReceived, qint64 bytesTotal )
 {
     if(hasProgress)
-	progressDialog->updateProgress(bytesReceived,bytesTotal);
+        progressDialog->updateProgress(bytesReceived,bytesTotal);
 }
 
 /*********************************************
@@ -190,18 +190,22 @@ void inetConn_progressDialog::updateProgress(qint64 bytesReceived, qint64 bytesT
     QString str;
     double received,total;
     if(bytesTotal<1024)
-	type="b";
+    {
+        type="b";
+        received=((double)bytesReceived);
+        total=((double)bytesTotal);
+    }
     else if(bytesTotal<1024*1024)
     {
-	type="Kb";
-	received=((double)bytesReceived)/1024.0;
-	total=((double)bytesTotal)/1024.0;
+        type="Kb";
+        received=((double)bytesReceived)/1024.0;
+        total=((double)bytesTotal)/1024.0;
     }
     else
     {
-	type="Mb";
-	received=((double)bytesReceived)/1024.0/1024.0;
-	total=((double)bytesTotal)/1024.0/1024.0;
+        type="Mb";
+        received=((double)bytesReceived)/1024.0/1024.0;
+        total=((double)bytesTotal)/1024.0/1024.0;
     }
 
     progress->setMinimum(0);
