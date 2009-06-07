@@ -36,7 +36,7 @@ paramVLM::paramVLM(QWidget * parent) : QDialog(parent)
     opp_labelType->addItem(tr("Numéro"));
     opp_labelType->setCurrentIndex(Util::getSetting("opp_labelType",0).toInt());
 
-    chk_manualClipping->setCheckState(Util::getSetting("manualClipping",0).toInt()==1?Qt::Checked:Qt::Unchecked);
+    chk_autoGribDate->setCheckState(Util::getSetting("autoGribDate",0).toInt()==1?Qt::Checked:Qt::Unchecked);
 
     /* Colors */
 
@@ -44,7 +44,6 @@ paramVLM::paramVLM(QWidget * parent) : QDialog(parent)
     setColor(Util::getSetting("POI_WP_Color",QColor(Qt::red).name()).toString(),4);
     setColor(Util::getSetting("qtBoat_color",QColor(Qt::blue).name()).toString(),1);
     setColor(Util::getSetting("qtBoat_sel_color",QColor(Qt::red).name()).toString(),2);
-    //setColor(Util::getSetting("opp_color",QColor(Qt::green).name()).toString(),3);
 
     /* Trace */
     for(int i=5;i<=61;i+=5)
@@ -62,11 +61,6 @@ paramVLM::paramVLM(QWidget * parent) : QDialog(parent)
     userAgent->setText(Util::getSetting("userAgent", "").toString());
     userAgent->setEnabled(Util::getSetting("forceUserAgent",0).toInt()==1);
 
-    /*
-    url_list->addItem(tr("Standard: ")+"www.virtual-loup-de-mer.org");
-    url_list->addItem(tr("Secours: ")+"virtual-loup-de-mer.org");
-    url_list->addItem(tr("Test: ")+"testing.virtual-loup-de-mer.org");
-    */
     for(int i=0;i<NB_URL;i++)
         url_list->addItem(url_name[i]+": "+url_str[i]);
     url_list->setCurrentIndex(Util::getSetting("vlm_url",0).toInt());
@@ -80,7 +74,7 @@ void paramVLM::done(int result)
         Util::setSetting("estimeLen", QString().setNum(estimeLen->value()));
         Util::setSetting("gribZoomOnLoad",chk_gribZoomOnLoad->checkState()==Qt::Checked?"1":"0");
         Util::setSetting("opp_labelType",QString().setNum(opp_labelType->currentIndex()));
-        Util::setSetting("manualClipping",chk_manualClipping->checkState()==Qt::Checked?"1":"0");
+        Util::setSetting("autoGribDate",chk_autoGribDate->checkState()==Qt::Checked?"1":"0");
 
         /* colors */
 
@@ -88,7 +82,6 @@ void paramVLM::done(int result)
         Util::setSetting("POI_WP_Color",POI_WP_color);
         Util::setSetting("qtBoat_color",qtBoat_color);
         Util::setSetting("qtBoat_sel_color",qtBoat_sel_color);
-        //Util::setSetting("opp_color",opp_color);
 
         /* Trace */
 
@@ -132,11 +125,6 @@ void paramVLM::changeColor_qtBoat_sel(void)
 {
     changeColor(2);
 }
-
-/*void paramVLM::changeColor_opp(void)
-{
-    changeColor(3);
-}*/
 
 void paramVLM::changeColor_POI_WP(void)
 {
@@ -190,10 +178,6 @@ void paramVLM::setColor(QString color,int type)
             qtBoat_sel_frame->setStyleSheet(style);
             qtBoat_sel_color=color;
             break;
-/*        case 3:
-            opp_frame->setStyleSheet(style);
-            opp_color=color;
-            break;*/
         case 4:
             POI_WP_frame->setStyleSheet(style);
             POI_WP_color=color;

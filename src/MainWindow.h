@@ -156,6 +156,7 @@ class MainWindow: public QMainWindow
         void paramVLMChanged();
         void WPChanged(float,float);
         void getTrace(QString buff,QList<position*> * trace);
+        void updateInet(void);
 
     private:
         GshhsReader *gshhsReader;

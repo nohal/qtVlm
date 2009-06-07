@@ -110,9 +110,7 @@ class opponentList : public QWidget
 	void refreshData(void);
 	void clear(void);
 	QString getRaceId();
-	QList<opponent*> * getList(void) { return &opponent_list; };
-
-	void updateInet(void);
+        QList<opponent*> * getList(void) { return &opponent_list; };
 
     public slots:
 	void requestFinished (int,QByteArray);

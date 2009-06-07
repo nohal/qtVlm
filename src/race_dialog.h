@@ -31,6 +31,7 @@ class race_dialog;
 
 #include "opponentBoat.h"
 #include "boatAccount.h"
+#include "inetConnexion.h"
 
 struct boatParam {
     QString login;
@@ -57,11 +58,9 @@ class race_dialog : public QDialog, public Ui::race_dialog_ui
         void chgRace(int id);
         void addBoat(void);
         void delBoat(void);
-        //void addAllBoat(void);
         void delAllBoat(void);
         void doSynch(void);
-        
-        void requestFinished (QNetworkReply*);
+        void requestFinished (int,QByteArray);
         
     signals:
         void readBoat(void);
@@ -86,11 +85,10 @@ class race_dialog : public QDialog, public Ui::race_dialog_ui
         void saveData(bool);
         
         /* http connection */
-        QString host;        
-        int currentRequest;
         int currentRace;
         QStringList currentParam;
-        QNetworkAccessManager *inetManager;
+
+        inetConnexion * conn;
         
 };
 

@@ -84,7 +84,7 @@ boatAccount::boatAccount(QString login, QString pass, bool activated,Projection 
     connect(this,SIGNAL(releasePolar(QString)),main,SLOT(releasePolar(QString)));
 
     /* init http inetManager */
-    conn=new inetConnexion(this);
+    conn=new inetConnexion(main,this);
 
     setParam(login,pass,activated);
 }
@@ -94,12 +94,6 @@ boatAccount::~boatAccount()
     disconnect();
     if(polarData)
 	emit releasePolar(polarData->getName());
-}
-
-void boatAccount::updateInet(void)
-{
-    /* update connection */
-    if(conn) conn->updateInet();
 }
 
 void boatAccount::selectBoat()

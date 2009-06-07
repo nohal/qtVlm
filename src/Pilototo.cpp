@@ -53,7 +53,7 @@ Pilototo::Pilototo(QWidget *main,QWidget * parent):QDialog(parent)
 			     );
 
     /* inet init */
-    conn=new inetConnexion(this);
+    conn=new inetConnexion(main,this);
     currentList = NULL;
 }
 
@@ -261,7 +261,7 @@ void Pilototo::done(int result)
 	{
 	    int rep = QMessageBox::question (this,
 	    tr("Instructions non Validées"),
-	    tr("Il reste des instructions non validées. Elles ne seront pas envoyées à VLM\nContinuer la sauvegarde?"),
+	    tr("Il reste des instructions non validées. Elles ne seront pas envoyées �  VLM\nContinuer la sauvegarde?"),
 	    QMessageBox::Yes | QMessageBox::No);
 	    if (rep == QMessageBox::No)
 		return;
@@ -343,12 +343,6 @@ void Pilototo::requestFinished (int currentRequest,QByteArray)
 	    }
 	    break;
     }
-}
-
-void Pilototo::updateInet(void)
-{
-    /* update connection */
-    if(conn) conn->updateInet();
 }
 
 void Pilototo::addInstruction(void)

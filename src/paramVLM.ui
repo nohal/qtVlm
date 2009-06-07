@@ -169,9 +169,9 @@
       </rect>
      </property>
      <property name="title">
-      <string>Manual Clipping</string>
+      <string>Grib horodate</string>
      </property>
-     <widget class="QCheckBox" name="chk_manualClipping">
+     <widget class="QCheckBox" name="chk_autoGribDate">
       <property name="geometry">
        <rect>
         <x>10</x>
@@ -181,7 +181,7 @@
        </rect>
       </property>
       <property name="text">
-       <string>Activer le nouvel algo de clipping</string>
+       <string>Date automatique à chaque synchro VLM</string>
       </property>
      </widget>
     </widget>

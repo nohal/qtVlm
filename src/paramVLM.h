@@ -39,7 +39,6 @@ class paramVLM : public QDialog, public Ui::VLM_param_ui
         void changeColor_POI(void);
         void changeColor_qtBoat(void);
         void changeColor_qtBoat_sel(void);
-        //void changeColor_opp(void);
         void changeColor_POI_WP(void);
 
     signals:
@@ -52,7 +51,6 @@ class paramVLM : public QDialog, public Ui::VLM_param_ui
         QColor getColor(int type);
 
         QString POI_color,POI_WP_color,qtBoat_color,qtBoat_sel_color;
-        //,opp_color;
 };
 
 

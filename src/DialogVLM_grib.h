@@ -32,11 +32,9 @@ class DialogVLM_grib : public QDialog, public Ui::DialogVLM_grib_ui
 {
     Q_OBJECT
     public:
-	DialogVLM_grib(QWidget * parent = 0);
+        DialogVLM_grib(QWidget * main,QWidget * parent = 0);
 	void done(int res);
-	void showDialog(void);
-
-	void updateInet(void);
+        void showDialog(void);
 
     public slots:
 	void requestFinished (int,QByteArray);

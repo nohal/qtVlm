@@ -23,13 +23,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #define REQUEST_GET  0
 #define REQUEST_POST 1
 
-inetConnexion::inetConnexion(QWidget * parent) : QWidget(parent)
+inetConnexion::inetConnexion(QWidget * main,QWidget * parent) : QWidget(parent)
 {
     hasSpecHost=false;
-    initConn(parent);
+    initConn(main,parent);
 }
 
-inetConnexion::inetConnexion(QString specHost,QWidget * parent) : QWidget(parent)
+inetConnexion::inetConnexion(QString specHost,QWidget * main,QWidget * parent) : QWidget(parent)
 {
     if(specHost.isEmpty())
         hasSpecHost=false;
@@ -38,13 +38,16 @@ inetConnexion::inetConnexion(QString specHost,QWidget * parent) : QWidget(parent
         hasSpecHost=true;
         host=specHost;
     }
-    initConn(parent);
+    initConn(main,parent);
 }
 
-void inetConnexion::initConn(QWidget * parent)
+void inetConnexion::initConn(QWidget * main,QWidget * parent)
 {
+    this->parent=parent;
+
     inetManager = new QNetworkAccessManager(this);
     connect(this,SIGNAL(requestFinished(int,QByteArray)),parent,SLOT(requestFinished(int,QByteArray)));
+    connect(main,SIGNAL(updateInet()),this,SLOT(updateInet()));
     currentReply=NULL;
     updateInet();
     progressDialog=new inetConn_progressDialog();
@@ -61,6 +64,8 @@ void inetConnexion::updateInet(void)
 {
     if(inetManager)
     {
+        qWarning() << "Update inet for " << parent;
+
         if(!hasSpecHost)
             host=Util::getHost();
         Util::paramProxy(inetManager,host);

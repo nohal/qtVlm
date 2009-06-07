@@ -263,7 +263,7 @@ opponentList::opponentList(Projection * proj,MainWindow * mainWin,QWidget *paren
     colorTable[14] = QColor(170,0,255);
 
     /* init http inetManager */
-    conn=new inetConnexion(this);
+    conn=new inetConnexion(mainWin,this);
 }
 
 QString opponentList::getRaceId()
@@ -365,12 +365,6 @@ void opponentList::getNxtOppData()
     currentOpponent++;
 
     conn->doRequestGet(OPP_BOAT_DATA,page);
-}
-
-void opponentList::updateInet(void)
-{
-    /* update connection */
-    if(conn) conn->updateInet();
 }
 
 void opponentList::requestFinished (int currentRequest,QByteArray res_byte)

@@ -89,7 +89,7 @@ boardVLM::boardVLM(QMainWindow * mainWin,QWidget * parent) : QWidget(parent)
     btn_WP->setText("No WP");
 
     /* inet init */
-    conn=new inetConnexion(this);
+    conn=new inetConnexion(mainWin,this);
     isWaiting=false;
 
     currentBoat = NULL;
@@ -607,12 +607,6 @@ void boardVLM::setChangeStatus(bool status)
 
 /*********************/
 /* http requests     */
-
-void boardVLM::updateInet(void)
-{
-    /* update connection */
-    if(conn) conn->updateInet();
-}
 
 void boardVLM::sendCmd(int cmdNum,float  val1,float val2, float val3)
 {

@@ -26,7 +26,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #define VLM_REQUEST_GET_FOLDER 0
 #define VLM_REQUEST_GET_FILE   1
 
-DialogVLM_grib::DialogVLM_grib(QWidget *parent) : QDialog(parent)
+DialogVLM_grib::DialogVLM_grib(QWidget * main,QWidget *parent) : QDialog(parent)
 {
     setupUi(this);
     listRadio[0]=radio1;
@@ -41,7 +41,7 @@ DialogVLM_grib::DialogVLM_grib(QWidget *parent) : QDialog(parent)
 			     );
 
     /* init http inetManager */
-    conn=new inetConnexion("http://grib.virtual-loup-de-mer.org",this);
+    conn=new inetConnexion("http://grib.virtual-loup-de-mer.org",main,this);
 }
 
 void DialogVLM_grib::done(int res)
@@ -204,10 +204,4 @@ void DialogVLM_grib::requestFinished (int reqType,QByteArray data)
 
 	    break;
     }
-}
-
-void DialogVLM_grib::updateInet(void)
-{
-    /* update connection */
-    if(conn) conn->updateInet();
 }

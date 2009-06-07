@@ -40,15 +40,7 @@ race_dialog::race_dialog(QWidget * main,QWidget * parent) : QDialog(parent)
     connect(this,SIGNAL(updateOpponent()),main,SLOT(slotUpdateOpponent()));
 
     /* init http inetManager */
-    inetManager = new QNetworkAccessManager(this);
-    currentRequest=RACE_NO_REQUEST;
-    if(inetManager)
-    {
-	host = Util::getHost();
-	connect(inetManager, SIGNAL(finished(QNetworkReply*)),
-	    this, SLOT(requestFinished (QNetworkReply*)));
-	Util::paramProxy(inetManager,host);
-    }
+    conn=new inetConnexion(main,this);
 
     waitBox = new QMessageBox(QMessageBox::Information,
 			     tr("Paramétrage des courses"),
@@ -102,15 +94,20 @@ void race_dialog::initList(QList<boatAccount*> & acc_list_ptr,QList<raceData*> &
     for(int j=0;j<param_list.size();j++)
 	chooser_raceList->addItem(param_list[j]->name,param_list[j]->id);
     nbRace->setText(QString().setNum(param_list.size()));
-    #warning should use inetConn here !!!
     /* get boat list */
-    if(currentRequest != RACE_NO_REQUEST)
+    if(!conn)
     {
-	qWarning() << "request already running";
-	return;
+        qWarning() << "No connection structure available";
+        return ;
     }
+
+    if(!conn->isAvailable() )
+    {
+        qWarning() << "request already running" ;
+        return ;
+    }
+
     currentRace=-1;
-    currentRequest=RACE_LIST_BOAT;
     getNextRace();
 
     waitBox->exec();
@@ -125,8 +122,7 @@ void race_dialog::getNextRace()
 	/* finished */
 	waitBox->hide();
 	numRace=-1;
-	chgRace(0);
-	currentRequest=RACE_NO_REQUEST;
+        chgRace(0);
 	return;
     }
 
@@ -140,59 +136,39 @@ void race_dialog::getNextRace()
 	}
 
     QString page;
-    QTextStream(&page) << host
-			<< "/getuserlist.php?"
+    QTextStream(&page) << "/getuserlist.php?"
 			<< "idr="
 			<< param_list[currentRace]->id;
-    qWarning() << "ask for " << page;
-    QNetworkRequest request;
-    request.setUrl(QUrl(page));
-    Util::addAgent(request);
-    inetManager->get(request);
+
+    conn->doRequestGet(RACE_LIST_BOAT,page);
 }
 
-void race_dialog::requestFinished (QNetworkReply * inetReply)
+void race_dialog::requestFinished (int currentRequest,QByteArray data)
 {
-    if (inetReply->error() != QNetworkReply::NoError) {
-	qWarning() << "Error doing inet-Get:" << inetReply->error();
-	currentRequest=RACE_NO_REQUEST;
-    }
-    else
+    QString strbuf(data);
+    QStringList list_res;
+    QStringList boat;
+    int i;
+    struct boatParam * ptr;
+
+    list_res=strbuf.split("\n");
+    for(i=5;i<list_res.size();i++)
     {
-	 QString strbuf = inetReply->readAll();
-	 QStringList list_res;
-	 QStringList boat;
-	 int i;
-	 struct boatParam * ptr;
-	 switch(currentRequest)
-	 {
-	     case RACE_NO_REQUEST:
-		 return;
-	     case RACE_LIST_BOAT:
-		 list_res=strbuf.split("\n");
-		 //qWarning() << (list_res.size()-4) << " boats in race";
-		 for(i=5;i<list_res.size();i++)
-		 {
-		     boat=list_res[i].split(";");
-		     if(boat.size() < 5) /* not enough data => next line */
-		     {
-			 //qWarning() << "Skip boat only " << boat.size() << " data (should be 5)";
-			 continue;
-		     }
-		     ptr = new boatParam();
-		     /* ex: 6936;Aarizia 4;Petit Navire;Nova_Scotia;79.94.105.194 */
-		     ptr->login=boat[1];
-		     ptr->name=boat[2];
-		     ptr->user_id=boat[0];
-		     ptr->selected=currentParam.contains(boat[0]);
-		     param_list[currentRace]->boats.append(ptr);
-		 }
-		 //qWarning() << "boat list size: " << param_list[currentRace]->boats.size();
-		 /* next race */
-		getNextRace();
-		 break;
-	 }
+        boat=list_res[i].split(";");
+        if(boat.size() < 5) /* not enough data => next line */
+        {
+            continue;
+        }
+        ptr = new boatParam();
+        ptr->login=boat[1];
+        /* ex: 6936;Aarizia 4;Petit Navire;Nova_Scotia;79.94.105.194 */
+        ptr->name=boat[2];
+        ptr->user_id=boat[0];
+        ptr->selected=currentParam.contains(boat[0]);
+        param_list[currentRace]->boats.append(ptr);
     }
+    /* next race */
+    getNextRace();
 }
 
 void race_dialog::clear(void)

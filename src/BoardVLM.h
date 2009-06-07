@@ -66,8 +66,7 @@ class WP_dialog: public QDialog, public Ui::WP_dialog_ui
 class boardVLM: public QWidget , public Ui::boardVLM_ui
 { Q_OBJECT
     public:
-	boardVLM(QMainWindow * mainWin,QWidget * parent=0);
-	void updateInet(void);
+        boardVLM(QMainWindow * mainWin,QWidget * parent=0);
 
     public slots:
 	void chgHeading();

@@ -118,10 +118,7 @@ class Pilototo : public QDialog, public Ui::pilototo_ui
 {Q_OBJECT
     public:
 	Pilototo(QWidget *main,QWidget * parent=0);
-	void done(int);
-
-	void updateInet(void);
-
+        void done(int);
 	Pilototo_param * instructionEditor;
 
     public slots:

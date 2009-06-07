@@ -413,7 +413,7 @@ MainWindow::MainWindow(int w, int h, QWidget *parent)
     nxtVac_cnt=0;
     connect(timer,SIGNAL(timeout()),this, SLOT(updateNxtVac()));
 
-    loadVLM_grib = new DialogVLM_grib(terre);
+    loadVLM_grib = new DialogVLM_grib(this,terre);
 
     //---------------------------------------------------------
     // Active les actions
@@ -1055,6 +1055,9 @@ void MainWindow::slotVLM_Sync(void) {
     }
     /* synch opponents */
     opponents->refreshData();
+    /* synch grib */
+    if(Util::getSetting("autoGribDate",0).toInt()==1)
+        slotDateGribChanged_now();
 }
 
 void MainWindow::slotBoatUpdated(boatAccount * boat,bool newRace)
@@ -1165,10 +1168,10 @@ void MainWindow::slotSelectBoat(boatAccount* newSelect)
 	selectedBoat=newSelect;
 	if(newSelect->getStatus())
 	{
-	    newSelect->getData();
+            newSelect->getData();
 	    if(newSelect->getZoom()!=-1)
 		proj->setScale(newSelect->getZoom());
-	    menuBar->acPilototo->setEnabled(!newSelect->getLockStatus());
+            menuBar->acPilototo->setEnabled(!newSelect->getLockStatus());
 	}
 	else
 	    menuBar->acPilototo->setEnabled(false);
@@ -1196,6 +1199,8 @@ void MainWindow::slotInetUpdated(void)
     qWarning() << "Inet Updated";
     QListIterator<boatAccount*> i (acc_list);
 #warning should use signals
+    emit updateInet();
+    /*
     while(i.hasNext())
     {
 	boatAccount * acc = i.next();
@@ -1204,7 +1209,7 @@ void MainWindow::slotInetUpdated(void)
     VLMBoard->updateInet();
     pilototo->updateInet();
     opponents->updateInet();
-    loadVLM_grib->updateInet();
+    loadVLM_grib->updateInet();*/
     /*refreshing data*/
     slotVLM_Sync();
 }
@@ -1237,6 +1242,7 @@ void MainWindow::slotAccountListUpdated(void)
 	    break;
 	}
     menuBar->updateBoatList(acc_list);
+
     menuBar->setSelectedBoatIndex(0);
     slotChgBoat(0);
 }

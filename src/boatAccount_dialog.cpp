@@ -41,11 +41,6 @@ boatAccount_dialog::boatAccount_dialog(Projection * proj, QWidget * main, QWidge
     this->main=main;
     this->parent=parent;
 
-    /* load data */
-
-    /*xmlData = new xml_boatData(proj,main,parent);
-    xmlData->readBoatData(*this->acc_list,*this->race_list,"boatAcc.dat");*/
-
     /* signal / slot init */
 
     connect(btn_accAdd, SIGNAL(clicked()), this, SLOT(slot_addBoat()));

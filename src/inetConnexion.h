@@ -45,20 +45,20 @@ class inetConn_progressDialog : public QDialog, public Ui::inetConn_progressDial
 class inetConnexion : public QWidget
 { Q_OBJECT
     public:
-	inetConnexion(QWidget * parent);
-	inetConnexion(QString specHost,QWidget * parent);
+        inetConnexion(QWidget * main,QWidget * parent);
+        inetConnexion(QString specHost,QWidget * main,QWidget * parent);
 	~inetConnexion(void);
-	void initConn(QWidget * parent);
+        void initConn(QWidget * main,QWidget * parent);
 	void doRequestGet(int requestNum,QString requestUrl);
 	void doRequestGetProgress(int requestNum,QString requestUrl);
 	void doRequestPost(int requestNum,QString requestUrl,QString data);
-	bool isAvailable(void);
-	void updateInet(void);
+	bool isAvailable(void);	
 
     public slots:
 	void slotFinished();
 	void slotError(QNetworkReply::NetworkError error);
 	void slotProgess(qint64 bytesReceived, qint64 bytesTotal );
+        void updateInet(void);
 
     signals:
 	void requestFinished(int,QByteArray);
@@ -74,6 +74,7 @@ class inetConnexion : public QWidget
 
 	inetConn_progressDialog * progressDialog;
 
+        QWidget * parent;
 
 	void resetInet(void);
 	void doRequest(int type,int requestNum,QString requestUrl,QString data);

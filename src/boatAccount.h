@@ -99,9 +99,7 @@ class boatAccount: public QWidget
 	QString getEmail(void)       { return email; }
 	bool isUpdating()            { return updating; }
 
-	QString getCurrentPolarName(void) { return (forcePolar?polarName:polarVlm); }
-
-	void updateInet(void);
+        QString getCurrentPolarName(void) { return (forcePolar?polarName:polarVlm); }
 
     public slots:
 	void projectionUpdated();
