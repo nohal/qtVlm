@@ -27,7 +27,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 //-------------------------------------------------------------------------------
 Grib::Grib()
-{    
+{
     initNewGrib();
 }
 
@@ -121,19 +121,21 @@ void Grib::loadGribFile(QString fileName)
                 readGribFileContent();
         }
         setCurrentDate ( setAllDates.size()>0 ? *(setAllDates.begin()) : 0);
+        if (file != NULL)
+            zu_close(file);
     }
 }
 
 //-------------------------------------------------------------------------------
 void Grib::clean_all_vectors()
 {
-	std::map < std::string, std::vector<GribRecord *>* >::iterator it;
-	for (it=mapGribRecords.begin(); it!=mapGribRecords.end(); it++) {
-		std::vector<GribRecord *> *ls = (*it).second;
-		clean_vector( *ls );
-		delete ls;
-	}
-	mapGribRecords.clear();
+        std::map < std::string, std::vector<GribRecord *>* >::iterator it;
+        for (it=mapGribRecords.begin(); it!=mapGribRecords.end(); it++) {
+                std::vector<GribRecord *> *ls = (*it).second;
+                clean_vector( *ls );
+                delete ls;
+        }
+        mapGribRecords.clear();
 }
 //-------------------------------------------------------------------------------
 void Grib::clean_vector(std::vector<GribRecord *> &ls)
@@ -146,20 +148,20 @@ void Grib::clean_vector(std::vector<GribRecord *> &ls)
     ls.clear();
 }
 
-//---------------------------------------------------------------------------------    
+//---------------------------------------------------------------------------------
 void Grib::storeRecordInMap(GribRecord *rec)
 {
-	std::map <std::string, std::vector<GribRecord *>* >::iterator it;
-	it = mapGribRecords.find(rec->getKey());	
-	if (it == mapGribRecords.end())
-	{
-		mapGribRecords[rec->getKey()] = new std::vector<GribRecord *>;
-		assert(mapGribRecords[rec->getKey()]);
-	}	
-	mapGribRecords[rec->getKey()]->push_back(rec);
+        std::map <std::string, std::vector<GribRecord *>* >::iterator it;
+        it = mapGribRecords.find(rec->getKey());
+        if (it == mapGribRecords.end())
+        {
+                mapGribRecords[rec->getKey()] = new std::vector<GribRecord *>;
+                assert(mapGribRecords[rec->getKey()]);
+        }
+        mapGribRecords[rec->getKey()]->push_back(rec);
 }
 
-//---------------------------------------------------------------------------------    
+//---------------------------------------------------------------------------------
 void Grib::readAllGribRecords()
 {
     //--------------------------------------------------------
@@ -176,10 +178,10 @@ void Grib::readAllGribRecords()
         if (rec->isOk())
         {
             ok = true;   // au moins 1 record ok
-            
+
             if (firstdate== -1)
                 firstdate = rec->getRecordCurrentDate();
-            
+
             if ((rec->getDataType()==GRB_WIND_VX || rec->getDataType()==GRB_WIND_VY)
                       && rec->getLevelType()==LV_ABOV_GND && rec->getLevelValue()==10)
                 storeRecordInMap(rec);
@@ -191,83 +193,83 @@ void Grib::readAllGribRecords()
     } while (rec != NULL &&  !rec->isEof());
 }
 
-//---------------------------------------------------------------------------------    
+//---------------------------------------------------------------------------------
 void Grib::readGribFileContent()
 {
     fileSize = zu_filesize(file);
     readAllGribRecords();
-    
+
     createListDates();
     hoursBetweenRecords = computeHoursBeetweenGribRecords();
 }
 
 //---------------------------------------------------
 int Grib::getTotalNumberOfGribRecords() {
-	int nb=0;
-	std::map < std::string, std::vector<GribRecord *>* >::iterator it;
-	for (it=mapGribRecords.begin(); it!=mapGribRecords.end(); it++)
-	{
-		nb += (*it).second->size();
-	}
-	return nb;
+        int nb=0;
+        std::map < std::string, std::vector<GribRecord *>* >::iterator it;
+        for (it=mapGribRecords.begin(); it!=mapGribRecords.end(); it++)
+        {
+                nb += (*it).second->size();
+        }
+        return nb;
 }
 
 //---------------------------------------------------
 std::vector<GribRecord *> * Grib::getFirstNonEmptyList()
 {
     std::vector<GribRecord *> *ls = NULL;
-	std::map < std::string, std::vector<GribRecord *>* >::iterator it;
-	for (it=mapGribRecords.begin(); ls==NULL && it!=mapGribRecords.end(); it++)
-	{
-		if ((*it).second->size()>0)
-			ls = (*it).second;
-	}
-	return ls;
+        std::map < std::string, std::vector<GribRecord *>* >::iterator it;
+        for (it=mapGribRecords.begin(); ls==NULL && it!=mapGribRecords.end(); it++)
+        {
+                if ((*it).second->size()>0)
+                        ls = (*it).second;
+        }
+        return ls;
 }
 
 //---------------------------------------------------
 int Grib::getNumberOfGribRecords(int dataType,int levelType,int levelValue)
 {
-	std::vector<GribRecord *> *liste = getListOfGribRecords(dataType,levelType,levelValue);
-	if (liste != NULL)
-		return liste->size();
-	else
-		return 0;
+        std::vector<GribRecord *> *liste = getListOfGribRecords(dataType,levelType,levelValue);
+        if (liste != NULL)
+                return liste->size();
+        else
+                return 0;
 }
 
 //---------------------------------------------------------------------
 std::vector<GribRecord *> * Grib::getListOfGribRecords(int dataType,int levelType,int levelValue)
 {
-	std::string key = GribRecord::makeKey(dataType,levelType,levelValue);
-	if (mapGribRecords.find(key) != mapGribRecords.end())
-		return mapGribRecords[key];
-	else
-		return NULL;
+        std::string key = GribRecord::makeKey(dataType,levelType,levelValue);
+        if (mapGribRecords.find(key) != mapGribRecords.end())
+                return mapGribRecords[key];
+        else
+                return NULL;
 }
 
 //------------------------------------------------------------------
 void Grib::findGribsAroundDate (int dataType,int levelType,int levelValue, time_t date,
-							GribRecord **before, GribRecord **after)
+                                                        GribRecord **before, GribRecord **after)
 {
-	// Cherche les GribRecord qui encadrent la date
-	std::vector<GribRecord *> *ls = getListOfGribRecords(dataType,levelType,levelValue);
-	*before = NULL;
-	*after  = NULL;
-	zuint nb = ls->size();
+        // Cherche les GribRecord qui encadrent la date
+        std::vector<GribRecord *> *ls = getListOfGribRecords(dataType,levelType,levelValue);
+        *before = NULL;
+        *after  = NULL;
+        zuint nb = ls->size();
         for (zuint i=0; i<nb && /**before==NULL &&*/ *after==NULL; i++)
-	{
-		GribRecord *rec = (*ls)[i];
-		if (rec->getRecordCurrentDate() == date) {
-			*before = rec;
-			*after = rec;
-		}
-		else if (rec->getRecordCurrentDate() < date) {
-			*before = rec;
-		}
-		else if (rec->getRecordCurrentDate() > date  &&  *before != NULL) {
-			*after = rec;
-		}
-	}
+        {
+                GribRecord *rec = (*ls)[i];
+                if (rec->getRecordCurrentDate() == date) {
+                        *before = rec;
+                        *after = rec;
+                }
+                else if (rec->getRecordCurrentDate() < date) {
+                        *before = rec;
+                }
+                else if (rec->getRecordCurrentDate() > date  &&  *before != NULL) {
+                        *after = rec;
+                }
+        }
 }
 
 bool Grib::getInterpolatedValue_byDates(double d_long, double d_lat, time_t now,double * u, double * v)
@@ -478,14 +480,14 @@ GribRecord * Grib::getFirstGribRecord()
 // On suppose qu'il est fixe pour tout le fichier !!!
 double Grib::computeHoursBeetweenGribRecords()
 {
-	double res = 1;
+        double res = 1;
     std::vector<GribRecord *> *ls = getFirstNonEmptyList();
     if (ls != NULL) {
         time_t t0 = (*ls)[0]->getRecordCurrentDate();
         time_t t1 = (*ls)[1]->getRecordCurrentDate();
         res = abs(t1-t0) / 3600.0;
         if (res < 1)
-        	res = 1;  
+                res = 1;
     }
     return res;
 }
@@ -670,7 +672,7 @@ void Grib::draw_WIND_Color(QPainter &pnt, const Projection *proj, bool smooth,
 void Grib::drawCartouche(QPainter &pnt)
 {
     if (!ok) return;
-    int fSize=12;    
+    int fSize=12;
     QFont fontbig("TypeWriter", fSize, QFont::Bold, false);
     fontbig.setStyleHint(QFont::TypeWriter);
     fontbig.setStretch(QFont::Condensed);
