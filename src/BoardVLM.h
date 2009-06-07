@@ -121,6 +121,7 @@ class boardVLM: public QWidget , public Ui::boardVLM_ui
 
 	/*GPS emul param*/
 	QString COM;
+        char chkSum(QString data);
 
 	/* heading /angle user update */
 	bool isComputing;

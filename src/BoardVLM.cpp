@@ -481,15 +481,14 @@ void boardVLM::disp_boatInfo()
 
 }
 
-#define CHKSUM(DATA) ({             \
-    char __c=0;                     \
-    char * __str=DATA.toAscii().data(); \
-    while(*__str) {                 \
-        __c^=*__str;                \
-        __str++;                    \
-    }                               \
-    __c;                            \
-})
+char boardVLM::chkSum(QString data)
+{
+    char res=0;
+    for(int i=0;i<data.length();i++)
+        res^=data.at(i).toAscii();
+    return res;
+}
+
 
 void boardVLM::synch_GPS()
 {
@@ -540,9 +539,9 @@ void boardVLM::synch_GPS()
         for(int i=0;i<10;i++)
         {
             data="GPGLL,"+data1+now.toString("HHmmss")+",A";
-            ch=(char)CHKSUM(data);
+            ch=chkSum(data);
             data="$"+data+"*"+QString().setNum(ch,16);
-            qWarning() << "GPS-GLL: " << data;
+            //qWarning() << "GPS-GLL: " << data;
             data=data+"\x0D\x0A";
             if(port->write(data.toAscii(),data.length())!=data.length())
             {
@@ -554,9 +553,9 @@ void boardVLM::synch_GPS()
             }
 
             data="GPRMC,"+now.toString("HHmmss")+",A,"+data1+data2+now.toString("ddMMyy")+",000.0,E";
-            ch=(char)CHKSUM(data);
+            ch=chkSum(data);
             data="$"+data+"*"+QString().setNum(ch,16);
-            qWarning() << "GPS-RMC: " << data;
+            //qWarning() << "GPS-RMC: " << data;
             data=data+"\x0D\x0A";
             //port->write(data.toAscii(),data.length());
             if(port->write(data.toAscii(),data.length())!=data.length())
@@ -572,9 +571,9 @@ void boardVLM::synch_GPS()
         }
         /* one last RMC to confirm speed */
         data="GPRMC,"+now.toString("HHmmss")+",A,"+data1+data2+now.toString("ddMMyy")+",000.0,E";
-        ch=(char)CHKSUM(data);
+        ch=chkSum(data);
         data="$"+data+"*"+QString().setNum(ch,16);
-        qWarning() << "GPS-RMC: " << data;
+        //qWarning() << "GPS-RMC: " << data;
         data=data+"\x0D\x0A";
         //port->write(data.toAscii(),data.length());
         if(port->write(data.toAscii(),data.length())!=data.length())
