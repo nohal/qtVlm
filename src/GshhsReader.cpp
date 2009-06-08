@@ -1001,7 +1001,7 @@ void GshhsReader::drawContinents( QPainter &pnt, Projection *proj,
 {
     selectBestQuality(proj);
 
-    mode=(Util::getSetting("manualClipping",0).toInt());
+    mode=0;//(Util::getSetting("manualClipping",0).toInt());
 
     pnt.setPen(Qt::transparent);
 
@@ -1035,7 +1035,7 @@ void GshhsReader::drawSeaBorders( QPainter &pnt, Projection *proj)
 
     pnt.setBrush(Qt::transparent);
 
-    mode=(Util::getSetting("manualClipping",0).toInt());
+    mode=0;//(Util::getSetting("manualClipping",0).toInt());
 
     if (isUsingRangsReader) {
        gshhsRangsReader->drawGshhsRangsMapSeaBorders(pnt, proj);
