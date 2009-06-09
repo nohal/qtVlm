@@ -51,7 +51,6 @@ class DialogLoadGrib : public QDialog
     public slots:
         void slotBtOK();
         void slotBtCancel();
-        void slotBtServerStatus();
         void slotGribDataReceived(QByteArray *content, QString fileName);
         void slotGribFileError(QString error);
         void slotGribMessage(QString msg);
@@ -77,7 +76,6 @@ class DialogLoadGrib : public QDialog
 
         QPushButton *btOK;
         QPushButton *btCancel;
-        QPushButton *btServerStatus;
 
         QLabel       *labelMsg;
 
@@ -85,10 +83,8 @@ class DialogLoadGrib : public QDialog
 
         float   xmin,ymin,xmax,ymax,resolution;
         int     interval,days;
-        bool    pressure, wind;
-#ifdef HAS_TEMP
-	bool    temp;
-#endif
+        bool    wind;
+
         void    updateParameters();
 
 

@@ -28,7 +28,6 @@ HEADERS += BoardVLM.h \
     DialogGraphicsParams.h \
     DialogLoadGrib.h \
     DialogProxy.h \
-    DialogServerStatus.h \
     DialogUnits.h \
     GshhsRangsReader.h \
     GshhsReader.h \
@@ -78,7 +77,6 @@ SOURCES += BoardVLM.cpp \
     DialogGraphicsParams.cpp \
     DialogLoadGrib.cpp \
     DialogProxy.cpp \
-    DialogServerStatus.cpp \
     DialogUnits.cpp \
     GshhsRangsReader.cpp \
     GshhsReader.cpp \
