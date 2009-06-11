@@ -33,26 +33,26 @@ class DialogVLM_grib : public QDialog, public Ui::DialogVLM_grib_ui
     Q_OBJECT
     public:
         DialogVLM_grib(QWidget * main,QWidget * parent = 0);
-	void done(int res);
+        void done(int res);
         void showDialog(void);
 
     public slots:
-	void requestFinished (int,QByteArray);
+        void requestFinished (int,QByteArray);
 
     signals:
-	void signalGribFileReceived(QString);
+        void signalGribFileReceived(QString);
 
     private:
-	/* http connection */
-	inetConnexion * conn;
-	QRadioButton * listRadio[4];
-	QMessageBox * waitBox;
+        /* http connection */
+        inetConnexion * conn;
+        QRadioButton * listRadio[4];
+        QMessageBox * waitBox;
 
-	QString filename;
+        QString filename;
 
-	bool doRequest(int reqType);
-	int parseFolderListing(QString data);
-	bool gribFileReceived(QByteArray * content, QString fileName);
+        bool doRequest(int reqType);
+        int parseFolderListing(QString data);
+        bool gribFileReceived(QByteArray * content);
 };
 
 #endif // DIALOGVLM_GRIB_H

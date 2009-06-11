@@ -35,10 +35,10 @@ DialogVLM_grib::DialogVLM_grib(QWidget * main,QWidget *parent) : QDialog(parent)
     listRadio[3]=radio4;
 
     waitBox = new QMessageBox(QMessageBox::Question,
-			     tr("VLM Grib"),
-			     tr("Chargement de la liste de grib"),
-			     QMessageBox::Cancel,this
-			     );
+                             tr("VLM Grib"),
+                             tr("Chargement de la liste de grib"),
+                             QMessageBox::Cancel,this
+                             );
 
     /* init http inetManager */
     conn=new inetConnexion("http://grib.virtual-loup-de-mer.org",main,this);
@@ -48,8 +48,8 @@ void DialogVLM_grib::done(int res)
 {
     if(res == QDialog::Accepted)
     {
-	if(!doRequest(VLM_REQUEST_GET_FILE))
-	    QDialog::done(QDialog::Rejected);
+        if(!doRequest(VLM_REQUEST_GET_FILE))
+            QDialog::done(QDialog::Rejected);
     }
 
     QDialog::done(res);
@@ -60,13 +60,13 @@ void DialogVLM_grib::showDialog(void)
     /* disable all radio button */
 
     for(int i=0;i<4;i++)
-	listRadio[i]->setEnabled(false);
+        listRadio[i]->setEnabled(false);
 
     filename="";
 
     if(doRequest(VLM_REQUEST_GET_FOLDER))
     {
-	waitBox->exec();
+        waitBox->exec();
     }
 }
 
@@ -82,55 +82,55 @@ int DialogVLM_grib::parseFolderListing(QString data)
     i=0;
     while(1)
     {
-	/* grib file name */
-	pos = data.indexOf("gfs_NOAA",pos);
-	if(pos==-1) break;
-	gribName_str = data.mid(pos,23);
+        /* grib file name */
+        pos = data.indexOf("gfs_NOAA",pos);
+        if(pos==-1) break;
+        gribName_str = data.mid(pos,23);
 
-	pos+=23;
+        pos+=23;
 
-	/* grib date */
-	pos = data.indexOf("<td align=\"right\">",pos);
-	if(pos==-1) break;
-	date_str = data.mid(pos+19,16);
-	pos=pos+20;
+        /* grib date */
+        pos = data.indexOf("<td align=\"right\">",pos);
+        if(pos==-1) break;
+        date_str = data.mid(pos+19,16);
+        pos=pos+20;
 
-	/* file size */
-	pos = data.indexOf("<td align=\"right\">",pos);
-	if(pos==-1) break;
-	size_str = data.mid(pos+19,3);
-	pos=pos+20;
+        /* file size */
+        pos = data.indexOf("<td align=\"right\">",pos);
+        if(pos==-1) break;
+        size_str = data.mid(pos+19,3);
+        pos=pos+20;
 
-	listRadio[i]->setText(gribName_str + ", modified " + date_str + ", size " + size_str );
-	listRadio[i]->setEnabled(true);
-	i++;
+        listRadio[i]->setText(gribName_str + ", modified " + date_str + ", size " + size_str );
+        listRadio[i]->setEnabled(true);
+        i++;
     }
     return i;
 }
 
-bool DialogVLM_grib::gribFileReceived(QByteArray * content, QString fileName)
+bool DialogVLM_grib::gribFileReceived(QByteArray * content)
 {
-    fileName = QFileDialog::getSaveFileName(this,
-		 tr("Sauvegarde du fichier GRIB"), "grib/"+fileName, "");
+    filename = QFileDialog::getSaveFileName(this,
+                 tr("Sauvegarde du fichier GRIB"), "grib/"+filename, "");
 
-    if (fileName != "")
+    if (filename != "")
     {
-	QFile *saveFile = new QFile(fileName);
-	assert(saveFile);
-	if (saveFile->open(QIODevice::WriteOnly))
-	{
-	    int nb=saveFile->write(*content);
-	    if(nb>0)
-		saveFile->close();
-	    qWarning() << nb << " bytes saved in " << filename;
-	    return true;
-	}
-	else
-	{
-	    QMessageBox::critical (this,
-		    tr("Erreur"),
-		    tr("Ecriture du fichier impossible."));
-	}
+        QFile *saveFile = new QFile(filename);
+        assert(saveFile);
+        if (saveFile->open(QIODevice::WriteOnly))
+        {
+            int nb=saveFile->write(*content);
+            if(nb>0)
+                saveFile->close();
+            qWarning() << nb << " bytes saved in " << filename;
+            return true;
+        }
+        else
+        {
+            QMessageBox::critical (this,
+                    tr("Erreur"),
+                    tr("Ecriture du fichier impossible."));
+        }
     }
     return false;
 }
@@ -143,14 +143,14 @@ bool DialogVLM_grib::doRequest(int reqType)
 {
     if(!conn)
     {
-	qWarning() << "No connection structure available";
-	return false;
+        qWarning() << "No connection structure available";
+        return false;
     }
 
     if(!conn->isAvailable() )
     {
-	qWarning() << "request already running" ;
-	return false;
+        qWarning() << "request already running" ;
+        return false;
     }
 
     QString page;
@@ -158,20 +158,20 @@ bool DialogVLM_grib::doRequest(int reqType)
 
     switch(reqType)
     {
-	case VLM_REQUEST_GET_FOLDER:
-	    conn->doRequestGet(VLM_REQUEST_GET_FOLDER,"/");
-	    break;
-	case VLM_REQUEST_GET_FILE:
-	    /*search selected file*/
-	    for(i=0;i<4;i++)
-		if(listRadio[i]->isChecked())
-		    break;
-	    if(i==4)
-		return false;
-	    filename=listRadio[i]->text().mid(0,23);
-	    page="/"+filename;
-	    conn->doRequestGetProgress(VLM_REQUEST_GET_FILE,page);
-	    break;
+        case VLM_REQUEST_GET_FOLDER:
+            conn->doRequestGet(VLM_REQUEST_GET_FOLDER,"/");
+            break;
+        case VLM_REQUEST_GET_FILE:
+            /*search selected file*/
+            for(i=0;i<4;i++)
+                if(listRadio[i]->isChecked())
+                    break;
+            if(i==4)
+                return false;
+            filename=listRadio[i]->text().mid(0,23);
+            page="/"+filename;
+            conn->doRequestGetProgress(VLM_REQUEST_GET_FILE,page);
+            break;
     }
     return true;
 }
@@ -181,27 +181,27 @@ void DialogVLM_grib::requestFinished (int reqType,QByteArray data)
     int nb;
     switch(reqType)
     {
-	case VLM_REQUEST_GET_FOLDER:
-	    if(!waitBox->isVisible())
-		return;
-	    waitBox->hide();
-	    nb=parseFolderListing(QString(data));
-	    if(nb==0)
-		return;
-	    listRadio[nb-1]->setChecked(true);
-	    exec();
-	    break;
-	case VLM_REQUEST_GET_FILE:
-	    if(filename.isEmpty())
-	    {
-		qWarning() << "Empty file name in VLM grib save";
-	    }
-	    else
-		if(!gribFileReceived(&data,filename))
-		    showDialog();
-		else
-		    emit signalGribFileReceived("grib/"+filename);
+        case VLM_REQUEST_GET_FOLDER:
+            if(!waitBox->isVisible())
+                return;
+            waitBox->hide();
+            nb=parseFolderListing(QString(data));
+            if(nb==0)
+                return;
+            listRadio[nb-1]->setChecked(true);
+            exec();
+            break;
+        case VLM_REQUEST_GET_FILE:
+            if(filename.isEmpty())
+            {
+                qWarning() << "Empty file name in VLM grib save";
+            }
+            else
+                if(!gribFileReceived(&data))
+                    showDialog();
+                else
+                    emit signalGribFileReceived(filename);
 
-	    break;
+            break;
     }
 }

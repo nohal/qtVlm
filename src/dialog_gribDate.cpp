@@ -34,7 +34,7 @@ dialog_gribDate::dialog_gribDate(QWidget * parent) : QDialog(parent)
 }
 
 void dialog_gribDate::showDialog(time_t current,std::set<time_t>  * listGrib,time_t * result)
-{    
+{
 
 
     if(!result)
@@ -43,8 +43,6 @@ void dialog_gribDate::showDialog(time_t current,std::set<time_t>  * listGrib,tim
     startTime=current;
 
     time_t min=-1,max=-1;
-
-    qWarning() << "Starting dialog with: " << current;
 
     /* clear current status*/
     listGribDates.clear();
@@ -68,10 +66,8 @@ void dialog_gribDate::showDialog(time_t current,std::set<time_t>  * listGrib,tim
     int i=0;
     dateList->addItem("");
 
-    qWarning() << "Current " << current;
-
     for (it=listGribDates.begin(); it!=listGribDates.end(); it++)
-    {        
+    {
         time_t tps = *it;
         QString str = Util::formatDateTimeLong(tps);
         dateList->addItem(str);

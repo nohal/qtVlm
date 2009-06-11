@@ -326,7 +326,7 @@ QFrame *DialogLoadGrib::createFrameButtonsZone(QWidget *parent)
         ind = Util::inRange(ind, 0, cbDays->count()-1);
     cbDays->setCurrentIndex(ind);
 
-    btOK     = new QPushButton(tr("TÃ©lÃ©charger le fichier GRIB"), this);
+    btOK     = new QPushButton(tr("Télécharger le fichier GRIB"), this);
     assert(btOK);
     btCancel = new QPushButton(tr("Annuler"), this);
     assert(btCancel);
