@@ -9,7 +9,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>623</width>
+    <width>629</width>
     <height>282</height>
    </rect>
   </property>
@@ -71,7 +71,7 @@
   <widget class="QWidget" name="layoutWidget">
    <property name="geometry">
     <rect>
-     <x>276</x>
+     <x>280</x>
      <y>43</y>
      <width>241</width>
      <height>23</height>
@@ -97,7 +97,7 @@
   <widget class="QWidget" name="layoutWidget">
    <property name="geometry">
     <rect>
-     <x>276</x>
+     <x>280</x>
      <y>72</y>
      <width>241</width>
      <height>22</height>
@@ -123,7 +123,7 @@
   <widget class="QGroupBox" name="groupBox_2">
    <property name="geometry">
     <rect>
-     <x>276</x>
+     <x>280</x>
      <y>103</y>
      <width>241</width>
      <height>61</height>
@@ -171,7 +171,7 @@
   <widget class="QWidget" name="layoutWidget">
    <property name="geometry">
     <rect>
-     <x>276</x>
+     <x>280</x>
      <y>14</y>
      <width>241</width>
      <height>23</height>
@@ -193,10 +193,10 @@
   <widget class="QGroupBox" name="groupBox">
    <property name="geometry">
     <rect>
-     <x>278</x>
+     <x>310</x>
      <y>170</y>
-     <width>241</width>
-     <height>71</height>
+     <width>211</width>
+     <height>75</height>
     </rect>
    </property>
    <property name="title">
@@ -265,7 +265,7 @@
     <rect>
      <x>540</x>
      <y>10</y>
-     <width>77</width>
+     <width>79</width>
      <height>231</height>
     </rect>
    </property>
@@ -312,6 +312,51 @@
        </size>
       </property>
      </spacer>
+    </item>
+   </layout>
+  </widget>
+  <widget class="QWidget" name="">
+   <property name="geometry">
+    <rect>
+     <x>280</x>
+     <y>180</y>
+     <width>25</width>
+     <height>61</height>
+    </rect>
+   </property>
+   <layout class="QVBoxLayout" name="verticalLayout">
+    <item>
+     <widget class="QToolButton" name="btn_upBoat">
+      <property name="text">
+       <string/>
+      </property>
+      <property name="arrowType">
+       <enum>Qt::UpArrow</enum>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <spacer name="verticalSpacer">
+      <property name="orientation">
+       <enum>Qt::Vertical</enum>
+      </property>
+      <property name="sizeHint" stdset="0">
+       <size>
+        <width>20</width>
+        <height>17</height>
+       </size>
+      </property>
+     </spacer>
+    </item>
+    <item>
+     <widget class="QToolButton" name="btn_downBoat">
+      <property name="text">
+       <string/>
+      </property>
+      <property name="arrowType">
+       <enum>Qt::DownArrow</enum>
+      </property>
+     </widget>
     </item>
    </layout>
   </widget>
@@ -488,10 +533,44 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>btn_upBoat</sender>
+   <signal>clicked()</signal>
+   <receiver>boatAccount_dialog</receiver>
+   <slot>slot_boatUp()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>294</x>
+     <y>192</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>164</x>
+     <y>264</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>btn_downBoat</sender>
+   <signal>clicked()</signal>
+   <receiver>boatAccount_dialog</receiver>
+   <slot>slot_boatDown()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>290</x>
+     <y>227</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>195</x>
+     <y>253</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>slot_accHasChanged()</slot>
   <slot>chkPolar_changed(int)</slot>
   <slot>chkAlias_changed(int)</slot>
+  <slot>slot_boatUp()</slot>
+  <slot>slot_boatDown()</slot>
  </slots>
 </ui>

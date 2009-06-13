@@ -299,6 +299,8 @@ void boatAccount_dialog::slot_chgBoat(void)
 /* changing selection */
 void  boatAccount_dialog::slot_selectItem( QListWidgetItem * item)
 {
+
+
      if(item==blank)
      {
         edit_login->setText("");
@@ -311,6 +313,8 @@ void  boatAccount_dialog::slot_selectItem( QListWidgetItem * item)
         chk_polar->setCheckState(Qt::Unchecked);
         btn_accChg->setEnabled(false);
         btn_accDel->setEnabled(false);
+        btn_upBoat->setEnabled(false);
+        btn_downBoat->setEnabled(false);
      }
      else
      {
@@ -326,6 +330,10 @@ void  boatAccount_dialog::slot_selectItem( QListWidgetItem * item)
          edit_alias->setEnabled(chk_alias->checkState()==Qt::Checked);
          polarList->setEnabled(chk_polar->checkState()==Qt::Checked);
          btn_accDel->setEnabled(true);
+         int index=list_boat->row(item);
+         qWarning() << "item " << index;
+         btn_upBoat->setEnabled(index>0);
+         btn_downBoat->setEnabled(index<(list_boat->count()-2));
      }
 }
 
@@ -339,4 +347,30 @@ void  boatAccount_dialog::chkPolar_changed(int state)
 {
     polarList->setEnabled(state==Qt::Checked);
     slot_accHasChanged();
+}
+
+void boatAccount_dialog::slot_boatUp(void)
+{
+    int index = list_boat->currentRow();
+    if(index==0)
+        return;
+    QListWidgetItem * item = list_boat->takeItem(index);
+    if(item==blank)
+        return;
+    index--;
+    list_boat->insertItem(index,item);
+    list_boat->setCurrentRow(index);
+}
+
+void boatAccount_dialog::slot_boatDown(void)
+{
+    int index = list_boat->currentRow();
+    if(index==list_boat->count()-2)
+        return;    
+    QListWidgetItem * item = list_boat->takeItem(index);
+    if(item==blank)
+        return;
+    index++;
+    list_boat->insertItem(index,item);
+    list_boat->setCurrentRow(index);
 }
