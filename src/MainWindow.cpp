@@ -352,7 +352,10 @@ MainWindow::MainWindow(int w, int h, QWidget *parent)
     }
 
     compass = new mapCompass(proj,terre);
-    compass->show();
+    if(Util::getSetting("showCompass",1).toInt()==1)
+        compass->show();
+    else
+        compass->hide();
 
     //---------------------------------------------------------
     // Menu popup : bouton droit de la souris
@@ -1424,6 +1427,10 @@ void MainWindow::slotUpdateOpponent(void)
 
 void MainWindow::slotParamChanged(void)
 {
+    if(Util::getSetting("showCompass",1).toInt()==1)
+        compass->show();
+    else
+        compass->hide();
     emit paramVLMChanged();
 }
 

@@ -37,11 +37,14 @@ class mapCompass : public QWidget
         int mouse_x,mouse_y;
         bool mouseEvt;
         Projection * proj;
+        QCursor enterCursor;
 
         void  paintEvent(QPaintEvent *event);
         void  mousePressEvent(QMouseEvent *);
         void  mouseReleaseEvent(QMouseEvent *e);
         void  mouseMoveEvent (QMouseEvent * e);
+        void  enterEvent (QEvent * e);
+        void  leaveEvent (QEvent * e);
 };
 
 #endif // MAPCOMPASS_H

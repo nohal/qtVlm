@@ -136,6 +136,19 @@ void  mapCompass::paintEvent(QPaintEvent *)
     }
 }
 
+//-------------------------------------------------------------------------------
+void  mapCompass::enterEvent (QEvent *)
+{
+    enterCursor = cursor();
+    setCursor(Qt::PointingHandCursor);
+
+}
+//-------------------------------------------------------------------------------
+void  mapCompass::leaveEvent (QEvent *)
+{
+    setCursor(enterCursor);
+}
+
 void  mapCompass::mousePressEvent(QMouseEvent * e)
 {
     if (e->button() == Qt::LeftButton)
@@ -144,6 +157,7 @@ void  mapCompass::mousePressEvent(QMouseEvent * e)
         mouseEvt=false;
         mouse_x=e->globalX();
         mouse_y=e->globalY();
+        setCursor(Qt::BlankCursor);
         update();
     }
 }
@@ -154,6 +168,7 @@ void  mapCompass::mouseReleaseEvent(QMouseEvent *e)
     if (e->button() == Qt::LeftButton)
     {
         isMoving=false;
+        setCursor(Qt::PointingHandCursor);
         update();
     }
 
