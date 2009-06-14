@@ -57,7 +57,8 @@ HEADERS += BoardVLM.h \
     xmlPOIData.h \
     zuFile.h \
     dialog_gribDate.h \
-    DialogVLM_grib.h
+    DialogVLM_grib.h \
+    mapcompass.h
 FORMS += boatAccount_dialog.ui \
     BoardVLM.ui \
     paramVLM.ui \
@@ -106,7 +107,8 @@ SOURCES += BoardVLM.cpp \
     xmlPOIData.cpp \
     zuFile.cpp \
     dialog_gribDate.cpp \
-    DialogVLM_grib.cpp
+    DialogVLM_grib.cpp \
+    mapcompass.cpp
 DEFINES = QT_$$[QT_VERSION]
 DEFINES ~= s/\./_
 DEFINES ~= s/-.*/

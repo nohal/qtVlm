@@ -43,6 +43,7 @@ Copyright (C) 2008 - Jacques Zaninetti - http://zygrib.free.fr
 #include "POI.h"
 #include "paramVLM.h"
 #include "POI_input.h"
+#include "mapcompass.h"
 #include "xmlPOIData.h"
 #include "xmlBoatData.h"
 
@@ -230,6 +231,8 @@ class MainWindow: public QMainWindow
         polarList * polar_list;
 
         DialogVLM_grib * loadVLM_grib;
+
+        mapCompass * compass;
 };
 
 #endif

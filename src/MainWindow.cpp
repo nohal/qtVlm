@@ -351,6 +351,9 @@ MainWindow::MainWindow(int w, int h, QWidget *parent)
         qWarning() << "Grib opened";
     }
 
+    compass = new mapCompass(proj,terre);
+    compass->show();
+
     //---------------------------------------------------------
     // Menu popup : bouton droit de la souris
     //---------------------------------------------------------
@@ -905,7 +908,7 @@ void MainWindow::statusBar_showWindData(double x,double y)
     double a,b;
 
     statusBar->clearMessage();
-    stBar_label_1->setText(Util::pos2String(TYPE_LON,x) + ", " + Util::pos2String(TYPE_LAT,y));
+    stBar_label_1->setText( Util::pos2String(TYPE_LAT,y) + ", " + Util::pos2String(TYPE_LON,x));
 
     if(terre->getGrib()->isOk() && terre->getGrib()->getInterpolatedValue_byDates(x,y,
                                           terre->getGrib()->getCurrentDate(),&a,&b))
