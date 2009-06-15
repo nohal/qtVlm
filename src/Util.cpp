@@ -315,23 +315,27 @@ void Util::paramProxy(QNetworkAccessManager *inetManager,QString)
     }
 }
 
+/* format: LAT,LON@WPH,TSTAMP */
 bool Util::getWPClipboard(float * lat,float * lon, float * wph, int * tstamp)
 {
     QClipboard *clipboard = QApplication::clipboard();
     QString WP_txt = clipboard->text();
     QStringList list1 = WP_txt.split(",");
+
     if(list1.size()!=2 && list1.size()!=3)
         return false;
     QStringList list2 =list1[1].split("@");
-    if(list2.size()!=2)
-        return false;
 
     if(lat)
         *lat=list1[0].toFloat();
     if(lon)
         *lon=list2[0].toFloat();
     if(wph)
-        *wph=list2[1].toFloat();
+        if(list2.size()==2)
+            *wph=list2[1].toFloat();
+        else
+            *wph=-1;
+
     if(tstamp)
     {
         if(list1.size()==3)
