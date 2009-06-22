@@ -181,4 +181,63 @@ void Projection::updateBoundaries() {
         coefremp = 10000.0;
 }
 
+//===============================================================================
+void Projection::map2screen(double x, double y, int *i, int *j) const
+{
+    double scaley = scale*dscale;
+
+    *i =  W/2 + (int) (scale * (x-CX) + 0.5);
+    *j =  H/2 - (int) (scaley * (y-CY) + 0.5);
+/*    *i =  W/2 + (int) (scale * (x-CX)+0.5);
+    *j =  H/2 - (int) (scale * (radToDeg(log(tan(degToRad(y-CY)/2 + M_PI_4))))+0.5);
+
+    if(*i<0 || *i> W)
+    {
+        qWarning()<< "i out of bound: " << *i;
+        *i=-1;
+    }
+
+    if(*j<0 || *j>H)
+    {
+        qWarning()<< "i out of bound: " << *j;
+        *j=-1;
+    }*/
+}
+
+//-------------------------------------------------------------------------------
+void Projection::screen2map(int i, int j, double *x, double *y) const
+{
+    double scaley = scale*dscale;
+
+    *x = (double)(i - W/2 + scale*CX)/ scale;
+    *y = (double)(H/2 -j + scaley * CY)/ scaley;
+    //*x = (double)((i - W/2 + scale*CX)/ scale);
+    //*y = radToDeg(2*atan(exp(degToRad((double)((H/2 -j)/scale))))-M_PI_2)+CY;
+}
+
+void Projection::test(void)
+{
+    float x= 0;
+    float y = 45;
+    int i,j;
+    qWarning() << "W=" << W << " H=" << H;
+    qWarning() << "Cx=" << CX << " Cy=" << CY;
+
+    qWarning() << "Scale= " << scale ;
+
+    qWarning() << "x-CX=" << x-CX << " prod=" << scale * (x-CX) + 0.5;
+
+    double scaley = scale*dscale;
+
+    //*j =  H/2 - (int) (scaley * (y-CY) + 0.5);
+    //*y = (double)(H/2 -j + scaley * CY)/ scaley;
+
+    i =  W/2 + (int) (scale * (x-CX) + 0.5);
+    j =  H/2 - (int) (scale * (radToDeg(log(tan(degToRad(y-CY)/2 + M_PI_4)))));
+
+    y = radToDeg(2*atan(exp(degToRad((double)((H/2 -j)/scale))))-M_PI_2)+CY;
+
+    qWarning() << i << "," << j << " => " << y;
+
+}
 

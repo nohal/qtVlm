@@ -25,6 +25,10 @@ Copyright (C) 2008 - Jacques Zaninetti - http://zygrib.free.fr
 #ifndef PROJECTION_H
 #define PROJECTION_H
 
+class Projection;
+
+#include "Util.h"
+
 #include <QObject>
 class Projection : public QObject
 {
@@ -63,6 +67,8 @@ Q_OBJECT
         virtual void zoom (float k);
         virtual void move (float dx, float dy);
 
+        void test();
+
     signals:
         void newZoom(float);
     private:
@@ -79,23 +85,29 @@ Q_OBJECT
 };
 
 
+#if 0
 //===============================================================================
 inline void Projection::map2screen(double x, double y, int *i, int *j) const
 {
-    double scaley = scale*dscale;
+    //double scaley = scale*dscale;
 
+    //*i =  W/2 + (int) (scale * (x-CX) + 0.5);
+    //*j =  H/2 - (int) (scaley * (y-CY) + 0.5);
     *i =  W/2 + (int) (scale * (x-CX) + 0.5);
-    *j =  H/2 - (int) (scaley * (y-CY) + 0.5);
+    *j =  H/2 - (int) (scale * (radToDeg(log(tan(degToRad(y)/2 + M_PI_4))-CY) + 0.5));
 }
 
 //-------------------------------------------------------------------------------
 inline void Projection::screen2map(int i, int j, double *x, double *y) const
 {
-    double scaley = scale*dscale;
+    //double scaley = scale*dscale;
 
-    *x = (double)(i - W/2 + scale*CX)/ scale;
-    *y = (double)(H/2 -j + scaley * CY)/ scaley;
+    //*x = (double)(i - W/2 + scale*CX)/ scale;
+    //*y = (double)(H/2 -j + scaley * CY)/ scaley;
+    *x = (double)((i - W/2 + scale*CX)/ scale);
+    *y = (double)((H/2 - radToDeg(2*atan(exp(j))+M_PI_2) + scale * CY)/ scale);
 }
+#endif
 
 //-------------------------------------------------------------------------------
 inline bool Projection::intersect (float w,float e,float s,float n) const

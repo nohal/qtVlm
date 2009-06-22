@@ -37,8 +37,6 @@ Copyright (C) 2008 - Jacques Zaninetti - http://zygrib.free.fr
 #include <QLocale>
 #include <QNetworkAccessManager>
 
-#include "Projection.h"
-
 #define PI     M_PI
 #define PI_2   M_PI_2
 #define PI_4   M_PI_4
@@ -66,6 +64,8 @@ Copyright (C) 2008 - Jacques Zaninetti - http://zygrib.free.fr
     _res = (_v1==_v2);         \
     _res;                      \
     })
+
+#include "Projection.h"
 
 #define NB_URL 4
 extern QString url_name[NB_URL];

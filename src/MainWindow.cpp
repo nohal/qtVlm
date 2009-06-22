@@ -177,8 +177,10 @@ void MainWindow::connectSignals()
     connect(mb->acRace, SIGNAL(triggered()), this, SLOT(slotVLM_ParamRace()));
     connect(mb->acVLMParam, SIGNAL(triggered()), this, SLOT(slotVLM_Param()));
     connect(mb->acVLMSync, SIGNAL(triggered()), this, SLOT(slotVLM_Sync()));
+#ifdef __QTVLM_WITH_TEST
     if(mb->acVLMTest)
         connect(mb->acVLMTest, SIGNAL(triggered()), this, SLOT(slotVLM_Test()));
+#endif
     connect(mb->acPOIinput, SIGNAL(triggered()), this, SLOT(slotPOIinput()));
     connect(mb->acPilototo, SIGNAL(triggered()), this, SLOT(slotPilototo()));
 
@@ -239,6 +241,7 @@ void MainWindow::slotGribFileReceived(QString fileName)
 MainWindow::MainWindow(int w, int h, QWidget *parent)
     : QMainWindow(parent)
 {
+    float prcx,prcy,scale;
     setWindowTitle("QtVlm");
     selectedBoat = NULL;
 
@@ -252,10 +255,9 @@ MainWindow::MainWindow(int w, int h, QWidget *parent)
     assert(gshhsReader);
 
     proj = new Projection (width(), height(), 0,0);
-    assert(proj);
-    float prcx = (float) Util::getSetting("projectionCX", 0.0).toDouble();
-    float prcy = (float) Util::getSetting("projectionCY", 0.0).toDouble();
-    float scale = (float) Util::getSetting("projectionScale", 0.5).toDouble();
+    prcx = (float) Util::getSetting("projectionCX", 0.0).toDouble();
+    prcy = (float) Util::getSetting("projectionCY", 0.0).toDouble();
+    scale = (float) Util::getSetting("projectionScale", 0.5).toDouble();
     proj->setCenterInMap(prcx,prcy);
     proj->setScale(scale);
 
@@ -1119,6 +1121,7 @@ void MainWindow::slotBoatUpdated(boatAccount * boat,bool newRace)
 void MainWindow::slotVLM_Test(void)
 {
     qWarning() << "Testing";
+    proj->test();
 }
 
 void MainWindow::slotSelectPOI(Pilototo_instruction * instruction)

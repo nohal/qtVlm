@@ -84,10 +84,8 @@ MenuBar::MenuBar(QWidget *parent)
 	acPOIimport = addAction(menuImportPoi,tr("Importer de zyGrib"),"","","");
 
 	menuPOI->addMenu(menuImportPoi);
-#if 0
+#ifdef __QTVLM_WITH_TEST
 	acVLMTest = addAction(menuPOI,"Test","","","");
-#else
-	acVLMTest = NULL;
 #endif
     addMenu(menuPOI);
 
@@ -275,6 +273,7 @@ void MenuBar::updateListeDates(std::set<time_t> *setDates)
 {
     listGribDates.clear();
     // Construit un vector Ã  partir du set (plus pratique)
+
     std::set<time_t>::iterator its;
     for (its=setDates->begin(); its!=setDates->end(); its++) {
 	listGribDates.push_back(*its);

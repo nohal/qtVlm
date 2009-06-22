@@ -80,6 +80,9 @@ public:
     QAction *acMap_Rivers;
     QAction *acMap_CountriesBorders;
     QAction *acMap_CountriesNames;
+#ifdef __QTVLM_WITH_TEST
+    QAction * acVLMTest;
+#endif
 
     QActionGroup *acMap_GroupCitiesNames;
         QAction *acMap_CitiesNames0;
@@ -115,7 +118,6 @@ public:
     QAction *acPOIinput;
 	QAction *acPOIimport;
     QAction *acVLMSync;
-    QAction *acVLMTest;
     QAction *acPOISave;
     QAction *acPilototo;
     QAction *acRace;
