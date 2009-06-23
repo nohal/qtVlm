@@ -331,10 +331,12 @@ bool Util::getWPClipboard(float * lat,float * lon, float * wph, int * tstamp)
     if(lon)
         *lon=list2[0].toFloat();
     if(wph)
+    {
         if(list2.size()==2)
             *wph=list2[1].toFloat();
         else
             *wph=-1;
+    }
 
     if(tstamp)
     {

@@ -1,5 +1,5 @@
 /**********************************************************************
-qtVlm: Virtual Loup de mer GUI
+qtVlm: Loup de mer GUI
 Copyright (C) 2008 - Christophe Thomas aka Oxygen77
 
 http://qtvlm.sf.net
@@ -34,91 +34,85 @@ class Projection : public QObject
 {
 Q_OBJECT
     public:
-        Projection(int w, int h, float lon, float lat);
-        virtual ~Projection() {}
+        Projection(int w, int h, double lon, double lat);
+        ~Projection() {}
 
-        virtual void screen2map(int i, int j, double *x, double *y) const;
-        virtual void map2screen(double x, double y, int *i, int *j) const;
+        void screen2map(int i, int j, double *x, double *y) const;
+        void map2screen(double x, double y, int *i, int *j) const;
 
-        virtual int   getW()  const   {return W;};    // taille de l'écran
-        virtual int   getH()  const   {return H;};
-        virtual float getCX() const   {return CX;};   // centre
-        virtual float getCY() const   {return CY;};
-        virtual float getScale() const      {return scale;};
-        virtual float getCoefremp() const   {return coefremp;};
+        int   getW()  const   {return W;};    // taille de l'écran
+        int   getH()  const   {return H;};
+        double getCX() const   {return CX;};   // centre
+        double getCY() const   {return CY;};
+        float getScale() const      {return scale;};
+        float getCoefremp() const   {return coefremp;};
 
         // zone visible (longitude/latitude)
-        virtual float getXmin() const   {return xmin;};
-        virtual float getXmax() const   {return xmax;};
-        virtual float getYmin() const   {return ymin;};
-        virtual float getYmax() const   {return ymax;};
+        double getXmin() const   {return xW;};
+        double getXmax() const   {return xE;};
+        double getYmin() const   {return yS;};
+        double getYmax() const   {return yN;};
 
-        virtual bool intersect(float w,float e,float s,float n)  const;
-        virtual bool isPointVisible (float x,float y) const;
-        virtual bool isInBounderies (int x,int y) const;
+        bool intersect(double w,double e,double s,double n)  const;
+        bool isPointVisible (double x,double y) const;
+        bool isInBounderies (int x,int y) const;
 
-        virtual void setScale(float sc);
-        virtual float getScale();
-        virtual void setCentralPixel(int i, int j);
-        virtual void setCenterInMap(float x, float y);
-        virtual void setScreenSize(int w, int h);
-        virtual void updateZoneSelected(float x0, float y0, float x1, float y1);
-        virtual void init(int w, int h, float cx, float cy);
-        virtual void zoom (float k);
-        virtual void move (float dx, float dy);
-
-        void test();
+        void setScale(float sc);
+        float getScale();
+        void setCentralPixel(int i, int j);
+        void setCenterInMap(double x, double y);
+        void setScreenSize(int w, int h);
+        void updateZoneSelected(double x0, double y0, double x1, double y1);
+        void init(int w, int h, double cx, double cy);
+        void move(double dx, double dy);
+        void zoom (float k);
 
     signals:
         void newZoom(float);
+
     private:
         int W, H;     // taille de la fenêtre (pixels)
 
-        float CX, CY;                  // centre de la vue (longitude/latitude)
-        float xmin, xmax, ymax, ymin;  // fenêtre visible (repère longitude/latitude)
-        float scale;       // échelle courante
-        float scalemax;    // échelle maxi
-        float dscale;	   // rapport scaley/scalex
-		float coefremp;		// Coefficient de remplissage (surface_visible/pixels)
+        double CX, CY;                  // centre de la vue (longitude/latitude)
+        double xW, xE, yN, yS;  // fenetre visible (repere longitude/latitude)
+        double PX,PY;       // center in mercator projection
+        float scale;       // Echelle courante
+        float scalemax;    // Echelle maxi
+        float scaleall;
+        float coefremp;	   // Coefficient de remplissage (surface_visible/pixels)
 
-        virtual void updateBoundaries();
+        void updateBoundaries();
+        void computeScalleAll(void);
 };
 
 
-#if 0
 //===============================================================================
 inline void Projection::map2screen(double x, double y, int *i, int *j) const
 {
-    //double scaley = scale*dscale;
+    if(y<=-90) y=-89.9;
+    if(y>=90) y=89.9;
 
-    //*i =  W/2 + (int) (scale * (x-CX) + 0.5);
-    //*j =  H/2 - (int) (scaley * (y-CY) + 0.5);
-    *i =  W/2 + (int) (scale * (x-CX) + 0.5);
-    *j =  H/2 - (int) (scale * (radToDeg(log(tan(degToRad(y)/2 + M_PI_4))-CY) + 0.5));
+    *i = (int) (scale * (x-xW));
+    *j = H/2 + (int) (scale * (PY-radToDeg(log(tan(degToRad(y)/2 + M_PI_4)))));
 }
 
 //-------------------------------------------------------------------------------
 inline void Projection::screen2map(int i, int j, double *x, double *y) const
 {
-    //double scaley = scale*dscale;
-
-    //*x = (double)(i - W/2 + scale*CX)/ scale;
-    //*y = (double)(H/2 -j + scaley * CY)/ scaley;
-    *x = (double)((i - W/2 + scale*CX)/ scale);
-    *y = (double)((H/2 - radToDeg(2*atan(exp(j))+M_PI_2) + scale * CY)/ scale);
-}
-#endif
-
-//-------------------------------------------------------------------------------
-inline bool Projection::intersect (float w,float e,float s,float n) const
-{
-    return ! (w>xmax || e<xmin || s>ymax || n<ymin);
+    *x = (double)(i/scale+xW);
+    *y = radToDeg((2*atan(exp((double)(degToRad(PY-(j-H/2)/scale)))))-M_PI_2);
 }
 
 //-------------------------------------------------------------------------------
-inline bool Projection::isPointVisible (float x,float y) const
+inline bool Projection::intersect (double w,double e,double s,double n) const
 {
-    return (x<=xmax && x>=xmin && y<=ymax && y>=ymin);
+    return ! (w>xE || e<xW || s>yN || n<yS);
+}
+
+//-------------------------------------------------------------------------------
+inline bool Projection::isPointVisible (double x,double y) const
+{
+    return (x<=xE && x>=xW && y<=yN && y>=yS);
 }
 
 //-------------------------------------------------------------------------------

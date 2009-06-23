@@ -58,7 +58,7 @@ public:
 
     bool  isSelectingZone()      {return isSelectionZoneEnCours;}
 
-    bool  getSelectedRectangle (float *x0, float *y0, float *x1, float *y1);
+    bool  getSelectedRectangle (double *x0, double *y0, double *x1, double *y1);
     bool  getSelectedLine      (float *x0, float *y0, float *x1, float *y1);
 
     void setBoatList(QList<boatAccount*> & boat_list) {this->boat_list=&boat_list; update();}

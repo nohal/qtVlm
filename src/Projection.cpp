@@ -31,47 +31,66 @@ Copyright (C) 2008 - Jacques Zaninetti - http://zygrib.free.fr
 //-----------------------------
 // Constructeur
 //-----------------------------
-Projection::Projection(int w, int h, float cx, float cy) {
-    scalemax = 50000;
-    dscale = 1.2;
+Projection::Projection(int w, int h, double cx, double cy) {
+    scalemax = 10000;
     init(w, h, cx, cy);
 }
 
 //--------------------------------------------------------------
-void Projection::init(int w, int h, float cx, float cy) {
-    CX = cx;
-    CY = cy;
+void Projection::init(int w, int h, double cx, double cy)
+{
     W = w;
     H = h;
 
     // Echelle (garde la plus petite en largeur ou hauteur)
-    float sx, sy;
-    sx = W/360.0;
-    sy = H/180.0;
-    scale = (sx<sy) ? sx : sy;
-    updateBoundaries();
+    computeScalleAll();
+
+    scale = scaleall;
+
+    setCenterInMap(cx,cy);
 }
 
+void Projection::computeScalleAll(void)
+{
+    double sx, sy,sy1,sy2;
+    sx = W/360.0;
+    sy1=log(tan(degToRad(89.9)/2 + M_PI_4));
+    sy2=log(tan(degToRad(-89.9)/2 + M_PI_4));
+    sy = H/fabs(radToDeg(sy1-sy2));;
+    //sy=H/180.0;
+    scaleall = (sx<sy) ? sy : sx;
+}
 
 //--------------------------------------------------------------
 // Ajustements
+
+
+//--------------------------------------------------------------
+void Projection::setScreenSize(int w, int h)
+{
+    W = w;
+    H = h;
+
+    /* update scale all */
+    computeScalleAll();
+
+    if (scale < scaleall)
+        scale = scaleall;
+
+    emit newZoom(scale);
+
+    updateBoundaries();
+}
+
 //--------------------------------------------------------------
 void Projection::setCentralPixel(int i, int j)
 {
     double x, y;
     screen2map(i, j, &x, &y);
-    while (x > 180.0) {
-        x -= 360.0;
-    }
-    while (x < -180.0) {
-        x += 360.0;
-    }
-    CX = (float)x;
-    CY = (float)y;
-    updateBoundaries();
+    setCenterInMap(x,y);
 }
 //--------------------------------------------------------------
-void Projection::setCenterInMap(float x, float y)
+void Projection::setCenterInMap(double x, double y)
 {
     while (x > 180.0) {
         x -= 360.0;
@@ -81,56 +100,62 @@ void Projection::setCenterInMap(float x, float y)
     }
     CX = x;
     CY = y;
-    updateBoundaries();
-}
-//--------------------------------------------------------------
-void Projection::setScreenSize(int w, int h) {
-    W = w;
-    H = h;
+
+    /* compute projection */
+    PX=CX;
+    PY=radToDeg(log(tan(degToRad(CY)/2 + M_PI_4)));
+
     updateBoundaries();
 }
 
 //--------------------------------------------------------------
-void Projection::updateZoneSelected(float x0, float y0, float x1, float y1)
+void Projection::updateZoneSelected(double x0, double y0, double x1, double y1)
 {
-    // Nouvelle position du centre
-    CX = (x0+x1)/2.0;
-    CY = (y0+y1)/2.0;
+    // security
+    if (x1 == x0)
+        x1 = x0+0.1;
+    if (y1 == y0)
+        y1 = y0+0.1;
 
-    // sécurité
-    if (x1 == x0) {
-    	x1 = x0+0.1;
-	}
-    if (y1 == y0) {
-    	y1 = y0+0.1;
-	}
-    // Echelle (garde la plus petite en largeur ou hauteur)
-    float sx, sy;
-    sx = fabs(W/(x1-x0));
-    sy = fabs(H/(y1-y0)) / dscale;
-    scale = (sx<sy) ? sx : sy;
+    //qWarning() << "Zoom select: " << x0 << " " << x1 << " " << y0 << " " << y1;
+    //qWarning() << "Scale= " << scale ;
+
+    xW=x0;
+    xE=x1;
+    yN=y0;
+    yS=y1;
+
+    // compute scale;
+    double sX,sY,sYN,sYS;
+    sX=W/fabs(xE-xW);
+    sYN=log(tan(degToRad(yN)/2 + M_PI_4));
+    sYS=log(tan(degToRad(yS)/2 + M_PI_4));
+    sY=H/fabs(radToDeg(sYN-sYS));
+    scale=sX<sY?sY:sX;
+
     if (scale > scalemax)
         scale = scalemax;
-    updateBoundaries();
+
+    emit newZoom(scale);
+
+    // Nouvelle position du centre
+    //screen2map(W/2,H/2,&CX,&CY);
+    CX=(xE+xW)/2;
+    CY=(yN+yS)/2;
+    PX=CX;
+    PY=radToDeg(log(tan(degToRad(CY)/2 + M_PI_4)));
+
+    if((getW()*getH())!=0)
+        coefremp = 10000.0*fabs( ((xE-xW)*(yN-yS)) / (getW()*getH()) );
+    else
+        coefremp = 10000.0;
 }
 
 //--------------------------------------------------------------
-void Projection::move(float dx, float dy)
+void Projection::move(double dx, double dy)
 {
     // Nouvelle position du centre
-    CX = CX - dx*(xmax-xmin);
-    while (CX > 180.0)
-        CX -= 360.0;
-    while (CX < -180.0)
-        CX += 360.0;
-
-    CY = CY - dy*(ymax-ymin);
-    if (CY > 90.0)
-        CY = 90.0;
-    if (CY < -90.0)
-        CY = -90.0;
-
-    updateBoundaries();
+    setCenterInMap(CX - dx*(xE-xW),CY - dy*(yN-yS));
 }
 
 //--------------------------------------------------------------
@@ -142,12 +167,6 @@ void Projection::zoom(float k)
 //--------------------------------------------------------------
 void Projection::setScale(float sc)
 {
-    float sx, sy, scaleall;
-    // scaleall = Zoom sur la terre entière
-    sx = W/360.0;
-    sy = H/180.0;
-    scaleall = (sx<sy) ? sx : sy;
-
     scale = sc;
     if (scale < scaleall)
         scale = scaleall;
@@ -166,78 +185,39 @@ float Projection::getScale()
 // Intersection avec une zone de la carte
 //--------------------------------------------------------------
 void Projection::updateBoundaries() {
-    // Extrémités de la zone
-    double x0,y0, x1,y1;
-    screen2map(-1, -1, &x0, &y0);
-    screen2map(getW()+1, getH()+1, &x1, &y1);
+    /* lat */
+    yS=radToDeg(2*atan(exp((double)(degToRad(PY-H/(2*scale)))))-M_PI_2);
+    yN=radToDeg(2*atan(exp((double)(degToRad(PY+H/(2*scale)))))-M_PI_2);
 
-    xmax = (float)x1;
-    xmin = (float)x0;
-    ymax = (float)y0;
-    ymin = (float)y1;
+    /* lon */
+    xW=PX-W/(2*scale);
+    xE=PX+W/(2*scale);
+
+    //qWarning() << "Px=" << PX << " Py="  << PY;
+    //qWarning() << "Scale= " << scale ;
+
+    /* xW and yN => upper corner */
+
     if((getW()*getH())!=0)
-        coefremp = 10000.0*fabs( ((xmax-xmin)*(ymax-ymin)) / (getW()*getH()) );
+        coefremp = 10000.0*fabs( ((xE-xW)*(yN-yS)) / (getW()*getH()) );
     else
         coefremp = 10000.0;
 }
 
+/*
 //===============================================================================
 void Projection::map2screen(double x, double y, int *i, int *j) const
 {
-    double scaley = scale*dscale;
+    if(y<=-90) y=-89.9;
+    if(y>=90) y=89.9;
 
-    *i =  W/2 + (int) (scale * (x-CX) + 0.5);
-    *j =  H/2 - (int) (scaley * (y-CY) + 0.5);
-/*    *i =  W/2 + (int) (scale * (x-CX)+0.5);
-    *j =  H/2 - (int) (scale * (radToDeg(log(tan(degToRad(y-CY)/2 + M_PI_4))))+0.5);
-
-    if(*i<0 || *i> W)
-    {
-        qWarning()<< "i out of bound: " << *i;
-        *i=-1;
-    }
-
-    if(*j<0 || *j>H)
-    {
-        qWarning()<< "i out of bound: " << *j;
-        *j=-1;
-    }*/
+    *i = (int) (scale * (x-xW));
+    *j = H/2 + (int) (scale * (PY-radToDeg(log(tan(degToRad(y)/2 + M_PI_4)))));
 }
 
 //-------------------------------------------------------------------------------
 void Projection::screen2map(int i, int j, double *x, double *y) const
 {
-    double scaley = scale*dscale;
-
-    *x = (double)(i - W/2 + scale*CX)/ scale;
-    *y = (double)(H/2 -j + scaley * CY)/ scaley;
-    //*x = (double)((i - W/2 + scale*CX)/ scale);
-    //*y = radToDeg(2*atan(exp(degToRad((double)((H/2 -j)/scale))))-M_PI_2)+CY;
-}
-
-void Projection::test(void)
-{
-    float x= 0;
-    float y = 45;
-    int i,j;
-    qWarning() << "W=" << W << " H=" << H;
-    qWarning() << "Cx=" << CX << " Cy=" << CY;
-
-    qWarning() << "Scale= " << scale ;
-
-    qWarning() << "x-CX=" << x-CX << " prod=" << scale * (x-CX) + 0.5;
-
-    double scaley = scale*dscale;
-
-    //*j =  H/2 - (int) (scaley * (y-CY) + 0.5);
-    //*y = (double)(H/2 -j + scaley * CY)/ scaley;
-
-    i =  W/2 + (int) (scale * (x-CX) + 0.5);
-    j =  H/2 - (int) (scale * (radToDeg(log(tan(degToRad(y-CY)/2 + M_PI_4)))));
-
-    y = radToDeg(2*atan(exp(degToRad((double)((H/2 -j)/scale))))-M_PI_2)+CY;
-
-    qWarning() << i << "," << j << " => " << y;
-
-}
-
+    *x = (double)(i/scale+xW);
+    *y = radToDeg((2*atan(exp((double)(degToRad(PY-(j-H/2)/scale)))))-M_PI_2);
+}*/

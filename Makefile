@@ -20,4 +20,3 @@ clean:
 	rm -Rf src/qtVlm src/Makefile src/objs
 	rm -f qtVlm
 
-

@@ -524,7 +524,7 @@ void Terrain::setBarbules (bool b) {
 }
 
 //=================================================================
-bool  Terrain::getSelectedRectangle(float *x0, float *y0, float *x1, float *y1)
+bool  Terrain::getSelectedRectangle(double *x0, double *y0, double *x1, double *y1)
 {
     if (selX0!=selX1 && selY0!=selY1)
     {   // Si nécessaire, réoriente le rectangle sélectionné
@@ -649,7 +649,7 @@ void Terrain::keyModif(QKeyEvent *e)
 }
 
 void  Terrain::keyPressEvent (QKeyEvent *e)
-{    
+{
     switch(e->key())
     {
         case Qt::Key_Minus:
@@ -706,10 +706,8 @@ void Terrain::mousePressEvent (QMouseEvent * e) {
         double x,y;
         isSelectionZoneEnCours = true;
         proj->screen2map(e->x(),e->y(), &x, &y);
-/*        selX1 = floor(selX1*12)/12;
-        selY1 = ceil (selY1*12)/12;*/
-        selX0 = selX1=(float)x;
-        selY0 = selY1=(float)y;
+        selX0 = selX1=x;
+        selY0 = selY1=y;
         update();
     }
 }
@@ -719,7 +717,7 @@ void Terrain::mouseReleaseEvent (QMouseEvent * e) {
 
 //printf("release\n");
 //
-    float x0, y0, x1, y1;
+    double x0, y0, x1, y1;
     double x,y;
     if (isSelectionZoneEnCours)
     {
@@ -727,8 +725,6 @@ void Terrain::mouseReleaseEvent (QMouseEvent * e) {
         proj->screen2map(e->x(),e->y(), &x, &y);
         selX1=x;
         selY1=y;
-/*        selX1 = ceil (selX1*12)/12;
-        selY1 = floor(selY1*12)/12;*/
         if (getSelectedRectangle(&x0,&y0, &x1,&y1))
         {
             emit selectionOK(x0, y0, x1, y1);
@@ -814,7 +810,7 @@ void Terrain::slot_Zoom_Out()
 //---------------------------------------------------------
 void Terrain::slot_Zoom_Sel()
 {
-    float x0, y0, x1, y1;
+    double x0, y0, x1, y1;
 
     if (getSelectedRectangle(&x0,&y0, &x1,&y1))
     {

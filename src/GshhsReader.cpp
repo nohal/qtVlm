@@ -896,7 +896,7 @@ void GshhsReader::GsshDrawPolygons(QPainter &pnt, std::list<GshhsPolygon*> &lst,
 
 //-----------------------------------------------------------------------
 void GshhsReader::GsshDrawLines(QPainter &pnt, std::list<GshhsPolygon*> &lst,
-                                Projection *proj, bool isClosed, int order, int mode)
+                                Projection *proj, bool /*isClosed*/, int order, int mode)
 {
     std::list<GshhsPolygon*>::iterator iter;
     GshhsPolygon *pol;
@@ -988,8 +988,8 @@ void GshhsReader::drawBackground( QPainter &pnt, Projection *proj,
     pnt.setBrush(seaColor);
     pnt.setPen(seaColor);
     int x0,y0,x1,y1;
-    proj->map2screen(0,90, &x0,&y0);
-    proj->map2screen(0,-90, &x1,&y1);
+    proj->map2screen(0,89, &x0,&y0);
+    proj->map2screen(0,-89, &x1,&y1);
 
     pnt.drawRect(0, y0, proj->getW(), y1-y0);
 }
@@ -1012,7 +1012,6 @@ void GshhsReader::drawContinents( QPainter &pnt, Projection *proj,
 
     readGshhsFiles();
 
-    //qWarning() << "quality = " << quality ;
 
     // Continents (level 1)
     pnt.setBrush(landColor);
@@ -1091,6 +1090,7 @@ void GshhsReader::selectBestQuality(Projection *proj)
     else
         setQuality(bestQuality);
 
+    //qWarning() << "Quality " << bestQuality;
 }
 
 

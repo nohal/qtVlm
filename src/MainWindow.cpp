@@ -657,7 +657,7 @@ void MainWindow::slotFile_Close() {
 //========================================================================
 void MainWindow::slotFile_Load_GRIB()
 {
-    float x0, y0, x1, y1;
+    double x0, y0, x1, y1;
     if (terre->getSelectedRectangle(&x0,&y0, &x1,&y1))
     {
         dialogLoadGrib.setZone(x0, y0, x1, y1);
@@ -1004,7 +1004,7 @@ void MainWindow::slotMouseDblClicked(QMouseEvent * e)
 
 void MainWindow::slotShowContextualMenu(QContextMenuEvent * e)
 {
-    float a,b,c,d;
+    double a,b,c,d;
     mouseClicX = e->x();
     mouseClicY = e->y();
     if(terre->getSelectedRectangle(&a,&b,&c,&d))
@@ -1121,7 +1121,6 @@ void MainWindow::slotBoatUpdated(boatAccount * boat,bool newRace)
 void MainWindow::slotVLM_Test(void)
 {
     qWarning() << "Testing";
-    proj->test();
 }
 
 void MainWindow::slotSelectPOI(Pilototo_instruction * instruction)
@@ -1279,8 +1278,8 @@ void MainWindow::slotPOIinput(void)
 
 void MainWindow::slotDelPOIs(void)
 {
-    float lat0,lon0,lat1,lon1;
-    float lat,lon;
+    double lat0,lon0,lat1,lon1;
+    double lat,lon;
     if(terre->getSelectedRectangle(&lon0,&lat0,&lon1,&lat1))
     {
         QListIterator<POI*> i (poi_list);
