@@ -32,7 +32,7 @@ Copyright (C) 2008 - Jacques Zaninetti - http://zygrib.free.fr
 // Constructeur
 //-----------------------------
 Projection::Projection(int w, int h, double cx, double cy) {
-    scalemax = 10000;
+    scalemax = 50000;
     init(w, h, cx, cy);
 }
 
@@ -145,6 +145,8 @@ void Projection::updateZoneSelected(double x0, double y0, double x1, double y1)
     PX=CX;
     PY=radToDeg(log(tan(degToRad(CY)/2 + M_PI_4)));
 
+    //qWarning() << "New center " << CX << "," << CY << " - " << PX << "," << PY;
+
     if((getW()*getH())!=0)
         coefremp = 10000.0*fabs( ((xE-xW)*(yN-yS)) / (getW()*getH()) );
     else
@@ -155,7 +157,10 @@ void Projection::updateZoneSelected(double x0, double y0, double x1, double y1)
 void Projection::move(double dx, double dy)
 {
     // Nouvelle position du centre
+    //qWarning() << "Move: " << dx << "," << dy;
+    //qWarning() << "Computed center: " << CX - dx*(xE-xW) << "," << CY - dy*(yN-yS);
     setCenterInMap(CX - dx*(xE-xW),CY - dy*(yN-yS));
+    //qWarning() << "After center " << CX << "," << CY << " - " << PX << "," << PY;
 }
 
 //--------------------------------------------------------------
