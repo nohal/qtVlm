@@ -41,89 +41,88 @@ class boardVLM;
 class WP_dialog: public QDialog, public Ui::WP_dialog_ui
 { Q_OBJECT
     public:
-	WP_dialog(QWidget * parent=0);
-	void show_WPdialog(boatAccount * boat);
+        WP_dialog(QWidget * parent=0);
+        void show_WPdialog(boatAccount * boat);
 
     public slots:
-	void chgLat();
-	void chgLon();
-	void doPaste();
-	void doCopy();
-	void done(int result);
-	void doClearWP();
-	void doSelPOI();
-	void show_WPdialog(POI * poi);
+        void chgLat();
+        void chgLon();
+        void doPaste();
+        void doCopy();
+        void done(int result);
+        void doClearWP();
+        void doSelPOI();
+        void show_WPdialog(POI * poi);
 
     signals:
-	void sendCmd(int cmdNum,float,float,float);
-	void selectPOI(void);
+        void sendCmd(int cmdNum,float,float,float);
+        void selectPOI(void);
 
     private:
-	boatAccount * currentBoat;
-	void initDialog(float WPLat,float WPLon,float WPHd);
+        boatAccount * currentBoat;
+        void initDialog(float WPLat,float WPLon,float WPHd);
 };
 
 class boardVLM: public QWidget , public Ui::boardVLM_ui
 { Q_OBJECT
     public:
         boardVLM(QMainWindow * mainWin,QWidget * parent=0);
+        void validationDone(bool ok);
 
     public slots:
-	void chgHeading();
-	void headingUpdated(double heading);
-	void chgAngle();
-	void angleUpdated(double angle);
-	void doSync();
-	void doVirer();
-	void doPilotOrtho();
-	void doVmg();
-	void doWP_edit();
-	void disp_boatInfo();
-	void synch_GPS();
+        void chgHeading();
+        void headingUpdated(double heading);
+        void chgAngle();
+        void angleUpdated(double angle);
+        void doSync();
+        void doVirer();
+        void doPilotOrtho();
+        void doVmg();
+        void doWP_edit();
+        void disp_boatInfo();
+        void synch_GPS();
 
-	void requestFinished (int currentRequest,QByteArray res);
+        void requestFinished (int currentRequest,QByteArray res);
 
-	void sendCmd(int cmdNum,float val1,float val2, float val3);
-	void chkResult(void);
-	void setWP(float lat,float lon,float wph=-1);
-	void paramChanged(void);
-	void setChangeStatus(bool);
+        void sendCmd(int cmdNum,float val1,float val2, float val3);
+        void setWP(float lat,float lon,float wph=-1);
+        void paramChanged(void);
+        void setChangeStatus(bool);
 
-	void edtSpinBox_key(void);
+        void edtSpinBox_key(void);
 
-	void boatUpdated(boatAccount * boat);
+        void boatUpdated(boatAccount * boat);
 
     signals:
-	void VLM_Sync(void);
+        void VLM_Sync(void);
 
     private:
-	QMainWindow * mainWin;
+        QMainWindow * mainWin;
 
-	inetConnexion * conn;
-	int currentRequest;
-	int currentCmdNum;
-	int nbRetry;
-	bool isWaiting;
+        inetConnexion * conn;
+        int currentRequest;
+        int currentCmdNum;
+        int nbRetry;
+        bool isWaiting;
 
-	float cmd_val1,cmd_val2,cmd_val3;
-	float computeWPdir(boatAccount * boat);
-	void update_btnWP(void);
+        float cmd_val1,cmd_val2,cmd_val3;
+        float computeWPdir(boatAccount * boat);
+        void update_btnWP(void);
 
-	boatAccount * currentBoat;
+        boatAccount * currentBoat;
 
-	QTimer * timer;
-	QTimer * GPS_timer;
+        QTimer * GPS_timer;
 
-	WP_dialog * wpDialog;
+        WP_dialog * wpDialog;
 
-	QString default_styleSheet;
+        QString default_styleSheet;
 
-	/*GPS emul param*/
-	QString COM;
+        /*GPS emul param*/
+        QString COM;
         char chkSum(QString data);
 
-	/* heading /angle user update */
-	bool isComputing;
+        /* heading /angle user update */
+        bool isComputing;
 };
 
 

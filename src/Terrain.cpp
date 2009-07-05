@@ -306,7 +306,13 @@ void Terrain::drawBoats(QPainter &pnt)
     while(i.hasNext())
     {
         boatAccount * boat = i.next();
-        if(!boat->isUpdating() && boat->getStatus() && ( boat->getIsSelected() || boat->getForceEstime()))
+
+        /*can we draw something?*/
+        if(boat->isUpdating() || !boat->getStatus())
+            continue;
+
+        /* draw estime */
+        if(boat->getIsSelected() || boat->getForceEstime())
         {
             float lat,lon,tmp_lat,tmp_lon,WPLat,WPLon;
             lat=boat->getLat();
@@ -323,6 +329,7 @@ void Terrain::drawBoats(QPainter &pnt)
                 draw_OrthodromieSegment(pnt, lon,lat,WPLon,WPLat);
             }
         }
+
         /*draw trace*/
         QList<position*> * trace = boat->getTrace();
         int x,y,x0=0,y0=0;

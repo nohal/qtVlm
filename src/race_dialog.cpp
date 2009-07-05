@@ -37,7 +37,6 @@ race_dialog::race_dialog(QWidget * main,QWidget * parent) : QDialog(parent)
 
     connect(this,SIGNAL(readBoat()),main,SLOT(slotReadBoat()));
     connect(this,SIGNAL(writeBoat()),main,SLOT(slotWriteBoat()));
-    connect(this,SIGNAL(updateOpponent()),main,SLOT(slotUpdateOpponent()));
 
     /* init http inetManager */
     conn=new inetConnexion(main,this);
@@ -57,9 +56,12 @@ race_dialog::~race_dialog()
 void race_dialog::initList(QList<boatAccount*> & acc_list_ptr,QList<raceData*> & race_list_ptr)
 {
     this->acc_list = & acc_list_ptr;
-    this->race_list = &race_list_ptr;
+    this->race_list = & race_list_ptr;
 
     qWarning() << "init list";
+
+    numRace = -1;
+    initDone = false;
 
     clear();
 
@@ -79,16 +81,17 @@ void race_dialog::initList(QList<boatAccount*> & acc_list_ptr,QList<raceData*> &
                 found=true;
                 break;
             }
-        if(!found)
+        if(!found) /* not adding a race twice*/
         {
             raceParam * ptr = new raceParam();
             ptr->id=acc_list->at(i)->getRaceId();
             ptr->name=acc_list->at(i)->getRaceName();
             ptr->boats.clear();
+            ptr->vac_len=0;
             param_list.append(ptr);
         }
     }
-    /* init list of races */
+    /* init combo box with list of races */
     chooser_raceList->clear();
 
     for(int j=0;j<param_list.size();j++)
@@ -107,8 +110,11 @@ void race_dialog::initList(QList<boatAccount*> & acc_list_ptr,QList<raceData*> &
         return ;
     }
 
+    /* init index of search : currentRace*/
     currentRace=-1;
     getNextRace();
+
+    initDone = true;
 
     waitBox->exec();
     #warning should cancel current request if cancel is pressed
@@ -131,6 +137,8 @@ void race_dialog::getNextRace()
     for(int i=0;i<race_list->size();i++)
         if(race_list->at(i)->idrace==param_list[currentRace]->id)
         {
+            /*setting vac len */
+            param_list[currentRace]->vac_len=race_list->at(i)->vac_len;
             currentParam=race_list->at(i)->oppList.split(";");
             break;
         }
@@ -186,16 +194,16 @@ void race_dialog::clear(void)
 void race_dialog::done(int result)
 {
     if(result == QDialog::Accepted)
-        saveData(true);
+        saveData(true); /* really saving, not only applying*/
     else
     {
+        qWarning() << "Cancel modification: read boat param from disk";
         emit readBoat();
-        emit updateOpponent();
     }
     QDialog::done(result);
 }
 
-void race_dialog::doSynch(void)
+void race_dialog::doSynch(void) /* apply only */
 {
     int savNum=numRace;
     saveData(false);
@@ -222,22 +230,25 @@ void race_dialog::saveData(bool save)
             if(param_list[i]->boats[j]->selected)
                 boats.append(param_list[i]->boats[j]->user_id);
 
+        ptr = new raceData();
+        ptr->idrace=param_list[i]->id;
         if(!boats.isEmpty())
-        {
-           ptr = new raceData();
-           ptr->idrace=param_list[i]->id;
-           ptr->oppList=boats.join(";");
-           race_list->append(ptr);
-        }
+            ptr->oppList=boats.join(";");
+        else
+            ptr->oppList=boats.join(";");
+        ptr->vac_len=param_list[i]->vac_len;
+        race_list->append(ptr);
     }
 
     if(save)
         emit writeBoat();
-    emit updateOpponent();
 }
 
 void race_dialog::chgRace(int id)
 {
+    if(!initDone)
+        return;
+
     if(numRace!=-1)
     {
         /* changement du select des boat */
@@ -247,6 +258,8 @@ void race_dialog::chgRace(int id)
             ptr=reinterpret_cast<struct boatParam *>(qvariant_cast<void*>(selectedBoat->item(i)->data(Qt::UserRole)));
             ptr->selected=true;
         }
+        /*saving vac length*/
+        param_list[numRace]->vac_len=vac_length->currentIndex();
     }
 
     /* find race data */
@@ -284,6 +297,8 @@ void race_dialog::chgRace(int id)
 
     nbAvailable->setText(QString().setNum(availableBoat->count()));
     nbSelect->setText(QString().setNum(selectedBoat->count())+"/"+QString().setNum(RACE_MAX_BOAT));
+
+    vac_length->setCurrentIndex(param_list[numRace]->vac_len);
 
     availableBoat->clearSelection();
     selectedBoat->clearSelection();

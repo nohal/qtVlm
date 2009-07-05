@@ -371,6 +371,7 @@ MainWindow::MainWindow(int w, int h, QWidget *parent)
     polar_list = new polarList();
 
     /* read boat Data */
+    race_vacLen=300;
     xmlData = new xml_boatData(proj,this,terre);
     xmlData->readBoatData(acc_list,race_list,"boatAcc.dat");
 
@@ -387,9 +388,6 @@ MainWindow::MainWindow(int w, int h, QWidget *parent)
     VLMBoard = new boardVLM(this);
     connect(this,SIGNAL(boatHasUpdated(boatAccount*)),
             VLMBoard,SLOT(boatUpdated(boatAccount*)));
-    //VLMBoard->updateBoatList(acc_list);
-
-
 
     connect(param,SIGNAL(paramVLMChanged()),VLMBoard,SLOT(paramChanged()));
 
@@ -454,6 +452,10 @@ MainWindow::~MainWindow()
     Util::setSetting("gribFilePath",  gribFilePath);
 
     xmlPOI->writeData(poi_list,"poi.dat");
+
+    if(selectedBoat) /* save the zoom factor */
+        selectedBoat->setZoom(proj->getScale());
+
     slotWriteBoat();
 
     delete boatAcc;
@@ -931,7 +933,7 @@ void MainWindow::updateNxtVac(void)
 {
     nxtVac_cnt--;
     if(nxtVac_cnt<0)
-        nxtVac_cnt=300;
+        nxtVac_cnt=(race_vacLen==0?300:60);
     if(statusBar->currentMessage().isEmpty())
         drawVacInfo();
 }
@@ -1016,7 +1018,7 @@ void MainWindow::slotShowContextualMenu(QContextMenuEvent * e)
 
 void MainWindow::slotVLM_ParamBoat(void) {
 
-    boatAcc->initList(acc_list,race_list);
+    boatAcc->initList(acc_list);
     boatAcc->exec();
 }
 
@@ -1024,6 +1026,7 @@ void MainWindow::slotVLM_ParamRace(void)
 {
     raceParam->initList(acc_list,race_list);
     raceParam->exec();
+
 }
 
 void MainWindow::slotVLM_Param(void)
@@ -1031,10 +1034,10 @@ void MainWindow::slotVLM_Param(void)
     param->exec();
 }
 
-void MainWindow::slotVLM_Sync(void) {
+void MainWindow::slotVLM_Sync(void)
+{
     bool hasFirstActivated = (selectedBoat!=NULL);
     QListIterator<boatAccount*> i (acc_list);
-    int cnt=0;
 
     qWarning() << "Doing a synch with VLM";
 
@@ -1043,31 +1046,27 @@ void MainWindow::slotVLM_Sync(void) {
         boatAccount * acc = i.next();
         if(acc->getStatus())
         {
-            acc->getData();
             if(!hasFirstActivated)
             {
+                /* no selected boat => select the first activated boat
+                   no need to do getData as it will be done in selectBoat*/
                 hasFirstActivated=true;
                 selectedBoat=acc;
                 acc->selectBoat();
-                if(selectedBoat->getZoom() !=-1)
-                    proj->setScale(selectedBoat->getZoom());
             }
-
-            if(acc==selectedBoat)
+            else
             {
-                menuBar->setSelectedBoatIndex(cnt);
-                menuBar->acPilototo->setEnabled(!acc->getLockStatus());
+                acc->getData();
             }
-            cnt++;
         }
     }
-    /* synch opponents */
-    opponents->refreshData();
-    /* synch grib */
-    if(Util::getSetting("autoGribDate",0).toInt()==1)
-        slotDateGribChanged_now();
 }
 
+
+
+/*****************************************
+ signal send by each boat after it has update
+*****************************************/
 void MainWindow::slotBoatUpdated(boatAccount * boat,bool newRace)
 {
     //qWarning() << "Boat updated " << boat->getLogin();
@@ -1075,26 +1074,39 @@ void MainWindow::slotBoatUpdated(boatAccount * boat,bool newRace)
     {
         bool found=false;
         timer->stop();
+
+        /* managing race data: opponnents position and trace*/
         if(newRace || opponents->getRaceId() != boat->getRaceId())
         { /* load a new race */
             for(int i=0;i<race_list.size();i++)
                 if(race_list[i]->idrace == boat->getRaceId())
                 {
-                    opponents->setBoatList(race_list[i]->oppList,race_list[i]->idrace,false);
-                    found=true;
+                    race_vacLen=race_list[i]->vac_len;
+                    if(!race_list[i]->oppList.isEmpty())
+                    {
+                        opponents->setBoatList(race_list[i]->oppList,race_list[i]->idrace,false);
+                        found=true;
+                    }
                     break;
                 }
             if(!found)
+            {
                 opponents->clear();
+                race_vacLen=0;
+            }
         }
+        else /* race has not changed, just refreshing position */
+            opponents->refreshData();
 
+        /* centering map on boat */
         terre->setCenterInMap(boat->getLon(),boat->getLat());
 
+        /* updating Vac info */
         nxtVac_cnt=boat->getNextVac();
         drawVacInfo();
         timer->start(1000);
 
-        /* MaJ ETA */
+        /* Updating ETA */
         int nbS,j,h,m;
         QString txt;
         QString Eta = boat->getETA();
@@ -1111,16 +1123,90 @@ void MainWindow::slotBoatUpdated(boatAccount * boat,bool newRace)
         txt.sprintf("(%dj %02dh%02dm%02ds)",j,h,m,nbS);
         tool_ETA->setText(tr(" Arrivée WP")+": " +dtm.toString("dd-MM-yyyy, HH:mm:ss")+ " " +txt);
 
+        /* change data displayed in all pilototo buttons or menu entry: (nb of instructions passed / tot nb) */
         updatePilototo_Btn(boat);
+        /* signal to Board and Pilototo that boat data have changed
+           signal to pilototo is needed only when showing the pilototo dialog, the logic of this dialog:
+           -> show wait msg box while doing a getData on current boat
+           -> once boat send its hasUpdated signal, show the real dialog
+        */
         emit boatHasUpdated(boat);
+        /* send to all POI the new WP, the corresponding WP if exists will draw in a different color*/
         emit WPChanged(boat->getWPLat(),boat->getWPLon());
     }
-    //qWarning() << "Boat " << boat->getLogin() << " done";
 }
 
-void MainWindow::slotVLM_Test(void)
+/*
+
+  if(selectedBoat->getZoom() !=-1)
+                    proj->setScale(selectedBoat->getZoom());
+  if(acc==selectedBoat)
+            {
+                menuBar->setSelectedBoatIndex(cnt);
+                menuBar->acPilototo->setEnabled(!acc->getLockStatus());
+            }
+  */
+
+void MainWindow::slotSelectBoat(boatAccount* newSelect)
 {
-    qWarning() << "Testing";
+    if(newSelect != selectedBoat)
+    {
+        /* did we have already a selected boat ? */
+        if(selectedBoat)
+        {
+            selectedBoat->unSelectBoat(true); /* ask for unselect + update */
+            /* save the zoom factor */
+            selectedBoat->setZoom(proj->getScale());
+        }
+
+        selectedBoat=newSelect;
+        if(newSelect->getStatus()) /* is selected boat activated ?*/
+        {
+            newSelect->getData();
+            if(newSelect->getZoom()!=-1)
+                proj->setScale(newSelect->getZoom());
+            menuBar->acPilototo->setEnabled(!newSelect->getLockStatus());
+        }
+        else
+            menuBar->acPilototo->setEnabled(false);
+
+        /* manage item of boat list */
+        int cnt=0;
+        for(int i=0;i<acc_list.count();i++)
+        {
+            if(acc_list[i] == newSelect)
+            {
+                menuBar->setSelectedBoatIndex(cnt);
+                break;
+            }
+            if(acc_list[i]->getStatus())
+                cnt++;
+        }
+
+    }
+}
+
+/***********************************
+  Called when boat list is changed
+  *********************************/
+
+void MainWindow::slotChgBoat(int num)
+{
+    QListIterator<boatAccount*> i (acc_list);
+    int cnt=0;
+    while(i.hasNext())
+    {
+        boatAccount * acc = i.next();
+        if(acc->getStatus())
+        {
+            if(cnt==num)
+            {
+                acc->selectBoat();
+                break;
+            }
+            cnt++;
+        }
+    }
 }
 
 void MainWindow::slotSelectPOI(Pilototo_instruction * instruction)
@@ -1164,83 +1250,18 @@ void MainWindow::slotPOIselected(POI* poi)
 
 }
 
-void MainWindow::slotSelectBoat(boatAccount* newSelect)
-{
-    if(newSelect != selectedBoat)
-    {
-        if(selectedBoat)
-        {
-            selectedBoat->unSelectBoat();
-            selectedBoat->setZoom(proj->getScale());
-        }
-        selectedBoat=newSelect;
-        if(newSelect->getStatus())
-        {
-            newSelect->getData();
-            if(newSelect->getZoom()!=-1)
-                proj->setScale(newSelect->getZoom());
-            menuBar->acPilototo->setEnabled(!newSelect->getLockStatus());
-        }
-        else
-            menuBar->acPilototo->setEnabled(false);
-
-
-
-        /* manage item of boat list */
-        int cnt=0;
-        for(int i=0;i<acc_list.count();i++)
-        {
-            if(acc_list[i] == newSelect)
-            {
-                menuBar->setSelectedBoatIndex(cnt);
-                break;
-            }
-            if(acc_list[i]->getStatus())
-                cnt++;
-        }
-
-    }
-}
-
 void MainWindow::slotInetUpdated(void)
 {
     qWarning() << "Inet Updated";
-    QListIterator<boatAccount*> i (acc_list);
     emit updateInet();
     slotVLM_Sync();
 }
 
-void MainWindow::slotChgBoat(int num)
-{
-    QListIterator<boatAccount*> i (acc_list);
-    int cnt=0;
-    while(i.hasNext())
-    {
-        boatAccount * acc = i.next();
-        if(acc->getStatus())
-        {
-            if(cnt==num)
-            {
-                acc->selectBoat();
-                break;
-            }
-            cnt++;
-        }
-    }
-}
-
 void MainWindow::slotAccountListUpdated(void)
 {
-    for(int i=0;i<acc_list.count();i++)
-        if(acc_list[i]->getStatus())
-        {
-            acc_list[i]->getData();
-            break;
-        }
+    selectedBoat=NULL;
     menuBar->updateBoatList(acc_list);
-
-    menuBar->setSelectedBoatIndex(0);
-    slotChgBoat(0);
+    slotVLM_Sync();
 }
 
 void MainWindow::slotAddPOI(float lat,float lon, float wph,int timestamp,bool useTimeStamp)
@@ -1407,26 +1428,6 @@ void MainWindow::slotWriteBoat(void)
     xmlData->writeBoatData(acc_list,race_list,QString("boatAcc.dat"));
 }
 
-void MainWindow::slotUpdateOpponent(void)
-{
-    bool found=false;
-    if(!selectedBoat)
-    {
-        opponents->clear();
-        return;
-    }
-
-    for(int i=0;i<race_list.size();i++)
-        if(race_list[i]->idrace == selectedBoat->getRaceId())
-        {
-            opponents->setBoatList(race_list[i]->oppList,race_list[i]->idrace,true);
-            found=true;
-            break;
-        }
-    if(!found)
-        opponents->clear();
-}
-
 void MainWindow::slotParamChanged(void)
 {
     if(Util::getSetting("showCompass",1).toInt()==1)
@@ -1482,4 +1483,16 @@ void MainWindow::releasePolar(QString fname)
 void MainWindow::slotLoadVLMGrib(void)
 {
     loadVLM_grib->showDialog();
+}
+
+void MainWindow::slotValidationDone(bool ok)
+{
+    VLMBoard->validationDone(ok);
+}
+
+/*************************************/
+
+void MainWindow::slotVLM_Test(void)
+{
+    qWarning() << "Testing";
 }

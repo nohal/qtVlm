@@ -65,6 +65,19 @@ Copyright (C) 2008 - Jacques Zaninetti - http://zygrib.free.fr
     _res;                      \
     })
 
+#define calcAngleSign(VAL,ANGLE) { \
+    if(qAbs(VAL)>180)              \
+    {                              \
+        if(VAL>0)                  \
+            ANGLE=-ANGLE;          \
+    }                              \
+    else                           \
+    {                              \
+        if(VAL<0)                  \
+            ANGLE=-ANGLE;          \
+    }                              \
+}
+
 #include "Projection.h"
 
 #define NB_URL 4

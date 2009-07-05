@@ -131,7 +131,6 @@ class MainWindow: public QMainWindow
         void slotEditPOI(POI *);
         void slotReadBoat(void);
         void slotWriteBoat(void);
-        void slotUpdateOpponent(void);
         void slotParamChanged(void);
         void slotNewZoom(float zoom);
         void slotGetTrace(QString buff,QList<position*> * trace);
@@ -144,6 +143,8 @@ class MainWindow: public QMainWindow
         void getPolar(QString fname,Polar ** ptr);
         void releasePolar(QString fname);
         void slotLoadVLMGrib(void);
+
+        void slotValidationDone(bool);
 
     signals:
         void signalMapQuality(int quality);
@@ -224,6 +225,7 @@ class MainWindow: public QMainWindow
 
         opponentList * opponents;
         QList<raceData*> race_list;
+        int race_vacLen;
 
         Pilototo_instruction * selPOI_instruction;
         bool isSelectingWP;

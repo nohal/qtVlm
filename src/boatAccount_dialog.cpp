@@ -47,17 +47,13 @@ boatAccount_dialog::boatAccount_dialog(Projection * proj, QWidget * main, QWidge
     connect(btn_accDel, SIGNAL(clicked()), this, SLOT(slot_delBoat()));
     connect(btn_accChg, SIGNAL(clicked()), this, SLOT(slot_chgBoat()));
 
-    connect(this,SIGNAL(vlmSync()),main,SLOT(slotVLM_Sync()));
-
     connect(list_boat,SIGNAL(itemClicked(QListWidgetItem *)),
     this, SLOT(slot_selectItem(QListWidgetItem *)));
 
     connect(this,SIGNAL(accountListUpdated()), main, SLOT(slotAccountListUpdated()));
-    
+
     connect(this,SIGNAL(writeBoat()),main,SLOT(slotWriteBoat()));
 
-    /* sync boat position */
-    //emit vlmSync();
 }
 
 boatAccount_dialog::~boatAccount_dialog()
@@ -67,10 +63,9 @@ boatAccount_dialog::~boatAccount_dialog()
 
 
 
-void boatAccount_dialog::initList(QList<boatAccount*> & acc_list,QList<raceData*> & race_list)
+void boatAccount_dialog::initList(QList<boatAccount*> & acc_list)
 {
     this->acc_list = & acc_list;
-    this->race_list = &race_list;
 
     list_boat->clear();
     polarList->clear();
@@ -108,27 +103,27 @@ void boatAccount_dialog::initList(QList<boatAccount*> & acc_list,QList<raceData*
 
     /* default value */
     polarList->addItem(tr("<Aucun>"));
-    
+
     if(!fileList.isEmpty())
     {
         QListIterator<QFileInfo> j (fileList);
-        
+
         while(j.hasNext())
         {
             QFileInfo finfo = j.next();
             polarList->addItem(finfo.baseName());
         }
     }
-    
-    
+
+
 }
 
 void boatAccount_dialog::slot_accHasChanged(void)
 {
     if(list_boat->count()<=0) return ;
-    
+
     QListWidgetItem * curItem = list_boat->currentItem();
-    
+
     if(curItem != blank && (edit_login->text() != curItem->text()
             || edit_pass->text() != curItem->data(ROLE_PASS).toString()
             || enable_state->checkState() != ((Qt::CheckState)curItem->data(ROLE_ACTIVATED).toInt())
@@ -175,8 +170,7 @@ void boatAccount_dialog::done(int result)
                 acc->setLockStatus(((Qt::CheckState)item->data(ROLE_LOCKED).toInt())==Qt::Checked);
                 acc->setAlias(((Qt::CheckState)item->data(ROLE_CHK_ALIAS).toInt())==Qt::Checked,
                                 item->data(ROLE_ALIAS).toString());
-                if(acc->getStatus())
-                    acc->getData();
+                acc->unSelectBoat(false); /*unselect without update as following getData will do it*/
             }
 
             if(list_boat->count()-1<acc_list->count())
@@ -203,20 +197,18 @@ void boatAccount_dialog::done(int result)
                     acc->setAlias(((Qt::CheckState)item->data(ROLE_CHK_ALIAS).toInt())==Qt::Checked,
                                 item->data(ROLE_ALIAS).toString());
                     acc_list->append(acc);
-                    if(acc->getStatus())
-                        acc->getData();
+                    acc->unSelectBoat(false); /*unselect without update as following getData will do it*/
                 }
             }
 
         }
         emit accountListUpdated();
         emit writeBoat();
-        //xmlData->writeBoatData(*acc_list,*race_list,QString("boatAcc.dat"));
     }
-    
+
     list_boat->clear();
     polarList->clear();
-    
+
     QDialog::done(result);
 }
 
@@ -366,7 +358,7 @@ void boatAccount_dialog::slot_boatDown(void)
 {
     int index = list_boat->currentRow();
     if(index==list_boat->count()-2)
-        return;    
+        return;
     QListWidgetItem * item = list_boat->takeItem(index);
     if(item==blank)
         return;

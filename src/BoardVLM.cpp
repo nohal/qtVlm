@@ -32,14 +32,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #define VLM_DO_REQUEST     1
 #define VLM_WAIT_RESULT    2
 
-#define VLM_CMD_HD     1
-#define VLM_CMD_ANG    2
-#define VLM_CMD_WP     3
-#define VLM_CMD_ORTHO  4
-#define VLM_CMD_VMG    5
-
-#define MAX_RETRY 5
-
 #define SPEED_COLOR_UPDATE    "color: rgb(100, 200, 0);"
 #define SPEED_COLOR_VLM       "color: rgb(255, 0, 0);"
 #define SPEED_COLOR_NO_POLAR  "color: rgb(255, 170, 127);"
@@ -53,10 +45,6 @@ boardVLM::boardVLM(QMainWindow * mainWin,QWidget * parent) : QWidget(parent)
 
     connect(mainWin,SIGNAL(setChangeStatus(bool)),this,SLOT(setChangeStatus(bool)));
     connect(this,SIGNAL(VLM_Sync()),mainWin,SLOT(slotVLM_Sync()));
-
-    timer = new QTimer(this);
-    timer->setSingleShot(true);
-    connect(timer,SIGNAL(timeout()),this, SLOT(chkResult()));
 
     GPS_timer = new QTimer(this);
     GPS_timer->setSingleShot(true);
@@ -77,9 +65,9 @@ boardVLM::boardVLM(QMainWindow * mainWin,QWidget * parent) : QWidget(parent)
     connect(editHeading,SIGNAL(hasEvent()),this,SLOT(edtSpinBox_key()));
     connect(editAngle,SIGNAL(hasEvent()),this,SLOT(edtSpinBox_key()));
 
+    /* ugly hack to have degree char*/
     QString str;
     str.sprintf("%c",176);
-
     deg_unit_1->setText(str);
     deg_unit_2->setText(str);
     deg_unit_5->setText(str);
@@ -128,19 +116,6 @@ void boardVLM::paramChanged(void)
     else
         chk_GPS->show();
     COM=Util::getSetting("serialName", "COM2").toString();
-}
-
-#define calcAngleSign(VAL,ANGLE) { \
-    if(qAbs(VAL)>180)              \
-    {                              \
-        if(VAL>0)                  \
-            ANGLE=-ANGLE;          \
-    }                              \
-    else                           \
-    {                              \
-        if(VAL<0)                  \
-            ANGLE=-ANGLE;          \
-    }                              \
 }
 
 float boardVLM::computeWPdir(boatAccount * boat)
@@ -695,67 +670,19 @@ void boardVLM::requestFinished (int currentRequest,QByteArray)
         case VLM_DO_REQUEST:
             isWaiting=true;
             qWarning() << "Request done";
-            /* update boat info */
-            nbRetry=0;
-            timer->start(1000);
+            /* validate boat info */
+            currentBoat->validateChg(currentCmdNum,cmd_val1,cmd_val2,cmd_val3);
+            /*nbRetry=0;
+            timer->start(1000);*/
             break;
     }
 }
 
-void boardVLM::chkResult(void)
+void boardVLM::validationDone(bool ok)
 {
-    bool done=false;
-    float data;
-    float val;
-    currentBoat->getData();
-    switch(currentCmdNum)
-    {
-        case VLM_CMD_HD:
-            data=currentBoat->getHeading();
-            if(compFloat(data,cmd_val1) && currentBoat->getPilotType() == 1)
-                done=true;
-            break;
-        case VLM_CMD_ANG:
-            data = currentBoat->getTWA();
-            val=currentBoat->getHeading()-currentBoat->getWindDir();
-            calcAngleSign(val,data);
-
-            if(((int)data) == ((int)cmd_val1) && currentBoat->getPilotType() == 2)
-                done=true;
-            break;
-        case VLM_CMD_VMG:
-            if(currentBoat->getPilotType() == 4)
-                done=true;
-            break;
-        case VLM_CMD_ORTHO:
-            if(currentBoat->getPilotType() == 3)
-                done=true;
-            break;
-        case VLM_CMD_WP:
-            if(compFloat(currentBoat->getWPLat(),cmd_val1) &&
-                compFloat(currentBoat->getWPLon(),cmd_val2) &&
-                compFloat(currentBoat->getWPHd(),cmd_val3))
-                done=true;
-            break;
-    }
-    if(done)
-    {
-        isWaiting=false;
-        boatUpdated(currentBoat);
-    }
-    else
-    {
-        nbRetry++;
-        if(nbRetry>MAX_RETRY)
-        {
-            qWarning("Failed to synch");
-            isWaiting=false;
-            btn_Synch->setStyleSheet(QString::fromUtf8("background-color: rgb(255, 170, 0);"));
-            return;
-        }
-        qWarning("Retry...");
-        timer->start(1000);
-    }
+    isWaiting=false;
+    if(!ok)
+        btn_Synch->setStyleSheet(QString::fromUtf8("background-color: rgb(255, 170, 0);"));;
 }
 
 void boardVLM::edtSpinBox_key()
