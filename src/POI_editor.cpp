@@ -68,8 +68,8 @@ void POI_Editor::newPOI(float lon, float lat,Projection *proj)
 {
     //=> set name
     modeCreation = true;
-    this->poi = new POI(tr("POI"), lon, lat, proj, ownerMeteotable,
-                        parent, POI_STD,-1,-1,false);
+    this->poi = new POI(tr("POI"), lat, lon, proj, ownerMeteotable,
+                        parent, -1,-1,false);
     initPOI();
     setWindowTitle(tr("Nouveau Point d'Intérêt"));
     btDelete->setEnabled(false);
@@ -79,16 +79,17 @@ void POI_Editor::newPOI(float lon, float lat,Projection *proj)
 void POI_Editor::initPOI(void)
 {
     editName->setText(poi->getName());
-    setValue(POI_EDT_LON,poi->getLongitude());
-    setValue(POI_EDT_LAT,poi->getLatitude());
+
     if(poi->getWph()==-1)
         editWph->setText(QString());
     else
          editWph->setText(QString().setNum(poi->getWph()));
 
     btSaveWP->setEnabled(!((MainWindow*)ownerMeteotable)->getBoatLockStatus());
+
     setValue(POI_EDT_LON,poi->getLongitude());
     setValue(POI_EDT_LAT,poi->getLatitude());
+
     if(poi->getTimeStamp()!=-1)
     {
         QDateTime tm;
@@ -182,7 +183,7 @@ void POI_Editor::btPasteClicked()
         tm.setTimeSpec(Qt::UTC);
         tm.setTime_t(tstamp);
         editTStamp->setDateTime(tm);
-	editTStamp->setTimeSpec(Qt::UTC);
+        editTStamp->setTimeSpec(Qt::UTC);
         chk_tstamp->setCheckState(Qt::Checked);
     }
 

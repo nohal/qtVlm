@@ -58,7 +58,9 @@ HEADERS += BoardVLM.h \
     zuFile.h \
     dialog_gribDate.h \
     DialogVLM_grib.h \
-    mapcompass.h
+    mapcompass.h \
+    gate.h \
+    gate_editor.h
 FORMS += boatAccount_dialog.ui \
     BoardVLM.ui \
     paramVLM.ui \
@@ -71,7 +73,8 @@ FORMS += boatAccount_dialog.ui \
     WP_dialog.ui \
     dialog_gribDate.ui \
     DialogVLM_grib.ui \
-    inetConn_progessDialog.ui
+    inetConn_progessDialog.ui \
+    gate_editor.ui
 SOURCES += BoardVLM.cpp \
     boatAccount_dialog.cpp \
     boatAccount.cpp \
@@ -108,7 +111,9 @@ SOURCES += BoardVLM.cpp \
     zuFile.cpp \
     dialog_gribDate.cpp \
     DialogVLM_grib.cpp \
-    mapcompass.cpp
+    mapcompass.cpp \
+    gate.cpp \
+    gate_editor.cpp
 DEFINES = QT_$$[QT_VERSION]
 DEFINES ~= s/\./_
 DEFINES ~= s/-.*/

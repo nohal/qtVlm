@@ -449,7 +449,7 @@ void Util::computePos(Projection * proj, float lat, float lon, int * x, int * y)
     else if (proj->isPointVisible(lon-360, lat)) {
         proj->map2screen(lon-360, lat, x, y);
     }
-    else {
+    else  {
         proj->map2screen(lon+360, lat, x, y);
     }
 }

@@ -52,6 +52,8 @@ Copyright (C) 2008 - Jacques Zaninetti - http://zygrib.free.fr
 #include "Pilototo.h"
 #include "race_dialog.h"
 #include "Polar.h"
+#include "gate.h"
+#include "gate_editor.h"
 
 class opponentList;
 class raceData;
@@ -74,8 +76,6 @@ class MainWindow: public QMainWindow
         bool get_selPOI_instruction();
 
     public slots:
-        void slotCreatePOI();
-
         void slotFile_Open();
         void slotFile_Close();
         void slotFile_Load_GRIB();
@@ -115,20 +115,29 @@ class MainWindow: public QMainWindow
         void slotChgBoat(int);
         void slotAccountListUpdated(void);
         void slotBoatUpdated(boatAccount * boat,bool newRace);
-        void slotpastePOI();
+
         void slotChgWP(float lat,float lon, float wph);
-        void slotAddPOI(float lat,float lon, float wph,int timestamp,bool useTimeStamp);
         void slotPOIinput(void);
-        void slotDelPOIs(void);
-        void slotBoatSave(void);
+        void slotPOISave(void);
         void slotPOIimport(void);
         void slotBoatLockStatusChanged(boatAccount*,bool);
         void slotPilototo(void);
 
+        void slot_addGate(void);
+        void addGate_list(gate*);
+        void delGate_list(gate*);
+        void slotEditGate(gate *);
+        void slotCreateGate();
+
+        void slot_newPOI(void);
         void addPOI_list(POI * poi);
         void delPOI_list(POI * poi);
-
         void slotEditPOI(POI *);
+        void slotDelPOIs(void);
+        void slotCreatePOI();
+        void slotAddPOI(float lat,float lon, float wph,int timestamp,bool useTimeStamp);
+        void slotpastePOI();
+
         void slotReadBoat(void);
         void slotWriteBoat(void);
         void slotParamChanged(void);
@@ -151,6 +160,8 @@ class MainWindow: public QMainWindow
         void setChangeStatus(bool);
         void editPOI(POI *);
         void newPOI(float,float,Projection *);
+        void editGate(gate*);
+        void newGate(float,float,float,float,Projection*);
         void editInstructions(void);
         void editInstructionsPOI(Pilototo_instruction * ,POI*);
         void editWP_POI(POI*);
@@ -218,7 +229,6 @@ class MainWindow: public QMainWindow
         xml_POIData * xmlPOI;
 
         QList<POI*> poi_list;
-
         POI_Editor * poi_editor;
 
         Pilototo * pilototo;
@@ -235,6 +245,9 @@ class MainWindow: public QMainWindow
         DialogVLM_grib * loadVLM_grib;
 
         mapCompass * compass;
+
+        gate_editor * gate_edit;
+        QList<gate*> gate_list;
 };
 
 #endif

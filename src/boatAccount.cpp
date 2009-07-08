@@ -356,6 +356,7 @@ void boatAccount::requestFinished ( int currentRequest,QByteArray res_byte)
 
             if(doingValidation)
             {
+                qWarning() << "Validating Board cmd for " << login;
                 if(chkResult())
                 {
                     doingValidation=false;
@@ -507,12 +508,10 @@ void boatAccount::createWidget()
 void boatAccount::updatePosition(void)
 {
     int boat_i,boat_j;
-
     Util::computePos(proj,lat,lon,&boat_i,&boat_j);
     boat_i-=3;
     boat_j-=(height()/2);
     move(boat_i, boat_j);
-    update();
 }
 
 void boatAccount::updateHint(void)
@@ -646,7 +645,6 @@ void boatAccount::setParam(QString login, QString pass)
 {
      this->login=login;
      this->pass=pass;
-
      //doRequest(VLM_REQUEST_IDU);
 }
 

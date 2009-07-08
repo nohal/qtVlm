@@ -28,19 +28,21 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "POI.h"
 #include "Projection.h"
+#include "gate.h"
 
 class xml_POIData: public QWidget
-{Q_OBJECT
+{
+    Q_OBJECT
 
-      public:
-            xml_POIData(Projection * proj,QWidget * main, QWidget * parent=0);
-            bool writeData(QList<POI*> & poi_list,QString fname);
-            bool readData(QList<POI*> & poi_list,QString fname);
-			void importZyGrib(QList<POI*> & poi_list);
+    public:
+        xml_POIData(Projection * proj,QWidget * main, QWidget * parent=0);
+        bool writeData(QList<POI*> & poi_list,QList<gate*> & gate_list,QString fname);
+        bool readData(QList<POI*> & poi_list,QList<gate*> & gate_list,QString fname);
+        void importZyGrib(QList<POI*> & poi_list);
 
-      private:
-            Projection * proj;
-            QWidget * main, * parent;
+    private:
+        Projection * proj;
+        QWidget * main, * parent;
 };
 
 #endif

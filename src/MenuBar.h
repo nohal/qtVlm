@@ -62,6 +62,9 @@ public:
     QAction *ac_CreatePOI;
     QAction *ac_pastePOI;
     QAction *ac_delPOIs;
+    QAction *ac_CreateGate;
+    QAction *acPOIAdd;
+    QAction *acGateAdd;
 
     QAction *acFile_Open;
     QAction *acFile_Close;
@@ -116,7 +119,7 @@ public:
     QAction *acVLMParam;
     QAction *acVLMParamBoat;
     QAction *acPOIinput;
-	QAction *acPOIimport;
+    QAction *acPOIimport;
     QAction *acVLMSync;
     QAction *acPOISave;
     QAction *acPilototo;

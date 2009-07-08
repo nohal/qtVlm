@@ -53,7 +53,7 @@ class POI_Editor : public QDialog, public Ui::POI_editor_ui
     private:
         POI   *poi;
         bool  modeCreation;
-        
+
         QWidget * parent;
         QWidget * ownerMeteotable;
 

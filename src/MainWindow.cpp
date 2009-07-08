@@ -46,6 +46,7 @@ Copyright (C) 2008 - Jacques Zaninetti - http://zygrib.free.fr
 #include "BoardVLM.h"
 
 
+
 //-----------------------------------------------------------
 void MainWindow::InitActionsStatus()
 {
@@ -110,6 +111,7 @@ void MainWindow::connectSignals()
     connect(mb->ac_CreatePOI, SIGNAL(triggered()), this, SLOT(slotCreatePOI()));
     connect(mb->ac_pastePOI, SIGNAL(triggered()), this, SLOT(slotpastePOI()));
     connect(mb->ac_delPOIs, SIGNAL(triggered()), this, SLOT(slotDelPOIs()));
+    connect(mb->ac_CreateGate, SIGNAL(triggered()), this, SLOT(slotCreateGate()));
 
     connect(mb->acFile_Open, SIGNAL(triggered()), this, SLOT(slotFile_Open()));
     connect(mb->acFile_Close, SIGNAL(triggered()), this, SLOT(slotFile_Close()));
@@ -177,6 +179,10 @@ void MainWindow::connectSignals()
     connect(mb->acRace, SIGNAL(triggered()), this, SLOT(slotVLM_ParamRace()));
     connect(mb->acVLMParam, SIGNAL(triggered()), this, SLOT(slotVLM_Param()));
     connect(mb->acVLMSync, SIGNAL(triggered()), this, SLOT(slotVLM_Sync()));
+
+    connect(mb->acPOIAdd, SIGNAL(triggered()), this, SLOT(slot_newPOI()));
+    connect(mb->acGateAdd, SIGNAL(triggered()), this, SLOT(slot_addGate()));
+
 #ifdef __QTVLM_WITH_TEST
     if(mb->acVLMTest)
         connect(mb->acVLMTest, SIGNAL(triggered()), this, SLOT(slotVLM_Test()));
@@ -188,7 +194,7 @@ void MainWindow::connectSignals()
 
     connect(&dialogProxy, SIGNAL(proxyUpdated()), this, SLOT(slotInetUpdated()));
 
-    connect(mb->acPOISave, SIGNAL(triggered()), this, SLOT(slotBoatSave()));
+    connect(mb->acPOISave, SIGNAL(triggered()), this, SLOT(slotPOISave()));
 
     //-------------------------------------
     // Autres objets de l'interface
@@ -398,6 +404,7 @@ MainWindow::MainWindow(int w, int h, QWidget *parent)
             this,SLOT(slotAddPOI(float,float,float,int,bool)));
 
     poi_editor=new POI_Editor(this,terre);
+    gate_edit=new gate_editor(this,terre);
 
     pilototo = new Pilototo(this,terre);
     connect(this,SIGNAL(editInstructions()),
@@ -427,11 +434,14 @@ MainWindow::MainWindow(int w, int h, QWidget *parent)
     connectSignals();
     InitActionsStatus();
 
-    // POI's
+    // POI's and gates
     while (!poi_list.isEmpty())
         delete poi_list.takeFirst();
+    while (!gate_list.isEmpty())
+        delete gate_list.takeFirst();
     xmlPOI = new xml_POIData(proj,this,terre);
-    xmlPOI->readData(poi_list,"poi.dat");
+    xmlPOI->readData(poi_list,gate_list,"poi.dat");
+
     //------------------------------------------------
     // sync all boat
     slotVLM_Sync();
@@ -451,7 +461,7 @@ MainWindow::~MainWindow()
     Util::setSetting("gribFileName",  gribFileName);
     Util::setSetting("gribFilePath",  gribFilePath);
 
-    xmlPOI->writeData(poi_list,"poi.dat");
+    xmlPOI->writeData(poi_list,gate_list,"poi.dat");
 
     if(selectedBoat) /* save the zoom factor */
         selectedBoat->setZoom(proj->getScale());
@@ -469,6 +479,16 @@ void MainWindow::addPOI_list(POI * poi)
 void MainWindow::delPOI_list(POI * poi)
 {
     poi_list.removeAll(poi);
+}
+
+void MainWindow::addGate_list(gate * ptr)
+{
+    gate_list.append(ptr);
+}
+
+void MainWindow::delGate_list(gate * ptr)
+{
+    gate_list.removeAll(ptr);
 }
 
 //-------------------------------------------------
@@ -510,6 +530,22 @@ void MainWindow::slotCreatePOI()
     double lon, lat;
     proj->screen2map(mouseClicX,mouseClicY, &lon, &lat);
     emit newPOI((float)lon,(float)lat,proj);
+}
+
+void MainWindow::slot_newPOI(void)
+{
+    emit newPOI(0.0,0.0,proj);
+}
+
+void MainWindow::slot_addGate(void)
+{
+    qWarning() << "Asking for a new gate";
+    emit newGate(0.0,0.0,0.0,0.0,proj);
+}
+
+void MainWindow::slotCreateGate(void)
+{
+
 }
 
 //-------------------------------------------------
@@ -1051,7 +1087,6 @@ void MainWindow::slotVLM_Sync(void)
                 /* no selected boat => select the first activated boat
                    no need to do getData as it will be done in selectBoat*/
                 hasFirstActivated=true;
-                selectedBoat=acc;
                 acc->selectBoat();
             }
             else
@@ -1268,8 +1303,8 @@ void MainWindow::slotAddPOI(float lat,float lon, float wph,int timestamp,bool us
 {
     POI * poi;
 
-    poi = new POI(QString(tr("POI")),lon,lat, proj,
-                  this, terre,POI_STD,wph,timestamp,useTimeStamp);
+    poi = new POI(QString(tr("POI")),lat,lon, proj,
+                  this, terre,wph,timestamp,useTimeStamp);
 
     addPOI_list(poi);
     poi->show();
@@ -1332,9 +1367,9 @@ void MainWindow::slotDelPOIs(void)
     }
 }
 
-void MainWindow::slotBoatSave(void)
+void MainWindow::slotPOISave(void)
 {
-    xmlPOI->writeData(poi_list,"poi.dat");
+    xmlPOI->writeData(poi_list,gate_list,"poi.dat");
 }
 
 void MainWindow::slotPOIimport(void)
@@ -1382,6 +1417,11 @@ bool MainWindow::getBoatLockStatus(void)
 void MainWindow::slotEditPOI(POI * poi)
 {
     emit editPOI(poi);
+}
+
+void MainWindow::slotEditGate(gate *curGate)
+{
+    emit editGate(curGate);
 }
 
 void MainWindow::slotPilototo(void)
@@ -1495,4 +1535,6 @@ void MainWindow::slotValidationDone(bool ok)
 void MainWindow::slotVLM_Test(void)
 {
     qWarning() << "Testing";
+
+    //gate * g1 = new gate("Gate 1",-2,-2,-2,2,proj,this,terre);
 }

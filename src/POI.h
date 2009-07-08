@@ -31,9 +31,6 @@ Copyright (C) 2008 - Jacques Zaninetti - http://zygrib.free.fr
 #include <QMouseEvent>
 #include <QMenu>
 
-#define POI_STD  0
-#define POI_BOAT 1
-
 #include "Projection.h"
 
 //===================================================================
@@ -41,9 +38,9 @@ class POI : public QWidget
 { Q_OBJECT
     public:
 
-        POI(QString name, float lon, float lat,
+        POI(QString name, float lat, float lon,
                     Projection *proj, QWidget *ownerMeteotable,
-                    QWidget *parentWindow, int type, float wph,
+                    QWidget *parentWindow, float wph,
                     int tstamp,bool useTstamp);
 
         ~POI();
@@ -52,7 +49,6 @@ class POI : public QWidget
         float   getLongitude()    {return lon;}
         float   getLatitude()     {return lat;}
         float   getWph()          {return wph;}
-        int     getType()         {return type;}
         int     getTimeStamp()    {return timeStamp;}
         bool    getUseTimeStamp() {if(timeStamp==-1) return false; else return useTstamp;}
 
@@ -96,7 +92,6 @@ class POI : public QWidget
         QWidget   *owner;
         QColor    bgcolor,fgcolor;
         QColor    myColor,wpColor;
-        int type;
         int timeStamp;
         bool useTstamp;
         bool isWp;
@@ -121,7 +116,7 @@ class POI : public QWidget
         QAction * ac_meteo;
         QAction * ac_copy;
         void createPopUpMenu(void);
-        
+
         void chkIsWP(void);
         void rmSignal(void);
 };

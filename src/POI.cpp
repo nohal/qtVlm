@@ -34,9 +34,9 @@ Copyright (C) 2008 - Jacques Zaninetti - http://zygrib.free.fr
 #include "MainWindow.h"
 
 //-------------------------------------------------------------------------------
-POI::POI(QString name, float lon, float lat,
+POI::POI(QString name, float lat, float lon,
                  Projection *proj, QWidget *ownerMeteotable, QWidget *parentWindow,
-                 int type, float wph,int tstamp,bool useTstamp)
+                 float wph,int tstamp,bool useTstamp)
     : QWidget(parentWindow)
 {
     this->parent = parentWindow;
@@ -45,18 +45,17 @@ POI::POI(QString name, float lon, float lat,
     this->lon = lon;
     this->lat = lat;
     this->wph=wph;
-    this->type = type;
     this->timeStamp=tstamp;
     this->useTstamp=useTstamp;
-    
+
     WPlon=WPlat=-1;
     isWp=false;
 
     this->proj = proj;
-    
-    
+
+
     countClick = 0;
-    
+
     createWidget();
     paramChanged();
 
@@ -75,9 +74,9 @@ POI::POI(QString name, float lon, float lat,
 
     connect(ownerMeteotable,SIGNAL(paramVLMChanged()),this,SLOT(paramChanged()));
     connect(ownerMeteotable,SIGNAL(WPChanged(float,float)),this,SLOT(WPChanged(float,float)));
-    
+
     ((MainWindow*)owner)->getBoatWP(&WPlat,&WPlon);
-    
+
     setName(name);
     updateProjection();
     chkIsWP();
@@ -106,7 +105,7 @@ void POI::rmSignal(void)
 
 //-------------------------------------------------------------------------------
 void POI::createWidget()
-{ 
+{
     fgcolor = QColor(0,0,0);
     int gr = 255;
     bgcolor = QColor(gr,gr,gr,150);
@@ -151,17 +150,8 @@ void POI::setName(QString name)
 
 //-------------------------------------------------------------------------------
 void POI::updateProjection()
-{    
-    if (proj->isPointVisible(lon, lat)) {      // tour du monde ?
-        proj->map2screen(lon, lat, &pi, &pj);
-    }
-    else if (proj->isPointVisible(lon-360, lat)) {
-        proj->map2screen(lon-360, lat, &pi, &pj);
-    }
-    else {
-        proj->map2screen(lon+360, lat, &pi, &pj);
-    }
-
+{
+    Util::computePos(proj,lat, lon, &pi, &pj);
     int dy = height()/2;
     move(pi-3, pj-dy);
 }
@@ -314,7 +304,7 @@ void POI::slotDelPoi()
 
         delPOI_list(this);
         rmSignal();
-        close();        
+        close();
     }
 }
 
@@ -333,7 +323,7 @@ void POI::WPChanged(float tlat,float tlon)
 }
 
 void POI::chkIsWP(void)
-{   
+{
     if(compFloat(lat,WPlat) && compFloat(lon,WPlon))
     {
         if(!isWp)
