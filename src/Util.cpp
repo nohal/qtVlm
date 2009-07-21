@@ -428,7 +428,7 @@ QString Util::pos2String(int type,float value)
 }
 
 QString  url_name[NB_URL] = { "Std 1","Std 2","Std 3","Test"};
-QString  url_str[NB_URL] = { "s9.virtual-loup-de-mer.org","s9.virtual-loup-de-mer.org","s9.virtual-loup-de-mer.org",
+QString  url_str[NB_URL] = { "s9.virtual-loup-de-mer.org","s10.virtual-loup-de-mer.org","s11.virtual-loup-de-mer.org",
     "testing.virtual-loup-de-mer.org"};
 
 QString Util::getHost()
