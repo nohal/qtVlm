@@ -92,7 +92,7 @@ int DialogVLM_grib::parseFolderListing(QString data)
         /* grib date */
         pos = data.indexOf("<td align=\"right\">",pos);
         if(pos==-1) break;
-        date_str = data.mid(pos+19,16);
+        date_str = data.mid(pos+18,17);
         pos=pos+20;
 
         /* file size */

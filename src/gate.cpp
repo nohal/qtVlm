@@ -45,6 +45,7 @@ gate::gate(QString name,float lat_1, float lon_1,float lat_2, float lon_2,
         this->myColor=QColor(color);
 
     notDrawing=false;
+    isIn=false;
 
     createPopUpMenu();
     paramChanged();
@@ -56,7 +57,10 @@ gate::gate(QString name,float lat_1, float lon_1,float lat_2, float lon_2,
 
     setName(name);
     updateProjection();
-    show();
+
+    setMouseTracking (true);
+
+    //show();
 }
 
 gate::~gate()
@@ -210,20 +214,72 @@ void  gate::paintEvent(QPaintEvent *)
     pnt.setPen(pen);
     pnt.drawText(l_x,l_y+l_h-2,name);
 
-    qWarning() << "Gate paint done";
+    //qWarning() << "Gate paint done";
 }
 
-//-------------------------------------------------------------------------------
-void gate::enterEvent (QEvent *)
+bool gate::validateCoord(int x, int y)
 {
-    enterCursor = cursor();
-    setCursor(Qt::PointingHandCursor);
-
+    /* txt zone */
+    if(x>=l_x && x<=(l_x+l_w) && y>=l_y && y<=(l_y+l_h))
+    {
+        qWarning() << "Validate ok: " << x << "," << y  << " (" << l_x << " " << l_y << " " << l_w << " " << l_h;
+        return true;
+    }
+    else
+    {
+        qWarning() << "Validate ko: " << x << "," << y  << " (" << l_x << " " << l_y << " " << l_w << " " << l_h;
+        return false;
+    }
 }
+
 //-------------------------------------------------------------------------------
+/*void gate::enterEvent (QEvent *)
+{
+    QPoint mouse_pos = QWidget::mapFromGlobal(QCursor::pos());
+    if(validateCoord(mouse_pose->x(), mouse_pos->y()))
+    {
+        enterCursor = cursor();
+        setCursor(Qt::PointingHandCursor);
+    }
+}
+
 void gate::leaveEvent (QEvent *)
 {
     setCursor(enterCursor);
+}
+*/
+
+void gate::mouseMoveEvent (QMouseEvent * e)
+{
+    if (validateCoord(e->x(),e->y()) && !isIn)
+    {
+        enterCursor = cursor();
+        setCursor(Qt::PointingHandCursor);
+        isIn=true;
+    }
+    else
+        if(isIn)
+        {
+            setCursor(enterCursor);
+            isIn=false;
+        }
+}
+
+//-------------------------------------------------------------------------------
+
+
+void  gate::mouseReleaseEvent(QMouseEvent *e)
+{
+    if (!validateCoord(e->x(),e->y()))
+    {
+        e->ignore();
+        return;
+    }
+    if (e->button() == Qt::LeftButton)
+    {
+        emit editGate(this);
+        e->accept();
+    }
 }
 
 void gate::contextMenuEvent(QContextMenuEvent *)

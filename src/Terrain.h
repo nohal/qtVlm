@@ -110,6 +110,7 @@ signals:
     void showContextualMenu(QContextMenuEvent * event);
     void projectionUpdated();
     void POI_selectAborted(POI*);
+    int  getRaceVacLen(boatAccount *,int*);
 
 private:
     //-----------------------------------------------

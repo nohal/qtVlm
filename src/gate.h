@@ -72,6 +72,7 @@ class gate : public QWidget
         QWidget *parent;
 
         QCursor enterCursor;
+        bool isIn;
         QColor myColor;
 
         void rmSignal(void);
@@ -83,9 +84,12 @@ class gate : public QWidget
         QAction * ac_copyGate;
 
         void paintEvent(QPaintEvent *event);
-        void enterEvent (QEvent * e);
-        void leaveEvent (QEvent * e);
+        //void enterEvent (QEvent * e);
+        //void leaveEvent (QEvent * e);
+        void mouseReleaseEvent(QMouseEvent *e);
+        void mouseMoveEvent (QMouseEvent * e);
         void contextMenuEvent(QContextMenuEvent *);
+        bool validateCoord(int x, int y);
 };
 
 #endif // GATE_H

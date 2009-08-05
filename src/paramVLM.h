@@ -41,6 +41,10 @@ class paramVLM : public QDialog, public Ui::VLM_param_ui
         void changeColor_qtBoat_sel(void);
         void changeColor_POI_WP(void);
 
+        void radioBtn_time_toggle(bool);
+        void radioBtn_vac_toggle(bool);
+        void radioBtn_dist_toggle(bool);
+
     signals:
         void paramVLMChanged(void);
         void inetUpdated(void);

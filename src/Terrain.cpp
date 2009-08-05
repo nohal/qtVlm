@@ -51,6 +51,7 @@ Terrain::Terrain(QWidget *parent, Projection *proj_)
     assert(timerResize);
     timerResize->setSingleShot(true);
     connect(timerResize, SIGNAL(timeout()), this, SLOT(slotTimerResize()));
+    connect(this,SIGNAL(getRaceVacLen(boatAccount *,int*)),parent,SLOT(getRaceVacLen(boatAccount *,int*)));
 
     //---------------------------------------------------------------------
     showCountriesBorders  = Util::getSetting("showCountriesBorders", true).toBool();
@@ -301,7 +302,22 @@ void Terrain::drawBoats(QPainter &pnt)
     QPen penLine4(selColor,1);
     penLine4.setWidthF(1);
 
-    int estime = Util::getSetting("estimeLen",100).toInt();
+    int estime_param,estime_param_2;
+    int type=Util::getSetting("estimeType",0).toInt();
+    float estime;
+    switch(type)
+    {
+        case 0: /* time */
+            estime_param = Util::getSetting("estimeTime",60).toInt();
+            break;
+        case 1: /* nb vac */
+            estime_param = Util::getSetting("estimeVac",10).toInt();
+            break;
+        default: /* dist */
+            estime_param = Util::getSetting("estimeLen",100).toInt();
+            break;
+    }
+
 
     while(i.hasNext())
     {
@@ -319,6 +335,26 @@ void Terrain::drawBoats(QPainter &pnt)
             lon=boat->getLon();
             WPLat=boat->getWPLat();
             WPLon=boat->getWPLon();
+
+            switch(type)
+            {
+                case 0: /* time */
+                    estime = (float)((float)(estime_param/60))*boat->getSpeed();
+                    //qWarning() << "Estime (time) " << boat->getLogin() << " " << estime<< "(" << estime_param << "," << boat->getSpeed() << ")";
+                    break;
+                case 1: /* nb vac */
+                    emit getRaceVacLen(boat,&estime_param_2);
+                    estime = (float)((((float)(estime_param*estime_param_2))/3660)*boat->getSpeed());
+                    /*qWarning() << "Estime (vac) " << boat->getLogin() << " " << estime << "("
+                            << estime_param << "," << estime_param_2
+                            << "," << boat->getSpeed() << ")";*/
+                    break;
+                default: /* dist */
+                    estime = estime_param;
+                    //qWarning() << "Estime (len) " << boat->getLogin() << " " << estime;
+                    break;
+            }
+
             Util::getCoordFromDistanceAngle(lat,lon,estime,boat->getHeading(),&tmp_lat,&tmp_lon);
             pnt.setPen(penLine1);
             draw_OrthodromieSegment(pnt, lon,lat,tmp_lon,tmp_lat);

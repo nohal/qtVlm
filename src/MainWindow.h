@@ -75,6 +75,7 @@ class MainWindow: public QMainWindow
         void getBoatWP(float * lat,float * lon);
         bool get_selPOI_instruction();
 
+
     public slots:
         void slotFile_Open();
         void slotFile_Close();
@@ -154,6 +155,7 @@ class MainWindow: public QMainWindow
         void slotLoadVLMGrib(void);
 
         void slotValidationDone(bool);
+        void getRaceVacLen(boatAccount * boat,int * res);
 
     signals:
         void signalMapQuality(int quality);

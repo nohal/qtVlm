@@ -111,7 +111,8 @@ void MainWindow::connectSignals()
     connect(mb->ac_CreatePOI, SIGNAL(triggered()), this, SLOT(slotCreatePOI()));
     connect(mb->ac_pastePOI, SIGNAL(triggered()), this, SLOT(slotpastePOI()));
     connect(mb->ac_delPOIs, SIGNAL(triggered()), this, SLOT(slotDelPOIs()));
-    connect(mb->ac_CreateGate, SIGNAL(triggered()), this, SLOT(slotCreateGate()));
+    //Porte
+    //connect(mb->ac_CreateGate, SIGNAL(triggered()), this, SLOT(slotCreateGate()));
 
     connect(mb->acFile_Open, SIGNAL(triggered()), this, SLOT(slotFile_Open()));
     connect(mb->acFile_Close, SIGNAL(triggered()), this, SLOT(slotFile_Close()));
@@ -181,7 +182,8 @@ void MainWindow::connectSignals()
     connect(mb->acVLMSync, SIGNAL(triggered()), this, SLOT(slotVLM_Sync()));
 
     connect(mb->acPOIAdd, SIGNAL(triggered()), this, SLOT(slot_newPOI()));
-    connect(mb->acGateAdd, SIGNAL(triggered()), this, SLOT(slot_addGate()));
+    //Porte
+    //connect(mb->acGateAdd, SIGNAL(triggered()), this, SLOT(slot_addGate()));
 
 #ifdef __QTVLM_WITH_TEST
     if(mb->acVLMTest)
@@ -442,6 +444,11 @@ MainWindow::MainWindow(int w, int h, QWidget *parent)
     xmlPOI = new xml_POIData(proj,this,terre);
     xmlPOI->readData(poi_list,gate_list,"poi.dat");
 
+    //Porte
+    while (!gate_list.isEmpty())
+        delete gate_list.takeFirst();
+    //Fin porte
+
     //------------------------------------------------
     // sync all boat
     slotVLM_Sync();
@@ -545,7 +552,11 @@ void MainWindow::slot_addGate(void)
 
 void MainWindow::slotCreateGate(void)
 {
-
+    double lat0,lon0,lat1,lon1;
+    if(terre->getSelectedRectangle(&lon0,&lat0,&lon1,&lat1))
+    {
+        emit newGate(lat0,lon0,lat1,lon1,proj);
+    }
 }
 
 //-------------------------------------------------
@@ -1046,9 +1057,17 @@ void MainWindow::slotShowContextualMenu(QContextMenuEvent * e)
     mouseClicX = e->x();
     mouseClicY = e->y();
     if(terre->getSelectedRectangle(&a,&b,&c,&d))
+    {
         menuBar->ac_delPOIs->setEnabled(true);
+        //Porte
+        //menuBar->ac_CreateGate->setEnabled(true);
+    }
     else
+    {
         menuBar->ac_delPOIs->setEnabled(false);
+        //Porte
+        //menuBar->ac_CreateGate->setEnabled(false);
+    }
     menuPopupBtRight->exec(QCursor::pos());
 }
 
@@ -1097,7 +1116,25 @@ void MainWindow::slotVLM_Sync(void)
     }
 }
 
+void MainWindow::getRaceVacLen(boatAccount * boat,int * res)
+{
+    if(!res)
+        return;
 
+    if(boat==NULL)
+    {
+        *res=300;
+        return;
+    }
+
+    for(int i=0;i<race_list.size();i++)
+        if(race_list[i]->idrace == boat->getRaceId())
+        {
+            *res = (race_list[i]->vac_len==0?300:60);
+            return;
+        }
+    *res=300;
+}
 
 /*****************************************
  signal send by each boat after it has update

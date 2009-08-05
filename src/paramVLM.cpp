@@ -27,8 +27,7 @@ paramVLM::paramVLM(QWidget * parent) : QDialog(parent)
 {
     setupUi(this);
 
-    /* Drawing / affichage */
-    estimeLen->setValue(Util::getSetting("estimeLen",100).toInt());
+    /* Drawing / affichage */   
     chk_gribZoomOnLoad->setCheckState(Util::getSetting("gribZoomOnLoad",0).toInt()==1?Qt::Checked:Qt::Unchecked);
 
     opp_labelType->addItem(tr("Login"));
@@ -44,6 +43,30 @@ paramVLM::paramVLM(QWidget * parent) : QDialog(parent)
     setColor(Util::getSetting("POI_WP_Color",QColor(Qt::red).name()).toString(),4);
     setColor(Util::getSetting("qtBoat_color",QColor(Qt::blue).name()).toString(),1);
     setColor(Util::getSetting("qtBoat_sel_color",QColor(Qt::red).name()).toString(),2);
+
+    /* Estime */
+    estimeVal_dist->setValue(Util::getSetting("estimeLen",100).toInt());
+    estimeVal_time->setValue(Util::getSetting("estimeTime",60).toInt());
+    estimeVal_vac->setValue(Util::getSetting("estimeVac",10).toInt());
+
+    estimeVal_time->setEnabled(false);
+    estimeVal_vac->setEnabled(false);
+    estimeVal_dist->setEnabled(false);
+
+    switch(Util::getSetting("estimeType",0).toInt())
+    {
+        case 0:
+            radioBtn_time->setChecked(true);
+            break;
+        case 1:
+            radioBtn_vac->setChecked(true);
+            break;
+        case 2:
+            radioBtn_dist->setChecked(true);
+            break;
+    }
+
+
 
     /* Trace */
     for(int i=5;i<=61;i+=5)
@@ -73,8 +96,7 @@ void paramVLM::done(int result)
 {
     if(result == QDialog::Accepted)
     {
-        /*drawing*/
-        Util::setSetting("estimeLen", QString().setNum(estimeLen->value()));
+        /*drawing*/        
         Util::setSetting("gribZoomOnLoad",chk_gribZoomOnLoad->checkState()==Qt::Checked?"1":"0");
         Util::setSetting("opp_labelType",QString().setNum(opp_labelType->currentIndex()));
         Util::setSetting("autoGribDate",chk_autoGribDate->checkState()==Qt::Checked?"1":"0");
@@ -85,6 +107,19 @@ void paramVLM::done(int result)
         Util::setSetting("POI_WP_Color",POI_WP_color);
         Util::setSetting("qtBoat_color",qtBoat_color);
         Util::setSetting("qtBoat_sel_color",qtBoat_sel_color);
+
+        /* Estime */
+        Util::setSetting("estimeLen", QString().setNum(estimeVal_dist->value()));
+        Util::setSetting("estimeTime", QString().setNum(estimeVal_time->value()));
+        Util::setSetting("estimeVac", QString().setNum(estimeVal_vac->value()));
+
+        if(radioBtn_time->isChecked())
+            Util::setSetting("estimeType","0");
+        else if(radioBtn_vac->isChecked())
+            Util::setSetting("estimeType","1");
+        else
+            Util::setSetting("estimeType","2");
+
 
         /* Trace */
 
@@ -100,7 +135,7 @@ void paramVLM::done(int result)
 
         int oldUrl = Util::getSetting("vlm_url",0).toInt();
         Util::setSetting("vlm_url",QString().setNum(url_list->currentIndex()));
-        qWarning() << "old url=" << oldUrl << " new=" << url_list->currentIndex();
+        //qWarning() << "old url=" << oldUrl << " new=" << url_list->currentIndex();
         if(oldUrl!=url_list->currentIndex())
             emit inetUpdated();
 
@@ -191,3 +226,17 @@ void paramVLM::setColor(QString color,int type)
     }
 }
 
+void paramVLM::radioBtn_time_toggle(bool val)
+{
+    estimeVal_time->setEnabled(val);
+}
+
+void paramVLM::radioBtn_vac_toggle(bool val)
+{
+    estimeVal_vac->setEnabled(val);
+}
+
+void paramVLM::radioBtn_dist_toggle(bool val)
+{
+    estimeVal_dist->setEnabled(val);
+}

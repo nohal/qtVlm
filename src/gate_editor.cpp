@@ -61,10 +61,10 @@ void gate_editor::editGate(gate * gate_)
     exec();
 }
 
-void gate_editor::newGate(float lon_1, float lat_1,float lon_2, float lat_2,Projection *proj)
+void gate_editor::newGate(float lat_1, float lon_1,float lat_2, float lon_2,Projection *proj)
 {
     modeCreation = true;
-    curGate = new gate(tr("Porte"), lon_1, lat_1, lon_2, lat_2,proj, ownerMeteotable,parent);
+    curGate = new gate(tr("Porte"), lat_1, lon_1, lat_2, lon_2,proj, ownerMeteotable,parent);
     initEditor();
     setWindowTitle(tr("Nouvelle porte"));
     btDelete->setEnabled(false);
@@ -151,6 +151,9 @@ void gate_editor::setValue(int num,int type,float val)
 {
     int   deg = (int) trunc(val);
     float min = 60.0*fabs(val-trunc(val));
+
+    //qWarning() << "Gate - setVal, num=" << num << ", type=" << type << ", val=" << val << "=> deg=" << deg << ",min=" << min;
+
     if(type==EDT_LAT)
     {
         lat[num][0]->setValue(deg);
@@ -158,7 +161,7 @@ void gate_editor::setValue(int num,int type,float val)
     }
     else
     {
-        lon[num][1]->setValue(deg);
+        lon[num][0]->setValue(deg);
         lon[num][1]->setValue(min);
     }
 }
