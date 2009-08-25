@@ -136,7 +136,7 @@ class MainWindow: public QMainWindow
         void slotEditPOI(POI *);
         void slotDelPOIs(void);
         void slotCreatePOI();
-        void slotAddPOI(float lat,float lon, float wph,int timestamp,bool useTimeStamp);
+        void slotAddPOI(QString name,float lat,float lon, float wph,int timestamp,bool useTimeStamp);
         void slotpastePOI();
 
         void slotReadBoat(void);

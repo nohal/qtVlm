@@ -316,44 +316,67 @@ void Util::paramProxy(QNetworkAccessManager *inetManager,QString)
 }
 
 /* format: LAT,LON@WPH,TSTAMP */
-bool Util::getWPClipboard(float * lat,float * lon, float * wph, int * tstamp)
+bool Util::getWPClipboard(QString * name,float * lat,float * lon, float * wph, int * tstamp)
 {
     QClipboard *clipboard = QApplication::clipboard();
     QString WP_txt = clipboard->text();
-    QStringList list1 = WP_txt.split(",");
+    return convertPOI(WP_txt,name,lat,lon,wph,tstamp);
+}
 
-    if(list1.size()!=2 && list1.size()!=3)
-        return false;
-    QStringList list2 =list1[1].split("@");
+bool Util::convertPOI(const QString & str,QString * name,float * lat,float * lon,float * wph,int * tstamp)
+{
+    QStringList lsval1,lsval2,lsval3;
 
-    if(lat)
-        *lat=list1[0].toFloat();
-    if(lon)
-        *lon=list2[0].toFloat();
-    if(wph)
+    //qWarning() << "Converting: " << str;
+
+    lsval1 = str.split("@");
+
+    if(lsval1.size()==2)
     {
-        if(list2.size()==2)
-            *wph=list2[1].toFloat();
-        else
-            *wph=-1;
-    }
+        lsval2 = lsval1[0].split(",");
+        //qWarning() << "Sub 1: " << lsval1.at(0);
+        lsval3 = lsval1[1].split(",");
+        //qWarning() << "Sub 2: " << lsval1.at(1);
 
-    if(tstamp)
-    {
-        if(list1.size()==3)
-            *tstamp=list1[2].toInt();
-        else
-            *tstamp=-1;
-    }
+        switch(lsval2.size())
+        {
+            case 2:
+                if(name)    *name="";
+                if(lat)     *lat=lsval2[0].toFloat();
+                if(lon)     *lon=lsval2[1].toFloat();
+                break;
+            case 3:
+                if(name)    *name=lsval2[0];
+                if(lat)     *lat=lsval2[1].toFloat();
+                if(lon)     *lon=lsval2[2].toFloat();
+                break;
+            default:
+                return false; /* bad format */
+        }
 
-    return true;
+        switch(lsval3.size())
+        {
+            case 1:
+                if(tstamp) *tstamp=-1;
+                if(wph) *wph=lsval3[0].toDouble();
+                break;
+            case 2:
+                if(tstamp) *tstamp=lsval3[1].toInt();
+                if(wph) *wph=lsval3[0].toDouble();
+                break;
+            default:
+                return false; /* bad format */
+        }
+        return true; /* all ok */
+    }
+    return false; /* bad format */
 }
 
 void Util::setWPClipboard(float lat,float lon, float wph)
 {
-    if(wph==-1)
+    /*if(wph==-1)
         QApplication::clipboard()->setText(QString("%1,%2").arg(lat).arg(lon));
-    else
+    else*/
         QApplication::clipboard()->setText(QString("%1,%2@%3").arg(lat).arg(lon).arg(wph));
 }
 

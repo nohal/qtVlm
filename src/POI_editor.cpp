@@ -43,6 +43,8 @@ POI_Editor::POI_Editor(QWidget *ownerMeteotable, QWidget *parent)
     this->poi = NULL;
     this->parent=parent;
     this->ownerMeteotable=ownerMeteotable;
+
+    lock=true;
     modeCreation=false;
 
     connect(this,SIGNAL(addPOI_list(POI*)),ownerMeteotable,SLOT(addPOI_list(POI*)));
@@ -164,8 +166,9 @@ void POI_Editor::btDeleteClicked()
 void POI_Editor::btPasteClicked()
 {
     float lat,lon,wph;
+    QString name;
     int tstamp;
-    if(!Util::getWPClipboard(&lat,&lon,&wph,&tstamp))
+    if(!Util::getWPClipboard(&name,&lat,&lon,&wph,&tstamp))
         return;
 
     setValue(POI_EDT_LON,lon);
@@ -186,6 +189,9 @@ void POI_Editor::btPasteClicked()
         editTStamp->setTimeSpec(Qt::UTC);
         chk_tstamp->setCheckState(Qt::Checked);
     }
+
+    if(name!="")
+        editName->setText(name);
 
     if(wph<0 || wph > 360)
         editWph->setText(QString());
@@ -221,28 +227,103 @@ void POI_Editor::nameHasChanged(QString newName)
     setWindowTitle(tr("Point d'Intérêt : ")+newName);
 }
 
+void POI_Editor::lat_deg_chg(int)
+{
+    data_chg(POI_EDT_LAT);
+}
+
+void POI_Editor::lat_min_chg(double)
+{
+    data_chg(POI_EDT_LAT);
+}
+
+void POI_Editor::lon_deg_chg(int)
+{
+    data_chg(POI_EDT_LON);
+}
+
+void POI_Editor::lon_min_chg(double)
+{
+    data_chg(POI_EDT_LON);
+}
+
+void POI_Editor::data_chg(int type)
+{
+    if(lock)
+        return;
+    float val=getValue(type);
+    if(type==POI_EDT_LAT)
+        lat_val->setValue(val);
+    else
+        lon_val->setValue(val);
+}
+
+void POI_Editor::lat_val_chg(double)
+{
+    val_chg(POI_EDT_LAT);
+}
+
+void POI_Editor::lon_val_chg(double)
+{
+    val_chg(POI_EDT_LON);
+}
+
+void POI_Editor::val_chg(int type)
+{
+    float val;
+    if(lock)
+        return;
+    if(type==POI_EDT_LAT)
+        val=lat_val->value();
+    else
+        val=lon_val->value();
+    setValue(type,val);
+}
+
 float POI_Editor::getValue(int type)
 {
+    float res;
     float deg = (type==POI_EDT_LAT?lat_deg->value():lon_deg->value());
     float min = (type==POI_EDT_LAT?lat_min->value():lon_min->value())/60.0;
+    /* if min < 0 or deg < 0 the whole value is < 0 */
     if (deg < 0)
-        return deg - min;
+    {
+        if(min<0)
+            res = deg + min;
+        else
+            res = deg - min;
+    }
     else
-        return deg + min;
+    {
+        if(min<0)
+            res=-(deg-min);
+        else
+            res = deg + min;
+    }
+
+    return res;
 }
 
 void POI_Editor::setValue(int type,float val)
 {
+    lock=true;
     int   deg = (int) trunc(val);
     float min = 60.0*fabs(val-trunc(val));
+
+    if(deg==0 && val < 0)
+        min=-min;
+
     if(type==POI_EDT_LAT)
     {
         lat_deg->setValue(deg);
         lat_min->setValue(min);
+        lat_val->setValue(val);
     }
     else
     {
         lon_deg->setValue(deg);
         lon_min->setValue(min);
+        lon_val->setValue(val);
     }
+    lock=false;
 }

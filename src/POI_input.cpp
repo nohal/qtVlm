@@ -38,16 +38,17 @@ void POI_input::txtHasChanged(void)
         return;
     }
     
-    QStringList lsbuf,lsval1,lsval2;
+    QStringList lsbuf,lsval1,lsval2,lsval3;
     int nbOk=0;
     lsbuf = POI_list->toPlainText().split("\n");
     for (int i=0; i < lsbuf.size(); i++)
     {
-        lsval1 = lsbuf.at(i).split(",");
-        if(lsval1.size()==2 || lsval1.size()==3)
+        lsval1 = lsbuf.at(i).split("@");
+        if(lsval1.size()==2)
         {
-            lsval2 = lsval1[1].split("@");
-            if(lsval2.size()==2)
+            lsval2 = lsval1[0].split(",");
+            lsval3 = lsval1[1].split(",");
+            if((lsval2.size()== 2 || lsval2.size()== 3) && (lsval3.size()== 1 || lsval3.size()== 2))
                 nbOk++;
         }
     }
@@ -59,23 +60,15 @@ void POI_input::done(int result)
 {
     if(result == QDialog::Accepted)
     {
-        QStringList lsbuf,lsval1,lsval2;
+        QStringList lsbuf,lsval1,lsval2,lsval3;
+        QString name;
+        float lat,lon,wph;
+        int tstamp;
         lsbuf = POI_list->toPlainText().split("\n");
         for (int i=0; i < lsbuf.size(); i++)
         {
-            lsval1 = lsbuf.at(i).split(",");
-            if(lsval1.size()==2 || lsval1.size()==3)
-            {
-                lsval2 = lsval1[1].split("@");
-                if(lsval2.size()==2)
-                {
-                    if(lsval1.size()==2)
-                        emit addPOI(lsval1[0].toFloat(),lsval2[0].toFloat(),lsval2[1].toFloat(),-1,false);
-                    else
-                        emit addPOI(lsval1[0].toFloat(),lsval2[0].toFloat(),lsval2[1].toFloat(),lsval1[2].toInt(),true);
-                }
-                    
-            }
+            if(Util::convertPOI(lsbuf.at(i),&name,&lat,&lon,&wph,&tstamp))
+                addPOI(name,lat,lon,wph,tstamp,tstamp!=-1);
         }
     }
     POI_list->clear();

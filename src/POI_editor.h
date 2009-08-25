@@ -45,6 +45,12 @@ class POI_Editor : public QDialog, public Ui::POI_editor_ui
         void nameHasChanged(QString);
         void editPOI(POI *);
         void newPOI(float lon, float lat,Projection *proj);
+        void lat_deg_chg(int);
+        void lat_min_chg(double);
+        void lon_deg_chg(int);
+        void lon_min_chg(double);
+        void lat_val_chg(double);
+        void lon_val_chg(double);
 
     signals:
         void addPOI_list(POI*);
@@ -53,6 +59,7 @@ class POI_Editor : public QDialog, public Ui::POI_editor_ui
     private:
         POI   *poi;
         bool  modeCreation;
+        bool lock;
 
         QWidget * parent;
         QWidget * ownerMeteotable;
@@ -60,6 +67,8 @@ class POI_Editor : public QDialog, public Ui::POI_editor_ui
         void initPOI(void);
         float getValue(int type);
         void setValue(int type,float val);
+        void data_chg(int type);
+        void val_chg(int type);
 };
 
 #endif

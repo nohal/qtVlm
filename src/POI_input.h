@@ -38,7 +38,7 @@ class POI_input : public QDialog, public Ui::POI_input_ui
         void txtHasChanged(void);
         
     signals:
-        void addPOI(float,float,float,int,bool);
+        void addPOI(QString,float,float,float,int,bool);
 };
 
 

@@ -560,7 +560,7 @@ void Pilototo_instruction::pastePOI(void)
 {
     float lat,lon,wph;
     int tstamp_int;
-    if(!Util::getWPClipboard(&lat,&lon,&wph,&tstamp_int))
+    if(!Util::getWPClipboard(NULL,&lat,&lon,&wph,&tstamp_int))
 	return;
 
     this->lat = lat;

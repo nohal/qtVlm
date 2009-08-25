@@ -402,8 +402,8 @@ MainWindow::MainWindow(int w, int h, QWidget *parent)
     connect(param,SIGNAL(paramVLMChanged()),this,SLOT(slotParamChanged()));
     connect(param, SIGNAL(inetUpdated()), this, SLOT(slotInetUpdated()));
 
-    connect(poi_input_dialog,SIGNAL(addPOI(float,float,float,int,bool)),
-            this,SLOT(slotAddPOI(float,float,float,int,bool)));
+    connect(poi_input_dialog,SIGNAL(addPOI(QString,float,float,float,int,bool)),
+            this,SLOT(slotAddPOI(QString,float,float,float,int,bool)));
 
     poi_editor=new POI_Editor(this,terre);
     gate_edit=new gate_editor(this,terre);
@@ -1047,7 +1047,7 @@ void MainWindow::slotMouseDblClicked(QMouseEvent * e)
     if(e->button()==Qt::LeftButton)
     {
         proj->screen2map(mouseClicX,mouseClicY, &lon, &lat);
-        slotAddPOI((float)lat,(float)lon,-1,-1,false);
+        slotAddPOI("",(float)lat,(float)lon,-1,-1,false);
     }
 }
 
@@ -1336,11 +1336,13 @@ void MainWindow::slotAccountListUpdated(void)
     slotVLM_Sync();
 }
 
-void MainWindow::slotAddPOI(float lat,float lon, float wph,int timestamp,bool useTimeStamp)
+void MainWindow::slotAddPOI(QString name,float lat,float lon, float wph,int timestamp,bool useTimeStamp)
 {
     POI * poi;
 
-    poi = new POI(QString(tr("POI")),lat,lon, proj,
+    if(name=="")
+        name=QString(tr("POI"));
+    poi = new POI(name,lat,lon, proj,
                   this, terre,wph,timestamp,useTimeStamp);
 
     addPOI_list(poi);
@@ -1351,11 +1353,12 @@ void MainWindow::slotpastePOI()
 {
     float lon, lat,wph;
     int tstamp;
+    QString name;
 
-    if(!Util::getWPClipboard(&lat,&lon,&wph,&tstamp))
+    if(!Util::getWPClipboard(&name,&lat,&lon,&wph,&tstamp))
         return;
 
-    slotAddPOI(lat,lon,wph,tstamp,tstamp!=-1);
+    slotAddPOI(name,lat,lon,wph,tstamp,tstamp!=-1);
 }
 
 void MainWindow::slotChgWP(float lat,float lon, float wph)

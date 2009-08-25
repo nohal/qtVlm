@@ -136,7 +136,7 @@ void Pilototo_param::pastePOI(void)
 {
     float lat,lon,wph;
     
-    if(!Util::getWPClipboard(&lat,&lon,&wph,NULL))
+    if(!Util::getWPClipboard(NULL,&lat,&lon,&wph,NULL))
         return;
     
     setValue(EDT_LON,lon);
@@ -171,16 +171,33 @@ float Pilototo_param::getValue(int type)
 {
     float deg = (type==EDT_LAT?lat_deg->value():lon_deg->value());
     float min = (type==EDT_LAT?lat_min->value():lon_min->value())/60.0;
+    float res;
+    /* if min < 0 or deg < 0 the whole value is < 0 */
     if (deg < 0)
-        return deg - min;
+    {
+        if(min<0)
+            res = deg + min;
+        else
+            res = deg - min;
+    }
     else
-        return deg + min;
+    {
+        if(min<0)
+            res=-(deg-min);
+        else
+            res = deg + min;
+    }
+
+    return res;
 }
 
 void Pilototo_param::setValue(int type,float val)
 {
     int   deg = (int) trunc(val);
     float min = 60.0*fabs(val-trunc(val));
+
+    if(deg==0 && val < 0)
+        min=-min;
 
     if(type==EDT_LAT)
     {

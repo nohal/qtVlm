@@ -52,57 +52,6 @@
     <property name="geometry">
      <rect>
       <x>10</x>
-      <y>50</y>
-      <width>271</width>
-      <height>25</height>
-     </rect>
-    </property>
-    <layout class="QHBoxLayout" name="horizontalLayout_2">
-     <item>
-      <widget class="QLabel" name="label_2">
-       <property name="text">
-        <string>Longitude Est</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QSpinBox" name="lon_deg">
-       <property name="suffix">
-        <string> °</string>
-       </property>
-       <property name="prefix">
-        <string/>
-       </property>
-       <property name="minimum">
-        <number>-359</number>
-       </property>
-       <property name="maximum">
-        <number>359</number>
-       </property>
-       <property name="value">
-        <number>0</number>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QDoubleSpinBox" name="lon_min">
-       <property name="suffix">
-        <string> '</string>
-       </property>
-       <property name="maximum">
-        <double>59.990000000000002</double>
-       </property>
-       <property name="value">
-        <double>59.990000000000002</double>
-       </property>
-      </widget>
-     </item>
-    </layout>
-   </widget>
-   <widget class="QWidget" name="layoutWidget">
-    <property name="geometry">
-     <rect>
-      <x>10</x>
       <y>80</y>
       <width>451</width>
       <height>26</height>
@@ -121,13 +70,26 @@
      </item>
     </layout>
    </widget>
+   <widget class="QLabel" name="label_4">
+    <property name="geometry">
+     <rect>
+      <x>250</x>
+      <y>23</y>
+      <width>21</width>
+      <height>16</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string/>
+    </property>
+   </widget>
    <widget class="QWidget" name="layoutWidget">
     <property name="geometry">
      <rect>
-      <x>10</x>
-      <y>20</y>
-      <width>271</width>
-      <height>25</height>
+      <x>11</x>
+      <y>21</y>
+      <width>241</width>
+      <height>22</height>
      </rect>
     </property>
     <layout class="QHBoxLayout" name="horizontalLayout">
@@ -153,7 +115,7 @@
         <number>89</number>
        </property>
        <property name="value">
-        <number>0</number>
+        <number>89</number>
        </property>
       </widget>
      </item>
@@ -162,11 +124,151 @@
        <property name="suffix">
         <string> '</string>
        </property>
+       <property name="minimum">
+        <double>-59.990000000000002</double>
+       </property>
        <property name="maximum">
         <double>59.990000000000002</double>
        </property>
        <property name="value">
         <double>59.990000000000002</double>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </widget>
+   <widget class="QWidget" name="layoutWidget">
+    <property name="geometry">
+     <rect>
+      <x>11</x>
+      <y>51</y>
+      <width>241</width>
+      <height>22</height>
+     </rect>
+    </property>
+    <layout class="QHBoxLayout" name="horizontalLayout_2">
+     <item>
+      <widget class="QLabel" name="label_2">
+       <property name="text">
+        <string>Longitude Est</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QSpinBox" name="lon_deg">
+       <property name="suffix">
+        <string> °</string>
+       </property>
+       <property name="prefix">
+        <string/>
+       </property>
+       <property name="minimum">
+        <number>-359</number>
+       </property>
+       <property name="maximum">
+        <number>359</number>
+       </property>
+       <property name="value">
+        <number>359</number>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QDoubleSpinBox" name="lon_min">
+       <property name="suffix">
+        <string> '</string>
+       </property>
+       <property name="minimum">
+        <double>-59.990000000000002</double>
+       </property>
+       <property name="maximum">
+        <double>59.990000000000002</double>
+       </property>
+       <property name="value">
+        <double>59.990000000000002</double>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </widget>
+   <widget class="Line" name="line">
+    <property name="geometry">
+     <rect>
+      <x>260</x>
+      <y>15</y>
+      <width>3</width>
+      <height>61</height>
+     </rect>
+    </property>
+    <property name="orientation">
+     <enum>Qt::Vertical</enum>
+    </property>
+   </widget>
+   <widget class="QWidget" name="layoutWidget">
+    <property name="geometry">
+     <rect>
+      <x>270</x>
+      <y>20</y>
+      <width>151</width>
+      <height>22</height>
+     </rect>
+    </property>
+    <layout class="QHBoxLayout" name="horizontalLayout_4">
+     <item>
+      <widget class="QLabel" name="label_5">
+       <property name="text">
+        <string>Latitude (dd,dd)</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QDoubleSpinBox" name="lat_val">
+       <property name="minimum">
+        <double>-89.989999999999995</double>
+       </property>
+       <property name="maximum">
+        <double>89.989999999999995</double>
+       </property>
+       <property name="singleStep">
+        <double>0.100000000000000</double>
+       </property>
+       <property name="value">
+        <double>89.000000000000000</double>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </widget>
+   <widget class="QWidget" name="layoutWidget">
+    <property name="geometry">
+     <rect>
+      <x>270</x>
+      <y>50</y>
+      <width>153</width>
+      <height>22</height>
+     </rect>
+    </property>
+    <layout class="QHBoxLayout" name="horizontalLayout_5">
+     <item>
+      <widget class="QLabel" name="label_6">
+       <property name="text">
+        <string>Longitude (dd,dd)</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QDoubleSpinBox" name="lon_val">
+       <property name="minimum">
+        <double>-359.990000000000009</double>
+       </property>
+       <property name="maximum">
+        <double>359.990000000000009</double>
+       </property>
+       <property name="singleStep">
+        <double>0.100000000000000</double>
+       </property>
+       <property name="value">
+        <double>359.000000000000000</double>
        </property>
       </widget>
      </item>
@@ -436,6 +538,102 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>lat_deg</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>POI_editor_ui</receiver>
+   <slot>lat_deg_chg(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>112</x>
+     <y>88</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>113</x>
+     <y>263</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>lon_deg</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>POI_editor_ui</receiver>
+   <slot>lon_deg_chg(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>124</x>
+     <y>123</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>210</x>
+     <y>263</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>lat_min</sender>
+   <signal>valueChanged(double)</signal>
+   <receiver>POI_editor_ui</receiver>
+   <slot>lat_min_chg(double)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>164</x>
+     <y>90</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>5</x>
+     <y>84</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>lon_min</sender>
+   <signal>valueChanged(double)</signal>
+   <receiver>POI_editor_ui</receiver>
+   <slot>lon_min_chg(double)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>170</x>
+     <y>122</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>5</x>
+     <y>139</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>lat_val</sender>
+   <signal>valueChanged(double)</signal>
+   <receiver>POI_editor_ui</receiver>
+   <slot>lat_val_chg(double)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>365</x>
+     <y>91</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>499</x>
+     <y>101</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>lon_val</sender>
+   <signal>valueChanged(double)</signal>
+   <receiver>POI_editor_ui</receiver>
+   <slot>lon_val_chg(double)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>367</x>
+     <y>120</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>514</x>
+     <y>118</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>btDeleteClicked()</slot>
@@ -444,5 +642,11 @@
   <slot>btSaveWPClicked()</slot>
   <slot>chkTStamp_chg(int)</slot>
   <slot>nameHasChanged(QString)</slot>
+  <slot>lat_deg_chg(int)</slot>
+  <slot>lat_min_chg(double)</slot>
+  <slot>lat_val_chg(double)</slot>
+  <slot>lon_val_chg(double)</slot>
+  <slot>lon_deg_chg(int)</slot>
+  <slot>lon_min_chg(double)</slot>
  </slots>
 </ui>

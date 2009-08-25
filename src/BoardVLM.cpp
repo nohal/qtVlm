@@ -791,7 +791,7 @@ void WP_dialog::doPaste()
     float lat,lon,wph;
     if(!currentBoat)
         return;
-    if(!Util::getWPClipboard(&lat,&lon,&wph,NULL)) /*no need to get timestamp*/
+    if(!Util::getWPClipboard(NULL,&lat,&lon,&wph,NULL)) /*no need to get timestamp*/
         return;
     WP_lat->setText(QString().setNum(lat));
     WP_lon->setText(QString().setNum(lon));

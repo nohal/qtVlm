@@ -115,8 +115,9 @@ class Util
     static float  BeaufortToKmh_F(float bf);
 
     static void paramProxy(QNetworkAccessManager *inetManager,QString host);
-    static bool getWPClipboard(float * lat,float * lon, float * wph, int * tStamp);
+    static bool getWPClipboard(QString *,float * lat,float * lon, float * wph, int * tStamp);
     static void setWPClipboard(float lat,float lon, float wph);
+    static bool convertPOI(const QString & str,QString * name,float * lat,float * lon,float * wph,int * tstamp);
     static void getCoordFromDistanceAngle(float latitude, float longitude,
              float distance,float heading, float * res_lat,float * res_lon);
     static void getCoordFromDistanceAngle2(float latitude, float longitude,

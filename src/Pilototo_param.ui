@@ -66,6 +66,9 @@
        <property name="suffix">
         <string> '</string>
        </property>
+       <property name="minimum">
+        <double>-59.990000000000002</double>
+       </property>
        <property name="maximum">
         <double>59.990000000000002</double>
        </property>
@@ -138,6 +141,9 @@
       <widget class="QDoubleSpinBox" name="lat_min">
        <property name="suffix">
         <string> '</string>
+       </property>
+       <property name="minimum">
+        <double>-59.990000000000002</double>
        </property>
        <property name="maximum">
         <double>59.990000000000002</double>
