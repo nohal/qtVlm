@@ -41,6 +41,7 @@ class boatAccount;
 #define VLM_CMD_WP     3
 #define VLM_CMD_ORTHO  4
 #define VLM_CMD_VMG    5
+#define VLM_CMD_VBVMG  6
 
 #define MAX_RETRY 5
 
@@ -90,6 +91,7 @@ class boatAccount: public QWidget
         QString getScore(void)       {    return score; }
         int getPrevVac(void)         {    return prevVac; }
         int getNextVac(void)         {    return nextVac; }
+        int getVacLen(void)          {    return vacLen; }
         QString getPolarName(void)   {    return polarName; }
         Polar * getPolarData(void)   {    return polarData; }
         bool getLockStatus(void)     {    return changeLocked;}
@@ -169,6 +171,7 @@ class boatAccount: public QWidget
 
         int prevVac;
         int nextVac;
+        int vacLen;
 
         QString race_name;
         QString boat_name;

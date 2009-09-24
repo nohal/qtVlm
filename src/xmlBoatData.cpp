@@ -44,7 +44,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #define RACE_GROUP_NAME   "Race"
 #define RACEID_NAME       "raceId"
 #define OPPLIST_NAME      "oppList"
-#define VACLEN_NAME       "vacLen"
 
 #define OLD_DOM_FILE_TYPE "zygVLM_config"
 #define OLD_ROOT_NAME     "zygVLM_boat"
@@ -156,11 +155,7 @@ bool xml_boatData::writeBoatData(QList<boatAccount*> & boat_list,QList<raceData*
           tag = doc.createElement(OPPLIST_NAME);
           group.appendChild(tag);
           t = doc.createTextNode(race_data->oppList);
-          tag.appendChild(t);
-          tag = doc.createElement(VACLEN_NAME);
-          group.appendChild(tag);
-          t = doc.createTextNode(QString().setNum(race_data->vac_len));
-          tag.appendChild(t);
+          tag.appendChild(t);          
      }
 
      QFile file(fname);
@@ -340,7 +335,6 @@ bool xml_boatData::readBoatData(QList<boatAccount*> & boat_list,QList<raceData*>
              subNode = node.firstChild();
              QString race = "";
              QString opp_list = "";
-             int vacLen=0;
 
              while(!subNode.isNull())
              {
@@ -355,13 +349,7 @@ bool xml_boatData::readBoatData(QList<boatAccount*> & boat_list,QList<raceData*>
                      dataNode = subNode.firstChild();
                      if(dataNode.nodeType() == QDomNode::TextNode)
                          opp_list = dataNode.toText().data();
-                 }
-                 if(subNode.toElement().tagName() == VACLEN_NAME)
-                 {
-                     dataNode = subNode.firstChild();
-                     if(dataNode.nodeType() == QDomNode::TextNode)
-                         vacLen = dataNode.toText().data().toInt();
-                 }
+                 }                 
                  subNode = subNode.nextSibling();
              }
              if(!race.isEmpty() /*&& !opp_list.isEmpty()*/)
@@ -381,7 +369,6 @@ bool xml_boatData::readBoatData(QList<boatAccount*> & boat_list,QList<raceData*>
                  qWarning() << "Race info present => id " <<  race << " opp list " << opp_list;
                  race_data->idrace=race;
                  race_data->oppList=opp_list;
-                 race_data->vac_len=vacLen;
                  race_list.append(race_data);
              }
              else

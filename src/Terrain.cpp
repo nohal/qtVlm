@@ -51,7 +51,6 @@ Terrain::Terrain(QWidget *parent, Projection *proj_)
     assert(timerResize);
     timerResize->setSingleShot(true);
     connect(timerResize, SIGNAL(timeout()), this, SLOT(slotTimerResize()));
-    connect(this,SIGNAL(getRaceVacLen(boatAccount *,int*)),parent,SLOT(getRaceVacLen(boatAccount *,int*)));
 
     //---------------------------------------------------------------------
     showCountriesBorders  = Util::getSetting("showCountriesBorders", true).toBool();
@@ -343,7 +342,7 @@ void Terrain::drawBoats(QPainter &pnt)
                     //qWarning() << "Estime (time) " << boat->getLogin() << " " << estime<< "(" << estime_param << "," << boat->getSpeed() << ")";
                     break;
                 case 1: /* nb vac */
-                    emit getRaceVacLen(boat,&estime_param_2);
+                    estime_param_2=boat->getVacLen();
                     estime = (float)((((float)(estime_param*estime_param_2))/3660)*boat->getSpeed());
                     /*qWarning() << "Estime (vac) " << boat->getLogin() << " " << estime << "("
                             << estime_param << "," << estime_param_2

@@ -53,6 +53,7 @@ boatAccount::boatAccount(QString login, QString pass, bool activated,Projection 
     forceEstime=false;
     updating=false;
     doingValidation=false;
+    vacLen=300;
 
     trace.clear();
 
@@ -196,6 +197,7 @@ void boatAccount::doRequest(int requestCmd)
          race_id = 0;
          lat = 0;
          lon = 0;
+         vacLen=300;
          race_name = "Test race";
          updating=false;
          updateBoatData();
@@ -237,6 +239,7 @@ void boatAccount::requestFinished ( int currentRequest,QByteArray res_byte)
         case VLM_REQUEST_BOAT:
             hasPilototo=false;
             newRace=false;
+            vacLen=300;
             pilototo.clear();
             for(int i=0;i<5;i++)
                 pilototo.append("none");
@@ -306,6 +309,8 @@ void boatAccount::requestFinished ( int currentRequest,QByteArray res_byte)
                         pilotType = lsval.at(1).toInt();
                     else if(lsval.at(0) == "PIP")
                         pilotString = lsval.at(1);
+                        if(pilotString == "0.0000,0.0000")
+                            pilotString=tr("Prochaine balise");
                     else if(lsval.at(0) == "TWA")
                         TWA = lsval.at(1).toFloat();
                     else if(lsval.at(0) == "ETA")
@@ -345,14 +350,19 @@ void boatAccount::requestFinished ( int currentRequest,QByteArray res_byte)
                         polarVlm = lsval.at(1);
                     else if(lsval.at(0) == "EML")
                         email = lsval.at(1);
+                    else if(lsval.at(0) == "VAC")
+                        vacLen = lsval.at(1).toInt()*60;
                 }
             }
+
+            /*if(pilotType==5 && pilotString.isEmpty())
+                pilotString=tr("Prochaine balise");*/
 
             lat = latitude/1000;
             lon = longitude/1000;
 
             current_heading = heading;
-            //qWarning() << "Data for " << boat_id << " received";
+            //qWarning() << "Data for " << boat_id << " received" << " - vac len " << vacLen;
 
             if(doingValidation)
             {
@@ -444,6 +454,10 @@ bool boatAccount::chkResult(void)
             if(getPilotType() == 4)
                 return true;
             break;
+        case VLM_CMD_VBVMG:
+            if(getPilotType() == 5)
+                return true;
+            break;
         case VLM_CMD_ORTHO:
             if(getPilotType() == 3)
                 return true;
@@ -532,6 +546,9 @@ void boatAccount::updateHint(void)
             break;
         case 4: /*VMG*/
             str += tr("BVMG") + "-> " + getPilotString();
+            break;
+       case 5: /*VBVMG*/
+            str += tr("VBVMG") /*+ "-> " + getPilotString()*/;
             break;
     }
 

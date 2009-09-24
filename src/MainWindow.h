@@ -155,7 +155,6 @@ class MainWindow: public QMainWindow
         void slotLoadVLMGrib(void);
 
         void slotValidationDone(bool);
-        void getRaceVacLen(boatAccount * boat,int * res);
 
     signals:
         void signalMapQuality(int quality);
@@ -237,7 +236,6 @@ class MainWindow: public QMainWindow
 
         opponentList * opponents;
         QList<raceData*> race_list;
-        int race_vacLen;
 
         Pilototo_instruction * selPOI_instruction;
         bool isSelectingWP;

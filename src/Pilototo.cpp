@@ -515,6 +515,18 @@ void Pilototo_instruction::updateText(void)
 			.arg(Util::pos2String(TYPE_LON,lon))
 			.arg(wph);
 	    break;
+        case 4:
+            modeTxt="VBVMG";
+            if(wph==-1)
+                param=QString("%1,%2")
+                        .arg(Util::pos2String(TYPE_LAT,lat))
+                        .arg(Util::pos2String(TYPE_LON,lon));
+            else
+                param=QString("%1,%2@%3")
+                        .arg(Util::pos2String(TYPE_LAT,lat))
+                        .arg(Util::pos2String(TYPE_LON,lon))
+                        .arg(wph);
+            break;
     }
     final_txt=modeTxt+" = "+param;
     instructionText->setMinimumWidth( fmt.width(final_txt)+20 );
@@ -635,6 +647,7 @@ QString Pilototo_instruction::getPip(void)
 	    break;
 	case 2:
 	case 3:
+        case 4:
 	    if(wph==-1)
 		txt=QString("%1,%2")
 			.arg(lat)

@@ -48,7 +48,6 @@ struct position {
 struct raceData {
       QString idrace;
       QString oppList;
-      int vac_len;
 };
 
 #define RACE_MAX_BOAT 15

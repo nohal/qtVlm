@@ -74,7 +74,7 @@ boardVLM::boardVLM(QMainWindow * mainWin,QWidget * parent) : QWidget(parent)
 
     default_styleSheet = btn_chgHeading->styleSheet();
 
-    btn_WP->setText("No WP");
+    btn_WP->setText(tr("Prochaine balise (0 WP)"));
 
     /* inet init */
     conn=new inetConnexion(mainWin,this);
@@ -207,6 +207,7 @@ void boardVLM::boatUpdated(boatAccount * boat)
     goVMG->setStyleSheet(default_styleSheet);
     goPilotOrtho->setStyleSheet(default_styleSheet);
     btn_chgAngle->setStyleSheet(default_styleSheet);
+    goVBVMG->setStyleSheet(default_styleSheet);
     switch(boat->getPilotType())
     {
         case 1: /*heading*/
@@ -220,6 +221,9 @@ void boardVLM::boatUpdated(boatAccount * boat)
             break;
         case 4: /*VMG*/
             goVMG->setStyleSheet(QString::fromUtf8("background-color: rgb(85, 255, 127);"));
+            break;
+        case 5: /*VMG*/
+            goVBVMG->setStyleSheet(QString::fromUtf8("background-color: rgb(85, 255, 127);"));
             break;
     }
 
@@ -363,7 +367,7 @@ void boardVLM::update_btnWP(void)
     float WPHd = currentBoat->getWPHd();
 
     if(WPLat==0 && WPLon==0)
-        btn_WP->setText("No WP");
+        btn_WP->setText(tr("Prochaine balise (0 WP)"));
     else
     {
         QString str = "WP: ";
@@ -423,6 +427,11 @@ void boardVLM::doPilotOrtho()
 void boardVLM::doVmg()
 {
     sendCmd(VLM_CMD_VMG,0,0,0);
+}
+
+void boardVLM::doVbvmg()
+{
+    sendCmd(VLM_CMD_VBVMG,0,0,0);
 }
 
 void boardVLM::disp_boatInfo()
@@ -660,6 +669,13 @@ void boardVLM::requestFinished (int currentRequest,QByteArray)
                                 << "&targetlat="+QString().setNum(cmd_val1)
                                 << "&targetlong="+QString().setNum(cmd_val2)
                                 << "&targetandhdg="+QString().setNum(cmd_val3)
+                            ;
+                    break;
+                 case VLM_CMD_VBVMG:
+                    QTextStream(&page)
+                                << "/update_angle.php?expertcookie=yes&lang=fr&idusers="
+                                << currentBoat->getBoatId().toInt()
+                                << "&pilotmode=vbvmg"
                             ;
                     break;
             }

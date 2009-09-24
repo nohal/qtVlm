@@ -44,7 +44,6 @@ struct raceParam {
     QString id;
     QString name;
     QList <boatParam*> boats;
-    int vac_len;
 };
 
 class race_dialog : public QDialog, public Ui::race_dialog_ui

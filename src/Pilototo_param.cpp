@@ -36,6 +36,7 @@ Pilototo_param::Pilototo_param(QWidget *parent) : QDialog(parent)
     mode->addItem(tr("Angle du vent (2)"));
     mode->addItem(tr("Pilote ortho (3)"));
     mode->addItem(tr("Meilleur VMG (4)"));
+    mode->addItem(tr("VBVMG (5)"));
 }
 
 void Pilototo_param::editInstruction(Pilototo_instruction * instruction)

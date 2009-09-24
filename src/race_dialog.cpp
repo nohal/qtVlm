@@ -87,7 +87,6 @@ void race_dialog::initList(QList<boatAccount*> & acc_list_ptr,QList<raceData*> &
             ptr->id=acc_list->at(i)->getRaceId();
             ptr->name=acc_list->at(i)->getRaceName();
             ptr->boats.clear();
-            ptr->vac_len=0;
             param_list.append(ptr);
         }
     }
@@ -137,8 +136,6 @@ void race_dialog::getNextRace()
     for(int i=0;i<race_list->size();i++)
         if(race_list->at(i)->idrace==param_list[currentRace]->id)
         {
-            /*setting vac len */
-            param_list[currentRace]->vac_len=race_list->at(i)->vac_len;
             currentParam=race_list->at(i)->oppList.split(";");
             break;
         }
@@ -236,7 +233,6 @@ void race_dialog::saveData(bool save)
             ptr->oppList=boats.join(";");
         else
             ptr->oppList=boats.join(";");
-        ptr->vac_len=param_list[i]->vac_len;
         race_list->append(ptr);
     }
 
@@ -258,8 +254,6 @@ void race_dialog::chgRace(int id)
             ptr=reinterpret_cast<struct boatParam *>(qvariant_cast<void*>(selectedBoat->item(i)->data(Qt::UserRole)));
             ptr->selected=true;
         }
-        /*saving vac length*/
-        param_list[numRace]->vac_len=vac_length->currentIndex();
     }
 
     /* find race data */
@@ -297,8 +291,6 @@ void race_dialog::chgRace(int id)
 
     nbAvailable->setText(QString().setNum(availableBoat->count()));
     nbSelect->setText(QString().setNum(selectedBoat->count())+"/"+QString().setNum(RACE_MAX_BOAT));
-
-    vac_length->setCurrentIndex(param_list[numRace]->vac_len);
 
     availableBoat->clearSelection();
     selectedBoat->clearSelection();

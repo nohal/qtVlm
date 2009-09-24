@@ -379,7 +379,6 @@ MainWindow::MainWindow(int w, int h, QWidget *parent)
     polar_list = new polarList();
 
     /* read boat Data */
-    race_vacLen=300;
     xmlData = new xml_boatData(proj,this,terre);
     xmlData->readBoatData(acc_list,race_list,"boatAcc.dat");
 
@@ -978,9 +977,17 @@ void MainWindow::statusBar_showWindData(double x,double y)
 
 void MainWindow::updateNxtVac(void)
 {
-    nxtVac_cnt--;
-    if(nxtVac_cnt<0)
-        nxtVac_cnt=(race_vacLen==0?300:60);
+    if(!selectedBoat)
+    {
+        nxtVac_cnt=0;
+    }
+    else
+    {
+        nxtVac_cnt--;
+        if(nxtVac_cnt<0)
+            nxtVac_cnt=selectedBoat->getVacLen();
+    }
+
     if(statusBar->currentMessage().isEmpty())
         drawVacInfo();
 }
@@ -1116,26 +1123,6 @@ void MainWindow::slotVLM_Sync(void)
     }
 }
 
-void MainWindow::getRaceVacLen(boatAccount * boat,int * res)
-{
-    if(!res)
-        return;
-
-    if(boat==NULL)
-    {
-        *res=300;
-        return;
-    }
-
-    for(int i=0;i<race_list.size();i++)
-        if(race_list[i]->idrace == boat->getRaceId())
-        {
-            *res = (race_list[i]->vac_len==0?300:60);
-            return;
-        }
-    *res=300;
-}
-
 /*****************************************
  signal send by each boat after it has update
 *****************************************/
@@ -1153,7 +1140,6 @@ void MainWindow::slotBoatUpdated(boatAccount * boat,bool newRace)
             for(int i=0;i<race_list.size();i++)
                 if(race_list[i]->idrace == boat->getRaceId())
                 {
-                    race_vacLen=race_list[i]->vac_len;
                     if(!race_list[i]->oppList.isEmpty())
                     {
                         opponents->setBoatList(race_list[i]->oppList,race_list[i]->idrace,false);
@@ -1164,7 +1150,6 @@ void MainWindow::slotBoatUpdated(boatAccount * boat,bool newRace)
             if(!found)
             {
                 opponents->clear();
-                race_vacLen=0;
             }
         }
         else /* race has not changed, just refreshing position */

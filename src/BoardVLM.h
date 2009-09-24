@@ -52,7 +52,7 @@ class WP_dialog: public QDialog, public Ui::WP_dialog_ui
         void done(int result);
         void doClearWP();
         void doSelPOI();
-        void show_WPdialog(POI * poi);
+        void show_WPdialog(POI * poi);        
 
     signals:
         void sendCmd(int cmdNum,float,float,float);
@@ -78,6 +78,7 @@ class boardVLM: public QWidget , public Ui::boardVLM_ui
         void doVirer();
         void doPilotOrtho();
         void doVmg();
+        void doVbvmg();
         void doWP_edit();
         void disp_boatInfo();
         void synch_GPS();
