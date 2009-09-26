@@ -351,7 +351,7 @@ void boatAccount::requestFinished ( int currentRequest,QByteArray res_byte)
                     else if(lsval.at(0) == "EML")
                         email = lsval.at(1);
                     else if(lsval.at(0) == "VAC")
-                        vacLen = lsval.at(1).toInt()*60;
+                        vacLen = lsval.at(1).toInt();
                 }
             }
 
