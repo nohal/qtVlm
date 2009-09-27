@@ -39,11 +39,11 @@
      <x>10</x>
      <y>10</y>
      <width>331</width>
-     <height>271</height>
+     <height>281</height>
     </rect>
    </property>
    <property name="currentIndex">
-    <number>0</number>
+    <number>5</number>
    </property>
    <widget class="QWidget" name="tab">
     <attribute name="title">
@@ -544,42 +544,38 @@
        <x>10</x>
        <y>10</y>
        <width>311</width>
-       <height>91</height>
+       <height>51</height>
       </rect>
      </property>
      <property name="title">
       <string>Emulation de GPS</string>
      </property>
-     <widget class="QWidget" name="layoutWidget">
+     <widget class="QWidget" name="">
       <property name="geometry">
        <rect>
-        <x>10</x>
+        <x>11</x>
         <y>20</y>
-        <width>211</width>
-        <height>61</height>
+        <width>291</width>
+        <height>22</height>
        </rect>
       </property>
-      <layout class="QVBoxLayout" name="verticalLayout">
+      <layout class="QHBoxLayout" name="horizontalLayout">
        <item>
-        <widget class="QCheckBox" name="chk_activateEmulation">
+        <widget class="QLabel" name="label">
          <property name="text">
-          <string>Activer l'emulation</string>
+          <string>Port serie</string>
          </property>
         </widget>
        </item>
        <item>
-        <layout class="QHBoxLayout" name="horizontalLayout">
-         <item>
-          <widget class="QLabel" name="label">
-           <property name="text">
-            <string>Port serie</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QLineEdit" name="serialName"/>
-         </item>
-        </layout>
+        <widget class="QLineEdit" name="serialName"/>
+       </item>
+       <item>
+        <widget class="QCheckBox" name="chk_activateEmulation">
+         <property name="text">
+          <string>Activer</string>
+         </property>
+        </widget>
        </item>
       </layout>
      </widget>
@@ -588,9 +584,9 @@
      <property name="geometry">
       <rect>
        <x>10</x>
-       <y>100</y>
+       <y>120</y>
        <width>311</width>
-       <height>81</height>
+       <height>71</height>
       </rect>
      </property>
      <property name="title">
@@ -600,7 +596,7 @@
       <property name="geometry">
        <rect>
         <x>10</x>
-        <y>20</y>
+        <y>15</y>
         <width>191</width>
         <height>20</height>
        </rect>
@@ -613,7 +609,7 @@
       <property name="geometry">
        <rect>
         <x>10</x>
-        <y>50</y>
+        <y>39</y>
         <width>281</width>
         <height>21</height>
        </rect>
@@ -624,7 +620,7 @@
      <property name="geometry">
       <rect>
        <x>10</x>
-       <y>180</y>
+       <y>197</y>
        <width>311</width>
        <height>51</height>
       </rect>
@@ -640,6 +636,32 @@
         <width>281</width>
         <height>22</height>
        </rect>
+      </property>
+     </widget>
+    </widget>
+    <widget class="QGroupBox" name="groupBox_2">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>66</y>
+       <width>301</width>
+       <height>51</height>
+      </rect>
+     </property>
+     <property name="title">
+      <string>Position et taille de qtVlm</string>
+     </property>
+     <widget class="QCheckBox" name="saveWinGeometry">
+      <property name="geometry">
+       <rect>
+        <x>10</x>
+        <y>22</y>
+        <width>161</width>
+        <height>18</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Sauvegarde à la fermeture</string>
       </property>
      </widget>
     </widget>

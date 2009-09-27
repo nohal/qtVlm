@@ -251,11 +251,13 @@ void POI_Editor::data_chg(int type)
 {
     if(lock)
         return;
+    lock=true;
     float val=getValue(type);
     if(type==POI_EDT_LAT)
         lat_val->setValue(val);
     else
         lon_val->setValue(val);
+    lock=false;
 }
 
 void POI_Editor::lat_val_chg(double)
@@ -273,11 +275,13 @@ void POI_Editor::val_chg(int type)
     float val;
     if(lock)
         return;
+    lock=true;
     if(type==POI_EDT_LAT)
         val=lat_val->value();
     else
         val=lon_val->value();
     setValue(type,val);
+    lock=false;
 }
 
 float POI_Editor::getValue(int type)
@@ -306,7 +310,6 @@ float POI_Editor::getValue(int type)
 
 void POI_Editor::setValue(int type,float val)
 {
-    lock=true;
     int   deg = (int) trunc(val);
     float min = 60.0*fabs(val-trunc(val));
 
@@ -325,5 +328,4 @@ void POI_Editor::setValue(int type,float val)
         lon_min->setValue(min);
         lon_val->setValue(val);
     }
-    lock=false;
 }

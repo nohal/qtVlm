@@ -209,7 +209,7 @@
      <rect>
       <x>270</x>
       <y>20</y>
-      <width>151</width>
+      <width>171</width>
       <height>22</height>
      </rect>
     </property>
@@ -223,6 +223,9 @@
      </item>
      <item>
       <widget class="QDoubleSpinBox" name="lat_val">
+       <property name="suffix">
+        <string> °</string>
+       </property>
        <property name="minimum">
         <double>-89.989999999999995</double>
        </property>
@@ -230,7 +233,7 @@
         <double>89.989999999999995</double>
        </property>
        <property name="singleStep">
-        <double>0.100000000000000</double>
+        <double>1.000000000000000</double>
        </property>
        <property name="value">
         <double>89.000000000000000</double>
@@ -244,7 +247,7 @@
      <rect>
       <x>270</x>
       <y>50</y>
-      <width>153</width>
+      <width>171</width>
       <height>22</height>
      </rect>
     </property>
@@ -258,6 +261,9 @@
      </item>
      <item>
       <widget class="QDoubleSpinBox" name="lon_val">
+       <property name="suffix">
+        <string> °</string>
+       </property>
        <property name="minimum">
         <double>-359.990000000000009</double>
        </property>
@@ -265,7 +271,7 @@
         <double>359.990000000000009</double>
        </property>
        <property name="singleStep">
-        <double>0.100000000000000</double>
+        <double>1.000000000000000</double>
        </property>
        <property name="value">
         <double>359.000000000000000</double>
@@ -577,8 +583,8 @@
    <slot>lat_min_chg(double)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>164</x>
-     <y>90</y>
+     <x>260</x>
+     <y>91</y>
     </hint>
     <hint type="destinationlabel">
      <x>5</x>
@@ -593,8 +599,8 @@
    <slot>lon_min_chg(double)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>170</x>
-     <y>122</y>
+     <x>260</x>
+     <y>123</y>
     </hint>
     <hint type="destinationlabel">
      <x>5</x>
@@ -625,8 +631,8 @@
    <slot>lon_val_chg(double)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>367</x>
-     <y>120</y>
+     <x>431</x>
+     <y>121</y>
     </hint>
     <hint type="destinationlabel">
      <x>514</x>

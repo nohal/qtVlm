@@ -88,6 +88,8 @@ paramVLM::paramVLM(QWidget * parent) : QDialog(parent)
         url_list->addItem(url_name[i]+": "+url_str[i]);
     url_list->setCurrentIndex(Util::getSetting("vlm_url",0).toInt());
 
+    saveWinGeometry->setCheckState(Util::getSetting("saveMainWindowGeometry","1").toInt()==1?Qt::Checked:Qt::Unchecked);
+
     /* Compas */
     chk_showCompass->setCheckState(Util::getSetting("showCompass",1).toInt()==1?Qt::Checked:Qt::Unchecked);
 }
@@ -138,6 +140,8 @@ void paramVLM::done(int result)
         //qWarning() << "old url=" << oldUrl << " new=" << url_list->currentIndex();
         if(oldUrl!=url_list->currentIndex())
             emit inetUpdated();
+
+        Util::setSetting("saveMainWindowGeometry",saveWinGeometry->checkState()==Qt::Checked?"1":"0");
 
         /* Compas */
         Util::setSetting("showCompass",chk_showCompass->checkState()==Qt::Checked?"1":"0");

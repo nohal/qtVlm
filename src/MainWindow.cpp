@@ -254,9 +254,7 @@ MainWindow::MainWindow(int w, int h, QWidget *parent)
     selectedBoat = NULL;
 
     qWarning() <<  "Starting qtVlm";
-    //--------------------------------------------------
-    resize( Util::getSetting("mainWindowSize", QSize(w,h)).toSize() );
-    move  ( Util::getSetting("mainWindowPos", QPoint()).toPoint() );
+
 
     int mapQuality = 0;
     gshhsReader = new GshhsReader("maps/gshhs", mapQuality);
@@ -451,6 +449,15 @@ MainWindow::MainWindow(int w, int h, QWidget *parent)
     //------------------------------------------------
     // sync all boat
     slotVLM_Sync();
+
+     //--------------------------------------------------
+    if(Util::getSetting("saveMainWindowGeometry","1").toInt())
+    {
+        resize( Util::getSetting("mainWindowSize", QSize(w,h)).toSize() );
+        move  ( Util::getSetting("mainWindowPos", QPoint()).toPoint() );
+    }
+    else
+        showMaximized ();
 }
 
 //-----------------------------------------------
@@ -459,8 +466,11 @@ MainWindow::~MainWindow()
     //--------------------------------------------------
     // Save global settings
     //--------------------------------------------------
-    Util::setSetting("mainWindowSize", size());
-    Util::setSetting("mainWindowPos", pos());
+    if(Util::getSetting("saveMainWindowGeometry","1").toInt())
+    {
+        Util::setSetting("mainWindowSize", size());
+        Util::setSetting("mainWindowPos", pos());
+    }
     Util::setSetting("projectionCX", proj->getCX());
     Util::setSetting("projectionCY", proj->getCY());
     Util::setSetting("projectionScale",  proj->getScale());
@@ -1121,6 +1131,8 @@ void MainWindow::slotVLM_Sync(void)
             }
         }
     }
+    /* sync finished, update grib date */
+    slotDateGribChanged_now();
 }
 
 /*****************************************
