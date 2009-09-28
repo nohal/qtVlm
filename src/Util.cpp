@@ -320,7 +320,17 @@ bool Util::getWPClipboard(QString * name,float * lat,float * lon, float * wph, i
 {
     QClipboard *clipboard = QApplication::clipboard();
     QString WP_txt = clipboard->text();
-    return convertPOI(WP_txt,name,lat,lon,wph,tstamp);
+    QStringList lsval=WP_txt.split(QRegExp("\\s+"));
+    for(int i=0;i<lsval.size();i++)
+        if(!lsval[i].isEmpty())
+        {
+            if(convertPOI(lsval[i],name,lat,lon,wph,tstamp))
+                return true;
+            else
+                qWarning() << "Bad string: " << i << " |" << lsval[i] << "|";
+        }
+    qWarning() << "No correct string found";
+    return false;
 }
 
 bool Util::convertPOI(const QString & str,QString * name,float * lat,float * lon,float * wph,int * tstamp)
