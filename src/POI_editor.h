@@ -51,6 +51,7 @@ class POI_Editor : public QDialog, public Ui::POI_editor_ui
         void lon_min_chg(double);
         void lat_val_chg(double);
         void lon_val_chg(double);
+        void type_chg(int);
 
     signals:
         void addPOI_list(POI*);
@@ -60,6 +61,7 @@ class POI_Editor : public QDialog, public Ui::POI_editor_ui
         POI   *poi;
         bool  modeCreation;
         bool lock;
+        int oldType;
 
         QWidget * parent;
         QWidget * ownerMeteotable;

@@ -34,7 +34,7 @@ Copyright (C) 2008 - Jacques Zaninetti - http://zygrib.free.fr
 #include "MainWindow.h"
 
 //-------------------------------------------------------------------------------
-POI::POI(QString name, float lat, float lon,
+POI::POI(QString name, POI_TYPE type, float lat, float lon,
                  Projection *proj, QWidget *ownerMeteotable, QWidget *parentWindow,
                  float wph,int tstamp,bool useTstamp)
     : QWidget(parentWindow)
@@ -47,6 +47,8 @@ POI::POI(QString name, float lat, float lon,
     this->wph=wph;
     this->timeStamp=tstamp;
     this->useTstamp=useTstamp;
+    this->type=type;
+    this->typeMask=1<<type;
 
     WPlon=WPlat=-1;
     isWp=false;
@@ -144,8 +146,14 @@ void POI::setName(QString name)
         str=name;
 
     label->setText(str);
-    setToolTip(tr("Point d'intérêt : ")+str);
+    setToolTip(tr("Marque") + " - " + getTypeStr() + " : "+str);
     adjustSize();
+}
+
+QString POI::getTypeStr(int index)
+{
+    QString type_str[3] = { "POI", "WP", "Balise" };
+    return type_str[index];
 }
 
 //-------------------------------------------------------------------------------
@@ -163,11 +171,27 @@ void  POI::paintEvent(QPaintEvent *)
     int dy = height()/2;
 
     pnt.fillRect(9,0, width()-10,height()-1, QBrush(bgcolor));
+    QColor myColor;
+    if(isWp)
+        myColor=mwpColor;
+    else
+        switch(type)
+        {
+            case 0:
+                myColor=poiColor;
+                break;
+            case 1:
+                myColor=wpColor;
+                break;
+            case 2:
+                myColor=baliseColor;
+                break;
+         }
 
-    QPen pen(isWp?wpColor:myColor);
+    QPen pen(myColor);
     pen.setWidth(4);
     pnt.setPen(pen);
-    pnt.fillRect(0,dy-3,7,7, QBrush(isWp?wpColor:myColor));
+    pnt.fillRect(0,dy-3,7,7, QBrush(myColor));
 
     int g = 60;
     pen = QPen(QColor(g,g,g));
@@ -263,7 +287,7 @@ void POI::createPopUpMenu(void)
     popup->addAction(ac_copy);
     connect(ac_copy,SIGNAL(triggered()),this,SLOT(slot_copy()));
 
-    ac_setWp = new QAction(tr("POI->WP"),popup);
+    ac_setWp = new QAction(tr("Marque->WP"),popup);
     popup->addAction(ac_setWp);
     connect(ac_setWp,SIGNAL(triggered()),this,SLOT(slot_setWP()));
 
@@ -297,8 +321,8 @@ void POI::slot_setGribDate()
 void POI::slotDelPoi()
 {
     int rep = QMessageBox::question (this,
-            tr("Détruire le POI"),
-            tr("La destruction d'un point d'intérêt est définitive.\n\nEtes-vous sûr ?"),
+            tr("D�truire la marque"),
+            tr("La destruction d'une marque est definitive.\n\nEtes-vous sur ?"),
             QMessageBox::Yes | QMessageBox::No);
     if (rep == QMessageBox::Yes) {
 
@@ -310,8 +334,10 @@ void POI::slotDelPoi()
 
 void POI::paramChanged()
 {
-    myColor = QColor(Util::getSetting("POI_color",QColor(Qt::black).name()).toString());
-    wpColor = QColor(Util::getSetting("POI_WP_color",QColor(Qt::red).name()).toString());
+    poiColor = QColor(Util::getSetting("POI_color",QColor(Qt::black).name()).toString());
+    mwpColor = QColor(Util::getSetting("Marque_WP_color",QColor(Qt::red).name()).toString());
+    wpColor  = QColor(Util::getSetting("WP_color",QColor(Qt::darkYellow).name()).toString());
+    baliseColor  = QColor(Util::getSetting("Balise_color",QColor(Qt::darkMagenta).name()).toString());
     update();
 }
 

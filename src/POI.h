@@ -31,35 +31,51 @@ Copyright (C) 2008 - Jacques Zaninetti - http://zygrib.free.fr
 #include <QMouseEvent>
 #include <QMenu>
 
+class POI;
+
 #include "Projection.h"
 
 //===================================================================
 class POI : public QWidget
 { Q_OBJECT
     public:
+        /* les enum */
+        enum POI_TYPE { TYPE_POI=0, TYPE_WP, TYPE_BALISE};
 
-        POI(QString name, float lat, float lon,
+        /* constructeurs, destructeurs */
+        POI(QString name, POI_TYPE type, float lat, float lon,
                     Projection *proj, QWidget *ownerMeteotable,
                     QWidget *parentWindow, float wph,
                     int tstamp,bool useTstamp);
 
         ~POI();
 
-        QString getName()         {return name;}
-        float   getLongitude()    {return lon;}
-        float   getLatitude()     {return lat;}
-        float   getWph()          {return wph;}
-        int     getTimeStamp()    {return timeStamp;}
-        bool    getUseTimeStamp() {if(timeStamp==-1) return false; else return useTstamp;}
+        /* accés aux données */
+        QString  getName(void)         {return name;}
+        float    getLongitude(void)    {return lon;}
+        float    getLatitude(void)     {return lat;}
+        float    getWph(void)          {return wph;}
+        int      getTimeStamp(void)    {return timeStamp;}
+        bool     getUseTimeStamp(void) {if(timeStamp==-1) return false; else return useTstamp;}
+        POI_TYPE getType(void)         {return type; }
+        int      getTypeMask(void)     {return typeMask; }
 
+        static QString  getTypeStr(int index);
+        QString  getTypeStr(void)      {return getTypeStr(type); }
+
+        /* modification des données */
         void setName         (QString name);
         void setLongitude    (float lon) {this->lon=lon;}
         void setLatitude     (float lat) {this->lat=lat;}
         void setWph          (float wph) {this->wph=wph;}
         void setTimeStamp    (int tstamp){this->timeStamp=tstamp;}
         void setUseTimeStamp (bool state){this->useTstamp=state;}
+        void setType         (POI_TYPE type) {this->type=type;this->typeMask=(1<<type);}
+
 
         void doChgWP(float lat,float lon, float wph);
+
+
 
     public slots:
         void updateProjection();
@@ -91,10 +107,13 @@ class POI : public QWidget
         QWidget   *parent;
         QWidget   *owner;
         QColor    bgcolor,fgcolor;
-        QColor    myColor,wpColor;
+        QColor    poiColor,mwpColor,wpColor,baliseColor;
         int timeStamp;
         bool useTstamp;
         bool isWp;
+
+        POI_TYPE type;
+        int typeMask;
 
         void createWidget();
 

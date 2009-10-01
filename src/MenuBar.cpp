@@ -77,15 +77,15 @@ MenuBar::MenuBar(QWidget *parent)
     //-------------------------------------
     //Porte
     //menuPOI = new QMenu(tr("POI / Portes"));
-    menuPOI = new QMenu(tr("POI"));
+    menuPOI = new QMenu(tr("Marques"));
         //acPOIinput = addAction(menuPOI,tr("POI / porte en masse"),"","","");
-        acPOIinput = addAction(menuPOI,tr("POI en masse"),"","","");
+        acPOIinput = addAction(menuPOI,tr("Ajout en masse"),"","","");
         acPOISave = addAction(menuPOI,tr("Sauvegarder"),"","","");
         menuPOI->addSeparator();
         QMenu *menuImportPoi = new QMenu(tr("Importer"));
         acPOIimport = addAction(menuImportPoi,tr("Importer de zyGrib"),"","","");
         menuPOI->addMenu(menuImportPoi);
-        acPOIAdd = addAction(menuPOI,tr("Ajouter POI"),"","","");
+        acPOIAdd = addAction(menuPOI,tr("Ajouter une marque"),"","","");
         //menuPOI->addSeparator();
         //acGateAdd = addAction(menuPOI,tr("Ajouter une porte"),"","","");
 
@@ -215,9 +215,10 @@ QMenu * MenuBar::createPopupBtRight(QWidget *parent)
 {
     QMenu *popup = new QMenu(parent);
 
-    ac_CreatePOI = addAction(popup, tr("Marquer un Point d'Intérêt"),tr(""),tr(""),"");
-    ac_pastePOI = addAction(popup, tr("Paste un POI"),tr(""),tr(""),"");
-    ac_delPOIs = addAction(popup, tr("Effacer les POI"),tr(""),tr(""),"");
+    ac_CreatePOI = addAction(popup, tr("Positionner une nouvelle Marque"),tr(""),tr(""),"");
+    ac_pastePOI = addAction(popup, tr("Coller une marque"),tr(""),tr(""),"");
+    ac_delAllPOIs = addAction(popup, tr("Effacer toutes les marques"),tr(""),tr(""),"");
+    ac_delSelPOIs = addAction(popup, tr("Effacer les marques..."),tr(""),tr(""),"");
 // Porte
     //popup->addSeparator();
     //ac_CreateGate = addAction(popup, tr("Creer une porte"),tr(""),tr(""),"");

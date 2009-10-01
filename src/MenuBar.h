@@ -61,7 +61,8 @@ public:
     //---------------------------------------------------------
     QAction *ac_CreatePOI;
     QAction *ac_pastePOI;
-    QAction *ac_delPOIs;
+    QAction *ac_delAllPOIs;
+    QAction *ac_delSelPOIs;
     QAction *ac_CreateGate;
     QAction *acPOIAdd;
     QAction *acGateAdd;

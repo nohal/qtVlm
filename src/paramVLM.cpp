@@ -40,9 +40,11 @@ paramVLM::paramVLM(QWidget * parent) : QDialog(parent)
     /* Colors */
 
     setColor(Util::getSetting("POI_Color",QColor(Qt::black).name()).toString(),0);
-    setColor(Util::getSetting("POI_WP_Color",QColor(Qt::red).name()).toString(),4);
+    setColor(Util::getSetting("Marque_WP_Color",QColor(Qt::red).name()).toString(),4);
     setColor(Util::getSetting("qtBoat_color",QColor(Qt::blue).name()).toString(),1);
     setColor(Util::getSetting("qtBoat_sel_color",QColor(Qt::red).name()).toString(),2);
+    setColor(Util::getSetting("WP_Color",QColor(Qt::darkYellow).name()).toString(),5);
+    setColor(Util::getSetting("Balise_Color",QColor(Qt::darkMagenta).name()).toString(),6);
 
     /* Estime */
     estimeVal_dist->setValue(Util::getSetting("estimeLen",100).toInt());
@@ -106,9 +108,11 @@ void paramVLM::done(int result)
         /* colors */
 
         Util::setSetting("POI_Color",POI_color);
-        Util::setSetting("POI_WP_Color",POI_WP_color);
+        Util::setSetting("Marque_WP_Color",Marque_WP_color);
         Util::setSetting("qtBoat_color",qtBoat_color);
         Util::setSetting("qtBoat_sel_color",qtBoat_sel_color);
+        Util::setSetting("WP_Color",WP_color);
+        Util::setSetting("Balise_Color",Balise_color);
 
         /* Estime */
         Util::setSetting("estimeLen", QString().setNum(estimeVal_dist->value()));
@@ -171,9 +175,19 @@ void paramVLM::changeColor_qtBoat_sel(void)
     changeColor(2);
 }
 
-void paramVLM::changeColor_POI_WP(void)
+void paramVLM::changeColor_Marque_WP(void)
 {
     changeColor(4);
+}
+
+void paramVLM::changeColor_WP(void)
+{
+    changeColor(5);
+}
+
+void paramVLM::changeColor_Balise(void)
+{
+    changeColor(6);
 }
 
 void paramVLM::changeColor(int type)
@@ -200,7 +214,13 @@ QColor paramVLM::getColor(int type)
             return QColor(opp_color);
             break;*/
         case 4:
-            return QColor(POI_WP_color);
+            return QColor(Marque_WP_color);
+            break;
+        case 5:
+            return QColor(WP_color);
+            break;
+        case 6:
+            return QColor(Balise_color);
             break;
     }
     return Qt::white;
@@ -224,8 +244,16 @@ void paramVLM::setColor(QString color,int type)
             qtBoat_sel_color=color;
             break;
         case 4:
-            POI_WP_frame->setStyleSheet(style);
-            POI_WP_color=color;
+            Marque_WP_frame->setStyleSheet(style);
+            Marque_WP_color=color;
+            break;
+        case 5:
+            WP_frame->setStyleSheet(style);
+            WP_color=color;
+            break;
+        case 6:
+            Balise_frame->setStyleSheet(style);
+            Balise_color=color;
             break;
     }
 }

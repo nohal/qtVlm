@@ -1,35 +1,20 @@
-<ui version="4.0" >
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
  <class>POI_input_ui</class>
- <widget class="QDialog" name="POI_input_ui" >
-  <property name="geometry" >
+ <widget class="QDialog" name="POI_input_ui">
+  <property name="geometry">
    <rect>
     <x>0</x>
     <y>0</y>
     <width>290</width>
-    <height>276</height>
+    <height>295</height>
    </rect>
   </property>
-  <property name="windowTitle" >
-   <string>Liste de POI - LAT,LON@WPH</string>
+  <property name="windowTitle">
+   <string>Importation de marques - LAT,LON@WPH</string>
   </property>
-  <widget class="QDialogButtonBox" name="buttonBox" >
-   <property name="geometry" >
-    <rect>
-     <x>0</x>
-     <y>240</y>
-     <width>281</width>
-     <height>32</height>
-    </rect>
-   </property>
-   <property name="orientation" >
-    <enum>Qt::Horizontal</enum>
-   </property>
-   <property name="standardButtons" >
-    <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
-   </property>
-  </widget>
-  <widget class="QPlainTextEdit" name="POI_list" >
-   <property name="geometry" >
+  <widget class="QPlainTextEdit" name="POI_list">
+   <property name="geometry">
     <rect>
      <x>4</x>
      <y>5</y>
@@ -37,74 +22,164 @@
      <height>231</height>
     </rect>
    </property>
-   <property name="toolTip" >
+   <property name="toolTip">
     <string>Coller ou inserer des POI au format LAT,LON@WPH</string>
    </property>
-   <property name="plainText" >
+   <property name="plainText">
     <string/>
    </property>
   </widget>
-  <widget class="QLabel" name="nbValid" >
-   <property name="geometry" >
+  <widget class="QWidget" name="">
+   <property name="geometry">
     <rect>
      <x>10</x>
-     <y>250</y>
-     <width>101</width>
-     <height>20</height>
+     <y>266</y>
+     <width>271</width>
+     <height>27</height>
     </rect>
    </property>
-   <property name="text" >
-    <string>0/0 valid WP</string>
+   <layout class="QHBoxLayout" name="horizontalLayout">
+    <item>
+     <spacer name="horizontalSpacer">
+      <property name="orientation">
+       <enum>Qt::Horizontal</enum>
+      </property>
+      <property name="sizeHint" stdset="0">
+       <size>
+        <width>40</width>
+        <height>20</height>
+       </size>
+      </property>
+     </spacer>
+    </item>
+    <item>
+     <widget class="QPushButton" name="pushButton">
+      <property name="text">
+       <string>Ok</string>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <widget class="QPushButton" name="pushButton_2">
+      <property name="text">
+       <string>Cancel</string>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <spacer name="horizontalSpacer_2">
+      <property name="orientation">
+       <enum>Qt::Horizontal</enum>
+      </property>
+      <property name="sizeHint" stdset="0">
+       <size>
+        <width>40</width>
+        <height>20</height>
+       </size>
+      </property>
+     </spacer>
+    </item>
+   </layout>
+  </widget>
+  <widget class="QWidget" name="">
+   <property name="geometry">
+    <rect>
+     <x>10</x>
+     <y>240</y>
+     <width>271</width>
+     <height>22</height>
+    </rect>
    </property>
+   <layout class="QHBoxLayout" name="horizontalLayout_2">
+    <item>
+     <widget class="QLabel" name="nbValid">
+      <property name="text">
+       <string>0/0 valid WP</string>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <spacer name="horizontalSpacer_3">
+      <property name="orientation">
+       <enum>Qt::Horizontal</enum>
+      </property>
+      <property name="sizeHint" stdset="0">
+       <size>
+        <width>40</width>
+        <height>20</height>
+       </size>
+      </property>
+     </spacer>
+    </item>
+    <item>
+     <widget class="QComboBox" name="type">
+      <item>
+       <property name="text">
+        <string>POI</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>Waypoint</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>Balise</string>
+       </property>
+      </item>
+     </widget>
+    </item>
+   </layout>
   </widget>
  </widget>
  <resources/>
  <connections>
-  <connection>
-   <sender>buttonBox</sender>
-   <signal>accepted()</signal>
-   <receiver>POI_input_ui</receiver>
-   <slot>accept()</slot>
-   <hints>
-    <hint type="sourcelabel" >
-     <x>248</x>
-     <y>254</y>
-    </hint>
-    <hint type="destinationlabel" >
-     <x>157</x>
-     <y>274</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>buttonBox</sender>
-   <signal>rejected()</signal>
-   <receiver>POI_input_ui</receiver>
-   <slot>reject()</slot>
-   <hints>
-    <hint type="sourcelabel" >
-     <x>280</x>
-     <y>260</y>
-    </hint>
-    <hint type="destinationlabel" >
-     <x>187</x>
-     <y>274</y>
-    </hint>
-   </hints>
-  </connection>
   <connection>
    <sender>POI_list</sender>
    <signal>textChanged()</signal>
    <receiver>POI_input_ui</receiver>
    <slot>txtHasChanged()</slot>
    <hints>
-    <hint type="sourcelabel" >
+    <hint type="sourcelabel">
      <x>104</x>
      <y>171</y>
     </hint>
-    <hint type="destinationlabel" >
+    <hint type="destinationlabel">
      <x>60</x>
      <y>277</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>pushButton</sender>
+   <signal>clicked()</signal>
+   <receiver>POI_input_ui</receiver>
+   <slot>accept()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>115</x>
+     <y>275</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>152</x>
+     <y>240</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>pushButton_2</sender>
+   <signal>clicked()</signal>
+   <receiver>POI_input_ui</receiver>
+   <slot>reject()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>196</x>
+     <y>284</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>249</x>
+     <y>280</y>
     </hint>
    </hints>
   </connection>

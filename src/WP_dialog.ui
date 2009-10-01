@@ -264,7 +264,7 @@
     </font>
    </property>
    <property name="text">
-    <string>Selectionner POI</string>
+    <string>Selectionner une marque</string>
    </property>
   </widget>
  </widget>

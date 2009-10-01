@@ -44,8 +44,7 @@ Copyright (C) 2008 - Jacques Zaninetti - http://zygrib.free.fr
 #include "DialogLoadGrib.h"
 #include "boatAccount_dialog.h"
 #include "BoardVLM.h"
-
-
+#include "POI_delete.h"
 
 //-----------------------------------------------------------
 void MainWindow::InitActionsStatus()
@@ -110,7 +109,8 @@ void MainWindow::connectSignals()
     //-------------------------------------
     connect(mb->ac_CreatePOI, SIGNAL(triggered()), this, SLOT(slotCreatePOI()));
     connect(mb->ac_pastePOI, SIGNAL(triggered()), this, SLOT(slotpastePOI()));
-    connect(mb->ac_delPOIs, SIGNAL(triggered()), this, SLOT(slotDelPOIs()));
+    connect(mb->ac_delAllPOIs, SIGNAL(triggered()), this, SLOT(slotDelAllPOIs()));
+    connect(mb->ac_delSelPOIs, SIGNAL(triggered()), this, SLOT(slotDelSelPOIs()));
     //Porte
     //connect(mb->ac_CreateGate, SIGNAL(triggered()), this, SLOT(slotCreateGate()));
 
@@ -399,8 +399,8 @@ MainWindow::MainWindow(int w, int h, QWidget *parent)
     connect(param,SIGNAL(paramVLMChanged()),this,SLOT(slotParamChanged()));
     connect(param, SIGNAL(inetUpdated()), this, SLOT(slotInetUpdated()));
 
-    connect(poi_input_dialog,SIGNAL(addPOI(QString,float,float,float,int,bool)),
-            this,SLOT(slotAddPOI(QString,float,float,float,int,bool)));
+    connect(poi_input_dialog,SIGNAL(addPOI(QString,POI::POI_TYPE,float,float,float,int,bool)),
+            this,SLOT(slotAddPOI(QString,POI::POI_TYPE,float,float,float,int,bool)));
 
     poi_editor=new POI_Editor(this,terre);
     gate_edit=new gate_editor(this,terre);
@@ -960,8 +960,8 @@ void MainWindow::updatePilototo_Btn(boatAccount * boat)
     }
     else
     {
-        menuBar->acPilototo->setText(tr("Séléction de POI"));
-        VLMBoard->btn_Pilototo->setText(tr("Séléction de POI"));
+        menuBar->acPilototo->setText(tr("Selection d'une marque"));
+        VLMBoard->btn_Pilototo->setText(tr("Selection d'une marque"));
     }
 }
 
@@ -1064,7 +1064,7 @@ void MainWindow::slotMouseDblClicked(QMouseEvent * e)
     if(e->button()==Qt::LeftButton)
     {
         proj->screen2map(mouseClicX,mouseClicY, &lon, &lat);
-        slotAddPOI("",(float)lat,(float)lon,-1,-1,false);
+        slotAddPOI("",POI::TYPE_POI,(float)lat,(float)lon,-1,-1,false);
     }
 }
 
@@ -1075,13 +1075,15 @@ void MainWindow::slotShowContextualMenu(QContextMenuEvent * e)
     mouseClicY = e->y();
     if(terre->getSelectedRectangle(&a,&b,&c,&d))
     {
-        menuBar->ac_delPOIs->setEnabled(true);
+        menuBar->ac_delAllPOIs->setEnabled(true);
+        menuBar->ac_delSelPOIs->setEnabled(true);
         //Porte
         //menuBar->ac_CreateGate->setEnabled(true);
     }
     else
     {
-        menuBar->ac_delPOIs->setEnabled(false);
+        menuBar->ac_delAllPOIs->setEnabled(false);
+        menuBar->ac_delSelPOIs->setEnabled(false);
         //Porte
         //menuBar->ac_CreateGate->setEnabled(false);
     }
@@ -1271,6 +1273,8 @@ void MainWindow::slotChgBoat(int num)
             if(cnt==num)
             {
                 acc->selectBoat();
+                /* sync lunched, update grib date */
+                slotDateGribChanged_now();
                 break;
             }
             cnt++;
@@ -1333,15 +1337,14 @@ void MainWindow::slotAccountListUpdated(void)
     slotVLM_Sync();
 }
 
-void MainWindow::slotAddPOI(QString name,float lat,float lon, float wph,int timestamp,bool useTimeStamp)
+void MainWindow::slotAddPOI(QString name,POI::POI_TYPE type,float lat,float lon, float wph,int timestamp,bool useTimeStamp)
 {
     POI * poi;
 
     if(name=="")
         name=QString(tr("POI"));
-    poi = new POI(name,lat,lon, proj,
+    poi = new POI(name,type,lat,lon, proj,
                   this, terre,wph,timestamp,useTimeStamp);
-
     addPOI_list(poi);
     poi->show();
 }
@@ -1355,7 +1358,7 @@ void MainWindow::slotpastePOI()
     if(!Util::getWPClipboard(&name,&lat,&lon,&wph,&tstamp))
         return;
 
-    slotAddPOI(name,lat,lon,wph,tstamp,tstamp!=-1);
+    slotAddPOI(name,POI::TYPE_POI,lat,lon,wph,tstamp,tstamp!=-1);
 }
 
 void MainWindow::slotChgWP(float lat,float lon, float wph)
@@ -1369,18 +1372,18 @@ void MainWindow::slotPOIinput(void)
     poi_input_dialog->exec();
 }
 
-void MainWindow::slotDelPOIs(void)
+void MainWindow::slotDelAllPOIs(void)
 {
     double lat0,lon0,lat1,lon1;
     double lat,lon;
     if(terre->getSelectedRectangle(&lon0,&lat0,&lon1,&lat1))
     {
         QListIterator<POI*> i (poi_list);
-        int num=0,sup=0;
+        //int num=0,sup=0;
 
         int rep = QMessageBox::question (this,
-            tr("Suppression de POI"),
-             tr("La destruction d'un point d'intérêt est définitive.\n\nEtes-vous sûr ?"),
+            tr("Suppression de toutes les marques"),
+             tr("La destruction d'une marque est definitive.\n\nEtes-vous sur ?"),
             QMessageBox::Yes | QMessageBox::No);
         if (rep != QMessageBox::Yes)
             return;
@@ -1395,10 +1398,45 @@ void MainWindow::slotDelPOIs(void)
             {
                 delPOI_list(poi);
                 delete poi;
-                sup++;
+                //sup++;
             }
 
-            num++;
+            //num++;
+        }
+        terre->clearSelection();
+    }
+}
+
+void MainWindow::slotDelSelPOIs(void)
+{
+    double lat0,lon0,lat1,lon1;
+    double lat,lon;
+    if(terre->getSelectedRectangle(&lon0,&lat0,&lon1,&lat1))
+    {
+        int res_mask;
+        POI_delete * dialog_sel = new POI_delete();
+        dialog_sel->exec();
+        if((res_mask=dialog_sel->getResult())<0)
+            return;
+
+        qWarning() << "Result is " << res_mask;
+
+        QListIterator<POI*> i (poi_list);
+
+        while(i.hasNext())
+        {
+            POI * poi = i.next();
+            qWarning() << "POI: " << poi->getName() << " mask=" << poi->getTypeMask();
+            if(!(poi->getTypeMask() & res_mask))
+                continue;
+            lat=poi->getLatitude();
+            lon=poi->getLongitude();
+
+            if(lat1<=lat && lat<=lat0 && lon0<=lon && lon<=lon1)
+            {
+                delPOI_list(poi);
+                delete poi;
+            }
         }
         terre->clearSelection();
     }

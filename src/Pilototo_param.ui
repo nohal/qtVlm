@@ -160,7 +160,7 @@
      <rect>
       <x>8</x>
       <y>110</y>
-      <width>75</width>
+      <width>61</width>
       <height>25</height>
      </rect>
     </property>
@@ -171,22 +171,22 @@
    <widget class="QPushButton" name="btn_selectPOI">
     <property name="geometry">
      <rect>
-      <x>86</x>
+      <x>76</x>
       <y>110</y>
-      <width>121</width>
+      <width>141</width>
       <height>25</height>
      </rect>
     </property>
     <property name="text">
-     <string>Selectionner un POI</string>
+     <string>Selectionner une marque</string>
     </property>
    </widget>
    <widget class="QPushButton" name="btn_copyPOI">
     <property name="geometry">
      <rect>
-      <x>210</x>
+      <x>224</x>
       <y>110</y>
-      <width>75</width>
+      <width>61</width>
       <height>25</height>
      </rect>
     </property>

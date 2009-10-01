@@ -39,7 +39,9 @@ class paramVLM : public QDialog, public Ui::VLM_param_ui
         void changeColor_POI(void);
         void changeColor_qtBoat(void);
         void changeColor_qtBoat_sel(void);
-        void changeColor_POI_WP(void);
+        void changeColor_Marque_WP(void);
+        void changeColor_WP(void);
+        void changeColor_Balise(void);
 
         void radioBtn_time_toggle(bool);
         void radioBtn_vac_toggle(bool);
@@ -54,7 +56,7 @@ class paramVLM : public QDialog, public Ui::VLM_param_ui
         void setColor(QString color,int type);
         QColor getColor(int type);
 
-        QString POI_color,POI_WP_color,qtBoat_color,qtBoat_sel_color;
+        QString POI_color,Marque_WP_color,qtBoat_color,qtBoat_sel_color,WP_color,Balise_color;
 };
 
 

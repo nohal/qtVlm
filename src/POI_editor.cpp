@@ -61,7 +61,7 @@ void POI_Editor::editPOI(POI * poi_)
     modeCreation = false;
     this->poi = poi_;
     initPOI();
-    setWindowTitle(tr("Point d'Intérêt : ")+poi->getName());
+    setWindowTitle(tr("Marque : ")+poi->getName());
     btDelete->setEnabled(true);
     exec();
 }
@@ -70,10 +70,10 @@ void POI_Editor::newPOI(float lon, float lat,Projection *proj)
 {
     //=> set name
     modeCreation = true;
-    this->poi = new POI(tr("POI"), lat, lon, proj, ownerMeteotable,
+    this->poi = new POI(tr("POI"), POI::TYPE_POI,lat, lon, proj, ownerMeteotable,
                         parent, -1,-1,false);
     initPOI();
-    setWindowTitle(tr("Nouveau Point d'Intérêt"));
+    setWindowTitle(tr("Nouvelle marque"));
     btDelete->setEnabled(false);
     exec();
 }
@@ -81,6 +81,8 @@ void POI_Editor::newPOI(float lon, float lat,Projection *proj)
 void POI_Editor::initPOI(void)
 {
     editName->setText(poi->getName());
+    oldType=poi->getType();
+    POI_type_liste->setCurrentIndex(oldType);
 
     if(poi->getWph()==-1)
         editWph->setText(QString());
@@ -125,7 +127,8 @@ void POI_Editor::done(int result)
         poi->setName((editName->text()).trimmed() );
         poi->setLongitude(getValue(POI_EDT_LON));
         poi->setLatitude (getValue(POI_EDT_LAT));
-
+        poi->setType((POI::POI_TYPE)POI_type_liste->currentIndex());
+//qWarning() << "POI type set to " << poi->getType() << " mask is " << poi->getTypeMask();
         if(editWph->text().isEmpty())
             poi->setWph(-1);
         else
@@ -151,8 +154,8 @@ void POI_Editor::btDeleteClicked()
 {
     if (! modeCreation) {
         int rep = QMessageBox::question (this,
-            tr("Détruire le POI : %1").arg(poi->getName()),
-            tr("La destruction d'un point d'intérêt est définitive.\n\nEtes-vous sûr ?"),
+            tr("D�truire la marque : %1").arg(poi->getName()),
+            tr("La destruction d'une marque est definitive.\n\nEtes-vous sur ?"),
             QMessageBox::Yes | QMessageBox::No);
         if (rep == QMessageBox::Yes)
         {
@@ -224,7 +227,7 @@ void POI_Editor::chkTStamp_chg(int state)
 
 void POI_Editor::nameHasChanged(QString newName)
 {
-    setWindowTitle(tr("Point d'Intérêt : ")+newName);
+    setWindowTitle(tr("Marque : ")+newName);
 }
 
 void POI_Editor::lat_deg_chg(int)
@@ -245,6 +248,17 @@ void POI_Editor::lon_deg_chg(int)
 void POI_Editor::lon_min_chg(double)
 {
     data_chg(POI_EDT_LON);
+}
+
+void POI_Editor::type_chg(int index)
+{
+    if(index==oldType)
+        return;
+    QString oldStr=POI::getTypeStr(oldType);
+    QString editStr=editName->text();
+    if(oldStr==editStr.left(oldStr.size()))
+        editName->setText(POI::getTypeStr(index)+editStr.right(editStr.size()-oldStr.size()));
+    oldType=index;
 }
 
 void POI_Editor::data_chg(int type)

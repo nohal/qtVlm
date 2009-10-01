@@ -67,8 +67,8 @@ void POI_input::done(int result)
         lsbuf = POI_list->toPlainText().split("\n");
         for (int i=0; i < lsbuf.size(); i++)
         {
-            if(Util::convertPOI(lsbuf.at(i),&name,&lat,&lon,&wph,&tstamp))
-                addPOI(name,lat,lon,wph,tstamp,tstamp!=-1);
+            if(Util::convertPOI(lsbuf.at(i),&name,&lat,&lon,&wph,&tstamp,type->currentIndex()))
+                emit addPOI(name,(POI::POI_TYPE)type->currentIndex(),lat,lon,wph,tstamp,tstamp!=-1);
         }
     }
     POI_list->clear();

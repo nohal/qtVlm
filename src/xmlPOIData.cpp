@@ -84,6 +84,11 @@ bool xml_POIData::writeData(QList<POI*> & poi_list,QList<gate*> & gate_list,QStr
           t = doc.createTextNode(poi->getName().toUtf8().toBase64());
           tag.appendChild(t);
 
+          tag = doc.createElement(TYPE_NAME);
+          group.appendChild(tag);
+          t = doc.createTextNode(QString().setNum(poi->getType()));
+          tag.appendChild(t);
+
           tag = doc.createElement(LAT_NAME);
           group.appendChild(tag);
           t = doc.createTextNode(QString().setNum(poi->getLatitude()));
@@ -200,7 +205,7 @@ void xml_POIData::importZyGrib(QList<POI*> & poi_list)
                     serialized+=";-1";
                                     }
                 lst = serialized.split(";");
-                POI * poi = new POI(QString(QByteArray::fromBase64(lst[1].toUtf8())),
+                POI * poi = new POI(QString(QByteArray::fromBase64(lst[1].toUtf8())), POI::TYPE_POI,
                                     lst[3].toFloat(),lst[2].toFloat(),proj,main,parent,lst[5].toInt(),-1,false);
                 poi_list.append(poi);
                 /*removing zyGrib POI*/
@@ -342,7 +347,8 @@ bool xml_POIData::readData(QList<POI*> & poi_list,QList<gate*> & gate_list,QStri
               {
                    qWarning() << "POI info present => create item " << name << " "
                         << lat << "," << lon << "@" << wph ;
-                   POI * poi = new POI(name,lat,lon,proj,main,parent,wph,tstamp,useTstamp);
+                   if(type==-1) type=POI::TYPE_POI;
+                   POI * poi = new POI(name,(POI::POI_TYPE)type,lat,lon,proj,main,parent,wph,tstamp,useTstamp);
                    poi_list.append(poi);
               }
               else

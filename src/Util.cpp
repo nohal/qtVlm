@@ -28,6 +28,7 @@ Copyright (C) 2008 - Jacques Zaninetti - http://zygrib.free.fr
 #include <QUrl>
 #include <QClipboard>
 #include "Util.h"
+#include "POI.h"
 
 //---------------------------------------------------------------------
 void Util::setSetting(const QString &key, const QVariant &value)
@@ -324,7 +325,7 @@ bool Util::getWPClipboard(QString * name,float * lat,float * lon, float * wph, i
     for(int i=0;i<lsval.size();i++)
         if(!lsval[i].isEmpty())
         {
-            if(convertPOI(lsval[i],name,lat,lon,wph,tstamp))
+            if(convertPOI(lsval[i],name,lat,lon,wph,tstamp,0)) // default type of mark = POI
                 return true;
             else
                 qWarning() << "Bad string: " << i << " |" << lsval[i] << "|";
@@ -333,7 +334,8 @@ bool Util::getWPClipboard(QString * name,float * lat,float * lon, float * wph, i
     return false;
 }
 
-bool Util::convertPOI(const QString & str,QString * name,float * lat,float * lon,float * wph,int * tstamp)
+bool Util::convertPOI(const QString & str,QString * name,float * lat,float * lon,float * wph,int * tstamp,
+                      int type)
 {
     QStringList lsval1,lsval2,lsval3;
 
@@ -351,7 +353,7 @@ bool Util::convertPOI(const QString & str,QString * name,float * lat,float * lon
         switch(lsval2.size())
         {
             case 2:
-                if(name)    *name="";
+                if(name)    *name=POI::getTypeStr(type);
                 if(lat)     *lat=lsval2[0].toFloat();
                 if(lon)     *lon=lsval2[1].toFloat();
                 break;

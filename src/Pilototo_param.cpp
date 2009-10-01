@@ -67,7 +67,7 @@ void Pilototo_param::editInstructionPOI(Pilototo_instruction * instruction,POI *
 
     this->instruction=instruction;
 
-    qWarning() << "Edit instruction with POI";
+    //qWarning() << "Edit instruction with POI";
 
     /*mode->setCurrentIndex(instruction->getMode());
     angle->setValue(instruction->getAngle());*/

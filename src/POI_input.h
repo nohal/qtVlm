@@ -25,6 +25,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <QDialog>
 
+#include "POI.h"
 #include "ui_POI_input.h"
 
 class POI_input : public QDialog, public Ui::POI_input_ui
@@ -38,7 +39,7 @@ class POI_input : public QDialog, public Ui::POI_input_ui
         void txtHasChanged(void);
         
     signals:
-        void addPOI(QString,float,float,float,int,bool);
+        void addPOI(QString,POI::POI_TYPE,float,float,float,int,bool);
 };
 
 
