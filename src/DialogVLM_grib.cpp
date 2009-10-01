@@ -111,7 +111,7 @@ int DialogVLM_grib::parseFolderListing(QString data)
 bool DialogVLM_grib::gribFileReceived(QByteArray * content)
 {
     filename = QFileDialog::getSaveFileName(this,
-                 tr("Sauvegarde du fichier GRIB"), "grib/"+filename, "");
+                 tr("Sauvegarde du fichier GRIB"), "grib/"+filename, "Grib (*.grb)");
 
     if (filename != "")
     {
