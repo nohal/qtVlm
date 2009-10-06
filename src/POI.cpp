@@ -63,6 +63,8 @@ POI::POI(QString name, POI_TYPE type, float lat, float lon,
 
     connect(parentWindow, SIGNAL(projectionUpdated()), this, SLOT(updateProjection()) );
 
+    connect(this , SIGNAL(clearSelection()), parentWindow, SLOT(clearSelection()) );
+
     connect(this,SIGNAL(chgWP(float,float,float)),ownerMeteotable,SLOT(slotChgWP(float,float,float)));
 
     connect(this,SIGNAL(addPOI_list(POI*)),ownerMeteotable,SLOT(addPOI_list(POI*)));
@@ -91,6 +93,7 @@ POI::~POI()
 void POI::rmSignal(void)
 {
     disconnect(parent, SIGNAL(projectionUpdated()), this, SLOT(updateProjection()) );
+    disconnect(this , SIGNAL(clearSelection()), parent, SLOT(clearSelection()) );
 
     disconnect(this,SIGNAL(chgWP(float,float,float)),owner,SLOT(slotChgWP(float,float,float)));
 
@@ -214,18 +217,26 @@ void  POI::leaveEvent (QEvent *)
 }
 
 //-------------------------------------------------------------------------------
-void  POI::mousePressEvent(QMouseEvent *)
+void  POI::mousePressEvent(QMouseEvent * e)
 {
+    e->ignore();
 }
 //-------------------------------------------------------------------------------
-void  POI::mouseDoubleClickEvent(QMouseEvent *)
+/*void  POI::mouseDoubleClickEvent(QMouseEvent *)
 {
-}
+}*/
 //-------------------------------------------------------------------------------
 void  POI::mouseReleaseEvent(QMouseEvent *e)
 {
+    if(e->x() < 0 || e->x()>width() || e->y() < 0 || e->y() > height())
+    {
+        e->ignore();
+        return;
+    }
     if (e->button() == Qt::LeftButton)
     {
+        emit clearSelection();
+
         setCursor(Qt::BusyCursor);
         if (countClick == 0) {
             QTimer::singleShot(200, this, SLOT(timerClickEvent()));

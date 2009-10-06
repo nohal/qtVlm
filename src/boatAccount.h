@@ -130,6 +130,7 @@ class boatAccount: public QWidget
         void getPolar(QString fname,Polar ** ptr);
         void releasePolar(QString fname);
         void validationDone(bool);
+        void clearSelection(void);
 
     private:
         void createWidget(void);
@@ -197,7 +198,7 @@ class boatAccount: public QWidget
         void  enterEvent (QEvent * e);
         void  leaveEvent (QEvent * e);
         void  mousePressEvent(QMouseEvent * e);
-        void  mouseDoubleClickEvent(QMouseEvent * e);
+        //void  mouseDoubleClickEvent(QMouseEvent * e);
         void  mouseReleaseEvent(QMouseEvent * e);
         void  contextMenuEvent(QContextMenuEvent * event);
 

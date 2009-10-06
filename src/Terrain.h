@@ -66,7 +66,6 @@ public:
 
     void showGribDate_dialog(void);
 
-    void clearSelection();
 
 public slots :
     // Map
@@ -88,6 +87,7 @@ public slots :
     void setCenterInMap(float x, float y);
 
     void updateGraphicsParameters();
+    void clearSelection(void);
 
     // Grib
     void loadGribFile(QString fileName, bool zoom);

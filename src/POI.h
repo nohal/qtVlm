@@ -95,6 +95,7 @@ class POI : public QWidget
         void editPOI(POI*);
         void selectPOI(POI*);
         void setGribDate(int);
+        void clearSelection(void);
 
     private:
         QString      name;
@@ -123,7 +124,7 @@ class POI : public QWidget
 
         int   countClick;
         void  mousePressEvent(QMouseEvent * e);
-        void  mouseDoubleClickEvent(QMouseEvent * e);
+        //void  mouseDoubleClickEvent(QMouseEvent * e);
         void  mouseReleaseEvent(QMouseEvent * e);
         void  contextMenuEvent(QContextMenuEvent * event);
 

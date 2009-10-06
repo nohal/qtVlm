@@ -753,6 +753,7 @@ void Terrain::mousePressEvent (QMouseEvent * e) {
         update();
     }
 }
+
 //---------------------------------------------------------
 void Terrain::mouseReleaseEvent (QMouseEvent * e) {
 
@@ -877,6 +878,7 @@ void Terrain::slot_Zoom_Sel()
 
 void Terrain::clearSelection()
 {
+    qWarning() << "clearSelection";
     isSelectionZoneEnCours=false;
     selX0 = selX1 = 0;
     selY0 = selY1 = 0;

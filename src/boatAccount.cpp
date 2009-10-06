@@ -72,6 +72,8 @@ boatAccount::boatAccount(QString login, QString pass, bool activated,Projection 
     connect(ac_select,SIGNAL(triggered()),this,SLOT(selectBoat()));
     connect(ac_estime,SIGNAL(triggered()),this,SLOT(toggleEstime()));
 
+    connect(this , SIGNAL(clearSelection()), parentWindow, SLOT(clearSelection()) );
+
     connect(this,SIGNAL(boatSelected(boatAccount*)),main,SLOT(slotSelectBoat(boatAccount*)));
     connect(this,SIGNAL(boatUpdated(boatAccount*,bool)),main,SLOT(slotBoatUpdated(boatAccount*,bool)));
     connect(this,SIGNAL(boatLockStatusChanged(boatAccount*,bool)),
@@ -595,21 +597,32 @@ void  boatAccount::leaveEvent (QEvent *)
 
 void  boatAccount::mousePressEvent(QMouseEvent * e)
 {
+
+    e->ignore();
+}
+
+/*void  boatAccount::mouseDoubleClickEvent(QMouseEvent *)
+{
+
+}*/
+
+void  boatAccount::mouseReleaseEvent(QMouseEvent * e)
+{
+    if(e->x() < 0 || e->x()>width() || e->y() < 0 || e->y() > height())
+    {
+        e->ignore();
+        return;
+    }
+
     if(e->button() == Qt::LeftButton)
     {
+        emit clearSelection();
         if(!((MainWindow*)mainWindow)->get_selPOI_instruction())
+        {
             selectBoat();
+            return;
+        }
     }
-}
-
-void  boatAccount::mouseDoubleClickEvent(QMouseEvent *)
-{
-
-}
-
-void  boatAccount::mouseReleaseEvent(QMouseEvent *)
-{
-
 }
 
 void boatAccount::contextMenuEvent(QContextMenuEvent *)
