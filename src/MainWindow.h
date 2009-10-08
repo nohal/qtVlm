@@ -157,6 +157,8 @@ class MainWindow: public QMainWindow
 
         void slotValidationDone(bool);
 
+        void slotCompassLine(void);
+
     signals:
         void signalMapQuality(int quality);
         void setChangeStatus(bool);
@@ -172,6 +174,7 @@ class MainWindow: public QMainWindow
         void WPChanged(float,float);
         void getTrace(QString buff,QList<position*> * trace);
         void updateInet(void);
+        void showCompassLine(double,double,double);
 
     private:
         GshhsReader *gshhsReader;

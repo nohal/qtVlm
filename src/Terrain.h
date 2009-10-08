@@ -88,6 +88,7 @@ public slots :
 
     void updateGraphicsParameters();
     void clearSelection(void);
+    void clearCompassLine(void);
 
     // Grib
     void loadGribFile(QString fileName, bool zoom);
@@ -101,6 +102,8 @@ public slots :
 
     void slotTimerResize();
     void slotMustRedraw();
+
+    void showCompassLine(double,double,double);
 
 signals:
     void selectionOK(float x0, float y0, float x1, float y1);
@@ -155,7 +158,9 @@ private:
 
     //-----------------------------------------------
     bool    isSelectionZoneEnCours;
+    bool    isCompassLineEnCours;
     float   selX0, selY0, selX1, selY1;   // sélection de zone (repère carte)
+    double compass_windAngle;
 
     QColor  seaColor, landColor, backgroundColor;
     QColor  selectColor;

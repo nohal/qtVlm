@@ -29,13 +29,23 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #define COMPASS_MARGIN 30
 #define CROSS_SIZE 8
 #define MARK_SIZE 12
+#define DELTA 4
 
-mapCompass::mapCompass(Projection * proj,QWidget *parentWindow) : QWidget(parentWindow)
+mapCompass::mapCompass(Projection * proj,Terrain *parentWindow) : QWidget(parentWindow)
 {
     size = 310;
     isMoving=false;
     this->proj=proj;
+    this->terre=parentWindow;
     setGeometry(200,200,size,size);
+    setMouseTracking(true);
+}
+
+bool mapCompass::isUnder(int x_val, int y_val)
+{
+    if(x_val>x() && x_val < (x()+width()) && y_val>y() && y_val < (y()+height()))
+        return true;
+    return false;
 }
 
 void  mapCompass::paintEvent(QPaintEvent *)
@@ -45,9 +55,12 @@ void  mapCompass::paintEvent(QPaintEvent *)
 
     QFontMetrics fm(pnt.font());
     int str_w,str_h,x,y;
+    double wind_speed;
+    double lat,lon;
     float angle;
     QString str;
 
+    proj->screen2map(this->x()+size/2,this->y()+size/2,&lon,&lat);
 
     QPen pen(QColor(Qt::black));
     //QBrush brush(QColor(255,255,255,50));
@@ -76,9 +89,9 @@ void  mapCompass::paintEvent(QPaintEvent *)
     pnt.drawLine(-(CROSS_SIZE/2),0,(CROSS_SIZE/2),0);
     pnt.drawLine(0,-(CROSS_SIZE/2),0,(CROSS_SIZE/2));
 
-    /* numbers */
+    /* external compass : direction */
 
-
+    /* external numbers */
     for(int i=0;i<360;i+=10)
     {
         str=QString().setNum(i);
@@ -89,22 +102,27 @@ void  mapCompass::paintEvent(QPaintEvent *)
         pnt.drawText(x,y,str);
     }
 
-    /* marks */
+    /* External marks */
     for(int i=0;i<360;i++)
     {
+        if(i==0)
+            pen.setColor(Qt::red);
+        else
+            pen.setColor(Qt::black);
+
         if(i%10==0) // big marks
         {
             pen.setWidth(2);
             pnt.setPen(pen);
             pnt.drawLine(0,-diam+MARK_SIZE,0,-diam);
         }
-        else if(i%5==0) // big marks
+        else if(i%5==0) // medium marks
         {
             pen.setWidth(1);
             pnt.setPen(pen);
             pnt.drawLine(0,-diam+MARK_SIZE,0,-diam+6);
         }
-        else if(i%1==0) // big marks
+        else if(i%1==0) // small marks
         {
             pen.setWidth(1);
             pnt.setPen(pen);
@@ -113,12 +131,61 @@ void  mapCompass::paintEvent(QPaintEvent *)
         pnt.rotate(1);
     }
 
+    /* Internal compas : WIND */
+
+    /* internal numbers */
+    /*compute start angle = wind angle*/
+    wind_angle=0;
+    if(terre->getGrib()->isOk())
+        terre->getGrib()->getInterpolatedValue_byDates(lon,lat,
+                                          terre->getGrib()->getCurrentDate(),&wind_speed,&wind_angle);
+    wind_angle=radToDeg(wind_angle);
+
+    for(int i=0;i<360;i+=20)
+    {
+        str=QString().setNum(i>180?i-360:i);
+        str_w=fm.width(str);
+        angle=degToRad((i+wind_angle)-90);
+        x=(int)((diam-2*MARK_SIZE-4*DELTA)*cos(angle)-(float)(str_w/2));
+        y=(int)((diam-2*MARK_SIZE-4*DELTA)*sin(angle)+(float)(str_h/2));
+        pnt.drawText(x,y,str);
+    }
+
+    /* internal marks */
+    pnt.rotate(wind_angle);
+    for(int i=0;i<360;i++)
+    {
+        if(i==0)
+            pen.setColor(Qt::red);
+        else
+            pen.setColor(Qt::black);
+
+        if(i%10==0) // big marks
+        {
+            pen.setWidth(2);
+            pnt.setPen(pen);
+            pnt.drawLine(0,-diam+DELTA+MARK_SIZE,0,-diam+DELTA+2*MARK_SIZE);
+        }
+        else if(i%5==0) // medium marks
+        {
+            pen.setWidth(1);
+            pnt.setPen(pen);
+            pnt.drawLine(0,-diam+DELTA+MARK_SIZE,0,-diam+DELTA+2*MARK_SIZE-6);
+        }
+        else if(i%1==0) // small marks
+        {
+            pen.setWidth(1);
+            pnt.setPen(pen);
+            pnt.drawLine(0,-diam+DELTA+MARK_SIZE,0,-diam+DELTA+2*MARK_SIZE-10);
+        }
+        pnt.rotate(1);
+    }
+    pnt.rotate(-wind_angle);
     /* text de lattitude/longitude*/
     if(isMoving)
     {
-        QString lat_txt,lon_txt;
-        int lat_w;
-        double lat,lon;
+        QString lat_txt,lon_txt,wind_txt,s;
+        int lat_w,wind_w;
 
         QFont fnt=pnt.font();
         fnt.setBold(true);
@@ -126,13 +193,17 @@ void  mapCompass::paintEvent(QPaintEvent *)
         pnt.setFont(fnt);
         str_h=fm.height();
 
-        proj->screen2map(this->x()+size/2,this->y()+size/2,&lon,&lat);
+
         lat_txt=Util::pos2String(TYPE_LAT,lat);
         lon_txt=Util::pos2String(TYPE_LON,lon);
+        s.sprintf("%.0f", wind_angle);
+        wind_txt += tr("Vent: ") + s + tr("°");
         lat_w=fm2.width(lat_txt);
+        wind_w=fm2.width(wind_txt);
         //lon_w=fm2.width(lon_txt);
-        pnt.drawText(-lat_w-10,str_h,lat_txt);
-        pnt.drawText(10,str_h,lon_txt);
+        pnt.drawText(-lat_w-2,-str_h/2,lat_txt);
+        pnt.drawText(2,-str_h/2,lon_txt);
+        pnt.drawText(-wind_w/2,2*str_h,wind_txt);
     }
 }
 
@@ -171,7 +242,6 @@ void  mapCompass::mouseReleaseEvent(QMouseEvent *e)
         setCursor(Qt::PointingHandCursor);
         update();
     }
-
 }
 
 void  mapCompass::mouseMoveEvent (QMouseEvent * e)
@@ -194,6 +264,6 @@ void  mapCompass::mouseMoveEvent (QMouseEvent * e)
         mouse_x=e->globalX();
         mouse_y=e->globalY();
     }
+    else
+        e->ignore();
 }
-
-

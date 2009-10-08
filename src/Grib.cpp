@@ -276,6 +276,10 @@ bool Grib::getInterpolatedValue_byDates(double d_long, double d_lat, time_t now,
 {
     GribRecord *recU1,*recV1,*recU2,*recV2;
     time_t t1,t2;
+
+    if(u) *u=0;
+    if(v) *v=0;
+
     if(getInterpolationParam(now,&t1,&t2,&recU1,&recV1,&recU2,&recV2))
     {
         return getInterpolatedValue_byDates(d_long,d_lat,now,t1,t2,recU1,recV1,recU2,recV2,u,v);

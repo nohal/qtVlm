@@ -24,12 +24,17 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <QWidget>
 #include <QPainter>
 
+class mapCompass;
+
 #include "Projection.h"
+#include "Terrain.h"
 
 class mapCompass : public QWidget
 {
     public:
-        mapCompass(Projection * proj,QWidget *parentWindow=NULL);
+        mapCompass(Projection * proj,Terrain *parentWindow=NULL);
+        bool isUnder(int x, int y);
+        double getWindAngle(void) { return wind_angle; }
 
     private:
         int size;
@@ -37,7 +42,9 @@ class mapCompass : public QWidget
         int mouse_x,mouse_y;
         bool mouseEvt;
         Projection * proj;
+        Terrain * terre;
         QCursor enterCursor;
+        double wind_angle;
 
         void  paintEvent(QPaintEvent *event);
         void  mousePressEvent(QMouseEvent *);

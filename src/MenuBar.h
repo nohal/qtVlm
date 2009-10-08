@@ -66,6 +66,7 @@ public:
     QAction *ac_CreateGate;
     QAction *acPOIAdd;
     QAction *acGateAdd;
+    QAction *ac_compassLine;
 
     QAction *acFile_Open;
     QAction *acFile_Close;

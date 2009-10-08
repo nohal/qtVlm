@@ -223,6 +223,8 @@ QMenu * MenuBar::createPopupBtRight(QWidget *parent)
     //popup->addSeparator();
     //ac_CreateGate = addAction(popup, tr("Creer une porte"),tr(""),tr(""),"");
 
+    popup->addSeparator();
+    ac_compassLine = addAction(popup, tr("Tirer un cap"),tr(""),tr(""),"");
     return popup;
 }
 

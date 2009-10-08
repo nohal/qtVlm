@@ -81,6 +81,7 @@ Terrain::Terrain(QWidget *parent, Projection *proj_)
     assert(gisReader);
 
     isSelectionZoneEnCours = false;
+    isCompassLineEnCours = false;
     setPalette(QPalette(backgroundColor));
     setAutoFillBackground(true);
 
@@ -717,7 +718,12 @@ void  Terrain::keyPressEvent (QKeyEvent *e)
             slot_Go_Right();
             break;
         case Qt::Key_Escape:
-            emit POI_selectAborted(NULL);
+            if(isCompassLineEnCours)
+            {
+                clearCompassLine();
+            }
+            else
+                emit POI_selectAborted(NULL);
             break;
         default:
             keyModif(e);
@@ -742,15 +748,22 @@ void Terrain::leaveEvent (QEvent * /*e*/) {
 //---------------------------------------------------------
 void Terrain::mousePressEvent (QMouseEvent * e) {
 //printf("press\n");
-    if (e->button() == Qt::LeftButton)
+    if (e->button() == Qt::LeftButton )
     {
         // DÃ©but de sÃ©lection de zone rectangulaire
-        double x,y;
-        isSelectionZoneEnCours = true;
-        proj->screen2map(e->x(),e->y(), &x, &y);
-        selX0 = selX1=x;
-        selY0 = selY1=y;
-        update();
+        if(isCompassLineEnCours)
+        {
+
+        }
+        else
+        {
+            double x,y;
+            isSelectionZoneEnCours = true;
+            proj->screen2map(e->x(),e->y(), &x, &y);
+            selX0 = selX1=x;
+            selY0 = selY1=y;
+            update();
+        }
     }
 }
 
@@ -796,7 +809,7 @@ void Terrain::mouseDoubleClickEvent(QMouseEvent * event)
 void Terrain::mouseMoveEvent (QMouseEvent * e) {
 //printf("move %d %d\n",e->x(),e->y());
     double x,y;
-    if (isSelectionZoneEnCours)
+    if (isSelectionZoneEnCours || isCompassLineEnCours)
     {
         proj->screen2map(e->x(),e->y(), &x, &y);
         selX1=x;
@@ -805,12 +818,22 @@ void Terrain::mouseMoveEvent (QMouseEvent * e) {
         selY1 = floor(selY1*12)/12;*/
         update();
     }
+
     emit mouseMoved(e);
 }
 
 void Terrain::contextMenuEvent(QContextMenuEvent * event)
-{
+{    
     emit showContextualMenu(event);
+}
+
+void Terrain::showCompassLine(double x,double y,double wind_angle)
+{
+    clearSelection();
+    isCompassLineEnCours=true;
+    selX0=selX1=x;
+    selY0=selY1=y;
+    compass_windAngle=wind_angle;
 }
 
 //---------------------------------------------------------
@@ -878,8 +901,15 @@ void Terrain::slot_Zoom_Sel()
 
 void Terrain::clearSelection()
 {
-    qWarning() << "clearSelection";
     isSelectionZoneEnCours=false;
+    selX0 = selX1 = 0;
+    selY0 = selY1 = 0;
+    update();
+}
+
+void Terrain::clearCompassLine()
+{
+    isCompassLineEnCours=false;
     selX0 = selX1 = 0;
     selY0 = selY1 = 0;
     update();
@@ -935,8 +965,6 @@ void Terrain::setCenterInMap(float x, float y)
         setProjection();
 }
 
-
-
 //---------------------------------------------------------
 // paintEvent
 //---------------------------------------------------------
@@ -954,22 +982,56 @@ void Terrain::paintEvent(QPaintEvent * /*event*/)
         drawingMap = true;
         longJob = draw_GSHHSandGRIB(pnt);
 
-        if (selX0!=selX1 && selY0!=selY1) {
+        if ((isSelectionZoneEnCours || isCompassLineEnCours) && selX0!=selX1 && selY0!=selY1) {
             // Draw the rectangle of the selected zone
-            pnt.setPen(selectColor);
-            transp = QColor(r,r,r, 80);
-            pnt.setBrush(transp);
+
             int x0,y0, x1,y1;
             proj->map2screen(selX0, selY0, &x0, &y0);
             proj->map2screen(selX1, selY1, &x1, &y1);
-            pnt.drawRect(x0, y0, x1-x0, y1-y0);
 
-            if (showOrthodromie)
+            if(isSelectionZoneEnCours)
+            {
+                pnt.setPen(selectColor);
+                transp = QColor(r,r,r, 80);
+                pnt.setBrush(transp);                
+                pnt.drawRect(x0, y0, x1-x0, y1-y0);
+            }
+
+            if (showOrthodromie || isCompassLineEnCours)
             {
                 QPen penLine(QColor(Qt::white));
                 penLine.setWidthF(1.6);
                 pnt.setPen(penLine);
                 draw_Orthodromie(pnt);
+            }
+
+            if(isCompassLineEnCours)
+            {
+                QString angle_str,wind_angle_str;
+                double angle,wind_angle;
+                QFontMetrics fm(pnt.font());
+                int str_w,str_h;
+                Orthodromie orth(selX0,selY0, selX1,selY1);
+
+                QPen pen(QColor(Qt::black));
+                pnt.setPen(pen);
+                str_h=fm.height();
+
+                angle=qRound(orth.getAzimutDeg());
+                angle_str.sprintf("Hdg: %.0f °",angle);
+                wind_angle=angle-compass_windAngle;
+                if(qAbs(wind_angle)>180)
+                {
+                    if(wind_angle<0)
+                        wind_angle=360+wind_angle;
+                    else
+                        wind_angle=wind_angle-360;
+                }
+                wind_angle_str.sprintf("Ang: %.0f °",wind_angle);
+                str_w=fm.width(angle_str);
+                pnt.drawText(x1-str_w/2,y1-5,angle_str);
+                str_w=fm.width(wind_angle_str);
+                pnt.drawText(x1-str_w/2,y1+str_h+5,wind_angle_str);
             }
         }
         drawBoats(pnt);

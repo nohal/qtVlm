@@ -184,6 +184,7 @@ void MainWindow::connectSignals()
     connect(mb->acPOIAdd, SIGNAL(triggered()), this, SLOT(slot_newPOI()));
     //Porte
     //connect(mb->acGateAdd, SIGNAL(triggered()), this, SLOT(slot_addGate()));
+    connect(mb->ac_compassLine,SIGNAL(triggered()), this, SLOT(slotCompassLine()));
 
 #ifdef __QTVLM_WITH_TEST
     if(mb->acVLMTest)
@@ -213,6 +214,7 @@ void MainWindow::connectSignals()
             this, SLOT(slotDateGribChanged_prev()));
     connect(mb->boatList, SIGNAL(activated(int)),
             this, SLOT(slotChgBoat(int)));
+
 
     //-------------------------------------
     // Autres signaux
@@ -273,6 +275,7 @@ MainWindow::MainWindow(int w, int h, QWidget *parent)
     terre = new Terrain(this, proj);
     assert(terre);
     terre->setGSHHS_map(gshhsReader);
+    connect(this,SIGNAL(showCompassLine(double,double,double)),terre,SLOT(showCompassLine(double,double,double)));
 
     //--------------------------------------------------
     menuBar = new MenuBar(this);
@@ -972,7 +975,7 @@ void MainWindow::statusBar_showWindData(double x,double y)
 
     statusBar->clearMessage();
     stBar_label_1->setText( Util::pos2String(TYPE_LAT,y) + ", " + Util::pos2String(TYPE_LON,x));
-
+    
     if(terre->getGrib()->isOk() && terre->getGrib()->getInterpolatedValue_byDates(x,y,
                                           terre->getGrib()->getCurrentDate(),&a,&b))
     {
@@ -1087,7 +1090,21 @@ void MainWindow::slotShowContextualMenu(QContextMenuEvent * e)
         //Porte
         //menuBar->ac_CreateGate->setEnabled(false);
     }
+
+    if(compass->isUnder(mouseClicX,mouseClicY))
+        menuBar->ac_compassLine->setEnabled(true);
+    else
+        menuBar->ac_compassLine->setEnabled(false);
     menuPopupBtRight->exec(QCursor::pos());
+}
+
+void MainWindow::slotCompassLine(void)
+{
+    double x,y;
+
+    proj->screen2map((int)(compass->x()+compass->width()/2),(int)(compass->y()+compass->height()/2), &x, &y);
+
+    emit showCompassLine(x,y,compass->getWindAngle());
 }
 
 void MainWindow::slotVLM_ParamBoat(void) {
