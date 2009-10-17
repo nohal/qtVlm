@@ -47,6 +47,8 @@ class paramVLM : public QDialog, public Ui::VLM_param_ui
         void radioBtn_vac_toggle(bool);
         void radioBtn_dist_toggle(bool);
 
+        void doBtn_browseGrib(void);
+
     signals:
         void paramVLMChanged(void);
         void inetUpdated(void);

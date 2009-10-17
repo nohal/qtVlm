@@ -42,7 +42,7 @@ class inetConn_progressDialog : public QDialog, public Ui::inetConn_progressDial
 	void updateProgress(qint64 bytesReceived, qint64 bytesTotal);
 };
 
-class inetConnexion : public QWidget
+class inetConnexion : public QObject
 { Q_OBJECT
     public:
         inetConnexion(QWidget * main,QWidget * parent);

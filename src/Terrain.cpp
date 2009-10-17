@@ -811,6 +811,7 @@ void Terrain::mouseMoveEvent (QMouseEvent * e) {
     double x,y;
     if (isSelectionZoneEnCours || isCompassLineEnCours)
     {
+        //qWarning() << "Mouse move " << e->x() << " " << e->y();
         proj->screen2map(e->x(),e->y(), &x, &y);
         selX1=x;
         selY1=y;
@@ -827,13 +828,16 @@ void Terrain::contextMenuEvent(QContextMenuEvent * event)
     emit showContextualMenu(event);
 }
 
-void Terrain::showCompassLine(double x,double y,double wind_angle)
+void Terrain::showCompassLine(double x,double y,double m_x,double m_y,double wind_angle)
 {
     clearSelection();
     isCompassLineEnCours=true;
-    selX0=selX1=x;
-    selY0=selY1=y;
+    selX0=x;
+    selX1=m_x;
+    selY0=y;
+    selY1=m_y;
     compass_windAngle=wind_angle;
+    update();
 }
 
 //---------------------------------------------------------
@@ -901,10 +905,13 @@ void Terrain::slot_Zoom_Sel()
 
 void Terrain::clearSelection()
 {
-    isSelectionZoneEnCours=false;
-    selX0 = selX1 = 0;
-    selY0 = selY1 = 0;
-    update();
+    if(!isCompassLineEnCours)
+    {
+        isSelectionZoneEnCours=false;
+        selX0 = selX1 = 0;
+        selY0 = selY1 = 0;
+        update();
+    }
 }
 
 void Terrain::clearCompassLine()
@@ -1008,7 +1015,10 @@ void Terrain::paintEvent(QPaintEvent * /*event*/)
             if(isCompassLineEnCours)
             {
                 QString angle_str,wind_angle_str;
-                double angle,wind_angle;
+                double angle,wind_angle;                
+                QFont fnt=pnt.font();
+                fnt.setBold(true);
+                pnt.setFont(fnt);
                 QFontMetrics fm(pnt.font());
                 int str_w,str_h;
                 Orthodromie orth(selX0,selY0, selX1,selY1);
@@ -1029,9 +1039,9 @@ void Terrain::paintEvent(QPaintEvent * /*event*/)
                 }
                 wind_angle_str.sprintf("Ang: %.0f °",wind_angle);
                 str_w=fm.width(angle_str);
-                pnt.drawText(x1-str_w/2,y1-5,angle_str);
+                pnt.drawText(x1-str_w/2,y1-10,angle_str);
                 str_w=fm.width(wind_angle_str);
-                pnt.drawText(x1-str_w/2,y1+str_h+5,wind_angle_str);
+                pnt.drawText(x1-str_w/2,y1+str_h+10,wind_angle_str);
             }
         }
         drawBoats(pnt);

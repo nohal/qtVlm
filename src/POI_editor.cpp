@@ -25,6 +25,8 @@ Copyright (C) 2008 - Jacques Zaninetti - http://zygrib.free.fr
 #include <cmath>
 #include <QMessageBox>
 
+class POI_Editor;
+
 #include "POI_editor.h"
 #include "Util.h"
 #include "MainWindow.h"
@@ -35,23 +37,23 @@ Copyright (C) 2008 - Jacques Zaninetti - http://zygrib.free.fr
 //-------------------------------------------------------
 // POI_Editor: Constructor for edit an existing POI
 //-------------------------------------------------------
-POI_Editor::POI_Editor(QWidget *ownerMeteotable, QWidget *parent)
-    : QDialog(parent)
+POI_Editor::POI_Editor(MainWindow * main, Terrain * terre)
+    : QDialog(terre)
 {
     setupUi(this);
 
     this->poi = NULL;
-    this->parent=parent;
-    this->ownerMeteotable=ownerMeteotable;
+    this->terre=terre;
+    this->main=main;
 
     lock=true;
     modeCreation=false;
 
-    connect(this,SIGNAL(addPOI_list(POI*)),ownerMeteotable,SLOT(addPOI_list(POI*)));
-    connect(this,SIGNAL(delPOI_list(POI*)),ownerMeteotable,SLOT(delPOI_list(POI*)));
+    connect(this,SIGNAL(addPOI_list(POI*)),main,SLOT(addPOI_list(POI*)));
+    connect(this,SIGNAL(delPOI_list(POI*)),main,SLOT(delPOI_list(POI*)));
 
-    connect(ownerMeteotable, SIGNAL(editPOI(POI*)),this, SLOT(editPOI(POI*)));
-    connect(ownerMeteotable, SIGNAL(newPOI(float,float,Projection *)),
+    connect(main, SIGNAL(editPOI(POI*)),this, SLOT(editPOI(POI*)));
+    connect(main, SIGNAL(newPOI(float,float,Projection *)),
             this, SLOT(newPOI(float,float,Projection *)));
 }
 
@@ -70,8 +72,8 @@ void POI_Editor::newPOI(float lon, float lat,Projection *proj)
 {
     //=> set name
     modeCreation = true;
-    this->poi = new POI(tr("POI"), POI::TYPE_POI,lat, lon, proj, ownerMeteotable,
-                        parent, -1,-1,false);
+    this->poi = new POI(tr("POI"), POI::TYPE_POI,lat, lon, proj, main,
+                        terre, -1,-1,false);
     initPOI();
     setWindowTitle(tr("Nouvelle marque"));
     btDelete->setEnabled(false);
@@ -89,7 +91,7 @@ void POI_Editor::initPOI(void)
     else
          editWph->setText(QString().setNum(poi->getWph()));
 
-    btSaveWP->setEnabled(!((MainWindow*)ownerMeteotable)->getBoatLockStatus());
+    btSaveWP->setEnabled(!main->getBoatLockStatus());
 
     setValue(POI_EDT_LON,poi->getLongitude());
     setValue(POI_EDT_LAT,poi->getLatitude());

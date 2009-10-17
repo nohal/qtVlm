@@ -275,7 +275,11 @@ MainWindow::MainWindow(int w, int h, QWidget *parent)
     terre = new Terrain(this, proj);
     assert(terre);
     terre->setGSHHS_map(gshhsReader);
-    connect(this,SIGNAL(showCompassLine(double,double,double)),terre,SLOT(showCompassLine(double,double,double)));
+    connect(this,SIGNAL(showCompassLine(double,double,double,double,double)),
+            terre,SLOT(showCompassLine(double,double,double,double,double)));
+    connect(this,SIGNAL(clearCompassLine()),terre,SLOT(clearCompassLine()));
+
+    qWarning() << "Terre is at " << terre;
 
     //--------------------------------------------------
     menuBar = new MenuBar(this);
@@ -1091,20 +1095,51 @@ void MainWindow::slotShowContextualMenu(QContextMenuEvent * e)
         //menuBar->ac_CreateGate->setEnabled(false);
     }
 
-    if(compass->isUnder(mouseClicX,mouseClicY))
-        menuBar->ac_compassLine->setEnabled(true);
-    else
-        menuBar->ac_compassLine->setEnabled(false);
+    switch(getCompassMode(mouseClicX,mouseClicY))
+    {
+        case 0:
+            /* not showing menu line, default text*/
+            menuBar->ac_compassLine->setText("Tirer un cap");
+            menuBar->ac_compassLine->setEnabled(false);
+            break;
+        case 1:
+            /* showing text for compass line off*/
+            menuBar->ac_compassLine->setText("Arret du cap");
+            menuBar->ac_compassLine->setEnabled(true);
+            break;
+        case 2:
+        case 3:
+            menuBar->ac_compassLine->setText("Tirer un cap");
+            menuBar->ac_compassLine->setEnabled(true);
+            break;
+        }
+
     menuPopupBtRight->exec(QCursor::pos());
+}
+
+int MainWindow::getCompassMode(int m_x,int m_y)
+{
+    if(terre->getHasCompassLine())
+        return COMPASS_LINEON;
+    else if(compass->isUnder(m_x,m_y,true))
+        return COMPASS_UNDER_STRICT;
+    else if(compass->isUnder(m_x,m_y,false))
+        return COMPASS_UNDER;
+    return COMPASS_NOTHING;
 }
 
 void MainWindow::slotCompassLine(void)
 {
-    double x,y;
-
-    proj->screen2map((int)(compass->x()+compass->width()/2),(int)(compass->y()+compass->height()/2), &x, &y);
-
-    emit showCompassLine(x,y,compass->getWindAngle());
+    if(terre->getHasCompassLine())
+        emit clearCompassLine();
+    else
+    {
+        double x,y,m_x,m_y;
+        proj->screen2map((int)(compass->x()+compass->width()/2),(int)(compass->y()+compass->height()/2), &x, &y);
+        QPoint cursor_pos=terre->mapFromGlobal(cursor().pos());
+        proj->screen2map(cursor_pos.x(),cursor_pos.y(), &m_x, &m_y);
+        emit showCompassLine(x,y,m_x,m_y,compass->getWindAngle());
+    }
 }
 
 void MainWindow::slotVLM_ParamBoat(void) {

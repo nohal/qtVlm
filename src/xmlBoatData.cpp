@@ -48,7 +48,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #define OLD_DOM_FILE_TYPE "zygVLM_config"
 #define OLD_ROOT_NAME     "zygVLM_boat"
 
-xml_boatData::xml_boatData(Projection * proj,QWidget * main, QWidget * parent)
+xml_boatData::xml_boatData(Projection * proj,MainWindow * main, Terrain * parent)
 : QWidget(parent)
 {
         this->proj=proj;

@@ -31,18 +31,21 @@ class xml_boatData;
 #include "boatAccount.h"
 #include "Projection.h"
 #include "opponentBoat.h"
+#include "MainWindow.h"
+#include "Terrain.h"
 
 class xml_boatData: public QWidget
 {Q_OBJECT
 
       public:
-            xml_boatData(Projection * proj,QWidget * main, QWidget * parent=0);
+            xml_boatData(Projection * proj,MainWindow * main, Terrain * parent=0);
             bool writeBoatData(QList<boatAccount*> & boat_list,QList<raceData*> & race_list,QString fname);
             bool readBoatData(QList<boatAccount*> & boat_list,QList<raceData*> & race_list,QString fname);
 
       private:
             Projection * proj;
-            QWidget * main, * parent;
+            MainWindow * main;
+            Terrain * parent;
 };
 
 #endif

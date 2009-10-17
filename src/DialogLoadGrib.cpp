@@ -91,8 +91,12 @@ void DialogLoadGrib::slotGribMessage(QString msg)
 //----------------------------------------------------
 void DialogLoadGrib::slotGribDataReceived(QByteArray *content, QString fileName)
 {
-    fileName = QFileDialog::getSaveFileName(this,
-                 tr("Sauvegarde du fichier GRIB"), "grib/"+fileName, "");
+    fileName=Util::getSetting("edtGribFolder","grib").toString()+"/"+fileName;
+    if(Util::getSetting("askGribFolder",1)==1)
+    {
+        fileName = QFileDialog::getSaveFileName(this,
+                         tr("Sauvegarde du fichier GRIB"), fileName, "");
+    }
 
     if (fileName != "")
     {

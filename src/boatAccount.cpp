@@ -19,6 +19,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ***********************************************************************/
 
 #include <QDebug>
+#include <QtGui>
 
 #include "boatAccount.h"
 #include "MainWindow.h"
@@ -30,8 +31,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #define VLM_REQUEST_BOAT 1
 #define VLM_REQUEST_TRJ  2
 
-boatAccount::boatAccount(QString login, QString pass, bool activated,Projection * proj,QWidget * main, QWidget *parentWindow)
-    : QWidget(parentWindow)
+boatAccount::boatAccount(QString login, QString pass, bool activated,Projection * proj,
+                         MainWindow * main, Terrain *parentWindow) : QWidget(parentWindow)
 {
     this->parent=parentWindow;
     this->mainWindow=main;
@@ -64,6 +65,7 @@ boatAccount::boatAccount(QString login, QString pass, bool activated,Projection 
     createPopUpMenu();
 
     createWidget();
+
     paramChanged();
 
     if(activated)
@@ -98,6 +100,8 @@ boatAccount::boatAccount(QString login, QString pass, bool activated,Projection 
     conn=new inetConnexion(main,this);
 
     setParam(login,pass,activated);
+
+    setMouseTracking(true);
 }
 
 boatAccount::~boatAccount()
@@ -493,7 +497,7 @@ void boatAccount::updateBoatName()
 
     label->setText(txt);
 
-     adjustSize();
+    adjustSize();
 }
 
 void boatAccount::createWidget()
@@ -502,7 +506,7 @@ void boatAccount::createWidget()
     int gr = 255;
     bgcolor = QColor(gr,gr,gr,150);
 
-    QGridLayout *layout = new QGridLayout();
+    QGridLayout *layout = new QGridLayout(this);
     layout->setContentsMargins(10,0,2,0);
     layout->setSpacing(0);
 
@@ -518,6 +522,10 @@ void boatAccount::createWidget()
     layout->addWidget(label, 0,0, Qt::AlignHCenter|Qt::AlignVCenter);
     this->setLayout(layout);
     setAutoFillBackground (false);
+
+    label->installEventFilter(this);
+    label->setMouseTracking(true);
+
     hide();
 }
 
@@ -563,12 +571,50 @@ void boatAccount::projectionUpdated()
         updatePosition();
 }
 
+bool boatAccount::eventFilter(QObject *obj, QEvent *event)
+{
+    if (obj == label)
+    {
+        if (event->type() == QEvent::MouseMove)
+        {
+            event->ignore();
+            return true;
+        }
+        else
+            return false;
+
+    }
+    else
+    {
+        // pass the event on to the parent class
+        //qWarning() << "Event for POI widget" << event->type();
+        /*if(event->type() == QEvent::ToolTip && parent->getHasCompassLine())
+        {
+            event->accept();
+            return true;
+        }*/
+
+        return QWidget::eventFilter(obj, event);
+    }
+}
+
+bool boatAccount::event(QEvent * e)
+{
+    if(e->type() == QEvent::ToolTip && parent->getHasCompassLine())
+    {
+        e->accept();
+        return true;
+    }
+    return QWidget::event(e);
+}
+
 void  boatAccount::paintEvent(QPaintEvent *)
 {
     QPainter pnt(this);
     int dy = height()/2;
 
-    //qWarning() << "qtBoat " << login << " paint";
+    //qWarning() << "qtBoat " << login << " paint mouse tracking " << hasMouseTracking ()
+    //        << "- is enabled: " << isEnabled();
 
     pnt.fillRect(9,0, width()-10,height()-1, QBrush(bgcolor));
 
@@ -586,17 +632,28 @@ void  boatAccount::paintEvent(QPaintEvent *)
 
 void  boatAccount::enterEvent (QEvent *)
 {
-    enterCursor = cursor();
-    setCursor(Qt::PointingHandCursor);
+    if(!parent->getHasCompassLine())
+    {
+        //enterCursor = cursor();
+        setCursor(Qt::PointingHandCursor);
+    }
 }
 
 void  boatAccount::leaveEvent (QEvent *)
 {
-    setCursor(enterCursor);
+    //unsetCursor();
 }
 
 void  boatAccount::mousePressEvent(QMouseEvent * e)
 {
+    e->ignore();
+}
+
+void boatAccount::mouseMoveEvent (QMouseEvent * e)
+{
+    //qWarning() << "boat move " << e->x() << " " << e->y() << " mouse tracking " << hasMouseTracking ();
+    if(parent->getHasCompassLine())
+        unsetCursor();
 
     e->ignore();
 }
@@ -608,6 +665,12 @@ void  boatAccount::mousePressEvent(QMouseEvent * e)
 
 void  boatAccount::mouseReleaseEvent(QMouseEvent * e)
 {
+    if(parent->getHasCompassLine())
+    {
+        e->ignore();
+        return;
+    }
+
     if(e->x() < 0 || e->x()>width() || e->y() < 0 || e->y() > height())
     {
         e->ignore();
@@ -617,7 +680,7 @@ void  boatAccount::mouseReleaseEvent(QMouseEvent * e)
     if(e->button() == Qt::LeftButton)
     {
         emit clearSelection();
-        if(!((MainWindow*)mainWindow)->get_selPOI_instruction())
+        if(!mainWindow->get_selPOI_instruction())
         {
             selectBoat();
             return;
@@ -625,30 +688,46 @@ void  boatAccount::mouseReleaseEvent(QMouseEvent * e)
     }
 }
 
-void boatAccount::contextMenuEvent(QContextMenuEvent *)
+void boatAccount::contextMenuEvent(QContextMenuEvent * e)
 {
-    int nb=0;
-    if(!((MainWindow*)mainWindow)->get_selPOI_instruction())
+    bool onlyLineOff = false;
+    switch(mainWindow->getCompassMode(x()+e->x(),y()+e->y()))
     {
-        ac_select->setEnabled(true);
-        nb++;
-    }
-    else
-        ac_select->setEnabled(false);
+        case 0:
+            /* not showing menu line, default text*/
+            ac_compassLine->setText("Tirer un cap");
+            ac_compassLine->setEnabled(false);
+            break;
+        case 1:
+            /* showing text for compass line off*/
+            ac_compassLine->setText("Arret du cap");
+            ac_compassLine->setEnabled(true);
+            onlyLineOff=true;
+            break;
+        case 2:
+        case 3:
+            ac_compassLine->setText("Tirer un cap");
+            ac_compassLine->setEnabled(true);
+            break;
+        }
 
-    if(!selected)
+    if(forceEstime)
+        ac_estime->setText(tr("Cacher estime"));
+    else
+        ac_estime->setText(tr("Afficher estime"));
+
+    if(onlyLineOff)
     {
-        if(forceEstime)
-            ac_estime->setText(tr("Cacher estime"));
-        else
-            ac_estime->setText(tr("Afficher estime"));
-        ac_estime->setEnabled(true);
-        nb++;
+        ac_select->setEnabled(false);
+        ac_estime->setEnabled(false);
     }
     else
-        ac_estime->setEnabled(false);
-    if(nb)
-        popup->exec(QCursor::pos());
+    {
+        ac_select->setEnabled(!mainWindow->get_selPOI_instruction());
+        ac_estime->setEnabled(!selected);
+    }
+
+    popup->exec(QCursor::pos());
 }
 
 void boatAccount::createPopUpMenu(void)
@@ -661,8 +740,9 @@ void boatAccount::createPopUpMenu(void)
     ac_estime = new QAction("Afficher estime",popup);
     popup->addAction(ac_estime);
 
-    /*ac_change = new QAction("Changer",popup);
-    popup->addAction(ac_change);*/
+    ac_compassLine = new QAction(tr("Tirer un cap"),popup);
+    popup->addAction(ac_compassLine);
+    connect(ac_compassLine,SIGNAL(triggered()),mainWindow,SLOT(slotCompassLine()));
 }
 
 void boatAccount::setStatus(bool activated)

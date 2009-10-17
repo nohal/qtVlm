@@ -33,7 +33,7 @@ class mapCompass : public QWidget
 {
     public:
         mapCompass(Projection * proj,Terrain *parentWindow=NULL);
-        bool isUnder(int x, int y);
+        bool isUnder(int x, int y, bool strict);
         double getWindAngle(void) { return wind_angle; }
 
     private:

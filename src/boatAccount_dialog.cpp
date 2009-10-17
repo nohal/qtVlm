@@ -33,7 +33,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #define ROLE_ALIAS     Qt::UserRole+5
 #define ROLE_CHK_POLAR Qt::UserRole+6
 
-boatAccount_dialog::boatAccount_dialog(Projection * proj, QWidget * main, QWidget * parent) : QDialog(parent)
+boatAccount_dialog::boatAccount_dialog(Projection * proj, MainWindow * main, Terrain * parent) : QDialog(parent)
 {
     setupUi(this);
 

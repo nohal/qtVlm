@@ -21,18 +21,20 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #ifndef BOATACCOUNT_H
 #define BOATACCOUNT_H
 
-#include <QGridLayout>
-#include <QLabel>
+#include <QWidget>
 #include <QPainter>
-#include <QObject>
 #include <QBuffer>
 #include <QMenuBar>
+
+class QMouseEvent;
 
 class boatAccount;
 
 #include "Projection.h"
 #include "Polar.h"
 #include "opponentBoat.h"
+#include "Terrain.h"
+#include "MainWindow.h"
 
 #include "inetConnexion.h"
 
@@ -46,9 +48,12 @@ class boatAccount;
 #define MAX_RETRY 5
 
 class boatAccount: public QWidget
-{Q_OBJECT
+{
+    Q_OBJECT
+
     public:
-        boatAccount(QString login, QString pass, bool state,Projection * proj,QWidget * main,QWidget *parentWindow=0);
+        boatAccount(QString login, QString pass, bool state,
+                    Projection * proj,MainWindow * main,Terrain * parentWindow=0);
         ~boatAccount(void);
 
         void setStatus(bool activated);
@@ -57,8 +62,8 @@ class boatAccount: public QWidget
         void setPolar(bool state,QString polar);
         void setLockStatus(bool status);
         void setAlias(bool state,QString alias);
-        void setZoom(float zoom)   { this->zoom=zoom; };
-        void setForceEstime(bool force_estime) { this->forceEstime=force_estime;};
+        void setZoom(float zoom)   { this->zoom=zoom; }
+        void setForceEstime(bool force_estime) { this->forceEstime=force_estime;}
 
         void unSelectBoat(bool needUpdate);
 
@@ -132,6 +137,16 @@ class boatAccount: public QWidget
         void validationDone(bool);
         void clearSelection(void);
 
+    protected:
+        void  enterEvent (QEvent * e);
+        void  leaveEvent (QEvent * e);
+        void  mousePressEvent(QMouseEvent * e);
+        //void  mouseDoubleClickEvent(QMouseEvent * e);
+        void  mouseReleaseEvent(QMouseEvent * e);
+        void  contextMenuEvent(QContextMenuEvent * event);
+        void  mouseMoveEvent (QMouseEvent * e);
+        bool  event(QEvent * e);
+
     private:
         void createWidget(void);
         void setLabelText(QString name);
@@ -139,6 +154,7 @@ class boatAccount: public QWidget
         void reloadPolar(void);
         void updateBoatName(void);
         void updateHint(void);
+        bool eventFilter(QObject *obj, QEvent *event);
 
         QString login;
         QString pass;
@@ -186,21 +202,17 @@ class boatAccount: public QWidget
         QCursor   enterCursor;
         bool      isSync;
 
-        QWidget * parent;
-        QWidget * mainWindow;
+        Terrain * parent;
+        MainWindow * mainWindow;
 
         QMenu *popup;
         QAction * ac_select;
         QAction * ac_estime;
+        QAction * ac_compassLine;
         void createPopUpMenu(void);
 
         void  paintEvent(QPaintEvent *event);
-        void  enterEvent (QEvent * e);
-        void  leaveEvent (QEvent * e);
-        void  mousePressEvent(QMouseEvent * e);
-        //void  mouseDoubleClickEvent(QMouseEvent * e);
-        void  mouseReleaseEvent(QMouseEvent * e);
-        void  contextMenuEvent(QContextMenuEvent * event);
+
 
         void updatePosition(void);
 

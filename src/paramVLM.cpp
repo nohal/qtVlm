@@ -68,14 +68,20 @@ paramVLM::paramVLM(QWidget * parent) : QDialog(parent)
             break;
     }
 
-
-
     /* Trace */
     for(int i=5;i<=61;i+=5)
         trace_step->addItem(QString().setNum(i));
     trace_step->setCurrentIndex(Util::getSetting("trace_step",60/5-1).toInt());
     trace_length->setValue(Util::getSetting("trace_length",12).toInt());
     chk_oppTrace->setCheckState(Util::getSetting("opp_trace","1").toInt()==1?Qt::Checked:Qt::Unchecked);
+
+    /* Compas */
+    chk_showCompass->setCheckState(Util::getSetting("showCompass",1).toInt()==1?Qt::Checked:Qt::Unchecked);
+
+     /* Fichier repertoire */
+
+    chk_askGribFolder->setCheckState(Util::getSetting("askGribFolder",1).toInt()==1?Qt::Checked:Qt::Unchecked);
+    edt_gribFolder->setText(Util::getSetting("edtGribFolder","grib/").toString());
 
     /* advanced */
     chk_activateEmulation->setCheckState(
@@ -92,8 +98,7 @@ paramVLM::paramVLM(QWidget * parent) : QDialog(parent)
 
     saveWinGeometry->setCheckState(Util::getSetting("saveMainWindowGeometry","1").toInt()==1?Qt::Checked:Qt::Unchecked);
 
-    /* Compas */
-    chk_showCompass->setCheckState(Util::getSetting("showCompass",1).toInt()==1?Qt::Checked:Qt::Unchecked);
+
 }
 
 void paramVLM::done(int result)
@@ -126,12 +131,19 @@ void paramVLM::done(int result)
         else
             Util::setSetting("estimeType","2");
 
-
         /* Trace */
 
         Util::setSetting("trace_step",QString().setNum(trace_step->currentIndex()));
         Util::setSetting("trace_length",QString().setNum(trace_length->value()));
         Util::setSetting("opp_trace",chk_oppTrace->checkState()==Qt::Checked?"1":"0");
+
+        /* Compas */
+        Util::setSetting("showCompass",chk_showCompass->checkState()==Qt::Checked?"1":"0");
+
+        /* Fichier repertoire */
+
+        Util::setSetting("askGribFolder",chk_askGribFolder->checkState()==Qt::Checked?"1":"0");
+        Util::setSetting("edtGribFolder",edt_gribFolder->text());
 
         /* advanced */
         Util::setSetting("gpsEmulEnable",chk_activateEmulation->checkState()==Qt::Checked?"1":"0");
@@ -145,10 +157,7 @@ void paramVLM::done(int result)
         if(oldUrl!=url_list->currentIndex())
             emit inetUpdated();
 
-        Util::setSetting("saveMainWindowGeometry",saveWinGeometry->checkState()==Qt::Checked?"1":"0");
-
-        /* Compas */
-        Util::setSetting("showCompass",chk_showCompass->checkState()==Qt::Checked?"1":"0");
+        Util::setSetting("saveMainWindowGeometry",saveWinGeometry->checkState()==Qt::Checked?"1":"0");        
 
         emit paramVLMChanged();
     }
@@ -271,4 +280,12 @@ void paramVLM::radioBtn_vac_toggle(bool val)
 void paramVLM::radioBtn_dist_toggle(bool val)
 {
     estimeVal_dist->setEnabled(val);
+}
+
+void paramVLM::doBtn_browseGrib(void)
+{
+     QString dir = QFileDialog::getExistingDirectory(this, tr("Repertoire Grib"),
+                                                 edt_gribFolder->text());
+     if(dir!="")
+         edt_gribFolder->setText(dir);
 }

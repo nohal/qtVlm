@@ -50,9 +50,10 @@ public:
     Terrain(QWidget *parent, Projection *proj);
 
     void       setGSHHS_map(GshhsReader *map);
-    Grib * getGrib()     {return grib;};
+    Grib * getGrib()     {return grib;}
     void       setCurrentDate(time_t t);
     time_t getCurrentDate(void);
+    bool getHasCompassLine() {return isCompassLineEnCours;}
 
     void  indicateWaitingMap();    // Affiche un message d'attente
 
@@ -62,7 +63,7 @@ public:
     bool  getSelectedLine      (float *x0, float *y0, float *x1, float *y1);
 
     void setBoatList(QList<boatAccount*> & boat_list) {this->boat_list=&boat_list; update();}
-    void setOpponents(opponentList * opponents) { this->opponents=opponents; };
+    void setOpponents(opponentList * opponents) { this->opponents=opponents; }
 
     void showGribDate_dialog(void);
 
@@ -103,7 +104,7 @@ public slots :
     void slotTimerResize();
     void slotMustRedraw();
 
-    void showCompassLine(double,double,double);
+    void showCompassLine(double,double,double,double,double);
 
 signals:
     void selectionOK(float x0, float y0, float x1, float y1);

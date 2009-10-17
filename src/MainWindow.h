@@ -60,6 +60,12 @@ class raceData;
 
 #include "opponentBoat.h"
 
+
+#define COMPASS_NOTHING  0
+#define COMPASS_LINEON 1
+#define COMPASS_UNDER_STRICT  2
+#define COMPASS_UNDER  3
+
 class MainWindow: public QMainWindow
 {
     Q_OBJECT
@@ -74,7 +80,7 @@ class MainWindow: public QMainWindow
 
         void getBoatWP(float * lat,float * lon);
         bool get_selPOI_instruction();
-
+        int getCompassMode(int m_x,int m_y);
 
     public slots:
         void slotFile_Open();
@@ -174,7 +180,8 @@ class MainWindow: public QMainWindow
         void WPChanged(float,float);
         void getTrace(QString buff,QList<position*> * trace);
         void updateInet(void);
-        void showCompassLine(double,double,double);
+        void showCompassLine(double,double,double,double,double);
+        void clearCompassLine(void);
 
     private:
         GshhsReader *gshhsReader;

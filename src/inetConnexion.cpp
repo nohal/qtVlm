@@ -23,13 +23,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #define REQUEST_GET  0
 #define REQUEST_POST 1
 
-inetConnexion::inetConnexion(QWidget * main,QWidget * parent) : QWidget(parent)
+inetConnexion::inetConnexion(QWidget * main,QWidget * parent) : QObject(parent)
 {
     hasSpecHost=false;
     initConn(main,parent);
 }
 
-inetConnexion::inetConnexion(QString specHost,QWidget * main,QWidget * parent) : QWidget(parent)
+inetConnexion::inetConnexion(QString specHost,QWidget * main,QWidget * parent) : QObject(parent)
 {
     if(specHost.isEmpty())
         hasSpecHost=false;

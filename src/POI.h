@@ -72,10 +72,7 @@ class POI : public QWidget
         void setUseTimeStamp (bool state){this->useTstamp=state;}
         void setType         (POI_TYPE type) {this->type=type;this->typeMask=(1<<type);}
 
-
         void doChgWP(float lat,float lon, float wph);
-
-
 
     public slots:
         void updateProjection();
@@ -96,6 +93,15 @@ class POI : public QWidget
         void selectPOI(POI*);
         void setGribDate(int);
         void clearSelection(void);
+
+    protected:
+        bool eventFilter(QObject *obj, QEvent *event);
+        void  mousePressEvent(QMouseEvent * e);
+        void  mouseMoveEvent (QMouseEvent * e);
+        //void  mouseDoubleClickEvent(QMouseEvent * e);
+        void  mouseReleaseEvent(QMouseEvent * e);
+        void  contextMenuEvent(QContextMenuEvent * event);
+        bool  event(QEvent * e);
 
     private:
         QString      name;
@@ -122,19 +128,15 @@ class POI : public QWidget
         void  enterEvent (QEvent * e);
         void  leaveEvent (QEvent * e);
 
-        int   countClick;
-        void  mousePressEvent(QMouseEvent * e);
-        //void  mouseDoubleClickEvent(QMouseEvent * e);
-        void  mouseReleaseEvent(QMouseEvent * e);
-        void  contextMenuEvent(QContextMenuEvent * event);
+        int   countClick;        
 
         QMenu *popup;
         QAction * ac_edit;
         QAction * ac_setWp;
         QAction * ac_setGribDate;
         QAction * ac_delPoi;
-        QAction * ac_meteo;
         QAction * ac_copy;
+        QAction * ac_compassLine;
         void createPopUpMenu(void);
 
         void chkIsWP(void);

@@ -31,20 +31,30 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #define MARK_SIZE 12
 #define DELTA 4
 
-mapCompass::mapCompass(Projection * proj,Terrain *parentWindow) : QWidget(parentWindow)
+mapCompass::mapCompass(Projection * proj,Terrain *terre) : QWidget(terre)
 {
     size = 310;
     isMoving=false;
     this->proj=proj;
-    this->terre=parentWindow;
+    this->terre=terre;
     setGeometry(200,200,size,size);
     setMouseTracking(true);
 }
 
-bool mapCompass::isUnder(int x_val, int y_val)
+bool mapCompass::isUnder(int x_val, int y_val,bool strict)
 {
-    if(x_val>x() && x_val < (x()+width()) && y_val>y() && y_val < (y()+height()))
-        return true;
+    if(strict)
+    {
+        int center_x=x()+width()/2;
+        int center_y=y()+height()/2;
+        if(x_val>center_x-4 && x_val<center_x+4 && y_val>center_y-4 && y_val<center_y+4)
+            return true;
+    }
+    else
+    {
+        if(x_val>x() && x_val < (x()+width()) && y_val>y() && y_val < (y()+height()))
+            return true;
+    }
     return false;
 }
 
@@ -210,26 +220,34 @@ void  mapCompass::paintEvent(QPaintEvent *)
 //-------------------------------------------------------------------------------
 void  mapCompass::enterEvent (QEvent *)
 {
-    enterCursor = cursor();
-    setCursor(Qt::PointingHandCursor);
+    if(!terre->getHasCompassLine())
+    {
+        //enterCursor = cursor();
+        setCursor(Qt::PointingHandCursor);
+    }
 
 }
 //-------------------------------------------------------------------------------
 void  mapCompass::leaveEvent (QEvent *)
 {
-    setCursor(enterCursor);
+    //unsetCursor();
 }
 
 void  mapCompass::mousePressEvent(QMouseEvent * e)
 {
     if (e->button() == Qt::LeftButton)
     {
-        isMoving=true;
-        mouseEvt=false;
-        mouse_x=e->globalX();
-        mouse_y=e->globalY();
-        setCursor(Qt::BlankCursor);
-        update();
+        if(terre->getHasCompassLine())
+            e->ignore();
+        else
+        {
+            isMoving=true;
+            mouseEvt=false;
+            mouse_x=e->globalX();
+            mouse_y=e->globalY();
+            setCursor(Qt::BlankCursor);
+            update();
+        }
     }
 }
 
@@ -238,9 +256,14 @@ void  mapCompass::mouseReleaseEvent(QMouseEvent *e)
 {
     if (e->button() == Qt::LeftButton)
     {
-        isMoving=false;
-        setCursor(Qt::PointingHandCursor);
-        update();
+        if(terre->getHasCompassLine())
+            e->ignore();
+        else
+        {
+            isMoving=false;
+            setCursor(Qt::PointingHandCursor);
+            update();
+        }
     }
 }
 
@@ -265,5 +288,9 @@ void  mapCompass::mouseMoveEvent (QMouseEvent * e)
         mouse_y=e->globalY();
     }
     else
+    {
+        if(terre->getHasCompassLine())
+            unsetCursor();
         e->ignore();
+    }
 }

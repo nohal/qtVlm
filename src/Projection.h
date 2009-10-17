@@ -30,6 +30,7 @@ class Projection;
 #include "Util.h"
 
 #include <QObject>
+
 class Projection : public QObject
 {
 Q_OBJECT
@@ -40,18 +41,18 @@ Q_OBJECT
         void screen2map(int i, int j, double *x, double *y) const;
         void map2screen(double x, double y, int *i, int *j) const;
 
-        int   getW()  const   {return W;};    // taille de l'écran
-        int   getH()  const   {return H;};
-        double getCX() const   {return CX;};   // centre
-        double getCY() const   {return CY;};
-        float getScale() const      {return scale;};
-        float getCoefremp() const   {return coefremp;};
+        int   getW()  const   {return W;}    // taille de l'écran
+        int   getH()  const   {return H;}
+        double getCX() const   {return CX;}   // centre
+        double getCY() const   {return CY;}
+        float getScale() const      {return scale;}
+        float getCoefremp() const   {return coefremp;}
 
         // zone visible (longitude/latitude)
-        double getXmin() const   {return xW;};
-        double getXmax() const   {return xE;};
-        double getYmin() const   {return yS;};
-        double getYmax() const   {return yN;};
+        double getXmin() const   {return xW;}
+        double getXmax() const   {return xE;}
+        double getYmin() const   {return yS;}
+        double getYmax() const   {return yN;}
 
         bool intersect(double w,double e,double s,double n)  const;
         bool isPointVisible (double x,double y) const;

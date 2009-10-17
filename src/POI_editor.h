@@ -25,15 +25,19 @@ Copyright (C) 2008 - Jacques Zaninetti - http://zygrib.free.fr
 #ifndef POI_EDITOR_H
 #define POI_EDITOR_H
 
+class POI_Editor;
+
 #include "POI.h"
 #include "Projection.h"
 #include "ui_POI_editor.h"
+#include "MainWindow.h"
+#include "Terrain.h"
 
 //===================================================================
 class POI_Editor : public QDialog, public Ui::POI_editor_ui
 { Q_OBJECT
     public:
-        POI_Editor(QWidget *ownerMeteotable,QWidget *parent);
+        POI_Editor(MainWindow * main,Terrain * terre);
         void done(int result);
 
     public slots:
@@ -63,8 +67,8 @@ class POI_Editor : public QDialog, public Ui::POI_editor_ui
         bool lock;
         int oldType;
 
-        QWidget * parent;
-        QWidget * ownerMeteotable;
+        MainWindow * main;
+        Terrain * terre;
 
         void initPOI(void);
         float getValue(int type);

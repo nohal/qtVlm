@@ -84,6 +84,7 @@ POI::POI(QString name, POI_TYPE type, float lat, float lon,
     setName(name);
     updateProjection();
     chkIsWP();
+    setMouseTracking(true);
 }
 
 POI::~POI()
@@ -108,6 +109,37 @@ void POI::rmSignal(void)
     disconnect(owner,SIGNAL(WPChanged(float,float)),this,SLOT(WPChanged(float,float)));
 }
 
+bool POI::event(QEvent * e)
+{
+    if(e->type() == QEvent::ToolTip && ((Terrain*)parent)->getHasCompassLine())
+    {
+        e->accept();
+        return true;
+    }
+    return QWidget::event(e);
+}
+
+bool POI::eventFilter(QObject *obj, QEvent *event)
+{
+    if (obj == label)
+    {
+        if (event->type() == QEvent::MouseMove)
+        {
+            event->ignore();
+            return true;
+        }
+        else
+            return false;
+
+    }
+    else
+    {
+        // pass the event on to the parent class
+        //qWarning() << "Event for POI widget" << event->type();
+        return QWidget::eventFilter(obj, event);
+    }
+}
+
 //-------------------------------------------------------------------------------
 void POI::createWidget()
 {
@@ -115,7 +147,7 @@ void POI::createWidget()
     int gr = 255;
     bgcolor = QColor(gr,gr,gr,150);
 
-    QGridLayout *layout = new QGridLayout();
+    QGridLayout * layout = new QGridLayout();
     layout->setContentsMargins(10,0,2,0);
     layout->setSpacing(0);
 
@@ -131,6 +163,9 @@ void POI::createWidget()
     layout->addWidget(label, 0,0, Qt::AlignHCenter|Qt::AlignVCenter);
     this->setLayout(layout);
     setAutoFillBackground (false);
+
+    label->installEventFilter(this);
+    label->setMouseTracking(true);
 
     createPopUpMenu();
 }
@@ -205,15 +240,18 @@ void  POI::paintEvent(QPaintEvent *)
 
 //-------------------------------------------------------------------------------
 void  POI::enterEvent (QEvent *)
-{
-    enterCursor = cursor();
-    setCursor(Qt::PointingHandCursor);
+{    
+    if(!((Terrain*)parent)->getHasCompassLine())
+    {
+        //enterCursor = cursor();
+        setCursor(Qt::PointingHandCursor);
+    }
 
 }
 //-------------------------------------------------------------------------------
 void  POI::leaveEvent (QEvent *)
 {
-    setCursor(enterCursor);
+    //setCursor(enterCursor);
 }
 
 //-------------------------------------------------------------------------------
@@ -225,9 +263,24 @@ void  POI::mousePressEvent(QMouseEvent * e)
 /*void  POI::mouseDoubleClickEvent(QMouseEvent *)
 {
 }*/
-//-------------------------------------------------------------------------------
-void  POI::mouseReleaseEvent(QMouseEvent *e)
+
+void POI::mouseMoveEvent (QMouseEvent * e)
 {
+    if(((Terrain*)parent)->getHasCompassLine())
+        unsetCursor();
+
+    e->ignore();
+}
+
+//-------------------------------------------------------------------------------
+void POI::mouseReleaseEvent(QMouseEvent *e)
+{
+    if(((Terrain*)parent)->getHasCompassLine())
+    {
+        e->ignore();
+        return;
+    }
+
     if(e->x() < 0 || e->x()>width() || e->y() < 0 || e->y() > height())
     {
         e->ignore();
@@ -255,12 +308,47 @@ void  POI::mouseReleaseEvent(QMouseEvent *e)
     }
 }
 
-void POI::contextMenuEvent(QContextMenuEvent *)
+void POI::contextMenuEvent(QContextMenuEvent * e)
 {
-    // is currentBoat locked ?
-    ac_setWp->setEnabled(!((MainWindow*)owner)->getBoatLockStatus());
-    ac_setGribDate->setEnabled(useTstamp);
-    // Right clic : Edit this Point Of Interest
+    bool onlyLineOff = false;
+    switch(((MainWindow*)owner)->getCompassMode(x()+e->x(),y()+e->y()))
+    {
+        case 0:
+            /* not showing menu line, default text*/
+            ac_compassLine->setText("Tirer un cap");
+            ac_compassLine->setEnabled(false);
+            break;
+        case 1:
+            /* showing text for compass line off*/
+            ac_compassLine->setText("Arret du cap");
+            ac_compassLine->setEnabled(true);
+            onlyLineOff=true;
+            break;
+        case 2:
+        case 3:
+            ac_compassLine->setText("Tirer un cap");
+            ac_compassLine->setEnabled(true);
+            break;
+        }
+    if(onlyLineOff)
+    {
+        // is currentBoat locked ?
+        ac_setWp->setEnabled(false);
+        ac_setGribDate->setEnabled(false);
+        ac_edit->setEnabled(false);
+        ac_delPoi->setEnabled(false);
+        ac_copy->setEnabled(false);
+    }
+    else
+    {
+        // is currentBoat locked ?
+        ac_setWp->setEnabled(!((MainWindow*)owner)->getBoatLockStatus());
+        ac_setGribDate->setEnabled(useTstamp);
+        ac_edit->setEnabled(true);
+        ac_delPoi->setEnabled(true);
+        ac_copy->setEnabled(true);
+
+    }
     popup->exec(QCursor::pos());
 }
 
@@ -302,9 +390,13 @@ void POI::createPopUpMenu(void)
     popup->addAction(ac_setWp);
     connect(ac_setWp,SIGNAL(triggered()),this,SLOT(slot_setWP()));
 
-    ac_setGribDate= new QAction(tr("Set Date"),popup);
+    ac_setGribDate = new QAction(tr("Set Date"),popup);
     popup->addAction(ac_setGribDate);
     connect(ac_setGribDate,SIGNAL(triggered()),this,SLOT(slot_setGribDate()));
+
+    ac_compassLine = new QAction(tr("Tirer un cap"),popup);
+    popup->addAction(ac_compassLine);
+    connect(ac_compassLine,SIGNAL(triggered()),owner,SLOT(slotCompassLine()));
 }
 
 void POI::slot_editPOI()
