@@ -989,31 +989,20 @@ void Terrain::paintEvent(QPaintEvent * /*event*/)
         drawingMap = true;
         longJob = draw_GSHHSandGRIB(pnt);
 
-        if ((isSelectionZoneEnCours || isCompassLineEnCours) && selX0!=selX1 && selY0!=selY1) {
+        if (selX0!=selX1 && selY0!=selY1) {
             // Draw the rectangle of the selected zone
 
             int x0,y0, x1,y1;
             proj->map2screen(selX0, selY0, &x0, &y0);
             proj->map2screen(selX1, selY1, &x1, &y1);
 
-            if(isSelectionZoneEnCours)
-            {
-                pnt.setPen(selectColor);
-                transp = QColor(r,r,r, 80);
-                pnt.setBrush(transp);                
-                pnt.drawRect(x0, y0, x1-x0, y1-y0);
-            }
-
-            if (showOrthodromie || isCompassLineEnCours)
+            if(isCompassLineEnCours)
             {
                 QPen penLine(QColor(Qt::white));
                 penLine.setWidthF(1.6);
                 pnt.setPen(penLine);
                 draw_Orthodromie(pnt);
-            }
 
-            if(isCompassLineEnCours)
-            {
                 QString angle_str,wind_angle_str;
                 double angle,wind_angle;                
                 QFont fnt=pnt.font();
@@ -1042,6 +1031,21 @@ void Terrain::paintEvent(QPaintEvent * /*event*/)
                 pnt.drawText(x1-str_w/2,y1-10,angle_str);
                 str_w=fm.width(wind_angle_str);
                 pnt.drawText(x1-str_w/2,y1+str_h+10,wind_angle_str);
+            }
+            else
+            {
+                pnt.setPen(selectColor);
+                transp = QColor(r,r,r, 80);
+                pnt.setBrush(transp);
+                pnt.drawRect(x0, y0, x1-x0, y1-y0);
+
+                if (showOrthodromie)
+                {
+                    QPen penLine(QColor(Qt::white));
+                    penLine.setWidthF(1.6);
+                    pnt.setPen(penLine);
+                    draw_Orthodromie(pnt);
+                }
             }
         }
         drawBoats(pnt);

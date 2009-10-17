@@ -28,13 +28,23 @@ class mapCompass;
 
 #include "Projection.h"
 #include "Terrain.h"
+#include "MainWindow.h"
 
 class mapCompass : public QWidget
 {
     public:
-        mapCompass(Projection * proj,Terrain *parentWindow=NULL);
+        mapCompass(Projection * proj,MainWindow * main,Terrain *parentWindow=NULL);
         bool isUnder(int x, int y, bool strict);
         double getWindAngle(void) { return wind_angle; }
+
+    protected:
+        void  paintEvent(QPaintEvent *event);
+        void  mousePressEvent(QMouseEvent *);
+        void  mouseReleaseEvent(QMouseEvent *e);
+        void  mouseMoveEvent (QMouseEvent * e);
+        void  enterEvent (QEvent * e);
+        void  leaveEvent (QEvent * e);
+        void  slotMouseDblClicked(QMouseEvent * e);
 
     private:
         int size;
@@ -43,15 +53,9 @@ class mapCompass : public QWidget
         bool mouseEvt;
         Projection * proj;
         Terrain * terre;
+        MainWindow * main;
         QCursor enterCursor;
-        double wind_angle;
-
-        void  paintEvent(QPaintEvent *event);
-        void  mousePressEvent(QMouseEvent *);
-        void  mouseReleaseEvent(QMouseEvent *e);
-        void  mouseMoveEvent (QMouseEvent * e);
-        void  enterEvent (QEvent * e);
-        void  leaveEvent (QEvent * e);
+        double wind_angle;        
 };
 
 #endif // MAPCOMPASS_H

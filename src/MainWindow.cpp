@@ -279,8 +279,6 @@ MainWindow::MainWindow(int w, int h, QWidget *parent)
             terre,SLOT(showCompassLine(double,double,double,double,double)));
     connect(this,SIGNAL(clearCompassLine()),terre,SLOT(clearCompassLine()));
 
-    qWarning() << "Terre is at " << terre;
-
     //--------------------------------------------------
     menuBar = new MenuBar(this);
     assert(menuBar);
@@ -366,7 +364,7 @@ MainWindow::MainWindow(int w, int h, QWidget *parent)
         qWarning() << "Grib opened";
     }
 
-    compass = new mapCompass(proj,terre);
+    compass = new mapCompass(proj,this,terre);
     if(Util::getSetting("showCompass",1).toInt()==1)
         compass->show();
     else
