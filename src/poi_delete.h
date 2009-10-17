@@ -23,7 +23,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <QDialog>
 
-#include "ui_POI_delete.h"
+#include "ui_poi_delete.h"
 
 class POI_delete : public QDialog, public Ui::POI_delete_ui
 {

@@ -20,7 +20,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <QtGui>
 
-#include "POI_delete.h"
+#include "poi_delete.h"
 
 POI_delete::POI_delete(QWidget * parent) : QDialog(parent)
 {

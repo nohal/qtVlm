@@ -44,7 +44,7 @@ Copyright (C) 2008 - Jacques Zaninetti - http://zygrib.free.fr
 #include "DialogLoadGrib.h"
 #include "boatAccount_dialog.h"
 #include "BoardVLM.h"
-#include "POI_delete.h"
+#include "poi_delete.h"
 
 //-----------------------------------------------------------
 void MainWindow::InitActionsStatus()
@@ -1080,7 +1080,9 @@ void MainWindow::slotShowContextualMenu(QContextMenuEvent * e)
     double a,b,c,d;
     mouseClicX = e->x();
     mouseClicY = e->y();
-    if(terre->getSelectedRectangle(&a,&b,&c,&d))
+    int compassMode = getCompassMode(mouseClicX,mouseClicY);
+
+    if(terre->getSelectedRectangle(&a,&b,&c,&d) && compassMode==0)
     {
         menuBar->ac_delAllPOIs->setEnabled(true);
         menuBar->ac_delSelPOIs->setEnabled(true);
@@ -1095,7 +1097,7 @@ void MainWindow::slotShowContextualMenu(QContextMenuEvent * e)
         //menuBar->ac_CreateGate->setEnabled(false);
     }
 
-    switch(getCompassMode(mouseClicX,mouseClicY))
+    switch(compassMode)
     {
         case 0:
             /* not showing menu line, default text*/
