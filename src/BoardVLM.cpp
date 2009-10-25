@@ -571,7 +571,7 @@ void boardVLM::synch_GPS()
 
         delete port;
         /* we will send this again in 30 secs */
-        GPS_timer->start(30*1000);
+        GPS_timer->start(Util::getSetting("GPS_DELAY",30).toInt()*1000);
     }
 }
 

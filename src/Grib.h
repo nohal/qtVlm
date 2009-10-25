@@ -135,7 +135,8 @@ class Grib
         bool getInterpolationParam(time_t now,time_t * t1,time_t * t2,GribRecord ** recU1,GribRecord ** recV1,
                            GribRecord ** recU2,GribRecord ** recV2);
         bool getInterpolatedValue_record(double px, double py,
-                                                    GribRecord *recU, GribRecord *recV, double * u, double * v);
+                                                    GribRecord *recU, GribRecord *recV,
+                                                    double * u, double * v, int * rot);
         bool getInterpolatedValue_byDates(double d_long, double d_lat, time_t now, time_t t1,time_t t2,
                                               GribRecord *recU1,GribRecord *recV1,GribRecord *recU2,GribRecord *recV2,
                                               double * u, double * v);

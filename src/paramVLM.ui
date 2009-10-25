@@ -677,7 +677,7 @@
        <x>10</x>
        <y>10</y>
        <width>311</width>
-       <height>51</height>
+       <height>81</height>
       </rect>
      </property>
      <property name="title">
@@ -703,6 +703,41 @@
        <item>
         <widget class="QLineEdit" name="serialName"/>
        </item>
+      </layout>
+     </widget>
+     <widget class="QWidget" name="">
+      <property name="geometry">
+       <rect>
+        <x>10</x>
+        <y>50</y>
+        <width>241</width>
+        <height>22</height>
+       </rect>
+      </property>
+      <layout class="QHBoxLayout" name="horizontalLayout_4">
+       <item>
+        <widget class="QLabel" name="label_18">
+         <property name="text">
+          <string>Délais d'envoi (sec)</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QSpinBox" name="spn_gpsDelay">
+         <property name="minimum">
+          <number>5</number>
+         </property>
+         <property name="maximum">
+          <number>60</number>
+         </property>
+         <property name="singleStep">
+          <number>5</number>
+         </property>
+         <property name="value">
+          <number>30</number>
+         </property>
+        </widget>
+       </item>
        <item>
         <widget class="QCheckBox" name="chk_activateEmulation">
          <property name="text">
@@ -717,9 +752,9 @@
      <property name="geometry">
       <rect>
        <x>10</x>
-       <y>120</y>
+       <y>140</y>
        <width>311</width>
-       <height>71</height>
+       <height>61</height>
       </rect>
      </property>
      <property name="title">
@@ -742,7 +777,7 @@
       <property name="geometry">
        <rect>
         <x>10</x>
-        <y>39</y>
+        <y>35</y>
         <width>281</width>
         <height>21</height>
        </rect>
@@ -753,9 +788,9 @@
      <property name="geometry">
       <rect>
        <x>10</x>
-       <y>197</y>
+       <y>207</y>
        <width>311</width>
-       <height>51</height>
+       <height>41</height>
       </rect>
      </property>
      <property name="title">
@@ -765,7 +800,7 @@
       <property name="geometry">
        <rect>
         <x>20</x>
-        <y>20</y>
+        <y>15</y>
         <width>281</width>
         <height>22</height>
        </rect>
@@ -776,9 +811,9 @@
      <property name="geometry">
       <rect>
        <x>10</x>
-       <y>66</y>
+       <y>99</y>
        <width>301</width>
-       <height>51</height>
+       <height>41</height>
       </rect>
      </property>
      <property name="title">

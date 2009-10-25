@@ -336,6 +336,9 @@ bool Grib::getInterpolationParam(time_t now,time_t * t1,time_t * t2,GribRecord *
     a -= TWO_PI;				\
   }
 
+# define _transform_back_u_v(a,b,c)		\
+   c= std::complex<double>(a * cos(b) , a * sin(b));
+
 bool Grib::getInterpolatedValue_byDates(double d_long, double d_lat, time_t now, time_t t1,time_t t2,
                                               GribRecord *recU1,GribRecord *recV1,GribRecord *recU2,GribRecord *recV2,
                                               double * u, double * v)
@@ -343,20 +346,23 @@ bool Grib::getInterpolatedValue_byDates(double d_long, double d_lat, time_t now,
     double u1,u2,v1,v2;
     double t_ratio,angle;
     double u_res,v_res;
+    int rot_1,rot_2;
+    std::complex<double> c, c01, c23;
 
     /*sanity check */
     if(!u || !v || !recU1 || !recV1)
         return false;
 
     /*interpolation for t1*/
-    if(!getInterpolatedValue_record(d_long,d_lat,recU1,recV1,&u1,&v1))
+    if(!getInterpolatedValue_record(d_long,d_lat,recU1,recV1,&u1,&v1,&rot_1))
         return false;
 
     if(recU2 && recV2) /* second interpolation*/
     {
-        if(!getInterpolatedValue_record(d_long,d_lat,recU2,recV2,&u2,&v2))
+        if(!getInterpolatedValue_record(d_long,d_lat,recU2,recV2,&u2,&v2,&rot_2))
             return false;
         /* time interpolation*/
+#if 1
         t_ratio = ((double)(now - t1)) / ((double)(t2 - t1));
 
         u_res = u1 + (u2 - u1) * t_ratio;
@@ -366,6 +372,29 @@ bool Grib::getInterpolatedValue_byDates(double d_long, double d_lat, time_t now,
         _positive_angle(v_res);
         *u=u_res;
         *v=v_res;
+#else
+        t_ratio = ((double)(now - t1)) / ((double)(t2 - t1));
+        if ((rot_1 == rot_2) || (rot_1 < 0) || (rot_2 < 0))
+        {
+            u_res = u1 + (u2 - u1) * t_ratio;
+            angle = (v2 - v1);
+            _check_angle_interp(angle);
+            v_res = v1 + (angle) * t_ratio;
+            _positive_angle(v_res);
+            *u=u_res;
+            *v=v_res;
+        }
+        else
+        {
+            _transform_back_u_v(u1, v1, c01);
+            _transform_back_u_v(u2, v2, c23);
+            c = c01 + (c23 - c01) * t_ratio;
+            u_res = std::abs(c);
+            v_res = std::arg(c);
+            *u=u_res;
+            *v=v_res;
+        }
+#endif
     }
     else
     {
@@ -374,8 +403,9 @@ bool Grib::getInterpolatedValue_byDates(double d_long, double d_lat, time_t now,
     }
     return true;
 }
-
-bool Grib::getInterpolatedValue_record(double d_long, double d_lat, GribRecord *recU, GribRecord *recV, double * u, double * v)
+#if 1
+bool Grib::getInterpolatedValue_record(double d_long, double d_lat, GribRecord *recU, GribRecord *recV,
+                                       double * u, double * v, int * rot)
 {
     double u0,u1,u2,u3,v0,v1,v2,v3;
     double u01,u23,v01,v23;
@@ -434,6 +464,91 @@ bool Grib::getInterpolatedValue_record(double d_long, double d_lat, GribRecord *
 
     return true;
 }
+#else
+
+bool Grib::getInterpolatedValue_record(double d_long, double d_lat, GribRecord *recU, GribRecord *recV,
+                                       double * u, double * v, int * rot)
+{
+    double u0,u1,u2,u3,v0,v1,v2,v3;
+    double u01,u23,v01,v23;
+    double u_val,v_val;
+    double angle;
+    int rot_step1a, rot_step1b;
+    std::complex<double> c;
+    std::complex<double> c01;
+    std::complex<double> c23;
+
+    if(!u || !v || !recU || !recV || !rot)
+        return false;
+
+    if(!recU->getValue_TWSA(d_long,d_lat,&u0,&u1,&u2,&u3))
+        return false;
+    if(!recV->getValue_TWSA(d_long,d_lat,&v0,&v1,&v2,&v3))
+        return false;
+
+    /* is there a +180 drift? see grib */
+    if (d_long < 0) {
+        d_long += 360;
+    } else if (d_long >= 360) {
+        d_long -= 360;
+    }
+    d_lat += 90; /* is there a +90 drift? see grib*/
+
+    if(recU->getDi()==0.5 || recU->getDi()==-0.5) /* is it 0.5 grib otherwise assume it is a grib with step of 1°*/
+    {
+        d_long = d_long*2.0;
+        d_lat = d_lat*2.0;
+    }
+
+    _transform_u_v(u0, v0);
+    _transform_u_v(u1, v1);
+    _transform_u_v(u2, v2);
+    _transform_u_v(u3, v3);
+
+    /* speed interpolation */
+    u01 = u0 + (u1 - u0) * (d_lat - floor(d_lat));
+    u23 = u2 + (u3 - u2) * (d_lat - floor(d_lat));
+
+
+    angle = (v1 - v0);
+    _check_angle_interp(angle);
+    rot_step1a = (angle > 0.0);
+    v01 = v0 + (angle) * (d_lat - floor(d_lat));
+    _positive_angle(v01);
+
+    angle =  (v3 - v2);
+    _check_angle_interp(angle);
+    rot_step1b = (angle > 0.0);
+    v23 = v2 + (angle) * (d_lat - floor(d_lat));
+    _positive_angle(v23);
+
+    if (rot_step1a == rot_step1b)
+    {
+        u_val = u01 + (u23 - u01) * (d_long - floor(d_long));
+
+        angle = (v23 - v01);
+        _check_angle_interp(angle);
+        *rot = (angle > 0.0);
+        v_val = v01 + (angle) * (d_long - floor(d_long));
+        _positive_angle(v_val);
+    }
+    else
+    {
+        *rot = -1;
+        /* rotations are in contrary motion, let's use UV for this */
+        _transform_back_u_v(u01, v01, c01);
+        _transform_back_u_v(u23, v23, c23);
+        c = c01 + (c23 - c01) * (d_long - floor(d_long));
+        u_val = std::abs(c);
+        v_val = std::arg(c);
+    }
+
+    *u=u_val;
+    *v=v_val;
+
+    return true;
+}
+#endif
 
 //---------------------------------------------------
 // Rectangle de la zone couverte par les données

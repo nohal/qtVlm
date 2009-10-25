@@ -87,6 +87,7 @@ paramVLM::paramVLM(QWidget * parent) : QDialog(parent)
     chk_activateEmulation->setCheckState(
          Util::getSetting("gpsEmulEnable", "0").toString()=="1"?Qt::Checked:Qt::Unchecked);
     serialName->setText(Util::getSetting("serialName", "COM2").toString());
+    spn_gpsDelay->setValue(Util::getSetting("GPS_DELAY",30).toInt());
 
     chk_forceUserAgent->setCheckState(Util::getSetting("forceUserAgent",0).toInt()==1?Qt::Checked:Qt::Unchecked);
     userAgent->setText(Util::getSetting("userAgent", "").toString());
@@ -148,6 +149,8 @@ void paramVLM::done(int result)
         /* advanced */
         Util::setSetting("gpsEmulEnable",chk_activateEmulation->checkState()==Qt::Checked?"1":"0");
         Util::setSetting("serialName", serialName->text());
+        Util::setSetting("GPS_DELAY",spn_gpsDelay->value());
+
         Util::setSetting("forceUserAgent",chk_forceUserAgent->checkState()==Qt::Checked?"1":"0");
         Util::setSetting("userAgent",userAgent->text());
 
