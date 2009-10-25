@@ -19,7 +19,7 @@ QT += network \
     xml
 CODECFORTR = UTF-8
 CODECFORSRC = UTF-8
-TRANSLATIONS = ../tr/qtVlm_en.ts
+TRANSLATIONS = ../tr/qtVlm_en.ts ../tr/qtVlm_fr.ts
 RC_FILE = qtVlm.rc
 HEADERS += BoardVLM.h \
     BoardVLM_tools.h \

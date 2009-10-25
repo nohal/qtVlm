@@ -52,7 +52,7 @@ int main(int argc, char *argv[])
         QLocale::setDefault(QLocale("fr_FR"));
         translator.load( QString("tr/qtVlm_") + lang);
         translator.load( QString("qt_fr"),
-        					QLibraryInfo::location(QLibraryInfo::TranslationsPath));
+        QLibraryInfo::location(QLibraryInfo::TranslationsPath));
         app.installTranslator(&translator);
     }
     else if (lang == "en") {

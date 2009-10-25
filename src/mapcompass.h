@@ -21,6 +21,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #ifndef MAPCOMPASS_H
 #define MAPCOMPASS_H
 
+#include <QObject>
 #include <QWidget>
 #include <QPainter>
 
@@ -31,7 +32,7 @@ class mapCompass;
 #include "MainWindow.h"
 
 class mapCompass : public QWidget
-{
+{ Q_OBJECT
     public:
         mapCompass(Projection * proj,MainWindow * main,Terrain *parentWindow=NULL);
         bool isUnder(int x, int y, bool strict);

@@ -37,7 +37,7 @@ DialogLoadGrib::DialogLoadGrib() : QDialog()
     loadgrib = new LoadGribFile();
     assert(loadgrib);
 
-    setWindowTitle(tr("Téléchargement"));
+    setWindowTitle(tr("Telechargement"));
     loadInProgress = false;
     QFrame * frameButtonsZone = createFrameButtonsZone(this);
 
@@ -95,7 +95,7 @@ void DialogLoadGrib::slotGribDataReceived(QByteArray *content, QString fileName)
     if(Util::getSetting("askGribFolder",1)==1)
     {
         fileName = QFileDialog::getSaveFileName(this,
-                         tr("Sauvegarde du fichier GRIB"), fileName, "");
+                         tr("Sauvegarde du fichier GRIB"), fileName, "Grib (*.grb)");
     }
 
     if (fileName != "")
@@ -127,7 +127,7 @@ void DialogLoadGrib::slotGribDataReceived(QByteArray *content, QString fileName)
     else {
         QMessageBox::critical (this,
                 tr("Erreur"),
-                tr("Opération abandonnée."));
+                tr("Operation abandonnee."));
         loadInProgress = false;
         btCancel->setText(tr("Annuler"));
         btOK->setEnabled(true);
@@ -220,7 +220,7 @@ void DialogLoadGrib::slotParameterUpdated()
     estime += nbWind*(head+(nbits*npts)/8+2 );
 
     estime = estime/1024;
-    slotGribMessage(tr("Taille estimée : environ %1 ko").arg(estime) );
+    slotGribMessage(tr("Taille estimee : environ %1 ko").arg(estime) );
 
     if (estime == 0)
         btOK->setEnabled(false);
@@ -330,7 +330,7 @@ QFrame *DialogLoadGrib::createFrameButtonsZone(QWidget *parent)
         ind = Util::inRange(ind, 0, cbDays->count()-1);
     cbDays->setCurrentIndex(ind);
 
-    btOK     = new QPushButton(tr("T�l�charger le fichier GRIB"), this);
+    btOK     = new QPushButton(tr("Telecharger le fichier GRIB"), this);
     assert(btOK);
     btCancel = new QPushButton(tr("Annuler"), this);
     assert(btCancel);
@@ -350,15 +350,15 @@ QFrame *DialogLoadGrib::createFrameButtonsZone(QWidget *parent)
     ftmp = new QFrame(this); ftmp->setFrameShape(QFrame::HLine); lay->addWidget( ftmp, lig,0, 1, -1);
     //-------------------------
     lig ++;
-    lay->addWidget( new QLabel(tr("Résolution :")), lig,0, Qt::AlignRight);
+    lay->addWidget( new QLabel(tr("Resolution :")), lig,0, Qt::AlignRight);
     lay->addWidget( cbResolution, lig, 1, Qt::AlignLeft );
-    lay->addWidget( new QLabel(tr(" °")), lig,2, Qt::AlignLeft);
+    lay->addWidget( new QLabel(tr("�")), lig,2, Qt::AlignLeft);
     lig ++;
     lay->addWidget( new QLabel(tr("Intervalle :")), lig,0, Qt::AlignRight);
     lay->addWidget( cbInterval, lig, 1, Qt::AlignLeft );
     lay->addWidget( new QLabel(tr(" heures")), lig,2, Qt::AlignLeft);
     lig ++;
-    lay->addWidget( new QLabel(tr("Durée :")), lig,0, Qt::AlignRight);
+    lay->addWidget( new QLabel(tr("Duree :")), lig,0, Qt::AlignRight);
     lay->addWidget( cbDays, lig, 1, Qt::AlignLeft );
     lay->addWidget( new QLabel(tr(" jours")), lig,2, Qt::AlignLeft);
     //-------------------------
@@ -369,7 +369,7 @@ QFrame *DialogLoadGrib::createFrameButtonsZone(QWidget *parent)
     labelMsg = new QLabel();
     lay->addWidget( labelMsg, lig,0, 1, -1);
     lig ++;
-    lay->addWidget(new QLabel(tr("La taille des fichiers est limitée �  20000 ko.")),lig,0,1,-1);
+    lay->addWidget(new QLabel(tr("La taille des fichiers est limitee a 20000 ko.")),lig,0,1,-1);
     //-------------------------
     lig ++;
     ftmp = new QFrame(this); ftmp->setFrameShape(QFrame::HLine); lay->addWidget( ftmp, lig,0, 1, -1);

@@ -1,35 +1,31 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE TS>
-<TS version="2.0" language="en_US" sourcelanguage="fr_FR">
+<TS version="2.0">
 <defaultcodec>UTF-8</defaultcodec>
 <context>
     <name>DialogGraphicsParams</name>
-    <message>
-        <source>Valider</source>
-        <translation>Ok</translation>
-    </message>
-    <message>
-        <source>Annuler</source>
-        <translation>Cancel</translation>
-    </message>
-    <message>
-        <source>Couleur de fond :</source>
-        <translation>Background color:</translation>
-    </message>
-    <message>
-        <source>Couleur des terres :</source>
-        <translation>Land color:</translation>
-    </message>
-    <message>
-        <source>Isobares :</source>
-        <translation>Isobars:</translation>
-    </message>
     <message>
         <source>Paramètres graphiques</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
+        <source>Valider</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Annuler</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Couleur de fond :</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <source>Couleur des océans :</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Couleur des terres :</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -44,63 +40,31 @@
         <source>Rivières :</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Isobares :</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>DialogLoadGrib</name>
     <message>
+        <source>Telechargement</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <source>Sauvegarde du fichier GRIB</source>
-        <translation>Save GRIB file</translation>
-    </message>
-    <message>
-        <source>Erreur</source>
-        <translation>Error</translation>
-    </message>
-    <message>
-        <source>Ecriture du fichier impossible.</source>
-        <translation>Can&apos;t write file.</translation>
-    </message>
-    <message>
-        <source>Erreur : </source>
-        <translation>Error: </translation>
-    </message>
-    <message>
-        <source>Stop</source>
-        <translation>Stop</translation>
-    </message>
-    <message>
-        <source>Latitude min :</source>
-        <translation>Latitude min :</translation>
-    </message>
-    <message>
-        <source>Latitude max :</source>
-        <translation>Latitude max :</translation>
-    </message>
-    <message>
-        <source>Longitude min :</source>
-        <translation>Longitude min :</translation>
-    </message>
-    <message>
-        <source>Longitude max :</source>
-        <translation>Longitude max :</translation>
-    </message>
-    <message>
-        <source>Intervalle :</source>
-        <translation>Interval :</translation>
-    </message>
-    <message>
-        <source> heures</source>
-        <translation> hours</translation>
-    </message>
-    <message>
-        <source> jours</source>
-        <translation> days</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Annuler</source>
-        <translation>Cancel</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Telechargement</source>
+        <source>Erreur</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Ecriture du fichier impossible.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -108,7 +72,15 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
+        <source>Erreur : </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <source>Taille estimee : environ %1 ko</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Stop</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -124,6 +96,22 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
+        <source>Latitude min :</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Latitude max :</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Longitude min :</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Longitude max :</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <source>Resolution :</source>
         <translation type="unfinished"></translation>
     </message>
@@ -132,7 +120,19 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
+        <source>Intervalle :</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source> heures</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <source>Duree :</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source> jours</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -143,31 +143,15 @@
 <context>
     <name>DialogProxy</name>
     <message>
+        <source>Mode de connexion à internet</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <source>Valider</source>
-        <translation>Ok</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Annuler</source>
-        <translation>Cancel</translation>
-    </message>
-    <message>
-        <source>Serveur de proxy :</source>
-        <translation>Proxy server: </translation>
-    </message>
-    <message>
-        <source>Utilisateur * :</source>
-        <translation>User * : </translation>
-    </message>
-    <message>
-        <source>Mot de passe * :</source>
-        <translation>Password * : </translation>
-    </message>
-    <message>
-        <source>Utilise les parametres de IE</source>
-        <translation>Use IE parameters</translation>
-    </message>
-    <message>
-        <source>Mode de connexion à internet</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -175,11 +159,27 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
+        <source>Utilise les parametres de IE</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <source>Connexion à travers un proxy</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
+        <source>Serveur de proxy :</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <source>Numéro de port :</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Utilisateur * :</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Mot de passe * :</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -190,71 +190,43 @@
 <context>
     <name>DialogUnits</name>
     <message>
-        <source>Valider</source>
-        <translation>Ok</translation>
-    </message>
-    <message>
-        <source>Annuler</source>
-        <translation>Cancel</translation>
-    </message>
-    <message>
-        <source>Vitesse du vent :</source>
-        <translation>Wind speed: </translation>
-    </message>
-    <message>
-        <source>m/s</source>
-        <translation></translation>
-    </message>
-    <message>
-        <source>km/h</source>
-        <translation></translation>
-    </message>
-    <message>
-        <source>Distances :</source>
-        <translation>Distances :</translation>
-    </message>
-    <message>
-        <source>mille marin</source>
-        <translation>Nautical Mile</translation>
-    </message>
-    <message>
-        <source>km</source>
-        <translation></translation>
-    </message>
-    <message>
-        <source>Longitudes :</source>
-        <translation>Longitudes:</translation>
-    </message>
-    <message>
-        <source>Est positive</source>
-        <translation>East positive</translation>
-    </message>
-    <message>
-        <source>Ouest positive</source>
-        <translation>West positive</translation>
-    </message>
-    <message>
-        <source>Latitudes :</source>
-        <translation>Latitudes:</translation>
-    </message>
-    <message>
-        <source>Nord positive</source>
-        <translation>North positive</translation>
-    </message>
-    <message>
-        <source>Sud positive</source>
-        <translation>South positive</translation>
-    </message>
-    <message>
-        <source>Auto</source>
-        <translation>Auto</translation>
-    </message>
-    <message>
         <source>Unités</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
+        <source>Valider</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Annuler</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Vitesse du vent :</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>m/s</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>km/h</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <source>nœuds</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Distances :</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>mille marin</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>km</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -273,6 +245,34 @@
         <source>dd,dd°</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Longitudes :</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Auto</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Est positive</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Ouest positive</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Latitudes :</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Nord positive</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Sud positive</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>DialogVLM_grib</name>
@@ -286,15 +286,15 @@
     </message>
     <message>
         <source>Sauvegarde du fichier GRIB</source>
-        <translation type="unfinished">Save GRIB file</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Erreur</source>
-        <translation type="unfinished">Error</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Ecriture du fichier impossible.</source>
-        <translation type="unfinished">Can&apos;t write file.</translation>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -313,7 +313,7 @@
     </message>
     <message>
         <source>Cancel</source>
-        <translation type="unfinished">Cancel</translation>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -333,23 +333,15 @@
 <context>
     <name>LoadGribFile</name>
     <message>
+        <source>Préparation du fichier sur le serveur</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <source>GetFileContent</source>
-        <translation>GetFileContent</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Taille totale : </source>
-        <translation>Total size: </translation>
-    </message>
-    <message>
-        <source>CheckSum control</source>
-        <translation>CheckSum control</translation>
-    </message>
-    <message>
-        <source>Checksum incorrect.</source>
-        <translation>Bad checksum.</translation>
-    </message>
-    <message>
-        <source>Préparation du fichier sur le serveur</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -357,164 +349,23 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
+        <source>CheckSum control</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <source>Terminé</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Checksum incorrect.</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
     <name>MainWindow</name>
     <message>
-        <source>Outils</source>
-        <translation>Tools</translation>
-    </message>
-    <message>
         <source>Erreur</source>
-        <translation>Error</translation>
-    </message>
-    <message>
-        <source>Fichier : </source>
-        <translation>File: </translation>
-    </message>
-    <message>
-        <source>Echec lors de l&apos;ouverture.</source>
-        <translation>Can&apos;t open file.</translation>
-    </message>
-    <message>
-        <source>A propos</source>
-        <translation>About</translation>
-    </message>
-    <message>
-        <source>Version : </source>
-        <translation>Version: </translation>
-    </message>
-    <message>
-        <source>Licence : GNU GPL v3</source>
-        <translation></translation>
-    </message>
-    <message>
-        <source>Fichiers GRIB (*.grb *.grib *.grb.bz2 *.grib.bz2 *.grb.gz *.grib.gz)</source>
-        <translation> GRIB files (*.grb *.grib *.grb.bz2 *.grib.bz2 *.grb.gz *.grib.gz)</translation>
-    </message>
-    <message>
-        <source>;;Autres fichiers (*)</source>
-        <translation>;;All files (*)</translation>
-    </message>
-    <message>
-        <source>Choisir un fichier GRIB</source>
-        <translation>Choose a GRIB file</translation>
-    </message>
-    <message>
-        <source>Informations sur le fichier GRIB</source>
-        <translation>GRIB file information</translation>
-    </message>
-    <message>
-        <source>Fichier : %1
-</source>
-        <translation>Fichier: %1
-</translation>
-    </message>
-    <message>
-        <source>Taille : %1 octets
-</source>
-        <translation>Size: %1 bytes
-</translation>
-    </message>
-    <message>
-        <source>
-</source>
-        <translation></translation>
-    </message>
-    <message>
-        <source>    Vent  : %1
-</source>
-        <translation>    Wind: %1
-</translation>
-    </message>
-    <message>
-        <source>Grille : %1 points (%2x%3)
-</source>
-        <translation>Grid : %1 points (%2x%3)
-</translation>
-    </message>
-    <message>
-        <source>Etendue :
-</source>
-        <translation>Area: </translation>
-    </message>
-    <message>
-        <source>%1  -&gt;  %2
-</source>
-        <translation>%1  -&gt;  %2</translation>
-    </message>
-    <message>
-        <source>ou le fichier est corrompu,</source>
-        <translation>or the file is corrupted,</translation>
-    </message>
-    <message>
-        <source>oui</source>
-        <translation>yes</translation>
-    </message>
-    <message>
-        <source>non</source>
-        <translation>no</translation>
-    </message>
-    <message>
-        <source>%1 enregistrements, </source>
-        <translation>%1 records, </translation>
-    </message>
-    <message>
-        <source>%1 dates :
-</source>
-        <translation>%1 dates:
-</translation>
-    </message>
-    <message>
-        <source>    du %1
-</source>
-        <translation>    from %1
-</translation>
-    </message>
-    <message>
-        <source>    au %1
-</source>
-        <translation>    to %1
-</translation>
-    </message>
-    <message>
-        <source>ou ce n&apos;est pas un fichier GRIB,</source>
-        <translation>or it&apos;s not a GRIB file,</translation>
-    </message>
-    <message>
-        <source>ou...</source>
-        <translation>or...</translation>
-    </message>
-    <message>
-        <source>(dist.orthodromique:</source>
-        <translation>(great circle dist:</translation>
-    </message>
-    <message>
-        <source>qtVlm - </source>
-        <translation></translation>
-    </message>
-    <message>
-        <source>qtVlm : GUI pour Virtual loup de mer</source>
-        <translation>qtVlm : GUI fo Virtual loup de mer</translation>
-    </message>
-    <message>
-        <source>http://qtvlm.sf.net</source>
-        <translation></translation>
-    </message>
-    <message>
-        <source>Grib part is originaly from zygrib project</source>
-        <translation>Grib part is originaly from zygrib project</translation>
-    </message>
-    <message>
-        <source>http://www.zygrib.org</source>
-        <translation></translation>
-    </message>
-    <message>
-        <source>POI</source>
-        <translation>POI</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Cartes non trouvées.
@@ -527,7 +378,31 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
+        <source>Outils</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>qtVlm - </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Fichier : </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Echec lors de l&apos;ouverture.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <source>Le fichier ne peut pas être ouvert,</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>ou ce n&apos;est pas un fichier GRIB,</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>ou le fichier est corrompu,</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -535,7 +410,51 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
+        <source>ou...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <source>qtVlm</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>A propos</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>qtVlm : GUI pour Virtual loup de mer</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Version : </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Licence : GNU GPL v3</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>http://qtvlm.sf.net</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Grib part is originaly from zygrib project</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>http://www.zygrib.org</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Fichiers GRIB (*.grb *.grib *.grb.bz2 *.grib.bz2 *.grb.gz *.grib.gz)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>;;Autres fichiers (*)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Choisir un fichier GRIB</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -547,11 +466,77 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
+        <source>non</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>oui</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Informations sur le fichier GRIB</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <source>Aucun fichir GRIB n&apos;est chargé.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
+        <source>Fichier : %1
+</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Taille : %1 octets
+</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>
+</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>%1 enregistrements, </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>%1 dates :
+</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>    du %1
+</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>    au %1
+</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <source>Données disponibles :
+</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>    Vent  : %1
+</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Grille : %1 points (%2x%3)
+</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Etendue :
+</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>%1  -&gt;  %2
 </source>
         <translation type="unfinished"></translation>
     </message>
@@ -562,6 +547,10 @@
     </message>
     <message>
         <source>Sélection: </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>(dist.orthodromique:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -582,7 +571,7 @@
     </message>
     <message>
         <source>Vent</source>
-        <translation type="unfinished">Wind</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>°</source>
@@ -601,6 +590,10 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
+        <source>POI</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <source>Suppression de toutes les marques</source>
         <translation type="unfinished"></translation>
     </message>
@@ -614,155 +607,19 @@ Etes-vous sur ?</source>
 <context>
     <name>MenuBar</name>
     <message>
-        <source>Ouvrir</source>
-        <translation>Open</translation>
-    </message>
-    <message>
-        <source>Ctrl+O</source>
-        <translation></translation>
-    </message>
-    <message>
-        <source>Ouvrir un fichier GRIB</source>
-        <translation>Open a GRIB file</translation>
-    </message>
-    <message>
-        <source>Fermer</source>
-        <translation>Close</translation>
-    </message>
-    <message>
-        <source>Ctrl+W</source>
-        <translation></translation>
-    </message>
-    <message>
-        <source>Ctrl+G</source>
-        <translation></translation>
-    </message>
-    <message>
-        <source>Informations sur le fichier</source>
-        <translation>File information</translation>
-    </message>
-    <message>
-        <source>Ctrl+I</source>
-        <translation></translation>
-    </message>
-    <message>
-        <source>Informations sur le fichier GRIB</source>
-        <translation>GRIB file information</translation>
-    </message>
-    <message>
-        <source>Ctrl+Q</source>
-        <translation></translation>
-    </message>
-    <message>
-        <source>Bye</source>
-        <translation></translation>
-    </message>
-    <message>
-        <source>Barbules</source>
-        <translation>Wind barbs</translation>
-    </message>
-    <message>
-        <source>Options</source>
-        <translation></translation>
-    </message>
-    <message>
-        <source>Proxy Internet</source>
-        <translation></translation>
-    </message>
-    <message>
-        <source>Ctrl+U</source>
-        <translation></translation>
-    </message>
-    <message>
-        <source>Aide</source>
-        <translation>Help</translation>
-    </message>
-    <message>
-        <source>Ctrl+H</source>
-        <translation></translation>
-    </message>
-    <message>
-        <source>English</source>
-        <translation></translation>
+        <source>QtVlm</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Quitter</source>
-        <translation>Quit</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Noms des pays</source>
-        <translation>Countries names</translation>
+        <source>Ctrl+Q</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Afficher les noms des pays</source>
-        <translation>Display countries names</translation>
-    </message>
-    <message>
-        <source>Nom des villes</source>
-        <translation>Cities names</translation>
-    </message>
-    <message>
-        <source>Aucun</source>
-        <translation>None</translation>
-    </message>
-    <message>
-        <source>Niveau 1</source>
-        <translation>Level 1</translation>
-    </message>
-    <message>
-        <source>Niveau 2</source>
-        <translation>Level 2</translation>
-    </message>
-    <message>
-        <source>Niveau 3</source>
-        <translation>Level 3</translation>
-    </message>
-    <message>
-        <source>Niveau 4</source>
-        <translation>Level 4</translation>
-    </message>
-    <message>
-        <source>Ctrl+Z</source>
-        <translation></translation>
-    </message>
-    <message>
-        <source>Carte du vent</source>
-        <translation>Wind map</translation>
-    </message>
-    <message>
-        <source>PgUp</source>
-        <translation></translation>
-    </message>
-    <message>
-        <source>PgDown</source>
-        <translation></translation>
-    </message>
-    <message>
-        <source>Distance orthodromique</source>
-        <translation>Great circle distance</translation>
-    </message>
-    <message>
-        <source>Language</source>
-        <translation></translation>
-    </message>
-    <message>
-        <source>A propos de QT</source>
-        <translation>About QT</translation>
-    </message>
-    <message>
-        <source>Ctrl+D</source>
-        <translation>Ctrl+D</translation>
-    </message>
-    <message>
-        <source></source>
-        <translation></translation>
-    </message>
-    <message>
-        <source>A propos de qtVlm</source>
-        <translation>About qtVlm</translation>
-    </message>
-    <message>
-        <source>QtVlm</source>
+        <source>Bye</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -770,11 +627,51 @@ Etes-vous sur ?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
+        <source>Ouvrir</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Ctrl+O</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Ouvrir un fichier GRIB</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Fermer</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Ctrl+W</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <source>Téléchargement</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
+        <source>Ctrl+D</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <source>Telechargement VLM</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Informations sur le fichier</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Ctrl+I</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Informations sur le fichier GRIB</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Carte du vent</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -790,12 +687,16 @@ Etes-vous sur ?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
+        <source>Barbules</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <source>Afficher les barbules sur les flèches de vent</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Bateau</source>
-        <translation type="unfinished">Boat</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Paramètres des bateaux</source>
@@ -838,11 +739,27 @@ Etes-vous sur ?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
+        <source>Options</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Proxy Internet</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <source>Unités</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
+        <source>Ctrl+U</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <source>Paramètres graphiques</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Ctrl+G</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -878,6 +795,10 @@ Etes-vous sur ?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
+        <source>Distance orthodromique</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <source>Frontières</source>
         <translation type="unfinished"></translation>
     </message>
@@ -894,7 +815,63 @@ Etes-vous sur ?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
+        <source>Noms des pays</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Afficher les noms des pays</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Nom des villes</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Aucun</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Niveau 1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Niveau 2</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Niveau 3</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Niveau 4</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Language</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <source>Français</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>English</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Aide</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Ctrl+H</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>A propos de qtVlm</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>A propos de QT</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -910,6 +887,10 @@ Etes-vous sur ?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
+        <source>Ctrl+Z</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <source>Zoomer sur la zone sélectionnée ou sur la surface du fichier Grib</source>
         <translation type="unfinished"></translation>
     </message>
@@ -922,7 +903,15 @@ Etes-vous sur ?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
+        <source>PgUp</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <source>Prévision suivante [page suiv]</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>PgDown</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -994,7 +983,7 @@ Etes-vous sur ?</source>
     </message>
     <message>
         <source>Supprimer</source>
-        <translation type="unfinished">Delete</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Copier</source>
@@ -1026,11 +1015,11 @@ Etes-vous sur ?</source>
 <context>
     <name>POI_Editor</name>
     <message>
-        <source>POI</source>
-        <translation></translation>
+        <source>Marque : </source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Marque : </source>
+        <source>POI</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -1060,11 +1049,11 @@ Etes-vous sur ?</source>
     </message>
     <message>
         <source>Aucun</source>
-        <translation type="unfinished">None</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>POI</source>
-        <translation type="unfinished">POI</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Waypoint</source>
@@ -1076,11 +1065,11 @@ Etes-vous sur ?</source>
     </message>
     <message>
         <source>OK</source>
-        <translation type="unfinished">Ok</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Cancel</source>
-        <translation type="unfinished">Cancel</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Type de marque à supprimer</source>
@@ -1095,7 +1084,7 @@ Etes-vous sur ?</source>
     </message>
     <message>
         <source>POI</source>
-        <translation type="unfinished">POI</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Waypoint</source>
@@ -1115,7 +1104,7 @@ Etes-vous sur ?</source>
     </message>
     <message>
         <source>Latitude Nord</source>
-        <translation type="unfinished">Latitude North</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <source> °</source>
@@ -1123,11 +1112,11 @@ Etes-vous sur ?</source>
     </message>
     <message>
         <source> &apos;</source>
-        <translation type="unfinished"> &apos;</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Longitude Est</source>
-        <translation type="unfinished">Longitude East</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Latitude (dd,dd)</source>
@@ -1147,15 +1136,15 @@ Etes-vous sur ?</source>
     </message>
     <message>
         <source>Valider</source>
-        <translation type="unfinished">Ok</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Annuler</source>
-        <translation type="unfinished">Cancel</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Supprimer</source>
-        <translation type="unfinished">Delete</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Copier</source>
@@ -1163,7 +1152,7 @@ Etes-vous sur ?</source>
     </message>
     <message>
         <source>Coller</source>
-        <translation type="unfinished">Paste</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Marque-&gt;WP</source>
@@ -1172,10 +1161,6 @@ Etes-vous sur ?</source>
 </context>
 <context>
     <name>POI_input_ui</name>
-    <message>
-        <source>0/0 valid WP</source>
-        <translation>0/0 valid WP</translation>
-    </message>
     <message>
         <source>Importation de marques - LAT,LON@WPH</source>
         <translation type="unfinished"></translation>
@@ -1186,15 +1171,19 @@ Etes-vous sur ?</source>
     </message>
     <message>
         <source>Ok</source>
-        <translation type="unfinished">Ok</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Cancel</source>
-        <translation type="unfinished">Cancel</translation>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>0/0 valid WP</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>POI</source>
-        <translation type="unfinished">POI</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Waypoint</source>
@@ -1279,22 +1268,6 @@ Continuer la sauvegarde?</source>
 <context>
     <name>QObject</name>
     <message>
-        <source>km/h</source>
-        <translation></translation>
-    </message>
-    <message>
-        <source>m/s</source>
-        <translation></translation>
-    </message>
-    <message>
-        <source>km</source>
-        <translation>km</translation>
-    </message>
-    <message>
-        <source>Lecture de parametre bateau</source>
-        <translation>Reading boat parameter</translation>
-    </message>
-    <message>
         <source>Lecture de polaire</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1339,6 +1312,18 @@ Continuer la sauvegarde?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
+        <source>km/h</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>m/s</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>km</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <source>dd°mm&apos;ss&quot;</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1346,27 +1331,23 @@ Continuer la sauvegarde?</source>
         <source>dd°mm,mm&apos;</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Lecture de parametre bateau</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>Terrain</name>
     <message>
         <source>  Calculs en cours...  </source>
-        <translation>  Please wait...  </translation>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
     <name>VLM_param_ui</name>
     <message>
-        <source>Emulation de GPS</source>
-        <translation>GPS emulation</translation>
-    </message>
-    <message>
-        <source>Port serie</source>
-        <translation>Serial port</translation>
-    </message>
-    <message>
         <source>Parametrage VLM</source>
-        <translation></translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Affichage</source>
@@ -1402,7 +1383,7 @@ Continuer la sauvegarde?</source>
     </message>
     <message>
         <source>POI</source>
-        <translation type="unfinished">POI</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Changer</source>
@@ -1521,6 +1502,14 @@ Continuer la sauvegarde?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
+        <source>Emulation de GPS</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Port serie</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <source>Délais d&apos;envoi (sec)</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1561,27 +1550,27 @@ Continuer la sauvegarde?</source>
     </message>
     <message>
         <source>Lon</source>
-        <translation type="unfinished">Lon</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>@WPH</source>
-        <translation type="unfinished">@WPH</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>000a00a00W</source>
-        <translation type="unfinished">000a00a00W</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>00a00a00N</source>
-        <translation type="unfinished">00a00a00N</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Paste</source>
-        <translation type="unfinished">Paste</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Clear</source>
-        <translation type="unfinished">Clear</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Copy</source>
@@ -1589,11 +1578,11 @@ Continuer la sauvegarde?</source>
     </message>
     <message>
         <source>Sauver</source>
-        <translation type="unfinished">Save</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Annuler</source>
-        <translation type="unfinished">Cancel</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Selectionner une marque</source>
@@ -1667,23 +1656,23 @@ Continuer la sauvegarde?</source>
     <name>boardVLM_ui</name>
     <message>
         <source>Form</source>
-        <translation type="unfinished">Form</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Wind</source>
-        <translation type="unfinished">Wind</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>background-color: rgb(170, 170, 255);</source>
-        <translation type="unfinished">background-color: rgb(170, 170, 255);</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>background-color: rgb(239, 243, 247);</source>
-        <translation type="unfinished">background-color: rgb(239, 243, 247);</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Angle</source>
-        <translation type="unfinished">Angle</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>+/-</source>
@@ -1691,31 +1680,31 @@ Continuer la sauvegarde?</source>
     </message>
     <message>
         <source>Speed</source>
-        <translation type="unfinished">Speed</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>99.99</source>
-        <translation type="unfinished">99.99</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>kts</source>
-        <translation type="unfinished">kts</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Dir</source>
-        <translation type="unfinished">Dir</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>999.99</source>
-        <translation type="unfinished">999.99</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>a</source>
-        <translation type="unfinished">a</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <source> Vitesse et Cap</source>
-        <translation type="unfinished">Speed and direction</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Heading</source>
@@ -1723,11 +1712,11 @@ Continuer la sauvegarde?</source>
     </message>
     <message>
         <source>Bateau</source>
-        <translation type="unfinished">Boat</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Avg</source>
-        <translation type="unfinished">Avg</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Loch</source>
@@ -1735,11 +1724,11 @@ Continuer la sauvegarde?</source>
     </message>
     <message>
         <source>9999.99</source>
-        <translation type="unfinished">9999.99</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>nm</source>
-        <translation type="unfinished">nm</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>PushButton</source>
@@ -1747,7 +1736,7 @@ Continuer la sauvegarde?</source>
     </message>
     <message>
         <source>Meilleur VMG</source>
-        <translation type="unfinished">Best VMG</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Pilote ortho</source>
@@ -1759,11 +1748,11 @@ Continuer la sauvegarde?</source>
     </message>
     <message>
         <source>Ortho</source>
-        <translation type="unfinished">Ortho</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>DNM</source>
-        <translation type="unfinished">DNM</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>VMG</source>
@@ -1775,7 +1764,7 @@ Continuer la sauvegarde?</source>
     </message>
     <message>
         <source>Score</source>
-        <translation type="unfinished">Score</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>?</source>
@@ -1783,11 +1772,11 @@ Continuer la sauvegarde?</source>
     </message>
     <message>
         <source>00a00&apos;00&apos;&apos; W</source>
-        <translation type="unfinished">00a00&apos;00&apos;&apos; W</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>000a00&apos;00&apos;&apos; W</source>
-        <translation type="unfinished">000a00&apos;00&apos;&apos; W</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Pilototo (x/x)</source>
@@ -1795,7 +1784,7 @@ Continuer la sauvegarde?</source>
     </message>
     <message>
         <source>GPS</source>
-        <translation type="unfinished">GPS</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>VLM Sync</source>
@@ -1822,11 +1811,11 @@ Continuer la sauvegarde?</source>
     </message>
     <message>
         <source>Angle</source>
-        <translation type="unfinished">Angle</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Ortho</source>
-        <translation type="unfinished">Ortho</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>BVMG</source>
@@ -1852,43 +1841,27 @@ Continuer la sauvegarde?</source>
 <context>
     <name>boatAccount_dialog</name>
     <message>
+        <source>&lt;Aucun&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <source>Boat account</source>
-        <translation>Boat account</translation>
-    </message>
-    <message>
-        <source>Login</source>
-        <translation></translation>
-    </message>
-    <message>
-        <source>Password</source>
-        <translation>Password</translation>
-    </message>
-    <message>
-        <source>Actif</source>
-        <translation>Enabled</translation>
-    </message>
-    <message>
-        <source>Ajouter</source>
-        <translation></translation>
-    </message>
-    <message>
-        <source>Modifier</source>
-        <translation>Change</translation>
-    </message>
-    <message>
-        <source>Supprimer</source>
-        <translation>Delete</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>OK</source>
-        <translation>Ok</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Cancel</source>
-        <translation>Cancel</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>&lt;Aucun&gt;</source>
+        <source>Password</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Actif</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -1904,11 +1877,27 @@ Continuer la sauvegarde?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
+        <source>Login</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <source>Polaire</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Forcer la polaire</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Ajouter</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Modifier</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Supprimer</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -1920,11 +1909,11 @@ Continuer la sauvegarde?</source>
     </message>
     <message>
         <source>Valider</source>
-        <translation type="unfinished">Ok</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Annuler</source>
-        <translation type="unfinished">Cancel</translation>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -1935,7 +1924,7 @@ Continuer la sauvegarde?</source>
     </message>
     <message>
         <source>Supprimer</source>
-        <translation type="unfinished">Delete</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Copier</source>
@@ -1979,7 +1968,7 @@ Etes-vous sur ?</source>
     </message>
     <message>
         <source>Nom</source>
-        <translation type="unfinished">Name</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Point 1</source>
@@ -1987,7 +1976,7 @@ Etes-vous sur ?</source>
     </message>
     <message>
         <source>Longitude Est</source>
-        <translation type="unfinished">Longitude East</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <source> °</source>
@@ -1995,11 +1984,11 @@ Etes-vous sur ?</source>
     </message>
     <message>
         <source> &apos;</source>
-        <translation type="unfinished"> &apos;</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Latitude Nord</source>
-        <translation type="unfinished">Latitude North</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Point 2</source>
@@ -2007,15 +1996,15 @@ Etes-vous sur ?</source>
     </message>
     <message>
         <source>Valider</source>
-        <translation type="unfinished">Ok</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Annuler</source>
-        <translation type="unfinished">Cancel</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Supprimer</source>
-        <translation type="unfinished">Delete</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Copier</source>
@@ -2023,7 +2012,7 @@ Etes-vous sur ?</source>
     </message>
     <message>
         <source>Coller</source>
-        <translation type="unfinished">Paste</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Couleur</source>
@@ -2049,7 +2038,7 @@ Etes-vous sur ?</source>
     <name>instruction_ui</name>
     <message>
         <source>Form</source>
-        <translation type="unfinished">Form</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>-</source>
@@ -2061,7 +2050,7 @@ Etes-vous sur ?</source>
     </message>
     <message>
         <source>Coller</source>
-        <translation type="unfinished">Paste</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Edit</source>
@@ -2111,7 +2100,7 @@ Etes-vous sur ?</source>
     </message>
     <message>
         <source>Nom</source>
-        <translation type="unfinished">Name</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Numéro</source>
@@ -2134,7 +2123,7 @@ Etes-vous sur ?</source>
     </message>
     <message>
         <source>Longitude Est</source>
-        <translation type="unfinished">Longitude East</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <source> °</source>
@@ -2142,7 +2131,7 @@ Etes-vous sur ?</source>
     </message>
     <message>
         <source> &apos;</source>
-        <translation type="unfinished"> &apos;</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Prochain cap</source>
@@ -2150,11 +2139,11 @@ Etes-vous sur ?</source>
     </message>
     <message>
         <source>Latitude Nord</source>
-        <translation type="unfinished">Latitude North</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Coller</source>
-        <translation type="unfinished">Paste</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Selectionner une marque</source>
@@ -2166,11 +2155,11 @@ Etes-vous sur ?</source>
     </message>
     <message>
         <source>Valider</source>
-        <translation type="unfinished">Ok</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Annuler</source>
-        <translation type="unfinished">Cancel</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Mode de pilotage</source>
@@ -2205,11 +2194,11 @@ Etes-vous sur ?</source>
     </message>
     <message>
         <source>Valider</source>
-        <translation type="unfinished">Ok</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Annuler</source>
-        <translation type="unfinished">Cancel</translation>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -2235,11 +2224,11 @@ Etes-vous sur ?</source>
     </message>
     <message>
         <source>OK</source>
-        <translation type="unfinished">Ok</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Cancel</source>
-        <translation type="unfinished">Cancel</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>XXX</source>
@@ -2307,8 +2296,7 @@ Etes-vous sur ?</source>
     <message>
         <source>Erreur ligne %1, colonne %2:
 %3</source>
-        <translation type="unfinished">Error line %1, column %2:
-%3</translation>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
