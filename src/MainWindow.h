@@ -80,6 +80,8 @@ class MainWindow: public QMainWindow
 
         void getBoatWP(float * lat,float * lon);
         bool get_selPOI_instruction();
+//        float selectedBoatgetLon();
+//        float selectedBoatgetLat();
         int getCompassMode(int m_x,int m_y);
 
     public slots:
@@ -140,6 +142,7 @@ class MainWindow: public QMainWindow
         void addPOI_list(POI * poi);
         void delPOI_list(POI * poi);
         void slotEditPOI(POI *);
+        void slotMovePOI(POI *);
         void slotDelAllPOIs(void);
         void slotDelSelPOIs(void);
         void slotCreatePOI();
@@ -197,7 +200,8 @@ class MainWindow: public QMainWindow
 
         void updatePrevNext(void);
         int getGribStep(void);
-
+        void updatePoiTip(POI*);
+        void updateRoute(void);
         Terrain      *terre;
         MenuBar      *menuBar;
         QToolBar     *toolBar;
@@ -227,7 +231,7 @@ class MainWindow: public QMainWindow
         int nxtVac_cnt;
         void drawVacInfo(void);
 
-        void closeEvent(QCloseEvent *) {QApplication::quit();};
+        void closeEvent(QCloseEvent *) {QApplication::quit();}
 
         QList<boatAccount*> acc_list;
         boatAccount_dialog * boatAcc;
@@ -241,6 +245,7 @@ class MainWindow: public QMainWindow
         xml_POIData * xmlPOI;
 
         QList<POI*> poi_list;
+        QList<POI*> route_list;
         POI_Editor * poi_editor;
 
         Pilototo * pilototo;

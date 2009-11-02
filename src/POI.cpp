@@ -52,6 +52,7 @@ POI::POI(QString name, POI_TYPE type, float lat, float lon,
 
     WPlon=WPlat=-1;
     isWp=false;
+    isMoving=false;
 
     this->proj = proj;
 
@@ -71,6 +72,7 @@ POI::POI(QString name, POI_TYPE type, float lat, float lon,
     connect(this,SIGNAL(delPOI_list(POI*)),ownerMeteotable,SLOT(delPOI_list(POI*)));
 
     connect(this,SIGNAL(editPOI(POI*)),ownerMeteotable,SLOT(slotEditPOI(POI *)));
+    connect(this,SIGNAL(movePOI(POI*)),ownerMeteotable,SLOT(slotMovePOI(POI *)));
 
     connect(this,SIGNAL(selectPOI(POI*)),ownerMeteotable,SLOT(slotPOIselected(POI*)));
 
@@ -102,6 +104,7 @@ void POI::rmSignal(void)
     disconnect(this,SIGNAL(delPOI_list(POI*)),owner,SLOT(delPOI_list(POI*)));
 
     disconnect(this,SIGNAL(editPOI(POI*)),owner,SLOT(slotEditPOI(POI *)));
+    disconnect(this,SIGNAL(movePOI(POI*)),owner,SLOT(slotMovePOI(POI *)));
 
     disconnect(this,SIGNAL(setGribDate(int)),owner,SLOT(slotSetGribDate(int)));
 
@@ -184,7 +187,28 @@ void POI::setName(QString name)
         str=name;
 
     label->setText(str);
-    setToolTip(tr("Marque") + " - " + getTypeStr() + " : "+str);
+    setToolTip(tr("Marque") + " - " + getTypeStr() + " : " + str);
+    adjustSize();
+}
+void POI::setDist(float distance,float speed, bool has_eta, QDateTime eta)
+{
+    QString str;
+    QDateTime tm;
+    tm.setTimeSpec(Qt::UTC);
+    tm.setTime_t(getTimeStamp());
+    if(getUseTimeStamp())
+        str=tm.toString("dd-hh:mm");
+    else
+        str=this->name;
+
+    label->setText(str);
+    if(!has_eta)
+        setToolTip(tr("Marque") + " - " + getTypeStr() + " : " + str + "<br>Ortho Dist from boat: "+
+                   Util::formatDistance(distance)+"<br>Initial Speed if Ortho: "+Util::formatSpeed(speed));
+    else
+        setToolTip(tr("Marque") + " - " + getTypeStr() + " : " + str + "<br>Ortho Dist from boat: "+
+                   Util::formatDistance(distance)+"<br>Initial Speed if Ortho: "+Util::formatSpeed(speed)+
+                   "<br>Estimated ETA: "+eta.toString("dd-MM-yyyy, HH:mm:ss"));
     adjustSize();
 }
 
@@ -236,6 +260,11 @@ void  POI::paintEvent(QPaintEvent *)
     pen.setWidth(1);
     pnt.setPen(pen);
     pnt.drawRect(9,0,width()-10,height()-1);
+//    qDebug()<<"before";
+//    if(chemin)
+//         delete chemin;
+//    chemin=new CHEMIN(proj,((MainWindow*)owner)->selectedBoatgetLon(),((MainWindow*)owner)->selectedBoatgetLat(),lon, lat);
+//    qDebug()<<"after";
 }
 
 //-------------------------------------------------------------------------------
@@ -257,7 +286,16 @@ void  POI::leaveEvent (QEvent *)
 //-------------------------------------------------------------------------------
 void  POI::mousePressEvent(QMouseEvent * e)
 {
-    e->ignore();
+   if (e->button() == Qt::LeftButton && e->modifiers()==Qt::ShiftModifier)
+   {
+        isMoving=true;
+        mouse_x=e->globalX();
+        mouse_y=e->globalY();
+        setCursor(Qt::BlankCursor);
+        update();
+   }
+   else
+        e->ignore();
 }
 //-------------------------------------------------------------------------------
 /*void  POI::mouseDoubleClickEvent(QMouseEvent *)
@@ -266,12 +304,27 @@ void  POI::mousePressEvent(QMouseEvent * e)
 
 void POI::mouseMoveEvent (QMouseEvent * e)
 {
-    if(((Terrain*)parent)->getHasCompassLine())
+    if(((Terrain*)parent)->getHasCompassLine() && !isMoving)
+    {
         unsetCursor();
+        e->ignore();
+    }
+    else
+    {
+        if(isMoving)
+        {
+            int new_x=x()+(e->globalX()-mouse_x);
+            int new_y=y()+(e->globalY()-mouse_y);
 
-    e->ignore();
+
+            move(new_x,new_y);
+            mouse_x=e->globalX();
+            mouse_y=e->globalY();
+        }
+        else
+            e->ignore();
+    }
 }
-
 //-------------------------------------------------------------------------------
 void POI::mouseReleaseEvent(QMouseEvent *e)
 {
@@ -280,6 +333,20 @@ void POI::mouseReleaseEvent(QMouseEvent *e)
         e->ignore();
         return;
     }
+        if(isMoving)
+        {
+            double newlon,newlat;
+            int new_x=x()+(e->globalX()-mouse_x)+3;
+            int new_y=y()+(e->globalY()-mouse_y)+height()/2;
+            proj->screen2map(new_x,new_y, &newlon, &newlat);
+            this->lon=newlon;
+            this->lat=newlat;
+            isMoving=false;
+            update();
+            emit movePOI(this);
+            return;
+        }
+
 
     if(e->x() < 0 || e->x()>width() || e->y() < 0 || e->y() > height())
     {

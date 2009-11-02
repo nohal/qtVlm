@@ -443,9 +443,18 @@ MainWindow::MainWindow(int w, int h, QWidget *parent)
         delete poi_list.takeFirst();
     while (!gate_list.isEmpty())
         delete gate_list.takeFirst();
+    while (!route_list.isEmpty())
+        delete route_list.takeFirst();
     xmlPOI = new xml_POIData(proj,this,terre);
     xmlPOI->readData(poi_list,gate_list,"poi.dat");
-
+    QListIterator<POI*> i (poi_list);
+        while(i.hasNext())
+        {
+            POI * poi = i.next();
+            if(poi->getTypeStr()=="WP")
+            route_list.append(poi);
+        }
+        qSort(route_list.begin(),route_list.end(),POI::myLessThan);
     //Porte
     while (!gate_list.isEmpty())
         delete gate_list.takeFirst();
@@ -495,11 +504,22 @@ MainWindow::~MainWindow()
 void MainWindow::addPOI_list(POI * poi)
 {
     poi_list.append(poi);
+    if(poi->getTypeStr()=="WP")
+    {
+        route_list.append(poi);
+        qSort(route_list.begin(),route_list.end(),POI::myLessThan);
+        updateRoute();
+    }
 }
 
 void MainWindow::delPOI_list(POI * poi)
 {
     poi_list.removeAll(poi);
+    if(!route_list.removeAll(poi)==0)
+    {
+        qSort(route_list.begin(),route_list.end(),POI::myLessThan);
+        updateRoute();
+    }
 }
 
 void MainWindow::addGate_list(gate * ptr)
@@ -521,6 +541,7 @@ void MainWindow::openGribFile(QString fileName, bool zoom)
         setWindowTitle(tr("qtVlm - ")+ QFileInfo(fileName).fileName());
         slotDateGribChanged_now();
         gribFileName = fileName;
+        updateRoute();
     }
     else {
         QMessageBox::critical (this,
@@ -1256,6 +1277,14 @@ void MainWindow::slotBoatUpdated(boatAccount * boat,bool newRace)
         emit boatHasUpdated(boat);
         /* send to all POI the new WP, the corresponding WP if exists will draw in a different color*/
         emit WPChanged(boat->getWPLat(),boat->getWPLon());
+        /* update distance in all POIs */
+        QListIterator<POI*> i (poi_list);
+        while(i.hasNext())
+        {
+            POI * poi = i.next();
+            updatePoiTip(poi);
+        }
+        updateRoute();
     }
 }
 
@@ -1398,6 +1427,7 @@ void MainWindow::slotAddPOI(QString name,POI::POI_TYPE type,float lat,float lon,
     poi = new POI(name,type,lat,lon, proj,
                   this, terre,wph,timestamp,useTimeStamp);
     addPOI_list(poi);
+    updatePoiTip(poi);
     poi->show();
 }
 
@@ -1531,7 +1561,14 @@ void MainWindow::slotBoatLockStatusChanged(boatAccount* boat,bool status)
         }
     }
 }
-
+//float MainWindow::selectedBoatgetLon(void)
+//{
+//    return selectedBoat->getLon();
+//}
+//float MainWindow::selectedBoatgetLat(void)
+//{
+//    return selectedBoat->getLat();
+//}
 bool MainWindow::getBoatLockStatus(void)
 {
     if(!selectedBoat)
@@ -1543,7 +1580,146 @@ bool MainWindow::getBoatLockStatus(void)
 
 void MainWindow::slotEditPOI(POI * poi)
 {
+    QString typesave=poi->getTypeStr();
+    if(typesave=="WP")
+        route_list.removeAll(poi);
     emit editPOI(poi);
+    updatePoiTip(poi);
+    if(poi->getTypeStr()=="WP")
+    {
+        route_list.append(poi);
+        qSort(route_list.begin(),route_list.end(),POI::myLessThan);
+    }
+    if(typesave=="WP" || poi->getTypeStr()=="WP")
+        updateRoute();
+}
+void MainWindow::slotMovePOI(POI * poi)
+{
+    updatePoiTip(poi);
+    if(poi->getTypeStr()=="WP")
+        updateRoute();
+    if(poi->getIsWp() && VLMBoard)
+        VLMBoard->setWP(poi->getLatitude(),poi->getLongitude(),poi->getWph());
+}
+void MainWindow::updatePoiTip(POI * poi)
+{
+    if(selectedBoat)
+    {
+        time_t eta=selectedBoat->getPrevVac();
+        Orthodromie orth(selectedBoat->getLon(), selectedBoat->getLat(), poi->getLongitude(),poi->getLatitude());
+        float   initial_distance=orth.getDistance();
+        /* compute speed if a polar is known */
+        float   speed=0;
+        bool    has_eta=false;
+        if(selectedBoat->getPolarData())
+        {
+            float angle=orth.getAzimutDeg()-selectedBoat->getWindDir();
+            if(qAbs(angle)>180)
+            {
+            if(angle<0)
+                angle=360+angle;
+            else
+                angle=angle-360;
+            }
+            speed=selectedBoat->getPolarData()->getSpeed(selectedBoat->getWindSpeed(),angle);
+        }
+        QDateTime Qeta;
+        Qeta.setTimeSpec(Qt::UTC);
+        Qeta.setTime_t(eta);
+        poi->setDist(initial_distance,speed,has_eta,Qeta );
+    }
+}
+void MainWindow::updateRoute()
+{
+    return; /* this part of code ix not activated yet */
+    if(selectedBoat && selectedBoat->getPolarData() && terre->getGrib()->isOk())
+    {
+        time_t eta=selectedBoat->getPrevVac();
+        time_t now = (QDateTime::currentDateTime()).toUTC().toTime_t();
+        if(eta < now - selectedBoat->getVacLen()) /*cas du boat inscrit depuis longtemps mais pas encore parti*/
+        {
+            eta=now;
+        }
+        float   lon=selectedBoat->getLon();
+        float   lat=selectedBoat->getLat();
+        bool    has_eta=true;
+        Orthodromie orth(0,0,0,0);
+        QListIterator<POI*> i (route_list);
+        while(i.hasNext() && has_eta)
+        {
+            POI * poi = i.next();
+            orth.setPoints(lon, lat, poi->getLongitude(),poi->getLatitude());
+            float   initial_distance=orth.getDistance();
+            float   newSpeed=0;
+            float   speed=0;
+            float   distance=0;
+            float   remaining_distance=initial_distance;
+            float   angle=orth.getAzimutDeg()-selectedBoat->getWindDir();
+            has_eta=false;
+            if(qAbs(angle)>180)
+            {
+                if(angle<0)
+                    angle=360+angle;
+                else
+                    angle=angle-360;
+            }
+            speed=selectedBoat->getPolarData()->getSpeed(selectedBoat->getWindSpeed(),angle);
+            float   lon=selectedBoat->getLon();
+            float   lat=selectedBoat->getLat();
+            float   res_lon=0;
+            float   res_lat=0;
+            float   previous_remaining_distance=0;
+            double  wind_angle=0;
+            double  wind_speed=0;
+            time_t  mult_vac=1;
+            /*
+            if(initial_distance>2400)
+                mult_vac=60;
+            else if (initial_distance>2100)
+                mult_vac=50;
+            else if (initial_distance>1200)
+                mult_vac=40;
+            else if (initial_distance>900)
+                mult_vac=30;
+            else if (initial_distance>600)
+                mult_vac=20;
+            */
+            has_eta=true;
+            do
+            {
+                if(terre->getGrib()->getInterpolatedValue_byDates((double) lon,(double) lat,
+                                          eta,&wind_speed,&wind_angle))
+                {
+                    previous_remaining_distance=remaining_distance;
+                    wind_angle=radToDeg(wind_angle);
+                    angle=orth.getAzimutDeg()-wind_angle;
+                    if(qAbs(angle)>180)
+                    {
+                        if(angle<0)
+                            angle=360+angle;
+                        else
+                            angle=angle-360;
+                    }
+                    newSpeed=selectedBoat->getPolarData()->getSpeed(wind_speed,angle);
+                    distance=newSpeed*selectedBoat->getVacLen()*mult_vac/3600.00;
+                    Util::getCoordFromDistanceAngle(lat, lon, distance,orth.getAzimutDeg(),&res_lat,&res_lon);
+                    lon=res_lon;
+                    lat=res_lat;
+                    orth.setStartPoint(lon, lat);
+                    eta= eta + selectedBoat->getVacLen()*mult_vac;
+                    remaining_distance=orth.getDistance();
+                }
+                else
+                    has_eta=false;
+            } while (remaining_distance>newSpeed*selectedBoat->getVacLen()/7200.000 && previous_remaining_distance>distance && has_eta);
+            QDateTime Qeta;
+            Qeta.setTimeSpec(Qt::UTC);
+            Qeta.setTime_t(eta);
+            poi->setDist(initial_distance,speed,has_eta,Qeta );
+            lon=poi->getLongitude();
+            lat=poi->getLatitude();
+        }
+    }
 }
 
 void MainWindow::slotEditGate(gate *curGate)

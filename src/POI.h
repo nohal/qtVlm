@@ -34,6 +34,7 @@ Copyright (C) 2008 - Jacques Zaninetti - http://zygrib.free.fr
 class POI;
 
 #include "Projection.h"
+//#include "chemin.h"
 
 //===================================================================
 class POI : public QWidget
@@ -59,6 +60,7 @@ class POI : public QWidget
         bool     getUseTimeStamp(void) {if(timeStamp==-1) return false; else return useTstamp;}
         POI_TYPE getType(void)         {return type; }
         int      getTypeMask(void)     {return typeMask; }
+        bool    getIsWp(void) {return isWp;}
 
         static QString  getTypeStr(int index);
         QString  getTypeStr(void)      {return getTypeStr(type); }
@@ -71,9 +73,9 @@ class POI : public QWidget
         void setTimeStamp    (int tstamp){this->timeStamp=tstamp;}
         void setUseTimeStamp (bool state){this->useTstamp=state;}
         void setType         (POI_TYPE type) {this->type=type;this->typeMask=(1<<type);}
-
+        void setDist         (float distance, float speed, bool has_eta, QDateTime eta);
         void doChgWP(float lat,float lon, float wph);
-
+        static bool myLessThan(POI * POI_1,POI* POI_2) {return POI_1->name < POI_2->name;}
     public slots:
         void updateProjection();
         void timerClickEvent();
@@ -90,6 +92,7 @@ class POI : public QWidget
         void addPOI_list(POI*);
         void delPOI_list(POI*);
         void editPOI(POI*);
+        void movePOI(POI*);
         void selectPOI(POI*);
         void setGribDate(int);
         void clearSelection(void);
@@ -141,6 +144,10 @@ class POI : public QWidget
 
         void chkIsWP(void);
         void rmSignal(void);
+        bool isMoving;
+        int mouse_x,mouse_y;
+//        CHEMIN * chemin;
+
 };
 
 #endif
