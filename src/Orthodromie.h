@@ -43,9 +43,9 @@ class Orthodromie
         void  setStartPoint (float x,float y);
         void  setEndPoint   (float x,float y);
 
-        float getDistance()     {return distanceNM;};
-        float getAzimutDeg()    {return azimutDeg;};
-        float getAzimutRad()    {return azimut;};
+        float getDistance()     {return distanceNM;}
+        float getAzimutDeg()    {return azimutDeg;}
+        float getAzimutRad()    {return azimut;}
 
         void  getMidPoint(float *x, float *y);
         
