@@ -32,6 +32,7 @@ Copyright (C) 2008 - Jacques Zaninetti - http://zygrib.free.fr
 #include "POI.h"
 #include "Util.h"
 #include "MainWindow.h"
+#include "chemin.h"
 
 //-------------------------------------------------------------------------------
 POI::POI(QString name, POI_TYPE type, float lat, float lon,
@@ -204,10 +205,10 @@ void POI::setDist(float distance,float speed, bool has_eta, QDateTime eta)
     label->setText(str);
     if(!has_eta)
         setToolTip(tr("Marque") + " - " + getTypeStr() + " : " + str + "<br>Ortho Dist from boat: "+
-                   Util::formatDistance(distance)+"<br>Initial Speed if Ortho: "+Util::formatSpeed(speed));
+                   Util::formatDistance(distance)+"<br>Initial Speed if Ortho: "+Util::formatSpeed(speed * 0.514444444444444 ));
     else
         setToolTip(tr("Marque") + " - " + getTypeStr() + " : " + str + "<br>Ortho Dist from boat: "+
-                   Util::formatDistance(distance)+"<br>Initial Speed if Ortho: "+Util::formatSpeed(speed)+
+                   Util::formatDistance(distance)+"<br>Initial Speed if Ortho: "+Util::formatSpeed(speed * 0.514444444444444 )+
                    "<br>Estimated ETA: "+eta.toString("dd-MM-yyyy, HH:mm:ss"));
     adjustSize();
 }
@@ -263,7 +264,7 @@ void  POI::paintEvent(QPaintEvent *)
 //    qDebug()<<"before";
 //    if(chemin)
 //         delete chemin;
-//    chemin=new CHEMIN(proj,((MainWindow*)owner)->selectedBoatgetLon(),((MainWindow*)owner)->selectedBoatgetLat(),lon, lat);
+    chemin=new CHEMIN(proj,((MainWindow*)owner)->selectedBoatgetLon(),((MainWindow*)owner)->selectedBoatgetLat(),lon, lat);
 //    qDebug()<<"after";
 }
 
