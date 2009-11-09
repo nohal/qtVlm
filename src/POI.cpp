@@ -32,7 +32,6 @@ Copyright (C) 2008 - Jacques Zaninetti - http://zygrib.free.fr
 #include "POI.h"
 #include "Util.h"
 #include "MainWindow.h"
-#include "chemin.h"
 
 //-------------------------------------------------------------------------------
 POI::POI(QString name, POI_TYPE type, float lat, float lon,
@@ -261,11 +260,6 @@ void  POI::paintEvent(QPaintEvent *)
     pen.setWidth(1);
     pnt.setPen(pen);
     pnt.drawRect(9,0,width()-10,height()-1);
-//    qDebug()<<"before";
-//    if(chemin)
-//         delete chemin;
-    chemin=new CHEMIN(proj,((MainWindow*)owner)->selectedBoatgetLon(),((MainWindow*)owner)->selectedBoatgetLat(),lon, lat);
-//    qDebug()<<"after";
 }
 
 //-------------------------------------------------------------------------------

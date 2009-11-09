@@ -80,8 +80,8 @@ class MainWindow: public QMainWindow
 
         void getBoatWP(float * lat,float * lon);
         bool get_selPOI_instruction();
-//        float selectedBoatgetLon();
-//        float selectedBoatgetLat();
+        float selectedBoatgetLon();
+        float selectedBoatgetLat();
         int getCompassMode(int m_x,int m_y);
 
     public slots:
@@ -264,6 +264,7 @@ class MainWindow: public QMainWindow
 
         gate_editor * gate_edit;
         QList<gate*> gate_list;
+        bool freeze_updateRoute;
 };
 
 #endif

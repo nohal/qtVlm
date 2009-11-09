@@ -34,7 +34,6 @@ Copyright (C) 2008 - Jacques Zaninetti - http://zygrib.free.fr
 class POI;
 
 #include "Projection.h"
-//#include "chemin.h"
 
 //===================================================================
 class POI : public QWidget
@@ -146,7 +145,6 @@ class POI : public QWidget
         void rmSignal(void);
         bool isMoving;
         int mouse_x,mouse_y;
-//        CHEMIN * chemin;
 
 };
 

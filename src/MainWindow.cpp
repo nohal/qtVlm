@@ -251,6 +251,7 @@ void MainWindow::slotGribFileReceived(QString fileName)
 MainWindow::MainWindow(int w, int h, QWidget *parent)
     : QMainWindow(parent)
 {
+    freeze_updateRoute=false;
     float prcx,prcy,scale;
     setWindowTitle("QtVlm");
     selectedBoat = NULL;
@@ -1451,7 +1452,10 @@ void MainWindow::slotChgWP(float lat,float lon, float wph)
 
 void MainWindow::slotPOIinput(void)
 {
+    freeze_updateRoute=true;
     poi_input_dialog->exec();
+    freeze_updateRoute=false;
+    updateRoute();
 }
 
 void MainWindow::slotDelAllPOIs(void)
@@ -1469,7 +1473,7 @@ void MainWindow::slotDelAllPOIs(void)
             QMessageBox::Yes | QMessageBox::No);
         if (rep != QMessageBox::Yes)
             return;
-
+        freeze_updateRoute=true;
         while(i.hasNext())
         {
             POI * poi = i.next();
@@ -1485,6 +1489,8 @@ void MainWindow::slotDelAllPOIs(void)
 
             //num++;
         }
+        freeze_updateRoute=false;
+        updateRoute();
         terre->clearSelection();
     }
 }
@@ -1504,6 +1510,7 @@ void MainWindow::slotDelSelPOIs(void)
         qWarning() << "Result is " << res_mask;
 
         QListIterator<POI*> i (poi_list);
+        freeze_updateRoute=true;
 
         while(i.hasNext())
         {
@@ -1520,6 +1527,8 @@ void MainWindow::slotDelSelPOIs(void)
                 delete poi;
             }
         }
+        freeze_updateRoute=false;
+        updateRoute();
         terre->clearSelection();
     }
 }
@@ -1561,14 +1570,14 @@ void MainWindow::slotBoatLockStatusChanged(boatAccount* boat,bool status)
         }
     }
 }
-//float MainWindow::selectedBoatgetLon(void)
-//{
-//    return selectedBoat->getLon();
-//}
-//float MainWindow::selectedBoatgetLat(void)
-//{
-//    return selectedBoat->getLat();
-//}
+float MainWindow::selectedBoatgetLon(void)
+{
+    return selectedBoat->getLon();
+}
+float MainWindow::selectedBoatgetLat(void)
+{
+    return selectedBoat->getLat();
+}
 bool MainWindow::getBoatLockStatus(void)
 {
     if(!selectedBoat)
@@ -1631,7 +1640,9 @@ void MainWindow::updatePoiTip(POI * poi)
 }
 void MainWindow::updateRoute()
 {
-    return; /* this part of code ix not activated yet */
+    return; /* this part of code is not activated yet */
+    if(freeze_updateRoute)
+        return;
     if(selectedBoat && selectedBoat->getPolarData() && terre->getGrib()->isOk())
     {
         time_t eta=selectedBoat->getPrevVac();
