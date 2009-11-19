@@ -74,7 +74,8 @@ void  mapCompass::paintEvent(QPaintEvent *)
     float WP_dist=-1;
     float angle;
     QString str;
-
+    float bvmg_up;
+    float bvmg_down;
     proj->screen2map(this->x()+size/2,this->y()+size/2,&lon,&lat);
 
     QPen pen(QColor(Qt::black));
@@ -111,10 +112,10 @@ void  mapCompass::paintEvent(QPaintEvent *)
     /* External marks */
     for(int i=0;i<360;i++)
     {
-        if(i==0)
-            pen.setColor(Qt::red);
-        else
-            pen.setColor(Qt::black);
+//        if(i==0)
+//            pen.setColor(Qt::red);
+//        else
+//            pen.setColor(Qt::black);
 
         if(i%10==0) // big marks
         {
@@ -162,7 +163,7 @@ void  mapCompass::paintEvent(QPaintEvent *)
         terre->getGrib()->getInterpolatedValue_byDates(lon,lat,
                                           terre->getGrib()->getCurrentDate(),&wind_speed,&wind_angle);
     wind_angle=radToDeg(wind_angle);
-
+    main->getBoatBvmg(&bvmg_up,&bvmg_down,wind_speed);
     pen.setColor(Qt::black);
     pnt.setPen(pen);
 
@@ -178,14 +179,27 @@ void  mapCompass::paintEvent(QPaintEvent *)
 
     /* internal marks */
     pnt.rotate(wind_angle);
+    int i_180;
     for(int i=0;i<360;i++)
     {
-        if(i==0)
+        if(i>180)
+            i_180=360-i;
+        else
+            i_180=i;
+        if((i_180<qRound(bvmg_up)  || i_180>qRound(bvmg_down)) && qRound(bvmg_up)!=-1)
             pen.setColor(Qt::red);
         else
             pen.setColor(Qt::black);
-
-        if(i%10==0) // big marks
+        pen.setStyle(Qt::SolidLine);
+        if(i_180==qRound(bvmg_up)  || i_180==qRound(bvmg_down))
+        {
+            pen.setColor(Qt::red);
+            pen.setStyle(Qt::DashLine);
+            pen.setWidth(1);
+            pnt.setPen(pen);
+            pnt.drawLine(0,0,0,-diam-30);
+        }
+        else if(i%10==0) // big marks
         {
             pen.setWidth(2);
             pnt.setPen(pen);
@@ -205,7 +219,9 @@ void  mapCompass::paintEvent(QPaintEvent *)
         }
         pnt.rotate(1);
     }
+    pen.setColor(Qt::black);
     pnt.rotate(-wind_angle);
+    pnt.setPen(pen);
 
     /* text de lattitude/longitude*/
     if(isMoving)

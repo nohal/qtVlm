@@ -80,7 +80,7 @@ Copyright (C) 2008 - Jacques Zaninetti - http://zygrib.free.fr
 
 #include "Projection.h"
 
-#define NB_URL 4
+#define NB_URL 2
 extern QString url_name[NB_URL];
 extern QString url_str[NB_URL];
 

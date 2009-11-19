@@ -22,6 +22,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <QFile>
 #include <QTextStream>
 #include <QDebug>
+#include <QDateTime>
 
 #include "Polar.h"
 
@@ -66,18 +67,10 @@ Polar::Polar(QString fname)
 
 void Polar::setPolarName(QString fname)
 {
-    int val,prev;
-    int nbWindSpeedVal;
-    int nbWindAngleVal=0;
-    float * dataLine;
-    float valFloat;
-    if(loaded)
-        clearPolar();
-    
+    clearPolar();
     loaded=false;
     name=fname;
     fname = "polar/"+fname+".pol";
-    
     QFile file(fname);
     if (!file.open(QIODevice::ReadOnly | QIODevice::Text ))
     {
@@ -97,140 +90,178 @@ void Polar::setPolarName(QString fname)
         file.close();
         return;
     }
-    list = line.split(";");
-    nbWindSpeedVal=list.count()-1;
-    getInt(1,windSpeed_min);
-    
-    getInt(2,val); /*we use val var as this can be the max*/
-    windSpeed_step=val-windSpeed_min;
-    prev = val;
-    if(windSpeed_step<0)
+    list = line.split('\t');
+    if(list[0] != "TWA\\TWS")
     {
         QMessageBox::warning(0,QObject::tr("Lecture de polaire"),
-             QString(QObject::tr("Fichier %1 invalide - step vitesse non positif")).arg(fname));
+             QString(QObject::tr("Fichier %1 invalide")).arg(fname));
         file.close();
         return;
     }
-    /*control that step is constant*/
-    for(int i=3;i<list.count();i++)
-    {
-        getInt(i,val);
-        if((val-prev)!= windSpeed_step)
-        {
-            QMessageBox::warning(0,QObject::tr("Lecture de polaire"),
-             QString(QObject::tr("Fichier %1 invalide - step vitesse non constant (speed=%2,step=%3)")).arg(fname)
-                    .arg(val).arg(val-prev));
-            file.close();
-            return;
-        }
-        prev=val;
-    }
-    windSpeed_max=val; /* val could have bee set in the loop or before windSpeed_step computation*/
-    /* we can now read the polar data */
-    nbWindAngleVal=0;
+    list.removeLast();
+    int i;
+    for(i=1;i<list.count();i++) tws.append(list[i].toFloat());
     while(true)
     {
         line=stream.readLine();
         if(line.isNull()) break;
-        list = line.split(";");
-        if(list.count()!=(nbWindSpeedVal+1))
+        list = line.split("\t");
+        twa.append(list[0].toFloat());
+        for(i=1;i<list.count();i++)
         {
-            qWarning() << "line " << nbWindAngleVal << " wrong number of data: " << list.count() << "  => nxtLine";
-            continue;
+            if(i>tws.count()) break;
+            polar_data.append(list[i].toFloat());
         }
-        nbWindAngleVal++;
-        getInt(0,val);
-        if(nbWindAngleVal==1)  /* this is the first line */
-        {
-            windAngle_min=val;
-        }
-        else
-        {
-            if(nbWindAngleVal==2) /* this is the second line => compute step */
-            {
-                windAngle_step=val-prev;
-                if(windAngle_step<0)
-                {
-                    QMessageBox::warning(0,QObject::tr("Lecture de polaire"),
-                        QString(QObject::tr("Fichier %1 invalide - step angle non positif")).arg(fname));
-                    file.close();
-                    clearPolar();
-                    return;
-                }
-            }
-            else if(windAngle_step != (val-prev)) /* we have to check if step is constant */
-            {
-                QMessageBox::warning(0,QObject::tr("Lecture de polaire"),
-                        QString(QObject::tr("Fichier %1 invalide - step angle non constant (val=%2,step=%3)"))
-                                .arg(fname).arg(val).arg(val-prev));
-                file.close();
-                clearPolar();
-                return;
-            }
-        }
-        /* we can always set the max*/
-        windAngle_max=val;
-        prev=val;
-        /* create the line */
-        dataLine = new float[nbWindSpeedVal];
-        for(int i=0;i<nbWindSpeedVal;i++)
-        {
-            getFloat(i+1,valFloat);
-            dataLine[i]=valFloat;
-        }
-        polar_data.append(dataLine);
+        while(i<=tws.count())
+            polar_data.append(0);
     }
+    mid_twa=qRound(twa.count()/2);
+    mid_tws=qRound(tws.count()/2);
+/* pre-calculate B-VMG for every tws at 0.1 precision with a twa step of 1 and then .1 */
+    float ws=0;
+    float wa=0;
+    float bvmg,bvmg_d,bvmg_u,wa_u,wa_d,wa_limit;
+    QDateTime now = (QDateTime::currentDateTime()).toUTC();
+    qWarning() << now;
+    while(true)
+    {
+        bvmg_u=bvmg_d=0;
+        while(true)
+        {
+//                qWarning()<<ws<<" "<<wa;
+//            if(qRound(ws)==30 && qRound(wa)==135)
+//                qWarning() <<"here";
+            bvmg=getSpeed(ws,wa)*cos(degToRad(wa));
+            if(bvmg_u<bvmg)
+            {
+                bvmg_u=bvmg;
+                wa_u=wa;
+            }
+            if(bvmg_d>bvmg)
+            {
+                bvmg_d=bvmg;
+                wa_d=wa;
+            }
+            wa=wa+1;
+            if(wa>180) break;
+        }
+        wa=wa_u-1;
+        wa_limit=wa_u+1;
+        if(wa<0) wa=0;
+        bvmg_u=0;
+        while(true)
+        {
+//                qWarning()<<ws<<" "<<wa;
+            bvmg=getSpeed(ws,wa)*cos(degToRad(wa));
+            if(bvmg_u<bvmg)
+            {
+                bvmg_u=bvmg;
+                wa_u=wa;
+            }
+            wa=wa+0.1;
+            if(wa>wa_limit) break;
+        }
+        wa=wa_d-1;
+        wa_limit=wa_d+1;
+        if(wa_limit>180) wa_limit=180;
+        bvmg_d=0;
+        while(true)
+        {
+//                qWarning()<<ws<<" "<<wa;
+            bvmg=getSpeed(ws,wa)*cos(degToRad(wa));
+            if(bvmg_d>bvmg)
+            {
+                bvmg_d=bvmg;
+                wa_d=wa;
+            }
+            wa=wa+0.1;
+            if(wa>wa_limit) break;
+        }
+        best_vmg_up.append(wa_u);
+        best_vmg_down.append(wa_d);
+        wa=0;
+        ws=ws+.1;
+        if(ws>60) break;
+    }
+    now = (QDateTime::currentDateTime()).toUTC();
+    qWarning() << now;
     loaded=true;
     file.close();
 }
 
 void Polar::printPolar(void)
 {
-    for(int j=0;j<(windAngle_max-windAngle_min)/windAngle_step;j++)
-    {
-        QString str=QString().setNum(j*windAngle_step)+"\t";
-        for(int i=0;i<(windSpeed_max-windSpeed_min)/windSpeed_step;i++)
-            str+=(QString().setNum((polar_data[j])[i])+"\t");
-        qWarning()<< str;
-    }
+//    for(int j=0;j<(windAngle_max-windAngle_min)/windAngle_step;j++)
+//    {
+//        QString str=QString().setNum(j*windAngle_step)+"\t";
+//        for(int i=0;i<(windSpeed_max-windSpeed_min)/windSpeed_step;i++)
+//            str+=(QString().setNum((polar_data[j])[i])+"\t");
+//        qWarning()<< str;
+//    }
 }
 
+float Polar::getBvmgUp(float windSpeed)
+{
+    return(best_vmg_up[qRound(windSpeed*10)]);
+}
+float Polar::getBvmgDown(float windSpeed)
+{
+    return(best_vmg_down[qRound(windSpeed*10)]);
+}
 float Polar::getSpeed(float windSpeed, float angle)
 {
 
-    int val;
-    int infSpeed_idx,infAngle_idx;
+    int i1,i2,k1,k2,k;
     float a,b,c,d;
     float infSpeed,supSpeed;
     float boatSpeed;
-    
-    angle=qAbs(qRound(angle));
-
-    /* ugly fix to manage out of bound angle or wind speed*/
-    if(angle>=windAngle_max) angle=windAngle_max-0.1;
-    if(angle<windAngle_min) return 0;
-
-    if(windSpeed<windSpeed_min) return 0;
-    if(windSpeed>=windSpeed_max) windSpeed=windSpeed_max-0.1;
-
-    /* find index in data structure */
-    val=(int)windSpeed;
-    infSpeed_idx=(int)(((float)(val-windSpeed_min))/windSpeed_step);
-    val=(int)angle;
-    infAngle_idx =(int)(((float)(val-windAngle_min))/windAngle_step);
-
-    /* find data */
-    a = (polar_data[infAngle_idx])[infSpeed_idx];
-    b = (polar_data[infAngle_idx+1])[infSpeed_idx];
-    c = (polar_data[infAngle_idx])[infSpeed_idx+1];
-    d = (polar_data[infAngle_idx+1])[infSpeed_idx+1];
-
-    /* compute speed: linear interpolation on angle (constant wind speed) and then on wind speed */
-    infSpeed = a + (angle-(windAngle_min+infAngle_idx*windAngle_step))*(b-a)/(windAngle_step);
-    supSpeed = c + (angle-(windAngle_min+infAngle_idx*windAngle_step))*(d-c)/(windAngle_step);
-    boatSpeed = infSpeed+(windSpeed-(windSpeed_min+infSpeed_idx*windSpeed_step))*
-            (supSpeed-infSpeed)/(windSpeed_step);
-    
+    angle=qAbs(angle);
+    if(windSpeed>tws.last()) windSpeed=tws.last();
+    if(windSpeed<tws.first()) windSpeed=tws.first();
+    if(angle>twa.last()) angle=twa.last();
+    if(angle<twa.first()) angle=twa.first();
+    if (angle>=twa[mid_twa])
+        k=mid_twa;
+    else
+        k=0;
+    for(i2=k;i2<twa.count();i2++)
+    {
+        if(angle<=twa[i2])
+            break;
+    }
+    if(twa[i2]==angle)
+        i1=i2;
+    else
+        i1=i2-1;
+    if (windSpeed>=tws[mid_tws])
+        k=mid_tws;
+    else
+        k=0;
+    for(k2=k;k2<tws.count();k2++)
+    {
+        if(windSpeed<=tws[k2])
+            break;
+    }
+    if(tws[k2]==windSpeed)
+        k1=k2;
+    else
+        k1=k2-1;
+    a=polar_data[tws.count()*i1+k1];
+    b=polar_data[tws.count()*i2+k1];
+    c=polar_data[tws.count()*i1+k2];
+    d=polar_data[tws.count()*i2+k2];
+    if(i1==i2)
+        infSpeed=a;
+    else
+        infSpeed=a+(angle-twa[i1])*(b-a)/(twa[i2]-twa[i1]);
+    if(i1==i2)
+        supSpeed=c;
+    else
+        supSpeed=c+(angle-twa[i1])*(d-c)/(twa[i2]-twa[i1]);
+    if(supSpeed==infSpeed)
+        boatSpeed=infSpeed;
+    else
+        boatSpeed=infSpeed+(windSpeed-tws[k1])*(supSpeed-infSpeed)/(tws[k2]-tws[k1]);
     return boatSpeed;
 }
 
@@ -239,8 +270,15 @@ void Polar::clearPolar(void)
 /*clear previous polar data*/
     while(polar_data.count()!=0)
     {
-        delete polar_data.last();
         polar_data.removeLast();
+    }
+    while(tws.count()!=0)
+    {
+        tws.removeLast();
+    }
+    while(twa.count()!=0)
+    {
+        twa.removeLast();
     }
 }
 

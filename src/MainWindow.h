@@ -82,6 +82,7 @@ class MainWindow: public QMainWindow
         bool get_selPOI_instruction();
         float selectedBoatgetLon();
         float selectedBoatgetLat();
+        void getBoatBvmg(float * up, float * down, float ws);
         int getCompassMode(int m_x,int m_y);
 
     public slots:

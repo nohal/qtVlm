@@ -24,6 +24,14 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <QString>
 #include <QList>
 #include <QObject>
+#include <cmath>
+#define PI     M_PI
+#define PI_2   M_PI_2
+#define PI_4   M_PI_4
+#define TWO_PI M_PI * 2
+
+#define degToRad(angle) (((angle)/180.0) * PI)
+#define radToDeg(angle) (((angle)*180.0) / PI)
 
 class Polar : public QObject
 {Q_OBJECT
@@ -33,11 +41,18 @@ class Polar : public QObject
 
         QString getName() { if(loaded) return name; else return ""; }
         float getSpeed(float windSpeed, float angle);
+        float getBvmgUp(float windSpeed);
+        float getBvmgDown(float windSpeed);
 
         int nbUsed;
 
     private:
-        QList<float*> polar_data;
+        QList<float> polar_data;
+        QList<float> tws;
+        QList<float> twa;
+        QList<float> best_vmg_up;
+        QList<float> best_vmg_down;
+        int mid_twa,mid_tws;
         bool loaded;
         QString name;
 

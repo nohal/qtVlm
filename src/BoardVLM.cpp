@@ -499,9 +499,12 @@ void boardVLM::synch_GPS()
 
         port->setTimeout(0,100);
 
-        QString data1;
         QString data;
+        QString data1;
         QString data2;
+        QString TWD;
+        QString TWA;
+        QString TWS;
         char ch;
         float lat=qAbs(currentBoat->getLat());
         int deg=((int)lat);
@@ -555,6 +558,40 @@ void boardVLM::synch_GPS()
         }
         /* one last RMC to confirm speed */
         data="GPRMC,"+now.toString("HHmmss")+",A,"+data1+data2+now.toString("ddMMyy")+",000.0,E";
+        ch=chkSum(data);
+        data="$"+data+"*"+QString().setNum(ch,16);
+        //qWarning() << "GPS-RMC: " << data;
+        data=data+"\x0D\x0A";
+        //port->write(data.toAscii(),data.length());
+        if(port->write(data.toAscii(),data.length())!=data.length())
+        {
+            delete port;
+            chk_GPS->setCheckState(Qt::Unchecked);
+            QMessageBox::warning ( this, tr("GPS synchronisation"),
+                tr("Impossible d'envoyer les donnees sur le port serie"));
+            return;
+        }
+
+        /* Sending TWD TWA and TWS , sentence $GPMWV,TWA,T,TWS,N*/
+        TWD.sprintf("%05.1f",currentBoat->getWindDir());
+        TWA.sprintf("%05.1f",(-1 * currentBoat->getTWA()));
+        TWS.sprintf("%05.1f",currentBoat->getWindSpeed());
+        data="GPMWV,"+TWA+",T,"+TWS+",N";
+        ch=chkSum(data);
+        data="$"+data+"*"+QString().setNum(ch,16);
+        //qWarning() << "GPS-RMC: " << data;
+        data=data+"\x0D\x0A";
+        //port->write(data.toAscii(),data.length());
+        if(port->write(data.toAscii(),data.length())!=data.length())
+        {
+            delete port;
+            chk_GPS->setCheckState(Qt::Unchecked);
+            QMessageBox::warning ( this, tr("GPS synchronisation"),
+                tr("Impossible d'envoyer les donnees sur le port serie"));
+            return;
+        }
+
+        data="GPMWD,"+TWD+",T,"+TWS+",N";
         ch=chkSum(data);
         data="$"+data+"*"+QString().setNum(ch,16);
         //qWarning() << "GPS-RMC: " << data;

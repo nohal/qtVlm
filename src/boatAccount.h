@@ -113,6 +113,8 @@ class boatAccount: public QWidget
         QList<position*> * getTrace(){ return &trace; }
         QString getEmail(void)       { return email; }
         bool isUpdating()            { return updating; }
+        float getBvmgUp(float ws);
+        float getBvmgDown(float ws);
 
         QString getCurrentPolarName(void) { return (forcePolar?polarName:polarVlm); }
 

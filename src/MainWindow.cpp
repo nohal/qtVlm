@@ -1791,6 +1791,25 @@ void MainWindow::slotParamChanged(void)
     emit paramVLMChanged();
 }
 
+void MainWindow::getBoatBvmg(float * up,float * down,float ws)
+{
+   if(!selectedBoat)
+   {
+       *up=-1;
+       *down=-1;
+   }
+   else
+       if(selectedBoat->getPolarData())
+       {
+            *up=selectedBoat->getBvmgUp(ws);
+            *down=selectedBoat->getBvmgDown(ws);
+       }
+       else
+       {
+            *up=-1;
+            *down=-1;
+       }
+}
 void MainWindow::getBoatWP(float * lat,float * lon)
 {
    if(!lat || !lon)

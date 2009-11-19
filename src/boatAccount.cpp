@@ -117,6 +117,16 @@ void boatAccount::selectBoat()
     emit   boatSelected(this);
 }
 
+float boatAccount::getBvmgUp(float ws)
+{
+    if(polarData) return(polarData->getBvmgUp(ws));
+    return -1;
+}
+float boatAccount::getBvmgDown(float ws)
+{
+    if(polarData) return(polarData->getBvmgDown(ws));
+    return -1;
+}
 void boatAccount::unSelectBoat(bool needUpdate)
 {
     selected = false;
