@@ -308,6 +308,23 @@ void  mapCompass::mousePressEvent(QMouseEvent * e)
             update();
         }
     }
+    if (e->button() == Qt::MidButton)
+    {
+            double lat=main->selectedBoatgetLat();
+            double lon=main->selectedBoatgetLon();
+            int new_x,new_y;
+            Util::computePos(proj,lat, lon, &new_x, &new_y);
+            if(new_x<=-(size/2))
+                return;
+            if(new_y<=-(size/2))
+                return;
+            if(new_x>(((QWidget*)(parent()))->width()-size/2))
+                return;
+            if(new_y>(((QWidget*)(parent()))->height()-size/2))
+                return;
+            int dy = height()/2;
+            move(new_x-dy, new_y-dy);
+    }
 }
 
 //-------------------------------------------------------------------------------
