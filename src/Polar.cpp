@@ -48,6 +48,7 @@ Polar::Polar(QString fname)
              QString(QObject::tr("Fichier %1 invalide")).arg(fname)); \
         file.close();          \
         clearPolar();          \
+        loaded=false;          \
         return;                \
     }                          \
 }
@@ -61,6 +62,7 @@ Polar::Polar(QString fname)
              QString(QObject::tr("Fichier %1 invalide")).arg(fname)); \
          file.close();          \
          clearPolar();          \
+         loaded=false;          \
          return;                \
     }                          \
 }
@@ -117,12 +119,12 @@ void Polar::setPolarName(QString fname)
     }
     mid_twa=qRound(twa.count()/2);
     mid_tws=qRound(tws.count()/2);
+    /* polaire chargée */
+    loaded=true;
 /* pre-calculate B-VMG for every tws at 0.1 precision with a twa step of 1 and then .1 */
     float ws=0;
     float wa=0;
     float bvmg,bvmg_d,bvmg_u,wa_u,wa_d,wa_limit;
-    QDateTime now = (QDateTime::currentDateTime()).toUTC();
-    qWarning() << now;
     while(true)
     {
         bvmg_u=bvmg_d=0;
@@ -183,9 +185,6 @@ void Polar::setPolarName(QString fname)
         ws=ws+.1;
         if(ws>60) break;
     }
-    now = (QDateTime::currentDateTime()).toUTC();
-    qWarning() << now;
-    loaded=true;
     file.close();
 }
 
@@ -202,10 +201,14 @@ void Polar::printPolar(void)
 
 float Polar::getBvmgUp(float windSpeed)
 {
+    if(!loaded)
+        return 0;
     return(best_vmg_up[qRound(windSpeed*10)]);
 }
 float Polar::getBvmgDown(float windSpeed)
 {
+    if(!loaded)
+        return 0;
     return(best_vmg_down[qRound(windSpeed*10)]);
 }
 float Polar::getSpeed(float windSpeed, float angle)
@@ -215,6 +218,10 @@ float Polar::getSpeed(float windSpeed, float angle)
     float a,b,c,d;
     float infSpeed,supSpeed;
     float boatSpeed;
+
+    if(!loaded)
+        return 0;
+
     angle=qAbs(angle);
     if(windSpeed>tws.last()) windSpeed=tws.last();
     if(windSpeed<tws.first()) windSpeed=tws.first();

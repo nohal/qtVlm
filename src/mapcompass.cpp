@@ -140,7 +140,6 @@ void  mapCompass::paintEvent(QPaintEvent *)
 
     /* WP info */
     main->getBoatWP(&WP_lat,&WP_lon);
-    qWarning() << "Wp pos: " << WP_lat << "," << WP_lon;
     if(WP_lat!=-1 && WP_lat!=0 && WP_lon!=-1 && WP_lon!=0)
     {
         Orthodromie orth(lon,lat,WP_lon,WP_lat);
