@@ -69,10 +69,12 @@ Polar::Polar(QString fname)
 
 void Polar::setPolarName(QString fname)
 {
-    clearPolar();
     loaded=false;
+    clearPolar();
+
     name=fname;
     fname = "polar/"+fname+".pol";
+
     QFile file(fname);
     if (!file.open(QIODevice::ReadOnly | QIODevice::Text ))
     {
@@ -80,6 +82,7 @@ void Polar::setPolarName(QString fname)
              QString(QObject::tr("Ne peux ouvrir le fichier %1")).arg(fname));
         return;
     }
+
     QTextStream stream(&file);
     QString line;
     QStringList list;
@@ -120,7 +123,7 @@ void Polar::setPolarName(QString fname)
     mid_twa=qRound(twa.count()/2);
     mid_tws=qRound(tws.count()/2);
     /* polaire chargée */
-    loaded=true;
+
 /* pre-calculate B-VMG for every tws at 0.1 precision with a twa step of 1 and then .1 */
     float ws=qRound(0);
     float wa=qRound(0);
@@ -131,7 +134,7 @@ void Polar::setPolarName(QString fname)
         do
         {
 //          qWarning()<<ws<<" "<<wa;
-            bvmg=getSpeed(ws,wa)*cos(degToRad(wa));
+            bvmg=myGetSpeed(ws,wa,true)*cos(degToRad(wa));
             if(bvmg_u<bvmg)
             {
                 bvmg_u=bvmg;
@@ -153,7 +156,7 @@ void Polar::setPolarName(QString fname)
         do
         {
 //                qWarning()<<ws<<" "<<wa;
-            bvmg=getSpeed(ws,wa)*cos(degToRad(wa));
+            bvmg=myGetSpeed(ws,wa,true)*cos(degToRad(wa));
             if(bvmg_u<bvmg)
             {
                 bvmg_u=bvmg;
@@ -170,7 +173,7 @@ void Polar::setPolarName(QString fname)
         do
         {
 //                qWarning()<<ws<<" "<<wa;
-            bvmg=getSpeed(ws,wa)*cos(degToRad(wa));
+            bvmg=myGetSpeed(ws,wa,true)*cos(degToRad(wa));
             if(bvmg_d>bvmg)
             {
                 bvmg_d=bvmg;
@@ -184,6 +187,7 @@ void Polar::setPolarName(QString fname)
         ws=ws+.1;
     }while(ws<=60.1);
     file.close();
+    loaded=true;
 }
 
 void Polar::printPolar(void)
@@ -211,13 +215,17 @@ float Polar::getBvmgDown(float windSpeed)
 }
 float Polar::getSpeed(float windSpeed, float angle)
 {
+    return myGetSpeed(windSpeed,angle,false);
+}
 
+float Polar::myGetSpeed(float windSpeed, float angle, bool force)
+{
     int i1,i2,k1,k2,k;
     float a,b,c,d;
     float infSpeed,supSpeed;
     float boatSpeed;
 
-    if(!loaded)
+    if(!loaded && !force)
         return 0;
 
     angle=qAbs(angle);
@@ -320,13 +328,17 @@ Polar * polarList::needPolar(QString fname)
     if(!res)
     {
         res = new Polar(fname);
-        if(res)
+        if(res && res->isLoaded())
         {
             res->nbUsed++;
             polars.append(res);
         }
+        else
+            res=NULL;
     }
 
+    if(res==NULL)
+        qWarning() << "Polar not found";
     return res;
 }
 

@@ -472,6 +472,13 @@ QString Util::getHost()
 
     host="http://";
 
+    if(num>=NB_URL)
+    {
+        qWarning() << "Updating wrong config for VLM url";
+        num=0;
+        Util::setSetting("vlm_url",0);
+    }
+
     return host+url_str[num];
 }
 

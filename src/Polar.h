@@ -43,6 +43,7 @@ class Polar : public QObject
         float getSpeed(float windSpeed, float angle);
         float getBvmgUp(float windSpeed);
         float getBvmgDown(float windSpeed);
+        bool isLoaded() { return loaded; }
 
         int nbUsed;
 
@@ -58,6 +59,8 @@ class Polar : public QObject
 
         int windSpeed_min,windSpeed_max,windSpeed_step;
         int windAngle_min,windAngle_max,windAngle_step;
+
+        float myGetSpeed(float windSpeed, float angle, bool force);
 
         void clearPolar(void);
         void setPolarName(QString fname);
