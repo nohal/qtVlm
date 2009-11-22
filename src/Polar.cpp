@@ -122,17 +122,15 @@ void Polar::setPolarName(QString fname)
     /* polaire chargée */
     loaded=true;
 /* pre-calculate B-VMG for every tws at 0.1 precision with a twa step of 1 and then .1 */
-    float ws=0;
-    float wa=0;
+    float ws=qRound(0);
+    float wa=qRound(0);
     float bvmg,bvmg_d,bvmg_u,wa_u,wa_d,wa_limit;
-    while(true)
+    do
     {
-        bvmg_u=bvmg_d=0;
-        while(true)
+        bvmg_u=bvmg_d=qRound(0);
+        do
         {
-//                qWarning()<<ws<<" "<<wa;
-//            if(qRound(ws)==30 && qRound(wa)==135)
-//                qWarning() <<"here";
+//          qWarning()<<ws<<" "<<wa;
             bvmg=getSpeed(ws,wa)*cos(degToRad(wa));
             if(bvmg_u<bvmg)
             {
@@ -144,14 +142,15 @@ void Polar::setPolarName(QString fname)
                 bvmg_d=bvmg;
                 wa_d=wa;
             }
-            wa=wa+1;
-            if(wa>180) break;
-        }
+            wa=qRound(wa+1);
+        } while(wa<=181.00);
         wa=wa_u-1;
         wa_limit=wa_u+1;
-        if(wa<0) wa=0;
-        bvmg_u=0;
-        while(true)
+        if(wa<0) wa=qRound(0);
+        if(wa_limit<1) wa_limit=qRound(1);
+        if(wa_limit>180) wa_limit=qRound(180);
+        bvmg_u=qRound(0);
+        do
         {
 //                qWarning()<<ws<<" "<<wa;
             bvmg=getSpeed(ws,wa)*cos(degToRad(wa));
@@ -161,13 +160,14 @@ void Polar::setPolarName(QString fname)
                 wa_u=wa;
             }
             wa=wa+0.1;
-            if(wa>wa_limit) break;
-        }
+        } while(wa<=(wa_limit+0.1000));
         wa=wa_d-1;
         wa_limit=wa_d+1;
-        if(wa_limit>180) wa_limit=180;
-        bvmg_d=0;
-        while(true)
+        if(wa<0) wa=qRound(0);
+        if(wa_limit<1) wa_limit=qRound(1);
+        if(wa_limit>180) wa_limit=qRound(180);
+        bvmg_d=qRound(0);
+        do
         {
 //                qWarning()<<ws<<" "<<wa;
             bvmg=getSpeed(ws,wa)*cos(degToRad(wa));
@@ -177,14 +177,12 @@ void Polar::setPolarName(QString fname)
                 wa_d=wa;
             }
             wa=wa+0.1;
-            if(wa>wa_limit) break;
-        }
+        }while(wa<=wa_limit+0.1);
         best_vmg_up.append(wa_u);
         best_vmg_down.append(wa_d);
-        wa=0;
+        wa=qRound(0);
         ws=ws+.1;
-        if(ws>60) break;
-    }
+    }while(ws<=60.1);
     file.close();
 }
 
