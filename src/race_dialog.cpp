@@ -160,13 +160,13 @@ void race_dialog::requestFinished (int ,QByteArray data)
     for(i=5;i<list_res.size();i++)
     {
         boat=list_res[i].split(";");
-        if(boat.size() < 5) /* not enough data => next line */
+        if(boat.size() < 4) /* not enough data => next line */
         {
             continue;
         }
         ptr = new boatParam();
         ptr->login=boat[1];
-        /* ex: 6936;Aarizia 4;Petit Navire;Nova_Scotia;79.94.105.194 */
+        /* ex: 6936;Aarizia 4;Petit Navire;Nova_Scotia; */
         ptr->name=boat[2];
         ptr->user_id=boat[0];
         ptr->selected=currentParam.contains(boat[0]);

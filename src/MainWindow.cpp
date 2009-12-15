@@ -1255,7 +1255,7 @@ void MainWindow::slotBoatUpdated(boatAccount * boat,bool newRace)
         int nbS,j,h,m;
         QString txt;
         QString Eta = boat->getETA();
-        QDateTime dtm =QDateTime::fromString(Eta,"yyyy-MM-dd HH:mm:ss");
+        QDateTime dtm =QDateTime::fromString(Eta,"yyyy-MM-ddTHH:mm:ssZ");
         dtm.setTimeSpec(Qt::UTC);
         QDateTime now = (QDateTime::currentDateTime()).toUTC();
         nbS=now.secsTo(dtm);
