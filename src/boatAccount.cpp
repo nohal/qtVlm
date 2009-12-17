@@ -248,8 +248,15 @@ void boatAccount::requestFinished ( int currentRequest,QByteArray res_byte)
             }
             if(boat_id!=-1)
             {
-                //qWarning() << "Get boat id " << boat_id;
                 doRequest(VLM_REQUEST_BOAT);
+            }
+            else
+            {
+                QMessageBox::warning(0,QObject::tr("Paramètre bateau"),
+                              QString("Erreur de parametrage du bateau '")+
+                              login+"'.\n Verifier le login et mot de passe puis reactivez le bateau");
+                setStatus(false);
+                emit boatUpdated(this,0);
             }
             break;
         case VLM_REQUEST_BOAT:
@@ -257,6 +264,16 @@ void boatAccount::requestFinished ( int currentRequest,QByteArray res_byte)
             newRace=false;
             vacLen=300;
             pilototo.clear();
+
+            if(res.length()<5)
+            {
+                QMessageBox::warning(0,QObject::tr("Bateau au ponton"),
+                              QString("Le bateau '")+login+"' a ete desactive car hors course");
+                setStatus(false);
+                emit boatUpdated(this,0);
+                break;
+            }
+
             for(int i=0;i<5;i++)
                 pilototo.append("none");
             lsbuf = res.split("\n");
