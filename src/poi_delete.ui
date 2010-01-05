@@ -81,7 +81,7 @@
         <item>
          <widget class="QCheckBox" name="chk_WP">
           <property name="text">
-           <string>Waypoint</string>
+           <string>Route</string>
           </property>
          </widget>
         </item>

@@ -32,50 +32,75 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #define MARK_SIZE 12
 #define DELTA 4
 
-mapCompass::mapCompass(Projection * proj,MainWindow * main,Terrain *terre) : QWidget(terre)
+mapCompass::mapCompass(Projection * proj,MainWindow * main,myCentralWidget *parent) : QGraphicsWidget()
 {
-    size = 310;
+
     isMoving=false;
+    drawCompassLine=false;
     this->proj=proj;
-    this->terre=terre;
+    this->parent=parent;
     this->main=main;
-    setGeometry(200,200,size,size);
-    setMouseTracking(true);
+
+    setPos(200,200);
+    setZValue(Z_VALUE_COMPASS);
+    setData(0,COMPASS_WTYPE);
+
+    /* compassLine */
+    compassLine = new orthoSegment(proj,parent->getScene(),Z_VALUE_COMPASS);
+    connect(parent,SIGNAL(stopCompassLine()),this,SLOT(slot_stopCompassLine()));
+    QPen penLine(QColor(Qt::white));
+    penLine.setWidthF(1.6);
+    compassLine->setLinePen(penLine);
+
+    hdg_label = new QGraphicsSimpleTextItem();
+    hdg_label->setZValue(Z_VALUE_COMPASS);
+    hdg_label->setText("Hdg:");
+    hdg_label->hide();
+    QFont fnt=hdg_label->font();
+    fnt.setBold(true);
+    hdg_label->setFont(fnt);
+    parent->getScene()->addItem(hdg_label);
+
+    windAngle_label = new QGraphicsSimpleTextItem();
+    windAngle_label->setZValue(Z_VALUE_COMPASS);
+    windAngle_label->setText("Ang:");
+    windAngle_label->hide();
+    windAngle_label->setFont(fnt);
+    parent->getScene()->addItem(windAngle_label);    
+    size = 310;
 }
 
-bool mapCompass::isUnder(int x_val, int y_val,bool strict)
+void mapCompass::slot_paramChanged(void)
 {
-    if(strict)
-    {
-        int center_x=x()+width()/2;
-        int center_y=y()+height()/2;
-        if(x_val>center_x-4 && x_val<center_x+4 && y_val>center_y-4 && y_val<center_y+4)
-            return true;
-    }
+    if(Util::getSetting("showCompass",1).toInt()==1)
+        show();
     else
-    {
-        if(x_val>x() && x_val < (x()+width()) && y_val>y() && y_val < (y()+height()))
-            return true;
-    }
-    return false;
+       hide();
 }
 
-void  mapCompass::paintEvent(QPaintEvent *)
+QRectF mapCompass::boundingRect() const
 {
+    return QRectF(0,0,size,size);
+}
 
-    QPainter pnt(this);
+QPainterPath mapCompass::shape() const
+ {
+     QPainterPath path;
+     path.addEllipse(boundingRect());
+     return path;
+ }
 
-    QFontMetrics fm(pnt.font());
+void  mapCompass::paint(QPainter * pnt, const QStyleOptionGraphicsItem * , QWidget * )
+{
+    QFontMetrics fm(pnt->font());
     int str_w,str_h,x,y;
     double wind_speed;
     double lat,lon;
-    float WP_lat,WP_lon;
+    double WP_lat,WP_lon;
     float WP_angle=-1;
-    float WP_dist=-1;
+    double WP_dist=-1;
     float angle;
-    QString str;
-    float bvmg_up;
-    float bvmg_down;
+    QString str;    
     proj->screen2map(this->x()+size/2,this->y()+size/2,&lon,&lat);
 
     QPen pen(QColor(Qt::black));
@@ -83,18 +108,18 @@ void  mapCompass::paintEvent(QPaintEvent *)
     str_h=fm.height();
     int diam=(size-2*COMPASS_MARGIN)/2;
 
-    pnt.fillRect(0,0, width(),height(), QBrush(QColor(255,255,255,00)));
+    pnt->fillRect(0,0, size,size, QBrush(QColor(255,255,255,00)));
 
     pen.setWidth(1);
-    pnt.setPen(pen);
+    pnt->setPen(pen);
 
     /* move center to center of circle */
-    pnt.translate(size/2,size/2);
+    pnt->translate(size/2,size/2);
 
     /* center cross */
 
-    pnt.drawLine(-(CROSS_SIZE/2),0,(CROSS_SIZE/2),0);
-    pnt.drawLine(0,-(CROSS_SIZE/2),0,(CROSS_SIZE/2));
+    pnt->drawLine(-(CROSS_SIZE/2),0,(CROSS_SIZE/2),0);
+    pnt->drawLine(0,-(CROSS_SIZE/2),0,(CROSS_SIZE/2));
 
     /* external compass : direction */
 
@@ -106,7 +131,7 @@ void  mapCompass::paintEvent(QPaintEvent *)
         angle=degToRad(i-90);
         x=(int)((diam+12)*cos(angle)-(float)(str_w/2));
         y=(int)((diam+12)*sin(angle)+(float)(str_h/2));
-        pnt.drawText(x,y,str);
+        pnt->drawText(x,y,str);
     }
 
     /* External marks */
@@ -120,22 +145,22 @@ void  mapCompass::paintEvent(QPaintEvent *)
         if(i%10==0) // big marks
         {
             pen.setWidth(2);
-            pnt.setPen(pen);
-            pnt.drawLine(0,-diam+MARK_SIZE,0,-diam);
+            pnt->setPen(pen);
+            pnt->drawLine(0,-diam+MARK_SIZE,0,-diam);
         }
         else if(i%5==0) // medium marks
         {
             pen.setWidth(1);
-            pnt.setPen(pen);
-            pnt.drawLine(0,-diam+MARK_SIZE,0,-diam+6);
+            pnt->setPen(pen);
+            pnt->drawLine(0,-diam+MARK_SIZE,0,-diam+6);
         }
         else if(i%1==0) // small marks
         {
             pen.setWidth(1);
-            pnt.setPen(pen);
-            pnt.drawLine(0,-diam+MARK_SIZE,0,-diam+10);
+            pnt->setPen(pen);
+            pnt->drawLine(0,-diam+MARK_SIZE,0,-diam+10);
         }
-        pnt.rotate(1);
+        pnt->rotate(1);
     }
 
     /* WP info */
@@ -145,12 +170,12 @@ void  mapCompass::paintEvent(QPaintEvent *)
         Orthodromie orth(lon,lat,WP_lon,WP_lat);
         WP_angle=qRound(orth.getAzimutDeg());
         WP_dist=orth.getDistance();
-        pnt.rotate(WP_angle);
-        pen.setColor(Qt::red);
-        pen.setWidth(2);
-        pnt.setPen(pen);
-        pnt.drawLine(0,-diam+MARK_SIZE,0,-diam+MARK_SIZE+DELTA);
-        pnt.rotate(-WP_angle);
+        pnt->rotate(WP_angle);
+        pen.setColor(Qt::white);
+        pen.setWidth(4);
+        pnt->setPen(pen);
+        pnt->drawLine(0,-diam+MARK_SIZE,0,-diam+MARK_SIZE+DELTA);
+        pnt->rotate(-WP_angle);
     }
 
     /* Internal compas : WIND */
@@ -158,13 +183,13 @@ void  mapCompass::paintEvent(QPaintEvent *)
     /* internal numbers */
     /*compute start angle = wind angle*/
     wind_angle=0;
-    if(terre->getGrib()->isOk())
-        terre->getGrib()->getInterpolatedValue_byDates(lon,lat,
-                                          terre->getGrib()->getCurrentDate(),&wind_speed,&wind_angle);
+    Grib * grib = parent->getGrib();
+    if(grib)
+        grib->getInterpolatedValue_byDates(lon,lat,grib->getCurrentDate(),&wind_speed,&wind_angle);
     wind_angle=radToDeg(wind_angle);
     main->getBoatBvmg(&bvmg_up,&bvmg_down,wind_speed);
     pen.setColor(Qt::black);
-    pnt.setPen(pen);
+    pnt->setPen(pen);
 
     for(int i=0;i<360;i+=20)
     {
@@ -173,11 +198,11 @@ void  mapCompass::paintEvent(QPaintEvent *)
         angle=degToRad((i+wind_angle)-90);
         x=(int)((diam-2*MARK_SIZE-4*DELTA)*cos(angle)-(float)(str_w/2));
         y=(int)((diam-2*MARK_SIZE-4*DELTA)*sin(angle)+(float)(str_h/2));
-        pnt.drawText(x,y,str);
+        pnt->drawText(x,y,str);
     }
 
     /* internal marks */
-    pnt.rotate(wind_angle);
+    pnt->rotate(wind_angle);
     int i_180;
     for(int i=0;i<360;i++)
     {
@@ -195,32 +220,32 @@ void  mapCompass::paintEvent(QPaintEvent *)
             pen.setColor(Qt::red);
             pen.setStyle(Qt::DashLine);
             pen.setWidth(1);
-            pnt.setPen(pen);
-            pnt.drawLine(0,0,0,-diam-30);
+            pnt->setPen(pen);
+            pnt->drawLine(0,0,0,-diam-30);
         }
         else if(i%10==0) // big marks
         {
             pen.setWidth(2);
-            pnt.setPen(pen);
-            pnt.drawLine(0,-diam+DELTA+MARK_SIZE,0,-diam+DELTA+2*MARK_SIZE);
+            pnt->setPen(pen);
+            pnt->drawLine(0,-diam+DELTA+MARK_SIZE,0,-diam+DELTA+2*MARK_SIZE);
         }
         else if(i%5==0) // medium marks
         {
             pen.setWidth(1);
-            pnt.setPen(pen);
-            pnt.drawLine(0,-diam+DELTA+MARK_SIZE,0,-diam+DELTA+2*MARK_SIZE-6);
+            pnt->setPen(pen);
+            pnt->drawLine(0,-diam+DELTA+MARK_SIZE,0,-diam+DELTA+2*MARK_SIZE-6);
         }
         else if(i%1==0) // small marks
         {
             pen.setWidth(1);
-            pnt.setPen(pen);
-            pnt.drawLine(0,-diam+DELTA+MARK_SIZE,0,-diam+DELTA+2*MARK_SIZE-10);
+            pnt->setPen(pen);
+            pnt->drawLine(0,-diam+DELTA+MARK_SIZE,0,-diam+DELTA+2*MARK_SIZE-10);
         }
-        pnt.rotate(1);
+        pnt->rotate(1);
     }
     pen.setColor(Qt::black);
-    pnt.rotate(-wind_angle);
-    pnt.setPen(pen);
+    pnt->rotate(-wind_angle);
+    pnt->setPen(pen);
 
     /* text de lattitude/longitude*/
     if(isMoving)
@@ -228,10 +253,10 @@ void  mapCompass::paintEvent(QPaintEvent *)
         QString lat_txt,lon_txt,wind_txt,s,WP_txt;
         int lat_w,wind_w,WP_w;
 
-        QFont fnt=pnt.font();
+        QFont fnt=pnt->font();
         fnt.setBold(true);
         QFontMetrics fm2(fnt);
-        pnt.setFont(fnt);
+        pnt->setFont(fnt);
         str_h=fm.height();
 
         lat_txt=Util::pos2String(TYPE_LAT,lat);
@@ -241,9 +266,9 @@ void  mapCompass::paintEvent(QPaintEvent *)
         lat_w=fm2.width(lat_txt);
         wind_w=fm2.width(wind_txt);
 
-        pnt.drawText(-lat_w-2,-str_h/2,lat_txt);
-        pnt.drawText(2,-str_h/2,lon_txt);
-        pnt.drawText(-wind_w/2,-str_h/2-str_h,wind_txt);
+        pnt->drawText(-lat_w-2,-str_h/2,lat_txt);
+        pnt->drawText(2,-str_h/2,lon_txt);
+        pnt->drawText(-wind_w/2,-str_h/2-str_h,wind_txt);
 
         /* WP Data */
         if(WP_angle!=-1)
@@ -259,118 +284,181 @@ void  mapCompass::paintEvent(QPaintEvent *)
             s.sprintf("%.0f", WP_angle);
             WP_txt=tr("WP: ") + s + tr("°");
             WP_w=fm2.width(WP_txt);
-            pnt.drawText(-WP_w/2,str_h,WP_txt);
+            pnt->drawText(-WP_w/2,str_h,WP_txt);
 
             s.sprintf("%.0f", WP_windAngle);
             WP_txt=tr("WP%vent: ") + s + tr("°");
             WP_w=fm2.width(WP_txt);
-            pnt.drawText(-WP_w/2,2*str_h,WP_txt);
+            pnt->drawText(-WP_w/2,2*str_h,WP_txt);
 
             s.sprintf("%.1f", WP_dist);
             WP_txt=tr("WP: ") + s + tr(" nm");
             WP_w=fm2.width(WP_txt);
-            pnt.drawText(-WP_w/2,3*str_h,WP_txt);
+            pnt->drawText(-WP_w/2,3*str_h,WP_txt);
 
         }
     }
 }
 
-//-------------------------------------------------------------------------------
-void  mapCompass::enterEvent (QEvent *)
-{
-    if(!terre->getHasCompassLine())
-    {
-        //enterCursor = cursor();
-        setCursor(Qt::PointingHandCursor);
-    }
-
-}
-//-------------------------------------------------------------------------------
-void  mapCompass::leaveEvent (QEvent *)
-{
-    //unsetCursor();
-}
-
-void  mapCompass::mousePressEvent(QMouseEvent * e)
+void  mapCompass::mousePressEvent(QGraphicsSceneMouseEvent * e)
 {
     if (e->button() == Qt::LeftButton)
     {
-        if(terre->getHasCompassLine())
-            e->ignore();
-        else
+        if(!drawCompassLine)
         {
             isMoving=true;
             mouseEvt=false;
-            mouse_x=e->globalX();
-            mouse_y=e->globalY();
-            setCursor(Qt::BlankCursor);
+            mouse_x=e->scenePos().x();
+            mouse_y=e->scenePos().y();
             update();
         }
     }
     if (e->button() == Qt::MidButton)
     {
-            double lat=main->selectedBoatgetLat();
-            double lon=main->selectedBoatgetLon();
-            int new_x,new_y;
-            Util::computePos(proj,lat, lon, &new_x, &new_y);
-            if(new_x<=-(size/2))
-                return;
-            if(new_y<=-(size/2))
-                return;
-            if(new_x>(((QWidget*)(parent()))->width()-size/2))
-                return;
-            if(new_y>(((QWidget*)(parent()))->height()-size/2))
-                return;
-            int dy = height()/2;
-            move(new_x-dy, new_y-dy);
+        double lat,lon;
+        main->get_selectedBoatPos(&lat,&lon);
+        int new_x=0;
+        int new_y=0;
+        Util::computePos(proj,lat, lon, &new_x, &new_y);
+        if(new_x<=-(size/2))
+            return;
+        if(new_y<=-(size/2))
+            return;
+
+        if(new_x>(parent->width()-size/2))
+            return;
+        if(new_y>(parent->height()-size/2))
+            return;
+        setPos(new_x-size/2, new_y-size/2);
     }
 }
 
 //-------------------------------------------------------------------------------
-void  mapCompass::mouseReleaseEvent(QMouseEvent *e)
+void  mapCompass::mouseReleaseEvent(QGraphicsSceneMouseEvent *e)
 {
     if (e->button() == Qt::LeftButton)
     {
-        if(terre->getHasCompassLine())
-            e->ignore();
-        else
+        if(!drawCompassLine)
         {
             isMoving=false;
-            setCursor(Qt::PointingHandCursor);
             update();
         }
     }
 }
 
-void mapCompass::slotMouseDblClicked(QMouseEvent * e)
+bool mapCompass::tryMoving(int x, int y)
 {
-    e->ignore();
-}
+    if(drawCompassLine)
+    {
+        // show heading and wind angle label
+        updateCompassLineLabels(x, y);
 
-void  mapCompass::mouseMoveEvent (QMouseEvent * e)
-{
+        compassLine->moveSegment(x,y);
+        return true;
+    }
+
     if(isMoving)
     {
-        int new_x=x()+(e->globalX()-mouse_x);
-        int new_y=y()+(e->globalY()-mouse_y);
+        int new_x=this->x()+(x-mouse_x);
+        int new_y=this->y()+(y-mouse_y);
 
         if(new_x<=-(size/2))
             new_x=-size/2;
         if(new_y<=-(size/2))
             new_y=-size/2;
-        if(new_x>(((QWidget*)(parent()))->width()-size/2))
-            new_x=((QWidget*)(parent()))->width()-size/2;
-        if(new_y>(((QWidget*)(parent()))->height()-size/2))
-            new_y=((QWidget*)(parent()))->height()-size/2;
 
-        move(new_x,new_y);
-        mouse_x=e->globalX();
-        mouse_y=e->globalY();
+        if(new_x>(parent->width()-size/2))
+            new_x=parent->width()-size/2;
+        if(new_y>(parent->height()-size/2))
+            new_y=parent->height()-size/2;
+
+        setPos(new_x,new_y);
+        mouse_x=x;
+        mouse_y=y;
+        return true;
+    }
+    else
+        return false;
+}
+
+void mapCompass::updateCompassLineLabels(int x, int y)
+{
+    double pos_angle,pos_wind_angle;
+    double xa,xb,ya,yb;
+    proj->screen2map(this->x()+size/2,this->y()+size/2,&xa,&ya);
+    proj->screen2map(x,y,&xb,&yb);
+    Orthodromie orth(xa,ya,xb,yb);
+    pos_angle=qRound(orth.getAzimutDeg());
+    hdg_label->setText(QString().sprintf("Hdg: %.0f %c",pos_angle,176));
+    /* attention wind_angle, bvmg_up et bvmg_down sont calcules dans paint */
+    bool drawWindAngle=true;
+    if(!parent->getGrib())
+        drawWindAngle=false;
+
+    if(drawWindAngle)
+    {
+        pos_wind_angle=pos_angle-wind_angle;
+        if(qAbs(pos_wind_angle)>180)
+        {
+            if(pos_wind_angle<0)
+                pos_wind_angle=360+pos_wind_angle;
+            else
+                pos_wind_angle=pos_wind_angle-360;
+        }
+
+        if(qAbs(pos_wind_angle)< bvmg_up || qAbs(pos_wind_angle)> bvmg_down)
+            windAngle_label->setBrush(QColor(Qt::red));
+        else
+            windAngle_label->setBrush(QColor(Qt::black));
+
+        windAngle_label->setText(QString().sprintf("Ang: %.0f %c",pos_wind_angle,176));
+        windAngle_label->show();
+    }
+    else
+        windAngle_label->hide();
+
+    if( (pos_angle>285 && pos_angle<=360) || (pos_angle>=0 && pos_angle<75) || (pos_angle>105 && pos_angle<255)) /* horizontal */
+    {
+        if(drawWindAngle)
+        {
+             hdg_label->setPos(x-hdg_label->boundingRect().width()-10,y-hdg_label->boundingRect().height()/2);
+             windAngle_label->setPos(x+10,y-windAngle_label->boundingRect().height()/2);
+        }
+         else
+             hdg_label->setPos(x-hdg_label->boundingRect().width()/2,y-hdg_label->boundingRect().height()/2);
+    }
+    else /* vertical */
+    {
+        if(drawWindAngle)
+        {
+            hdg_label->setPos(x-hdg_label->boundingRect().width()/2,y-hdg_label->boundingRect().height()-10);
+            windAngle_label->setPos(x-windAngle_label->boundingRect().width()/2,y+10);
+        }
+        else
+            hdg_label->setPos(x-hdg_label->boundingRect().width()/2,y-hdg_label->boundingRect().height()-10);
+    }
+}
+
+void mapCompass::slot_stopCompassLine(void)
+{
+    if(drawCompassLine) /* toggle compass line only if it is ON */
+        slot_compassLine(0,0);
+}
+
+void mapCompass::slot_compassLine(int click_x, int click_y)
+{
+    drawCompassLine=!drawCompassLine;
+    if(drawCompassLine)
+    {
+        windAngle_label->show();
+        hdg_label->show();
+        updateCompassLineLabels(click_x,click_y);
+        compassLine->initSegment(this->x()+size/2,this->y()+size/2, click_x,click_y);
     }
     else
     {
-        if(terre->getHasCompassLine())
-            unsetCursor();        
+        windAngle_label->hide();
+        hdg_label->hide();
+        compassLine->hideSegment();
     }
-    e->ignore();
 }

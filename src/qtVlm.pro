@@ -19,7 +19,8 @@ QT += network \
     xml
 CODECFORTR = UTF-8
 CODECFORSRC = UTF-8
-TRANSLATIONS = ../tr/qtVlm_en.ts ../tr/qtVlm_fr.ts
+TRANSLATIONS = ../tr/qtVlm_en.ts \
+    ../tr/qtVlm_fr.ts
 RC_FILE = qtVlm.rc
 HEADERS += BoardVLM.h \
     BoardVLM_tools.h \
@@ -61,7 +62,12 @@ HEADERS += BoardVLM.h \
     mapcompass.h \
     gate.h \
     gate_editor.h \
-    POI_delete.h
+    POI_delete.h \
+    mycentralwidget.h \
+    orthoSegment.h \
+    selectionWidget.h \
+    vlmLine.h \
+    Font.h
 FORMS += boatAccount_dialog.ui \
     BoardVLM.ui \
     paramVLM.ui \
@@ -116,7 +122,12 @@ SOURCES += BoardVLM.cpp \
     mapcompass.cpp \
     gate.cpp \
     gate_editor.cpp \
-    POI_delete.cpp
+    POI_delete.cpp \
+    mycentralwidget.cpp \
+    orthoSegment.cpp \
+    selectionWidget.cpp \
+    vlmLine.cpp \
+    Font.cpp
 DEFINES = QT_$$[QT_VERSION]
 DEFINES ~= s/\./_
 DEFINES ~= s/-.*/

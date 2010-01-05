@@ -37,24 +37,25 @@ class POI_Editor;
 //-------------------------------------------------------
 // POI_Editor: Constructor for edit an existing POI
 //-------------------------------------------------------
-POI_Editor::POI_Editor(MainWindow * main, Terrain * terre)
-    : QDialog(terre)
+POI_Editor::POI_Editor(MainWindow * main,myCentralWidget * parent)
+    : QDialog(parent)
 {
     setupUi(this);
 
     this->poi = NULL;
-    this->terre=terre;
+    this->parent=parent;
     this->main=main;
 
     lock=true;
     modeCreation=false;
 
-    connect(this,SIGNAL(addPOI_list(POI*)),main,SLOT(addPOI_list(POI*)));
-    connect(this,SIGNAL(delPOI_list(POI*)),main,SLOT(delPOI_list(POI*)));
+    connect(this,SIGNAL(addPOI_list(POI*)),parent,SLOT(slot_addPOI_list(POI*)));
+    connect(this,SIGNAL(updateRoute()),parent,SLOT(slot_updateRoute()));
+    connect(this,SIGNAL(delPOI_list(POI*)),parent,SLOT(slot_delPOI_list(POI*)));
 
-    connect(main, SIGNAL(editPOI(POI*)),this, SLOT(editPOI(POI*)));
-    connect(main, SIGNAL(newPOI(float,float,Projection *)),
-            this, SLOT(newPOI(float,float,Projection *)));
+    connect(main, SIGNAL(newPOI(float,float,Projection *, boatAccount *)),
+            this, SLOT(newPOI(float,float,Projection *, boatAccount *)));
+    connect(this,SIGNAL(doChgWP(float,float,float)),main,SLOT(slotChgWP(float,float,float)));
 }
 
 void POI_Editor::editPOI(POI * poi_)
@@ -68,12 +69,12 @@ void POI_Editor::editPOI(POI * poi_)
     exec();
 }
 
-void POI_Editor::newPOI(float lon, float lat,Projection *proj)
+void POI_Editor::newPOI(float lon, float lat,Projection *proj, boatAccount *boat)
 {
     //=> set name
     modeCreation = true;
-    this->poi = new POI(tr("POI"), POI::TYPE_POI,lat, lon, proj, main,
-                        terre, -1,-1,false);
+    this->poi = new POI(tr("POI"), POI_TYPE_POI,lat, lon, proj, main,
+                        parent, -1,-1,false, boat);
     initPOI();
     setWindowTitle(tr("Nouvelle marque"));
     btDelete->setEnabled(false);
@@ -126,21 +127,25 @@ void POI_Editor::done(int result)
         poi->setTimeStamp(tm.toTime_t());
         poi->setUseTimeStamp(chk_tstamp->checkState()==Qt::Checked);
 
-        poi->setName((editName->text()).trimmed() );
         poi->setLongitude(getValue(POI_EDT_LON));
         poi->setLatitude (getValue(POI_EDT_LAT));
-        poi->setType((POI::POI_TYPE)POI_type_liste->currentIndex());
-//qWarning() << "POI type set to " << poi->getType() << " mask is " << poi->getTypeMask();
+        int oldtype=poi->getType();
+        poi->setType(POI_type_liste->currentIndex());
+        poi->setName((editName->text()).trimmed() );
         if(editWph->text().isEmpty())
             poi->setWph(-1);
         else
             poi->setWph(editWph->text().toFloat());
-        poi->updateProjection();
+        poi->slot_updateProjection();
 
         if (modeCreation) {
             poi->show();
             emit addPOI_list(poi);
         }
+        if(oldtype==1 || poi->getType()==1) emit updateRoute();
+        if(poi->getIsWp()) emit doChgWP(poi->getLatitude(),poi->getLongitude(),poi->getWph());
+
+
     }
 
     if(result == QDialog::Rejected)
@@ -161,7 +166,7 @@ void POI_Editor::btDeleteClicked()
             QMessageBox::Yes | QMessageBox::No);
         if (rep == QMessageBox::Yes)
         {
-            delPOI_list(poi);
+            emit delPOI_list(poi);
             poi->close();
             QDialog::done(QDialog::Accepted);
         }
@@ -217,7 +222,7 @@ void POI_Editor::btSaveWPClicked()
         wph=-1;
     else
         wph=editWph->text().toFloat();
-    poi->doChgWP(getValue(POI_EDT_LAT),getValue(POI_EDT_LON),wph);
+    emit doChgWP(getValue(POI_EDT_LAT),getValue(POI_EDT_LON),wph);
     done(QDialog::Accepted);
 }
 

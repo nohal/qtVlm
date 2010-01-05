@@ -77,7 +77,7 @@ class Grib
         bool getZoneExtension (double *x0,double *y0, double *x1,double *y1);
 
         void setCurrentDate(time_t t) { currentDate = t; }
-        time_t      getCurrentDate()         {return currentDate;}
+        time_t      getCurrentDate()         {if(isOk()) return currentDate; else return 0;}
 
         // Carte de couleurs du vent
         void draw_WIND_Color(QPainter &pnt, const Projection *proj, bool smooth,

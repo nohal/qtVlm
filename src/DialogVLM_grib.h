@@ -28,16 +28,21 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "inetConnexion.h"
 #include "ui_DialogVLM_grib.h"
 
+class DialogVLM_grib;
+
+#include "mycentralwidget.h"
+#include "MainWindow.h"
+
 class DialogVLM_grib : public QDialog, public Ui::DialogVLM_grib_ui
 {
     Q_OBJECT
     public:
-        DialogVLM_grib(QWidget * main,QWidget * parent = 0);
+        DialogVLM_grib(MainWindow * main,myCentralWidget * parent);
         void done(int res);
         void showDialog(void);
 
     public slots:
-        void requestFinished (int,QByteArray);
+        void slot_requestFinished (int,QByteArray);
 
     signals:
         void signalGribFileReceived(QString);

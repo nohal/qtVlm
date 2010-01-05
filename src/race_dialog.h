@@ -24,6 +24,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #define RACE_DIALOG_H
 
 #include <QDialog>
+#include <QMessageBox>
 
 #include "ui_race_dialog.h"
 
@@ -32,6 +33,8 @@ class race_dialog;
 #include "opponentBoat.h"
 #include "boatAccount.h"
 #include "inetConnexion.h"
+#include "MainWindow.h"
+#include "mycentralwidget.h"
 
 struct boatParam {
     QString login;
@@ -49,7 +52,7 @@ struct raceParam {
 class race_dialog : public QDialog, public Ui::race_dialog_ui
 { Q_OBJECT
     public:
-        race_dialog(QWidget * main,QWidget * parent = 0);
+        race_dialog(MainWindow * main,myCentralWidget * parent);
         ~race_dialog();
         void done(int result);
         void initList(QList<boatAccount*> & acc_list,QList<raceData*> & race_list);
@@ -60,11 +63,12 @@ class race_dialog : public QDialog, public Ui::race_dialog_ui
         void delBoat(void);
         void delAllBoat(void);
         void doSynch(void);
-        void requestFinished (int,QByteArray);
+        void slot_requestFinished (int,QByteArray);
 
     signals:
-        void readBoat(void);
+        void readRace(void);
         void writeBoat(void);
+        void updateOpponent(void);
 
     private:
         QList<boatAccount*> * acc_list;

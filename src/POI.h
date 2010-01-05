@@ -25,28 +25,27 @@ Copyright (C) 2008 - Jacques Zaninetti - http://zygrib.free.fr
 #ifndef POI_H
 #define POI_H
 
-
-#include <QLabel>
 #include <QPainter>
-#include <QMouseEvent>
+#include <QGraphicsWidget>
 #include <QMenu>
 
 class POI;
 
 #include "Projection.h"
+#include "boatAccount.h"
+
+#define POI_TYPE_POI    0
+#define POI_TYPE_WP     1
+#define POI_TYPE_BALISE 2
 
 //===================================================================
-class POI : public QWidget
+class POI : public QGraphicsWidget
 { Q_OBJECT
     public:
-        /* les enum */
-        enum POI_TYPE { TYPE_POI=0, TYPE_WP, TYPE_BALISE};
-
         /* constructeurs, destructeurs */
-        POI(QString name, POI_TYPE type, float lat, float lon,
-                    Projection *proj, QWidget *ownerMeteotable,
-                    QWidget *parentWindow, float wph,
-                    int tstamp,bool useTstamp);
+        POI(QString name, int type, float lat, float lon,
+                    Projection *proj, QWidget *ownerMeteotable, QWidget *parentWindow,
+                    float wph, int tstamp,bool useTstamp, boatAccount *boat);
 
         ~POI();
 
@@ -55,82 +54,95 @@ class POI : public QWidget
         float    getLongitude(void)    {return lon;}
         float    getLatitude(void)     {return lat;}
         float    getWph(void)          {return wph;}
-        int      getTimeStamp(void)    {return timeStamp;}
+        int      getTimeStamp(void)    {if(useRouteTstamp && !useTstamp) return routeTimeStamp; else return timeStamp;}
         bool     getUseTimeStamp(void) {if(timeStamp==-1) return false; else return useTstamp;}
-        POI_TYPE getType(void)         {return type; }
+        int      getType(void)         {return type; }
         int      getTypeMask(void)     {return typeMask; }
-        bool    getIsWp(void) {return isWp;}
+        bool     getIsWp(void)         {return isWp;}
 
         static QString  getTypeStr(int index);
         QString  getTypeStr(void)      {return getTypeStr(type); }
 
         /* modification des données */
-        void setName         (QString name);
-        void setLongitude    (float lon) {this->lon=lon;}
-        void setLatitude     (float lat) {this->lat=lat;}
-        void setWph          (float wph) {this->wph=wph;}
-        void setTimeStamp    (int tstamp){this->timeStamp=tstamp;}
-        void setUseTimeStamp (bool state){this->useTstamp=state;}
-        void setType         (POI_TYPE type) {this->type=type;this->typeMask=(1<<type);}
-        void setDist         (float distance, float speed, bool has_eta, QDateTime eta);
-        void doChgWP(float lat,float lon, float wph);
+        void setName           (QString name);
+        void setLongitude      (float lon) {this->lon=lon;}
+        void setLatitude       (float lat) {this->lat=lat;}
+        void setWph            (float wph) {this->wph=wph;}
+        void setTimeStamp      (int tstamp);
+        void setRouteTimeStamp (int date);
+        void setUseTimeStamp   (bool state){this->useTstamp=state;}
+        void setType           (int type) {this->type=type;this->typeMask=(1<<type);if(type!=POI_TYPE_WP) {useRouteTstamp=false; routeTimeStamp=false;}}
+        void setTip            (QString tip);
+
+
+        /* comparateur de classe pour le tri */
         static bool myLessThan(POI * POI_1,POI* POI_2) {return POI_1->name < POI_2->name;}
+
+        /* graphicsWidget */
+        QPainterPath shape() const;
+        QRectF boundingRect() const;
+
+        /* event propagé par la scene */
+        bool tryMoving(int x, int y);
+
     public slots:
-        void updateProjection();
-        void timerClickEvent();
+        void slot_updateProjection();
         void slot_editPOI();
         void slot_setWP();
         void slot_setGribDate();
-        void slotDelPoi();
+        void slot_delPoi();
         void slot_copy();
-        void paramChanged();
-        void WPChanged(float,float);
-
+        void slot_paramChanged();
+        void slot_WPChanged(float,float);
+        void slot_updateTip(boatAccount *);
     signals:
         void chgWP(float,float,float);
         void addPOI_list(POI*);
         void delPOI_list(POI*);
         void editPOI(POI*);
-        void movePOI(POI*);
         void selectPOI(POI*);
         void setGribDate(int);
         void clearSelection(void);
+        void updateTip(boatAccount*);
+        void updateRoute();
 
     protected:
-        bool eventFilter(QObject *obj, QEvent *event);
-        void  mousePressEvent(QMouseEvent * e);
-        void  mouseMoveEvent (QMouseEvent * e);
-        //void  mouseDoubleClickEvent(QMouseEvent * e);
-        void  mouseReleaseEvent(QMouseEvent * e);
-        void  contextMenuEvent(QContextMenuEvent * event);
-        bool  event(QEvent * e);
+        void  mousePressEvent(QGraphicsSceneMouseEvent * e);
+        void  mouseReleaseEvent(QGraphicsSceneMouseEvent * e);
+        void  contextMenuEvent(QGraphicsSceneContextMenuEvent * event);
+
+        void paint(QPainter * pnt, const QStyleOptionGraphicsItem * , QWidget * );
 
     private:
-        QString      name;
-        float        lon, lat,wph;
-        float        WPlon,WPlat;
-        Projection   *proj;
-        int       pi, pj;
-        QCursor   enterCursor;
-        QLabel    *label;
+        /* parent, main */
         QWidget   *parent;
         QWidget   *owner;
+        Projection   *proj;
+
+        /* widget component */
         QColor    bgcolor,fgcolor;
         QColor    poiColor,mwpColor,wpColor,baliseColor;
-        int timeStamp;
-        bool useTstamp;
-        bool isWp;
+        int       width,height;
+        QString   my_str;
 
-        POI_TYPE type;
-        int typeMask;
+        /* data */
+        QString  name;
+        double   lon, lat;
+        float    wph;
+        double   WPlon,WPlat;
+        int      pi, pj;
+        int      timeStamp;
+        int      routeTimeStamp;
+        bool     useTstamp;
+        bool     useRouteTstamp;
+        bool     isWp;
+        int      type;
+        int      typeMask;
+        bool     isMoving;
+        int      mouse_x,mouse_y;
+        boatAccount *boat;
 
-        void createWidget();
-
-        void  paintEvent(QPaintEvent *event);
-        void  enterEvent (QEvent * e);
-        void  leaveEvent (QEvent * e);
-
-        int   countClick;        
+        void update_myStr();
 
         QMenu *popup;
         QAction * ac_edit;
@@ -143,9 +155,6 @@ class POI : public QWidget
 
         void chkIsWP(void);
         void rmSignal(void);
-        bool isMoving;
-        int mouse_x,mouse_y;
-
 };
 
 #endif

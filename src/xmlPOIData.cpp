@@ -47,15 +47,26 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #define LON_2_NAME        "Lon_2"
 #define COLOR_NAME        "color"
 
-xml_POIData::xml_POIData(Projection * proj,QWidget * main, QWidget * parent)
+xml_POIData::xml_POIData(Projection * proj,MainWindow * main, myCentralWidget * parent)
 : QWidget(parent)
 {
     this->proj=proj;
     this->main=main;
     this->parent=parent;
+
+    /* signals */
+    connect(parent,SIGNAL(writePOIData(QList<POI*>&,QList<gate*>&,QString)),
+            this,SLOT(slot_writeData(QList<POI*>&,QList<gate*>&,QString)));
+    connect(parent,SIGNAL(readPOIData(QString)),this,SLOT(slot_readData(QString)));
+    connect(parent,SIGNAL(importZyGrib()),this,SLOT(slot_importZyGrib()));
+
+    connect(this,SIGNAL(addPOI_list(POI*)),parent,SLOT(slot_addPOI_list(POI*)));
+    connect(this,SIGNAL(addGate_list(gate*)),parent,SLOT(slot_addGate_list(gate*)));
+    connect(this,SIGNAL(delPOI_list(POI*)),parent,SLOT(slot_delPOI_list(POI*)));
+    connect(this,SIGNAL(delGate_list(gate*)),parent,SLOT(slot_delGate_list(gate*)));
 }
 
-bool xml_POIData::writeData(QList<POI*> & poi_list,QList<gate*> & gate_list,QString fname)
+void xml_POIData::slot_writeData(QList<POI*> & poi_list,QList<gate*> & gate_list,QString fname)
 {
      QDomDocument doc(DOM_FILE_TYPE);
      QDomElement root = doc.createElement(ROOT_NAME);
@@ -161,18 +172,16 @@ bool xml_POIData::writeData(QList<POI*> & poi_list,QList<gate*> & gate_list,QStr
 
      QFile file(fname);
      if (!file.open(QIODevice::ReadWrite | QIODevice::Text | QIODevice::Truncate))
-         return false;
+         return ;
 
      QTextStream out(&file);
 
      doc.save(out,4);
 
      file.close();
-
-     return true;
 }
 
-void xml_POIData::importZyGrib(QList<POI*> & poi_list)
+void xml_POIData::slot_importZyGrib(void)
 {
     /* let's see if we have some zyGrib POI here */
      QSettings settings("zyGrib");
@@ -205,9 +214,10 @@ void xml_POIData::importZyGrib(QList<POI*> & poi_list)
                     serialized+=";-1";
                                     }
                 lst = serialized.split(";");
-                POI * poi = new POI(QString(QByteArray::fromBase64(lst[1].toUtf8())), POI::TYPE_POI,
-                                    lst[3].toFloat(),lst[2].toFloat(),proj,main,parent,lst[5].toInt(),-1,false);
-                poi_list.append(poi);
+                POI * poi = new POI(QString(QByteArray::fromBase64(lst[1].toUtf8())), POI_TYPE_POI,
+                                    lst[3].toFloat(),lst[2].toFloat(),proj,main,parent,lst[5].toInt(),-1,false,NULL);
+
+                emit addPOI_list(poi);
                 /*removing zyGrib POI*/
                 if (rep == QMessageBox::Yes)
                     settings.remove(key);
@@ -226,23 +236,21 @@ void xml_POIData::importZyGrib(QList<POI*> & poi_list)
      settings.endGroup();
 }
 
-bool xml_POIData::readData(QList<POI*> & poi_list,QList<gate*> & gate_list,QString fname)
+void xml_POIData::slot_readData(QString fname)
 {
      QString  errorStr;
      int errorLine;
      int errorColumn;
      bool hasVersion = false;
-     bool needSave=false;
      int version=VERSION_NUMBER;
-
-     poi_list.clear();
-     gate_list.clear();
 
      QFile file(fname);
      if (!file.open(QIODevice::ReadOnly | QIODevice::Text ))
-         return false;
+         return ;
 
      //QTextStream in(&file);
+
+     qWarning() << "Starting loading POI";
 
      QDomDocument doc;
      if(!doc.setContent(&file,true,&errorStr,&errorLine,&errorColumn))
@@ -252,14 +260,14 @@ bool xml_POIData::readData(QList<POI*> & poi_list,QList<gate*> & gate_list,QStri
              .arg(errorLine)
              .arg(errorColumn)
              .arg(errorStr));
-        return false;
+        return ;
      }
 
      QDomElement root = doc.documentElement();
      if(root.tagName() != ROOT_NAME)
      {
          qWarning() << "Wrong root name: " << root.tagName();
-         return false;
+         return ;
      }
 
      QDomNode node = root.firstChild();
@@ -277,8 +285,7 @@ bool xml_POIData::readData(QList<POI*> & poi_list,QList<gate*> & gate_list,QStri
                   if(version != VERSION_NUMBER && version !=0)
                   {
                       qWarning("Bad version");
-                      poi_list.clear();;
-                      return false;
+                      return ;
                   }
                   else
                   {
@@ -347,9 +354,9 @@ bool xml_POIData::readData(QList<POI*> & poi_list,QList<gate*> & gate_list,QStri
               {
                    qWarning() << "POI info present => create item " << name << " "
                         << lat << "," << lon << "@" << wph ;
-                   if(type==-1) type=POI::TYPE_POI;
-                   POI * poi = new POI(name,(POI::POI_TYPE)type,lat,lon,proj,main,parent,wph,tstamp,useTstamp);
-                   poi_list.append(poi);
+                   if(type==-1) type=POI_TYPE_POI;
+                   POI * poi = new POI(name,type,lat,lon,proj,main,parent,wph,tstamp,useTstamp,NULL);
+                   emit addPOI_list(poi);
               }
               else
                    qWarning() << "Incomplete POI info " << name << " "
@@ -407,7 +414,7 @@ bool xml_POIData::readData(QList<POI*> & poi_list,QList<gate*> & gate_list,QStri
                    qWarning() << "Gate info present => create item " << name << " "
                         << lat_1 << "," << lon_1 << "-" << lat_2 << "," << lon_2;
                    gate * ptr = new gate(name,lat_1,lon_1,lat_2,lon_2,proj,main,parent,color);
-                   gate_list.append(ptr);
+                   emit addGate_list(ptr);
               }
               else
                    qWarning() << "Incomplete Gate info" << name << " "
@@ -416,19 +423,10 @@ bool xml_POIData::readData(QList<POI*> & poi_list,QList<gate*> & gate_list,QStri
           node = node.nextSibling();
      }
 
-    if(needSave)
-        writeData(poi_list,gate_list,fname);
-
-     if(hasVersion)
-     {
-         return true;
-     }
-     else
+     if(!hasVersion)
      {
          qWarning("no version");
-         poi_list.clear();
-         gate_list.clear();
-         return false;
+#warning remettre un appel Ã  centralWidget pour effacer la liste ? idem dans ts les retour d erreur
      }
 }
 

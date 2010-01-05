@@ -21,42 +21,64 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #ifndef MAPCOMPASS_H
 #define MAPCOMPASS_H
 
-#include <QObject>
-#include <QWidget>
+
+#include <QGraphicsWidget>
+#include <QGraphicsSimpleTextItem>
 #include <QPainter>
 
 class mapCompass;
 
 #include "Projection.h"
-#include "Terrain.h"
 #include "MainWindow.h"
+#include "orthoSegment.h"
+#include "Orthodromie.h"
+#include "mycentralwidget.h"
 
-class mapCompass : public QWidget
+class mapCompass : public QGraphicsWidget
 { Q_OBJECT
     public:
-        mapCompass(Projection * proj,MainWindow * main,Terrain *parentWindow=NULL);
-        bool isUnder(int x, int y, bool strict);
+        mapCompass(Projection * proj,MainWindow * main,myCentralWidget * parent);
         double getWindAngle(void) { return wind_angle; }
+        bool tryMoving(int x, int y);
+        bool hasCompassLine(void) { return drawCompassLine; }
+
+        QPainterPath shape() const;
+        QRectF boundingRect() const;
+
+    public slots:
+        void slot_compassLine(int mouse_x, int mouse_y);
+        void slot_stopCompassLine(void);
+        void slot_paramChanged(void);
 
     protected:
-        void  paintEvent(QPaintEvent *event);
-        void  mousePressEvent(QMouseEvent *);
-        void  mouseReleaseEvent(QMouseEvent *e);
-        void  mouseMoveEvent (QMouseEvent * e);
-        void  enterEvent (QEvent * e);
-        void  leaveEvent (QEvent * e);
-        void  slotMouseDblClicked(QMouseEvent * e);
+        void paint(QPainter * pnt, const QStyleOptionGraphicsItem * , QWidget * );        
+
+        void mousePressEvent(QGraphicsSceneMouseEvent *);
+        void mouseReleaseEvent(QGraphicsSceneMouseEvent *e);
+        void slotMouseDblClicked(QGraphicsSceneMouseEvent * e);
+        //void contextMenuEvent(QGraphicsSceneContextMenuEvent * event);
 
     private:
         int size;
+        int mouse_x;
+        int mouse_y;
         bool isMoving;
-        int mouse_x,mouse_y;
+
         bool mouseEvt;
         Projection * proj;
-        Terrain * terre;
+        myCentralWidget * parent;
         MainWindow * main;
         QCursor enterCursor;
-        double wind_angle;        
+        double wind_angle;
+        float bvmg_up;
+        float bvmg_down;
+
+        /* Compass Line */        
+        bool drawCompassLine;
+        orthoSegment * compassLine;
+        QGraphicsSimpleTextItem * hdg_label;
+        QGraphicsSimpleTextItem * windAngle_label;
+        void updateCompassLineLabels(int x, int y);
 };
 
 #endif // MAPCOMPASS_H

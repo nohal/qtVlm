@@ -21,22 +21,20 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #ifndef BOATACCOUNT_H
 #define BOATACCOUNT_H
 
-#include <QWidget>
 #include <QPainter>
-#include <QBuffer>
+#include <QGraphicsWidget>
 #include <QMenuBar>
-
-class QMouseEvent;
 
 class boatAccount;
 
 #include "Projection.h"
 #include "Polar.h"
 #include "opponentBoat.h"
-#include "Terrain.h"
+#include "mycentralwidget.h"
 #include "MainWindow.h"
-
 #include "inetConnexion.h"
+#include "orthoSegment.h"
+#include "vlmLine.h"
 
 #define VLM_CMD_HD     1
 #define VLM_CMD_ANG    2
@@ -47,13 +45,13 @@ class boatAccount;
 
 #define MAX_RETRY 5
 
-class boatAccount: public QWidget
+class boatAccount: public QGraphicsWidget
 {
     Q_OBJECT
 
     public:
         boatAccount(QString login, QString pass, bool state,
-                    Projection * proj,MainWindow * main,Terrain * parentWindow=0);
+                    Projection * proj,MainWindow * main,myCentralWidget * parent);
         ~boatAccount(void);
 
         void setStatus(bool activated);
@@ -69,94 +67,94 @@ class boatAccount: public QWidget
 
         void validateChg(int currentCmdNum,float cmd_val1,float cmd_val2,float cmd_val3);
 
-        QString getLogin(void)       {    return login; }
-        QString getPass(void)        {    return pass; }
-        bool getStatus(void)         {    return activated; }
-        float getLat(void)           {    return lat; }
-        float getLon(void)           {    return lon; }
-        float getSpeed(void)         {    return speed; }
-        float getAvg(void)           {    return avg; }
-        float getHeading(void)       {    return heading; }
-        float getDnm(void)           {    return dnm; }
-        float getLoch(void)          {    return loch; }
-        float getOrtho(void)         {    return ortho; }
-        float getLoxo(void)          {    return loxo; }
-        float getVmg(void)           {    return vmg; }
-        float getWindDir(void)       {    return windDir; }
-        float getWindSpeed(void)     {    return windSpeed; }
-        QString getBoatId(void)      {    return QString().setNum(boat_id); }
-        QString getBoatName(void)    {    return boat_name; }
-        float getWPLat(void)         {    return WPLat; }
-        float getWPLon(void)         {    return WPLon; }
-        float getTWA(void)           {    return TWA; }
-        float getWPHd(void)          {    return WPHd; }
-        int getPilotType(void)       {    return pilotType; }
-        QString getPilotString(void) {    return pilotString; }
-        QString getETA(void)         {    return ETA; }
-        QString getScore(void)       {    return score; }
-        int getPrevVac(void)         {    return prevVac; }
-        int getNextVac(void)         {    return nextVac; }
-        int getVacLen(void)          {    return vacLen; }
-        QString getPolarName(void)   {    return polarName; }
-        Polar * getPolarData(void)   {    return polarData; }
-        bool getLockStatus(void)     {    return changeLocked;}
-        QStringList * getPilototo(void) { return &pilototo; }
-        bool getHasPilototo(void)    { return hasPilototo; }
-        bool getAliasState(void)     { return useAlias; }
-        bool getPolarState(void)     { return forcePolar; }
-        QString getAlias(void)       { return alias; }
-        bool getForceEstime(void)    { return forceEstime; }
-        bool getIsSelected(void)     { return selected; }
-        QString getRaceId(void)      { return QString().setNum(race_id); }
-        QString getRaceName(void)    { return race_name; }
-        float getZoom(void)          { return zoom; }
-        QList<position*> * getTrace(){ return &trace; }
-        QString getEmail(void)       { return email; }
-        bool isUpdating()            { return updating; }
+        QString getLogin(void)          {    return login; }
+        QString getPass(void)           {    return pass; }
+        bool getStatus(void)            {    return activated; }
+        double getLat(void)             {    return lat; }
+        double getLon(void)             {    return lon; }
+        float getSpeed(void)            {    return speed; }
+        float getAvg(void)              {    return avg; }
+        float getHeading(void)          {    return heading; }
+        float getDnm(void)              {    return dnm; }
+        float getLoch(void)             {    return loch; }
+        float getOrtho(void)            {    return ortho; }
+        float getLoxo(void)             {    return loxo; }
+        float getVmg(void)              {    return vmg; }
+        float getWindDir(void)          {    return windDir; }
+        float getWindSpeed(void)        {    return windSpeed; }
+        QString getBoatId(void)         {    return QString().setNum(boat_id); }
+        QString getBoatName(void)       {    return boat_name; }
+        float getWPLat(void)            {    return WPLat; }
+        float getWPLon(void)            {    return WPLon; }
+        float getTWA(void)              {    return TWA; }
+        float getWPHd(void)             {    return WPHd; }
+        int getPilotType(void)          {    return pilotType; }
+        QString getPilotString(void)    {    return pilotString; }
+        QString getETA(void)            {    return ETA; }
+        QString getScore(void)          {    return score; }
+        int getPrevVac(void)            {    return prevVac; }
+        int getNextVac(void)            {    return nextVac; }
+        int getVacLen(void)             {    return vacLen; }
+        QString getPolarName(void)      {    return polarName; }
+        Polar * getPolarData(void)      {    return polarData; }
+        bool getLockStatus(void)        {    return changeLocked;}
+        QStringList * getPilototo(void) {    return &pilototo; }
+        bool getHasPilototo(void)       {    return hasPilototo; }
+        bool getAliasState(void)        {    return useAlias; }
+        bool getPolarState(void)        {    return forcePolar; }
+        QString getAlias(void)          {    return alias; }
+        bool getForceEstime(void)       {    return forceEstime; }
+        int getEstimeType(void)        {    return estime_type; }
+        bool getIsSelected(void)        {    return selected; }
+        QString getRaceId(void)         {    return QString().setNum(race_id); }
+        QString getRaceName(void)       {    return race_name; }
+        float getZoom(void)             {    return zoom; }
+        QString getEmail(void)          {    return email; }
+        bool isUpdating()               {    return updating; }
+
         float getBvmgUp(float ws);
         float getBvmgDown(float ws);
 
         QString getCurrentPolarName(void) { return (forcePolar?polarName:polarVlm); }
 
+        /* graphicsWidget */
+        QPainterPath shape() const;
+        QRectF boundingRect() const;               
+
     public slots:
-        void getData(void);
+        void slot_getData(void);
 
-        void projectionUpdated();
-        void paramChanged();
+        void slot_projectionUpdated();
+        void slot_paramChanged();
+        void slot_requestFinished(int currentRequest,QByteArray res);
 
-        void requestFinished(int currentRequest,QByteArray res);
-
-        void selectBoat();
-        void toggleEstime();
+        void slot_selectBoat();
+        void slot_toggleEstime();
+        void slot_updateGraphicsParameters();
 
     signals:
         void boatSelected(boatAccount*);
         void boatUpdated(boatAccount*,bool);
         void boatLockStatusChanged(boatAccount*,bool);
-        void getTrace(QString,QList<position*> *);
+        void getTrace(QString,QList<vlmPoint> *);
         void getPolar(QString fname,Polar ** ptr);
         void releasePolar(QString fname);
         void validationDone(bool);
         void clearSelection(void);
 
     protected:
-        void  enterEvent (QEvent * e);
-        void  leaveEvent (QEvent * e);
-        void  mousePressEvent(QMouseEvent * e);
-        //void  mouseDoubleClickEvent(QMouseEvent * e);
-        void  mouseReleaseEvent(QMouseEvent * e);
-        void  contextMenuEvent(QContextMenuEvent * event);
-        void  mouseMoveEvent (QMouseEvent * e);
-        bool  event(QEvent * e);
+        void mousePressEvent(QGraphicsSceneMouseEvent * e);
+        void mouseReleaseEvent(QGraphicsSceneMouseEvent * e);
+        void contextMenuEvent(QGraphicsSceneContextMenuEvent * event);
+
+        void paint(QPainter * pnt, const QStyleOptionGraphicsItem * , QWidget * );
 
     private:
-        void createWidget(void);
         void setLabelText(QString name);
         void updateBoatData(void);
         void reloadPolar(void);
         void updateBoatName(void);
         void updateHint(void);
-        bool eventFilter(QObject *obj, QEvent *event);
 
         QString login;
         QString pass;
@@ -175,7 +173,7 @@ class boatAccount: public QWidget
         int pilotType;
         QString pilotString;
 
-        float lat,lon;
+        double lat,lon;
         float speed,avg,heading;
         float dnm,loch,ortho,loxo,vmg;
         float windDir,windSpeed;
@@ -203,18 +201,23 @@ class boatAccount: public QWidget
         QColor    selColor;
         QCursor   enterCursor;
         bool      isSync;
+        int       width,height;
+        QString   my_str;
 
-        Terrain * parent;
+        /* estime param */
+        int estime_type;
+        int estime_param;
+        orthoSegment * estimeLine;
+        orthoSegment * WPLine;
+
+        myCentralWidget * parent;
         MainWindow * mainWindow;
 
         QMenu *popup;
         QAction * ac_select;
         QAction * ac_estime;
         QAction * ac_compassLine;
-        void createPopUpMenu(void);
-
-        void  paintEvent(QPaintEvent *event);
-
+        void createPopUpMenu();
 
         void updatePosition(void);
 
@@ -234,7 +237,9 @@ class boatAccount: public QWidget
         bool forceEstime;
 
         /* positions*/
-        QList<position*> trace;
+        QList<vlmPoint> trace;
+        vlmLine * trace_drawing;
+        void updateTraceColor(void);
 
         /* validation from BoardVLM */
         bool chkResult(void);
@@ -245,6 +250,8 @@ class boatAccount: public QWidget
         float valid_val3;
         int valid_nbRetry;
         bool doingValidation;
+
+        void drawEstime(void);
 };
 
 #endif

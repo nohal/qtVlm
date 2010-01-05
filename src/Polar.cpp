@@ -146,7 +146,7 @@ void Polar::setPolarName(QString fname)
                 wa_d=wa;
             }
             wa=qRound(wa+1);
-        } while(wa<=181.00);
+        } while(wa<181.00);
         wa=wa_u-1;
         wa_limit=wa_u+1;
         if(wa<0) wa=qRound(0);
@@ -163,7 +163,7 @@ void Polar::setPolarName(QString fname)
                 wa_u=wa;
             }
             wa=wa+0.1;
-        } while(wa<=(wa_limit+0.1000));
+        } while(wa<(wa_limit+0.1000));
         wa=wa_d-1;
         wa_limit=wa_d+1;
         if(wa<0) wa=qRound(0);
@@ -180,12 +180,12 @@ void Polar::setPolarName(QString fname)
                 wa_d=wa;
             }
             wa=wa+0.1;
-        }while(wa<=wa_limit+0.1);
+        }while(wa<wa_limit+0.1);
         best_vmg_up.append(wa_u);
         best_vmg_down.append(wa_d);
         wa=qRound(0);
         ws=ws+.1;
-    }while(ws<=60.1);
+    }while(ws<60.1);
     file.close();
     loaded=true;
 }

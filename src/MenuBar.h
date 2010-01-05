@@ -31,8 +31,8 @@ Copyright (C) 2008 - Jacques Zaninetti - http://zygrib.free.fr
 #include <set>
 
 class MenuBar;
+class boatAccount;
 
-#include "boatAccount.h"
 #include "DialogLoadGrib.h"
 
 class MenuBar : public QMenuBar
@@ -133,6 +133,7 @@ public:
     //-------------------------------------
     QComboBox *cbGribStep;
     QComboBox *boatList;
+    QSpinBox *estime;
     QAction *acDatesGrib_prev;
     QAction *acDatesGrib_next;
     QPushButton * datesGrib_now;

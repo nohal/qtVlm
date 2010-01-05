@@ -23,19 +23,29 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "Util.h"
 #include "Pilototo.h"
+#include "boatAccount.h"
 
 #define VLM_NO_REQUEST     -1
 #define VLM_REQUEST_LOGIN  0
 #define VLM_DO_REQUEST     1
 
-Pilototo::Pilototo(QWidget *main,QWidget * parent):QDialog(parent)
+Pilototo::Pilototo(MainWindow *main,myCentralWidget * parent):QDialog(parent)
 {
-    setupUi(this);
     this->parent=parent;
+    setupUi(this);
+
 
     instructionEditor = new Pilototo_param(this);
-    connect(instructionEditor,SIGNAL(doSelectPOI(Pilototo_instruction *)),this,SLOT(doSelectPOI(Pilototo_instruction *)));
-    connect(this,SIGNAL(selectPOI(Pilototo_instruction *)),main,SLOT(slotSelectPOI(Pilototo_instruction *)));
+    connect(instructionEditor,SIGNAL(doSelectPOI(Pilototo_instruction *)),
+            this,SLOT(doSelectPOI(Pilototo_instruction *)));
+    connect(this,SIGNAL(selectPOI(Pilototo_instruction *)),
+            main,SLOT(slotSelectPOI(Pilototo_instruction *)));
+    connect(main,SIGNAL(editInstructions()),
+            this,SLOT(editInstructions()));
+    connect(main,SIGNAL(editInstructionsPOI(Pilototo_instruction * ,POI * )),
+            this,SLOT(editInstructionsPOI(Pilototo_instruction * ,POI * )));
+    connect(main,SIGNAL(boatHasUpdated(boatAccount*)),
+            this,SLOT(boatUpdated(boatAccount*)));
 
 
     instructions_list.clear();
@@ -46,11 +56,9 @@ Pilototo::Pilototo(QWidget *main,QWidget * parent):QDialog(parent)
     frameLayout = new QVBoxLayout(frame);
     frameLayout->setSizeConstraint(QLayout::SetFixedSize);
 
-    waitBox = new QMessageBox(QMessageBox::Question,
+    waitBox = new QMessageBox(QMessageBox::Information,
 			     tr("Pilototo"),
-			     tr("Chargement des instructions VLM en cours"),
-			     QMessageBox::Cancel,this
-			     );
+                             tr("Chargement des instructions VLM en cours"));
 
     /* inet init */
     conn=new inetConnexion(main,this);
@@ -147,7 +155,8 @@ void Pilototo::updateDrawList(void)
 /* init pilototo editor */
 void Pilototo::editInstructions(void)
 {
-    waitBox->exec();
+//    waitBox->exec();
+    waitBox->show();
 }
 
 /*init piloto editor after selecting a POI*/
@@ -161,6 +170,7 @@ void Pilototo::doSelectPOI(Pilototo_instruction * instruction)
 {
     emit selectPOI(instruction);
     QDialog::done(QDialog::Rejected);
+    parent->activateWindow();
 }
 
 void Pilototo::boatUpdated(boatAccount * boat)
@@ -311,7 +321,7 @@ void Pilototo::sendPilototo(QStringList * cmdList)
 			<< "&password=" << boat->getPass()
 			<< "&lang=fr&type=login"
 			;
-	conn->doRequestGet(VLM_REQUEST_LOGIN,page);
+        slot_requestFinished(VLM_REQUEST_LOGIN,conn->doRequestGet(VLM_REQUEST_LOGIN,page));
     }
     else
     {
@@ -319,7 +329,7 @@ void Pilototo::sendPilototo(QStringList * cmdList)
     }
 }
 
-void Pilototo::requestFinished (int currentRequest,QByteArray)
+void Pilototo::slot_requestFinished (int currentRequest,QByteArray)
 {
     QString page;
     QString data;
@@ -333,13 +343,13 @@ void Pilototo::requestFinished (int currentRequest,QByteArray)
 		/*we have processed all cmd*/
 		delete currentList;
 		/* ask for an update of boat data*/
-		boat->getData();
+                boat->slot_getData();
 	    }
 	    else
 	    {
 		QTextStream(&page) << "/pilototo.php";
 		data = currentList->takeFirst();
-		conn->doRequestPost(VLM_DO_REQUEST,page,data);
+                slot_requestFinished(VLM_DO_REQUEST,conn->doRequestPost(VLM_DO_REQUEST,page,data));
 	    }
 	    break;
     }
@@ -415,9 +425,7 @@ Pilototo_instruction::Pilototo_instruction(QWidget * main,QWidget * parent) : QW
     connect(this,SIGNAL(doDelInstruction(Pilototo_instruction*)),
 		main,SLOT(delInstruction(Pilototo_instruction *)));
     connect(this,SIGNAL(instructionUpdated()),
-		main,SLOT(instructionUpdated()));
-    this->parent=parent;
-    layout()->setContentsMargins(0,0,0,0);
+                main,SLOT(instructionUpdated()));
 
     updateHasChanged(true); /*instruction is not saved when created*/
     initVal();

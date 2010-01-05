@@ -32,42 +32,46 @@ Copyright (C) 2008 - Jacques Zaninetti - http://zygrib.free.fr
 
 #include <cmath>
 #include <cassert>
+#include <QPainter>
 
+#include "Projection.h"
 
 class Orthodromie
 {
     public:
-        Orthodromie(float x0,float y0, float x1,float y1);
+        Orthodromie(double x0,double y0, double x1,double y1);
         
-        void  setPoints(float x0,float y0, float x1,float y1);
-        void  setStartPoint (float x,float y);
-        void  setEndPoint   (float x,float y);
+        void  setPoints(double x0,double y0, double x1,double y1);
+        void  setStartPoint (double x,double y);
+        void  setEndPoint   (double x,double y);
 
-        float getDistance()     {return distanceNM;}
-        float getAzimutDeg()    {return azimutDeg;}
-        float getAzimutRad()    {return azimut;}
+        double getDistance()     {return distanceNM;}
+        double getAzimutDeg()    {return azimutDeg;}
+        double getAzimutRad()    {return azimut;}
 
-        void  getMidPoint(float *x, float *y);
+        void  getMidPoint(double *x, double *y);
         
         //// Reduce an angle to (-PI/2, PI/2), for latitudes.
-        float  reduceLat(float lat);
+        double  reduceLat(double lat);
         //// Reduce and angle to (-PI, PI), for longitudes.
-        float  reduceLng(float lng);
+        double  reduceLng(double lng);
         //// Reduce an angle to (0, 2*PI), for direction and azimuth.
-        float  reduceAzimut(float azimuth);
+        double  reduceAzimut(double azimuth);
+
+        static void draw_OrthodromieSegment(Projection * proj, QPainter * pnt, double x0,double y0, double x1,double y1, int recurs=0);
 
     private:
         void initOrthodromie();
 
-        float lat0,lat1,lon0,lon1;   // radians
-        float distanceNM;
+        double lat0,lat1,lon0,lon1;   // radians
+        double distanceNM;
         
-        float azimut, azimutDeg;
+        double azimut, azimutDeg;
         
-        float sinStartLat, cosStartLat;
-        float sinEndLat,   cosEndLat;
-        float sinAzimut,   cosAzimut;
-        float sinDeltaLng, cosDeltaLng;
+        double sinStartLat, cosStartLat;
+        double sinEndLat,   cosEndLat;
+        double sinAzimut,   cosAzimut;
+        double sinDeltaLng, cosDeltaLng;
 
 
         

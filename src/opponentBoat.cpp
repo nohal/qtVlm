@@ -34,18 +34,18 @@ Copyright (C) 2008 - Jacques Zaninetti - http://zygrib.free.fr
 ****************************************/
 
 opponent::opponent(QColor color, QString idu,QString race, float lat, float lon, QString login,
-                            QString name,Projection * proj,QWidget *main, QWidget *parentWindow):QWidget(parentWindow)
+                            QString name,Projection * proj,MainWindow *main, myCentralWidget *parentWindow):QGraphicsWidget()
 {
     init(color,false,idu,race,lat,lon,login,name,proj,main,parentWindow);
 }
 
-opponent::opponent(QColor color, QString idu,QString race,Projection * proj,QWidget *main, QWidget *parentWindow):QWidget(parentWindow)
+opponent::opponent(QColor color, QString idu,QString race,Projection * proj,MainWindow *main, myCentralWidget *parentWindow):QGraphicsWidget()
 {
     init(color,true,idu,race,0,0,"","",proj,main,parentWindow);
 }
 
 void opponent::init(QColor color,bool isQtBoat,QString idu,QString race, float lat, float lon, QString login,
-                            QString name,Projection * proj,QWidget *main, QWidget *parentWindow)
+                            QString name,Projection * proj,MainWindow *main, myCentralWidget *parentWindow)
 {
     this->idu=idu;
     this->idrace=race;
@@ -54,70 +54,84 @@ void opponent::init(QColor color,bool isQtBoat,QString idu,QString race, float l
     this->login=login;
     this->name=name;
     this->proj=proj;
+    this->main=main;
+    this->parentWindow=parentWindow;
+
+    this->opp_trace=1;
+
+    width=height=0;
+
+    parentWindow->getScene()->addItem(this);
+
+    setZValue(Z_VALUE_OPP);
+    setFont(QFont("Helvetica",9));
+    setData(0,OPP_WTYPE);
+
+    fgcolor = QColor(0,0,0);
+    int gr = 255;
+    bgcolor = QColor(gr,gr,gr,150);
 
     this->isQtBoat = isQtBoat;
-    while (!trace.isEmpty())
-        delete trace.takeFirst();
+    trace.clear();
+    trace_drawing = new vlmLine(proj,parentWindow->getScene(),Z_VALUE_OPP);
+    trace_drawing->setLinePen(QPen(color));
+    trace_drawing->setPointMode(color);
 
     myColor = color;
 
-    createWidget();
-    //updatePosition();
     paramChanged();
 
     if(!isQtBoat)
         show();
 
-    connect(parentWindow, SIGNAL(projectionUpdated()), this, SLOT(updateProjection()));
+    connect(proj, SIGNAL(projectionUpdated()), this, SLOT(updateProjection()));
     connect(main,SIGNAL(paramVLMChanged()),this,SLOT(paramChanged()));
+
 
     updatePosition();
 }
 
-void opponent::createWidget(void)
+opponent::~opponent(void)
 {
-    fgcolor = QColor(0,0,0);
-    int gr = 255;
-    bgcolor = QColor(gr,gr,gr,150);
-
-    QGridLayout *layout = new QGridLayout();
-    layout->setContentsMargins(10,0,2,0);
-    layout->setSpacing(0);
-
-    label = new QLabel(login, this);
-    label->setFont(QFont("Helvetica",9));
-
-    QPalette p;
-    p.setBrush(QPalette::Active, QPalette::WindowText, fgcolor);
-    p.setBrush(QPalette::Inactive, QPalette::WindowText, fgcolor);
-    label->setPalette(p);
-    label->setAlignment(Qt::AlignHCenter);
-
-    layout->addWidget(label, 0,0, Qt::AlignHCenter|Qt::AlignVCenter);
-    this->setLayout(layout);
-    setAutoFillBackground (false);
+    parentWindow->getScene()->removeItem(this);
+    //delete trace_drawing;
 }
 
-void  opponent::paintEvent(QPaintEvent *)
+/**************************/
+/* boundingRect, Paint    */
+/**************************/
+
+QRectF opponent::boundingRect() const
+{
+    return QRectF(0,0,width,height);
+}
+
+void opponent::paint(QPainter * pnt, const QStyleOptionGraphicsItem * , QWidget * )
 {
     if(isQtBoat)
+    {
+        hide();
         return;
+    }
 
-    QPainter pnt(this);
-    int dy = height()/2;
+    int dy = height/2;
 
-    pnt.fillRect(9,0, width()-10,height()-1, QBrush(bgcolor));
+    QFontMetrics fm(font());
+
+    pnt->fillRect(9,0, width-10,height-1, QBrush(bgcolor));
+    pnt->setFont(font());
+    pnt->drawText(10,fm.height()-2,my_str);
 
     QPen pen(myColor);
     pen.setWidth(4);
-    pnt.setPen(pen);
-    pnt.fillRect(0,dy-3,7,7, QBrush(myColor));
+    pnt->setPen(pen);
+    pnt->fillRect(0,dy-3,7,7, QBrush(myColor));
 
     int g = 60;
     pen = QPen(QColor(g,g,g));
     pen.setWidth(1);
-    pnt.setPen(pen);
-    pnt.drawRect(9,0,width()-10,height()-1);
+    pnt->setPen(pen);
+    pnt->drawRect(9,0,width-10,height-1);
 }
 
 void opponent::updateProjection()
@@ -133,36 +147,47 @@ void opponent::updatePosition()
     Util::computePos(proj,lat,lon,&boat_i,&boat_j);
 
     boat_i-=3;
-    boat_j-=(height()/2);
+    boat_j-=(height/2);
 
-    //qWarning() << name << ": at (" << boat_i << "," << boat_j << ") => " << lat << "," << lon;
+    setPos(boat_i, boat_j);
 
-    move(boat_i, boat_j);
+    if(opp_trace==1)
+    {
+        trace_drawing->setPoly(trace);
+        trace_drawing->slot_showMe();
+    }
+    else
+    {
+        trace_drawing->hide();
+    }
 }
 
-void opponent::setName()
+void opponent::updateName()
 {
-    this->name=name;
-    QString str;
     QString str2;
     switch(label_type)
     {
         case OPP_SHOW_LOGIN:
-            str = login;
+            my_str = login;
             str2 = idu + " - " + name;
             break;
         case OPP_SHOW_NAME:
-            str = name;
+            my_str = name;
             str2 = idu + " - " + login;
             break;
         case OPP_SHOW_IDU:
-            str = idu;
+            my_str = idu;
             str2 = login + " - " + name;
             break;
     }
-    label->setText(str);
     setToolTip(str2);
-    adjustSize();
+    /* compute size */
+    /* computing widget size */
+    QFontMetrics fm(font());
+    prepareGeometryChange();
+    width = fm.width(my_str) + 10 + 2;
+    height = qMax(fm.height()+2,10);
+
 }
 
 void opponent::setNewData(float lat, float lon,QString name)
@@ -180,7 +205,7 @@ void opponent::setNewData(float lat, float lon,QString name)
     if(name != this->name)
     {
         this->name=name;
-        setName();
+        updateName();
         needUpdate = true;
     }
 
@@ -212,8 +237,11 @@ void opponent::paramChanged()
 {
     //myColor = QColor(Util::getSetting("opp_color",QColor(Qt::green).name()).toString());
     label_type = Util::getSetting("opp_labelType",0).toInt();
-    setName();
-    if(isQtBoat)
+    opp_trace = Util::getSetting("opp_trace","1").toInt();
+
+    updatePosition();
+    updateName();
+    if(!isQtBoat)
         update();
 }
 
@@ -230,10 +258,10 @@ void opponent::paramChanged()
 #define OPP_MODE_REFRESH   0
 #define OPP_MODE_NEWLIST   1
 
-opponentList::opponentList(Projection * proj,MainWindow * mainWin,QWidget *parentWindow) : QWidget(parentWindow)
+opponentList::opponentList(Projection * proj,MainWindow * main,myCentralWidget * parent) : QWidget(parent)
 {
-    parent=parentWindow;
-    this->mainWin=mainWin;
+    this->parent=parent;
+    this->main=main;
     this->proj=proj;
 
 
@@ -265,7 +293,7 @@ opponentList::opponentList(Projection * proj,MainWindow * mainWin,QWidget *paren
     colorTable[14] = QColor(170,0,255);
 
     /* init http inetManager */
-    conn=new inetConnexion(mainWin,this);
+    conn=new inetConnexion(main,this);
 }
 
 QString opponentList::getRaceId()
@@ -344,12 +372,12 @@ void opponentList::getNxtOppData()
 
     idu = (currentMode==OPP_MODE_REFRESH?opponent_list[currentOpponent]->getIduser():currentList[currentOpponent]);
 
-    if(mainWin->isBoat(idu))
+    if(main->isBoat(idu))
     {
         if(currentMode==OPP_MODE_REFRESH)
             opponent_list[currentOpponent]->setIsQtBoat(true);
         else
-            opponent_list.append(new opponent(colorTable[currentOpponent],idu,currentRace,proj,mainWin,parent));
+            opponent_list.append(new opponent(colorTable[currentOpponent],idu,currentRace,proj,main,parent));
 
         currentOpponent++;
         getNxtOppData();
@@ -366,10 +394,10 @@ void opponentList::getNxtOppData()
                         << currentRace;
     currentOpponent++;
 
-    conn->doRequestGet(OPP_BOAT_DATA,page);
+    slot_requestFinished(OPP_BOAT_DATA,conn->doRequestGet(OPP_BOAT_DATA,page));
 }
 
-void opponentList::requestFinished (int currentRequest,QByteArray res_byte)
+void opponentList::slot_requestFinished (int currentRequest,QByteArray res_byte)
 {
     QString page;
     QStringList list_res;
@@ -406,7 +434,7 @@ void opponentList::requestFinished (int currentRequest,QByteArray res_byte)
                             opponent_list[currentOpponent-1]->setNewData(lat,lon,name);
                         else
                             opponent_list.append(new opponent(colorTable[currentOpponent-1],idu,currentRace,
-                                                        lat,lon,login,name,proj,mainWin,parent));
+                                                        lat,lon,login,name,proj,main,parent));
                     QTextStream(&page)
                         << "/gmap/index.php?"
                         << "type=ajax&riq=trj"
@@ -415,7 +443,7 @@ void opponentList::requestFinished (int currentRequest,QByteArray res_byte)
                         << "&idraces="
                         << currentRace;
 
-                    conn->doRequestGet(OPP_BOAT_TRJ,page);
+                    slot_requestFinished(OPP_BOAT_TRJ,conn->doRequestGet(OPP_BOAT_TRJ,page));
                     break;
                     }
                 }
@@ -428,7 +456,7 @@ void opponentList::requestFinished (int currentRequest,QByteArray res_byte)
             else
             {
                 if(!opponent_list.isEmpty())
-                getTrace(res,opponent_list.last()->getTrace());
+                    getTrace(res,opponent_list.last()->getTrace());
             }
             getNxtOppData();
             break;
@@ -466,14 +494,12 @@ QStringList opponentList::readData(QString in_data,int type)
     return lst;
 }
 
-void opponentList::getTrace(QString buff, QList<position*> * trace)
+void opponentList::getTrace(QString buff, QList<vlmPoint> * trace)
 {
     QStringList lsval,lsval2;
-    position * ptr;
 
     /* clear current trace*/
-    while (!trace->isEmpty())
-        delete trace->takeFirst();
+    trace->clear();
 
     /* parse buff */
     if(buff.isEmpty())
@@ -484,10 +510,10 @@ void opponentList::getTrace(QString buff, QList<position*> * trace)
         lsval2=lsval[i].split(",");
         if (lsval2.size() == 2)
         {
-            ptr=new position();
-            ptr->lat=lsval2[0].toFloat();
-            ptr->lon=lsval2[1].toFloat();
-            trace->append(ptr);
+            vlmPoint pt;
+            pt.lat=lsval2[0].toFloat();
+            pt.lon=lsval2[1].toFloat();
+            trace->append(pt);
         }
     }
 }

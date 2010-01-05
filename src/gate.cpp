@@ -53,7 +53,8 @@ gate::gate(QString name,float lat_1, float lon_1,float lat_2, float lon_2,
     connect(parentWindow, SIGNAL(projectionUpdated()), this, SLOT(updateProjection()));
     connect(ownerMeteotable,SIGNAL(paramVLMChanged()),this,SLOT(paramChanged()));
     connect(this,SIGNAL(delGate_list(gate*)),owner,SLOT(delGate_list(gate*)));
-    connect(this,SIGNAL(editGate(gate*)),owner,SLOT(slotEditGate(gate*)));
+#warning mettre un lien directe vers gate editor ?
+    //    connect(this,SIGNAL(editGate(gate*)),owner,SLOT(slotEditGate(gate*)));
 
     setName(name);
     updateProjection();

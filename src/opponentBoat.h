@@ -25,25 +25,21 @@ Copyright (C) 2008 - Jacques Zaninetti - http://zygrib.free.fr
 #ifndef OPPONENTBOAT_H
 #define OPPONENTBOAT_H
 
-#include <QObject>
-#include <QWidget>
-#include <QLabel>
+#include <QPainter>
+#include <QGraphicsWidget>
 
 #include "Projection.h"
 #include "inetConnexion.h"
+#include "vlmLine.h"
 
 class MainWindow;
+class myCentralWidget;
 struct raceData;
-struct position;
 class opponentList;
 class opponent;
 
 #include "MainWindow.h"
-
-struct position {
-    float lat;
-    float lon;
-};
+#include "mycentralwidget.h"
 
 struct raceData {
       QString idrace;
@@ -56,28 +52,35 @@ struct raceData {
 #define OPP_SHOW_NAME  1
 #define OPP_SHOW_IDU   2
 
-class opponent : public QWidget
+class opponent : public QGraphicsWidget
 {Q_OBJECT
     public:
         opponent(QColor color,QString idu,QString race, float lat, float lon, QString login,
-                            QString name,Projection * proj,QWidget *main, QWidget *parentWindow=NULL);
-        opponent(QColor color,QString idu,QString race,Projection * proj,QWidget *main, QWidget *parentWindow=NULL);
+                            QString name,Projection * proj,MainWindow *main, myCentralWidget *parentWindow);
+        opponent(QColor color,QString idu,QString race,Projection * proj,MainWindow *main, myCentralWidget *parentWindow);
         void init(QColor color, bool isQtBoat,QString idu,QString race, float lat, float lon, QString login,
-                            QString name,Projection * proj,QWidget *main, QWidget *parentWindow);
+                            QString name,Projection * proj,MainWindow *main, myCentralWidget *parentWindow);
+        ~opponent();
 
         QString getRace(void)    { return idrace; }
         QString getIduser(void)  { return idu; }
         bool    getIsQtBoat()    { return isQtBoat; }
-        QList<position*> * getTrace() { return &trace; }
+        QList<vlmPoint> * getTrace() { return &trace; }
         QColor getColor() { return myColor; }
 
         void setNewData(float lat, float lon,QString name);
         void setIsQtBoat(bool status);
-        void setName();
+        void updateName();
+
+        /* graphicsWidget */
+        QRectF boundingRect() const;
 
     public slots:
         void updateProjection();
         void paramChanged();
+
+    protected:
+        void paint(QPainter * pnt, const QStyleOptionGraphicsItem * , QWidget * );
 
     private:
         float lat,lon;
@@ -87,25 +90,29 @@ class opponent : public QWidget
         QString idrace;
         Projection * proj;
 
+        MainWindow *main;
+        myCentralWidget *parentWindow;
+
         bool isQtBoat;
 
         QColor    bgcolor,fgcolor;
         QColor    myColor;
         int       pi, pj;
-        QLabel    *label;
         int       label_type;
+        int       opp_trace;
+        QString   my_str;
+        int       width,height;
 
-        QList<position*>  trace;
+        QList<vlmPoint>  trace;
+        vlmLine * trace_drawing;
 
-        void createWidget(void);
         void updatePosition();
-        void  paintEvent(QPaintEvent *event);
 };
 
 class opponentList : public QWidget
 {Q_OBJECT
     public:
-        opponentList(Projection * proj,MainWindow * mainWin,QWidget *parentWindow=NULL);
+        opponentList(Projection * proj,MainWindow * main,myCentralWidget * parent);
         void setBoatList(QString list_txt, QString race, bool force);
         void refreshData(void);
         void clear(void);
@@ -113,14 +120,14 @@ class opponentList : public QWidget
         QList<opponent*> * getList(void) { return &opponent_list; };
 
     public slots:
-        void requestFinished (int,QByteArray);
-        void getTrace(QString buff, QList<position*> * trace);
+        void slot_requestFinished (int,QByteArray);
+        void getTrace(QString buff, QList<vlmPoint> * trace);
 
     private:
         QList<opponent*> opponent_list;
 
-        QWidget * parent;
-        MainWindow * mainWin;
+        myCentralWidget * parent;
+        MainWindow * main;
 
         QStringList currentList;
         int currentOpponent;

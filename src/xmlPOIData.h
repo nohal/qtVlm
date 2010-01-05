@@ -26,23 +26,36 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <QFile>
 #include <QTextStream>
 
+class xml_POIData;
+
 #include "POI.h"
 #include "Projection.h"
 #include "gate.h"
+#include "MainWindow.h"
+#include "mycentralwidget.h"
 
 class xml_POIData: public QWidget
 {
     Q_OBJECT
 
     public:
-        xml_POIData(Projection * proj,QWidget * main, QWidget * parent=0);
-        bool writeData(QList<POI*> & poi_list,QList<gate*> & gate_list,QString fname);
-        bool readData(QList<POI*> & poi_list,QList<gate*> & gate_list,QString fname);
-        void importZyGrib(QList<POI*> & poi_list);
+        xml_POIData(Projection * proj,MainWindow * main, myCentralWidget * parent);
+
+    public slots:
+        void slot_writeData(QList<POI*> & poi_list,QList<gate*> & gate_list,QString fname);
+        void slot_readData(QString fname);
+        void slot_importZyGrib();
+
+    signals:
+        void addPOI_list(POI * poi);
+        void delPOI_list(POI * poi);
+        void addGate_list(gate*);
+        void delGate_list(gate*);
 
     private:
         Projection * proj;
-        QWidget * main, * parent;
+        MainWindow * main;
+        myCentralWidget * parent;
 };
 
 #endif

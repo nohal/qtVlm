@@ -60,6 +60,7 @@ int main(int argc, char *argv[])
         translator.load( QString("tr/qtVlm_") + lang);
         app.installTranslator(&translator);
     }
+    app.setQuitOnLastWindowClosed(true);
     
     MainWindow win(800, 600);
     win.show();

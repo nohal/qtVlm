@@ -1,8 +1,6 @@
 /**********************************************************************
-qtVlm: Virtual Loup de mer GUI
-Copyright (C) 2008 - Christophe Thomas aka Oxygen77
-
-http://qtvlm.sf.net
+zUGrib: meteorologic GRIB file data viewer
+Copyright (C) 2008 - Jacques Zaninetti - http://www.zygrib.org
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -16,10 +14,6 @@ GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
-
-Original code: zyGrib: meteorological GRIB file viewer
-Copyright (C) 2008 - Jacques Zaninetti - http://zygrib.free.fr
-
 ***********************************************************************/
 
 #ifndef GshhsREADER_H
@@ -39,17 +33,17 @@ Copyright (C) 2008 - Jacques Zaninetti - http://zygrib.free.fr
 
 // GSHHS file format:
 //
-// int id;           /* Unique polygon id number, starting at 0 */
-// int n;            /* Number of points in this polygon */
-// int flag;             /* level + version << 8 + greenwich << 16 + source << 24 */
+// int id;			 /* Unique polygon id number, starting at 0 */
+// int n;			 /* Number of points in this polygon */
+// int flag;			 /* level + version << 8 + greenwich << 16 + source << 24 */
 // int west, east, south, north; /* min/max extent in micro-degrees */
-// int area;             /* Area of polygon in 1/10 km^2 */
-//
+// int area;			 /* Area of polygon in 1/10 km^2 */
+// 
 // Here, level, version, greenwhich, and source are
-// level:   1 land, 2 lake, 3 island_in_lake, 4 pond_in_island_in_lake
-// version: Set to 4 for GSHHS version 1.4
-// greenwich:   1 if Greenwich is crossed
-// source:  0 = CIA WDBII, 1 = WVS
+// level:	1 land, 2 lake, 3 island_in_lake, 4 pond_in_island_in_lake
+// version:	Set to 4 for GSHHS version 1.4
+// greenwich:	1 if Greenwich is crossed
+// source:	0 = CIA WDBII, 1 = WVS
 
 //==========================================================
 class GshhsPoint {
@@ -70,17 +64,17 @@ class GshhsPolygon
         GshhsPolygon() {};
         GshhsPolygon(ZUFILE *file);
         virtual ~GshhsPolygon();
-
+        
         int  getLevel()     {return flag&255;};
         int  isGreenwich()  {return greenwich;};
         int  isAntarctic()  {return antarctic;};
         bool isOk()         {return ok;};
         //----------------------
-        int id;             /* Unique polygon id number, starting at 0 */
-        int n;              /* Number of points in this polygon */
-        int flag;           /* level + version << 8 + greenwich << 16 + source << 24 */
-        double west, east, south, north;    /* min/max extent in DEGREES */
-        int area;           /* Area of polygon in 1/10 km^2 */
+        int id;				/* Unique polygon id number, starting at 0 */
+        int n;				/* Number of points in this polygon */
+        int flag;			/* level + version << 8 + greenwich << 16 + source << 24 */
+        double west, east, south, north;	/* min/max extent in DEGREES */
+        int area;			/* Area of polygon in 1/10 km^2 */
         //----------------------
         std::list<GshhsPoint *> lsPoints;
 
@@ -105,67 +99,44 @@ class GshhsPolygon_WDB : public GshhsPolygon
         inline virtual int readInt2();
 };
 
-class clipPoint {
-    public:
-        clipPoint() {init(0,0,false,false);}
-        clipPoint(double x, double y) {init(x,y,false,false);}
-        clipPoint(double x, double y, bool type, bool dir) {init(x,y,type,dir);}
-
-        void clearList(void);
-        void append(clipPoint*);
-        void appendBorder(clipPoint*);
-        int count(void);
-        int countBorder(void);
-        QString printBorder(void);
-
-        double x;
-        double y;
-        bool isIntersection;
-        bool goingIn;
-        clipPoint * next;
-        clipPoint * nextBorder;
-        bool visited;
-
-    private:
-        void init(double x, double y, bool type, bool dir);
-};
-
 //==========================================================
 class GshhsReader
 {
     public:
         GshhsReader(std::string fpath, int quality);
+        GshhsReader(const GshhsReader &model);
         ~GshhsReader();
-
+        
         void setUserPreferredQuality(int quality); // 5 levels: 0=low ... 4=full
-
+        
         void drawBackground( QPainter &pnt, Projection *proj,
                 QColor seaColor, QColor backgroundColor);
         void drawContinents( QPainter &pnt, Projection *proj,
                 QColor seaColor, QColor landColor);
-
+                
         void drawSeaBorders( QPainter &pnt, Projection *proj);
         void drawBoundaries( QPainter &pnt, Projection *proj);
         void drawRivers( QPainter &pnt, Projection *proj);
-
+        
         bool gshhsFilesExists(int quality);
-
+        
     private:
         int quality, userPreferredQuality;  // 5 levels: 0=low ... 4=full
+        int  getQuality()   {return quality;}
         void setQuality(int quality);
-        void selectBestQuality(Projection *proj);
+		void selectBestQuality(Projection *proj);
 
         std::string fpath;     // directory containing gshhs files
-
+        
         GshhsRangsReader * gshhsRangsReader;
         bool               isUsingRangsReader;
-
+        
         std::string getNameExtension(int quality);
         std::string getFileName_gshhs(int quality);
         std::string getFileName_boundaries(int quality);
         std::string getFileName_rivers(int quality);
-        void        readGshhsFiles();
-
+        void		readGshhsFiles();
+        
         //-----------------------------------------------------
         // Listes de polygones
         // Pour chaque type, une liste par niveau de qualité,
@@ -181,22 +152,19 @@ class GshhsReader
         std::list<GshhsPolygon*> & getList_boundaries();
         std::list<GshhsPolygon*> & getList_rivers();
         //-----------------------------------------------------
-
+                
         int GSHHS_scaledPoints(GshhsPolygon *pol, QPoint *pts, double decx,
                                 Projection *proj
         );
-
-        void GSHHS_scaleAndClip(QPainter &pnt, GshhsPolygon *pol, QPoint *pts, double decx,Projection *proj,int order,int fillType);
-
         void GsshDrawPolygons(QPainter &pnt, std::list<GshhsPolygon*> &lst,
-                               Projection *proj,int order);
+                                Projection *proj
+        );
         void GsshDrawLines(QPainter &pnt, std::list<GshhsPolygon*> &lst,
-                                Projection *proj, bool isClosed, int order, int mode);
+                                Projection *proj, bool isClosed
+        );
         void clearLists();
-        bool segIntersect(double x1, double y1, double x2, double y2, double x3, double y3, double x4, double y4, double * res_x, double * res_y);
-        bool addIntersect(double xx,double yy,double oxx,double oyy,clipPoint * A, clipPoint * B,clipPoint ** lst,bool isIn);
+    
 
-        int mode;
 };
 
 //-------------------------------------------------

@@ -28,9 +28,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <QPainter>
 #include <QMainWindow>
 
+class boatAccount;
+class MainWindow;
 class boardVLM;
 
-#include "boatAccount.h"
 #include "ui_BoardVLM.h"
 #include "ui_WP_dialog.h"
 #include "Util.h"
@@ -66,7 +67,7 @@ class WP_dialog: public QDialog, public Ui::WP_dialog_ui
 class boardVLM: public QWidget , public Ui::boardVLM_ui
 { Q_OBJECT
     public:
-        boardVLM(QMainWindow * mainWin,QWidget * parent=0);
+        boardVLM(MainWindow * mainWin);
         void validationDone(bool ok);
 
     public slots:
@@ -83,7 +84,7 @@ class boardVLM: public QWidget , public Ui::boardVLM_ui
         void disp_boatInfo();
         void synch_GPS();
 
-        void requestFinished (int currentRequest,QByteArray res);
+        void slot_requestFinished (int currentRequest,QByteArray res);
 
         void sendCmd(int cmdNum,float val1,float val2, float val3);
         void setWP(float lat,float lon,float wph=-1);
@@ -96,6 +97,10 @@ class boardVLM: public QWidget , public Ui::boardVLM_ui
 
     signals:
         void VLM_Sync(void);
+        void POI_selectAborted(POI*);
+
+    protected:
+        void keyPressEvent ( QKeyEvent * event );
 
     private:
         QMainWindow * mainWin;

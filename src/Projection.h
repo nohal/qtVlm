@@ -28,62 +28,79 @@ Copyright (C) 2008 - Jacques Zaninetti - http://zygrib.free.fr
 class Projection;
 
 #include "Util.h"
+#include <QTimer>
 
 #include <QObject>
+
+struct vlmPoint{
+    float lat;
+    float lon;
+};
 
 class Projection : public QObject
 {
 Q_OBJECT
     public:
-        Projection(int w, int h, double lon, double lat);
+        /* init */
+        Projection(int w, int h, double cx, double cy);
+        void setScreenSize(int w, int h);
         ~Projection() {}
 
+        /* zoom */
+        void zoom (float k);
+        void zoomAll(void);
+        void zoomOnZone(double x0, double y0, double x1, double y1);
+        void setScale(float sc);
+
+
+        /* move */
+        void move(double dx, double dy);
+        void setCentralPixel(int i, int j);
+        void setCenterInMap(double x, double y);
+        void setScaleAndCenterInMap(float sc,double x, double y);
+
+        /* get internal data */
+        int   getW()        const   {return W;}    // taille de l'écran
+        int   getH()        const   {return H;}
+        double getCX()      const   {return CX;}   // centre
+        double getCY()      const   {return CY;}
+        float getScale()    const   {return scale;}
+        float getCoefremp() const   {return coefremp;}
+        double getXmin()    const   {return xW;}
+        double getXmax()    const   {return xE;}
+        double getYmin()    const   {return yS;}
+        double getYmax()    const   {return yN;}
+
+        /* coord conversion */
         void screen2map(int i, int j, double *x, double *y) const;
         void map2screen(double x, double y, int *i, int *j) const;
 
-        int   getW()  const   {return W;}    // taille de l'écran
-        int   getH()  const   {return H;}
-        double getCX() const   {return CX;}   // centre
-        double getCY() const   {return CY;}
-        float getScale() const      {return scale;}
-        float getCoefremp() const   {return coefremp;}
-
-        // zone visible (longitude/latitude)
-        double getXmin() const   {return xW;}
-        double getXmax() const   {return xE;}
-        double getYmin() const   {return yS;}
-        double getYmax() const   {return yN;}
-
+        /* position / region validation*/
         bool intersect(double w,double e,double s,double n)  const;
         bool isPointVisible (double x,double y) const;
         bool isInBounderies (int x,int y) const;
 
-        void setScale(float sc);
-        float getScale();
-        void setCentralPixel(int i, int j);
-        void setCenterInMap(double x, double y);
-        void setScreenSize(int w, int h);
-        void updateZoneSelected(double x0, double y0, double x1, double y1);
-        void init(int w, int h, double cx, double cy);
-        void move(double dx, double dy);
-        void zoom (float k);
-
     signals:
         void newZoom(float);
+        void projectionUpdated(void);
 
     private:
         int W, H;     // taille de la fenêtre (pixels)
-
         double CX, CY;                  // centre de la vue (longitude/latitude)
         double xW, xE, yN, yS;  // fenetre visible (repere longitude/latitude)
         double PX,PY;       // center in mercator projection
         float scale;       // Echelle courante
         float scalemax;    // Echelle maxi
-        float scaleall;
+        float scaleall;    // Echelle pour afficher le monde entier
         float coefremp;	   // Coefficient de remplissage (surface_visible/pixels)
 
         void updateBoundaries();
-        void computeScalleAll(void);
+        void my_setScreenSize(int w, int h);
+        void my_setScale(float sc);
+        void my_setCenterInMap(double x, double y);
+        QTimer * timer;
+        void emit_projectionUpdated(void);
+
 };
 
 

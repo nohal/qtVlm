@@ -25,21 +25,25 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <QDialog>
 
+class POI_input;
+
 #include "POI.h"
 #include "ui_POI_input.h"
+#include "mycentralwidget.h"
 
 class POI_input : public QDialog, public Ui::POI_input_ui
 {
     Q_OBJECT
     public:
-        POI_input(QWidget * parent = 0);
+        POI_input(myCentralWidget * parent);
         void done(int result);
 
     public slots:
         void txtHasChanged(void);
+        void slot_showPOI_input(void);
         
     signals:
-        void addPOI(QString,POI::POI_TYPE,float,float,float,int,bool);
+        void addPOI(QString,int,float,float,float,int,bool,boatAccount*);
 };
 
 

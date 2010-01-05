@@ -25,107 +25,79 @@ Copyright (C) 2008 - Jacques Zaninetti - http://zygrib.free.fr
 #ifndef TERRAIN_H
 #define TERRAIN_H
 
-#include <QWidget>
+#include <QGraphicsWidget>
+#include <QGraphicsSceneMouseEvent>
+#include <QPainter>
 #include <QToolBar>
 #include <QBitmap>
-#include <QTimer>
 
-
+class POI;
 class Terrain;
 
 #include "GshhsReader.h"
 #include "GisReader.h"
-#include "Grib.h"
-#include "Projection.h"
-#include "boatAccount.h"
-#include "opponentBoat.h"
-#include "POI.h"
-#include "dialog_gribDate.h"
 
-class Terrain : public QWidget
+#include "Projection.h"
+#include "mycentralwidget.h"
+
+class Terrain : public QGraphicsWidget
 {
     Q_OBJECT
 
 public:
-    Terrain(QWidget *parent, Projection *proj);
+    Terrain(myCentralWidget *parent, Projection *proj);
 
-    void       setGSHHS_map(GshhsReader *map);
-    Grib * getGrib()     {return grib;}
-    void       setCurrentDate(time_t t);
-    time_t getCurrentDate(void);
-    bool getHasCompassLine() {return isCompassLineEnCours;}
+    void  setGSHHS_map(GshhsReader *map);
 
-    void  indicateWaitingMap();    // Affiche un message d'attente
+    void updateSize(int width, int height);
 
-    bool  isSelectingZone()      {return isSelectionZoneEnCours;}
-
-    bool  getSelectedRectangle (double *x0, double *y0, double *x1, double *y1);
-    bool  getSelectedLine      (float *x0, float *y0, float *x1, float *y1);
-
-    void setBoatList(QList<boatAccount*> & boat_list) {this->boat_list=&boat_list; update();}
-    void setOpponents(opponentList * opponents) { this->opponents=opponents; }
-
-    void showGribDate_dialog(void);
-
+    QRectF boundingRect() const;
+    QPainterPath shape() const;
 
 public slots :
     // Map
-    void setProjection();
     void setDrawRivers(bool);
     void setDrawCountriesBorders(bool);
-    void setDrawOrthodromie(bool);
     void setCountriesNames(bool);
-    void setMapQuality(int q);
-    void slot_Zoom_In();
-    void slot_Zoom_Out();
-    void slot_Zoom_Sel();
-    void slot_Zoom_All();
-    void slot_Go_Left();
-    void slot_Go_Right();
-    void slot_Go_Up();
-    void slot_Go_Down();
-    void setCentralPixel(int i, int j);
-    void setCenterInMap(float x, float y);
+    void slot_setMapQuality(int q);
 
     void updateGraphicsParameters();
-    void clearSelection(void);
-    void clearCompassLine(void);
 
-    // Grib
-    void loadGribFile(QString fileName, bool zoom);
-
-    void setDrawWindColors    (bool);
+    void slot_setDrawWindColors    (bool);
 
     void setColorMapSmooth (bool);
     void setDrawWindArrows    (bool);
     void setBarbules          (bool);
     void setCitiesNamesLevel  (int level);
 
-    void slotTimerResize();
-    void slotMustRedraw();
+    void redrawAll(void);
+    void redrawGrib(void);
 
-    void showCompassLine(double,double,double,double,double);
+
 
 signals:
-    void selectionOK(float x0, float y0, float x1, float y1);
-    void mouseClicked(QMouseEvent * e);
-    void mouseDblClicked(QMouseEvent * e);
-    void mouseMoved(QMouseEvent * e);
-    void showContextualMenu(QContextMenuEvent * event);
-    void projectionUpdated();
-    void POI_selectAborted(POI*);
+    void showContextualMenu(QGraphicsSceneContextMenuEvent * event);
+    void mousePress(QGraphicsSceneMouseEvent* e);
+    void mouseRelease(QGraphicsSceneMouseEvent* e);
     int  getRaceVacLen(boatAccount *,int*);
 
-private:
+protected:
+    void paint(QPainter * pnt, const QStyleOptionGraphicsItem * , QWidget * );
+    void contextMenuEvent(QGraphicsSceneContextMenuEvent * event);
+    void mousePressEvent(QGraphicsSceneMouseEvent* e);
+    void mouseReleaseEvent(QGraphicsSceneMouseEvent* e);
+
+private:    
+    //-----------------------------------------------
+    int width,height;
     //-----------------------------------------------
     GshhsReader *gshhsReader;
     GisReader   *gisReader;
     Projection  *proj;
-    Grib        *grib;
-    QTimer      *timerResize;
+    myCentralWidget *parent;    
 
-    QPixmap     *imgEarth;   // images précalculées pour accélérer l'affichage
-
+    QImage     *imgEarth;   // images précalculées pour accélérer l'affichage
+    QImage     *imgSea;
     QPixmap     *imgWind;
     QPixmap     *imgAll;
 
@@ -133,37 +105,28 @@ private:
     bool        isWindMapValid;
     bool        mustRedraw;
     QCursor     enterCursor;
-    bool        isResizing;
 
-    void  draw_OrthodromieSegment
-            (QPainter &pnt, float x0,float y0, float x1,float y1, int recurs=0);
 
-    //-----------------------------------------------
-    void  paintEvent(QPaintEvent *event);
-    void  resizeEvent (QResizeEvent *e);
 
-    void  keyPressEvent (QKeyEvent *e);
-    void  keyReleaseEvent (QKeyEvent *e);
-    void  keyModif(QKeyEvent *e);
-
-    void  mousePressEvent (QMouseEvent * e);
-    void  mouseReleaseEvent (QMouseEvent * e);
-    void  mouseDoubleClickEvent(QMouseEvent * event);
-    void  mouseMoveEvent (QMouseEvent * e);
-    void  enterEvent (QEvent * e);
-    void  leaveEvent (QEvent * e);
-
-    void contextMenuEvent(QContextMenuEvent * event);
-
-    void zoomOnGribFile();
 
     //-----------------------------------------------
-    bool    isSelectionZoneEnCours;
-    bool    isCompassLineEnCours;
-    float   selX0, selY0, selX1, selY1;   // sélection de zone (repère carte)
-    double compass_windAngle;
+    // ox01
+    //void  paintEvent(QPaintEvent *event);
+    //void paint(QPainter * painter, const QStyleOptionGraphicsItem * option, QWidget * widget = 0);
 
-    QColor  seaColor, landColor, backgroundColor;
+
+    //void  mousePressEvent (QMouseEvent * e);
+    //void  mouseReleaseEvent (QMouseEvent * e);
+    //void  mouseDoubleClickEvent(QMouseEvent * event);
+    //void  mouseMoveEvent (QGraphicsSceneMouseEvent * event);
+    //void  enterEvent (QEvent * e);
+    //void  leaveEvent (QEvent * e);
+
+
+
+    //-----------------------------------------------
+
+    QColor  seaColor, landColor, backgroundColor, tranparent;
     QColor  selectColor;
     QColor  windArrowsColor;
 
@@ -190,21 +153,9 @@ private:
     bool  showCountriesNames;
 
     //-----------------------------------------------
-    bool draw_GSHHSandGRIB(QPainter &painter);
-    void draw_Orthodromie(QPainter &painter);
-
-    bool pleaseWait;     // long task in progress
-
-    bool drawingMap;
-
-
-    QList<boatAccount*> * boat_list;
-    opponentList * opponents;
-    void drawBoats(QPainter &pnt);
-    void drawOpponents(QPainter &pnt);
-
-    dialog_gribDate * gribDateDialog;
-
+    void draw_GSHHSandGRIB(void);
+    void indicateWaitingMap(void);
+    void updateRoutine(void);
 };
 
 #endif

@@ -26,6 +26,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <QWidget>
 #include <QDialog>
 #include <QDebug>
+#include <QMutex>
 
 #include "Util.h"
 
@@ -37,6 +38,7 @@ class inetConn_progressDialog : public QDialog, public Ui::inetConn_progressDial
     public:
 	inetConn_progressDialog(QWidget * parent = 0);
 	void showDialog(QString name);
+        void hideDialog(void);
 
     public slots:
 	void updateProgress(qint64 bytesReceived, qint64 bytesTotal);
@@ -49,19 +51,17 @@ class inetConnexion : public QObject
         inetConnexion(QString specHost,QWidget * main,QWidget * parent);
 	~inetConnexion(void);
         void initConn(QWidget * main,QWidget * parent);
-	void doRequestGet(int requestNum,QString requestUrl);
-	void doRequestGetProgress(int requestNum,QString requestUrl);
-	void doRequestPost(int requestNum,QString requestUrl,QString data);
+        QByteArray doRequestGet(int requestNum,QString requestUrl);
+        QByteArray doRequestGetProgress(int requestNum,QString requestUrl);
+        QByteArray doRequestPost(int requestNum,QString requestUrl,QString data);
 	bool isAvailable(void);	
 
     public slots:
-	void slotFinished();
-	void slotError(QNetworkReply::NetworkError error);
 	void slotProgess(qint64 bytesReceived, qint64 bytesTotal );
         void updateInet(void);
 
     signals:
-	void requestFinished(int,QByteArray);
+//	void requestFinished(int,QByteArray);
 
     private:
 	QString host;
@@ -70,14 +70,15 @@ class inetConnexion : public QObject
 	bool hasProgress;
 	int currentRequest;
 	QNetworkAccessManager *inetManager;
-	QNetworkReply * currentReply;
 
 	inetConn_progressDialog * progressDialog;
 
         QWidget * parent;
 
 	void resetInet(void);
-	void doRequest(int type,int requestNum,QString requestUrl,QString data);
+        QByteArray doRequest(int type,int requestNum,QString requestUrl,QString data);
+//        void routineFinished(QNetworkReply * currentReply);
+//        void routineError(QNetworkReply::NetworkError error);
 };
 
 #endif

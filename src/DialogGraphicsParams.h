@@ -66,14 +66,16 @@ class InputLineParams : public QWidget
         InputLineParams(float width, QColor color,
 						float defaultWidth, QColor defaultColor,
 						QWidget *parent,
-						float minWidth=0.2, float maxWidth=6
+                                                float minWidth=0.2, float maxWidth=6,int decimal=1,
+                                                bool useTestZone=true
         			);
         			
-    	float  getLineWidth() {return sbWidth->value();};
-    	QColor getLineColor() {return testZone->getLineColor();};
+        float  getLineWidth() {return sbWidth->value();}
+        QColor getLineColor() {return testZone->getLineColor();}
     
     private:
 		float defaultWidth;
+                bool useTestZone;
 		QColor defaultColor, color;
 		
 		QDoubleSpinBox *sbWidth;
@@ -95,7 +97,7 @@ class InputColor_testZone : public QWidget
         void setColor (QColor color)
         		{ this->color=color; update(); }
     	
-    	QColor getColor() {return color;};
+        QColor getColor() {return color;}
     
     private:
 		QColor color;
@@ -110,7 +112,7 @@ class InputColor : public QWidget
     public:
         InputColor(QColor color, QColor defaultColor, QWidget *parent);
     	
-    	QColor getColor() {return testZone->getColor();};
+        QColor getColor() {return testZone->getColor();}
     
     private:
 		QColor defaultColor, color;
@@ -149,7 +151,9 @@ class DialogGraphicsParams : public QDialog
         InputLineParams *inputBoundariesLine;
         InputLineParams *inputRiversLine;
         InputLineParams *inputIsobarsLine;
-        
+        InputLineParams *inputOpacity;
+        InputLineParams *inputEstimeLine;
+
         QFrame * createFrameGui(QWidget *parent);
 };
 

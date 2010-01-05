@@ -33,7 +33,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #define ROLE_ALIAS     Qt::UserRole+5
 #define ROLE_CHK_POLAR Qt::UserRole+6
 
-boatAccount_dialog::boatAccount_dialog(Projection * proj, MainWindow * main, Terrain * parent) : QDialog(parent)
+boatAccount_dialog::boatAccount_dialog(Projection * proj, MainWindow * main, myCentralWidget * parent) : QDialog(parent)
 {
     setupUi(this);
 
@@ -52,7 +52,9 @@ boatAccount_dialog::boatAccount_dialog(Projection * proj, MainWindow * main, Ter
 
     connect(this,SIGNAL(accountListUpdated()), main, SLOT(slotAccountListUpdated()));
 
-    connect(this,SIGNAL(writeBoat()),main,SLOT(slotWriteBoat()));
+    connect(this,SIGNAL(writeBoat()),parent,SLOT(slot_writeBoatData()));
+    connect(this,SIGNAL(addBoat(boatAccount*)),parent,SLOT(slot_addBoat_list(boatAccount*)));
+    connect(this,SIGNAL(delBoat(boatAccount*)),parent,SLOT(slot_delBoat_list(boatAccount*)));
 
 }
 
@@ -149,10 +151,10 @@ void boatAccount_dialog::done(int result)
             /* clear all account from list*/
             while(acc_list->count()!=0)
             {
-                delete acc_list->last();
-                acc_list->removeLast();
+                boatAccount* ptr = acc_list->last();
+                emit delBoat(ptr);
+                delete ptr;
             }
-            acc_list->clear();
         }
         else
         {
@@ -177,8 +179,9 @@ void boatAccount_dialog::done(int result)
             { /* need to remove account */
                 while(acc_list->count()!=commonLen)
                 {
-                    delete acc_list->last();
-                    acc_list->removeLast();
+                    boatAccount* ptr = acc_list->last();
+                    emit delBoat(ptr);
+                    delete ptr;
                 }
             }
 
@@ -196,8 +199,8 @@ void boatAccount_dialog::done(int result)
                     acc->setLockStatus(((Qt::CheckState)item->data(ROLE_LOCKED).toInt())==Qt::Checked);
                     acc->setAlias(((Qt::CheckState)item->data(ROLE_CHK_ALIAS).toInt())==Qt::Checked,
                                 item->data(ROLE_ALIAS).toString());
-                    acc_list->append(acc);
                     acc->unSelectBoat(false); /*unselect without update as following getData will do it*/
+                    emit addBoat(acc);
                 }
             }
 

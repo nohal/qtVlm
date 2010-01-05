@@ -25,27 +25,34 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <QDomDocument>
 #include <QFile>
 #include <QTextStream>
-
 class xml_boatData;
 
 #include "boatAccount.h"
 #include "Projection.h"
 #include "opponentBoat.h"
 #include "MainWindow.h"
-#include "Terrain.h"
+#include "mycentralwidget.h"
 
 class xml_boatData: public QWidget
 {Q_OBJECT
 
       public:
-            xml_boatData(Projection * proj,MainWindow * main, Terrain * parent=0);
-            bool writeBoatData(QList<boatAccount*> & boat_list,QList<raceData*> & race_list,QString fname);
-            bool readBoatData(QList<boatAccount*> & boat_list,QList<raceData*> & race_list,QString fname);
+            xml_boatData(Projection * proj,MainWindow * main, myCentralWidget * parent=0);
+
+      public slots:
+            void slot_writeData(QList<boatAccount*> & boat_list,QList<raceData*> & race_list,QString fname);
+            void slot_readData(QString fname,bool readAll);
+
+      signals:
+            void addBoat_list(boatAccount* boat);
+            void delBoat_list(boatAccount* boat);
+            void addRace_list(raceData* race);
+            void delRace_list(raceData* race);
 
       private:
             Projection * proj;
             MainWindow * main;
-            Terrain * parent;
+            myCentralWidget * parent;
 };
 
 #endif

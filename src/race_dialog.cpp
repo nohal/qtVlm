@@ -26,26 +26,24 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #define RACE_NO_REQUEST 0
 #define RACE_LIST_BOAT  1
 
-race_dialog::race_dialog(QWidget * main,QWidget * parent) : QDialog(parent)
+race_dialog::race_dialog(MainWindow * main,myCentralWidget * parent) : QDialog(parent)
 {
     setupUi(this);
-    chooser_raceList->setInsertPolicy(QComboBox::InsertAlphabetically);
-    availableBoat->setSortingEnabled(true);
-    availableBoat->setSelectionMode(QAbstractItemView::ExtendedSelection);
-    selectedBoat->setSortingEnabled(true);
-    selectedBoat->setSelectionMode(QAbstractItemView::ExtendedSelection);
 
-    connect(this,SIGNAL(readBoat()),main,SLOT(slotReadBoat()));
-    connect(this,SIGNAL(writeBoat()),main,SLOT(slotWriteBoat()));
+    connect(this,SIGNAL(updateOpponent()),main,SLOT(slotUpdateOpponent()));
+
+    chooser_raceList->setInsertPolicy(QComboBox::InsertAlphabetically);
+//    availableBoat->setSortingEnabled(true);
+    availableBoat->setSelectionMode(QAbstractItemView::ExtendedSelection);
+//    selectedBoat->setSortingEnabled(true);
+    selectedBoat->setSelectionMode(QAbstractItemView::ExtendedSelection);
 
     /* init http inetManager */
     conn=new inetConnexion(main,this);
 
     waitBox = new QMessageBox(QMessageBox::Information,
                              tr("ParamÃ©trage des courses"),
-                             tr("Chargement des courses et des bateaux"),
-                             QMessageBox::Cancel,this
-                             );
+                             tr("Chargement des courses et des bateaux"));
 }
 
 race_dialog::~race_dialog()
@@ -57,8 +55,6 @@ void race_dialog::initList(QList<boatAccount*> & acc_list_ptr,QList<raceData*> &
 {
     this->acc_list = & acc_list_ptr;
     this->race_list = & race_list_ptr;
-
-    qWarning() << "init list";
 
     numRace = -1;
     initDone = false;
@@ -72,16 +68,19 @@ void race_dialog::initList(QList<boatAccount*> & acc_list_ptr,QList<raceData*> &
 
         //qWarning() << acc_list->at(i)->getLogin() << " " << acc_list->at(i)->getStatus() << " " << acc_list->at(i)->getRaceId();
 
+        /* bateau inactif ou pas en course */
         if(!acc_list->at(i)->getStatus() || acc_list->at(i)->getRaceId() == "0")
             continue;
 
+        /* on cherche si la course existe déjà ds la liste */
         for(int j=0;j<param_list.size();j++)
             if(param_list[j]->id == acc_list->at(i)->getRaceId())
             {
                 found=true;
                 break;
             }
-        if(!found) /* not adding a race twice*/
+        /* Elle n'existe pas => on crée un nv raceParam */
+        if(!found)
         {
             raceParam * ptr = new raceParam();
             ptr->id=acc_list->at(i)->getRaceId();
@@ -111,12 +110,10 @@ void race_dialog::initList(QList<boatAccount*> & acc_list_ptr,QList<raceData*> &
 
     /* init index of search : currentRace*/
     currentRace=-1;
+    waitBox->show();
     getNextRace();
 
-    initDone = true;
 
-    waitBox->exec();
-    #warning should cancel current request if cancel is pressed
 }
 
 void race_dialog::getNextRace()
@@ -126,6 +123,7 @@ void race_dialog::getNextRace()
     {
         /* finished */
         waitBox->hide();
+        initDone = true;
         numRace=-1;
         chgRace(0);
         return;
@@ -145,14 +143,15 @@ void race_dialog::getNextRace()
                         << "idr="
                         << param_list[currentRace]->id;
 
-    conn->doRequestGet(RACE_LIST_BOAT,page);
+    slot_requestFinished(RACE_LIST_BOAT,conn->doRequestGet(RACE_LIST_BOAT,page));
 }
 
-void race_dialog::requestFinished (int ,QByteArray data)
+void race_dialog::slot_requestFinished (int ,QByteArray data)
 {
     QString strbuf(data);
     QStringList list_res;
     QStringList boat;
+    QStringList boattemp;
     int i;
     struct boatParam * ptr;
 
@@ -194,9 +193,10 @@ void race_dialog::done(int result)
         saveData(true); /* really saving, not only applying*/
     else
     {
-        qWarning() << "Cancel modification: read boat param from disk";
-        emit readBoat();
+        emit readRace();
+        emit updateOpponent();
     }
+
     QDialog::done(result);
 }
 
@@ -216,7 +216,7 @@ void race_dialog::saveData(bool save)
         delete race_list->at(i);
     race_list->clear();
 
-    /* forcing sync of currently displayed race*/
+    /* force le synch du champ selected des boatParam */
     chgRace(-1);
 
     /* saving races */
@@ -237,7 +237,12 @@ void race_dialog::saveData(bool save)
     }
 
     if(save)
+    {
+        //qWarning() << "saving races: " << race_list->size();
         emit writeBoat();
+    }
+
+    emit updateOpponent();
 }
 
 void race_dialog::chgRace(int id)
@@ -259,7 +264,7 @@ void race_dialog::chgRace(int id)
     /* find race data */
     if(id < 0 || id >= chooser_raceList->count())
     {
-        qWarning() << "chgRace: Bad id :" << id;
+        //qWarning() << "chgRace: Bad id :" << id;
         return;
     }
 
@@ -278,15 +283,31 @@ void race_dialog::chgRace(int id)
     selectedBoat->clear();
 
     QListWidgetItem * ptr;
+    QString string;
+    QMap<QString,boatParam*> sortedAvailable,sortedSelected;
     for(int i=0;i<param_list[numRace]->boats.size();i++)
     {
-        ptr=new QListWidgetItem(param_list[numRace]->boats[i]->login + " - " + param_list[numRace]->boats[i]->user_id);
-        ptr->setData(Qt::UserRole,QVariant(QMetaType::VoidStar, &param_list[numRace]->boats[i]));
+        string=param_list[numRace]->boats[i]->login + " - " + param_list[numRace]->boats[i]->user_id;
         if(param_list[numRace]->boats[i]->selected)
-            selectedBoat->addItem(ptr);
+            sortedSelected.insert(string.toLower(),param_list[numRace]->boats[i]);
         else
-            availableBoat->addItem(ptr);
+            sortedAvailable.insert(string.toLower(),param_list[numRace]->boats[i]);
         param_list[numRace]->boats[i]->selected=false;
+    }
+    QList <boatParam*> tempList;
+    tempList=sortedSelected.values();
+    for(int i=0;i<tempList.count();i++)
+    {
+        ptr=new QListWidgetItem(tempList[i]->login + " - " + tempList[i]->user_id);
+        ptr->setData(Qt::UserRole,QVariant(QMetaType::VoidStar, &tempList[i]));
+        selectedBoat->addItem(ptr);
+    }
+    tempList=sortedAvailable.values();
+    for(int i=0;i<tempList.count();i++)
+    {
+        ptr=new QListWidgetItem(tempList[i]->login + " - " + tempList[i]->user_id);
+        ptr->setData(Qt::UserRole,QVariant(QMetaType::VoidStar, &tempList[i]));
+        availableBoat->addItem(ptr);
     }
 
     nbAvailable->setText(QString().setNum(availableBoat->count()));

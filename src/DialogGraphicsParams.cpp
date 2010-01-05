@@ -31,6 +31,7 @@ Copyright (C) 2008 - Jacques Zaninetti - http://zygrib.free.fr
 
 #include "DialogGraphicsParams.h"
 #include "Util.h"
+#include <QDebug>
 
 
 //===========================================================================
@@ -112,24 +113,30 @@ void InputLineParams_testZone::mouseReleaseEvent(QMouseEvent * )
 //----------------------------------------------------------------------
 InputLineParams::InputLineParams(float width, QColor color,
 						float defaultWidth, QColor defaultColor, QWidget *parent,
-						float minWidth, float maxWidth)
+                                                float minWidth, float maxWidth,int decimal,bool useTestZone)
 		: QWidget(parent)
 {
 	this->defaultWidth = defaultWidth;
 	this->defaultColor = defaultColor;
-
+        this->useTestZone = useTestZone;
 	QHBoxLayout *layout = new QHBoxLayout;
 
     sbWidth = new QDoubleSpinBox(this);
-    	sbWidth->setValue(width);
+
     	sbWidth->setRange(minWidth, maxWidth);
-    	sbWidth->setDecimals(1);
-    	sbWidth->setSingleStep(0.2);
-	layout->addWidget(sbWidth);
-	
-	testZone = new InputLineParams_testZone(width, color);
-		testZone->setMinimumSize(220, 20);
-	layout->addWidget(testZone);
+        sbWidth->setDecimals(decimal);
+        if (decimal!=0)
+                sbWidth->setSingleStep(0.2);
+        else
+                sbWidth->setSingleStep(1);
+        sbWidth->setValue(width);
+        layout->addWidget(sbWidth);
+        if(useTestZone)
+        {
+            testZone = new InputLineParams_testZone(width, color);
+            testZone->setMinimumSize(220, 20);
+            layout->addWidget(testZone);
+        }
 
 	bdDefault = new QPushButton(tr("Valeurs par défauts"), this);
 	layout->addWidget(bdDefault);
@@ -141,14 +148,18 @@ InputLineParams::InputLineParams(float width, QColor color,
 //----------------------------------------------------------------------
 void InputLineParams::lineWidthChanged()
 {
+    if(!useTestZone) return;
 	testZone->setWidth(sbWidth->value());
 }
 //----------------------------------------------------------------------
 void InputLineParams::resetDefault()
 {
 	sbWidth->setValue(defaultWidth);
-	testZone->setWidth(defaultWidth);
-	testZone->setColor(defaultColor);
+        if(useTestZone)
+        {
+            testZone->setWidth(defaultWidth);
+            testZone->setColor(defaultColor);
+        }
 }
 
 //===========================================================================
@@ -206,6 +217,9 @@ void DialogGraphicsParams::slotBtOK()
 	Util::setSetting("riversLineColor",   inputRiversLine->getLineColor());
 	Util::setSetting("isobarsLineWidth",  inputIsobarsLine->getLineWidth());
 	Util::setSetting("isobarsLineColor",  inputIsobarsLine->getLineColor());
+        Util::setSetting("landOpacity",  inputOpacity->getLineWidth());
+        Util::setSetting("estimeLineWidth",  inputEstimeLine->getLineWidth());
+        Util::setSetting("estimeLineColor",  inputEstimeLine->getLineColor());
     accept();
 }
 //-------------------------------------------------------------------------------
@@ -256,6 +270,29 @@ QFrame *DialogGraphicsParams::createFrameGui(QWidget *parent)
     lay->addWidget( inputLandColor, lig,1, Qt::AlignLeft);
     //-------------------------------------------------
     lig ++;
+    label = new QLabel(tr("Opacite des terres :"), frm);
+    lay->addWidget( label,    lig,0, Qt::AlignRight);
+        inputOpacity =
+                new InputLineParams(
+                                Util::getSetting("landOpacity", 180).toDouble(),
+                                QColor(Qt::black).value(),
+                                180,  QColor(Qt::black),
+                                this,0,255,0,false);
+
+    lay->addWidget( inputOpacity, lig,1, Qt::AlignLeft);
+    //-------------------------------------------------
+    lig ++;
+    label = new QLabel(tr("Estime :"), frm);
+    lay->addWidget( label,    lig,0, Qt::AlignRight);
+        inputEstimeLine =
+                new InputLineParams(
+                                Util::getSetting("estimeLineWidth", 1.6).toDouble(),
+                                Util::getSetting("estimeLineColor", QColor(Qt::darkMagenta)).value<QColor>(),
+                                1.6,  QColor(Qt::darkMagenta),
+                                this);
+    lay->addWidget( inputEstimeLine, lig,1, Qt::AlignLeft);
+    //-------------------------------------------------
+    lig ++;
     label = new QLabel(tr("Traits de côtes :"), frm);
     lay->addWidget( label,    lig,0, Qt::AlignRight);
 	inputSeaBordersLine =
@@ -263,7 +300,7 @@ QFrame *DialogGraphicsParams::createFrameGui(QWidget *parent)
 				Util::getSetting("seaBordersLineWidth", 1.8).toDouble(),
 				Util::getSetting("seaBordersLineColor", QColor(40,45,30)).value<QColor>(),
 				1.8,  QColor(40,45,30),
-				this);
+                                this);
     lay->addWidget( inputSeaBordersLine, lig,1, Qt::AlignLeft);
     //-------------------------------------------------
     lig ++;

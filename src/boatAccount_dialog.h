@@ -33,14 +33,14 @@ class boatAccount_dialog;
 #include "Projection.h"
 #include "xmlBoatData.h"
 #include "opponentBoat.h"
-#include "Terrain.h"
 #include "MainWindow.h"
+#include "mycentralwidget.h"
 
 class boatAccount_dialog : public QDialog, public Ui::boatAccount_dialog
 {
     Q_OBJECT
     public:
-        boatAccount_dialog(Projection * proj,MainWindow * main, Terrain * parent = 0);
+        boatAccount_dialog(Projection * proj,MainWindow * main, myCentralWidget * parent);
         ~boatAccount_dialog();
         void done(int result);
         void initList(QList<boatAccount*> & acc_list);
@@ -59,13 +59,15 @@ class boatAccount_dialog : public QDialog, public Ui::boatAccount_dialog
     signals:
         void accountListUpdated(void);
         void writeBoat(void);
+        void addBoat(boatAccount*);
+        void delBoat(boatAccount*);
 
     private:
         QListWidgetItem * blank;
         QList<boatAccount*> * acc_list;
         Projection * proj;
         MainWindow * main;
-        Terrain * parent;
+        myCentralWidget * parent;
 };
 
 

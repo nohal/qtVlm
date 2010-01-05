@@ -27,10 +27,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 class Pilototo;
 class Pilototo_instruction;
 class Pilototo_param;
+class boatAccount;
 
 #include "Pilototo_param.h"
-#include "boatAccount.h"
 #include "inetConnexion.h"
+#include "mycentralwidget.h"
 
 #define PILOTOTO_STATUS_DONE    0
 #define PILOTOTO_STATUS_PENDING 1
@@ -117,7 +118,7 @@ class Pilototo_instruction : public QWidget, public Ui::instruction_ui
 class Pilototo : public QDialog, public Ui::pilototo_ui
 {Q_OBJECT
     public:
-	Pilototo(QWidget *main,QWidget * parent=0);
+        Pilototo(MainWindow *main,myCentralWidget * parent);
         void done(int);
 	Pilototo_param * instructionEditor;
 
@@ -128,7 +129,7 @@ class Pilototo : public QDialog, public Ui::pilototo_ui
 	void instructionUpdated(void);
 	void boatUpdated(boatAccount * boat);
 	void updateTime(void);
-	void requestFinished (int currentRequest,QByteArray res);
+        void slot_requestFinished (int currentRequest,QByteArray res);
 	void doSelectPOI(Pilototo_instruction * instruction);
 
     signals:
@@ -138,8 +139,8 @@ class Pilototo : public QDialog, public Ui::pilototo_ui
 	void addInstruction(void);
 
     private:
-	QWidget * parent;
-	QList<Pilototo_instruction*> instructions_list;
+        myCentralWidget * parent;
+        QList<Pilototo_instruction*> instructions_list;
 	QList<Pilototo_instruction*> drawList;
 	QList<int> delList;
 	QMessageBox * waitBox;

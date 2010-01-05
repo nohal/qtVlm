@@ -26,7 +26,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #define VLM_REQUEST_GET_FOLDER 0
 #define VLM_REQUEST_GET_FILE   1
 
-DialogVLM_grib::DialogVLM_grib(QWidget * main,QWidget *parent) : QDialog(parent)
+DialogVLM_grib::DialogVLM_grib(MainWindow * main,myCentralWidget * parent) : QDialog(parent)
 {
     setupUi(this);
     listRadio[0]=radio1;
@@ -34,11 +34,9 @@ DialogVLM_grib::DialogVLM_grib(QWidget * main,QWidget *parent) : QDialog(parent)
     listRadio[2]=radio3;
     listRadio[3]=radio4;
 
-    waitBox = new QMessageBox(QMessageBox::Question,
+    waitBox = new QMessageBox(QMessageBox::Information,
                              tr("VLM Grib"),
-                             tr("Chargement de la liste de grib"),
-                             QMessageBox::Cancel,this
-                             );
+                             tr("Chargement de la liste de grib"));
 
     /* init http inetManager */
     conn=new inetConnexion("http://grib.virtual-loup-de-mer.org",main,this);
@@ -48,6 +46,7 @@ void DialogVLM_grib::done(int res)
 {
     if(res == QDialog::Accepted)
     {
+        this->hide();
         if(!doRequest(VLM_REQUEST_GET_FILE))
             QDialog::done(QDialog::Rejected);
     }
@@ -64,10 +63,9 @@ void DialogVLM_grib::showDialog(void)
 
     filename="";
 
-    if(doRequest(VLM_REQUEST_GET_FOLDER))
-    {
-        waitBox->exec();
-    }
+    waitBox->show();
+    doRequest(VLM_REQUEST_GET_FOLDER);
+    if(waitBox->isVisible()) waitBox->hide();
 }
 
 int DialogVLM_grib::parseFolderListing(QString data)
@@ -163,7 +161,7 @@ bool DialogVLM_grib::doRequest(int reqType)
     switch(reqType)
     {
         case VLM_REQUEST_GET_FOLDER:
-            conn->doRequestGet(VLM_REQUEST_GET_FOLDER,"/");
+            slot_requestFinished(VLM_REQUEST_GET_FOLDER,conn->doRequestGet(VLM_REQUEST_GET_FOLDER,"/"));
             break;
         case VLM_REQUEST_GET_FILE:
             /*search selected file*/
@@ -174,13 +172,13 @@ bool DialogVLM_grib::doRequest(int reqType)
                 return false;
             filename=listRadio[i]->text().mid(0,23);
             page="/"+filename;
-            conn->doRequestGetProgress(VLM_REQUEST_GET_FILE,page);
+            slot_requestFinished(VLM_REQUEST_GET_FILE,conn->doRequestGetProgress(VLM_REQUEST_GET_FILE,page));
             break;
     }
     return true;
 }
 
-void DialogVLM_grib::requestFinished (int reqType,QByteArray data)
+void DialogVLM_grib::slot_requestFinished (int reqType,QByteArray data)
 {
     int nb;
     switch(reqType)

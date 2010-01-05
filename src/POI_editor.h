@@ -31,13 +31,13 @@ class POI_Editor;
 #include "Projection.h"
 #include "ui_POI_editor.h"
 #include "MainWindow.h"
-#include "Terrain.h"
+#include "mycentralwidget.h"
 
 //===================================================================
 class POI_Editor : public QDialog, public Ui::POI_editor_ui
 { Q_OBJECT
     public:
-        POI_Editor(MainWindow * main,Terrain * terre);
+        POI_Editor(MainWindow * main,myCentralWidget * parent);
         void done(int result);
 
     public slots:
@@ -48,7 +48,7 @@ class POI_Editor : public QDialog, public Ui::POI_editor_ui
         void chkTStamp_chg(int);
         void nameHasChanged(QString);
         void editPOI(POI *);
-        void newPOI(float lon, float lat,Projection *proj);
+        void newPOI(float lon, float lat,Projection *proj, boatAccount *);
         void lat_deg_chg(int);
         void lat_min_chg(double);
         void lon_deg_chg(int);
@@ -60,6 +60,8 @@ class POI_Editor : public QDialog, public Ui::POI_editor_ui
     signals:
         void addPOI_list(POI*);
         void delPOI_list(POI*);
+        void doChgWP(float,float,float);
+        void updateRoute();
 
     private:
         POI   *poi;
@@ -68,7 +70,7 @@ class POI_Editor : public QDialog, public Ui::POI_editor_ui
         int oldType;
 
         MainWindow * main;
-        Terrain * terre;
+        myCentralWidget * parent;
 
         void initPOI(void);
         float getValue(int type);

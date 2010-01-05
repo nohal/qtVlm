@@ -24,12 +24,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #define EDT_LAT 0
 #define EDT_LON 1
 
-gate_editor::gate_editor(QWidget *ownerMeteotable, QWidget *parent): QDialog(parent)
+gate_editor::gate_editor(MainWindow * main ,myCentralWidget * parent): QDialog(parent)
 {
     setupUi(this);
 
     this->parent=parent;
-    this->ownerMeteotable=ownerMeteotable;
+    this->main=main;
 
     lat[0][0] = lat_deg_1;
     lat[0][1] = lat_min_1;
@@ -41,12 +41,12 @@ gate_editor::gate_editor(QWidget *ownerMeteotable, QWidget *parent): QDialog(par
     lon[1][0] = lon_deg_2;
     lon[1][1] = lon_min_2;
 
-    connect(ownerMeteotable,SIGNAL(editGate(gate*)),this,SLOT(editGate(gate*)));
-    connect(ownerMeteotable,SIGNAL(newGate(float,float,float,float,Projection*)),
+
+    connect(main,SIGNAL(newGate(float,float,float,float,Projection*)),
             this,SLOT(newGate(float,float,float,float,Projection*)));
 
-    connect(this,SIGNAL(addGate_list(gate*)),ownerMeteotable,SLOT(addGate_list(gate*)));
-    connect(this,SIGNAL(delGate_list(gate*)),ownerMeteotable,SLOT(delGate_list(gate*)));
+    connect(this,SIGNAL(addGate_list(gate*)),parent,SLOT(slot_addGate_list(gate*)));
+    connect(this,SIGNAL(delGate_list(gate*)),parent,SLOT(slot_delGate_list(gate*)));
 
 }
 
@@ -64,7 +64,7 @@ void gate_editor::editGate(gate * gate_)
 void gate_editor::newGate(float lat_1, float lon_1,float lat_2, float lon_2,Projection *proj)
 {
     modeCreation = true;
-    curGate = new gate(tr("Porte"), lat_1, lon_1, lat_2, lon_2,proj, ownerMeteotable,parent);
+    curGate = new gate(tr("Porte"), lat_1, lon_1, lat_2, lon_2,proj, main,parent);
     initEditor();
     setWindowTitle(tr("Nouvelle porte"));
     btDelete->setEnabled(false);

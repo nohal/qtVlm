@@ -23,9 +23,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "paramVLM.h"
 #include "Util.h"
 
-paramVLM::paramVLM(QWidget * parent) : QDialog(parent)
+paramVLM::paramVLM(MainWindow * main,myCentralWidget * parent) : QDialog(parent)
 {
     setupUi(this);
+
+    connect(this,SIGNAL(paramVLMChanged()),main,SLOT(slotParamChanged()));
+    connect(this, SIGNAL(inetUpdated()), main, SLOT(slotInetUpdated()));
 
     /* Drawing / affichage */   
     chk_gribZoomOnLoad->setCheckState(Util::getSetting("gribZoomOnLoad",0).toInt()==1?Qt::Checked:Qt::Unchecked);
@@ -67,7 +70,15 @@ paramVLM::paramVLM(QWidget * parent) : QDialog(parent)
             radioBtn_dist->setChecked(true);
             break;
     }
-
+    switch(Util::getSetting("routeStart",0).toInt())
+    {
+        case 0:
+            radioBtn_route0->setChecked(true);
+            break;
+        case 1:
+            radioBtn_route1->setChecked(true);
+            break;
+    }
     /* Trace */
     for(int i=5;i<=61;i+=5)
         trace_step->addItem(QString().setNum(i));
@@ -132,6 +143,10 @@ void paramVLM::done(int result)
         else
             Util::setSetting("estimeType","2");
 
+        if(radioBtn_route0->isChecked())
+            Util::setSetting("routeStart","0");
+        else
+            Util::setSetting("routeStart","1");
         /* Trace */
 
         Util::setSetting("trace_step",QString().setNum(trace_step->currentIndex()));

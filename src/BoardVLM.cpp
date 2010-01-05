@@ -23,9 +23,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <QDebug>
 
 #include "BoardVLM.h"
+#include "boatAccount.h"
 #include <qextserialport.h>
 #include "Orthodromie.h"
 #include "Util.h"
+#include "MainWindow.h"
+#include "mycentralwidget.h"
 
 #define VLM_NO_REQUEST     -1
 #define VLM_REQUEST_LOGIN  0
@@ -36,7 +39,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #define SPEED_COLOR_VLM       "color: rgb(255, 0, 0);"
 #define SPEED_COLOR_NO_POLAR  "color: rgb(255, 170, 127);"
 
-boardVLM::boardVLM(QMainWindow * mainWin,QWidget * parent) : QWidget(parent)
+boardVLM::boardVLM(MainWindow * mainWin) : QWidget(mainWin)
 {
     setupUi(this);
 
@@ -45,6 +48,9 @@ boardVLM::boardVLM(QMainWindow * mainWin,QWidget * parent) : QWidget(parent)
 
     connect(mainWin,SIGNAL(setChangeStatus(bool)),this,SLOT(setChangeStatus(bool)));
     connect(this,SIGNAL(VLM_Sync()),mainWin,SLOT(slotVLM_Sync()));
+    connect(mainWin,SIGNAL(boatHasUpdated(boatAccount*)),
+            this,SLOT(boatUpdated(boatAccount*)));
+    connect(this,SIGNAL(POI_selectAborted(POI*)),mainWin,SLOT(slot_POIselected(POI*)));
 
     GPS_timer = new QTimer(this);
     GPS_timer->setSingleShot(true);
@@ -650,7 +656,7 @@ void boardVLM::sendCmd(int cmdNum,float  val1,float val2, float val3)
                                                  << cmd_val2 << ","
                                                  << cmd_val3 << ")";
 
-        conn->doRequestGet(VLM_REQUEST_LOGIN,page);
+        slot_requestFinished(VLM_REQUEST_LOGIN,conn->doRequestGet(VLM_REQUEST_LOGIN,page));
     }
     else
     {
@@ -659,7 +665,7 @@ void boardVLM::sendCmd(int cmdNum,float  val1,float val2, float val3)
     }
 }
 
-void boardVLM::requestFinished (int currentRequest,QByteArray)
+void boardVLM::slot_requestFinished (int currentRequest,QByteArray)
 {
     QString page;
     QNetworkRequest request;
@@ -718,7 +724,7 @@ void boardVLM::requestFinished (int currentRequest,QByteArray)
             }
             qWarning() << "Send cmd: " << page;
 
-            conn->doRequestGet(VLM_DO_REQUEST,page);
+            slot_requestFinished(VLM_DO_REQUEST,conn->doRequestGet(VLM_DO_REQUEST,page));
             break;
         case VLM_DO_REQUEST:
             isWaiting=true;
@@ -747,6 +753,12 @@ void boardVLM::edtSpinBox_key()
         chgHeading();
     else if(s==editAngle)
         chgAngle();
+}
+
+void boardVLM::keyPressEvent ( QKeyEvent * event )
+{
+    if(event->key() == Qt::Key_Escape)
+        emit POI_selectAborted(NULL);
 }
 
 /************************/

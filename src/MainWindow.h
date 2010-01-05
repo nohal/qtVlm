@@ -27,44 +27,30 @@ Copyright (C) 2008 - Jacques Zaninetti - http://zygrib.free.fr
 #include <QApplication>
 #include <QMainWindow>
 #include <QMouseEvent>
+#include <QTimer>
+#include <QProgressDialog>
 
 #include <QLibrary>
 
 #include "GshhsReader.h"
-#include "Terrain.h"
 #include "MenuBar.h"
 #include "BoardVLM.h"
+#include "Grib.h"
 
-#include "DialogGraphicsParams.h"
-#include "DialogLoadGrib.h"
+
 #include "DialogVLM_grib.h"
 #include "DialogProxy.h"
-#include "DialogUnits.h"
+
 #include "POI.h"
 #include "paramVLM.h"
 #include "POI_input.h"
-#include "mapcompass.h"
-#include "xmlPOIData.h"
 #include "xmlBoatData.h"
 
-#include "boatAccount_dialog.h"
-#include "POI_editor.h"
 #include "Pilototo.h"
-#include "race_dialog.h"
+
 #include "Polar.h"
 #include "gate.h"
-#include "gate_editor.h"
-
-class opponentList;
-class raceData;
-
-#include "opponentBoat.h"
-
-
-#define COMPASS_NOTHING  0
-#define COMPASS_LINEON 1
-#define COMPASS_UNDER_STRICT  2
-#define COMPASS_UNDER  3
+#include "mycentralwidget.h"
 
 class MainWindow: public QMainWindow
 {
@@ -78,36 +64,32 @@ class MainWindow: public QMainWindow
         bool getBoatLockStatus(void);
         bool isBoat(QString idu);
 
-        void getBoatWP(float * lat,float * lon);
+        void getBoatWP(double * lat,double * lon);
         bool get_selPOI_instruction();
-        float selectedBoatgetLon();
-        float selectedBoatgetLat();
+        void get_selectedBoatPos(double * lat,double* lon);
         void getBoatBvmg(float * up, float * down, float ws);
-        int getCompassMode(int m_x,int m_y);
+        boatAccount * getSelectedBoat(void) {if(selectedBoat) return selectedBoat;else return NULL;}
+
+        void statusBar_showWindData(double x,double y);
+        void statusBar_showSelectedZone(float x0, float y0, float x1, float y1);
+        void drawVacInfo(void);
 
     public slots:
         void slotFile_Open();
         void slotFile_Close();
-        void slotFile_Load_GRIB();
-        void slotFile_Info_GRIB();
         void slotFile_Quit();
         void slotMap_Quality();
-        void slotMap_CitiesNames();
-        void slotGribFileReceived(QString fileName);
+        void slot_gribFileReceived(QString fileName);
 
-        void slotMouseClicked(QMouseEvent * e);
-        void slotMouseDblClicked(QMouseEvent * e);
-        void slotMouseMoved(QMouseEvent * e);
-        void slotShowContextualMenu(QContextMenuEvent *);
+        void slotShowContextualMenu(QGraphicsSceneContextMenuEvent *);
 
-        void  slotDateStepChanged(int);
+        void slotDateStepChanged(int);
         void slotDateGribChanged_next();
         void slotDateGribChanged_prev();
         void slotDateGribChanged_now();
         void slotDateGribChanged_sel();
         void slotSetGribDate(int);
 
-        void slotWindColors(bool b);
         void slotWindArrows(bool b);
 
         void slotOptions_Language();
@@ -116,8 +98,6 @@ class MainWindow: public QMainWindow
         void slotHelp_AProposQT();
 
         void slotVLM_Sync(void);
-        void slotVLM_ParamBoat(void);
-        void slotVLM_ParamRace(void);
         void slotVLM_Param(void);
         void slotVLM_Test(void);
         void slotSelectBoat(boatAccount* newSelect);
@@ -127,39 +107,27 @@ class MainWindow: public QMainWindow
         void slotBoatUpdated(boatAccount * boat,bool newRace);
 
         void slotChgWP(float lat,float lon, float wph);
-        void slotPOIinput(void);
-        void slotPOISave(void);
-        void slotPOIimport(void);
+
         void slotBoatLockStatusChanged(boatAccount*,bool);
         void slotPilototo(void);
 
-        void slot_addGate(void);
-        void addGate_list(gate*);
-        void delGate_list(gate*);
-        void slotEditGate(gate *);
+        void slot_addGate(void);        
         void slotCreateGate();
 
-        void slot_newPOI(void);
-        void addPOI_list(POI * poi);
-        void delPOI_list(POI * poi);
-        void slotEditPOI(POI *);
-        void slotMovePOI(POI *);
-        void slotDelAllPOIs(void);
-        void slotDelSelPOIs(void);
+        void slot_newPOI(void);        
         void slotCreatePOI();
-        void slotAddPOI(QString name,POI::POI_TYPE type,float lat,float lon, float wph,int timestamp,bool useTimeStamp);
         void slotpastePOI();
+        //void slotMovePOI(POI *);
 
-        void slotReadBoat(void);
-        void slotWriteBoat(void);
         void slotParamChanged(void);
         void slotNewZoom(float zoom);
-        void slotGetTrace(QString buff,QList<position*> * trace);
         void slotSelectPOI(Pilototo_instruction * instruction);
         void slotSelectWP_POI(void);
-        void slotPOIselected(POI* poi);
+        void slot_POIselected(POI* poi);
 
         void updateNxtVac();
+
+        void slotUpdateOpponent(void);
 
         void getPolar(QString fname,Polar ** ptr);
         void releasePolar(QString fname);
@@ -168,12 +136,15 @@ class MainWindow: public QMainWindow
         void slotValidationDone(bool);
 
         void slotCompassLine(void);
+        void slotEstime(int);
+        void slot_ParamVLMchanged(void);
+        void slot_deleteProgress(void);
 
     signals:
         void signalMapQuality(int quality);
         void setChangeStatus(bool);
         void editPOI(POI *);
-        void newPOI(float,float,Projection *);
+        void newPOI(float,float,Projection *, boatAccount *);
         void editGate(gate*);
         void newGate(float,float,float,float,Projection*);
         void editInstructions(void);
@@ -181,29 +152,30 @@ class MainWindow: public QMainWindow
         void editWP_POI(POI*);
         void boatHasUpdated(boatAccount*);
         void paramVLMChanged();
-        void WPChanged(float,float);
-        void getTrace(QString buff,QList<position*> * trace);
+        void WPChanged(float,float);        
         void updateInet(void);
-        void showCompassLine(double,double,double,double,double);
-        void clearCompassLine(void);
+        void showCompassLine(int,int);
+        void addPOI_list(POI*);
+        void addPOI(QString name,int type,float lat,float lon, float wph,int timestamp,bool useTimeStamp, boatAccount *);
+        void updateRoute(void);
+
+    protected:
+        void closeEvent(QCloseEvent *) {QApplication::quit();}
+        void keyPressEvent ( QKeyEvent * event );
 
     private:
-        GshhsReader *gshhsReader;
+        //GshhsReader *gshhsReader;
         Projection  *proj;
 
         QString      gribFileName;
         QString      gribFilePath;
 
-        DialogLoadGrib  dialogLoadGrib;
-        DialogProxy     dialogProxy;
-        DialogUnits     dialogUnits;
-        DialogGraphicsParams dialogGraphicsParams;
+        DialogProxy     dialogProxy;        
 
         void updatePrevNext(void);
         int getGribStep(void);
-        void updatePoiTip(POI*);
-        void updateRoute(void);
-        Terrain      *terre;
+
+
         MenuBar      *menuBar;
         QToolBar     *toolBar;
         QStatusBar   *statusBar;
@@ -212,47 +184,29 @@ class MainWindow: public QMainWindow
         QLabel       *stBar_label_3;
 
         QLabel       * tool_ETA;
+        QLabel       * tool_ESTIME;
+        QLabel       * tool_ESTIMEUNIT;
         //QPushButton  * btn_Pilototo;
 
         QMenu    *menuPopupBtRight;
 
         void     connectSignals();
         void     InitActionsStatus();
-        void     statusBar_showSelectedZone();
-        void     statusBar_showWindData(double x,double y);
+
         QString  dataPresentInGrib(Grib* grib, int type);
         void     updatePilototo_Btn(boatAccount * boat);
-
         int mouseClicX, mouseClicY;
-
-        void  keyPressEvent (QKeyEvent *e);
 
         /* Vacation count*/
         QTimer * timer;
         int nxtVac_cnt;
-        void drawVacInfo(void);
 
-        void closeEvent(QCloseEvent *) {QApplication::quit();}
-
-        QList<boatAccount*> acc_list;
-        boatAccount_dialog * boatAcc;
         boardVLM * VLMBoard;
         boatAccount* selectedBoat;
-        paramVLM * param;
-        race_dialog * raceParam;
+        paramVLM * param;        
         POI_input * poi_input_dialog;
 
-        xml_boatData * xmlData;
-        xml_POIData * xmlPOI;
-
-        QList<POI*> poi_list;
-        QList<POI*> route_list;
-        POI_Editor * poi_editor;
-
-        Pilototo * pilototo;
-
-        opponentList * opponents;
-        QList<raceData*> race_list;
+        Pilototo * pilototo;        
 
         Pilototo_instruction * selPOI_instruction;
         bool isSelectingWP;
@@ -261,11 +215,11 @@ class MainWindow: public QMainWindow
 
         DialogVLM_grib * loadVLM_grib;
 
-        mapCompass * compass;
+        /* central widget */
+        myCentralWidget * my_centralWidget;
+        QProgressDialog *progress;
+        QTimer * timerprogress;
 
-        gate_editor * gate_edit;
-        QList<gate*> gate_list;
-        bool freeze_updateRoute;
 };
 
 #endif

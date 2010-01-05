@@ -448,17 +448,19 @@ void Util::getCoordFromDistanceAngle(float latitude, float longitude,
 QString Util::pos2String(int type,float value)
 {
     QString str;
-    int d,m,s;
-    float l;
-    l=value<0?-value:value;
-    d=(int)l;
-    m=(int)((l-d)*60);
-    s=(int)((l-d-(float)m/60)*3600);
+//    int d,m,s;
+//    float l;
+//    l=value<0?-value:value;
+//    d=(int)l;
+//    m=(int)((l-d)*60);
+//    s=(int)((l-d-(float)m/60)*3600);
 
     if(type==TYPE_LON)
-        str.sprintf("%03d%c%02d'%02d\"%s",d,176,m,s,value<0?"W":"E");
-    else
-        str.sprintf("%02d%c%02d'%02d\"%s",d,176,m,s,value<0?"S":"N");
+//        str.sprintf("%03d%c%02d'%02d\"%s",d,176,m,s,value<0?"W":"E");
+        str=formatLongitude(value);
+        else
+//        str.sprintf("%02d%c%02d'%02d\"%s",d,176,m,s,value<0?"S":"N");
+        str=formatLatitude(value);
     return str;
 }
 
@@ -484,15 +486,15 @@ QString Util::getHost()
 
 void Util::computePos(Projection * proj, float lat, float lon, int * x, int * y)
 {
-    if (proj->isPointVisible(lon, lat)) {      // tour du monde ?
+    //if (proj->isPointVisible(lon, lat)) {      // tour du monde ?
         proj->map2screen(lon, lat, x, y);
-    }
+    /*}
     else if (proj->isPointVisible(lon-360, lat)) {
         proj->map2screen(lon-360, lat, x, y);
     }
     else  {
         proj->map2screen(lon+360, lat, x, y);
-    }
+    }*/
 }
 
 void Util::addAgent(QNetworkRequest & request)

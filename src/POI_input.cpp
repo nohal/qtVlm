@@ -23,12 +23,17 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "POI_input.h"
 #include "Util.h"
 
-POI_input::POI_input(QWidget * parent) : QDialog(parent)
+POI_input::POI_input(myCentralWidget * parent) : QDialog(parent)
 {
     setupUi(this);
+    connect(this,SIGNAL(addPOI(QString,int,float,float,float,int,bool,boatAccount*)),
+            parent,SLOT(slot_addPOI(QString,int,float,float,float,int,bool,boatAccount*)));
 }
 
-
+void POI_input::slot_showPOI_input(void)
+{
+    exec();
+}
 
 void POI_input::txtHasChanged(void)
 {
@@ -68,7 +73,7 @@ void POI_input::done(int result)
         for (int i=0; i < lsbuf.size(); i++)
         {
             if(Util::convertPOI(lsbuf.at(i),&name,&lat,&lon,&wph,&tstamp,type->currentIndex()))
-                emit addPOI(name,(POI::POI_TYPE)type->currentIndex(),lat,lon,wph,tstamp,tstamp!=-1);
+                emit addPOI(name,type->currentIndex(),lat,lon,wph,tstamp,tstamp!=-1,NULL);
         }
     }
     POI_list->clear();

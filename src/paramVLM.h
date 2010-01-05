@@ -27,11 +27,16 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "ui_paramVLM.h"
 
+class paramVLM;
+
+#include "MainWindow.h"
+#include "mycentralwidget.h"
+
 class paramVLM : public QDialog, public Ui::VLM_param_ui
 {
     Q_OBJECT
     public:
-        paramVLM(QWidget * parent = 0);
+        paramVLM(MainWindow * main,myCentralWidget * parent);
         void done(int result);
 
     public slots:

@@ -43,7 +43,8 @@ void Grib::initNewGrib()
 {
     ok = false;
 
-    mapColorTransp = 210;
+//    mapColorTransp = 210;
+    mapColorTransp = 255;
 
     windArrowSpace = 28;      // distance mini entre flèches
     windBarbuleSpace = 34;    // distance mini entre flèches
@@ -280,6 +281,9 @@ bool Grib::getInterpolatedValue_byDates(double d_long, double d_lat, time_t now,
     if(u) *u=0;
     if(v) *v=0;
 
+    if(!isOk())
+        return false;
+
     if(getInterpolationParam(now,&t1,&t2,&recU1,&recV1,&recU2,&recV2))
     {
         return getInterpolatedValue_byDates(d_long,d_lat,now,t1,t2,recU1,recV1,recU2,recV2,u,v);
@@ -405,7 +409,7 @@ bool Grib::getInterpolatedValue_byDates(double d_long, double d_lat, time_t now,
 }
 #if 1
 bool Grib::getInterpolatedValue_record(double d_long, double d_lat, GribRecord *recU, GribRecord *recV,
-                                       double * u, double * v, int * rot)
+                                       double * u, double * v, int * )
 {
     double u0,u1,u2,u3,v0,v1,v2,v3;
     double u01,u23,v01,v23;
@@ -554,6 +558,9 @@ bool Grib::getInterpolatedValue_record(double d_long, double d_lat, GribRecord *
 // Rectangle de la zone couverte par les données
 bool Grib::getZoneExtension(double *x0,double *y0, double *x1,double *y1)
 {
+    if(!isOk())
+        return false;
+
     std::vector<GribRecord *> *ls = getFirstNonEmptyList();
     if (ls != NULL) {
         GribRecord *rec = ls->at(0);
@@ -681,6 +688,8 @@ void Grib::draw_WIND_Color(QPainter &pnt, const Projection *proj, bool smooth,
     int H = proj->getH();
     int space=0;
     int W_s=0,H_s=0;
+    QRgb   rgb;
+    QImage *image= new QImage(W,H,QImage::Format_ARGB32);
 
     GribRecord *recU1,*recV1,*recU2,*recV2;
     time_t t1,t2;
@@ -721,46 +730,48 @@ void Grib::draw_WIND_Color(QPainter &pnt, const Projection *proj, bool smooth,
     }
 
     if(showWindColorMap)
-    {
-        QRgb   rgb;
-        QImage *image = new QImage(W,H,QImage::Format_ARGB32);
         image->fill( qRgba(0,0,0,0));
-        for (i=0; i<W-1; i+=2)
+
+    for (i=0; i<W-1; i+=2)
+    {
+        for (j=0; j<H-1; j+=2)
         {
-            for (j=0; j<H-1; j+=2)
+            proj->screen2map(i,j, &x, &y);
+            if(getInterpolatedValue_byDates(x,y,currentDate,t1,t2,recU1,recV1,recU2,recV2,&u,&v))
             {
-                proj->screen2map(i,j, &x, &y);
-                if(getInterpolatedValue_byDates(x,y,currentDate,t1,t2,recU1,recV1,recU2,recV2,&u,&v))
+                if(showWindArrows && i%space==0 && j%space==0)
                 {
-                    if(showWindArrows && i%space==0 && j%space==0)
-                    {
-                        int i_s=i/space;
-                        int j_s=j/space;
-                        u_tab[i_s*H_s+j_s]=u;
-                        v_tab[i_s*H_s+j_s]=v;
-                        y_tab[i_s*H_s+j_s]=(y<0);
-                    }
+                    int i_s=i/space;
+                    int j_s=j/space;
+                    u_tab[i_s*H_s+j_s]=u;
+                    v_tab[i_s*H_s+j_s]=v;
+                    y_tab[i_s*H_s+j_s]=(y<0);
+                }
+                if(showWindColorMap)
+                {
                     rgb=getWindColor(u, smooth);
                     image->setPixel(i,  j,rgb);
                     image->setPixel(i+1,j,rgb);
                     image->setPixel(i,  j+1,rgb);
                     image->setPixel(i+1,j+1,rgb);
                 }
-                else
+            }
+            else
+            {
+                if(showWindArrows && i%space==0 && j%space==0)
                 {
-                    if(showWindArrows && i%space==0 && j%space==0)
-                    {
-                        int i_s=i/space;
-                        int j_s=j/space;
-                        u_tab[i_s*H_s+j_s]=-1;
-                    }
+                    int i_s=i/space;
+                    int j_s=j/space;
+                    u_tab[i_s*H_s+j_s]=-1;
                 }
             }
         }
-        pnt.drawImage(0,0,*image);
-        delete image;
     }
 
+    if(showWindColorMap)
+        pnt.drawImage(0,0,*image);
+
+    delete image;
 
 
     if(showWindArrows)
@@ -777,7 +788,7 @@ void Grib::draw_WIND_Color(QPainter &pnt, const Projection *proj, bool smooth,
                 if (barbules)
                     drawWindArrowWithBarbs(pnt, i*space,j*space, u,v, y_tab[i*H_s+j]);
                 else
-                    drawWindArrow(pnt, i,j, v);
+                    drawWindArrow(pnt, i*space,j*space, v);
 
             }
         }
@@ -785,7 +796,6 @@ void Grib::draw_WIND_Color(QPainter &pnt, const Projection *proj, bool smooth,
         delete v_tab;
         delete y_tab;
     }
-
 }
 
 void Grib::drawCartouche(QPainter &pnt)

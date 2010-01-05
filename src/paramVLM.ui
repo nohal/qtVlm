@@ -43,7 +43,7 @@
     </rect>
    </property>
    <property name="currentIndex">
-    <number>0</number>
+    <number>2</number>
    </property>
    <widget class="QWidget" name="tab">
     <attribute name="title">
@@ -336,10 +336,10 @@
       <item row="0" column="1">
        <widget class="QSpinBox" name="estimeVal_time">
         <property name="minimum">
-         <number>1</number>
+         <number>0</number>
         </property>
         <property name="maximum">
-         <number>1440</number>
+         <number>99999999</number>
         </property>
         <property name="singleStep">
          <number>1</number>
@@ -378,10 +378,10 @@
       <item row="1" column="1">
        <widget class="QSpinBox" name="estimeVal_vac">
         <property name="minimum">
-         <number>1</number>
+         <number>0</number>
         </property>
         <property name="maximum">
-         <number>300</number>
+         <number>99999999</number>
         </property>
         <property name="singleStep">
          <number>1</number>
@@ -420,10 +420,10 @@
       <item row="2" column="1">
        <widget class="QSpinBox" name="estimeVal_dist">
         <property name="minimum">
-         <number>1</number>
+         <number>0</number>
         </property>
         <property name="maximum">
-         <number>200</number>
+         <number>99999999</number>
         </property>
         <property name="singleStep">
          <number>10</number>
@@ -449,6 +449,48 @@
         </property>
         <property name="text">
          <string>milles</string>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+    <widget class="QLabel" name="label_19">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>120</y>
+       <width>161</width>
+       <height>16</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Heure de demarrage de la route</string>
+     </property>
+    </widget>
+    <widget class="QWidget" name="layoutWidget_2">
+     <property name="geometry">
+      <rect>
+       <x>20</x>
+       <y>140</y>
+       <width>281</width>
+       <height>74</height>
+      </rect>
+     </property>
+     <layout class="QGridLayout" name="gridLayout_3">
+      <item row="2" column="0">
+       <widget class="QRadioButton" name="radioBtn_route1">
+        <property name="text">
+         <string>Date du grib</string>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="0">
+       <widget class="QRadioButton" name="radioBtn_route0">
+        <property name="text">
+         <string>Derniere VAC</string>
+        </property>
+        <property name="checked">
+         <bool>true</bool>
         </property>
        </widget>
       </item>
@@ -705,7 +747,7 @@
        </item>
       </layout>
      </widget>
-     <widget class="QWidget" name="">
+     <widget class="QWidget" name="layoutWidget">
       <property name="geometry">
        <rect>
         <x>10</x>

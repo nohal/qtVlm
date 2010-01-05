@@ -22,6 +22,7 @@ Copyright (C) 2008 - Jacques Zaninetti - http://zygrib.free.fr
 ***********************************************************************/
 
 #include "MenuBar.h"
+#include "boatAccount.h"
 #include "Util.h"
 
 //===================================================================================
@@ -203,7 +204,10 @@ MenuBar::MenuBar(QWidget *parent)
     boatList = new QComboBox();
     boatList->setSizeAdjustPolicy(QComboBox::AdjustToContents);
     boatList->setFont(font);
-
+    estime = new QSpinBox();
+    estime->setMaximum(9999999);
+    estime->setMinimum(0);
+    estime->setAlignment(Qt::AlignRight);
 }
 
 

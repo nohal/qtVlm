@@ -48,15 +48,25 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #define OLD_DOM_FILE_TYPE "zygVLM_config"
 #define OLD_ROOT_NAME     "zygVLM_boat"
 
-xml_boatData::xml_boatData(Projection * proj,MainWindow * main, Terrain * parent)
+xml_boatData::xml_boatData(Projection * proj,MainWindow * main, myCentralWidget * parent)
 : QWidget(parent)
 {
-        this->proj=proj;
-        this->main=main;
-        this->parent=parent;
+    this->proj=proj;
+    this->main=main;
+    this->parent=parent;
+
+        /* signals */
+    connect(parent,SIGNAL(writeBoatData(QList<boatAccount*>&,QList<raceData*>&,QString)),
+            this,SLOT(slot_writeData(QList<boatAccount*>&,QList<raceData*>&,QString)));
+    connect(parent,SIGNAL(readBoatData(QString,bool)),this,SLOT(slot_readData(QString,bool)));
+
+    connect(this,SIGNAL(addBoat_list(boatAccount*)),parent,SLOT(slot_addBoat_list(boatAccount*)));
+    connect(this,SIGNAL(addRace_list(raceData*)),parent,SLOT(slot_addRace_list(raceData*)));
+    connect(this,SIGNAL(delBoat_list(boatAccount*)),parent,SLOT(slot_delBoat_list(boatAccount*)));
+    connect(this,SIGNAL(delRace_list(raceData*)),parent,SLOT(slot_delRace_list(raceData*)));
 }
 
-bool xml_boatData::writeBoatData(QList<boatAccount*> & boat_list,QList<raceData*> & race_list,QString fname)
+void xml_boatData::slot_writeData(QList<boatAccount*> & boat_list,QList<raceData*> & race_list,QString fname)
 {
      QDomDocument doc(DOM_FILE_TYPE);
          QDomElement root = doc.createElement(ROOT_NAME);
@@ -72,7 +82,11 @@ bool xml_boatData::writeBoatData(QList<boatAccount*> & boat_list,QList<raceData*
      group.appendChild(t);
 
      /* managing boat data */
-         QListIterator<boatAccount*> i (boat_list);
+
+     //qWarning() << "boat list: " << boat_list.size();
+
+     QListIterator<boatAccount*> i (boat_list);
+
      while(i.hasNext())
      {
           boatAccount * acc = i.next();
@@ -144,6 +158,8 @@ bool xml_boatData::writeBoatData(QList<boatAccount*> & boat_list,QList<raceData*
      {
           raceData * race_data = j.next();
 
+          //qWarning() << "Saving race: " << race_data->idrace << " - " << race_data->oppList;
+
           group = doc.createElement(RACE_GROUP_NAME);
           root.appendChild(group);
 
@@ -160,37 +176,28 @@ bool xml_boatData::writeBoatData(QList<boatAccount*> & boat_list,QList<raceData*
 
      QFile file(fname);
      if (!file.open(QIODevice::ReadWrite | QIODevice::Text | QIODevice::Truncate))
-         return false;
+         return ;
 
      QTextStream out(&file);
 
      doc.save(out,4);
 
      file.close();
-
-     return true;
 }
 
-bool xml_boatData::readBoatData(QList<boatAccount*> & boat_list,QList<raceData*> & race_list,QString fname)
+void xml_boatData::slot_readData(QString fname,bool readAll)
 {
      QString  errorStr;
      int errorLine;
      int errorColumn;
-         bool hasVersion = false;
+     bool hasVersion = false;
      bool forceWrite = false;
      int version=VERSION_NUMBER;
 
      QFile file(fname);
 
      if (!file.open(QIODevice::ReadOnly | QIODevice::Text ))
-         return false;
-
-     while (!boat_list.isEmpty())
-        delete boat_list.takeFirst();
-     while (!race_list.isEmpty())
-        delete race_list.takeFirst();
-
-     //QTextStream in(&file);
+         return ;
 
      QDomDocument doc;
      if(!doc.setContent(&file,true,&errorStr,&errorLine,&errorColumn))
@@ -200,14 +207,14 @@ bool xml_boatData::readBoatData(QList<boatAccount*> & boat_list,QList<raceData*>
                               .arg(errorLine)
                               .arg(errorColumn)
                               .arg(errorStr));
-         return false;
+         return ;
      }
 
      QDomElement root = doc.documentElement();
      if(root.tagName() != ROOT_NAME && root.tagName() != OLD_ROOT_NAME)
      {
          qWarning() << "Wrong root name: " << root.tagName();
-         return false;
+         return ;
      }
 
      QDomNode node = root.firstChild();
@@ -225,7 +232,7 @@ bool xml_boatData::readBoatData(QList<boatAccount*> & boat_list,QList<raceData*>
                  hasVersion = true;
              }
          }
-         else if(node.toElement().tagName() == BOAT_GROUP_NAME)
+         else if(node.toElement().tagName() == BOAT_GROUP_NAME && readAll)
          {
              subNode = node.firstChild();
              QString login = "";
@@ -325,7 +332,7 @@ bool xml_boatData::readBoatData(QList<boatAccount*> & boat_list,QList<raceData*>
                  acc->setLockStatus(locked);
                  acc->setZoom(zoom);
                  acc->setForceEstime(force_estime);
-                 boat_list.append(acc);
+                 emit addBoat_list(acc);
              }
              else
                  qWarning("Incomplete boat info");
@@ -369,7 +376,7 @@ bool xml_boatData::readBoatData(QList<boatAccount*> & boat_list,QList<raceData*>
                  qWarning() << "Race info present => id " <<  race << " opp list " << opp_list;
                  race_data->idrace=race;
                  race_data->oppList=opp_list;
-                 race_list.append(race_data);
+                 emit addRace_list(race_data);
              }
              else
                  qWarning("Incomplete race info");
@@ -379,16 +386,16 @@ bool xml_boatData::readBoatData(QList<boatAccount*> & boat_list,QList<raceData*>
 
      if(hasVersion)
      {
+#warning voir si c est tjs util cf c utilise pour les versions
+         /*
          if(forceWrite)
              writeBoatData(boat_list,race_list,fname);
-         return true;
+             */
      }
      else
      {
          qWarning("no version");
-         while (!boat_list.isEmpty())
-             delete boat_list.takeFirst();
-         return false;
+#warning on devrait vider la liste et prevenir centralWidget ?
      }
 }
 

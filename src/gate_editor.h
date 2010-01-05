@@ -26,10 +26,15 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "gate.h"
 #include "ui_gate_editor.h"
 
+class gate_editor;
+
+#include "MainWindow.h"
+#include "mycentralwidget.h"
+
 class gate_editor: public QDialog, public Ui::gate_editor_ui
 { Q_OBJECT
     public:
-        gate_editor(QWidget *ownerMeteotable,QWidget *parent);
+        gate_editor(MainWindow *main,myCentralWidget * parent);
         void done(int result);
 
     public slots:
@@ -46,8 +51,8 @@ class gate_editor: public QDialog, public Ui::gate_editor_ui
         void delGate_list(gate*);
 
     private:
-        QWidget *ownerMeteotable;
-        QWidget *parent;
+        MainWindow *main;
+        myCentralWidget *parent;
 
         gate * curGate;
 

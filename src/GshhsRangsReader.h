@@ -1,8 +1,6 @@
 /**********************************************************************
-qtVlm: Virtual Loup de mer GUI
-Copyright (C) 2008 - Christophe Thomas aka Oxygen77
-
-http://qtvlm.sf.net
+zUGrib: meteorologic GRIB file data viewer
+Copyright (C) 2008 - Jacques Zaninetti - http://www.zygrib.org
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -16,10 +14,6 @@ GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
-
-Original code: zyGrib: meteorological GRIB file viewer
-Copyright (C) 2008 - Jacques Zaninetti - http://zygrib.free.fr
-
 ***********************************************************************/
 
 #ifndef GshhsRangsREADER_H
@@ -132,22 +126,28 @@ class GshhsRangsReader
 inline int GshhsRangsCell::readInt1(FILE *f)
 {
     unsigned char  buf;
-    (void) fread(&buf, 1, 1, f);
-    return buf;
+    if (fread(&buf, 1, 1, f) == 1)
+    	return buf;
+	else
+		return 0;
 }
 //--------------------------------------------------------
 inline int GshhsRangsCell::readInt2(FILE *f)
 {
     unsigned char buf[2];
-    (void) fread(buf, 1, 2, f);
-    return (buf[1]<<8) + (buf[0]);
+    if (fread(buf, 1, 2, f) == 2)
+    	return (buf[1]<<8) + (buf[0]);
+	else
+		return 0;
 }
 //--------------------------------------------------------
 inline int GshhsRangsCell::readInt4(FILE *f)
 {
     unsigned char buf[4];
-    (void) fread(buf, 1, 4, f);
-    return (buf[3]<<24) + (buf[2]<<16) + (buf[1]<<8) + (buf[0]);
+    if (fread(buf, 1, 4, f) == 4)
+    	return (buf[3]<<24) + (buf[2]<<16) + (buf[1]<<8) + (buf[0]);
+	else
+		return 0;
 }
 
 

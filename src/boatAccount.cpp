@@ -22,20 +22,23 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <QtGui>
 
 #include "boatAccount.h"
-#include "MainWindow.h"
-#include "Polar.h"
 #include "Util.h"
+#include "vlmLine.h"
 
 #define VLM_NO_REQUEST  -1
 #define VLM_REQUEST_IDU  0
 #define VLM_REQUEST_BOAT 1
 #define VLM_REQUEST_TRJ  2
 
+/**************************/
+/* Init & Clean           */
+/**************************/
+
 boatAccount::boatAccount(QString login, QString pass, bool activated,Projection * proj,
-                         MainWindow * main, Terrain *parentWindow) : QWidget(parentWindow)
+                         MainWindow * main, myCentralWidget *parent) : QGraphicsWidget()
 {
-    this->parent=parentWindow;
     this->mainWindow=main;
+    this->parent=parent;
 
     boat_name="NO NAME";
     boat_id=-1;
@@ -56,35 +59,40 @@ boatAccount::boatAccount(QString login, QString pass, bool activated,Projection 
     doingValidation=false;
     vacLen=300;
 
+    width=height=0;
+
+    setZValue(Z_VALUE_BOAT);
+    setFont(QFont("Helvetica",9));
+    setData(0,BOAT_WTYPE);
+
+    fgcolor = QColor(0,0,0);
+    int gr = 255;
+    bgcolor = QColor(gr,gr,gr,150);
+
+    estimeLine = new orthoSegment(proj,parent->getScene(),Z_VALUE_ESTIME,true);
+    WPLine = new orthoSegment(proj,parent->getScene(),Z_VALUE_ESTIME);
+
     trace.clear();
+    trace_drawing = new vlmLine(proj,parent->getScene(),Z_VALUE_BOAT);
 
     this->proj = proj;
-    connect(parentWindow, SIGNAL(projectionUpdated()), this,
-            SLOT(projectionUpdated()) );
 
     createPopUpMenu();
 
-    createWidget();
-
-    paramChanged();
+    slot_paramChanged();
 
     if(activated)
         show();
 
-    connect(ac_select,SIGNAL(triggered()),this,SLOT(selectBoat()));
-    connect(ac_estime,SIGNAL(triggered()),this,SLOT(toggleEstime()));
-
-    connect(this , SIGNAL(clearSelection()), parentWindow, SLOT(clearSelection()) );
+    connect(ac_select,SIGNAL(triggered()),this,SLOT(slot_selectBoat()));
+    connect(ac_estime,SIGNAL(triggered()),this,SLOT(slot_toggleEstime()));
 
     connect(this,SIGNAL(boatSelected(boatAccount*)),main,SLOT(slotSelectBoat(boatAccount*)));
     connect(this,SIGNAL(boatUpdated(boatAccount*,bool)),main,SLOT(slotBoatUpdated(boatAccount*,bool)));
     connect(this,SIGNAL(boatLockStatusChanged(boatAccount*,bool)),
             main,SLOT(slotBoatLockStatusChanged(boatAccount*,bool)));
 
-    connect(main,SIGNAL(paramVLMChanged()),this,SLOT(paramChanged()));
-
-    connect(this,SIGNAL(getTrace(QString,QList<position*> *)),
-             main,SLOT(slotGetTrace(QString,QList<position*> *)));
+    connect(main,SIGNAL(paramVLMChanged()),this,SLOT(slot_paramChanged()));
 
     connect(this,SIGNAL(getPolar(QString,Polar**)),main,SLOT(getPolar(QString,Polar**)));
     connect(this,SIGNAL(releasePolar(QString)),main,SLOT(releasePolar(QString)));
@@ -94,14 +102,12 @@ boatAccount::boatAccount(QString login, QString pass, bool activated,Projection 
     /* timer used for validating modification to boat param (from BoardVLM)*/
     timer = new QTimer(this);
     timer->setSingleShot(true);
-    connect(timer,SIGNAL(timeout()),this, SLOT(getData()));
+    connect(timer,SIGNAL(timeout()),this, SLOT(slot_getData()));
 
     /* init http inetManager */
-    conn=new inetConnexion(main,this);
+    conn=new inetConnexion(main,(QWidget*)this);
 
     setParam(login,pass,activated);
-
-    setMouseTracking(true);
 }
 
 boatAccount::~boatAccount()
@@ -109,40 +115,42 @@ boatAccount::~boatAccount()
     disconnect();
     if(polarData)
         emit releasePolar(polarData->getName());
+    if(estimeLine)
+    {
+        //estimeLine->hideSegment();
+        //delete estimeLine;
+    }
+
+    if(WPLine)
+    {
+        //WPLine->hideSegment();
+        //delete WPLine;
+    }
 }
 
-void boatAccount::selectBoat()
+void boatAccount::createPopUpMenu(void)
 {
-    selected = true;
-    emit   boatSelected(this);
+    popup = new QMenu(parent);
+
+    ac_select = new QAction("Selectionner",popup);
+    popup->addAction(ac_select);
+
+    ac_estime = new QAction("Afficher estime",popup);
+    popup->addAction(ac_estime);
+
+    ac_compassLine = new QAction(tr("Tirer un cap"),popup);
+    popup->addAction(ac_compassLine);
+    connect(ac_compassLine,SIGNAL(triggered()),mainWindow,SLOT(slotCompassLine()));
 }
 
-float boatAccount::getBvmgUp(float ws)
-{
-    if(polarData) return(polarData->getBvmgUp(ws));
-    return -1;
-}
-float boatAccount::getBvmgDown(float ws)
-{
-    if(polarData) return(polarData->getBvmgDown(ws));
-    return -1;
-}
-void boatAccount::unSelectBoat(bool needUpdate)
-{
-    selected = false;
-    if(needUpdate)
-        update();
-}
+/**************************/
+/* Data request to VLM    */
+/**************************/
 
-void boatAccount::toggleEstime()
-{
-    forceEstime=!forceEstime;
-    update();
-}
-
-void boatAccount::getData(void)
+void boatAccount::slot_getData(void)
 {
     updating=true;
+    trace_drawing->deleteAll();
     doRequest(VLM_REQUEST_BOAT);
 }
 
@@ -158,12 +166,11 @@ void boatAccount::doRequest(int requestCmd)
     {
         if(!conn->isAvailable() )
         {
-            qWarning() << "request already running for " << login  << "(" << this << ")";
-            //updating=false;
+            qWarning() << "request already running for " << login;
             return;
         }
         else
-            qWarning() << "Doing request " << requestCmd << " for " << login  << "(" << this << ")";
+            qWarning() << "Doing request " << requestCmd << " for " << login  ;
 
         QString page;
 
@@ -203,7 +210,7 @@ void boatAccount::doRequest(int requestCmd)
                 break;
         }
 
-        conn->doRequestGet(requestCmd,page);
+        slot_requestFinished(requestCmd,conn->doRequestGet(requestCmd,page));
     }
     else
     {
@@ -220,11 +227,14 @@ void boatAccount::doRequest(int requestCmd)
     }
 }
 
-void boatAccount::requestFinished ( int currentRequest,QByteArray res_byte)
+void boatAccount::slot_requestFinished ( int currentRequest,QByteArray res_byte)
 {
     //-------------------------------------------
     // Retour de l'étape 1 : préparation du fichier
     //-------------------------------------------
+//    if(res_byte=="error") {
+//        qWarning()<<"error in received QByteArray";
+//        return;}
     QStringList lsbuf;
     float latitude=0,longitude=0;
 
@@ -276,6 +286,16 @@ void boatAccount::requestFinished ( int currentRequest,QByteArray res_byte)
 
             for(int i=0;i<5;i++)
                 pilototo.append("none");
+
+            if(res.length()<5)
+            {
+                QMessageBox::warning(0,QObject::tr("Bateau au ponton"),
+                              QString("Le bateau '")+login+"' a ete desactive car hors course");
+                setStatus(false);
+                emit boatUpdated(this,0);
+                break;
+            }
+
             lsbuf = res.split("\n");
 
             for (int i=0; i < lsbuf.size(); i++)
@@ -291,9 +311,8 @@ void boatAccount::requestFinished ( int currentRequest,QByteArray res_byte)
                         if(race_id != lsval.at(1).toInt())
                             newRace=true;
                         race_id = lsval.at(1).toInt();
-
                         if(race_id==0)
-                        {
+                        {                            
                             latitude = longitude = speed = heading = avg = 0;
                             dnm = loch = ortho = loxo = vmg = windDir = 0;
                             windSpeed = WPLat = WPLon = TWA = prevVac = 0;
@@ -431,11 +450,14 @@ void boatAccount::requestFinished ( int currentRequest,QByteArray res_byte)
             if(race_id==0)
             {
                 /* clearing trace */
-                while (!trace.isEmpty())
-                    delete trace.takeFirst();
+                trace.clear();
+                trace_drawing->deleteAll();
                 /*updating everything*/
                 updateBoatData();
                 updating=false;
+                QMessageBox::warning(0,QObject::tr("Bateau au ponton"),
+                              QString("Le bateau '")+login+"' a ete desactive car hors course");
+                setStatus(false);
                 emit boatUpdated(this,newRace);
             }
             else
@@ -443,8 +465,11 @@ void boatAccount::requestFinished ( int currentRequest,QByteArray res_byte)
             break;
         case VLM_REQUEST_TRJ:
             emit getTrace(res,&trace);
+            trace_drawing->setPoly(trace);
+
             /* we can now update everything */
             updateBoatData();
+            updateTraceColor();
             updating=false;
             emit boatUpdated(this,newRace);
             break;
@@ -460,7 +485,7 @@ void boatAccount::validateChg(int currentCmdNum,float cmd_val1,float cmd_val2,fl
     valid_val3=cmd_val3;
     valid_nbRetry=0;
     doingValidation=true;
-    getData();
+    slot_getData();
 }
 
 bool boatAccount::chkResult(void)
@@ -505,55 +530,190 @@ bool boatAccount::chkResult(void)
     return false;
 }
 
+/**************************/
+/* Select / unselect      */
+/**************************/
+
+
+void boatAccount::slot_selectBoat()
+{
+    selected = true;
+    updateTraceColor();
+    emit boatSelected(this);
+}
+
+void boatAccount::unSelectBoat(bool needUpdate)
+{
+    selected = false;
+    if(needUpdate)
+    {
+        drawEstime();
+        update();
+        updateTraceColor();
+    }
+}
+
+/**************************/
+/* data access            */
+/**************************/
+float boatAccount::getBvmgUp(float ws)
+{
+    if(polarData) return(polarData->getBvmgUp(ws));
+    return -1;
+}
+float boatAccount::getBvmgDown(float ws)
+{
+    if(polarData) return(polarData->getBvmgDown(ws));
+    return -1;
+}
+
+/**************************/
+/* Paint & graphics       */
+/**************************/
+
+void boatAccount::slot_toggleEstime()
+{
+    forceEstime=!forceEstime;
+    drawEstime();
+    update();
+}
+
+void boatAccount::paint(QPainter * pnt, const QStyleOptionGraphicsItem * , QWidget * )
+{
+    int dy = height/2;
+
+    QFontMetrics fm(font());
+
+    pnt->fillRect(9,0, width-10,height-1, QBrush(bgcolor));
+    pnt->setFont(font());
+    pnt->drawText(10,fm.height()-2,my_str);
+
+    QPen pen(selected?selColor:myColor);
+    pen.setWidth(4);
+    pnt->setPen(pen);
+    pnt->fillRect(0,dy-3,7,7, QBrush(selected?selColor:myColor));
+
+    int g = 60;
+    pen = QPen(QColor(g,g,g));
+    pen.setWidth(1);
+    pnt->setPen(pen);
+    pnt->drawRect(9,0,width-10,height-1);
+
+    //drawEstime();
+}
+
+void boatAccount::updateTraceColor(void)
+{
+    if(selected)
+    {
+        QPen penLine(selColor,1);
+        penLine.setWidthF(1);
+        trace_drawing->setLinePen(penLine);
+        trace_drawing->setPointMode(selColor);
+    }
+    else
+    {
+        QPen penLine(myColor,1);
+        penLine.setWidthF(1);
+        trace_drawing->setLinePen(penLine);
+        trace_drawing->setPointMode(myColor);
+    }
+    trace_drawing->slot_showMe();
+}
+
+void boatAccount::drawEstime(void)
+{
+    estimeLine->hideSegment();
+    WPLine->hideSegment();
+    /*should we draw something?*/
+    if(isUpdating() || !getStatus())
+        return;
+
+    QPen penLine1(QColor(Util::getSetting("estimeLineColor", QColor(Qt::darkMagenta)).value<QColor>()),1,Qt::SolidLine);
+    penLine1.setWidthF(Util::getSetting("estimeLineWidth", 1.6).toDouble());
+    QPen penLine2(QColor(Qt::black),1,Qt::DotLine);
+    penLine2.setWidthF(1.2);
+
+    int estime_param_2;
+    int i1,j1,i2,j2;
+    float estime;
+
+    /* draw estime */
+    if(getIsSelected() || getForceEstime())
+    {
+        float tmp_lat,tmp_lon;
+
+        switch(estime_type)
+        {
+            case 0: /* time */
+                estime = (float)((float)(estime_param/float(60.0000000000)))*getSpeed();
+                break;
+            case 1: /* nb vac */
+                estime_param_2=getVacLen();
+                estime = (float)((((float)(estime_param*estime_param_2))/3660.000000000)*getSpeed());
+                break;
+            default: /* dist */
+                estime = estime_param;
+                break;
+        }
+
+        Util::getCoordFromDistanceAngle(lat,lon,estime,getHeading(),&tmp_lat,&tmp_lon);
+        proj->map2screen(lon,lat,&i1,&j1);
+        proj->map2screen(tmp_lon,tmp_lat,&i2,&j2);
+        estimeLine->setLinePen(penLine1);
+        estimeLine->initSegment(i1,j1,i2,j2);
+        /* draw ortho to wp */
+        if(WPLat != 0 && WPLon != 0)
+        {
+            WPLine->setLinePen(penLine2);
+            proj->map2screen(WPLon,WPLat,&i2,&j2);
+            WPLine->initSegment(i1,j1,i2,j2);
+        }
+    }
+}
+
+/**************************/
+/* shape & boundingRect   */
+/**************************/
+
+QPainterPath boatAccount::shape() const
+{
+    QPainterPath path;
+    path.addRect(0,0,width,height);
+    return path;
+}
+
+QRectF boatAccount::boundingRect() const
+{
+    return QRectF(0,0,width,height);
+}
+
+/**************************/
+/* Data update            */
+/**************************/
+
 void boatAccount::updateBoatData()
 {
     updateBoatName();
     reloadPolar();
     updatePosition();
     updateHint();
-    //update();
 }
 
 void boatAccount::updateBoatName()
-{
-    QString txt;
+{    
     if(getAliasState())
-        txt=(alias.isEmpty()?login:alias);
+        my_str=(alias.isEmpty()?login:alias);
     else
-        txt=login;
+        my_str=login;
 
-    label->setText(txt);
+    //qWarning() << "Updating Boat name: " << login;
 
-    adjustSize();
-}
-
-void boatAccount::createWidget()
-{
-    fgcolor = QColor(0,0,0);
-    int gr = 255;
-    bgcolor = QColor(gr,gr,gr,150);
-
-    QGridLayout *layout = new QGridLayout(this);
-    layout->setContentsMargins(10,0,2,0);
-    layout->setSpacing(0);
-
-    label = new QLabel(boat_name, this);
-    label->setFont(QFont("Helvetica",10));
-
-    QPalette p;
-    p.setBrush(QPalette::Active, QPalette::WindowText, fgcolor);
-    p.setBrush(QPalette::Inactive, QPalette::WindowText, fgcolor);
-    label->setPalette(p);
-    label->setAlignment(Qt::AlignHCenter);
-
-    layout->addWidget(label, 0,0, Qt::AlignHCenter|Qt::AlignVCenter);
-    this->setLayout(layout);
-    setAutoFillBackground (false);
-
-    label->installEventFilter(this);
-    label->setMouseTracking(true);
-
-    hide();
+     /* computing widget size */
+    QFontMetrics fm(font());
+    prepareGeometryChange();
+    width = fm.width(my_str) + 10 + 2;
+    height = qMax(fm.height()+2,10);
 }
 
 void boatAccount::updatePosition(void)
@@ -561,8 +721,9 @@ void boatAccount::updatePosition(void)
     int boat_i,boat_j;
     Util::computePos(proj,lat,lon,&boat_i,&boat_j);
     boat_i-=3;
-    boat_j-=(height()/2);
-    move(boat_i, boat_j);
+    boat_j-=(height/2);
+    setPos(boat_i, boat_j);
+    drawEstime();
 }
 
 void boatAccount::updateHint(void)
@@ -592,184 +753,10 @@ void boatAccount::updateHint(void)
     setToolTip(str);
 }
 
-void boatAccount::projectionUpdated()
+void boatAccount::slot_projectionUpdated()
 {
     if(activated)
         updatePosition();
-}
-
-bool boatAccount::eventFilter(QObject *obj, QEvent *event)
-{
-    if (obj == label)
-    {
-        if (event->type() == QEvent::MouseMove)
-        {
-            event->ignore();
-            return true;
-        }
-        else
-            return false;
-
-    }
-    else
-    {
-        // pass the event on to the parent class
-        //qWarning() << "Event for POI widget" << event->type();
-        /*if(event->type() == QEvent::ToolTip && parent->getHasCompassLine())
-        {
-            event->accept();
-            return true;
-        }*/
-
-        return QWidget::eventFilter(obj, event);
-    }
-}
-
-bool boatAccount::event(QEvent * e)
-{
-    if(e->type() == QEvent::ToolTip && parent->getHasCompassLine())
-    {
-        e->accept();
-        return true;
-    }
-    return QWidget::event(e);
-}
-
-void  boatAccount::paintEvent(QPaintEvent *)
-{
-    QPainter pnt(this);
-    int dy = height()/2;
-
-    //qWarning() << "qtBoat " << login << " paint mouse tracking " << hasMouseTracking ()
-    //        << "- is enabled: " << isEnabled();
-
-    pnt.fillRect(9,0, width()-10,height()-1, QBrush(bgcolor));
-
-    QPen pen(selected?selColor:myColor);
-    pen.setWidth(4);
-    pnt.setPen(pen);
-    pnt.fillRect(0,dy-3,7,7, QBrush(selected?selColor:myColor));
-
-    int g = 60;
-    pen = QPen(QColor(g,g,g));
-    pen.setWidth(1);
-    pnt.setPen(pen);
-    pnt.drawRect(9,0,width()-10,height()-1);
-}
-
-void  boatAccount::enterEvent (QEvent *)
-{
-    if(!parent->getHasCompassLine())
-    {
-        //enterCursor = cursor();
-        setCursor(Qt::PointingHandCursor);
-    }
-}
-
-void  boatAccount::leaveEvent (QEvent *)
-{
-    //unsetCursor();
-}
-
-void  boatAccount::mousePressEvent(QMouseEvent * e)
-{
-    e->ignore();
-}
-
-void boatAccount::mouseMoveEvent (QMouseEvent * e)
-{
-    //qWarning() << "boat move " << e->x() << " " << e->y() << " mouse tracking " << hasMouseTracking ();
-    if(parent->getHasCompassLine())
-        unsetCursor();
-
-    e->ignore();
-}
-
-/*void  boatAccount::mouseDoubleClickEvent(QMouseEvent *)
-{
-
-}*/
-
-void  boatAccount::mouseReleaseEvent(QMouseEvent * e)
-{
-    if(parent->getHasCompassLine())
-    {
-        e->ignore();
-        return;
-    }
-
-    if(e->x() < 0 || e->x()>width() || e->y() < 0 || e->y() > height())
-    {
-        e->ignore();
-        return;
-    }
-
-    if(e->button() == Qt::LeftButton)
-    {
-        emit clearSelection();
-        if(!mainWindow->get_selPOI_instruction())
-        {
-            selectBoat();
-            return;
-        }
-    }
-}
-
-void boatAccount::contextMenuEvent(QContextMenuEvent * e)
-{
-    bool onlyLineOff = false;
-    switch(mainWindow->getCompassMode(x()+e->x(),y()+e->y()))
-    {
-        case 0:
-            /* not showing menu line, default text*/
-            ac_compassLine->setText("Tirer un cap");
-            ac_compassLine->setEnabled(false);
-            break;
-        case 1:
-            /* showing text for compass line off*/
-            ac_compassLine->setText("Arret du cap");
-            ac_compassLine->setEnabled(true);
-            onlyLineOff=true;
-            break;
-        case 2:
-        case 3:
-            ac_compassLine->setText("Tirer un cap");
-            ac_compassLine->setEnabled(true);
-            break;
-        }
-
-    if(forceEstime)
-        ac_estime->setText(tr("Cacher estime"));
-    else
-        ac_estime->setText(tr("Afficher estime"));
-
-    if(onlyLineOff)
-    {
-        ac_select->setEnabled(false);
-        ac_estime->setEnabled(false);
-    }
-    else
-    {
-        ac_select->setEnabled(!mainWindow->get_selPOI_instruction());
-        ac_estime->setEnabled(!selected);
-    }
-
-    popup->exec(QCursor::pos());
-}
-
-void boatAccount::createPopUpMenu(void)
-{
-    popup = new QMenu(parent);
-
-    ac_select = new QAction("Selectionner",popup);
-    popup->addAction(ac_select);
-
-    ac_estime = new QAction("Afficher estime",popup);
-    popup->addAction(ac_estime);
-
-    ac_compassLine = new QAction(tr("Tirer un cap"),popup);
-    popup->addAction(ac_compassLine);
-    connect(ac_compassLine,SIGNAL(triggered()),mainWindow,SLOT(slotCompassLine()));
 }
 
 void boatAccount::setStatus(bool activated)
@@ -782,7 +769,8 @@ void boatAccount::setParam(QString login, QString pass)
 {
      this->login=login;
      this->pass=pass;
-     //doRequest(VLM_REQUEST_IDU);
+     this->boat_id=-1;
+     this->race_id=0;
 }
 
 void boatAccount::setParam(QString login, QString pass, bool activated)
@@ -810,7 +798,10 @@ void boatAccount::reloadPolar(void)
         if(polarData!=NULL)
             emit releasePolar(polarData->getName());
         //qWarning() << login << " Loading forced polar: " << polarName;
-        emit getPolar(polarName,&polarData);
+        if(!polarName.isEmpty())
+            emit getPolar(polarName,&polarData);
+        else
+            polarData=NULL;
     }
     else
     {
@@ -867,11 +858,98 @@ void boatAccount::setAlias(bool state,QString alias)
     this->alias=alias;
 }
 
-void boatAccount::paramChanged()
+void boatAccount::slot_paramChanged()
 {
     myColor = QColor(Util::getSetting("qtBoat_color",QColor(Qt::blue).name()).toString());
     selColor = QColor(Util::getSetting("qtBoat_sel_color",QColor(Qt::red).name()).toString());
+    estime_type=Util::getSetting("estimeType",0).toInt();
+    switch(estime_type)
+    {
+        case 0: /* time */
+            estime_param = Util::getSetting("estimeTime",60).toInt();
+            break;
+        case 1: /* nb vac */
+            estime_param = Util::getSetting("estimeVac",10).toInt();
+            break;
+        default: /* dist */
+            estime_param = Util::getSetting("estimeLen",100).toInt();
+            break;
+    }
     if(activated)
+    {
+        drawEstime();
         update();
+    }
+}
+void boatAccount::slot_updateGraphicsParameters()
+{
+    if(activated)
+        drawEstime();
+}
+/**************************/
+/* Events                 */
+/**************************/
+
+void boatAccount::mousePressEvent(QGraphicsSceneMouseEvent * e)
+{
+    if (e->button() != Qt::LeftButton)
+    {
+         e->ignore();
+    }
 }
 
+void  boatAccount::mouseReleaseEvent(QGraphicsSceneMouseEvent * e)
+{
+    if(e->button() == Qt::LeftButton)
+    {
+        emit clearSelection();
+        if(!mainWindow->get_selPOI_instruction())
+        {
+            slot_selectBoat();
+            return;
+        }
+    }
+}
+
+void boatAccount::contextMenuEvent(QGraphicsSceneContextMenuEvent * e)
+{
+    bool onlyLineOff = false;
+
+    switch(parent->getCompassMode((float)e->scenePos().x(),(float)e->scenePos().y()))
+    {
+        case 0:
+            /* not showing menu line, default text*/
+            ac_compassLine->setText("Tirer un cap");
+            ac_compassLine->setEnabled(false);
+            break;
+        case 1:
+            /* showing text for compass line off*/
+            ac_compassLine->setText("Arret du cap");
+            ac_compassLine->setEnabled(true);
+            onlyLineOff=true;
+            break;
+        case 2:
+        case 3:
+            ac_compassLine->setText("Tirer un cap");
+            ac_compassLine->setEnabled(true);
+            break;
+        }
+
+    if(forceEstime)
+        ac_estime->setText(tr("Cacher estime"));
+    else
+        ac_estime->setText(tr("Afficher estime"));
+
+    if(onlyLineOff)
+    {
+        ac_select->setEnabled(false);
+        ac_estime->setEnabled(false);
+    }
+    else
+    {
+        ac_select->setEnabled(!mainWindow->get_selPOI_instruction());
+        ac_estime->setEnabled(!selected);
+    }
+
+    popup->exec(QCursor::pos());
+}
