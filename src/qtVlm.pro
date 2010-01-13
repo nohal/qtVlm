@@ -131,8 +131,8 @@ SOURCES += BoardVLM.cpp \
 DEFINES = QT_$$[QT_VERSION]
 DEFINES ~= s/\./_
 DEFINES ~= s/-.*/
-DEFINES ~= s/QT_4_5_[01]/QT_4_5
-unix:DEFINES += _TTY_POSIX_
-win32:DEFINES += _TTY_WIN_ \
+DEFINES ~= s/QT_4_5_[0-9]/QT_4_5
+
+DEFINES += _TTY_WIN_ \
     QWT_DLL \
     QT_DLL
