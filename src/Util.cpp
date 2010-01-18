@@ -486,15 +486,15 @@ QString Util::getHost()
 
 void Util::computePos(Projection * proj, float lat, float lon, int * x, int * y)
 {
-    //if (proj->isPointVisible(lon, lat)) {      // tour du monde ?
+    if (proj->isPointVisible(lon, lat)) {      // tour du monde ?
         proj->map2screen(lon, lat, x, y);
-    /*}
+    }
     else if (proj->isPointVisible(lon-360, lat)) {
         proj->map2screen(lon-360, lat, x, y);
     }
     else  {
         proj->map2screen(lon+360, lat, x, y);
-    }*/
+    }
 }
 
 void Util::addAgent(QNetworkRequest & request)
