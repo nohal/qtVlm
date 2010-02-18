@@ -32,9 +32,10 @@ class boatAccount;
 #include "opponentBoat.h"
 #include "mycentralwidget.h"
 #include "MainWindow.h"
-#include "inetConnexion.h"
 #include "orthoSegment.h"
 #include "vlmLine.h"
+
+#include "inetClient.h"
 
 #define VLM_CMD_HD     1
 #define VLM_CMD_ANG    2
@@ -45,13 +46,13 @@ class boatAccount;
 
 #define MAX_RETRY 5
 
-class boatAccount: public QGraphicsWidget
+class boatAccount: public QGraphicsWidget, public inetClient
 {
     Q_OBJECT
 
     public:
         boatAccount(QString login, QString pass, bool state,
-                    Projection * proj,MainWindow * main,myCentralWidget * parent);
+                    Projection * proj,MainWindow * main,myCentralWidget * parent,inetConnexion * inet);
         ~boatAccount(void);
 
         void setStatus(bool activated);
@@ -66,6 +67,7 @@ class boatAccount: public QGraphicsWidget
         void unSelectBoat(bool needUpdate);
 
         void validateChg(int currentCmdNum,float cmd_val1,float cmd_val2,float cmd_val3);
+        void showNextGates();
 
         QString getLogin(void)          {    return login; }
         QString getPass(void)           {    return pass; }
@@ -121,20 +123,26 @@ class boatAccount: public QGraphicsWidget
         QPainterPath shape() const;
         QRectF boundingRect() const;               
 
+        /* inetClient */
+        void requestFinished(QByteArray res);
+
     public slots:
-        void slot_getData(void);
+        void slot_getData(bool doingSync);
+        void slot_getDataTrue();
 
         void slot_projectionUpdated();
-        void slot_paramChanged();
-        void slot_requestFinished(int currentRequest,QByteArray res);
+        void slot_paramChanged();        
 
         void slot_selectBoat();
         void slot_toggleEstime();
         void slot_updateGraphicsParameters();
-
+        void slot_shLab(){this->labelHidden=!this->labelHidden;update();}
+        void slot_shPor(){this->porteHidden=!this->porteHidden;showNextGates();}
+        void slot_shSall(){this->porteHidden=false;showNextGates();}
+        void slot_shHall(){this->porteHidden=true;showNextGates();}
     signals:
         void boatSelected(boatAccount*);
-        void boatUpdated(boatAccount*,bool);
+        void boatUpdated(boatAccount*,bool,bool);
         void boatLockStatusChanged(boatAccount*,bool);
         void getTrace(QString,QList<vlmPoint> *);
         void getPolar(QString fname,Polar ** ptr);
@@ -143,8 +151,8 @@ class boatAccount: public QGraphicsWidget
         void clearSelection(void);
 
     protected:
-        void mousePressEvent(QGraphicsSceneMouseEvent * e);
-        void mouseReleaseEvent(QGraphicsSceneMouseEvent * e);
+//        void mousePressEvent(QGraphicsSceneMouseEvent * e);
+//        void mouseReleaseEvent(QGraphicsSceneMouseEvent * e);
         void contextMenuEvent(QGraphicsSceneContextMenuEvent * event);
 
         void paint(QPainter * pnt, const QStyleOptionGraphicsItem * , QWidget * );
@@ -162,6 +170,7 @@ class boatAccount: public QGraphicsWidget
         bool activated;
         bool changeLocked;
         bool updating;
+        bool doingSync;
 
         void doRequest(int request);
 
@@ -189,7 +198,7 @@ class boatAccount: public QGraphicsWidget
         int prevVac;
         int nextVac;
         int vacLen;
-
+        int nWP;
         QString race_name;
         QString boat_name;
 
@@ -221,8 +230,6 @@ class boatAccount: public QGraphicsWidget
 
         void updatePosition(void);
 
-        /* http connection */
-        inetConnexion * conn;
         /* polar data */
         Polar * polarData;
         QString polarName;
@@ -238,6 +245,7 @@ class boatAccount: public QGraphicsWidget
 
         /* positions*/
         QList<vlmPoint> trace;
+        QList<vlmLine*> gates;
         vlmLine * trace_drawing;
         void updateTraceColor(void);
 
@@ -250,8 +258,11 @@ class boatAccount: public QGraphicsWidget
         float valid_val3;
         int valid_nbRetry;
         bool doingValidation;
+        bool gatesLoaded;
 
         void drawEstime(void);
+        bool labelHidden;
+        bool porteHidden;
 };
 
 #endif

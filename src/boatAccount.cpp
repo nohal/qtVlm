@@ -24,18 +24,21 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "boatAccount.h"
 #include "Util.h"
 #include "vlmLine.h"
+#include "parser.h"
+#include "settings.h"
 
 #define VLM_NO_REQUEST  -1
 #define VLM_REQUEST_IDU  0
 #define VLM_REQUEST_BOAT 1
 #define VLM_REQUEST_TRJ  2
+#define VLM_REQUEST_GATE 3
 
 /**************************/
 /* Init & Clean           */
 /**************************/
 
 boatAccount::boatAccount(QString login, QString pass, bool activated,Projection * proj,
-                         MainWindow * main, myCentralWidget *parent) : QGraphicsWidget()
+                         MainWindow * main, myCentralWidget *parent,inetConnexion * inet) : QGraphicsWidget(), inetClient(inet)
 {
     this->mainWindow=main;
     this->parent=parent;
@@ -58,8 +61,11 @@ boatAccount::boatAccount(QString login, QString pass, bool activated,Projection 
     updating=false;
     doingValidation=false;
     vacLen=300;
-
+    doingSync=false;
+    gatesLoaded=false;
     width=height=0;
+    nWP=0;
+    this->porteHidden=false;
 
     setZValue(Z_VALUE_BOAT);
     setFont(QFont("Helvetica",9));
@@ -71,14 +77,20 @@ boatAccount::boatAccount(QString login, QString pass, bool activated,Projection 
 
     estimeLine = new orthoSegment(proj,parent->getScene(),Z_VALUE_ESTIME,true);
     WPLine = new orthoSegment(proj,parent->getScene(),Z_VALUE_ESTIME);
+    connect(parent, SIGNAL(shPor(bool)),this,SLOT(slot_shPor()));
+    connect(parent, SIGNAL(showALL(bool)),this,SLOT(slot_shSall()));
+    connect(parent, SIGNAL(hideALL(bool)),this,SLOT(slot_shHall()));
 
     trace.clear();
     trace_drawing = new vlmLine(proj,parent->getScene(),Z_VALUE_BOAT);
 
     this->proj = proj;
+    this->labelHidden=false;
 
     createPopUpMenu();
 
+    connect(this,SIGNAL(boatUpdated(boatAccount*,bool,bool)),main,SIGNAL(updateRoute()));
+    connect(parent, SIGNAL(shLab(bool)),this,SLOT(slot_shLab()));
     slot_paramChanged();
 
     if(activated)
@@ -88,7 +100,7 @@ boatAccount::boatAccount(QString login, QString pass, bool activated,Projection 
     connect(ac_estime,SIGNAL(triggered()),this,SLOT(slot_toggleEstime()));
 
     connect(this,SIGNAL(boatSelected(boatAccount*)),main,SLOT(slotSelectBoat(boatAccount*)));
-    connect(this,SIGNAL(boatUpdated(boatAccount*,bool)),main,SLOT(slotBoatUpdated(boatAccount*,bool)));
+    connect(this,SIGNAL(boatUpdated(boatAccount*,bool,bool)),main,SLOT(slotBoatUpdated(boatAccount*,bool,bool)));
     connect(this,SIGNAL(boatLockStatusChanged(boatAccount*,bool)),
             main,SLOT(slotBoatLockStatusChanged(boatAccount*,bool)));
 
@@ -102,10 +114,7 @@ boatAccount::boatAccount(QString login, QString pass, bool activated,Projection 
     /* timer used for validating modification to boat param (from BoardVLM)*/
     timer = new QTimer(this);
     timer->setSingleShot(true);
-    connect(timer,SIGNAL(timeout()),this, SLOT(slot_getData()));
-
-    /* init http inetManager */
-    conn=new inetConnexion(main,(QWidget*)this);
+    connect(timer,SIGNAL(timeout()),this, SLOT(slot_getDataTrue()));
 
     setParam(login,pass,activated);
 }
@@ -115,16 +124,20 @@ boatAccount::~boatAccount()
     disconnect();
     if(polarData)
         emit releasePolar(polarData->getName());
-    if(estimeLine)
+    if(gatesLoaded)
     {
-        //estimeLine->hideSegment();
-        //delete estimeLine;
-    }
-
-    if(WPLine)
-    {
-        //WPLine->hideSegment();
-        //delete WPLine;
+        vlmLine * porte;
+        QListIterator<vlmLine*> i (gates);
+        while(i.hasNext())
+        {
+            porte=i.next();
+            //parent->getScene()->removeItem(porte);
+            if(porte)
+            {
+                if(!parent->getAboutToQuit())
+                    delete porte;
+            }
+        }
     }
 }
 
@@ -147,13 +160,17 @@ void boatAccount::createPopUpMenu(void)
 /* Data request to VLM    */
 /**************************/
 
-void boatAccount::slot_getData(void)
+void boatAccount::slot_getData(bool doingSync)
 {
     updating=true;
     trace_drawing->deleteAll();
     doRequest(VLM_REQUEST_BOAT);
+    this->doingSync=doingSync;
 }
-
+void boatAccount::slot_getDataTrue()
+{
+    slot_getData(true);
+}
 void boatAccount::doRequest(int requestCmd)
 {
     if(!activated)
@@ -162,9 +179,9 @@ void boatAccount::doRequest(int requestCmd)
         return;
     }
 
-    if(conn)
+    if(hasInet())
     {
-        if(!conn->isAvailable() )
+        if(hasRequest() )
         {
             qWarning() << "request already running for " << login;
             return;
@@ -208,9 +225,11 @@ void boatAccount::doRequest(int requestCmd)
                             << "&idraces="
                             << race_id;
                 break;
+            case VLM_REQUEST_GATE:
+                QTextStream(&page) << "/ws/raceinfo.php?idrace="<<race_id;
         }
 
-        slot_requestFinished(requestCmd,conn->doRequestGet(requestCmd,page));
+        inetGet(requestCmd,page);
     }
     else
     {
@@ -227,20 +246,14 @@ void boatAccount::doRequest(int requestCmd)
     }
 }
 
-void boatAccount::slot_requestFinished ( int currentRequest,QByteArray res_byte)
+void boatAccount::requestFinished (QByteArray res_byte)
 {
-    //-------------------------------------------
-    // Retour de l'étape 1 : préparation du fichier
-    //-------------------------------------------
-//    if(res_byte=="error") {
-//        qWarning()<<"error in received QByteArray";
-//        return;}
     QStringList lsbuf;
     float latitude=0,longitude=0;
 
     QString res(res_byte);
 
-    switch(currentRequest)
+    switch(getCurrentRequest())
     {
         case VLM_REQUEST_IDU:
             lsbuf = res.split(";");
@@ -258,6 +271,7 @@ void boatAccount::slot_requestFinished ( int currentRequest,QByteArray res_byte)
             }
             if(boat_id!=-1)
             {
+                clearCurrentRequest();
                 doRequest(VLM_REQUEST_BOAT);
             }
             else
@@ -266,7 +280,7 @@ void boatAccount::slot_requestFinished ( int currentRequest,QByteArray res_byte)
                               QString("Erreur de parametrage du bateau '")+
                               login+"'.\n Verifier le login et mot de passe puis reactivez le bateau");
                 setStatus(false);
-                emit boatUpdated(this,0);
+                emit boatUpdated(this,false,doingSync);
             }
             break;
         case VLM_REQUEST_BOAT:
@@ -280,7 +294,7 @@ void boatAccount::slot_requestFinished ( int currentRequest,QByteArray res_byte)
                 QMessageBox::warning(0,QObject::tr("Bateau au ponton"),
                               QString("Le bateau '")+login+"' a ete desactive car hors course");
                 setStatus(false);
-                emit boatUpdated(this,0);
+                emit boatUpdated(this,false,doingSync);
                 break;
             }
 
@@ -292,7 +306,7 @@ void boatAccount::slot_requestFinished ( int currentRequest,QByteArray res_byte)
                 QMessageBox::warning(0,QObject::tr("Bateau au ponton"),
                               QString("Le bateau '")+login+"' a ete desactive car hors course");
                 setStatus(false);
-                emit boatUpdated(this,0);
+                emit boatUpdated(this,false,doingSync);
                 break;
             }
 
@@ -373,6 +387,8 @@ void boatAccount::slot_requestFinished ( int currentRequest,QByteArray res_byte)
                         prevVac = lsval.at(1).toInt();
                     else if(lsval.at(0) == "NUP")
                         nextVac = lsval.at(1).toInt();
+                    else if(lsval.at(0) == "NWP")
+                        nWP = lsval.at(1).toInt();
                     else if(lsval.at(0) == "PIL1")
                     {
                         hasPilototo=true;
@@ -432,7 +448,7 @@ void boatAccount::slot_requestFinished ( int currentRequest,QByteArray res_byte)
                         qWarning("Failed to synch");
                         doingValidation=false;
                         updateBoatData();
-                        emit boatUpdated(this,newRace);
+                        emit boatUpdated(this,newRace,doingSync);
                         emit validationDone(false);
                         updating=false;
                     }
@@ -458,7 +474,7 @@ void boatAccount::slot_requestFinished ( int currentRequest,QByteArray res_byte)
                 QMessageBox::warning(0,QObject::tr("Bateau au ponton"),
                               QString("Le bateau '")+login+"' a ete desactive car hors course");
                 setStatus(false);
-                emit boatUpdated(this,newRace);
+                emit boatUpdated(this,newRace,doingSync);
             }
             else
                 doRequest(VLM_REQUEST_TRJ);
@@ -471,11 +487,99 @@ void boatAccount::slot_requestFinished ( int currentRequest,QByteArray res_byte)
             updateBoatData();
             updateTraceColor();
             updating=false;
-            emit boatUpdated(this,newRace);
+            drawEstime();
+            emit boatUpdated(this,newRace,doingSync);
+            if(race_id!=0 && !gatesLoaded)
+                doRequest(VLM_REQUEST_GATE);
+            showNextGates();
+            break;
+        case VLM_REQUEST_GATE:
+            QJson::Parser parser;
+            bool ok;
+
+            QVariantMap result = parser.parse (res_byte, &ok).toMap();
+            if (!ok) {
+                qWarning() << "Error parsing json data " << res_byte;
+                qWarning() << "Error: " << parser.errorString() << " (line: " << parser.errorLine() << ")";
+            }
+
+            qWarning() << "id Race: " << result["idraces"].toString();
+            qWarning() << "race name: " << result["racename"].toString();
+
+            QVariantMap wps= result["races_waypoints"].toMap();
+            for(int i=1;true;i++)
+            {
+                QString str;
+                QVariantMap wp= wps[str.setNum(i)].toMap();
+                if(wp.isEmpty()) break;
+                qWarning()<<"wp: "<<wp["libelle"].toString();
+                float lonPorte1=wp["longitude1"].toDouble()/1000.000;
+                float latPorte1=wp["latitude1"].toDouble()/1000.000;
+                float lonPorte2=wp["longitude2"].toDouble()/1000.000;
+                float latPorte2=wp["latitude2"].toDouble()/1000.000;
+                vlmLine * porte=new vlmLine(proj,parent->getScene(),Z_VALUE_GATE);
+                connect(parent, SIGNAL(shLab(bool)),porte,SLOT(slot_shLab()));
+                porte->setGateMode("WP"+str+": "+wp["libelle"].toString());
+                porte->addPoint(latPorte1,lonPorte1);
+                if(qRound(lonPorte1*1000)==qRound(lonPorte2*1000) && qRound(latPorte1*1000)==qRound(latPorte2*1000))
+                {
+                    porte->setPorteOnePoint();
+                    Util::getCoordFromDistanceAngle(latPorte1, lonPorte1, 500,wp["laisser_au"].toDouble()+180,&latPorte2,&lonPorte2);
+                }
+                porte->addPoint(latPorte2,lonPorte2);
+                QPen penLine(Qt::black,1);
+                penLine.setWidthF(3);
+                porte->setLinePen(penLine);
+                porte->setHidden(true);
+                gates.append(porte);
+
+            }
+            gatesLoaded=true;
+            showNextGates();
             break;
     }
 }
+void boatAccount::showNextGates()
+{
+    if(!gatesLoaded) return;
+    vlmLine * porte;
+    QListIterator<vlmLine*> i (gates);
+    int j=0;
+    while(i.hasNext())
+    {
+        porte=i.next();
+        if(!selected || porteHidden)
+        {
+            porte->setHidden(true);
+            porte->hide();
+            continue;
+        }
+        porte->show();
+        j++;
+        if(j<nWP)
+        {
+            porte->setHidden(true);
+            porte->slot_showMe();
+        }
+        else if (j==nWP)
+        {
+            QPen penLine(Qt::blue,1);
+            penLine.setWidthF(3);
+            porte->setLinePen(penLine);
+            porte->setHidden(false);
+            porte->slot_showMe();
+        }
+        else
+        {
+            QPen penLine(Qt::white,1);
+            penLine.setWidthF(3);
+            porte->setLinePen(penLine);
+            porte->setHidden(false);
+            porte->slot_showMe();
+        }
+    }
 
+}
 void boatAccount::validateChg(int currentCmdNum,float cmd_val1,float cmd_val2,float cmd_val3)
 {
     timer->stop();
@@ -485,7 +589,7 @@ void boatAccount::validateChg(int currentCmdNum,float cmd_val1,float cmd_val2,fl
     valid_val3=cmd_val3;
     valid_nbRetry=0;
     doingValidation=true;
-    slot_getData();
+    slot_getData(true);
 }
 
 bool boatAccount::chkResult(void)
@@ -521,10 +625,17 @@ bool boatAccount::chkResult(void)
                 return true;
             break;
         case VLM_CMD_WP:
+            
             if(compFloat(getWPLat(),valid_val1) &&
                 compFloat(getWPLon(),valid_val2) &&
                 compFloat(getWPHd(),valid_val3))
                 return true;
+            else
+            {
+                qWarning()<<"lat: "<<getWPLat()<<" against "<<valid_val1 << "diff " << getWPLat()-valid_val1;
+                qWarning()<<"lon: "<<getWPLon()<<" against "<<valid_val2 << "diff " << getWPLon()-valid_val2;
+                qWarning()<<"lon: "<<getWPHd()<<" against "<<valid_val3 << "diff " << getWPHd()-valid_val3;
+            }
             break;
     }
     return false;
@@ -540,6 +651,7 @@ void boatAccount::slot_selectBoat()
     selected = true;
     updateTraceColor();
     emit boatSelected(this);
+    showNextGates();
 }
 
 void boatAccount::unSelectBoat(bool needUpdate)
@@ -551,6 +663,7 @@ void boatAccount::unSelectBoat(bool needUpdate)
         update();
         updateTraceColor();
     }
+    showNextGates();
 }
 
 /**************************/
@@ -581,13 +694,14 @@ void boatAccount::slot_toggleEstime()
 void boatAccount::paint(QPainter * pnt, const QStyleOptionGraphicsItem * , QWidget * )
 {
     int dy = height/2;
+    if(!labelHidden)
+    {
+        QFontMetrics fm(font());
 
-    QFontMetrics fm(font());
-
-    pnt->fillRect(9,0, width-10,height-1, QBrush(bgcolor));
-    pnt->setFont(font());
-    pnt->drawText(10,fm.height()-2,my_str);
-
+        pnt->fillRect(9,0, width-10,height-1, QBrush(bgcolor));
+        pnt->setFont(font());
+        pnt->drawText(10,fm.height()-2,my_str);
+    }
     QPen pen(selected?selColor:myColor);
     pen.setWidth(4);
     pnt->setPen(pen);
@@ -597,7 +711,8 @@ void boatAccount::paint(QPainter * pnt, const QStyleOptionGraphicsItem * , QWidg
     pen = QPen(QColor(g,g,g));
     pen.setWidth(1);
     pnt->setPen(pen);
-    pnt->drawRect(9,0,width-10,height-1);
+    if(!labelHidden)
+        pnt->drawRect(9,0,width-10,height-1);
 
     //drawEstime();
 }
@@ -618,6 +733,7 @@ void boatAccount::updateTraceColor(void)
         trace_drawing->setLinePen(penLine);
         trace_drawing->setPointMode(myColor);
     }
+    trace_drawing->setNbVacPerHour(3600/this->vacLen);
     trace_drawing->slot_showMe();
 }
 
@@ -629,8 +745,8 @@ void boatAccount::drawEstime(void)
     if(isUpdating() || !getStatus())
         return;
 
-    QPen penLine1(QColor(Util::getSetting("estimeLineColor", QColor(Qt::darkMagenta)).value<QColor>()),1,Qt::SolidLine);
-    penLine1.setWidthF(Util::getSetting("estimeLineWidth", 1.6).toDouble());
+    QPen penLine1(QColor(Settings::getSetting("estimeLineColor", QColor(Qt::darkMagenta)).value<QColor>()),1,Qt::SolidLine);
+    penLine1.setWidthF(Settings::getSetting("estimeLineWidth", 1.6).toDouble());
     QPen penLine2(QColor(Qt::black),1,Qt::DotLine);
     penLine2.setWidthF(1.2);
 
@@ -860,19 +976,19 @@ void boatAccount::setAlias(bool state,QString alias)
 
 void boatAccount::slot_paramChanged()
 {
-    myColor = QColor(Util::getSetting("qtBoat_color",QColor(Qt::blue).name()).toString());
-    selColor = QColor(Util::getSetting("qtBoat_sel_color",QColor(Qt::red).name()).toString());
-    estime_type=Util::getSetting("estimeType",0).toInt();
+    myColor = QColor(Settings::getSetting("qtBoat_color",QColor(Qt::blue).name()).toString());
+    selColor = QColor(Settings::getSetting("qtBoat_sel_color",QColor(Qt::red).name()).toString());
+    estime_type=Settings::getSetting("estimeType",0).toInt();
     switch(estime_type)
     {
         case 0: /* time */
-            estime_param = Util::getSetting("estimeTime",60).toInt();
+            estime_param = Settings::getSetting("estimeTime",60).toInt();
             break;
         case 1: /* nb vac */
-            estime_param = Util::getSetting("estimeVac",10).toInt();
+            estime_param = Settings::getSetting("estimeVac",10).toInt();
             break;
         default: /* dist */
-            estime_param = Util::getSetting("estimeLen",100).toInt();
+            estime_param = Settings::getSetting("estimeLen",100).toInt();
             break;
     }
     if(activated)
@@ -890,26 +1006,26 @@ void boatAccount::slot_updateGraphicsParameters()
 /* Events                 */
 /**************************/
 
-void boatAccount::mousePressEvent(QGraphicsSceneMouseEvent * e)
-{
-    if (e->button() != Qt::LeftButton)
-    {
-         e->ignore();
-    }
-}
-
-void  boatAccount::mouseReleaseEvent(QGraphicsSceneMouseEvent * e)
-{
-    if(e->button() == Qt::LeftButton)
-    {
-        emit clearSelection();
-        if(!mainWindow->get_selPOI_instruction())
-        {
-            slot_selectBoat();
-            return;
-        }
-    }
-}
+//void boatAccount::mousePressEvent(QGraphicsSceneMouseEvent * e)
+//{
+//    if (e->button() != Qt::LeftButton)
+//    {
+//         e->ignore();
+//    }
+//}
+//
+//void  boatAccount::mouseReleaseEvent(QGraphicsSceneMouseEvent * e)
+//{
+//    if(e->button() == Qt::LeftButton)
+//    {
+//        emit clearSelection();
+//        if(!mainWindow->get_selPOI_instruction())
+//        {
+//            slot_selectBoat();
+//            return;
+//        }
+//    }
+//}
 
 void boatAccount::contextMenuEvent(QGraphicsSceneContextMenuEvent * e)
 {

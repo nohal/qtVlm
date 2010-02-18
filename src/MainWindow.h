@@ -49,8 +49,9 @@ Copyright (C) 2008 - Jacques Zaninetti - http://zygrib.free.fr
 #include "Pilototo.h"
 
 #include "Polar.h"
-#include "gate.h"
 #include "mycentralwidget.h"
+
+#include "settings.h"
 
 class MainWindow: public QMainWindow
 {
@@ -67,12 +68,17 @@ class MainWindow: public QMainWindow
         void getBoatWP(double * lat,double * lon);
         bool get_selPOI_instruction();
         void get_selectedBoatPos(double * lat,double* lon);
+        int get_selectedBoatVacLen();
         void getBoatBvmg(float * up, float * down, float ws);
+        float getBoatPolarSpeed(float ws,float angle);
+        float getBoatPolarMaxSpeed();
         boatAccount * getSelectedBoat(void) {if(selectedBoat) return selectedBoat;else return NULL;}
 
         void statusBar_showWindData(double x,double y);
         void statusBar_showSelectedZone(float x0, float y0, float x1, float y1);
         void drawVacInfo(void);
+
+        void setBoardToggleAction(QAction * action);
 
     public slots:
         void slotFile_Open();
@@ -104,15 +110,12 @@ class MainWindow: public QMainWindow
         void slotInetUpdated(void);
         void slotChgBoat(int);
         void slotAccountListUpdated(void);
-        void slotBoatUpdated(boatAccount * boat,bool newRace);
+        void slotBoatUpdated(boatAccount * boat,bool newRace,bool doingSync);
+        void slot_centerBoat();
 
         void slotChgWP(float lat,float lon, float wph);
-
         void slotBoatLockStatusChanged(boatAccount*,bool);
         void slotPilototo(void);
-
-        void slot_addGate(void);        
-        void slotCreateGate();
 
         void slot_newPOI(void);        
         void slotCreatePOI();
@@ -136,17 +139,18 @@ class MainWindow: public QMainWindow
         void slotValidationDone(bool);
 
         void slotCompassLine(void);
+        void slotCompassCenterBoat(void);
+        void slotCompassCenterWp(void);
         void slotEstime(int);
         void slot_ParamVLMchanged(void);
         void slot_deleteProgress(void);
+        void slot_centerMap();
 
     signals:
         void signalMapQuality(int quality);
         void setChangeStatus(bool);
         void editPOI(POI *);
         void newPOI(float,float,Projection *, boatAccount *);
-        void editGate(gate*);
-        void newGate(float,float,float,float,Projection*);
         void editInstructions(void);
         void editInstructionsPOI(Pilototo_instruction * ,POI*);
         void editWP_POI(POI*);
@@ -157,8 +161,10 @@ class MainWindow: public QMainWindow
         void showCompassLine(int,int);
         void addPOI_list(POI*);
         void addPOI(QString name,int type,float lat,float lon, float wph,int timestamp,bool useTimeStamp, boatAccount *);
-        void updateRoute(void);
-
+        void updateRoute();
+        void showCompassCenterBoat();
+        void showCompassCenterWp();
+        void selectedBoatChanged();
     protected:
         void closeEvent(QCloseEvent *) {QApplication::quit();}
         void keyPressEvent ( QKeyEvent * event );
@@ -187,6 +193,8 @@ class MainWindow: public QMainWindow
         QLabel       * tool_ESTIME;
         QLabel       * tool_ESTIMEUNIT;
         //QPushButton  * btn_Pilototo;
+
+        Settings * settings;
 
         QMenu    *menuPopupBtRight;
 

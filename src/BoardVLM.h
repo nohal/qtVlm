@@ -35,9 +35,9 @@ class boardVLM;
 #include "ui_BoardVLM.h"
 #include "ui_WP_dialog.h"
 #include "Util.h"
-#include "inetConnexion.h"
 #include "Util.h"
 #include "POI.h"
+#include "inetClient.h"
 
 class WP_dialog: public QDialog, public Ui::WP_dialog_ui
 { Q_OBJECT
@@ -64,11 +64,14 @@ class WP_dialog: public QDialog, public Ui::WP_dialog_ui
         void initDialog(float WPLat,float WPLon,float WPHd);
 };
 
-class boardVLM: public QWidget , public Ui::boardVLM_ui
+class boardVLM: public QWidget , public Ui::boardVLM_ui, public inetClient
 { Q_OBJECT
     public:
-        boardVLM(MainWindow * mainWin);
+        boardVLM(MainWindow * mainWin, inetConnexion * inet);
         void validationDone(bool ok);
+
+        /* inetClient */
+        void requestFinished(QByteArray res);
 
     public slots:
         void chgHeading();
@@ -83,8 +86,6 @@ class boardVLM: public QWidget , public Ui::boardVLM_ui
         void doWP_edit();
         void disp_boatInfo();
         void synch_GPS();
-
-        void slot_requestFinished (int currentRequest,QByteArray res);
 
         void sendCmd(int cmdNum,float val1,float val2, float val3);
         void setWP(float lat,float lon,float wph=-1);
@@ -105,8 +106,6 @@ class boardVLM: public QWidget , public Ui::boardVLM_ui
     private:
         QMainWindow * mainWin;
 
-        inetConnexion * conn;
-        int currentRequest;
         int currentCmdNum;
         int nbRetry;
         bool isWaiting;

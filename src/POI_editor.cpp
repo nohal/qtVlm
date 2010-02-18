@@ -50,7 +50,6 @@ POI_Editor::POI_Editor(MainWindow * main,myCentralWidget * parent)
     modeCreation=false;
 
     connect(this,SIGNAL(addPOI_list(POI*)),parent,SLOT(slot_addPOI_list(POI*)));
-    connect(this,SIGNAL(updateRoute()),parent,SLOT(slot_updateRoute()));
     connect(this,SIGNAL(delPOI_list(POI*)),parent,SLOT(slot_delPOI_list(POI*)));
 
     connect(main, SIGNAL(newPOI(float,float,Projection *, boatAccount *)),
@@ -86,11 +85,17 @@ void POI_Editor::initPOI(void)
     editName->setText(poi->getName());
     oldType=poi->getType();
     POI_type_liste->setCurrentIndex(oldType);
-
+    QListIterator<ROUTE*> i (parent->getRouteList());
+    cb_routeList->clear();
+    cb_routeList->addItem("Not in a route");
+    while(i.hasNext())
+        cb_routeList->addItem(i.next()->getName());
+    if(poi->getRoute()!=NULL)
+        cb_routeList->setCurrentIndex(cb_routeList->findText(((ROUTE*) poi->getRoute())->getName()));
     if(poi->getWph()==-1)
         editWph->setText(QString());
     else
-         editWph->setText(QString().setNum(poi->getWph()));
+        editWph->setText(QString().setNum(poi->getWph()));
 
     btSaveWP->setEnabled(!main->getBoatLockStatus());
 
@@ -129,7 +134,7 @@ void POI_Editor::done(int result)
 
         poi->setLongitude(getValue(POI_EDT_LON));
         poi->setLatitude (getValue(POI_EDT_LAT));
-        int oldtype=poi->getType();
+ //       int oldtype=poi->getType();
         poi->setType(POI_type_liste->currentIndex());
         poi->setName((editName->text()).trimmed() );
         if(editWph->text().isEmpty())
@@ -142,7 +147,15 @@ void POI_Editor::done(int result)
             poi->show();
             emit addPOI_list(poi);
         }
-        if(oldtype==1 || poi->getType()==1) emit updateRoute();
+        if(cb_routeList->currentIndex()!=0)
+        {
+            ROUTE * route=parent->getRouteList()[cb_routeList->currentIndex()-1];
+            if(!route->getFrozen())
+#warning rajouter un QDialog pour prevenir.
+                poi->setRoute(route);
+        }
+        else
+            poi->setRoute(NULL);
         if(poi->getIsWp()) emit doChgWP(poi->getLatitude(),poi->getLongitude(),poi->getWph());
 
 

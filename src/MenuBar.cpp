@@ -36,6 +36,8 @@ MenuBar::MenuBar(QWidget *parent)
 
         acFile_Quit = addAction(menuFile,
                     tr("Quitter"), tr("Ctrl+Q"), tr("Bye"), "img/exit.png");
+        menuFile->addSeparator();
+
     addMenu(menuFile);
 
     //-------------------------------------
@@ -78,6 +80,16 @@ MenuBar::MenuBar(QWidget *parent)
     //-------------------------------------
     //Porte
     //menuPOI = new QMenu(tr("POI / Portes"));
+    menuRoute = new QMenu(tr("Routes"));
+
+        acRoute_add = addAction(menuRoute,
+                    tr("Creer une route"),"", "", "");
+        mnRoute_delete = new QMenu(tr("Supprimer une route"));
+        mnRoute_edit = new QMenu(tr("Editer une route"));
+        menuRoute->addMenu(mnRoute_edit);
+        menuRoute->addMenu(mnRoute_delete);
+    addMenu(menuRoute);
+
     menuPOI = new QMenu(tr("Marques"));
         //acPOIinput = addAction(menuPOI,tr("POI / porte en masse"),"","","");
         acPOIinput = addAction(menuPOI,tr("Ajout en masse"),"","","");
@@ -87,8 +99,6 @@ MenuBar::MenuBar(QWidget *parent)
         acPOIimport = addAction(menuImportPoi,tr("Importer de zyGrib"),"","","");
         menuPOI->addMenu(menuImportPoi);
         acPOIAdd = addAction(menuPOI,tr("Ajouter une marque"),"","","");
-        //menuPOI->addSeparator();
-        //acGateAdd = addAction(menuPOI,tr("Ajouter une porte"),"","","");
 
 #ifdef __QTVLM_WITH_TEST
         menuPOI->addSeparator();
@@ -150,7 +160,26 @@ MenuBar::MenuBar(QWidget *parent)
                 acOptions_GroupLanguage->addAction(acOptions_Lang_en);
         menuOptions->addMenu(menuLanguage);
 
-    addMenu(menuOptions);
+        QMenu *menuShowHide = new QMenu(tr("Montrer/cacher"));
+           acOptions_GroupShowHide = new QActionGroup(menuShowHide);
+                acOptions_SH_sAll = addAction(menuShowHide, tr("Tout montrer"), "S", tr(""));
+                acOptions_SH_hAll = addAction(menuShowHide, tr("Tout cacher sauf les bateaux actifs"), "H", tr(""));
+                menuShowHide->addSeparator();
+                acOptions_SH_Opp = addAction(menuShowHide, tr("Cacher/Montrer les bateaux opposants"), "O", tr(""));
+                acOptions_SH_Por = addAction(menuShowHide, tr("Cacher/Montrer les portes et WPs"), "W", tr(""));
+                acOptions_SH_Poi = addAction(menuShowHide, tr("Cacher/Montrer les POIs"), "P", tr(""));
+                acOptions_SH_Rou = addAction(menuShowHide, tr("Cacher/Montrer les routes"), "R", tr(""));
+                acOptions_SH_Lab = addAction(menuShowHide, tr("Cacher/Montrer les etiquettes"), "E", tr(""));
+                menuShowHide->addSeparator();
+                acOptions_SH_Com = addAction(menuShowHide, tr("Cacher/Montrer le compas"), "C", tr(""));
+                acOptions_SH_Pol = addAction(menuShowHide, tr("Cacher/Montrer la polaire"), "L", tr(""));
+                menuShowHide->addSeparator();
+                acOptions_SH_Boa = addAction(menuShowHide, tr("Centrer sur le bateau actif"), "B", tr(""));
+        menuOptions->addMenu(menuShowHide);
+
+
+
+        addMenu(menuOptions);
 
     //-------------------------------------
     menuHelp = new QMenu(tr("Aide"));
@@ -223,12 +252,13 @@ QMenu * MenuBar::createPopupBtRight(QWidget *parent)
     ac_pastePOI = addAction(popup, tr("Coller une marque"),tr(""),tr(""),"");
     ac_delAllPOIs = addAction(popup, tr("Effacer toutes les marques"),tr(""),tr(""),"");
     ac_delSelPOIs = addAction(popup, tr("Effacer les marques..."),tr(""),tr(""),"");
-// Porte
-    //popup->addSeparator();
-    //ac_CreateGate = addAction(popup, tr("Creer une porte"),tr(""),tr(""),"");
 
     popup->addSeparator();
     ac_compassLine = addAction(popup, tr("Tirer un cap"),tr(""),tr(""),"");
+    ac_compassCenterBoat = addAction(popup, tr("Centrer le compas sur le bateau actif"),tr(""),tr(""),"");
+    ac_compassCenterWp = addAction(popup, tr("Centrer le compas sur le WP VLM"),tr(""),tr(""),"");
+    popup->addSeparator();
+    ac_centerMap = addAction(popup, tr("Centrer la carte ici"),tr(""),tr(""),"");
     return popup;
 }
 
@@ -269,7 +299,15 @@ void MenuBar::setQuality(int q) {
         case 4: acMap_Quality5->setChecked(true); break;
     }
 }
-
+void MenuBar::addMenuRoute(ROUTE* route)
+{
+    QAction *action1;
+    QAction *action2;
+    action1=addAction(mnRoute_edit,route->getName(),"","","");
+    connect(action1, SIGNAL(triggered()), route, SLOT(slot_edit()));
+    action2=addAction(mnRoute_delete,route->getName(),"","","");
+    connect(action2, SIGNAL(triggered()), route, SLOT(slot_delete()));
+}
 //-------------------------------------------------
 void MenuBar::setCitiesNamesLevel(int level) {
     switch (level) {

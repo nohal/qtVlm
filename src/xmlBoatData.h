@@ -32,12 +32,13 @@ class xml_boatData;
 #include "opponentBoat.h"
 #include "MainWindow.h"
 #include "mycentralwidget.h"
+#include "inetClient.h"
 
 class xml_boatData: public QWidget
 {Q_OBJECT
 
       public:
-            xml_boatData(Projection * proj,MainWindow * main, myCentralWidget * parent=0);
+            xml_boatData(Projection * proj,MainWindow * main, myCentralWidget * parent,inetConnexion * inet);
 
       public slots:
             void slot_writeData(QList<boatAccount*> & boat_list,QList<raceData*> & race_list,QString fname);
@@ -53,6 +54,7 @@ class xml_boatData: public QWidget
             Projection * proj;
             MainWindow * main;
             myCentralWidget * parent;
+            inetConnexion * inet;
 };
 
 #endif

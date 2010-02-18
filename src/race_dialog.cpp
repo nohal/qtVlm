@@ -26,20 +26,17 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #define RACE_NO_REQUEST 0
 #define RACE_LIST_BOAT  1
 
-race_dialog::race_dialog(MainWindow * main,myCentralWidget * parent) : QDialog(parent)
+race_dialog::race_dialog(MainWindow * main,myCentralWidget * parent, inetConnexion * inet) :
+        QDialog(parent),
+        inetClient(inet)
 {
     setupUi(this);
 
     connect(this,SIGNAL(updateOpponent()),main,SLOT(slotUpdateOpponent()));
 
     chooser_raceList->setInsertPolicy(QComboBox::InsertAlphabetically);
-//    availableBoat->setSortingEnabled(true);
     availableBoat->setSelectionMode(QAbstractItemView::ExtendedSelection);
-//    selectedBoat->setSortingEnabled(true);
     selectedBoat->setSelectionMode(QAbstractItemView::ExtendedSelection);
-
-    /* init http inetManager */
-    conn=new inetConnexion(main,this);
 
     waitBox = new QMessageBox(QMessageBox::Information,
                              tr("ParamÃ©trage des courses"),
@@ -72,14 +69,14 @@ void race_dialog::initList(QList<boatAccount*> & acc_list_ptr,QList<raceData*> &
         if(!acc_list->at(i)->getStatus() || acc_list->at(i)->getRaceId() == "0")
             continue;
 
-        /* on cherche si la course existe déjà ds la liste */
+        /* on cherche si la course existe dï¿½jï¿½ ds la liste */
         for(int j=0;j<param_list.size();j++)
             if(param_list[j]->id == acc_list->at(i)->getRaceId())
             {
                 found=true;
                 break;
             }
-        /* Elle n'existe pas => on crée un nv raceParam */
+        /* Elle n'existe pas => on crï¿½e un nv raceParam */
         if(!found)
         {
             raceParam * ptr = new raceParam();
@@ -95,17 +92,11 @@ void race_dialog::initList(QList<boatAccount*> & acc_list_ptr,QList<raceData*> &
     for(int j=0;j<param_list.size();j++)
         chooser_raceList->addItem(param_list[j]->name,param_list[j]->id);
     nbRace->setText(QString().setNum(param_list.size()));
-    /* get boat list */
-    if(!conn)
-    {
-        qWarning() << "No connection structure available";
-        return ;
-    }
 
-    if(!conn->isAvailable() )
+    if(!hasInet() || hasRequest())
     {
-        qWarning() << "request already running" ;
-        return ;
+        qWarning("raceDialog bad state in inet");
+        return;
     }
 
     /* init index of search : currentRace*/
@@ -142,11 +133,11 @@ void race_dialog::getNextRace()
     QTextStream(&page) << "/getuserlist.php?"
                         << "idr="
                         << param_list[currentRace]->id;
-
-    slot_requestFinished(RACE_LIST_BOAT,conn->doRequestGet(RACE_LIST_BOAT,page));
+    clearCurrentRequest();
+    inetGet(RACE_LIST_BOAT,page);
 }
 
-void race_dialog::slot_requestFinished (int ,QByteArray data)
+void race_dialog::requestFinished (QByteArray data)
 {
     QString strbuf(data);
     QStringList list_res;
@@ -165,13 +156,14 @@ void race_dialog::slot_requestFinished (int ,QByteArray data)
         }
         ptr = new boatParam();
         ptr->login=boat[1];
-        /* ex: 6936;Aarizia 4;Petit Navire;Nova_Scotia; */
+        /* ex: 6936;Aarizia 4;Petit Navire;Nova_Scotia */
         ptr->name=boat[2];
         ptr->user_id=boat[0];
         ptr->selected=currentParam.contains(boat[0]);
         param_list[currentRace]->boats.append(ptr);
     }
     /* next race */
+
     getNextRace();
 }
 

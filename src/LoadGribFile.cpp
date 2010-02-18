@@ -34,6 +34,8 @@ Copyright (C) 2008 - Jacques Zaninetti - http://zygrib.free.fr
 #include "Version.h"
 #include "sha1/sha1.h"
 
+#warning zyGrib dwn n utilise pas les classes std
+
 //-------------------------------------------------------------------------------
 LoadGribFile::LoadGribFile()
 {

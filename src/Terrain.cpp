@@ -34,6 +34,7 @@ Copyright (C) 2008 - Jacques Zaninetti - http://zygrib.free.fr
 #include <QDateTime>
 
 #include "Terrain.h"
+#include "settings.h"
 
 //---------------------------------------------------------
 // Constructeur
@@ -59,16 +60,16 @@ Terrain::Terrain(myCentralWidget *parent, Projection *proj_) : QGraphicsWidget()
     quality = 0;
 
     //---------------------------------------------------------------------
-    showCountriesBorders  = Util::getSetting("showCountriesBorders", true).toBool();
+    showCountriesBorders  = Settings::getSetting("showCountriesBorders", true).toBool();
 
-    showRivers   = Util::getSetting("showRivers", false).toBool();
-    showCitiesNamesLevel = Util::getSetting("showCitiesNamesLevel", 0).toInt();
-    showCountriesNames = Util::getSetting("showCountriesNames", false).toBool();
-    showWindColorMap  = Util::getSetting("showWindColorMap", true).toBool();
+    showRivers   = Settings::getSetting("showRivers", false).toBool();
+    showCitiesNamesLevel = Settings::getSetting("showCitiesNamesLevel", 0).toInt();
+    showCountriesNames = Settings::getSetting("showCountriesNames", false).toBool();
+    showWindColorMap  = Settings::getSetting("showWindColorMap", true).toBool();
 
-    colorMapSmooth = Util::getSetting("colorMapSmooth", true).toBool();
-    showWindArrows  = Util::getSetting("showWindArrows", true).toBool();
-    showBarbules = Util::getSetting("showBarbules", true).toBool();
+    colorMapSmooth = Settings::getSetting("colorMapSmooth", true).toBool();
+    showWindArrows  = Settings::getSetting("showWindArrows", true).toBool();
+    showBarbules = Settings::getSetting("showBarbules", true).toBool();
     //----------------------------------------------------------------------------
 
     imgEarth = NULL;
@@ -78,7 +79,7 @@ Terrain::Terrain(myCentralWidget *parent, Projection *proj_) : QGraphicsWidget()
     isEarthMapValid = false;
     isWindMapValid  = false;
     mustRedraw = true;
-
+    isWaiting=false;
 
     gshhsReader = NULL;
     gisReader = new GisReader();
@@ -92,20 +93,20 @@ Terrain::Terrain(myCentralWidget *parent, Projection *proj_) : QGraphicsWidget()
 //-------------------------------------------
 void Terrain::updateGraphicsParameters()
 {
-    backgroundColor  = Util::getSetting("backgroundColor", QColor(0,0,45)).value<QColor>();
-    seaColor  = Util::getSetting("seaColor", QColor(50,50,150)).value<QColor>();
-    landColor = Util::getSetting("landColor", QColor(200,200,120)).value<QColor>();
-    landColor.setAlpha(Util::getSetting("landOpacity","180").toInt());
+    backgroundColor  = Settings::getSetting("backgroundColor", QColor(0,0,45)).value<QColor>();
+    seaColor  = Settings::getSetting("seaColor", QColor(50,50,150)).value<QColor>();
+    landColor = Settings::getSetting("landColor", QColor(200,200,120)).value<QColor>();
+    landColor.setAlpha(Settings::getSetting("landOpacity","180").toInt());
     tranparent=QColor(0,0,0,0);
 
-    seaBordersPen.setColor(Util::getSetting("seaBordersLineColor", QColor(40,45,30)).value<QColor>());
-    seaBordersPen.setWidthF(Util::getSetting("seaBordersLineWidth", 1.8).toDouble());
+    seaBordersPen.setColor(Settings::getSetting("seaBordersLineColor", QColor(40,45,30)).value<QColor>());
+    seaBordersPen.setWidthF(Settings::getSetting("seaBordersLineWidth", 1.8).toDouble());
 
-    boundariesPen.setColor(Util::getSetting("boundariesLineColor", QColor(40,40,40)).value<QColor>());
-    boundariesPen.setWidthF(Util::getSetting("boundariesLineWidth", 1.4).toDouble());
+    boundariesPen.setColor(Settings::getSetting("boundariesLineColor", QColor(40,40,40)).value<QColor>());
+    boundariesPen.setWidthF(Settings::getSetting("boundariesLineWidth", 1.4).toDouble());
 
-    riversPen.setColor(Util::getSetting("riversLineColor", QColor(50,50,150)).value<QColor>());
-    riversPen.setWidthF(Util::getSetting("riversLineWidth", 1.0).toDouble());
+    riversPen.setColor(Settings::getSetting("riversLineColor", QColor(50,50,150)).value<QColor>());
+    riversPen.setWidthF(Settings::getSetting("riversLineWidth", 1.0).toDouble());
 
     int v = 180;
     selectColor     = QColor(v,v,v);
@@ -225,7 +226,7 @@ void Terrain::draw_GSHHSandGRIB()
 void Terrain::setDrawRivers(bool b) {
     if (showRivers != b) {
         showRivers = b;
-        Util::setSetting("showRivers", b);
+        Settings::setSetting("showRivers", b);
         mustRedraw = true;
         indicateWaitingMap();
     }
@@ -235,7 +236,7 @@ void Terrain::setDrawRivers(bool b) {
 void Terrain::setDrawCountriesBorders(bool b) {
     if (showCountriesBorders != b) {
         showCountriesBorders = b;
-        Util::setSetting("showCountriesBorders", b);
+        Settings::setSetting("showCountriesBorders", b);
         mustRedraw = true;
         indicateWaitingMap();
     }
@@ -246,7 +247,7 @@ void Terrain::setDrawCountriesBorders(bool b) {
 void Terrain::setCountriesNames(bool b) {
     if (showCountriesNames != b) {
         showCountriesNames = b;
-        Util::setSetting("showCountriesNames", b);
+        Settings::setSetting("showCountriesNames", b);
         mustRedraw = true;
         indicateWaitingMap();
     }
@@ -255,7 +256,7 @@ void Terrain::setCountriesNames(bool b) {
 void Terrain::setCitiesNamesLevel  (int level) {
     if (showCitiesNamesLevel != level) {
         showCitiesNamesLevel = level;
-        Util::setSetting("showCitiesNamesLevel", level);
+        Settings::setSetting("showCitiesNamesLevel", level);
         mustRedraw = true;
         indicateWaitingMap();
     }
@@ -277,7 +278,7 @@ void Terrain::slot_setMapQuality(int q) {
 void Terrain::slot_setDrawWindColors (bool b) {
     if (showWindColorMap != b) {
         showWindColorMap = b;
-        Util::setSetting("showWindColorMap", b);
+        Settings::setSetting("showWindColorMap", b);
         mustRedraw = true;
         indicateWaitingMap();
     }
@@ -286,7 +287,7 @@ void Terrain::slot_setDrawWindColors (bool b) {
 void Terrain::setColorMapSmooth (bool b) {
     if (colorMapSmooth != b) {
         colorMapSmooth = b;
-        Util::setSetting("colorMapSmooth", b);
+        Settings::setSetting("colorMapSmooth", b);
         mustRedraw = true;
         indicateWaitingMap();
     }
@@ -295,7 +296,7 @@ void Terrain::setColorMapSmooth (bool b) {
 void Terrain::setDrawWindArrows (bool b) {
     if (showWindArrows != b) {
         showWindArrows = b;
-        Util::setSetting("showWindArrows", b);
+        Settings::setSetting("showWindArrows", b);
         mustRedraw = true;
         indicateWaitingMap();
     }
@@ -304,7 +305,7 @@ void Terrain::setDrawWindArrows (bool b) {
 void Terrain::setBarbules (bool b) {
     if (showBarbules != b) {
         showBarbules = b;
-        Util::setSetting("showBarbules", b);
+        Settings::setSetting("showBarbules", b);
         mustRedraw = true;
         indicateWaitingMap();
     }
@@ -386,6 +387,8 @@ void Terrain::paint(QPainter * pnt, const QStyleOptionGraphicsItem * , QWidget *
 
 void Terrain::indicateWaitingMap()
 {
+    if(isWaiting) return;
+    isWaiting=true;
     if(imgAll!=NULL)
     {
         QPainter pnt_1(imgAll);
@@ -413,6 +416,7 @@ void Terrain::indicateWaitingMap()
         mustRedraw = false;
     }
     updateRoutine();
+    isWaiting=false;
 }
 void Terrain::updateRoutine()
 {

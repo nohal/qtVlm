@@ -33,13 +33,14 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #define ROLE_ALIAS     Qt::UserRole+5
 #define ROLE_CHK_POLAR Qt::UserRole+6
 
-boatAccount_dialog::boatAccount_dialog(Projection * proj, MainWindow * main, myCentralWidget * parent) : QDialog(parent)
+boatAccount_dialog::boatAccount_dialog(Projection * proj, MainWindow * main, myCentralWidget * parent,inetConnexion * inet) : QDialog(parent)
 {
     setupUi(this);
 
     this->proj = proj;
     this->main=main;
     this->parent=parent;
+    this->inet=inet;
 
     /* signal / slot init */
 
@@ -193,7 +194,7 @@ void boatAccount_dialog::done(int result)
                     boatAccount * acc = new boatAccount(item->text(),
                         item->data(ROLE_PASS).toString(),
                         ((Qt::CheckState)item->data(ROLE_ACTIVATED).toInt())==Qt::Checked,
-                         proj,main,parent);
+                         proj,main,parent,inet);
                     acc->setPolar(((Qt::CheckState)item->data(ROLE_CHK_POLAR).toInt())==Qt::Checked,
                                 item->data(ROLE_POLAR).toString());
                     acc->setLockStatus(((Qt::CheckState)item->data(ROLE_LOCKED).toInt())==Qt::Checked);

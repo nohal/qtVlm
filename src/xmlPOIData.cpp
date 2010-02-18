@@ -28,6 +28,18 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #define DOM_FILE_TYPE     "qtVLM_config"
 #define ROOT_NAME         "qtVLM_POI"
 #define VERSION_NAME      "Version"
+/* ROUTE */
+#define ROUTE_GROUP_NAME  "ROUTE"
+#define ROUTE_NAME        "name"
+#define ROUTE_BOAT        "boat"
+#define ROUTE_START       "startFromBoat"
+#define ROUTE_DATEOPTION  "startTimeOption"
+#define ROUTE_DATE        "startTime"
+#define ROUTE_WIDTH       "width"
+#define ROUTE_COLOR_R     "color_red"
+#define ROUTE_COLOR_G     "color_green"
+#define ROUTE_COLOR_B     "color_blue"
+#define ROUTE_LIVE        "liveUpdate"
 /* POI */
 #define POI_GROUP_NAME    "POI"
 #define POI_NAME          "name"
@@ -38,14 +50,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #define TYPE_NAME         "type"
 #define TSTAMP_NAME       "timeStamp"
 #define USETSTAMP_NAME    "useTimeStamp"
-/* GATES */
-#define GATE_GROUP_NAME   "GATE"
-#define GATE_NAME         "name"
-#define LAT_1_NAME        "Lat_1"
-#define LON_1_NAME        "Lon_1"
-#define LAT_2_NAME        "Lat_2"
-#define LON_2_NAME        "Lon_2"
-#define COLOR_NAME        "color"
+#define POI_ROUTE         "route"
 
 xml_POIData::xml_POIData(Projection * proj,MainWindow * main, myCentralWidget * parent)
 : QWidget(parent)
@@ -55,18 +60,16 @@ xml_POIData::xml_POIData(Projection * proj,MainWindow * main, myCentralWidget * 
     this->parent=parent;
 
     /* signals */
-    connect(parent,SIGNAL(writePOIData(QList<POI*>&,QList<gate*>&,QString)),
-            this,SLOT(slot_writeData(QList<POI*>&,QList<gate*>&,QString)));
+    connect(parent,SIGNAL(writePOIData(QList<ROUTE*>&,QList<POI*>&,QString)),
+            this,SLOT(slot_writeData(QList<ROUTE*>&,QList<POI*>&,QString)));
     connect(parent,SIGNAL(readPOIData(QString)),this,SLOT(slot_readData(QString)));
     connect(parent,SIGNAL(importZyGrib()),this,SLOT(slot_importZyGrib()));
 
     connect(this,SIGNAL(addPOI_list(POI*)),parent,SLOT(slot_addPOI_list(POI*)));
-    connect(this,SIGNAL(addGate_list(gate*)),parent,SLOT(slot_addGate_list(gate*)));
     connect(this,SIGNAL(delPOI_list(POI*)),parent,SLOT(slot_delPOI_list(POI*)));
-    connect(this,SIGNAL(delGate_list(gate*)),parent,SLOT(slot_delGate_list(gate*)));
 }
 
-void xml_POIData::slot_writeData(QList<POI*> & poi_list,QList<gate*> & gate_list,QString fname)
+void xml_POIData::slot_writeData(QList<ROUTE*> & route_list,QList<POI*> & poi_list,QString fname)
 {
      QDomDocument doc(DOM_FILE_TYPE);
      QDomElement root = doc.createElement(ROOT_NAME);
@@ -80,6 +83,70 @@ void xml_POIData::slot_writeData(QList<POI*> & poi_list,QList<gate*> & gate_list
      root.appendChild(group);
      t = doc.createTextNode(QString().setNum(VERSION_NUMBER));
      group.appendChild(t);
+
+     /* ROUTE */
+     QListIterator<ROUTE*> h (route_list);
+     while(h.hasNext())
+     {
+          ROUTE * route=h.next();
+          if(route->getBoat()==NULL) continue;
+          if(!route->getBoat()->getStatus()) continue; //if boat has been deactivated do not save route
+          group = doc.createElement(ROUTE_GROUP_NAME);
+          root.appendChild(group);
+
+          tag = doc.createElement(ROUTE_NAME);
+          group.appendChild(tag);
+          t = doc.createTextNode(route->getName().toUtf8().toBase64());
+          tag.appendChild(t);
+
+          tag = doc.createElement(ROUTE_BOAT);
+          group.appendChild(tag);
+          t = doc.createTextNode(route->getBoat()->getLogin().toUtf8().toBase64());
+          tag.appendChild(t);
+
+          tag = doc.createElement(ROUTE_START);
+          group.appendChild(tag);
+          t = doc.createTextNode(QString().setNum(route->getStartFromBoat()?1:0));
+          tag.appendChild(t);
+
+          tag = doc.createElement(ROUTE_DATEOPTION);
+          group.appendChild(tag);
+          t = doc.createTextNode(QString().setNum(route->getStartTimeOption()));
+          tag.appendChild(t);
+
+          tag = doc.createElement(ROUTE_DATE);
+          group.appendChild(tag);
+          t = doc.createTextNode(QString().setNum(route->getStartTime().toUTC().toTime_t()));
+          tag.appendChild(t);
+
+          tag = doc.createElement(ROUTE_WIDTH);
+          group.appendChild(tag);
+          t = doc.createTextNode(QString().setNum(route->getWidth()));
+          tag.appendChild(t);
+
+          tag = doc.createElement(ROUTE_COLOR_R);
+          group.appendChild(tag);
+          t = doc.createTextNode(QString().setNum(route->getColor().red()));
+          tag.appendChild(t);
+          tag = doc.createElement(ROUTE_COLOR_G);
+          group.appendChild(tag);
+          t = doc.createTextNode(QString().setNum(route->getColor().green()));
+          tag.appendChild(t);
+          tag = doc.createElement(ROUTE_COLOR_B);
+          group.appendChild(tag);
+          t = doc.createTextNode(QString().setNum(route->getColor().blue()));
+          tag.appendChild(t);
+
+
+
+          tag = doc.createElement(ROUTE_LIVE);
+          group.appendChild(tag);
+          t = doc.createTextNode(QString().setNum(route->isLive()?1:0));
+          tag.appendChild(t);
+
+
+          tag.appendChild(t);
+     }
 
      /* POI */
      QListIterator<POI*> i (poi_list);
@@ -125,46 +192,12 @@ void xml_POIData::slot_writeData(QList<POI*> & poi_list,QList<gate*> & gate_list
           t = doc.createTextNode(QString().setNum(poi->getUseTimeStamp()?1:0));
           tag.appendChild(t);
 
-          tag.appendChild(t);
-     }
-
-     /* Gates */
-     QListIterator<gate*> j (gate_list);
-     while(j.hasNext())
-     {
-          gate * ptr = j.next();
-
-          group = doc.createElement(GATE_GROUP_NAME);
-          root.appendChild(group);
-
-          tag = doc.createElement(GATE_NAME);
+          tag = doc.createElement(POI_ROUTE);
           group.appendChild(tag);
-          t = doc.createTextNode(ptr->getName().toUtf8().toBase64());
-          tag.appendChild(t);
-
-          tag = doc.createElement(LAT_1_NAME);
-          group.appendChild(tag);
-          t = doc.createTextNode(QString().setNum(ptr->getLat(0)));
-          tag.appendChild(t);
-
-          tag = doc.createElement(LON_1_NAME);
-          group.appendChild(tag);
-          t = doc.createTextNode(QString().setNum(ptr->getLon(0)));
-          tag.appendChild(t);
-
-          tag = doc.createElement(LAT_2_NAME);
-          group.appendChild(tag);
-          t = doc.createTextNode(QString().setNum(ptr->getLat(1)));
-          tag.appendChild(t);
-
-          tag = doc.createElement(LON_2_NAME);
-          group.appendChild(tag);
-          t = doc.createTextNode(QString().setNum(ptr->getLon(1)));
-          tag.appendChild(t);
-
-          tag = doc.createElement(COLOR_NAME);
-          group.appendChild(tag);
-          t = doc.createTextNode(ptr->getColor().name().toUtf8().toBase64());
+          if(poi->getRoute()!=NULL)
+            t = doc.createTextNode(poi->getRoute()->getName().toUtf8().toBase64()); //do not use poi->routeName since route->name might have changed */
+          else
+              t = doc.createTextNode(QString("").toUtf8().toBase64());
           tag.appendChild(t);
 
           tag.appendChild(t);
@@ -293,10 +326,111 @@ void xml_POIData::slot_readData(QString fname)
                   }
               }
           }
+          else if(node.toElement().tagName() == ROUTE_GROUP_NAME)
+          {
+              ROUTE * route = parent->addRoute();
+              route->setFrozen(true);
+              route->setBoat(NULL);
+              QColor routeColor=Qt::red;
+              subNode = node.firstChild();
+              while(!subNode.isNull())
+              {
+                  if(subNode.toElement().tagName() == ROUTE_NAME)
+                  {
+                      dataNode = subNode.firstChild();
+                      if(dataNode.nodeType() == QDomNode::TextNode)
+                          route->setName(QString(QByteArray::fromBase64(dataNode.toText().data().toUtf8())));
+                  }
+                  if(subNode.toElement().tagName() == ROUTE_BOAT)
+                  {
+                       dataNode = subNode.firstChild();
+                       if(dataNode.nodeType() == QDomNode::TextNode)
+                       {
+                           QListIterator<boatAccount*> b (parent->getBoats());
+                           while(b.hasNext())
+                           {
+                                boatAccount * acc = b.next();
+                                if(acc->getStatus())
+                                {
+                                    if(acc->getLogin()==QString(QByteArray::fromBase64(dataNode.toText().data().toUtf8())))
+                                    {
+                                        route->setBoat(acc);
+                                        break;
+                                    }
+                                }
+                           }
+                       }
+                  }
+                  if(subNode.toElement().tagName() == ROUTE_START)
+                  {
+                       dataNode = subNode.firstChild();
+                       if(dataNode.nodeType() == QDomNode::TextNode)
+                           route->setStartFromBoat(dataNode.toText().data().toInt()==1);
+                  }
+                  if(subNode.toElement().tagName() == ROUTE_DATEOPTION)
+                  {
+                      dataNode = subNode.firstChild();
+                      if(dataNode.nodeType() == QDomNode::TextNode)
+                          route->setStartTimeOption(dataNode.toText().data().toInt());
+                  }
+                  if(subNode.toElement().tagName() == ROUTE_DATE)
+                  {
+                       dataNode = subNode.firstChild();
+                       if(dataNode.nodeType() == QDomNode::TextNode)
+                       {
+                           QDateTime date;
+                           date.setTime_t(dataNode.toText().data().toInt());
+                           route->setStartTime(date);
+                       }
+                  }
+                  if(subNode.toElement().tagName() == ROUTE_WIDTH)
+                  {
+                       dataNode = subNode.firstChild();
+                       if(dataNode.nodeType() == QDomNode::TextNode)
+                           route->setWidth(dataNode.toText().data().toFloat());
+                  }
+                  if(subNode.toElement().tagName() == ROUTE_COLOR_R)
+                  {
+                       dataNode = subNode.firstChild();
+                       if(dataNode.nodeType() == QDomNode::TextNode)
+                       {
+                           routeColor.setRed(dataNode.toText().data().toInt());
+                           route->setColor(routeColor);
+                       }
+                  }
+                  if(subNode.toElement().tagName() == ROUTE_COLOR_G)
+                  {
+                       dataNode = subNode.firstChild();
+                       if(dataNode.nodeType() == QDomNode::TextNode)
+                       {
+                           routeColor.setGreen(dataNode.toText().data().toInt());
+                           route->setColor(routeColor);
+                       }
+                  }
+                  if(subNode.toElement().tagName() == ROUTE_COLOR_B)
+                  {
+                       dataNode = subNode.firstChild();
+                       if(dataNode.nodeType() == QDomNode::TextNode)
+                       {
+                           routeColor.setBlue(dataNode.toText().data().toInt());
+                           route->setColor(routeColor);
+                       }
+                  }
+
+                  if(subNode.toElement().tagName() == ROUTE_LIVE)
+                  {
+                       dataNode = subNode.firstChild();
+                       if(dataNode.nodeType() == QDomNode::TextNode)
+                           route->setLive(dataNode.toText().data().toInt()==1);
+                  }
+                   subNode = subNode.nextSibling();
+              }
+          }
           else if(node.toElement().tagName() == POI_GROUP_NAME)
           {
               subNode = node.firstChild();
               QString name="";
+              QString routeName="";
               float lon=-1, lat=-1,wph=-1;
               int type = -1;
               int tstamp=-1;
@@ -348,6 +482,12 @@ void xml_POIData::slot_readData(QString fname)
                            useTstamp = dataNode.toText().data().toInt()==1;
                    }
 
+                   if(subNode.toElement().tagName() == POI_ROUTE)
+                   {
+                       dataNode = subNode.firstChild();
+                       if(dataNode.nodeType() == QDomNode::TextNode)
+                          routeName = QString(QByteArray::fromBase64(dataNode.toText().data().toUtf8()));
+                   }
                    subNode = subNode.nextSibling();
               }
               if(!name.isEmpty() && lat!=-1 && lon != -1)
@@ -356,77 +496,21 @@ void xml_POIData::slot_readData(QString fname)
                         << lat << "," << lon << "@" << wph ;
                    if(type==-1) type=POI_TYPE_POI;
                    POI * poi = new POI(name,type,lat,lon,proj,main,parent,wph,tstamp,useTstamp,NULL);
+                   poi->setRouteName(routeName);
                    emit addPOI_list(poi);
               }
               else
                    qWarning() << "Incomplete POI info " << name << " "
                         << lat << "," << lon << "@" << wph ;
-          }
-          else if(node.toElement().tagName() == GATE_GROUP_NAME)
-          {
-              subNode = node.firstChild();
-              QString name="";
-              float lon_1=-1, lat_1=-1,lon_2=-1, lat_2=-1;
-              QString color="";
-
-              while(!subNode.isNull())
-              {
-                   if(subNode.toElement().tagName() == GATE_NAME)
-                   {
-                      dataNode = subNode.firstChild();
-                      if(dataNode.nodeType() == QDomNode::TextNode)
-                          name = QString(QByteArray::fromBase64(dataNode.toText().data().toUtf8()));
-                   }
-                   if(subNode.toElement().tagName() == LAT_1_NAME)
-                   {
-                      dataNode = subNode.firstChild();
-                      if(dataNode.nodeType() == QDomNode::TextNode)
-                          lat_1 = dataNode.toText().data().toFloat();
-                   }
-                   if(subNode.toElement().tagName() == LON_1_NAME)
-                   {
-                      dataNode = subNode.firstChild();
-                      if(dataNode.nodeType() == QDomNode::TextNode)
-                          lon_1 = dataNode.toText().data().toFloat();
-                   }
-                   if(subNode.toElement().tagName() == LAT_2_NAME)
-                   {
-                      dataNode = subNode.firstChild();
-                      if(dataNode.nodeType() == QDomNode::TextNode)
-                          lat_2 = dataNode.toText().data().toFloat();
-                   }
-                   if(subNode.toElement().tagName() == LON_2_NAME)
-                   {
-                      dataNode = subNode.firstChild();
-                      if(dataNode.nodeType() == QDomNode::TextNode)
-                          lon_2 = dataNode.toText().data().toFloat();
-                   }
-                   if(subNode.toElement().tagName() == COLOR_NAME)
-                   {
-                      dataNode = subNode.firstChild();
-                      if(dataNode.nodeType() == QDomNode::TextNode)
-                          color = QString(QByteArray::fromBase64(dataNode.toText().data().toUtf8()));
-                   }
-                   subNode = subNode.nextSibling();
-              }
-              if(!name.isEmpty() && lat_1!=-1 && lon_1 != -1 && lat_2!=-1 && lon_2 != -1)
-              {
-                   qWarning() << "Gate info present => create item " << name << " "
-                        << lat_1 << "," << lon_1 << "-" << lat_2 << "," << lon_2;
-                   gate * ptr = new gate(name,lat_1,lon_1,lat_2,lon_2,proj,main,parent,color);
-                   emit addGate_list(ptr);
-              }
-              else
-                   qWarning() << "Incomplete Gate info" << name << " "
-                        << lat_1 << "," << lon_1 << "-" << lat_2 << "," << lon_2;
-          }
+          }          
           node = node.nextSibling();
      }
-
+    parent->assignPois();
      if(!hasVersion)
      {
          qWarning("no version");
 #warning remettre un appel Ã  centralWidget pour effacer la liste ? idem dans ts les retour d erreur
      }
+
 }
 

@@ -156,6 +156,7 @@ private:
     void draw_GSHHSandGRIB(void);
     void indicateWaitingMap(void);
     void updateRoutine(void);
+    bool isWaiting;
 };
 
 #endif

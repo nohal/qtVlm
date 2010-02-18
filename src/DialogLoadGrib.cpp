@@ -27,6 +27,7 @@ Copyright (C) 2008 - Jacques Zaninetti - http://zygrib.free.fr
 #include <cassert>
 
 #include "DialogLoadGrib.h"
+#include "settings.h"
 #include "Util.h"
 
 
@@ -91,8 +92,16 @@ void DialogLoadGrib::slotGribMessage(QString msg)
 //----------------------------------------------------
 void DialogLoadGrib::slotGribDataReceived(QByteArray *content, QString fileName)
 {
-    fileName=Util::getSetting("edtGribFolder","grib").toString()+"/"+fileName;
-    if(Util::getSetting("askGribFolder",1)==1)
+    QString gribPath=Settings::getSetting("edtGribFolder","grib").toString();
+    QDir dirGrib(gribPath);
+    if(!dirGrib.exists())
+    {
+        gribPath=QApplication::applicationDirPath()+"/grib";
+        Settings::setSetting("askGribFolder",1);
+        Settings::setSetting("edtGribFolder",gribPath);
+    }
+    fileName=gribPath+"/"+fileName;
+    if(Settings::getSetting("askGribFolder",1)==1)
     {
         fileName = QFileDialog::getSaveFileName(this,
                          tr("Sauvegarde du fichier GRIB"), fileName, "Grib (*.grb)");
@@ -195,9 +204,9 @@ void DialogLoadGrib::updateParameters()
         ymax = ym - 2*resolution;
     }
 
-        Util::setSetting("downloadIndResolution", cbResolution->currentIndex());
-        Util::setSetting("downloadIndInterval",  cbInterval->currentIndex());
-        Util::setSetting("downloadIndNbDays",  cbDays->currentIndex());
+        Settings::setSetting("downloadIndResolution", cbResolution->currentIndex());
+        Settings::setSetting("downloadIndInterval",  cbInterval->currentIndex());
+        Settings::setSetting("downloadIndNbDays",  cbDays->currentIndex());
 }
 
 //-------------------------------------------------------------------------------
@@ -310,7 +319,7 @@ QFrame *DialogLoadGrib::createFrameButtonsZone(QWidget *parent)
     assert(cbResolution);
     cbResolution->addItems(QStringList()<< "0.5" << "1" << "2");
     cbResolution->setMinimumWidth (sizemin);
-        ind = Util::getSetting("downloadIndResolution", 1).toInt();
+        ind = Settings::getSetting("downloadIndResolution", 1).toInt();
         ind = Util::inRange(ind, 0, cbResolution->count()-1);
     cbResolution->setCurrentIndex(ind);
 
@@ -318,7 +327,7 @@ QFrame *DialogLoadGrib::createFrameButtonsZone(QWidget *parent)
     assert(cbInterval);
     cbInterval->addItems(QStringList()<< "3" << "6" << "12" << "24");
     cbInterval->setMinimumWidth (sizemin);
-        ind = Util::getSetting("downloadIndInterval", 1).toInt();
+        ind = Settings::getSetting("downloadIndInterval", 1).toInt();
         ind = Util::inRange(ind, 0, cbInterval->count()-1);
     cbInterval->setCurrentIndex(ind);
 
@@ -326,7 +335,7 @@ QFrame *DialogLoadGrib::createFrameButtonsZone(QWidget *parent)
     assert(cbDays);
     cbDays->addItems(QStringList()<< "1"<<"2"<<"3"<<"4"<<"5"<<"6"<<"7");
     cbDays->setMinimumWidth (sizemin);
-        ind = Util::getSetting("downloadIndNbDays", 4).toInt();
+        ind = Settings::getSetting("downloadIndNbDays", 4).toInt();
         ind = Util::inRange(ind, 0, cbDays->count()-1);
     cbDays->setCurrentIndex(ind);
 

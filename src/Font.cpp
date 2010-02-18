@@ -21,7 +21,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <QFontDatabase>
 #include "QApplication"
 #include "Font.h"
-#include "Util.h"
+#include "settings.h"
 
 QFont GLOB_Font [FONT_MaxValue];
 	
@@ -125,7 +125,7 @@ void Font::initAppFonts ()
 void Font::changeGlobalFont (FontCode code, QFont font)
 {
 	GLOB_Font[code] = font;
-	Util::setSetting( getFontCodeString(code), font);
+        Settings::setSetting( getFontCodeString(code), font);
 }
 
 

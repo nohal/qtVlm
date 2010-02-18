@@ -34,6 +34,7 @@ class MenuBar;
 class boatAccount;
 
 #include "DialogLoadGrib.h"
+#include "route.h"
 
 class MenuBar : public QMenuBar
 {
@@ -51,6 +52,7 @@ public:
     void updateBoatList(QList<boatAccount*> & acc_list);
     void clearListeDates(void);
     void setSelectedBoatIndex(int index);
+    void addMenuRoute(ROUTE * route);
 
 
     QMenu * createPopupBtRight(QWidget *parent);
@@ -63,10 +65,11 @@ public:
     QAction *ac_pastePOI;
     QAction *ac_delAllPOIs;
     QAction *ac_delSelPOIs;
-    QAction *ac_CreateGate;
     QAction *acPOIAdd;
-    QAction *acGateAdd;
     QAction *ac_compassLine;
+    QAction *ac_compassCenterBoat;
+    QAction *ac_compassCenterWp;
+    QAction *ac_centerMap;
 
     QAction *acFile_Open;
     QAction *acFile_Close;
@@ -74,6 +77,10 @@ public:
     QAction *acFile_Load_VLM_GRIB;
     QAction *acFile_Info_GRIB;
     QAction *acFile_Quit;
+
+    QAction *acRoute_add;
+    QMenu   *mnRoute_edit;
+    QMenu   *mnRoute_delete;
 
     QAction *acView_WindColors;
     QAction *acView_ColorMapSmooth;
@@ -114,6 +121,22 @@ public:
     QAction *acOptions_Lang_fr;
     QAction *acOptions_Lang_en;
 
+
+
+     QActionGroup *acOptions_GroupShowHide;
+     QAction *acOptions_SH_sAll;
+     QAction *acOptions_SH_hAll;
+     QAction *acOptions_SH_Opp;
+     QAction *acOptions_SH_Poi;
+     QAction *acOptions_SH_Com;
+     QAction *acOptions_SH_Rou;
+     QAction *acOptions_SH_Por;
+     QAction *acOptions_SH_Lab;
+     QAction *acOptions_SH_Pol;
+     QAction *acOptions_SH_Boa;
+
+
+
     QAction *acHelp_Help;
     QAction *acHelp_APropos;
     QAction *acHelp_AProposQT;
@@ -141,12 +164,15 @@ public:
 
     QAction  *acVLMSync_menu;
 
+    QMenu *menuFile;
+
 //------------------------------------------------------------------------
 private:
-    QMenu *menuFile;
+
     QMenu *menuView;
     QMenu *menuOptions;
     QMenu *menuBoat;
+    QMenu *menuRoute;
     QMenu *menuPOI;
     QMenu *menuHelp;
 

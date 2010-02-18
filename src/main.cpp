@@ -29,8 +29,7 @@ Copyright (C) 2008 - Jacques Zaninetti - http://zygrib.free.fr
 #include <QLibraryInfo>
 
 #include "MainWindow.h"
-
-Util *util;
+#include "settings.h"
 
 int main(int argc, char *argv[])
 {
@@ -41,10 +40,10 @@ int main(int argc, char *argv[])
     QTextCodec::setCodecForCStrings(QTextCodec::codecForName("utf8"));
 
     QTranslator translator;
-    QString lang = Util::getSetting("appLanguage", "none").toString();
+    QString lang = Settings::getSetting("appLanguage", "none").toString();
     if (lang == "none") {  // first call
         lang = "fr";
-        Util::setSetting("appLanguage", lang);
+        Settings::setSetting("appLanguage", lang);
     }
 
     

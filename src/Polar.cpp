@@ -26,6 +26,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "Polar.h"
 
+#include "parser.h"
+
 Polar::Polar()
 {
     loaded=false;
@@ -128,13 +130,16 @@ void Polar::setPolarName(QString fname)
     float ws=qRound(0);
     float wa=qRound(0);
     float bvmg,bvmg_d,bvmg_u,wa_u,wa_d,wa_limit;
+    maxSpeed=qRound(0);
     do
     {
         bvmg_u=bvmg_d=qRound(0);
+        float speed;
         do
         {
-//          qWarning()<<ws<<" "<<wa;
-            bvmg=myGetSpeed(ws,wa,true)*cos(degToRad(wa));
+            speed=myGetSpeed(ws,wa,true);
+            if(speed>maxSpeed) maxSpeed=speed;
+            bvmg=speed*cos(degToRad(wa));
             if(bvmg_u<bvmg)
             {
                 bvmg_u=bvmg;
@@ -155,8 +160,9 @@ void Polar::setPolarName(QString fname)
         bvmg_u=qRound(0);
         do
         {
-//                qWarning()<<ws<<" "<<wa;
-            bvmg=myGetSpeed(ws,wa,true)*cos(degToRad(wa));
+            speed=myGetSpeed(ws,wa,true);
+            if(speed>maxSpeed) maxSpeed=speed;
+            bvmg=speed*cos(degToRad(wa));
             if(bvmg_u<bvmg)
             {
                 bvmg_u=bvmg;
@@ -172,8 +178,9 @@ void Polar::setPolarName(QString fname)
         bvmg_d=qRound(0);
         do
         {
-//                qWarning()<<ws<<" "<<wa;
-            bvmg=myGetSpeed(ws,wa,true)*cos(degToRad(wa));
+            speed=myGetSpeed(ws,wa,true);
+            if(speed>maxSpeed) maxSpeed=speed;
+            bvmg=speed*cos(degToRad(wa));
             if(bvmg_d>bvmg)
             {
                 bvmg_d=bvmg;
@@ -295,7 +302,7 @@ void Polar::clearPolar(void)
     }
 }
 
-polarList::polarList(void)
+polarList::polarList(inetConnexion * inet) : inetClient(inet)
 {
     polars.clear();
 }
@@ -372,4 +379,43 @@ void polarList::stats(void)
         qWarning() << k << ": " << item->getName() << "(nb used=" << item->nbUsed << ")";
         k++;
     }
+}
+
+/********************/
+/*  VLM polar List  */
+/********************/
+
+void polarList::get_polarList(void)
+{
+    if(!hasInet() || hasRequest() )
+    {
+        qWarning() << "getPolarList: bad state";
+        return;
+    }
+
+    QString page;
+    QTextStream(&page) << "/ws/polarlist.php";
+
+    inetGet(0,page);
+
+}
+
+void polarList::requestFinished(QByteArray res)
+{
+    QJson::Parser parser;
+    bool ok;
+
+    QList<QVariant> result = parser.parse (res, &ok).toList();
+    if (!ok) {
+        qWarning() << "Error parsing json data " << res;
+        qWarning() << "Error: " << parser.errorString() << " (line: " << parser.errorLine() << ")";
+    }
+
+    qWarning() << "Polar list: " ;
+
+    foreach (QVariant polar, result)
+    {
+        qWarning() << "\t-" << polar.toString();
+    }
+
 }

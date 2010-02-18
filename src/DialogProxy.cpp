@@ -26,7 +26,7 @@ Copyright (C) 2008 - Jacques Zaninetti - http://zygrib.free.fr
 #include <cassert>
 
 #include "DialogProxy.h"
-#include "Util.h"
+#include "settings.h"
 
 
 //-------------------------------------------------------------------------------
@@ -42,7 +42,7 @@ DialogProxy::DialogProxy() : QDialog()
     lig ++;
     QFont font;
     font.setBold(true);
-    label = new QLabel(tr("Mode de connexion Ã  internet"), this);
+    label = new QLabel(tr("Mode de connexion Ã  internet"), this);
     label->setFont(font);
     layout->addWidget( label,    lig,0, 1,-1, Qt::AlignCenter);
     lig ++;
@@ -61,12 +61,12 @@ DialogProxy::DialogProxy() : QDialog()
     layout->addWidget( btCancel, lig,1);
 
     //===============================================================
-    lineProxyHostname->setText(Util::getSetting("httpProxyHostname", "").toString());
-    lineProxyPort->setText(Util::getSetting("httpProxyPort", "").toString());
-    lineProxyUsername->setText(Util::getSetting("httpProxyUsername", "").toString());
-    lineProxyUserPassword->setText(Util::getSetting("httpProxyUserPassword", "").toString());
+    lineProxyHostname->setText(Settings::getSetting("httpProxyHostname", "").toString());
+    lineProxyPort->setText(Settings::getSetting("httpProxyPort", "").toString());
+    lineProxyUsername->setText(Settings::getSetting("httpProxyUsername", "").toString());
+    lineProxyUserPassword->setText(Settings::getSetting("httpProxyUserPassword", "").toString());
 
-    int usep = Util::getSetting("httpUseProxy", 0).toInt();
+    int usep = Settings::getSetting("httpUseProxy", 0).toInt();
 
 #ifndef QT_4_5
     if(usep==2) usep=1;
@@ -131,11 +131,11 @@ void DialogProxy::slotBtOK()
 #else
     int proxyType=btUseProxy->isChecked()?1:0;
 #endif
-    Util::setSetting("httpUseProxy",proxyType);
-    Util::setSetting("httpProxyHostname", lineProxyHostname->text());
-    Util::setSetting("httpProxyPort", lineProxyPort->text());
-    Util::setSetting("httpProxyUsername", lineProxyUsername->text());
-    Util::setSetting("httpProxyUserPassword", lineProxyUserPassword->text());
+    Settings::setSetting("httpUseProxy",proxyType);
+    Settings::setSetting("httpProxyHostname", lineProxyHostname->text());
+    Settings::setSetting("httpProxyPort", lineProxyPort->text());
+    Settings::setSetting("httpProxyUsername", lineProxyUsername->text());
+    Settings::setSetting("httpProxyUserPassword", lineProxyUserPassword->text());
     emit proxyUpdated();
     accept();
 }
@@ -158,7 +158,7 @@ QFrame *DialogProxy::createFrameGui(QWidget *parent)
     //-------------------------
     QButtonGroup *grp = new QButtonGroup(frm);
     lig ++;
-    btDontUseProxy     = new QRadioButton(tr("Connexion directe Ã  internet"), frm);
+    btDontUseProxy     = new QRadioButton(tr("Connexion directe Ã  internet"), frm);
     grp->addButton(btDontUseProxy);
     lay->addWidget( btDontUseProxy,    lig,0,   1, 2);
     lig ++;
@@ -168,7 +168,7 @@ QFrame *DialogProxy::createFrameGui(QWidget *parent)
     lay->addWidget(btUseIECfg,    lig,0,   1, 2);
     lig++;
 #endif
-    btUseProxy     = new QRadioButton(tr("Connexion Ã  travers un proxy"), frm);
+    btUseProxy     = new QRadioButton(tr("Connexion Ã  travers un proxy"), frm);
     grp->addButton(btUseProxy);
     lay->addWidget( btUseProxy,    lig,0,   1, 2);
     //-------------------------

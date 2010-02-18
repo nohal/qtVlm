@@ -28,6 +28,7 @@ Copyright (C) 2008 - Jacques Zaninetti - http://zygrib.free.fr
 
 #include "boatAccount.h"
 #include "MainWindow.h"
+#include "settings.h"
 
 /****************************************
 * Opponent methods
@@ -58,7 +59,11 @@ void opponent::init(QColor color,bool isQtBoat,QString idu,QString race, float l
     this->parentWindow=parentWindow;
 
     this->opp_trace=1;
-
+    this->labelHidden=false;
+    connect(parentWindow, SIGNAL(showALL(bool)),this,SLOT(slot_shShow()));
+    connect(parentWindow, SIGNAL(hideALL(bool)),this,SLOT(slot_shHidden()));
+    connect(parentWindow, SIGNAL(shOpp(bool)),this,SLOT(slot_shOpp()));
+    connect(parentWindow, SIGNAL(shLab(bool)),this,SLOT(slot_shLab()));
     width=height=0;
 
     parentWindow->getScene()->addItem(this);
@@ -93,8 +98,11 @@ void opponent::init(QColor color,bool isQtBoat,QString idu,QString race, float l
 
 opponent::~opponent(void)
 {
-    parentWindow->getScene()->removeItem(this);
-    //delete trace_drawing;
+    if(trace_drawing)
+    {
+        if(!parentWindow->getAboutToQuit())
+            delete trace_drawing;
+    }
 }
 
 /**************************/
@@ -117,11 +125,12 @@ void opponent::paint(QPainter * pnt, const QStyleOptionGraphicsItem * , QWidget 
     int dy = height/2;
 
     QFontMetrics fm(font());
-
-    pnt->fillRect(9,0, width-10,height-1, QBrush(bgcolor));
-    pnt->setFont(font());
-    pnt->drawText(10,fm.height()-2,my_str);
-
+    if(!labelHidden)
+    {
+        pnt->fillRect(9,0, width-10,height-1, QBrush(bgcolor));
+        pnt->setFont(font());
+        pnt->drawText(10,fm.height()-2,my_str);
+    }
     QPen pen(myColor);
     pen.setWidth(4);
     pnt->setPen(pen);
@@ -131,7 +140,8 @@ void opponent::paint(QPainter * pnt, const QStyleOptionGraphicsItem * , QWidget 
     pen = QPen(QColor(g,g,g));
     pen.setWidth(1);
     pnt->setPen(pen);
-    pnt->drawRect(9,0,width-10,height-1);
+    if(!labelHidden)
+        pnt->drawRect(9,0,width-10,height-1);
 }
 
 void opponent::updateProjection()
@@ -150,7 +160,11 @@ void opponent::updatePosition()
     boat_j-=(height/2);
 
     setPos(boat_i, boat_j);
-
+    drawTrace();
+}
+void opponent::drawTrace()
+{
+    trace_drawing->setNbVacPerHour(3600/main->get_selectedBoatVacLen());
     if(opp_trace==1)
     {
         trace_drawing->setPoly(trace);
@@ -235,9 +249,9 @@ void opponent::setIsQtBoat(bool status)
 
 void opponent::paramChanged()
 {
-    //myColor = QColor(Util::getSetting("opp_color",QColor(Qt::green).name()).toString());
-    label_type = Util::getSetting("opp_labelType",0).toInt();
-    opp_trace = Util::getSetting("opp_trace","1").toInt();
+    //myColor = QColor(Settings::getSetting("opp_color",QColor(Qt::green).name()).toString());
+    label_type = Settings::getSetting("opp_labelType",0).toInt();
+    opp_trace = Settings::getSetting("opp_trace","1").toInt();
 
     updatePosition();
     updateName();
@@ -258,23 +272,13 @@ void opponent::paramChanged()
 #define OPP_MODE_REFRESH   0
 #define OPP_MODE_NEWLIST   1
 
-opponentList::opponentList(Projection * proj,MainWindow * main,myCentralWidget * parent) : QWidget(parent)
+opponentList::opponentList(Projection * proj,MainWindow * main,myCentralWidget * parent, inetConnexion * inet) :
+        QWidget(parent),
+        inetClient(inet)
 {
     this->parent=parent;
     this->main=main;
     this->proj=proj;
-
-
-    /*colorTable[0] = QColor(85,0,0);
-    colorTable[1] = QColor(255,0,0);
-    colorTable[2] = QColor(170,0,255);
-    colorTable[3] = QColor(170,170,255);
-    colorTable[4] = QColor(170,170,0);
-    colorTable[5] = QColor(0,255,127);
-    colorTable[6] = QColor(255,85,127);
-    colorTable[7] = QColor(255,255,0);
-    colorTable[8] = QColor(0,85,127);
-    colorTable[9] = QColor(255,0,255);*/
 
     colorTable[0] = QColor(170,0,0);
     colorTable[1] = QColor(255,0,0);
@@ -291,9 +295,6 @@ opponentList::opponentList(Projection * proj,MainWindow * main,myCentralWidget *
     colorTable[12] = QColor(255,85,127);
     colorTable[13] = QColor(170,170,255);
     colorTable[14] = QColor(170,0,255);
-
-    /* init http inetManager */
-    conn=new inetConnexion(main,this);
 }
 
 QString opponentList::getRaceId()
@@ -306,9 +307,9 @@ QString opponentList::getRaceId()
 
 void opponentList::setBoatList(QString list_txt,QString race,bool force)
 {
-    if(conn && !conn->isAvailable())
+    if(!hasInet() || hasRequest())
     {
-        qWarning() << "getOpponents request still running";
+        qWarning("getOpponents bad state in inet - setBoatList");
         return;
     }
 
@@ -325,7 +326,6 @@ void opponentList::setBoatList(QString list_txt,QString race,bool force)
         clear();
     }
 
-    //currentRequest=OPP_BOAT_DATA;
     currentOpponent = 0;
     currentList = list_txt.split(";");
     currentRace = race;
@@ -343,16 +343,15 @@ void opponentList::clear(void)
 
 void opponentList::refreshData(void)
 {
-    if(conn && !conn->isAvailable())
+    if(!hasInet() || hasRequest())
     {
-        qWarning() << "getOpponents request still running";
+        qWarning("getOpponents bad state in inet - refreshData");
         return;
     }
 
     if(opponent_list.size()<=0)
         return;
 
-    //currentRequest=OPP_BOAT_DATA;
     currentRace = opponent_list[0]->getRace();
     currentOpponent = 0;
     currentMode=OPP_MODE_REFRESH;
@@ -394,10 +393,11 @@ void opponentList::getNxtOppData()
                         << currentRace;
     currentOpponent++;
 
-    slot_requestFinished(OPP_BOAT_DATA,conn->doRequestGet(OPP_BOAT_DATA,page));
+    clearCurrentRequest();
+    inetGet(OPP_BOAT_DATA,page);
 }
 
-void opponentList::slot_requestFinished (int currentRequest,QByteArray res_byte)
+void opponentList::requestFinished (QByteArray res_byte)
 {
     QString page;
     QStringList list_res;
@@ -407,7 +407,7 @@ void opponentList::slot_requestFinished (int currentRequest,QByteArray res_byte)
     QString idu;
     QString res(res_byte);
 
-    switch(currentRequest)
+    switch(getCurrentRequest())
     {
         case OPP_BOAT_DATA:
             list_res=readData(res,OPP_TYPE_NAME);
@@ -442,8 +442,8 @@ void opponentList::slot_requestFinished (int currentRequest,QByteArray res_byte)
                         << idu
                         << "&idraces="
                         << currentRace;
-
-                    slot_requestFinished(OPP_BOAT_TRJ,conn->doRequestGet(OPP_BOAT_TRJ,page));
+                    clearCurrentRequest();
+                    inetGet(OPP_BOAT_TRJ,page);
                     break;
                     }
                 }
@@ -452,11 +452,17 @@ void opponentList::slot_requestFinished (int currentRequest,QByteArray res_byte)
             break;
         case OPP_BOAT_TRJ:
             if(currentMode==OPP_MODE_REFRESH)
+            {
                 getTrace(res,opponent_list[currentOpponent-1]->getTrace());
+                opponent_list[currentOpponent-1]->drawTrace();
+            }
             else
             {
                 if(!opponent_list.isEmpty())
+                {
                     getTrace(res,opponent_list.last()->getTrace());
+                    opponent_list.last()->drawTrace();
+                }
             }
             getNxtOppData();
             break;
@@ -502,18 +508,19 @@ void opponentList::getTrace(QString buff, QList<vlmPoint> * trace)
     trace->clear();
 
     /* parse buff */
-    if(buff.isEmpty())
-        return;
-    lsval = readData(buff,OPP_TYPE_POSITION);
-    for(int i=0;i<lsval.size();i++)
+    if(!buff.isEmpty())
     {
-        lsval2=lsval[i].split(",");
-        if (lsval2.size() == 2)
+        lsval = readData(buff,OPP_TYPE_POSITION);
+        for(int i=0;i<lsval.size();i++)
         {
-            vlmPoint pt;
-            pt.lat=lsval2[0].toFloat();
-            pt.lon=lsval2[1].toFloat();
-            trace->append(pt);
+            lsval2=lsval[i].split(",");
+            if (lsval2.size() == 2)
+            {
+                vlmPoint pt;
+                pt.lat=lsval2[0].toFloat();
+                pt.lon=lsval2[1].toFloat();
+                trace->append(pt);
+            }
         }
     }
 }

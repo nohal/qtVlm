@@ -611,7 +611,7 @@ zuint GribRecord::periodSeconds(zuchar unit,zuchar P1,zuchar P2,zuchar range) {
 }
 
 //===============================================================================================
-bool GribRecord::getValue_TWSA(double px, double py,double * a00,double * a01,double * a10,double * a11)
+bool GribRecord::getValue_TWSA(double px, double py,double * a00,double * a01,double * a10,double * a11,bool debug)
 {
     int sigDj;
 
@@ -623,9 +623,9 @@ bool GribRecord::getValue_TWSA(double px, double py,double * a00,double * a01,do
         return false;
 
      if (!isPointInMap(px,py)) {
-        px += 360.0;               // tour du monde Ã  droite ?
+        px += 360.0;               // tour du monde Ã  droite ?
         if (!isPointInMap(px,py)) {
-            px -= 2*360.0;              // tour du monde Ã  gauche ?
+            px -= 2*360.0;              // tour du monde Ã  gauche ?
             if (!isPointInMap(px,py)) {
                 return false;
             }
@@ -636,6 +636,7 @@ bool GribRecord::getValue_TWSA(double px, double py,double * a00,double * a01,do
     // 01 11
     int i0 = (int) ((px-Lo1)/Di);  // point 00
     int j0 = (int) ((py-La1)/Dj);
+    int j0_init=j0;
     int i1;
 
     if(isFull && px>=Lo2)
@@ -643,13 +644,29 @@ bool GribRecord::getValue_TWSA(double px, double py,double * a00,double * a01,do
     else
         i1=i0+1;
 
-    if(Dj<0)
+    if(((py-La1)/Dj)-j0==0.0)
     {
-        sigDj=-1;
-        j0++;
+        if(debug)
+            qWarning() << "on grib point";
+        sigDj=0;
     }
     else
-        sigDj=1;
+    {
+        if(Dj<0)
+        {
+            sigDj=-1;
+            j0++;
+        }
+        else
+            sigDj=1;
+    }
+
+    if(debug)
+    {
+        qWarning() << "Lo1=" << Lo1 << ", La1=" << La1 << ", Di=" << Di << ", Dj" << Dj;
+        qWarning() << "Rec date = " << this->getRecordCurrentDate();
+        qWarning() << "px=" << px << ", py=" << py << ", i0=" << i0 << ", j0=" << j0 << ", i1=" << i1 << ", j1=" << j0+sigDj;
+    }
 
     int nbval = 0;     // how many values in grid ?
     if (hasValue(i0,   j0))
@@ -661,6 +678,9 @@ bool GribRecord::getValue_TWSA(double px, double py,double * a00,double * a01,do
     if (hasValue(i1, j0+sigDj))
         nbval ++;
 
+    if(debug)
+        qWarning() << "Nb Val =" << nbval;
+
     if (nbval != 4)
         return false;
 
@@ -668,6 +688,19 @@ bool GribRecord::getValue_TWSA(double px, double py,double * a00,double * a01,do
     *a01 = getValue(i0,   j0+sigDj);
     *a10 = getValue(i1, j0);
     *a11 = getValue(i1, j0+sigDj);
+
+    if(debug)
+    {
+        qWarning() << "val around 00\n" << *a00
+            << "\n" << getValue(i0-1,   j0_init)
+            << "\n" << getValue(i0-1,   j0_init+1)
+            << "\n" << getValue(i0,   j0_init+1)
+            << "\n" << getValue(i0+1,   j0_init+1)
+            << "\n" << getValue(i0+1,   j0_init)
+            << "\n" << getValue(i0+1,   j0_init-1)
+            << "\n" << getValue(i0,   j0_init-1)
+            << "\n" << getValue(i0-1,   j0_init-1) << "\n";
+    }
 
     return true;
 }

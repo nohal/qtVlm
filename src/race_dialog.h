@@ -35,6 +35,7 @@ class race_dialog;
 #include "inetConnexion.h"
 #include "MainWindow.h"
 #include "mycentralwidget.h"
+#include "inetClient.h"
 
 struct boatParam {
     QString login;
@@ -49,13 +50,16 @@ struct raceParam {
     QList <boatParam*> boats;
 };
 
-class race_dialog : public QDialog, public Ui::race_dialog_ui
-{ Q_OBJECT
+class race_dialog : public QDialog, public Ui::race_dialog_ui, public inetClient
+{
+    Q_OBJECT
+
     public:
-        race_dialog(MainWindow * main,myCentralWidget * parent);
+        race_dialog(MainWindow * main,myCentralWidget * parent, inetConnexion * inet);
         ~race_dialog();
         void done(int result);
         void initList(QList<boatAccount*> & acc_list,QList<raceData*> & race_list);
+        void requestFinished (QByteArray);
 
     public slots:
         void chgRace(int id);
@@ -63,7 +67,7 @@ class race_dialog : public QDialog, public Ui::race_dialog_ui
         void delBoat(void);
         void delAllBoat(void);
         void doSynch(void);
-        void slot_requestFinished (int,QByteArray);
+
 
     signals:
         void readRace(void);
@@ -92,9 +96,6 @@ class race_dialog : public QDialog, public Ui::race_dialog_ui
         /* http connection */
         int currentRace;
         QStringList currentParam;
-
-        inetConnexion * conn;
-
 };
 
 #endif

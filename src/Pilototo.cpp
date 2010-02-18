@@ -29,7 +29,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #define VLM_REQUEST_LOGIN  0
 #define VLM_DO_REQUEST     1
 
-Pilototo::Pilototo(MainWindow *main,myCentralWidget * parent):QDialog(parent)
+Pilototo::Pilototo(MainWindow *main,myCentralWidget * parent,inetConnexion * inet):QDialog(parent), inetClient(inet)
 {
     this->parent=parent;
     setupUi(this);
@@ -61,7 +61,6 @@ Pilototo::Pilototo(MainWindow *main,myCentralWidget * parent):QDialog(parent)
                              tr("Chargement des instructions VLM en cours"));
 
     /* inet init */
-    conn=new inetConnexion(main,this);
     currentList = NULL;
 }
 
@@ -271,7 +270,7 @@ void Pilototo::done(int result)
 	{
 	    int rep = QMessageBox::question (this,
 	    tr("Instructions non Validées"),
-	    tr("Il reste des instructions non validées. Elles ne seront pas envoyées �  VLM\nContinuer la sauvegarde?"),
+	    tr("Il reste des instructions non validées. Elles ne seront pas envoyées �  VLM\nContinuer la sauvegarde?"),
 	    QMessageBox::Yes | QMessageBox::No);
 	    if (rep == QMessageBox::No)
 		return;
@@ -311,30 +310,29 @@ void Pilototo::done(int result)
 
 void Pilototo::sendPilototo(QStringList * cmdList)
 {
-    if(conn && cmdList->count() > 0 && conn->isAvailable() )
+    if(!hasInet() || hasRequest())
     {
-	currentList=cmdList;
-	QString page;
-	QTextStream(&page)
-			<< "/myboat.php?"
-			<< "pseudo=" << boat->getLogin()
-			<< "&password=" << boat->getPass()
-			<< "&lang=fr&type=login"
-			;
-        slot_requestFinished(VLM_REQUEST_LOGIN,conn->doRequestGet(VLM_REQUEST_LOGIN,page));
+        qWarning("error can't send pilototo (nb instr:%d)",cmdList->count());
+        return;
     }
-    else
-    {
-	qWarning("error can't send pilototo (nb instr:%d)",cmdList->count());
-    }
+
+    currentList=cmdList;
+    QString page;
+    QTextStream(&page)
+            << "/myboat.php?"
+            << "pseudo=" << boat->getLogin()
+            << "&password=" << boat->getPass()
+            << "&lang=fr&type=login"
+            ;
+    inetGet(VLM_REQUEST_LOGIN,page);
 }
 
-void Pilototo::slot_requestFinished (int currentRequest,QByteArray)
+void Pilototo::requestFinished (QByteArray)
 {
     QString page;
     QString data;
 
-    switch(currentRequest)
+    switch(getCurrentRequest())
     {
 	case VLM_REQUEST_LOGIN:
 	case VLM_DO_REQUEST:
@@ -343,13 +341,15 @@ void Pilototo::slot_requestFinished (int currentRequest,QByteArray)
 		/*we have processed all cmd*/
 		delete currentList;
 		/* ask for an update of boat data*/
-                boat->slot_getData();
+                boat->slot_getData(true);
 	    }
 	    else
 	    {
 		QTextStream(&page) << "/pilototo.php";
 		data = currentList->takeFirst();
-                slot_requestFinished(VLM_DO_REQUEST,conn->doRequestPost(VLM_DO_REQUEST,page,data));
+
+                clearCurrentRequest();
+                inetPost(VLM_DO_REQUEST,page,data);
 	    }
 	    break;
     }

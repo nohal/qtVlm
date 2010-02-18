@@ -100,7 +100,7 @@ void orthoSegment::draw_orthoSegment(QPainter * pnt,int i0,int j0, int i1, int j
 {
     if (recurs > 10) // this is bugging under win :100)
     {
-        qWarning() << "Stop recursing";
+        //qWarning() << "Stop recursing";
         return;
     }
 

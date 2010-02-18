@@ -38,6 +38,7 @@ class paramVLM : public QDialog, public Ui::VLM_param_ui
     public:
         paramVLM(MainWindow * main,myCentralWidget * parent);
         void done(int result);
+        void changeParam();
 
     public slots:
         void forceUserAgent_changed(int newVal);
@@ -47,7 +48,6 @@ class paramVLM : public QDialog, public Ui::VLM_param_ui
         void changeColor_Marque_WP(void);
         void changeColor_WP(void);
         void changeColor_Balise(void);
-
         void radioBtn_time_toggle(bool);
         void radioBtn_vac_toggle(bool);
         void radioBtn_dist_toggle(bool);

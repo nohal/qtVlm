@@ -33,6 +33,8 @@ class POI;
 
 #include "Projection.h"
 #include "boatAccount.h"
+#include "route.h"
+#include "mycentralwidget.h"
 
 #define POI_TYPE_POI    0
 #define POI_TYPE_WP     1
@@ -44,13 +46,14 @@ class POI : public QGraphicsWidget
     public:
         /* constructeurs, destructeurs */
         POI(QString name, int type, float lat, float lon,
-                    Projection *proj, QWidget *ownerMeteotable, QWidget *parentWindow,
+                    Projection *proj, QWidget *ownerMeteotable, myCentralWidget *parentWindow,
                     float wph, int tstamp,bool useTstamp, boatAccount *boat);
 
         ~POI();
 
         /* accés aux données */
         QString  getName(void)         {return name;}
+        ROUTE    *getRoute(void)        {return route;}
         float    getLongitude(void)    {return lon;}
         float    getLatitude(void)     {return lat;}
         float    getWph(void)          {return wph;}
@@ -59,20 +62,23 @@ class POI : public QGraphicsWidget
         int      getType(void)         {return type; }
         int      getTypeMask(void)     {return typeMask; }
         bool     getIsWp(void)         {return isWp;}
+        QString  getRouteName(void);
 
         static QString  getTypeStr(int index);
         QString  getTypeStr(void)      {return getTypeStr(type); }
 
         /* modification des données */
         void setName           (QString name);
-        void setLongitude      (float lon) {this->lon=lon;}
-        void setLatitude       (float lat) {this->lat=lat;}
+        void setLongitude      (float lon);
+        void setLatitude       (float lat);
         void setWph            (float wph) {this->wph=wph;}
         void setTimeStamp      (int tstamp);
         void setRouteTimeStamp (int date);
         void setUseTimeStamp   (bool state){this->useTstamp=state;}
-        void setType           (int type) {this->type=type;this->typeMask=(1<<type);if(type!=POI_TYPE_WP) {useRouteTstamp=false; routeTimeStamp=false;}}
+        void setType           (int type) {this->type=type;this->typeMask=(1<<type);}
         void setTip            (QString tip);
+        void setRoute          (ROUTE *route);
+        void setRouteName      (QString routeName){this->routeName=routeName;}
 
 
         /* comparateur de classe pour le tri */
@@ -95,6 +101,12 @@ class POI : public QGraphicsWidget
         void slot_paramChanged();
         void slot_WPChanged(float,float);
         void slot_updateTip(boatAccount *);
+        void slot_shShow(){this->labelHidden=false;show();}
+        void slot_shHidden(){hide();}
+        void slot_shPoi(){this->isVisible()?hide():show();}
+        void slot_shLab(){this->labelHidden=!this->labelHidden;update();}
+        void slot_routeMenu(QAction* ptr_action);
+
     signals:
         void chgWP(float,float,float);
         void addPOI_list(POI*);
@@ -104,7 +116,7 @@ class POI : public QGraphicsWidget
         void setGribDate(int);
         void clearSelection(void);
         void updateTip(boatAccount*);
-        void updateRoute();
+        void poiMoving();
 
     protected:
         void  mousePressEvent(QGraphicsSceneMouseEvent * e);
@@ -115,7 +127,7 @@ class POI : public QGraphicsWidget
 
     private:
         /* parent, main */
-        QWidget   *parent;
+        myCentralWidget   *parent;
         QWidget   *owner;
         Projection   *proj;
 
@@ -151,10 +163,15 @@ class POI : public QGraphicsWidget
         QAction * ac_delPoi;
         QAction * ac_copy;
         QAction * ac_compassLine;
+        QMenu * ac_routeList;
         void createPopUpMenu(void);
 
         void chkIsWP(void);
         void rmSignal(void);
+        ROUTE *route;
+        QString routeName;
+        bool labelHidden;
+        bool VLMBoardIsBusy;
 };
 
 #endif

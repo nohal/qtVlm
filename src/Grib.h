@@ -38,6 +38,9 @@ Lecture mise en mémoire d'un fichier GRIB
 #include "zuFile.h"
 #include "Util.h"
 
+#define INTERPOLATION_TWSA             1
+#define INTERPOLATION_SELECTIVE_TWSA   2
+
 //===============================================================
 class Grib
 {
@@ -71,7 +74,8 @@ class Grib
 
         // Valeur pour un point et une date quelconques
 
-        bool getInterpolatedValue_byDates(double d_long, double d_lat, time_t now,double * u, double * v);
+        bool getInterpolatedValue_byDates(double d_long, double d_lat, time_t now,double * u, double * v,
+                                          int interpolation_type=INTERPOLATION_TWSA,bool debug=false);
 
         // Rectangle de la zone couverte par les données
         bool getZoneExtension (double *x0,double *y0, double *x1,double *y1);
@@ -133,13 +137,11 @@ class Grib
         void 	findGribsAroundDate (int dataType,int levelType,int levelValue, time_t date,
                                      GribRecord **before, GribRecord **after);
         bool getInterpolationParam(time_t now,time_t * t1,time_t * t2,GribRecord ** recU1,GribRecord ** recV1,
-                           GribRecord ** recU2,GribRecord ** recV2);
-        bool getInterpolatedValue_record(double px, double py,
-                                                    GribRecord *recU, GribRecord *recV,
-                                                    double * u, double * v, int * rot);
+                           GribRecord ** recU2,GribRecord ** recV2,bool debug=false);
+
         bool getInterpolatedValue_byDates(double d_long, double d_lat, time_t now, time_t t1,time_t t2,
                                               GribRecord *recU1,GribRecord *recV1,GribRecord *recU2,GribRecord *recV2,
-                                              double * u, double * v);
+                                              double * u, double * v,int interpolation_type=INTERPOLATION_TWSA,bool debug=false);
 
         void drawWindArrow(QPainter &pnt, int i, int j, double ang);
         void drawWindArrowWithBarbs(

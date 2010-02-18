@@ -21,7 +21,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <QtGui>
 
 #include "paramVLM.h"
-#include "Util.h"
+#include "settings.h"
 
 paramVLM::paramVLM(MainWindow * main,myCentralWidget * parent) : QDialog(parent)
 {
@@ -31,34 +31,34 @@ paramVLM::paramVLM(MainWindow * main,myCentralWidget * parent) : QDialog(parent)
     connect(this, SIGNAL(inetUpdated()), main, SLOT(slotInetUpdated()));
 
     /* Drawing / affichage */   
-    chk_gribZoomOnLoad->setCheckState(Util::getSetting("gribZoomOnLoad",0).toInt()==1?Qt::Checked:Qt::Unchecked);
+    chk_gribZoomOnLoad->setCheckState(Settings::getSetting("gribZoomOnLoad",0).toInt()==1?Qt::Checked:Qt::Unchecked);
 
     opp_labelType->addItem(tr("Login"));
     opp_labelType->addItem(tr("Nom"));
-    opp_labelType->addItem(tr("Numéro"));
-    opp_labelType->setCurrentIndex(Util::getSetting("opp_labelType",0).toInt());
+    opp_labelType->addItem(tr("Numero"));
+    opp_labelType->setCurrentIndex(Settings::getSetting("opp_labelType",0).toInt());
 
-    chk_autoGribDate->setCheckState(Util::getSetting("autoGribDate",0).toInt()==1?Qt::Checked:Qt::Unchecked);
+    chk_autoGribDate->setCheckState(Settings::getSetting("autoGribDate",0).toInt()==1?Qt::Checked:Qt::Unchecked);
 
     /* Colors */
 
-    setColor(Util::getSetting("POI_Color",QColor(Qt::black).name()).toString(),0);
-    setColor(Util::getSetting("Marque_WP_Color",QColor(Qt::red).name()).toString(),4);
-    setColor(Util::getSetting("qtBoat_color",QColor(Qt::blue).name()).toString(),1);
-    setColor(Util::getSetting("qtBoat_sel_color",QColor(Qt::red).name()).toString(),2);
-    setColor(Util::getSetting("WP_Color",QColor(Qt::darkYellow).name()).toString(),5);
-    setColor(Util::getSetting("Balise_Color",QColor(Qt::darkMagenta).name()).toString(),6);
+    setColor(Settings::getSetting("POI_Color",QColor(Qt::black).name()).toString(),0);
+    setColor(Settings::getSetting("Marque_WP_Color",QColor(Qt::red).name()).toString(),4);
+    setColor(Settings::getSetting("qtBoat_color",QColor(Qt::blue).name()).toString(),1);
+    setColor(Settings::getSetting("qtBoat_sel_color",QColor(Qt::red).name()).toString(),2);
+    setColor(Settings::getSetting("WP_Color",QColor(Qt::darkYellow).name()).toString(),5);
+    setColor(Settings::getSetting("Balise_Color",QColor(Qt::darkMagenta).name()).toString(),6);
 
-    /* Estime */
-    estimeVal_dist->setValue(Util::getSetting("estimeLen",100).toInt());
-    estimeVal_time->setValue(Util::getSetting("estimeTime",60).toInt());
-    estimeVal_vac->setValue(Util::getSetting("estimeVac",10).toInt());
+    /* Bateau */
+    estimeVal_dist->setValue(Settings::getSetting("estimeLen",100).toInt());
+    estimeVal_time->setValue(Settings::getSetting("estimeTime",60).toInt());
+    estimeVal_vac->setValue(Settings::getSetting("estimeVac",10).toInt());
 
     estimeVal_time->setEnabled(false);
     estimeVal_vac->setEnabled(false);
     estimeVal_dist->setEnabled(false);
 
-    switch(Util::getSetting("estimeType",0).toInt())
+    switch(Settings::getSetting("estimeType",0).toInt())
     {
         case 0:
             radioBtn_time->setChecked(true);
@@ -70,45 +70,44 @@ paramVLM::paramVLM(MainWindow * main,myCentralWidget * parent) : QDialog(parent)
             radioBtn_dist->setChecked(true);
             break;
     }
-    switch(Util::getSetting("routeStart",0).toInt())
-    {
-        case 0:
-            radioBtn_route0->setChecked(true);
-            break;
-        case 1:
-            radioBtn_route1->setChecked(true);
-            break;
-    }
+
+    chk_centerOnSynch->setCheckState(Settings::getSetting("centerOnSynch","1").toInt()==1?Qt::Checked:Qt::Unchecked);
+
     /* Trace */
-    for(int i=5;i<=61;i+=5)
+    for(int i=1;i<=60;i++)
         trace_step->addItem(QString().setNum(i));
-    trace_step->setCurrentIndex(Util::getSetting("trace_step",60/5-1).toInt());
-    trace_length->setValue(Util::getSetting("trace_length",12).toInt());
-    chk_oppTrace->setCheckState(Util::getSetting("opp_trace","1").toInt()==1?Qt::Checked:Qt::Unchecked);
+    trace_step->setCurrentIndex(Settings::getSetting("trace_step",60/5-1).toInt());
+    trace_length->setValue(Settings::getSetting("trace_length",12).toInt());
+    chk_oppTrace->setCheckState(Settings::getSetting("opp_trace","1").toInt()==1?Qt::Checked:Qt::Unchecked);
 
     /* Compas */
-    chk_showCompass->setCheckState(Util::getSetting("showCompass",1).toInt()==1?Qt::Checked:Qt::Unchecked);
+    chk_showCompass->setCheckState(Settings::getSetting("showCompass",1).toInt()==1?Qt::Checked:Qt::Unchecked);
+    chk_showPolar->setCheckState(Settings::getSetting("showPolar",1).toInt()==1?Qt::Checked:Qt::Unchecked);
+    if(Settings::getSetting("scalePolar",0).toInt()==1)
+        chk_scalePolarF->setChecked(true);
+    else
+        chk_scalePolarR->setChecked(true);
 
      /* Fichier repertoire */
 
-    chk_askGribFolder->setCheckState(Util::getSetting("askGribFolder",1).toInt()==1?Qt::Checked:Qt::Unchecked);
-    edt_gribFolder->setText(Util::getSetting("edtGribFolder","grib/").toString());
+    chk_askGribFolder->setCheckState(Settings::getSetting("askGribFolder",1).toInt()==1?Qt::Checked:Qt::Unchecked);
+    edt_gribFolder->setText(Settings::getSetting("edtGribFolder","grib/").toString());
 
     /* advanced */
     chk_activateEmulation->setCheckState(
-         Util::getSetting("gpsEmulEnable", "0").toString()=="1"?Qt::Checked:Qt::Unchecked);
-    serialName->setText(Util::getSetting("serialName", "COM2").toString());
-    spn_gpsDelay->setValue(Util::getSetting("GPS_DELAY",30).toInt());
+         Settings::getSetting("gpsEmulEnable", "0").toString()=="1"?Qt::Checked:Qt::Unchecked);
+    serialName->setText(Settings::getSetting("serialName", "COM2").toString());
+    spn_gpsDelay->setValue(Settings::getSetting("GPS_DELAY",30).toInt());
 
-    chk_forceUserAgent->setCheckState(Util::getSetting("forceUserAgent",0).toInt()==1?Qt::Checked:Qt::Unchecked);
-    userAgent->setText(Util::getSetting("userAgent", "").toString());
-    userAgent->setEnabled(Util::getSetting("forceUserAgent",0).toInt()==1);
+    chk_forceUserAgent->setCheckState(Settings::getSetting("forceUserAgent",0).toInt()==1?Qt::Checked:Qt::Unchecked);
+    userAgent->setText(Settings::getSetting("userAgent", "").toString());
+    userAgent->setEnabled(Settings::getSetting("forceUserAgent",0).toInt()==1);
 
     for(int i=0;i<NB_URL;i++)
         url_list->addItem(url_name[i]+": "+url_str[i]);
-    url_list->setCurrentIndex(Util::getSetting("vlm_url",0).toInt());
+    url_list->setCurrentIndex(Settings::getSetting("vlm_url",0).toInt());
 
-    saveWinGeometry->setCheckState(Util::getSetting("saveMainWindowGeometry","1").toInt()==1?Qt::Checked:Qt::Unchecked);
+    saveWinGeometry->setCheckState(Settings::getSetting("saveMainWindowGeometry","1").toInt()==1?Qt::Checked:Qt::Unchecked);
 
 
 }
@@ -118,64 +117,64 @@ void paramVLM::done(int result)
     if(result == QDialog::Accepted)
     {
         /*drawing*/        
-        Util::setSetting("gribZoomOnLoad",chk_gribZoomOnLoad->checkState()==Qt::Checked?"1":"0");
-        Util::setSetting("opp_labelType",QString().setNum(opp_labelType->currentIndex()));
-        Util::setSetting("autoGribDate",chk_autoGribDate->checkState()==Qt::Checked?"1":"0");
+        Settings::setSetting("gribZoomOnLoad",chk_gribZoomOnLoad->checkState()==Qt::Checked?"1":"0");
+        Settings::setSetting("opp_labelType",QString().setNum(opp_labelType->currentIndex()));
+        Settings::setSetting("autoGribDate",chk_autoGribDate->checkState()==Qt::Checked?"1":"0");
 
         /* colors */
 
-        Util::setSetting("POI_Color",POI_color);
-        Util::setSetting("Marque_WP_Color",Marque_WP_color);
-        Util::setSetting("qtBoat_color",qtBoat_color);
-        Util::setSetting("qtBoat_sel_color",qtBoat_sel_color);
-        Util::setSetting("WP_Color",WP_color);
-        Util::setSetting("Balise_Color",Balise_color);
+        Settings::setSetting("POI_Color",POI_color);
+        Settings::setSetting("Marque_WP_Color",Marque_WP_color);
+        Settings::setSetting("qtBoat_color",qtBoat_color);
+        Settings::setSetting("qtBoat_sel_color",qtBoat_sel_color);
+        Settings::setSetting("WP_Color",WP_color);
+        Settings::setSetting("Balise_Color",Balise_color);
 
         /* Estime */
-        Util::setSetting("estimeLen", QString().setNum(estimeVal_dist->value()));
-        Util::setSetting("estimeTime", QString().setNum(estimeVal_time->value()));
-        Util::setSetting("estimeVac", QString().setNum(estimeVal_vac->value()));
+        Settings::setSetting("estimeLen", QString().setNum(estimeVal_dist->value()));
+        Settings::setSetting("estimeTime", QString().setNum(estimeVal_time->value()));
+        Settings::setSetting("estimeVac", QString().setNum(estimeVal_vac->value()));
 
         if(radioBtn_time->isChecked())
-            Util::setSetting("estimeType","0");
+            Settings::setSetting("estimeType","0");
         else if(radioBtn_vac->isChecked())
-            Util::setSetting("estimeType","1");
+            Settings::setSetting("estimeType","1");
         else
-            Util::setSetting("estimeType","2");
+            Settings::setSetting("estimeType","2");
 
-        if(radioBtn_route0->isChecked())
-            Util::setSetting("routeStart","0");
-        else
-            Util::setSetting("routeStart","1");
+        Settings::setSetting("centerOnSynch",chk_centerOnSynch->checkState()==Qt::Checked?"1":"0");
+
         /* Trace */
 
-        Util::setSetting("trace_step",QString().setNum(trace_step->currentIndex()));
-        Util::setSetting("trace_length",QString().setNum(trace_length->value()));
-        Util::setSetting("opp_trace",chk_oppTrace->checkState()==Qt::Checked?"1":"0");
+        Settings::setSetting("trace_step",QString().setNum(trace_step->currentIndex()));
+        Settings::setSetting("trace_length",QString().setNum(trace_length->value()));
+        Settings::setSetting("opp_trace",chk_oppTrace->checkState()==Qt::Checked?"1":"0");
 
         /* Compas */
-        Util::setSetting("showCompass",chk_showCompass->checkState()==Qt::Checked?"1":"0");
+        Settings::setSetting("showCompass",chk_showCompass->checkState()==Qt::Checked?"1":"0");
+        Settings::setSetting("showPolar",chk_showPolar->checkState()==Qt::Checked?"1":"0");
+        Settings::setSetting("scalePolar",chk_scalePolarF->isChecked()?"1":"0");
 
         /* Fichier repertoire */
 
-        Util::setSetting("askGribFolder",chk_askGribFolder->checkState()==Qt::Checked?"1":"0");
-        Util::setSetting("edtGribFolder",edt_gribFolder->text());
+        Settings::setSetting("askGribFolder",chk_askGribFolder->checkState()==Qt::Checked?"1":"0");
+        Settings::setSetting("edtGribFolder",edt_gribFolder->text());
 
         /* advanced */
-        Util::setSetting("gpsEmulEnable",chk_activateEmulation->checkState()==Qt::Checked?"1":"0");
-        Util::setSetting("serialName", serialName->text());
-        Util::setSetting("GPS_DELAY",spn_gpsDelay->value());
+        Settings::setSetting("gpsEmulEnable",chk_activateEmulation->checkState()==Qt::Checked?"1":"0");
+        Settings::setSetting("serialName", serialName->text());
+        Settings::setSetting("GPS_DELAY",spn_gpsDelay->value());
 
-        Util::setSetting("forceUserAgent",chk_forceUserAgent->checkState()==Qt::Checked?"1":"0");
-        Util::setSetting("userAgent",userAgent->text());
+        Settings::setSetting("forceUserAgent",chk_forceUserAgent->checkState()==Qt::Checked?"1":"0");
+        Settings::setSetting("userAgent",userAgent->text());
 
-        int oldUrl = Util::getSetting("vlm_url",0).toInt();
-        Util::setSetting("vlm_url",QString().setNum(url_list->currentIndex()));
+        int oldUrl = Settings::getSetting("vlm_url",0).toInt();
+        Settings::setSetting("vlm_url",QString().setNum(url_list->currentIndex()));
         //qWarning() << "old url=" << oldUrl << " new=" << url_list->currentIndex();
         if(oldUrl!=url_list->currentIndex())
             emit inetUpdated();
 
-        Util::setSetting("saveMainWindowGeometry",saveWinGeometry->checkState()==Qt::Checked?"1":"0");        
+        Settings::setSetting("saveMainWindowGeometry",saveWinGeometry->checkState()==Qt::Checked?"1":"0");
 
         emit paramVLMChanged();
     }
@@ -306,4 +305,8 @@ void paramVLM::doBtn_browseGrib(void)
                                                  edt_gribFolder->text());
      if(dir!="")
          edt_gribFolder->setText(dir);
+}
+void paramVLM::changeParam()
+{
+    chk_showCompass->setCheckState(Settings::getSetting("showCompass",1).toInt()==1?Qt::Checked:Qt::Unchecked);
 }

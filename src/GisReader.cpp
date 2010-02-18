@@ -17,13 +17,14 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ***********************************************************************/
 
 #include "GisReader.h"
+#include "settings.h"
 
 //==========================================================
 // GisReader
 //==========================================================
 GisReader::GisReader()
 {
-    QString lang = Util::getSetting("appLanguage", "none").toString();
+    QString lang = Settings::getSetting("appLanguage", "none").toString();
     
     QString fname;
     bool ok1, ok2, ok3;

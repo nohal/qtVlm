@@ -25,6 +25,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <QList>
 #include <QObject>
 #include <cmath>
+
+#include "inetClient.h"
+
 #define PI     M_PI
 #define PI_2   M_PI_2
 #define PI_4   M_PI_4
@@ -44,6 +47,7 @@ class Polar : public QObject
         float getBvmgUp(float windSpeed);
         float getBvmgDown(float windSpeed);
         bool isLoaded() { return loaded; }
+        float getMaxSpeed() {return maxSpeed;}
 
         int nbUsed;
 
@@ -65,18 +69,23 @@ class Polar : public QObject
         void clearPolar(void);
         void setPolarName(QString fname);
         void printPolar(void);
+        float maxSpeed;
 };
 
-class polarList : public QObject
+class polarList : public QObject, public inetClient
 { Q_OBJECT
     public:
-        polarList(void);
+        polarList(inetConnexion * inet);
         ~polarList(void);
 
         Polar * needPolar(QString fname);
         void releasePolar(QString fname);
 
         void stats(void);
+
+        /* inetClient */
+        void requestFinished(QByteArray res);
+        void get_polarList(void);
 
     private:
         QList<Polar*> polars;

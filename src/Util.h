@@ -52,7 +52,7 @@ Copyright (C) 2008 - Jacques Zaninetti - http://zygrib.free.fr
 #define TYPE_LAT 2
 
 #define adjustFloat(VAR) ({ \
-    VAR = ((float)((int)(VAR*1000)))/1000; \
+    VAR = ((float)((int)qRound(VAR*1000)))/1000; \
     })
 
 #define compFloat(VAR1,VAR2) ({ \
@@ -61,7 +61,7 @@ Copyright (C) 2008 - Jacques Zaninetti - http://zygrib.free.fr
     adjustFloat(_v1);           \
     float _v2=VAR2;            \
     adjustFloat(_v2);           \
-    _res = (_v1==_v2);         \
+    _res = (qAbs(_v1-_v2)<0.0001);         \
     _res;                      \
     })
 
@@ -87,9 +87,6 @@ extern QString url_str[NB_URL];
 class Util
 {
     public:
-
-    static void     setSetting(const QString &key, const QVariant &value);
-    static QVariant getSetting(const QString &key, const QVariant &defaultValue);
 
     //-------------------------------------------------
     static QString formatDegres(float x);           // 123.4 -> 123°24.00'

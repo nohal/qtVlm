@@ -59,7 +59,7 @@ void dialog_gribDate::showDialog(time_t current,std::set<time_t>  * listGrib,tim
     QDateTime dt;
     dt.setTimeSpec(Qt::UTC);
     dt.setTime_t(current);
-    qWarning() << dt;
+    //qWarning() << dt;
     dateParam->setDateTime(dt);
     std::vector<time_t>::iterator it;
     int index=-1;
@@ -71,7 +71,7 @@ void dialog_gribDate::showDialog(time_t current,std::set<time_t>  * listGrib,tim
         time_t tps = *it;
         QString str = Util::formatDateTimeLong(tps);
         dateList->addItem(str);
-        qWarning() << i << " - tps " << tps;
+        //qWarning() << i << " - tps " << tps;
         if(tps==current)
             index=i;
         i++;

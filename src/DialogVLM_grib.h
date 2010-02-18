@@ -25,31 +25,27 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <QMessageBox>
 #include <QRadioButton>
 
-#include "inetConnexion.h"
 #include "ui_DialogVLM_grib.h"
 
 class DialogVLM_grib;
 
 #include "mycentralwidget.h"
 #include "MainWindow.h"
+#include "inetClient.h"
 
-class DialogVLM_grib : public QDialog, public Ui::DialogVLM_grib_ui
+class DialogVLM_grib : public QDialog, public Ui::DialogVLM_grib_ui, public inetClient
 {
     Q_OBJECT
     public:
-        DialogVLM_grib(MainWindow * main,myCentralWidget * parent);
+        DialogVLM_grib(MainWindow * main,myCentralWidget * parent, inetConnexion * inet);
         void done(int res);
         void showDialog(void);
-
-    public slots:
-        void slot_requestFinished (int,QByteArray);
+        void requestFinished (QByteArray);
 
     signals:
         void signalGribFileReceived(QString);
 
     private:
-        /* http connection */
-        inetConnexion * conn;
         QRadioButton * listRadio[4];
         QMessageBox * waitBox;
 

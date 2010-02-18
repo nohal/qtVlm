@@ -35,12 +35,13 @@ class boatAccount_dialog;
 #include "opponentBoat.h"
 #include "MainWindow.h"
 #include "mycentralwidget.h"
+#include "inetClient.h"
 
 class boatAccount_dialog : public QDialog, public Ui::boatAccount_dialog
 {
     Q_OBJECT
     public:
-        boatAccount_dialog(Projection * proj,MainWindow * main, myCentralWidget * parent);
+        boatAccount_dialog(Projection * proj,MainWindow * main, myCentralWidget * parent,inetConnexion * inet);
         ~boatAccount_dialog();
         void done(int result);
         void initList(QList<boatAccount*> & acc_list);
@@ -68,6 +69,7 @@ class boatAccount_dialog : public QDialog, public Ui::boatAccount_dialog
         Projection * proj;
         MainWindow * main;
         myCentralWidget * parent;
+        inetConnexion * inet;
 };
 
 

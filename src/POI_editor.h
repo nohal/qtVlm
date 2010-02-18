@@ -32,6 +32,7 @@ class POI_Editor;
 #include "ui_POI_editor.h"
 #include "MainWindow.h"
 #include "mycentralwidget.h"
+#include "route.h"
 
 //===================================================================
 class POI_Editor : public QDialog, public Ui::POI_editor_ui

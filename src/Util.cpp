@@ -29,31 +29,13 @@ Copyright (C) 2008 - Jacques Zaninetti - http://zygrib.free.fr
 #include <QClipboard>
 #include "Util.h"
 #include "POI.h"
+#include "settings.h"
 
-//---------------------------------------------------------------------
-void Util::setSetting(const QString &key, const QVariant &value)
-{
-     QSettings settings("qtVlm");
-     settings.beginGroup("main");
-     settings.setValue(key, value);
-     settings.endGroup();
-    //Settings::setUserSetting(key, value);
-}
-//---------------------------------------------------------------------
-QVariant Util::getSetting(const QString &key, const QVariant &defaultValue)
-{
-     QSettings settings("qtVlm");
-     settings.beginGroup("main");
-     QVariant val = settings.value(key, defaultValue);
-     settings.endGroup();
-     return val;
-    //return Settings::getUserSetting(key, defaultValue);
-}
 
 //======================================================================
 QString Util::formatTemperature(float tempKelvin)
 {
-    QString tunit = Util::getSetting("unitsTemp", "").toString();
+    QString tunit = Settings::getSetting("unitsTemp", "").toString();
     QString unit = (tunit=="") ? QObject::tr("°C") : tunit;
     QString r;
     if (unit == QObject::tr("°C")) {
@@ -71,7 +53,7 @@ QString Util::formatTemperature(float tempKelvin)
 //-------------------------------------------------------
 QString Util::formatTemperature_short(float tempKelvin)
 {
-    QString tunit = Util::getSetting("unitsTemp", "").toString();
+    QString tunit = Settings::getSetting("unitsTemp", "").toString();
     QString unit = (tunit=="") ? QObject::tr("°C") : tunit;
     QString r;
     if (unit == QObject::tr("°C")) {
@@ -89,7 +71,7 @@ QString Util::formatTemperature_short(float tempKelvin)
 //----------------------------------------------------------------
 QString Util::formatSpeed(float meterspersecond)
 {
-    QString tunit = Util::getSetting("unitsWindSpeed", "").toString();
+    QString tunit = Settings::getSetting("unitsWindSpeed", "").toString();
     QString unit = (tunit=="") ? QObject::tr("km/h") : tunit;
     QString r;
     if (unit == QObject::tr("m/s")) {
@@ -106,7 +88,7 @@ QString Util::formatSpeed(float meterspersecond)
 //----------------------------------------------------------------
 QString Util::formatDistance(float mille)
 {
-    QString tunit = Util::getSetting("unitsDistance", "").toString();
+    QString tunit = Settings::getSetting("unitsDistance", "").toString();
     QString unit = (tunit=="") ? QObject::tr("km") : tunit;
     QString r, unite;
     float d;
@@ -129,7 +111,7 @@ QString Util::formatDistance(float mille)
 //----------------------------------------------------------------
 QString Util::formatDegres(float x)     // 123.4 -> 123°24.00'
 {
-    QString tunit = Util::getSetting("unitsPosition", "").toString();
+    QString tunit = Settings::getSetting("unitsPosition", "").toString();
     QString unit = (tunit=="") ? QObject::tr("dd°mm'ss\"") : tunit;
 
     QString r;
@@ -167,7 +149,7 @@ QString Util::formatPosition(float x, float y)  // 123°24.00'W 45°67.89'N
 //---------------------------------------------------------------------
 QString Util::formatLongitude(float x)
 {
-    QString dir = Util::getSetting("longitudeDirection", "").toString();
+    QString dir = Settings::getSetting("longitudeDirection", "").toString();
     if (dir == "Ouest positive")
         return formatDegres(-x)+"W";
     else if (dir == "Est positive")
@@ -195,7 +177,7 @@ QString Util::formatLongitude(float x)
 //---------------------------------------------------------------------
 QString Util::formatLatitude(float y)
 {
-    QString dir = Util::getSetting("latitudeDirection", "").toString();
+    QString dir = Settings::getSetting("latitudeDirection", "").toString();
     if (dir == "Sud positive")
         return formatDegres(-y)+"S";
     else if (dir == "Nord positive")
@@ -285,7 +267,7 @@ void Util::paramProxy(QNetworkAccessManager *inetManager,QString)
 {
     /* update connection */
 
-    int proxyType = Util::getSetting("httpUseProxy", 0).toInt();
+    int proxyType = Settings::getSetting("httpUseProxy", 0).toInt();
 
 
     QNetworkProxy * inetProxy;
@@ -295,10 +277,10 @@ void Util::paramProxy(QNetworkAccessManager *inetManager,QString)
         case 1:
             /* basic proxy */
             inetProxy = new QNetworkProxy(QNetworkProxy::DefaultProxy,
-                    Util::getSetting("httpProxyHostname", "").toString(),
-                    Util::getSetting("httpProxyPort", 0).toInt(),
-                    Util::getSetting("httpProxyUsername", "").toString(),
-                    Util::getSetting("httpProxyUserPassword", "").toString());
+                    Settings::getSetting("httpProxyHostname", "").toString(),
+                    Settings::getSetting("httpProxyPort", 0).toInt(),
+                    Settings::getSetting("httpProxyUsername", "").toString(),
+                    Settings::getSetting("httpProxyUserPassword", "").toString());
             inetManager->setProxy(*inetProxy);
             break;
 #ifdef QT_4_5
@@ -307,8 +289,8 @@ void Util::paramProxy(QNetworkAccessManager *inetManager,QString)
             QList<QNetworkProxy> proxyList =QNetworkProxyFactory::systemProxyForQuery(QNetworkProxyQuery(QUrl(host)));
             inetProxy = &(proxyList.first());
 
-            inetProxy->setUser(Util::getSetting("httpProxyUsername", "").toString());
-            inetProxy->setPassword(Util::getSetting("httpProxyUserPassword", "").toString());
+            inetProxy->setUser(Settings::getSetting("httpProxyUsername", "").toString());
+            inetProxy->setPassword(Settings::getSetting("httpProxyUserPassword", "").toString());
 
             inetManager->setProxy(*inetProxy);
             break;
@@ -470,7 +452,7 @@ QString  url_str[NB_URL] = { "s10.virtual-loup-de-mer.org","s11.virtual-loup-de-
 QString Util::getHost()
 {
     QString host;
-    int num = Util::getSetting("vlm_url",0).toInt();
+    int num = Settings::getSetting("vlm_url",0).toInt();
 
     host="http://";
 
@@ -478,7 +460,7 @@ QString Util::getHost()
     {
         qWarning() << "Updating wrong config for VLM url";
         num=0;
-        Util::setSetting("vlm_url",0);
+        Settings::setSetting("vlm_url",0);
     }
 
     return host+url_str[num];
@@ -492,14 +474,18 @@ void Util::computePos(Projection * proj, float lat, float lon, int * x, int * y)
     else if (proj->isPointVisible(lon-360, lat)) {
         proj->map2screen(lon-360, lat, x, y);
     }
-    else  {
+    else  if (proj->isPointVisible(lon+360,lat)) {
         proj->map2screen(lon+360, lat, x, y);
+    }
+    else
+    {
+        proj->map2screen(lon, lat, x, y);
     }
 }
 
 void Util::addAgent(QNetworkRequest & request)
 {
-    if(Util::getSetting("forceUserAgent",0).toInt()==1
-        && !Util::getSetting("userAgent", "").toString().isEmpty())
-        request.setRawHeader("User-Agent",Util::getSetting("userAgent", "").toString().toAscii());
+    if(Settings::getSetting("forceUserAgent",0).toInt()==1
+        && !Settings::getSetting("userAgent", "").toString().isEmpty())
+        request.setRawHeader("User-Agent",Settings::getSetting("userAgent", "").toString().toAscii());
 }

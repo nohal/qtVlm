@@ -23,6 +23,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <QFontInfo>
 
 #include "Util.h"
+#include "settings.h"
 
 enum FontCode
 {
@@ -73,7 +74,7 @@ class Font {
 		
 		static QFont getSettingsFont (FontCode code) {
 			QString codename = getFontCodeString (code);
-			return Util::getSetting(codename, getDefaultFont(code)).value<QFont>();
+                        return Settings::getSetting(codename, getDefaultFont(code)).value<QFont>();
 		}
 		
 		static void initGlobalFont (FontCode code) {

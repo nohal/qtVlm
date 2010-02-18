@@ -30,7 +30,7 @@ Copyright (C) 2008 - Jacques Zaninetti - http://zygrib.free.fr
 #include <QColorDialog>
 
 #include "DialogGraphicsParams.h"
-#include "Util.h"
+#include "settings.h"
 #include <QDebug>
 
 
@@ -205,21 +205,21 @@ DialogGraphicsParams::DialogGraphicsParams()
 //-------------------------------------------------------------------------------
 void DialogGraphicsParams::slotBtOK()
 {
-	Util::setSetting("seaColor", inputSeaColor->getColor());
-	Util::setSetting("landColor", inputLandColor->getColor());
-	Util::setSetting("backgroundColor", inputBackgroundColor->getColor());
+        Settings::setSetting("seaColor", inputSeaColor->getColor());
+        Settings::setSetting("landColor", inputLandColor->getColor());
+        Settings::setSetting("backgroundColor", inputBackgroundColor->getColor());
 	
-	Util::setSetting("seaBordersLineWidth", inputSeaBordersLine->getLineWidth());
-	Util::setSetting("seaBordersLineColor", inputSeaBordersLine->getLineColor());
-	Util::setSetting("boundariesLineWidth", inputBoundariesLine->getLineWidth());
-	Util::setSetting("boundariesLineColor", inputBoundariesLine->getLineColor());
-	Util::setSetting("riversLineWidth",   inputRiversLine->getLineWidth());
-	Util::setSetting("riversLineColor",   inputRiversLine->getLineColor());
-	Util::setSetting("isobarsLineWidth",  inputIsobarsLine->getLineWidth());
-	Util::setSetting("isobarsLineColor",  inputIsobarsLine->getLineColor());
-        Util::setSetting("landOpacity",  inputOpacity->getLineWidth());
-        Util::setSetting("estimeLineWidth",  inputEstimeLine->getLineWidth());
-        Util::setSetting("estimeLineColor",  inputEstimeLine->getLineColor());
+        Settings::setSetting("seaBordersLineWidth", inputSeaBordersLine->getLineWidth());
+        Settings::setSetting("seaBordersLineColor", inputSeaBordersLine->getLineColor());
+        Settings::setSetting("boundariesLineWidth", inputBoundariesLine->getLineWidth());
+        Settings::setSetting("boundariesLineColor", inputBoundariesLine->getLineColor());
+        Settings::setSetting("riversLineWidth",   inputRiversLine->getLineWidth());
+        Settings::setSetting("riversLineColor",   inputRiversLine->getLineColor());
+        Settings::setSetting("isobarsLineWidth",  inputIsobarsLine->getLineWidth());
+        Settings::setSetting("isobarsLineColor",  inputIsobarsLine->getLineColor());
+        Settings::setSetting("landOpacity",  inputOpacity->getLineWidth());
+        Settings::setSetting("estimeLineWidth",  inputEstimeLine->getLineWidth());
+        Settings::setSetting("estimeLineColor",  inputEstimeLine->getLineColor());
     accept();
 }
 //-------------------------------------------------------------------------------
@@ -244,7 +244,7 @@ QFrame *DialogGraphicsParams::createFrameGui(QWidget *parent)
     lay->addWidget( label,    lig,0, Qt::AlignRight);
 	inputBackgroundColor =
 		new InputColor(
-				Util::getSetting("backgroundColor", QColor(0,0,45)).value<QColor>(),
+                                Settings::getSetting("backgroundColor", QColor(0,0,45)).value<QColor>(),
 				QColor(0,0,45),
 				this);
     lay->addWidget( inputBackgroundColor, lig,1, Qt::AlignLeft);
@@ -254,7 +254,7 @@ QFrame *DialogGraphicsParams::createFrameGui(QWidget *parent)
     lay->addWidget( label,    lig,0, Qt::AlignRight);
 	inputSeaColor =
 		new InputColor(
-				Util::getSetting("seaColor", QColor(50,50,150)).value<QColor>(),
+                                Settings::getSetting("seaColor", QColor(50,50,150)).value<QColor>(),
 				QColor(50,50,150),
 				this);
     lay->addWidget( inputSeaColor, lig,1, Qt::AlignLeft);
@@ -264,7 +264,7 @@ QFrame *DialogGraphicsParams::createFrameGui(QWidget *parent)
     lay->addWidget( label,    lig,0, Qt::AlignRight);
 	inputLandColor =
 		new InputColor(
-				Util::getSetting("landColor", QColor(200,200,120)).value<QColor>(),
+                                Settings::getSetting("landColor", QColor(200,200,120)).value<QColor>(),
 				QColor(200,200,120),
 				this);
     lay->addWidget( inputLandColor, lig,1, Qt::AlignLeft);
@@ -274,7 +274,7 @@ QFrame *DialogGraphicsParams::createFrameGui(QWidget *parent)
     lay->addWidget( label,    lig,0, Qt::AlignRight);
         inputOpacity =
                 new InputLineParams(
-                                Util::getSetting("landOpacity", 180).toDouble(),
+                                Settings::getSetting("landOpacity", 180).toDouble(),
                                 QColor(Qt::black).value(),
                                 180,  QColor(Qt::black),
                                 this,0,255,0,false);
@@ -286,8 +286,8 @@ QFrame *DialogGraphicsParams::createFrameGui(QWidget *parent)
     lay->addWidget( label,    lig,0, Qt::AlignRight);
         inputEstimeLine =
                 new InputLineParams(
-                                Util::getSetting("estimeLineWidth", 1.6).toDouble(),
-                                Util::getSetting("estimeLineColor", QColor(Qt::darkMagenta)).value<QColor>(),
+                                Settings::getSetting("estimeLineWidth", 1.6).toDouble(),
+                                Settings::getSetting("estimeLineColor", QColor(Qt::darkMagenta)).value<QColor>(),
                                 1.6,  QColor(Qt::darkMagenta),
                                 this);
     lay->addWidget( inputEstimeLine, lig,1, Qt::AlignLeft);
@@ -297,8 +297,8 @@ QFrame *DialogGraphicsParams::createFrameGui(QWidget *parent)
     lay->addWidget( label,    lig,0, Qt::AlignRight);
 	inputSeaBordersLine =
 		new InputLineParams(
-				Util::getSetting("seaBordersLineWidth", 1.8).toDouble(),
-				Util::getSetting("seaBordersLineColor", QColor(40,45,30)).value<QColor>(),
+                                Settings::getSetting("seaBordersLineWidth", 1.8).toDouble(),
+                                Settings::getSetting("seaBordersLineColor", QColor(40,45,30)).value<QColor>(),
 				1.8,  QColor(40,45,30),
                                 this);
     lay->addWidget( inputSeaBordersLine, lig,1, Qt::AlignLeft);
@@ -308,8 +308,8 @@ QFrame *DialogGraphicsParams::createFrameGui(QWidget *parent)
     lay->addWidget( label,    lig,0, Qt::AlignRight);
 	inputBoundariesLine =
 		new InputLineParams(
-				Util::getSetting("boundariesLineWidth", 1.4).toDouble(),
-				Util::getSetting("boundariesLineColor", QColor(40,40,40)).value<QColor>(),
+                                Settings::getSetting("boundariesLineWidth", 1.4).toDouble(),
+                                Settings::getSetting("boundariesLineColor", QColor(40,40,40)).value<QColor>(),
 				1.4,  QColor(40,40,40),
 				this);
     lay->addWidget( inputBoundariesLine, lig,1, Qt::AlignLeft);
@@ -319,8 +319,8 @@ QFrame *DialogGraphicsParams::createFrameGui(QWidget *parent)
     lay->addWidget( label,    lig,0, Qt::AlignRight);
 	inputRiversLine =
 		new InputLineParams(
-				Util::getSetting("riversLineWidth", 1.0).toDouble(),
-				Util::getSetting("riversLineColor", QColor(50,50,150)).value<QColor>(),
+                                Settings::getSetting("riversLineWidth", 1.0).toDouble(),
+                                Settings::getSetting("riversLineColor", QColor(50,50,150)).value<QColor>(),
 				1.0,  QColor(50,50,150),
 				this);
     lay->addWidget( inputRiversLine, lig,1, Qt::AlignLeft);
@@ -330,8 +330,8 @@ QFrame *DialogGraphicsParams::createFrameGui(QWidget *parent)
     lay->addWidget( label,    lig,0, Qt::AlignRight);
 	inputIsobarsLine =
 		new InputLineParams(
-				Util::getSetting("isobarsLineWidth", 2.0).toDouble(),
-				Util::getSetting("isobarsLineColor", QColor(80,80,80)).value<QColor>(),
+                                Settings::getSetting("isobarsLineWidth", 2.0).toDouble(),
+                                Settings::getSetting("isobarsLineColor", QColor(80,80,80)).value<QColor>(),
 				2.0,  QColor(80,80,80),
 				this);
     lay->addWidget( inputIsobarsLine, lig,1, Qt::AlignLeft);

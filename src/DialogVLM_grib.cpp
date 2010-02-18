@@ -22,11 +22,14 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <QFileDialog>
 
 #include "DialogVLM_grib.h"
+#include "settings.h"
 
 #define VLM_REQUEST_GET_FOLDER 0
 #define VLM_REQUEST_GET_FILE   1
 
-DialogVLM_grib::DialogVLM_grib(MainWindow * main,myCentralWidget * parent) : QDialog(parent)
+DialogVLM_grib::DialogVLM_grib(MainWindow * ,myCentralWidget * parent,inetConnexion * inet) :
+        QDialog(parent),
+        inetClient(inet)
 {
     setupUi(this);
     listRadio[0]=radio1;
@@ -38,15 +41,12 @@ DialogVLM_grib::DialogVLM_grib(MainWindow * main,myCentralWidget * parent) : QDi
                              tr("VLM Grib"),
                              tr("Chargement de la liste de grib"));
 
-    /* init http inetManager */
-    conn=new inetConnexion("http://grib.virtual-loup-de-mer.org",main,this);
 }
 
 void DialogVLM_grib::done(int res)
 {
     if(res == QDialog::Accepted)
-    {
-        this->hide();
+    {        
         if(!doRequest(VLM_REQUEST_GET_FILE))
             QDialog::done(QDialog::Rejected);
     }
@@ -63,9 +63,9 @@ void DialogVLM_grib::showDialog(void)
 
     filename="";
 
-    waitBox->show();
-    doRequest(VLM_REQUEST_GET_FOLDER);
-    if(waitBox->isVisible()) waitBox->hide();
+    if(doRequest(VLM_REQUEST_GET_FOLDER))
+        waitBox->exec();
+   // if(waitBox->isVisible()) waitBox->hide();
 }
 
 int DialogVLM_grib::parseFolderListing(QString data)
@@ -108,8 +108,16 @@ int DialogVLM_grib::parseFolderListing(QString data)
 
 bool DialogVLM_grib::gribFileReceived(QByteArray * content)
 {
-    filename=Util::getSetting("edtGribFolder","grib").toString()+"/"+filename;
-    if(Util::getSetting("askGribFolder",1)==1)
+    QString gribPath=Settings::getSetting("edtGribFolder","grib").toString();
+    QDir dirGrib(gribPath);
+    if(!dirGrib.exists())
+    {
+        gribPath=QApplication::applicationDirPath()+"/grib";
+        Settings::setSetting("askGribFolder",1);
+        Settings::setSetting("edtGribFolder",gribPath);
+    }
+    filename=gribPath+"/"+filename;
+    if(Settings::getSetting("askGribFolder",1)==1)
     {
         filename = QFileDialog::getSaveFileName(this,
                          tr("Sauvegarde du fichier GRIB"), filename, "Grib (*.grb)");
@@ -143,15 +151,9 @@ bool DialogVLM_grib::gribFileReceived(QByteArray * content)
 
 bool DialogVLM_grib::doRequest(int reqType)
 {
-    if(!conn)
+    if(!hasInet() || hasRequest())
     {
-        qWarning() << "No connection structure available";
-        return false;
-    }
-
-    if(!conn->isAvailable() )
-    {
-        qWarning() << "request already running" ;
+        qWarning("VLM dvnld grib:  bad state in inet");
         return false;
     }
 
@@ -161,7 +163,7 @@ bool DialogVLM_grib::doRequest(int reqType)
     switch(reqType)
     {
         case VLM_REQUEST_GET_FOLDER:
-            slot_requestFinished(VLM_REQUEST_GET_FOLDER,conn->doRequestGet(VLM_REQUEST_GET_FOLDER,"/"));
+            inetGet(VLM_REQUEST_GET_FOLDER,"/","http://grib.virtual-loup-de-mer.org");
             break;
         case VLM_REQUEST_GET_FILE:
             /*search selected file*/
@@ -172,16 +174,16 @@ bool DialogVLM_grib::doRequest(int reqType)
                 return false;
             filename=listRadio[i]->text().mid(0,23);
             page="/"+filename;
-            slot_requestFinished(VLM_REQUEST_GET_FILE,conn->doRequestGetProgress(VLM_REQUEST_GET_FILE,page));
+            inetGetProgress(VLM_REQUEST_GET_FILE,page,"http://grib.virtual-loup-de-mer.org");
             break;
     }
     return true;
 }
 
-void DialogVLM_grib::slot_requestFinished (int reqType,QByteArray data)
+void DialogVLM_grib::requestFinished (QByteArray data)
 {
     int nb;
-    switch(reqType)
+    switch(getCurrentRequest())
     {
         case VLM_REQUEST_GET_FOLDER:
             if(!waitBox->isVisible())

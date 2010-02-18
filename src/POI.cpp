@@ -32,13 +32,14 @@ Copyright (C) 2008 - Jacques Zaninetti - http://zygrib.free.fr
 #include "POI.h"
 #include "Util.h"
 #include "MainWindow.h"
+#include "settings.h"
 
 /**************************/
 /* Init & Clean           */
 /**************************/
 
 POI::POI(QString name, int type, float lat, float lon,
-                 Projection *proj, QWidget *main, QWidget *parentWindow,
+                 Projection *proj, QWidget *main, myCentralWidget *parentWindow,
                  float wph,int tstamp,bool useTstamp,boatAccount *boat)
     : QGraphicsWidget()
 {
@@ -46,8 +47,8 @@ POI::POI(QString name, int type, float lat, float lon,
     this->owner = main;
     this->proj = proj;
     this->name = name;
-    this->lon = lon;
-    this->lat = lat;
+    setLatitude(lat);
+    setLongitude(lon);
     this->wph=wph;
     this->timeStamp=tstamp;
     this->useTstamp=useTstamp;
@@ -57,10 +58,14 @@ POI::POI(QString name, int type, float lat, float lon,
 
     useRouteTstamp=false;
     routeTimeStamp=-1;
+    route=NULL;
+    routeName="";
+    this->labelHidden=false;
 
     WPlon=WPlat=-1;
     isWp=false;
     isMoving=false;
+    VLMBoardIsBusy=false;
 
     setZValue(Z_VALUE_POI);
     setFont(QFont("Helvetica",9));
@@ -98,8 +103,24 @@ POI::POI(QString name, int type, float lat, float lon,
 
 POI::~POI()
 {
+    if(route!=NULL) route->removePoi(this);
 }
+void POI::setLongitude(float lon)
+{
+    /*int temp=lon*1000;
+    this->lon=(float)temp/1000;*/
 
+    this->lon=lon;
+
+    if(this->lon>180) this->lon=this->lon-360;
+    if(this->lon<-180) this->lon=this->lon+360;
+}
+void POI::setLatitude(float lat)
+{
+    /*int temp=lat*1000;
+    this->lat=(float)temp/1000;*/
+    this->lat=lat;
+}
 void POI::rmSignal(void)
 {
     //disconnect(parent, SIGNAL(projectionUpdated()), this, SLOT(slot_updateProjection()) );
@@ -142,6 +163,10 @@ void POI::createPopUpMenu(void)
     ac_compassLine = new QAction(tr("Tirer un cap"),popup);
     popup->addAction(ac_compassLine);
     connect(ac_compassLine,SIGNAL(triggered()),owner,SLOT(slotCompassLine()));
+
+    ac_routeList = new QMenu(tr("Routes"));
+    connect(ac_routeList,SIGNAL(triggered(QAction*)),this,SLOT(slot_routeMenu(QAction*)));
+    popup->addMenu(ac_routeList);
 }
 
 /**************************/
@@ -152,12 +177,17 @@ void POI::mousePressEvent(QGraphicsSceneMouseEvent * e)
 {
     if (e->button() == Qt::LeftButton && e->modifiers()==Qt::ShiftModifier)
     {
+         if(route!=NULL)
+             if(route->getFrozen()) return;
+         if(VLMBoardIsBusy && this->isWp) return;
          isMoving=true;
          mouse_x=e->scenePos().x();
          mouse_y=e->scenePos().y();
          setCursor(Qt::BlankCursor);
          update();
      }
+    else if(!((MainWindow*)owner)->get_selPOI_instruction())
+        e->ignore();
 }
 
 bool POI::tryMoving(int x, int y)
@@ -170,6 +200,21 @@ bool POI::tryMoving(int x, int y)
         setPos(new_x,new_y);
         mouse_x=x;
         mouse_y=y;
+
+
+        if(route!=NULL && route->isLive() &&!route->isBusy())
+        {
+            double newlon,newlat;
+            new_x=scenePos().x();
+            new_y=scenePos().y()+height/2;
+            proj->screen2map(new_x,new_y, &newlon, &newlat);
+            setLongitude(newlon);
+            setLatitude(newlat);
+            Util::computePos(proj,lat, lon, &pi, &pj);
+            emit poiMoving();
+        }
+
+
         return true;
     }
     return false;
@@ -180,35 +225,39 @@ void POI::mouseReleaseEvent(QGraphicsSceneMouseEvent * e)
     if(isMoving)
     {
         double newlon,newlat;
-//        int new_x=scenePos().x()+(scenePos().x()-mouse_x);
-//        int new_y=scenePos().y()+(scenePos().y()-mouse_y);
         int new_x=scenePos().x();
         int new_y=scenePos().y()+height/2;
         proj->screen2map(new_x,new_y, &newlon, &newlat);
-        this->lon=newlon;
-        this->lat=newlat;
-    Util::computePos(proj,lat, lon, &pi, &pj);
-    setPos(pi, pj-height/2);
+        setLongitude(newlon);
+        setLatitude(newlat);
+        Util::computePos(proj,lat, lon, &pi, &pj);
+        setPos(pi, pj-height/2);
         isMoving=false;
         setCursor(Qt::PointingHandCursor);
         setName(this->name);
         update();
-        if(type==POI_TYPE_WP) emit updateRoute();
+        if(route!=NULL) route->slot_recalculate();
         if(isWp) slot_setWP();
-
         return;
     }
 
     if(e->pos().x() < 0 || e->pos().x()>width || e->pos().y() < 0 || e->pos().y() > height)
+    {
+        e->ignore();
         return;
-
+    }
     if (e->button() == Qt::LeftButton)
     {
         emit clearSelection();
         if(((MainWindow*)owner)->get_selPOI_instruction())
             emit selectPOI(this);
         else
-            emit editPOI(this);
+        {
+//            if(route!=NULL)
+//                if(route->getFrozen()) return;
+//            emit editPOI(this);
+            e->ignore();
+        }
     }
 }
 
@@ -220,18 +269,18 @@ void POI::contextMenuEvent(QGraphicsSceneContextMenuEvent * e)
     {
         case 0:
             /* not showing menu line, default text*/
-            ac_compassLine->setText("Tirer un cap");
+            ac_compassLine->setText(tr("Tirer un cap"));
             ac_compassLine->setEnabled(false);
             break;
         case 1:
             /* showing text for compass line off*/
-            ac_compassLine->setText("Arret du cap");
+            ac_compassLine->setText(tr("Arret du cap"));
             ac_compassLine->setEnabled(true);
             onlyLineOff=true;
             break;
         case 2:
         case 3:
-            ac_compassLine->setText("Tirer un cap");
+            ac_compassLine->setText(tr("Tirer un cap"));
             ac_compassLine->setEnabled(true);
             break;
     }
@@ -243,14 +292,49 @@ void POI::contextMenuEvent(QGraphicsSceneContextMenuEvent * e)
         ac_edit->setEnabled(false);
         ac_delPoi->setEnabled(false);
         ac_copy->setEnabled(false);
+        ac_routeList->setEnabled(false);
     }
     else
     {
         ac_setWp->setEnabled(!((MainWindow*)owner)->getBoatLockStatus());
-        ac_setGribDate->setEnabled(useTstamp);
+        ac_setGribDate->setEnabled(useTstamp || useRouteTstamp);
         ac_edit->setEnabled(true);
         ac_delPoi->setEnabled(true);
         ac_copy->setEnabled(true);
+        ac_routeList->setEnabled(true);
+        /*clear current actions */
+        ac_routeList->clear();
+
+        QActionGroup * ptr_group = new QActionGroup(ac_routeList);
+        QListIterator<ROUTE*> j (parent->getRouteList());
+        QAction * ptr;
+        ptr=new QAction(tr("Aucune route"),ac_routeList);
+        ptr->setCheckable  (true);
+        ac_routeList->addAction(ptr);
+        ptr_group->addAction(ptr);
+        ptr->setData(0);
+
+        int k=0;
+
+        if(route==NULL)
+            ptr->setChecked(true);
+        else
+            ptr->setChecked(false);
+        while(j.hasNext())
+        {
+            ROUTE * ptr_route = j.next();
+            ptr=new QAction(ptr_route->getName(),ac_routeList);            
+            ptr->setCheckable  (true);
+            ptr->setData(-1);
+            ac_routeList->addAction(ptr);
+            ptr_group->addAction(ptr);
+            if(ptr_route == route)
+                ptr->setChecked(true);
+            else
+                ptr->setChecked(false);
+            ptr->setData(qVariantFromValue((void *) ptr_route));
+            k++;
+        }
 
     }
     popup->exec(QCursor::pos());
@@ -264,45 +348,39 @@ void POI::setName(QString name)
 {
     this->name=name;
     update_myStr();
-    if(type==POI_TYPE_WP) return;
-    if(boat)
-    {
-        Orthodromie orth2boat(boat->getLon(), boat->getLat(), lon, lat);
-        float   distance=orth2boat.getDistance();
-    /* compute speed if a polar is known */
-        float   speed=0;
-        if(boat->getPolarData())
-        {
-            float angle=orth2boat.getAzimutDeg()-boat->getWindDir();
-            if(qAbs(angle)>180)
-            {
-            if(angle<0)
-                angle=360+angle;
-            else
-                angle=angle-360;
-            }
-            speed=boat->getPolarData()->getSpeed(boat->getWindSpeed(),angle);
-        }
-        setToolTip(tr("Marque") + " - " + getTypeStr() + " : " + my_str + "<br>Ortho Dist from boat: "+
-                   Util::formatDistance(distance)+"<br>Initial Speed if Ortho: "+Util::formatSpeed(speed * 0.514444444444444 ));
-    }
-    else
-        setToolTip(tr("Marque") + " - " + getTypeStr() + " : "+my_str);
+    setTip("");
 }
 void POI::setTip(QString tip)
 {
-    setToolTip(tip);
+    boatAccount * w_boat;
+    tip=tip.replace(" ","&nbsp;");
+    if(route==NULL)
+        w_boat=boat;
+    else
+        w_boat=route->getBoat();
+    if(w_boat)
+    {
+        Orthodromie orth2boat(w_boat->getLon(), w_boat->getLat(), lon, lat);
+        float   distance=orth2boat.getDistance();
+        QString tt=tr("Distance Ortho a partir de ")+w_boat->getLogin()+": "+
+                   Util::formatDistance(distance);
+        tt=tt.replace(" ","&nbsp;");
+        setToolTip(getTypeStr() + " : " + my_str + "<br>"+tt+tip);
+    }
+    else
+        setToolTip(getTypeStr() + " : "+my_str);
 }
 void POI::update_myStr(void)
 {
     QDateTime tm;
     tm.setTimeSpec(Qt::UTC);
     tm.setTime_t(getTimeStamp());
+    if(route==NULL) useRouteTstamp=false;
     if(useRouteTstamp || useTstamp)
         if(useRouteTstamp && type==POI_TYPE_WP)
         {
             if(this->routeTimeStamp==0)
-                my_str=name + " " + "Unreachable within Grib";
+                my_str=name + " " + tr("Non joinable avec ce Grib");
             else
                 my_str=name + " " + tm.toString("dd MMM-hh:mm");
         }
@@ -327,6 +405,7 @@ void POI::setTimeStamp(int date)
 void POI::setRouteTimeStamp(int date)
 {
     this->useRouteTstamp=(date!=-1);
+    if(useRouteTstamp) useTstamp=false;
     this->routeTimeStamp=date;
     update_myStr();
     //update();
@@ -334,7 +413,7 @@ void POI::setRouteTimeStamp(int date)
 
 QString POI::getTypeStr(int index)
 {
-    QString type_str[3] = { "POI", "Route", "Balise" };
+    QString type_str[3] = { "POI", "Marque", "Balise" };
     return type_str[index];
 }
 
@@ -357,6 +436,23 @@ void POI::chkIsWP(void)
         }
     }
 }
+void POI::setRoute(ROUTE *route)
+{
+    if(this->route!=NULL)
+    {
+        if(this->route->getFrozen()) return;
+        this->route->removePoi(this);
+        this->routeName="";
+    }
+    this->route=route;
+    if(this->route!=NULL)
+    {
+        this->route->insertPoi(this);
+        this->routeName=route->getName();
+    }
+    else
+        setRouteTimeStamp(false);
+}
 
 /**************************/
 /* Slots                  */
@@ -370,13 +466,14 @@ void POI::slot_updateProjection()
 }
 void POI::slot_updateTip(boatAccount * boat)
 {
-    if(type==POI_TYPE_WP) return;
     this->boat=boat;
-    setName(this->name);
+    if(route==NULL) setTip("");
 }
 
 void POI::slot_editPOI()
 {
+    if(route!=NULL)
+        if(route->getFrozen()) return;
     emit editPOI(this);
 }
 
@@ -387,17 +484,20 @@ void POI::slot_copy()
 
 void POI::slot_setWP()
 {
+    VLMBoardIsBusy=true;
     emit chgWP(lat,lon,wph);
 }
 
 void POI::slot_setGribDate()
 {
-    if(useTstamp)
-        emit setGribDate(timeStamp);
+    if (useRouteTstamp) emit setGribDate(routeTimeStamp);
+    else if(useTstamp) emit setGribDate(timeStamp);
 }
 
 void POI::slot_delPoi()
 {
+    if(route!=NULL)
+        if(route->getFrozen()) return;
     int rep = QMessageBox::question (parent,
             tr("Détruire la marque"),
             tr("La destruction d'une marque est definitive.\n\nEtes-vous sur ?"),
@@ -405,7 +505,10 @@ void POI::slot_delPoi()
     if (rep == QMessageBox::Yes) {
 
         emit delPOI_list(this);
-        if(type==POI_TYPE_WP) emit updateRoute();
+        if(route!=NULL)
+        {
+            route->removePoi(this);
+        }
         rmSignal();
         close();
     }
@@ -413,10 +516,10 @@ void POI::slot_delPoi()
 
 void POI::slot_paramChanged()
 {
-    poiColor = QColor(Util::getSetting("POI_color",QColor(Qt::black).name()).toString());
-    mwpColor = QColor(Util::getSetting("Marque_WP_color",QColor(Qt::red).name()).toString());
-    wpColor  = QColor(Util::getSetting("WP_color",QColor(Qt::darkYellow).name()).toString());
-    baliseColor  = QColor(Util::getSetting("Balise_color",QColor(Qt::darkMagenta).name()).toString());
+    poiColor = QColor(Settings::getSetting("POI_color",QColor(Qt::black).name()).toString());
+    mwpColor = QColor(Settings::getSetting("Marque_WP_color",QColor(Qt::red).name()).toString());
+    wpColor  = QColor(Settings::getSetting("WP_color",QColor(Qt::darkYellow).name()).toString());
+    baliseColor  = QColor(Settings::getSetting("Balise_color",QColor(Qt::darkMagenta).name()).toString());
     update();
 }
 
@@ -425,6 +528,17 @@ void POI::slot_WPChanged(float tlat,float tlon)
     WPlat=tlat;
     WPlon=tlon;
     chkIsWP();
+    VLMBoardIsBusy=false;
+}
+QString POI::getRouteName()
+{
+    return routeName;
+}
+
+void POI::slot_routeMenu(QAction* ptr_action)
+{
+    ROUTE *  ptr_route = (ROUTE *) ptr_action->data().value<void *>();
+    setRoute(ptr_route);
 }
 
 /***************************/
@@ -434,12 +548,13 @@ void POI::slot_WPChanged(float tlat,float tlon)
 void POI::paint(QPainter * pnt, const QStyleOptionGraphicsItem * , QWidget * )
 {
     int dy = height/2;
-
-    QFontMetrics fm(font());
-    pnt->fillRect(9,0, width-10,height-1, QBrush(bgcolor));
-    pnt->setFont(font());
-    pnt->drawText(10,fm.height()-2,my_str);
-
+    if(!labelHidden)
+    {
+        QFontMetrics fm(font());
+        pnt->fillRect(9,0, width-10,height-1, QBrush(bgcolor));
+        pnt->setFont(font());
+        pnt->drawText(10,fm.height()-2,my_str);
+    }
     QColor myColor;
     if(isWp)
         myColor=mwpColor;
@@ -468,7 +583,8 @@ void POI::paint(QPainter * pnt, const QStyleOptionGraphicsItem * , QWidget * )
         pen = QPen(QColor(g,g,g));
         pen.setWidth(1);
         pnt->setPen(pen);
-        pnt->drawRect(9,0,width-10,height-1);
+        if(!labelHidden)
+            pnt->drawRect(9,0,width-10,height-1);
 }
 
 QPainterPath POI::shape() const

@@ -29,6 +29,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "Util.h"
 #include "MainWindow.h"
 #include "mycentralwidget.h"
+#include "settings.h"
 
 #define VLM_NO_REQUEST     -1
 #define VLM_REQUEST_LOGIN  0
@@ -39,7 +40,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #define SPEED_COLOR_VLM       "color: rgb(255, 0, 0);"
 #define SPEED_COLOR_NO_POLAR  "color: rgb(255, 170, 127);"
 
-boardVLM::boardVLM(MainWindow * mainWin) : QWidget(mainWin)
+boardVLM::boardVLM(MainWindow * mainWin, inetConnexion * inet) : QWidget(mainWin), inetClient(inet)
 {
     setupUi(this);
 
@@ -60,6 +61,7 @@ boardVLM::boardVLM(MainWindow * mainWin) : QWidget(mainWin)
     VLMDock->setWidget(this);
     VLMDock->setAllowedAreas(Qt::RightDockWidgetArea|Qt::LeftDockWidgetArea);
     mainWin->addDockWidget(Qt::LeftDockWidgetArea,VLMDock);
+    mainWin->setBoardToggleAction(VLMDock->toggleViewAction());
 
     /* wpDialog */
     wpDialog = new WP_dialog();
@@ -75,32 +77,23 @@ boardVLM::boardVLM(MainWindow * mainWin) : QWidget(mainWin)
     QString str;
     str.sprintf("%c",176);
     deg_unit_1->setText(str);
+    deg_unit_3->setText(str);
     deg_unit_2->setText(str);
     deg_unit_5->setText(str);
+    deg_unit_6->setText(str);
 
     default_styleSheet = btn_chgHeading->styleSheet();
 
     btn_WP->setText(tr("Prochaine balise (0 WP)"));
 
-    /* inet init */
-    conn=new inetConnexion(mainWin,this);
     isWaiting=false;
 
     currentBoat = NULL;
 
-    //boatList->setSizeAdjustPolicy(QComboBox::AdjustToContents);
-    /*finfo = cbBoatList->fontInfo();
-    QFont font2("", finfo.pointSize(), QFont::Normal, false);
-    font2.setStyleHint(QFont::TypeWriter);
-    font2.setStretch(QFont::SemiCondensed);
-    cbBoatList->setFont(font2);*/
-    /*connect(boatList, SIGNAL(activated(int)),
-            mainWin, SLOT(slotChgBoat(int)));*/
-
     btn_Pilototo->setStyleSheet(QString::fromUtf8("background-color: rgb(255, 255, 127);"));
     connect(btn_Pilototo,SIGNAL(clicked()),mainWin, SLOT(slotPilototo()));
 
-    chk_GPS->setEnabled(Util::getSetting("gpsEmulEnable", "0").toString()=="1");
+    chk_GPS->setEnabled(Settings::getSetting("gpsEmulEnable", "0").toString()=="1");
     if(!chk_GPS->isEnabled())
     {
         chk_GPS->setCheckState(Qt::Unchecked);
@@ -108,12 +101,13 @@ boardVLM::boardVLM(MainWindow * mainWin) : QWidget(mainWin)
     }
     else
         chk_GPS->show();
-    COM=Util::getSetting("serialName", "COM2").toString();
+
+    COM=Settings::getSetting("serialName", "COM2").toString();
 }
 
 void boardVLM::paramChanged(void)
 {
-    chk_GPS->setEnabled(Util::getSetting("gpsEmulEnable", "0").toString()=="1");
+    chk_GPS->setEnabled(Settings::getSetting("gpsEmulEnable", "0").toString()=="1");
     if(!chk_GPS->isEnabled())
     {
         chk_GPS->setCheckState(Qt::Unchecked);
@@ -121,7 +115,7 @@ void boardVLM::paramChanged(void)
     }
     else
         chk_GPS->show();
-    COM=Util::getSetting("serialName", "COM2").toString();
+    COM=Settings::getSetting("serialName", "COM2").toString();
 }
 
 float boardVLM::computeWPdir(boatAccount * boat)
@@ -169,6 +163,8 @@ void boardVLM::boatUpdated(boatAccount * boat)
     avg->setText(QString().setNum(boat->getAvg()));
 
     windAngle->setValues(boat->getHeading(),boat->getWindDir(),boat->getWindSpeed(), computeWPdir(boat), -1);
+    bvmgU->setText(QString().setNum(boat->getBvmgUp(boat->getWindSpeed())));
+    bvmgD->setText(QString().setNum(boat->getBvmgDown(boat->getWindSpeed())));
 
     boatName->setText(boat->getBoatName());
 
@@ -512,6 +508,7 @@ void boardVLM::synch_GPS()
         QString TWA;
         QString TWS;
         char ch;
+        float fTWA;
         float lat=qAbs(currentBoat->getLat());
         int deg=((int)lat);
         lat=(lat-deg)*60;
@@ -579,8 +576,10 @@ void boardVLM::synch_GPS()
         }
 
         /* Sending TWD TWA and TWS , sentence $GPMWV,TWA,T,TWS,N*/
+        fTWA = currentBoat->getTWA();
+        calcAngleSign((currentBoat->getHeading()-currentBoat->getWindDir()),fTWA);
         TWD.sprintf("%05.1f",currentBoat->getWindDir());
-        TWA.sprintf("%05.1f",(-1 * currentBoat->getTWA()));
+        TWA.sprintf("%05.1f",(-1 * fTWA));
         TWS.sprintf("%05.1f",currentBoat->getWindSpeed());
         data="GPMWV,"+TWA+",T,"+TWS+",N";
         ch=chkSum(data);
@@ -614,7 +613,7 @@ void boardVLM::synch_GPS()
 
         delete port;
         /* we will send this again in 30 secs */
-        GPS_timer->start(Util::getSetting("GPS_DELAY",30).toInt()*1000);
+        GPS_timer->start(Settings::getSetting("GPS_DELAY",30).toInt()*1000);
     }
 }
 
@@ -637,8 +636,14 @@ void boardVLM::setChangeStatus(bool status)
 
 void boardVLM::sendCmd(int cmdNum,float  val1,float val2, float val3)
 {
-    if(conn && currentBoat && !isWaiting && conn->isAvailable())
+
+    if(!hasInet() || hasRequest())
     {
+        qWarning() <<  "error sendCmd " << cmdNum << " - bad state";
+        btn_Synch->setStyleSheet(QString::fromUtf8("background-color: rgb(255, 255, 127);"));
+        return;
+    }
+
         btn_Synch->setStyleSheet(QString::fromUtf8("background-color: rgb(255, 0, 0);"));
         currentCmdNum=cmdNum;
         cmd_val1=val1;
@@ -656,21 +661,14 @@ void boardVLM::sendCmd(int cmdNum,float  val1,float val2, float val3)
                                                  << cmd_val2 << ","
                                                  << cmd_val3 << ")";
 
-        slot_requestFinished(VLM_REQUEST_LOGIN,conn->doRequestGet(VLM_REQUEST_LOGIN,page));
-    }
-    else
-    {
-        qWarning() <<  "error sendCmd " << cmdNum << " - bad state";
-        btn_Synch->setStyleSheet(QString::fromUtf8("background-color: rgb(255, 255, 127);"));
-    }
+    inetGet(VLM_REQUEST_LOGIN,page);
 }
 
-void boardVLM::slot_requestFinished (int currentRequest,QByteArray)
+void boardVLM::requestFinished (QByteArray)
 {
     QString page;
     QNetworkRequest request;
-
-    switch(currentRequest)
+    switch(getCurrentRequest())
     {
         case VLM_REQUEST_LOGIN:
             switch(currentCmdNum)
@@ -724,7 +722,8 @@ void boardVLM::slot_requestFinished (int currentRequest,QByteArray)
             }
             qWarning() << "Send cmd: " << page;
 
-            slot_requestFinished(VLM_DO_REQUEST,conn->doRequestGet(VLM_DO_REQUEST,page));
+            clearCurrentRequest();
+            inetGet(VLM_DO_REQUEST,page);
             break;
         case VLM_DO_REQUEST:
             isWaiting=true;

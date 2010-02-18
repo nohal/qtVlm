@@ -27,7 +27,7 @@ Copyright (C) 2008 - Jacques Zaninetti - http://zygrib.free.fr
 #include <cassert>
 
 #include "DialogUnits.h"
-#include "Util.h"
+#include "settings.h"
 
 
 //-------------------------------------------------------------------------------
@@ -67,23 +67,23 @@ DialogUnits::DialogUnits() : QDialog()
     QString tunit;
     int ind;
 
-    tunit = Util::getSetting("unitsWindSpeed", "").toString();
+    tunit = Settings::getSetting("unitsWindSpeed", "").toString();
     ind = (tunit=="") ? 0 : cbWindSpeedUnit->findText(tunit);
     cbWindSpeedUnit->setCurrentIndex( ind );
 
-    tunit = Util::getSetting("unitsPosition", "").toString();
+    tunit = Settings::getSetting("unitsPosition", "").toString();
     ind = (tunit=="") ? 0 : cbPositionUnit->findText(tunit);
     cbPositionUnit->setCurrentIndex( ind );
     
-    tunit = Util::getSetting("unitsDistance", "").toString();
+    tunit = Settings::getSetting("unitsDistance", "").toString();
     ind = (tunit=="") ? 0 : cbDistanceUnit->findText(tunit);
     cbDistanceUnit->setCurrentIndex( ind );
     
-    tunit = Util::getSetting("unitsLongitude", "").toString();
+    tunit = Settings::getSetting("unitsLongitude", "").toString();
     ind = (tunit=="") ? 0 : cbLongitude->findText(tunit);
     cbLongitude->setCurrentIndex( ind );
     
-    tunit = Util::getSetting("unitsLatitude", "").toString();
+    tunit = Settings::getSetting("unitsLatitude", "").toString();
     ind = (tunit=="") ? 0 : cbLatitude->findText(tunit);
     cbLatitude->setCurrentIndex( ind );
     
@@ -98,16 +98,16 @@ void DialogUnits::slotBtOK()
     QComboBox *cb;
 
     cb = cbWindSpeedUnit;
-    Util::setSetting("unitsWindSpeed", cb->itemData(cb->currentIndex()).toString());
+    Settings::setSetting("unitsWindSpeed", cb->itemData(cb->currentIndex()).toString());
     cb = cbPositionUnit;
-    Util::setSetting("unitsPosition",  cb->itemData(cb->currentIndex()).toString());
+    Settings::setSetting("unitsPosition",  cb->itemData(cb->currentIndex()).toString());
     cb = cbDistanceUnit;
-    Util::setSetting("unitsDistance",  cb->itemData(cb->currentIndex()).toString());
+    Settings::setSetting("unitsDistance",  cb->itemData(cb->currentIndex()).toString());
 
     cb = cbLongitude;
-    Util::setSetting("longitudeDirection",  cb->itemData(cb->currentIndex()).toString());
+    Settings::setSetting("longitudeDirection",  cb->itemData(cb->currentIndex()).toString());
     cb = cbLatitude;
-    Util::setSetting("latitudeDirection",  cb->itemData(cb->currentIndex()).toString());
+    Settings::setSetting("latitudeDirection",  cb->itemData(cb->currentIndex()).toString());
     accept();
 }
 //-------------------------------------------------------------------------------

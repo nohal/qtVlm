@@ -30,9 +30,9 @@ class xml_POIData;
 
 #include "POI.h"
 #include "Projection.h"
-#include "gate.h"
 #include "MainWindow.h"
 #include "mycentralwidget.h"
+#include "route.h"
 
 class xml_POIData: public QWidget
 {
@@ -42,15 +42,15 @@ class xml_POIData: public QWidget
         xml_POIData(Projection * proj,MainWindow * main, myCentralWidget * parent);
 
     public slots:
-        void slot_writeData(QList<POI*> & poi_list,QList<gate*> & gate_list,QString fname);
+        void slot_writeData(QList<ROUTE*> & route_list,QList<POI*> & poi_list,QString fname);
         void slot_readData(QString fname);
         void slot_importZyGrib();
 
     signals:
+        void addRoute_list(ROUTE * route);
+        void delRoute_list(ROUTE * route);
         void addPOI_list(POI * poi);
         void delPOI_list(POI * poi);
-        void addGate_list(gate*);
-        void delGate_list(gate*);
 
     private:
         Projection * proj;

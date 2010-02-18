@@ -31,6 +31,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #define VLMLINE_LINE_MODE   0
 #define VLMLINE_POINT_MODE  1
+#define VLMLINE_GATE_MODE   2
 
 class vlmLine : public QGraphicsWidget
 { Q_OBJECT
@@ -39,32 +40,43 @@ class vlmLine : public QGraphicsWidget
 
         void addPoint(float lat,float lon);
         void deleteAll(void);
-        void setLinePen ( const QPen & pen ) {linePen = pen; }
-        void setPoly(QList<vlmPoint> & poly);
+        void setLinePen ( const QPen & pen ) {linePen = pen;update(); }
+        void setPoly(QList<vlmPoint> & points);
 
         void setLineMode();
         void setPointMode(QColor pt_color);
+        void setGateMode(QString desc);
+        void setNbVacPerHour(int nbVacPerHour) {this->nbVacPerHour=nbVacPerHour;}
+        void setPorteOnePoint(void){this->onePoint=true;}
+        void setHidden(bool hidden) {this->hidden=hidden;update();}
 
-        QRectF boundingRect() const;
+        int count(void) { return line.count(); }
 
         ~vlmLine();
 
     protected:
         void paint(QPainter * pnt, const QStyleOptionGraphicsItem * , QWidget * );
+        QRectF boundingRect() const;
 
     public slots:
         void slot_showMe(void);
+        void slot_shLab(){this->labelHidden=!this->labelHidden;update();}
 
     private:
         QList<vlmPoint> line;
         QPen linePen;
         QColor pt_color;
-        QPolygon poly;
+        QList<QPolygon*> polyList;
+        bool onePoint;
         int mode;
         void calculatePoly(void);
-
+        int nbVacPerHour;
         Projection * proj;
         QGraphicsScene * myScene;
+        QString desc;
+        QRectF boundingR;
+        bool hidden;
+        bool labelHidden;
 };
 
 

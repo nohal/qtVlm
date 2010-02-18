@@ -48,12 +48,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #define OLD_DOM_FILE_TYPE "zygVLM_config"
 #define OLD_ROOT_NAME     "zygVLM_boat"
 
-xml_boatData::xml_boatData(Projection * proj,MainWindow * main, myCentralWidget * parent)
+xml_boatData::xml_boatData(Projection * proj,MainWindow * main, myCentralWidget * parent,inetConnexion * inet)
 : QWidget(parent)
 {
     this->proj=proj;
     this->main=main;
     this->parent=parent;
+    this->inet=inet;
 
         /* signals */
     connect(parent,SIGNAL(writeBoatData(QList<boatAccount*>&,QList<raceData*>&,QString)),
@@ -326,7 +327,7 @@ void xml_boatData::slot_readData(QString fname,bool readAll)
              {
                  qWarning() << "Boat info present => create item " <<  login << " state " << activated;
                  boatAccount * acc = new boatAccount(login,pass,activated == "1",
-                                                     proj,main,parent);
+                                                     proj,main,parent,inet);
                  acc->setPolar(chk_polar,polar);
                  acc->setAlias(chk_alias,alias);
                  acc->setLockStatus(locked);

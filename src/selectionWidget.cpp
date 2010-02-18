@@ -22,6 +22,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <QDebug>
 
 #include "selectionWidget.h"
+#include "settings.h"
 
 selectionWidget::selectionWidget(Projection * proj, QGraphicsScene * myScene) : QGraphicsWidget()
 {
@@ -34,7 +35,7 @@ selectionWidget::selectionWidget(Projection * proj, QGraphicsScene * myScene) : 
     xa=xb=ya=yb=0;
     width=height=0;
     selecting=false;
-    showOrthodromie   = Util::getSetting("showOrthodromie", false).toBool();
+    showOrthodromie   = Settings::getSetting("showOrthodromie", false).toBool();
     hide();
 }
 
@@ -88,7 +89,7 @@ void selectionWidget::slot_setDrawOrthodromie(bool b)
     if (showOrthodromie != b)
     {
         showOrthodromie = b;
-        Util::setSetting("showOrthodromie", b);
+        Settings::setSetting("showOrthodromie", b);
         update();
         if(showOrthodromie)
             seg->initSegment(xa,ya,xb,yb);

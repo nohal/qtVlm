@@ -26,9 +26,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <QWidget>
 #include <QDialog>
 #include <QDebug>
-#include <QMutex>
+
+class inetConnexion;
 
 #include "Util.h"
+#include "inetClient.h"
 
 #include "ui_inetConn_progessDialog.h"
 
@@ -45,40 +47,37 @@ class inetConn_progressDialog : public QDialog, public Ui::inetConn_progressDial
 };
 
 class inetConnexion : public QObject
-{ Q_OBJECT
+{
+    Q_OBJECT
     public:
-        inetConnexion(QWidget * main,QWidget * parent);
-        inetConnexion(QString specHost,QWidget * main,QWidget * parent);
+        inetConnexion(QWidget * main);
 	~inetConnexion(void);
-        void initConn(QWidget * main,QWidget * parent);
-        QByteArray doRequestGet(int requestNum,QString requestUrl);
-        QByteArray doRequestGetProgress(int requestNum,QString requestUrl);
-        QByteArray doRequestPost(int requestNum,QString requestUrl,QString data);
-	bool isAvailable(void);	
+
+        void doRequestGet(inetClient* client,QString requestUrl);
+        void doRequestGetProgress(inetClient* client,QString requestUrl);
+        void doRequestPost(inetClient* client,QString requestUrl,QString data);
+
+        void doRequestGet(inetClient* client,QString requestUrl, QString host);
+        void doRequestGetProgress(inetClient* client,QString requestUrl, QString host);
+        void doRequestPost(inetClient* client,QString requestUrl,QString data, QString host);
+
+        bool isAvailable(void);
 
     public slots:
-	void slotProgess(qint64 bytesReceived, qint64 bytesTotal );
-        void updateInet(void);
-
-    signals:
-//	void requestFinished(int,QByteArray);
+        void slot_progess(qint64 bytesReceived, qint64 bytesTotal );
+        void slot_updateInet(void);
+        void slot_requestFinished(QNetworkReply * currentReply);
 
     private:
-	QString host;
-	bool hasSpecHost;
-	bool hasRequest;
-	bool hasProgress;
-	int currentRequest;
+        bool hasProgress;
 	QNetworkAccessManager *inetManager;
 
-	inetConn_progressDialog * progressDialog;
-
-        QWidget * parent;
+        inetConn_progressDialog * progressDialog;
 
 	void resetInet(void);
-        QByteArray doRequest(int type,int requestNum,QString requestUrl,QString data);
-//        void routineFinished(QNetworkReply * currentReply);
-//        void routineError(QNetworkReply::NetworkError error);
+        void doRequest(int type,inetClient* client,QString requestUrl,QString data, QString host);
+
+        QList<inetClient*> replyList;
 };
 
 #endif

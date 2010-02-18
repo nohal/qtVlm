@@ -32,6 +32,7 @@ class boatAccount;
 #include "Pilototo_param.h"
 #include "inetConnexion.h"
 #include "mycentralwidget.h"
+#include "inetClient.h"
 
 #define PILOTOTO_STATUS_DONE    0
 #define PILOTOTO_STATUS_PENDING 1
@@ -115,12 +116,15 @@ class Pilototo_instruction : public QWidget, public Ui::instruction_ui
 
 #include "ui_Pilototo.h"
 
-class Pilototo : public QDialog, public Ui::pilototo_ui
+class Pilototo : public QDialog, public Ui::pilototo_ui, public inetClient
 {Q_OBJECT
     public:
-        Pilototo(MainWindow *main,myCentralWidget * parent);
+        Pilototo(MainWindow *main,myCentralWidget * parent,inetConnexion * inet);
         void done(int);
 	Pilototo_param * instructionEditor;
+
+        /* inetClient */
+        void requestFinished(QByteArray res);
 
     public slots:
 	void delInstruction(Pilototo_instruction *);
@@ -128,8 +132,7 @@ class Pilototo : public QDialog, public Ui::pilototo_ui
 	void editInstructionsPOI(Pilototo_instruction * instruction,POI * poi);
 	void instructionUpdated(void);
 	void boatUpdated(boatAccount * boat);
-	void updateTime(void);
-        void slot_requestFinished (int currentRequest,QByteArray res);
+        void updateTime(void);
 	void doSelectPOI(Pilototo_instruction * instruction);
 
     signals:
@@ -152,10 +155,7 @@ class Pilototo : public QDialog, public Ui::pilototo_ui
 	void updateDrawList(void);
 	void updateNbInstruction(void);
 
-	inetConnexion * conn;
 	QStringList * currentList;
-
-	void resetInet(void);
 
 	void sendPilototo(QStringList * cmdList);
 };

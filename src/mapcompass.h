@@ -33,6 +33,7 @@ class mapCompass;
 #include "orthoSegment.h"
 #include "Orthodromie.h"
 #include "mycentralwidget.h"
+#include <cmath>
 
 class mapCompass : public QGraphicsWidget
 { Q_OBJECT
@@ -42,16 +43,20 @@ class mapCompass : public QGraphicsWidget
         bool tryMoving(int x, int y);
         bool hasCompassLine(void) { return drawCompassLine; }
 
-        QPainterPath shape() const;
-        QRectF boundingRect() const;
 
     public slots:
         void slot_compassLine(int mouse_x, int mouse_y);
+        void slot_compassCenterBoat();
+        void slot_compassCenterWp();
         void slot_stopCompassLine(void);
         void slot_paramChanged(void);
-
+        QPainterPath shape() const;
+        QRectF boundingRect() const;
+        void slot_shHidden(){hide();}
+        void slot_shCom();
+        void slot_shPol();
     protected:
-        void paint(QPainter * pnt, const QStyleOptionGraphicsItem * , QWidget * );        
+        void paint(QPainter * pnt, const QStyleOptionGraphicsItem * , QWidget * );
 
         void mousePressEvent(QGraphicsSceneMouseEvent *);
         void mouseReleaseEvent(QGraphicsSceneMouseEvent *e);
@@ -60,6 +65,7 @@ class mapCompass : public QGraphicsWidget
 
     private:
         int size;
+        QPolygon poly;
         int mouse_x;
         int mouse_y;
         bool isMoving;
@@ -70,14 +76,15 @@ class mapCompass : public QGraphicsWidget
         MainWindow * main;
         QCursor enterCursor;
         double wind_angle;
+        double wind_speed;
         float bvmg_up;
         float bvmg_down;
 
         /* Compass Line */        
         bool drawCompassLine;
         orthoSegment * compassLine;
-        QGraphicsSimpleTextItem * hdg_label;
-        QGraphicsSimpleTextItem * windAngle_label;
+        QGraphicsTextItem * hdg_label;
+        QGraphicsTextItem * windAngle_label;
         void updateCompassLineLabels(int x, int y);
 };
 

@@ -4,13 +4,19 @@ TARGET =
 DEPENDPATH += .
 INCLUDEPATH += bzip2 \
     zlib-1.2.3 \
-    qextserialport
+    qextserialport \
+    qjson \
+    c_lib
 LIBS += -Lbzip2 \
     -lbz2 \
     -Lzlib-1.2.3 \
     -lz \
     -Lqextserialport/build \
-    -lqextserialport
+    -lqextserialport \
+    -Lqjson \
+    -lqjson \
+    -Lc_lib \
+    -lclib
 MOC_DIR = objs
 OBJECTS_DIR = objs
 SOURCES_DIR = src
@@ -60,14 +66,16 @@ HEADERS += BoardVLM.h \
     dialog_gribDate.h \
     DialogVLM_grib.h \
     mapcompass.h \
-    gate.h \
-    gate_editor.h \
     POI_delete.h \
     mycentralwidget.h \
     orthoSegment.h \
     selectionWidget.h \
     vlmLine.h \
-    Font.h
+    Font.h \
+    inetClient.h \
+    route.h \
+    Route_Editor.h \
+    settings.h
 FORMS += boatAccount_dialog.ui \
     BoardVLM.ui \
     paramVLM.ui \
@@ -81,8 +89,8 @@ FORMS += boatAccount_dialog.ui \
     dialog_gribDate.ui \
     DialogVLM_grib.ui \
     inetConn_progessDialog.ui \
-    gate_editor.ui \
-    POI_delete.ui
+    POI_delete.ui \
+    Route_Editor.ui
 SOURCES += BoardVLM.cpp \
     boatAccount_dialog.cpp \
     boatAccount.cpp \
@@ -120,20 +128,22 @@ SOURCES += BoardVLM.cpp \
     dialog_gribDate.cpp \
     DialogVLM_grib.cpp \
     mapcompass.cpp \
-    gate.cpp \
-    gate_editor.cpp \
     POI_delete.cpp \
     mycentralwidget.cpp \
     orthoSegment.cpp \
     selectionWidget.cpp \
     vlmLine.cpp \
-    Font.cpp
+    Font.cpp \
+    inetClient.cpp \
+    route.cpp \
+    Route_Editor.cpp \
+    settings.cpp
 DEFINES = QT_$$[QT_VERSION]
 DEFINES ~= s/\./_
 DEFINES ~= s/-.*/
 DEFINES ~= s/QT_4_5_[0-9]/QT_4_5
-
 unix:DEFINES += _TTY_POSIX_
 win32:DEFINES += _TTY_WIN_ \
     QWT_DLL \
     QT_DLL
+#DEFINES += __QTVLM_WITH_TEST

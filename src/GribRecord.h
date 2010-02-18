@@ -137,7 +137,7 @@ class GribRecord
         			data[j*Ni+i] = v; }
         
         // Valeur pour un point quelconque
-        bool getValue_TWSA(double px, double py,double * a00,double * a01,double * a10,double * a11);
+        bool getValue_TWSA(double px, double py,double * a00,double * a01,double * a10,double * a11,bool debug=false);
 
         // coordonnées d'un point de la grille
         inline double  getX(int i) const   { return ok ? Lo1+i*Di : GRIB_NOTDEF;}
@@ -148,11 +148,11 @@ class GribRecord
         double  getLatMax() const   { return latMax;}
         double  getLonMax() const   { return lonMax;}
 
-        // Le point est-il à l'intérieur de la grille ?
+        // Le point est-il �  l'intérieur de la grille ?
         inline bool   isPointInMap(double x, double y) const;
         inline bool   isXInMap(double x) const;
         inline bool   isYInMap(double y) const;
-        // La valeur est-elle définie (grille à trous) ?
+        // La valeur est-elle définie (grille �  trous) ?
         inline bool   hasValue(int i, int j) const;
         bool getIsFull() {return isFull; }
         

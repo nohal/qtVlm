@@ -23,6 +23,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "mycentralwidget.h"
 #include "poi_delete.h"
+#include "settings.h"
 
 /*******************/
 /*    myScene      */
@@ -37,6 +38,8 @@ myScene::myScene(myCentralWidget * parent) : QGraphicsScene(parent)
 
 void  myScene::keyPressEvent (QKeyEvent *e)
 {
+    QString position;
+    QStringList positions;
     switch(e->key())
     {
         case Qt::Key_Minus:
@@ -64,6 +67,66 @@ void  myScene::keyPressEvent (QKeyEvent *e)
             break;
         case Qt::Key_Delete:
             parent->slot_delSelPOIs();
+            break;
+        case Qt::Key_F9:
+            if(e->modifiers() & Qt::ControlModifier)
+            {
+                position.sprintf("%.0f ; %.0f ; %.0f",parent->getProj()->getScale(),parent->getProj()->getCX(),
+                         parent->getProj()->getCY());
+                Settings::setSetting("f9map",position);
+           }
+            else
+            {
+                position=Settings::getSetting("f9map","-1;-1;-1").toString();
+                positions=position.split(";");
+                if(positions[0]!="-1")
+                    parent->getProj()->setScaleAndCenterInMap(positions[0].toFloat(), positions[1].toDouble(), positions[2].toDouble());
+            }
+            break;
+        case Qt::Key_F10:
+            if(e->modifiers() & Qt::ControlModifier)
+            {
+                position.sprintf("%.0f ; %.0f ; %.0f",parent->getProj()->getScale(),parent->getProj()->getCX(),
+                         parent->getProj()->getCY());
+                Settings::setSetting("f10map",position);
+           }
+            else
+            {
+                position=Settings::getSetting("f10map","-1;-1;-1").toString();
+                positions=position.split(";");
+                if(positions[0]!="-1")
+                    parent->getProj()->setScaleAndCenterInMap(positions[0].toFloat(), positions[1].toDouble(), positions[2].toDouble());
+            }
+            break;
+        case Qt::Key_F11:
+            if(e->modifiers() & Qt::ControlModifier)
+            {
+                position.sprintf("%.0f ; %.0f ; %.0f",parent->getProj()->getScale(),parent->getProj()->getCX(),
+                         parent->getProj()->getCY());
+                Settings::setSetting("f11map",position);
+           }
+            else
+            {
+                position=Settings::getSetting("f11map","-1;-1;-1").toString();
+                positions=position.split(";");
+                if(positions[0]!="-1")
+                    parent->getProj()->setScaleAndCenterInMap(positions[0].toFloat(), positions[1].toDouble(), positions[2].toDouble());
+            }
+            break;
+        case Qt::Key_F12:
+            if(e->modifiers() & Qt::ControlModifier)
+            {
+                position.sprintf("%.0f ; %.0f ; %.0f",parent->getProj()->getScale(),parent->getProj()->getCX(),
+                         parent->getProj()->getCY());
+                Settings::setSetting("f12map",position);
+           }
+            else
+            {
+                position=Settings::getSetting("f12map","-1;-1;-1").toString();
+                positions=position.split(";");
+                if(positions[0]!="-1")
+                    parent->getProj()->setScaleAndCenterInMap(positions[0].toFloat(), positions[1].toDouble(), positions[2].toDouble());
+            }
             break;
         default:
             parent->keyModif(e);
@@ -94,6 +157,7 @@ myCentralWidget::myCentralWidget(Projection * proj,MainWindow * parent,MenuBar *
     this-> proj=proj;
     this->main=parent;
     this->menuBar=menuBar;
+    this->aboutToQuit=false;
 
     /* scene and views */
     scene =  new myScene(this);
@@ -105,13 +169,13 @@ myCentralWidget::myCentralWidget(Projection * proj,MainWindow * parent,MenuBar *
     /* other child */
     gshhsReader = new GshhsReader("maps/gshhs", 0);
     grib = new Grib();
-    route=new vlmLine(proj,scene,Z_VALUE_ROUTE);
+    inetManager = new inetConnexion(main);
 
     /* item child */
     // Terre
     terre = new Terrain(this,proj);
     terre->setGSHHS_map(gshhsReader);
-    terre->setCitiesNamesLevel(Util::getSetting("showCitiesNamesLevel", 0).toInt());
+    terre->setCitiesNamesLevel(Settings::getSetting("showCitiesNamesLevel", 0).toInt());
 #warning voir s il faut mettre le slot ds centralWidget ou utiliser myScene
     connect(terre,SIGNAL(showContextualMenu(QGraphicsSceneContextMenuEvent *)),
             parent, SLOT(slotShowContextualMenu(QGraphicsSceneContextMenuEvent *)));
@@ -122,7 +186,22 @@ myCentralWidget::myCentralWidget(Projection * proj,MainWindow * parent,MenuBar *
     connect(menuBar->acView_WindColors, SIGNAL(triggered(bool)), terre,  SLOT(slot_setDrawWindColors(bool)));
     connect(menuBar->acView_ColorMapSmooth, SIGNAL(triggered(bool)), terre,  SLOT(setColorMapSmooth(bool)));
     connect(menuBar->acView_WindArrow, SIGNAL(triggered(bool)), terre,  SLOT(setDrawWindArrows(bool)));
-    connect(menuBar->acView_Barbules, SIGNAL(triggered(bool)), terre,  SLOT(setBarbules(bool)));    
+    connect(menuBar->acView_Barbules, SIGNAL(triggered(bool)), terre,  SLOT(setBarbules(bool)));
+
+    connect(menuBar->acOptions_SH_sAll, SIGNAL(triggered(bool)), this,  SIGNAL(showALL(bool)));
+    connect(menuBar->acOptions_SH_hAll, SIGNAL(triggered(bool)), this,  SIGNAL(hideALL(bool)));
+    connect(menuBar->acOptions_SH_Opp, SIGNAL(triggered(bool)), this,  SIGNAL(shOpp(bool)));
+    connect(menuBar->acOptions_SH_Poi, SIGNAL(triggered(bool)), this,  SIGNAL(shPoi(bool)));
+    connect(menuBar->acOptions_SH_Rou, SIGNAL(triggered(bool)), this,  SIGNAL(shRou(bool)));
+    connect(menuBar->acOptions_SH_Por, SIGNAL(triggered(bool)), this,  SIGNAL(shPor(bool)));
+    connect(menuBar->acOptions_SH_Lab, SIGNAL(triggered(bool)), this,  SIGNAL(shLab(bool)));
+
+    connect(menuBar->acOptions_SH_Com, SIGNAL(triggered(bool)), this,  SIGNAL(shCom(bool)));
+    connect(menuBar->acOptions_SH_Pol, SIGNAL(triggered(bool)), this,  SIGNAL(shPol(bool)));
+    connect(menuBar->acOptions_SH_Boa, SIGNAL(triggered(bool)), parent, SLOT(slot_centerBoat()));
+
+
+
     connect(&dialogUnits, SIGNAL(accepted()), terre, SLOT(redrawAll()));
     connect(&dialogGraphicsParams, SIGNAL(accepted()), terre, SLOT(updateGraphicsParameters()));
     scene->addItem(terre);
@@ -131,12 +210,20 @@ myCentralWidget::myCentralWidget(Projection * proj,MainWindow * parent,MenuBar *
     compass = new mapCompass(proj,parent,this);
     scene->addItem(compass);
     connect(parent,SIGNAL(showCompassLine(int,int)),compass,SLOT(slot_compassLine(int,int)));
+    connect(parent,SIGNAL(showCompassCenterBoat()),compass,SLOT(slot_compassCenterBoat()));
+    connect(parent,SIGNAL(showCompassCenterWp()),compass,SLOT(slot_compassCenterWp()));
     connect(parent,SIGNAL(paramVLMChanged()),compass,SLOT(slot_paramChanged()));
-    connect(parent,SIGNAL(paramVLMChanged()),this,SLOT(slot_updateRoute()));
-    if(Util::getSetting("showCompass",1).toInt()==1)
-        compass->show();
-    else
-        compass->hide();
+    connect(parent,SIGNAL(selectedBoatChanged()),compass,SLOT(slot_paramChanged()));
+    connect(scene,SIGNAL(paramVLMChanged()),compass,SLOT(slot_paramChanged()));
+    connect(parent,SIGNAL(boatHasUpdated(boatAccount*)),compass,SLOT(slot_paramChanged()));
+    connect(this, SIGNAL(showALL(bool)),compass,SLOT(slot_paramChanged()));
+    connect(this, SIGNAL(hideALL(bool)),compass,SLOT(slot_shHidden()));
+    connect(this, SIGNAL(shCom(bool)),compass,SLOT(slot_shCom()));
+    connect(this, SIGNAL(shPol(bool)),compass,SLOT(slot_shPol()));
+//    if(Settings::getSetting("showCompass",1).toInt()==1)
+//        compass->show();
+//    else
+//        compass->hide();
 
     // Selection zone
     selection=new selectionWidget(proj,scene);
@@ -149,15 +236,14 @@ myCentralWidget::myCentralWidget(Projection * proj,MainWindow * parent,MenuBar *
             this, SLOT(slot_map_CitiesNames()));
 
     // Opponents
-    opponents = new opponentList(proj,main,this);
+    opponents = new opponentList(proj,main,this,inetManager);
 
      /* Dialogs */
     gribDateDialog = new dialog_gribDate();
     poi_editor=new POI_Editor(parent,this);
-    gate_edit=new gate_editor(parent,this);
-    boatAcc = new boatAccount_dialog(proj,parent,this);
+    boatAcc = new boatAccount_dialog(proj,parent,this,inetManager);
     connect(boatAcc,SIGNAL(writeBoat()),this,SLOT(slot_writeBoatData()));
-    raceParam = new race_dialog(parent,this);
+    raceParam = new race_dialog(parent,this,inetManager);
     connect(raceParam,SIGNAL(readRace()),this,SLOT(slot_readRaceData()));
     connect(raceParam,SIGNAL(writeBoat()),this,SLOT(slot_writeBoatData()));
     dialogLoadGrib = new DialogLoadGrib();
@@ -166,19 +252,17 @@ myCentralWidget::myCentralWidget(Projection * proj,MainWindow * parent,MenuBar *
     connect(menuBar->acOptions_Units, SIGNAL(triggered()), &dialogUnits, SLOT(exec()));
     connect(menuBar->acOptions_GraphicsParams, SIGNAL(triggered()), &dialogGraphicsParams, SLOT(exec()));
 
-    /* Boats */
-    connect(parent,SIGNAL(boatHasUpdated(boatAccount*)),this,SLOT(slot_updateRouteFromBoatChange(boatAccount*)));
-    xmlData = new xml_boatData(proj,parent,this);
-    //emit readBoatData("boatAcc.dat",true);
+    /*Routes*/
+    connect(menuBar->acRoute_add, SIGNAL(triggered()), this, SLOT(slot_addRouteFromMenu()));
 
-    /* POIs & Gates*/
+    /* Boats */
+    xmlData = new xml_boatData(proj,parent,this,inetManager);
+
+    /* POIs*/
     while (!poi_list.isEmpty())
         delete poi_list.takeFirst();
-    while (!gate_list.isEmpty())
-        delete gate_list.takeFirst();
 
     xmlPOI = new xml_POIData(proj,parent,this);
-    //emit readPOIData("poi.dat");
 }
 
 void myCentralWidget::loadData(void)
@@ -189,7 +273,7 @@ void myCentralWidget::loadData(void)
 
 myCentralWidget::~myCentralWidget()
 {
-    xmlPOI->slot_writeData(poi_list,gate_list,"poi.dat");
+    xmlPOI->slot_writeData(route_list,poi_list,"poi.dat");
     xmlData->slot_writeData(acc_list,race_list,QString("boatAcc.dat"));
 }
 
@@ -207,7 +291,7 @@ bool myCentralWidget::compassHasLine(void)
 
 int myCentralWidget::getCompassMode(int m_x,int m_y)
 {
-    if(!compass)
+    if(!compass || !compass->isVisible())
         return COMPASS_NOTHING;
 
     if(compass->hasCompassLine())
@@ -359,7 +443,6 @@ void myCentralWidget::slot_mousePress(QGraphicsSceneMouseEvent* e)
     else
         selection->startSelection(e->scenePos().x(),e->scenePos().y());
 }
-
 void myCentralWidget::slot_mouseRelease(QGraphicsSceneMouseEvent* e)
 {
     if(selection->isSelecting())
@@ -398,12 +481,9 @@ void myCentralWidget::loadGribFile(QString fileName, bool zoom)
         return;
 
     grib->loadGribFile(fileName);
-
-    slot_updateRoute();
-
     if(!grib->isOk())
     {
-        emit redrawAll();        
+        emit redrawAll();
         return;
     }
 
@@ -419,7 +499,6 @@ void myCentralWidget::setCurrentDate(time_t t)
     {
         grib->setCurrentDate(t);
         emit redrawGrib();
-        slot_updateRoute();
     }
 }
 
@@ -448,7 +527,7 @@ void myCentralWidget::slot_fileLoad_GRIB()
     {
         dialogLoadGrib->setZone(x0, y0, x1, y1);
         dialogLoadGrib->exec();
-        slot_updateRoute();
+        emit updateRoute();
     }
     else
     {
@@ -532,7 +611,11 @@ void myCentralWidget::slot_addPOI_list(POI * poi)
     connect(poi, SIGNAL(editPOI(POI*)),poi_editor, SLOT(editPOI(POI*)));
     connect(proj, SIGNAL(projectionUpdated()), poi, SLOT(slot_updateProjection()));
     connect(poi, SIGNAL(clearSelection()),this,SLOT(slot_clearSelection()));
-    connect(poi, SIGNAL(updateRoute()),this,SLOT(slot_updateRoute()));
+
+    connect(this, SIGNAL(showALL(bool)),poi,SLOT(slot_shShow()));
+    connect(this, SIGNAL(hideALL(bool)),poi,SLOT(slot_shHidden()));
+    connect(this, SIGNAL(shPoi(bool)),poi,SLOT(slot_shPoi()));
+    connect(this, SIGNAL(shLab(bool)),poi,SLOT(slot_shLab()));
 }
 
 void myCentralWidget::slot_delPOI_list(POI * poi)
@@ -542,14 +625,12 @@ void myCentralWidget::slot_delPOI_list(POI * poi)
     disconnect(poi, SIGNAL(editPOI(POI*)),poi_editor, SLOT(editPOI(POI*)));
     disconnect(proj, SIGNAL(projectionUpdated()), poi, SLOT(slot_updateProjection()));
     disconnect(poi, SIGNAL(clearSelection()),this,SLOT(slot_clearSelection()));
-//  disconnect(poi, SIGNAL(updateRoute()),this,SLOT(slot_updateRoute()));
 }
 
 void myCentralWidget::slot_delAllPOIs(void)
 {
     double lat0,lon0,lat1,lon1;
     double lat,lon;
-    bool changed_route=false;
 
     if(selection->getZone(&lon0,&lat0,&lon1,&lat1))
     {
@@ -565,20 +646,19 @@ void myCentralWidget::slot_delAllPOIs(void)
         while(i.hasNext())
         {
             POI * poi = i.next();
+            if(poi->getRoute()!=NULL)
+                if(poi->getRoute()->getFrozen()) return;
             lat=poi->getLatitude();
             lon=poi->getLongitude();
 
             if(lat1<=lat && lat<=lat0 && lon0<=lon && lon<=lon1)
             {
                 slot_delPOI_list(poi);
-                if(poi->getType()==POI_TYPE_WP)
-                    changed_route=true;
                 delete poi;
             }
 
         }
         selection->clearSelection();
-        if(changed_route) slot_updateRoute();
     }
 }
 
@@ -586,7 +666,6 @@ void myCentralWidget::slot_delSelPOIs(void)
 {
     double lat0,lon0,lat1,lon1;
     double lat,lon;
-    bool changed_route=false;
 
     if(selection->getZone(&lon0,&lat0,&lon1,&lat1))
     {
@@ -601,6 +680,8 @@ void myCentralWidget::slot_delSelPOIs(void)
         while(i.hasNext())
         {
             POI * poi = i.next();
+            if(poi->getRoute()!=NULL)
+                if(poi->getRoute()->getFrozen()) return;
             qWarning() << "POI: " << poi->getName() << " mask=" << poi->getTypeMask();
             if(!(poi->getTypeMask() & res_mask))
                 continue;
@@ -609,204 +690,115 @@ void myCentralWidget::slot_delSelPOIs(void)
 
             if(lat1<=lat && lat<=lat0 && lon0<=lon && lon<=lon1)
             {
-                if(poi->getType()==POI_TYPE_WP)
-                    changed_route=1;
                 slot_delPOI_list(poi);
                 delete poi;
             }
         }
         selection->clearSelection();
-        if(changed_route) slot_updateRoute();
     }
 }
-
-void myCentralWidget::slot_updateRouteFromBoatChange(boatAccount * boat)
+bool myCentralWidget::freeRouteName(QString name,ROUTE * thisroute)
 {
-    if(boat==main->getSelectedBoat()) slot_updateRoute();
-}
+    QListIterator<ROUTE*> i (route_list);
 
-void myCentralWidget::slot_updateRoute()
-{
-    route->deleteAll();
-    if(poi_list.count()==0) return;
-
-    boatAccount * selectedBoat=main->getSelectedBoat();
-    time_t eta;
-    if(selectedBoat && selectedBoat->getPolarData() && grib)
+    while(i.hasNext())
     {
-        if(Util::getSetting("routeStart",0).toInt()==0)
-        {
-            eta=selectedBoat->getPrevVac();
-            time_t now = (QDateTime::currentDateTime()).toUTC().toTime_t();
-            if(eta < now - selectedBoat->getVacLen()) /*cas du boat inscrit depuis longtemps mais pas encore parti*/
-                eta=now;
-        }
-        else
-            eta=grib->getCurrentDate();
-        time_t startTime=eta;
-        float   lon=selectedBoat->getLon();
-        float   lat=selectedBoat->getLat();
-        /* ajout du boat comme premier point de la route */
-        route->addPoint(lat,lon);
-        bool    has_eta=true;
-        Orthodromie orth(0,0,0,0);
-        qSort(poi_list.begin(),poi_list.end(),POI::myLessThan);
-        QListIterator<POI*> i (poi_list);
-        QString tip;
-        float initial_distance,newSpeed,speed,distance,remaining_distance,angle,res_lon,res_lat,previous_remaining_distance,cap,cap1,cap2,diff1,diff2;
-        double wind_angle,wind_speed;
-        time_t  mult_vac=1;
-        while(i.hasNext())
-        {
-            POI * poi = i.next();
-            if(poi->getType()!=POI_TYPE_WP) continue;
-            if(!grib->isOk())
-            {
-                tip=poi->getTypeStr() + " : " + poi->getName() + "<br>Ortho Dist from boat: "+
-                           Util::formatDistance(initial_distance)+"<br>Initial Speed if Ortho: "+Util::formatSpeed(speed * 0.514444444444444 )+
-                           "<br>Estimated ETA: No grib loaded" ;
-                poi->setRouteTimeStamp(-1);
-                poi->setTip(tip);
-                continue;
-            }
+        ROUTE * route = i.next();
+        if (route->getName()==name && route!=thisroute) return false;
+    }
+    return true;
+}
+void myCentralWidget::slot_addRouteFromMenu()
+{
+    ROUTE * route=addRoute();
+    slot_editRoute(route,true);
+}
+ROUTE * myCentralWidget::addRoute()
+{
+    ROUTE * route=new ROUTE("Route", proj, grib, scene, this);
+    route->setBoat(main->getSelectedBoat());
+    connect(this,SIGNAL(updateRoute()),route,SLOT(slot_recalculate()));
+    connect(main,SIGNAL(updateRoute()),route,SLOT(slot_recalculate()));
+    connect(route,SIGNAL(editMe(ROUTE *)),this,SLOT(slot_editRoute(ROUTE *)));
+    connect(route,SIGNAL(deletePoi(POI *)),this,SLOT(slot_delPOI_list(POI *)));
 
-            //if(poi->getAccount()!=selectedBoat->getLogin()) continue;
-            orth.setPoints(selectedBoat->getLon(), selectedBoat->getLat(), poi->getLongitude(),poi->getLatitude());
-            initial_distance=orth.getDistance();
-            newSpeed=0;
-            speed=0;
-            distance=0;
-            remaining_distance=initial_distance;
-            angle=orth.getAzimutDeg()-selectedBoat->getWindDir();
-            if(qAbs(angle)>180)
-            {
-                if(angle<0)
-                    angle=360+angle;
-                else
-                    angle=angle-360;
-            }
-            speed=selectedBoat->getPolarData()->getSpeed(selectedBoat->getWindSpeed(),angle);
-            res_lon=0;
-            res_lat=0;
-            previous_remaining_distance=0;
-            wind_angle=0;
-            wind_speed=0;
-            orth.setPoints(lon, lat, poi->getLongitude(),poi->getLatitude());
-            time_t maxDate=grib->getMaxDate();
-            if(has_eta)
-            {
-                do
-                {
-                    if(grib->getInterpolatedValue_byDates((double) lon,(double) lat,
-                                              eta,&wind_speed,&wind_angle) && eta<=maxDate)
-                    {
-                        previous_remaining_distance=remaining_distance;
-                        wind_angle=radToDeg(wind_angle);
-                        cap=orth.getAzimutDeg();
-                        angle=cap-wind_angle;
-                        if(qAbs(angle)>180)
-                        {
-                            if(angle<0)
-                                angle=360+angle;
-                            else
-                                angle=angle-360;
-                        }
-                        if(qAbs(angle)<selectedBoat->getBvmgUp(wind_speed))
-                        {
-                            angle=selectedBoat->getBvmgUp(wind_speed);
-                            cap1=A360(wind_angle+angle);
-                            cap2=A360(wind_angle-angle);
-                            diff1=A360(qAbs(cap-cap1));
-                            diff2=A360(qAbs(cap-cap2));
-                            if(diff1<diff2)
-                                cap=cap1;
-                            else
-                                cap=cap2;
-                        }
-                        else if(qAbs(angle)>selectedBoat->getBvmgDown(wind_speed))
-                        {
-                            angle=selectedBoat->getBvmgDown(wind_speed);
-                            cap1=A360(wind_angle+angle);
-                            cap2=A360(wind_angle-angle);
-                            diff1=A360(qAbs(cap-cap1));
-                            diff2=A360(qAbs(cap-cap2));
-                            if(diff1<diff2)
-                                cap=cap1;
-                            else
-                                cap=cap2;
-                        }
-                        newSpeed=selectedBoat->getPolarData()->getSpeed(wind_speed,angle);
-                        distance=newSpeed*selectedBoat->getVacLen()*mult_vac/3600.00;
-                        Util::getCoordFromDistanceAngle(lat, lon, distance, cap,&res_lat,&res_lon);
-                        lon=res_lon;
-                        lat=res_lat;
-                        route->addPoint(lat,lon);
-                        orth.setStartPoint(lon, lat);
-                        eta= eta + selectedBoat->getVacLen()*mult_vac;
-                        remaining_distance=orth.getDistance();
-                    }
-                    else
-                        has_eta=false;
-                } while (remaining_distance>newSpeed*selectedBoat->getVacLen()/7200.000 && previous_remaining_distance>distance && has_eta);
-            }
-            if(!has_eta)
-            {
-                tip=poi->getTypeStr() + " : " + poi->getName() + "<br>Ortho Dist from boat: "+
-                           Util::formatDistance(initial_distance)+"<br>Initial Speed if Ortho: "+Util::formatSpeed(speed * 0.514444444444444 )+
-                           "<br>Estimated ETA: Unreachable within Grib" ;
-                poi->setRouteTimeStamp(0);
-            }
-            else
-            {
-                float days=(eta-startTime)/86400.0000;
-                if(qRound(days)>days)
-                    days=qRound(days)-1;
-                else
-                    days=qRound(days);
-                float hours=(eta-startTime-days*86400)/3600.0000;
-                if(qRound(hours)>hours)
-                    hours=qRound(hours)-1;
-                else
-                    hours=qRound(hours);
-                float mins=qRound((eta-startTime-days*86400-hours*3600)/60.0000);
-                tip=poi->getTypeStr() + " : " + poi->getName() + "<br>Ortho Dist from boat: "+
-                           Util::formatDistance(initial_distance)+"<br>Initial Speed if Ortho: "+Util::formatSpeed(speed * 0.514444444444444 )+
-                           "<br>Estimated ETA from last VAC:<br>"+QString::number((int)days)+" days "+QString::number((int)hours)+" hours "+QString::number((int)mins)+" minutes";
-                poi->setRouteTimeStamp((int)eta);
-            }
-            poi->setTip(tip);
-            lon=poi->getLongitude();
-            lat=poi->getLatitude();
+
+    connect(this, SIGNAL(showALL(bool)),route,SLOT(slot_shShow()));
+    connect(this, SIGNAL(hideALL(bool)),route,SLOT(slot_shHidden()));
+    connect(this, SIGNAL(shRou(bool)),route,SLOT(slot_shRou()));
+
+
+    route_list.append(route);
+    return route;
+}
+void myCentralWidget::slot_editRoute(ROUTE * route,bool createMode)
+{
+    ROUTE_Editor *route_editor=new ROUTE_Editor(route,this);
+    if(route_editor->exec()!=QDialog::Accepted)
+    {
+        if(createMode)
+        {
+            delete route;
+            route_list.removeAll(route);
+            route=NULL;
         }
     }
-    route->slot_showMe();
+    else
+    {
+        update_menuRoute();
+        route->slot_recalculate();
+    }
+    delete route_editor;
+}
+void myCentralWidget::deleteRoute(ROUTE * route)
+{
+    route_list.removeAll(route);
+    delete route;
+    update_menuRoute();
+}
+void myCentralWidget::assignPois()
+{
+    freezeRoutes(true);
+    QListIterator<POI*> i (poi_list);
+    while(i.hasNext())
+    {
+        POI * poi=i.next();
+        if(poi->getRouteName()!="")
+        {
+            QListIterator<ROUTE*> j (route_list);
+            while(j.hasNext())
+            {
+                ROUTE * route=j.next();
+                if(poi->getRouteName() == route->getName())
+                {
+                    poi->setRoute(route);
+                }
+            }
+         }
+    }
+    update_menuRoute();
+    freezeRoutes(false);
+    emit updateRoute();
+}
+void myCentralWidget::freezeRoutes(bool freeze)
+{
+    QListIterator<ROUTE*> i (route_list);
+    while(i.hasNext()) i.next()->setFrozen(freeze);
+}
+void myCentralWidget::update_menuRoute()
+{
+    qSort(route_list.begin(),route_list.end(),ROUTE::myLessThan);
+    menuBar->mnRoute_edit->clear();
+    menuBar->mnRoute_delete->clear();
+    QListIterator<ROUTE*> i (route_list);
+    while(i.hasNext())
+        menuBar->addMenuRoute(i.next());
 }
 float myCentralWidget::A360(float hdg)
 {
     if(hdg>=360) hdg=hdg-360;
     if(hdg<0) hdg=hdg+360;
     return hdg;
-}
-
-/**************************/
-/* Gate                   */
-/**************************/
-
-void myCentralWidget::slot_addGate_list(gate * ptr)
-{
-    gate_list.append(ptr);
-#warning il faudra ajouter les gates
-    //scene->addItem(ptr);
-    connect(ptr,SIGNAL(editGate(gate*)),gate_edit,SLOT(editGate(gate*)));
-    connect(proj, SIGNAL(projectionUpdated()), ptr, SLOT(slot_updateProjection()));
-}
-
-void myCentralWidget::slot_delGate_list(gate * ptr)
-{
-    gate_list.removeAll(ptr);
-    //scene->removeItem(ptr);
-    disconnect(ptr,SIGNAL(editGate(gate*)),gate_edit,SLOT(editGate(gate*)));
-    disconnect(proj, SIGNAL(projectionUpdated()), ptr, SLOT(slot_updateProjection()));
 }
 
 /**************************/
@@ -914,7 +906,7 @@ void myCentralWidget::slot_map_CitiesNames()
 
 void myCentralWidget::slot_POISave(void)
 {
-    emit writePOIData(poi_list,gate_list,"poi.dat");
+    emit writePOIData(route_list,poi_list,"poi.dat");
 }
 
 void myCentralWidget::slot_POIimport(void)

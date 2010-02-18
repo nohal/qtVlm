@@ -36,23 +36,24 @@ class myCentralWidget;
 #include "mapcompass.h"
 #include "selectionWidget.h"
 #include "POI.h"
-#include "gate.h"
 #include "vlmLine.h"
 #include "opponentBoat.h"
 
 /* other child */
 #include "GshhsReader.h"
 #include "Grib.h"
+#include "inetConnexion.h"
 
 /* dialog */
 #include "dialog_gribDate.h"
 #include "DialogLoadGrib.h"
 #include "DialogUnits.h"
 #include "POI_editor.h"
-#include "gate_editor.h"
+#include "Route_Editor.h"
 #include "boatAccount_dialog.h"
 #include "race_dialog.h"
 #include "DialogGraphicsParams.h"
+#include "route.h"
 
 /* Data file */
 #include "xmlPOIData.h"
@@ -64,6 +65,7 @@ class myCentralWidget;
 #define Z_VALUE_ESTIME     3
 #define Z_VALUE_ROUTE      4
 #define Z_VALUE_POI        5
+#define Z_VALUE_GATE       6
 #define Z_VALUE_BOAT       7
 #define Z_VALUE_COMPASS    10
 
@@ -92,7 +94,8 @@ class myScene : public QGraphicsScene
         void keyReleaseEvent (QKeyEvent *e);
         void mouseMoveEvent (QGraphicsSceneMouseEvent * event);
         void mouseDoubleClickEvent(QGraphicsSceneMouseEvent* e);
-
+    signals:
+        void paramVLMChanged();
     private:
         myCentralWidget * parent;
 };
@@ -114,6 +117,18 @@ class myCentralWidget : public QWidget
         QList<raceData*> & getRaces() { return this->race_list; }
         GshhsReader * get_gshhsReader(void) { return gshhsReader; }
         opponentList * getOppList() { return opponents; }
+        inetConnexion * getInet(void) { return inetManager; }
+
+        /* route */
+        QList<ROUTE*> & getRouteList(){ return this->route_list;}
+        bool freeRouteName(QString name, ROUTE * route);
+        void update_menuRoute();
+        void deleteRoute(ROUTE * route);
+        void freezeRoutes(bool freeze);
+        void assignPois();
+        ROUTE * addRoute();
+        Projection * getProj(void){return proj;}
+
 
         /* grib */
         void   setCurrentDate(time_t t);
@@ -126,6 +141,8 @@ class myCentralWidget : public QWidget
         void mouseDoubleClick(int x, int y, QGraphicsItem * item);
         void keyModif(QKeyEvent *e);
         void escapeKeyPressed(void);
+        bool getAboutToQuit(void){return aboutToQuit;}
+        void setAboutToQuit(void){this->aboutToQuit=true;}
 
     public slots :
         /* Zoom & position */
@@ -142,16 +159,14 @@ class myCentralWidget : public QWidget
         void slot_addPOI(QString name,int type,float lat,float lon, float wph,int timestamp,bool useTimeStamp, boatAccount *boat);
         void slot_addPOI_list(POI * poi);
         void slot_delPOI_list(POI * poi);
-        void slot_POISave(void); // also save gates
+        void slot_POISave(void);
         void slot_POIimport(void); // import data from zyGrib
         void slot_delAllPOIs(void);
         void slot_delSelPOIs(void);
-        void slot_updateRoute(void);
-        void slot_updateRouteFromBoatChange(boatAccount *);
 
-        /* Gates */
-        void slot_addGate_list(gate*);
-        void slot_delGate_list(gate*);
+        /*Routes */
+        void slot_addRouteFromMenu();
+        void slot_editRoute(ROUTE * route,bool createMode=false);
 
         /* Boats */
         void slot_addBoat_list(boatAccount* boat);
@@ -185,11 +200,12 @@ class myCentralWidget : public QWidget
         void redrawAll(void);
         void redrawGrib(void);
 
-        /* POI & gates */
+        /* POI */
         void readPOIData(QString);
-        void writePOIData(QList<POI*> &,QList<gate*> & ,QString);
+        void writePOIData(QList<ROUTE*> &,QList<POI*> &,QString);
         void importZyGrib(void);
         void POI_selectAborted(POI*);
+        void updateRoute();
 
         /* Boats */
         void writeBoatData(QList<boatAccount*> & boat_list,QList<raceData*> & race_list,QString fname);
@@ -197,6 +213,17 @@ class myCentralWidget : public QWidget
 
         /* compass */
         void stopCompassLine(void);
+
+        /*show-hide*/
+        void hideALL(bool);
+        void showALL(bool);
+        void shOpp(bool);
+        void shPoi(bool);
+        void shCom(bool);
+        void shRou(bool);
+        void shPor(bool);
+        void shPol(bool);
+        void shLab(bool);
 
     protected:
         void resizeEvent (QResizeEvent * e);
@@ -221,6 +248,7 @@ class myCentralWidget : public QWidget
 
         /* other child */
         GshhsReader *gshhsReader;
+        inetConnexion * inetManager;
 
         /* Scene & view */
         QGraphicsScene *scene;
@@ -229,24 +257,24 @@ class myCentralWidget : public QWidget
         /* Dialogs */
         dialog_gribDate * gribDateDialog;
         POI_Editor * poi_editor;
-        gate_editor * gate_edit;
         boatAccount_dialog * boatAcc;
         race_dialog * raceParam;
         DialogLoadGrib  * dialogLoadGrib;
         DialogUnits     dialogUnits;
         DialogGraphicsParams dialogGraphicsParams;
 
-        /* Lists, POI and gates */
+        /* Lists, POI*/
         QList<POI*> poi_list;
-        QList<gate*> gate_list;
+        QList<ROUTE*> route_list;
         QList<boatAccount*> acc_list;
         QList<raceData*> race_list;
-        vlmLine * route;
 
         /* Data file */
         xml_POIData * xmlPOI;
         xml_boatData * xmlData;
         float A360(float hdg);
+        bool aboutToQuit;
+
 };
 
 #endif // MYCENTRALWIDGET_H

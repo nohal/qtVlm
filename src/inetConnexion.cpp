@@ -23,34 +23,16 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #define REQUEST_GET  0
 #define REQUEST_POST 1
 
-inetConnexion::inetConnexion(QWidget * main,QWidget * parent) : QObject(parent)
+inetConnexion::inetConnexion(QWidget * main)
 {
-    hasSpecHost=false;
-    initConn(main,parent);
-}
-
-inetConnexion::inetConnexion(QString specHost,QWidget * main,QWidget * parent) : QObject(parent)
-{
-    if(specHost.isEmpty())
-        hasSpecHost=false;
-    else
-    {
-        hasSpecHost=true;
-        host=specHost;
-    }
-    initConn(main,parent);
-}
-
-void inetConnexion::initConn(QWidget * main,QWidget * parent)
-{
-    this->parent=parent;
-
     inetManager = new QNetworkAccessManager(this);
-//    connect(this,SIGNAL(requestFinished(int,QByteArray)),parent,SLOT(slot_requestFinished(int,QByteArray)));
-    connect(main,SIGNAL(updateInet()),this,SLOT(updateInet()));
-    //currentReply=NULL;
-    updateInet();
+
+    connect(main,SIGNAL(updateInet()),this,SLOT(slot_updateInet()));
+    connect(inetManager,SIGNAL(finished(QNetworkReply*)),this,SLOT(slot_requestFinished(QNetworkReply*)));
+
+    slot_updateInet();
     progressDialog=new inetConn_progressDialog();
+    hasProgress=false;
 }
 
 inetConnexion::~inetConnexion(void)
@@ -60,64 +42,71 @@ inetConnexion::~inetConnexion(void)
         delete inetManager;
 }
 
-void inetConnexion::updateInet(void)
+void inetConnexion::slot_updateInet(void)
 {
     if(inetManager)
     {
-        qWarning() << "Update inet for " << parent;
-
-        if(!hasSpecHost)
+        /*if(!hasSpecHost)
             host=Util::getHost();
-        Util::paramProxy(inetManager,host);
+        Util::paramProxy(inetManager,host);*/
         resetInet();
     }
 }
 
 bool inetConnexion::isAvailable(void)
 {
-    return !hasRequest;
+    return (inetManager!=NULL);
 }
+
 
 void inetConnexion::resetInet(void)
 {
-    hasRequest=false;
-//    if(currentReply)
-//    {
-//        currentReply->disconnect();
-//        currentReply->close();
-//        currentReply->deleteLater();
-//        currentReply=NULL;
-//    }
+    while(replyList.count() > 0)
+    {
+        inetClient * ptr = replyList.takeFirst();
+        ptr->resetReply();
+        ptr->clearCurrentRequest();
+    }
+    replyList.clear();
 }
 
-QByteArray inetConnexion::doRequestGet(int requestNum,QString requestUrl)
+void inetConnexion::doRequestGet(inetClient* client,QString requestUrl,QString host)
 {
     hasProgress=false;
-    return(doRequest(REQUEST_GET,requestNum,requestUrl,QString()));
+    doRequest(REQUEST_GET,client,requestUrl,QString(),host);
 }
 
-QByteArray  inetConnexion::doRequestGetProgress(int requestNum,QString requestUrl)
+void inetConnexion::doRequestGetProgress(inetClient* client,QString requestUrl,QString host)
 {
-    hasProgress=true;
-    progressDialog->showDialog(host+requestUrl);
-    return(doRequest(REQUEST_GET,requestNum,requestUrl,QString()));
+    if(hasProgress)
+    {
+        qWarning() << "Already running request with progress";
+        doRequest(REQUEST_GET,client,requestUrl,QString(),host);
+
+    }
+    else
+    {
+        hasProgress=true;
+        progressDialog->showDialog(host+requestUrl);
+        doRequest(REQUEST_GET,client,requestUrl,QString(),host);
+    }
 }
 
-QByteArray inetConnexion::doRequestPost(int requestNum,QString requestUrl,QString data)
+void inetConnexion::doRequestPost(inetClient* client,QString requestUrl,QString data,QString host)
 {
-    return(doRequest(REQUEST_POST,requestNum,requestUrl,data));
+    doRequest(REQUEST_POST,client,requestUrl,data,host);
 }
 
-QByteArray inetConnexion::doRequest(int type,int requestNum,QString requestUrl,QString data)
+void inetConnexion::doRequest(int type,inetClient* client,QString requestUrl,QString data,QString host)
 {
-    QNetworkReply * currentReply;
     QString page;
-    QEventLoop q;
-    resetInet();
-    hasRequest=true;
+    QNetworkReply * currentReply;
+
+    if(host.isEmpty())
+        host=Util::getHost();
+    Util::paramProxy(inetManager,host);
 
     page=host+requestUrl;
-    currentRequest=requestNum;
 
     //qWarning() << "Doing inet request: " << page;
 
@@ -129,57 +118,69 @@ QByteArray inetConnexion::doRequest(int type,int requestNum,QString requestUrl,Q
         currentReply=inetManager->post(request,data.toAscii());
     else
         currentReply=inetManager->get(request);
-    connect(currentReply, SIGNAL(finished()), &q, SLOT(quit()));
-    connect(currentReply, SIGNAL(error(QNetworkReply::NetworkError)), &q, SLOT(quit()));
-    connect(currentReply,SIGNAL(downloadProgress(qint64,qint64)),this,SLOT(slotProgess(qint64,qint64)));
-//    qWarning()<<"entering loop";
-    q.exec();
-//    qWarning()<<"exiting loop";
-    QByteArray res;
-    if(currentReply->error()==QNetworkReply::NoError)
-        res=currentReply->readAll();
-    else
-        res="Error";
-    resetInet();
-    if(hasProgress)
-        progressDialog->hide();
 
-    return(res);
+    client->setReply(currentReply);
+
+    if(hasProgress)
+    {
+        client->setHasProgress(true);
+        connect(currentReply,SIGNAL(downloadProgress(qint64,qint64)),this,SLOT(slot_progess(qint64,qint64)));
+    }
+
+    replyList.push_back(client);
 }
 
-//void inetConnexion::routineFinished(QNetworkReply * currentReply)
-//{
-//    progressDialog->hide();
-//    if(currentReply && hasRequest)
-//    {
-//        if (currentReply->error() != QNetworkReply::NoError) {
-//            qWarning() << "Error doing inetGet (2):" << currentReply->error() << " - " << currentReply->errorString();
-//            resetInet();
-//        }
-//        else
-//        {
-//            //qWarning() << "Received : " << currentReply->size();
-//            QByteArray res=currentReply->readAll();
-//            resetInet();
-//            emit requestFinished(currentRequest,res);
-//        }
-//    }
-//    else
-//    {
-//        qWarning() << "Not processing reply: currentReply = " << currentReply << ", hasRequest=" << hasRequest;
-//        resetInet();
-//    }
-//    currentReply->deleteLater();
-//}
-//
-//void inetConnexion::routineError(QNetworkReply::NetworkError error)
-//{
-////    qWarning() << "Error doing inetGet (1):" << error << " - " << (currentReply?currentReply->errorString():"");
-//    progressDialog->hide();
-//    resetInet();
-//}
+void inetConnexion::slot_requestFinished(QNetworkReply * currentReply)
+{
+    /* Recherche du client correspondant � currentReply */
+    bool found=false;
+    inetClient * currentClient;
+    QListIterator<inetClient*> i (replyList);
 
-void inetConnexion::slotProgess(qint64 bytesReceived, qint64 bytesTotal )
+    while(!found && i.hasNext())
+    {        
+        inetClient * ptr = i.next();
+        if(ptr->getReply() == currentReply)
+        {
+            found=true;
+            currentClient = ptr;
+            replyList.removeAll(ptr);
+            break;
+        }
+    }
+
+    if(found)
+    {
+        /* managing progress bar */
+        if(currentClient->getHasProgress())
+        {
+            currentClient->setHasProgress(false);
+            progressDialog->hide();
+            disconnect(currentReply,SIGNAL(downloadProgress(qint64,qint64)),this,SLOT(slot_progess(qint64,qint64)));
+        }
+
+        if (currentReply->error() != QNetworkReply::NoError) {
+            qWarning() << "Error doing inetGet (2):" << currentReply->error() << " - " << currentReply->errorString();
+            currentClient->resetReply();
+            currentClient->clearCurrentRequest();
+        }
+        else
+        {
+            QByteArray res=currentReply->readAll();
+            currentClient->resetReply();
+            currentClient->requestFinished(res);            
+        }
+    }
+    else
+    {
+        qWarning() << "Client of request not found => Not processing reply";
+        currentReply->close();
+        currentReply->deleteLater();
+    }
+}
+
+
+void inetConnexion::slot_progess(qint64 bytesReceived, qint64 bytesTotal )
 {
     if(hasProgress)
         progressDialog->updateProgress(bytesReceived,bytesTotal);

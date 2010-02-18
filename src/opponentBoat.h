@@ -40,6 +40,7 @@ class opponent;
 
 #include "MainWindow.h"
 #include "mycentralwidget.h"
+#include "inetClient.h"
 
 struct raceData {
       QString idrace;
@@ -71,6 +72,7 @@ class opponent : public QGraphicsWidget
         void setNewData(float lat, float lon,QString name);
         void setIsQtBoat(bool status);
         void updateName();
+        void drawTrace();
 
         /* graphicsWidget */
         QRectF boundingRect() const;
@@ -78,6 +80,10 @@ class opponent : public QGraphicsWidget
     public slots:
         void updateProjection();
         void paramChanged();
+        void slot_shShow(){this->labelHidden=false;show();if(trace_drawing)trace_drawing->show();}
+        void slot_shHidden(){hide();if(trace_drawing)trace_drawing->hide();}
+        void slot_shOpp(){if(this->isVisible())slot_shHidden();else slot_shShow();}
+        void slot_shLab(){this->labelHidden=!this->labelHidden;update();}
 
     protected:
         void paint(QPainter * pnt, const QStyleOptionGraphicsItem * , QWidget * );
@@ -107,20 +113,24 @@ class opponent : public QGraphicsWidget
         vlmLine * trace_drawing;
 
         void updatePosition();
+        bool labelHidden;
 };
 
-class opponentList : public QWidget
-{Q_OBJECT
+class opponentList : public QWidget, public inetClient
+{
+    Q_OBJECT
+
     public:
-        opponentList(Projection * proj,MainWindow * main,myCentralWidget * parent);
+        opponentList(Projection * proj,MainWindow * main,myCentralWidget * parent, inetConnexion * inet);
         void setBoatList(QString list_txt, QString race, bool force);
         void refreshData(void);
         void clear(void);
         QString getRaceId();
-        QList<opponent*> * getList(void) { return &opponent_list; };
+        QList<opponent*> * getList(void) { return &opponent_list; }
+
+        void requestFinished (QByteArray);
 
     public slots:
-        void slot_requestFinished (int,QByteArray);
         void getTrace(QString buff, QList<vlmPoint> * trace);
 
     private:
@@ -138,9 +148,6 @@ class opponentList : public QWidget
         QStringList readData(QString in_data,int type);
         void getOpponents(QStringList opp_idu,QString idrace);
         void getNxtOppData();
-
-        /* http connection */
-        inetConnexion * conn;
 
         Projection * proj;
 };
