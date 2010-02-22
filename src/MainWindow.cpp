@@ -36,6 +36,7 @@ Copyright (C) 2008 - Jacques Zaninetti - http://zygrib.free.fr
 #include <QDockWidget>
 #include <QRegExp>
 #include <QDebug>
+#include <QDesktopServices>
 
 #include "MainWindow.h"
 #include "Util.h"
@@ -581,26 +582,9 @@ void MainWindow::slotMap_Quality()
 
 //-------------------------------------------------
 void MainWindow::slotHelp_Help() {
-    /*QMessageBox::question (this,
-            tr("Aide"),
-            tr("Des questions ?"));
-
-    QString coderand = QDateTime::currentDateTime().toString("yyyymmsszzz");
-
-    QMessageBox::information (this,
-            tr("Aide"),
-            tr("Félicitations, votre demande a bien été enregistrée.\n")
-            +tr("Référence : ") + coderand
-            +tr("\n\n")
-            +tr("Nos services vous contacteront peut-être quand ils seront en mesure de vous répondre.")
-            +tr("\n\n")
-            +tr("En attendant, essayez donc d'appuyer au hasard sur des touches du clavier, ")
-            +tr("ou bien de bouger la souris en appuyant de temps en temps ")
-            +tr("sur l'un de ses boutons, ")
-            +tr("ou bien n'importe quoi d'autre, ")
-            +tr("et vous verrez bien s'il se passe quelque chose...")
-            );*/
+    QDesktopServices::openUrl(QUrl("http://wiki.virtual-loup-de-mer.org/index.php/QtVlm#L.27interface_de_qtVlm"));
 }
+
 //-------------------------------------------------
 void MainWindow::slotHelp_APropos() {
     QMessageBox::information (this,
