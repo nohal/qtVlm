@@ -48,9 +48,13 @@ ROUTE_Editor::ROUTE_Editor(ROUTE *route,myCentralWidget *parent)
     setWindowTitle(tr("Parametres Route"));
     editName->setText(route->getName());
     editFrozen->setChecked(route->getFrozen());
+
+
     startFromBoat->setChecked(route->getStartFromBoat());
+    startFromMark->setChecked(!route->getStartFromBoat());
+
     editDateBox->setDateTime(route->getStartTime());
-    startFromBoat->setChecked(route->getStartFromBoat());
+
     editLive->setChecked(route->isLive());
     switch(route->getStartTimeOption())
     {
