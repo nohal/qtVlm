@@ -24,14 +24,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <QList>
 #include <QMessageBox>
 
-class Pilototo;
-class Pilototo_instruction;
-class Pilototo_param;
-class boatAccount;
+#include "class_list.h"
 
-#include "Pilototo_param.h"
-#include "inetConnexion.h"
-#include "mycentralwidget.h"
 #include "inetClient.h"
 
 #define PILOTOTO_STATUS_DONE    0

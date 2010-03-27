@@ -20,9 +20,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <QDebug>
 #include <QFileDialog>
+#include <cassert>
 
 #include "DialogVLM_grib.h"
 #include "settings.h"
+#include "mycentralwidget.h"
 
 #define VLM_REQUEST_GET_FOLDER 0
 #define VLM_REQUEST_GET_FILE   1

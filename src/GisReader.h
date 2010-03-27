@@ -25,9 +25,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <QImage>
 #include <QPainter>
 
-#include "zuFile.h"
-#include "Projection.h"
-#include "Util.h"
+#include "class_list.h"
+
 #include "Font.h"
 
 //==========================================================

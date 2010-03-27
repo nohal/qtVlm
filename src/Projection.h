@@ -25,12 +25,11 @@ Copyright (C) 2008 - Jacques Zaninetti - http://zygrib.free.fr
 #ifndef PROJECTION_H
 #define PROJECTION_H
 
-class Projection;
-
-#include "Util.h"
 #include <QTimer>
 
 #include <QObject>
+
+#include "Util.h"
 
 struct vlmPoint{
     float lat;

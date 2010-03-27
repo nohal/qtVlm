@@ -25,15 +25,9 @@ Copyright (C) 2008 - Jacques Zaninetti - http://zygrib.free.fr
 #ifndef ROUTE_EDITOR_H
 #define ROUTE_EDITOR_H
 
-class ROUTE_Editor;
+#include "class_list.h"
 
-#include "route.h"
-#include "Projection.h"
 #include "ui_Route_Editor.h"
-#include "MainWindow.h"
-#include "mycentralwidget.h"
-#include "DialogGraphicsParams.h"
-#include "boatAccount.h"
 
 //===================================================================
 class ROUTE_Editor : public QDialog, public Ui::ROUTE_Editor_ui

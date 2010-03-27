@@ -29,6 +29,7 @@ Copyright (C) 2008 - Jacques Zaninetti - http://zygrib.free.fr
 #include "DialogLoadGrib.h"
 #include "settings.h"
 #include "Util.h"
+#include "LoadGribFile.h"
 
 
 

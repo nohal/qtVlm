@@ -35,8 +35,6 @@ Copyright (C) 2008 - Jacques Zaninetti - http://zygrib.free.fr
         #define QTVLM_APP_NAME   "qtVlm"
 #endif
 
-
-
 class Version {
 
     public:

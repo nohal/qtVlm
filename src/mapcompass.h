@@ -25,14 +25,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <QGraphicsWidget>
 #include <QGraphicsSimpleTextItem>
 #include <QPainter>
+#include <QCursor>
 
-class mapCompass;
+#include "class_list.h"
 
-#include "Projection.h"
-#include "MainWindow.h"
-#include "orthoSegment.h"
-#include "Orthodromie.h"
-#include "mycentralwidget.h"
 #include <cmath>
 
 class mapCompass : public QGraphicsWidget

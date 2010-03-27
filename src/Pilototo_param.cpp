@@ -18,10 +18,14 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ***********************************************************************/
 
+#include <QDebug>
+
 #include <cmath>
 
 #include "Pilototo_param.h"
 #include "Util.h"
+#include "Pilototo.h"
+#include "POI.h"
 
 #define EDT_LAT 1
 #define EDT_LON 2

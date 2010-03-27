@@ -27,6 +27,7 @@ Copyright (C) 2008 - Jacques Zaninetti - http://zygrib.free.fr
 #include <QTranslator>
 #include <QTime>
 #include <QLibraryInfo>
+#include <QLocale>
 
 #include "MainWindow.h"
 #include "settings.h"

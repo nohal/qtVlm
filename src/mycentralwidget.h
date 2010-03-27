@@ -25,39 +25,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <QGraphicsScene>
 #include <QGraphicsView>
 
-class myCentralWidget;
+#include "class_list.h"
 
-#include "MainWindow.h"
-#include "Projection.h"
-#include "MenuBar.h"
-
-/* item child */
-#include "Terrain.h"
-#include "mapcompass.h"
-#include "selectionWidget.h"
-#include "POI.h"
-#include "vlmLine.h"
-#include "opponentBoat.h"
-
-/* other child */
-#include "GshhsReader.h"
-#include "Grib.h"
-#include "inetConnexion.h"
-
-/* dialog */
-#include "dialog_gribDate.h"
-#include "DialogLoadGrib.h"
 #include "DialogUnits.h"
-#include "POI_editor.h"
-#include "Route_Editor.h"
-#include "boatAccount_dialog.h"
-#include "race_dialog.h"
 #include "DialogGraphicsParams.h"
-#include "route.h"
-
-/* Data file */
-#include "xmlPOIData.h"
-#include "xmlBoatData.h"
 
 /* Z value according to type */
 #define Z_VALUE_TERRE      0
@@ -108,7 +79,7 @@ class myCentralWidget : public QWidget
         ~myCentralWidget();
 
         /* access to pointer & data */
-        Grib * getGrib(void) { if(grib && grib->isOk()) return grib; else return NULL; }
+        Grib * getGrib(void);
         QGraphicsScene * getScene(void) { return scene; }
         bool compassHasLine(void);
         int getCompassMode(int m_x,int m_y);
@@ -144,6 +115,13 @@ class myCentralWidget : public QWidget
         bool getAboutToQuit(void){return aboutToQuit;}
         void setAboutToQuit(void){this->aboutToQuit=true;}
 
+        /* item state */
+        bool get_shLab_st(void) { return shLab_st; }
+        bool get_shPoi_st(void) { return shPoi_st; }
+        bool get_shRoute_st(void) { return shRoute_st; }
+        bool get_shOpp_st(void) { return shOpp_st; }
+        bool get_shPor_st(void) { return shPor_st; }
+
     public slots :
         /* Zoom & position */
         void slot_Zoom_All();
@@ -163,6 +141,17 @@ class myCentralWidget : public QWidget
         void slot_POIimport(void); // import data from zyGrib
         void slot_delAllPOIs(void);
         void slot_delSelPOIs(void);
+
+        /* item state */
+        void slot_showALL(bool);
+        void slot_hideALL(bool);
+
+        void slot_shLab(bool);
+        void slot_shPoi(bool);
+        void slot_shRoute(bool);
+        void slot_shOpp(bool);
+        void slot_shPor(bool);
+
 
         /*Routes */
         void slot_addRouteFromMenu();
@@ -261,7 +250,7 @@ class myCentralWidget : public QWidget
         race_dialog * raceParam;
         DialogLoadGrib  * dialogLoadGrib;
         DialogUnits     dialogUnits;
-        DialogGraphicsParams dialogGraphicsParams;
+        DialogGraphicsParams  dialogGraphicsParams;
 
         /* Lists, POI*/
         QList<POI*> poi_list;
@@ -274,6 +263,13 @@ class myCentralWidget : public QWidget
         xml_boatData * xmlData;
         float A360(float hdg);
         bool aboutToQuit;
+
+        /* items state */
+        bool shLab_st;
+        bool shPoi_st;
+        bool shRoute_st;
+        bool shOpp_st;
+        bool shPor_st;
 
 };
 

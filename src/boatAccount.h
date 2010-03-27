@@ -24,16 +24,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <QPainter>
 #include <QGraphicsWidget>
 #include <QMenuBar>
+#include <QLabel>
 
-class boatAccount;
-
-#include "Projection.h"
-#include "Polar.h"
-#include "opponentBoat.h"
-#include "mycentralwidget.h"
-#include "MainWindow.h"
-#include "orthoSegment.h"
-#include "vlmLine.h"
+#include "class_list.h"
 
 #include "inetClient.h"
 

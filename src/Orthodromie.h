@@ -34,7 +34,7 @@ Copyright (C) 2008 - Jacques Zaninetti - http://zygrib.free.fr
 #include <cassert>
 #include <QPainter>
 
-#include "Projection.h"
+#include "class_list.h"
 
 class Orthodromie
 {

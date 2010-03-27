@@ -22,6 +22,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "paramVLM.h"
 #include "settings.h"
+#include "MainWindow.h"
+#include "mycentralwidget.h"
+#include "Util.h"
 
 paramVLM::paramVLM(MainWindow * main,myCentralWidget * parent) : QDialog(parent)
 {

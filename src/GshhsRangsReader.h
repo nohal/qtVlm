@@ -26,8 +26,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <QPainter>
 
-#include "Projection.h"
+#include "class_list.h"
+
 #include "Util.h"
+#include "Projection.h"
 
 //-------------------------------------------------------------------------
 class GshhsRangsPoint 

@@ -33,6 +33,11 @@ Copyright (C) 2008 - Jacques Zaninetti - http://zygrib.free.fr
 #include "Util.h"
 #include "MainWindow.h"
 #include "settings.h"
+#include "Orthodromie.h"
+#include "mycentralwidget.h"
+#include "route.h"
+#include "boatAccount.h"
+#include "Projection.h"
 
 /**************************/
 /* Init & Clean           */
@@ -60,7 +65,8 @@ POI::POI(QString name, int type, float lat, float lon,
     routeTimeStamp=-1;
     route=NULL;
     routeName="";
-    this->labelHidden=false;
+    this->labelHidden=parentWindow->get_shLab_st();
+    qWarning() << "Init POI label: " << labelHidden;
 
     WPlon=WPlat=-1;
     isWp=false;
@@ -98,7 +104,10 @@ POI::POI(QString name, int type, float lat, float lon,
     setName(name);
     slot_updateProjection();
     chkIsWP();
-    show();
+    if(!parentWindow->get_shPoi_st())
+        show();
+    else
+        hide();
 }
 
 POI::~POI()

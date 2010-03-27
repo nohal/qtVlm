@@ -20,10 +20,14 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <QtGui>
 #include <QBuffer>
+#include <QDialog>
 
 #include "boatAccount_dialog.h"
 
 #include "xmlBoatData.h"
+#include "boatAccount.h"
+#include "mycentralwidget.h"
+#include "MainWindow.h"
 
 #define ROLE_PASS      Qt::UserRole
 #define ROLE_ACTIVATED Qt::UserRole+1

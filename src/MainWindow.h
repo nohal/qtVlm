@@ -29,29 +29,11 @@ Copyright (C) 2008 - Jacques Zaninetti - http://zygrib.free.fr
 #include <QMouseEvent>
 #include <QTimer>
 #include <QProgressDialog>
+#include <QGraphicsSceneContextMenuEvent>
 
 #include <QLibrary>
 
-#include "GshhsReader.h"
-#include "MenuBar.h"
-#include "BoardVLM.h"
-#include "Grib.h"
-
-
-#include "DialogVLM_grib.h"
-#include "DialogProxy.h"
-
-#include "POI.h"
-#include "paramVLM.h"
-#include "POI_input.h"
-#include "xmlBoatData.h"
-
-#include "Pilototo.h"
-
-#include "Polar.h"
-#include "mycentralwidget.h"
-
-#include "settings.h"
+#include "class_list.h"
 
 class MainWindow: public QMainWindow
 {
@@ -176,7 +158,7 @@ class MainWindow: public QMainWindow
         QString      gribFileName;
         QString      gribFilePath;
 
-        DialogProxy     dialogProxy;        
+        DialogProxy   * dialogProxy;
 
         void updatePrevNext(void);
         int getGribStep(void);

@@ -25,11 +25,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <QDialog>
 
-class POI_input;
-
-#include "POI.h"
+#include "class_list.h"
 #include "ui_POI_input.h"
-#include "mycentralwidget.h"
 
 class POI_input : public QDialog, public Ui::POI_input_ui
 {

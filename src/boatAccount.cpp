@@ -26,6 +26,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "vlmLine.h"
 #include "parser.h"
 #include "settings.h"
+#include "mycentralwidget.h"
+#include "orthoSegment.h"
+#include "MainWindow.h"
+#include "Polar.h"
+#include "Projection.h"
 
 #define VLM_NO_REQUEST  -1
 #define VLM_REQUEST_IDU  0
@@ -65,7 +70,7 @@ boatAccount::boatAccount(QString login, QString pass, bool activated,Projection 
     gatesLoaded=false;
     width=height=0;
     nWP=0;
-    this->porteHidden=false;
+    this->porteHidden=parent->get_shPor_st();
 
     setZValue(Z_VALUE_BOAT);
     setFont(QFont("Helvetica",9));
@@ -85,7 +90,7 @@ boatAccount::boatAccount(QString login, QString pass, bool activated,Projection 
     trace_drawing = new vlmLine(proj,parent->getScene(),Z_VALUE_BOAT);
 
     this->proj = proj;
-    this->labelHidden=false;
+    this->labelHidden=parent->get_shLab_st();
 
     createPopUpMenu();
 

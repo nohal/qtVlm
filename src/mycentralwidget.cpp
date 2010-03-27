@@ -20,10 +20,31 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ***********************************************************************/
 
 #include <QDebug>
+#include <QGraphicsSceneMouseEvent>
 
 #include "mycentralwidget.h"
 #include "poi_delete.h"
 #include "settings.h"
+#include "opponentBoat.h"
+#include "Projection.h"
+#include "MainWindow.h"
+#include "GshhsReader.h"
+#include "Grib.h"
+#include "Terrain.h"
+#include "inetConnexion.h"
+#include "MenuBar.h"
+#include "mapcompass.h"
+#include "selectionWidget.h"
+#include "dialog_gribDate.h"
+#include "POI_editor.h"
+#include "POI.h"
+#include "boatAccount.h"
+#include "race_dialog.h"
+#include "boatAccount_dialog.h"
+#include "DialogLoadGrib.h"
+#include "xmlBoatData.h"
+#include "xmlPOIData.h"
+#include "Route_Editor.h"
 
 /*******************/
 /*    myScene      */
@@ -159,6 +180,13 @@ myCentralWidget::myCentralWidget(Projection * proj,MainWindow * parent,MenuBar *
     this->menuBar=menuBar;
     this->aboutToQuit=false;
 
+    /* item state */
+    shLab_st = false;
+    shPoi_st = false;
+    shRoute_st = false;
+    shOpp_st = false;
+    shPor_st = false;
+
     /* scene and views */
     scene =  new myScene(this);
     scene->setSceneRect(QRect(0,0,width(),height()));
@@ -189,15 +217,29 @@ myCentralWidget::myCentralWidget(Projection * proj,MainWindow * parent,MenuBar *
     connect(menuBar->acView_Barbules, SIGNAL(triggered(bool)), terre,  SLOT(setBarbules(bool)));
 
     connect(menuBar->acOptions_SH_sAll, SIGNAL(triggered(bool)), this,  SIGNAL(showALL(bool)));
+    connect(menuBar->acOptions_SH_sAll, SIGNAL(triggered(bool)), this,  SLOT(slot_showALL(bool)));
+
     connect(menuBar->acOptions_SH_hAll, SIGNAL(triggered(bool)), this,  SIGNAL(hideALL(bool)));
+    connect(menuBar->acOptions_SH_hAll, SIGNAL(triggered(bool)), this,  SLOT(slot_hideALL(bool)));
+
     connect(menuBar->acOptions_SH_Opp, SIGNAL(triggered(bool)), this,  SIGNAL(shOpp(bool)));
+    connect(menuBar->acOptions_SH_Opp, SIGNAL(triggered(bool)), this,  SLOT(slot_shOpp(bool)));
+
     connect(menuBar->acOptions_SH_Poi, SIGNAL(triggered(bool)), this,  SIGNAL(shPoi(bool)));
+    connect(menuBar->acOptions_SH_Poi, SIGNAL(triggered(bool)), this,  SLOT(slot_shPoi(bool)));
+
     connect(menuBar->acOptions_SH_Rou, SIGNAL(triggered(bool)), this,  SIGNAL(shRou(bool)));
+    connect(menuBar->acOptions_SH_Rou, SIGNAL(triggered(bool)), this,  SLOT(slot_shRoute(bool)));
+
     connect(menuBar->acOptions_SH_Por, SIGNAL(triggered(bool)), this,  SIGNAL(shPor(bool)));
+    connect(menuBar->acOptions_SH_Por, SIGNAL(triggered(bool)), this,  SLOT(slot_shPor(bool)));
+
     connect(menuBar->acOptions_SH_Lab, SIGNAL(triggered(bool)), this,  SIGNAL(shLab(bool)));
+    connect(menuBar->acOptions_SH_Lab, SIGNAL(triggered(bool)), this,  SLOT(slot_shLab(bool)));
 
     connect(menuBar->acOptions_SH_Com, SIGNAL(triggered(bool)), this,  SIGNAL(shCom(bool)));
     connect(menuBar->acOptions_SH_Pol, SIGNAL(triggered(bool)), this,  SIGNAL(shPol(bool)));
+
     connect(menuBar->acOptions_SH_Boa, SIGNAL(triggered(bool)), parent, SLOT(slot_centerBoat()));
 
 
@@ -263,6 +305,8 @@ myCentralWidget::myCentralWidget(Projection * proj,MainWindow * parent,MenuBar *
         delete poi_list.takeFirst();
 
     xmlPOI = new xml_POIData(proj,parent,this);
+
+
 }
 
 void myCentralWidget::loadData(void)
@@ -300,6 +344,14 @@ int myCentralWidget::getCompassMode(int m_x,int m_y)
         return COMPASS_UNDER;
 
     return COMPASS_NOTHING;
+}
+
+Grib * myCentralWidget::getGrib(void)
+{
+    if(grib && grib->isOk())
+        return grib;
+    else
+        return NULL;
 }
 
 /*******************/
@@ -601,7 +653,7 @@ void myCentralWidget::slot_addPOI(QString name,int type,float lat,float lon, flo
                   main, this,wph,timestamp,useTimeStamp,boat);
 
     slot_addPOI_list(poi);
-    poi->show();
+    //poi->show();
 }
 
 void myCentralWidget::slot_addPOI_list(POI * poi)
@@ -697,6 +749,50 @@ void myCentralWidget::slot_delSelPOIs(void)
         selection->clearSelection();
     }
 }
+
+void myCentralWidget::slot_showALL(bool)
+{
+    shLab_st=false;
+    shPoi_st=false;
+    shRoute_st=false;
+    shOpp_st=false;
+    shPor_st=false;
+}
+
+void myCentralWidget::slot_hideALL(bool)
+{
+    shLab_st=true;
+    shPoi_st=true;
+    shRoute_st=true;
+    shOpp_st=true;
+    shPor_st=true;
+}
+
+void myCentralWidget::slot_shLab(bool)
+{
+       shLab_st=!shLab_st;
+}
+
+void myCentralWidget::slot_shPoi(bool)
+{
+       shPoi_st=!shPoi_st;
+}
+
+void myCentralWidget::slot_shRoute(bool)
+{
+       shRoute_st=!shRoute_st;
+}
+
+void myCentralWidget::slot_shOpp(bool)
+{
+       shOpp_st=!shOpp_st;
+}
+
+void myCentralWidget::slot_shPor(bool)
+{
+    shPor_st=!shPor_st;
+}
+
 bool myCentralWidget::freeRouteName(QString name,ROUTE * thisroute)
 {
     QListIterator<ROUTE*> i (route_list);
@@ -708,11 +804,13 @@ bool myCentralWidget::freeRouteName(QString name,ROUTE * thisroute)
     }
     return true;
 }
+
 void myCentralWidget::slot_addRouteFromMenu()
 {
     ROUTE * route=addRoute();
     slot_editRoute(route,true);
 }
+
 ROUTE * myCentralWidget::addRoute()
 {
     ROUTE * route=new ROUTE("Route", proj, grib, scene, this);

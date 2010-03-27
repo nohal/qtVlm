@@ -27,14 +27,12 @@ Copyright (C) 2008 - Jacques Zaninetti - http://zygrib.free.fr
 
 #include <QMenuBar>
 #include <QComboBox>
+#include <QSpinBox>
+#include <QPushButton>
 
 #include <set>
 
-class MenuBar;
-class boatAccount;
-
-#include "DialogLoadGrib.h"
-#include "route.h"
+#include "class_list.h"
 
 class MenuBar : public QMenuBar
 {

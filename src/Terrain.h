@@ -31,14 +31,7 @@ Copyright (C) 2008 - Jacques Zaninetti - http://zygrib.free.fr
 #include <QToolBar>
 #include <QBitmap>
 
-class POI;
-class Terrain;
-
-#include "GshhsReader.h"
-#include "GisReader.h"
-
-#include "Projection.h"
-#include "mycentralwidget.h"
+#include "class_list.h"
 
 class Terrain : public QGraphicsWidget
 {

@@ -29,12 +29,7 @@ Copyright (C) 2008 - Jacques Zaninetti - http://zygrib.free.fr
 #include <QGraphicsWidget>
 #include <QMenu>
 
-class POI;
-
-#include "Projection.h"
-#include "boatAccount.h"
-#include "route.h"
-#include "mycentralwidget.h"
+#include "class_list.h"
 
 #define POI_TYPE_POI    0
 #define POI_TYPE_WP     1

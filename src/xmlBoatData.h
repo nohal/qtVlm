@@ -25,14 +25,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <QDomDocument>
 #include <QFile>
 #include <QTextStream>
-class xml_boatData;
+#include <QWidget>
 
-#include "boatAccount.h"
-#include "Projection.h"
-#include "opponentBoat.h"
-#include "MainWindow.h"
-#include "mycentralwidget.h"
-#include "inetClient.h"
+#include "class_list.h"
 
 class xml_boatData: public QWidget
 {Q_OBJECT

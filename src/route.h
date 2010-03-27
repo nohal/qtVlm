@@ -28,14 +28,9 @@ Copyright (C) 2008 - Jacques Zaninetti - http://zygrib.free.fr
 #include <QGraphicsWidget>
 #include <QGraphicsScene>
 #include <QMenu>
+#include <QDateTime>
 
-class ROUTE;
-
-#include "Projection.h"
-#include "boatAccount.h"
-#include "POI.h"
-#include "vlmLine.h"
-#include "Grib.h"
+#include "class_list.h"
 
 
 //===================================================================
@@ -86,8 +81,8 @@ class ROUTE : public QGraphicsWidget
         void slot_recalculate();
         void slot_edit();
         void slot_delete();
-        void slot_shShow(){show();if(line) line->show();}
-        void slot_shHidden(){hide();if(line) line->hide();}
+        void slot_shShow();
+        void slot_shHidden();
         void slot_shRou(){if(this->isVisible()) slot_shHidden();else slot_shShow();}
     signals:
         void editMe(ROUTE *);

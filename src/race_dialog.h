@@ -28,13 +28,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "ui_race_dialog.h"
 
-class race_dialog;
+#include "class_list.h"
 
-#include "opponentBoat.h"
-#include "boatAccount.h"
-#include "inetConnexion.h"
-#include "MainWindow.h"
-#include "mycentralwidget.h"
 #include "inetClient.h"
 
 struct boatParam {

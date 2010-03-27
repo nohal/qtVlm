@@ -24,6 +24,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "Grib.h"
 #include "Util.h"
+#include "GribRecord.h"
+#include "Projection.h"
 
 #include "c_lib/wind.h"
 

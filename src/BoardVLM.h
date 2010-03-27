@@ -28,16 +28,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <QPainter>
 #include <QMainWindow>
 
-class boatAccount;
-class MainWindow;
-class boardVLM;
+#include "class_list.h"
+
+#include "inetClient.h"
 
 #include "ui_BoardVLM.h"
 #include "ui_WP_dialog.h"
-#include "Util.h"
-#include "Util.h"
-#include "POI.h"
-#include "inetClient.h"
 
 class WP_dialog: public QDialog, public Ui::WP_dialog_ui
 { Q_OBJECT

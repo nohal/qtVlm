@@ -19,6 +19,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ***********************************************************************/
 
 #include "inetClient.h"
+#include "inetConnexion.h"
 
 inetClient::inetClient(inetConnexion * inet)
 {

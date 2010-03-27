@@ -23,12 +23,17 @@ Copyright (C) 2008 - Jacques Zaninetti - http://zygrib.free.fr
 ***********************************************************************/
 
 #include <QDebug>
+#include <QLabel>
+#include <QWidget>
 
 #include "opponentBoat.h"
 
 #include "boatAccount.h"
 #include "MainWindow.h"
 #include "settings.h"
+#include "mycentralwidget.h"
+#include "vlmLine.h"
+#include "Projection.h"
 
 /****************************************
 * Opponent methods
@@ -59,7 +64,7 @@ void opponent::init(QColor color,bool isQtBoat,QString idu,QString race, float l
     this->parentWindow=parentWindow;
 
     this->opp_trace=1;
-    this->labelHidden=false;
+    this->labelHidden=parentWindow->get_shLab_st();
     connect(parentWindow, SIGNAL(showALL(bool)),this,SLOT(slot_shShow()));
     connect(parentWindow, SIGNAL(hideALL(bool)),this,SLOT(slot_shHidden()));
     connect(parentWindow, SIGNAL(shOpp(bool)),this,SLOT(slot_shOpp()));
@@ -86,8 +91,10 @@ void opponent::init(QColor color,bool isQtBoat,QString idu,QString race, float l
 
     paramChanged();
 
-    if(!isQtBoat)
+    if(!isQtBoat&& !parentWindow->get_shOpp_st())
         show();
+    else
+        hide();
 
     connect(proj, SIGNAL(projectionUpdated()), this, SLOT(updateProjection()));
     connect(main,SIGNAL(paramVLMChanged()),this,SLOT(paramChanged()));
@@ -116,7 +123,7 @@ QRectF opponent::boundingRect() const
 
 void opponent::paint(QPainter * pnt, const QStyleOptionGraphicsItem * , QWidget * )
 {
-    if(isQtBoat)
+    if(isQtBoat || parentWindow->get_shOpp_st())
     {
         hide();
         return;
@@ -160,7 +167,8 @@ void opponent::updatePosition()
     boat_j-=(height/2);
 
     setPos(boat_i, boat_j);
-    drawTrace();
+    if(!parentWindow->get_shOpp_st())
+        drawTrace();
 }
 void opponent::drawTrace()
 {
@@ -241,7 +249,7 @@ void opponent::setIsQtBoat(bool status)
     if(status == isQtBoat)
         return;
     isQtBoat=status;
-    if(isQtBoat)
+    if(isQtBoat || parentWindow->get_shOpp_st())
         hide();
     else
         show();
@@ -257,6 +265,26 @@ void opponent::paramChanged()
     updateName();
     if(!isQtBoat)
         update();
+}
+
+void opponent::slot_shShow()
+{
+    this->labelHidden=false;
+    show();
+    if(trace_drawing)
+    {
+        drawTrace();
+        trace_drawing->show();
+    }
+}
+
+void opponent::slot_shHidden()
+{
+    hide();
+    if(trace_drawing)
+    {
+        trace_drawing->hide();
+    }
 }
 
 /****************************************
@@ -454,14 +482,16 @@ void opponentList::requestFinished (QByteArray res_byte)
             if(currentMode==OPP_MODE_REFRESH)
             {
                 getTrace(res,opponent_list[currentOpponent-1]->getTrace());
-                opponent_list[currentOpponent-1]->drawTrace();
+                if(!parent->get_shOpp_st())
+                    opponent_list[currentOpponent-1]->drawTrace();
             }
             else
             {
                 if(!opponent_list.isEmpty())
                 {
                     getTrace(res,opponent_list.last()->getTrace());
-                    opponent_list.last()->drawTrace();
+                    if(!parent->get_shOpp_st())
+                        opponent_list.last()->drawTrace();
                 }
             }
             getNxtOppData();

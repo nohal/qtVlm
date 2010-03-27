@@ -24,11 +24,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <QGraphicsWidget>
 
-class selectionWidget;
-
-#include "Projection.h"
-#include "orthoSegment.h"
-#include "mycentralwidget.h"
+#include "class_list.h"
 
 class selectionWidget : public QGraphicsWidget
 { Q_OBJECT

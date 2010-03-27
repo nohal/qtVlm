@@ -27,7 +27,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <QPainter>
 #include <QObject>
 
-#include "Projection.h"
+#include "class_list.h"
 
 #define VLMLINE_LINE_MODE   0
 #define VLMLINE_POINT_MODE  1

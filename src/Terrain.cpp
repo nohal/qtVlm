@@ -35,6 +35,11 @@ Copyright (C) 2008 - Jacques Zaninetti - http://zygrib.free.fr
 
 #include "Terrain.h"
 #include "settings.h"
+#include "GisReader.h"
+#include "Projection.h"
+#include "mycentralwidget.h"
+#include "GshhsReader.h"
+#include "Grib.h"
 
 //---------------------------------------------------------
 // Constructeur

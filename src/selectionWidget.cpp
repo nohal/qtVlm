@@ -20,9 +20,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ***********************************************************************/
 
 #include <QDebug>
+#include <QPainter>
 
 #include "selectionWidget.h"
 #include "settings.h"
+#include "Projection.h"
+#include "mycentralwidget.h"
+#include "orthoSegment.h"
 
 selectionWidget::selectionWidget(Projection * proj, QGraphicsScene * myScene) : QGraphicsWidget()
 {

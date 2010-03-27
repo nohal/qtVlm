@@ -144,7 +144,7 @@ void POI_Editor::done(int result)
         poi->slot_updateProjection();
 
         if (modeCreation) {
-            poi->show();
+            //poi->show();
             emit addPOI_list(poi);
         }
         if(cb_routeList->currentIndex()!=0)

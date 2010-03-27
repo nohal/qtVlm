@@ -30,6 +30,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "MainWindow.h"
 #include "mycentralwidget.h"
 #include "settings.h"
+#include "Polar.h"
+#include "POI.h"
 
 #define VLM_NO_REQUEST     -1
 #define VLM_REQUEST_LOGIN  0
@@ -292,6 +294,7 @@ void boardVLM::headingUpdated(double heading)
             speed->setText(QString().setNum(((float)qRound(newSpeed*100))/100));
             speed->setStyleSheet(QString::fromUtf8(SPEED_COLOR_UPDATE));
             label_6->setStyleSheet(QString::fromUtf8(SPEED_COLOR_UPDATE));
+            qWarning() << "Angle=" << angle << " w spd=" << currentBoat->getWindSpeed() << " => boat spd=" << newSpeed;
         }
         else
         {
@@ -320,6 +323,7 @@ void boardVLM::angleUpdated(double angle)
     calcAngleSign(val,oldAngle);
     oldAngle=((float)qRound(oldAngle*10))/10;
 
+
     if(angle==oldAngle)
     {
 /* setting back to VLM value */
@@ -346,6 +350,8 @@ void boardVLM::angleUpdated(double angle)
             speed->setText(QString().setNum(((float)qRound(newSpeed*100))/100));
             speed->setStyleSheet(QString::fromUtf8(SPEED_COLOR_UPDATE));
             label_6->setStyleSheet(QString::fromUtf8(SPEED_COLOR_UPDATE));
+
+            qWarning() << "Angle=" << angle << " w spd=" << currentBoat->getWindSpeed() << " => boat spd=" << newSpeed;
         }
         else
         {

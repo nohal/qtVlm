@@ -25,14 +25,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <QDomDocument>
 #include <QFile>
 #include <QTextStream>
+#include <QWidget>
 
-class xml_POIData;
-
-#include "POI.h"
-#include "Projection.h"
-#include "MainWindow.h"
-#include "mycentralwidget.h"
-#include "route.h"
+#include "class_list.h"
 
 class xml_POIData: public QWidget
 {

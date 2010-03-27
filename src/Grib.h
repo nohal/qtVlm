@@ -33,10 +33,9 @@ Lecture mise en mémoire d'un fichier GRIB
 #include <QPainter>
 #include <QApplication>
 
-#include "Projection.h"
-#include "GribRecord.h"
+#include "class_list.h"
+
 #include "zuFile.h"
-#include "Util.h"
 
 #define INTERPOLATION_TWSA             1
 #define INTERPOLATION_SELECTIVE_TWSA   2

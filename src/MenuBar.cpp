@@ -21,9 +21,15 @@ Original code zyGrib: meteorological GRIB file viewer
 Copyright (C) 2008 - Jacques Zaninetti - http://zygrib.free.fr
 ***********************************************************************/
 
+#include <QSpinBox>
+#include <QPushButton>
+#include <QLabel>
+
+
 #include "MenuBar.h"
 #include "boatAccount.h"
 #include "Util.h"
+#include "route.h"
 
 //===================================================================================
 MenuBar::MenuBar(QWidget *parent)

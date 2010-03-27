@@ -18,6 +18,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "GshhsReader.h"
 
+#include "GshhsRangsReader.h"
+#include "Projection.h"
+
 //==========================================================
 // GshhsPolygon  (compatible avec le format .rim de RANGS)
 //==========================================================
@@ -53,7 +56,7 @@ GshhsPolygon::GshhsPolygon(ZUFILE *file_)
 }*/
         }
         
-    	// force l'Antarctic à être un "rectangle" qui passe par le pôle
+    	// force l'Antarctic �  être un "rectangle" qui passe par le pôle
         if (antarctic) {
         	lsPoints.push_front(new GshhsPoint(360, y));
         	lsPoints.push_front(new GshhsPoint(360,-90));
@@ -217,7 +220,7 @@ std::string GshhsReader::getFileName_gshhs(int quality)
     ext = getNameExtension(quality);
     fname = fpath+"/"+"gshhs_" + ext + ".b";*/
     
-    // Lit le .rim de RANGS à la place du fichier initial
+    // Lit le .rim de RANGS �  la place du fichier initial
     char txtn[16];
     if (quality < 0)   quality = 0;
     if (quality > 4)   quality = 4;
@@ -478,7 +481,7 @@ void GshhsReader::GsshDrawLines(QPainter &pnt, std::list<GshhsPolygon*> &lst,
 		if (nbp > 1) {
 			if (pol->isAntarctic()) {
 				// Ne pas tracer les bords artificiels qui rejoignent le pôle
-				// ajoutés lors de la création des polygones (2 au début, 1 à la fin).
+				// ajoutés lors de la création des polygones (2 au début, 1 �  la fin).
 				pts ++;
 				nbp -= 2;
 				pnt.drawPolyline(pts, nbp);
@@ -496,7 +499,7 @@ void GshhsReader::GsshDrawLines(QPainter &pnt, std::list<GshhsPolygon*> &lst,
 		if (nbp > 1) {
 			if (pol->isAntarctic()) {
 				// Ne pas tracer les bords artificiels qui rejoignent le pôle
-				// ajoutés lors de la création des polygones (2 au début, 1 à la fin).
+				// ajoutés lors de la création des polygones (2 au début, 1 �  la fin).
 				pts ++;
 				nbp -= 2;
 				pnt.drawPolyline(pts, nbp);

@@ -21,8 +21,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #ifndef PILOTOTO_PARAM_H
 #define PILOTOTO_PARAM_H
 
-#include "Pilototo.h"
-#include "POI.h"
+#include "class_list.h"
 
 #include "ui_Pilototo_param.h"
 

@@ -24,6 +24,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "Util.h"
 #include "Pilototo.h"
 #include "boatAccount.h"
+#include "MainWindow.h"
+#include "mycentralwidget.h"
+#include "Pilototo_param.h"
 
 #define VLM_NO_REQUEST     -1
 #define VLM_REQUEST_LOGIN  0

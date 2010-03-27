@@ -27,6 +27,8 @@ Elément de base d'un fichier GRIB
 #include <iostream>
 #include <cmath>
 
+#include "class_list.h"
+
 #include "zuFile.h"
 
 #define DEBUG_INFO    false

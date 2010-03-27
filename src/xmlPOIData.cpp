@@ -23,6 +23,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <QDebug>
 
 #include "xmlPOIData.h"
+#include "mycentralwidget.h"
+#include "MainWindow.h"
+#include "Projection.h"
+#include "route.h"
+#include "POI.h"
+#include "boatAccount.h"
 
 #define VERSION_NUMBER    1
 #define DOM_FILE_TYPE     "qtVLM_config"

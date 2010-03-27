@@ -27,15 +27,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "ui_boatAccount_dialog.h"
 
-class boatAccount_dialog;
-
-#include "boatAccount.h"
-#include "Projection.h"
-#include "xmlBoatData.h"
-#include "opponentBoat.h"
-#include "MainWindow.h"
-#include "mycentralwidget.h"
-#include "inetClient.h"
+#include "class_list.h"
 
 class boatAccount_dialog : public QDialog, public Ui::boatAccount_dialog
 {

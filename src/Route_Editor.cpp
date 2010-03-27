@@ -24,14 +24,15 @@ Copyright (C) 2008 - Jacques Zaninetti - http://zygrib.free.fr
 
 #include <cmath>
 #include <QMessageBox>
-
-class ROUTE_Editor;
+#include <QDebug>
 
 #include "Route_Editor.h"
 #include "Util.h"
 #include "MainWindow.h"
-#include <QDebug>
 #include "DialogGraphicsParams.h"
+#include "mycentralwidget.h"
+#include "route.h"
+#include "boatAccount.h"
 
 
 //-------------------------------------------------------

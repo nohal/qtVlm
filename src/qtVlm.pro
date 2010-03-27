@@ -75,7 +75,8 @@ HEADERS += BoardVLM.h \
     inetClient.h \
     route.h \
     Route_Editor.h \
-    settings.h
+    settings.h \
+    class_list.h
 FORMS += boatAccount_dialog.ui \
     BoardVLM.ui \
     paramVLM.ui \
@@ -146,4 +147,3 @@ unix:DEFINES += _TTY_POSIX_
 win32:DEFINES += _TTY_WIN_ \
     QWT_DLL \
     QT_DLL
-#DEFINES += __QTVLM_WITH_TEST

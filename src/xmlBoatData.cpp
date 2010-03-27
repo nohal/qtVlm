@@ -24,6 +24,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "xmlBoatData.h"
 
+#include "opponentBoat.h"
+#include "mycentralwidget.h"
+#include "MainWindow.h"
+#include "Projection.h"
+#include "inetConnexion.h"
+#include "boatAccount.h"
+
 #define VERSION_NUMBER    1
 #define DOM_FILE_TYPE     "qtVLM_config"
 #define ROOT_NAME         "qtVLM_boat"

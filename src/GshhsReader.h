@@ -26,10 +26,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <QImage>
 #include <QPainter>
 
+#include "class_list.h"
 
 #include "zuFile.h"
-#include "Projection.h"
-#include "GshhsRangsReader.h"
+
 
 // GSHHS file format:
 //

@@ -23,6 +23,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "race_dialog.h"
 #include "Util.h"
 
+#include "opponentBoat.h"
+#include "mycentralwidget.h"
+#include "boatAccount.h"
+#include "MainWindow.h"
+
 #define RACE_NO_REQUEST 0
 #define RACE_LIST_BOAT  1
 

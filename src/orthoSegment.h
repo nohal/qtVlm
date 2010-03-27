@@ -26,7 +26,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <QGraphicsWidget>
 #include <QPainter>
 
-#include "Projection.h"
+#include "class_list.h"
 
 class orthoSegment : public QGraphicsWidget
 {

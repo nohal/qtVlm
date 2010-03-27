@@ -25,7 +25,7 @@ Copyright (C) 2008 - Jacques Zaninetti - http://zygrib.free.fr
 #include <stdio.h>
 
 #include "Orthodromie.h"
-
+#include "Projection.h"
     
 //------------------------------------------------------------------------------
 Orthodromie::Orthodromie(double x0,double y0, double x1,double y1)

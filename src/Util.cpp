@@ -27,9 +27,12 @@ Copyright (C) 2008 - Jacques Zaninetti - http://zygrib.free.fr
 #include <QNetworkRequest>
 #include <QUrl>
 #include <QClipboard>
+
 #include "Util.h"
+
 #include "POI.h"
 #include "settings.h"
+#include "Projection.h"
 
 
 //======================================================================

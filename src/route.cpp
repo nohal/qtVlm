@@ -21,8 +21,23 @@ Original code: zyGrib: meteorological GRIB file viewer
 Copyright (C) 2008 - Jacques Zaninetti - http://zygrib.free.fr
 
 ***********************************************************************/
+
 #include <cassert>
+#include <QDateTime>
+#include <QMessageBox>
+
 #include "route.h"
+
+#include "Orthodromie.h"
+#include "Projection.h"
+#include "Grib.h"
+#include "mycentralwidget.h"
+#include "vlmLine.h"
+#include "POI.h"
+#include "Route_Editor.h"
+#include "boatAccount.h"
+#include "Polar.h"
+
 ROUTE::ROUTE(QString name, Projection *proj, Grib *grib, QGraphicsScene * myScene, myCentralWidget *parentWindow)
             : QGraphicsWidget()
 
@@ -44,6 +59,10 @@ ROUTE::ROUTE(QString name, Projection *proj, Grib *grib, QGraphicsScene * myScen
     pen.setColor(color);
     pen.setBrush(color);
     pen.setWidthF(width);
+    if(!parentWindow->get_shRoute_st())
+        slot_shShow();
+    else
+        slot_shHidden();
 }
 ROUTE::~ROUTE()
 {
@@ -296,4 +315,18 @@ void ROUTE::slot_delete()
 void ROUTE::slot_edit()
 {
     emit editMe(this);
+}
+
+void ROUTE::slot_shShow()
+{
+    show();
+    if(line)
+        line->show();
+}
+
+void ROUTE::slot_shHidden()
+{
+    hide();
+    if(line)
+        line->hide();
 }

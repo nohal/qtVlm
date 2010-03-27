@@ -38,7 +38,7 @@ Copyright (C) 2008 - Jacques Zaninetti - http://zygrib.free.fr
 
 //#define HAS_TEMP
 
-#include "LoadGribFile.h"
+#include "class_list.h"
 
 class DialogLoadGrib : public QDialog
 { Q_OBJECT

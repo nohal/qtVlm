@@ -27,19 +27,10 @@ Copyright (C) 2008 - Jacques Zaninetti - http://zygrib.free.fr
 
 #include <QPainter>
 #include <QGraphicsWidget>
+#include <QWidget>
 
-#include "Projection.h"
-#include "inetConnexion.h"
-#include "vlmLine.h"
+#include "class_list.h"
 
-class MainWindow;
-class myCentralWidget;
-struct raceData;
-class opponentList;
-class opponent;
-
-#include "MainWindow.h"
-#include "mycentralwidget.h"
 #include "inetClient.h"
 
 struct raceData {
@@ -80,8 +71,8 @@ class opponent : public QGraphicsWidget
     public slots:
         void updateProjection();
         void paramChanged();
-        void slot_shShow(){this->labelHidden=false;show();if(trace_drawing)trace_drawing->show();}
-        void slot_shHidden(){hide();if(trace_drawing)trace_drawing->hide();}
+        void slot_shShow();
+        void slot_shHidden();
         void slot_shOpp(){if(this->isVisible())slot_shHidden();else slot_shShow();}
         void slot_shLab(){this->labelHidden=!this->labelHidden;update();}
 

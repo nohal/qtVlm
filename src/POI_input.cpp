@@ -22,6 +22,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "POI_input.h"
 #include "Util.h"
+#include "mycentralwidget.h"
 
 POI_input::POI_input(myCentralWidget * parent) : QDialog(parent)
 {

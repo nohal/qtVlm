@@ -25,12 +25,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <QDialog>
 
+#include "class_list.h"
+
 #include "ui_paramVLM.h"
-
-class paramVLM;
-
-#include "MainWindow.h"
-#include "mycentralwidget.h"
 
 class paramVLM : public QDialog, public Ui::VLM_param_ui
 {

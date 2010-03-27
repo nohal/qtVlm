@@ -78,7 +78,7 @@ Copyright (C) 2008 - Jacques Zaninetti - http://zygrib.free.fr
     }                              \
 }
 
-#include "Projection.h"
+#include "class_list.h"
 
 #define NB_URL 2
 extern QString url_name[NB_URL];

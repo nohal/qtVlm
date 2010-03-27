@@ -47,6 +47,20 @@ Copyright (C) 2008 - Jacques Zaninetti - http://zygrib.free.fr
 #include "poi_delete.h"
 #include "mycentralwidget.h"
 #include "settings.h"
+#include "opponentBoat.h"
+#include "MenuBar.h"
+#include "GshhsReader.h"
+#include "DialogProxy.h"
+#include "DialogVLM_grib.h"
+#include "Polar.h"
+#include "POI_input.h"
+#include "paramVLM.h"
+#include "Pilototo.h"
+#include "boatAccount.h"
+#include "Grib.h"
+#include "GribRecord.h"
+#include "POI.h"
+#include "Projection.h"
 
 //-----------------------------------------------------------
 void MainWindow::InitActionsStatus()
@@ -140,7 +154,7 @@ void MainWindow::connectSignals()
 
     //-------------------------------------------------------
 
-    connect(mb->acOptions_Proxy, SIGNAL(triggered()), &dialogProxy, SLOT(exec()));
+    connect(mb->acOptions_Proxy, SIGNAL(triggered()), dialogProxy, SLOT(exec()));
 
     connect(mb->acOptions_GroupLanguage, SIGNAL(triggered(QAction *)),
             this, SLOT(slotOptions_Language()));
@@ -171,7 +185,7 @@ void MainWindow::connectSignals()
 
     connect(mb->acPOIimport, SIGNAL(triggered()), my_centralWidget, SLOT(slot_POIimport()));
 
-    connect(&dialogProxy, SIGNAL(proxyUpdated()), this, SLOT(slotInetUpdated()));
+    connect(dialogProxy, SIGNAL(proxyUpdated()), this, SLOT(slotInetUpdated()));
 
     connect(mb->acPOISave, SIGNAL(triggered()), my_centralWidget, SLOT(slot_POISave()));
 
@@ -238,6 +252,8 @@ MainWindow::MainWindow(int w, int h, QWidget *parent)
     proj->setScale(scale);
 
     connect(proj,SIGNAL(newZoom(float)),this,SLOT(slotNewZoom(float)));
+
+    dialogProxy = new DialogProxy();
 
     //--------------------------------------------------
 

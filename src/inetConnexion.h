@@ -27,10 +27,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <QDialog>
 #include <QDebug>
 
-class inetConnexion;
-
-#include "Util.h"
-#include "inetClient.h"
+#include "class_list.h"
 
 #include "ui_inetConn_progessDialog.h"
 

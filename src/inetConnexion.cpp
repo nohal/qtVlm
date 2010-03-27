@@ -20,6 +20,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "inetConnexion.h"
 
+#include "inetClient.h"
+#include "Util.h"
+
 #define REQUEST_GET  0
 #define REQUEST_POST 1
 
