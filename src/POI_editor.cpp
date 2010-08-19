@@ -24,12 +24,14 @@ Copyright (C) 2008 - Jacques Zaninetti - http://zygrib.free.fr
 
 #include <cmath>
 #include <QMessageBox>
+#include <QDebug>
 
 class POI_Editor;
 
 #include "POI_editor.h"
 #include "Util.h"
 #include "MainWindow.h"
+#include "boatAccount.h"
 
 #define POI_EDT_LAT 1
 #define POI_EDT_LON 2
@@ -65,6 +67,7 @@ void POI_Editor::editPOI(POI * poi_)
     initPOI();
     setWindowTitle(tr("Marque : ")+poi->getName());
     btDelete->setEnabled(true);
+
     exec();
 }
 
@@ -119,6 +122,15 @@ void POI_Editor::initPOI(void)
     chk_tstamp->setCheckState(poi->getUseTimeStamp()?Qt::Checked:Qt::Unchecked);
     editTStamp->setEnabled(poi->getUseTimeStamp());
     editName->setEnabled(!poi->getUseTimeStamp());
+
+    boatAccount * ptr=parent->getSelectedBoat();
+    if(ptr)
+    {
+        btSaveWP->setText(tr("Marque->WP\n(")+ptr->getLogin()+")");
+        btSaveWP->setEnabled(true);
+    }
+    else
+        btSaveWP->setEnabled(false);
 }
 
 //---------------------------------------
@@ -126,6 +138,7 @@ void POI_Editor::done(int result)
 {
     if(result == QDialog::Accepted)
     {
+        poi->setPartOfTwa(false);
         QDateTime tm = editTStamp->dateTime();
 
         tm.setTimeSpec(Qt::UTC);
@@ -323,8 +336,13 @@ float POI_Editor::getValue(int type)
     float res;
     float deg = (type==POI_EDT_LAT?lat_deg->value():lon_deg->value());
     float min = (type==POI_EDT_LAT?lat_min->value():lon_min->value())/60.0;
+    float sig;
+    if(type==POI_EDT_LAT)
+        sig=lat_sig->currentIndex()==0?1.0:-1.0;
+    else
+        sig=lon_sig->currentIndex()==0?1.0:-1.0;
     /* if min < 0 or deg < 0 the whole value is < 0 */
-    if (deg < 0)
+    /*if (deg < 0)
     {
         if(min<0)
             res = deg + min;
@@ -337,29 +355,36 @@ float POI_Editor::getValue(int type)
             res=-(deg-min);
         else
             res = deg + min;
-    }
+    }*/
+    res=sig*(deg+min);
+
+    //qWarning() << (type==POI_EDT_LAT?"Lat ":"Lon ") << " set to " << res;
 
     return res;
 }
 
 void POI_Editor::setValue(int type,float val)
 {
+    int sig=val<0?1:0;
+    val=fabs(val);
     int   deg = (int) trunc(val);
     float min = 60.0*fabs(val-trunc(val));
 
-    if(deg==0 && val < 0)
-        min=-min;
+    /*if(deg==0 && val < 0)
+        min=-min;*/
 
     if(type==POI_EDT_LAT)
     {
         lat_deg->setValue(deg);
         lat_min->setValue(min);
         lat_val->setValue(val);
+        lat_sig->setCurrentIndex(sig);
     }
     else
     {
         lon_deg->setValue(deg);
         lon_min->setValue(min);
         lon_val->setValue(val);
+        lon_sig->setCurrentIndex(sig);
     }
 }

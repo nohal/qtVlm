@@ -32,8 +32,9 @@ Copyright (C) 2008 - Jacques Zaninetti - http://zygrib.free.fr
 #include "MainWindow.h"
 #include "settings.h"
 #include "mycentralwidget.h"
-#include "vlmLine.h"
 #include "Projection.h"
+#include "vlmLine.h"
+#include "Util.h"
 
 /****************************************
 * Opponent methods
@@ -304,12 +305,13 @@ opponentList::opponentList(Projection * proj,MainWindow * main,myCentralWidget *
         QWidget(parent),
         inetClient(inet)
 {
+    inetClient::setName("OpponentList");
     this->parent=parent;
     this->main=main;
     this->proj=proj;
-
+    currentRace="";
     colorTable[0] = QColor(170,0,0);
-    colorTable[1] = QColor(255,0,0);
+    colorTable[1] = QColor(100,100,100);
     colorTable[2] = QColor(170,0,128);
     colorTable[3] = QColor(0,85,127);
     colorTable[4] = QColor(255,85,0);
@@ -335,9 +337,10 @@ QString opponentList::getRaceId()
 
 void opponentList::setBoatList(QString list_txt,QString race,bool force)
 {
+    //qWarning() << "SetBoatList";
     if(!hasInet() || hasRequest())
     {
-        qWarning("getOpponents bad state in inet - setBoatList");
+        qWarning() << "getOpponents bad state in inet - setBoatList: " << hasInet() << " " << hasRequest();
         return;
     }
 
@@ -355,7 +358,10 @@ void opponentList::setBoatList(QString list_txt,QString race,bool force)
     }
 
     currentOpponent = 0;
-    currentList = list_txt.split(";");
+    if(!list_txt.isEmpty())
+        currentList = list_txt.split(";");
+    else
+        currentList.clear();
     currentRace = race;
     currentMode = OPP_MODE_NEWLIST;
 
@@ -370,10 +376,11 @@ void opponentList::clear(void)
 }
 
 void opponentList::refreshData(void)
-{
+{    
+    //qWarning() << "refreshData";
     if(!hasInet() || hasRequest())
     {
-        qWarning("getOpponents bad state in inet - refreshData");
+        qWarning() << "getOpponents bad state in inet - refreshData: " << hasInet() << " " << hasRequest();
         return;
     }
 
@@ -390,7 +397,6 @@ void opponentList::getNxtOppData()
 {
     int listSize = (currentMode==OPP_MODE_REFRESH?opponent_list.size():currentList.size());
     QString idu;
-
     if(currentOpponent>=listSize)
     {
         parent->update();
@@ -451,10 +457,11 @@ void opponentList::requestFinished (QByteArray res_byte)
                     lon=lsval2[1].toFloat();
                     login=lsval[0].mid(4,lsval[0].size()-4-4);
                     name=lsval[1].mid(5,lsval[1].size()-5-1);
-                    if(lat!=0 && lon !=0)
+                    if(!(lat==0 && lon ==0))
                     {
                         idu = (currentMode==OPP_MODE_REFRESH?
                             opponent_list[currentOpponent-1]->getIduser():currentList[currentOpponent-1]);
+
                         /*qWarning() << login << "-" << name
                             << " at (" << lat << "," << lon << ") - idu"
                             << idu ;*/
@@ -463,6 +470,7 @@ void opponentList::requestFinished (QByteArray res_byte)
                         else
                             opponent_list.append(new opponent(colorTable[currentOpponent-1],idu,currentRace,
                                                         lat,lon,login,name,proj,main,parent));
+
                     QTextStream(&page)
                         << "/gmap/index.php?"
                         << "type=ajax&riq=trj"
@@ -546,9 +554,7 @@ void opponentList::getTrace(QString buff, QList<vlmPoint> * trace)
             lsval2=lsval[i].split(",");
             if (lsval2.size() == 2)
             {
-                vlmPoint pt;
-                pt.lat=lsval2[0].toFloat();
-                pt.lon=lsval2[1].toFloat();
+                vlmPoint pt(lsval2[1].toFloat(),lsval2[0].toFloat());
                 trace->append(pt);
             }
         }

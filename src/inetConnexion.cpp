@@ -18,10 +18,14 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ***********************************************************************/
 
+#include <QNetworkCookieJar>
+#include <QMessageBox>
+
 #include "inetConnexion.h"
 
 #include "inetClient.h"
 #include "Util.h"
+#include "dataDef.h"
 
 #define REQUEST_GET  0
 #define REQUEST_POST 1
@@ -32,6 +36,8 @@ inetConnexion::inetConnexion(QWidget * main)
 
     connect(main,SIGNAL(updateInet()),this,SLOT(slot_updateInet()));
     connect(inetManager,SIGNAL(finished(QNetworkReply*)),this,SLOT(slot_requestFinished(QNetworkReply*)));
+    connect(inetManager,SIGNAL(authenticationRequired(QNetworkReply*,QAuthenticator*)),
+            this,SLOT(slot_authRequired(QNetworkReply*,QAuthenticator*)));
 
     slot_updateInet();
     progressDialog=new inetConn_progressDialog();
@@ -110,18 +116,31 @@ void inetConnexion::doRequest(int type,inetClient* client,QString requestUrl,QSt
     Util::paramProxy(inetManager,host);
 
     page=host+requestUrl;
-
-    //qWarning() << "Doing inet request: " << page;
-
+#if 0
+    qWarning() << "Doing inet request: " << page;
+#endif
     QNetworkRequest request;
     request.setUrl(QUrl(page));
     Util::addAgent(request);
+
+    if(client->getNeedAuth())
+    {         
+        QString concatenated = client->getAuthLogin() + ":" + client->getAuthPass();
+        //qWarning() << "Adding auth data: " <<concatenated ;
+        QByteArray data = concatenated.toLocal8Bit().toBase64();
+        QString headerData = "Basic " + data;
+        request.setRawHeader("Authorization", headerData.toLocal8Bit());
+        //qWarning() << "Adding auth data: " <<concatenated << " - " << headerData;
+        //delete inetManager->cookieJar();
+        inetManager->setCookieJar(new QNetworkCookieJar());
+    }
 
     if(type==REQUEST_POST)
         currentReply=inetManager->post(request,data.toAscii());
     else
         currentReply=inetManager->get(request);
 
+    replyList.push_back(client);
     client->setReply(currentReply);
 
     if(hasProgress)
@@ -130,7 +149,7 @@ void inetConnexion::doRequest(int type,inetClient* client,QString requestUrl,QSt
         connect(currentReply,SIGNAL(downloadProgress(qint64,qint64)),this,SLOT(slot_progess(qint64,qint64)));
     }
 
-    replyList.push_back(client);
+    //replyList.push_back(client);
 }
 
 void inetConnexion::slot_requestFinished(QNetworkReply * currentReply)
@@ -164,24 +183,58 @@ void inetConnexion::slot_requestFinished(QNetworkReply * currentReply)
 
         if (currentReply->error() != QNetworkReply::NoError) {
             qWarning() << "Error doing inetGet (2):" << currentReply->error() << " - " << currentReply->errorString();
+            if(currentReply->error()==3)
+                QMessageBox::warning(0,QObject::tr("Erreur internet"),
+                              QObject::tr("Serveur VLM inaccessible"));
+            currentClient->inetError();
             currentClient->resetReply();
             currentClient->clearCurrentRequest();
         }
         else
         {
             QByteArray res=currentReply->readAll();
+            //qWarning() << "res=" <<  res;
             currentClient->resetReply();
             currentClient->requestFinished(res);            
         }
     }
     else
     {
-        qWarning() << "Client of request not found => Not processing reply";
+        qWarning() << "Client of request not found => Not processing reply (url=" << currentReply->url() << ")";
         currentReply->close();
         currentReply->deleteLater();
     }
 }
 
+void inetConnexion::slot_authRequired(QNetworkReply* currentReply,QAuthenticator* auth)
+{
+    /* Recherche du client correspondant � currentReply */
+    bool found=false;
+    inetClient * currentClient;
+    QListIterator<inetClient*> i (replyList);
+
+    while(!found && i.hasNext())
+    {
+        inetClient * ptr = i.next();
+        if(ptr->getReply() == currentReply)
+        {
+            found=true;
+            currentClient = ptr;
+            //replyList.removeAll(ptr);
+            break;
+        }
+    }
+
+    if(found)
+    {
+        if(currentClient->getNeedAuth())
+        {
+            qWarning() << "Auth failed for " << currentClient->getAuthLogin() << " " << currentClient->getAuthPass() <<
+                    " reqType=" << currentClient->getCurrentRequest();
+            currentClient->authFailed();
+        }
+    }
+}
 
 void inetConnexion::slot_progess(qint64 bytesReceived, qint64 bytesTotal )
 {

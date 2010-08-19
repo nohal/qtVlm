@@ -41,18 +41,37 @@ public:
     Terrain(myCentralWidget *parent, Projection *proj);
 
     void  setGSHHS_map(GshhsReader *map);
+    void setColorMapMode(int mode);
 
     void updateSize(int width, int height);
 
     QRectF boundingRect() const;
     QPainterPath shape() const;
 
+    enum DrawGribPlainDataMode {
+             drawNone,
+             drawWind,
+             drawCloud,
+             drawRain,
+             drawCAPEsfc,
+             drawSnowDepth,
+             drawSnowCateg,
+             drawFrzRainCateg,
+             drawHumid,
+             drawTemp,
+             drawTempPot,
+             drawTempMin,
+             drawTempMax,
+             drawDewpoint,
+             drawDeltaDewpoint
+    };
+
 public slots :
     // Map
     void setDrawRivers(bool);
     void setDrawCountriesBorders(bool);
     void setCountriesNames(bool);
-    void slot_setMapQuality(int q);
+    void slot_setMapQuality(int q);    
 
     void updateGraphicsParameters();
 
@@ -62,6 +81,15 @@ public slots :
     void setDrawWindArrows    (bool);
     void setBarbules          (bool);
     void setCitiesNamesLevel  (int level);
+    void setDrawIsobars       (bool);
+    void setDrawIsobarsLabels (bool);
+    void setIsobarsStep		  (double step);
+    void setPressureMinMax    (bool);
+    void slotTemperatureLabels(bool b);
+
+    void setDrawIsotherms0       (bool);
+    void setDrawIsotherms0Labels (bool);
+    void setIsotherms0Step	     (double step);
 
     void redrawAll(void);
     void redrawGrib(void);
@@ -99,33 +127,26 @@ private:
     bool        mustRedraw;
     QCursor     enterCursor;
 
-
-
-
-    //-----------------------------------------------
-    // ox01
-    //void  paintEvent(QPaintEvent *event);
-    //void paint(QPainter * painter, const QStyleOptionGraphicsItem * option, QWidget * widget = 0);
-
-
-    //void  mousePressEvent (QMouseEvent * e);
-    //void  mouseReleaseEvent (QMouseEvent * e);
-    //void  mouseDoubleClickEvent(QMouseEvent * event);
-    //void  mouseMoveEvent (QGraphicsSceneMouseEvent * event);
-    //void  enterEvent (QEvent * e);
-    //void  leaveEvent (QEvent * e);
-
-
-
-    //-----------------------------------------------
-
     QColor  seaColor, landColor, backgroundColor, tranparent;
     QColor  selectColor;
     QColor  windArrowsColor;
 
+    double isobarsStep;
+    bool   showIsobars;
+    bool   showIsobarsLabels;
+    bool   showPressureMinMax;
+
+    double isotherms0Step;
+    bool   showIsotherms0;
+    bool   showIsotherms0Labels;
+
+    bool  showTemperatureLabels;
+
     QPen    seaBordersPen;
     QPen    boundariesPen;
     QPen    riversPen;
+    QPen    isobarsPen;
+    QPen    isotherms0Pen;
 
     int     quality;
 
@@ -145,8 +166,11 @@ private:
     int   showCitiesNamesLevel;
     bool  showCountriesNames;
 
+    int	  colorMapMode;
+
     //-----------------------------------------------
     void draw_GSHHSandGRIB(void);
+    void drawGrib(QPainter &pnt, Grib *gribPlot);
     void indicateWaitingMap(void);
     void updateRoutine(void);
     bool isWaiting;

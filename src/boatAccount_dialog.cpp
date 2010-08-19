@@ -60,6 +60,8 @@ boatAccount_dialog::boatAccount_dialog(Projection * proj, MainWindow * main, myC
     connect(this,SIGNAL(writeBoat()),parent,SLOT(slot_writeBoatData()));
     connect(this,SIGNAL(addBoat(boatAccount*)),parent,SLOT(slot_addBoat_list(boatAccount*)));
     connect(this,SIGNAL(delBoat(boatAccount*)),parent,SLOT(slot_delBoat_list(boatAccount*)));
+    connect(this,SIGNAL(boatPointerHasChanged(boatAccount*)),parent,SIGNAL(boatPointerHasChanged(boatAccount*)));
+
 
 }
 
@@ -96,7 +98,7 @@ void boatAccount_dialog::initList(QList<boatAccount*> & acc_list)
         item->setData(ROLE_POLAR,acc->getPolarName());
     }
 
-    blank = new QListWidgetItem("<Nouveau>",list_boat);
+    blank = new QListWidgetItem(tr("<Nouveau>"),list_boat);
     polarList->setEnabled(false);
     list_boat->setCurrentItem(blank);
     slot_selectItem(blank);
@@ -106,6 +108,8 @@ void boatAccount_dialog::initList(QList<boatAccount*> & acc_list)
     QStringList extStr;
     extStr.append("*.pol");
     extStr.append("*.POL");
+    extStr.append("*.csv");
+    extStr.append("*.CSV");
     QFileInfoList fileList=QDir("polar").entryInfoList(extStr,QDir::Files);
 
     /* default value */
@@ -178,6 +182,7 @@ void boatAccount_dialog::done(int result)
                 acc->setAlias(((Qt::CheckState)item->data(ROLE_CHK_ALIAS).toInt())==Qt::Checked,
                                 item->data(ROLE_ALIAS).toString());
                 acc->unSelectBoat(false); /*unselect without update as following getData will do it*/
+                emit boatPointerHasChanged(acc);
             }
 
             if(list_boat->count()-1<acc_list->count())

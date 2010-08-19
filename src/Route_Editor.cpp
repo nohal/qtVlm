@@ -57,6 +57,7 @@ ROUTE_Editor::ROUTE_Editor(ROUTE *route,myCentralWidget *parent)
     editDateBox->setDateTime(route->getStartTime());
 
     editLive->setChecked(route->isLive());
+    hidePois->setChecked(route->getHidePois());
     switch(route->getStartTimeOption())
     {
     case 1:
@@ -84,6 +85,7 @@ ROUTE_Editor::ROUTE_Editor(ROUTE *route,myCentralWidget *parent)
             n++;
         }
     }
+    //if(route->isImported()) this->editFrozen->setEnabled(false);
 }
 ROUTE_Editor::~ROUTE_Editor()
 {
@@ -126,6 +128,8 @@ void ROUTE_Editor::done(int result)
         }
         route->setFrozen(editFrozen->isChecked());
         route->setLive(editLive->isChecked());
+        if(hidePois->isChecked()!=route->getHidePois())
+            route->setHidePois(hidePois->isChecked());
     }
     if(result == QDialog::Rejected)
     {

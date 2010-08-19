@@ -1,6 +1,8 @@
 /**********************************************************************
-zyGrib: meteorological GRIB file viewer
-Copyright (C) 2008 - Jacques Zaninetti - http://www.zygrib.org
+qtVlm: Virtual Loup de mer GUI
+Copyright (C) 2008 - Christophe Thomas aka Oxygen77
+
+http://qtvlm.sf.net
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -14,6 +16,10 @@ GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+Original code: zyGrib: meteorological GRIB file viewer
+Copyright (C) 2008 - Jacques Zaninetti - http://zygrib.free.fr
+
 ***********************************************************************/
 
 #include <stdlib.h>
@@ -54,6 +60,7 @@ GribRecord::GribRecord(ZUFILE* file, int id_)
     BMSbits = NULL;
     eof     = false;
     isFull = false;
+    knownData = true;
     
     ok = readGribSection0_IS(file);
     
@@ -79,9 +86,102 @@ GribRecord::GribRecord(ZUFILE* file, int id_)
     if (ok) {
         zu_seek(file, seekStart+totalSize, SEEK_SET);
     }
-    setDataType(dataType);
+
+    if (ok) {
+        translateDataType();
+        setDataType(dataType);
+    }
 }
 
+void  GribRecord::translateDataType()
+{
+        this->knownData = true;
+
+        //------------------------
+        // NOAA GFS
+        //------------------------
+        if (idCenter==7 && (idModel==96 || idModel==81) && (idGrid==4 || idGrid==255))
+        {
+                if (dataType == GRB_PRECIP_TOT) {	// mm/period -> mm/h
+                        if (periodP2 > periodP1)
+                                multiplyAllData( 1.0/(periodP2-periodP1) );
+                }
+                if (dataType == GRB_PRECIP_RATE) {	// mm/s -> mm/h
+                        if (periodP2 > periodP1)
+                                multiplyAllData( 3600.0 );
+                }
+
+
+        }
+        //------------------------
+        // WRF NMM grib.meteorologic.net
+        //------------------------
+        else if (idCenter==7 && idModel==89 && idGrid==255)
+        {
+                if (dataType == GRB_PRECIP_TOT) {	// mm/period -> mm/h
+                        if (periodP2 > periodP1)
+                                multiplyAllData( 1.0/(periodP2-periodP1) );
+                }
+                if (dataType == GRB_PRECIP_RATE) {	// mm/s -> mm/h
+                        if (periodP2 > periodP1)
+                                multiplyAllData( 3600.0 );
+                }
+
+
+        }
+        //------------------------
+        // Meteorem
+        //------------------------
+        else if (idCenter==59 && idModel==78 && idGrid==255)
+        {
+                if ( (getDataType()==GRB_WIND_VX || getDataType()==GRB_WIND_VY)
+                        && getLevelType()==LV_MSL
+                        && getLevelValue()==0)
+                {
+                        levelType  = LV_ABOV_GND;
+                        levelValue = 10;
+                }
+                if ( getDataType()==GRB_PRECIP_TOT
+                        && getLevelType()==LV_MSL
+                        && getLevelValue()==0)
+                {
+                        levelType  = LV_GND_SURF;
+                        levelValue = 0;
+                }
+        }
+        //------------------------
+        // Unknown center
+        //------------------------
+        else
+        {
+                printf("Unknown GribRecord: ");
+                this->print();
+                this->knownData = false;
+
+        }
+                //this->print();
+}
+
+//-------------------------------------------------------------------------------
+void GribRecord::print()
+{
+        printf("%d: idCenter=%d idModel=%d idGrid=%d dataType=%d hr=%f\n",
+                        id, idCenter, idModel, idGrid, dataType,
+                        (curDate-refDate)/3600.0
+                        );
+}
+
+void  GribRecord::multiplyAllData(double k)
+{
+        for (zuint j=0; j<Nj; j++) {
+                for (zuint i=0; i<Ni; i++)
+                {
+                        if (hasValue(i,j)) {
+                                data[j*Ni+i] *= k;
+                        }
+                }
+        }
+}
 //------------------------------------------------------------------------------
 void  GribRecord::setDataType(const zuchar t)
 {
@@ -704,3 +804,141 @@ bool GribRecord::getValue_TWSA(double px, double py,double * a00,double * a01,do
 
     return true;
 }
+
+//===============================================================================================
+// Interpolation pour données 1D
+//
+
+double GribRecord::getInterpolatedValue(double px, double py, bool numericalInterpolation)
+{
+    double val;
+    if (!ok || Di==0 || Dj==0) {
+        return GRIB_NOTDEF;
+    }
+    if (!isPointInMap(px,py)) {
+        px += 360.0;               // tour du monde Ã  droite ?
+        if (!isPointInMap(px,py)) {
+            px -= 2*360.0;              // tour du monde Ã  gauche ?
+            if (!isPointInMap(px,py)) {
+                return GRIB_NOTDEF;
+            }
+        }
+    }
+    double pi, pj;     // coord. in grid unit
+    pi = (px-Lo1)/Di;
+    pj = (py-La1)/Dj;
+
+    // 00 10      point is in a square
+    // 01 11
+    int i0 = (int) pi;  // point 00
+    int j0 = (int) pj;
+
+    bool h00,h01,h10,h11;
+    int nbval = 0;     // how many values in grid ?
+    if ((h00=hasValue(i0,   j0)))
+        nbval ++;
+    if ((h10=hasValue(i0+1, j0)))
+        nbval ++;
+    if ((h01=hasValue(i0,   j0+1)))
+        nbval ++;
+    if ((h11=hasValue(i0+1, j0+1)))
+        nbval ++;
+
+    if (nbval <3) {
+        return GRIB_NOTDEF;
+    }
+
+    // distances to 00
+    double dx = pi-i0;
+    double dy = pj-j0;
+
+        if (! numericalInterpolation)
+        {
+                if (dx < 0.5) {
+                        if (dy < 0.5)
+                                val = getValue(i0,   j0);
+                        else
+                                val = getValue(i0,   j0+1);
+                }
+                else {
+                        if (dy < 0.5)
+                                val = getValue(i0+1,   j0);
+                        else
+                                val = getValue(i0+1,   j0+1);
+                }
+                return val;
+        }
+
+    dx = (3.0 - 2.0*dx)*dx*dx;   // pseudo hermite interpolation
+    dy = (3.0 - 2.0*dy)*dy*dy;
+
+    double xa, xb, xc, kx, ky;
+    // Triangle :
+    //   xa  xb
+    //   xc
+    // kx = distance(xa,x)
+    // ky = distance(xa,y)
+    if (nbval == 4)
+    {
+        double x00 = getValue(i0,   j0);
+        double x01 = getValue(i0,   j0+1);
+        double x10 = getValue(i0+1, j0);
+        double x11 = getValue(i0+1, j0+1);
+        double x1 = (1.0-dx)*x00 + dx*x10;
+        double x2 = (1.0-dx)*x01 + dx*x11;
+        val =  (1.0-dy)*x1 + dy*x2;
+        return val;
+    }
+    else {
+        // here nbval==3, check the corner without data
+        if (!h00) {
+            //printf("! h00  %f %f\n", dx,dy);
+            xa = getValue(i0+1, j0+1);   // A = point 11
+            xb = getValue(i0,   j0+1);   // B = point 01
+            xc = getValue(i0+1, j0);     // C = point 10
+            kx = 1-dx;
+            ky = 1-dy;
+        }
+        else if (!h01) {
+            //printf("! h01  %f %f\n", dx,dy);
+            xa = getValue(i0+1, j0);     // A = point 10
+            xb = getValue(i0+1, j0+1);   // B = point 11
+            xc = getValue(i0,   j0);     // C = point 00
+            kx = dy;
+            ky = 1-dx;
+        }
+        else if (!h10) {
+            //printf("! h10  %f %f\n", dx,dy);
+            xa = getValue(i0,   j0+1);     // A = point 01
+            xb = getValue(i0,   j0);       // B = point 00
+            xc = getValue(i0+1, j0+1);     // C = point 11
+            kx = 1-dy;
+            ky = dx;
+        }
+        else {
+            //printf("! h11  %f %f\n", dx,dy);
+            xa = getValue(i0,   j0);    // A = point 00
+            xb = getValue(i0+1, j0);    // B = point 10
+            xc = getValue(i0,   j0+1);  // C = point 01
+            kx = dx;
+            ky = dy;
+        }
+    }
+    double k = kx + ky;
+    if (k<0 || k>1) {
+        val = GRIB_NOTDEF;
+    }
+    else if (k == 0) {
+        val = xa;
+    }
+    else {
+        // axes interpolation
+        double vx = k*xb + (1-k)*xa;
+        double vy = k*xc + (1-k)*xa;
+        // diagonal interpolation
+        double k2 = kx / k;
+        val =  k2*vx + (1-k2)*vy;
+    }
+    return val;
+}
+

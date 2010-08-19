@@ -27,20 +27,20 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "MainWindow.h"
 #include "mycentralwidget.h"
 #include "Pilototo_param.h"
+#include "POI.h"
+#include "dataDef.h"
 
-#define VLM_NO_REQUEST     -1
-#define VLM_REQUEST_LOGIN  0
-#define VLM_DO_REQUEST     1
 
 Pilototo::Pilototo(MainWindow *main,myCentralWidget * parent,inetConnexion * inet):QDialog(parent), inetClient(inet)
 {
     this->parent=parent;
     setupUi(this);
 
+    selectPOI_mode=1;
 
     instructionEditor = new Pilototo_param(this);
-    connect(instructionEditor,SIGNAL(doSelectPOI(Pilototo_instruction *)),
-            this,SLOT(doSelectPOI(Pilototo_instruction *)));
+    connect(instructionEditor,SIGNAL(doSelectPOI(Pilototo_instruction *,int)),
+            this,SLOT(doSelectPOI(Pilototo_instruction *,int)));
     connect(this,SIGNAL(selectPOI(Pilototo_instruction *)),
             main,SLOT(slotSelectPOI(Pilototo_instruction *)));
     connect(main,SIGNAL(editInstructions()),
@@ -50,6 +50,7 @@ Pilototo::Pilototo(MainWindow *main,myCentralWidget * parent,inetConnexion * ine
     connect(main,SIGNAL(boatHasUpdated(boatAccount*)),
             this,SLOT(boatUpdated(boatAccount*)));
 
+    btn_addInstruction->setIcon(QIcon("img/add.png"));
 
     instructions_list.clear();
     drawList.clear();
@@ -165,11 +166,22 @@ void Pilototo::editInstructions(void)
 void Pilototo::editInstructionsPOI(Pilototo_instruction * instruction,POI * poi)
 {
     show();
-    instructionEditor->editInstructionPOI(instruction,poi);
+    if(selectPOI_mode==1)
+    {
+        if(poi)
+        {
+            instruction->setLat(poi->getLatitude());
+            instruction->setLon(poi->getLongitude());
+            instruction->setWph(poi->getWph());
+        }
+    }
+    else
+        instructionEditor->editInstructionPOI(instruction,poi);
 }
 
-void Pilototo::doSelectPOI(Pilototo_instruction * instruction)
+void Pilototo::doSelectPOI(Pilototo_instruction * instruction,int type) /* 1=instruction, 2=editor */
 {
+    selectPOI_mode=type;
     emit selectPOI(instruction);
     QDialog::done(QDialog::Rejected);
     parent->activateWindow();
@@ -182,9 +194,18 @@ void Pilototo::boatUpdated(boatAccount * boat)
     waitBox->hide();
     this->boat=boat;
     int mode;
+    int ref;
+    float angle=0;
+    float lat=0,lon=0;
+    float wph=-1;
     int pos;
 
     QStringList * list = boat->getPilototo();
+
+    if(boat)
+        titreBateau->setText(tr("Pilototo pour ") + boat->getBoatName());
+    else
+        titreBateau->setText(tr("Pilototo"));
 
     delList.clear(); /* this is a list of int => no delete*/
     drawList.clear(); /*all item are also in instructions_list */
@@ -204,39 +225,47 @@ void Pilototo::boatUpdated(boatAccount * boat)
 	if(instr_txt!="none")
 	{
 	    QStringList instr_buf = instr_txt.split(",");
+            //qWarning() << "Parsing PIL" << i << ": " << instr_txt;
 
 	    if(instr_buf.count() == 6 || instr_buf.count() == 5)
 	    {
 		Pilototo_instruction * instr = new Pilototo_instruction(this,frame);
 		instructions_list.append(instr);
-		instr->setRef(instr_buf.at(0).toInt());
+                //instr->setRef(instr_buf.at(0).toInt());                
+                ref=instr_buf.at(0).toInt();
 		instr->setTstamp(instr_buf.at(1).toInt());
 		mode=instr_buf.at(2).toInt()-1;
-		instr->setMode(mode);
+                //instr->setMode(mode);
 		if(mode == 0 || mode == 1)
 		{
-		    instr->setAngle(instr_buf.at(3).toFloat());
+                    //instr->setAngle(instr_buf.at(3).toFloat());
+                    angle=instr_buf.at(3).toFloat();
 		    pos=4;
 		}
 		else
 		{
-		    instr->setLat(instr_buf.at(3).toFloat());
+                    //instr->setLat(instr_buf.at(3).toFloat());
+                    lat=instr_buf.at(3).toFloat();
 		    QStringList instr_buf2 = instr_buf.at(4).split("@");
 		    if(instr_buf2.count() == 2)
 		    {
-			instr->setLon(instr_buf2.at(0).toFloat());
-			instr->setWph(instr_buf2.at(1).toFloat());
+                        //instr->setLon(instr_buf2.at(0).toFloat());
+                        lon=instr_buf2.at(0).toFloat();
+                        //instr->setWph(instr_buf2.at(1).toFloat());
+                        wph=instr_buf2.at(1).toFloat();
 		    }
 		    else
 		    {
-			instr->setLon(instr_buf.at(4).toFloat());
+                        //instr->setLon(instr_buf.at(4).toFloat());
+                        lon=instr_buf2.at(0).toFloat();
 		    }
 		    pos=5;
 		}
 		if(instr_buf.at(pos) == "done")
-		    instr->setStatus(PILOTOTO_STATUS_DONE);
+                    instr->setStatus(PILOTOTO_STATUS_DONE);
 		else if(instr_buf.at(pos) == "pending")
 		    instr->setStatus(PILOTOTO_STATUS_PENDING);
+                instr->initVal(mode,angle,lat,lon,wph,ref);
 		instr->updateHasChanged(false);
 	    }
 	}
@@ -423,12 +452,28 @@ void Pilototo::instructionUpdated(void)
 Pilototo_instruction::Pilototo_instruction(QWidget * main,QWidget * parent) : QWidget(parent)
 {
     setupUi(this);
+
     connect(this,SIGNAL(doEditInstruction(Pilototo_instruction*)),
 		((Pilototo*)main)->instructionEditor,SLOT(editInstruction(Pilototo_instruction*)));
     connect(this,SIGNAL(doDelInstruction(Pilototo_instruction*)),
 		main,SLOT(delInstruction(Pilototo_instruction *)));
     connect(this,SIGNAL(instructionUpdated()),
                 main,SLOT(instructionUpdated()));
+    connect(this,SIGNAL(selectPOI(Pilototo_instruction*,int)),main,SLOT(doSelectPOI(Pilototo_instruction*,int)));
+
+    mode_sel->addItem(tr("Cap constant (1)"));
+    mode_sel->addItem(tr("Angle du vent (2)"));
+    mode_sel->addItem(tr("Pilote ortho (3)"));
+    mode_sel->addItem(tr("Meilleur VMG (4)"));
+    mode_sel->addItem(tr("VBVMG (5)"));
+
+    btn_delInstruction->setIcon(QIcon("img/del.png"));
+    btn_validate->setIcon(QIcon("img/apply.png"));
+    btn_cancel->setIcon(QIcon("img/undo.png"));
+    btn_updateTime->setIcon(QIcon("img/clock.png"));
+    btn_copy->setIcon(QIcon("img/copy.png"));
+    btn_paste->setIcon(QIcon("img/paste.png"));
+
 
     updateHasChanged(true); /*instruction is not saved when created*/
     initVal();
@@ -436,114 +481,277 @@ Pilototo_instruction::Pilototo_instruction(QWidget * main,QWidget * parent) : QW
 
 void Pilototo_instruction::initVal(void)
 {
-    mode=0;
-    angle=0;
-    lat=0;
-    lon=0;
-    wph=-1;
+    mode=mode_scr=0;
+    mode_sel->setCurrentIndex(mode);
+    angle=angle_scr=0;
+    lat=lat_scr=0;
+    lon=lon_scr=0;
+    wph=wph_scr=-1;
     ref=-1;
-    status=PILOTOTO_STATUS_NEW;
+    status=status_scr=PILOTOTO_STATUS_NEW;
     updateHasChanged(true);
     tstamp = QDateTime::currentDateTime().toUTC();
+    tstamp_scr = QDateTime::currentDateTime().toUTC();
     horodate->setTimeSpec(Qt::UTC);
     horodate->setDateTime(tstamp);
-    updateText();
+    updateText(true);
     hide();
+}
+
+void Pilototo_instruction::initVal(int mode_ini,float angle_ini,float lat_ini,float lon_ini, float wph_ini,int ref_ini)
+{
+    mode=mode_scr=mode_ini;
+    mode_sel->setCurrentIndex(mode);
+    angle=angle_scr=angle_ini;
+    lat=lat_scr=lat_ini;
+    lon=lon_scr=lon_ini;
+    wph=wph_scr=wph_ini;
+    ref=ref_ini;
+    updateText(true);
 }
 
 #define SETVAL(VAR)       \
 {                         \
     if(VAR!=val)          \
     {                     \
-	VAR=val;          \
-	updateHasChanged(true); \
-	updateText();     \
+        VAR=val;          \
+        updateHasChanged(chkHasChanged()); \
+        updateText(true);     \
     }                     \
 }
 
 void Pilototo_instruction::setMode(int val)
 {
-    SETVAL(mode);
+    SETVAL(mode_scr);
+    mode_sel->setCurrentIndex(mode_scr);
 }
 
 void Pilototo_instruction::setAngle(float val)
 {
-    SETVAL(angle);
+    SETVAL(angle_scr);
 }
 
 void Pilototo_instruction::setLat(float val)
 {
-    SETVAL(lat);
+    SETVAL(lat_scr);
 }
 
 void Pilototo_instruction::setLon(float val)
 {
-    SETVAL(lon);
+    SETVAL(lon_scr);
 }
 
 void Pilototo_instruction::setWph(float val)
 {
-    SETVAL(wph);
+    SETVAL(wph_scr);
 }
 
-void Pilototo_instruction::updateText(void)
+void Pilototo_instruction::modeChanged(int index)
+{
+
+    if(!checkPIP(false,false))
+    {
+        QString sav=instructionText->text();
+        setMode(index);
+        instructionText->setText(sav);
+    }
+    else
+        setMode(index);
+    /* mode changed saving new data if ok */
+    checkPIP(true,true);
+}
+
+bool Pilototo_instruction::chkHasChanged(void)
+{
+    return (mode!=mode_scr || lat!=lat_scr || lon!=lon_scr || wph!=wph_scr || angle!=angle_scr || tstamp!=tstamp_scr);
+}
+
+bool Pilototo_instruction::checkPIP(bool savChange,bool chgColor)
+{
+    float lat_val,lon_val,wph_val;
+    int tstamp_int;
+    float angle_val=0;
+    bool ok;
+    bool res=false;
+    //qWarning() << "New PIP=" << instructionText->text() << " " << savChange << "-" << chgColor;
+    switch(mode_scr)
+    {
+        case 0:
+        case 1: /*converting a float */
+            ok=false;
+            if(!instructionText->text().contains(QChar(','),Qt::CaseInsensitive))
+                angle_val=instructionText->text().toFloat(&ok);
+            if(ok)
+            {
+                if(chgColor)
+                {
+                    QPalette p = instructionText->palette();
+                    p.setColor( QPalette::Text, QColor(Qt::black) );
+                    instructionText->setPalette(p);
+                }
+                if(savChange)
+                    setAngle(angle_val);
+                res=true;
+            }
+            else
+            {
+                if(chgColor)
+                {
+                    QPalette p = instructionText->palette();
+                    p.setColor( QPalette::Text, QColor(Qt::red) );
+                    instructionText->setPalette(p);
+                }
+            }
+            break;
+        case 2:
+        case 3:
+        case 4:
+            if(!Util::convertPOI(instructionText->text(),NULL,&lat_val,&lon_val,&wph_val,&tstamp_int,0))
+            {
+                if(chgColor)
+                {
+                    QPalette p = instructionText->palette();
+                    p.setColor( QPalette::Text, QColor(Qt::red) );
+                    instructionText->setPalette(p);
+                }
+            }
+            else
+            {
+                if(chgColor)
+                {
+                    QPalette p = instructionText->palette();
+                    p.setColor( QPalette::Text, QColor(Qt::black) );
+                    instructionText->setPalette(p);
+                }
+                if(savChange)
+                {
+                    setLat(lat_val);
+                    setLon(lon_val);
+                    setWph(wph_val);
+                    if(tstamp_int!=-1)
+                        tstamp_scr.setTime_t(tstamp_int);
+
+                    if(wph_val<0 || wph_val > 360)
+                        setWph(-1);
+                    else
+                        setWph(wph_val);
+                }
+                res=true;
+            }
+            break;
+    }
+    return res;
+}
+
+void Pilototo_instruction::pipChanged(QString)
+{
+    checkPIP(false,true);
+}
+
+void Pilototo_instruction::pipValidated(void)
+{
+    checkPIP(true,true);
+    updateText(false);
+}
+
+void Pilototo_instruction::updateText(bool updateAll)
 {
     QFontMetrics fmt(instructionText->font());
     QString final_txt;
     QString modeTxt,param;
+    QString param_txt;
 
-    switch(mode)
+    switch(mode_scr)
     {
 	case 0:
 	    modeTxt="Cap";
-	    param=QString().setNum(angle)+" °";
+            param=QString().setNum(angle_scr)+" °";
+            param_txt=QString().setNum(angle_scr);
 	    break;
 	case 1:
 	    modeTxt="Angle";
-	    param=QString().setNum(angle)+" °";
+            param=QString().setNum(angle_scr)+" °";
+            param_txt=QString().setNum(angle_scr);
 	    break;
 	case 2:
 	    modeTxt="Ortho";
-	    if(wph==-1)
-		param=QString("%1,%2")
-			.arg(Util::pos2String(TYPE_LAT,lat))
-			.arg(Util::pos2String(TYPE_LON,lon));
-	    else
-		param=QString("%1,%2@%3")
-			.arg(Util::pos2String(TYPE_LAT,lat))
-			.arg(Util::pos2String(TYPE_LON,lon))
-			.arg(wph);
+            if(wph_scr==-1)
+            {
+                param=QString("%1,%2")
+                        .arg(Util::pos2String(TYPE_LAT,lat_scr))
+                        .arg(Util::pos2String(TYPE_LON,lon_scr));
+                param_txt=QString("%1,%2")
+                          .arg(lat_scr)
+                          .arg(lon_scr);
+            }
+            else
+            {
+                param=QString("%1,%2@%3")
+                        .arg(Util::pos2String(TYPE_LAT,lat_scr))
+                        .arg(Util::pos2String(TYPE_LON,lon_scr))
+                        .arg(wph_scr);
+                param_txt=QString("%1,%2@%3")
+                          .arg(lat_scr)
+                          .arg(lon_scr)
+                          .arg(wph_scr);
+            }
 	    break;
 	case 3:
 	    modeTxt="BVMG";
-	    if(wph==-1)
-		param=QString("%1,%2")
-			.arg(Util::pos2String(TYPE_LAT,lat))
-			.arg(Util::pos2String(TYPE_LON,lon));
-	    else
-		param=QString("%1,%2@%3")
-			.arg(Util::pos2String(TYPE_LAT,lat))
-			.arg(Util::pos2String(TYPE_LON,lon))
-			.arg(wph);
+            if(wph_scr==-1)
+            {
+                param=QString("%1,%2")
+                        .arg(Util::pos2String(TYPE_LAT,lat_scr))
+                        .arg(Util::pos2String(TYPE_LON,lon_scr));
+                param_txt=QString("%1,%2")
+                          .arg(lat_scr)
+                          .arg(lon_scr);
+            }
+            else
+            {
+                param=QString("%1,%2@%3")
+                        .arg(Util::pos2String(TYPE_LAT,lat_scr))
+                        .arg(Util::pos2String(TYPE_LON,lon_scr))
+                        .arg(wph_scr);
+                param_txt=QString("%1,%2@%3")
+                          .arg(lat_scr)
+                          .arg(lon_scr)
+                          .arg(wph_scr);
+            }
 	    break;
         case 4:
             modeTxt="VBVMG";
-            if(wph==-1)
+            if(wph_scr==-1)
+            {
                 param=QString("%1,%2")
-                        .arg(Util::pos2String(TYPE_LAT,lat))
-                        .arg(Util::pos2String(TYPE_LON,lon));
+                        .arg(Util::pos2String(TYPE_LAT,lat_scr))
+                        .arg(Util::pos2String(TYPE_LON,lon_scr));
+                param_txt=QString("%1,%2")
+                          .arg(lat_scr)
+                          .arg(lon_scr);
+            }
             else
+            {
                 param=QString("%1,%2@%3")
-                        .arg(Util::pos2String(TYPE_LAT,lat))
-                        .arg(Util::pos2String(TYPE_LON,lon))
-                        .arg(wph);
+                        .arg(Util::pos2String(TYPE_LAT,lat_scr))
+                        .arg(Util::pos2String(TYPE_LON,lon_scr))
+                        .arg(wph_scr);
+                param_txt=QString("%1,%2@%3")
+                          .arg(lat_scr)
+                          .arg(lon_scr)
+                          .arg(wph_scr);
+            }
             break;
     }
     final_txt=modeTxt+" = "+param;
-    instructionText->setMinimumWidth( fmt.width(final_txt)+20 );
-    instructionText->setText(final_txt);
+    if(updateAll)
+    {
+        instructionText->setMinimumWidth( fmt.width(param_txt)+20 );
+        instructionText->setText(param_txt);
+    }
+    instructionText->setToolTip(final_txt);
 
-    switch(status)
+    switch(status_scr)
     {
 	case PILOTOTO_STATUS_DONE:
 	    status_txt->setText(tr("Passee"));
@@ -554,19 +762,31 @@ void Pilototo_instruction::updateText(void)
 	case PILOTOTO_STATUS_NEW:
 	    status_txt->setText(tr("Nouveau"));
 	    break;
+        case PILOTOTO_STATUS_CHG:
+            status_txt->setText(tr("Modifie"));
+            break;
     }
 
-    horodate->setDateTime(tstamp);
+    horodate->setDateTime(tstamp_scr);
 }
 
 void Pilototo_instruction::updateHasChanged(bool status)
 {
+
     hasChanged = status;
     btn_validate->setEnabled(status);
+    btn_cancel->setEnabled(status);
     if(status)
-	btn_validate->setStyleSheet(QString::fromUtf8("background-color: rgb(255, 0, 0);"));
+    {
+        if(ref!=-1)
+            status_scr=PILOTOTO_STATUS_CHG;
+	btn_validate->setStyleSheet(QString::fromUtf8("background-color: rgb(255, 0, 0);"));        
+    }
     else
+    {
+        status_scr=this->status;
 	btn_validate->setStyleSheet(QString::fromUtf8("background-color: rgb(85, 255, 127);"));
+    }
 }
 
 void Pilototo_instruction::delInstruction(void)
@@ -586,32 +806,52 @@ void Pilototo_instruction::pastePOI(void)
     if(!Util::getWPClipboard(NULL,&lat,&lon,&wph,&tstamp_int))
 	return;
 
-    this->lat = lat;
-    this->lon = lon;
-    mode=2; /*default mode : ortho */
+    this->lat_scr = lat;
+    this->lon_scr = lon;
+    mode_scr=2; /*default mode : ortho */
 
     if(tstamp_int!=-1)
-	tstamp.setTime_t(tstamp_int);
+        tstamp_scr.setTime_t(tstamp_int);
 
-    if(wph<0 || wph > 360)
-	this->wph=-1;
+    if(wph_scr<0 || wph_scr > 360)
+        this->wph_scr=-1;
     else
-	this->wph=wph;
+        this->wph_scr=wph;
     updateHasChanged(true);
-    updateText();
+    updateText(true);
 }
 
 void Pilototo_instruction::copyPOI(void)
 {
-    if(mode==2 || mode==3)
-	Util::setWPClipboard(lat,lon,wph);
+    if(mode_scr==2 || mode_scr==3)
+        Util::setWPClipboard(lat_scr,lon_scr,wph_scr);
+}
+
+void Pilototo_instruction::doSelectPOI(void)
+{
+    emit selectPOI(this,1);
 }
 
 void Pilototo_instruction::dateTime_changed(QDateTime tm)
 {
-    if(tm!=tstamp)
-	updateHasChanged(true);
-    tstamp=tm;
+    if(tm!=tstamp_scr)
+    {        
+        tstamp_scr=tm;
+        updateHasChanged(chkHasChanged());
+        updateText(true);
+        if(status_scr!=PILOTOTO_STATUS_DONE && tm.toTime_t() < QDateTime::currentDateTime().toTime_t())
+        {
+            QPalette p = horodate->palette();
+            p.setColor( QPalette::Text, QColor(Qt::red) );
+            horodate->setPalette(p);
+        }
+        else
+        {
+            QPalette p = horodate->palette();
+            p.setColor( QPalette::Text, QColor(Qt::black) );
+            horodate->setPalette(p);
+        }
+    }
 }
 
 void Pilototo_instruction::setLock(bool status)
@@ -630,26 +870,52 @@ void Pilototo_instruction::setLock(bool status)
 void Pilototo_instruction::validateModif(void)
 {
     updateHasChanged(false);
+    /* set data to scr one */
+    mode=mode_scr;
+    angle=angle_scr;
+    lat=lat_scr;
+    lon=lon_scr;
+    wph=wph_scr;
+    status=status_scr;
+    tstamp=tstamp_scr;
     /* code to update instruction order */
     emit instructionUpdated();
 }
 
+void Pilototo_instruction::cancelModif(void)
+{
+
+    /* set src data to org */
+    mode_scr=mode;
+    angle_scr=angle;
+    lat_scr=lat;
+    lon_scr=lon;
+    wph_scr=wph;
+    status_scr=status;
+    tstamp_scr=tstamp;
+
+    updateHasChanged(false);
+    updateText(true);
+}
+
 void Pilototo_instruction::setStatus(int val)
 {
-    SETVAL(status);
+    status=status_scr=val;
 }
 
 void Pilototo_instruction::setTstamp(int val)
 {
     tstamp.setTime_t(val);
-    updateHasChanged(true);
-    updateText();
+    tstamp_scr.setTime_t(val);
+    //updateHasChanged(true);
+    updateText(true);
 }
 
 QString Pilototo_instruction::getPip(void)
 {
     QString txt;
 
+    /* using real data */
     switch(mode)
     {
 	case 0:
@@ -675,6 +941,6 @@ QString Pilototo_instruction::getPip(void)
 
 void Pilototo_instruction::maintenant(void)
 {
-    tstamp = QDateTime::currentDateTime().toUTC();
-    horodate->setDateTime(tstamp);
+    tstamp_scr = QDateTime::currentDateTime().toUTC();
+    horodate->setDateTime(tstamp_scr);
 }

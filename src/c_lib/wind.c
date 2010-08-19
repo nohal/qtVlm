@@ -44,23 +44,25 @@ This code is mainly coming from vlmc module by vlm: www.virtual-loup-de-mer.org
   } else if (a >= TWO_PI) {			\
     a -= TWO_PI;				\
   }
+
 /**********************/
 /* TWSA interpolation */
 /**********************/
 
 void get_wind_info_latlong_TWSA(double longitude,  double latitude, time_t now, time_t t1,time_t t2,
                                 windData * data_prev, windData * data_nxt,
-                                int gribHighRes,double * u_res, double * v_res,int debug)
+                                int gribHighRes_t1,int gribHighRes_t2
+                                ,double * u_res, double * v_res,int debug)
 {
     double u1,u2,v1,v2;
     double t_ratio,angle;
     double u,v;
 
-    get_wind_info_latlong_TWSA_compute(longitude,latitude,data_prev,gribHighRes,&u1,&v1,debug);
+    get_wind_info_latlong_TWSA_compute(longitude,latitude,data_prev,gribHighRes_t1,&u1,&v1,debug);
 
     if(data_nxt != NULL)
     {
-        get_wind_info_latlong_TWSA_compute(longitude,latitude,data_nxt,gribHighRes,&u2,&v2,debug);
+        get_wind_info_latlong_TWSA_compute(longitude,latitude,data_nxt,gribHighRes_t2,&u2,&v2,debug);
 
         t_ratio = ((double)(now - t1)) / ((double)(t2 - t1));
 
@@ -98,8 +100,9 @@ void get_wind_info_latlong_TWSA(double longitude,  double latitude, time_t now, 
   }
 #endif
 
-void get_wind_info_latlong_TWSA_compute(double longitude,  double latitude, windData * data,int gribHighRes,
-        double * u_res, double * v_res,int debug)
+void get_wind_info_latlong_TWSA_compute(double longitude,  double latitude, windData * data,
+                                        int gribHighRes, double * u_res,
+                                        double * v_res,int debug)
 {
   double u0,u1,u2,u3,v0,v1,v2,v3;
   double u01,u23,v01,v23;
@@ -166,6 +169,10 @@ void get_wind_info_latlong_TWSA_compute(double longitude,  double latitude, wind
   *v_res=v;
 }
 
+/********************************/
+/* selective TWSA interpolation */
+/********************************/
+
 #if OLD_C
 # define _transform_back_u_v(a,b)		\
   t_speed = a * sin(b);				\
@@ -178,7 +185,8 @@ void get_wind_info_latlong_TWSA_compute(double longitude,  double latitude, wind
 
 void get_wind_info_latlong_selective_TWSA(double longitude,  double latitude, time_t now, time_t t1,time_t t2,
                                 windData * data_prev, windData * data_nxt,
-                                int gribHighRes,double * u_res, double * v_res,int debug)
+                                int gribHighRes_t1,int gribHighRes_t2,
+                                double * u_res, double * v_res,int debug)
 {
     double u1,u2,v1,v2;
     double t_ratio,angle;
@@ -190,7 +198,7 @@ void get_wind_info_latlong_selective_TWSA(double longitude,  double latitude, ti
     double complex c, c01, c23;
 #endif
 
-    get_wind_info_latlong_selective_TWSA_compute(longitude,latitude,data_prev,gribHighRes,&u1,&v1,&rot_1,debug);
+    get_wind_info_latlong_selective_TWSA_compute(longitude,latitude,data_prev,gribHighRes_t1,&u1,&v1,&rot_1,debug);
 
     if(debug)
     {
@@ -199,7 +207,7 @@ void get_wind_info_latlong_selective_TWSA(double longitude,  double latitude, ti
 
     if(data_nxt != NULL)
     {
-        get_wind_info_latlong_selective_TWSA_compute(longitude,latitude,data_nxt,gribHighRes,&u2,&v2,&rot_2,debug);
+        get_wind_info_latlong_selective_TWSA_compute(longitude,latitude,data_nxt,gribHighRes_t2,&u2,&v2,&rot_2,debug);
 
         if(debug)
         {
@@ -300,8 +308,8 @@ void get_wind_info_latlong_selective_TWSA(double longitude,  double latitude, ti
 }
 
 
-void get_wind_info_latlong_selective_TWSA_compute(double longitude,  double latitude, windData * data,int gribHighRes,
-        double * u_res, double * v_res, int * rot,int debug)
+void get_wind_info_latlong_selective_TWSA_compute(double longitude,  double latitude, windData * data,
+                                  int gribHighRes,double * u_res, double * v_res, int * rot,int debug)
 {
     double u0,u1,u2,u3,v0,v1,v2,v3;
     double u01,u23,v01,v23;
@@ -489,4 +497,158 @@ void get_wind_info_latlong_selective_TWSA_compute(double longitude,  double lati
         printf("Fin interpolation geo: vit=%f ang=%f\n",u,radToDeg(v));
     }
 
+}
+
+/************************/
+/* hybrid interpolation */
+/************************/
+
+/* we reuse u = speed v = angle after conversion */
+#ifdef OLD_C
+
+#define _speed_u_v(a, b, ro)	   \
+    ro = msToKts(sqrt(a*a+b*b));
+
+ #define _hybrid_comp(u,v,angle,ro) { \
+    double t_speed;                \
+    t_speed = sqrt(u*u+v*v);       \
+    angle = acos(-v / t_speed);    \
+    if (u > 0.0)                   \
+        angle = TWO_PI - angle;    \
+}
+
+#else
+
+#define _speed_u_v(a, b, ro)	  \
+    ro = msToKts(hypot(a, b));
+
+#define _hybrid_comp(u,v,angle,ro) { \
+    double complex c;             \
+    c = - v - _Complex_I * u;     \
+    angle = carg(c);              \
+    if (angle < 0)                \
+        angle += TWO_PI;          \
+    ro=msToKts(cabs(c));          \
+}
+#endif /* OLD_C */
+
+
+
+void get_wind_info_latlong_hybrid(double longitude,  double latitude, time_t now, time_t t1,time_t t2,
+                                windData * data_prev, windData * data_nxt,
+                                int gribHighRes_t1, int gribHighRes_t2,
+                                double * u_res, double * v_res,int debug)
+{
+    double u1,u2,v1,v2,ro1,ro2;
+    double t_ratio,angle;
+    double u,v,ro;
+
+    get_wind_info_latlong_hybrid_compute(longitude,latitude,data_prev,gribHighRes_t1,&u1,&v1,&ro1,debug);
+
+    if(data_nxt != NULL)
+    {
+        get_wind_info_latlong_hybrid_compute(longitude,latitude,data_nxt,gribHighRes_t2,&u2,&v2,&ro2,debug);
+
+        t_ratio = ((double)(now - t1)) / ((double)(t2 - t1));
+
+        u = u1 + (u2 - u1) * t_ratio;
+        v = v1 + (v2 - v1) * t_ratio;
+
+        ro = ro1 + (ro2 - ro1) * t_ratio;
+
+        _hybrid_comp(u,v,angle,ro);
+    }
+    else
+    {
+         _hybrid_comp(u1,v1,angle,ro);
+         ro=ro1;
+    }
+
+    *u_res = ro;
+    *v_res= angle;
+}
+
+void get_wind_info_latlong_hybrid_compute(double longitude,  double latitude, windData * data,
+                      int gribHighRes, double * u_res, double * v_res, double * ro_res,int debug)
+{
+    double u0,u1,u2,u3,v0,v1,v2,v3;
+    double ro0,ro1,ro2,ro3;
+    double u01,u23,v01,v23;
+    double ro01,ro23;
+    double u,v;
+    double ro;
+    double d_long,d_lat;
+
+    u0=data->u0;
+    u1=data->u1;
+    u2=data->u2;
+    u3=data->u3;
+    v0=data->v0;
+    v1=data->v1;
+    v2=data->v2;
+    v3=data->v3;
+
+    d_long = longitude; /* is there a +180 drift? see grib */
+    if (d_long < 0) {
+        d_long += 360;
+    } else if (d_long >= 360) {
+        d_long -= 360;
+    }
+    d_lat = latitude + 90; /* is there a +90 drift? see grib*/
+
+    if(debug)
+    {
+        printf("Donnée IN (highRes=%d)\n",gribHighRes);
+        printf("Lat= %f (=> %f ), Lon= %f (=> %f )\n",latitude,d_lat,longitude,d_long);
+        printf("grid : lat= %f, Lon= %f\n",floor(d_lat),floor(d_long));
+        printf("P0: u= %f, v= %f\n",u0,v0);
+        printf("P1: u= %f, v= %f\n",u1,v1);
+        printf("P2: u= %f, v= %f\n",u2,v2);
+        printf("P3: u= %f, v= %f\n",u3,v3);
+    }
+
+    if(gribHighRes)
+    {
+        d_long = d_long*2.0;
+        d_lat = d_lat*2.0;
+    }
+
+    /*
+      simple bilinear interpolation, we might factor the cos(lat) in
+      the computation to tackle the shape of the pseudo square
+
+      Doing interpolation on angle/speed might be better
+    */
+
+    _speed_u_v(u0, v0, ro0);
+    _speed_u_v(u1, v1, ro1);
+    _speed_u_v(u2, v2, ro2);
+    _speed_u_v(u3, v3, ro3);
+
+    /* UV for geting the angle without too much hashing */
+    u01 = u0 + (u1 - u0) * (d_lat - floor(d_lat));
+    v01 = v0 + (v1 - v0) * (d_lat - floor(d_lat));
+    u23 = u2 + (u3 - u2) * (d_lat - floor(d_lat));
+    v23 = v2 + (v3 - v2) * (d_lat - floor(d_lat));
+
+    u = u01 + (u23 - u01) * (d_long - floor(d_long));
+    v = v01 + (v23 - v01) * (d_long - floor(d_long));
+
+    /* now the speed part */
+    ro01 = ro0 + (ro1 - ro0) * (d_lat - floor(d_lat));
+    ro23 = ro2 + (ro3 - ro2) * (d_lat - floor(d_lat));
+
+    ro = ro01 + (ro23 - ro01) * (d_long - floor(d_long));
+
+    if(debug)
+    {
+        printf("-> u01prev: U=%.2f m/s, V=%.2f m/s\n", u01, v01);
+        printf("-> u23prev: U=%.2f m/s, V=%.2f m/s\n", u23, v23);
+        printf("=>   uprev: U=%.2f m/s, V=%.2f m/s\n", u, v);
+        printf("->  roprev: %.2f kts\n", ro);
+    }
+
+    *u_res=u;
+    *v_res=v;
+    *ro_res=ro;
 }

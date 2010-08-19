@@ -65,13 +65,23 @@ void LoadGribFile::stop () {
     if(step1_InetReply)
         step1_InetReply->abort();
     if(step2_InetReply)
-        step1_InetReply->abort();
+        step2_InetReply->abort();
 }
 
 //-------------------------------------------------------------------------------
 void LoadGribFile::getGribFile(
         float x0, float y0, float x1, float y1,
-        float resolution, int interval, int days)
+        float resolution, int interval, int days,
+        bool wind, bool pressure, bool rain,
+        bool cloud, bool temp, bool humid, bool isotherm0,
+                bool tempPot, bool tempMin, bool tempMax, bool snowDepth,
+                bool snowCateg, bool frzRainCateg,
+                bool CAPEsfc,
+                bool altitudeData200,
+                bool altitudeData300,
+                bool altitudeData500,
+                bool altitudeData700,
+                bool altitudeData850)
 {
     QString page;
 
@@ -79,31 +89,87 @@ void LoadGribFile::getGribFile(
     // Etape 1 : Demande la création du fichier Grib (nom en retour)
     //----------------------------------------------------------------
 
-    Util::paramProxy(inetManager,host);
+    QString parameters = "";
+    if (wind) {
+        parameters += "W";
+    }
+    if (pressure) {
+        parameters += "P";
+    }
+    if (rain) {
+        parameters += "R";
+    }
+    if (cloud) {
+        parameters += "C";
+    }
+    if (temp) {
+        parameters += "T";
+    }
+    if (humid) {
+        parameters += "H";
+    }
+        if (isotherm0) {
+                parameters += "I";
+    }
+    if (tempPot) {
+        parameters += "t";
+    }
+    if (tempMin) {
+        parameters += "m";
+    }
+    if (tempMax) {
+        parameters += "M";
+    }
+    if (snowDepth) {
+        parameters += "S";
+    }
+    if (snowCateg) {
+        parameters += "s";
+    }
+    if (frzRainCateg) {
+        parameters += "Z";
+    }
+    if (CAPEsfc) {
+        parameters += "c";
+    }
 
-    step = 1;
-    emit signalGribSendMessage(tr("Préparation du fichier sur le serveur"));
-    QTextStream(&page)
-            << host
-            << "/noaa/getzygribfile.php?"
-            << "but=prepfile"
-            << "&la1=" << floor(y0)
-            << "&la2=" << ceil(y1)
-            << "&lo1=" << floor(x0)
-            << "&lo2=" << ceil(x1)
-            << "&res=" << resolution
-            << "&hrs=" << interval
-            << "&jrs=" << days
-            << "&par=W"
-            << "&l=" << zygriblog
-            << "&m=" << zygribpwd
-            << "&client=" << "zyGrib-3.0.0"
-            ;
-    step1_InetReply=step2_InetReply=NULL;
-    QNetworkRequest request;
-    request.setUrl(QUrl(page));
-    Util::addAgent(request);
-    step1_InetReply=inetManager->get(request);
+    if (altitudeData200) parameters += "2";
+    if (altitudeData300) parameters += "3";
+    if (altitudeData500) parameters += "5";
+    if (altitudeData700) parameters += "7";
+    if (altitudeData850) parameters += "8";
+
+//parameters += "r";	// PRATE
+
+    if (parameters != "")
+    {
+        Util::paramProxy(inetManager,host);
+
+        step = 1;
+        emit signalGribSendMessage(tr("Préparation du fichier sur le serveur"));
+        QTextStream(&page)
+                << host
+                << "/noaa/getzygribfile2.php?"
+                << "but=prepfile"
+                << "&la1=" << floor(y0)
+                << "&la2=" << ceil(y1)
+                << "&lo1=" << floor(x0)
+                << "&lo2=" << ceil(x1)
+                << "&res=" << resolution
+                << "&hrs=" << interval
+                << "&jrs=" << days
+                << "&par=" << parameters
+                << "&l=" << zygriblog
+                << "&m=" << zygribpwd
+                << "&client=" << "zyGrib-3.9.2"
+                ;
+
+        step1_InetReply=step2_InetReply=NULL;
+        QNetworkRequest request;
+        request.setUrl(QUrl(page));
+        Util::addAgent(request);
+        step1_InetReply=inetManager->get(request);
+    }
 
     // Suite de la séquence de récupération dans requestFinished()
 }

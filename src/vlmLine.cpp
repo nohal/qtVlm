@@ -21,9 +21,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <QDebug>
 #include "Orthodromie.h"
+#include "Projection.h"
 #include "vlmLine.h"
 #include "settings.h"
-#include "Projection.h"
+#include "Util.h"
 
 vlmLine::vlmLine(Projection * proj, QGraphicsScene * myScene,int z_level) : QGraphicsWidget()
 {
@@ -43,6 +44,10 @@ vlmLine::vlmLine(Projection * proj, QGraphicsScene * myScene,int z_level) : QGra
     this->hidden=false;
     this->boundingR.setRect(0,0,0,0);
     this->labelHidden=false;
+    this->solid=false;
+    this->hasInterpolated=false;
+    this->interpolatedLon=0;
+    this->interpolatedLat=0;
     show();
 }
 
@@ -57,10 +62,16 @@ QRectF vlmLine::boundingRect() const
 
 void vlmLine::addPoint(float lat,float lon)
 {
-    vlmPoint point;
-    point.lat=lat;
-    point.lon=lon;
+    vlmPoint point(lon,lat);
     line.append(point);
+}
+void vlmLine::addVlmPoint(vlmPoint point)
+{
+    line.append(point);
+}
+void vlmLine::removeVlmPoint(int index)
+{
+    line.removeAt(index);
 }
 
 void vlmLine::setPoly(QList<vlmPoint> & points)
@@ -72,11 +83,11 @@ void vlmLine::setPoly(QList<vlmPoint> & points)
 
 void vlmLine::slot_showMe()
 {
-    int n=0;
-    if(this->zValue()==4)
-    {
-        n=1;
-    }
+//    int n=0;
+//    if(this->zValue()==4)
+//    {
+//        n=1;
+//    }
     calculatePoly();
     update();
 }
@@ -127,15 +138,14 @@ void vlmLine::calculatePoly(void)
     poly=new QPolygon();
     polyList.append(poly);
     poly->resize(0);
-    vlmPoint worldPoint,previousWorldPoint;
-    previousWorldPoint.lat=0;
-    previousWorldPoint.lon=0;
+    vlmPoint worldPoint(0,0),previousWorldPoint(0,0);
     if(line.count()>1)
     {
         QListIterator<vlmPoint> i (line);
         while(i.hasNext())
         {
             worldPoint=i.next();
+            if(worldPoint.isDead) continue;
             Util::computePos(proj,worldPoint.lat, worldPoint.lon, &X, &Y);
             X=X-(int)x();
             Y=Y-(int)y();
@@ -229,7 +239,15 @@ void vlmLine::paint(QPainter * pnt, const QStyleOptionGraphicsItem * , QWidget *
         {
         case VLMLINE_LINE_MODE:
             if(!hidden)
-                pnt->drawPolyline(*poly);
+            {
+                if (!solid)
+                    pnt->drawPolyline(*poly);
+                else
+                {
+                    pnt->setBrush(linePen.brush());
+                    pnt->drawPolygon(*poly,Qt::WindingFill);
+                }
+            }
             break;
         case VLMLINE_POINT_MODE:
             if(!hidden)
@@ -302,6 +320,16 @@ void vlmLine::paint(QPainter * pnt, const QStyleOptionGraphicsItem * , QWidget *
             labelAlreadyMade=true;
             break;
         }
+    }
+    if(hasInterpolated)
+    {
+        linePen.setWidthF(penW+10);
+        pnt->setPen(linePen);
+        int X,Y;
+        Util::computePos(proj,interpolatedLat, interpolatedLon, &X, &Y);
+        pnt->drawPoint(X,Y);
+        linePen.setWidthF(penW);
+        pnt->setPen(linePen);
     }
 //    if(this->zValue()==4) //uncomment to see the boundingRect for routes
 //    {

@@ -29,12 +29,20 @@ Copyright (C) 2008 - Jacques Zaninetti - http://zygrib.free.fr
 
 #include <QObject>
 
-#include "Util.h"
-
-struct vlmPoint{
-    float lat;
-    float lon;
-};
+//#include "Util.h"
+#include "dataDef.h"
+//struct vlmPoint
+//{
+//#warning change vlmPoint from struct to class
+//    float       lat;
+//    float       lon;
+//    VlmPoint    origin;
+//    bool        isStart;
+//    float       cap;
+//    bool        isSplitting;
+//    float       etaBcmg;
+//    float       capBcmg;
+//};
 
 class Projection : public QObject
 {

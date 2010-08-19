@@ -48,7 +48,8 @@ class Orthodromie
         double getDistance()     {return distanceNM;}
         double getAzimutDeg()    {return azimutDeg;}
         double getAzimutRad()    {return azimut;}
-
+        double getLoxoCap();
+        double getLoxoDistance();
         void  getMidPoint(double *x, double *y);
         
         //// Reduce an angle to (-PI/2, PI/2), for latitudes.

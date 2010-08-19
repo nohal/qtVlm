@@ -21,7 +21,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <QDebug>
 #include <QtGui>
 
+#include "dataDef.h"
 #include "boatAccount.h"
+#include "Projection.h"
 #include "Util.h"
 #include "vlmLine.h"
 #include "parser.h"
@@ -30,13 +32,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "orthoSegment.h"
 #include "MainWindow.h"
 #include "Polar.h"
-#include "Projection.h"
-
-#define VLM_NO_REQUEST  -1
-#define VLM_REQUEST_IDU  0
-#define VLM_REQUEST_BOAT 1
-#define VLM_REQUEST_TRJ  2
-#define VLM_REQUEST_GATE 3
 
 /**************************/
 /* Init & Clean           */
@@ -48,6 +43,7 @@ boatAccount::boatAccount(QString login, QString pass, bool activated,Projection 
     this->mainWindow=main;
     this->parent=parent;
 
+    inetClient::setName(login);
     boat_name="NO NAME";
     boat_id=-1;
     race_id=0;
@@ -71,6 +67,9 @@ boatAccount::boatAccount(QString login, QString pass, bool activated,Projection 
     width=height=0;
     nWP=0;
     this->porteHidden=parent->get_shPor_st();
+    firstSynch=false;
+
+    needAuth=true;
 
     setZValue(Z_VALUE_BOAT);
     setFont(QFont("Helvetica",9));
@@ -158,7 +157,12 @@ void boatAccount::createPopUpMenu(void)
 
     ac_compassLine = new QAction(tr("Tirer un cap"),popup);
     popup->addAction(ac_compassLine);
-    connect(ac_compassLine,SIGNAL(triggered()),mainWindow,SLOT(slotCompassLine()));
+    connect(ac_compassLine,SIGNAL(triggered()),this,SLOT(slotCompassLine()));
+    connect (this,SIGNAL(compassLine(int,int)),mainWindow,SLOT(slotCompassLineForced(int,int)));
+
+    ac_twaLine = new QAction(tr("Tracer une estime TWA"),popup);
+    popup->addAction(ac_twaLine);
+    connect(ac_twaLine,SIGNAL(triggered()),this,SLOT(slotTwaLine()));
 }
 
 /**************************/
@@ -166,7 +170,7 @@ void boatAccount::createPopUpMenu(void)
 /**************************/
 
 void boatAccount::slot_getData(bool doingSync)
-{
+{    
     updating=true;
     trace_drawing->deleteAll();
     doRequest(VLM_REQUEST_BOAT);
@@ -176,6 +180,17 @@ void boatAccount::slot_getDataTrue()
 {
     slot_getData(true);
 }
+
+void boatAccount::tryWs(void)
+{
+    QString page;
+
+    QTextStream(&page) << "/ws/boatinfo.php?forcefmt=json";
+
+    inetGet(VLM_REQUEST_WS,page);
+}
+
+
 void boatAccount::doRequest(int requestCmd)
 {
     if(!activated)
@@ -199,23 +214,7 @@ void boatAccount::doRequest(int requestCmd)
         switch(requestCmd)
         {
             case VLM_REQUEST_BOAT:
-                if(boat_id==-1)
-                {
-                    qWarning() << "boat Acc no std request : Boat Id = -1 for:" << login ;
-                    doRequest(VLM_REQUEST_IDU);
-                    return;
-                }
-                QTextStream(&page) << "/getinfo.php?"
-                            << "pseudo=" << login
-                            << "&password=" << pass
-                            << "&idu="<< boat_id
-                            ;
-                break;
-            case VLM_REQUEST_IDU:
-                QTextStream(&page) << "/getinfo2.php?"
-                            << "pseudo=" << login
-                            << "&password=" << pass
-                            ;
+                QTextStream(&page) << "/ws/boatinfo.php?forcefmt=json";
                 break;
             case VLM_REQUEST_TRJ:
                 if(race_id==0)
@@ -232,6 +231,10 @@ void boatAccount::doRequest(int requestCmd)
                 break;
             case VLM_REQUEST_GATE:
                 QTextStream(&page) << "/ws/raceinfo.php?idrace="<<race_id;
+                break;
+             default:
+                qWarning() << "[boatAccount-doRequest] error: unknown request: " << requestCmd;
+                break;
         }
 
         inetGet(requestCmd,page);
@@ -251,238 +254,163 @@ void boatAccount::doRequest(int requestCmd)
     }
 }
 
+void boatAccount::authFailed(void)
+{
+    QMessageBox::warning(0,QObject::tr("Paramètre bateau"),
+                  QString("Erreur de parametrage du bateau '")+
+                  login+"'.\n Verifier le login et mot de passe puis reactivez le bateau");
+    setStatus(false);
+    emit boatUpdated(this,false,doingSync);
+    inetClient::authFailed();
+}
+
+#define printData(JSON,DATA) qWarning() << DATA << JSON[DATA].toString();
+
 void boatAccount::requestFinished (QByteArray res_byte)
 {
     QStringList lsbuf;
-    float latitude=0,longitude=0;
+    double latitude=0,longitude=0;
 
     QString res(res_byte);
 
     switch(getCurrentRequest())
-    {
-        case VLM_REQUEST_IDU:
-            lsbuf = res.split(";");
-            boat_id=-1;
-            for (int i=0; i < lsbuf.size(); i++)
-            {
-                QStringList lsval = lsbuf.at(i).split("=");
-                if (lsval.size() == 2) {
-                    if (lsval.at(0) == "IDU")
-                    {
-                        boat_id = lsval.at(1).toInt();
-                        break;
-                    }
-                }
-            }
-            if(boat_id!=-1)
-            {
-                clearCurrentRequest();
-                doRequest(VLM_REQUEST_BOAT);
-            }
-            else
-            {
-                QMessageBox::warning(0,QObject::tr("Paramètre bateau"),
-                              QString("Erreur de parametrage du bateau '")+
-                              login+"'.\n Verifier le login et mot de passe puis reactivez le bateau");
-                setStatus(false);
-                emit boatUpdated(this,false,doingSync);
-            }
+    {             
+        case VLM_REQUEST_WS:
             break;
+
         case VLM_REQUEST_BOAT:
-            hasPilototo=false;
-            newRace=false;
-            vacLen=300;
-            pilototo.clear();
-
-            if(res.length()<5)
             {
-                QMessageBox::warning(0,QObject::tr("Bateau au ponton"),
-                              QString("Le bateau '")+login+"' a ete desactive car hors course");
-                setStatus(false);
-                emit boatUpdated(this,false,doingSync);
-                break;
-            }
+                QJson::Parser parser;
+                bool ok;
 
-            for(int i=0;i<5;i++)
-                pilototo.append("none");
-
-            if(res.length()<5)
-            {
-                QMessageBox::warning(0,QObject::tr("Bateau au ponton"),
-                              QString("Le bateau '")+login+"' a ete desactive car hors course");
-                setStatus(false);
-                emit boatUpdated(this,false,doingSync);
-                break;
-            }
-
-            lsbuf = res.split("\n");
-
-            for (int i=0; i < lsbuf.size(); i++)
-            {
-                QStringList lsval = lsbuf.at(i).split("=");
-                if (lsval.size() == 2) {
-                    if (lsval.at(0) == "IDU")
-                        boat_id = lsval.at(1).toInt();
-                    else if (lsval.at(0) == "IDB")
-                        boat_name = lsval.at(1);
-                    else if (lsval.at(0) == "RAC")
-                    {
-                        if(race_id != lsval.at(1).toInt())
-                            newRace=true;
-                        race_id = lsval.at(1).toInt();
-                        if(race_id==0)
-                        {                            
-                            latitude = longitude = speed = heading = avg = 0;
-                            dnm = loch = ortho = loxo = vmg = windDir = 0;
-                            windSpeed = WPLat = WPLon = TWA = prevVac = 0;
-                            nextVac = 0;
-                            race_name = "";
-                            WPHd = -1;
-                            pilotType = 1;
-                            pilotString = "";
-                            score = "";
-                            hasPilototo=false;
-                        }
-                    }
-                    else if (lsval.at(0) == "LAT")
-                        latitude = lsval.at(1).toFloat();
-                    else if (lsval.at(0) == "LON")
-                        longitude = lsval.at(1).toFloat();
-                    else if (lsval.at(0) == "RAN")
-                        race_name = lsval.at(1);
-                    else if (lsval.at(0) == "BSP")
-                        speed = lsval.at(1).toFloat();
-                    else if (lsval.at(0) == "HDG")
-                        heading = lsval.at(1).toFloat();
-                    else if (lsval.at(0) == "AVG")
-                        avg = lsval.at(1).toFloat();
-                    else if (lsval.at(0) == "DNM")
-                        dnm = lsval.at(1).toFloat();
-                    else if (lsval.at(0) == "LOC")
-                        loch = lsval.at(1).toFloat();
-                    else if (lsval.at(0) == "ORT")
-                        ortho = lsval.at(1).toFloat();
-                    else if (lsval.at(0) == "LOX")
-                        loxo = lsval.at(1).toFloat();
-                    else if (lsval.at(0) == "VMG")
-                        vmg = lsval.at(1).toFloat();
-                    else if (lsval.at(0) == "TWD")
-                        windDir = lsval.at(1).toFloat();
-                    else if (lsval.at(0) == "TWS")
-                        windSpeed = lsval.at(1).toFloat();
-                    else if (lsval.at(0) == "WPLAT")
-                        WPLat = lsval.at(1).toFloat();
-                    else if (lsval.at(0) == "WPLON")
-                        WPLon = lsval.at(1).toFloat();
-                    else if (lsval.at(0) == "H@WP")
-                        WPHd = lsval.at(1).toFloat();
-                    else if(lsval.at(0) == "PIM")
-                        pilotType = lsval.at(1).toInt();
-                    else if(lsval.at(0) == "PIP")
-                        pilotString = lsval.at(1);
-                        if(pilotString == "0.0000,0.0000")
-                            pilotString=tr("Prochaine balise");
-                    else if(lsval.at(0) == "TWA")
-                        TWA = lsval.at(1).toFloat();
-                    else if(lsval.at(0) == "ETA")
-                        ETA = lsval.at(1);
-                    else if(lsval.at(0) == "POS")
-                        score = lsval.at(1);
-                    else if(lsval.at(0) == "LUP")
-                        prevVac = lsval.at(1).toInt();
-                    else if(lsval.at(0) == "NUP")
-                        nextVac = lsval.at(1).toInt();
-                    else if(lsval.at(0) == "NWP")
-                        nWP = lsval.at(1).toInt();
-                    else if(lsval.at(0) == "PIL1")
-                    {
-                        hasPilototo=true;
-                        pilototo[0] = lsval.at(1);
-                    }
-                    else if(lsval.at(0) == "PIL2")
-                    {
-                        hasPilototo=true;
-                        pilototo[1] = lsval.at(1);
-                    }
-                    else if(lsval.at(0) == "PIL3")
-                    {
-                        hasPilototo=true;
-                        pilototo[2] = lsval.at(1);
-                    }
-                    else if(lsval.at(0) == "PIL4")
-                    {
-                        hasPilototo=true;
-                        pilototo[3] = lsval.at(1);
-                    }
-                    else if(lsval.at(0) == "PIL5")
-                    {
-                        hasPilototo=true;
-                        pilototo[4] = lsval.at(1);
-                    }
-                    else if(lsval.at(0) == "POL")
-                        polarVlm = lsval.at(1);
-                    else if(lsval.at(0) == "EML")
-                        email = lsval.at(1);
-                    else if(lsval.at(0) == "VAC")
-                        vacLen = lsval.at(1).toInt();
+                QVariantMap result = parser.parse (res_byte, &ok).toMap();
+                if (!ok) {
+                    qWarning() << "Error parsing json data " << res_byte;
+                    qWarning() << "Error: " << parser.errorString() << " (line: " << parser.errorLine() << ")";
                 }
-            }
+                
+                //qWarning() << "reqest res for " << login << ": " << result["IDU"].toInt() << ", " << result["IDB"].toString();
 
-            /*if(pilotType==5 && pilotString.isEmpty())
-                pilotString=tr("Prochaine balise");*/
+                hasPilototo=false;
+                newRace=false;
+                vacLen=300;
+                pilototo.clear();
+                for(int i=0;i<5;i++)
+                    pilototo.append("none");
 
-            lat = latitude/1000;
-            lon = longitude/1000;
-
-            current_heading = heading;
-            //qWarning() << "Data for " << boat_id << " received" << " - vac len " << vacLen;
-
-            if(doingValidation)
-            {
-                qWarning() << "Validating Board cmd for " << login;
-                if(chkResult())
+                if(result["RAC"].toInt() == 0)
                 {
-                    doingValidation=false;
-                    emit validationDone(true);
+                    QMessageBox::warning(0,QObject::tr("Bateau au ponton"),
+                                         QString("Le bateau '")+login+"' a ete desactive car hors course");
+                    setStatus(false);
+                    emit boatUpdated(this,false,doingSync);
+                    emit hasFinishedUpdating();
+                    break;
                 }
-                else
+
+                if(race_id != result["RAC"].toInt())
+                    newRace=true;
+
+                boat_id     = result["IDU"].toInt();
+                race_id     = result["RAC"].toInt();
+                boat_name   = result["IDB"].toString();
+                latitude    = result["LAT"].toDouble();
+                longitude   = result["LON"].toDouble();
+                race_name   = result["RAN"].toString();
+                speed       = (float) result["BSP"].toDouble();
+                heading     = (float) result["HDG"].toDouble();
+                avg         = (float) result["AVG"].toDouble();
+                dnm         = (float) result["DNM"].toDouble();
+                loch        = (float) result["LOC"].toDouble();
+                ortho       = (float) result["ORT"].toDouble();
+                loxo        = (float) result["LOX"].toDouble();
+                vmg         = (float) result["VMG"].toDouble();
+                windDir     = (float) result["TWD"].toDouble();
+                windSpeed   = (float) result["TWS"].toDouble();
+                WPLat       = result["WPLAT"].toDouble();
+                WPLon       = result["WPLON"].toDouble();
+                WPHd        = (float) result["H@WP"].toDouble();
+                pilotType   = result["PIM"].toInt();
+                pilotString = result["PIP"].toString();                
+                TWA         = (float) result["TWA"].toDouble();
+                ETA         = result["ETA"].toString();
+                score       = result["POS"].toString();
+                prevVac     = result["LUP"].toUInt();
+                nextVac     = result["NUP"].toUInt();
+                nWP         = result["NWP"].toInt();
+                pilototo[0] = result["PIL1"].toString();
+                pilototo[1] = result["PIL2"].toString();
+                pilototo[2] = result["PIL3"].toString();
+                pilototo[3] = result["PIL4"].toString();
+                pilototo[4] = result["PIL5"].toString();
+                polarVlm = result["POL"].toString();
+                email = result["EML"].toString();
+                vacLen = result["VAC"].toInt();
+
+                //qWarning() << "WPL=" << result["WPL"].toString();
+
+                hasPilototo=true;
+
+                lat = latitude/1000;
+                lon = longitude/1000;
+
+                current_heading = heading;
+
+                if(doingValidation)
                 {
-                    valid_nbRetry++;
-                    if(valid_nbRetry>MAX_RETRY)
+                    qWarning() << "Validating Board cmd for " << login;
+                    if(chkResult())
                     {
-                        qWarning("Failed to synch");
                         doingValidation=false;
-                        updateBoatData();
-                        emit boatUpdated(this,newRace,doingSync);
-                        emit validationDone(false);
-                        updating=false;
+                        emit validationDone(true);
                     }
                     else
                     {
-                        qWarning("Retry...");
-                        timer->start(1000);
-                        updating=false;
-                        break;
+                        valid_nbRetry++;
+                        if(valid_nbRetry>MAX_RETRY)
+                        {
+                            qWarning("Failed to synch");
+                            doingValidation=false;
+                            updateBoatData();
+                            emit boatUpdated(this,newRace,doingSync);
+                            emit validationDone(false);
+                            emit hasFinishedUpdating();
+                            updating=false;
+                        }
+                        else
+                        {
+                            qWarning("Retry...");
+                            timer->start(1000);
+                            updating=false;
+                            break;
+                        }
                     }
                 }
-            }
 
-            /* request trace points */
-            if(race_id==0)
-            {
-                /* clearing trace */
-                trace.clear();
-                trace_drawing->deleteAll();
-                /*updating everything*/
-                updateBoatData();
-                updating=false;
-                QMessageBox::warning(0,QObject::tr("Bateau au ponton"),
-                              QString("Le bateau '")+login+"' a ete desactive car hors course");
-                setStatus(false);
-                emit boatUpdated(this,newRace,doingSync);
+                /* request trace points */
+                if(race_id==0)
+                {
+                    /* clearing trace */
+                    trace.clear();
+                    trace_drawing->deleteAll();
+                    /*updating everything*/
+                    updateBoatData();
+                    updating=false;
+                    QMessageBox::warning(0,QObject::tr("Bateau au ponton"),
+                                         QString("Le bateau '")+login+"' a ete desactive car hors course");
+                    setStatus(false);
+                    emit boatUpdated(this,newRace,doingSync);
+                    emit hasFinishedUpdating();
+                }
+                else
+                {
+                    //updateBoatData();
+                    //emit boatUpdated(this,newRace,doingSync);
+                    //emit hasFinishedUpdating();
+                    //updating=false;
+                    doRequest(VLM_REQUEST_TRJ);
+                }
             }
-            else
-                doRequest(VLM_REQUEST_TRJ);
             break;
         case VLM_REQUEST_TRJ:
             emit getTrace(res,&trace);
@@ -490,60 +418,94 @@ void boatAccount::requestFinished (QByteArray res_byte)
 
             /* we can now update everything */
             updateBoatData();
-            updateTraceColor();
-            updating=false;
-            drawEstime();
-            emit boatUpdated(this,newRace,doingSync);
+            updateTraceColor();            
+
             if(race_id!=0 && !gatesLoaded)
+            {
+                updating=false;
+                drawEstime();
+                updating=true;
                 doRequest(VLM_REQUEST_GATE);
+            }
+            else
+            {
+                updating=false;
+                drawEstime();
+                emit hasFinishedUpdating();
+                emit boatUpdated(this,newRace,doingSync);
+            }
             showNextGates();
             break;
         case VLM_REQUEST_GATE:
-            QJson::Parser parser;
-            bool ok;
-
-            QVariantMap result = parser.parse (res_byte, &ok).toMap();
-            if (!ok) {
-                qWarning() << "Error parsing json data " << res_byte;
-                qWarning() << "Error: " << parser.errorString() << " (line: " << parser.errorLine() << ")";
-            }
-
-            qWarning() << "id Race: " << result["idraces"].toString();
-            qWarning() << "race name: " << result["racename"].toString();
-
-            QVariantMap wps= result["races_waypoints"].toMap();
-            for(int i=1;true;i++)
             {
-                QString str;
-                QVariantMap wp= wps[str.setNum(i)].toMap();
-                if(wp.isEmpty()) break;
-                qWarning()<<"wp: "<<wp["libelle"].toString();
-                float lonPorte1=wp["longitude1"].toDouble()/1000.000;
-                float latPorte1=wp["latitude1"].toDouble()/1000.000;
-                float lonPorte2=wp["longitude2"].toDouble()/1000.000;
-                float latPorte2=wp["latitude2"].toDouble()/1000.000;
-                vlmLine * porte=new vlmLine(proj,parent->getScene(),Z_VALUE_GATE);
-                connect(parent, SIGNAL(shLab(bool)),porte,SLOT(slot_shLab()));
-                porte->setGateMode("WP"+str+": "+wp["libelle"].toString());
-                porte->addPoint(latPorte1,lonPorte1);
-                if(qRound(lonPorte1*1000)==qRound(lonPorte2*1000) && qRound(latPorte1*1000)==qRound(latPorte2*1000))
-                {
-                    porte->setPorteOnePoint();
-                    Util::getCoordFromDistanceAngle(latPorte1, lonPorte1, 500,wp["laisser_au"].toDouble()+180,&latPorte2,&lonPorte2);
-                }
-                porte->addPoint(latPorte2,lonPorte2);
-                QPen penLine(Qt::black,1);
-                penLine.setWidthF(3);
-                porte->setLinePen(penLine);
-                porte->setHidden(true);
-                gates.append(porte);
+                QJson::Parser parser;
+                bool ok;
 
+                QVariantMap result = parser.parse (res_byte, &ok).toMap();
+                if (!ok) {
+                    qWarning() << "Error parsing json data " << res_byte;
+                    qWarning() << "Error: " << parser.errorString() << " (line: " << parser.errorLine() << ")";
+                }
+
+                qWarning() << "id Race: " << result["idraces"].toString();
+                qWarning() << "race name: " << result["racename"].toString();
+
+                QVariantMap wps= result["races_waypoints"].toMap();
+                for(int i=1;true;i++)
+                {
+                    QString str;
+                    QVariantMap wp= wps[str.setNum(i)].toMap();
+                    if(wp.isEmpty()) break;
+                    qWarning()<<"wp: "<<wp["libelle"].toString();
+                    double lonPorte1=wp["longitude1"].toDouble()/1000.000;
+                    double latPorte1=wp["latitude1"].toDouble()/1000.000;
+                    double lonPorte2=wp["longitude2"].toDouble()/1000.000;
+                    double latPorte2=wp["latitude2"].toDouble()/1000.000;
+                    vlmLine * porte=new vlmLine(proj,parent->getScene(),Z_VALUE_GATE);
+                    connect(parent, SIGNAL(shLab(bool)),porte,SLOT(slot_shLab()));
+                    porte->setGateMode("WP"+str+": "+wp["libelle"].toString());
+                    porte->addPoint(latPorte1,lonPorte1);
+                    if(qRound(lonPorte1*1000)==qRound(lonPorte2*1000) && qRound(latPorte1*1000)==qRound(latPorte2*1000))
+                    {
+                        porte->setPorteOnePoint();
+                        Util::getCoordFromDistanceAngle(latPorte1, lonPorte1, 500,wp["laisser_au"].toDouble()+180,&latPorte2,&lonPorte2);
+                    }
+                    porte->addPoint(latPorte2,lonPorte2);
+                    QPen penLine(Qt::black,1);
+                    penLine.setWidthF(3);
+                    porte->setLinePen(penLine);
+                    porte->setHidden(true);
+                    gates.append(porte);
+
+                }
+                gatesLoaded=true;
+                updating=false;
+                emit hasFinishedUpdating();
+                emit boatUpdated(this,newRace,doingSync);
+                showNextGates();
             }
-            gatesLoaded=true;
-            showNextGates();
+            break;
+        default:
+            qWarning() << "[boatAccount-requestFinished] error: unknown request: " << getCurrentRequest();
             break;
     }
+#if 0 //unflag to check b-vmg
+    double res_h,res_wangle;
+    if(this->polarData && lon != 0 && lat != 0 && WPLon != 0 && WPLat != 0)
+    {
+        this->polarData->bvmg(this->lon,this->lat,this->WPLon,this->WPLat,this->windDir,this->windSpeed,0,&res_h,&res_wangle);
+        qWarning()<<"Cap BVMG: "<<res_h<<" TWA BVMG: "<<res_wangle;
+    }
+#endif
 }
+
+void boatAccount::inetError()
+{
+    updating=false;
+    //emit hasFinishedUpdating();
+    //emit boatUpdated(this,newRace,doingSync);
+}
+
 void boatAccount::showNextGates()
 {
     if(!gatesLoaded) return;
@@ -631,8 +593,8 @@ bool boatAccount::chkResult(void)
             break;
         case VLM_CMD_WP:
             
-            if(compFloat(getWPLat(),valid_val1) &&
-                compFloat(getWPLon(),valid_val2) &&
+            if(compDouble(getWPLat(),valid_val1) &&
+                compDouble(getWPLon(),valid_val2) &&
                 compFloat(getWPHd(),valid_val3))
                 return true;
             else
@@ -649,7 +611,6 @@ bool boatAccount::chkResult(void)
 /**************************/
 /* Select / unselect      */
 /**************************/
-
 
 void boatAccount::slot_selectBoat()
 {
@@ -699,6 +660,8 @@ void boatAccount::slot_toggleEstime()
 void boatAccount::paint(QPainter * pnt, const QStyleOptionGraphicsItem * , QWidget * )
 {
     int dy = height/2;
+    QPen pen(selected?Qt::darkRed:Qt::darkBlue);
+    pnt->setPen(pen);
     if(!labelHidden)
     {
         QFontMetrics fm(font());
@@ -707,7 +670,7 @@ void boatAccount::paint(QPainter * pnt, const QStyleOptionGraphicsItem * , QWidg
         pnt->setFont(font());
         pnt->drawText(10,fm.height()-2,my_str);
     }
-    QPen pen(selected?selColor:myColor);
+    pen.setColor(selected?selColor:myColor);
     pen.setWidth(4);
     pnt->setPen(pen);
     pnt->fillRect(0,dy-3,7,7, QBrush(selected?selColor:myColor));
@@ -762,7 +725,7 @@ void boatAccount::drawEstime(void)
     /* draw estime */
     if(getIsSelected() || getForceEstime())
     {
-        float tmp_lat,tmp_lon;
+        double tmp_lat,tmp_lon;
 
         switch(estime_type)
         {
@@ -796,7 +759,12 @@ void boatAccount::drawEstime(void)
 /**************************/
 /* shape & boundingRect   */
 /**************************/
-
+void boatAccount::slotCompassLine()
+{
+    int i1,j1;
+    proj->map2screen(this->lon,this->lat,&i1,&j1);
+    emit compassLine(i1,j1);
+}
 QPainterPath boatAccount::shape() const
 {
     QPainterPath path;
@@ -870,8 +838,13 @@ void boatAccount::updateHint(void)
             str += tr("VBVMG") /*+ "-> " + getPilotString()*/;
             break;
     }
-
-    setToolTip(str);
+    QString desc;
+    if(!polarData) desc=tr(" (pas de polaire charg�e)");
+    else if (polarData->getIsCsv()) desc=polarData->getName() + tr(" (format CSV)");
+    else desc=polarData->getName() + tr(" (format POL)");
+    str=str.replace(" ","&nbsp;");
+    desc=desc.replace(" ","&nbsp;");
+    setToolTip(desc+"<br>"+str);
 }
 
 void boatAccount::slot_projectionUpdated()
@@ -884,6 +857,23 @@ void boatAccount::setStatus(bool activated)
 {
      this->activated=activated;
      setVisible(activated);
+     if(!activated)
+     {
+        WPLine->hide();
+        estimeLine->hide();
+        if(gatesLoaded)
+        {
+            vlmLine * porte;
+            QListIterator<vlmLine*> i (gates);
+            while(i.hasNext())
+            {
+                porte=i.next();
+                delete porte;
+            }
+        }
+        gatesLoaded=false;
+     }
+
 }
 
 void boatAccount::setParam(QString login, QString pass)
@@ -1041,7 +1031,7 @@ void boatAccount::contextMenuEvent(QGraphicsSceneContextMenuEvent * e)
         case 0:
             /* not showing menu line, default text*/
             ac_compassLine->setText("Tirer un cap");
-            ac_compassLine->setEnabled(false);
+            ac_compassLine->setEnabled(true);
             break;
         case 1:
             /* showing text for compass line off*/

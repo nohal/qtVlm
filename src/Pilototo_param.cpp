@@ -41,6 +41,9 @@ Pilototo_param::Pilototo_param(QWidget *parent) : QDialog(parent)
     mode->addItem(tr("Pilote ortho (3)"));
     mode->addItem(tr("Meilleur VMG (4)"));
     mode->addItem(tr("VBVMG (5)"));
+
+    btn_copyPOI->setIcon(QIcon("img/copy.png"));
+    btn_pastePOI->setIcon(QIcon("img/paste.png"));
 }
 
 void Pilototo_param::editInstruction(Pilototo_instruction * instruction)
@@ -49,7 +52,7 @@ void Pilototo_param::editInstruction(Pilototo_instruction * instruction)
     
     this->instruction=instruction;
 
-    qWarning() << "Edit instruction std";
+    //qWarning() << "Edit instruction std";
 
     mode->setCurrentIndex(instruction->getMode());
     angle->setValue(instruction->getAngle());
@@ -168,17 +171,24 @@ void Pilototo_param::copyPOI(void)
 
 void Pilototo_param::selectPOI(void)
 {
-    emit doSelectPOI(instruction);
+    emit doSelectPOI(instruction,2); /* type=editor*/
     QDialog::done(QDialog::Rejected);
 }
+
 
 float Pilototo_param::getValue(int type)
 {
     float deg = (type==EDT_LAT?lat_deg->value():lon_deg->value());
     float min = (type==EDT_LAT?lat_min->value():lon_min->value())/60.0;
     float res;
+    float sig;
+    if(type==EDT_LAT)
+        sig=lat_sig->currentIndex()==0?1.0:-1.0;
+    else
+        sig=lon_sig->currentIndex()==0?1.0:-1.0;
+
     /* if min < 0 or deg < 0 the whole value is < 0 */
-    if (deg < 0)
+    /*if (deg < 0)
     {
         if(min<0)
             res = deg + min;
@@ -191,27 +201,35 @@ float Pilototo_param::getValue(int type)
             res=-(deg-min);
         else
             res = deg + min;
-    }
+    }*/
+
+    res=sig*(deg+min);
+
+    //qWarning() << (type==POI_EDT_LAT?"Lat ":"Lon ") << " set to " << res;
 
     return res;
 }
 
 void Pilototo_param::setValue(int type,float val)
 {
+    int sig=val<0?1:0;
+    val=fabs(val);
     int   deg = (int) trunc(val);
     float min = 60.0*fabs(val-trunc(val));
 
-    if(deg==0 && val < 0)
-        min=-min;
+    /*if(deg==0 && val < 0)
+        min=-min;*/
 
     if(type==EDT_LAT)
     {
         lat_deg->setValue(deg);
         lat_min->setValue(min);
+        lat_sig->setCurrentIndex(sig);
     }
     else
     {
         lon_deg->setValue(deg);
         lon_min->setValue(min);
+        lon_sig->setCurrentIndex(sig);
     }
 }

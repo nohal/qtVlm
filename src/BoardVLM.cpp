@@ -22,6 +22,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <QMessageBox>
 #include <QDebug>
 
+#include "dataDef.h"
+
 #include "BoardVLM.h"
 #include "boatAccount.h"
 #include <qextserialport.h>
@@ -32,11 +34,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "settings.h"
 #include "Polar.h"
 #include "POI.h"
-
-#define VLM_NO_REQUEST     -1
-#define VLM_REQUEST_LOGIN  0
-#define VLM_DO_REQUEST     1
-#define VLM_WAIT_RESULT    2
 
 #define SPEED_COLOR_UPDATE    "color: rgb(100, 200, 0);"
 #define SPEED_COLOR_VLM       "color: rgb(255, 0, 0);"
@@ -60,6 +57,7 @@ boardVLM::boardVLM(MainWindow * mainWin, inetConnexion * inet) : QWidget(mainWin
     connect(GPS_timer,SIGNAL(timeout()),this, SLOT(synch_GPS()));
 
     QDockWidget * VLMDock = new QDockWidget("Virtual Loup de Mer");
+    assert(VLMDock);
     VLMDock->setWidget(this);
     VLMDock->setAllowedAreas(Qt::RightDockWidgetArea|Qt::LeftDockWidgetArea);
     mainWin->addDockWidget(Qt::LeftDockWidgetArea,VLMDock);
@@ -67,7 +65,8 @@ boardVLM::boardVLM(MainWindow * mainWin, inetConnexion * inet) : QWidget(mainWin
 
     /* wpDialog */
     wpDialog = new WP_dialog();
-    connect(wpDialog,SIGNAL(sendCmd(int,float,float,float)),this,SLOT(sendCmd(int,float,float,float)));
+    connect(wpDialog,SIGNAL(confirmAndSendCmd(QString,QString,int,float,float,float)),
+            this,SLOT(confirmAndSendCmd(QString,QString,int,float,float,float)));
     connect(wpDialog,SIGNAL(selectPOI()),mainWin,SLOT(slotSelectWP_POI()));
     connect(mainWin,SIGNAL(editWP_POI(POI*)),wpDialog,SLOT(show_WPdialog(POI *)));
 
@@ -105,6 +104,45 @@ boardVLM::boardVLM(MainWindow * mainWin, inetConnexion * inet) : QWidget(mainWin
         chk_GPS->show();
 
     COM=Settings::getSetting("serialName", "COM2").toString();
+
+    /* Contextual Menu */
+    popup = new QMenu(this);
+    ac_showHideCompass = new QAction(tr("Cacher compas"),popup);
+    popup->addAction(ac_showHideCompass);
+    connect(ac_showHideCompass,SIGNAL(triggered()),this,SLOT(slot_hideShowCompass()));
+
+    /* Etat du compass */
+    if(Settings::getSetting("boardCompassShown", "1").toInt()==1)
+        windAngle->show();
+    else
+        windAngle->hide();
+}
+
+void boardVLM::confirmAndSendCmd(QString question,QString info,int cmdNum,float val1,float val2, float val3)
+{
+    if(confirmChange(question,info))
+        sendCmd(cmdNum,val1,val2,val3);
+}
+
+bool boardVLM::confirmChange(QString question,QString info)
+{    
+    if(!currentBoat)
+    {
+        QMessageBox::warning(mainWin,tr("Erreur"),tr("Pas de bateau selectionn�"));
+        return false;
+    }
+
+    if(Settings::getSetting("askConfirmation","0").toInt()==0)
+        return true;
+
+    if(QMessageBox::question(mainWin,tr("Instruction pour ")+currentBoat->getBoatName(),
+                             currentBoat->getBoatName()+": " + question,QMessageBox::Yes|QMessageBox::No,
+                             QMessageBox::Yes)==QMessageBox::Yes)
+    {
+        emit showMessage(currentBoat->getBoatName()+": " + info,2000);
+        return true;
+    }
+    return false;
 }
 
 void boardVLM::paramChanged(void)
@@ -236,18 +274,15 @@ void boardVLM::boatUpdated(boatAccount * boat)
 }
 
 void boardVLM::setWP(float lat,float lon,float wph)
-{
-    if(!currentBoat)
-    {
-        qWarning("No current boat for setWP");
-        return;
-    }
-    sendCmd(VLM_CMD_WP,lat,lon,wph);
+{    
+    if(confirmChange(tr("Confirmer le changement du WP"),tr("WP change")))
+       sendCmd(VLM_CMD_WP,lat,lon,wph);
 }
 
 void boardVLM::chgHeading()
 {
-    sendCmd(VLM_CMD_HD,editHeading->value(),0,0);
+    if(confirmChange(tr("Confirmer le mode pilotage 'Cap'"),tr("Mode de pilotage change en 'Cap'")))
+        sendCmd(VLM_CMD_HD,editHeading->value(),0,0);
 }
 
 void boardVLM::headingUpdated(double heading)
@@ -409,7 +444,8 @@ void boardVLM::doWP_edit()
 
 void boardVLM::chgAngle()
 {
-    sendCmd(VLM_CMD_ANG,editAngle->value(),0,0);
+    if(confirmChange(tr("Confirmer le mode pilotage 'Angle'"),tr("Mode de pilotage change en 'Angle'")))
+        sendCmd(VLM_CMD_ANG,editAngle->value(),0,0);
 }
 
 void boardVLM::doSync()
@@ -429,17 +465,20 @@ void boardVLM::doVirer()
 
 void boardVLM::doPilotOrtho()
 {
-    sendCmd(VLM_CMD_ORTHO,0,0,0);
+    if(confirmChange(tr("Confirmer le mode 'Pilot Ortho'"),tr("Mode de pilotage change en 'Pilot Ortho'")))
+        sendCmd(VLM_CMD_ORTHO,0,0,0);
 }
 
 void boardVLM::doVmg()
 {
-    sendCmd(VLM_CMD_VMG,0,0,0);
+    if(confirmChange(tr("Confirmer le mode 'VMG'"),tr("Mode de pilotage change en 'VMG'")))
+        sendCmd(VLM_CMD_VMG,0,0,0);
 }
 
 void boardVLM::doVbvmg()
 {
-    sendCmd(VLM_CMD_VBVMG,0,0,0);
+    if(confirmChange(tr("Confirmer le mode 'VBVMG'"),tr("Mode de pilotage change en 'VBVMG'")))
+        sendCmd(VLM_CMD_VBVMG,0,0,0);
 }
 
 void boardVLM::disp_boatInfo()
@@ -447,10 +486,17 @@ void boardVLM::disp_boatInfo()
     if(currentBoat)
     {
         QString polar_str=currentBoat->getCurrentPolarName();
-        if(currentBoat->getPolarState())
-            polar_str+= " ("+tr("forcé")+")";
-        if(!currentBoat->getPolarData())
-            polar_str+= " ("+tr("erreur")+")";
+        if(currentBoat->getPolarData())
+        {
+            if(currentBoat->getPolarState())
+                polar_str+= " ("+tr("forcé")+")";
+            if (currentBoat->getPolarData()->getIsCsv())
+                polar_str += " - format csv";
+            else
+                polar_str += " - format pol";
+        }
+        else
+            polar_str+= " ("+tr("erreur chargement")+")";
 
         QString boatID;
 
@@ -766,6 +812,30 @@ void boardVLM::keyPressEvent ( QKeyEvent * event )
         emit POI_selectAborted(NULL);
 }
 
+void boardVLM::contextMenuEvent(QContextMenuEvent  *)
+{
+    if(windAngle->isVisible())
+        ac_showHideCompass->setText(tr("Cacher le compas"));
+    else
+        ac_showHideCompass->setText(tr("Afficher le compas"));
+    popup->exec(QCursor::pos());
+}
+
+void boardVLM::slot_hideShowCompass()
+{
+    if(windAngle->isVisible())
+    {
+        Settings::setSetting("boardCompassShown",0);
+        windAngle->hide();
+    }
+    else
+    {
+        Settings::setSetting("boardCompassShown",1);
+        windAngle->show();
+    }
+
+}
+
 /************************/
 /* Dialog WP            */
 
@@ -819,9 +889,10 @@ void WP_dialog::done(int result)
     if(result == QDialog::Accepted)
     {
         if(WP_lat->text().isEmpty() && WP_lon->text().isEmpty())
-            sendCmd(VLM_CMD_WP,0,0,-1);
+            confirmAndSendCmd(tr("Confirmer le changement du WP"),tr("WP change"),VLM_CMD_WP,0,0,-1);
         else
-            sendCmd(VLM_CMD_WP,WP_lat->text().toFloat(),WP_lon->text().toFloat(),
+            confirmAndSendCmd(tr("Confirmer le changement du WP"),tr("WP change"),
+                              VLM_CMD_WP,WP_lat->text().toFloat(),WP_lon->text().toFloat(),
                     WP_heading->text().isEmpty()?-1:WP_heading->text().toFloat());
     }
     QDialog::done(result);

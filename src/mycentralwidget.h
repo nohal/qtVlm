@@ -29,15 +29,18 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "DialogUnits.h"
 #include "DialogGraphicsParams.h"
+#include <qsound.h>
+#include <qdatetime.h>
 
 /* Z value according to type */
 #define Z_VALUE_TERRE      0
 #define Z_VALUE_OPP        2
 #define Z_VALUE_ESTIME     3
 #define Z_VALUE_ROUTE      4
-#define Z_VALUE_POI        5
-#define Z_VALUE_GATE       6
-#define Z_VALUE_BOAT       7
+#define Z_VALUE_ROUTAGE    5
+#define Z_VALUE_POI        6
+#define Z_VALUE_GATE       7
+#define Z_VALUE_BOAT       8
 #define Z_VALUE_COMPASS    10
 
 #define Z_VALUE_SELECTION  15
@@ -86,9 +89,17 @@ class myCentralWidget : public QWidget
         bool isSelecting(void);
         QList<boatAccount*> &  getBoats() { return this->acc_list; }
         QList<raceData*> & getRaces() { return this->race_list; }
+        QList<POI*> & getPois() { return this->poi_list; }
         GshhsReader * get_gshhsReader(void) { return gshhsReader; }
         opponentList * getOppList() { return opponents; }
         inetConnexion * getInet(void) { return inetManager; }
+        boatAccount * getSelectedBoat(void);
+        bool hornIsActivated(void){return hornActivated;}
+        void setHornIsActivated(bool b){this->hornActivated=b;}
+        QDateTime getHornDate(void){return this->hornDate;}
+        void setHornDate(QDateTime t){this->hornDate=t;}
+        void setHorn();
+        void twaDraw(double lon, double lat);
 
         /* route */
         QList<ROUTE*> & getRouteList(){ return this->route_list;}
@@ -97,8 +108,24 @@ class myCentralWidget : public QWidget
         void deleteRoute(ROUTE * route);
         void freezeRoutes(bool freeze);
         void assignPois();
+        void emitUpdateRoute(){emit updateRoute();}
         ROUTE * addRoute();
+        void setCompassFollow(ROUTE * route);
+        ROUTE * getCompassFollow(){return this->compassRoute;}
+        void centerCompass(double lon,double lat);
+
+        /* routage */
+        QList<ROUTAGE*> & getRoutageList(){ return this->routage_list;}
+        bool freeRoutageName(QString name, ROUTAGE * routage);
+        void update_menuRoutage();
+        void deleteRoutage(ROUTAGE * routage);
+        ROUTAGE * addRoutage();
+
+
+
         Projection * getProj(void){return proj;}
+
+        void send_redrawAll() { emit redrawAll(); }
 
 
         /* grib */
@@ -121,6 +148,10 @@ class myCentralWidget : public QWidget
         bool get_shRoute_st(void) { return shRoute_st; }
         bool get_shOpp_st(void) { return shOpp_st; }
         bool get_shPor_st(void) { return shPor_st; }
+        void exportRouteFromMenu(ROUTE * route);
+
+        /*races*/
+        void drawNSZ(int i);
 
     public slots :
         /* Zoom & position */
@@ -134,7 +165,7 @@ class myCentralWidget : public QWidget
         void slot_Zoom_Sel();
 
         /* POI */
-        void slot_addPOI(QString name,int type,float lat,float lon, float wph,int timestamp,bool useTimeStamp, boatAccount *boat);
+        POI * slot_addPOI(QString name,int type,float lat,float lon, float wph,int timestamp,bool useTimeStamp, boatAccount *boat);
         void slot_addPOI_list(POI * poi);
         void slot_delPOI_list(POI * poi);
         void slot_POISave(void);
@@ -155,7 +186,14 @@ class myCentralWidget : public QWidget
 
         /*Routes */
         void slot_addRouteFromMenu();
+        void slot_importRouteFromMenu();
         void slot_editRoute(ROUTE * route,bool createMode=false);
+        void slot_twaLine();
+        void slot_releaseCompassFollow(){this->compassRoute=NULL;}
+
+        /*Routages */
+        void slot_addRoutageFromMenu();
+        void slot_editRoutage(ROUTAGE * routage,bool createMode=false);
 
         /* Boats */
         void slot_addBoat_list(boatAccount* boat);
@@ -183,6 +221,11 @@ class myCentralWidget : public QWidget
         /* Menu */
         void slot_map_CitiesNames();
         void slot_clearSelection(void);
+        void slotIsobarsStep();
+        void slotIsotherms0Step();
+        void slot_setColorMapMode(QAction*);
+        void slot_editHorn();
+        void slot_playHorn();
 
     signals:
         /* drawing */
@@ -195,10 +238,12 @@ class myCentralWidget : public QWidget
         void importZyGrib(void);
         void POI_selectAborted(POI*);
         void updateRoute();
+        void twaDelPoi(POI*);
 
         /* Boats */
         void writeBoatData(QList<boatAccount*> & boat_list,QList<raceData*> & race_list,QString fname);
         void readBoatData(QString fname, bool readAll);
+        void boatPointerHasChanged(boatAccount *);
 
         /* compass */
         void stopCompassLine(void);
@@ -221,6 +266,8 @@ class myCentralWidget : public QWidget
 
         //QCursor cur_cursor;
 
+        bool resizing;
+
         Projection * proj;
         MainWindow * main;
         MenuBar    *menuBar;
@@ -230,11 +277,14 @@ class myCentralWidget : public QWidget
         mapCompass * compass;
         selectionWidget * selection;
         opponentList * opponents;
+        vlmLine * NSZ;
 
         /* Grib */
         Grib *grib;
         void zoomOnGrib(void);
-
+        QString  dataPresentInGrib(Grib* grib,
+                                   int dataType,int levelType,int levelValue,
+                                   bool *ok=NULL);
         /* other child */
         GshhsReader *gshhsReader;
         inetConnexion * inetManager;
@@ -255,6 +305,7 @@ class myCentralWidget : public QWidget
         /* Lists, POI*/
         QList<POI*> poi_list;
         QList<ROUTE*> route_list;
+        QList<ROUTAGE*> routage_list;
         QList<boatAccount*> acc_list;
         QList<raceData*> race_list;
 
@@ -270,6 +321,13 @@ class myCentralWidget : public QWidget
         bool shRoute_st;
         bool shOpp_st;
         bool shPor_st;
+
+        QSound  *horn;
+        bool    hornActivated;
+        QDateTime  hornDate;
+        QTimer *hornTimer;
+        twaLine *twaTrace;
+        ROUTE * compassRoute;
 
 };
 

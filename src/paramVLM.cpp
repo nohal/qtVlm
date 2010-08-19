@@ -55,7 +55,7 @@ paramVLM::paramVLM(MainWindow * main,myCentralWidget * parent) : QDialog(parent)
     /* Bateau */
     estimeVal_dist->setValue(Settings::getSetting("estimeLen",100).toInt());
     estimeVal_time->setValue(Settings::getSetting("estimeTime",60).toInt());
-    estimeVal_vac->setValue(Settings::getSetting("estimeVac",10).toInt());
+    estimeVal_vac->setValue(Settings::getSetting("estimeVac",12).toInt());
 
     estimeVal_time->setEnabled(false);
     estimeVal_vac->setEnabled(false);
@@ -75,6 +75,8 @@ paramVLM::paramVLM(MainWindow * main,myCentralWidget * parent) : QDialog(parent)
     }
 
     chk_centerOnSynch->setCheckState(Settings::getSetting("centerOnSynch","1").toInt()==1?Qt::Checked:Qt::Unchecked);
+    chk_centerOnBoatChange->setCheckState(Settings::getSetting("centerOnBoatChange","1").toInt()==1?Qt::Checked:Qt::Unchecked);
+    chk_askConfirm->setCheckState(Settings::getSetting("askConfirmation","0").toInt()==1?Qt::Checked:Qt::Unchecked);
 
     /* Trace */
     for(int i=1;i<=60;i++)
@@ -86,10 +88,26 @@ paramVLM::paramVLM(MainWindow * main,myCentralWidget * parent) : QDialog(parent)
     /* Compas */
     chk_showCompass->setCheckState(Settings::getSetting("showCompass",1).toInt()==1?Qt::Checked:Qt::Unchecked);
     chk_showPolar->setCheckState(Settings::getSetting("showPolar",1).toInt()==1?Qt::Checked:Qt::Unchecked);
+    this->radioBtn_time->setEnabled(true);
+    this->radioBtn_dist->setEnabled(true);
     if(Settings::getSetting("scalePolar",0).toInt()==1)
+    {
         chk_scalePolarF->setChecked(true);
+        polVac->setEnabled(false);
+    }
+    else if(Settings::getSetting("scalePolar",0).toInt()==2)
+    {
+        chk_scaleEstime->setChecked(true);
+        polVac->setEnabled(false);
+        this->radioBtn_time->setEnabled(false);
+        this->radioBtn_dist->setEnabled(false);
+    }
     else
+    {
         chk_scalePolarR->setChecked(true);
+        polVac->setEnabled(true);
+    }
+    polVac->setValue(Settings::getSetting("polVac",12).toInt());
 
      /* Fichier repertoire */
 
@@ -133,7 +151,7 @@ void paramVLM::done(int result)
         Settings::setSetting("WP_Color",WP_color);
         Settings::setSetting("Balise_Color",Balise_color);
 
-        /* Estime */
+        /* Bateau */
         Settings::setSetting("estimeLen", QString().setNum(estimeVal_dist->value()));
         Settings::setSetting("estimeTime", QString().setNum(estimeVal_time->value()));
         Settings::setSetting("estimeVac", QString().setNum(estimeVal_vac->value()));
@@ -146,6 +164,8 @@ void paramVLM::done(int result)
             Settings::setSetting("estimeType","2");
 
         Settings::setSetting("centerOnSynch",chk_centerOnSynch->checkState()==Qt::Checked?"1":"0");
+        Settings::setSetting("centerOnBoatChange",chk_centerOnBoatChange->checkState()==Qt::Checked?"1":"0");
+        Settings::setSetting("askConfirmation",chk_askConfirm->checkState()==Qt::Checked?"1":"0");
 
         /* Trace */
 
@@ -156,7 +176,13 @@ void paramVLM::done(int result)
         /* Compas */
         Settings::setSetting("showCompass",chk_showCompass->checkState()==Qt::Checked?"1":"0");
         Settings::setSetting("showPolar",chk_showPolar->checkState()==Qt::Checked?"1":"0");
-        Settings::setSetting("scalePolar",chk_scalePolarF->isChecked()?"1":"0");
+        if(this->chk_scalePolarR->isChecked())
+            Settings::setSetting("scalePolar","0");
+        else if(this->chk_scalePolarF->isChecked())
+            Settings::setSetting("scalePolar","1");
+        else
+            Settings::setSetting("scalePolar","2");
+        Settings::setSetting("polVac",QString().setNum(polVac->value()));
 
         /* Fichier repertoire */
 
@@ -312,4 +338,19 @@ void paramVLM::doBtn_browseGrib(void)
 void paramVLM::changeParam()
 {
     chk_showCompass->setCheckState(Settings::getSetting("showCompass",1).toInt()==1?Qt::Checked:Qt::Unchecked);
+}
+
+void paramVLM::on_chk_scaleEstime_toggled(bool checked)
+{
+    if (checked)
+    {
+        this->radioBtn_time->setEnabled(false);
+        this->radioBtn_dist->setEnabled(false);
+        this->radioBtn_vac->setChecked(true);
+    }
+    else
+    {
+        this->radioBtn_time->setEnabled(true);
+        this->radioBtn_dist->setEnabled(true);
+    }
 }

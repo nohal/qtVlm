@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>590</width>
-    <height>330</height>
+    <height>370</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -76,13 +76,13 @@
    <property name="title">
     <string>Point de depart de la route</string>
    </property>
-   <widget class="QWidget" name="">
+   <widget class="QWidget" name="layoutWidget">
     <property name="geometry">
      <rect>
       <x>7</x>
       <y>30</y>
       <width>161</width>
-      <height>43</height>
+      <height>44</height>
      </rect>
     </property>
     <layout class="QVBoxLayout" name="verticalLayout_3">
@@ -234,7 +234,7 @@
      <x>10</x>
      <y>270</y>
      <width>481</width>
-     <height>51</height>
+     <height>81</height>
     </rect>
    </property>
    <property name="title">
@@ -275,10 +275,32 @@
      <bool>true</bool>
     </property>
    </widget>
+   <widget class="QCheckBox" name="hidePois">
+    <property name="geometry">
+     <rect>
+      <x>20</x>
+      <y>50</y>
+      <width>181</width>
+      <height>18</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Cacher les POIs intermediaires</string>
+    </property>
+   </widget>
   </widget>
  </widget>
  <tabstops>
   <tabstop>editName</tabstop>
+  <tabstop>editBoat</tabstop>
+  <tabstop>startFromBoat</tabstop>
+  <tabstop>startFromMark</tabstop>
+  <tabstop>editVac</tabstop>
+  <tabstop>editGrib</tabstop>
+  <tabstop>editDate</tabstop>
+  <tabstop>editDateBox</tabstop>
+  <tabstop>editFrozen</tabstop>
+  <tabstop>editLive</tabstop>
   <tabstop>btOk</tabstop>
   <tabstop>btCancel</tabstop>
  </tabstops>

@@ -46,7 +46,7 @@ class Pilototo_param : public QDialog, public Ui::pilototo_param_ui
         void copyPOI(void);
 
     signals:
-        void doSelectPOI(Pilototo_instruction *);
+        void doSelectPOI(Pilototo_instruction *,int type);
 
     private:
         Pilototo_instruction * instruction;

@@ -75,8 +75,22 @@ HEADERS += BoardVLM.h \
     inetClient.h \
     route.h \
     Route_Editor.h \
+    routage.h \
+    Routage_Editor.h \
     settings.h \
-    class_list.h
+    class_list.h \
+    gribValidation.h \
+    Triangle.h \
+    Segment.h \
+    Polygon.h \
+    Point.h \
+    triangulation.h \
+    vlmPoint.h \
+    finePosit.h \
+    IsoLine.h \
+    dataDef.h \
+    dialoghorn.h \
+    twaline.h
 FORMS += boatAccount_dialog.ui \
     BoardVLM.ui \
     paramVLM.ui \
@@ -91,7 +105,12 @@ FORMS += boatAccount_dialog.ui \
     DialogVLM_grib.ui \
     inetConn_progessDialog.ui \
     POI_delete.ui \
-    Route_Editor.ui
+    Route_Editor.ui \
+    Routage_Editor.ui \
+    gribValidation.ui \
+    finePosit.ui \
+    dialoghorn.ui \
+    twaline.ui
 SOURCES += BoardVLM.cpp \
     boatAccount_dialog.cpp \
     boatAccount.cpp \
@@ -138,7 +157,20 @@ SOURCES += BoardVLM.cpp \
     inetClient.cpp \
     route.cpp \
     Route_Editor.cpp \
-    settings.cpp
+    routage.cpp \
+    Routage_Editor.cpp \
+    settings.cpp \
+    gribValidation.cpp \
+    triangulation.cpp \
+    Triangle.cpp \
+    Segment.cpp \
+    Polygon.cpp \
+    Point.cpp \
+    vlmPoint.cpp \
+    finePosit.cpp \
+    IsoLine.cpp \
+    dialoghorn.cpp \
+    twaline.cpp
 DEFINES = QT_$$[QT_VERSION]
 DEFINES ~= s/\./_
 DEFINES ~= s/-.*/

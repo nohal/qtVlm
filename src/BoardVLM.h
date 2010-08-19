@@ -52,7 +52,7 @@ class WP_dialog: public QDialog, public Ui::WP_dialog_ui
         void show_WPdialog(POI * poi);        
 
     signals:
-        void sendCmd(int cmdNum,float,float,float);
+        void confirmAndSendCmd(QString,QString,int cmdNum,float,float,float);
         void selectPOI(void);
 
     private:
@@ -64,7 +64,7 @@ class boardVLM: public QWidget , public Ui::boardVLM_ui, public inetClient
 { Q_OBJECT
     public:
         boardVLM(MainWindow * mainWin, inetConnexion * inet);
-        void validationDone(bool ok);
+        void validationDone(bool ok);        
 
         /* inetClient */
         void requestFinished(QByteArray res);
@@ -82,8 +82,7 @@ class boardVLM: public QWidget , public Ui::boardVLM_ui, public inetClient
         void doWP_edit();
         void disp_boatInfo();
         void synch_GPS();
-
-        void sendCmd(int cmdNum,float val1,float val2, float val3);
+        void confirmAndSendCmd(QString,QString,int cmdNum,float,float,float);
         void setWP(float lat,float lon,float wph=-1);
         void paramChanged(void);
         void setChangeStatus(bool);
@@ -92,12 +91,16 @@ class boardVLM: public QWidget , public Ui::boardVLM_ui, public inetClient
 
         void boatUpdated(boatAccount * boat);
 
+        void slot_hideShowCompass();
+
     signals:
         void VLM_Sync(void);
         void POI_selectAborted(POI*);
+        void showMessage(QString,int);
 
     protected:
         void keyPressEvent ( QKeyEvent * event );
+        void contextMenuEvent(QContextMenuEvent  * event);
 
     private:
         QMainWindow * mainWin;
@@ -110,13 +113,17 @@ class boardVLM: public QWidget , public Ui::boardVLM_ui, public inetClient
         float computeWPdir(boatAccount * boat);
         void update_btnWP(void);
 
+        void sendCmd(int cmdNum,float val1,float val2, float val3);
+
         boatAccount * currentBoat;
 
         QTimer * GPS_timer;
 
-        WP_dialog * wpDialog;
-
         QString default_styleSheet;
+
+        /* Dialogs */
+        WP_dialog * wpDialog;
+        bool confirmChange(QString question,QString info);
 
         /*GPS emul param*/
         QString COM;
@@ -124,6 +131,10 @@ class boardVLM: public QWidget , public Ui::boardVLM_ui, public inetClient
 
         /* heading /angle user update */
         bool isComputing;
+
+        /* contextual menu */
+        QMenu *popup;
+        QAction * ac_showHideCompass;
 };
 
 

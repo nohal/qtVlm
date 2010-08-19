@@ -38,6 +38,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 /* BOAT data */
 #define BOAT_GROUP_NAME   "Boat"
 #define LOGIN_NAME        "Login"
+#define BOAT_IDU          "Idu"
 #define PASS_NAME         "Pass"
 #define ACTIVATED_NAME    "Activated"
 #define POLAR_NAME        "Polar"
@@ -51,6 +52,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #define RACE_GROUP_NAME   "Race"
 #define RACEID_NAME       "raceId"
 #define OPPLIST_NAME      "oppList"
+#define DISPLAY_NSZ       "displayNSZ"
+#define LAT_NSZ           "latNSZ"
+#define WIDTH_NSZ         "widthNSZ"
+#define COLOR_NSZ_R       "colorNSZ_R"
+#define COLOR_NSZ_G       "colorNSZ_G"
+#define COLOR_NSZ_B       "colorNSZ_B"
 
 #define OLD_DOM_FILE_TYPE "zygVLM_config"
 #define OLD_ROOT_NAME     "zygVLM_boat"
@@ -105,6 +112,11 @@ void xml_boatData::slot_writeData(QList<boatAccount*> & boat_list,QList<raceData
                   tag = doc.createElement(LOGIN_NAME);
                   group.appendChild(tag);
                   t = doc.createTextNode(acc->getLogin());
+                  tag.appendChild(t);
+
+                  tag = doc.createElement(BOAT_IDU);
+                  group.appendChild(tag);
+                  t = doc.createTextNode(acc->getBoatId());
                   tag.appendChild(t);
 
                   tag = doc.createElement(PASS_NAME);
@@ -180,7 +192,35 @@ void xml_boatData::slot_writeData(QList<boatAccount*> & boat_list,QList<raceData
           group.appendChild(tag);
           t = doc.createTextNode(race_data->oppList);
           tag.appendChild(t);          
-     }
+
+          tag = doc.createElement(DISPLAY_NSZ);
+          group.appendChild(tag);
+          t = doc.createTextNode(QString().setNum(race_data->displayNSZ?1:0));
+          tag.appendChild(t);
+
+          tag = doc.createElement(LAT_NSZ);
+          group.appendChild(tag);
+          t = doc.createTextNode(QString().setNum(race_data->latNSZ));
+          tag.appendChild(t);
+
+          tag = doc.createElement(WIDTH_NSZ);
+          group.appendChild(tag);
+          t = doc.createTextNode(QString().setNum(race_data->widthNSZ));
+          tag.appendChild(t);
+
+          tag = doc.createElement(COLOR_NSZ_R);
+          group.appendChild(tag);
+          t = doc.createTextNode(QString().setNum(race_data->colorNSZ.red()));
+          tag.appendChild(t);
+          tag = doc.createElement(COLOR_NSZ_G);
+          group.appendChild(tag);
+          t = doc.createTextNode(QString().setNum(race_data->colorNSZ.green()));
+          tag.appendChild(t);
+          tag = doc.createElement(COLOR_NSZ_B);
+          group.appendChild(tag);
+          t = doc.createTextNode(QString().setNum(race_data->colorNSZ.blue()));
+          tag.appendChild(t);
+      }
 
      QFile file(fname);
      if (!file.open(QIODevice::ReadWrite | QIODevice::Text | QIODevice::Truncate))
@@ -244,6 +284,7 @@ void xml_boatData::slot_readData(QString fname,bool readAll)
          {
              subNode = node.firstChild();
              QString login = "";
+             int idu=-1;
              QString pass = "";
              QString activated = "";
              QString polar="";
@@ -261,6 +302,12 @@ void xml_boatData::slot_readData(QString fname,bool readAll)
                      dataNode = subNode.firstChild();
                      if(dataNode.nodeType() == QDomNode::TextNode)
                          login = dataNode.toText().data();
+                 }
+                 if(subNode.toElement().tagName() == BOAT_IDU)
+                 {
+                     dataNode = subNode.firstChild();
+                     if(dataNode.nodeType() == QDomNode::TextNode)
+                         idu = dataNode.toText().data().toInt();
                  }
                  if(subNode.toElement().tagName() == PASS_NAME)
                  {
@@ -340,6 +387,7 @@ void xml_boatData::slot_readData(QString fname,bool readAll)
                  acc->setLockStatus(locked);
                  acc->setZoom(zoom);
                  acc->setForceEstime(force_estime);
+                 acc->setBoatId(idu);
                  emit addBoat_list(acc);
              }
              else
@@ -350,6 +398,10 @@ void xml_boatData::slot_readData(QString fname,bool readAll)
              subNode = node.firstChild();
              QString race = "";
              QString opp_list = "";
+             bool displayNSZ=false;
+             double latNSZ=-60;
+             double widthNSZ=2;
+             QColor colorNSZ=Qt::black;
 
              while(!subNode.isNull())
              {
@@ -365,6 +417,46 @@ void xml_boatData::slot_readData(QString fname,bool readAll)
                      if(dataNode.nodeType() == QDomNode::TextNode)
                          opp_list = dataNode.toText().data();
                  }                 
+                 if(subNode.toElement().tagName() == DISPLAY_NSZ)
+                 {
+                     dataNode = subNode.firstChild();
+                     if(dataNode.nodeType() == QDomNode::TextNode)
+                         displayNSZ=(dataNode.toText().data().toInt()==1);
+                 }
+                  if(subNode.toElement().tagName() == LAT_NSZ)
+                  {
+                       dataNode = subNode.firstChild();
+                       if(dataNode.nodeType() == QDomNode::TextNode)
+                           latNSZ=(dataNode.toText().data().toFloat());
+                  }
+                  if(subNode.toElement().tagName() == WIDTH_NSZ)
+                  {
+                       dataNode = subNode.firstChild();
+                       if(dataNode.nodeType() == QDomNode::TextNode)
+                           widthNSZ=(dataNode.toText().data().toFloat());
+                  }
+                  if(subNode.toElement().tagName() == COLOR_NSZ_R)
+                  {
+                       dataNode = subNode.firstChild();
+                       if(dataNode.nodeType() == QDomNode::TextNode)
+                           colorNSZ.setRed(dataNode.toText().data().toInt());
+                  }
+                  if(subNode.toElement().tagName() == COLOR_NSZ_G)
+                  {
+                       dataNode = subNode.firstChild();
+                       if(dataNode.nodeType() == QDomNode::TextNode)
+                           colorNSZ.setGreen(dataNode.toText().data().toInt());
+                  }
+                  if(subNode.toElement().tagName() == COLOR_NSZ_B)
+                  {
+                       dataNode = subNode.firstChild();
+                       if(dataNode.nodeType() == QDomNode::TextNode)
+                           colorNSZ.setBlue(dataNode.toText().data().toInt());
+                  }
+
+
+
+
                  subNode = subNode.nextSibling();
              }
              if(!race.isEmpty() /*&& !opp_list.isEmpty()*/)
@@ -384,6 +476,10 @@ void xml_boatData::slot_readData(QString fname,bool readAll)
                  qWarning() << "Race info present => id " <<  race << " opp list " << opp_list;
                  race_data->idrace=race;
                  race_data->oppList=opp_list;
+                 race_data->colorNSZ=colorNSZ;
+                 race_data->displayNSZ=displayNSZ;
+                 race_data->latNSZ=latNSZ;
+                 race_data->widthNSZ=widthNSZ;
                  emit addRace_list(race_data);
              }
              else

@@ -38,6 +38,8 @@ class mapCompass : public QGraphicsWidget
         double getWindAngle(void) { return wind_angle; }
         bool tryMoving(int x, int y);
         bool hasCompassLine(void) { return drawCompassLine; }
+        void compassCenter(double lon, double lat);
+        ~mapCompass();
 
 
     public slots:
@@ -46,8 +48,7 @@ class mapCompass : public QGraphicsWidget
         void slot_compassCenterWp();
         void slot_stopCompassLine(void);
         void slot_paramChanged(void);
-        QPainterPath shape() const;
-        QRectF boundingRect() const;
+        void slot_projectionUpdated();
         void slot_shHidden(){hide();}
         void slot_shCom();
         void slot_shPol();
@@ -57,14 +58,19 @@ class mapCompass : public QGraphicsWidget
         void mousePressEvent(QGraphicsSceneMouseEvent *);
         void mouseReleaseEvent(QGraphicsSceneMouseEvent *e);
         void slotMouseDblClicked(QGraphicsSceneMouseEvent * e);
+        QPainterPath shape() const;
+        QRectF boundingRect() const;
         //void contextMenuEvent(QGraphicsSceneContextMenuEvent * event);
 
     private:
+        void setBr();
         int size;
-        QPolygon poly;
+        QPolygonF poly;
         int mouse_x;
         int mouse_y;
         bool isMoving;
+        double myLon;
+        double myLat;
 
         bool mouseEvt;
         Projection * proj;
@@ -82,6 +88,9 @@ class mapCompass : public QGraphicsWidget
         QGraphicsTextItem * hdg_label;
         QGraphicsTextItem * windAngle_label;
         void updateCompassLineLabels(int x, int y);
+        bool polarModeVac;
+        QRectF boundingR;
+        bool busy;
 };
 
 #endif // MAPCOMPASS_H

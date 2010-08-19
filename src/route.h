@@ -29,6 +29,7 @@ Copyright (C) 2008 - Jacques Zaninetti - http://zygrib.free.fr
 #include <QGraphicsScene>
 #include <QMenu>
 #include <QDateTime>
+#include "mycentralwidget.h"
 
 #include "class_list.h"
 
@@ -57,11 +58,13 @@ class ROUTE : public QGraphicsWidget
         void setStartTime(QDateTime date){this->startTime=date;}
         QDateTime getStartTime() {return this->startTime.toUTC();}
 
-        void setFrozen(bool frozen) {this->frozen=frozen;slot_recalculate();}
+        void setFrozen(bool frozen) {this->frozen=frozen;if(frozen==false) imported=false;slot_recalculate();}
+        void setFrozen2(bool frozen) {this->frozen=frozen;slot_recalculate();}
         bool getFrozen(){return this->frozen;}
         void setLive(bool live) {this->live=live;}
         bool isLive(){return this->live;}
         bool isBusy(){return this->busy;}
+
 
         void setStartFromBoat(bool startFromBoat){this->startFromBoat=startFromBoat;}
         bool getStartFromBoat() {return this->startFromBoat;}
@@ -74,9 +77,26 @@ class ROUTE : public QGraphicsWidget
 
         void insertPoi(POI *poi);
         void removePoi(POI *poi);
-
-//        void movePoi(POI *poi);
-//        void updatePoi(POI *poi);
+        POI * getFirstPoi(){return this->my_poiList.first();}
+        POI * getLastPoi(){return this->my_poiList.last();}
+        time_t getEta(){return this->eta;}
+        time_t getStartDate(){return this->start;}
+        bool getHas_eta(){return this->has_eta;}
+        double getRemain(){return this->remain;}
+        bool isPartOfBvmg(POI * poi);
+        void setOptimizing(bool b){this->optimizing=b;}
+        bool getOptimizing(){return optimizing;}
+        void setFastVmgCalc(bool b){this->fastVmgCalc=b;}
+        void setOptimizingPOI(bool b){this->optimizingPOI=b;hasStartEta=false;startPoiName="";}
+        void setPoiName(QString name){this->poiName=name;}
+        float getStartLat(){return this->startLat;}
+        float getStartLon(){return this->startLon;}
+        bool getHidePois(){return this->hidePois;}
+        void setHidePois(bool b);
+        bool isImported(){return imported;}
+        void setImported(){this->imported=true;}
+        QList<POI*> & getPoiList() { return this->my_poiList; }
+        vlmLine * getLine(){return this->line;}
     public slots:
         void slot_recalculate();
         void slot_edit();
@@ -84,6 +104,9 @@ class ROUTE : public QGraphicsWidget
         void slot_shShow();
         void slot_shHidden();
         void slot_shRou(){if(this->isVisible()) slot_shHidden();else slot_shShow();}
+        void slot_export(){parent->exportRouteFromMenu(this);}
+        void slot_boatPointerHasChanged(boatAccount * acc);
+        void slot_compassFollow(){parent->setCompassFollow(this);}
     signals:
         void editMe(ROUTE *);
         void deletePoi(POI *);
@@ -103,6 +126,7 @@ class ROUTE : public QGraphicsWidget
         QString name;
         QList<POI*> my_poiList;
         boatAccount *boat;
+        QString boatLogin;
         Grib *grib;
         bool startFromBoat;
         QDateTime startTime;
@@ -120,7 +144,23 @@ class ROUTE : public QGraphicsWidget
         void createPopUpMenu(void);
 
         /*various*/
-        float A360(float hdg);
-        float myDiffAngle(float a1,float a2);
+        double A360(double hdg);
+        double myDiffAngle(double a1,double a2);
+        time_t eta;
+        time_t start;
+        bool has_eta;
+        double remain;
+        bool optimizing;
+        bool fastVmgCalc;
+        bool optimizingPOI;
+        QString poiName;
+        QString startPoiName;
+        bool hasStartEta;
+        time_t startEta;
+        float startLon;
+        float startLat;
+        bool hidePois;
+        void interpolatePos();
+        bool imported;
 };
 #endif // ROUTE_H

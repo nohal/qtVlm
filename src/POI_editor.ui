@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>572</width>
+    <width>590</width>
     <height>344</height>
    </rect>
   </property>
@@ -120,15 +120,29 @@
       <x>11</x>
       <y>21</y>
       <width>241</width>
-      <height>23</height>
+      <height>26</height>
      </rect>
     </property>
     <layout class="QHBoxLayout" name="horizontalLayout">
      <item>
       <widget class="QLabel" name="label">
        <property name="text">
-        <string>Latitude Nord</string>
+        <string>Latitude</string>
        </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QComboBox" name="lat_sig">
+       <item>
+        <property name="text">
+         <string>Nord</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>Sud</string>
+        </property>
+       </item>
       </widget>
      </item>
      <item>
@@ -140,7 +154,7 @@
         <string/>
        </property>
        <property name="minimum">
-        <number>-89</number>
+        <number>0</number>
        </property>
        <property name="maximum">
         <number>89</number>
@@ -156,7 +170,7 @@
         <string> '</string>
        </property>
        <property name="minimum">
-        <double>-59.990000000000002</double>
+        <double>0.000000000000000</double>
        </property>
        <property name="maximum">
         <double>59.990000000000002</double>
@@ -173,16 +187,30 @@
      <rect>
       <x>11</x>
       <y>51</y>
-      <width>241</width>
-      <height>23</height>
+      <width>254</width>
+      <height>26</height>
      </rect>
     </property>
     <layout class="QHBoxLayout" name="horizontalLayout_2">
      <item>
       <widget class="QLabel" name="label_2">
        <property name="text">
-        <string>Longitude Est</string>
+        <string>Longitude</string>
        </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QComboBox" name="lon_sig">
+       <item>
+        <property name="text">
+         <string>Est</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>Ouest</string>
+        </property>
+       </item>
       </widget>
      </item>
      <item>
@@ -194,7 +222,7 @@
         <string/>
        </property>
        <property name="minimum">
-        <number>-359</number>
+        <number>0</number>
        </property>
        <property name="maximum">
         <number>359</number>
@@ -210,7 +238,7 @@
         <string> '</string>
        </property>
        <property name="minimum">
-        <double>-59.990000000000002</double>
+        <double>0.000000000000000</double>
        </property>
        <property name="maximum">
         <double>59.990000000000002</double>
@@ -241,7 +269,7 @@
       <x>270</x>
       <y>20</y>
       <width>181</width>
-      <height>23</height>
+      <height>26</height>
      </rect>
     </property>
     <layout class="QHBoxLayout" name="horizontalLayout_4">
@@ -279,7 +307,7 @@
       <x>270</x>
       <y>50</y>
       <width>181</width>
-      <height>23</height>
+      <height>26</height>
      </rect>
     </property>
     <layout class="QHBoxLayout" name="horizontalLayout_5">
@@ -353,7 +381,7 @@
     <rect>
      <x>487</x>
      <y>10</y>
-     <width>84</width>
+     <width>96</width>
      <height>251</height>
     </rect>
    </property>

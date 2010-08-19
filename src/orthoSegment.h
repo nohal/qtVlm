@@ -38,8 +38,9 @@ class orthoSegment : public QGraphicsWidget
         void hideSegment(void);
         void setOrthoMode(bool mode) { isOrtho=mode; }
         bool orthoMode(void) { return isOrtho; }
-
+        void getStartPoint(int * xx,int * yy){*xx=xa;*yy=ya;}
         void setLinePen ( const QPen & pen ) {linePen = pen; }
+        void setAlsoDrawLoxo(bool b){this->alsoDrawLoxo=b;}
 
         QRectF boundingRect() const;
 
@@ -57,6 +58,7 @@ class orthoSegment : public QGraphicsWidget
         void draw_orthoSegment(QPainter * pnt,int i0,int j0, int i1, int j2, int recurs=0);
         void updateSizeAndPosition(void);
         bool roundedEnd;
+        bool alsoDrawLoxo;
 };
 
 #endif // ORTHOSEGMENT_H

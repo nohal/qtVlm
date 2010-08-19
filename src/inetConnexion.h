@@ -23,6 +23,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <QNetworkAccessManager>
 #include <QNetworkReply>
+#include <QAuthenticator>
 #include <QWidget>
 #include <QDialog>
 #include <QDebug>
@@ -64,6 +65,7 @@ class inetConnexion : public QObject
         void slot_progess(qint64 bytesReceived, qint64 bytesTotal );
         void slot_updateInet(void);
         void slot_requestFinished(QNetworkReply * currentReply);
+        void slot_authRequired(QNetworkReply*,QAuthenticator*);
 
     private:
         bool hasProgress;

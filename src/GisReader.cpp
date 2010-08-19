@@ -19,6 +19,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "GisReader.h"
 #include "settings.h"
 #include "zuFile.h"
+#include "dataDef.h"
 #include "Projection.h"
 #include "Util.h"
 

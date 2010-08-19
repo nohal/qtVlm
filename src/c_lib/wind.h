@@ -44,11 +44,18 @@ extern "C" {
 
 void get_wind_info_latlong_TWSA(double longitude,  double latitude, time_t now, time_t t1,time_t t2,
                                 windData * data_prev, windData * data_nxt,
-                                int gribHighRes,double * u_res, double * v_res,int debug);
+                                int gribHighRes_t1, int gribHighRes_t2,
+                                double * u_res, double * v_res,int debug);
 
 void get_wind_info_latlong_selective_TWSA(double longitude,  double latitude, time_t now, time_t t1,time_t t2,
                                 windData * data_prev, windData * data_nxt,
-                                int gribHighRes,double * u_res, double * v_res,int debug);
+                                int gribHighRes_t1, int gribHighRes_t2,
+                                double * u_res, double * v_res,int debug);
+
+void get_wind_info_latlong_hybrid(double longitude,  double latitude, time_t now, time_t t1,time_t t2,
+                                windData * data_prev, windData * data_nxt,
+                                int gribHighRes_t1, int gribHighRes_t2,
+                                double * u_res, double * v_res,int debug);
 
 #ifdef __cplusplus
 }
@@ -61,5 +68,8 @@ void get_wind_info_latlong_TWSA_compute(double longitude,  double latitude, wind
 
 void get_wind_info_latlong_selective_TWSA_compute(double longitude,  double latitude, windData * data,int gribHighRes,
         double * u_res, double * v_res, int * rot,int debug);
+
+void get_wind_info_latlong_hybrid_compute(double longitude,  double latitude, windData * data,int gribHighRes,
+        double * u_res, double * v_res, double * ro_res,int debug);
 
 #endif

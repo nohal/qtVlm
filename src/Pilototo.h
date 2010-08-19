@@ -31,6 +31,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #define PILOTOTO_STATUS_DONE    0
 #define PILOTOTO_STATUS_PENDING 1
 #define PILOTOTO_STATUS_NEW     2
+#define PILOTOTO_STATUS_CHG     3
 
 /******************************
 * Pilototo instruction
@@ -43,15 +44,15 @@ class Pilototo_instruction : public QWidget, public Ui::instruction_ui
     public:
 	Pilototo_instruction(QWidget * main,QWidget * parent=0);
 
-	int   getMode(void)       { return mode; }
-	float getAngle(void)      { return angle; }
-	float getLat(void)        { return lat; }
-	float getLon(void)        { return lon; }
-	float getWph(void)        { return wph; }
+        int   getMode(void)       { return mode_scr; }
+        float getAngle(void)      { return angle_scr; }
+        float getLat(void)        { return lat_scr; }
+        float getLon(void)        { return lon_scr; }
+        float getWph(void)        { return wph_scr; }
 	bool  getLockStatus(void) { return locked; }
 	int   getRef(void)        { return ref; }
-	int   getStatus(void)     { return status; }
-	int   getTstamp(void)     { return tstamp.toTime_t(); }
+        int   getStatus(void)     { return status_scr; }
+        int   getTstamp(void)     { return tstamp_scr.toTime_t(); }
 	bool  getHasChanged(void) { return hasChanged; }
 	QString getPip(void);
 
@@ -66,6 +67,7 @@ class Pilototo_instruction : public QWidget, public Ui::instruction_ui
 
 	void setRef(int val) { ref=val; }
 
+        void initVal(int mode_ini,float angle_ini,float lat_ini,float lon_ini, float wph_ini,int ref_ini);
 	void initVal(void);
 	void updateHasChanged(bool status);
 
@@ -75,13 +77,19 @@ class Pilototo_instruction : public QWidget, public Ui::instruction_ui
 	void pastePOI(void);
 	void copyPOI(void);
 	void validateModif(void);
+        void cancelModif(void);
 	void dateTime_changed(QDateTime);
 	void maintenant(void);
+        void doSelectPOI();
+        void modeChanged(int index);
+        void pipChanged(QString);
+        void pipValidated(void);
 
     signals:
 	void doDelInstruction(Pilototo_instruction*);
 	void doEditInstruction(Pilototo_instruction*);
-	void instructionUpdated(void);
+        void instructionUpdated(void);
+        void selectPOI(Pilototo_instruction *,int);
 
     private:
 	int mode;
@@ -89,17 +97,26 @@ class Pilototo_instruction : public QWidget, public Ui::instruction_ui
 	float lat;
 	float lon;
 	float wph;
+        int mode_scr;
+        float angle_scr;
+        float lat_scr;
+        float lon_scr;
+        float wph_scr;
 	QDateTime tstamp;
+        QDateTime tstamp_scr;
 	int ref;
 	int status;
+        int status_scr;
 
 	bool locked;
 	bool hasChanged;
 
 	QWidget * parent;
-	QWidget * pilototo;
+        QWidget * pilototo;
 
-	void updateText(void);
+        void updateText(bool);
+        bool chkHasChanged(void);
+        bool checkPIP(bool savChange,bool chgColor);
 
 
 };
@@ -127,10 +144,10 @@ class Pilototo : public QDialog, public Ui::pilototo_ui, public inetClient
 	void instructionUpdated(void);
 	void boatUpdated(boatAccount * boat);
         void updateTime(void);
-	void doSelectPOI(Pilototo_instruction * instruction);
+        void doSelectPOI(Pilototo_instruction * instruction, int type); /* 1=instruction, 2=editor */
 
     signals:
-	void selectPOI(Pilototo_instruction *);
+        void selectPOI(Pilototo_instruction *);
 
     private slots:
 	void addInstruction(void);
@@ -142,6 +159,8 @@ class Pilototo : public QDialog, public Ui::pilototo_ui, public inetClient
 	QList<int> delList;
 	QMessageBox * waitBox;
 	QVBoxLayout * frameLayout;
+
+        int selectPOI_mode;
 
 	boatAccount * boat;
 	int nbInstruction;

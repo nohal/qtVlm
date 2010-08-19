@@ -30,6 +30,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 /* BoardVLM.h */
 class boardVLM;
 
+/* horn */
+class DialogHorn;
+
 /* boatAccount.h */
 class boatAccount;
 
@@ -61,6 +64,9 @@ class DialogProxy;
 /* DialogVLM_grib.h */
 class DialogVLM_grib;
 
+/*finePosit.h*/
+class finePosit;
+
 /* Font.h */
 class Font;
 
@@ -78,6 +84,12 @@ class GshhsReader;
 
 /* GshhsRangsReader.h */
 class GshhsRangsReader;
+
+/* gribValidation.h */
+class gribValidation;
+
+/* IsoLine.h */
+class IsoLine;
 
 /* LoadGribFile.h */
 class LoadGribFile;
@@ -131,10 +143,15 @@ class polarList;
 
 /* Projection.h */
 class Projection;
-struct vlmPoint;
 
 /* race_dialog.h */
 class race_dialog;
+
+/* routage.h */
+class ROUTAGE;
+
+/* ROUTAGE_Editor.h */
+class ROUTAGE_Editor;
 
 /* route.h */
 class ROUTE;
@@ -151,8 +168,14 @@ class Settings;
 /* Terrain.h */
 class Terrain;
 
+/*twaLine.h*/
+class twaLine;
+
 /* vlmLine.h */
 class vlmLine;
+
+/* vlmPoint.h */
+class vlmPoint;
 
 /* xmlBoatData.h */
 class xml_boatData;

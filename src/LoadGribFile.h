@@ -48,7 +48,17 @@ class LoadGribFile : public QObject
 
         void getGribFile(
                     float x0, float y0, float x1, float y1,
-                    float resolution, int interval, int days);
+                    float resolution, int interval, int days,
+                    bool wind, bool pressure, bool rain,
+                    bool cloud, bool temp, bool humid, bool isotherm0,
+                    bool tempPot, bool tempMin, bool tempMax, bool snowDepth,
+                    bool snowCateg, bool frzRainCateg,
+                    bool CAPEsfc,
+                    bool altitudeData200,
+                    bool altitudeData300,
+                    bool altitudeData500,
+                    bool altitudeData700,
+                    bool altitudeData850);
         void stop();
 
     private:

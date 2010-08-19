@@ -35,6 +35,7 @@ Copyright (C) 2008 - Jacques Zaninetti - http://zygrib.free.fr
 #include <QPushButton>
 #include <QFileDialog>
 #include <QTime>
+#include <QProgressBar>
 
 //#define HAS_TEMP
 
@@ -56,6 +57,7 @@ class DialogLoadGrib : public QDialog
         void slotGribMessage(QString msg);
         void slotGribStartLoadData();
         void slotParameterUpdated();
+        void slotAltitudeAll();
 
     signals:
         void signalGribFileReceived(QString fileName);
@@ -74,8 +76,33 @@ class DialogLoadGrib : public QDialog
         QComboBox *cbInterval;
         QComboBox *cbDays;
 
+        QCheckBox *chkWind;
+        QCheckBox *chkPressure;
+        QCheckBox *chkRain;
+        QCheckBox *chkCloud;
+        QCheckBox *chkTemp;
+        QCheckBox *chkHumid;
+        QCheckBox *chkIsotherm0;
+        QCheckBox *chkTempPot;
+        QCheckBox *chkTempMin;
+        QCheckBox *chkTempMax;
+        QCheckBox *chkSnowCateg;
+        QCheckBox *chkFrzRainCateg;
+        QCheckBox *chkSnowDepth;
+        QCheckBox *chkCAPEsfc;
+
+        QCheckBox *chkAltitudeAll;
+        QCheckBox *chkAltitude200;
+        QCheckBox *chkAltitude300;
+        QCheckBox *chkAltitude500;
+        QCheckBox *chkAltitude700;
+        QCheckBox *chkAltitude850;
+
         QPushButton *btOK;
         QPushButton *btCancel;
+        QPushButton *btServerStatus;
+
+        QProgressBar *progressBar;
 
         QLabel       *labelMsg;
 
@@ -83,9 +110,12 @@ class DialogLoadGrib : public QDialog
 
         float   xmin,ymin,xmax,ymax,resolution;
         int     interval,days;
-        bool    wind;
+        bool    rain, cloud, pressure, wind, temp, humid, isotherm0;
+        bool	tempPot, tempMin, tempMax, snowDepth, snowCateg, frzRainCateg;
+        bool 	CAPEsfc;
 
         void    updateParameters();
+        void    addSeparator (QLayout *layout, char orientation);	// 'H' or 'V'
 
 
 };

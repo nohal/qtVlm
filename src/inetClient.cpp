@@ -26,7 +26,10 @@ inetClient::inetClient(inetConnexion * inet)
     myReply = NULL;
     currentRequest=-1;
     hasProgress=false;
+    needAuth=false;
     this->inet=inet;
+    this->nbAuth=0;
+    this->name="Unknown";
 }
 
 void inetClient::inetGet(int currentRequest,QString requestUrl)
@@ -49,6 +52,7 @@ void inetClient::inetGet(int currentRequest,QString requestUrl,QString host)
     if(inet)
     {
         this->currentRequest=currentRequest;
+        this->nbAuth=0;
         inet->doRequestGet(this,requestUrl,host);
     }
 }
@@ -58,6 +62,7 @@ void inetClient::inetGetProgress(int currentRequest,QString requestUrl,QString h
     if(inet)
     {
         this->currentRequest=currentRequest;
+        this->nbAuth=0;
         inet->doRequestGetProgress(this,requestUrl,host);
     }
 }
@@ -67,6 +72,7 @@ void inetClient::inetPost(int currentRequest,QString requestUrl,QString data,QSt
     if(inet)
     {
         this->currentRequest=currentRequest;
+        this->nbAuth=0;
         inet->doRequestPost(this,requestUrl,data,host);
     }
 }
@@ -78,5 +84,6 @@ void inetClient::resetReply()
         myReply->close();
         myReply->deleteLater();
         myReply=NULL;
+        this->nbAuth=0;
     }
 }

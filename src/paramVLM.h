@@ -61,6 +61,9 @@ class paramVLM : public QDialog, public Ui::VLM_param_ui
         QColor getColor(int type);
 
         QString POI_color,Marque_WP_color,qtBoat_color,qtBoat_sel_color,WP_color,Balise_color;
+
+private slots:
+    void on_chk_scaleEstime_toggled(bool checked);
 };
 
 

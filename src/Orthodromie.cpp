@@ -23,9 +23,11 @@ Copyright (C) 2008 - Jacques Zaninetti - http://zygrib.free.fr
 ***********************************************************************/
 
 #include <stdio.h>
+#include <QDebug>
 
 #include "Orthodromie.h"
 #include "Projection.h"
+
     
 //------------------------------------------------------------------------------
 Orthodromie::Orthodromie(double x0,double y0, double x1,double y1)
@@ -164,4 +166,25 @@ void Orthodromie::draw_OrthodromieSegment(Projection * proj, QPainter * pnt,
                 pnt->drawLine(i0,j0, i1,j1);
         }
     }
+}
+double Orthodromie::getLoxoCap()
+{
+    double L0=log(tan(M_PI_4+lat0/2));
+    double L1=log(tan(M_PI_4+lat1/2));
+    double loxo=atan2((lon1-lon0),(L1-L0));
+    return 180.0/M_PI*loxo;
+}
+double Orthodromie::getLoxoDistance()
+{
+    double L0=log(tan(M_PI_4+lat0/2));
+    double L1=log(tan(M_PI_4+lat1/2));
+    double q=0;
+    if(L0==L1)
+        q=cos(lat1);
+    else
+        q=(lat1-lat0)/(L1-L0);
+    double dLon=lon1-lon0;
+    if(qAbs(dLon)>M_PI)
+        dLon=dLon>0? -(2*M_PI-dLon) : (2*M_PI+dLon);
+    return sqrt((lat1-lat0)*(lat1-lat0)+q*q*dLon*dLon)*6378.0/1.852;
 }

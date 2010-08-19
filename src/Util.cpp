@@ -33,6 +33,7 @@ Copyright (C) 2008 - Jacques Zaninetti - http://zygrib.free.fr
 #include "POI.h"
 #include "settings.h"
 #include "Projection.h"
+#include "Version.h"
 
 
 //======================================================================
@@ -319,10 +320,17 @@ bool Util::getWPClipboard(QString * name,float * lat,float * lon, float * wph, i
     return false;
 }
 
+#define convertCheckDouble(VAR1,VAR2) {bool _ok; float _val = VAR1.toDouble(&_ok); if(_ok) *VAR2=_val; else return false; }
+#define convertCheckFloat(VAR1,VAR2) {bool _ok; float _val = VAR1.toFloat(&_ok); if(_ok) *VAR2=_val; else return false; }
+#define convertCheckInt(VAR1,VAR2) {bool _ok; float _val = VAR1.toInt(&_ok); if(_ok) *VAR2=_val; else return false; }
+
+
 bool Util::convertPOI(const QString & str,QString * name,float * lat,float * lon,float * wph,int * tstamp,
                       int type)
 {
     QStringList lsval1,lsval2,lsval3;
+    //float val;
+    //bool ok;
 
     //qWarning() << "Converting: " << str;
 
@@ -339,13 +347,13 @@ bool Util::convertPOI(const QString & str,QString * name,float * lat,float * lon
         {
             case 2:
                 if(name)    *name=POI::getTypeStr(type);
-                if(lat)     *lat=lsval2[0].toFloat();
-                if(lon)     *lon=lsval2[1].toFloat();
+                if(lat)     convertCheckFloat(lsval2[0],lat)
+                if(lon)     convertCheckFloat(lsval2[1],lon)
                 break;
             case 3:
                 if(name)    *name=lsval2[0];
-                if(lat)     *lat=lsval2[1].toFloat();
-                if(lon)     *lon=lsval2[2].toFloat();
+                if(lat)     convertCheckFloat(lsval2[1],lat)
+                if(lon)     convertCheckFloat(lsval2[2],lon)
                 break;
             default:
                 return false; /* bad format */
@@ -355,16 +363,32 @@ bool Util::convertPOI(const QString & str,QString * name,float * lat,float * lon
         {
             case 1:
                 if(tstamp) *tstamp=-1;
-                if(wph) *wph=lsval3[0].toDouble();
+                if(wph) convertCheckDouble(lsval3[0],wph)
                 break;
             case 2:
-                if(tstamp) *tstamp=lsval3[1].toInt();
-                if(wph) *wph=lsval3[0].toDouble();
+                if(tstamp) convertCheckInt(lsval3[1],tstamp)
+                if(wph) convertCheckDouble(lsval3[0],wph)
                 break;
             default:
                 return false; /* bad format */
         }
         return true; /* all ok */
+    }
+    else
+    {
+        if(lsval1.size()==1)
+        {
+            lsval2 = lsval1[0].split(",");
+            if(lsval2.size()==2)
+            {
+                if(name)    *name=POI::getTypeStr(type);
+                if(lat)     convertCheckFloat(lsval2[0],lat)
+                if(lon)     convertCheckFloat(lsval2[1],lon)
+                if(wph)     *wph=-1;
+                if(tstamp) *tstamp=-1;
+                return true;
+            }
+        }
     }
     return false; /* bad format */
 }
@@ -377,8 +401,8 @@ void Util::setWPClipboard(float lat,float lon, float wph)
         QApplication::clipboard()->setText(QString("%1,%2@%3").arg(lat).arg(lon).arg(wph));
 }
 
-void Util::getCoordFromDistanceAngle2(float latitude, float longitude,
-             float distance,float heading, float * res_lat,float * res_lon)
+void Util::getCoordFromDistanceAngle2(double latitude, double longitude,
+             double distance,double heading, double * res_lat,double * res_lon)
 {
     double ld, la;
     *res_lat = latitude + degToRad( (cos(heading)*distance)/60.0 );
@@ -395,11 +419,11 @@ void Util::getCoordFromDistanceAngle2(float latitude, float longitude,
     }
 }
 
-void Util::getCoordFromDistanceAngle(float latitude, float longitude,
-             float distance,float heading, float * res_lat,float * res_lon)
+void Util::getCoordFromDistanceAngle(double latitude, double longitude,
+             double distance,double heading, double * res_lat,double * res_lon)
 {
-    float lat,lon;
-    float ratio;
+    double lat,lon;
+    double ratio;
 
     if(!res_lat || !res_lon)
         return;
@@ -490,5 +514,11 @@ void Util::addAgent(QNetworkRequest & request)
 {
     if(Settings::getSetting("forceUserAgent",0).toInt()==1
         && !Settings::getSetting("userAgent", "").toString().isEmpty())
+    {
         request.setRawHeader("User-Agent",Settings::getSetting("userAgent", "").toString().toAscii());
+        request.setRawHeader("VLM_PROXY_AGENT",QString("qtVlm/"+Version::getVersion()+" ("+QTVLM_OS+")").toAscii());
+    }
+    else
+        request.setRawHeader("User-Agent",QString("qtVlm/"+Version::getVersion()+" ("+QTVLM_OS+")").toAscii());
+
 }

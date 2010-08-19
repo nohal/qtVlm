@@ -54,6 +54,7 @@ class boatAccount_dialog : public QDialog, public Ui::boatAccount_dialog
         void writeBoat(void);
         void addBoat(boatAccount*);
         void delBoat(boatAccount*);
+        void boatPointerHasChanged(boatAccount*);
 
     private:
         QListWidgetItem * blank;

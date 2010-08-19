@@ -50,9 +50,9 @@ int main(int argc, char *argv[])
     
     if (lang == "fr") {
         QLocale::setDefault(QLocale("fr_FR"));
-        translator.load( QString("tr/qtVlm_") + lang);
-        translator.load( QString("qt_fr"),
-        QLibraryInfo::location(QLibraryInfo::TranslationsPath));
+        translator.load( QString("qtVlm_") + lang,"tr/");
+        /*translator.load( QString("qt_fr"),
+        QLibraryInfo::location(QLibraryInfo::TranslationsPath));*/
         app.installTranslator(&translator);
     }
     else if (lang == "en") {

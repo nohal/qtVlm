@@ -54,6 +54,7 @@ class MainWindow: public QMainWindow
         void getBoatBvmg(float * up, float * down, float ws);
         float getBoatPolarSpeed(float ws,float angle);
         float getBoatPolarMaxSpeed();
+        boardVLM * getBoard(void) { return this->VLMBoard; }
         boatAccount * getSelectedBoat(void) {if(selectedBoat) return selectedBoat;else return NULL;}
 
         void statusBar_showWindData(double x,double y);
@@ -61,6 +62,8 @@ class MainWindow: public QMainWindow
         void drawVacInfo(void);
 
         void setBoardToggleAction(QAction * action);
+        void getXY(int *X,int *Y){*X=this->mouseClicX;*Y=this->mouseClicY;}
+        bool isStartingUp;
 
     public slots:
         void slotFile_Open();
@@ -76,7 +79,7 @@ class MainWindow: public QMainWindow
         void slotDateGribChanged_prev();
         void slotDateGribChanged_now();
         void slotDateGribChanged_sel();
-        void slotSetGribDate(int);
+        void slotSetGribDate(time_t);
 
         void slotWindArrows(bool b);
 
@@ -88,6 +91,7 @@ class MainWindow: public QMainWindow
         void slotVLM_Sync(void);
         void slotVLM_Param(void);
         void slotVLM_Test(void);
+        void slotGribInterpolation(void);
         void slotSelectBoat(boatAccount* newSelect);
         void slotInetUpdated(void);
         void slotChgBoat(int);
@@ -121,12 +125,14 @@ class MainWindow: public QMainWindow
         void slotValidationDone(bool);
 
         void slotCompassLine(void);
+        void slotCompassLineForced(int a,int b);
         void slotCompassCenterBoat(void);
         void slotCompassCenterWp(void);
         void slotEstime(int);
         void slot_ParamVLMchanged(void);
         void slot_deleteProgress(void);
         void slot_centerMap();
+        void slot_boatHasUpdated(void);
 
     signals:
         void signalMapQuality(int quality);
@@ -138,7 +144,7 @@ class MainWindow: public QMainWindow
         void editWP_POI(POI*);
         void boatHasUpdated(boatAccount*);
         void paramVLMChanged();
-        void WPChanged(float,float);        
+        void WPChanged(double,double);
         void updateInet(void);
         void showCompassLine(int,int);
         void addPOI_list(POI*);
@@ -152,7 +158,6 @@ class MainWindow: public QMainWindow
         void keyPressEvent ( QKeyEvent * event );
 
     private:
-        //GshhsReader *gshhsReader;
         Projection  *proj;
 
         QString      gribFileName;
@@ -183,13 +188,13 @@ class MainWindow: public QMainWindow
         void     connectSignals();
         void     InitActionsStatus();
 
-        QString  dataPresentInGrib(Grib* grib, int type);
-        void     updatePilototo_Btn(boatAccount * boat);
-        int mouseClicX, mouseClicY;
+        void    updatePilototo_Btn(boatAccount * boat);
+        int     mouseClicX, mouseClicY;
 
         /* Vacation count*/
         QTimer * timer;
         int nxtVac_cnt;
+        bool showingSelectionMessage;
 
         boardVLM * VLMBoard;
         boatAccount* selectedBoat;
@@ -210,6 +215,11 @@ class MainWindow: public QMainWindow
         QProgressDialog *progress;
         QTimer * timerprogress;
 
+        gribValidation * gribValidation_dialog;
+        int nBoat;
+        int toBeCentered;
+        boatAccount *acc;
+        void VLM_Sync_sync();
 };
 
 #endif

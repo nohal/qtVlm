@@ -21,6 +21,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <QDebug>
 #include <QGraphicsSceneMouseEvent>
+#include <QInputDialog>
+#include <QSound>
 
 #include "mycentralwidget.h"
 #include "poi_delete.h"
@@ -30,6 +32,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "MainWindow.h"
 #include "GshhsReader.h"
 #include "Grib.h"
+#include "GribRecord.h"
 #include "Terrain.h"
 #include "inetConnexion.h"
 #include "MenuBar.h"
@@ -44,7 +47,15 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "DialogLoadGrib.h"
 #include "xmlBoatData.h"
 #include "xmlPOIData.h"
+#include "routage.h"
 #include "Route_Editor.h"
+#include "Routage_Editor.h"
+#include "BoardVLM.h"
+#include "vlmLine.h"
+#include "dataDef.h"
+#include "Util.h"
+#include "dialoghorn.h"
+#include "twaline.h"
 
 /*******************/
 /*    myScene      */
@@ -180,6 +191,8 @@ myCentralWidget::myCentralWidget(Projection * proj,MainWindow * parent,MenuBar *
     this->menuBar=menuBar;
     this->aboutToQuit=false;
 
+    resizing=false;
+    this->twaTrace=NULL;
     /* item state */
     shLab_st = false;
     shPoi_st = false;
@@ -204,10 +217,12 @@ myCentralWidget::myCentralWidget(Projection * proj,MainWindow * parent,MenuBar *
     terre = new Terrain(this,proj);
     terre->setGSHHS_map(gshhsReader);
     terre->setCitiesNamesLevel(Settings::getSetting("showCitiesNamesLevel", 0).toInt());
-#warning voir s il faut mettre le slot ds centralWidget ou utiliser myScene
+
+    #warning voir s il faut mettre le slot ds centralWidget ou utiliser myScene
     connect(terre,SIGNAL(showContextualMenu(QGraphicsSceneContextMenuEvent *)),
             parent, SLOT(slotShowContextualMenu(QGraphicsSceneContextMenuEvent *)));
     connect(parent, SIGNAL(signalMapQuality(int)), terre, SLOT(slot_setMapQuality(int)));
+    connect(menuBar->acView_GroupColorMap, SIGNAL(triggered(QAction *)), this, SLOT(slot_setColorMapMode(QAction *)));
     connect(menuBar->acMap_Rivers, SIGNAL(triggered(bool)), terre,  SLOT(setDrawRivers(bool)));
     connect(menuBar->acMap_CountriesBorders, SIGNAL(triggered(bool)), terre,  SLOT(setDrawCountriesBorders(bool)));
     connect(menuBar->acMap_CountriesNames, SIGNAL(triggered(bool)), terre,  SLOT(setCountriesNames(bool)));
@@ -215,6 +230,17 @@ myCentralWidget::myCentralWidget(Projection * proj,MainWindow * parent,MenuBar *
     connect(menuBar->acView_ColorMapSmooth, SIGNAL(triggered(bool)), terre,  SLOT(setColorMapSmooth(bool)));
     connect(menuBar->acView_WindArrow, SIGNAL(triggered(bool)), terre,  SLOT(setDrawWindArrows(bool)));
     connect(menuBar->acView_Barbules, SIGNAL(triggered(bool)), terre,  SLOT(setBarbules(bool)));
+    connect(menuBar->acView_TemperatureLabels, SIGNAL(triggered(bool)),terre,  SLOT(slotTemperatureLabels(bool)));
+    connect(menuBar->acView_Isobars, SIGNAL(triggered(bool)), terre,  SLOT(setDrawIsobars(bool)));
+    connect(menuBar->acView_GroupIsobarsStep, SIGNAL(triggered(QAction *)), this, SLOT(slotIsobarsStep()));
+    connect(menuBar->acView_IsobarsLabels, SIGNAL(triggered(bool)), terre,  SLOT(setDrawIsobarsLabels(bool)));
+    connect(menuBar->acView_PressureMinMax, SIGNAL(triggered(bool)), terre,  SLOT(setPressureMinMax(bool)));
+
+    connect(menuBar->acView_Isotherms0, SIGNAL(triggered(bool)), terre,  SLOT(setDrawIsotherms0(bool)));
+
+    connect(menuBar->acView_GroupIsotherms0Step, SIGNAL(triggered(QAction *)), this, SLOT(slotIsotherms0Step()));
+
+    connect(menuBar->acView_Isotherms0Labels, SIGNAL(triggered(bool)), terre,  SLOT(setDrawIsotherms0Labels(bool)));
 
     connect(menuBar->acOptions_SH_sAll, SIGNAL(triggered(bool)), this,  SIGNAL(showALL(bool)));
     connect(menuBar->acOptions_SH_sAll, SIGNAL(triggered(bool)), this,  SLOT(slot_showALL(bool)));
@@ -238,6 +264,7 @@ myCentralWidget::myCentralWidget(Projection * proj,MainWindow * parent,MenuBar *
     connect(menuBar->acOptions_SH_Lab, SIGNAL(triggered(bool)), this,  SLOT(slot_shLab(bool)));
 
     connect(menuBar->acOptions_SH_Com, SIGNAL(triggered(bool)), this,  SIGNAL(shCom(bool)));
+
     connect(menuBar->acOptions_SH_Pol, SIGNAL(triggered(bool)), this,  SIGNAL(shPol(bool)));
 
     connect(menuBar->acOptions_SH_Boa, SIGNAL(triggered(bool)), parent, SLOT(slot_centerBoat()));
@@ -247,6 +274,12 @@ myCentralWidget::myCentralWidget(Projection * proj,MainWindow * parent,MenuBar *
     connect(&dialogUnits, SIGNAL(accepted()), terre, SLOT(redrawAll()));
     connect(&dialogGraphicsParams, SIGNAL(accepted()), terre, SLOT(updateGraphicsParameters()));
     scene->addItem(terre);
+    horn=new QSound("img/boat_horn.wav");
+    hornTimer=new QTimer(this);
+    connect(hornTimer,SIGNAL(timeout()),this,SLOT(slot_playHorn()));
+    this->hornDate=QDateTime::currentDateTime().toUTC();
+    this->hornDate.setTimeSpec(Qt::UTC);
+    this->hornActivated=false;
 
     // Compass
     compass = new mapCompass(proj,parent,this);
@@ -262,6 +295,8 @@ myCentralWidget::myCentralWidget(Projection * proj,MainWindow * parent,MenuBar *
     connect(this, SIGNAL(hideALL(bool)),compass,SLOT(slot_shHidden()));
     connect(this, SIGNAL(shCom(bool)),compass,SLOT(slot_shCom()));
     connect(this, SIGNAL(shPol(bool)),compass,SLOT(slot_shPol()));
+    connect(proj,SIGNAL(projectionUpdated()),compass,SLOT(slot_compassCenterBoat()));
+    this->compassRoute=NULL;
 //    if(Settings::getSetting("showCompass",1).toInt()==1)
 //        compass->show();
 //    else
@@ -296,6 +331,10 @@ myCentralWidget::myCentralWidget(Projection * proj,MainWindow * parent,MenuBar *
 
     /*Routes*/
     connect(menuBar->acRoute_add, SIGNAL(triggered()), this, SLOT(slot_addRouteFromMenu()));
+    connect(menuBar->acRoute_import, SIGNAL(triggered()), this, SLOT(slot_importRouteFromMenu()));
+
+    /*Routages*/
+    connect(menuBar->acRoutage_add, SIGNAL(triggered()), this, SLOT(slot_addRoutageFromMenu()));
 
     /* Boats */
     xmlData = new xml_boatData(proj,parent,this,inetManager);
@@ -305,10 +344,20 @@ myCentralWidget::myCentralWidget(Projection * proj,MainWindow * parent,MenuBar *
         delete poi_list.takeFirst();
 
     xmlPOI = new xml_POIData(proj,parent,this);
-
-
+    /*Races*/
+    this->NSZ=NULL;
 }
-
+void myCentralWidget::setCompassFollow(ROUTE * route)
+{
+    this->compassRoute=route;
+    menuBar->ac_compassCenterBoat->setChecked(false);
+    Settings::setSetting("compassCenterBoat", "0");
+    emitUpdateRoute();
+}
+void myCentralWidget::centerCompass(double lon, double lat)
+{
+    this->compass->compassCenter(lon,lat);
+}
 void myCentralWidget::loadData(void)
 {
     emit readBoatData("boatAcc.dat",true);
@@ -352,6 +401,11 @@ Grib * myCentralWidget::getGrib(void)
         return grib;
     else
         return NULL;
+}
+
+boatAccount * myCentralWidget::getSelectedBoat(void)
+{
+    return main->getSelectedBoat();
 }
 
 /*******************/
@@ -414,10 +468,14 @@ void myCentralWidget::slot_Zoom_Sel()
 
 void myCentralWidget::resizeEvent (QResizeEvent * /*e*/)
 {
+    if(resizing)
+        return;
+    resizing=true;
     view->setGeometry(0,0,width(), height());
     scene->setSceneRect(QRect(0,0,width()-4, height()-4));
     terre->updateSize(width()-4, height()-4);
     proj->setScreenSize( width()-4, height()-4);
+    resizing=false;
 }
 
 void myCentralWidget::mouseMove(int x, int y, QGraphicsItem * )
@@ -449,7 +507,6 @@ void myCentralWidget::mouseMove(int x, int y, QGraphicsItem * )
         {
             break ;
         }
-
         if(item->data(0) == COMPASS_WTYPE && ((mapCompass*)item)->tryMoving(x,y))
         {
             break ;
@@ -487,6 +544,7 @@ void myCentralWidget::escapeKeyPressed(void)
     emit stopCompassLine();
     emit POI_selectAborted(NULL);
     selection->clearSelection();
+    horn->stop();
 }
 void myCentralWidget::slot_mousePress(QGraphicsSceneMouseEvent* e)
 {
@@ -589,20 +647,50 @@ void myCentralWidget::slot_fileLoad_GRIB()
     }
 }
 
+QString myCentralWidget::dataPresentInGrib(Grib* grib,
+                                int dataType,int levelType,int levelValue,
+                                bool *ok)
+{
+        if (dataType == GRB_DEWPOINT) {
+                switch (grib->getDewpointDataStatus(levelType,levelValue)) {
+                        case Grib::DATA_IN_FILE :
+                                if (ok != NULL) *ok = true;
+                                return tr("oui");
+                                break;
+                        case Grib::NO_DATA_IN_FILE :
+                                if (ok != NULL) *ok = false;
+                                return tr("non");
+                                break;
+                        case Grib::COMPUTED_DATA :
+                        default :
+                                if (ok != NULL) *ok = true;
+                                return tr("oui (calculé par la formule de Magnus-Tetens)");
+                                break;
+                }
+        }
+        else {
+                if (grib->getNumberOfGribRecords(dataType,levelType,levelValue) > 0) {
+                        if (ok != NULL) *ok = true;
+                        return tr("oui");
+                }
+                else {
+                        if (ok != NULL) *ok = false;
+                        return tr("non");
+                }
+        }
+}
+
 void myCentralWidget::slot_fileInfo_GRIB()
 {
-    #warning refaire le grib info
-    /*
+    
     QString msg;
-    if (! terre->getGrib()->isOk())
+    if (!grib ||  ! grib->isOk())
     {
         QMessageBox::information (this,
             tr("Informations sur le fichier GRIB"),
             tr("Aucun fichir GRIB n'est chargé."));
     }
     else {
-        Grib * grib = terre->getGrib();
-
         msg += tr("Fichier : %1\n") .arg(grib->getFileName().c_str());
         msg += tr("Taille : %1 octets\n") .arg(grib->getFileSize());
         msg += tr("\n");
@@ -616,7 +704,26 @@ void myCentralWidget::slot_fileInfo_GRIB()
 
         msg += tr("\n");
         msg += tr("Données disponibles :\n");
-        msg += tr("    Vent  : %1\n").arg(dataPresentInGrib(grib,GRB_WIND_VX));
+	msg += tr("    Température : %1\n").arg(dataPresentInGrib(grib,GRB_TEMP,LV_ABOV_GND,2));
+	msg += tr("    Pression : %1\n").arg(dataPresentInGrib(grib,GRB_PRESSURE,LV_MSL,0));
+	msg += tr("    Vent  : %1\n").arg(dataPresentInGrib(grib,GRB_WIND_VX,LV_ABOV_GND,10));
+	msg += tr("    Cumul de précipitations : %1\n").arg(dataPresentInGrib(grib,GRB_PRECIP_TOT,LV_GND_SURF,0));
+	msg += tr("    Nébulosité : %1\n").arg(dataPresentInGrib(grib,GRB_CLOUD_TOT,LV_ATMOS_ALL,0));
+	msg += tr("    Humidité relative : %1\n").arg(dataPresentInGrib(grib,GRB_HUMID_REL,LV_ABOV_GND,2));
+	msg += tr("    Isotherme 0°C : %1\n").arg(dataPresentInGrib(grib,GRB_GEOPOT_HGT,LV_ISOTHERM0,0));
+	msg += tr("    Point de rosée : %1\n").arg(dataPresentInGrib(grib,GRB_DEWPOINT,LV_ABOV_GND,2));
+	msg += tr("    Température (min) : %1\n").arg(dataPresentInGrib(grib,GRB_TMIN,LV_ABOV_GND,2));
+	msg += tr("    Température (max) : %1\n").arg(dataPresentInGrib(grib,GRB_TMAX,LV_ABOV_GND,2));
+        msg += tr("    Température (pot) : %1\n").arg(dataPresentInGrib(grib,GRB_TEMP_POT,LV_SIGMA,9950));
+	msg += tr("    Neige (risque) : %1\n").arg(dataPresentInGrib(grib,GRB_SNOW_CATEG,LV_GND_SURF,0));
+	msg += tr("    Neige (épaisseur) : %1\n").arg(dataPresentInGrib(grib,GRB_SNOW_DEPTH,LV_GND_SURF,0));
+        msg += tr("    Humidité spécifique :\n");
+        msg += tr("        - 200: %1\n").arg(dataPresentInGrib(grib,GRB_HUMID_SPEC,LV_ISOBARIC,200));
+        msg += tr("        - 300: %1\n").arg(dataPresentInGrib(grib,GRB_HUMID_SPEC,LV_ISOBARIC,300));
+        msg += tr("        - 500: %1\n").arg(dataPresentInGrib(grib,GRB_HUMID_SPEC,LV_ISOBARIC,500));
+        msg += tr("        - 700: %1\n").arg(dataPresentInGrib(grib,GRB_HUMID_SPEC,LV_ISOBARIC,700));
+        msg += tr("        - 850: %1\n").arg(dataPresentInGrib(grib,GRB_HUMID_SPEC,LV_ISOBARIC,850));
+        
 
         GribRecord * gr = grib->getFirstGribRecord();
         msg += tr("\n");
@@ -636,13 +743,13 @@ void myCentralWidget::slot_fileInfo_GRIB()
         QMessageBox::information (this,
             tr("Informations sur le fichier GRIB"),
             msg );
-    }*/
+    }
 }
 
 /**************************/
 /* POI                    */
 /**************************/
-void myCentralWidget::slot_addPOI(QString name,int type,float lat,float lon, float wph,int timestamp,bool useTimeStamp,boatAccount *boat)
+POI * myCentralWidget::slot_addPOI(QString name,int type,float lat,float lon, float wph,int timestamp,bool useTimeStamp,boatAccount *boat)
 {
     POI * poi;
 
@@ -654,6 +761,7 @@ void myCentralWidget::slot_addPOI(QString name,int type,float lat,float lon, flo
 
     slot_addPOI_list(poi);
     //poi->show();
+    return poi;
 }
 
 void myCentralWidget::slot_addPOI_list(POI * poi)
@@ -677,6 +785,7 @@ void myCentralWidget::slot_delPOI_list(POI * poi)
     disconnect(poi, SIGNAL(editPOI(POI*)),poi_editor, SLOT(editPOI(POI*)));
     disconnect(proj, SIGNAL(projectionUpdated()), poi, SLOT(slot_updateProjection()));
     disconnect(poi, SIGNAL(clearSelection()),this,SLOT(slot_clearSelection()));
+    emit twaDelPoi(poi);
 }
 
 void myCentralWidget::slot_delAllPOIs(void)
@@ -734,7 +843,7 @@ void myCentralWidget::slot_delSelPOIs(void)
             POI * poi = i.next();
             if(poi->getRoute()!=NULL)
                 if(poi->getRoute()->getFrozen()) return;
-            qWarning() << "POI: " << poi->getName() << " mask=" << poi->getTypeMask();
+//            qWarning() << "POI: " << poi->getName() << " mask=" << poi->getTypeMask();
             if(!(poi->getTypeMask() & res_mask))
                 continue;
             lat=poi->getLatitude();
@@ -792,7 +901,39 @@ void myCentralWidget::slot_shPor(bool)
 {
     shPor_st=!shPor_st;
 }
-
+void myCentralWidget::slot_editHorn()
+{
+    DialogHorn *dh=new DialogHorn(this);
+    dh->exec();
+    delete dh;
+    setHorn();
+}
+void myCentralWidget::setHorn()
+{
+    if(this->hornIsActivated())
+    {
+        QDateTime now=QDateTime::currentDateTime().toUTC();
+        now.setTimeSpec(Qt::UTC);
+        int r=now.secsTo(hornDate);
+        if (r<0)
+        {
+            hornTimer->stop();
+            this->hornActivated=false;
+        }
+        else
+        {
+            hornTimer->setSingleShot(true);
+            hornTimer->start(r*1000);
+        }
+    }
+    else
+        hornTimer->stop();
+}
+void myCentralWidget::slot_playHorn()
+{
+    horn->setLoops(2000);
+    horn->play();
+}
 bool myCentralWidget::freeRouteName(QString name,ROUTE * thisroute)
 {
     QListIterator<ROUTE*> i (route_list);
@@ -804,13 +945,240 @@ bool myCentralWidget::freeRouteName(QString name,ROUTE * thisroute)
     }
     return true;
 }
+bool myCentralWidget::freeRoutageName(QString name,ROUTAGE * thisroutage)
+{
+    QListIterator<ROUTAGE*> i (routage_list);
 
+    while(i.hasNext())
+    {
+        ROUTAGE * routage = i.next();
+        if (routage->getName()==name && routage!=thisroutage) return false;
+    }
+    return true;
+}
+void myCentralWidget::slot_importRouteFromMenu()
+{
+    QString routePath=Settings::getSetting("importRouteFolder","").toString();
+    QDir dirRoute(routePath);
+    if(!dirRoute.exists())
+    {
+        routePath=QApplication::applicationDirPath();
+        Settings::setSetting("importRouteFolder",routePath);
+    }
+    QString fileName = QFileDialog::getOpenFileName(this,
+                         tr("Ouvrir un fichier Route"), routePath, "Routes (*.csv *.txt)");
+    if(fileName.isEmpty() || fileName.isNull()) return;
+
+    QFile routeFile(fileName);
+    if(!routeFile.open(QIODevice::ReadOnly))
+    {
+        QMessageBox::warning(0,QObject::tr("Lecture de route"),
+             QString(QObject::tr("Impossible d'ouvrir le fichier %1")).arg(fileName));
+        return;
+    }
+    QFileInfo info(routeFile);
+    Settings::setSetting("importRouteFolder",info.absoluteDir().path());
+    QTextStream stream(&routeFile);
+    QString line;
+    QStringList list;
+    line=stream.readLine();
+    if(line.isNull())
+    {
+        QMessageBox::warning(0,QObject::tr("Lecture de route"),
+             QString(QObject::tr("Fichier %1 vide")).arg(fileName));
+        routeFile.close();
+        return;
+    }
+    list = line.split(';');
+    if(list[0].toUpper() != "POSITION")
+    {
+        QMessageBox::warning(0,QObject::tr("Lecture de route"),
+             QString(QObject::tr("Fichier %1 invalide (doit commencer par POSITION et non '%2')"))
+                        .arg(fileName)
+                        .arg(list[0].toUpper()));
+        routeFile.close();
+        return;
+    }
+    bool ok;
+    QString routeName=QInputDialog::getText(this,tr("Nom de la route a importer"),tr("Nom de la route"),QLineEdit::Normal,"ImportedRoute",&ok);
+    if(!ok)
+    {
+        routeFile.close();
+        return;
+    }
+    ROUTE * route=addRoute();
+    if (routeName.isEmpty() || !freeRouteName(routeName.trimmed(),route))
+    {
+        QMessageBox msgBox;
+        msgBox.setText(tr("Ce nom est deja utilise ou invalide"));
+        msgBox.setIcon(QMessageBox::Critical);
+        msgBox.exec();
+        routeFile.close();
+        this->deleteRoute(route);
+        return;
+    }
+    route->setName(routeName); //fixme
+    update_menuRoute();
+    route->setBoat(main->getSelectedBoat());
+    route->setStartFromBoat(false);
+    route->setStartTimeOption(3);
+    route->setColor(QColor(227,142,42,255));
+    route->setImported();
+    route->setFrozen(true);
+
+    int n=0;
+    QString poiName;
+    double lon,lat;
+    while(true)
+    {
+        n++;
+        line=stream.readLine();
+        if(line.isNull()) break;
+        list = line.split(';');
+        lat=list[0].mid(0,2).toInt()+list[0].mid(3,6).toFloat()/60.0;
+        if(list[0].mid(10,1)!="N") lat=-lat;
+        lon=list[0].mid(13,3).toInt()+list[0].mid(17,6).toFloat()/60.0;
+        if(list[0].mid(24,1)!="E") lon=-lon;
+        QString poiN;
+        poiN.sprintf("%.5i",n);
+        poiName=route->getName()+poiN;
+        POI * poi = slot_addPOI(poiName,0,lat,lon,-1,false,false,main->getSelectedBoat());
+        poi->setRoute(route);
+        QDateTime start=QDateTime::fromString(list[1],"dd/MM/yyyy hh:mm:ss");
+        start.setTimeSpec(Qt::UTC);
+        if(n==1)
+        {
+            route->setStartTime(start);
+
+        }
+        poi->setRouteTimeStamp(start.toTime_t());
+    }
+    routeFile.close();
+    route->setHidePois(true);
+    route->setImported();
+    route->setFrozen2(false);//calculate only once and relock immediately
+    route->setFrozen2(true);
+}
+void myCentralWidget::slot_twaLine()
+{
+    int X,Y;
+    main->getXY(&X,&Y);
+    double lon, lat;
+    proj->screen2map(X,Y, &lon, &lat);
+    twaDraw(lon,lat);
+}
+void myCentralWidget::twaDraw(double lon, double lat)
+{
+    if (main->getSelectedBoat()==NULL) return;
+    if (!grib->isOk()) return;
+    QPointF start(lon,lat);
+    if(twaTrace==NULL)
+        twaTrace=new twaLine(start,this, main);
+    else
+    {
+        if (!twaTrace->isHidden()) return;
+        twaTrace->setStart(start);
+    }
+    twaTrace->show();
+    twaTrace->activateWindow();
+}
+void myCentralWidget::exportRouteFromMenu(ROUTE * route)
+{
+    QString routePath=Settings::getSetting("importRouteFolder","").toString();
+    QDir dirRoute(routePath);
+    if(!dirRoute.exists())
+    {
+        routePath=QApplication::applicationDirPath();
+        Settings::setSetting("importRouteFolder",routePath);
+    }
+    QString fileName = QFileDialog::getSaveFileName(this,
+                         tr("Exporter une Route"), routePath, "Routes (*.csv *.txt)");
+    if(fileName.isEmpty() || fileName.isNull()) return;
+    QFile::remove(fileName);
+    QFile routeFile(fileName);
+    if(!routeFile.open(QIODevice::WriteOnly | QIODevice::Text))
+    {
+        QMessageBox::warning(0,QObject::tr("Lecture de route"),
+             QString(QObject::tr("Impossible de creer le fichier %1")).arg(fileName));
+        return;
+    }
+    QFileInfo info(routeFile);
+    Settings::setSetting("importRouteFolder",info.absoluteDir().path());
+    QTextStream stream(&routeFile);
+    QStringList list;
+    list.append("position");
+    list.append("heure");
+    stream<<list.join(";")<<endl;
+    if(route->getStartFromBoat())
+    {
+        list.clear();
+        int deg = (int) fabs(route->getStartLat());
+        float min = (fabs(route->getStartLat()) - deg)*60.0;
+        const char *cdeg = "°";
+        QString latitude;
+        latitude.sprintf("%02d%s%06.3f", deg, cdeg, min);
+        if(route->getStartLat()<0)
+            latitude=latitude+" S";
+        else
+            latitude=latitude+" N";
+        deg = (int) fabs(route->getStartLon());
+        min = (fabs(route->getStartLon()) - deg)*60.0;
+        QString longitude;
+        longitude.sprintf("%03d%s%06.3f", deg, cdeg, min);
+        if(route->getStartLon()<0)
+            longitude=longitude+" W";
+        else
+            longitude=longitude+" E";
+        list.append(latitude+"  "+longitude);
+        QDateTime time;
+        time.setTime_t(route->getStartDate());
+        time.setTimeSpec(Qt::UTC);
+        list.append(time.toString("dd/MM/yyyy hh:mm:ss"));
+        stream<<list.join(";")<<endl;
+    }
+    QList<vlmPoint> *poiList=route->getLine()->getPoints();
+    QListIterator<vlmPoint> i(*poiList);
+    while(i.hasNext())
+    {
+        list.clear();
+        vlmPoint poi=i.next();
+
+        int deg = (int) fabs(poi.lon);
+        float min = (fabs(poi.lat) - deg)*60.0;
+        const char *cdeg = "°";
+        QString latitude;
+        latitude.sprintf("%02d%s%06.3f", deg, cdeg, min);
+        if(poi.lat<0)
+            latitude=latitude+" S";
+        else
+            latitude=latitude+" N";
+        deg = (int) fabs(poi.lon);
+        min = (fabs(poi.lon) - deg)*60.0;
+        QString longitude;
+        longitude.sprintf("%03d%s%06.3f", deg, cdeg, min);
+        if(poi.lon<0)
+            longitude=longitude+" W";
+        else
+            longitude=longitude+" E";
+        list.append(latitude+"  "+longitude);
+        QDateTime time;
+        time.setTime_t(poi.eta);
+        time.setTimeSpec(Qt::UTC);
+        list.append(time.toString("dd/MM/yyyy hh:mm:ss"));
+        stream<<list.join(";")<<endl;
+    }
+    routeFile.close();
+}
 void myCentralWidget::slot_addRouteFromMenu()
 {
     ROUTE * route=addRoute();
     slot_editRoute(route,true);
 }
-
+void myCentralWidget::slot_addRoutageFromMenu()
+{
+    ROUTAGE * routage=addRoutage();
+    slot_editRoutage(routage,true);
+}
 ROUTE * myCentralWidget::addRoute()
 {
     ROUTE * route=new ROUTE("Route", proj, grib, scene, this);
@@ -828,6 +1196,24 @@ ROUTE * myCentralWidget::addRoute()
 
     route_list.append(route);
     return route;
+}
+ROUTAGE * myCentralWidget::addRoutage()
+{
+    ROUTAGE * routage=new ROUTAGE("Routage", proj, grib, scene, this);
+    routage->setBoat(main->getSelectedBoat());
+    connect(this,SIGNAL(updateRoutage()),routage,SLOT(slot_recalculate()));
+    connect(main,SIGNAL(updateRoutage()),routage,SLOT(slot_recalculate()));
+    connect(routage,SIGNAL(editMe(ROUTAGE *)),this,SLOT(slot_editRoutage(ROUTAGE *)));
+    connect(routage,SIGNAL(deletePoi(POI *)),this,SLOT(slot_delPOI_list(POI *)));
+
+
+    connect(this, SIGNAL(showALL(bool)),routage,SLOT(slot_shShow()));
+    connect(this, SIGNAL(hideALL(bool)),routage,SLOT(slot_shHidden()));
+    connect(this, SIGNAL(shRoutage(bool)),routage,SLOT(slot_shRou()));
+
+
+    routage_list.append(routage);
+    return routage;
 }
 void myCentralWidget::slot_editRoute(ROUTE * route,bool createMode)
 {
@@ -848,11 +1234,38 @@ void myCentralWidget::slot_editRoute(ROUTE * route,bool createMode)
     }
     delete route_editor;
 }
+void myCentralWidget::slot_editRoutage(ROUTAGE * routage,bool createMode)
+{
+    ROUTAGE_Editor *routage_editor=new ROUTAGE_Editor(routage,this);
+    if(routage_editor->exec()!=QDialog::Accepted)
+    {
+        if(createMode)
+        {
+            delete routage;
+            routage_list.removeAll(routage);
+            routage=NULL;
+            delete routage_editor;
+        }
+    }
+    else
+    {
+        delete routage_editor;
+        update_menuRoutage();
+        if(createMode)
+            routage->calculate();
+    }
+}
 void myCentralWidget::deleteRoute(ROUTE * route)
 {
     route_list.removeAll(route);
     delete route;
     update_menuRoute();
+}
+void myCentralWidget::deleteRoutage(ROUTAGE * routage)
+{
+    routage_list.removeAll(routage);
+    delete routage;
+    update_menuRoutage();
 }
 void myCentralWidget::assignPois()
 {
@@ -888,9 +1301,24 @@ void myCentralWidget::update_menuRoute()
     qSort(route_list.begin(),route_list.end(),ROUTE::myLessThan);
     menuBar->mnRoute_edit->clear();
     menuBar->mnRoute_delete->clear();
+    menuBar->mnRoute_export->clear();
+    menuBar->mnCompassCenterRoute->clear();
+    QAction * a=menuBar->addReleaseCompass();
+    connect(a, SIGNAL(triggered()), this, SLOT(slot_releaseCompassFollow()));
     QListIterator<ROUTE*> i (route_list);
     while(i.hasNext())
+    {
         menuBar->addMenuRoute(i.next());
+    }
+}
+void myCentralWidget::update_menuRoutage()
+{
+    qSort(routage_list.begin(),routage_list.end(),ROUTAGE::myLessThan);
+    menuBar->mnRoutage_edit->clear();
+    menuBar->mnRoutage_delete->clear();
+    QListIterator<ROUTAGE*> i (routage_list);
+    while(i.hasNext())
+        menuBar->addMenuRoutage(i.next());
 }
 float myCentralWidget::A360(float hdg)
 {
@@ -912,7 +1340,6 @@ void myCentralWidget::slot_addBoat_list(boatAccount* boat)
     connect(boat,SIGNAL(getTrace(QString,QList<vlmPoint> *)),opponents,SLOT(getTrace(QString,QList<vlmPoint> *)));
     connect(&dialogGraphicsParams, SIGNAL(accepted()), boat, SLOT(slot_updateGraphicsParameters()));
 }
-
 void myCentralWidget::slot_delBoat_list(boatAccount* boat)
 {
     acc_list.removeAll(boat);
@@ -998,6 +1425,87 @@ void myCentralWidget::slot_map_CitiesNames()
         terre->setCitiesNamesLevel(4);
 }
 
+void myCentralWidget::slotIsobarsStep()
+{
+    int s = 4;
+    MenuBar  *mb = menuBar;
+    QAction *act = mb->acView_GroupIsobarsStep->checkedAction();
+    if (act == mb->acView_IsobarsStep1)
+        s = 1;
+    else if (act == mb->acView_IsobarsStep2)
+        s = 2;
+    else if (act == mb->acView_IsobarsStep3)
+        s = 3;
+    else if (act == mb->acView_IsobarsStep4)
+        s = 4;
+    else if (act == mb->acView_IsobarsStep5)
+        s = 5;
+    else if (act == mb->acView_IsobarsStep6)
+        s = 6;
+    else if (act == mb->acView_IsobarsStep8)
+        s = 8;
+    else if (act == mb->acView_IsobarsStep10)
+        s = 10;
+    terre->setIsobarsStep(s);
+}
+
+void myCentralWidget::slotIsotherms0Step()
+{
+    int s = 100;
+    MenuBar  *mb = menuBar;
+    QAction *act = mb->acView_GroupIsotherms0Step->checkedAction();
+    if (act == mb->acView_Isotherms0Step10)
+        s = 10;
+    else if (act == mb->acView_Isotherms0Step20)
+        s = 20;
+    else if (act == mb->acView_Isotherms0Step50)
+        s = 50;
+    else if (act == mb->acView_Isotherms0Step100)
+        s = 100;
+    else if (act == mb->acView_Isotherms0Step200)
+        s = 200;
+    else if (act == mb->acView_Isotherms0Step500)
+        s = 500;
+    else if (act == mb->acView_Isotherms0Step1000)
+        s = 1000;
+
+    terre->setIsotherms0Step(s);
+}
+
+void myCentralWidget::slot_setColorMapMode(QAction* act)
+{
+    MenuBar  *mb = menuBar;
+    int mode;
+    if (act == mb->acView_WindColors)
+        mode = Terrain::drawWind;
+    else if (act == mb->acView_RainColors)
+        mode = Terrain::drawRain;
+    else if (act == mb->acView_CloudColors)
+        mode = Terrain::drawCloud;
+    else if (act == mb->acView_HumidColors)
+        mode = Terrain::drawHumid;
+    else if (act == mb->acView_TempColors)
+        mode = Terrain::drawTemp;
+    else if (act == mb->acView_TempPotColors)
+        mode = Terrain::drawTempPot;
+    else if (act == mb->acView_DeltaDewpointColors)
+        mode = Terrain::drawDeltaDewpoint;
+    else if (act == mb->acView_SnowCateg)
+        mode = Terrain::drawSnowCateg;
+    else if (act == mb->acView_FrzRainCateg)
+        mode = Terrain::drawFrzRainCateg;
+    else if (act == mb->acView_SnowDepth)
+        mode = Terrain::drawSnowDepth;
+    else if (act == mb->acView_CAPEsfc)
+        mode = Terrain::drawCAPEsfc;
+    else
+        mode = Terrain::drawNone;
+
+    //qWarning() << "New mode " << mode;
+
+    terre->setColorMapMode(mode);
+}
+
 /**************************/
 /* Menu slot              */
 /**************************/
@@ -1020,4 +1528,25 @@ bool myCentralWidget::isSelecting(void)
 {
     double a,b,c,d;
     return selection->getZone(&a,&b,&c,&d);
+}
+void myCentralWidget::drawNSZ(int i)
+{
+    if (NSZ!=NULL)
+    {
+        delete NSZ;
+        NSZ=NULL;
+    }
+    if(i==-1) return;
+    if(race_list[i]->displayNSZ)
+    {
+        NSZ=new vlmLine(proj,this->scene,Z_VALUE_GATE);
+        QPen pen;
+        pen.setColor(race_list[i]->colorNSZ);
+        pen.setBrush(race_list[i]->colorNSZ);
+        pen.setWidthF(race_list[i]->widthNSZ);
+        NSZ->setLinePen(pen);
+        for (int j=-180;j<361;j++)
+            NSZ->addPoint(race_list[i]->latNSZ,j);
+        NSZ->slot_showMe();
+    }
 }

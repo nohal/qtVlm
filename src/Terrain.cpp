@@ -75,6 +75,22 @@ Terrain::Terrain(myCentralWidget *parent, Projection *proj_) : QGraphicsWidget()
     colorMapSmooth = Settings::getSetting("colorMapSmooth", true).toBool();
     showWindArrows  = Settings::getSetting("showWindArrows", true).toBool();
     showBarbules = Settings::getSetting("showBarbules", true).toBool();
+
+    showIsobars  = Settings::getSetting("showIsobars", true).toBool();
+    showIsobarsLabels = Settings::getSetting("showIsobarsLabels", false).toBool();
+    isobarsStep = Settings::getSetting("isobarsStep", 2).toDouble();
+    //setIsobarsStep(Settings::getSetting("isobarsStep", 2).toDouble());
+    showPressureMinMax = Settings::getSetting("showPressureMinMax", false).toBool();
+
+    showIsotherms0  = Settings::getSetting("showIsotherms0", false).toBool();
+    showIsotherms0Labels  = Settings::getSetting("showIsotherms0Labels", false).toBool();
+    isotherms0Step = Settings::getSetting("isotherms0Step", 50).toDouble();
+    //setIsotherms0Step(Settings::getSetting("isotherms0Step", 50).toDouble());
+
+    colorMapMode = Settings::getSetting("colorMapMode", Terrain::drawWind).toInt();
+
+    showTemperatureLabels = Settings::getSetting("showTemperatureLabels", false).toBool();
+    //showGribGrid = Settings::getSetting("showGribGrid", false).toBool();
     //----------------------------------------------------------------------------
 
     imgEarth = NULL;
@@ -112,6 +128,12 @@ void Terrain::updateGraphicsParameters()
 
     riversPen.setColor(Settings::getSetting("riversLineColor", QColor(50,50,150)).value<QColor>());
     riversPen.setWidthF(Settings::getSetting("riversLineWidth", 1.0).toDouble());
+
+    isobarsPen.setColor(Settings::getSetting("isobarsLineColor", QColor(80,80,80)).value<QColor>());
+    isobarsPen.setWidthF(Settings::getSetting("isobarsLineWidth", 2.0).toDouble());
+
+    isotherms0Pen.setColor(Settings::getSetting("isotherms0LineColor", QColor(200,120,100)).value<QColor>());
+    isotherms0Pen.setWidthF(Settings::getSetting("isotherms0LineWidth", 1.6).toDouble());
 
     int v = 180;
     selectColor     = QColor(v,v,v);
@@ -187,7 +209,7 @@ void Terrain::draw_GSHHSandGRIB()
     Grib * grib=parent->getGrib();
 
     if(grib)
-        grib->draw_WIND_Color(pnt, proj, colorMapSmooth,showWindColorMap,showWindArrows,showBarbules);
+        drawGrib(pnt,grib);
 
     //===================================================
     // Dessin des bordures et frontières
@@ -225,6 +247,100 @@ void Terrain::draw_GSHHSandGRIB()
     if(save==1) imgEarth->save("test.jpg","JPG",100);*/
     if(grib) grib->drawCartouche(pnt);
     setCursor(oldcursor);
+}
+
+void Terrain::drawGrib(QPainter &pnt, Grib *gribPlot)
+{
+        gribPlot->show_CoverZone(pnt,proj);
+
+        //QTime t1 = QTime::currentTime();
+        //qWarning() << "Grib mode: " << colorMapMode << " (grib=" << Terrain::drawWind << ")";
+        // grib->draw_WIND_Color(pnt, proj, colorMapSmooth,showWindColorMap,showWindArrows,showBarbules);
+        switch (colorMapMode)
+        {
+                case Terrain::drawWind :
+                        windArrowsColor.setRgb(255, 255, 255);                        
+                        gribPlot->draw_WIND_Color(pnt, proj, colorMapSmooth,showWindArrows,showBarbules);
+                        break;
+                case Terrain::drawRain :
+                        windArrowsColor.setRgb(140, 120, 100);
+                        gribPlot->draw_RAIN_Color(pnt, proj, colorMapSmooth);
+                        break;
+                case Terrain::drawCloud :
+                        windArrowsColor.setRgb(180, 180, 80);
+                        gribPlot->draw_CLOUD_Color(pnt, proj, colorMapSmooth);
+                        break;
+                case Terrain::drawHumid :
+                        windArrowsColor.setRgb(180, 180, 80);
+                        gribPlot->draw_HUMID_Color(pnt, proj, colorMapSmooth);
+                        break;
+                case Terrain::drawTemp :
+                        windArrowsColor.setRgb(255, 255, 255);
+                        gribPlot->draw_Temp_Color(pnt, proj, colorMapSmooth);
+                        break;
+                case Terrain::drawTempPot :
+                        windArrowsColor.setRgb(255, 255, 255);
+                        gribPlot->draw_TempPot_Color(pnt, proj, colorMapSmooth);
+                        break;
+                case Terrain::drawDewpoint :
+                        windArrowsColor.setRgb(255, 255, 255);
+                        gribPlot->draw_Dewpoint_Color(pnt, proj, colorMapSmooth);
+                        break;
+                case Terrain::drawDeltaDewpoint :
+                        windArrowsColor.setRgb(180, 180, 80);
+                        gribPlot->draw_DeltaDewpoint_Color(pnt, proj, colorMapSmooth);
+                        break;
+                case Terrain::drawSnowDepth :
+                        windArrowsColor.setRgb(140, 120, 100);
+                        gribPlot->draw_SNOW_DEPTH_Color(pnt, proj, colorMapSmooth);
+                        break;
+                case Terrain::drawSnowCateg :
+                        windArrowsColor.setRgb(140, 120, 100);
+                        gribPlot->draw_SNOW_CATEG_Color(pnt, proj, colorMapSmooth);
+                        break;
+                case Terrain::drawFrzRainCateg :
+                        windArrowsColor.setRgb(140, 120, 100);
+                        gribPlot->draw_FRZRAIN_CATEG_Color(pnt, proj, colorMapSmooth);
+                        break;
+                case Terrain::drawCAPEsfc :
+                        windArrowsColor.setRgb(100, 80, 80);
+                        gribPlot->draw_CAPEsfc(pnt, proj, colorMapSmooth);
+                        break;
+        }
+        //printf("time show ColorMap = %d ms\n", t1.elapsed());
+
+        //send gfs:40N,60N,140W,120W|2,2|24,48,72|PRESS,WIND,SEATMP,AIRTMP,WAVES
+
+        if (showIsobars) {
+                pnt.setPen(isobarsPen);
+                gribPlot->draw_Isobars(pnt, proj);
+        }
+
+        if (showIsotherms0) {
+                pnt.setPen(isotherms0Pen);
+                gribPlot->draw_Isotherms0(pnt, proj);
+        }
+
+        if (showIsobarsLabels) {
+                gribPlot->draw_IsobarsLabels(pnt, proj);
+        }
+        if (showIsotherms0Labels) {
+                gribPlot->draw_Isotherms0Labels(pnt, proj);
+        }
+        if (showPressureMinMax) {
+                gribPlot->draw_PRESSURE_MinMax (pnt, proj);
+        }
+        if (showTemperatureLabels) {
+                gribPlot->draw_TEMPERATURE_Labels (pnt, proj);
+        }
+
+        //===================================================
+        // Grille GRIB
+        //===================================================
+        /*if (showGribGrid) {
+                gribPlot->draw_GribGrid(pnt, proj);
+        }*/
+    #warning remettre la grille grib
 }
 
 //=========================================================
@@ -288,6 +404,26 @@ void Terrain::slot_setDrawWindColors (bool b) {
         indicateWaitingMap();
     }
 }
+void Terrain::slotTemperatureLabels(bool b) {
+    if (showTemperatureLabels != b) {
+        showTemperatureLabels = b;
+        Settings::setSetting("showTemperatureLabels", b);
+        mustRedraw = true;
+        indicateWaitingMap();
+    }
+}
+//-------------------------------------------------------
+void Terrain::setColorMapMode(int mode)
+{    
+    if (colorMapMode != mode)
+    {
+        Settings::setSetting("colorMapMode", mode);
+        colorMapMode=mode;
+        mustRedraw = true;
+        indicateWaitingMap();
+    }
+}
+
 //-------------------------------------------------------
 void Terrain::setColorMapSmooth (bool b) {
     if (colorMapSmooth != b) {
@@ -311,6 +447,82 @@ void Terrain::setBarbules (bool b) {
     if (showBarbules != b) {
         showBarbules = b;
         Settings::setSetting("showBarbules", b);
+        mustRedraw = true;
+        indicateWaitingMap();
+    }
+}
+
+//-------------------------------------------------------
+void Terrain::setPressureMinMax (bool b) {
+    if (showPressureMinMax != b) {
+        showPressureMinMax = b;
+        Settings::setSetting("showPressureMinMax", b);
+        mustRedraw = true;
+        indicateWaitingMap();
+    }
+}
+
+//-------------------------------------------------------
+void Terrain::setDrawIsobars(bool b) {
+    if (showIsobars != b) {
+        showIsobars = b;
+        Settings::setSetting("showIsobars", b);
+        mustRedraw = true;
+        indicateWaitingMap();
+    }
+}
+//-------------------------------------------------------
+void Terrain::setIsobarsStep(double step)
+{
+    if (isobarsStep != step) {
+        Grib * grib = parent->getGrib();
+        if(grib)
+            grib->setIsobarsStep(step);
+        else
+            qWarning() << "No grib present";
+        Settings::setSetting("isobarsStep", step);
+        isobarsStep = step;
+        mustRedraw = true;
+        indicateWaitingMap();
+    }
+}
+//-------------------------------------------------------
+void Terrain::setDrawIsobarsLabels(bool b) {
+    if (showIsobarsLabels != b) {
+        showIsobarsLabels = b;
+        Settings::setSetting("showIsobarsLabels", b);
+        mustRedraw = true;
+        indicateWaitingMap();
+    }
+}
+
+//-------------------------------------------------------
+void Terrain::setDrawIsotherms0(bool b) {
+    if (showIsotherms0 != b) {
+        showIsotherms0 = b;
+        Settings::setSetting("showIsotherms0", b);
+        mustRedraw = true;
+        indicateWaitingMap();
+    }
+}
+//-------------------------------------------------------
+void Terrain::setIsotherms0Step(double step)
+{
+    if (isotherms0Step!=step) {
+        Grib * grib = this->parent->getGrib();
+        if(grib)
+            grib->setIsotherms0Step(step);
+        Settings::setSetting("isotherms0Step", step);
+        isotherms0Step = step;
+        mustRedraw = true;
+        indicateWaitingMap();
+    }
+}
+//-------------------------------------------------------
+void Terrain::setDrawIsotherms0Labels(bool b) {
+    if (showIsotherms0Labels != b) {
+        showIsotherms0Labels = b;
+        Settings::setSetting("showIsotherms0Labels", b);
         mustRedraw = true;
         indicateWaitingMap();
     }
@@ -368,6 +580,7 @@ void Terrain::updateSize(int width, int height)
     isWindMapValid = false;
     this->width=width;
     this->height=height;
+    update();
 }
 
 QRectF Terrain::boundingRect() const

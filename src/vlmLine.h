@@ -28,6 +28,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <QObject>
 
 #include "class_list.h"
+#include "Projection.h"
+#include "vlmPoint.h"
 
 #define VLMLINE_LINE_MODE   0
 #define VLMLINE_POINT_MODE  1
@@ -39,6 +41,8 @@ class vlmLine : public QGraphicsWidget
         vlmLine(Projection * proj, QGraphicsScene * myScene,int z_level);
 
         void addPoint(float lat,float lon);
+        void addVlmPoint(vlmPoint point);
+        void removeVlmPoint(int index);
         void deleteAll(void);
         void setLinePen ( const QPen & pen ) {linePen = pen;update(); }
         void setPoly(QList<vlmPoint> & points);
@@ -49,9 +53,20 @@ class vlmLine : public QGraphicsWidget
         void setNbVacPerHour(int nbVacPerHour) {this->nbVacPerHour=nbVacPerHour;}
         void setPorteOnePoint(void){this->onePoint=true;}
         void setHidden(bool hidden) {this->hidden=hidden;update();}
+        QList<vlmPoint> * getPoints(){return & this->line;}
+        void setSolid(bool solid){this->solid=solid;}
 
         int count(void) { return line.count(); }
-
+        void setPointDead(int n){this->line[n].isDead=true;}
+        void setPointStartCap(int n,float c){this->line[n].startCap=c;}
+        void setPointWind(int n, float twd, float tws){this->line[n].wind_angle=twd;this->line[n].wind_speed=tws;}
+        void setPointDistIso(int n, double d){this->line[n].distIso=d;}
+        void setPointInitialCap(int n,double d){this->line[n].initialCap=d;}
+        const vlmPoint * getOrigin(int n) {return this->line.at(n).origin;}
+        const vlmPoint * getPoint(int n) {return & line.at(n);}
+        void setInterpolated(float lon,float lat){this->interpolatedLon=lon;this->interpolatedLat=lat;update();}
+        void setHasInterpolated(bool b){this->hasInterpolated=b;update();}
+        vlmPoint * getLastPoint() {return & line.last();}
         ~vlmLine();
 
     protected:
@@ -77,6 +92,10 @@ class vlmLine : public QGraphicsWidget
         QRectF boundingR;
         bool hidden;
         bool labelHidden;
+        bool solid;
+        float interpolatedLon;
+        float interpolatedLat;
+        bool hasInterpolated;
 };
 
 

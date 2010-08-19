@@ -147,7 +147,7 @@
       <rect>
        <x>40</x>
        <y>30</y>
-       <width>221</width>
+       <width>224</width>
        <height>207</height>
       </rect>
      </property>
@@ -320,7 +320,7 @@
        <rect>
         <x>10</x>
         <y>20</y>
-        <width>295</width>
+        <width>306</width>
         <height>79</height>
        </rect>
       </property>
@@ -473,6 +473,44 @@
       <string>Centrage sur bateau après synchro VLM</string>
      </property>
     </widget>
+    <widget class="QCheckBox" name="chk_centerOnBoatChange">
+     <property name="geometry">
+      <rect>
+       <x>20</x>
+       <y>150</y>
+       <width>291</width>
+       <height>20</height>
+      </rect>
+     </property>
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="text">
+      <string>Centrage après changement de bateau</string>
+     </property>
+    </widget>
+    <widget class="QCheckBox" name="chk_askConfirm">
+     <property name="geometry">
+      <rect>
+       <x>20</x>
+       <y>170</y>
+       <width>291</width>
+       <height>20</height>
+      </rect>
+     </property>
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="text">
+      <string>Confirmation à chaque ordre vers VLM</string>
+     </property>
+    </widget>
    </widget>
    <widget class="QWidget" name="tab_4">
     <attribute name="title">
@@ -615,7 +653,7 @@
        <x>10</x>
        <y>70</y>
        <width>311</width>
-       <height>101</height>
+       <height>151</height>
       </rect>
      </property>
      <property name="title">
@@ -657,13 +695,51 @@
       <property name="geometry">
        <rect>
         <x>30</x>
-        <y>70</y>
-        <width>171</width>
+        <y>80</y>
+        <width>131</width>
         <height>18</height>
        </rect>
       </property>
       <property name="text">
-       <string>Echelle relative (vitesse maxi)</string>
+       <string>Nombre de vacations</string>
+      </property>
+     </widget>
+     <widget class="QSpinBox" name="polVac">
+      <property name="geometry">
+       <rect>
+        <x>170</x>
+        <y>80</y>
+        <width>71</width>
+        <height>22</height>
+       </rect>
+      </property>
+      <property name="alignment">
+       <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+      </property>
+      <property name="suffix">
+       <string> vac</string>
+      </property>
+      <property name="minimum">
+       <number>1</number>
+      </property>
+      <property name="maximum">
+       <number>9999</number>
+      </property>
+      <property name="value">
+       <number>12</number>
+      </property>
+     </widget>
+     <widget class="QRadioButton" name="chk_scaleEstime">
+      <property name="geometry">
+       <rect>
+        <x>30</x>
+        <y>110</y>
+        <width>161</width>
+        <height>18</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Meme duree que l'estime</string>
       </property>
      </widget>
     </widget>
@@ -796,7 +872,7 @@
        <rect>
         <x>10</x>
         <y>50</y>
-        <width>243</width>
+        <width>248</width>
         <height>23</height>
        </rect>
       </property>

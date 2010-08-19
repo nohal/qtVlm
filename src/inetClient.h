@@ -31,6 +31,10 @@ class inetClient
         inetClient(inetConnexion * inet);
 
         virtual void requestFinished(QByteArray res) { res.clear();}
+        virtual QString getAuthLogin(bool * ok=NULL) {if(ok) *ok=false; return QString();}
+        virtual QString getAuthPass(bool * ok=NULL) {if(ok) *ok=false; return QString();}
+        virtual void authFailed(void) { clearCurrentRequest(); }
+        virtual void inetError(void) { clearCurrentRequest(); }
 
         void resetReply();
         void clearCurrentRequest() { currentRequest=-1; hasProgress=false;}
@@ -39,6 +43,12 @@ class inetClient
         QNetworkReply * getReply(void) { return myReply; }
         void setHasProgress(bool val) { hasProgress=val; }
         bool getHasProgress(void) { return hasProgress; }
+        int  getCurrentRequest(void) { return currentRequest; }
+        QString getName(){return this->name;}
+        void setName(QString name){this->name=name;}
+        bool getNeedAuth(void) {return needAuth;}
+
+        int nbAuth;
 
     protected:
        void inetGet(int currentRequest,QString url);
@@ -51,14 +61,15 @@ class inetClient
 
        bool hasRequest(void) { return (myReply!=NULL); }
        bool hasInet(void) {return (inet!=NULL); }
-       int  getCurrentRequest(void) { return currentRequest; }
 
+       bool needAuth;
 
     private:
        int currentRequest;
        bool hasProgress;
        inetConnexion * inet;
        QNetworkReply * myReply;
+       QString name;
 };
 
 #endif // INETCLIENT_H

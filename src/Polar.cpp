@@ -23,10 +23,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <QTextStream>
 #include <QDebug>
 #include <QDateTime>
+#include <QProgressDialog>
 
 #include "Polar.h"
 
 #include "parser.h"
+#include "Orthodromie.h"
 
 Polar::Polar()
 {
@@ -71,20 +73,25 @@ Polar::Polar(QString fname)
 
 void Polar::setPolarName(QString fname)
 {
+    isCsv=true;
     loaded=false;
     clearPolar();
 
     name=fname;
-    fname = "polar/"+fname+".pol";
-
-    QFile file(fname);
+    QString nameF = "polar/"+fname+".csv";
+    QFile file(nameF);
     if (!file.open(QIODevice::ReadOnly | QIODevice::Text ))
     {
-         QMessageBox::warning(0,QObject::tr("Lecture de polaire"),
-             QString(QObject::tr("Ne peux ouvrir le fichier %1")).arg(fname));
-        return;
+        isCsv=false;
+        nameF = "polar/"+fname+".pol";
+        file.setFileName(nameF);
+        if (!file.open(QIODevice::ReadOnly | QIODevice::Text ))
+        {
+             QMessageBox::warning(0,QObject::tr("Lecture de polaire"),
+                 QString(QObject::tr("Impossible d'ouvrir le fichier %1 (ni en .csv ni en .pol)")).arg(name));
+             return;
+        }
     }
-
     QTextStream stream(&file);
     QString line;
     QStringList list;
@@ -97,11 +104,16 @@ void Polar::setPolarName(QString fname)
         file.close();
         return;
     }
-    list = line.split('\t');
-    if(list[0] != "TWA\\TWS")
+    if(isCsv)
+        list = line.split(';');
+    else
+        list = line.split('\t');
+    if(list[0].toUpper() != "TWA\\TWS" && list[0].toUpper() != "TWA/TWS")
     {
         QMessageBox::warning(0,QObject::tr("Lecture de polaire"),
-             QString(QObject::tr("Fichier %1 invalide")).arg(fname));
+             QString(QObject::tr("Fichier %1 invalide (doit commencer par TWA\\TWS et non '%2')"))
+                        .arg(fname)
+                        .arg(list[0]));
         file.close();
         return;
     }
@@ -112,7 +124,10 @@ void Polar::setPolarName(QString fname)
     {
         line=stream.readLine();
         if(line.isNull()) break;
-        list = line.split("\t");
+        if (isCsv)
+            list = line.split(";");
+        else
+            list = line.split("\t");
         twa.append(list[0].toFloat());
         for(i=1;i<list.count();i++)
         {
@@ -133,6 +148,8 @@ void Polar::setPolarName(QString fname)
     maxSpeed=qRound(0);
     do
     {
+        wa_u=qRound(0);
+        wa_d=qRound(180);
         bvmg_u=bvmg_d=qRound(0);
         float speed;
         do
@@ -140,12 +157,12 @@ void Polar::setPolarName(QString fname)
             speed=myGetSpeed(ws,wa,true);
             if(speed>maxSpeed) maxSpeed=speed;
             bvmg=speed*cos(degToRad(wa));
-            if(bvmg_u<bvmg)
+            if(bvmg_u<bvmg) //bvmg is positive here
             {
                 bvmg_u=bvmg;
                 wa_u=wa;
             }
-            if(bvmg_d>bvmg)
+            if(bvmg_d>bvmg) //bvmg is negative here
             {
                 bvmg_d=bvmg;
                 wa_d=wa;
@@ -188,6 +205,8 @@ void Polar::setPolarName(QString fname)
             }
             wa=wa+0.1;
         }while(wa<wa_limit+0.1);
+        if(wa_u>80)
+            wa_u=0; //better put an anchor and relax
         best_vmg_up.append(wa_u);
         best_vmg_down.append(wa_d);
         wa=qRound(0);
@@ -195,6 +214,43 @@ void Polar::setPolarName(QString fname)
     }while(ws<60.1);
     file.close();
     loaded=true;
+    QString nameFVmg = "polar/"+fname+".vmg";
+    fileVMG.setFileName(nameFVmg);
+    if (fileVMG.open(QIODevice::ReadOnly | QIODevice::Text ))
+    {
+        if(fileVMG.size()<4329500 || fileVMG.size()>4329700)
+            fileVMG.remove();
+        else
+            return;
+    }
+//precalculate regular VMGs
+    fileVMG.open(QIODevice::WriteOnly | QIODevice::Text );
+    double vmg=0;
+    QTextStream sVmg(&fileVMG);
+    QString ssVmg;
+    QProgressDialog * progress;
+    progress=new QProgressDialog();
+    progress->setLabelText(tr("Pre-calcul des valeurs de VMG (ceci est fait seulement la premiere fois qu'une polaire est utilisee)"));
+    progress->setMaximum(600);
+    progress->setMinimum(0);
+    progress->setCancelButton(NULL);
+    progress->setMaximumHeight(100);
+    progress->show();
+    for (int tws=0;tws<601;tws++)
+    {
+        progress->setValue(tws);
+        for (int twa=0;twa<1801;twa++)
+        {
+            bvmgWind((double) twa/10.0,(double) tws/10.0,&vmg);
+            ssVmg.sprintf("%.4d",qRound(A360(vmg)*10.0));
+            sVmg<<ssVmg;
+        }
+    }
+    fileVMG.close();
+    if(!fileVMG.open(QIODevice::ReadOnly | QIODevice::Text ))
+        qWarning()<<"fileVMG could not be re-opened!";
+    progress->close();
+    delete progress;
 }
 
 void Polar::printPolar(void)
@@ -281,7 +337,10 @@ float Polar::myGetSpeed(float windSpeed, float angle, bool force)
     if(supSpeed==infSpeed)
         boatSpeed=infSpeed;
     else
-        boatSpeed=infSpeed+(windSpeed-tws[k1])*(supSpeed-infSpeed)/(tws[k2]-tws[k1]);
+        if(k1==k2) //due to rounding problems this can occurs even if (infSpeed!=supSpeed)
+            boatSpeed=(infSpeed+supSpeed)/2.0;
+        else
+            boatSpeed=infSpeed+(windSpeed-tws[k1])*(supSpeed-infSpeed)/(tws[k2]-tws[k1]);
     return boatSpeed;
 }
 
@@ -302,6 +361,170 @@ void Polar::clearPolar(void)
     }
 }
 
+/***************************************************************************************/
+/* VMG                                                                                 */
+/*                                                                                     */
+/* Part of the code comes from C lib of VLM: (c) 2008 by Yves Lafon                    */
+/* see http://www.virtual-loup-de-mer.org/ or http://dev.virtual-loup-de-mer.org/vlm/  */
+/* Contact: <yves@raubacapeu.net>                                                      */
+/***************************************************************************************/
+
+void Polar::bvmg(double bt_longitude,double bt_latitude, double wp_longitude, double wp_latitude,
+                  double w_angle, double w_speed,
+                  double *heading, double *wangle)
+{
+    double maxwangle,twaOrtho;
+    double maxheading;
+    double wanted_heading;
+
+    w_angle=degToRad(w_angle);
+    Orthodromie orth(bt_longitude,bt_latitude,wp_longitude,wp_latitude);
+    wanted_heading=orth.getAzimutRad();
+    twaOrtho = w_angle - wanted_heading;
+    myBvmgWind(twaOrtho,w_speed,&maxwangle);
+    maxheading = fmod((wanted_heading-maxwangle+twaOrtho), TWO_PI);
+    if (maxheading < 0)
+    {
+      maxheading += TWO_PI;
+    }
+    maxwangle = fmod(maxwangle, TWO_PI);
+    if (maxwangle > PI)
+    {
+      maxwangle -= TWO_PI;
+    } else if (maxwangle < -PI)
+    {
+      maxwangle += TWO_PI;
+    }
+#if 0
+  qWarning() << "BVMG: Wind " << w_speed << "kts " << radToDeg(w_angle);
+  qWarning() << "BVMG Wind Angle : wanted_heading " << radToDeg(wanted_heading);
+  qWarning() << "BVMG Wind Angle : heading " << radToDeg(maxheading) << ", wind angle " << radToDeg(maxwangle);
+#endif /* DEBUG */
+    *heading = radToDeg(maxheading);
+    *wangle = radToDeg(maxwangle);
+}
+void Polar::getBvmg(double twaOrtho, double tws, double *twaVMG)
+{
+    double twa;
+    bool babord=false;
+//    double debug=twaOrtho;
+    twaOrtho=((float)qRound(twaOrtho*10.0))/10.0;
+    if (twaOrtho<0)
+    {
+        twaOrtho=-twaOrtho;
+        babord=true;
+    }
+    if(twaOrtho>180)
+    {
+        babord=!babord;
+        twaOrtho=360-twaOrtho;
+    }
+    twaOrtho=twaOrtho*10.0;
+    char data[5];
+    fileVMG.seek(qRound(tws*10)*4*1801+qRound(twaOrtho)*4);
+    fileVMG.read(data,4);
+    data[4]='\0';
+    twa=atoi(data);
+//    if(twa>3600)
+//        qWarning()<<"lol";
+    twa=twa/10.0;
+    if(babord)
+    {
+        twa=-twa;
+    }
+//    qWarning()<<"twaOrtho="<<debug<<" vmg="<<twa;
+    *twaVMG=twa;
+}
+void Polar::bvmgWind(double twaOrtho, double tws, double *twaVMG)
+{
+    double twa;
+    myBvmgWind(degToRad(twaOrtho),tws,&twa);
+    twa = fmod(twa, TWO_PI);
+    if (twa > PI)
+    {
+      twa -= TWO_PI;
+    } else if (twa < -PI)
+    {
+      twa += TWO_PI;
+    }
+    *twaVMG=radToDeg(twa);
+}
+void Polar::myBvmgWind(double w_angle, double w_speed, double *wangle)
+{    /* FIXME, this can be optimized a lot */
+    double speed=0;
+    double t_heading=0;
+    double t=0;
+    double imax = 90;
+    double t_max = -100;
+    double t_max2 = -100;
+    int i=0;
+
+    /* -90 to +90 form desired diretion */
+    for (i=0; i<imax; i++)
+    {
+        t_heading = w_angle + degToRad(((double)i));
+        speed = this->getSpeed(w_speed, A180(radToDeg(t_heading)));
+
+        if (speed < 0.0)
+        {
+            continue;
+        }
+        t = speed * cos(degToRad(((double)i)));
+        if (t > t_max)
+        {
+            t_max = t;
+            *wangle = t_heading;
+        } else if ( t_max - t > (t_max/20.0))
+        {
+            break;  /* cut if lower enough from current maximum */
+        }
+    }
+
+    for (i=0; i<imax; i++)
+    {
+        t_heading = w_angle - degToRad(((double)i));
+        speed = this->getSpeed(w_speed,  A180(radToDeg(t_heading)));
+        if (speed < 0.0)
+        {
+          continue;
+        }
+        t = speed * cos(- degToRad(((double)i)));
+        if (t > t_max2)
+        {
+          t_max2 = t;
+          if (t > t_max)
+          {
+            t_max = t;
+            *wangle = t_heading;
+          }
+        } else if (t_max2 - t > (t_max2/20.0))
+        {
+          break;
+        }
+    }
+}
+
+float Polar::A180(float angle)
+{
+    if(qAbs(angle)>180)
+    {
+        if(angle<0)
+            angle=360+angle;
+        else
+            angle=angle-360;
+    }
+    return angle;
+}
+double Polar::A360(double hdg)
+{
+    if(hdg>=360) hdg=hdg-360;
+    if(hdg<0) hdg=hdg+360;
+    return hdg;
+}
+
+/********************/
+/*  VLM polar List  */
+/********************/
 polarList::polarList(inetConnexion * inet) : inetClient(inet)
 {
     polars.clear();
@@ -380,10 +603,6 @@ void polarList::stats(void)
         k++;
     }
 }
-
-/********************/
-/*  VLM polar List  */
-/********************/
 
 void polarList::get_polarList(void)
 {

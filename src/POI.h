@@ -30,6 +30,7 @@ Copyright (C) 2008 - Jacques Zaninetti - http://zygrib.free.fr
 #include <QMenu>
 
 #include "class_list.h"
+#include "mycentralwidget.h"
 
 #define POI_TYPE_POI    0
 #define POI_TYPE_WP     1
@@ -40,7 +41,7 @@ class POI : public QGraphicsWidget
 { Q_OBJECT
     public:
         /* constructeurs, destructeurs */
-        POI(QString name, int type, float lat, float lon,
+        POI(QString name, int type, double lat, double lon,
                     Projection *proj, QWidget *ownerMeteotable, myCentralWidget *parentWindow,
                     float wph, int tstamp,bool useTstamp, boatAccount *boat);
 
@@ -49,31 +50,46 @@ class POI : public QGraphicsWidget
         /* accés aux données */
         QString  getName(void)         {return name;}
         ROUTE    *getRoute(void)        {return route;}
-        float    getLongitude(void)    {return lon;}
-        float    getLatitude(void)     {return lat;}
+        double    getLongitude(void)    {return lon;}
+        double    getLatitude(void)     {return lat;}
         float    getWph(void)          {return wph;}
         int      getTimeStamp(void)    {if(useRouteTstamp && !useTstamp) return routeTimeStamp; else return timeStamp;}
         bool     getUseTimeStamp(void) {if(timeStamp==-1) return false; else return useTstamp;}
+        bool     getUseRouteTstamp(void) {if(routeTimeStamp==-1) return false; else return useRouteTstamp;}
+        time_t   getRouteTimeStamp(void){return this->routeTimeStamp;}
         int      getType(void)         {return type; }
         int      getTypeMask(void)     {return typeMask; }
         bool     getIsWp(void)         {return isWp;}
         QString  getRouteName(void);
-
+        double   getSearchRangeLon(void) {return this->searchRangeLon;}
+        double   getSearchRangeLat(void) {return this->searchRangeLat;}
+        double   getSearchStep(void) {return this->searchStep;}
+        bool    getOptimizing(void) {return this->optimizing;}
+        bool    isPartOfTwa(void) {return this->partOfTwa;}
+        void    setPartOfTwa(bool b){this->partOfTwa=b;}
         static QString  getTypeStr(int index);
         QString  getTypeStr(void)      {return getTypeStr(type); }
+        int     getNavMode(){return this->navMode;}
 
         /* modification des données */
         void setName           (QString name);
-        void setLongitude      (float lon);
-        void setLatitude       (float lat);
+        void setLongitude      (double lon);
+        void setLatitude       (double lat);
         void setWph            (float wph) {this->wph=wph;}
-        void setTimeStamp      (int tstamp);
-        void setRouteTimeStamp (int date);
+        void setTimeStamp      (time_t tstamp);
+        void setRouteTimeStamp (time_t date);
         void setUseTimeStamp   (bool state){this->useTstamp=state;}
         void setType           (int type) {this->type=type;this->typeMask=(1<<type);}
         void setTip            (QString tip);
         void setRoute          (ROUTE *route);
         void setRouteName      (QString routeName){this->routeName=routeName;}
+        void setSearchRangeLon (double value){this->searchRangeLon=value;}
+        void setSearchRangeLat (double value){this->searchRangeLat=value;}
+        void setSearchStep     (double value){this->searchStep=value;}
+        void setNavMode        (int mode);
+        void setOptimizing     (bool b) {this->optimizing=b;}
+        void setMyLabelHidden  (bool b) {this->myLabelHidden=b;}
+        bool getMyLabelHidden  (void) {return this->myLabelHidden;}
 
 
         /* comparateur de classe pour le tri */
@@ -94,13 +110,19 @@ class POI : public QGraphicsWidget
         void slot_delPoi();
         void slot_copy();
         void slot_paramChanged();
-        void slot_WPChanged(float,float);
+        void slot_WPChanged(double tlat,double tlon);
         void slot_updateTip(boatAccount *);
         void slot_shShow(){this->labelHidden=false;show();}
         void slot_shHidden(){hide();}
         void slot_shPoi(){this->isVisible()?hide():show();}
         void slot_shLab(){this->labelHidden=!this->labelHidden;update();}
         void slot_routeMenu(QAction* ptr_action);
+        void slot_finePosit();
+        void slot_abort(){this->abortSearch=true;}
+        void slot_setMode(QAction* ptr_action);
+        void slot_setHorn();
+        void slot_twaLine(){parent->twaDraw(lon,lat);}
+        void slotCompassLine();
 
     signals:
         void chgWP(float,float,float);
@@ -108,10 +130,11 @@ class POI : public QGraphicsWidget
         void delPOI_list(POI*);
         void editPOI(POI*);
         void selectPOI(POI*);
-        void setGribDate(int);
+        void setGribDate(time_t);
         void clearSelection(void);
         void updateTip(boatAccount*);
         void poiMoving();
+        void compassLine(int,int);
 
     protected:
         void  mousePressEvent(QGraphicsSceneMouseEvent * e);
@@ -138,8 +161,8 @@ class POI : public QGraphicsWidget
         float    wph;
         double   WPlon,WPlat;
         int      pi, pj;
-        int      timeStamp;
-        int      routeTimeStamp;
+        time_t      timeStamp;
+        time_t      routeTimeStamp;
         bool     useTstamp;
         bool     useRouteTstamp;
         bool     isWp;
@@ -158,7 +181,14 @@ class POI : public QGraphicsWidget
         QAction * ac_delPoi;
         QAction * ac_copy;
         QAction * ac_compassLine;
+        QAction * ac_twaLine;
+        QAction * ac_setHorn;
         QMenu * ac_routeList;
+        QAction * ac_finePosit;
+        QMenu * ac_modeList;
+        QAction * ac_modeList1;
+        QAction * ac_modeList2;
+        QAction * ac_modeList3;
         void createPopUpMenu(void);
 
         void chkIsWP(void);
@@ -167,6 +197,15 @@ class POI : public QGraphicsWidget
         QString routeName;
         bool labelHidden;
         bool VLMBoardIsBusy;
+        double searchRangeLon;
+        double searchRangeLat;
+        double searchStep;
+        bool abortSearch;
+        int  navMode;
+        bool isPartOfBvmg;
+        bool optimizing;
+        bool myLabelHidden;
+        bool partOfTwa;
 };
 
 #endif

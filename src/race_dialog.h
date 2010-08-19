@@ -43,6 +43,10 @@ struct raceParam {
     QString id;
     QString name;
     QList <boatParam*> boats;
+    bool displayNSZ;
+    double latNSZ;
+    double widthNSZ;
+    QColor colorNSZ;
 };
 
 class race_dialog : public QDialog, public Ui::race_dialog_ui, public inetClient
@@ -91,6 +95,14 @@ class race_dialog : public QDialog, public Ui::race_dialog_ui, public inetClient
         /* http connection */
         int currentRace;
         QStringList currentParam;
+        bool currentDisplayNSZ;
+        double currentLatNSZ;
+        double currentWidthNSZ;
+        QColor currentColorNSZ;
+        InputLineParams *inputTraceColor;
+
+private slots:
+    void on_displayNSZ_clicked();
 };
 
 #endif

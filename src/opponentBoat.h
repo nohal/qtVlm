@@ -36,6 +36,10 @@ Copyright (C) 2008 - Jacques Zaninetti - http://zygrib.free.fr
 struct raceData {
       QString idrace;
       QString oppList;
+    bool displayNSZ;
+    double latNSZ;
+    double widthNSZ;
+    QColor colorNSZ;
 };
 
 #define RACE_MAX_BOAT 15
@@ -118,12 +122,10 @@ class opponentList : public QWidget, public inetClient
         void clear(void);
         QString getRaceId();
         QList<opponent*> * getList(void) { return &opponent_list; }
-
         void requestFinished (QByteArray);
 
     public slots:
         void getTrace(QString buff, QList<vlmPoint> * trace);
-
     private:
         QList<opponent*> opponent_list;
 

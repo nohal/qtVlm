@@ -17,6 +17,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ***********************************************************************/
 
 #include "GshhsRangsReader.h"
+//#include "dataDef.h"
 
 //------------------------------------------------------------------------
 GshhsRangsCell::GshhsRangsCell(FILE *fcat_, FILE *fcel_, FILE *frim_, int x0_, int y0_)

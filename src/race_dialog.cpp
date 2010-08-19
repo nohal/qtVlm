@@ -42,6 +42,8 @@ race_dialog::race_dialog(MainWindow * main,myCentralWidget * parent, inetConnexi
     chooser_raceList->setInsertPolicy(QComboBox::InsertAlphabetically);
     availableBoat->setSelectionMode(QAbstractItemView::ExtendedSelection);
     selectedBoat->setSelectionMode(QAbstractItemView::ExtendedSelection);
+    inputTraceColor =new InputLineParams(1,QColor(Qt::red),1.6,  QColor(Qt::red),this,0.1,5);
+    verticalLayout_4->addWidget( inputTraceColor);
 
     waitBox = new QMessageBox(QMessageBox::Information,
                              tr("Paramétrage des courses"),
@@ -74,7 +76,7 @@ void race_dialog::initList(QList<boatAccount*> & acc_list_ptr,QList<raceData*> &
         if(!acc_list->at(i)->getStatus() || acc_list->at(i)->getRaceId() == "0")
             continue;
 
-        /* on cherche si la course existe d�j� ds la liste */
+        /* on cherche si la course existe deja ds la liste */
         for(int j=0;j<param_list.size();j++)
             if(param_list[j]->id == acc_list->at(i)->getRaceId())
             {
@@ -82,12 +84,17 @@ void race_dialog::initList(QList<boatAccount*> & acc_list_ptr,QList<raceData*> &
                 break;
             }
         /* Elle n'existe pas => on cr�e un nv raceParam */
+        qWarning()<<"race found:"<<found;
         if(!found)
         {
             raceParam * ptr = new raceParam();
             ptr->id=acc_list->at(i)->getRaceId();
             ptr->name=acc_list->at(i)->getRaceName();
             ptr->boats.clear();
+            ptr->latNSZ=-60;
+            ptr->colorNSZ=Qt::black;
+            ptr->widthNSZ=2;
+            ptr->displayNSZ=false;
             param_list.append(ptr);
         }
     }
@@ -97,7 +104,6 @@ void race_dialog::initList(QList<boatAccount*> & acc_list_ptr,QList<raceData*> &
     for(int j=0;j<param_list.size();j++)
         chooser_raceList->addItem(param_list[j]->name,param_list[j]->id);
     nbRace->setText(QString().setNum(param_list.size()));
-
     if(!hasInet() || hasRequest())
     {
         qWarning("raceDialog bad state in inet");
@@ -131,6 +137,10 @@ void race_dialog::getNextRace()
         if(race_list->at(i)->idrace==param_list[currentRace]->id)
         {
             currentParam=race_list->at(i)->oppList.split(";");
+            currentDisplayNSZ=race_list->at(i)->displayNSZ;
+            currentLatNSZ=race_list->at(i)->latNSZ;
+            currentWidthNSZ=race_list->at(i)->widthNSZ;
+            currentColorNSZ=race_list->at(i)->colorNSZ;
             break;
         }
 
@@ -167,6 +177,11 @@ void race_dialog::requestFinished (QByteArray data)
         ptr->selected=currentParam.contains(boat[0]);
         param_list[currentRace]->boats.append(ptr);
     }
+    param_list[currentRace]->displayNSZ=currentDisplayNSZ;
+    param_list[currentRace]->latNSZ=currentLatNSZ;
+    param_list[currentRace]->widthNSZ=currentWidthNSZ;
+    param_list[currentRace]->colorNSZ=currentColorNSZ;
+
     /* next race */
 
     getNextRace();
@@ -230,6 +245,10 @@ void race_dialog::saveData(bool save)
             ptr->oppList=boats.join(";");
         else
             ptr->oppList=boats.join(";");
+        ptr->colorNSZ=param_list[i]->colorNSZ;
+        ptr->widthNSZ=param_list[i]->widthNSZ;
+        ptr->displayNSZ=param_list[i]->displayNSZ;
+        ptr->latNSZ=param_list[i]->latNSZ;
         race_list->append(ptr);
     }
 
@@ -256,6 +275,13 @@ void race_dialog::chgRace(int id)
             ptr=reinterpret_cast<struct boatParam *>(qvariant_cast<void*>(selectedBoat->item(i)->data(Qt::UserRole)));
             ptr->selected=true;
         }
+        param_list[numRace]->colorNSZ=inputTraceColor->getLineColor();
+        param_list[numRace]->widthNSZ=inputTraceColor->getLineWidth();
+        param_list[numRace]->displayNSZ=displayNSZ->isChecked();
+        if(nsNSZ->currentText()=="N")
+            param_list[numRace]->latNSZ=latNSZ->value();
+        else
+            param_list[numRace]->latNSZ=-latNSZ->value();
     }
 
     /* find race data */
@@ -312,6 +338,19 @@ void race_dialog::chgRace(int id)
 
     availableBoat->clearSelection();
     selectedBoat->clearSelection();
+    displayNSZ->setChecked(param_list[numRace]->displayNSZ);
+    latNSZ->setValue(qAbs(param_list[numRace]->latNSZ));
+    if(param_list[numRace]->latNSZ<0)
+        nsNSZ->setCurrentIndex(1);
+    else
+        nsNSZ->setCurrentIndex(0);
+    verticalLayout_4->removeWidget(inputTraceColor);
+    delete inputTraceColor;
+    inputTraceColor =new InputLineParams(param_list[numRace]->widthNSZ,param_list[numRace]->colorNSZ,2,  QColor(Qt::black),this,0.1,5);
+    verticalLayout_4->addWidget( inputTraceColor);
+    latNSZ->setEnabled(param_list[numRace]->displayNSZ);
+    nsNSZ->setEnabled(param_list[numRace]->displayNSZ);
+    inputTraceColor->setEnabled(param_list[numRace]->displayNSZ);
 }
 
 void race_dialog::addBoat(void)
@@ -367,5 +406,9 @@ void race_dialog::mvAllBoat(QListWidget * from,QListWidget * to)
     availableBoat->clearSelection();
     selectedBoat->clearSelection();
 }
-
-
+void race_dialog::on_displayNSZ_clicked()
+{
+    latNSZ->setEnabled(displayNSZ->isChecked());
+    nsNSZ->setEnabled(displayNSZ->isChecked());
+    inputTraceColor->setEnabled(displayNSZ->isChecked());
+}

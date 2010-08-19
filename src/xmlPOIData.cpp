@@ -46,6 +46,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #define ROUTE_COLOR_G     "color_green"
 #define ROUTE_COLOR_B     "color_blue"
 #define ROUTE_LIVE        "liveUpdate"
+#define ROUTE_HIDEPOIS    "hidePois"
 /* POI */
 #define POI_GROUP_NAME    "POI"
 #define POI_NAME          "name"
@@ -57,6 +58,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #define TSTAMP_NAME       "timeStamp"
 #define USETSTAMP_NAME    "useTimeStamp"
 #define POI_ROUTE         "route"
+#define POI_NAVMODE       "NavMode"
+#define POI_LABEL_HIDDEN  "LabelHidden"
 
 xml_POIData::xml_POIData(Projection * proj,MainWindow * main, myCentralWidget * parent)
 : QWidget(parent)
@@ -96,6 +99,7 @@ void xml_POIData::slot_writeData(QList<ROUTE*> & route_list,QList<POI*> & poi_li
      {
           ROUTE * route=h.next();
           if(route->getBoat()==NULL) continue;
+          if(route->isImported()) continue;
           if(!route->getBoat()->getStatus()) continue; //if boat has been deactivated do not save route
           group = doc.createElement(ROUTE_GROUP_NAME);
           root.appendChild(group);
@@ -150,6 +154,10 @@ void xml_POIData::slot_writeData(QList<ROUTE*> & route_list,QList<POI*> & poi_li
           t = doc.createTextNode(QString().setNum(route->isLive()?1:0));
           tag.appendChild(t);
 
+          tag = doc.createElement(ROUTE_HIDEPOIS);
+          group.appendChild(tag);
+          t = doc.createTextNode(QString().setNum(route->getHidePois()?1:0));
+          tag.appendChild(t);
 
           tag.appendChild(t);
      }
@@ -159,7 +167,8 @@ void xml_POIData::slot_writeData(QList<ROUTE*> & route_list,QList<POI*> & poi_li
      while(i.hasNext())
      {
           POI * poi = i.next();
-
+          if(poi->getRoute()!=NULL && poi->getRoute()->isImported()) continue;
+          if(poi->isPartOfTwa()) continue;
           group = doc.createElement(POI_GROUP_NAME);
           root.appendChild(group);
 
@@ -198,12 +207,22 @@ void xml_POIData::slot_writeData(QList<ROUTE*> & route_list,QList<POI*> & poi_li
           t = doc.createTextNode(QString().setNum(poi->getUseTimeStamp()?1:0));
           tag.appendChild(t);
 
+          tag = doc.createElement(POI_LABEL_HIDDEN);
+          group.appendChild(tag);
+          t = doc.createTextNode(QString().setNum(poi->getMyLabelHidden()?1:0));
+          tag.appendChild(t);
+
           tag = doc.createElement(POI_ROUTE);
           group.appendChild(tag);
           if(poi->getRoute()!=NULL)
             t = doc.createTextNode(poi->getRoute()->getName().toUtf8().toBase64()); //do not use poi->routeName since route->name might have changed */
           else
               t = doc.createTextNode(QString("").toUtf8().toBase64());
+          tag.appendChild(t);
+
+          tag = doc.createElement(POI_NAVMODE);
+          group.appendChild(tag);
+          t = doc.createTextNode(QString().setNum(poi->getNavMode()));
           tag.appendChild(t);
 
           tag.appendChild(t);
@@ -429,7 +448,16 @@ void xml_POIData::slot_readData(QString fname)
                        if(dataNode.nodeType() == QDomNode::TextNode)
                            route->setLive(dataNode.toText().data().toInt()==1);
                   }
-                   subNode = subNode.nextSibling();
+
+
+                  if(subNode.toElement().tagName() == ROUTE_HIDEPOIS)
+                  {
+                       dataNode = subNode.firstChild();
+                       if(dataNode.nodeType() == QDomNode::TextNode)
+                           route->setHidePois(dataNode.toText().data().toInt()==1);
+                  }
+
+                  subNode = subNode.nextSibling();
               }
           }
           else if(node.toElement().tagName() == POI_GROUP_NAME)
@@ -441,6 +469,8 @@ void xml_POIData::slot_readData(QString fname)
               int type = -1;
               int tstamp=-1;
               bool useTstamp=false;
+              bool labelHidden=false;
+              int navMode=0;
 
               while(!subNode.isNull())
               {
@@ -488,12 +518,28 @@ void xml_POIData::slot_readData(QString fname)
                            useTstamp = dataNode.toText().data().toInt()==1;
                    }
 
+                   if(subNode.toElement().tagName() == POI_LABEL_HIDDEN)
+                   {
+                       dataNode = subNode.firstChild();
+                       if(dataNode.nodeType() == QDomNode::TextNode)
+                           labelHidden = dataNode.toText().data().toInt()==1;
+                   }
+
                    if(subNode.toElement().tagName() == POI_ROUTE)
                    {
                        dataNode = subNode.firstChild();
                        if(dataNode.nodeType() == QDomNode::TextNode)
                           routeName = QString(QByteArray::fromBase64(dataNode.toText().data().toUtf8()));
                    }
+
+                   if(subNode.toElement().tagName() == POI_NAVMODE)
+                   {
+                       dataNode = subNode.firstChild();
+                       if(dataNode.nodeType() == QDomNode::TextNode)
+                           navMode = dataNode.toText().data().toInt();
+                   }
+
+
                    subNode = subNode.nextSibling();
               }
               if(!name.isEmpty() && lat!=-1 && lon != -1)
@@ -503,6 +549,8 @@ void xml_POIData::slot_readData(QString fname)
                    if(type==-1) type=POI_TYPE_POI;
                    POI * poi = new POI(name,type,lat,lon,proj,main,parent,wph,tstamp,useTstamp,NULL);
                    poi->setRouteName(routeName);
+                   poi->setNavMode(navMode);
+                   poi->setMyLabelHidden(labelHidden);
                    emit addPOI_list(poi);
               }
               else

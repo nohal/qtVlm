@@ -37,47 +37,6 @@ Copyright (C) 2008 - Jacques Zaninetti - http://zygrib.free.fr
 #include <QLocale>
 #include <QNetworkAccessManager>
 
-#define PI     M_PI
-#define PI_2   M_PI_2
-#define PI_4   M_PI_4
-#define TWO_PI M_PI * 2
-
-#define degToRad(angle) (((angle)/180.0) * PI)
-#define radToDeg(angle) (((angle)*180.0) / PI)
-
-#define msToKts(speed) (1.9438445*(speed))
-#define ktsToMs(speed) (0.51444444*(speed))
-
-#define TYPE_LON 1
-#define TYPE_LAT 2
-
-#define adjustFloat(VAR) ({ \
-    VAR = ((float)((int)qRound(VAR*1000)))/1000; \
-    })
-
-#define compFloat(VAR1,VAR2) ({ \
-    bool _res;                 \
-    float _v1=VAR1;            \
-    adjustFloat(_v1);           \
-    float _v2=VAR2;            \
-    adjustFloat(_v2);           \
-    _res = (qAbs(_v1-_v2)<0.0001);         \
-    _res;                      \
-    })
-
-#define calcAngleSign(VAL,ANGLE) { \
-    if(qAbs(VAL)>180)              \
-    {                              \
-        if(VAL>0)                  \
-            ANGLE=-ANGLE;          \
-    }                              \
-    else                           \
-    {                              \
-        if(VAL<0)                  \
-            ANGLE=-ANGLE;          \
-    }                              \
-}
-
 #include "class_list.h"
 
 #define NB_URL 2
@@ -116,10 +75,10 @@ class Util
     static void setWPClipboard(float lat,float lon, float wph);
     static bool convertPOI(const QString & str,QString * name,float * lat,float * lon,float * wph,int * tstamp,
                            int type);
-    static void getCoordFromDistanceAngle(float latitude, float longitude,
-             float distance,float heading, float * res_lat,float * res_lon);
-    static void getCoordFromDistanceAngle2(float latitude, float longitude,
-             float distance,float heading, float * res_lat,float * res_lon);
+    static void getCoordFromDistanceAngle(double latitude, double longitude,
+             double distance,double heading, double * res_lat,double * res_lon);
+    static void getCoordFromDistanceAngle2(double latitude, double longitude,
+                                           double distance,double heading, double * res_lat,double * res_lon);
     static QString pos2String(int type,float value);
     static QString getHost();
     static void computePos(Projection * proj, float lat, float lon, int * x, int * y);

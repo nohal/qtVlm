@@ -26,6 +26,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <QMenuBar>
 #include <QLabel>
 
+#include "mycentralwidget.h"
+
 #include "class_list.h"
 
 #include "inetClient.h"
@@ -56,7 +58,7 @@ class boatAccount: public QGraphicsWidget, public inetClient
         void setAlias(bool state,QString alias);
         void setZoom(float zoom)   { this->zoom=zoom; }
         void setForceEstime(bool force_estime) { this->forceEstime=force_estime;}
-
+        void setBoatId(int idu){this->boat_id=idu;}
         void unSelectBoat(bool needUpdate);
 
         void validateChg(int currentCmdNum,float cmd_val1,float cmd_val2,float cmd_val3);
@@ -79,16 +81,16 @@ class boatAccount: public QGraphicsWidget, public inetClient
         float getWindSpeed(void)        {    return windSpeed; }
         QString getBoatId(void)         {    return QString().setNum(boat_id); }
         QString getBoatName(void)       {    return boat_name; }
-        float getWPLat(void)            {    return WPLat; }
-        float getWPLon(void)            {    return WPLon; }
+        double getWPLat(void)            {    return WPLat; }
+        double getWPLon(void)            {    return WPLon; }
         float getTWA(void)              {    return TWA; }
         float getWPHd(void)             {    return WPHd; }
         int getPilotType(void)          {    return pilotType; }
         QString getPilotString(void)    {    return pilotString; }
         QString getETA(void)            {    return ETA; }
         QString getScore(void)          {    return score; }
-        int getPrevVac(void)            {    return prevVac; }
-        int getNextVac(void)            {    return nextVac; }
+        time_t getPrevVac(void)            {    return prevVac; }
+        time_t getNextVac(void)            {    return nextVac; }
         int getVacLen(void)             {    return vacLen; }
         QString getPolarName(void)      {    return polarName; }
         Polar * getPolarData(void)      {    return polarData; }
@@ -99,13 +101,16 @@ class boatAccount: public QGraphicsWidget, public inetClient
         bool getPolarState(void)        {    return forcePolar; }
         QString getAlias(void)          {    return alias; }
         bool getForceEstime(void)       {    return forceEstime; }
-        int getEstimeType(void)        {    return estime_type; }
+        int getEstimeType(void)         {    return estime_type; }
         bool getIsSelected(void)        {    return selected; }
         QString getRaceId(void)         {    return QString().setNum(race_id); }
         QString getRaceName(void)       {    return race_name; }
         float getZoom(void)             {    return zoom; }
         QString getEmail(void)          {    return email; }
         bool isUpdating()               {    return updating; }
+        bool getFirstSynch()            {    return firstSynch; }
+        void setFirstSynch(bool val)    {    firstSynch=val; }
+
 
         float getBvmgUp(float ws);
         float getBvmgDown(float ws);
@@ -118,6 +123,13 @@ class boatAccount: public QGraphicsWidget, public inetClient
 
         /* inetClient */
         void requestFinished(QByteArray res);
+        QString getAuthLogin(bool * ok=NULL) {if(ok) *ok=true; return getLogin();}
+        QString getAuthPass(bool * ok=NULL) {if(ok) *ok=true; return getPass();}
+        void authFailed(void);
+        void inetError(void);
+
+        /* test */
+        void tryWs(void);
 
     public slots:
         void slot_getData(bool doingSync);
@@ -133,6 +145,8 @@ class boatAccount: public QGraphicsWidget, public inetClient
         void slot_shPor(){this->porteHidden=!this->porteHidden;showNextGates();}
         void slot_shSall(){this->porteHidden=false;showNextGates();}
         void slot_shHall(){this->porteHidden=true;showNextGates();}
+        void slotTwaLine(){parent->twaDraw(lon,lat);}
+        void slotCompassLine(void);
     signals:
         void boatSelected(boatAccount*);
         void boatUpdated(boatAccount*,bool,bool);
@@ -142,6 +156,8 @@ class boatAccount: public QGraphicsWidget, public inetClient
         void releasePolar(QString fname);
         void validationDone(bool);
         void clearSelection(void);
+        void compassLine(int,int);
+        void hasFinishedUpdating(void);
 
     protected:
 //        void mousePressEvent(QGraphicsSceneMouseEvent * e);
@@ -164,6 +180,7 @@ class boatAccount: public QGraphicsWidget, public inetClient
         bool changeLocked;
         bool updating;
         bool doingSync;
+        bool firstSynch;
 
         void doRequest(int request);
 
@@ -180,7 +197,8 @@ class boatAccount: public QGraphicsWidget, public inetClient
         float dnm,loch,ortho,loxo,vmg;
         float windDir,windSpeed;
         float TWA;
-        float WPLat,WPLon,WPHd;
+        double WPLat,WPLon;
+        float WPHd;
         float zoom;
         QString ETA;
         QString score;
@@ -188,8 +206,8 @@ class boatAccount: public QGraphicsWidget, public inetClient
 
         float current_heading;
 
-        int prevVac;
-        int nextVac;
+        time_t prevVac;
+        time_t nextVac;
         int vacLen;
         int nWP;
         QString race_name;
@@ -219,6 +237,7 @@ class boatAccount: public QGraphicsWidget, public inetClient
         QAction * ac_select;
         QAction * ac_estime;
         QAction * ac_compassLine;
+        QAction * ac_twaLine;
         void createPopUpMenu();
 
         void updatePosition(void);

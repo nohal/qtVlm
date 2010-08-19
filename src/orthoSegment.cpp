@@ -33,6 +33,7 @@ orthoSegment::orthoSegment(Projection * proj, QGraphicsScene * myScene,int z_lev
     this->roundedEnd=roundedEnd;
     myScene->addItem(this);
     this->setZValue(z_level);
+    this->alsoDrawLoxo=false;
     isOrtho=true;
     setFocusPolicy(Qt::NoFocus);
     hide();
@@ -40,7 +41,7 @@ orthoSegment::orthoSegment(Projection * proj, QGraphicsScene * myScene,int z_lev
 
 QRectF orthoSegment::boundingRect() const
 {
-    return QRectF(0,0,2*size,2*size);
+    return QRectF(0,0,4*size,4*size);
 }
 
 void orthoSegment::initSegment(int xa,int ya,int xb, int yb)
@@ -86,6 +87,8 @@ void orthoSegment::paint(QPainter * pnt, const QStyleOptionGraphicsItem * , QWid
     {
         draw_orthoSegment(pnt,xa,ya,xb,yb);
     }
+    if(alsoDrawLoxo)
+        pnt->drawLine(xa-x(),ya-y(),xb-x(),yb-y());
     if(roundedEnd)
     {
         float w=linePen.widthF();

@@ -9,8 +9,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>682</width>
-    <height>43</height>
+    <width>748</width>
+    <height>57</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -29,40 +29,14 @@
    <string>Form</string>
   </property>
   <layout class="QGridLayout" name="gridLayout">
-   <item row="0" column="0">
-    <widget class="QPushButton" name="btn_delInstruction">
-     <property name="maximumSize">
-      <size>
-       <width>20</width>
-       <height>16777215</height>
-      </size>
-     </property>
-     <property name="text">
-      <string>-</string>
-     </property>
-    </widget>
-   </item>
-   <item row="0" column="2">
-    <widget class="QLineEdit" name="instructionText">
-     <property name="enabled">
-      <bool>false</bool>
-     </property>
-     <property name="frame">
-      <bool>true</bool>
-     </property>
-    </widget>
-   </item>
-   <item row="0" column="3">
+   <item row="0" column="4">
     <widget class="QLabel" name="status_txt">
      <property name="text">
       <string>Status</string>
      </property>
     </widget>
    </item>
-   <item row="0" column="4">
-    <widget class="QDateTimeEdit" name="horodate"/>
-   </item>
-   <item row="0" column="6">
+   <item row="0" column="13">
     <widget class="QPushButton" name="btn_paste">
      <property name="sizePolicy">
       <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
@@ -72,25 +46,31 @@
      </property>
      <property name="maximumSize">
       <size>
-       <width>16777215</width>
+       <width>28</width>
        <height>16777215</height>
       </size>
      </property>
+     <property name="toolTip">
+      <string>Colle l'instruction depuis le press-papier</string>
+     </property>
      <property name="text">
-      <string>Coller</string>
+      <string/>
      </property>
     </widget>
    </item>
-   <item row="0" column="8">
-    <widget class="QPushButton" name="btn_edit">
+   <item row="0" column="7">
+    <widget class="QPushButton" name="btn_updateTime">
      <property name="maximumSize">
       <size>
-       <width>16777215</width>
+       <width>28</width>
        <height>16777215</height>
       </size>
      </property>
+     <property name="toolTip">
+      <string>Synchronise l'heure</string>
+     </property>
      <property name="text">
-      <string>Edit</string>
+      <string/>
      </property>
     </widget>
    </item>
@@ -101,32 +81,114 @@
      </property>
      <property name="maximumSize">
       <size>
-       <width>20</width>
+       <width>28</width>
        <height>16777215</height>
       </size>
      </property>
+     <property name="toolTip">
+      <string>Valide l'instruction</string>
+     </property>
      <property name="text">
-      <string>V</string>
+      <string/>
+     </property>
+    </widget>
+   </item>
+   <item row="0" column="2">
+    <widget class="QPushButton" name="btn_cancel">
+     <property name="maximumSize">
+      <size>
+       <width>28</width>
+       <height>16777215</height>
+      </size>
+     </property>
+     <property name="toolTip">
+      <string>Annule les changements</string>
+     </property>
+     <property name="text">
+      <string/>
      </property>
     </widget>
    </item>
    <item row="0" column="5">
-    <widget class="QPushButton" name="pushButton">
-     <property name="maximumSize">
-      <size>
-       <width>20</width>
-       <height>16777215</height>
-      </size>
+    <widget class="QDateTimeEdit" name="horodate"/>
+   </item>
+   <item row="0" column="9">
+    <widget class="QLineEdit" name="instructionText">
+     <property name="enabled">
+      <bool>true</bool>
      </property>
-     <property name="text">
-      <string>H</string>
+     <property name="frame">
+      <bool>true</bool>
+     </property>
+     <property name="readOnly">
+      <bool>false</bool>
      </property>
     </widget>
    </item>
-   <item row="0" column="7">
-    <widget class="QPushButton" name="pushButton_2">
+   <item row="0" column="8">
+    <widget class="QComboBox" name="mode_sel"/>
+   </item>
+   <item row="0" column="12">
+    <widget class="QPushButton" name="btn_copy">
+     <property name="maximumSize">
+      <size>
+       <width>28</width>
+       <height>16777215</height>
+      </size>
+     </property>
+     <property name="toolTip">
+      <string>Copier l'instruction</string>
+     </property>
      <property name="text">
-      <string>Copy</string>
+      <string/>
+     </property>
+    </widget>
+   </item>
+   <item row="0" column="11">
+    <widget class="QPushButton" name="btn_edit">
+     <property name="maximumSize">
+      <size>
+       <width>16777215</width>
+       <height>16777215</height>
+      </size>
+     </property>
+     <property name="toolTip">
+      <string>Edition complete</string>
+     </property>
+     <property name="text">
+      <string>Edition complete</string>
+     </property>
+    </widget>
+   </item>
+   <item row="0" column="10">
+    <widget class="QPushButton" name="pushButton_3">
+     <property name="maximumSize">
+      <size>
+       <width>30</width>
+       <height>16777215</height>
+      </size>
+     </property>
+     <property name="toolTip">
+      <string>Selection d'un WP</string>
+     </property>
+     <property name="text">
+      <string>WP</string>
+     </property>
+    </widget>
+   </item>
+   <item row="0" column="0">
+    <widget class="QPushButton" name="btn_delInstruction">
+     <property name="maximumSize">
+      <size>
+       <width>28</width>
+       <height>16777215</height>
+      </size>
+     </property>
+     <property name="toolTip">
+      <string>Supprime l'instruction</string>
+     </property>
+     <property name="text">
+      <string/>
      </property>
     </widget>
    </item>
@@ -134,6 +196,118 @@
  </widget>
  <resources/>
  <connections>
+  <connection>
+   <sender>btn_paste</sender>
+   <signal>clicked()</signal>
+   <receiver>instruction_ui</receiver>
+   <slot>pastePOI()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>696</x>
+     <y>37</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>256</x>
+     <y>42</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>btn_edit</sender>
+   <signal>clicked()</signal>
+   <receiver>instruction_ui</receiver>
+   <slot>editInstruction()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>632</x>
+     <y>37</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>342</x>
+     <y>42</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>btn_validate</sender>
+   <signal>clicked()</signal>
+   <receiver>instruction_ui</receiver>
+   <slot>validateModif()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>47</x>
+     <y>30</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>108</x>
+     <y>42</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>horodate</sender>
+   <signal>dateTimeChanged(QDateTime)</signal>
+   <receiver>instruction_ui</receiver>
+   <slot>dateTime_changed(QDateTime)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>241</x>
+     <y>39</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>421</x>
+     <y>42</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>btn_updateTime</sender>
+   <signal>clicked()</signal>
+   <receiver>instruction_ui</receiver>
+   <slot>maintenant()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>273</x>
+     <y>37</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>615</x>
+     <y>4</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>btn_copy</sender>
+   <signal>clicked()</signal>
+   <receiver>instruction_ui</receiver>
+   <slot>copyPOI()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>641</x>
+     <y>27</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>596</x>
+     <y>13</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>btn_cancel</sender>
+   <signal>clicked()</signal>
+   <receiver>instruction_ui</receiver>
+   <slot>cancelModif()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>95</x>
+     <y>36</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>107</x>
+     <y>3</y>
+    </hint>
+   </hints>
+  </connection>
   <connection>
    <sender>btn_delInstruction</sender>
    <signal>clicked()</signal>
@@ -151,97 +325,65 @@
    </hints>
   </connection>
   <connection>
-   <sender>btn_paste</sender>
+   <sender>pushButton_3</sender>
    <signal>clicked()</signal>
    <receiver>instruction_ui</receiver>
-   <slot>pastePOI()</slot>
+   <slot>doSelectPOI()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>439</x>
-     <y>33</y>
+     <x>501</x>
+     <y>25</y>
     </hint>
     <hint type="destinationlabel">
-     <x>256</x>
-     <y>42</y>
+     <x>614</x>
+     <y>51</y>
     </hint>
    </hints>
   </connection>
   <connection>
-   <sender>btn_edit</sender>
-   <signal>clicked()</signal>
+   <sender>mode_sel</sender>
+   <signal>currentIndexChanged(int)</signal>
    <receiver>instruction_ui</receiver>
-   <slot>editInstruction()</slot>
+   <slot>modeChanged(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>672</x>
-     <y>33</y>
+     <x>332</x>
+     <y>27</y>
     </hint>
     <hint type="destinationlabel">
-     <x>342</x>
-     <y>42</y>
+     <x>384</x>
+     <y>46</y>
     </hint>
    </hints>
   </connection>
   <connection>
-   <sender>btn_validate</sender>
-   <signal>clicked()</signal>
+   <sender>instructionText</sender>
+   <signal>editingFinished()</signal>
    <receiver>instruction_ui</receiver>
-   <slot>validateModif()</slot>
+   <slot>pipValidated()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>46</x>
-     <y>33</y>
+     <x>397</x>
+     <y>28</y>
     </hint>
     <hint type="destinationlabel">
-     <x>108</x>
-     <y>42</y>
+     <x>483</x>
+     <y>10</y>
     </hint>
    </hints>
   </connection>
   <connection>
-   <sender>horodate</sender>
-   <signal>dateTimeChanged(QDateTime)</signal>
+   <sender>instructionText</sender>
+   <signal>textChanged(QString)</signal>
    <receiver>instruction_ui</receiver>
-   <slot>dateTime_changed(QDateTime)</slot>
+   <slot>pipChanged(QString)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>357</x>
-     <y>30</y>
+     <x>371</x>
+     <y>23</y>
     </hint>
     <hint type="destinationlabel">
-     <x>421</x>
-     <y>42</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>pushButton</sender>
-   <signal>clicked()</signal>
-   <receiver>instruction_ui</receiver>
-   <slot>maintenant()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>417</x>
-     <y>29</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>615</x>
-     <y>4</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>pushButton_2</sender>
-   <signal>clicked()</signal>
-   <receiver>instruction_ui</receiver>
-   <slot>copyPOI()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>573</x>
-     <y>17</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>596</x>
+     <x>356</x>
      <y>13</y>
     </hint>
    </hints>
@@ -255,5 +397,10 @@
   <slot>dateTime_changed(QDateTime)</slot>
   <slot>maintenant()</slot>
   <slot>copyPOI()</slot>
+  <slot>cancelModif()</slot>
+  <slot>doSelectPOI()</slot>
+  <slot>modeChanged(int)</slot>
+  <slot>pipChanged(QString)</slot>
+  <slot>pipValidated()</slot>
  </slots>
 </ui>

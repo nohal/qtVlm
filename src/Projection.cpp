@@ -45,7 +45,7 @@ Projection::Projection(int w, int h, double cx, double cy) {
 void Projection::setScreenSize(int w, int h)
 {
     my_setScreenSize(w,h);
-    emit projectionUpdated();
+    timer->start(5);
 }
 
 /* zoom and scale */
@@ -139,7 +139,7 @@ void Projection::setScaleAndCenterInMap(float sc,double x, double y)
         mod=true;
     }
 
-    if(x!=0 && y!=0)
+    if(!(x==0 && y==0))
     {
         my_setCenterInMap(x,y);
         mod=true;

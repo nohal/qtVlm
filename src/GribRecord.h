@@ -1,6 +1,8 @@
 /**********************************************************************
-zyGrib: meteorological GRIB file viewer
-Copyright (C) 2008 - Jacques Zaninetti - http://www.zygrib.org
+qtVlm: Virtual Loup de mer GUI
+Copyright (C) 2008 - Christophe Thomas aka Oxygen77
+
+http://qtvlm.sf.net
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -14,6 +16,10 @@ GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+Original code: zyGrib: meteorological GRIB file viewer
+Copyright (C) 2008 - Jacques Zaninetti - http://zygrib.free.fr
+
 ***********************************************************************/
 
 
@@ -28,6 +34,7 @@ Elément de base d'un fichier GRIB
 #include <cmath>
 
 #include "class_list.h"
+#include "dataDef.h"
 
 #include "zuFile.h"
 
@@ -39,61 +46,6 @@ Elément de base d'un fichier GRIB
 #define zuint  unsigned int
 #define zuchar unsigned char
 
-#define GRIB_NOTDEF -999999999
-
-//--------------------------------------------------------
-// dataTypes	Cf function translateDataType()
-//--------------------------------------------------------
-#define GRB_PRESSURE        2   /* Pa     */
-#define GRB_GEOPOT_HGT      7   /* gpm    */
-#define GRB_TEMP           11   /* K      */
-#define GRB_TPOT           13   /* K      */
-#define GRB_TMAX           15   /* K      */
-#define GRB_TMIN           16   /* K      */
-#define GRB_DEWPOINT       17   /* K      */
-#define GRB_WIND_VX        33   /* m/s    */
-#define GRB_WIND_VY        34   /* m/s    */
-#define GRB_HUMID_SPEC     51   /* kg/kg  */
-#define GRB_HUMID_REL      52   /* %      */
-#define GRB_PRECIP_RATE    59   /* l/m2/s */
-#define GRB_PRECIP_TOT     61   /* l/m2   */
-#define GRB_SNOW_DEPTH     66   /* m      */
-#define GRB_CLOUD_TOT      71   /* %      */
-#define GRB_FRZRAIN_CATEG 141   /* 1=yes 0=no */
-#define GRB_SNOW_CATEG    143   /* 1=yes 0=no */
-
-#define GRB_WIND_XY2D      250   /* private : GRB_WIND_VX+GRB_WIND_VX */
-#define GRB_DIFF_TEMPDEW   251   /* private : GRB_TEMP-GRB_DEWPOINT */
-
-//--------------------------------------------------------
-// Levels types (altitude reference)
-//--------------------------------------------------------
-#define LV_GND_SURF    1
-#define LV_ISOTHERM0   4
-#define LV_ISOBARIC  100
-#define LV_MSL       102
-#define LV_ABOV_GND  105
-#define LV_SIGMA     107
-#define LV_ATMOS_ALL 200
-
-
-//----------------------------------------------
-class GribCode
-{
-	public:
-		static zuint makeCode (zuchar dataType, zuchar levelType, zuint levelValue) {
-			return ((levelValue&0xFFFF)<<16)+((levelType&0xFF)<<8)+dataType;
-		}
-		static zuchar getDataType (zuint code) {
-			return code&0xFF;
-		}
-		static zuchar getLevelType (zuint code) {
-			return (code>>8)&0xFF;
-		}
-		static zuint getLevelValue (zuint code) {
-			return (code>>16)&0xFFFF;
-		}
-};
 
 //----------------------------------------------
 class GribRecord
@@ -104,11 +56,13 @@ class GribRecord
         ~GribRecord();
         
         bool  isOk()  const   {return ok;};
+        bool  isDataKnown()  const   {return knownData;};
         bool  isEof() const   {return eof;};
         
         //-----------------------------------------
         zuchar  getDataType() const         { return dataType; }
         void    setDataType(const zuchar t);
+        void    translateDataType();  // adapte les codes des différents centres météo
         
         zuchar  getLevelType() const   { return levelType; }
         zuint   getLevelValue() const  { return levelValue; }
@@ -140,6 +94,7 @@ class GribRecord
         
         // Valeur pour un point quelconque
         bool getValue_TWSA(double px, double py,double * a00,double * a01,double * a10,double * a11,bool debug=false);
+        double getInterpolatedValue(double px, double py, bool numericalInterpolation=true);
 
         // coordonnées d'un point de la grille
         inline double  getX(int i) const   { return ok ? Lo1+i*Di : GRIB_NOTDEF;}
@@ -169,6 +124,7 @@ class GribRecord
         int    id;    // unique identifiant
         bool   ok;    // validité des données
         bool   eof;   // fin de fichier atteinte lors de la lecture
+        bool knownData;
         std::string dataKey;
         char   strRefDate [32];
         char   strCurDate [32];
@@ -261,6 +217,9 @@ class GribRecord
         
         time_t makeDate(zuint year,zuint month,zuint day,zuint hour,zuint min,zuint sec);
         zuint  periodSeconds(zuchar unit, zuchar P1, zuchar P2, zuchar range);
+
+        void   print();
+        void   multiplyAllData(double k);
 
 
 };

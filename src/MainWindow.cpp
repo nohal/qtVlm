@@ -37,6 +37,7 @@ Copyright (C) 2008 - Jacques Zaninetti - http://zygrib.free.fr
 #include <QRegExp>
 #include <QDebug>
 #include <QDesktopServices>
+#include <QTimer>
 
 #include "MainWindow.h"
 #include "Util.h"
@@ -61,7 +62,9 @@ Copyright (C) 2008 - Jacques Zaninetti - http://zygrib.free.fr
 #include "GribRecord.h"
 #include "POI.h"
 #include "Projection.h"
-
+#include "gribValidation.h"
+#include "Terrain.h"
+#include "route.h"
 //-----------------------------------------------------------
 void MainWindow::InitActionsStatus()
 {
@@ -70,7 +73,19 @@ void MainWindow::InitActionsStatus()
     menuBar->acMap_CountriesBorders->setChecked(Settings::getSetting("showCountriesBorders", true).toBool());
     menuBar->acMap_Orthodromie->setChecked(Settings::getSetting("showOrthodromie", false).toBool());
 
-    menuBar->acView_WindColors->setChecked(Settings::getSetting("showWindColorMap", true).toBool());
+
+    menuBar->setMenubarColorMapMode(Settings::getSetting("colorMapMode", Terrain::drawWind).toInt());
+    menuBar->acView_Isobars->setChecked(Settings::getSetting("showIsobars", true).toBool());
+    menuBar->acView_IsobarsLabels->setChecked(Settings::getSetting("showIsobarsLabels", false).toBool());
+    menuBar->acView_PressureMinMax->setChecked(Settings::getSetting("showPressureMinMax", false).toBool());
+    menuBar->setIsobarsStep(Settings::getSetting("isobarsStep", 2).toInt());
+
+    menuBar->setIsotherms0Step(Settings::getSetting("isotherms0Step", 100).toInt());
+    menuBar->acView_Isotherms0->setChecked(Settings::getSetting("showIsotherms0", false).toBool());
+    menuBar->acView_Isotherms0Labels->setChecked(Settings::getSetting("showIsotherms0Labels", false).toBool());
+
+    menuBar->acView_TemperatureLabels->setChecked(Settings::getSetting("showTemperatureLabels", false).toBool());
+
     menuBar->acView_ColorMapSmooth->setChecked(Settings::getSetting("colorMapSmooth", true).toBool());
     menuBar->acView_WindArrow->setChecked(Settings::getSetting("showWindArrows", true).toBool());
     menuBar->acView_Barbules->setChecked(Settings::getSetting("showBarbules", true).toBool());
@@ -124,6 +139,7 @@ void MainWindow::connectSignals()
     //-------------------------------------
     // Actions
     //-------------------------------------
+    connect(mb->acHorn, SIGNAL(triggered()), my_centralWidget, SLOT(slot_editHorn()));
     connect(mb->ac_CreatePOI, SIGNAL(triggered()), this, SLOT(slotCreatePOI()));
     connect(mb->ac_pastePOI, SIGNAL(triggered()), this, SLOT(slotpastePOI()));
     connect(mb->ac_delAllPOIs, SIGNAL(triggered()), my_centralWidget, SLOT(slot_delAllPOIs()));
@@ -171,6 +187,7 @@ void MainWindow::connectSignals()
     connect(mb->acVLMSync, SIGNAL(triggered()), this, SLOT(slotVLM_Sync()));
 
     connect(mb->acPOIAdd, SIGNAL(triggered()), this, SLOT(slot_newPOI()));
+    connect(mb->ac_twaLine,SIGNAL(triggered()), my_centralWidget, SLOT(slot_twaLine()));
     connect(mb->ac_compassLine,SIGNAL(triggered()), this, SLOT(slotCompassLine()));
     connect(mb->ac_compassCenterBoat,SIGNAL(triggered()), this, SLOT(slotCompassCenterBoat()));
     connect(mb->ac_compassCenterWp,SIGNAL(triggered()), this, SLOT(slotCompassCenterWp()));
@@ -179,6 +196,8 @@ void MainWindow::connectSignals()
 #ifdef __QTVLM_WITH_TEST
     if(mb->acVLMTest)
         connect(mb->acVLMTest, SIGNAL(triggered()), this, SLOT(slotVLM_Test()));
+    if(mb->acGribInterpolation)
+        connect(mb->acGribInterpolation, SIGNAL(triggered()), this, SLOT(slotGribInterpolation()));
 #endif
     connect(mb->acPOIinput, SIGNAL(triggered()), poi_input_dialog, SLOT(slot_showPOI_input()));
     connect(mb->acPilototo, SIGNAL(triggered()), this, SLOT(slotPilototo()));
@@ -225,9 +244,12 @@ void MainWindow::slot_gribFileReceived(QString fileName)
 MainWindow::MainWindow(int w, int h, QWidget *parent)
     : QMainWindow(parent)
 {
+    isStartingUp=true;
+    nBoat=0;
     float prcx,prcy,scale;
     setWindowTitle("QtVlm");
     selectedBoat = NULL;
+    showingSelectionMessage=false;
 
     settings = new Settings();
 
@@ -236,6 +258,7 @@ MainWindow::MainWindow(int w, int h, QWidget *parent)
     progress->setLabelText("Starting qtVLM");
     progress->setMaximum(100);
     progress->setMinimum(0);
+    progress->setCancelButton(NULL);
     progress->show();
 
     /* timer de gestion des VAC */
@@ -271,7 +294,6 @@ MainWindow::MainWindow(int w, int h, QWidget *parent)
 
     //--------------------------------------------------
 
-
     statusBar =new QStatusBar(this);
     QFontInfo finfo = statusBar->fontInfo();
     QFont font("", finfo.pointSize(), QFont::Normal, false);
@@ -303,6 +325,7 @@ MainWindow::MainWindow(int w, int h, QWidget *parent)
     toolBar->addAction(menuBar->acFile_Quit);
     toolBar->addSeparator();
     toolBar->addAction(menuBar->acFile_Open);
+    toolBar->addAction(menuBar->acFile_Load_GRIB);
     toolBar->addAction(menuBar->acFile_Load_VLM_GRIB);
     toolBar->addAction(menuBar->acFile_Close);
     toolBar->addWidget(menuBar->datesGrib_sel);
@@ -324,6 +347,8 @@ MainWindow::MainWindow(int w, int h, QWidget *parent)
     menuBar->datesGrib_now->setEnabled(false);
 
     menuBar->cbGribStep->setCurrentIndex(Settings::getSetting("gribDateStep", 2).toInt());
+
+    menuBar->menuFile->addAction(toolBar->toggleViewAction());
 
     toolBar->addSeparator();
     toolBar->addWidget(menuBar->boatList);
@@ -397,6 +422,8 @@ MainWindow::MainWindow(int w, int h, QWidget *parent)
 
     VLMBoard = new boardVLM(this,my_centralWidget->getInet());
     VLMBoard->show();
+    connect(VLMBoard,SIGNAL(showMessage(QString,int)),statusBar,SLOT(showMessage(QString,int)));
+    connect(menuBar->acOptions_SH_ComBandeau,SIGNAL(triggered()),VLMBoard,SLOT(slot_hideShowCompass()));
 
     param = new paramVLM(this,my_centralWidget);
     connect(param,SIGNAL(paramVLMChanged()),VLMBoard,SLOT(paramChanged()));    
@@ -413,11 +440,16 @@ MainWindow::MainWindow(int w, int h, QWidget *parent)
     InitActionsStatus();
 
 
-
     //------------------------------------------------
     // sync all boat
-    progress->setLabelText("Synchronizing all boats");
-    slotVLM_Sync();
+    progress->setLabelText("Preparing coffee");
+    nBoat=my_centralWidget->getBoats().size();
+    toBeCentered=-1;
+    if(nBoat>0)
+        VLM_Sync_sync();
+    else
+        isStartingUp=false;
+
     progress->setLabelText("Drawing all");
     progress->setValue(90);
 
@@ -434,6 +466,9 @@ MainWindow::MainWindow(int w, int h, QWidget *parent)
     timerprogress->setInterval(5000);
     connect(timerprogress,SIGNAL(timeout()),this, SLOT(slot_deleteProgress()));
     timerprogress->start();
+
+    /* init du dialog de validation de grib (present uniquement en mode debug)*/
+    gribValidation_dialog = new gribValidation(my_centralWidget,this);
 }
 
 //-----------------------------------------------
@@ -468,6 +503,7 @@ void MainWindow::keyPressEvent ( QKeyEvent * event )
 }
 void MainWindow::slot_deleteProgress (void)
 {
+    qWarning() << "Removing progress";
     progress->close();
     delete progress;
     delete timerprogress;
@@ -519,14 +555,21 @@ void MainWindow::slotUpdateOpponent(void)
     }
 
     for(int i=0;i<my_centralWidget->getRaces().size();i++)
+    {
         if(my_centralWidget->getRaces()[i]->idrace == selectedBoat->getRaceId())
         {
+            //qWarning() << "Set1";
             my_centralWidget->getOppList()->setBoatList(my_centralWidget->getRaces()[i]->oppList,my_centralWidget->getRaces()[i]->idrace,true);
+            my_centralWidget->drawNSZ(i);
             found=true;
             break;
         }
+    }
     if(!found)
+    {
         my_centralWidget->getOppList()->clear();
+        my_centralWidget->drawNSZ(-1);
+    }
 }
 
 void MainWindow::slotCreatePOI()
@@ -673,20 +716,6 @@ void MainWindow::slotFile_Close() {
 
 }
 
-
-
-//-----------------------------------------------
-QString MainWindow::dataPresentInGrib(Grib* grib, int type)
-{
-    if(type!=GRB_WIND_VX)
-        return tr("non");
-
-    if (grib->getNumberOfGribRecords(GRB_WIND_VX,LV_ABOV_GND,10) > 0)
-        return tr("oui");
-    else
-        return tr("non");
-}
-
 //========================================================================
 void MainWindow::slotDateStepChanged(int id)
 {
@@ -782,7 +811,7 @@ void MainWindow::slotDateGribChanged_prev()
     emit updateRoute();
 }
 
-void MainWindow::slotSetGribDate(int tps)
+void MainWindow::slotSetGribDate(time_t tps)
 {
     Grib * grib = my_centralWidget->getGrib();
     if(grib)
@@ -865,7 +894,16 @@ void MainWindow::statusBar_showWindData(double x,double y)
     QString s, res;
     double a,b;
 
-    statusBar->clearMessage();
+    if(showingSelectionMessage)
+    {
+        showingSelectionMessage=false;
+        statusBar->clearMessage();
+    }
+
+    if(!statusBar->currentMessage().isEmpty())
+        return;
+
+
     stBar_label_1->setText( Util::pos2String(TYPE_LAT,y) + ", " + Util::pos2String(TYPE_LON,x));
 
     Grib * grib = my_centralWidget->getGrib();
@@ -898,6 +936,7 @@ void MainWindow::statusBar_showSelectedZone(float x0, float y0, float x1, float 
                 + tr("  init.dir: %1°").arg(s.sprintf("%.1f",orth.getAzimutDeg()))
                 + ")";
 
+    showingSelectionMessage=true;
     statusBar->showMessage(message);
 }
 
@@ -913,18 +952,16 @@ void MainWindow::updateNxtVac(void)
         if(nxtVac_cnt<0)
             nxtVac_cnt=selectedBoat->getVacLen();
     }
-
-    if(statusBar->currentMessage().isEmpty())
-        drawVacInfo();
+    drawVacInfo();
 }
 
 void MainWindow::drawVacInfo(void)
 {
-    if(selectedBoat)
+    if(selectedBoat && statusBar->currentMessage().isEmpty())
     {
         QDateTime lastVac_date;
-        lastVac_date.setTime_t(selectedBoat->getPrevVac());
         lastVac_date.setTimeSpec(Qt::UTC);
+        lastVac_date.setTime_t(selectedBoat->getPrevVac());        
         stBar_label_3->setText("- "+ tr("Vacation de la dernière synchro") + ": " + lastVac_date.toString("dd-MM-yyyy, HH:mm:ss") + " - "+
                                tr("Prochaine vac dans") + ": " + QString().setNum(nxtVac_cnt) + "s");
     }
@@ -950,11 +987,10 @@ void MainWindow::slotShowContextualMenu(QGraphicsSceneContextMenuEvent * e)
     switch(compassMode)
     {
         case COMPASS_NOTHING:
-            /* not showing menu line, default text*/
             menuBar->ac_compassLine->setText("Tirer un cap");
-            menuBar->ac_compassLine->setEnabled(false);
-            menuBar->ac_compassCenterBoat->setEnabled(false);
-            menuBar->ac_compassCenterWp->setEnabled(false);
+            menuBar->ac_compassLine->setEnabled(true);
+            menuBar->ac_compassCenterBoat->setEnabled(true);
+            menuBar->ac_compassCenterWp->setEnabled(true);
             break;
         case COMPASS_LINEON:
             /* showing text for compass line off*/
@@ -981,15 +1017,23 @@ void MainWindow::slot_centerMap()
 
 void MainWindow::slotCompassLine(void)
 {
-    QPoint cursor_pos=my_centralWidget->mapFromGlobal(cursor().pos());
-    emit showCompassLine(cursor_pos.x(),cursor_pos.y());
+//    QPoint cursor_pos=my_centralWidget->mapFromGlobal(cursor().pos());
+    emit showCompassLine(mouseClicX,mouseClicY);
+}
+void MainWindow::slotCompassLineForced(int a, int b)
+{
+//    QPoint cursor_pos=my_centralWidget->mapFromGlobal(cursor().pos());
+    emit showCompassLine(a,b);
 }
 void MainWindow::slotCompassCenterBoat(void)
 {
+    Settings::setSetting("compassCenterBoat", menuBar->ac_compassCenterBoat->isChecked()?"1":"0");
     emit showCompassCenterBoat();
 }
 void MainWindow::slotCompassCenterWp(void)
 {
+    menuBar->ac_compassCenterBoat->setChecked(false);
+    Settings::setSetting("compassCenterBoat", "0");
     emit showCompassCenterWp();
 }
 
@@ -1001,32 +1045,86 @@ void MainWindow::slotVLM_Param(void)
 
 void MainWindow::slotVLM_Sync(void)
 {
-    bool hasFirstActivated = (selectedBoat!=NULL);
-    QListIterator<boatAccount*> i (my_centralWidget->getBoats());
-
-    qWarning() << "Doing a synch with VLM";
-
-    while(i.hasNext())
+    if (isStartingUp) return;
+    if(selectedBoat==NULL)
     {
-        boatAccount * acc = i.next();
-        if(acc->getStatus())
+        QList<boatAccount*> listBoats = my_centralWidget->getBoats();
+        for(int n=0;n<listBoats.count();n++)
         {
-            if(!hasFirstActivated)
+            if(listBoats[n]->getStatus())
             {
-                /* no selected boat => select the first activated boat
-                   no need to do getData as it will be done in selectBoat*/
-                hasFirstActivated=true;
-                acc->slot_selectBoat();
-            }
-            else
-            {
-                acc->slot_getData(true);
+                qWarning() << "Doing a synch with VLM";
+                listBoats[n]->slot_selectBoat();
+                break;
             }
         }
+    }
+    else
+    {
+        qWarning() << "Doing a synch with VLM";
+        selectedBoat->slot_getData(true);
     }
     /* sync finished, update grib date */
     slotDateGribChanged_now();
     emit updateRoute();
+ }
+void MainWindow::VLM_Sync_sync(void)
+{
+    QList<boatAccount*> listBoats = my_centralWidget->getBoats();
+    if(listBoats.count()==0) return;
+    menuBar->boatList->setEnabled(false);
+    nBoat--;
+    if(nBoat>=0)
+    {
+        acc = listBoats.at(nBoat);
+        if(acc->getStatus())
+        {
+            qWarning() << "Doing a synch_synch with VLM";
+            connect(acc,SIGNAL(hasFinishedUpdating(void)),this,SLOT(slot_boatHasUpdated()));
+            //toBeCentered=nBoat;
+            if(selectedBoat==NULL)
+                acc->slot_selectBoat();
+            else
+                acc->slot_getData(true);
+        }
+        else
+            VLM_Sync_sync();
+    }
+    else
+    {
+        menuBar->boatList->setEnabled(true);
+        isStartingUp=false;
+        slotDateGribChanged_now();
+        /*if(toBeCentered!=-1)
+        {
+            acc=listBoats[toBeCentered];
+            my_centralWidget->drawNSZ(-1);
+            bool found=false;
+            for(int i=0;i<my_centralWidget->getRaces().size();i++)
+                if(my_centralWidget->getRaces()[i]->idrace == acc->getRaceId())
+                {
+                    {
+                        qWarning() << "Set2";
+                        my_centralWidget->getOppList()->setBoatList(my_centralWidget->getRaces()[i]->oppList,my_centralWidget->getRaces()[i]->idrace,false);
+                        found=true;
+                        my_centralWidget->drawNSZ(i);
+                    }
+                    break;
+                }
+            if(!found)
+            {
+                qWarning() << "Set3";
+                my_centralWidget->getOppList()->setBoatList("",acc->getRaceId(),false);
+            }
+            proj->setScaleAndCenterInMap(listBoats[toBeCentered]->getZoom(),listBoats[toBeCentered]->getLon(),listBoats[toBeCentered]->getLat());
+        }*/
+        emit updateRoute();
+    }
+}
+void MainWindow::slot_boatHasUpdated()
+{
+     disconnect(acc,SIGNAL(hasFinishedUpdating(void)),this,SLOT(slot_boatHasUpdated()));
+     VLM_Sync_sync();
 }
 
 /*****************************************
@@ -1051,14 +1149,17 @@ void MainWindow::slotBoatUpdated(boatAccount * boat,bool newRace,bool doingSync)
         /* managing race data: opponnents position and trace*/
         if(newRace || my_centralWidget->getOppList()->getRaceId() != boat->getRaceId())
         { /* load a new race */
+            my_centralWidget->drawNSZ(-1);
             for(int i=0;i<my_centralWidget->getRaces().size();i++)
                 if(my_centralWidget->getRaces()[i]->idrace == boat->getRaceId())
                 {
                     if(!my_centralWidget->getRaces()[i]->oppList.isEmpty())
                     {
+                        //qWarning() << "Set4";
                         my_centralWidget->getOppList()->setBoatList(my_centralWidget->getRaces()[i]->oppList,my_centralWidget->getRaces()[i]->idrace,false);
                         found=true;
                     }
+                    my_centralWidget->drawNSZ(i);
                     break;
                 }
             if(!found)
@@ -1071,15 +1172,18 @@ void MainWindow::slotBoatUpdated(boatAccount * boat,bool newRace,bool doingSync)
             my_centralWidget->getOppList()->refreshData();
         }
         /* centering map on boat */
-        if(doingSync)
+        if(!boat->getFirstSynch())
         {
-            if(Settings::getSetting("centerOnSynch",0).toInt()==1)
-                proj->setCenterInMap(boat->getLon(),boat->getLat());
-        }
-        else
-        {
-            if(Settings::getSetting("centerOnSynch",0).toInt()==1)
-                proj->setScaleAndCenterInMap(boat->getZoom(),boat->getLon(),boat->getLat());
+            if(doingSync)
+            {
+                if(Settings::getSetting("centerOnSynch",0).toInt()==1)
+                    proj->setCenterInMap(boat->getLon(),boat->getLat());
+            }
+            else
+            {
+                if(Settings::getSetting("centerOnBoatChange",1).toInt()==1)
+                    proj->setScaleAndCenterInMap(boat->getZoom(),boat->getLon(),boat->getLat());
+            }
         }
 
         /* updating Vac info */
@@ -1139,6 +1243,7 @@ void MainWindow::slotSelectBoat(boatAccount* newSelect)
         if(newSelect->getStatus()) /* is selected boat activated ?*/
         {
             newSelect->slot_getData(false);
+            slotDateGribChanged_now();
             //proj->setScaleAndCenterInMap(newSelect->getZoom(),newSelect->getLon(),newSelect->getLat());
             menuBar->acPilototo->setEnabled(!newSelect->getLockStatus());
         }
@@ -1180,6 +1285,14 @@ void MainWindow::slotChgBoat(int num)
                 /* sync lunched, update grib date */
                 //slotDateGribChanged_now();
                 emit selectedBoatChanged();
+                for(int i=0;i<my_centralWidget->getRaces().size();i++)
+                {
+                    if(my_centralWidget->getRaces()[i]->idrace == selectedBoat->getRaceId())
+                    {
+                        my_centralWidget->drawNSZ(i);
+                        break;
+                    }
+                }
                 break;
             }
             cnt++;
@@ -1260,8 +1373,6 @@ void MainWindow::slotpastePOI()
     emit addPOI(name,POI_TYPE_POI,lat,lon,wph,tstamp,tstamp!=-1, selectedBoat);
 }
 
-
-
 void MainWindow::slotBoatLockStatusChanged(boatAccount* boat,bool status)
 {
     if(boat==selectedBoat)
@@ -1322,7 +1433,7 @@ bool MainWindow::isBoat(QString idu)
     for(int i=0;i<my_centralWidget->getBoats().count();i++)
         if(my_centralWidget->getBoats()[i]->getBoatId() == idu)
         {
-            if(my_centralWidget->getBoats()[i]->getStatus())
+            if(my_centralWidget->getBoats()[i]->getStatus() && my_centralWidget->getBoats()[i]==selectedBoat)
                 return true;
             else
                 return false;
@@ -1338,16 +1449,21 @@ void MainWindow::slotParamChanged(void)
 
 void MainWindow::getBoatBvmg(float * up,float * down,float ws)
 {
-   if(!selectedBoat)
+   boatAccount *bateau;
+   if(my_centralWidget->getCompassFollow()!=NULL)
+       bateau=my_centralWidget->getCompassFollow()->getBoat();
+   else
+       bateau=selectedBoat;
+   if(!bateau)
    {
        *up=-1;
        *down=-1;
    }
    else
-       if(selectedBoat->getPolarData())
+       if(bateau->getPolarData())
        {
-            *up=selectedBoat->getBvmgUp(ws);
-            *down=selectedBoat->getBvmgDown(ws);
+            *up=bateau->getBvmgUp(ws);
+            *down=bateau->getBvmgDown(ws);
        }
        else
        {
@@ -1357,14 +1473,19 @@ void MainWindow::getBoatBvmg(float * up,float * down,float ws)
 }
 float MainWindow::getBoatPolarSpeed(float ws,float angle)
 {
-   if(!selectedBoat)
+   boatAccount *bateau;
+   if(my_centralWidget->getCompassFollow()!=NULL)
+       bateau=my_centralWidget->getCompassFollow()->getBoat();
+   else
+       bateau=selectedBoat;
+   if(!bateau)
    {
        return 0;
    }
    else
-       if(selectedBoat->getPolarData())
+       if(bateau->getPolarData())
        {
-            return selectedBoat->getPolarData()->getSpeed(ws,angle);
+            return bateau->getPolarData()->getSpeed(ws,angle);
        }
        else
        {
@@ -1440,22 +1561,18 @@ void MainWindow::slotValidationDone(bool ok)
 
 void MainWindow::slotVLM_Test(void)
 {
-    Grib * myGrib=this->my_centralWidget->getGrib();
-    double u,v;
-    //time_t tps=QDateTime::currentDateTime().toUTC().toTime_t();
-    time_t tps=myGrib->getCurrentDate();
+    qWarning() << "Trying ws access";
+    if(this->selectedBoat)
+        this->selectedBoat->tryWs();
+}
 
-    //double val =  degToRad(120) ;
-
-    //qWarning() << "Now = " << QDateTime::currentDateTime().toUTC();
-
-    myGrib->getInterpolatedValue_byDates(120.4,30.2,tps,&u,&v,true);
-    //qWarning() << "120,35 => " << u << " " << radToDeg(v);
-    /*myGrib->getInterpolatedValue_byDates(-20,-20,tps,&u,&v,true);
-    qWarning() << "-20,-20 => " << u << " " << radToDeg(v);
-    myGrib->getInterpolatedValue_byDates(0,0,tps,&u,&v,true);
-    qWarning() << "0,0 => " << u << " " << radToDeg(v);*/
-
+void MainWindow::slotGribInterpolation(void)
+{
+    if(my_centralWidget->getGrib())
+    {
+        gribValidation_dialog->setMode(this->my_centralWidget->getGrib()->getInterpolationMode());
+        gribValidation_dialog->show();
+    }
 }
 
 void MainWindow::slotEstime(int valeur)
@@ -1464,12 +1581,15 @@ void MainWindow::slotEstime(int valeur)
     {
         case 0:
             Settings::setSetting("estimeTime", valeur);
+            param->estimeVal_time->setValue(valeur);
             break;
         case 1:
             Settings::setSetting("estimeVac", valeur);
+            param->estimeVal_vac->setValue(valeur);
             break;
         case 2:
             Settings::setSetting("estimeLen", valeur);
+            param->estimeVal_dist->setValue(valeur);
     }
     emit paramVLMChanged();
 }
