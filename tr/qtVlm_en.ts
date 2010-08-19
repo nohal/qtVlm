@@ -44,6 +44,14 @@
         <source>Rivières :</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Opacite des terres :</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Estime :</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>DialogLoadGrib</name>
@@ -85,15 +93,15 @@
     </message>
     <message>
         <source>Intervalle :</source>
-        <translation>Interval :</translation>
+        <translation type="obsolete">Interval :</translation>
     </message>
     <message>
         <source> heures</source>
-        <translation> hours</translation>
+        <translation type="obsolete"> hours</translation>
     </message>
     <message>
         <source> jours</source>
-        <translation> days</translation>
+        <translation type="obsolete"> days</translation>
     </message>
     <message>
         <source>Annuler</source>
@@ -112,31 +120,123 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source> °N</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source> °E</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Telecharger le fichier GRIB</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Resolution :</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>�</source>
+        <source> �N</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Duree :</source>
+        <source> �E</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>La taille des fichiers est limitee a 20000 ko.</source>
+        <source>Wind (10 m)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Mean sea level pressure</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Total precipitation</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Cloud cover</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Temperature (2 m)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Relative humidity (2 m)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Isotherm 0�C</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Potential temperature (sigma 995)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Temperature min (2 m)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Temperature max (2 m)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Snow (snowfall possible)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Frozen rain (rainfall possible)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Snow (depth)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>CAPE (surface)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>hPa</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>All</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Download GRIB file</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Cancel</source>
+        <translation type="unfinished">Cancel</translation>
+    </message>
+    <message>
+        <source>Server status</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source> �</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Interval :</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source> hours</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Period :</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source> days</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Atmosphere: geopotential altitude, wind, temperature, theta-e, relative humidity.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Warning : these data increase strongly the size of the GRIB file.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>File size max: </source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -167,23 +267,23 @@
         <translation>Use IE parameters</translation>
     </message>
     <message>
-        <source>Mode de connexion à internet</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Connexion directe à internet</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Connexion à travers un proxy</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Numéro de port :</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>(* si nécessaire)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Mode de connexion �  internet</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Connexion directe �  internet</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Connexion �  travers un proxy</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -405,46 +505,41 @@
     </message>
     <message>
         <source>Informations sur le fichier GRIB</source>
-        <translation>GRIB file information</translation>
+        <translation type="obsolete">GRIB file information</translation>
     </message>
     <message>
         <source>Fichier : %1
 </source>
-        <translation>Fichier: %1
+        <translation type="obsolete">Fichier: %1
 </translation>
     </message>
     <message>
         <source>Taille : %1 octets
 </source>
-        <translation>Size: %1 bytes
+        <translation type="obsolete">Size: %1 bytes
 </translation>
-    </message>
-    <message>
-        <source>
-</source>
-        <translation></translation>
     </message>
     <message>
         <source>    Vent  : %1
 </source>
-        <translation>    Wind: %1
+        <translation type="obsolete">    Wind: %1
 </translation>
     </message>
     <message>
         <source>Grille : %1 points (%2x%3)
 </source>
-        <translation>Grid : %1 points (%2x%3)
+        <translation type="obsolete">Grid : %1 points (%2x%3)
 </translation>
     </message>
     <message>
         <source>Etendue :
 </source>
-        <translation>Area: </translation>
+        <translation type="obsolete">Area: </translation>
     </message>
     <message>
         <source>%1  -&gt;  %2
 </source>
-        <translation>%1  -&gt;  %2</translation>
+        <translation type="obsolete">%1  -&gt;  %2</translation>
     </message>
     <message>
         <source>ou le fichier est corrompu,</source>
@@ -452,32 +547,32 @@
     </message>
     <message>
         <source>oui</source>
-        <translation>yes</translation>
+        <translation type="obsolete">yes</translation>
     </message>
     <message>
         <source>non</source>
-        <translation>no</translation>
+        <translation type="obsolete">no</translation>
     </message>
     <message>
         <source>%1 enregistrements, </source>
-        <translation>%1 records, </translation>
+        <translation type="obsolete">%1 records, </translation>
     </message>
     <message>
         <source>%1 dates :
 </source>
-        <translation>%1 dates:
+        <translation type="obsolete">%1 dates:
 </translation>
     </message>
     <message>
         <source>    du %1
 </source>
-        <translation>    from %1
+        <translation type="obsolete">    from %1
 </translation>
     </message>
     <message>
         <source>    au %1
 </source>
-        <translation>    to %1
+        <translation type="obsolete">    to %1
 </translation>
     </message>
     <message>
@@ -514,7 +609,7 @@
     </message>
     <message>
         <source>POI</source>
-        <translation>POI</translation>
+        <translation type="obsolete">POI</translation>
     </message>
     <message>
         <source>Cartes non trouvées.
@@ -536,28 +631,6 @@
     </message>
     <message>
         <source>qtVlm</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Téléchargement d&apos;un fichier GRIB</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Vous devez sélectionner une zone de la carte.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Aucun fichir GRIB n&apos;est chargé.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Données disponibles :
-</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Date de référence : %1
-</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -598,16 +671,6 @@
     </message>
     <message>
         <source> Arrivée WP</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Suppression de toutes les marques</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>La destruction d&apos;une marque est definitive.
-
-Etes-vous sur ?</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -981,13 +1044,277 @@ Etes-vous sur ?</source>
         <source>Tirer un cap</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Montrer/cacher</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Tout montrer</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Tout cacher sauf les bateaux actifs</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Cacher/Montrer les bateaux opposants</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Cacher/Montrer les portes et WPs</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Cacher/Montrer les POIs</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Cacher/Montrer les routes</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Cacher/Montrer les routages</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Cacher/Montrer les etiquettes</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Cacher/Montrer le compas</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Cacher/Montrer le compas du bandeau</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Cacher/Montrer la polaire</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Centrer sur le bateau actif</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Telechargement</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Carte des précipitations</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Couverture nuageuse</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Carte de l&apos;humidité relative</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Carte de la température</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Carte de la température potentielle</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Ecart température-point de rosée</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Neige (chute possible)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Neige (épaisseur)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Pluie verglaçante (chute possible)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>CAPE (surface)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Température</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Ctrl+T</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Isobares</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Afficher les isobares</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Espacement (hPa)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Espacement des isobares</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>2</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>3</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>4</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>5</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>6</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>8</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>10</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Etiquettes des isobares</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Afficher les étiquettes des isobares</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Pression Mini(L) Maxi(H)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Afficher les points de pression mini et maxi</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Isothermes 0°C</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Afficher les isothermes 0°C</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Espacement (m)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Espacement des isothermes 0°C</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>20</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>50</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>100</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>200</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>500</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>1000</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Etiquettes des isothermes 0°C</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Afficher les étiquettes des isothermes 0°C</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Routes</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Creer une route</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Supprimer une route</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Editer une route</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Exporter une route</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Importer une route</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Routages</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Creer un routage</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Supprimer un routage</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Editer un routage</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Centrer le compas sur le bateau actif</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Centrer le compas sur le WP VLM</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Centrer la carte ici</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>POI</name>
-    <message>
-        <source>Marque</source>
-        <translation type="unfinished"></translation>
-    </message>
     <message>
         <source>Editer</source>
         <translation type="unfinished"></translation>
@@ -1022,6 +1349,66 @@ Etes-vous sur ?</source>
 Etes-vous sur ?</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Routes</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Optimiser le placement sur la route</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Mode de navigation vers ce POI</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>VB-VMG</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>B-VMG</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>ORTHO</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Arret du cap</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Aucune route</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Marque-&gt;WP : </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Distance Ortho a partir de </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Non joignable avec ce Grib</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Meilleure ETA: </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Meilleure distance restante: </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Abandon du positionnement automatique</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Souhaitez vous conserver la meilleure position deja trouvee?</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>POI_Editor</name>
@@ -1047,44 +1434,29 @@ Etes-vous sur ?</source>
 Etes-vous sur ?</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Marque-&gt;WP
+(</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>POI_delete_ui</name>
     <message>
-        <source>Selection de type de marque</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Tous</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Aucun</source>
-        <translation type="unfinished">None</translation>
+        <translation type="obsolete">None</translation>
     </message>
     <message>
         <source>POI</source>
-        <translation type="unfinished">POI</translation>
-    </message>
-    <message>
-        <source>Waypoint</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Balise</source>
-        <translation type="unfinished"></translation>
+        <translation type="obsolete">POI</translation>
     </message>
     <message>
         <source>OK</source>
-        <translation type="unfinished">Ok</translation>
+        <translation type="obsolete">Ok</translation>
     </message>
     <message>
         <source>Cancel</source>
-        <translation type="unfinished">Cancel</translation>
-    </message>
-    <message>
-        <source>Type de marque à supprimer</source>
-        <translation type="unfinished"></translation>
+        <translation type="obsolete">Cancel</translation>
     </message>
 </context>
 <context>
@@ -1096,10 +1468,6 @@ Etes-vous sur ?</source>
     <message>
         <source>POI</source>
         <translation type="unfinished">POI</translation>
-    </message>
-    <message>
-        <source>Waypoint</source>
-        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Balise</source>
@@ -1115,7 +1483,7 @@ Etes-vous sur ?</source>
     </message>
     <message>
         <source>Latitude Nord</source>
-        <translation type="unfinished">Latitude North</translation>
+        <translation type="obsolete">Latitude North</translation>
     </message>
     <message>
         <source> °</source>
@@ -1127,7 +1495,7 @@ Etes-vous sur ?</source>
     </message>
     <message>
         <source>Longitude Est</source>
-        <translation type="unfinished">Longitude East</translation>
+        <translation type="obsolete">Longitude East</translation>
     </message>
     <message>
         <source>Latitude (dd,dd)</source>
@@ -1169,6 +1537,38 @@ Etes-vous sur ?</source>
         <source>Marque-&gt;WP</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Marque</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Latitude</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Nord</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Sud</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Longitude</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Est</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Ouest</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Route</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>POI_input_ui</name>
@@ -1197,11 +1597,11 @@ Etes-vous sur ?</source>
         <translation type="unfinished">POI</translation>
     </message>
     <message>
-        <source>Waypoint</source>
+        <source>Balise</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Balise</source>
+        <source>Route</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -1237,6 +1637,10 @@ Continuer la sauvegarde?</source>
         <source>instruction</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Pilototo pour </source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>Pilototo_instruction</name>
@@ -1250,6 +1654,30 @@ Continuer la sauvegarde?</source>
     </message>
     <message>
         <source>Nouveau</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Cap constant (1)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Angle du vent (2)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Pilote ortho (3)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Meilleur VMG (4)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>VBVMG (5)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Modifie</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -1273,6 +1701,13 @@ Continuer la sauvegarde?</source>
     </message>
     <message>
         <source>VBVMG (5)</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>Polar</name>
+    <message>
+        <source>Pre-calcul des valeurs de VMG (ceci est fait seulement la premiere fois qu&apos;une polaire est utilisee)</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -1303,27 +1738,7 @@ Continuer la sauvegarde?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Ne peux ouvrir le fichier %1</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Fichier %1 vide</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Fichier %1 invalide - step vitesse non positif</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Fichier %1 invalide - step vitesse non constant (speed=%2,step=%3)</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Fichier %1 invalide - step angle non positif</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Fichier %1 invalide - step angle non constant (val=%2,step=%3)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -1346,12 +1761,280 @@ Continuer la sauvegarde?</source>
         <source>dd°mm,mm&apos;</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Impossible d&apos;ouvrir le fichier %1 (ni en .csv ni en .pol)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Fichier %1 invalide (doit commencer par TWA\TWS et non &apos;%2&apos;)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Paramètre bateau</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Bateau au ponton</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Lecture de route</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Impossible d&apos;ouvrir le fichier %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Fichier %1 invalide (doit commencer par POSITION et non &apos;%2&apos;)</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>ROUTAGE</name>
+    <message>
+        <source>D�truire le routage : %1?</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>La destruction d&apos;un routage est definitive.</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>ROUTAGE_Editor</name>
+    <message>
+        <source>Parametres Routage</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Ce nom est deja utilise, choisissez en un autre</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>ROUTAGE_Editor_ui</name>
+    <message>
+        <source>Name</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Points de depart et d&apos;arrivee</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Valider</source>
+        <translation type="unfinished">Ok</translation>
+    </message>
+    <message>
+        <source>Annuler</source>
+        <translation type="unfinished">Cancel</translation>
+    </message>
+    <message>
+        <source>Taille et couleur du resultat du routage</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Date et heure de depart du routage</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Options</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Duree Isochrones</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Pas Anglulaire</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Angle Balayage</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source> min</source>
+        <extracomment>min</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source> deg</source>
+        <extracomment>deg
+----------
+deg</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Forcer le vent</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>TWS</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source> nds</source>
+        <extracomment>nds</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>TWD</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Coeff Exploration</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Montrer les isochrones</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Convertir en Route</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>ROUTE</name>
+    <message>
+        <source>&lt;br&gt;ETA: Non joignable avec ce fichier GRIB</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>ETA depuis la derniere vacation</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>ETA depuis la date Grib</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>ETA depuis la date fixe</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>jours</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>heures</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>minutes</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>D�truire la route : %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>La destruction d&apos;une route est definitive.
+
+Voulez-vous egalement supprimer tous les POIs lui appartenant?</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>ROUTE_Editor</name>
+    <message>
+        <source>Parametres Route</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Ce nom est deja utilise, choisissez en un autre</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>ROUTE_Editor_ui</name>
+    <message>
+        <source>Name</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Point de depart de la route</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Du bateau</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Depuis la 1ere marque</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Valider</source>
+        <translation type="unfinished">Ok</translation>
+    </message>
+    <message>
+        <source>Annuler</source>
+        <translation type="unfinished">Cancel</translation>
+    </message>
+    <message>
+        <source>Taille et couleur</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Date et heure de depart de la route</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Depuis la derniere Vac</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Depuis la date du grib</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Date fixe</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Options</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Figer la route</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Cette option peut entrainer un ralentissement lors des mouvements de POIs</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Recalculer la route simultanement aux mouvements de POIs</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Cacher les POIs intermediaires</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>Settings</name>
+    <message>
+        <source>Ouverture des param�tres</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Il existe des parametres locaux, les importer dans qtvlm.ini?</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>Terrain</name>
     <message>
         <source>  Calculs en cours...  </source>
-        <translation>  Please wait...  </translation>
+        <translation type="obsolete">  Please wait...  </translation>
+    </message>
+    <message>
+        <source>Calculs en cours...</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -1429,14 +2112,6 @@ Continuer la sauvegarde?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Estime</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Calcul de l&apos;estime:</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>En temps</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1477,10 +2152,6 @@ Continuer la sauvegarde?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>minutes</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>heures</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1490,10 +2161,6 @@ Continuer la sauvegarde?</source>
     </message>
     <message>
         <source>Affichage du compas</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Afficher le compas</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -1546,6 +2213,61 @@ Continuer la sauvegarde?</source>
     </message>
     <message>
         <source>Sauvegarde à la fermeture</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Bateau</source>
+        <translation type="unfinished">Boat</translation>
+    </message>
+    <message>
+        <source>Calcul de l&apos;estime</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Centrage sur bateau après synchro VLM</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Centrage après changement de bateau</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Confirmation à chaque ordre vers VLM</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>vacations</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Afficher le compas (C)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Polaire</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Afficher la polaire (L)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Echelle fixe (50nds)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Echelle relative (vitesse maxi)</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>WP_dialog</name>
+    <message>
+        <source>Confirmer le changement du WP</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>WP change</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -1615,10 +2337,6 @@ Continuer la sauvegarde?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>erreur</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Information sur</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1662,6 +2380,82 @@ Continuer la sauvegarde?</source>
         <source>Impossible d&apos;envoyer les donnees sur le port serie</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Cacher compas</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Erreur</source>
+        <translation type="unfinished">Error</translation>
+    </message>
+    <message>
+        <source>Pas de bateau selectionn�</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Instruction pour </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Confirmer le changement du WP</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>WP change</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Confirmer le mode pilotage &apos;Cap&apos;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Mode de pilotage change en &apos;Cap&apos;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Confirmer le mode pilotage &apos;Angle&apos;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Mode de pilotage change en &apos;Angle&apos;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Confirmer le mode &apos;Pilot Ortho&apos;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Mode de pilotage change en &apos;Pilot Ortho&apos;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Confirmer le mode &apos;VMG&apos;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Mode de pilotage change en &apos;VMG&apos;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Confirmer le mode &apos;VBVMG&apos;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Mode de pilotage change en &apos;VBVMG&apos;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>erreur chargement</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Cacher le compas</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Afficher le compas</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>boardVLM_ui</name>
@@ -1671,7 +2465,7 @@ Continuer la sauvegarde?</source>
     </message>
     <message>
         <source>Wind</source>
-        <translation type="unfinished">Wind</translation>
+        <translation type="obsolete">Wind</translation>
     </message>
     <message>
         <source>background-color: rgb(170, 170, 255);</source>
@@ -1747,11 +2541,7 @@ Continuer la sauvegarde?</source>
     </message>
     <message>
         <source>Meilleur VMG</source>
-        <translation type="unfinished">Best VMG</translation>
-    </message>
-    <message>
-        <source>Pilote ortho</source>
-        <translation type="unfinished"></translation>
+        <translation type="obsolete">Best VMG</translation>
     </message>
     <message>
         <source>WP direction</source>
@@ -1805,6 +2595,26 @@ Continuer la sauvegarde?</source>
         <source>VBVMG</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>F5</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Vent</source>
+        <translation type="unfinished">Wind</translation>
+    </message>
+    <message>
+        <source>Meilleur VMG vent</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Pres</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Portant</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>boatAccount</name>
@@ -1846,6 +2656,18 @@ Continuer la sauvegarde?</source>
     </message>
     <message>
         <source>Tirer un cap</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source> (pas de polaire charg�e)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source> (format CSV)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source> (format POL)</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -1928,109 +2750,145 @@ Continuer la sauvegarde?</source>
     </message>
 </context>
 <context>
-    <name>gate</name>
+    <name>finePosit</name>
     <message>
-        <source>Editer</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Supprimer</source>
-        <translation type="unfinished">Delete</translation>
-    </message>
-    <message>
-        <source>Copier</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Detruire la Porte</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>La destruction d&apos;une porte est definitive.
-
-Etes-vous sur ?</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Porte: </source>
+        <source>Parametres du positionnement automatique</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
-    <name>gate_editor</name>
+    <name>finePosit_ui</name>
     <message>
-        <source>Porte : </source>
+        <source>Dialog</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Porte</source>
+        <source>Etendue de la recherche (longitude)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Nouvelle porte</source>
+        <source>Précision de la recherche</source>
         <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Afficher les routes calculées</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Etendue de la recherche (latitude)</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>gate</name>
+    <message>
+        <source>Supprimer</source>
+        <translation type="obsolete">Delete</translation>
     </message>
 </context>
 <context>
     <name>gate_editor_ui</name>
     <message>
-        <source>Gate Editor</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Nom</source>
-        <translation type="unfinished">Name</translation>
-    </message>
-    <message>
-        <source>Point 1</source>
-        <translation type="unfinished"></translation>
+        <translation type="obsolete">Name</translation>
     </message>
     <message>
         <source>Longitude Est</source>
-        <translation type="unfinished">Longitude East</translation>
-    </message>
-    <message>
-        <source> °</source>
-        <translation type="unfinished"></translation>
+        <translation type="obsolete">Longitude East</translation>
     </message>
     <message>
         <source> &apos;</source>
-        <translation type="unfinished"> &apos;</translation>
+        <translation type="obsolete"> &apos;</translation>
     </message>
     <message>
         <source>Latitude Nord</source>
-        <translation type="unfinished">Latitude North</translation>
-    </message>
-    <message>
-        <source>Point 2</source>
-        <translation type="unfinished"></translation>
+        <translation type="obsolete">Latitude North</translation>
     </message>
     <message>
         <source>Valider</source>
-        <translation type="unfinished">Ok</translation>
+        <translation type="obsolete">Ok</translation>
     </message>
     <message>
         <source>Annuler</source>
-        <translation type="unfinished">Cancel</translation>
+        <translation type="obsolete">Cancel</translation>
     </message>
     <message>
         <source>Supprimer</source>
-        <translation type="unfinished">Delete</translation>
-    </message>
-    <message>
-        <source>Copier</source>
-        <translation type="unfinished"></translation>
+        <translation type="obsolete">Delete</translation>
     </message>
     <message>
         <source>Coller</source>
-        <translation type="unfinished">Paste</translation>
+        <translation type="obsolete">Paste</translation>
     </message>
+</context>
+<context>
+    <name>gribValidation</name>
     <message>
-        <source>Couleur</source>
+        <source>Validation de l&apos;interpolation</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Changer</source>
+        <source>OK</source>
+        <translation type="unfinished">Ok</translation>
+    </message>
+    <message>
+        <source>Cancel</source>
+        <translation type="unfinished">Cancel</translation>
+    </message>
+    <message>
+        <source>Le type est egalement utilisé pour l&apos;affichage du grib</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Prametres du calcul</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Latitude</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Longitude</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Tstamp</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Resultat du calcul</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Vitesse</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Angle</source>
+        <translation type="unfinished">Angle</translation>
+    </message>
+    <message>
+        <source>now</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Debug</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Type d&apos;interpolation</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>TWSA</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Selective TWSA</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Hybrid</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -2052,31 +2910,47 @@ Etes-vous sur ?</source>
         <translation type="unfinished">Form</translation>
     </message>
     <message>
-        <source>-</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Status</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Coller</source>
-        <translation type="unfinished">Paste</translation>
+        <translation type="obsolete">Paste</translation>
     </message>
     <message>
-        <source>Edit</source>
+        <source>Colle l&apos;instruction depuis le press-papier</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>V</source>
+        <source>Synchronise l&apos;heure</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>H</source>
+        <source>Valide l&apos;instruction</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Copy</source>
+        <source>Annule les changements</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Copier l&apos;instruction</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Edition complete</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Selection d&apos;un WP</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>WP</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Supprime l&apos;instruction</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -2102,6 +2976,227 @@ Etes-vous sur ?</source>
         <source> nm</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>nds</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>jours</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>heures</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>minutes</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>secondes</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>myCentralWidget</name>
+    <message>
+        <source>Téléchargement d&apos;un fichier GRIB</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Vous devez sélectionner une zone de la carte.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>oui</source>
+        <translation type="unfinished">yes</translation>
+    </message>
+    <message>
+        <source>non</source>
+        <translation type="unfinished">no</translation>
+    </message>
+    <message>
+        <source>non (calculé par la formule de Magnus-Tetens)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Informations sur le fichier GRIB</source>
+        <translation type="unfinished">GRIB file information</translation>
+    </message>
+    <message>
+        <source>Aucun fichir GRIB n&apos;est chargé.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Fichier : %1
+</source>
+        <translation type="unfinished">Fichier: %1
+</translation>
+    </message>
+    <message>
+        <source>Taille : %1 octets
+</source>
+        <translation type="unfinished">Size: %1 bytes
+</translation>
+    </message>
+    <message>
+        <source>
+</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>%1 enregistrements, </source>
+        <translation type="unfinished">%1 records, </translation>
+    </message>
+    <message>
+        <source>%1 dates :
+</source>
+        <translation type="unfinished">%1 dates:
+</translation>
+    </message>
+    <message>
+        <source>    du %1
+</source>
+        <translation type="unfinished">    from %1
+</translation>
+    </message>
+    <message>
+        <source>    au %1
+</source>
+        <translation type="unfinished">    to %1
+</translation>
+    </message>
+    <message>
+        <source>Données disponibles :
+</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>    Température : %1
+</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>    Pression : %1
+</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>    Vent  : %1
+</source>
+        <translation type="unfinished">    Wind: %1
+</translation>
+    </message>
+    <message>
+        <source>    Cumul de précipitations : %1
+</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>    Nébulosité : %1
+</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>    Humidité relative : %1
+</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>    Isotherme 0°C : %1
+</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>    Point de rosée : %1
+</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>    Température (min) : %1
+</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>    Température (max) : %1
+</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>    Température (pot) : %1
+</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>    Neige (risque) : %1
+</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>    Neige (épaisseur) : %1
+</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>    Humidité spécifique : %1
+</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Grille : %1 points (%2x%3)
+</source>
+        <translation type="unfinished">Grid : %1 points (%2x%3)
+</translation>
+    </message>
+    <message>
+        <source>Etendue :
+</source>
+        <translation type="unfinished">Area: </translation>
+    </message>
+    <message>
+        <source>%1  -&gt;  %2
+</source>
+        <translation type="unfinished">%1  -&gt;  %2</translation>
+    </message>
+    <message>
+        <source>Date de référence : %1
+</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>POI</source>
+        <translation type="unfinished">POI</translation>
+    </message>
+    <message>
+        <source>Suppression de toutes les marques</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>La destruction d&apos;une marque est definitive.
+
+Etes-vous sur ?</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Ouvrir un fichier Route</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Nom de la route a importer</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Nom de la route</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Ce nom est deja utilise ou invalide</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Exporter une Route</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>paramVLM</name>
@@ -2114,11 +3209,11 @@ Etes-vous sur ?</source>
         <translation type="unfinished">Name</translation>
     </message>
     <message>
-        <source>Numéro</source>
+        <source>Repertoire Grib</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Repertoire Grib</source>
+        <source>Numero</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -2134,7 +3229,7 @@ Etes-vous sur ?</source>
     </message>
     <message>
         <source>Longitude Est</source>
-        <translation type="unfinished">Longitude East</translation>
+        <translation type="obsolete">Longitude East</translation>
     </message>
     <message>
         <source> °</source>
@@ -2150,18 +3245,14 @@ Etes-vous sur ?</source>
     </message>
     <message>
         <source>Latitude Nord</source>
-        <translation type="unfinished">Latitude North</translation>
+        <translation type="obsolete">Latitude North</translation>
     </message>
     <message>
         <source>Coller</source>
-        <translation type="unfinished">Paste</translation>
+        <translation type="obsolete">Paste</translation>
     </message>
     <message>
         <source>Selectionner une marque</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Copier</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -2180,6 +3271,30 @@ Etes-vous sur ?</source>
         <source>Cap / Angle</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Longitude</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Est</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Ouest</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Latitude</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Nord</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Sud</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>pilototo_ui</name>
@@ -2196,10 +3311,6 @@ Etes-vous sur ?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>+</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>N / 5 instructions</source>
         <translation type="unfinished"></translation>
     </message>
@@ -2210,6 +3321,10 @@ Etes-vous sur ?</source>
     <message>
         <source>Annuler</source>
         <translation type="unfinished">Cancel</translation>
+    </message>
+    <message>
+        <source>TextLabel</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -2279,6 +3394,30 @@ Etes-vous sur ?</source>
     </message>
     <message>
         <source>XX</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Ligne de No Sail Zone</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Afficher</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source> deg</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Latitude</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>N</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>S</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
