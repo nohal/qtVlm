@@ -38,8 +38,13 @@ Copyright (C) 2008 - Jacques Zaninetti - http://zygrib.free.fr
 #include <QNetworkAccessManager>
 
 #include "class_list.h"
+#include "dataDef.h"
 
+#ifdef __QTVLM_WITH_TEST
+#define NB_URL 3
+#else
 #define NB_URL 2
+#endif
 extern QString url_name[NB_URL];
 extern QString url_str[NB_URL];
 

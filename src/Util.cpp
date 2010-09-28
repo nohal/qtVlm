@@ -473,8 +473,17 @@ QString Util::pos2String(int type,float value)
     return str;
 }
 
-QString  url_name[NB_URL] = { "s10","s11"};
-QString  url_str[NB_URL] = { "s10.virtual-loup-de-mer.org","s11.virtual-loup-de-mer.org"};
+QString  url_name[NB_URL] = { "s10","s11"
+#ifdef __QTVLM_WITH_TEST
+                 , "testing"
+#endif
+
+                          };
+QString  url_str[NB_URL] = { "s10.virtual-loup-de-mer.org","s11.virtual-loup-de-mer.org"
+#ifdef __QTVLM_WITH_TEST
+                 , "testing.virtual-loup-de-mer.org"
+#endif
+             };
 
 QString Util::getHost()
 {
