@@ -36,7 +36,7 @@ Copyright (C) 2008 - Jacques Zaninetti - http://zygrib.free.fr
 #include "vlmLine.h"
 #include "POI.h"
 #include "Route_Editor.h"
-#include "boatAccount.h"
+#include "boatVLM.h"
 #include "Polar.h"
 #include "Util.h"
 
@@ -64,7 +64,7 @@ ROUTE::ROUTE(QString name, Projection *proj, Grib *grib, QGraphicsScene * myScen
     this->has_eta=false,
     this->eta=0;
     this->remain=0;
-    this->boat=NULL;
+    this->myBoat=NULL;
     this->boatLogin="";
     this->my_poiList.clear();
     this->fastVmgCalc=false;
@@ -73,10 +73,11 @@ ROUTE::ROUTE(QString name, Projection *proj, Grib *grib, QGraphicsScene * myScen
     this->startEta=0;
     this->hidePois=false;
     this->imported=false;
+    this->multVac=1;
     pen.setColor(color);
     pen.setBrush(color);
     pen.setWidthF(width);
-    connect (parent,SIGNAL(boatPointerHasChanged(boatAccount*)),this,SLOT(slot_boatPointerHasChanged(boatAccount*)));
+    connect (parent,SIGNAL(boatPointerHasChanged(boat*)),this,SLOT(slot_boatPointerHasChanged(boat*)));
     if(!parentWindow->get_shRoute_st())
         slot_shShow();
     else
@@ -90,11 +91,11 @@ ROUTE::~ROUTE()
             delete line;
     }
 }
-void ROUTE::setBoat(boatAccount *boat)
+void ROUTE::setBoat(boat *curBoat)
 {
-    this->boat=boat;
-    if(boat!=NULL)
-        this->boatLogin=boat->getLogin();
+    this->myBoat=curBoat;
+    if(myBoat!=NULL && myBoat->getType()==BOAT_VLM)
+        this->boatLogin=((boatVLM*)myBoat)->getBoatName();
     else
         this->boatLogin="";
 }
@@ -125,7 +126,7 @@ void ROUTE::removePoi(POI *poi)
 }
 void ROUTE::slot_recalculate()
 {
-//    if(!boat->getStatus())
+//    if(!myBoat->getStatus())
 //    {
 //        return parent->deleteRoute(this);
 //    }
@@ -144,15 +145,20 @@ void ROUTE::slot_recalculate()
     eta=0;
     has_eta=false;
     time_t now;
-    if(boat && boat->getPolarData() && grib && boat!=NULL)
+    if(myBoat && myBoat->getPolarData() && grib && myBoat!=NULL)
     {
+#warning revoir ce forcage
+        if(myBoat->getType()!=BOAT_VLM && startTimeOption == 1)
+            startTimeOption=2;
+
         switch(startTimeOption)
         {
             case 1:
-                eta=boat->getPrevVac();
+                eta=((boatVLM*)myBoat)->getPrevVac();
                 now = (QDateTime::currentDateTime()).toUTC().toTime_t();
 #warning find a better way to identify a boat that has not yet started
-                if(eta < now - 2*boat->getVacLen()) /*cas du boat inscrit depuis longtemps mais pas encore parti*/
+                if(eta < now - 2*myBoat->getVacLen())
+/*cas du boat inscrit depuis longtemps mais pas encore parti*/
                     eta=now;
                 //qWarning() << "Depart route: " << now;
                 break;
@@ -172,8 +178,8 @@ void ROUTE::slot_recalculate()
         double lon,lat;
         if(startFromBoat)
         {
-            lon=boat->getLon();
-            lat=boat->getLat();
+            lon=myBoat->getLon();
+            lat=myBoat->getLat();
         }
         else
         {
@@ -197,7 +203,6 @@ void ROUTE::slot_recalculate()
         }
         double newSpeed,distanceParcourue,remaining_distance,res_lon,res_lat,previous_remaining_distance,cap1,cap2,diff1,diff2;
         double wind_angle,wind_speed,cap,angle;
-        time_t mult_vac=1;
         time_t maxDate=grib->getMaxDate();
         QString previousPoiName="";
         time_t previousEta=0;
@@ -243,9 +248,9 @@ void ROUTE::slot_recalculate()
             {
                 do
                 {                    
-                    if((grib->getInterpolatedValue_byDates(lon, lat,
+                    if(((grib->getInterpolatedValue_byDates(lon, lat,
                                               eta,&wind_speed,&wind_angle,INTERPOLATION_SELECTIVE_TWSA)
-                        && eta<=maxDate || imported))
+                        && eta<=maxDate) || imported))
                     {
                         //qWarning() << lon << ";" << lat << ";" << eta << ";" << wind_speed << ";" << wind_angle;
                         previous_remaining_distance=remaining_distance;
@@ -269,9 +274,9 @@ void ROUTE::slot_recalculate()
                                         else
                                             angle=angle-360;
                                     }
-                                    if(qAbs(angle)<boat->getBvmgUp(wind_speed))
+                                    if(qAbs(angle)<myBoat->getBvmgUp(wind_speed))
                                     {
-                                        angle=boat->getBvmgUp(wind_speed);
+                                        angle=myBoat->getBvmgUp(wind_speed);
                                         cap1=A360(wind_angle+angle);
                                         cap2=A360(wind_angle-angle);
                                         diff1=myDiffAngle(cap,cap1);
@@ -281,9 +286,9 @@ void ROUTE::slot_recalculate()
                                         else
                                             cap=cap2;
                                     }
-                                    else if(qAbs(angle)>boat->getBvmgDown(wind_speed))
+                                    else if(qAbs(angle)>myBoat->getBvmgDown(wind_speed))
                                     {
-                                        angle=boat->getBvmgDown(wind_speed);
+                                        angle=myBoat->getBvmgDown(wind_speed);
                                         cap1=A360(wind_angle+angle);
                                         cap2=A360(wind_angle-angle);
                                         diff1=myDiffAngle(cap,cap1);
@@ -296,9 +301,9 @@ void ROUTE::slot_recalculate()
                                     break;
                                 case 1: //BVMG
                                     if(fastVmgCalc)
-                                        boat->getPolarData()->getBvmg((cap-wind_angle),wind_speed,&angle);
+                                        myBoat->getPolarData()->getBvmg((cap-wind_angle),wind_speed,&angle);
                                     else
-                                        boat->getPolarData()->bvmgWind((cap-wind_angle),wind_speed,&angle);
+                                        myBoat->getPolarData()->bvmgWind((cap-wind_angle),wind_speed,&angle);
     #if 0
                                     if(qRound(angle*100.00)!=qRound(angleDebug*100.00))
                                         qWarning()<<"angle="<<angle<<" angleDebug="<<angleDebug;
@@ -316,8 +321,8 @@ void ROUTE::slot_recalculate()
                                     }
                                     break;
                             }
-                            newSpeed=boat->getPolarData()->getSpeed(wind_speed,angle);
-                            distanceParcourue=newSpeed*boat->getVacLen()*mult_vac/3600.00;
+                            newSpeed=myBoat->getPolarData()->getSpeed(wind_speed,angle);
+                            distanceParcourue=newSpeed*myBoat->getVacLen()*multVac/3600.00;
                             Util::getCoordFromDistanceAngle(lat, lon, distanceParcourue, cap,&res_lat,&res_lon);
                         }
                         orth.setStartPoint(res_lon, res_lat);
@@ -326,6 +331,10 @@ void ROUTE::slot_recalculate()
                         {
 //                            if (remaining_distance-previous_remaining_distance>10)
 //                                qWarning()<<(remaining_distance-previous_remaining_distance)<<" milles in one vac, not bad";
+                            if(imported)
+                                eta=poi->getRouteTimeStamp();
+                            else
+                                eta= eta + myBoat->getVacLen()*multVac;
                             break;
                         }
                         lon=res_lon;
@@ -333,7 +342,7 @@ void ROUTE::slot_recalculate()
                         if(imported)
                             eta=poi->getRouteTimeStamp();
                         else
-                            eta= eta + boat->getVacLen()*mult_vac;
+                            eta= eta + myBoat->getVacLen()*multVac;
                         //qWarning() << "" << eta << ";" << wind_angle << ";" << wind_speed << ";" << newSpeed << ";" << distanceParcourue << ";" << remaining_distance;
                         if (!optimizing)
                         {
@@ -511,10 +520,18 @@ void ROUTE::slot_shHidden()
     if(line)
         line->hide();
 }
-void ROUTE::slot_boatPointerHasChanged(boatAccount * acc)
+void ROUTE::slot_boatPointerHasChanged(boat * acc)
 {
-    if(acc->getLogin()==this->boatLogin)
-        this->setBoat(acc);
+    if(acc->getType()==BOAT_VLM)
+    {
+        if(((boatVLM*)acc)->getBoatName()==this->boatLogin)
+            this->setBoat(acc);
+    }
+    else
+    {
+        if(myBoat->getType()!=BOAT_VLM)
+            this->setBoat(acc);
+    }
 }
 void ROUTE::setHidePois(bool b)
 {

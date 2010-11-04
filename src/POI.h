@@ -43,7 +43,7 @@ class POI : public QGraphicsWidget
         /* constructeurs, destructeurs */
         POI(QString name, int type, double lat, double lon,
                     Projection *proj, QWidget *ownerMeteotable, myCentralWidget *parentWindow,
-                    float wph, int tstamp,bool useTstamp, boatAccount *boat);
+                    float wph, int tstamp,bool useTstamp, boat *boat);
 
         ~POI();
 
@@ -111,7 +111,7 @@ class POI : public QGraphicsWidget
         void slot_copy();
         void slot_paramChanged();
         void slot_WPChanged(double tlat,double tlon);
-        void slot_updateTip(boatAccount *);
+        void slot_updateTip(boat *);
         void slot_shShow(){this->labelHidden=false;show();}
         void slot_shHidden(){hide();}
         void slot_shPoi(){this->isVisible()?hide():show();}
@@ -132,7 +132,7 @@ class POI : public QGraphicsWidget
         void selectPOI(POI*);
         void setGribDate(time_t);
         void clearSelection(void);
-        void updateTip(boatAccount*);
+        void updateTip(boat*);
         void poiMoving();
         void compassLine(int,int);
 
@@ -170,7 +170,7 @@ class POI : public QGraphicsWidget
         int      typeMask;
         bool     isMoving;
         int      mouse_x,mouse_y;
-        boatAccount *boat;
+        boat *   myBoat;
 
         void update_myStr();
 

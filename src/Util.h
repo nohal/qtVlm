@@ -45,6 +45,7 @@ Copyright (C) 2008 - Jacques Zaninetti - http://zygrib.free.fr
 #else
 #define NB_URL 2
 #endif
+
 extern QString url_name[NB_URL];
 extern QString url_str[NB_URL];
 

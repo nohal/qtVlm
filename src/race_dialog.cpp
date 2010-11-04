@@ -25,7 +25,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "opponentBoat.h"
 #include "mycentralwidget.h"
-#include "boatAccount.h"
+#include "boatVLM.h"
 #include "MainWindow.h"
 
 #define RACE_NO_REQUEST 0
@@ -55,9 +55,9 @@ race_dialog::~race_dialog()
 
 }
 
-void race_dialog::initList(QList<boatAccount*> & acc_list_ptr,QList<raceData*> & race_list_ptr)
+void race_dialog::initList(QList<boatVLM*> & boat_list_ptr,QList<raceData*> & race_list_ptr)
 {
-    this->acc_list = & acc_list_ptr;
+    this->boat_list = & boat_list_ptr;
     this->race_list = & race_list_ptr;
 
     numRace = -1;
@@ -66,19 +66,19 @@ void race_dialog::initList(QList<boatAccount*> & acc_list_ptr,QList<raceData*> &
     clear();
 
     /* determines the list of race */
-    for(int i=0;i<acc_list->size();i++)
+    for(int i=0;i<boat_list->size();i++)
     {
         bool found = false;
 
-        //qWarning() << acc_list->at(i)->getLogin() << " " << acc_list->at(i)->getStatus() << " " << acc_list->at(i)->getRaceId();
+        //qWarning() << boat_list->at(i)->getBoatName() << " " << boat_list->at(i)->getStatus() << " " << boat_list->at(i)->getRaceId();
 
         /* bateau inactif ou pas en course */
-        if(!acc_list->at(i)->getStatus() || acc_list->at(i)->getRaceId() == "0")
+        if(!boat_list->at(i)->getStatus() || boat_list->at(i)->getRaceId() == "0")
             continue;
 
         /* on cherche si la course existe deja ds la liste */
         for(int j=0;j<param_list.size();j++)
-            if(param_list[j]->id == acc_list->at(i)->getRaceId())
+            if(param_list[j]->id == boat_list->at(i)->getRaceId())
             {
                 found=true;
                 break;
@@ -88,13 +88,14 @@ void race_dialog::initList(QList<boatAccount*> & acc_list_ptr,QList<raceData*> &
         if(!found)
         {
             raceParam * ptr = new raceParam();
-            ptr->id=acc_list->at(i)->getRaceId();
-            ptr->name=acc_list->at(i)->getRaceName();
+            ptr->id=boat_list->at(i)->getRaceId();
+            ptr->name=boat_list->at(i)->getRaceName();
             ptr->boats.clear();
             ptr->latNSZ=-60;
             ptr->colorNSZ=Qt::black;
             ptr->widthNSZ=2;
             ptr->displayNSZ=false;
+            ptr->showWhat=0;
             param_list.append(ptr);
         }
     }
@@ -133,6 +134,13 @@ void race_dialog::getNextRace()
 
     /* let's find this race in the param from boatAcc.dat*/
     currentParam.clear();
+
+    currentShowWhat=0;
+    currentDisplayNSZ=false;
+    currentLatNSZ=60;
+    currentColorNSZ=Qt::black;
+    currentWidthNSZ=2;
+
     for(int i=0;i<race_list->size();i++)
         if(race_list->at(i)->idrace==param_list[currentRace]->id)
         {
@@ -141,6 +149,7 @@ void race_dialog::getNextRace()
             currentLatNSZ=race_list->at(i)->latNSZ;
             currentWidthNSZ=race_list->at(i)->widthNSZ;
             currentColorNSZ=race_list->at(i)->colorNSZ;
+            currentShowWhat=race_list->at(i)->showWhat;
             break;
         }
 
@@ -181,6 +190,7 @@ void race_dialog::requestFinished (QByteArray data)
     param_list[currentRace]->latNSZ=currentLatNSZ;
     param_list[currentRace]->widthNSZ=currentWidthNSZ;
     param_list[currentRace]->colorNSZ=currentColorNSZ;
+    param_list[currentRace]->showWhat=currentShowWhat;
 
     /* next race */
 
@@ -249,6 +259,7 @@ void race_dialog::saveData(bool save)
         ptr->widthNSZ=param_list[i]->widthNSZ;
         ptr->displayNSZ=param_list[i]->displayNSZ;
         ptr->latNSZ=param_list[i]->latNSZ;
+        ptr->showWhat=param_list[i]->showWhat;
         race_list->append(ptr);
     }
 
@@ -282,6 +293,10 @@ void race_dialog::chgRace(int id)
             param_list[numRace]->latNSZ=latNSZ->value();
         else
             param_list[numRace]->latNSZ=-latNSZ->value();
+        if(this->buttonMySelection->isChecked())
+            param_list[numRace]->showWhat=0;
+        else
+            param_list[numRace]->showWhat=1;
     }
 
     /* find race data */
@@ -344,6 +359,11 @@ void race_dialog::chgRace(int id)
         nsNSZ->setCurrentIndex(1);
     else
         nsNSZ->setCurrentIndex(0);
+    if(param_list[numRace]->showWhat==0)
+        this->buttonMySelection->setChecked(true);
+    else
+        this->button10First->setChecked(true);
+
     verticalLayout_4->removeWidget(inputTraceColor);
     delete inputTraceColor;
     inputTraceColor =new InputLineParams(param_list[numRace]->widthNSZ,param_list[numRace]->colorNSZ,2,  QColor(Qt::black),this,0.1,5);

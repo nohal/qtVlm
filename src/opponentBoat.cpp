@@ -28,13 +28,14 @@ Copyright (C) 2008 - Jacques Zaninetti - http://zygrib.free.fr
 
 #include "opponentBoat.h"
 
-#include "boatAccount.h"
+#include "boatVLM.h"
 #include "MainWindow.h"
 #include "settings.h"
 #include "mycentralwidget.h"
 #include "Projection.h"
 #include "vlmLine.h"
 #include "Util.h"
+#include "parser.h"
 
 /****************************************
 * Opponent methods
@@ -236,7 +237,7 @@ void opponent::setNewData(float lat, float lon,QString name)
     if(isQtBoat)
     {
         setIsQtBoat(false);
-        #warning why doing this ?
+        /* why doing this ? */
     }
     else
     {
@@ -297,6 +298,7 @@ void opponent::slot_shHidden()
 #define OPP_NO_REQUEST     0
 #define OPP_BOAT_DATA      1
 #define OPP_BOAT_TRJ       2
+#define OPP_LIST           3
 
 #define OPP_MODE_REFRESH   0
 #define OPP_MODE_NEWLIST   1
@@ -335,12 +337,24 @@ QString opponentList::getRaceId()
     return opponent_list[0]->getRace();
 }
 
-void opponentList::setBoatList(QString list_txt,QString race,bool force)
+void opponentList::setBoatList(QString list_txt,QString race,int showWhat,bool force)
 {
     //qWarning() << "SetBoatList";
     if(!hasInet() || hasRequest())
     {
         qWarning() << "getOpponents bad state in inet - setBoatList: " << hasInet() << " " << hasRequest();
+        return;
+    }
+    if(showWhat==1)
+    {
+        QString page;
+        QTextStream(&page)
+                            << "/ws/raceinfo/ranking.php?limit=10&idr="
+                            << race;
+        clearCurrentRequest();
+        opponent_list.clear();
+        needAuth=true;
+        inetGet(OPP_LIST,page);
         return;
     }
 
@@ -443,6 +457,34 @@ void opponentList::requestFinished (QByteArray res_byte)
 
     switch(getCurrentRequest())
     {
+        case OPP_LIST:
+        {
+            needAuth=false;
+            QJson::Parser parser;
+            QStringList listFirst;
+            QString race;
+            bool ok;
+
+            QVariantMap result = parser.parse (res_byte, &ok).toMap();
+            if (!ok)
+            {
+                qWarning() << "Error parsing json data while getting 10 first opponents" << res_byte;
+                qWarning() << "Error: " << parser.errorString() << " (line: " << parser.errorLine() << ")";
+                return;
+            }
+            QVariantMap r= result["request"].toMap();
+            race=r["idr"].toString();
+            QVariantMap opps= result["ranking"].toMap();
+            QMapIterator<QString,QVariant> indice(opps);
+            while(indice.hasNext())
+            {
+                QVariantMap opp=indice.next().value().toMap();
+                if(opp.isEmpty()) break;
+                listFirst.append(opp["idusers"].toString());
+            }
+            setBoatList(listFirst.join(";"),race,0,true);
+            break;
+        }
         case OPP_BOAT_DATA:
             list_res=readData(res,OPP_TYPE_NAME);
             if(list_res.size()>0)

@@ -288,6 +288,35 @@
      <string>Cacher les POIs intermediaires</string>
     </property>
    </widget>
+   <widget class="QSpinBox" name="vacStep">
+    <property name="geometry">
+     <rect>
+      <x>400</x>
+      <y>50</y>
+      <width>42</width>
+      <height>22</height>
+     </rect>
+    </property>
+    <property name="alignment">
+     <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+    </property>
+    <property name="minimum">
+     <number>1</number>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label">
+    <property name="geometry">
+     <rect>
+      <x>250</x>
+      <y>50</y>
+      <width>151</width>
+      <height>20</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Nbre de vac par pas de calcul</string>
+    </property>
+   </widget>
   </widget>
  </widget>
  <tabstops>

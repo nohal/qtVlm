@@ -49,7 +49,7 @@ class POI_Editor : public QDialog, public Ui::POI_editor_ui
         void chkTStamp_chg(int);
         void nameHasChanged(QString);
         void editPOI(POI *);
-        void newPOI(float lon, float lat,Projection *proj, boatAccount *);
+        void newPOI(float lon, float lat,Projection *proj, boat *);
         void lat_deg_chg(int);
         void lat_min_chg(double);
         void lon_deg_chg(int);

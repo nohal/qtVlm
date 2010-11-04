@@ -24,6 +24,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <QList>
 #include <QMessageBox>
 
+#include "boat.h"
 #include "class_list.h"
 
 #include "inetClient.h"
@@ -54,7 +55,7 @@ class Pilototo_instruction : public QWidget, public Ui::instruction_ui
         int   getStatus(void)     { return status_scr; }
         int   getTstamp(void)     { return tstamp_scr.toTime_t(); }
 	bool  getHasChanged(void) { return hasChanged; }
-	QString getPip(void);
+        QString getPip(void);
 
 	void setMode(int val);
 	void setAngle(float val);
@@ -127,6 +128,11 @@ class Pilototo_instruction : public QWidget, public Ui::instruction_ui
 
 #include "ui_Pilototo.h"
 
+struct instruction {
+    int script;
+    QByteArray param;
+};
+
 class Pilototo : public QDialog, public Ui::pilototo_ui, public inetClient
 {Q_OBJECT
     public:
@@ -136,13 +142,15 @@ class Pilototo : public QDialog, public Ui::pilototo_ui, public inetClient
 
         /* inetClient */
         void requestFinished(QByteArray res);
+        QString getAuthLogin(bool * ok);
+        QString getAuthPass(bool * ok);
 
     public slots:
 	void delInstruction(Pilototo_instruction *);
 	void editInstructions(void);
 	void editInstructionsPOI(Pilototo_instruction * instruction,POI * poi);
 	void instructionUpdated(void);
-	void boatUpdated(boatAccount * boat);
+        void slot_boatUpdated(boat * pvBoat);
         void updateTime(void);
         void doSelectPOI(Pilototo_instruction * instruction, int type); /* 1=instruction, 2=editor */
 
@@ -162,15 +170,15 @@ class Pilototo : public QDialog, public Ui::pilototo_ui, public inetClient
 
         int selectPOI_mode;
 
-	boatAccount * boat;
+        boatVLM * myBoat;
 	int nbInstruction;
 
 	void updateDrawList(void);
 	void updateNbInstruction(void);
 
-	QStringList * currentList;
+        QList<struct instruction*> * currentList;
 
-	void sendPilototo(QStringList * cmdList);
+        void sendPilototo(void);
 };
 
 #endif

@@ -46,15 +46,17 @@ void POI_delete::done(int result)
     QDialog::done(result);
 }
 
-void POI_delete::do_chkAll(void)
+void POI_delete::do_chkAll(QString)
 {
+    //qWarning() << "POI_delete: chk all";
     chk_POI->setCheckState(Qt::Checked);
     chk_WP->setCheckState(Qt::Checked);
     chk_Balise->setCheckState(Qt::Checked);
 }
 
-void POI_delete::do_chkNone(void)
+void POI_delete::do_chkNone(QString)
 {
+    //qWarning() << "POI_delete: unchk all";
     chk_POI->setCheckState(Qt::Unchecked);
     chk_WP->setCheckState(Qt::Unchecked);
     chk_Balise->setCheckState(Qt::Unchecked);

@@ -34,8 +34,8 @@ class POI_delete : public QDialog, public Ui::POI_delete_ui
         int getResult(void) { return mask; }
 
     public slots:
-        void do_chkAll(void);
-        void do_chkNone(void);
+        void do_chkAll(QString);
+        void do_chkNone(QString);
 
      private:
         int mask;

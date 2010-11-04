@@ -117,7 +117,7 @@ void inetConnexion::doRequest(int type,inetClient* client,QString requestUrl,QSt
 
     page=host+requestUrl;
 #if 0
-    qWarning() << "Doing inet request: " << page;
+    qWarning() << "Doing inet request: " << page ;
 #endif
     QNetworkRequest request;
     request.setUrl(QUrl(page));
@@ -136,7 +136,10 @@ void inetConnexion::doRequest(int type,inetClient* client,QString requestUrl,QSt
     }
 
     if(type==REQUEST_POST)
+    {
+        //qWarning() << "Posting data: " << data;
         currentReply=inetManager->post(request,data.toAscii());
+    }
     else
         currentReply=inetManager->get(request);
 
@@ -149,6 +152,8 @@ void inetConnexion::doRequest(int type,inetClient* client,QString requestUrl,QSt
         connect(currentReply,SIGNAL(downloadProgress(qint64,qint64)),this,SLOT(slot_progess(qint64,qint64)));
     }
 
+    //qWarning() << "inetConn::doRequest FINISHED";
+
     //replyList.push_back(client);
 }
 
@@ -158,6 +163,8 @@ void inetConnexion::slot_requestFinished(QNetworkReply * currentReply)
     bool found=false;
     inetClient * currentClient;
     QListIterator<inetClient*> i (replyList);
+
+    //qWarning() << "Get reply";
 
     while(!found && i.hasNext())
     {        
@@ -206,7 +213,7 @@ void inetConnexion::slot_requestFinished(QNetworkReply * currentReply)
     }
 }
 
-void inetConnexion::slot_authRequired(QNetworkReply* currentReply,QAuthenticator* auth)
+void inetConnexion::slot_authRequired(QNetworkReply* currentReply,QAuthenticator* /*auth*/)
 {
     /* Recherche du client correspondant � currentReply */
     bool found=false;

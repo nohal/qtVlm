@@ -36,7 +36,7 @@ Copyright (C) 2008 - Jacques Zaninetti - http://zygrib.free.fr
 #include "Orthodromie.h"
 #include "mycentralwidget.h"
 #include "route.h"
-#include "boatAccount.h"
+#include "boatVLM.h"
 #include "Projection.h"
 #include "finePosit.h"
 
@@ -46,7 +46,7 @@ Copyright (C) 2008 - Jacques Zaninetti - http://zygrib.free.fr
 
 POI::POI(QString name, int type, double lat, double lon,
                  Projection *proj, QWidget *main, myCentralWidget *parentWindow,
-                 float wph,int tstamp,bool useTstamp,boatAccount *boat)
+                 float wph,int tstamp,bool useTstamp,boat *myBoat)
     : QGraphicsWidget()
 {
     this->parent = parentWindow;
@@ -60,7 +60,7 @@ POI::POI(QString name, int type, double lat, double lon,
     this->useTstamp=useTstamp;
     this->type=type;
     this->typeMask=1<<type;
-    this->boat=boat;
+    this->myBoat=myBoat;
     this->searchRangeLon=1;
     this->searchRangeLat=1;
     this->searchStep=0.1;
@@ -107,7 +107,7 @@ POI::POI(QString name, int type, double lat, double lon,
 
     connect(main,SIGNAL(paramVLMChanged()),this,SLOT(slot_paramChanged()));
     connect(main,SIGNAL(WPChanged(double,double)),this,SLOT(slot_WPChanged(double,double)));
-    connect(main,SIGNAL(boatHasUpdated(boatAccount*)),this,SLOT(slot_updateTip(boatAccount*)));
+    connect(main,SIGNAL(boatHasUpdated(boat*)),this,SLOT(slot_updateTip(boat*)));
     connect(parent,SIGNAL(stopCompassLine()),this,SLOT(slot_abort()));
 
     ((MainWindow*)main)->getBoatWP(&WPlat,&WPlon);
@@ -122,7 +122,7 @@ POI::POI(QString name, int type, double lat, double lon,
 
 POI::~POI()
 {
-   // if(route!=NULL) route->removePoi(this);
+    if(route!=NULL) this->setRoute(NULL);
 }
 void POI::setLongitude(double lon)
 {
@@ -145,7 +145,7 @@ void POI::rmSignal(void)
 
     disconnect(owner,SIGNAL(paramVLMChanged()),this,SLOT(slot_paramChanged()));
     disconnect(owner,SIGNAL(WPChanged(double,double)),this,SLOT(slot_WPChanged(double,double)));
-    disconnect(owner,SIGNAL(boatHasUpdated(boatAccount*)),this,SLOT(slot_updateTip(boatAccount*)));
+    disconnect(owner,SIGNAL(boatHasUpdated(boat*)),this,SLOT(slot_updateTip(boat*)));
 
 }
 
@@ -416,10 +416,10 @@ void POI::contextMenuEvent(QGraphicsSceneContextMenuEvent * e)
     }
 
     /* Modification du nom du bateau */
-    boatAccount * ptr=parent->getSelectedBoat();
+    boat * ptr=parent->getSelectedBoat();
     if(ptr)
     {
-        ac_setWp->setText(tr("Marque->WP : ")+ptr->getLogin());
+        ac_setWp->setText(tr("Marque->WP : ")+ptr->getBoatName());
     }
     else
         ac_setWp->setEnabled(false);
@@ -459,17 +459,17 @@ void POI::setName(QString name)
 }
 void POI::setTip(QString tip)
 {
-    boatAccount * w_boat;
+    boat * w_boat;
     tip=tip.replace(" ","&nbsp;");
     if(route==NULL)
-        w_boat=boat;
+        w_boat=myBoat;
     else
         w_boat=route->getBoat();
     if(w_boat)
     {
         Orthodromie orth2boat(w_boat->getLon(), w_boat->getLat(), lon, lat);
         double   distance=orth2boat.getDistance();
-        QString tt=tr("Distance Ortho a partir de ")+w_boat->getLogin()+": "+
+        QString tt=tr("Distance Ortho a partir de ")+w_boat->getBoatName()+": "+
                    Util::formatDistance(distance);
         tt=tt.replace(" ","&nbsp;");
         setToolTip(getTypeStr() + " : " + my_str + "<br>"+tt+tip);
@@ -559,7 +559,9 @@ void POI::setRoute(ROUTE *route)
         this->routeName=route->getName();
     }
     else
+    {
         setRouteTimeStamp(false);
+    }
 }
 
 /**************************/
@@ -590,9 +592,9 @@ void POI::slot_updateProjection()
     int dy = height/2;
     setPos(pi, pj-dy);
 }
-void POI::slot_updateTip(boatAccount * boat)
+void POI::slot_updateTip(boat * myBoat)
 {
-    this->boat=boat;
+    this->myBoat=myBoat;
     if(route==NULL) setTip("");
 }
 
@@ -731,7 +733,7 @@ void POI::slot_finePosit()
                         parent->slot_delPOI_list(best);
                         delete best;
                     }
-                    best=new POI(tr("Meilleure ETA: ")+tm.toString("dd MMM-hh:mm"),0,bestLat,bestLon,this->proj,this->owner,this->parent,0,0,false,this->boat);
+                    best=new POI(tr("Meilleure ETA: ")+tm.toString("dd MMM-hh:mm"),0,bestLat,bestLon,this->proj,this->owner,this->parent,0,0,false,this->myBoat);
                     parent->slot_addPOI_list(best);
                     fromBoat.setEndPoint(bestLon,bestLat);
                     bestDistance=fromBoat.getDistance();
@@ -747,7 +749,7 @@ void POI::slot_finePosit()
                         delete best;
                         tm.setTimeSpec(Qt::UTC);
                         tm.setTime_t(bestEta);
-                        best=new POI(tr("Meilleure ETA: ")+tm.toString("dd MMM-hh:mm"),0,bestLat,bestLon,this->proj,this->owner,this->parent,0,0,false,this->boat);
+                        best=new POI(tr("Meilleure ETA: ")+tm.toString("dd MMM-hh:mm"),0,bestLat,bestLon,this->proj,this->owner,this->parent,0,0,false,this->myBoat);
                         parent->slot_addPOI_list(best);
                         fromBoat.setEndPoint(bestLon,bestLat);
                         bestDistance=fromBoat.getDistance();
@@ -764,7 +766,7 @@ void POI::slot_finePosit()
                             delete best;
                             tm.setTimeSpec(Qt::UTC);
                             tm.setTime_t(bestEta);
-                            best=new POI(tr("Meilleure ETA: ")+tm.toString("dd MMM-hh:mm"),0,bestLat,bestLon,this->proj,this->owner,this->parent,0,0,false,this->boat);
+                            best=new POI(tr("Meilleure ETA: ")+tm.toString("dd MMM-hh:mm"),0,bestLat,bestLon,this->proj,this->owner,this->parent,0,0,false,this->myBoat);
                             parent->slot_addPOI_list(best);
                             bestDistance=fromBoat.getDistance();
                         }
@@ -788,7 +790,7 @@ void POI::slot_finePosit()
                         bestLat=lat;
                         QString r;
                         best=new POI(tr("Meilleure distance restante: ")+r.sprintf("%.2f milles",bestRemain),
-                                     0,bestLat,bestLon,this->proj,this->owner,this->parent,0,0,false,this->boat);
+                                     0,bestLat,bestLon,this->proj,this->owner,this->parent,0,0,false,this->myBoat);
                         parent->slot_addPOI_list(best);
                     }
                 }

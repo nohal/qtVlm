@@ -43,6 +43,14 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 /* defines */
 #define TYPE_LON 1
 #define TYPE_LAT 2
+#define TYPE_DATE 1
+#define TYPE_TIME 2
+#define REC_ACTIVE 1
+#define REC_VOID 2
+
+#define BOAT_REAL 0
+#define BOAT_VLM  1
+#define BOAT_NOBOAT -1
 
 /* request type */
 #define VLM_NO_REQUEST     -1
@@ -54,6 +62,34 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #define VLM_REQUEST_TRJ  5
 #define VLM_REQUEST_GATE 6
 #define VLM_REQUEST_WS    7
+#define VLM_REQUEST_PROFILE 8
+#define VLM_REQUEST_FLEET   9
+
+/* VLM CMD type */
+#define VLM_CMD_HD     1
+#define VLM_CMD_ANG    2
+#define VLM_CMD_WP     3
+#define VLM_CMD_ORTHO  4
+#define VLM_CMD_VMG    5
+#define VLM_CMD_VBVMG  6
+
+#define PILOT_ADD      0
+#define PILOT_UPD      1
+#define PILOT_DEL      2
+
+#define BOAT_OWN        0
+#define BOAT_BSIT       1
+
+#define ROLE_IDX       Qt::UserRole
+
+/* NB retry when sending data to VLM */
+#define MAX_RETRY 5
+
+/* colors */
+
+#define SPEED_COLOR_UPDATE    "color: rgb(100, 200, 0);"
+#define SPEED_COLOR_VLM       "color: rgb(255, 0, 0);"
+#define SPEED_COLOR_NO_POLAR  "color: rgb(255, 170, 127);"
 
 /* angle helper functions */
 

@@ -1,7 +1,7 @@
 #include "twaline.h"
 #include "mycentralwidget.h"
 #include "Grib.h"
-#include "boatAccount.h"
+#include "boatVLM.h"
 #include "vlmLine.h"
 #include "Util.h"
 #include "Polar.h"
@@ -12,7 +12,7 @@ twaLine::twaLine(QPointF start, myCentralWidget *parent, MainWindow *main) : QDi
     this->parent=parent;
     this->start=start;
     this->grib=parent->getGrib();
-    this->boat=parent->getSelectedBoat();
+    this->myBoat=parent->getSelectedBoat();
     pen.setColor(Qt::yellow);
     pen.setBrush(Qt::yellow);
     pen.setWidthF(3);
@@ -102,10 +102,10 @@ void twaLine::traceIt()
             delete poi;
         }
     }
-    this->boat=parent->getSelectedBoat();
-    if(boat==NULL) return;
+    this->myBoat=parent->getSelectedBoat();
+    if(myBoat==NULL) return;
     if(!grib->isOk()) return;
-    if(!boat->getPolarData()) return;
+    if(!myBoat->getPolarData()) return;
     time_t eta=grib->getCurrentDate();
     nbVac[0]=this->spinBox->value();
     nbVac[1]=this->spinBox_2->value();
@@ -117,7 +117,7 @@ void twaLine::traceIt()
     twa[2]=this->doubleSpinBox_3->value();
     twa[3]=this->doubleSpinBox_4->value();
     twa[4]=this->doubleSpinBox_5->value();
-    int vacLen=boat->getVacLen();
+    int vacLen=myBoat->getVacLen();
     vlmPoint current(start.x(),start.y());
     line->addVlmPoint(current);
     double wind_speed,wind_angle,cap;
@@ -133,7 +133,7 @@ void twaLine::traceIt()
                 break;
             wind_angle=radToDeg(wind_angle);
             cap=A360(wind_angle+twa[page]);
-            float newSpeed=boat->getPolarData()->getSpeed(wind_speed,twa[page]);
+            float newSpeed=myBoat->getPolarData()->getSpeed(wind_speed,twa[page]);
             float distanceParcourue=newSpeed*vacLen/3600.00;
             Util::getCoordFromDistanceAngle(current.lat, current.lon, distanceParcourue, cap,&lat,&lon);
             current.lon=lon;
@@ -146,7 +146,7 @@ void twaLine::traceIt()
         tm.setTime_t(eta);
         QString name;
         name.sprintf("Twa %.1f",twa[page]);
-        POI * arrival=parent->slot_addPOI(name+tr(" ETA: ")+tm.toString("dd MMM-hh:mm"),0,lat,lon,-1,0,false,boat);
+        POI * arrival=parent->slot_addPOI(name+tr(" ETA: ")+tm.toString("dd MMM-hh:mm"),0,lat,lon,-1,0,false,myBoat);
         arrival->setPartOfTwa(true);
         list.append(arrival);
     }

@@ -28,7 +28,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "Projection.h"
 #include "route.h"
 #include "POI.h"
-#include "boatAccount.h"
+#include "boatVLM.h"
 
 #define VERSION_NUMBER    1
 #define DOM_FILE_TYPE     "qtVLM_config"
@@ -47,6 +47,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #define ROUTE_COLOR_B     "color_blue"
 #define ROUTE_LIVE        "liveUpdate"
 #define ROUTE_HIDEPOIS    "hidePois"
+#define ROUTE_MULTVAC     "vacStep"
 /* POI */
 #define POI_GROUP_NAME    "POI"
 #define POI_NAME          "name"
@@ -111,7 +112,7 @@ void xml_POIData::slot_writeData(QList<ROUTE*> & route_list,QList<POI*> & poi_li
 
           tag = doc.createElement(ROUTE_BOAT);
           group.appendChild(tag);
-          t = doc.createTextNode(route->getBoat()->getLogin().toUtf8().toBase64());
+          t = doc.createTextNode(QString().setNum(route->getBoat()->getId()));
           tag.appendChild(t);
 
           tag = doc.createElement(ROUTE_START);
@@ -122,6 +123,11 @@ void xml_POIData::slot_writeData(QList<ROUTE*> & route_list,QList<POI*> & poi_li
           tag = doc.createElement(ROUTE_DATEOPTION);
           group.appendChild(tag);
           t = doc.createTextNode(QString().setNum(route->getStartTimeOption()));
+          tag.appendChild(t);
+
+          tag = doc.createElement(ROUTE_MULTVAC);
+          group.appendChild(tag);
+          t = doc.createTextNode(QString().setNum(route->getMultVac()));
           tag.appendChild(t);
 
           tag = doc.createElement(ROUTE_DATE);
@@ -308,7 +314,7 @@ void xml_POIData::slot_readData(QString fname)
 
      //QTextStream in(&file);
 
-     qWarning() << "Starting loading POI";
+     qWarning() << "Loading POI";
 
      QDomDocument doc;
      if(!doc.setContent(&file,true,&errorStr,&errorLine,&errorColumn))
@@ -358,6 +364,7 @@ void xml_POIData::slot_readData(QString fname)
               route->setBoat(NULL);
               QColor routeColor=Qt::red;
               subNode = node.firstChild();
+              bool invalidRoute=true;
               while(!subNode.isNull())
               {
                   if(subNode.toElement().tagName() == ROUTE_NAME)
@@ -368,21 +375,27 @@ void xml_POIData::slot_readData(QString fname)
                   }
                   if(subNode.toElement().tagName() == ROUTE_BOAT)
                   {
+#warning a modif pour les real boat ?
                        dataNode = subNode.firstChild();
                        if(dataNode.nodeType() == QDomNode::TextNode)
                        {
-                           QListIterator<boatAccount*> b (parent->getBoats());
-                           while(b.hasNext())
+                           if(parent->getBoats())
                            {
-                                boatAccount * acc = b.next();
-                                if(acc->getStatus())
-                                {
-                                    if(acc->getLogin()==QString(QByteArray::fromBase64(dataNode.toText().data().toUtf8())))
-                                    {
-                                        route->setBoat(acc);
-                                        break;
-                                    }
-                                }
+                               QListIterator<boatVLM*> b (*parent->getBoats());
+
+                               while(b.hasNext())
+                               {
+                                   boatVLM * boat = b.next();
+                                   if(boat->getStatus())
+                                   {
+                                       if(boat->getId()==dataNode.toText().data().toInt())
+                                       {
+                                           route->setBoat(boat);
+                                           invalidRoute=false;
+                                           break;
+                                       }
+                                   }
+                               }
                            }
                        }
                   }
@@ -397,6 +410,12 @@ void xml_POIData::slot_readData(QString fname)
                       dataNode = subNode.firstChild();
                       if(dataNode.nodeType() == QDomNode::TextNode)
                           route->setStartTimeOption(dataNode.toText().data().toInt());
+                  }
+                  if(subNode.toElement().tagName() == ROUTE_MULTVAC)
+                  {
+                      dataNode = subNode.firstChild();
+                      if(dataNode.nodeType() == QDomNode::TextNode)
+                          route->setMultVac(dataNode.toText().data().toInt());
                   }
                   if(subNode.toElement().tagName() == ROUTE_DATE)
                   {
@@ -458,6 +477,10 @@ void xml_POIData::slot_readData(QString fname)
                   }
 
                   subNode = subNode.nextSibling();
+              }
+              if(invalidRoute) /*route->boat does not exist anymore, delete the route*/
+              {
+                parent->deleteRoute(route);
               }
           }
           else if(node.toElement().tagName() == POI_GROUP_NAME)

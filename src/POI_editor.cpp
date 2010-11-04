@@ -31,7 +31,7 @@ class POI_Editor;
 #include "POI_editor.h"
 #include "Util.h"
 #include "MainWindow.h"
-#include "boatAccount.h"
+#include "boatVLM.h"
 
 #define POI_EDT_LAT 1
 #define POI_EDT_LON 2
@@ -54,8 +54,8 @@ POI_Editor::POI_Editor(MainWindow * main,myCentralWidget * parent)
     connect(this,SIGNAL(addPOI_list(POI*)),parent,SLOT(slot_addPOI_list(POI*)));
     connect(this,SIGNAL(delPOI_list(POI*)),parent,SLOT(slot_delPOI_list(POI*)));
 
-    connect(main, SIGNAL(newPOI(float,float,Projection *, boatAccount *)),
-            this, SLOT(newPOI(float,float,Projection *, boatAccount *)));
+    connect(main, SIGNAL(newPOI(float,float,Projection *, boat *)),
+            this, SLOT(newPOI(float,float,Projection *, boat*)));
     connect(this,SIGNAL(doChgWP(float,float,float)),main,SLOT(slotChgWP(float,float,float)));
 }
 
@@ -71,7 +71,7 @@ void POI_Editor::editPOI(POI * poi_)
     exec();
 }
 
-void POI_Editor::newPOI(float lon, float lat,Projection *proj, boatAccount *boat)
+void POI_Editor::newPOI(float lon, float lat,Projection *proj, boat *boat)
 {
     //=> set name
     modeCreation = true;
@@ -123,10 +123,10 @@ void POI_Editor::initPOI(void)
     editTStamp->setEnabled(poi->getUseTimeStamp());
     editName->setEnabled(!poi->getUseTimeStamp());
 
-    boatAccount * ptr=parent->getSelectedBoat();
+    boat * ptr=parent->getSelectedBoat();
     if(ptr)
     {
-        btSaveWP->setText(tr("Marque->WP\n(")+ptr->getLogin()+")");
+        btSaveWP->setText(tr("Marque->WP\n(")+ptr->getBoatName()+")");
         btSaveWP->setEnabled(true);
     }
     else

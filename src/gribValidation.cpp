@@ -112,7 +112,7 @@ void gribValidation::inputChanged(void)
         this->vitesse->setText("Err tstamp");
         return;
     }
-    qWarning() << "Get new param: " << lat << "," << lon << " - " << tstamp;
+    //qWarning() << "Get new param: " << lat << "," << lon << " - " << tstamp;
 
     if(!this->my_centralWidget->getGrib())
     {
@@ -122,7 +122,7 @@ void gribValidation::inputChanged(void)
 
     ok=this->my_centralWidget->getGrib()->getInterpolatedValue_byDates(lon,lat,tstamp,&vit,&ang,
                                                       type->currentIndex()+1,this->chk_debug->checkState()==Qt::Checked);
-    qWarning() << "Interpolation: v=" << vit << ", ang=" << ang << "(ok=" << ok << ")";
+    //qWarning() << "Interpolation: v=" << vit << ", ang=" << ang << "(ok=" << ok << ")";
 
     vitesse->setText(QString().setNum(vit));
     angle->setText(QString().setNum(radToDeg(ang)));

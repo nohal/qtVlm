@@ -46,8 +46,8 @@ class ROUTE : public QGraphicsWidget
         void setName(QString name){this->name=name;}
         QString getName() {return(this->name);}
 
-        void setBoat(boatAccount *boat);
-        boatAccount * getBoat(){return this->boat;}
+        void setBoat(boat *boat);
+        boat * getBoat(){return this->myBoat;}
 
         void setColor(QColor color);
         QColor getColor(){return this->color;}
@@ -95,6 +95,8 @@ class ROUTE : public QGraphicsWidget
         void setHidePois(bool b);
         bool isImported(){return imported;}
         void setImported(){this->imported=true;}
+        void setMultVac(int i){this->multVac=i;}
+        int getMultVac(){return this->multVac;}
         QList<POI*> & getPoiList() { return this->my_poiList; }
         vlmLine * getLine(){return this->line;}
     public slots:
@@ -105,7 +107,8 @@ class ROUTE : public QGraphicsWidget
         void slot_shHidden();
         void slot_shRou(){if(this->isVisible()) slot_shHidden();else slot_shShow();}
         void slot_export(){parent->exportRouteFromMenu(this);}
-        void slot_boatPointerHasChanged(boatAccount * acc);
+        void slot_boatPointerHasChanged(boat * acc);
+        void slot_compassFollow(){parent->setCompassFollow(this);}
         void slot_compassFollow(){parent->setCompassFollow(this);}
     signals:
         void editMe(ROUTE *);
@@ -125,7 +128,7 @@ class ROUTE : public QGraphicsWidget
         /* data */
         QString name;
         QList<POI*> my_poiList;
-        boatAccount *boat;
+        boat *myBoat;
         QString boatLogin;
         Grib *grib;
         bool startFromBoat;
@@ -162,5 +165,6 @@ class ROUTE : public QGraphicsWidget
         bool hidePois;
         void interpolatePos();
         bool imported;
+        int multVac;
 };
 #endif // ROUTE_H

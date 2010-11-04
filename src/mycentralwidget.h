@@ -78,7 +78,8 @@ class myCentralWidget : public QWidget
 { Q_OBJECT
     public:
         myCentralWidget(Projection * proj,MainWindow * parent,MenuBar *menuBar);
-        void loadData(void);
+        void loadBoat(void);
+        void loadPOI(void);
         ~myCentralWidget();
 
         /* access to pointer & data */
@@ -87,19 +88,23 @@ class myCentralWidget : public QWidget
         bool compassHasLine(void);
         int getCompassMode(int m_x,int m_y);
         bool isSelecting(void);
-        QList<boatAccount*> &  getBoats() { return this->acc_list; }
+        QList<boatVLM*> * getBoats() { return this->boat_list; }
+        QList<Player*> &  getPlayers() { return this->player_list; }
         QList<raceData*> & getRaces() { return this->race_list; }
         QList<POI*> & getPois() { return this->poi_list; }
         GshhsReader * get_gshhsReader(void) { return gshhsReader; }
         opponentList * getOppList() { return opponents; }
         inetConnexion * getInet(void) { return inetManager; }
-        boatAccount * getSelectedBoat(void);
+        boat * getSelectedBoat(void);
         bool hornIsActivated(void){return hornActivated;}
         void setHornIsActivated(bool b){this->hornActivated=b;}
         QDateTime getHornDate(void){return this->hornDate;}
         void setHornDate(QDateTime t){this->hornDate=t;}
         void setHorn();
         void twaDraw(double lon, double lat);
+        Player * getPlayer(void) { return currentPlayer; }
+
+        void manageAccount(bool * res=NULL);
 
         /* route */
         QList<ROUTE*> & getRouteList(){ return this->route_list;}
@@ -165,7 +170,7 @@ class myCentralWidget : public QWidget
         void slot_Zoom_Sel();
 
         /* POI */
-        POI * slot_addPOI(QString name,int type,float lat,float lon, float wph,int timestamp,bool useTimeStamp, boatAccount *boat);
+        POI * slot_addPOI(QString name,int type,float lat,float lon, float wph,int timestamp,bool useTimeStamp, boat *boat);
         void slot_addPOI_list(POI * poi);
         void slot_delPOI_list(POI * poi);
         void slot_POISave(void);
@@ -195,9 +200,14 @@ class myCentralWidget : public QWidget
         void slot_addRoutageFromMenu();
         void slot_editRoutage(ROUTAGE * routage,bool createMode=false);
 
+        /* Players */
+        void slot_addPlayer_list(Player* player);
+        void slot_delPlayer_list(Player* player);
+        void slot_playerSelected(Player * player);
+
         /* Boats */
-        void slot_addBoat_list(boatAccount* boat);
-        void slot_delBoat_list(boatAccount* boat);
+        void slot_addBoat_list(boatVLM* boat);
+        void slot_delBoat_list(boatVLM* boat);
         void slot_writeBoatData(void);
         void slot_readBoatData(void);
 
@@ -212,6 +222,7 @@ class myCentralWidget : public QWidget
 
         /* Dialogs */
         void slot_boatDialog(void);
+        void slot_manageAccount();
         void slot_raceDialog(void);
 
         /* Events */
@@ -241,9 +252,10 @@ class myCentralWidget : public QWidget
         void twaDelPoi(POI*);
 
         /* Boats */
-        void writeBoatData(QList<boatAccount*> & boat_list,QList<raceData*> & race_list,QString fname);
+        void writeBoatData(QList<Player*> & player_list,QList<raceData*> & race_list,QString fname);
         void readBoatData(QString fname, bool readAll);
-        void boatPointerHasChanged(boatAccount *);
+        void boatPointerHasChanged(boat *);
+        void accountListUpdated(void);
 
         /* compass */
         void stopCompassLine(void);
@@ -297,6 +309,7 @@ class myCentralWidget : public QWidget
         dialog_gribDate * gribDateDialog;
         POI_Editor * poi_editor;
         boatAccount_dialog * boatAcc;
+        playerAccount * playerAcc;
         race_dialog * raceParam;
         DialogLoadGrib  * dialogLoadGrib;
         DialogUnits     dialogUnits;
@@ -306,8 +319,11 @@ class myCentralWidget : public QWidget
         QList<POI*> poi_list;
         QList<ROUTE*> route_list;
         QList<ROUTAGE*> routage_list;
-        QList<boatAccount*> acc_list;
+        QList<boatVLM*> * boat_list;
+        QList<Player*> player_list;
         QList<raceData*> race_list;
+        Player * currentPlayer;
+        boatReal * realBoat;
 
         /* Data file */
         xml_POIData * xmlPOI;

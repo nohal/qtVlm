@@ -29,6 +29,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "class_list.h"
 
+typedef QMap<int,Player*> PlayerMap;
+
 class xml_boatData: public QWidget
 {Q_OBJECT
 
@@ -36,20 +38,26 @@ class xml_boatData: public QWidget
             xml_boatData(Projection * proj,MainWindow * main, myCentralWidget * parent,inetConnexion * inet);
 
       public slots:
-            void slot_writeData(QList<boatAccount*> & boat_list,QList<raceData*> & race_list,QString fname);
+            void slot_writeData(QList<Player*> & player_list,QList<raceData*> & race_list,QString fname);
             void slot_readData(QString fname,bool readAll);
 
       signals:
-            void addBoat_list(boatAccount* boat);
-            void delBoat_list(boatAccount* boat);
+            void addBoat_list(boatVLM* boat);
+            void delBoat_list(boatVLM* boat);
             void addRace_list(raceData* race);
             void delRace_list(raceData* race);
+            void addPlayer_list(Player* player);
+            void delPlayer_list(Player* player);
 
       private:
             Projection * proj;
             MainWindow * main;
             myCentralWidget * parent;
             inetConnexion * inet;
+
+            void readRace(QDomNode node);
+            void readBoat(QDomNode node,PlayerMap * pList);
+            void readPlayer(QDomNode node,PlayerMap * pList);
 };
 
 #endif

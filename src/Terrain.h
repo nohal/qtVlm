@@ -100,7 +100,7 @@ signals:
     void showContextualMenu(QGraphicsSceneContextMenuEvent * event);
     void mousePress(QGraphicsSceneMouseEvent* e);
     void mouseRelease(QGraphicsSceneMouseEvent* e);
-    int  getRaceVacLen(boatAccount *,int*);
+    int  getRaceVacLen(boatVLM *,int*);
 
 protected:
     void paint(QPainter * pnt, const QStyleOptionGraphicsItem * , QWidget * );

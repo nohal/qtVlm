@@ -63,9 +63,14 @@ int main(int argc, char *argv[])
     app.setQuitOnLastWindowClosed(true);
     
     MainWindow win(800, 600);
-    win.show();
+    if(win.getFinishStart())
+    {
+        win.show();
     
-    app.installTranslator(NULL);
+        app.installTranslator(NULL);
 
-    return app.exec();
+        return app.exec();
+    }
+    else
+        return 0;
 }

@@ -19,7 +19,7 @@
      <x>10</x>
      <y>20</y>
      <width>210</width>
-     <height>133</height>
+     <height>135</height>
     </rect>
    </property>
    <layout class="QVBoxLayout" name="verticalLayout_2">
@@ -32,8 +32,11 @@
           <underline>true</underline>
          </font>
         </property>
+        <property name="focusPolicy">
+         <enum>Qt::ClickFocus</enum>
+        </property>
         <property name="text">
-         <string>Tous</string>
+         <string>&lt;a href=&quot;titi&quot;&gt;Tous&lt;/a&gt;</string>
         </property>
        </widget>
       </item>
@@ -44,8 +47,11 @@
           <underline>true</underline>
          </font>
         </property>
+        <property name="focusPolicy">
+         <enum>Qt::ClickFocus</enum>
+        </property>
         <property name="text">
-         <string>Aucun</string>
+         <string>&lt;a href=&quot;toto&quot;&gt;Aucun&lt;/a&gt;</string>
         </property>
        </widget>
       </item>
@@ -188,7 +194,7 @@
    <sender>lnk_all</sender>
    <signal>linkActivated(QString)</signal>
    <receiver>POI_delete_ui</receiver>
-   <slot>do_chkAll()</slot>
+   <slot>do_chkAll(QString)</slot>
    <hints>
     <hint type="sourcelabel">
      <x>23</x>
@@ -204,7 +210,7 @@
    <sender>lnk_none</sender>
    <signal>linkActivated(QString)</signal>
    <receiver>POI_delete_ui</receiver>
-   <slot>do_chkNone()</slot>
+   <slot>do_chkNone(QString)</slot>
    <hints>
     <hint type="sourcelabel">
      <x>62</x>
@@ -250,7 +256,7 @@
   </connection>
  </connections>
  <slots>
-  <slot>do_chkAll()</slot>
-  <slot>do_chkNone()</slot>
+  <slot>do_chkAll(QString)</slot>
+  <slot>do_chkNone(QString)</slot>
  </slots>
 </ui>

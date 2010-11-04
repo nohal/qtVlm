@@ -1,7 +1,7 @@
 #include "vlmPoint.h"
 #include "Util.h"
 #include "Orthodromie.h"
-#include "boatAccount.h"
+
 #include "Polar.h"
 #include <QLineF>
 vlmPoint::vlmPoint(float lon,float lat)
@@ -14,7 +14,7 @@ vlmPoint::vlmPoint(float lon,float lat)
     this->isDead=false;
     this->eta=0;
     this->distIso=-1;
-    this->initialCap=0;
-    this->startLon=0;
-    this->startLat=0;
+    this->capOrigin=0;
+    this->eyeLon=0;
+    this->eyeLat=0;
 }

@@ -29,7 +29,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <QMainWindow>
 
 #include "class_list.h"
-
 #include "inetClient.h"
 
 #include "ui_BoardVLM.h"
@@ -39,7 +38,7 @@ class WP_dialog: public QDialog, public Ui::WP_dialog_ui
 { Q_OBJECT
     public:
         WP_dialog(QWidget * parent=0);
-        void show_WPdialog(boatAccount * boat);
+        void show_WPdialog(boatVLM * boat);
 
     public slots:
         void chgLat();
@@ -56,18 +55,21 @@ class WP_dialog: public QDialog, public Ui::WP_dialog_ui
         void selectPOI(void);
 
     private:
-        boatAccount * currentBoat;
+        boatVLM * currentBoat;
         void initDialog(float WPLat,float WPLon,float WPHd);
 };
 
 class boardVLM: public QWidget , public Ui::boardVLM_ui, public inetClient
 { Q_OBJECT
     public:
-        boardVLM(MainWindow * mainWin, inetConnexion * inet);
-        void validationDone(bool ok);        
+        boardVLM(MainWindow * mainWin, inetConnexion * inet, board * parent);       
+        void boatUpdated(void);
+        void setChangeStatus(bool);
 
         /* inetClient */
         void requestFinished(QByteArray res);
+        QString getAuthLogin(bool * ok);
+        QString getAuthPass(bool * ok);
 
     public slots:
         void chgHeading();
@@ -84,13 +86,10 @@ class boardVLM: public QWidget , public Ui::boardVLM_ui, public inetClient
         void synch_GPS();
         void confirmAndSendCmd(QString,QString,int cmdNum,float,float,float);
         void setWP(float lat,float lon,float wph=-1);
+
         void paramChanged(void);
-        void setChangeStatus(bool);
 
         void edtSpinBox_key(void);
-
-        void boatUpdated(boatAccount * boat);
-
         void slot_hideShowCompass();
 
     signals:
@@ -104,18 +103,19 @@ class boardVLM: public QWidget , public Ui::boardVLM_ui, public inetClient
 
     private:
         QMainWindow * mainWin;
+        board * parent;
+
+        boatVLM * currentBoat(void);
 
         int currentCmdNum;
         int nbRetry;
         bool isWaiting;
 
-        float cmd_val1,cmd_val2,cmd_val3;
-        float computeWPdir(boatAccount * boat);
+        double cmd_val1,cmd_val2,cmd_val3;
+        float computeWPdir(boatVLM * boat);
         void update_btnWP(void);
 
-        void sendCmd(int cmdNum,float val1,float val2, float val3);
-
-        boatAccount * currentBoat;
+        void sendCmd(int cmdNum,double  val1,double val2, double val3);
 
         QTimer * GPS_timer;
 

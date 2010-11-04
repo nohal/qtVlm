@@ -21,6 +21,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #ifndef INETCLIENT_H
 #define INETCLIENT_H
 
+#include <QObject>
 #include <QNetworkReply>
 
 #include "class_list.h"
@@ -48,6 +49,8 @@ class inetClient
         void setName(QString name){this->name=name;}
         bool getNeedAuth(void) {return needAuth;}
 
+        inetConnexion * getInet(void) { return inet; }
+
         int nbAuth;
 
     protected:
@@ -61,6 +64,8 @@ class inetClient
 
        bool hasRequest(void) { return (myReply!=NULL); }
        bool hasInet(void) {return (inet!=NULL); }
+
+       bool checkWSResult(QByteArray res,QString caller,QWidget * parent);
 
        bool needAuth;
 

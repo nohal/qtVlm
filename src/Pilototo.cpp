@@ -20,15 +20,18 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <QTextStream>
 #include <QDebug>
+#include <parser.h>
+#include <serializer.h>
 
 #include "Util.h"
-#include "Pilototo.h"
-#include "boatAccount.h"
+#include "boat.h"
+#include "boatVLM.h"
 #include "MainWindow.h"
 #include "mycentralwidget.h"
 #include "Pilototo_param.h"
 #include "POI.h"
 #include "dataDef.h"
+#include "Pilototo.h"
 
 
 Pilototo::Pilototo(MainWindow *main,myCentralWidget * parent,inetConnexion * inet):QDialog(parent), inetClient(inet)
@@ -37,6 +40,8 @@ Pilototo::Pilototo(MainWindow *main,myCentralWidget * parent,inetConnexion * ine
     setupUi(this);
 
     selectPOI_mode=1;
+
+    needAuth=true;
 
     instructionEditor = new Pilototo_param(this);
     connect(instructionEditor,SIGNAL(doSelectPOI(Pilototo_instruction *,int)),
@@ -47,8 +52,7 @@ Pilototo::Pilototo(MainWindow *main,myCentralWidget * parent,inetConnexion * ine
             this,SLOT(editInstructions()));
     connect(main,SIGNAL(editInstructionsPOI(Pilototo_instruction * ,POI * )),
             this,SLOT(editInstructionsPOI(Pilototo_instruction * ,POI * )));
-    connect(main,SIGNAL(boatHasUpdated(boatAccount*)),
-            this,SLOT(boatUpdated(boatAccount*)));
+    connect(main,SIGNAL(boatHasUpdated(boat*)),this,SLOT(slot_boatUpdated(boat*)));
 
     btn_addInstruction->setIcon(QIcon("img/add.png"));
 
@@ -65,7 +69,7 @@ Pilototo::Pilototo(MainWindow *main,myCentralWidget * parent,inetConnexion * ine
                              tr("Chargement des instructions VLM en cours"));
 
     /* inet init */
-    currentList = NULL;
+    currentList=NULL;
 }
 
 void Pilototo::updateDrawList(void)
@@ -187,12 +191,13 @@ void Pilototo::doSelectPOI(Pilototo_instruction * instruction,int type) /* 1=ins
     parent->activateWindow();
 }
 
-void Pilototo::boatUpdated(boatAccount * boat)
+void Pilototo::slot_boatUpdated(boat * pvBoat)
 {
     if(!waitBox->isVisible())
 	return;
     waitBox->hide();
-    this->boat=boat;
+    boatVLM * my_boat=(boatVLM*)pvBoat;
+    this->myBoat=my_boat;
     int mode;
     int ref;
     float angle=0;
@@ -200,10 +205,10 @@ void Pilototo::boatUpdated(boatAccount * boat)
     float wph=-1;
     int pos;
 
-    QStringList * list = boat->getPilototo();
+    QStringList * list = my_boat->getPilototo();
 
-    if(boat)
-        titreBateau->setText(tr("Pilototo pour ") + boat->getBoatName());
+    if(my_boat)
+        titreBateau->setText(tr("Pilototo pour ") + my_boat->getBoatName());
     else
         titreBateau->setText(tr("Pilototo"));
 
@@ -213,7 +218,7 @@ void Pilototo::boatUpdated(boatAccount * boat)
     while (!instructions_list.isEmpty())
 	delete instructions_list.takeFirst();
 
-    if(!boat->getHasPilototo())
+    if(!my_boat->getHasPilototo())
 	QMessageBox::information (this,
 	    tr("Pilototo"),
 	    tr("La récupération des données pilototo de VLM n'a pas fonctionné\nVous pouvez ajouter des instructions mais sans voir le resultat dans QtVlm"),
@@ -308,28 +313,71 @@ void Pilototo::done(int result)
 		return;
 	}
 	/* creating list of pilototo.php requests*/
-	QStringList * requestList= new QStringList();
+        QList<struct instruction*> * instructions = new QList<struct instruction*>;
+        QJson::Serializer serializer;
+        struct instruction * instr_ptr;
 	/* processing del */
 	for(int i=0;i<delList.count();i++)
-	    requestList->append("action=efface&lang=fr&taskid="+QString().setNum(delList[i]));
+        {
+            QVariantMap cur_instruction;
+            cur_instruction.insert("taskid",delList[i]);
+            cur_instruction.insert("idu",myBoat->getBoatId().toInt());
+            instr_ptr=new struct instruction();
+            instr_ptr->script=PILOT_DEL;
+            instr_ptr->param=serializer.serialize(cur_instruction);
+            instructions->append(instr_ptr);
+        }
 	/* processing others */
 	for(int i=0;i<instructions_list.count();i++)
 	{
 	    Pilototo_instruction * instr=instructions_list[i];
 	    if(!instr->getHasChanged())
 	    { /* only processing activated and validated instructions */
-		QString txt;
+                QVariantMap cur_instruction;
+                QVariantMap pip;
+                int type;
+                int mode=instr->getMode()+1;
+                cur_instruction.insert("idu",myBoat->getBoatId().toInt());
 		if(instr->getRef()!=-1) /* updating */
-		    txt="action=modifie&lang=fr&taskid="+QString().setNum(instr->getRef());
+                {
+                    type=PILOT_UPD;
+                    cur_instruction.insert("taskid",instr->getRef());
+                }
 		else /* adding */
-		    txt="action=ajoute&lang=fr";
-		txt=txt+QString("&pim=%1&pip=%2&time=%3").arg(instr->getMode()+1)
-			.arg(instr->getPip()).arg(instr->getTstamp());
-		requestList->append(txt);
+                {
+                    type=PILOT_ADD;
+                }
+                cur_instruction.insert("pim",mode);
+                cur_instruction.insert("tasktime",instr->getTstamp());
+
+                switch(mode)
+                {
+                case 1:
+                case 2:
+                    cur_instruction.insert("pip",(double)instr->getAngle());
+                    break;
+                case 3:
+                case 4:
+                case 5:
+                    pip.insert("targetlat",(double)instr->getLat());
+                    pip.insert("targetlong",(double)instr->getLon());
+                    pip.insert("targetandhdg",(double)instr->getWph());
+                    cur_instruction.insert("pip",pip);
+                    break;
+                }
+                instr_ptr=new struct instruction();
+                instr_ptr->script=type;
+                instr_ptr->param=serializer.serialize(cur_instruction);
+                instructions->append(instr_ptr);
 	    }
 	}
 	/* ready to send */
-	sendPilototo(requestList);
+        currentList=instructions;
+
+        for(int i=0;i<currentList->count();i++)
+            qWarning() << i << ": " << currentList->at(i)->script << " - " << currentList->at(i)->param;
+
+        sendPilototo();
     }
 
     while (!instructions_list.isEmpty())
@@ -340,52 +388,92 @@ void Pilototo::done(int result)
 
 
 
-void Pilototo::sendPilototo(QStringList * cmdList)
+void Pilototo::sendPilototo(void)
 {
-    if(!hasInet() || hasRequest())
+    struct instruction* data;
+
+    if(!currentList)
     {
-        qWarning("error can't send pilototo (nb instr:%d)",cmdList->count());
+        qWarning("error can't send pilototo list does not exists");
         return;
     }
 
-    currentList=cmdList;
-    QString page;
-    QTextStream(&page)
-            << "/myboat.php?"
-            << "pseudo=" << boat->getLogin()
-            << "&password=" << boat->getPass()
-            << "&lang=fr&type=login"
-            ;
-    inetGet(VLM_REQUEST_LOGIN,page);
+    if(!hasInet() || hasRequest())
+    {
+        qWarning("error can't send pilototo (nb instr:%d)",currentList->count());
+        return;
+    }
+
+    if(currentList->isEmpty())
+    {
+        qWarning() << "Piloto instruction list is empty";
+        /* ask for an update of boat data*/
+        delete currentList;
+        currentList=NULL;
+        myBoat->slot_getData(true);
+    }
+    else
+    {
+        data = currentList->takeFirst();
+        QString scriptList[3]={"pilototo_add.php","pilototo_update.php","pilototo_delete.php" };
+        clearCurrentRequest();
+        qWarning() << "Sending: " << data->script << "(" << scriptList[data->script] << ") - " << data->param;
+        inetPost(VLM_DO_REQUEST,"/ws/boatsetup/" + scriptList[data->script],
+                 "parms="+data->param+"&select_idu="+QString().setNum(myBoat->getId()));
+        delete data;
+    }
 }
 
-void Pilototo::requestFinished (QByteArray)
+void Pilototo::requestFinished (QByteArray res)
 {
-    QString page;
-    QString data;
-
     switch(getCurrentRequest())
     {
 	case VLM_REQUEST_LOGIN:
+            qWarning() << "Error pilototo: getting res for LOGIN!!!";
+            break;
 	case VLM_DO_REQUEST:
-	    if(currentList->isEmpty())
-	    {
-		/*we have processed all cmd*/
-		delete currentList;
-		/* ask for an update of boat data*/
-                boat->slot_getData(true);
-	    }
-	    else
-	    {
-		QTextStream(&page) << "/pilototo.php";
-		data = currentList->takeFirst();
-
-                clearCurrentRequest();
-                inetPost(VLM_DO_REQUEST,page,data);
-	    }
+            {
+                if(checkWSResult(res,"Pilototo",parent))
+                    sendPilototo();
+                else
+                {
+                    currentList->clear();
+                    delete currentList;
+                    currentList=NULL;
+                }
+            }
 	    break;
     }
 }
+
+QString Pilototo::getAuthLogin(bool * ok=NULL)
+{
+    if(myBoat)
+    {
+        if(ok) *ok=true;
+        return myBoat->getAuthLogin();
+    }
+    else
+    {
+        if(ok) *ok=false;
+        return QString();
+    }
+}
+
+QString Pilototo::getAuthPass(bool * ok=NULL)
+{
+    if(myBoat)
+    {
+        if(ok) *ok=true;
+        return myBoat->getAuthPass();
+    }
+    else
+    {
+        if(ok) *ok=false;
+        return QString();
+    }
+}
+
 
 void Pilototo::addInstruction(void)
 {

@@ -27,8 +27,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 POI_input::POI_input(myCentralWidget * parent) : QDialog(parent)
 {
     setupUi(this);
-    connect(this,SIGNAL(addPOI(QString,int,float,float,float,int,bool,boatAccount*)),
-            parent,SLOT(slot_addPOI(QString,int,float,float,float,int,bool,boatAccount*)));
+    connect(this,SIGNAL(addPOI(QString,int,float,float,float,int,bool,boat*)),
+            parent,SLOT(slot_addPOI(QString,int,float,float,float,int,bool,boat*)));
 }
 
 void POI_input::slot_showPOI_input(void)

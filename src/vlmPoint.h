@@ -18,9 +18,15 @@ class vlmPoint
         float wind_speed;
         time_t eta;
         double distIso;
-        double initialCap;
-        double startLon;
-        double startLat;
+        double capOrigin;
+	double distOrigin;
+        double eyeLon;
+        double eyeLat;
+        double distStart;
+        double capStart;
+        double distArrival;
+        double capArrival;
+        int originNb;
     private:
 };
 

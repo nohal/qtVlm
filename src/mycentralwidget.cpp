@@ -1,4 +1,4 @@
-/**********************************************************************
+﻿/**********************************************************************
 qtVlm: Virtual Loup de mer GUI
 Copyright (C) 2008 - Christophe Thomas aka Oxygen77
 
@@ -41,9 +41,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "dialog_gribDate.h"
 #include "POI_editor.h"
 #include "POI.h"
-#include "boatAccount.h"
+#include "boatVLM.h"
 #include "race_dialog.h"
 #include "boatAccount_dialog.h"
+#include "playerAccount.h"
 #include "DialogLoadGrib.h"
 #include "xmlBoatData.h"
 #include "xmlPOIData.h"
@@ -56,6 +57,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "Util.h"
 #include "dialoghorn.h"
 #include "twaline.h"
+#include "Player.h"
 
 /*******************/
 /*    myScene      */
@@ -191,6 +193,8 @@ myCentralWidget::myCentralWidget(Projection * proj,MainWindow * parent,MenuBar *
     this->menuBar=menuBar;
     this->aboutToQuit=false;
 
+    currentPlayer=NULL;
+
     resizing=false;
     this->twaTrace=NULL;
     /* item state */
@@ -269,7 +273,7 @@ myCentralWidget::myCentralWidget(Projection * proj,MainWindow * parent,MenuBar *
 
     connect(menuBar->acOptions_SH_Boa, SIGNAL(triggered(bool)), parent, SLOT(slot_centerBoat()));
 
-
+    connect(this,SIGNAL(accountListUpdated()), parent, SLOT(slotAccountListUpdated()));
 
     connect(&dialogUnits, SIGNAL(accepted()), terre, SLOT(redrawAll()));
     connect(&dialogGraphicsParams, SIGNAL(accepted()), terre, SLOT(updateGraphicsParameters()));
@@ -290,7 +294,7 @@ myCentralWidget::myCentralWidget(Projection * proj,MainWindow * parent,MenuBar *
     connect(parent,SIGNAL(paramVLMChanged()),compass,SLOT(slot_paramChanged()));
     connect(parent,SIGNAL(selectedBoatChanged()),compass,SLOT(slot_paramChanged()));
     connect(scene,SIGNAL(paramVLMChanged()),compass,SLOT(slot_paramChanged()));
-    connect(parent,SIGNAL(boatHasUpdated(boatAccount*)),compass,SLOT(slot_paramChanged()));
+    connect(parent,SIGNAL(boatHasUpdated(boat*)),compass,SLOT(slot_paramChanged()));
     connect(this, SIGNAL(showALL(bool)),compass,SLOT(slot_paramChanged()));
     connect(this, SIGNAL(hideALL(bool)),compass,SLOT(slot_shHidden()));
     connect(this, SIGNAL(shCom(bool)),compass,SLOT(slot_shCom()));
@@ -318,11 +322,14 @@ myCentralWidget::myCentralWidget(Projection * proj,MainWindow * parent,MenuBar *
      /* Dialogs */
     gribDateDialog = new dialog_gribDate();
     poi_editor=new POI_Editor(parent,this);
-    boatAcc = new boatAccount_dialog(proj,parent,this,inetManager);
-    connect(boatAcc,SIGNAL(writeBoat()),this,SLOT(slot_writeBoatData()));
+
+    boatAcc = new boatAccount_dialog(proj,parent,this,inetManager);    
+    playerAcc = new playerAccount(proj,main,this,inetManager);
+
     raceParam = new race_dialog(parent,this,inetManager);
     connect(raceParam,SIGNAL(readRace()),this,SLOT(slot_readRaceData()));
     connect(raceParam,SIGNAL(writeBoat()),this,SLOT(slot_writeBoatData()));
+
     dialogLoadGrib = new DialogLoadGrib();
     connect(dialogLoadGrib, SIGNAL(signalGribFileReceived(QString)),
             parent,  SLOT(slot_gribFileReceived(QString)));
@@ -358,16 +365,21 @@ void myCentralWidget::centerCompass(double lon, double lat)
 {
     this->compass->compassCenter(lon,lat);
 }
-void myCentralWidget::loadData(void)
+
+void myCentralWidget::loadBoat(void)
 {
     emit readBoatData("boatAcc.dat",true);
+}
+
+void myCentralWidget::loadPOI(void)
+{
     emit readPOIData("poi.dat");
 }
 
 myCentralWidget::~myCentralWidget()
 {
     xmlPOI->slot_writeData(route_list,poi_list,"poi.dat");
-    xmlData->slot_writeData(acc_list,race_list,QString("boatAcc.dat"));
+    xmlData->slot_writeData(player_list,race_list,QString("boatAcc.dat"));
 }
 
 /***********************/
@@ -403,7 +415,7 @@ Grib * myCentralWidget::getGrib(void)
         return NULL;
 }
 
-boatAccount * myCentralWidget::getSelectedBoat(void)
+boat * myCentralWidget::getSelectedBoat(void)
 {
     return main->getSelectedBoat();
 }
@@ -749,7 +761,7 @@ void myCentralWidget::slot_fileInfo_GRIB()
 /**************************/
 /* POI                    */
 /**************************/
-POI * myCentralWidget::slot_addPOI(QString name,int type,float lat,float lon, float wph,int timestamp,bool useTimeStamp,boatAccount *boat)
+POI * myCentralWidget::slot_addPOI(QString name,int type,float lat,float lon, float wph,int timestamp,bool useTimeStamp,boat *boat)
 {
     POI * poi;
 
@@ -808,7 +820,7 @@ void myCentralWidget::slot_delAllPOIs(void)
         {
             POI * poi = i.next();
             if(poi->getRoute()!=NULL)
-                if(poi->getRoute()->getFrozen()) return;
+                if(poi->getRoute()->getFrozen()) continue;
             lat=poi->getLatitude();
             lon=poi->getLongitude();
 
@@ -842,7 +854,7 @@ void myCentralWidget::slot_delSelPOIs(void)
         {
             POI * poi = i.next();
             if(poi->getRoute()!=NULL)
-                if(poi->getRoute()->getFrozen()) return;
+                if(poi->getRoute()->getFrozen()) continue;
 //            qWarning() << "POI: " << poi->getName() << " mask=" << poi->getTypeMask();
             if(!(poi->getTypeMask() & res_mask))
                 continue;
@@ -990,14 +1002,20 @@ void myCentralWidget::slot_importRouteFromMenu()
         return;
     }
     list = line.split(';');
+    bool sbsFormat=false;
     if(list[0].toUpper() != "POSITION")
     {
-        QMessageBox::warning(0,QObject::tr("Lecture de route"),
-             QString(QObject::tr("Fichier %1 invalide (doit commencer par POSITION et non '%2')"))
-                        .arg(fileName)
-                        .arg(list[0].toUpper()));
-        routeFile.close();
+        if(list.count()==6)
+            sbsFormat=true;
+        else
+        {
+            QMessageBox::warning(0,QObject::tr("Lecture de route"),
+                 QString(QObject::tr("Fichier %1 invalide (doit commencer par POSITION et non '%2'), ou alors etre au format sbsRouteur"))
+                            .arg(fileName)
+                            .arg(list[0].toUpper()));
+            routeFile.close();
         return;
+        }
     }
     bool ok;
     QString routeName=QInputDialog::getText(this,tr("Nom de la route a importer"),tr("Nom de la route"),QLineEdit::Normal,"ImportedRoute",&ok);
@@ -1017,7 +1035,7 @@ void myCentralWidget::slot_importRouteFromMenu()
         this->deleteRoute(route);
         return;
     }
-    route->setName(routeName); //fixme
+    route->setName(routeName);
     update_menuRoute();
     route->setBoat(main->getSelectedBoat());
     route->setStartFromBoat(false);
@@ -1031,27 +1049,91 @@ void myCentralWidget::slot_importRouteFromMenu()
     double lon,lat;
     while(true)
     {
-        n++;
-        line=stream.readLine();
-        if(line.isNull()) break;
-        list = line.split(';');
-        lat=list[0].mid(0,2).toInt()+list[0].mid(3,6).toFloat()/60.0;
-        if(list[0].mid(10,1)!="N") lat=-lat;
-        lon=list[0].mid(13,3).toInt()+list[0].mid(17,6).toFloat()/60.0;
-        if(list[0].mid(24,1)!="E") lon=-lon;
-        QString poiN;
-        poiN.sprintf("%.5i",n);
-        poiName=route->getName()+poiN;
-        POI * poi = slot_addPOI(poiName,0,lat,lon,-1,false,false,main->getSelectedBoat());
-        poi->setRoute(route);
-        QDateTime start=QDateTime::fromString(list[1],"dd/MM/yyyy hh:mm:ss");
-        start.setTimeSpec(Qt::UTC);
-        if(n==1)
+        if(!sbsFormat)
         {
-            route->setStartTime(start);
+            n++;
+            line=stream.readLine();
+            if(line.isNull()) break;
+            list = line.split(';');
+            lat=list[0].mid(0,2).toInt()+list[0].mid(3,6).toFloat()/60.0;
+            if(list[0].mid(10,1)!="N") lat=-lat;
+            lon=list[0].mid(13,3).toInt()+list[0].mid(17,6).toFloat()/60.0;
+            if(list[0].mid(24,1)!="E") lon=-lon;
+            QString poiN;
+            poiN.sprintf("%.5i",n);
+            poiName=route->getName()+poiN;
+            POI * poi = slot_addPOI(poiName,0,lat,lon,-1,false,false,main->getSelectedBoat());
+            poi->setRoute(route);
+            QDateTime start=QDateTime::fromString(list[1],"dd/MM/yyyy hh:mm:ss");
+            start.setTimeSpec(Qt::UTC);
+            if(n==1)
+            {
+                route->setStartTime(start);
 
+            }
+            poi->setRouteTimeStamp(start.toTime_t());
         }
-        poi->setRouteTimeStamp(start.toTime_t());
+        else
+        {
+            n++;
+            list = line.split(';');
+            QDateTime start=QDateTime::fromString(list[0].simplified(),"dd-MMM hh:mm");
+            start=start.toUTC();
+            start.setTimeSpec(Qt::UTC);
+            start=start.addYears(QDate::currentDate().year()-1900);
+            if(n==1)
+            {
+                route->setStartTime(start);
+
+            }
+            /* 45? 53' 29.785" N  2? 57' 44.532" W  */
+            QString position=list[3];
+            position.remove(" ",Qt::CaseInsensitive);
+            position.replace("\"","q");
+            position.remove(QChar(0xC2));
+            position.replace(QChar(0xB0),"d");
+            if(position.contains("N",Qt::CaseInsensitive))
+                position.truncate(position.indexOf("N")+1);
+            else
+                position.truncate(position.indexOf("S")+1);
+            QStringList temp=position.split("d");
+            float deg=temp[0].toInt();
+            temp=temp[1].split("'");
+            float min=temp[0].toInt();
+            temp=temp[1].split("q");
+            float sec=temp[0].toFloat();
+            min=min+sec/60;
+            lat=deg+min/60;
+            if(list[3].contains("S"))
+                lat=-lat;
+            position=list[3];
+            position.remove(" ",Qt::CaseInsensitive);
+            position.replace("\"","q");
+            position.remove(QChar(0xC2));
+            position.replace(QChar(0xB0),"d");
+            if(position.contains("N",Qt::CaseInsensitive))
+                position=position.mid(position.indexOf("N")+1);
+            else
+                position=position.mid(position.indexOf("S")+1);
+            temp=position.split("d");
+            deg=temp[0].toInt();
+            temp=temp[1].split("'");
+            min=temp[0].toInt();
+            temp=temp[1].split("q");
+            sec=temp[0].toFloat();
+            min=min+sec/60;
+            lon=deg+min/60;
+            if(list[3].contains("W",Qt::CaseInsensitive))
+                lon=-lon;
+            QString poiN;
+            poiN.sprintf("%.5i",n);
+            poiName=route->getName()+poiN;
+            POI * poi = slot_addPOI(poiName,0,lat,lon,-1,false,false,main->getSelectedBoat());
+            poi->setRoute(route);
+            poi->setRouteTimeStamp(start.toTime_t());
+            line=stream.readLine();
+            if(line.isNull()) break;
+        }
     }
     routeFile.close();
     route->setHidePois(true);
@@ -1143,7 +1225,7 @@ void myCentralWidget::exportRouteFromMenu(ROUTE * route)
         list.clear();
         vlmPoint poi=i.next();
 
-        int deg = (int) fabs(poi.lon);
+        int deg = (int) fabs(poi.lat);
         float min = (fabs(poi.lat) - deg)*60.0;
         const char *cdeg = "°";
         QString latitude;
@@ -1276,6 +1358,7 @@ void myCentralWidget::assignPois()
         POI * poi=i.next();
         if(poi->getRouteName()!="")
         {
+            bool found=false;
             QListIterator<ROUTE*> j (route_list);
             while(j.hasNext())
             {
@@ -1283,8 +1366,12 @@ void myCentralWidget::assignPois()
                 if(poi->getRouteName() == route->getName())
                 {
                     poi->setRoute(route);
+                    found=true;
+                    break;
                 }
             }
+            if(!found)
+                poi->setRoute(NULL);
          }
     }
     update_menuRoute();
@@ -1328,21 +1415,39 @@ float myCentralWidget::A360(float hdg)
 }
 
 /**************************/
+/* Players                */
+/**************************/
+void myCentralWidget::slot_addPlayer_list(Player* player)
+{
+    player_list.append(player);
+    connect(player,SIGNAL(addBoat_list(boatVLM*)),this,SLOT(slot_addBoat_list(boatVLM*)));
+    connect(player,SIGNAL(delBoat_list(boatVLM*)),this,SLOT(slot_delBoat_list(boatVLM*)));
+}
+
+void myCentralWidget::slot_delPlayer_list(Player* player)
+{
+    player_list.removeAll(player);
+    disconnect(player,SIGNAL(addBoat_list(boatVLM*)),this,SLOT(slot_addBoat_list(boatVLM*)));
+    disconnect(player,SIGNAL(delBoat_list(boatVLM*)),this,SLOT(slot_delBoat_list(boatVLM*)));
+}
+
+/**************************/
 /* Boats                  */
 /**************************/
 
-void myCentralWidget::slot_addBoat_list(boatAccount* boat)
+void myCentralWidget::slot_addBoat_list(boatVLM* boat)
 {
-    acc_list.append(boat);
+    //boat_list.append(boat);
     scene->addItem(boat);
     connect(proj,SIGNAL(projectionUpdated()),boat,SLOT(slot_projectionUpdated()));
     connect(boat, SIGNAL(clearSelection()),this,SLOT(slot_clearSelection()));
     connect(boat,SIGNAL(getTrace(QString,QList<vlmPoint> *)),opponents,SLOT(getTrace(QString,QList<vlmPoint> *)));
     connect(&dialogGraphicsParams, SIGNAL(accepted()), boat, SLOT(slot_updateGraphicsParameters()));
 }
-void myCentralWidget::slot_delBoat_list(boatAccount* boat)
+
+void myCentralWidget::slot_delBoat_list(boatVLM* boat)
 {
-    acc_list.removeAll(boat);
+    //boat_list.removeAll(boat);
     scene->removeItem(boat);
     disconnect(proj,SIGNAL(projectionUpdated()),boat,SLOT(slot_projectionUpdated()));
     disconnect(boat, SIGNAL(clearSelection()),this,SLOT(slot_clearSelection()));
@@ -1352,13 +1457,74 @@ void myCentralWidget::slot_delBoat_list(boatAccount* boat)
 
 void myCentralWidget::slot_boatDialog(void)
 {
-    boatAcc->initList(acc_list);
-    boatAcc->exec();
+    if(boatAcc->initList(boat_list,currentPlayer))
+        boatAcc->exec();
+}
+
+void myCentralWidget::slot_manageAccount()
+{
+    manageAccount();
+}
+
+void myCentralWidget::manageAccount(bool * res)
+{
+    /* managing previous account */
+    if(currentPlayer && boat_list)
+    {
+        QListIterator<boatVLM*> i(*boat_list);
+        while(i.hasNext())
+        {
+            i.next()->hide();
+        }
+    }
+
+    playerAcc->initList(&player_list);
+    int tmp_res= playerAcc->exec();
+    if(res)
+        *res=(tmp_res == QDialog::Accepted);
+
+}
+
+void myCentralWidget::slot_playerSelected(Player * player)
+{
+    currentPlayer = player;
+    if(player)
+    {
+        if(player->getType() == BOAT_VLM)
+        {
+            menuBar->boatList->setEnabled(true);
+            menuBar->acVLMParamBoat->setEnabled(true);
+            boat_list=player->getBoats();
+            QListIterator<boatVLM*> i(*boat_list);
+            while(i.hasNext())
+            {
+                boatVLM * boat=i.next();
+                boat->setStatus(boat->getStatus());
+            }
+            realBoat=NULL;
+            emit accountListUpdated();
+        }
+        else
+        {
+            menuBar->boatList->setEnabled(false);
+            menuBar->acVLMParamBoat->setEnabled(false);
+            realBoat=player->getRealBoat();
+            main->slotSelectBoat((boat*)realBoat);
+        }
+    }
+    else
+    {
+        menuBar->boatList->setVisible(false);
+        menuBar->acVLMParamBoat->setEnabled(false);
+        boat_list=NULL;
+        realBoat=NULL;
+    }
+
 }
 
 void myCentralWidget::slot_writeBoatData(void)
 {
-    emit writeBoatData(acc_list,race_list,QString("boatAcc.dat"));
+    emit writeBoatData(player_list,race_list,QString("boatAcc.dat"));
 }
 
 void myCentralWidget::slot_readBoatData(void)
@@ -1384,7 +1550,7 @@ void myCentralWidget::slot_delRace_list(raceData* race)
 
 void myCentralWidget::slot_raceDialog(void)
 {
-    raceParam->initList(acc_list,race_list);
+    raceParam->initList(*boat_list,race_list);
     raceParam->exec();
 }
 

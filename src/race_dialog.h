@@ -47,6 +47,7 @@ struct raceParam {
     double latNSZ;
     double widthNSZ;
     QColor colorNSZ;
+    int showWhat;
 };
 
 class race_dialog : public QDialog, public Ui::race_dialog_ui, public inetClient
@@ -57,7 +58,7 @@ class race_dialog : public QDialog, public Ui::race_dialog_ui, public inetClient
         race_dialog(MainWindow * main,myCentralWidget * parent, inetConnexion * inet);
         ~race_dialog();
         void done(int result);
-        void initList(QList<boatAccount*> & acc_list,QList<raceData*> & race_list);
+        void initList(QList<boatVLM*> & boat_list,QList<raceData*> & race_list);
         void requestFinished (QByteArray);
 
     public slots:
@@ -74,7 +75,7 @@ class race_dialog : public QDialog, public Ui::race_dialog_ui, public inetClient
         void updateOpponent(void);
 
     private:
-        QList<boatAccount*> * acc_list;
+        QList<boatVLM*> * boat_list;
         QList<raceData*> * race_list;
 
         QList<raceParam*> param_list;
@@ -99,7 +100,9 @@ class race_dialog : public QDialog, public Ui::race_dialog_ui, public inetClient
         double currentLatNSZ;
         double currentWidthNSZ;
         QColor currentColorNSZ;
+        int currentShowWhat;
         InputLineParams *inputTraceColor;
+        int showWhat;
 
 private slots:
     void on_displayNSZ_clicked();

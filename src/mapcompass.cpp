@@ -33,7 +33,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "MainWindow.h"
 #include "Grib.h"
 #include "Projection.h"
-#include "boatAccount.h"
+#include "boatVLM.h"
 
 #define COMPASS_MARGIN 30
 #define CROSS_SIZE 8

@@ -20,7 +20,7 @@ private:
     int nbVac[5];
     QList<POI*> list;
     Grib * grib;
-    boatAccount * boat;
+    boat * myBoat;
     void traceIt();
     double A360(double hdg);
     MainWindow * main;

@@ -32,7 +32,7 @@ Copyright (C) 2008 - Jacques Zaninetti - http://zygrib.free.fr
 #include "DialogGraphicsParams.h"
 #include "mycentralwidget.h"
 #include "route.h"
-#include "boatAccount.h"
+#include "boatVLM.h"
 
 
 //-------------------------------------------------------
@@ -58,6 +58,7 @@ ROUTE_Editor::ROUTE_Editor(ROUTE *route,myCentralWidget *parent)
 
     editLive->setChecked(route->isLive());
     hidePois->setChecked(route->getHidePois());
+    vacStep->setValue(route->getMultVac());
     switch(route->getStartTimeOption())
     {
     case 1:
@@ -70,19 +71,22 @@ ROUTE_Editor::ROUTE_Editor(ROUTE *route,myCentralWidget *parent)
         editDate->setChecked(true);
         editDateBox->setEnabled(true);
     }
-    QListIterator<boatAccount*> i (parent->getBoats());
     int n=0;
-    while(i.hasNext())
+    if(parent->getBoats())
     {
-        boatAccount * acc = i.next();
-        if(acc->getStatus())
+        QListIterator<boatVLM*> i (*parent->getBoats());
+        while(i.hasNext())
         {
-            if(acc->getAliasState())
-                editBoat->addItem(acc->getAlias() + "(" + acc->getLogin() + ")");
-            else
-                editBoat->addItem(acc->getLogin());
-            if(acc==route->getBoat()) editBoat->setCurrentIndex(n);
-            n++;
+            boatVLM * acc = i.next();
+            if(acc->getStatus())
+            {
+                if(acc->getAliasState())
+                    editBoat->addItem(acc->getAlias() + "(" + acc->getBoatName() + ")");
+                else
+                    editBoat->addItem(acc->getBoatName());
+                if(acc->getId()==route->getBoat()->getId()) editBoat->setCurrentIndex(n);
+                n++;
+            }
         }
     }
     //if(route->isImported()) this->editFrozen->setEnabled(false);
@@ -106,6 +110,7 @@ void ROUTE_Editor::done(int result)
         route->setName((editName->text()).trimmed());
         route->setWidth(inputTraceColor->getLineWidth());
         route->setColor(inputTraceColor->getLineColor());
+        route->setMultVac(vacStep->value());
         if(editVac->isChecked())
             route->setStartTimeOption(1);
         if (editGrib->isChecked())
@@ -116,16 +121,21 @@ void ROUTE_Editor::done(int result)
             route->setStartTime(editDateBox->dateTime());
         }
         route->setStartFromBoat(startFromBoat->isChecked());
-        QListIterator<boatAccount*> i (parent->getBoats());
-        while(i.hasNext())
+
+        if(parent->getBoats())
         {
-            boatAccount * acc = i.next();
-            if(acc->getLogin()==editBoat->currentText())
+            QListIterator<boatVLM*> i (*parent->getBoats());
+            while(i.hasNext())
             {
-                 route->setBoat(acc);
-                 break;
+                boatVLM * acc = i.next();
+                if(acc->getBoatName()==editBoat->currentText())
+                {
+                    route->setBoat(acc);
+                    break;
+                }
             }
         }
+
         route->setFrozen(editFrozen->isChecked());
         route->setLive(editLive->isChecked());
         if(hidePois->isChecked()!=route->getHidePois())

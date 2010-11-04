@@ -29,25 +29,38 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "MainWindow.h"
 #include "Projection.h"
 #include "inetConnexion.h"
-#include "boatAccount.h"
+#include "boatVLM.h"
 
-#define VERSION_NUMBER    1
+#define VERSION_NUMBER    2
 #define DOM_FILE_TYPE     "qtVLM_config"
 #define ROOT_NAME         "qtVLM_boat"
 #define VERSION_NAME      "Version"
+
+/* player data */
+#define PLAYER_GROUP_NAME   "Player"
+#define PLAYER_LOGIN_NAME   "Login"
+#define PLAYER_PASS_NAME    "Pass"
+#define PLAYER_NAME_NAME    "Name"
+#define PLAYER_ID_NAME      "Idp"
+#define PLAYER_TYPE_NAME    "Type"
+
+
 /* BOAT data */
-#define BOAT_GROUP_NAME   "Boat"
-#define LOGIN_NAME        "Login"
-#define BOAT_IDU          "Idu"
-#define PASS_NAME         "Pass"
-#define ACTIVATED_NAME    "Activated"
-#define POLAR_NAME        "Polar"
-#define LOCK_NAME         "Lock"
-#define POLAR_CHK_NAME    "UsePolar"
-#define ALIAS_CHK_NAME    "UseAlias"
-#define ALIAS_NAME        "Alias"
-#define ZOOM_NAME         "Zoom"
-#define ESTIME_NAME       "Estime"
+#define BOAT_GROUP_NAME     "Boat"
+#define BOAT_NAME_NAME      "Name"
+#define BOAT_PSEUDO_NAME    "Pseudo"
+#define BOAT_IDU_NAME       "Idu"
+#define BOAT_IDP_NAME       "Idp"
+#define BOAT_ISOWN_NAME     "IsOwn"
+#define BOAT_ACTIVATED_NAME "Activated"
+#define BOAT_POLAR_NAME     "Polar"
+#define BOAT_LOCK_NAME      "Lock"
+#define BOAT_POLAR_CHK_NAME "UsePolar"
+#define BOAT_ALIAS_CHK_NAME "UseAlias"
+#define BOAT_ALIAS_NAME     "Alias"
+#define BOAT_ZOOM_NAME      "Zoom"
+#define BOAT_ESTIME_NAME    "Estime"
+
 /* RACE DATA */
 #define RACE_GROUP_NAME   "Race"
 #define RACEID_NAME       "raceId"
@@ -58,6 +71,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #define COLOR_NSZ_R       "colorNSZ_R"
 #define COLOR_NSZ_G       "colorNSZ_G"
 #define COLOR_NSZ_B       "colorNSZ_B"
+#define SHOWWHAT          "showWhat"
 
 #define OLD_DOM_FILE_TYPE "zygVLM_config"
 #define OLD_ROOT_NAME     "zygVLM_boat"
@@ -70,157 +84,218 @@ xml_boatData::xml_boatData(Projection * proj,MainWindow * main, myCentralWidget 
     this->parent=parent;
     this->inet=inet;
 
-        /* signals */
-    connect(parent,SIGNAL(writeBoatData(QList<boatAccount*>&,QList<raceData*>&,QString)),
-            this,SLOT(slot_writeData(QList<boatAccount*>&,QList<raceData*>&,QString)));
+    /* signals */
+    connect(parent,SIGNAL(writeBoatData(QList<Player*>&,QList<raceData*>&,QString)),
+            this,SLOT(slot_writeData(QList<Player*>&,QList<raceData*>&,QString)));
     connect(parent,SIGNAL(readBoatData(QString,bool)),this,SLOT(slot_readData(QString,bool)));
 
-    connect(this,SIGNAL(addBoat_list(boatAccount*)),parent,SLOT(slot_addBoat_list(boatAccount*)));
+    connect(this,SIGNAL(addBoat_list(boatVLM*)),parent,SLOT(slot_addBoat_list(boatVLM*)));
     connect(this,SIGNAL(addRace_list(raceData*)),parent,SLOT(slot_addRace_list(raceData*)));
-    connect(this,SIGNAL(delBoat_list(boatAccount*)),parent,SLOT(slot_delBoat_list(boatAccount*)));
+    connect(this,SIGNAL(addPlayer_list(Player*)),parent,SLOT(slot_addPlayer_list(Player*)));
+
+    connect(this,SIGNAL(delBoat_list(boatVLM*)),parent,SLOT(slot_delBoat_list(boatVLM*)));
     connect(this,SIGNAL(delRace_list(raceData*)),parent,SLOT(slot_delRace_list(raceData*)));
+    connect(this,SIGNAL(delPlayer_list(Player*)),parent,SLOT(slot_delPlayer_list(Player*)));
 }
 
-void xml_boatData::slot_writeData(QList<boatAccount*> & boat_list,QList<raceData*> & race_list,QString fname)
+void xml_boatData::slot_writeData(QList<Player*> & player_list,QList<raceData*> & race_list,QString fname)
 {
-     QDomDocument doc(DOM_FILE_TYPE);
-         QDomElement root = doc.createElement(ROOT_NAME);
-         doc.appendChild(root);
 
-         QDomElement group;
-         QDomElement tag;
-         QDomText t;
+    QDomDocument doc(DOM_FILE_TYPE);
+    QDomElement root = doc.createElement(ROOT_NAME);
+    doc.appendChild(root);
 
-         group = doc.createElement(VERSION_NAME);
-         root.appendChild(group);
-         t = doc.createTextNode(QString().setNum(VERSION_NUMBER));
-     group.appendChild(t);
+    QDomElement group;
+    QDomElement tag;
+    QDomText t;
 
-     /* managing boat data */
+    group = doc.createElement(VERSION_NAME);
+    root.appendChild(group);
+    t = doc.createTextNode(QString().setNum(VERSION_NUMBER));
+    group.appendChild(t);
 
-     //qWarning() << "boat list: " << boat_list.size();
+    /* managing player data */
 
-     QListIterator<boatAccount*> i (boat_list);
+    QListIterator<Player*> j (player_list);
 
-     while(i.hasNext())
-     {
-          boatAccount * acc = i.next();
+    //qWarning() << "Write boatAcc - " << player_list.count() << " players to sav";
 
-                  group = doc.createElement(BOAT_GROUP_NAME);
-                  root.appendChild(group);
+    while(j.hasNext())
+    {
+        Player * player= j.next();
 
-                  tag = doc.createElement(LOGIN_NAME);
-                  group.appendChild(tag);
-                  t = doc.createTextNode(acc->getLogin());
-                  tag.appendChild(t);
+        /*qWarning() << "Write boatAcc - " << player->getLogin() << ": "
+                <<  player->getBoats()->count() << " boats to sav";*/
 
-                  tag = doc.createElement(BOAT_IDU);
-                  group.appendChild(tag);
-                  t = doc.createTextNode(acc->getBoatId());
-                  tag.appendChild(t);
+        group = doc.createElement(PLAYER_GROUP_NAME);
+        root.appendChild(group);
 
-                  tag = doc.createElement(PASS_NAME);
-                  group.appendChild(tag);
-                  t = doc.createTextNode(acc->getPass().toAscii().toBase64());
-                  tag.appendChild(t);
+        tag = doc.createElement(PLAYER_LOGIN_NAME);
+        group.appendChild(tag);
+        t = doc.createTextNode(player->getLogin());
+        tag.appendChild(t);
 
-          tag = doc.createElement(ACTIVATED_NAME);
-                  group.appendChild(tag);
-                  bool status = acc->getStatus();
-                  t = doc.createTextNode(status?"1":"0");
-                  tag.appendChild(t);
+        tag = doc.createElement(PLAYER_PASS_NAME);
+        group.appendChild(tag);
+        t = doc.createTextNode(player->getPass().toAscii().toBase64());
+        tag.appendChild(t);
 
-          tag = doc.createElement(LOCK_NAME);
-          group.appendChild(tag);
-          status = acc->getLockStatus();
-          t = doc.createTextNode(status?"1":"0");
-          tag.appendChild(t);
+        tag = doc.createElement(PLAYER_NAME_NAME);
+        group.appendChild(tag);
+        t = doc.createTextNode(player->getName());
+        tag.appendChild(t);        
 
-          tag = doc.createElement(POLAR_NAME);
-          group.appendChild(tag);
-          QString polarName = acc->getPolarName();
-          if(polarName.isEmpty()) polarName="none";
-          t = doc.createTextNode(polarName);
-          tag.appendChild(t);
+        tag = doc.createElement(PLAYER_ID_NAME);
+        group.appendChild(tag);
+        t = doc.createTextNode(QString().setNum(player->getId()));
+        tag.appendChild(t);
 
-          tag = doc.createElement(ALIAS_NAME);
-          group.appendChild(tag);
-          t = doc.createTextNode(acc->getAlias());
-          tag.appendChild(t);
+        tag = doc.createElement(PLAYER_TYPE_NAME);
+        group.appendChild(tag);
+        t = doc.createTextNode(QString().setNum(player->getType()));
+        tag.appendChild(t);
 
-          tag = doc.createElement(ALIAS_CHK_NAME);
-          group.appendChild(tag);
-          status = acc->getAliasState();
-          t = doc.createTextNode(status?"1":"0");
-          tag.appendChild(t);
+        /* managing boat data => saving only boats listed in player */
 
-          tag = doc.createElement(POLAR_CHK_NAME);
-          group.appendChild(tag);
-          status = acc->getPolarState();
-          t = doc.createTextNode(status?"1":"0");
-          tag.appendChild(t);
+        if(!player->getBoats()) continue;
 
-          tag = doc.createElement(ZOOM_NAME);
-          group.appendChild(tag);
-          t = doc.createTextNode(QString().setNum(acc->getZoom()));
-          tag.appendChild(t);
+        QListIterator<boatVLM*> i (*player->getBoats());
 
-          tag = doc.createElement(ESTIME_NAME);
-          group.appendChild(tag);
-          status = acc->getForceEstime();
-          t = doc.createTextNode(status?"1":"0");
-          tag.appendChild(t);
-     }
+        while(i.hasNext())
+        {
+            boatVLM * boat = i.next();
+
+            group = doc.createElement(BOAT_GROUP_NAME);
+            root.appendChild(group);
+
+            tag = doc.createElement(BOAT_NAME_NAME);
+            group.appendChild(tag);
+            t = doc.createTextNode(boat->getName());
+            tag.appendChild(t);
+
+            tag = doc.createElement(BOAT_PSEUDO_NAME);
+            group.appendChild(tag);
+            t = doc.createTextNode(boat->getPseudo());
+            tag.appendChild(t);
+
+            tag = doc.createElement(BOAT_IDU_NAME);
+            group.appendChild(tag);
+            t = doc.createTextNode(boat->getBoatId());
+            tag.appendChild(t);
+
+            tag = doc.createElement(BOAT_IDP_NAME);
+            group.appendChild(tag);
+            t = doc.createTextNode(QString().setNum(boat->getPlayerId()));
+            tag.appendChild(t);
+
+            tag = doc.createElement(BOAT_ISOWN_NAME);
+            group.appendChild(tag);
+            t = doc.createTextNode(QString().setNum(boat->getIsOwn()));
+            tag.appendChild(t);
+
+            tag = doc.createElement(BOAT_ACTIVATED_NAME);
+            group.appendChild(tag);
+            bool status = boat->getStatus();
+            t = doc.createTextNode(status?"1":"0");
+            tag.appendChild(t);
+
+            tag = doc.createElement(BOAT_LOCK_NAME);
+            group.appendChild(tag);
+            status = boat->getLockStatus();
+            t = doc.createTextNode(status?"1":"0");
+            tag.appendChild(t);
+
+            tag = doc.createElement(BOAT_POLAR_NAME);
+            group.appendChild(tag);
+            QString polarName = boat->getPolarName();
+            if(polarName.isEmpty()) polarName="none";
+            t = doc.createTextNode(polarName);
+            tag.appendChild(t);
+
+            tag = doc.createElement(BOAT_POLAR_CHK_NAME);
+            group.appendChild(tag);
+            status = boat->getPolarState();
+            t = doc.createTextNode(status?"1":"0");
+            tag.appendChild(t);
+
+            tag = doc.createElement(BOAT_ALIAS_NAME);
+            group.appendChild(tag);
+            t = doc.createTextNode(boat->getAlias());
+            tag.appendChild(t);
+
+            tag = doc.createElement(BOAT_ALIAS_CHK_NAME);
+            group.appendChild(tag);
+            status = boat->getAliasState();
+            t = doc.createTextNode(status?"1":"0");
+            tag.appendChild(t);
+
+            tag = doc.createElement(BOAT_ZOOM_NAME);
+            group.appendChild(tag);
+            t = doc.createTextNode(QString().setNum(boat->getZoom()));
+            tag.appendChild(t);
+
+            tag = doc.createElement(BOAT_ESTIME_NAME);
+            group.appendChild(tag);
+            status = boat->getForceEstime();
+            t = doc.createTextNode(status?"1":"0");
+            tag.appendChild(t);
+        }
+    }
 
      /* managing race info */
-     QListIterator<raceData*> j (race_list);
+     QListIterator<raceData*> k (race_list);
      while(j.hasNext())
      {
-          raceData * race_data = j.next();
+         raceData * race_data = k.next();
 
-          //qWarning() << "Saving race: " << race_data->idrace << " - " << race_data->oppList;
+         //qWarning() << "Saving race: " << race_data->idrace << " - " << race_data->oppList;
 
-          group = doc.createElement(RACE_GROUP_NAME);
-          root.appendChild(group);
+         group = doc.createElement(RACE_GROUP_NAME);
+         root.appendChild(group);
 
-          tag = doc.createElement(RACEID_NAME);
-          group.appendChild(tag);
-          t = doc.createTextNode(race_data->idrace);
-          tag.appendChild(t);
+         tag = doc.createElement(RACEID_NAME);
+         group.appendChild(tag);
+         t = doc.createTextNode(race_data->idrace);
+         tag.appendChild(t);
 
-          tag = doc.createElement(OPPLIST_NAME);
-          group.appendChild(tag);
-          t = doc.createTextNode(race_data->oppList);
-          tag.appendChild(t);          
+         tag = doc.createElement(OPPLIST_NAME);
+         group.appendChild(tag);
+         t = doc.createTextNode(race_data->oppList);
+         tag.appendChild(t);
 
-          tag = doc.createElement(DISPLAY_NSZ);
-          group.appendChild(tag);
-          t = doc.createTextNode(QString().setNum(race_data->displayNSZ?1:0));
-          tag.appendChild(t);
+         tag = doc.createElement(DISPLAY_NSZ);
+         group.appendChild(tag);
+         t = doc.createTextNode(QString().setNum(race_data->displayNSZ?1:0));
+         tag.appendChild(t);
 
-          tag = doc.createElement(LAT_NSZ);
-          group.appendChild(tag);
-          t = doc.createTextNode(QString().setNum(race_data->latNSZ));
-          tag.appendChild(t);
+         tag = doc.createElement(LAT_NSZ);
+         group.appendChild(tag);
+         t = doc.createTextNode(QString().setNum(race_data->latNSZ));
+         tag.appendChild(t);
 
-          tag = doc.createElement(WIDTH_NSZ);
-          group.appendChild(tag);
-          t = doc.createTextNode(QString().setNum(race_data->widthNSZ));
-          tag.appendChild(t);
+         tag = doc.createElement(WIDTH_NSZ);
+         group.appendChild(tag);
+         t = doc.createTextNode(QString().setNum(race_data->widthNSZ));
+         tag.appendChild(t);
 
-          tag = doc.createElement(COLOR_NSZ_R);
-          group.appendChild(tag);
-          t = doc.createTextNode(QString().setNum(race_data->colorNSZ.red()));
-          tag.appendChild(t);
-          tag = doc.createElement(COLOR_NSZ_G);
-          group.appendChild(tag);
-          t = doc.createTextNode(QString().setNum(race_data->colorNSZ.green()));
-          tag.appendChild(t);
-          tag = doc.createElement(COLOR_NSZ_B);
-          group.appendChild(tag);
-          t = doc.createTextNode(QString().setNum(race_data->colorNSZ.blue()));
-          tag.appendChild(t);
-      }
+         tag = doc.createElement(COLOR_NSZ_R);
+         group.appendChild(tag);
+         t = doc.createTextNode(QString().setNum(race_data->colorNSZ.red()));
+         tag.appendChild(t);
+         tag = doc.createElement(COLOR_NSZ_G);
+         group.appendChild(tag);
+         t = doc.createTextNode(QString().setNum(race_data->colorNSZ.green()));
+         tag.appendChild(t);
+         tag = doc.createElement(COLOR_NSZ_B);
+         group.appendChild(tag);
+         t = doc.createTextNode(QString().setNum(race_data->colorNSZ.blue()));
+         tag.appendChild(t);
+
+         tag = doc.createElement(SHOWWHAT);
+         group.appendChild(tag);
+         t = doc.createTextNode(QString().setNum(race_data->showWhat));
+         tag.appendChild(t);
+     }
 
      QFile file(fname);
      if (!file.open(QIODevice::ReadWrite | QIODevice::Text | QIODevice::Truncate))
@@ -231,275 +306,387 @@ void xml_boatData::slot_writeData(QList<boatAccount*> & boat_list,QList<raceData
      doc.save(out,4);
 
      file.close();
+
 }
 
 void xml_boatData::slot_readData(QString fname,bool readAll)
 {
-     QString  errorStr;
-     int errorLine;
-     int errorColumn;
-     bool hasVersion = false;
-     bool forceWrite = false;
-     int version=VERSION_NUMBER;
+    /* opening file */
+    QString  errorStr;
+    int errorLine;
+    int errorColumn;    
+    bool hasVersion = false;
 
-     QFile file(fname);
+    QFile file(fname);
 
-     if (!file.open(QIODevice::ReadOnly | QIODevice::Text ))
-         return ;
+    if (!file.open(QIODevice::ReadOnly | QIODevice::Text ))
+        return ;
 
-     QDomDocument doc;
-     if(!doc.setContent(&file,true,&errorStr,&errorLine,&errorColumn))
-     {
-         QMessageBox::warning(0,QObject::tr("Lecture de parametre bateau"),
-                              QString("Erreur ligne %1, colonne %2:\n%3")
-                              .arg(errorLine)
-                              .arg(errorColumn)
-                              .arg(errorStr));
-         return ;
-     }
+    QDomDocument doc;
+    if(!doc.setContent(&file,true,&errorStr,&errorLine,&errorColumn))
+    {
+        QMessageBox::warning(0,QObject::tr("Lecture de parametre bateau"),
+                             QString("Erreur ligne %1, colonne %2:\n%3")
+                             .arg(errorLine)
+                             .arg(errorColumn)
+                             .arg(errorStr));
+        return ;
+    }
 
-     QDomElement root = doc.documentElement();
-     if(root.tagName() != ROOT_NAME && root.tagName() != OLD_ROOT_NAME)
-     {
-         qWarning() << "Wrong root name: " << root.tagName();
-         return ;
-     }
+    QDomElement root = doc.documentElement();
+    if(root.tagName() != ROOT_NAME)
+    {
+        qWarning() << "Wrong root name: " << root.tagName();
+        return ;
+    }
 
-     QDomNode node = root.firstChild();
-     QDomNode subNode;
-     QDomNode dataNode;
+    /* check for old version */
+    QDomNode node = root.firstChild();
+    while(!node.isNull())
+    {
+        if(node.toElement().tagName() == VERSION_NAME)
+        {
+            QDomNode dataNode = node.firstChild();
+            if(dataNode.nodeType() == QDomNode::TextNode)
+            {
+                hasVersion = true;
+                if(dataNode.toText().data().toInt()<VERSION_NUMBER)
+                {
+                    QMessageBox::warning(this->main,tr("Chargement des comptes/bateaux"),
+                                         tr("Ancienne version de fichier, demarrage avec une configuration vide"));
+                    file.close();                    
+                    return;
+                }
+            }
+            break;
+        }
+    }
 
-     while(!node.isNull())
-     {
-         if(node.toElement().tagName() == VERSION_NAME)
-         {
-             dataNode = node.firstChild();
-             if(dataNode.nodeType() == QDomNode::TextNode)
-             {
-                 version = dataNode.toText().data().toInt();
-                 hasVersion = true;
-             }
-         }
-         else if(node.toElement().tagName() == BOAT_GROUP_NAME && readAll)
-         {
-             subNode = node.firstChild();
-             QString login = "";
-             int idu=-1;
-             QString pass = "";
-             QString activated = "";
-             QString polar="";
-             bool locked=false;
-             bool chk_polar=false;
-             bool chk_alias=false;
-             bool force_estime=false;
-             QString alias="";
-             float zoom=-1;
+    if(!hasVersion)
+    {
+        qWarning() << "Missing version number in boatAcc.dat";
+        return;
+    }
 
-             while(!subNode.isNull())
-             {
-                 if(subNode.toElement().tagName() == LOGIN_NAME)
-                 {
-                     dataNode = subNode.firstChild();
-                     if(dataNode.nodeType() == QDomNode::TextNode)
-                         login = dataNode.toText().data();
-                 }
-                 if(subNode.toElement().tagName() == BOAT_IDU)
-                 {
-                     dataNode = subNode.firstChild();
-                     if(dataNode.nodeType() == QDomNode::TextNode)
-                         idu = dataNode.toText().data().toInt();
-                 }
-                 if(subNode.toElement().tagName() == PASS_NAME)
-                 {
-                     dataNode = subNode.firstChild();
-                     if(dataNode.nodeType() == QDomNode::TextNode)
-                     {
-                         if(version==0)
-                         {
-                             pass = dataNode.toText().data();
-                             forceWrite=true;
-                         }
-                         else
-                             pass = QByteArray::fromBase64(dataNode.toText().data().toAscii());
-                     }
-                 }
-                 if(subNode.toElement().tagName() == ACTIVATED_NAME)
-                 {
-                     dataNode = subNode.firstChild();
-                     if(dataNode.nodeType() == QDomNode::TextNode)
-                         activated = dataNode.toText().data();
-                 }
-                 if(subNode.toElement().tagName() == POLAR_NAME)
-                 {
-                     dataNode = subNode.firstChild();
-                     if(dataNode.nodeType() == QDomNode::TextNode)
-                     {
-                         polar = dataNode.toText().data();
-                         if(polar=="none") polar="";
-                     }
-                 }
-                 if(subNode.toElement().tagName() == LOCK_NAME)
-                 {
-                     dataNode = subNode.firstChild();
-                     if(dataNode.nodeType() == QDomNode::TextNode)
-                         locked = dataNode.toText().data() == "1";
-                 }
-                 if(subNode.toElement().tagName() == ALIAS_CHK_NAME)
-                 {
-                     dataNode = subNode.firstChild();
-                     if(dataNode.nodeType() == QDomNode::TextNode)
-                         chk_alias = dataNode.toText().data() == "1";
-                 }
-                 if(subNode.toElement().tagName() == POLAR_CHK_NAME)
-                 {
-                     dataNode = subNode.firstChild();
-                     if(dataNode.nodeType() == QDomNode::TextNode)
-                         chk_polar = dataNode.toText().data() == "1";
-                 }
-                 if(subNode.toElement().tagName() == ALIAS_NAME)
-                 {
-                     dataNode = subNode.firstChild();
-                     if(dataNode.nodeType() == QDomNode::TextNode)
-                         alias = dataNode.toText().data();
-                 }
-                 if(subNode.toElement().tagName() == ZOOM_NAME)
-                 {
-                     dataNode = subNode.firstChild();
-                     if(dataNode.nodeType() == QDomNode::TextNode)
-                         zoom = dataNode.toText().data().toFloat();
-                 }
-                 if(subNode.toElement().tagName() == ESTIME_NAME)
-                 {
-                     dataNode = subNode.firstChild();
-                     if(dataNode.nodeType() == QDomNode::TextNode)
-                         force_estime = dataNode.toText().data() == "1";
-                 }
+    /* are we reading all ? */
+    PlayerMap *pList=new PlayerMap();
+    if(readAll)
+    {
+        /* start with players */
+        readPlayer(root.firstChild(),pList);
+        /* now read boats */
+        readBoat(root.firstChild(),pList);
+    }
 
-                 subNode = subNode.nextSibling();
-             }
-             if(!login.isEmpty() && !pass.isEmpty() && ! activated.isEmpty())
-             {
-                 qWarning() << "Boat info present => create item " <<  login << " state " << activated;
-                 boatAccount * acc = new boatAccount(login,pass,activated == "1",
-                                                     proj,main,parent,inet);
-                 acc->setPolar(chk_polar,polar);
-                 acc->setAlias(chk_alias,alias);
-                 acc->setLockStatus(locked);
-                 acc->setZoom(zoom);
-                 acc->setForceEstime(force_estime);
-                 acc->setBoatId(idu);
-                 emit addBoat_list(acc);
-             }
-             else
-                 qWarning("Incomplete boat info");
-         }
-         else if(node.toElement().tagName() == RACE_GROUP_NAME)
-         {
-             subNode = node.firstChild();
-             QString race = "";
-             QString opp_list = "";
-             bool displayNSZ=false;
-             double latNSZ=-60;
-             double widthNSZ=2;
-             QColor colorNSZ=Qt::black;
-
-             while(!subNode.isNull())
-             {
-                 if(subNode.toElement().tagName() == RACEID_NAME)
-                 {
-                     dataNode = subNode.firstChild();
-                     if(dataNode.nodeType() == QDomNode::TextNode)
-                         race = dataNode.toText().data();
-                 }
-                 if(subNode.toElement().tagName() == OPPLIST_NAME)
-                 {
-                     dataNode = subNode.firstChild();
-                     if(dataNode.nodeType() == QDomNode::TextNode)
-                         opp_list = dataNode.toText().data();
-                 }                 
-                 if(subNode.toElement().tagName() == DISPLAY_NSZ)
-                 {
-                     dataNode = subNode.firstChild();
-                     if(dataNode.nodeType() == QDomNode::TextNode)
-                         displayNSZ=(dataNode.toText().data().toInt()==1);
-                 }
-                  if(subNode.toElement().tagName() == LAT_NSZ)
-                  {
-                       dataNode = subNode.firstChild();
-                       if(dataNode.nodeType() == QDomNode::TextNode)
-                           latNSZ=(dataNode.toText().data().toFloat());
-                  }
-                  if(subNode.toElement().tagName() == WIDTH_NSZ)
-                  {
-                       dataNode = subNode.firstChild();
-                       if(dataNode.nodeType() == QDomNode::TextNode)
-                           widthNSZ=(dataNode.toText().data().toFloat());
-                  }
-                  if(subNode.toElement().tagName() == COLOR_NSZ_R)
-                  {
-                       dataNode = subNode.firstChild();
-                       if(dataNode.nodeType() == QDomNode::TextNode)
-                           colorNSZ.setRed(dataNode.toText().data().toInt());
-                  }
-                  if(subNode.toElement().tagName() == COLOR_NSZ_G)
-                  {
-                       dataNode = subNode.firstChild();
-                       if(dataNode.nodeType() == QDomNode::TextNode)
-                           colorNSZ.setGreen(dataNode.toText().data().toInt());
-                  }
-                  if(subNode.toElement().tagName() == COLOR_NSZ_B)
-                  {
-                       dataNode = subNode.firstChild();
-                       if(dataNode.nodeType() == QDomNode::TextNode)
-                           colorNSZ.setBlue(dataNode.toText().data().toInt());
-                  }
-
-
-
-
-                 subNode = subNode.nextSibling();
-             }
-             if(!race.isEmpty() /*&& !opp_list.isEmpty()*/)
-             {
-                 /* control nb boats*/
-                 QStringList lst=opp_list.split(";");
-                 if(lst.size()>RACE_MAX_BOAT)
-                 {
-                     QMessageBox::warning(this,tr("Paramétrage des courses"),
-                                          tr("Nombre maximum de concurrent dépassé")+" ("+QString().setNum(RACE_MAX_BOAT)+")");
-                     while(lst.size()>RACE_MAX_BOAT)
-                         lst.removeLast();
-                     opp_list=lst.join(";");
-                 }
-
-                 struct raceData * race_data = new raceData();
-                 qWarning() << "Race info present => id " <<  race << " opp list " << opp_list;
-                 race_data->idrace=race;
-                 race_data->oppList=opp_list;
-                 race_data->colorNSZ=colorNSZ;
-                 race_data->displayNSZ=displayNSZ;
-                 race_data->latNSZ=latNSZ;
-                 race_data->widthNSZ=widthNSZ;
-                 emit addRace_list(race_data);
-             }
-             else
-                 qWarning("Incomplete race info");
-         }
-         node = node.nextSibling();
-     }
-
-     if(hasVersion)
-     {
-#warning voir si c est tjs util cf c utilise pour les versions
-         /*
-         if(forceWrite)
-             writeBoatData(boat_list,race_list,fname);
-             */
-     }
-     else
-     {
-         qWarning("no version");
-#warning on devrait vider la liste et prevenir centralWidget ?
-     }
+    /* read race data */
+    readRace(node.firstChild());
+    delete pList;
 }
 
+void xml_boatData::readPlayer(QDomNode node,PlayerMap * pList)
+{
+    while(!node.isNull())
+    {
+        if(node.toElement().tagName() == PLAYER_GROUP_NAME)
+        {
+            QDomNode subNode= node.firstChild();
+            QDomNode dataNode;
+            QString login = "";
+            QString pass = "";
+            QString name = "";
+            int player_id = 0;
+            int player_type = BOAT_VLM;
+
+            while(!subNode.isNull())
+            {
+                if(subNode.toElement().tagName() == PLAYER_LOGIN_NAME)
+                {
+                    dataNode = subNode.firstChild();
+                    if(dataNode.nodeType() == QDomNode::TextNode)
+                        login = dataNode.toText().data();
+                }
+                if(subNode.toElement().tagName() == PLAYER_ID_NAME)
+                {
+                    dataNode = subNode.firstChild();
+                    if(dataNode.nodeType() == QDomNode::TextNode)
+                        player_id = dataNode.toText().data().toInt();
+                }
+                if(subNode.toElement().tagName() == PLAYER_TYPE_NAME)
+                {
+                    dataNode = subNode.firstChild();
+                    if(dataNode.nodeType() == QDomNode::TextNode)
+                        player_type = dataNode.toText().data().toInt();
+                }
+                if(subNode.toElement().tagName() == PLAYER_PASS_NAME)
+                {
+                    dataNode = subNode.firstChild();
+                    if(dataNode.nodeType() == QDomNode::TextNode)
+                        pass = QByteArray::fromBase64(dataNode.toText().data().toAscii());
+                }                
+                if(subNode.toElement().tagName() == PLAYER_NAME_NAME)
+                {
+                    dataNode = subNode.firstChild();
+                    if(dataNode.nodeType() == QDomNode::TextNode)
+                        name = dataNode.toText().data();
+                }
+                subNode = subNode.nextSibling();
+            }
+            /* do we have enough info */
+            if(!login.isEmpty() && ((!pass.isEmpty() && player_type==BOAT_VLM) || player_type==BOAT_REAL))
+            {
+                Player * player = new Player(login,pass,player_type,player_id,name,proj,main,parent,inet);
+                pList->insertMulti(player_id,player);
+                emit addPlayer_list(player);
+                qWarning() << "ReadPlayer: add " << login;
+            }
+            else
+                qWarning() << "Not adding 1 player:" << login;
+        }
+
+
+        node = node.nextSibling();
+    }
+}
+
+void xml_boatData::readBoat(QDomNode node,PlayerMap * pList)
+{
+    while(!node.isNull())
+    {
+        if(node.toElement().tagName() == BOAT_GROUP_NAME)
+        {
+            QDomNode subNode= node.firstChild();
+            QDomNode dataNode;
+
+            QString name = "";
+            QString pseudo = "";
+            int idu=-1;
+            int idp=-1;
+            bool activated = false;
+            bool chk_polar=false;
+            QString polar="";
+            bool locked=false;            
+            bool chk_alias=false;
+            QString alias="";
+            bool force_estime=false;
+            float zoom=-1;
+            int isOwn=0;
+
+            while(!subNode.isNull())
+            {
+                if(subNode.toElement().tagName() == BOAT_NAME_NAME)
+                {
+                    dataNode = subNode.firstChild();
+                    if(dataNode.nodeType() == QDomNode::TextNode)
+                        name = dataNode.toText().data();
+                }
+                if(subNode.toElement().tagName() == BOAT_PSEUDO_NAME)
+                {
+                    dataNode = subNode.firstChild();
+                    if(dataNode.nodeType() == QDomNode::TextNode)
+                        pseudo = dataNode.toText().data();
+                }
+                if(subNode.toElement().tagName() == BOAT_IDU_NAME)
+                {
+                    dataNode = subNode.firstChild();
+                    if(dataNode.nodeType() == QDomNode::TextNode)
+                        idu = dataNode.toText().data().toInt();
+                }
+                if(subNode.toElement().tagName() == BOAT_IDP_NAME)
+                {
+                    dataNode = subNode.firstChild();
+                    if(dataNode.nodeType() == QDomNode::TextNode)
+                        idp = dataNode.toText().data().toInt();
+                }
+                if(subNode.toElement().tagName() == BOAT_ISOWN_NAME)
+                {
+                    dataNode = subNode.firstChild();
+                    if(dataNode.nodeType() == QDomNode::TextNode)
+                        isOwn = dataNode.toText().data().toInt();
+                }
+                if(subNode.toElement().tagName() == BOAT_ACTIVATED_NAME)
+                {
+                    dataNode = subNode.firstChild();
+                    if(dataNode.nodeType() == QDomNode::TextNode)
+                        activated = dataNode.toText().data()=="1";
+                }
+                if(subNode.toElement().tagName() == BOAT_POLAR_CHK_NAME)
+                {
+                    dataNode = subNode.firstChild();
+                    if(dataNode.nodeType() == QDomNode::TextNode)
+                        chk_polar = dataNode.toText().data() == "1";
+                }
+                if(subNode.toElement().tagName() == BOAT_POLAR_NAME)
+                {
+                    dataNode = subNode.firstChild();
+                    if(dataNode.nodeType() == QDomNode::TextNode)
+                    {
+                        polar = dataNode.toText().data();
+                        if(polar=="none") polar="";
+                    }
+                }                
+                if(subNode.toElement().tagName() == BOAT_ALIAS_CHK_NAME)
+                {
+                    dataNode = subNode.firstChild();
+                    if(dataNode.nodeType() == QDomNode::TextNode)
+                        chk_alias = dataNode.toText().data() == "1";
+                }
+
+                if(subNode.toElement().tagName() == BOAT_ALIAS_NAME)
+                {
+                    dataNode = subNode.firstChild();
+                    if(dataNode.nodeType() == QDomNode::TextNode)
+                        alias = dataNode.toText().data();
+                }
+                if(subNode.toElement().tagName() == BOAT_LOCK_NAME)
+                {
+                    dataNode = subNode.firstChild();
+                    if(dataNode.nodeType() == QDomNode::TextNode)
+                        locked = dataNode.toText().data() == "1";
+                }
+                if(subNode.toElement().tagName() == BOAT_ZOOM_NAME)
+                {
+                    dataNode = subNode.firstChild();
+                    if(dataNode.nodeType() == QDomNode::TextNode)
+                        zoom = dataNode.toText().data().toFloat();
+                }
+                if(subNode.toElement().tagName() == BOAT_ESTIME_NAME)
+                {
+                    dataNode = subNode.firstChild();
+                    if(dataNode.nodeType() == QDomNode::TextNode)
+                        force_estime = dataNode.toText().data() == "1";
+                }
+                subNode = subNode.nextSibling();
+            }
+
+            /* trying to find player idp */
+            Player * player=NULL;
+            if(idp!=-1 && idp!=0)
+                player=pList->value(idp,NULL);
+
+            if(player)
+            {
+                //qWarning() << "Boat has player => create item " <<  name << " state " << activated;
+                boatVLM * boat = new boatVLM(name,activated, idu,idp,player,isOwn,
+                                                    proj,main,parent,inet);
+                boat->setPseudo(pseudo);
+                boat->setPolar(chk_polar,polar);
+                boat->setAlias(chk_alias,alias);
+                boat->setLockStatus(locked);
+                boat->setZoom(zoom);
+                boat->setForceEstime(force_estime);
+                emit addBoat_list(boat);
+                player->addBoat(boat);
+            }
+            else
+                qWarning() << "Boat has NO player " <<  name << "(player= " << idp << ")";
+        }
+        node = node.nextSibling();
+    }
+}
+
+void xml_boatData::readRace(QDomNode node)
+{
+    while(!node.isNull())
+    {
+        if(node.toElement().tagName() == RACE_GROUP_NAME)
+        {
+            QDomNode subNode= node.firstChild();
+            QDomNode dataNode;
+
+            QString race = "";
+            QString opp_list = "";
+            bool displayNSZ=false;
+            double latNSZ=-60;
+            double widthNSZ=2;
+            int showWhat=0;
+            QColor colorNSZ=Qt::black;
+
+            while(!subNode.isNull())
+            {
+                if(subNode.toElement().tagName() == RACEID_NAME)
+                {
+                    dataNode = subNode.firstChild();
+                    if(dataNode.nodeType() == QDomNode::TextNode)
+                        race = dataNode.toText().data();
+                }
+                if(subNode.toElement().tagName() == OPPLIST_NAME)
+                {
+                    dataNode = subNode.firstChild();
+                    if(dataNode.nodeType() == QDomNode::TextNode)
+                        opp_list = dataNode.toText().data();
+                }
+                if(subNode.toElement().tagName() == DISPLAY_NSZ)
+                {
+                    dataNode = subNode.firstChild();
+                    if(dataNode.nodeType() == QDomNode::TextNode)
+                        displayNSZ=(dataNode.toText().data().toInt()==1);
+                }
+                if(subNode.toElement().tagName() == LAT_NSZ)
+                {
+                    dataNode = subNode.firstChild();
+                    if(dataNode.nodeType() == QDomNode::TextNode)
+                        latNSZ=(dataNode.toText().data().toFloat());
+                }
+                if(subNode.toElement().tagName() == WIDTH_NSZ)
+                {
+                    dataNode = subNode.firstChild();
+                    if(dataNode.nodeType() == QDomNode::TextNode)
+                        widthNSZ=(dataNode.toText().data().toFloat());
+                }
+                if(subNode.toElement().tagName() == COLOR_NSZ_R)
+                {
+                    dataNode = subNode.firstChild();
+                    if(dataNode.nodeType() == QDomNode::TextNode)
+                        colorNSZ.setRed(dataNode.toText().data().toInt());
+                }
+                if(subNode.toElement().tagName() == COLOR_NSZ_G)
+                {
+                    dataNode = subNode.firstChild();
+                    if(dataNode.nodeType() == QDomNode::TextNode)
+                        colorNSZ.setGreen(dataNode.toText().data().toInt());
+                }
+                if(subNode.toElement().tagName() == COLOR_NSZ_B)
+                {
+                    dataNode = subNode.firstChild();
+                    if(dataNode.nodeType() == QDomNode::TextNode)
+                        colorNSZ.setBlue(dataNode.toText().data().toInt());
+                }
+                if(subNode.toElement().tagName() == SHOWWHAT)
+                {
+                    dataNode = subNode.firstChild();
+                    if(dataNode.nodeType() == QDomNode::TextNode)
+                        showWhat=(dataNode.toText().data().toInt());
+                }
+
+                subNode = subNode.nextSibling();
+            }
+            if(!race.isEmpty() /*&& !opp_list.isEmpty()*/)
+            {
+                /* control nb boats*/
+                QStringList lst=opp_list.split(";");
+                if(lst.size()>RACE_MAX_BOAT)
+                {
+                    QMessageBox::warning(this,tr("Paramétrage des courses"),
+                                         tr("Nombre maximum de concurrent dépassé")+" ("+QString().setNum(RACE_MAX_BOAT)+")");
+                    while(lst.size()>RACE_MAX_BOAT)
+                        lst.removeLast();
+                    opp_list=lst.join(";");
+                }
+
+                struct raceData * race_data = new raceData();
+                qWarning() << "Race info present => id " <<  race << " opp list " << opp_list;
+                race_data->idrace=race;
+                race_data->oppList=opp_list;
+                race_data->colorNSZ=colorNSZ;
+                race_data->displayNSZ=displayNSZ;
+                race_data->latNSZ=latNSZ;
+                race_data->widthNSZ=widthNSZ;
+                race_data->showWhat=showWhat;
+                emit addRace_list(race_data);
+            }
+            else
+                qWarning("Incomplete race info");
+        }
+        node = node.nextSibling();
+    }
+}

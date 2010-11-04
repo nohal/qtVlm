@@ -113,6 +113,11 @@ void vlmLine::setGateMode(QString desc)
     calculatePoly();
     update();
 }
+void vlmLine::setTip(QString tip)
+{
+    tip=tip.replace(" ","&nbsp;");
+    setToolTip(tip);
+}
 
 void vlmLine::calculatePoly(void)
 {
@@ -311,7 +316,6 @@ void vlmLine::paint(QPainter * pnt, const QStyleOptionGraphicsItem * , QWidget *
             QPen linePenBis(Qt::black,1);
             linePenBis.setWidthF(1);
             pnt->setPen(linePenBis);
-            QRectF r;
             r.setRect(x,y, width-10,height-1);
             pnt->fillRect(r, QBrush(bgcolor));
             pnt->drawRect(r);
@@ -339,4 +343,13 @@ void vlmLine::paint(QPainter * pnt, const QStyleOptionGraphicsItem * , QWidget *
 //        pnt->drawRect(boundingR);
 //        pnt->setPen(linePen);
 //    }
+}
+QPainterPath vlmLine::shape() const
+{
+    QPainterPath path;
+    if(this->labelHidden)
+        path.addRect(0,0,0,0);
+    else
+        path.addRect(r);
+    return path;
 }

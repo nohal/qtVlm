@@ -51,8 +51,8 @@ class ROUTAGE : public QGraphicsWidget
         void setName(QString name){this->name=name;}
         QString getName() {return(this->name);}
 
-        void setBoat(boatAccount *boat);
-        boatAccount * getBoat(){return this->boat;}
+        void setBoat(boat *myBoat);
+        boat * getBoat(){return this->myBoat;}
 
         void setColor(QColor color);
         QColor getColor(){return this->color;}
@@ -62,8 +62,8 @@ class ROUTAGE : public QGraphicsWidget
 
         void setWindIsForced(bool b){this->windIsForced=b;}
         void setWind(float twd, float tws){this->wind_angle=twd;this->wind_speed=tws;}
-        double getWindAngle(void){return this->wind_angle;}
-        double getWindSpeed(void){return this->wind_speed;}
+        float getWindAngle(void){return this->wind_angle;}
+        float getWindSpeed(void){return this->wind_speed;}
         void setAngleRange(float a) {this->angleRange=a;}
         float getAngleRange(void){return this->angleRange;}
         void setAngleStep(float a) {this->angleStep=a;}
@@ -75,6 +75,8 @@ class ROUTAGE : public QGraphicsWidget
         void setShowIso(bool b);
         void setExplo(float e){this->explo=e;}
         float getExplo(void){return explo;}
+        bool getUseTrueVacation(void){return useTrueVacation;}
+        void setUseTrueVacation(bool b){this->useTrueVacation=b;}
 
         void setStartTime(QDateTime date){this->startTime=date;}
         QDateTime getStartTime() {return this->startTime.toUTC();}
@@ -116,7 +118,7 @@ class ROUTAGE : public QGraphicsWidget
         POI * toPOI;
         QList<vlmLine *> isochrones;
         QList<vlmLine *> segments;
-        boatAccount *boat;
+        boat *myBoat;
         Grib *grib;
         float angleRange;
         float angleStep;
@@ -124,6 +126,7 @@ class ROUTAGE : public QGraphicsWidget
         int explo;
         bool showIso;
         QDateTime startTime;
+        bool useTrueVacation;
 
         /*popup menu*/
         QMenu *popup;
@@ -138,24 +141,34 @@ class ROUTAGE : public QGraphicsWidget
         float A360(float hdg);
         float myDiffAngle(float a1,float a2);
         void findPoint(float lon, float lat, double wind_angle, double wind_speed, float cap, vlmPoint *pt);
-        double findTime(const vlmPoint * pt, vlmPoint newPoint, float * cap);
+        float findTime(const vlmPoint * pt, QPointF P, float * cap);
         float loxoCap;
-        float origDistance;
+        float initialDist;
 
         bool arrived;
         bool windIsForced;
         double wind_speed;
         double wind_angle;
+        time_t eta;
 
         vlmLine * result;
         void drawResult(vlmPoint P);
-//        float checkOrientation(const vlmPoint & P1, const vlmPoint & P2);
-        bool intersects(vlmLine *iso,int nn,int mm,int * toBeKilled);
+        bool intersects(QList<vlmPoint> *iso,int nn,int mm,int * toBeKilled);
         bool done;
         bool converted;
-        QPointF closestPointPreviousIso(vlmPoint P,QPolygonF * isoShape);
+        float findDistancePreviousIso(vlmPoint P,QPolygonF * isoShape);
         int superIntersects(QLineF L1,QLineF L2);
         bool tooFar(vlmPoint point);
-//        bool leftToRight(const vlmPoint & P1,const vlmPoint & P2);
+        void pruneWake(QList<vlmPoint> * tempPoints,int wakeAngle,int mode);
+        int calculateTimeRoute(vlmPoint RouteFrom,vlmPoint routeTo,int limit=-1);
+        int routeFunction(float x,vlmPoint from);
+        int routeFunctionDeriv(float x,vlmPoint from);
+        int routeN;
+        int routeMaxN;
+        int routeTotN;
+        int routeFailedN;
+        double lastLonFound;
+        double lastLatFound;
+        int debug1;
     };
 #endif // ROUTAGE_H

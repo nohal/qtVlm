@@ -40,6 +40,7 @@ struct raceData {
     double latNSZ;
     double widthNSZ;
     QColor colorNSZ;
+    int showWhat;
 };
 
 #define RACE_MAX_BOAT 15
@@ -71,6 +72,10 @@ class opponent : public QGraphicsWidget
 
         /* graphicsWidget */
         QRectF boundingRect() const;
+        QString getAuthLogin(bool * ok=NULL) {if(ok) *ok=true;
+            return "test";}
+        QString getAuthPass(bool * ok=NULL) {if(ok) *ok=true;
+            return "test";}
 
     public slots:
         void updateProjection();
@@ -117,12 +122,16 @@ class opponentList : public QWidget, public inetClient
 
     public:
         opponentList(Projection * proj,MainWindow * main,myCentralWidget * parent, inetConnexion * inet);
-        void setBoatList(QString list_txt, QString race, bool force);
+        void setBoatList(QString list_txt, QString race,int showWhat, bool force);
         void refreshData(void);
         void clear(void);
         QString getRaceId();
         QList<opponent*> * getList(void) { return &opponent_list; }
         void requestFinished (QByteArray);
+        QString getAuthLogin(bool * ok=NULL) {if(ok) *ok=true;
+            return "test";}
+        QString getAuthPass(bool * ok=NULL) {if(ok) *ok=true;
+            return "test";}
 
     public slots:
         void getTrace(QString buff, QList<vlmPoint> * trace);

@@ -6,7 +6,8 @@ INCLUDEPATH += bzip2 \
     zlib-1.2.3 \
     qextserialport \
     qjson \
-    c_lib
+    c_lib \
+    nmealib/src/nmea
 LIBS += -Lbzip2 \
     -lbz2 \
     -Lzlib-1.2.3 \
@@ -16,7 +17,9 @@ LIBS += -Lbzip2 \
     -Lqjson \
     -lqjson \
     -Lc_lib \
-    -lclib
+    -lclib \
+    -Lnmealib/src/ \
+    -lnmea
 MOC_DIR = objs
 OBJECTS_DIR = objs
 SOURCES_DIR = src
@@ -31,7 +34,6 @@ RC_FILE = qtVlm.rc
 HEADERS += BoardVLM.h \
     BoardVLM_tools.h \
     boatAccount_dialog.h \
-    boatAccount.h \
     DialogGraphicsParams.h \
     DialogLoadGrib.h \
     DialogProxy.h \
@@ -90,9 +92,17 @@ HEADERS += BoardVLM.h \
     IsoLine.h \
     dataDef.h \
     dialoghorn.h \
-    twaline.h
+    twaline.h \
+    boatReal.h \
+    boat.h \
+    boatVLM.h \
+    Board.h \
+    BoardReal.h \
+    Player.h \
+    playerAccount.h
 FORMS += boatAccount_dialog.ui \
     BoardVLM.ui \
+    BoardReal.ui \
     paramVLM.ui \
     POI_input.ui \
     POI_editor.ui \
@@ -110,10 +120,11 @@ FORMS += boatAccount_dialog.ui \
     gribValidation.ui \
     finePosit.ui \
     dialoghorn.ui \
-    twaline.ui
+    twaline.ui \
+    paramAccount.ui \
+    playerAccount.ui
 SOURCES += BoardVLM.cpp \
     boatAccount_dialog.cpp \
-    boatAccount.cpp \
     DialogGraphicsParams.cpp \
     DialogLoadGrib.cpp \
     DialogProxy.cpp \
@@ -170,7 +181,14 @@ SOURCES += BoardVLM.cpp \
     finePosit.cpp \
     IsoLine.cpp \
     dialoghorn.cpp \
-    twaline.cpp
+    twaline.cpp \
+    boatReal.cpp \
+    boat.cpp \
+    boatVLM.cpp \
+    Board.cpp \
+    BoardReal.cpp \
+    Player.cpp \
+    playerAccount.cpp
 DEFINES = QT_$$[QT_VERSION]
 DEFINES ~= s/\./_
 DEFINES ~= s/-.*/

@@ -29,6 +29,24 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "class_list.h"
 
+class boatSetup
+{
+    public :
+        boatSetup(void);
+        boatSetup(boatVLM * boat);
+        
+        void updateBoat(void);
+
+        bool useAlias;
+        QString alias;
+        bool usePolar;
+        QString polar;
+        bool activated;
+        bool blocked;
+
+        boatVLM * boat;
+};
+
 class boatAccount_dialog : public QDialog, public Ui::boatAccount_dialog
 {
     Q_OBJECT
@@ -36,33 +54,39 @@ class boatAccount_dialog : public QDialog, public Ui::boatAccount_dialog
         boatAccount_dialog(Projection * proj,MainWindow * main, myCentralWidget * parent,inetConnexion * inet);
         ~boatAccount_dialog();
         void done(int result);
-        void initList(QList<boatAccount*> & acc_list);
+        bool initList(QList<boatVLM*> * boat_list, Player * player);
 
-    public slots:
-        void slot_addBoat(void);
-        void slot_delBoat(void);
-        void slot_chgBoat(void);
-        void slot_selectItem(QListWidgetItem * item);
-        void slot_accHasChanged(void);
+    public slots:        
+        void slot_selectItem_boat(QListWidgetItem *,QListWidgetItem *);
+        void slot_selectItem_boatSit(QListWidgetItem *,QListWidgetItem *);
+
         void chkAlias_changed(int);
         void chkPolar_changed(int);
         void slot_boatUp(void);
         void slot_boatDown(void);
+        void slot_boatSitUp(void);
+        void slot_boatSitDown(void);
 
     signals:
         void accountListUpdated(void);
         void writeBoat(void);
-        void addBoat(boatAccount*);
-        void delBoat(boatAccount*);
-        void boatPointerHasChanged(boatAccount*);
+        
+        void boatPointerHasChanged(boat*);
 
     private:
-        QListWidgetItem * blank;
-        QList<boatAccount*> * acc_list;
+        QList<boatVLM*> * boat_list;
+        QMap<int,boatSetup*> boats;
+        int boat_idx;
         Projection * proj;
         MainWindow * main;
         myCentralWidget * parent;
         inetConnexion * inet;
+
+        void setBoatItemName(QListWidgetItem * item,boatVLM * boat);
+        void saveItem(QListWidgetItem * item);
+        void setItem(QListWidgetItem * item);
+        void boatUp(QListWidget * list);
+        void boatDown(QListWidget * list);
 };
 
 

@@ -70,7 +70,7 @@ public:
     time_t  getDateGribById(int id);
     int  getNearestDateGrib(time_t tm);*/
 
-    void updateBoatList(QList<boatAccount*> & acc_list);
+    void updateBoatList(QList<boatVLM*> & boat_list);
     void clearListeDates(void);
     void setSelectedBoatIndex(int index);
     void addMenuRoute(ROUTE * route);
@@ -256,6 +256,7 @@ public:
 
     QAction *acVLMParam;
     QAction *acVLMParamBoat;
+    QAction *acVLMParamPlayer;
     QAction *acPOIinput;
     QAction *acPOIimport;
     QAction *acVLMSync;

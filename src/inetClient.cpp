@@ -18,6 +18,9 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ***********************************************************************/
 
+#include <parser.h>
+#include <QMessageBox>
+
 #include "inetClient.h"
 #include "inetConnexion.h"
 
@@ -85,5 +88,36 @@ void inetClient::resetReply()
         myReply->deleteLater();
         myReply=NULL;
         this->nbAuth=0;
+    }
+}
+
+bool inetClient::checkWSResult(QByteArray res,QString caller,QWidget * parent)
+{
+    QJson::Parser parser;
+    bool ok;
+
+    QVariantMap result = parser.parse (res, &ok).toMap();
+    if (!ok) {
+        qWarning() << "Error parsing json data " << res;
+        qWarning() << "Error: " << parser.errorString() << " (line: " << parser.errorLine() << ")";
+        return false;
+    }
+
+    if(result["success"].toBool())
+    {
+        return true;
+    }
+    else
+    {
+        QVariantMap errorData = result["error"].toMap();
+        qWarning() << "Error doing " << caller << " cmd: code=" << errorData["code"].toString()
+                << " - message=" << errorData["msg"].toString();
+        QMessageBox::critical(parent,QObject::tr("Erreur de communication avec VLM ds ")+caller,
+                              QObject::tr("Reporter l'erreur au dev qtVlm ") + "\n"
+                              + QObject::tr("Zone: ") + caller + "\n"
+                              + QObject::tr("Code erreur:")+errorData["code"].toString() + "\n"
+                              + QObject::tr("Msg erreur:")+errorData["msg"].toString()
+                              );
+        return false;
     }
 }

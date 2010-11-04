@@ -50,6 +50,7 @@ class vlmLine : public QGraphicsWidget
         void setLineMode();
         void setPointMode(QColor pt_color);
         void setGateMode(QString desc);
+        void setTip(QString tip);
         void setNbVacPerHour(int nbVacPerHour) {this->nbVacPerHour=nbVacPerHour;}
         void setPorteOnePoint(void){this->onePoint=true;}
         void setHidden(bool hidden) {this->hidden=hidden;update();}
@@ -61,12 +62,13 @@ class vlmLine : public QGraphicsWidget
         void setPointStartCap(int n,float c){this->line[n].startCap=c;}
         void setPointWind(int n, float twd, float tws){this->line[n].wind_angle=twd;this->line[n].wind_speed=tws;}
         void setPointDistIso(int n, double d){this->line[n].distIso=d;}
-        void setPointInitialCap(int n,double d){this->line[n].initialCap=d;}
+        void setPointcapOrigin(int n,double d){this->line[n].capOrigin=d;}
         const vlmPoint * getOrigin(int n) {return this->line.at(n).origin;}
         const vlmPoint * getPoint(int n) {return & line.at(n);}
         void setInterpolated(float lon,float lat){this->interpolatedLon=lon;this->interpolatedLat=lat;update();}
         void setHasInterpolated(bool b){this->hasInterpolated=b;update();}
         vlmPoint * getLastPoint() {return & line.last();}
+        QPainterPath shape() const;
         ~vlmLine();
 
     protected:
@@ -96,6 +98,7 @@ class vlmLine : public QGraphicsWidget
         float interpolatedLon;
         float interpolatedLat;
         bool hasInterpolated;
+        QRectF r;
 };
 
 

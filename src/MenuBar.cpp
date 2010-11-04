@@ -24,10 +24,11 @@ Copyright (C) 2008 - Jacques Zaninetti - http://zygrib.free.fr
 #include <QSpinBox>
 #include <QPushButton>
 #include <QLabel>
+#include <QDebug>
 
 
 #include "MenuBar.h"
-#include "boatAccount.h"
+#include "boatVLM.h"
 #include "Util.h"
 #include "route.h"
 #include "routage.h"
@@ -251,6 +252,7 @@ MenuBar::MenuBar(QWidget *parent)
 
     //-------------------------------------
     menuBoat = new QMenu(tr("Bateau"));
+        acVLMParamPlayer = addAction(menuBoat,tr("Gestion des comptes"),"","","");
         acVLMParamBoat = addAction(menuBoat,tr("Paramètres des bateaux"),"","","");
         acRace = addAction(menuBoat,tr("Paramètres des courses"),"","","");
         acVLMSync = addAction(menuBoat,tr("VLM Sync"),"","","");
@@ -282,8 +284,9 @@ MenuBar::MenuBar(QWidget *parent)
         menuRoutage->addMenu(mnRoutage_edit);
         menuRoutage->addMenu(mnRoutage_delete);
 
-    //addMenu(menuRoutage);
-
+#ifdef __QTVLM_WITH_TEST
+    addMenu(menuRoutage);
+#endif
     menuPOI = new QMenu(tr("Marques"));
         //acPOIinput = addAction(menuPOI,tr("POI / porte en masse"),"","","");
         acPOIinput = addAction(menuPOI,tr("Ajout en masse"),"","","");
@@ -551,36 +554,30 @@ void MenuBar::setIsotherms0Step(int step) {
 }
 
 //------------------------------------------------------------
-void MenuBar::updateBoatList(QList<boatAccount*> & acc_list)
+void MenuBar::updateBoatList(QList<boatVLM*> & boat_list)
 {
-    //qWarning() << "Boat list cnt " << boatList->count();
     while(boatList->count())
         boatList->removeItem(0);
-    //boatList->clear();
 
-    QListIterator<boatAccount*> i (acc_list);
+    QListIterator<boatVLM*> i (boat_list);
 
     while(i.hasNext())
     {
-        boatAccount * acc = i.next();
-        //qWarning() << "Boat: " << acc->getLogin();
+        boatVLM * acc = i.next();
+        //qWarning() << "updateBoatList - Boat: " << acc->getName() << " " << acc->getStatus() << " " << acc->getId();
         if(acc->getStatus())
         {
-            //qWarning() << "Adding it";
             if(acc->getAliasState())
-                boatList->addItem(acc->getAlias() + "(" + acc->getLogin() + ")");
+                boatList->addItem(acc->getAlias() + "(" + acc->getBoatName() + ")");
             else
-                boatList->addItem(acc->getLogin());
+                boatList->addItem(acc->getBoatName());
         }
     }
-
-    //qWarning() << "Boat list cnt after: " << boatList->count() << " Status " << boatList->isEnabled();
 }
 
 void MenuBar::setSelectedBoatIndex(int index)
 {
     boatList->setCurrentIndex(index);
-    //qWarning() << "Current index: " << index << " " << boatList->itemText(index);
 }
 
 

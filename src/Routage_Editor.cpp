@@ -33,7 +33,7 @@ Copyright (C) 2008 - Jacques Zaninetti - http://zygrib.free.fr
 #include "DialogGraphicsParams.h"
 #include "mycentralwidget.h"
 #include "routage.h"
-#include "boatAccount.h"
+#include "boatVLM.h"
 
 
 //-------------------------------------------------------
@@ -51,19 +51,22 @@ ROUTAGE_Editor::ROUTAGE_Editor(ROUTAGE *routage,myCentralWidget *parent)
     editName->setText(routage->getName());
     editDateBox->setDateTime(routage->getStartTime());
     editDateBox->setEnabled(true);
-    QListIterator<boatAccount*> i (parent->getBoats());
     int n=0;
-    while(i.hasNext())
+    if(parent->getBoats())
     {
-        boatAccount * acc = i.next();
-        if(acc->getStatus())
+        QListIterator<boatVLM*> i (*parent->getBoats());
+        while(i.hasNext())
         {
-            if(acc->getAliasState())
-                editBoat->addItem(acc->getAlias() + "(" + acc->getLogin() + ")");
-            else
-                editBoat->addItem(acc->getLogin());
-            if(acc==routage->getBoat()) editBoat->setCurrentIndex(n);
-            n++;
+            boatVLM * acc = i.next();
+            if(acc->getStatus())
+            {
+                if(acc->getAliasState())
+                    editBoat->addItem(acc->getAlias() + "(" + acc->getBoatName() + ")");
+                else
+                    editBoat->addItem(acc->getBoatName());
+                if(acc==routage->getBoat()) editBoat->setCurrentIndex(n);
+                n++;
+            }
         }
     }
     QListIterator<POI*> j (parent->getPois());
@@ -86,6 +89,7 @@ ROUTAGE_Editor::ROUTAGE_Editor(ROUTAGE *routage,myCentralWidget *parent)
     this->windForced->setChecked(routage->getWindIsForced());
     this->showIso->setChecked(routage->getShowIso());
     this->explo->setValue(routage->getExplo());
+    this->useVac->setChecked(routage->getUseTrueVacation());
     if(routage->getWindIsForced())
     {
         this->TWD->setValue(routage->getWindAngle());
@@ -105,6 +109,7 @@ ROUTAGE_Editor::ROUTAGE_Editor(ROUTAGE *routage,myCentralWidget *parent)
         this->windForced->setDisabled(true);
         this->TWD->setDisabled(true);
         this->TWS->setDisabled(true);
+        this->useVac->setDisabled(true);
         if(routage->isConverted())
             this->convRoute->setDisabled(true);
     }
@@ -129,14 +134,17 @@ void ROUTAGE_Editor::done(int result)
         routage->setWidth(inputTraceColor->getLineWidth());
         routage->setColor(inputTraceColor->getLineColor());
         routage->setStartTime(editDateBox->dateTime());
-        QListIterator<boatAccount*> i (parent->getBoats());
-        while(i.hasNext())
+        if(parent->getBoats())
         {
-            boatAccount * acc = i.next();
-            if(acc->getLogin()==editBoat->currentText())
+            QListIterator<boatVLM*> i (*parent->getBoats());
+            while(i.hasNext())
             {
-                 routage->setBoat(acc);
-                 break;
+                boatVLM * acc = i.next();
+                if(acc->getBoatName()==editBoat->currentText())
+                {
+                    routage->setBoat(acc);
+                    break;
+                }
             }
         }
         QListIterator<POI*> j (parent->getPois());
@@ -159,6 +167,7 @@ void ROUTAGE_Editor::done(int result)
         routage->setTimeStep(this->duree->value());
         routage->setExplo(this->explo->value());
         routage->setShowIso(this->showIso->isChecked());
+        routage->setUseTrueVacation(this->useVac->isChecked());
         if(this->convRoute->isChecked())
         {
             if(!routage->isConverted())

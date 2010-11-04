@@ -21,11 +21,15 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <QtGui>
 #include <QMessageBox>
 #include <QDebug>
+/* QJson */
+#include <serializer.h>
+#include <parser.h>
 
 #include "dataDef.h"
 
 #include "BoardVLM.h"
-#include "boatAccount.h"
+#include "boatVLM.h"
+#include "Board.h"
 #include <qextserialport.h>
 #include "Orthodromie.h"
 #include "Util.h"
@@ -35,33 +39,23 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "Polar.h"
 #include "POI.h"
 
-#define SPEED_COLOR_UPDATE    "color: rgb(100, 200, 0);"
-#define SPEED_COLOR_VLM       "color: rgb(255, 0, 0);"
-#define SPEED_COLOR_NO_POLAR  "color: rgb(255, 170, 127);"
-
-boardVLM::boardVLM(MainWindow * mainWin, inetConnexion * inet) : QWidget(mainWin), inetClient(inet)
+boardVLM::boardVLM(MainWindow * mainWin, inetConnexion * inet, board * parent) : QWidget(mainWin), inetClient(inet)
 {
     setupUi(this);
 
     isComputing = false;
     this->mainWin = mainWin;
+    this->parent=parent;
 
-    connect(mainWin,SIGNAL(setChangeStatus(bool)),this,SLOT(setChangeStatus(bool)));
-    connect(this,SIGNAL(VLM_Sync()),mainWin,SLOT(slotVLM_Sync()));
-    connect(mainWin,SIGNAL(boatHasUpdated(boatAccount*)),
-            this,SLOT(boatUpdated(boatAccount*)));
+    needAuth=true;
+
+
+    connect(this,SIGNAL(VLM_Sync()),mainWin,SLOT(slotVLM_Sync()));    
     connect(this,SIGNAL(POI_selectAborted(POI*)),mainWin,SLOT(slot_POIselected(POI*)));
 
     GPS_timer = new QTimer(this);
     GPS_timer->setSingleShot(true);
     connect(GPS_timer,SIGNAL(timeout()),this, SLOT(synch_GPS()));
-
-    QDockWidget * VLMDock = new QDockWidget("Virtual Loup de Mer");
-    assert(VLMDock);
-    VLMDock->setWidget(this);
-    VLMDock->setAllowedAreas(Qt::RightDockWidgetArea|Qt::LeftDockWidgetArea);
-    mainWin->addDockWidget(Qt::LeftDockWidgetArea,VLMDock);
-    mainWin->setBoardToggleAction(VLMDock->toggleViewAction());
 
     /* wpDialog */
     wpDialog = new WP_dialog();
@@ -88,8 +82,6 @@ boardVLM::boardVLM(MainWindow * mainWin, inetConnexion * inet) : QWidget(mainWin
     btn_WP->setText(tr("Prochaine balise (0 WP)"));
 
     isWaiting=false;
-
-    currentBoat = NULL;
 
     btn_Pilototo->setStyleSheet(QString::fromUtf8("background-color: rgb(255, 255, 127);"));
     connect(btn_Pilototo,SIGNAL(clicked()),mainWin, SLOT(slotPilototo()));
@@ -126,7 +118,7 @@ void boardVLM::confirmAndSendCmd(QString question,QString info,int cmdNum,float 
 
 bool boardVLM::confirmChange(QString question,QString info)
 {    
-    if(!currentBoat)
+    if(!currentBoat())
     {
         QMessageBox::warning(mainWin,tr("Erreur"),tr("Pas de bateau selectionné"));
         return false;
@@ -135,11 +127,11 @@ bool boardVLM::confirmChange(QString question,QString info)
     if(Settings::getSetting("askConfirmation","0").toInt()==0)
         return true;
 
-    if(QMessageBox::question(mainWin,tr("Instruction pour ")+currentBoat->getBoatName(),
-                             currentBoat->getBoatName()+": " + question,QMessageBox::Yes|QMessageBox::No,
+    if(QMessageBox::question(mainWin,tr("Instruction pour ")+currentBoat()->getBoatName(),
+                             currentBoat()->getBoatName()+": " + question,QMessageBox::Yes|QMessageBox::No,
                              QMessageBox::Yes)==QMessageBox::Yes)
     {
-        emit showMessage(currentBoat->getBoatName()+": " + info,2000);
+        emit showMessage(currentBoat()->getBoatName()+": " + info,2000);
         return true;
     }
     return false;
@@ -158,14 +150,14 @@ void boardVLM::paramChanged(void)
     COM=Settings::getSetting("serialName", "COM2").toString();
 }
 
-float boardVLM::computeWPdir(boatAccount * boat)
+float boardVLM::computeWPdir(boatVLM * myBoat)
 {
     float dirAngle;
-    float WPLat = boat->getWPLat();
-    float WPLon = boat->getWPLon();
+    float WPLat = myBoat->getWPLat();
+    float WPLon = myBoat->getWPLon();
     if(WPLat != 0 && WPLon != 0)
     {
-        Orthodromie orth = Orthodromie(boat->getLon(),boat->getLat(),WPLon,WPLat);
+        Orthodromie orth = Orthodromie(myBoat->getLon(),myBoat->getLat(),WPLon,WPLat);
         dirAngle = orth.getAzimutDeg();
     }
     else
@@ -173,67 +165,77 @@ float boardVLM::computeWPdir(boatAccount * boat)
     return dirAngle;
 }
 
-void boardVLM::boatUpdated(boatAccount * boat)
+boatVLM * boardVLM::currentBoat(void)
+{
+    if(parent)
+    {
+        if(parent->currentBoat()->getType()==BOAT_VLM)
+            return (boatVLM*)parent->currentBoat();
+        else
+            return NULL;
+    }
+    else
+        return NULL;
+}
+
+void boardVLM::boatUpdated(void)
 {
     float angle_val;
 
-    if(boat == NULL)
+    boatVLM * myBoat=currentBoat();
+
+    if(myBoat == NULL)
         return;
 
     isComputing = true;
-    float val=boat->getHeading()-boat->getWindDir();
+    float val=myBoat->getHeading()-myBoat->getWindDir();
 
-    currentBoat = boat;
-
-    if(boat->getPilotType() == 2)
-        angle_val = boat->getPilotString().toFloat();
+    if(myBoat->getPilotType() == 2)
+        angle_val = myBoat->getPilotString().toFloat();
     else
     {
-        angle_val = boat->getTWA();
+        angle_val = myBoat->getTWA();
         calcAngleSign(val,angle_val);
     }
 
-    editHeading->setValue(boat->getHeading());
+    editHeading->setValue(myBoat->getHeading());
     editAngle->setValue(angle_val);
 
-    w_dir->setText(QString().setNum(boat->getWindDir()));
-    w_speed->setText(QString().setNum(boat->getWindSpeed()));
-    loch->setText(QString().setNum(boat->getLoch()));
-    speed->setText(QString().setNum(boat->getSpeed()));
-    avg->setText(QString().setNum(boat->getAvg()));
+    w_dir->setText(QString().setNum(myBoat->getWindDir()));
+    w_speed->setText(QString().setNum(myBoat->getWindSpeed()));
+    loch->setText(QString().setNum(myBoat->getLoch()));
+    speed->setText(QString().setNum(myBoat->getSpeed()));
+    avg->setText(QString().setNum(myBoat->getAvg()));
 
-    windAngle->setValues(boat->getHeading(),boat->getWindDir(),boat->getWindSpeed(), computeWPdir(boat), -1);
-    bvmgU->setText(QString().setNum(boat->getBvmgUp(boat->getWindSpeed())));
-    bvmgD->setText(QString().setNum(boat->getBvmgDown(boat->getWindSpeed())));
+    windAngle->setValues(myBoat->getHeading(),myBoat->getWindDir(),myBoat->getWindSpeed(), computeWPdir(myBoat), -1);
+    bvmgU->setText(QString().setNum(myBoat->getBvmgUp(myBoat->getWindSpeed())));
+    bvmgD->setText(QString().setNum(myBoat->getBvmgDown(myBoat->getWindSpeed())));
 
-    boatName->setText(boat->getBoatName());
+    boatName->setText(myBoat->getBoatName());
 
-    if(boat->getAliasState())
-        boatName->setText(boat->getAlias() + " (" + boat->getLogin() + " - " + boat->getBoatId() + ")");
-    else
-        boatName->setText(boat->getLogin() + " ("  + boat->getBoatId() + ")");
+    boatName->setText(myBoat->getDispName());
 
-    boatScore->setText(boat->getScore());
+    boatScore->setText(myBoat->getScore());
 
     /* boat position */
-    latitude->setText(Util::pos2String(TYPE_LAT,boat->getLat()));
-    longitude->setText(Util::pos2String(TYPE_LON,boat->getLon()));
+    latitude->setText(Util::pos2String(TYPE_LAT,myBoat->getLat()));
+    longitude->setText(Util::pos2String(TYPE_LON,myBoat->getLon()));
 
     btn_Synch->setStyleSheet(QString::fromUtf8("background-color: rgb(255, 255, 127);"));
     isComputing = false;
     speed->setStyleSheet(QString::fromUtf8(SPEED_COLOR_VLM));
     label_6->setStyleSheet(QString::fromUtf8(SPEED_COLOR_VLM));
-    setChangeStatus(boat->getLockStatus());
+    setChangeStatus(myBoat->getLockStatus());
 
     /* update WP button */
     update_btnWP();
 
     /* WP direction */
-    dnm->setText(QString().setNum(boat->getDnm()));
-    ortho->setText(QString().setNum(boat->getOrtho()));
-    vmg->setText(QString().setNum(boat->getVmg()));
+    dnm->setText(QString().setNum(myBoat->getDnm()));
+    ortho->setText(QString().setNum(myBoat->getOrtho()));
+    vmg->setText(QString().setNum(myBoat->getVmg()));
 
-    angle_val=boat->getOrtho()-boat->getWindDir();
+    angle_val=myBoat->getOrtho()-myBoat->getWindDir();
     if(qAbs(angle_val)>180)
     {
     if(angle_val<0)
@@ -250,7 +252,7 @@ void boardVLM::boatUpdated(boatAccount * boat)
     goPilotOrtho->setStyleSheet(default_styleSheet);
     btn_chgAngle->setStyleSheet(default_styleSheet);
     goVBVMG->setStyleSheet(default_styleSheet);
-    switch(boat->getPilotType())
+    switch(myBoat->getPilotType())
     {
         case 1: /*heading*/
              btn_chgHeading->setStyleSheet(QString::fromUtf8("background-color: rgb(85, 255, 127);"));
@@ -287,31 +289,31 @@ void boardVLM::chgHeading()
 
 void boardVLM::headingUpdated(double heading)
 {
-    if(!currentBoat) /*no current boat, nothing to do*/
+    if(!currentBoat()) /*no current boat, nothing to do*/
         return;
 
     if(isComputing) return;
     isComputing=true;
 
 
-    if((float)heading==currentBoat->getHeading())
+    if((float)heading==currentBoat()->getHeading())
     {
         /* setting back to VLM value */
-        speed->setText(QString().setNum(currentBoat->getSpeed()));
+        speed->setText(QString().setNum(currentBoat()->getSpeed()));
         speed->setStyleSheet(QString::fromUtf8(SPEED_COLOR_VLM));
         label_6->setStyleSheet(QString::fromUtf8(SPEED_COLOR_VLM));
-        float val=currentBoat->getHeading()-currentBoat->getWindDir();
-        float angle = currentBoat->getTWA();
+        float val=currentBoat()->getHeading()-currentBoat()->getWindDir();
+        float angle = currentBoat()->getTWA();
         calcAngleSign(val,angle);
         editAngle->setValue(angle);
         /*changing boat rotation*/
-        windAngle->setValues(currentBoat->getHeading(),currentBoat->getWindDir(),
-                             currentBoat->getWindSpeed(), computeWPdir(currentBoat), -1);
+        windAngle->setValues(currentBoat()->getHeading(),currentBoat()->getWindDir(),
+                             currentBoat()->getWindSpeed(), computeWPdir(currentBoat()), -1);
     }
     else
     {
         /* heading value has changed => compute angle */
-        float angle=heading-currentBoat->getWindDir();
+        float angle=heading-currentBoat()->getWindDir();
         if(qAbs(angle)>180)
         {
             if(angle<0)
@@ -323,13 +325,13 @@ void boardVLM::headingUpdated(double heading)
         editAngle->setValue(angle);
 
         /* compute speed if a polar is known */
-        if(currentBoat->getPolarData())
+        if(currentBoat()->getPolarData())
         {
-            float newSpeed=currentBoat->getPolarData()->getSpeed(currentBoat->getWindSpeed(),angle);
+            float newSpeed=currentBoat()->getPolarData()->getSpeed(currentBoat()->getWindSpeed(),angle);
             speed->setText(QString().setNum(((float)qRound(newSpeed*100))/100));
             speed->setStyleSheet(QString::fromUtf8(SPEED_COLOR_UPDATE));
             label_6->setStyleSheet(QString::fromUtf8(SPEED_COLOR_UPDATE));
-            qWarning() << "Angle=" << angle << " w spd=" << currentBoat->getWindSpeed() << " => boat spd=" << newSpeed;
+            qWarning() << "Angle=" << angle << " w spd=" << currentBoat()->getWindSpeed() << " => boat spd=" << newSpeed;
         }
         else
         {
@@ -337,8 +339,8 @@ void boardVLM::headingUpdated(double heading)
             label_6->setStyleSheet(QString::fromUtf8(SPEED_COLOR_NO_POLAR));
         }
         /*changing boat rotation*/
-        windAngle->setValues(currentBoat->getHeading(),currentBoat->getWindDir(),
-                             currentBoat->getWindSpeed(), computeWPdir(currentBoat), heading);
+        windAngle->setValues(currentBoat()->getHeading(),currentBoat()->getWindDir(),
+                             currentBoat()->getWindSpeed(), computeWPdir(currentBoat()), heading);
     }
 
     isComputing=false;
@@ -346,15 +348,15 @@ void boardVLM::headingUpdated(double heading)
 
 void boardVLM::angleUpdated(double angle)
 {
-    if(!currentBoat) /*no current boat, nothing to do*/
+    if(!currentBoat()) /*no current boat, nothing to do*/
         return;
 
     if(isComputing) return;
     isComputing=true;
 
 /* compute VLM angle */
-    float val=currentBoat->getHeading()-currentBoat->getWindDir();
-    float oldAngle=currentBoat->getTWA();
+    float val=currentBoat()->getHeading()-currentBoat()->getWindDir();
+    float oldAngle=currentBoat()->getTWA();
     calcAngleSign(val,oldAngle);
     oldAngle=((float)qRound(oldAngle*10))/10;
 
@@ -362,31 +364,31 @@ void boardVLM::angleUpdated(double angle)
     if(angle==oldAngle)
     {
 /* setting back to VLM value */
-        speed->setText(QString().setNum(currentBoat->getSpeed()));
-        editHeading->setValue(currentBoat->getHeading());
+        speed->setText(QString().setNum(currentBoat()->getSpeed()));
+        editHeading->setValue(currentBoat()->getHeading());
         speed->setStyleSheet(QString::fromUtf8(SPEED_COLOR_VLM));
         label_6->setStyleSheet(QString::fromUtf8(SPEED_COLOR_VLM));
         /*changing boat rotation*/
-        windAngle->setValues(currentBoat->getHeading(),currentBoat->getWindDir(),
-                             currentBoat->getWindSpeed(), computeWPdir(currentBoat), -1);
+        windAngle->setValues(currentBoat()->getHeading(),currentBoat()->getWindDir(),
+                             currentBoat()->getWindSpeed(), computeWPdir(currentBoat()), -1);
     }
     else
     {
         /* angle has changed */
         /* compute heading */
-        float heading = currentBoat->getWindDir() + angle;
+        float heading = currentBoat()->getWindDir() + angle;
         if(heading<0) heading+=360;
         else if(heading>360) heading-=360;
         editHeading->setValue(heading);
 /* compute speed if a polar is known */
-        if(currentBoat->getPolarData())
+        if(currentBoat()->getPolarData())
         {
-            float newSpeed=currentBoat->getPolarData()->getSpeed(currentBoat->getWindSpeed(),angle);
+            float newSpeed=currentBoat()->getPolarData()->getSpeed(currentBoat()->getWindSpeed(),angle);
             speed->setText(QString().setNum(((float)qRound(newSpeed*100))/100));
             speed->setStyleSheet(QString::fromUtf8(SPEED_COLOR_UPDATE));
             label_6->setStyleSheet(QString::fromUtf8(SPEED_COLOR_UPDATE));
 
-            qWarning() << "Angle=" << angle << " w spd=" << currentBoat->getWindSpeed() << " => boat spd=" << newSpeed;
+            qWarning() << "Angle=" << angle << " w spd=" << currentBoat()->getWindSpeed() << " => boat spd=" << newSpeed;
         }
         else
         {
@@ -394,20 +396,20 @@ void boardVLM::angleUpdated(double angle)
             label_6->setStyleSheet(QString::fromUtf8(SPEED_COLOR_NO_POLAR));
         }
         /*changing boat rotation*/
-        windAngle->setValues(currentBoat->getHeading(),currentBoat->getWindDir(),
-                             currentBoat->getWindSpeed(), computeWPdir(currentBoat), heading);
+        windAngle->setValues(currentBoat()->getHeading(),currentBoat()->getWindDir(),
+                             currentBoat()->getWindSpeed(), computeWPdir(currentBoat()), heading);
     }
     isComputing=false;
 }
 
 void boardVLM::update_btnWP(void)
 {
-    if(!currentBoat)
+    if(!currentBoat())
         return;
 
-    float WPLat = currentBoat->getWPLat();
-    float WPLon = currentBoat->getWPLon();
-    float WPHd = currentBoat->getWPHd();
+    float WPLat = currentBoat()->getWPLat();
+    float WPLon = currentBoat()->getWPLon();
+    float WPHd = currentBoat()->getWPHd();
 
     if(WPLat==0 && WPLon==0)
         btn_WP->setText(tr("Prochaine balise (0 WP)"));
@@ -439,7 +441,7 @@ void boardVLM::update_btnWP(void)
 
 void boardVLM::doWP_edit()
 {
-    wpDialog->show_WPdialog(currentBoat);
+    wpDialog->show_WPdialog(currentBoat());
 }
 
 void boardVLM::chgAngle()
@@ -450,7 +452,7 @@ void boardVLM::chgAngle()
 
 void boardVLM::doSync()
 {
-    if(currentBoat)
+    if(currentBoat())
     {
         btn_Synch->setStyleSheet(QString::fromUtf8("background-color: rgb(255, 0, 0);"));
         emit VLM_Sync();
@@ -483,14 +485,14 @@ void boardVLM::doVbvmg()
 
 void boardVLM::disp_boatInfo()
 {
-    if(currentBoat)
+    if(currentBoat())
     {
-        QString polar_str=currentBoat->getCurrentPolarName();
-        if(currentBoat->getPolarData())
+        QString polar_str=currentBoat()->getCurrentPolarName();
+        if(currentBoat()->getPolarData())
         {
-            if(currentBoat->getPolarState())
+            if(currentBoat()->getPolarState())
                 polar_str+= " ("+tr("forcÃ©")+")";
-            if (currentBoat->getPolarData()->getIsCsv())
+            if (currentBoat()->getPolarData()->getIsCsv())
                 polar_str += " - format csv";
             else
                 polar_str += " - format pol";
@@ -498,21 +500,15 @@ void boardVLM::disp_boatInfo()
         else
             polar_str+= " ("+tr("erreur chargement")+")";
 
-        QString boatID;
-
-        if(currentBoat->getAliasState())
-            boatID=currentBoat->getAlias() + " (" + currentBoat->getBoatId() + ")";
-        else
-            boatID=currentBoat->getLogin() + " (" + currentBoat->getBoatId() + ")";
-
+        QString boatID=currentBoat()->getDispName();
         QMessageBox::information(this,tr("Information sur")+" " + boatID,
-                             tr("Login:") + " " + currentBoat->getLogin() + "\n" +
-                             (currentBoat->getAliasState()?tr("Alias:")+ " " + currentBoat->getAlias() + "\n":"") +
-                             tr("ID:") + " " + currentBoat->getBoatId() + "\n" +
-                             tr("Nom:") + " " + currentBoat->getBoatName() + "\n" +
-                             tr("Email:") + " " + currentBoat->getEmail() + "\n" +
-                             tr("Course:") + " (" + currentBoat->getRaceId() + ") " + currentBoat->getRaceName() + "\n" +
-                             tr("Score:") + " " + currentBoat->getScore() + "\n" +
+                             tr("Name:") + " " + currentBoat()->getName() + "\n" +
+                             (currentBoat()->getAliasState()?tr("Alias:")+ " " + currentBoat()->getAlias() + "\n":"") +
+                             tr("ID:") + " " + currentBoat()->getBoatId() + "\n" +
+                             tr("Nom:") + " " + currentBoat()->getBoatName() + "\n" +
+                             tr("Email:") + " " + currentBoat()->getEmail() + "\n" +
+                             tr("Course:") + " (" + currentBoat()->getRaceId() + ") " + currentBoat()->getRaceName() + "\n" +
+                             tr("Score:") + " " + currentBoat()->getScore() + "\n" +
                              tr("Polaire:") + " " + polar_str
                              );
     }
@@ -530,7 +526,7 @@ char boardVLM::chkSum(QString data)
 
 void boardVLM::synch_GPS()
 {
-  if(!currentBoat)
+  if(!currentBoat())
       return;
 
   if(chk_GPS->isChecked())
@@ -561,12 +557,12 @@ void boardVLM::synch_GPS()
         QString TWS;
         char ch;
         float fTWA;
-        float lat=qAbs(currentBoat->getLat());
+        float lat=qAbs(currentBoat()->getLat());
         int deg=((int)lat);
         lat=(lat-deg)*60;
         deg=deg*100;
         lat=lat+deg;
-        float lon=qAbs(currentBoat->getLon());
+        float lon=qAbs(currentBoat()->getLon());
         deg=((int)lon);
         lon=(lon-deg)*60;
         deg=deg*100;
@@ -574,8 +570,8 @@ void boardVLM::synch_GPS()
         QDateTime now = QDateTime::currentDateTime();
 
         /*preparing main content */
-        data1.sprintf("%07.2f,%s,%08.2f,%s,",lat,currentBoat->getLat()<0?"S":"N",lon,currentBoat->getLon()<0?"W":"E");
-        data2.sprintf("%05.1f,%05.1f,",currentBoat->getSpeed(),currentBoat->getHeading());
+        data1.sprintf("%07.2f,%s,%08.2f,%s,",lat,currentBoat()->getLat()<0?"S":"N",lon,currentBoat()->getLon()<0?"W":"E");
+        data2.sprintf("%05.1f,%05.1f,",currentBoat()->getSpeed(),currentBoat()->getHeading());
 
         /*sending it 10 times */
         for(int i=0;i<10;i++)
@@ -628,11 +624,11 @@ void boardVLM::synch_GPS()
         }
 
         /* Sending TWD TWA and TWS , sentence $GPMWV,TWA,T,TWS,N*/
-        fTWA = currentBoat->getTWA();
-        calcAngleSign((currentBoat->getHeading()-currentBoat->getWindDir()),fTWA);
-        TWD.sprintf("%05.1f",currentBoat->getWindDir());
+        fTWA = currentBoat()->getTWA();
+        calcAngleSign((currentBoat()->getHeading()-currentBoat()->getWindDir()),fTWA);
+        TWD.sprintf("%05.1f",currentBoat()->getWindDir());
         TWA.sprintf("%05.1f",(-1 * fTWA));
-        TWS.sprintf("%05.1f",currentBoat->getWindSpeed());
+        TWS.sprintf("%05.1f",currentBoat()->getWindSpeed());
         data="GPMWV,"+TWA+",T,"+TWS+",N";
         ch=chkSum(data);
         data="$"+data+"*"+QString().setNum(ch,16);
@@ -686,7 +682,7 @@ void boardVLM::setChangeStatus(bool status)
 /*********************/
 /* http requests     */
 
-void boardVLM::sendCmd(int cmdNum,float  val1,float val2, float val3)
+void boardVLM::sendCmd(int cmdNum,double  val1,double val2, double val3)
 {
 
     if(!hasInet() || hasRequest())
@@ -696,103 +692,110 @@ void boardVLM::sendCmd(int cmdNum,float  val1,float val2, float val3)
         return;
     }
 
-        btn_Synch->setStyleSheet(QString::fromUtf8("background-color: rgb(255, 0, 0);"));
-        currentCmdNum=cmdNum;
-        cmd_val1=val1;
-        cmd_val2=val2;
-        cmd_val3=val3;
-        QString page;
-        QTextStream(&page)
-                        << "/myboat.php?"
-                        << "pseudo=" << currentBoat->getLogin()
-                        << "&password=" << currentBoat->getPass()
-                        << "&lang=fr&type=login"
-                        ;
+    btn_Synch->setStyleSheet(QString::fromUtf8("background-color: rgb(255, 0, 0);"));
+    currentCmdNum=cmdNum;
+    cmd_val1=val1;
+    cmd_val2=val2;
+    cmd_val3=val3;
+    QString url;
+    QString data;
+    QString phpScript;
 
-        qWarning() << "login for cmd " << cmdNum << "(" << cmd_val1 << ","
-                                                 << cmd_val2 << ","
-                                                 << cmd_val3 << ")";
+    QVariantMap instruction;
+    QVariantMap pip;
+    instruction.insert("idu",currentBoat()->getBoatId().toInt());
 
-    inetGet(VLM_REQUEST_LOGIN,page);
+
+    switch(currentCmdNum)
+    {
+        case VLM_CMD_HD:
+            phpScript="pilot_set.php";
+            instruction.insert("pim",1);
+            instruction.insert("pip",cmd_val1);
+            break;
+        case VLM_CMD_ANG:
+            phpScript="pilot_set.php";
+            instruction.insert("pim",2);
+            instruction.insert("pip",cmd_val1);
+            break;
+        case VLM_CMD_ORTHO:
+            phpScript="pilot_set.php";
+            instruction.insert("pim",3);
+            break;
+        case VLM_CMD_VMG:
+            phpScript="pilot_set.php";
+            instruction.insert("pim",4);
+            break;
+        case VLM_CMD_VBVMG:
+            phpScript="pilot_set.php";
+            instruction.insert("pim",5);
+            break;
+        case VLM_CMD_WP:
+            /*phpScript="pilot_set.php";
+            instruction.insert("pim",currentBoat()->getPilotType());*/
+            phpScript="target_set.php";
+            pip.insert("targetlat",cmd_val1);
+            pip.insert("targetlong",cmd_val2);
+            pip.insert("targetandhdg",cmd_val3);
+            instruction.insert("pip",pip);
+            break;
+    }
+
+    QJson::Serializer serializer;
+    QByteArray json = serializer.serialize(instruction);
+
+    QTextStream(&url) << "/ws/boatsetup/" << phpScript;
+
+    QTextStream(&data) << "parms=" << json;
+    QTextStream(&data) << "&select_idu=" << currentBoat()->getId();
+
+    inetPost(VLM_DO_REQUEST,url,data);
 }
 
-void boardVLM::requestFinished (QByteArray)
-{
-    QString page;
-    QNetworkRequest request;
+void boardVLM::requestFinished (QByteArray res)
+{    
     switch(getCurrentRequest())
     {
         case VLM_REQUEST_LOGIN:
-            switch(currentCmdNum)
-            {
-                case VLM_CMD_HD:
-                    QTextStream(&page)
-                                << "/update_angle.php?expertcookie=yes&lang=fr&idusers="
-                                << currentBoat->getBoatId().toInt()
-                                << "&pilotmode=autopilot&boatheading="+QString().setNum(cmd_val1)
-                            ;
-                    break;
-                case VLM_CMD_ANG:
-                    QTextStream(&page)
-                                << "/update_angle.php?expertcookie=yes&lang=fr&idusers="
-                                << currentBoat->getBoatId().toInt()
-                                << "&pilotmode=windangle&pilotparameter="+QString().setNum(cmd_val1)
-                            ;
-                    break;
-                case VLM_CMD_VMG:
-                    QTextStream(&page)
-                                << "/update_angle.php?expertcookie=yes&lang=fr&idusers="
-                                << currentBoat->getBoatId().toInt()
-                                << "&pilotmode=bestvmg"
-                            ;
-                    break;
-                case VLM_CMD_ORTHO:
-                    QTextStream(&page)
-                                << "/update_angle.php?expertcookie=yes&lang=fr&idusers="
-                                << currentBoat->getBoatId().toInt()
-                                << "&pilotmode=orthodromic"
-                            ;
-                    break;
-                case VLM_CMD_WP:
-                    QTextStream(&page)
-                                << "/myboat.php?type=savemywp"
-                                << "&pseudo=" << currentBoat->getLogin()
-                                << "&password=" << currentBoat->getPass()
-                                << "&lang=fr"
-                                << "&targetlat="+QString().setNum(cmd_val1)
-                                << "&targetlong="+QString().setNum(cmd_val2)
-                                << "&targetandhdg="+QString().setNum(cmd_val3)
-                            ;
-                    break;
-                 case VLM_CMD_VBVMG:
-                    QTextStream(&page)
-                                << "/update_angle.php?expertcookie=yes&lang=fr&idusers="
-                                << currentBoat->getBoatId().toInt()
-                                << "&pilotmode=vbvmg"
-                            ;
-                    break;
-            }
-            qWarning() << "Send cmd: " << page;
-
-            clearCurrentRequest();
-            inetGet(VLM_DO_REQUEST,page);
+            qWarning() << "Error: BoardVLM:requestFinished - res for request login";
             break;
         case VLM_DO_REQUEST:
-            isWaiting=true;
-            qWarning() << "Request done";
-            /* validate boat info */
-            currentBoat->validateChg(currentCmdNum,cmd_val1,cmd_val2,cmd_val3);
-            /*nbRetry=0;
-            timer->start(1000);*/
+            //qWarning() << "Request done";
+
+            if(checkWSResult(res,"BoardVLM",mainWin))
+                currentBoat()->slot_getData(true);
+            else
+                btn_Synch->setStyleSheet(QString::fromUtf8("background-color: rgb(255, 170, 0);"));
             break;
     }
 }
 
-void boardVLM::validationDone(bool ok)
+QString boardVLM::getAuthLogin(bool * ok=NULL)
 {
-    isWaiting=false;
-    if(!ok)
-        btn_Synch->setStyleSheet(QString::fromUtf8("background-color: rgb(255, 170, 0);"));;
+    if(currentBoat())
+    {
+        if(ok) *ok=true;
+        return currentBoat()->getAuthLogin();
+    }
+    else
+    {
+        if(ok) *ok=false;
+        return QString();
+    }
+}
+
+QString boardVLM::getAuthPass(bool * ok=NULL)
+{
+    if(currentBoat())
+    {
+        if(ok) *ok=true;
+        return currentBoat()->getAuthPass();
+    }
+    else
+    {
+        if(ok) *ok=false;
+        return QString();
+    }
 }
 
 void boardVLM::edtSpinBox_key()
@@ -833,7 +836,6 @@ void boardVLM::slot_hideShowCompass()
         Settings::setSetting("boardCompassShown",1);
         windAngle->show();
     }
-
 }
 
 /************************/
@@ -849,7 +851,7 @@ WP_dialog::WP_dialog(QWidget * parent) : QDialog(parent)
     WP_conv_lon->setText("");
 }
 
-void WP_dialog::show_WPdialog(boatAccount * boat)
+void WP_dialog::show_WPdialog(boatVLM * boat)
 {
     currentBoat=boat;
 

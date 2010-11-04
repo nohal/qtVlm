@@ -28,16 +28,23 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 /*****************************/
 
 /* BoardVLM.h */
+class board;
 class boardVLM;
+class boardReal;
 
 /* horn */
 class DialogHorn;
 
-/* boatAccount.h */
-class boatAccount;
+/* boat*.h */
+class boat;
+class boatVLM;
+class boatReal;
+class Player;
 
 /* boatAccount_dialog.h */
 class boatAccount_dialog;
+class playerAccount;
+class paramAccountv;
 
 /* inetClient.h */
 class inetClient;
@@ -183,5 +190,7 @@ class xml_boatData;
 /* xml_POIData.h */
 class xml_POIData;
 
+/* boatReal.h */
+class boatReal;
 
 #endif // CLASS_LIST_H
