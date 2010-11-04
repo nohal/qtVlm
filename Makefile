@@ -7,6 +7,7 @@ all:
 	cd src/qextserialport; qmake; make
 	cd src/qjson; qmake; make
 	cd src/c_lib; qmake; make
+	cd src/nmealib/src; qmake; make
 	cd src; qmake; make
 
 clean:
@@ -22,6 +23,8 @@ clean:
 	rm -Rf src/qjson/Makefile src/qjson/libqjson.a
 	cd src/c_lib; make clean
 	rm -Rf src/c_lib/Makefile
+	cd src/nmealib/src; make clean
+	rm -Rf src/nmealib/src/Makefile
 	cd src;	qmake; make clean
 	rm -Rf src/qtVlm src/Makefile src/objs
 	rm -f qtVlm

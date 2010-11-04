@@ -99,6 +99,8 @@ class ROUTE : public QGraphicsWidget
         int getMultVac(){return this->multVac;}
         QList<POI*> & getPoiList() { return this->my_poiList; }
         vlmLine * getLine(){return this->line;}
+        bool getSimplify(){return this->simplify;}
+        void setSimplify(bool b){this->simplify=b;}
     public slots:
         void slot_recalculate();
         void slot_edit();
@@ -108,7 +110,6 @@ class ROUTE : public QGraphicsWidget
         void slot_shRou(){if(this->isVisible()) slot_shHidden();else slot_shShow();}
         void slot_export(){parent->exportRouteFromMenu(this);}
         void slot_boatPointerHasChanged(boat * acc);
-        void slot_compassFollow(){parent->setCompassFollow(this);}
         void slot_compassFollow(){parent->setCompassFollow(this);}
     signals:
         void editMe(ROUTE *);
@@ -166,5 +167,6 @@ class ROUTE : public QGraphicsWidget
         void interpolatePos();
         bool imported;
         int multVac;
+        bool simplify;
 };
 #endif // ROUTE_H
