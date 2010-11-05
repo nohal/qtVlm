@@ -505,7 +505,11 @@ bool paramAccount::initDialog(player_data * data)
     {
         data->login=edit_login->text();
         data->pass=edit_pass->text();
+#ifdef __QTVLM_WITH_TEST
         data->type=type_cb->currentIndex();
+#else
+        data->type=BOAT_VLM;
+#endif
         return true;
     }
     return false;
