@@ -27,6 +27,8 @@ class vlmPoint
         double distArrival;
         double capArrival;
         int originNb;
+        double lonProj;
+        double latProj;
     private:
 };
 

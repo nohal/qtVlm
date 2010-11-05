@@ -114,11 +114,13 @@ paramVLM::paramVLM(MainWindow * main,myCentralWidget * parent) : QDialog(parent)
     chk_askGribFolder->setCheckState(Settings::getSetting("askGribFolder",1).toInt()==1?Qt::Checked:Qt::Unchecked);
     edt_gribFolder->setText(Settings::getSetting("edtGribFolder","grib/").toString());
 
-    /* advanced */
+    /* GPS */
     chk_activateEmulation->setCheckState(
          Settings::getSetting("gpsEmulEnable", "0").toString()=="1"?Qt::Checked:Qt::Unchecked);
     serialName->setText(Settings::getSetting("serialName", "COM2").toString());
     spn_gpsDelay->setValue(Settings::getSetting("GPS_DELAY",30).toInt());
+
+    /* advanced */
 
     chk_forceUserAgent->setCheckState(Settings::getSetting("forceUserAgent",0).toInt()==1?Qt::Checked:Qt::Unchecked);
     userAgent->setText(Settings::getSetting("userAgent", "").toString());
@@ -130,6 +132,10 @@ paramVLM::paramVLM(MainWindow * main,myCentralWidget * parent) : QDialog(parent)
 
     saveWinGeometry->setCheckState(Settings::getSetting("saveMainWindowGeometry","1").toInt()==1?Qt::Checked:Qt::Unchecked);
 
+    /*QString interpol_name[3] = { "TWSA", "selecive TWSA", "Hybride" };
+    for(int i=0;i<3;i++)
+        interpol_list->addItem(interpol_name[i]);
+    interpol_list->setCurrentIndex(Settings::getSetting("interpolation",INTERPOL_DEFAULT).toInt());*/
 
 }
 

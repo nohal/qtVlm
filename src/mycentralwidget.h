@@ -105,6 +105,7 @@ class myCentralWidget : public QWidget
         Player * getPlayer(void) { return currentPlayer; }
 
         void manageAccount(bool * res=NULL);
+        void updatePlayer(Player * player);
 
         /* route */
         QList<ROUTE*> & getRouteList(){ return this->route_list;}
@@ -125,8 +126,6 @@ class myCentralWidget : public QWidget
         void update_menuRoutage();
         void deleteRoutage(ROUTAGE * routage);
         ROUTAGE * addRoutage();
-
-
 
         Projection * getProj(void){return proj;}
 

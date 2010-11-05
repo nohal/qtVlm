@@ -129,7 +129,7 @@ void twaLine::traceIt()
         for(int i=1;i<=nbVac[page];i++)
         {
             if(!grib->getInterpolatedValue_byDates(current.lon, current.lat,
-                eta,&wind_speed,&wind_angle,INTERPOLATION_SELECTIVE_TWSA) || eta>maxDate)
+                eta,&wind_speed,&wind_angle,INTERPOLATION_DEFAULT) || eta>maxDate)
                 break;
             wind_angle=radToDeg(wind_angle);
             cap=A360(wind_angle+twa[page]);

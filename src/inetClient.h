@@ -65,7 +65,7 @@ class inetClient
        bool hasRequest(void) { return (myReply!=NULL); }
        bool hasInet(void) {return (inet!=NULL); }
 
-       bool checkWSResult(QByteArray res,QString caller,QWidget * parent);
+       bool checkWSResult(QByteArray res,QString caller,QWidget * parent,QString order=QString());
 
        bool needAuth;
 

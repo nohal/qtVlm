@@ -39,7 +39,9 @@ playerAccount::playerAccount(Projection * proj, MainWindow * main,
     this->proj = proj;
     this->main=main;
     this->parent=parent;
-    this->inet=inet;    
+    this->inet=inet;
+
+    msgBox = NULL;
 
     /* signal / slot init */
 
@@ -78,6 +80,8 @@ void playerAccount::initList(QList<Player*> * player_list)
         player_idx++;
         if(curPlayerIdp != -1 && curPlayerIdp==player->getId())
             curItem=item;
+        /* updating player */
+        updPlayer(player);
     }
 
     if(curItem)
@@ -231,7 +235,11 @@ void playerAccount::slot_modPlayer(void)
     player_data * data = new player_data();
     data->login=player->getLogin();
     data->pass=player->getPass();
+#ifdef __QTVLM_WITH_TEST
     data->type=player->getType();
+#else
+    data->type=BOAT_VLM;
+#endif
 
     if(accDialog.initDialog(data))
     {
@@ -303,11 +311,19 @@ void playerAccount::slot_updPlayer(void)
         qWarning() << "Can't find player for UPD";
         return;
     }
+
     updPlayer(player);
 }
 
 void playerAccount::updPlayer(Player * player)
 {
+    /* showing msg box */
+    if(msgBox)
+        delete msgBox;
+    msgBox= new QMessageBox(QMessageBox::Information,tr("Mise à jour de compte"),
+                            tr("Mise en cours du compte ")+player->getLogin(),
+                            QMessageBox::NoButton,this,Qt::SplashScreen);
+    msgBox->show();
     connect(player,SIGNAL(playerUpdated(bool,Player*)),this,SLOT(slot_updFinished(bool,Player*)));
     player->updateData();
 }
@@ -316,12 +332,45 @@ void playerAccount::slot_updFinished(bool res_ok, Player * player)
 {
 #warning voir la gestion des erreurs de update
     disconnect(player,SIGNAL(playerUpdated(bool,Player*)),this,SLOT(slot_updFinished(bool,Player*)));
+
+    if(msgBox)
+    {
+        delete msgBox;
+        msgBox=NULL;
+    }
+
     if(!res_ok)
     {
         qWarning() << "Erreur de MaJ player";
         return;
     }
 
+    doUpdate(player);
+
+    /* updating player displayed */
+    int idx=players.key(player,-1);
+    if(idx!=-1)
+    {
+        //qWarning() << "Player found in player list";
+        for(int i=0;i<list_player->count();i++)
+        {
+            QListWidgetItem * item = list_player->item(i);
+            if(item->data(ROLE_IDX).toInt()==idx)
+            {
+                setPlayerItemName(item,player);
+                slot_selectItem_player(item);
+            }
+        }
+    }
+
+    /*else
+        qWarning() << "Player " << player->getLogin() << " - " << player->getName() << " not found";*/
+    //qWarning() << "Updt finished: nb " << player->getBoats()->count();
+}
+
+void playerAccount::doUpdate(Player * player)
+{
+    qWarning() << "Maj player: " << player->getLogin();
 
     /* comparing old and new boats */
     QListIterator<boatData*> i (player->getBoatsData());
@@ -383,25 +432,6 @@ void playerAccount::slot_updFinished(bool res_ok, Player * player)
             //qWarning() << "after remove: nb " << player->getBoats()->count();
         }
     }
-
-    /* updating player displayed */
-    int idx=players.key(player,-1);
-    if(idx!=-1)
-    {
-        //qWarning() << "Player found in player list";
-        for(int i=0;i<list_player->count();i++)
-        {
-            QListWidgetItem * item = list_player->item(i);
-            if(item->data(ROLE_IDX).toInt()==idx)
-            {
-                setPlayerItemName(item,player);
-                slot_selectItem_player(item);
-            }
-        }
-    }
-    /*else
-        qWarning() << "Player " << player->getLogin() << " - " << player->getName() << " not found";*/
-    //qWarning() << "Updt finished: nb " << player->getBoats()->count();
 }
 
 void  playerAccount::slot_selectItem_player( QListWidgetItem * item)

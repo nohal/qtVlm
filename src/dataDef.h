@@ -81,9 +81,19 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #define BOAT_BSIT       1
 
 #define ROLE_IDX       Qt::UserRole
+#define ROLE_IDU        33
 
 /* NB retry when sending data to VLM */
 #define MAX_RETRY 5
+
+/* Interpolations */
+
+#define INTERPOLATION_UKN              0
+#define INTERPOLATION_TWSA             1
+#define INTERPOLATION_SELECTIVE_TWSA   2
+#define INTERPOLATION_HYBRID           3
+
+#define INTERPOLATION_DEFAULT          INTERPOLATION_HYBRID
 
 /* colors */
 

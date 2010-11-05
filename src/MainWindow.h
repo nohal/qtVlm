@@ -132,6 +132,7 @@ class MainWindow: public QMainWindow
         void slot_deleteProgress(void);
         void slot_centerMap();
         void slot_boatHasUpdated(void);
+        void slot_updPlayerFinished(bool res_ok, Player * player);
 
     signals:
         void signalMapQuality(int quality);

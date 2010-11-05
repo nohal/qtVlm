@@ -63,6 +63,7 @@ class vlmLine : public QGraphicsWidget
         void setPointWind(int n, float twd, float tws){this->line[n].wind_angle=twd;this->line[n].wind_speed=tws;}
         void setPointDistIso(int n, double d){this->line[n].distIso=d;}
         void setPointcapOrigin(int n,double d){this->line[n].capOrigin=d;}
+        void setPointCoordProj(int n,double x,double y){this->line[n].lonProj=x;this->line[n].latProj=y;}
         const vlmPoint * getOrigin(int n) {return this->line.at(n).origin;}
         const vlmPoint * getPoint(int n) {return & line.at(n);}
         void setInterpolated(float lon,float lat){this->interpolatedLon=lon;this->interpolatedLat=lat;update();}

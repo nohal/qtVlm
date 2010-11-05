@@ -20,9 +20,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <parser.h>
 #include <QMessageBox>
+#include <QDateTime>
 
 #include "inetClient.h"
 #include "inetConnexion.h"
+#include "Version.h"
 
 inetClient::inetClient(inetConnexion * inet)
 {
@@ -91,7 +93,7 @@ void inetClient::resetReply()
     }
 }
 
-bool inetClient::checkWSResult(QByteArray res,QString caller,QWidget * parent)
+bool inetClient::checkWSResult(QByteArray res,QString caller,QWidget * parent,QString order)
 {
     QJson::Parser parser;
     bool ok;
@@ -113,10 +115,13 @@ bool inetClient::checkWSResult(QByteArray res,QString caller,QWidget * parent)
         qWarning() << "Error doing " << caller << " cmd: code=" << errorData["code"].toString()
                 << " - message=" << errorData["msg"].toString();
         QMessageBox::critical(parent,QObject::tr("Erreur de communication avec VLM ds ")+caller,
-                              QObject::tr("Reporter l'erreur au dev qtVlm ") + "\n"
+                              QObject::tr("Reporter l'erreur au dev qtVlm") + " (H= " + QDateTime::currentDateTime().toUTC().toString() + ")\n"
+                              + QObject::tr("Version: ") + Version::getVersion() + " - build on: " + Version::getDate() + "\n"
                               + QObject::tr("Zone: ") + caller + "\n"
                               + QObject::tr("Code erreur:")+errorData["code"].toString() + "\n"
-                              + QObject::tr("Msg erreur:")+errorData["msg"].toString()
+                              + QObject::tr("Msg erreur:")+errorData["msg"].toString() + "\n"
+                              + QObject::tr("Complement: ")+errorData["custom_error_string"].toString() + "\n"
+                              + QObject::tr("Ordre:")+order
                               );
         return false;
     }

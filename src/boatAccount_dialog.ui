@@ -10,7 +10,7 @@
     <x>0</x>
     <y>0</y>
     <width>509</width>
-    <height>351</height>
+    <height>376</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -19,9 +19,9 @@
   <widget class="QDialogButtonBox" name="buttonBox">
    <property name="geometry">
     <rect>
-     <x>10</x>
-     <y>320</y>
-     <width>471</width>
+     <x>-10</x>
+     <y>330</y>
+     <width>501</width>
      <height>32</height>
     </rect>
    </property>
@@ -406,6 +406,22 @@
      </widget>
     </item>
    </layout>
+  </widget>
+  <widget class="QLabel" name="label">
+   <property name="geometry">
+    <rect>
+     <x>10</x>
+     <y>330</y>
+     <width>271</width>
+     <height>41</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Note: La mise a jour de la liste des bateaux disponibles se fait dans l'ecran &quot;compte&quot;</string>
+   </property>
+   <property name="wordWrap">
+    <bool>true</bool>
+   </property>
   </widget>
  </widget>
  <resources/>

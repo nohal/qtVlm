@@ -258,13 +258,14 @@ MainWindow::MainWindow(int w, int h, QWidget *parent)
 
     settings = new Settings();
 
-    qWarning() <<  "Starting qtVlm";
-    progress=new QProgressDialog();
+    qWarning() <<  "Starting qtVlm - " << Version::getVersion() << " - build on " << Version::getDate();
+    progress=new QProgressDialog(this,Qt::SplashScreen);
     progress->setLabelText("Starting qtVLM");
     progress->setMaximum(100);
     progress->setMinimum(0);
     progress->setCancelButton(NULL);
     progress->show();
+    timerprogress=NULL;
 
     /* timer de gestion des VAC */
     timer = new QTimer(this);
@@ -467,9 +468,23 @@ MainWindow::MainWindow(int w, int h, QWidget *parent)
 
     //********************************************
 
-    slot_deleteProgress();
+    //slot_deleteProgress();
+
+    QList<Player*> players=my_centralWidget->getPlayers();
+    if(players.count()==1)
+    {
+        progress->setLabelText("Updating player");
+        progress->setValue(90);
+        connect(players.at(0),SIGNAL(playerUpdated(bool,Player*)),this,SLOT(slot_updPlayerFinished(bool,Player*)));
+        players.at(0)->updateData();
+        return;
+    }
+
 
     bool res;
+    progress->setLabelText("Calling player dialog");
+    progress->setValue(90);
+
     my_centralWidget->manageAccount(&res);
     if(!res)
     {
@@ -494,7 +509,17 @@ MainWindow::MainWindow(int w, int h, QWidget *parent)
                 nBoat=my_centralWidget->getBoats()->size();
                 toBeCentered=-1;
                 if(nBoat>0)
+                {
+                    progress->setLabelText("Updating boats");
+                    progress->setValue(95);
                     VLM_Sync_sync();
+                    timerprogress=new QTimer();
+                    timerprogress->setSingleShot(true);
+                    timerprogress->setInterval(5000);
+                    connect(timerprogress,SIGNAL(timeout()),this, SLOT(slot_deleteProgress()));
+                    timerprogress->start();
+                    return;
+                }
                 else
                     isStartingUp=false;
             }
@@ -502,6 +527,8 @@ MainWindow::MainWindow(int w, int h, QWidget *parent)
                 isStartingUp=false;
         }
     }
+
+    slot_deleteProgress();
 
 }
 
@@ -560,7 +587,8 @@ void MainWindow::slot_deleteProgress (void)
     qWarning() << "Removing progress";
     progress->close();
     delete progress;
-    //delete timerprogress;
+    if(timerprogress)
+        delete timerprogress;
 }
 
 //-------------------------------------------------
@@ -1152,9 +1180,9 @@ void MainWindow::VLM_Sync_sync(void)
             qWarning() << "Doing a synch_synch with VLM";
             connect(acc,SIGNAL(hasFinishedUpdating(void)),this,SLOT(slot_boatHasUpdated()));
             //toBeCentered=nBoat;
-            if(selectedBoat==NULL)
-                acc->slot_selectBoat();
-            else
+//            if(selectedBoat==NULL)
+//                acc->slot_selectBoat();
+//            else
                 acc->slot_getData(true);
         }
         else
@@ -1162,6 +1190,37 @@ void MainWindow::VLM_Sync_sync(void)
     }
     else
     {
+        int lastBoatSelected=Settings::getSetting("LastBoatSelected","-10").toInt();
+        if(lastBoatSelected!=-10)
+        {
+            bool found=false;
+            for(nBoat=0;nBoat<listBoats.count();nBoat++)
+            {
+                if(listBoats.at(nBoat)->getId()==lastBoatSelected)
+                {
+                    listBoats.at(nBoat)->slot_selectBoat();
+                    found=true;
+                    break;
+                }
+            }
+            if(!found)
+            {
+                lastBoatSelected=-10;
+                Settings::setSetting("LastBoatSelected","-10");
+            }
+        }
+        if(lastBoatSelected==-10)
+        {
+            for(nBoat=0;nBoat<listBoats.count();nBoat++)
+            {
+                if(listBoats.at(nBoat)->getStatus())
+                {
+                    listBoats.at(nBoat)->slot_selectBoat();
+                    Settings::setSetting("LastBoatSelected",listBoats.at(nBoat)->getId());
+                    break;
+                }
+            }
+        }
         menuBar->boatList->setEnabled(true);
         isStartingUp=false;
         slotDateGribChanged_now();
@@ -1390,6 +1449,7 @@ void MainWindow::slotChgBoat(int num)
         {
             if(cnt==num)
             {
+                Settings::setSetting("LastBoatSelected", acc->getId());
                 acc->slot_selectBoat();
                 /* sync lunched, update grib date */
                 //slotDateGribChanged_now();
@@ -1407,6 +1467,40 @@ void MainWindow::slotChgBoat(int num)
             cnt++;
         }
     }
+}
+
+void MainWindow::slot_updPlayerFinished(bool res_ok, Player * player)
+{
+    disconnect(player,SIGNAL(playerUpdated(bool,Player*)),this,SLOT(slot_updPlayerFinished(bool,Player*)));
+    if(!res_ok)
+    {
+        qWarning() << "Erreur de MaJ player";
+        isStartingUp=false;
+        slot_deleteProgress();
+        return;
+    }
+
+    my_centralWidget->updatePlayer(player);
+
+    my_centralWidget->slot_playerSelected(player);
+    my_centralWidget->loadPOI();
+    nBoat=my_centralWidget->getBoats()->size();
+    toBeCentered=-1;
+    if(nBoat>0)
+    {
+        progress->setLabelText("Updating boats");
+        progress->setValue(95);
+        VLM_Sync_sync();
+        timerprogress=new QTimer();
+        timerprogress->setSingleShot(true);
+        timerprogress->setInterval(5000);
+        connect(timerprogress,SIGNAL(timeout()),this, SLOT(slot_deleteProgress()));
+        timerprogress->start();
+        return;
+    }
+    else
+        isStartingUp=false;
+    slot_deleteProgress();
 }
 
 void MainWindow::slotSelectPOI(Pilototo_instruction * instruction)
@@ -1559,8 +1653,9 @@ bool MainWindow::isBoat(QString idu)
     for(int i=0;i<my_centralWidget->getBoats()->count();i++)
         if(my_centralWidget->getBoats()->at(i)->getBoatId() == idu)
         {
-            if(my_centralWidget->getBoats()->at(i)->getStatus()
-                && my_centralWidget->getBoats()->at(i)==selectedBoat)
+//            if(my_centralWidget->getBoats()->at(i)->getStatus()
+//                && my_centralWidget->getBoats()->at(i)==selectedBoat)
+                if(my_centralWidget->getBoats()->at(i)->getStatus())
                 return true;
             else
                 return false;
@@ -1679,27 +1774,20 @@ void MainWindow::slotLoadVLMGrib(void)
 }
 
 /*************************************/
-#include <serializer.h>
+#ifdef __QTVLM_WITH_TEST
+#include "coast.h"
+
 void MainWindow::slotVLM_Test(void)
 {    
-    //listAllChildren(NULL);
-    //realBoat->readData();
-    QVariantMap instruction;
-    QVariantMap pip;
+    qWarning() << "chk 1= " << chkCrossCoast(-18,11,-17.5,12);
+    qWarning() << "chk 2= " << chkCrossCoast(47,-9,46,-11);
 
-    pip.insert("targetlat",42.8);
-    pip.insert("targetlong",-7);
-    pip.insert("targetandhdg",180);
-
-    instruction.insert("pim",3);
-    instruction.insert("pip",pip);
-    instruction.insert("idu",10573);
-
-    QJson::Serializer serializer;
-    QByteArray json = serializer.serialize(instruction);
-    qWarning() << json;
 }
-
+#else
+void MainWindow::slotVLM_Test(void)
+{
+}
+#endif
 void MainWindow::slotGribInterpolation(void)
 {
     if(my_centralWidget->getGrib())

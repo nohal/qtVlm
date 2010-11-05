@@ -33,6 +33,7 @@ Player::Player(QString login, QString pass,int type, int id, QString name,
 {
     this->login=login;
     this->pass=pass;
+    this->type=0;
     this->name=name;
     this->player_id=id;
     this->type=type;
@@ -54,7 +55,6 @@ Player::Player(QString login, QString pass,int type, int id, QString name,
 
     if(type==BOAT_REAL)
     {
-        qWarning() << "creating real boat";
         realBoat = new boatReal(this->login,true,proj,main,parent);
     }
 }

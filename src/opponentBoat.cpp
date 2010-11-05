@@ -327,6 +327,7 @@ opponentList::opponentList(Projection * proj,MainWindow * main,myCentralWidget *
     colorTable[12] = QColor(255,85,127);
     colorTable[13] = QColor(170,170,255);
     colorTable[14] = QColor(170,0,255);
+    was10First=false;
 }
 
 QString opponentList::getRaceId()
@@ -347,6 +348,8 @@ void opponentList::setBoatList(QString list_txt,QString race,int showWhat,bool f
     }
     if(showWhat==1)
     {
+        if(opponent_list.size()>0) clear();
+        was10First=true;
         QString page;
         QTextStream(&page)
                             << "/ws/raceinfo/ranking.php?limit=10&idr="
@@ -356,6 +359,11 @@ void opponentList::setBoatList(QString list_txt,QString race,int showWhat,bool f
         needAuth=true;
         inetGet(OPP_LIST,page);
         return;
+    }
+    else if(was10First)
+    {
+        was10First=false;
+        clear();
     }
 
     /* is a list defined ? */

@@ -41,12 +41,9 @@ Lecture mise en mémoire d'un fichier GRIB
 
 #include "class_list.h"
 
+#include "dataDef.h"
 #include "zuFile.h"
 
-#define INTERPOLATION_UKN              0
-#define INTERPOLATION_TWSA             1
-#define INTERPOLATION_SELECTIVE_TWSA   2
-#define INTERPOLATION_HYBRID           3
 
 //===============================================================
 class Grib

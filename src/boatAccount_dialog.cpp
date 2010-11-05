@@ -83,6 +83,7 @@ bool boatAccount_dialog::initList( QList<boatVLM*> * boat_list, Player * player)
 
         setBoatItemName(item,boat);
         item->setData(ROLE_IDX,boat_idx);
+        item->setData(ROLE_IDU,boat->getId());
         boats.insert(boat_idx,setup);
         boat_idx++;
     }
@@ -135,6 +136,34 @@ void boatAccount_dialog::done(int result)
         /* validate last change for currentItem */
         saveItem(list_boat->currentItem());
         saveItem(list_boatSit->currentItem());
+        for(int n=0;n<list_boat->count();n++)
+        {
+            QListWidgetItem * item = list_boat->item(n);
+            for(int nBoat=0;nBoat<boat_list->count();nBoat++)
+            {
+                if(boat_list->at(nBoat)->getId()==item->data(ROLE_IDU).toInt())
+                {
+                    boatVLM * boat=boat_list->at(nBoat);
+                    boat_list->removeAt(nBoat);
+                    boat_list->append(boat);
+                    break;
+                }
+            }
+        }
+        for(int n=0;n<list_boatSit->count();n++)
+        {
+            QListWidgetItem * item = list_boatSit->item(n);
+            for(int nBoat=0;nBoat<boat_list->count();nBoat++)
+            {
+                if(boat_list->at(nBoat)->getId()==item->data(ROLE_IDU).toInt())
+                {
+                    boatVLM * boat=boat_list->at(nBoat);
+                    boat_list->removeAt(nBoat);
+                    boat_list->append(boat);
+                    break;
+                }
+            }
+        }
 
         while(list_boat->count())
         {
@@ -196,9 +225,17 @@ void boatAccount_dialog::done(int result)
 void boatAccount_dialog::setBoatItemName(QListWidgetItem * item,boatVLM * boat)
 {
     if(boat->getIsOwn()==BOAT_OWN)
-        item->setText(boat->getBoatName());
+        if(boat->getRaceName().isEmpty())
+            item->setText(boat->getBoatName()+" ("+tr("pas en course en ce moment")+")");
+        else
+            item->setText(boat->getBoatName()+" ("+boat->getRaceName()+")");
     else
-        item->setText(boat->getBoatName() + " (" + tr("proprio")+": "+boat->getEmail()+")");
+    {
+        if(boat->getEmail().isEmpty())
+            item->setText(boat->getBoatName() +" "+ tr("proprio")+": "+boat->getEmail()+" ("+tr("pas en course en ce moment")+")");
+        else
+            item->setText(boat->getBoatName() + " " + tr("proprio")+": "+boat->getEmail()+" ("+boat->getRaceName()+")");
+    }
 }
 
 void  boatAccount_dialog::slot_selectItem_boat(QListWidgetItem * item, QListWidgetItem * old)
@@ -306,7 +343,7 @@ void boatAccount_dialog::setItem(QListWidgetItem * item)
     if(boat->boat)
     {
         boatVLM * curBoat=boat->boat;
-        pseudo->setText(curBoat->getPseudo());
+        pseudo->setText(curBoat->getName());
         boat_id->setText(QString().setNum(curBoat->getId()));        
     }
     else

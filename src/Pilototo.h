@@ -168,6 +168,8 @@ class Pilototo : public QDialog, public Ui::pilototo_ui, public inetClient
 	QMessageBox * waitBox;
 	QVBoxLayout * frameLayout;
 
+        QString lastOrder;
+
         int selectPOI_mode;
 
         boatVLM * myBoat;

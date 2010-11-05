@@ -141,17 +141,6 @@ void boatReal::updateHint(void)
 #endif
 }
 
-
-void boatReal::my_selectBoat(void)
-{
-
-}
-
-void boatReal::my_unselectBoat(bool)
-{
-
-}
-
 /****************************************************/
 /* Receiver Thread                                  */
 /****************************************************/

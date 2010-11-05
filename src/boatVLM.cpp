@@ -56,8 +56,9 @@ boatVLM::boatVLM(QString name, bool activated, int boatId, int playerId,Player *
     nWP=0;
     this->porteHidden=parent->get_shPor_st();
     firstSynch=false;
-
+    race_name="";
     trace.clear();
+    playerName=player->getName();
 
     needAuth=true;
     connect(parent, SIGNAL(shPor(bool)),this,SLOT(slot_shPor()));
@@ -87,7 +88,7 @@ boatVLM::~boatVLM(void)
 void boatVLM::updateData(boatData * data)
 {
     this->boat_name=data->name;
-    this->pseudo=data->pseudo;
+//    this->playerName=data->playerName;
     this->boat_id=data->idu;
     this->isOwn=data->isOwn;
     /* Not updating activated status */
@@ -261,7 +262,6 @@ void boatVLM::requestFinished (QByteArray res_byte)
                     vacLen = result["VAC"].toInt();
 
                     hasPilototo=true;
-
                     lat = latitude/1000;
                     lon = longitude/1000;
 
@@ -305,7 +305,7 @@ void boatVLM::requestFinished (QByteArray res_byte)
             /* we can now update everything */
             updateBoatData();
             updateTraceColor();
-            // retirer suite au merge v2.2 drawEstime();
+            //drawEstime();
 
             if(race_id!=0 && !gatesLoaded)
             {
@@ -401,16 +401,18 @@ void boatVLM::requestFinished (QByteArray res_byte)
                     porte->setLinePen(penLine);
                     porte->setHidden(true);
                     QString tip;
+                    if(((QVariantMap)wps[str.setNum(i+1)].toMap()).isEmpty())
+                        tip=tr("Arrivee<br>");
                     if(oneBuoy)
                     {
                         QString a;
                         if(qRound(wp["laisser_au"].toDouble()==wp["laisser_au"].toDouble()))
-                            tip=tr("Une seule bouee a laisser au ")+a.sprintf("%.0f",wp["laisser_au"].toDouble());
+                            tip=tip+tr("Une seule bouee a laisser au ")+a.sprintf("%.0f",wp["laisser_au"].toDouble());
                         else
-                            tip=tr("Une seule bouee a laisser au ")+a.sprintf("%.2f",wp["laisser_au"].toDouble());
+                            tip=tip+tr("Une seule bouee a laisser au ")+a.sprintf("%.2f",wp["laisser_au"].toDouble());
                     }
                     else
-                        tip=tr("Passage a deux bouees");
+                        tip=tip+tr("Passage a deux bouees");
                     if(clockWise)
                         tip=tip+tr("<br>A passer dans le sens des aiguilles d'une montre");
                     else if (antiClockWise)
@@ -467,14 +469,16 @@ void boatVLM::inetError()
 /* Select / unselect      */
 /**************************/
 
-void boatVLM::my_selectBoat(void)
+void boatVLM::slot_selectBoat(void)
 {
+    boat::slot_selectBoat();
     showNextGates();
 }
 
 
-void boatVLM::my_unSelectBoat(bool /*needUpdate*/)
+void boatVLM::unSelectBoat(bool needUpdate)
 {
+    boat::unSelectBoat(needUpdate);
     showNextGates();
 }
 

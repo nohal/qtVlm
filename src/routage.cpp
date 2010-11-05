@@ -80,7 +80,7 @@ ROUTAGE::ROUTAGE(QString name, Projection *proj, Grib *grib, QGraphicsScene * my
     pen.setColor(Qt::red);
     pen.setBrush(Qt::red);
     pen.setWidthF(2);
-    this->angleRange=120;
+    this->angleRange=140;
     this->angleStep=3;
     this->timeStep=60;
     this->explo=2;
@@ -90,9 +90,10 @@ ROUTAGE::ROUTAGE(QString name, Projection *proj, Grib *grib, QGraphicsScene * my
     this->showIso=true;
     this->done=false;
     this->converted=false;
-    this->useTrueVacation=true;
+    this->useRouteModule=true;
+    this->finalEta.setTimeSpec(Qt::UTC);
+    this->finalEta=QDateTime::QDateTime();
     result=new vlmLine(proj,myscene,Z_VALUE_ROUTAGE);
-    debug1=0;
 }
 ROUTAGE::~ROUTAGE()
 {
@@ -122,6 +123,7 @@ void ROUTAGE::calculate()
 {
     if (!(myBoat && myBoat->getPolarData() && myBoat!=NULL)) return;
     QTime timeTotal;
+    QTime tfp;
     timeTotal.start();
     int msecs_1=0;
     int msecs_2=0;
@@ -165,10 +167,10 @@ void ROUTAGE::calculate()
     point.eyeLat=start.y();
     iso->addVlmPoint(point);
     point.capOrigin=A360(loxoCap);
-    double farAwayX=0;
-    double farAwayY=0;
-    Util::getCoordFromDistanceAngle(start.y(), start.x(), orth.getLoxoDistance()*2, A360(loxoCap), &farAwayY, &farAwayX);
-    QPointF farAway(farAwayX,farAwayY);
+//    double farAwayX=0;
+//    double farAwayY=0;
+//    Util::getCoordFromDistanceAngle(start.y(), start.x(), orth.getLoxoDistance()*2, A360(loxoCap), &farAwayY, &farAwayX);
+//    QPointF farAway(farAwayX,farAwayY);
     isochrones.append(iso);
     int nbIso=0;
     arrived=false;
@@ -186,8 +188,10 @@ void ROUTAGE::calculate()
     routeMaxN=0;
     routeTotN=0;
     routeFailedN=0;
+    NR_n=0;
+    NR_success=0;
     time_t maxDate=grib->getMaxDate();
-
+    if(angleRange>=180) angleRange=179;
     QPolygonF previousIso;
     QList<QLineF> previousSegments;
     while(true)
@@ -206,7 +210,7 @@ void ROUTAGE::calculate()
             if(!windIsForced)
             {
                 if(!grib->getInterpolatedValue_byDates((double) list->at(n).lon,(double) list->at(n).lat,
-                       eta,&wind_speed,&wind_angle,INTERPOLATION_SELECTIVE_TWSA)||eta+timeStep*60>maxDate)
+                       eta,&wind_speed,&wind_angle,INTERPOLATION_DEFAULT)||eta+timeStep*60>maxDate)
                 {
                     iso->setPointDead(n);
                     continue;
@@ -215,6 +219,7 @@ void ROUTAGE::calculate()
             }
             nbNotDead++;
             iso->setPointWind(n,wind_angle,wind_speed);
+            orth.setPoints(list->at(n).lon,list->at(n).lat,arrival.x(),arrival.y());
         }
         if(nbNotDead==0) break;
         QList<vlmPoint> tempPoints;
@@ -227,6 +232,8 @@ void ROUTAGE::calculate()
             wind_speed=list->at(n).wind_speed;
             orth.setPoints(list->at(n).lon,list->at(n).lat,arrival.x(),arrival.y());
             float loxo=orth.getLoxoCap();
+            float max_ccRight=10e5;
+            float max_ccLeft=10e5;
             QList<float> caps;
             QList<float> cap_left;
             QList<float> cap_right;
@@ -240,7 +247,11 @@ void ROUTAGE::calculate()
             else
             {
                 /*force une convergence logarithmique vers l'arrivee. On utilise la distance au meilleur point pour donner une chance aux autres de se refaire, je me comprends*/
+#if 1
                 workAngleRange=qMax((float)60.0,angleRange*(1/(1+log(initialDist/minDist))));
+#else
+                workAngleRange=angleRange;
+#endif
                 /*une fois le 1er iso passe, on explore juste 10 caps a partir de chaque point---> a voir si c'est bon et pkoi 10 et pas 5 ou 3?*/
 #if 0
                 workAngleStep=qMax(workAngleRange/10,angleStep);
@@ -251,8 +262,10 @@ void ROUTAGE::calculate()
             for(float cc=0;true;cc=cc+workAngleStep)
             {
                 if(cc>angleRange/2.0) cc=workAngleRange/2;
-                cap_left.append(loxo-cc);
-                cap_right.append(loxo+cc);
+                if(cc<max_ccLeft)
+                    cap_left.append(loxo-cc);
+                if(cc<max_ccRight)
+                    cap_right.append(loxo+cc);
                 if(cc>=workAngleRange/2.0) break;
             }
             for(int ccc=cap_left.count()-1;ccc>=0;ccc--)
@@ -271,25 +284,19 @@ void ROUTAGE::calculate()
 #warning multiprocessing is probably doable here
             for(int ccc=caps.count()-1;ccc>=0;ccc--)
             {
-                cap=caps[ccc];
                 vlmPoint newPoint(0,0);
-                findPoint(list->at(n).lon, list->at(n).lat, wind_angle, wind_speed, cap, &newPoint);
+                cap=caps[ccc];
+                tfp.start();
+                findPoint(list->at(n).lon, list->at(n).lat, wind_angle, wind_speed, cap, &newPoint,true); /*to be reviewed*/
+                msecs_3=msecs_3+tfp.elapsed();
+                newPoint.lon=((float)qRound(newPoint.lon*1000))/1000.00;
+                newPoint.lat=((float)qRound(newPoint.lat*1000))/1000.00;
                 QPointF P(newPoint.lon,newPoint.lat);
-#if 0 //check that point doesn't belong to previous iso global shape
-                if(isoShape->containsPoint(P,Qt::OddEvenFill)) continue;
-#endif
-#if 0
-                //check that the shape made by origin, point, farAway does not cross previous iso global shape
-                QPolygonF temp;
-                temp.push_back(QPointF(iso->getPoint(n)->lon,iso->getPoint(n)->lat));
-                temp.push_back(QPointF(newPoint.lon,newPoint.lat));
-                temp.push_back(farAway);
-                temp.push_back(QPointF(iso->getPoint(n)->lon,iso->getPoint(n)->lat));
-                if(isoShape->intersected(temp).size()!=0) continue;
-#endif
 #if 1
-                //check that the line (newpoint,arrival) does not cross previous iso
+                //check that the line line (origin,newPoint) do not cross previous iso or previous segments
                 QLineF temp(P,arrival);
+                temp.setLength(newPoint.distOrigin*2);
+                QLineF temp1(list->at(n).lon,list->at(n).lat,P.x(),P.y());
                 QPointF dummy(0,0);
                 bool bad=false;
                 if(!list->at(n).isStart)
@@ -302,12 +309,25 @@ void ROUTAGE::calculate()
                             bad=true;
                             break;
                         }
+                        if(n!=i && n!=i+1)
+                        {
+                            if(temp1.intersect(s,&dummy)==QLineF::BoundedIntersection)
+                            {
+                                bad=true;
+                                break;
+                            }
+                            if(temp1.intersect(previousSegments.at(i),&dummy)==QLineF::BoundedIntersection)
+                            {
+                                bad=true;
+                                break;
+                            }
+                        }
                     }
                     if (bad) continue;
                 }
 #endif
-#if 1
-                //check that the new segment wont' cross any segments from previous iso
+#if 0
+                //check that the new segment wont' cross any segments from previous iso.
                 QLineF s(newPoint.lon,newPoint.lat,list->at(n).lon,list->at(n).lat);
                 bad=false;
                 for(int i=0;i<previousSegments.count();i++)
@@ -338,24 +358,24 @@ void ROUTAGE::calculate()
                 polarPoints.append(newPoint);
             }
             qSort(polarPoints.begin(),polarPoints.end(),leftToRightFromOrigin);
+#if 1 /*suppression des doublons (il peut y en avoir a cause du module route)*/
+        for(int nn=0;nn<polarPoints.count()-1;nn++)
+        {
+            int x1=qRound(polarPoints.at(nn).lon*1000);
+            int y1=qRound(polarPoints.at(nn).lat*1000);
+            int x2=qRound(polarPoints.at(nn+1).lon*1000);
+            int y2=qRound(polarPoints.at(nn+1).lat*1000);
+            if(x1==x2 && y1==y2)
+            {
+                polarPoints.removeAt(nn+1);
+                nn--;
+            }
+        }
+#endif
             if(!polarPoints.isEmpty())
                 polarList.append(polarPoints);
         }
         msecs_1=msecs_1+time.elapsed();
-#if 0
-/* epuration par sillage: si un pt se trouve dans le sillage d'un autre, il est elimine*/
-        //Warning: not compatible with current method to clean crossing segments.
-        for (int nn=0;nn<polarList.count();nn++)
-            tempPoints=tempPoints+polartList.at(nn);
-        if(!list->at(0).isStart)
-        {
-            qSort(tempPoints.begin(),tempPoints.end(),byDistanceArrival);
-            pruneWake(&tempPoints,30,2);
-#if 0
-            pruneWake(&tempPoints,10,1);
-#endif
-        }
-#endif
 /*1eme epuration: on supprime les segments qui se croisent*/
 #if 1 /*compare last point of one polar with the first of the next polar. If they cross delete the closest point from previous iso*/
         if(!list->at(0).isStart)
@@ -423,7 +443,7 @@ void ROUTAGE::calculate()
                 }
 #else
                 if(polarNN.isEmpty()||polarMM.isEmpty())
-                    nn=-1; /*restart the loop completely, can to better than that (maybe)*/
+                    nn=-1; /*restart the loop completely, can do better than that (maybe)*/
 #endif
             }
         }
@@ -431,211 +451,134 @@ void ROUTAGE::calculate()
             tempPoints=tempPoints+polarList.at(nn);
         polarList.clear();
 #endif
-#if 0 /*remove remaining crossing segments*/
-/*counts how many times a segment crosses others and remove first those which crosses more. For example if a segment crosses 4 other segments
-it is pruned first than one which crosses only three times. In case 2 segments have the same number of crosses, we pruned first the farest from arrival*/
+        msecs_2=msecs_2+time.elapsed();
+
+
+
+
+
+
+
+
+
+#if 1 //Check that no segment is crossing it's own isochron. If this is the case remove worst point
+        time.start();
         qSort(tempPoints.begin(),tempPoints.end(),leftToRight);
-        QMultiMap<int,int> nbCross_1;
-        QMultiMap<int,int> nbCross_2;
-        QList<QList<int> > crossDetails;
-        for (int nn=0;nn<tempPoints.count()-1;nn++)
+        if(!tempPoints.at(0).origin->isStart)
         {
-            if(tempPoints.at(nn).isDead) continue;
-            QList<int> myCrossDetails;
-            int myNbCross=0;
-            for (int mm=0;mm<tempPoints.count()-1;mm++)
+            int nn=0;
+            int mm=0;
+            QPointF crossPoint;
+            int maxLook=(angleRange/angleStep)/2;
+            for (nn=0;nn<tempPoints.count()-1;nn++)
             {
-                if(tempPoints.at(mm).isDead) continue;
-                if(tempPoints.at(mm).originNb==tempPoints.at(nn).originNb) continue;
-                int toBeKilled=0;
-                if(intersects(&tempPoints, nn, mm, & toBeKilled))
+                QLineF S1(tempPoints.at(nn).lon,tempPoints.at(nn).lat,tempPoints.at(nn+1).lon,tempPoints.at(nn+1).lat);
+                bool foundCross=false;
+                for(mm=(qMax(0,nn-maxLook));mm<tempPoints.count();mm++)
                 {
-                    myNbCross++;
-                    myCrossDetails.append(mm);
+                    if(mm>nn+maxLook) break;
+                    if(mm==nn || mm==nn+1) continue;
+                    QLineF S2(tempPoints.at(mm).lon,tempPoints.at(mm).lat,tempPoints.at(mm).origin->lon,tempPoints.at(mm).origin->lat);
+                    if(S1.intersect(S2,&crossPoint)==QLineF::BoundedIntersection)
+                    {
+                        if(crossPoint!=S1.p1() && crossPoint!=S1.p2())
+                        {
+                            foundCross=true;
+                            break;
+                        }
+                    }
                 }
-            }
-            nbCross_1.insert(myNbCross*100000+tempPoints.at(nn).distArrival,nn);
-            nbCross_2.insert(nn,myNbCross*100000+tempPoints.at(nn).distArrival);
-            crossDetails.append(myCrossDetails);
-        }
-        while(true)
-        {
-            QMapIterator<int,int> index(nbCross_1);
-            index.toBack();
-            index.previous();
-            if(index.key()<=99999) break;
-            vlmPoint temp=tempPoints.at(index.value());
-            temp.isDead=true;
-            tempPoints.replace(index.value(),temp);;
-            QList<int> myCrossDetails=crossDetails.at(index.value());
-            for(int n=0;n<myCrossDetails.count();n++)
-            {
-                int segNbCross=nbCross_2.value(myCrossDetails.at(n));
-                nbCross_2.replace(myCrossDetails[n],segNbCross-100000);
-                nbCross_1.remove(segNbCross,myCrossDetails[n]);
-                nbCross_1.insert(segNbCross-100000,myCrossDetails[n]);
-            }
-            nbCross_1.remove(index.key(),index.value());
-            nbCross_2.remove(index.value(),index.key());
-        }
-        for (int nn=tempPoints.count()-1;nn>=0;nn--)
-        {
-            if(tempPoints.at(nn).isDead) tempPoints.removeAt(nn);
-        }
-        crossDetails.clear();
-        nbCross_1.clear();
-        nbCross_2.clear();
-#endif
-#if 0 //when 2 segments crosses, just discard the worst point
-        qSort(tempPoints.begin(),tempPoints.end(),leftToRight);
-        for (int nn=0;nn<tempPoints.count()-1;nn++)
-        {
-            if(tempPoints.at(nn).isDead) continue;
-            for (int mm=0;mm<tempPoints.count()-1;mm++)
-            {
-                if(tempPoints.at(mm).isDead) continue;
-                if(tempPoints.at(mm).originNb==tempPoints.at(nn).originNb) continue;
-                int toBeKilled=0;
-                if(intersects(&tempPoints, nn, mm, & toBeKilled))
+                if(foundCross)
                 {
-                    if(toBeKilled==1)
+#if 0 /*debug*/
+                    qWarning()<<"nn="<<nn<<"mm="<<mm;
+                    QPen penDebug;
+                    penDebug.setColor(Qt::red);
+                    penDebug.setBrush(Qt::red);
+                    penDebug.setWidthF(1);
+                    vlmLine *L1=new vlmLine(proj,myscene,Z_VALUE_ROUTAGE);
+                    L1->setLinePen(penDebug);
+                    L1->addVlmPoint(tempPoints.at(nn));
+                    L1->addVlmPoint(tempPoints.at(nn+1));
+                    vlmLine *L2=new vlmLine(proj,myscene,Z_VALUE_ROUTAGE);
+                    penDebug.setColor(Qt::black);
+                    penDebug.setBrush(Qt::black);
+                    L2->setLinePen(penDebug);
+                    L2->addVlmPoint(tempPoints.at(mm));
+                    vlmPoint O(tempPoints.at(mm).origin->lon,tempPoints.at(mm).origin->lat);
+                    L2->addVlmPoint(O);
+                    L1->slot_showMe();
+                    L2->slot_showMe();
+                    QApplication::processEvents();
+                    QMessageBox::information(0,"cross found","cross found!");
+                    delete L1;
+                    delete L2;
+#endif
+                    QLineF S1(tempPoints.at(nn).lon,tempPoints.at(nn).lat,crossPoint.x(),crossPoint.y());
+                    QLineF S2(tempPoints.at(mm).lon,tempPoints.at(mm).lat,crossPoint.x(),crossPoint.y());
+                    QLineF S3(tempPoints.at(mm+1).lon,tempPoints.at(mm+1).lat,crossPoint.x(),crossPoint.y());
+                    int badOne=0;
+                    if(S1.length()<S2.length())
                     {
-                        vlmPoint temp=tempPoints.at(nn);
-                        temp.isDead=true;
-                        tempPoints.replace(nn,temp);;
-                        break;
-                    }
-                    else if(toBeKilled==2)
-                    {
-                        vlmPoint temp=tempPoints.at(mm);
-                        temp.isDead=true;
-                        tempPoints.replace(mm,temp);;
-                    }
-                    else if(tempPoints.at(nn).distArrival>tempPoints.at(mm).distArrival)
-                    {
-                        vlmPoint temp=tempPoints.at(nn);
-                        temp.isDead=true;
-                        tempPoints.replace(nn,temp);;
-                        break;
+                        badOne=nn;
+                        if(S3.length()<S1.length())
+                            badOne=mm+1;
                     }
                     else
                     {
-                        vlmPoint temp=tempPoints.at(mm);
-                        temp.isDead=true;
-                        tempPoints.replace(mm,temp);;
+                        badOne=mm;
+                        if(S3.length()<S2.length())
+                            badOne=mm+1;
                     }
+                    tempPoints.removeAt(badOne);
+                    nn=qMax(-1,nn-maxLook); //not so clever restart of the loop
                 }
             }
         }
-        for (int nn=tempPoints.count()-1;nn>=0;nn--)
+#if 1 /*check that the new iso itself does not cross previous segments*/
+        if(!tempPoints.at(0).origin->isStart)
         {
-            if(tempPoints.at(nn).isDead) tempPoints.removeAt(nn);
-        }
-#endif
-        msecs_2=msecs_2+time.elapsed();
-#if 1
-        time.start();
-        //Check that no segment is crossing it's own isochron. If this is the case remove worst point
-        qSort(tempPoints.begin(),tempPoints.end(),leftToRight);
-        int nn=0;
-        int mm=0;
-        int kk=0;
-#if 0
-        /*optimisation: find 1st 2 points not dead before nn and test just that. For instance if nn==4 test only (2,3). Do the same for after nn*/
-        /*Not covering every case... can do better here*/
-        for(nn=2;nn<tempPoints.count();nn++)
-        {
-            bool foundCross=false;
-            if(tempPoints.at(nn).isDead) continue;
-            QLineF S1(tempPoints.at(nn).lon,tempPoints.at(nn).lat,tempPoints.at(nn).origin->lon,tempPoints.at(nn).origin->lat);
-            QPointF crossPoint(0,0);
-            for(mm=nn-1;mm>=0;mm--)
+            for(int nn=0;nn<tempPoints.count()-1;nn++)
             {
-                if(tempPoints.at(mm).isDead) continue;
-                for(kk=mm-1;kk>=0;kk--)
+                QPointF dummy;
+                QLineF S1(tempPoints.at(nn).lon,tempPoints.at(nn).lat,tempPoints.at(nn+1).lon,tempPoints.at(nn+1).lat);
+                for(int mm=0;mm<previousSegments.count();mm++)
                 {
-                    if(tempPoints.at(kk).isDead) continue;
-                    QLineF S2(tempPoints.at(mm).lon,tempPoints.at(mm).lat,tempPoints.at(kk).lon,tempPoints.at(kk).lat);
-                    if(S1.intersect(S2,&crossPoint)==QLineF::BoundedIntersection)
+                    if(S1.intersect(previousSegments.at(mm),&dummy)==QLineF::BoundedIntersection)
                     {
-                        foundCross=true;
-                    }
-                    break;
-                }
-                break;
-            }
-            if(!foundCross)
-            {
-                for(mm=nn+1;mm<tempPoints.count()-1;mm++)
-                {
-                    if(tempPoints.at(mm).isDead) continue;
-                    for(kk=mm+1;kk<tempPoints.count();kk++)
-                    {
-                        if(tempPoints.at(kk).isDead) continue;
-                        QLineF S2(tempPoints.at(mm).lon,tempPoints.at(mm).lat,tempPoints.at(kk).lon,tempPoints.at(kk).lat);
-                        if(S1.intersect(S2,&crossPoint)==QLineF::BoundedIntersection)
+                        if(tempPoints.at(nn).distArrival>tempPoints.at(nn+1).distArrival)
                         {
-                            foundCross=true;
+                            tempPoints.removeAt(nn);
+                            nn--;
                         }
+                        else
+                            tempPoints.removeAt(nn+1);
                         break;
                     }
-                    break;
                 }
             }
-#else
-#warning Optimisable here
-        for(nn=0;nn<tempPoints.count();nn++)
-        {
-            if(tempPoints.at(nn).isDead) continue;
-            QLineF S1(tempPoints.at(nn).lon,tempPoints.at(nn).lat,tempPoints.at(nn).origin->lon,tempPoints.at(nn).origin->lat);
-            bool foundCross=false;
-            for(mm=0;mm<tempPoints.count()-1;mm++)
-            {
-                if(mm==nn) continue;
-                if(tempPoints.at(mm).isDead) continue;
-                for (kk=mm+1;kk<tempPoints.count();kk++)
-                {
-                    if(tempPoints.at(kk).isDead) continue;
-                    if (kk==nn) break;
-                    QPointF crossPoint;
-                    QLineF S2(tempPoints.at(mm).lon,tempPoints.at(mm).lat,tempPoints.at(kk).lon,tempPoints.at(kk).lat);
-                    if(S1.intersect(S2,&crossPoint)==QLineF::BoundedIntersection)
-                    {
-                        foundCross=true;
-                    }
-                    break;
-                }
-                if(foundCross) break;
-            }
+        }
 #endif
-            if(foundCross)
-            {
-                int badOne=0;
-                if(tempPoints.at(nn).distIso<tempPoints.at(mm).distIso)
-                    badOne=nn;
-                else
-                    badOne=mm;
-                if(tempPoints.at(kk).distIso<tempPoints.at(badOne).distIso)
-                    badOne=kk;
-                vlmPoint temp=tempPoints.at(badOne);
-                temp.isDead=true;
-                tempPoints.replace(badOne,temp);
-            }
-        }
-        for (int nn=tempPoints.count()-1;nn>=0;nn--)
-        {
-            if(tempPoints.at(nn).isDead) tempPoints.removeAt(nn);
-        }
         msecs_4=msecs_4+time.elapsed();
 #endif
-#if 1 /*smoothing the isoline*/
+#if 0
+/* epuration par sillage: si un pt se trouve dans le sillage d'un autre, il est elimine*/
+        if(!list->at(0).isStart)
+        {
+            qSort(tempPoints.begin(),tempPoints.end(),byDistanceArrival);
+            pruneWake(&tempPoints,30,2);
+            qSort(tempPoints.begin(),tempPoints.end(),leftToRight);
+        }
+#endif
+#if 0 /*smoothing the isoline*/
         time.start();
         for(int smoothPass=1;smoothPass<=1;smoothPass++)
         {
-            for(nn=1;nn<tempPoints.count()-1;nn++)
+            for(int nn=1;nn<tempPoints.count()-1;nn++)
             {
                 if(tempPoints.at(nn).isDead) continue;
                 bool first=true;
+                int mm=0;
                 for(mm=nn-1;mm>=0;mm--)
                 {
                     if(tempPoints.at(mm).isDead) continue;
@@ -662,156 +605,194 @@ it is pruned first than one which crosses only three times. In case 2 segments h
         int limit=(this->angleRange/this->angleStep)+this->explo;
         int c=tempPoints.count();
         int toBeRemoved=c-limit;
-//        qWarning()<<"start cleaning"<<tempPoints.count()<<"points. Limit is"<<limit;
         if(tempPoints.count()>limit)
         {
-#if 0
-/* Method 1: just take them out at regular interval */
-            int n=0;
-            float m=0;
-            float inc=(float) c/(float) toBeRemoved;
-            for (int i=0;i<toBeRemoved;i++)
-            {
-                m=m+inc;
-                if(qRound(m)<c)
-                {
-                    tempPoints.at(qRound(m)).isDead=true;
-                    n++;
-                }
-            }
-#endif
-#if 0
-/* Method 2: we first identify the root with most children, then we kill the child which is the farest from arrival
-   if there is the same number of children then the root farest from destination is pruned first*/
-            qSort(tempPoints.begin(),tempPoints.end(),byOrigin);
-            QMultiMap<int,int> rootNb;
-            QMultiMap<int,int> rootMap;
-            int indexRoot=0;
-            int count=0;
-            vlmPoint lastOrig(tempPoints.at(0).origin->lon,tempPoints.at(0).origin->lat);
-            lastOrig.distArrival=tempPoints.at(0).distArrival;
-            for(int n=0;n<tempPoints.count();n++)
-            {
-                if(tempPoints.at(n).origin->lon!=lastOrig.lon && tempPoints.at(n).origin->lat!=lastOrig.lat)
-                {
-                    rootNb.insert(count*100000+lastOrig.distArrival,indexRoot);
-                    lastOrig.lon=tempPoints.at(n).origin->lon;
-                    lastOrig.lat=tempPoints.at(n).origin->lat;
-                    lastOrig.distArrival=tempPoints.at(n).distArrival;
-                    indexRoot++;
-                    count=0;
-                }
-                rootMap.insert(indexRoot,n);
-                count++;
-            }
-            rootNb.insert(count*100000+lastOrig.distArrival,indexRoot);
-/* at that point we have two MultiMaps, one with (count_of_children,origin_nb), one with (origin_nb,index_in_list) */
-            while(toBeRemoved>0)
-            {
-                QMapIterator<int,int> root(rootNb);
-                while(root.hasNext())
-                {
-                    indexRoot=root.next().value();
-                    int keyRoot=root.key();
-                    qWarning()<<"iso nb "<<indexRoot<<" has "<<keyRoot<<" children";
-                }
-                root.toBack();
-                indexRoot=root.previous().value();
-                int keyRoot=root.key();
-                QList<int> children=rootMap.values(indexRoot);
-                QMultiMap<float,int> dist;
-                for(int n=0;n<children.size();n++)
-                {
-                    dist.insert(tempPoints.at(children.at(n)).distArrival,children.at(n));
-                }
-                QMapIterator<float,int> distIndex(dist);
-                distIndex.toBack();
-                while(distIndex.hasPrevious())
-                {
-                    int debug1=distIndex.previous().value();
-                    float debug2=distIndex.key();
-                    qWarning()<<debug2<<debug1;
-                }
-                distIndex.toBack();
-                int indice=distIndex.previous().value();
-                vlmPoint temp=tempPoints.at(indice);
-                temp.isDead=true;
-                tempPoints.replace(indice,temp);
-                toBeRemoved--;
-                rootMap.remove(indexRoot,indice);
-                rootNb.remove(keyRoot,indexRoot);
-                rootNb.insert(keyRoot-100000,indexRoot);
-            }
-            qSort(tempPoints.begin(),tempPoints.end(),leftToRight);
-#endif
 #if 1
-/* Method 3: in this solution we sort each couple of adjacent iso points by the distance between them,
+/* We sort each couple of adjacent iso points by the distance between them,
    then we kill one of the point belonging to the first couples, based on the distance from previous iso shape*/
             while(toBeRemoved>0)
             {
                 QMultiMap<float,int> byDistances;
-                QMultiMap<int,float> byIndex;
                 for(int n=0;n<tempPoints.size()-1;n++)
                 {
                     float length=QLineF(QPointF(tempPoints.at(n).lon,tempPoints.at(n).lat),QPointF(tempPoints.at(n+1).lon,tempPoints.at(n+1).lat)).length();
                     byDistances.insert(length,n);
-                    byIndex.insert(n,length);
                 }
                 QMapIterator<float,int> d(byDistances);
                 int coupleNb=d.next().value();
-#if 1
                 if(tempPoints.at(coupleNb).distIso<tempPoints.at(coupleNb+1).distIso)
                     tempPoints.removeAt(coupleNb);
                 else
                     tempPoints.removeAt(coupleNb+1);
-#endif
-#if 0
-// playing with distStart and distArrival
-                if(tempPoints.at(coupleNb).distArrival<tempPoints.at(coupleNb).distStart)
-                {
-                    if(tempPoints.at(coupleNb).distArrival>tempPoints.at(coupleNb+1).distArrival)
-                        tempPoints.removeAt(coupleNb);
-                    else
-                        tempPoints.removeAt(coupleNb+1);
-                }
-                else
-                {
-                    if(tempPoints.at(coupleNb).distStart>tempPoints.at(coupleNb+1).distStart)
-                        tempPoints.removeAt(coupleNb);
-                    else
-                        tempPoints.removeAt(coupleNb+1);
-                }
-#endif
-#if 0
-//here we remove the one that is closest from next point. Exemple: if couple3 has the smallest distance, then we look at couple2 and couple4
-//if couple2 has a smallest distance than couple 4, then we remove point 3 otherwise we remove point 4
-                if(tempPoints.at(coupleNb).distArrival>tempPoints.at(coupleNb).distStart/2)
-                {
-                    if(coupleNb==0)
-                        tempPoints.removeAt(1);
-                    else if (coupleNb==tempPoints.count()-2)
-                        tempPoints.removeAt(tempPoints.count()-3);
-                    else
-                    {
-                        if(byIndex.value(coupleNb)>byIndex.value(coupleNb+1))
-                            tempPoints.removeAt(coupleNb);
-                        else
-                            tempPoints.removeAt(coupleNb+1);
-                    }
-                }
-                else
-                {
-                    if(tempPoints.at(coupleNb).distArrival>tempPoints.at(coupleNb+1).distArrival)
-                        tempPoints.removeAt(coupleNb);
-                    else
-                        tempPoints.removeAt(coupleNb+1);
-                }
-#endif
                 toBeRemoved--;
             }
-#endif
         }
+#endif
+        bool somethingHasChanged=true;
+        while (somethingHasChanged)
+        {
+            somethingHasChanged=false;
+#if 1 /*recheck that the new iso itself does not cross previous segments*/
+            if(!tempPoints.at(0).origin->isStart)
+            {
+                for(int nn=0;nn<tempPoints.count()-1;nn++)
+                {
+                    QPointF dummy;
+                    QLineF S1(tempPoints.at(nn).lon,tempPoints.at(nn).lat,tempPoints.at(nn+1).lon,tempPoints.at(nn+1).lat);
+                    for(int mm=0;mm<previousSegments.count();mm++)
+                    {
+                        if(S1.intersect(previousSegments.at(mm),&dummy)==QLineF::BoundedIntersection)
+                        {
+                            somethingHasChanged=true;
+                            if(tempPoints.at(nn).distArrival>tempPoints.at(nn+1).distArrival)
+                            {
+                                tempPoints.removeAt(nn);
+                                nn--;
+                            }
+                            else
+                                tempPoints.removeAt(nn+1);
+                            break;
+                        }
+                    }
+                }
+            }
+#endif
+#if 1 //Recheck that no segment is crossing it's own isochron
+            time.start();
+            qSort(tempPoints.begin(),tempPoints.end(),leftToRight);
+            if(!tempPoints.at(0).origin->isStart)
+            {
+                int nn=0;
+                int mm=0;
+                QPointF crossPoint;
+                int maxLook=(angleRange/angleStep)/2;
+                for (nn=0;nn<tempPoints.count()-1;nn++)
+                {
+                    QLineF S1(tempPoints.at(nn).lon,tempPoints.at(nn).lat,tempPoints.at(nn+1).lon,tempPoints.at(nn+1).lat);
+                    bool foundCross=false;
+                    for(mm=(qMax(0,nn-maxLook));mm<tempPoints.count();mm++)
+                    {
+                        if(mm>nn+maxLook) break;
+                        if(mm==nn || mm==nn+1) continue;
+                        QLineF S2(tempPoints.at(mm).lon,tempPoints.at(mm).lat,tempPoints.at(mm).origin->lon,tempPoints.at(mm).origin->lat);
+                        if(S1.intersect(S2,&crossPoint)==QLineF::BoundedIntersection)
+                        {
+                            if(crossPoint!=S1.p1() && crossPoint!=S1.p2())
+                            {
+                                somethingHasChanged=true;
+                                foundCross=true;
+                                break;
+                            }
+                        }
+                    }
+                    if(foundCross)
+                    {
+#if 0 /*debug*/
+                        qWarning()<<"nn="<<nn<<"mm="<<mm;
+                        QPen penDebug;
+                        penDebug.setColor(Qt::red);
+                        penDebug.setBrush(Qt::red);
+                        penDebug.setWidthF(1);
+                        vlmLine *L1=new vlmLine(proj,myscene,Z_VALUE_ROUTAGE);
+                        L1->setLinePen(penDebug);
+                        L1->addVlmPoint(tempPoints.at(nn));
+                        L1->addVlmPoint(tempPoints.at(nn+1));
+                        vlmLine *L2=new vlmLine(proj,myscene,Z_VALUE_ROUTAGE);
+                        penDebug.setColor(Qt::black);
+                        penDebug.setBrush(Qt::black);
+                        L2->setLinePen(penDebug);
+                        L2->addVlmPoint(tempPoints.at(mm));
+                        vlmPoint O(tempPoints.at(mm).origin->lon,tempPoints.at(mm).origin->lat);
+                        L2->addVlmPoint(O);
+                        L1->slot_showMe();
+                        L2->slot_showMe();
+                        QApplication::processEvents();
+                        QMessageBox::information(0,"cross found","cross found!");
+                        delete L1;
+                        delete L2;
+#endif
+                        QLineF S1(tempPoints.at(nn).lon,tempPoints.at(nn).lat,crossPoint.x(),crossPoint.y());
+                        QLineF S2(tempPoints.at(mm).lon,tempPoints.at(mm).lat,crossPoint.x(),crossPoint.y());
+                        QLineF S3(tempPoints.at(mm+1).lon,tempPoints.at(mm+1).lat,crossPoint.x(),crossPoint.y());
+                        int badOne=0;
+                        if(S1.length()<S2.length())
+                        {
+                            badOne=nn;
+                            if(S3.length()<S1.length())
+                                badOne=mm+1;
+                        }
+                        else
+                        {
+                            badOne=mm;
+                            if(S3.length()<S2.length())
+                                badOne=mm+1;
+                        }
+                        tempPoints.removeAt(badOne);
+                        nn=qMax(-1,nn-maxLook); //not so clever restart of the loop
+                    }
+                }
+            }
+        }
+#endif
         msecs_6=msecs_6+time.elapsed();
+
+
+
+
+
+
+#if 1 /* now that some fast calculations have been made, compute real thing using route*/
+        if(this->useRouteModule)
+        {
+            for(int np=0;np<tempPoints.count();np++)
+            {
+                vlmPoint newPoint=tempPoints.at(np);
+                tfp.start();
+                findPoint(newPoint.origin->lon, newPoint.origin->lat, newPoint.origin->wind_angle, newPoint.origin->wind_speed, newPoint.capOrigin, &newPoint,false);
+                msecs_3=msecs_3+tfp.elapsed();
+                newPoint.lon=((float)qRound(newPoint.lon*1000))/1000.00;
+                newPoint.lat=((float)qRound(newPoint.lat*1000))/1000.00;
+#if 0
+                QPointF P(newPoint.lon,newPoint.lat);
+                //check that the line line (origin,newPoint) do not cross previous iso or previous segments
+                QLineF temp(P,arrival);
+                temp.setLength(newPoint.distOrigin*2);
+                QLineF temp1(newPoint.origin->lon,newPoint.origin->lat,P.x(),P.y());
+                QPointF dummy(0,0);
+                bool bad=false;
+                if(!newPoint.origin->isStart)
+                {
+                    for (int i=0;i<previousIso.count()-1;i++)
+                    {
+                        QLineF s(previousIso.at(i),previousIso.at(i+1));
+                        if(temp.intersect(s,&dummy)==QLineF::BoundedIntersection)
+                        {
+                            bad=true;
+                            break;
+                        }
+                    }
+                    if (bad) continue;
+                }
+                orth.setPoints(start.x(),start.y(),newPoint.lon,newPoint.lat);
+                newPoint.distStart=orth.getDistance();
+                if(newPoint.origin->isStart)
+                    newPoint.distIso=newPoint.distStart;
+                newPoint.capStart=A360(orth.getLoxoCap()+180);
+                orth.setStartPoint(arrival.x(),arrival.y());
+                newPoint.distArrival=orth.getDistance();
+                newPoint.capArrival=A360(orth.getLoxoCap()+180);
+                newPoint.distIso=findDistancePreviousIso(newPoint,&previousIso);
+#endif
+                tempPoints.replace(np,newPoint);
+            }
+        }
+#endif
+
+
+
+
+
+
         previousIso.clear();
         if(tempPoints.count()>0)
         {
@@ -848,32 +829,6 @@ it is pruned first than one which crosses only three times. In case 2 segments h
         QCoreApplication::processEvents();
         isochrones.append(iso);
         nbIso++;
-//        qWarning()<<"Isochrone Nb"<<nbIso<<"has"<<list->count()<<"points";
-#if 0
-        isoShape->clear();;
-        isoShape->append(start);
-        for (int n=1;n<isochrones.count()-1;n++)
-        {
-            QPointF P(isochrones[n]->getPoint(0)->lon,isochrones[n]->getPoint(0)->lat);
-            isoShape->append(P);
-        }
-        for(int n=0;n<list->count();n++)
-        {
-            QPointF P(list->at(n).lon,list->at(n).lat);
-            isoShape->append(P);
-        }
-        for (int n=isochrones.count()-2;n>1;n--)
-        {
-            QPointF P(isochrones[n]->getLastPoint()->lon,isochrones[n]->getLastPoint()->lat);
-            isoShape->append(P);
-        }
-        isoShape->append(start);
-//        if(isoShape->containsPoint(arrival,Qt::OddEvenFill)||list->count()==0)
-//        {
-//            arrived=true;
-//            iso=isochrones.at(isochrones.count()-2);
-//        }
-#endif
         eta=eta+(int)timeStep*60.00;
         vlmPoint to(arrival.x(),arrival.y());
         time.start();
@@ -937,17 +892,17 @@ it is pruned first than one which crosses only three times. In case 2 segments h
     tt=tt.addMSecs(msecs_1);
     qWarning()<<"...Calculating iso points:"<<tt.toString("hh'h'mm'min'ss.zzz'secs'");
     tt.setHMS(0,0,0,0);
+    tt=tt.addMSecs(msecs_3);
+    qWarning()<<".........out of which inside findPoint():"<<tt.toString("hh'h'mm'min'ss.zzz'secs'");
+    tt.setHMS(0,0,0,0);
     tt=tt.addMSecs(msecs_2);
     qWarning()<<"...removing crossed segments:"<<tt.toString("hh'h'mm'min'ss.zzz'secs'");
     tt.setHMS(0,0,0,0);
-    tt=tt.addMSecs(msecs_3);
-    qWarning()<<"...calculating distance from previous iso:"<<tt.toString("hh'h'mm'min'ss.zzz'secs'");
-    tt.setHMS(0,0,0,0);
     tt=tt.addMSecs(msecs_4);
     qWarning()<<"...removing segments crossing their own isochron:"<<tt.toString("hh'h'mm'min'ss.zzz'secs'");
-    tt.setHMS(0,0,0,0);
-    tt=tt.addMSecs(msecs_5);
-    qWarning()<<"...smoothing iso:"<<tt.toString("hh'h'mm'min'ss.zzz'secs'");
+//    tt.setHMS(0,0,0,0);
+//    tt=tt.addMSecs(msecs_5);
+//    qWarning()<<"...smoothing iso:"<<tt.toString("hh'h'mm'min'ss.zzz'secs'");
     tt.setHMS(0,0,0,0);
     tt=tt.addMSecs(msecs_6);
     qWarning()<<"...final cleaning:"<<tt.toString("hh'h'mm'min'ss.zzz'secs'");
@@ -955,23 +910,34 @@ it is pruned first than one which crosses only three times. In case 2 segments h
     tt=tt.addMSecs(msecs_7);
     qWarning()<<"...checking if arrived:"<<tt.toString("hh'h'mm'min'ss.zzz'secs'");
     tt.setHMS(0,0,0,0);
-    tt=tt.addMSecs(msecs-(msecs_1+msecs_2+msecs_3+msecs_4+msecs_5+msecs_6));
+    tt=tt.addMSecs(msecs-(msecs_1+msecs_2+msecs_4+msecs_5+msecs_6));
     qWarning()<<"...sum of other calculations:"<<tt.toString("hh'h'mm'min'ss.zzz'secs'");
     if(arrived)
     {
-        QDateTime finalEta=QDateTime::fromTime_t(eta).toUTC();
+        finalEta=QDateTime::fromTime_t(eta).toUTC();
         QMessageBox msgBox;
         msgBox.setIcon(QMessageBox::Information);
-        msgBox.setText(tr("Fin de routage : ")+finalEta.toString("dd MMM-hh:mm"));
+        tt.setHMS(0,0,0,0);
+        tt=tt.addMSecs(msecs);
+        qWarning()<<"Total calculation time:"<<tt.toString("hh'h'mm'min'ss.zzz'secs'");
+        int elapsed=finalEta.toTime_t()-this->startTime.toTime_t();
+        QTime eLapsed(0,0,0,0);
+        eLapsed=eLapsed.addSecs(elapsed);
+        msgBox.setText(tr("Date et heure d'arrivee: ")+finalEta.toString("dd MMM-hh:mm")+
+                       tr("<br>Arrivee en: ")+eLapsed.toString("hh'h 'mm'min 'ss'secs'")+
+                       tr("<br><br>Temps de calcul: ")+tt.toString("hh'h 'mm'min 'ss'secs'"));
         msgBox.exec();
     }
-    if(this->useTrueVacation)
+    if(this->useRouteModule)
     {
-        qWarning()<<"---Newton-Raphson Statistics---";
+        qWarning()<<"---Route module statistics---";
         qWarning()<<"Total number of route segments calculated"<<routeN;
         qWarning()<<"Average number of iterations"<<(float)routeTotN/(float)routeN;
         qWarning()<<"Max number of iterations made to find a solution"<<routeMaxN;
-        qWarning()<<"Number of iterations failure"<<routeFailedN;
+        qWarning()<<"Number of failures using Route between Iso"<<routeFailedN;
+        qWarning()<<"Number of successes using Route between Iso"<<routeN-routeFailedN;
+        qWarning()<<"Number of Newton-Raphson calculations"<<NR_n;
+        qWarning()<<"Number of Newton-Raphson successful calculations"<<NR_success;
         qWarning()<<"-------------------------------";
     }
     if (!this->showIso)
@@ -982,9 +948,14 @@ it is pruned first than one which crosses only three times. In case 2 segments h
 }
 float ROUTAGE::findDistancePreviousIso(vlmPoint P, QPolygonF * isoShape)
 {
-    //QLineF line(start.x(),start.y(),P.lon,P.lat);
-    QLineF line(P.lon,P.lat,arrival.x(),arrival.y());
-    line.setAngle(line.angle()+180);
+    QLineF line;
+    if(P.distArrival>P.distStart)
+        line.setPoints(start,QPointF(P.lon,P.lat));
+    else
+    {
+        line.setPoints(QPointF(P.lon,P.lat),arrival);
+        line.setAngle(line.angle()+180);
+    }
     line.setLength(P.distStart*2);
     QPointF result(0,0);
     for(int i=0;i<isoShape->count()-1;i++)
@@ -1018,7 +989,7 @@ void ROUTAGE::pruneWake(QList<vlmPoint> * tempPoints,int wakeAngle,int mode)
             }
             else
             {
-                wakeDist=tempPoints->at(m).distOrigin;
+                wakeDist=tempPoints->at(m).distIso;
                 if(tempPoints->at(m).distStart>tempPoints->at(m).distArrival)
                     wakeDir=A360(tempPoints->at(m).capStart);
                 else
@@ -1088,7 +1059,7 @@ int ROUTAGE::superIntersects(QLineF L1,QLineF L2)
         return L2_CROSS;
     return NO_CROSS;
 }
-void ROUTAGE::findPoint(float lon, float lat, double wind_angle, double wind_speed, float cap, vlmPoint *pt)
+void ROUTAGE::findPoint(float lon, float lat, double wind_angle, double wind_speed, float cap, vlmPoint *pt, bool estimateOnly)
 {
     cap=A360(cap);
     float angle,newSpeed;
@@ -1124,7 +1095,7 @@ void ROUTAGE::findPoint(float lon, float lat, double wind_angle, double wind_spe
     pt->lon=res_lon;
     pt->lat=res_lat;
     pt->distOrigin=distanceParcourue;
-    if(!this->useTrueVacation || windIsForced) return;
+    if(!this->useRouteModule || windIsForced || estimateOnly) return;
     vlmPoint from(lon,lat);
     vlmPoint to(res_lon,res_lat);
     int realTime=calculateTimeRoute(from,to);
@@ -1169,16 +1140,18 @@ void ROUTAGE::findPoint(float lon, float lat, double wind_angle, double wind_spe
             bestDist=newDist;
         }
 #if 1 /*find it using Newtown-Raphson method*/
+        NR_n++;
         float x=distanceParcourue;
         float term=0;
         from.capOrigin=cap;
-        for (n=2;n<=100;n++)
+        for (n=2;n<=20;n++)
         {
             float y=routeFunction(x,from);
-            if(qAbs(y)<=timeStepSec/2)
+            if(qAbs(y)<=60)
             {
                 found=true;
                 pt->distOrigin=x;
+                NR_success++;
                 break;
             }
             float deriv=routeFunctionDeriv(x,from);
@@ -1203,6 +1176,31 @@ void ROUTAGE::findPoint(float lon, float lat, double wind_angle, double wind_spe
         routeTotN=routeTotN+n;
         pt->lon=lastLonFound;
         pt->lat=lastLatFound;
+#if 0 /*debug*/
+        ROUTE * route=parent->addRoute();
+        route->setName("Routage: "+name);
+        parent->update_menuRoute();
+        route->setBoat(this->myBoat);
+        route->setStartFromBoat(false);
+        route->setColor(this->color);
+        route->setWidth(this->width);
+        route->setStartTime(QDateTime::fromTime_t(eta).toUTC());
+        route->setStartTimeOption(3);
+        POI *poi1=parent->slot_addPOI("debug1",0,from.lat,from.lon,-1,0,false,this->myBoat);
+        POI *poi2=parent->slot_addPOI("debug2",0,pt->lat,pt->lon,-1,0,false,this->myBoat);
+        poi1->setRoute(route);
+        poi2->setRoute(route);
+        route->slot_recalculate();
+        if(route->getEta()!=eta+timeStep*60)
+        {
+            qWarning()<<"Mismatch between real route module and routage. etaRoutage="<<eta+timeStep*60<<"etaRoute="<<route->getEta();
+            route->slot_recalculate();
+            findPoint(lon, lat, wind_angle, wind_speed, cap, pt,false);
+        }
+        parent->deleteRoute(route);;
+        parent->slot_delPOI_list(poi1);
+        parent->slot_delPOI_list(poi2);
+#endif
     }
     else
     {
@@ -1269,7 +1267,7 @@ int ROUTAGE::calculateTimeRoute(vlmPoint routeFrom,vlmPoint routeTo,int limit)
         remaining_distance=orth.getDistance();
         do
             {
-                if(grib->getInterpolatedValue_byDates(lon, lat, etaRoute,&wind_speed,&wind_angle,INTERPOLATION_SELECTIVE_TWSA) && etaRoute<=maxDate && (!hasLimit || etaRoute<=etaLimit))
+                if(grib->getInterpolatedValue_byDates(lon, lat, etaRoute,&wind_speed,&wind_angle,INTERPOLATION_DEFAULT) && etaRoute<=maxDate && (!hasLimit || etaRoute<=etaLimit))
                 {
                     previous_remaining_distance=remaining_distance;
                     wind_angle=radToDeg(wind_angle);
@@ -1323,7 +1321,7 @@ int ROUTAGE::calculateTimeRoute(vlmPoint routeFrom,vlmPoint routeTo,int limit)
                 else
                 {
 #if 0
-                    if(!grib->getInterpolatedValue_byDates(lon, lat, etaRoute,&wind_speed,&wind_angle,INTERPOLATION_SELECTIVE_TWSA))
+                    if(!grib->getInterpolatedValue_byDates(lon, lat, etaRoute,&wind_speed,&wind_angle,INTERPOLATION_DEFAULT))
                         qWarning()<<"out of grib!!";
                     if(etaRoute>maxDate)
                         qWarning()<<"out of gribDate!"<<QDateTime::fromTime_t(etaRoute).toString("dd/MM/yy hh:mm:ss")<<QDateTime::fromTime_t(maxDate).toString("dd/MM/yy hh:mm:ss")<<QDateTime::fromTime_t(this->eta).toString("dd/MM/yy hh:mm:ss")<<orth.getDistance();

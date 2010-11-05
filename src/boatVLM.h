@@ -38,8 +38,9 @@ class boatVLM : public boat, public inetClient
         void setParam(QString login, QString pass, bool activated);*/
         void setPolar(bool state,QString polar);
         void setAlias(bool state,QString alias);
-        void setPseudo(QString pseudo) { this->pseudo = pseudo; }
+        void setPlayerName(QString playerName) { this->playerName = playerName; }
         void setStatus(bool activated);
+        void unSelectBoat(bool needUpdate);
 
         /* inetClient */
         void requestFinished(QByteArray res);
@@ -56,7 +57,7 @@ class boatVLM : public boat, public inetClient
         int     getPlayerId(void)       {    return player_id; }
         Player * getPlayer(void)        {    return player; }
         QString getBoatName(void)       {    return boat_name; }
-        QString getPseudo(void)         {    return pseudo; }
+        QString getplayerName(void)         {    return playerName; }
         QString getEmail(void)          {    return email; }
         int     getIsOwn(void)          {    return isOwn; }
         int     getId(void)             {    return boat_id; }
@@ -107,8 +108,9 @@ class boatVLM : public boat, public inetClient
         void slot_getData(bool doingSync);
         void slot_getDataTrue();
         void slot_shPor(){this->porteHidden=!this->porteHidden;showNextGates();}
-        void my_shSall(void)       { showNextGates(); this->porteHidden=false; }
-        void my_shHall(void)       { showNextGates(); this->porteHidden=true; }
+        void slot_selectBoat();
+        void slot_shSall() { this->porteHidden=false; showNextGates();}
+        void slot_shHall() { this->porteHidden=true; showNextGates();}
 
     signals:
         void getTrace(QString,QList<vlmPoint> *);
@@ -123,7 +125,7 @@ class boatVLM : public boat, public inetClient
         Player * player;
 
         QString boat_name;
-        QString pseudo;
+        QString playerName;
         int boat_id;
         int player_id;
         int type;

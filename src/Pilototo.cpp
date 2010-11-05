@@ -66,7 +66,8 @@ Pilototo::Pilototo(MainWindow *main,myCentralWidget * parent,inetConnexion * ine
 
     waitBox = new QMessageBox(QMessageBox::Information,
 			     tr("Pilototo"),
-                             tr("Chargement des instructions VLM en cours"));
+                             tr("Chargement des instructions VLM en cours"),
+                             QMessageBox::NoButton,this,Qt::SplashScreen);
 
     /* inet init */
     currentList=NULL;
@@ -331,6 +332,8 @@ void Pilototo::done(int result)
 	for(int i=0;i<instructions_list.count();i++)
 	{
 	    Pilototo_instruction * instr=instructions_list[i];
+#warning a revoir eventuellement, ca serait p-tet mieux de recuperer heure de la de la derniere synchro...
+            if(instr->getTstamp()<(int)QDateTime::currentDateTime().toUTC().toTime_t()) continue;
 	    if(!instr->getHasChanged())
 	    { /* only processing activated and validated instructions */
                 QVariantMap cur_instruction;
@@ -361,7 +364,8 @@ void Pilototo::done(int result)
                 case 5:
                     pip.insert("targetlat",(double)instr->getLat());
                     pip.insert("targetlong",(double)instr->getLon());
-                    pip.insert("targetandhdg",(double)instr->getWph());
+                    if(instr->getWph()!=-1)
+                        pip.insert("targetandhdg",(double)instr->getWph());
                     cur_instruction.insert("pip",pip);
                     break;
                 }
@@ -406,7 +410,7 @@ void Pilototo::sendPilototo(void)
 
     if(currentList->isEmpty())
     {
-        qWarning() << "Piloto instruction list is empty";
+        //qWarning() << "Piloto instruction list is empty";
         /* ask for an update of boat data*/
         delete currentList;
         currentList=NULL;
@@ -417,7 +421,8 @@ void Pilototo::sendPilototo(void)
         data = currentList->takeFirst();
         QString scriptList[3]={"pilototo_add.php","pilototo_update.php","pilototo_delete.php" };
         clearCurrentRequest();
-        qWarning() << "Sending: " << data->script << "(" << scriptList[data->script] << ") - " << data->param;
+        //qWarning() << "Sending: " << data->script << "(" << scriptList[data->script] << ") - " << data->param;
+        lastOrder="/ws/boatsetup/" + scriptList[data->script] + " | " + "parms="+data->param+"&select_idu="+QString().setNum(myBoat->getId());
         inetPost(VLM_DO_REQUEST,"/ws/boatsetup/" + scriptList[data->script],
                  "parms="+data->param+"&select_idu="+QString().setNum(myBoat->getId()));
         delete data;
@@ -433,7 +438,7 @@ void Pilototo::requestFinished (QByteArray res)
             break;
 	case VLM_DO_REQUEST:
             {
-                if(checkWSResult(res,"Pilototo",parent))
+                if(checkWSResult(res,"Pilototo",parent,lastOrder))
                     sendPilototo();
                 else
                 {

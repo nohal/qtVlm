@@ -18,6 +18,8 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ***********************************************************************/
 
+#include <QDebug>
+
 #include "Util.h"
 
 #include "MainWindow.h"
@@ -149,7 +151,6 @@ void boat::slot_selectBoat()
     selected = true;
     updateTraceColor();
     emit boatSelected(this);
-    my_selectBoat();
 }
 
 void boat::unSelectBoat(bool needUpdate)
@@ -161,7 +162,6 @@ void boat::unSelectBoat(bool needUpdate)
         update();
         updateTraceColor();
     }
-    my_unselectBoat();
 }
 
 /**************************/
@@ -241,6 +241,11 @@ void boat::updateTraceColor(void)
 
 void boat::drawEstime(void)
 {
+    drawEstime(getHeading(),getSpeed());
+}
+
+void boat::drawEstime(float myHeading, float mySpeed)
+{
     estimeLine->hideSegment();
     WPLine->hideSegment();
     /*should we draw something?*/
@@ -265,13 +270,13 @@ void boat::drawEstime(void)
         switch(estime_type)
         {
             case 0: /* time */
-                estime = (float)((float)(estime_param/float(60.0000000000)))*getSpeed();
+                estime = (float)((float)(estime_param/float(60.0000000000)))*mySpeed;
                 break;
             case 1: /* nb vac */
                 if(boat_type == BOAT_VLM)
                 {
                     estime_param_2=getVacLen();
-                    estime = (float)((((float)(estime_param*estime_param_2))/3660.000000000)*getSpeed());
+                    estime = (float)((((float)(estime_param*estime_param_2))/3660.000000000)*mySpeed);
                     break;
                 }
             default: /* dist */
@@ -279,7 +284,7 @@ void boat::drawEstime(void)
                 break;
         }
 
-        Util::getCoordFromDistanceAngle(lat,lon,estime,getHeading(),&tmp_lat,&tmp_lon);
+        Util::getCoordFromDistanceAngle(lat,lon,estime,myHeading,&tmp_lat,&tmp_lon);
         proj->map2screen(lon,lat,&i1,&j1);
         proj->map2screen(tmp_lon,tmp_lat,&i2,&j2);
         estimeLine->setLinePen(penLine1);

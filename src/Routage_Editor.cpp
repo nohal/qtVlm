@@ -51,6 +51,13 @@ ROUTAGE_Editor::ROUTAGE_Editor(ROUTAGE *routage,myCentralWidget *parent)
     editName->setText(routage->getName());
     editDateBox->setDateTime(routage->getStartTime());
     editDateBox->setEnabled(true);
+    if(routage->getFinalEta().isNull())
+        this->groupBox_eta->setHidden(true);
+    else
+    {
+        this->groupBox_eta->setHidden(false);
+        this->editDateBox_2->setDateTime(routage->getFinalEta());
+    }
     int n=0;
     if(parent->getBoats())
     {
@@ -89,7 +96,7 @@ ROUTAGE_Editor::ROUTAGE_Editor(ROUTAGE *routage,myCentralWidget *parent)
     this->windForced->setChecked(routage->getWindIsForced());
     this->showIso->setChecked(routage->getShowIso());
     this->explo->setValue(routage->getExplo());
-    this->useVac->setChecked(routage->getUseTrueVacation());
+    this->useVac->setChecked(routage->getUseRouteModule());
     if(routage->getWindIsForced())
     {
         this->TWD->setValue(routage->getWindAngle());
@@ -167,7 +174,7 @@ void ROUTAGE_Editor::done(int result)
         routage->setTimeStep(this->duree->value());
         routage->setExplo(this->explo->value());
         routage->setShowIso(this->showIso->isChecked());
-        routage->setUseTrueVacation(this->useVac->isChecked());
+        routage->setUseRouteModule(this->useVac->isChecked());
         if(this->convRoute->isChecked())
         {
             if(!routage->isConverted())

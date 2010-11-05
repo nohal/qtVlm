@@ -561,12 +561,18 @@ void MenuBar::updateBoatList(QList<boatVLM*> & boat_list)
 
     QListIterator<boatVLM*> i (boat_list);
 
+    bool separator=false;
     while(i.hasNext())
     {
         boatVLM * acc = i.next();
         //qWarning() << "updateBoatList - Boat: " << acc->getName() << " " << acc->getStatus() << " " << acc->getId();
         if(acc->getStatus())
         {
+//            if(!separator && !acc->getIsOwn())
+//            {
+//                boatList->insertSeparator(boatList->count()+1);
+//                separator=true;
+//            }
             if(acc->getAliasState())
                 boatList->addItem(acc->getAlias() + "(" + acc->getBoatName() + ")");
             else

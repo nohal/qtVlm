@@ -75,8 +75,8 @@ class ROUTAGE : public QGraphicsWidget
         void setShowIso(bool b);
         void setExplo(float e){this->explo=e;}
         float getExplo(void){return explo;}
-        bool getUseTrueVacation(void){return useTrueVacation;}
-        void setUseTrueVacation(bool b){this->useTrueVacation=b;}
+        bool getUseRouteModule(void){return useRouteModule;}
+        void setUseRouteModule(bool b){this->useRouteModule=b;}
 
         void setStartTime(QDateTime date){this->startTime=date;}
         QDateTime getStartTime() {return this->startTime.toUTC();}
@@ -93,6 +93,7 @@ class ROUTAGE : public QGraphicsWidget
         bool isConverted(void) {return this->converted;}
         void setConverted(void) {this->converted=true;}
         void convertToRoute(void);
+        QDateTime getFinalEta(void){return finalEta;}
     public slots:
         void slot_edit();
         void slot_delete();
@@ -126,7 +127,7 @@ class ROUTAGE : public QGraphicsWidget
         int explo;
         bool showIso;
         QDateTime startTime;
-        bool useTrueVacation;
+        bool useRouteModule;
 
         /*popup menu*/
         QMenu *popup;
@@ -140,7 +141,7 @@ class ROUTAGE : public QGraphicsWidget
         QPointF arrival;
         float A360(float hdg);
         float myDiffAngle(float a1,float a2);
-        void findPoint(float lon, float lat, double wind_angle, double wind_speed, float cap, vlmPoint *pt);
+        void findPoint(float lon, float lat, double wind_angle, double wind_speed, float cap, vlmPoint *pt, bool estimateOnly);
         float findTime(const vlmPoint * pt, QPointF P, float * cap);
         float loxoCap;
         float initialDist;
@@ -167,8 +168,10 @@ class ROUTAGE : public QGraphicsWidget
         int routeMaxN;
         int routeTotN;
         int routeFailedN;
+        int NR_n;
+        int NR_success;
         double lastLonFound;
         double lastLatFound;
-        int debug1;
+        QDateTime finalEta;
     };
 #endif // ROUTAGE_H

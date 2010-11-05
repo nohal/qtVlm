@@ -213,7 +213,7 @@ void boardVLM::boatUpdated(void)
 
     boatName->setText(myBoat->getBoatName());
 
-    boatName->setText(myBoat->getDispName());
+    //boatName->setText(myBoat->getDispName());
 
     boatScore->setText(myBoat->getScore());
 
@@ -314,6 +314,7 @@ void boardVLM::headingUpdated(double heading)
     {
         /* heading value has changed => compute angle */
         float angle=heading-currentBoat()->getWindDir();
+        float newSpeed=0;
         if(qAbs(angle)>180)
         {
             if(angle<0)
@@ -327,7 +328,7 @@ void boardVLM::headingUpdated(double heading)
         /* compute speed if a polar is known */
         if(currentBoat()->getPolarData())
         {
-            float newSpeed=currentBoat()->getPolarData()->getSpeed(currentBoat()->getWindSpeed(),angle);
+            newSpeed=currentBoat()->getPolarData()->getSpeed(currentBoat()->getWindSpeed(),angle);
             speed->setText(QString().setNum(((float)qRound(newSpeed*100))/100));
             speed->setStyleSheet(QString::fromUtf8(SPEED_COLOR_UPDATE));
             label_6->setStyleSheet(QString::fromUtf8(SPEED_COLOR_UPDATE));
@@ -341,6 +342,8 @@ void boardVLM::headingUpdated(double heading)
         /*changing boat rotation*/
         windAngle->setValues(currentBoat()->getHeading(),currentBoat()->getWindDir(),
                              currentBoat()->getWindSpeed(), computeWPdir(currentBoat()), heading);
+        /* update estime */
+        currentBoat()->drawEstime(heading,currentBoat()->getPolarData()?newSpeed:currentBoat()->getSpeed());
     }
 
     isComputing=false;
@@ -377,13 +380,14 @@ void boardVLM::angleUpdated(double angle)
         /* angle has changed */
         /* compute heading */
         float heading = currentBoat()->getWindDir() + angle;
+        float newSpeed=0;
         if(heading<0) heading+=360;
         else if(heading>360) heading-=360;
         editHeading->setValue(heading);
 /* compute speed if a polar is known */
         if(currentBoat()->getPolarData())
         {
-            float newSpeed=currentBoat()->getPolarData()->getSpeed(currentBoat()->getWindSpeed(),angle);
+            newSpeed=currentBoat()->getPolarData()->getSpeed(currentBoat()->getWindSpeed(),angle);
             speed->setText(QString().setNum(((float)qRound(newSpeed*100))/100));
             speed->setStyleSheet(QString::fromUtf8(SPEED_COLOR_UPDATE));
             label_6->setStyleSheet(QString::fromUtf8(SPEED_COLOR_UPDATE));
@@ -398,6 +402,8 @@ void boardVLM::angleUpdated(double angle)
         /*changing boat rotation*/
         windAngle->setValues(currentBoat()->getHeading(),currentBoat()->getWindDir(),
                              currentBoat()->getWindSpeed(), computeWPdir(currentBoat()), heading);
+        /* update estime */
+        currentBoat()->drawEstime(heading,currentBoat()->getPolarData()?newSpeed:currentBoat()->getSpeed());
     }
     isComputing=false;
 }

@@ -22,6 +22,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #define PLAYERACCOUNT_H
 
 #include <QDialog>
+#include <QMessageBox>
 
 #include "ui_playerAccount.h"
 #include "ui_paramAccount.h"
@@ -52,6 +53,7 @@ class playerAccount : public QDialog, public Ui::playerAccount
 
         void done(int result);
         void initList(QList<Player*> * player_list);
+        void doUpdate(Player * player);
 
     public slots:
         void slot_addPlayer(void);
@@ -82,6 +84,8 @@ class playerAccount : public QDialog, public Ui::playerAccount
         MainWindow * main;
         myCentralWidget * parent;
         inetConnexion * inet;
+
+        QMessageBox * msgBox;
 
         paramAccount accDialog;
 

@@ -48,7 +48,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 /* BOAT data */
 #define BOAT_GROUP_NAME     "Boat"
 #define BOAT_NAME_NAME      "Name"
-#define BOAT_PSEUDO_NAME    "Pseudo"
 #define BOAT_IDU_NAME       "Idu"
 #define BOAT_IDP_NAME       "Idp"
 #define BOAT_ISOWN_NAME     "IsOwn"
@@ -173,11 +172,6 @@ void xml_boatData::slot_writeData(QList<Player*> & player_list,QList<raceData*> 
             t = doc.createTextNode(boat->getName());
             tag.appendChild(t);
 
-            tag = doc.createElement(BOAT_PSEUDO_NAME);
-            group.appendChild(tag);
-            t = doc.createTextNode(boat->getPseudo());
-            tag.appendChild(t);
-
             tag = doc.createElement(BOAT_IDU_NAME);
             group.appendChild(tag);
             t = doc.createTextNode(boat->getBoatId());
@@ -244,7 +238,7 @@ void xml_boatData::slot_writeData(QList<Player*> & player_list,QList<raceData*> 
 
      /* managing race info */
      QListIterator<raceData*> k (race_list);
-     while(j.hasNext())
+     while(k.hasNext())
      {
          raceData * race_data = k.next();
 
@@ -379,7 +373,7 @@ void xml_boatData::slot_readData(QString fname,bool readAll)
     }
 
     /* read race data */
-    readRace(node.firstChild());
+    readRace(root.firstChild());
     delete pList;
 }
 
@@ -458,7 +452,6 @@ void xml_boatData::readBoat(QDomNode node,PlayerMap * pList)
             QDomNode dataNode;
 
             QString name = "";
-            QString pseudo = "";
             int idu=-1;
             int idp=-1;
             bool activated = false;
@@ -478,12 +471,6 @@ void xml_boatData::readBoat(QDomNode node,PlayerMap * pList)
                     dataNode = subNode.firstChild();
                     if(dataNode.nodeType() == QDomNode::TextNode)
                         name = dataNode.toText().data();
-                }
-                if(subNode.toElement().tagName() == BOAT_PSEUDO_NAME)
-                {
-                    dataNode = subNode.firstChild();
-                    if(dataNode.nodeType() == QDomNode::TextNode)
-                        pseudo = dataNode.toText().data();
                 }
                 if(subNode.toElement().tagName() == BOAT_IDU_NAME)
                 {
@@ -568,7 +555,6 @@ void xml_boatData::readBoat(QDomNode node,PlayerMap * pList)
                 //qWarning() << "Boat has player => create item " <<  name << " state " << activated;
                 boatVLM * boat = new boatVLM(name,activated, idu,idp,player,isOwn,
                                                     proj,main,parent,inet);
-                boat->setPseudo(pseudo);
                 boat->setPolar(chk_polar,polar);
                 boat->setAlias(chk_alias,alias);
                 boat->setLockStatus(locked);

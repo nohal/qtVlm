@@ -87,7 +87,7 @@
         <item>
          <widget class="QCheckBox" name="chk_WP">
           <property name="text">
-           <string>Route</string>
+           <string>Marque</string>
           </property>
          </widget>
         </item>

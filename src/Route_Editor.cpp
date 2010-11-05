@@ -44,6 +44,9 @@ ROUTE_Editor::ROUTE_Editor(ROUTE *route,myCentralWidget *parent)
     this->route=route;
     this->parent=parent;
     setupUi(this);
+#ifndef __QTVLM_WITH_TEST
+    this->Simplifier->setHidden(true);
+#endif
     inputTraceColor =new InputLineParams(route->getWidth(),route->getColor(),1.6,  QColor(Qt::red),this,0.1,5);
     verticalLayout_2->addWidget( inputTraceColor);
     setWindowTitle(tr("Parametres Route"));
@@ -140,6 +143,10 @@ void ROUTE_Editor::done(int result)
         route->setLive(editLive->isChecked());
         if(hidePois->isChecked()!=route->getHidePois())
             route->setHidePois(hidePois->isChecked());
+        if(this->Simplifier->isChecked())
+            route->setSimplify(true);
+        else
+            route->setSimplify(false);
     }
     if(result == QDialog::Rejected)
     {

@@ -43,11 +43,12 @@ class boat: public QGraphicsWidget
         void setLockStatus(bool status);
         void setZoom(float zoom)   { this->zoom=zoom; }
         void setForceEstime(bool force_estime) { this->forceEstime=force_estime;}
-        void unSelectBoat(bool needUpdate);
+        virtual void unSelectBoat(bool needUpdate);
         virtual int getVacLen(void) {return 1; }
         virtual int getId(void) {return -1; }
+        virtual QString getPlayerName(void){return QString();}
 
-        QString getBoatName(void)       {    return name; }
+        virtual QString getBoatName(void)       {    return name; }
         bool getStatus(void)            {    return activated; }
         double getLat(void)             {    return lat; }
         double getLon(void)             {    return lon; }
@@ -69,6 +70,8 @@ class boat: public QGraphicsWidget
 
         int getType(void) { return boat_type; }
 
+        void drawEstime(float myHeading, float mySpeed);
+
         /* graphicsWidget */
         QPainterPath shape() const;
         QRectF boundingRect() const;
@@ -76,12 +79,12 @@ class boat: public QGraphicsWidget
     public slots:
         void slot_projectionUpdated();
         void slot_paramChanged();
-        void slot_selectBoat();
+        virtual void slot_selectBoat();
         void slot_toggleEstime();
         void slot_updateGraphicsParameters();
         void slot_shLab(){this->labelHidden=!this->labelHidden;update();}        
-        void slot_shSall(){ my_shSall();}
-        void slot_shHall(){ my_shHall();}
+        virtual void slot_shSall() { }
+        virtual void slot_shHall() { }
         void slotTwaLine(){parent->twaDraw(lon,lat);}
         void slotCompassLine(void);
 
@@ -150,12 +153,7 @@ class boat: public QGraphicsWidget
         QAction * ac_estime;
         QAction * ac_compassLine;
         QAction * ac_twaLine;
-        void createPopUpMenu();
-
-        virtual void my_selectBoat(void)   { }
-        virtual void my_unselectBoat(void) { }
-        virtual void my_shSall(void)       { }
-        virtual void my_shHall(void)       { }
+        void createPopUpMenu();        
 
         void updateBoatData(void);
         virtual void reloadPolar(void);

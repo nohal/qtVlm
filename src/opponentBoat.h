@@ -94,6 +94,7 @@ class opponent : public QGraphicsWidget
         QString login;
         QString idu;
         QString idrace;
+
         Projection * proj;
 
         MainWindow *main;
@@ -150,7 +151,7 @@ class opponentList : public QWidget, public inetClient
         QStringList readData(QString in_data,int type);
         void getOpponents(QStringList opp_idu,QString idrace);
         void getNxtOppData();
-
+        bool was10First;
         Projection * proj;
 };
 

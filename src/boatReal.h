@@ -57,9 +57,11 @@ class boatReal : public boat
         ~boatReal();
         void readData();
         int getVacLen(void) {return 5; }
+        void unSelectBoat(bool needUpdate) { boat::unSelectBoat(needUpdate); }
 
     public slots:
         void decodeData(QString data);
+        void slot_selectBoat(void) { boat::slot_selectBoat(); }
 
     signals:
         void terminateThread();
@@ -72,9 +74,6 @@ class boatReal : public boat
         nmeaPARSER parser;
 
         QString parseMask(int mask);
-
-        void my_selectBoat(void);
-        void my_unselectBoat(bool);
 
         void updateBoatName(void);
         void updateHint(void);

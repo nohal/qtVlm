@@ -1,4 +1,4 @@
-﻿/**********************************************************************
+/**********************************************************************
 qtVlm: Virtual Loup de mer GUI
 Copyright (C) 2008 - Christophe Thomas aka Oxygen77
 
@@ -945,6 +945,8 @@ void myCentralWidget::slot_playHorn()
 {
     horn->setLoops(2000);
     horn->play();
+    QMessageBox::information(0,QObject::tr("Corne de brume activee"),QString(),QString(QObject::tr("Arreter la corne de brume")));
+    horn->stop();
 }
 bool myCentralWidget::freeRouteName(QString name,ROUTE * thisroute)
 {
@@ -1077,10 +1079,14 @@ void myCentralWidget::slot_importRouteFromMenu()
         {
             n++;
             list = line.split(';');
-            QDateTime start=QDateTime::fromString(list[0].simplified(),"dd-MMM hh:mm");
+            QDateTime start=QDateTime::fromString(list[0].simplified(),"dd-MMM.-yyyy hh:mm");
+            if(!start.isValid())
+            {
+                start=QDateTime::fromString(list[0].simplified(),"dd-MMM hh:mm");
+                start=start.addYears(QDate::currentDate().year()-1900);
+            }
             start=start.toUTC();
             start.setTimeSpec(Qt::UTC);
-            start=start.addYears(QDate::currentDate().year()-1900);
             if(n==1)
             {
                 route->setStartTime(start);
@@ -1313,6 +1319,78 @@ void myCentralWidget::slot_editRoute(ROUTE * route,bool createMode)
     {
         update_menuRoute();
         route->slot_recalculate();
+        if(route->getSimplify())
+        {
+            if(route->getFrozen() || !route->getHas_eta())
+                QMessageBox::critical(0,QString(QObject::tr("Simplification de route")),QString(QObject::tr("La simplification est impossible pour une route figee ou une route sans ETA")));
+            else
+            {
+                bool ok=false;
+                int maxLoss=QInputDialog::getInteger(0,QString(QObject::tr("Simplication de route")),QString(QObject::tr("Perte maximum de temps sur l'ETA finale (en minutes)")),0,0,10000,1,&ok);
+                if(!ok)
+                    route->setSimplify(false);
+                else
+                {
+                    route->setSimplify(false);
+                    QList<POI*> pois=route->getPoiList();
+                    int ref_nbPois=pois.count();
+                    time_t ref_eta=route->getEta();
+                    int nbDel=0;
+                    QProgressDialog p(tr("Simplification en cours"),"",1,ref_nbPois-2);
+                    p.setLabelText(tr("Phase 1..."));
+                    for (int n=1;n<ref_nbPois-2;n++)
+                    {
+                        POI *poi=pois.at(n);
+                        poi->setRoute(NULL);
+                        QApplication::processEvents();
+                        if(!route->getHas_eta())
+                            poi->setRoute(route);
+                        else if(route->getEta()<=ref_eta)
+                        {
+                            slot_delPOI_list(poi);
+                            delete poi;
+                            nbDel++;
+                        }
+                        else
+                            poi->setRoute(route);
+                        p.setValue(n);
+                        QApplication::processEvents();
+                    }
+                    p.setLabelText(tr("Phase 2..."));
+                    pois=route->getPoiList();
+                    p.setMaximum(pois.count()-2);
+                    if(maxLoss!=0)
+                    {
+                        for (int n=1;n<pois.count()-2;n++)
+                        {
+                            POI *poi=pois.at(n);
+                            poi->setRoute(NULL);
+                            QApplication::processEvents();
+                            if(!route->getHas_eta())
+                                poi->setRoute(route);
+                            else if(route->getEta()<=ref_eta+maxLoss*60)
+                            {
+                                slot_delPOI_list(poi);
+                                delete poi;
+                                nbDel++;
+                            }
+                            else
+                                poi->setRoute(route);
+                            p.setValue(n);
+                            QApplication::processEvents();
+                        }
+                    }
+                    p.close();
+                    int diff=(ref_eta-route->getEta())/60;
+                    QString result;
+                    if(diff<=0)
+                        result=result.sprintf("%d minutes perdues, %d POIs supprimes sur %d",-diff,nbDel,ref_nbPois);
+                    else
+                        result=result.sprintf("%d minutes gagnees(!), %d POIs supprimes sur %d",diff,nbDel,ref_nbPois);
+                    QMessageBox::information(0,QString(QObject::tr("Resultat de la simplification")),result);
+                }
+            }
+        }
     }
     delete route_editor;
 }
@@ -1443,6 +1521,7 @@ void myCentralWidget::slot_addBoat_list(boatVLM* boat)
     connect(boat, SIGNAL(clearSelection()),this,SLOT(slot_clearSelection()));
     connect(boat,SIGNAL(getTrace(QString,QList<vlmPoint> *)),opponents,SLOT(getTrace(QString,QList<vlmPoint> *)));
     connect(&dialogGraphicsParams, SIGNAL(accepted()), boat, SLOT(slot_updateGraphicsParameters()));
+    boat->slot_paramChanged();
 }
 
 void myCentralWidget::slot_delBoat_list(boatVLM* boat)
@@ -1483,6 +1562,11 @@ void myCentralWidget::manageAccount(bool * res)
     if(res)
         *res=(tmp_res == QDialog::Accepted);
 
+}
+
+void myCentralWidget::updatePlayer(Player * player)
+{
+    playerAcc->doUpdate(player);
 }
 
 void myCentralWidget::slot_playerSelected(Player * player)
@@ -1551,7 +1635,7 @@ void myCentralWidget::slot_delRace_list(raceData* race)
 void myCentralWidget::slot_raceDialog(void)
 {
     raceParam->initList(*boat_list,race_list);
-    raceParam->exec();
+    //raceParam->exec();
 }
 
 void myCentralWidget::slot_readRaceData(void)

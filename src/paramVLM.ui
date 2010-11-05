@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>348</width>
-    <height>325</height>
+    <height>327</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -43,7 +43,7 @@
     </rect>
    </property>
    <property name="currentIndex">
-    <number>4</number>
+    <number>7</number>
    </property>
    <widget class="QWidget" name="tab">
     <attribute name="title">
@@ -831,7 +831,7 @@
    </widget>
    <widget class="QWidget" name="tab_3">
     <attribute name="title">
-     <string>Avancé</string>
+     <string>GPS</string>
     </attribute>
     <widget class="QGroupBox" name="groupBox">
      <property name="geometry">
@@ -910,13 +910,73 @@
       </layout>
      </widget>
     </widget>
+   </widget>
+   <widget class="QWidget" name="tab_8">
+    <attribute name="title">
+     <string>Avancé</string>
+    </attribute>
+    <widget class="QGroupBox" name="groupBox_6">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>120</y>
+       <width>311</width>
+       <height>51</height>
+      </rect>
+     </property>
+     <property name="title">
+      <string>Url</string>
+     </property>
+     <widget class="QComboBox" name="url_list">
+      <property name="geometry">
+       <rect>
+        <x>20</x>
+        <y>15</y>
+        <width>281</width>
+        <height>22</height>
+       </rect>
+      </property>
+     </widget>
+    </widget>
+    <widget class="QGroupBox" name="groupBox_2">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>10</y>
+       <width>301</width>
+       <height>41</height>
+      </rect>
+     </property>
+     <property name="title">
+      <string>Position et taille de qtVlm</string>
+     </property>
+     <widget class="QCheckBox" name="saveWinGeometry">
+      <property name="geometry">
+       <rect>
+        <x>10</x>
+        <y>15</y>
+        <width>221</width>
+        <height>20</height>
+       </rect>
+      </property>
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+        <horstretch>0</horstretch>
+        <verstretch>0</verstretch>
+       </sizepolicy>
+      </property>
+      <property name="text">
+       <string>Sauvegarde à la fermeture</string>
+      </property>
+     </widget>
+    </widget>
     <widget class="QGroupBox" name="groupBox_4">
      <property name="geometry">
       <rect>
        <x>10</x>
-       <y>140</y>
+       <y>50</y>
        <width>311</width>
-       <height>61</height>
+       <height>71</height>
       </rect>
      </property>
      <property name="title">
@@ -943,61 +1003,6 @@
         <width>281</width>
         <height>21</height>
        </rect>
-      </property>
-     </widget>
-    </widget>
-    <widget class="QGroupBox" name="groupBox_6">
-     <property name="geometry">
-      <rect>
-       <x>10</x>
-       <y>207</y>
-       <width>311</width>
-       <height>41</height>
-      </rect>
-     </property>
-     <property name="title">
-      <string>Url</string>
-     </property>
-     <widget class="QComboBox" name="url_list">
-      <property name="geometry">
-       <rect>
-        <x>20</x>
-        <y>15</y>
-        <width>281</width>
-        <height>22</height>
-       </rect>
-      </property>
-     </widget>
-    </widget>
-    <widget class="QGroupBox" name="groupBox_2">
-     <property name="geometry">
-      <rect>
-       <x>10</x>
-       <y>99</y>
-       <width>301</width>
-       <height>41</height>
-      </rect>
-     </property>
-     <property name="title">
-      <string>Position et taille de qtVlm</string>
-     </property>
-     <widget class="QCheckBox" name="saveWinGeometry">
-      <property name="geometry">
-       <rect>
-        <x>10</x>
-        <y>15</y>
-        <width>221</width>
-        <height>20</height>
-       </rect>
-      </property>
-      <property name="sizePolicy">
-       <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-        <horstretch>0</horstretch>
-        <verstretch>0</verstretch>
-       </sizepolicy>
-      </property>
-      <property name="text">
-       <string>Sauvegarde à la fermeture</string>
       </property>
      </widget>
     </widget>

@@ -82,6 +82,7 @@ ROUTE::ROUTE(QString name, Projection *proj, Grib *grib, QGraphicsScene * myScen
         slot_shShow();
     else
         slot_shHidden();
+    this->simplify=false;
 }
 ROUTE::~ROUTE()
 {
@@ -249,7 +250,7 @@ void ROUTE::slot_recalculate()
                 do
                 {                    
                     if(((grib->getInterpolatedValue_byDates(lon, lat,
-                                              eta,&wind_speed,&wind_angle,INTERPOLATION_SELECTIVE_TWSA)
+                                              eta,&wind_speed,&wind_angle,INTERPOLATION_DEFAULT)
                         && eta<=maxDate) || imported))
                     {
                         //qWarning() << lon << ";" << lat << ";" << eta << ";" << wind_speed << ";" << wind_angle;

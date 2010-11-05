@@ -84,7 +84,7 @@ void race_dialog::initList(QList<boatVLM*> & boat_list_ptr,QList<raceData*> & ra
                 break;
             }
         /* Elle n'existe pas => on cr�e un nv raceParam */
-        qWarning()<<"race found:"<<found;
+        //qWarning()<<"race found:"<<found;
         if(!found)
         {
             raceParam * ptr = new raceParam();
@@ -125,13 +125,14 @@ void race_dialog::getNextRace()
     if(currentRace>=param_list.size())
     {
         /* finished */
-        waitBox->hide();
         initDone = true;
         numRace=-1;
         chgRace(0);
+        waitBox->hide();
+        this->exec();
         return;
     }
-
+    waitBox->show();
     /* let's find this race in the param from boatAcc.dat*/
     currentParam.clear();
 
@@ -276,7 +277,7 @@ void race_dialog::chgRace(int id)
 {
     if(!initDone)
         return;
-
+    int debug=0;
     if(numRace!=-1)
     {
         /* changement du select des boat */
