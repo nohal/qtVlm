@@ -90,7 +90,6 @@ ROUTE::ROUTE(QString name, Projection *proj, Grib *grib, QGraphicsScene * myScen
         slot_shShow();
     else
         slot_shHidden();
-    this->simplify=false;
 }
 
 ROUTE::~ROUTE()

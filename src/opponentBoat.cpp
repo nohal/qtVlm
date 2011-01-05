@@ -419,11 +419,6 @@ void opponentList::setBoatList(QString list_txt,QString race,int showWhat, bool 
         clear();
         return;
     }
-    else if(was10First)
-    {
-        was10First=false;
-        clear();
-    }
 
     /* is a list defined ? */
     if(opponent_list.size()>0)

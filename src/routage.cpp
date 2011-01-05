@@ -609,7 +609,6 @@ void ROUTAGE::calculate()
             double vmg;
             myBoat->getPolarData()->getBvmg(A360(list->at(n).capArrival-windAngle),windSpeed,&vmg);
             iso->setPointCapVmg(n,A360(vmg+windAngle));
-            orth.setPoints(list->at(n).lon,list->at(n).lat,arrival.x(),arrival.y());
         }
         if(minDist<distStart)
             arrivalIsClosest=true;
@@ -696,19 +695,6 @@ void ROUTAGE::calculate()
                             {
                                 nbCapsPruned++;
                                 continue;
-                            }
-                        }
-                        if(n!=i && n!=i+1)
-                        {
-                            if(temp1.intersect(s,&dummy)==QLineF::BoundedIntersection)
-                            {
-                                bad=true;
-                                break;
-                            }
-                            if(temp1.intersect(previousSegments.at(i),&dummy)==QLineF::BoundedIntersection)
-                            {
-                                bad=true;
-                                break;
                             }
                         }
                     }
@@ -897,8 +883,6 @@ void ROUTAGE::calculate()
                         continue;
                     }
                     polarPoints[nn].maxDistIso=maxDistIso;
-                    tempPoints.removeAt(badOne);
-                    nn=qMax(-1,nn-maxLook); //not so clever restart of the loop
                 }
             }
 #endif
@@ -1101,9 +1085,6 @@ void ROUTAGE::calculate()
                         }
                         msecs_14=msecs_14+t2.elapsed();
                     }
-                toBeRemoved--;
-            }
-        }
 #endif
                     if(newPoint.origin->isStart)
                         newPoint.distIso=newPoint.distStart;
@@ -1122,24 +1103,6 @@ void ROUTAGE::calculate()
                 msecs_12=msecs_12+t1.elapsed();
                 /*rechecking that no segment crosses*/
                 t1.start();
-        msecs_6=msecs_6+time.elapsed();
-
-
-
-
-
-
-#if 1 /* now that some fast calculations have been made, compute real thing using route*/
-        if(this->useRouteModule)
-        {
-            for(int np=0;np<tempPoints.count();np++)
-            {
-                vlmPoint newPoint=tempPoints.at(np);
-                tfp.start();
-                findPoint(newPoint.origin->lon, newPoint.origin->lat, newPoint.origin->wind_angle, newPoint.origin->wind_speed, newPoint.capOrigin, &newPoint,false);
-                msecs_3=msecs_3+tfp.elapsed();
-                newPoint.lon=((float)qRound(newPoint.lon*1000))/1000.00;
-                newPoint.lat=((float)qRound(newPoint.lat*1000))/1000.00;
 #if 0
                 QPointF dummy;
                 for(int np=0;np<tempPoints.count();np++)
@@ -1164,7 +1127,6 @@ void ROUTAGE::calculate()
                             if(badOne==np) break;
                         }
                     }
-                    if (bad) continue;
                 }
                 for(int np=tempPoints.count()-1;np>0;np--)
                 {
@@ -2045,7 +2007,6 @@ vlmPoint ROUTAGE::findRoute(const vlmPoint & point)
             {
                 found=true;
                 result.distOrigin=x;
-                NR_success++;
                 NR_success++;
                 break;
             }

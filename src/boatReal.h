@@ -66,7 +66,6 @@ class boatReal : public boat
         void stopRead();
         void startRead();
         void unSelectBoat(bool needUpdate);
-        void unSelectBoat(bool needUpdate) { boat::unSelectBoat(needUpdate); }
 
         void updateAll(void);
 
@@ -86,7 +85,6 @@ class boatReal : public boat
         void slot_selectBoat(void) { boat::slot_selectBoat(); }
         void slot_threadStartedOrFinished(void);
         void slot_chgPos(void);
-        void slot_selectBoat(void) { boat::slot_selectBoat(); }
 
     signals:
         void terminateThread();

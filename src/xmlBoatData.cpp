@@ -50,6 +50,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 /* BOAT data */
 #define BOAT_GROUP_NAME     "Boat"
 #define BOAT_NAME_NAME      "Name" //for compatibility
+#define BOAT_PSEUDO_NAME    "Pseudo"
 #define BOAT_IDU_NAME       "Idu"
 #define BOAT_IDP_NAME       "Idp"
 #define BOAT_ISOWN_NAME     "IsOwn"
@@ -520,6 +521,7 @@ void xml_boatData::readBoat(QDomNode node,PlayerMap * pList)
             QDomNode subNode= node.firstChild();
             QDomNode dataNode;
 
+            QString pseudo = "";
             int idu=-1;
             int idp=-1;
             bool activated = false;
@@ -536,6 +538,12 @@ void xml_boatData::readBoat(QDomNode node,PlayerMap * pList)
             while(!subNode.isNull())
             {
                 if(subNode.toElement().tagName() == BOAT_NAME_NAME)
+                {
+                    dataNode = subNode.firstChild();
+                    if(dataNode.nodeType() == QDomNode::TextNode)
+                        pseudo = dataNode.toText().data();
+                }
+                if(subNode.toElement().tagName() == BOAT_PSEUDO_NAME)
                 {
                     dataNode = subNode.firstChild();
                     if(dataNode.nodeType() == QDomNode::TextNode)

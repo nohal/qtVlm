@@ -91,7 +91,6 @@ class opponent : public QGraphicsWidget
         QString pseudo;
         QString idu;
         QString idrace;
-
         Projection * proj;
 
         MainWindow *main;
