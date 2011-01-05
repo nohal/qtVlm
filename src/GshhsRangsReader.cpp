@@ -17,11 +17,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ***********************************************************************/
 
 #include "GshhsRangsReader.h"
+#include <QDebug>
 //#include "dataDef.h"
 
 //------------------------------------------------------------------------
-GshhsRangsCell::GshhsRangsCell(FILE *fcat_, FILE *fcel_, FILE *frim_, int x0_, int y0_)
+GshhsRangsCell::GshhsRangsCell(FILE *fcat_, FILE *fcel_, FILE *frim_, int x0_, int y0_,Projection *proj_)
 {
+    proj = proj_;
     fcat = fcat_;
     fcel = fcel_;
     frim = frim_;    
@@ -56,7 +58,7 @@ bool GshhsRangsCell::readPolygonList()
 
     if (PolygonByte == 0) {
         // printf("*** End_PolygonList ***\n");
-        return false;         // Fin de récursion
+        return false;         // Fin de recursion
     }
     else 
     {
@@ -65,7 +67,7 @@ bool GshhsRangsCell::readPolygonList()
         	poligonSizeMax = size;
         	
         while (readPolygonList())
-            {};        // Appel récursif
+            {};        // Appel recursif
         return true;
     }
 }
@@ -107,6 +109,7 @@ int GshhsRangsCell::readSegmentLoop()
                 x = readInt4(fcel);
                 y = readInt4(fcel);
                 //if ((x0cell==x0debug && y0cell==y0debug)) printf("CEL X vertex %d : (%8.4f %8.4f) %d\n", i+1, x/1e6, y/1e6, nbpoints);
+                //if(!proj->isPointVisible(x/1.e6, y/1.e6)) continue;
                 newPoint = new GshhsRangsPoint(x/1.e6, y/1.e6, true);
                 assert(newPoint);
                 newPolygon->lsPoints.push_back(newPoint);
@@ -163,8 +166,8 @@ void GshhsRangsCell::drawMapPlain(QPainter &pnt, double dx, QPoint *pts, Project
     QPen landPen(landColor);
     landPen.setWidthF(1.4);
 	
-	pnt.setRenderHint(QPainter::Antialiasing, true);
-        
+    pnt.setRenderHint(QPainter::Antialiasing, true);
+
     for (iterPolygons=lsPolygons.begin(); iterPolygons!=lsPolygons.end(); iterPolygons++)
     {
         poly = *iterPolygons;
@@ -175,7 +178,7 @@ void GshhsRangsCell::drawMapPlain(QPainter &pnt, double dx, QPoint *pts, Project
         {
             GshhsRangsPoint *pt = *iterPoints;
             proj->map2screen(pt->x+dx, pt->y, &xx, &yy);
-            if (j==0 || (oxx!=xx || oyy!=yy))  // élimine les points trop proches
+            if (j==0 || (oxx!=xx || oyy!=yy))  // elimine les points trop proches
             {
                 oxx = xx;
                 oyy = yy;
@@ -185,7 +188,6 @@ void GshhsRangsCell::drawMapPlain(QPainter &pnt, double dx, QPoint *pts, Project
             }
         }
         nbpts = j;
-
         if (poly->interior==1 || poly->interior==3) {
             pnt.setBrush(landColor);
 			pnt.setPen(landPen);
@@ -205,6 +207,8 @@ void GshhsRangsCell::drawSeaBorderLines(QPainter &pnt, double dx, Projection *pr
     std::list<GshhsRangsPoint *>::iterator iterPoints;
     GshhsRangsPolygon *poly;
     int xx, yy;
+    float xxF,yyF;
+    coasts.clear();
 
     for (iterPolygons=lsPolygons.begin(); iterPolygons!=lsPolygons.end(); iterPolygons++)
     {
@@ -213,72 +217,120 @@ void GshhsRangsCell::drawSeaBorderLines(QPainter &pnt, double dx, Projection *pr
 		
 		GshhsRangsPoint *pt;
 		QPoint  pstart, p0, p1;		// points on screen
+                QPointF pstartF,p0F,p1F;
 		double	xstart, ystart, x0,y0,  x1,y1;    // world coordinate
 		bool	p0_isCellBorder=true, p1_isCellBorder=true;
 		bool	pstart_isCellBorder;
         
-        if (lsPts.size() > 1) {
-        	iterPoints=lsPts.begin();
-			pt = *iterPoints;
-			proj->map2screen(pt->x+dx, pt->y, &xx, &yy);
-			pstart = QPoint(xx, yy);
-			xstart = pt->x;
-			ystart = pt->y;
-			pstart_isCellBorder = pt->isCellBorder;
-			p0 = QPoint(xx, yy);
-			x0 = pt->x;
-			y0 = pt->y;
-			p0_isCellBorder = pt->isCellBorder;
-			x1 = x0;
-			y1 = y0;
-			
-			iterPoints++;
-			for ( ; iterPoints!=lsPts.end(); iterPoints++)
-			{
-				pt = *iterPoints;
-				proj->map2screen(pt->x+dx, pt->y, &xx, &yy);
-				p1 = QPoint(xx, yy);
-				x1 = pt->x;
-				y1 = pt->y;
-				p1_isCellBorder = pt->isCellBorder;
-				
-				if (p0.x()!=xx || p0.y()!=yy)  // élimine les points trop proches
-				{
-					if (pt->isCellBorder)
-					{
-						if (! p0_isCellBorder)   // ne trace pas les bords des cellules
-						{
-							pnt.drawLine(p0, p1);
-						}
-						else { // relie les points sur des bords différents
-							if (x1!=x0 && y1!=y0) {
-								pnt.drawLine(p0, p1);
-							}
-						}
-					}
-					else
-					{	// point intérieur : on trace
-						pnt.drawLine(p0, p1);
-					}
-				}
-				p0 = p1;
-				x0 = x1;
-				y0 = y1;
-				p0_isCellBorder = p1_isCellBorder;
-			}
+        if (lsPts.size() > 1)
+        {
+            iterPoints=lsPts.begin();
+            pt = *iterPoints;
+            proj->map2screenFloat(pt->x+dx, pt->y, &xxF, &yyF);
+            xx=qRound(xxF);
+            yy=qRound(yyF);
+            pstart = QPoint(xx, yy);
+            pstartF= QPointF(xxF,yyF);
+            xstart = pt->x;
+            ystart = pt->y;
+            pstart_isCellBorder = pt->isCellBorder;
+            p0 = QPoint(xx, yy);
+            p0F= QPointF(xxF,yyF);
+            x0 = pt->x;
+            y0 = pt->y;
+            p0_isCellBorder = pt->isCellBorder;
+            x1 = x0;
+            y1 = y0;
+            iterPoints++;
+            for ( ; iterPoints!=lsPts.end(); iterPoints++)
+            {
+                pt = *iterPoints;
+                proj->map2screenFloat(pt->x+dx, pt->y, &xxF, &yyF);
+                xx=qRound(xxF);
+                yy=qRound(yyF);
+                p1 = QPoint(xx, yy);
+                p1F = QPointF(xxF, yyF);
+                x1 = pt->x;
+                y1 = pt->y;
+                p1_isCellBorder = pt->isCellBorder;
+//                if(qRound(p0F.x()*10)!=qRound(p1F.x()*10) ||
+//                   qRound(p0F.y()*10)!=qRound(p1F.y()*10))
+//                if (p0.x()!=xx || p0.y()!=yy)  // elimine les points trop proches
+//                {
+                    if (pt->isCellBorder)
+                    {
+                        if (! p0_isCellBorder)   // ne trace pas les bords des cellules
+                        {
+                            coasts.append(QLineF(p0F,p1F));
+                        }
+                        else
+                        { // relie les points sur des bords differents
+                            if (x1!=x0 && y1!=y0)
+                            {
+                                coasts.append(QLineF(p0F,p1F));
+                            }
+                        }
+                    }
+                    else
+                    {	// point interieur : on trace
+                        coasts.append(QLineF(p0F,p1F));
+                    }
+//                }
 
-			// closed polygone ?
-			if (! p1_isCellBorder) {
-				pnt.drawLine(pstart, p1);
-			}
-			else if ( 	   pstart_isCellBorder
-						&& xstart!=x1 && ystart!=y1
-					) {
-				pnt.drawLine(pstart, p1);
-			}
-		}
+                if (p0.x()!=xx || p0.y()!=yy)  // elimine les points trop proches
+                {
+                    if (pt->isCellBorder)
+                    {
+                        if (! p0_isCellBorder)   // ne trace pas les bords des cellules
+                        {
+                            pnt.drawLine(p0, p1);
+                        }
+                        else
+                        { // relie les points sur des bords differents
+                            if (x1!=x0 && y1!=y0)
+                            {
+                                pnt.drawLine(p0, p1);
+                            }
+                        }
+                    }
+                    else
+                    {	// point interieur : on trace
+                        pnt.drawLine(p0, p1);
+                    }
+                }
+                p0 = p1;
+                p0F= p1F;
+                x0 = x1;
+                y0 = y1;
+                p0_isCellBorder = p1_isCellBorder;
+            }
 
+            // closed polygone ?
+            if (! p1_isCellBorder)
+            {
+//                if (!proj->getFrozen())
+                    pnt.drawLine(pstart, p1);
+//                else
+                    coasts.append(QLineF(pstartF,p1F));
+            }
+            else if (pstart_isCellBorder && xstart!=x1 && ystart!=y1)
+            {
+//                if (!proj->getFrozen())
+                    pnt.drawLine(pstart, p1);
+//                else
+                    coasts.append(QLineF(pstartF,p1F));
+            }
+        }
     }
+#if 0 //debug
+    QPen save=pnt.pen();
+    QPen myPen=save;
+    myPen.setColor(Qt::red);
+    pnt.setPen(myPen);
+    foreach(QLineF coast,coasts)
+        pnt.drawLine(coast);
+    pnt.setPen(save);
+#endif
 }
 
 //========================================================================
@@ -303,6 +355,44 @@ GshhsRangsReader::GshhsRangsReader(std::string rangspath)
 	currentQuality = -1;
     setQuality(1);
 }
+bool GshhsRangsReader::crossing(QLineF traject,QLineF trajectWorld)
+{
+    QPointF dummy;
+    int cxmin, cxmax, cymax, cymin;  // cellules visibles
+    cxmin = (int) floor (qMin(trajectWorld.p1().x(),trajectWorld.p2().x()));
+    cxmax = (int) ceil  (qMax(trajectWorld.p1().x(),trajectWorld.p2().x()));
+    cymin = (int) floor (qMin(trajectWorld.p1().y(),trajectWorld.p2().y()));
+    cymax = (int) ceil  (qMax(trajectWorld.p1().y(),trajectWorld.p2().y()));
+    int cx, cxx, cy;
+    GshhsRangsCell *cel;
+
+    for (cx=cxmin; cx<cxmax; cx++)
+    {
+        cxx = cx;
+        while (cxx < 0)
+            cxx += 360;
+        while (cxx >= 360)
+            cxx -= 360;
+
+        for (cy=cymin; cy<cymax; cy++)
+        {
+            if (cxx>=0 && cxx<=359 && cy>=-90 && cy<=89)
+            {
+                if (allCells[cxx][cy+90] == NULL) continue;
+                cel = allCells[cxx][cy+90];
+                QList<QLineF> *coasts=cel->getCoasts();
+                if (coasts->isEmpty()) continue;
+                for(int cs=0;cs<coasts->count();cs++)
+                {
+                    if(coasts->at(cs).intersect(traject,&dummy)==QLineF::BoundedIntersection)
+                        return true;
+                }
+            }
+        }
+    }
+    return false;
+}
+
 //-------------------------------------------------------------------------
 GshhsRangsReader::~GshhsRangsReader()
 {
@@ -386,7 +476,7 @@ void GshhsRangsReader::drawGshhsRangsMapPlain( QPainter &pnt, Projection *proj,
             if (cxx>=0 && cxx<=359 && cy>=-90 && cy<=89)
             {
             	if (allCells[cxx][cy+90] == NULL) {
-					cel = new GshhsRangsCell(fcat, fcel, frim, cxx, cy);
+                                        cel = new GshhsRangsCell(fcat, fcel, frim, cxx, cy,proj);
 					assert(cel);
 					allCells[cxx][cy+90] = cel;
 				}
@@ -433,7 +523,7 @@ void GshhsRangsReader::drawGshhsRangsMapSeaBorders( QPainter &pnt, Projection *p
             if (cxx>=0 && cxx<=359 && cy>=-90 && cy<=89)
             {
             	if (allCells[cxx][cy+90] == NULL) {
-					cel = new GshhsRangsCell(fcat, fcel, frim, cxx, cy);
+                                        cel = new GshhsRangsCell(fcat, fcel, frim, cxx, cy,proj);
 					assert(cel);
 					allCells[cxx][cy+90] = cel;
 				}

@@ -56,8 +56,7 @@ class boatVLM : public boat, public inetClient
         QString getBoatId(void)         {    return QString().setNum(boat_id); }
         int     getPlayerId(void)       {    return player_id; }
         Player * getPlayer(void)        {    return player; }
-        QString getBoatName(void)       {    return boat_name; }
-        QString getplayerName(void)         {    return playerName; }
+        QString getBoatName(void)       {    return name; }
         QString getEmail(void)          {    return email; }
         int     getIsOwn(void)          {    return isOwn; }
         int     getId(void)             {    return boat_id; }
@@ -71,23 +70,12 @@ class boatVLM : public boat, public inetClient
 
         QString getScore(void)          {    return score; }
 
-        float getAvg(void)              {    return avg; }
-        float getDnm(void)              {    return dnm; }
-        float getLoch(void)             {    return loch; }
-        float getOrtho(void)            {    return ortho; }
-        float getLoxo(void)             {    return loxo; }
-        float getVmg(void)              {    return vmg; }
-        float getWindDir(void)          {    return windDir; }
-        float getWindSpeed(void)        {    return windSpeed; }
-        float getTWA(void)              {    return TWA; }
-        float getWPHd(void)             {    return WPHd; }
         int getPilotType(void)          {    return pilotType; }
         QString getPilotString(void)    {    return pilotString; }
         QString getETA(void)            {    return ETA; }
 
         time_t getPrevVac(void)         {    return prevVac; }
         time_t getNextVac(void)         {    return nextVac; }
-        int getVacLen(void)             {    return vacLen; }
         QString getPolarName(void)      {    return polarForcedName; }
         QStringList * getPilototo(void) {    return &pilototo; }
         bool getHasPilototo(void)       {    return hasPilototo; }
@@ -103,6 +91,10 @@ class boatVLM : public boat, public inetClient
 
         QString getCurrentPolarName(void) { return (forcePolar?polarName:polarVlm); }
 
+        void reloadPolar(void);
+        bool isInitialized(){return this->initialized;}
+        void setInitialized(bool b){this->initialized=b;}
+
 
     public slots:
         void slot_getData(bool doingSync);
@@ -113,7 +105,7 @@ class boatVLM : public boat, public inetClient
         void slot_shHall() { this->porteHidden=true; showNextGates();}
 
     signals:
-        void getTrace(QString,QList<vlmPoint> *);
+        void getTrace(QByteArray,QList<vlmPoint> *);
         void hasFinishedUpdating(void);
 
     private:
@@ -124,13 +116,11 @@ class boatVLM : public boat, public inetClient
 
         Player * player;
 
-        QString boat_name;
-        QString playerName;
+        QString name;
         int boat_id;
         int player_id;
         int type;
         int isOwn;
-
         QString alias;
         bool useAlias;
         QString email;
@@ -144,18 +134,6 @@ class boatVLM : public boat, public inetClient
         bool newRace;
         int pilotType;
         QString pilotString;
-        float avg;
-        float dnm,loch,ortho,loxo,vmg;
-        float windDir,windSpeed;
-        float TWA;
-
-        float WPHd;
-        QString ETA;
-        QString score;
-        time_t prevVac;
-        time_t nextVac;
-        int vacLen;
-        int nWP;
         QString race_name;
 
 
@@ -176,12 +154,11 @@ class boatVLM : public boat, public inetClient
         void my_unSelectBoat(bool needUpdate);
         void my_selectBoat(void);
 
-        void updateBoatName(void);
+        void updateBoatString(void);
         void updateHint(void);
-
-
-        void reloadPolar(void);
-
+        QImage flag;
+        bool drawFlag;
+        bool initialized;
 };
 
 #endif // BOATVLM_H

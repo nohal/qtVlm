@@ -28,6 +28,7 @@ Copyright (C) 2008 - Jacques Zaninetti - http://zygrib.free.fr
 #include <QTime>
 #include <QLibraryInfo>
 #include <QLocale>
+#include <QDebug>
 
 #include "MainWindow.h"
 #include "settings.h"
@@ -39,23 +40,31 @@ int main(int argc, char *argv[])
     
     QTextCodec::setCodecForTr(QTextCodec::codecForName("utf8"));
     QTextCodec::setCodecForCStrings(QTextCodec::codecForName("utf8"));
+    QFont def=QApplication::font();
+    def.setPointSizeF(8.25);
+    QApplication::setFont(def);
+
+    Settings::initSettings();
 
     QTranslator translator;
+    QTranslator translatorQt;
     QString lang = Settings::getSetting("appLanguage", "none").toString();
     if (lang == "none") {  // first call
+        qWarning() << "Setting default lang=fr";
         lang = "fr";
         Settings::setSetting("appLanguage", lang);
     }
 
-    
     if (lang == "fr") {
+        qWarning() << "Loading fr";
         QLocale::setDefault(QLocale("fr_FR"));
         translator.load( QString("qtVlm_") + lang,"tr/");
-        /*translator.load( QString("qt_fr"),
-        QLibraryInfo::location(QLibraryInfo::TranslationsPath));*/
+        translatorQt.load( QString("qt_fr"),"tr/");
+        app.installTranslator(&translatorQt);
         app.installTranslator(&translator);
     }
     else if (lang == "en") {
+        qWarning() << "Loading en";
         QLocale::setDefault(QLocale("en_US"));
         translator.load( QString("tr/qtVlm_") + lang);
         app.installTranslator(&translator);

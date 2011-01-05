@@ -32,32 +32,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "inetClient.h"
 
 #include "ui_BoardVLM.h"
-#include "ui_WP_dialog.h"
-
-class WP_dialog: public QDialog, public Ui::WP_dialog_ui
-{ Q_OBJECT
-    public:
-        WP_dialog(QWidget * parent=0);
-        void show_WPdialog(boatVLM * boat);
-
-    public slots:
-        void chgLat();
-        void chgLon();
-        void doPaste();
-        void doCopy();
-        void done(int result);
-        void doClearWP();
-        void doSelPOI();
-        void show_WPdialog(POI * poi);        
-
-    signals:
-        void confirmAndSendCmd(QString,QString,int cmdNum,float,float,float);
-        void selectPOI(void);
-
-    private:
-        boatVLM * currentBoat;
-        void initDialog(float WPLat,float WPLon,float WPHd);
-};
 
 class boardVLM: public QWidget , public Ui::boardVLM_ui, public inetClient
 { Q_OBJECT
@@ -70,6 +44,8 @@ class boardVLM: public QWidget , public Ui::boardVLM_ui, public inetClient
         void requestFinished(QByteArray res);
         QString getAuthLogin(bool * ok);
         QString getAuthPass(bool * ok);
+
+        void setCompassVisible(bool status);
 
     public slots:
         void chgHeading();
@@ -122,7 +98,7 @@ class boardVLM: public QWidget , public Ui::boardVLM_ui, public inetClient
         QString default_styleSheet;
 
         /* Dialogs */
-        WP_dialog * wpDialog;
+        DialogWp * wpDialog;
         bool confirmChange(QString question,QString info);
 
         /*GPS emul param*/

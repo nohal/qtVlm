@@ -100,7 +100,7 @@ class Grib
         // Carte de couleurs du vent
         void draw_WIND_Color(QPainter &pnt, const Projection *proj, bool smooth,
                                bool showWindArrows,bool barbules);
-        void drawCartouche(QPainter &pnt);
+        QString drawCartouche(QPainter &pnt);
         void show_CoverZone(QPainter &pnt, Projection * proj);
         void draw_GribGrid(QPainter &pnt, const Projection *proj);
         // Carte de couleurs des précipitations

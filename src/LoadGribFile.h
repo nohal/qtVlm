@@ -60,12 +60,14 @@ class LoadGribFile : public QObject
                     bool altitudeData700,
                     bool altitudeData850);
         void stop();
+        void getServerStatus();
 
     private:
         QNetworkAccessManager *inetManager;
 
         QNetworkReply * step1_InetReply;
         QNetworkReply * step2_InetReply;
+        QNetworkReply * step3_InetReply;
 
         QString host;
         QByteArray arrayContent;
@@ -87,6 +89,8 @@ class LoadGribFile : public QObject
         void signalGribSendMessage(QString msg);
         void signalGribStartLoadData();
         void signalGribLoadError(QString msg);
+        void ungrayButtons();
+        void progress(qint64,qint64);
 };
 
 

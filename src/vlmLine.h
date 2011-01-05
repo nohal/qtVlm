@@ -50,6 +50,8 @@ class vlmLine : public QGraphicsWidget
         void setLineMode();
         void setPointMode(QColor pt_color);
         void setGateMode(QString desc);
+        void setIceGate(int i){iceGate=i;}
+        int  isIceGate(){return iceGate;}
         void setTip(QString tip);
         void setNbVacPerHour(int nbVacPerHour) {this->nbVacPerHour=nbVacPerHour;}
         void setPorteOnePoint(void){this->onePoint=true;}
@@ -62,8 +64,10 @@ class vlmLine : public QGraphicsWidget
         void setPointStartCap(int n,float c){this->line[n].startCap=c;}
         void setPointWind(int n, float twd, float tws){this->line[n].wind_angle=twd;this->line[n].wind_speed=tws;}
         void setPointDistIso(int n, double d){this->line[n].distIso=d;}
+        void setPointCapVmg(int n, double d){this->line[n].capVmg=d;}
         void setPointcapOrigin(int n,double d){this->line[n].capOrigin=d;}
         void setPointCoordProj(int n,double x,double y){this->line[n].lonProj=x;this->line[n].latProj=y;}
+        void setNotSimplificable(int n){this->line[n].notSimplificable=true;}
         const vlmPoint * getOrigin(int n) {return this->line.at(n).origin;}
         const vlmPoint * getPoint(int n) {return & line.at(n);}
         void setInterpolated(float lon,float lat){this->interpolatedLon=lon;this->interpolatedLat=lat;update();}
@@ -78,7 +82,7 @@ class vlmLine : public QGraphicsWidget
 
     public slots:
         void slot_showMe(void);
-        void slot_shLab(){this->labelHidden=!this->labelHidden;update();}
+        void slot_shLab(bool state){this->labelHidden=state;update();}
 
     private:
         QList<vlmPoint> line;
@@ -87,6 +91,7 @@ class vlmLine : public QGraphicsWidget
         QList<QPolygon*> polyList;
         bool onePoint;
         int mode;
+        int iceGate;
         void calculatePoly(void);
         int nbVacPerHour;
         Projection * proj;
@@ -100,6 +105,9 @@ class vlmLine : public QGraphicsWidget
         float interpolatedLat;
         bool hasInterpolated;
         QRectF r;
+        double cLFA(double lon);
+        float myDiffAngle(float a1,float a2);
+        float A360(float hdg);
 };
 
 

@@ -30,12 +30,11 @@ Copyright (C) 2008 - Jacques Zaninetti - http://zygrib.free.fr
 #include <QWidget>
 
 #include "class_list.h"
-
+#include "dataDef.h"
 #include "inetClient.h"
-
 struct raceData {
-      QString idrace;
-      QString oppList;
+    QString idrace;
+    QString oppList;
     bool displayNSZ;
     double latNSZ;
     double widthNSZ;
@@ -43,19 +42,13 @@ struct raceData {
     int showWhat;
 };
 
-#define RACE_MAX_BOAT 15
-
-#define OPP_SHOW_LOGIN 0
-#define OPP_SHOW_NAME  1
-#define OPP_SHOW_IDU   2
-
 class opponent : public QGraphicsWidget
 {Q_OBJECT
     public:
-        opponent(QColor color,QString idu,QString race, float lat, float lon, QString login,
+        opponent(QColor color,QString idu,QString race, float lat, float lon, QString pseudo,
                             QString name,Projection * proj,MainWindow *main, myCentralWidget *parentWindow);
         opponent(QColor color,QString idu,QString race,Projection * proj,MainWindow *main, myCentralWidget *parentWindow);
-        void init(QColor color, bool isQtBoat,QString idu,QString race, float lat, float lon, QString login,
+        void init(QColor color, bool isQtBoat,QString idu,QString race, float lat, float lon, QString pseudo,
                             QString name,Projection * proj,MainWindow *main, myCentralWidget *parentWindow);
         ~opponent();
 
@@ -66,6 +59,10 @@ class opponent : public QGraphicsWidget
         QColor getColor() { return myColor; }
 
         void setNewData(float lat, float lon,QString name);
+        void setOtherData(int rank, QString loch1h, QString loch3h, QString loch24h, QString statusVLM,QString pavillon){this->rank=rank;this->loch1h=loch1h;
+                                                                                              this->loch3h=loch3h;this->loch24h=loch24h;
+                                                                                              this->statusVLM=statusVLM;updateName();
+                                                                                              this->pavillon=pavillon;}
         void setIsQtBoat(bool status);
         void updateName();
         void drawTrace();
@@ -83,7 +80,7 @@ class opponent : public QGraphicsWidget
         void slot_shShow();
         void slot_shHidden();
         void slot_shOpp(){if(this->isVisible())slot_shHidden();else slot_shShow();}
-        void slot_shLab(){this->labelHidden=!this->labelHidden;update();}
+        void slot_shLab(bool state){this->labelHidden=state;update();}
 
     protected:
         void paint(QPainter * pnt, const QStyleOptionGraphicsItem * , QWidget * );
@@ -91,7 +88,7 @@ class opponent : public QGraphicsWidget
     private:
         float lat,lon;
         QString name;
-        QString login;
+        QString pseudo;
         QString idu;
         QString idrace;
 
@@ -115,6 +112,11 @@ class opponent : public QGraphicsWidget
 
         void updatePosition();
         bool labelHidden;
+        int rank;
+        QString loch1h,loch3h,loch24h,pavillon;
+        QString statusVLM;
+        QImage flag;
+        bool drawFlag;
 };
 
 class opponentList : public QWidget, public inetClient
@@ -123,19 +125,23 @@ class opponentList : public QWidget, public inetClient
 
     public:
         opponentList(Projection * proj,MainWindow * main,myCentralWidget * parent, inetConnexion * inet);
-        void setBoatList(QString list_txt, QString race,int showWhat, bool force);
+        void setBoatList(QString list_txt, QString race, int showWhat, bool force);
         void refreshData(void);
         void clear(void);
         QString getRaceId();
         QList<opponent*> * getList(void) { return &opponent_list; }
+
         void requestFinished (QByteArray);
-        QString getAuthLogin(bool * ok=NULL) {if(ok) *ok=true;
-            return "test";}
-        QString getAuthPass(bool * ok=NULL) {if(ok) *ok=true;
-            return "test";}
+
+        QString getAuthLogin(bool * ok=NULL);
+        QString getAuthPass(bool * ok=NULL);
+
+        void authFailed(void);
+        void inetError(void);
 
     public slots:
-        void getTrace(QString buff, QList<vlmPoint> * trace);
+        void getTrace(QByteArray buff, QList<vlmPoint> * trace);
+
     private:
         QList<opponent*> opponent_list;
 
@@ -151,8 +157,10 @@ class opponentList : public QWidget, public inetClient
         QStringList readData(QString in_data,int type);
         void getOpponents(QStringList opp_idu,QString idrace);
         void getNxtOppData();
+        void getGenData();
         bool was10First;
         Projection * proj;
+        int showWhat;
 };
 
 

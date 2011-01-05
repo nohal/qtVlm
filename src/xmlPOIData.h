@@ -51,6 +51,7 @@ class xml_POIData: public QWidget
         Projection * proj;
         MainWindow * main;
         myCentralWidget * parent;
+        bool loaded;
 };
 
 #endif

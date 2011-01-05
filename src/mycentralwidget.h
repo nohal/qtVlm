@@ -31,6 +31,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "DialogGraphicsParams.h"
 #include <qsound.h>
 #include <qdatetime.h>
+#include <MainWindow.h>
 
 /* Z value according to type */
 #define Z_VALUE_TERRE      0
@@ -38,10 +39,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #define Z_VALUE_ESTIME     3
 #define Z_VALUE_ROUTE      4
 #define Z_VALUE_ROUTAGE    5
-#define Z_VALUE_POI        6
-#define Z_VALUE_GATE       7
-#define Z_VALUE_BOAT       8
-#define Z_VALUE_COMPASS    10
+#define Z_VALUE_ISOPOINT   6
+#define Z_VALUE_POI        7
+#define Z_VALUE_GATE       8
+#define Z_VALUE_NEXT_GATE  9
+#define Z_VALUE_BOAT       10
+#define Z_VALUE_COMPASS    11
 
 #define Z_VALUE_SELECTION  15
 
@@ -52,6 +55,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #define BOAT_WTYPE        4
 #define SELECTION_WTYPE   5
 #define OPP_WTYPE         6
+#define ISOPOINT          7
+#define BOATREAL_WTYPE    8
 
 /* compass mode */
 #define COMPASS_NOTHING  0
@@ -68,10 +73,20 @@ class myScene : public QGraphicsScene
         void keyReleaseEvent (QKeyEvent *e);
         void mouseMoveEvent (QGraphicsSceneMouseEvent * event);
         void mouseDoubleClickEvent(QGraphicsSceneMouseEvent* e);
+        void wheelEvent(QGraphicsSceneWheelEvent* e);
     signals:
         void paramVLMChanged();
+        void eraseWay();
+    private slots:
+        void wheelTimerElapsed();
     private:
         myCentralWidget * parent;
+        bool hasWay;
+        int  wheelStrokes;
+        QTimer *wheelTimer;
+        int wheelPosX;
+        int wheelPosY;
+        bool wheelCenter;
 };
 
 class myCentralWidget : public QWidget
@@ -103,6 +118,8 @@ class myCentralWidget : public QWidget
         void setHorn();
         void twaDraw(double lon, double lat);
         Player * getPlayer(void) { return currentPlayer; }
+        boatReal * getRealBoat(void) {return realBoat; }
+        bool getIsStartingUp(void){return main->isStartingUp;}
 
         void manageAccount(bool * res=NULL);
         void updatePlayer(Player * player);
@@ -112,9 +129,9 @@ class myCentralWidget : public QWidget
         bool freeRouteName(QString name, ROUTE * route);
         void update_menuRoute();
         void deleteRoute(ROUTE * route);
-        void freezeRoutes(bool freeze);
+        void removeRoute(ROUTE * route);
         void assignPois();
-        void emitUpdateRoute(){emit updateRoute();}
+        void emitUpdateRoute(boat * boat){emit updateRoute(boat);}
         ROUTE * addRoute();
         void setCompassFollow(ROUTE * route);
         ROUTE * getCompassFollow(){return this->compassRoute;}
@@ -125,15 +142,17 @@ class myCentralWidget : public QWidget
         bool freeRoutageName(QString name, ROUTAGE * routage);
         void update_menuRoutage();
         void deleteRoutage(ROUTAGE * routage);
+        void removeRoutage(ROUTAGE * routage);
         ROUTAGE * addRoutage();
-
+        int getNbRoutage(){return nbRoutage;}
+        void addPivot(ROUTAGE * fromRoutage,bool editOptions=false);
         Projection * getProj(void){return proj;}
 
         void send_redrawAll() { emit redrawAll(); }
 
 
         /* grib */
-        void   setCurrentDate(time_t t);
+        void   setCurrentDate(time_t t, bool uRoute=true);
         time_t getCurrentDate(void);
         void showGribDate_dialog(void);
         void loadGribFile(QString fileName, bool zoom);
@@ -156,23 +175,27 @@ class myCentralWidget : public QWidget
 
         /*races*/
         void drawNSZ(int i);
+        void removeOpponent(QString oppId, QString raceId);
 
     public slots :
         /* Zoom & position */
         void slot_Zoom_All();
-        void slot_Zoom_In();
-        void slot_Zoom_Out();
+        void slot_Zoom_In(float quantity=1.3);
+        void slot_Zoom_Out(float quantity=1.3);
+        void slot_Zoom_Wheel(float quantity, int XX, int YY, bool centerOnWheel);
         void slot_Go_Left();
         void slot_Go_Right();
         void slot_Go_Up();
         void slot_Go_Down();
         void slot_Zoom_Sel();
+        void slot_keepPos(bool b){this->keepPos=b;}
 
         /* POI */
         POI * slot_addPOI(QString name,int type,float lat,float lon, float wph,int timestamp,bool useTimeStamp, boat *boat);
         void slot_addPOI_list(POI * poi);
         void slot_delPOI_list(POI * poi);
         void slot_POISave(void);
+        void slot_POIRestore(void);
         void slot_POIimport(void); // import data from zyGrib
         void slot_delAllPOIs(void);
         void slot_delSelPOIs(void);
@@ -186,6 +209,7 @@ class myCentralWidget : public QWidget
         void slot_shRoute(bool);
         void slot_shOpp(bool);
         void slot_shPor(bool);
+        void slot_shFla(bool);
 
 
         /*Routes */
@@ -205,10 +229,11 @@ class myCentralWidget : public QWidget
         void slot_playerSelected(Player * player);
 
         /* Boats */
-        void slot_addBoat_list(boatVLM* boat);
-        void slot_delBoat_list(boatVLM* boat);
+        void slot_addBoat(boat* boat);
+        void slot_delBoat(boat* boat);
         void slot_writeBoatData(void);
         void slot_readBoatData(void);
+        void slot_moveBoat(double lat, double lon);
 
         /* Races */
         void slot_addRace_list(raceData* race);
@@ -218,6 +243,7 @@ class myCentralWidget : public QWidget
         /* Grib */
         void slot_fileLoad_GRIB(void);
         void slot_fileInfo_GRIB(void);
+        void slotLoadSailsDocGrib(void);
 
         /* Dialogs */
         void slot_boatDialog(void);
@@ -247,7 +273,7 @@ class myCentralWidget : public QWidget
         void writePOIData(QList<ROUTE*> &,QList<POI*> &,QString);
         void importZyGrib(void);
         void POI_selectAborted(POI*);
-        void updateRoute();
+        void updateRoute(boat *);
         void twaDelPoi(POI*);
 
         /* Boats */
@@ -266,9 +292,11 @@ class myCentralWidget : public QWidget
         void shPoi(bool);
         void shCom(bool);
         void shRou(bool);
+        void shRouBis();
         void shPor(bool);
         void shPol(bool);
         void shLab(bool);
+        void shFla();
 
     protected:
         void resizeEvent (QResizeEvent * e);
@@ -305,14 +333,15 @@ class myCentralWidget : public QWidget
         QGraphicsView * view;
 
         /* Dialogs */
-        dialog_gribDate * gribDateDialog;
-        POI_Editor * poi_editor;
-        boatAccount_dialog * boatAcc;
-        playerAccount * playerAcc;
-        race_dialog * raceParam;
+        DialogGribDate * gribDateDialog;
+        DialogPoi * poi_editor;
+        DialogBoatAccount * boatAcc;
+        DialogPlayerAccount * playerAcc;
+        DialogRace * raceDialog;
         DialogLoadGrib  * dialogLoadGrib;
         DialogUnits     dialogUnits;
         DialogGraphicsParams  dialogGraphicsParams;
+        DialogRealBoatConfig * realBoatConfig;
 
         /* Lists, POI*/
         QList<POI*> poi_list;
@@ -341,8 +370,10 @@ class myCentralWidget : public QWidget
         bool    hornActivated;
         QDateTime  hornDate;
         QTimer *hornTimer;
-        twaLine *twaTrace;
+        DialogTwaLine *twaTrace;
         ROUTE * compassRoute;
+        int nbRoutage;
+        bool keepPos;
 
 };
 

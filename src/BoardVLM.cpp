@@ -38,6 +38,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "settings.h"
 #include "Polar.h"
 #include "POI.h"
+#include "DialogWp.h"
 
 boardVLM::boardVLM(MainWindow * mainWin, inetConnexion * inet, board * parent) : QWidget(mainWin), inetClient(inet)
 {
@@ -58,7 +59,7 @@ boardVLM::boardVLM(MainWindow * mainWin, inetConnexion * inet, board * parent) :
     connect(GPS_timer,SIGNAL(timeout()),this, SLOT(synch_GPS()));
 
     /* wpDialog */
-    wpDialog = new WP_dialog();
+    wpDialog = new DialogWp();
     connect(wpDialog,SIGNAL(confirmAndSendCmd(QString,QString,int,float,float,float)),
             this,SLOT(confirmAndSendCmd(QString,QString,int,float,float,float)));
     connect(wpDialog,SIGNAL(selectPOI()),mainWin,SLOT(slotSelectWP_POI()));
@@ -120,18 +121,18 @@ bool boardVLM::confirmChange(QString question,QString info)
 {    
     if(!currentBoat())
     {
-        QMessageBox::warning(mainWin,tr("Erreur"),tr("Pas de bateau selectionn�"));
+        QMessageBox::warning(mainWin,tr("Erreur"),tr("Pas de bateau selectionne"));
         return false;
     }
 
     if(Settings::getSetting("askConfirmation","0").toInt()==0)
         return true;
 
-    if(QMessageBox::question(mainWin,tr("Instruction pour ")+currentBoat()->getBoatName(),
-                             currentBoat()->getBoatName()+": " + question,QMessageBox::Yes|QMessageBox::No,
+    if(QMessageBox::question(mainWin,tr("Instruction pour ")+currentBoat()->getBoatPseudo(),
+                             currentBoat()->getBoatPseudo()+": " + question,QMessageBox::Yes|QMessageBox::No,
                              QMessageBox::Yes)==QMessageBox::Yes)
     {
-        emit showMessage(currentBoat()->getBoatName()+": " + info,2000);
+        emit showMessage(currentBoat()->getBoatPseudo()+": " + info,2000);
         return true;
     }
     return false;
@@ -186,7 +187,6 @@ void boardVLM::boatUpdated(void)
 
     if(myBoat == NULL)
         return;
-
     isComputing = true;
     float val=myBoat->getHeading()-myBoat->getWindDir();
 
@@ -211,15 +211,16 @@ void boardVLM::boatUpdated(void)
     bvmgU->setText(QString().setNum(myBoat->getBvmgUp(myBoat->getWindSpeed())));
     bvmgD->setText(QString().setNum(myBoat->getBvmgDown(myBoat->getWindSpeed())));
 
-    boatName->setText(myBoat->getBoatName());
+    boatName->setText(myBoat->getBoatPseudo());
 
     //boatName->setText(myBoat->getDispName());
 
-    boatScore->setText(myBoat->getScore());
+    QString tt;
+    boatScore->setText(myBoat->getScore()+" ("+tt.sprintf("%d",myBoat->getRank())+")");
 
     /* boat position */
-    latitude->setText(Util::pos2String(TYPE_LAT,myBoat->getLat()));
     longitude->setText(Util::pos2String(TYPE_LON,myBoat->getLon()));
+    latitude->setText(Util::pos2String(TYPE_LAT,myBoat->getLat()));
 
     btn_Synch->setStyleSheet(QString::fromUtf8("background-color: rgb(255, 255, 127);"));
     isComputing = false;
@@ -412,6 +413,8 @@ void boardVLM::update_btnWP(void)
 {
     if(!currentBoat())
         return;
+    if(isComputing) return;
+    isComputing=true;
 
     float WPLat = currentBoat()->getWPLat();
     float WPLon = currentBoat()->getWPLon();
@@ -421,7 +424,7 @@ void boardVLM::update_btnWP(void)
         btn_WP->setText(tr("Prochaine balise (0 WP)"));
     else
     {
-        QString str = "WP: ";
+        QString str = tr("WP: ");
         if(WPLat==0)
             str+="0 N";
         else
@@ -438,11 +441,12 @@ void boardVLM::update_btnWP(void)
         {
             str+=" @";
             str+=QString().setNum(WPHd);
-            str+=tr("°");
+            str+=tr("deg");
         }
 
         btn_WP->setText(str);
     }
+    isComputing=false;
 }
 
 void boardVLM::doWP_edit()
@@ -497,7 +501,7 @@ void boardVLM::disp_boatInfo()
         if(currentBoat()->getPolarData())
         {
             if(currentBoat()->getPolarState())
-                polar_str+= " ("+tr("forcé")+")";
+                polar_str+= " ("+tr("forcee")+")";
             if (currentBoat()->getPolarData()->getIsCsv())
                 polar_str += " - format csv";
             else
@@ -508,9 +512,9 @@ void boardVLM::disp_boatInfo()
 
         QString boatID=currentBoat()->getDispName();
         QMessageBox::information(this,tr("Information sur")+" " + boatID,
-                             tr("Name:") + " " + currentBoat()->getName() + "\n" +
                              (currentBoat()->getAliasState()?tr("Alias:")+ " " + currentBoat()->getAlias() + "\n":"") +
                              tr("ID:") + " " + currentBoat()->getBoatId() + "\n" +
+                             tr("Pseudo:") + " " + currentBoat()->getBoatPseudo() + "\n" +
                              tr("Nom:") + " " + currentBoat()->getBoatName() + "\n" +
                              tr("Email:") + " " + currentBoat()->getEmail() + "\n" +
                              tr("Course:") + " (" + currentBoat()->getRaceId() + ") " + currentBoat()->getRaceName() + "\n" +
@@ -832,136 +836,28 @@ void boardVLM::contextMenuEvent(QContextMenuEvent  *)
 
 void boardVLM::slot_hideShowCompass()
 {
-    if(windAngle->isVisible())
-    {
-        Settings::setSetting("boardCompassShown",0);
-        windAngle->hide();
-    }
-    else
+    setCompassVisible(!windAngle->isVisible());
+}
+
+void boardVLM::setCompassVisible(bool status)
+{
+    if(status)
     {
         Settings::setSetting("boardCompassShown",1);
         windAngle->show();
-    }
-}
-
-/************************/
-/* Dialog WP            */
-
-WP_dialog::WP_dialog(QWidget * parent) : QDialog(parent)
-{
-    setupUi(this);
-
-    currentBoat=NULL;
-
-    WP_conv_lat->setText("");
-    WP_conv_lon->setText("");
-}
-
-void WP_dialog::show_WPdialog(boatVLM * boat)
-{
-    currentBoat=boat;
-
-    initDialog(boat->getWPLat(),boat->getWPLon(),boat->getWPHd());
-
-    exec();
-}
-
-void WP_dialog::show_WPdialog(POI * poi)
-{
-    if(poi)
-        initDialog(poi->getLatitude(),poi->getLongitude(),poi->getWph());
-    exec();
-}
-
-void WP_dialog::initDialog(float WPLat,float WPLon,float WPHd)
-{
-    if(WPLat == 0 && WPLon == 0)
-    {
-        WP_lat->setText("");
-        WP_lon->setText("");
-        WP_heading->setText("");
+        this->setMaximumHeight(680);
     }
     else
     {
-        WP_lat->setText(QString().setNum(WPLat));
-        WP_lon->setText(QString().setNum(WPLon));
-        if(WPHd==-1)
-            WP_heading->setText("");
-        else
-            WP_heading->setText(QString().setNum(WPHd));
+        Settings::setSetting("boardCompassShown",0);
+        windAngle->hide();
+        this->setMaximumHeight(434);
     }
+    this->updateGeometry();
+//    this->adjustSize();
 }
 
-void WP_dialog::done(int result)
-{
-    if(result == QDialog::Accepted)
-    {
-        if(WP_lat->text().isEmpty() && WP_lon->text().isEmpty())
-            confirmAndSendCmd(tr("Confirmer le changement du WP"),tr("WP change"),VLM_CMD_WP,0,0,-1);
-        else
-            confirmAndSendCmd(tr("Confirmer le changement du WP"),tr("WP change"),
-                              VLM_CMD_WP,WP_lat->text().toFloat(),WP_lon->text().toFloat(),
-                    WP_heading->text().isEmpty()?-1:WP_heading->text().toFloat());
-    }
-    QDialog::done(result);
-}
 
-void WP_dialog::doClearWP()
-{
-    WP_lat->setText("");
-    WP_lon->setText("");
-    WP_heading->setText("");
-}
-
-void WP_dialog::chgLat()
-{
-    if(WP_lat->text().isEmpty())
-        WP_conv_lat->setText("");
-    else
-    {
-        float val = WP_lat->text().toFloat();
-        WP_conv_lat->setText(Util::pos2String(TYPE_LAT,val));
-    }
-}
-
-void WP_dialog::chgLon()
-{
-    if(WP_lon->text().isEmpty())
-        WP_conv_lon->setText("");
-    else
-    {
-        float val = WP_lon->text().toFloat();
-        WP_conv_lon->setText(Util::pos2String(TYPE_LON,val));
-    }
-}
-
-void WP_dialog::doPaste()
-{
-    float lat,lon,wph;
-    if(!currentBoat)
-        return;
-    if(!Util::getWPClipboard(NULL,&lat,&lon,&wph,NULL)) /*no need to get timestamp*/
-        return;
-    WP_lat->setText(QString().setNum(lat));
-    WP_lon->setText(QString().setNum(lon));
-    WP_heading->setText(QString().setNum(wph));
-}
-
-void WP_dialog::doCopy()
-{
-    if(!currentBoat)
-        return;
-    Util::setWPClipboard(WP_lat->text().toFloat(),WP_lon->text().toFloat(),
-        WP_heading->text().toFloat());
-    QDialog::done(QDialog::Rejected);
-
-}
-
-void WP_dialog::doSelPOI()
-{
-    emit selectPOI();
-    QDialog::done(QDialog::Rejected);
-}
 
 /************************/
 /* Board custom spinBox */
@@ -1165,12 +1061,15 @@ void tool_windAngle::draw(QPainter * painter)
         }
 
         /* rotate + wind dir */
-        painter->rotate(windDir);
-        QPen curPen = painter->pen();
-        painter->setPen(windSpeed_toColor());
-        painter->fillRect(-2,-h/2,4,40,QBrush(windSpeed_toColor()));
-        painter->setPen(curPen);
-        painter->rotate(-windDir);
+        if(windSpeed!=-1)
+        {
+            painter->rotate(windDir);
+            QPen curPen = painter->pen();
+            painter->setPen(windSpeed_toColor());
+            painter->fillRect(-2,-h/2,4,40,QBrush(windSpeed_toColor()));
+            painter->setPen(curPen);
+            painter->rotate(-windDir);
+        }
 
         /* rotate + WP dir */
         if(WPdir != -1)
@@ -1294,7 +1193,6 @@ void tool_windStation::draw(QPainter * painter)
 
         /* data */
         painter->setPen(QColor(0, 0, 0));
-
 
         y=24;
 

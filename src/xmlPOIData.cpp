@@ -46,8 +46,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #define ROUTE_COLOR_G     "color_green"
 #define ROUTE_COLOR_B     "color_blue"
 #define ROUTE_LIVE        "liveUpdate"
+#define ROUTE_FROZEN      "frozen"
 #define ROUTE_HIDEPOIS    "hidePois"
 #define ROUTE_MULTVAC     "vacStep"
+#define ROUTE_HIDDEN      "hidden"
+#define ROUTE_VBVMG_VLM   "vbvmg-vlm"
 /* POI */
 #define POI_GROUP_NAME    "POI"
 #define POI_NAME          "name"
@@ -77,10 +80,12 @@ xml_POIData::xml_POIData(Projection * proj,MainWindow * main, myCentralWidget * 
 
     connect(this,SIGNAL(addPOI_list(POI*)),parent,SLOT(slot_addPOI_list(POI*)));
     connect(this,SIGNAL(delPOI_list(POI*)),parent,SLOT(slot_delPOI_list(POI*)));
+    this->loaded=false;
 }
 
 void xml_POIData::slot_writeData(QList<ROUTE*> & route_list,QList<POI*> & poi_list,QString fname)
 {
+     if(!loaded) return;
      QDomDocument doc(DOM_FILE_TYPE);
      QDomElement root = doc.createElement(ROOT_NAME);
      doc.appendChild(root);
@@ -99,7 +104,6 @@ void xml_POIData::slot_writeData(QList<ROUTE*> & route_list,QList<POI*> & poi_li
      while(h.hasNext())
      {
           ROUTE * route=h.next();
-          if(route->getBoat()==NULL) continue;
           if(route->isImported()) continue;
           if(!route->getBoat()->getStatus()) continue; //if boat has been deactivated do not save route
           group = doc.createElement(ROUTE_GROUP_NAME);
@@ -110,10 +114,13 @@ void xml_POIData::slot_writeData(QList<ROUTE*> & route_list,QList<POI*> & poi_li
           t = doc.createTextNode(route->getName().toUtf8().toBase64());
           tag.appendChild(t);
 
-          tag = doc.createElement(ROUTE_BOAT);
-          group.appendChild(tag);
-          t = doc.createTextNode(QString().setNum(route->getBoat()->getId()));
-          tag.appendChild(t);
+          if(route->getBoat()!=NULL)
+          {
+              tag = doc.createElement(ROUTE_BOAT);
+              group.appendChild(tag);
+              t = doc.createTextNode(QString().setNum(route->getBoat()->getId()));
+              tag.appendChild(t);
+          }
 
           tag = doc.createElement(ROUTE_START);
           group.appendChild(tag);
@@ -153,16 +160,30 @@ void xml_POIData::slot_writeData(QList<ROUTE*> & route_list,QList<POI*> & poi_li
           t = doc.createTextNode(QString().setNum(route->getColor().blue()));
           tag.appendChild(t);
 
-
-
           tag = doc.createElement(ROUTE_LIVE);
           group.appendChild(tag);
           t = doc.createTextNode(QString().setNum(route->isLive()?1:0));
           tag.appendChild(t);
 
+
+          tag = doc.createElement(ROUTE_FROZEN);
+          group.appendChild(tag);
+          t = doc.createTextNode(QString().setNum(route->getFrozen()?1:0));
+          tag.appendChild(t);
+
           tag = doc.createElement(ROUTE_HIDEPOIS);
           group.appendChild(tag);
           t = doc.createTextNode(QString().setNum(route->getHidePois()?1:0));
+          tag.appendChild(t);
+
+          tag = doc.createElement(ROUTE_HIDDEN);
+          group.appendChild(tag);
+          t = doc.createTextNode(QString().setNum(route->getHidden()?1:0));
+          tag.appendChild(t);
+
+          tag = doc.createElement(ROUTE_VBVMG_VLM);
+          group.appendChild(tag);
+          t = doc.createTextNode(QString().setNum(route->getUseVbvmgVlm()?1:0));
           tag.appendChild(t);
 
           tag.appendChild(t);
@@ -288,20 +309,21 @@ void xml_POIData::slot_importZyGrib(void)
             }
             QMessageBox::information (this,
             tr("POI de zyGrib").arg(slist.size()),
-            tr("POI importer, pensez a sauvegarder les POI"));
+            tr("POI importes, pensez a sauvegarder les POI"));
         }
      }
      else
      {
          QMessageBox::information (this,
             tr("POI de zyGrib").arg(slist.size()),
-            tr("Pas de POI de zyGrib trouvï¿½e"));
+            tr("Pas de POI de zyGrib trouves"));
      }
      settings.endGroup();
 }
 
 void xml_POIData::slot_readData(QString fname)
 {
+     this->loaded=true;
      QString  errorStr;
      int errorLine;
      int errorColumn;
@@ -363,6 +385,7 @@ void xml_POIData::slot_readData(QString fname)
               route->setFrozen(true);
               route->setBoat(NULL);
               QColor routeColor=Qt::red;
+              bool toBeFreezed=false;
               subNode = node.firstChild();
               bool invalidRoute=true;
               while(!subNode.isNull())
@@ -375,7 +398,7 @@ void xml_POIData::slot_readData(QString fname)
                   }
                   if(subNode.toElement().tagName() == ROUTE_BOAT)
                   {
-#warning a modif pour les real boat ?
+//a modif pour les real boat ?
                        dataNode = subNode.firstChild();
                        if(dataNode.nodeType() == QDomNode::TextNode)
                        {
@@ -467,6 +490,12 @@ void xml_POIData::slot_readData(QString fname)
                        if(dataNode.nodeType() == QDomNode::TextNode)
                            route->setLive(dataNode.toText().data().toInt()==1);
                   }
+                  if(subNode.toElement().tagName() == ROUTE_FROZEN)
+                  {
+                       dataNode = subNode.firstChild();
+                       if(dataNode.nodeType() == QDomNode::TextNode)
+                           toBeFreezed=(dataNode.toText().data().toInt()==1);
+                  }
 
 
                   if(subNode.toElement().tagName() == ROUTE_HIDEPOIS)
@@ -476,12 +505,27 @@ void xml_POIData::slot_readData(QString fname)
                            route->setHidePois(dataNode.toText().data().toInt()==1);
                   }
 
+                  if(subNode.toElement().tagName() == ROUTE_HIDDEN)
+                  {
+                       dataNode = subNode.firstChild();
+                       if(dataNode.nodeType() == QDomNode::TextNode)
+                           route->setHidden(dataNode.toText().data().toInt()==1);
+                  }
+                  if(subNode.toElement().tagName() == ROUTE_VBVMG_VLM)
+                  {
+                       dataNode = subNode.firstChild();
+                       if(dataNode.nodeType() == QDomNode::TextNode)
+                           route->setUseVbVmgVlm(dataNode.toText().data().toInt()==1);
+                  }
+
                   subNode = subNode.nextSibling();
               }
-              if(invalidRoute) /*route->boat does not exist anymore, delete the route*/
+              if(invalidRoute) /*route->boat does not exist anymore*/
               {
-                parent->deleteRoute(route);
+                  route->setBoat(NULL);
               }
+              if(!toBeFreezed)
+                  route->setFrozen(false);
           }
           else if(node.toElement().tagName() == POI_GROUP_NAME)
           {
@@ -586,7 +630,7 @@ void xml_POIData::slot_readData(QString fname)
      if(!hasVersion)
      {
          qWarning("no version");
-#warning remettre un appel Ã  centralWidget pour effacer la liste ? idem dans ts les retour d erreur
+// remettre un appel a centralWidget pour effacer la liste ? idem dans ts les retour d erreur
      }
 
 }

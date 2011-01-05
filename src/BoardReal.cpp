@@ -20,10 +20,18 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <QMessageBox>
 #include <QMenu>
+#include <QDebug>
 
 #include "MainWindow.h"
+
 #include "BoardReal.h"
+#include "Board.h"
 #include "settings.h"
+
+#include "boatReal.h"
+
+#include "dataDef.h"
+#include "Util.h"
 
 boardReal::boardReal(MainWindow * mainWin, board * parent) : QWidget(mainWin)
 {
@@ -44,9 +52,53 @@ boardReal::boardReal(MainWindow * mainWin, board * parent) : QWidget(mainWin)
         windAngle->hide();
 }
 
+boatReal * boardReal::currentBoat(void)
+{
+    if(parent && parent->currentBoat())
+    {
+        if(parent->currentBoat()->getType()==BOAT_REAL)
+            return (boatReal*)parent->currentBoat();
+        else
+            return NULL;
+    }
+    else
+        return NULL;
+}
+
 void boardReal::boatUpdated(void)
 {
+    boatReal * myBoat=currentBoat();
 
+    if(!myBoat)
+    {
+        qWarning() << "No current real boat";
+        return;
+    }
+
+    /* boat position */
+    latitude->setText(Util::pos2String(TYPE_LAT,myBoat->getLat()));
+    longitude->setText(Util::pos2String(TYPE_LON,myBoat->getLon()));
+
+    /* boat heading */
+    windAngle->setValues(myBoat->getHeading(),0,myBoat->getWindSpeed(), -1, -1);
+    this->dir->display(myBoat->getHeading());
+
+    /* boat speed*/
+    this->speed->display(myBoat->getSpeed());
+
+    /* GPS status */
+    if(myBoat->gpsIsRunning())
+    {
+        gpsStatus->setText("Running");
+        this->startBtn->setEnabled(false);
+        this->stopBtn->setEnabled(true);
+    }
+    else
+    {
+        gpsStatus->setText("Stopped");
+        this->startBtn->setEnabled(true);
+        this->stopBtn->setEnabled(false);
+    }
 }
 
 void boardReal::setChangeStatus(bool /*status*/)
@@ -61,20 +113,54 @@ void boardReal::paramChanged()
 
 void boardReal::disp_boatInfo()
 {
-    QMessageBox::information(this,tr("Information"),"Bientot des infos ici");
+    QMessageBox::information(this,tr("Information"),tr("Bientot des infos ici"));
 }
+
+void boardReal::chgBoatPosition(void)
+{
+    boatReal * myBoat=currentBoat();
+    if(myBoat)
+        myBoat->slot_chgPos();
+}
+
+void boardReal::startGPS(void)
+{
+    boatReal * myBoat=currentBoat();
+    if(!myBoat)
+    {
+        qWarning() << "No real board to start GPS";
+        return;
+    }
+    myBoat->startRead();
+}
+
+ void boardReal::stopGPS(void)
+ {
+     boatReal * myBoat=currentBoat();
+     if(!myBoat)
+     {
+         qWarning() << "No real board to stop GPS";
+         return;
+     }
+     myBoat->stopRead();
+ }
 
 void boardReal::slot_hideShowCompass()
 {
-    if(windAngle->isVisible())
-    {
-        Settings::setSetting("boardCompassShown",0);
-        windAngle->hide();
-    }
-    else
+    setCompassVisible(~windAngle->isVisible());
+}
+
+void boardReal::setCompassVisible(bool status)
+{
+    if(status)
     {
         Settings::setSetting("boardCompassShown",1);
         windAngle->show();
+    }
+    else
+    {
+        Settings::setSetting("boardCompassShown",0);
+        windAngle->hide();
     }
 }
 

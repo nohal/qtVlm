@@ -40,16 +40,16 @@ Copyright (C) 2008 - Jacques Zaninetti - http://zygrib.free.fr
 QString Util::formatTemperature(float tempKelvin)
 {
     QString tunit = Settings::getSetting("unitsTemp", "").toString();
-    QString unit = (tunit=="") ? QObject::tr("°C") : tunit;
+    QString unit = (tunit=="") ? "degC" : tunit;
     QString r;
-    if (unit == QObject::tr("°C")) {
+    if (unit == "degC") {
         r.sprintf("%.1f ", tempKelvin-273.15);
     }
-    else if (unit == QObject::tr("°F")) {
+    else if (unit == "degF") {
         r.sprintf("%.1f ", 1.8*(tempKelvin-273.15)+32.0);
     }
-    else  {   // if (unit == QObject::tr("°K"))
-        unit = QObject::tr("°K");
+    else  {   // if (unit=="degK")
+        unit = "degK";
         r.sprintf("%.1f ", tempKelvin);
     }
     return r+unit;
@@ -58,16 +58,16 @@ QString Util::formatTemperature(float tempKelvin)
 QString Util::formatTemperature_short(float tempKelvin)
 {
     QString tunit = Settings::getSetting("unitsTemp", "").toString();
-    QString unit = (tunit=="") ? QObject::tr("°C") : tunit;
+    QString unit = (tunit=="") ? "degC" : tunit;
     QString r;
-    if (unit == QObject::tr("°C")) {
+    if (unit == "degC") {
         r.sprintf("%d", qRound(tempKelvin-273.15) );
     }
-    else if (unit == QObject::tr("°F")) {
+    else if (unit == "degF") {
         r.sprintf("%d", qRound(1.8*(tempKelvin-273.15)+32.0) );
     }
-    else  {   // if (unit == QObject::tr("°K"))
-        unit = QObject::tr("°K");
+    else  {   // if (unit == "degK")
+        unit = "degK";
         r.sprintf("%d", qRound(tempKelvin) );
     }
     return r; //+unit;
@@ -76,15 +76,15 @@ QString Util::formatTemperature_short(float tempKelvin)
 QString Util::formatSpeed(float meterspersecond)
 {
     QString tunit = Settings::getSetting("unitsWindSpeed", "").toString();
-    QString unit = (tunit=="") ? QObject::tr("km/h") : tunit;
+    QString unit = (tunit=="") ? "km/h" : tunit;
     QString r;
-    if (unit == QObject::tr("m/s")) {
+    if (unit == "m/s") {
         r.sprintf("%.1f m/s", meterspersecond);
     }
-    else if (unit == QObject::tr("km/h")) {
+    else if (unit == "km/h") {
         r.sprintf("%.1f km/h", meterspersecond*3.6);
     }
-    else  {   // if (unit == QObject::tr("nœuds"))
+    else  {   // if (unit == "noeuds")
         r.sprintf("%.1f knt", meterspersecond*3.6/1.852);
     }
     return r;
@@ -93,10 +93,10 @@ QString Util::formatSpeed(float meterspersecond)
 QString Util::formatDistance(float mille)
 {
     QString tunit = Settings::getSetting("unitsDistance", "").toString();
-    QString unit = (tunit=="") ? QObject::tr("km") : tunit;
+    QString unit = (tunit=="") ? "km" : tunit;
     QString r, unite;
     float d;
-    if (unit == QObject::tr("km")) {
+    if (unit == "km") {
         unite = "km";
         d= mille*1.852;
     }
@@ -116,10 +116,10 @@ QString Util::formatDistance(float mille)
 QString Util::formatDegres(float x)     // 123.4 -> 123°24.00'
 {
     QString tunit = Settings::getSetting("unitsPosition", "").toString();
-    QString unit = (tunit=="") ? QObject::tr("dd°mm'ss\"") : tunit;
+    QString unit = (tunit=="") ? "dddegmm'ss" : tunit;
 
     QString r;
-    if (unit == QObject::tr("dd°mm,mm'"))
+    if (unit == "dddegmm,mm'")
     {
         int deg = (int) fabs(x);
         float min = (fabs(x) - deg)*60.0;
@@ -127,18 +127,18 @@ QString Util::formatDegres(float x)     // 123.4 -> 123°24.00'
         const char *cdeg = "°";
         r.sprintf("%c%03d%s%05.2f'", sign,deg,cdeg, min);
     }
-    else if (unit == QObject::tr("dd°mm'ss\""))
+    else if (unit == "dddegmm'ss")
     {
         int sec = (int) fabs(x*3600.0);  // total en secondes
         int min = sec / 60;              // nombre entier de minutes
-        int deg = min / 60;              // nombre entier de degrés
+        int deg = min / 60;              // nombre entier de degres
         min = min % 60;                  // reste en minutes
         sec = sec % 60;                  // reste en secondes
         char sign = (x<0) ? '-' : ' ';
         const char *cdeg = "°";
         r.sprintf("%c%03d%s%02d'%02d\"", sign,deg,cdeg, min,sec);
     }
-    else // if (unit == QObject::tr("dd,dd°"))
+    else // if (unit == "dd,dddeg")
     {
         const char *cdeg = "°";
         r.sprintf("%06.2f%s",x,cdeg);
@@ -154,6 +154,11 @@ QString Util::formatPosition(float x, float y)  // 123°24.00'W 45°67.89'N
 QString Util::formatLongitude(float x)
 {
     QString dir = Settings::getSetting("longitudeDirection", "").toString();
+    if(fabs(x)>100000)
+    {
+        QWARN << "x too big: " << x;
+        x=0;
+    }
     if (dir == "Ouest positive")
         return formatDegres(-x)+"W";
     else if (dir == "Est positive")
@@ -263,11 +268,7 @@ QString Util::formatDateTime_hour(time_t t)
     return dt.toString("hh:mm UTC");
 }
 
-#ifdef QT_4_5
 void Util::paramProxy(QNetworkAccessManager *inetManager,QString host)
-#else
-void Util::paramProxy(QNetworkAccessManager *inetManager,QString)
-#endif
 {
     /* update connection */
 
@@ -287,7 +288,6 @@ void Util::paramProxy(QNetworkAccessManager *inetManager,QString)
                     Settings::getSetting("httpProxyUserPassword", "").toString());
             inetManager->setProxy(*inetProxy);
             break;
-#ifdef QT_4_5
         case 2:
             /* IE proxy*/
             QList<QNetworkProxy> proxyList =QNetworkProxyFactory::systemProxyForQuery(QNetworkProxyQuery(QUrl(host)));
@@ -298,7 +298,6 @@ void Util::paramProxy(QNetworkAccessManager *inetManager,QString)
 
             inetManager->setProxy(*inetProxy);
             break;
-#endif
     }
 }
 
@@ -474,13 +473,13 @@ QString Util::pos2String(int type,float value)
 }
 
 
-QString  url_name[NB_URL] = { "s10","s11"
+QString  url_name[NB_URL] = { "std","s10","s11"
 #ifdef __QTVLM_WITH_TEST
                  , "testing"
 #endif
 
                           };
-QString  url_str[NB_URL] = { "s10.virtual-loup-de-mer.org","s11.virtual-loup-de-mer.org"
+QString  url_str[NB_URL] = { "virtual-loup-de-mer.org", "s10.virtual-loup-de-mer.org","s11.virtual-loup-de-mer.org"
 #ifdef __QTVLM_WITH_TEST
                  , "testing.virtual-loup-de-mer.org"
 #endif
@@ -488,19 +487,20 @@ QString  url_str[NB_URL] = { "s10.virtual-loup-de-mer.org","s11.virtual-loup-de-
 
 QString Util::getHost()
 {
+#ifdef __QTVLM_WITH_TEST
     QString host;
-    int num = Settings::getSetting("vlm_url",0).toInt();
-
     host="http://";
-
+    int num = Settings::getSetting("vlm_url",0).toInt();
     if(num>=NB_URL)
     {
         qWarning() << "Updating wrong config for VLM url";
         num=0;
         Settings::setSetting("vlm_url",0);
     }
-
     return host+url_str[num];
+#else
+    return "http://virtual-loup-de-mer.org";
+#endif
 }
 
 void Util::computePos(Projection * proj, float lat, float lon, int * x, int * y)
@@ -517,6 +517,22 @@ void Util::computePos(Projection * proj, float lat, float lon, int * x, int * y)
     else
     {
         proj->map2screen(lon, lat, x, y);
+    }
+}
+void Util::computePosFloat(Projection * proj, float lat, float lon, float * x, float * y)
+{
+    if (proj->isPointVisible(lon, lat)) {      // tour du monde ?
+        proj->map2screenFloat(lon, lat, x, y);
+    }
+    else if (proj->isPointVisible(lon-360, lat)) {
+        proj->map2screenFloat(lon-360, lat, x, y);
+    }
+    else  if (proj->isPointVisible(lon+360,lat)) {
+        proj->map2screenFloat(lon+360, lat, x, y);
+    }
+    else
+    {
+        proj->map2screenFloat(lon, lat, x, y);
     }
 }
 

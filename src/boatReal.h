@@ -24,47 +24,76 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <QObject>
 #include <QTimer>
 #include <QThread>
+#include <QGraphicsWidget>
 
 #include <qextserialport.h>
 #include <nmea.h>
 
 #include "boat.h"
+#include "vlmLine.h"
 #include "class_list.h"
+#include "mycentralwidget.h"
 
 class ReceiverThread : public QThread
 { Q_OBJECT
     public:
-        ReceiverThread(void);
+        ReceiverThread(boatReal * parent);
         ~ReceiverThread(void);
         void run();
+
+        bool initPort(void);
 
     public slots:
         void terminate();
 
     signals:
-        void decodeData(QString data);
+        void decodeData(QByteArray data);
+        void updateBoat(boat * boat,bool b1, bool b2);
 
     private:
         QextSerialPort * port;
+        boatReal *parent;
         bool stop;
+
 };
 
 class boatReal : public boat
 { Q_OBJECT
     public:
-        boatReal(QString name, bool activated,
+        boatReal(QString pseudo, bool activated,
                  Projection * proj,MainWindow * main,myCentralWidget * parent);
         ~boatReal();
-        void readData();
-        int getVacLen(void) {return 5; }
+        void stopRead();
+        void startRead();
+        void unSelectBoat(bool needUpdate);
         void unSelectBoat(bool needUpdate) { boat::unSelectBoat(needUpdate); }
 
+        void updateAll(void);
+
+        void paramUpdated();
+
+        bool gpsIsRunning();
+        void setPolar(QString polarName);
+
+        void setPosition(double lat, double lon);
+
+        /* event propagé par la scene */
+        bool tryMoving(int x, int y);
+        time_t getLastUpdateTime(){return this->lastUpdateTime;}
+
     public slots:
-        void decodeData(QString data);
+        void decodeData(QByteArray data);
+        void slot_selectBoat(void) { boat::slot_selectBoat(); }
+        void slot_threadStartedOrFinished(void);
+        void slot_chgPos(void);
         void slot_selectBoat(void) { boat::slot_selectBoat(); }
 
     signals:
         void terminateThread();
+
+    protected:
+        void  mousePressEvent(QGraphicsSceneMouseEvent * e);
+        void  mouseReleaseEvent(QGraphicsSceneMouseEvent * e);
 
     private:
         ReceiverThread * gpsReader;
@@ -75,8 +104,19 @@ class boatReal : public boat
 
         QString parseMask(int mask);
 
-        void updateBoatName(void);
+        void updateBoatString(void);
         void updateHint(void);
+        vlmLine *trace;
+        double previousLon;
+        double previousLat;
+        bool gotPosition;
+
+        void myCreatePopUpMenu(void);
+        QAction * ac_chgPos;
+
+        bool isMoving;
+        int mouse_x,mouse_y;
+        time_t lastUpdateTime;
 };
 
 

@@ -31,10 +31,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 class Settings : QObject
 { Q_OBJECT
     public:
-        Settings();
 
-        void loadFromReg(void);
-
+        static void loadFromReg(void);
+        static void initSettings(void);
         static void     setSetting(const QString &key, const QVariant &value);
         static QVariant getSetting(const QString &key, const QVariant &defaultValue);
 };

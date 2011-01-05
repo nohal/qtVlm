@@ -51,6 +51,7 @@ class Player : public QObject, public inetClient
         Projection * getProjection(void) { return proj; }
 
         boatReal * getRealBoat(void) { if(type==BOAT_VLM) return NULL; return realBoat; }
+        void setRealBoat(boatReal* boat) {if(type==BOAT_REAL) realBoat=boat; }
 
         void authFailed(void);
         void inetError(void);
@@ -74,10 +75,11 @@ class Player : public QObject, public inetClient
 
         /* boat list */
         void addBoat(boatVLM * boat)    { boats.append(boat); }
+        QList<int> getFleetList(){return fleetList;}
 
     signals:
-        void addBoat_list(boatVLM* boat);
-        void delBoat_list(boatVLM* boat);
+        void addBoat(boat* boat);
+        void delBoat(boat* boat);
         void playerUpdated(bool,Player *);
 
     public slots:
@@ -94,12 +96,14 @@ class Player : public QObject, public inetClient
         int player_id;
         QList<boatVLM*> boats;
         QList<boatData*> boatsData;
+        QString polarName;
 
         boatReal * realBoat;
 
         bool updating;
 
         void doRequest(int requestCmd);
+        QList<int> fleetList;
 
 };
 

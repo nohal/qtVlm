@@ -21,57 +21,174 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <QTime>
 #include <QDebug>
 #include <QStringList>
+#include <QGraphicsSceneEvent>
 
+#include "DialogRealBoatPosition.h"
+
+#include "settings.h"
 #include "boatReal.h"
 #include "dataDef.h"
 #include "nmea.h"
+#include "Util.h"
 
-boatReal::boatReal(QString name, bool activated, Projection * proj,MainWindow * main,
-                   myCentralWidget * parent): boat(name,activated,proj,main,parent)
+boatReal::boatReal(QString pseudo, bool activated, Projection * proj,MainWindow * main,
+                   myCentralWidget * parent): boat(pseudo,activated,proj,main,parent)
 {
-    this->boat_type=BOAT_REAL;
-    /* init thread */
-    gpsReader = new ReceiverThread();
-    connect(this,SIGNAL(terminateThread()),gpsReader,SLOT(terminate()));
-    connect(gpsReader,SIGNAL(decodeData(QString)),this,SLOT(decodeData(QString)));
+    qWarning()<<"creating boat real";
 
+    setData(0,BOATREAL_WTYPE);
+    isMoving=false;
+
+    this->boat_type=BOAT_REAL;
+    setFont(QFont("Helvetica",9));
+
+    /* init thread */
+    gpsReader = new ReceiverThread(this);
+    qWarning()<<"after creating thread";
     /* init nmea decoder */
     nmea_zero_INFO(&info);
     nmea_parser_init(&parser);
+    if(parser.buff_size==0)
+        qWarning()<<"no parser!!!";
 
-    /* other init */
-    setParam(name,activated);
+
+    this->lat=0;
+    this->lon=0;
+    this->vacLen=300;
+    trace=new vlmLine(proj,parent->getScene(),Z_VALUE_ESTIME);
+    qWarning()<<"after creating trace for boatReal";
+    previousLon=lon;
+    previousLat=lat;
+    QPen penTrace;
+    penTrace.setColor(Qt::red);
+    penTrace.setBrush(Qt::red);
+    penTrace.setWidthF(0.5);
+    qWarning()<<"before setNbVacPerHour";
+    trace->setNbVacPerHour(3600/this->getVacLen());
+    qWarning()<<"after setNbVacPerHour";
+    trace->setLinePen(penTrace);
+    qWarning()<<"after setLinePen";
+    trace->slot_showMe();
+    qWarning()<<"after boatReal show trace";
+    gotPosition=false;
+    this->WPLat=0;
+    this->WPLon=0;
+    this->speed=0;
+    this->heading=0;
+    this->windSpeed=-1;
+    this->setStatus(true);
+    this->vacLen=300;
+    this->playerName=pseudo;
+    changeLocked=false;
+    forceEstime=false;
+    //updateBoatData();
+
+    myCreatePopUpMenu();
 }
 
 boatReal::~boatReal()
 {
-    delete gpsReader;
+    qWarning()<<"inside ~boatReal";
+    if(gpsReader && gpsReader->isRunning())
+    {
+        this->stopRead();
+//        int dummy=0;/*trying to fix the crash on exit (not enough)*/
+//        while(gpsReader->isRunning())
+//            dummy++;
+//        qWarning()<<"dummy="<<dummy;
+        delete gpsReader;
+    }
+    if(trace && !parent->getAboutToQuit())
+    {
+        parent->getScene()->removeItem(trace);
+        delete trace;
+    }
+    qWarning()<<"last instruction in ~boatReal";
 }
 
-void boatReal::readData()
+void boatReal::myCreatePopUpMenu(void)
 {
-    /* start/stop timer loop */
-
-    if(gpsReader->isRunning())
-    {
-        emit terminateThread();
-    }
-    else
-    {
-        cnt=0;
-        gpsReader->start();
-    }
-
+    ac_chgPos = new QAction("Definir la position",popup);
+    popup->addAction(ac_chgPos);
+    connect(ac_chgPos,SIGNAL(triggered()),this,SLOT(slot_chgPos()));
 }
 
-void boatReal::decodeData(QString data)
+void boatReal::startRead()
 {
-    char * record=data.toAscii().data();
-    nmeaPOS dpos;
+    /* if running stop */
+    stopRead();
+
+    /* start loop */
+    cnt=0;
+    if(!gpsReader)
+        gpsReader = new ReceiverThread(this);
+    gpsReader->start();
+}
+
+void boatReal::stopRead()
+{
+    if(gpsReader)
+    {
+        if(gpsReader->isRunning())
+        {
+            qWarning() << "gpsThread running => kill it";
+            emit terminateThread();
+        }
+    }
+}
+void boatReal::slot_threadStartedOrFinished()
+{
+    emit boatUpdated(this,false,false);
+}
+
+bool boatReal::gpsIsRunning()
+{
+    if(!gpsReader)
+        return false;
+    if(!gpsReader->isRunning())
+        return false;
+    return true;
+}
+
+void boatReal::decodeData(QByteArray data)
+{
+    //data="$GPRMC,152051.718,A,4825.333333,N,00618.333333,W,0,0,151110,0,E,A*04";
+    data.push_back('\r');
+    data.push_back('\n');
+    //qWarning()<<data<<"(size="<<data.size()<<")";
+    char * record=data.data();
     nmea_parse(&parser, record, data.size(), &info);
 
-    qWarning() << cnt++ << ": Lat= " << info.lat << ", Lon= " << info.lon
-            << ", Sig=" << info.sig << ", Fix=" << info.fix << ", mask=" << parseMask(info.smask);
+
+    /*QWARN << cnt++ << ": Lat= " << nmea_ndeg2degree(info.lat) << " (" << info.lat << "), Lon= "
+            << nmea_ndeg2degree(info.lon) << " (" << info.lon << "), Sig=" << info.sig << ", Fix=" << info.fix << ", mask=" << parseMask(info.smask);
+    */
+    qWarning()<<"speed:"<<info.speed<<"cap:"<<info.direction<<"lat:"<<info.lat;
+    this->speed=info.speed/1.852;
+    this->heading=info.direction;
+    this->lat=nmea_ndeg2degree(info.lat);
+    this->lon=nmea_ndeg2degree(info.lon);
+    this->lastUpdateTime=QDateTime().currentDateTimeUtc().toTime_t();
+    if(previousLon!=lon && previousLat!=lat)
+        updateBoatData();
+    if(gotPosition && !(previousLat==0 && previousLon==0)) /*a revoir*/
+    {
+        trace->addPoint(previousLat,previousLon);
+        trace->slot_showMe();
+    }
+    gotPosition=true;
+    previousLon=lon;
+    previousLat=lat;
+    emit boatUpdated(this,false,false);
+}
+
+void boatReal::setPosition(double lat, double lon)
+{
+    this->lat=lat;
+    this->lon=lon;
+    this->lastUpdateTime=QDateTime().currentDateTimeUtc().toTime_t();
+    updateBoatData();
+    emit boatUpdated(this,false,false);
 }
 
 QString boatReal::parseMask(int mask)
@@ -85,26 +202,89 @@ QString boatReal::parseMask(int mask)
     return data;
 }
 
+void boatReal::mousePressEvent(QGraphicsSceneMouseEvent * e)
+{
+    if (e->button() == Qt::LeftButton && e->modifiers()==Qt::ShiftModifier)
+    {
+         previousLon=lon;
+         previousLat=lat;
+         isMoving=true;
+         mouse_x=e->scenePos().x();
+         mouse_y=e->scenePos().y();
+         setPos(mouse_x,mouse_y-height/2);
+         setCursor(Qt::BlankCursor);
+         update();
+     }
+}
+
+bool boatReal::tryMoving(int x, int y)
+{
+    if(isMoving)
+    {
+        int new_x=x;
+        int new_y=y-height/2;
+
+        setPos(new_x,new_y);
+
+        mouse_x=x;
+        mouse_y=y;
+        return true;
+    }
+    return false;
+}
+
+void boatReal::mouseReleaseEvent(QGraphicsSceneMouseEvent * e)
+{
+    if(isMoving)
+    {
+        double newlon,newlat;
+        if(e->modifiers()==Qt::ShiftModifier)
+        {
+            proj->screen2map(mouse_x+3,mouse_y, &newlon, &newlat);
+        }
+        else
+        {
+            newlon=previousLon;
+            newlat=previousLat;
+        }
+        setPosition(newlat,newlon);
+        isMoving=false;
+        setCursor(Qt::PointingHandCursor);
+        return;
+    }
+
+    if(e->pos().x() < 0 || e->pos().x()>width || e->pos().y() < 0 || e->pos().y() > height)
+    {
+        e->ignore();
+        return;
+    }
+    if (e->button() == Qt::LeftButton)
+    {
+        emit clearSelection();
+    }
+}
+
 /**************************/
 /* Data update            */
 /**************************/
 
-void boatReal::updateBoatName()
+void boatReal::updateBoatString()
 {
-#if 0
-    if(getAliasState())
-        my_str=(alias.isEmpty()?login:alias);
-    else
-        my_str=login;
+    my_str=pseudo;
 
-    //qWarning() << "Updating Boat name: " << login;
+    //qWarning() << "Updating Boat pseudo: " << pseudo << " (my= " << my_str << ") for a real boat, status=" << this->isVisible();
 
      /* computing widget size */
-    QFontMetrics fm(font());
+    QFont myFont=QFont("Helvetica",9);
+    QFontMetrics fm(myFont);
     prepareGeometryChange();
-    width = fm.width(my_str) + 10 + 2;
+    width = fm.width("_"+my_str+"_")+2;
     height = qMax(fm.height()+2,10);
-#endif
+}
+
+void boatReal::updateAll(void)
+{
+    this->updateBoatData();
 }
 
 void boatReal::updateHint(void)
@@ -116,10 +296,10 @@ void boatReal::updateHint(void)
     switch(getPilotType())
     {
         case 1: /*heading*/
-            str += tr("Hdg") + ": " + getPilotString() + tr("°");
+            str += tr("Hdg") + ": " + getPilotString() + tr("deg");
             break;
         case 2: /*constant angle*/
-            str += tr("Angle") + ": " + getPilotString()+ tr("°");
+            str += tr("Angle") + ": " + getPilotString()+ tr("deg");
             break;
         case 3: /*pilotortho*/
             str += tr("Ortho" ) + "-> " + getPilotString();
@@ -132,36 +312,94 @@ void boatReal::updateHint(void)
             break;
     }
     QString desc;
-    if(!polarData) desc=tr(" (pas de polaire charg�e)");
+    if(!polarData) desc=tr(" (pas de polaire chargee)");
     else if (polarData->getIsCsv()) desc=polarData->getName() + tr(" (format CSV)");
     else desc=polarData->getName() + tr(" (format POL)");
     str=str.replace(" ","&nbsp;");
     desc=desc.replace(" ","&nbsp;");
     setToolTip(desc+"<br>"+str);
 #endif
+    setToolTip(pseudo);
+}
+void boatReal::unSelectBoat(bool needUpdate)
+{
+    selected = false;
+    if(needUpdate)
+    {
+        drawEstime();
+        update();
+        updateTraceColor();
+    }
+}
+
+void boatReal::paramUpdated()
+{
+    gpsReader->initPort();
+    startRead();
+}
+
+void boatReal::setPolar(QString polarName)
+{
+    this->polarName=polarName;
+    boat::reloadPolar();
+}
+
+void boatReal::slot_chgPos(void)
+{
+    DialogRealBoatPosition dialog(parent);
+    dialog.showDialog(this);
 }
 
 /****************************************************/
 /* Receiver Thread                                  */
 /****************************************************/
 
-ReceiverThread::ReceiverThread()
+ReceiverThread::ReceiverThread(boatReal * parent)
 {
-    /* init serial port */
-    port = new QextSerialPort("/dev/ttyUSB0");
-    port->setBaudRate(BAUD4800);
-    port->setFlowControl(FLOW_OFF);
-    port->setParity(PAR_NONE);
-    port->setDataBits(DATA_8);
-    port->setStopBits(STOP_1);
-    if(!port->open(QIODevice::ReadWrite))
-        qWarning() << "Can't open Serial port (" << port->lastError() << ")";
+    connect(parent,SIGNAL(terminateThread()),this,SLOT(terminate()));
+    connect(this,SIGNAL(decodeData(QByteArray)),parent,SLOT(decodeData(QByteArray)));
+    connect(this,SIGNAL(updateBoat(boat*,bool,bool)),parent,SIGNAL(boatUpdated(boat*,bool,bool)));
+    connect(this,SIGNAL(finished()),parent,SLOT(slot_threadStartedOrFinished()));
+    connect(this,SIGNAL(started()),parent,SLOT(slot_threadStartedOrFinished()));
+
+    //port = new QextSerialPort();
+    port=NULL;
+    initPort();
+    this->parent=parent;
     stop=false;
 }
 
 ReceiverThread::~ReceiverThread(void)
 {
+    if(port && port->isOpen())
+    {
+        port->close();
+    }
+    if(port)
+        delete port;
+}
 
+bool ReceiverThread::initPort(void)
+{
+    /* close existing port */
+    if(port && port->isOpen())
+        port->close();
+    if(!port)
+        port=new QextSerialPort();
+    /* init serial port */
+    port->setPortName(Settings::getSetting("gpsPortName","COM1").toString());
+    port->setBaudRate((BaudRateType)Settings::getSetting("gpsBaudRate",BAUD4800).toInt());
+    port->setFlowControl(FLOW_OFF);
+    port->setParity(PAR_NONE);
+    port->setDataBits(DATA_8);
+    port->setStopBits(STOP_1);
+    if(!port->open(QIODevice::ReadOnly))
+    {
+        qWarning() << "Can't open Serial port " << port->portName() << " (" << port->lastError() << ")";
+        return false;
+    }
+    else
+        return true;
 }
 
 void ReceiverThread::run()
@@ -169,26 +407,50 @@ void ReceiverThread::run()
     int numBytes = 0;
     int l = 512;
 
-    qWarning() << "Starting thread loop";
-
     if(!port || !port->isOpen())
     {
-        qWarning() << "Port not open => exiting thread";
-        return;
+        /*retry to open the port*/
+        this->initPort();
+        if(!port || !port->isOpen())
+        {
+            qWarning() << "Port not open => not starting GPS thread";
+            return;
+        }
     }
 
-    stop=false;
+    qWarning() << "Starting thread loop";
 
+    stop=false;
+    /*clear port*/
+    while(port->bytesAvailable()>0)
+        port->read(512);
+    emit updateBoat((boat *) parent,false,false);
     while (!stop)
     {
         numBytes = port->bytesAvailable();
-        if(numBytes > l) {
-            if(numBytes > l) numBytes = l;
-            char buff[l];
-            qint64 lineLength = port->readLine(buff, sizeof(buff));
-            emit decodeData(QString(buff));
+        if(numBytes > l)
+        {
+            QByteArray buffer;
+            while(port->bytesAvailable()>0)
+                buffer=buffer+port->read(512);
+            QList<QByteArray> lines=buffer.split('\n');
+            for (int n=0;n<lines.count();n++)
+            {
+                if(lines.at(n).count()!=0)
+                {
+
+                    //QString temp=QString(lines.at(n));
+                    //if(temp.left(6)!="$GPRMC") continue;
+                    emit decodeData(lines.at(n).left(lines.at(n).length()-1));
+                }
+            }
+            emit updateBoat((boat *) parent,false,false);
         }
+        qWarning()<<"sleeping";
+#warning a mettre en parametre
+        sleep(3);
     }
+    port->close();
     qWarning() << "Exiting thread loop";
 }
 
@@ -263,7 +525,6 @@ bool boatReal::chkData(QString data)
 
 #define GET_DATETIME(RECTYPE,DATA,NUM,V1,V2,V3,TYPE) { \
     bool _ok1,_ok2,_ok3;                          \
-
     if(DATA[NUM].size()!=6)                       \
     {                                             \
         qWarning() << RECTYPE << ": field " << NUM  \

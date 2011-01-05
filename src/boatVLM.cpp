@@ -28,19 +28,22 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "parser.h"
 #include "Util.h"
 #include "Polar.h"
+#include "settings.h"
+#include "orthoSegment.h"
 
 
-boatVLM::boatVLM(QString name, bool activated, int boatId, int playerId,Player * player, int isOwn,
+boatVLM::boatVLM(QString pseudo, bool activated, int boatId, int playerId,Player * player, int isOwn,
                  Projection * proj,MainWindow * main, myCentralWidget * parent,
-                 inetConnexion * inet): boat(name,activated,proj,main,parent), inetClient(inet)
+                 inetConnexion * inet): boat(pseudo,activated,proj,main,parent), inetClient(inet)
 {    
     this->boat_type=BOAT_VLM;
+    setFont(QFont("Helvetica",9));
 
     this->isOwn=isOwn;
-    boat_name=name;
+    name="";
     alias="";
     useAlias=false;
-    inetClient::setName(name);
+    inetClient::setName(pseudo);
     this->player=player;
     boat_id=boatId;
     player_id=playerId;
@@ -59,11 +62,14 @@ boatVLM::boatVLM(QString name, bool activated, int boatId, int playerId,Player *
     race_name="";
     trace.clear();
     playerName=player->getName();
-
     needAuth=true;
+    this->rank=1;
     connect(parent, SIGNAL(shPor(bool)),this,SLOT(slot_shPor()));
 
-    setStatus(activated);
+    myCreatePopUpMenu();
+    this->initialized=false;
+    own=QString();
+    //setStatus(activated);
 }
 
 boatVLM::~boatVLM(void)
@@ -83,14 +89,25 @@ boatVLM::~boatVLM(void)
             }
         }
     }
+    if(!parent->getAboutToQuit())
+    {
+        if(estimeLine)
+            delete this->estimeLine;
+        if(trace_drawing)
+            delete this->trace_drawing;
+        if(this->WPLine)
+            delete this->WPLine;
+    }
 }
 
 void boatVLM::updateData(boatData * data)
 {
-    this->boat_name=data->name;
+//    this->boat_name=data->name;
 //    this->playerName=data->playerName;
     this->boat_id=data->idu;
     this->isOwn=data->isOwn;
+    this->pseudo=data->pseudo;
+    this->name=data->name;
     /* Not updating activated status */
     //this->setStatus(data->engaged>0);
 }
@@ -102,10 +119,10 @@ void boatVLM::updateData(boatData * data)
 void boatVLM::slot_getData(bool doingSync)
 {
     updating=true;
-    trace_drawing->deleteAll();
     doRequest(VLM_REQUEST_BOAT);
     this->doingSync=doingSync;
 }
+
 void boatVLM::slot_getDataTrue()
 {
     slot_getData(true);
@@ -115,6 +132,12 @@ void boatVLM::doRequest(int requestCmd)
 {
     if(!activated)
     {
+        while(!gates.isEmpty())
+           delete gates.takeFirst();
+        this->gatesLoaded=false;
+    }
+    if(!activated && initialized)
+    {
         updating=false;
         return;
     }
@@ -123,11 +146,13 @@ void boatVLM::doRequest(int requestCmd)
     {
         if(hasRequest() )
         {
-            qWarning() << "request already running for " << boat_name;
+            qWarning() << "request already running for " << pseudo;
             return;
         }
         else
-            qWarning() << "Doing request " << requestCmd << " for " << boat_name  ;
+        {
+            /*qWarning() << "Doing request " << requestCmd << " for " << pseudo */ ;
+        }
 
         QString page;
 
@@ -138,18 +163,24 @@ void boatVLM::doRequest(int requestCmd)
                             << "&select_idu="<<this->boat_id;
                 break;
             case VLM_REQUEST_TRJ:
+            {
+                trace_drawing->deleteAll();
                 if(race_id==0)
                 {
-                    qWarning() << "boat Acc no request TRJ for:" << boat_name << " id=" << boat_id;
+                    qWarning() << "boat Acc no request TRJ for:" << pseudo << " id=" << boat_id;
                     return;
                 }
-                QTextStream(&page) << "/gmap/index.php?"
-                            << "type=ajax&riq=trj"
-                            << "&idusers="
-                            << boat_id
-                            << "&idraces="
-                            << race_id;
+                time_t et=QDateTime::currentDateTime().toUTC().toTime_t();
+                time_t st=et-(Settings::getSetting("trace_length",12).toInt()*60*60);
+                clearCurrentRequest();
+                QTextStream(&page)
+                        << "/ws/boatinfo/tracks.php?"
+                        << "idu="
+                        << boat_id
+                        << "&starttime="
+                        << st;
                 break;
+            }
             case VLM_REQUEST_GATE:
                 QTextStream(&page) << "/ws/raceinfo.php?idrace="<<race_id;
                 break;
@@ -164,7 +195,7 @@ void boatVLM::doRequest(int requestCmd)
     {
          qWarning("Creating dummy data");
          boat_id = 0;
-         boat_name = "test";
+         pseudo = "test";
          race_id = 0;
          lat = 0;
          lon = 0;
@@ -183,6 +214,8 @@ void boatVLM::requestFinished (QByteArray res_byte)
 
     QString res(res_byte);
 
+    QWARN << "Request finished: " << getCurrentRequest() << " boat: " << this->boat_id;
+
     switch(getCurrentRequest())
     {
         case VLM_REQUEST_WS:
@@ -199,11 +232,7 @@ void boatVLM::requestFinished (QByteArray res_byte)
                     qWarning() << "Error: " << parser.errorString() << " (line: " << parser.errorLine() << ")";
                 }
 
-                //qWarning() << "request res for " << boat_name << ": " << result["IDU"].toInt() << ", " << result["IDB"].toString();
-                /*qWarning() << "Request for " << boat_name;
-                qWarning() << res_byte;
-                qWarning() << "-------------------------";*/
-                if(1 /*checkWSResult(res_byte,"BoatVLM_boatInfo",mainWindow)*/)
+                if(1 /*checkWSResult(res_byte,"BoatVLM_boatf",mainWindow)*/) // pas de wsCheck car VLM ne renvoit pas "success"
                 {
                     hasPilototo=false;
                     newRace=false;
@@ -212,22 +241,32 @@ void boatVLM::requestFinished (QByteArray res_byte)
                     for(int i=0;i<5;i++)
                         pilototo.append("none");
 
-                    if(result["RAC"].toInt() == 0)
-                    {
-                        QMessageBox::warning(0,QObject::tr("Bateau au ponton"),
-                                             QString("Le bateau '")+boat_name+"' a ete desactive car hors course");
-                        setStatus(false);
-                        emit boatUpdated(this,false,doingSync);
-                        emit hasFinishedUpdating();
-                        break;
-                    }
 
                     if(race_id != result["RAC"].toInt())
                         newRace=true;
+                    if(result["error"].toMap()["code"].toString()=="XXXXXXX" || boat_id!=result["IDU"].toInt()) /* cas de la radiation du boatsit*/
+                    {
+                        /* clearing trace */
+                        trace.clear();
+                        trace_drawing->deleteAll();
+                        /*updating everything*/
+                        updateBoatData();
+                        updating=false;
+                        QMessageBox::warning(0,QObject::tr("Bateau au ponton"),
+                                             QObject::tr("Le bateau ")+"'"+pseudo+"' "+QObject::tr("a ete desactive car vous n'etes plus boatsitter"));
+                        setStatus(false);
+                        while(!gates.isEmpty())
+                           delete gates.takeFirst();
+                        this->gatesLoaded=false;
+                        emit boatUpdated(this,newRace,doingSync);
+                        emit hasFinishedUpdating();
+                        return;
+                    }
 
                     boat_id     = result["IDU"].toInt();
                     race_id     = result["RAC"].toInt();
-                    boat_name   = result["IDB"].toString();
+                    name        = result["IDB"].toString();
+                    own         = result["OWN"].toString();
                     latitude    = result["LAT"].toDouble();
                     longitude   = result["LON"].toDouble();
                     race_name   = result["RAN"].toString();
@@ -240,6 +279,7 @@ void boatVLM::requestFinished (QByteArray res_byte)
                     loxo        = (float) result["LOX"].toDouble();
                     vmg         = (float) result["VMG"].toDouble();
                     windDir     = (float) result["TWD"].toDouble();
+                    country     = result["CNT"].toString();
                     windSpeed   = (float) result["TWS"].toDouble();
                     WPLat       = result["WPLAT"].toDouble();
                     WPLon       = result["WPLON"].toDouble();
@@ -252,6 +292,7 @@ void boatVLM::requestFinished (QByteArray res_byte)
                     prevVac     = result["LUP"].toUInt();
                     nextVac     = result["NUP"].toUInt();
                     nWP         = result["NWP"].toInt();
+                    rank        = result["RNK"].toInt();
                     pilototo[0] = result["PIL1"].toString();
                     pilototo[1] = result["PIL2"].toString();
                     pilototo[2] = result["PIL3"].toString();
@@ -261,10 +302,32 @@ void boatVLM::requestFinished (QByteArray res_byte)
                     email = result["EML"].toString();
                     vacLen = result["VAC"].toInt();
 
-                    hasPilototo=true;
                     lat = latitude/1000;
                     lon = longitude/1000;
-
+                    initialized=true;
+                    if(!activated)
+                    {
+                        updating=false;
+                        emit hasFinishedUpdating();
+                        return;
+                    }
+//                    if(result["RAC"].toInt() == 0)
+//                    {
+//                        initialized=true;
+//                        QMessageBox::warning(0,QObject::tr("Bateau au ponton"),
+//                                             QString("Le bateau '")+pseudo+"' a ete desactive car hors course");
+//                        setStatus(false);
+//                        emit boatUpdated(this,false,doingSync);
+//                        emit hasFinishedUpdating();
+//                        break;
+//                    }
+                    hasPilototo=true;
+                    if(newRace)
+                    {
+                        while(!gates.isEmpty())
+                            delete gates.takeFirst();
+                        this->gatesLoaded=false;
+                    }
                     /* request trace points */
                     if(race_id==0)
                     {
@@ -275,8 +338,11 @@ void boatVLM::requestFinished (QByteArray res_byte)
                         updateBoatData();
                         updating=false;
                         QMessageBox::warning(0,QObject::tr("Bateau au ponton"),
-                                             QString("Le bateau '")+boat_name+"' a ete desactive car hors course");
+                                             QObject::tr("Le bateau ")+"'"+pseudo+"' "+QObject::tr("a ete desactive car hors course"));
                         setStatus(false);
+                        while(!gates.isEmpty())
+                           delete gates.takeFirst();
+                        this->gatesLoaded=false;
                         emit boatUpdated(this,newRace,doingSync);
                         emit hasFinishedUpdating();
                     }
@@ -299,7 +365,7 @@ void boatVLM::requestFinished (QByteArray res_byte)
             }
             break;
         case VLM_REQUEST_TRJ:
-            emit getTrace(res,&trace);
+            emit getTrace(res_byte,&trace);
             trace_drawing->setPoly(trace);
 
             /* we can now update everything */
@@ -334,8 +400,8 @@ void boatVLM::requestFinished (QByteArray res_byte)
                     qWarning() << "Error: " << parser.errorString() << " (line: " << parser.errorLine() << ")";
                 }
 
-                qWarning() << "id Race: " << result["idraces"].toString();
-                qWarning() << "race name: " << result["racename"].toString();
+                //qWarning() << "id Race: " << result["idraces"].toString();
+                //qWarning() << "race name: " << result["racename"].toString();
 
                 QVariantMap wps= result["races_waypoints"].toMap();
                 for(int i=1;true;i++)
@@ -372,22 +438,27 @@ void boatVLM::requestFinished (QByteArray res_byte)
                     }
                     if(wpformat>=32)
                     {
-                        iceGateN=true;
+                        iceGateS=true;
                         wpformat=wpformat-32;
                     }
                     if(wpformat>=16)
                     {
-                        iceGateS=true;
+                        iceGateN=true;
                         wpformat=wpformat-16;
                     }
                     if(wpformat>=1)
                         oneBuoy=true;
-#warning a faire plus tard
-                    if(iceGateN || iceGateS) continue;
+
 
                     vlmLine * porte=new vlmLine(proj,parent->getScene(),Z_VALUE_GATE);
-                    connect(parent, SIGNAL(shLab(bool)),porte,SLOT(slot_shLab()));
+                    connect(parent, SIGNAL(shLab(bool)),porte,SLOT(slot_shLab(bool)));
                     porte->setGateMode("WP"+str+": "+wp["libelle"].toString());
+                    if(iceGateN)
+                        porte->setIceGate(1);
+                    else if(iceGateS)
+                        porte->setIceGate(2);
+                    else
+                        porte->setIceGate(0);
                     porte->addPoint(latPorte1,lonPorte1);
                     if((qRound(lonPorte1*1000)==qRound(lonPorte2*1000) && qRound(latPorte1*1000)==qRound(latPorte2*1000))||oneBuoy)
                     {
@@ -401,28 +472,37 @@ void boatVLM::requestFinished (QByteArray res_byte)
                     porte->setLinePen(penLine);
                     porte->setHidden(true);
                     QString tip;
-                    if(((QVariantMap)wps[str.setNum(i+1)].toMap()).isEmpty())
-                        tip=tr("Arrivee<br>");
-                    if(oneBuoy)
+                    if(iceGateN)
+                        tip=tr("Passer au moins une fois au Sud de cette ligne<br>")+
+                            tr("Vous n'etes pas oblige de couper la ligne");
+                    else if(iceGateS)
+                        tip=tr("Passer au moins une fois au Nord de cette ligne<br>")+
+                            tr("Vous n'etes pas oblige de couper la ligne");
+                    else
                     {
-                        QString a;
-                        if(qRound(wp["laisser_au"].toDouble()==wp["laisser_au"].toDouble()))
-                            tip=tip+tr("Une seule bouee a laisser au ")+a.sprintf("%.0f",wp["laisser_au"].toDouble());
+                        if(((QVariantMap)wps[str.setNum(i+1)].toMap()).isEmpty())
+                            tip=tr("Arrivee<br>");
+                        if(oneBuoy)
+                        {
+                            QString a;
+                            if(qRound(wp["laisser_au"].toDouble()==wp["laisser_au"].toDouble()))
+                                tip=tip+tr("Une seule bouee a laisser au ")+a.sprintf("%.0f",wp["laisser_au"].toDouble());
+                            else
+                                tip=tip+tr("Une seule bouee a laisser au ")+a.sprintf("%.2f",wp["laisser_au"].toDouble());
+                        }
                         else
-                            tip=tip+tr("Une seule bouee a laisser au ")+a.sprintf("%.2f",wp["laisser_au"].toDouble());
+                            tip=tip+tr("Passage a deux bouees");
+                        if(clockWise)
+                            tip=tip+tr("<br>A passer dans le sens des aiguilles d'une montre");
+                        else if (antiClockWise)
+                            tip=tip+tr("<br>A passer dans le sens contraire des aiguilles d'une montre");
+                        else
+                            tip=tip+tr("<br>Sens du passage libre");
+                        if(crossOnce)
+                            tip=tip+tr("<br>Il est interdit de couper cette ligne plusieurs fois");
+                        else
+                            tip=tip+tr("<br>Il est autorise de couper cette ligne plusieurs fois");
                     }
-                    else
-                        tip=tip+tr("Passage a deux bouees");
-                    if(clockWise)
-                        tip=tip+tr("<br>A passer dans le sens des aiguilles d'une montre");
-                    else if (antiClockWise)
-                        tip=tip+tr("<br>A passer dans le sens contraire des aiguilles d'une montre");
-                    else
-                        tip=tip+tr("<br>Sens du passage libre");
-                    if(crossOnce)
-                        tip=tip+tr("<br>Il est interdit de couper cette ligne plusieurs fois");
-                    else
-                        tip=tip+tr("<br>Il est autorise de couper cette ligne plusieurs fois");
                     porte->setTip(tip);
                     gates.append(porte);
 
@@ -450,9 +530,9 @@ void boatVLM::requestFinished (QByteArray res_byte)
 
 void boatVLM::authFailed(void)
 {
-    QMessageBox::warning(0,QObject::tr("Paramètre bateau"),
+    QMessageBox::warning(0,QObject::tr("Parametre bateau"),
                   QString("Erreur de parametrage du bateau '")+
-                  boat_name+"'.\n Verifier le login et mot de passe puis reactivez le bateau");
+                  pseudo+"'.\n Verifier le login et mot de passe puis reactivez le bateau");
     setStatus(false);
     emit boatUpdated(this,false,doingSync);
     inetClient::authFailed();
@@ -509,16 +589,18 @@ void boatVLM::showNextGates()
         }
         else if (j==nWP)
         {
-            QPen penLine(Qt::blue,1);
-            penLine.setWidthF(3);
+            porte->setZValue(Z_VALUE_NEXT_GATE);
+            QPen penLine(Settings::getSetting("nextGateLineColor", Qt::blue).value<QColor>(),1);
+            penLine.setWidthF(Settings::getSetting("nextGateLineWidth", 3.0).toDouble());
             porte->setLinePen(penLine);
             porte->setHidden(false);
             porte->slot_showMe();
         }
         else
         {
-            QPen penLine(Qt::white,1);
-            penLine.setWidthF(3);
+            porte->setZValue(Z_VALUE_GATE);
+            QPen penLine(Settings::getSetting("gateLineColor", Qt::magenta).value<QColor>(),1);
+            penLine.setWidthF(Settings::getSetting("gateLineWidth", 3.0).toDouble());
             porte->setLinePen(penLine);
             porte->setHidden(false);
             porte->slot_showMe();
@@ -531,20 +613,32 @@ void boatVLM::showNextGates()
 /* Data update            */
 /**************************/
 
-void boatVLM::updateBoatName()
+void boatVLM::updateBoatString()
 {
-    if(getAliasState())
-        my_str=(alias.isEmpty()?boat_name:alias);
+    if(getAliasState() && !alias.isEmpty())
+        my_str=alias;
     else
-        my_str=boat_name;
-
-    //qWarning() << "Updating Boat name: " << login;
+    {
+        switch(Settings::getSetting("opp_labelType",0).toInt())
+        {
+            case SHOW_PSEUDO:
+                my_str=pseudo;
+                break;
+            case SHOW_NAME:
+                my_str=name;
+                break;
+            case SHOW_IDU:
+                my_str=this->getBoatId();
+                break;
+        }
+    }
 
      /* computing widget size */
-    QFontMetrics fm(font());
+    QFont myFont=QFont("Helvetica",9);
+    QFontMetrics fm(myFont);
     prepareGeometryChange();
-    width = fm.width(my_str) + 10 + 2;
-    height = qMax(fm.height()+2,10);
+    width = fm.width("_"+my_str+"_")+2;
+    height = qMax(fm.height()+2,12);
 }
 
 void boatVLM::updateHint(void)
@@ -555,10 +649,10 @@ void boatVLM::updateHint(void)
     switch(getPilotType())
     {
         case 1: /*heading*/
-            str += tr("Hdg") + ": " + getPilotString() + tr("°");
+            str += tr("Hdg") + ": " + getPilotString() + tr("deg");
             break;
         case 2: /*constant angle*/
-            str += tr("Angle") + ": " + getPilotString()+ tr("°");
+            str += tr("Angle") + ": " + getPilotString()+ tr("deg");
             break;
         case 3: /*pilotortho*/
             str += tr("Ortho" ) + "-> " + getPilotString();
@@ -571,7 +665,7 @@ void boatVLM::updateHint(void)
             break;
     }
     QString desc;
-    if(!polarData) desc=tr(" (pas de polaire charg�e)");
+    if(!polarData) desc=tr(" (pas de polaire chargee)");
     else if (polarData->getIsCsv()) desc=polarData->getName() + tr(" (format CSV)");
     else desc=polarData->getName() + tr(" (format POL)");
     str=str.replace(" ","&nbsp;");
@@ -586,13 +680,8 @@ void boatVLM::setStatus(bool activated)
     {
         if(gatesLoaded)
         {
-            vlmLine * porte;
-            QListIterator<vlmLine*> i (gates);
-            while(i.hasNext())
-            {
-                porte=i.next();
-                delete porte;
-            }
+            while(!gates.isEmpty())
+                delete gates.takeFirst();
         }
         gatesLoaded=false;
     }
@@ -606,8 +695,6 @@ void boatVLM::reloadPolar(void)
         polarName=polarVlm;
     boat::reloadPolar();
 }
-
-#warning a mettre dans boat ?
 void boatVLM::setPolar(bool state,QString polar)
 {
     this->polarForcedName=polar;
@@ -630,8 +717,22 @@ void boatVLM::setAlias(bool state,QString alias)
 
 QString boatVLM::getDispName(void)
 {
-    if(getAliasState())
-        return getAlias() + " (" + getName() + " - " + getBoatId() + ")";
+    if(getAliasState() && !alias.isEmpty())
+        return alias + " (" + pseudo + " - " + getBoatId() + ")";
     else
-        return getName() + " ("  + getBoatId() + ")";
+    {
+        switch(Settings::getSetting("opp_labelType",0).toInt())
+        {
+            case SHOW_PSEUDO:
+                return pseudo + " (" + name + " - " + getBoatId() +")";
+                break;
+            case SHOW_NAME:
+                return name + " (" + pseudo + " - " + getBoatId() +")";
+                break;
+            case SHOW_IDU:
+                return getBoatId() + " (" + pseudo + " - " + name +")";
+                break;
+        }
+    }
+    return "";
 }

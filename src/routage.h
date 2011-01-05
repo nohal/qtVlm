@@ -34,11 +34,26 @@ Copyright (C) 2008 - Jacques Zaninetti - http://zygrib.free.fr
 #include "class_list.h"
 
 #include "Polygon.h"
-
+#include "vlmpointgraphic.h"
+#include "vlmPoint.h"
 #define NO_CROSS 1
 #define BOUNDED_CROSS 2
 #define L1_CROSS 3
 #define L2_CROSS 4
+struct datathread
+{
+    time_t Eta;
+    Grib *GriB;
+    bool whatIfUsed;
+    time_t whatIfJour;
+    bool windIsForced;
+    int whatIfTime;
+    float whatIfWind;
+    float windSpeed;
+    float windAngle;
+    boat *Boat;
+    int timeStep;
+};
 
 //===================================================================
 class ROUTAGE : public QGraphicsWidget
@@ -77,12 +92,23 @@ class ROUTAGE : public QGraphicsWidget
         float getExplo(void){return explo;}
         bool getUseRouteModule(void){return useRouteModule;}
         void setUseRouteModule(bool b){this->useRouteModule=b;}
+        bool getRouteFromBoat(){return this->routeFromBoat;}
+        void setRouteFromBoat(bool b){this->routeFromBoat=b;}
 
         void setStartTime(QDateTime date){this->startTime=date;}
         QDateTime getStartTime() {return this->startTime.toUTC();}
+        void setWhatIfDate(QDateTime date){this->whatIfDate=date;}
+        QDateTime getWhatIfDate() {return this->whatIfDate.toUTC();}
+        bool getWhatIfUsed(void){return this->whatIfUsed;}
+        void setWhatIfUsed(bool b){this->whatIfUsed=b;}
+        int getWhatIfTime(void){return this->whatIfTime;}
+        void setWhatIfTime(int t){this->whatIfTime=t;}
+        int getWhatIfWind(void){return this->whatIfWind;}
+        void setWhatIfWind(int p){this->whatIfWind=p;}
 
         static bool myLessThan(ROUTAGE * ROUTAGE_1,ROUTAGE* ROUTAGE_2) {return ROUTAGE_1->name < ROUTAGE_2->name;}
         static bool myEqual(ROUTAGE * ROUTAGE_1,ROUTAGE* ROUTAGE_2) {return ROUTAGE_1->name == ROUTAGE_2->name;}
+        double cLFA(double cx);
 
         void setFromPOI(POI *poi){this->fromPOI=poi;}
         POI * getFromPOI(){return this->fromPOI;}
@@ -94,11 +120,40 @@ class ROUTAGE : public QGraphicsWidget
         void setConverted(void) {this->converted=true;}
         void convertToRoute(void);
         QDateTime getFinalEta(void){return finalEta;}
+        bool getCheckCoast(){return this->checkCoast;}
+        void setCheckCoast(bool b){this->checkCoast=b;}
+        bool isRunning(){return this->running;}
+        void setFromRoutage(ROUTAGE * fromRoutage,bool editOptions);
+        vlmPoint getPivotPoint(){return pivotPoint;}
+        vlmLine * getWay(){return way;}
+        void setPivotPoint(int isoNb,int pointNb);
+        void showContextMenu(int isoNb,int pointNb);
+        bool getIsNewPivot(){return isNewPivot;}
+        void setIsNewPivot(bool b){isNewPivot=b;}
+/*beta testing advanced parameters*/
+        int  pruneWakeAngle;
+        bool useConverge;
+        time_t getEta(){return eta;}
+        Grib * getGrib(){return grib;}
+        time_t getWhatIfJour(){return whatIfJour;}
+        static int calculateTimeRouteThreaded(vlmPoint RouteFrom,vlmPoint routeTo,float * lastLonFound, float * lastLatFound, datathread *dataThread);
+        static int routeFunctionThreaded(float x,vlmPoint from, float * lastLonFound, float * lastLatFound, datathread *dataThread);
+        static int routeFunctionDerivThreaded(float x,vlmPoint from, float * lastLonFound, float * lastLatFound, datathread *dataThread);
+        static float A360(float hdg);
+        static float myDiffAngle(float a1,float a2);
+        bool getUseMultiThreading(){return this->useMultiThreading;}
+        void setUseMultiThreading(bool b){this->useMultiThreading=b;}
+        vlmLine * getResult(){return result;}
     public slots:
         void slot_edit();
         void slot_delete();
         void slot_shShow(){show();}
         void slot_shHidden(){hide();}
+        void slot_abort(){this->aborted=true;}
+        void slot_createPivot();
+        void slot_createPivotM();
+        void slot_drawWay();
+        void eraseWay();
     signals:
         void editMe(ROUTAGE *);
     private:
@@ -129,22 +184,22 @@ class ROUTAGE : public QGraphicsWidget
         QDateTime startTime;
         bool useRouteModule;
 
-        /*popup menu*/
-        QMenu *popup;
-        QAction *r_edit;
-        QAction *r_hide;
-        QAction *r_delete;
-        void createPopUpMenu(void);
 
         /*various*/
         QPointF start;
         QPointF arrival;
-        float A360(float hdg);
-        float myDiffAngle(float a1,float a2);
-        void findPoint(float lon, float lat, double wind_angle, double wind_speed, float cap, vlmPoint *pt, bool estimateOnly);
+        float mySignedDiffAngle(float a1,float a2);
+        bool findPoint(float lon, float lat, double wind_angle, double wind_speed, float cap, vlmPoint *pt);
+        vlmPoint findRoute(const vlmPoint  & point);
         float findTime(const vlmPoint * pt, QPointF P, float * cap);
         float loxoCap;
         float initialDist;
+
+
+//        vlmPoint findRouteThreaded(const vlmPoint  & point);
+
+
+
 
         bool arrived;
         bool windIsForced;
@@ -153,14 +208,13 @@ class ROUTAGE : public QGraphicsWidget
         time_t eta;
 
         vlmLine * result;
+        vlmLine * way;
         void drawResult(vlmPoint P);
         bool intersects(QList<vlmPoint> *iso,int nn,int mm,int * toBeKilled);
         bool done;
         bool converted;
         float findDistancePreviousIso(vlmPoint P,QPolygonF * isoShape);
-        int superIntersects(QLineF L1,QLineF L2);
-        bool tooFar(vlmPoint point);
-        void pruneWake(QList<vlmPoint> * tempPoints,int wakeAngle,int mode);
+        void pruneWake(int wakeAngle);
         int calculateTimeRoute(vlmPoint RouteFrom,vlmPoint routeTo,int limit=-1);
         int routeFunction(float x,vlmPoint from);
         int routeFunctionDeriv(float x,vlmPoint from);
@@ -173,5 +227,40 @@ class ROUTAGE : public QGraphicsWidget
         double lastLonFound;
         double lastLatFound;
         QDateTime finalEta;
+        int msecsD1;
+        int msecsD2;
+        QList<vlmPoint> tempPoints;
+        QPolygonF previousIso;
+        QList<QLineF> previousSegments;
+        bool somethingHasChanged;
+        void checkSegmentCrossingOwnIso();
+        void checkIsoCrossingPreviousSegments();
+        void epuration(int toBeRemoved);
+        void finalEpuration(int toBeRemoved,QList<vlmPoint> *listPoints);
+        void removeCrossedSegments();
+        float xa,ya,xs,ys;
+        bool checkCoast;
+        bool arrivalIsClosest;
+        bool routeFromBoat;
+        QList<float> calculateCaps(vlmPoint point,float workAngleStep, float workAngleRange);
+        bool aborted;
+        bool running;
+        int debugCross0;
+        int debugCross1;
+        QDateTime whatIfDate;
+        int       whatIfTime;
+        bool      whatIfUsed;
+        int       whatIfWind;
+        time_t whatIfJour;
+        bool tooFar;
+        QList<vlmPointGraphic *> isoPointList;
+        vlmPoint pivotPoint;
+        bool isPivot;
+        QMenu * popup;
+        QAction * ac_pivot;
+        QAction * ac_pivotM;
+        void createPopupMenu();
+        bool useMultiThreading;
+        bool isNewPivot;
     };
 #endif // ROUTAGE_H

@@ -66,10 +66,14 @@ class MainWindow: public QMainWindow
 
         bool getFinishStart(void) { return finishStart; }
 
+        board * getBoard(void) { return myBoard; }
+        bool getNoSave(){return noSave;}
+
     public slots:
         void slotFile_Open();
         void slotFile_Close();
         void slotFile_Quit();
+        void slotFile_QuitNoSave();
         void slotMap_Quality();
         void slot_gribFileReceived(QString fileName);
 
@@ -78,7 +82,7 @@ class MainWindow: public QMainWindow
         void slotDateStepChanged(int);
         void slotDateGribChanged_next();
         void slotDateGribChanged_prev();
-        void slotDateGribChanged_now();
+        void slotDateGribChanged_now(bool b=true);
         void slotDateGribChanged_sel();
         void slotSetGribDate(time_t);
 
@@ -99,6 +103,7 @@ class MainWindow: public QMainWindow
         void slotAccountListUpdated(void);
         void slotBoatUpdated(boat * boat,bool newRace,bool doingSync);
         void slot_centerBoat();
+        void slot_moveBoat(void);
 
         void slotChgWP(float lat,float lon, float wph);
         void slotBoatLockStatusChanged(boat*,bool);
@@ -111,7 +116,7 @@ class MainWindow: public QMainWindow
 
         void slotParamChanged(void);
         void slotNewZoom(float zoom);
-        void slotSelectPOI(Pilototo_instruction * instruction);
+        void slotSelectPOI(DialogPilototoInstruction * instruction);
         void slotSelectWP_POI(void);
         void slot_POIselected(POI* poi);
 
@@ -140,7 +145,7 @@ class MainWindow: public QMainWindow
         void editPOI(POI *);
         void newPOI(float,float,Projection *, boat *);
         void editInstructions(void);
-        void editInstructionsPOI(Pilototo_instruction * ,POI*);
+        void editInstructionsPOI(DialogPilototoInstruction * ,POI*);
         void editWP_POI(POI*);
         void boatHasUpdated(boat*);
         void paramVLMChanged();
@@ -149,16 +154,18 @@ class MainWindow: public QMainWindow
         void showCompassLine(int,int);
         void addPOI_list(POI*);
         void addPOI(QString name,int type,float lat,float lon, float wph,int timestamp,bool useTimeStamp, boat *);
-        void updateRoute();
+        void updateRoute(boat * boat);
         void showCompassCenterBoat();
         void showCompassCenterWp();
         void selectedBoatChanged();
         void boatChanged(boat *);
+        void moveBoat(double lat, double lon);
 
 
     protected:
         void closeEvent(QCloseEvent *) {QApplication::quit();}
         void keyPressEvent ( QKeyEvent * event );
+        //bool eventFilter(QObject * obj, QEvent * e);
 
     private:
         Projection  *proj;
@@ -190,7 +197,6 @@ class MainWindow: public QMainWindow
         QMenu    *menuPopupBtRight;
 
         void     connectSignals();
-        void     InitActionsStatus();
 
         void    updatePilototo_Btn(boatVLM * boat);
         int     mouseClicX, mouseClicY;
@@ -202,32 +208,31 @@ class MainWindow: public QMainWindow
 
         board * myBoard;
         boat* selectedBoat;
-        paramVLM * param;        
-        POI_input * poi_input_dialog;
+        DialogParamVlm * param;
+        DialogPoiInput * poi_input_dialog;
 
-        Pilototo * pilototo;        
+        DialogPilototo * pilototo;
 
-        Pilototo_instruction * selPOI_instruction;
+        DialogPilototoInstruction * selPOI_instruction;
         bool isSelectingWP;
 
         polarList * polar_list;
 
-        DialogVLM_grib * loadVLM_grib;
+        DialogVlmGrib * loadVLM_grib;
 
         /* central widget */
         myCentralWidget * my_centralWidget;
         QProgressDialog *progress;
         QTimer * timerprogress;
 
-        gribValidation * gribValidation_dialog;
+        DialogGribValidation * gribValidation_dialog;
         int nBoat;
         int toBeCentered;
         boatVLM *acc;
         void VLM_Sync_sync();
 
-        boatReal * realBoat;
-
         void listAllChildren(QObject * ptr,int);
+        bool noSave;
 };
 
 #endif

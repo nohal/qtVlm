@@ -48,12 +48,20 @@ vlmLine::vlmLine(Projection * proj, QGraphicsScene * myScene,int z_level) : QGra
     this->hasInterpolated=false;
     this->interpolatedLon=0;
     this->interpolatedLat=0;
+    this->iceGate=0;
     show();
 }
 
 vlmLine::~vlmLine()
 {
 //    myScene->removeItem(this);
+    QPolygon * poly;
+    while(!polyList.isEmpty())
+    {
+        poly=polyList.first();
+        delete poly;
+        polyList.removeFirst();
+    }
 }
 QRectF vlmLine::boundingRect() const
 {
@@ -116,6 +124,7 @@ void vlmLine::setGateMode(QString desc)
 void vlmLine::setTip(QString tip)
 {
     tip=tip.replace(" ","&nbsp;");
+    tip="<qt>"+tip+"</qt>";
     setToolTip(tip);
 }
 
@@ -130,15 +139,11 @@ void vlmLine::calculatePoly(void)
     tempBound.setRect(0,0,0,0);
     Orthodromie orth(0,0,0,0);
     QPolygon * poly;
-    QListIterator<QPolygon*> nPoly (polyList);
-    if(polyList.count()!=0)
+    while(polyList.count()>0)
     {
-        while(nPoly.hasNext())
-        {
-            poly=nPoly.next();
-            polyList.removeFirst();
-            delete poly;
-        }
+        poly=polyList.first();
+        polyList.removeFirst();
+        delete poly;
     }
     poly=new QPolygon();
     polyList.append(poly);
@@ -151,7 +156,9 @@ void vlmLine::calculatePoly(void)
         {
             worldPoint=i.next();
             if(worldPoint.isDead) continue;
-            Util::computePos(proj,worldPoint.lat, worldPoint.lon, &X, &Y);
+            if(worldPoint.isBroken && n==0) continue;
+            //Util::computePos(proj,worldPoint.lat, worldPoint.lon, &X, &Y);
+            proj->map2screen(cLFA(worldPoint.lon),worldPoint.lat,&X,&Y);
             X=X-(int)x();
             Y=Y-(int)y();
             if(n>0)
@@ -187,6 +194,14 @@ void vlmLine::calculatePoly(void)
             previousWorldPoint=worldPoint;
             previousX=X;
             previousY=Y;
+            if(worldPoint.isBroken)
+            {
+                tempBound=tempBound.united(poly->boundingRect());
+                poly=new QPolygon();
+                n=0;
+                polyList.append(poly);
+                continue;
+            }
             n++;
         }
         tempBound=tempBound.united(poly->boundingRect());
@@ -204,6 +219,10 @@ void vlmLine::calculatePoly(void)
             height = qMax(fm.height()+2,10);
             int x=poly->point(0).x()+5;
             int y=poly->point(0).y()-5;
+            if(iceGate==1)
+                y-=10;
+            else if(iceGate==2)
+                y+=10;
             QRectF r;
             r.setRect(x,y, width-10,height-1);
             double x1,y1,x2,y2;
@@ -220,7 +239,9 @@ void vlmLine::calculatePoly(void)
 void vlmLine::deleteAll()
 {
     while(line.count()!=0)
+    {
         line.removeFirst();
+    }
     calculatePoly();
     update();
 }
@@ -257,7 +278,7 @@ void vlmLine::paint(QPainter * pnt, const QStyleOptionGraphicsItem * , QWidget *
         case VLMLINE_POINT_MODE:
             if(!hidden)
             {
-                int nbVac=nbVacPerHour*Settings::getSetting("trace_length",12).toInt();
+                int nbVac=nbVacPerHour*Settings::getSetting("trace_length",12).toInt()+1;
                 int step=Settings::getSetting("trace_step",60/5-1).toInt()+1;
                 int x0=poly->point(0).x();
                 int y0=poly->point(0).y();
@@ -312,6 +333,10 @@ void vlmLine::paint(QPainter * pnt, const QStyleOptionGraphicsItem * , QWidget *
             height = qMax(fm.height()+2,10);
             int x=poly->point(0).x()+5;
             int y=poly->point(0).y()-5;
+            if(this->iceGate==1)
+                y-=10;
+            else if(this->iceGate==2)
+                y+=10;
             pnt->setFont(font());
             QPen linePenBis(Qt::black,1);
             linePenBis.setWidthF(1);
@@ -352,4 +377,33 @@ QPainterPath vlmLine::shape() const
     else
         path.addRect(r);
     return path;
+}
+double vlmLine::cLFA(double lon)
+//convertLonForAntiMeridian
+{
+    double xW=proj->getXmin();
+    if(xW>=0 && lon>=0) return lon;
+    if(xW<=0 && lon<=0) return lon;
+    if(qAbs(qRound(qAbs(lon-xW))-qRound(myDiffAngle(A360(lon),A360(xW))))<=2) return lon;
+    if(xW>=0)
+    {
+        return xW+myDiffAngle(xW,lon+360.0);
+    }
+    else
+    {
+        if(xW<-180)
+            return lon-360;
+        else
+            return xW-myDiffAngle(A360(xW),lon);
+    }
+}
+float vlmLine::myDiffAngle(float a1,float a2)
+{
+    return qAbs(A360(qAbs(a1)+ 180.0 -qAbs(a2)) -180.0);
+}
+float vlmLine::A360(float hdg)
+{
+    while (hdg>=360.0) hdg=hdg-360.0;
+    while (hdg<0.0) hdg=hdg+360.0;
+    return hdg;
 }

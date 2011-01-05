@@ -25,13 +25,14 @@ Copyright (C) 2008 - Jacques Zaninetti - http://zygrib.free.fr
 #include <iostream>
 #include <cmath>
 #include <QDebug>
-
+#include <QLine>
 #include "Projection.h"
 
 //-----------------------------
 // Constructeur
 //-----------------------------
 Projection::Projection(int w, int h, double cx, double cy) {
+    frozen=false;
     scalemax = 50000;
     scale = -1;
     my_setScreenSize(w, h);
@@ -51,6 +52,7 @@ void Projection::setScreenSize(int w, int h)
 /* zoom and scale */
 void Projection::zoomOnZone(double x0, double y0, double x1, double y1)
 {
+    if(frozen) return;
     // security
     if (x1 == x0)
         x1 = x0+0.1;
@@ -89,19 +91,40 @@ void Projection::zoomOnZone(double x0, double y0, double x1, double y1)
 }
 
 void Projection::zoom(float k)
-{    
+{
+    if(frozen) return;
     my_setScale(scale*k);
+    emit_projectionUpdated();
+}
+void Projection::zoomKeep(double lon, double lat, float k)
+{    
+    if(frozen) return;
+    int xx,yy;
+    map2screen(lon,lat,&xx,&yy);
+    int centerX,centerY;
+    map2screen(CX,CY,&centerX,&centerY);
+    QLineF repere1(xx,yy,centerX,centerY);
+    my_setScale(scale*k);
+    map2screen(lon,lat,&xx,&yy);
+    QLineF repere2(xx,yy,xx+1,yy+1);
+    repere2.setAngle(repere1.angle());
+    repere2.setLength(repere1.length());
+    double ww,zz;
+    screen2map(repere2.p2().x(),repere2.p2().y(),&ww,&zz);
+    my_setCenterInMap(ww,zz);
     emit_projectionUpdated();
 }
 
 void Projection::zoomAll(void)
 {
+    if(frozen) return;
     my_setScale(scaleall);
     emit_projectionUpdated();
 }
 
 void Projection::setScale(float sc)
 {
+    if(frozen) return;
     my_setScale(sc);
     emit_projectionUpdated();
 }
@@ -112,12 +135,14 @@ void Projection::setScale(float sc)
 
 void Projection::move(double dx, double dy)
 {
+    if(frozen) return;
     my_setCenterInMap(CX - dx*(xE-xW),CY - dy*(yN-yS));
     emit_projectionUpdated();
 }
 
 void Projection::setCentralPixel(int i, int j)
 {
+    if(frozen) return;
     double x, y;
     screen2map(i, j, &x, &y);
     my_setCenterInMap(x,y);
@@ -126,12 +151,14 @@ void Projection::setCentralPixel(int i, int j)
 
 void Projection::setCenterInMap(double x, double y)
 {
+    if(frozen) return;
     my_setCenterInMap(x,y);
     emit_projectionUpdated();
 }
 
 void Projection::setScaleAndCenterInMap(float sc,double x, double y)
 {
+    if(frozen) return;
     bool mod=false;
     if(sc!=-1)
     {

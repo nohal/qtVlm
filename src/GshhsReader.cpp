@@ -131,7 +131,8 @@ GshhsReader::GshhsReader(std::string fpath_, int quality)
         lsPoly_rivers[qual] = new std::list<GshhsPolygon*>;
     }
     userPreferredQuality = quality;
-    setQuality(quality);
+    quality=-1;
+    setQuality(userPreferredQuality);
 }
 
 //-------------------------------------------------------
@@ -152,8 +153,8 @@ GshhsReader::GshhsReader(const GshhsReader &model)
         lsPoly_rivers[qual] = model.lsPoly_rivers[qual];
     }
     userPreferredQuality = model.userPreferredQuality;
-    quality = model.quality;
-    setQuality(quality);
+    quality = -1;
+    setQuality(model.quality);
 }
 
 //-------------------------------------------------------
@@ -298,6 +299,7 @@ void GshhsReader::setUserPreferredQuality(int quality_) // 5 levels: 0=low ... 4
 //-----------------------------------------------------------------------
 void GshhsReader::setQuality(int quality_) // 5 levels: 0=low ... 4=full
 {
+    if(quality==quality_) return;
     std::string fname;
     ZUFILE *file;
     bool   ok;
@@ -312,7 +314,7 @@ void GshhsReader::setQuality(int quality_) // 5 levels: 0=low ... 4=full
 	    readGshhsFiles();
     }
         
-    // Frontières politiques
+    // Frontieres politiques
     if (lsPoly_boundaries[quality]->size() == 0) { // on ne lit qu'une fois le fichier
         fname = getFileName_boundaries(quality);
         file = zu_open(fname.c_str(), "rb");
@@ -537,7 +539,6 @@ void GshhsReader::drawBackground( QPainter &pnt, Projection *proj,
     pnt.drawRect(0, y0, proj->getW(), y1-y0);
 
 }
-
 //-----------------------------------------------------------------------
 void GshhsReader::drawContinents( QPainter &pnt, Projection *proj,
             QColor seaColor, QColor landColor
@@ -571,6 +572,9 @@ void GshhsReader::drawContinents( QPainter &pnt, Projection *proj,
 //-----------------------------------------------------------------------
 void GshhsReader::drawSeaBorders( QPainter &pnt, Projection *proj)
 {
+//    if(proj->getFrozen()) //routage mode
+//        setQuality(this->userPreferredQuality);
+//    else
 	selectBestQuality(proj);
 
     pnt.setBrush(Qt::transparent);
@@ -623,12 +627,14 @@ void GshhsReader::selectBestQuality(Projection *proj)
 		bestQuality = 3;
 	else
 		bestQuality = 4;
-	
-	if (bestQuality > userPreferredQuality)
+#if 1
+        if (bestQuality > userPreferredQuality)
 		setQuality(userPreferredQuality);
 	else
 		setQuality(bestQuality);
-
-	//printf("coefremp=%.2f usingRangs=%d qual=%d\n", proj->getCoefremp(),(int)isUsingRangsReader,getQuality());
+#else
+        setQuality(userPreferredQuality);
+#endif
+        //printf("coefremp=%.2f usingRangs=%d qual=%d\n", proj->getCoefremp(),(int)isUsingRangsReader,getQuality());
 }
 

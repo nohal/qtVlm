@@ -58,12 +58,14 @@ class ROUTE : public QGraphicsWidget
         void setStartTime(QDateTime date){this->startTime=date;}
         QDateTime getStartTime() {return this->startTime.toUTC();}
 
-        void setFrozen(bool frozen) {this->frozen=frozen;if(frozen==false) imported=false;slot_recalculate();}
-        void setFrozen2(bool frozen) {this->frozen=frozen;slot_recalculate();}
+        void setFrozen(bool frozen) {if(frozen==this->frozen) return;this->frozen=frozen;if(frozen==false) {imported=false;slot_recalculate();}}
+        void setFrozen2(bool frozen) {if(frozen==this->frozen) return;this->frozen=frozen;if(!frozen)slot_recalculate();}
+        void setFrozen3(bool frozen){this->frozen=frozen;}
         bool getFrozen(){return this->frozen;}
         void setLive(bool live) {this->live=live;}
         bool isLive(){return this->live;}
         bool isBusy(){return this->busy;}
+        void setBusy(bool b){this->busy=b;}
 
 
         void setStartFromBoat(bool startFromBoat){this->startFromBoat=startFromBoat;}
@@ -101,11 +103,18 @@ class ROUTE : public QGraphicsWidget
         vlmLine * getLine(){return this->line;}
         bool getSimplify(){return this->simplify;}
         void setSimplify(bool b){this->simplify=b;}
+        void setHidden(bool b){if(b==hidden) return;this->hidden=b;this->slot_shShow();}
+        bool getHidden(void){return this->hidden;}
+        bool getUseVbvmgVlm(void){return this->useVbvmgVlm;}
+        void setUseVbVmgVlm(bool b){this->useVbvmgVlm=b;}
+        void setTemp(bool b){this->temp=b;}
+        bool getTemp(){return this->temp;}
+
     public slots:
-        void slot_recalculate();
+        void slot_recalculate(boat * boat=NULL);
         void slot_edit();
-        void slot_delete();
         void slot_shShow();
+        void slot_delete();
         void slot_shHidden();
         void slot_shRou(){if(this->isVisible()) slot_shHidden();else slot_shShow();}
         void slot_export(){parent->exportRouteFromMenu(this);}
@@ -149,6 +158,7 @@ class ROUTE : public QGraphicsWidget
 
         /*various*/
         double A360(double hdg);
+        double A180(double hdg);
         double myDiffAngle(double a1,double a2);
         time_t eta;
         time_t start;
@@ -168,5 +178,15 @@ class ROUTE : public QGraphicsWidget
         bool imported;
         int multVac;
         bool simplify;
+        bool hidden;
+        void do_vbvmg_context(double dist,double wanted_heading,
+                              double w_speed,double w_angle,
+                              double *heading1, double *heading2,
+                              double *wangle1, double *wangle2,
+                              double *time1, double *time2,
+                              double *dist1, double *dist2);
+        bool useVbvmgVlm;
+        bool initialized;
+        bool temp;
 };
 #endif // ROUTE_H

@@ -30,20 +30,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "class_list.h"
 
-#include "ui_inetConn_progessDialog.h"
-
-class inetConn_progressDialog : public QDialog, public Ui::inetConn_progressDialog_ui
-{
-    Q_OBJECT
-    public:
-	inetConn_progressDialog(QWidget * parent = 0);
-	void showDialog(QString name);
-        void hideDialog(void);
-
-    public slots:
-	void updateProgress(qint64 bytesReceived, qint64 bytesTotal);
-};
-
 class inetConnexion : public QObject
 {
     Q_OBJECT
@@ -71,7 +57,7 @@ class inetConnexion : public QObject
         bool hasProgress;
 	QNetworkAccessManager *inetManager;
 
-        inetConn_progressDialog * progressDialog;
+        DialogInetProgess * progressDialog;
 
 	void resetInet(void);
         void doRequest(int type,inetClient* client,QString requestUrl,QString data, QString host);

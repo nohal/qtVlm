@@ -119,10 +119,11 @@ class GshhsReader
         void drawRivers( QPainter &pnt, Projection *proj);
         
         bool gshhsFilesExists(int quality);
-        
+        GshhsRangsReader * getGshhsRangsReader(){return gshhsRangsReader;}
+        int  getQuality()   {return quality;}
+
     private:
         int quality, userPreferredQuality;  // 5 levels: 0=low ... 4=full
-        int  getQuality()   {return quality;}
         void setQuality(int quality);
 		void selectBestQuality(Projection *proj);
 

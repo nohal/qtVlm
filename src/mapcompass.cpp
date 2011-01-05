@@ -34,7 +34,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "Grib.h"
 #include "Projection.h"
 #include "boatVLM.h"
-
+#include "GshhsRangsReader.h"
+#include "GshhsReader.h"
 #define COMPASS_MARGIN 30
 #define CROSS_SIZE 8
 #define MARK_SIZE 12
@@ -130,7 +131,10 @@ void  mapCompass::paint(QPainter * pnt, const QStyleOptionGraphicsItem * , QWidg
     float WP_angle=-1;
     double WP_dist=-1;
     float angle;
-    QString str;    
+    QString str;
+
+    lat=lon=0;
+
     proj->screen2map(this->x()+size/2,this->y()+size/2,&lon,&lat);
 
     QPen pen(QColor(Qt::black));
@@ -296,7 +300,7 @@ void  mapCompass::paint(QPainter * pnt, const QStyleOptionGraphicsItem * , QWidg
             speeds[i]=main->getBoatPolarSpeed(wind_speed,i);
         }
         poly.resize(361);
-        int polVac=0;
+        float polVac=0;
         if(Settings::getSetting("scalePolar",0).toInt()==0)
         {
             polVac=Settings::getSetting("polVac",12).toInt();
@@ -307,13 +311,14 @@ void  mapCompass::paint(QPainter * pnt, const QStyleOptionGraphicsItem * , QWidg
             polVac=Settings::getSetting("estimeVac",12).toInt();
             polarModeVac=true;
         }
-        double lon1,lat1,lon2,lat2;
-        int X,Y;
-        proj->screen2map(0,0, &lon1, &lat1);
-        Util::getCoordFromDistanceAngle(lat1,lon1,100,90,&lat2,&lon2);
-        Util::computePos(proj,(float)lat2,(float)lon2, &Y, &X);
-        float oneMile=qAbs(QLineF(0,0,X,Y).length())/100;
-        int vacLen=parent->getSelectedBoat()->getVacLen()/60.0;
+        double lon1,lat1;
+        int X,Y,X1,Y1;
+        Util::getCoordFromDistanceAngle(lat,lon,10,90,&lat1,&lon1);
+        Util::computePos(proj,(float)lat,(float)lon, &Y, &X);
+        Util::computePos(proj,(float)lat1,(float)lon1, &Y1, &X1);
+
+        float oneMile=QLineF(X,Y,X1,Y1).length()/10;
+        float vacLen=parent->getSelectedBoat()->getVacLen()/60.0;
         for(int i=0;i<=180;i++)
         {
             float temp=0;
@@ -384,7 +389,7 @@ void  mapCompass::paint(QPainter * pnt, const QStyleOptionGraphicsItem * , QWidg
         lon_txt=Util::pos2String(TYPE_LON,lon);
         s.sprintf("%.1f", wind_angle);
         z.sprintf("%.1f", wind_speed);
-        wind_txt = tr("Vent: ") + s + tr("°")+", "+z+tr("nds");
+        wind_txt = tr("Vent: ") + s + tr("deg")+", "+z+tr("nds");
         lat_w=fm2.width(lat_txt);
         wind_w=fm2.width(wind_txt);
 
@@ -404,12 +409,12 @@ void  mapCompass::paint(QPainter * pnt, const QStyleOptionGraphicsItem * , QWidg
                     WP_windAngle=WP_windAngle-360;
             }
             s.sprintf("%.1f", WP_angle);
-            WP_txt=tr("WP: ") + s + tr("°");
+            WP_txt=tr("WP: ") + s + tr("deg");
             WP_w=fm2.width(WP_txt);
             pnt->drawText(-WP_w/2,str_h,WP_txt);
 
             s.sprintf("%.1f", WP_windAngle);
-            WP_txt=tr("WP%vent: ") + s + tr("°");
+            WP_txt=tr("WP%vent: ") + s + tr("deg");
             WP_w=fm2.width(WP_txt);
             pnt->drawText(-WP_w/2,2*str_h,WP_txt);
 
@@ -634,10 +639,16 @@ void mapCompass::updateCompassLineLabels(int x, int y)
     pos_angle=orth.getAzimutDeg();
     pos_distance=orth.getDistance();
     bool drawWindAngle=true;
+    GshhsRangsReader *map=parent->get_gshhsReader()->getGshhsRangsReader();
     if(this->isVisible())
     {
-        hdg_label->setHtml(QString().sprintf("Hdg: %.1f %c, Tws: %.1f nds",pos_angle,176,wind_speed)+"<br>"+
-                       "Distance: "+Util::formatDistance(pos_distance));
+        if(map->crossing(QLineF(XX,YY,x,y),QLineF(xa,ya,xb,yb)))
+            hdg_label->setHtml(QString().sprintf("Hdg: %.2f %c, Tws: %.1f nds",pos_angle,176,wind_speed)+"<br>"+
+                           "Distance: "+Util::formatDistance(pos_distance)+"<br>"+
+                           "<font color=\"#FF0000\">"+tr("Collision avec les terres detectee")+"</font>");
+        else
+            hdg_label->setHtml(QString().sprintf("Hdg: %.2f %c, Tws: %.1f nds",pos_angle,176,wind_speed)+"<br>"+
+                           "Distance: "+Util::formatDistance(pos_distance));
     /* attention wind_angle, bvmg_up et bvmg_down sont calcules dans paint */
         drawWindAngle=true;
     }
@@ -647,8 +658,13 @@ void mapCompass::updateCompassLineLabels(int x, int y)
         if(loxo_angle<0) loxo_angle+=360;
         double loxo_dist=orth.getLoxoDistance();
         hdg_label->setDefaultTextColor(Qt::darkRed);
-        hdg_label->setHtml(QString().sprintf("<b><big>Ortho->Hdg: %.1f%c Dist: %.2f NM",pos_angle,176,pos_distance)+"<br>"+
-                       QString().sprintf("<b><big>Loxo-->Hdg: %.1f%c Dist: %.2f NM",loxo_angle,176,loxo_dist));
+        if(map->crossing(QLineF(XX,YY,x,y),QLineF(xa,ya,xb,yb)))
+            hdg_label->setHtml(QString().sprintf("<b><big>Ortho->Hdg: %.2f%c Dist: %.2f NM",pos_angle,176,pos_distance)+"<br>"+
+                       QString().sprintf("<b><big>Loxo-->Hdg: %.1f%c Dist: %.2f NM",loxo_angle,176,loxo_dist)+"<br>"+
+                       "<font color=\"#FF0000\">"+tr("Collision avec les terres detectee")+"</font>");
+        else
+            hdg_label->setHtml(QString().sprintf("<b><big>Ortho->Hdg: %.2f%c Dist: %.2f NM",pos_angle,176,pos_distance)+"<br>"+
+                       QString().sprintf("<b><big>Loxo-->Hdg: %.2f%c Dist: %.2f NM",loxo_angle,176,loxo_dist));
         drawWindAngle=false;
     }
     if(!parent->getGrib())

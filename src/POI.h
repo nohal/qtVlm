@@ -88,8 +88,10 @@ class POI : public QGraphicsWidget
         void setSearchStep     (double value){this->searchStep=value;}
         void setNavMode        (int mode);
         void setOptimizing     (bool b) {this->optimizing=b;}
-        void setMyLabelHidden  (bool b) {this->myLabelHidden=b;}
+        void setMyLabelHidden  (bool b) {if(route==NULL) this->myLabelHidden=false; else this->myLabelHidden=b;}
         bool getMyLabelHidden  (void) {return this->myLabelHidden;}
+        void setNotSimplificable(bool b) {this->notSimplificable=b;}
+        bool getNotSimplificable(){return this->notSimplificable;}
 
 
         /* comparateur de classe pour le tri */
@@ -112,10 +114,10 @@ class POI : public QGraphicsWidget
         void slot_paramChanged();
         void slot_WPChanged(double tlat,double tlon);
         void slot_updateTip(boat *);
-        void slot_shShow(){this->labelHidden=false;show();}
+        void slot_shShow(){show();}
         void slot_shHidden(){hide();}
         void slot_shPoi(){this->isVisible()?hide():show();}
-        void slot_shLab(){this->labelHidden=!this->labelHidden;update();}
+        void slot_shLab(bool state){this->labelHidden=state;update();}
         void slot_routeMenu(QAction* ptr_action);
         void slot_finePosit();
         void slot_abort(){this->abortSearch=true;}
@@ -158,6 +160,7 @@ class POI : public QGraphicsWidget
         /* data */
         QString  name;
         double   lon, lat;
+        double   previousLon,previousLat;
         float    wph;
         double   WPlon,WPlat;
         int      pi, pj;
@@ -206,6 +209,7 @@ class POI : public QGraphicsWidget
         bool optimizing;
         bool myLabelHidden;
         bool partOfTwa;
+        bool notSimplificable;
 };
 
 #endif

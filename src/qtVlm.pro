@@ -2,26 +2,27 @@ CONFIG += qt
 TEMPLATE = app
 TARGET = 
 DEPENDPATH += .
-INCLUDEPATH += bzip2 \
-    zlib-1.2.3 \
-    qextserialport \
-    qjson \
-    c_lib \
-    nmealib/src/nmea
-LIBS += -Lbzip2 \
+INCLUDEPATH += objs \
+    Dialogs \
+    libs/bzip2 \
+    libs/zlib-1.2.3 \
+    libs/qextserialport \
+    libs/qjson \
+    libs/nmealib/src/nmea \
+    .
+LIBS += -Llibs/bzip2 \
     -lbz2 \
-    -Lzlib-1.2.3 \
+    -Llibs/zlib-1.2.3 \
     -lz \
-    -Lqextserialport/build \
+    -Llibs/qextserialport/build \
     -lqextserialport \
-    -Lqjson \
+    -Llibs/qjson \
     -lqjson \
-    -Lc_lib \
-    -lclib \
-    -Lnmealib/src/ \
+    -Llibs/nmealib/src/ \
     -lnmea
 MOC_DIR = objs
 OBJECTS_DIR = objs
+UI_DIR = objs
 SOURCES_DIR = src
 DESTDIR = ../
 QT += network \
@@ -31,13 +32,32 @@ CODECFORSRC = UTF-8
 TRANSLATIONS = ../tr/qtVlm_en.ts \
     ../tr/qtVlm_fr.ts
 RC_FILE = qtVlm.rc
-HEADERS += BoardVLM.h \
+HEADERS += Dialogs/DialogGraphicsParams.h \
+    Dialogs/DialogLoadGrib.h \
+    Dialogs/DialogProxy.h \
+    Dialogs/DialogUnits.h \
+    Dialogs/DialogGribDate.h \
+    Dialogs/DialogHorn.h \
+    Dialogs/DialogVlmGrib.h \
+    Dialogs/DialogRace.h \
+    Dialogs/DialogRoute.h \
+    Dialogs/DialogGribValidation.h \
+    Dialogs/DialogBoatAccount.h \
+    Dialogs/DialogPoiInput.h \
+    Dialogs/DialogPoi.h \
+    Dialogs/DialogPoiDelete.h \
+    Dialogs/DialogFinePosit.h \
+    Dialogs/DialogParamVlm.h \
+    Dialogs/DialogPilototo.h \
+    Dialogs/DialogPilototoParam.h \
+    Dialogs/DialogPlayerAccount.h \
+    Dialogs/DialogRoutage.h \
+    Dialogs/DialogSailDocs.h \
+    Dialogs/DialogTwaLine.h \
+    Dialogs/DialogWp.h \
+    Dialogs/DialogInetProgess.h \
+    BoardVLM.h \
     BoardVLM_tools.h \
-    boatAccount_dialog.h \
-    DialogGraphicsParams.h \
-    DialogLoadGrib.h \
-    DialogProxy.h \
-    DialogUnits.h \
     GshhsRangsReader.h \
     GshhsReader.h \
     GisReader.h \
@@ -49,26 +69,17 @@ HEADERS += BoardVLM.h \
     MenuBar.h \
     Orthodromie.h \
     opponentBoat.h \
-    paramVLM.h \
-    Pilototo.h \
-    Pilototo_param.h \
     POI.h \
-    POI_editor.h \
-    POI_input.h \
     Polar.h \
     Projection.h \
-    race_dialog.h \
-    sha1/sha1.h \
+    libs/sha1/sha1.h \
     Terrain.h \
     Util.h \
     Version.h \
     xmlBoatData.h \
     xmlPOIData.h \
     zuFile.h \
-    dialog_gribDate.h \
-    DialogVLM_grib.h \
     mapcompass.h \
-    POI_delete.h \
     mycentralwidget.h \
     orthoSegment.h \
     selectionWidget.h \
@@ -76,59 +87,78 @@ HEADERS += BoardVLM.h \
     Font.h \
     inetClient.h \
     route.h \
-    Route_Editor.h \
     routage.h \
-    Routage_Editor.h \
     settings.h \
     class_list.h \
-    gribValidation.h \
     Triangle.h \
     Segment.h \
     Polygon.h \
     Point.h \
     triangulation.h \
     vlmPoint.h \
-    finePosit.h \
     IsoLine.h \
     dataDef.h \
-    dialoghorn.h \
-    twaline.h \
     boatReal.h \
     boat.h \
     boatVLM.h \
     Board.h \
     BoardReal.h \
     Player.h \
-    playerAccount.h
-FORMS += boatAccount_dialog.ui \
-    BoardVLM.ui \
-    BoardReal.ui \
-    paramVLM.ui \
-    POI_input.ui \
-    POI_editor.ui \
-    Pilototo_param.ui \
-    instructions.ui \
-    Pilototo.ui \
-    race_dialog.ui \
-    WP_dialog.ui \
-    dialog_gribDate.ui \
-    DialogVLM_grib.ui \
-    inetConn_progessDialog.ui \
-    POI_delete.ui \
-    Route_Editor.ui \
-    Routage_Editor.ui \
-    gribValidation.ui \
-    finePosit.ui \
-    dialoghorn.ui \
-    twaline.ui \
-    paramAccount.ui \
-    playerAccount.ui
-SOURCES += BoardVLM.cpp \
-    boatAccount_dialog.cpp \
-    DialogGraphicsParams.cpp \
-    DialogLoadGrib.cpp \
-    DialogProxy.cpp \
-    DialogUnits.cpp \
+    interpolation.h \
+    Dialogs/DialogRealBoatConfig.h \
+    vlmpointgraphic.h \
+    Dialogs/DialogRealBoatPosition.h
+FORMS += Ui/boatAccount_dialog.ui \
+    Ui/BoardVLM.ui \
+    Ui/BoardReal.ui \
+    Ui/paramVLM.ui \
+    Ui/POI_input.ui \
+    Ui/POI_editor.ui \
+    Ui/Pilototo_param.ui \
+    Ui/instructions.ui \
+    Ui/Pilototo.ui \
+    Ui/race_dialog.ui \
+    Ui/WP_dialog.ui \
+    Ui/dialog_gribDate.ui \
+    Ui/DialogVLM_grib.ui \
+    Ui/inetConn_progessDialog.ui \
+    Ui/POI_delete.ui \
+    Ui/Route_Editor.ui \
+    Ui/Routage_Editor.ui \
+    Ui/gribValidation.ui \
+    Ui/finePosit.ui \
+    Ui/dialoghorn.ui \
+    Ui/twaline.ui \
+    Ui/paramAccount.ui \
+    Ui/playerAccount.ui \
+    Ui/sailDocs.ui \
+    Ui/realBoatConfig.ui \
+    Ui/realBoatPosition.ui
+SOURCES += Dialogs/DialogGraphicsParams.cpp \
+    Dialogs/DialogLoadGrib.cpp \
+    Dialogs/DialogProxy.cpp \
+    Dialogs/DialogUnits.cpp \
+    Dialogs/DialogGribDate.cpp \
+    Dialogs/DialogHorn.cpp \
+    Dialogs/DialogVlmGrib.cpp \
+    Dialogs/DialogRace.cpp \
+    Dialogs/DialogRoute.cpp \
+    Dialogs/DialogGribValidation.cpp \
+    Dialogs/DialogBoatAccount.cpp \
+    Dialogs/DialogPoiInput.cpp \
+    Dialogs/DialogPoi.cpp \
+    Dialogs/DialogPoiDelete.cpp \
+    Dialogs/DialogFinePosit.cpp \
+    Dialogs/DialogParamVlm.cpp \
+    Dialogs/DialogPilototo.cpp \
+    Dialogs/DialogPilototoParam.cpp \
+    Dialogs/DialogPlayerAccount.cpp \
+    Dialogs/DialogRoutage.cpp \
+    Dialogs/DialogSailDocs.cpp \
+    Dialogs/DialogTwaLine.cpp \
+    Dialogs/DialogWp.cpp \
+    Dialogs/DialogInetProgess.cpp \
+    BoardVLM.cpp \
     GshhsRangsReader.cpp \
     GshhsReader.cpp \
     GisReader.cpp \
@@ -141,25 +171,16 @@ SOURCES += BoardVLM.cpp \
     MenuBar.cpp \
     Orthodromie.cpp \
     opponentBoat.cpp \
-    paramVLM.cpp \
-    Pilototo.cpp \
-    Pilototo_param.cpp \
     POI.cpp \
-    POI_editor.cpp \
-    POI_input.cpp \
     Polar.cpp \
     Projection.cpp \
-    race_dialog.cpp \
-    sha1/sha1.cpp \
+    libs/sha1/sha1.cpp \
     Terrain.cpp \
     Util.cpp \
     xmlBoatData.cpp \
     xmlPOIData.cpp \
     zuFile.cpp \
-    dialog_gribDate.cpp \
-    DialogVLM_grib.cpp \
     mapcompass.cpp \
-    POI_delete.cpp \
     mycentralwidget.cpp \
     orthoSegment.cpp \
     selectionWidget.cpp \
@@ -167,32 +188,25 @@ SOURCES += BoardVLM.cpp \
     Font.cpp \
     inetClient.cpp \
     route.cpp \
-    Route_Editor.cpp \
     routage.cpp \
-    Routage_Editor.cpp \
     settings.cpp \
-    gribValidation.cpp \
     triangulation.cpp \
     Triangle.cpp \
     Segment.cpp \
     Polygon.cpp \
     Point.cpp \
     vlmPoint.cpp \
-    finePosit.cpp \
     IsoLine.cpp \
-    dialoghorn.cpp \
-    twaline.cpp \
     boatReal.cpp \
     boat.cpp \
     boatVLM.cpp \
     Board.cpp \
     BoardReal.cpp \
     Player.cpp \
-    playerAccount.cpp
-DEFINES = QT_$$[QT_VERSION]
-DEFINES ~= s/\./_
-DEFINES ~= s/-.*/
-DEFINES ~= s/QT_4_5_[0-9]/QT_4_5
+    interpolation.cpp \
+    Dialogs/DialogRealBoatConfig.cpp \
+    vlmpointgraphic.cpp \
+    Dialogs/DialogRealBoatPosition.cpp
 unix:DEFINES += _TTY_POSIX_
 win32:DEFINES += _TTY_WIN_ \
     QWT_DLL \

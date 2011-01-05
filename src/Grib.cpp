@@ -36,7 +36,7 @@ Copyright (C) 2008 - Jacques Zaninetti - http://zygrib.free.fr
 #include "IsoLine.h"
 #include "settings.h"
 
-#include "c_lib/wind.h"
+#include "interpolation.h"
 
 
 
@@ -65,7 +65,6 @@ void Grib::initNewGrib()
     qWarning() << "Starting with interpolation: " << interpol_name[interpolation_param];
 
     mustInterpolateValues = true;
-#warning remettre un paramettre pour mustInterpolateValues ?
 
     isCloudsColorModeWhite = Settings::getSetting("cloudsColorMode", "white").toString() == "white";
 
@@ -691,17 +690,17 @@ bool Grib::getInterpolatedValue_byDates(double d_long, double d_lat, time_t now,
         case INTERPOLATION_TWSA:
             if(debug)
                 qWarning() << "Interpolation TWSA";
-            get_wind_info_latlong_TWSA(d_long,d_lat,now,t1,t2,&wData_prev,(hasNxt?(&wData_nxt):NULL),isHighRes_t1,isHighRes_t2,u,v,debug);
+            interpolation::get_wind_info_latlong_TWSA(d_long,d_lat,now,t1,t2,&wData_prev,(hasNxt?(&wData_nxt):NULL),isHighRes_t1,isHighRes_t2,u,v,debug);
             break;
         case INTERPOLATION_SELECTIVE_TWSA:
             if(debug)
                 qWarning() << "Interpolation selective-TWSA";
-            get_wind_info_latlong_selective_TWSA(d_long,d_lat,now,t1,t2,&wData_prev,(hasNxt?(&wData_nxt):NULL),isHighRes_t1,isHighRes_t2,u,v,debug);
+            interpolation::get_wind_info_latlong_selective_TWSA(d_long,d_lat,now,t1,t2,&wData_prev,(hasNxt?(&wData_nxt):NULL),isHighRes_t1,isHighRes_t2,u,v,debug);
             break;
         case INTERPOLATION_HYBRID:
             if(debug)
                 qWarning() << "Interpolation Hybrid";
-            get_wind_info_latlong_hybrid(d_long,d_lat,now,t1,t2,&wData_prev,(hasNxt?(&wData_nxt):NULL),isHighRes_t1,isHighRes_t2,u,v,debug);
+            interpolation::get_wind_info_latlong_hybrid(d_long,d_lat,now,t1,t2,&wData_prev,(hasNxt?(&wData_nxt):NULL),isHighRes_t1,isHighRes_t2,u,v,debug);
             break;
          default:
             if(debug)
@@ -1128,7 +1127,7 @@ void Grib::show_CoverZone(QPainter &pnt, Projection * proj)
         pnt.drawRect(i, j, k-i, l-j);
         proj->map2screen(x0-360.0,y0, &i, &j);
         proj->map2screen(x1-360.0,y1, &k, &l);
-        pnt.drawRect(i, j, k-i, l-j);
+         pnt.drawRect(i, j, k-i, l-j);
     }
 }
 
@@ -1153,6 +1152,8 @@ void Grib::draw_WIND_Color(QPainter &pnt, const Projection *proj, bool smooth,
     GribRecord *recU1,*recV1,*recU2,*recV2;
     time_t t1,t2;
 
+    //qWarning() << "Drawing on " << proj->getW() << " " << proj->getH();
+
     if (!ok) {
         return;
     }
@@ -1173,13 +1174,19 @@ void Grib::draw_WIND_Color(QPainter &pnt, const Projection *proj, bool smooth,
         u_tab = new double[W_s*H_s];
         v_tab = new double[W_s*H_s];
         y_tab = new bool[W_s*H_s];
+
+        /* clearing u_tab array */
+        for(i=0;i<W_s*H_s;i++)
+        {
+            u_tab[i]=-1;
+        }
     }
 
     image->fill( qRgba(0,0,0,0));
 
-    for (i=0; i<W-1; i+=2)
+    for (i=0; i<W-2; i+=2)
     {
-        for (j=0; j<H-1; j+=2)
+        for (j=0; j<H-2; j+=2)
         {
             proj->screen2map(i,j, &x, &y);
             if(getInterpolatedValue_byDates(x,y,currentDate,t1,t2,recU1,recV1,recU2,recV2,&u,&v))
@@ -1199,7 +1206,7 @@ void Grib::draw_WIND_Color(QPainter &pnt, const Projection *proj, bool smooth,
                 image->setPixel(i,  j+1,rgb);
                 image->setPixel(i+1,j+1,rgb);
             }
-            else
+            /*else
             {
                 if(showWindArrows && i%space==0 && j%space==0)
                 {
@@ -1207,7 +1214,7 @@ void Grib::draw_WIND_Color(QPainter &pnt, const Projection *proj, bool smooth,
                     int j_s=j/space;
                     u_tab[i_s*H_s+j_s]=-1;
                 }
-            }
+            }*/
         }
     }
 
@@ -1498,21 +1505,23 @@ void Grib::draw_DeltaDewpoint_Color(QPainter &pnt, const Projection *proj, bool 
     }
 }
 
-void Grib::drawCartouche(QPainter &pnt)
+QString Grib::drawCartouche(QPainter &pnt)
 {
-    if (!ok) return;
-    int fSize=12;
-    QFont fontbig("TypeWriter", fSize, QFont::Bold, false);
-    fontbig.setStyleHint(QFont::TypeWriter);
-    fontbig.setStretch(QFont::Condensed);
-    QColor   transpcolor(255,255,255,120);
-    QColor   textcolor(20,20,20,255);
-    pnt.setBrush(transpcolor);
-    pnt.setFont(fontbig);
-    pnt.setPen(transpcolor);
-    pnt.drawRect(3,3,190,fSize+3+4);
-    pnt.setPen(textcolor);
-    pnt.drawText(10, fSize+6, Util::formatDateTimeLong(currentDate));// forecast validity date
+    if (!ok) return QString();
+    return Util::formatDateTimeLong(currentDate);
+//    int fSize=12;
+//    QFont fontbig("TypeWriter", fSize, QFont::Bold, false);
+//    fontbig.setStyleHint(QFont::TypeWriter);
+//    fontbig.setStretch(QFont::Condensed);
+//    QColor   transpcolor(255,255,255,120);
+//    QColor   textcolor(20,20,20,255);
+//    pnt.setBrush(transpcolor);
+//    pnt.setFont(fontbig);
+//    pnt.setPen(transpcolor);
+//    pnt.drawRect(3,3,190,fSize+3+4);
+//    pnt.setPen(textcolor);
+
+//    pnt.drawText(10, fSize+6, Util::formatDateTimeLong(currentDate));// forecast validity date
 }
 
 void Grib::draw_Isobars(QPainter &pnt, const Projection *proj)

@@ -33,10 +33,10 @@ Player::Player(QString login, QString pass,int type, int id, QString name,
 {
     this->login=login;
     this->pass=pass;
-    this->type=0;
     this->name=name;
     this->player_id=id;
     this->type=type;
+    this->polarName="";
 
     realBoat=NULL;
 
@@ -55,21 +55,34 @@ Player::Player(QString login, QString pass,int type, int id, QString name,
 
     if(type==BOAT_REAL)
     {
+        qWarning() << "creating real boat in player constr: " << name;
         realBoat = new boatReal(this->login,true,proj,main,parent);
+        parent->slot_addBoat(realBoat);
+        qWarning() << "... after creating real boat in player constr: " << name;
     }
 }
 
 Player::~Player()
 {
     /* cleaning boat list */
-    QListIterator<boatVLM*> j (boats);
-    while(j.hasNext())
+    if(type==BOAT_REAL && realBoat)
     {
-        boatVLM * boat = j.next();
-        emit delBoat_list(boat);
-        delete boat;
+        qWarning()<<"before delete realBoat";
+        parent->slot_delBoat(realBoat);
+//        delete realBoat;
+        qWarning()<<"after delete realBoat";
     }
-    boats.clear();
+    else
+    {
+        QListIterator<boatVLM*> j (boats);
+        while(j.hasNext())
+        {
+            boatVLM * boat = j.next();
+            emit delBoat(boat);
+            delete boat;
+        }
+        boats.clear();
+    }
 }
 
 void Player::updateData(void)
@@ -94,7 +107,9 @@ void Player::doRequest(int requestCmd)
             return;
         }
         else
-            qWarning() << "Doing request " << requestCmd << " for player " << login  ;
+        {
+            /*qWarning() << "Doing request " << requestCmd << " for player " << login */ ;
+        }
 
         QString page;
 
@@ -148,7 +163,7 @@ void Player::requestFinished (QByteArray res_byte)
             case VLM_REQUEST_FLEET:
             {
                 QVariantMap fleet;
-
+                fleetList.clear();
                 for(int j=0;j<2;j++)
                 {
                     fleet = result[j==0?"fleet":"fleet_boatsit"].toMap();
@@ -170,10 +185,11 @@ void Player::requestFinished (QByteArray res_byte)
                         data->engaged=boats_data["engaged"].toInt();
                         data->isOwn=j;
                         boatsData.append(data);
+                        fleetList.append(data->idu);
                     }
                 }
                 updating=false;
-                //qWarning() << "nb boats: " <<boatsData.count();
+                qWarning() << "emiting playerUpdated (nb boats= " <<boatsData.count()<<")";
                 emit playerUpdated(true,this);
                 break;
             }
@@ -190,8 +206,8 @@ void Player::requestFinished (QByteArray res_byte)
 void Player::authFailed(void)
 {
     QMessageBox::warning(0,QObject::tr("Parametre compte VLM"),
-                         QString("Erreur de parametrage du compte VLM '")+
-                         login+"'.\n Verifier le login et mot de passe");
+                         QObject::tr("Erreur de parametrage du compte VLM '")+
+                         login+QObject::tr("'.\n Verifiez le login et mot de passe"));
     inetClient::authFailed();
     updating=false;
     emit playerUpdated(false,this);

@@ -4,6 +4,7 @@
 
 #include "Polar.h"
 #include <QLineF>
+
 vlmPoint::vlmPoint(float lon,float lat)
 {
     this->lon=lon;
@@ -17,4 +18,10 @@ vlmPoint::vlmPoint(float lon,float lat)
     this->capOrigin=0;
     this->eyeLon=0;
     this->eyeLat=0;
+    this->needRoute=false;
+    this->isBroken=false;
+    this->reversedEye=false;
+    this->capVmg=0;
+    this->notSimplificable=false;
+    this->maxDistIso=10e5;
 }

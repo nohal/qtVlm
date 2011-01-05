@@ -42,8 +42,8 @@ class xml_boatData: public QWidget
             void slot_readData(QString fname,bool readAll);
 
       signals:
-            void addBoat_list(boatVLM* boat);
-            void delBoat_list(boatVLM* boat);
+            void addBoat(boat* boat);
+            void delBoat(boat* boat);
             void addRace_list(raceData* race);
             void delRace_list(raceData* race);
             void addPlayer_list(Player* player);

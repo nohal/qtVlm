@@ -156,6 +156,12 @@ void Terrain::setGSHHS_map(GshhsReader *map)
 //-------------------------------------------------------
 void Terrain::draw_GSHHSandGRIB()
 {
+//    if(proj->getFrozen()) //routage
+//    {
+//        QPainter pnt(imgAll);
+//        gshhsReader->drawSeaBorders(pnt, proj);
+//        return;
+//    }
     QCursor oldcursor = cursor();
     setCursor(Qt::WaitCursor);
     if (imgAll != NULL) {
@@ -245,13 +251,30 @@ void Terrain::draw_GSHHSandGRIB()
     pnt.drawImage(0,0, *imgEarth);
     /*int save=0;
     if(save==1) imgEarth->save("test.jpg","JPG",100);*/
-    if(grib) grib->drawCartouche(pnt);
+    QString cartouche="";
+    if(grib) cartouche=grib->drawCartouche(pnt)+". ";
+    if(this->gshhsReader)
+        cartouche=cartouche+tr("Niveau de detail des cotes: ")+QString().setNum(this->gshhsReader->getQuality()+1);
+    int fSize=12;
+    QFont fontbig("TypeWriter", fSize, QFont::Bold, false);
+    fontbig.setStyleHint(QFont::TypeWriter);
+    fontbig.setStretch(QFont::Condensed);
+    QColor   transpcolor(255,255,255,120);
+    QColor   textcolor(20,20,20,255);
+    pnt.setBrush(transpcolor);
+    pnt.setFont(fontbig);
+    pnt.setPen(transpcolor);
+    pnt.drawRect(3,3,400,fSize+3+4);
+    pnt.setPen(textcolor);
+
+    pnt.drawText(10, fSize+6, cartouche);// forecast validity date
+
     setCursor(oldcursor);
 }
 
 void Terrain::drawGrib(QPainter &pnt, Grib *gribPlot)
 {
-        gribPlot->show_CoverZone(pnt,proj);
+        //gribPlot->show_CoverZone(pnt,proj);
 
         //QTime t1 = QTime::currentTime();
         //qWarning() << "Grib mode: " << colorMapMode << " (grib=" << Terrain::drawWind << ")";
@@ -340,7 +363,10 @@ void Terrain::drawGrib(QPainter &pnt, Grib *gribPlot)
         /*if (showGribGrid) {
                 gribPlot->draw_GribGrid(pnt, proj);
         }*/
-    #warning remettre la grille grib
+
+        gribPlot->show_CoverZone(pnt,proj);
+
+    //remettre la grille grib
 }
 
 //=========================================================

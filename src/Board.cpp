@@ -28,9 +28,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "boat.h"
 #include "BoardReal.h"
 #include "BoardVLM.h"
+#include "Player.h"
 
 board::board(MainWindow * mainWin, inetConnexion * inet,QStatusBar * statusBar)
 {
+    playerType = BOAT_NOBOAT;
 
     vlm_board=new boardVLM(mainWin,inet,this);
     connect(this,SIGNAL(sig_paramChanged()),vlm_board,SLOT(paramChanged()));
@@ -38,30 +40,17 @@ board::board(MainWindow * mainWin, inetConnexion * inet,QStatusBar * statusBar)
     connect(this,SIGNAL(hideShowCompass()),vlm_board,SLOT(slot_hideShowCompass()));
     VLMDock = new QDockWidget("Virtual Loup de Mer");
     VLMDock->setWidget(vlm_board);
-    VLMDock->setAllowedAreas(Qt::RightDockWidgetArea|Qt::LeftDockWidgetArea);
-#if 1
-    mainWin->addDockWidget(Qt::LeftDockWidgetArea,VLMDock);
-    mainWin->setBoardToggleAction(VLMDock->toggleViewAction());
-    vlm_board->show();
-#else
-    vlm_board->hide();
-#endif
+    VLMDock->setAllowedAreas(Qt::LeftDockWidgetArea | Qt::RightDockWidgetArea );
 
-/*
     real_board=new boardReal(mainWin,this);
     connect(this,SIGNAL(sig_paramChanged()),real_board,SLOT(paramChanged()));
     connect(real_board,SIGNAL(showMessage(QString,int)),statusBar,SLOT(showMessage(QString,int)));
     connect(this,SIGNAL(hideShowCompass()),real_board,SLOT(slot_hideShowCompass()));
     realDock = new QDockWidget(tr("Mon bateau"));
     realDock->setWidget(real_board);
-    realDock->setAllowedAreas(Qt::RightDockWidgetArea|Qt::LeftDockWidgetArea);
-#if 1
-    mainWin->addDockWidget(Qt::LeftDockWidgetArea,realDock);
-    real_board->show();
-#else
-    real_board->hide();
-#endif
-*/
+    realDock->setAllowedAreas(Qt::LeftDockWidgetArea | Qt::RightDockWidgetArea);
+
+
     this->mainWin = mainWin;
     curBoat = NULL;
 
@@ -69,17 +58,19 @@ board::board(MainWindow * mainWin, inetConnexion * inet,QStatusBar * statusBar)
     connect(mainWin,SIGNAL(boatHasUpdated(boat*)),
             this,SLOT(boatUpdated(boat*)));
 
+    isFloatingBoard=false;
+}
 
-
-
+void board::floatingBoard(bool status)
+{
+    isFloatingBoard=status;
+    realDock->setFloating(status);
+    VLMDock->setFloating(status);
 }
 
 int board::currentBoardType(void)
 {
-    if(curBoat)
-        return curBoat->getType();
-    else
-        return BOAT_NOBOAT;
+    return playerType;
 }
 
 void board::paramChanged(void)
@@ -94,59 +85,70 @@ void board::slot_hideShowCompass(void)
 
 void board::boatUpdated(boat* myBoat)
 {
-#if 0
-    /*  mainWin->setBoardToggleAction(VLMDock->toggleViewAction());*/
-
-    if(!myBoat)
+    if(curBoat!=NULL && curBoat->getType()==BOAT_REAL && myBoat!=curBoat)
+        curBoat->setSelected(false);
+    curBoat=myBoat;
+    if(playerType!=BOAT_NOBOAT)
     {
-        /* hiding all */
-        qWarning() << "board::boatUpdated : new boat = NULL";
-        mainWin->removeDockWidget(VLMDock);
-        mainWin->removeDockWidget(realDock);
-    }
-    else
-    {
-        qWarning() << "board::boatUpdated : new boat exist";
-        if(myBoat!=curBoat)
+        if(playerType == BOAT_VLM)
         {
-            qWarning() << "board::boatUpdated : new boat different from previsous";
-            /* make sure the correct board is shown */
-            if(myBoat->getType()==BOAT_VLM)
-            {
-                qWarning() << "board::boatUpdated : VLM boat";
-                mainWin->removeDockWidget(realDock);
-                mainWin->addDockWidget(Qt::LeftDockWidgetArea,VLMDock);
-                vlm_board->show();
-            }
-            else
-            {
-                qWarning() << "board::boatUpdated : real boat";
-                mainWin->removeDockWidget(VLMDock);
-                mainWin->addDockWidget(Qt::LeftDockWidgetArea,realDock);
-                realDock->setEnabled(true);
-                real_board->show();
-                real_board->update();
-            }
+            vlm_board->boatUpdated();
         }
-
+        else
+            real_board->boatUpdated();
     }
-    qWarning() << "board::boatUpdated : calling VLM and real board update";
-    curBoat=myBoat;
-    vlm_board->boatUpdated();
-    real_board->boatUpdated();
-#else
-    curBoat=myBoat;
-    vlm_board->boatUpdated();
-#endif
+}
+
+
+void board::playerChanged(Player * player)
+{
+    if(!player)
+        return;
+
+    if(playerType!=BOAT_NOBOAT)
+    {
+        if(playerType == BOAT_VLM)
+        {
+            mainWin->removeDockWidget(VLMDock);
+        }
+        else
+        {
+            mainWin->removeDockWidget(realDock);
+        }
+    }
+
+    playerType=player->getType();
+    qWarning()<<"playerType="<<playerType;
+    if(playerType!=BOAT_NOBOAT)
+    {
+        if(playerType == BOAT_VLM)
+        {
+            mainWin->addDockWidget(Qt::LeftDockWidgetArea,VLMDock);
+            floatingBoard(isFloatingBoard);
+            VLMDock->show();
+            vlm_board->show();
+        }
+        else
+        {
+            mainWin->addDockWidget(Qt::LeftDockWidgetArea,realDock);
+            floatingBoard(isFloatingBoard);
+            realDock->show();
+            real_board->show();
+        }
+    }
 }
 
 void board::setChangeStatus(bool val)
 {
-    if(curBoat)
+    if(playerType!=BOAT_NOBOAT)
     {
-        if(curBoat->getType()==BOAT_VLM)
+        if(playerType == BOAT_VLM)
+        {
             vlm_board->setChangeStatus(val);
+        }
         else
+        {
             real_board->setChangeStatus(val);
+        }
     }
 }

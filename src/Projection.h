@@ -55,6 +55,7 @@ Q_OBJECT
 
         /* zoom */
         void zoom (float k);
+        void zoomKeep (double lon,double lat, float k);
         void zoomAll(void);
         void zoomOnZone(double x0, double y0, double x1, double y1);
         void setScale(float sc);
@@ -81,12 +82,14 @@ Q_OBJECT
         /* coord conversion */
         void screen2map(int i, int j, double *x, double *y) const;
         void map2screen(double x, double y, int *i, int *j) const;
+        void map2screenFloat(double x, double y, float *i, float *j) const;
 
         /* position / region validation*/
         bool intersect(double w,double e,double s,double n)  const;
         bool isPointVisible (double x,double y) const;
         bool isInBounderies (int x,int y) const;
-
+        void setFrozen(bool b){this->frozen=b;/*emit_projectionUpdated();*/}
+        bool getFrozen(void){return this->frozen;}
     signals:
         void newZoom(float);
         void projectionUpdated(void);
@@ -107,6 +110,7 @@ Q_OBJECT
         void my_setCenterInMap(double x, double y);
         QTimer * timer;
         void emit_projectionUpdated(void);
+        bool frozen;
 
 };
 
@@ -117,8 +121,20 @@ inline void Projection::map2screen(double x, double y, int *i, int *j) const
     if(y<=-90) y=-89.9;
     if(y>=90) y=89.9;
 
+//    if(xW>0 && x<0)
+//        x=360+x;
+//    if(xW<0 && x>0)
+//        x=x-360;
     *i = (int) (scale * (x-xW));
     *j = H/2 + (int) (scale * (PY-radToDeg(log(tan(degToRad(y)/2 + M_PI_4)))));
+}
+inline void Projection::map2screenFloat(double x, double y, float *i, float *j) const
+{
+    if(y<=-90) y=-89.9999999999999999999999999999999999999999999999999999999;
+    if(y>=90) y=89.999999999999999999999999999999999999999999999999999999999;
+    float diff=(float)x-(float)xW;
+    *i = ((float)scale * diff);
+    *j = (float)H/2.0 + ((float)scale * ((float)PY-radToDeg(log(tan((float)degToRad(y)/2 + (float)M_PI_4)))));
 }
 
 //-------------------------------------------------------------------------------

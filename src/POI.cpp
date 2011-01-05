@@ -38,7 +38,7 @@ Copyright (C) 2008 - Jacques Zaninetti - http://zygrib.free.fr
 #include "route.h"
 #include "boatVLM.h"
 #include "Projection.h"
-#include "finePosit.h"
+#include "DialogFinePosit.h"
 
 /**************************/
 /* Init & Clean           */
@@ -68,6 +68,7 @@ POI::POI(QString name, int type, double lat, double lon,
     this->navMode=0;
     this->optimizing=true;
     this->partOfTwa=false;
+    this->notSimplificable=false;
 
     useRouteTstamp=false;
     routeTimeStamp=-1;
@@ -229,8 +230,10 @@ void POI::mousePressEvent(QGraphicsSceneMouseEvent * e)
     if (e->button() == Qt::LeftButton && e->modifiers()==Qt::ShiftModifier)
     {
          if(route!=NULL)
-             if(route->getFrozen()) return;
+             if(route->getFrozen()||route->isBusy()) return;
          if(VLMBoardIsBusy && this->isWp) return;
+         previousLon=lon;
+         previousLat=lat;
          this->partOfTwa=false;
          isMoving=true;
 //         if(route!=NULL)
@@ -284,9 +287,17 @@ void POI::mouseReleaseEvent(QGraphicsSceneMouseEvent * e)
     if(isMoving)
     {
         double newlon,newlat;
-        int new_x=scenePos().x();
-        int new_y=scenePos().y()+height/2;
-        proj->screen2map(new_x,new_y, &newlon, &newlat);
+        if(e->modifiers()==Qt::ShiftModifier)
+        {
+            int new_x=scenePos().x();
+            int new_y=scenePos().y()+height/2;
+            proj->screen2map(new_x,new_y, &newlon, &newlat);
+        }
+        else
+        {
+            newlon=previousLon;
+            newlat=previousLat;
+        }
         setLongitude(newlon);
         setLatitude(newlat);
         Util::computePos(proj,lat, lon, &pi, &pj);
@@ -295,12 +306,12 @@ void POI::mouseReleaseEvent(QGraphicsSceneMouseEvent * e)
         setCursor(Qt::PointingHandCursor);
         setName(this->name);
         update();
+        if(isWp && e->modifiers()==Qt::ShiftModifier) slot_setWP();
         if(route!=NULL)
         {
             route->setFastVmgCalc(false);
             route->slot_recalculate();
         }
-        if(isWp) slot_setWP();
         return;
     }
 
@@ -419,7 +430,7 @@ void POI::contextMenuEvent(QGraphicsSceneContextMenuEvent * e)
     boat * ptr=parent->getSelectedBoat();
     if(ptr)
     {
-        ac_setWp->setText(tr("Marque->WP : ")+ptr->getBoatName());
+        ac_setWp->setText(tr("Marque->WP : ")+ptr->getBoatPseudo());
     }
     else
         ac_setWp->setEnabled(false);
@@ -469,7 +480,7 @@ void POI::setTip(QString tip)
     {
         Orthodromie orth2boat(w_boat->getLon(), w_boat->getLat(), lon, lat);
         double   distance=orth2boat.getDistance();
-        QString tt=tr("Distance Ortho a partir de ")+w_boat->getBoatName()+": "+
+        QString tt=tr("Distance Ortho a partir de ")+w_boat->getBoatPseudo()+": "+
                    Util::formatDistance(distance);
         tt=tt.replace(" ","&nbsp;");
         setToolTip(getTypeStr() + " : " + my_str + "<br>"+tt+tip);
@@ -549,6 +560,7 @@ void POI::setRoute(ROUTE *route)
     if(this->route!=NULL)
     {
         if(this->route->getFrozen()) return;
+        this->notSimplificable=false;
         this->route->removePoi(this);
         this->routeName="";
     }
@@ -560,6 +572,7 @@ void POI::setRoute(ROUTE *route)
     }
     else
     {
+        this->notSimplificable=false;
         setRouteTimeStamp(false);
     }
 }
@@ -628,16 +641,17 @@ void POI::slot_delPoi()
     if(route!=NULL)
         if(route->getFrozen()) return;
     int rep = QMessageBox::question (parent,
-            tr("Détruire la marque"),
+            tr("Detruire la marque"),
             tr("La destruction d'une marque est definitive.\n\nEtes-vous sur ?"),
             QMessageBox::Yes | QMessageBox::No);
     if (rep == QMessageBox::Yes) {
 
-        emit delPOI_list(this);
         if(route!=NULL)
         {
-            route->removePoi(this);
+            if(route->isBusy()) return;
+            setRoute(NULL);
         }
+        emit delPOI_list(this);
         rmSignal();
         close();
     }
@@ -658,6 +672,8 @@ void POI::slot_WPChanged(double tlat,double tlon)
     WPlon=tlon;
     chkIsWP();
     VLMBoardIsBusy=false;
+    if (this->isWp)
+        this->setWph(parent->getSelectedBoat()->getWPHd());
 }
 QString POI::getRouteName()
 {
@@ -682,10 +698,18 @@ void POI::slot_finePosit()
     if (this->route==NULL) return;
     if (this->route->getFrozen()) return;
     if (route->getLastPoi()==this) return;
+    if (route->isBusy()) return;
+    if (route->getOptimizing()) return;
+    if (route->getUseVbvmgVlm())
+    {
+        QMessageBox::critical(0,tr("Optimisation du placement d'un POI"),
+                              tr("Vous ne pouvez pas optimiser en mode VBVMG-VLM"));
+        return;
+    }
     this->abortSearch=false;
     double savedLon=lon;
     double savedLat=lat;
-    finePosit * dia=new finePosit(this,parent);
+    DialogFinePosit * dia=new DialogFinePosit(this,parent);
     if(dia->exec()!=QDialog::Accepted)
     {
         delete dia;
@@ -695,8 +719,6 @@ void POI::slot_finePosit()
     double rangeLon=searchRangeLon;
     double rangeLat=searchRangeLat;
     double step=searchStep;
-    setLongitude(lon-rangeLon/2.0);
-    setLatitude(lat-rangeLat/2.0);
     time_t bestEta=0;
     bool has_bestEta=false;
     double bestRemain=0;
@@ -704,6 +726,7 @@ void POI::slot_finePosit()
     double bestLon=0;
     double bestLat=0;
     double sens=1;
+    QString r;
     route->setOptimizing(!this->optimizing);
     route->setOptimizingPOI(true);
     route->setPoiName(this->name);
@@ -712,6 +735,21 @@ void POI::slot_finePosit()
     route->setFastVmgCalc(true);
     Orthodromie fromBoat(route->getStartLon(),route->getStartLat(),lon,lat);
     float bestDistance=0;
+    POI * previousMe=NULL;
+    route->slot_recalculate();
+    if (route->getHas_eta())
+    {
+        tm.setTimeSpec(Qt::UTC);
+        tm.setTime_t(route->getEta());
+        previousMe=new POI(tr("ETA du prochain POI: ")+tm.toString("dd MMM-hh:mm"),0,savedLat,savedLon,this->proj,this->owner,this->parent,0,0,false,this->myBoat);
+    }
+    else
+        previousMe=new POI(tr("Dist. restante du prochain POI: ")+r.sprintf("%.2f milles",route->getRemain()),
+                     0,savedLat,savedLon,this->proj,this->owner,this->parent,0,0,false,this->myBoat);
+    parent->slot_addPOI_list(previousMe);
+    setLongitude(lon-rangeLon/2.0);
+    setLatitude(lat-rangeLat/2.0);
+    QApplication::processEvents();
     while(lon<savedLon+rangeLon/2)
     {
         while((sens==1.0 && lat<savedLat+rangeLat/2.0)||(sens==-1.0 && lat>savedLat-rangeLat/2.0))
@@ -788,7 +826,6 @@ void POI::slot_finePosit()
                         bestRemain=route->getRemain();
                         bestLon=lon;
                         bestLat=lat;
-                        QString r;
                         best=new POI(tr("Meilleure distance restante: ")+r.sprintf("%.2f milles",bestRemain),
                                      0,bestLat,bestLon,this->proj,this->owner,this->parent,0,0,false,this->myBoat);
                         parent->slot_addPOI_list(best);
@@ -822,6 +859,11 @@ void POI::slot_finePosit()
         {
             parent->slot_delPOI_list(best);
             delete best;
+            if(Settings::getSetting("keepOldPoi","0").toInt()==0)
+            {
+                parent->slot_delPOI_list(previousMe);
+                delete previousMe;
+            }
             setLongitude(bestLon);
             setLatitude(bestLat);
             if(isWp) slot_setWP();
@@ -835,12 +877,19 @@ void POI::slot_finePosit()
                 parent->slot_delPOI_list(best);
                 delete best;
             }
+            parent->slot_delPOI_list(previousMe);
+            delete previousMe;
         }
     }
     else
     {
         parent->slot_delPOI_list(best);
         delete best;
+        if(Settings::getSetting("keepOldPoi","0").toInt()==0)
+        {
+            parent->slot_delPOI_list(previousMe);
+            delete previousMe;
+        }
         setLongitude(bestLon);
         setLatitude(bestLat);
         if(isWp) slot_setWP();

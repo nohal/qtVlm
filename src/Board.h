@@ -36,7 +36,10 @@ class board : public QWidget
         boardVLM * VLMBoard(void) {return vlm_board; }
         boardReal * realBoard(void) {return real_board; }
 
+        void playerChanged(Player * player);
+
         int currentBoardType(void);
+        void floatingBoard(bool status);
 
     public slots:
         void boatUpdated(boat * boat);
@@ -56,6 +59,8 @@ class board : public QWidget
         QDockWidget * realDock;
 
         boat * curBoat;
+        int playerType;
+        bool isFloatingBoard;
 };
 
 #endif // BOARD_H

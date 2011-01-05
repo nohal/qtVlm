@@ -24,6 +24,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <stdint.h>
 #include <cmath>
 #include <cassert>
+#include <QColor>
 
 //#define __QTVLM_WITH_TEST
 
@@ -95,11 +96,73 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #define INTERPOLATION_DEFAULT          INTERPOLATION_HYBRID
 
+#define SHOW_PSEUDO 0
+#define SHOW_NAME   1
+#define SHOW_IDU    2
+
+#define SHOW_MY_LIST 0
+#define SHOW_TEN_FIRST 1
+#define SHOW_TEN_CLOSEST_RANKING 2
+#define SHOW_TEN_CLOSEST_DISTANCE 3
+#define SHOW_NONE 4
+
+#define RACE_MAX_BOAT 15
+
+struct boatParam {
+    QString pseudo;
+    QString name;
+    QString user_id;
+    bool selected;
+    QString rank;
+    QString statusVLM;
+    QString last1h;
+    QString last3h;
+    QString last24h;
+    QString fromFirst;
+    QString pavillon;
+    float longitude;
+    float latitude;
+    QString dnm;
+};
+struct raceParam {
+    QString id;
+    QString name;
+    QList <boatParam*> boats;
+    QList <boatParam*> arrived;
+    bool displayNSZ;
+    double latNSZ;
+    double widthNSZ;
+    QColor colorNSZ;
+    int showWhat;
+};
+
+
+
+struct windData
+{
+        double u0;
+        double u1;
+        double u2;
+        double u3;
+        double v0;
+        double v1;
+        double v2;
+        double v3;
+} ;
+
+/* Export Import format */
+
+#define ADRENA_FORMAT 0 /*same format used to export from qtvlm*/
+#define MS_FORMAT 1
+#define SBS_FORMAT 2
+
 /* colors */
 
 #define SPEED_COLOR_UPDATE    "color: rgb(100, 200, 0);"
 #define SPEED_COLOR_VLM       "color: rgb(255, 0, 0);"
 #define SPEED_COLOR_NO_POLAR  "color: rgb(255, 170, 127);"
+
+#define QWARN qWarning() << "In" << __FILE__ << ", (line" << __LINE__ << "): "
 
 /* angle helper functions */
 

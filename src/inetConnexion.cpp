@@ -24,6 +24,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "inetConnexion.h"
 
 #include "inetClient.h"
+#include "DialogInetProgess.h"
 #include "Util.h"
 #include "dataDef.h"
 
@@ -40,7 +41,7 @@ inetConnexion::inetConnexion(QWidget * main)
             this,SLOT(slot_authRequired(QNetworkReply*,QAuthenticator*)));
 
     slot_updateInet();
-    progressDialog=new inetConn_progressDialog();
+    progressDialog=new DialogInetProgess();
     hasProgress=false;
 }
 
@@ -117,7 +118,8 @@ void inetConnexion::doRequest(int type,inetClient* client,QString requestUrl,QSt
 
     page=host+requestUrl;
 #if 0
-    qWarning() << "Doing inet request: " << page ;
+    //if(page.contains("track"))
+        qWarning() << "Doing inet request: " << page ;
 #endif
     QNetworkRequest request;
     request.setUrl(QUrl(page));
@@ -131,8 +133,10 @@ void inetConnexion::doRequest(int type,inetClient* client,QString requestUrl,QSt
         QString headerData = "Basic " + data;
         request.setRawHeader("Authorization", headerData.toLocal8Bit());
         //qWarning() << "Adding auth data: " <<concatenated << " - " << headerData;
-        //delete inetManager->cookieJar();
+//        if(inetManager->cookieJar())
+//            delete inetManager->cookieJar();
         inetManager->setCookieJar(new QNetworkCookieJar());
+        //inetManager->cookieJar()->setParent(0);
     }
 
     if(type==REQUEST_POST)
@@ -248,57 +252,3 @@ void inetConnexion::slot_progess(qint64 bytesReceived, qint64 bytesTotal )
     if(hasProgress)
         progressDialog->updateProgress(bytesReceived,bytesTotal);
 }
-
-/*********************************************
-  Progress bar
-  *******************************************/
-
-inetConn_progressDialog::inetConn_progressDialog(QWidget * parent) : QDialog(parent)
-{
-    setupUi(this);
-}
-
-void inetConn_progressDialog::showDialog(QString name)
-{
-    fileName->setText(name);
-    progress->reset();
-    progress_txt->setText("0/0 Kb");
-    setWindowModality(Qt::ApplicationModal);
-    show();
-}
-void inetConn_progressDialog::hideDialog()
-{
-    if(this->isVisible()) hide();
-}
-
-void inetConn_progressDialog::updateProgress(qint64 bytesReceived, qint64 bytesTotal)
-{
-    QString type;
-    QString str;
-    double received,total;
-    if(bytesTotal<1024)
-    {
-        type="b";
-        received=((double)bytesReceived);
-        total=((double)bytesTotal);
-    }
-    else if(bytesTotal<1024*1024)
-    {
-        type="Kb";
-        received=((double)bytesReceived)/1024.0;
-        total=((double)bytesTotal)/1024.0;
-    }
-    else
-    {
-        type="Mb";
-        received=((double)bytesReceived)/1024.0/1024.0;
-        total=((double)bytesTotal)/1024.0/1024.0;
-    }
-
-    progress->setMinimum(0);
-    progress->setMaximum((int)bytesTotal);
-    progress->setValue((int)bytesReceived);
-    str.sprintf("%.2f/%.2f ",received,total);
-    progress_txt->setText(str+type);
-}
-

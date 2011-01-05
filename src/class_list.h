@@ -41,10 +41,10 @@ class boatVLM;
 class boatReal;
 class Player;
 
-/* boatAccount_dialog.h */
-class boatAccount_dialog;
-class playerAccount;
-class paramAccountv;
+/* DialogBoatAccount.h */
+class DialogBoatAccount;
+class DialogPlayerAccount;
+class DialogParamAccount;
 
 /* inetClient.h */
 class inetClient;
@@ -53,7 +53,7 @@ class inetClient;
 class inetConnexion;
 
 /* dialog_gribDate.h */
-class dialog_gribDate;
+class DialogGribDate;
 
 /* DialogGraphicsParams.h */
 class InputLineParams_testZone;
@@ -68,11 +68,11 @@ class DialogLoadGrib;
 /* DialogProxy.h */
 class DialogProxy;
 
-/* DialogVLM_grib.h */
-class DialogVLM_grib;
+/* DialogVlmGrib.h */
+class DialogVlmGrib;
 
-/*finePosit.h*/
-class finePosit;
+/*DialogFinePositt.h*/
+class DialogFinePosit;
 
 /* Font.h */
 class Font;
@@ -92,8 +92,8 @@ class GshhsReader;
 /* GshhsRangsReader.h */
 class GshhsRangsReader;
 
-/* gribValidation.h */
-class gribValidation;
+/* DialogGribValidation.h */
+class DialogGribValidation;
 
 /* IsoLine.h */
 class IsoLine;
@@ -125,24 +125,27 @@ class Orthodromie;
 /* orthoSegment.h */
 class orthoSegment;
 
-/* paramVLM.h */
-class paramVLM;
+/* DialogParamVlm.h */
+class DialogParamVlm;
 
-/* Pilototo.h */
-class Pilototo;
-class Pilototo_instruction;
+/* DialogPilototo.h */
+class DialogPilototo;
+class DialogPilototoInstruction;
 
-/* Pilototo_param.h */
-class Pilototo_param;
+/* DialogPilototoParam.h */
+class DialogPilototoParam;
 
 /* POI.h */
 class POI;
 
-/* POI_input.h */
-class POI_input;
+/* DialogPoiInput.h */
+class DialogPoiInput;
 
-/* POI_Editor.h */
-class POI_Editor;
+/* DialogPoi.h */
+class DialogPoi;
+
+/* DialogPoiDelete.h */
+class DialogPoiDelete;
 
 /* Polar.h */
 class Polar;
@@ -151,20 +154,20 @@ class polarList;
 /* Projection.h */
 class Projection;
 
-/* race_dialog.h */
-class race_dialog;
+/* DialogRace.h */
+class DialogRace;
 
 /* routage.h */
 class ROUTAGE;
 
-/* ROUTAGE_Editor.h */
-class ROUTAGE_Editor;
+/* DialogRoutage.h */
+class DialogRoutage;
 
 /* route.h */
 class ROUTE;
 
-/* ROUTE_Editor.h */
-class ROUTE_Editor;
+/* DialogRoute.h */
+class DialogRoute;
 
 /* selectionWidget.h */
 class selectionWidget;
@@ -175,14 +178,17 @@ class Settings;
 /* Terrain.h */
 class Terrain;
 
-/*twaLine.h*/
-class twaLine;
+/*DialogTwaLine.h*/
+class DialogTwaLine;
 
 /* vlmLine.h */
 class vlmLine;
 
 /* vlmPoint.h */
 class vlmPoint;
+
+/* vlmPointGraphic.h */
+class vlmPointGraphic;
 
 /* xmlBoatData.h */
 class xml_boatData;
@@ -192,5 +198,14 @@ class xml_POIData;
 
 /* boatReal.h */
 class boatReal;
+
+/* DialogWp.h */
+class DialogWp;
+
+/* DialogInetProgess.h */
+class DialogInetProgess;
+
+/* DialogRealBoatConfig.h */
+class DialogRealBoatConfig;
 
 #endif // CLASS_LIST_H

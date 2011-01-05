@@ -93,6 +93,7 @@ void inetClient::resetReply()
     }
 }
 
+
 bool inetClient::checkWSResult(QByteArray res,QString caller,QWidget * parent,QString order)
 {
     QJson::Parser parser;
@@ -112,6 +113,9 @@ bool inetClient::checkWSResult(QByteArray res,QString caller,QWidget * parent,QS
     else
     {
         QVariantMap errorData = result["error"].toMap();
+#warning Radiation de boatsit: a remplacer par le code erreur ad-hoc qd paparazia aura fait la modif necessaire
+        if(errorData["code"].toString()=="XXXXXX") return true; /*cas de la radiation de boatsit*/
+        if(caller=="OppList_getTrack") return false; /*cas du opp qui a fini la course entre getranking et gettrack*/
         qWarning() << "Error doing " << caller << " cmd: code=" << errorData["code"].toString()
                 << " - message=" << errorData["msg"].toString();
         QMessageBox::critical(parent,QObject::tr("Erreur de communication avec VLM ds ")+caller,

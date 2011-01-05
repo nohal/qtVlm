@@ -27,22 +27,25 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "vlmLine.h"
 #include "Polar.h"
 #include "settings.h"
+#include "Player.h"
 
 #include "boat.h"
 
-boat::boat(QString name, bool activated,
+boat::boat(QString pseudo, bool activated,
            Projection * proj,MainWindow * main,myCentralWidget * parent): QGraphicsWidget()
 {
     this->mainWindow=main;
     this->parent=parent;
 
-    this->name=name;
+    this->pseudo=pseudo;
     selected = false;
     polarName="";
     polarData=NULL;
     changeLocked=false;    
     forceEstime=false;
     width=height=0;
+
+    WPLat=WPLon=lat=lon=0;
 
     setZValue(Z_VALUE_BOAT);
     setFont(QFont("Helvetica",9));
@@ -64,18 +67,28 @@ boat::boat(QString name, bool activated,
     this->proj = proj;
     this->labelHidden=parent->get_shLab_st();
 
+    //qWarning() << "Boat (" << pseudo << ") created labelHidden=" << labelHidden;
+
     createPopUpMenu();
 
-    connect(this,SIGNAL(boatUpdated(boat*,bool,bool)),main,SIGNAL(updateRoute()));
-    connect(parent, SIGNAL(shLab(bool)),this,SLOT(slot_shLab()));
+    //connect(this,SIGNAL(boatUpdated(boat*,bool,bool)),main,SIGNAL(updateRoute(boat *)));
+    connect(parent, SIGNAL(shLab(bool)),this,SLOT(slot_shLab(bool)));
 
+
+    this->activated=false;
     slot_paramChanged();
+    this->country="";
+    this->drawFlag=false;
+    this->flag=QImage();
+    updateBoatData();
+    this->activated=activated;
+    hide();
+    WPLine->hide();
+    estimeLine->hide();
 
-    if(activated)
+    /*if(activated)
         show();
-
-    connect(ac_select,SIGNAL(triggered()),this,SLOT(slot_selectBoat()));
-    connect(ac_estime,SIGNAL(triggered()),this,SLOT(slot_toggleEstime()));
+*/
 
     connect(this,SIGNAL(boatSelected(boat*)),main,SLOT(slotSelectBoat(boat*)));
     connect(this,SIGNAL(boatUpdated(boat*,bool,bool)),main,SLOT(slotBoatUpdated(boat*,bool,bool)));
@@ -101,9 +114,11 @@ void boat::createPopUpMenu(void)
 
     ac_select = new QAction("Selectionner",popup);
     popup->addAction(ac_select);
+    connect(ac_select,SIGNAL(triggered()),this,SLOT(slot_selectBoat()));
 
     ac_estime = new QAction("Afficher estime",popup);
     popup->addAction(ac_estime);
+    connect(ac_estime,SIGNAL(triggered()),this,SLOT(slot_toggleEstime()));
 
     ac_compassLine = new QAction(tr("Tirer un cap"),popup);
     popup->addAction(ac_compassLine);
@@ -126,20 +141,18 @@ void boat::slot_paramChanged()
             estime_param = Settings::getSetting("estimeTime",60).toInt();
             break;
         case 1: /* nb vac */
-            if(boat_type == BOAT_VLM)
-            {
-                estime_param = Settings::getSetting("estimeVac",10).toInt();
-                break;
-            }
+            estime_param = Settings::getSetting("estimeVac",10).toInt();
+            break;
         default: /* dist */
             estime_param = Settings::getSetting("estimeLen",100).toInt();
             break;
     }
+    this->updateBoatString();
     if(activated)
     {
         drawEstime();
-        update();
     }
+    update();
 }
 
 /**************************/
@@ -147,8 +160,15 @@ void boat::slot_paramChanged()
 /**************************/
 
 void boat::slot_selectBoat()
-{    
+{
+    if(this->getplayerName()!=parent->getPlayer()->getName())
+    {
+        selected=false;
+        return;
+    }
     selected = true;
+    trace_drawing->show();
+    if(this->boat_type==BOAT_REAL) return;
     updateTraceColor();
     emit boatSelected(this);
 }
@@ -162,6 +182,8 @@ void boat::unSelectBoat(bool needUpdate)
         update();
         updateTraceColor();
     }
+    if(this->boat_type==BOAT_REAL)
+        this->stopRead();
 }
 
 /**************************/
@@ -192,28 +214,71 @@ void boat::slot_toggleEstime()
 
 void boat::paint(QPainter * pnt, const QStyleOptionGraphicsItem * , QWidget * )
 {
+    /*if(!this->isVisible())
+        return;*/
     int dy = height/2;
     QPen pen(selected?Qt::darkRed:Qt::darkBlue);
-    pnt->setPen(pen);
+    pnt->setFont(QFont("Helvetica",9));
     if(!labelHidden)
     {
-        QFontMetrics fm(font());
-
-        pnt->fillRect(9,0, width-10,height-1, QBrush(bgcolor));
-        pnt->setFont(font());
-        pnt->drawText(10,fm.height()-2,my_str);
+        if(Settings::getSetting("showFlag",0).toInt()==1 && this->getType()==BOAT_VLM)
+        {
+            if(flag.isNull())
+            {
+                if(flag.load("img/flags/"+this->country+".png"))
+                {
+                    flag=flag.scaled(30,20,Qt::KeepAspectRatio);
+                    drawFlag=true;
+                    prepareGeometryChange();
+                }
+                else
+                    drawFlag=false;
+            }
+            else
+            {
+                if(!drawFlag)
+                    prepareGeometryChange();
+                drawFlag=true;
+            }
+        }
+        else
+        {
+            if(drawFlag)
+                prepareGeometryChange();
+            drawFlag=false;
+        }
+        pnt->setBrush(QBrush(bgcolor));
+        if(!drawFlag)
+            pnt->drawRoundRect(9,0, width,height, 50,50);
+        else
+            pnt->drawRoundRect(21,0, width,height, 50,50);
+        pnt->setBrush(Qt::NoBrush);
+        pnt->setPen(pen);
+        QFontMetrics fm(QFont("Helvetica",9));
+        int w = fm.width("_")+1;
+        if(!drawFlag)
+            pnt->drawText(w+9,height-height/4,my_str);
+        else
+            pnt->drawText(w+21,height-height/4,my_str);
     }
     pen.setColor(selected?selColor:myColor);
     pen.setWidth(4);
     pnt->setPen(pen);
-    pnt->fillRect(0,dy-3,7,7, QBrush(selected?selColor:myColor));
-
+    if(!drawFlag)
+        pnt->fillRect(0,dy-3,7,7, QBrush(selected?selColor:myColor));
+    else
+        pnt->drawImage(-11,dy-9,flag);
     int g = 60;
     pen = QPen(QColor(g,g,g));
     pen.setWidth(1);
     pnt->setPen(pen);
     if(!labelHidden)
-        pnt->drawRect(9,0,width-10,height-1);
+    {
+        if(!drawFlag)
+            pnt->drawRoundRect(9,0, width,height, 50,50);
+        else
+            pnt->drawRoundRect(21,0, width,height, 50,50);
+    }
 
     //drawEstime();
 }
@@ -234,7 +299,6 @@ void boat::updateTraceColor(void)
         trace_drawing->setLinePen(penLine);
         trace_drawing->setPointMode(myColor);
     }
-#warning utilisation de VAC pour les real Boat ?
     trace_drawing->setNbVacPerHour(3600/getVacLen());
     trace_drawing->slot_showMe();
 }
@@ -273,12 +337,9 @@ void boat::drawEstime(float myHeading, float mySpeed)
                 estime = (float)((float)(estime_param/float(60.0000000000)))*mySpeed;
                 break;
             case 1: /* nb vac */
-                if(boat_type == BOAT_VLM)
-                {
-                    estime_param_2=getVacLen();
-                    estime = (float)((((float)(estime_param*estime_param_2))/3660.000000000)*mySpeed);
-                    break;
-                }
+                estime_param_2=getVacLen();
+                estime = (float)((((float)(estime_param*estime_param_2))/3660.000000000)*mySpeed);
+                break;
             default: /* dist */
                 estime = estime_param;
                 break;
@@ -317,7 +378,10 @@ QPainterPath boat::shape() const
 
 QRectF boat::boundingRect() const
 {
-    return QRectF(0,0,width,height);
+    if(!drawFlag)
+        return QRectF(0,0,width+10,height+2);
+    else
+        return QRectF(-12,height/2-10,width+30,25);
 }
 
 /**************************/
@@ -326,7 +390,7 @@ QRectF boat::boundingRect() const
 
 void boat::updateBoatData()
 {
-    updateBoatName();
+    updateBoatString();
     reloadPolar();
     updatePosition();
     updateHint();
@@ -338,6 +402,7 @@ void boat::updatePosition(void)
     Util::computePos(proj,lat,lon,&boat_i,&boat_j);
     boat_i-=3;
     boat_j-=(height/2);
+    //qWarning() << "upd position: " << x() << "," << y() << " -> " << boat_i << "," << boat_j;
     setPos(boat_i, boat_j);
     drawEstime();
 }
@@ -350,24 +415,45 @@ void boat::slot_projectionUpdated()
 
 void boat::setStatus(bool activated)
 {
+    //qWarning() << "BOAT: " << this->getBoatPseudo() << " setStatus=" << activated;
      this->activated=activated;
      setVisible(activated);
+     slot_paramChanged();
+     updateBoatData();
+
+
      if(!activated)
      {
         WPLine->hide();
         estimeLine->hide();
+        if(this->boat_type==BOAT_REAL)
+            this->stopRead();
      }
 }
 
-void boat::setParam(QString name)
+void boat::playerDeActivated(void)
 {
-     this->name=name;
+    //qWarning() << "Deactivation of: " << this->getBoatPseudo();
+    if(selected)
+        this->unSelectBoat(false);
+    this->hide();
+    setVisible(false);
+    trace_drawing->hide();
+    WPLine->hide();
+    estimeLine->hide();
+    if(this->boat_type==BOAT_REAL)
+        this->stopRead();
 }
 
-void boat::setParam(QString name, bool activated)
+void boat::setParam(QString pseudo)
+{
+     this->pseudo=pseudo;
+}
+
+void boat::setParam(QString pseudo, bool activated)
 {
     setStatus(activated);
-    setParam(name);
+    setParam(pseudo);
 }
 
 void boat::reloadPolar(void)
@@ -393,7 +479,7 @@ void boat::reloadPolar(void)
 
 void boat::setLockStatus(bool status)
 {
-#warning n a probablement d interet que pour les boat VLM
+//n'a probablement d interet que pour les boat VLM
     if(status!=changeLocked)
     {
         changeLocked=status;
@@ -404,7 +490,10 @@ void boat::setLockStatus(bool status)
 void boat::slot_updateGraphicsParameters()
 {
     if(activated)
+    {
         drawEstime();
+        showNextGates();
+    }
 }
 
 /**************************/
@@ -440,18 +529,18 @@ void boat::contextMenuEvent(QGraphicsSceneContextMenuEvent * e)
     {
         case 0:
             /* not showing menu line, default text*/
-            ac_compassLine->setText("Tirer un cap");
+            ac_compassLine->setText(tr("Tirer un cap"));
             ac_compassLine->setEnabled(true);
             break;
         case 1:
             /* showing text for compass line off*/
-            ac_compassLine->setText("Arret du cap");
+            ac_compassLine->setText(tr("Arret du cap"));
             ac_compassLine->setEnabled(true);
             onlyLineOff=true;
             break;
         case 2:
         case 3:
-            ac_compassLine->setText("Tirer un cap");
+            ac_compassLine->setText(tr("Tirer un cap"));
             ac_compassLine->setEnabled(true);
             break;
         }

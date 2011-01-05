@@ -28,7 +28,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 QSettings *fileSettings;
 
-Settings::Settings()
+void Settings::initSettings(void)
 {
     if (! QFile::exists (SETTINGS_FILE))
     {
@@ -43,7 +43,7 @@ Settings::Settings()
                 QMessageBox::Yes | QMessageBox::No
                 ) == QMessageBox::Yes)
             {
-                loadFromReg();
+                Settings::loadFromReg();
             }
         }
     }

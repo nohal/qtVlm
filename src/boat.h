@@ -33,27 +33,43 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 class boat: public QGraphicsWidget
 { Q_OBJECT
     public:
-        boat(QString name, bool activated,
+        boat(QString pseudo, bool activated,
             Projection * proj,MainWindow * main,myCentralWidget * parent);
         ~boat();
 
         virtual void setStatus(bool activated);
-        void setParam(QString name);
-        void setParam(QString name, bool activated);
+        virtual void showNextGates(){return;}
+        void setParam(QString pseudo);
+        void setParam(QString pseudo, bool activated);
         void setLockStatus(bool status);
         void setZoom(float zoom)   { this->zoom=zoom; }
         void setForceEstime(bool force_estime) { this->forceEstime=force_estime;}
         virtual void unSelectBoat(bool needUpdate);
-        virtual int getVacLen(void) {return 1; }
         virtual int getId(void) {return -1; }
-        virtual QString getPlayerName(void){return QString();}
+        QString getplayerName(void)     {    return playerName; }
+        virtual void stopRead(){return;}
 
-        virtual QString getBoatName(void)       {    return name; }
+        virtual void reloadPolar(void);
+
+        void playerDeActivated(void);
+        void playerActivated(void) { setStatus(activated); }
+
         bool getStatus(void)            {    return activated; }
+        int getVacLen(void)             {    return vacLen; }
         double getLat(void)             {    return lat; }
         double getLon(void)             {    return lon; }
         float getSpeed(void)            {    return speed; }
         float getHeading(void)          {    return heading; }
+        float getAvg(void)              {    return avg; }
+        float getDnm(void)              {    return dnm; }
+        float getLoch(void)             {    return loch; }
+        float getOrtho(void)            {    return ortho; }
+        float getLoxo(void)             {    return loxo; }
+        float getVmg(void)              {    return vmg; }
+        float getWindDir(void)          {    return windDir; }
+        float getWindSpeed(void)        {    return windSpeed; }
+        float getTWA(void)              {    return TWA; }
+        float getWPHd(void)             {    return WPHd; }
         QString getPolarName(void)      {    return polarName; }
         Polar * getPolarData(void)      {    return polarData; }
         bool getLockStatus(void)        {    return changeLocked;}
@@ -64,9 +80,15 @@ class boat: public QGraphicsWidget
         bool isUpdating()               {    return false; }
         double getWPLat(void)           {    return WPLat; }
         double getWPLon(void)           {    return WPLon; }
+        int getRank(void)               {    return rank; }
+        QString getScore(void)          {    return score;}
+        QString getBoatPseudo(void)     {    return pseudo; }
+        QString getOwn(void)            {    return own; }
 
         float getBvmgUp(float ws);
         float getBvmgDown(float ws);
+        int getX(){return x();}
+        int getY(){return y();}
 
         int getType(void) { return boat_type; }
 
@@ -82,7 +104,7 @@ class boat: public QGraphicsWidget
         virtual void slot_selectBoat();
         void slot_toggleEstime();
         void slot_updateGraphicsParameters();
-        void slot_shLab(){this->labelHidden=!this->labelHidden;update();}        
+        void slot_shLab(bool state){this->labelHidden=state;update();}
         virtual void slot_shSall() { }
         virtual void slot_shHall() { }
         void slotTwaLine(){parent->twaDraw(lon,lat);}
@@ -96,6 +118,7 @@ class boat: public QGraphicsWidget
         void releasePolar(QString fname);
         void clearSelection(void);
         void compassLine(int,int);
+        void getTrace(QByteArray,QList<vlmPoint> *);
 
     protected:
         void contextMenuEvent(QGraphicsSceneContextMenuEvent * event);
@@ -107,13 +130,31 @@ class boat: public QGraphicsWidget
         QString polarName;
         Polar * polarData;
 
-        QString name;
+        QString pseudo;
         bool activated;
         bool changeLocked;
         bool selected;
         double lat,lon;
         double WPLat,WPLon;
         float speed,heading;
+
+
+        float avg;
+        float dnm,loch,ortho,loxo,vmg;
+        float windDir,windSpeed;
+        float TWA;
+
+        float WPHd;
+        QString ETA;
+        QString score;
+        time_t prevVac;
+        time_t nextVac;
+        int nWP;
+        int   vacLen;
+        int rank;
+
+
+
         float zoom;
 
         Projection * proj;
@@ -125,6 +166,7 @@ class boat: public QGraphicsWidget
         QCursor   enterCursor;
         int       width,height;
         QString   my_str;
+        QString   playerName;
 
         /* trace */
         vlmLine * trace_drawing;
@@ -155,11 +197,14 @@ class boat: public QGraphicsWidget
         QAction * ac_twaLine;
         void createPopUpMenu();        
 
-        void updateBoatData(void);
-        virtual void reloadPolar(void);
-        virtual void updateBoatName(void)  { }
+        void updateBoatData(void);        
+        virtual void updateBoatString(void)  { }
         virtual void updateHint(void)      { }
-
+        virtual void myCreatePopUpMenu(void)   {  }
+        QString country;
+        QImage flag;
+        bool drawFlag;
+        QString own;
 };
 
 #endif // BOAT_H

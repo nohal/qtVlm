@@ -98,12 +98,17 @@ public:
     QMenu   *mnCompassCenterRoute;
     QAction *ac_centerMap;
 
+    QAction * ac_moveBoat;
+    QAction * ac_moveBoatSep;
+
     QAction *acFile_Open;
     QAction *acFile_Close;
     QAction *acFile_Load_GRIB;
     QAction *acFile_Load_VLM_GRIB;
+    QAction *acFile_Load_SAILSDOC_GRIB;
     QAction *acFile_Info_GRIB;
     QAction *acFile_Quit;
+    QAction *acFile_QuitNoSave;
 
     QAction *acRoute_add;
     QMenu   *mnRoute_edit;
@@ -247,6 +252,8 @@ public:
      QAction *acOptions_SH_Lab;
      QAction *acOptions_SH_Pol;
      QAction *acOptions_SH_Boa;
+     QAction *acOptions_SH_Fla;
+     QAction *acKeep;
 
 
 
@@ -261,6 +268,7 @@ public:
     QAction *acPOIimport;
     QAction *acVLMSync;
     QAction *acPOISave;
+    QAction *acPOIRestore;
     QAction *acPilototo;
     QAction *acRace;
 

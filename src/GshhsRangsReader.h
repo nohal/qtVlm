@@ -68,7 +68,7 @@ class GshhsRangsCell
 {
     public:
 
-         GshhsRangsCell(FILE *fcat, FILE *fcel, FILE *frim, int x0, int y0);
+         GshhsRangsCell(FILE *fcat, FILE *fcel, FILE *frim, int x0, int y0, Projection *proj);
         ~GshhsRangsCell() {
                 Util::cleanListPointers(lsPolygons);
             }
@@ -78,7 +78,8 @@ class GshhsRangsCell
 
         void  drawSeaBorderLines(QPainter &pnt, double dx, Projection *proj);
 		
-		uint  getPoligonSizeMax() {return poligonSizeMax;}
+        uint  getPoligonSizeMax() {return poligonSizeMax;}
+        QList<QLineF> * getCoasts(){return & this->coasts;}
     
     private:
         int nbpoints;
@@ -96,6 +97,8 @@ class GshhsRangsCell
         bool readPolygonList();
         int  readSegmentLoop();
         void readSegmentRim(int RimAddress, int RimLength, GshhsRangsPolygon *polygon);
+        QList<QLineF> coasts;
+        Projection *proj;
 
 };
 
@@ -112,6 +115,7 @@ class GshhsRangsReader
         void drawGshhsRangsMapSeaBorders( QPainter &pnt, Projection *proj);
         
         void setQuality(int quality); // 5 levels: 0=low ... 4=full
+        bool crossing(QLineF traject,QLineF trajectWorld);
 
     private:
     	int currentQuality;

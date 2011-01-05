@@ -32,9 +32,10 @@ Copyright (C) 2008 - Jacques Zaninetti - http://zygrib.free.fr
 #include "LoadGribFile.h"
 #include "Util.h"
 #include "Version.h"
-#include "sha1/sha1.h"
+#include "libs/sha1/sha1.h"
+#include <QMessageBox>
 
-#warning zyGrib dwn n utilise pas les classes std
+// zyGrib dwn n'utilise pas les classes std
 
 //-------------------------------------------------------------------------------
 LoadGribFile::LoadGribFile()
@@ -45,7 +46,7 @@ LoadGribFile::LoadGribFile()
     zygribpwd = "61c9b2b17db77a27841bbeeabff923448b0f6388";
 
     inetManager = new QNetworkAccessManager(this);
-    step1_InetReply=step2_InetReply=NULL;
+    step1_InetReply=step2_InetReply=step3_InetReply=NULL;
     assert(inetManager);
 
     host = "http://www.zygrib.org";
@@ -86,7 +87,7 @@ void LoadGribFile::getGribFile(
     QString page;
 
     //----------------------------------------------------------------
-    // Etape 1 : Demande la création du fichier Grib (nom en retour)
+    // Etape 1 : Demande la creation du fichier Grib (nom en retour)
     //----------------------------------------------------------------
 
     QString parameters = "";
@@ -146,7 +147,7 @@ void LoadGribFile::getGribFile(
         Util::paramProxy(inetManager,host);
 
         step = 1;
-        emit signalGribSendMessage(tr("Préparation du fichier sur le serveur"));
+        emit signalGribSendMessage(tr("Preparation du fichier sur le serveur"));
         QTextStream(&page)
                 << host
                 << "/noaa/getzygribfile2.php?"
@@ -171,7 +172,7 @@ void LoadGribFile::getGribFile(
         step1_InetReply=inetManager->get(request);
     }
 
-    // Suite de la séquence de récupération dans requestFinished()
+    // Suite de la sequence de recuperation dans requestFinished()
 }
 
 //-------------------------------------------------------------------------------
@@ -184,7 +185,7 @@ void LoadGribFile::requestFinished ( QNetworkReply* inetReply)
     else if(inetReply == step1_InetReply)
     {
         //-------------------------------------------
-        // Retour de l'étape 1 : préparation du fichier
+        // Retour de l'etape 1 : preparation du fichier
         //-------------------------------------------
         QString strbuf = inetReply->readAll();
         QStringList lsbuf = strbuf.split("\n");
@@ -236,9 +237,10 @@ gfs_run_hour:6
             request.setUrl(QUrl(page));
             Util::addAgent(request);               
             step2_InetReply=inetManager->get(request);
+            connect(step2_InetReply,SIGNAL(downloadProgress(qint64,qint64)),this,SIGNAL(progress(qint64,qint64)));
         }
         else {
-            emit signalGribLoadError(tr("Pas de fichier créé sur le serveur:")+status);
+            emit signalGribLoadError(tr("Pas de fichier cree sur le serveur:")+status);
         }
     }
     else if(inetReply == step2_InetReply)
@@ -265,15 +267,31 @@ gfs_run_hour:6
         if (strsha1 == checkSumSHA1)
         {
             //--------------------------------------------------
-            // Signale la fin du téléchargement
+            // Signale la fin du telechargement
             //--------------------------------------------------
             emit signalGribDataReceived(&arrayContent, fileName.replace("%20",".grb"));
-            emit signalGribSendMessage(tr("Terminé"));
+            emit signalGribSendMessage(tr("Termine"));
         }
         else {
             emit signalGribLoadError(tr("Checksum incorrect."));
         }
     }
+    else if(inetReply == step3_InetReply)
+    {
+        arrayContent = inetReply->readAll();
+        QString content= arrayContent;
+        QMessageBox::information (0,
+            tr("Informations sur le serveur zyGrib"),
+            content);
+        emit ungrayButtons();
+    }
 }
-
+void LoadGribFile::getServerStatus()
+{
+    Util::paramProxy(inetManager,host);
+    QNetworkRequest request;
+    request.setUrl(QUrl(host+"/noaa/getServerStatus.php"));
+    Util::addAgent(request);
+    step3_InetReply=inetManager->get(request);
+}
 

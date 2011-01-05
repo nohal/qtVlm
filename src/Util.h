@@ -41,9 +41,9 @@ Copyright (C) 2008 - Jacques Zaninetti - http://zygrib.free.fr
 #include "dataDef.h"
 
 #ifdef __QTVLM_WITH_TEST
-#define NB_URL 3
+#define NB_URL 4
 #else
-#define NB_URL 2
+#define NB_URL 3
 #endif
 
 extern QString url_name[NB_URL];
@@ -88,6 +88,7 @@ class Util
     static QString pos2String(int type,float value);
     static QString getHost();
     static void computePos(Projection * proj, float lat, float lon, int * x, int * y);
+    static void computePosFloat(Projection * proj, float lat, float lon, float * x, float * y);
     static void addAgent(QNetworkRequest & request);
 
     //-------------------------------------------------

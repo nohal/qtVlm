@@ -34,11 +34,15 @@ class boardReal: public QWidget , public Ui::boardReal_ui
 
         void boatUpdated(void);
         void setChangeStatus(bool);
+        void setCompassVisible(bool status);
 
     public slots:
         void disp_boatInfo();
         void paramChanged(void);
         void slot_hideShowCompass();
+        void startGPS(void);
+        void stopGPS(void);
+        void chgBoatPosition();
 
     signals:
         void showMessage(QString,int);
@@ -53,6 +57,8 @@ class boardReal: public QWidget , public Ui::boardReal_ui
         /* contextual menu */
         QMenu *popup;
         QAction * ac_showHideCompass;
+
+        boatReal * currentBoat(void);
 };
 
 #endif // BOARDREAL_H

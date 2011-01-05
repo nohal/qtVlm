@@ -20,6 +20,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <QMessageBox>
 #include <QFile>
+#include <QFileInfo>
 #include <QTextStream>
 #include <QDebug>
 #include <QDateTime>
@@ -80,16 +81,32 @@ void Polar::setPolarName(QString fname)
     name=fname;
     QString nameF = "polar/"+fname+".csv";
     QFile file(nameF);
-    if (!file.open(QIODevice::ReadOnly | QIODevice::Text ))
+    if (fname.endsWith(".csv",Qt::CaseInsensitive) || fname.endsWith(".pol",Qt::CaseInsensitive))
     {
-        isCsv=false;
-        nameF = "polar/"+fname+".pol";
+        nameF="polar/"+fname;
         file.setFileName(nameF);
         if (!file.open(QIODevice::ReadOnly | QIODevice::Text ))
         {
-             QMessageBox::warning(0,QObject::tr("Lecture de polaire"),
-                 QString(QObject::tr("Impossible d'ouvrir le fichier %1 (ni en .csv ni en .pol)")).arg(name));
-             return;
+            QMessageBox::warning(0,QObject::tr("Lecture de polaire"),
+                QString(QObject::tr("Impossible d'ouvrir le fichier %1")).arg(name));
+            return;
+        }
+
+        isCsv=fname.endsWith("csv",Qt::CaseInsensitive);
+    }
+    else
+    {
+        if (!file.open(QIODevice::ReadOnly | QIODevice::Text ))
+        {
+            isCsv=false;
+            nameF = "polar/"+fname+".pol";
+            file.setFileName(nameF);
+            if (!file.open(QIODevice::ReadOnly | QIODevice::Text ))
+            {
+                 QMessageBox::warning(0,QObject::tr("Lecture de polaire"),
+                     QString(QObject::tr("Impossible d'ouvrir le fichier %1 (ni en .csv ni en .pol)")).arg(name));
+                 return;
+            }
         }
     }
     QTextStream stream(&file);
@@ -214,7 +231,8 @@ void Polar::setPolarName(QString fname)
     }while(ws<60.1);
     file.close();
     loaded=true;
-    QString nameFVmg = "polar/"+fname+".vmg";
+    QFileInfo fi(file.fileName());
+    QString nameFVmg = "polar/"+fi.baseName()+".vmg";
     fileVMG.setFileName(nameFVmg);
     if (fileVMG.open(QIODevice::ReadOnly | QIODevice::Text ))
     {
