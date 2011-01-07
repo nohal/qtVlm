@@ -127,26 +127,22 @@ class myCentralWidget : public QWidget
         /* route */
         QList<ROUTE*> & getRouteList(){ return this->route_list;}
         bool freeRouteName(QString name, ROUTE * route);
-        void update_menuRoute();
-        void deleteRoute(ROUTE * route);
-        void removeRoute(ROUTE * route);
         void assignPois();
         void emitUpdateRoute(boat * boat){emit updateRoute(boat);}
         ROUTE * addRoute();
         void setCompassFollow(ROUTE * route);
         ROUTE * getCompassFollow(){return this->compassRoute;}
         void centerCompass(double lon,double lat);
-
-        /* routage */
+        void update_menuRoute();
+/* routage */
         QList<ROUTAGE*> & getRoutageList(){ return this->routage_list;}
         bool freeRoutageName(QString name, ROUTAGE * routage);
-        void update_menuRoutage();
-        void deleteRoutage(ROUTAGE * routage);
-        void removeRoutage(ROUTAGE * routage);
         ROUTAGE * addRoutage();
         int getNbRoutage(){return nbRoutage;}
         void addPivot(ROUTAGE * fromRoutage,bool editOptions=false);
+/*Other*/
         Projection * getProj(void){return proj;}
+        void update_menuRoutage();
 
         void send_redrawAll() { emit redrawAll(); }
 
@@ -218,10 +214,12 @@ class myCentralWidget : public QWidget
         void slot_editRoute(ROUTE * route,bool createMode=false);
         void slot_twaLine();
         void slot_releaseCompassFollow(){this->compassRoute=NULL;}
+        void slot_deleteRoute();
 
         /*Routages */
         void slot_addRoutageFromMenu();
         void slot_editRoutage(ROUTAGE * routage,bool createMode=false);
+        void slot_deleteRoutage();
 
         /* Players */
         void slot_addPlayer_list(Player* player);
@@ -374,7 +372,9 @@ class myCentralWidget : public QWidget
         ROUTE * compassRoute;
         int nbRoutage;
         bool keepPos;
-
+        void deleteRoute(ROUTE * route);
+        void myDeleteRoute(ROUTE * route);
+        void deleteRoutage(ROUTAGE * routage);
 };
 
 #endif // MYCENTRALWIDGET_H

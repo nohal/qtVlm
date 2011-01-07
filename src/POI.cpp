@@ -162,6 +162,12 @@ void POI::createPopUpMenu(void)
     popup->addAction(ac_delPoi);
     connect(ac_delPoi,SIGNAL(triggered()),this,SLOT(slot_delPoi()));
 
+    ac_delRoute = new QAction(tr("Supprimer la route "),popup);
+    ac_delRoute->setData(QVariant(QMetaType::VoidStar, &route));
+    popup->addAction(ac_delRoute);
+    ac_delRoute->setVisible(false);
+    connect(ac_delRoute,SIGNAL(triggered()),parent,SLOT(slot_deleteRoute()));
+
     ac_copy = new QAction(tr("Copier"),popup);
     popup->addAction(ac_copy);
     connect(ac_copy,SIGNAL(triggered()),this,SLOT(slot_copy()));
@@ -381,6 +387,8 @@ void POI::contextMenuEvent(QGraphicsSceneContextMenuEvent * e)
         ac_delPoi->setEnabled(false);
         ac_copy->setEnabled(false);
         ac_routeList->setEnabled(false);
+        ac_delRoute->setEnabled(false);
+        ac_delRoute->setData(QVariant(QMetaType::VoidStar, &route));
     }
     else
     {
@@ -390,6 +398,15 @@ void POI::contextMenuEvent(QGraphicsSceneContextMenuEvent * e)
         ac_delPoi->setEnabled(true);
         ac_copy->setEnabled(true);
         ac_routeList->setEnabled(true);
+        ac_delRoute->setEnabled(true);
+        ac_delRoute->setData(QVariant(QMetaType::VoidStar, &route));
+        if(route==NULL)
+            ac_delRoute->setVisible(false);
+        else
+        {
+            ac_delRoute->setText(tr("Supprimer la route ")+route->getName());
+            ac_delRoute->setVisible(true);
+        }
         /*clear current actions */
         ac_routeList->clear();
 

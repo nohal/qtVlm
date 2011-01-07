@@ -1600,7 +1600,6 @@ ROUTE * myCentralWidget::addRoute()
     connect(this,SIGNAL(updateRoute(boat *)),route,SLOT(slot_recalculate(boat *)));
     connect(main,SIGNAL(updateRoute(boat *)),route,SLOT(slot_recalculate(boat *)));
     connect(route,SIGNAL(editMe(ROUTE *)),this,SLOT(slot_editRoute(ROUTE *)));
-    connect(route,SIGNAL(deletePoi(POI *)),this,SLOT(slot_delPOI_list(POI *)));
 
 
     connect(this, SIGNAL(showALL(bool)),route,SLOT(slot_shShow()));
@@ -1796,39 +1795,73 @@ void myCentralWidget::slot_editRoutage(ROUTAGE * routage,bool createMode)
             deleteRoutage(routage);
     }
 }
-
 void myCentralWidget::deleteRoute(ROUTE * route)
-{
-    if(route)
-    {
-        removeRoute(route);
-        delete(route);
-    }
-}
-
-void myCentralWidget::removeRoute(ROUTE * route)
 {
     route_list.removeAll(route);
     update_menuRoute();
+    delete route;
+}
+void myCentralWidget::slot_deleteRoute()
+{
+    QAction *sender=(QAction*)QObject::sender();
+    ROUTE *route=reinterpret_cast<struct ROUTE *>(qvariant_cast<void*>(sender->data()));
+    if(!route || route==NULL) return;
+    myDeleteRoute(route);
+}
+void myCentralWidget::myDeleteRoute(ROUTE * route)
+{
+    if(route->isBusy()) return ;
+    if(route->getFrozen())
+    {
+        QMessageBox::critical(0,
+            tr("Suppression d'une route"),
+            tr("Vous ne pouvez pas supprimer une route figee"));
+        return ;
+    }
+    int rep = QMessageBox::question (0,
+            tr("Detruire la route : %1").arg(route->getName()),
+            tr("La destruction d'une route est definitive.\n\nVoulez-vous egalement supprimer tous les POIs lui appartenant?"),
+            QMessageBox::Yes | QMessageBox::No | QMessageBox::Cancel);
+    if (rep == QMessageBox::Cancel) return ;
+
+    route->setTemp(true);
+
+    while(!route->getPoiList().isEmpty())
+    {
+        POI * poi = route->getPoiList().takeFirst();
+        poi->setRoute(NULL);
+        poi->setMyLabelHidden(false);
+        if(rep==QMessageBox::Yes)
+        {
+            slot_delPOI_list(poi);
+            delete poi;
+        }
+    }
+    deleteRoute(route);
+}
+void myCentralWidget::slot_deleteRoutage()
+{
+    QAction *sender=(QAction*)QObject::sender();
+    ROUTAGE *routage=reinterpret_cast<struct ROUTAGE *>(qvariant_cast<void*>(sender->data()));
+    if(!routage || routage==NULL) return;
+    if(routage->isRunning()) return;
+    int rep = QMessageBox::question (0,
+            tr("Detruire le routage : %1?").arg(routage->getName()),
+            tr("La destruction d'un routage est definitive."),
+            QMessageBox::Yes | QMessageBox::Cancel);
+    if (rep == QMessageBox::Cancel) return;
+    deleteRoutage(routage);
 }
 
 void myCentralWidget::deleteRoutage(ROUTAGE * routage)
 {
     if(routage)
     {
-        removeRoutage(routage);
+        routage_list.removeAll(routage);
+        update_menuRoutage();
         delete(routage);
     }
 }
-
-void myCentralWidget::removeRoutage(ROUTAGE * routage)
-{
-    routage_list.removeAll(routage);
-    update_menuRoutage();
-}
-
-
-
 void myCentralWidget::assignPois()
 {
     QList<bool> frozens;

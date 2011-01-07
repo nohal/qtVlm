@@ -114,7 +114,6 @@ class ROUTE : public QGraphicsWidget
         void slot_recalculate(boat * boat=NULL);
         void slot_edit();
         void slot_shShow();
-        void slot_delete();
         void slot_shHidden();
         void slot_shRou(){if(this->isVisible()) slot_shHidden();else slot_shShow();}
         void slot_export(){parent->exportRouteFromMenu(this);}
@@ -122,7 +121,6 @@ class ROUTE : public QGraphicsWidget
         void slot_compassFollow(){parent->setCompassFollow(this);}
     signals:
         void editMe(ROUTE *);
-        void deletePoi(POI *);
     private:
         /* parent, main */
         myCentralWidget *parent;

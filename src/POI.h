@@ -182,6 +182,7 @@ class POI : public QGraphicsWidget
         QAction * ac_setWp;
         QAction * ac_setGribDate;
         QAction * ac_delPoi;
+        QAction * ac_delRoute;
         QAction * ac_copy;
         QAction * ac_compassLine;
         QAction * ac_twaLine;

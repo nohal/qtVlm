@@ -287,6 +287,7 @@ public:
     QAction  *acVLMSync_menu;
 
     QMenu *menuFile;
+    void setMCW(myCentralWidget * mcw){my_CentralWidget=mcw;}
 
 //------------------------------------------------------------------------
 private:
@@ -308,6 +309,7 @@ private:
     QAction* addActionCheck(QWidget *menu,
                     QString title, QString shortcut, QString statustip,
                     QString iconFileName = "");
+    myCentralWidget * my_CentralWidget;
 
 
 };

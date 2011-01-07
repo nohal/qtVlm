@@ -249,7 +249,8 @@ void ROUTE::slot_recalculate(boat * boat)
             }
             if(!grib->isOk() && !imported)
             {
-                tip="<br>Estimated ETA: No grib loaded" ;
+                tip=tr("<br>Route: ")+name;
+                tip=tip+"<br>Estimated ETA: No grib loaded" ;
                 poi->setRouteTimeStamp(-1);
                 poi->setTip(tip);
                 has_eta=false;
@@ -393,9 +394,10 @@ void ROUTE::slot_recalculate(boat * boat)
             }
 //            qWarning()<<"Distance Parcourue="<<distanceParcourue<<" remaining_distance="<<remaining_distance<<" previous_rd="<<previous_remaining_distance;
 //            qWarning()<<"newSpeed="<<newSpeed<<" wind_speed="<<wind_speed<<" angle="<<angle;
+            tip=tr("<br>Route: ")+name;
             if(!has_eta)
             {
-                tip=tr("<br>ETA: Non joignable avec ce fichier GRIB");
+                tip=tip+tr("<br>ETA: Non joignable avec ce fichier GRIB");
                 poi->setRouteTimeStamp(-1);
             }
             else
@@ -429,7 +431,7 @@ void ROUTE::slot_recalculate(boat * boat)
                             tt="<br>"+tr("ETA depuis la date fixe")+" ("+tm.toString("dd MMM-hh:mm")+"):<br>";
                             break;
                 }
-                tip=tt+QString::number((int)days)+" "+tr("jours")+" "+QString::number((int)hours)+" "+tr("heures")+" "+
+                tip=tip+tt+QString::number((int)days)+" "+tr("jours")+" "+QString::number((int)hours)+" "+tr("heures")+" "+
                     QString::number((int)mins)+" "+tr("minutes");
                 poi->setRouteTimeStamp(eta);
             }
@@ -514,44 +516,6 @@ bool ROUTE::isPartOfBvmg(POI * poi)
 double ROUTE::myDiffAngle(double a1,double a2)
 {
     return qAbs(A360(qAbs(a1)+ 180 -qAbs(a2)) -180);
-}
-
-void ROUTE::slot_delete()
-{
-    if(this->busy) return ;
-    if(this->getFrozen())
-    {
-        QMessageBox::critical(0,
-            tr("Suppression d'une route"),
-            tr("Vous ne pouvez pas supprimer une route figee"));
-        return ;
-    }
-    int rep = QMessageBox::question (parent,
-            tr("Detruire la route : %1").arg(name),
-            tr("La destruction d'une route est definitive.\n\nVoulez-vous egalement supprimer tous les POIs lui appartenant?"),
-            QMessageBox::Yes | QMessageBox::No | QMessageBox::Cancel);
-    if (rep == QMessageBox::Cancel) return ;
-
-    this->setHidden(false);
-    this->setHidePois(false);
-    frozen=false;
-    temp=true;
-    superFrozen=true;
-
-    while(!this->my_poiList.isEmpty())
-    {
-        POI * poi = my_poiList.takeFirst();
-        poi->setRoute(NULL);
-        poi->setMyLabelHidden(false);
-        if(rep==QMessageBox::Yes)
-        {
-            emit deletePoi(poi);
-            delete poi;
-        }
-    }
-
-    parent->removeRoute(this);
-    deleteLater();
 }
 
 void ROUTE::slot_edit()

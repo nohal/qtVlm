@@ -105,7 +105,7 @@ void xml_POIData::slot_writeData(QList<ROUTE*> & route_list,QList<POI*> & poi_li
      {
           ROUTE * route=h.next();
           if(route->isImported()) continue;
-          if(!route->getBoat()->getStatus()) continue; //if boat has been deactivated do not save route
+          if(!route->getBoat() || !route->getBoat()->getStatus()) continue; //if boat has been deactivated do not save route
           group = doc.createElement(ROUTE_GROUP_NAME);
           root.appendChild(group);
 

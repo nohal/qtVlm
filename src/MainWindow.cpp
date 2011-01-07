@@ -256,6 +256,7 @@ MainWindow::MainWindow(int w, int h, QWidget *parent)
     setMenuBar(menuBar);
 
     my_centralWidget = new myCentralWidget(proj,this,menuBar);
+    menuBar->setMCW(this->my_centralWidget);
     this->setCentralWidget(my_centralWidget);
     connect(this,SIGNAL(addPOI_list(POI*)),my_centralWidget,SLOT(slot_addPOI_list(POI*)));
     connect(this,SIGNAL(addPOI(QString,int,float,float,float,int,bool,boat*)),

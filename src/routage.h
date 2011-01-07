@@ -146,7 +146,6 @@ class ROUTAGE : public QGraphicsWidget
         vlmLine * getResult(){return result;}
     public slots:
         void slot_edit();
-        void slot_delete();
         void slot_shShow(){show();}
         void slot_shHidden(){hide();}
         void slot_abort(){this->aborted=true;}

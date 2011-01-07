@@ -618,7 +618,6 @@ void ROUTAGE::calculate()
         float workAngleStep=0;
         float workAngleRange=0;
         tempPoints.clear();
-        QList<QList<vlmPoint> > polarList;
         msecsD1=msecsD1+tDebug.elapsed();
         time.start();
         int lastAnnoyingSegment=0;
@@ -906,7 +905,7 @@ void ROUTAGE::calculate()
                         it.toBack();
                         while(it.hasPrevious() && polarPoints.count()>max)
                         {
-                            polarPoints.removeAll(it.previous().value());
+                            polarPoints.removeOne(it.previous().value());
                         }
                     }
                     else
@@ -914,7 +913,7 @@ void ROUTAGE::calculate()
                         it.toFront();
                         while(it.hasNext() && polarPoints.count()>max)
                         {
-                            polarPoints.removeAll(it.next().value());
+                            polarPoints.removeOne(it.next().value());
                         }
                     }
                 }
@@ -924,21 +923,13 @@ void ROUTAGE::calculate()
             if(!polarPoints.isEmpty())
             {
                 //qSort(polarPoints.begin(),polarPoints.end(),rightToLeftFromOrigin);
-                polarList.append(polarPoints);
+                tempPoints.append(polarPoints);
             }
         }
         msecs_1=msecs_1+time.elapsed();
 /*1eme epuration: on supprime les segments qui se croisent */
+        time.restart();
 #if 1
-        tempPoints.clear();
-        time.restart();
-        for (int nn=0;nn<polarList.count();nn++)
-        {
-            tempPoints<<polarList.at(nn);
-        }
-        msecs_21=msecs_21+time.elapsed();
-        polarList.clear();
-        time.restart();
         removeCrossedSegments();
 #endif
         msecs_2=msecs_2+time.elapsed();
@@ -1754,17 +1745,6 @@ float ROUTAGE::myDiffAngle(float a1,float a2)
 float ROUTAGE::mySignedDiffAngle(float a1,float a2)
 {
     return (A360(qAbs(a1)+ 180 -qAbs(a2)) -180);
-}
-void ROUTAGE::slot_delete()
-{
-    if(running) return;
-    int rep = QMessageBox::question (parent,
-            tr("Detruire le routage : %1?").arg(name),
-            tr("La destruction d'un routage est definitive."),
-            QMessageBox::Yes | QMessageBox::Cancel);
-    if (rep == QMessageBox::Cancel) return;
-    parent->removeRoutage(this);
-    deleteLater();
 }
 void ROUTAGE::slot_edit()
 {

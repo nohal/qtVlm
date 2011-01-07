@@ -531,7 +531,8 @@ void MenuBar::addMenuRoute(ROUTE* route)
     action1=addAction(mnRoute_edit,route->getName(),"","","");
     connect(action1, SIGNAL(triggered()), route, SLOT(slot_edit()));
     action2=addAction(mnRoute_delete,route->getName(),"","","");
-    connect(action2, SIGNAL(triggered()), route, SLOT(slot_delete()));
+    action2->setData(QVariant(QMetaType::VoidStar, &route));
+    connect(action2, SIGNAL(triggered()), my_CentralWidget, SLOT(slot_deleteRoute()));
     action3=addAction(mnRoute_export,route->getName(),"","","");
     connect(action3, SIGNAL(triggered()), route, SLOT(slot_export()));
     action4=addAction(mnCompassCenterRoute,route->getName(),"","","");
@@ -550,7 +551,8 @@ void MenuBar::addMenuRoutage(ROUTAGE* routage)
     action1=addAction(mnRoutage_edit,routage->getName(),"","","");
     connect(action1, SIGNAL(triggered()), routage, SLOT(slot_edit()));
     action2=addAction(mnRoutage_delete,routage->getName(),"","","");
-    connect(action2, SIGNAL(triggered()), routage, SLOT(slot_delete()));
+    action2->setData(QVariant(QMetaType::VoidStar, &routage));
+    connect(action2, SIGNAL(triggered()), my_CentralWidget, SLOT(slot_deleteRoutage()));
 }
 //-------------------------------------------------
 void MenuBar::setCitiesNamesLevel(int level) {
