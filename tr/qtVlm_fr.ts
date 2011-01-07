@@ -531,7 +531,7 @@ Continuer la sauvegarde?</source>
     </message>
     <message>
         <source>Mise a jour du compte en cours pour </source>
-        <translation>Mise à jour de compte en cours pour</translation>
+        <translation>Mise à jour de compte en cours pour </translation>
     </message>
 </context>
 <context>
@@ -2022,6 +2022,10 @@ Etes-vous sur ?</source>
         <source>Vous ne pouvez pas optimiser en mode VBVMG-VLM</source>
         <translation></translation>
     </message>
+    <message>
+        <source>Supprimer la route </source>
+        <translation></translation>
+    </message>
 </context>
 <context>
     <name>POI_delete_ui</name>
@@ -2483,7 +2487,7 @@ Etes-vous sur ?</source>
     <name>ROUTAGE</name>
     <message>
         <source>La destruction d&apos;un routage est definitive.</source>
-        <translation>La destruction d&apos;un routage est définitive.</translation>
+        <translation type="obsolete">La destruction d&apos;un routage est définitive.</translation>
     </message>
     <message>
         <source>Date et heure d&apos;arrivee:</source>
@@ -2511,7 +2515,7 @@ Etes-vous sur ?</source>
     </message>
     <message>
         <source>Detruire le routage : %1?</source>
-        <translation>Détruire le routage: %1?</translation>
+        <translation type="obsolete">Détruire le routage: %1?</translation>
     </message>
     <message>
         <source>Creer un pivot</source>
@@ -2753,22 +2757,22 @@ deg</extracomment>
         <translation type="obsolete">La destruction d&apos;une route est définitive. Voulez-vous également supprimer tous les POIs lui appartenant?</translation>
     </message>
     <message>
-        <source>Suppression d&apos;une route</source>
-        <translation></translation>
-    </message>
-    <message>
         <source>Vous ne pouvez pas supprimer une route figee</source>
-        <translation>Vous ne pouvez pas supprimer une route figée</translation>
+        <translation type="obsolete">Vous ne pouvez pas supprimer une route figée</translation>
     </message>
     <message>
         <source>Detruire la route : %1</source>
-        <translation>Détruire la route %1</translation>
+        <translation type="obsolete">Détruire la route %1</translation>
     </message>
     <message>
         <source>La destruction d&apos;une route est definitive.
 
 Voulez-vous egalement supprimer tous les POIs lui appartenant?</source>
-        <translation>La destruction d&apos;une route est définitive. Voulez-vous également supprimer tous les POIs lui appartenant?</translation>
+        <translation type="obsolete">La destruction d&apos;une route est définitive. Voulez-vous également supprimer tous les POIs lui appartenant?</translation>
+    </message>
+    <message>
+        <source>&lt;br&gt;Route: </source>
+        <translation></translation>
     </message>
 </context>
 <context>
@@ -4381,6 +4385,32 @@ Etes-vous sur ?</source>
     <message>
         <source>Chargement reussi</source>
         <translation>Chargement réussi</translation>
+    </message>
+    <message>
+        <source>Suppression d&apos;une route</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Vous ne pouvez pas supprimer une route figee</source>
+        <translation>Vous ne pouvez pas supprimer une route figée</translation>
+    </message>
+    <message>
+        <source>Detruire la route : %1</source>
+        <translation>Détruire la route %1</translation>
+    </message>
+    <message>
+        <source>La destruction d&apos;une route est definitive.
+
+Voulez-vous egalement supprimer tous les POIs lui appartenant?</source>
+        <translation>La destruction d&apos;une route est définitive. Voulez-vous également supprimer tous les POIs lui appartenant?</translation>
+    </message>
+    <message>
+        <source>Detruire le routage : %1?</source>
+        <translation>Détruire le routage: %1?</translation>
+    </message>
+    <message>
+        <source>La destruction d&apos;un routage est definitive.</source>
+        <translation>La destruction d&apos;un routage est définitive.</translation>
     </message>
 </context>
 <context>
