@@ -334,10 +334,10 @@
      <widget class="QFrame" name="frame">
       <property name="geometry">
        <rect>
-        <x>130</x>
-        <y>10</y>
-        <width>86</width>
-        <height>71</height>
+        <x>131</x>
+        <y>13</y>
+        <width>89</width>
+        <height>57</height>
        </rect>
       </property>
       <property name="autoFillBackground">
@@ -355,9 +355,9 @@
       <widget class="QWidget" name="layoutWidget">
        <property name="geometry">
         <rect>
-         <x>6</x>
-         <y>10</y>
-         <width>77</width>
+         <x>5</x>
+         <y>2</y>
+         <width>79</width>
          <height>51</height>
         </rect>
        </property>
@@ -697,9 +697,9 @@
       <property name="geometry">
        <rect>
         <x>8</x>
-        <y>20</y>
+        <y>14</y>
         <width>121</width>
-        <height>64</height>
+        <height>61</height>
        </rect>
       </property>
       <layout class="QGridLayout" name="gridLayout_2">
@@ -859,19 +859,6 @@
           <string>nm</string>
          </property>
         </widget>
-       </item>
-       <item row="3" column="1">
-        <spacer name="verticalSpacer_6">
-         <property name="orientation">
-          <enum>Qt::Vertical</enum>
-         </property>
-         <property name="sizeHint" stdset="0">
-          <size>
-           <width>20</width>
-           <height>40</height>
-          </size>
-         </property>
-        </spacer>
        </item>
       </layout>
      </widget>
@@ -1459,7 +1446,7 @@
       <property name="geometry">
        <rect>
         <x>0</x>
-        <y>20</y>
+        <y>10</y>
         <width>221</width>
         <height>61</height>
        </rect>
@@ -1635,9 +1622,9 @@
        <widget class="QWidget" name="layoutWidget">
         <property name="geometry">
          <rect>
-          <x>10</x>
-          <y>0</y>
-          <width>201</width>
+          <x>3</x>
+          <y>1</y>
+          <width>211</width>
           <height>29</height>
          </rect>
         </property>
@@ -1870,19 +1857,6 @@
             <double>180.000000000000000</double>
            </property>
           </widget>
-         </item>
-         <item>
-          <spacer name="horizontalSpacer_3">
-           <property name="orientation">
-            <enum>Qt::Horizontal</enum>
-           </property>
-           <property name="sizeHint" stdset="0">
-            <size>
-             <width>40</width>
-             <height>20</height>
-            </size>
-           </property>
-          </spacer>
          </item>
         </layout>
        </widget>
