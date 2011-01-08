@@ -3165,6 +3165,18 @@ Voulez-vous egalement supprimer tous les POIs lui appartenant?</source>
         <source>Afficher les pavillons (F)</source>
         <translation></translation>
     </message>
+    <message>
+        <source>Police de caractere par defaut</source>
+        <translation>Police de caractères par defaut</translation>
+    </message>
+    <message>
+        <source>Police</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Facteur de taille</source>
+        <translation></translation>
+    </message>
 </context>
 <context>
     <name>WP_dialog_ui</name>
