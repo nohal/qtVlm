@@ -29,6 +29,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 DialogParamVlm::DialogParamVlm(MainWindow * main,myCentralWidget * parent) : QDialog(parent)
 {
     setupUi(this);
+    Util::setFontDialog(this);
 
     connect(this,SIGNAL(paramVLMChanged()),main,SLOT(slotParamChanged()));
     connect(this, SIGNAL(inetUpdated()), main, SLOT(slotInetUpdated()));
@@ -129,6 +130,8 @@ DialogParamVlm::DialogParamVlm(MainWindow * main,myCentralWidget * parent) : QDi
     chk_forceUserAgent->setCheckState(Settings::getSetting("forceUserAgent",0).toInt()==1?Qt::Checked:Qt::Unchecked);
     userAgent->setText(Settings::getSetting("userAgent", "").toString());
     userAgent->setEnabled(Settings::getSetting("forceUserAgent",0).toInt()==1);
+    defFontName->findText(Settings::getSetting("defaultFontName",QApplication::font().family()).toString());
+    defFontSize->setValue(Settings::getSetting("defaultFontSizeInc",0).toInt());
 
     for(int i=0;i<NB_URL;i++)
         url_list->addItem(url_name[i]+": "+url_str[i]);
@@ -155,6 +158,9 @@ void DialogParamVlm::done(int result)
         Settings::setSetting("opp_labelType",QString().setNum(opp_labelType->currentIndex()));
         Settings::setSetting("autoHideRoute",this->chkHideRoute->checkState()==Qt::Checked?"1":"0");
         Settings::setSetting("showFlag",this->chkPavillon->checkState()==Qt::Checked?"1":"0");
+        Settings::setSetting("defaultFontName",this->defFontName->currentText());
+        Settings::setSetting("defaultFontSizeInc",QString().setNum(this->defFontSize->value()));
+
 
         /* colors */
 

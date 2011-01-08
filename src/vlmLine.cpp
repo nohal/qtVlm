@@ -213,7 +213,7 @@ void vlmLine::calculatePoly(void)
         {
             int width=20;
             int height=10;
-            setFont(QFont("Helvetica",9));
+            setFont(QApplication::font());
             QFontMetrics fm(font());
             width = fm.width(desc) + 10 +2;
             height = qMax(fm.height()+2,10);
@@ -327,7 +327,7 @@ void vlmLine::paint(QPainter * pnt, const QStyleOptionGraphicsItem * , QWidget *
             QColor bgcolor = QColor(255,255,255,150);
             int width=20;
             int height=10;
-            setFont(QFont("Helvetica",9));
+            setFont(QApplication::font());
             QFontMetrics fm(font());
             width = fm.width(desc) + 10 +2;
             height = qMax(fm.height()+2,10);

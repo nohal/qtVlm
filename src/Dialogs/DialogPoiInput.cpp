@@ -27,6 +27,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 DialogPoiInput::DialogPoiInput(myCentralWidget * parent) : QDialog(parent)
 {
     setupUi(this);
+    Util::setFontDialog(this);
     connect(this,SIGNAL(addPOI(QString,int,float,float,float,int,bool,boat*)),
             parent,SLOT(slot_addPOI(QString,int,float,float,float,int,bool,boat*)));
 }

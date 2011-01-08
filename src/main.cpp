@@ -40,11 +40,10 @@ int main(int argc, char *argv[])
     
     QTextCodec::setCodecForTr(QTextCodec::codecForName("utf8"));
     QTextCodec::setCodecForCStrings(QTextCodec::codecForName("utf8"));
-    QFont def=QApplication::font();
-    def.setPointSizeF(8.25);
-    QApplication::setFont(def);
-
     Settings::initSettings();
+    QFont def(Settings::getSetting("defaultFontName",QApplication::font().family()).toString());
+    def.setPointSizeF(8.25+Settings::getSetting("defaultFontSizeInc",0).toInt());
+    QApplication::setFont(def);
 
     QTranslator translator;
     QTranslator translatorQt;

@@ -54,6 +54,8 @@ class Util
     public:
 
     //-------------------------------------------------
+    static void setFontDialog(QObject * o);
+    static void setFontDialog(QWidget * o);
     static QString formatDegres(float x);           // 123.4 -> 123°24.00'
     static QString formatPosition(float x, float y);    // 123°24.00'W 45°67.89'N
     static QString formatLongitude(float x);

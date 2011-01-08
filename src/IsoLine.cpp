@@ -102,7 +102,7 @@ void IsoLine::drawIsoLineLabels(QPainter &pnt, QColor &couleur,
     label = label.sprintf("%d", (int)(value*coef+0.5));
 
     QPen penText(couleur);
-    QFont fontText("Helvetica", 8);
+    QFont fontText(QApplication::font());
     QFontMetrics fmet(fontText);
     QRect rect = fmet.boundingRect(label);
     pnt.setPen(penText);

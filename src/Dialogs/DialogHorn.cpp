@@ -1,11 +1,13 @@
 #include "DialogHorn.h"
 #include "ui_dialoghorn.h"
+#include "Util.h"
 
 
 DialogHorn::DialogHorn(myCentralWidget *parent) : QDialog(parent)
 {
     this->parent=parent;
     setupUi(this);
+    Util::setFontDialog(this);
     if(parent->getHornDate()<(QDateTime::currentDateTime()).toUTC())
     {
         this->date->setDateTime((QDateTime::currentDateTime().toUTC()));

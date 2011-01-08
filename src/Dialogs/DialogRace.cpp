@@ -48,6 +48,7 @@ DialogRace::DialogRace(MainWindow * main,myCentralWidget * parent, inetConnexion
     inetClient::setName("RaceDialog");
     needAuth=true;
     setupUi(this);
+    Util::setFontDialog(this);
     this->resize(widget->width()+10,widget->height()+10);
     widget->setParent(0);
     scroll=new QScrollArea(this);

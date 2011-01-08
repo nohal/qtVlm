@@ -43,7 +43,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 boardVLM::boardVLM(MainWindow * mainWin, inetConnexion * inet, board * parent) : QWidget(mainWin), inetClient(inet)
 {
     setupUi(this);
-
+    Util::setFontDialog(this);
     isComputing = false;
     this->mainWin = mainWin;
     this->parent=parent;

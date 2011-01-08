@@ -37,6 +37,29 @@ Copyright (C) 2008 - Jacques Zaninetti - http://zygrib.free.fr
 
 
 //======================================================================
+void Util::setFontDialog(QObject * o)
+{
+
+    QFont myFont(Settings::getSetting("defaultFontName",QApplication::font().family()).toString());
+    if(o->isWidgetType())
+    {
+        QWidget * widget=qobject_cast<QWidget*> (o);
+        myFont.setPointSizeF(widget->font().pointSizeF()+Settings::getSetting("defaultFontSizeInc",0).toInt());
+        myFont.setStyle(widget->font().style());
+        myFont.setBold(widget->font().bold());
+        widget->setFont(myFont);
+    }
+    foreach(QObject * object,o->children())
+    {
+        Util::setFontDialog(object); /*recursion*/
+    }
+}
+void Util::setFontDialog(QWidget * o)
+{
+    QObject * object=qobject_cast<QObject*>(o);
+    setFontDialog(object);
+}
+
 QString Util::formatTemperature(float tempKelvin)
 {
     QString tunit = Settings::getSetting("unitsTemp", "").toString();

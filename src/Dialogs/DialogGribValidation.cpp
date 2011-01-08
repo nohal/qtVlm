@@ -25,12 +25,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "Grib.h"
 #include "MainWindow.h"
 #include "mycentralwidget.h"
-//#include "Util.h"
+#include "Util.h"
 #include "dataDef.h"
 
 DialogGribValidation::DialogGribValidation(myCentralWidget * my_centralWidget,MainWindow * mainWindow) :  QDialog(my_centralWidget)
 {
     setupUi(this);
+    Util::setFontDialog(this);
     this->my_centralWidget=my_centralWidget;
     this->mainWindow=mainWindow;
     tstamp->setText(QString().setNum(QDateTime::currentDateTime().toUTC().toTime_t()));

@@ -38,7 +38,7 @@ DialogPilototo::DialogPilototo(MainWindow *main,myCentralWidget * parent,inetCon
 {
     this->parent=parent;
     setupUi(this);
-
+    Util::setFontDialog(this);
     selectPOI_mode=1;
 
     needAuth=true;

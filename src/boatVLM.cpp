@@ -37,7 +37,7 @@ boatVLM::boatVLM(QString pseudo, bool activated, int boatId, int playerId,Player
                  inetConnexion * inet): boat(pseudo,activated,proj,main,parent), inetClient(inet)
 {    
     this->boat_type=BOAT_VLM;
-    setFont(QFont("Helvetica",9));
+    setFont(QApplication::font());
 
     this->isOwn=isOwn;
     name="";
@@ -634,7 +634,7 @@ void boatVLM::updateBoatString()
     }
 
      /* computing widget size */
-    QFont myFont=QFont("Helvetica",9);
+    QFont myFont=QApplication::font();
     QFontMetrics fm(myFont);
     prepareGeometryChange();
     width = fm.width("_"+my_str+"_")+2;

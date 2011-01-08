@@ -84,7 +84,7 @@ POI::POI(QString name, int type, double lat, double lon,
     VLMBoardIsBusy=false;
 
     setZValue(Z_VALUE_POI);
-    setFont(QFont("Helvetica",9));
+    setFont(QFont(QApplication::font()));
     setCursor(Qt::PointingHandCursor);
     setData(0,POI_WTYPE);
 

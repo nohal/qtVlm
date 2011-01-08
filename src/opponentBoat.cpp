@@ -79,7 +79,7 @@ void opponent::init(QColor color,bool isQtBoat,QString idu,QString race, float l
     parentWindow->getScene()->addItem(this);
 
     setZValue(Z_VALUE_OPP);
-    setFont(QFont("Helvetica",9));
+    setFont(QFont(QApplication::font()));
     setData(0,OPP_WTYPE);
 
     fgcolor = QColor(0,0,0);

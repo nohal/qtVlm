@@ -441,11 +441,13 @@ MenuBar::MenuBar(QWidget *parent)
     cbGribStep->addItem(tr("3 h"));
     cbGribStep->addItem(tr("6 h"));
     cbGribStep->addItem(tr("12 h"));
+    Util::setFontDialog(cbGribStep);
 
 
     boatList = new QComboBox();
     boatList->setSizeAdjustPolicy(QComboBox::AdjustToContents);
     boatList->setFont(font);
+    Util::setFontDialog(boatList);
     estime = new QSpinBox();
     estime->setMaximum(9999999);
     estime->setMinimum(0);

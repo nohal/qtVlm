@@ -49,6 +49,7 @@ DialogRoutage::DialogRoutage(ROUTAGE *routage,myCentralWidget *parent)
     this->routage=routage;
     this->parent=parent;
     setupUi(this);
+    Util::setFontDialog(this);
     this->resize(widget->width()+10,widget->height()+10);
     widget->setParent(0);
     scroll=new QScrollArea(this);

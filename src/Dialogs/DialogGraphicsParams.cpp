@@ -32,6 +32,7 @@ Copyright (C) 2008 - Jacques Zaninetti - http://zygrib.free.fr
 #include "DialogGraphicsParams.h"
 #include "settings.h"
 #include <QDebug>
+#include "Util.h"
 
 
 //===========================================================================
@@ -200,6 +201,7 @@ DialogGraphicsParams::DialogGraphicsParams()
     //===============================================================
     connect(btCancel, SIGNAL(clicked()), this, SLOT(slotBtCancel()));
     connect(btOK, SIGNAL(clicked()), this, SLOT(slotBtOK()));
+    Util::setFontDialog(this);
 }
 
 //-------------------------------------------------------------------------------

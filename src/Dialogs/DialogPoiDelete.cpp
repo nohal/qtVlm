@@ -19,12 +19,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ***********************************************************************/
 
 #include <QtGui>
-
+#include "Util.h"
 #include "DialogPoiDelete.h"
 
 DialogPoiDelete::DialogPoiDelete(QWidget * parent) : QDialog(parent)
 {
     setupUi(this);
+    Util::setFontDialog(this);
     mask=-1;
 }
 

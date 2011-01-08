@@ -25,7 +25,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "DialogVlmGrib.h"
 #include "settings.h"
 #include "mycentralwidget.h"
-
+#include "Util.h"
 #define VLM_REQUEST_GET_FOLDER 0
 #define VLM_REQUEST_GET_FILE   1
 
@@ -34,6 +34,7 @@ DialogVlmGrib::DialogVlmGrib(MainWindow * ,myCentralWidget * parent,inetConnexio
         inetClient(inet)
 {
     setupUi(this);
+    Util::setFontDialog(this);
     listRadio[0]=radio1;
     listRadio[1]=radio2;
     listRadio[2]=radio3;

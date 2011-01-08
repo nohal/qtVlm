@@ -28,6 +28,7 @@ Copyright (C) 2008 - Jacques Zaninetti - http://zygrib.free.fr
 
 #include "DialogUnits.h"
 #include "settings.h"
+#include "Util.h"
 
 
 //-------------------------------------------------------------------------------
@@ -61,7 +62,9 @@ DialogUnits::DialogUnits() : QDialog()
     btCancel = new QPushButton(tr("Annuler"), this);
     layout->addWidget( btOK,    lig,0);
     layout->addWidget( btCancel, lig,1);
-    
+    Util::setFontDialog(this);
+    Util::setFontDialog(ftmp);
+
     //===============================================================
     // restaure les valeurs enregistrées dans les settings
     QString tunit;

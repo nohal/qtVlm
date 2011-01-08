@@ -40,7 +40,7 @@ boatReal::boatReal(QString pseudo, bool activated, Projection * proj,MainWindow 
     isMoving=false;
 
     this->boat_type=BOAT_REAL;
-    setFont(QFont("Helvetica",9));
+    setFont(QApplication::font());
 
     /* init thread */
     gpsReader = new ReceiverThread(this);
@@ -275,7 +275,7 @@ void boatReal::updateBoatString()
     //qWarning() << "Updating Boat pseudo: " << pseudo << " (my= " << my_str << ") for a real boat, status=" << this->isVisible();
 
      /* computing widget size */
-    QFont myFont=QFont("Helvetica",9);
+    QFont myFont=QFont(QApplication::font());
     QFontMetrics fm(myFont);
     prepareGeometryChange();
     width = fm.width("_"+my_str+"_")+2;

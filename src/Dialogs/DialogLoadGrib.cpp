@@ -43,7 +43,7 @@ DialogLoadGrib::DialogLoadGrib() : QDialog()
     setWindowTitle(tr("Telechargement"));
     loadInProgress = false;
     QFrame * frameButtonsZone = createFrameButtonsZone(this);
-
+    Util::setFontDialog(frameButtonsZone);
     rain  = true;
     cloud = true;
     pressure = true;
@@ -115,6 +115,7 @@ DialogLoadGrib::DialogLoadGrib() : QDialog()
     connect(chkAltitude700, SIGNAL(stateChanged(int)), 	this,  SLOT(slotParameterUpdated()));
     connect(chkAltitude850, SIGNAL(stateChanged(int)), 	this,  SLOT(slotParameterUpdated()));
     connect(chkAltitudeAll, SIGNAL(stateChanged(int)), 	this,  SLOT(slotAltitudeAll()));
+    Util::setFontDialog(this);
 }
 
 //-------------------------------------------------------------------------------

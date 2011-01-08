@@ -31,14 +31,14 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "route.h"
 #include "routage.h"
 #include "boatReal.h"
-
+#include "Util.h"
 
 
 DialogPlayerAccount::DialogPlayerAccount(Projection * proj, MainWindow * main,
                              myCentralWidget * parent, inetConnexion * inet) : QDialog(parent)
 {
     setupUi(this);
-
+    Util::setFontDialog(this);
     this->proj = proj;
     this->main=main;
     this->parent=parent;

@@ -27,12 +27,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "settings.h"
 #include "boatReal.h"
 #include "Player.h"
-
+#include "Util.h"
 
 DialogRealBoatConfig::DialogRealBoatConfig(myCentralWidget *parent) : QDialog(parent)
 {
     this->parent=parent;
     setupUi(this);
+    Util::setFontDialog(this);
 }
 
 void DialogRealBoatConfig::launch(boatReal * boat)

@@ -48,7 +48,7 @@ boat::boat(QString pseudo, bool activated,
     WPLat=WPLon=lat=lon=0;
 
     setZValue(Z_VALUE_BOAT);
-    setFont(QFont("Helvetica",9));
+    setFont(QFont(QApplication::font()));
     setData(0,BOAT_WTYPE);
 
     fgcolor = QColor(0,0,0);
@@ -218,7 +218,7 @@ void boat::paint(QPainter * pnt, const QStyleOptionGraphicsItem * , QWidget * )
         return;*/
     int dy = height/2;
     QPen pen(selected?Qt::darkRed:Qt::darkBlue);
-    pnt->setFont(QFont("Helvetica",9));
+    pnt->setFont(QApplication::font());
     if(!labelHidden)
     {
         if(Settings::getSetting("showFlag",0).toInt()==1 && this->getType()==BOAT_VLM)
@@ -254,7 +254,7 @@ void boat::paint(QPainter * pnt, const QStyleOptionGraphicsItem * , QWidget * )
             pnt->drawRoundRect(21,0, width,height, 50,50);
         pnt->setBrush(Qt::NoBrush);
         pnt->setPen(pen);
-        QFontMetrics fm(QFont("Helvetica",9));
+        QFontMetrics fm(QApplication::font());
         int w = fm.width("_")+1;
         if(!drawFlag)
             pnt->drawText(w+9,height-height/4,my_str);

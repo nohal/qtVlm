@@ -22,6 +22,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "POI.h"
 #include "mycentralwidget.h"
 #include "settings.h"
+#include "Util.h"
 
 
 DialogFinePosit::DialogFinePosit(POI * poi,myCentralWidget *parent)
@@ -30,6 +31,7 @@ DialogFinePosit::DialogFinePosit(POI * poi,myCentralWidget *parent)
     this->poi=poi;
     this->parent=parent;
     setupUi(this);
+    Util::setFontDialog(this);
     setWindowTitle(tr("Parametres du positionnement automatique"));
     etendueLon->setValue(poi->getSearchRangeLon());
     etendueLat->setValue(poi->getSearchRangeLat());

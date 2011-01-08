@@ -33,6 +33,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 DialogPilototoParam::DialogPilototoParam(QWidget *parent) : QDialog(parent)
 {
     setupUi(this);
+    Util::setFontDialog(this);
     instruction=NULL;
     //btn_selectPOI->setEnabled(false);
     

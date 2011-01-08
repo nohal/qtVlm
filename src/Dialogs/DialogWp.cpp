@@ -31,7 +31,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 DialogWp::DialogWp(QWidget * parent) : QDialog(parent)
 {
     setupUi(this);
-
+    Util::setFontDialog(this);
     currentBoat=NULL;
 
     WP_conv_lat->setText("");

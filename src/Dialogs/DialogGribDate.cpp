@@ -26,7 +26,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 DialogGribDate::DialogGribDate(QWidget * parent) : QDialog(parent)
 {
     setupUi(this);
-
+    Util::setFontDialog(this);
     result=NULL;
     startTime=0;
     listGribDates.clear();

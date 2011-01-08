@@ -27,7 +27,7 @@ Copyright (C) 2008 - Jacques Zaninetti - http://zygrib.free.fr
 
 #include "DialogProxy.h"
 #include "settings.h"
-
+#include "Util.h"
 
 //-------------------------------------------------------------------------------
 DialogProxy::DialogProxy() : QDialog()
@@ -59,7 +59,8 @@ DialogProxy::DialogProxy() : QDialog()
     btCancel = new QPushButton(tr("Annuler"), this);
     layout->addWidget( btOK,    lig,0);
     layout->addWidget( btCancel, lig,1);
-
+    Util::setFontDialog(frameGui);
+    Util::setFontDialog(this);
     //===============================================================
     lineProxyHostname->setText(Settings::getSetting("httpProxyHostname", "").toString());
     lineProxyPort->setText(Settings::getSetting("httpProxyPort", "").toString());

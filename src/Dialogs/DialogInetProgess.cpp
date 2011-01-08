@@ -19,6 +19,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ***********************************************************************/
 
 #include "DialogInetProgess.h"
+#include "Util.h"
 
 /*********************************************
   Progress bar
@@ -27,6 +28,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 DialogInetProgess::DialogInetProgess(QWidget * parent) : QDialog(parent)
 {
     setupUi(this);
+    Util::setFontDialog(this);
 }
 
 void DialogInetProgess::showDialog(QString name)

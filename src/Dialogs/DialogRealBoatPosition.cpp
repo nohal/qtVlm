@@ -27,6 +27,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 DialogRealBoatPosition::DialogRealBoatPosition(QWidget * parent) : QDialog(parent)
 {
     setupUi(this);
+    Util::setFontDialog(this);
     lat->setText(QString());
     lon->setText(QString());
 }

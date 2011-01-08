@@ -44,6 +44,7 @@ DialogPoi::DialogPoi(MainWindow * main,myCentralWidget * parent)
     : QDialog(parent)
 {
     setupUi(this);
+    Util::setFontDialog(this);
     this->resize(widget->width()+10,widget->height()+10);
     widget->setParent(0);
     scroll=new QScrollArea(this);

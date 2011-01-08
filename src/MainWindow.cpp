@@ -290,7 +290,6 @@ MainWindow::MainWindow(int w, int h, QWidget *parent)
     stBar_label_3->setFont(font);
     //stBar_label_3->setStyleSheet("color: rgb(255, 0, 0);");
     statusBar->addWidget(stBar_label_3);
-
     //--------------------------------------------------
     toolBar = addToolBar(tr("Outils"));
     toolBar->setFloatable(false);
@@ -348,6 +347,11 @@ MainWindow::MainWindow(int w, int h, QWidget *parent)
     tool_ETA->setStyleSheet("color: rgb(0, 0, 255);");
     toolBar->addWidget(tool_ETA);
 
+    Util::setFontDialog(tool_ETA);
+    Util::setFontDialog(tool_ESTIME);
+    Util::setFontDialog(tool_ESTIMEUNIT);
+    Util::setFontDialog(statusBar);
+    Util::setFontDialog(menuBar);
     //--------------------------------------------------
 
     setStatusBar(statusBar);
@@ -520,6 +524,8 @@ MainWindow::MainWindow(int w, int h, QWidget *parent)
             isStartingUp=false;
             slot_deleteProgress();            
         }
+        Util::setFontDialog(statusBar);
+        Util::setFontDialog(menuBar);
         return;
     }
 
@@ -572,7 +578,8 @@ MainWindow::MainWindow(int w, int h, QWidget *parent)
     }
 
     slot_deleteProgress();
-
+    Util::setFontDialog(statusBar);
+    Util::setFontDialog(menuBar);
 }
 
 //-----------------------------------------------

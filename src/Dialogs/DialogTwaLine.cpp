@@ -20,6 +20,7 @@ DialogTwaLine::DialogTwaLine(QPointF start, myCentralWidget *parent, MainWindow 
     line->setLinePen(pen);
     this->setWindowFlags(Qt::Tool);
     setupUi(this);
+    Util::setFontDialog(this);
     this->tabWidget->setCurrentIndex(0);
     this->doubleSpinBox->setFocus();
     this->doubleSpinBox->selectAll();
