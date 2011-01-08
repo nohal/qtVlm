@@ -56,7 +56,7 @@ struct datathread
 };
 
 //===================================================================
-class ROUTAGE : public QGraphicsWidget
+class ROUTAGE : public QObject
 { Q_OBJECT
     public:
         /* constructeurs, destructeurs */
@@ -146,8 +146,6 @@ class ROUTAGE : public QGraphicsWidget
         vlmLine * getResult(){return result;}
     public slots:
         void slot_edit();
-        void slot_shShow(){show();}
-        void slot_shHidden(){hide();}
         void slot_abort(){this->aborted=true;}
         void slot_createPivot();
         void slot_createPivotM();

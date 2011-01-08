@@ -303,8 +303,7 @@ int ROUTAGE::calculateTimeRouteThreaded(vlmPoint routeFrom,vlmPoint routeTo, flo
 }
 #endif
 ROUTAGE::ROUTAGE(QString name, Projection *proj, Grib *grib, QGraphicsScene * myScene, myCentralWidget *parentWindow)
-        : QGraphicsWidget()
-
+        : QObject()
 {
     this->proj=proj;
     this->name=name;
@@ -361,7 +360,9 @@ ROUTAGE::ROUTAGE(QString name, Projection *proj, Grib *grib, QGraphicsScene * my
     this->finalEta=QDateTime();
     this->finalEta.setTimeSpec(Qt::UTC);
     result=new vlmLine(proj,myscene,Z_VALUE_ROUTAGE);
+    result->setParent(this);
     way=new vlmLine(proj,myscene,Z_VALUE_ROUTAGE);
+    way->setParent(this);
     this->checkCoast=true;
     this->useConverge=true;
     this->pruneWakeAngle=30;
@@ -508,6 +509,7 @@ void ROUTAGE::calculate()
     arrival.setX(toPOI->getLongitude());
     arrival.setY(toPOI->getLatitude());
     iso=new vlmLine(proj,myscene,Z_VALUE_ROUTAGE);
+    iso->setParent(this);
     orth.setPoints(start.x(),start.y(),arrival.x(),arrival.y());
     loxoCap=orth.getAzimutDeg();
     initialDist=orth.getDistance();
@@ -568,6 +570,7 @@ void ROUTAGE::calculate()
     {
         tDebug.start();
         currentIso=new vlmLine(proj,myscene,Z_VALUE_ROUTAGE);
+        currentIso->setParent(this);
         list = iso->getPoints();
         int nbNotDead=0;
         float minDist=initialDist*10;
@@ -1177,6 +1180,7 @@ void ROUTAGE::calculate()
                                                        tempPoints.at(n).lat,
                                                        this->proj,this->myscene,
                                                        Z_VALUE_ISOPOINT);
+                vg->setParent(this);
                 mmm++;
                 QString ss;
                 vg->setDebug(ss.sprintf("mdi=%.2f di=%.2f",tempPoints.at(n).maxDistIso,tempPoints.at(n).distIso));
@@ -1202,6 +1206,7 @@ void ROUTAGE::calculate()
                 continue;
             }
             segment=new vlmLine(proj,myscene,Z_VALUE_ROUTAGE);
+            segment->setParent(this);
             vlmPoint temp=* iso->getOrigin(n);
             temp.isBroken=false;
             segment->addVlmPoint(temp);

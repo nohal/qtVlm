@@ -44,7 +44,7 @@ Copyright (C) 2008 - Jacques Zaninetti - http://zygrib.free.fr
 #define USE_VBVMG_VLM
 
 ROUTE::ROUTE(QString name, Projection *proj, Grib *grib, QGraphicsScene * myScene, myCentralWidget *parentWindow)
-            : QGraphicsWidget()
+            : QObject()
 
 {
     this->proj=proj;
@@ -57,6 +57,7 @@ ROUTE::ROUTE(QString name, Projection *proj, Grib *grib, QGraphicsScene * myScen
     this->startFromBoat=true;
     this->startTimeOption=1;
     this->line=new vlmLine(proj,myScene,Z_VALUE_ROUTE);
+    line->setParent(this);
     this->frozen=false;
     this->superFrozen=false;
     this->live=true;
@@ -531,7 +532,6 @@ void ROUTE::slot_shShow()
         slot_shHidden();
         return;
     }
-    show();
     if(line)
     {
         line->show();
@@ -541,7 +541,6 @@ void ROUTE::slot_shShow()
 void ROUTE::slot_shHidden()
 {
     bool toBeHidden=this->hidden || (Settings::getSetting("autoHideRoute",1).toInt()==1 && (this->myBoat==NULL || !this->myBoat->getIsSelected()));
-    hide();
     if(line)
         line->hide();
     if(toBeHidden)

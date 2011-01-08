@@ -254,6 +254,7 @@ myCentralWidget::myCentralWidget(Projection * proj,MainWindow * parent,MenuBar *
 
     /* scene and views */
     scene =  new myScene(this);
+    scene->setItemIndexMethod(QGraphicsScene::NoIndex);
     scene->setSceneRect(QRect(0,0,width(),height()));
 
     view = new QGraphicsView(scene, this);
@@ -1620,8 +1621,8 @@ ROUTAGE * myCentralWidget::addRoutage()
     connect(routage,SIGNAL(editMe(ROUTAGE *)),this,SLOT(slot_editRoutage(ROUTAGE *)));
 
 
-    connect(this, SIGNAL(showALL(bool)),routage,SLOT(slot_shShow()));
-    connect(this, SIGNAL(hideALL(bool)),routage,SLOT(slot_shHidden()));
+//    connect(this, SIGNAL(showALL(bool)),routage,SLOT(slot_shShow()));
+//    connect(this, SIGNAL(hideALL(bool)),routage,SLOT(slot_shHidden()));
 //    connect(this, SIGNAL(shRoutage(bool)),routage,SLOT(slot_shRou()));
 
 
@@ -1823,9 +1824,11 @@ void myCentralWidget::myDeleteRoute(ROUTE * route)
             tr("La destruction d'une route est definitive.\n\nVoulez-vous egalement supprimer tous les POIs lui appartenant?"),
             QMessageBox::Yes | QMessageBox::No | QMessageBox::Cancel);
     if (rep == QMessageBox::Cancel) return ;
-
     route->setTemp(true);
-
+//    route->setHidden(false);
+//    QCoreApplication::sendPostedEvents(scene,0);
+//    QCoreApplication::processEvents();
+//    QCoreApplication::flush();
     while(!route->getPoiList().isEmpty())
     {
         POI * poi = route->getPoiList().takeFirst();

@@ -7,7 +7,7 @@
 #include "Projection.h"
 #include "class_list.h"
 
-class vlmPointGraphic : QGraphicsWidget
+class vlmPointGraphic : public QGraphicsWidget
 { Q_OBJECT
 public:
     vlmPointGraphic(ROUTAGE * routage,int isoNb, int pointIsoNb, float lon, float lat, Projection * proj, QGraphicsScene * myScene,int z_level);

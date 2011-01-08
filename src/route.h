@@ -35,7 +35,7 @@ Copyright (C) 2008 - Jacques Zaninetti - http://zygrib.free.fr
 
 
 //===================================================================
-class ROUTE : public QGraphicsWidget
+class ROUTE : public QObject
 { Q_OBJECT
     public:
         /* constructeurs, destructeurs */
@@ -115,7 +115,7 @@ class ROUTE : public QGraphicsWidget
         void slot_edit();
         void slot_shShow();
         void slot_shHidden();
-        void slot_shRou(){if(this->isVisible()) slot_shHidden();else slot_shShow();}
+        void slot_shRou(){if(!this->hidden) slot_shHidden();else slot_shShow();}
         void slot_export(){parent->exportRouteFromMenu(this);}
         void slot_boatPointerHasChanged(boat * acc);
         void slot_compassFollow(){parent->setCompassFollow(this);}
