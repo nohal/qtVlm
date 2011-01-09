@@ -8,6 +8,8 @@ CONFIG+=staticlib
 DEPENDPATH += . nmea
 INCLUDEPATH += . nmea
 
+DESTDIR=../../build
+
 # Input
 HEADERS += nmea/config.h \
            nmea/context.h \

@@ -10,15 +10,11 @@ INCLUDEPATH += objs \
     libs/qjson \
     libs/nmealib/src/nmea \
     .
-LIBS += -Llibs/bzip2 \
+LIBS += -Llibs/build \
     -lbz2 \
-    -Llibs/zlib-1.2.3 \
     -lz \
-    -Llibs/qextserialport/build \
     -lqextserialport \
-    -Llibs/qjson \
     -lqjson \
-    -Llibs/nmealib/src/ \
     -lnmea
 MOC_DIR = objs
 OBJECTS_DIR = objs

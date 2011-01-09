@@ -1,4 +1,4 @@
-
+DESTDIR=../build
 TEMPLATE=lib
 TARGET=bz2
 CONFIG+=staticlib

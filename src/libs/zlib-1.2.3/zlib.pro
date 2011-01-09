@@ -5,6 +5,8 @@ CONFIG+=staticlib
 
 INCLUDEPATH += .
 
+DESTDIR=../build
+
 HEADERS += crc32.h \
            deflate.h \
            inffast.h \

@@ -7,6 +7,8 @@ TARGET=qjson
 CONFIG+=staticlib
 INCLUDEPATH += .
 
+DESTDIR=../build
+
 # Input
 HEADERS += json_parser.hh \
            json_scanner.h \
