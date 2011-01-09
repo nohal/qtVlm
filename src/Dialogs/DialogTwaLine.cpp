@@ -6,6 +6,7 @@
 #include "Util.h"
 #include "Polar.h"
 #include <QDebug>
+#include "settings.h"
 
 DialogTwaLine::DialogTwaLine(QPointF start, myCentralWidget *parent, MainWindow *main) : QDialog(parent)
 {
@@ -13,9 +14,11 @@ DialogTwaLine::DialogTwaLine(QPointF start, myCentralWidget *parent, MainWindow 
     this->start=start;
     this->grib=parent->getGrib();
     this->myBoat=parent->getSelectedBoat();
-    pen.setColor(Qt::yellow);
-    pen.setBrush(Qt::yellow);
-    pen.setWidthF(3);
+
+    QColor color=Settings::getSetting("traceLineColor", Qt::yellow).value<QColor>();
+    pen.setColor(color);
+    pen.setBrush(color);
+    pen.setWidthF(Settings::getSetting("traceLineWidth", 2.0).toDouble());
     this->line=new vlmLine(parent->getProj(),parent->getScene(),Z_VALUE_ROUTE);
     line->setLinePen(pen);
     this->setWindowFlags(Qt::Tool);

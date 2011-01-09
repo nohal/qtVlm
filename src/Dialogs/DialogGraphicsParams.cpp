@@ -228,6 +228,8 @@ void DialogGraphicsParams::slotBtOK()
         Settings::setSetting("estimeLineColor",  inputEstimeLine->getLineColor());
         Settings::setSetting("routeLineWidth",  inputRouteLine->getLineWidth());
         Settings::setSetting("routeLineColor",  inputRouteLine->getLineColor());
+        Settings::setSetting("traceLineWidth",  inputTraceLine->getLineWidth());
+        Settings::setSetting("traceLineColor",  inputTraceLine->getLineColor());
     accept();
 }
 //-------------------------------------------------------------------------------
@@ -376,6 +378,18 @@ QFrame *DialogGraphicsParams::createFrameGui(QWidget *parent)
                                 2.0,  Qt::yellow,
                                 this);
     lay->addWidget( inputRouteLine, lig,1, Qt::AlignLeft);
+
+    //-------------------------------------------------
+    lig ++;
+    label = new QLabel(tr("Trace TWA :"), frm);
+    lay->addWidget( label,    lig,0, Qt::AlignRight);
+        inputTraceLine =
+                new InputLineParams(
+                                Settings::getSetting("traceLineWidth", 2.0).toDouble(),
+                                Settings::getSetting("traceLineColor", Qt::yellow).value<QColor>(),
+                                2.0,  Qt::yellow,
+                                this);
+    lay->addWidget( inputTraceLine, lig,1, Qt::AlignLeft);
 
     return frm;
 }

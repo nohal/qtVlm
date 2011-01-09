@@ -176,7 +176,7 @@ void Terrain::draw_GSHHSandGRIB()
     tranparent=Qt::transparent;
 
     //===================================================
-    // Dessin du fond de carte et des données GRIB
+    // Dessin du fond de carte et des donnees GRIB
     //===================================================
     if (!isEarthMapValid)
     {
@@ -236,12 +236,14 @@ void Terrain::draw_GSHHSandGRIB()
         }
     }
 
-    if (showCountriesNames) {
+    QPainter pnt1(imgEarth);
+    if (showCountriesNames)
+    {
 
-        gisReader->drawCountriesNames(pnt, proj);
+        gisReader->drawCountriesNames(pnt1, proj);
     }
     if (showCitiesNamesLevel > 0) {
-        gisReader->drawCitiesNames(pnt, proj, showCitiesNamesLevel);
+        gisReader->drawCitiesNames(pnt1, proj, showCitiesNamesLevel);
     }
     //===================================================
 

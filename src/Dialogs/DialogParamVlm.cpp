@@ -131,7 +131,7 @@ DialogParamVlm::DialogParamVlm(MainWindow * main,myCentralWidget * parent) : QDi
     userAgent->setText(Settings::getSetting("userAgent", "").toString());
     userAgent->setEnabled(Settings::getSetting("forceUserAgent",0).toInt()==1);
     defFontName->findText(Settings::getSetting("defaultFontName",QApplication::font().family()).toString());
-    defFontSize->setValue(Settings::getSetting("defaultFontSizeInc",0).toInt());
+    defFontSize->setValue(8.25+Settings::getSetting("defaultFontSizeInc",0).toFloat());
 
     for(int i=0;i<NB_URL;i++)
         url_list->addItem(url_name[i]+": "+url_str[i]);
@@ -159,7 +159,7 @@ void DialogParamVlm::done(int result)
         Settings::setSetting("autoHideRoute",this->chkHideRoute->checkState()==Qt::Checked?"1":"0");
         Settings::setSetting("showFlag",this->chkPavillon->checkState()==Qt::Checked?"1":"0");
         Settings::setSetting("defaultFontName",this->defFontName->currentText());
-        Settings::setSetting("defaultFontSizeInc",QString().setNum(this->defFontSize->value()));
+        Settings::setSetting("defaultFontSizeInc",QString().setNum(this->defFontSize->value()-8.25));
 
 
         /* colors */
