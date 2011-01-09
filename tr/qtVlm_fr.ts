@@ -90,6 +90,10 @@
         <source>Routes :</source>
         <translation></translation>
     </message>
+    <message>
+        <source>Trace TWA :</source>
+        <translation>Tracé TWA :</translation>
+    </message>
 </context>
 <context>
     <name>DialogHorn</name>
@@ -1088,7 +1092,7 @@ Etes-vous sur ?</source>
     </message>
     <message>
         <source>  init.dir: %1deg</source>
-        <translation>init.dir: %1°</translation>
+        <translation>  init.dir: %1°</translation>
     </message>
     <message>
         <source> Arrivee WP</source>
@@ -3174,7 +3178,7 @@ Voulez-vous egalement supprimer tous les POIs lui appartenant?</source>
         <translation></translation>
     </message>
     <message>
-        <source>Facteur de taille</source>
+        <source>Taille</source>
         <translation></translation>
     </message>
 </context>

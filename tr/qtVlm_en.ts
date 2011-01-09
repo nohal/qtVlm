@@ -63,61 +63,66 @@
         <translation>Cancel</translation>
     </message>
     <message>
-        <location filename="../src/Dialogs/DialogGraphicsParams.cpp" line="251"/>
+        <location filename="../src/Dialogs/DialogGraphicsParams.cpp" line="253"/>
         <source>Couleur de fond :</source>
         <translation>Background color :</translation>
     </message>
     <message>
-        <location filename="../src/Dialogs/DialogGraphicsParams.cpp" line="261"/>
+        <location filename="../src/Dialogs/DialogGraphicsParams.cpp" line="263"/>
         <source>Couleur des oceans :</source>
         <translation>Oceans color :</translation>
     </message>
     <message>
-        <location filename="../src/Dialogs/DialogGraphicsParams.cpp" line="304"/>
+        <location filename="../src/Dialogs/DialogGraphicsParams.cpp" line="306"/>
         <source>Traits de cotes :</source>
         <translation>Coastlines :</translation>
     </message>
     <message>
-        <location filename="../src/Dialogs/DialogGraphicsParams.cpp" line="315"/>
+        <location filename="../src/Dialogs/DialogGraphicsParams.cpp" line="317"/>
         <source>Frontieres :</source>
         <translation>Borders :</translation>
     </message>
     <message>
-        <location filename="../src/Dialogs/DialogGraphicsParams.cpp" line="326"/>
+        <location filename="../src/Dialogs/DialogGraphicsParams.cpp" line="328"/>
         <source>Rivieres :</source>
         <translation>Rivers :</translation>
     </message>
     <message>
-        <location filename="../src/Dialogs/DialogGraphicsParams.cpp" line="348"/>
+        <location filename="../src/Dialogs/DialogGraphicsParams.cpp" line="350"/>
         <source>Prochaine porte :</source>
         <translation>Next active gate :</translation>
     </message>
     <message>
-        <location filename="../src/Dialogs/DialogGraphicsParams.cpp" line="359"/>
+        <location filename="../src/Dialogs/DialogGraphicsParams.cpp" line="361"/>
         <source>Portes suivantes :</source>
         <translation>Next other gates :</translation>
     </message>
     <message>
-        <location filename="../src/Dialogs/DialogGraphicsParams.cpp" line="370"/>
+        <location filename="../src/Dialogs/DialogGraphicsParams.cpp" line="372"/>
         <source>Routes :</source>
         <translation></translation>
+    </message>
+    <message>
+        <location filename="../src/Dialogs/DialogGraphicsParams.cpp" line="384"/>
+        <source>Trace TWA :</source>
+        <translation>TWA trace :</translation>
     </message>
     <message>
         <source>Couleur des océans :</source>
         <translation type="obsolete">Oceans color :</translation>
     </message>
     <message>
-        <location filename="../src/Dialogs/DialogGraphicsParams.cpp" line="271"/>
+        <location filename="../src/Dialogs/DialogGraphicsParams.cpp" line="273"/>
         <source>Couleur des terres :</source>
         <translation>Land color :</translation>
     </message>
     <message>
-        <location filename="../src/Dialogs/DialogGraphicsParams.cpp" line="281"/>
+        <location filename="../src/Dialogs/DialogGraphicsParams.cpp" line="283"/>
         <source>Opacite des terres :</source>
         <translation>Land opacity :</translation>
     </message>
     <message>
-        <location filename="../src/Dialogs/DialogGraphicsParams.cpp" line="293"/>
+        <location filename="../src/Dialogs/DialogGraphicsParams.cpp" line="295"/>
         <source>Estime :</source>
         <translation>Reckoning :</translation>
     </message>
@@ -134,7 +139,7 @@
         <translation type="obsolete">Rivers :</translation>
     </message>
     <message>
-        <location filename="../src/Dialogs/DialogGraphicsParams.cpp" line="337"/>
+        <location filename="../src/Dialogs/DialogGraphicsParams.cpp" line="339"/>
         <source>Isobares :</source>
         <translation>Isobars :</translation>
     </message>
@@ -1000,7 +1005,7 @@ Etes-vous sur ?</source>
         <translation type="obsolete">ETA:</translation>
     </message>
     <message>
-        <location filename="../src/Dialogs/DialogTwaLine.cpp" line="150"/>
+        <location filename="../src/Dialogs/DialogTwaLine.cpp" line="153"/>
         <source> ETA: </source>
         <translation></translation>
     </message>
@@ -1502,7 +1507,7 @@ Etes-vous sur ?</source>
     <message>
         <location filename="../src/MainWindow.cpp" line="1086"/>
         <source>  init.dir: %1deg</source>
-        <translation>init.dir: %1°</translation>
+        <translation>  init.dir: %1°</translation>
     </message>
     <message>
         <location filename="../src/MainWindow.cpp" line="1115"/>
@@ -4202,12 +4207,12 @@ Voulez-vous egalement supprimer tous les POIs lui appartenant?</source>
 <context>
     <name>Terrain</name>
     <message>
-        <location filename="../src/Terrain.cpp" line="257"/>
+        <location filename="../src/Terrain.cpp" line="259"/>
         <source>Niveau de detail des cotes: </source>
         <translation>Coast detail level: </translation>
     </message>
     <message>
-        <location filename="../src/Terrain.cpp" line="647"/>
+        <location filename="../src/Terrain.cpp" line="649"/>
         <source>Calculs en cours...</source>
         <translation>Calculating...</translation>
     </message>
@@ -4260,137 +4265,141 @@ Voulez-vous egalement supprimer tous les POIs lui appartenant?</source>
         <translation>Font</translation>
     </message>
     <message>
-        <location filename="../src/Ui/paramVLM.ui" line="162"/>
         <source>Facteur de taille</source>
-        <translation>Size factor</translation>
+        <translation type="obsolete">Size factor</translation>
     </message>
     <message>
-        <location filename="../src/Ui/paramVLM.ui" line="198"/>
+        <location filename="../src/Ui/paramVLM.ui" line="162"/>
+        <source>Taille</source>
+        <translation>Size</translation>
+    </message>
+    <message>
+        <location filename="../src/Ui/paramVLM.ui" line="201"/>
         <source>Couleurs</source>
         <translation>Colors</translation>
     </message>
     <message>
-        <location filename="../src/Ui/paramVLM.ui" line="213"/>
+        <location filename="../src/Ui/paramVLM.ui" line="216"/>
         <source>POI</source>
         <translation>POI</translation>
     </message>
     <message>
-        <location filename="../src/Ui/paramVLM.ui" line="230"/>
-        <location filename="../src/Ui/paramVLM.ui" line="254"/>
-        <location filename="../src/Ui/paramVLM.ui" line="278"/>
-        <location filename="../src/Ui/paramVLM.ui" line="302"/>
-        <location filename="../src/Ui/paramVLM.ui" line="326"/>
-        <location filename="../src/Ui/paramVLM.ui" line="350"/>
+        <location filename="../src/Ui/paramVLM.ui" line="233"/>
+        <location filename="../src/Ui/paramVLM.ui" line="257"/>
+        <location filename="../src/Ui/paramVLM.ui" line="281"/>
+        <location filename="../src/Ui/paramVLM.ui" line="305"/>
+        <location filename="../src/Ui/paramVLM.ui" line="329"/>
+        <location filename="../src/Ui/paramVLM.ui" line="353"/>
         <source>Changer</source>
         <translation>Change</translation>
     </message>
     <message>
-        <location filename="../src/Ui/paramVLM.ui" line="237"/>
+        <location filename="../src/Ui/paramVLM.ui" line="240"/>
         <source>Waypoint</source>
         <translation>Waypoint</translation>
     </message>
     <message>
-        <location filename="../src/Ui/paramVLM.ui" line="261"/>
+        <location filename="../src/Ui/paramVLM.ui" line="264"/>
         <source>Balise</source>
         <translation>Beacon</translation>
     </message>
     <message>
-        <location filename="../src/Ui/paramVLM.ui" line="285"/>
+        <location filename="../src/Ui/paramVLM.ui" line="288"/>
         <source>Marque est proc WP</source>
         <translation>Mark and next WP</translation>
     </message>
     <message>
-        <location filename="../src/Ui/paramVLM.ui" line="309"/>
+        <location filename="../src/Ui/paramVLM.ui" line="312"/>
         <source>Bateau qtVlm</source>
         <translation>qtVlm boat</translation>
     </message>
     <message>
-        <location filename="../src/Ui/paramVLM.ui" line="333"/>
+        <location filename="../src/Ui/paramVLM.ui" line="336"/>
         <source>Bateau qtVlm sel.</source>
         <translation>qtVlm selected boat.</translation>
     </message>
     <message>
-        <location filename="../src/Ui/paramVLM.ui" line="359"/>
+        <location filename="../src/Ui/paramVLM.ui" line="362"/>
         <source>Bateau</source>
         <translation>Boat</translation>
     </message>
     <message>
-        <location filename="../src/Ui/paramVLM.ui" line="371"/>
+        <location filename="../src/Ui/paramVLM.ui" line="374"/>
         <source>Calcul de l&apos;estime</source>
         <translation>Reckoning calculation</translation>
     </message>
     <message>
-        <location filename="../src/Ui/paramVLM.ui" line="392"/>
+        <location filename="../src/Ui/paramVLM.ui" line="395"/>
         <source>En temps</source>
         <translation>Time</translation>
     </message>
     <message>
-        <location filename="../src/Ui/paramVLM.ui" line="433"/>
+        <location filename="../src/Ui/paramVLM.ui" line="436"/>
         <source>min</source>
         <translation>min</translation>
     </message>
     <message>
-        <location filename="../src/Ui/paramVLM.ui" line="446"/>
+        <location filename="../src/Ui/paramVLM.ui" line="449"/>
         <source>En nombre de vacations</source>
         <translation>Number of cranks</translation>
     </message>
     <message>
-        <location filename="../src/Ui/paramVLM.ui" line="487"/>
+        <location filename="../src/Ui/paramVLM.ui" line="490"/>
         <source>vac</source>
         <translation>crank</translation>
     </message>
     <message>
-        <location filename="../src/Ui/paramVLM.ui" line="500"/>
+        <location filename="../src/Ui/paramVLM.ui" line="503"/>
         <source>En distance</source>
         <translation>Distance</translation>
     </message>
     <message>
-        <location filename="../src/Ui/paramVLM.ui" line="541"/>
+        <location filename="../src/Ui/paramVLM.ui" line="544"/>
         <source>milles</source>
         <translation>miles</translation>
     </message>
     <message>
-        <location filename="../src/Ui/paramVLM.ui" line="564"/>
+        <location filename="../src/Ui/paramVLM.ui" line="567"/>
         <source>Centrage sur bateau apres synchro VLM</source>
         <translation>Center on boat after VLM sync</translation>
     </message>
     <message>
-        <location filename="../src/Ui/paramVLM.ui" line="583"/>
+        <location filename="../src/Ui/paramVLM.ui" line="586"/>
         <source>Centrage apres changement de bateau</source>
         <translation>Center on boat after changing boat</translation>
     </message>
     <message>
-        <location filename="../src/Ui/paramVLM.ui" line="602"/>
+        <location filename="../src/Ui/paramVLM.ui" line="605"/>
         <source>Confirmation a chaque ordre vers VLM</source>
         <translation>Confirm each order to VLM</translation>
     </message>
     <message>
-        <location filename="../src/Ui/paramVLM.ui" line="811"/>
+        <location filename="../src/Ui/paramVLM.ui" line="814"/>
         <source> vac</source>
         <translation>crank</translation>
     </message>
     <message>
-        <location filename="../src/Ui/paramVLM.ui" line="864"/>
+        <location filename="../src/Ui/paramVLM.ui" line="867"/>
         <source>Demander l&apos;emplacement lors du telechargement</source>
         <translation>Ask for destination during download</translation>
     </message>
     <message>
-        <location filename="../src/Ui/paramVLM.ui" line="957"/>
+        <location filename="../src/Ui/paramVLM.ui" line="960"/>
         <source>Date automatique a chaque synchro VLM</source>
         <translation>Automatic date at each VLM sync</translation>
     </message>
     <message>
-        <location filename="../src/Ui/paramVLM.ui" line="1039"/>
+        <location filename="../src/Ui/paramVLM.ui" line="1042"/>
         <source>Delais d&apos;envoi (sec)</source>
         <translation>Send delay (sec)</translation>
     </message>
     <message>
-        <location filename="../src/Ui/paramVLM.ui" line="1072"/>
+        <location filename="../src/Ui/paramVLM.ui" line="1075"/>
         <source>Avance</source>
         <translation>Avanced</translation>
     </message>
     <message>
-        <location filename="../src/Ui/paramVLM.ui" line="1128"/>
+        <location filename="../src/Ui/paramVLM.ui" line="1131"/>
         <source>Sauvegarde a la fermeture</source>
         <translation>Save on exit</translation>
     </message>
@@ -4407,82 +4416,82 @@ Voulez-vous egalement supprimer tous les POIs lui appartenant?</source>
         <translation type="obsolete">Confirm each order to VLM</translation>
     </message>
     <message>
-        <location filename="../src/Ui/paramVLM.ui" line="608"/>
+        <location filename="../src/Ui/paramVLM.ui" line="611"/>
         <source>Trace</source>
         <translation>Trace</translation>
     </message>
     <message>
-        <location filename="../src/Ui/paramVLM.ui" line="620"/>
+        <location filename="../src/Ui/paramVLM.ui" line="623"/>
         <source>Pas de la trace</source>
         <translation>Trace step</translation>
     </message>
     <message>
-        <location filename="../src/Ui/paramVLM.ui" line="633"/>
+        <location filename="../src/Ui/paramVLM.ui" line="636"/>
         <source>Longueur de la trace</source>
         <translation>Length of trace</translation>
     </message>
     <message>
-        <location filename="../src/Ui/paramVLM.ui" line="652"/>
+        <location filename="../src/Ui/paramVLM.ui" line="655"/>
         <source>Afficher la trace des concurrents</source>
         <translation>Show trace competitors</translation>
     </message>
     <message>
-        <location filename="../src/Ui/paramVLM.ui" line="691"/>
+        <location filename="../src/Ui/paramVLM.ui" line="694"/>
         <source>vacations</source>
         <translation>crank</translation>
     </message>
     <message>
-        <location filename="../src/Ui/paramVLM.ui" line="704"/>
+        <location filename="../src/Ui/paramVLM.ui" line="707"/>
         <source>heures</source>
         <translation>hours</translation>
     </message>
     <message>
-        <location filename="../src/Ui/paramVLM.ui" line="710"/>
+        <location filename="../src/Ui/paramVLM.ui" line="713"/>
         <source>Compas</source>
         <translation>Compass</translation>
     </message>
     <message>
-        <location filename="../src/Ui/paramVLM.ui" line="722"/>
+        <location filename="../src/Ui/paramVLM.ui" line="725"/>
         <source>Affichage du compas</source>
         <translation>Show compass</translation>
     </message>
     <message>
-        <location filename="../src/Ui/paramVLM.ui" line="734"/>
+        <location filename="../src/Ui/paramVLM.ui" line="737"/>
         <source>Afficher le compas (C)</source>
         <translation>Show compass (C)</translation>
     </message>
     <message>
-        <location filename="../src/Ui/paramVLM.ui" line="751"/>
+        <location filename="../src/Ui/paramVLM.ui" line="754"/>
         <source>Polaire</source>
         <translation>Polar</translation>
     </message>
     <message>
-        <location filename="../src/Ui/paramVLM.ui" line="763"/>
+        <location filename="../src/Ui/paramVLM.ui" line="766"/>
         <source>Afficher la polaire (L)</source>
         <translation>Show polar (L)</translation>
     </message>
     <message>
-        <location filename="../src/Ui/paramVLM.ui" line="779"/>
+        <location filename="../src/Ui/paramVLM.ui" line="782"/>
         <source>Echelle fixe (50nds)</source>
         <translation>Fixed scale (50knots)</translation>
     </message>
     <message>
-        <location filename="../src/Ui/paramVLM.ui" line="795"/>
+        <location filename="../src/Ui/paramVLM.ui" line="798"/>
         <source>Nombre de vacations</source>
         <translation>Number of cranks</translation>
     </message>
     <message>
-        <location filename="../src/Ui/paramVLM.ui" line="833"/>
+        <location filename="../src/Ui/paramVLM.ui" line="836"/>
         <source>Meme duree que l&apos;estime</source>
         <translation>Same duration as reckoning</translation>
     </message>
     <message>
-        <location filename="../src/Ui/paramVLM.ui" line="840"/>
+        <location filename="../src/Ui/paramVLM.ui" line="843"/>
         <source>Grib</source>
         <translation>Grib</translation>
     </message>
     <message>
-        <location filename="../src/Ui/paramVLM.ui" line="852"/>
+        <location filename="../src/Ui/paramVLM.ui" line="855"/>
         <source>Fichier grib</source>
         <translation>Grib file</translation>
     </message>
@@ -4491,22 +4500,22 @@ Voulez-vous egalement supprimer tous les POIs lui appartenant?</source>
         <translation type="obsolete">Ask for destination during download</translation>
     </message>
     <message>
-        <location filename="../src/Ui/paramVLM.ui" line="880"/>
+        <location filename="../src/Ui/paramVLM.ui" line="883"/>
         <source>Repertoire</source>
         <translation>Directory</translation>
     </message>
     <message>
-        <location filename="../src/Ui/paramVLM.ui" line="915"/>
+        <location filename="../src/Ui/paramVLM.ui" line="918"/>
         <source>Parcourir</source>
         <translation>Browse</translation>
     </message>
     <message>
-        <location filename="../src/Ui/paramVLM.ui" line="931"/>
+        <location filename="../src/Ui/paramVLM.ui" line="934"/>
         <source>zoom sur grib au chargement</source>
         <translation>zoom on grib after download</translation>
     </message>
     <message>
-        <location filename="../src/Ui/paramVLM.ui" line="945"/>
+        <location filename="../src/Ui/paramVLM.ui" line="948"/>
         <source>Grib horodate</source>
         <translation>Grib timestamp</translation>
     </message>
@@ -4515,27 +4524,27 @@ Voulez-vous egalement supprimer tous les POIs lui appartenant?</source>
         <translation type="obsolete">Automatic date at each VLM sync</translation>
     </message>
     <message>
-        <location filename="../src/Ui/paramVLM.ui" line="971"/>
+        <location filename="../src/Ui/paramVLM.ui" line="974"/>
         <source>SailsDoc</source>
         <translation>SailDocs</translation>
     </message>
     <message>
-        <location filename="../src/Ui/paramVLM.ui" line="983"/>
+        <location filename="../src/Ui/paramVLM.ui" line="986"/>
         <source>Utilisation d&apos;un client mail externe</source>
         <translation>Use an external mail client</translation>
     </message>
     <message>
-        <location filename="../src/Ui/paramVLM.ui" line="990"/>
+        <location filename="../src/Ui/paramVLM.ui" line="993"/>
         <source>GPS</source>
         <translation>GPS</translation>
     </message>
     <message>
-        <location filename="../src/Ui/paramVLM.ui" line="1002"/>
+        <location filename="../src/Ui/paramVLM.ui" line="1005"/>
         <source>Emulation de GPS</source>
         <translation>GPS emulation</translation>
     </message>
     <message>
-        <location filename="../src/Ui/paramVLM.ui" line="1017"/>
+        <location filename="../src/Ui/paramVLM.ui" line="1020"/>
         <source>Port serie</source>
         <translation>Serial port</translation>
     </message>
@@ -4544,7 +4553,7 @@ Voulez-vous egalement supprimer tous les POIs lui appartenant?</source>
         <translation type="obsolete">Delay to send (sec)</translation>
     </message>
     <message>
-        <location filename="../src/Ui/paramVLM.ui" line="1062"/>
+        <location filename="../src/Ui/paramVLM.ui" line="1065"/>
         <source>Activer</source>
         <translation>Activate</translation>
     </message>
@@ -4553,12 +4562,12 @@ Voulez-vous egalement supprimer tous les POIs lui appartenant?</source>
         <translation type="obsolete">Advanced</translation>
     </message>
     <message>
-        <location filename="../src/Ui/paramVLM.ui" line="1087"/>
+        <location filename="../src/Ui/paramVLM.ui" line="1090"/>
         <source>Url</source>
         <translation>URL</translation>
     </message>
     <message>
-        <location filename="../src/Ui/paramVLM.ui" line="1110"/>
+        <location filename="../src/Ui/paramVLM.ui" line="1113"/>
         <source>Position et taille de qtVlm</source>
         <translation>Position and size of qtVlm</translation>
     </message>
@@ -4567,12 +4576,12 @@ Voulez-vous egalement supprimer tous les POIs lui appartenant?</source>
         <translation type="obsolete">Save when closing</translation>
     </message>
     <message>
-        <location filename="../src/Ui/paramVLM.ui" line="1142"/>
+        <location filename="../src/Ui/paramVLM.ui" line="1145"/>
         <source>User agent</source>
         <translation>User agent</translation>
     </message>
     <message>
-        <location filename="../src/Ui/paramVLM.ui" line="1154"/>
+        <location filename="../src/Ui/paramVLM.ui" line="1157"/>
         <source>Force user agent</source>
         <translation>Force user agent</translation>
     </message>
@@ -5129,8 +5138,8 @@ Voulez-vous egalement supprimer tous les POIs lui appartenant?</source>
     </message>
     <message>
         <location filename="../src/Ui/BoardVLM.ui" line="513"/>
-        <location filename="../src/Ui/BoardVLM.ui" line="1653"/>
-        <location filename="../src/Ui/BoardVLM.ui" line="1688"/>
+        <location filename="../src/Ui/BoardVLM.ui" line="1640"/>
+        <location filename="../src/Ui/BoardVLM.ui" line="1675"/>
         <source>background-color: rgb(239, 243, 247);</source>
         <translation>background-color: rgb(239, 243, 247);</translation>
     </message>
@@ -5141,7 +5150,7 @@ Voulez-vous egalement supprimer tous les POIs lui appartenant?</source>
     </message>
     <message>
         <location filename="../src/Ui/BoardVLM.ui" line="683"/>
-        <location filename="../src/Ui/BoardVLM.ui" line="1861"/>
+        <location filename="../src/Ui/BoardVLM.ui" line="1848"/>
         <source>deg</source>
         <translation>°</translation>
     </message>
@@ -5153,16 +5162,16 @@ Voulez-vous egalement supprimer tous les POIs lui appartenant?</source>
     <message>
         <location filename="../src/Ui/BoardVLM.ui" line="740"/>
         <location filename="../src/Ui/BoardVLM.ui" line="791"/>
-        <location filename="../src/Ui/BoardVLM.ui" line="1201"/>
-        <location filename="../src/Ui/BoardVLM.ui" line="1503"/>
+        <location filename="../src/Ui/BoardVLM.ui" line="1188"/>
+        <location filename="../src/Ui/BoardVLM.ui" line="1490"/>
         <source>99.99</source>
         <translation>99.99</translation>
     </message>
     <message>
         <location filename="../src/Ui/BoardVLM.ui" line="759"/>
         <location filename="../src/Ui/BoardVLM.ui" line="809"/>
-        <location filename="../src/Ui/BoardVLM.ui" line="1228"/>
-        <location filename="../src/Ui/BoardVLM.ui" line="1521"/>
+        <location filename="../src/Ui/BoardVLM.ui" line="1215"/>
+        <location filename="../src/Ui/BoardVLM.ui" line="1508"/>
         <source>kts</source>
         <translation>kts</translation>
     </message>
@@ -5183,104 +5192,104 @@ Voulez-vous egalement supprimer tous les POIs lui appartenant?</source>
     </message>
     <message>
         <location filename="../src/Ui/BoardVLM.ui" line="859"/>
-        <location filename="../src/Ui/BoardVLM.ui" line="1154"/>
+        <location filename="../src/Ui/BoardVLM.ui" line="1141"/>
         <source>nm</source>
         <translation>nm</translation>
     </message>
     <message>
-        <location filename="../src/Ui/BoardVLM.ui" line="918"/>
+        <location filename="../src/Ui/BoardVLM.ui" line="905"/>
         <source>WP direction</source>
         <translation>WP direction</translation>
     </message>
     <message>
-        <location filename="../src/Ui/BoardVLM.ui" line="954"/>
-        <location filename="../src/Ui/BoardVLM.ui" line="1349"/>
+        <location filename="../src/Ui/BoardVLM.ui" line="941"/>
+        <location filename="../src/Ui/BoardVLM.ui" line="1336"/>
         <source>Ortho</source>
         <translation>Ortho</translation>
     </message>
     <message>
-        <location filename="../src/Ui/BoardVLM.ui" line="984"/>
-        <location filename="../src/Ui/BoardVLM.ui" line="1079"/>
-        <location filename="../src/Ui/BoardVLM.ui" line="1130"/>
-        <location filename="../src/Ui/BoardVLM.ui" line="1581"/>
-        <location filename="../src/Ui/BoardVLM.ui" line="1968"/>
-        <location filename="../src/Ui/BoardVLM.ui" line="2048"/>
+        <location filename="../src/Ui/BoardVLM.ui" line="971"/>
+        <location filename="../src/Ui/BoardVLM.ui" line="1066"/>
+        <location filename="../src/Ui/BoardVLM.ui" line="1117"/>
+        <location filename="../src/Ui/BoardVLM.ui" line="1568"/>
+        <location filename="../src/Ui/BoardVLM.ui" line="1942"/>
+        <location filename="../src/Ui/BoardVLM.ui" line="2022"/>
         <source>999.99</source>
         <translation>999.99</translation>
     </message>
     <message>
-        <location filename="../src/Ui/BoardVLM.ui" line="1014"/>
-        <location filename="../src/Ui/BoardVLM.ui" line="1058"/>
-        <location filename="../src/Ui/BoardVLM.ui" line="1598"/>
-        <location filename="../src/Ui/BoardVLM.ui" line="1985"/>
-        <location filename="../src/Ui/BoardVLM.ui" line="2065"/>
+        <location filename="../src/Ui/BoardVLM.ui" line="1001"/>
+        <location filename="../src/Ui/BoardVLM.ui" line="1045"/>
+        <location filename="../src/Ui/BoardVLM.ui" line="1585"/>
+        <location filename="../src/Ui/BoardVLM.ui" line="1959"/>
+        <location filename="../src/Ui/BoardVLM.ui" line="2039"/>
         <source>a</source>
         <translation>a</translation>
     </message>
     <message>
-        <location filename="../src/Ui/BoardVLM.ui" line="1034"/>
-        <location filename="../src/Ui/BoardVLM.ui" line="1656"/>
+        <location filename="../src/Ui/BoardVLM.ui" line="1021"/>
+        <location filename="../src/Ui/BoardVLM.ui" line="1643"/>
         <source>Angle</source>
         <translation>Angle</translation>
     </message>
     <message>
-        <location filename="../src/Ui/BoardVLM.ui" line="1106"/>
+        <location filename="../src/Ui/BoardVLM.ui" line="1093"/>
         <source>DNM</source>
         <translation>DNM</translation>
     </message>
     <message>
-        <location filename="../src/Ui/BoardVLM.ui" line="1174"/>
-        <location filename="../src/Ui/BoardVLM.ui" line="1318"/>
+        <location filename="../src/Ui/BoardVLM.ui" line="1161"/>
+        <location filename="../src/Ui/BoardVLM.ui" line="1305"/>
         <source>VMG</source>
         <translation>VMG</translation>
     </message>
     <message>
-        <location filename="../src/Ui/BoardVLM.ui" line="1275"/>
+        <location filename="../src/Ui/BoardVLM.ui" line="1262"/>
         <source>PushButton</source>
         <translation>PushButton</translation>
     </message>
     <message>
-        <location filename="../src/Ui/BoardVLM.ui" line="1380"/>
+        <location filename="../src/Ui/BoardVLM.ui" line="1367"/>
         <source>VBVMG</source>
         <translation>VBVMG</translation>
     </message>
     <message>
-        <location filename="../src/Ui/BoardVLM.ui" line="1456"/>
+        <location filename="../src/Ui/BoardVLM.ui" line="1443"/>
         <source>Vent</source>
         <translation>Wind</translation>
     </message>
     <message>
-        <location filename="../src/Ui/BoardVLM.ui" line="1627"/>
+        <location filename="../src/Ui/BoardVLM.ui" line="1614"/>
         <source>background-color: rgb(170, 170, 255);</source>
         <translation>background-color: rgb(170, 170, 255);</translation>
     </message>
     <message>
-        <location filename="../src/Ui/BoardVLM.ui" line="1691"/>
+        <location filename="../src/Ui/BoardVLM.ui" line="1678"/>
         <source>+/-</source>
         <translation>+/-</translation>
     </message>
     <message>
-        <location filename="../src/Ui/BoardVLM.ui" line="1485"/>
+        <location filename="../src/Ui/BoardVLM.ui" line="1472"/>
         <source>Speed</source>
         <translation>Speed</translation>
     </message>
     <message>
-        <location filename="../src/Ui/BoardVLM.ui" line="1566"/>
+        <location filename="../src/Ui/BoardVLM.ui" line="1553"/>
         <source>Dir</source>
         <translation>Dir</translation>
     </message>
     <message>
-        <location filename="../src/Ui/BoardVLM.ui" line="1928"/>
+        <location filename="../src/Ui/BoardVLM.ui" line="1902"/>
         <source>Meilleur VMG vent</source>
         <translation>Best VMG wind</translation>
     </message>
     <message>
-        <location filename="../src/Ui/BoardVLM.ui" line="1953"/>
+        <location filename="../src/Ui/BoardVLM.ui" line="1927"/>
         <source>Pres</source>
         <translation>Beating</translation>
     </message>
     <message>
-        <location filename="../src/Ui/BoardVLM.ui" line="2030"/>
+        <location filename="../src/Ui/BoardVLM.ui" line="2004"/>
         <source>Portant</source>
         <translation>Reaching</translation>
     </message>
