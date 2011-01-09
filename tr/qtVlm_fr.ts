@@ -3171,7 +3171,7 @@ Voulez-vous egalement supprimer tous les POIs lui appartenant?</source>
     </message>
     <message>
         <source>Police de caractere par defaut</source>
-        <translation>Police de caractères par defaut</translation>
+        <translation type="unfinished">Police de caractères par défaut</translation>
     </message>
     <message>
         <source>Police</source>
