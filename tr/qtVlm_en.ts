@@ -2839,7 +2839,7 @@ Etes-vous sur ?</source>
     <message>
         <location filename="../src/POI.cpp" line="179"/>
         <source>Set Date</source>
-        <translation>Set Date</translation>
+        <translation>Set grib date</translation>
     </message>
     <message>
         <location filename="../src/POI.cpp" line="183"/>

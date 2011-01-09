@@ -1918,7 +1918,7 @@ Etes-vous sur ?</source>
     </message>
     <message>
         <source>Set Date</source>
-        <translation></translation>
+        <translation>Positionner le grib à l&apos;ETA</translation>
     </message>
     <message>
         <source>Tirer un cap</source>
