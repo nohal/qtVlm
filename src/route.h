@@ -30,7 +30,7 @@ Copyright (C) 2008 - Jacques Zaninetti - http://zygrib.free.fr
 #include <QMenu>
 #include <QDateTime>
 #include "mycentralwidget.h"
-
+#include "vlmLine.h"
 #include "class_list.h"
 
 
@@ -115,7 +115,7 @@ class ROUTE : public QObject
         void slot_edit();
         void slot_shShow();
         void slot_shHidden();
-        void slot_shRou(){if(!this->hidden) slot_shHidden();else slot_shShow();}
+        void slot_shRou(){if(this->line->isVisible()) slot_shHidden();else slot_shShow();}
         void slot_export(){parent->exportRouteFromMenu(this);}
         void slot_boatPointerHasChanged(boat * acc);
         void slot_compassFollow(){parent->setCompassFollow(this);}
