@@ -36,6 +36,7 @@ Copyright (C) 2008 - Jacques Zaninetti - http://zygrib.free.fr
 #include <QRadioButton>
 #include <QLineEdit>
 #include <QDoubleSpinBox>
+#include <QScrollArea>
 
 //-------------------------------------------------------------------------------
 class InputLineParams_testZone : public QWidget
@@ -136,6 +137,8 @@ class DialogGraphicsParams : public QDialog
         void slotBtCancel();
     
     
+    protected:
+        void resizeEvent ( QResizeEvent * event );
     private:
         QFrame *frameGui;
         QGridLayout *layout;
@@ -159,6 +162,7 @@ class DialogGraphicsParams : public QDialog
         InputLineParams *inputTraceLine;
 
         QFrame * createFrameGui(QWidget *parent);
+        QScrollArea *scroll;
 };
 
 

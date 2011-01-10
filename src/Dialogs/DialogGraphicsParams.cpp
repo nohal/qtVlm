@@ -33,6 +33,7 @@ Copyright (C) 2008 - Jacques Zaninetti - http://zygrib.free.fr
 #include "settings.h"
 #include <QDebug>
 #include "Util.h"
+#include <QDesktopWidget>
 
 
 //===========================================================================
@@ -173,7 +174,6 @@ DialogGraphicsParams::DialogGraphicsParams()
     QFrame *ftmp;
     QLabel *label;
     frameGui = createFrameGui(this);
-    
     layout = new QGridLayout(this);
     int lig=0;
     //-------------------------
@@ -197,14 +197,36 @@ DialogGraphicsParams::DialogGraphicsParams()
     btCancel = new QPushButton(tr("Annuler"), this);
     layout->addWidget( btOK,    lig,0);
     layout->addWidget( btCancel, lig,1);
-    
+    Util::setFontDialog(this);
+    QWidget *wid=new QWidget();
+    wid->setLayout(layout);
+    scroll=new QScrollArea(this);
+    this->resize(wid->size());
+    scroll->resize(wid->size());
+    scroll->setWidget(wid);
+    QSize mySize=QSize(wid->size().width()+20,wid->size().height()+20);
+    QSize screenSize=QApplication::desktop()->screenGeometry().size()*.8;
+    if(mySize.height() > screenSize.height())
+    {
+        mySize.setHeight(screenSize.height());
+    }
+    if(mySize.width() > screenSize.width())
+    {
+        mySize.setWidth(screenSize.width());
+    }
+    this->resize(mySize);
+    scroll->resize(mySize);
+
     //===============================================================
     connect(btCancel, SIGNAL(clicked()), this, SLOT(slotBtCancel()));
     connect(btOK, SIGNAL(clicked()), this, SLOT(slotBtOK()));
-    Util::setFontDialog(this);
 }
 
 //-------------------------------------------------------------------------------
+void DialogGraphicsParams::resizeEvent ( QResizeEvent * /*event*/ )
+{
+    scroll->resize(this->size());
+}
 void DialogGraphicsParams::slotBtOK()
 {
         Settings::setSetting("seaColor", inputSeaColor->getColor());
