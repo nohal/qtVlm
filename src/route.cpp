@@ -179,10 +179,10 @@ void ROUTE::slot_recalculate(boat * boat)
                     eta=((boatVLM*)myBoat)->getPrevVac();
                 now = (QDateTime::currentDateTime()).toUTC().toTime_t();
 #warning find a better way to identify a boat that has not yet started
-                if(eta < now - 2*myBoat->getVacLen() && myBoat->getType()==BOAT_VLM)
 /*cas du boat inscrit depuis longtemps mais pas encore parti*/
+                //if(eta < now - 2*myBoat->getVacLen() && myBoat->getType()==BOAT_VLM)
+                if(myBoat->getLoch()<0.01 && myBoat->getType()==BOAT_VLM)
                     eta=now;
-                //qWarning() << "Depart route: " << now;
                 break;
             case 2:
                 eta=grib->getCurrentDate();

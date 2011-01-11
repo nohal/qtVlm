@@ -1648,6 +1648,7 @@ void myCentralWidget::slot_editRoute(ROUTE * route,bool createMode)
         route->slot_recalculate();
         if(route->getSimplify())
         {
+            route->setSimplify(false);
             if(route->getFrozen() || !route->getHas_eta())
                 QMessageBox::critical(0,QString(QObject::tr("Simplification de route")),QString(QObject::tr("La simplification est impossible pour une route figee ou une route sans ETA")));
             else if(route->getUseVbvmgVlm())
@@ -1656,11 +1657,11 @@ void myCentralWidget::slot_editRoute(ROUTE * route,bool createMode)
             {
                 bool ok=false;
                 int maxLoss=QInputDialog::getInteger(0,QString(QObject::tr("Simplication de route")),QString(QObject::tr("Perte maximum de temps sur l'ETA finale (en minutes)")),0,0,10000,1,&ok);
-                if(!ok)
-                    route->setSimplify(false);
-                else
+                if(ok)
                 {
-                    route->setSimplify(false);
+                    int firstPOI=1;
+                    if(route->getStartFromBoat())
+                        firstPOI=0;
                     QList<POI*> pois=route->getPoiList();
                     int ref_nbPois=pois.count();
                     time_t ref_eta=route->getEta();
@@ -1676,7 +1677,7 @@ void myCentralWidget::slot_editRoute(ROUTE * route,bool createMode)
                         pois=route->getPoiList();
                         p.setValue(0);
                         p.setMaximum(pois.count()-2);
-                        for (int n=1;n<pois.count()-2;n++)
+                        for (int n=firstPOI;n<pois.count()-2;n++)
                         {
                             POI *poi=pois.at(n);
                             if(poi->getNotSimplificable()) continue;
@@ -1701,7 +1702,7 @@ void myCentralWidget::slot_editRoute(ROUTE * route,bool createMode)
                         pois=route->getPoiList();
                         p.setValue(pois.count()-2);
                         p.setMaximum(pois.count()-2);
-                        for (int n=pois.count()-2;n>0;n--)
+                        for (int n=pois.count()-2;n>=firstPOI;n--)
                         {
                             POI *poi=pois.at(n);
                             if(poi->getNotSimplificable()) continue;
@@ -1728,7 +1729,7 @@ void myCentralWidget::slot_editRoute(ROUTE * route,bool createMode)
                     p.setMaximum(pois.count()-2);
                     if(maxLoss!=0)
                     {
-                        for (int n=1;n<pois.count()-2;n++)
+                        for (int n=firstPOI;n<pois.count()-2;n++)
                         {
                             POI *poi=pois.at(n);
                             poi->setRoute(NULL);
