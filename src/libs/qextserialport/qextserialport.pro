@@ -9,8 +9,8 @@ CONFIG                 += warn_on qt thread
 CONFIG+=staticlib
 QT                     -= gui
 
-OBJECTS_DIR             = obj
-MOC_DIR                 = moc
+#OBJECTS_DIR             = obj
+#MOC_DIR                 = moc
 DEPENDDIR               = .
 INCLUDEDIR              = .
 HEADERS                 = qextserialbase.h \
