@@ -1,32 +1,48 @@
 #main makefile
 
+TARGET = "release"
+
+ifdef SystemRoot
+	RM = del /Q
+	RMFOLDER = rmdir /S /Q
+	FixPath = $(subst /,\,$1)
+	CD = cd
+	SEP = &&
+	APPNAME = qtVlm.exe
+	QMAKE = qmake
+else
+	RM = rm -f
+	RMFOLDER = rm -Rf
+	FixPath = $1
+	CD = cd
+	PWD = $(pwd)
+	SEP = ;
+	APPNAME = qtVlm
+	QMAKE = qmake
+endif
+
 all:
-	rm -f ./qtVlm
-	cd src/libs/bzip2; qmake; make
-	cd src/libs/zlib-1.2.3; qmake; make
-	cd src/libs/qextserialport; qmake; make
-	cd src/libs/qjson; qmake; make
-	cd src/libs/nmealib/src; qmake; make
-	cd src/nmealib/src; qmake; make
-	cd src; qmake; make
+	$(RM) $(APPNAME)
+	$(CD) $(call FixPath,src/libs/bzip2) $(SEP) $(QMAKE) CONFIG+=$(TARGET) $(SEP) make 
+	$(CD) $(call FixPath,src/libs/zlib-1.2.3) $(SEP) $(QMAKE) CONFIG+=$(TARGET) $(SEP) make 
+	$(CD) $(call FixPath,src/libs/qextserialport) $(SEP) $(QMAKE) CONFIG+=$(TARGET) $(SEP) make 
+	$(CD) $(call FixPath,src/libs/qjson) $(SEP) $(QMAKE) CONFIG+=$(TARGET) $(SEP) make 
+	$(CD) $(call FixPath,src/libs/nmealib/src) $(SEP) $(QMAKE) CONFIG+=$(TARGET) $(SEP) make 
+	$(CD) src $(SEP) $(QMAKE) CONFIG+=$(TARGET) $(SEP) make 
 
 clean:
-	cd src/libs/bzip2; qmake; make clean
-	rm -f src/libs/bzip2/Makefile
-	cd src/libs/zlib-1.2.3; qmake; make clean
-	rm -f src/libs/zlib-1.2.3/Makefile
-	cd src/libs/qextserialport; qmake; make clean
-	rm -Rf src/libs/qextserialport/Makefile
-	cd src/libs/qjson; qmake; make clean
-	rm -Rf src/libs/qjson/Makefile
-	cd src/libs/nmealib/src; qmake; make clean
-	rm -Rf src/libs/nmealib/src/Makefile
-	cd src/nmealib/src; make clean
-	rm -Rf src/nmealib/src/Makefile
-	cd src;	qmake; make clean
-	rm -Rf src/libs/qtVlm src/Makefile src/objs
-	rm -Rf src/libs/build
-	rm -f qtVlm
-	rm -f qtVlm.exe
-	rm -f qtVlm.app
-
+	$(RM) $(APPNAME)
+	$(CD) $(call FixPath,src/libs/bzip2) $(SEP) $(QMAKE) $(SEP) make clean
+	$(CD) $(call FixPath,src/libs/zlib-1.2.3) $(SEP) $(QMAKE) $(SEP) make clean
+	$(CD) $(call FixPath,src/libs/qextserialport) $(SEP) $(QMAKE) $(SEP) make clean
+	$(CD) $(call FixPath,src/libs/qjson) $(SEP) $(QMAKE) $(SEP) make clean
+	$(CD) $(call FixPath,src/libs/nmealib/src) $(SEP) $(QMAKE) $(SEP) make clean
+	$(CD) src $(SEP) $(QMAKE) $(SEP) make clean
+	$(CD) $(call FixPath,src/libs/bzip2) $(SEP) $(RM) Makefile Makefile.Release Makefile.Debug $(SEP) $(RMFOLDER) release debug
+	$(CD) $(call FixPath,src/libs/zlib-1.2.3) $(SEP) $(RM) Makefile Makefile.Release Makefile.Debug $(SEP) $(RMFOLDER) release debug
+	$(CD) $(call FixPath,src/libs/qextserialport) $(SEP) $(RM) Makefile Makefile.Release Makefile.Debug $(SEP) $(RMFOLDER) release debug
+	$(CD) $(call FixPath,src/libs/qjson) $(SEP) $(RM) Makefile Makefile.Release Makefile.Debug $(SEP) $(RMFOLDER) release debug
+	$(CD) $(call FixPath,src/libs/nmealib/src) $(SEP) $(RM) Makefile Makefile.Release Makefile.Debug $(SEP) $(RMFOLDER) release debug
+	$(CD) $(call FixPath,src) $(SEP) $(RM) Makefile Makefile.Release Makefile.Debug
+	$(RMFOLDER) $(call FixPath,src/libs/build)
+	$(RMFOLDER) $(call FixPath,src/objs)
