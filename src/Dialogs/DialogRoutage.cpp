@@ -178,6 +178,7 @@ DialogRoutage::DialogRoutage(ROUTAGE *routage,myCentralWidget *parent)
         this->range->setDisabled(false);
         this->step->setDisabled(false);
         this->explo->setDisabled(false);
+        this->toPOI->setDisabled(false);
         this->log->setDisabled(false);
         this->pruneWakeAngle->setDisabled(false);
         this->checkCoast->setDisabled(false);

@@ -80,7 +80,7 @@ QList<vlmPoint> findRouteThreaded(const QList<vlmPoint> & pointList)
         float cap=point.capOrigin;
         double lon=point.origin->lon;
         double lat=point.origin->lat;
-        vlmPoint result=point;
+        vlmPoint resultP=point;
         double res_lon=point.lon;
         double res_lat=point.lat;
         float distanceParcourue=point.distOrigin;
@@ -90,17 +90,17 @@ QList<vlmPoint> findRouteThreaded(const QList<vlmPoint> & pointList)
         int realTime=ROUTAGE::calculateTimeRouteThreaded(from,to,&lastLonFound,&lastLatFound,&dataThread);
         if(realTime==0)
         {
-            result.isDead=true;
-            resultList.append(result);
+            resultP.isDead=true;
+            resultList.append(resultP);
             continue;
         }
         int timeStep=point.routage->getTimeStep();
         int timeStepSec=timeStep*60;
         if(realTime==timeStepSec)
         {
-            result.lon=lastLonFound;
-            result.lat=lastLatFound;
-            resultList.append(result);
+            resultP.lon=lastLonFound;
+            resultP.lat=lastLatFound;
+            resultList.append(resultP);
             continue;
         }
         int minDiff=qAbs(realTime-timeStepSec);
@@ -117,7 +117,7 @@ QList<vlmPoint> findRouteThreaded(const QList<vlmPoint> & pointList)
         realTime=ROUTAGE::calculateTimeRouteThreaded(from,to,&lastLonFound,&lastLatFound,&dataThread);
         if(realTime==timeStepSec)
         {
-            result.distOrigin=newDist;
+            resultP.distOrigin=newDist;
             found=true;
         }
         if(!found)
@@ -137,7 +137,7 @@ QList<vlmPoint> findRouteThreaded(const QList<vlmPoint> & pointList)
                 if(qAbs(y)<=60)
                 {
                     found=true;
-                    result.distOrigin=x;
+                    resultP.distOrigin=x;
                     break;
                 }
                 float deriv=ROUTAGE::routeFunctionDerivThreaded(x,from,&lastLonFound,&lastLatFound,&dataThread);
@@ -153,18 +153,18 @@ QList<vlmPoint> findRouteThreaded(const QList<vlmPoint> & pointList)
         }
         if(found)
         {
-            result.lon=lastLonFound;
-            result.lat=lastLatFound;
+            resultP.lon=lastLonFound;
+            resultP.lat=lastLatFound;
         }
         else
         {
-            result.distOrigin=bestDist;
+            resultP.distOrigin=bestDist;
             Util::getCoordFromDistanceAngle(lat, lon, bestDist, cap, &res_lat, &res_lon);
-            result.lon=res_lon;
-            result.lat=res_lat;
-            result.isDead=true; /*no route to point, better delete it(?)*/
+            resultP.lon=res_lon;
+            resultP.lat=res_lat;
+            resultP.isDead=true; /*no route to point, better delete it(?)*/
         }
-        resultList.append(result);
+        resultList.append(resultP);
     }
     return resultList;
 }
@@ -1766,7 +1766,7 @@ void ROUTAGE::setShowIso(bool b)
     {
         isoPointList[n]->shown(b);
     }
-    way->deleteAll();
+    way->hide();
     if(result && b)
         result->slot_showMe();
 }
@@ -1789,7 +1789,7 @@ void ROUTAGE::drawResult(vlmPoint P)
         if (P.isStart) break;
         P= (*P.origin);
     }
-    for(int n=1;n<initialRoad.count();n++)
+    for(int n=initialRoad.count()-1;n>=1;n--)
         result->addVlmPoint(initialRoad.at(n));
     pen.setWidthF(width);
     pen.setColor(color);
@@ -1843,13 +1843,14 @@ void ROUTAGE::slot_drawWay()
     pen.setBrush(colorsList[ncolor]);
     way->setLinePen(pen);
     way->slot_showMe();
+    way->show();
     pen.setColor(color);
     pen.setBrush(color);
     pen.setWidthF(2);
 }
 void ROUTAGE::eraseWay()
 {
-    way->deleteAll();
+    way->hide();
 }
 
 bool ROUTAGE::findPoint(float lon, float lat, double windAngle, double windSpeed, float cap, vlmPoint *pt)
@@ -1932,7 +1933,7 @@ vlmPoint ROUTAGE::findRoute(const vlmPoint & point)
     float cap=point.capOrigin;
     double lon=point.origin->lon;
     double lat=point.origin->lat;
-    vlmPoint result=point;
+    vlmPoint resultP=point;
     double res_lon=point.lon;
     double res_lat=point.lat;
     float distanceParcourue=point.distOrigin;
@@ -1942,15 +1943,15 @@ vlmPoint ROUTAGE::findRoute(const vlmPoint & point)
     if(realTime==0)
     {
         qWarning()<<"out of grib or something while computing in route-mode";
-        result.isDead=true;
-        return result;
+        resultP.isDead=true;
+        return resultP;
     }
     int timeStepSec=timeStep*60;
     if(realTime==timeStepSec)
     {
-        result.lon=lastLonFound;
-        result.lat=lastLatFound;
-        return result;
+        resultP.lon=lastLonFound;
+        resultP.lat=lastLatFound;
+        return resultP;
     }
     int minDiff=qAbs(realTime-timeStepSec);
     float bestDist=distanceParcourue;
@@ -1970,7 +1971,7 @@ vlmPoint ROUTAGE::findRoute(const vlmPoint & point)
     }
     if(realTime==timeStepSec)
     {
-        result.distOrigin=newDist;
+        resultP.distOrigin=newDist;
         found=true;
     }
     if(!found)
@@ -1991,7 +1992,7 @@ vlmPoint ROUTAGE::findRoute(const vlmPoint & point)
             if(qAbs(y)<=60)
             {
                 found=true;
-                result.distOrigin=x;
+                resultP.distOrigin=x;
                 NR_success++;
                 break;
             }
@@ -2015,8 +2016,8 @@ vlmPoint ROUTAGE::findRoute(const vlmPoint & point)
         if(n>routeMaxN)
             routeMaxN=n;
         routeTotN=routeTotN+n;
-        result.lon=lastLonFound;
-        result.lat=lastLatFound;
+        resultP.lon=lastLonFound;
+        resultP.lat=lastLatFound;
 #if 0 /*debug*/
         ROUTE * route=parent->addRoute();
         route->setName(tr("Routage: ")+name);
@@ -2045,14 +2046,14 @@ vlmPoint ROUTAGE::findRoute(const vlmPoint & point)
         }
         else
         {
-            result.distOrigin=bestDist;
+            resultP.distOrigin=bestDist;
             Util::getCoordFromDistanceAngle(lat, lon, bestDist, cap, &res_lat, &res_lon);
             routeFailedN++;
-            result.lon=res_lon;
-            result.lat=res_lat;
-            result.isDead=true; /*no route to point, better delete it(?)*/
+            resultP.lon=res_lon;
+            resultP.lat=res_lat;
+            resultP.isDead=true; /*no route to point, better delete it(?)*/
         }
-        return result;
+        return resultP;
 }
 void ROUTAGE::convertToRoute()
 {
@@ -2062,7 +2063,12 @@ void ROUTAGE::convertToRoute()
     route->setUseVbVmgVlm(false);
     parent->update_menuRoute();
     route->setBoat(this->myBoat);
-    route->setStartTime(this->startTime);
+    ROUTAGE * parentRoutage=this;
+    while(parentRoutage->getIsPivot())
+    {
+        parentRoutage=parentRoutage->getFromRoutage();
+    }
+    route->setStartTime(parentRoutage->getStartTime());
     route->setStartTimeOption(3);
     route->setStartFromBoat(false);
     route->setColor(this->color);
@@ -2520,19 +2526,20 @@ void ROUTAGE::showContextMenu(int isoNb, int pointNb)
 void ROUTAGE::slot_createPivot()
 {
     //qWarning()<<"creating pivot..";
-    if(way->getPoints()->isEmpty())
+    if(way->getPoints()->isEmpty() || !way->isVisible())
         slot_drawWay();
     parent->addPivot(this);
 }
 void ROUTAGE::slot_createPivotM()
 {
     //qWarning()<<"creating pivotM..";
-    if(way->getPoints()->isEmpty())
+    if(way->getPoints()->isEmpty()||!way->isVisible())
         slot_drawWay();
     parent->addPivot(this,true);
 }
 void ROUTAGE::setFromRoutage(ROUTAGE *fromRoutage, bool editOptions)
 {
+    this->fromRoutage=fromRoutage;
     this->width=fromRoutage->getWidth();
     pivotPoint=fromRoutage->getPivotPoint();
     this->myBoat=fromRoutage->getBoat();
@@ -2555,9 +2562,24 @@ void ROUTAGE::setFromRoutage(ROUTAGE *fromRoutage, bool editOptions)
     this->routeFromBoat=false;
     this->toPOI=fromRoutage->getToPOI();
     isPivot=true;
-    QList<vlmPoint> * initialRoad=fromRoutage->getWay()->getPoints();
-    for(int n=0;n<initialRoad->count();n++)
-        result->addVlmPoint(initialRoad->at(n));
+    ROUTAGE *parentRoutage=this;
+    result->deleteAll();
+    QList<vlmPoint> initialRoad;
+    while(true)
+    {
+        QList<vlmPoint> parentWay=*parentRoutage->getFromRoutage()->getWay()->getPoints();
+        for(int n=1;n<parentWay.count();n++)
+            initialRoad.prepend(parentWay.at(n));
+        if(!parentRoutage->getFromRoutage()->getIsPivot()) break;
+        parentRoutage=parentRoutage->getFromRoutage();
+    }
+    for(int n=0;n<initialRoad.count();n++)
+    {
+        vlmPoint p=initialRoad.at(n);
+        p.isBroken=false;
+        result->addVlmPoint(p);;
+    }
+    result->addVlmPoint(pivotPoint);
     QPen penResult;
     penResult.setColor(color);
     penResult.setBrush(color);
@@ -2566,6 +2588,7 @@ void ROUTAGE::setFromRoutage(ROUTAGE *fromRoutage, bool editOptions)
     result->slot_showMe();
     fromRoutage->setShowIso(false);
     fromRoutage->getResult()->hide();
+    fromRoutage->getWay()->hide();
     if(editOptions)
     {
         isNewPivot=true;

@@ -238,10 +238,7 @@ void vlmLine::calculatePoly(void)
 
 void vlmLine::deleteAll()
 {
-    while(line.count()!=0)
-    {
-        line.removeFirst();
-    }
+    line.clear();
     calculatePoly();
     update();
 }

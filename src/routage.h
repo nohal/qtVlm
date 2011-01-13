@@ -130,6 +130,7 @@ class ROUTAGE : public QObject
         void showContextMenu(int isoNb,int pointNb);
         bool getIsNewPivot(){return isNewPivot;}
         void setIsNewPivot(bool b){isNewPivot=b;}
+        bool getIsPivot(){return this->isPivot;}
 /*beta testing advanced parameters*/
         int  pruneWakeAngle;
         bool useConverge;
@@ -144,6 +145,7 @@ class ROUTAGE : public QObject
         bool getUseMultiThreading(){return this->useMultiThreading;}
         void setUseMultiThreading(bool b){this->useMultiThreading=b;}
         vlmLine * getResult(){return result;}
+        ROUTAGE * getFromRoutage(){return fromRoutage;}
     public slots:
         void slot_edit();
         void slot_abort(){this->aborted=true;}
@@ -259,5 +261,6 @@ class ROUTAGE : public QObject
         void createPopupMenu();
         bool useMultiThreading;
         bool isNewPivot;
+        ROUTAGE * fromRoutage;
     };
 #endif // ROUTAGE_H
