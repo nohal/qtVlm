@@ -55,13 +55,18 @@ DialogRoutage::DialogRoutage(ROUTAGE *routage,myCentralWidget *parent)
     scroll=new QScrollArea(this);
     scroll->resize(widget->size());
     scroll->setWidget(widget);
+    QSize mySize=QSize(widget->size().width()+20,widget->size().height()+20);
     QSize screenSize=QApplication::desktop()->screenGeometry().size()*.8;
-    if(widget->size().height() > screenSize.height() ||
-       widget->width() > screenSize.width())
+    if(mySize.height() > screenSize.height())
     {
-        this->resize(screenSize);
-        scroll->resize(screenSize);
+        mySize.setHeight(screenSize.height());
     }
+    if(mySize.width() > screenSize.width())
+    {
+        mySize.setWidth(screenSize.width());
+    }
+    this->resize(mySize);
+    scroll->resize(mySize);
     m.sprintf("%d",QThread::idealThreadCount());
     m=tr("Calculer en parallele (")+m+tr(" processeurs disponibles)");
     multi->setText(m);

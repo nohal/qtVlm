@@ -54,14 +54,19 @@ DialogRace::DialogRace(MainWindow * main,myCentralWidget * parent, inetConnexion
     scroll=new QScrollArea(this);
     scroll->resize(widget->minimumSize());
     scroll->setWidget(widget);
-
+    QSize mySize=QSize(widget->size().width()+20,widget->size().height()+20);
     QSize screenSize=QApplication::desktop()->screenGeometry().size()*.8;
-    if(widget->size().height() > screenSize.height() ||
-       widget->size().width() > screenSize.width())
+    if(mySize.height() > screenSize.height())
     {
-        this->resize(screenSize);
-        scroll->resize(screenSize);
+        mySize.setHeight(screenSize.height());
     }
+    if(mySize.width() > screenSize.width())
+    {
+        mySize.setWidth(screenSize.width());
+    }
+    this->resize(mySize);
+    scroll->resize(mySize);
+
     screenSize=QApplication::desktop()->screenGeometry().size();
     model= new QStandardItemModel();
     model->setColumnCount(10);

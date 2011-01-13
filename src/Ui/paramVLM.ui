@@ -774,7 +774,7 @@
        <rect>
         <x>30</x>
         <y>50</y>
-        <width>131</width>
+        <width>161</width>
         <height>18</height>
        </rect>
       </property>
@@ -790,7 +790,7 @@
        <rect>
         <x>30</x>
         <y>80</y>
-        <width>131</width>
+        <width>161</width>
         <height>18</height>
        </rect>
       </property>
@@ -801,7 +801,7 @@
      <widget class="QSpinBox" name="polVac">
       <property name="geometry">
        <rect>
-        <x>170</x>
+        <x>210</x>
         <y>80</y>
         <width>71</width>
         <height>22</height>
@@ -828,7 +828,7 @@
        <rect>
         <x>30</x>
         <y>110</y>
-        <width>161</width>
+        <width>191</width>
         <height>18</height>
        </rect>
       </property>
@@ -859,7 +859,7 @@
        <rect>
         <x>10</x>
         <y>20</y>
-        <width>261</width>
+        <width>301</width>
         <height>20</height>
        </rect>
       </property>
@@ -926,7 +926,7 @@
        <rect>
         <x>10</x>
         <y>100</y>
-        <width>191</width>
+        <width>271</width>
         <height>20</height>
        </rect>
       </property>
@@ -1105,7 +1105,7 @@
       <rect>
        <x>10</x>
        <y>10</y>
-       <width>301</width>
+       <width>311</width>
        <height>41</height>
       </rect>
      </property>
