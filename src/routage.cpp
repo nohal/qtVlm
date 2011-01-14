@@ -1380,7 +1380,7 @@ void ROUTAGE::calculate()
     {
         info=info+"\n---Route module statistics---";
         info=info+"\nTotal number of route segments calculated: "+temp.sprintf("%d",routeN);
-        info=info+"\npercentage of correct guesses using rought method: "+temp.sprintf("%.2f",100-((float)(NR_n)/(float)routeN)*100.00);
+        info=info+"\npercentage of correct guesses using rough method: "+temp.sprintf("%.2f",100-((float)(NR_n)/(float)routeN)*100.00)+"%";
         info=info+"\nAverage number of iterations: "+temp.sprintf("%.2f",(float)routeTotN/(float)routeN);
         info=info+"\nMax number of iterations made to find a solution: "+temp.sprintf("%d",routeMaxN);
         info=info+"\nNumber of failures using Route between Iso: "+temp.sprintf("%d",routeFailedN);
@@ -1723,15 +1723,17 @@ float ROUTAGE::findTime(const vlmPoint * pt, QPointF P, float * cap)
         else
             angle=angle-360;
     }
-    if(qAbs(angle)<myBoat->getBvmgUp(windSpeed)) //if too close to wind then use BVMG technique
+    if(qAbs(angle)<myBoat->getBvmgUp(windSpeed) && angle!=90) //if too close to wind then use BVMG technique
     {
         newSpeed=myBoat->getPolarData()->getSpeed(windSpeed,myBoat->getBvmgUp(windSpeed));
-        newSpeed=newSpeed*qAbs(cos(degToRad(myDiffAngle(myBoat->getBvmgUp(windSpeed),qAbs(angle)))));
+//        newSpeed=newSpeed*qAbs(cos(degToRad(myDiffAngle(myBoat->getBvmgUp(windSpeed),qAbs(angle)))));
+        newSpeed=newSpeed*qAbs(cos(degToRad(myBoat->getBvmgUp(windSpeed)))/cos(degToRad(qAbs(angle))));
     }
-    else if(qAbs(angle)>myBoat->getBvmgDown(windSpeed))
+    else if(qAbs(angle)>myBoat->getBvmgDown(windSpeed) && angle!=90)
     {
         newSpeed=myBoat->getPolarData()->getSpeed(windSpeed,myBoat->getBvmgDown(windSpeed));
-        newSpeed=newSpeed*qAbs(cos(degToRad(myDiffAngle(qAbs(angle),myBoat->getBvmgDown(windSpeed)))));
+//        newSpeed=newSpeed*qAbs(cos(degToRad(myDiffAngle(qAbs(angle),myBoat->getBvmgDown(windSpeed)))));
+        newSpeed=newSpeed*qAbs(cos(degToRad(myBoat->getBvmgDown(windSpeed)))/cos(degToRad(qAbs(angle))));
     }
     else
         newSpeed=myBoat->getPolarData()->getSpeed(windSpeed,angle);
@@ -1871,18 +1873,20 @@ bool ROUTAGE::findPoint(float lon, float lat, double windAngle, double windSpeed
                 angle=angle-360;
         }
         float limit=myBoat->getBvmgUp(windSpeed);
-        if(qAbs(angle)<limit) //if too close to wind then use VB-VMG technique
+        if(qAbs(angle)<limit && angle!=90) //if too close to wind then use VB-VMG technique
         {
             newSpeed=myBoat->getPolarData()->getSpeed(windSpeed,limit);
-            newSpeed=newSpeed*qAbs(cos(degToRad(myDiffAngle(limit,qAbs(angle)))));
+//            newSpeed=newSpeed*qAbs(cos(degToRad(myDiffAngle(limit,qAbs(angle)))));
+            newSpeed=newSpeed*qAbs(cos(degToRad(limit))/cos(degToRad(qAbs(angle))));
         }
         else
         {
             limit=myBoat->getBvmgDown(windSpeed);
-            if(qAbs(angle)>limit)
+            if(qAbs(angle)>limit && angle!=90)
             {
                 newSpeed=myBoat->getPolarData()->getSpeed(windSpeed,limit);
-                newSpeed=newSpeed*qAbs(cos(degToRad(myDiffAngle(qAbs(angle),limit))));
+//                newSpeed=newSpeed*qAbs(cos(degToRad(myDiffAngle(qAbs(angle),limit))));
+                newSpeed=newSpeed*qAbs(cos(degToRad(limit))/cos(degToRad(qAbs(angle))));
             }
             else
                 newSpeed=myBoat->getPolarData()->getSpeed(windSpeed,angle);
