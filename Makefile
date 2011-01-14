@@ -8,7 +8,7 @@ ifdef SystemRoot
 	FixPath = $(subst /,\,$1)
 	CD = cd
 	SEP = &&
-	APPNAME = qtVlm.exe
+	RMAPPNAME = $(RM) qtVlm.exe
 	QMAKE = qmake
 else
 	RM = rm -f
@@ -16,13 +16,17 @@ else
 	FixPath = $1
 	CD = cd
 	PWD = $(pwd)
-	SEP = ;
-	APPNAME = qtVlm
+	SEP = ;	
 	QMAKE = qmake
+	ifeq ($(shell uname), Linux)
+		RMAPPNAME = $(RM) qtVlm
+	else
+		RMAPPNAME = $(RMFOLDER) qtVlm.app
+	endif
 endif
 
 all:
-	$(RM) $(APPNAME)
+	$(RMAPPNAME)
 	$(CD) $(call FixPath,src/libs/bzip2) $(SEP) $(QMAKE) CONFIG+=$(TARGET) $(SEP) make 
 	$(CD) $(call FixPath,src/libs/zlib-1.2.3) $(SEP) $(QMAKE) CONFIG+=$(TARGET) $(SEP) make 
 	$(CD) $(call FixPath,src/libs/qextserialport) $(SEP) $(QMAKE) CONFIG+=$(TARGET) $(SEP) make 
@@ -31,7 +35,7 @@ all:
 	$(CD) src $(SEP) $(QMAKE) CONFIG+=$(TARGET) $(SEP) make 
 
 clean:
-	$(RM) $(APPNAME)
+	$(RMAPPNAME)
 	$(CD) $(call FixPath,src/libs/bzip2) $(SEP) $(QMAKE) $(SEP) make clean
 	$(CD) $(call FixPath,src/libs/zlib-1.2.3) $(SEP) $(QMAKE) $(SEP) make clean
 	$(CD) $(call FixPath,src/libs/qextserialport) $(SEP) $(QMAKE) $(SEP) make clean
