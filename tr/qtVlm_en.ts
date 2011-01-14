@@ -715,7 +715,7 @@ Continuer la sauvegarde?</source>
     <message>
         <location filename="../src/Dialogs/DialogPlayerAccount.cpp" line="315"/>
         <source>La suppression est definitive&lt;br&gt;Voulez-vous VRAIMENT supprimer le compte </source>
-        <translation>Deletion is not reversible&lt;br&gt;Do you REALLY want to delete the account</translation>
+        <translation type="unfinished">Deletion is not reversible&lt;br&gt;Do you REALLY want to delete the account </translation>
     </message>
     <message>
         <location filename="../src/Dialogs/DialogPlayerAccount.cpp" line="364"/>
@@ -2906,7 +2906,7 @@ Etes-vous sur ?</source>
     <message>
         <location filename="../src/POI.cpp" line="500"/>
         <source>Distance Ortho a partir de </source>
-        <translation>Orthodromic distance from</translation>
+        <translation type="unfinished">Orthodromic distance from </translation>
     </message>
     <message>
         <location filename="../src/POI.cpp" line="662"/>

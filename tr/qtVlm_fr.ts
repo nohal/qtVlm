@@ -531,7 +531,7 @@ Continuer la sauvegarde?</source>
     </message>
     <message>
         <source>La suppression est definitive&lt;br&gt;Voulez-vous VRAIMENT supprimer le compte </source>
-        <translation>La suppression est définitive&lt;br&gt;Voulez-vous VRAIMENT supprimer le compte</translation>
+        <translation type="unfinished">La suppression est définitive&lt;br&gt;Voulez-vous VRAIMENT supprimer le compte </translation>
     </message>
     <message>
         <source>Mise a jour du compte en cours pour </source>
@@ -1994,7 +1994,7 @@ Etes-vous sur ?</source>
     </message>
     <message>
         <source>Distance Ortho a partir de </source>
-        <translation>Distance Ortho à partir de</translation>
+        <translation type="unfinished">Distance Ortho à partir de </translation>
     </message>
     <message>
         <source>La destruction d&apos;une marque est definitive.
