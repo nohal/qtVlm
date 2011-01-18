@@ -16,11 +16,11 @@ vlmPoint::vlmPoint(float lon,float lat)
     this->eta=0;
     this->distIso=-1;
     this->capOrigin=0;
-    this->eyeLon=0;
-    this->eyeLat=0;
     this->needRoute=false;
     this->isBroken=false;
-    this->reversedEye=false;
+    this->debugBool=false;
+    this->internal_1=0;
+    this->internal_2=0;
     this->capVmg=0;
     this->notSimplificable=false;
     this->maxDistIso=10e5;

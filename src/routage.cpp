@@ -57,6 +57,121 @@ bool rightToLeftFromOrigin(const vlmPoint & P1,const vlmPoint & P2)
 #ifdef USING_MULTI_THREAD
 /*threaded functions*/
 
+QList<vlmPoint> finalEpurationThreaded(const QList<vlmPoint> &listPoints)
+{
+    if(listPoints.count()==0) return listPoints;
+    int toBeRemoved=listPoints.at(0).internal_1;
+    double initialDist=listPoints.at(0).internal_2;
+    if(toBeRemoved<=0) return listPoints;
+    QMultiMap<float,QPoint> byCriteres;
+    QHash<QString,float> byIndices;
+    QList<bool> deadStatus;
+    QString s;
+    for(int n=0;n<listPoints.size()-1;n++)
+    {
+#if 1
+        QLineF temp1(listPoints.at(n).origin->x,listPoints.at(n).origin->y,
+                     listPoints.at(n+1).origin->x,listPoints.at(n+1).origin->y);
+        QPointF middle=temp1.pointAt(0.5);
+        temp1.setPoints(QPointF(listPoints.at(n).x,listPoints.at(n).y),
+                        QPointF(listPoints.at(n+1).x,listPoints.at(n+1).y));
+        QPointF middleBis=temp1.pointAt(0.5);
+        temp1.setPoints(middleBis,middle);
+        temp1.setLength(initialDist);
+        middle=temp1.p2();
+        QLineF temp2(middle.x(),middle.y(),listPoints.at(n).x,listPoints.at(n).y);
+        QLineF temp3(middle.x(),middle.y(),listPoints.at(n+1).x,listPoints.at(n+1).y);
+        float critere=qAbs(temp2.angleTo(temp3));
+        if(critere>180)
+        {
+            critere=360-critere;
+        }
+#else
+        QLineF ecart(listPoints.at(n).x,listPoints.at(n).y,listPoints.at(n+1).x,listPoints.at(n+1).y);
+        float critere=ecart.length();
+#endif
+        byCriteres.insert(critere,QPoint(n,n+1));
+        s=s.sprintf("%d;%d",n,n+1);
+        byIndices.insert(s,critere);
+        deadStatus.append(false);
+    }
+    deadStatus.append(false);
+    QMutableMapIterator<float,QPoint> d(byCriteres);
+    int currentCount=listPoints.count();
+    while(toBeRemoved>0 && currentCount>=0)
+    {
+        d.toFront();
+        if(!d.hasNext()) break;
+        QPoint couple=d.next().value();
+        int badOne=0;
+        if(listPoints.at(couple.x()).distIso<listPoints.at(couple.y()).distIso)
+            badOne=couple.x();
+        else
+            badOne=couple.y();
+        deadStatus.replace(badOne,true);
+        int previous=0;
+        int next=0;
+        previous=-1;
+        previous=deadStatus.lastIndexOf(false,badOne);
+        next=deadStatus.indexOf(false,badOne);
+        if(currentCount<=1) break;
+        if(previous!=-1 && next!=-1)
+        {
+            s=s.sprintf("%d;%d",previous,badOne);
+            float criterePrevious=byIndices.value(s);
+            s=s.sprintf("%d;%d",badOne,next);
+            float critereNext=byIndices.value(s);
+            byCriteres.remove(criterePrevious,QPoint(previous,badOne));
+            byCriteres.remove(critereNext,QPoint(badOne,next));
+//            float length=QLineF(QPointF(listPoints.at(previous).lon,listPoints.at(previous).lat),QPointF(listPoints.at(next).lon,listPoints.at(next).lat)).length();
+#if 1
+            QLineF temp1(listPoints.at(previous).origin->x,listPoints.at(previous).origin->y,
+                         listPoints.at(next).origin->x,listPoints.at(next).origin->y);
+            QPointF middle=temp1.pointAt(0.5);
+            temp1.setPoints(QPointF(listPoints.at(previous).x,listPoints.at(previous).y),
+                            QPointF(listPoints.at(next).x,listPoints.at(next).y));
+            QPointF middleBis=temp1.pointAt(0.5);
+            temp1.setPoints(middleBis,middle);
+            temp1.setLength(initialDist);
+            middle=temp1.p2();
+            QLineF temp2(middle.x(),middle.y(),listPoints.at(previous).x,listPoints.at(previous).y);
+            QLineF temp3(middle.x(),middle.y(),listPoints.at(next).x,listPoints.at(next).y);
+            float critere=qAbs(temp2.angleTo(temp3));
+            if(critere>180)
+            {
+                critere=360-critere;
+            }
+#else
+            QLineF ecart(listPoints.at(previous).x,listPoints.at(previous).y,listPoints.at(next).x,listPoints.at(next).y);
+            float critere=ecart.length();
+#endif
+            byCriteres.insert(critere,QPoint(previous,next));
+            s=s.sprintf("%d;%d",previous,next);
+            byIndices.insert(s,critere);
+        }
+        else if(previous==-1)
+        {
+            s=s.sprintf("%d;%d",badOne,next);
+            float critereNext=byIndices.value(s);
+            byCriteres.remove(critereNext,QPoint(badOne,next));
+        }
+        else if(next==-1)
+        {
+            s=s.sprintf("%d;%d",previous,badOne);
+            float criterePrevious=byIndices.value(s);
+            byCriteres.remove(criterePrevious,QPoint(previous,badOne));
+        }
+        toBeRemoved--;
+        currentCount--;
+    }
+    QList<vlmPoint> result;
+    for (int nn=0;nn<deadStatus.count();nn++)
+    {
+        if(!deadStatus.at(nn))
+            result.append(listPoints.at(nn));
+    }
+    return result;
+}
 QList<vlmPoint> findRouteThreaded(const QList<vlmPoint> & pointList)
 {
     if(pointList.isEmpty()) return pointList;
@@ -515,18 +630,26 @@ void ROUTAGE::calculate()
     initialDist=orth.getDistance();
     vlmPoint point(start.x(),start.y());
     point.isStart=true;
-    point.distArrival=initialDist;
-    point.distStart=0;
-    point.capArrival=orth.getAzimutDeg();
-    point.capStart=A360(-orth.getAzimutDeg());
-    point.origin=NULL;
-    point.eyeLon=start.x();
-    point.eyeLat=start.y();
-    point.routage=this;
     proj->map2screenFloat(cLFA(start.x()),start.y(),&xs,&ys);
     proj->map2screenFloat(cLFA(arrival.x()),arrival.y(),&xa,&ya);
     point.x=xs;
     point.y=ys;
+#if 0
+    point.distArrival=initialDist;
+    point.distStart=0;
+    point.capArrival=orth.getAzimutDeg();
+    point.capStart=A360(-orth.getAzimutDeg());
+#else
+    QLineF tempLine(point.x,point.y,xa,ya);
+    point.distStart=0;
+    point.capStart=0;
+    point.distArrival=tempLine.length();
+    point.capArrival=A360(-tempLine.angle()+90);
+    point.distOrigin=0;
+    initialDist=tempLine.length();
+#endif
+    point.origin=NULL;
+    point.routage=this;
     iso->addVlmPoint(point);
     point.capOrigin=A360(loxoCap);
     isochrones.append(iso);
@@ -781,6 +904,8 @@ void ROUTAGE::calculate()
                 newPoint.origin=iso->getPoint(n);
                 newPoint.originNb=n;
                 newPoint.capOrigin=A360(cap);
+                tfp.start();
+#if 0
                 orth.setPoints(start.x(),start.y(),newPoint.lon,newPoint.lat);
                 newPoint.distStart=orth.getDistance();
                 newPoint.capStart=A360(orth.getAzimutDeg()+180);
@@ -789,6 +914,17 @@ void ROUTAGE::calculate()
                 newPoint.capArrival=A360(orth.getAzimutDeg()+180);
                 orth.setStartPoint(list->at(n).lon,list->at(n).lat);
                 newPoint.distOrigin=orth.getDistance();
+#else
+                QLineF tempLine(newPoint.x,newPoint.y,xs,ys);
+                newPoint.distStart=tempLine.length();
+                newPoint.capStart=A360(-tempLine.angle()+90);
+                tempLine.setP2(QPointF(xa,ya));
+                newPoint.distArrival=tempLine.length();
+                newPoint.capArrival=A360(-tempLine.angle()+90);
+                orth.setPoints(list->at(n).lon,list->at(n).lat,newPoint.lon,newPoint.lat);
+                newPoint.distOrigin=orth.getDistance();
+#endif
+                msecs_21=msecs_21+tfp.elapsed();
                 if(tryingToFindHole)
                     newPoint.notSimplificable=true;
 #if 1
@@ -874,7 +1010,7 @@ void ROUTAGE::calculate()
             if(aborted) break;
             if(averageDistIsoN>0)
                 averageDistIso=averageDistIso/averageDistIsoN;
-#if 1 /**/
+#if 0 /**/
             if(!tryingToFindHole && !list->at(n).isStart && averageDistIsoN>5)
             {
                 for(int nn=polarPoints.count()-1;nn>=0;nn--)
@@ -933,7 +1069,8 @@ void ROUTAGE::calculate()
 /*1eme epuration: on supprime les segments qui se croisent */
         time.restart();
 #if 1
-        removeCrossedSegments();
+        if(tempPoints.count()>0 && !tempPoints.at(0).origin->isStart)
+             removeCrossedSegments();
 #endif
         msecs_2=msecs_2+time.elapsed();
 
@@ -1128,7 +1265,8 @@ void ROUTAGE::calculate()
                         tempPoints.removeAt(np);
                 }
 #else
-                removeCrossedSegments();
+                if(tempPoints.count()>0 && !tempPoints.at(0).origin->isStart)
+                    removeCrossedSegments();
 #endif
                 msecs_13=msecs_13+t1.elapsed();
             }
@@ -1213,6 +1351,12 @@ void ROUTAGE::calculate()
             temp=list->at(n);
             temp.isBroken=false;
             segment->addVlmPoint(temp);
+#if 0
+            if(temp.debugBool)
+                penSegment.setColor(Qt::red);
+            else
+                penSegment.setColor(Qt::blue);
+#endif
             segment->setLinePen(penSegment);
             segment->slot_showMe();
             segments.append(segment);
@@ -1246,7 +1390,7 @@ void ROUTAGE::calculate()
         }
     }
     list=iso->getPoints();
-    orth.setEndPoint(arrival.x(),arrival.y());
+    //orth.setEndPoint(arrival.x(),arrival.y());
     int nBest=0;
     if(arrived)
     {
@@ -1312,8 +1456,8 @@ void ROUTAGE::calculate()
     info=info+"\n.........out of which calculating distance from previous iso: "+tt.toString("hh'h'mm'min'ss.zzz'secs'");
     tt.setHMS(0,0,0,0);
     tt=tt.addMSecs(msecs_21);
-    qWarning()<<"...merging polars:"<<tt.toString("hh'h'mm'min'ss.zzz'secs'");
-    info=info+"\n...merging polars: "+tt.toString("hh'h'mm'min'ss.zzz'secs'");
+    qWarning()<<".........out of which calculating distances and angles:"<<tt.toString("hh'h'mm'min'ss.zzz'secs'");
+    info=info+"\n.........out of which calculating distances and angles: "+tt.toString("hh'h'mm'min'ss.zzz'secs'");
     tt.setHMS(0,0,0,0);
     tt=tt.addMSecs(msecs_2);
     qWarning()<<"...removing crossed segments:"<<tt.toString("hh'h'mm'min'ss.zzz'secs'");
@@ -2232,7 +2376,10 @@ void ROUTAGE::epuration(int toBeRemoved)
         {
             Triangle test(Point(xs,ys),Point(xa,ya),Point(tempPoints.at(n).x,tempPoints.at(n).y));
             if(test.orientation()==left_turn)
+            {
+                tempPoints[n].debugBool=true;
                 rightFromLoxo.append(tempPoints.at(n));
+            }
             else
             {
                 rightSide=false;
@@ -2276,11 +2423,36 @@ void ROUTAGE::epuration(int toBeRemoved)
             toBeRemovedLeft=toBeRemoved-toBeRemovedRight;
         }
     }
-    finalEpuration(toBeRemovedLeft,&leftFromLoxo);
-    finalEpuration(toBeRemovedRight,&rightFromLoxo);
-    tempPoints.clear();
-    tempPoints.append(rightFromLoxo);
-    tempPoints.append(leftFromLoxo);
+    if(this->useMultiThreading)
+    {
+        if(leftFromLoxo.count()>0)
+        {
+            leftFromLoxo[0].internal_1=toBeRemovedLeft;
+            leftFromLoxo[0].internal_2=initialDist;
+        }
+        if(rightFromLoxo.count()>0)
+        {
+            rightFromLoxo[0].internal_1=toBeRemovedRight;
+            rightFromLoxo[0].internal_2=initialDist;
+        }
+        QList<QList<vlmPoint> > listList;
+        listList.append(rightFromLoxo);
+        listList.append(leftFromLoxo);
+        listList = QtConcurrent::blockingMapped(listList, finalEpurationThreaded);
+        tempPoints.clear();
+        tempPoints.reserve(listList.at(0).count()+listList.at(1).count());
+        tempPoints.append(listList.at(0));
+        tempPoints.append(listList.at(1));
+    }
+    else
+    {
+        finalEpuration(toBeRemovedLeft,&leftFromLoxo);
+        finalEpuration(toBeRemovedRight,&rightFromLoxo);
+        tempPoints.clear();
+        tempPoints.reserve(rightFromLoxo.count()+leftFromLoxo.count());
+        tempPoints.append(rightFromLoxo);
+        tempPoints.append(leftFromLoxo);
+    }
 }
 void ROUTAGE::finalEpuration(int toBeRemoved, QList<vlmPoint> *listPoints)
 {
@@ -2296,6 +2468,12 @@ void ROUTAGE::finalEpuration(int toBeRemoved, QList<vlmPoint> *listPoints)
         QLineF temp1(listPoints->at(n).origin->x,listPoints->at(n).origin->y,
                      listPoints->at(n+1).origin->x,listPoints->at(n+1).origin->y);
         QPointF middle=temp1.pointAt(0.5);
+        temp1.setPoints(QPointF(listPoints->at(n).x,listPoints->at(n).y),
+                        QPointF(listPoints->at(n+1).x,listPoints->at(n+1).y));
+        QPointF middleBis=temp1.pointAt(0.5);
+        temp1.setPoints(middleBis,middle);
+        temp1.setLength(initialDist);
+        middle=temp1.p2();
         QLineF temp2(middle.x(),middle.y(),listPoints->at(n).x,listPoints->at(n).y);
         QLineF temp3(middle.x(),middle.y(),listPoints->at(n+1).x,listPoints->at(n+1).y);
         debugCross0++;
@@ -2336,7 +2514,6 @@ void ROUTAGE::finalEpuration(int toBeRemoved, QList<vlmPoint> *listPoints)
         if(currentCount<=1) break;
         if(previous!=-1 && next!=-1)
         {
-            QString s;
             s=s.sprintf("%d;%d",previous,badOne);
             float criterePrevious=byIndices.value(s);
             s=s.sprintf("%d;%d",badOne,next);
@@ -2348,6 +2525,12 @@ void ROUTAGE::finalEpuration(int toBeRemoved, QList<vlmPoint> *listPoints)
             QLineF temp1(listPoints->at(previous).origin->x,listPoints->at(previous).origin->y,
                          listPoints->at(next).origin->x,listPoints->at(next).origin->y);
             QPointF middle=temp1.pointAt(0.5);
+            temp1.setPoints(QPointF(listPoints->at(previous).x,listPoints->at(previous).y),
+                            QPointF(listPoints->at(next).x,listPoints->at(next).y));
+            QPointF middleBis=temp1.pointAt(0.5);
+            temp1.setPoints(middleBis,middle);
+            temp1.setLength(initialDist);
+            middle=temp1.p2();
             QLineF temp2(middle.x(),middle.y(),listPoints->at(previous).x,listPoints->at(previous).y);
             QLineF temp3(middle.x(),middle.y(),listPoints->at(next).x,listPoints->at(next).y);
             float critere=qAbs(temp2.angleTo(temp3));
@@ -2366,14 +2549,12 @@ void ROUTAGE::finalEpuration(int toBeRemoved, QList<vlmPoint> *listPoints)
         }
         else if(previous==-1)
         {
-            QString s;
             s=s.sprintf("%d;%d",badOne,next);
             float critereNext=byIndices.value(s);
             byCriteres.remove(critereNext,QPoint(badOne,next));
         }
         else if(next==-1)
         {
-            QString s;
             s=s.sprintf("%d;%d",previous,badOne);
             float criterePrevious=byIndices.value(s);
             byCriteres.remove(criterePrevious,QPoint(previous,badOne));
@@ -2411,12 +2592,72 @@ void ROUTAGE::removeCrossedSegments()
     deadStatus.append(false);
     QMutableMapIterator<float,QPoint> d(byCriteres);
     int currentCount=tempPoints.count();
-    while(currentCount>=0)
+    while(currentCount>0)
     {
         d.toBack();
         if(!d.hasPrevious()) break;
         d.previous();
         if(d.key()<180) break;
+        QPoint couple=d.value();
+        int badOne=0;
+        if(tempPoints.at(couple.x()).distIso<tempPoints.at(couple.y()).distIso)
+            badOne=couple.x();
+        else
+            badOne=couple.y();
+        deadStatus.replace(badOne,true);
+        int previous=-1;
+        int next=-1;
+        previous=deadStatus.lastIndexOf(false,badOne);
+        next=deadStatus.indexOf(false,badOne);
+        if(currentCount<=1) break;
+        if(previous!=-1 && next!=-1)
+        {
+            QString s;
+            s=s.sprintf("%d;%d",previous,badOne);
+            float criterePrevious=byIndices.value(s);
+            s=s.sprintf("%d;%d",badOne,next);
+            float critereNext=byIndices.value(s);
+            byCriteres.remove(criterePrevious,QPoint(previous,badOne));
+            byCriteres.remove(critereNext,QPoint(badOne,next));
+//            float length=QLineF(QPointF(tempPoints.at(previous).lon,tempPoints.at(previous).lat),QPointF(tempPoints.at(next).lon,tempPoints.at(next).lat)).length();
+#if 1
+            QLineF temp1(tempPoints.at(previous).origin->x,tempPoints.at(previous).origin->y,
+                         tempPoints.at(next).origin->x,tempPoints.at(next).origin->y);
+            QPointF middle=temp1.pointAt(0.5);
+            QLineF temp2(middle.x(),middle.y(),tempPoints.at(previous).x,tempPoints.at(previous).y);
+            QLineF temp3(middle.x(),middle.y(),tempPoints.at(next).x,tempPoints.at(next).y);
+            float critere=temp2.angleTo(temp3);
+#else
+            Orthodromie oo(tempPoints.at(previous).lon,tempPoints.at(previous).lat,tempPoints.at(next).lon,tempPoints.at(next).lat);
+            float critere=oo.getDistance();
+#endif
+            byCriteres.insert(critere,QPoint(previous,next));
+            s=s.sprintf("%d;%d",previous,next);
+            byIndices.insert(s,critere);
+        }
+        else if(previous==-1)
+        {
+            QString s;
+            s=s.sprintf("%d;%d",badOne,next);
+            float critereNext=byIndices.value(s);
+            byCriteres.remove(critereNext,QPoint(badOne,next));
+        }
+        else if(next==-1)
+        {
+            QString s;
+            s=s.sprintf("%d;%d",previous,badOne);
+            float criterePrevious=byIndices.value(s);
+            byCriteres.remove(criterePrevious,QPoint(previous,badOne));
+        }
+        currentCount--;
+    }
+    /*remove points too close from each other*/
+    while(currentCount>0)
+    {
+        d.toFront();
+        if(!d.hasNext()) break;
+        d.next();
+        if(d.key()>this->angleStep) break;
         QPoint couple=d.value();
         int badOne=0;
         if(tempPoints.at(couple.x()).distIso<tempPoints.at(couple.y()).distIso)

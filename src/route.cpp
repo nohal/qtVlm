@@ -299,6 +299,7 @@ void ROUTE::slot_recalculate(boat * boat)
                                         double h1,h2,w1,w2,t1,t2,d1,d2;
                                         this->do_vbvmg_context(remaining_distance,cap,wind_speed,wind_angle,&h1,&h2,&w1,&w2,&t1,&t2,&d1,&d2);
                                         angle=A180(w1);
+                                        //qWarning()<<"cap="<<cap<<"h1="<<h1<<"twa="<<angle;
                                         cap=h1;
                                     }
                                     else
@@ -681,7 +682,8 @@ void ROUTE::do_vbvmg_context(double dist,double wanted_heading,
  #if DEBUG
    printf("VBVMG: alpha=%.2f, beta=%.2f\n", radToDeg(b_alpha), radToDeg(b_beta));
  #endif /* DEBUG */
-   if (true) {
+
+#if 0 /*set 1 to get 0.1 precision*/
      b1_alpha = b_alpha;
      b1_beta = b_beta;
      for (i=-9; i<=9; i++) {
@@ -728,7 +730,7 @@ void ROUTE::do_vbvmg_context(double dist,double wanted_heading,
      printf("VBVMG: alpha=%.2f, beta=%.2f\n", radToDeg(b_alpha),
             radToDeg(b_beta));
  #endif /* DEBUG */
-   }
+#endif
    speed_alpha=myBoat->getPolarData()->getSpeed(w_speed,A180(radToDeg(angle-b_alpha)));
    //speed_alpha = find_speed(aboat, w_speed, angle-b_alpha);
    vmg_alpha = speed_alpha * cos(b_alpha);
@@ -778,16 +780,17 @@ void ROUTE::do_vbvmg_context(double dist,double wanted_heading,
    } else if (*wangle2 < -PI ) {
      *wangle2 += TWO_PI;
    }
- #if DEBUG
-   printf("VBVMG: wangle1=%.2f, wangle2=%.2f\n", radToDeg(*wangle1),
+ #if 0
+   QString s;
+   qWarning()<<s.sprintf("VBVMG: wangle1=%.2f, wangle2=%.2f\n", radToDeg(*wangle1),
           radToDeg(*wangle2));
-   printf("VBVMG: heading1 %.2f, heading2=%.2f\n", radToDeg(*heading1),
+   qWarning()<<s.sprintf("VBVMG: heading1 %.2f, heading2=%.2f\n", radToDeg(*heading1),
           radToDeg(*heading2));
-   printf("VBVMG: dist=%.2f, l1=%.2f, l2=%.2f, ratio=%.2f\n", dist, *dist1,
+   qWarning()<<s.sprintf("VBVMG: dist=%.2f, l1=%.2f, l2=%.2f, ratio=%.2f\n", dist, *dist1,
           *dist2, (b_l1+b_l2)/dist);
-   printf("VBVMG: t1 = %.2f, t2=%.2f, total=%.2f\n", *time1, *time2, t_min);
-   printf("VBVMG: heading %.2f\n", radToDeg(*heading1));
-   printf("VBVMG: wind angle %.2f\n", radToDeg(*wangle1));
+   qWarning()<<s.sprintf("VBVMG: t1 = %.2f, t2=%.2f, total=%.2f\n", *time1, *time2, t_min);
+   qWarning()<<s.sprintf("VBVMG: heading %.2f\n", radToDeg(*heading1));
+   qWarning()<<s.sprintf("VBVMG: wind angle %.2f\n", radToDeg(*wangle1));
  #endif /* DEBUG */
    *heading1=radToDeg(*heading1);
    *heading2=radToDeg(*heading2);
