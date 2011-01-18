@@ -592,7 +592,7 @@ void ROUTE::do_vbvmg_context(double dist,double wanted_heading,
    //double w_speed, w_angle;
    double tanalpha, d1hypotratio;
    double b_alpha, b_beta, b_t1, b_t2, b_l1, b_l2;
-   double b1_alpha, b1_beta;
+   //double b1_alpha, b1_beta;
    double speed_alpha, speed_beta;
    double vmg_alpha, vmg_beta;
    wanted_heading=degToRad(wanted_heading);

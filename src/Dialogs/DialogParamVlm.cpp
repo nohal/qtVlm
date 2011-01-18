@@ -137,9 +137,9 @@ DialogParamVlm::DialogParamVlm(MainWindow * main,myCentralWidget * parent) : QDi
         url_list->addItem(url_name[i]+": "+url_str[i]);
     url_list->setCurrentIndex(Settings::getSetting("vlm_url",0).toInt());
 
-#ifndef __QTVLM_WITH_TEST
-    urlGroup->setVisible(false);
-#endif
+//#ifndef __QTVLM_WITH_TEST
+//    urlGroup->setVisible(false);
+//#endif
 
     saveWinGeometry->setCheckState(Settings::getSetting("saveMainWindowGeometry","1").toInt()==1?Qt::Checked:Qt::Unchecked);
 
