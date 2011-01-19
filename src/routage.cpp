@@ -1373,14 +1373,18 @@ void ROUTAGE::calculate()
         time.restart();
         for (int n=0;n<list->count();n++)
         {
-            if(checkCoast && map->crossing(QLineF(list->at(n).x,list->at(n).y,xa,ya),QLineF(list->at(n).lon,list->at(n).lat,arrival.x(),arrival.y())))
-                continue;
             vlmPoint from=list->at(n);
-            int thisTime=calculateTimeRoute(from,to,(timeStep+1)*60);
-            if(thisTime<=timeStep*60)
+            orth.setPoints(from.lon,from.lat,to.lon,to.lat);
+            if(orth.getDistance()<myBoat->getPolarData()->getMaxSpeed()*60/timeStep)
             {
-                arrived=true;
-                break;
+                if(checkCoast && map->crossing(QLineF(list->at(n).x,list->at(n).y,xa,ya),QLineF(list->at(n).lon,list->at(n).lat,arrival.x(),arrival.y())))
+                    continue;
+                int thisTime=calculateTimeRoute(from,to,(timeStep+1)*60);
+                if(thisTime<=timeStep*60)
+                {
+                    arrived=true;
+                    break;
+                }
             }
         }
         msecs_8=msecs_8+time.elapsed();
