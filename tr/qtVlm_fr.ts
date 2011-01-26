@@ -531,7 +531,7 @@ Continuer la sauvegarde?</source>
     </message>
     <message>
         <source>La suppression est definitive&lt;br&gt;Voulez-vous VRAIMENT supprimer le compte </source>
-        <translation type="unfinished">La suppression est définitive&lt;br&gt;Voulez-vous VRAIMENT supprimer le compte </translation>
+        <translation>La suppression est définitive&lt;br&gt;Voulez-vous VRAIMENT supprimer le compte </translation>
     </message>
     <message>
         <source>Mise a jour du compte en cours pour </source>
@@ -1994,7 +1994,7 @@ Etes-vous sur ?</source>
     </message>
     <message>
         <source>Distance Ortho a partir de </source>
-        <translation type="unfinished">Distance Ortho à partir de </translation>
+        <translation>Distance Ortho à partir de </translation>
     </message>
     <message>
         <source>La destruction d&apos;une marque est definitive.
@@ -2629,10 +2629,6 @@ Etes-vous sur ?</source>
         <translation></translation>
     </message>
     <message>
-        <source>Convertir en Route</source>
-        <translation></translation>
-    </message>
-    <message>
         <source>Parametres Generaux</source>
         <translation>Paramètres généraux</translation>
     </message>
@@ -2724,6 +2720,20 @@ deg</extracomment>
     <message>
         <source>M/d/yyyy hh:mm:ss</source>
         <translation>dd/MM/yyyy hh:mm:ss</translation>
+    </message>
+    <message>
+        <source>Convertir en Route
+avec ce prefixe</source>
+        <translation>Convertir en Route
+avec ce préfixe</translation>
+    </message>
+    <message>
+        <source>A; </source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>R</source>
+        <translation></translation>
     </message>
 </context>
 <context>
@@ -3171,7 +3181,7 @@ Voulez-vous egalement supprimer tous les POIs lui appartenant?</source>
     </message>
     <message>
         <source>Police de caractere par defaut</source>
-        <translation type="unfinished">Police de caractères par défaut</translation>
+        <translation>Police de caractères par défaut</translation>
     </message>
     <message>
         <source>Police</source>
@@ -4453,7 +4463,7 @@ Voulez-vous egalement supprimer tous les POIs lui appartenant?</source>
     </message>
     <message>
         <source>Status VLM: </source>
-        <translation>Statut VLM:</translation>
+        <translation>Statut VLM: </translation>
     </message>
 </context>
 <context>
