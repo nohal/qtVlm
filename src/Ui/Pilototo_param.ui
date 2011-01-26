@@ -189,7 +189,7 @@
       <x>10</x>
       <y>110</y>
       <width>271</width>
-      <height>23</height>
+      <height>25</height>
      </rect>
     </property>
     <layout class="QHBoxLayout" name="horizontalLayout_6">
@@ -240,6 +240,12 @@
    </property>
    <property name="text">
     <string>Valider</string>
+   </property>
+   <property name="autoDefault">
+    <bool>false</bool>
+   </property>
+   <property name="default">
+    <bool>true</bool>
    </property>
   </widget>
   <widget class="QPushButton" name="pushButton_2">

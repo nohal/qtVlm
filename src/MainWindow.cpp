@@ -699,7 +699,7 @@ void MainWindow::slotUpdateOpponent(void)
     {
         if(my_centralWidget->getRaces()[i]->idrace ==  ((boatVLM *)selectedBoat)->getRaceId())
         {
-            qWarning() << "Set1";
+            //qWarning() << "Set1";
             my_centralWidget->getOppList()->setBoatList(my_centralWidget->getRaces()[i]->oppList,my_centralWidget->getRaces()[i]->idrace,my_centralWidget->getRaces()[i]->showWhat,true);
             my_centralWidget->drawNSZ(i);
             found=true;

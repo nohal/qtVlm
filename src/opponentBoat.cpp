@@ -818,7 +818,7 @@ void opponentList::getTrace(QByteArray buff, QList<vlmPoint> * trace)
     if(checkWSResult(buff,"OppList_getTrack",main))
     {
         int nbPoints= result["nb_tracks"].toInt();
-        qWarning() << "Nb point in track: " << nbPoints;
+        //qWarning() << "Nb point in track: " << nbPoints;
         if(nbPoints > 0)
         {
             //int i=0;

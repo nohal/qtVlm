@@ -2351,6 +2351,7 @@ void myCentralWidget::drawNSZ(int i)
         for (int j=-180;j<361;j++)
             NSZ->addPoint(race_list[i]->latNSZ,j);
         NSZ->slot_showMe();
+        qWarning()<<"drawing NSZ";
     }
 }
 void myCentralWidget::removeOpponent(QString oppId, QString raceId)

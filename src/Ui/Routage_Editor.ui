@@ -285,106 +285,11 @@
         <double>5.000000000000000</double>
        </property>
       </widget>
-      <widget class="QCheckBox" name="windForced">
-       <property name="geometry">
-        <rect>
-         <x>330</x>
-         <y>30</y>
-         <width>131</width>
-         <height>18</height>
-        </rect>
-       </property>
-       <property name="text">
-        <string>Forcer le vent</string>
-       </property>
-      </widget>
-      <widget class="QLabel" name="label_4">
-       <property name="geometry">
-        <rect>
-         <x>340</x>
-         <y>60</y>
-         <width>46</width>
-         <height>14</height>
-        </rect>
-       </property>
-       <property name="text">
-        <string>TWS</string>
-       </property>
-      </widget>
-      <widget class="QDoubleSpinBox" name="TWS">
-       <property name="enabled">
-        <bool>false</bool>
-       </property>
-       <property name="geometry">
-        <rect>
-         <x>380</x>
-         <y>61</y>
-         <width>91</width>
-         <height>21</height>
-        </rect>
-       </property>
-       <property name="alignment">
-        <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-       </property>
-       <property name="suffix">
-        <string extracomment="nds"> nds</string>
-       </property>
-       <property name="decimals">
-        <number>1</number>
-       </property>
-       <property name="maximum">
-        <double>60.000000000000000</double>
-       </property>
-       <property name="value">
-        <double>20.000000000000000</double>
-       </property>
-      </widget>
-      <widget class="QLabel" name="label_5">
-       <property name="geometry">
-        <rect>
-         <x>340</x>
-         <y>90</y>
-         <width>46</width>
-         <height>14</height>
-        </rect>
-       </property>
-       <property name="text">
-        <string>TWD</string>
-       </property>
-      </widget>
-      <widget class="QDoubleSpinBox" name="TWD">
-       <property name="enabled">
-        <bool>false</bool>
-       </property>
-       <property name="geometry">
-        <rect>
-         <x>380</x>
-         <y>90</y>
-         <width>91</width>
-         <height>21</height>
-        </rect>
-       </property>
-       <property name="alignment">
-        <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-       </property>
-       <property name="suffix">
-        <string extracomment="deg"> deg</string>
-       </property>
-       <property name="decimals">
-        <number>1</number>
-       </property>
-       <property name="maximum">
-        <double>360.000000000000000</double>
-       </property>
-       <property name="value">
-        <double>0.000000000000000</double>
-       </property>
-      </widget>
       <widget class="QCheckBox" name="showIso">
        <property name="geometry">
         <rect>
-         <x>330</x>
-         <y>130</y>
+         <x>260</x>
+         <y>30</y>
          <width>141</width>
          <height>18</height>
         </rect>
@@ -396,10 +301,10 @@
       <widget class="QCheckBox" name="convRoute">
        <property name="geometry">
         <rect>
-         <x>330</x>
-         <y>160</y>
+         <x>260</x>
+         <y>60</y>
          <width>141</width>
-         <height>18</height>
+         <height>31</height>
         </rect>
        </property>
        <property name="font">
@@ -410,7 +315,8 @@
         </font>
        </property>
        <property name="text">
-        <string>Convertir en Route</string>
+        <string>Convertir en Route
+avec ce prefixe</string>
        </property>
       </widget>
       <widget class="QCheckBox" name="useVac">
@@ -453,6 +359,28 @@
        </property>
        <property name="text">
         <string>Calculer en parallele (1 processeur disponible)</string>
+       </property>
+      </widget>
+      <widget class="QLineEdit" name="poiPrefix">
+       <property name="geometry">
+        <rect>
+         <x>410</x>
+         <y>70</y>
+         <width>41</width>
+         <height>20</height>
+        </rect>
+       </property>
+       <property name="inputMask">
+        <string>A; </string>
+       </property>
+       <property name="text">
+        <string>R</string>
+       </property>
+       <property name="maxLength">
+        <number>1</number>
+       </property>
+       <property name="alignment">
+        <set>Qt::AlignCenter</set>
        </property>
       </widget>
      </widget>
@@ -814,6 +742,114 @@
        </property>
       </widget>
      </widget>
+     <widget class="QGroupBox" name="groupBox_7">
+      <property name="geometry">
+       <rect>
+        <x>20</x>
+        <y>360</y>
+        <width>441</width>
+        <height>121</height>
+       </rect>
+      </property>
+      <property name="title">
+       <string>Forcer le vent</string>
+      </property>
+      <widget class="QDoubleSpinBox" name="TWD">
+       <property name="enabled">
+        <bool>false</bool>
+       </property>
+       <property name="geometry">
+        <rect>
+         <x>110</x>
+         <y>80</y>
+         <width>91</width>
+         <height>21</height>
+        </rect>
+       </property>
+       <property name="alignment">
+        <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+       </property>
+       <property name="suffix">
+        <string extracomment="deg"> deg</string>
+       </property>
+       <property name="decimals">
+        <number>1</number>
+       </property>
+       <property name="maximum">
+        <double>360.000000000000000</double>
+       </property>
+       <property name="value">
+        <double>0.000000000000000</double>
+       </property>
+      </widget>
+      <widget class="QDoubleSpinBox" name="TWS">
+       <property name="enabled">
+        <bool>false</bool>
+       </property>
+       <property name="geometry">
+        <rect>
+         <x>110</x>
+         <y>51</y>
+         <width>91</width>
+         <height>21</height>
+        </rect>
+       </property>
+       <property name="alignment">
+        <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+       </property>
+       <property name="suffix">
+        <string extracomment="nds"> nds</string>
+       </property>
+       <property name="decimals">
+        <number>1</number>
+       </property>
+       <property name="maximum">
+        <double>60.000000000000000</double>
+       </property>
+       <property name="value">
+        <double>20.000000000000000</double>
+       </property>
+      </widget>
+      <widget class="QLabel" name="label_4">
+       <property name="geometry">
+        <rect>
+         <x>70</x>
+         <y>50</y>
+         <width>46</width>
+         <height>14</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>TWS</string>
+       </property>
+      </widget>
+      <widget class="QCheckBox" name="windForced">
+       <property name="geometry">
+        <rect>
+         <x>60</x>
+         <y>20</y>
+         <width>131</width>
+         <height>18</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>Forcer le vent</string>
+       </property>
+      </widget>
+      <widget class="QLabel" name="label_5">
+       <property name="geometry">
+        <rect>
+         <x>70</x>
+         <y>80</y>
+         <width>46</width>
+         <height>14</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>TWD</string>
+       </property>
+      </widget>
+     </widget>
     </widget>
    </widget>
    <widget class="QWidget" name="layoutWidget">
@@ -830,6 +866,12 @@
       <widget class="QPushButton" name="btOk">
        <property name="text">
         <string>Valider</string>
+       </property>
+       <property name="autoDefault">
+        <bool>false</bool>
+       </property>
+       <property name="default">
+        <bool>true</bool>
        </property>
       </widget>
      </item>
@@ -868,12 +910,11 @@
   <tabstop>duree</tabstop>
   <tabstop>step</tabstop>
   <tabstop>range</tabstop>
-  <tabstop>windForced</tabstop>
-  <tabstop>TWS</tabstop>
-  <tabstop>TWD</tabstop>
   <tabstop>showIso</tabstop>
   <tabstop>convRoute</tabstop>
+  <tabstop>poiPrefix</tabstop>
   <tabstop>useVac</tabstop>
+  <tabstop>multi</tabstop>
   <tabstop>checkCoast</tabstop>
   <tabstop>tabWidget</tabstop>
   <tabstop>pruneWakeAngle</tabstop>
@@ -883,6 +924,9 @@
   <tabstop>whatIfDate</tabstop>
   <tabstop>whatIfWind</tabstop>
   <tabstop>whatIfTime</tabstop>
+  <tabstop>windForced</tabstop>
+  <tabstop>TWD</tabstop>
+  <tabstop>TWS</tabstop>
   <tabstop>btOk</tabstop>
   <tabstop>btCancel</tabstop>
  </tabstops>

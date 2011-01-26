@@ -247,7 +247,7 @@
       <rect>
        <x>20</x>
        <y>20</y>
-       <width>72</width>
+       <width>111</width>
        <height>18</height>
       </rect>
      </property>
@@ -283,10 +283,10 @@
     <widget class="QLabel" name="label_4">
      <property name="geometry">
       <rect>
-       <x>200</x>
-       <y>23</y>
-       <width>46</width>
-       <height>14</height>
+       <x>180</x>
+       <y>20</y>
+       <width>61</width>
+       <height>16</height>
       </rect>
      </property>
      <property name="text">
@@ -351,7 +351,7 @@
       <rect>
        <x>30</x>
        <y>20</y>
-       <width>131</width>
+       <width>241</width>
        <height>17</height>
       </rect>
      </property>
@@ -367,7 +367,7 @@
       <rect>
        <x>30</x>
        <y>40</y>
-       <width>141</width>
+       <width>231</width>
        <height>17</height>
       </rect>
      </property>
@@ -378,9 +378,9 @@
     <widget class="QRadioButton" name="button10distance">
      <property name="geometry">
       <rect>
-       <x>230</x>
+       <x>290</x>
        <y>20</y>
-       <width>221</width>
+       <width>361</width>
        <height>17</height>
       </rect>
      </property>
@@ -391,9 +391,9 @@
     <widget class="QRadioButton" name="button10ranking">
      <property name="geometry">
       <rect>
-       <x>230</x>
+       <x>290</x>
        <y>40</y>
-       <width>231</width>
+       <width>371</width>
        <height>17</height>
       </rect>
      </property>
@@ -404,7 +404,7 @@
     <widget class="QRadioButton" name="buttonNone">
      <property name="geometry">
       <rect>
-       <x>510</x>
+       <x>680</x>
        <y>20</y>
        <width>82</width>
        <height>17</height>
@@ -501,8 +501,8 @@
    <slot>accept()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>362</x>
-     <y>644</y>
+     <x>366</x>
+     <y>636</y>
     </hint>
     <hint type="destinationlabel">
      <x>127</x>
@@ -517,8 +517,8 @@
    <slot>reject()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>443</x>
-     <y>644</y>
+     <x>528</x>
+     <y>636</y>
     </hint>
     <hint type="destinationlabel">
      <x>415</x>
@@ -533,8 +533,8 @@
    <slot>doSynch()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>729</x>
-     <y>27</y>
+     <x>447</x>
+     <y>614</y>
     </hint>
     <hint type="destinationlabel">
      <x>380</x>
@@ -622,6 +622,22 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>displayNSZ</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>race_dialog_ui</receiver>
+   <slot>NSZToggle(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>95</x>
+     <y>428</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>403</x>
+     <y>327</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>chgRace(int)</slot>
@@ -631,5 +647,6 @@
   <slot>tenFirstDistToggle(bool)</slot>
   <slot>tenFirstRankToggle(bool)</slot>
   <slot>noneToggle(bool)</slot>
+  <slot>NSZToggle(bool)</slot>
  </slots>
 </ui>

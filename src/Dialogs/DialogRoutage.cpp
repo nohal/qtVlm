@@ -87,6 +87,7 @@ DialogRoutage::DialogRoutage(ROUTAGE *routage,myCentralWidget *parent)
     whatIfUse->setChecked(routage->getWhatIfUsed());
     whatIfWind->setValue(routage->getWhatIfWind());
     whatIfTime->setValue(routage->getWhatIfTime());
+    this->poiPrefix->setText(routage->getPoiPrefix());
     this->startFromBoat->setChecked(routage->getRouteFromBoat());
     if(routage->getFinalEta().isNull())
         this->groupBox_eta->setHidden(true);
@@ -216,6 +217,7 @@ void DialogRoutage::done(int result)
             return;
         }
         routage->setUseMultiThreading(this->multi->isChecked());
+        routage->setPoiPrefix(this->poiPrefix->text());
         routage->setName((editName->text()).trimmed());
         routage->setWidth(inputTraceColor->getLineWidth());
         routage->setColor(inputTraceColor->getLineColor());
@@ -286,8 +288,11 @@ void DialogRoutage::done(int result)
             if(routage->getFromPOI()->getLongitude()==routage->getToPOI()->getLongitude() &&
                routage->getFromPOI()->getLatitude()==routage->getToPOI()->getLatitude())
             {
-                QMessageBox::critical(0,QString(QObject::tr("Routage")),QString(QObject::tr("Le POI de depart et d'arrivee sont les memes, vous etes deja arrive...")));
-                return;
+                if(!routage->getIsNewPivot())
+                {
+                    QMessageBox::critical(0,QString(QObject::tr("Routage")),QString(QObject::tr("Le POI de depart et d'arrivee sont les memes, vous etes deja arrive...")));
+                    return;
+                }
             }
         }
         routage->setWhatIfUsed(whatIfUse->isChecked());

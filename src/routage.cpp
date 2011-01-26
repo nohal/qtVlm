@@ -486,6 +486,7 @@ ROUTAGE::ROUTAGE(QString name, Projection *proj, Grib *grib, QGraphicsScene * my
     createPopupMenu();
     connect(parent,SIGNAL(stopCompassLine()),this,SLOT(slot_abort()));
     this->tempPoints.reserve(180*180);
+    this->poiPrefix="R";
 }
 ROUTAGE::~ROUTAGE()
 {
@@ -2218,7 +2219,10 @@ void ROUTAGE::convertToRoute()
     ROUTAGE * parentRoutage=this;
     while(parentRoutage->getIsPivot())
     {
-        parentRoutage=parentRoutage->getFromRoutage();
+        if(parentRoutage->getFromRoutage())
+            parentRoutage=parentRoutage->getFromRoutage();
+        else
+            break;
     }
     route->setStartTime(parentRoutage->getStartTime());
     route->setStartTimeOption(3);
@@ -2230,7 +2234,8 @@ void ROUTAGE::convertToRoute()
     for (int n=0;n<list->count();n++)
     {
        QString poiName;
-       poiName.sprintf("R%.5i",list->count()-n);
+       poiName.sprintf("%.5i",list->count()-n);
+       poiName=poiPrefix+poiName;
        POI * poi = parent->slot_addPOI(poiName,0,list->at(n).lat,list->at(n).lon,-1,false,false,myBoat);
        poi->setRoute(route);
        poi->setNotSimplificable(list->at(n).notSimplificable);
@@ -2790,6 +2795,7 @@ void ROUTAGE::setFromRoutage(ROUTAGE *fromRoutage, bool editOptions)
 {
     this->fromRoutage=fromRoutage;
     this->width=fromRoutage->getWidth();
+    this->poiPrefix=fromRoutage->getPoiPrefix();
     pivotPoint=fromRoutage->getPivotPoint();
     this->myBoat=fromRoutage->getBoat();
     this->startTime= startTime.fromTime_t(pivotPoint.eta);
@@ -2819,7 +2825,7 @@ void ROUTAGE::setFromRoutage(ROUTAGE *fromRoutage, bool editOptions)
         QList<vlmPoint> parentWay=*parentRoutage->getFromRoutage()->getWay()->getPoints();
         for(int n=1;n<parentWay.count();n++)
             initialRoad.prepend(parentWay.at(n));
-        if(!parentRoutage->getFromRoutage()->getIsPivot()) break;
+        if(!parentRoutage->getFromRoutage()->getIsPivot() || !parentRoutage->getFromRoutage()) break;
         parentRoutage=parentRoutage->getFromRoutage();
     }
     for(int n=0;n<initialRoad.count();n++)

@@ -131,6 +131,8 @@ class ROUTAGE : public QObject
         bool getIsNewPivot(){return isNewPivot;}
         void setIsNewPivot(bool b){isNewPivot=b;}
         bool getIsPivot(){return this->isPivot;}
+        void setPoiPrefix(QString s){this->poiPrefix=s;}
+        QString getPoiPrefix(){return this->poiPrefix;}
 /*beta testing advanced parameters*/
         int  pruneWakeAngle;
         bool useConverge;
@@ -262,5 +264,6 @@ class ROUTAGE : public QObject
         bool useMultiThreading;
         bool isNewPivot;
         ROUTAGE * fromRoutage;
+        QString poiPrefix;
     };
 #endif // ROUTAGE_H

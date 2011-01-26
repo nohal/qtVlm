@@ -28,16 +28,18 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "boatVLM.h"
 #include "MainWindow.h"
 #include "parser.h"
-#include<QStandardItemModel>
-#include<QStandardItem>
+#include <QStandardItemModel>
+#include <QStandardItem>
 #include "Orthodromie.h"
 #include <QImage>
 #include <QDesktopWidget>
 #include "settings.h"
+#include <QDebug>
 
 #define RACE_NO_REQUEST 0
 #define RACE_LIST_BOAT  1
 #define RESULT_LIST_BOAT 2
+#define FLAG_REQUEST 3
 
 DialogRace::DialogRace(MainWindow * main,myCentralWidget * parent, inetConnexion * inet) :
         QDialog(parent),
@@ -237,6 +239,12 @@ void DialogRace::initList(QList<boatVLM*> & boat_list_ptr,QList<raceData*> & rac
     }
     getNextRace();
 }
+void DialogRace::NSZToggle(bool b)
+{
+    param_list[numRace]->displayNSZ=b;
+    param_list[numRace]->colorNSZ=inputTraceColor->getLineColor();
+    param_list[numRace]->widthNSZ=inputTraceColor->getLineWidth();
+}
 void DialogRace::myListToggle(bool b)
 {
     if(b)
@@ -322,7 +330,7 @@ void DialogRace::getNextRace()
 
     currentShowWhat=SHOW_MY_LIST;
     currentDisplayNSZ=false;
-    currentLatNSZ=60;
+    currentLatNSZ=-60;
     currentColorNSZ=Qt::black;
     currentWidthNSZ=2;
 
@@ -352,17 +360,20 @@ void DialogRace::requestFinished (QByteArray res_byte)
 
     QJson::Parser parser;
     bool ok;
-
-    QVariantMap result = parser.parse (res_byte, &ok).toMap();
-    if (!ok) {
-        qWarning() << "Error parsing json data " << res_byte;
-        qWarning() << "Error: " << parser.errorString() << " (line: " << parser.errorLine() << ")";
-    }
-
-    if(!checkWSResult(res_byte,"raceDialog->RACE_LIST_BOAT",main))
+    QVariantMap result;
+    if(getCurrentRequest()!=FLAG_REQUEST)
     {
-        getNextRace();
-        return;
+        result = parser.parse (res_byte, &ok).toMap();
+        if (!ok) {
+            qWarning() << "Error parsing json data " << res_byte;
+            qWarning() << "Error: " << parser.errorString() << " (line: " << parser.errorLine() << ")";
+        }
+
+        if(!checkWSResult(res_byte,"raceDialog->RACE_LIST_BOAT",main))
+        {
+            getNextRace();
+            return;
+        }
     }
     switch(getCurrentRequest())
     {
@@ -439,12 +450,45 @@ void DialogRace::requestFinished (QByteArray res_byte)
             }
             for(int ii=0;ii<param_list[currentRace]->arrived.count();ii++)
                 param_list[currentRace]->arrived[ii]->fromFirst=QString().setNum(qAbs(param_list[currentRace]->arrived.at(ii)->last3h.toInt()-firstTime));
-            getNextRace();
+            jj=0;
+            getMissingFlags();
+            //getNextRace();
+            break;
+        }
+        case FLAG_REQUEST:
+        {
+            QImage img;
+            if(img.loadFromData(res_byte))
+            {
+                img.save("img/flags/"+imgFileName);
+                //qWarning()<<"saving flag"<<imgFileName;
+            }
+            jj++;
+            getMissingFlags();
             break;
         }
     }
 }
-
+void DialogRace::getMissingFlags()
+{
+    QImage img;
+    for (;jj<param_list[currentRace]->boats.count();jj++)
+    {
+        imgFileName=param_list[currentRace]->boats.at(jj)->pavillon+".png";
+        if(!img.load("img/flags/"+imgFileName))
+        {
+            //qWarning()<<"requesting flag"<<imgFileName;
+            QString page;
+            QTextStream(&page)
+                    << "/cache/flags/"
+                    <<imgFileName;
+            clearCurrentRequest();
+            inetGet(FLAG_REQUEST,page);
+            return;
+        }
+    }
+    getNextRace();
+}
 void DialogRace::clear(void)
 {
     for(int i=0;i<param_list.size();i++)

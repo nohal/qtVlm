@@ -59,6 +59,7 @@ class DialogRace : public QDialog, public Ui::race_dialog_ui, public inetClient
         void tenFirstDistToggle(bool b);
         void tenFirstRankToggle(bool b);
         void noneToggle(bool b);
+        void NSZToggle(bool b);
 
     protected:
         void resizeEvent ( QResizeEvent * event );
@@ -100,6 +101,9 @@ class DialogRace : public QDialog, public Ui::race_dialog_ui, public inetClient
         QStandardItemModel * model;
         QStandardItemModel * modelResult;
         int nbSelected;
+        QString imgFileName;
+        int jj;
+        void getMissingFlags();
 
 private slots:
     void on_displayNSZ_clicked();
