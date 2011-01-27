@@ -30,26 +30,26 @@ class interpolation
     public:
         static void get_wind_info_latlong_TWSA(double longitude,  double latitude, time_t now, time_t t1,time_t t2,
                                     windData * data_prev, windData * data_nxt,
-                                    int gribHighRes_t1, int gribHighRes_t2,
+                                    double lat_step_t1, double lon_step_t1, double lat_step_t2, double lon_step_t2,
                                     double * u_res, double * v_res,int debug);
 
         static void get_wind_info_latlong_selective_TWSA(double longitude,  double latitude, time_t now, time_t t1,time_t t2,
                                     windData * data_prev, windData * data_nxt,
-                                    int gribHighRes_t1, int gribHighRes_t2,
+                                    double lat_step_t1, double lon_step_t1, double lat_step_t2, double lon_step_t2,
                                     double * u_res, double * v_res,int debug);
 
         static void get_wind_info_latlong_hybrid(double longitude,  double latitude, time_t now, time_t t1,time_t t2,
                                     windData * data_prev, windData * data_nxt,
-                                    int gribHighRes_t1, int gribHighRes_t2,
+                                    double lat_step_t1, double lon_step_t1, double lat_step_t2, double lon_step_t2,
                                     double * u_res, double * v_res,int debug);
 
-        static void get_wind_info_latlong_TWSA_compute(double longitude,  double latitude, windData * data,int gribHighRes,
+        static void get_wind_info_latlong_TWSA_compute(double longitude,  double latitude, windData * data,double lat_step, double lon_step,
                 double * u_res, double * v_res,int debug);
 
-        static void get_wind_info_latlong_selective_TWSA_compute(double longitude,  double latitude, windData * data,int gribHighRes,
+        static void get_wind_info_latlong_selective_TWSA_compute(double longitude,  double latitude, windData * data,double lat_step, double lon_step,
                 double * u_res, double * v_res, int * rot,int debug);
 
-        static void get_wind_info_latlong_hybrid_compute(double longitude,  double latitude, windData * data,int gribHighRes,
+        static void get_wind_info_latlong_hybrid_compute(double longitude,  double latitude, windData * data,double lat_step, double lon_step,
                 double * u_res, double * v_res, double * ro_res,int debug);
 };
 

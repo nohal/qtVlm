@@ -660,14 +660,15 @@ bool Grib::getInterpolatedValue_byDates(double d_long, double d_lat, time_t now,
         interpolation_type=interpolation_param;
 
     bool hasNxt=false;
-    int isHighRes_t1=false,isHighRes_t2=false;
+    //int isHighRes_t1=false,isHighRes_t2=false;
+    double gribStep_t1=1,gribStep_t2=1;
 
     /*sanity check */
     if(!u || !v || !recU1 || !recV1)
         return false;
 
-    isHighRes_t1=(recU1->getDi()==0.5 || recU1->getDi()==-0.5)?1:0;
-
+    //isHighRes_t1=(recU1->getDi()==0.5 || recU1->getDi()==-0.5)?1:0;
+    gribStep_t1=recU1->getDi()==0?1:recU1->getDi();
 
     if(!recU1->getValue_TWSA(d_long,d_lat,&(wData_prev.u0),&(wData_prev.u1),&(wData_prev.u2),&(wData_prev.u3),debug))
         return false;
@@ -677,7 +678,8 @@ bool Grib::getInterpolatedValue_byDates(double d_long, double d_lat, time_t now,
     if(recU2 && recV2)
     {
         hasNxt=true;
-        isHighRes_t2=(recU2->getDi()==0.5 || recU2->getDi()==-0.5)?1:0;
+        //isHighRes_t2=(recU2->getDi()==0.5 || recU2->getDi()==-0.5)?1:0;
+        gribStep_t2=recU2->getDi()==0?1:recU2->getDi();
 
         if(!recU2->getValue_TWSA(d_long,d_lat,&(wData_nxt.u0),(&wData_nxt.u1),&(wData_nxt.u2),&(wData_nxt.u3),debug))
             return false;
@@ -690,17 +692,17 @@ bool Grib::getInterpolatedValue_byDates(double d_long, double d_lat, time_t now,
         case INTERPOLATION_TWSA:
             if(debug)
                 qWarning() << "Interpolation TWSA";
-            interpolation::get_wind_info_latlong_TWSA(d_long,d_lat,now,t1,t2,&wData_prev,(hasNxt?(&wData_nxt):NULL),isHighRes_t1,isHighRes_t2,u,v,debug);
+            interpolation::get_wind_info_latlong_TWSA(d_long,d_lat,now,t1,t2,&wData_prev,(hasNxt?(&wData_nxt):NULL),gribStep_t1,gribStep_t1,gribStep_t2,gribStep_t2,u,v,debug);
             break;
         case INTERPOLATION_SELECTIVE_TWSA:
             if(debug)
                 qWarning() << "Interpolation selective-TWSA";
-            interpolation::get_wind_info_latlong_selective_TWSA(d_long,d_lat,now,t1,t2,&wData_prev,(hasNxt?(&wData_nxt):NULL),isHighRes_t1,isHighRes_t2,u,v,debug);
+            interpolation::get_wind_info_latlong_selective_TWSA(d_long,d_lat,now,t1,t2,&wData_prev,(hasNxt?(&wData_nxt):NULL),gribStep_t1,gribStep_t1,gribStep_t2,gribStep_t2,u,v,debug);
             break;
         case INTERPOLATION_HYBRID:
             if(debug)
                 qWarning() << "Interpolation Hybrid";
-            interpolation::get_wind_info_latlong_hybrid(d_long,d_lat,now,t1,t2,&wData_prev,(hasNxt?(&wData_nxt):NULL),isHighRes_t1,isHighRes_t2,u,v,debug);
+            interpolation::get_wind_info_latlong_hybrid(d_long,d_lat,now,t1,t2,&wData_prev,(hasNxt?(&wData_nxt):NULL),gribStep_t1,gribStep_t1,gribStep_t2,gribStep_t2,u,v,debug);
             break;
          default:
             if(debug)

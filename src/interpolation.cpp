@@ -46,18 +46,18 @@ typedef complex<double> dcmplx;
 
   void interpolation::get_wind_info_latlong_TWSA(double longitude,  double latitude, time_t now, time_t t1,time_t t2,
                                 windData * data_prev, windData * data_nxt,
-                                int gribHighRes_t1,int gribHighRes_t2
+                                double lat_step_t1, double lon_step_t1, double lat_step_t2, double lon_step_t2
                                 ,double * u_res, double * v_res,int debug)
 {
     double u1,u2,v1,v2;
     double t_ratio,angle;
     double u,v;
 
-    get_wind_info_latlong_TWSA_compute(longitude,latitude,data_prev,gribHighRes_t1,&u1,&v1,debug);
+    get_wind_info_latlong_TWSA_compute(longitude,latitude,data_prev,lat_step_t1,lon_step_t1,&u1,&v1,debug);
 
     if(data_nxt != NULL)
     {
-        get_wind_info_latlong_TWSA_compute(longitude,latitude,data_nxt,gribHighRes_t2,&u2,&v2,debug);
+        get_wind_info_latlong_TWSA_compute(longitude,latitude,data_nxt,lat_step_t2,lon_step_t2,&u2,&v2,debug);
 
         t_ratio = ((double)(now - t1)) / ((double)(t2 - t1));
 
@@ -96,7 +96,7 @@ typedef complex<double> dcmplx;
 #endif
 
 void interpolation::get_wind_info_latlong_TWSA_compute(double longitude,  double latitude, windData * data,
-                                        int gribHighRes, double * u_res,
+                                        double lat_step, double lon_step, double * u_res,
                                         double * v_res,int /*debug*/)
 {
   double u0,u1,u2,u3,v0,v1,v2,v3;
@@ -130,11 +130,8 @@ void interpolation::get_wind_info_latlong_TWSA_compute(double longitude,  double
   }
   d_lat = latitude + 90; /* is there a +90 drift? see grib*/
 
-  if(gribHighRes)
-  {
-    d_long = d_long*2.0;
-    d_lat = d_lat*2.0;
-  }
+  d_long = d_long/lon_step;
+  d_lat = d_lat/lat_step;
 
   /* we reuse u = speed v = angle after conversion */
 
@@ -183,7 +180,7 @@ void interpolation::get_wind_info_latlong_TWSA_compute(double longitude,  double
 
 void interpolation::get_wind_info_latlong_selective_TWSA(double longitude,  double latitude, time_t now, time_t t1,time_t t2,
                                 windData * data_prev, windData * data_nxt,
-                                int gribHighRes_t1,int gribHighRes_t2,
+                                double lat_step_t1, double lon_step_t1, double lat_step_t2, double lon_step_t2,
                                 double * u_res, double * v_res,int debug)
 {
     double u1,u2,v1,v2;
@@ -196,7 +193,7 @@ void interpolation::get_wind_info_latlong_selective_TWSA(double longitude,  doub
     dcmplx  c, c01, c23;
 #endif
 
-    get_wind_info_latlong_selective_TWSA_compute(longitude,latitude,data_prev,gribHighRes_t1,&u1,&v1,&rot_1,debug);
+    get_wind_info_latlong_selective_TWSA_compute(longitude,latitude,data_prev,lat_step_t1,lon_step_t1,&u1,&v1,&rot_1,debug);
 
     if(debug)
     {
@@ -205,7 +202,7 @@ void interpolation::get_wind_info_latlong_selective_TWSA(double longitude,  doub
 
     if(data_nxt != NULL)
     {
-        get_wind_info_latlong_selective_TWSA_compute(longitude,latitude,data_nxt,gribHighRes_t2,&u2,&v2,&rot_2,debug);
+        get_wind_info_latlong_selective_TWSA_compute(longitude,latitude,data_nxt,lat_step_t2,lon_step_t2,&u2,&v2,&rot_2,debug);
 
         if(debug)
         {
@@ -307,7 +304,7 @@ void interpolation::get_wind_info_latlong_selective_TWSA(double longitude,  doub
 
 
 void interpolation::get_wind_info_latlong_selective_TWSA_compute(double longitude,  double latitude, windData * data,
-                                  int gribHighRes,double * u_res, double * v_res, int * rot,int debug)
+                                  double lat_step, double lon_step,double * u_res, double * v_res, int * rot,int debug)
 {
     double u0,u1,u2,u3,v0,v1,v2,v3;
     double u01,u23,v01,v23;
@@ -340,7 +337,7 @@ void interpolation::get_wind_info_latlong_selective_TWSA_compute(double longitud
 
     if(debug)
     {
-        qWarning("Donnée IN (highRes=%d)\n",gribHighRes);
+        qWarning("Donnée IN (step=%f)\n",lat_step);
         qWarning("Lat= %f (=> %f ), Lon= %f (=> %f )\n",latitude,d_lat,longitude,d_long);
         qWarning("grid : lat= %f, Lon= %f\n",floor(d_lat),floor(d_long));
         qWarning("P0: u= %f, v= %f\n",u0,v0);
@@ -349,11 +346,8 @@ void interpolation::get_wind_info_latlong_selective_TWSA_compute(double longitud
         qWarning("P3: u= %f, v= %f\n",u3,v3);
     }
 
-    if(gribHighRes)
-    {
-        d_long = d_long*2.0;
-        d_lat = d_lat*2.0;
-    }
+    d_long = d_long/lon_step;
+    d_lat = d_lat/lat_step;
 
     _transform_u_v(u0, v0);
     _transform_u_v(u1, v1);
@@ -538,18 +532,18 @@ void interpolation::get_wind_info_latlong_selective_TWSA_compute(double longitud
 
 void interpolation::get_wind_info_latlong_hybrid(double longitude,  double latitude, time_t now, time_t t1,time_t t2,
                                 windData * data_prev, windData * data_nxt,
-                                int gribHighRes_t1, int gribHighRes_t2,
+                                double lat_step_t1, double lon_step_t1, double lat_step_t2, double lon_step_t2,
                                 double * u_res, double * v_res,int debug)
 {
     double u1,u2,v1,v2,ro1,ro2;
     double t_ratio,angle;
     double u,v,ro;
 
-    get_wind_info_latlong_hybrid_compute(longitude,latitude,data_prev,gribHighRes_t1,&u1,&v1,&ro1,debug);
+    get_wind_info_latlong_hybrid_compute(longitude,latitude,data_prev,lat_step_t1,lon_step_t1,&u1,&v1,&ro1,debug);
 
     if(data_nxt != NULL)
     {
-        get_wind_info_latlong_hybrid_compute(longitude,latitude,data_nxt,gribHighRes_t2,&u2,&v2,&ro2,debug);
+        get_wind_info_latlong_hybrid_compute(longitude,latitude,data_nxt,lat_step_t2,lon_step_t2,&u2,&v2,&ro2,debug);
 
         t_ratio = ((double)(now - t1)) / ((double)(t2 - t1));
 
@@ -572,7 +566,7 @@ void interpolation::get_wind_info_latlong_hybrid(double longitude,  double latit
 }
 
 void interpolation::get_wind_info_latlong_hybrid_compute(double longitude,  double latitude, windData * data,
-                      int gribHighRes, double * u_res, double * v_res, double * ro_res,int debug)
+                      double lat_step, double lon_step, double * u_res, double * v_res, double * ro_res,int debug)
 {
     double u0,u1,u2,u3,v0,v1,v2,v3;
     double ro0,ro1,ro2,ro3;
@@ -601,7 +595,7 @@ void interpolation::get_wind_info_latlong_hybrid_compute(double longitude,  doub
 
     if(debug)
     {
-        qWarning("Donnée IN (highRes=%d)\n",gribHighRes);
+        qWarning("Donnée IN (step=%f)\n",lat_step);
         qWarning("Lat= %f (=> %f ), Lon= %f (=> %f )\n",latitude,d_lat,longitude,d_long);
         qWarning("grid : lat= %f, Lon= %f\n",floor(d_lat),floor(d_long));
         qWarning("P0: u= %f, v= %f\n",u0,v0);
@@ -610,12 +604,16 @@ void interpolation::get_wind_info_latlong_hybrid_compute(double longitude,  doub
         qWarning("P3: u= %f, v= %f\n",u3,v3);
     }
 
-    if(gribHighRes)
+#if 1
+    d_long = d_long/lon_step;
+    d_lat = d_lat/lat_step;
+#else
+    if(lon_step==0.5)
     {
-        d_long = d_long*2.0;
-        d_lat = d_lat*2.0;
+        d_long = d_long*2;
+        d_lat = d_lat*2;
     }
-
+#endif
     /*
       simple bilinear interpolation, we might factor the cos(lat) in
       the computation to tackle the shape of the pseudo square

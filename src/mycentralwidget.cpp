@@ -670,6 +670,7 @@ void myCentralWidget::mouseDoubleClick(int x, int y, QGraphicsItem * )
 {
     double lon, lat;
     proj->screen2map(x,y, &lon, &lat);
+    qWarning() << "Creating POI at: " << lat << "," << lon << " - " << Util::formatLatitude(lat) << "," << Util::formatLongitude(lon);
     slot_addPOI("",POI_TYPE_POI,(float)lat,(float)lon,-1,-1,false,main->getSelectedBoat());
 }
 
