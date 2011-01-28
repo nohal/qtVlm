@@ -425,6 +425,7 @@ ROUTAGE::ROUTAGE(QString name, Projection *proj, Grib *grib, QGraphicsScene * my
     this->myscene=myScene;
     this->isPivot=false;
     this->isNewPivot=false;
+    this->autoZoom=true;
     if(QThread::idealThreadCount()<=1)
         this->useMultiThreading=false;
     else
@@ -553,8 +554,6 @@ void ROUTAGE::calculate()
         return;
     }
     running=true;
-    proj->setFrozen(true);
-    GshhsRangsReader *map=parent->get_gshhsReader()->getGshhsRangsReader();
     QTime timeTotal;
     QTime tfp;
     timeTotal.start();
@@ -624,11 +623,37 @@ void ROUTAGE::calculate()
     }
     arrival.setX(toPOI->getLongitude());
     arrival.setY(toPOI->getLatitude());
-    iso=new vlmLine(proj,myscene,Z_VALUE_ROUTAGE);
-    iso->setParent(this);
     orth.setPoints(start.x(),start.y(),arrival.x(),arrival.y());
     loxoCap=orth.getAzimutDeg();
     initialDist=orth.getDistance();
+    if(autoZoom)
+    {
+        double lonM,latM;
+        Util::getCoordFromDistanceAngle(start.y(),start.x(),orth.getDistance()/2,orth.getAzimutDeg(),&latM,&lonM);
+
+        float xW=qMin(start.x(),arrival.x());
+        float xE=qMax(start.x(),arrival.x());
+        float yN=qMax(start.y(),arrival.y());
+        float yS=qMin(start.y(),arrival.y());
+        // compute scale;
+        if (xE == xW)
+            xE = xW+0.1;
+        if (yS == yN)
+            yS = yN+0.1;
+        double sX,sY,sYN,sYS;
+        sX=proj->getW()/fabs(xE-xW);
+        sYN=log(tan(degToRad(yN)/2 + M_PI_4));
+        sYS=log(tan(degToRad(yS)/2 + M_PI_4));
+        sY=proj->getH()/fabs(radToDeg(sYN-sYS));
+        float newScale=sX>sY?sY:sX;
+        proj->setScaleAndCenterInMap(newScale*0.9,lonM,latM);
+        QApplication::processEvents();
+        orth.setPoints(start.x(),start.y(),arrival.x(),arrival.y());
+    }
+    proj->setFrozen(true);
+    GshhsRangsReader *map=parent->get_gshhsReader()->getGshhsRangsReader();
+    iso=new vlmLine(proj,myscene,Z_VALUE_ROUTAGE);
+    iso->setParent(this);
     vlmPoint point(start.x(),start.y());
     point.isStart=true;
     proj->map2screenFloat(cLFA(start.x()),start.y(),&xs,&ys);
@@ -2816,6 +2841,7 @@ void ROUTAGE::setFromRoutage(ROUTAGE *fromRoutage, bool editOptions)
     this->pruneWakeAngle=fromRoutage->pruneWakeAngle;
     this->routeFromBoat=false;
     this->toPOI=fromRoutage->getToPOI();
+    this->autoZoom=fromRoutage->getAutoZoom();
     isPivot=true;
     ROUTAGE *parentRoutage=this;
     result->deleteAll();

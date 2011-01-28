@@ -87,6 +87,7 @@ DialogRoutage::DialogRoutage(ROUTAGE *routage,myCentralWidget *parent)
     whatIfUse->setChecked(routage->getWhatIfUsed());
     whatIfWind->setValue(routage->getWhatIfWind());
     whatIfTime->setValue(routage->getWhatIfTime());
+    autoZoom->setChecked(routage->getAutoZoom());
     this->poiPrefix->setText(routage->getPoiPrefix());
     this->startFromBoat->setChecked(routage->getRouteFromBoat());
     if(routage->getFinalEta().isNull())
@@ -154,6 +155,7 @@ DialogRoutage::DialogRoutage(ROUTAGE *routage,myCentralWidget *parent)
     if(routage->isDone() || routage->getIsNewPivot())
     {
         this->editName->setDisabled(false);
+        this->autoZoom->setDisabled(true);
         this->editBoat->setDisabled(true);
         this->editDateBox->setDisabled(true);
         this->fromPOI->setDisabled(true);
@@ -180,6 +182,7 @@ DialogRoutage::DialogRoutage(ROUTAGE *routage,myCentralWidget *parent)
     }
     if(routage->getIsNewPivot() && !routage->isDone())
     {
+        this->autoZoom->setDisabled(false);
         this->duree->setDisabled(false);
         this->range->setDisabled(false);
         this->step->setDisabled(false);
@@ -225,6 +228,7 @@ void DialogRoutage::done(int result)
         routage->setCheckCoast(checkCoast->isChecked());
         routage->useConverge=log->isChecked();
         routage->pruneWakeAngle=pruneWakeAngle->value();
+        routage->setAutoZoom(autoZoom->isChecked());
         routage->setRouteFromBoat(this->startFromBoat->isChecked());
         if(parent->getPlayer()->getType()!=BOAT_REAL)
         {

@@ -471,11 +471,12 @@ void DialogRace::requestFinished (QByteArray res_byte)
 }
 void DialogRace::getMissingFlags()
 {
-    QImage img;
+    QFile file;
     for (;jj<param_list[currentRace]->boats.count();jj++)
     {
         imgFileName=param_list[currentRace]->boats.at(jj)->pavillon+".png";
-        if(!img.load("img/flags/"+imgFileName))
+        file.setFileName("img/flags/"+imgFileName);
+        if(!file.exists())
         {
             //qWarning()<<"requesting flag"<<imgFileName;
             QString page;
@@ -504,7 +505,11 @@ void DialogRace::clear(void)
 void DialogRace::done(int result)
 {
     if(result == QDialog::Accepted)
+    {
+        param_list[numRace]->colorNSZ=inputTraceColor->getLineColor();
+        param_list[numRace]->widthNSZ=inputTraceColor->getLineWidth();
         saveData(true); /* really saving, not only applying*/
+    }
     else
     {
         emit readRace();

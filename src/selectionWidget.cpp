@@ -135,6 +135,8 @@ bool selectionWidget::getZone(double * x0, double * y0, double * x1, double * y1
 
     if(!x0 || !y0 || !x1 || !y1)
         return false;
+    if(xa==xb || ya==yb)
+        return false;
 
     proj->screen2map(xa<xb?xa:xb,ya<yb?ya:yb,x0,y0);
     proj->screen2map(xa<xb?xb:xa,ya<yb?yb:ya,x1,y1);

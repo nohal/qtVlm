@@ -70,8 +70,11 @@ void Projection::zoomOnZone(double x0, double y0, double x1, double y1)
     sYN=log(tan(degToRad(yN)/2 + M_PI_4));
     sYS=log(tan(degToRad(yS)/2 + M_PI_4));
     sY=H/fabs(radToDeg(sYN-sYS));
+#if 0
     scale=sX<sY?sY:sX;
-
+#else
+    scale=sX>sY?sY:sX;
+#endif
     if (scale > scalemax)
         scale = scalemax;
 

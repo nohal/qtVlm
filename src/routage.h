@@ -148,6 +148,8 @@ class ROUTAGE : public QObject
         void setUseMultiThreading(bool b){this->useMultiThreading=b;}
         vlmLine * getResult(){return result;}
         ROUTAGE * getFromRoutage(){return fromRoutage;}
+        bool getAutoZoom(){return autoZoom;}
+        void setAutoZoom(bool b){this->autoZoom=b;}
     public slots:
         void slot_edit();
         void slot_abort(){this->aborted=true;}
@@ -265,5 +267,6 @@ class ROUTAGE : public QObject
         bool isNewPivot;
         ROUTAGE * fromRoutage;
         QString poiPrefix;
+        bool autoZoom;
     };
 #endif // ROUTAGE_H

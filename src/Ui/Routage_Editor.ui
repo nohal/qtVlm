@@ -290,7 +290,7 @@
         <rect>
          <x>260</x>
          <y>30</y>
-         <width>141</width>
+         <width>201</width>
          <height>18</height>
         </rect>
        </property>
@@ -381,6 +381,22 @@ avec ce prefixe</string>
        </property>
        <property name="alignment">
         <set>Qt::AlignCenter</set>
+       </property>
+      </widget>
+      <widget class="QCheckBox" name="autoZoom">
+       <property name="geometry">
+        <rect>
+         <x>330</x>
+         <y>160</y>
+         <width>131</width>
+         <height>17</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>Auto Zoom</string>
+       </property>
+       <property name="checked">
+        <bool>true</bool>
        </property>
       </widget>
      </widget>
@@ -915,6 +931,7 @@ avec ce prefixe</string>
   <tabstop>poiPrefix</tabstop>
   <tabstop>useVac</tabstop>
   <tabstop>multi</tabstop>
+  <tabstop>autoZoom</tabstop>
   <tabstop>checkCoast</tabstop>
   <tabstop>tabWidget</tabstop>
   <tabstop>pruneWakeAngle</tabstop>
