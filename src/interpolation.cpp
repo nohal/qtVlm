@@ -604,16 +604,9 @@ void interpolation::get_wind_info_latlong_hybrid_compute(double longitude,  doub
         qWarning("P3: u= %f, v= %f\n",u3,v3);
     }
 
-#if 1
     d_long = d_long/lon_step;
     d_lat = d_lat/lat_step;
-#else
-    if(lon_step==0.5)
-    {
-        d_long = d_long*2;
-        d_lat = d_lat*2;
-    }
-#endif
+
     /*
       simple bilinear interpolation, we might factor the cos(lat) in
       the computation to tackle the shape of the pseudo square
