@@ -66,12 +66,30 @@ bool selectionWidget::tryMoving(int mouse_x,int mouse_y)
         return false;
     xb=mouse_x;
     yb=mouse_y;
+
+#if 0
+    double xE,xW,yN,yS;
+    double sX;
+    double PY;
+
+    proj->screen2map(xa<xb?xa:xb,ya<yb?ya:yb,xW,yN);
+    proj->screen2map(xa<xb?xb:xa,ya<yb?yb:ya,xE,yS);
+
+    sX=W/fabs(xE-xW);
+
+    y = radToDeg((2*atan(exp((double)(degToRad(PY-(j-H/2)/scale)))))-M_PI_2);
+
+#endif
+
+#if 0
+    yb=xb*(((double)proj->getH())/((double)proj->getW()));
+#endif
     updateSize();
 
     update();
 
     if(showOrthodromie)
-        seg->moveSegment(mouse_x,mouse_y);
+        seg->moveSegment(xb,yb);
     return true;
 }
 
