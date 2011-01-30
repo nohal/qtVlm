@@ -52,6 +52,8 @@ void Projection::setScreenSize(int w, int h)
 /* zoom and scale */
 void Projection::zoomOnZone(double x0, double y0, double x1, double y1)
 {
+    double coef;
+
     if(frozen) return;
     // security
     if (x1 == x0)
@@ -64,25 +66,51 @@ void Projection::zoomOnZone(double x0, double y0, double x1, double y1)
     yN=y0;
     yS=y1;
 
+    //qWarning() << "init border : (" << xW << " " << xE << ") (" << yN << " " << yS << ")";
+
     // compute scale;
     double sX,sY,sYN,sYS;
     sX=W/fabs(xE-xW);
     sYN=log(tan(degToRad(yN)/2 + M_PI_4));
     sYS=log(tan(degToRad(yS)/2 + M_PI_4));
     sY=H/fabs(radToDeg(sYN-sYS));
+
+    //qWarning() << "scale: X=" << sX << " Y=" << sY;
 #if 0
     scale=sX<sY?sY:sX;
 #else
     scale=sX>sY?sY:sX;
 #endif
+    //qWarning() << "Choosing: " << scale;
+
     if (scale > scalemax)
         scale = scalemax;
+    //qWarning() << "final scale: " << scale;
 
     // Nouvelle position du centre
     CX=(xE+xW)/2;
     CY=(yN+yS)/2;
     PX=CX;
     PY=radToDeg(log(tan(degToRad(CY)/2 + M_PI_4)));
+
+    //qWarning() << "New center (" << CX << "," << CY << ") proj: (" << PX << "," << PY << ")";
+
+    // compute new bounderies
+#if 1
+    coef=(W/2)/scale;
+    xW=CX-coef;
+    xE=CX+coef;
+
+    //qWarning() << "New border x: " << xW << " " << xE;
+
+    double xTmpW,xTmpE;
+    screen2map(0,0,&xTmpW,&yN);
+    screen2map(W,H,&xTmpE,&yS);
+
+    //qWarning() << "New border y: " << yN << " " << yS;
+
+    //qWarning() << "Double check x border: " << xTmpW << " " << xTmpE;
+#endif
 
     if((getW()*getH())!=0)
         coefremp = 10000.0*fabs( ((xE-xW)*(yN-yS)) / (getW()*getH()) );
@@ -121,7 +149,11 @@ void Projection::zoomKeep(double lon, double lat, float k)
 void Projection::zoomAll(void)
 {
     if(frozen) return;
+
     my_setScale(scaleall);
+
+    my_setCenterInMap(0,0);
+
     emit_projectionUpdated();
 }
 
@@ -219,12 +251,28 @@ void Projection::my_setScreenSize(int w, int h)
     H = h;
 
     /* conpute scaleall */
+    //qWarning() << "new MAP size: " << w << "," << h;
     double sx, sy,sy1,sy2;
     sx = W/360.0;
-    sy1=log(tan(degToRad(89.9)/2 + M_PI_4));
-    sy2=log(tan(degToRad(-89.9)/2 + M_PI_4));
+    sy1=log(tan(degToRad(84)/2 + M_PI_4));
+    sy2=log(tan(degToRad(-80)/2 + M_PI_4));
     sy = H/fabs(radToDeg(sy1-sy2));
-    scaleall = (sx<sy) ? sy : sx;
+    scaleall = (sy<sx) ? sy : sx;
+
+    //qWarning() << "ScaleALL: " << sx << "," << sy1 << "," << sy2 << "," << sy;
+
+    double sX,sY,sYN,sYS;
+    sX=W/fabs(xE-xW);
+    sYN=log(tan(degToRad(yN)/2 + M_PI_4));
+    sYS=log(tan(degToRad(yS)/2 + M_PI_4));
+    sY=H/fabs(radToDeg(sYN-sYS));
+
+    //qWarning() << "scale: X=" << sX << " Y=" << sY;
+#if 0
+    scale=sX<sY?sY:sX;
+#else
+    scale=sX>sY?sY:sX;
+#endif
 
     if (scale < scaleall)
     {
