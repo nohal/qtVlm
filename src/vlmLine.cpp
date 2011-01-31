@@ -49,6 +49,8 @@ vlmLine::vlmLine(Projection * proj, QGraphicsScene * myScene,int z_level) : QGra
     this->interpolatedLon=0;
     this->interpolatedLat=0;
     this->iceGate=0;
+    this->replayMode=false;
+    this->replayStep=0;
     show();
 }
 
@@ -63,6 +65,13 @@ vlmLine::~vlmLine()
         polyList.removeFirst();
     }
 }
+void vlmLine::slot_replay(int i)
+{
+    this->replayStep=i;
+    calculatePoly();
+    update();
+}
+
 QRectF vlmLine::boundingRect() const
 {
     return boundingR;
@@ -149,11 +158,14 @@ void vlmLine::calculatePoly(void)
     polyList.append(poly);
     poly->resize(0);
     vlmPoint worldPoint(0,0),previousWorldPoint(0,0);
+    int cc=-1;
     if(line.count()>1)
     {
         QListIterator<vlmPoint> i (line);
         while(i.hasNext())
         {
+            cc++;
+            if(replayMode && cc>replayStep) break;
             worldPoint=i.next();
             if(worldPoint.isDead) continue;
             if(worldPoint.isBroken && n==0) continue;

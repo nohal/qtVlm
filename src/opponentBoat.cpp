@@ -91,6 +91,8 @@ void opponent::init(QColor color,bool isQtBoat,QString idu,QString race, float l
     trace_drawing = new vlmLine(proj,parentWindow->getScene(),Z_VALUE_OPP);
     trace_drawing->setLinePen(QPen(color));
     trace_drawing->setPointMode(color);
+    connect(parentWindow,SIGNAL(startReplay(bool)),trace_drawing,SLOT(slot_startReplay(bool)));
+    connect(parentWindow,SIGNAL(replay(int)),trace_drawing,SLOT(slot_replay(int)));
     this->flag=QImage();
     this->drawFlag=false;
     this->pavillon=QString();
@@ -829,7 +831,8 @@ void opponentList::getTrace(QByteArray buff, QList<vlmPoint> * trace)
                 double lat = pos_list[2].toDouble()/1000;
                 //qWarning() << i << ": " << QDateTime::fromTime_t(pos_list[0].toInt()) << " - " << lon << "," << lat;
                 vlmPoint pt(lon,lat);
-                trace->prepend(pt);
+                //trace->prepend(pt);
+                trace->append(pt);
                 //i++;
             }
         }

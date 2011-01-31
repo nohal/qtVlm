@@ -83,6 +83,8 @@ class vlmLine : public QGraphicsWidget
     public slots:
         void slot_showMe(void);
         void slot_shLab(bool state){this->labelHidden=state;update();}
+        void slot_startReplay(bool b){this->replayMode=b;slot_showMe();}
+        void slot_replay(int i);
 
     private:
         QList<vlmPoint> line;
@@ -108,6 +110,8 @@ class vlmLine : public QGraphicsWidget
         double cLFA(double lon);
         float myDiffAngle(float a1,float a2);
         float A360(float hdg);
+        bool replayMode;
+        int replayStep;
 };
 
 

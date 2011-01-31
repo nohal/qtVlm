@@ -264,6 +264,10 @@ myCentralWidget::myCentralWidget(Projection * proj,MainWindow * parent,MenuBar *
     gshhsReader = new GshhsReader("maps/gshhs", 0);
     grib = new Grib();
     inetManager = new inetConnexion(main);
+    replayTimer=new QTimer(this);
+    replayTimer->setSingleShot(true);
+    replayTimer->setInterval(20);
+    connect(replayTimer,SIGNAL(timeout()),this,SLOT(slot_replay()));
 
     /* item child */
     // Terre
@@ -680,6 +684,7 @@ void myCentralWidget::escapeKeyPressed(void)
     emit POI_selectAborted(NULL);
     selection->clearSelection();
     horn->stop();
+    this->replayStep=10e6;
 }
 void myCentralWidget::slot_mousePress(QGraphicsSceneMouseEvent* e)
 {
@@ -1147,6 +1152,27 @@ void myCentralWidget::slot_editHorn()
     delete dh;
     setHorn();
 }
+void myCentralWidget::slot_startReplay()
+{
+    if(main->getSelectedBoat()==NULL) return;
+    emit startReplay(true);
+    replayTimer->start();
+    this->replayStep=-1;
+}
+void myCentralWidget::slot_replay()
+{
+    replayStep++;
+    if(replayStep>Settings::getSetting("trace_length",12).toInt()*60*60/main->getSelectedBoat()->getVacLen())
+    {
+        replayTimer->stop();
+        emit startReplay(false);
+        return;
+    }
+    emit replay(replayStep);
+    QApplication::processEvents();
+    replayTimer->start();
+}
+
 void myCentralWidget::setHorn()
 {
     if(this->hornIsActivated())

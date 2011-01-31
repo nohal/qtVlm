@@ -76,6 +76,7 @@ MenuBar::MenuBar(QWidget *parent)
                 acKeep=addAction(menuFile,tr("Conserver la position du bateau dans l'ecran lors de zoom +/-"),"Z","",tr(""));
                 acKeep->setCheckable(true);
                 acKeep->setChecked(true);
+                acReplay=addAction(menuFile,tr("Rejouer l'historique des traces"),"Y","",tr(""));
 
     addMenu(menuFile);
 

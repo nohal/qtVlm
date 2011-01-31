@@ -260,11 +260,15 @@ class myCentralWidget : public QWidget
         void slot_setColorMapMode(QAction*);
         void slot_editHorn();
         void slot_playHorn();
+        void slot_startReplay();
+        void slot_replay();
 
     signals:
         /* drawing */
         void redrawAll(void);
         void redrawGrib(void);
+        void startReplay(bool);
+        void replay(int);
 
         /* POI */
         void readPOIData(QString);
@@ -375,6 +379,8 @@ class myCentralWidget : public QWidget
         void deleteRoute(ROUTE * route);
         void myDeleteRoute(ROUTE * route);
         void deleteRoutage(ROUTAGE * routage);
+        int replayStep;
+        QTimer *replayTimer;
 };
 
 #endif // MYCENTRALWIDGET_H

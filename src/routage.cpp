@@ -628,13 +628,19 @@ void ROUTAGE::calculate()
     initialDist=orth.getDistance();
     if(autoZoom)
     {
+        double xW=qMin(start.x(),arrival.x());
+        double xE=qMax(start.x(),arrival.x());
+        double yN=qMax(start.y(),arrival.y());
+        double yS=qMin(start.y(),arrival.y());
+#if 1
+        proj->blockSignals(true);
+        proj->zoomOnZone(xW,yN,xE,yS);
+        proj->blockSignals(false);
+        proj->setScale(proj->getScale()*.9);
+        QApplication::processEvents();
+#else
         double lonM,latM;
         Util::getCoordFromDistanceAngle(start.y(),start.x(),orth.getDistance()/2,orth.getAzimutDeg(),&latM,&lonM);
-
-        float xW=qMin(start.x(),arrival.x());
-        float xE=qMax(start.x(),arrival.x());
-        float yN=qMax(start.y(),arrival.y());
-        float yS=qMin(start.y(),arrival.y());
         // compute scale;
         if (xE == xW)
             xE = xW+0.1;
@@ -649,6 +655,7 @@ void ROUTAGE::calculate()
         proj->setScaleAndCenterInMap(newScale*0.9,lonM,latM);
         QApplication::processEvents();
         orth.setPoints(start.x(),start.y(),arrival.x(),arrival.y());
+#endif
     }
     proj->setFrozen(true);
     GshhsRangsReader *map=parent->get_gshhsReader()->getGshhsRangsReader();

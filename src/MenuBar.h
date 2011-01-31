@@ -254,6 +254,7 @@ public:
      QAction *acOptions_SH_Boa;
      QAction *acOptions_SH_Fla;
      QAction *acKeep;
+     QAction *acReplay;
 
 
 

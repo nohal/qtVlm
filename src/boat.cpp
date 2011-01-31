@@ -63,6 +63,8 @@ boat::boat(QString pseudo, bool activated,
 
     trace.clear();
     trace_drawing = new vlmLine(proj,parent->getScene(),Z_VALUE_BOAT);
+    connect(parent,SIGNAL(startReplay(bool)),trace_drawing,SLOT(slot_startReplay(bool)));
+    connect(parent,SIGNAL(replay(int)),trace_drawing,SLOT(slot_replay(int)));
 
     this->proj = proj;
     this->labelHidden=parent->get_shLab_st();
