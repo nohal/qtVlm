@@ -1897,6 +1897,10 @@ Etes-vous sur ?</source>
         <source>Recharger POIs et routes</source>
         <translation></translation>
     </message>
+    <message>
+        <source>Rejouer l&apos;historique des traces</source>
+        <translation></translation>
+    </message>
 </context>
 <context>
     <name>POI</name>
@@ -2733,6 +2737,10 @@ avec ce préfixe</translation>
     </message>
     <message>
         <source>R</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Auto Zoom</source>
         <translation></translation>
     </message>
 </context>
