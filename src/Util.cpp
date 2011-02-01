@@ -510,7 +510,8 @@ QString  url_str[NB_URL] = { "virtual-loup-de-mer.org", "s10.virtual-loup-de-mer
 
 QString Util::getHost()
 {
-#ifdef __QTVLM_WITH_TEST
+//#ifdef __QTVLM_WITH_TEST
+#if 1
     QString host;
     host="http://";
     int num = Settings::getSetting("vlm_url",0).toInt();
