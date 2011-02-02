@@ -43,7 +43,7 @@
     </rect>
    </property>
    <property name="currentIndex">
-    <number>0</number>
+    <number>2</number>
    </property>
    <widget class="QWidget" name="tab">
     <attribute name="title">
@@ -615,7 +615,7 @@
       <rect>
        <x>10</x>
        <y>10</y>
-       <width>91</width>
+       <width>131</width>
        <height>21</height>
       </rect>
      </property>
@@ -628,7 +628,7 @@
       <rect>
        <x>10</x>
        <y>42</y>
-       <width>121</width>
+       <width>141</width>
        <height>16</height>
       </rect>
      </property>
@@ -640,8 +640,8 @@
      <property name="geometry">
       <rect>
        <x>10</x>
-       <y>70</y>
-       <width>221</width>
+       <y>130</y>
+       <width>251</width>
        <height>18</height>
       </rect>
      </property>
@@ -658,7 +658,7 @@
     <widget class="QComboBox" name="trace_step">
      <property name="geometry">
       <rect>
-       <x>140</x>
+       <x>180</x>
        <y>10</y>
        <width>69</width>
        <height>22</height>
@@ -668,11 +668,14 @@
     <widget class="QSpinBox" name="trace_length">
      <property name="geometry">
       <rect>
-       <x>140</x>
+       <x>180</x>
        <y>40</y>
        <width>71</width>
        <height>22</height>
       </rect>
+     </property>
+     <property name="alignment">
+      <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
      </property>
      <property name="minimum">
       <number>1</number>
@@ -684,9 +687,9 @@
     <widget class="QLabel" name="label_11">
      <property name="geometry">
       <rect>
-       <x>220</x>
+       <x>260</x>
        <y>15</y>
-       <width>61</width>
+       <width>71</width>
        <height>16</height>
       </rect>
      </property>
@@ -697,14 +700,46 @@
     <widget class="QLabel" name="label_12">
      <property name="geometry">
       <rect>
-       <x>220</x>
+       <x>260</x>
        <y>45</y>
-       <width>46</width>
-       <height>14</height>
+       <width>71</width>
+       <height>16</height>
       </rect>
      </property>
      <property name="text">
       <string>heures</string>
+     </property>
+    </widget>
+    <widget class="QLabel" name="label_20">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>70</y>
+       <width>151</width>
+       <height>16</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Vitesse du replay</string>
+     </property>
+    </widget>
+    <widget class="QSpinBox" name="speedReplay">
+     <property name="geometry">
+      <rect>
+       <x>180</x>
+       <y>70</y>
+       <width>71</width>
+       <height>22</height>
+      </rect>
+     </property>
+     <property name="alignment">
+      <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+     </property>
+     <property name="minimum">
+      <number>1</number>
+     </property>
+     <property name="maximum">
+      <number>1000</number>
      </property>
     </widget>
    </widget>
@@ -1171,6 +1206,53 @@
    </widget>
   </widget>
  </widget>
+ <tabstops>
+  <tabstop>buttonBox</tabstop>
+  <tabstop>tabWidget</tabstop>
+  <tabstop>opp_labelType</tabstop>
+  <tabstop>chkPavillon</tabstop>
+  <tabstop>chkHideRoute</tabstop>
+  <tabstop>defFontName</tabstop>
+  <tabstop>defFontSize</tabstop>
+  <tabstop>pushButton</tabstop>
+  <tabstop>pushButton_3</tabstop>
+  <tabstop>pushButton_6</tabstop>
+  <tabstop>pushButton_5</tabstop>
+  <tabstop>pushButton_2</tabstop>
+  <tabstop>pushButton_4</tabstop>
+  <tabstop>radioBtn_time</tabstop>
+  <tabstop>estimeVal_time</tabstop>
+  <tabstop>radioBtn_vac</tabstop>
+  <tabstop>estimeVal_vac</tabstop>
+  <tabstop>radioBtn_dist</tabstop>
+  <tabstop>estimeVal_dist</tabstop>
+  <tabstop>chk_centerOnSynch</tabstop>
+  <tabstop>chk_centerOnBoatChange</tabstop>
+  <tabstop>chk_askConfirm</tabstop>
+  <tabstop>trace_step</tabstop>
+  <tabstop>trace_length</tabstop>
+  <tabstop>speedReplay</tabstop>
+  <tabstop>chk_oppTrace</tabstop>
+  <tabstop>chk_showCompass</tabstop>
+  <tabstop>chk_showPolar</tabstop>
+  <tabstop>chk_scalePolarF</tabstop>
+  <tabstop>chk_scalePolarR</tabstop>
+  <tabstop>polVac</tabstop>
+  <tabstop>chk_scaleEstime</tabstop>
+  <tabstop>chk_askGribFolder</tabstop>
+  <tabstop>edt_gribFolder</tabstop>
+  <tabstop>btn_browseGrib</tabstop>
+  <tabstop>chk_gribZoomOnLoad</tabstop>
+  <tabstop>chk_autoGribDate</tabstop>
+  <tabstop>chk_externalMail</tabstop>
+  <tabstop>serialName</tabstop>
+  <tabstop>spn_gpsDelay</tabstop>
+  <tabstop>chk_activateEmulation</tabstop>
+  <tabstop>url_list</tabstop>
+  <tabstop>saveWinGeometry</tabstop>
+  <tabstop>chk_forceUserAgent</tabstop>
+  <tabstop>userAgent</tabstop>
+ </tabstops>
  <resources/>
  <connections>
   <connection>

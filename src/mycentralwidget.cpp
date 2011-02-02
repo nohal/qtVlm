@@ -266,7 +266,7 @@ myCentralWidget::myCentralWidget(Projection * proj,MainWindow * parent,MenuBar *
     inetManager = new inetConnexion(main);
     replayTimer=new QTimer(this);
     replayTimer->setSingleShot(true);
-    replayTimer->setInterval(20);
+    replayTimer->setInterval(Settings::getSetting("speed_replay",20).toInt());
     connect(replayTimer,SIGNAL(timeout()),this,SLOT(slot_replay()));
 
     /* item child */
@@ -1156,6 +1156,7 @@ void myCentralWidget::slot_startReplay()
 {
     if(main->getSelectedBoat()==NULL) return;
     emit startReplay(true);
+    replayTimer->setInterval(Settings::getSetting("speed_replay",20).toInt());
     replayTimer->start();
     this->replayStep=-1;
 }
