@@ -3199,6 +3199,10 @@ Voulez-vous egalement supprimer tous les POIs lui appartenant?</source>
         <source>Taille</source>
         <translation></translation>
     </message>
+    <message>
+        <source>Vitesse du replay</source>
+        <translation></translation>
+    </message>
 </context>
 <context>
     <name>WP_dialog_ui</name>
