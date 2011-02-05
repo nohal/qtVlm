@@ -293,35 +293,39 @@ QString Util::formatDateTime_hour(time_t t)
 
 void Util::paramProxy(QNetworkAccessManager *inetManager,QString host)
 {
-    /* update connection */
-
     int proxyType = Settings::getSetting("httpUseProxy", 0).toInt();
+    QNetworkProxy::ProxyType proxyParam[4]={QNetworkProxy::NoProxy, QNetworkProxy::DefaultProxy, QNetworkProxy::HttpProxy, QNetworkProxy::Socks5Proxy };
+    QNetworkProxy inetProxy;
 
+    qWarning() << "Using proxy type: " << proxyType;
 
-    QNetworkProxy * inetProxy;
-
-    switch(proxyType)
+    if(proxyType==0)
     {
-        case 1:
-            /* basic proxy */
-            inetProxy = new QNetworkProxy(QNetworkProxy::DefaultProxy,
-                    Settings::getSetting("httpProxyHostname", "").toString(),
-                    Settings::getSetting("httpProxyPort", 0).toInt(),
-                    Settings::getSetting("httpProxyUsername", "").toString(),
-                    Settings::getSetting("httpProxyUserPassword", "").toString());
-            inetManager->setProxy(*inetProxy);
-            break;
-        case 2:
-            /* IE proxy*/
-            QList<QNetworkProxy> proxyList =QNetworkProxyFactory::systemProxyForQuery(QNetworkProxyQuery(QUrl(host)));
-            inetProxy = &(proxyList.first());
-
-            inetProxy->setUser(Settings::getSetting("httpProxyUsername", "").toString());
-            inetProxy->setPassword(Settings::getSetting("httpProxyUserPassword", "").toString());
-
-            inetManager->setProxy(*inetProxy);
-            break;
+        /* no proxy */
+        //inetProxy.setType (QNetworkProxy::NoProxy);
     }
+    else
+    {
+        inetProxy.setType (proxyParam[proxyType]);
+        inetProxy.setHostName (Settings::getSetting("httpProxyHostname", "").toString());
+        inetProxy.setPort     (Settings::getSetting("httpProxyPort", 0).toInt());
+        inetProxy.setUser     (Settings::getSetting("httpProxyUsername", "").toString());
+        inetProxy.setPassword (Settings::getSetting("httpProxyUserPassword", "").toString());
+
+        if (proxyType==1)
+        {
+            QList<QNetworkProxy> proxyList =QNetworkProxyFactory::systemProxyForQuery(QNetworkProxyQuery(QUrl(host)));
+            if(proxyList.size() > 0)
+            {
+                inetProxy = proxyList.first();
+                inetProxy.setUser(Settings::getSetting("httpProxyUsername", "").toString());
+                inetProxy.setPassword(Settings::getSetting("httpProxyUserPassword", "").toString());
+                inetManager->setProxy(inetProxy);
+            }
+        }
+    }
+    inetManager->setProxy(inetProxy);
+    qWarning() << "Proxy param finished";
 }
 
 /* format: LAT,LON@WPH,TSTAMP */

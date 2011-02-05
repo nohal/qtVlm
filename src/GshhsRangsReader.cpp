@@ -171,6 +171,8 @@ void GshhsRangsCell::drawMapPlain(QPainter &pnt, double dx, QPoint *pts, Project
     for (iterPolygons=lsPolygons.begin(); iterPolygons!=lsPolygons.end(); iterPolygons++)
     {
         poly = *iterPolygons;
+        if(poly->interior==0) continue;
+
         std::list<GshhsRangsPoint *> lsPts = poly->lsPoints;
         
         int j = 0;

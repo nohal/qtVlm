@@ -129,7 +129,8 @@ FORMS += Ui/boatAccount_dialog.ui \
     Ui/playerAccount.ui \
     Ui/sailDocs.ui \
     Ui/realBoatConfig.ui \
-    Ui/realBoatPosition.ui
+    Ui/realBoatPosition.ui \
+    Ui/paramProxy.ui
 SOURCES += Dialogs/DialogGraphicsParams.cpp \
     Dialogs/DialogLoadGrib.cpp \
     Dialogs/DialogProxy.cpp \

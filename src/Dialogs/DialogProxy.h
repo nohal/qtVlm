@@ -26,48 +26,24 @@ Copyright (C) 2008 - Jacques Zaninetti - http://zygrib.free.fr
 #define DIALOGPROXY_H
 
 #include <QDialog>
-#include <QFrame>
-#include <QGridLayout>
-#include <QLabel>
-#include <QCheckBox>
-#include <QComboBox>
-#include <QPushButton>
-#include <QButtonGroup>
-#include <QRadioButton>
-#include <QLineEdit>
+
+#include "class_list.h"
+#include "ui_paramProxy.h"
 
 
-class DialogProxy : public QDialog
+class DialogProxy : public QDialog, public Ui::paramProxy_ui
 { Q_OBJECT
     public:
         DialogProxy();
+
+        void done(int result);
     
     public slots:
-        void slotBtOK();
-        void slotBtCancel();
-
-    private slots:
-        void slotUseProxyChanged();
+        void slot_proxyType_changed(int);
+        void slot_useProxy_changed();
 
     signals:
         void proxyUpdated(void);
-        
-    private:
-        QFrame *frameGui;
-        QGridLayout *layout;
-        
-        QPushButton *btOK;
-        QPushButton *btCancel;
-        
-        QRadioButton *btUseProxy;
-        QRadioButton *btDontUseProxy;
-        QRadioButton *btUseIECfg;
-        QLineEdit    *lineProxyHostname;
-        QLineEdit    *lineProxyPort;
-        QLineEdit    *lineProxyUsername;
-        QLineEdit    *lineProxyUserPassword;
-
-        QFrame * createFrameGui(QWidget *parent);
 };
 
 
