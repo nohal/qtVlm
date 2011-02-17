@@ -2184,6 +2184,10 @@ Etes-vous sur ?</source>
         <source>M/d/yyyy hh:mm:ss</source>
         <translation>dd/MM/yyyy hh:mm:ss</translation>
     </message>
+    <message>
+        <source>Non simplifiable</source>
+        <translation></translation>
+    </message>
 </context>
 <context>
     <name>POI_input_ui</name>
@@ -3611,7 +3615,7 @@ Voulez-vous egalement supprimer tous les POIs lui appartenant?</source>
     </message>
     <message>
         <source>Pres</source>
-        <translation></translation>
+        <translation>Près</translation>
     </message>
     <message>
         <source>Portant</source>
@@ -4398,7 +4402,7 @@ Etes-vous sur ?</source>
     </message>
     <message>
         <source>ETA apres simplification: </source>
-        <translation>ETA après simplification:</translation>
+        <translation>ETA après simplification: </translation>
     </message>
     <message>
         <source>Routage%d</source>
@@ -4449,6 +4453,18 @@ Voulez-vous egalement supprimer tous les POIs lui appartenant?</source>
     <message>
         <source>La destruction d&apos;un routage est definitive.</source>
         <translation>La destruction d&apos;un routage est définitive.</translation>
+    </message>
+    <message>
+        <source> minutes perdues, </source>
+        <translation></translation>
+    </message>
+    <message>
+        <source> POIs supprimes sur </source>
+        <translation> POIs supprimés sur </translation>
+    </message>
+    <message>
+        <source> minutes gagnees(!), </source>
+        <translation> minutes gagnées(!), </translation>
     </message>
 </context>
 <context>
