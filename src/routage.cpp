@@ -2858,7 +2858,11 @@ void ROUTAGE::setFromRoutage(ROUTAGE *fromRoutage, bool editOptions)
         QList<vlmPoint> parentWay=*parentRoutage->getFromRoutage()->getWay()->getPoints();
         for(int n=1;n<parentWay.count();n++)
             initialRoad.prepend(parentWay.at(n));
-        if(!parentRoutage->getFromRoutage()->getIsPivot() || !parentRoutage->getFromRoutage()) break;
+        if(!parentRoutage->getFromRoutage()->getIsPivot() || !parentRoutage->getFromRoutage())
+        {
+            initialRoad.prepend(parentWay.at(0));
+            break;
+        }
         parentRoutage=parentRoutage->getFromRoutage();
     }
     for(int n=0;n<initialRoad.count();n++)

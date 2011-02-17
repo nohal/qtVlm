@@ -235,6 +235,8 @@ void opponent::updatePosition()
 void opponent::drawTrace()
 {
     trace_drawing->setNbVacPerHour(3600/main->get_selectedBoatVacLen());
+    if(!trace.isEmpty() && (trace.last().lat!=lat || trace.last().lon!=lon))
+        trace.append(vlmPoint(lon,lat));
     if(opp_trace==1)
     {
         trace_drawing->setPoly(trace);

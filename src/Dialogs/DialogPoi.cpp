@@ -144,6 +144,7 @@ void DialogPoi::initPOI(void)
     chk_tstamp->setCheckState(poi->getUseTimeStamp()?Qt::Checked:Qt::Unchecked);
     editTStamp->setEnabled(poi->getUseTimeStamp());
     editName->setEnabled(!poi->getUseTimeStamp());
+    this->notSimplicable->setChecked(poi->getNotSimplificable());
 
     boat * ptr=parent->getSelectedBoat();
     if(ptr)
@@ -162,7 +163,7 @@ void DialogPoi::done(int result)
     {
         poi->setPartOfTwa(false);
         QDateTime tm = editTStamp->dateTime();
-
+        poi->setNotSimplificable(this->notSimplicable->checkState()==Qt::Checked);
         tm.setTimeSpec(Qt::UTC);
         poi->setTimeStamp(tm.toTime_t());
         poi->setUseTimeStamp(chk_tstamp->checkState()==Qt::Checked);

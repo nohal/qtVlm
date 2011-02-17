@@ -366,6 +366,8 @@ void boatVLM::requestFinished (QByteArray res_byte)
             break;
         case VLM_REQUEST_TRJ:
             emit getTrace(res_byte,&trace);
+            if(!trace.isEmpty() && (trace.last().lon!=this->lon || trace.last().lat!=this->lat))
+                trace.append(vlmPoint(lon,lat));
             trace_drawing->setPoly(trace);
 
             /* we can now update everything */

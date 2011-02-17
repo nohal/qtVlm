@@ -292,7 +292,7 @@ void DialogRoutage::done(int result)
             if(routage->getFromPOI()->getLongitude()==routage->getToPOI()->getLongitude() &&
                routage->getFromPOI()->getLatitude()==routage->getToPOI()->getLatitude())
             {
-                if(!routage->getIsNewPivot())
+                if(!routage->getIsNewPivot() && !routage->getIsPivot())
                 {
                     QMessageBox::critical(0,QString(QObject::tr("Routage")),QString(QObject::tr("Le POI de depart et d'arrivee sont les memes, vous etes deja arrive...")));
                     return;

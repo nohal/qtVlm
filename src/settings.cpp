@@ -49,7 +49,9 @@ void Settings::initSettings(void)
     }
 
     if(!fileSettings)
+    {
         fileSettings = new QSettings(SETTINGS_FILE, QSettings::IniFormat);
+    }
 }
 
 void Settings::loadFromReg(void)

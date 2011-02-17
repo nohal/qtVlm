@@ -577,7 +577,7 @@ void POI::setRoute(ROUTE *route)
     if(this->route!=NULL)
     {
         if(this->route->getFrozen()) return;
-        this->notSimplificable=false;
+        //this->notSimplificable=false;
         this->route->removePoi(this);
         this->routeName="";
     }
@@ -589,7 +589,7 @@ void POI::setRoute(ROUTE *route)
     }
     else
     {
-        this->notSimplificable=false;
+        //this->notSimplificable=false;
         setRouteTimeStamp(false);
     }
 }

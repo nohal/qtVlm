@@ -1234,7 +1234,7 @@ void myCentralWidget::slot_importRouteFromMenu()
         Settings::setSetting("importRouteFolder",routePath);
     }
     QString fileName = QFileDialog::getOpenFileName(this,
-                         tr("Ouvrir un fichier Route"), routePath, "Routes (*.csv *.txt)");
+                         tr("Ouvrir un fichier Route"), routePath, "Routes (*.csv *.txt *.CSV *.TXT)");
     if(fileName.isEmpty() || fileName.isNull()) return;
 
     QFile routeFile(fileName);
@@ -1477,7 +1477,7 @@ void myCentralWidget::exportRouteFromMenu(ROUTE * route)
         Settings::setSetting("importRouteFolder",routePath);
     }
     QString fileName = QFileDialog::getSaveFileName(this,
-                         tr("Exporter une Route"), routePath, "Routes (*.csv *.txt)");
+                         tr("Exporter une Route"), routePath, "Routes (*.csv *.txt *.CSV *.TXT)");
     if(fileName.isEmpty() || fileName.isNull()) return;
     QMessageBox mb(0);
     mb.setText(tr("Exporter seulement les POIs ou egalement tous les details?"));
@@ -1780,9 +1780,15 @@ void myCentralWidget::slot_editRoute(ROUTE * route,bool createMode)
                     int diff=(ref_eta-route->getEta())/60;
                     QString result;
                     if(diff<=0)
-                        result=result.sprintf("%d minutes perdues, %d POIs supprimes sur %d",-diff,nbDel,ref_nbPois);
+                        result=QString().setNum(-diff)+tr(" minutes perdues, ")+
+                               QString().setNum(nbDel)+tr(" POIs supprimes sur ")+
+                               QString().setNum(ref_nbPois);
+//                        result=result.sprintf(tr("%d minutes perdues, %d POIs supprimes sur %d").toStdString(),-diff,nbDel,ref_nbPois);
                     else
-                        result=result.sprintf("%d minutes gagnees(!), %d POIs supprimes sur %d",diff,nbDel,ref_nbPois);
+                        result=QString().setNum(diff)+tr(" minutes gagnees(!), ")+
+                               QString().setNum(nbDel)+tr(" POIs supprimes sur ")+
+                               QString().setNum(ref_nbPois);
+//                        result=result.sprintf("%d minutes gagnees(!), %d POIs supprimes sur %d",diff,nbDel,ref_nbPois);
                     QDateTime before;
                     before=before.fromTime_t(ref_eta);
                     before=before.toUTC();
