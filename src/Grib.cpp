@@ -1716,7 +1716,7 @@ void Grib::draw_TEMPERATURE_Labels(QPainter &pnt, const Projection *proj)
                     if (v1!= GRIB_NOTDEF)
                         v = v + ((v1-v)/((double)(tNxt-tPrev)))*((double)(currentDate-tPrev));
                 }
-                QString strtemp = Util::formatTemperature_short(v);
+                QString strtemp = Util::formatTemperature_short(v-273.15);
                 pnt.drawText(i-fmet.width("XXX")/2, j+fmet.ascent()/2, strtemp);
             }
 
