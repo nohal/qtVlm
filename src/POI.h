@@ -125,6 +125,7 @@ class POI : public QGraphicsWidget
         void slot_setHorn();
         void slot_twaLine(){parent->twaDraw(lon,lat);}
         void slotCompassLine();
+        void slot_editRoute();
 
     signals:
         void chgWP(float,float,float);
@@ -183,6 +184,7 @@ class POI : public QGraphicsWidget
         QAction * ac_setGribDate;
         QAction * ac_delPoi;
         QAction * ac_delRoute;
+        QAction * ac_editRoute;
         QAction * ac_copy;
         QAction * ac_compassLine;
         QAction * ac_twaLine;

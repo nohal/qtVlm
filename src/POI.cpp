@@ -162,12 +162,6 @@ void POI::createPopUpMenu(void)
     popup->addAction(ac_delPoi);
     connect(ac_delPoi,SIGNAL(triggered()),this,SLOT(slot_delPoi()));
 
-    ac_delRoute = new QAction(tr("Supprimer la route "),popup);
-    ac_delRoute->setData(QVariant(QMetaType::VoidStar, &route));
-    popup->addAction(ac_delRoute);
-    ac_delRoute->setVisible(false);
-    connect(ac_delRoute,SIGNAL(triggered()),parent,SLOT(slot_deleteRoute()));
-
     ac_copy = new QAction(tr("Copier"),popup);
     popup->addAction(ac_copy);
     connect(ac_copy,SIGNAL(triggered()),this,SLOT(slot_copy()));
@@ -193,9 +187,23 @@ void POI::createPopUpMenu(void)
     popup->addAction(ac_twaLine);
     connect(ac_twaLine,SIGNAL(triggered()),this,SLOT(slot_twaLine()));
 
+    popup->addSeparator();
     ac_routeList = new QMenu(tr("Routes"));
     connect(ac_routeList,SIGNAL(triggered(QAction*)),this,SLOT(slot_routeMenu(QAction*)));
     popup->addMenu(ac_routeList);
+
+
+    ac_editRoute = new QAction(tr("Editer la route "),popup);
+    ac_editRoute->setData(QVariant(QMetaType::VoidStar, &route));
+    popup->addAction(ac_editRoute);
+    ac_editRoute->setEnabled(false);;
+    connect(ac_editRoute,SIGNAL(triggered()),this,SLOT(slot_editRoute()));
+
+    ac_delRoute = new QAction(tr("Supprimer la route "),popup);
+    ac_delRoute->setData(QVariant(QMetaType::VoidStar, &route));
+    popup->addAction(ac_delRoute);
+    ac_delRoute->setEnabled(false);
+    connect(ac_delRoute,SIGNAL(triggered()),parent,SLOT(slot_deleteRoute()));
 
     ac_finePosit = new QAction(tr("Optimiser le placement sur la route"),popup);
     connect(ac_finePosit,SIGNAL(triggered()),this,SLOT(slot_finePosit()));
@@ -389,6 +397,7 @@ void POI::contextMenuEvent(QGraphicsSceneContextMenuEvent * e)
         ac_routeList->setEnabled(false);
         ac_delRoute->setEnabled(false);
         ac_delRoute->setData(QVariant(QMetaType::VoidStar, &route));
+        ac_editRoute->setEnabled(false);
     }
     else
     {
@@ -399,13 +408,19 @@ void POI::contextMenuEvent(QGraphicsSceneContextMenuEvent * e)
         ac_copy->setEnabled(true);
         ac_routeList->setEnabled(true);
         ac_delRoute->setEnabled(true);
+        ac_editRoute->setEnabled(true);
         ac_delRoute->setData(QVariant(QMetaType::VoidStar, &route));
         if(route==NULL)
-            ac_delRoute->setVisible(false);
+        {
+            ac_delRoute->setEnabled(false);
+            ac_editRoute->setEnabled(false);
+        }
         else
         {
             ac_delRoute->setText(tr("Supprimer la route ")+route->getName());
-            ac_delRoute->setVisible(true);
+            ac_delRoute->setEnabled(true);
+            ac_editRoute->setText(tr("Editer la route ")+route->getName());
+            ac_editRoute->setEnabled(true);
         }
         /*clear current actions */
         ac_routeList->clear();
@@ -597,6 +612,11 @@ void POI::setRoute(ROUTE *route)
 /**************************/
 /* Slots                  */
 /**************************/
+void POI::slot_editRoute()
+{
+    if (this->route==NULL) return;
+    parent->slot_editRoute(route);
+}
 void POI::slotCompassLine()
 {
     int i1,j1;
