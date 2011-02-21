@@ -2826,129 +2826,135 @@ Etes-vous sur ?</source>
         <translation>Delete</translation>
     </message>
     <message>
-        <location filename="../src/POI.cpp" line="165"/>
-        <location filename="../src/POI.cpp" line="407"/>
+        <location filename="../src/POI.cpp" line="202"/>
+        <location filename="../src/POI.cpp" line="420"/>
         <source>Supprimer la route </source>
         <translation>Delete route </translation>
     </message>
     <message>
-        <location filename="../src/POI.cpp" line="171"/>
+        <location filename="../src/POI.cpp" line="165"/>
         <source>Copier</source>
         <translation>Copy</translation>
     </message>
     <message>
-        <location filename="../src/POI.cpp" line="175"/>
+        <location filename="../src/POI.cpp" line="169"/>
         <source>Marque-&gt;WP</source>
         <translation>Mark-&gt;WP</translation>
     </message>
     <message>
-        <location filename="../src/POI.cpp" line="179"/>
+        <location filename="../src/POI.cpp" line="173"/>
         <source>Set Date</source>
         <translation>Set grib date</translation>
     </message>
     <message>
-        <location filename="../src/POI.cpp" line="183"/>
+        <location filename="../src/POI.cpp" line="177"/>
         <source>Activer la corne de brume 10mn avant le passage</source>
         <translation>Activate fog horn 10 minutes prior reaching</translation>
     </message>
     <message>
-        <location filename="../src/POI.cpp" line="187"/>
-        <location filename="../src/POI.cpp" line="366"/>
-        <location filename="../src/POI.cpp" line="377"/>
+        <location filename="../src/POI.cpp" line="181"/>
+        <location filename="../src/POI.cpp" line="374"/>
+        <location filename="../src/POI.cpp" line="385"/>
         <source>Tirer un cap</source>
         <translation>Draw a heading</translation>
     </message>
     <message>
-        <location filename="../src/POI.cpp" line="192"/>
+        <location filename="../src/POI.cpp" line="186"/>
         <source>Tracer une estime TWA</source>
         <translation>Draw a TWA reckoning</translation>
     </message>
     <message>
-        <location filename="../src/POI.cpp" line="196"/>
+        <location filename="../src/POI.cpp" line="191"/>
         <source>Routes</source>
         <translation>Routes</translation>
     </message>
     <message>
-        <location filename="../src/POI.cpp" line="200"/>
+        <location filename="../src/POI.cpp" line="196"/>
+        <location filename="../src/POI.cpp" line="422"/>
+        <source>Editer la route </source>
+        <translation>Edit route </translation>
+    </message>
+    <message>
+        <location filename="../src/POI.cpp" line="208"/>
         <source>Optimiser le placement sur la route</source>
         <translation>Optimize position on route</translation>
     </message>
     <message>
-        <location filename="../src/POI.cpp" line="204"/>
+        <location filename="../src/POI.cpp" line="212"/>
         <source>Mode de navigation vers ce POI</source>
         <translation>Navigation mode towards this POI</translation>
     </message>
     <message>
-        <location filename="../src/POI.cpp" line="207"/>
+        <location filename="../src/POI.cpp" line="215"/>
         <source>VB-VMG</source>
         <translation>VBVMG</translation>
     </message>
     <message>
-        <location filename="../src/POI.cpp" line="213"/>
+        <location filename="../src/POI.cpp" line="221"/>
         <source>B-VMG</source>
         <translation>BestVMG</translation>
     </message>
     <message>
-        <location filename="../src/POI.cpp" line="219"/>
+        <location filename="../src/POI.cpp" line="227"/>
         <source>ORTHO</source>
         <translation>Orthodromic</translation>
     </message>
     <message>
-        <location filename="../src/POI.cpp" line="371"/>
+        <location filename="../src/POI.cpp" line="379"/>
         <source>Arret du cap</source>
         <translation>Stop the heading</translation>
     </message>
     <message>
-        <location filename="../src/POI.cpp" line="416"/>
+        <location filename="../src/POI.cpp" line="431"/>
         <source>Aucune route</source>
         <translation>No route</translation>
     </message>
     <message>
-        <location filename="../src/POI.cpp" line="450"/>
+        <location filename="../src/POI.cpp" line="465"/>
         <source>Marque-&gt;WP : </source>
         <translation>Mark-&gt;WP :</translation>
     </message>
     <message>
-        <location filename="../src/POI.cpp" line="500"/>
+        <location filename="../src/POI.cpp" line="515"/>
         <source>Distance Ortho a partir de </source>
         <translation>Orthodromic distance from </translation>
     </message>
     <message>
-        <location filename="../src/POI.cpp" line="662"/>
+        <location filename="../src/POI.cpp" line="682"/>
         <source>La destruction d&apos;une marque est definitive.
 
 Etes-vous sur ?</source>
         <translation>Deleting a mark is not reversible.  Are you sure?</translation>
     </message>
     <message>
-        <location filename="../src/POI.cpp" line="722"/>
+        <location filename="../src/POI.cpp" line="742"/>
         <source>Optimisation du placement d&apos;un POI</source>
         <translation>POI position optimisation</translation>
     </message>
     <message>
-        <location filename="../src/POI.cpp" line="723"/>
+        <location filename="../src/POI.cpp" line="743"/>
         <source>Vous ne pouvez pas optimiser en mode VBVMG-VLM</source>
         <translation>You cannot optimize in VBVMG-VLM</translation>
     </message>
     <message>
-        <location filename="../src/POI.cpp" line="761"/>
+        <location filename="../src/POI.cpp" line="781"/>
         <source>ETA du prochain POI: </source>
         <translation>Previous ETA of next POI: </translation>
     </message>
     <message>
-        <location filename="../src/POI.cpp" line="764"/>
+        <location filename="../src/POI.cpp" line="784"/>
         <source>Dist. restante du prochain POI: </source>
         <translation>Next WP remaining dist.:</translation>
     </message>
     <message>
-        <location filename="../src/POI.cpp" line="791"/>
-        <location filename="../src/POI.cpp" line="807"/>
-        <location filename="../src/POI.cpp" line="824"/>
+        <location filename="../src/POI.cpp" line="811"/>
+        <location filename="../src/POI.cpp" line="827"/>
+        <location filename="../src/POI.cpp" line="844"/>
         <source>Meilleure ETA: </source>
         <translation>Best ETA:</translation>
     </message>
     <message>
-        <location filename="../src/POI.cpp" line="846"/>
+        <location filename="../src/POI.cpp" line="866"/>
         <source>Meilleure distance restante: </source>
         <translation>Shortest remaining distance:</translation>
     </message>
@@ -2961,12 +2967,12 @@ Etes-vous sur ?</source>
         <translation type="obsolete">Orthodromic distance from</translation>
     </message>
     <message>
-        <location filename="../src/POI.cpp" line="518"/>
+        <location filename="../src/POI.cpp" line="533"/>
         <source>Non joignable avec ce Grib</source>
         <translation>Can&apos;t be reached with this Grib</translation>
     </message>
     <message>
-        <location filename="../src/POI.cpp" line="661"/>
+        <location filename="../src/POI.cpp" line="681"/>
         <source>Detruire la marque</source>
         <translation>Delete mark</translation>
     </message>
@@ -2987,12 +2993,12 @@ Etes-vous sur ?</source>
         <translation type="obsolete">Shortest remaining distance:</translation>
     </message>
     <message>
-        <location filename="../src/POI.cpp" line="874"/>
+        <location filename="../src/POI.cpp" line="894"/>
         <source>Abandon du positionnement automatique</source>
         <translation>Automatic positioning was stopped</translation>
     </message>
     <message>
-        <location filename="../src/POI.cpp" line="874"/>
+        <location filename="../src/POI.cpp" line="894"/>
         <source>Souhaitez vous conserver la meilleure position deja trouvee?</source>
         <translation>Do you wish to keep best position found so far?</translation>
     </message>

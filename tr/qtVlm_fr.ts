@@ -2034,6 +2034,10 @@ Etes-vous sur ?</source>
         <source>Supprimer la route </source>
         <translation></translation>
     </message>
+    <message>
+        <source>Editer la route </source>
+        <translation></translation>
+    </message>
 </context>
 <context>
     <name>POI_delete_ui</name>
