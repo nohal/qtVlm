@@ -47,6 +47,7 @@ DialogRace::DialogRace(MainWindow * main,myCentralWidget * parent, inetConnexion
 {
     this->main=main;
     this->parent=parent;
+    this->somethingChanged=false;
     inetClient::setName("RaceDialog");
     needAuth=true;
     setupUi(this);
@@ -176,6 +177,7 @@ void DialogRace::initList(QList<boatVLM*> & boat_list_ptr,QList<raceData*> & rac
 
     numRace = -1;
     initDone = false;
+    this->somethingChanged=false;
 
     clear();
 
@@ -510,7 +512,7 @@ void DialogRace::done(int result)
         param_list[numRace]->widthNSZ=inputTraceColor->getLineWidth();
         saveData(true); /* really saving, not only applying*/
     }
-    else
+    else if(somethingChanged)
     {
         emit readRace();
         emit updateOpponent();
@@ -521,6 +523,7 @@ void DialogRace::done(int result)
 
 void DialogRace::doSynch(void) /* apply only */
 {
+    somethingChanged=true;
     int savNum=numRace;
     saveData(false);
     chgRace(savNum);

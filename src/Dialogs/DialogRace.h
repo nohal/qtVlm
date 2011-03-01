@@ -104,6 +104,7 @@ class DialogRace : public QDialog, public Ui::race_dialog_ui, public inetClient
         QString imgFileName;
         int jj;
         void getMissingFlags();
+        bool somethingChanged;
 
 private slots:
     void on_displayNSZ_clicked();

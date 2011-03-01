@@ -22,7 +22,8 @@ UI_DIR = objs
 SOURCES_DIR = src
 DESTDIR = ../
 QT += network \
-    xml
+      xmlpatterns \
+      xml
 CODECFORTR = UTF-8
 CODECFORSRC = UTF-8
 TRANSLATIONS = ../tr/qtVlm_en.ts \

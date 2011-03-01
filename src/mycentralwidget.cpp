@@ -24,7 +24,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <QInputDialog>
 #include <QSound>
 #include <QDesktopServices>
-
+#include <QXmlSchema>
+#include <QXmlSchemaValidator>
+#include <QXmlQuery>
 #include "mycentralwidget.h"
 
 #include "settings.h"
@@ -1234,7 +1236,7 @@ void myCentralWidget::slot_importRouteFromMenu()
         Settings::setSetting("importRouteFolder",routePath);
     }
     QString fileName = QFileDialog::getOpenFileName(this,
-                         tr("Ouvrir un fichier Route"), routePath, "Routes (*.csv *.txt *.CSV *.TXT)");
+                         tr("Ouvrir un fichier Route"), routePath, "Routes (*.csv *.txt *.CSV *.TXT *.xml *.XML)");
     if(fileName.isEmpty() || fileName.isNull()) return;
 
     QFile routeFile(fileName);
@@ -1246,202 +1248,311 @@ void myCentralWidget::slot_importRouteFromMenu()
     }
     QFileInfo info(routeFile);
     Settings::setSetting("importRouteFolder",info.absoluteDir().path());
-    QTextStream stream(&routeFile);
-    QString line;
-    QStringList list;
-    line=stream.readLine();
-    if(line.isNull())
+    bool ok;
+    QString routeName;
+    if(info.suffix().toLower()!="xml")
     {
-        QMessageBox::warning(0,QObject::tr("Lecture de route"),
-             QString(QObject::tr("Fichier %1 vide")).arg(fileName));
+        QTextStream stream(&routeFile);
+        QString line;
+        QStringList list;
+        line=stream.readLine();
+        if(line.isNull())
+        {
+            QMessageBox::warning(0,QObject::tr("Lecture de route"),
+                 QString(QObject::tr("Fichier %1 vide")).arg(fileName));
+            routeFile.close();
+            return;
+        }
+        int format=ADRENA_FORMAT;
+        list=line.split('\t');
+        int timeOffset=0;
+        QString temp=list[0];
+        temp.squeeze();
+        if(temp.toUpper()=="W0")
+        {
+            format=MS_FORMAT;
+            bool ok;
+            timeOffset=QInputDialog::getInteger(0,QString(QObject::tr("Importation de routage MaxSea")),QString(QObject::tr("Heures a ajouter/enlever pour obtenir UTC (par ex -2 pour la France)")),0,-24,24,1,&ok);
+            if(!ok) return;
+        }
+        else
+        {
+            list = line.split(';');
+            if(list[0].toUpper() != "POSITION" && format!=MS_FORMAT)
+            {
+                if(list.count()==6)
+                {
+                    format=SBS_FORMAT;
+                }
+                else
+                {
+                    QMessageBox::warning(0,QObject::tr("Lecture de route"),
+                         QString(QObject::tr("Fichier %1 invalide (doit commencer par POSITION et non '%2'), ou alors etre au format sbsRouteur"))
+                                    .arg(fileName)
+                                    .arg(list[0].toUpper().left(20)));
+                    routeFile.close();
+                return;
+                }
+            }
+        }
+        routeName=QInputDialog::getText(this,tr("Nom de la route a importer"),tr("Nom de la route"),QLineEdit::Normal,"ImportedRoute",&ok);
+        if(!ok)
+        {
+            routeFile.close();
+            return;
+        }
+        ROUTE * route=addRoute();
+        if (routeName.isEmpty() || !freeRouteName(routeName.trimmed(),route))
+        {
+            QMessageBox msgBox;
+            msgBox.setText(tr("Ce nom est deja utilise ou invalide"));
+            msgBox.setIcon(QMessageBox::Critical);
+            msgBox.exec();
+            routeFile.close();
+            this->deleteRoute(route);
+            return;
+        }
+        route->setName(routeName);
+        update_menuRoute();
+        route->setBoat(main->getSelectedBoat());
+        route->setStartFromBoat(false);
+        route->setStartTimeOption(3);
+        route->setColor(QColor(227,142,42,255));
+        route->setImported();
+        route->setFrozen(true);
+
+        int n=0;
+        QString poiName;
+        double lon,lat;
+        QDateTime start;
+        if(format==ADRENA_FORMAT)
+            line=stream.readLine();
+        while(!line.isNull())
+        {
+            n++;
+            switch(format)
+            {
+            case ADRENA_FORMAT:
+                {
+                    list = line.split(';');
+                    lat=list[0].mid(0,2).toInt()+list[0].mid(3,6).toFloat()/60.0;
+                    if(list[0].mid(10,1)!="N") lat=-lat;
+                    lon=list[0].mid(13,3).toInt()+list[0].mid(17,6).toFloat()/60.0;
+                    if(list[0].mid(24,1)!="E") lon=-lon;
+                    start=QDateTime::fromString(list[1],"dd/MM/yyyy hh:mm:ss");
+                    start.setTimeSpec(Qt::UTC);
+                    break;
+                }
+            case SBS_FORMAT:
+                {
+                    list = line.split(';');
+                    start=QDateTime::fromString(list[0].simplified(),"dd-MMM.-yyyy hh:mm");
+                    if(!start.isValid())
+                    {
+                        start=QDateTime::fromString(list[0].simplified(),"dd-MMM hh:mm");
+                        start=start.addYears(QDate::currentDate().year()-1900);
+                    }
+                    start=start.toUTC();
+                    start.setTimeSpec(Qt::UTC);
+                    QString position=list[3];
+                    position.remove(" ",Qt::CaseInsensitive);
+                    position.replace("\"","q");
+                    position.remove(QChar(0xC2));
+                    position.replace(QChar(0xB0),"d");
+                    if(position.contains("N",Qt::CaseInsensitive))
+                        position.truncate(position.indexOf("N")+1);
+                    else
+                        position.truncate(position.indexOf("S")+1);
+                    QStringList temp=position.split("d");
+                    float deg=temp[0].toInt();
+                    temp=temp[1].split("'");
+                    float min=temp[0].toInt();
+                    temp=temp[1].split("q");
+                    float sec=temp[0].toFloat();
+                    min=min+sec/60;
+                    lat=deg+min/60;
+                    if(list[3].contains("S"))
+                        lat=-lat;
+                    position=list[3];
+                    position.remove(" ",Qt::CaseInsensitive);
+                    position.replace("\"","q");
+                    position.remove(QChar(0xC2));
+                    position.replace(QChar(0xB0),"d");
+                    if(position.contains("N",Qt::CaseInsensitive))
+                        position=position.mid(position.indexOf("N")+1);
+                    else
+                        position=position.mid(position.indexOf("S")+1);
+                    temp=position.split("d");
+                    deg=temp[0].toInt();
+                    temp=temp[1].split("'");
+                    min=temp[0].toInt();
+                    temp=temp[1].split("q");
+                    sec=temp[0].toFloat();
+                    min=min+sec/60;
+                    lon=deg+min/60;
+                    if(list[3].contains("W",Qt::CaseInsensitive))
+                        lon=-lon;
+                    break;
+                }
+            case MS_FORMAT:
+                {
+                    list = line.split('\t');
+                    start=QDateTime::fromString(list[3].simplified(),"dd/MM/yyyy hh:mm:ss");
+                    if (!start.isValid())
+                        start=QDateTime::fromString(list[3].simplified(),"dd/MM/yyyy");
+                    start.setTimeSpec(Qt::UTC);
+                    start=start.addSecs(timeOffset*60*60);
+                    QStringList position=list[13].split(QChar(0xB0));
+                    lat=position.at(0).toInt();
+                    QString temp=position.at(1);
+                    if(temp.contains("N",Qt::CaseInsensitive))
+                    {
+                        temp.truncate(temp.indexOf("N")-1);
+                        lat=lat+temp.toFloat()/60;
+                    }
+                    else
+                    {
+                        temp.truncate(temp.indexOf("S")-1);
+                        lat=-(lat+temp.toFloat()/60);
+                    }
+                    position=list[14].split(QChar(0xB0));
+                    lon=position.at(0).toInt();
+                    temp=position.at(1);
+                    if(temp.contains("E",Qt::CaseInsensitive))
+                    {
+                        temp.truncate(temp.indexOf("E")-1);
+                        lon=lon+temp.toFloat()/60;
+                    }
+                    else
+                    {
+                        temp.replace("O","W");
+                        temp.truncate(temp.indexOf("W")-1);
+                        lon=-(lon+temp.toFloat()/60);
+                    }
+                    break;
+                }
+            }
+            if(n==1)
+                route->setStartTime(start);
+            QString poiN;
+            poiN.sprintf("%.5i",n);
+            poiName=route->getName()+poiN;
+            POI * poi = slot_addPOI(poiName,0,lat,lon,-1,false,false,main->getSelectedBoat());
+            poi->setRoute(route);
+            poi->setRouteTimeStamp(start.toTime_t());
+            line=stream.readLine();
+        }
         routeFile.close();
-        return;
-    }
-    int format=ADRENA_FORMAT;
-    list=line.split('\t');
-    int timeOffset=0;
-    QString temp=list[0];
-    temp.squeeze();
-    if(temp.toUpper()=="W0")
-    {
-        format=MS_FORMAT;
-        bool ok;
-        timeOffset=QInputDialog::getInteger(0,QString(QObject::tr("Importation de routage MaxSea")),QString(QObject::tr("Heures a ajouter/enlever pour obtenir UTC (par ex -2 pour la France)")),0,-24,24,1,&ok);
-        if(!ok) return;
+        route->setHidePois(true);
+        route->setImported();
+        route->setFrozen2(false);//calculate only once and relock immediately
+        route->setFrozen2(true);
     }
     else
     {
-        list = line.split(';');
-        if(list[0].toUpper() != "POSITION" && format!=MS_FORMAT)
+        QFile xsd("export.xsd");
+        if(!xsd.open(QIODevice::ReadOnly))
         {
-            if(list.count()==6)
-            {
-                format=SBS_FORMAT;
-            }
-            else
-            {
-                QMessageBox::warning(0,QObject::tr("Lecture de route"),
-                     QString(QObject::tr("Fichier %1 invalide (doit commencer par POSITION et non '%2'), ou alors etre au format sbsRouteur"))
-                                .arg(fileName)
-                                .arg(list[0].toUpper().left(20)));
-                routeFile.close();
+            qWarning()<<"cannot open export.xsd";
             return;
-            }
         }
-    }
-    bool ok;
-    QString routeName=QInputDialog::getText(this,tr("Nom de la route a importer"),tr("Nom de la route"),QLineEdit::Normal,"ImportedRoute",&ok);
-    if(!ok)
-    {
-        routeFile.close();
-        return;
-    }
-    ROUTE * route=addRoute();
-    if (routeName.isEmpty() || !freeRouteName(routeName.trimmed(),route))
-    {
-        QMessageBox msgBox;
-        msgBox.setText(tr("Ce nom est deja utilise ou invalide"));
-        msgBox.setIcon(QMessageBox::Critical);
-        msgBox.exec();
-        routeFile.close();
-        this->deleteRoute(route);
-        return;
-    }
-    route->setName(routeName);
-    update_menuRoute();
-    route->setBoat(main->getSelectedBoat());
-    route->setStartFromBoat(false);
-    route->setStartTimeOption(3);
-    route->setColor(QColor(227,142,42,255));
-    route->setImported();
-    route->setFrozen(true);
-
-    int n=0;
-    QString poiName;
-    double lon,lat;
-    QDateTime start;
-    if(format==ADRENA_FORMAT)
-        line=stream.readLine();
-    while(!line.isNull())
-    {
-        n++;
-        switch(format)
+        QXmlSchema schema;
+        schema.load(&xsd);
+        xsd.close();
+        if(!schema.isValid())
         {
-        case ADRENA_FORMAT:
-            {
-                list = line.split(';');
-                lat=list[0].mid(0,2).toInt()+list[0].mid(3,6).toFloat()/60.0;
-                if(list[0].mid(10,1)!="N") lat=-lat;
-                lon=list[0].mid(13,3).toInt()+list[0].mid(17,6).toFloat()/60.0;
-                if(list[0].mid(24,1)!="E") lon=-lon;
-                start=QDateTime::fromString(list[1],"dd/MM/yyyy hh:mm:ss");
-                start.setTimeSpec(Qt::UTC);
-                break;
-            }
-        case SBS_FORMAT:
-            {
-                list = line.split(';');
-                start=QDateTime::fromString(list[0].simplified(),"dd-MMM.-yyyy hh:mm");
-                if(!start.isValid())
-                {
-                    start=QDateTime::fromString(list[0].simplified(),"dd-MMM hh:mm");
-                    start=start.addYears(QDate::currentDate().year()-1900);
-                }
-                start=start.toUTC();
-                start.setTimeSpec(Qt::UTC);
-                QString position=list[3];
-                position.remove(" ",Qt::CaseInsensitive);
-                position.replace("\"","q");
-                position.remove(QChar(0xC2));
-                position.replace(QChar(0xB0),"d");
-                if(position.contains("N",Qt::CaseInsensitive))
-                    position.truncate(position.indexOf("N")+1);
-                else
-                    position.truncate(position.indexOf("S")+1);
-                QStringList temp=position.split("d");
-                float deg=temp[0].toInt();
-                temp=temp[1].split("'");
-                float min=temp[0].toInt();
-                temp=temp[1].split("q");
-                float sec=temp[0].toFloat();
-                min=min+sec/60;
-                lat=deg+min/60;
-                if(list[3].contains("S"))
-                    lat=-lat;
-                position=list[3];
-                position.remove(" ",Qt::CaseInsensitive);
-                position.replace("\"","q");
-                position.remove(QChar(0xC2));
-                position.replace(QChar(0xB0),"d");
-                if(position.contains("N",Qt::CaseInsensitive))
-                    position=position.mid(position.indexOf("N")+1);
-                else
-                    position=position.mid(position.indexOf("S")+1);
-                temp=position.split("d");
-                deg=temp[0].toInt();
-                temp=temp[1].split("'");
-                min=temp[0].toInt();
-                temp=temp[1].split("q");
-                sec=temp[0].toFloat();
-                min=min+sec/60;
-                lon=deg+min/60;
-                if(list[3].contains("W",Qt::CaseInsensitive))
-                    lon=-lon;
-                break;
-            }
-        case MS_FORMAT:
-            {
-                list = line.split('\t');
-                start=QDateTime::fromString(list[3].simplified(),"dd/MM/yyyy hh:mm:ss");
-                if (!start.isValid())
-                    start=QDateTime::fromString(list[3].simplified(),"dd/MM/yyyy");
-                start.setTimeSpec(Qt::UTC);
-                start=start.addSecs(timeOffset*60*60);
-                QStringList position=list[13].split(QChar(0xB0));
-                lat=position.at(0).toInt();
-                QString temp=position.at(1);
-                if(temp.contains("N",Qt::CaseInsensitive))
-                {
-                    temp.truncate(temp.indexOf("N")-1);
-                    lat=lat+temp.toFloat()/60;
-                }
-                else
-                {
-                    temp.truncate(temp.indexOf("S")-1);
-                    lat=-(lat+temp.toFloat()/60);
-                }
-                position=list[14].split(QChar(0xB0));
-                lon=position.at(0).toInt();
-                temp=position.at(1);
-                if(temp.contains("E",Qt::CaseInsensitive))
-                {
-                    temp.truncate(temp.indexOf("E")-1);
-                    lon=lon+temp.toFloat()/60;
-                }
-                else
-                {
-                    temp.replace("O","W");
-                    temp.truncate(temp.indexOf("W")-1);
-                    lon=-(lon+temp.toFloat()/60);
-                }
-                break;
-            }
+            qWarning()<<"shema is unvalid";
+            return;
         }
-        if(n==1)
-            route->setStartTime(start);
-        QString poiN;
-        poiN.sprintf("%.5i",n);
-        poiName=route->getName()+poiN;
-        POI * poi = slot_addPOI(poiName,0,lat,lon,-1,false,false,main->getSelectedBoat());
-        poi->setRoute(route);
-        poi->setRouteTimeStamp(start.toTime_t());
-        line=stream.readLine();
+        QXmlSchemaValidator validator(schema);
+        //freopen("stderr.txt","w",stderr);
+        if(!validator.validate(&routeFile,QUrl::fromLocalFile(routeFile.fileName())))
+        {
+            qWarning()<<"xml is NOT valid";
+            routeFile.close();
+            return;
+        }
+        qWarning()<<"validation ok";
+        routeFile.seek(0);
+        QDomDocument doc;
+        int errorLine,errorColumn;
+        QString errorStr;
+        if(!doc.setContent(&routeFile,true,&errorStr,&errorLine,&errorColumn))
+        {
+            QMessageBox::warning(0,QObject::tr("Lecture de route"),
+                                 QString("Erreur ligne %1, colonne %2:\n%3")
+                                 .arg(errorLine)
+                                 .arg(errorColumn)
+                                 .arg(errorStr));
+            return ;
+        }
+        routeFile.close();
+        QDomElement root = doc.documentElement();
+        QDomElement routeList=root.firstChildElement("RouteList");
+        QDomElement routeDetail=routeList.firstChildElement("Route");
+        while(!routeDetail.isNull())
+        {
+            routeName=routeDetail.firstChildElement("Name").firstChild().toText().data();
+            routeName=QInputDialog::getText(this,tr("Nom de la route a importer"),tr("Nom de la route"),QLineEdit::Normal,routeName,&ok);
+            if(!ok)
+            {
+                return;
+            }
+            ROUTE * route=addRoute();
+            if (routeName.isEmpty() || !freeRouteName(routeName.trimmed(),route))
+            {
+                QMessageBox msgBox;
+                msgBox.setText(tr("Ce nom est deja utilise ou invalide"));
+                msgBox.setIcon(QMessageBox::Critical);
+                msgBox.exec();
+                routeFile.close();
+                this->deleteRoute(route);
+                return;
+            }
+            route->setName(routeName);
+            update_menuRoute();
+            route->setBoat(main->getSelectedBoat());
+            route->setStartFromBoat(false);
+            route->setStartTimeOption(3);
+            QDomElement ss=routeDetail.firstChildElement("TrackColor");
+            route->setColor(QColor(ss.firstChildElement("R").firstChild().toText().data().toInt(),
+                                   ss.firstChildElement("G").firstChild().toText().data().toInt(),
+                                   ss.firstChildElement("B").firstChild().toText().data().toInt(),
+                                   ss.firstChildElement("A").firstChild().toText().data().toInt()));
+            route->setImported();
+            route->setFrozen(true);
+            QDomElement track=routeDetail.firstChildElement("Track");
+            QDomElement trackPoint=track.firstChildElement("TrackPoint");
+            int n=0;
+            QString poiName;
+            double lon,lat;
+            QDateTime start;
+            while(!trackPoint.isNull())
+            {
+                QVariant var=trackPoint.firstChildElement("ActionDate").firstChild().toText().data();
+                var.convert(QVariant::DateTime);
+                start=var.toDateTime();
+                start=start.toUTC();
+                if(n==0)
+                    route->setStartTime(start);
+                n++;
+                QString poiN;
+                lon=trackPoint.firstChildElement("Coords").firstChildElement("Lon").firstChild().toText().data().toFloat();
+                lat=trackPoint.firstChildElement("Coords").firstChildElement("Lat").firstChild().toText().data().toFloat();
+                poiN.sprintf("%.5i",n);
+                poiName="I"+poiN;
+                POI * poi = slot_addPOI(poiName,0,lat,lon,-1,false,false,main->getSelectedBoat());
+                poi->setRoute(route);
+                poi->setRouteTimeStamp(start.toTime_t());
+                trackPoint=trackPoint.nextSiblingElement("TrackPoint");
+            }
+            route->setHidePois(true);
+            route->setImported();
+            route->setFrozen2(false);//calculate only once and relock immediately
+            route->setFrozen2(true);
+            routeDetail=routeDetail.nextSiblingElement("Route");
+        }
     }
-    routeFile.close();
-    route->setHidePois(true);
-    route->setImported();
-    route->setFrozen2(false);//calculate only once and relock immediately
-    route->setFrozen2(true);
 }
 
 void myCentralWidget::slot_twaLine()
