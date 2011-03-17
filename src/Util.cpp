@@ -297,7 +297,7 @@ void Util::paramProxy(QNetworkAccessManager *inetManager,QString host)
     QNetworkProxy::ProxyType proxyParam[4]={QNetworkProxy::NoProxy, QNetworkProxy::DefaultProxy, QNetworkProxy::HttpProxy, QNetworkProxy::Socks5Proxy };
     QNetworkProxy inetProxy;
 
-    qWarning() << "Using proxy type: " << proxyType;
+    //qWarning() << "Using proxy type: " << proxyType;
 
     if(proxyType==0)
     {
@@ -325,7 +325,7 @@ void Util::paramProxy(QNetworkAccessManager *inetManager,QString host)
         }
     }
     inetManager->setProxy(inetProxy);
-    qWarning() << "Proxy param finished";
+    //qWarning() << "Proxy param finished";
 }
 
 /* format: LAT,LON@WPH,TSTAMP */

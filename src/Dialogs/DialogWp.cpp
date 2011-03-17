@@ -132,8 +132,12 @@ void DialogWp::doCopy()
 {
     if(!currentBoat)
         return;
-    Util::setWPClipboard(WP_lat->text().toFloat(),WP_lon->text().toFloat(),
-        WP_heading->text().toFloat());
+    if(WP_heading->text().isEmpty())
+        Util::setWPClipboard(WP_lat->text().toFloat(),WP_lon->text().toFloat(),
+            -1);
+    else
+        Util::setWPClipboard(WP_lat->text().toFloat(),WP_lon->text().toFloat(),
+            WP_heading->text().toFloat());
     QDialog::done(QDialog::Rejected);
 
 }

@@ -632,30 +632,11 @@ void ROUTAGE::calculate()
         double xE=qMax(start.x(),arrival.x());
         double yN=qMax(start.y(),arrival.y());
         double yS=qMin(start.y(),arrival.y());
-#if 1
         proj->blockSignals(true);
         proj->zoomOnZone(xW,yN,xE,yS);
         proj->blockSignals(false);
-        proj->setScale(proj->getScale()*.9);
+        proj->setScale(proj->getScale()*.8);
         QApplication::processEvents();
-#else
-        double lonM,latM;
-        Util::getCoordFromDistanceAngle(start.y(),start.x(),orth.getDistance()/2,orth.getAzimutDeg(),&latM,&lonM);
-        // compute scale;
-        if (xE == xW)
-            xE = xW+0.1;
-        if (yS == yN)
-            yS = yN+0.1;
-        double sX,sY,sYN,sYS;
-        sX=proj->getW()/fabs(xE-xW);
-        sYN=log(tan(degToRad(yN)/2 + M_PI_4));
-        sYS=log(tan(degToRad(yS)/2 + M_PI_4));
-        sY=proj->getH()/fabs(radToDeg(sYN-sYS));
-        float newScale=sX>sY?sY:sX;
-        proj->setScaleAndCenterInMap(newScale*0.9,lonM,latM);
-        QApplication::processEvents();
-        orth.setPoints(start.x(),start.y(),arrival.x(),arrival.y());
-#endif
     }
     proj->setFrozen(true);
     GshhsRangsReader *map=parent->get_gshhsReader()->getGshhsRangsReader();
@@ -1951,7 +1932,10 @@ void ROUTAGE::setShowIso(bool b)
     }
     way->hide();
     if(result && b)
+    {
+        result->show();
         result->slot_showMe();
+    }
 }
 void ROUTAGE::drawResult(vlmPoint P)
 {
@@ -1972,7 +1956,7 @@ void ROUTAGE::drawResult(vlmPoint P)
         if (P.isStart) break;
         P= (*P.origin);
     }
-    for(int n=initialRoad.count()-1;n>=1;n--)
+    for(int n=1;n<initialRoad.count();n++)
         result->addVlmPoint(initialRoad.at(n));
     pen.setWidthF(width);
     pen.setColor(color);
@@ -2265,6 +2249,10 @@ void ROUTAGE::convertToRoute()
     QList<vlmPoint> * list=result->getPoints();
     for (int n=0;n<list->count();n++)
     {
+       if(n!=0)
+       {
+           if(list->at(n-1)==list->at(n)) continue;
+       }
        QString poiName;
        poiName.sprintf("%.5i",list->count()-n);
        poiName=poiPrefix+poiName;
@@ -2857,21 +2845,22 @@ void ROUTAGE::setFromRoutage(ROUTAGE *fromRoutage, bool editOptions)
     {
         QList<vlmPoint> parentWay=*parentRoutage->getFromRoutage()->getWay()->getPoints();
         for(int n=1;n<parentWay.count();n++)
-            initialRoad.prepend(parentWay.at(n));
+            initialRoad.append(parentWay.at(n));
         if(!parentRoutage->getFromRoutage()->getIsPivot() || !parentRoutage->getFromRoutage())
         {
-            initialRoad.prepend(parentWay.at(0));
+//            initialRoad.prepend(parentWay.at(0));
             break;
         }
         parentRoutage=parentRoutage->getFromRoutage();
     }
+    initialRoad.prepend(pivotPoint);
     for(int n=0;n<initialRoad.count();n++)
     {
         vlmPoint p=initialRoad.at(n);
         p.isBroken=false;
         result->addVlmPoint(p);;
     }
-    result->addVlmPoint(pivotPoint);
+//    result->addVlmPoint(pivotPoint);
     QPen penResult;
     penResult.setColor(color);
     penResult.setBrush(color);

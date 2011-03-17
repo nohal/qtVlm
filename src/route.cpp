@@ -149,12 +149,11 @@ void ROUTE::slot_recalculate(boat * boat)
     if(temp) return;
     if(busy)
     {
-        //if(frozen) return;
         busy=false; /*recursion*/
         return;
     }
     if(boat!=NULL && this->myBoat!=boat) return;
-    //if(parent->getIsStartingUp()) return;
+    if(!myBoat || myBoat==NULL  || !myBoat->getStatus()) return;
     if(this->hidden) return;
     if (frozen && initialized) interpolatePos();
     if(initialized && (frozen || superFrozen)) return;
@@ -167,7 +166,7 @@ void ROUTE::slot_recalculate(boat * boat)
     eta=0;
     has_eta=false;
     time_t now;
-    if(myBoat && myBoat->getPolarData() && grib && myBoat!=NULL)
+    if(myBoat  && myBoat!=NULL && myBoat->getPolarData() && grib)
     {
         initialized=true;
         switch(startTimeOption)

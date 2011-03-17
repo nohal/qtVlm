@@ -301,5 +301,6 @@ void Projection::updateBoundaries() {
 }
 void Projection::emit_projectionUpdated()
 {
-     timer->start(200);
+ //    timer->start(200);
+    emit projectionUpdated();
 }
