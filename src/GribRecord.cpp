@@ -149,6 +149,13 @@ void  GribRecord::translateDataType()
                         levelValue = 0;
                 }
         }
+        //---------------
+        //Navimail
+        //---------------
+        else if (idCenter==85 && idModel==5 && idGrid==255)
+        {
+
+        }
         //------------------------
         // Unknown center
         //------------------------
@@ -165,10 +172,16 @@ void  GribRecord::translateDataType()
 //-------------------------------------------------------------------------------
 void GribRecord::print()
 {
-        printf("%d: idCenter=%d idModel=%d idGrid=%d dataType=%d hr=%f\n",
-                        id, idCenter, idModel, idGrid, dataType,
-                        (curDate-refDate)/3600.0
-                        );
+        QString debug;
+        debug=debug.sprintf("%d: idCenter=%d idModel=%d idGrid=%d dataType=%d hr=%f\n",
+                             id, idCenter, idModel, idGrid, dataType,
+                             (curDate-refDate)/3600.0
+                             );
+        qWarning()<<debug;
+//        printf("%d: idCenter=%d idModel=%d idGrid=%d dataType=%d hr=%f\n",
+//                        id, idCenter, idModel, idGrid, dataType,
+//                        (curDate-refDate)/3600.0
+//                        );
 }
 
 void  GribRecord::multiplyAllData(double k)
@@ -209,7 +222,7 @@ GribRecord::~GribRecord()
 }
 
 //==============================================================
-// Lecture des données
+// Lecture des donnees
 //==============================================================
 //----------------------------------------------
 // SECTION 0: THE INDICATOR SECTION (IS)
