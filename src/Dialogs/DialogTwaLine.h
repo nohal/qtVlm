@@ -26,6 +26,7 @@ private:
     MainWindow * main;
     QPen pen;
     QPoint position;
+    QColor color;
 public slots:
     void slot_delPOI_list(POI *);
 private slots:

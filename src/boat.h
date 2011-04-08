@@ -109,7 +109,7 @@ class boat: public QGraphicsWidget
         virtual void slot_shHall() { }
         void slotTwaLine(){parent->twaDraw(lon,lat);}
         void slotCompassLine(void);
-
+        void slot_estimeFlashing(void);
     signals:
         void boatSelected(boat*);
         void boatUpdated(boat*,bool,bool);
@@ -205,6 +205,7 @@ class boat: public QGraphicsWidget
         QImage flag;
         bool drawFlag;
         QString own;
+        QTimer * estimeTimer;
 };
 
 #endif // BOAT_H

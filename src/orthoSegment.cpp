@@ -79,6 +79,7 @@ void orthoSegment::hideSegment(void)
 void orthoSegment::paint(QPainter * pnt, const QStyleOptionGraphicsItem * , QWidget * )
 {
     pnt->setPen(linePen);
+    pnt->setRenderHint(QPainter::Antialiasing);
     if(!isOrtho)
     {        
         pnt->drawLine(xa-x(),ya-y(),xb-x(),yb-y());

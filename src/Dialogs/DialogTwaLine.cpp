@@ -7,6 +7,8 @@
 #include "Polar.h"
 #include <QDebug>
 #include "settings.h"
+#include "GshhsRangsReader.h"
+#include "GshhsReader.h"
 
 DialogTwaLine::DialogTwaLine(QPointF start, myCentralWidget *parent, MainWindow *main) : QDialog(parent)
 {
@@ -15,7 +17,7 @@ DialogTwaLine::DialogTwaLine(QPointF start, myCentralWidget *parent, MainWindow 
     this->grib=parent->getGrib();
     this->myBoat=parent->getSelectedBoat();
 
-    QColor color=Settings::getSetting("traceLineColor", Qt::yellow).value<QColor>();
+    color=Settings::getSetting("traceLineColor", Qt::yellow).value<QColor>();
     pen.setColor(color);
     pen.setBrush(color);
     pen.setWidthF(Settings::getSetting("traceLineWidth", 2.0).toDouble());
@@ -127,6 +129,9 @@ void DialogTwaLine::traceIt()
     double wind_speed,wind_angle,cap;
     double lon,lat;
     time_t maxDate=grib->getMaxDate();
+    bool crossing=false;
+    int i1,j1,i2,j2;
+    GshhsRangsReader *map=parent->get_gshhsReader()->getGshhsRangsReader();
     for (int page=0;page<5;page++)
     {
         if (nbVac[page]==0) continue;
@@ -140,11 +145,22 @@ void DialogTwaLine::traceIt()
             float newSpeed=myBoat->getPolarData()->getSpeed(wind_speed,twa[page]);
             float distanceParcourue=newSpeed*vacLen/3600.00;
             Util::getCoordFromDistanceAngle(current.lat, current.lon, distanceParcourue, cap,&lat,&lon);
+            if(!crossing)
+            {
+                parent->getProj()->map2screen(current.lon,current.lat,&i1,&j1);
+                parent->getProj()->map2screen(lon,lat,&i2,&j2);
+                crossing=map->crossing(QLineF(i1,j1,i2,j2),QLineF(current.lon,current.lat,lon,lat));
+            }
             current.lon=lon;
             current.lat=lat;
             line->addVlmPoint(current);
             eta=eta+vacLen;
         }
+        if(crossing)
+            pen.setColor(Qt::red);
+        else
+            pen.setColor(color);
+        line->setLinePen(pen);
         QDateTime tm;
         tm.setTimeSpec(Qt::UTC);
         tm.setTime_t(eta);

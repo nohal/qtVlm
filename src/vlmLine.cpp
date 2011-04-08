@@ -260,6 +260,7 @@ void vlmLine::paint(QPainter * pnt, const QStyleOptionGraphicsItem * , QWidget *
 //    int debug;
 //    if(this->desc=="WP1: Latitude Cap Vert") //for debug point
 //        debug=0;
+    pnt->setRenderHint(QPainter::Antialiasing);
     pnt->setPen(linePen);
     float penW=linePen.widthF();
     if(polyList.isEmpty()) return;

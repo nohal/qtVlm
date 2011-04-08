@@ -333,7 +333,7 @@ void boardVLM::headingUpdated(double heading)
             speed->setText(QString().setNum(((float)qRound(newSpeed*100))/100));
             speed->setStyleSheet(QString::fromUtf8(SPEED_COLOR_UPDATE));
             label_6->setStyleSheet(QString::fromUtf8(SPEED_COLOR_UPDATE));
-            qWarning() << "Angle=" << angle << " w spd=" << currentBoat()->getWindSpeed() << " => boat spd=" << newSpeed;
+            //qWarning() << "Angle=" << angle << " w spd=" << currentBoat()->getWindSpeed() << " => boat spd=" << newSpeed;
         }
         else
         {
