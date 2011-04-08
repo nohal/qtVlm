@@ -91,7 +91,9 @@ boat::boat(QString pseudo, bool activated,
     this->activated=activated;
     hide();
     WPLine->hide();
+    estimeTimer->stop();
     estimeLine->hide();
+    WPLine->hide();
 
     /*if(activated)
         show();
@@ -356,10 +358,15 @@ void boat::drawEstime(float myHeading, float mySpeed)
         proj->map2screen(lon,lat,&i1,&j1);
         proj->map2screen(tmp_lon,tmp_lat,&i2,&j2);
         GshhsRangsReader *map=parent->get_gshhsReader()->getGshhsRangsReader();
-        if(map->crossing(QLineF(i1,j1,i2,j2),QLineF(lon,lat,tmp_lon,tmp_lat)))
+        if(map->currentQuality>=3)
         {
-            estimeTimer->start();
-            penLine1.setColor(Qt::red);
+            if(map->crossing(QLineF(i1,j1,i2,j2),QLineF(lon,lat,tmp_lon,tmp_lat)))
+            {
+                estimeTimer->start();
+                penLine1.setColor(Qt::red);
+            }
+            else
+                estimeTimer->stop();
         }
         else
             estimeTimer->stop();
@@ -380,6 +387,13 @@ void boat::drawEstime(float myHeading, float mySpeed)
 /**************************/
 void boat::slot_estimeFlashing()
 {
+    if(!selected)
+    {
+        estimeTimer->stop();
+        estimeLine->hide();
+        WPLine->hide();
+        return;
+    }
     if(estimeLine->isVisible())
         estimeLine->hide();
     else estimeLine->show();
@@ -447,6 +461,7 @@ void boat::setStatus(bool activated)
      if(!activated)
      {
         WPLine->hide();
+        estimeTimer->stop();
         estimeLine->hide();
         if(this->boat_type==BOAT_REAL)
             this->stopRead();
@@ -462,6 +477,7 @@ void boat::playerDeActivated(void)
     setVisible(false);
     trace_drawing->hide();
     WPLine->hide();
+    estimeTimer->stop();
     estimeLine->hide();
     if(this->boat_type==BOAT_REAL)
         this->stopRead();

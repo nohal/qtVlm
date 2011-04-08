@@ -116,9 +116,8 @@ class GshhsRangsReader
         
         void setQuality(int quality); // 5 levels: 0=low ... 4=full
         bool crossing(QLineF traject,QLineF trajectWorld);
-
+        int currentQuality;
     private:
-    	int currentQuality;
         std::string path;
         FILE *fcat, *fcel, *frim;
         GshhsRangsCell * allCells[360][180];

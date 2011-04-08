@@ -132,6 +132,7 @@ void DialogTwaLine::traceIt()
     bool crossing=false;
     int i1,j1,i2,j2;
     GshhsRangsReader *map=parent->get_gshhsReader()->getGshhsRangsReader();
+    int mapQuality=map->currentQuality;
     for (int page=0;page<5;page++)
     {
         if (nbVac[page]==0) continue;
@@ -145,7 +146,7 @@ void DialogTwaLine::traceIt()
             float newSpeed=myBoat->getPolarData()->getSpeed(wind_speed,twa[page]);
             float distanceParcourue=newSpeed*vacLen/3600.00;
             Util::getCoordFromDistanceAngle(current.lat, current.lon, distanceParcourue, cap,&lat,&lon);
-            if(!crossing)
+            if(!crossing && mapQuality>=3)
             {
                 parent->getProj()->map2screen(current.lon,current.lat,&i1,&j1);
                 parent->getProj()->map2screen(lon,lat,&i2,&j2);
