@@ -632,10 +632,12 @@ void ROUTAGE::calculate()
         double xE=qMax(start.x(),arrival.x());
         double yN=qMax(start.y(),arrival.y());
         double yS=qMin(start.y(),arrival.y());
+        proj->setUseTempo(false);
         proj->blockSignals(true);
         proj->zoomOnZone(xW,yN,xE,yS);
         proj->blockSignals(false);
         proj->setScale(proj->getScale()*.8);
+        proj->setUseTempo(true);
         QApplication::processEvents();
     }
     proj->setFrozen(true);

@@ -41,6 +41,7 @@ Projection::Projection(int w, int h, double cx, double cy) {
     assert(timer);
     timer->setSingleShot(true);
     connect(timer, SIGNAL(timeout()), this, SIGNAL(projectionUpdated()));
+    useTempo=true;
 }
 
 void Projection::setScreenSize(int w, int h)
@@ -301,6 +302,8 @@ void Projection::updateBoundaries() {
 }
 void Projection::emit_projectionUpdated()
 {
- //    timer->start(200);
-    emit projectionUpdated();
+    if(useTempo)
+        timer->start(200);
+    else
+        emit projectionUpdated();
 }

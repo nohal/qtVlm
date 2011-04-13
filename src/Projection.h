@@ -90,6 +90,7 @@ Q_OBJECT
         bool isInBounderies (int x,int y) const;
         void setFrozen(bool b){this->frozen=b;/*emit_projectionUpdated();*/}
         bool getFrozen(void){return this->frozen;}
+        void setUseTempo(bool b){this->useTempo=b;}
     signals:
         void newZoom(float);
         void projectionUpdated(void);
@@ -111,6 +112,7 @@ Q_OBJECT
         QTimer * timer;
         void emit_projectionUpdated(void);
         bool frozen;
+        bool useTempo;
 
 };
 

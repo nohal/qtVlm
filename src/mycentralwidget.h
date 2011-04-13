@@ -74,6 +74,7 @@ class myScene : public QGraphicsScene
         void mouseMoveEvent (QGraphicsSceneMouseEvent * event);
         void mouseDoubleClickEvent(QGraphicsSceneMouseEvent* e);
         void wheelEvent(QGraphicsSceneWheelEvent* e);
+        bool event(QEvent * event);
     signals:
         void paramVLMChanged();
         void eraseWay();

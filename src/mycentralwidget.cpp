@@ -27,6 +27,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <QXmlSchema>
 #include <QXmlSchemaValidator>
 #include <QXmlQuery>
+#include <QGesture>
 #include "mycentralwidget.h"
 
 #include "settings.h"
@@ -230,6 +231,44 @@ void myScene::wheelTimerElapsed()
     parent->slot_Zoom_Wheel(wheelStrokes,wheelPosX,wheelPosY,wheelCenter);
     wheelStrokes=0;
 }
+bool myScene::event(QEvent * event)
+{
+    if (event->type() == QEvent::Gesture)
+    {
+        qWarning()<<"gesture detected";
+        QGestureEvent * gestureEvent=static_cast<QGestureEvent*>(event);
+        wheelCenter=false;
+        if (QGesture *g = gestureEvent->gesture(Qt::PanGesture))
+        {
+            if(g->state()!=Qt::GestureFinished) return false;
+            QMessageBox::warning (0,
+                tr("Gesture"),
+                tr("Pan gesture detected"));
+            //QPanGesture *pinch = static_cast<QPanGesture *>(g);
+            //parent->slot_Go_Left();
+        }
+        else if (QGesture *g = gestureEvent->gesture(Qt::PinchGesture))
+        {
+            if(g->state()!=Qt::GestureFinished) return false;
+            QMessageBox::warning (0,
+                tr("Gesture"),
+                tr("Pan gesture detected"));
+            QPinchGesture *pinch = static_cast<QPinchGesture *>(g);
+            if (pinch->property("scaleFactor").toReal()<0)
+                wheelStrokes--;
+            else
+                wheelStrokes++;
+        }
+        else
+        {
+            QMessageBox::warning (0,
+                tr("Gesture"),
+                tr("Other gesture detected!!"));
+        }
+        wheelTimer->start(500);
+        return true;
+    }
+    return QGraphicsScene::event(event);}
 
 /*******************/
 /* myCentralWidget */
@@ -261,6 +300,12 @@ myCentralWidget::myCentralWidget(Projection * proj,MainWindow * parent,MenuBar *
 
     view = new QGraphicsView(scene, this);
     view->setGeometry(0,0,width(),height());
+//   view->viewport()->setAttribute(Qt::WA_AcceptTouchEvents);
+    view->viewport()->grabGesture(Qt::PanGesture);
+    view->viewport()->grabGesture(Qt::PinchGesture);
+//    view->setAttribute(Qt::WA_AcceptTouchEvents);
+//    view->grabGesture(Qt::PanGesture);
+//    view->grabGesture(Qt::PinchGesture);
 
     /* other child */
     gshhsReader = new GshhsReader("maps/gshhs", 0);
