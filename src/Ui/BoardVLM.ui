@@ -177,24 +177,7 @@
         <widget class="QLabel" name="latitude">
          <property name="font">
           <font>
-           <pointsize>14</pointsize>
-           <weight>75</weight>
-           <bold>true</bold>
-          </font>
-         </property>
-         <property name="text">
-          <string>00a00'00'' W</string>
-         </property>
-         <property name="alignment">
-          <set>Qt::AlignCenter</set>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QLabel" name="longitude">
-         <property name="font">
-          <font>
-           <pointsize>14</pointsize>
+           <pointsize>12</pointsize>
            <weight>75</weight>
            <bold>true</bold>
           </font>
@@ -203,7 +186,24 @@
           <string>000a00'00'' W</string>
          </property>
          <property name="alignment">
-          <set>Qt::AlignCenter</set>
+          <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QLabel" name="longitude">
+         <property name="font">
+          <font>
+           <pointsize>12</pointsize>
+           <weight>75</weight>
+           <bold>true</bold>
+          </font>
+         </property>
+         <property name="text">
+          <string>000a00'00'' W</string>
+         </property>
+         <property name="alignment">
+          <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
          </property>
         </widget>
        </item>
@@ -247,7 +247,7 @@
          <property name="font">
           <font>
            <family>MS Shell Dlg 2</family>
-           <pointsize>9</pointsize>
+           <pointsize>8</pointsize>
           </font>
          </property>
          <property name="styleSheet">
@@ -317,7 +317,7 @@
      <property name="minimumSize">
       <size>
        <width>224</width>
-       <height>80</height>
+       <height>85</height>
       </size>
      </property>
      <property name="font">
@@ -334,10 +334,10 @@
      <widget class="QFrame" name="frame">
       <property name="geometry">
        <rect>
-        <x>131</x>
-        <y>13</y>
+        <x>130</x>
+        <y>20</y>
         <width>89</width>
-        <height>57</height>
+        <height>61</height>
        </rect>
       </property>
       <property name="autoFillBackground">
@@ -357,8 +357,8 @@
         <rect>
          <x>5</x>
          <y>2</y>
-         <width>79</width>
-         <height>51</height>
+         <width>81</width>
+         <height>54</height>
         </rect>
        </property>
        <layout class="QVBoxLayout" name="verticalLayout">
@@ -696,9 +696,9 @@
      <widget class="QWidget" name="layoutWidget">
       <property name="geometry">
        <rect>
-        <x>8</x>
-        <y>14</y>
-        <width>121</width>
+        <x>0</x>
+        <y>20</y>
+        <width>126</width>
         <height>61</height>
        </rect>
       </property>
@@ -719,7 +719,7 @@
           <string>Bateau</string>
          </property>
          <property name="alignment">
-          <set>Qt::AlignCenter</set>
+          <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
          </property>
         </widget>
        </item>
@@ -728,7 +728,7 @@
          <property name="font">
           <font>
            <family>MS Shell Dlg 2</family>
-           <pointsize>10</pointsize>
+           <pointsize>9</pointsize>
            <weight>75</weight>
            <bold>true</bold>
           </font>
@@ -773,25 +773,7 @@
           <string>Avg</string>
          </property>
          <property name="alignment">
-          <set>Qt::AlignCenter</set>
-         </property>
-        </widget>
-       </item>
-       <item row="1" column="1">
-        <widget class="QLabel" name="avg">
-         <property name="font">
-          <font>
-           <family>MS Shell Dlg 2</family>
-           <pointsize>9</pointsize>
-           <weight>50</weight>
-           <bold>false</bold>
-          </font>
-         </property>
-         <property name="text">
-          <string>99.99</string>
-         </property>
-         <property name="alignment">
-          <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+          <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
          </property>
         </widget>
        </item>
@@ -823,7 +805,7 @@
           <string>Loch</string>
          </property>
          <property name="alignment">
-          <set>Qt::AlignCenter</set>
+          <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
          </property>
         </widget>
        </item>
@@ -857,6 +839,24 @@
          </property>
          <property name="text">
           <string>nm</string>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="1">
+        <widget class="QLabel" name="avg">
+         <property name="font">
+          <font>
+           <family>MS Shell Dlg 2</family>
+           <pointsize>9</pointsize>
+           <weight>50</weight>
+           <bold>false</bold>
+          </font>
+         </property>
+         <property name="text">
+          <string>99.99</string>
+         </property>
+         <property name="alignment">
+          <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
          </property>
         </widget>
        </item>
@@ -907,10 +907,10 @@
      <widget class="QWidget" name="layoutWidget">
       <property name="geometry">
        <rect>
-        <x>11</x>
+        <x>4</x>
         <y>21</y>
-        <width>211</width>
-        <height>38</height>
+        <width>221</width>
+        <height>39</height>
        </rect>
       </property>
       <layout class="QHBoxLayout" name="horizontalLayout_4">
@@ -1371,6 +1371,19 @@
     </widget>
    </item>
    <item>
+    <spacer name="verticalSpacer_6">
+     <property name="orientation">
+      <enum>Qt::Vertical</enum>
+     </property>
+     <property name="sizeHint" stdset="0">
+      <size>
+       <width>20</width>
+       <height>40</height>
+      </size>
+     </property>
+    </spacer>
+   </item>
+   <item>
     <spacer name="verticalSpacer_2">
      <property name="orientation">
       <enum>Qt::Vertical</enum>
@@ -1429,7 +1442,7 @@
      <property name="minimumSize">
       <size>
        <width>224</width>
-       <height>80</height>
+       <height>85</height>
       </size>
      </property>
      <property name="font">
@@ -1446,7 +1459,7 @@
       <property name="geometry">
        <rect>
         <x>0</x>
-        <y>10</y>
+        <y>20</y>
         <width>221</width>
         <height>61</height>
        </rect>
@@ -1624,8 +1637,8 @@
          <rect>
           <x>3</x>
           <y>1</y>
-          <width>211</width>
-          <height>29</height>
+          <width>216</width>
+          <height>30</height>
          </rect>
         </property>
         <layout class="QHBoxLayout" name="horizontalLayout_9">
@@ -1906,7 +1919,7 @@
        <rect>
         <x>0</x>
         <y>20</y>
-        <width>221</width>
+        <width>243</width>
         <height>24</height>
        </rect>
       </property>

@@ -845,15 +845,15 @@ void boardVLM::setCompassVisible(bool status)
     {
         Settings::setSetting("boardCompassShown",1);
         windAngle->show();
-        this->setMaximumHeight(680);
+        //this->setMaximumHeight(680);
     }
     else
     {
         Settings::setSetting("boardCompassShown",0);
         windAngle->hide();
-        this->setMaximumHeight(434);
+        //this->setMaximumHeight(434);
     }
-    this->updateGeometry();
+    //this->updateGeometry();
 //    this->adjustSize();
 }
 
