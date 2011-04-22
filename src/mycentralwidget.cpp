@@ -2263,6 +2263,7 @@ void myCentralWidget::slot_playerSelected(Player * player)
             menuBar->acRace->setVisible(true);
             menuBar->acVLMSync->setVisible(true);
             menuBar->acPilototo->setVisible(true);
+            menuBar->acShowPolar->setVisible(true);
             //menuBar->acVLMParamBoat->setEnabled(true);
             boat_list=player->getBoats();
             QListIterator<boatVLM*> i(*boat_list);
@@ -2302,6 +2303,7 @@ void myCentralWidget::slot_playerSelected(Player * player)
             menuBar->acRace->setVisible(false);
             menuBar->acVLMSync->setVisible(false);
             menuBar->acPilototo->setVisible(false);
+            menuBar->acShowPolar->setVisible(true);
             //menuBar->acVLMParamBoat->setEnabled(false);
             realBoat=player->getRealBoat();
             realBoat->reloadPolar();

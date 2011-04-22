@@ -699,7 +699,7 @@
         <x>0</x>
         <y>20</y>
         <width>126</width>
-        <height>61</height>
+        <height>68</height>
        </rect>
       </property>
       <layout class="QGridLayout" name="gridLayout_2">
@@ -814,7 +814,7 @@
          <property name="font">
           <font>
            <family>MS Shell Dlg 2</family>
-           <pointsize>9</pointsize>
+           <pointsize>8</pointsize>
            <weight>50</weight>
            <bold>false</bold>
           </font>

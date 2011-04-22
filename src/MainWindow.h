@@ -108,6 +108,7 @@ class MainWindow: public QMainWindow
         void slotChgWP(float lat,float lon, float wph);
         void slotBoatLockStatusChanged(boat*,bool);
         void slotPilototo(void);
+        void slotShowPolar(void);
 
         void slot_newPOI(void);        
         void slotCreatePOI();

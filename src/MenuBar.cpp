@@ -279,6 +279,7 @@ MenuBar::MenuBar(QWidget *parent)
         acRace = addAction(menuBoat,tr("Parametres des courses"),"","","");
         acVLMSync = addAction(menuBoat,tr("VLM Sync"),"","","");
         acPilototo = addAction(menuBoat,tr("Pilototo"),"","","");
+        acShowPolar=addAction(menuBoat,tr("Etudier la polaire"),"","");
     addMenu(menuBoat);
 
     //-------------------------------------

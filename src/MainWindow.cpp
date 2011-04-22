@@ -69,6 +69,7 @@ Copyright (C) 2008 - Jacques Zaninetti - http://zygrib.free.fr
 #include "DialogVlmGrib.h"
 #include "DialogParamVlm.h"
 #include "DialogPilototo.h"
+#include "dialogviewpolar.h"
 
 //-----------------------------------------------------------
 // Connexions des signaux
@@ -152,6 +153,7 @@ void MainWindow::connectSignals()
 #endif
     connect(mb->acPOIinput, SIGNAL(triggered()), poi_input_dialog, SLOT(slot_showPOI_input()));
     connect(mb->acPilototo, SIGNAL(triggered()), this, SLOT(slotPilototo()));
+    connect(mb->acShowPolar, SIGNAL(triggered()),this,SLOT(slotShowPolar()));
 
     connect(mb->acPOIimport, SIGNAL(triggered()), my_centralWidget, SLOT(slot_POIimport()));
 
@@ -1719,6 +1721,15 @@ bool MainWindow::getBoatLockStatus(void)
     if(selPOI_instruction)
         return true;
     return selectedBoat->getLockStatus();
+}
+void MainWindow::slotShowPolar()
+{
+    if(!selectedBoat) return;
+    DialogViewPolar *dvp=new DialogViewPolar(this);
+    dvp->setBoat(selectedBoat);
+    dvp->exec();
+    if(dvp)
+        delete dvp;
 }
 
 void MainWindow::slotPilototo(void)

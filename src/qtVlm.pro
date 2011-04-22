@@ -104,7 +104,8 @@ HEADERS += Dialogs/DialogGraphicsParams.h \
     interpolation.h \
     Dialogs/DialogRealBoatConfig.h \
     vlmpointgraphic.h \
-    Dialogs/DialogRealBoatPosition.h
+    Dialogs/DialogRealBoatPosition.h \
+    Dialogs/dialogviewpolar.h
 FORMS += Ui/boatAccount_dialog.ui \
     Ui/BoardVLM.ui \
     Ui/BoardReal.ui \
@@ -131,7 +132,8 @@ FORMS += Ui/boatAccount_dialog.ui \
     Ui/sailDocs.ui \
     Ui/realBoatConfig.ui \
     Ui/realBoatPosition.ui \
-    Ui/paramProxy.ui
+    Ui/paramProxy.ui \
+    Ui/dialogviewpolar.ui
 SOURCES += Dialogs/DialogGraphicsParams.cpp \
     Dialogs/DialogLoadGrib.cpp \
     Dialogs/DialogProxy.cpp \
@@ -204,7 +206,8 @@ SOURCES += Dialogs/DialogGraphicsParams.cpp \
     interpolation.cpp \
     Dialogs/DialogRealBoatConfig.cpp \
     vlmpointgraphic.cpp \
-    Dialogs/DialogRealBoatPosition.cpp
+    Dialogs/DialogRealBoatPosition.cpp \
+    Dialogs/dialogviewpolar.cpp
 unix:DEFINES += _TTY_POSIX_
 win32:DEFINES += _TTY_WIN_ \
     QWT_DLL \

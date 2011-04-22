@@ -271,6 +271,7 @@ public:
     QAction *acPOISave;
     QAction *acPOIRestore;
     QAction *acPilototo;
+    QAction *acShowPolar;
     QAction *acRace;
 
 
