@@ -575,48 +575,20 @@ Etes-vous sur ?</source>
 <context>
     <name>DialogProxy</name>
     <message>
-        <source>Valider</source>
-        <translation></translation>
-    </message>
-    <message>
         <source>Annuler</source>
-        <translation>Annuler</translation>
+        <translation type="obsolete">Annuler</translation>
     </message>
     <message>
         <source>Utilise les parametres de IE</source>
-        <translation>Utilise les paramètres de IE</translation>
-    </message>
-    <message>
-        <source>Serveur de proxy :</source>
-        <translation></translation>
-    </message>
-    <message>
-        <source>Utilisateur * :</source>
-        <translation></translation>
-    </message>
-    <message>
-        <source>Mot de passe * :</source>
-        <translation></translation>
-    </message>
-    <message>
-        <source>Mode de connexion a internet</source>
-        <translation></translation>
-    </message>
-    <message>
-        <source>Connexion directe a internet</source>
-        <translation></translation>
-    </message>
-    <message>
-        <source>Connexion a travers un proxy</source>
-        <translation></translation>
+        <translation type="obsolete">Utilise les paramètres de IE</translation>
     </message>
     <message>
         <source>Numero de port :</source>
-        <translation>Numéro de port:</translation>
+        <translation type="obsolete">Numéro de port:</translation>
     </message>
     <message>
         <source>(* si necessaire)</source>
-        <translation>(* si nécessaire)</translation>
+        <translation type="obsolete">(* si nécessaire)</translation>
     </message>
 </context>
 <context>
@@ -833,6 +805,45 @@ Etes-vous sur ?</source>
     <message>
         <source>Cancel</source>
         <translation>Annuler</translation>
+    </message>
+</context>
+<context>
+    <name>DialogViewPolar</name>
+    <message>
+        <source>Dialog</source>
+        <translation>Grib SailDocs</translation>
+    </message>
+    <message>
+        <source>Fermer</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Vitesse vent</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source> nds</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Best VMG pres</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>00.0</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Best VMG portant</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Tout afficher</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Analyse de la polaire: </source>
+        <translation></translation>
     </message>
 </context>
 <context>
@@ -1901,6 +1912,10 @@ Etes-vous sur ?</source>
         <source>Rejouer l&apos;historique des traces</source>
         <translation></translation>
     </message>
+    <message>
+        <source>Etudier la polaire</source>
+        <translation></translation>
+    </message>
 </context>
 <context>
     <name>POI</name>
@@ -2497,6 +2512,12 @@ Etes-vous sur ?</source>
     <message>
         <source>a ete desactive car vous n&apos;etes plus boatsitter</source>
         <translation>a été désactivé probablement parce que vous n&apos;êtes plus boatsitter</translation>
+    </message>
+    <message>
+        <source>TWA %ddeg, BS %.1fnds
+AWA %ddeg, AWS %.1fnds</source>
+        <translation>TWA %d°, BS %.1fnds
+AWA %d°, AWS %.1fnds</translation>
     </message>
 </context>
 <context>
@@ -3582,10 +3603,6 @@ Voulez-vous egalement supprimer tous les POIs lui appartenant?</source>
         <translation></translation>
     </message>
     <message>
-        <source>00a00&apos;00&apos;&apos; W</source>
-        <translation></translation>
-    </message>
-    <message>
         <source>000a00&apos;00&apos;&apos; W</source>
         <translation></translation>
     </message>
@@ -4472,6 +4489,21 @@ Voulez-vous egalement supprimer tous les POIs lui appartenant?</source>
     </message>
 </context>
 <context>
+    <name>myScene</name>
+    <message>
+        <source>Gesture</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Pan gesture detected</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Other gesture detected!!</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>opponent</name>
     <message>
         <source>Status VLM:</source>
@@ -4523,6 +4555,65 @@ Voulez-vous egalement supprimer tous les POIs lui appartenant?</source>
     <message>
         <source>Bateau VLM</source>
         <translation></translation>
+    </message>
+</context>
+<context>
+    <name>paramProxy_ui</name>
+    <message>
+        <source>Proxy parameter</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Direct connection to internet</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>proxyState</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Connection using a proxy</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Proxy config</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Proxy type</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>System default proxy</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>HTTP proxy</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>SOCKS5 proxy</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Proxy server</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Port number</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>User *</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Password *</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>(* if needed)</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
