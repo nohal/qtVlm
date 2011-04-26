@@ -163,7 +163,16 @@ void boatReal::decodeData(QByteArray data)
     /*QWARN << cnt++ << ": Lat= " << nmea_ndeg2degree(info.lat) << " (" << info.lat << "), Lon= "
             << nmea_ndeg2degree(info.lon) << " (" << info.lon << "), Sig=" << info.sig << ", Fix=" << info.fix << ", mask=" << parseMask(info.smask);
     */
-    qWarning()<<"speed:"<<info.speed<<"cap:"<<info.direction<<"lat:"<<info.lat;
+    QDateTime now;
+    now=now.currentDateTime();
+    QString s=now.toString("hh:mm:ss");
+    qWarning()<<s<<
+        "speed:"<<info.speed<<"cap:"<<info.direction<<"lat:"<<info.lat;
+    if(info.fix==1 || info.sig==0)
+    {
+        qWarning()<<"bad gps signal, fix="<<info.fix<<",sig="<<info.sig;
+        return;
+    }
     this->speed=info.speed/1.852;
     this->heading=info.direction;
     this->lat=nmea_ndeg2degree(info.lat);
@@ -179,7 +188,7 @@ void boatReal::decodeData(QByteArray data)
     gotPosition=true;
     previousLon=lon;
     previousLat=lat;
-    emit boatUpdated(this,false,false);
+    //emit boatUpdated(this,false,false); /* made elsewhere*/
 }
 
 void boatReal::setPosition(double lat, double lon)
@@ -393,20 +402,19 @@ bool ReceiverThread::initPort(void)
     port->setParity(PAR_NONE);
     port->setDataBits(DATA_8);
     port->setStopBits(STOP_1);
-    if(!port->open(QIODevice::ReadOnly))
+    if(!port->open(QIODevice::ReadOnly | QIODevice::Unbuffered))
     {
         qWarning() << "Can't open Serial port " << port->portName() << " (" << port->lastError() << ")";
         return false;
     }
-    else
-        return true;
+    //port->write("$PSRF");
+    return true;
 }
 
 void ReceiverThread::run()
 {
     int numBytes = 0;
     int l = 512;
-
     if(!port || !port->isOpen())
     {
         /*retry to open the port*/
@@ -422,33 +430,40 @@ void ReceiverThread::run()
 
     stop=false;
     /*clear port*/
-    while(port->bytesAvailable()>0)
-        port->read(512);
-    emit updateBoat((boat *) parent,false,false);
+    //port->readAll();
     while (!stop)
     {
+//        port->readAll();
+//        sleep(1);
+//        port->waitForReadyRead(3000);
         numBytes = port->bytesAvailable();
+        int pass=0;
         if(numBytes > l)
         {
             QByteArray buffer;
-            while(port->bytesAvailable()>0)
+            while(port->bytesAvailable()>0 /*&& pass<20*/)
+            {
+                ++pass;
                 buffer=buffer+port->read(512);
+            }
             QList<QByteArray> lines=buffer.split('\n');
             for (int n=0;n<lines.count();n++)
             {
                 if(lines.at(n).count()!=0)
                 {
 
-                    //QString temp=QString(lines.at(n));
-                    //if(temp.left(6)!="$GPRMC") continue;
-                    emit decodeData(lines.at(n).left(lines.at(n).length()-1));
+                    QString temp=QString(lines.at(n).left(lines.at(n).length()-1));
+                    qWarning()<<temp;
+                    parent->decodeData(lines.at(n).left(lines.at(n).length()-1));
+                    //emit decodeData(lines.at(n).left(lines.at(n).length()-1));
                 }
             }
             emit updateBoat((boat *) parent,false,false);
         }
         qWarning()<<"sleeping";
 #warning a mettre en parametre
-        sleep(3);
+        this->msleep(3000);
+        qWarning()<<"waking up";
     }
     port->close();
     qWarning() << "Exiting thread loop";
