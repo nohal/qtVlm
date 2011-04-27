@@ -79,6 +79,9 @@ class boatReal : public boat
         /* event propagé par la scene */
         bool tryMoving(int x, int y);
         time_t getLastUpdateTime(){return this->lastUpdateTime;}
+        int getFix(){return fix;}
+        int getSig(){return sig;}
+        double getPdop(){return pdop;}
 
     public slots:
         void decodeData(QByteArray data);
@@ -115,6 +118,9 @@ class boatReal : public boat
         bool isMoving;
         int mouse_x,mouse_y;
         time_t lastUpdateTime;
+        int     sig;        /**< GPS quality indicator (0 = Invalid; 1 = Fix; 2 = Differential, 3 = Sensitive) */
+        int     fix;        /**< Operating mode, used for navigation (1 = Fix not available; 2 = 2D; 3 = 3D) */
+        double  pdop;
 };
 
 

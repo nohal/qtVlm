@@ -71,6 +71,7 @@ public:
     int  getNearestDateGrib(time_t tm);*/
 
     void updateBoatList(QList<boatVLM*> & boat_list);
+    void insertBoatReal(QString name);
     void clearListeDates(void);
     void setSelectedBoatIndex(int index);
     void addMenuRoute(ROUTE * route);

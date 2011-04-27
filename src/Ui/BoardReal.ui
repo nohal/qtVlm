@@ -151,7 +151,7 @@
          <bool>true</bool>
         </property>
         <property name="numDigits">
-         <number>3</number>
+         <number>4</number>
         </property>
         <property name="segmentStyle">
          <enum>QLCDNumber::Filled</enum>

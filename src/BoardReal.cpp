@@ -75,7 +75,6 @@ void boardReal::boatUpdated(void)
         qWarning() << "No current real boat";
         return;
     }
-
     /* boat position */
     latitude->setText(Util::pos2String(TYPE_LAT,myBoat->getLat()));
     longitude->setText(Util::pos2String(TYPE_LON,myBoat->getLon()));
@@ -88,9 +87,41 @@ void boardReal::boatUpdated(void)
     this->speed->display(myBoat->getSpeed());
 
     /* GPS status */
+    QString status;
     if(myBoat->gpsIsRunning())
     {
-        gpsStatus->setText("Running");
+        status="running\n";
+        if(myBoat->getSig()==0)
+            status=status+"no signal\n";
+        else if(myBoat->getSig()==1)
+            status=status+"Fix qualitys\n";
+        else if (myBoat->getSig()==2)
+            status=status+"Differential quality\n";
+        else if (myBoat->getSig()==3)
+            status=status+"Sensitive quality\n";
+        if(myBoat->getFix()==1)
+            status=status+"no position";
+        else if(myBoat->getFix()==2)
+            status=status+"2D position";
+        else
+            status=status+"3D position";
+        if(myBoat->getFix()>1)
+        {
+            status=status+"\n";
+            if(myBoat->getPdop()<=1)
+                status=status+"Ideal accuracy";
+            else if(myBoat->getPdop()<=2)
+                status=status+"Excellent accuracy";
+            else if(myBoat->getPdop()<=1)
+                status=status+"Good accuracy";
+            else if(myBoat->getPdop()<=5)
+                status=status+"Moderate accuracy";
+            else if(myBoat->getPdop()<=20)
+                status=status+"Bad accuracy";
+            else
+                status=status+"Very bad accuracy";
+        }
+        gpsStatus->setText(status);
         this->startBtn->setEnabled(false);
         this->stopBtn->setEnabled(true);
     }

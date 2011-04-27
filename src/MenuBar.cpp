@@ -596,6 +596,13 @@ void MenuBar::setIsotherms0Step(int step) {
 }
 
 //------------------------------------------------------------
+void MenuBar::insertBoatReal(QString name)
+{
+    boatList->clear();
+    boatList->addItem(name);
+    boatList->setCurrentIndex(0);
+}
+
 void MenuBar::updateBoatList(QList<boatVLM*> & boat_list)
 {
     while(boatList->count())

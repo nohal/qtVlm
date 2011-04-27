@@ -535,31 +535,42 @@ boat * myCentralWidget::getSelectedBoat(void)
 
 void myCentralWidget::slot_Zoom_All()
 {
+    main->getSelectedBoat()->blockSignals(true);
     proj->zoomAll();
+    main->getSelectedBoat()->blockSignals(false);
 }
 
 void myCentralWidget::slot_Go_Left()
 {
+    main->getSelectedBoat()->blockSignals(true);
     proj->move( 0.2, 0);
+    main->getSelectedBoat()->blockSignals(false);
 }
 
 void myCentralWidget::slot_Go_Right()
 {
+    main->getSelectedBoat()->blockSignals(true);
     proj->move(-0.2, 0);
+    main->getSelectedBoat()->blockSignals(false);
 }
 
 void myCentralWidget::slot_Go_Up()
 {
+    main->getSelectedBoat()->blockSignals(true);
     proj->move(0,  -0.2);
+    main->getSelectedBoat()->blockSignals(false);
 }
 
 void myCentralWidget::slot_Go_Down()
 {
+    main->getSelectedBoat()->blockSignals(true);
     proj->move(0,  0.2);
+    main->getSelectedBoat()->blockSignals(false);
 }
 
 void myCentralWidget::slot_Zoom_In(float quantity)
 {
+    main->getSelectedBoat()->blockSignals(true);
     if(keepPos)
     {
         if(main->getSelectedBoat())
@@ -567,15 +578,18 @@ void myCentralWidget::slot_Zoom_In(float quantity)
             if (proj->isPointVisible(main->getSelectedBoat()->getLon(),main->getSelectedBoat()->getLat()))
             {
                 proj->zoomKeep(main->getSelectedBoat()->getLon(),main->getSelectedBoat()->getLat(),quantity);
+                main->getSelectedBoat()->blockSignals(false);
                 return;
             }
         }
     }
     proj->zoom(quantity);
+    main->getSelectedBoat()->blockSignals(false);
 }
 
 void myCentralWidget::slot_Zoom_Out(float quantity)
 {
+    main->getSelectedBoat()->blockSignals(true);
     if(keepPos)
     {
         if(main->getSelectedBoat())
@@ -583,15 +597,18 @@ void myCentralWidget::slot_Zoom_Out(float quantity)
            if (proj->isPointVisible(main->getSelectedBoat()->getLon(),main->getSelectedBoat()->getLat()))
            {
                proj->zoomKeep(main->getSelectedBoat()->getLon(),main->getSelectedBoat()->getLat(),1/quantity);
+               main->getSelectedBoat()->blockSignals(false);
                return;
            }
         }
     }
     proj->zoom(1/quantity);
+    main->getSelectedBoat()->blockSignals(false);
 }
 
 void myCentralWidget::slot_Zoom_Wheel(float quantity, int XX, int YY, bool centerOnWheel)
 {
+    main->getSelectedBoat()->blockSignals(true);
     double lat,lon;
     proj->screen2map(XX,YY,&lon,&lat);
     double newScale=proj->getScale();
@@ -619,16 +636,19 @@ void myCentralWidget::slot_Zoom_Wheel(float quantity, int XX, int YY, bool cente
                    proj->zoomKeep(main->getSelectedBoat()->getLon(),
                                   main->getSelectedBoat()->getLat(),
                                   newScale/proj->getScale());
+                   main->getSelectedBoat()->blockSignals(false);
                    return;
                }
             }
         }
         proj->setScale(newScale);
     }
+    main->getSelectedBoat()->blockSignals(false);
 }
 
 void myCentralWidget::slot_Zoom_Sel()
 {
+    main->getSelectedBoat()->blockSignals(true);
     double x0, y0, x1, y1;
     if (selection->getZone(&x0,&y0, &x1,&y1))
     {
@@ -641,6 +661,7 @@ void myCentralWidget::slot_Zoom_Sel()
     {
         zoomOnGrib();
     }
+    main->getSelectedBoat()->blockSignals(false);
 }
 
 /**************************/
@@ -2313,6 +2334,7 @@ void myCentralWidget::slot_playerSelected(Player * player)
             main->getBoard()->boatUpdated(realBoat);
             main->slotBoatUpdated(realBoat,true,false);;
             emit shRouBis();
+            menuBar->insertBoatReal(realBoat->getplayerName());
         }
     }
     else

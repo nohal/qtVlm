@@ -79,9 +79,12 @@ boatReal::boatReal(QString pseudo, bool activated, Projection * proj,MainWindow 
     this->setStatus(true);
     this->vacLen=300;
     this->playerName=pseudo;
+    this->fix=1;
+    this->sig=0;
     changeLocked=false;
     forceEstime=false;
     //updateBoatData();
+
 
     myCreatePopUpMenu();
 }
@@ -168,6 +171,11 @@ void boatReal::decodeData(QByteArray data)
     QString s=now.toString("hh:mm:ss");
     qWarning()<<s<<
         "speed:"<<info.speed<<"cap:"<<info.direction<<"lat:"<<info.lat;
+    this->fix=info.fix;
+    this->sig=info.sig;
+    this->pdop=info.PDOP;
+    if(sig<0 || sig>3)
+        qWarning()<<"strange sig value:"<<sig;
     if(info.fix==1 || info.sig==0)
     {
         qWarning()<<"bad gps signal, fix="<<info.fix<<",sig="<<info.sig;
@@ -402,12 +410,13 @@ bool ReceiverThread::initPort(void)
     port->setParity(PAR_NONE);
     port->setDataBits(DATA_8);
     port->setStopBits(STOP_1);
-    if(!port->open(QIODevice::ReadOnly | QIODevice::Unbuffered))
+    if(!port->open(QIODevice::ReadWrite | QIODevice::Unbuffered))
     {
         qWarning() << "Can't open Serial port " << port->portName() << " (" << port->lastError() << ")";
         return false;
     }
-    //port->write("$PSRF");
+    port->write("$PSRF151,01*0F"); /*enabling WAAS/EGNOS on sirf chipset*/
+    port->flush();
     return true;
 }
 
@@ -433,9 +442,6 @@ void ReceiverThread::run()
     //port->readAll();
     while (!stop)
     {
-//        port->readAll();
-//        sleep(1);
-//        port->waitForReadyRead(3000);
         numBytes = port->bytesAvailable();
         int pass=0;
         if(numBytes > l)
