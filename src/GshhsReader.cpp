@@ -16,9 +16,12 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ***********************************************************************/
 
+#include <QDebug>
+
 #include "GshhsReader.h"
 
 #include "GshhsRangsReader.h"
+#include "GshhsPolyReader.h"
 #include "Projection.h"
 
 //==========================================================
@@ -120,6 +123,7 @@ GshhsReader::GshhsReader(std::string fpath_, int quality)
 {
     fpath = fpath_;
     gshhsRangsReader = new GshhsRangsReader(fpath);
+    gshhsPreader = new GshhsPolyReader(fpath);
     isUsingRangsReader = true;
     for (int qual=0; qual<5; qual++)
     {
@@ -140,7 +144,8 @@ GshhsReader::GshhsReader(std::string fpath_, int quality)
 GshhsReader::GshhsReader(const GshhsReader &model)
 {
     fpath = model.fpath;
-    gshhsRangsReader = new GshhsRangsReader(fpath);	
+    gshhsRangsReader = new GshhsRangsReader(fpath);
+    gshhsPreader = new GshhsPolyReader(fpath);
     isUsingRangsReader = model.isUsingRangsReader;
     // reuse lists of polygons
     for (int qual=0; qual<5; qual++)
@@ -309,6 +314,7 @@ void GshhsReader::setQuality(int quality_) // 5 levels: 0=low ... 4=full
     else if (quality > 4) quality = 4;
     
     gshhsRangsReader->setQuality(quality);
+    gshhsPreader->setQuality(quality);
 
     if (!isUsingRangsReader) {
 	    readGshhsFiles();
@@ -549,7 +555,8 @@ void GshhsReader::drawContinents( QPainter &pnt, Projection *proj,
     pnt.setPen(Qt::transparent);
 
     if (isUsingRangsReader) {
-        gshhsRangsReader->drawGshhsRangsMapPlain(pnt, proj, seaColor, landColor);
+        //gshhsRangsReader->drawGshhsRangsMapPlain(pnt, proj, seaColor, landColor);
+        gshhsPreader->drawGshhsPolyMapPlain(pnt, proj, seaColor, landColor);
         return;
     }
     
@@ -580,7 +587,8 @@ void GshhsReader::drawSeaBorders( QPainter &pnt, Projection *proj)
     pnt.setBrush(Qt::transparent);
     
     if (isUsingRangsReader) {
-       gshhsRangsReader->drawGshhsRangsMapSeaBorders(pnt, proj);
+       //gshhsRangsReader->drawGshhsRangsMapSeaBorders(pnt, proj);
+       gshhsPreader->drawGshhsPolyMapSeaBorders(pnt, proj);
        return;
     }
     
@@ -614,8 +622,10 @@ void GshhsReader::drawRivers( QPainter &pnt, Projection *proj)
 void GshhsReader::selectBestQuality(Projection *proj)
 {
 	double gshhsRangsThreshold = 200;	// FIXME
-	isUsingRangsReader = proj->getCoefremp()<gshhsRangsThreshold;
+        isUsingRangsReader = proj->getCoefremp()<gshhsRangsThreshold;
 	
+        qWarning() << "use rangs: " << isUsingRangsReader;
+
 	int bestQuality = 0;
 	if (proj->getCoefremp() > 50)
 		bestQuality = 0;

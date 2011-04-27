@@ -131,6 +131,8 @@ class GshhsReader
         
         GshhsRangsReader * gshhsRangsReader;
         bool               isUsingRangsReader;
+
+        GshhsPolyReader * gshhsPreader;
         
         std::string getNameExtension(int quality);
         std::string getFileName_gshhs(int quality);

@@ -105,7 +105,8 @@ HEADERS += Dialogs/DialogGraphicsParams.h \
     Dialogs/DialogRealBoatConfig.h \
     vlmpointgraphic.h \
     Dialogs/DialogRealBoatPosition.h \
-    Dialogs/dialogviewpolar.h
+    Dialogs/dialogviewpolar.h \
+    GshhsPolyReader.h
 FORMS += Ui/boatAccount_dialog.ui \
     Ui/BoardVLM.ui \
     Ui/BoardReal.ui \
@@ -207,7 +208,8 @@ SOURCES += Dialogs/DialogGraphicsParams.cpp \
     Dialogs/DialogRealBoatConfig.cpp \
     vlmpointgraphic.cpp \
     Dialogs/DialogRealBoatPosition.cpp \
-    Dialogs/dialogviewpolar.cpp
+    Dialogs/dialogviewpolar.cpp \
+    GshhsPolyReader.cpp
 unix:DEFINES += _TTY_POSIX_
 win32:DEFINES += _TTY_WIN_ \
     QWT_DLL \

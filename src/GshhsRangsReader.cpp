@@ -359,6 +359,8 @@ GshhsRangsReader::GshhsRangsReader(std::string rangspath)
 }
 bool GshhsRangsReader::crossing(QLineF traject,QLineF trajectWorld)
 {
+#warning forcing map crossing to false
+    return false;
     QPointF dummy;
     int cxmin, cxmax, cymax, cymin;  // cellules visibles
     cxmin = (int) floor (qMin(trajectWorld.p1().x(),trajectWorld.p2().x()));
