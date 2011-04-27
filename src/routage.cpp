@@ -42,7 +42,6 @@ Original code: virtual-winds.com
 #include "route.h"
 #include <QDebug>
 #include <QtConcurrentMap>
-#include "GshhsRangsReader.h"
 #include "GshhsReader.h"
 #include "vlmpointgraphic.h"
 
@@ -641,7 +640,7 @@ void ROUTAGE::calculate()
         QApplication::processEvents();
     }
     proj->setFrozen(true);
-    GshhsRangsReader *map=parent->get_gshhsReader()->getGshhsRangsReader();
+    GshhsReader *map=parent->get_gshhsReader();
     iso=new vlmLine(proj,myscene,Z_VALUE_ROUTAGE);
     iso->setParent(this);
     vlmPoint point(start.x(),start.y());

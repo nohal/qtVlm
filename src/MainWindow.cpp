@@ -431,10 +431,13 @@ MainWindow::MainWindow(int w, int h, QWidget *parent)
                 case 3: menuBar->acMap_Quality4->setEnabled(false); break;
                 case 4: menuBar->acMap_Quality5->setEnabled(false); break;
             }
-            if (quality > qual)
+            if (quality >= qual)
+            {
                 quality = qual-1;
+            }
         }
     }
+
     if (quality < 0) {
         QMessageBox::information (this,
             QString(tr("Erreur")),

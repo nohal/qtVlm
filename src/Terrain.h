@@ -24,7 +24,6 @@ Copyright (C) 2008 - Jacques Zaninetti - http://zygrib.free.fr
 
 #ifndef TERRAIN_H
 #define TERRAIN_H
-#include "GshhsRangsReader.h"
 #include "GshhsReader.h"
 #include <QGraphicsWidget>
 #include <QGraphicsSceneMouseEvent>
@@ -48,7 +47,7 @@ public:
 
     QRectF boundingRect() const;
     QPainterPath shape() const;
-    GshhsRangsReader * getMap(){return gshhsReader->getGshhsRangsReader();}
+    //GshhsRangsReader * getMap(){return gshhsReader->getGshhsRangsReader();}
 
     enum DrawGribPlainDataMode {
              drawNone,

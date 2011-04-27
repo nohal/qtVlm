@@ -34,7 +34,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "Grib.h"
 #include "Projection.h"
 #include "boatVLM.h"
-#include "GshhsRangsReader.h"
 #include "GshhsReader.h"
 #define COMPASS_MARGIN 30
 #define CROSS_SIZE 8
@@ -639,7 +638,7 @@ void mapCompass::updateCompassLineLabels(int x, int y)
     pos_angle=orth.getAzimutDeg();
     pos_distance=orth.getDistance();
     bool drawWindAngle=true;
-    GshhsRangsReader *map=parent->get_gshhsReader()->getGshhsRangsReader();
+    GshhsReader *map=parent->get_gshhsReader();
     if(this->isVisible())
     {
         if(map->crossing(QLineF(XX,YY,x,y),QLineF(xa,ya,xb,yb)))

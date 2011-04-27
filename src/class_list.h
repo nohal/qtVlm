@@ -89,9 +89,6 @@ class GribRecord;
 /* GshhsReader.h */
 class GshhsReader;
 
-/* GshhsRangsReader.h */
-class GshhsRangsReader;
-
 /* GshhsPolyReader.h */
 class GshhsPolyReader;
 

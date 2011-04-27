@@ -7,7 +7,6 @@
 #include "Polar.h"
 #include <QDebug>
 #include "settings.h"
-#include "GshhsRangsReader.h"
 #include "GshhsReader.h"
 
 DialogTwaLine::DialogTwaLine(QPointF start, myCentralWidget *parent, MainWindow *main) : QDialog(parent)
@@ -131,8 +130,8 @@ void DialogTwaLine::traceIt()
     time_t maxDate=grib->getMaxDate();
     bool crossing=false;
     int i1,j1,i2,j2;
-    GshhsRangsReader *map=parent->get_gshhsReader()->getGshhsRangsReader();
-    int mapQuality=map->currentQuality;
+    GshhsReader *map=parent->get_gshhsReader();
+    int mapQuality=map->getQuality();
     for (int page=0;page<5;page++)
     {
         if (nbVac[page]==0) continue;

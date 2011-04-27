@@ -155,7 +155,7 @@ void GshhsPolyCell::DrawPolygonContour(QPainter &pnt,contour_list * p, double dx
     long_max=((double)x0cell+(double)header->pasx);
     lat_max=((double)y0cell+(double)header->pasy);
 
-    qWarning()  << long_min << "," << lat_min << long_max << "," << lat_max;
+    //qWarning()  << long_min << "," << lat_min << long_max << "," << lat_max;
 
     for (int i= 0; i < p->count(); i++)
     {

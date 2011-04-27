@@ -119,39 +119,31 @@ class GshhsReader
         void drawRivers( QPainter &pnt, Projection *proj);
         
         bool gshhsFilesExists(int quality);
-        GshhsRangsReader * getGshhsRangsReader(){return gshhsRangsReader;}
         int  getQuality()   {return quality;}
+
+        bool crossing(QLineF ,QLineF ) { return false; }
 
     private:
         int quality, userPreferredQuality;  // 5 levels: 0=low ... 4=full
         void setQuality(int quality);
-		void selectBestQuality(Projection *proj);
+        void selectBestQuality(Projection *proj);
 
         std::string fpath;     // directory containing gshhs files
         
-        GshhsRangsReader * gshhsRangsReader;
-        bool               isUsingRangsReader;
-
-        GshhsPolyReader * gshhsPreader;
+        GshhsPolyReader * gshhsPoly_reader;
         
         std::string getNameExtension(int quality);
-        std::string getFileName_gshhs(int quality);
         std::string getFileName_boundaries(int quality);
         std::string getFileName_rivers(int quality);
-        void		readGshhsFiles();
         
         //-----------------------------------------------------
         // Listes de polygones
         // Pour chaque type, une liste par niveau de qualité,
         // pour éviter les relectures de fichier (pb mémoire ?)
-        std::list<GshhsPolygon*> * lsPoly_level1  [5];
-        std::list<GshhsPolygon*> * lsPoly_level2  [5];
-        std::list<GshhsPolygon*> * lsPoly_level3  [5];
-        std::list<GshhsPolygon*> * lsPoly_level4  [5];
+
         std::list<GshhsPolygon*> * lsPoly_boundaries [5];
         std::list<GshhsPolygon*> * lsPoly_rivers  [5];
 
-        std::list<GshhsPolygon*> & getList_level(int level);
         std::list<GshhsPolygon*> & getList_boundaries();
         std::list<GshhsPolygon*> & getList_rivers();
         //-----------------------------------------------------
@@ -159,9 +151,7 @@ class GshhsReader
         int GSHHS_scaledPoints(GshhsPolygon *pol, QPoint *pts, double decx,
                                 Projection *proj
         );
-        void GsshDrawPolygons(QPainter &pnt, std::list<GshhsPolygon*> &lst,
-                                Projection *proj
-        );
+
         void GsshDrawLines(QPainter &pnt, std::list<GshhsPolygon*> &lst,
                                 Projection *proj, bool isClosed
         );

@@ -28,7 +28,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "Polar.h"
 #include "settings.h"
 #include "Player.h"
-#include "GshhsRangsReader.h"
 #include "GshhsReader.h"
 #include "boat.h"
 
@@ -357,8 +356,8 @@ void boat::drawEstime(float myHeading, float mySpeed)
         Util::getCoordFromDistanceAngle(lat,lon,estime,myHeading,&tmp_lat,&tmp_lon);
         proj->map2screen(lon,lat,&i1,&j1);
         proj->map2screen(tmp_lon,tmp_lat,&i2,&j2);
-        GshhsRangsReader *map=parent->get_gshhsReader()->getGshhsRangsReader();
-        if(map->currentQuality>=3)
+        GshhsReader *map=parent->get_gshhsReader();
+        if(map->getQuality()>=3)
         {
             if(map->crossing(QLineF(i1,j1,i2,j2),QLineF(lon,lat,tmp_lon,tmp_lat)))
             {

@@ -20,7 +20,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "GshhsReader.h"
 
-#include "GshhsRangsReader.h"
 #include "GshhsPolyReader.h"
 #include "Projection.h"
 
@@ -29,7 +28,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //==========================================================
 GshhsPolygon::GshhsPolygon(ZUFILE *file_)
 {
- 	file  = file_;
+    file  = file_;
     ok = true;
     id    = readInt4();
     n     = readInt4();
@@ -41,11 +40,11 @@ GshhsPolygon::GshhsPolygon(ZUFILE *file_)
     area  = readInt4();
     greenwich = readInt2();
     readInt2();   // source
-//printf("%d %d %d\n", id, n, ok);
+    //printf("%d %d %d\n", id, n, ok);
     antarctic = (west==0 && east==360);
     if (ok)
     {
-		double x, y=-90;
+        double x, y=-90;
         
         for (int i=0; i<n; i++) {
             x = readInt4() * 1e-6;
@@ -53,7 +52,7 @@ GshhsPolygon::GshhsPolygon(ZUFILE *file_)
                 x -= 360;
             y = readInt4() * 1e-6;
             lsPoints.push_back(new GshhsPoint(x,y));
-/*if (antarctic)
+            /*if (antarctic)
 {
 	printf("x %12.8f %12.8f\n", x,y);
 }*/
@@ -61,11 +60,11 @@ GshhsPolygon::GshhsPolygon(ZUFILE *file_)
         
     	// force l'Antarctic �  être un "rectangle" qui passe par le pôle
         if (antarctic) {
-        	lsPoints.push_front(new GshhsPoint(360, y));
-        	lsPoints.push_front(new GshhsPoint(360,-90));
+            lsPoints.push_front(new GshhsPoint(360, y));
+            lsPoints.push_front(new GshhsPoint(360,-90));
             lsPoints.push_back(new GshhsPoint(0,-90));
         }
-    
+
     }
 }
 
@@ -122,15 +121,9 @@ GshhsPolygon::~GshhsPolygon() {
 GshhsReader::GshhsReader(std::string fpath_, int quality)
 {
     fpath = fpath_;
-    gshhsRangsReader = new GshhsRangsReader(fpath);
-    gshhsPreader = new GshhsPolyReader(fpath);
-    isUsingRangsReader = true;
+    gshhsPoly_reader = new GshhsPolyReader(fpath);
     for (int qual=0; qual<5; qual++)
     {
-        lsPoly_level1[qual] = new std::list<GshhsPolygon*>;
-        lsPoly_level2[qual] = new std::list<GshhsPolygon*>;
-        lsPoly_level3[qual] = new std::list<GshhsPolygon*>;
-        lsPoly_level4[qual] = new std::list<GshhsPolygon*>;
         lsPoly_boundaries[qual] = new std::list<GshhsPolygon*>;
         lsPoly_rivers[qual] = new std::list<GshhsPolygon*>;
     }
@@ -144,16 +137,10 @@ GshhsReader::GshhsReader(std::string fpath_, int quality)
 GshhsReader::GshhsReader(const GshhsReader &model)
 {
     fpath = model.fpath;
-    gshhsRangsReader = new GshhsRangsReader(fpath);
-    gshhsPreader = new GshhsPolyReader(fpath);
-    isUsingRangsReader = model.isUsingRangsReader;
+    gshhsPoly_reader = new GshhsPolyReader(fpath);
     // reuse lists of polygons
     for (int qual=0; qual<5; qual++)
     {
-        lsPoly_level1[qual] = model.lsPoly_level1[qual];
-        lsPoly_level2[qual] = model.lsPoly_level2[qual];
-        lsPoly_level3[qual] = model.lsPoly_level3[qual];
-        lsPoly_level4[qual] = model.lsPoly_level4[qual];
         lsPoly_boundaries[qual] = model.lsPoly_boundaries[qual];
         lsPoly_rivers[qual] = model.lsPoly_rivers[qual];
     }
@@ -173,22 +160,6 @@ void GshhsReader::clearLists() {
     std::list<GshhsPolygon*>::iterator itp;
     for (int qual=0; qual<5; qual++)
     {
-        for (itp=lsPoly_level1[qual]->begin(); itp != lsPoly_level1[qual]->end(); itp++) {
-            delete *itp;
-            *itp = NULL;
-        }
-        for (itp=lsPoly_level2[qual]->begin(); itp != lsPoly_level2[qual]->end(); itp++) {
-            delete *itp;
-            *itp = NULL;
-        }
-        for (itp=lsPoly_level3[qual]->begin(); itp != lsPoly_level3[qual]->end(); itp++) {
-            delete *itp;
-            *itp = NULL;
-        }
-        for (itp=lsPoly_level4[qual]->begin(); itp != lsPoly_level4[qual]->end(); itp++) {
-            delete *itp;
-            *itp = NULL;
-        }
         for (itp=lsPoly_boundaries[qual]->begin(); itp != lsPoly_boundaries[qual]->end(); itp++) {
             delete *itp;
             *itp = NULL;
@@ -197,10 +168,7 @@ void GshhsReader::clearLists() {
             delete *itp;
             *itp = NULL;
         }
-        lsPoly_level1[qual]->clear();
-        lsPoly_level2[qual]->clear();
-        lsPoly_level3[qual]->clear();
-        lsPoly_level4[qual]->clear();
+
         lsPoly_boundaries[qual]->clear();
         lsPoly_rivers[qual]->clear();
     }
@@ -220,24 +188,7 @@ std::string GshhsReader::getNameExtension(int quality)
     }
     return ext;
 }
-std::string GshhsReader::getFileName_gshhs(int quality)
-{
-/*    std::string fname, ext;
-    ext = getNameExtension(quality);
-    fname = fpath+"/"+"gshhs_" + ext + ".b";*/
-    
-    // Lit le .rim de RANGS �  la place du fichier initial
-    char txtn[16];
-    if (quality < 0)   quality = 0;
-    if (quality > 4)   quality = 4;
-    snprintf(txtn, 10, "%d", 4-quality);   // précision inversée :(
-    
-    std::string fname;
-    fname = fpath+"/"+"gshhs_" + txtn + ".rim";
 
-//printf("%s\n", fname.c_str());
-    return fname;
-}
 std::string GshhsReader::getFileName_boundaries(int quality) {
     std::string fname, ext;
     ext = getNameExtension(quality);
@@ -254,7 +205,10 @@ std::string GshhsReader::getFileName_rivers(int quality) {
 //-----------------------------------------------------------------------
 bool GshhsReader::gshhsFilesExists(int quality)
 {
-    if (zu_can_read_file( getFileName_gshhs(quality).c_str() ) == 0)
+    std::string fname, ext;
+    ext = getNameExtension(quality);
+    fname = fpath+"/"+"poly-" + ext + "-1.dat";
+    if(!QFile::exists(QString().fromStdString(fname)))
         return false;
     if (zu_can_read_file( getFileName_boundaries(quality).c_str() ) == 0)
         return false;
@@ -263,37 +217,6 @@ bool GshhsReader::gshhsFilesExists(int quality)
     return true;
 }
 
-//-----------------------------------------------------------------------
-void GshhsReader::readGshhsFiles()
-{
-    std::string fname;
-    ZUFILE *file;
-    bool   ok;
-
-	// Bordures des continents (4 niveaux) (gshhs_[clihf].b)
-	if (lsPoly_level1[quality]->size() == 0) { // on ne lit qu'une fois le fichier
-		fname = getFileName_gshhs(quality);
-		file = zu_open(fname.c_str(), "rb");
-		if (file != NULL) {
-			
-			ok = true;
-			while (ok) {
-				GshhsPolygon *poly = new GshhsPolygon(file);
-				ok = poly->isOk();
-				if (ok) {
-					switch (poly->getLevel()) {
-						case 1: lsPoly_level1[quality]->push_back(poly); break;
-						case 2: lsPoly_level2[quality]->push_back(poly); break;
-						case 3: lsPoly_level3[quality]->push_back(poly); break;
-						case 4: lsPoly_level4[quality]->push_back(poly); break;
-					}
-				}
-			}
-			zu_close(file);
-		}
-		//printf("GshhsReader::readGshhsFiles(%d)\n", quality);
-	}
-}
 
 //-----------------------------------------------------------------------
 void GshhsReader::setUserPreferredQuality(int quality_) // 5 levels: 0=low ... 4=full
@@ -313,13 +236,9 @@ void GshhsReader::setQuality(int quality_) // 5 levels: 0=low ... 4=full
     if (quality < 0) quality = 0;
     else if (quality > 4) quality = 4;
     
-    gshhsRangsReader->setQuality(quality);
-    gshhsPreader->setQuality(quality);
+    //gshhsRangsReader->setQuality(quality);
+    gshhsPoly_reader->setQuality(quality);
 
-    if (!isUsingRangsReader) {
-	    readGshhsFiles();
-    }
-        
     // Frontieres politiques
     if (lsPoly_boundaries[quality]->size() == 0) { // on ne lit qu'une fois le fichier
         fname = getFileName_boundaries(quality);
@@ -357,16 +276,6 @@ void GshhsReader::setQuality(int quality_) // 5 levels: 0=low ... 4=full
     }
 }
 
-//-----------------------------------------------------------------------
-std::list<GshhsPolygon*> & GshhsReader::getList_level(int level) {
-    switch (level) {
-        case 1: return * lsPoly_level1[quality];
-        case 2: return * lsPoly_level2[quality];
-        case 3: return * lsPoly_level3[quality];
-        case 4: return * lsPoly_level4[quality];
-        default: return * lsPoly_level1[quality];
-    }
-}
 //-----------------------------------------------------------------------
 std::list<GshhsPolygon*> & GshhsReader::getList_boundaries() {
     return * lsPoly_boundaries[quality];
@@ -421,42 +330,6 @@ int GshhsReader::GSHHS_scaledPoints(
     }
 	//if (j>1000)printf("%d\n", j);    
     return j;
-}
-
-//-----------------------------------------------------------------------
-void GshhsReader::GsshDrawPolygons(QPainter &pnt, std::list<GshhsPolygon*> &lst,
-                                Projection *proj
-        )
-{
-    std::list<GshhsPolygon*>::iterator iter;
-    GshhsPolygon *pol;
-    QPoint *pts = NULL;
-    int i;
-    int nbp;
-    
-    int nbmax = 10000;
-    pts = new QPoint[nbmax];
-    assert(pts);
-    
-    for  (i=0, iter=lst.begin(); iter!=lst.end(); iter++,i++) {
-        pol = *iter;
-        
-        if (nbmax < pol->n+2) {
-            nbmax = pol->n+2;
-            pts = new QPoint[nbmax];
-            assert(pts);
-        }
-        
-        nbp = GSHHS_scaledPoints(pol, pts, 0, proj);
-        if (nbp > 3)
-            pnt.drawPolygon(pts, nbp);
-            
-        nbp = GSHHS_scaledPoints(pol, pts, -360, proj);
-        if (nbp > 3)
-            pnt.drawPolygon(pts, nbp);
-    }
-
-    delete [] pts;
 }
 
 //-----------------------------------------------------------------------
@@ -550,58 +423,21 @@ void GshhsReader::drawContinents( QPainter &pnt, Projection *proj,
             QColor seaColor, QColor landColor
         )
 {
-	selectBestQuality(proj);
-	
+    selectBestQuality(proj);
+
     pnt.setPen(Qt::transparent);
 
-    if (isUsingRangsReader) {
-        //gshhsRangsReader->drawGshhsRangsMapPlain(pnt, proj, seaColor, landColor);
-        gshhsPreader->drawGshhsPolyMapPlain(pnt, proj, seaColor, landColor);
-        return;
-    }
-    
-    readGshhsFiles();
-    
-    // Continents (level 1)
-    pnt.setBrush(landColor);
-    GsshDrawPolygons(pnt, getList_level(1), proj);
-    // Grands lacs (level 2)
-    pnt.setBrush(seaColor);
-    GsshDrawPolygons(pnt, getList_level(2), proj);
-    // Terres dans les grands lacs (level 3)
-    pnt.setBrush(landColor);
-    GsshDrawPolygons(pnt, getList_level(3), proj);
-    // Lacs dans les terres dans les grands lacs (level 4)
-    pnt.setBrush(seaColor);
-    GsshDrawPolygons(pnt, getList_level(4), proj);
+    gshhsPoly_reader->drawGshhsPolyMapPlain(pnt, proj, seaColor, landColor);
 }
 
 //-----------------------------------------------------------------------
 void GshhsReader::drawSeaBorders( QPainter &pnt, Projection *proj)
 {
-//    if(proj->getFrozen()) //routage mode
-//        setQuality(this->userPreferredQuality);
-//    else
-	selectBestQuality(proj);
+    selectBestQuality(proj);
 
-    pnt.setBrush(Qt::transparent);
-    
-    if (isUsingRangsReader) {
-       //gshhsRangsReader->drawGshhsRangsMapSeaBorders(pnt, proj);
-       gshhsPreader->drawGshhsPolyMapSeaBorders(pnt, proj);
-       return;
-    }
-    
-    readGshhsFiles();
-    
-    // Continents (level 1)
-    GsshDrawLines(pnt, getList_level(1), proj, true);
-    // Grands lacs (level 2)
-    GsshDrawLines(pnt, getList_level(2), proj, true);
-    // Terres dans les grands lacs (level 3)
-    GsshDrawLines(pnt, getList_level(3), proj, true);
-    // Lacs dans les terres dans les grands lacs (level 4)
-    GsshDrawLines(pnt, getList_level(4), proj, true);
+    pnt.setBrush(Qt::transparent);    
+
+    gshhsPoly_reader->drawGshhsPolyMapSeaBorders(pnt, proj);
 }
 
 //-----------------------------------------------------------------------
@@ -621,30 +457,25 @@ void GshhsReader::drawRivers( QPainter &pnt, Projection *proj)
 //-----------------------------------------------------------------------
 void GshhsReader::selectBestQuality(Projection *proj)
 {
-	double gshhsRangsThreshold = 200;	// FIXME
-        isUsingRangsReader = proj->getCoefremp()<gshhsRangsThreshold;
-	
-        qWarning() << "use rangs: " << isUsingRangsReader;
-
-	int bestQuality = 0;
-	if (proj->getCoefremp() > 50)
-		bestQuality = 0;
-	else if (proj->getCoefremp() > 5)
-		bestQuality = 1;
-	else if (proj->getCoefremp() > 0.2)
-		bestQuality = 2;
-	else if (proj->getCoefremp() > 0.005)
-		bestQuality = 3;
-	else
-		bestQuality = 4;
+    int bestQuality = 0;
+    if (proj->getCoefremp() > 50)
+        bestQuality = 0;
+    else if (proj->getCoefremp() > 5)
+        bestQuality = 1;
+    else if (proj->getCoefremp() > 0.2)
+        bestQuality = 2;
+    else if (proj->getCoefremp() > 0.005)
+        bestQuality = 3;
+    else
+        bestQuality = 4;
 #if 1
-        if (bestQuality > userPreferredQuality)
-		setQuality(userPreferredQuality);
-	else
-		setQuality(bestQuality);
-#else
+    if (bestQuality > userPreferredQuality)
         setQuality(userPreferredQuality);
+    else
+        setQuality(bestQuality);
+#else
+    setQuality(userPreferredQuality);
 #endif
-        //printf("coefremp=%.2f usingRangs=%d qual=%d\n", proj->getCoefremp(),(int)isUsingRangsReader,getQuality());
+    //printf("coefremp=%.2f usingRangs=%d qual=%d\n", proj->getCoefremp(),(int)isUsingRangsReader,getQuality());
 }
 

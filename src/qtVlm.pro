@@ -55,7 +55,6 @@ HEADERS += Dialogs/DialogGraphicsParams.h \
     Dialogs/DialogInetProgess.h \
     BoardVLM.h \
     BoardVLM_tools.h \
-    GshhsRangsReader.h \
     GshhsReader.h \
     GisReader.h \
     Grib.h \
@@ -160,7 +159,6 @@ SOURCES += Dialogs/DialogGraphicsParams.cpp \
     Dialogs/DialogWp.cpp \
     Dialogs/DialogInetProgess.cpp \
     BoardVLM.cpp \
-    GshhsRangsReader.cpp \
     GshhsReader.cpp \
     GisReader.cpp \
     Grib.cpp \
