@@ -1141,6 +1141,10 @@ Etes-vous sur ?</source>
         <source> au </source>
         <translation></translation>
     </message>
+    <message>
+        <source>Votre blocnote a change!</source>
+        <translation type="unfinished">Votre blocnote a changé!</translation>
+    </message>
 </context>
 <context>
     <name>MenuBar</name>
