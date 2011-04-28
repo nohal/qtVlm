@@ -121,7 +121,7 @@ class GshhsReader
         bool gshhsFilesExists(int quality);
         int  getQuality()   {return quality;}
 
-        bool crossing(QLineF ,QLineF ) { return false; }
+        bool crossing(QLineF ,QLineF );
 
     private:
         int quality, userPreferredQuality;  // 5 levels: 0=low ... 4=full

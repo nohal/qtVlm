@@ -173,12 +173,15 @@ void GshhsPolyCell::DrawPolygonContour(QPainter &pnt,contour_list * p, double dx
             if ((((x1==x2) && ((x1==long_min) || (x1==long_max))) || ((y1==y2) && ((y1==lat_min) || (y1==lat_max))))==0)
             {
                 int a,b,c,d;
+                float A,B,C,D;
                 proj->map2screen(x1+dx,y1, &a, &b);
                 proj->map2screen(x2+dx,y2, &c, &d);
-
+                proj->map2screenFloat(x1+dx,y1, &A, &B);
+                proj->map2screenFloat(x2+dx,y2, &C, &D);
                 if(a!=c || b!=d)
                     pnt.drawLine(a,b,c,d);
-
+                if(A!=C || B!=D)
+                    coasts.append(QLineF(A,B,C,D));
             }
         }
 
@@ -190,10 +193,15 @@ void GshhsPolyCell::DrawPolygonContour(QPainter &pnt,contour_list * p, double dx
         if ((((x1==x2) && ((x1==long_min) || (x1==long_max))) || ((y1==y2) && ((y1==lat_min) || (y1==lat_max))))==0)
         {
             int a,b,c,d;
+            float A,B,C,D;
             proj->map2screen(x1+dx,y1, &a, &b);
             proj->map2screen(x2+dx,y2, &c, &d);
+            proj->map2screenFloat(x1+dx,y1, &A, &B);
+            proj->map2screenFloat(x2+dx,y2, &C, &D);
             if(a!=c || b!=d)
                 pnt.drawLine(a,b,c,d);
+            if(A!=C || B!=D)
+                coasts.append(QLineF(A,B,C,D));
         }
     }
 }
@@ -202,6 +210,7 @@ void GshhsPolyCell::DrawPolygonContour(QPainter &pnt,contour_list * p, double dx
 
 void GshhsPolyCell::drawSeaBorderLines(QPainter &pnt, double dx, Projection *proj)
 {
+    coasts.clear();
     DRAW_POLY_CONTOUR(&poly1)
     DRAW_POLY_CONTOUR(&poly2)
     DRAW_POLY_CONTOUR(&poly3)
@@ -255,13 +264,13 @@ bool GshhsPolyReader::crossing(QLineF traject,QLineF trajectWorld)
             {
                 if (allCells[cxx][cy+90] == NULL) continue;
                 cel = allCells[cxx][cy+90];
-                /*QList<QLineF> *coasts=cel->getCoasts();
+                QList<QLineF> *coasts=cel->getCoasts();
                 if (coasts->isEmpty()) continue;
                 for(int cs=0;cs<coasts->count();cs++)
                 {
                     if(coasts->at(cs).intersect(traject,&dummy)==QLineF::BoundedIntersection)
                         return true;
-                }*/
+                }
             }
         }
     }

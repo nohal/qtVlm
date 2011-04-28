@@ -64,7 +64,7 @@ class GshhsPolyCell
                     QColor seaColor, QColor landColor );
 
         void  drawSeaBorderLines(QPainter &pnt, double dx, Projection *proj);
-
+        QList<QLineF> * getCoasts(){return & coasts;}
     private:
         int nbpoints;
         int x0cell, y0cell;
