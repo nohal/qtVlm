@@ -249,7 +249,9 @@ void xml_boatData::slot_writeData(QList<Player*> & player_list,QList<raceData*> 
 
                 tag = doc.createElement(BOAT_NPD);
                 group.appendChild(tag);
-                t = doc.createTextNode(boat->getNpd());
+                QString temp=boat->getNpd();
+                temp=temp.replace(QString("\n"),QString("^!"));
+                t = doc.createTextNode(temp);
                 tag.appendChild(t);
 
             }
@@ -643,7 +645,10 @@ void xml_boatData::readBoat(QDomNode node,PlayerMap * pList)
                 {
                     dataNode = subNode.firstChild();
                     if(dataNode.nodeType() == QDomNode::TextNode)
-                        npd = dataNode.toText().data();
+                    {
+                        QString temp=dataNode.toText().data();
+                        npd = temp.replace(QString("^!"),QString("\n"));
+                    }
                 }
                 subNode = subNode.nextSibling();
             }

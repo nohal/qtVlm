@@ -23,6 +23,7 @@ bool DialogViewPolar::eventFilter(QObject *obj, QEvent *event)
     if(event->type()==QEvent::MouseButtonRelease)
     {
         imageContainer->setPixmap(image);
+        info->clear();
         return true;
     }
     if(event->type()!=QEvent::MouseMove)
@@ -52,10 +53,12 @@ bool DialogViewPolar::eventFilter(QObject *obj, QEvent *event)
     double bb=b+polarValues.at(angle);
     double aws=sqrt(a*a+bb*bb);
     double awa=90-radToDeg(atan(bb/a));
-    s=s.sprintf(QObject::tr("TWA %ddeg, BS %.1fnds\nAWA %ddeg, AWS %.1fnds").toAscii(),angle,polarValues.at(angle),qRound(awa),aws);
-    QRect r(polarLine.at(angle).x(),polarLine.at(angle).y(),500,500);
-    pp.drawText(r,s);
+    double vmg=polarValues.at(angle)*cos(degToRad(angle));
+    s=s.sprintf(QObject::tr("TWA %ddeg, BS %.1fnds\nAWA %ddeg, AWS %.1fnds\nVMG %.1fnds").toAscii(),angle,polarValues.at(angle),qRound(awa),aws,vmg);
+    //QRect r(polarLine.at(angle).x(),polarLine.at(angle).y(),500,500);
+    //pp.drawText(r,s);
     imageContainer->setPixmap(i2);
+    info->setText(s);
     return true;
 }
 void DialogViewPolar::setBoat(boat *myboat)
@@ -76,7 +79,7 @@ void DialogViewPolar::drawIt()
     if(this->allSpeed->isChecked())
         maxSpeed=polar->getMaxSpeed();
     pen.setBrush(Qt::red);
-    double maxSize=(image.height()/2)*0.8;
+    double maxSize=(image.height()/2)*0.92;
     double ws=this->doubleSpinBox->value();
     double wsMin=ws;
     double wsMax=ws;

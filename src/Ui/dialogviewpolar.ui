@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>488</width>
+    <width>542</width>
     <height>493</height>
    </rect>
   </property>
@@ -18,7 +18,7 @@
     <rect>
      <x>0</x>
      <y>6</y>
-     <width>481</width>
+     <width>531</width>
      <height>481</height>
     </rect>
    </property>
@@ -30,14 +30,14 @@
      <rect>
       <x>0</x>
       <y>0</y>
-      <width>479</width>
+      <width>529</width>
       <height>479</height>
      </rect>
     </property>
     <widget class="QPushButton" name="closeButton">
      <property name="geometry">
       <rect>
-       <x>368</x>
+       <x>398</x>
        <y>10</y>
        <width>93</width>
        <height>28</height>
@@ -50,7 +50,7 @@
     <widget class="QGroupBox" name="groupBox">
      <property name="geometry">
       <rect>
-       <x>348</x>
+       <x>378</x>
        <y>60</y>
        <width>121</width>
        <height>51</height>
@@ -99,8 +99,8 @@
     <widget class="QLabel" name="label">
      <property name="geometry">
       <rect>
-       <x>348</x>
-       <y>240</y>
+       <x>378</x>
+       <y>170</y>
        <width>111</width>
        <height>20</height>
       </rect>
@@ -112,8 +112,8 @@
     <widget class="QLabel" name="BVMG_up">
      <property name="geometry">
       <rect>
-       <x>350</x>
-       <y>270</y>
+       <x>380</x>
+       <y>200</y>
        <width>91</width>
        <height>20</height>
       </rect>
@@ -133,8 +133,8 @@
     <widget class="QLabel" name="BVMG_down">
      <property name="geometry">
       <rect>
-       <x>350</x>
-       <y>340</y>
+       <x>380</x>
+       <y>270</y>
        <width>91</width>
        <height>20</height>
       </rect>
@@ -154,8 +154,8 @@
     <widget class="QLabel" name="label_4">
      <property name="geometry">
       <rect>
-       <x>348</x>
-       <y>310</y>
+       <x>378</x>
+       <y>240</y>
        <width>111</width>
        <height>20</height>
       </rect>
@@ -167,7 +167,7 @@
     <widget class="QLabel" name="imageContainer">
      <property name="geometry">
       <rect>
-       <x>30</x>
+       <x>10</x>
        <y>20</y>
        <width>301</width>
        <height>441</height>
@@ -180,14 +180,27 @@
     <widget class="QCheckBox" name="allSpeed">
      <property name="geometry">
       <rect>
-       <x>358</x>
-       <y>140</y>
+       <x>380</x>
+       <y>120</y>
        <width>111</width>
        <height>20</height>
       </rect>
      </property>
      <property name="text">
       <string>Tout afficher</string>
+     </property>
+    </widget>
+    <widget class="QLabel" name="info">
+     <property name="geometry">
+      <rect>
+       <x>340</x>
+       <y>330</y>
+       <width>171</width>
+       <height>121</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string/>
      </property>
     </widget>
    </widget>

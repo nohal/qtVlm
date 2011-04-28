@@ -305,11 +305,13 @@ void boatVLM::requestFinished (QByteArray res_byte)
                     vacLen = result["VAC"].toInt();
                     if(npd!=result["NPD"].toString())
                     {
+                        //qWarning()<<"old npd"<<npd;
                         npd=result["NPD"].toString();
+                        //qWarning()<<"new npd"<<npd;
                         showNpd=true;
                     }
-                    else
-                        showNpd=false;
+                    //else
+                        //showNpd=false;
 
                     lat = latitude/1000;
                     lon = longitude/1000;
