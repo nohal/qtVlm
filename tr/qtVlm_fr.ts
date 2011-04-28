@@ -1143,7 +1143,7 @@ Etes-vous sur ?</source>
     </message>
     <message>
         <source>Votre blocnote a change!</source>
-        <translation type="unfinished">Votre blocnote a changé!</translation>
+        <translation>Votre blocnote a changé!</translation>
     </message>
 </context>
 <context>
@@ -2520,8 +2520,14 @@ Etes-vous sur ?</source>
     <message>
         <source>TWA %ddeg, BS %.1fnds
 AWA %ddeg, AWS %.1fnds</source>
-        <translation>TWA %d°, BS %.1fnds
+        <translation type="obsolete">TWA %d°, BS %.1fnds
 AWA %d°, AWS %.1fnds</translation>
+    </message>
+    <message>
+        <source>TWA %ddeg, BS %.1fnds
+AWA %ddeg, AWS %.1fnds
+VMG %.1fnds</source>
+        <translation></translation>
     </message>
 </context>
 <context>

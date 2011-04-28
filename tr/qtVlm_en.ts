@@ -1203,7 +1203,7 @@ Etes-vous sur ?</source>
         <translation>Display all</translation>
     </message>
     <message>
-        <location filename="../src/Dialogs/dialogviewpolar.cpp" line="64"/>
+        <location filename="../src/Dialogs/dialogviewpolar.cpp" line="67"/>
         <source>Analyse de la polaire: </source>
         <translation>Polar analysis: </translation>
     </message>
@@ -1561,7 +1561,7 @@ Etes-vous sur ?</source>
     <message>
         <location filename="../src/MainWindow.cpp" line="1435"/>
         <source>Votre blocnote a change!</source>
-        <translation type="unfinished">Your notepad has changed!</translation>
+        <translation>Your notepad has changed!</translation>
     </message>
     <message>
         <location filename="../src/MainWindow.cpp" line="1939"/>
@@ -3503,13 +3503,13 @@ Etes-vous sur ?</source>
     </message>
     <message>
         <location filename="../src/boatVLM.cpp" line="257"/>
-        <location filename="../src/boatVLM.cpp" line="349"/>
+        <location filename="../src/boatVLM.cpp" line="351"/>
         <source>Bateau au ponton</source>
         <translation>Boat at marina</translation>
     </message>
     <message>
         <location filename="../src/boatVLM.cpp" line="258"/>
-        <location filename="../src/boatVLM.cpp" line="350"/>
+        <location filename="../src/boatVLM.cpp" line="352"/>
         <source>Le bateau </source>
         <translation>Boat </translation>
     </message>
@@ -3519,7 +3519,7 @@ Etes-vous sur ?</source>
         <translation>has been deactivated probably because you are not boatsitter anymore</translation>
     </message>
     <message>
-        <location filename="../src/boatVLM.cpp" line="350"/>
+        <location filename="../src/boatVLM.cpp" line="352"/>
         <source>a ete desactive car hors course</source>
         <translation>has been deactivated because not engaged in any race</translation>
     </message>
@@ -3664,13 +3664,13 @@ Etes-vous sur ?</source>
         <translation>Simplification result</translation>
     </message>
     <message>
-        <location filename="../src/boatVLM.cpp" line="544"/>
+        <location filename="../src/boatVLM.cpp" line="546"/>
         <location filename="../src/opponentBoat.cpp" line="556"/>
         <source>Parametre bateau</source>
         <translation>Boat settings</translation>
     </message>
     <message>
-        <location filename="../src/xmlBoatData.cpp" line="391"/>
+        <location filename="../src/xmlBoatData.cpp" line="393"/>
         <location filename="../src/xmlPOIData.cpp" line="344"/>
         <source>Lecture de parametre bateau</source>
         <translation>Reading boat setting</translation>
@@ -3702,11 +3702,19 @@ Etes-vous sur ?</source>
         <translation>Departure and destination POIs are the same, you&apos;re already arrived...</translation>
     </message>
     <message>
-        <location filename="../src/Dialogs/dialogviewpolar.cpp" line="55"/>
         <source>TWA %ddeg, BS %.1fnds
 AWA %ddeg, AWS %.1fnds</source>
-        <translation>TWA %d°, BS %.1fkts
+        <translation type="obsolete">TWA %d°, BS %.1fkts
 AWA %d°, AWS %.1fkts</translation>
+    </message>
+    <message>
+        <location filename="../src/Dialogs/dialogviewpolar.cpp" line="57"/>
+        <source>TWA %ddeg, BS %.1fnds
+AWA %ddeg, AWS %.1fnds
+VMG %.1fnds</source>
+        <translation>TWA %d°, BS %.1fkts
+AWA %d°, AWS %.1fkts
+VMG %.1kts</translation>
     </message>
 </context>
 <context>
@@ -5565,7 +5573,7 @@ Voulez-vous egalement supprimer tous les POIs lui appartenant?</source>
 <context>
     <name>boatVLM</name>
     <message>
-        <location filename="../src/boatVLM.cpp" line="495"/>
+        <location filename="../src/boatVLM.cpp" line="497"/>
         <source>Arrivee&lt;br&gt;</source>
         <translation>Finish&lt;br&gt;</translation>
     </message>
@@ -5574,80 +5582,80 @@ Voulez-vous egalement supprimer tous les POIs lui appartenant?</source>
         <translation type="obsolete">Single buoy, leave to</translation>
     </message>
     <message>
-        <location filename="../src/boatVLM.cpp" line="487"/>
+        <location filename="../src/boatVLM.cpp" line="489"/>
         <source>Passer au moins une fois au Sud de cette ligne&lt;br&gt;</source>
         <translation>Sail at least once South of this line</translation>
     </message>
     <message>
-        <location filename="../src/boatVLM.cpp" line="488"/>
-        <location filename="../src/boatVLM.cpp" line="491"/>
+        <location filename="../src/boatVLM.cpp" line="490"/>
+        <location filename="../src/boatVLM.cpp" line="493"/>
         <source>Vous n&apos;etes pas oblige de couper la ligne</source>
         <translation>You are not obliged to cross the line</translation>
     </message>
     <message>
-        <location filename="../src/boatVLM.cpp" line="490"/>
+        <location filename="../src/boatVLM.cpp" line="492"/>
         <source>Passer au moins une fois au Nord de cette ligne&lt;br&gt;</source>
         <translation>Sail at least once North of this line</translation>
     </message>
     <message>
-        <location filename="../src/boatVLM.cpp" line="500"/>
         <location filename="../src/boatVLM.cpp" line="502"/>
+        <location filename="../src/boatVLM.cpp" line="504"/>
         <source>Une seule bouee a laisser au </source>
         <translation>Single buoy, leave to</translation>
     </message>
     <message>
-        <location filename="../src/boatVLM.cpp" line="505"/>
+        <location filename="../src/boatVLM.cpp" line="507"/>
         <source>Passage a deux bouees</source>
         <translation>Gate with two buoys</translation>
     </message>
     <message>
-        <location filename="../src/boatVLM.cpp" line="507"/>
+        <location filename="../src/boatVLM.cpp" line="509"/>
         <source>&lt;br&gt;A passer dans le sens des aiguilles d&apos;une montre</source>
         <translation>&lt;br&gt;Pass clockwise</translation>
     </message>
     <message>
-        <location filename="../src/boatVLM.cpp" line="509"/>
+        <location filename="../src/boatVLM.cpp" line="511"/>
         <source>&lt;br&gt;A passer dans le sens contraire des aiguilles d&apos;une montre</source>
         <translation>&lt;br&gt;Pass anti-clockwise</translation>
     </message>
     <message>
-        <location filename="../src/boatVLM.cpp" line="511"/>
+        <location filename="../src/boatVLM.cpp" line="513"/>
         <source>&lt;br&gt;Sens du passage libre</source>
         <translation>&lt;br&gt;Passage direction free</translation>
     </message>
     <message>
-        <location filename="../src/boatVLM.cpp" line="513"/>
+        <location filename="../src/boatVLM.cpp" line="515"/>
         <source>&lt;br&gt;Il est interdit de couper cette ligne plusieurs fois</source>
         <translation>&lt;br&gt;Forbidden to cross more then once</translation>
     </message>
     <message>
-        <location filename="../src/boatVLM.cpp" line="515"/>
+        <location filename="../src/boatVLM.cpp" line="517"/>
         <source>&lt;br&gt;Il est autorise de couper cette ligne plusieurs fois</source>
         <translation>&lt;br&gt;Number of crossings free</translation>
     </message>
     <message>
-        <location filename="../src/boatVLM.cpp" line="663"/>
+        <location filename="../src/boatVLM.cpp" line="665"/>
         <source>Hdg</source>
         <translation>Hdg</translation>
     </message>
     <message>
-        <location filename="../src/boatVLM.cpp" line="663"/>
-        <location filename="../src/boatVLM.cpp" line="666"/>
+        <location filename="../src/boatVLM.cpp" line="665"/>
+        <location filename="../src/boatVLM.cpp" line="668"/>
         <source>deg</source>
         <translation>°</translation>
     </message>
     <message>
-        <location filename="../src/boatVLM.cpp" line="679"/>
+        <location filename="../src/boatVLM.cpp" line="681"/>
         <source> (pas de polaire chargee)</source>
         <translation>(no polar loaded)</translation>
     </message>
     <message>
-        <location filename="../src/boatVLM.cpp" line="680"/>
+        <location filename="../src/boatVLM.cpp" line="682"/>
         <source> (format CSV)</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../src/boatVLM.cpp" line="681"/>
+        <location filename="../src/boatVLM.cpp" line="683"/>
         <source> (format POL)</source>
         <translation></translation>
     </message>
@@ -5660,22 +5668,22 @@ Voulez-vous egalement supprimer tous les POIs lui appartenant?</source>
         <translation type="obsolete"> </translation>
     </message>
     <message>
-        <location filename="../src/boatVLM.cpp" line="666"/>
+        <location filename="../src/boatVLM.cpp" line="668"/>
         <source>Angle</source>
         <translation>Angle</translation>
     </message>
     <message>
-        <location filename="../src/boatVLM.cpp" line="669"/>
+        <location filename="../src/boatVLM.cpp" line="671"/>
         <source>Ortho</source>
         <translation>Ortho</translation>
     </message>
     <message>
-        <location filename="../src/boatVLM.cpp" line="672"/>
+        <location filename="../src/boatVLM.cpp" line="674"/>
         <source>BVMG</source>
         <translation>BestVMG</translation>
     </message>
     <message>
-        <location filename="../src/boatVLM.cpp" line="675"/>
+        <location filename="../src/boatVLM.cpp" line="677"/>
         <source>VBVMG</source>
         <translation>VBVMG</translation>
     </message>
@@ -7480,22 +7488,22 @@ Voulez-vous egalement supprimer tous les POIs lui appartenant?</source>
 <context>
     <name>xml_boatData</name>
     <message>
-        <location filename="../src/xmlBoatData.cpp" line="418"/>
+        <location filename="../src/xmlBoatData.cpp" line="420"/>
         <source>Chargement des comptes/bateaux</source>
         <translation>Loading accounts/boats</translation>
     </message>
     <message>
-        <location filename="../src/xmlBoatData.cpp" line="419"/>
+        <location filename="../src/xmlBoatData.cpp" line="421"/>
         <source>Ancienne version de fichier, demarrage avec une configuration vide</source>
         <translation>File of previous version, start with empty config file</translation>
     </message>
     <message>
-        <location filename="../src/xmlBoatData.cpp" line="776"/>
+        <location filename="../src/xmlBoatData.cpp" line="781"/>
         <source>Parametrage des courses</source>
         <translation>Race settings</translation>
     </message>
     <message>
-        <location filename="../src/xmlBoatData.cpp" line="777"/>
+        <location filename="../src/xmlBoatData.cpp" line="782"/>
         <source>Nombre maximum de concurrent depasse</source>
         <translation>Maximum number of competitors exceeded</translation>
     </message>
