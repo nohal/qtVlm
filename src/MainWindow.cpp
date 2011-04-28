@@ -1429,6 +1429,13 @@ void MainWindow::slotBoatUpdated(boat * upBoat,bool newRace,bool doingSync)
         }
         emit updateRoute(boat);
         boat->showNextGates();
+        if(boat==selectedBoat && boat->getShowNpd())
+        {
+            QMessageBox::information (this,
+                QString(tr("Votre blocnote a change!")),
+                boat->getNpd());
+            boat->setShowNpd(false);
+        }
     }
     else
     {

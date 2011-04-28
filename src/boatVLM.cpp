@@ -69,6 +69,8 @@ boatVLM::boatVLM(QString pseudo, bool activated, int boatId, int playerId,Player
     myCreatePopUpMenu();
     this->initialized=false;
     own=QString();
+    npd=QString();
+    showNpd=false;
     //setStatus(activated);
 }
 
@@ -301,6 +303,13 @@ void boatVLM::requestFinished (QByteArray res_byte)
                     polarVlm = result["POL"].toString();
                     email = result["EML"].toString();
                     vacLen = result["VAC"].toInt();
+                    if(npd!=result["NPD"].toString())
+                    {
+                        npd=result["NPD"].toString();
+                        showNpd=true;
+                    }
+                    else
+                        showNpd=false;
 
                     lat = latitude/1000;
                     lon = longitude/1000;

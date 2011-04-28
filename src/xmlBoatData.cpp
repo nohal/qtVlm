@@ -64,6 +64,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #define BOAT_ESTIME_NAME    "Estime"
 #define BOAT_LAT_NAME       "Latitude"
 #define BOAT_LON_NAME       "Longitude"
+#define BOAT_NPD            "NotePad"
 
 /* RACE DATA */
 #define RACE_GROUP_NAME   "Race"
@@ -245,6 +246,12 @@ void xml_boatData::slot_writeData(QList<Player*> & player_list,QList<raceData*> 
                 status = boat->getForceEstime();
                 t = doc.createTextNode(status?"1":"0");
                 tag.appendChild(t);
+
+                tag = doc.createElement(BOAT_NPD);
+                group.appendChild(tag);
+                t = doc.createTextNode(boat->getNpd());
+                tag.appendChild(t);
+
             }
         }
         else
@@ -534,6 +541,7 @@ void xml_boatData::readBoat(QDomNode node,PlayerMap * pList)
             float zoom=-1;
             int isOwn=0;
             double lat=0,lon=0;
+            QString npd="";
 
             while(!subNode.isNull())
             {
@@ -631,6 +639,12 @@ void xml_boatData::readBoat(QDomNode node,PlayerMap * pList)
                     if(dataNode.nodeType() == QDomNode::TextNode)
                         lon = dataNode.toText().data().toDouble();
                 }
+                if(subNode.toElement().tagName() == BOAT_NPD)
+                {
+                    dataNode = subNode.firstChild();
+                    if(dataNode.nodeType() == QDomNode::TextNode)
+                        npd = dataNode.toText().data();
+                }
                 subNode = subNode.nextSibling();
             }
 
@@ -651,6 +665,7 @@ void xml_boatData::readBoat(QDomNode node,PlayerMap * pList)
                     boat->setLockStatus(locked);
                     boat->setZoom(zoom);
                     boat->setForceEstime(force_estime);
+                    boat->setNpd(npd);
                     emit addBoat(boat);
                     player->addBoat(boat);
                 }

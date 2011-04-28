@@ -94,6 +94,10 @@ class boatVLM : public boat, public inetClient
         void reloadPolar(void);
         bool isInitialized(){return this->initialized;}
         void setInitialized(bool b){this->initialized=b;}
+        bool getShowNpd(){return showNpd;}
+        void setShowNpd(bool b){this->showNpd=b;}
+        QString getNpd(){return npd;}
+        void setNpd(QString s){this->npd=s;}
 
 
     public slots:
@@ -159,6 +163,8 @@ class boatVLM : public boat, public inetClient
         QImage flag;
         bool drawFlag;
         bool initialized;
+        bool showNpd;
+        QString npd;
 };
 
 #endif // BOATVLM_H
