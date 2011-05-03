@@ -573,6 +573,33 @@ Etes-vous sur ?</source>
     </message>
 </context>
 <context>
+    <name>DialogPoiConnect</name>
+    <message>
+        <source>Dialog</source>
+        <translation>Grib SailDocs</translation>
+    </message>
+    <message>
+        <source>Taille et couleur</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>POI a connecter</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Supprimer la ligne</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Tracer une ligne entre deux POIs</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Vous devez selectionner un poi dans la liste</source>
+        <translation></translation>
+    </message>
+</context>
+<context>
     <name>DialogProxy</name>
     <message>
         <source>Annuler</source>
@@ -2057,6 +2084,10 @@ Etes-vous sur ?</source>
         <source>Editer la route </source>
         <translation></translation>
     </message>
+    <message>
+        <source>Relier ce poi a un autre poi</source>
+        <translation>Tracer une ligne entre ce POI et un autre</translation>
+    </message>
 </context>
 <context>
     <name>POI_delete_ui</name>
@@ -3315,14 +3346,6 @@ Voulez-vous egalement supprimer tous les POIs lui appartenant?</source>
         <source>Bientot des infos ici</source>
         <translation></translation>
     </message>
-    <message>
-        <source>Cacher le compas</source>
-        <translation></translation>
-    </message>
-    <message>
-        <source>Afficher le compas</source>
-        <translation></translation>
-    </message>
 </context>
 <context>
     <name>boardReal_ui</name>
@@ -3365,6 +3388,50 @@ Voulez-vous egalement supprimer tous les POIs lui appartenant?</source>
     <message>
         <source>Deplacer le bateau</source>
         <translation>Déplacer le bateau</translation>
+    </message>
+    <message>
+        <source>WP</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Ortho</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>999.99</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>a</source>
+        <translation>°</translation>
+    </message>
+    <message>
+        <source>Loxo</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>DNM</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>nm</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>VMG</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>99.99</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>kts</source>
+        <translation>nds</translation>
+    </message>
+    <message>
+        <source>Reset</source>
+        <translation></translation>
     </message>
 </context>
 <context>

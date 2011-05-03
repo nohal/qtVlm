@@ -797,6 +797,39 @@ Etes-vous sur ?</source>
     </message>
 </context>
 <context>
+    <name>DialogPoiConnect</name>
+    <message>
+        <location filename="../src/Ui/dialogpoiconnect.ui" line="14"/>
+        <source>Dialog</source>
+        <translation></translation>
+    </message>
+    <message>
+        <location filename="../src/Ui/dialogpoiconnect.ui" line="42"/>
+        <source>Taille et couleur</source>
+        <translation>Size and color</translation>
+    </message>
+    <message>
+        <location filename="../src/Ui/dialogpoiconnect.ui" line="76"/>
+        <source>POI a connecter</source>
+        <translation>POI to connect with</translation>
+    </message>
+    <message>
+        <location filename="../src/Ui/dialogpoiconnect.ui" line="89"/>
+        <source>Supprimer la ligne</source>
+        <translation>Cancel line</translation>
+    </message>
+    <message>
+        <location filename="../src/Dialogs/dialogpoiconnect.cpp" line="13"/>
+        <source>Tracer une ligne entre deux POIs</source>
+        <translation>Draw a line between 2 POIs</translation>
+    </message>
+    <message>
+        <location filename="../src/Dialogs/dialogpoiconnect.cpp" line="48"/>
+        <source>Vous devez selectionner un poi dans la liste</source>
+        <translation>You must select a POI in the list</translation>
+    </message>
+</context>
+<context>
     <name>DialogProxy</name>
     <message>
         <source>Mode de connexion �  internet</source>
@@ -1564,18 +1597,18 @@ Etes-vous sur ?</source>
         <translation>Your notepad has changed!</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="1939"/>
-        <location filename="../src/MainWindow.cpp" line="1951"/>
+        <location filename="../src/MainWindow.cpp" line="1950"/>
+        <location filename="../src/MainWindow.cpp" line="1962"/>
         <source> mins</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="1943"/>
+        <location filename="../src/MainWindow.cpp" line="1954"/>
         <source> vacs</source>
         <translation>cranks</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="1947"/>
+        <location filename="../src/MainWindow.cpp" line="1958"/>
         <source> milles</source>
         <translation></translation>
     </message>
@@ -2864,145 +2897,150 @@ Etes-vous sur ?</source>
 <context>
     <name>POI</name>
     <message>
-        <location filename="../src/POI.cpp" line="157"/>
+        <location filename="../src/POI.cpp" line="168"/>
         <source>Editer</source>
         <translation>Edit</translation>
     </message>
     <message>
-        <location filename="../src/POI.cpp" line="161"/>
+        <location filename="../src/POI.cpp" line="172"/>
         <source>Supprimer</source>
         <translation>Delete</translation>
     </message>
     <message>
-        <location filename="../src/POI.cpp" line="202"/>
-        <location filename="../src/POI.cpp" line="420"/>
+        <location filename="../src/POI.cpp" line="213"/>
+        <location filename="../src/POI.cpp" line="453"/>
         <source>Supprimer la route </source>
         <translation>Delete route </translation>
     </message>
     <message>
-        <location filename="../src/POI.cpp" line="165"/>
+        <location filename="../src/POI.cpp" line="176"/>
         <source>Copier</source>
         <translation>Copy</translation>
     </message>
     <message>
-        <location filename="../src/POI.cpp" line="169"/>
+        <location filename="../src/POI.cpp" line="180"/>
         <source>Marque-&gt;WP</source>
         <translation>Mark-&gt;WP</translation>
     </message>
     <message>
-        <location filename="../src/POI.cpp" line="173"/>
+        <location filename="../src/POI.cpp" line="184"/>
         <source>Set Date</source>
         <translation>Set grib date</translation>
     </message>
     <message>
-        <location filename="../src/POI.cpp" line="177"/>
+        <location filename="../src/POI.cpp" line="188"/>
         <source>Activer la corne de brume 10mn avant le passage</source>
         <translation>Activate fog horn 10 minutes prior reaching</translation>
     </message>
     <message>
-        <location filename="../src/POI.cpp" line="181"/>
-        <location filename="../src/POI.cpp" line="374"/>
-        <location filename="../src/POI.cpp" line="385"/>
+        <location filename="../src/POI.cpp" line="192"/>
+        <location filename="../src/POI.cpp" line="407"/>
+        <location filename="../src/POI.cpp" line="418"/>
         <source>Tirer un cap</source>
         <translation>Draw a heading</translation>
     </message>
     <message>
-        <location filename="../src/POI.cpp" line="186"/>
+        <location filename="../src/POI.cpp" line="197"/>
         <source>Tracer une estime TWA</source>
         <translation>Draw a TWA reckoning</translation>
     </message>
     <message>
-        <location filename="../src/POI.cpp" line="191"/>
+        <location filename="../src/POI.cpp" line="202"/>
         <source>Routes</source>
         <translation>Routes</translation>
     </message>
     <message>
-        <location filename="../src/POI.cpp" line="196"/>
-        <location filename="../src/POI.cpp" line="422"/>
+        <location filename="../src/POI.cpp" line="207"/>
+        <location filename="../src/POI.cpp" line="455"/>
         <source>Editer la route </source>
         <translation>Edit route </translation>
     </message>
     <message>
-        <location filename="../src/POI.cpp" line="208"/>
+        <location filename="../src/POI.cpp" line="219"/>
         <source>Optimiser le placement sur la route</source>
         <translation>Optimize position on route</translation>
     </message>
     <message>
-        <location filename="../src/POI.cpp" line="212"/>
+        <location filename="../src/POI.cpp" line="223"/>
         <source>Mode de navigation vers ce POI</source>
         <translation>Navigation mode towards this POI</translation>
     </message>
     <message>
-        <location filename="../src/POI.cpp" line="215"/>
+        <location filename="../src/POI.cpp" line="226"/>
         <source>VB-VMG</source>
         <translation>VBVMG</translation>
     </message>
     <message>
-        <location filename="../src/POI.cpp" line="221"/>
+        <location filename="../src/POI.cpp" line="232"/>
         <source>B-VMG</source>
         <translation>BestVMG</translation>
     </message>
     <message>
-        <location filename="../src/POI.cpp" line="227"/>
+        <location filename="../src/POI.cpp" line="238"/>
         <source>ORTHO</source>
         <translation>Orthodromic</translation>
     </message>
     <message>
-        <location filename="../src/POI.cpp" line="379"/>
+        <location filename="../src/POI.cpp" line="248"/>
+        <source>Relier ce poi a un autre poi</source>
+        <translation>Draw a line between this POI and anoter POI</translation>
+    </message>
+    <message>
+        <location filename="../src/POI.cpp" line="412"/>
         <source>Arret du cap</source>
         <translation>Stop the heading</translation>
     </message>
     <message>
-        <location filename="../src/POI.cpp" line="431"/>
+        <location filename="../src/POI.cpp" line="464"/>
         <source>Aucune route</source>
         <translation>No route</translation>
     </message>
     <message>
-        <location filename="../src/POI.cpp" line="465"/>
+        <location filename="../src/POI.cpp" line="498"/>
         <source>Marque-&gt;WP : </source>
         <translation>Mark-&gt;WP :</translation>
     </message>
     <message>
-        <location filename="../src/POI.cpp" line="515"/>
+        <location filename="../src/POI.cpp" line="548"/>
         <source>Distance Ortho a partir de </source>
         <translation>Orthodromic distance from </translation>
     </message>
     <message>
-        <location filename="../src/POI.cpp" line="682"/>
+        <location filename="../src/POI.cpp" line="744"/>
         <source>La destruction d&apos;une marque est definitive.
 
 Etes-vous sur ?</source>
         <translation>Deleting a mark is not reversible.  Are you sure?</translation>
     </message>
     <message>
-        <location filename="../src/POI.cpp" line="742"/>
+        <location filename="../src/POI.cpp" line="804"/>
         <source>Optimisation du placement d&apos;un POI</source>
         <translation>POI position optimisation</translation>
     </message>
     <message>
-        <location filename="../src/POI.cpp" line="743"/>
+        <location filename="../src/POI.cpp" line="805"/>
         <source>Vous ne pouvez pas optimiser en mode VBVMG-VLM</source>
         <translation>You cannot optimize in VBVMG-VLM</translation>
     </message>
     <message>
-        <location filename="../src/POI.cpp" line="781"/>
+        <location filename="../src/POI.cpp" line="843"/>
         <source>ETA du prochain POI: </source>
         <translation>Previous ETA of next POI: </translation>
     </message>
     <message>
-        <location filename="../src/POI.cpp" line="784"/>
+        <location filename="../src/POI.cpp" line="846"/>
         <source>Dist. restante du prochain POI: </source>
         <translation>Next WP remaining dist.:</translation>
     </message>
     <message>
-        <location filename="../src/POI.cpp" line="811"/>
-        <location filename="../src/POI.cpp" line="827"/>
-        <location filename="../src/POI.cpp" line="844"/>
+        <location filename="../src/POI.cpp" line="873"/>
+        <location filename="../src/POI.cpp" line="889"/>
+        <location filename="../src/POI.cpp" line="906"/>
         <source>Meilleure ETA: </source>
         <translation>Best ETA:</translation>
     </message>
     <message>
-        <location filename="../src/POI.cpp" line="866"/>
+        <location filename="../src/POI.cpp" line="928"/>
         <source>Meilleure distance restante: </source>
         <translation>Shortest remaining distance:</translation>
     </message>
@@ -3015,12 +3053,12 @@ Etes-vous sur ?</source>
         <translation type="obsolete">Orthodromic distance from</translation>
     </message>
     <message>
-        <location filename="../src/POI.cpp" line="533"/>
+        <location filename="../src/POI.cpp" line="566"/>
         <source>Non joignable avec ce Grib</source>
         <translation>Can&apos;t be reached with this Grib</translation>
     </message>
     <message>
-        <location filename="../src/POI.cpp" line="681"/>
+        <location filename="../src/POI.cpp" line="743"/>
         <source>Detruire la marque</source>
         <translation>Delete mark</translation>
     </message>
@@ -3041,12 +3079,12 @@ Etes-vous sur ?</source>
         <translation type="obsolete">Shortest remaining distance:</translation>
     </message>
     <message>
-        <location filename="../src/POI.cpp" line="894"/>
+        <location filename="../src/POI.cpp" line="956"/>
         <source>Abandon du positionnement automatique</source>
         <translation>Automatic positioning was stopped</translation>
     </message>
     <message>
-        <location filename="../src/POI.cpp" line="894"/>
+        <location filename="../src/POI.cpp" line="956"/>
         <source>Souhaitez vous conserver la meilleure position deja trouvee?</source>
         <translation>Do you wish to keep best position found so far?</translation>
     </message>
@@ -4907,24 +4945,22 @@ Voulez-vous egalement supprimer tous les POIs lui appartenant?</source>
         <translation>Hide compass</translation>
     </message>
     <message>
-        <location filename="../src/BoardReal.cpp" line="148"/>
+        <location filename="../src/BoardReal.cpp" line="170"/>
         <source>Information</source>
         <translation>Information</translation>
     </message>
     <message>
-        <location filename="../src/BoardReal.cpp" line="148"/>
+        <location filename="../src/BoardReal.cpp" line="170"/>
         <source>Bientot des infos ici</source>
         <translation>Soon more info from here</translation>
     </message>
     <message>
-        <location filename="../src/BoardReal.cpp" line="202"/>
         <source>Cacher le compas</source>
-        <translation>Hide compass</translation>
+        <translation type="obsolete">Hide compass</translation>
     </message>
     <message>
-        <location filename="../src/BoardReal.cpp" line="204"/>
         <source>Afficher le compas</source>
-        <translation>Show compass</translation>
+        <translation type="obsolete">Show compass</translation>
     </message>
 </context>
 <context>
@@ -4960,22 +4996,80 @@ Voulez-vous egalement supprimer tous les POIs lui appartenant?</source>
         <translation>Speed and heading</translation>
     </message>
     <message>
-        <location filename="../src/Ui/BoardReal.ui" line="210"/>
+        <location filename="../src/Ui/BoardReal.ui" line="191"/>
+        <source>WP</source>
+        <translation>WP</translation>
+    </message>
+    <message>
+        <location filename="../src/Ui/BoardReal.ui" line="227"/>
+        <source>Ortho</source>
+        <translation>Ortho</translation>
+    </message>
+    <message>
+        <location filename="../src/Ui/BoardReal.ui" line="257"/>
+        <location filename="../src/Ui/BoardReal.ui" line="352"/>
+        <location filename="../src/Ui/BoardReal.ui" line="403"/>
+        <source>999.99</source>
+        <translation>999.99</translation>
+    </message>
+    <message>
+        <location filename="../src/Ui/BoardReal.ui" line="287"/>
+        <location filename="../src/Ui/BoardReal.ui" line="331"/>
+        <source>a</source>
+        <translation>°</translation>
+    </message>
+    <message>
+        <location filename="../src/Ui/BoardReal.ui" line="307"/>
+        <source>Loxo</source>
+        <translation></translation>
+    </message>
+    <message>
+        <location filename="../src/Ui/BoardReal.ui" line="379"/>
+        <source>DNM</source>
+        <translation>DNM</translation>
+    </message>
+    <message>
+        <location filename="../src/Ui/BoardReal.ui" line="427"/>
+        <source>nm</source>
+        <translation>nm</translation>
+    </message>
+    <message>
+        <location filename="../src/Ui/BoardReal.ui" line="447"/>
+        <source>VMG</source>
+        <translation>VMG</translation>
+    </message>
+    <message>
+        <location filename="../src/Ui/BoardReal.ui" line="474"/>
+        <source>99.99</source>
+        <translation>99.99</translation>
+    </message>
+    <message>
+        <location filename="../src/Ui/BoardReal.ui" line="501"/>
+        <source>kts</source>
+        <translation>kts</translation>
+    </message>
+    <message>
+        <location filename="../src/Ui/BoardReal.ui" line="519"/>
+        <source>Reset</source>
+        <translation></translation>
+    </message>
+    <message>
+        <location filename="../src/Ui/BoardReal.ui" line="531"/>
         <source>Start GPS</source>
         <translation>Start GPS</translation>
     </message>
     <message>
-        <location filename="../src/Ui/BoardReal.ui" line="217"/>
+        <location filename="../src/Ui/BoardReal.ui" line="538"/>
         <source>Stop GPS</source>
         <translation>Stop GPS</translation>
     </message>
     <message>
-        <location filename="../src/Ui/BoardReal.ui" line="228"/>
+        <location filename="../src/Ui/BoardReal.ui" line="549"/>
         <source>GPS status:</source>
         <translation>GPS status:</translation>
     </message>
     <message>
-        <location filename="../src/Ui/BoardReal.ui" line="235"/>
+        <location filename="../src/Ui/BoardReal.ui" line="556"/>
         <source>status</source>
         <translation>status</translation>
     </message>
@@ -5504,7 +5598,7 @@ Voulez-vous egalement supprimer tous les POIs lui appartenant?</source>
 <context>
     <name>boatReal</name>
     <message>
-        <location filename="../src/boatReal.cpp" line="316"/>
+        <location filename="../src/boatReal.cpp" line="334"/>
         <source>Hdg</source>
         <translation>Hdg</translation>
     </message>
@@ -5513,43 +5607,43 @@ Voulez-vous egalement supprimer tous les POIs lui appartenant?</source>
         <translation type="obsolete"> </translation>
     </message>
     <message>
-        <location filename="../src/boatReal.cpp" line="316"/>
-        <location filename="../src/boatReal.cpp" line="319"/>
+        <location filename="../src/boatReal.cpp" line="334"/>
+        <location filename="../src/boatReal.cpp" line="337"/>
         <source>deg</source>
         <translation>°</translation>
     </message>
     <message>
-        <location filename="../src/boatReal.cpp" line="319"/>
+        <location filename="../src/boatReal.cpp" line="337"/>
         <source>Angle</source>
         <translation>Angle</translation>
     </message>
     <message>
-        <location filename="../src/boatReal.cpp" line="322"/>
+        <location filename="../src/boatReal.cpp" line="340"/>
         <source>Ortho</source>
         <translation>Ortho</translation>
     </message>
     <message>
-        <location filename="../src/boatReal.cpp" line="325"/>
+        <location filename="../src/boatReal.cpp" line="343"/>
         <source>BVMG</source>
         <translation>BestVMG</translation>
     </message>
     <message>
-        <location filename="../src/boatReal.cpp" line="328"/>
+        <location filename="../src/boatReal.cpp" line="346"/>
         <source>VBVMG</source>
         <translation>VBVMG</translation>
     </message>
     <message>
-        <location filename="../src/boatReal.cpp" line="332"/>
+        <location filename="../src/boatReal.cpp" line="350"/>
         <source> (pas de polaire chargee)</source>
         <translation>(no polar loaded)</translation>
     </message>
     <message>
-        <location filename="../src/boatReal.cpp" line="333"/>
+        <location filename="../src/boatReal.cpp" line="351"/>
         <source> (format CSV)</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../src/boatReal.cpp" line="334"/>
+        <location filename="../src/boatReal.cpp" line="352"/>
         <source> (format POL)</source>
         <translation></translation>
     </message>
