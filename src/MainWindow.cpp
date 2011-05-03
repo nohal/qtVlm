@@ -1445,6 +1445,36 @@ void MainWindow::slotBoatUpdated(boat * upBoat,bool newRace,bool doingSync)
             my_centralWidget->getOppList()->clear();
             my_centralWidget->getOppList()->refreshData();
         }*/
+        /* Updating ETA */
+        boatReal *boat=(boatReal *) upBoat;
+        if(boat->getWPLat()==0 && boat->getWPLon()==0 ||boat->getEta()==-1)
+            tool_ETA->clear();
+        else
+        {
+            int nbS,j,h,m;
+            QString txt;
+            QDateTime dtm =QDateTime::fromTime_t(boat->getEta()).toUTC();
+            if(!dtm.isValid())
+                tool_ETA->clear();
+            else
+            {
+                dtm.setTimeSpec(Qt::UTC);
+                QDateTime now = (QDateTime::currentDateTime()).toUTC();
+                nbS=now.secsTo(dtm);
+                j = nbS/(24*3600);
+                nbS-=j*24*3600;
+                h=nbS/3600;
+                nbS-=h*3600;
+                m=nbS/60;
+                nbS-=m*60;
+                txt.sprintf("(%dj %02dh%02dm%02ds)",j,h,m,nbS);
+                txt.replace("j",tr("j"));
+                txt.replace("h",tr("h"));
+                txt.replace("m",tr("m"));
+                txt.replace("s",tr("s"));
+                tool_ETA->setText(tr(" Arrivee WP")+": " +dtm.toString(tr("dd-MM-yyyy, HH:mm:ss"))+ " " +txt);
+            }
+        }
         emit boatHasUpdated(upBoat);
         emit WPChanged(upBoat->getWPLat(),upBoat->getWPLon());
     }
@@ -1680,8 +1710,19 @@ void MainWindow::slotAccountListUpdated(void)
 
 void MainWindow::slotChgWP(float lat,float lon, float wph)
 {
-    if(myBoard->VLMBoard())
-        myBoard->VLMBoard()->setWP(lat,lon,wph);
+    if(this->selectedBoat->type()==BOAT_VLM)
+    {
+        if(myBoard->VLMBoard())
+            myBoard->VLMBoard()->setWP(lat,lon,wph);
+    }
+    else
+    {
+        if(myBoard->realBoard())
+        {
+            myBoard->realBoard()->setWp(lat,lon,wph);
+            emit this->WPChanged(lat,lon);
+        }
+    }
 }
 
 void MainWindow::slotpastePOI()

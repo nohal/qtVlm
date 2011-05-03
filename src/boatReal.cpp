@@ -30,6 +30,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "dataDef.h"
 #include "nmea.h"
 #include "Util.h"
+#include "Orthodromie.h"
 
 boatReal::boatReal(QString pseudo, bool activated, Projection * proj,MainWindow * main,
                    myCentralWidget * parent): boat(pseudo,activated,proj,main,parent)
@@ -81,6 +82,7 @@ boatReal::boatReal(QString pseudo, bool activated, Projection * proj,MainWindow 
     this->playerName=pseudo;
     this->fix=1;
     this->sig=0;
+    this->eta=-1;
     changeLocked=false;
     forceEstime=false;
     //updateBoatData();
@@ -107,6 +109,30 @@ boatReal::~boatReal()
         delete trace;
     }
     qWarning()<<"last instruction in ~boatReal";
+}
+void boatReal::setWp(float la, float lo, float w)
+{
+    this->WPLat=la;
+    this->WPLon=lo;
+    this->WPHd=w;
+    Orthodromie orth(this->lon,this->lat,WPLon,WPLat);
+    this->dnm=qRound(orth.getDistance()*100)/100.00;
+    this->loxo=qRound(orth.getLoxoCap()*100)/100.00;
+    this->ortho=qRound(orth.getAzimutDeg()*100)/100.00;
+    if(loxo<0)
+        loxo+=360;
+    if(ortho<0)
+        ortho+=360;
+    this->vmg=qRound(this->speed*cos(degToRad(qAbs(this->heading-this->loxo)))*100)/100.00;
+    if(vmg<=0)
+        eta=-1;
+    else
+    {
+        eta=QDateTime::currentDateTimeUtc().toTime_t();
+        eta=eta+(3600/vmg)*dnm;
+    }
+    this->drawEstime();
+    emit boatUpdated(this,false,false);
 }
 
 void boatReal::myCreatePopUpMenu(void)
@@ -196,6 +222,9 @@ void boatReal::decodeData(QByteArray data)
     gotPosition=true;
     previousLon=lon;
     previousLat=lat;
+    this->blockSignals(true);
+    this->setWp(WPLat,WPLon,WPHd);
+    this->blockSignals(false);
     //emit boatUpdated(this,false,false); /* made elsewhere*/
 }
 
@@ -205,7 +234,7 @@ void boatReal::setPosition(double lat, double lon)
     this->lon=lon;
     this->lastUpdateTime=QDateTime().currentDateTimeUtc().toTime_t();
     updateBoatData();
-    emit boatUpdated(this,false,false);
+    this->setWp(WPLat,WPLon,WPHd);
 }
 
 QString boatReal::parseMask(int mask)

@@ -39,6 +39,7 @@ Copyright (C) 2008 - Jacques Zaninetti - http://zygrib.free.fr
 #include "boatVLM.h"
 #include "Projection.h"
 #include "DialogFinePosit.h"
+#include "dialogpoiconnect.h"
 
 /**************************/
 /* Init & Clean           */
@@ -69,6 +70,10 @@ POI::POI(QString name, int type, double lat, double lon,
     this->optimizing=true;
     this->partOfTwa=false;
     this->notSimplificable=false;
+    this->connectedPoi=NULL;
+    this->lineBetweenPois=NULL;
+    this->lineColor=Qt::blue;
+    this->lineWidth=2;
 
     useRouteTstamp=false;
     routeTimeStamp=-1;
@@ -124,6 +129,12 @@ POI::POI(QString name, int type, double lat, double lon,
 POI::~POI()
 {
     if(route!=NULL) this->setRoute(NULL);
+    if(lineBetweenPois!=NULL)
+    {
+        delete lineBetweenPois;
+        this->connectedPoi->setConnectedPoi(NULL);
+        this->connectedPoi->setLineBetweenPois(NULL);
+    }
 }
 void POI::setLongitude(double lon)
 {
@@ -229,10 +240,14 @@ void POI::createPopUpMenu(void)
     ac_modeList->addAction(ac_modeList3);
     ptr_group->addAction(ac_modeList3);
     ac_modeList3->setData(2);
-
     ac_modeList1->setChecked(true);
     connect(ac_modeList,SIGNAL(triggered(QAction*)),this,SLOT(slot_setMode(QAction*)));
     popup->addMenu(ac_modeList);
+
+    popup->addSeparator();
+    ac_connect=new QAction(tr("Relier ce poi a un autre poi"),popup);
+    connect(ac_connect,SIGNAL(triggered()),this,SLOT(slot_relier()));
+    popup->addAction(ac_connect);
 }
 
 /**************************/
@@ -286,11 +301,22 @@ bool POI::tryMoving(int x, int y)
             setLongitude(newlon);
             setLatitude(newlat);
             Util::computePos(proj,lat, lon, &pi, &pj);
-            //if(!this->isPartOfBvmg)
-                emit poiMoving();
+            emit poiMoving();
         }
-
-
+        if(lineBetweenPois!=NULL)
+        {
+            double newlon,newlat;
+            new_x=scenePos().x();
+            new_y=scenePos().y()+height/2;
+            proj->screen2map(new_x,new_y, &newlon, &newlat);
+            setLongitude(newlon);
+            setLatitude(newlat);
+            Util::computePos(proj,lat, lon, &pi, &pj);
+            lineBetweenPois->deleteAll();
+            lineBetweenPois->addVlmPoint(vlmPoint(this->lon,this->lat));
+            lineBetweenPois->addVlmPoint(vlmPoint(this->connectedPoi->lon,this->connectedPoi->lat));
+            lineBetweenPois->slot_showMe();
+        }
         return true;
     }
     return false;
@@ -325,6 +351,13 @@ void POI::mouseReleaseEvent(QGraphicsSceneMouseEvent * e)
         {
             route->setFastVmgCalc(false);
             route->slot_recalculate();
+        }
+        if(lineBetweenPois!=NULL)
+        {
+            lineBetweenPois->deleteAll();
+            lineBetweenPois->addVlmPoint(vlmPoint(this->lon,this->lat));
+            lineBetweenPois->addVlmPoint(vlmPoint(this->connectedPoi->lon,this->connectedPoi->lat));
+            lineBetweenPois->slot_showMe();
         }
         return;
     }
@@ -612,6 +645,35 @@ void POI::setRoute(ROUTE *route)
 /**************************/
 /* Slots                  */
 /**************************/
+void POI::slot_relier()
+{
+    DialogPoiConnect * box=new DialogPoiConnect(this,parent);
+    if(box->exec()==QDialog::Accepted)
+    {
+        if(connectedPoi==NULL)
+        {
+            if(lineBetweenPois!=NULL)
+            {
+                delete lineBetweenPois;
+                lineBetweenPois=NULL;
+            }
+        }
+        else
+        {
+            if(lineBetweenPois!=NULL)
+                delete lineBetweenPois;
+            lineBetweenPois=new vlmLine(proj,parent->getScene(),Z_VALUE_POI);
+            lineBetweenPois->addVlmPoint(vlmPoint(this->lon,this->lat));
+            lineBetweenPois->addVlmPoint(vlmPoint(this->connectedPoi->lon,this->connectedPoi->lat));
+            connectedPoi->setLineBetweenPois(lineBetweenPois);
+            QPen pen(lineColor);
+            pen.setWidthF(lineWidth);
+            lineBetweenPois->setLinePen(pen);
+            lineBetweenPois->slot_showMe();
+        }
+    }
+}
+
 void POI::slot_editRoute()
 {
     if (this->route==NULL) return;

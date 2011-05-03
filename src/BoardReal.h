@@ -35,6 +35,8 @@ class boardReal: public QWidget , public Ui::boardReal_ui
         void boatUpdated(void);
         void setChangeStatus(bool);
         void setCompassVisible(bool status);
+        void setWp(float lat,float lon,float wph);
+        time_t getETA(void)            {    return eta; }
 
     public slots:
         void disp_boatInfo();
@@ -43,6 +45,7 @@ class boardReal: public QWidget , public Ui::boardReal_ui
         void startGPS(void);
         void stopGPS(void);
         void chgBoatPosition();
+        void resetWp(){this->setWp(0,0,-1);}
 
     signals:
         void showMessage(QString,int);
@@ -59,6 +62,7 @@ class boardReal: public QWidget , public Ui::boardReal_ui
         QAction * ac_showHideCompass;
 
         boatReal * currentBoat(void);
+        time_t eta;
 };
 
 #endif // BOARDREAL_H

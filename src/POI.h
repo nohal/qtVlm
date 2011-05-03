@@ -92,7 +92,13 @@ class POI : public QGraphicsWidget
         bool getMyLabelHidden  (void) {return this->myLabelHidden;}
         void setNotSimplificable(bool b) {this->notSimplificable=b;}
         bool getNotSimplificable(){return this->notSimplificable;}
-
+        QColor getLineColor(){return lineColor;}
+        void setLineColor(QColor c){lineColor=c;}
+        float getLineWidth(){return lineWidth;}
+        void setLineWidth(float f){lineWidth=f;}
+        POI * getConnectedPoi(){return connectedPoi;}
+        void setConnectedPoi(POI * p){connectedPoi=p;}
+        void setLineBetweenPois(vlmLine * line){this->lineBetweenPois=line;}
 
         /* comparateur de classe pour le tri */
         static bool myLessThan(POI * POI_1,POI* POI_2) {return POI_1->name < POI_2->name;}
@@ -126,6 +132,7 @@ class POI : public QGraphicsWidget
         void slot_twaLine(){parent->twaDraw(lon,lat);}
         void slotCompassLine();
         void slot_editRoute();
+        void slot_relier();
 
     signals:
         void chgWP(float,float,float);
@@ -195,6 +202,7 @@ class POI : public QGraphicsWidget
         QAction * ac_modeList1;
         QAction * ac_modeList2;
         QAction * ac_modeList3;
+        QAction * ac_connect;
         void createPopUpMenu(void);
 
         void chkIsWP(void);
@@ -213,6 +221,10 @@ class POI : public QGraphicsWidget
         bool myLabelHidden;
         bool partOfTwa;
         bool notSimplificable;
+        POI * connectedPoi;
+        vlmLine * lineBetweenPois;
+        QColor lineColor;
+        float lineWidth;
 };
 
 #endif

@@ -42,7 +42,6 @@ class ReceiverThread : public QThread
         void run();
 
         bool initPort(void);
-
     public slots:
         void terminate();
 
@@ -82,6 +81,8 @@ class boatReal : public boat
         int getFix(){return fix;}
         int getSig(){return sig;}
         double getPdop(){return pdop;}
+        time_t getEta(){return eta;}
+        void setWp(float lat, float lon, float wph);
 
     public slots:
         void decodeData(QByteArray data);
@@ -121,6 +122,7 @@ class boatReal : public boat
         int     sig;        /**< GPS quality indicator (0 = Invalid; 1 = Fix; 2 = Differential, 3 = Sensitive) */
         int     fix;        /**< Operating mode, used for navigation (1 = Fix not available; 2 = 2D; 3 = 3D) */
         double  pdop;
+        time_t eta;
 };
 
 

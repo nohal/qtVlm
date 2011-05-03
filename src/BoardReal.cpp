@@ -46,11 +46,11 @@ boardReal::boardReal(MainWindow * mainWin, board * parent) : QWidget(mainWin)
     popup->addAction(ac_showHideCompass);
     connect(ac_showHideCompass,SIGNAL(triggered()),this,SLOT(slot_hideShowCompass()));
 
-    /* Etat du compass */
-    if(Settings::getSetting("boardCompassShown", "1").toInt()==1)
-        windAngle->show();
-    else
-        windAngle->hide();
+//    /* Etat du compass */
+//    if(Settings::getSetting("boardCompassShown", "1").toInt()==1)
+//        windAngle->show();
+//    else
+//        windAngle->hide();
 }
 
 boatReal * boardReal::currentBoat(void)
@@ -66,6 +66,11 @@ boatReal * boardReal::currentBoat(void)
         return NULL;
 }
 
+void boardReal::setWp(float lat,float lon,float wph)
+{
+    boatReal * myBoat=currentBoat();
+    myBoat->setWp(lat,lon,wph);
+}
 void boardReal::boatUpdated(void)
 {
     boatReal * myBoat=currentBoat();
@@ -80,11 +85,27 @@ void boardReal::boatUpdated(void)
     longitude->setText(Util::pos2String(TYPE_LON,myBoat->getLon()));
 
     /* boat heading */
-    windAngle->setValues(myBoat->getHeading(),0,myBoat->getWindSpeed(), -1, -1);
+    //windAngle->setValues(myBoat->getHeading(),0,myBoat->getWindSpeed(), -1, -1);
     this->dir->display(myBoat->getHeading());
 
     /* boat speed*/
     this->speed->display(myBoat->getSpeed());
+
+    /*WP*/
+    if(myBoat->getWPLat()!=0 && myBoat->getWPLat()!=0)
+    {
+        dnm_2->setText(QString().setNum(myBoat->getDnm()));
+        ortho->setText(QString().setNum(myBoat->getOrtho()));
+        vmg_2->setText(QString().setNum(myBoat->getVmg()));
+        angle->setText(QString().setNum(myBoat->getLoxo()));
+    }
+    else
+    {
+        dnm_2->setText("---");
+        ortho->setText("---");
+        vmg_2->setText("---");
+        angle->setText("---");
+    }
 
     /* GPS status */
     QString status;
@@ -179,28 +200,28 @@ void boardReal::startGPS(void)
 
 void boardReal::slot_hideShowCompass()
 {
-    setCompassVisible(~windAngle->isVisible());
+    //setCompassVisible(~windAngle->isVisible());
 }
 
 void boardReal::setCompassVisible(bool status)
 {
-    if(status)
-    {
-        Settings::setSetting("boardCompassShown",1);
-        windAngle->show();
-    }
-    else
-    {
-        Settings::setSetting("boardCompassShown",0);
-        windAngle->hide();
-    }
+//    if(status)
+//    {
+//        Settings::setSetting("boardCompassShown",1);
+//        windAngle->show();
+//    }
+//    else
+//    {
+//        Settings::setSetting("boardCompassShown",0);
+//        windAngle->hide();
+//    }
 }
 
 void boardReal::contextMenuEvent(QContextMenuEvent  *)
 {
-    if(windAngle->isVisible())
-        ac_showHideCompass->setText(tr("Cacher le compas"));
-    else
-        ac_showHideCompass->setText(tr("Afficher le compas"));
-    popup->exec(QCursor::pos());
+//    if(windAngle->isVisible())
+//        ac_showHideCompass->setText(tr("Cacher le compas"));
+//    else
+//        ac_showHideCompass->setText(tr("Afficher le compas"));
+//    popup->exec(QCursor::pos());
 }
