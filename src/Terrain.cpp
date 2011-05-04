@@ -268,8 +268,7 @@ void Terrain::draw_GSHHSandGRIB()
     if(grib) cartouche=grib->drawCartouche(pnt)+". ";
     if(this->gshhsReader)
         cartouche=cartouche+tr("Niveau de detail des cotes: ")+QString().setNum(this->gshhsReader->getQuality()+1);
-    int fSize=12;
-    QFont fontbig("TypeWriter", fSize, QFont::Bold, false);
+    QFont fontbig("TypeWriter", 12, QFont::Bold, false);
     fontbig.setStyleHint(QFont::TypeWriter);
     fontbig.setStretch(QFont::Condensed);
     QColor   transpcolor(255,255,255,120);
@@ -277,10 +276,12 @@ void Terrain::draw_GSHHSandGRIB()
     pnt.setBrush(transpcolor);
     pnt.setFont(fontbig);
     pnt.setPen(transpcolor);
-    pnt.drawRect(3,3,400,fSize+3+4);
+    QFontMetrics fm(fontbig);
+    QSize Fsize=fm.size(Qt::TextSingleLine,cartouche);
+    pnt.drawRect(3,3,Fsize.width()+2,Fsize.height());
     pnt.setPen(textcolor);
 
-    pnt.drawText(10, fSize+6, cartouche);// forecast validity date
+    pnt.drawText(5, 8+Fsize.height()/2, cartouche);// forecast validity date
 
     setCursor(oldcursor);
 }
