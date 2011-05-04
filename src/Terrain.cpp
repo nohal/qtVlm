@@ -193,8 +193,8 @@ void Terrain::draw_GSHHSandGRIB()
 //            imgSea = NULL;
 //        }
 
-        //imgEarth = new QImage(width,height,QImage::Format_ARGB32_Premultiplied);
-        imgEarth= new QPixmap(width,height);
+        imgEarth = new QImage(width,height,QImage::Format_ARGB32_Premultiplied);
+        //imgEarth= new QPixmap(width,height);
         assert(imgEarth);
         imgEarth->fill(Qt::transparent);
         //imgSea = new QImage(width,height,QImage::Format_ARGB32_Premultiplied);
@@ -226,8 +226,8 @@ void Terrain::draw_GSHHSandGRIB()
     if(grib)
         drawGrib(pnt,grib);
 
-    pnt.drawPixmap(0,0, *imgEarth);
-    //pnt.drawImage(0,0, *imgEarth);
+    //pnt.drawPixmap(0,0, *imgEarth);
+    pnt.drawImage(0,0, *imgEarth);
 
     //===================================================
     // Dessin des bordures et frontieres
