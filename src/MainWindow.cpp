@@ -1447,7 +1447,7 @@ void MainWindow::slotBoatUpdated(boat * upBoat,bool newRace,bool doingSync)
         }*/
         /* Updating ETA */
         boatReal *boat=(boatReal *) upBoat;
-        if(boat->getWPLat()==0 && boat->getWPLon()==0 ||boat->getEta()==-1)
+        if((boat->getWPLat()==0 && boat->getWPLon()==0) ||boat->getEta()==-1)
             tool_ETA->clear();
         else
         {

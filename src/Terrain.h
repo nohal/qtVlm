@@ -119,10 +119,10 @@ private:
     Projection  *proj;
     myCentralWidget *parent;    
 
-#ifdef __WIN_ARCH
-    QPixmap     *imgEarth;
+#ifdef __TERRAIN_QIMAGE
+    QImage     *imgEarth;
 #else
-    QImage     *imgEarth;   // images precalculees pour accelerer l'affichage
+    QPixmap     *imgEarth;
 #endif
     QPixmap     *imgWind;
     QPixmap     *imgAll;

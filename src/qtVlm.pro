@@ -211,8 +211,9 @@ SOURCES += Dialogs/DialogGraphicsParams.cpp \
     Dialogs/dialogviewpolar.cpp \
     GshhsPolyReader.cpp \
     Dialogs/dialogpoiconnect.cpp
-unix:DEFINES += _TTY_POSIX_ __UNIX_ARCH
+unix:!macx: DEFINES += _TTY_POSIX_ __TERRAIN_QIMAGE
 win32:DEFINES += _TTY_WIN_ \
     QWT_DLL \
     QT_DLL \
-    __WIN_ARCH
+    __TERRAIN_QPIXMAP
+macx: DEFINES += _TTY_POSIX_ __TERRAIN_QPIXMAP

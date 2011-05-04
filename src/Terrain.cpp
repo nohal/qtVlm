@@ -189,10 +189,10 @@ void Terrain::draw_GSHHSandGRIB()
         }
 
 
-#ifdef __WIN_ARCH
-        imgEarth= new QPixmap(width,height);
-#else
+#ifdef __TERRAIN_QIMAGE
         imgEarth = new QImage(width,height,QImage::Format_ARGB32_Premultiplied);
+#else
+        imgEarth= new QPixmap(width,height);
 #endif
         assert(imgEarth);
         imgEarth->fill(Qt::transparent);
@@ -216,10 +216,10 @@ void Terrain::draw_GSHHSandGRIB()
     if(grib)
         drawGrib(pnt,grib);
 
-#ifdef __WIN_ARCH
-    pnt.drawPixmap(0,0, *imgEarth);
-#else
+#ifdef __TERRAIN_QIMAGE
     pnt.drawImage(0,0, *imgEarth);
+#else
+    pnt.drawPixmap(0,0, *imgEarth);
 #endif
 
     //===================================================
