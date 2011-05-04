@@ -410,7 +410,7 @@ void GshhsReader::drawBackground( QPainter &pnt, Projection *proj,
     pnt.setPen(backgroundColor);
     pnt.drawRect(0,0,proj->getW(), proj->getH());
     
-    // océans bleus (peint toute la zone entre les 2 pôles)
+    // oceans bleus (peint toute la zone entre les 2 poles)
     pnt.setBrush(seaColor);
     pnt.setPen(seaColor);
     int x0,y0,x1,y1;
@@ -429,7 +429,7 @@ void GshhsReader::drawContinents( QPainter &pnt, Projection *proj,
 {
     selectBestQuality(proj);
 
-    pnt.setPen(Qt::transparent);
+    //pnt.setPen(Qt::transparent);
 
     gshhsPoly_reader->drawGshhsPolyMapPlain(pnt, proj, seaColor, landColor);
 }

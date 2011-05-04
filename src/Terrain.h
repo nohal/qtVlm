@@ -119,8 +119,8 @@ private:
     Projection  *proj;
     myCentralWidget *parent;    
 
-    QImage     *imgEarth;   // images précalculées pour accélérer l'affichage
-    QImage     *imgSea;
+    QPixmap     *imgEarth;   // images precalculees pour accelerer l'affichage
+    //QPixmap     *imgSea;
     QPixmap     *imgWind;
     QPixmap     *imgAll;
 

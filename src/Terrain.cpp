@@ -32,6 +32,7 @@ Copyright (C) 2008 - Jacques Zaninetti - http://zygrib.free.fr
 #include <QMessageBox>
 #include <QDebug>
 #include <QDateTime>
+#include <QGraphicsScene>
 
 #include "Terrain.h"
 #include "settings.h"
@@ -94,7 +95,7 @@ Terrain::Terrain(myCentralWidget *parent, Projection *proj_) : QGraphicsWidget()
     //----------------------------------------------------------------------------
 
     imgEarth = NULL;
-    imgSea = NULL;
+    //imgSea = NULL;
     imgWind  = NULL;
     imgAll   = NULL;
     isEarthMapValid = false;
@@ -141,6 +142,7 @@ void Terrain::updateGraphicsParameters()
 
     isEarthMapValid = false;
     mustRedraw = true;
+    parent->getScene()->setBackgroundBrush(seaColor);
     indicateWaitingMap();
 }
 
@@ -170,8 +172,10 @@ void Terrain::draw_GSHHSandGRIB()
     }
     imgAll = new QPixmap(width,height);
     assert(imgAll);
+    imgAll->fill(Qt::transparent);
     QPainter pnt(imgAll);
     pnt.setRenderHint(QPainter::Antialiasing, true);
+    pnt.setRenderHint(QPainter::SmoothPixmapTransform, true);
 
     tranparent=Qt::transparent;
 
@@ -184,32 +188,37 @@ void Terrain::draw_GSHHSandGRIB()
             delete imgEarth;
             imgEarth = NULL;
         }
-        if (imgSea != NULL) {
-            delete imgSea;
-            imgSea = NULL;
-        }
+//        if (imgSea != NULL) {
+//            delete imgSea;
+//            imgSea = NULL;
+//        }
 
-        imgEarth = new QImage(width,height,QImage::Format_ARGB32_Premultiplied);
+        //imgEarth = new QImage(width,height,QImage::Format_ARGB32_Premultiplied);
+        imgEarth= new QPixmap(width,height);
         assert(imgEarth);
         imgEarth->fill(Qt::transparent);
-        imgSea = new QImage(width,height,QImage::Format_ARGB32_Premultiplied);
-        assert(imgSea);
+        //imgSea = new QImage(width,height,QImage::Format_ARGB32_Premultiplied);
+//        imgSea= new QPixmap(width,height);
+
+//        assert(imgSea);
 
         if (gshhsReader != NULL)
         {
-            QPainter pnt0(imgSea);
+//            QPainter pnt0(imgSea);
             QPainter pnt1(imgEarth);
-            pnt0.setRenderHint(QPainter::Antialiasing, true);
+//            pnt0.setRenderHint(QPainter::Antialiasing, true);
+//            pnt0.setRenderHint(QPainter::SmoothPixmapTransform, true);
             pnt1.setRenderHint(QPainter::Antialiasing, true);
+            pnt1.setRenderHint(QPainter::SmoothPixmapTransform, true);
             pnt1.setCompositionMode(QPainter::CompositionMode_Source);
-            gshhsReader->drawBackground(pnt0, proj, seaColor, backgroundColor);
+//            gshhsReader->drawBackground(pnt0, proj, seaColor, backgroundColor);
             gshhsReader->drawContinents(pnt1, proj, tranparent, landColor);
         }
     }
-    pnt.drawImage(0,0, *imgSea);
+//    pnt.drawPixmap(0,0, *imgSea);
 
     //===================================================
-    // Dessin des données GRIB
+    // Dessin des donnees GRIB
     //===================================================
 
     Grib * grib=parent->getGrib();
@@ -217,9 +226,12 @@ void Terrain::draw_GSHHSandGRIB()
     if(grib)
         drawGrib(pnt,grib);
 
+    pnt.drawPixmap(0,0, *imgEarth);
+
     //===================================================
-    // Dessin des bordures et frontières
+    // Dessin des bordures et frontieres
     //===================================================
+    pnt.setCompositionMode(QPainter::CompositionMode_Source);
 
     if (gshhsReader != NULL)
     {
@@ -250,7 +262,6 @@ void Terrain::draw_GSHHSandGRIB()
 
     //===================================================
 
-    pnt.drawImage(0,0, *imgEarth);
     /*int save=0;
     if(save==1) imgEarth->save("test.jpg","JPG",100);*/
     QString cartouche="";
@@ -628,6 +639,7 @@ QPainterPath Terrain::shape() const
 //---------------------------------------------------------
 void Terrain::paint(QPainter * pnt, const QStyleOptionGraphicsItem * , QWidget * )
 {
+    pnt->setRenderHint(QPainter::Antialiasing,true);
     pnt->drawPixmap(0,0, *imgAll);
 }
 

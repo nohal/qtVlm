@@ -84,6 +84,8 @@ myScene::myScene(myCentralWidget * parent) : QGraphicsScene(parent)
     wheelTimer->setInterval(5000);
     connect(wheelTimer,SIGNAL(timeout()),this, SLOT(wheelTimerElapsed()));
     wheelStrokes=0;
+    QColor seaColor  = Settings::getSetting("seaColor", QColor(50,50,150)).value<QColor>();
+    this->setBackgroundBrush(seaColor);
 }
 
 /* Events */
