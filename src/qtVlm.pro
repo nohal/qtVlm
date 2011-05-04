@@ -211,7 +211,8 @@ SOURCES += Dialogs/DialogGraphicsParams.cpp \
     Dialogs/dialogviewpolar.cpp \
     GshhsPolyReader.cpp \
     Dialogs/dialogpoiconnect.cpp
-unix:DEFINES += _TTY_POSIX_
+unix:DEFINES += _TTY_POSIX_ __UNIX_ARCH
 win32:DEFINES += _TTY_WIN_ \
     QWT_DLL \
-    QT_DLL
+    QT_DLL \
+    __WIN_ARCH

@@ -95,7 +95,6 @@ Terrain::Terrain(myCentralWidget *parent, Projection *proj_) : QGraphicsWidget()
     //----------------------------------------------------------------------------
 
     imgEarth = NULL;
-    //imgSea = NULL;
     imgWind  = NULL;
     imgAll   = NULL;
     isEarthMapValid = false;
@@ -188,34 +187,25 @@ void Terrain::draw_GSHHSandGRIB()
             delete imgEarth;
             imgEarth = NULL;
         }
-//        if (imgSea != NULL) {
-//            delete imgSea;
-//            imgSea = NULL;
-//        }
 
+
+#ifdef __WIN_ARCH
+        imgEarth= new QPixmap(width,height);
+#else
         imgEarth = new QImage(width,height,QImage::Format_ARGB32_Premultiplied);
-        //imgEarth= new QPixmap(width,height);
+#endif
         assert(imgEarth);
         imgEarth->fill(Qt::transparent);
-        //imgSea = new QImage(width,height,QImage::Format_ARGB32_Premultiplied);
-//        imgSea= new QPixmap(width,height);
-
-//        assert(imgSea);
 
         if (gshhsReader != NULL)
         {
-//            QPainter pnt0(imgSea);
             QPainter pnt1(imgEarth);
-//            pnt0.setRenderHint(QPainter::Antialiasing, true);
-//            pnt0.setRenderHint(QPainter::SmoothPixmapTransform, true);
             pnt1.setRenderHint(QPainter::Antialiasing, true);
             pnt1.setRenderHint(QPainter::SmoothPixmapTransform, true);
             pnt1.setCompositionMode(QPainter::CompositionMode_Source);
-//            gshhsReader->drawBackground(pnt0, proj, seaColor, backgroundColor);
             gshhsReader->drawContinents(pnt1, proj, tranparent, landColor);
         }
     }
-//    pnt.drawPixmap(0,0, *imgSea);
 
     //===================================================
     // Dessin des donnees GRIB
@@ -226,13 +216,15 @@ void Terrain::draw_GSHHSandGRIB()
     if(grib)
         drawGrib(pnt,grib);
 
-    //pnt.drawPixmap(0,0, *imgEarth);
+#ifdef __WIN_ARCH
+    pnt.drawPixmap(0,0, *imgEarth);
+#else
     pnt.drawImage(0,0, *imgEarth);
+#endif
 
     //===================================================
     // Dessin des bordures et frontieres
     //===================================================
-    //pnt.setCompositionMode(QPainter::CompositionMode_Source);
 
     if (gshhsReader != NULL)
     {
