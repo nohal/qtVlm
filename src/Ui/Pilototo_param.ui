@@ -189,7 +189,7 @@
       <x>10</x>
       <y>110</y>
       <width>271</width>
-      <height>25</height>
+      <height>30</height>
      </rect>
     </property>
     <layout class="QHBoxLayout" name="horizontalLayout_6">
@@ -318,11 +318,15 @@
  <tabstops>
   <tabstop>mode</tabstop>
   <tabstop>angle</tabstop>
+  <tabstop>lat_sig</tabstop>
   <tabstop>lat_deg</tabstop>
   <tabstop>lat_min</tabstop>
+  <tabstop>lon_sig</tabstop>
   <tabstop>lon_deg</tabstop>
   <tabstop>lon_min</tabstop>
   <tabstop>editWph</tabstop>
+  <tabstop>btn_copyPOI</tabstop>
+  <tabstop>btn_pastePOI</tabstop>
   <tabstop>btn_selectPOI</tabstop>
   <tabstop>pushButton</tabstop>
   <tabstop>pushButton_2</tabstop>

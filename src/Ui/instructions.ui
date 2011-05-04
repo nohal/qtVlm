@@ -9,7 +9,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>748</width>
+    <width>799</width>
     <height>57</height>
    </rect>
   </property>
@@ -90,6 +90,9 @@
      </property>
      <property name="text">
       <string/>
+     </property>
+     <property name="default">
+      <bool>true</bool>
      </property>
     </widget>
    </item>
@@ -198,6 +201,19 @@
    </item>
   </layout>
  </widget>
+ <tabstops>
+  <tabstop>btn_delInstruction</tabstop>
+  <tabstop>btn_validate</tabstop>
+  <tabstop>btn_cancel</tabstop>
+  <tabstop>horodate</tabstop>
+  <tabstop>btn_updateTime</tabstop>
+  <tabstop>mode_sel</tabstop>
+  <tabstop>instructionText</tabstop>
+  <tabstop>pushButton_3</tabstop>
+  <tabstop>btn_edit</tabstop>
+  <tabstop>btn_copy</tabstop>
+  <tabstop>btn_paste</tabstop>
+ </tabstops>
  <resources/>
  <connections>
   <connection>
