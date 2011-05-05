@@ -33,7 +33,7 @@ Copyright (C) 2008 - Jacques Zaninetti - http://zygrib.free.fr
 //-----------------------------
 Projection::Projection(int w, int h, double cx, double cy) {
     frozen=false;
-    scalemax = 500000;
+    scalemax = 10e20;
     scale = -1;
     my_setScreenSize(w, h);
     my_setCenterInMap(cx,cy);
