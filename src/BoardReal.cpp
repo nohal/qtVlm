@@ -69,7 +69,8 @@ boatReal * boardReal::currentBoat(void)
 void boardReal::setWp(float lat,float lon,float wph)
 {
     boatReal * myBoat=currentBoat();
-    myBoat->setWp(lat,lon,wph);
+    if(myBoat)
+        myBoat->setWp(lat,lon,wph);
 }
 void boardReal::boatUpdated(void)
 {

@@ -1710,7 +1710,7 @@ void MainWindow::slotAccountListUpdated(void)
 
 void MainWindow::slotChgWP(float lat,float lon, float wph)
 {
-    if(this->selectedBoat->type()==BOAT_VLM)
+    if(this->selectedBoat->getType()==BOAT_VLM)
     {
         if(myBoard->VLMBoard())
             myBoard->VLMBoard()->setWP(lat,lon,wph);
