@@ -2245,7 +2245,7 @@ void ROUTAGE::convertToRoute()
     route->setStartTimeOption(3);
     route->setStartFromBoat(false);
     route->setColor(this->color);
-    route->setWidth(this->width);
+    //route->setWidth(this->width);
     route->setFrozen(true);
     QList<vlmPoint> * list=result->getPoints();
     for (int n=0;n<list->count();n++)

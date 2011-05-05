@@ -324,7 +324,7 @@ void GshhsPolyReader::setQuality(int quality)  // 5 levels: 0=low ... 4=full
 
         QString fname=QString().fromStdString(path)+QString().sprintf("poly-%c-1.dat",txtn);
 
-        qWarning() << "New quality: " << qual << ", fname=" << fname;
+        //qWarning() << "New quality: " << qual << ", fname=" << fname;
 
         if (fpoly)
             fclose(fpoly);

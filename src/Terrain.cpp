@@ -228,8 +228,6 @@ void Terrain::draw_GSHHSandGRIB()
 
     if (gshhsReader != NULL)
     {
-        pnt.setPen(seaBordersPen);
-        gshhsReader->drawSeaBorders(pnt, proj);
 
         if (showCountriesBorders) {
             pnt.setPen(boundariesPen);
@@ -241,18 +239,21 @@ void Terrain::draw_GSHHSandGRIB()
         }
     }
 
-    QPainter pnt1(imgEarth);
     if (showCountriesNames)
     {
 
-        gisReader->drawCountriesNames(pnt1, proj);
+        gisReader->drawCountriesNames(pnt, proj);
     }
     if (showCitiesNamesLevel > 0) {
-        gisReader->drawCitiesNames(pnt1, proj, showCitiesNamesLevel);
+        gisReader->drawCitiesNames(pnt, proj, showCitiesNamesLevel);
     }
     //===================================================
 
-
+    if (gshhsReader != NULL)
+    {
+        pnt.setPen(seaBordersPen);
+        gshhsReader->drawSeaBorders(pnt, proj);
+    }
     //===================================================
 
     /*int save=0;
