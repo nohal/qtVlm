@@ -3346,6 +3346,78 @@ Voulez-vous egalement supprimer tous les POIs lui appartenant?</source>
         <source>Bientot des infos ici</source>
         <translation></translation>
     </message>
+    <message>
+        <source>nds</source>
+        <translation>nds</translation>
+    </message>
+    <message>
+        <source>deg</source>
+        <translation>°</translation>
+    </message>
+    <message>
+        <source>Running</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>no signal</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Fix quality</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Differential quality</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Sensitive quality</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>no position</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>2D position</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>3D position</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Ideal accuracy</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Excellent accuracy</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Good accuracy</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Moderate accuracy</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Not so good accuracy</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Very bad accuracy</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Start GPS</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Stop GPS</source>
+        <translation></translation>
+    </message>
 </context>
 <context>
     <name>boardReal_ui</name>
@@ -3374,16 +3446,8 @@ Voulez-vous egalement supprimer tous les POIs lui appartenant?</source>
         <translation></translation>
     </message>
     <message>
-        <source>Stop GPS</source>
-        <translation></translation>
-    </message>
-    <message>
         <source>GPS status:</source>
-        <translation>Statut GPS:</translation>
-    </message>
-    <message>
-        <source>status</source>
-        <translation></translation>
+        <translation type="obsolete">Statut GPS:</translation>
     </message>
     <message>
         <source>Deplacer le bateau</source>
@@ -3432,6 +3496,18 @@ Voulez-vous egalement supprimer tous les POIs lui appartenant?</source>
     <message>
         <source>Reset</source>
         <translation></translation>
+    </message>
+    <message>
+        <source>GPS Status</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>GPS status loading</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Wind information (from grib)</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
