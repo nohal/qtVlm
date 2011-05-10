@@ -47,9 +47,9 @@ Copyright (C) 2008 - Jacques Zaninetti - http://zygrib.free.fr
 #include "Board.h"
 #include "BoardVLM.h"
 #include "BoardReal.h"
-#include "mycentralwidget.h"
 #include "settings.h"
 #include "opponentBoat.h"
+#include "mycentralwidget.h"
 #include "MenuBar.h"
 #include "GshhsReader.h"
 #include "Polar.h"
@@ -977,9 +977,14 @@ void MainWindow::slotSetGribDate(time_t tps)
     }
 }
 //-------------------------------------------------
+Grib * MainWindow::getGrib()
+{
+    return my_centralWidget->getGrib();
+}
+
 void MainWindow::slotWindArrows(bool b)
 {
-    // pas de barbules sans flèches
+    // pas de barbules sans fleches
     menuBar->acView_Barbules->setEnabled(b);
 }
 
@@ -1476,7 +1481,7 @@ void MainWindow::slotBoatUpdated(boat * upBoat,bool newRace,bool doingSync)
             }
         }
         emit boatHasUpdated(upBoat);
-        emit WPChanged(upBoat->getWPLat(),upBoat->getWPLon());
+        //emit WPChanged(upBoat->getWPLat(),upBoat->getWPLon());
     }
 
 }

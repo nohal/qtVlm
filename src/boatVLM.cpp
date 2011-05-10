@@ -99,6 +99,8 @@ boatVLM::~boatVLM(void)
             delete this->trace_drawing;
         if(this->WPLine)
             delete this->WPLine;
+        if(popup)
+            delete popup;
     }
 }
 

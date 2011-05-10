@@ -360,13 +360,21 @@ void vlmLine::paint(QPainter * pnt, const QStyleOptionGraphicsItem * , QWidget *
             break;
         }
     }
-    if(hasInterpolated)
+    if(hasInterpolated && !hidden)
     {
         linePen.setWidthF(penW+10);
         pnt->setPen(linePen);
         int X,Y;
         Util::computePos(proj,interpolatedLat, interpolatedLon, &X, &Y);
         pnt->drawPoint(X,Y);
+        linePen.setWidthF(penW);
+        pnt->setPen(linePen);
+    }
+    if(roundedEnd && !hidden)
+    {
+        linePen.setWidthF(penW+1);
+        pnt->setPen(linePen);
+        pnt->drawPoint(polyList.last()->last());
         linePen.setWidthF(penW);
         pnt->setPen(linePen);
     }

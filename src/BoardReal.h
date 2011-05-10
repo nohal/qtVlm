@@ -26,6 +26,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "class_list.h"
 #include "ui_BoardReal.h"
+#include <QPainter>
 
 class boardReal: public QWidget , public Ui::boardReal_ui
 { Q_OBJECT
@@ -43,7 +44,7 @@ class boardReal: public QWidget , public Ui::boardReal_ui
         void paramChanged(void);
         void slot_hideShowCompass();
         void startGPS(void);
-        void stopGPS(void);
+        void statusGPS(void);
         void chgBoatPosition();
         void resetWp(){this->setWp(0,0,-1);}
 
@@ -54,8 +55,9 @@ class boardReal: public QWidget , public Ui::boardReal_ui
         void contextMenuEvent(QContextMenuEvent  *);
 
     private:
-        QMainWindow * mainWin;
+        MainWindow * mainWin;
         board * parent;
+        double A180(double angle);
 
         /* contextual menu */
         QMenu *popup;
@@ -63,6 +65,8 @@ class boardReal: public QWidget , public Ui::boardReal_ui
 
         boatReal * currentBoat(void);
         time_t eta;
+        QPixmap imgInfo;
+        QPainter pntImgInfo;
 };
 
 #endif // BOARDREAL_H

@@ -129,12 +129,14 @@ POI::POI(QString name, int type, double lat, double lon,
 POI::~POI()
 {
     if(route!=NULL) this->setRoute(NULL);
-    if(lineBetweenPois!=NULL)
+    if(lineBetweenPois!=NULL && !parent->getAboutToQuit())
     {
         delete lineBetweenPois;
         this->connectedPoi->setConnectedPoi(NULL);
         this->connectedPoi->setLineBetweenPois(NULL);
     }
+    if(popup && !parent->getAboutToQuit())
+        delete popup;
 }
 void POI::setLongitude(double lon)
 {

@@ -176,7 +176,7 @@ class boat: public QGraphicsWidget
         /* estime param */
         int estime_type;
         int estime_param;
-        orthoSegment * estimeLine;
+        vlmLine * estimeLine;
         orthoSegment * WPLine;
 
         myCentralWidget * parent;

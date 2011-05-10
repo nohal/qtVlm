@@ -500,6 +500,8 @@ ROUTAGE::~ROUTAGE()
     for (int n=0;n<isoPointList.count();n++)
         delete isoPointList[n];
     delete way;
+    if(this->popup && !parent->getAboutToQuit())
+        delete popup;
 }
 void ROUTAGE::setBoat(boat *myBoat)
 {

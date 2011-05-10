@@ -56,6 +56,7 @@ class vlmLine : public QGraphicsWidget
         void setNbVacPerHour(int nbVacPerHour) {this->nbVacPerHour=nbVacPerHour;}
         void setPorteOnePoint(void){this->onePoint=true;}
         void setHidden(bool hidden) {this->hidden=hidden;update();}
+        bool getHidden(void){return this->hidden;}
         QList<vlmPoint> * getPoints(){return & this->line;}
         void setSolid(bool solid){this->solid=solid;}
 
@@ -73,6 +74,7 @@ class vlmLine : public QGraphicsWidget
         void setInterpolated(float lon,float lat){this->interpolatedLon=lon;this->interpolatedLat=lat;update();}
         void setHasInterpolated(bool b){this->hasInterpolated=b;update();}
         vlmPoint * getLastPoint() {return & line.last();}
+        void setRoundedEnd(bool b){this->roundedEnd=b;}
         QPainterPath shape() const;
         ~vlmLine();
 
@@ -112,6 +114,7 @@ class vlmLine : public QGraphicsWidget
         float A360(float hdg);
         bool replayMode;
         int replayStep;
+        bool roundedEnd;
 };
 
 

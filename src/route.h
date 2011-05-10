@@ -148,11 +148,11 @@ class ROUTE : public QObject
         bool busy;
 
         /*popup menu*/
-        QMenu *popup;
-        QAction *r_edit;
-        QAction *r_hide;
-        QAction *r_delete;
-        void createPopUpMenu(void);
+//        QMenu *popup;
+//        QAction *r_edit;
+//        QAction *r_hide;
+//        QAction *r_delete;
+//        void createPopUpMenu(void);
 
         /*various*/
         double A360(double hdg);

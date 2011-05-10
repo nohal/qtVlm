@@ -50,6 +50,12 @@ void nmea_trace_buff(const char *buff, int buff_size)
 
 void nmea_error(const char *str, ...)
 {
+#if 0
+    FILE *file;
+    file = fopen("nmeaError.txt","a+");
+    fprintf(file,"%s\n",str);
+    fclose(file);
+#endif
     int size;
     va_list arg_list;
     char buff[NMEA_DEF_PARSEBUFF];

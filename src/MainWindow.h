@@ -46,6 +46,7 @@ class MainWindow: public QMainWindow
         void openGribFile(QString fileName, bool zoom=true);
         bool getBoatLockStatus(void);
         bool isBoat(QString idu);
+        Grib * getGrib();
 
         void getBoatWP(double * lat,double * lon);
         bool get_selPOI_instruction();

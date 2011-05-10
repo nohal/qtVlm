@@ -28,21 +28,7 @@ Copyright (C) 2008 - Jacques Zaninetti - http://zygrib.free.fr
 #include <QTimer>
 
 #include <QObject>
-
-//#include "Util.h"
 #include "dataDef.h"
-//struct vlmPoint
-//{
-//#warning change vlmPoint from struct to class
-//    float       lat;
-//    float       lon;
-//    VlmPoint    origin;
-//    bool        isStart;
-//    float       cap;
-//    bool        isSplitting;
-//    float       etaBcmg;
-//    float       capBcmg;
-//};
 
 class Projection : public QObject
 {
@@ -68,7 +54,7 @@ Q_OBJECT
         void setScaleAndCenterInMap(float sc,double x, double y);
 
         /* get internal data */
-        int   getW()        const   {return W;}    // taille de l'écran
+        int   getW()        const   {return W;}    // taille de l'ecran
         int   getH()        const   {return H;}
         double getCX()      const   {return CX;}   // centre
         double getCY()      const   {return CY;}
@@ -88,7 +74,7 @@ Q_OBJECT
         bool intersect(double w,double e,double s,double n)  const;
         bool isPointVisible (double x,double y) const;
         bool isInBounderies (int x,int y) const;
-        void setFrozen(bool b){this->frozen=b;/*emit_projectionUpdated();*/}
+        void setFrozen(bool b){this->frozen=b;}
         bool getFrozen(void){return this->frozen;}
         void setUseTempo(bool b){this->useTempo=b;}
     signals:
@@ -96,7 +82,7 @@ Q_OBJECT
         void projectionUpdated(void);
 
     private:
-        int W, H;     // taille de la fenêtre (pixels)
+        int W, H;     // taille de la fenetre (pixels)
         double CX, CY;                  // centre de la vue (longitude/latitude)
         double xW, xE, yN, yS;  // fenetre visible (repere longitude/latitude)
         double PX,PY;       // center in mercator projection

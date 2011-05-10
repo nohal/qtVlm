@@ -21,17 +21,19 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <QMessageBox>
 #include <QMenu>
 #include <QDebug>
+#include <QString>
 
 #include "MainWindow.h"
 
 #include "BoardReal.h"
 #include "Board.h"
 #include "settings.h"
-
+#include "Polar.h"
 #include "boatReal.h"
 
 #include "dataDef.h"
 #include "Util.h"
+#include "Grib.h"
 
 boardReal::boardReal(MainWindow * mainWin, board * parent) : QWidget(mainWin)
 {
@@ -45,7 +47,16 @@ boardReal::boardReal(MainWindow * mainWin, board * parent) : QWidget(mainWin)
     ac_showHideCompass = new QAction(tr("Cacher compas"),popup);
     popup->addAction(ac_showHideCompass);
     connect(ac_showHideCompass,SIGNAL(triggered()),this,SLOT(slot_hideShowCompass()));
-
+    imgInfo=QPixmap(230,70);
+    pntImgInfo.begin(&imgInfo);
+    pntImgInfo.setRenderHint(QPainter::Antialiasing,true);
+    pntImgInfo.setRenderHint(QPainter::TextAntialiasing,true);
+    pntImgInfo.setPen(Qt::black);
+    QFont font=pntImgInfo.font();
+    font.setPointSize(6);
+    pntImgInfo.setFont(font);
+    this->gpsInfo->hide();
+    this->statusBtn->setEnabled(false);
 //    /* Etat du compass */
 //    if(Settings::getSetting("boardCompassShown", "1").toInt()==1)
 //        windAngle->show();
@@ -107,53 +118,108 @@ void boardReal::boatUpdated(void)
         vmg_2->setText("---");
         angle->setText("---");
     }
-
+    this->windInfo->setText("--");
+    if(mainWin->getGrib() && mainWin->getGrib()->isOk())
+    {
+        time_t now=QDateTime::currentDateTimeUtc().toTime_t();
+        Grib * grib=mainWin->getGrib();
+        QString s=QString();
+        if(now>grib->getMinDate() && now<grib->getMaxDate())
+        {
+            double tws,twd;
+            grib->getInterpolatedValue_byDates((double) myBoat->getLon(),myBoat->getLat(),
+                                   now,&tws,&twd,INTERPOLATION_DEFAULT);
+            twd=radToDeg(twd);
+            if(twd>360)
+                twd-=360;
+            double twa=A180(myBoat->getWindDir()-twd);
+            double Y=90-twa;
+            double a=tws*cos(degToRad(Y));
+            double b=tws*sin(degToRad(Y));
+            double bb=b+myBoat->getSpeed();
+            double aws=sqrt(a*a+bb*bb);
+            double awa=90-radToDeg(atan(bb/a));
+            s=s.sprintf("<BODY LEFTMARGIN=\"0\">TWS <FONT COLOR=\"RED\"><b>%.1fnds</b></FONT> TWD %.0fdeg TWA %.0fdeg<br>AWS %.1fnds AWA %.0fdeg",tws,twd,A180(twa),aws,awa);
+            if(myBoat->getPolarData())
+            {
+                QString s1;
+                float bvmgUp=myBoat->getBvmgUp(tws);
+                float bvmgDown=myBoat->getBvmgDown(tws);
+                s=s+s1.sprintf("<br>Pres %.0fdeg Portant %.0fdeg",bvmgUp,bvmgDown);
+            }
+            s=s.replace("nds",tr("nds"));
+            s=s.replace("deg",tr("deg"));
+            s=s.replace("Pres",tr("Pres"));
+            s=s.replace("Portant",tr("Portant"));
+            this->windInfo->setText(s);
+        }
+    }
     /* GPS status */
     QString status;
-    if(myBoat->gpsIsRunning())
+    if(myBoat->gpsIsRunning() && !this->gpsInfo->isHidden())
     {
-        status="running\n";
+        nmeaINFO info=myBoat->getInfo();
+        imgInfo.fill(Qt::white);
+        for(int n=0;n<12;n++)
+        {
+            if(info.satinfo.sat[n].in_use==0)
+                pntImgInfo.setBrush(Qt::red);
+            else
+                pntImgInfo.setBrush(Qt::green);
+            pntImgInfo.drawRect(1+n*19,50,16,-info.satinfo.sat[n].sig*.7);
+            pntImgInfo.drawText(1+n*19,52,16,18,Qt::AlignHCenter | Qt::AlignVCenter,QString().setNum(info.satinfo.sat[n].id));
+        }
+        gpsInfo->setPixmap(imgInfo);
+        status=tr("Running")+"<br>";
         if(myBoat->getSig()==0)
-            status=status+"no signal\n";
+            status=status+tr("no signal")+"<br>";
         else if(myBoat->getSig()==1)
-            status=status+"Fix qualitys\n";
+            status=status+tr("Fix quality")+"<br>";
         else if (myBoat->getSig()==2)
-            status=status+"Differential quality\n";
+            status=status+tr("Differential quality")+"<br>";
         else if (myBoat->getSig()==3)
-            status=status+"Sensitive quality\n";
+            status=status+tr("Sensitive quality")+"<br>";
         if(myBoat->getFix()==1)
-            status=status+"no position";
+            status=status+tr("no position");
         else if(myBoat->getFix()==2)
-            status=status+"2D position";
+            status=status+tr("2D position");
         else
-            status=status+"3D position";
+            status=status+tr("3D position");
         if(myBoat->getFix()>1)
         {
-            status=status+"\n";
+            status=status+"<br>";
             if(myBoat->getPdop()<=1)
-                status=status+"Ideal accuracy";
+                status=status+tr("Ideal accuracy");
             else if(myBoat->getPdop()<=2)
-                status=status+"Excellent accuracy";
+                status=status+tr("Excellent accuracy");
             else if(myBoat->getPdop()<=1)
-                status=status+"Good accuracy";
+                status=status+tr("Good accuracy");
             else if(myBoat->getPdop()<=5)
-                status=status+"Moderate accuracy";
+                status=status+tr("Moderate accuracy");
             else if(myBoat->getPdop()<=20)
-                status=status+"Bad accuracy";
+                status=status+tr("Not so good accuracy");
             else
-                status=status+"Very bad accuracy";
+                status=status+tr("Very bad accuracy");
         }
-        gpsStatus->setText(status);
-        this->startBtn->setEnabled(false);
-        this->stopBtn->setEnabled(true);
-    }
-    else
-    {
-        gpsStatus->setText("Stopped");
-        this->startBtn->setEnabled(true);
-        this->stopBtn->setEnabled(false);
+        status=status.replace(" ","&nbsp;");
+        gpsInfo->setToolTip(status);
+#if 0 /*show the image as a tooltip for startBtn (experimental)*/
+        imgInfo.save("tempTip.png");
+        startBtn->setToolTip("<p>"+status+"</p><img src=\"tempTip.png\">");
+#endif
     }
 }
+double boardReal::A180(double angle)
+    {
+        if(qAbs(angle)>180)
+        {
+            if(angle<0)
+                angle=360+angle;
+            else
+                angle=angle-360;
+        }
+        return angle;
+    }
 
 void boardReal::setChangeStatus(bool /*status*/)
 {
@@ -182,21 +248,33 @@ void boardReal::startGPS(void)
     boatReal * myBoat=currentBoat();
     if(!myBoat)
     {
-        qWarning() << "No real board to start GPS";
+        qWarning() << "No real boat to start GPS";
         return;
     }
-    myBoat->startRead();
+    if(myBoat->gpsIsRunning())
+    {
+        myBoat->stopRead();
+        this->startBtn->setText(tr("Start GPS"));
+        this->statusBtn->setEnabled(false);
+        this->gpsInfo->hide();
+    }
+    else
+    {
+        myBoat->startRead();
+        if(myBoat->gpsIsRunning())
+        {
+            this->startBtn->setText(tr("Stop GPS"));
+            this->statusBtn->setEnabled(true);
+        }
+    }
 }
 
- void boardReal::stopGPS(void)
+ void boardReal::statusGPS(void)
  {
-     boatReal * myBoat=currentBoat();
-     if(!myBoat)
-     {
-         qWarning() << "No real board to stop GPS";
-         return;
-     }
-     myBoat->stopRead();
+     if(this->gpsInfo->isHidden())
+         gpsInfo->show();
+     else
+         gpsInfo->hide();
  }
 
 void boardReal::slot_hideShowCompass()

@@ -55,8 +55,8 @@ boat::boat(QString pseudo, bool activated,
     int gr = 255;
     bgcolor = QColor(gr,gr,gr,150);
 
-    estimeLine = new orthoSegment(proj,parent->getScene(),Z_VALUE_ESTIME,true);
-    estimeLine->setOrthoMode(false);
+    estimeLine = new vlmLine(proj,parent->getScene(),Z_VALUE_ESTIME);
+    estimeLine->setRoundedEnd(true);
     estimeTimer=new QTimer(this);
     estimeTimer->setInterval(1000);
     connect(estimeTimer,SIGNAL(timeout()),this,SLOT(slot_estimeFlashing()));
@@ -91,7 +91,8 @@ boat::boat(QString pseudo, bool activated,
     hide();
     WPLine->hide();
     estimeTimer->stop();
-    estimeLine->hide();
+    estimeLine->slot_showMe();
+    estimeLine->setHidden(false);
     WPLine->hide();
 
     /*if(activated)
@@ -112,8 +113,17 @@ boat::boat(QString pseudo, bool activated,
 boat::~boat()
 {
     disconnect();
-    if(polarData)
-        emit releasePolar(polarData->getName());
+    if(!parent->getAboutToQuit())
+    {
+        if(polarData)
+            emit releasePolar(polarData->getName());
+        if(estimeLine)
+            delete estimeLine;
+        if(WPLine)
+            delete WPLine;
+        if(this->popup)
+            delete popup;
+    }
 }
 
 void boat::createPopUpMenu(void)
@@ -176,6 +186,7 @@ void boat::slot_selectBoat()
     }
     selected = true;
     trace_drawing->show();
+    drawEstime();
     if(this->boat_type==BOAT_REAL) return;
     updateTraceColor();
     emit boatSelected(this);
@@ -318,12 +329,12 @@ void boat::drawEstime(void)
 
 void boat::drawEstime(float myHeading, float mySpeed)
 {
-    estimeLine->hideSegment();
+    estimeLine->deleteAll();
     WPLine->hideSegment();
     /*should we draw something?*/
     if(isUpdating() || !getStatus())
         return;
-
+    estimeLine->setHidden(false);
     QPen penLine1(QColor(Settings::getSetting("estimeLineColor", QColor(Qt::darkMagenta)).value<QColor>()),1,Qt::SolidLine);
     penLine1.setWidthF(Settings::getSetting("estimeLineWidth", 1.6).toDouble());
     QPen penLine2(QColor(Qt::black),1,Qt::DotLine);
@@ -370,7 +381,10 @@ void boat::drawEstime(float myHeading, float mySpeed)
         else
             estimeTimer->stop();
         estimeLine->setLinePen(penLine1);
-        estimeLine->initSegment(i1,j1,i2,j2);
+        estimeLine->addPoint(lat,lon);
+        estimeLine->addPoint(tmp_lat,tmp_lon);
+        estimeLine->slot_showMe();
+        //estimeLine->initSegment(i1,j1,i2,j2);
         /* draw ortho to wp */
         if(WPLat != 0 && WPLon != 0)
         {
@@ -389,13 +403,11 @@ void boat::slot_estimeFlashing()
     if(!selected)
     {
         estimeTimer->stop();
-        estimeLine->hide();
+        estimeLine->setHidden(true);
         WPLine->hide();
         return;
     }
-    if(estimeLine->isVisible())
-        estimeLine->hide();
-    else estimeLine->show();
+    estimeLine->setHidden(!estimeLine->getHidden());
 }
 
 void boat::slotCompassLine()
@@ -461,10 +473,12 @@ void boat::setStatus(bool activated)
      {
         WPLine->hide();
         estimeTimer->stop();
-        estimeLine->hide();
+        estimeLine->setHidden(true);;
         if(this->boat_type==BOAT_REAL)
             this->stopRead();
      }
+     else
+         estimeLine->setHidden(false);
 }
 
 void boat::playerDeActivated(void)
@@ -477,7 +491,7 @@ void boat::playerDeActivated(void)
     trace_drawing->hide();
     WPLine->hide();
     estimeTimer->stop();
-    estimeLine->hide();
+    estimeLine->setHidden(true);;
     if(this->boat_type==BOAT_REAL)
         this->stopRead();
 }

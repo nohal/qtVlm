@@ -43,16 +43,18 @@ class ReceiverThread : public QThread
 
         bool initPort(void);
     public slots:
-        void terminate();
+        void terminateMe();
 
     signals:
         void decodeData(QByteArray data);
-        void updateBoat(boat * boat,bool b1, bool b2);
+        void updateBoat(nmeaINFO info);
 
     private:
         QextSerialPort * port;
         boatReal *parent;
         bool stop;
+        nmeaINFO info;
+        nmeaPARSER parser;
 
 };
 
@@ -83,12 +85,13 @@ class boatReal : public boat
         double getPdop(){return pdop;}
         time_t getEta(){return eta;}
         void setWp(float lat, float lon, float wph);
+        nmeaINFO getInfo(void){return info;}
 
     public slots:
-        void decodeData(QByteArray data);
         void slot_selectBoat(void) { boat::slot_selectBoat(); }
         void slot_threadStartedOrFinished(void);
         void slot_chgPos(void);
+        void updateBoat(nmeaINFO info);
 
     signals:
         void terminateThread();
@@ -102,7 +105,6 @@ class boatReal : public boat
         int cnt;
 
         nmeaINFO info;
-        nmeaPARSER parser;
 
         QString parseMask(int mask);
 

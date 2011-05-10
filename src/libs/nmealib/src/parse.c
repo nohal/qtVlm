@@ -280,7 +280,6 @@ int nmea_parse_GPGSV(const char *buff, int buff_sz, nmeaGPGSV *pack)
         nmea_error("GPGSV parse error!");
         return 0;
     }
-
     return 1;
 }
 
@@ -303,7 +302,8 @@ int nmea_parse_GPRMC(const char *buff, int buff_sz, nmeaGPRMC *pack)
     nmea_trace_buff(buff, buff_sz);
 
     nsen = nmea_scanf(buff, buff_sz,
-        "$GPRMC,%s,%C,%lf,%C,%lf,%C,%f,%lf,%2d%2d%2d,%lf,%C,%C*",
+//      "$GPRMC,%s,%C,%lf,%C,%lf,%C,%f,%lf,%2d%2d%2d,%lf,%C,%C*",
+        "$GPRMC,%s,%C,%f,%C,%f,%C,%f,%f,%2d%2d%2d,%f,%C,%C*",
         &(time_buff[0]),
         &(pack->status), &(pack->lat), &(pack->ns), &(pack->lon), &(pack->ew),
         &(pack->speed), &(pack->direction),
@@ -312,7 +312,9 @@ int nmea_parse_GPRMC(const char *buff, int buff_sz, nmeaGPRMC *pack)
 
     if(nsen != 13 && nsen != 14)
     {
-        nmea_error("GPRMC parse error!");
+        char error[50];
+        sprintf(error,"GPRMC parse error! nsen=%d",nsen);
+        nmea_error(error);
         return 0;
     }
 
@@ -428,12 +430,13 @@ void nmea_GPGSA2info(nmeaGPGSA *pack, nmeaINFO *info)
 void nmea_GPGSV2info(nmeaGPGSV *pack, nmeaINFO *info)
 {
     int isat, isi, nsat;
-
     NMEA_ASSERT(pack && info);
 
     if(pack->pack_index > pack->pack_count ||
         pack->pack_index * NMEA_SATINPACK > NMEA_MAXSAT)
+    {
         return;
+    }
 
     if(pack->pack_index < 1)
         pack->pack_index = 1;

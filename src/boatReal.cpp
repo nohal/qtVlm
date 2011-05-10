@@ -1,4 +1,4 @@
-/**********************************************************************
+/********************************************************************
 qtVlm: Virtual Loup de mer GUI
 Copyright (C) 2010 - Christophe Thomas aka Oxygen77
 
@@ -31,6 +31,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "nmea.h"
 #include "Util.h"
 #include "Orthodromie.h"
+#include "Polar.h"
+#include "orthoSegment.h"
 
 boatReal::boatReal(QString pseudo, bool activated, Projection * proj,MainWindow * main,
                    myCentralWidget * parent): boat(pseudo,activated,proj,main,parent)
@@ -45,32 +47,20 @@ boatReal::boatReal(QString pseudo, bool activated, Projection * proj,MainWindow 
 
     /* init thread */
     gpsReader = new ReceiverThread(this);
-    qWarning()<<"after creating thread";
-    /* init nmea decoder */
     nmea_zero_INFO(&info);
-    nmea_parser_init(&parser);
-    if(parser.buff_size==0)
-        qWarning()<<"no parser!!!";
-
-
     this->lat=0;
     this->lon=0;
     this->vacLen=300;
     trace=new vlmLine(proj,parent->getScene(),Z_VALUE_ESTIME);
-    qWarning()<<"after creating trace for boatReal";
     previousLon=lon;
     previousLat=lat;
     QPen penTrace;
     penTrace.setColor(Qt::red);
     penTrace.setBrush(Qt::red);
     penTrace.setWidthF(0.5);
-    qWarning()<<"before setNbVacPerHour";
     trace->setNbVacPerHour(3600/this->getVacLen());
-    qWarning()<<"after setNbVacPerHour";
     trace->setLinePen(penTrace);
-    qWarning()<<"after setLinePen";
     trace->slot_showMe();
-    qWarning()<<"after boatReal show trace";
     gotPosition=false;
     this->WPLat=0;
     this->WPLon=0;
@@ -78,37 +68,39 @@ boatReal::boatReal(QString pseudo, bool activated, Projection * proj,MainWindow 
     this->heading=0;
     this->windSpeed=-1;
     this->setStatus(true);
-    this->vacLen=300;
     this->playerName=pseudo;
     this->fix=1;
     this->sig=0;
     this->eta=-1;
     changeLocked=false;
     forceEstime=false;
-    //updateBoatData();
-
 
     myCreatePopUpMenu();
 }
 
 boatReal::~boatReal()
 {
-    qWarning()<<"inside ~boatReal";
     if(gpsReader && gpsReader->isRunning())
     {
         this->stopRead();
-//        int dummy=0;/*trying to fix the crash on exit (not enough)*/
-//        while(gpsReader->isRunning())
-//            dummy++;
-//        qWarning()<<"dummy="<<dummy;
         delete gpsReader;
     }
-    if(trace && !parent->getAboutToQuit())
+    if( !parent->getAboutToQuit() )
     {
-        parent->getScene()->removeItem(trace);
-        delete trace;
+        if(trace)
+        {
+            parent->getScene()->removeItem(trace);
+            delete trace;
+        }
+        if(polarData)
+            emit releasePolar(polarData->getName());
+        if(estimeLine)
+            delete estimeLine;
+        if(WPLine)
+            delete WPLine;
+        if(this->popup)
+            delete popup;
     }
-    qWarning()<<"last instruction in ~boatReal";
 }
 void boatReal::setWp(float la, float lo, float w)
 {
@@ -132,7 +124,6 @@ void boatReal::setWp(float la, float lo, float w)
         eta=eta+(3600/vmg)*dnm;
     }
     this->drawEstime();
-    emit boatUpdated(this,false,false);
 }
 
 void boatReal::myCreatePopUpMenu(void)
@@ -149,8 +140,9 @@ void boatReal::startRead()
 
     /* start loop */
     cnt=0;
-    if(!gpsReader)
-        gpsReader = new ReceiverThread(this);
+    if(gpsReader)
+        delete gpsReader;
+    gpsReader = new ReceiverThread(this);
     gpsReader->start();
 }
 
@@ -160,7 +152,7 @@ void boatReal::stopRead()
     {
         if(gpsReader->isRunning())
         {
-            qWarning() << "gpsThread running => kill it";
+            qWarning() << "gpsThread running => kill it (this should not happened)";
             emit terminateThread();
         }
     }
@@ -179,19 +171,9 @@ bool boatReal::gpsIsRunning()
     return true;
 }
 
-void boatReal::decodeData(QByteArray data)
+void boatReal::updateBoat(nmeaINFO info)
 {
-    //data="$GPRMC,152051.718,A,4825.333333,N,00618.333333,W,0,0,151110,0,E,A*04";
-    data.push_back('\r');
-    data.push_back('\n');
-    //qWarning()<<data<<"(size="<<data.size()<<")";
-    char * record=data.data();
-    nmea_parse(&parser, record, data.size(), &info);
-
-
-    /*QWARN << cnt++ << ": Lat= " << nmea_ndeg2degree(info.lat) << " (" << info.lat << "), Lon= "
-            << nmea_ndeg2degree(info.lon) << " (" << info.lon << "), Sig=" << info.sig << ", Fix=" << info.fix << ", mask=" << parseMask(info.smask);
-    */
+    this->info=info;
     QDateTime now;
     now=now.currentDateTime();
     QString s=now.toString("hh:mm:ss");
@@ -202,30 +184,29 @@ void boatReal::decodeData(QByteArray data)
     this->pdop=info.PDOP;
     if(sig<0 || sig>3)
         qWarning()<<"strange sig value:"<<sig;
-    if(info.fix==1 || info.sig==0)
-    {
-        qWarning()<<"bad gps signal, fix="<<info.fix<<",sig="<<info.sig;
-        return;
-    }
     this->speed=info.speed/1.852;
     this->heading=info.direction;
+    if(info.fix==1 || info.sig==0)
+    {
+//        qWarning()<<"bad gps signal, fix="<<info.fix<<",sig="<<info.sig;
+        emit(boatUpdated(this,false,false));
+        return;
+    }
     this->lat=nmea_ndeg2degree(info.lat);
     this->lon=nmea_ndeg2degree(info.lon);
     this->lastUpdateTime=QDateTime().currentDateTimeUtc().toTime_t();
-    if(previousLon!=lon && previousLat!=lat)
+    if(previousLon!=lon || previousLat!=lat)
         updateBoatData();
-    if(gotPosition && !(previousLat==0 && previousLon==0)) /*a revoir*/
+    if(gotPosition && (previousLon!=lon || previousLat!=lat))
     {
-        trace->addPoint(previousLat,previousLon);
+        trace->addPoint(lat,lon);
         trace->slot_showMe();
     }
     gotPosition=true;
     previousLon=lon;
     previousLat=lat;
-    this->blockSignals(true);
     this->setWp(WPLat,WPLon,WPHd);
-    this->blockSignals(false);
-    //emit boatUpdated(this,false,false); /* made elsewhere*/
+    emit(boatUpdated(this,false,false));
 }
 
 void boatReal::setPosition(double lat, double lon)
@@ -233,8 +214,8 @@ void boatReal::setPosition(double lat, double lon)
     this->lat=lat;
     this->lon=lon;
     this->lastUpdateTime=QDateTime().currentDateTimeUtc().toTime_t();
-    updateBoatData();
     this->setWp(WPLat,WPLon,WPHd);
+    updateBoatData();
 }
 
 QString boatReal::parseMask(int mask)
@@ -402,17 +383,20 @@ void boatReal::slot_chgPos(void)
 
 ReceiverThread::ReceiverThread(boatReal * parent)
 {
-    connect(parent,SIGNAL(terminateThread()),this,SLOT(terminate()));
-    connect(this,SIGNAL(decodeData(QByteArray)),parent,SLOT(decodeData(QByteArray)));
-    connect(this,SIGNAL(updateBoat(boat*,bool,bool)),parent,SIGNAL(boatUpdated(boat*,bool,bool)));
+    qRegisterMetaType<nmeaINFO>("nmeaINFO");
+    connect(parent,SIGNAL(terminateThread()),this,SLOT(terminateMe()));
+    connect(this,SIGNAL(updateBoat(nmeaINFO)),parent,SLOT(updateBoat(nmeaINFO)));
     connect(this,SIGNAL(finished()),parent,SLOT(slot_threadStartedOrFinished()));
     connect(this,SIGNAL(started()),parent,SLOT(slot_threadStartedOrFinished()));
 
-    //port = new QextSerialPort();
     port=NULL;
     initPort();
     this->parent=parent;
     stop=false;
+    nmea_zero_INFO(&info);
+    nmea_parser_init(&parser);
+    if(parser.buff_size==0)
+        qWarning()<<"no parser!!!";
 }
 
 ReceiverThread::~ReceiverThread(void)
@@ -428,10 +412,10 @@ ReceiverThread::~ReceiverThread(void)
 bool ReceiverThread::initPort(void)
 {
     /* close existing port */
+    if(!port || port==NULL)
+        port=new QextSerialPort();
     if(port && port->isOpen())
         port->close();
-    if(!port)
-        port=new QextSerialPort();
     /* init serial port */
     port->setPortName(Settings::getSetting("gpsPortName","COM1").toString());
     port->setBaudRate((BaudRateType)Settings::getSetting("gpsBaudRate",BAUD4800).toInt());
@@ -439,13 +423,14 @@ bool ReceiverThread::initPort(void)
     port->setParity(PAR_NONE);
     port->setDataBits(DATA_8);
     port->setStopBits(STOP_1);
-    if(!port->open(QIODevice::ReadWrite | QIODevice::Unbuffered))
+    if(!port->open(QIODevice::ReadOnly | QIODevice::Unbuffered))
     {
+#warning put an error message
         qWarning() << "Can't open Serial port " << port->portName() << " (" << port->lastError() << ")";
         return false;
     }
-    port->write("$PSRF151,01*0F"); /*enabling WAAS/EGNOS on sirf chipset*/
-    port->flush();
+//    port->write("$PSRF151,01*0F"); /*enabling WAAS/EGNOS on sirf chipset*/
+//    port->flush();
     return true;
 }
 
@@ -488,23 +473,31 @@ void ReceiverThread::run()
                 {
 
                     QString temp=QString(lines.at(n).left(lines.at(n).length()-1));
-                    qWarning()<<temp;
-                    parent->decodeData(lines.at(n).left(lines.at(n).length()-1));
-                    //emit decodeData(lines.at(n).left(lines.at(n).length()-1));
+                    if(temp.contains("GPRMC"))
+                        qWarning()<<temp;
+                    QByteArray data=lines.at(n).left(lines.at(n).length()-1);
+                    data.push_back('\r' );
+                    data.push_back('\n');
+                    char * record=data.data();
+                    nmea_parse(&parser, record, data.size(), &info);
                 }
             }
-            emit updateBoat((boat *) parent,false,false);
+            emit updateBoat(info);
         }
         qWarning()<<"sleeping";
 #warning a mettre en parametre
         this->msleep(3000);
         qWarning()<<"waking up";
     }
-    port->close();
+    if(port && port->isOpen())
+    {
+        port->close();
+    }
     qWarning() << "Exiting thread loop";
+    this->exit();
 }
 
-void ReceiverThread::terminate()
+void ReceiverThread::terminateMe()
 {
     stop=true;
 }
@@ -513,209 +506,3 @@ void ReceiverThread::terminate()
 
 
 
-/**************************************************************************************/
-/*                                                                                    */
-/*                     OLD CODE                                                       */
-/*                                                                                    */
-/**************************************************************************************/
-
-
-
-
-
-#if 0
-bool boatReal::chkData(QString data)
-{
-    char res=0;
-    QStringList lst=data.split("*");
-    char val;
-
-    if(lst.size()!=2)
-        return false;
-
-    if(lst[0].at(0) != '$')
-        return false;
-
-    val=lst[1].toInt(0,16);
-
-    for(int i=1;i<lst[0].length();i++)
-        res^=lst[0].at(i).toAscii();
-
-    //qWarning() << "chk comp=" << (int)res << " chk read" << (int)val;
-
-    if(res!=val)
-        return false;
-    return true;
-}
-
-#define GET_POS(RECTYPE,DATA,NUM,VAL,TYPE) {   \
-    bool _ok;                                \
-    int _deg;                                \
-    float _min;                              \
-    if(DATA[NUM].size()==0) {                \
-        VAL=0;                               \
-    } else {                                 \
-        QString _s1=(TYPE == TYPE_LON?"E":"N");  \
-        QString _s2=(TYPE == TYPE_LON?"W":"S");  \
-        VAL=DATA[NUM].toFloat(&_ok);             \
-        if(!_ok || (DATA[NUM+1]!=_s1 && DATA[NUM+1]!=_s2))   \
-        {                                                   \
-            qWarning() << RECTYPE << ": field " << NUM            \
-                    << " error reading " << (TYPE==TYPE_LON?"LON":"LAT" )  \
-                    << ": " << DATA[NUM] << " " << DATA[NUM+1];    \
-            return;                              \
-        }                                        \
-        _deg=(int)(VAL/100);                     \
-        _min=VAL-_deg*100;                       \
-        VAL=_deg+_min/60;                        \
-        if(DATA[NUM+1]!=_s2)                     \
-            VAL=-VAL;                            \
-    }                                            \
-}
-
-#define GET_DATETIME(RECTYPE,DATA,NUM,V1,V2,V3,TYPE) { \
-    bool _ok1,_ok2,_ok3;                          \
-    if(DATA[NUM].size()!=6)                       \
-    {                                             \
-        qWarning() << RECTYPE << ": field " << NUM  \
-            << " error (1) reading " << (TYPE==TYPE_DATE?"date":"time") \
-            << ": " << DATA[NUM] ;                \
-        return;                                   \
-    }                                             \
-    V1=DATA[NUM].mid(0,2).toInt(&_ok1);          \
-    V2=DATA[NUM].mid(2,2).toInt(&_ok2);          \
-    V3=DATA[NUM].mid(4,2).toInt(&_ok3);          \
-    if(!_ok1 || !_ok2 || !_ok3)                   \
-    {                                             \
-        qWarning() << RECTYPE << ": field " << NUM  \
-            << " error (2) reading " << (TYPE==TYPE_DATE?"date":"time") \
-            << ": " << DATA[NUM] ;                \
-        return;                                   \
-    }                                             \
-}
-
-#define GET_DATE(RECTYPE,DATA,NUM,VAL) {   \
-    int _v1,_v2,_v3;                                 \
-    GET_DATETIME(RECTYPE,DATA,NUM,_v1,_v2,_v3,TYPE_DATE); \
-    _v3=(_v3<=70?2000+_v3:1900+_v3);                 \
-    VAL=QDate(_v3,_v2,_v1);                          \
-}
-
-#define GET_TIME(RECTYPE,DATA,NUM,VAL) {   \
-    int _v1,_v2,_v3;                                 \
-    GET_DATETIME(RECTYPE,DATA,NUM,_v1,_v2,_v3,TYPE_TIME); \
-    VAL=QTime(_v1,_v2,_v3);                          \
-}
-
-#define GET_FLOAT(RECTYPE,DATA,NUM,VAL) { \
-    bool _ok;                             \
-    VAL=DATA[NUM].toFloat(&_ok);          \
-    if(!_ok )                              \
-    {                                                   \
-        qWarning() << RECTYPE << ": field " << NUM      \
-            << " error reading float:"                  \
-             << DATA[NUM];                              \
-        return;                           \
-    }                                     \
-}
-
-#define GET_INT(RECTYPE,DATA,NUM,VAL) { \
-    bool _ok;                             \
-    VAL=DATA[NUM].toInt(&_ok);          \
-    if(!_ok )                              \
-    {                                                   \
-        qWarning() << RECTYPE << ": field " << NUM      \
-            << " error reading fint:"                  \
-             << DATA[NUM];                              \
-        return;                           \
-    }                                     \
-}
-
-#define CHKSIZE(RECTYPE,DATA,RECSIZE) { \
-    if((DATA.size()-1) != RECSIZE) {    \
-        qWarning() << RECTYPE << ": Bad number of args : " \
-            << DATA.size()-1 << " (required " \
-            << RECSIZE << ")";          \
-        return;                         \
-    }                                   \
-}
-
-
-void boatReal::decodeData(QString data)
-{
-    if(!chkData(data))
-    {
-        qWarning() << "Error in data: " << data;
-        return;
-    }
-
-    QStringList dataLst = data.split("*")[0].split(",");
-
-    if(dataLst[0] == "$GPRMC")
-    {
-        QTime t;
-        QDate d;
-        float lat,lon;
-        float spd;
-        float angle;
-        float mag;
-        int   recValidity;
-        /*check nb of param */
-        CHKSIZE("RMC",dataLst,12);
-        /* Get data */
-        GET_TIME("RMC",dataLst,1,t);
-        if(dataLst[2]!="A" && dataLst[2]!="V")
-        {
-            qWarning() << "RMC: field 2 / status - bad format:" << dataLst[2];
-            return;
-        }
-        recValidity=dataLst[2]=="A"?REC_ACTIVE:REC_VOID;
-        GET_POS("RMC",dataLst,3,lat,TYPE_LAT);
-        GET_POS("RMC",dataLst,5,lon,TYPE_LON);
-        GET_FLOAT("RMC",dataLst,7,spd);
-        GET_FLOAT("RMC",dataLst,8,angle);
-        GET_DATE("RMC",dataLst,9,d);
-        GET_POS("RMC",dataLst,10,mag,TYPE_LON);
-
-        /* Output data */
-        qWarning() << "--------------- RMC";
-        qWarning() << "Time: " << t << " Status: " << (recValidity==REC_ACTIVE?"Active":"Void");
-        qWarning() << "Lat=" << lat << " - Lon=" << lon;
-        qWarning() << "Speed=" << spd << " Angle=" << angle;
-        qWarning() << "Date: " << d << " mag Variation: " << mag;
-        qWarning() << "-------------------";
-    }
-    else if(dataLst[0] == "$GPGGA")
-    {
-        QTime t;
-        float lat,lon,H_dilution,altitude,altitude_corr;
-        int fixQuality,nbSat;
-        QString altitude_unit;
-        /*check nb of param */
-        CHKSIZE("GGA",dataLst,14);
-        /* Get data */
-        GET_TIME("GGA",dataLst,1,t);
-        GET_POS("GGA",dataLst,2,lat,TYPE_LAT);
-        GET_POS("GGA",dataLst,4,lon,TYPE_LON);
-        GET_INT("GGA",dataLst,6,fixQuality);
-        GET_INT("GGA",dataLst,7,nbSat);
-        GET_FLOAT("GGA",dataLst,8,H_dilution);
-        GET_FLOAT("GGA",dataLst,9,altitude);
-        altitude_unit=dataLst[10];
-        GET_FLOAT("GGA",dataLst,11,altitude_corr);
-
-        /* Output data */
-        qWarning() << "--------------- GGA";
-        qWarning() << "Time: " << t ;
-        qWarning() << "Lat=" << lat << " - Lon=" << lon;
-        qWarning() << "Fix Qual: " << fixQuality << " nb sat=" << nbSat << " DOP=" << H_dilution;
-        qWarning() << "Altitude: " << altitude << " " << altitude_unit << " cor:" << altitude_corr;
-        qWarning() << "-------------------";
-    }
-
-    else
-    {
-        //qWarning() << "UKN record: " << dataLst[0];
-    }
-}
-#endif

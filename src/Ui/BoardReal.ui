@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>261</width>
-    <height>644</height>
+    <width>275</width>
+    <height>724</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -184,7 +184,7 @@
        <property name="minimumSize">
         <size>
          <width>224</width>
-         <height>80</height>
+         <height>95</height>
         </size>
        </property>
        <property name="title">
@@ -510,7 +510,7 @@
         <property name="geometry">
          <rect>
           <x>70</x>
-          <y>60</y>
+          <y>70</y>
           <width>93</width>
           <height>21</height>
          </rect>
@@ -533,9 +533,9 @@
       </widget>
      </item>
      <item>
-      <widget class="QPushButton" name="stopBtn">
+      <widget class="QPushButton" name="statusBtn">
        <property name="text">
-        <string>Stop GPS</string>
+        <string>GPS Status</string>
        </property>
       </widget>
      </item>
@@ -544,33 +544,72 @@
    <item>
     <layout class="QHBoxLayout" name="horizontalLayout_4">
      <item>
-      <widget class="QLabel" name="label_3">
-       <property name="text">
-        <string>GPS status:</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QLabel" name="gpsStatus">
-       <property name="text">
-        <string>status</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <spacer name="horizontalSpacer_2">
-       <property name="orientation">
-        <enum>Qt::Horizontal</enum>
-       </property>
-       <property name="sizeHint" stdset="0">
+      <widget class="QLabel" name="gpsInfo">
+       <property name="minimumSize">
         <size>
-         <width>40</width>
-         <height>20</height>
+         <width>230</width>
+         <height>70</height>
         </size>
        </property>
-      </spacer>
+       <property name="maximumSize">
+        <size>
+         <width>230</width>
+         <height>70</height>
+        </size>
+       </property>
+       <property name="text">
+        <string>GPS status loading</string>
+       </property>
+       <property name="alignment">
+        <set>Qt::AlignCenter</set>
+       </property>
+      </widget>
      </item>
     </layout>
+   </item>
+   <item>
+    <widget class="QGroupBox" name="groupBox_3">
+     <property name="minimumSize">
+      <size>
+       <width>224</width>
+       <height>87</height>
+      </size>
+     </property>
+     <property name="title">
+      <string>Wind information (from grib)</string>
+     </property>
+     <widget class="QLabel" name="windInfo">
+      <property name="geometry">
+       <rect>
+        <x>-10</x>
+        <y>20</y>
+        <width>251</width>
+        <height>61</height>
+       </rect>
+      </property>
+      <property name="font">
+       <font>
+        <pointsize>8</pointsize>
+        <kerning>true</kerning>
+       </font>
+      </property>
+      <property name="text">
+       <string/>
+      </property>
+      <property name="scaledContents">
+       <bool>false</bool>
+      </property>
+      <property name="alignment">
+       <set>Qt::AlignCenter</set>
+      </property>
+      <property name="margin">
+       <number>1</number>
+      </property>
+      <property name="indent">
+       <number>0</number>
+      </property>
+     </widget>
+    </widget>
    </item>
    <item>
     <spacer name="verticalSpacer">
@@ -596,8 +635,8 @@
    <slot>disp_boatInfo()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>206</x>
-     <y>40</y>
+     <x>248</x>
+     <y>57</y>
     </hint>
     <hint type="destinationlabel">
      <x>130</x>
@@ -612,8 +651,8 @@
    <slot>startGPS()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>43</x>
-     <y>484</y>
+     <x>55</x>
+     <y>421</y>
     </hint>
     <hint type="destinationlabel">
      <x>4</x>
@@ -622,14 +661,14 @@
    </hints>
   </connection>
   <connection>
-   <sender>stopBtn</sender>
+   <sender>statusBtn</sender>
    <signal>clicked()</signal>
    <receiver>boardReal_ui</receiver>
-   <slot>stopGPS()</slot>
+   <slot>statusGPS()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>218</x>
-     <y>484</y>
+     <x>248</x>
+     <y>421</y>
     </hint>
     <hint type="destinationlabel">
      <x>227</x>
@@ -644,8 +683,8 @@
    <slot>chgBoatPosition()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>40</x>
-     <y>79</y>
+     <x>51</x>
+     <y>112</y>
     </hint>
     <hint type="destinationlabel">
      <x>4</x>
@@ -673,8 +712,8 @@
  <slots>
   <slot>disp_boatInfo()</slot>
   <slot>startGPS()</slot>
-  <slot>stopGPS()</slot>
   <slot>chgBoatPosition()</slot>
   <slot>resetWp()</slot>
+  <slot>statusGPS()</slot>
  </slots>
 </ui>
