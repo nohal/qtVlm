@@ -147,6 +147,7 @@ class boat: public QGraphicsWidget
         float WPHd;
         QString ETA;
         QString score;
+        QString stopAndGo;
         time_t prevVac;
         time_t nextVac;
         int nWP;

@@ -35,6 +35,7 @@ Copyright (C) 2008 - Jacques Zaninetti - http://zygrib.free.fr
 #include "boatVLM.h"
 #include "Player.h"
 #include <QDesktopWidget>
+#include "settings.h"
 
 
 //-------------------------------------------------------
@@ -146,6 +147,7 @@ void DialogRoute::done(int result)
         route->setWidth(inputTraceColor->getLineWidth());
         route->setColor(inputTraceColor->getLineColor());
         route->setUseVbVmgVlm(this->useVbvmgVlm->isChecked());
+        Settings::setSetting("useVbvmgVlm",route->getUseVbvmgVlm()?"1":"0"  );
         route->setMultVac(vacStep->value());
         if(editVac->isChecked())
             route->setStartTimeOption(1);

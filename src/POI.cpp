@@ -247,7 +247,7 @@ void POI::createPopUpMenu(void)
     popup->addMenu(ac_modeList);
 
     popup->addSeparator();
-    ac_connect=new QAction(tr("Relier ce poi a un autre poi"),popup);
+    ac_connect=new QAction(tr("Tracer/Editer une ligne avec un autre POI"),popup);
     connect(ac_connect,SIGNAL(triggered()),this,SLOT(slot_relier()));
     popup->addAction(ac_connect);
 }

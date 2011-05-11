@@ -279,6 +279,7 @@ void boatVLM::requestFinished (QByteArray res_byte)
                     avg         = (float) result["AVG"].toDouble();
                     dnm         = (float) result["DNM"].toDouble();
                     loch        = (float) result["LOC"].toDouble();
+                    loch        = qRound(loch*100)/100.00;
                     ortho       = (float) result["ORT"].toDouble();
                     loxo        = (float) result["LOX"].toDouble();
                     vmg         = (float) result["VMG"].toDouble();
@@ -302,6 +303,7 @@ void boatVLM::requestFinished (QByteArray res_byte)
                     pilototo[2] = result["PIL3"].toString();
                     pilototo[3] = result["PIL4"].toString();
                     pilototo[4] = result["PIL5"].toString();
+                    stopAndGo   = result["S&G"].toString();
                     polarVlm = result["POL"].toString();
                     email = result["EML"].toString();
                     vacLen = result["VAC"].toInt();
@@ -683,6 +685,8 @@ void boatVLM::updateHint(void)
     if(!polarData) desc=tr(" (pas de polaire chargee)");
     else if (polarData->getIsCsv()) desc=polarData->getName() + tr(" (format CSV)");
     else desc=polarData->getName() + tr(" (format POL)");
+    if(stopAndGo!="0")
+        desc=desc+"<br>"+tr("Bateau echoue, pour encore ")+stopAndGo+tr("secondes");
     str=str.replace(" ","&nbsp;");
     desc=desc.replace(" ","&nbsp;");
     setToolTip(desc+"<br>"+str);

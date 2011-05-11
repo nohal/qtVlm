@@ -177,6 +177,10 @@ void opponent::paint(QPainter * pnt, const QStyleOptionGraphicsItem * , QWidget 
     QFontMetrics fm(font());
     if(!labelHidden)
     {
+        if(this->statusVLM.toLower()=="on_coast" || this->statusVLM.toLower()=="locked")
+            bgcolor=QColor(239,48,36,150);
+        else
+            bgcolor = QColor(255,255,255,150);
         if(!drawFlag)
         {
             pnt->fillRect(9,0, width-10,height-1, QBrush(bgcolor));

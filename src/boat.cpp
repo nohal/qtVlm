@@ -94,6 +94,7 @@ boat::boat(QString pseudo, bool activated,
     estimeLine->slot_showMe();
     estimeLine->setHidden(false);
     WPLine->hide();
+    this->stopAndGo="0";
 
     /*if(activated)
         show();
@@ -265,6 +266,13 @@ void boat::paint(QPainter * pnt, const QStyleOptionGraphicsItem * , QWidget * )
             if(drawFlag)
                 prepareGeometryChange();
             drawFlag=false;
+        }
+        if(this->getType()==BOAT_VLM)
+        {
+            if(this->stopAndGo!="0")
+                bgcolor=QColor(239,48,36,150);
+            else
+                bgcolor = QColor(255,255,255,150);
         }
         pnt->setBrush(QBrush(bgcolor));
         if(!drawFlag)

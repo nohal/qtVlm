@@ -182,8 +182,8 @@ void GisCity::getRectName (QPainter *pnt, Projection *proj, QRect *rectName)
 	int y1 = y0-prect.height();
 	rectName->setX (x1);
 	rectName->setY (y1);
-	rectName->setWidth  (prect.width());
-	rectName->setHeight (prect.height());
+        rectName->setWidth  (prect.width()*1.1);
+        rectName->setHeight (prect.height()*1.1);
 }
 //-----------------------------------------------------------------------
 bool compareCities_sup(GisCity *a, GisCity *b)
