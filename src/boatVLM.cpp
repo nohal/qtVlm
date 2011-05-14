@@ -307,6 +307,8 @@ void boatVLM::requestFinished (QByteArray res_byte)
                     polarVlm = result["POL"].toString();
                     email = result["EML"].toString();
                     vacLen = result["VAC"].toInt();
+                    if(vacLen==0)
+                        vacLen=1;
                     if(npd!=result["NPD"].toString())
                     {
                         //qWarning()<<"old npd"<<npd;

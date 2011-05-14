@@ -370,7 +370,7 @@ void vlmLine::paint(QPainter * pnt, const QStyleOptionGraphicsItem * , QWidget *
         linePen.setWidthF(penW);
         pnt->setPen(linePen);
     }
-    if(roundedEnd && !hidden)
+    if(roundedEnd && !hidden && !polyList.last()->isEmpty())
     {
         linePen.setWidthF(penW+1);
         pnt->setPen(linePen);
