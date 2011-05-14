@@ -226,7 +226,7 @@ MainWindow::MainWindow(int w, int h, QWidget *parent)
 
     //settings = new Settings();
 
-    qWarning() <<  "Starting qtVlm - " << Version::getVersion() << " - build on " << Version::getDate();
+    qWarning() <<  "Starting qtVlm - " << Version::getCompleteName();
     progress=new QProgressDialog(this,Qt::SplashScreen);
     progress->setLabelText("Starting qtVLM");
     progress->setMaximum(100);

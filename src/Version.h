@@ -29,13 +29,20 @@ Copyright (C) 2008 - Jacques Zaninetti - http://zygrib.free.fr
 #define QTVLM_SUB_VERSION_NUM   "beta3+"
 #define QTVLM_VERSION_DATE  __DATE__
 
-#ifdef Q_OS_WIN32
-        #define QTVLM_APP_NAME   "qtVlm_win"
-        #define QTVLM_OS "WIN"
-#else
+#ifdef __WIN_QTVLM
         #define QTVLM_APP_NAME   "qtVlm"
-        #define QTVLM_OS "OTHER"
+        #define QTVLM_OS "Windows"
 #endif
+#ifdef __UNIX_QTVLM
+        #define QTVLM_APP_NAME   "qtVlm"
+        #define QTVLM_OS "Linux"
+#endif
+#ifdef __MAC_QTVLM
+        #define QTVLM_APP_NAME   "qtVlm"
+        #define QTVLM_OS "Macintosh"
+#endif
+
+#include <QString>
 
 class Version {
 
@@ -48,11 +55,14 @@ class Version {
 #endif
 
         }
+        static QString get_OS() {
+            return QString(QTVLM_OS);
+        }
         static QString getDate() {
             return QString(QTVLM_VERSION_DATE);
         }
         static QString getCompleteName() {
-            return QString(QString(QTVLM_APP_NAME)+"-"+QTVLM_VERSION_NUM);
+            return QString(QString(QTVLM_APP_NAME)+" - ver "+getVersion()+" ("+getDate()+") for "+get_OS());
         }
 };
 
