@@ -2086,7 +2086,11 @@ Etes-vous sur ?</source>
     </message>
     <message>
         <source>Relier ce poi a un autre poi</source>
-        <translation>Tracer une ligne entre ce POI et un autre</translation>
+        <translation type="obsolete">Tracer une ligne entre ce POI et un autre</translation>
+    </message>
+    <message>
+        <source>Tracer/Editer une ligne avec un autre POI</source>
+        <translation></translation>
     </message>
 </context>
 <context>
@@ -2813,6 +2817,14 @@ avec ce préfixe</translation>
         <source>Auto Zoom</source>
         <translation></translation>
     </message>
+    <message>
+        <source>Pourcentage de la polaire a appliquer pendant une vacation</source>
+        <translation>Pourcentage de la polaire à appliquer pendant une vacation, après un virement ou un empannage</translation>
+    </message>
+    <message>
+        <source>Empannages/Virements</source>
+        <translation></translation>
+    </message>
 </context>
 <context>
     <name>ROUTE</name>
@@ -2956,6 +2968,18 @@ Voulez-vous egalement supprimer tous les POIs lui appartenant?</source>
     <message>
         <source>M/d/yyyy hh:mm:ss</source>
         <translation>dd/MM/yyyy hh:mm:ss</translation>
+    </message>
+    <message>
+        <source>Empannages/Virements</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Pourcentage de la polaire a appliquer pendant une vacation</source>
+        <translation>Pourcentage de la polaire à appliquer pendant une vacation, après un virement ou un empannage</translation>
+    </message>
+    <message>
+        <source>%</source>
+        <translation></translation>
     </message>
 </context>
 <context>
@@ -3273,6 +3297,26 @@ Voulez-vous egalement supprimer tous les POIs lui appartenant?</source>
         <source>Vitesse du replay</source>
         <translation></translation>
     </message>
+    <message>
+        <source>Parametres des virements/empanages</source>
+        <translation>Paramètres des virements et empannages</translation>
+    </message>
+    <message>
+        <source>Pourcentage de la polaire a appliquer pendant une vacation</source>
+        <translation>Pourcentage de la polaire à appliquer pendant une vacation, après un virement ou un empannage</translation>
+    </message>
+    <message>
+        <source>%</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>pour les bateaux reels</source>
+        <translation>Pour les bateaux réels</translation>
+    </message>
+    <message>
+        <source>pour les bateaux VLM</source>
+        <translation></translation>
+    </message>
 </context>
 <context>
     <name>WP_dialog_ui</name>
@@ -3356,59 +3400,60 @@ Voulez-vous egalement supprimer tous les POIs lui appartenant?</source>
     </message>
     <message>
         <source>Running</source>
-        <translation type="unfinished"></translation>
+        <translation>En marche</translation>
     </message>
     <message>
         <source>no signal</source>
-        <translation type="unfinished"></translation>
+        <translation>pas de signal</translation>
     </message>
     <message>
         <source>Fix quality</source>
-        <translation type="unfinished"></translation>
+        <translation>Qualité fixe</translation>
     </message>
     <message>
         <source>Differential quality</source>
-        <translation type="unfinished"></translation>
+        <translatorcomment>Qualité différentielle</translatorcomment>
+        <translation></translation>
     </message>
     <message>
         <source>Sensitive quality</source>
-        <translation type="unfinished"></translation>
+        <translation>Qualité maximum</translation>
     </message>
     <message>
         <source>no position</source>
-        <translation type="unfinished"></translation>
+        <translation>Pas de position</translation>
     </message>
     <message>
         <source>2D position</source>
-        <translation type="unfinished"></translation>
+        <translation>Position 2D</translation>
     </message>
     <message>
         <source>3D position</source>
-        <translation type="unfinished"></translation>
+        <translation>position 3D</translation>
     </message>
     <message>
         <source>Ideal accuracy</source>
-        <translation type="unfinished"></translation>
+        <translation>Précision idéale</translation>
     </message>
     <message>
         <source>Excellent accuracy</source>
-        <translation type="unfinished"></translation>
+        <translation>Précision excellente</translation>
     </message>
     <message>
         <source>Good accuracy</source>
-        <translation type="unfinished"></translation>
+        <translation>Précision bonne</translation>
     </message>
     <message>
         <source>Moderate accuracy</source>
-        <translation type="unfinished"></translation>
+        <translation>Précision moyenne</translation>
     </message>
     <message>
         <source>Not so good accuracy</source>
-        <translation type="unfinished"></translation>
+        <translation>Précision mauvaise</translation>
     </message>
     <message>
         <source>Very bad accuracy</source>
-        <translation type="unfinished"></translation>
+        <translation>Précision très mauvaise</translation>
     </message>
     <message>
         <source>Start GPS</source>
@@ -3416,6 +3461,14 @@ Voulez-vous egalement supprimer tous les POIs lui appartenant?</source>
     </message>
     <message>
         <source>Stop GPS</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Pres</source>
+        <translation>Près</translation>
+    </message>
+    <message>
+        <source>Portant</source>
         <translation></translation>
     </message>
 </context>
@@ -3499,15 +3552,16 @@ Voulez-vous egalement supprimer tous les POIs lui appartenant?</source>
     </message>
     <message>
         <source>GPS Status</source>
-        <translation type="unfinished"></translation>
+        <translation>Statut GPS</translation>
     </message>
     <message>
         <source>GPS status loading</source>
-        <translation type="unfinished"></translation>
+        <translatorcomment>En cours de chargement</translatorcomment>
+        <translation></translation>
     </message>
     <message>
         <source>Wind information (from grib)</source>
-        <translation type="unfinished"></translation>
+        <translation>Information Vent (Grib)</translation>
     </message>
 </context>
 <context>
@@ -4017,6 +4071,14 @@ Voulez-vous egalement supprimer tous les POIs lui appartenant?</source>
     </message>
     <message>
         <source>Passer au moins une fois au Nord de cette ligne&lt;br&gt;</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Bateau echoue, pour encore </source>
+        <translation>Bateau échoué, pour encore </translation>
+    </message>
+    <message>
+        <source>secondes</source>
         <translation></translation>
     </message>
 </context>
