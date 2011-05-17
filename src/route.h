@@ -109,7 +109,8 @@ class ROUTE : public QObject
         void setUseVbVmgVlm(bool b){this->useVbvmgVlm=b;}
         void setTemp(bool b){this->temp=b;}
         bool getTemp(){return this->temp;}
-
+        double getSpeedLossOnTack(){return speedLossOnTack;}
+        void setSpeedLossOnTack(double d){this->speedLossOnTack=d;}
     public slots:
         void slot_recalculate(boat * boat=NULL);
         void slot_edit();
@@ -186,5 +187,6 @@ class ROUTE : public QObject
         bool useVbvmgVlm;
         bool initialized;
         bool temp;
+        double speedLossOnTack;
 };
 #endif // ROUTE_H

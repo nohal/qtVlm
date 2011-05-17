@@ -37,6 +37,7 @@ Copyright (C) 2008 - Jacques Zaninetti - http://zygrib.free.fr
 #include "Player.h"
 #include <QThread>
 #include <QDesktopWidget>
+#include "settings.h"
 
 
 //-------------------------------------------------------
@@ -100,6 +101,7 @@ DialogRoutage::DialogRoutage(ROUTAGE *routage,myCentralWidget *parent)
     int n=0;
     if(parent->getPlayer()->getType()!=BOAT_REAL)
     {
+        this->speedLossOnTack->setValue(Settings::getSetting("speedLossOnTackVlm","100").toInt());
         if(parent->getBoats())
         {
             QListIterator<boatVLM*> i (*parent->getBoats());
@@ -120,6 +122,7 @@ DialogRoutage::DialogRoutage(ROUTAGE *routage,myCentralWidget *parent)
     }
     else
     {
+        this->speedLossOnTack->setValue(Settings::getSetting("speedLossOnTackReal","100").toInt());
         editBoat->addItem(parent->getPlayer()->getName());
         editBoat->setEnabled(false);
     }
@@ -154,6 +157,8 @@ DialogRoutage::DialogRoutage(ROUTAGE *routage,myCentralWidget *parent)
     this->checkCoast->setChecked(routage->getCheckCoast());
     if(routage->isDone() || routage->getIsNewPivot())
     {
+        this->speedLossOnTack->setValue(qRound(routage->getSpeedLossOnTack()*100));
+        this->speedLossOnTack->setDisabled(true);
         this->editName->setDisabled(false);
         this->autoZoom->setDisabled(true);
         this->editBoat->setDisabled(true);
@@ -182,6 +187,7 @@ DialogRoutage::DialogRoutage(ROUTAGE *routage,myCentralWidget *parent)
     }
     if(routage->getIsNewPivot() && !routage->isDone())
     {
+        this->speedLossOnTack->setDisabled(false);
         this->autoZoom->setDisabled(false);
         this->duree->setDisabled(false);
         this->range->setDisabled(false);
@@ -230,6 +236,7 @@ void DialogRoutage::done(int result)
         routage->pruneWakeAngle=pruneWakeAngle->value();
         routage->setAutoZoom(autoZoom->isChecked());
         routage->setRouteFromBoat(this->startFromBoat->isChecked());
+        routage->setSpeedLossOnTack((double)this->speedLossOnTack->value()/100.00);
         if(parent->getPlayer()->getType()!=BOAT_REAL)
         {
             if(parent->getBoats())

@@ -284,11 +284,13 @@ MainWindow::MainWindow(int w, int h, QWidget *parent)
     stBar_label_1->setStyleSheet("color: rgb(0, 0, 255);");
     statusBar->addWidget(stBar_label_1);
 
+    font.setBold(true);
     stBar_label_2 = new QLabel("", statusBar);
     stBar_label_2->setFont(font);
     stBar_label_2->setStyleSheet("color: rgb(255, 0, 0);");
     statusBar->addWidget(stBar_label_2);
 
+    font.setBold(false);
     stBar_label_3 = new QLabel("", statusBar);
     stBar_label_3->setFont(font);
     //stBar_label_3->setStyleSheet("color: rgb(255, 0, 0);");

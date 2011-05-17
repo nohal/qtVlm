@@ -281,6 +281,7 @@ void  mapCompass::paint(QPainter * pnt, const QStyleOptionGraphicsItem * , QWidg
     }
     /* draw Polar */
     polarModeVac=false;
+    bool polarModeTime=false;
     if(bvmg_up!=-1 && Settings::getSetting("showPolar",1).toInt()==1)
     {
         if(Settings::getSetting("showCompass",1).toInt()==0)
@@ -307,8 +308,17 @@ void  mapCompass::paint(QPainter * pnt, const QStyleOptionGraphicsItem * , QWidg
         }
         else if(Settings::getSetting("scalePolar",0).toInt()==2)
         {
-            polVac=Settings::getSetting("estimeVac",12).toInt();
-            polarModeVac=true;
+            if(Settings::getSetting("estimeType",0).toInt()==0)
+            {
+                polVac=Settings::getSetting("estimeTime",60).toInt();
+                polarModeVac=true;
+                polarModeTime=true;
+            }
+            else
+            {
+                polVac=Settings::getSetting("estimeVac",12).toInt();
+                polarModeVac=true;
+            }
         }
         double lon1,lat1;
         int X,Y,X1,Y1;
@@ -324,11 +334,15 @@ void  mapCompass::paint(QPainter * pnt, const QStyleOptionGraphicsItem * , QWidg
             if(!polarModeVac)
                 temp=speeds[i]*(size/3)/50.000;
             else
-                temp=(speeds[i]/60.0*vacLen*polVac)*oneMile;
-//                temp=speeds[i]*(size/3)/main->getBoatPolarMaxSpeed();
-            poly[i]=QPointF(temp*sin(degToRad(i)),-temp*cos(degToRad(i)));
-            if(i!=180)
-                poly[360-i]=QPointF(-temp*sin(degToRad(i)),-temp*cos(degToRad(i)));
+            {
+                if(!polarModeTime)
+                    temp=(speeds[i]*vacLen*polVac*oneMile)/60.0;
+                else
+                    temp=(speeds[i]*polVac*oneMile)/60.0;
+                poly[i]=QPointF(temp*sin(degToRad(i)),-temp*cos(degToRad(i)));
+                if(i!=180)
+                    poly[360-i]=QPointF(-temp*sin(degToRad(i)),-temp*cos(degToRad(i)));
+            }
         }
         QMatrix matrix;
         matrix.rotate(wind_angle);
@@ -342,18 +356,14 @@ void  mapCompass::paint(QPainter * pnt, const QStyleOptionGraphicsItem * , QWidg
         pnt->setPen(pen);
         for (int n=0;n<=qRound(bvmg_up);n++)
             polyRed.append(poly[qRound(360-bvmg_up)+n]);
-//        polyRed.putPoints(0,qRound(bvmg_up),poly,qRound(360-bvmg_up));
         for (int n=0;n<=qRound(bvmg_up);n++)
             polyRed.append(poly[n]);
-//        polyRed.putPoints(qRound(bvmg_up),qRound(bvmg_up),poly,0);
         pnt->drawPolyline(polyRed);
         polyRed.resize(0);
         for (int n=0;n<=qRound(180-bvmg_down);n++)
             polyRed.append(poly[qRound(bvmg_down)+n]);
-//        polyRed.putPoints(0,qRound(180-bvmg_down),poly,qRound(bvmg_down));
         for (int n=0;n<=qRound(180-bvmg_down);n++)
             polyRed.append(poly[180+n]);
-//        polyRed.putPoints(qRound(180-bvmg_down),qRound(180-bvmg_down),poly,180);
         pnt->drawPolyline(polyRed);
     }
     else
@@ -363,14 +373,6 @@ void  mapCompass::paint(QPainter * pnt, const QStyleOptionGraphicsItem * , QWidg
     pen.setWidth(1);
     pen.setColor(Qt::black);
     pnt->setPen(pen);
-//    if (poly.size()!=0)
-//    {
-//        QRectF r1=poly.boundingRect();
-//        QRectF r2=QRectF(-size/2,-size/2,size,size);
-//        pnt->drawRect(r1);
-//        pnt->drawRect(r2);
-//        pnt->drawRect(r1.united(r2));
-//    }
 
     /* text de lattitude/longitude*/
     if(isMoving)
@@ -424,7 +426,6 @@ void  mapCompass::paint(QPainter * pnt, const QStyleOptionGraphicsItem * , QWidg
 
         }
     }
-//    pnt->drawRect(QRectF(0,0,size,size));
     boundingR=poly.boundingRect();
     QPointF center=boundingR.center();
     boundingR.setWidth(boundingR.width()*2);

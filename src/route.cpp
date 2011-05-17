@@ -91,6 +91,7 @@ ROUTE::ROUTE(QString name, Projection *proj, Grib *grib, QGraphicsScene * myScen
         slot_shShow();
     else
         slot_shHidden();
+    this->speedLossOnTack=1;
 }
 
 ROUTE::~ROUTE()
@@ -163,6 +164,8 @@ void ROUTE::slot_recalculate(boat * boat)
     line->slot_showMe();
     if(my_poiList.count()==0) return;
     busy=true;
+    bool firstPoint;
+    double lastTwa=0;
     eta=0;
     has_eta=false;
     time_t now;
@@ -348,6 +351,19 @@ void ROUTE::slot_recalculate(boat * boat)
                                     break;
                             }
                             newSpeed=myBoat->getPolarData()->getSpeed(wind_speed,angle);
+                            if (firstPoint)
+                            {
+                                firstPoint=false;
+                            }
+                            else if (speedLossOnTack!=1)
+                            {
+                                if ((angle>0 && lastTwa<0)||(angle<0 && lastTwa>0))
+                                {
+                                    qWarning()<<"reducing polar because of tack/gybe";
+                                    newSpeed=newSpeed*speedLossOnTack;
+                                }
+                            }
+                            lastTwa=angle;
                             distanceParcourue=newSpeed*myBoat->getVacLen()*multVac/3600.00;
                             Util::getCoordFromDistanceAngle(lat, lon, distanceParcourue, cap,&res_lat,&res_lon);
                         }

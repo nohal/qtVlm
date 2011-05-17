@@ -74,6 +74,8 @@ DialogParamVlm::DialogParamVlm(MainWindow * main,myCentralWidget * parent) : QDi
             radioBtn_dist->setChecked(true);
             break;
     }
+    this->speedLossOnTackReal->setValue(Settings::getSetting("speedLossOnTackReal","100").toInt());
+    this->speedLossOnTackVlm->setValue(Settings::getSetting("speedLossOnTackVlm","100").toInt());
 
     chk_centerOnSynch->setCheckState(Settings::getSetting("centerOnSynch","1").toInt()==1?Qt::Checked:Qt::Unchecked);
     chk_centerOnBoatChange->setCheckState(Settings::getSetting("centerOnBoatChange","1").toInt()==1?Qt::Checked:Qt::Unchecked);
@@ -101,7 +103,7 @@ DialogParamVlm::DialogParamVlm(MainWindow * main,myCentralWidget * parent) : QDi
     {
         chk_scaleEstime->setChecked(true);
         polVac->setEnabled(false);
-        this->radioBtn_time->setEnabled(false);
+        this->radioBtn_time->setEnabled(true);
         this->radioBtn_dist->setEnabled(false);
     }
     else
@@ -177,6 +179,9 @@ void DialogParamVlm::done(int result)
         Settings::setSetting("estimeLen", QString().setNum(estimeVal_dist->value()));
         Settings::setSetting("estimeTime", QString().setNum(estimeVal_time->value()));
         Settings::setSetting("estimeVac", QString().setNum(estimeVal_vac->value()));
+
+        Settings::setSetting("speedLossOnTackReal", QString().setNum(speedLossOnTackReal->value()));
+        Settings::setSetting("speedLossOnTackVlm", QString().setNum(speedLossOnTackVlm->value()));
 
         if(radioBtn_time->isChecked())
             Settings::setSetting("estimeType","0");

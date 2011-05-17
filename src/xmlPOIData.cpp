@@ -51,6 +51,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #define ROUTE_MULTVAC     "vacStep"
 #define ROUTE_HIDDEN      "hidden"
 #define ROUTE_VBVMG_VLM   "vbvmg-vlm"
+#define ROUTE_SPEED_TACK  "speedTack"
 /* POI */
 #define POI_GROUP_NAME    "POI"
 #define POI_NAME          "name"
@@ -135,6 +136,11 @@ void xml_POIData::slot_writeData(QList<ROUTE*> & route_list,QList<POI*> & poi_li
           tag = doc.createElement(ROUTE_MULTVAC);
           group.appendChild(tag);
           t = doc.createTextNode(QString().setNum(route->getMultVac()));
+          tag.appendChild(t);
+
+          tag = doc.createElement(ROUTE_SPEED_TACK);
+          group.appendChild(tag);
+          t = doc.createTextNode(QString().setNum(qRound(route->getSpeedLossOnTack()*100)));
           tag.appendChild(t);
 
           tag = doc.createElement(ROUTE_DATE);
@@ -427,6 +433,12 @@ void xml_POIData::slot_readData(QString fname)
                        dataNode = subNode.firstChild();
                        if(dataNode.nodeType() == QDomNode::TextNode)
                            route->setStartFromBoat(dataNode.toText().data().toInt()==1);
+                  }
+                  if(subNode.toElement().tagName() == ROUTE_SPEED_TACK)
+                  {
+                       dataNode = subNode.firstChild();
+                       if(dataNode.nodeType() == QDomNode::TextNode)
+                           route->setSpeedLossOnTack((double)dataNode.toText().data().toInt()/100.00);
                   }
                   if(subNode.toElement().tagName() == ROUTE_DATEOPTION)
                   {

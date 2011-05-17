@@ -70,6 +70,8 @@ DialogRoute::DialogRoute(ROUTE *route,myCentralWidget *parent)
     setWindowTitle(tr("Parametres Route"));
     editName->setText(route->getName());
     editFrozen->setChecked(route->getFrozen());
+    qWarning()<<"setting speedLoss"<<qRound(route->getSpeedLossOnTack()*100.00);
+    this->speedLossOnTack->setValue(qRound(route->getSpeedLossOnTack()*100.00));
 
 
     startFromBoat->setChecked(route->getStartFromBoat());
@@ -142,6 +144,7 @@ void DialogRoute::done(int result)
             msgBox.exec();
             return;
         }
+        route->setSpeedLossOnTack((double)this->speedLossOnTack->value()/100.00);
         route->setBusy(true);
         route->setName((editName->text()).trimmed());
         route->setWidth(inputTraceColor->getLineWidth());

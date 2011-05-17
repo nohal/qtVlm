@@ -44,6 +44,7 @@ Original code: virtual-winds.com
 #include <QtConcurrentMap>
 #include "GshhsReader.h"
 #include "vlmpointgraphic.h"
+#include "settings.h"
 
 bool rightToLeftFromOrigin(const vlmPoint & P1,const vlmPoint & P2)
 {
@@ -187,6 +188,7 @@ QList<vlmPoint> findRouteThreaded(const QList<vlmPoint> & pointList)
     dataThread.windSpeed=routage->getWindSpeed();
     dataThread.whatIfWind=routage->getWhatIfWind();
     dataThread.timeStep=routage->getTimeStep();
+    dataThread.speedLossOnTack=routage->getSpeedLossOnTack();
     QList<vlmPoint> resultList;
     for (int pp=0;pp<pointList.count();pp++)
     {
@@ -199,6 +201,8 @@ QList<vlmPoint> findRouteThreaded(const QList<vlmPoint> & pointList)
         double res_lat=point.lat;
         float distanceParcourue=point.distOrigin;
         vlmPoint from(lon,lat);
+        from.wind_angle=point.origin->wind_angle;
+        from.isStart=point.origin->isStart;
         vlmPoint to(res_lon,res_lat);
         float lastLonFound,lastLatFound;
         int realTime=ROUTAGE::calculateTimeRouteThreaded(from,to,&lastLonFound,&lastLatFound,&dataThread);
@@ -307,6 +311,8 @@ int ROUTAGE::routeFunctionDerivThreaded(float x,vlmPoint from, float * lastLonFo
 }
 int ROUTAGE::calculateTimeRouteThreaded(vlmPoint routeFrom,vlmPoint routeTo, float * lastLonFound, float * lastLatFound, datathread * dataThread)
 {
+    double  lastTwa=routeFrom.wind_angle;
+    bool    ignoreTackLoss=routeFrom.isStart;
     time_t etaRoute=dataThread->Eta;
     time_t etaLimit=etaRoute*2;
     time_t workEta;
@@ -384,6 +390,14 @@ int ROUTAGE::calculateTimeRouteThreaded(vlmPoint routeFrom,vlmPoint routeTo, flo
                         cap=cap2;
                 }
                 newSpeed=dataThread->Boat->getPolarData()->getSpeed(windSpeed,angle);
+                if(!ignoreTackLoss && dataThread->speedLossOnTack!=1)
+                {
+                    if((angle>0 && lastTwa<0) || (angle<0 && lastTwa>0))
+                        newSpeed=newSpeed*dataThread->speedLossOnTack;
+                }
+                else
+                    ignoreTackLoss=false;
+                lastTwa=angle;
                 distanceParcourue=newSpeed*dataThread->Boat->getVacLen()/3600.00;
                 Util::getCoordFromDistanceAngle(lat, lon, distanceParcourue, cap,&res_lat,&res_lon);
                 orth.setStartPoint(res_lon, res_lat);
@@ -487,6 +501,7 @@ ROUTAGE::ROUTAGE(QString name, Projection *proj, Grib *grib, QGraphicsScene * my
     connect(parent,SIGNAL(stopCompassLine()),this,SLOT(slot_abort()));
     this->tempPoints.reserve(180*180);
     this->poiPrefix="R";
+    this->speedLossOnTack=1;
 }
 ROUTAGE::~ROUTAGE()
 {
@@ -1744,6 +1759,8 @@ int ROUTAGE::routeFunctionDeriv(float x,vlmPoint from)
 }
 int ROUTAGE::calculateTimeRoute(vlmPoint routeFrom,vlmPoint routeTo,int limit)
 {
+    double  lastTwa=routeFrom.wind_angle;
+    bool    ignoreTackLoss=routeFrom.isStart;
     tooFar=false;
     time_t etaRoute=this->eta;
     time_t etaLimit=eta*2;
@@ -1827,6 +1844,14 @@ int ROUTAGE::calculateTimeRoute(vlmPoint routeFrom,vlmPoint routeTo,int limit)
                         cap=cap2;
                 }
                 newSpeed=myBoat->getPolarData()->getSpeed(windSpeed,angle);
+                if(!ignoreTackLoss && this->speedLossOnTack!=1)
+                {
+                    if((angle>0 && lastTwa<0) || (angle<0 && lastTwa>0))
+                        newSpeed=newSpeed*this->speedLossOnTack;
+                }
+                else
+                    ignoreTackLoss=false;
+                lastTwa=angle;
                 distanceParcourue=newSpeed*myBoat->getVacLen()/3600.00;
                 Util::getCoordFromDistanceAngle(lat, lon, distanceParcourue, cap,&res_lat,&res_lon);
                 orth.setStartPoint(res_lon, res_lat);
@@ -2110,6 +2135,8 @@ vlmPoint ROUTAGE::findRoute(const vlmPoint & point)
     double res_lat=point.lat;
     float distanceParcourue=point.distOrigin;
     vlmPoint from(lon,lat);
+    from.wind_angle=point.origin->wind_angle;
+    from.isStart=point.origin->isStart;
     vlmPoint to(res_lon,res_lat);
     int realTime=calculateTimeRoute(from,to);
     if(realTime==0)
@@ -2247,6 +2274,7 @@ void ROUTAGE::convertToRoute()
     route->setStartTimeOption(3);
     route->setStartFromBoat(false);
     route->setColor(this->color);
+    route->setSpeedLossOnTack(this->speedLossOnTack);
     //route->setWidth(this->width);
     route->setFrozen(true);
     QList<vlmPoint> * list=result->getPoints();
@@ -2827,6 +2855,7 @@ void ROUTAGE::setFromRoutage(ROUTAGE *fromRoutage, bool editOptions)
     this->whatIfTime=fromRoutage->getWhatIfTime();
     this->whatIfWind=fromRoutage->getWhatIfWind();
     this->angleRange=fromRoutage->getAngleRange();
+    this->speedLossOnTack=fromRoutage->getSpeedLossOnTack();
     this->angleStep=fromRoutage->getAngleStep();
     this->timeStep=fromRoutage->getTimeStep();
     this->explo=fromRoutage->getExplo();

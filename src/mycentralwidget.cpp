@@ -1821,6 +1821,11 @@ ROUTE * myCentralWidget::addRoute()
 
 
     route_list.append(route);
+    if(this->getPlayer()->getType()!=BOAT_REAL)
+        route->setSpeedLossOnTack((double)Settings::getSetting("speedLossOnTackVlm","100").toInt()/100.00);
+    else
+        route->setSpeedLossOnTack((double)Settings::getSetting("speedLossOnTackReal","100").toInt()/100.00);
+
     return route;
 }
 ROUTAGE * myCentralWidget::addRoutage()

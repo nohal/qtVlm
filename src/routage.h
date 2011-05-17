@@ -53,6 +53,7 @@ struct datathread
     float windAngle;
     boat *Boat;
     int timeStep;
+    double speedLossOnTack;
 };
 
 //===================================================================
@@ -150,6 +151,8 @@ class ROUTAGE : public QObject
         ROUTAGE * getFromRoutage(){return fromRoutage;}
         bool getAutoZoom(){return autoZoom;}
         void setAutoZoom(bool b){this->autoZoom=b;}
+        double getSpeedLossOnTack(){return speedLossOnTack;}
+        void setSpeedLossOnTack(double d){this->speedLossOnTack=d;}
     public slots:
         void slot_edit();
         void slot_abort(){this->aborted=true;}
@@ -268,5 +271,6 @@ class ROUTAGE : public QObject
         ROUTAGE * fromRoutage;
         QString poiPrefix;
         bool autoZoom;
+        double speedLossOnTack;
     };
 #endif // ROUTAGE_H
