@@ -231,12 +231,12 @@
       <string>Utiliser la formule VLM pour le VB-VMG</string>
      </property>
     </widget>
-    <widget class="QLabel" name="label_6">
+    <widget class="QLabel" name="labelTackGybe">
      <property name="geometry">
       <rect>
        <x>20</x>
        <y>110</y>
-       <width>171</width>
+       <width>181</width>
        <height>16</height>
       </rect>
      </property>
@@ -247,7 +247,7 @@
     <widget class="QSpinBox" name="speedLossOnTack">
      <property name="geometry">
       <rect>
-       <x>190</x>
+       <x>210</x>
        <y>110</y>
        <width>61</width>
        <height>21</height>
@@ -267,6 +267,9 @@
      </property>
      <property name="maximum">
       <number>100</number>
+     </property>
+     <property name="singleStep">
+      <number>10</number>
      </property>
      <property name="value">
       <number>100</number>
@@ -500,17 +503,34 @@
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>225</x>
-     <y>137</y>
+     <x>226</x>
+     <y>192</y>
     </hint>
     <hint type="destinationlabel">
-     <x>400</x>
-     <y>138</y>
+     <x>559</x>
+     <y>193</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>speedLossOnTack</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>ROUTE_Editor_ui</receiver>
+   <slot>GybeTack(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>230</x>
+     <y>450</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>289</x>
+     <y>238</y>
     </hint>
    </hints>
   </connection>
  </connections>
  <slots>
   <slot>btDeleteClicked()</slot>
+  <slot>GybeTack(int)</slot>
  </slots>
 </ui>

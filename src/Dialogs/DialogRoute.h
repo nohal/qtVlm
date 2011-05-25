@@ -39,7 +39,7 @@ class DialogRoute : public QDialog, public Ui::ROUTE_Editor_ui
         void done(int result);
 
     public slots:
-
+        void GybeTack(int i);
     protected:
         void resizeEvent ( QResizeEvent * event );
     signals:

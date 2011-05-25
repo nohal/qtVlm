@@ -70,7 +70,6 @@ DialogRoute::DialogRoute(ROUTE *route,myCentralWidget *parent)
     setWindowTitle(tr("Parametres Route"));
     editName->setText(route->getName());
     editFrozen->setChecked(route->getFrozen());
-    qWarning()<<"setting speedLoss"<<qRound(route->getSpeedLossOnTack()*100.00);
     this->speedLossOnTack->setValue(qRound(route->getSpeedLossOnTack()*100.00));
 
 
@@ -195,6 +194,15 @@ void DialogRoute::done(int result)
     {
     }
     QDialog::done(result);
+}
+void DialogRoute::GybeTack(int i)
+{
+    QFont font=this->labelTackGybe->font();
+    if(i==100)
+        font.setBold(false);
+    else
+        font.setBold(true);
+    this->labelTackGybe->setFont(font);
 }
 
 //---------------------------------------

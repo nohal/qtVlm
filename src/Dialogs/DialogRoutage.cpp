@@ -361,4 +361,13 @@ void DialogRoutage::on_windForced_toggled(bool checked)
    TWD->setEnabled(checked);
    TWS->setEnabled(checked);
 }
+void DialogRoutage::GybeTack(int i)
+{
+    QFont font=this->labelTackGybe->font();
+    if(i==100)
+        font.setBold(false);
+    else
+        font.setBold(true);
+    this->labelTackGybe->setFont(font);
+}
 

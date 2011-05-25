@@ -359,7 +359,7 @@ void ROUTE::slot_recalculate(boat * boat)
                             {
                                 if ((angle>0 && lastTwa<0)||(angle<0 && lastTwa>0))
                                 {
-                                    qWarning()<<"reducing polar because of tack/gybe";
+                                    //qWarning()<<"reducing polar because of tack/gybe";
                                     newSpeed=newSpeed*speedLossOnTack;
                                 }
                             }

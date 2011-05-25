@@ -38,7 +38,7 @@ class DialogRoutage : public QDialog, public Ui::ROUTAGE_Editor_ui
         void done(int result);
 
     public slots:
-
+        void GybeTack(int i);
     signals:
 
     protected:

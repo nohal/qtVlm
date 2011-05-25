@@ -423,21 +423,31 @@ avec ce prefixe</string>
        <property name="maximum">
         <number>100</number>
        </property>
+       <property name="singleStep">
+        <number>10</number>
+       </property>
        <property name="value">
         <number>100</number>
        </property>
       </widget>
-      <widget class="QLabel" name="label_6">
+      <widget class="QLabel" name="labelTackGybe">
        <property name="geometry">
         <rect>
          <x>240</x>
-         <y>110</y>
+         <y>105</y>
          <width>171</width>
-         <height>16</height>
+         <height>31</height>
         </rect>
        </property>
+       <property name="font">
+        <font>
+         <weight>50</weight>
+         <bold>false</bold>
+        </font>
+       </property>
        <property name="text">
-        <string>Empannages/Virements</string>
+        <string>Empannages et
+Virements de bord</string>
        </property>
       </widget>
      </widget>
@@ -912,7 +922,7 @@ avec ce prefixe</string>
    <widget class="QWidget" name="layoutWidget">
     <property name="geometry">
      <rect>
-      <x>520</x>
+      <x>510</x>
       <y>30</y>
       <width>95</width>
       <height>471</height>
@@ -997,8 +1007,8 @@ avec ce prefixe</string>
    <slot>accept()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>527</x>
-     <y>23</y>
+     <x>518</x>
+     <y>31</y>
     </hint>
     <hint type="destinationlabel">
      <x>285</x>
@@ -1013,8 +1023,8 @@ avec ce prefixe</string>
    <slot>reject()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>527</x>
-     <y>54</y>
+     <x>518</x>
+     <y>90</y>
     </hint>
     <hint type="destinationlabel">
      <x>285</x>
@@ -1029,12 +1039,12 @@ avec ce prefixe</string>
    <slot>setDisabled(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>104</x>
-     <y>156</y>
+     <x>107</x>
+     <y>177</y>
     </hint>
     <hint type="destinationlabel">
-     <x>104</x>
-     <y>185</y>
+     <x>107</x>
+     <y>208</y>
     </hint>
    </hints>
   </connection>
@@ -1045,12 +1055,12 @@ avec ce prefixe</string>
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>122</x>
-     <y>240</y>
+     <x>124</x>
+     <y>261</y>
     </hint>
     <hint type="destinationlabel">
-     <x>257</x>
-     <y>271</y>
+     <x>282</x>
+     <y>294</y>
     </hint>
    </hints>
   </connection>
@@ -1061,8 +1071,8 @@ avec ce prefixe</string>
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>122</x>
-     <y>240</y>
+     <x>124</x>
+     <y>261</y>
     </hint>
     <hint type="destinationlabel">
      <x>307</x>
@@ -1077,17 +1087,34 @@ avec ce prefixe</string>
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>122</x>
-     <y>240</y>
+     <x>124</x>
+     <y>261</y>
     </hint>
     <hint type="destinationlabel">
-     <x>217</x>
-     <y>302</y>
+     <x>282</x>
+     <y>326</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>speedLossOnTack</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>ROUTAGE_Editor_ui</receiver>
+   <slot>GybeTack(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>452</x>
+     <y>495</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>306</x>
+     <y>299</y>
     </hint>
    </hints>
   </connection>
  </connections>
  <slots>
   <slot>btDeleteClicked()</slot>
+  <slot>GybeTack(int)</slot>
  </slots>
 </ui>
