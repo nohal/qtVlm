@@ -2822,7 +2822,8 @@ avec ce préfixe</translation>
         <translation>Pourcentage de la polaire à appliquer pendant une vacation, après un virement ou un empannage</translation>
     </message>
     <message>
-        <source>Empannages/Virements</source>
+        <source>Empannages et
+Virements de bord</source>
         <translation></translation>
     </message>
 </context>
@@ -4707,15 +4708,15 @@ Voulez-vous egalement supprimer tous les POIs lui appartenant?</source>
     <name>myScene</name>
     <message>
         <source>Gesture</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <source>Pan gesture detected</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <source>Other gesture detected!!</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
 </context>
 <context>
