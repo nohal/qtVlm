@@ -75,6 +75,7 @@ class GshhsPolygon
         int flag;			/* level + version << 8 + greenwich << 16 + source << 24 */
         double west, east, south, north;	/* min/max extent in DEGREES */
         int area;			/* Area of polygon in 1/10 km^2 */
+        int areaFull,container,ancestor;
         //----------------------
         std::list<GshhsPoint *> lsPoints;
 

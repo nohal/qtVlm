@@ -58,7 +58,7 @@ GshhsPolygon::GshhsPolygon(ZUFILE *file_)
 }*/
         }
         
-    	// force l'Antarctic �  être un "rectangle" qui passe par le pôle
+    	// force l'Antarctic �  être un "rectangle" qui passe par le pôle
         if (antarctic) {
             lsPoints.push_front(new GshhsPoint(360, y));
             lsPoints.push_front(new GshhsPoint(360,-90));
@@ -84,16 +84,41 @@ GshhsPolygon_WDB::GshhsPolygon_WDB(ZUFILE *file_)
     north = readInt4() * 1e-6;
     area  = readInt4();
     
-    greenwich = false;
-    antarctic = false;
-    if (ok) {
-        for (int i=0; i<n; i++) {
-            double x, y;
-            x = readInt4() * 1e-6;
-            if (greenwich && x > 270)
-                x -= 360;
-            y = readInt4() * 1e-6;
-            lsPoints.push_back(new GshhsPoint(x,y));
+    if ( ( (flag >> 8) & 255 ) >= 7) { //GSHHS Release 2.0
+        areaFull  = readInt4();
+        container  = readInt4();
+        ancestor  = readInt4();
+
+        greenwich = ( flag >> 16) & 1;
+        antarctic = (west==0 && east==360);
+        if (ok) {
+            double x=0, y=0;
+            for (int i=0; i<n; i++) {
+                x = readInt4() * 1e-6;
+                if (greenwich && x > 270)
+                    x -= 360;
+                y = readInt4() * 1e-6;
+                lsPoints.push_back(new GshhsPoint(x,y));
+            }
+            if (antarctic) {
+                    lsPoints.push_front(new GshhsPoint(360, y));
+                    lsPoints.push_front(new GshhsPoint(360,-90));
+                lsPoints.push_back(new GshhsPoint(0,-90));
+            }
+        }
+    }
+    else {
+        greenwich = ( flag >> 16) & 1;
+        antarctic = (west==0 && east==360);
+        if (ok) {
+            for (int i=0; i<n; i++) {
+                double x=0, y=0;
+                x = readInt4() * 1e-6;
+                if (greenwich && x > 270)
+                    x -= 360;
+                y = readInt4() * 1e-6;
+                lsPoints.push_back(new GshhsPoint(x,y));
+            }
         }
     }
 }
@@ -366,7 +391,7 @@ void GshhsReader::GsshDrawLines(QPainter &pnt, std::list<GshhsPolygon*> &lst,
 		if (nbp > 1) {
 			if (pol->isAntarctic()) {
 				// Ne pas tracer les bords artificiels qui rejoignent le pôle
-				// ajoutés lors de la création des polygones (2 au début, 1 �  la fin).
+				// ajoutés lors de la création des polygones (2 au début, 1 �  la fin).
 				pts ++;
 				nbp -= 2;
 				pnt.drawPolyline(pts, nbp);
@@ -384,7 +409,7 @@ void GshhsReader::GsshDrawLines(QPainter &pnt, std::list<GshhsPolygon*> &lst,
 		if (nbp > 1) {
 			if (pol->isAntarctic()) {
 				// Ne pas tracer les bords artificiels qui rejoignent le pôle
-				// ajoutés lors de la création des polygones (2 au début, 1 �  la fin).
+				// ajoutés lors de la création des polygones (2 au début, 1 �  la fin).
 				pts ++;
 				nbp -= 2;
 				pnt.drawPolyline(pts, nbp);
