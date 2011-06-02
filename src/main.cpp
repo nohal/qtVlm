@@ -29,6 +29,7 @@ Copyright (C) 2008 - Jacques Zaninetti - http://zygrib.free.fr
 #include <QLibraryInfo>
 #include <QLocale>
 #include <QDebug>
+#include <QDir>
 
 #include "MainWindow.h"
 #include "settings.h"
@@ -36,8 +37,18 @@ Copyright (C) 2008 - Jacques Zaninetti - http://zygrib.free.fr
 int main(int argc, char *argv[])
 {
     QApplication app(argc, argv);
-	qsrand(QTime::currentTime().msec());
-    
+    qsrand(QTime::currentTime().msec());
+#ifdef __UNIX_QTVLM
+    QString curDir=QDir::currentPath();
+    QString appExeFolder=QApplication::applicationDirPath();
+    qWarning() << "currentPath returns: " << curDir << "applicationDirPath returns: " << appExeFolder;
+    if ( QString::compare(curDir,appExeFolder,Qt::CaseSensitive)!=0 )
+    {
+        QDir::setCurrent(appExeFolder);
+        curDir=QDir::currentPath();
+        qWarning() << "currentPath modified: " << curDir << "applicationDirPath returns: " << appExeFolder;
+    }
+#endif
     QTextCodec::setCodecForTr(QTextCodec::codecForName("utf8"));
     QTextCodec::setCodecForCStrings(QTextCodec::codecForName("utf8"));
     Settings::initSettings();
