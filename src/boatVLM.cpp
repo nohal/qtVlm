@@ -136,12 +136,14 @@ void boatVLM::doRequest(int requestCmd)
 {
     if(!activated)
     {
+        qWarning() << "Doing a synch on a non activated boat";
         while(!gates.isEmpty())
            delete gates.takeFirst();
         this->gatesLoaded=false;
     }
     if(!activated && initialized)
     {
+        qWarning() << "Doing a synch on a non activated and initialized boat";
         updating=false;
         return;
     }
@@ -155,7 +157,7 @@ void boatVLM::doRequest(int requestCmd)
         }
         else
         {
-            /*qWarning() << "Doing request " << requestCmd << " for " << pseudo */ ;
+            //qWarning() << "Doing request " << requestCmd << " for " << pseudo;
         }
 
         QString page;
@@ -197,7 +199,7 @@ void boatVLM::doRequest(int requestCmd)
     }
     else
     {
-         qWarning("Creating dummy data");
+         qWarning("no Inet => Creating dummy data");
          boat_id = 0;
          pseudo = "test";
          race_id = 0;

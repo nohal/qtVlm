@@ -60,6 +60,8 @@ void inetClient::inetGet(int currentRequest,QString requestUrl,QString host)
         this->nbAuth=0;
         inet->doRequestGet(this,requestUrl,host);
     }
+    else
+        qWarning() << "Doing inetGet with no inet available";
 }
 
 void inetClient::inetGetProgress(int currentRequest,QString requestUrl,QString host)
@@ -70,6 +72,8 @@ void inetClient::inetGetProgress(int currentRequest,QString requestUrl,QString h
         this->nbAuth=0;
         inet->doRequestGetProgress(this,requestUrl,host);
     }
+    else
+        qWarning() << "Doing inetGetProgress with no inet available";
 }
 
 void inetClient::inetPost(int currentRequest,QString requestUrl,QString data,QString host)
@@ -80,6 +84,8 @@ void inetClient::inetPost(int currentRequest,QString requestUrl,QString data,QSt
         this->nbAuth=0;
         inet->doRequestPost(this,requestUrl,data,host);
     }
+    else
+        qWarning() << "Doing inetPost with no inet available";
 }
 
 void inetClient::resetReply()

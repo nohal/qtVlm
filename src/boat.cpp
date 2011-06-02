@@ -45,6 +45,10 @@ boat::boat(QString pseudo, bool activated,
     forceEstime=false;
     width=height=0;
 
+    speed=heading=0;
+    avg=dnm=loch=ortho=loxo=vmg=0;
+    windDir=windSpeed=TWA=0;
+
     WPLat=WPLon=lat=lon=0;
 
     setZValue(Z_VALUE_BOAT);
@@ -470,7 +474,7 @@ void boat::slot_projectionUpdated()
 
 void boat::setStatus(bool activated)
 {
-    //qWarning() << "BOAT: " << this->getBoatPseudo() << " setStatus=" << activated;
+     //qWarning() << "BOAT: " << this->getBoatPseudo() << " setStatus=" << activated;
      this->activated=activated;
      setVisible(activated);
      slot_paramChanged();
@@ -519,6 +523,7 @@ void boat::reloadPolar(void)
 {
     if(polarName.isEmpty()) /* nom de la polaire est vide => pas de chargement */
     {
+        //qWarning() << "Polar name empty => nothing to load";
         if(polarData!=NULL) /* doit on faire un release tt de meme? */
         {
             emit releasePolar(polarData->getName());
@@ -528,11 +533,18 @@ void boat::reloadPolar(void)
     }
 
     if(polarData != NULL && polarName == polarData->getName()) /* reload inutile */
+    {
+       // qWarning() << "Polar already loaded => nothing to do";
         return;
+    }
 
     if(polarData!=NULL)
+    {
+        //qWarning() << "Releasing polar " << polarData->getName();
         emit releasePolar(polarData->getName()); /* release si une polaire déjà chargée */
+    }
 
+    //qWarning() << "Asking for polar " << polarName;
     emit getPolar(polarName,&polarData);
 }
 

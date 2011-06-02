@@ -78,6 +78,9 @@ void Polar::setPolarName(QString fname)
     loaded=false;
     clearPolar();
 
+
+    qWarning() << "Opening polar " << fname;
+
     name=fname;
     QString nameF = "polar/"+fname+".csv";
     QFile file(nameF);
@@ -159,6 +162,7 @@ void Polar::setPolarName(QString fname)
     /* polaire chargée */
 
 /* pre-calculate B-VMG for every tws at 0.1 precision with a twa step of 1 and then .1 */
+
     float ws=qRound(0);
     float wa=qRound(0);
     float bvmg,bvmg_d,bvmg_u,wa_u,wa_d,wa_limit;
@@ -242,6 +246,7 @@ void Polar::setPolarName(QString fname)
             return;
     }
 //precalculate regular VMGs
+    //qWarning() << "Start computing vmg";
     fileVMG.open(QIODevice::WriteOnly | QIODevice::Text );
     double vmg=0;
     QTextStream sVmg(&fileVMG);
@@ -301,6 +306,7 @@ float Polar::getSpeed(float windSpeed, float angle)
 
 float Polar::myGetSpeed(float windSpeed, float angle, bool force)
 {
+    //qWarning() << "My get speed";
     int i1,i2,k1,k2,k;
     float a,b,c,d;
     float infSpeed,supSpeed;
@@ -323,6 +329,8 @@ float Polar::myGetSpeed(float windSpeed, float angle, bool force)
         if(angle<=twa[i2])
             break;
     }
+    if(i2==twa.count())
+        i2=twa.count()-1;
     if(twa[i2]==angle)
         i1=i2;
     else
@@ -336,6 +344,8 @@ float Polar::myGetSpeed(float windSpeed, float angle, bool force)
         if(windSpeed<=tws[k2])
             break;
     }
+    if(k2==tws.count())
+        k2=tws.count()-1;
     if(tws[k2]==windSpeed)
         k1=k2;
     else

@@ -185,8 +185,11 @@ void boardVLM::boatUpdated(void)
 
     boatVLM * myBoat=currentBoat();
 
+    //qWarning() << "boardVlm update boat";
+
     if(myBoat == NULL)
         return;
+
     isComputing = true;
     float val=myBoat->getHeading()-myBoat->getWindDir();
 
@@ -195,7 +198,7 @@ void boardVLM::boatUpdated(void)
     else
     {
         angle_val = myBoat->getTWA();
-        calcAngleSign(val,angle_val);
+        calcAngleSign(val,angle_val)
     }
 
     editHeading->setValue(myBoat->getHeading());
@@ -1132,6 +1135,7 @@ QColor tool_windAngle::windSpeed_toColor()
 
 void tool_windAngle::setValues(float heading,float windDir, float windSpeed, float WPdir,float newHeading)
 {
+    //qWarning() << "windAngle set: heading=" << heading << " windDir=" << windDir << " windSpeed=" << windSpeed << " WPdir=" << WPdir << " " << newHeading;
     this->heading=heading;
     this->windDir=windDir;
     this->windSpeed=windSpeed;

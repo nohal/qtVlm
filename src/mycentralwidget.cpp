@@ -2090,6 +2090,7 @@ void myCentralWidget::deleteRoutage(ROUTAGE * routage)
 }
 void myCentralWidget::assignPois()
 {
+    qWarning() << "AssignPOI "  << route_list.count() << " routes, " << poi_list.count() << " pois";
     QList<bool> frozens;
     QListIterator<ROUTE*> r (route_list);
     while(r.hasNext())
@@ -2272,6 +2273,7 @@ void myCentralWidget::slot_playerSelected(Player * player)
 {
     if(currentPlayer && boat_list)
     {
+        //qWarning() << "Deactivate current player";
         if(currentPlayer->getType()==BOAT_VLM)
         {
             QListIterator<boatVLM*> i(*boat_list);
@@ -2282,6 +2284,7 @@ void myCentralWidget::slot_playerSelected(Player * player)
         }
         else
             realBoat->playerDeActivated();
+        //qWarning() << "Deactivate current player ==> done";
     }
 
     currentPlayer = player;
@@ -2289,6 +2292,7 @@ void myCentralWidget::slot_playerSelected(Player * player)
     {
         if(player->getType() == BOAT_VLM)
         {
+            //qWarning() << "Activate player: managing boats (VLM)";
             menuBar->boatList->setVisible(true);
             menuBar->ac_moveBoat->setVisible(false);
             menuBar->ac_moveBoatSep->setVisible(false);

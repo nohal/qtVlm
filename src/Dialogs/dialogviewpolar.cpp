@@ -74,6 +74,7 @@ DialogViewPolar::~DialogViewPolar()
 void DialogViewPolar::drawIt()
 {
     Polar * polar=myBoat->getPolarData();
+    if(!polar) return;
     image.fill(Qt::white);
     double maxSpeed=-1;
     if(this->allSpeed->isChecked())
