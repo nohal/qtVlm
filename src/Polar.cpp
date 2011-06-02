@@ -559,7 +559,8 @@ double Polar::A360(double hdg)
 polarList::polarList(inetConnexion * inet, MainWindow * mainWindow) : inetClient(inet)
 {
     polars.clear();
-
+    loadList.clear();
+    isLoading=false;
     this->mainWindow=mainWindow;
 }
 
@@ -570,39 +571,62 @@ polarList::~polarList(void)
     polars.clear();
 }
 
-Polar * polarList::needPolar(QString fname)
+void polarList::getPolar(QString fname)
 {
-    if(fname=="")
-        return NULL;
-
-    Polar * res=NULL;
-    QListIterator<Polar*> i (polars);
-
-    while(i.hasNext())
-    {
-        Polar * item = i.next();
-        if(item->getName()==fname)
-        {
-            res=item;
-            item->nbUsed++;
-            break;
-        }
+    //qWarning() << "get polar for " << fname;
+    if(fname=="") {
+        emit polarLoaded(fname,NULL);
+        return ;
     }
-    if(!res)
+    loadList.append(fname);
+    if(!isLoading)
     {
-        res = new Polar(fname,mainWindow);
-        if(res && res->isLoaded())
-        {
-            res->nbUsed++;
-            polars.append(res);
-        }
-        else
-            res=NULL;
+        //qWarning() << "Starting loop";
+        loadPolars();
     }
+}
 
-    if(res==NULL)
-        qWarning() << "Polar not found";
-    return res;
+
+void polarList::loadPolars(void)
+{
+    isLoading=true;
+    while(loadList.count()!=0)
+    {
+        QString fname=loadList.takeFirst();
+        //qWarning() << "loop on " << fname;
+        Polar * res=NULL;
+        QListIterator<Polar*> i (polars);
+
+        while(i.hasNext())
+        {
+            Polar * item = i.next();
+            if(item->getName()==fname)
+            {
+                //qWarning() << "polar already loaded";
+                res=item;
+                item->nbUsed++;
+                break;
+            }
+        }
+        if(!res)
+        {
+            //qWarning() << "loading polar from disk";
+            res = new Polar(fname,mainWindow);
+            if(res && res->isLoaded())
+            {
+                res->nbUsed++;
+                polars.append(res);
+            }
+            else
+                res=NULL;
+        }
+
+        if(res==NULL)
+            qWarning() << "Polar not found";
+        //qWarning() << "Sending polar " << fname;
+        emit polarLoaded(fname,res);
+    }
+    isLoading=false;
 }
 
 void polarList::releasePolar(QString fname)

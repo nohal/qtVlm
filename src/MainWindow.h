@@ -56,6 +56,7 @@ class MainWindow: public QMainWindow
         float getBoatPolarSpeed(float ws,float angle);
         float getBoatPolarMaxSpeed();
         boat * getSelectedBoat(void) {if(selectedBoat) return selectedBoat;else return NULL;}
+        polarList * getPolarList(void) {return polar_list;}
 
         void statusBar_showWindData(double x,double y);
         void statusBar_showSelectedZone(float x0, float y0, float x1, float y1);
@@ -126,7 +127,6 @@ class MainWindow: public QMainWindow
 
         void slotUpdateOpponent(void);
 
-        void getPolar(QString fname,Polar ** ptr);
         void releasePolar(QString fname);
         void slotLoadVLMGrib(void);
 

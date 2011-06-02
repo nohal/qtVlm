@@ -282,7 +282,7 @@ void boardReal::slot_hideShowCompass()
     //setCompassVisible(~windAngle->isVisible());
 }
 
-void boardReal::setCompassVisible(bool status)
+void boardReal::setCompassVisible(bool /*status*/)
 {
 //    if(status)
 //    {

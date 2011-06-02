@@ -37,6 +37,9 @@ boat::boat(QString pseudo, bool activated,
     this->mainWindow=main;
     this->parent=parent;
 
+    polar_list = main->getPolarList();
+    connect(this,SIGNAL(getPolar(QString)),polar_list,SLOT(getPolar(QString)));
+
     this->pseudo=pseudo;
     selected = false;
     polarName="";
@@ -111,7 +114,7 @@ boat::boat(QString pseudo, bool activated,
 
     connect(main,SIGNAL(paramVLMChanged()),this,SLOT(slot_paramChanged()));
 
-    connect(this,SIGNAL(getPolar(QString,Polar**)),main,SLOT(getPolar(QString,Polar**)));
+
     connect(this,SIGNAL(releasePolar(QString)),main,SLOT(releasePolar(QString)));
 }
 
@@ -544,8 +547,22 @@ void boat::reloadPolar(void)
         emit releasePolar(polarData->getName()); /* release si une polaire déjà chargée */
     }
 
-    //qWarning() << "Asking for polar " << polarName;
-    emit getPolar(polarName,&polarData);
+    connect(polar_list,SIGNAL(polarLoaded(QString,Polar *)),this,SLOT(polarLoaded(QString,Polar *)));
+    //qWarning() << pseudo << " request polar " << polarName;
+    emit getPolar(polarName);
+}
+
+void boat::polarLoaded(QString polarName,Polar * polarData) {
+    disconnect(polar_list,SIGNAL(polarLoaded(QString,Polar *)),this,SLOT(polarLoaded(QString,Polar *)));
+    //qWarning() << pseudo << " get polar returned: " << polarName;
+    if(this->polarName==polarName)
+    {
+        this->polarData=polarData;
+        /*if(polarData)
+            qWarning() << polarData->getName() << " received";
+        else
+            qWarning() << "void polar received";*/
+    }
 }
 
 void boat::setLockStatus(bool status)

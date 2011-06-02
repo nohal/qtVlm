@@ -1314,7 +1314,7 @@ void MainWindow::VLM_Sync_sync(void)
 void MainWindow::slot_boatHasUpdated()
 {
      disconnect(acc,SIGNAL(hasFinishedUpdating(void)),this,SLOT(slot_boatHasUpdated()));
-     qWarning() << "slot_boatHasUpdated => syncSync";
+     //qWarning() << "slot_boatHasUpdated => syncSync";
      VLM_Sync_sync();
 }
 
@@ -1918,20 +1918,9 @@ void MainWindow::slotNewZoom(float zoom)
         selectedBoat->setZoom(zoom);
 }
 
-void MainWindow::getPolar(QString fname,Polar ** ptr)
-{
-    qWarning() << "Get polar: " << fname;
-    if(ptr)
-    {
-        *ptr=polar_list->needPolar(fname);
-    }
-    //polar_list->stats();
-}
-
 void MainWindow::releasePolar(QString fname)
 {
     polar_list->releasePolar(fname);
-    //polar_list->stats();
 }
 
 void MainWindow::slotLoadVLMGrib(void)

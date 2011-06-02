@@ -136,7 +136,7 @@ void boatVLM::doRequest(int requestCmd)
 {
     if(!activated)
     {
-        qWarning() << "Doing a synch on a non activated boat";
+        //qWarning() << "Doing a synch on a non activated boat";
         while(!gates.isEmpty())
            delete gates.takeFirst();
         this->gatesLoaded=false;
@@ -220,7 +220,7 @@ void boatVLM::requestFinished (QByteArray res_byte)
 
     QString res(res_byte);
 
-    QWARN << "Request finished: " << getCurrentRequest() << " boat: " << this->boat_id;
+    //QWARN << "Request finished: " << getCurrentRequest() << " boat: " << this->boat_id;
 
     switch(getCurrentRequest())
     {

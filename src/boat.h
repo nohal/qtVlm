@@ -110,11 +110,13 @@ class boat: public QGraphicsWidget
         void slotTwaLine(){parent->twaDraw(lon,lat);}
         void slotCompassLine(void);
         void slot_estimeFlashing(void);
+        void polarLoaded(QString,Polar *);
+
     signals:
         void boatSelected(boat*);
         void boatUpdated(boat*,bool,bool);
         void boatLockStatusChanged(boat*,bool);
-        void getPolar(QString fname,Polar ** ptr);
+        void getPolar(QString);
         void releasePolar(QString fname);
         void clearSelection(void);
         void compassLine(int,int);
@@ -207,6 +209,8 @@ class boat: public QGraphicsWidget
         bool drawFlag;
         QString own;
         QTimer * estimeTimer;
+
+        polarList * polar_list;
 };
 
 #endif // BOAT_H

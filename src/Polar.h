@@ -102,9 +102,19 @@ class polarList : public QObject, public inetClient
         void requestFinished(QByteArray res);
         void get_polarList(void);
 
+    public slots:
+        void getPolar(QString);
+
+    signals:
+        void polarLoaded(QString,Polar *);
+
     private:
         QList<Polar*> polars;
+        QList<QString> loadList;
+        bool isLoading;
         MainWindow * mainWindow;
+
+        void loadPolars(void);
 };
 
 #endif
