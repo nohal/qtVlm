@@ -31,16 +31,18 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "parser.h"
 #include "Orthodromie.h"
 
-Polar::Polar()
+Polar::Polar(MainWindow * mainWindow)
 {
     loaded=false;
     nbUsed=0;
+    this->mainWindow=mainWindow;
 }
 
-Polar::Polar(QString fname)
+Polar::Polar(QString fname,MainWindow * mainWindow)
 {
     loaded=false;
     nbUsed=0;
+    this->mainWindow=mainWindow;
     setPolarName(fname);
 }
 
@@ -252,8 +254,9 @@ void Polar::setPolarName(QString fname)
     QTextStream sVmg(&fileVMG);
     QString ssVmg;
     QProgressDialog * progress;
-    progress=new QProgressDialog();
-    progress->setLabelText(tr("Pre-calcul des valeurs de VMG (ceci est fait seulement la premiere fois qu'une polaire est utilisee)"));
+    progress=new QProgressDialog((QWidget*)mainWindow);
+    progress->setWindowModality(Qt::ApplicationModal);
+    progress->setLabelText(tr("Pre-calcul des valeurs de VMG pour ")+fname);
     progress->setMaximum(600);
     progress->setMinimum(0);
     progress->setCancelButton(NULL);
@@ -553,9 +556,11 @@ double Polar::A360(double hdg)
 /********************/
 /*  VLM polar List  */
 /********************/
-polarList::polarList(inetConnexion * inet) : inetClient(inet)
+polarList::polarList(inetConnexion * inet, MainWindow * mainWindow) : inetClient(inet)
 {
     polars.clear();
+
+    this->mainWindow=mainWindow;
 }
 
 polarList::~polarList(void)
@@ -585,7 +590,7 @@ Polar * polarList::needPolar(QString fname)
     }
     if(!res)
     {
-        res = new Polar(fname);
+        res = new Polar(fname,mainWindow);
         if(res && res->isLoaded())
         {
             res->nbUsed++;

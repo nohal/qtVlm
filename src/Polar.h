@@ -26,6 +26,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <QObject>
 #include <cmath>
 #include <QFile>
+#include <QMutex>
 
 #include "inetClient.h"
 
@@ -40,8 +41,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 class Polar : public QObject
 {Q_OBJECT
     public:
-        Polar(void);
-        Polar(QString fname);
+        Polar(MainWindow * mainWindow);
+        Polar(QString fname,MainWindow * mainWindow);
 
         QString getName() { if(loaded) return name; else return ""; }
         float   getSpeed(float windSpeed, float angle);
@@ -59,6 +60,8 @@ class Polar : public QObject
         void    getBvmg(double twaOrtho,double tws,double *twa);
 
     private:
+        MainWindow * mainWindow;
+
         QList<float> polar_data;
         QList<float> tws;
         QList<float> twa;
@@ -87,7 +90,7 @@ class Polar : public QObject
 class polarList : public QObject, public inetClient
 { Q_OBJECT
     public:
-        polarList(inetConnexion * inet);
+        polarList(inetConnexion * inet, MainWindow * mainWindow);
         ~polarList(void);
 
         Polar * needPolar(QString fname);
@@ -101,6 +104,7 @@ class polarList : public QObject, public inetClient
 
     private:
         QList<Polar*> polars;
+        MainWindow * mainWindow;
 };
 
 #endif

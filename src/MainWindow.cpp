@@ -388,7 +388,7 @@ MainWindow::MainWindow(int w, int h, QWidget *parent)
     /* list of polar structure */
 
     progress->setLabelText("loading polars list");
-    polar_list = new polarList(my_centralWidget->getInet());
+    polar_list = new polarList(my_centralWidget->getInet(),this);
 //    progress->setValue(30);
     progress->setLabelText("reading boats data");
     my_centralWidget->loadBoat();
