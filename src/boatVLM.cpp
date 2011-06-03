@@ -180,7 +180,7 @@ void boatVLM::doRequest(int requestCmd)
                 time_t st=et-(Settings::getSetting("trace_length",12).toInt()*60*60);
                 clearCurrentRequest();
                 QTextStream(&page)
-                        << "/ws/boatinfo/tracks.php?"
+                        << "/ws/boatinfo/tracks_private.php?"
                         << "idu="
                         << boat_id
                         << "&starttime="
