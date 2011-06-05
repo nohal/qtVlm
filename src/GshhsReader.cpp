@@ -491,9 +491,9 @@ void GshhsReader::selectBestQuality(Projection *proj)
         bestQuality = 0;
     else if (proj->getCoefremp() > 5)
         bestQuality = 1;
-    else if (proj->getCoefremp() > 1)
+    else if (proj->getCoefremp() > 2)
         bestQuality = 2;
-    else if (proj->getCoefremp() > 0.5)
+    else if (proj->getCoefremp() > 0.8)
         bestQuality = 3;
     else
         bestQuality = 4;
