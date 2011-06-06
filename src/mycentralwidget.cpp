@@ -235,6 +235,7 @@ void myScene::wheelTimerElapsed()
 }
 bool myScene::event(QEvent * event)
 {
+#if 0
     if (event->type() == QEvent::Gesture)
     {
         qWarning()<<"gesture detected";
@@ -270,6 +271,7 @@ bool myScene::event(QEvent * event)
         wheelTimer->start(500);
         return true;
     }
+#endif
     return QGraphicsScene::event(event);}
 
 /*******************/
