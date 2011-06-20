@@ -156,7 +156,11 @@ void ROUTE::slot_recalculate(boat * boat)
     if(boat!=NULL && this->myBoat!=boat) return;
     if(!myBoat || myBoat==NULL  || !myBoat->getStatus()) return;
     if(this->hidden) return;
-    if (frozen && initialized) interpolatePos();
+    if (frozen && initialized)
+    {
+        interpolatePos();
+        return;
+    }
     if(initialized && (frozen || superFrozen)) return;
     line->deleteAll();
     line->setHasInterpolated(false);

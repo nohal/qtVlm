@@ -460,13 +460,11 @@ void POI::contextMenuEvent(QGraphicsSceneContextMenuEvent * e)
         /*clear current actions */
         ac_routeList->clear();
 
-        QActionGroup * ptr_group = new QActionGroup(ac_routeList);
         QListIterator<ROUTE*> j (parent->getRouteList());
         QAction * ptr;
         ptr=new QAction(tr("Aucune route"),ac_routeList);
         ptr->setCheckable  (true);
         ac_routeList->addAction(ptr);
-        ptr_group->addAction(ptr);
         ptr->setData(0);
 
         int k=0;
@@ -482,7 +480,6 @@ void POI::contextMenuEvent(QGraphicsSceneContextMenuEvent * e)
             ptr->setCheckable  (true);
             ptr->setData(-1);
             ac_routeList->addAction(ptr);
-            ptr_group->addAction(ptr);
             if(ptr_route == route)
                 ptr->setChecked(true);
             else

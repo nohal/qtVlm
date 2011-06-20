@@ -33,6 +33,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "Orthodromie.h"
 #include "Polar.h"
 #include "orthoSegment.h"
+#include <QMessageBox>
 
 boatReal::boatReal(QString pseudo, bool activated, Projection * proj,MainWindow * main,
                    myCentralWidget * parent): boat(pseudo,activated,proj,main,parent)
@@ -143,6 +144,8 @@ void boatReal::startRead()
     if(gpsReader)
         delete gpsReader;
     gpsReader = new ReceiverThread(this);
+    if(!gpsReader->initPort())
+        return;
     gpsReader->start();
 }
 
@@ -361,8 +364,8 @@ void boatReal::unSelectBoat(bool needUpdate)
 
 void boatReal::paramUpdated()
 {
-    gpsReader->initPort();
-    startRead();
+    if(gpsReader->initPort());
+        startRead();
 }
 
 void boatReal::setPolar(QString polarName)
@@ -390,7 +393,7 @@ ReceiverThread::ReceiverThread(boatReal * parent)
     connect(this,SIGNAL(started()),parent,SLOT(slot_threadStartedOrFinished()));
 
     port=NULL;
-    initPort();
+    //initPort();
     this->parent=parent;
     stop=false;
     nmea_zero_INFO(&info);
@@ -417,7 +420,7 @@ bool ReceiverThread::initPort(void)
     if(port && port->isOpen())
         port->close();
     /* init serial port */
-    port->setPortName(Settings::getSetting("gpsPortName","COM1").toString());
+    port->setPortName("\\\\.\\"+Settings::getSetting("gpsPortName","COM1").toString());
     port->setBaudRate((BaudRateType)Settings::getSetting("gpsBaudRate",BAUD4800).toInt());
     port->setFlowControl(FLOW_OFF);
     port->setParity(PAR_NONE);
@@ -425,8 +428,9 @@ bool ReceiverThread::initPort(void)
     port->setStopBits(STOP_1);
     if(!port->open(QIODevice::ReadOnly | QIODevice::Unbuffered))
     {
-#warning put an error message
-        qWarning() << "Can't open Serial port " << port->portName() << " (" << port->lastError() << ")";
+        QMessageBox::critical (0,
+            tr("Activation du GPS"),
+            tr("Impossible d'ouvrir le port ")+Settings::getSetting("gpsPortName","COM1").toString()+"\n"+tr("Erreur: ")+port->lastError());
         return false;
     }
 //    port->write("$PSRF151,01*0F"); /*enabling WAAS/EGNOS on sirf chipset*/
@@ -441,7 +445,7 @@ void ReceiverThread::run()
     if(!port || !port->isOpen())
     {
         /*retry to open the port*/
-        this->initPort();
+        if(!this->initPort()) return;
         if(!port || !port->isOpen())
         {
             qWarning() << "Port not open => not starting GPS thread";
