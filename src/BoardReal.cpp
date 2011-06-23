@@ -82,6 +82,20 @@ void boardReal::setWp(float lat,float lon,float wph)
     boatReal * myBoat=currentBoat();
     if(myBoat)
         myBoat->setWp(lat,lon,wph);
+    if(myBoat->getWPLat()!=0 && myBoat->getWPLat()!=0)
+    {
+        dnm_2->setText(QString().setNum(myBoat->getDnm()));
+        ortho->setText(QString().setNum(myBoat->getOrtho()));
+        vmg_2->setText(QString().setNum(myBoat->getVmg()));
+        angle->setText(QString().setNum(myBoat->getLoxo()));
+    }
+    else
+    {
+        dnm_2->setText("---");
+        ortho->setText("---");
+        vmg_2->setText("---");
+        angle->setText("---");
+    }
 }
 void boardReal::boatUpdated(void)
 {

@@ -646,6 +646,22 @@ void ROUTAGE::calculate()
     {
         double xW=qMin(start.x(),arrival.x());
         double xE=qMax(start.x(),arrival.x());
+        qWarning()<<xW<<xE;
+        if((xW>0 && xE<0) || (xW<0 && xE>0))
+        {
+            if(qAbs(xW-xE)>180)
+            {
+                double xTemp=xW;
+                xW=xE;
+                xE=xTemp;
+                if(xW>0)
+                    xW-=360;
+                else
+                    xE-=360;
+
+            }
+        }
+        qWarning()<<xW<<xE;
         double yN=qMax(start.y(),arrival.y());
         double yS=qMin(start.y(),arrival.y());
         proj->setUseTempo(false);
