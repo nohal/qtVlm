@@ -251,13 +251,17 @@ bool boatReal::tryMoving(int x, int y)
 {
     if(isMoving)
     {
-        int new_x=x;
-        int new_y=y-height/2;
+//        int new_x=x;
+//        int new_y=y-height/2;
 
-        setPos(new_x,new_y);
+//        setPos(new_x,new_y);
 
         mouse_x=x;
         mouse_y=y;
+        double newlon,newlat;
+        proj->screen2map(mouse_x+3,mouse_y, &newlon, &newlat);
+        setPosition(newlat,newlon);
+        emit boatUpdated(this,false,false);
         return true;
     }
     return false;
@@ -280,6 +284,7 @@ void boatReal::mouseReleaseEvent(QGraphicsSceneMouseEvent * e)
         setPosition(newlat,newlon);
         isMoving=false;
         setCursor(Qt::PointingHandCursor);
+        emit boatUpdated(this,false,false);
         return;
     }
 

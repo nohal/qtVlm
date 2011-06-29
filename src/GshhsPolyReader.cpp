@@ -20,6 +20,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "GshhsPolyReader.h"
 #include "Projection.h"
+#include "dataDef.h"
 
 
 GshhsPolyCell::GshhsPolyCell(FILE *fpoly_, int x0_, int y0_,Projection *proj_,PolygonFileHeader *header_)
@@ -181,7 +182,9 @@ void GshhsPolyCell::DrawPolygonContour(QPainter &pnt,contour_list * p, double dx
                 if(a!=c || b!=d)
                     pnt.drawLine(a,b,c,d);
                 if(A!=C || B!=D)
+                {
                     coasts.append(QLineF(A,B,C,D));
+                }
             }
         }
 
@@ -201,7 +204,9 @@ void GshhsPolyCell::DrawPolygonContour(QPainter &pnt,contour_list * p, double dx
             if(a!=c || b!=d)
                 pnt.drawLine(a,b,c,d);
             if(A!=C || B!=D)
+            {
                 coasts.append(QLineF(A,B,C,D));
+            }
         }
     }
 }
@@ -239,43 +244,6 @@ GshhsPolyReader::GshhsPolyReader(std::string Polypath)
     setQuality(1);
 }
 
-bool GshhsPolyReader::crossing(QLineF traject,QLineF trajectWorld)
-{
-    QPointF dummy;
-    int cxmin, cxmax, cymax, cymin;  // cellules visibles
-    cxmin = (int) floor (qMin(trajectWorld.p1().x(),trajectWorld.p2().x()));
-    cxmax = (int) ceil  (qMax(trajectWorld.p1().x(),trajectWorld.p2().x()));
-    cymin = (int) floor (qMin(trajectWorld.p1().y(),trajectWorld.p2().y()));
-    cymax = (int) ceil  (qMax(trajectWorld.p1().y(),trajectWorld.p2().y()));
-    int cx, cxx, cy;
-    GshhsPolyCell *cel;
-
-    for (cx=cxmin; cx<cxmax; cx++)
-    {
-        cxx = cx;
-        while (cxx < 0)
-            cxx += 360;
-        while (cxx >= 360)
-            cxx -= 360;
-
-        for (cy=cymin; cy<cymax; cy++)
-        {
-            if (cxx>=0 && cxx<=359 && cy>=-90 && cy<=89)
-            {
-                if (allCells[cxx][cy+90] == NULL) continue;
-                cel = allCells[cxx][cy+90];
-                QList<QLineF> *coasts=cel->getCoasts();
-                if (coasts->isEmpty()) continue;
-                for(int cs=0;cs<coasts->count();cs++)
-                {
-                    if(coasts->at(cs).intersect(traject,&dummy)==QLineF::BoundedIntersection)
-                        return true;
-                }
-            }
-        }
-    }
-    return false;
-}
 
 //-------------------------------------------------------------------------
 GshhsPolyReader::~GshhsPolyReader()

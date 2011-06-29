@@ -30,6 +30,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "zuFile.h"
 
+#include "GshhsPolyReader.h"
 
 // GSHHS file format:
 //
@@ -122,7 +123,7 @@ class GshhsReader
         bool gshhsFilesExists(int quality);
         int  getQuality()   {return quality;}
 
-        bool crossing(QLineF ,QLineF );
+        bool crossing(QLineF traject, QLineF trajectWorld) const;
 
     private:
         int quality, userPreferredQuality;  // 5 levels: 0=low ... 4=full
@@ -194,6 +195,10 @@ inline int GshhsPolygon_WDB::readInt2() {
         ok = false;
     }
     return ((int)tab[0]<<8)+((int)tab[1]);
+}
+inline bool GshhsReader::crossing(QLineF traject, QLineF trajectWorld) const
+{
+    return this->gshhsPoly_reader->crossing(traject, trajectWorld);
 }
 
 

@@ -1446,7 +1446,7 @@ void MainWindow::slotBoatUpdated(boat * upBoat,bool newRace,bool doingSync)
     }
     else
     {
-        qWarning() << "Real boat has updated";
+//        qWarning() << "Real boat has updated";
         /*if(my_centralWidget->getOppList())
         {
             my_centralWidget->getOppList()->clear();

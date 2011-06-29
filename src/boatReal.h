@@ -86,6 +86,7 @@ class boatReal : public boat
         time_t getEta(){return eta;}
         void setWp(float lat, float lon, float wph);
         nmeaINFO getInfo(void){return info;}
+        void emitMoveBoat(){emit boatUpdated(this,false,false);}
 
     public slots:
         void slot_selectBoat(void) { boat::slot_selectBoat(); }

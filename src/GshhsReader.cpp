@@ -20,7 +20,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "GshhsReader.h"
 
-#include "GshhsPolyReader.h"
 #include "Projection.h"
 
 //==========================================================
@@ -355,10 +354,6 @@ int GshhsReader::GSHHS_scaledPoints(
     }
 	//if (j>1000)printf("%d\n", j);    
     return j;
-}
-bool GshhsReader::crossing(QLineF traject, QLineF trajectWorld)
-{
-    return this->gshhsPoly_reader->crossing(traject,trajectWorld);
 }
 
 //-----------------------------------------------------------------------

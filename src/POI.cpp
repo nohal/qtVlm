@@ -140,14 +140,14 @@ POI::~POI()
 }
 void POI::setLongitude(double lon)
 {
-    this->lon=(double)(qRound(lon*1000.0))/1000.0;
+    this->lon=(double)(qRound(lon*1000000.0))/1000000.0;
 
     if(this->lon>180) this->lon=this->lon-360;
     if(this->lon<-180) this->lon=this->lon+360;
 }
 void POI::setLatitude(double lat)
 {
-    this->lat=(double)(qRound(lat*1000.0))/1000.0;
+    this->lat=(double)(qRound(lat*1000000.0))/1000000.0;
 }
 void POI::rmSignal(void)
 {

@@ -2232,6 +2232,7 @@ void myCentralWidget::slot_moveBoat(double lat, double lon)
     if(currentPlayer && currentPlayer->getType()==BOAT_REAL)
     {
         realBoat->setPosition(lat,lon);
+        realBoat->emitMoveBoat();
     }
 }
 

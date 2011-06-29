@@ -56,6 +56,7 @@ void DialogRealBoatPosition::done(int result)
         else boatLon=lon->text().toDouble();
 
         currentBoat->setPosition(boatLat,boatLon);
+        currentBoat->emitMoveBoat();
     }
     QDialog::done(result);
 }
