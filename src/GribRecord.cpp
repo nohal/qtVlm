@@ -156,6 +156,13 @@ void  GribRecord::translateDataType()
         {
 
         }
+        //---------------
+        //PredictWind
+        //---------------
+        else if (idCenter==255 && idModel==1 && idGrid==255)
+        {
+
+        }
         //------------------------
         // Unknown center
         //------------------------
