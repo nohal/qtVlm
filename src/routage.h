@@ -36,6 +36,7 @@ Copyright (C) 2008 - Jacques Zaninetti - http://zygrib.free.fr
 #include "Polygon.h"
 #include "vlmpointgraphic.h"
 #include "vlmPoint.h"
+#include "GshhsReader.h"
 #define NO_CROSS 1
 #define BOUNDED_CROSS 2
 #define L1_CROSS 3
@@ -134,15 +135,14 @@ class ROUTAGE : public QObject
         bool getIsPivot(){return this->isPivot;}
         void setPoiPrefix(QString s){this->poiPrefix=s;}
         QString getPoiPrefix(){return this->poiPrefix;}
-/*beta testing advanced parameters*/
         int  pruneWakeAngle;
         bool useConverge;
         time_t getEta(){return eta;}
         Grib * getGrib(){return grib;}
         time_t getWhatIfJour(){return whatIfJour;}
-        static int calculateTimeRouteThreaded(vlmPoint RouteFrom,vlmPoint routeTo,float * lastLonFound, float * lastLatFound, datathread *dataThread);
-        static int routeFunctionThreaded(float x,vlmPoint from, float * lastLonFound, float * lastLatFound, datathread *dataThread);
-        static int routeFunctionDerivThreaded(float x,vlmPoint from, float * lastLonFound, float * lastLatFound, datathread *dataThread);
+        static int calculateTimeRoute(vlmPoint RouteFrom,vlmPoint routeTo, datathread *dataThread,float * lastLonFound=NULL, float * lastLatFound=NULL, int limit=-1);
+        static int routeFunction(float x,vlmPoint from, float * lastLonFound, float * lastLatFound, datathread *dataThread);
+        static int routeFunctionDeriv(float x,vlmPoint from, float * lastLonFound, float * lastLatFound, datathread *dataThread);
         static float A360(float hdg);
         static float myDiffAngle(float a1,float a2);
         bool getUseMultiThreading(){return this->useMultiThreading;}
@@ -153,6 +153,7 @@ class ROUTAGE : public QObject
         void setAutoZoom(bool b){this->autoZoom=b;}
         double getSpeedLossOnTack(){return speedLossOnTack;}
         void setSpeedLossOnTack(double d){this->speedLossOnTack=d;}
+        GshhsReader * getMap(){return this->map;}
     public slots:
         void slot_edit();
         void slot_abort(){this->aborted=true;}
@@ -196,13 +197,10 @@ class ROUTAGE : public QObject
         QPointF arrival;
         float mySignedDiffAngle(float a1,float a2);
         bool findPoint(float lon, float lat, double wind_angle, double wind_speed, float cap, vlmPoint *pt);
-        vlmPoint findRoute(const vlmPoint  & point);
         float findTime(const vlmPoint * pt, QPointF P, float * cap);
         float loxoCap;
         float initialDist;
-
-
-//        vlmPoint findRouteThreaded(const vlmPoint  & point);
+        GshhsReader *map;
 
 
 
@@ -221,9 +219,9 @@ class ROUTAGE : public QObject
         bool converted;
         float findDistancePreviousIso(vlmPoint P,QPolygonF * isoShape);
         void pruneWake(int wakeAngle);
-        int calculateTimeRoute(vlmPoint RouteFrom,vlmPoint routeTo,int limit=-1);
-        int routeFunction(float x,vlmPoint from);
-        int routeFunctionDeriv(float x,vlmPoint from);
+        //int calculateTimeRoute(vlmPoint RouteFrom,vlmPoint routeTo,int limit=-1);
+        //int routeFunction(float x,vlmPoint from);
+        //int routeFunctionDeriv(float x,vlmPoint from);
         int routeN;
         int routeMaxN;
         int routeTotN;
@@ -242,7 +240,6 @@ class ROUTAGE : public QObject
         void checkSegmentCrossingOwnIso();
         void checkIsoCrossingPreviousSegments();
         void epuration(int toBeRemoved);
-        void finalEpuration(int toBeRemoved,QList<vlmPoint> *listPoints);
         void removeCrossedSegments();
         float xa,ya,xs,ys;
         bool checkCoast;

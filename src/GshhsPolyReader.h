@@ -117,7 +117,7 @@ class GshhsPolyReader
 };
 inline bool GshhsPolyReader::crossing(QLineF traject, QLineF trajectWorld) const
 {
-    QPointF dummy;
+    //QPointF dummy;
     int cxmin, cxmax, cymax, cymin;  // cellules visibles
     cxmin = (int) floor (qMin(trajectWorld.p1().x(),trajectWorld.p2().x()));
     cxmax = (int) ceil  (qMax(trajectWorld.p1().x(),trajectWorld.p2().x()));
