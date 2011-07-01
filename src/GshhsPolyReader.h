@@ -30,7 +30,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "zuFile.h"
 #include "Util.h"
-#include <private/qnumeric_p.h>
 
 #define GSHHS_SCL    1.0e-6    /* Convert micro-degrees to degrees */
 #  define INTER_MAX_LIMIT 1.0000001
@@ -163,7 +162,7 @@ inline bool GshhsPolyReader::my_intersects(QLineF line1,QLineF line2) const
     const QPointF c = line1.p1() - line2.p1();
 
     const qreal denominator = a.y() * b.x() - a.x() * b.y();
-    if (denominator == 0 || !qt_is_finite(denominator))
+    if (denominator == 0)
         return false;
 
     const qreal reciprocal = 1 / denominator;
