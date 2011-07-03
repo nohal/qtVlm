@@ -655,6 +655,9 @@ bool Grib::getInterpolatedValue_byDates(double d_long, double d_lat, time_t now,
 {    
     windData wData_prev;
     windData wData_nxt;
+    double gridOriginLat,gridOriginLon;
+    gridOriginLat=recV1->getLatMin();
+    gridOriginLon=recV1->getLonMin();
 
     if(interpolation_type==INTERPOLATION_UKN)
         interpolation_type=interpolation_param;
@@ -702,7 +705,7 @@ bool Grib::getInterpolatedValue_byDates(double d_long, double d_lat, time_t now,
         case INTERPOLATION_HYBRID:
             if(debug)
                 qWarning() << "Interpolation Hybrid";
-            interpolation::get_wind_info_latlong_hybrid(d_long,d_lat,now,t1,t2,&wData_prev,(hasNxt?(&wData_nxt):NULL),gribStep_t1,gribStep_t1,gribStep_t2,gribStep_t2,u,v,debug);
+            interpolation::get_wind_info_latlong_hybrid(d_long,d_lat,now,t1,t2,&wData_prev,(hasNxt?(&wData_nxt):NULL),gribStep_t1,gribStep_t1,gribStep_t2,gribStep_t2,u,v,gridOriginLat,gridOriginLon,debug);
             break;
          default:
             if(debug)
