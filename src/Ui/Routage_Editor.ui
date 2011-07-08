@@ -323,7 +323,7 @@ avec ce prefixe</string>
        <property name="geometry">
         <rect>
          <x>20</x>
-         <y>170</y>
+         <y>150</y>
          <width>301</width>
          <height>17</height>
         </rect>
@@ -339,7 +339,7 @@ avec ce prefixe</string>
        <property name="geometry">
         <rect>
          <x>330</x>
-         <y>190</y>
+         <y>170</y>
          <width>141</width>
          <height>17</height>
         </rect>
@@ -352,7 +352,7 @@ avec ce prefixe</string>
        <property name="geometry">
         <rect>
          <x>20</x>
-         <y>190</y>
+         <y>170</y>
          <width>301</width>
          <height>17</height>
         </rect>
@@ -387,7 +387,7 @@ avec ce prefixe</string>
        <property name="geometry">
         <rect>
          <x>330</x>
-         <y>170</y>
+         <y>150</y>
          <width>131</width>
          <height>17</height>
         </rect>
@@ -448,6 +448,19 @@ avec ce prefixe</string>
        <property name="text">
         <string>Empannages et
 Virements de bord</string>
+       </property>
+      </widget>
+      <widget class="QCheckBox" name="showGrib">
+       <property name="geometry">
+        <rect>
+         <x>20</x>
+         <y>190</y>
+         <width>291</width>
+         <height>20</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>Afficher le grib pendant le calcul</string>
        </property>
       </widget>
      </widget>
@@ -984,6 +997,7 @@ Virements de bord</string>
   <tabstop>multi</tabstop>
   <tabstop>autoZoom</tabstop>
   <tabstop>checkCoast</tabstop>
+  <tabstop>showGrib</tabstop>
   <tabstop>tabWidget</tabstop>
   <tabstop>pruneWakeAngle</tabstop>
   <tabstop>explo</tabstop>
@@ -997,6 +1011,7 @@ Virements de bord</string>
   <tabstop>TWS</tabstop>
   <tabstop>btOk</tabstop>
   <tabstop>btCancel</tabstop>
+  <tabstop>speedLossOnTack</tabstop>
  </tabstops>
  <resources/>
  <connections>

@@ -576,3 +576,25 @@ void Util::addAgent(QNetworkRequest & request)
         request.setRawHeader("User-Agent",QString("qtVlm/"+Version::getVersion()+" ("+QTVLM_OS+")").toAscii());
 
 }
+bool Util::lineIsCrossingRect(const QLineF line, const QRectF rect)
+{
+    double A=(line.y2()-line.y1())*rect.topLeft().x() +
+             (line.x1()-line.x2())*rect.topLeft().y() +
+             (line.x2()*line.y1()-line.x1()*line.y2());
+    double B=(line.y2()-line.y1())*rect.topRight().x() +
+             (line.x1()-line.x2())*rect.topRight().y() +
+             (line.x2()*line.y1()-line.x1()*line.y2());
+    double C=(line.y2()-line.y1())*rect.bottomLeft().x() +
+             (line.x1()-line.x2())*rect.bottomLeft().y() +
+             (line.x2()*line.y1()-line.x1()*line.y2());
+    double D=(line.y2()-line.y1())*rect.bottomRight().x() +
+             (line.x1()-line.x2())*rect.bottomRight().y() +
+             (line.x2()*line.y1()-line.x1()*line.y2());
+    if(A<0 && B<0 && C<0 && D<0) return false;
+    if(A>0 && B>0 && C>0 && D>0) return false;
+    if(line.x1()>rect.topRight().x() && line.x2()>rect.topRight().x()) return false;
+    if(line.x1()<rect.bottomLeft().x() && line.x2()<rect.bottomLeft().x()) return false;
+    if(line.y1()>rect.topRight().y() && line.y2()>rect.topRight().y()) return false;
+    if(line.y1()<rect.bottomLeft().y() && line.y2()<rect.bottomLeft().y()) return false;
+    return true;
+}

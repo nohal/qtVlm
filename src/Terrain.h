@@ -66,7 +66,7 @@ public:
              drawDewpoint,
              drawDeltaDewpoint
     };
-
+    void switchGribDisplay(bool windArrowOnly);
 
 public slots :
     // Map

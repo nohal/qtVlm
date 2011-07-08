@@ -62,7 +62,6 @@ Terrain::Terrain(myCentralWidget *parent, Projection *proj_) : QGraphicsWidget()
     height=50;
     setPos(0,0);
     //qWarning() << "Terre is at " << x() << "," << y() << ", size: " << size().width() << "," << size().height();
-
     quality = 0;
 
     //---------------------------------------------------------------------
@@ -430,6 +429,26 @@ void Terrain::slot_setMapQuality(int q) {
 }
 
 //-------------------------------------------------------
+void Terrain::switchGribDisplay(bool windArrowOnly)
+{
+    if(windArrowOnly)
+    {
+        colorMapMode=drawWind;
+        colorMapSmooth=false;
+        showWindArrows=true;
+        showBarbules=true;
+        showWindColorMap=false;
+    }
+    else
+    {
+        colorMapMode = Settings::getSetting("colorMapMode", 1).toInt();
+        colorMapSmooth = Settings::getSetting("colorMapSmooth", true).toBool();
+        showWindArrows  = Settings::getSetting("showWindArrows", true).toBool();
+        showBarbules = Settings::getSetting("showBarbules", true).toBool();
+        showWindColorMap = Settings::getSetting("showWindColorMap", true).toBool();
+    }
+}
+
 void Terrain::slot_setDrawWindColors (bool b) {
     if (showWindColorMap != b) {
         showWindColorMap = b;
@@ -451,8 +470,8 @@ void Terrain::setColorMapMode(int mode)
 {    
     if (colorMapMode != mode)
     {
-        Settings::setSetting("colorMapMode", mode);
         colorMapMode=mode;
+        Settings::setSetting("colorMapMode", mode);
         mustRedraw = true;
         indicateWaitingMap();
     }

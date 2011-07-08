@@ -601,7 +601,8 @@ QString POI::getTypeStr(int index)
 
 void POI::chkIsWP(void)
 {
-    if(compDouble(lat,WPlat) && compDouble(lon,WPlon))
+    if(qRound(lat*1000)==qRound(WPlat*1000) && qRound(lon*1000)==qRound(WPlon*1000))
+    // if(compDouble(lat,WPlat) && compDouble(lon,WPlon))
     {
         if(!isWp)
         {

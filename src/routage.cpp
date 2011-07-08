@@ -44,6 +44,7 @@ Original code: virtual-winds.com
 #include <QtConcurrentMap>
 #include "vlmpointgraphic.h"
 #include "settings.h"
+//#include "Terrain.h"
 
 bool rightToLeftFromOrigin(const vlmPoint & P1,const vlmPoint & P2)
 {
@@ -489,7 +490,7 @@ ROUTAGE::ROUTAGE(QString name, Projection *proj, Grib *grib, QGraphicsScene * my
     this->whatIfUsed=false;
     this->whatIfTime=0;
     this->whatIfWind=100;
-
+    this->showGrib=Settings::getSetting("showGribDuringRoutage","0").toString()=="1";
     pen.setColor(color);
     pen.setBrush(color);
     pen.setWidthF(2);
@@ -687,6 +688,10 @@ void ROUTAGE::calculate()
         proj->setUseTempo(true);
         QApplication::processEvents();
     }
+//    if(this->showGrib)
+//    {
+//        parent->getTerre()->switchGribDisplay(true);
+//    }
     proj->setFrozen(true);
     iso=new vlmLine(proj,myscene,Z_VALUE_ROUTAGE);
     iso->setParent(this);
@@ -760,6 +765,8 @@ void ROUTAGE::calculate()
         int nbNotDead=0;
         float minDist=initialDist*10;
         float distStart=0;
+        if(this->showGrib)
+            parent->setCurrentDate(eta);
         for(int n=0;n<list->count();n++)
         {
             if(list->at(n).isDead)
@@ -1665,6 +1672,11 @@ void ROUTAGE::calculate()
     }
     running=false;
     proj->setFrozen(false);
+    if(this->showGrib)
+    {
+        //parent->getTerre()->switchGribDisplay(false);
+        parent->setCurrentDate(QDateTime().currentDateTimeUtc().toTime_t());
+    }
 }
 float ROUTAGE::findDistancePreviousIso(vlmPoint P, QPolygonF * isoShape)
 {
@@ -2642,6 +2654,7 @@ void ROUTAGE::setFromRoutage(ROUTAGE *fromRoutage, bool editOptions)
     this->whatIfUsed=fromRoutage->getWhatIfUsed();
     this->whatIfTime=fromRoutage->getWhatIfTime();
     this->whatIfWind=fromRoutage->getWhatIfWind();
+    this->showGrib=fromRoutage->getShowGrib();
     this->angleRange=fromRoutage->getAngleRange();
     this->speedLossOnTack=fromRoutage->getSpeedLossOnTack();
     this->angleStep=fromRoutage->getAngleStep();

@@ -154,6 +154,8 @@ class ROUTAGE : public QObject
         double getSpeedLossOnTack(){return speedLossOnTack;}
         void setSpeedLossOnTack(double d){this->speedLossOnTack=d;}
         GshhsReader * getMap(){return this->map;}
+        bool getShowGrib(){return this->showGrib;}
+        void setShowGrib(bool b){this->showGrib=b;}
     public slots:
         void slot_edit();
         void slot_abort(){this->aborted=true;}
@@ -269,5 +271,6 @@ class ROUTAGE : public QObject
         QString poiPrefix;
         bool autoZoom;
         double speedLossOnTack;
+        bool showGrib;
     };
 #endif // ROUTAGE_H

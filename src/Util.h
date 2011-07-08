@@ -92,6 +92,7 @@ class Util
     static void computePos(Projection * proj, float lat, float lon, int * x, int * y);
     static void computePosFloat(Projection * proj, float lat, float lon, float * x, float * y);
     static void addAgent(QNetworkRequest & request);
+    static bool lineIsCrossingRect(const QLineF line, const QRectF rect);
 
     //-------------------------------------------------
     template <typename T>
