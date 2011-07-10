@@ -518,9 +518,11 @@ ROUTAGE::ROUTAGE(QString name, Projection *proj, Grib *grib, QGraphicsScene * my
     this->aborted=false;
     createPopupMenu();
     connect(parent,SIGNAL(stopCompassLine()),this,SLOT(slot_abort()));
+    connect(parent,SIGNAL(updateRoutage()),this,SLOT(slot_gribDateChanged()));
     this->tempPoints.reserve(180*180);
     this->poiPrefix="R";
     this->speedLossOnTack=1;
+    highlightedIso=0;
 }
 ROUTAGE::~ROUTAGE()
 {
@@ -1670,6 +1672,7 @@ void ROUTAGE::calculate()
         if(rep==QMessageBox::Yes)
             convertToRoute();
     }
+    this->slot_gribDateChanged();
     running=false;
     proj->setFrozen(false);
     if(this->showGrib)
@@ -1994,6 +1997,28 @@ void ROUTAGE::slot_edit()
 {
     emit editMe(this);
 }
+void ROUTAGE::slot_gribDateChanged()
+{
+    QPen p=isochrones.at(highlightedIso)->getLinePen();
+    p.setWidthF(2);
+    isochrones.at(highlightedIso)->setLinePen(p);
+    int maxTime=10e5;
+    int isoNb=0;
+    for(int n=0;n<isochrones.count();n++)
+    {
+        int time=qAbs(isochrones.at(n)->getPoint(0)->eta - grib->getCurrentDate());
+        if (time<maxTime)
+        {
+            maxTime=time;
+            isoNb=n;
+        }
+    }
+    highlightedIso=isoNb;
+    p=isochrones.at(highlightedIso)->getLinePen();
+    p.setWidthF(4);
+    isochrones.at(highlightedIso)->setLinePen(p);
+}
+
 void ROUTAGE::setShowIso(bool b)
 {
     this->showIso=b;

@@ -278,6 +278,7 @@ class myCentralWidget : public QWidget
         void importZyGrib(void);
         void POI_selectAborted(POI*);
         void updateRoute(boat *);
+        void updateRoutage();
         void twaDelPoi(POI*);
 
         /* Boats */

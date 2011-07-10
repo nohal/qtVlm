@@ -45,6 +45,7 @@ class vlmLine : public QGraphicsWidget
         void removeVlmPoint(int index);
         void deleteAll(void);
         void setLinePen ( const QPen & pen ) {linePen = pen;update(); }
+        QPen getLinePen (){return this->linePen;}
         void setPoly(QList<vlmPoint> & points);
 
         void setLineMode();

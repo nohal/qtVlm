@@ -163,6 +163,7 @@ class ROUTAGE : public QObject
         void slot_createPivotM();
         void slot_drawWay();
         void eraseWay();
+        void slot_gribDateChanged();
     signals:
         void editMe(ROUTAGE *);
     private:
@@ -272,5 +273,6 @@ class ROUTAGE : public QObject
         bool autoZoom;
         double speedLossOnTack;
         bool showGrib;
+        int highlightedIso;
     };
 #endif // ROUTAGE_H

@@ -845,7 +845,10 @@ void myCentralWidget::setCurrentDate(time_t t, bool uRoute)
         grib->setCurrentDate(t);
         emit redrawGrib();
         if(uRoute)
+        {
             emit updateRoute(NULL);
+            emit updateRoutage();
+        }
     }
 }
 
