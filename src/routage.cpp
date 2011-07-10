@@ -2004,6 +2004,7 @@ void ROUTAGE::slot_gribDateChanged()
     isochrones.at(highlightedIso)->setLinePen(p);
     int maxTime=10e5;
     int isoNb=0;
+    bool found=false;
     for(int n=0;n<isochrones.count();n++)
     {
         int time=qAbs(isochrones.at(n)->getPoint(0)->eta - grib->getCurrentDate());
@@ -2011,11 +2012,13 @@ void ROUTAGE::slot_gribDateChanged()
         {
             maxTime=time;
             isoNb=n;
+            found=true;
         }
+        if(found && time>maxTime) break;
     }
     highlightedIso=isoNb;
     p=isochrones.at(highlightedIso)->getLinePen();
-    p.setWidthF(4);
+    p.setWidthF(6);
     isochrones.at(highlightedIso)->setLinePen(p);
 }
 
