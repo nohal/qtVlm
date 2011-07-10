@@ -280,7 +280,10 @@ void boardVLM::boatUpdated(void)
 }
 
 void boardVLM::setWP(float lat,float lon,float wph)
-{    
+{
+    lon=qRound(lon*1000)/1000.00;
+    lat=qRound(lat*1000)/1000.00;
+    wph=qRound(wph*10)/10.0;
     if(confirmChange(tr("Confirmer le changement du WP"),tr("WP change")))
        sendCmd(VLM_CMD_WP,lat,lon,wph);
 }

@@ -601,6 +601,12 @@ QString POI::getTypeStr(int index)
 
 void POI::chkIsWP(void)
 {
+    if(this->name.contains("R00014"))
+    {
+        QString debug;
+        debug=debug.sprintf("lat %.6f lon %.6f wplat %.6f wplon %.6f",lat,lon,WPlat,WPlon );
+        qWarning()<<debug;
+    }
     if(qRound(lat*1000)==qRound(WPlat*1000) && qRound(lon*1000)==qRound(WPlon*1000))
     // if(compDouble(lat,WPlat) && compDouble(lon,WPlon))
     {
