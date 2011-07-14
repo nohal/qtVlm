@@ -89,7 +89,7 @@
        <double>50.000000000000000</double>
       </property>
       <property name="singleStep">
-       <double>5.000000000000000</double>
+       <double>1.000000000000000</double>
       </property>
       <property name="value">
        <double>20.000000000000000</double>
@@ -203,9 +203,42 @@
       <string/>
      </property>
     </widget>
+    <widget class="QPushButton" name="reLoad">
+     <property name="geometry">
+      <rect>
+       <x>360</x>
+       <y>450</y>
+       <width>141</width>
+       <height>28</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Recharger la polaire</string>
+     </property>
+    </widget>
    </widget>
   </widget>
  </widget>
  <resources/>
- <connections/>
+ <connections>
+  <connection>
+   <sender>reLoad</sender>
+   <signal>clicked()</signal>
+   <receiver>DialogViewPolar</receiver>
+   <slot>reloadPolar()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>451</x>
+     <y>410</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>270</x>
+     <y>246</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
+ <slots>
+  <slot>reloadPolar()</slot>
+ </slots>
 </ui>

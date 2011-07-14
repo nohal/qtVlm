@@ -445,6 +445,26 @@ void Util::getCoordFromDistanceAngle2(double latitude, double longitude,
     }
 }
 
+void Util::getCoordFromDistanceLoxo(double latitude, double longitude,
+             double distance,double heading, double * res_lat,double * res_lon)
+{
+#if 0
+    double dL=distance*cos(degToRad(heading));
+    double lat=latitude+dL;
+    double dLc=10800/PI * log(tan(degToRad(45+lat/2.0)))/tan(degToRad((45+latitude/2.0)));
+    double dG=tan(degToRad(heading))*dLc;
+    *res_lon=longitude+dG;
+    *res_lat=lat;
+#else
+    double l=(distance*cos(degToRad(heading)))/60.0;
+    *res_lat=latitude+l;
+    double La=180.0/PI*log(tan(degToRad(45+*res_lat/2.0)));
+    double Ld=180.0/PI*log(tan(degToRad(45+latitude/2.0)));
+    double g=(La-Ld)*tan(degToRad(heading));
+    *res_lon=longitude+g;
+
+#endif
+}
 void Util::getCoordFromDistanceAngle(double latitude, double longitude,
              double distance,double heading, double * res_lat,double * res_lon)
 {

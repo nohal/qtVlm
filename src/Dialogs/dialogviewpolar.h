@@ -21,6 +21,7 @@ public:
     bool eventFilter(QObject *obj, QEvent *event);
 public slots:
     void drawIt();
+    void reloadPolar();
 private:
     QPixmap image;
     QPen pen;

@@ -85,6 +85,8 @@ class Util
                            int type);
     static void getCoordFromDistanceAngle(double latitude, double longitude,
              double distance,double heading, double * res_lat,double * res_lon);
+    static void getCoordFromDistanceLoxo(double latitude, double longitude,
+             double distance,double heading, double * res_lat,double * res_lon);
     static void getCoordFromDistanceAngle2(double latitude, double longitude,
                                            double distance,double heading, double * res_lat,double * res_lon);
     static QString pos2String(int type,float value);

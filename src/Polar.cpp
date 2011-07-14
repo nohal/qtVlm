@@ -130,7 +130,7 @@ void Polar::setPolarName(QString fname)
         list = line.split(';');
     else
         list = line.split('\t');
-    if(list[0].toUpper() != "TWA\\TWS" && list[0].toUpper() != "TWA/TWS")
+    if(list[0].toUpper() != "TWA\\TWS" && list[0].toUpper() != "TWA/TWS" && list[0].toUpper() != "TWA")
     {
         QMessageBox::warning(0,QObject::tr("Lecture de polaire"),
              QString(QObject::tr("Fichier %1 invalide (doit commencer par TWA\\TWS et non '%2')"))
@@ -235,7 +235,6 @@ void Polar::setPolarName(QString fname)
         wa=qRound(0);
         ws=ws+.1;
     }while(ws<60.1);
-    file.close();
     loaded=true;
     QFileInfo fi(file.fileName());
     QString nameFVmg = "polar/"+fi.baseName()+".vmg";
@@ -245,8 +244,19 @@ void Polar::setPolarName(QString fname)
         if(fileVMG.size()<4329500 || fileVMG.size()>4329700)
             fileVMG.remove();
         else
-            return;
+        {
+            QFileInfo info1(fileVMG);
+            QFileInfo info2(file);
+            if(info1.lastModified()<info2.lastModified())
+                fileVMG.remove();
+            else
+            {
+                file.close();
+                return;
+            }
+        }
     }
+    file.close();
 //precalculate regular VMGs
     //qWarning() << "Start computing vmg";
     fileVMG.open(QIODevice::WriteOnly | QIODevice::Text );

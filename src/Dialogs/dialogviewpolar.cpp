@@ -71,6 +71,12 @@ void DialogViewPolar::setBoat(boat *myboat)
 DialogViewPolar::~DialogViewPolar()
 {
 }
+void DialogViewPolar::reloadPolar()
+{
+    myBoat->reloadPolar(true);
+    drawIt();
+}
+
 void DialogViewPolar::drawIt()
 {
     Polar * polar=myBoat->getPolarData();

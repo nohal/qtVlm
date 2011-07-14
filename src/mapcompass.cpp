@@ -657,6 +657,13 @@ void mapCompass::updateCompassLineLabels(int x, int y)
         double loxo_angle=orth.getLoxoCap();
         if(loxo_angle<0) loxo_angle+=360;
         double loxo_dist=orth.getLoxoDistance();
+        loxo_angle=qRound(loxo_angle*10.0)/10.0;
+        Util::getCoordFromDistanceLoxo(ya,xa,loxo_dist,loxo_angle,&yb,&xb);
+        proj->map2screen(xb,yb,&x,&y);
+        orth.setEndPoint(xb,yb);
+        pos_angle=orth.getAzimutDeg();
+        pos_distance=orth.getDistance();
+        compassLine->moveSegment(xb,yb);
         hdg_label->setDefaultTextColor(Qt::darkRed);
         if(map->crossing(QLineF(XX,YY,x,y),QLineF(xa,ya,xb,yb)))
             hdg_label->setHtml(QString().sprintf("<b><big>Ortho->Hdg: %.2f%c Dist: %.2f NM",pos_angle,176,pos_distance)+"<br>"+

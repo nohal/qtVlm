@@ -91,7 +91,7 @@ class boatVLM : public boat, public inetClient
 
         QString getCurrentPolarName(void) { return (forcePolar?polarName:polarVlm); }
 
-        void reloadPolar(void);
+        void reloadPolar(bool forced=false);
         bool isInitialized(){return this->initialized;}
         void setInitialized(bool b){this->initialized=b;}
         bool getShowNpd(){return showNpd;}

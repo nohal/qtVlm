@@ -49,7 +49,7 @@ class boat: public QGraphicsWidget
         QString getplayerName(void)     {    return playerName; }
         virtual void stopRead(){return;}
 
-        virtual void reloadPolar(void);
+        virtual void reloadPolar(bool forced=false);
 
         void playerDeActivated(void);
         void playerActivated(void) { setStatus(activated); }
