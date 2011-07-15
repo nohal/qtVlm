@@ -65,6 +65,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #define POI_ROUTE         "route"
 #define POI_NAVMODE       "NavMode"
 #define POI_LABEL_HIDDEN  "LabelHidden"
+#define POI_NOT_SIMPLIFICABLE "IsSimplificable"
 
 xml_POIData::xml_POIData(Projection * proj,MainWindow * main, myCentralWidget * parent)
 : QWidget(parent)
@@ -243,6 +244,11 @@ void xml_POIData::slot_writeData(QList<ROUTE*> & route_list,QList<POI*> & poi_li
           tag = doc.createElement(POI_LABEL_HIDDEN);
           group.appendChild(tag);
           t = doc.createTextNode(QString().setNum(poi->getMyLabelHidden()?1:0));
+          tag.appendChild(t);
+
+          tag = doc.createElement(POI_NOT_SIMPLIFICABLE);
+          group.appendChild(tag);
+          t = doc.createTextNode(QString().setNum(poi->getNotSimplificable()?1:0));
           tag.appendChild(t);
 
           tag = doc.createElement(POI_ROUTE);
@@ -550,6 +556,7 @@ void xml_POIData::slot_readData(QString fname)
               bool useTstamp=false;
               bool labelHidden=false;
               int navMode=0;
+              bool notSimplificable=false;
 
               while(!subNode.isNull())
               {
@@ -604,6 +611,13 @@ void xml_POIData::slot_readData(QString fname)
                            labelHidden = dataNode.toText().data().toInt()==1;
                    }
 
+                   if(subNode.toElement().tagName() == POI_NOT_SIMPLIFICABLE)
+                   {
+                       dataNode = subNode.firstChild();
+                       if(dataNode.nodeType() == QDomNode::TextNode)
+                           notSimplificable = dataNode.toText().data().toInt()==1;
+                   }
+
                    if(subNode.toElement().tagName() == POI_ROUTE)
                    {
                        dataNode = subNode.firstChild();
@@ -630,6 +644,7 @@ void xml_POIData::slot_readData(QString fname)
                    poi->setRouteName(routeName);
                    poi->setNavMode(navMode);
                    poi->setMyLabelHidden(labelHidden);
+                   poi->setNotSimplificable(notSimplificable);
                    emit addPOI_list(poi);
               }
               else

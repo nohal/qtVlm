@@ -25,7 +25,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <QDebug>
 #include <QDateTime>
 #include <QProgressDialog>
-
+#include "MainWindow.h"
 #include "Polar.h"
 
 #include "parser.h"
@@ -247,7 +247,7 @@ void Polar::setPolarName(QString fname)
         {
             QFileInfo info1(fileVMG);
             QFileInfo info2(file);
-            if(info1.lastModified()<info2.lastModified())
+            if(this->mainWindow->isStartingUp && info1.lastModified()<info2.lastModified())
                 fileVMG.remove();
             else
             {

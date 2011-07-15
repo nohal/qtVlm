@@ -710,13 +710,13 @@ void boatVLM::setStatus(bool activated)
     }
 }
 
-void boatVLM::reloadPolar(bool)
+void boatVLM::reloadPolar(bool forced)
 {
     if(forcePolar)
         polarName=polarForcedName;
     else
         polarName=polarVlm;
-    boat::reloadPolar();
+    boat::reloadPolar(forced);
 }
 void boatVLM::setPolar(bool state,QString polar)
 {

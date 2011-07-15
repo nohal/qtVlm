@@ -524,9 +524,13 @@ void boat::setParam(QString pseudo, bool activated)
 
 void boat::reloadPolar(bool forced)
 {
+    qWarning()<<"inside reloadPolar with forced="<<forced;
+    if(forced && polarName.isEmpty())
+        polarName=polarData->getName();
+    qWarning()<<"polarName="<<polarName;
     if(polarName.isEmpty()) /* nom de la polaire est vide => pas de chargement */
     {
-        //qWarning() << "Polar name empty => nothing to load";
+        qWarning() << "Polar name empty => nothing to load";
         if(polarData!=NULL) /* doit on faire un release tt de meme? */
         {
             emit releasePolar(polarData->getName());
@@ -537,7 +541,7 @@ void boat::reloadPolar(bool forced)
 
     if(!forced && polarData != NULL && polarName == polarData->getName()) /* reload inutile */
     {
-       // qWarning() << "Polar already loaded => nothing to do";
+        qWarning() << "Polar already loaded => nothing to do"<<forced;
         return;
     }
 
@@ -546,9 +550,8 @@ void boat::reloadPolar(bool forced)
         //qWarning() << "Releasing polar " << polarData->getName();
         emit releasePolar(polarData->getName()); /* release si une polaire déjà chargée */
     }
-
     connect(polar_list,SIGNAL(polarLoaded(QString,Polar *)),this,SLOT(polarLoaded(QString,Polar *)));
-    //qWarning() << pseudo << " request polar " << polarName;
+    qWarning() << pseudo << " request polar " << polarName;
     emit getPolar(polarName);
 }
 

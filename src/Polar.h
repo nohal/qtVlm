@@ -61,7 +61,6 @@ class Polar : public QObject
 
     private:
         MainWindow * mainWindow;
-
         QList<float> polar_data;
         QList<float> tws;
         QList<float> twa;
@@ -113,7 +112,6 @@ class polarList : public QObject, public inetClient
         QList<QString> loadList;
         bool isLoading;
         MainWindow * mainWindow;
-
         void loadPolars(void);
 };
 
