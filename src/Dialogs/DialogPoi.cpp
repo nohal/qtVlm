@@ -46,6 +46,9 @@ DialogPoi::DialogPoi(MainWindow * main,myCentralWidget * parent)
     setupUi(this);
     Util::setFontDialog(this);
     this->resize(widget->width()+10,widget->height()+10);
+//    int minSize=qMax(this->lat_sig->width(),this->lon_sig->width());
+//    lat_sig->setMinimumWidth(minSize);
+//    lon_sig->setMinimumWidth(minSize);
     widget->setParent(0);
     scroll=new QScrollArea(this);
     scroll->resize(widget->size());

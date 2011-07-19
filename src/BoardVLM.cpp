@@ -281,9 +281,12 @@ void boardVLM::boatUpdated(void)
 
 void boardVLM::setWP(float lat,float lon,float wph)
 {
-    lon=qRound(lon*1000)/1000.00;
+    lon=qRound(lon*10000)/10000.00;
     lat=qRound(lat*1000)/1000.00;
     wph=qRound(wph*10)/10.0;
+//    QString debug;
+//    debug=debug.sprintf("sending WPLon %.10f WPLat %.10f @WP %.10f",lon,lat,wph);
+//    qWarning()<<debug;
     if(confirmChange(tr("Confirmer le changement du WP"),tr("WP change")))
        sendCmd(VLM_CMD_WP,lat,lon,wph);
 }

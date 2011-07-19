@@ -291,6 +291,9 @@ void boatVLM::requestFinished (QByteArray res_byte)
                     WPLat       = result["WPLAT"].toDouble();
                     WPLon       = result["WPLON"].toDouble();
                     WPHd        = (float) result["H@WP"].toDouble();
+//                    QString debug;
+//                    debug=debug.sprintf("receiving WPLon %.10f WPLat %.10f @WP %.10f",WPLon,WPLat,WPHd);
+//                    qWarning()<<debug;
                     pilotType   = result["PIM"].toInt();
                     pilotString = result["PIP"].toString();
                     TWA         = (float) result["TWA"].toDouble();

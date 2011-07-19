@@ -140,14 +140,14 @@ POI::~POI()
 }
 void POI::setLongitude(double lon)
 {
-    this->lon=(double)(qRound(lon*1000000.0))/1000000.0;
+    this->lon=(double)(qRound(lon*10000.0))/10000.0;
 
     if(this->lon>180) this->lon=this->lon-360;
     if(this->lon<-180) this->lon=this->lon+360;
 }
 void POI::setLatitude(double lat)
 {
-    this->lat=(double)(qRound(lat*1000000.0))/1000000.0;
+    this->lat=(double)(qRound(lat*1000.0))/1000.0;
 }
 void POI::rmSignal(void)
 {
@@ -609,7 +609,7 @@ void POI::chkIsWP(void)
         qWarning()<<debug;
     }
     */
-    if(qRound(lat*1000)==qRound(WPlat*1000) && qRound(lon*1000)==qRound(WPlon*1000))
+    if(qRound(lat*1000.00)==qRound(WPlat*1000.00) && qRound(lon*10000.00)==qRound(WPlon*10000.00))
     // if(compDouble(lat,WPlat) && compDouble(lon,WPlon))
     {
         if(!isWp)

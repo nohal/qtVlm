@@ -81,7 +81,7 @@ void Polar::setPolarName(QString fname)
     clearPolar();
 
 
-    qWarning() << "Opening polar " << fname;
+    //qWarning() << "Opening polar " << fname;
 
     name=fname;
     QString nameF = "polar/"+fname+".csv";
