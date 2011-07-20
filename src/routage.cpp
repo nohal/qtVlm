@@ -719,8 +719,9 @@ void ROUTAGE::calculate()
 #endif
     point.origin=NULL;
     point.routage=this;
-    iso->addVlmPoint(point);
     point.capOrigin=A360(loxoCap);
+    point.eta=eta;
+    iso->addVlmPoint(point);
     isochrones.append(iso);
     int nbIso=0;
     arrived=false;
