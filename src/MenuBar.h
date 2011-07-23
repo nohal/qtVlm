@@ -256,7 +256,7 @@ public:
      QAction *acOptions_SH_Fla;
      QAction *acKeep;
      QAction *acReplay;
-
+    QAction *acScreenshot;
 
 
     QAction *acHelp_Help;

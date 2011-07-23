@@ -264,6 +264,7 @@ class myCentralWidget : public QWidget
         void slot_playHorn();
         void slot_startReplay();
         void slot_replay();
+        void slot_takeScreenshot();
 
     signals:
         /* drawing */

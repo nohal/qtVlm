@@ -77,6 +77,7 @@ MenuBar::MenuBar(QWidget *parent)
                 acKeep->setCheckable(true);
                 acKeep->setChecked(true);
                 acReplay=addAction(menuFile,tr("Rejouer l'historique des traces"),"Y","",tr(""));
+                acScreenshot=addAction(menuFile,tr("Photo d'ecran"),"Ctrl+E","",tr(""));
 
     addMenu(menuFile);
 

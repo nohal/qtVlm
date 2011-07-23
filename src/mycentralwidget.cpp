@@ -1252,6 +1252,31 @@ void myCentralWidget::slot_replay()
     QApplication::processEvents();
     replayTimer->start();
 }
+void myCentralWidget::slot_takeScreenshot()
+{
+    // Create the image and render it...
+    QImage * image = new QImage(800,600,QImage::Format_ARGB32_Premultiplied);
+    QPainter * p = new QPainter(image);
+    p->setRenderHint(QPainter::Antialiasing);
+    scene->render(p);
+    p->end();
+    QString screenshotPath;
+    QString fileName = QFileDialog::getSaveFileName(this,
+                         tr("Photo Ecran"), screenshotPath, "Screenshot (*.png)");
+    if(fileName.isEmpty() || fileName.isNull()) return;
+    QFile::remove(fileName);
+    QFile screenshotFile(fileName);
+    if(!screenshotFile.open(QIODevice::WriteOnly))
+    {
+        QMessageBox::warning(0,QObject::tr("Sauvegarde ecran"),
+             QString(QObject::tr("Impossible de creer le fichier %1")).arg(fileName));
+        return;
+    }
+    QFileInfo info(screenshotFile);
+    Settings::setSetting("screenShotFolder",info.absoluteDir().path());
+    // Save it..
+    image->save(fileName, "PNG", -1);
+}
 
 void myCentralWidget::setHorn()
 {
