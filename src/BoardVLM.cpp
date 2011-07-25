@@ -281,9 +281,6 @@ void boardVLM::boatUpdated(void)
 
 void boardVLM::setWP(float lat,float lon,float wph)
 {
-    lon=qRound(lon*10000)/10000.00;
-    lat=qRound(lat*1000)/1000.00;
-    wph=qRound(wph*10)/10.0;
 //    QString debug;
 //    debug=debug.sprintf("sending WPLon %.10f WPLat %.10f @WP %.10f",lon,lat,wph);
 //    qWarning()<<debug;
@@ -713,9 +710,9 @@ void boardVLM::sendCmd(int cmdNum,double  val1,double val2, double val3)
 
     btn_Synch->setStyleSheet(QString::fromUtf8("background-color: rgb(255, 0, 0);"));
     currentCmdNum=cmdNum;
-    cmd_val1=val1;
-    cmd_val2=val2;
-    cmd_val3=val3;
+    cmd_val1=QString().sprintf("%.10f",val1);
+    cmd_val2=QString().sprintf("%.10f",val2);
+    cmd_val3=QString().sprintf("%.10f",val3);
     QString url;
     QString data;
     QString phpScript;

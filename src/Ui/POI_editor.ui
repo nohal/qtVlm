@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>591</width>
+    <width>705</width>
     <height>344</height>
    </rect>
   </property>
@@ -18,7 +18,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>591</width>
+     <width>701</width>
      <height>341</height>
     </rect>
    </property>
@@ -33,7 +33,7 @@
      <rect>
       <x>10</x>
       <y>269</y>
-      <width>491</width>
+      <width>541</width>
       <height>71</height>
      </rect>
     </property>
@@ -58,7 +58,7 @@
       <rect>
        <x>10</x>
        <y>40</y>
-       <width>471</width>
+       <width>161</width>
        <height>22</height>
       </rect>
      </property>
@@ -70,9 +70,9 @@
    <widget class="QWidget" name="layoutWidget">
     <property name="geometry">
      <rect>
-      <x>510</x>
-      <y>10</y>
-      <width>81</width>
+      <x>590</x>
+      <y>40</y>
+      <width>95</width>
       <height>251</height>
      </rect>
     </property>
@@ -152,7 +152,7 @@
      <rect>
       <x>10</x>
       <y>180</y>
-      <width>491</width>
+      <width>541</width>
       <height>81</height>
      </rect>
     </property>
@@ -164,7 +164,7 @@
       <rect>
        <x>20</x>
        <y>20</y>
-       <width>461</width>
+       <width>281</width>
        <height>22</height>
       </rect>
      </property>
@@ -188,7 +188,7 @@
      <rect>
       <x>10</x>
       <y>60</y>
-      <width>491</width>
+      <width>541</width>
       <height>111</height>
      </rect>
     </property>
@@ -200,7 +200,7 @@
       <rect>
        <x>10</x>
        <y>80</y>
-       <width>471</width>
+       <width>191</width>
        <height>26</height>
       </rect>
      </property>
@@ -233,7 +233,7 @@
     <widget class="Line" name="line">
      <property name="geometry">
       <rect>
-       <x>260</x>
+       <x>299</x>
        <y>10</y>
        <width>16</width>
        <height>71</height>
@@ -243,13 +243,13 @@
       <enum>Qt::Vertical</enum>
      </property>
     </widget>
-    <widget class="QWidget" name="">
+    <widget class="QWidget" name="layoutWidget">
      <property name="geometry">
       <rect>
        <x>12</x>
        <y>21</y>
-       <width>251</width>
-       <height>51</height>
+       <width>291</width>
+       <height>53</height>
       </rect>
      </property>
      <layout class="QGridLayout" name="gridLayout">
@@ -408,13 +408,13 @@
       </item>
      </layout>
     </widget>
-    <widget class="QWidget" name="">
+    <widget class="QWidget" name="layoutWidget">
      <property name="geometry">
       <rect>
-       <x>276</x>
+       <x>310</x>
        <y>20</y>
-       <width>211</width>
-       <height>51</height>
+       <width>222</width>
+       <height>53</height>
       </rect>
      </property>
      <layout class="QGridLayout" name="gridLayout_2">
@@ -434,19 +434,19 @@
          <string> °</string>
         </property>
         <property name="decimals">
-         <number>4</number>
+         <number>6</number>
         </property>
         <property name="minimum">
-         <double>-89.989999999999995</double>
+         <double>-89.999999000000003</double>
         </property>
         <property name="maximum">
-         <double>89.989999999999995</double>
+         <double>89.999999000000003</double>
         </property>
         <property name="singleStep">
          <double>0.100000000000000</double>
         </property>
         <property name="value">
-         <double>89.000000000000000</double>
+         <double>89.999999000000003</double>
         </property>
        </widget>
       </item>
@@ -466,19 +466,19 @@
          <string> °</string>
         </property>
         <property name="decimals">
-         <number>5</number>
+         <number>6</number>
         </property>
         <property name="minimum">
-         <double>-359.990000000000009</double>
+         <double>-359.999999000000003</double>
         </property>
         <property name="maximum">
-         <double>359.990000000000009</double>
+         <double>359.999999000000003</double>
         </property>
         <property name="singleStep">
          <double>0.100000000000000</double>
         </property>
         <property name="value">
-         <double>-359.000000000000000</double>
+         <double>-359.999999000000003</double>
         </property>
        </widget>
       </item>
@@ -502,8 +502,8 @@
     <property name="geometry">
      <rect>
       <x>10</x>
-      <y>0</y>
-      <width>491</width>
+      <y>10</y>
+      <width>541</width>
       <height>51</height>
      </rect>
     </property>
@@ -515,7 +515,7 @@
       <rect>
        <x>10</x>
        <y>20</y>
-       <width>331</width>
+       <width>391</width>
        <height>21</height>
       </rect>
      </property>
@@ -523,9 +523,9 @@
     <widget class="QComboBox" name="POI_type_liste">
      <property name="geometry">
       <rect>
-       <x>370</x>
+       <x>430</x>
        <y>20</y>
-       <width>111</width>
+       <width>91</width>
        <height>22</height>
       </rect>
      </property>

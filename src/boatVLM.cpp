@@ -484,7 +484,7 @@ void boatVLM::requestFinished (QByteArray res_byte)
                     else
                         porte->setIceGate(0);
                     porte->addPoint(latPorte1,lonPorte1);
-                    if((qRound(lonPorte1*1000)==qRound(lonPorte2*1000) && qRound(latPorte1*1000)==qRound(latPorte2*1000))||oneBuoy)
+                    if((qRound(lonPorte1*1000000)==qRound(lonPorte2*1000000) && qRound(latPorte1*1000000)==qRound(latPorte2*1000000))||oneBuoy)
                     {
                         porte->setPorteOnePoint();
                         Util::getCoordFromDistanceAngle(latPorte1, lonPorte1, 500,wp["laisser_au"].toDouble()+180,&latPorte2,&lonPorte2);

@@ -361,10 +361,10 @@ void DialogPilototo::done(int result)
                 case 3:
                 case 4:
                 case 5:
-                    pip.insert("targetlat",(double)instr->getLat());
-                    pip.insert("targetlong",(double)instr->getLon());
+                    pip.insert("targetlat",QString().sprintf("%.10f",(double)instr->getLat()));
+                    pip.insert("targetlong",QString().sprintf("%.10f",(double)instr->getLon()));
                     if(instr->getWph()!=-1)
-                        pip.insert("targetandhdg",(double)instr->getWph());
+                        pip.insert("targetandhdg",QString().sprintf("%.1f",(double)instr->getWph()));
                     cur_instruction.insert("pip",pip);
                     break;
                 }

@@ -87,7 +87,7 @@ class boardVLM: public QWidget , public Ui::boardVLM_ui, public inetClient
         int nbRetry;
         bool isWaiting;
 
-        double cmd_val1,cmd_val2,cmd_val3;
+        QString cmd_val1,cmd_val2,cmd_val3;
         float computeWPdir(boatVLM * boat);
         void update_btnWP(void);
 
