@@ -380,12 +380,15 @@ void boat::drawEstime(float myHeading, float mySpeed)
         }
 
         Util::getCoordFromDistanceAngle(lat,lon,estime,myHeading,&tmp_lat,&tmp_lon);
-        proj->map2screen(lon,lat,&i1,&j1);
-        proj->map2screen(tmp_lon,tmp_lat,&i2,&j2);
         GshhsReader *map=parent->get_gshhsReader();
         if(map->getQuality()>=3)
         {
-            if(map->crossing(QLineF(i1,j1,i2,j2),QLineF(lon,lat,tmp_lon,tmp_lat)))
+            float I1,J1,I2,J2;
+            proj->map2screenFloat(lon,lat,&I1,&J1);
+            proj->map2screenFloat(tmp_lon,tmp_lat,&I2,&J2);
+//            qWarning("crossing (%.5f,%.5f,%.5f,%.5f) (%.5f,%.5f,%.5f,%.5f)",I1,J1,I2,J2,lon,lat,tmp_lon,tmp_lat);
+//            qWarning("estime=%.5f, myHeading=%.5f",estime,myHeading);
+            if(map->crossing(QLineF(I1,J1,I2,J2),QLineF(lon,lat,tmp_lon,tmp_lat)))
             {
                 estimeTimer->start();
                 penLine1.setColor(Qt::red);

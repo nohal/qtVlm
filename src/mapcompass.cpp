@@ -642,11 +642,11 @@ void mapCompass::updateCompassLineLabels(int x, int y)
     GshhsReader *map=parent->get_gshhsReader();
     if(this->isVisible())
     {
-        if(map->crossing(QLineF(XX,YY,x,y),QLineF(xa,ya,xb,yb)))
-            hdg_label->setHtml(QString().sprintf("Hdg: %.2f %c, Tws: %.1f nds",pos_angle,176,wind_speed)+"<br>"+
-                           "Distance: "+Util::formatDistance(pos_distance)+"<br>"+
-                           "<font color=\"#FF0000\">"+tr("Collision avec les terres detectee")+"</font>");
-        else
+//        if(map->crossing(QLineF(XX,YY,x,y),QLineF(xa,ya,xb,yb)))
+//            hdg_label->setHtml(QString().sprintf("Hdg: %.2f %c, Tws: %.1f nds",pos_angle,176,wind_speed)+"<br>"+
+//                           "Distance: "+Util::formatDistance(pos_distance)+"<br>"+
+//                           "<font color=\"#FF0000\">"+tr("Collision avec les terres detectee")+"</font>");
+//        else
             hdg_label->setHtml(QString().sprintf("Hdg: %.2f %c, Tws: %.1f nds",pos_angle,176,wind_speed)+"<br>"+
                            "Distance: "+Util::formatDistance(pos_distance));
     /* attention wind_angle, bvmg_up et bvmg_down sont calcules dans paint */
@@ -659,19 +659,29 @@ void mapCompass::updateCompassLineLabels(int x, int y)
         double loxo_dist=orth.getLoxoDistance();
         loxo_angle=qRound(loxo_angle*10.0)/10.0;
         Util::getCoordFromDistanceLoxo(ya,xa,loxo_dist,loxo_angle,&yb,&xb);
-        proj->map2screen(xb,yb,&x,&y);
+        float X,Y;
+        proj->map2screenFloat(xb,yb,&X,&Y);
         orth.setEndPoint(xb,yb);
         pos_angle=orth.getAzimutDeg();
         pos_distance=orth.getDistance();
-        compassLine->moveSegment(xb,yb);
+        if(qRound(pos_angle*10)==qRound(loxo_angle*10))
+            compassLine->setOrthoMode(false);
+        else
+            compassLine->setOrthoMode(true);
+        compassLine->initSegment(XX,YY,qRound(X),qRound(Y));
         hdg_label->setDefaultTextColor(Qt::darkRed);
-        if(map->crossing(QLineF(XX,YY,x,y),QLineF(xa,ya,xb,yb)))
+        QString meters;
+        if(loxo_dist*1852<=.1)
+            meters=QString().sprintf("<br>%.2f ",loxo_dist*185200)+tr("Centimetres");
+        else if(loxo_dist*1852<=1000)
+            meters=QString().sprintf("<br>%.2f ",loxo_dist*1852)+tr("Metres");
+        if(map->crossing(QLineF(XX,YY,X,Y),QLineF(xa,ya,xb,yb)))
             hdg_label->setHtml(QString().sprintf("<b><big>Ortho->Hdg: %.2f%c Dist: %.2f NM",pos_angle,176,pos_distance)+"<br>"+
-                       QString().sprintf("<b><big>Loxo-->Hdg: %.1f%c Dist: %.2f NM",loxo_angle,176,loxo_dist)+"<br>"+
+                       QString().sprintf("<b><big>Loxo-->Hdg: %.1f%c Dist: %.2f NM",loxo_angle,176,loxo_dist)+meters+"<br>"+
                        "<font color=\"#FF0000\">"+tr("Collision avec les terres detectee")+"</font>");
         else
             hdg_label->setHtml(QString().sprintf("<b><big>Ortho->Hdg: %.2f%c Dist: %.2f NM",pos_angle,176,pos_distance)+"<br>"+
-                       QString().sprintf("<b><big>Loxo-->Hdg: %.2f%c Dist: %.2f NM",loxo_angle,176,loxo_dist));
+                       QString().sprintf("<b><big>Loxo-->Hdg: %.2f%c Dist: %.2f NM",loxo_angle,176,loxo_dist)+meters);
         drawWindAngle=false;
     }
     if(!parent->getGrib())

@@ -29,6 +29,7 @@ Copyright (C) 2008 - Jacques Zaninetti - http://zygrib.free.fr
 
 #include <QObject>
 #include "dataDef.h"
+#include <QDebug>
 
 class Projection : public QObject
 {
@@ -120,9 +121,10 @@ inline void Projection::map2screenFloat(double x, double y, float *i, float *j) 
 {
     if(y<=-90) y=-89.9999999999999999999999999999999999999999999999999999999;
     if(y>=90) y=89.999999999999999999999999999999999999999999999999999999999;
-    float diff=(float)x-(float)xW;
-    *i = ((float)scale * diff);
-    *j = (float)H/2.0 + ((float)scale * ((float)PY-radToDeg(log(tan((float)degToRad(y)/2 + (float)M_PI_4)))));
+    double diff=x-(double)xW;
+    *i = (float)((double)scale * diff);
+    double trick=(double)PY-radToDeg(log(tan((double)degToRad(y)/(double)2.0 + (double)M_PI_4)));
+    *j = (float)((double)H/2.0 + ((double)scale * trick));
 }
 
 //-------------------------------------------------------------------------------

@@ -703,7 +703,7 @@ void boatVLM::updateHint(void)
     if(stopAndGo!="0")
     {
         int secs=stopAndGo.toInt()-QDateTime().currentDateTimeUtc().toTime_t();
-        desc=desc+"<br>"+tr("Bateau echoue, pour encore ")+QString().setNum(secs)+tr("secondes");
+        desc=desc+"<br>"+tr("Bateau echoue, pour encore ")+QString().setNum(secs)+" "+tr("secondes");
     }
     str=str.replace(" ","&nbsp;");
     desc=desc.replace(" ","&nbsp;");

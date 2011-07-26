@@ -143,9 +143,12 @@ inline bool GshhsPolyReader::crossing(QLineF traject, QLineF trajectWorld) const
                 if (coasts->isEmpty()) continue;
                 for(int cs=0;cs<coasts->count();cs++)
                 {
+#if 1
                     if (my_intersects(traject,coasts->at(cs)))
-                    //if (vlm_intersects(traject,coasts->at(cs)))
-                    //if(coasts->at(cs).intersect(traject,&dummy)==QLineF::BoundedIntersection)
+#else
+                    QPointF dummy;
+                    if(coasts->at(cs).intersect(traject,&dummy)==QLineF::BoundedIntersection)
+#endif
                         return true;
                 }
             }

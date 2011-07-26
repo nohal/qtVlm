@@ -88,7 +88,7 @@ void orthoSegment::paint(QPainter * pnt, const QStyleOptionGraphicsItem * , QWid
     {
         draw_orthoSegment(pnt,xa,ya,xb,yb);
     }
-    if(alsoDrawLoxo)
+    if(alsoDrawLoxo && isOrtho)
         pnt->drawLine(xa-x(),ya-y(),xb-x(),yb-y());
     if(roundedEnd)
     {

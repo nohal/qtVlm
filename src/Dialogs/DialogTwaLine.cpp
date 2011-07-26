@@ -129,7 +129,7 @@ void DialogTwaLine::traceIt()
     double lon,lat;
     time_t maxDate=grib->getMaxDate();
     bool crossing=false;
-    int i1,j1,i2,j2;
+    //int i1,j1,i2,j2;
     GshhsReader *map=parent->get_gshhsReader();
     int mapQuality=map->getQuality();
     for (int page=0;page<5;page++)
@@ -147,9 +147,10 @@ void DialogTwaLine::traceIt()
             Util::getCoordFromDistanceAngle(current.lat, current.lon, distanceParcourue, cap,&lat,&lon);
             if(!crossing && mapQuality>=3)
             {
-                parent->getProj()->map2screen(current.lon,current.lat,&i1,&j1);
-                parent->getProj()->map2screen(lon,lat,&i2,&j2);
-                crossing=map->crossing(QLineF(i1,j1,i2,j2),QLineF(current.lon,current.lat,lon,lat));
+                float I1,J1,I2,J2;
+                parent->getProj()->map2screenFloat(current.lon,current.lat,&I1,&J1);
+                parent->getProj()->map2screenFloat(lon,lat,&I2,&J2);
+                crossing=map->crossing(QLineF(I1,J1,I2,J2),QLineF(current.lon,current.lat,lon,lat));
             }
             current.lon=lon;
             current.lat=lat;
