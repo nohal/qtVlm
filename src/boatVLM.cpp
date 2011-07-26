@@ -71,6 +71,13 @@ boatVLM::boatVLM(QString pseudo, bool activated, int boatId, int playerId,Player
     own=QString();
     npd=QString();
     showNpd=false;
+    this->logIndexLimit=10;
+    int logIndex;
+    QVariantMap emptyMap;
+    for(logIndex=0;logIndex<logIndexLimit;logIndex++) {
+        boatInfoLog.append(emptyMap);
+    }
+
     //setStatus(activated);
 }
 
@@ -384,6 +391,7 @@ void boatVLM::requestFinished (QByteArray res_byte)
                     emit boatUpdated(this,newRace,doingSync);
                     emit hasFinishedUpdating();
                 }
+                rotatesBoatInfoLog(result);
             }
             break;
         case VLM_REQUEST_TRJ:
@@ -764,4 +772,12 @@ QString boatVLM::getDispName(void)
         }
     }
     return "";
+}
+
+void boatVLM::rotatesBoatInfoLog(QVariantMap lastBoatInfo)
+{
+    if(!boatInfoLog.isEmpty()) {
+        boatInfoLog.removeFirst();
+        boatInfoLog.append(lastBoatInfo);
+    }
 }

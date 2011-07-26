@@ -88,6 +88,7 @@ class boatVLM : public boat, public inetClient
         bool isUpdating()               {    return updating; }
         bool getFirstSynch()            {    return firstSynch; }
         void setFirstSynch(bool val)    {    firstSynch=val; }
+        QList<QVariantMap>  getBoatInfoLog(void)   {   return boatInfoLog; }
 
         QString getCurrentPolarName(void) { return (forcePolar?polarName:polarVlm); }
 
@@ -139,6 +140,11 @@ class boatVLM : public boat, public inetClient
         int pilotType;
         QString pilotString;
         QString race_name;
+
+        // Logs boatInfo
+        QList<QVariantMap> boatInfoLog;
+        int lastLogIndex,logIndexLimit;
+        void rotatesBoatInfoLog(QVariantMap lastBoatInfo);
 
 
         QStringList pilototo;

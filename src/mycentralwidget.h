@@ -146,7 +146,7 @@ class myCentralWidget : public QWidget
         void update_menuRoutage();
 
         void send_redrawAll() { emit redrawAll(); }
-
+        void exportBoatInfoLog(QString fileName);
 
         /* grib */
         void   setCurrentDate(time_t t, bool uRoute=true);
@@ -265,6 +265,7 @@ class myCentralWidget : public QWidget
         void slot_startReplay();
         void slot_replay();
         void slot_takeScreenshot();
+
 
     signals:
         /* drawing */
