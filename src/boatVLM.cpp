@@ -693,7 +693,10 @@ void boatVLM::updateHint(void)
     else if (polarData->getIsCsv()) desc=polarData->getName() + tr(" (format CSV)");
     else desc=polarData->getName() + tr(" (format POL)");
     if(stopAndGo!="0")
-        desc=desc+"<br>"+tr("Bateau echoue, pour encore ")+stopAndGo+tr("secondes");
+    {
+        int secs=stopAndGo.toInt()-QDateTime().currentDateTimeUtc().toTime_t();
+        desc=desc+"<br>"+tr("Bateau echoue, pour encore ")+QString().setNum(secs)+tr("secondes");
+    }
     str=str.replace(" ","&nbsp;");
     desc=desc.replace(" ","&nbsp;");
     setToolTip(desc+"<br>"+str);

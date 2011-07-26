@@ -34,6 +34,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "Polar.h"
 #include "orthoSegment.h"
 #include <QMessageBox>
+#include <QListWidget>
+#include <QPushButton>
+#include <QApplication>
+#include <QClipboard>
 
 boatReal::boatReal(QString pseudo, bool activated, Projection * proj,MainWindow * main,
                    myCentralWidget * parent): boat(pseudo,activated,proj,main,parent)
@@ -405,6 +409,7 @@ ReceiverThread::ReceiverThread(boatReal * parent)
     nmea_parser_init(&parser);
     if(parser.buff_size==0)
         qWarning()<<"no parser!!!";
+    this->listNMEA=NULL;
 }
 
 ReceiverThread::~ReceiverThread(void)
@@ -440,7 +445,29 @@ bool ReceiverThread::initPort(void)
     }
 //    port->write("$PSRF151,01*0F"); /*enabling WAAS/EGNOS on sirf chipset*/
 //    port->flush();
+    if(parent->getDisplayNMEA())
+    {
+        QDialog *NMEA=new QDialog();
+        NMEA->setMinimumSize(600,300);
+        NMEA->setWindowFlags(Qt::WindowStaysOnTopHint);
+        NMEA->setModal(false);
+        QGridLayout  *lay = new QGridLayout(NMEA);
+        listNMEA=new QListWidget();
+        listNMEA->setSelectionMode(QAbstractItemView::ContiguousSelection);
+        lay->addWidget(listNMEA);
+        QPushButton * clipBoard=new QPushButton(tr("Copier"));
+        connect(clipBoard,SIGNAL(clicked()),this,SLOT(copyClipBoard()));
+        lay->addWidget(clipBoard);
+        NMEA->show();
+    }
     return true;
+}
+void ReceiverThread::copyClipBoard()
+{
+    QStringList liste;
+    for (int i=0;i<listNMEA->count();++i)
+        liste<<listNMEA->item(i)->text();
+    QApplication::clipboard()->setText(liste.join("\n"));
 }
 
 void ReceiverThread::run()
@@ -489,6 +516,10 @@ void ReceiverThread::run()
                     data.push_back('\n');
                     char * record=data.data();
                     nmea_parse(&parser, record, data.size(), &info);
+                    if(listNMEA)
+                    {
+                        listNMEA->addItem(temp);
+                    }
                 }
             }
             emit updateBoat(info);

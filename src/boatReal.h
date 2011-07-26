@@ -33,6 +33,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "vlmLine.h"
 #include "class_list.h"
 #include "mycentralwidget.h"
+#include <QListWidget>
 
 class ReceiverThread : public QThread
 { Q_OBJECT
@@ -44,6 +45,7 @@ class ReceiverThread : public QThread
         bool initPort(void);
     public slots:
         void terminateMe();
+        void copyClipBoard();
 
     signals:
         void decodeData(QByteArray data);
@@ -55,6 +57,7 @@ class ReceiverThread : public QThread
         bool stop;
         nmeaINFO info;
         nmeaPARSER parser;
+        QListWidget * listNMEA;
 
 };
 
@@ -87,6 +90,8 @@ class boatReal : public boat
         void setWp(float lat, float lon, float wph);
         nmeaINFO getInfo(void){return info;}
         void emitMoveBoat(){emit boatUpdated(this,false,false);}
+        bool getDisplayNMEA(){return this->displayNMEA;}
+        void setDisplayNMEA(bool b){this->displayNMEA=b;}
 
     public slots:
         void slot_selectBoat(void) { boat::slot_selectBoat(); }
@@ -126,6 +131,7 @@ class boatReal : public boat
         int     fix;        /**< Operating mode, used for navigation (1 = Fix not available; 2 = 2D; 3 = 3D) */
         double  pdop;
         time_t eta;
+        bool displayNMEA;
 };
 
 
