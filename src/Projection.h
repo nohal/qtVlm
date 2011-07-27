@@ -41,26 +41,26 @@ Q_OBJECT
         ~Projection() {}
 
         /* zoom */
-        void zoom (float k);
-        void zoomKeep (double lon,double lat, float k);
+        void zoom (double k);
+        void zoomKeep (double lon,double lat, double k);
         void zoomAll(void);
         void zoomOnZone(double x0, double y0, double x1, double y1);
-        void setScale(float sc);
+        void setScale(double sc);
 
 
         /* move */
         void move(double dx, double dy);
         void setCentralPixel(int i, int j);
         void setCenterInMap(double x, double y);
-        void setScaleAndCenterInMap(float sc,double x, double y);
+        void setScaleAndCenterInMap(double sc,double x, double y);
 
         /* get internal data */
         int   getW()        const   {return W;}    // taille de l'ecran
         int   getH()        const   {return H;}
         double getCX()      const   {return CX;}   // centre
         double getCY()      const   {return CY;}
-        float getScale()    const   {return scale;}
-        float getCoefremp() const   {return coefremp;}
+        double getScale()    const   {return scale;}
+        double getCoefremp() const   {return coefremp;}
         double getXmin()    const   {return xW;}
         double getXmax()    const   {return xE;}
         double getYmin()    const   {return yS;}
@@ -69,7 +69,7 @@ Q_OBJECT
         /* coord conversion */
         void screen2map(int i, int j, double *x, double *y) const;
         void map2screen(double x, double y, int *i, int *j) const;
-        void map2screenFloat(double x, double y, float *i, float *j) const;
+        void map2screenFloat(double x, double y, double *i, double *j) const;
 
         /* position / region validation*/
         bool intersect(double w,double e,double s,double n)  const;
@@ -79,7 +79,7 @@ Q_OBJECT
         bool getFrozen(void){return this->frozen;}
         void setUseTempo(bool b){this->useTempo=b;}
     signals:
-        void newZoom(float);
+        void newZoom(double);
         void projectionUpdated(void);
 
     private:
@@ -87,14 +87,14 @@ Q_OBJECT
         double CX, CY;                  // centre de la vue (longitude/latitude)
         double xW, xE, yN, yS;  // fenetre visible (repere longitude/latitude)
         double PX,PY;       // center in mercator projection
-        float scale;       // Echelle courante
-        float scalemax;    // Echelle maxi
-        float scaleall;    // Echelle pour afficher le monde entier
-        float coefremp;	   // Coefficient de remplissage (surface_visible/pixels)
+        double scale;       // Echelle courante
+        double scalemax;    // Echelle maxi
+        double scaleall;    // Echelle pour afficher le monde entier
+        double coefremp;	   // Coefficient de remplissage (surface_visible/pixels)
 
         void updateBoundaries();
         void my_setScreenSize(int w, int h);
-        void my_setScale(float sc);
+        void my_setScale(double sc);
         void my_setCenterInMap(double x, double y);
         QTimer * timer;
         void emit_projectionUpdated(void);
@@ -117,14 +117,14 @@ inline void Projection::map2screen(double x, double y, int *i, int *j) const
     *i = (int) (scale * (x-xW));
     *j = H/2 + (int) (scale * (PY-radToDeg(log(tan(degToRad(y)/2 + M_PI_4)))));
 }
-inline void Projection::map2screenFloat(double x, double y, float *i, float *j) const
+inline void Projection::map2screenFloat(double x, double y, double *i, double *j) const
 {
     if(y<=-90) y=-89.9999999999999999999999999999999999999999999999999999999;
     if(y>=90) y=89.999999999999999999999999999999999999999999999999999999999;
-    double diff=x-(double)xW;
-    *i = (float)((double)scale * diff);
-    double trick=(double)PY-radToDeg(log(tan((double)degToRad(y)/(double)2.0 + (double)M_PI_4)));
-    *j = (float)((double)H/2.0 + ((double)scale * trick));
+    double diff=x-xW;
+    *i = scale * diff;
+    double trick=PY-radToDeg(log(tan(degToRad(y)/(double)2.0 + M_PI_4)));
+    *j = ((double)H/(double)2.0 + (scale * trick));
 }
 
 //-------------------------------------------------------------------------------

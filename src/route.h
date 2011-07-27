@@ -52,8 +52,8 @@ class ROUTE : public QObject
         void setColor(QColor color);
         QColor getColor(){return this->color;}
 
-        void setWidth(float width);
-        float getWidth() {return this->width;}
+        void setWidth(double width);
+        double getWidth() {return this->width;}
 
         void setStartTime(QDateTime date){this->startTime=date;}
         QDateTime getStartTime() {return this->startTime.toUTC();}
@@ -91,8 +91,8 @@ class ROUTE : public QObject
         void setFastVmgCalc(bool b){this->fastVmgCalc=b;}
         void setOptimizingPOI(bool b){this->optimizingPOI=b;hasStartEta=false;startPoiName="";}
         void setPoiName(QString name){this->poiName=name;}
-        float getStartLat(){return this->startLat;}
-        float getStartLon(){return this->startLon;}
+        double getStartLat(){return this->startLat;}
+        double getStartLon(){return this->startLon;}
         bool getHidePois(){return this->hidePois;}
         void setHidePois(bool b);
         bool isImported(){return imported;}
@@ -130,7 +130,7 @@ class ROUTE : public QObject
 
         /* widget component */
         QColor color;
-        float width;
+        double width;
         vlmLine *line;
         QPen pen;
 
@@ -170,8 +170,8 @@ class ROUTE : public QObject
         QString startPoiName;
         bool hasStartEta;
         time_t startEta;
-        float startLon;
-        float startLat;
+        double startLon;
+        double startLat;
         bool hidePois;
         void interpolatePos();
         bool imported;

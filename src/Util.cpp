@@ -567,7 +567,7 @@ void Util::computePos(Projection * proj, float lat, float lon, int * x, int * y)
         proj->map2screen(lon, lat, x, y);
     }
 }
-void Util::computePosFloat(Projection * proj, float lat, float lon, float * x, float * y)
+void Util::computePosFloat(Projection * proj, double lat, double lon, double * x, double * y)
 {
     if (proj->isPointVisible(lon, lat)) {      // tour du monde ?
         proj->map2screenFloat(lon, lat, x, y);

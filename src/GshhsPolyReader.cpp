@@ -174,7 +174,7 @@ void GshhsPolyCell::DrawPolygonContour(QPainter &pnt,contour_list * p, double dx
             if ((((x1==x2) && ((x1==long_min) || (x1==long_max))) || ((y1==y2) && ((y1==lat_min) || (y1==lat_max))))==0)
             {
                 int a,b,c,d;
-                float A,B,C,D;
+                double A,B,C,D;
                 proj->map2screen(x1+dx,y1, &a, &b);
                 proj->map2screen(x2+dx,y2, &c, &d);
                 proj->map2screenFloat(x1+dx,y1, &A, &B);
@@ -196,7 +196,7 @@ void GshhsPolyCell::DrawPolygonContour(QPainter &pnt,contour_list * p, double dx
         if ((((x1==x2) && ((x1==long_min) || (x1==long_max))) || ((y1==y2) && ((y1==lat_min) || (y1==lat_max))))==0)
         {
             int a,b,c,d;
-            float A,B,C,D;
+            double A,B,C,D;
             proj->map2screen(x1+dx,y1, &a, &b);
             proj->map2screen(x2+dx,y2, &c, &d);
             proj->map2screenFloat(x1+dx,y1, &A, &B);

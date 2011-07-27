@@ -659,7 +659,7 @@ void mapCompass::updateCompassLineLabels(int x, int y)
         double loxo_dist=orth.getLoxoDistance();
         loxo_angle=qRound(loxo_angle*10.0)/10.0;
         Util::getCoordFromDistanceLoxo(ya,xa,loxo_dist,loxo_angle,&yb,&xb);
-        float X,Y;
+        double X,Y;
         proj->map2screenFloat(xb,yb,&X,&Y);
         orth.setEndPoint(xb,yb);
         pos_angle=orth.getAzimutDeg();

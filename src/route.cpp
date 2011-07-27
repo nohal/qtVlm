@@ -119,7 +119,7 @@ void ROUTE::setBoat(boat *curBoat)
         setFrozen(true);
     }
 }
-void ROUTE::setWidth(float width)
+void ROUTE::setWidth(double width)
 {
     this->width=width;
     pen.setWidthF(width);
@@ -424,17 +424,17 @@ void ROUTE::slot_recalculate(boat * boat)
             else
             {
                 //qWarning()<<"eta arrivee "<<eta;
-                float days=(eta-start)/86400.0000;
+                double days=(eta-start)/86400.0000;
                 if(qRound(days)>days)
                     days=qRound(days)-1;
                 else
                     days=qRound(days);
-                float hours=(eta-start-days*86400)/3600.0000;
+                double hours=(eta-start-days*86400)/3600.0000;
                 if(qRound(hours)>hours)
                     hours=qRound(hours)-1;
                 else
                     hours=qRound(hours);
-                float mins=qRound((eta-start-days*86400-hours*3600)/60.0000);
+                double mins=qRound((eta-start-days*86400-hours*3600)/60.0000);
                 QString tt;
                 QDateTime tm;
                 tm.setTimeSpec(Qt::UTC);

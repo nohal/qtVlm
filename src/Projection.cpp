@@ -122,13 +122,13 @@ void Projection::zoomOnZone(double x0, double y0, double x1, double y1)
     emit_projectionUpdated();
 }
 
-void Projection::zoom(float k)
+void Projection::zoom(double k)
 {
     if(frozen) return;
     my_setScale(scale*k);
     emit_projectionUpdated();
 }
-void Projection::zoomKeep(double lon, double lat, float k)
+void Projection::zoomKeep(double lon, double lat, double k)
 {    
     if(frozen) return;
     int xx,yy;
@@ -158,7 +158,7 @@ void Projection::zoomAll(void)
     emit_projectionUpdated();
 }
 
-void Projection::setScale(float sc)
+void Projection::setScale(double sc)
 {
     if(frozen) return;
     my_setScale(sc);
@@ -192,7 +192,7 @@ void Projection::setCenterInMap(double x, double y)
     emit_projectionUpdated();
 }
 
-void Projection::setScaleAndCenterInMap(float sc,double x, double y)
+void Projection::setScaleAndCenterInMap(double sc,double x, double y)
 {
     if(frozen) return;
     bool mod=false;
@@ -216,7 +216,7 @@ void Projection::setScaleAndCenterInMap(float sc,double x, double y)
 /* internal functions */
 /**********************/
 
-void Projection::my_setScale(float sc)
+void Projection::my_setScale(double sc)
 {
     scale = sc;
     //qWarning() << "my setScale " << sc;

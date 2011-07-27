@@ -147,7 +147,7 @@ void DialogTwaLine::traceIt()
             Util::getCoordFromDistanceAngle(current.lat, current.lon, distanceParcourue, cap,&lat,&lon);
             if(!crossing && mapQuality>=3)
             {
-                float I1,J1,I2,J2;
+                double I1,J1,I2,J2;
                 parent->getProj()->map2screenFloat(current.lon,current.lat,&I1,&J1);
                 parent->getProj()->map2screenFloat(lon,lat,&I2,&J2);
                 crossing=map->crossing(QLineF(I1,J1,I2,J2),QLineF(current.lon,current.lat,lon,lat));

@@ -383,7 +383,7 @@ void boat::drawEstime(float myHeading, float mySpeed)
         GshhsReader *map=parent->get_gshhsReader();
         if(map->getQuality()>=3)
         {
-            float I1,J1,I2,J2;
+            double I1,J1,I2,J2;
             proj->map2screenFloat(lon,lat,&I1,&J1);
             proj->map2screenFloat(tmp_lon,tmp_lat,&I2,&J2);
 //            qWarning("crossing (%.5f,%.5f,%.5f,%.5f) (%.5f,%.5f,%.5f,%.5f)",I1,J1,I2,J2,lon,lat,tmp_lon,tmp_lat);

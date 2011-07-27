@@ -92,7 +92,7 @@ class Util
     static QString pos2String(int type,float value);
     static QString getHost();
     static void computePos(Projection * proj, float lat, float lon, int * x, int * y);
-    static void computePosFloat(Projection * proj, float lat, float lon, float * x, float * y);
+    static void computePosFloat(Projection * proj, double lat, double lon, double * x, double * y);
     static void addAgent(QNetworkRequest & request);
     static bool lineIsCrossingRect(const QLineF line, const QRectF rect);
 

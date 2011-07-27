@@ -49,9 +49,9 @@ struct datathread
     time_t whatIfJour;
     bool windIsForced;
     int whatIfTime;
-    float whatIfWind;
-    float windSpeed;
-    float windAngle;
+    double whatIfWind;
+    double windSpeed;
+    double windAngle;
     boat *Boat;
     int timeStep;
     double speedLossOnTack;
@@ -74,24 +74,24 @@ class ROUTAGE : public QObject
         void setColor(QColor color);
         QColor getColor(){return this->color;}
 
-        void setWidth(float width);
-        float getWidth() {return this->width;}
+        void setWidth(double width);
+        double getWidth() {return this->width;}
 
         void setWindIsForced(bool b){this->windIsForced=b;}
-        void setWind(float twd, float tws){this->wind_angle=twd;this->wind_speed=tws;}
-        float getWindAngle(void){return this->wind_angle;}
-        float getWindSpeed(void){return this->wind_speed;}
-        void setAngleRange(float a) {this->angleRange=a;}
-        float getAngleRange(void){return this->angleRange;}
-        void setAngleStep(float a) {this->angleStep=a;}
-        float getAngleStep(void){return this->angleStep;}
-        void setTimeStep(float t) {this->timeStep=t;}
-        float getTimeStep(void){return this->timeStep;}
+        void setWind(double twd, double tws){this->wind_angle=twd;this->wind_speed=tws;}
+        double getWindAngle(void){return this->wind_angle;}
+        double getWindSpeed(void){return this->wind_speed;}
+        void setAngleRange(double a) {this->angleRange=a;}
+        double getAngleRange(void){return this->angleRange;}
+        void setAngleStep(double a) {this->angleStep=a;}
+        double getAngleStep(void){return this->angleStep;}
+        void setTimeStep(double t) {this->timeStep=t;}
+        double getTimeStep(void){return this->timeStep;}
         bool getWindIsForced(void){return this->windIsForced;}
         bool getShowIso(void){return this->showIso;}
         void setShowIso(bool b);
-        void setExplo(float e){this->explo=e;}
-        float getExplo(void){return explo;}
+        void setExplo(double e){this->explo=e;}
+        double getExplo(void){return explo;}
         bool getUseRouteModule(void){return useRouteModule;}
         void setUseRouteModule(bool b){this->useRouteModule=b;}
         bool getRouteFromBoat(){return this->routeFromBoat;}
@@ -140,11 +140,11 @@ class ROUTAGE : public QObject
         time_t getEta(){return eta;}
         Grib * getGrib(){return grib;}
         time_t getWhatIfJour(){return whatIfJour;}
-        static int calculateTimeRoute(vlmPoint RouteFrom,vlmPoint routeTo, datathread *dataThread,float * lastLonFound=NULL, float * lastLatFound=NULL, int limit=-1);
-        static int routeFunction(float x,vlmPoint from, float * lastLonFound, float * lastLatFound, datathread *dataThread);
-        static int routeFunctionDeriv(float x,vlmPoint from, float * lastLonFound, float * lastLatFound, datathread *dataThread);
-        static float A360(float hdg);
-        static float myDiffAngle(float a1,float a2);
+        static int calculateTimeRoute(vlmPoint RouteFrom,vlmPoint routeTo, datathread *dataThread,double * lastLonFound=NULL, double * lastLatFound=NULL, int limit=-1);
+        static int routeFunction(double x,vlmPoint from, double * lastLonFound, double * lastLatFound, datathread *dataThread);
+        static int routeFunctionDeriv(double x,vlmPoint from, double * lastLonFound, double * lastLatFound, datathread *dataThread);
+        static double A360(double hdg);
+        static double myDiffAngle(double a1,double a2);
         bool getUseMultiThreading(){return this->useMultiThreading;}
         void setUseMultiThreading(bool b){this->useMultiThreading=b;}
         vlmLine * getResult(){return result;}
@@ -174,7 +174,7 @@ class ROUTAGE : public QObject
 
         /* widget component */
         QColor color;
-        float width;
+        double width;
         vlmLine *iso;
         QPen pen;
 
@@ -186,9 +186,9 @@ class ROUTAGE : public QObject
         QList<vlmLine *> segments;
         boat *myBoat;
         Grib *grib;
-        float angleRange;
-        float angleStep;
-        float timeStep;
+        double angleRange;
+        double angleStep;
+        double timeStep;
         int explo;
         bool showIso;
         QDateTime startTime;
@@ -198,11 +198,11 @@ class ROUTAGE : public QObject
         /*various*/
         QPointF start;
         QPointF arrival;
-        float mySignedDiffAngle(float a1,float a2);
-        bool findPoint(float lon, float lat, double wind_angle, double wind_speed, float cap, vlmPoint *pt);
-        float findTime(const vlmPoint * pt, QPointF P, float * cap);
-        float loxoCap;
-        float initialDist;
+        double mySignedDiffAngle(double a1,double a2);
+        bool findPoint(double lon, double lat, double wind_angle, double wind_speed, double cap, vlmPoint *pt);
+        double findTime(const vlmPoint * pt, QPointF P, double * cap);
+        double loxoCap;
+        double initialDist;
         GshhsReader *map;
 
 
@@ -220,11 +220,11 @@ class ROUTAGE : public QObject
         bool intersects(QList<vlmPoint> *iso,int nn,int mm,int * toBeKilled);
         bool done;
         bool converted;
-        float findDistancePreviousIso(vlmPoint P,QPolygonF * isoShape);
+        double findDistancePreviousIso(vlmPoint P,QPolygonF * isoShape);
         void pruneWake(int wakeAngle);
         //int calculateTimeRoute(vlmPoint RouteFrom,vlmPoint routeTo,int limit=-1);
-        //int routeFunction(float x,vlmPoint from);
-        //int routeFunctionDeriv(float x,vlmPoint from);
+        //int routeFunction(double x,vlmPoint from);
+        //int routeFunctionDeriv(double x,vlmPoint from);
         int routeN;
         int routeMaxN;
         int routeTotN;
@@ -244,11 +244,11 @@ class ROUTAGE : public QObject
         void checkIsoCrossingPreviousSegments();
         void epuration(int toBeRemoved);
         void removeCrossedSegments();
-        float xa,ya,xs,ys;
+        double xa,ya,xs,ys;
         bool checkCoast;
         bool arrivalIsClosest;
         bool routeFromBoat;
-        QList<float> calculateCaps(vlmPoint point,float workAngleStep, float workAngleRange);
+        QList<double> calculateCaps(vlmPoint point,double workAngleStep, double workAngleRange);
         bool aborted;
         bool running;
         int debugCross0;
