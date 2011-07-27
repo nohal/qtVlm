@@ -149,7 +149,7 @@ void boat::createPopUpMenu(void)
     ac_compassLine = new QAction(tr("Tirer un cap"),popup);
     popup->addAction(ac_compassLine);
     connect(ac_compassLine,SIGNAL(triggered()),this,SLOT(slotCompassLine()));
-    connect (this,SIGNAL(compassLine(int,int)),mainWindow,SLOT(slotCompassLineForced(int,int)));
+    connect (this,SIGNAL(compassLine(double,double)),mainWindow,SLOT(slotCompassLineForced(double,double)));
 
     ac_twaLine = new QAction(tr("Tracer une estime TWA"),popup);
     popup->addAction(ac_twaLine);
@@ -356,7 +356,6 @@ void boat::drawEstime(float myHeading, float mySpeed)
     penLine2.setWidthF(1.2);
 
     int estime_param_2;
-    int i1,j1,i2,j2;
     float estime;
 
     /* draw estime */
@@ -381,13 +380,13 @@ void boat::drawEstime(float myHeading, float mySpeed)
 
         Util::getCoordFromDistanceAngle(lat,lon,estime,myHeading,&tmp_lat,&tmp_lon);
         GshhsReader *map=parent->get_gshhsReader();
+        double I1,J1,I2,J2;
+        proj->map2screenFloat(lon,lat,&I1,&J1);
         if(map->getQuality()>=3)
         {
-            double I1,J1,I2,J2;
-            proj->map2screenFloat(lon,lat,&I1,&J1);
             proj->map2screenFloat(tmp_lon,tmp_lat,&I2,&J2);
-//            qWarning("crossing (%.5f,%.5f,%.5f,%.5f) (%.5f,%.5f,%.5f,%.5f)",I1,J1,I2,J2,lon,lat,tmp_lon,tmp_lat);
-//            qWarning("estime=%.5f, myHeading=%.5f",estime,myHeading);
+            qWarning("crossing (%.5f,%.5f,%.5f,%.5f) (%.5f,%.5f,%.5f,%.5f)",I1,J1,I2,J2,lon,lat,tmp_lon,tmp_lat);
+            qWarning("estime=%.5f, myHeading=%.5f",estime,myHeading);
             if(map->crossing(QLineF(I1,J1,I2,J2),QLineF(lon,lat,tmp_lon,tmp_lat)))
             {
                 estimeTimer->start();
@@ -407,8 +406,8 @@ void boat::drawEstime(float myHeading, float mySpeed)
         if(WPLat != 0 && WPLon != 0)
         {
             WPLine->setLinePen(penLine2);
-            proj->map2screen(WPLon,WPLat,&i2,&j2);
-            WPLine->initSegment(i1,j1,i2,j2);
+            proj->map2screenFloat(WPLon,WPLat,&I2,&J2);
+            WPLine->initSegment(I1,J1,I2,J2);
         }
     }
 }
@@ -430,8 +429,8 @@ void boat::slot_estimeFlashing()
 
 void boat::slotCompassLine()
 {
-    int i1,j1;
-    proj->map2screen(this->lon,this->lat,&i1,&j1);
+    double i1,j1;
+    proj->map2screenFloat(this->lon,this->lat,&i1,&j1);
     emit compassLine(i1,j1);
 }
 QPainterPath boat::shape() const
@@ -527,13 +526,13 @@ void boat::setParam(QString pseudo, bool activated)
 
 void boat::reloadPolar(bool forced)
 {
-    qWarning()<<"inside reloadPolar with forced="<<forced;
+    //qWarning()<<"inside reloadPolar with forced="<<forced;
     if(forced && polarName.isEmpty())
         polarName=polarData->getName();
-    qWarning()<<"polarName="<<polarName;
+    //qWarning()<<"polarName="<<polarName;
     if(polarName.isEmpty()) /* nom de la polaire est vide => pas de chargement */
     {
-        qWarning() << "Polar name empty => nothing to load";
+       //qWarning() << "Polar name empty => nothing to load";
         if(polarData!=NULL) /* doit on faire un release tt de meme? */
         {
             emit releasePolar(polarData->getName());
@@ -544,7 +543,7 @@ void boat::reloadPolar(bool forced)
 
     if(!forced && polarData != NULL && polarName == polarData->getName()) /* reload inutile */
     {
-        qWarning() << "Polar already loaded => nothing to do"<<forced;
+        //qWarning() << "Polar already loaded => nothing to do"<<forced;
         return;
     }
 
@@ -554,7 +553,7 @@ void boat::reloadPolar(bool forced)
         emit releasePolar(polarData->getName()); /* release si une polaire déjà chargée */
     }
     connect(polar_list,SIGNAL(polarLoaded(QString,Polar *)),this,SLOT(polarLoaded(QString,Polar *)));
-    qWarning() << pseudo << " request polar " << polarName;
+    //qWarning() << pseudo << " request polar " << polarName;
     emit getPolar(polarName);
 }
 

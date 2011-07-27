@@ -57,7 +57,7 @@ mapCompass::mapCompass(Projection * proj,MainWindow * main,myCentralWidget *pare
     compassLine = new orthoSegment(proj,parent->getScene(),Z_VALUE_COMPASS);
     connect(parent,SIGNAL(stopCompassLine()),this,SLOT(slot_stopCompassLine()));
     connect(proj,SIGNAL(projectionUpdated()),this,SLOT(slot_projectionUpdated()));
-    QPen penLine(QColor(Qt::white));
+    penLine.setColor(QColor(Qt::white));
     penLine.setWidthF(1.6);
     compassLine->setLinePen(penLine);
 
@@ -631,7 +631,7 @@ void mapCompass::updateCompassLineLabels(int x, int y)
 {
     double pos_angle,pos_wind_angle,pos_distance;
     double xa,xb,ya,yb;
-    int XX,YY;
+    double XX,YY;
     compassLine->getStartPoint(&XX,&YY);
     proj->screen2map(XX,YY,&xa,&ya);
     proj->screen2map(x,y,&xb,&yb);
@@ -676,12 +676,20 @@ void mapCompass::updateCompassLineLabels(int x, int y)
         else if(loxo_dist*1852<=1000)
             meters=QString().sprintf("<br>%.2f ",loxo_dist*1852)+tr("Metres");
         if(map->crossing(QLineF(XX,YY,X,Y),QLineF(xa,ya,xb,yb)))
+        {
             hdg_label->setHtml(QString().sprintf("<b><big>Ortho->Hdg: %.2f%c Dist: %.2f NM",pos_angle,176,pos_distance)+"<br>"+
                        QString().sprintf("<b><big>Loxo-->Hdg: %.1f%c Dist: %.2f NM",loxo_angle,176,loxo_dist)+meters+"<br>"+
                        "<font color=\"#FF0000\">"+tr("Collision avec les terres detectee")+"</font>");
+            penLine.setColor(Qt::red);
+            compassLine->setLinePen(penLine);
+        }
         else
+        {
             hdg_label->setHtml(QString().sprintf("<b><big>Ortho->Hdg: %.2f%c Dist: %.2f NM",pos_angle,176,pos_distance)+"<br>"+
                        QString().sprintf("<b><big>Loxo-->Hdg: %.2f%c Dist: %.2f NM",loxo_angle,176,loxo_dist)+meters);
+            penLine.setColor(Qt::white);
+            compassLine->setLinePen(penLine);
+        }
         drawWindAngle=false;
     }
     if(!parent->getGrib())
@@ -786,7 +794,7 @@ void mapCompass::slot_stopCompassLine(void)
         slot_compassLine(0,0);
 }
 
-void mapCompass::slot_compassLine(int click_x, int click_y)
+void mapCompass::slot_compassLine(double click_x, double click_y)
 {
     drawCompassLine=!drawCompassLine;
     if(drawCompassLine)

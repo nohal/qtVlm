@@ -249,7 +249,7 @@ MainWindow::MainWindow(int w, int h, QWidget *parent)
     scale = (float) Settings::getSetting("projectionScale", 0.5).toDouble();
     proj->setScale(scale);
 
-    connect(proj,SIGNAL(newZoom(float)),this,SLOT(slotNewZoom(float)));
+    connect(proj,SIGNAL(newZoom(double)),this,SLOT(slotNewZoom(double)));
 
     dialogProxy = new DialogProxy();
 
@@ -1182,9 +1182,9 @@ void MainWindow::slot_centerMap()
 void MainWindow::slotCompassLine(void)
 {
 //    QPoint cursor_pos=my_centralWidget->mapFromGlobal(cursor().pos());
-    emit showCompassLine(mouseClicX,mouseClicY);
+    emit showCompassLine((double)mouseClicX,(double)mouseClicY);
 }
-void MainWindow::slotCompassLineForced(int a, int b)
+void MainWindow::slotCompassLineForced(double a, double b)
 {
 //    QPoint cursor_pos=my_centralWidget->mapFromGlobal(cursor().pos());
     emit showCompassLine(a,b);
@@ -1913,7 +1913,7 @@ void MainWindow::getBoatWP(double * lat,double * lon)
    }
 }
 
-void MainWindow::slotNewZoom(float zoom)
+void MainWindow::slotNewZoom(double zoom)
 {
     if(selectedBoat)
         selectedBoat->setZoom(zoom);

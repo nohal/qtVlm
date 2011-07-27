@@ -296,10 +296,13 @@ void boardVLM::chgHeading()
 
 void boardVLM::headingUpdated(double heading)
 {
+    qWarning()<<"heading value changed"<<heading;
     if(!currentBoat()) /*no current boat, nothing to do*/
         return;
 
-    if(isComputing) return;
+    //if(isComputing) return;
+    this->editHeading->blockSignals(true);
+    this->editAngle->blockSignals(true);
     isComputing=true;
 
 
@@ -316,6 +319,7 @@ void boardVLM::headingUpdated(double heading)
         /*changing boat rotation*/
         windAngle->setValues(currentBoat()->getHeading(),currentBoat()->getWindDir(),
                              currentBoat()->getWindSpeed(), computeWPdir(currentBoat()), -1);
+        currentBoat()->drawEstime(heading,currentBoat()->getSpeed());
     }
     else
     {
@@ -352,7 +356,10 @@ void boardVLM::headingUpdated(double heading)
         /* update estime */
         currentBoat()->drawEstime(heading,currentBoat()->getPolarData()?newSpeed:currentBoat()->getSpeed());
     }
-
+    if(this->editHeading->value()!=heading)
+        headingUpdated(this->editHeading->value());
+    this->editHeading->blockSignals(false);
+    this->editAngle->blockSignals(false);
     isComputing=false;
 }
 
@@ -361,7 +368,9 @@ void boardVLM::angleUpdated(double angle)
     if(!currentBoat()) /*no current boat, nothing to do*/
         return;
 
-    if(isComputing) return;
+    //if(isComputing) return;
+    this->editHeading->blockSignals(true);
+    this->editAngle->blockSignals(true);
     isComputing=true;
 
 /* compute VLM angle */
@@ -381,6 +390,7 @@ void boardVLM::angleUpdated(double angle)
         /*changing boat rotation*/
         windAngle->setValues(currentBoat()->getHeading(),currentBoat()->getWindDir(),
                              currentBoat()->getWindSpeed(), computeWPdir(currentBoat()), -1);
+        currentBoat()->drawEstime(currentBoat()->getHeading(),currentBoat()->getSpeed());
     }
     else
     {
@@ -413,6 +423,10 @@ void boardVLM::angleUpdated(double angle)
         currentBoat()->drawEstime(heading,currentBoat()->getPolarData()?newSpeed:currentBoat()->getSpeed());
     }
     isComputing=false;
+    if(angle!=this->editAngle->value())
+        this->angleUpdated(this->editAngle->value());
+    this->editHeading->blockSignals(false);
+    this->editAngle->blockSignals(false);
 }
 
 void boardVLM::update_btnWP(void)

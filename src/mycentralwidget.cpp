@@ -393,7 +393,7 @@ myCentralWidget::myCentralWidget(Projection * proj,MainWindow * parent,MenuBar *
     // Compass
     compass = new mapCompass(proj,parent,this);
     scene->addItem(compass);
-    connect(parent,SIGNAL(showCompassLine(int,int)),compass,SLOT(slot_compassLine(int,int)));
+    connect(parent,SIGNAL(showCompassLine(double,double)),compass,SLOT(slot_compassLine(double,double)));
     connect(parent,SIGNAL(showCompassCenterBoat()),compass,SLOT(slot_compassCenterBoat()));
     connect(parent,SIGNAL(showCompassCenterWp()),compass,SLOT(slot_compassCenterWp()));
     connect(parent,SIGNAL(paramVLMChanged()),compass,SLOT(slot_paramChanged()));

@@ -194,7 +194,7 @@ void POI::createPopUpMenu(void)
     ac_compassLine = new QAction(tr("Tirer un cap"),popup);
     popup->addAction(ac_compassLine);
     connect(ac_compassLine,SIGNAL(triggered()),this,SLOT(slotCompassLine()));
-    connect(this,SIGNAL(compassLine(int,int)),owner,SLOT(slotCompassLineForced(int,int)));
+    connect(this,SIGNAL(compassLine(double,double)),owner,SLOT(slotCompassLineForced(double,double)));
 
     ac_twaLine = new QAction(tr("Tracer une estime TWA"),popup);
     popup->addAction(ac_twaLine);
@@ -689,8 +689,8 @@ void POI::slot_editRoute()
 }
 void POI::slotCompassLine()
 {
-    int i1,j1;
-    proj->map2screen(this->lon,this->lat,&i1,&j1);
+    double i1,j1;
+    proj->map2screenFloat(this->lon,this->lat,&i1,&j1);
     emit compassLine(i1,j1);
 }
 void POI::slot_setHorn()

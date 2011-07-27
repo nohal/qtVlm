@@ -144,7 +144,7 @@ class POI : public QGraphicsWidget
         void clearSelection(void);
         void updateTip(boat*);
         void poiMoving();
-        void compassLine(int,int);
+        void compassLine(double,double);
 
     protected:
         void  mousePressEvent(QGraphicsSceneMouseEvent * e);

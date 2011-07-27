@@ -118,7 +118,7 @@ class MainWindow: public QMainWindow
         //void slotMovePOI(POI *);
 
         void slotParamChanged(void);
-        void slotNewZoom(float zoom);
+        void slotNewZoom(double zoom);
         void slotSelectPOI(DialogPilototoInstruction * instruction);
         void slotSelectWP_POI(void);
         void slot_POIselected(POI* poi);
@@ -131,7 +131,7 @@ class MainWindow: public QMainWindow
         void slotLoadVLMGrib(void);
 
         void slotCompassLine(void);
-        void slotCompassLineForced(int a,int b);
+        void slotCompassLineForced(double a,double b);
         void slotCompassCenterBoat(void);
         void slotCompassCenterWp(void);
         void slotEstime(int);
@@ -153,7 +153,7 @@ class MainWindow: public QMainWindow
         void paramVLMChanged();
         void WPChanged(double,double);
         void updateInet(void);
-        void showCompassLine(int,int);
+        void showCompassLine(double,double);
         void addPOI_list(POI*);
         void addPOI(QString name,int type,float lat,float lon, float wph,int timestamp,bool useTimeStamp, boat *);
         void updateRoute(boat * boat);

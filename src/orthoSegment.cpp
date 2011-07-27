@@ -44,7 +44,7 @@ QRectF orthoSegment::boundingRect() const
     return QRectF(0,0,4*size,4*size);
 }
 
-void orthoSegment::initSegment(int xa,int ya,int xb, int yb)
+void orthoSegment::initSegment(double xa,double ya,double xb, double yb)
 {
     this->xa=xa;
     this->ya=ya;
@@ -56,7 +56,7 @@ void orthoSegment::initSegment(int xa,int ya,int xb, int yb)
     if(xa==xb && ya==yb) hide();
 }
 
-void orthoSegment::moveSegment(int x,int y)
+void orthoSegment::moveSegment(double x,double y)
 {
     this->xb=x;
     this->yb=y;
@@ -101,7 +101,7 @@ void orthoSegment::paint(QPainter * pnt, const QStyleOptionGraphicsItem * , QWid
     }
 }
 
-void orthoSegment::draw_orthoSegment(QPainter * pnt,int i0,int j0, int i1, int j1, int recurs)
+void orthoSegment::draw_orthoSegment(QPainter * pnt,double i0,double j0, double i1, double j1, int recurs)
 {
     if (recurs > 10) // this is bugging under win :100)
     {

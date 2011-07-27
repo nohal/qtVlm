@@ -119,7 +119,7 @@ class boat: public QGraphicsWidget
         void getPolar(QString);
         void releasePolar(QString fname);
         void clearSelection(void);
-        void compassLine(int,int);
+        void compassLine(double,double);
         void getTrace(QByteArray,QList<vlmPoint> *);
 
     protected:

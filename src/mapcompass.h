@@ -43,7 +43,7 @@ class mapCompass : public QGraphicsWidget
 
 
     public slots:
-        void slot_compassLine(int mouse_x, int mouse_y);
+        void slot_compassLine(double mouse_x, double mouse_y);
         void slot_compassCenterBoat();
         void slot_compassCenterWp();
         void slot_stopCompassLine(void);
@@ -71,7 +71,7 @@ class mapCompass : public QGraphicsWidget
         bool isMoving;
         double myLon;
         double myLat;
-
+        QPen penLine;
         bool mouseEvt;
         Projection * proj;
         myCentralWidget * parent;

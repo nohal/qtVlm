@@ -33,13 +33,13 @@ class orthoSegment : public QGraphicsWidget
     public:
         orthoSegment(Projection * proj, QGraphicsScene * myScene,int z_level,bool roundedEnd=false);
 
-        void initSegment(int xa,int ya,int xb, int yb);
-        void moveSegment(int x,int y);
+        void initSegment(double xa,double ya,double xb, double yb);
+        void moveSegment(double x,double y);
         void hideSegment(void);
         void setOrthoMode(bool mode) { isOrtho=mode; }
         bool orthoMode(void) { return isOrtho; }
-        void getStartPoint(int * xx,int * yy){*xx=xa;*yy=ya;}
-        void setLinePen ( const QPen & pen ) {linePen = pen; }
+        void getStartPoint(double * xx,double * yy){*xx=xa;*yy=ya;}
+        void setLinePen ( const QPen & pen ) {linePen = pen;update(); }
         void setAlsoDrawLoxo(bool b){this->alsoDrawLoxo=b;}
 
         QRectF boundingRect() const;
@@ -49,13 +49,13 @@ class orthoSegment : public QGraphicsWidget
 
     private:
         int size;
-        int xa,xb,ya,yb;
+        double xa,xb,ya,yb;
         bool isOrtho;
         QPen linePen;
 
         Projection * proj;
 
-        void draw_orthoSegment(QPainter * pnt,int i0,int j0, int i1, int j2, int recurs=0);
+        void draw_orthoSegment(QPainter * pnt,double i0,double j0, double i1, double j2, int recurs=0);
         void updateSizeAndPosition(void);
         bool roundedEnd;
         bool alsoDrawLoxo;
