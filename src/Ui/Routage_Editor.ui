@@ -450,19 +450,6 @@ avec ce prefixe</string>
 Virements de bord</string>
        </property>
       </widget>
-      <widget class="QCheckBox" name="showGrib">
-       <property name="geometry">
-        <rect>
-         <x>20</x>
-         <y>190</y>
-         <width>291</width>
-         <height>20</height>
-        </rect>
-       </property>
-       <property name="text">
-        <string>Afficher le grib pendant le calcul</string>
-       </property>
-      </widget>
      </widget>
      <widget class="QGroupBox" name="groupBox_eta">
       <property name="enabled">
@@ -997,7 +984,6 @@ Virements de bord</string>
   <tabstop>multi</tabstop>
   <tabstop>autoZoom</tabstop>
   <tabstop>checkCoast</tabstop>
-  <tabstop>showGrib</tabstop>
   <tabstop>tabWidget</tabstop>
   <tabstop>pruneWakeAngle</tabstop>
   <tabstop>explo</tabstop>

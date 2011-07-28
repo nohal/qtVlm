@@ -60,7 +60,7 @@ ROUTE::ROUTE(QString name, Projection *proj, Grib *grib, QGraphicsScene * myScen
     line->setParent(this);
     this->frozen=false;
     this->superFrozen=false;
-    this->live=true;
+    this->detectCoasts=true;
     this->optimizing=false;
     this->optimizingPOI=false;
     this->busy=false;
@@ -227,6 +227,7 @@ void ROUTE::slot_recalculate(boat * boat)
         {
             vlmPoint p(lon,lat);
             p.eta=eta;
+            p.isPOI=true;
             line->addVlmPoint(p);
         }
         double newSpeed,distanceParcourue,remaining_distance,res_lon,res_lat,previous_remaining_distance,cap1,cap2,diff1,diff2;
@@ -236,6 +237,13 @@ void ROUTE::slot_recalculate(boat * boat)
         time_t previousEta=0;
         time_t lastEta=0;
         time_t gribDate=grib->getCurrentDate();
+        if(this->detectCoasts && !optimizingPOI)
+        {
+            line->setCoastDetection(true);
+            line->setMap(parent->get_gshhsReader());
+        }
+        else
+            line->setCoastDetection(false);
         while(i.hasNext())
         {
             POI * poi = i.next();
@@ -373,16 +381,6 @@ void ROUTE::slot_recalculate(boat * boat)
                         }
                         orth.setStartPoint(res_lon, res_lat);
                         remaining_distance=orth.getDistance();
-                        if(remaining_distance>previous_remaining_distance)
-                        {
-//                            if (remaining_distance-previous_remaining_distance>10)
-//                                qWarning()<<(remaining_distance-previous_remaining_distance)<<" milles in one vac, not bad";
-                            if(imported)
-                                eta=poi->getRouteTimeStamp();
-                            else
-                                eta= eta + myBoat->getVacLen()*multVac;
-                            break;
-                        }
                         lon=res_lon;
                         lat=res_lat;
                         if(imported)
@@ -409,12 +407,16 @@ void ROUTE::slot_recalculate(boat * boat)
                     {
                         has_eta=false;
                         orth.setPoints(res_lon,res_lat,my_poiList.last()->getLongitude(),my_poiList.last()->getLatitude());
-                        remain=orth.getDistance();
+                            remain=orth.getDistance();
                     }
-                } while (remaining_distance>distanceParcourue/2.000 && has_eta && !imported);
+                    if(remaining_distance<distanceParcourue ||
+                       previous_remaining_distance<distanceParcourue)
+                        break;
+                } while (has_eta && !imported);
             }
 //            qWarning()<<"Distance Parcourue="<<distanceParcourue<<" remaining_distance="<<remaining_distance<<" previous_rd="<<previous_remaining_distance;
 //            qWarning()<<"newSpeed="<<newSpeed<<" wind_speed="<<wind_speed<<" angle="<<angle;
+            line->setLastPointIsPoi();
             tip=tr("<br>Route: ")+name;
             if(!has_eta)
             {
@@ -423,6 +425,7 @@ void ROUTE::slot_recalculate(boat * boat)
             }
             else
             {
+                tip=tip+"<br>"+tr("Note: la date indiquee correspond a la desactivation du WP");
                 //qWarning()<<"eta arrivee "<<eta;
                 double days=(eta-start)/86400.0000;
                 if(qRound(days)>days)

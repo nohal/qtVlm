@@ -45,7 +45,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #define ROUTE_COLOR_R     "color_red"
 #define ROUTE_COLOR_G     "color_green"
 #define ROUTE_COLOR_B     "color_blue"
-#define ROUTE_LIVE        "liveUpdate"
+#define ROUTE_COASTS      "detectCoasts"
 #define ROUTE_FROZEN      "frozen"
 #define ROUTE_HIDEPOIS    "hidePois"
 #define ROUTE_MULTVAC     "vacStep"
@@ -167,9 +167,9 @@ void xml_POIData::slot_writeData(QList<ROUTE*> & route_list,QList<POI*> & poi_li
           t = doc.createTextNode(QString().setNum(route->getColor().blue()));
           tag.appendChild(t);
 
-          tag = doc.createElement(ROUTE_LIVE);
+          tag = doc.createElement(ROUTE_COASTS);
           group.appendChild(tag);
-          t = doc.createTextNode(QString().setNum(route->isLive()?1:0));
+          t = doc.createTextNode(QString().setNum(route->getDetectCoasts()?1:0));
           tag.appendChild(t);
 
 
@@ -502,11 +502,11 @@ void xml_POIData::slot_readData(QString fname)
                        }
                   }
 
-                  if(subNode.toElement().tagName() == ROUTE_LIVE)
+                  if(subNode.toElement().tagName() == ROUTE_COASTS)
                   {
                        dataNode = subNode.firstChild();
                        if(dataNode.nodeType() == QDomNode::TextNode)
-                           route->setLive(dataNode.toText().data().toInt()==1);
+                           route->setDetectCoasts(dataNode.toText().data().toInt()==1);
                   }
                   if(subNode.toElement().tagName() == ROUTE_FROZEN)
                   {

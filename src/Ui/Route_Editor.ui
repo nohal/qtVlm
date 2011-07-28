@@ -107,7 +107,7 @@
       <string>Figer la route</string>
      </property>
     </widget>
-    <widget class="QCheckBox" name="editLive">
+    <widget class="QCheckBox" name="editCoasts">
      <property name="geometry">
       <rect>
        <x>140</x>
@@ -117,10 +117,10 @@
       </rect>
      </property>
      <property name="toolTip">
-      <string>Cette option peut entrainer un ralentissement lors des mouvements de POIs</string>
+      <string>Les cotes invibles a l'ecran ne sont pas prises en compte</string>
      </property>
      <property name="text">
-      <string>Recalculer la route simultanement aux mouvements de POIs</string>
+      <string>Detecter les collisions avec les cotes visibles a l'ecran</string>
      </property>
      <property name="checked">
       <bool>true</bool>
@@ -458,7 +458,7 @@
   <tabstop>editDate</tabstop>
   <tabstop>editDateBox</tabstop>
   <tabstop>editFrozen</tabstop>
-  <tabstop>editLive</tabstop>
+  <tabstop>editCoasts</tabstop>
   <tabstop>btOk</tabstop>
   <tabstop>btCancel</tabstop>
  </tabstops>

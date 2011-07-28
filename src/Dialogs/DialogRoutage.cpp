@@ -89,7 +89,6 @@ DialogRoutage::DialogRoutage(ROUTAGE *routage,myCentralWidget *parent)
     whatIfWind->setValue(routage->getWhatIfWind());
     whatIfTime->setValue(routage->getWhatIfTime());
     autoZoom->setChecked(routage->getAutoZoom());
-    showGrib->setChecked(routage->getShowGrib());
     this->poiPrefix->setText(routage->getPoiPrefix());
     this->startFromBoat->setChecked(routage->getRouteFromBoat());
     if(routage->getFinalEta().isNull())
@@ -162,7 +161,6 @@ DialogRoutage::DialogRoutage(ROUTAGE *routage,myCentralWidget *parent)
         this->speedLossOnTack->setDisabled(true);
         this->editName->setDisabled(false);
         this->autoZoom->setDisabled(true);
-        this->showGrib->setDisabled(true);
         this->editBoat->setDisabled(true);
         this->editDateBox->setDisabled(true);
         this->fromPOI->setDisabled(true);
@@ -191,7 +189,6 @@ DialogRoutage::DialogRoutage(ROUTAGE *routage,myCentralWidget *parent)
     {
         this->speedLossOnTack->setDisabled(false);
         this->autoZoom->setDisabled(false);
-        this->showGrib->setDisabled(false);
         this->duree->setDisabled(false);
         this->range->setDisabled(false);
         this->step->setDisabled(false);
@@ -238,9 +235,6 @@ void DialogRoutage::done(int result)
         routage->useConverge=log->isChecked();
         routage->pruneWakeAngle=pruneWakeAngle->value();
         routage->setAutoZoom(autoZoom->isChecked());
-        routage->setShowGrib(showGrib->isChecked());
-        if(!routage->isDone())
-            Settings::setSetting("showGribDuringRoutage",this->showGrib->isChecked()?"1":"0");
         routage->setRouteFromBoat(this->startFromBoat->isChecked());
         routage->setSpeedLossOnTack((double)this->speedLossOnTack->value()/100.00);
         if(parent->getPlayer()->getType()!=BOAT_REAL)

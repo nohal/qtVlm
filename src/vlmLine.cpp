@@ -51,6 +51,9 @@ vlmLine::vlmLine(Projection * proj, QGraphicsScene * myScene,int z_level) : QGra
     this->iceGate=0;
     this->replayMode=false;
     this->replayStep=0;
+    this->coastDetected=false;
+    this->coastDetection=false;
+    map=NULL;
     show();
 }
 
@@ -140,10 +143,11 @@ void vlmLine::setTip(QString tip)
 void vlmLine::calculatePoly(void)
 {
     int n=0;
-    int X,Y,previousX=0,previousY,Xbis,Ybis;
+    double X,Y,previousX=0,previousY=0,Xbis,Ybis;
 //    int debug;
 //    if(this->desc=="WP2: Arrivee Bayonne") //for debug point
 //        debug=0;
+    collision.clear();
     QRectF tempBound;
     tempBound.setRect(0,0,0,0);
     Orthodromie orth(0,0,0,0);
@@ -159,6 +163,8 @@ void vlmLine::calculatePoly(void)
     poly->resize(0);
     vlmPoint worldPoint(0,0),previousWorldPoint(0,0);
     int cc=-1;
+    bool coasted=false;
+    coastDetected=false;
     if(line.count()>1)
     {
         QListIterator<vlmPoint> i (line);
@@ -170,7 +176,7 @@ void vlmLine::calculatePoly(void)
             if(worldPoint.isDead) continue;
             if(worldPoint.isBroken && n==0) continue;
             //Util::computePos(proj,worldPoint.lat, worldPoint.lon, &X, &Y);
-            proj->map2screen(cLFA(worldPoint.lon),worldPoint.lat,&X,&Y);
+            proj->map2screenFloat(cLFA(worldPoint.lon),worldPoint.lat,&X,&Y);
             X=X-(int)x();
             Y=Y-(int)y();
             if(n>0)
@@ -190,10 +196,10 @@ void vlmLine::calculatePoly(void)
 //                    wrongNS=-1; // on devrait etre au sud et on est en dessous
                 if(wrongEW!=0 && mode==VLMLINE_GATE_MODE)
                 {
-                    proj->map2screen(worldPoint.lon-wrongEW*360, worldPoint.lat, &Xbis, &Ybis);
+                    proj->map2screenFloat(worldPoint.lon-wrongEW*360, worldPoint.lat, &Xbis, &Ybis);
                     poly->putPoints(n,1,Xbis,Ybis);
                     tempBound=tempBound.united(poly->boundingRect());
-                    proj->map2screen(previousWorldPoint.lon+wrongEW*360, previousWorldPoint.lat, &Xbis, &Ybis);
+                    proj->map2screenFloat(previousWorldPoint.lon+wrongEW*360, previousWorldPoint.lat, &Xbis, &Ybis);
                     poly=new QPolygon();
                     poly->resize(0);
                     polyList.append(poly);
@@ -203,20 +209,39 @@ void vlmLine::calculatePoly(void)
                 }
             }
             poly->putPoints(n,1,X,Y);
+            if(coastDetection && n!=0 && !coasted && map->crossing(QLineF(previousX,previousY,X,Y),
+               QLineF(previousWorldPoint.lon,previousWorldPoint.lat,worldPoint.lon,worldPoint.lat)))
+            {
+                coasted=true;
+                coastDetected=true;
+            }
             previousWorldPoint=worldPoint;
             previousX=X;
             previousY=Y;
             if(worldPoint.isBroken)
             {
+                collision.append(coasted);
                 tempBound=tempBound.united(poly->boundingRect());
                 poly=new QPolygon();
                 n=0;
                 polyList.append(poly);
+                coasted=false;
                 continue;
+            }
+            if(worldPoint.isPOI && cc!=0 && cc!=line.count()-1)
+            {
+                collision.append(coasted);
+                tempBound=tempBound.united(poly->boundingRect());
+                poly=new QPolygon();
+                n=0;
+                polyList.append(poly);
+                poly->putPoints(n,1,X,Y);
+                coasted=false;
             }
             n++;
         }
         tempBound=tempBound.united(poly->boundingRect());
+        collision.append(coasted);
     }
     if(!polyList.isEmpty())
     {
@@ -262,14 +287,26 @@ void vlmLine::paint(QPainter * pnt, const QStyleOptionGraphicsItem * , QWidget *
 //        debug=0;
     pnt->setRenderHint(QPainter::Antialiasing);
     pnt->setPen(linePen);
+    QPen coastedPen=linePen;
+    if(linePen.color()==Qt::red)
+        coastedPen.setColor(Qt::black);
+    else
+        coastedPen.setColor(Qt::red);
+    coastedPen.setWidthF(linePen.widthF()*2);
     float penW=linePen.widthF();
     if(polyList.isEmpty()) return;
     QPolygon * poly;
     QListIterator<QPolygon*> nPoly (polyList);
     bool labelAlreadyMade=false;
+    int nn=-1;
     while(nPoly.hasNext())
     {
         poly=nPoly.next();
+        ++nn;
+        if(collision.at(nn))
+            pnt->setPen(coastedPen);
+        else
+            pnt->setPen(linePen);
         if(poly->size()==0) continue;
         switch(mode)
         {

@@ -78,7 +78,7 @@ DialogRoute::DialogRoute(ROUTE *route,myCentralWidget *parent)
 
     editDateBox->setDateTime(route->getStartTime());
 
-    editLive->setChecked(route->isLive());
+    editCoasts->setChecked(route->getDetectCoasts());
     hidePois->setChecked(route->getHidePois());
     vacStep->setValue(route->getMultVac());
     hidden->setChecked(route->getHidden());
@@ -181,7 +181,7 @@ void DialogRoute::done(int result)
             route->setBoat((boat *) parent->getRealBoat());
         route->setHidden(hidden->isChecked());
         route->setFrozen3(editFrozen->isChecked());
-        route->setLive(editLive->isChecked());
+        route->setDetectCoasts(editCoasts->isChecked());
         if(hidePois->isChecked()!=route->getHidePois())
             route->setHidePois(hidePois->isChecked());
         if(this->Simplifier->isChecked())

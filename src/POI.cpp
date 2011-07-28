@@ -294,7 +294,7 @@ bool POI::tryMoving(int x, int y)
         mouse_y=y;
 
 
-        if(route!=NULL && route->isLive() &&!route->isBusy())
+        if(route!=NULL &&!route->isBusy())
         {
             double newlon,newlat;
             new_x=scenePos().x();

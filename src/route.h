@@ -62,8 +62,6 @@ class ROUTE : public QObject
         void setFrozen2(bool frozen) {if(frozen==this->frozen) return;this->frozen=frozen;if(!frozen)slot_recalculate();}
         void setFrozen3(bool frozen){this->frozen=frozen;}
         bool getFrozen(){return this->frozen;}
-        void setLive(bool live) {this->live=live;}
-        bool isLive(){return this->live;}
         bool isBusy(){return this->busy;}
         void setBusy(bool b){this->busy=b;}
 
@@ -111,6 +109,8 @@ class ROUTE : public QObject
         bool getTemp(){return this->temp;}
         double getSpeedLossOnTack(){return speedLossOnTack;}
         void setSpeedLossOnTack(double d){this->speedLossOnTack=d;}
+        bool getDetectCoasts(){return detectCoasts;}
+        void setDetectCoasts(bool b){this->detectCoasts=b;}
     public slots:
         void slot_recalculate(boat * boat=NULL);
         void slot_edit();
@@ -145,17 +145,8 @@ class ROUTE : public QObject
         int startTimeOption;
         bool frozen;
         bool superFrozen;
-        bool live;
+        bool detectCoasts;
         bool busy;
-
-        /*popup menu*/
-//        QMenu *popup;
-//        QAction *r_edit;
-//        QAction *r_hide;
-//        QAction *r_delete;
-//        void createPopUpMenu(void);
-
-        /*various*/
         double A360(double hdg);
         double A180(double hdg);
         double myDiffAngle(double a1,double a2);

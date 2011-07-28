@@ -43,6 +43,7 @@ class vlmPoint
                         qRound(this->lat*1000)==qRound(other.lat*1000));}
         float  maxDistIso;
         ROUTAGE * routage;
+        bool    isPOI;
 
 };
 

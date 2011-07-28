@@ -30,6 +30,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "class_list.h"
 #include "Projection.h"
 #include "vlmPoint.h"
+#include "GshhsReader.h"
+
 
 #define VLMLINE_LINE_MODE   0
 #define VLMLINE_POINT_MODE  1
@@ -70,6 +72,7 @@ class vlmLine : public QGraphicsWidget
         void setPointcapOrigin(int n,double d){this->line[n].capOrigin=d;}
         void setPointCoordProj(int n,double x,double y){this->line[n].lonProj=x;this->line[n].latProj=y;}
         void setNotSimplificable(int n){this->line[n].notSimplificable=true;}
+        void setLastPointIsPoi(){this->line[line.count()-1].isPOI=true;}
         const vlmPoint * getOrigin(int n) {return this->line.at(n).origin;}
         const vlmPoint * getPoint(int n) {return & line.at(n);}
         void setInterpolated(float lon,float lat){this->interpolatedLon=lon;this->interpolatedLat=lat;update();}
@@ -77,6 +80,9 @@ class vlmLine : public QGraphicsWidget
         vlmPoint * getLastPoint() {return & line.last();}
         void setRoundedEnd(bool b){this->roundedEnd=b;}
         QPainterPath shape() const;
+        void setCoastDetection(bool b){this->coastDetection=b;}
+        bool getCoastDetected(){return this->coastDetected;}
+        void setMap(GshhsReader * map){this->map=map;}
         ~vlmLine();
 
     protected:
@@ -116,6 +122,10 @@ class vlmLine : public QGraphicsWidget
         bool replayMode;
         int replayStep;
         bool roundedEnd;
+        bool coastDetection;
+        bool coastDetected;
+        QList<bool>collision;
+        GshhsReader *map;
 };
 
 
