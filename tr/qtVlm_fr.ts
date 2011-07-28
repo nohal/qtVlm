@@ -872,6 +872,10 @@ Etes-vous sur ?</source>
         <source>Analyse de la polaire: </source>
         <translation></translation>
     </message>
+    <message>
+        <source>Recharger la polaire</source>
+        <translation></translation>
+    </message>
 </context>
 <context>
     <name>DialogVlmGrib</name>
@@ -1947,6 +1951,10 @@ Etes-vous sur ?</source>
         <source>Etudier la polaire</source>
         <translation></translation>
     </message>
+    <message>
+        <source>Photo d&apos;ecran</source>
+        <translation>Photo d&apos;écran</translation>
+    </message>
 </context>
 <context>
     <name>POI</name>
@@ -2286,7 +2294,11 @@ Etes-vous sur ?</source>
     <name>Polar</name>
     <message>
         <source>Pre-calcul des valeurs de VMG (ceci est fait seulement la premiere fois qu&apos;une polaire est utilisee)</source>
-        <translation>Pré-calcul des valeurs de VMG (ceci est fait seulement la première fois qu&apos;une polaire est utilisée)</translation>
+        <translation type="obsolete">Pré-calcul des valeurs de VMG (ceci est fait seulement la première fois qu&apos;une polaire est utilisée)</translation>
+    </message>
+    <message>
+        <source>Pre-calcul des valeurs de VMG pour </source>
+        <translation>Précalcul des valeurs de VMG pour </translation>
     </message>
 </context>
 <context>
@@ -2564,6 +2576,18 @@ AWA %ddeg, AWS %.1fnds
 VMG %.1fnds</source>
         <translation></translation>
     </message>
+    <message>
+        <source>Sauvegarde ecran</source>
+        <translation>Sauvegarde écran</translation>
+    </message>
+    <message>
+        <source>Exports VLM Syncs</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Exports VLM Syncs Summary</source>
+        <translation></translation>
+    </message>
 </context>
 <context>
     <name>ROUTAGE</name>
@@ -2826,6 +2850,10 @@ avec ce préfixe</translation>
 Virements de bord</source>
         <translation></translation>
     </message>
+    <message>
+        <source>Afficher le grib pendant le calcul</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>ROUTE</name>
@@ -2879,6 +2907,10 @@ Voulez-vous egalement supprimer tous les POIs lui appartenant?</source>
         <source>&lt;br&gt;Route: </source>
         <translation></translation>
     </message>
+    <message>
+        <source>Note: la date indiquee correspond a la desactivation du WP</source>
+        <translation>Note: la date indiquée correspond à la désactivation du WP</translation>
+    </message>
 </context>
 <context>
     <name>ROUTE_Editor_ui</name>
@@ -2931,12 +2963,8 @@ Voulez-vous egalement supprimer tous les POIs lui appartenant?</source>
         <translation></translation>
     </message>
     <message>
-        <source>Cette option peut entrainer un ralentissement lors des mouvements de POIs</source>
-        <translation></translation>
-    </message>
-    <message>
         <source>Recalculer la route simultanement aux mouvements de POIs</source>
-        <translation>Recalculer la route simultanément aux mouvements de POIs</translation>
+        <translation type="obsolete">Recalculer la route simultanément aux mouvements de POIs</translation>
     </message>
     <message>
         <source>Cacher les POIs intermediaires</source>
@@ -2980,6 +3008,33 @@ Voulez-vous egalement supprimer tous les POIs lui appartenant?</source>
     </message>
     <message>
         <source>%</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Les cotes invibles a l&apos;ecran ne sont pas prises en compte</source>
+        <translation>Les côtes invisbles à l&apos;écran ne sont pas détectées</translation>
+    </message>
+    <message>
+        <source>Detecter les collisions avec les cotes visibles a l&apos;ecran</source>
+        <translation>Détecter les collisions avec les côtes visibles à l&apos;écran</translation>
+    </message>
+</context>
+<context>
+    <name>ReceiverThread</name>
+    <message>
+        <source>Activation du GPS</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Impossible d&apos;ouvrir le port </source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Erreur: </source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Copier</source>
         <translation></translation>
     </message>
 </context>
@@ -4308,6 +4363,14 @@ Voulez-vous egalement supprimer tous les POIs lui appartenant?</source>
         <source>Collision avec les terres detectee</source>
         <translation>Collision avec les terres détectée</translation>
     </message>
+    <message>
+        <source>Centimetres</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Metres</source>
+        <translation></translation>
+    </message>
 </context>
 <context>
     <name>myCentralWidget</name>
@@ -4702,6 +4765,10 @@ Voulez-vous egalement supprimer tous les POIs lui appartenant?</source>
     <message>
         <source> minutes gagnees(!), </source>
         <translation> minutes gagnées(!), </translation>
+    </message>
+    <message>
+        <source>Photo Ecran</source>
+        <translation></translation>
     </message>
 </context>
 <context>
@@ -5185,6 +5252,10 @@ Voulez-vous egalement supprimer tous les POIs lui appartenant?</source>
     <message>
         <source>Polaire</source>
         <translation></translation>
+    </message>
+    <message>
+        <source>Afficher les donnees brutes</source>
+        <translation>Afficher les données NMEA brutes</translation>
     </message>
 </context>
 <context>
