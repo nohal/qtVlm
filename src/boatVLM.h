@@ -25,6 +25,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "inetClient.h"
 #include "Player.h"
 #include "class_list.h"
+#include "Grib.h"
 
 class boatVLM : public boat, public inetClient
 { Q_OBJECT
@@ -99,6 +100,7 @@ class boatVLM : public boat, public inetClient
         void setShowNpd(bool b){this->showNpd=b;}
         QString getNpd(){return npd;}
         void setNpd(QString s){this->npd=s;}
+        void exportBoatInfoLog(QString fileName);
 
 
     public slots:
@@ -145,7 +147,8 @@ class boatVLM : public boat, public inetClient
         QList<QVariantMap> boatInfoLog;
         int lastLogIndex,logIndexLimit;
         void rotatesBoatInfoLog(QVariantMap lastBoatInfo);
-
+        void saveBoatInfolog(void);
+        void loadBoatInfolog(void);
 
         QStringList pilototo;
         bool hasPilototo;

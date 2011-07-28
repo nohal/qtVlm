@@ -1255,7 +1255,8 @@ void myCentralWidget::slot_replay()
 void myCentralWidget::slot_takeScreenshot()
 {
     // Create the image and render it...
-    QImage * image = new QImage(800,600,QImage::Format_ARGB32_Premultiplied);
+    int w=proj->getW(),h=proj->getH();
+    QImage * image = new QImage(w,h,QImage::Format_ARGB32_Premultiplied);
     QPainter * p = new QPainter(image);
     p->setRenderHint(QPainter::Antialiasing);
     scene->render(p);
@@ -1266,81 +1267,23 @@ void myCentralWidget::slot_takeScreenshot()
     if(fileName.isEmpty() || fileName.isNull()) return;
     QFile::remove(fileName);
     QFile screenshotFile(fileName);
+    QFileInfo info(screenshotFile);
+    if(QString::compare(info.suffix(),"png")!=0) {
+        QMessageBox::warning(0,QObject::tr("Sauvegarde ecran"),
+             QString(QObject::tr("Un nom de fichier valide portant l'extension .png est requis")).arg(fileName));
+        return;
+    }
     if(!screenshotFile.open(QIODevice::WriteOnly))
     {
         QMessageBox::warning(0,QObject::tr("Sauvegarde ecran"),
              QString(QObject::tr("Impossible de creer le fichier %1")).arg(fileName));
         return;
     }
-    QFileInfo info(screenshotFile);
     Settings::setSetting("screenShotFolder",info.absoluteDir().path());
     // Save it..
     image->save(fileName, "PNG", -1);
-    exportBoatInfoLog(fileName);
-}
-void myCentralWidget::exportBoatInfoLog(QString fileName)
-{
-    if (main->getSelectedBoat()->getType()!=BOAT_VLM) return;
-    QFileInfo info(fileName);
-    QString textFileName = fileName.remove(info.suffix());
-    QString summaryFileName = textFileName;
-    textFileName.append("txt");
-    summaryFileName.append("Table.txt");
-    QFile textFile(textFileName),summaryFile(summaryFileName);
-    QTextStream stream(&textFile),tableStream(&summaryFile);
-    QStringList tableKeys;
-    tableKeys<<"NOW"<<"LUP"<<"IDU"<<"LAT"<<"LON"<<"PIM"<<"PIP"<<"HDG"<<"TWA"<<"WPLAT"<<"WPLON"<<"TWS"<<"TWD"<<"PIL1";
-    tableStream<<"Time\t"<<"LastUp\t"<<"boatId\t"<<"Lat\t"<<"Lon\t"<<"PIM\t"<<"PIP\t"<<"Cap\t"<<"Angle\t"<<"WPLat\t"<<"WPLon\t"<<"WindSpeed\t"<<"WindDir\t"<<"PIL1";
-    tableStream<<"\n";
-    if(!textFile.open(QIODevice::WriteOnly | QIODevice::Text))
-    {
-        QMessageBox::warning(0,QObject::tr("Exports VLM Syncs"),
-             QString(QObject::tr("Impossible de creer le fichier %1")).arg(fileName));
-        return;
-    }
-    if(!summaryFile.open(QIODevice::WriteOnly | QIODevice::Text))
-    {
-        QMessageBox::warning(0,QObject::tr("Exports VLM Syncs Summary"),
-             QString(QObject::tr("Impossible de creer le fichier %1")).arg(fileName));
-        return;
-    }
-    int logIndex,keysIndex,tableIndex;
-    QList<QVariantMap>  boatInfoLog = ((boatVLM*)main->getSelectedBoat())->getBoatInfoLog();
-    QVariantMap boatInfoRecord;
-    QList<QString> recordKeys;
-    QStringList textOutput;
-    QString key,gribFileName=QString::fromStdString(this->getGrib()->getFileName());
-    if (!boatInfoLog.isEmpty())
-    for( logIndex=0;logIndex<boatInfoLog.count();logIndex++) {
-        boatInfoRecord=boatInfoLog[logIndex];
-        recordKeys=boatInfoRecord.keys();
-        if (!boatInfoLog[logIndex].isEmpty()) {
-            for(keysIndex=0;keysIndex<recordKeys.count();keysIndex++) {
-                textOutput=QStringList();
-                key=recordKeys[keysIndex];
-                textOutput.append(key);
-                textOutput.append(boatInfoRecord[key].toString());
-                stream<<textOutput.join("\t");
-                stream<<"\n";
-            }
-            stream<<"\n\n";
-            QDateTime time;
-            QString timeString;
-            for (tableIndex=0 ; tableIndex<2; tableIndex++) {
-                time.setTime_t(boatInfoRecord[tableKeys[tableIndex]].toUInt());
-                timeString=time.toUTC().toString("yyyy/MM/dd hh:mm:ss");
-                tableStream <<  timeString <<"\t";
-            }
-            for (tableIndex=2 ; tableIndex<tableKeys.size(); tableIndex++) {
-                tableStream <<  boatInfoRecord[tableKeys[tableIndex]].toString() <<"\t";
-            }
-            tableStream<<"\n";
-        }
-    }
-    stream<<"grib\t"<<gribFileName<<"\n";
-    tableStream<<"\n"<<"grib\t"<<gribFileName<<"\n";
-    textFile.close();
-    summaryFile.close();
+    if (main->getSelectedBoat()->getType()==BOAT_VLM)
+        ((boatVLM*)main->getSelectedBoat())->exportBoatInfoLog(fileName);
 }
 
 void myCentralWidget::setHorn()
