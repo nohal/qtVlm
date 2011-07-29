@@ -352,7 +352,7 @@
       <item row="0" column="0" colspan="2">
        <widget class="QRadioButton" name="editVac">
         <property name="text">
-         <string>Depuis la derniere Vac</string>
+         <string>A partir de la prochaine vacation</string>
         </property>
         <property name="checked">
          <bool>true</bool>

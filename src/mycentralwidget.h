@@ -173,6 +173,7 @@ class myCentralWidget : public QWidget
         void drawNSZ(int i);
         void removeOpponent(QString oppId, QString raceId);
         Terrain * getTerre(){return terre;}
+        QDateTime getNextVac();
 
     public slots :
         /* Zoom & position */

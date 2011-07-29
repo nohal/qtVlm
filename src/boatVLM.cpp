@@ -724,6 +724,24 @@ void boatVLM::updateHint(void)
             double bs=this->getPolarData()->getSpeed(windSpeed,twa);
             desc=desc+"<br>"+tr("BS polaire:")+QString().sprintf("%.2f",bs);
         }
+        parent->getGrib()->getInterpolatedValue_byDates(this->lon,this->lat,
+                            this->getPrevVac()+this->getVacLen(),&windSpeed,&windAngle,INTERPOLATION_DEFAULT);
+        windAngle=radToDeg(windAngle);
+        desc=desc+"<br>"+tr("Donnees GRIB a la prochaine vac:")+"<br>"+
+             QString().sprintf("TWS: %.2f TWD: %.2f",windSpeed,windAngle);
+        if(this->getPolarData())
+        {
+            double twa=this->heading-windAngle;
+            if(qAbs(twa)>180)
+            {
+                if(twa<0)
+                    twa=360+twa;
+                else
+                    twa=twa-360;
+            }
+            double bs=this->getPolarData()->getSpeed(windSpeed,twa);
+            desc=desc+"<br>"+tr("BS polaire:")+QString().sprintf("%.2f",bs);
+        }
 
     }
     str=str.replace(" ","&nbsp;");

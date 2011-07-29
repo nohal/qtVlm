@@ -182,7 +182,7 @@ void ROUTE::slot_recalculate(boat * boat)
                 if(myBoat->getType()!=BOAT_VLM)
                     eta=((boatReal*)myBoat)->getLastUpdateTime();
                 else
-                    eta=((boatVLM*)myBoat)->getPrevVac();
+                    eta=((boatVLM*)myBoat)->getPrevVac()+((boatVLM*)myBoat)->getVacLen();
                 now = (QDateTime::currentDateTime()).toUTC().toTime_t();
 #warning find a better way to identify a boat that has not yet started
 /*cas du boat inscrit depuis longtemps mais pas encore parti*/

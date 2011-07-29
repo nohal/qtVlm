@@ -532,6 +532,13 @@ boat * myCentralWidget::getSelectedBoat(void)
 {
     return main->getSelectedBoat();
 }
+QDateTime myCentralWidget::getNextVac(void)
+{
+    if(main->getSelectedBoat() && main->getSelectedBoat()->getType()==BOAT_VLM)
+        return QDateTime().fromTime_t(((boatVLM *)main->getSelectedBoat())->getPrevVac()+((boatVLM *)main->getSelectedBoat())->getVacLen()).toUTC();
+    else
+        return QDateTime::currentDateTime().toUTC();
+}
 
 /*******************/
 /* Zoom and move   */

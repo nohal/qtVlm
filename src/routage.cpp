@@ -485,7 +485,7 @@ ROUTAGE::ROUTAGE(QString name, Projection *proj, Grib *grib, QGraphicsScene * my
         ncolor=ncolor-colorsList.count();
     this->color=colorsList.at(ncolor);
     this->width=3;
-    this->startTime= QDateTime::currentDateTime().toUTC();
+    this->startTime= parent->getNextVac();
     this->whatIfDate=startTime;
     this->whatIfUsed=false;
     this->whatIfTime=0;
