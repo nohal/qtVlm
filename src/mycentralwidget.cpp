@@ -532,12 +532,17 @@ boat * myCentralWidget::getSelectedBoat(void)
 {
     return main->getSelectedBoat();
 }
-QDateTime myCentralWidget::getNextVac(void)
+time_t myCentralWidget::getNextVac(void)
 {
     if(main->getSelectedBoat() && main->getSelectedBoat()->getType()==BOAT_VLM)
-        return QDateTime().fromTime_t(((boatVLM *)main->getSelectedBoat())->getPrevVac()+((boatVLM *)main->getSelectedBoat())->getVacLen()).toUTC();
+    {
+        if(main->getSelectedBoat()->getLoch()<0.01)
+            return QDateTime::currentDateTime().toTime_t();
+        else
+            return ((boatVLM *)main->getSelectedBoat())->getPrevVac()+((boatVLM *)main->getSelectedBoat())->getVacLen();
+    }
     else
-        return QDateTime::currentDateTime().toUTC();
+        return QDateTime::currentDateTime().toTime_t();
 }
 
 /*******************/
