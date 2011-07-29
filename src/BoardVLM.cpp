@@ -655,7 +655,7 @@ void boardVLM::synch_GPS()
 
         /* Sending TWD TWA and TWS , sentence $GPMWV,TWA,T,TWS,N*/
         fTWA = currentBoat()->getTWA();
-        calcAngleSign((currentBoat()->getHeading()-currentBoat()->getWindDir()),fTWA);
+        calcAngleSign((currentBoat()->getHeading()-currentBoat()->getWindDir()),fTWA)
         TWD.sprintf("%05.1f",currentBoat()->getWindDir());
         TWA.sprintf("%05.1f",(-1 * fTWA));
         TWS.sprintf("%05.1f",currentBoat()->getWindSpeed());

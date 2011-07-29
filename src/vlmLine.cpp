@@ -200,6 +200,7 @@ void vlmLine::calculatePoly(void)
                     poly->putPoints(n,1,Xbis,Ybis);
                     tempBound=tempBound.united(poly->boundingRect());
                     proj->map2screenFloat(previousWorldPoint.lon+wrongEW*360, previousWorldPoint.lat, &Xbis, &Ybis);
+                    collision.append(coasted);
                     poly=new QPolygon();
                     poly->resize(0);
                     polyList.append(poly);
