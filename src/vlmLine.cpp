@@ -229,6 +229,7 @@ void vlmLine::calculatePoly(void)
                 coasted=false;
                 continue;
             }
+
             if(worldPoint.isPOI && cc!=0 && cc!=line.count()-1)
             {
                 collision.append(coasted);
@@ -242,8 +243,8 @@ void vlmLine::calculatePoly(void)
             n++;
         }
         tempBound=tempBound.united(poly->boundingRect());
-        collision.append(coasted);
     }
+    collision.append(coasted);
     if(!polyList.isEmpty())
     {
         poly=polyList.first();
