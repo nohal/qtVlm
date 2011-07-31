@@ -2030,6 +2030,57 @@ void myCentralWidget::slot_editRoute(ROUTE * route,bool createMode)
                             p.setValue(n);
                             QApplication::processEvents();
                         }
+
+                        pois=route->getPoiList();
+                        p.setValue(pois.count()-2);
+                        p.setMaximum(pois.count()-2);
+
+                        for (int n=firstPOI;n<pois.count()-4;++n)
+                        {
+                            POI *poi1=pois.at(n);
+                            if(poi1->getNotSimplificable()) continue;
+                            POI *poi2=pois.at(n+1);
+                            if(poi2->getNotSimplificable()) continue;
+                            POI *poi3=pois.at(n+1);
+                            if(poi3->getNotSimplificable()) continue;
+                            poi1->setRoute(NULL);
+                            poi2->setRoute(NULL);
+                            poi3->setRoute(NULL);
+                            QApplication::processEvents();
+                            if(!route->getHas_eta())
+                            {
+                                poi1->setRoute(route);
+                                poi2->setRoute(route);
+                                poi3->setRoute(route);
+                            }
+                            else if(route->getEta()<=ref_eta+maxLoss*60)
+                            {
+                                bestEta=route->getEta();
+                                notFinished=true;
+                                slot_delPOI_list(poi1);
+                                delete poi1;
+                                slot_delPOI_list(poi2);
+                                delete poi2;
+                                slot_delPOI_list(poi3);
+                                delete poi3;
+                                nbDel=nbDel+3;
+                                n=firstPOI-1;
+                                pois=route->getPoiList();
+                                p.setValue(pois.count()-2);
+                                p.setMaximum(pois.count()-2);
+                                continue;
+                            }
+                            else
+                            {
+                                poi1->setRoute(route);
+                                poi2->setRoute(route);
+                                poi3->setRoute(route);
+                            }
+                            p.setValue(n);
+                            QApplication::processEvents();
+                        }
+
+
                     }
 
                     p.setLabelText(tr("Phase 3..."));

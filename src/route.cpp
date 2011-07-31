@@ -201,6 +201,7 @@ void ROUTE::slot_recalculate(boat * boat)
         has_eta=true;
         Orthodromie orth(0,0,0,0);
         qSort(my_poiList.begin(),my_poiList.end(),POI::myLessThan);
+        //qWarning()<<"??"<<my_poiList.first()->getName();
         QListIterator<POI*> i (my_poiList);
         QString tip;
         double lon,lat;
@@ -280,6 +281,7 @@ void ROUTE::slot_recalculate(boat * boat)
             wind_angle=0;
             wind_speed=0;
             orth.setPoints(lon, lat, poi->getLongitude(),poi->getLatitude());
+            //qWarning()<<poi->getName()<<this->my_poiList.at(0)->getName();
             remaining_distance=orth.getDistance();
             if(has_eta)
             {
@@ -289,7 +291,7 @@ void ROUTE::slot_recalculate(boat * boat)
                 {                    
                     if(((grib->getInterpolatedValue_byDates(lon, lat,
                                               eta,&wind_speed,&wind_angle,INTERPOLATION_DEFAULT)
-                        && eta<=maxDate) || imported))
+                            && eta<=maxDate) || imported))
                     {
                         //qWarning() << lon << ";" << lat << ";" << eta << ";" << wind_speed << ";" << wind_angle;
                         previous_remaining_distance=remaining_distance;
@@ -377,7 +379,11 @@ void ROUTE::slot_recalculate(boat * boat)
                             }
                             lastTwa=angle;
                             distanceParcourue=newSpeed*myBoat->getVacLen()*multVac/3600.00;
-                            if(distanceParcourue>remaining_distance) break;
+                            if(qRound(distanceParcourue*100)>=qRound(remaining_distance*100))
+                            {
+                                eta=eta-myBoat->getVacLen();
+                                break;
+                            }
                             Util::getCoordFromDistanceAngle(lat, lon, distanceParcourue, cap,&res_lat,&res_lon);
                         }
                         orth.setStartPoint(res_lon, res_lat);
@@ -410,8 +416,8 @@ void ROUTE::slot_recalculate(boat * boat)
                         orth.setPoints(res_lon,res_lat,my_poiList.last()->getLongitude(),my_poiList.last()->getLatitude());
                             remain=orth.getDistance();
                     }
-                    if(remaining_distance<distanceParcourue ||
-                       previous_remaining_distance<distanceParcourue)
+                    if(qRound(remaining_distance*100)<qRound(distanceParcourue*100) ||
+                       qRound(previous_remaining_distance*100)<qRound(distanceParcourue*100))
                         break;
                 } while (has_eta && !imported);
             }
@@ -424,6 +430,8 @@ void ROUTE::slot_recalculate(boat * boat)
                 tip=tip+tr("<br>ETA: Non joignable avec ce fichier GRIB");
                 poi->setRouteTimeStamp(-1);
             }
+            else if(eta-start<0)
+                tip=tip+tr("<br>ETA: deja atteint");
             else
             {
                 tip=tip+"<br>"+tr("Note: la date indiquee correspond a la desactivation du WP");
