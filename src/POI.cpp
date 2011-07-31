@@ -545,19 +545,19 @@ void POI::setTip(QString tip)
     switch(this->colorPilototo)
     {
     case 1:
-            pilot="<br>"+tr("1ere instruction pilototo");
+            pilot="<br>"+tr("1ere cible du pilototo");
             break;
     case 2:
-            pilot="<br>"+tr("2eme instruction pilototo");
+            pilot="<br>"+tr("2eme cible du pilototo");
             break;
     case 3:
-            pilot="<br>"+tr("3eme instruction pilototo");
+            pilot="<br>"+tr("3eme cible du pilototo");
             break;
     case 4:
-            pilot="<br>"+tr("4eme instruction pilototo");
+            pilot="<br>"+tr("4eme cible du pilototo");
             break;
     case 5:
-            pilot="<br>"+tr("5eme instruction pilototo");
+            pilot="<br>"+tr("5eme cible du pilototo");
             break;
     }
     if(w_boat)
@@ -1105,7 +1105,7 @@ void POI::paint(QPainter * pnt, const QStyleOptionGraphicsItem * , QWidget * )
                 myColor=QColor(Qt::red);
                 break;
          }
-        qWarning()<<"colorpilototo="<<this->colorPilototo;
+        //qWarning()<<"colorpilototo="<<this->colorPilototo;
         QColor pColor;
         switch (this->colorPilototo)
         {

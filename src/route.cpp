@@ -377,6 +377,7 @@ void ROUTE::slot_recalculate(boat * boat)
                             }
                             lastTwa=angle;
                             distanceParcourue=newSpeed*myBoat->getVacLen()*multVac/3600.00;
+                            if(distanceParcourue>remaining_distance) break;
                             Util::getCoordFromDistanceAngle(lat, lon, distanceParcourue, cap,&res_lat,&res_lon);
                         }
                         orth.setStartPoint(res_lon, res_lat);
@@ -426,27 +427,30 @@ void ROUTE::slot_recalculate(boat * boat)
             else
             {
                 tip=tip+"<br>"+tr("Note: la date indiquee correspond a la desactivation du WP");
+                time_t Start=start;
+                if(startTimeOption==1)
+                    Start=QDateTime::currentDateTimeUtc().toTime_t();
                 //qWarning()<<"eta arrivee "<<eta;
-                double days=(eta-start)/86400.0000;
+                double days=(eta-Start)/86400.0000;
                 if(qRound(days)>days)
                     days=qRound(days)-1;
                 else
                     days=qRound(days);
-                double hours=(eta-start-days*86400)/3600.0000;
+                double hours=(eta-Start-days*86400)/3600.0000;
                 if(qRound(hours)>hours)
                     hours=qRound(hours)-1;
                 else
                     hours=qRound(hours);
-                double mins=qRound((eta-start-days*86400-hours*3600)/60.0000);
+                double mins=qRound((eta-Start-days*86400-hours*3600)/60.0000);
                 QString tt;
                 QDateTime tm;
                 tm.setTimeSpec(Qt::UTC);
-                tm.setTime_t(start);
+                tm.setTime_t(Start);
                 //qWarning()<<"tm="<<tm.toString();
                 switch(startTimeOption)
                 {
                     case 1:
-                            tt="<br>"+tr("ETA depuis la derniere vacation")+" ("+tm.toString("dd MMM-hh:mm")+"):<br>";
+                            tt="<br>"+tr("ETA a partir de maintenant")+" ("+tm.toString("dd MMM-hh:mm")+"):<br>";
                             break;
                     case 2:
                             tt="<br>"+tr("ETA depuis la date Grib")+" ("+tm.toString("dd MMM-hh:mm")+"):<br>";
