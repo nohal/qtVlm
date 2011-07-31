@@ -218,12 +218,12 @@ void xml_POIData::slot_writeData(QList<ROUTE*> & route_list,QList<POI*> & poi_li
 
           tag = doc.createElement(LAT_NAME);
           group.appendChild(tag);
-          t = doc.createTextNode(QString().setNum(poi->getLatitude()));
+          t = doc.createTextNode(QString().sprintf("%.10f",poi->getLatitude()));
           tag.appendChild(t);
 
           tag = doc.createElement(LON_NAME);
           group.appendChild(tag);
-          t = doc.createTextNode(QString().setNum(poi->getLongitude()));
+          t = doc.createTextNode(QString().sprintf("%.10f",poi->getLongitude()));
           tag.appendChild(t);
 
           tag = doc.createElement(WPH_NAME);

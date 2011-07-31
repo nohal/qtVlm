@@ -305,7 +305,7 @@ void vlmLine::paint(QPainter * pnt, const QStyleOptionGraphicsItem * , QWidget *
     {
         poly=nPoly.next();
         ++nn;
-        if(collision.at(nn))
+        if(this->coastDetection && collision.at(nn))
             pnt->setPen(coastedPen);
         else
             pnt->setPen(linePen);

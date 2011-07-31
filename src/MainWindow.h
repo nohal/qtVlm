@@ -70,6 +70,7 @@ class MainWindow: public QMainWindow
 
         board * getBoard(void) { return myBoard; }
         bool getNoSave(){return noSave;}
+        void setPilototoFromRoute(ROUTE * route);
 
     public slots:
         void slotFile_Open();
@@ -162,6 +163,7 @@ class MainWindow: public QMainWindow
         void selectedBoatChanged();
         void boatChanged(boat *);
         void moveBoat(double lat, double lon);
+        void setInstructions(boat * boat,QList<POI *>);
 
 
     protected:

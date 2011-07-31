@@ -74,6 +74,7 @@ POI::POI(QString name, int type, double lat, double lon,
     this->lineBetweenPois=NULL;
     this->lineColor=Qt::blue;
     this->lineWidth=2;
+    this->colorPilototo=0;
 
     useRouteTstamp=false;
     routeTimeStamp=-1;
@@ -540,6 +541,25 @@ void POI::setTip(QString tip)
         w_boat=myBoat;
     else
         w_boat=route->getBoat();
+    QString pilot;
+    switch(this->colorPilototo)
+    {
+    case 1:
+            pilot="<br>"+tr("1ere instruction pilototo");
+            break;
+    case 2:
+            pilot="<br>"+tr("2eme instruction pilototo");
+            break;
+    case 3:
+            pilot="<br>"+tr("3eme instruction pilototo");
+            break;
+    case 4:
+            pilot="<br>"+tr("4eme instruction pilototo");
+            break;
+    case 5:
+            pilot="<br>"+tr("5eme instruction pilototo");
+            break;
+    }
     if(w_boat)
     {
         Orthodromie orth2boat(w_boat->getLon(), w_boat->getLat(), lon, lat);
@@ -547,10 +567,10 @@ void POI::setTip(QString tip)
         QString tt=tr("Distance Ortho a partir de ")+w_boat->getBoatPseudo()+": "+
                    Util::formatDistance(distance);
         tt=tt.replace(" ","&nbsp;");
-        setToolTip(getTypeStr() + " : " + my_str + "<br>"+tt+tip);
+        setToolTip(getTypeStr() + " : " + my_str +pilot+ "<br>"+tt+tip);
     }
     else
-        setToolTip(getTypeStr() + " : "+my_str);
+        setToolTip(getTypeStr() + " : "+my_str+pilot);
 }
 void POI::update_myStr(void)
 {
@@ -775,12 +795,33 @@ void POI::slot_paramChanged()
 
 void POI::slot_WPChanged(double tlat,double tlon)
 {
+    colorPilototo=0;
     WPlat=tlat;
     WPlon=tlon;
     chkIsWP();
     VLMBoardIsBusy=false;
     if (this->isWp)
         this->setWph(parent->getSelectedBoat()->getWPHd());
+    if(parent->getSelectedBoat()->getType()!=BOAT_VLM) return;
+    boatVLM * b=(boatVLM *)parent->getSelectedBoat();
+    if(!b->getHasPilototo()) return;
+    QStringList *is=b->getPilototo();
+    for(int n=0;n<is->count();++n)
+    {
+        QStringList isi=is->at(n).split(",");
+        if(isi.count()<6) continue;
+        if(isi.at(5)!="pending") continue;
+        if(isi.at(2).toInt()<3) continue;
+        double wlat=isi.at(3).toDouble();
+        double wlon=isi.at(4).split("@").at(0).toDouble();
+        //qWarning()<<lon<<lat<<wlon<<wlat;
+        if(qRound(lon*100000)==qRound(wlon*100000) && qRound(lat*100000)==qRound(wlat*100000))
+        {
+            colorPilototo=n+1;
+            break;
+        }
+    }
+    update();
 }
 QString POI::getRouteName()
 {
@@ -1048,6 +1089,7 @@ void POI::paint(QPainter * pnt, const QStyleOptionGraphicsItem * , QWidget * )
     if(isWp)
         myColor=mwpColor;
     else
+    {
         switch(type)
         {
             case 0:
@@ -1063,18 +1105,41 @@ void POI::paint(QPainter * pnt, const QStyleOptionGraphicsItem * , QWidget * )
                 myColor=QColor(Qt::red);
                 break;
          }
-
+        qWarning()<<"colorpilototo="<<this->colorPilototo;
+        QColor pColor;
+        switch (this->colorPilototo)
+        {
+        case 0:
+            pColor=QColor(60,60,60);
+            break;
+        case 1:
+            pColor=QColor(0,250,0);
+            break;
+        case 2:
+            pColor=QColor(0,220,0);
+            break;
+        case 3:
+            pColor=QColor(0,190,0);
+            break;
+        case 4:
+            pColor=QColor(0,160,0);
+            break;
+        case 5:
+            pColor=QColor(0,130,0);
+            break;
+        }
+        myColor=pColor;
+    }
     QPen pen(myColor);
-        pen.setWidth(4);
-        pnt->setPen(pen);
-        if(!myLabelHidden)
-            pnt->fillRect(0,dy-3,7,7, QBrush(myColor));
-        int g = 60;
-        pen = QPen(QColor(g,g,g));
-        pen.setWidth(1);
-        pnt->setPen(pen);
-        if(!labelHidden && !myLabelHidden)
-            pnt->drawRect(9,0,width-10,height-1);
+    pen.setWidth(4);
+    pnt->setPen(pen);
+    if(!myLabelHidden)
+        pnt->fillRect(0,dy-3,7,7, QBrush(myColor));
+    pen = QPen(QColor(60,60,60));
+    pen.setWidth(1);
+    pnt->setPen(pen);
+    if(!labelHidden && !myLabelHidden)
+        pnt->drawRect(9,0,width-10,height-1);
 }
 
 QPainterPath POI::shape() const

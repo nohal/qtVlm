@@ -111,6 +111,8 @@ class ROUTE : public QObject
         void setSpeedLossOnTack(double d){this->speedLossOnTack=d;}
         bool getDetectCoasts(){return detectCoasts;}
         void setDetectCoasts(bool b){this->detectCoasts=b;}
+        void setPilototo(bool b){this->pilototo=b;}
+        bool getPilototo(){return this->pilototo;}
     public slots:
         void slot_recalculate(boat * boat=NULL);
         void slot_edit();
@@ -179,5 +181,6 @@ class ROUTE : public QObject
         bool initialized;
         bool temp;
         double speedLossOnTack;
+        bool pilototo;
 };
 #endif // ROUTE_H

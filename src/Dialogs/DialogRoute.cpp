@@ -121,6 +121,7 @@ DialogRoute::DialogRoute(ROUTE *route,myCentralWidget *parent)
         this->editVac->setText(tr("Date de la derniere MAJ de la position"));
         editBoat->addItem(parent->getPlayer()->getName());
         editBoat->setEnabled(false);
+        this->pilototo->hide();
     }
 }
 DialogRoute::~DialogRoute()
@@ -149,6 +150,7 @@ void DialogRoute::done(int result)
         route->setWidth(inputTraceColor->getLineWidth());
         route->setColor(inputTraceColor->getLineColor());
         route->setUseVbVmgVlm(this->useVbvmgVlm->isChecked());
+        route->setPilototo(this->pilototo->isChecked());
         Settings::setSetting("useVbvmgVlm",route->getUseVbvmgVlm()?"1":"0"  );
         route->setMultVac(vacStep->value());
         if(editVac->isChecked())

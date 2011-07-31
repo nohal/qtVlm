@@ -50,6 +50,7 @@ DialogPilototo::DialogPilototo(MainWindow *main,myCentralWidget * parent,inetCon
             main,SLOT(slotSelectPOI(DialogPilototoInstruction *)));
     connect(main,SIGNAL(editInstructions()),
             this,SLOT(editInstructions()));
+    connect(main,SIGNAL(setInstructions(boat *,QList<POI*>)),this,SLOT(setInstructions(boat *,QList<POI*>)));
     connect(main,SIGNAL(editInstructionsPOI(DialogPilototoInstruction * ,POI * )),
             this,SLOT(editInstructionsPOI(DialogPilototoInstruction * ,POI * )));
     connect(main,SIGNAL(boatHasUpdated(boat*)),this,SLOT(slot_boatUpdated(boat*)));
@@ -71,6 +72,7 @@ DialogPilototo::DialogPilototo(MainWindow *main,myCentralWidget * parent,inetCon
 
     /* inet init */
     currentList=NULL;
+    this->updateBoat=false;
 }
 
 void DialogPilototo::updateDrawList(void)
@@ -448,6 +450,11 @@ void DialogPilototo::requestFinished (QByteArray res)
             }
 	    break;
     }
+    if(this->myBoat && this->updateBoat && this->currentList->isEmpty())
+    {
+        this->updateBoat=false;
+        poiToWp->slot_setWP();
+    }
 }
 
 QString DialogPilototo::getAuthLogin(bool * ok=NULL)
@@ -511,6 +518,58 @@ void DialogPilototo::delInstruction(DialogPilototoInstruction * instruction)
     updateNbInstruction();
 
     instruction->deleteLater();
+}
+void DialogPilototo::setInstructions(boat * pvBoat, QList<POI *> pois)
+{
+    boatVLM * my_boat=(boatVLM*)pvBoat;
+    this->myBoat=my_boat;
+    QList<struct instruction*> * instructions = new QList<struct instruction*>;
+    QJson::Serializer serializer;
+    struct instruction * instr_ptr;
+    QStringList * plist = my_boat->getPilototo();
+    for(int n=0;n<plist->count();n++)
+    {
+        QStringList i=plist->at(n).split(",");
+        if(i.at(0)=="none") continue;
+        QVariantMap cur_instruction;
+        cur_instruction.insert("taskid",i.at(0).toInt());
+        cur_instruction.insert("idu",myBoat->getBoatId().toInt());
+        instr_ptr=new struct instruction();
+        instr_ptr->script=PILOT_DEL;
+        instr_ptr->param=serializer.serialize(cur_instruction);
+        instructions->append(instr_ptr);
+    }
+    if(pois.count()<1) return;
+    for(int n=1;n<pois.count();++n)
+    {
+        POI * poi=pois.at(n);
+        if(poi->getTimeStamp()==-1) continue;
+        QVariantMap cur_instruction;
+        QVariantMap pip;
+        instr_ptr=new struct instruction();
+        instr_ptr->script=PILOT_ADD;
+        int mode=5;
+        if(poi->getNavMode()==1)
+            mode=4;
+        else if(poi->getNavMode()==2)
+            mode=3;
+        cur_instruction.insert("pim",mode);
+        cur_instruction.insert("tasktime",pois.at(n-1)->getTimeStamp()+20);
+        pip.insert("targetlat",QString().sprintf("%.10f",(double)poi->getLatitude()));
+        pip.insert("targetlong",QString().sprintf("%.10f",(double)poi->getLongitude()));
+        if(poi->getWph()!=-1)
+            pip.insert("targetandhdg",QString().sprintf("%.1f",(double)poi->getWph()));
+        cur_instruction.insert("pip",pip);
+        cur_instruction.insert("idu",myBoat->getBoatId().toInt());
+        instr_ptr->param=serializer.serialize(cur_instruction);
+        instructions->append(instr_ptr);
+    }
+    poiToWp=pois.at(0);
+    currentList=instructions;
+    for(int i=0;i<currentList->count();i++)
+        qWarning() << i << ": " << currentList->at(i)->script << " - " << currentList->at(i)->param;
+    this->updateBoat=true;
+    sendPilototo();
 }
 
 void DialogPilototo::updateNbInstruction(void)

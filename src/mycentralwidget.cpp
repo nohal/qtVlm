@@ -2087,6 +2087,16 @@ void myCentralWidget::slot_editRoute(ROUTE * route,bool createMode)
         }
     }
     delete route_editor;
+    if(route->getPilototo())
+    {
+        if(!route->getStartFromBoat() || route->getStartTimeOption()!=1 || !route->getUseVbvmgVlm())
+        {
+            QMessageBox::critical(0,tr("Envoyer la route au pilototo"),tr("Pour pouvoir envoyer la route au pilototo if faut que:<br>-La route demarre du bateau et de la prochaine vac<br>et que le mode VbVmg-Vlm soit active"));
+            return;
+        }
+        main->setPilototoFromRoute(route);
+
+    }
 }
 
 void myCentralWidget::slot_editRoutage(ROUTAGE * routage,bool createMode)

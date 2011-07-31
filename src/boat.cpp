@@ -344,6 +344,7 @@ void boat::drawEstime(void)
 
 void boat::drawEstime(float myHeading, float mySpeed)
 {
+
     estimeLine->deleteAll();
     WPLine->hideSegment();
     /*should we draw something?*/

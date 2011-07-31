@@ -147,6 +147,7 @@ class DialogPilototo : public QDialog, public Ui::pilototo_ui, public inetClient
 
     public slots:
         void delInstruction(DialogPilototoInstruction *);
+        void setInstructions(boat *pvBoat,QList<POI*> pois);
 	void editInstructions(void);
         void editInstructionsPOI(DialogPilototoInstruction * instruction,POI * poi);
 	void instructionUpdated(void);
@@ -181,6 +182,8 @@ class DialogPilototo : public QDialog, public Ui::pilototo_ui, public inetClient
         QList<struct instruction*> * currentList;
 
         void sendPilototo(void);
+        bool updateBoat;
+        POI * poiToWp;
 };
 
 #endif

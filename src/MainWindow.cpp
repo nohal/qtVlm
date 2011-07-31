@@ -1808,6 +1808,25 @@ void MainWindow::slotPilototo(void)
         }
     }
 }
+void MainWindow::setPilototoFromRoute(ROUTE *route)
+{
+    if(!route->getBoat() || route->getBoat()->getType()!=BOAT_VLM) return;
+    if(route->getPoiList().count()==0) return;
+    if(route->getPoiList().count()==1)
+    {
+        route->getPoiList().at(0)->slot_setWP();
+        return;
+    }
+    QList<POI *> pois;
+    for (int n=0;n<route->getPoiList().count() && n<=5;++n)
+    {
+        POI * poi=route->getPoiList().at(n);
+        if(poi->getTimeStamp()==-1)
+            break;
+        pois.append(poi);
+    }
+    emit setInstructions(route->getBoat(),pois);
+}
 
 bool MainWindow::isBoat(QString idu)
 {

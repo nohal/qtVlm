@@ -225,6 +225,7 @@ class POI : public QGraphicsWidget
         vlmLine * lineBetweenPois;
         QColor lineColor;
         float lineWidth;
+        int colorPilototo;
 };
 
 #endif

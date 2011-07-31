@@ -704,6 +704,7 @@ void boatVLM::updateHint(void)
         desc=desc+"<br>"+tr("Bateau echoue, pour encore ")+QString().setNum(secs)+" "+tr("secondes");
     }
     double windSpeed,windAngle;
+
     if(parent->getGrib() && parent->getGrib()->isOk() &&
        parent->getGrib()->getInterpolatedValue_byDates(this->lon,this->lat,
                            this->getPrevVac(),&windSpeed,&windAngle,INTERPOLATION_DEFAULT))
@@ -722,7 +723,7 @@ void boatVLM::updateHint(void)
         if(this->getPolarData())
         {
             double bs=this->getPolarData()->getSpeed(windSpeed,twa);
-            desc=desc+"<br>"+tr("BS polaire:")+QString().sprintf("%.2f",bs);
+            desc=desc+"<br>"+tr("BS polaire: ")+QString().sprintf("%.2f",bs);
         }
         double previousTWA=twa;
         double previousTWS=windSpeed;
@@ -742,7 +743,7 @@ void boatVLM::updateHint(void)
                     twa=twa-360;
             }
             double bs=this->getPolarData()->getSpeed(windSpeed,twa);
-            desc=desc+"<br>"+tr("BS polaire:")+QString().sprintf("%.2f",bs);
+            desc=desc+"<br>"+tr("BS polaire: ")+QString().sprintf("%.2f",bs);
             desc=desc+"<br>"+tr("Tendance: ");
             previousTWS=qRound(previousTWS*100);
             windSpeed=qRound(windSpeed*100);
@@ -759,22 +760,22 @@ void boatVLM::updateHint(void)
             if(!(previousTWS==windSpeed && previousTWA==twa))
             {
                 if(twa==previousTWA)
-                    desc=desc+tr(", direction stable.");
+                    desc=desc+tr(", direction stable");
                 else
                 {
                     if(qAbs(twa)<90)
                     {
                         if(previousTWA>twa)
-                            desc=desc+tr(" en refusant.");
+                            desc=desc+tr(" en refusant");
                         else
-                            desc=desc+tr(" en adonnant.");
+                            desc=desc+tr(" en adonnant");
                     }
                     else
                     {
                         if(previousTWA<twa)
-                            desc=desc+tr(" en refusant.");
+                            desc=desc+tr(" en refusant");
                         else
-                            desc=desc+tr(" en adonnant.");
+                            desc=desc+tr(" en adonnant");
                     }
                 }
             }
