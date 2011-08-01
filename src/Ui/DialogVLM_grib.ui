@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>436</width>
-    <height>147</height>
+    <width>527</width>
+    <height>217</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -18,8 +18,8 @@
     <rect>
      <x>10</x>
      <y>10</y>
-     <width>421</width>
-     <height>89</height>
+     <width>511</width>
+     <height>131</height>
     </rect>
    </property>
    <layout class="QVBoxLayout" name="verticalLayout">
@@ -51,15 +51,22 @@
       </property>
      </widget>
     </item>
+    <item>
+     <widget class="QRadioButton" name="radio5">
+      <property name="text">
+       <string>No grib file</string>
+      </property>
+     </widget>
+    </item>
    </layout>
   </widget>
   <widget class="QWidget" name="layoutWidget">
    <property name="geometry">
     <rect>
      <x>10</x>
-     <y>110</y>
-     <width>421</width>
-     <height>27</height>
+     <y>160</y>
+     <width>511</width>
+     <height>30</height>
     </rect>
    </property>
    <layout class="QHBoxLayout" name="horizontalLayout">

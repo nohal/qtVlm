@@ -150,7 +150,7 @@ void ROUTE::slot_recalculate(boat * boat)
     if(temp) return;
     if(busy)
     {
-        busy=false; /*recursion*/
+        //busy=false; /*recursion*/
         return;
     }
     if(boat!=NULL && this->myBoat!=boat) return;
@@ -165,6 +165,7 @@ void ROUTE::slot_recalculate(boat * boat)
     line->deleteAll();
     line->setHasInterpolated(false);
     line->setLinePen(pen);
+    line->setCoastDetection(false);
     line->slot_showMe();
     if(my_poiList.count()==0) return;
     busy=true;
@@ -173,7 +174,6 @@ void ROUTE::slot_recalculate(boat * boat)
     eta=0;
     has_eta=false;
     time_t now;
-    bool wrongEta=false;
     if(myBoat  && myBoat!=NULL && myBoat->getPolarData() && grib)
     {
         initialized=true;
@@ -239,13 +239,6 @@ void ROUTE::slot_recalculate(boat * boat)
         time_t previousEta=0;
         time_t lastEta=0;
         time_t gribDate=grib->getCurrentDate();
-        if(this->detectCoasts && !optimizingPOI)
-        {
-            line->setCoastDetection(true);
-            line->setMap(parent->get_gshhsReader());
-        }
-        else
-            line->setCoastDetection(false);
         while(i.hasNext())
         {
             POI * poi = i.next();
@@ -286,7 +279,7 @@ void ROUTE::slot_recalculate(boat * boat)
             remaining_distance=orth.getDistance();
             if(has_eta)
             {
-                if(!busy) this->slot_recalculate();
+                //if(!busy) this->slot_recalculate();
                 if(parent->getAboutToQuit()) return;
                 do
                 {                    
@@ -380,13 +373,10 @@ void ROUTE::slot_recalculate(boat * boat)
                             }
                             lastTwa=angle;
                             distanceParcourue=newSpeed*myBoat->getVacLen()*multVac/3600.00;
-                            if(poi==this->my_poiList.first() && qRound(distanceParcourue*100)>=qRound(remaining_distance*100))
+                            if(qRound(distanceParcourue*100)>=qRound(remaining_distance*100))
                             {
-                                wrongEta=true;
                                 break;
                             }
-                            else
-                                wrongEta=false;
                             Util::getCoordFromDistanceAngle(lat, lon, distanceParcourue, cap,&res_lat,&res_lon);
                         }
                         orth.setStartPoint(res_lon, res_lat);
@@ -429,12 +419,13 @@ void ROUTE::slot_recalculate(boat * boat)
             line->setLastPointIsPoi();
             tip=tr("<br>Route: ")+name;
             //poi->blockSignals(true);
+            time_t Eta=eta-myBoat->getVacLen();
             if(!has_eta)
             {
                 tip=tip+tr("<br>ETA: Non joignable avec ce fichier GRIB");
                 poi->setRouteTimeStamp(-1);
             }
-            else if(eta-start<0 || wrongEta)
+            else if(Eta-start<0)
                 tip=tip+tr("<br>ETA: deja atteint");
             else
             {
@@ -443,17 +434,17 @@ void ROUTE::slot_recalculate(boat * boat)
                 if(startTimeOption==1)
                     Start=QDateTime::currentDateTimeUtc().toTime_t();
                 //qWarning()<<"eta arrivee "<<eta;
-                double days=(eta-Start)/86400.0000;
+                double days=(Eta-Start)/86400.0000;
                 if(qRound(days)>days)
                     days=qRound(days)-1;
                 else
                     days=qRound(days);
-                double hours=(eta-Start-days*86400)/3600.0000;
+                double hours=(Eta-Start-days*86400)/3600.0000;
                 if(qRound(hours)>hours)
                     hours=qRound(hours)-1;
                 else
                     hours=qRound(hours);
-                double mins=qRound((eta-Start-days*86400-hours*3600)/60.0000);
+                double mins=qRound((Eta-Start-days*86400-hours*3600)/60.0000);
                 QString tt;
                 QDateTime tm;
                 tm.setTimeSpec(Qt::UTC);
@@ -473,10 +464,7 @@ void ROUTE::slot_recalculate(boat * boat)
                 }
                 tip=tip+tt+QString::number((int)days)+" "+tr("jours")+" "+QString::number((int)hours)+" "+tr("heures")+" "+
                     QString::number((int)mins)+" "+tr("minutes");
-                if(wrongEta)
-                    poi->setRouteTimeStamp(eta-myBoat->getVacLen());
-                else
-                    poi->setRouteTimeStamp(eta);
+                poi->setRouteTimeStamp(Eta);
             }
             poi->setTip(tip);
             //poi->blockSignals(false);
@@ -503,9 +491,17 @@ void ROUTE::slot_recalculate(boat * boat)
         if(startPoiName!="")
             hasStartEta=true;
     }
-    busy=false;
-    this->slot_shShow();
     setHidePois(this->hidePois);
+    if(this->detectCoasts && !optimizingPOI)
+    {
+        line->setCoastDetection(true);
+        line->setMap(parent->get_gshhsReader());
+    }
+    else
+        line->setCoastDetection(false);
+    this->slot_shShow();
+    line->slot_showMe();
+    busy=false;
 }
 void ROUTE::interpolatePos()
 {

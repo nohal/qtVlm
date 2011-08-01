@@ -1912,8 +1912,10 @@ void myCentralWidget::slot_editRoute(ROUTE * route,bool createMode)
         update_menuRoute();
         QApplication::processEvents();
         route->slot_recalculate();
-        if(route->getSimplify())
+        if(route->getSimplify() && !route->isBusy())
         {
+            bool detectCoast=route->getDetectCoasts();
+            route->setDetectCoasts(false);
             route->setSimplify(false);
             if(route->getFrozen() || !route->getHas_eta())
                 QMessageBox::critical(0,QString(QObject::tr("Simplification de route")),QString(QObject::tr("La simplification est impossible pour une route figee ou une route sans ETA")));
@@ -1934,7 +1936,8 @@ void myCentralWidget::slot_editRoute(ROUTE * route,bool createMode)
                     int nbDel=0;
                     QProgressDialog p(tr("Simplification en cours"),"",1,ref_nbPois-2);
                     p.setCancelButton(0);
-                    p.setLabelText(tr("Phase 1..."));
+                    int phase=1;
+                    p.setLabelText(tr("Phase ")+QString().setNum(phase));
                     bool notFinished=true;
                     time_t bestEta=ref_eta;
                     while(notFinished)
@@ -1965,6 +1968,8 @@ void myCentralWidget::slot_editRoute(ROUTE * route,bool createMode)
                             QApplication::processEvents();
                         }
                         //if(!notFinished) break;
+                        ++phase;
+                        p.setLabelText(tr("Phase ")+QString().setNum(phase));
                         pois=route->getPoiList();
                         p.setValue(pois.count()-2);
                         p.setMaximum(pois.count()-2);
@@ -1990,7 +1995,9 @@ void myCentralWidget::slot_editRoute(ROUTE * route,bool createMode)
                             QApplication::processEvents();
                         }
                         pois=route->getPoiList();
-                        p.setValue(pois.count()-2);
+                        ++phase;
+                        p.setLabelText(tr("Phase ")+QString().setNum(phase));
+                        p.setValue(0);
                         p.setMaximum(pois.count()-2);
 
                         for (int n=firstPOI;n<pois.count()-3;++n)
@@ -1999,12 +2006,16 @@ void myCentralWidget::slot_editRoute(ROUTE * route,bool createMode)
                             if(poi1->getNotSimplificable()) continue;
                             POI *poi2=pois.at(n+1);
                             if(poi2->getNotSimplificable()) continue;
+                            route->setTemp(true);
                             poi1->setRoute(NULL);
+                            route->setTemp(false);
                             poi2->setRoute(NULL);
                             QApplication::processEvents();
                             if(!route->getHas_eta())
                             {
+                                route->setTemp(true);
                                 poi1->setRoute(route);
+                                route->setTemp(false);
                                 poi2->setRoute(route);
                             }
                             else if(route->getEta()<=ref_eta+maxLoss*60)
@@ -2018,21 +2029,25 @@ void myCentralWidget::slot_editRoute(ROUTE * route,bool createMode)
                                 nbDel=nbDel+2;
                                 n=firstPOI-1;
                                 pois=route->getPoiList();
-                                p.setValue(pois.count()-2);
+                                p.setValue(0);
                                 p.setMaximum(pois.count()-2);
                                 continue;
                             }
                             else
                             {
+                                route->setTemp(true);
                                 poi1->setRoute(route);
+                                route->setTemp(false);
                                 poi2->setRoute(route);
                             }
                             p.setValue(n);
                             QApplication::processEvents();
                         }
 
+                        ++phase;
+                        p.setLabelText(tr("Phase ")+QString().setNum(phase));
                         pois=route->getPoiList();
-                        p.setValue(pois.count()-2);
+                        p.setValue(0);
                         p.setMaximum(pois.count()-2);
 
                         for (int n=firstPOI;n<pois.count()-4;++n)
@@ -2041,16 +2056,20 @@ void myCentralWidget::slot_editRoute(ROUTE * route,bool createMode)
                             if(poi1->getNotSimplificable()) continue;
                             POI *poi2=pois.at(n+1);
                             if(poi2->getNotSimplificable()) continue;
-                            POI *poi3=pois.at(n+1);
+                            POI *poi3=pois.at(n+2);
                             if(poi3->getNotSimplificable()) continue;
+                            route->setTemp(true);
                             poi1->setRoute(NULL);
                             poi2->setRoute(NULL);
+                            route->setTemp(false);
                             poi3->setRoute(NULL);
                             QApplication::processEvents();
                             if(!route->getHas_eta())
                             {
+                                route->setTemp(true);
                                 poi1->setRoute(route);
                                 poi2->setRoute(route);
+                                route->setTemp(false);
                                 poi3->setRoute(route);
                             }
                             else if(route->getEta()<=ref_eta+maxLoss*60)
@@ -2066,14 +2085,16 @@ void myCentralWidget::slot_editRoute(ROUTE * route,bool createMode)
                                 nbDel=nbDel+3;
                                 n=firstPOI-1;
                                 pois=route->getPoiList();
-                                p.setValue(pois.count()-2);
+                                p.setValue(0);
                                 p.setMaximum(pois.count()-2);
                                 continue;
                             }
                             else
                             {
+                                route->setTemp(true);
                                 poi1->setRoute(route);
                                 poi2->setRoute(route);
+                                route->setTemp(false);
                                 poi3->setRoute(route);
                             }
                             p.setValue(n);
@@ -2083,8 +2104,10 @@ void myCentralWidget::slot_editRoute(ROUTE * route,bool createMode)
 
                     }
 
-                    p.setLabelText(tr("Phase 3..."));
+                    ++phase;
+                    p.setLabelText(tr("Phase ")+QString().setNum(phase));
                     pois=route->getPoiList();
+                    p.setValue(0);
                     p.setMaximum(pois.count()-2);
 
                     if(maxLoss!=0)
@@ -2135,8 +2158,10 @@ void myCentralWidget::slot_editRoute(ROUTE * route,bool createMode)
                     QMessageBox::information(0,QString(QObject::tr("Resultat de la simplification")),result);
                 }
             }
+            route->setDetectCoasts(detectCoast);
         }
     }
+    route->slot_recalculate();
     delete route_editor;
     if(route->getPilototo())
     {

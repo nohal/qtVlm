@@ -629,7 +629,7 @@ void POI::chkIsWP(void)
         qWarning()<<debug;
     }
     */
-    if(qRound(lat*1000.00)==qRound(WPlat*1000.00) && qRound(lon*10000.00)==qRound(WPlon*10000.00))
+    if(qRound(lat*10000.00)==qRound(WPlat*10000.00) && qRound(lon*10000.00)==qRound(WPlon*10000.00))
     // if(compDouble(lat,WPlat) && compDouble(lon,WPlon))
     {
         if(!isWp)
@@ -775,7 +775,11 @@ void POI::slot_delPoi()
 
         if(route!=NULL)
         {
-            if(route->isBusy()) return;
+            if(route->isBusy())
+            {
+                QMessageBox::critical(0,tr("Destruction d'un marque"),tr("Le calcul de la route n'est pas fini, impossible de supprimer ce POI"));
+                return;
+            }
             setRoute(NULL);
         }
         emit delPOI_list(this);
@@ -988,7 +992,7 @@ void POI::slot_finePosit()
         }
         if(this->abortSearch) break;
         sens=-sens;
-        lon=(double)qRound((lon+step)*1000.0)/1000.0;
+        setLongitude(lon+step);
     }
     if((!has_bestEta && !has_bestRemain))
     {

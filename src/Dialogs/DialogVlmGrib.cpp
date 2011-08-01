@@ -39,6 +39,7 @@ DialogVlmGrib::DialogVlmGrib(MainWindow * ,myCentralWidget * parent,inetConnexio
     listRadio[1]=radio2;
     listRadio[2]=radio3;
     listRadio[3]=radio4;
+    listRadio[4]=radio5;
 
     waitBox = new QMessageBox(QMessageBox::Information,
                              tr("VLM Grib"),
@@ -61,7 +62,7 @@ void DialogVlmGrib::showDialog(void)
 {
     /* disable all radio button */
 
-    for(int i=0;i<4;i++)
+    for(int i=0;i<5;i++)
         listRadio[i]->setEnabled(false);
 
     filename="";
@@ -85,11 +86,19 @@ int DialogVlmGrib::parseFolderListing(QString data)
     {
         /* grib file name */
         pos = data.indexOf("gfs_NOAA",pos);
-        if(pos==-1) break;
-        gribName_str = data.mid(pos,23);
-
-        pos+=23;
-
+        if(pos==-1)
+        {
+            pos = data.indexOf("gfs_interim",pos);
+            if(pos==-1)
+                break;
+            gribName_str = data.mid(pos,18);
+            pos+=18;
+        }
+        else
+        {
+            gribName_str = data.mid(pos,23);
+            pos+=23;
+        }
         /* grib date */
         pos = data.indexOf("<td align=\"right\">",pos);
         if(pos==-1) break;

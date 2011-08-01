@@ -831,9 +831,7 @@ void DialogPilototoInstruction::updateText(bool updateAll)
                 param=QString("%1,%2")
                         .arg(Util::pos2String(TYPE_LAT,lat_scr))
                         .arg(Util::pos2String(TYPE_LON,lon_scr));
-                param_txt=QString("%1,%2")
-                          .arg(lat_scr)
-                          .arg(lon_scr);
+                param_txt=QString().sprintf("%.6f,%.6f",lat_scr,lon_scr);
             }
             else
             {
@@ -841,10 +839,7 @@ void DialogPilototoInstruction::updateText(bool updateAll)
                         .arg(Util::pos2String(TYPE_LAT,lat_scr))
                         .arg(Util::pos2String(TYPE_LON,lon_scr))
                         .arg(wph_scr);
-                param_txt=QString("%1,%2@%3")
-                          .arg(lat_scr)
-                          .arg(lon_scr)
-                          .arg(wph_scr);
+                param_txt=QString().sprintf("%.6f,%.6f@%.1f",lat_scr,lon_scr,wph_scr);
             }
 	    break;
 	case 3:
@@ -854,9 +849,7 @@ void DialogPilototoInstruction::updateText(bool updateAll)
                 param=QString("%1,%2")
                         .arg(Util::pos2String(TYPE_LAT,lat_scr))
                         .arg(Util::pos2String(TYPE_LON,lon_scr));
-                param_txt=QString("%1,%2")
-                          .arg(lat_scr)
-                          .arg(lon_scr);
+                param_txt=QString().sprintf("%.6f,%.6f",lat_scr,lon_scr);
             }
             else
             {
@@ -864,10 +857,7 @@ void DialogPilototoInstruction::updateText(bool updateAll)
                         .arg(Util::pos2String(TYPE_LAT,lat_scr))
                         .arg(Util::pos2String(TYPE_LON,lon_scr))
                         .arg(wph_scr);
-                param_txt=QString("%1,%2@%3")
-                          .arg(lat_scr)
-                          .arg(lon_scr)
-                          .arg(wph_scr);
+                param_txt=QString().sprintf("%.6f,%.6f@%.1f",lat_scr,lon_scr,wph_scr);
             }
 	    break;
         case 4:
@@ -877,9 +867,7 @@ void DialogPilototoInstruction::updateText(bool updateAll)
                 param=QString("%1,%2")
                         .arg(Util::pos2String(TYPE_LAT,lat_scr))
                         .arg(Util::pos2String(TYPE_LON,lon_scr));
-                param_txt=QString("%1,%2")
-                          .arg(lat_scr)
-                          .arg(lon_scr);
+                param_txt=QString().sprintf("%.6f,%.6f",lat_scr,lon_scr);
             }
             else
             {
@@ -887,10 +875,7 @@ void DialogPilototoInstruction::updateText(bool updateAll)
                         .arg(Util::pos2String(TYPE_LAT,lat_scr))
                         .arg(Util::pos2String(TYPE_LON,lon_scr))
                         .arg(wph_scr);
-                param_txt=QString("%1,%2@%3")
-                          .arg(lat_scr)
-                          .arg(lon_scr)
-                          .arg(wph_scr);
+                param_txt=QString().sprintf("%.6f,%.6f@%.1f",lat_scr,lon_scr,wph_scr);
             }
             break;
     }

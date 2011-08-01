@@ -550,7 +550,7 @@ void xml_POIData::slot_readData(QString fname)
               subNode = node.firstChild();
               QString name="";
               QString routeName="";
-              float lon=-1, lat=-1,wph=-1;
+              double lon=-1, lat=-1,wph=-1;
               int type = -1;
               int tstamp=-1;
               bool useTstamp=false;
@@ -570,13 +570,13 @@ void xml_POIData::slot_readData(QString fname)
                    {
                       dataNode = subNode.firstChild();
                       if(dataNode.nodeType() == QDomNode::TextNode)
-                          lat = dataNode.toText().data().toFloat();
+                          lat = dataNode.toText().data().toDouble();
                    }
                    if(subNode.toElement().tagName() == LON_NAME)
                    {
                       dataNode = subNode.firstChild();
                       if(dataNode.nodeType() == QDomNode::TextNode)
-                          lon = dataNode.toText().data().toFloat();
+                          lon = dataNode.toText().data().toDouble();
                    }
                    if(subNode.toElement().tagName() == WPH_NAME)
                    {
@@ -637,8 +637,8 @@ void xml_POIData::slot_readData(QString fname)
               }
               if(!name.isEmpty() && lat!=-1 && lon != -1)
               {
-                   qWarning() << "POI info present => create item " << name << " "
-                        << lat << "," << lon << "@" << wph ;
+                   QString warn="POI info present => create item "+name+QString().sprintf(" %.10f, %.10f @%.3f",lat,lon,wph);
+                   qWarning()<<warn;
                    if(type==-1) type=POI_TYPE_POI;
                    POI * poi = new POI(name,type,lat,lon,proj,main,parent,wph,tstamp,useTstamp,NULL);
                    poi->setRouteName(routeName);

@@ -512,6 +512,7 @@ void ReceiverThread::run()
                     if(temp.contains("GPRMC"))
                         qWarning()<<temp;
                     QByteArray data=lines.at(n).left(lines.at(n).length()-1);
+                    //data.replace("$II","$GP"); would have been good but... checksum
                     data.push_back('\r' );
                     data.push_back('\n');
                     char * record=data.data();

@@ -43,7 +43,7 @@ class DialogVlmGrib : public QDialog, public Ui::DialogVLM_grib_ui, public inetC
         void signalGribFileReceived(QString);
 
     private:
-        QRadioButton * listRadio[4];
+        QRadioButton * listRadio[5];
         QMessageBox * waitBox;
 
         QString filename;
