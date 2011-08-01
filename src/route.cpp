@@ -173,6 +173,7 @@ void ROUTE::slot_recalculate(boat * boat)
     eta=0;
     has_eta=false;
     time_t now;
+    bool wrongEta=false;
     if(myBoat  && myBoat!=NULL && myBoat->getPolarData() && grib)
     {
         initialized=true;
@@ -379,11 +380,13 @@ void ROUTE::slot_recalculate(boat * boat)
                             }
                             lastTwa=angle;
                             distanceParcourue=newSpeed*myBoat->getVacLen()*multVac/3600.00;
-                            if(qRound(distanceParcourue*100)>=qRound(remaining_distance*100))
+                            if(poi==this->my_poiList.first() && qRound(distanceParcourue*100)>=qRound(remaining_distance*100))
                             {
-                                eta=eta-myBoat->getVacLen();
+                                wrongEta=true;
                                 break;
                             }
+                            else
+                                wrongEta=false;
                             Util::getCoordFromDistanceAngle(lat, lon, distanceParcourue, cap,&res_lat,&res_lon);
                         }
                         orth.setStartPoint(res_lon, res_lat);
@@ -425,12 +428,13 @@ void ROUTE::slot_recalculate(boat * boat)
 //            qWarning()<<"newSpeed="<<newSpeed<<" wind_speed="<<wind_speed<<" angle="<<angle;
             line->setLastPointIsPoi();
             tip=tr("<br>Route: ")+name;
+            //poi->blockSignals(true);
             if(!has_eta)
             {
                 tip=tip+tr("<br>ETA: Non joignable avec ce fichier GRIB");
                 poi->setRouteTimeStamp(-1);
             }
-            else if(eta-start<0)
+            else if(eta-start<0 || wrongEta)
                 tip=tip+tr("<br>ETA: deja atteint");
             else
             {
@@ -469,9 +473,13 @@ void ROUTE::slot_recalculate(boat * boat)
                 }
                 tip=tip+tt+QString::number((int)days)+" "+tr("jours")+" "+QString::number((int)hours)+" "+tr("heures")+" "+
                     QString::number((int)mins)+" "+tr("minutes");
-                poi->setRouteTimeStamp(eta);
+                if(wrongEta)
+                    poi->setRouteTimeStamp(eta-myBoat->getVacLen());
+                else
+                    poi->setRouteTimeStamp(eta);
             }
             poi->setTip(tip);
+            //poi->blockSignals(false);
             lon=poi->getLongitude();
             lat=poi->getLatitude();
             if(optimizingPOI)

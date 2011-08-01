@@ -1823,8 +1823,10 @@ void MainWindow::setPilototoFromRoute(ROUTE *route)
         POI * poi=route->getPoiList().at(n);
         if(poi->getTimeStamp()==-1)
             break;
+        if(poi->getTimeStamp()+30<=QDateTime().currentDateTimeUtc().toTime_t()) continue;
         pois.append(poi);
     }
+    route->setPilototo(false);
     emit setInstructions(route->getBoat(),pois);
 }
 
