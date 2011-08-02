@@ -629,7 +629,8 @@ void POI::chkIsWP(void)
         qWarning()<<debug;
     }
     */
-    if(qRound(lat*10000.00)==qRound(WPlat*10000.00) && qRound(lon*10000.00)==qRound(WPlon*10000.00))
+#warning chkIsWp rounded to 4 digits, waiting for a fix by VLM
+    if(qRound(lat*1000.00)==qRound(WPlat*1000.00) && qRound(lon*1000.00)==qRound(WPlon*1000.00))
     // if(compDouble(lat,WPlat) && compDouble(lon,WPlon))
     {
         if(!isWp)

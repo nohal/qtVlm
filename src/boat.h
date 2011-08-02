@@ -48,6 +48,7 @@ class boat: public QGraphicsWidget
         virtual int getId(void) {return -1; }
         QString getplayerName(void)     {    return playerName; }
         virtual void stopRead(){return;}
+        virtual time_t getPrevVac(){return QDateTime::currentDateTimeUtc().toTime_t();}
 
         virtual void reloadPolar(bool forced=false);
 

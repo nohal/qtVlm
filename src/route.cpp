@@ -78,6 +78,7 @@ ROUTE::ROUTE(QString name, Projection *proj, Grib *grib, QGraphicsScene * myScen
     this->hidePois=false;
     this->imported=false;
     this->multVac=1;
+    this->autoRemove=false;
     this->useVbvmgVlm=Settings::getSetting("useVbvmgVlm",0).toInt()==1;
     pen.setColor(color);
     pen.setBrush(color);
@@ -169,6 +170,30 @@ void ROUTE::slot_recalculate(boat * boat)
     line->slot_showMe();
     if(my_poiList.count()==0) return;
     busy=true;
+    if(autoRemove && this->startFromBoat)
+    {
+        bool foundWP=false;
+        int n=0;
+        for (n=0;n<this->my_poiList.count();++n)
+        {
+            if(my_poiList.at(n)->getIsWp())
+            {
+                foundWP=true;
+                break;
+            }
+        }
+        if(foundWP)
+        {
+            POI * wp=my_poiList.at(n);
+            while(my_poiList.first()!=wp)
+                my_poiList.first()->setRoute(NULL);
+            if(my_poiList.count()==0)
+            {
+                busy=false;
+                return;
+            }
+        }
+    }
     bool firstPoint;
     double lastTwa=0;
     eta=0;
@@ -241,6 +266,8 @@ void ROUTE::slot_recalculate(boat * boat)
         time_t gribDate=grib->getCurrentDate();
         while(i.hasNext())
         {
+            int nbToReach=0;
+            bool badEta=false;
             POI * poi = i.next();
             if(optimizingPOI && hasStartEta)
             {
@@ -373,9 +400,13 @@ void ROUTE::slot_recalculate(boat * boat)
                             }
                             lastTwa=angle;
                             distanceParcourue=newSpeed*myBoat->getVacLen()*multVac/3600.00;
-                            if(qRound(distanceParcourue*100)>=qRound(remaining_distance*100))
+                            if(!imported /*&& nbToReach==0*/)
                             {
-                                break;
+                                if(qRound(distanceParcourue*100)>=qRound(remaining_distance*100))
+                                {
+                                    badEta=true;
+                                    break;
+                                }
                             }
                             Util::getCoordFromDistanceAngle(lat, lon, distanceParcourue, cap,&res_lat,&res_lon);
                         }
@@ -388,6 +419,7 @@ void ROUTE::slot_recalculate(boat * boat)
                         else
                             eta= eta + myBoat->getVacLen()*multVac;
                         //qWarning() << "" << eta << ";" << wind_angle << ";" << wind_speed << ";" << newSpeed << ";" << distanceParcourue << ";" << remaining_distance;
+                        ++nbToReach;
                         if (!optimizing)
                         {
                             if(lastEta<gribDate && eta>=gribDate && gribDate>start+1000)
@@ -409,8 +441,8 @@ void ROUTE::slot_recalculate(boat * boat)
                         orth.setPoints(res_lon,res_lat,my_poiList.last()->getLongitude(),my_poiList.last()->getLatitude());
                             remain=orth.getDistance();
                     }
-                    if(qRound(remaining_distance*100)<qRound(distanceParcourue*100) ||
-                       qRound(previous_remaining_distance*100)<qRound(distanceParcourue*100))
+                    if(!imported &&(qRound(remaining_distance*100)<qRound(distanceParcourue*100) ||
+                       qRound(previous_remaining_distance*100)<qRound(distanceParcourue*100)))
                         break;
                 } while (has_eta && !imported);
             }
@@ -418,15 +450,19 @@ void ROUTE::slot_recalculate(boat * boat)
 //            qWarning()<<"newSpeed="<<newSpeed<<" wind_speed="<<wind_speed<<" angle="<<angle;
             line->setLastPointIsPoi();
             tip=tr("<br>Route: ")+name;
-            //poi->blockSignals(true);
             time_t Eta=eta-myBoat->getVacLen();
+//            if(badEta)
+//                Eta=eta-myBoat->getVacLen();
             if(!has_eta)
             {
                 tip=tip+tr("<br>ETA: Non joignable avec ce fichier GRIB");
                 poi->setRouteTimeStamp(-1);
             }
             else if(Eta-start<0)
+            {
                 tip=tip+tr("<br>ETA: deja atteint");
+                poi->setRouteTimeStamp(Eta);
+            }
             else
             {
                 tip=tip+"<br>"+tr("Note: la date indiquee correspond a la desactivation du WP");
@@ -467,9 +503,8 @@ void ROUTE::slot_recalculate(boat * boat)
                 poi->setRouteTimeStamp(Eta);
             }
             poi->setTip(tip);
-            //poi->blockSignals(false);
-            lon=poi->getLongitude();
-            lat=poi->getLatitude();
+//            lon=poi->getLongitude();
+//            lat=poi->getLatitude();
             if(optimizingPOI)
             {
                 if(previousPoiName==poiName)
@@ -480,7 +515,7 @@ void ROUTE::slot_recalculate(boat * boat)
                     startPoiName=previousPoiName;
                 }
                 previousPoiName=poi->getName();
-                previousEta=eta;
+                previousEta=Eta;
             }
         }
     }

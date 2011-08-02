@@ -2161,7 +2161,7 @@ void myCentralWidget::slot_editRoute(ROUTE * route,bool createMode)
             route->setDetectCoasts(detectCoast);
         }
     }
-    route->slot_recalculate();
+    //route->slot_recalculate();
     delete route_editor;
     if(route->getPilototo())
     {

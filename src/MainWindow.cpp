@@ -340,7 +340,12 @@ MainWindow::MainWindow(int w, int h, QWidget *parent)
     tool_ESTIMEUNIT = new QLabel("", toolBar);
     tool_ESTIMEUNIT->setFont(font);
     tool_ESTIMEUNIT->setStyleSheet("color: rgb(0, 0, 255);");
+    startEstime=new QCheckBox("", toolBar);
+    connect (startEstime,SIGNAL(toggled(bool)),this,SLOT(slotParamChanged()));
+    startEstime->setToolTip(tr("Si cette option est cochee<br>l'estime calcule la vitesse du bateau<br>a la prochaine vac.<br>Sinon elle utilise la vitesse du bateau<br>telle que donnee par VLM"));
+    startEstime->setChecked(Settings::getSetting("startSpeedEstime", 1).toInt()==1);
     toolBar->addWidget(tool_ESTIMEUNIT);
+    toolBar->addWidget(startEstime);
     slot_ParamVLMchanged();
     toolBar->addSeparator();
     /*btn_Pilototo = new QPushButton(tr("Pilototo"),toolBar);
@@ -610,6 +615,10 @@ void MainWindow::listAllChildren(QObject * ptr,int depth=0)
     else
         qWarning() << QString().fill(QChar(' '),depth*2) << ptr ;
 }
+bool MainWindow::getStartEstimeSpeedFromGrib()
+{
+    return this->startEstime->isChecked();
+}
 
 //-----------------------------------------------
 MainWindow::~MainWindow()
@@ -631,6 +640,7 @@ MainWindow::~MainWindow()
     Settings::setSetting("projectionScale",  proj->getScale());
     Settings::setSetting("gribFileName",  gribFileName);
     Settings::setSetting("gribFilePath",  gribFilePath);
+    Settings::setSetting("startSpeedEstime",startEstime->isChecked()?1:0);
     /*freeze all routes*/
     //my_centralWidget->freezeRoutes(true);
     if(selectedBoat) /* save the zoom factor */
@@ -1995,19 +2005,19 @@ void MainWindow::slot_ParamVLMchanged()
     switch(Settings::getSetting("estimeType","0").toInt())
     {
         case 0:
-            tool_ESTIMEUNIT->setText(tr(" mins"));
+            tool_ESTIMEUNIT->setText(tr(" mins "));
             menuBar->estime->setValue(Settings::getSetting("estimeTime","60").toInt());
             break;
         case 1:
-            tool_ESTIMEUNIT->setText(tr(" vacs"));
+            tool_ESTIMEUNIT->setText(tr(" vacs "));
             menuBar->estime->setValue(Settings::getSetting("estimeVac","12").toInt());
             break;
         case 2:
-            tool_ESTIMEUNIT->setText(tr(" milles"));
+            tool_ESTIMEUNIT->setText(tr(" NM "));
             menuBar->estime->setValue(Settings::getSetting("estimeLen","50").toInt());
             break;
         default:
-            tool_ESTIMEUNIT->setText(tr(" mins"));
+            tool_ESTIMEUNIT->setText(tr(" mins "));
             menuBar->estime->setValue(0);
     }
 

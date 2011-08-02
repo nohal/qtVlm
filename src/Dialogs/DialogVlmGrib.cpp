@@ -85,9 +85,11 @@ int DialogVlmGrib::parseFolderListing(QString data)
     while(1)
     {
         /* grib file name */
+        int previousPos=pos;
         pos = data.indexOf("gfs_NOAA",pos);
         if(pos==-1)
         {
+            pos=previousPos;
             pos = data.indexOf("gfs_interim",pos);
             if(pos==-1)
                 break;
@@ -108,7 +110,7 @@ int DialogVlmGrib::parseFolderListing(QString data)
         /* file size */
         pos = data.indexOf("<td align=\"right\">",pos);
         if(pos==-1) break;
-        size_str = data.mid(pos+19,3);
+        size_str = data.mid(pos+18,4);
         pos=pos+20;
 
         listRadio[i]->setText(gribName_str + ", modified " + date_str + ", size " + size_str );
@@ -179,12 +181,16 @@ bool DialogVlmGrib::doRequest(int reqType)
             break;
         case VLM_REQUEST_GET_FILE:
             /*search selected file*/
-            for(i=0;i<4;i++)
+            for(i=0;i<5;i++)
                 if(listRadio[i]->isChecked())
                     break;
-            if(i==4)
+            if(i==5)
                 return false;
-            filename=listRadio[i]->text().mid(0,23);
+            filename=listRadio[i]->text();
+            if(filename.contains("interim"))
+                filename=filename.mid(0,18);
+            else
+                filename=filename.mid(0,23);
             page="/"+filename;
             inetGetProgress(VLM_REQUEST_GET_FILE,page,"http://grib.virtual-loup-de-mer.org");
             break;

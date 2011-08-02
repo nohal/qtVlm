@@ -30,6 +30,7 @@ Copyright (C) 2008 - Jacques Zaninetti - http://zygrib.free.fr
 #include <QTimer>
 #include <QProgressDialog>
 #include <QGraphicsSceneContextMenuEvent>
+#include <QCheckBox>
 
 #include <QLibrary>
 
@@ -71,6 +72,7 @@ class MainWindow: public QMainWindow
         board * getBoard(void) { return myBoard; }
         bool getNoSave(){return noSave;}
         void setPilototoFromRoute(ROUTE * route);
+        bool getStartEstimeSpeedFromGrib();
 
     public slots:
         void slotFile_Open();
@@ -194,6 +196,7 @@ class MainWindow: public QMainWindow
         QLabel       * tool_ETA;
         QLabel       * tool_ESTIME;
         QLabel       * tool_ESTIMEUNIT;
+        QCheckBox    * startEstime;
         //QPushButton  * btn_Pilototo;
 
         Settings * settings;

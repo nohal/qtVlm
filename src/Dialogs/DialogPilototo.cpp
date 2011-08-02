@@ -65,6 +65,9 @@ DialogPilototo::DialogPilototo(MainWindow *main,myCentralWidget * parent,inetCon
     frameLayout = new QVBoxLayout(frame);
     frameLayout->setSizeConstraint(QLayout::SetFixedSize);
 
+
+
+
     waitBox = new QMessageBox(QMessageBox::Information,
 			     tr("Pilototo"),
                              tr("Chargement des instructions VLM en cours"),
@@ -73,6 +76,7 @@ DialogPilototo::DialogPilototo(MainWindow *main,myCentralWidget * parent,inetCon
     /* inet init */
     currentList=NULL;
     this->updateBoat=false;
+
 }
 
 void DialogPilototo::updateDrawList(void)
@@ -555,10 +559,10 @@ void DialogPilototo::setInstructions(boat * pvBoat, QList<POI *> pois)
             mode=3;
         cur_instruction.insert("pim",mode);
         cur_instruction.insert("tasktime",pois.at(n-1)->getTimeStamp()+20);
-        pip.insert("targetlat",QString().sprintf("%.10f",(double)poi->getLatitude()));
-        pip.insert("targetlong",QString().sprintf("%.10f",(double)poi->getLongitude()));
+        pip.insert("targetlat",QString().sprintf("%.10f",poi->getLatitude()));
+        pip.insert("targetlong",QString().sprintf("%.10f",poi->getLongitude()));
         if(poi->getWph()!=-1)
-            pip.insert("targetandhdg",QString().sprintf("%.1f",(double)poi->getWph()));
+            pip.insert("targetandhdg",QString().sprintf("%.1f",poi->getWph()));
         cur_instruction.insert("pip",pip);
         cur_instruction.insert("idu",myBoat->getBoatId().toInt());
         instr_ptr->param=serializer.serialize(cur_instruction);

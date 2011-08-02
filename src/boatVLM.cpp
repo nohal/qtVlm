@@ -296,9 +296,9 @@ void boatVLM::requestFinished (QByteArray res_byte)
                     WPLat       = result["WPLAT"].toDouble();
                     WPLon       = result["WPLON"].toDouble();
                     WPHd        = (float) result["H@WP"].toDouble();
-//                    QString debug;
-//                    debug=debug.sprintf("receiving WPLon %.10f WPLat %.10f @WP %.10f",WPLon,WPLat,WPHd);
-//                    qWarning()<<debug;
+                    QString debug;
+                    debug=debug.sprintf("receiving WPLon %.10f WPLat %.10f @WP %.10f",WPLon,WPLat,WPHd);
+                    qWarning()<<debug;
                     pilotType   = result["PIM"].toInt();
                     pilotString = result["PIP"].toString();
                     TWA         = (float) result["TWA"].toDouble();
@@ -313,11 +313,6 @@ void boatVLM::requestFinished (QByteArray res_byte)
                     pilototo[2] = result["PIL3"].toString();
                     pilototo[3] = result["PIL4"].toString();
                     pilototo[4] = result["PIL5"].toString();
-                    qWarning()<<"pil0="<<pilototo[0];
-                    qWarning()<<"pil1="<<pilototo[1];
-                    qWarning()<<"pil2="<<pilototo[2];
-                    qWarning()<<"pil3="<<pilototo[3];
-                    qWarning()<<"pil4="<<pilototo[4];
                     stopAndGo   = result["S&G"].toString();
                     polarVlm = result["POL"].toString();
                     email = result["EML"].toString();

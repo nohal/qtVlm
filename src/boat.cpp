@@ -30,6 +30,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "Player.h"
 #include "GshhsReader.h"
 #include "boat.h"
+#include "Grib.h"
 
 boat::boat(QString pseudo, bool activated,
            Projection * proj,MainWindow * main,myCentralWidget * parent): QGraphicsWidget()
@@ -339,7 +340,27 @@ void boat::updateTraceColor(void)
 
 void boat::drawEstime(void)
 {
-    drawEstime(getHeading(),getSpeed());
+    if(mainWindow->getStartEstimeSpeedFromGrib() && parent->getGrib() && parent->getGrib()->isOk() && this->getPolarData())
+    {
+        double wind_speed,wind_angle;
+        parent->getGrib()->getInterpolatedValue_byDates(lon,lat,this->getPrevVac()+this->getVacLen(),&wind_speed,&wind_angle);
+        wind_angle=radToDeg(wind_angle);
+        double twa=getHeading()-wind_angle;
+        if(twa>=360) twa=twa-360;
+        if(twa<0) twa=twa+360;
+        if(qAbs(twa)>180)
+        {
+            if(twa<0)
+                twa=360+twa;
+            else
+                twa=twa-360;
+        }
+        float newSpeed=getPolarData()->getSpeed(wind_speed,twa);
+        drawEstime(getHeading(), newSpeed);
+        qWarning()<<"new speed for estime"<<newSpeed<<twa<<wind_speed;
+    }
+    else
+        drawEstime(getHeading(),getSpeed());
 }
 
 void boat::drawEstime(float myHeading, float mySpeed)

@@ -7,19 +7,19 @@
     <x>0</x>
     <y>0</y>
     <width>160</width>
-    <height>140</height>
+    <height>210</height>
    </rect>
   </property>
   <property name="minimumSize">
    <size>
     <width>160</width>
-    <height>140</height>
+    <height>180</height>
    </size>
   </property>
   <property name="maximumSize">
    <size>
     <width>160</width>
-    <height>140</height>
+    <height>210</height>
    </size>
   </property>
   <property name="baseSize">
@@ -547,10 +547,10 @@
   <widget class="QGroupBox" name="groupBox">
    <property name="geometry">
     <rect>
-     <x>10</x>
+     <x>2</x>
      <y>100</y>
-     <width>143</width>
-     <height>37</height>
+     <width>151</width>
+     <height>51</height>
     </rect>
    </property>
    <property name="title">
@@ -560,7 +560,7 @@
     <property name="geometry">
      <rect>
       <x>10</x>
-      <y>15</y>
+      <y>20</y>
       <width>61</width>
       <height>18</height>
      </rect>
@@ -573,13 +573,61 @@
     <property name="geometry">
      <rect>
       <x>80</x>
-      <y>15</y>
-      <width>61</width>
+      <y>20</y>
+      <width>71</width>
       <height>18</height>
      </rect>
     </property>
     <property name="text">
      <string>Estime</string>
+    </property>
+   </widget>
+  </widget>
+  <widget class="QGroupBox" name="groupBox_2">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>150</y>
+     <width>151</width>
+     <height>51</height>
+    </rect>
+   </property>
+   <property name="title">
+    <string>Date depart</string>
+   </property>
+   <widget class="QRadioButton" name="startGrib">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>20</y>
+      <width>51</width>
+      <height>20</height>
+     </rect>
+    </property>
+    <property name="toolTip">
+     <string>A la date et heure du Grib</string>
+    </property>
+    <property name="text">
+     <string>Grib</string>
+    </property>
+    <property name="checked">
+     <bool>true</bool>
+    </property>
+   </widget>
+   <widget class="QRadioButton" name="startVac">
+    <property name="geometry">
+     <rect>
+      <x>80</x>
+      <y>20</y>
+      <width>95</width>
+      <height>20</height>
+     </rect>
+    </property>
+    <property name="toolTip">
+     <string>A la date et heure de la prochaine vacation</string>
+    </property>
+    <property name="text">
+     <string>Vac</string>
     </property>
    </widget>
   </widget>

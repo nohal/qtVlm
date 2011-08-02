@@ -113,6 +113,8 @@ class ROUTE : public QObject
         void setDetectCoasts(bool b){this->detectCoasts=b;}
         void setPilototo(bool b){this->pilototo=b;}
         bool getPilototo(){return this->pilototo;}
+        void setAutoRemove(bool b){this->autoRemove=b;}
+        bool getAutoRemove(){return this->autoRemove;}
     public slots:
         void slot_recalculate(boat * boat=NULL);
         void slot_edit();
@@ -182,5 +184,6 @@ class ROUTE : public QObject
         bool temp;
         double speedLossOnTack;
         bool pilototo;
+        bool autoRemove;
 };
 #endif // ROUTE_H
