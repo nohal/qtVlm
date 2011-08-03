@@ -37,6 +37,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 DialogPilototo::DialogPilototo(MainWindow *main,myCentralWidget * parent,inetConnexion * inet):QDialog(parent), inetClient(inet)
 {
     this->parent=parent;
+    this->move(250,100);
     setupUi(this);
     Util::setFontDialog(this);
     selectPOI_mode=1;
@@ -291,7 +292,6 @@ void DialogPilototo::slot_boatUpdated(boat * pvBoat)
     updateTime();
 
     updateDrawList();
-
     exec();
 }
 
