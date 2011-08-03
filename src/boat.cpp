@@ -340,7 +340,7 @@ void boat::updateTraceColor(void)
 
 void boat::drawEstime(void)
 {
-    if(mainWindow->getStartEstimeSpeedFromGrib() && parent->getGrib() && parent->getGrib()->isOk() && this->getPolarData())
+    if(this->getType()==BOAT_VLM && mainWindow->getStartEstimeSpeedFromGrib() && parent->getGrib() && parent->getGrib()->isOk() && this->getPolarData())
     {
         double wind_speed,wind_angle;
         parent->getGrib()->getInterpolatedValue_byDates(lon,lat,this->getPrevVac()+this->getVacLen(),&wind_speed,&wind_angle);
@@ -357,7 +357,7 @@ void boat::drawEstime(void)
         }
         float newSpeed=getPolarData()->getSpeed(wind_speed,twa);
         drawEstime(getHeading(), newSpeed);
-        qWarning()<<"new speed for estime"<<newSpeed<<twa<<wind_speed;
+        //qWarning()<<"new speed for estime"<<newSpeed<<twa<<wind_speed;
     }
     else
         drawEstime(getHeading(),getSpeed());

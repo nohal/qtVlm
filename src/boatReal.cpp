@@ -38,6 +38,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <QPushButton>
 #include <QApplication>
 #include <QClipboard>
+//#define GPS_FILE
 
 boatReal::boatReal(QString pseudo, bool activated, Projection * proj,MainWindow * main,
                    myCentralWidget * parent): boat(pseudo,activated,proj,main,parent)
@@ -183,9 +184,9 @@ void boatReal::updateBoat(nmeaINFO info)
     this->info=info;
     QDateTime now;
     now=now.currentDateTime();
-    QString s=now.toString("hh:mm:ss");
-    qWarning()<<s<<
-        "speed:"<<info.speed<<"cap:"<<info.direction<<"lat:"<<info.lat;
+//    QString s=now.toString("hh:mm:ss");
+//    qWarning()<<s<<
+//        "speed:"<<info.speed<<"cap:"<<info.direction<<"lat:"<<info.lat;
     this->fix=info.fix;
     this->sig=info.sig;
     this->pdop=info.PDOP;
@@ -424,6 +425,7 @@ ReceiverThread::~ReceiverThread(void)
 
 bool ReceiverThread::initPort(void)
 {
+#ifndef GPS_FILE
     /* close existing port */
     if(!port || port==NULL)
         port=new QextSerialPort();
@@ -445,6 +447,7 @@ bool ReceiverThread::initPort(void)
     }
 //    port->write("$PSRF151,01*0F"); /*enabling WAAS/EGNOS on sirf chipset*/
 //    port->flush();
+#endif
     if(parent->getDisplayNMEA())
     {
         QDialog *NMEA=new QDialog();
@@ -474,6 +477,7 @@ void ReceiverThread::run()
 {
     int numBytes = 0;
     int l = 512;
+#ifndef GPS_FILE
     if(!port || !port->isOpen())
     {
         /*retry to open the port*/
@@ -484,7 +488,14 @@ void ReceiverThread::run()
             return;
         }
     }
-
+#else
+    QFile fakeGPS("fakeGPS.data");
+    if(!fakeGPS.open(QIODevice::ReadOnly | QIODevice::Text))
+    {
+        qWarning()<<"failed o open fakeGPS.data";
+        return;
+    }
+#endif
     qWarning() << "Starting thread loop";
 
     stop=false;
@@ -492,26 +503,47 @@ void ReceiverThread::run()
     //port->readAll();
     while (!stop)
     {
+#ifndef GPS_FILE
         numBytes = port->bytesAvailable();
-        int pass=0;
+#else
+        numBytes=513;
+#endif
         if(numBytes > l)
         {
             QByteArray buffer;
-            while(port->bytesAvailable()>0 /*&& pass<20*/)
+#ifndef GPS_FILE
+            while(port->bytesAvailable()>0)
             {
-                ++pass;
                 buffer=buffer+port->read(512);
             }
+#else
+            buffer.clear();
+        for(int pass=0;pass<50;++pass)
+        {
+            if(fakeGPS.atEnd())
+            {
+                fakeGPS.seek(0);
+                qWarning()<<"restarting fakeGPS file";
+            }
+            buffer=fakeGPS.readLine();
+#endif
             QList<QByteArray> lines=buffer.split('\n');
             for (int n=0;n<lines.count();n++)
             {
                 if(lines.at(n).count()!=0)
                 {
-
+#ifndef GPS_FILE
                     QString temp=QString(lines.at(n).left(lines.at(n).length()-1));
-                    if(temp.contains("GPRMC"))
-                        qWarning()<<temp;
+#else
+                    QString temp=lines.at(n);
+#endif
+//                    if(temp.contains("RMC"))
+//                        qWarning()<<temp;
+#ifndef GPS_FILE
                     QByteArray data=lines.at(n).left(lines.at(n).length()-1);
+#else
+                    QByteArray data=lines.at(n);
+#endif
                     //data.replace("$II","$GP"); would have been good but... checksum
                     data.push_back('\r' );
                     data.push_back('\n');
@@ -524,11 +556,14 @@ void ReceiverThread::run()
                 }
             }
             emit updateBoat(info);
+#ifdef GPS_FILE
         }
-        qWarning()<<"sleeping";
+#endif
+        }
+//        qWarning()<<"sleeping";
 #warning a mettre en parametre
         this->msleep(3000);
-        qWarning()<<"waking up";
+//        qWarning()<<"waking up";
     }
     if(port && port->isOpen())
     {
