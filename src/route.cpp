@@ -94,6 +94,7 @@ ROUTE::ROUTE(QString name, Projection *proj, Grib *grib, QGraphicsScene * myScen
         slot_shHidden();
     this->speedLossOnTack=1;
     this->autoAt=true;
+    this->pilototo=false;
 }
 
 ROUTE::~ROUTE()
@@ -172,7 +173,7 @@ void ROUTE::slot_recalculate(boat * boat)
     if(my_poiList.count()==0) return;
     busy=true;
     qSort(my_poiList.begin(),my_poiList.end(),POI::myLessThan);
-    if(autoRemove && this->startFromBoat)
+    if(!this->optimizing && !this->optimizingPOI && autoRemove && this->startFromBoat)
     {
         bool foundWP=false;
         int n=0;
@@ -260,6 +261,7 @@ void ROUTE::slot_recalculate(boat * boat)
         }
         double newSpeed,distanceParcourue,remaining_distance,res_lon,res_lat,previous_remaining_distance,cap1,cap2,diff1,diff2;
         double wind_angle,wind_speed,cap,angle;
+        cap=-1;
         time_t maxDate=grib->getMaxDate();
         QString previousPoiName="";
         time_t previousEta=0;
@@ -335,6 +337,8 @@ void ROUTE::slot_recalculate(boat * boat)
                                         line->slot_showMe();
                                         QApplication::processEvents();
                                         double h1,h2,w1,w2,t1,t2,d1,d2;
+//                                        this->do_vbvmg_context(remaining_distance,cap,wind_speed,wind_angle,&h1,&h2,&w1,&w2,&t1,&t2,&d1,&d2,true);
+//                                        angle=A180(w1);
                                         this->do_vbvmg_context(remaining_distance,cap,wind_speed,wind_angle,&h1,&h2,&w1,&w2,&t1,&t2,&d1,&d2);
                                         angle=A180(w1);
                                         //qWarning()<<"cap="<<cap<<"h1="<<h1<<"twa="<<angle;
@@ -657,12 +661,114 @@ void ROUTE::setHidePois(bool b)
         }
     }
 }
+#if 0
+void ROUTE::do_vbvmg_newton(double dist,double wanted_heading,
+                             double w_speed,double w_angle,
+                             double *heading1, double *heading2,
+                             double *wangle1, double *wangle2,
+                             double *time1, double *time2,
+                             double *dist1, double *dist2)
+{
+    //We look for minimum time, so we will apply NR to the derivative
+    double x=wanted_heading;
+    double term=0;
+    for (int n=0;n<=21;++n) /*20 tries max*/
+    {
+        double y=vbvmgVlmDeriv(x,dist,wanted_heading,w_speed_w,w_angle);
+        if(qAbs(y)<0.001)
+        {
+            *wangle1=x;
+            return;
+        }
+        double deriv=ROUTAGE::vbvmgVlmSecondDeriv(x,dist,wanted_heading,w_speed_w,w_angle);
+        if (deriv==0)
+        {
+            break; /*flat spot, there is no solution*/
+        }
+        term=y/deriv;
+        if(deriv<0)
+            x=x+term;
+        else
+            x=x-term;
+    }
+}
+
+void ROUTE::vbvmgVlm(double x,double dist, double wanted_heading, double w_speed, double w_angle)
+{
+    double speed_t1=myBoat->getPolarData()->getSpeed(w_speed,A180(wanted_heading-x));
+    tanalpha = tan(degToRad(x));
+    d1hypotratio = hypot(1, tan(degToRad(x)));
+}
+#endif
+#if 0
+void ROUTE::func(double j, double dist, double angle, double tanalpha, double d1hypotratio, double w_speed, double speed_t1, double *t1, double *l1, double * t2, double * l2)
+{
+
+    double beta = degToRad(j);
+    double d1 = dist * (tan(-beta) / (tanalpha + tan(-beta)));
+    *l1 = d1 * d1hypotratio;
+    *t1 = *l1 / speed_t1;
+    if (*t1 < 0.0)
+    {
+      *t2=-1;
+      *l2=-1;
+      return;
+    }
+    double d2 = dist - d1;
+    double speed_t2=myBoat->getPolarData()->getSpeed(w_speed,A180(radToDeg(angle-beta)));
+    //speed_t2 = find_speed(aboat, w_speed, angle-beta);
+    if (speed_t2 <= 0.0)
+    {
+        *t2=-1;
+        *l2=-1;
+        return;
+    }
+    *l2 =  d2 * hypot(1, tan(-beta));
+    *t2 = *l2 / speed_t2;
+}
+double ROUTE::funcDeriv(double j, double dist, double angle, double tanalpha, double d1hypotratio, double w_speed, double speed_t1)
+{
+    double minGap=1;
+    double yr,yl;
+    double xl,xr;
+    double T1,L1,T2,L2;
+    for(int n=1;n<10;++n) /*bad trick to try to avoid flat spots*/
+    {
+        xr=j+minGap;
+        xl=j-minGap;
+        func(xr, dist, angle, tanalpha, d1hypotratio, w_speed, speed_t1, &T1, &L1, & T2, & L2);
+        yr=T1+T2;
+        func(xl, dist, angle, tanalpha, d1hypotratio, w_speed, speed_t1, &T1, &L1, & T2, & L2);
+        yl=T1+T2;
+        if(yr!=yl) break;
+        minGap=minGap*2;
+    }
+    return((yr-yl)/(xr-xl));
+}
+double ROUTE::funcDerivDeriv(double j, double dist, double angle, double tanalpha, double d1hypotratio, double w_speed, double speed_t1)
+{
+    double minGap=1;
+    double yr,yl;
+    double xl,xr;
+    for(int n=1;n<10;++n) /*bad trick to try to avoid flat spots*/
+    {
+        xr=j+minGap;
+        xl=j-minGap;
+        yr=funcDeriv(xr, dist, angle, tanalpha, d1hypotratio, w_speed, speed_t1);
+        yl=funcDeriv(xl, dist, angle, tanalpha, d1hypotratio, w_speed, speed_t1);
+        if(yr!=yl) break;
+        minGap=minGap*2;
+    }
+    return((yr-yl)/(xr-xl));
+}
+#endif
 void ROUTE::do_vbvmg_context(double dist,double wanted_heading,
                              double w_speed,double w_angle,
                              double *heading1, double *heading2,
                              double *wangle1, double *wangle2,
                              double *time1, double *time2,
-                             double *dist1, double *dist2) {
+                             double *dist1, double *dist2,
+                             bool useNewton) {
    double alpha, beta;
    double speed, speed_t1, speed_t2, l1, l2, d1, d2;
    double angle, maxangle, t, t1, t2, t_min;
@@ -717,46 +823,86 @@ void ROUTE::do_vbvmg_context(double dist,double wanted_heading,
      max_j = 90;
    }
 
-   for (i=min_i; i<max_i; i++) {
-     alpha = degToRad((double)i);
-     tanalpha = tan(alpha);
-     d1hypotratio = hypot(1, tan(alpha));
-     speed_t1=myBoat->getPolarData()->getSpeed(w_speed,A180(radToDeg(angle-alpha)));
-     //speed_t1 = find_speed(aboat, w_speed, angle-alpha);
-     if (speed_t1 <= 0.0) {
-       continue;
-     }
-     for (j=min_j; j<max_j; j++) {
-       beta = degToRad((double)j);
-       d1 = dist * (tan(-beta) / (tanalpha + tan(-beta)));
-       l1 =  d1 * d1hypotratio;
-       t1 = l1 / speed_t1;
-       if ((t1 < 0.0) || (t1 > t_min)) {
-         continue;
-       }
-       d2 = dist - d1;
-       speed_t2=myBoat->getPolarData()->getSpeed(w_speed,A180(radToDeg(angle-beta)));
-       //speed_t2 = find_speed(aboat, w_speed, angle-beta);
-       if (speed_t2 <= 0.0) {
-         continue;
-       }
-       l2 =  d2 * hypot(1, tan(-beta));
-       t2 = l2 / speed_t2;
-       if (t2 < 0.0) {
-         continue;
-       }
-       t = t1 + t2;
-       if (t < t_min) {
-         t_min = t;
-         b_alpha = alpha;
-         b_beta  = beta;
-         b_l1 = l1;
-         b_l2 = l2;
-         b_t1 = t1;
-         b_t2 = t2;
-       }
-     }
-   }
+   for (i=min_i; i<max_i; i++)
+   {
+        alpha = degToRad((double)i);
+        tanalpha = tan(alpha);
+        d1hypotratio = hypot(1, tan(alpha));
+        speed_t1=myBoat->getPolarData()->getSpeed(w_speed,A180(radToDeg(angle-alpha)));
+        //speed_t1 = find_speed(aboat, w_speed, angle-alpha);
+        if (speed_t1 <= 0.0)
+        {
+            continue;
+        }
+        if(!useNewton)
+        {
+            for (j=min_j; j<max_j; j++)
+            {
+#if 0
+                func((double) j, dist, angle, tanalpha, d1hypotratio, w_speed, speed_t1, &t1, &l1, & t2, & l2);
+#else
+                beta = degToRad((double)j);
+                d1 = dist * (tan(-beta) / (tanalpha + tan(-beta)));
+                l1 =  d1 * d1hypotratio;
+                t1 = l1 / speed_t1;
+                if ((t1 < 0.0) || (t1 > t_min)) {
+                    continue;
+                }
+                d2 = dist - d1;
+                speed_t2=myBoat->getPolarData()->getSpeed(w_speed,A180(radToDeg(angle-beta)));
+                //speed_t2 = find_speed(aboat, w_speed, angle-beta);
+                if (speed_t2 <= 0.0) {
+                    continue;
+                }
+                l2 =  d2 * hypot(1, tan(-beta));
+                t2 = l2 / speed_t2;
+#endif
+                if (t2 < 0.0)
+                {
+                    continue;
+                }
+            }
+        }
+        else
+        {
+#if 1
+            qWarning()<<"we should not be there!!";
+#else
+            double x=-i;
+            double term=0;
+            for (int n=1;n<=20;++n) /*20 tries max*/
+            {
+                double y=funcDeriv(x, dist, angle, tanalpha, d1hypotratio, w_speed, speed_t1);
+                if(qAbs(y)<0.001)
+                {
+                    break;
+                }
+                double deriv=funcDerivDeriv(x, dist, angle, tanalpha, d1hypotratio, w_speed, speed_t1);
+                if (deriv==0)
+                {
+                    break; /*flat spot, there is no solution*/
+                }
+                term=y/deriv;
+                if(y<0)
+                    x=x+term;
+                else
+                    x=x-term;
+            }
+            func(x, dist, angle, tanalpha, d1hypotratio, w_speed, speed_t1, &t1, &l1, & t2, & l2);
+#endif
+        }
+        t = t1 + t2;
+        if (t < t_min)
+        {
+            t_min = t;
+            b_alpha = alpha;
+            b_beta  = beta;
+            b_l1 = l1;
+            b_l2 = l2;
+            b_t1 = t1;
+            b_t2 = t2;
+        }
+    }
  #if DEBUG
    printf("VBVMG: alpha=%.2f, beta=%.2f\n", radToDeg(b_alpha), radToDeg(b_beta));
  #endif /* DEBUG */

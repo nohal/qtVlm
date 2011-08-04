@@ -128,6 +128,9 @@ DialogRoute::DialogRoute(ROUTE *route,myCentralWidget *parent)
         this->autoAt->setChecked(false);
         this->autoAt->hide();
     }
+#if 0
+    this->pilototo->hide();
+#endif
 }
 DialogRoute::~DialogRoute()
 {
