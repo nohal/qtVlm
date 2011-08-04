@@ -85,7 +85,7 @@
       <x>10</x>
       <y>360</y>
       <width>561</width>
-      <height>141</height>
+      <height>151</height>
      </rect>
     </property>
     <property name="title">
@@ -279,13 +279,26 @@
      <property name="geometry">
       <rect>
        <x>290</x>
-       <y>110</y>
+       <y>100</y>
        <width>261</width>
        <height>20</height>
       </rect>
      </property>
      <property name="text">
       <string>Retirer les POIs avant le WP-VLM</string>
+     </property>
+    </widget>
+    <widget class="QCheckBox" name="autoAt">
+     <property name="geometry">
+      <rect>
+       <x>290</x>
+       <y>120</y>
+       <width>271</width>
+       <height>20</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Renseigner le cap a suivre (@) des POIs</string>
      </property>
     </widget>
    </widget>

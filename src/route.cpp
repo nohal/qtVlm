@@ -93,6 +93,7 @@ ROUTE::ROUTE(QString name, Projection *proj, Grib *grib, QGraphicsScene * myScen
     else
         slot_shHidden();
     this->speedLossOnTack=1;
+    this->autoAt=true;
 }
 
 ROUTE::~ROUTE()
@@ -170,6 +171,7 @@ void ROUTE::slot_recalculate(boat * boat)
     line->slot_showMe();
     if(my_poiList.count()==0) return;
     busy=true;
+    qSort(my_poiList.begin(),my_poiList.end(),POI::myLessThan);
     if(autoRemove && this->startFromBoat)
     {
         bool foundWP=false;
@@ -226,7 +228,6 @@ void ROUTE::slot_recalculate(boat * boat)
         start=eta;
         has_eta=true;
         Orthodromie orth(0,0,0,0);
-        qSort(my_poiList.begin(),my_poiList.end(),POI::myLessThan);
         //qWarning()<<"??"<<my_poiList.first()->getName();
         QListIterator<POI*> i (my_poiList);
         QString tip;
@@ -445,6 +446,10 @@ void ROUTE::slot_recalculate(boat * boat)
                        qRound(previous_remaining_distance*100)<qRound(distanceParcourue*100)))
                         break;
                 } while (has_eta && !imported);
+            }
+            if(this->autoAt)
+            {
+                poi->setWph(cap);
             }
 //            qWarning()<<"Distance Parcourue="<<distanceParcourue<<" remaining_distance="<<remaining_distance<<" previous_rd="<<previous_remaining_distance;
 //            qWarning()<<"newSpeed="<<newSpeed<<" wind_speed="<<wind_speed<<" angle="<<angle;

@@ -81,6 +81,7 @@ DialogRoute::DialogRoute(ROUTE *route,myCentralWidget *parent)
     editCoasts->setChecked(route->getDetectCoasts());
     hidePois->setChecked(route->getHidePois());
     autoRemove->setChecked(route->getAutoRemove());
+    autoAt->setChecked(route->getAutoAt());
     vacStep->setValue(route->getMultVac());
     hidden->setChecked(route->getHidden());
     this->useVbvmgVlm->setChecked(route->getUseVbvmgVlm());
@@ -124,6 +125,8 @@ DialogRoute::DialogRoute(ROUTE *route,myCentralWidget *parent)
         editBoat->setEnabled(false);
         this->pilototo->hide();
         this->autoRemove->hide();
+        this->autoAt->setChecked(false);
+        this->autoAt->hide();
     }
 }
 DialogRoute::~DialogRoute()
@@ -153,6 +156,7 @@ void DialogRoute::done(int result)
         route->setColor(inputTraceColor->getLineColor());
         route->setUseVbVmgVlm(this->useVbvmgVlm->isChecked());
         route->setAutoRemove(this->autoRemove->isChecked());
+        route->setAutoAt(autoAt->isChecked());
         route->setPilototo(this->pilototo->isChecked());
         Settings::setSetting("useVbvmgVlm",route->getUseVbvmgVlm()?"1":"0"  );
         route->setMultVac(vacStep->value());

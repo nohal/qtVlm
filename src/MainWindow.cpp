@@ -537,6 +537,7 @@ MainWindow::MainWindow(int w, int h, QWidget *parent)
             my_centralWidget->loadPOI();
             isStartingUp=false;
             slot_deleteProgress();            
+            my_centralWidget->emitUpdateRoute(NULL);
         }
         Util::setFontDialog(statusBar);
         Util::setFontDialog(menuBar);
@@ -583,12 +584,18 @@ MainWindow::MainWindow(int w, int h, QWidget *parent)
                     return;
                 }
                 else
+                {
                     isStartingUp=false;
+                    my_centralWidget->emitUpdateRoute(NULL);
+                }
 
             }
         }
         else
+        {
             isStartingUp=false;
+            my_centralWidget->emitUpdateRoute(NULL);
+        }
     }
 
     slot_deleteProgress();
@@ -1320,6 +1327,7 @@ void MainWindow::VLM_Sync_sync(void)
         menuBar->boatList->setEnabled(true);
         slotDateGribChanged_now(false);
         isStartingUp=false;
+        my_centralWidget->emitUpdateRoute(NULL);
     }
 }
 void MainWindow::slot_boatHasUpdated()
@@ -1634,6 +1642,7 @@ void MainWindow::slot_updPlayerFinished(bool res_ok, Player * player)
         }
         my_centralWidget->loadPOI();
         slot_deleteProgress();
+        my_centralWidget->emitUpdateRoute(NULL);
         return;
     }
 
@@ -1657,6 +1666,7 @@ void MainWindow::slot_updPlayerFinished(bool res_ok, Player * player)
     }
     else
         isStartingUp=false;
+    my_centralWidget->emitUpdateRoute(NULL);
     slot_deleteProgress();
 }
 
@@ -1820,11 +1830,20 @@ void MainWindow::slotPilototo(void)
 }
 void MainWindow::setPilototoFromRoute(ROUTE *route)
 {
-    if(!route->getBoat() || route->getBoat()->getType()!=BOAT_VLM) return;
-    if(route->getPoiList().count()==0) return;
+    if(!route->getBoat() || route->getBoat()->getType()!=BOAT_VLM)
+    {
+        route->setPilototo(false);
+        return;
+    }
+    if(route->getPoiList().count()==0)
+    {
+        route->setPilototo(false);
+        return;
+    }
     if(route->getPoiList().count()==1)
     {
         route->getPoiList().at(0)->slot_setWP();
+        route->setPilototo(false);
         return;
     }
     QList<POI *> pois;

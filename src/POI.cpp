@@ -560,6 +560,7 @@ void POI::setTip(QString tip)
             pilot="<br>"+tr("5eme cible du pilototo");
             break;
     }
+    QString at=QString().sprintf(" @%.1f",this->wph);
     if(w_boat)
     {
         Orthodromie orth2boat(w_boat->getLon(), w_boat->getLat(), lon, lat);
@@ -567,10 +568,10 @@ void POI::setTip(QString tip)
         QString tt=tr("Distance Ortho a partir de ")+w_boat->getBoatPseudo()+": "+
                    Util::formatDistance(distance);
         tt=tt.replace(" ","&nbsp;");
-        setToolTip(getTypeStr() + " : " + my_str +pilot+ "<br>"+tt+tip);
+        setToolTip(getTypeStr() + " : " + my_str +at+pilot+ "<br>"+tt+tip);
     }
     else
-        setToolTip(getTypeStr() + " : "+my_str+pilot);
+        setToolTip(getTypeStr() + " : "+my_str+at+pilot);
 }
 void POI::update_myStr(void)
 {
