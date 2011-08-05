@@ -2191,6 +2191,9 @@ bool ROUTAGE::findPoint(double lon, double lat, double windAngle, double windSpe
 }
 void ROUTAGE::convertToRoute()
 {
+    bool routeStartBoat=QMessageBox::question(0,tr("Convertion d'un routage en route"),
+                                              tr("Voulez-vous que la route parte du bateau a la prochaine vacation?"),
+                                              QMessageBox::Yes|QMessageBox::No)==QMessageBox::Yes;
     this->converted=true;
     ROUTE * route=parent->addRoute();
     route->setName(tr("Routage: ")+name);
@@ -2206,8 +2209,16 @@ void ROUTAGE::convertToRoute()
             break;
     }
     route->setStartTime(parentRoutage->getStartTime());
-    route->setStartTimeOption(3);
-    route->setStartFromBoat(false);
+    if(routeStartBoat)
+    {
+        route->setStartFromBoat(true);
+        route->setStartTimeOption(1);
+    }
+    else
+    {
+        route->setStartTimeOption(3);
+        route->setStartFromBoat(false);
+    }
     route->setColor(this->color);
     route->setSpeedLossOnTack(this->speedLossOnTack);
     //route->setWidth(this->width);
@@ -2230,6 +2241,19 @@ void ROUTAGE::convertToRoute()
     result=NULL;
     route->setHidePois(true);
     route->setFrozen(false);
+    if(routeStartBoat)
+    {
+        if (route->getPoiList().at(0)->getRouteTimeStamp()!=-1)
+        {
+            if(qAbs(route->getPoiList().at(0)->getRouteTimeStamp()-myBoat->getPrevVac())<myBoat->getVacLen()*2.0 || (myBoat->getType()==BOAT_VLM && myBoat->getLoch()<0.1))
+            {
+                POI * poi = route->getPoiList().at(0);
+                poi->setRoute(NULL);
+                parent->slot_delPOI_list(poi);
+                delete poi;
+            }
+        }
+    }
 }
 void ROUTAGE::checkSegmentCrossingOwnIso()
 {

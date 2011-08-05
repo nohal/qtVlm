@@ -180,11 +180,7 @@ class ROUTE : public QObject
                               double *heading1, double *heading2,
                               double *wangle1, double *wangle2,
                               double *time1, double *time2,
-                              double *dist1, double *dist2,
-                              bool useNewton=false);
-        void func(double j, double dist, double angle, double tanalpha, double d1hypotratio, double w_speed, double speed_t1, double *t1, double *l1, double * t2, double * l2);
-        double funcDeriv(double j, double dist, double angle, double tanalpha, double d1hypotratio, double w_speed, double speed_t1);
-        double funcDerivDeriv(double j, double dist, double angle, double tanalpha, double d1hypotratio, double w_speed, double speed_t1);
+                              double *dist1, double *dist2);
         bool useVbvmgVlm;
         bool initialized;
         bool temp;
