@@ -282,7 +282,7 @@ myCentralWidget::myCentralWidget(Projection * proj,MainWindow * parent,MenuBar *
 {
     this-> proj=proj;
     this->keepPos=true;
-    this->main=parent;
+    this->mainW=parent;
     this->menuBar=menuBar;
     this->aboutToQuit=false;
 
@@ -314,7 +314,7 @@ myCentralWidget::myCentralWidget(Projection * proj,MainWindow * parent,MenuBar *
     /* other child */
     gshhsReader = new GshhsReader("maps/gshhs", 0);
     grib = new Grib();
-    inetManager = new inetConnexion(main);
+    inetManager = new inetConnexion(mainW);
     replayTimer=new QTimer(this);
     replayTimer->setSingleShot(true);
     replayTimer->setInterval(Settings::getSetting("speed_replay",20).toInt());
@@ -426,7 +426,7 @@ myCentralWidget::myCentralWidget(Projection * proj,MainWindow * parent,MenuBar *
             this, SLOT(slot_map_CitiesNames()));
 
     // Opponents
-    opponents = new opponentList(proj,main,this,inetManager);
+    opponents = new opponentList(proj,mainW,this,inetManager);
 
      /* Dialogs */
     gribDateDialog = new DialogGribDate();
@@ -434,7 +434,7 @@ myCentralWidget::myCentralWidget(Projection * proj,MainWindow * parent,MenuBar *
 
     boatAcc = new DialogBoatAccount(proj,parent,this,inetManager);
     realBoatConfig = new DialogRealBoatConfig(this);
-    playerAcc = new DialogPlayerAccount(proj,main,this,inetManager);
+    playerAcc = new DialogPlayerAccount(proj,mainW,this,inetManager);
 
     raceDialog = new DialogRace(parent,this,inetManager);
     connect(raceDialog,SIGNAL(readRace()),this,SLOT(slot_readRaceData()));
@@ -469,7 +469,7 @@ void myCentralWidget::setCompassFollow(ROUTE * route)
     this->compassRoute=route;
     menuBar->ac_compassCenterBoat->setChecked(false);
     Settings::setSetting("compassCenterBoat", "0");
-    emitUpdateRoute(main->getSelectedBoat());
+    emitUpdateRoute(mainW->getSelectedBoat());
 }
 void myCentralWidget::centerCompass(double lon, double lat)
 {
@@ -488,7 +488,7 @@ void myCentralWidget::loadPOI(void)
 
 myCentralWidget::~myCentralWidget()
 {
-    if(!main->getNoSave() && xmlPOI && xmlData)
+    if(!mainW->getNoSave() && xmlPOI && xmlData)
     {
         xmlPOI->slot_writeData(route_list,poi_list,"poi.dat");
         xmlData->slot_writeData(player_list,race_list,QString("boatAcc.dat"));
@@ -530,16 +530,16 @@ Grib * myCentralWidget::getGrib(void)
 
 boat * myCentralWidget::getSelectedBoat(void)
 {
-    return main->getSelectedBoat();
+    return mainW->getSelectedBoat();
 }
 time_t myCentralWidget::getNextVac(void)
 {
-    if(main->getSelectedBoat() && main->getSelectedBoat()->getType()==BOAT_VLM)
+    if(mainW->getSelectedBoat() && mainW->getSelectedBoat()->getType()==BOAT_VLM)
     {
-        if(main->getSelectedBoat()->getLoch()<0.01)
+        if(mainW->getSelectedBoat()->getLoch()<0.01)
             return QDateTime::currentDateTime().toTime_t();
         else
-            return ((boatVLM *)main->getSelectedBoat())->getPrevVac()+((boatVLM *)main->getSelectedBoat())->getVacLen();
+            return ((boatVLM *)mainW->getSelectedBoat())->getPrevVac()+((boatVLM *)mainW->getSelectedBoat())->getVacLen();
     }
     else
         return QDateTime::currentDateTime().toTime_t();
@@ -549,8 +549,8 @@ time_t myCentralWidget::getNextVac(void)
 /* Zoom and move   */
 /*******************/
 
-#define BLOCK_SIG_BOAT() { if(main->getSelectedBoat()) main->getSelectedBoat()->blockSignals(true); }
-#define UNBLOCK_SIG_BOAT() { if(main->getSelectedBoat()) main->getSelectedBoat()->blockSignals(false); }
+#define BLOCK_SIG_BOAT() { if(mainW->getSelectedBoat()) mainW->getSelectedBoat()->blockSignals(true); }
+#define UNBLOCK_SIG_BOAT() { if(mainW->getSelectedBoat()) mainW->getSelectedBoat()->blockSignals(false); }
 
 void myCentralWidget::slot_Zoom_All()
 {
@@ -593,11 +593,11 @@ void myCentralWidget::slot_Zoom_In(float quantity)
     BLOCK_SIG_BOAT()
     if(keepPos)
     {
-        if(main->getSelectedBoat())
+        if(mainW->getSelectedBoat())
         {
-            if (proj->isPointVisible(main->getSelectedBoat()->getLon(),main->getSelectedBoat()->getLat()))
+            if (proj->isPointVisible(mainW->getSelectedBoat()->getLon(),mainW->getSelectedBoat()->getLat()))
             {
-                proj->zoomKeep(main->getSelectedBoat()->getLon(),main->getSelectedBoat()->getLat(),quantity);
+                proj->zoomKeep(mainW->getSelectedBoat()->getLon(),mainW->getSelectedBoat()->getLat(),quantity);
                 UNBLOCK_SIG_BOAT()
                 return;
             }
@@ -612,12 +612,12 @@ void myCentralWidget::slot_Zoom_Out(float quantity)
     BLOCK_SIG_BOAT()
     if(keepPos)
     {
-        if(main->getSelectedBoat())
+        if(mainW->getSelectedBoat())
         {
-           if (proj->isPointVisible(main->getSelectedBoat()->getLon(),main->getSelectedBoat()->getLat()))
+           if (proj->isPointVisible(mainW->getSelectedBoat()->getLon(),mainW->getSelectedBoat()->getLat()))
            {
-               proj->zoomKeep(main->getSelectedBoat()->getLon(),main->getSelectedBoat()->getLat(),1/quantity);
-               main->getSelectedBoat()->blockSignals(false);
+               proj->zoomKeep(mainW->getSelectedBoat()->getLon(),mainW->getSelectedBoat()->getLat(),1/quantity);
+               mainW->getSelectedBoat()->blockSignals(false);
                return;
            }
         }
@@ -649,12 +649,12 @@ void myCentralWidget::slot_Zoom_Wheel(float quantity, int XX, int YY, bool cente
     {
         if(keepPos)
         {
-            if(main->getSelectedBoat())
+            if(mainW->getSelectedBoat())
             {
-               if (proj->isPointVisible(main->getSelectedBoat()->getLon(),main->getSelectedBoat()->getLat()))
+               if (proj->isPointVisible(mainW->getSelectedBoat()->getLon(),mainW->getSelectedBoat()->getLat()))
                {
-                   proj->zoomKeep(main->getSelectedBoat()->getLon(),
-                                  main->getSelectedBoat()->getLat(),
+                   proj->zoomKeep(mainW->getSelectedBoat()->getLon(),
+                                  mainW->getSelectedBoat()->getLat(),
                                   newScale/proj->getScale());
                    UNBLOCK_SIG_BOAT()
                    return;
@@ -706,14 +706,14 @@ void myCentralWidget::mouseMove(int x, int y, QGraphicsItem * )
     {
         double xa,xb,ya,yb;
         selection->getZoneWithSens(&xa,&ya,&xb,&yb);
-        main->statusBar_showSelectedZone(xa,ya,xb,yb);
+        mainW->statusBar_showSelectedZone(xa,ya,xb,yb);
     }
     else
     {
         double xx, yy;
         proj->screen2map(x,y, &xx, &yy);
-        main->statusBar_showWindData(xx, yy);
-        main->drawVacInfo();
+        mainW->statusBar_showWindData(xx, yy);
+        mainW->drawVacInfo();
     }
 
     if(selection->tryMoving(x,y))
@@ -763,7 +763,7 @@ void myCentralWidget::mouseDoubleClick(int x, int y, QGraphicsItem * )
     double lon, lat;
     proj->screen2map(x,y, &lon, &lat);
     qWarning() << "Creating POI at: " << lat << "," << lon << " - " << Util::formatLatitude(lat) << "," << Util::formatLongitude(lon);
-    slot_addPOI("",POI_TYPE_POI,(float)lat,(float)lon,-1,-1,false,main->getSelectedBoat());
+    slot_addPOI("",POI_TYPE_POI,(float)lat,(float)lon,-1,-1,false,mainW->getSelectedBoat());
 }
 
 void myCentralWidget::escapeKeyPressed(void)
@@ -1054,9 +1054,9 @@ POI * myCentralWidget::slot_addPOI(QString name,int type,float lat,float lon, fl
 
     if(name=="")
         name=QString(tr("POI"));
-    if(boat==NULL) boat=main->getSelectedBoat();
+    if(boat==NULL) boat=mainW->getSelectedBoat();
     poi = new POI(name,type,lat,lon, proj,
-                  main, this,wph,timestamp,useTimeStamp,boat);
+                  mainW, this,wph,timestamp,useTimeStamp,boat);
 
     slot_addPOI_list(poi);
     //poi->show();
@@ -1245,7 +1245,7 @@ void myCentralWidget::slot_editHorn()
 }
 void myCentralWidget::slot_startReplay()
 {
-    if(main->getSelectedBoat()==NULL) return;
+    if(mainW->getSelectedBoat()==NULL) return;
     emit startReplay(true);
     replayTimer->setInterval(Settings::getSetting("speed_replay",20).toInt());
     replayTimer->start();
@@ -1254,7 +1254,7 @@ void myCentralWidget::slot_startReplay()
 void myCentralWidget::slot_replay()
 {
     replayStep++;
-    if(replayStep>Settings::getSetting("trace_length",12).toInt()*60*60/main->getSelectedBoat()->getVacLen())
+    if(replayStep>Settings::getSetting("trace_length",12).toInt()*60*60/mainW->getSelectedBoat()->getVacLen())
     {
         replayTimer->stop();
         emit startReplay(false);
@@ -1294,8 +1294,8 @@ void myCentralWidget::slot_takeScreenshot()
     Settings::setSetting("screenShotFolder",info.absoluteDir().path());
     // Save it..
     image->save(fileName, "PNG", -1);
-    if (main->getSelectedBoat()->getType()==BOAT_VLM)
-        ((boatVLM*)main->getSelectedBoat())->exportBoatInfoLog(fileName);
+    if (mainW->getSelectedBoat()->getType()==BOAT_VLM)
+        ((boatVLM*)mainW->getSelectedBoat())->exportBoatInfoLog(fileName);
 }
 
 void myCentralWidget::setHorn()
@@ -1436,7 +1436,7 @@ void myCentralWidget::slot_importRouteFromMenu()
         }
         route->setName(routeName);
         update_menuRoute();
-        route->setBoat(main->getSelectedBoat());
+        route->setBoat(mainW->getSelectedBoat());
         route->setStartFromBoat(false);
         route->setStartTimeOption(3);
         route->setColor(QColor(227,142,42,255));
@@ -1559,7 +1559,7 @@ void myCentralWidget::slot_importRouteFromMenu()
             QString poiN;
             poiN.sprintf("%.5i",n);
             poiName=route->getName()+poiN;
-            POI * poi = slot_addPOI(poiName,0,lat,lon,-1,false,false,main->getSelectedBoat());
+            POI * poi = slot_addPOI(poiName,0,lat,lon,-1,false,false,mainW->getSelectedBoat());
             poi->setRoute(route);
             poi->setRouteTimeStamp(start.toTime_t());
             line=stream.readLine();
@@ -1633,7 +1633,7 @@ void myCentralWidget::slot_importRouteFromMenu()
             }
             route->setName(routeName);
             update_menuRoute();
-            route->setBoat(main->getSelectedBoat());
+            route->setBoat(mainW->getSelectedBoat());
             route->setStartFromBoat(false);
             route->setStartTimeOption(3);
             QDomElement ss=routeDetail.firstChildElement("TrackColor");
@@ -1663,7 +1663,7 @@ void myCentralWidget::slot_importRouteFromMenu()
                 lat=trackPoint.firstChildElement("Coords").firstChildElement("Lat").firstChild().toText().data().toFloat();
                 poiN.sprintf("%.5i",n);
                 poiName="I"+poiN;
-                POI * poi = slot_addPOI(poiName,0,lat,lon,-1,false,false,main->getSelectedBoat());
+                POI * poi = slot_addPOI(poiName,0,lat,lon,-1,false,false,mainW->getSelectedBoat());
                 poi->setRoute(route);
                 poi->setRouteTimeStamp(start.toTime_t());
                 trackPoint=trackPoint.nextSiblingElement("TrackPoint");
@@ -1680,18 +1680,18 @@ void myCentralWidget::slot_importRouteFromMenu()
 void myCentralWidget::slot_twaLine()
 {
     int X,Y;
-    main->getXY(&X,&Y);
+    mainW->getXY(&X,&Y);
     double lon, lat;
     proj->screen2map(X,Y, &lon, &lat);
     twaDraw(lon,lat);
 }
 void myCentralWidget::twaDraw(double lon, double lat)
 {
-    if (main->getSelectedBoat()==NULL) return;
+    if (mainW->getSelectedBoat()==NULL) return;
     if (!grib->isOk()) return;
     QPointF start(lon,lat);
     if(twaTrace==NULL)
-        twaTrace=new DialogTwaLine(start,this, main);
+        twaTrace=new DialogTwaLine(start,this, mainW);
     else
     {
         if (!twaTrace->isHidden()) return;
@@ -1858,9 +1858,9 @@ void myCentralWidget::addPivot(ROUTAGE * fromRoutage,bool editOptions)
 ROUTE * myCentralWidget::addRoute()
 {
     ROUTE * route=new ROUTE("Route", proj, grib, scene, this);
-    route->setBoat(main->getSelectedBoat());
+    route->setBoat(mainW->getSelectedBoat());
     connect(this,SIGNAL(updateRoute(boat *)),route,SLOT(slot_recalculate(boat *)));
-    connect(main,SIGNAL(updateRoute(boat *)),route,SLOT(slot_recalculate(boat *)));
+    connect(mainW,SIGNAL(updateRoute(boat *)),route,SLOT(slot_recalculate(boat *)));
     connect(route,SIGNAL(editMe(ROUTE *)),this,SLOT(slot_editRoute(ROUTE *)));
 
 
@@ -1883,7 +1883,7 @@ ROUTAGE * myCentralWidget::addRoutage()
     nbRoutage++;
     QString rName;
     ROUTAGE * routage=new ROUTAGE(rName.sprintf(tr("Routage%d").toLocal8Bit(),nbRoutage), proj, grib, scene, this);
-    routage->setBoat(main->getSelectedBoat());
+    routage->setBoat(mainW->getSelectedBoat());
     connect(routage,SIGNAL(editMe(ROUTAGE *)),this,SLOT(slot_editRoutage(ROUTAGE *)));
 
 
@@ -1902,10 +1902,11 @@ void myCentralWidget::slot_editRoute(ROUTE * route,bool createMode)
     {
         if(createMode)
         {
-            delete route;
             route_list.removeAll(route);
+            delete route;
             route=NULL;
         }
+        return;
     }
     else
     {
@@ -2170,8 +2171,15 @@ void myCentralWidget::slot_editRoute(ROUTE * route,bool createMode)
             QMessageBox::critical(0,tr("Envoyer la route au pilototo"),tr("Pour pouvoir envoyer la route au pilototo if faut que:<br>-La route demarre du bateau et de la prochaine vac<br>et que le mode VbVmg-Vlm soit active"));
             return;
         }
-        main->setPilototoFromRoute(route);
+        mainW->setPilototoFromRoute(route);
 
+    }
+}
+void myCentralWidget::setPilototo(QList<POI *> poiList)
+{
+    if(!poiList.isEmpty())
+    {
+        mainW->setPilototoFromRoute(poiList);
     }
 }
 
@@ -2502,13 +2510,13 @@ void myCentralWidget::slot_playerSelected(Player * player)
             }
             realBoat=NULL;
             emit accountListUpdated();
-            main->getBoard()->playerChanged(player);
+            mainW->getBoard()->playerChanged(player);
             //qWarning()<<"reselected="<<reselected;
             if(reselected)
             {
-                main->slotSelectBoat(boat_list->at(thisOne));
+                mainW->slotSelectBoat(boat_list->at(thisOne));
                 boat_list->at(thisOne)->setSelected(true);
-                main->getBoard()->boatUpdated(boat_list->at(thisOne));
+                mainW->getBoard()->boatUpdated(boat_list->at(thisOne));
             }
             emit shRouBis();
         }
@@ -2524,11 +2532,11 @@ void myCentralWidget::slot_playerSelected(Player * player)
             //menuBar->acVLMParamBoat->setEnabled(false);
             realBoat=player->getRealBoat();
             realBoat->reloadPolar();
-            main->slotSelectBoat(realBoat);
+            mainW->slotSelectBoat(realBoat);
             realBoat->playerActivated();
-            main->getBoard()->playerChanged(player);
-            main->getBoard()->boatUpdated(realBoat);
-            main->slotBoatUpdated(realBoat,true,false);;
+            mainW->getBoard()->playerChanged(player);
+            mainW->getBoard()->boatUpdated(realBoat);
+            mainW->slotBoatUpdated(realBoat,true,false);;
             emit shRouBis();
             menuBar->insertBoatReal(realBoat->getplayerName());
         }

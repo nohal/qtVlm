@@ -36,7 +36,9 @@ Copyright (C) 2008 - Jacques Zaninetti - http://zygrib.free.fr
 #include "Player.h"
 #include <QDesktopWidget>
 #include "settings.h"
-
+#include <QStandardItemModel>
+#include "POI.h"
+#include <QItemDelegate>
 
 //-------------------------------------------------------
 // ROUTE_Editor: Constructor for edit an existing ROUTE
@@ -48,12 +50,12 @@ DialogRoute::DialogRoute(ROUTE *route,myCentralWidget *parent)
     this->parent=parent;
     setupUi(this);
     Util::setFontDialog(this);
-    this->resize(widget->width()+10,widget->height()+10);
-    widget->setParent(0);
+    this->resize(this->tabWidget->width()+10,tabWidget->height()+10);
+    tabWidget->setParent(0);
     scroll=new QScrollArea(this);
-    scroll->resize(widget->size());
-    scroll->setWidget(widget);
-    QSize mySize=QSize(widget->size().width()+20,widget->size().height()+20);
+    scroll->resize(tabWidget->size());
+    scroll->setWidget(tabWidget);
+    QSize mySize=QSize(tabWidget->size().width()+20,tabWidget->size().height()+20);
     QSize screenSize=QApplication::desktop()->screenGeometry().size()*.8;
     if(mySize.height() > screenSize.height())
     {
@@ -66,7 +68,7 @@ DialogRoute::DialogRoute(ROUTE *route,myCentralWidget *parent)
     this->resize(mySize);
     scroll->resize(mySize);
     inputTraceColor =new InputLineParams(route->getWidth(),route->getColor(),1.6,  QColor(Qt::red),this,0.1,5);
-    verticalLayout_2->addWidget( inputTraceColor);
+    verticalLayout->addWidget( inputTraceColor);
     setWindowTitle(tr("Parametres Route"));
     editName->setText(route->getName());
     editFrozen->setChecked(route->getFrozen());
@@ -84,6 +86,9 @@ DialogRoute::DialogRoute(ROUTE *route,myCentralWidget *parent)
     autoAt->setChecked(route->getAutoAt());
     vacStep->setValue(route->getMultVac());
     hidden->setChecked(route->getHidden());
+    connect(this->btOk,SIGNAL(clicked()),this,SLOT(accept()));
+    connect(this->btCancel,SIGNAL(clicked()),this,SLOT(reject()));
+    connect(this->Envoyer,SIGNAL(clicked()),this,SLOT(slotEnvoyer()));
     this->useVbvmgVlm->setChecked(route->getUseVbvmgVlm());
     switch(route->getStartTimeOption())
     {
@@ -97,6 +102,7 @@ DialogRoute::DialogRoute(ROUTE *route,myCentralWidget *parent)
         editDate->setChecked(true);
         editDateBox->setEnabled(true);
     }
+    this->tabWidget->setCurrentIndex(0);
     int n=0;
     if(parent->getPlayer()->getType()!=BOAT_REAL)
     {
@@ -124,13 +130,33 @@ DialogRoute::DialogRoute(ROUTE *route,myCentralWidget *parent)
         editBoat->addItem(parent->getPlayer()->getName());
         editBoat->setEnabled(false);
         this->pilototo->hide();
+        this->tabWidget->removeTab(1);
         this->autoRemove->hide();
         this->autoAt->setChecked(false);
         this->autoAt->hide();
     }
-#if 0
+#if 1
     this->pilototo->hide();
+    //this->tabWidget->removeTab(1);
 #endif
+    model= new QStandardItemModel();
+    model->setColumnCount(4);
+    model->setHeaderData(0,Qt::Horizontal,QObject::tr("Date et heure"));
+    model->setHeaderData(1,Qt::Horizontal,QObject::tr("Aller vers"));
+    model->setHeaderData(2,Qt::Horizontal,QObject::tr("Cap a suivre apres"));
+    model->setHeaderData(3,Qt::Horizontal,QObject::tr("Mode"));
+    DateBoxDelegate * delegate=new DateBoxDelegate();
+    pilotView->setModel(model);
+    pilotView->setItemDelegate(delegate);
+    pilotView->header()->setAlternatingRowColors(true);
+    pilotView->header()->setDefaultAlignment(Qt::AlignCenter|Qt::AlignVCenter);;
+    connect(this->defaultOrders,SIGNAL(clicked()),this,SLOT(slotLoadPilototo()));
+    connect(this->customOrders,SIGNAL(clicked()),this,SLOT(slotLoadPilototoCustom()));
+    this->pilotView->resizeColumnToContents(2);
+    this->pilotView->setColumnWidth(1,pilotView->columnWidth(2));
+    this->pilotView->resizeColumnToContents(0);
+    this->pilotView->setColumnWidth(0,this->pilotView->columnWidth(0)+30);
+    this->pilotView->setColumnWidth(3,pilotView->columnWidth(2));
 }
 DialogRoute::~DialogRoute()
 {
@@ -216,5 +242,153 @@ void DialogRoute::GybeTack(int i)
         font.setBold(true);
     this->labelTackGybe->setFont(font);
 }
+void DialogRoute::slotLoadPilototo()
+{
+    if(!(this->startFromBoat->isChecked() &&
+         this->editVac->isChecked() /*&& this->useVbvmgVlm->isChecked()*/))
+    {
+        QMessageBox::critical(0,tr("Pilototo"),tr("Pour utiliser cette action il faut que:<br>- La route parte du bateau<br>-La route parte de la prochaine vacation<br>- Le mode VBVMG-VLM soit actif"));
+        return;
+    }
+    if(route->getPoiList().isEmpty())
+    {
+        return;
+    }
+    this->fillPilotView(true);
+}
+void DialogRoute::slotLoadPilototoCustom()
+{
+    if(!(this->startFromBoat->isChecked() &&
+         this->editVac->isChecked() /*&& this->useVbvmgVlm->isChecked()*/))
+    {
+        QMessageBox::critical(0,tr("Pilototo"),tr("Pour utiliser cette action il faut que:<br>- La route parte du bateau<br>-La route parte de la prochaine vacation<br>- Le mode VBVMG-VLM soit actif"));
+        return;
+    }
+    if(route->getPoiList().isEmpty())
+    {
+        return;
+    }
+    this->fillPilotView(false);
+}
+void DialogRoute::fillPilotView(bool def)
+{
+    if(!(route->getStartFromBoat() &&
+         route->getStartTimeOption()==1 /*&& route->getUseVbvmgVlm()*/))
+    {
+        QMessageBox::critical(0,tr("Pilototo"),tr("Pour utiliser cette action il faut que:<br>- La route parte du bateau<br>-La route parte de la prochaine vacation<br>- Le mode VBVMG-VLM soit actif"));
+        return;
+    }
+    if(route->getPoiList().isEmpty())
+    {
+        return;
+    }
+    model->removeRows(0,model->rowCount());
+    listPois.clear();
+    for(int n=0;n<route->getPoiList().count();++n)
+    {
+        if(model->rowCount()==6) break;
+        POI * poi=route->getPoiList().at(n);
+        if(!def && !poi->getPiloteSelected()) continue;
+        listPois.append(poi);
+        time_t eta;
+        QList<QStandardItem*> items;
+        if(listPois.count()!=1)
+        {
+            eta=listPois.at(listPois.count()-2)->getRouteTimeStamp();
+            eta=eta+20;
+            if(eta==-1) break;
+            items.append(new QStandardItem());
+            QDateTime tt=QDateTime().fromTime_t(eta).toUTC();
+            tt.setTimeSpec(Qt::UTC);
+            items[0]->setData(tt.toString("dd MMM yyyy-hh:mm:ss"),Qt::EditRole);
+            items[0]->setEditable(true);
+        }
+        else
+        {
+            items.append(new QStandardItem(tr("WP-VLM")));
+            items[0]->setEditable(false);
+        }
+        items[0]->setData(QVariant(QMetaType::VoidStar, &poi ),Qt::UserRole);
+        items[0]->setTextAlignment(Qt::AlignCenter| Qt::AlignVCenter);
+        items.append(new QStandardItem(poi->getName()));
+        items[1]->setTextAlignment(Qt::AlignCenter| Qt::AlignVCenter);
+        items[1]->setEditable(false);
+        items.append(new QStandardItem(QString().sprintf("%.1f",poi->getWph())));
+        items[2]->setTextAlignment(Qt::AlignCenter| Qt::AlignVCenter);
+        items[2]->setEditable(false);
+        switch(poi->getNavMode())
+        {
+            case 0:
+                items.append(new QStandardItem("VB-VMG"));
+                break;
+            case 1:
+                items.append(new QStandardItem("VMG"));
+                break;
+            case 2:
+                items.append(new QStandardItem("ORTHO"));
+                break;
+        }
+        items[3]->setTextAlignment(Qt::AlignCenter| Qt::AlignVCenter);
+        items[3]->setEditable(false);
+        model->appendRow(items);
+    }
+
+    this->pilotView->resizeColumnToContents(2);
+    this->pilotView->setColumnWidth(1,pilotView->columnWidth(2));
+    this->pilotView->resizeColumnToContents(0);
+    this->pilotView->setColumnWidth(0,this->pilotView->columnWidth(0)+30);
+    this->pilotView->setColumnWidth(3,pilotView->columnWidth(2));
+}
+void DialogRoute::slotEnvoyer()
+{
+    QList<POI*> poiList;
+    for (int n=0;n<model->rowCount();++n)
+    {
+        POI * poi=reinterpret_cast<struct POI *>(qvariant_cast<void*>(model->item(n,0)->data(Qt::UserRole)));
+        QDateTime tt=QDateTime().fromString(model->item(n,0)->data(Qt::EditRole).toString(),"dd MMM yyyy-hh:mm:ss");
+        tt.setTimeSpec(Qt::UTC);
+        //qWarning()<<poi->getName()<<tt;
+        poi->setPiloteDate(tt.toTime_t());
+        poiList.append(poi);
+    }
+    parent->setPilototo(poiList);
+    this->done(QDialog::Accepted);
+}
 
 //---------------------------------------
+DateBoxDelegate::DateBoxDelegate(QObject *parent)
+    : QItemDelegate(parent)
+{
+}
+QWidget *DateBoxDelegate::createEditor(QWidget *parent,
+    const QStyleOptionViewItem &/* option */,
+    const QModelIndex &/* index */) const
+{
+    QDateTimeEdit *editor = new QDateTimeEdit(parent);
+    editor->setTimeSpec(Qt::UTC);
+    editor->setDisplayFormat("dd MMM yyyy-hh:mm:ss");
+    return editor;
+}
+void DateBoxDelegate::setEditorData(QWidget *editor,
+                                    const QModelIndex &index) const
+{
+    QDateTime value = QDateTime().fromString(index.model()->data(index, Qt::EditRole).toString(),"dd MMM yyyy-hh:mm:ss");
+    value.setTimeSpec(Qt::UTC);
+    //qWarning()<<"setEditorData"<<index<<value;
+    QDateTimeEdit *editBox = static_cast<QDateTimeEdit*>(editor);
+    editBox->setMinimumDateTime(QDateTime().currentDateTimeUtc());
+    editBox->setDateTime(value);
+}
+void DateBoxDelegate::setModelData(QWidget *editor, QAbstractItemModel *model,
+                                   const QModelIndex &index) const
+{
+    QDateTimeEdit *editBox = static_cast<QDateTimeEdit*>(editor);
+    QDateTime value = editBox->dateTime().toUTC();
+    value.setTimeSpec(Qt::UTC);
+    model->setData(index,value.toString("dd MMM yyyy-hh:mm:ss"),Qt::EditRole);
+}
+void DateBoxDelegate::updateEditorGeometry(QWidget *editor,
+    const QStyleOptionViewItem &option, const QModelIndex &/* index */) const
+{
+    editor->setGeometry(option.rect);
+}

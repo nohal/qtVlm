@@ -75,7 +75,8 @@ POI::POI(QString name, int type, double lat, double lon,
     this->lineColor=Qt::blue;
     this->lineWidth=2;
     this->colorPilototo=0;
-
+    this->piloteSelected=false;
+    this->piloteDate=-1;
     useRouteTstamp=false;
     routeTimeStamp=-1;
     route=NULL;
@@ -246,6 +247,13 @@ void POI::createPopUpMenu(void)
     ac_modeList1->setChecked(true);
     connect(ac_modeList,SIGNAL(triggered(QAction*)),this,SLOT(slot_setMode(QAction*)));
     popup->addMenu(ac_modeList);
+
+
+    ac_pilot=new QAction(tr("Pre-selectionner pour le pilototo"),popup);
+    ac_pilot->setCheckable(true);
+    ac_pilot->setChecked(this->piloteSelected);
+    connect(ac_pilot,SIGNAL(triggered()),this,SLOT(slot_pilote()));
+    popup->addAction(ac_pilot);
 
     popup->addSeparator();
     ac_connect=new QAction(tr("Tracer/Editer une ligne avec un autre POI"),popup);
@@ -591,6 +599,10 @@ void POI::update_myStr(void)
             my_str=name + " " + tm.toString("dd MMM-hh:mm");
     else
         my_str=this->name;
+    QFont myFont=(QFont(QApplication::font()));
+    if(this->piloteSelected)
+        myFont.setBold(true);
+    this->setFont(myFont);
     QFontMetrics fm(font());
     prepareGeometryChange();
     width = fm.width(my_str) + 10 +2;
@@ -1064,10 +1076,16 @@ void POI::slot_finePosit()
 
 void POI::paint(QPainter * pnt, const QStyleOptionGraphicsItem * , QWidget * )
 {
+    QFont myFont=(QFont(QApplication::font()));
+    if(this->piloteSelected)
+        myFont.setBold(true);
+    this->setFont(myFont);
+    QFontMetrics fm(font());
+    width = fm.width(my_str) + 10 +2;
+    height = qMax(fm.height()+2,10);
     int dy = height/2;
     if(!labelHidden && !myLabelHidden)
     {
-        QFontMetrics fm(font());
         if(route==NULL)
             pnt->fillRect(9,0, width-10,height-1, QBrush(bgcolor));
         else
@@ -1164,4 +1182,9 @@ QRectF POI::boundingRect() const
         return QRectF(0,0,0,0);
     else
         return QRectF(0,0,width,height);
+}
+void POI::slot_pilote()
+{
+    this->piloteSelected=ac_pilot->isChecked();
+    update();
 }

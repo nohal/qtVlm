@@ -1850,13 +1850,35 @@ void MainWindow::setPilototoFromRoute(ROUTE *route)
     for (int n=0;n<route->getPoiList().count() && n<=5;++n)
     {
         POI * poi=route->getPoiList().at(n);
-        if(poi->getTimeStamp()==-1)
+        if(poi->getRouteTimeStamp()==-1)
             break;
-        if(poi->getTimeStamp()+30<=(int)QDateTime().currentDateTimeUtc().toTime_t()) continue;
+        if(poi->getRouteTimeStamp()+30<=(int)QDateTime().currentDateTimeUtc().toTime_t()) continue;
+        if(n>0)
+            poi->setPiloteDate(route->getPoiList().at(n-1)->getRouteTimeStamp());
         pois.append(poi);
     }
     route->setPilototo(false);
     emit setInstructions(route->getBoat(),pois);
+}
+void MainWindow::setPilototoFromRoute(QList<POI*> poiList)
+{
+    if(poiList.isEmpty()) return;
+    if(poiList.at(0)->getRoute()==NULL) return;
+    ROUTE * route=poiList.at(0)->getRoute();
+    if(!route->getBoat() || route->getBoat()->getType()!=BOAT_VLM)
+    {
+        route->setPilototo(false);
+        return;
+    }
+    if(poiList.count()==1)
+    {
+        poiList.at(0)->slot_setWP();
+        poiList.at(0)->setPiloteDate(-1);
+        route->setPilototo(false);
+        return;
+    }
+    route->setPilototo(false);
+    emit setInstructions(route->getBoat(),poiList);
 }
 
 bool MainWindow::isBoat(QString idu)

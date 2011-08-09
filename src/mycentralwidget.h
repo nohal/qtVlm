@@ -120,7 +120,7 @@ class myCentralWidget : public QWidget
         void twaDraw(double lon, double lat);
         Player * getPlayer(void) { return currentPlayer; }
         boatReal * getRealBoat(void) {return realBoat; }
-        bool getIsStartingUp(void){return main->isStartingUp;}
+        bool getIsStartingUp(void){return mainW->isStartingUp;}
 
         void manageAccount(bool * res=NULL);
         void updatePlayer(Player * player);
@@ -174,6 +174,7 @@ class myCentralWidget : public QWidget
         void removeOpponent(QString oppId, QString raceId);
         Terrain * getTerre(){return terre;}
         time_t getNextVac();
+        void setPilototo(QList<POI*> poiList);
 
     public slots :
         /* Zoom & position */
@@ -315,7 +316,7 @@ class myCentralWidget : public QWidget
         bool resizing;
 
         Projection * proj;
-        MainWindow * main;
+        MainWindow * mainW;
         MenuBar    *menuBar;
 
         /* item child */

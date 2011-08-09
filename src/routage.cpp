@@ -2200,6 +2200,7 @@ void ROUTAGE::convertToRoute()
     route->setUseVbVmgVlm(false);
     parent->update_menuRoute();
     route->setBoat(this->myBoat);
+    route->setDetectCoasts(this->checkCoast);
     ROUTAGE * parentRoutage=this;
     while(parentRoutage->getIsPivot())
     {

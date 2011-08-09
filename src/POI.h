@@ -99,7 +99,8 @@ class POI : public QGraphicsWidget
         POI * getConnectedPoi(){return connectedPoi;}
         void setConnectedPoi(POI * p){connectedPoi=p;}
         void setLineBetweenPois(vlmLine * line){this->lineBetweenPois=line;}
-
+        bool getPiloteSelected(){return piloteSelected;}
+        void setPiloteSelected(bool b){this->piloteSelected=b;this->ac_pilot->setChecked(b);}
         /* comparateur de classe pour le tri */
         static bool myLessThan(POI * POI_1,POI* POI_2) {return POI_1->name < POI_2->name;}
 
@@ -109,6 +110,8 @@ class POI : public QGraphicsWidget
 
         /* event propagé par la scene */
         bool tryMoving(int x, int y);
+        time_t getPiloteDate(){return piloteDate;}
+        void setPiloteDate(time_t t){this->piloteDate=t;}
 
     public slots:
         void slot_updateProjection();
@@ -133,6 +136,7 @@ class POI : public QGraphicsWidget
         void slotCompassLine();
         void slot_editRoute();
         void slot_relier();
+        void slot_pilote();
 
     signals:
         void chgWP(float,float,float);
@@ -203,6 +207,7 @@ class POI : public QGraphicsWidget
         QAction * ac_modeList2;
         QAction * ac_modeList3;
         QAction * ac_connect;
+        QAction * ac_pilot;
         void createPopUpMenu(void);
 
         void chkIsWP(void);
@@ -226,6 +231,8 @@ class POI : public QGraphicsWidget
         QColor lineColor;
         float lineWidth;
         int colorPilototo;
+        bool piloteSelected;
+        time_t piloteDate;
 };
 
 #endif

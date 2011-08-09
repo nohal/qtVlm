@@ -527,6 +527,17 @@ void DialogPilototo::setInstructions(boat * pvBoat, QList<POI *> pois)
 {
     boatVLM * my_boat=(boatVLM*)pvBoat;
     this->myBoat=my_boat;
+    if(pois.count()>0)
+    {
+        for(int n=1;n<pois.count();++n)
+        {
+            if(pois.at(n)->getPiloteDate()<QDateTime().currentDateTimeUtc().toTime_t()+1.5*myBoat->getVacLen())
+            {
+                QMessageBox::critical(0,tr("Mise a jour Pilototo"),tr("Certains ordres ont des dates trop proches ou dans le passe"));
+                return;
+            }
+        }
+    }
     QList<struct instruction*> * instructions = new QList<struct instruction*>;
     QJson::Serializer serializer;
     struct instruction * instr_ptr;
@@ -547,7 +558,8 @@ void DialogPilototo::setInstructions(boat * pvBoat, QList<POI *> pois)
     for(int n=1;n<pois.count();++n)
     {
         POI * poi=pois.at(n);
-        if(poi->getTimeStamp()==-1) continue;
+        if(poi->getPiloteDate()==-1) continue;
+        if(poi->getPiloteDate()+30<=(int)QDateTime().currentDateTimeUtc().toTime_t()) continue;
         QVariantMap cur_instruction;
         QVariantMap pip;
         instr_ptr=new struct instruction();
@@ -558,7 +570,7 @@ void DialogPilototo::setInstructions(boat * pvBoat, QList<POI *> pois)
         else if(poi->getNavMode()==2)
             mode=3;
         cur_instruction.insert("pim",mode);
-        cur_instruction.insert("tasktime",pois.at(n-1)->getTimeStamp()+20);
+        cur_instruction.insert("tasktime",(int)poi->getPiloteDate());
         pip.insert("targetlat",QString().sprintf("%.10f",poi->getLatitude()));
         pip.insert("targetlong",QString().sprintf("%.10f",poi->getLongitude()));
         if(poi->getWph()!=-1)
@@ -567,11 +579,10 @@ void DialogPilototo::setInstructions(boat * pvBoat, QList<POI *> pois)
         cur_instruction.insert("idu",myBoat->getBoatId().toInt());
         instr_ptr->param=serializer.serialize(cur_instruction);
         instructions->append(instr_ptr);
+        poi->setPiloteDate(-1);
     }
     poiToWp=pois.at(0);
     currentList=instructions;
-    for(int i=0;i<currentList->count();i++)
-        qWarning() << i << ": " << currentList->at(i)->script << " - " << currentList->at(i)->param;
     this->updateBoat=true;
     sendPilototo();
 }

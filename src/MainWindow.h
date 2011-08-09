@@ -72,6 +72,7 @@ class MainWindow: public QMainWindow
         board * getBoard(void) { return myBoard; }
         bool getNoSave(){return noSave;}
         void setPilototoFromRoute(ROUTE * route);
+        void setPilototoFromRoute(QList<POI*> poiList);
         bool getStartEstimeSpeedFromGrib();
 
     public slots:

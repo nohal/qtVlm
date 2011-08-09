@@ -29,6 +29,8 @@ Copyright (C) 2008 - Jacques Zaninetti - http://zygrib.free.fr
 
 #include "ui_Route_Editor.h"
 #include <QScrollArea>
+#include <QStandardItemModel>
+#include <QItemDelegate>
 
 //===================================================================
 class DialogRoute : public QDialog, public Ui::ROUTE_Editor_ui
@@ -37,9 +39,13 @@ class DialogRoute : public QDialog, public Ui::ROUTE_Editor_ui
         DialogRoute(ROUTE *route, myCentralWidget *parent);
         ~DialogRoute();
         void done(int result);
+        void fillPilotView(bool f=false);
 
     public slots:
         void GybeTack(int i);
+        void slotLoadPilototo();
+        void slotLoadPilototoCustom();
+        void slotEnvoyer();
     protected:
         void resizeEvent ( QResizeEvent * event );
     signals:
@@ -50,6 +56,24 @@ class DialogRoute : public QDialog, public Ui::ROUTE_Editor_ui
         myCentralWidget *parent;
         bool  modeCreation;
         InputLineParams *inputTraceColor;
+        QStandardItemModel * model;
+        QList<POI*> listPois;
 };
+class DateBoxDelegate : public QItemDelegate
+{
+     Q_OBJECT
 
+ public:
+     DateBoxDelegate(QObject *parent = 0);
+
+     QWidget *createEditor(QWidget *parent, const QStyleOptionViewItem &option,
+                           const QModelIndex &index) const;
+
+     void setEditorData(QWidget *editor, const QModelIndex &index) const;
+     void setModelData(QWidget *editor, QAbstractItemModel *model,
+                       const QModelIndex &index) const;
+
+     void updateEditorGeometry(QWidget *editor,
+         const QStyleOptionViewItem &option, const QModelIndex &index) const;
+ };
 #endif

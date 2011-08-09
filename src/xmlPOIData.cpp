@@ -68,6 +68,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #define POI_NAVMODE       "NavMode"
 #define POI_LABEL_HIDDEN  "LabelHidden"
 #define POI_NOT_SIMPLIFICABLE "IsSimplificable"
+#define POI_PILOTE         "Pilote"
 
 xml_POIData::xml_POIData(Projection * proj,MainWindow * main, myCentralWidget * parent)
 : QWidget(parent)
@@ -261,6 +262,11 @@ void xml_POIData::slot_writeData(QList<ROUTE*> & route_list,QList<POI*> & poi_li
           tag = doc.createElement(POI_NOT_SIMPLIFICABLE);
           group.appendChild(tag);
           t = doc.createTextNode(QString().setNum(poi->getNotSimplificable()?1:0));
+          tag.appendChild(t);
+
+          tag = doc.createElement(POI_PILOTE);
+          group.appendChild(tag);
+          t = doc.createTextNode(QString().setNum(poi->getPiloteSelected()?1:0));
           tag.appendChild(t);
 
           tag = doc.createElement(POI_ROUTE);
@@ -583,6 +589,7 @@ void xml_POIData::slot_readData(QString fname)
               bool labelHidden=false;
               int navMode=0;
               bool notSimplificable=false;
+              bool pilote=false;
 
               while(!subNode.isNull())
               {
@@ -644,6 +651,13 @@ void xml_POIData::slot_readData(QString fname)
                            notSimplificable = dataNode.toText().data().toInt()==1;
                    }
 
+                   if(subNode.toElement().tagName() == POI_PILOTE)
+                   {
+                       dataNode = subNode.firstChild();
+                       if(dataNode.nodeType() == QDomNode::TextNode)
+                           pilote = dataNode.toText().data().toInt()==1;
+                   }
+
                    if(subNode.toElement().tagName() == POI_ROUTE)
                    {
                        dataNode = subNode.firstChild();
@@ -671,6 +685,7 @@ void xml_POIData::slot_readData(QString fname)
                    poi->setNavMode(navMode);
                    poi->setMyLabelHidden(labelHidden);
                    poi->setNotSimplificable(notSimplificable);
+                   poi->setPiloteSelected(pilote);
                    emit addPOI_list(poi);
               }
               else
