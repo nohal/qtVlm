@@ -424,6 +424,14 @@ Continuer la sauvegarde?</source>
         <source>(ddd) dd/MM/yyyy hh:mm:ss</source>
         <translation></translation>
     </message>
+    <message>
+        <source>Mise a jour Pilototo</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Certains ordres ont des dates trop proches ou dans le passe</source>
+        <translation>Certains ordres ont des dates trop proches ou dans le passé</translation>
+    </message>
 </context>
 <context>
     <name>DialogPilototoInstruction</name>
@@ -688,7 +696,7 @@ Etes-vous sur ?</source>
     </message>
     <message>
         <source>Vous ne pouvez pas utiliser le module route&lt;br&gt;avec moins de 4 vacations entre les isochrones.&lt;br&gt;Vous devez donc desactiver cette option ou rallonger la duree</source>
-        <translation>Vous ne pouvez pas utiliser le module route&lt;br&gt;avec moins de 4 vacations entre les isochrones.&lt;br&gt;Vous devez donc désactiver cette option ou rallonger la durée.</translation>
+        <translation>Vous ne pouvez pas utiliser le module route&lt;br&gt;avec moins de 4 vacations entre les isochrones.&lt;br&gt;Vous devez donc désactiver cette option ou rallonger la durée</translation>
     </message>
 </context>
 <context>
@@ -704,6 +712,18 @@ Etes-vous sur ?</source>
     <message>
         <source>Date de la derniere MAJ de la position</source>
         <translation>Date et heure de la dernière MAJ  de la position</translation>
+    </message>
+    <message>
+        <source>Pilototo</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Pour utiliser cette action il faut que:&lt;br&gt;- La route parte du bateau&lt;br&gt;-La route parte de la prochaine vacation&lt;br&gt;- Le mode VBVMG-VLM soit actif</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>WP-VLM</source>
+        <translation></translation>
     </message>
 </context>
 <context>
@@ -1141,18 +1161,6 @@ Etes-vous sur ?</source>
         <translation>Arrivée WP</translation>
     </message>
     <message>
-        <source> mins</source>
-        <translation></translation>
-    </message>
-    <message>
-        <source> vacs</source>
-        <translation></translation>
-    </message>
-    <message>
-        <source> milles</source>
-        <translation></translation>
-    </message>
-    <message>
         <source> kts</source>
         <translation>nds</translation>
     </message>
@@ -1175,6 +1183,22 @@ Etes-vous sur ?</source>
     <message>
         <source>Votre blocnote a change!</source>
         <translation>Votre blocnote a changé!</translation>
+    </message>
+    <message>
+        <source>Si cette option est cochee&lt;br&gt;l&apos;estime calcule la vitesse du bateau&lt;br&gt;a la prochaine vac.&lt;br&gt;Sinon elle utilise la vitesse du bateau&lt;br&gt;telle que donnee par VLM</source>
+        <translation>Si cette option est cochée&lt;br&gt;l&apos;estime calcule la vitesse du bateau à la prochaine vacation.&lt;br&gt;Sinon elle utilise la vitesse du bateau&lt;br&gt;telle que donnée par VLM</translation>
+    </message>
+    <message>
+        <source> mins </source>
+        <translation></translation>
+    </message>
+    <message>
+        <source> vacs </source>
+        <translation></translation>
+    </message>
+    <message>
+        <source> NM </source>
+        <translation></translation>
     </message>
 </context>
 <context>
@@ -2100,6 +2124,38 @@ Etes-vous sur ?</source>
         <source>Tracer/Editer une ligne avec un autre POI</source>
         <translation></translation>
     </message>
+    <message>
+        <source>Pre-selectionner pour le pilototo</source>
+        <translation>Préselectionner pour le pilototo</translation>
+    </message>
+    <message>
+        <source>1ere cible du pilototo</source>
+        <translation>Première cible du pilototo</translation>
+    </message>
+    <message>
+        <source>2eme cible du pilototo</source>
+        <translation>Deuxième cible du pilototo</translation>
+    </message>
+    <message>
+        <source>3eme cible du pilototo</source>
+        <translation>Troisième cible du pilototo</translation>
+    </message>
+    <message>
+        <source>4eme cible du pilototo</source>
+        <translation>Quatrième cible du pilototo</translation>
+    </message>
+    <message>
+        <source>5eme cible du pilototo</source>
+        <translation>Cinquième cible du pilototo</translation>
+    </message>
+    <message>
+        <source>Destruction d&apos;un marque</source>
+        <translation>Destruction d&apos;une marque</translation>
+    </message>
+    <message>
+        <source>Le calcul de la route n&apos;est pas fini, impossible de supprimer ce POI</source>
+        <translation></translation>
+    </message>
 </context>
 <context>
     <name>POI_delete_ui</name>
@@ -2588,6 +2644,26 @@ VMG %.1fnds</source>
         <source>Exports VLM Syncs Summary</source>
         <translation></translation>
     </message>
+    <message>
+        <source>Date et heure</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Aller vers</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Cap a suivre apres</source>
+        <translation>Cap à suivre après</translation>
+    </message>
+    <message>
+        <source>Mode</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Un nom de fichier valide portant l&apos;extension .png est requis</source>
+        <translation></translation>
+    </message>
 </context>
 <context>
     <name>ROUTAGE</name>
@@ -2666,6 +2742,14 @@ VMG %.1fnds</source>
     <message>
         <source>Date de depart choisie incoherente avec le grib</source>
         <translation>Date de départ choisie incohérente avec le grib</translation>
+    </message>
+    <message>
+        <source>Convertion d&apos;un routage en route</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Voulez-vous que la route parte du bateau a la prochaine vacation?</source>
+        <translation></translation>
     </message>
 </context>
 <context>
@@ -2850,10 +2934,6 @@ avec ce préfixe</translation>
 Virements de bord</source>
         <translation></translation>
     </message>
-    <message>
-        <source>Afficher le grib pendant le calcul</source>
-        <translation type="unfinished"></translation>
-    </message>
 </context>
 <context>
     <name>ROUTE</name>
@@ -2863,7 +2943,7 @@ Virements de bord</source>
     </message>
     <message>
         <source>ETA depuis la derniere vacation</source>
-        <translation>ETA depuis la dernière vacation</translation>
+        <translation type="obsolete">ETA depuis la dernière vacation</translation>
     </message>
     <message>
         <source>ETA depuis la date Grib</source>
@@ -2911,6 +2991,14 @@ Voulez-vous egalement supprimer tous les POIs lui appartenant?</source>
         <source>Note: la date indiquee correspond a la desactivation du WP</source>
         <translation>Note: la date indiquée correspond à la désactivation du WP</translation>
     </message>
+    <message>
+        <source>&lt;br&gt;ETA: deja atteint</source>
+        <translation>ETA: déjà atteint</translation>
+    </message>
+    <message>
+        <source>ETA a partir de maintenant</source>
+        <translation>ETA: à partir de maintenant</translation>
+    </message>
 </context>
 <context>
     <name>ROUTE_Editor_ui</name>
@@ -2944,7 +3032,7 @@ Voulez-vous egalement supprimer tous les POIs lui appartenant?</source>
     </message>
     <message>
         <source>Depuis la derniere Vac</source>
-        <translation>Depuis la dernière Vac</translation>
+        <translation type="obsolete">Depuis la dernière Vac</translation>
     </message>
     <message>
         <source>Depuis la date du grib</source>
@@ -2991,10 +3079,6 @@ Voulez-vous egalement supprimer tous les POIs lui appartenant?</source>
         <translation>Nom</translation>
     </message>
     <message>
-        <source>Utiliser la formule VLM pour le VB-VMG</source>
-        <translation></translation>
-    </message>
-    <message>
         <source>M/d/yyyy hh:mm:ss</source>
         <translation>dd/MM/yyyy hh:mm:ss</translation>
     </message>
@@ -3017,6 +3101,42 @@ Voulez-vous egalement supprimer tous les POIs lui appartenant?</source>
     <message>
         <source>Detecter les collisions avec les cotes visibles a l&apos;ecran</source>
         <translation>Détecter les collisions avec les côtes visibles à l&apos;écran</translation>
+    </message>
+    <message>
+        <source>Route</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Formule VLM pour le VB-VMG</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Retirer les POIs avant le WP-VLM</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Renseigner le cap a suivre (@) des POIs</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>A partir de la prochaine vacation</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Pilototo</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Envoyer les ordres</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Charger automatiquement</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Charger les POIs preselectionnes</source>
+        <translation></translation>
     </message>
 </context>
 <context>
@@ -4137,6 +4257,50 @@ Voulez-vous egalement supprimer tous les POIs lui appartenant?</source>
         <source>secondes</source>
         <translation></translation>
     </message>
+    <message>
+        <source>Donnees GRIB a la derniere vac:</source>
+        <translation>Données grib à la dernière vacation:</translation>
+    </message>
+    <message>
+        <source>BS polaire: </source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Donnees GRIB a la prochaine vac:</source>
+        <translation>Données grib à la prochaine vacation:</translation>
+    </message>
+    <message>
+        <source>Tendance: </source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>stable.</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>force stable</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>mollissant</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>forcissant</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>, direction stable</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source> en refusant</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source> en adonnant</source>
+        <translation></translation>
+    </message>
 </context>
 <context>
     <name>dialog_gribDate_ui</name>
@@ -4451,14 +4615,6 @@ Voulez-vous egalement supprimer tous les POIs lui appartenant?</source>
         <translation></translation>
     </message>
     <message>
-        <source>Phase 1...</source>
-        <translation></translation>
-    </message>
-    <message>
-        <source>Phase 2...</source>
-        <translation></translation>
-    </message>
-    <message>
         <source>ETA apres simplification:</source>
         <translation type="obsolete">ETA après simplification:</translation>
     </message>
@@ -4769,6 +4925,18 @@ Voulez-vous egalement supprimer tous les POIs lui appartenant?</source>
     <message>
         <source>Photo Ecran</source>
         <translation></translation>
+    </message>
+    <message>
+        <source>Phase </source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Envoyer la route au pilototo</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Pour pouvoir envoyer la route au pilototo if faut que:&lt;br&gt;-La route demarre du bateau et de la prochaine vac&lt;br&gt;et que le mode VbVmg-Vlm soit active</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -5362,6 +5530,26 @@ Voulez-vous egalement supprimer tous les POIs lui appartenant?</source>
     <message>
         <source> deg</source>
         <translation>°</translation>
+    </message>
+    <message>
+        <source>Date depart</source>
+        <translation type="unfinished">Date départ</translation>
+    </message>
+    <message>
+        <source>A la date et heure du Grib</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Grib</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>A la date et heure de la prochaine vacation</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Vac</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
