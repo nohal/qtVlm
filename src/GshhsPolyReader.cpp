@@ -183,7 +183,8 @@ void GshhsPolyCell::DrawPolygonContour(QPainter &pnt,contour_list * p, double dx
                     pnt.drawLine(a,b,c,d);
                 if(A!=C || B!=D)
                 {
-                    coasts.append(QLineF(A,B,C,D));
+                    if(proj->isInBounderies(a,b) || proj->isInBounderies(c,d))
+                        coasts.append(QLineF(A,B,C,D));
                 }
             }
         }
@@ -205,7 +206,8 @@ void GshhsPolyCell::DrawPolygonContour(QPainter &pnt,contour_list * p, double dx
                 pnt.drawLine(a,b,c,d);
             if(A!=C || B!=D)
             {
-                coasts.append(QLineF(A,B,C,D));
+                if(proj->isInBounderies(a,b) || proj->isInBounderies(c,d))
+                    coasts.append(QLineF(A,B,C,D));
             }
         }
     }

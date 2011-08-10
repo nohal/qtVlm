@@ -2244,7 +2244,7 @@ void ROUTAGE::convertToRoute()
     route->setFrozen(false);
     if(routeStartBoat)
     {
-        if (route->getPoiList().at(0)->getRouteTimeStamp()!=-1)
+        if (!route->getPoiList().isEmpty() && route->getPoiList().at(0)->getRouteTimeStamp()!=-1)
         {
             if(qAbs(route->getPoiList().at(0)->getRouteTimeStamp()-myBoat->getPrevVac())<myBoat->getVacLen()*2.0 || (myBoat->getType()==BOAT_VLM && myBoat->getLoch()<0.1))
             {
