@@ -51,6 +51,7 @@ class boat: public QGraphicsWidget
         virtual time_t getPrevVac(){return QDateTime::currentDateTimeUtc().toTime_t();}
 
         virtual void reloadPolar(bool forced=false);
+        virtual QList<vlmLine*> getGates();
 
         void playerDeActivated(void);
         void playerActivated(void) { setStatus(activated); }
@@ -212,6 +213,7 @@ class boat: public QGraphicsWidget
         QTimer * estimeTimer;
 
         polarList * polar_list;
+        bool my_intersects(QLineF line1,QLineF line2) const;
 };
 
 #endif // BOAT_H

@@ -404,21 +404,43 @@ void boat::drawEstime(float myHeading, float mySpeed)
         GshhsReader *map=parent->get_gshhsReader();
         double I1,J1,I2,J2;
         proj->map2screenFloat(lon,lat,&I1,&J1);
+        proj->map2screenFloat(tmp_lon,tmp_lat,&I2,&J2);
+        bool coastDetected=false;
         if(map->getQuality()>=2)
         {
-            proj->map2screenFloat(tmp_lon,tmp_lat,&I2,&J2);
             //qWarning("crossing (%.5f,%.5f,%.5f,%.5f) (%.5f,%.5f,%.5f,%.5f)",I1,J1,I2,J2,lon,lat,tmp_lon,tmp_lat);
             //qWarning("estime=%.5f, myHeading=%.5f",estime,myHeading);
             if(estime>0.0001 && map->crossing(QLineF(I1,J1,I2,J2),QLineF(lon,lat,tmp_lon,tmp_lat)))
             {
                 estimeTimer->start();
                 penLine1.setColor(Qt::red);
+                coastDetected=true;
             }
-            else
-                estimeTimer->stop();
         }
-        else
+        if(!coastDetected)
+        {
             estimeTimer->stop();
+            if(this->getType()==BOAT_VLM)
+            {
+                for(int n=0;n<this->getGates().count();++n)
+                {
+                    if(this->getGates().at(n)->getHidden()) continue;
+                    double LonTmp=getGates().at(n)->getPoints()->first().lon;
+                    double LatTmp=getGates().at(n)->getPoints()->first().lat;
+                    double Gx1,Gy1,Gx2,Gy2;
+                    proj->map2screenFloat(LonTmp,LatTmp,&Gx1,&Gy1);
+                    LonTmp=getGates().at(n)->getPoints()->last().lon;
+                    LatTmp=getGates().at(n)->getPoints()->last().lat;
+                    proj->map2screenFloat(LonTmp,LatTmp,&Gx2,&Gy2);
+                    if(estime>0.0001 && my_intersects(QLineF(I1,J1,I2,J2),QLineF(Gx1,Gy1,Gx2,Gy2)))
+                    {
+                        penLine1.setColor(Qt::darkGreen);
+                        penLine1.setWidthF(penLine1.widthF()*1.5);
+                        break;
+                    }
+                }
+            }
+        }
         estimeLine->setLinePen(penLine1);
         estimeLine->addPoint(lat,lon);
         estimeLine->addPoint(tmp_lat,tmp_lon);
@@ -432,6 +454,32 @@ void boat::drawEstime(float myHeading, float mySpeed)
             WPLine->initSegment(I1,J1,I2,J2);
         }
     }
+}
+#  define INTER_MAX_LIMIT 1.0000001
+#  define INTER_MIN_LIMIT -0.0000001
+bool boat::my_intersects(QLineF line1,QLineF line2) const
+{
+
+    // implementation is based on Graphics Gems III's "Faster Line Segment Intersection"
+    const QPointF a = line1.p2() - line1.p1();
+    const QPointF b = line2.p1() - line2.p2();
+    const QPointF c = line1.p1() - line2.p1();
+
+    const qreal denominator = a.y() * b.x() - a.x() * b.y();
+    if (denominator == 0)
+        return false;
+
+    const qreal reciprocal = 1 / denominator;
+    const qreal na = (b.y() * c.x() - b.x() * c.y()) * reciprocal;
+
+    if (na < INTER_MIN_LIMIT || na > INTER_MAX_LIMIT)
+        return false;
+
+    const qreal nb = (a.x() * c.y() - a.y() * c.x()) * reciprocal;
+    if (nb < INTER_MIN_LIMIT || nb > INTER_MAX_LIMIT)
+        return false;
+
+    return true;
 }
 
 /**************************/
@@ -677,4 +725,9 @@ void boat::contextMenuEvent(QGraphicsSceneContextMenuEvent * e)
     }
 
     popup->exec(QCursor::pos());
+}
+QList<vlmLine*> boat::getGates()
+{
+    QList<vlmLine*> empty;
+    return empty;
 }
