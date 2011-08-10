@@ -436,8 +436,8 @@ void boat::drawEstime(float myHeading, float mySpeed)
                     {
                         penLine1.setColor(Qt::darkGreen);
                         penLine1.setWidthF(penLine1.widthF()*1.5);
-                        break;
                     }
+                    break;
                 }
             }
         }
