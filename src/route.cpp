@@ -80,6 +80,8 @@ ROUTE::ROUTE(QString name, Projection *proj, Grib *grib, QGraphicsScene * myScen
     this->multVac=1;
     this->autoRemove=false;
     this->useVbvmgVlm=Settings::getSetting("useVbvmgVlm",0).toInt()==1;
+    this->setNewVbvmgVlm(Settings::getSetting("newVbvmgVlm",0).toInt()==1);
+    this->setNewVbvmgVlm(false);
     pen.setColor(color);
     pen.setBrush(color);
     pen.setWidthF(width);
@@ -95,6 +97,7 @@ ROUTE::ROUTE(QString name, Projection *proj, Grib *grib, QGraphicsScene * myScen
     this->speedLossOnTack=1;
     this->autoAt=true;
     this->pilototo=false;
+    this->precalculateTan();
 }
 
 ROUTE::~ROUTE()
@@ -107,6 +110,10 @@ ROUTE::~ROUTE()
         if(!parent->getAboutToQuit())
             delete line;
     }
+    delete tanPos;
+    delete tanNeg;
+    delete hypotPos;
+    delete hypotNeg;
 }
 
 void ROUTE::setBoat(boat *curBoat)
@@ -149,6 +156,8 @@ void ROUTE::removePoi(POI *poi)
 }
 void ROUTE::slot_recalculate(boat * boat)
 {
+    QTime timeDebug;
+    int n1=0;
     if(parent->getAboutToQuit()) return;
     if(temp) return;
     if(busy)
@@ -332,12 +341,40 @@ void ROUTE::slot_recalculate(boat * boat)
                             {
                                 case 0: //VBVMG
                                 {
+#if 0
                                     if(useVbvmgVlm && !this->fastVmgCalc && !parent->getIsStartingUp())
                                     {
                                         line->slot_showMe();
                                         QApplication::processEvents();
                                         double h1,h2,w1,w2,t1,t2,d1,d2;
                                         this->do_vbvmg_context(remaining_distance,cap,wind_speed,wind_angle,&h1,&h2,&w1,&w2,&t1,&t2,&d1,&d2);
+                                        angle=A180(w1);
+                                        //qWarning()<<"cap="<<cap<<"h1="<<h1<<"twa="<<angle;
+                                        cap=h1;
+                                    }
+#endif
+                                    if(useVbvmgVlm && !this->fastVmgCalc && !parent->getIsStartingUp())
+                                    {
+                                        line->slot_showMe();
+                                        QApplication::processEvents();
+                                        double h1,h2,w1,w2,t1,t2,d1,d2;
+#if 0
+                                        this->do_vbvmg_context(remaining_distance,cap,wind_speed,wind_angle,&h1,&h2,&w1,&w2,&t1,&t2,&d1,&d2);
+                                        double w1Save=w1;
+                                        double w2Save=w2;
+                                        double h1Save=h1;
+#endif
+                                        timeDebug.start();
+                                        this->do_vbvmg_buffer(remaining_distance,cap,wind_speed,wind_angle,&h1,&h2,&w1,&w2,&t1,&t2,&d1,&d2);
+                                        n1+=timeDebug.elapsed();
+#if 0
+                                        //qWarning()<<w1<<w2;
+                                        if(qRound(w1*1000)!=qRound(w1Save*1000) || qRound(h1*1000)!=qRound(h1Save*1000))
+                                        {
+                                            qWarning()<<"error in new vbvmg vlm"<<h1<<w1<<w2<<"should be"<<h1Save<<w1Save<<w2Save;
+                                            this->do_vbvmg_buffer(remaining_distance,cap,wind_speed,wind_angle,&h1,&h2,&w1,&w2,&t1,&t2,&d1,&d2);
+                                        }
+#endif
                                         angle=A180(w1);
                                         //qWarning()<<"cap="<<cap<<"h1="<<h1<<"twa="<<angle;
                                         cap=h1;
@@ -544,6 +581,7 @@ void ROUTE::slot_recalculate(boat * boat)
     this->slot_shShow();
     line->slot_showMe();
     busy=false;
+    qWarning()<<"VBVMG VLM time:"<<n1;
 }
 void ROUTE::interpolatePos()
 {
@@ -877,3 +915,268 @@ void ROUTE::do_vbvmg_context(double dist,double wanted_heading,
    *wangle1=radToDeg(*wangle1);
    *wangle2=radToDeg(*wangle2);
  }
+void ROUTE::do_vbvmg_buffer(double dist,double wanted_heading,
+                             double w_speed,double w_angle,
+                             double *heading1, double *heading2,
+                             double *wangle1, double *wangle2,
+                             double *time1, double *time2,
+                             double *dist1, double *dist2)
+{
+    double alpha, beta;
+    double speed, speed_t1, speed_t2, l1, l2, d1, d2;
+    double angle, maxangle, t, t1, t2, t_min;
+    double tanalpha, d1hypotratio;
+    double b_alpha, b_beta, b_t1, b_t2, b_l1, b_l2;
+    double speed_alpha, speed_beta;
+    double vmg_alpha, vmg_beta;
+    wanted_heading=degToRad(wanted_heading);
+    w_angle=degToRad(w_angle);
+    int i,j, min_i, min_j, max_i, max_j;
+
+    b_t1 = b_t2 = b_l1 = b_l2 = b_alpha = b_beta = beta = 0.0;
+
+    maxangle = wanted_heading;
+
+
+    /* first compute the time for the "ortho" heading */
+    speed=myBoat->getPolarData()->getSpeed(w_speed,A180(radToDeg(w_angle-wanted_heading)));
+    if (speed > 0.0)
+    {
+        t_min = dist / speed;
+    }
+    else
+    {
+        t_min = 365.0*24.0; /* one year :) */
+    }
+
+
+    angle = w_angle - wanted_heading;
+    if (angle < -PI )
+    {
+        angle += TWO_PI;
+    }
+    else if (angle > PI)
+    {
+        angle -= TWO_PI;
+    }
+    double guessAngle=A180(radToDeg(angle));
+    if (angle < 0.0)
+    {
+        min_i = 1;
+        min_j = -89;
+        max_i = 90;
+        max_j = 0;
+    }
+    else
+    {
+        min_i = -89;
+        min_j = 1;
+        max_i = 0;
+        max_j = 90;
+    }
+    for (i=min_i; i<max_i; ++i)
+    {
+        alpha = degToRad((double)i);
+        double guessTwa=A180(radToDeg(angle-alpha));
+        if(newVbvmgVlm && (qAbs(guessTwa)<20 || qAbs(guessTwa>175))) continue;
+        if(i>0)
+        {
+            tanalpha = tanPos->at(i);
+            d1hypotratio = hypotPos->at(i);
+        }
+        else
+        {
+            tanalpha = tanNeg->at(-i);
+            d1hypotratio = hypotNeg->at(-i);
+        }
+        speed_t1=myBoat->getPolarData()->getSpeed(w_speed,A180(radToDeg(angle-alpha)));
+        if (speed_t1 <= 0.0)
+        {
+            continue;
+        }
+        int MinJ,MaxJ;
+        if(!this->newVbvmgVlm)
+        {
+            MinJ=min_j;
+            MaxJ=max_j;
+        }
+        else
+        {
+            int guessInt=qRound(guessAngle+guessTwa);
+            MinJ=qMax(guessInt-5,min_j);
+            MaxJ=qMin(guessInt+5,min_j);
+        }
+        for (j=MinJ; j<MaxJ; ++j)
+        {
+            beta = degToRad((double)j);
+//            if((angle-alpha>0 && angle-beta>0) ||
+//               (angle-alpha<0 && angle-beta<0)) continue;
+            if(-j>0)
+            {
+//                d1 = dist * (tan(-beta) / (tanalpha + tan(-beta)));
+                d1 = dist * tanPos->at(-j) / (tanalpha + tanPos->at(-j));
+            }
+            else
+                d1 = dist * tanNeg->at(j) / (tanalpha + tanNeg->at(j));
+            l1 =  d1 * d1hypotratio;
+            t1 = l1 / speed_t1;
+            if ((t1 < 0.0) || (t1 > t_min))
+            {
+                continue;
+            }
+            d2 = dist - d1;
+            speed_t2=myBoat->getPolarData()->getSpeed(w_speed,A180(radToDeg(angle-beta)));
+            if (speed_t2 <= 0.0)
+            {
+                continue;
+            }
+            if(-j>0)
+            {
+                //l2 =  d2 * hypot(1, tan(-beta));
+                l2 = d2 * hypotPos->at(-j);
+            }
+            else
+                l2 = d2 * hypotNeg->at(j);
+            t2 = l2 / speed_t2;
+            if (t2 < 0.0)
+            {
+                continue;
+            }
+            t = t1 + t2;
+            if (t < t_min)
+            {
+                t_min = t;
+                b_alpha = alpha;
+                b_beta  = beta;
+                b_l1 = l1;
+                b_l2 = l2;
+                b_t1 = t1;
+                b_t2 = t2;
+            }
+        }
+        if(newVbvmgVlm)
+        {
+            for (j=qMax(-i-5,min_j); j<qMin(-i+5,max_j); ++j)
+            {
+                beta = degToRad((double)j);
+    //            if((angle-alpha>0 && angle-beta>0) ||
+    //               (angle-alpha<0 && angle-beta<0)) continue;
+                if(-j>0)
+                {
+    //                d1 = dist * (tan(-beta) / (tanalpha + tan(-beta)));
+                    d1 = dist * tanPos->at(-j) / (tanalpha + tanPos->at(-j));
+                }
+                else
+                    d1 = dist * tanNeg->at(j) / (tanalpha + tanNeg->at(j));
+                l1 =  d1 * d1hypotratio;
+                t1 = l1 / speed_t1;
+                if ((t1 < 0.0) || (t1 > t_min))
+                {
+                    continue;
+                }
+                d2 = dist - d1;
+                speed_t2=myBoat->getPolarData()->getSpeed(w_speed,A180(radToDeg(angle-beta)));
+                if (speed_t2 <= 0.0)
+                {
+                    continue;
+                }
+                if(-j>0)
+                {
+                    //l2 =  d2 * hypot(1, tan(-beta));
+                    l2 = d2 * hypotPos->at(-j);
+                }
+                else
+                    l2 = d2 * hypotNeg->at(j);
+                t2 = l2 / speed_t2;
+                if (t2 < 0.0)
+                {
+                    continue;
+                }
+                t = t1 + t2;
+                if (t < t_min)
+                {
+                    t_min = t;
+                    b_alpha = alpha;
+                    b_beta  = beta;
+                    b_l1 = l1;
+                    b_l2 = l2;
+                    b_t1 = t1;
+                    b_t2 = t2;
+                }
+            }
+        }
+    }
+    speed_alpha=myBoat->getPolarData()->getSpeed(w_speed,A180(radToDeg(angle-b_alpha)));
+    vmg_alpha = speed_alpha * cos(b_alpha);
+    speed_beta=myBoat->getPolarData()->getSpeed(w_speed,A180(radToDeg(angle-b_beta)));
+    vmg_beta = speed_beta * cos(b_beta);
+
+    if (vmg_alpha > vmg_beta)
+    {
+        *heading1 = fmod(wanted_heading + b_alpha, TWO_PI);
+        *heading2 = fmod(wanted_heading + b_beta, TWO_PI);
+        *time1 = b_t1;
+        *time2 = b_t2;
+        *dist1 = b_l1;
+        *dist2 = b_l2;
+    }
+    else
+    {
+        *heading2 = fmod(wanted_heading + b_alpha, TWO_PI);
+        *heading1 = fmod(wanted_heading + b_beta, TWO_PI);
+        *time2 = b_t1;
+        *time1 = b_t2;
+        *dist2 = b_l1;
+        *dist1 = b_l2;
+    }
+    if (*heading1 < 0 )
+    {
+        *heading1 += TWO_PI;
+    }
+    if (*heading2 < 0 )
+    {
+        *heading2 += TWO_PI;
+    }
+
+    *wangle1 = fmod(*heading1 - w_angle, TWO_PI);
+    if (*wangle1 > PI )
+    {
+        *wangle1 -= TWO_PI;
+    }
+    else if (*wangle1 < -PI )
+    {
+        *wangle1 += TWO_PI;
+    }
+    *wangle2 = fmod(*heading2 - w_angle, TWO_PI);
+    if (*wangle2 > PI )
+    {
+        *wangle2 -= TWO_PI;
+    } else if (*wangle2 < -PI )
+    {
+        *wangle2 += TWO_PI;
+    }
+    *heading1=radToDeg(*heading1);
+    *heading2=radToDeg(*heading2);
+    *wangle1=radToDeg(*wangle1);
+    *wangle2=radToDeg(*wangle2);
+}
+void ROUTE::precalculateTan()
+{
+    tanPos=new QList<double>;
+    tanNeg=new QList<double>;
+    hypotPos=new QList<double>;
+    hypotNeg=new QList<double>;
+    tanPos->append(0);
+    tanNeg->append(0);
+    hypotPos->append(0);
+    hypotNeg->append(0);
+    for (double i=1;i<90;++i)
+    {
+        double tanG=tan(degToRad(i));
+        tanPos->append(tanG);
+        hypotPos->append(hypot(1,tanG));
+        tanG=tan(degToRad(-i));
+        tanNeg->append(tanG);
+        hypotNeg->append(hypot(1,tanG));
+    }
+}

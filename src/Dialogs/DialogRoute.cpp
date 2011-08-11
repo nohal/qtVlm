@@ -89,7 +89,20 @@ DialogRoute::DialogRoute(ROUTE *route,myCentralWidget *parent)
     connect(this->btOk,SIGNAL(clicked()),this,SLOT(accept()));
     connect(this->btCancel,SIGNAL(clicked()),this,SLOT(reject()));
     connect(this->Envoyer,SIGNAL(clicked()),this,SLOT(slotEnvoyer()));
-    this->useVbvmgVlm->setChecked(route->getUseVbvmgVlm());
+    if(route->getUseVbvmgVlm())
+    {
+        if(route->getNewVbvmgVlm())
+        {
+            this->useVbvmgVlm->setCheckState(Qt::PartiallyChecked);
+        }
+        else
+        {
+            this->useVbvmgVlm->setCheckState(Qt::Checked);
+        }
+    }
+    else
+        this->useVbvmgVlm->setCheckState(Qt::Unchecked);
+    this->useVbvmgVlm->setToolTip("");
     switch(route->getStartTimeOption())
     {
     case 1:
@@ -183,11 +196,26 @@ void DialogRoute::done(int result)
         route->setName((editName->text()).trimmed());
         route->setWidth(inputTraceColor->getLineWidth());
         route->setColor(inputTraceColor->getLineColor());
-        route->setUseVbVmgVlm(this->useVbvmgVlm->isChecked());
+        if(this->useVbvmgVlm->checkState()==Qt::Unchecked)
+        {
+            route->setUseVbVmgVlm(false);
+            route->setNewVbvmgVlm(false);
+        }
+        else if(this->useVbvmgVlm->checkState()==Qt::PartiallyChecked)
+        {
+            route->setUseVbVmgVlm(true);
+            route->setNewVbvmgVlm(true);
+        }
+        else
+        {
+            route->setUseVbVmgVlm(true);
+            route->setNewVbvmgVlm(false);
+        }
         route->setAutoRemove(this->autoRemove->isChecked());
         route->setAutoAt(autoAt->isChecked());
         route->setPilototo(this->pilototo->isChecked());
         Settings::setSetting("useVbvmgVlm",route->getUseVbvmgVlm()?"1":"0"  );
+        Settings::setSetting("useNewVbvmgVlm",route->getNewVbvmgVlm()?"1":"0"  );
         route->setMultVac(vacStep->value());
         if(editVac->isChecked())
             route->setStartTimeOption(1);
@@ -245,7 +273,7 @@ void DialogRoute::GybeTack(int i)
 void DialogRoute::slotLoadPilototo()
 {
     if(!(this->startFromBoat->isChecked() &&
-         this->editVac->isChecked() /*&& this->useVbvmgVlm->isChecked()*/))
+         this->editVac->isChecked() && this->useVbvmgVlm->isChecked()))
     {
         QMessageBox::critical(0,tr("Pilototo"),tr("Pour utiliser cette action il faut que:<br>- La route parte du bateau<br>-La route parte de la prochaine vacation<br>- Le mode VBVMG-VLM soit actif"));
         return;
@@ -259,7 +287,7 @@ void DialogRoute::slotLoadPilototo()
 void DialogRoute::slotLoadPilototoCustom()
 {
     if(!(this->startFromBoat->isChecked() &&
-         this->editVac->isChecked() /*&& this->useVbvmgVlm->isChecked()*/))
+         this->editVac->isChecked() && this->useVbvmgVlm->isChecked()))
     {
         QMessageBox::critical(0,tr("Pilototo"),tr("Pour utiliser cette action il faut que:<br>- La route parte du bateau<br>-La route parte de la prochaine vacation<br>- Le mode VBVMG-VLM soit actif"));
         return;
@@ -273,7 +301,7 @@ void DialogRoute::slotLoadPilototoCustom()
 void DialogRoute::fillPilotView(bool def)
 {
     if(!(route->getStartFromBoat() &&
-         route->getStartTimeOption()==1 /*&& route->getUseVbvmgVlm()*/))
+         route->getStartTimeOption()==1 && route->getUseVbvmgVlm()))
     {
         QMessageBox::critical(0,tr("Pilototo"),tr("Pour utiliser cette action il faut que:<br>- La route parte du bateau<br>-La route parte de la prochaine vacation<br>- Le mode VBVMG-VLM soit actif"));
         return;

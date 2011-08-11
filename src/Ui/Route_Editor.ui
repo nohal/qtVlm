@@ -41,7 +41,7 @@
     </rect>
    </property>
    <property name="currentIndex">
-    <number>1</number>
+    <number>0</number>
    </property>
    <widget class="QWidget" name="tab">
     <attribute name="title">
@@ -243,8 +243,17 @@
          </disabled>
         </palette>
        </property>
+       <property name="toolTip">
+        <string>Ce bouton a 3 etats, selon que vous utilisez la formule qtVlm, une formule VLM optimisee, ou la formule VLM originale. La formule VLM optimisee donne en principe exactement les memes resultats que la formule non optimisee.</string>
+       </property>
+       <property name="statusTip">
+        <string/>
+       </property>
        <property name="text">
         <string>Formule VLM pour le VB-VMG</string>
+       </property>
+       <property name="tristate">
+        <bool>false</bool>
        </property>
       </widget>
       <widget class="QLabel" name="labelTackGybe">

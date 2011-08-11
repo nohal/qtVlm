@@ -117,6 +117,8 @@ class ROUTE : public QObject
         bool getAutoRemove(){return this->autoRemove;}
         void setAutoAt(bool b){this->autoAt=b;}
         bool getAutoAt(){return this->autoAt;}
+        bool getNewVbvmgVlm(){return newVbvmgVlm;}
+        void setNewVbvmgVlm(bool b){newVbvmgVlm=b;}
     public slots:
         void slot_recalculate(boat * boat=NULL);
         void slot_edit();
@@ -181,6 +183,12 @@ class ROUTE : public QObject
                               double *wangle1, double *wangle2,
                               double *time1, double *time2,
                               double *dist1, double *dist2);
+        void do_vbvmg_buffer(double dist,double wanted_heading,
+                              double w_speed,double w_angle,
+                              double *heading1, double *heading2,
+                              double *wangle1, double *wangle2,
+                              double *time1, double *time2,
+                              double *dist1, double *dist2);
         bool useVbvmgVlm;
         bool initialized;
         bool temp;
@@ -188,5 +196,11 @@ class ROUTE : public QObject
         bool pilototo;
         bool autoRemove;
         bool autoAt;
+        QList<double> * tanPos;
+        QList<double> * tanNeg;
+        QList<double> * hypotPos;
+        QList<double> * hypotNeg;
+        void precalculateTan();
+        bool newVbvmgVlm;
 };
 #endif // ROUTE_H

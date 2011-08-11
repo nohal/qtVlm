@@ -43,7 +43,7 @@
     </rect>
    </property>
    <property name="currentIndex">
-    <number>2</number>
+    <number>7</number>
    </property>
    <widget class="QWidget" name="tab">
     <attribute name="title">
@@ -379,7 +379,7 @@
         <x>10</x>
         <y>20</y>
         <width>321</width>
-        <height>81</height>
+        <height>82</height>
        </rect>
       </property>
       <layout class="QGridLayout" name="gridLayout_2">
@@ -702,19 +702,6 @@
        <number>100</number>
       </property>
      </widget>
-    </widget>
-    <widget class="Line" name="line">
-     <property name="geometry">
-      <rect>
-       <x>290</x>
-       <y>160</y>
-       <width>118</width>
-       <height>3</height>
-      </rect>
-     </property>
-     <property name="orientation">
-      <enum>Qt::Horizontal</enum>
-     </property>
     </widget>
    </widget>
    <widget class="QWidget" name="tab_4">
