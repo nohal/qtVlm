@@ -718,11 +718,11 @@ Etes-vous sur ?</source>
         <translation></translation>
     </message>
     <message>
-        <source>Pour utiliser cette action il faut que:&lt;br&gt;- La route parte du bateau&lt;br&gt;-La route parte de la prochaine vacation&lt;br&gt;- Le mode VBVMG-VLM soit actif</source>
+        <source>WP-VLM</source>
         <translation></translation>
     </message>
     <message>
-        <source>WP-VLM</source>
+        <source>Pour utiliser cette action il faut que:&lt;br&gt;- La route parte du bateau&lt;br&gt;- La route parte de la prochaine vacation&lt;br&gt;- Le mode VBVMG-VLM soit actif</source>
         <translation></translation>
     </message>
 </context>

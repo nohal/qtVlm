@@ -1020,31 +1020,35 @@ Etes-vous sur ?</source>
         <translation>Route settings</translation>
     </message>
     <message>
-        <location filename="../src/Dialogs/DialogRoute.cpp" line="141"/>
+        <location filename="../src/Dialogs/DialogRoute.cpp" line="142"/>
         <source>Date de la derniere MAJ de la position</source>
         <translation>Last position update date/time</translation>
     </message>
     <message>
-        <location filename="../src/Dialogs/DialogRoute.cpp" line="188"/>
+        <location filename="../src/Dialogs/DialogRoute.cpp" line="189"/>
         <source>Ce nom est deja utilise, choisissez en un autre</source>
         <translation>This name is already used, choose another one</translation>
     </message>
     <message>
-        <location filename="../src/Dialogs/DialogRoute.cpp" line="277"/>
-        <location filename="../src/Dialogs/DialogRoute.cpp" line="291"/>
-        <location filename="../src/Dialogs/DialogRoute.cpp" line="305"/>
+        <location filename="../src/Dialogs/DialogRoute.cpp" line="278"/>
+        <location filename="../src/Dialogs/DialogRoute.cpp" line="292"/>
+        <location filename="../src/Dialogs/DialogRoute.cpp" line="306"/>
         <source>Pilototo</source>
         <translation>Autopilot</translation>
     </message>
     <message>
-        <location filename="../src/Dialogs/DialogRoute.cpp" line="277"/>
-        <location filename="../src/Dialogs/DialogRoute.cpp" line="291"/>
-        <location filename="../src/Dialogs/DialogRoute.cpp" line="305"/>
-        <source>Pour utiliser cette action il faut que:&lt;br&gt;- La route parte du bateau&lt;br&gt;-La route parte de la prochaine vacation&lt;br&gt;- Le mode VBVMG-VLM soit actif</source>
-        <translation>To use this action it is needed that:&lt;br&gt;-Route starts from boat&lt;br&gt;-Route starts from next vacation&lt;br&gt;VBVMG-VLM is activated</translation>
+        <location filename="../src/Dialogs/DialogRoute.cpp" line="278"/>
+        <location filename="../src/Dialogs/DialogRoute.cpp" line="292"/>
+        <location filename="../src/Dialogs/DialogRoute.cpp" line="306"/>
+        <source>Pour utiliser cette action il faut que:&lt;br&gt;- La route parte du bateau&lt;br&gt;- La route parte de la prochaine vacation&lt;br&gt;- Le mode VBVMG-VLM soit actif</source>
+        <translation>To use this action it is needed that:&lt;br&gt;-Route starts from boat&lt;br&gt;-Route starts from next vacation&lt;br&gt;-VBVMG-VLM is activated</translation>
     </message>
     <message>
-        <location filename="../src/Dialogs/DialogRoute.cpp" line="335"/>
+        <source>Pour utiliser cette action il faut que:&lt;br&gt;- La route parte du bateau&lt;br&gt;-La route parte de la prochaine vacation&lt;br&gt;- Le mode VBVMG-VLM soit actif</source>
+        <translation type="obsolete">To use this action it is needed that:&lt;br&gt;-Route starts from boat&lt;br&gt;-Route starts from next vacation&lt;br&gt;VBVMG-VLM is activated</translation>
+    </message>
+    <message>
+        <location filename="../src/Dialogs/DialogRoute.cpp" line="336"/>
         <source>WP-VLM</source>
         <translation>WP-VLM</translation>
     </message>
@@ -3884,22 +3888,22 @@ AWA %d°, AWS %.1fkts
 VMG %.1kts</translation>
     </message>
     <message>
-        <location filename="../src/Dialogs/DialogRoute.cpp" line="156"/>
+        <location filename="../src/Dialogs/DialogRoute.cpp" line="157"/>
         <source>Date et heure</source>
         <translation>Date and time</translation>
     </message>
     <message>
-        <location filename="../src/Dialogs/DialogRoute.cpp" line="157"/>
+        <location filename="../src/Dialogs/DialogRoute.cpp" line="158"/>
         <source>Aller vers</source>
         <translation>Go to</translation>
     </message>
     <message>
-        <location filename="../src/Dialogs/DialogRoute.cpp" line="158"/>
+        <location filename="../src/Dialogs/DialogRoute.cpp" line="159"/>
         <source>Cap a suivre apres</source>
         <translation>Heading after</translation>
     </message>
     <message>
-        <location filename="../src/Dialogs/DialogRoute.cpp" line="159"/>
+        <location filename="../src/Dialogs/DialogRoute.cpp" line="160"/>
         <source>Mode</source>
         <translation>Mode</translation>
     </message>
@@ -4284,23 +4288,23 @@ Virements de bord</source>
 <context>
     <name>ROUTE</name>
     <message>
-        <location filename="../src/route.cpp" line="300"/>
-        <location filename="../src/route.cpp" line="495"/>
+        <location filename="../src/route.cpp" line="301"/>
+        <location filename="../src/route.cpp" line="496"/>
         <source>&lt;br&gt;Route: </source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../src/route.cpp" line="501"/>
+        <location filename="../src/route.cpp" line="502"/>
         <source>&lt;br&gt;ETA: Non joignable avec ce fichier GRIB</source>
         <translation>&lt;br&gt;ETA: not reachable with this GRIB file</translation>
     </message>
     <message>
-        <location filename="../src/route.cpp" line="506"/>
+        <location filename="../src/route.cpp" line="507"/>
         <source>&lt;br&gt;ETA: deja atteint</source>
         <translation>ETA: already reached</translation>
     </message>
     <message>
-        <location filename="../src/route.cpp" line="511"/>
+        <location filename="../src/route.cpp" line="512"/>
         <source>Note: la date indiquee correspond a la desactivation du WP</source>
         <translation>Note: indicated ETA corresponds to WP deactivation</translation>
     </message>
@@ -4309,32 +4313,32 @@ Virements de bord</source>
         <translation type="obsolete">ETA from last crank</translation>
     </message>
     <message>
-        <location filename="../src/route.cpp" line="535"/>
+        <location filename="../src/route.cpp" line="536"/>
         <source>ETA a partir de maintenant</source>
         <translation>ETA: from now</translation>
     </message>
     <message>
-        <location filename="../src/route.cpp" line="538"/>
+        <location filename="../src/route.cpp" line="539"/>
         <source>ETA depuis la date Grib</source>
         <translation>ETA from GRIB date</translation>
     </message>
     <message>
-        <location filename="../src/route.cpp" line="541"/>
+        <location filename="../src/route.cpp" line="542"/>
         <source>ETA depuis la date fixe</source>
         <translation>ETA from fixed date</translation>
     </message>
     <message>
-        <location filename="../src/route.cpp" line="544"/>
+        <location filename="../src/route.cpp" line="545"/>
         <source>jours</source>
         <translation>days</translation>
     </message>
     <message>
-        <location filename="../src/route.cpp" line="544"/>
+        <location filename="../src/route.cpp" line="545"/>
         <source>heures</source>
         <translation>hours</translation>
     </message>
     <message>
-        <location filename="../src/route.cpp" line="545"/>
+        <location filename="../src/route.cpp" line="546"/>
         <source>minutes</source>
         <translation>minutes</translation>
     </message>
@@ -6160,6 +6164,7 @@ Voulez-vous egalement supprimer tous les POIs lui appartenant?</source>
     <message>
         <location filename="../src/boatVLM.cpp" line="682"/>
         <location filename="../src/boatVLM.cpp" line="685"/>
+        <location filename="../src/boatVLM.cpp" line="714"/>
         <location filename="../src/boatVLM.cpp" line="734"/>
         <source>deg</source>
         <translation>°</translation>
