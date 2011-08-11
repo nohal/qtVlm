@@ -275,7 +275,7 @@ void DialogRoute::slotLoadPilototo()
     if(!(this->startFromBoat->isChecked() &&
          this->editVac->isChecked() && this->useVbvmgVlm->isChecked()))
     {
-        QMessageBox::critical(0,tr("Pilototo"),tr("Pour utiliser cette action il faut que:<br>- La route parte du bateau<br>-La route parte de la prochaine vacation<br>- Le mode VBVMG-VLM soit actif"));
+        QMessageBox::critical(0,tr("Pilototo"),tr("Pour utiliser cette action il faut que:<br>- La route parte du bateau<br>- La route parte de la prochaine vacation<br>- Le mode VBVMG-VLM soit actif"));
         return;
     }
     if(route->getPoiList().isEmpty())
@@ -289,7 +289,7 @@ void DialogRoute::slotLoadPilototoCustom()
     if(!(this->startFromBoat->isChecked() &&
          this->editVac->isChecked() && this->useVbvmgVlm->isChecked()))
     {
-        QMessageBox::critical(0,tr("Pilototo"),tr("Pour utiliser cette action il faut que:<br>- La route parte du bateau<br>-La route parte de la prochaine vacation<br>- Le mode VBVMG-VLM soit actif"));
+        QMessageBox::critical(0,tr("Pilototo"),tr("Pour utiliser cette action il faut que:<br>- La route parte du bateau<br>- La route parte de la prochaine vacation<br>- Le mode VBVMG-VLM soit actif"));
         return;
     }
     if(route->getPoiList().isEmpty())
@@ -303,7 +303,7 @@ void DialogRoute::fillPilotView(bool def)
     if(!(route->getStartFromBoat() &&
          route->getStartTimeOption()==1 && route->getUseVbvmgVlm()))
     {
-        QMessageBox::critical(0,tr("Pilototo"),tr("Pour utiliser cette action il faut que:<br>- La route parte du bateau<br>-La route parte de la prochaine vacation<br>- Le mode VBVMG-VLM soit actif"));
+        QMessageBox::critical(0,tr("Pilototo"),tr("Pour utiliser cette action il faut que:<br>- La route parte du bateau<br>- La route parte de la prochaine vacation<br>- Le mode VBVMG-VLM soit actif"));
         return;
     }
     if(route->getPoiList().isEmpty())

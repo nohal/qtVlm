@@ -711,7 +711,7 @@ void boatVLM::updateHint(void)
     {
         windAngle=radToDeg(windAngle);
         desc=desc+"<br>"+tr("Donnees GRIB a la derniere vac:")+"<br>"+
-             QString().sprintf("TWS: %.2f TWD: %.2f",windSpeed,windAngle);
+             QString().sprintf("TWS: %.2f TWD: %.2f",windSpeed,windAngle)+tr("deg");
         double twa=this->heading-windAngle;
         if(qAbs(twa)>180)
         {
