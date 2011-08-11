@@ -3138,6 +3138,10 @@ Voulez-vous egalement supprimer tous les POIs lui appartenant?</source>
         <source>Charger les POIs preselectionnes</source>
         <translation></translation>
     </message>
+    <message>
+        <source>Ce bouton a 3 etats, selon que vous utilisez la formule qtVlm, une formule VLM optimisee, ou la formule VLM originale. La formule VLM optimisee donne en principe exactement les memes resultats que la formule non optimisee.</source>
+        <translation>Ce bouton a 3 etats, selon que vous utilisez la formule qtVlm, une formule VLM optimisée, ou la formule VLM originale. La formule VLM optimisée donne en principe exactement les mêmes résultats que la formule non optimisée.</translation>
+    </message>
 </context>
 <context>
     <name>ReceiverThread</name>
@@ -4301,6 +4305,10 @@ Voulez-vous egalement supprimer tous les POIs lui appartenant?</source>
         <source> en adonnant</source>
         <translation></translation>
     </message>
+    <message>
+        <source> nds</source>
+        <translation></translation>
+    </message>
 </context>
 <context>
     <name>dialog_gribDate_ui</name>
@@ -4932,11 +4940,11 @@ Voulez-vous egalement supprimer tous les POIs lui appartenant?</source>
     </message>
     <message>
         <source>Envoyer la route au pilototo</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <source>Pour pouvoir envoyer la route au pilototo if faut que:&lt;br&gt;-La route demarre du bateau et de la prochaine vac&lt;br&gt;et que le mode VbVmg-Vlm soit active</source>
-        <translation type="unfinished"></translation>
+        <translation>Pour pouvoir envoyer la route au pilototo if faut que:&lt;br&gt;-La route demarre du bateau et de la prochaine vacation&lt;br&gt;et que le mode VbVmg-Vlm soit activé</translation>
     </message>
 </context>
 <context>
@@ -5533,23 +5541,23 @@ Voulez-vous egalement supprimer tous les POIs lui appartenant?</source>
     </message>
     <message>
         <source>Date depart</source>
-        <translation type="unfinished">Date départ</translation>
+        <translation>Date départ</translation>
     </message>
     <message>
         <source>A la date et heure du Grib</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <source>Grib</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <source>A la date et heure de la prochaine vacation</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <source>Vac</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
 </context>
 <context>

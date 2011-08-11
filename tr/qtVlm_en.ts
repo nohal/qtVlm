@@ -1020,31 +1020,31 @@ Etes-vous sur ?</source>
         <translation>Route settings</translation>
     </message>
     <message>
-        <location filename="../src/Dialogs/DialogRoute.cpp" line="129"/>
+        <location filename="../src/Dialogs/DialogRoute.cpp" line="141"/>
         <source>Date de la derniere MAJ de la position</source>
         <translation>Last position update date/time</translation>
     </message>
     <message>
-        <location filename="../src/Dialogs/DialogRoute.cpp" line="176"/>
+        <location filename="../src/Dialogs/DialogRoute.cpp" line="188"/>
         <source>Ce nom est deja utilise, choisissez en un autre</source>
         <translation>This name is already used, choose another one</translation>
     </message>
     <message>
-        <location filename="../src/Dialogs/DialogRoute.cpp" line="250"/>
-        <location filename="../src/Dialogs/DialogRoute.cpp" line="264"/>
-        <location filename="../src/Dialogs/DialogRoute.cpp" line="278"/>
+        <location filename="../src/Dialogs/DialogRoute.cpp" line="277"/>
+        <location filename="../src/Dialogs/DialogRoute.cpp" line="291"/>
+        <location filename="../src/Dialogs/DialogRoute.cpp" line="305"/>
         <source>Pilototo</source>
         <translation>Autopilot</translation>
     </message>
     <message>
-        <location filename="../src/Dialogs/DialogRoute.cpp" line="250"/>
-        <location filename="../src/Dialogs/DialogRoute.cpp" line="264"/>
-        <location filename="../src/Dialogs/DialogRoute.cpp" line="278"/>
+        <location filename="../src/Dialogs/DialogRoute.cpp" line="277"/>
+        <location filename="../src/Dialogs/DialogRoute.cpp" line="291"/>
+        <location filename="../src/Dialogs/DialogRoute.cpp" line="305"/>
         <source>Pour utiliser cette action il faut que:&lt;br&gt;- La route parte du bateau&lt;br&gt;-La route parte de la prochaine vacation&lt;br&gt;- Le mode VBVMG-VLM soit actif</source>
         <translation>To use this action it is needed that:&lt;br&gt;-Route starts from boat&lt;br&gt;-Route starts from next vacation&lt;br&gt;VBVMG-VLM is activated</translation>
     </message>
     <message>
-        <location filename="../src/Dialogs/DialogRoute.cpp" line="308"/>
+        <location filename="../src/Dialogs/DialogRoute.cpp" line="335"/>
         <source>WP-VLM</source>
         <translation>WP-VLM</translation>
     </message>
@@ -3884,22 +3884,22 @@ AWA %d°, AWS %.1fkts
 VMG %.1kts</translation>
     </message>
     <message>
-        <location filename="../src/Dialogs/DialogRoute.cpp" line="144"/>
+        <location filename="../src/Dialogs/DialogRoute.cpp" line="156"/>
         <source>Date et heure</source>
         <translation>Date and time</translation>
     </message>
     <message>
-        <location filename="../src/Dialogs/DialogRoute.cpp" line="145"/>
+        <location filename="../src/Dialogs/DialogRoute.cpp" line="157"/>
         <source>Aller vers</source>
         <translation>Go to</translation>
     </message>
     <message>
-        <location filename="../src/Dialogs/DialogRoute.cpp" line="146"/>
+        <location filename="../src/Dialogs/DialogRoute.cpp" line="158"/>
         <source>Cap a suivre apres</source>
         <translation>Heading after</translation>
     </message>
     <message>
-        <location filename="../src/Dialogs/DialogRoute.cpp" line="147"/>
+        <location filename="../src/Dialogs/DialogRoute.cpp" line="159"/>
         <source>Mode</source>
         <translation>Mode</translation>
     </message>
@@ -4284,23 +4284,23 @@ Virements de bord</source>
 <context>
     <name>ROUTE</name>
     <message>
-        <location filename="../src/route.cpp" line="292"/>
-        <location filename="../src/route.cpp" line="459"/>
+        <location filename="../src/route.cpp" line="300"/>
+        <location filename="../src/route.cpp" line="495"/>
         <source>&lt;br&gt;Route: </source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../src/route.cpp" line="465"/>
+        <location filename="../src/route.cpp" line="501"/>
         <source>&lt;br&gt;ETA: Non joignable avec ce fichier GRIB</source>
         <translation>&lt;br&gt;ETA: not reachable with this GRIB file</translation>
     </message>
     <message>
-        <location filename="../src/route.cpp" line="470"/>
+        <location filename="../src/route.cpp" line="506"/>
         <source>&lt;br&gt;ETA: deja atteint</source>
         <translation>ETA: already reached</translation>
     </message>
     <message>
-        <location filename="../src/route.cpp" line="475"/>
+        <location filename="../src/route.cpp" line="511"/>
         <source>Note: la date indiquee correspond a la desactivation du WP</source>
         <translation>Note: indicated ETA corresponds to WP deactivation</translation>
     </message>
@@ -4309,32 +4309,32 @@ Virements de bord</source>
         <translation type="obsolete">ETA from last crank</translation>
     </message>
     <message>
-        <location filename="../src/route.cpp" line="499"/>
+        <location filename="../src/route.cpp" line="535"/>
         <source>ETA a partir de maintenant</source>
         <translation>ETA: from now</translation>
     </message>
     <message>
-        <location filename="../src/route.cpp" line="502"/>
+        <location filename="../src/route.cpp" line="538"/>
         <source>ETA depuis la date Grib</source>
         <translation>ETA from GRIB date</translation>
     </message>
     <message>
-        <location filename="../src/route.cpp" line="505"/>
+        <location filename="../src/route.cpp" line="541"/>
         <source>ETA depuis la date fixe</source>
         <translation>ETA from fixed date</translation>
     </message>
     <message>
-        <location filename="../src/route.cpp" line="508"/>
+        <location filename="../src/route.cpp" line="544"/>
         <source>jours</source>
         <translation>days</translation>
     </message>
     <message>
-        <location filename="../src/route.cpp" line="508"/>
+        <location filename="../src/route.cpp" line="544"/>
         <source>heures</source>
         <translation>hours</translation>
     </message>
     <message>
-        <location filename="../src/route.cpp" line="509"/>
+        <location filename="../src/route.cpp" line="545"/>
         <source>minutes</source>
         <translation>minutes</translation>
     </message>
@@ -4372,42 +4372,42 @@ Voulez-vous egalement supprimer tous les POIs lui appartenant?</source>
         <translation type="obsolete">Name</translation>
     </message>
     <message>
-        <location filename="../src/Ui/Route_Editor.ui" line="417"/>
+        <location filename="../src/Ui/Route_Editor.ui" line="426"/>
         <source>Point de depart de la route</source>
         <translation>Starting point of route</translation>
     </message>
     <message>
-        <location filename="../src/Ui/Route_Editor.ui" line="432"/>
+        <location filename="../src/Ui/Route_Editor.ui" line="441"/>
         <source>Du bateau</source>
         <translation>From boat</translation>
     </message>
     <message>
-        <location filename="../src/Ui/Route_Editor.ui" line="442"/>
+        <location filename="../src/Ui/Route_Editor.ui" line="451"/>
         <source>Depuis la 1ere marque</source>
         <translation>From 1st mark</translation>
     </message>
     <message>
-        <location filename="../src/Ui/Route_Editor.ui" line="459"/>
+        <location filename="../src/Ui/Route_Editor.ui" line="468"/>
         <source>Valider</source>
         <translation>OK</translation>
     </message>
     <message>
-        <location filename="../src/Ui/Route_Editor.ui" line="472"/>
+        <location filename="../src/Ui/Route_Editor.ui" line="481"/>
         <source>Simplifie la route en supprimant les POIs qui ne changent pas l&apos;eta finale.</source>
         <translation>Simplify route removing POIs but without changing final ETA.</translation>
     </message>
     <message>
-        <location filename="../src/Ui/Route_Editor.ui" line="475"/>
+        <location filename="../src/Ui/Route_Editor.ui" line="484"/>
         <source>Simplifier</source>
         <translation>Simplify</translation>
     </message>
     <message>
-        <location filename="../src/Ui/Route_Editor.ui" line="488"/>
+        <location filename="../src/Ui/Route_Editor.ui" line="497"/>
         <source>Annuler</source>
         <translation>Cancel</translation>
     </message>
     <message>
-        <location filename="../src/Ui/Route_Editor.ui" line="331"/>
+        <location filename="../src/Ui/Route_Editor.ui" line="340"/>
         <source>Taille et couleur</source>
         <translation>Size and color</translation>
     </message>
@@ -4431,7 +4431,7 @@ Voulez-vous egalement supprimer tous les POIs lui appartenant?</source>
         <translation type="obsolete">Use VLM formula for VB-VMG</translation>
     </message>
     <message>
-        <location filename="../src/Ui/Route_Editor.ui" line="355"/>
+        <location filename="../src/Ui/Route_Editor.ui" line="364"/>
         <source>Date et heure de depart de la route</source>
         <translation>Start date and time of route</translation>
     </message>
@@ -4440,12 +4440,12 @@ Voulez-vous egalement supprimer tous les POIs lui appartenant?</source>
         <translation type="obsolete">From last crank</translation>
     </message>
     <message>
-        <location filename="../src/Ui/Route_Editor.ui" line="370"/>
+        <location filename="../src/Ui/Route_Editor.ui" line="379"/>
         <source>Depuis la date du grib</source>
         <translation>From GRIB date</translation>
     </message>
     <message>
-        <location filename="../src/Ui/Route_Editor.ui" line="377"/>
+        <location filename="../src/Ui/Route_Editor.ui" line="386"/>
         <source>Date fixe</source>
         <translation>Fixed date</translation>
     </message>
@@ -4489,62 +4489,67 @@ Voulez-vous egalement supprimer tous les POIs lui appartenant?</source>
     </message>
     <message>
         <location filename="../src/Ui/Route_Editor.ui" line="247"/>
+        <source>Ce bouton a 3 etats, selon que vous utilisez la formule qtVlm, une formule VLM optimisee, ou la formule VLM originale. La formule VLM optimisee donne en principe exactement les memes resultats que la formule non optimisee.</source>
+        <translation>This button has 3 states, depending whether you use qtVlm formula, an optimized version of vbVmg-Vlm, or the orginal vbVmg formula from VLM. Optimized version and original version are supposed to give the same results.</translation>
+    </message>
+    <message>
+        <location filename="../src/Ui/Route_Editor.ui" line="253"/>
         <source>Formule VLM pour le VB-VMG</source>
         <translation>VLM formula for VB-VMG</translation>
     </message>
     <message>
-        <location filename="../src/Ui/Route_Editor.ui" line="260"/>
+        <location filename="../src/Ui/Route_Editor.ui" line="269"/>
         <source>Empannages/Virements</source>
         <translation>Tacks/Gybes</translation>
     </message>
     <message>
-        <location filename="../src/Ui/Route_Editor.ui" line="273"/>
+        <location filename="../src/Ui/Route_Editor.ui" line="282"/>
         <source>Pourcentage de la polaire a appliquer pendant une vacation</source>
         <translation>Pourcentage of polar used for one vacation after tack or gybe</translation>
     </message>
     <message>
-        <location filename="../src/Ui/Route_Editor.ui" line="279"/>
+        <location filename="../src/Ui/Route_Editor.ui" line="288"/>
         <source>%</source>
         <translation>%</translation>
     </message>
     <message>
-        <location filename="../src/Ui/Route_Editor.ui" line="304"/>
+        <location filename="../src/Ui/Route_Editor.ui" line="313"/>
         <source>Retirer les POIs avant le WP-VLM</source>
         <translation>Remove POIs before WP-VLM</translation>
     </message>
     <message>
-        <location filename="../src/Ui/Route_Editor.ui" line="317"/>
+        <location filename="../src/Ui/Route_Editor.ui" line="326"/>
         <source>Renseigner le cap a suivre (@) des POIs</source>
         <translation>Add heding info (@) in POIs</translation>
     </message>
     <message>
-        <location filename="../src/Ui/Route_Editor.ui" line="387"/>
+        <location filename="../src/Ui/Route_Editor.ui" line="396"/>
         <source>M/d/yyyy hh:mm:ss</source>
         <translation>MM/dd/yyyy hh:mm:ss</translation>
     </message>
     <message>
-        <location filename="../src/Ui/Route_Editor.ui" line="397"/>
+        <location filename="../src/Ui/Route_Editor.ui" line="406"/>
         <source>A partir de la prochaine vacation</source>
         <translation>From next vacation</translation>
     </message>
     <message>
-        <location filename="../src/Ui/Route_Editor.ui" line="538"/>
-        <location filename="../src/Ui/Route_Editor.ui" line="545"/>
+        <location filename="../src/Ui/Route_Editor.ui" line="547"/>
+        <location filename="../src/Ui/Route_Editor.ui" line="554"/>
         <source>Pilototo</source>
         <translation>Autopilot</translation>
     </message>
     <message>
-        <location filename="../src/Ui/Route_Editor.ui" line="557"/>
+        <location filename="../src/Ui/Route_Editor.ui" line="566"/>
         <source>Envoyer les ordres</source>
         <translation>Send orders</translation>
     </message>
     <message>
-        <location filename="../src/Ui/Route_Editor.ui" line="570"/>
+        <location filename="../src/Ui/Route_Editor.ui" line="579"/>
         <source>Charger automatiquement</source>
         <translation>Load automatically</translation>
     </message>
     <message>
-        <location filename="../src/Ui/Route_Editor.ui" line="593"/>
+        <location filename="../src/Ui/Route_Editor.ui" line="602"/>
         <source>Charger les POIs preselectionnes</source>
         <translation>Load preselected POIs</translation>
     </message>
@@ -4822,37 +4827,37 @@ Voulez-vous egalement supprimer tous les POIs lui appartenant?</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../src/Ui/paramVLM.ui" line="834"/>
+        <location filename="../src/Ui/paramVLM.ui" line="821"/>
         <source>Vitesse du replay</source>
         <translation>Replay speed</translation>
     </message>
     <message>
-        <location filename="../src/Ui/paramVLM.ui" line="960"/>
+        <location filename="../src/Ui/paramVLM.ui" line="947"/>
         <source> vac</source>
         <translation>crank</translation>
     </message>
     <message>
-        <location filename="../src/Ui/paramVLM.ui" line="1013"/>
+        <location filename="../src/Ui/paramVLM.ui" line="1000"/>
         <source>Demander l&apos;emplacement lors du telechargement</source>
         <translation>Ask for destination during download</translation>
     </message>
     <message>
-        <location filename="../src/Ui/paramVLM.ui" line="1106"/>
+        <location filename="../src/Ui/paramVLM.ui" line="1093"/>
         <source>Date automatique a chaque synchro VLM</source>
         <translation>Automatic date at each VLM sync</translation>
     </message>
     <message>
-        <location filename="../src/Ui/paramVLM.ui" line="1188"/>
+        <location filename="../src/Ui/paramVLM.ui" line="1175"/>
         <source>Delais d&apos;envoi (sec)</source>
         <translation>Send delay (sec)</translation>
     </message>
     <message>
-        <location filename="../src/Ui/paramVLM.ui" line="1221"/>
+        <location filename="../src/Ui/paramVLM.ui" line="1208"/>
         <source>Avance</source>
         <translation>Avanced</translation>
     </message>
     <message>
-        <location filename="../src/Ui/paramVLM.ui" line="1277"/>
+        <location filename="../src/Ui/paramVLM.ui" line="1264"/>
         <source>Sauvegarde a la fermeture</source>
         <translation>Save on exit</translation>
     </message>
@@ -4869,82 +4874,82 @@ Voulez-vous egalement supprimer tous les POIs lui appartenant?</source>
         <translation type="obsolete">Confirm each order to VLM</translation>
     </message>
     <message>
-        <location filename="../src/Ui/paramVLM.ui" line="722"/>
+        <location filename="../src/Ui/paramVLM.ui" line="709"/>
         <source>Trace</source>
         <translation>Trace</translation>
     </message>
     <message>
-        <location filename="../src/Ui/paramVLM.ui" line="734"/>
+        <location filename="../src/Ui/paramVLM.ui" line="721"/>
         <source>Pas de la trace</source>
         <translation>Trace step</translation>
     </message>
     <message>
-        <location filename="../src/Ui/paramVLM.ui" line="747"/>
+        <location filename="../src/Ui/paramVLM.ui" line="734"/>
         <source>Longueur de la trace</source>
         <translation>Length of trace</translation>
     </message>
     <message>
-        <location filename="../src/Ui/paramVLM.ui" line="766"/>
+        <location filename="../src/Ui/paramVLM.ui" line="753"/>
         <source>Afficher la trace des concurrents</source>
         <translation>Show trace competitors</translation>
     </message>
     <message>
-        <location filename="../src/Ui/paramVLM.ui" line="808"/>
+        <location filename="../src/Ui/paramVLM.ui" line="795"/>
         <source>vacations</source>
         <translation>crank</translation>
     </message>
     <message>
-        <location filename="../src/Ui/paramVLM.ui" line="821"/>
+        <location filename="../src/Ui/paramVLM.ui" line="808"/>
         <source>heures</source>
         <translation>hours</translation>
     </message>
     <message>
-        <location filename="../src/Ui/paramVLM.ui" line="859"/>
+        <location filename="../src/Ui/paramVLM.ui" line="846"/>
         <source>Compas</source>
         <translation>Compass</translation>
     </message>
     <message>
-        <location filename="../src/Ui/paramVLM.ui" line="871"/>
+        <location filename="../src/Ui/paramVLM.ui" line="858"/>
         <source>Affichage du compas</source>
         <translation>Show compass</translation>
     </message>
     <message>
-        <location filename="../src/Ui/paramVLM.ui" line="883"/>
+        <location filename="../src/Ui/paramVLM.ui" line="870"/>
         <source>Afficher le compas (C)</source>
         <translation>Show compass (C)</translation>
     </message>
     <message>
-        <location filename="../src/Ui/paramVLM.ui" line="900"/>
+        <location filename="../src/Ui/paramVLM.ui" line="887"/>
         <source>Polaire</source>
         <translation>Polar</translation>
     </message>
     <message>
-        <location filename="../src/Ui/paramVLM.ui" line="912"/>
+        <location filename="../src/Ui/paramVLM.ui" line="899"/>
         <source>Afficher la polaire (L)</source>
         <translation>Show polar (L)</translation>
     </message>
     <message>
-        <location filename="../src/Ui/paramVLM.ui" line="928"/>
+        <location filename="../src/Ui/paramVLM.ui" line="915"/>
         <source>Echelle fixe (50nds)</source>
         <translation>Fixed scale (50knots)</translation>
     </message>
     <message>
-        <location filename="../src/Ui/paramVLM.ui" line="944"/>
+        <location filename="../src/Ui/paramVLM.ui" line="931"/>
         <source>Nombre de vacations</source>
         <translation>Number of cranks</translation>
     </message>
     <message>
-        <location filename="../src/Ui/paramVLM.ui" line="982"/>
+        <location filename="../src/Ui/paramVLM.ui" line="969"/>
         <source>Meme duree que l&apos;estime</source>
         <translation>Same duration as reckoning</translation>
     </message>
     <message>
-        <location filename="../src/Ui/paramVLM.ui" line="989"/>
+        <location filename="../src/Ui/paramVLM.ui" line="976"/>
         <source>Grib</source>
         <translation>Grib</translation>
     </message>
     <message>
-        <location filename="../src/Ui/paramVLM.ui" line="1001"/>
+        <location filename="../src/Ui/paramVLM.ui" line="988"/>
         <source>Fichier grib</source>
         <translation>Grib file</translation>
     </message>
@@ -4953,22 +4958,22 @@ Voulez-vous egalement supprimer tous les POIs lui appartenant?</source>
         <translation type="obsolete">Ask for destination during download</translation>
     </message>
     <message>
-        <location filename="../src/Ui/paramVLM.ui" line="1029"/>
+        <location filename="../src/Ui/paramVLM.ui" line="1016"/>
         <source>Repertoire</source>
         <translation>Directory</translation>
     </message>
     <message>
-        <location filename="../src/Ui/paramVLM.ui" line="1064"/>
+        <location filename="../src/Ui/paramVLM.ui" line="1051"/>
         <source>Parcourir</source>
         <translation>Browse</translation>
     </message>
     <message>
-        <location filename="../src/Ui/paramVLM.ui" line="1080"/>
+        <location filename="../src/Ui/paramVLM.ui" line="1067"/>
         <source>zoom sur grib au chargement</source>
         <translation>zoom on grib after download</translation>
     </message>
     <message>
-        <location filename="../src/Ui/paramVLM.ui" line="1094"/>
+        <location filename="../src/Ui/paramVLM.ui" line="1081"/>
         <source>Grib horodate</source>
         <translation>Grib timestamp</translation>
     </message>
@@ -4977,27 +4982,27 @@ Voulez-vous egalement supprimer tous les POIs lui appartenant?</source>
         <translation type="obsolete">Automatic date at each VLM sync</translation>
     </message>
     <message>
-        <location filename="../src/Ui/paramVLM.ui" line="1120"/>
+        <location filename="../src/Ui/paramVLM.ui" line="1107"/>
         <source>SailsDoc</source>
         <translation>SailDocs</translation>
     </message>
     <message>
-        <location filename="../src/Ui/paramVLM.ui" line="1132"/>
+        <location filename="../src/Ui/paramVLM.ui" line="1119"/>
         <source>Utilisation d&apos;un client mail externe</source>
         <translation>Use an external mail client</translation>
     </message>
     <message>
-        <location filename="../src/Ui/paramVLM.ui" line="1139"/>
+        <location filename="../src/Ui/paramVLM.ui" line="1126"/>
         <source>GPS</source>
         <translation>GPS</translation>
     </message>
     <message>
-        <location filename="../src/Ui/paramVLM.ui" line="1151"/>
+        <location filename="../src/Ui/paramVLM.ui" line="1138"/>
         <source>Emulation de GPS</source>
         <translation>GPS emulation</translation>
     </message>
     <message>
-        <location filename="../src/Ui/paramVLM.ui" line="1166"/>
+        <location filename="../src/Ui/paramVLM.ui" line="1153"/>
         <source>Port serie</source>
         <translation>Serial port</translation>
     </message>
@@ -5006,7 +5011,7 @@ Voulez-vous egalement supprimer tous les POIs lui appartenant?</source>
         <translation type="obsolete">Delay to send (sec)</translation>
     </message>
     <message>
-        <location filename="../src/Ui/paramVLM.ui" line="1211"/>
+        <location filename="../src/Ui/paramVLM.ui" line="1198"/>
         <source>Activer</source>
         <translation>Activate</translation>
     </message>
@@ -5015,12 +5020,12 @@ Voulez-vous egalement supprimer tous les POIs lui appartenant?</source>
         <translation type="obsolete">Advanced</translation>
     </message>
     <message>
-        <location filename="../src/Ui/paramVLM.ui" line="1236"/>
+        <location filename="../src/Ui/paramVLM.ui" line="1223"/>
         <source>Url</source>
         <translation>URL</translation>
     </message>
     <message>
-        <location filename="../src/Ui/paramVLM.ui" line="1259"/>
+        <location filename="../src/Ui/paramVLM.ui" line="1246"/>
         <source>Position et taille de qtVlm</source>
         <translation>Position and size of qtVlm</translation>
     </message>
@@ -5029,12 +5034,12 @@ Voulez-vous egalement supprimer tous les POIs lui appartenant?</source>
         <translation type="obsolete">Save when closing</translation>
     </message>
     <message>
-        <location filename="../src/Ui/paramVLM.ui" line="1291"/>
+        <location filename="../src/Ui/paramVLM.ui" line="1278"/>
         <source>User agent</source>
         <translation>User agent</translation>
     </message>
     <message>
-        <location filename="../src/Ui/paramVLM.ui" line="1303"/>
+        <location filename="../src/Ui/paramVLM.ui" line="1290"/>
         <source>Force user agent</source>
         <translation>Force user agent</translation>
     </message>
@@ -6155,6 +6160,7 @@ Voulez-vous egalement supprimer tous les POIs lui appartenant?</source>
     <message>
         <location filename="../src/boatVLM.cpp" line="682"/>
         <location filename="../src/boatVLM.cpp" line="685"/>
+        <location filename="../src/boatVLM.cpp" line="734"/>
         <source>deg</source>
         <translation>°</translation>
     </message>
@@ -6198,6 +6204,11 @@ Voulez-vous egalement supprimer tous les POIs lui appartenant?</source>
         <location filename="../src/boatVLM.cpp" line="733"/>
         <source>Donnees GRIB a la prochaine vac:</source>
         <translation>Grib data at next vacation:</translation>
+    </message>
+    <message>
+        <location filename="../src/boatVLM.cpp" line="746"/>
+        <source> nds</source>
+        <translation> kts</translation>
     </message>
     <message>
         <location filename="../src/boatVLM.cpp" line="747"/>
@@ -7193,12 +7204,12 @@ Etes-vous sur ?</source>
     <message>
         <location filename="../src/mycentralwidget.cpp" line="2171"/>
         <source>Envoyer la route au pilototo</source>
-        <translation type="unfinished"></translation>
+        <translation>Send Route to Autopilot</translation>
     </message>
     <message>
         <location filename="../src/mycentralwidget.cpp" line="2171"/>
         <source>Pour pouvoir envoyer la route au pilototo if faut que:&lt;br&gt;-La route demarre du bateau et de la prochaine vac&lt;br&gt;et que le mode VbVmg-Vlm soit active</source>
-        <translation type="unfinished"></translation>
+        <translation>To be able to send route to Autopilot:t&lt;br&gt;-Route must start from boat and next vacation&lt;br&gt;-VbVmg Vlm mode must be activated</translation>
     </message>
     <message>
         <location filename="../src/mycentralwidget.cpp" line="2229"/>
@@ -8058,27 +8069,27 @@ Voulez-vous egalement supprimer tous les POIs lui appartenant?</source>
     <message>
         <location filename="../src/Ui/twaline.ui" line="596"/>
         <source>Date depart</source>
-        <translation type="unfinished">Start date</translation>
+        <translation>Start date</translation>
     </message>
     <message>
         <location filename="../src/Ui/twaline.ui" line="608"/>
         <source>A la date et heure du Grib</source>
-        <translation type="unfinished"></translation>
+        <translation>Grib date and time</translation>
     </message>
     <message>
         <location filename="../src/Ui/twaline.ui" line="611"/>
         <source>Grib</source>
-        <translation type="unfinished">Grib</translation>
+        <translation>Grib</translation>
     </message>
     <message>
         <location filename="../src/Ui/twaline.ui" line="627"/>
         <source>A la date et heure de la prochaine vacation</source>
-        <translation type="unfinished"></translation>
+        <translation>Next vacation date and time</translation>
     </message>
     <message>
         <location filename="../src/Ui/twaline.ui" line="630"/>
         <source>Vac</source>
-        <translation type="unfinished"></translation>
+        <translation>Vac</translation>
     </message>
 </context>
 <context>
