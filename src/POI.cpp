@@ -1126,16 +1126,13 @@ void POI::paint(QPainter * pnt, const QStyleOptionGraphicsItem * , QWidget * )
                 myColor=baliseColor;
                 break;
             case 3:
-                myColor=QColor(Qt::red);
+                myColor=QColor(Qt::white);
                 break;
          }
         //qWarning()<<"colorpilototo="<<this->colorPilototo;
         QColor pColor;
         switch (this->colorPilototo)
         {
-        case 0:
-            pColor=QColor(60,60,60);
-            break;
         case 1:
             pColor=QColor(0,250,0);
             break;
@@ -1150,6 +1147,9 @@ void POI::paint(QPainter * pnt, const QStyleOptionGraphicsItem * , QWidget * )
             break;
         case 5:
             pColor=QColor(0,130,0);
+            break;
+        default:
+            pColor=myColor;
             break;
         }
         myColor=pColor;
