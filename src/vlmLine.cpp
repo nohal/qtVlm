@@ -210,7 +210,7 @@ void vlmLine::calculatePoly(void)
                 }
             }
             poly->putPoints(n,1,X,Y);
-            if(coastDetection && !coasted && map->crossing(QLineF(previousX,previousY,X,Y),
+            if(coastDetection && n!=0 && !coasted && map->crossing(QLineF(previousX,previousY,X,Y),
                QLineF(previousWorldPoint.lon,previousWorldPoint.lat,worldPoint.lon,worldPoint.lat)))
             {
                 coasted=true;

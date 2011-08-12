@@ -319,6 +319,7 @@ void ROUTE::slot_recalculate(boat * boat)
             orth.setPoints(lon, lat, poi->getLongitude(),poi->getLatitude());
             //qWarning()<<poi->getName()<<this->my_poiList.at(0)->getName();
             remaining_distance=orth.getDistance();
+            time_t Eta;
             if(has_eta)
             {
                 //if(!busy) this->slot_recalculate();
@@ -432,6 +433,7 @@ void ROUTE::slot_recalculate(boat * boat)
                                     angle=A180(cap-wind_angle);
                                     break;
                             }
+
                             newSpeed=myBoat->getPolarData()->getSpeed(wind_speed,angle);
                             if (firstPoint)
                             {
@@ -451,6 +453,7 @@ void ROUTE::slot_recalculate(boat * boat)
                             {
                                 if(qRound(distanceParcourue*100)>=qRound(remaining_distance*100))
                                 {
+                                    Eta=eta;
                                     badEta=true;
                                     break;
                                 }
@@ -490,7 +493,10 @@ void ROUTE::slot_recalculate(boat * boat)
                     }
                     if(!imported &&(qRound(remaining_distance*100)<qRound(distanceParcourue*100) ||
                        qRound(previous_remaining_distance*100)<qRound(distanceParcourue*100)))
+                    {
+                        Eta=eta+myBoat->getVacLen();
                         break;
+                    }
                 } while (has_eta && !imported);
             }
             if(this->autoAt)
@@ -501,7 +507,7 @@ void ROUTE::slot_recalculate(boat * boat)
 //            qWarning()<<"newSpeed="<<newSpeed<<" wind_speed="<<wind_speed<<" angle="<<angle;
             line->setLastPointIsPoi();
             tip=tr("<br>Route: ")+name;
-            time_t Eta=eta-myBoat->getVacLen();
+            //time_t Eta=eta-myBoat->getVacLen();
 //            if(badEta)
 //                Eta=eta-myBoat->getVacLen();
             if(!has_eta)
