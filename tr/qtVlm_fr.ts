@@ -3140,7 +3140,7 @@ Voulez-vous egalement supprimer tous les POIs lui appartenant?</source>
     </message>
     <message>
         <source>Ce bouton a 3 etats, selon que vous utilisez la formule qtVlm, une formule VLM optimisee, ou la formule VLM originale. La formule VLM optimisee donne en principe exactement les memes resultats que la formule non optimisee.</source>
-        <translation>Ce bouton a 3 etats, selon que vous utilisez la formule qtVlm, une formule VLM optimisée, ou la formule VLM originale. La formule VLM optimisée donne en principe exactement les mêmes résultats que la formule non optimisée.</translation>
+        <translation type="unfinished">Ce&amp;nbsp;bouton&amp;nbsp;a&amp;nbsp;3&amp;nbsp;etats,&amp;nbsp;selon&amp;nbsp;que&amp;nbsp;vous&amp;nbsp;utilisez&lt;br&gt;la&amp;nbsp;formule&amp;nbsp;qtVlm,&amp;nbsp;une&amp;nbsp;formule&amp;nbsp;VLM&amp;nbsp;optimisée,&lt;br&gt;ou&amp;nbsp;la&amp;nbsp;formule&amp;nbsp;VLM&amp;nbsp;originale.&amp;nbsp;La&amp;nbsp;formule&amp;nbsp;VLM&amp;nbsp;optimisée&lt;br&gt;donne&amp;nbsp;en&amp;nbsp;principe&amp;nbsp;exactement&amp;nbsp;les&amp;nbsp;mêmes&amp;nbsp;résultats&amp;nbsp;que&lt;br&gt;la&amp;nbsp;formule&amp;nbsp;non&amp;nbsp;optimisée.</translation>
     </message>
 </context>
 <context>
