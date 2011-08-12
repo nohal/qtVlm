@@ -81,7 +81,7 @@ ROUTE::ROUTE(QString name, Projection *proj, Grib *grib, QGraphicsScene * myScen
     this->autoRemove=false;
     this->useVbvmgVlm=Settings::getSetting("useVbvmgVlm",0).toInt()==1;
     this->setNewVbvmgVlm(Settings::getSetting("newVbvmgVlm",0).toInt()==1);
-    this->setNewVbvmgVlm(false);
+    //this->setNewVbvmgVlm(false);
     pen.setColor(color);
     pen.setBrush(color);
     pen.setWidthF(width);
@@ -156,8 +156,11 @@ void ROUTE::removePoi(POI *poi)
 }
 void ROUTE::slot_recalculate(boat * boat)
 {
+    QTime timeTotal;
+    timeTotal.start();
     QTime timeDebug;
-    int n1=0;
+    int timeD=0;
+    int nbLoop=0;
     if(parent->getAboutToQuit()) return;
     if(temp) return;
     if(busy)
@@ -355,8 +358,12 @@ void ROUTE::slot_recalculate(boat * boat)
 #endif
                                     if(useVbvmgVlm && !this->fastVmgCalc && !parent->getIsStartingUp())
                                     {
-                                        line->slot_showMe();
-                                        QApplication::processEvents();
+                                        if(++nbLoop>100)
+                                        {
+                                            nbLoop=0;
+                                            line->slot_showMe();
+                                            QApplication::processEvents();
+                                        }
                                         double h1,h2,w1,w2,t1,t2,d1,d2;
 #if 0
                                         this->do_vbvmg_context(remaining_distance,cap,wind_speed,wind_angle,&h1,&h2,&w1,&w2,&t1,&t2,&d1,&d2);
@@ -366,7 +373,7 @@ void ROUTE::slot_recalculate(boat * boat)
 #endif
                                         timeDebug.start();
                                         this->do_vbvmg_buffer(remaining_distance,cap,wind_speed,wind_angle,&h1,&h2,&w1,&w2,&t1,&t2,&d1,&d2);
-                                        n1+=timeDebug.elapsed();
+                                        timeD+=timeDebug.elapsed();
 #if 0
                                         //qWarning()<<w1<<w2;
                                         if(qRound(w1*1000)!=qRound(w1Save*1000) || qRound(h1*1000)!=qRound(h1Save*1000))
@@ -581,7 +588,8 @@ void ROUTE::slot_recalculate(boat * boat)
     this->slot_shShow();
     line->slot_showMe();
     busy=false;
-    qWarning()<<"VBVMG VLM time:"<<n1;
+    qWarning()<<"VBVMG-VLM calculation time:"<<timeD;
+    qWarning()<<"Route total calculation time:"<<timeTotal.elapsed();
 }
 void ROUTE::interpolatePos()
 {
@@ -1004,7 +1012,7 @@ void ROUTE::do_vbvmg_buffer(double dist,double wanted_heading,
         {
             int guessInt=qRound(guessAngle+guessTwa);
             MinJ=qMax(guessInt-5,min_j);
-            MaxJ=qMin(guessInt+5,min_j);
+            MaxJ=qMin(guessInt+5,max_j);
         }
         for (j=MinJ; j<MaxJ; ++j)
         {

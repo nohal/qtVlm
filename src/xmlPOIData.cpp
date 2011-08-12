@@ -51,6 +51,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #define ROUTE_MULTVAC     "vacStep"
 #define ROUTE_HIDDEN      "hidden"
 #define ROUTE_VBVMG_VLM   "vbvmg-vlm"
+#define ROUTE_NEW_VBVMG   "newVbvmg-vlm"
 #define ROUTE_SPEED_TACK  "speedTack"
 #define ROUTE_REMOVE      "autoRemovePoi"
 #define ROUTE_AUTO_AT      "autoAt"
@@ -194,6 +195,11 @@ void xml_POIData::slot_writeData(QList<ROUTE*> & route_list,QList<POI*> & poi_li
           tag = doc.createElement(ROUTE_VBVMG_VLM);
           group.appendChild(tag);
           t = doc.createTextNode(QString().setNum(route->getUseVbvmgVlm()?1:0));
+          tag.appendChild(t);
+
+          tag = doc.createElement(ROUTE_NEW_VBVMG);
+          group.appendChild(tag);
+          t = doc.createTextNode(QString().setNum(route->getNewVbvmgVlm()?1:0));
           tag.appendChild(t);
 
           tag = doc.createElement(ROUTE_REMOVE);
@@ -552,6 +558,13 @@ void xml_POIData::slot_readData(QString fname)
                        dataNode = subNode.firstChild();
                        if(dataNode.nodeType() == QDomNode::TextNode)
                            route->setUseVbVmgVlm(dataNode.toText().data().toInt()==1);
+                  }
+
+                  if(subNode.toElement().tagName() == ROUTE_NEW_VBVMG)
+                  {
+                       dataNode = subNode.firstChild();
+                       if(dataNode.nodeType() == QDomNode::TextNode)
+                           route->setNewVbvmgVlm(dataNode.toText().data().toInt()==1);
                   }
 
                   if(subNode.toElement().tagName() == ROUTE_REMOVE)

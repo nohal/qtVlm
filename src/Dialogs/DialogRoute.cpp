@@ -102,7 +102,7 @@ DialogRoute::DialogRoute(ROUTE *route,myCentralWidget *parent)
     }
     else
         this->useVbvmgVlm->setCheckState(Qt::Unchecked);
-    this->useVbvmgVlm->setToolTip("");
+    //this->useVbvmgVlm->setToolTip("");
     switch(route->getStartTimeOption())
     {
     case 1:
