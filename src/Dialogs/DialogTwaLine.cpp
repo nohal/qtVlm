@@ -41,6 +41,7 @@ DialogTwaLine::DialogTwaLine(QPointF start, myCentralWidget *parent, MainWindow 
         this->startVac->setDisabled(false);
     }
     connect(parent,SIGNAL(twaDelPoi(POI *)),this,SLOT(slot_delPOI_list(POI *)));
+    this->SyncWarn->hide();
     traceIt();
 }
 DialogTwaLine::~DialogTwaLine()
@@ -126,6 +127,15 @@ void DialogTwaLine::traceIt()
         eta=grib->getCurrentDate();
     else
         eta=((boatVLM*)myBoat)->getPrevVac()+myBoat->getVacLen();
+    time_t lastSync=((boatVLM*)myBoat)->getPrevVac();
+    time_t timeNow=QDateTime::currentDateTimeUtc().toTime_t();
+    if ( timeNow-lastSync > myBoat->getVacLen() )
+    {
+        this->SyncWarn->setText("<font color='red'>! Sync > 1 Vac !</font>");
+        this->SyncWarn->show();
+    }
+    else
+        this->SyncWarn->hide();
     nbVac[0]=this->spinBox->value();
     nbVac[1]=this->spinBox_2->value();
     nbVac[2]=this->spinBox_3->value();
@@ -238,6 +248,15 @@ void DialogTwaLine::on_doubleSpinBox_5_valueChanged(double )
 }
 
 void DialogTwaLine::on_spinBox_5_valueChanged(int )
+{
+    traceIt();
+}
+
+void DialogTwaLine::on_startGrib_pressed(void)
+{
+    traceIt();
+}
+void DialogTwaLine::on_startVac_pressed(void)
 {
     traceIt();
 }

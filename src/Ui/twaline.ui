@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>160</width>
-    <height>210</height>
+    <height>220</height>
    </rect>
   </property>
   <property name="minimumSize">
@@ -19,7 +19,7 @@
   <property name="maximumSize">
    <size>
     <width>160</width>
-    <height>210</height>
+    <height>220</height>
    </size>
   </property>
   <property name="baseSize">
@@ -41,7 +41,7 @@
     </rect>
    </property>
    <property name="currentIndex">
-    <number>4</number>
+    <number>0</number>
    </property>
    <widget class="QWidget" name="tabWidgetPage1">
     <attribute name="title">
@@ -589,7 +589,7 @@
      <x>0</x>
      <y>150</y>
      <width>151</width>
-     <height>51</height>
+     <height>61</height>
     </rect>
    </property>
    <property name="title">
@@ -628,6 +628,25 @@
     </property>
     <property name="text">
      <string>Vac</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="SyncWarn">
+    <property name="enabled">
+     <bool>false</bool>
+    </property>
+    <property name="geometry">
+     <rect>
+      <x>20</x>
+      <y>40</y>
+      <width>91</width>
+      <height>16</height>
+     </rect>
+    </property>
+    <property name="toolTip">
+     <string>Pas de sync Vlm depuis plus d'une vac</string>
+    </property>
+    <property name="text">
+     <string>! Sync &gt; 1 Vac !</string>
     </property>
    </widget>
   </widget>
