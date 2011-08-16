@@ -454,7 +454,7 @@ void DialogPilototo::requestFinished (QByteArray res)
             }
 	    break;
     }
-    if(this->myBoat && this->updateBoat && this->currentList->isEmpty())
+    if(this->myBoat && this->updateBoat && (this->currentList==NULL || this->currentList->isEmpty()))
     {
         this->updateBoat=false;
         poiToWp->slot_setWP();

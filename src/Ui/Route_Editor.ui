@@ -500,8 +500,8 @@
      <widget class="QCheckBox" name="pilototo">
       <property name="geometry">
        <rect>
-        <x>490</x>
-        <y>70</y>
+        <x>20</x>
+        <y>100</y>
         <width>81</width>
         <height>17</height>
        </rect>
@@ -545,6 +545,19 @@
       </property>
       <property name="text">
        <string>Pilototo</string>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="btAppliquer">
+      <property name="geometry">
+       <rect>
+        <x>490</x>
+        <y>70</y>
+        <width>75</width>
+        <height>23</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Appliquer</string>
       </property>
      </widget>
     </widget>
@@ -605,6 +618,35 @@
    </widget>
   </widget>
  </widget>
+ <tabstops>
+  <tabstop>tabWidget</tabstop>
+  <tabstop>editName</tabstop>
+  <tabstop>editBoat</tabstop>
+  <tabstop>editFrozen</tabstop>
+  <tabstop>editCoasts</tabstop>
+  <tabstop>hidePois</tabstop>
+  <tabstop>vacStep</tabstop>
+  <tabstop>hidden</tabstop>
+  <tabstop>useVbvmgVlm</tabstop>
+  <tabstop>speedLossOnTack</tabstop>
+  <tabstop>autoRemove</tabstop>
+  <tabstop>autoAt</tabstop>
+  <tabstop>editGrib</tabstop>
+  <tabstop>editDate</tabstop>
+  <tabstop>editDateBox</tabstop>
+  <tabstop>editVac</tabstop>
+  <tabstop>startFromBoat</tabstop>
+  <tabstop>startFromMark</tabstop>
+  <tabstop>btOk</tabstop>
+  <tabstop>Simplifier</tabstop>
+  <tabstop>btAppliquer</tabstop>
+  <tabstop>btCancel</tabstop>
+  <tabstop>pilototo</tabstop>
+  <tabstop>Envoyer</tabstop>
+  <tabstop>defaultOrders</tabstop>
+  <tabstop>pilotView</tabstop>
+  <tabstop>customOrders</tabstop>
+ </tabstops>
  <resources/>
  <connections/>
  <slots>

@@ -841,6 +841,7 @@ void POI::slot_WPChanged(double tlat,double tlon)
         if(qRound(lon*100000)==qRound(wlon*100000) && qRound(lat*100000)==qRound(wlat*100000))
         {
             colorPilototo=n+1;
+            this->setWph(isi.at(4).split("@").at(1).toDouble());
             break;
         }
     }

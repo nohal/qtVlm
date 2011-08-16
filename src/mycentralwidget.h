@@ -175,6 +175,7 @@ class myCentralWidget : public QWidget
         Terrain * getTerre(){return terre;}
         time_t getNextVac();
         void setPilototo(QList<POI*> poiList);
+        void treatRoute(ROUTE* route);
 
     public slots :
         /* Zoom & position */

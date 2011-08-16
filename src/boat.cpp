@@ -62,6 +62,8 @@ boat::boat(QString pseudo, bool activated,
     fgcolor = QColor(0,0,0);
     int gr = 255;
     bgcolor = QColor(gr,gr,gr,150);
+    windEstimeSpeed=-1;
+    windEstimeDir=-1;
 
     estimeLine = new vlmLine(proj,parent->getScene(),Z_VALUE_ESTIME);
     estimeLine->setRoundedEnd(true);
@@ -377,8 +379,8 @@ void boat::drawEstime(float myHeading, float mySpeed)
     QPen penLine2(QColor(Qt::black),1,Qt::DotLine);
     penLine2.setWidthF(1.2);
 
-    int estime_param_2;
-    float estime;
+    double estime_param_2;
+    double estime;
 
     /* draw estime */
     if(getIsSelected() || getForceEstime())
@@ -389,18 +391,34 @@ void boat::drawEstime(float myHeading, float mySpeed)
         switch(estime_type)
         {
             case 0: /* time */
-                estime = (float)((float)(estime_param/float(60.0000000000)))*mySpeed;
+                if(mySpeed<0.001)
+                    estime=0;
+                else
+                    estime = (double)estime_param/60.0*(double)mySpeed;
                 break;
             case 1: /* nb vac */
                 estime_param_2=getVacLen();
-                estime = (float)((((float)(estime_param*estime_param_2))/3660.000000000)*mySpeed);
+                if(mySpeed<0.001)
+                    estime=0;
+                else
+                    estime = ((double) estime_param*estime_param_2)*mySpeed/3600.0;
                 break;
             default: /* dist */
                 estime = estime_param;
                 break;
         }
 
+
         Util::getCoordFromDistanceAngle(lat,lon,estime,myHeading,&tmp_lat,&tmp_lon);
+        time_t estime_time=0;
+        if(mySpeed>0.001 && parent->getGrib() && parent->getGrib()->isOk())
+        {
+            estime_time=(estime/mySpeed)*3600;
+            parent->getGrib()->getInterpolatedValue_byDates(lon,lat,this->getPrevVac()+this->getVacLen()+estime_time,&windEstimeSpeed,&windEstimeDir);
+            windEstimeDir=radToDeg(windEstimeDir);
+        }
+        else
+            windEstimeSpeed=-1;
         GshhsReader *map=parent->get_gshhsReader();
         double I1,J1,I2,J2;
         proj->map2screenFloat(lon,lat,&I1,&J1);
@@ -453,6 +471,7 @@ void boat::drawEstime(float myHeading, float mySpeed)
             proj->map2screenFloat(WPLon,WPLat,&I2,&J2);
             WPLine->initSegment(I1,J1,I2,J2);
         }
+        this->updateHint();
     }
 }
 #  define INTER_MAX_LIMIT 1.0000001

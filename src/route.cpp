@@ -449,7 +449,7 @@ void ROUTE::slot_recalculate(boat * boat)
                             }
                             lastTwa=angle;
                             distanceParcourue=newSpeed*myBoat->getVacLen()*multVac/3600.00;
-                            if(!imported /*&& nbToReach==0*/)
+                            if(!imported && nbToReach==0)
                             {
                                 if(qRound(distanceParcourue*100)>=qRound(remaining_distance*100))
                                 {
@@ -491,10 +491,10 @@ void ROUTE::slot_recalculate(boat * boat)
                         orth.setPoints(res_lon,res_lat,my_poiList.last()->getLongitude(),my_poiList.last()->getLatitude());
                             remain=orth.getDistance();
                     }
-                    if(!imported &&(qRound(remaining_distance*100)<qRound(distanceParcourue*100) ||
-                       qRound(previous_remaining_distance*100)<qRound(distanceParcourue*100)))
+                    if(!imported &&(qRound(remaining_distance*100)<qRound(distanceParcourue*100) /* ||
+                       qRound(previous_remaining_distance*100)<qRound(distanceParcourue*100)*/))
                     {
-                        Eta=eta;
+                        Eta=eta-myBoat->getVacLen()*multVac;
                         break;
                     }
                 } while (has_eta && !imported);
@@ -515,7 +515,7 @@ void ROUTE::slot_recalculate(boat * boat)
                 tip=tip+tr("<br>ETA: Non joignable avec ce fichier GRIB");
                 poi->setRouteTimeStamp(-1);
             }
-            else if(Eta-start<0)
+            else if(Eta-start<=0)
             {
                 tip=tip+tr("<br>ETA: deja atteint");
                 poi->setRouteTimeStamp(Eta);

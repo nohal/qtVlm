@@ -214,6 +214,8 @@ class boat: public QGraphicsWidget
 
         polarList * polar_list;
         bool my_intersects(QLineF line1,QLineF line2) const;
+        double windEstimeDir;
+        double windEstimeSpeed;
 };
 
 #endif // BOAT_H

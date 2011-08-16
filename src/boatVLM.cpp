@@ -723,7 +723,7 @@ void boatVLM::updateHint(void)
         if(this->getPolarData())
         {
             double bs=this->getPolarData()->getSpeed(windSpeed,twa);
-            desc=desc+"<br>"+tr("BS polaire: ")+QString().sprintf("%.2f",bs);
+            desc=desc+"<br>"+tr("BS polaire: ")+QString().sprintf("%.2f",bs)+tr(" nds");
         }
         double previousTWA=twa;
         double previousTWS=windSpeed;
@@ -744,38 +744,42 @@ void boatVLM::updateHint(void)
             }
             double bs=this->getPolarData()->getSpeed(windSpeed,twa);
             desc=desc+"<br>"+tr("BS polaire: ")+QString().sprintf("%.2f",bs)+tr(" nds");
-            desc=desc+"<br>"+tr("Tendance: ");
-            previousTWS=qRound(previousTWS*100);
-            windSpeed=qRound(windSpeed*100);
-            previousTWA=qAbs(qRound(previousTWA*100));
-            twa=qAbs(qRound(twa*100));
-            if(previousTWS==windSpeed && previousTWA==twa)
-                desc=desc+tr("stable.");
-            else if(previousTWS==windSpeed)
-                desc=desc+tr("force stable");
-            else if (previousTWS>windSpeed)
-                desc=desc+tr("mollissant");
-            else
-                desc=desc+tr("forcissant");
-            if(!(previousTWS==windSpeed && previousTWA==twa))
+            if(windEstimeSpeed!=-1)
             {
-                if(twa==previousTWA)
-                    desc=desc+tr(", direction stable");
+                desc=desc+"<br>"+tr("Tendance a l'estime: ");
+                previousTWS=qRound(previousTWS*100);
+                windSpeed=qRound(windEstimeSpeed*100);
+                previousTWA=qAbs(qRound(previousTWA*100));
+                twa=this->heading-this->windEstimeDir;
+                twa=qAbs(qRound(twa*100));
+                if(previousTWS==windSpeed && previousTWA==twa)
+                    desc=desc+tr("stable.");
+                else if(previousTWS==windSpeed)
+                    desc=desc+tr("force stable");
+                else if (previousTWS>windSpeed)
+                    desc=desc+tr("mollissant");
                 else
+                    desc=desc+tr("forcissant");
+                if(!(previousTWS==windSpeed && previousTWA==twa))
                 {
-                    if(qAbs(twa)<90)
-                    {
-                        if(previousTWA>twa)
-                            desc=desc+tr(" en refusant");
-                        else
-                            desc=desc+tr(" en adonnant");
-                    }
+                    if(twa==previousTWA)
+                        desc=desc+tr(", direction stable");
                     else
                     {
-                        if(previousTWA<twa)
-                            desc=desc+tr(" en refusant");
+                        if(qAbs(twa)<90)
+                        {
+                            if(previousTWA>twa)
+                                desc=desc+tr(" en refusant");
+                            else
+                                desc=desc+tr(" en adonnant");
+                        }
                         else
-                            desc=desc+tr(" en adonnant");
+                        {
+                            if(previousTWA<twa)
+                                desc=desc+tr(" en refusant");
+                            else
+                                desc=desc+tr(" en adonnant");
+                        }
                     }
                 }
             }

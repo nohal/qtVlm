@@ -104,6 +104,27 @@ boardVLM::boardVLM(MainWindow * mainWin, inetConnexion * inet, board * parent) :
     ac_angle1 = new QAction(tr("Angles au degre"),popup);
     ac_angle10 = new QAction(tr("Angles au dixieme"),popup);
     ac_angle100 = new QAction(tr("Angles au centieme"),popup);
+    ac_angle1->setCheckable(true);
+    ac_angle10->setCheckable(true);
+    ac_angle100->setCheckable(true);
+    if(Settings::getSetting("anglePrecision",1)==0)
+    {
+        ac_angle1->setChecked(true);
+        editHeading->setSingleStep(1.0);
+        editAngle->setSingleStep(1.0);
+    }
+    else if (Settings::getSetting("anglePrecision",1)==1)
+    {
+        ac_angle10->setChecked(true);
+        editHeading->setSingleStep(0.1);
+        editAngle->setSingleStep(0.1);
+    }
+    else
+    {
+        ac_angle100->setChecked(true);
+        editHeading->setSingleStep(0.01);
+        editAngle->setSingleStep(0.01);
+    }
     popup->addAction(ac_showHideCompass);
     popup->addSeparator();
     popup->addAction(ac_angle1);
@@ -871,26 +892,29 @@ void boardVLM::slot_hideShowCompass()
 
 void boardVLM::slot_angle1()
 {
-    editHeading->setDecimals(0);
     editHeading->setSingleStep(1.0);
-    editAngle->setDecimals(0);
     editAngle->setSingleStep(1.0);
+    ac_angle10->setChecked(false);
+    ac_angle100->setChecked(false);
+    Settings::setSetting("anglePrecision",0);
 }
 
 void boardVLM::slot_angle10()
 {
-    editHeading->setDecimals(1);
     editHeading->setSingleStep(0.1);
-    editAngle->setDecimals(1);
     editAngle->setSingleStep(0.1);
+    Settings::setSetting("anglePrecision",1);
+    ac_angle1->setChecked(false);
+    ac_angle100->setChecked(false);
 }
 
 void boardVLM::slot_angle100()
 {
-    editHeading->setDecimals(2);
     editHeading->setSingleStep(0.01);
-    editAngle->setDecimals(2);
     editAngle->setSingleStep(0.01);
+    Settings::setSetting("anglePrecision",2);
+    ac_angle1->setChecked(false);
+    ac_angle10->setChecked(false);
 }
 
 

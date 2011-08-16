@@ -46,6 +46,7 @@ class DialogRoute : public QDialog, public Ui::ROUTE_Editor_ui
         void slotLoadPilototo();
         void slotLoadPilototoCustom();
         void slotEnvoyer();
+        void slotApply();
     protected:
         void resizeEvent ( QResizeEvent * event );
     signals:

@@ -88,6 +88,7 @@ DialogRoute::DialogRoute(ROUTE *route,myCentralWidget *parent)
     hidden->setChecked(route->getHidden());
     connect(this->btOk,SIGNAL(clicked()),this,SLOT(accept()));
     connect(this->btCancel,SIGNAL(clicked()),this,SLOT(reject()));
+    connect(this->btAppliquer,SIGNAL(clicked()),this,SLOT(slotApply()));
     connect(this->Envoyer,SIGNAL(clicked()),this,SLOT(slotEnvoyer()));
     if(route->getUseVbvmgVlm())
     {
@@ -181,7 +182,7 @@ void DialogRoute::resizeEvent ( QResizeEvent * /*event*/ )
 //---------------------------------------
 void DialogRoute::done(int result)
 {
-    if(result == QDialog::Accepted)
+    if(result == QDialog::Accepted || result==99)
     {
         if (!parent->freeRouteName((editName->text()).trimmed(),route))
         {
@@ -255,12 +256,34 @@ void DialogRoute::done(int result)
         else
             route->setSimplify(false);
         route->setBusy(false);
+        if(result==99)
+        {
+            parent->treatRoute(route);
+            return;
+        }
     }
     if(result == QDialog::Rejected)
     {
     }
     QDialog::done(result);
 }
+void DialogRoute::slotApply()
+{
+    this->btAppliquer->setEnabled(false);
+    this->btCancel->setEnabled(false);
+    this->btOk->setEnabled(false);
+    this->tabWidget->setEnabled(false);
+    if(this->Simplifier->isChecked())
+        this->hide();
+    this->done(99);
+    this->btAppliquer->setEnabled(true);
+    this->btCancel->setEnabled(true);
+    this->btOk->setEnabled(true);
+    this->tabWidget->setEnabled(true);
+    this->Simplifier->setChecked(false);
+    this->show();
+}
+
 void DialogRoute::GybeTack(int i)
 {
     QFont font=this->labelTackGybe->font();

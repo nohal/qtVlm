@@ -32,6 +32,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "inetClient.h"
 
 #include "ui_BoardVLM.h"
+#include <QAction>
 
 class boardVLM: public QWidget , public Ui::boardVLM_ui, public inetClient
 { Q_OBJECT
