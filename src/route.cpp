@@ -494,7 +494,7 @@ void ROUTE::slot_recalculate(boat * boat)
                     if(!imported &&(qRound(remaining_distance*100)<qRound(distanceParcourue*100) ||
                        qRound(previous_remaining_distance*100)<qRound(distanceParcourue*100)))
                     {
-                        Eta=eta+myBoat->getVacLen();
+                        Eta=eta;
                         break;
                     }
                 } while (has_eta && !imported);
