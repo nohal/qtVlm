@@ -3140,7 +3140,11 @@ Voulez-vous egalement supprimer tous les POIs lui appartenant?</source>
     </message>
     <message>
         <source>Ce bouton a 3 etats, selon que vous utilisez la formule qtVlm, une formule VLM optimisee, ou la formule VLM originale. La formule VLM optimisee donne en principe exactement les memes resultats que la formule non optimisee.</source>
-        <translation type="unfinished">Ce&amp;nbsp;bouton&amp;nbsp;a&amp;nbsp;3&amp;nbsp;etats,&amp;nbsp;selon&amp;nbsp;que&amp;nbsp;vous&amp;nbsp;utilisez&lt;br&gt;la&amp;nbsp;formule&amp;nbsp;qtVlm,&amp;nbsp;une&amp;nbsp;formule&amp;nbsp;VLM&amp;nbsp;optimisée,&lt;br&gt;ou&amp;nbsp;la&amp;nbsp;formule&amp;nbsp;VLM&amp;nbsp;originale.&amp;nbsp;La&amp;nbsp;formule&amp;nbsp;VLM&amp;nbsp;optimisée&lt;br&gt;donne&amp;nbsp;en&amp;nbsp;principe&amp;nbsp;exactement&amp;nbsp;les&amp;nbsp;mêmes&amp;nbsp;résultats&amp;nbsp;que&lt;br&gt;la&amp;nbsp;formule&amp;nbsp;non&amp;nbsp;optimisée.</translation>
+        <translation>Ce&amp;nbsp;bouton&amp;nbsp;a&amp;nbsp;3&amp;nbsp;etats,&amp;nbsp;selon&amp;nbsp;que&amp;nbsp;vous&amp;nbsp;utilisez&lt;br&gt;la&amp;nbsp;formule&amp;nbsp;qtVlm,&amp;nbsp;une&amp;nbsp;formule&amp;nbsp;VLM&amp;nbsp;optimisée,&lt;br&gt;ou&amp;nbsp;la&amp;nbsp;formule&amp;nbsp;VLM&amp;nbsp;originale.&amp;nbsp;La&amp;nbsp;formule&amp;nbsp;VLM&amp;nbsp;optimisée&lt;br&gt;donne&amp;nbsp;en&amp;nbsp;principe&amp;nbsp;exactement&amp;nbsp;les&amp;nbsp;mêmes&amp;nbsp;résultats&amp;nbsp;que&lt;br&gt;la&amp;nbsp;formule&amp;nbsp;non&amp;nbsp;optimisée.</translation>
+    </message>
+    <message>
+        <source>Appliquer</source>
+        <translation></translation>
     </message>
 </context>
 <context>
@@ -3883,8 +3887,16 @@ Voulez-vous egalement supprimer tous les POIs lui appartenant?</source>
         <translation></translation>
     </message>
     <message>
-        <source>WP: </source>
-        <translation></translation>
+        <source>Angles au degre</source>
+        <translation>Angles au degré</translation>
+    </message>
+    <message>
+        <source>Angles au dixieme</source>
+        <translation>Angles au dixième</translation>
+    </message>
+    <message>
+        <source>Angles au centieme</source>
+        <translation>Angles au centième</translation>
     </message>
 </context>
 <context>
@@ -4227,7 +4239,7 @@ Voulez-vous egalement supprimer tous les POIs lui appartenant?</source>
     </message>
     <message>
         <source>Une seule bouee a laisser au </source>
-        <translation>Une seule bouée à laisser au</translation>
+        <translation>Une seule bouée à laisser au </translation>
     </message>
     <message>
         <source> (pas de polaire chargee)</source>
@@ -4274,10 +4286,6 @@ Voulez-vous egalement supprimer tous les POIs lui appartenant?</source>
         <translation>Données grib à la prochaine vacation:</translation>
     </message>
     <message>
-        <source>Tendance: </source>
-        <translation></translation>
-    </message>
-    <message>
         <source>stable.</source>
         <translation></translation>
     </message>
@@ -4308,6 +4316,10 @@ Voulez-vous egalement supprimer tous les POIs lui appartenant?</source>
     <message>
         <source> nds</source>
         <translation></translation>
+    </message>
+    <message>
+        <source>Tendance a l&apos;estime: </source>
+        <translation>Tendance à l&apos;estime:</translation>
     </message>
 </context>
 <context>
@@ -5558,6 +5570,14 @@ Voulez-vous egalement supprimer tous les POIs lui appartenant?</source>
     <message>
         <source>Vac</source>
         <translation></translation>
+    </message>
+    <message>
+        <source>Pas de sync Vlm depuis plus d&apos;une vac</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>! Sync &gt; 1 Vac !</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
