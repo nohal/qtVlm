@@ -101,8 +101,18 @@ boardVLM::boardVLM(MainWindow * mainWin, inetConnexion * inet, board * parent) :
     /* Contextual Menu */
     popup = new QMenu(this);
     ac_showHideCompass = new QAction(tr("Cacher compas"),popup);
+    ac_angle1 = new QAction(tr("Angles au degre"),popup);
+    ac_angle10 = new QAction(tr("Angles au dixieme"),popup);
+    ac_angle100 = new QAction(tr("Angles au centieme"),popup);
     popup->addAction(ac_showHideCompass);
+    popup->addSeparator();
+    popup->addAction(ac_angle1);
+    popup->addAction(ac_angle10);
+    popup->addAction(ac_angle100);
     connect(ac_showHideCompass,SIGNAL(triggered()),this,SLOT(slot_hideShowCompass()));
+    connect(ac_angle1,SIGNAL(triggered()),this,SLOT(slot_angle1()));
+    connect(ac_angle10,SIGNAL(triggered()),this,SLOT(slot_angle10()));
+    connect(ac_angle100,SIGNAL(triggered()),this,SLOT(slot_angle100()));
 
     /* Etat du compass */
     if(Settings::getSetting("boardCompassShown", "1").toInt()==1)
@@ -858,6 +868,31 @@ void boardVLM::slot_hideShowCompass()
 {
     setCompassVisible(!windAngle->isVisible());
 }
+
+void boardVLM::slot_angle1()
+{
+    editHeading->setDecimals(0);
+    editHeading->setSingleStep(1.0);
+    editAngle->setDecimals(0);
+    editAngle->setSingleStep(1.0);
+}
+
+void boardVLM::slot_angle10()
+{
+    editHeading->setDecimals(1);
+    editHeading->setSingleStep(0.1);
+    editAngle->setDecimals(1);
+    editAngle->setSingleStep(0.1);
+}
+
+void boardVLM::slot_angle100()
+{
+    editHeading->setDecimals(2);
+    editHeading->setSingleStep(0.01);
+    editAngle->setDecimals(2);
+    editAngle->setSingleStep(0.01);
+}
+
 
 void boardVLM::setCompassVisible(bool status)
 {

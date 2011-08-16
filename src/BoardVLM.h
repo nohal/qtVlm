@@ -67,6 +67,9 @@ class boardVLM: public QWidget , public Ui::boardVLM_ui, public inetClient
 
         void edtSpinBox_key(void);
         void slot_hideShowCompass();
+        void slot_angle1();
+        void slot_angle10();
+        void slot_angle100();
 
     signals:
         void VLM_Sync(void);
@@ -111,6 +114,9 @@ class boardVLM: public QWidget , public Ui::boardVLM_ui, public inetClient
         /* contextual menu */
         QMenu *popup;
         QAction * ac_showHideCompass;
+        QAction * ac_angle1;
+        QAction * ac_angle10;
+        QAction * ac_angle100;
 };
 
 
