@@ -40,8 +40,8 @@ private slots:
     void on_doubleSpinBox_2_valueChanged(double );
     void on_spinBox_valueChanged(int );
     void on_doubleSpinBox_valueChanged(double );
-    void on_startGrib_pressed(void);
-    void on_startVac_pressed(void);
+    void on_startGrib_clicked(void);
+    void on_startVac_clicked(void);
 };
 
 #endif // TWALINE_H

@@ -181,6 +181,8 @@ void DialogTwaLine::traceIt()
             line->addVlmPoint(current);
             eta=eta+vacLen;
         }
+        if(this->startVac->isChecked())
+                eta=eta-vacLen;
         if(crossing)
             pen.setColor(Qt::red);
         else
@@ -252,11 +254,11 @@ void DialogTwaLine::on_spinBox_5_valueChanged(int )
     traceIt();
 }
 
-void DialogTwaLine::on_startGrib_pressed(void)
+void DialogTwaLine::on_startGrib_clicked(void)
 {
     traceIt();
 }
-void DialogTwaLine::on_startVac_pressed(void)
+void DialogTwaLine::on_startVac_clicked(void)
 {
     traceIt();
 }
