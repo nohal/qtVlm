@@ -683,7 +683,7 @@
            <string>deg</string>
           </property>
           <property name="decimals">
-           <number>1</number>
+           <number>2</number>
           </property>
           <property name="maximum">
            <double>359.000000000000000</double>
@@ -1638,9 +1638,9 @@
        <widget class="QWidget" name="layoutWidget">
         <property name="geometry">
          <rect>
-          <x>3</x>
-          <y>1</y>
-          <width>216</width>
+          <x>0</x>
+          <y>0</y>
+          <width>221</width>
           <height>30</height>
          </rect>
         </property>
@@ -1659,19 +1659,6 @@
             <string>Angle</string>
            </property>
           </widget>
-         </item>
-         <item>
-          <spacer name="horizontalSpacer_9">
-           <property name="orientation">
-            <enum>Qt::Horizontal</enum>
-           </property>
-           <property name="sizeHint" stdset="0">
-            <size>
-             <width>40</width>
-             <height>20</height>
-            </size>
-           </property>
-          </spacer>
          </item>
          <item>
           <widget class="QPushButton" name="btn_virer">
@@ -1696,10 +1683,23 @@
           </widget>
          </item>
          <item>
+          <spacer name="horizontalSpacer_9">
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>40</width>
+             <height>20</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+         <item>
           <widget class="tool_edtSpinBox" name="editAngle">
            <property name="minimumSize">
             <size>
-             <width>70</width>
+             <width>85</width>
              <height>0</height>
             </size>
            </property>
@@ -1864,7 +1864,7 @@
             <string>deg</string>
            </property>
            <property name="decimals">
-            <number>1</number>
+            <number>2</number>
            </property>
            <property name="minimum">
             <double>-180.000000000000000</double>

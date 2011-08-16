@@ -657,14 +657,14 @@ void mapCompass::updateCompassLineLabels(int x, int y)
         double loxo_angle=orth.getLoxoCap();
         if(loxo_angle<0) loxo_angle+=360;
         double loxo_dist=orth.getLoxoDistance();
-        loxo_angle=qRound(loxo_angle*10.0)/10.0;
+        loxo_angle=qRound(loxo_angle*100.0)/100.0;
         Util::getCoordFromDistanceLoxo(ya,xa,loxo_dist,loxo_angle,&yb,&xb);
         double X,Y;
         proj->map2screenFloat(xb,yb,&X,&Y);
         orth.setEndPoint(xb,yb);
         pos_angle=orth.getAzimutDeg();
         pos_distance=orth.getDistance();
-        if(qRound(pos_angle*10)==qRound(loxo_angle*10))
+        if(qRound(pos_angle*100)==qRound(loxo_angle*100))
             compassLine->setOrthoMode(false);
         else
             compassLine->setOrthoMode(true);
@@ -678,7 +678,7 @@ void mapCompass::updateCompassLineLabels(int x, int y)
         if(map->crossing(QLineF(XX,YY,X,Y),QLineF(xa,ya,xb,yb)))
         {
             hdg_label->setHtml(QString().sprintf("<b><big>Ortho->Hdg: %.2f%c Dist: %.2f NM",pos_angle,176,pos_distance)+"<br>"+
-                       QString().sprintf("<b><big>Loxo-->Hdg: %.1f%c Dist: %.2f NM",loxo_angle,176,loxo_dist)+meters+"<br>"+
+                       QString().sprintf("<b><big>Loxo-->Hdg: %.2f%c Dist: %.2f NM",loxo_angle,176,loxo_dist)+meters+"<br>"+
                        "<font color=\"#FF0000\">"+tr("Collision avec les terres detectee")+"</font>");
             penLine.setColor(Qt::red);
             compassLine->setLinePen(penLine);
@@ -741,7 +741,7 @@ void mapCompass::updateCompassLineLabels(int x, int y)
         }
         else
             s_eta="Estime non calculable";
-        windAngle_label->setHtml(QString().sprintf("Twa: %.1f %c, Bs: %.2f nds",pos_wind_angle,176,bs)+"<br>"+
+        windAngle_label->setHtml(QString().sprintf("Twa: %.2f %c, Bs: %.2f nds",pos_wind_angle,176,bs)+"<br>"+
                                QString().sprintf("Vmg-Vent: %.2f nds",bs*cos(degToRad(pos_wind_angle)))+"<br>"+
                                s_eta);
         windAngle_label->show();

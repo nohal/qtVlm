@@ -370,7 +370,7 @@ void DialogPilototo::done(int result)
                     pip.insert("targetlat",QString().sprintf("%.10f",(double)instr->getLat()));
                     pip.insert("targetlong",QString().sprintf("%.10f",(double)instr->getLon()));
                     if(instr->getWph()!=-1)
-                        pip.insert("targetandhdg",QString().sprintf("%.1f",(double)instr->getWph()));
+                        pip.insert("targetandhdg",QString().sprintf("%.2f",(double)instr->getWph()));
                     cur_instruction.insert("pip",pip);
                     break;
                 }
@@ -574,7 +574,7 @@ void DialogPilototo::setInstructions(boat * pvBoat, QList<POI *> pois)
         pip.insert("targetlat",QString().sprintf("%.10f",poi->getLatitude()));
         pip.insert("targetlong",QString().sprintf("%.10f",poi->getLongitude()));
         if(poi->getWph()!=-1)
-            pip.insert("targetandhdg",QString().sprintf("%.1f",poi->getWph()));
+            pip.insert("targetandhdg",QString().sprintf("%.2f",poi->getWph()));
         cur_instruction.insert("pip",pip);
         cur_instruction.insert("idu",myBoat->getBoatId().toInt());
         instr_ptr->param=serializer.serialize(cur_instruction);
@@ -854,7 +854,7 @@ void DialogPilototoInstruction::updateText(bool updateAll)
                         .arg(Util::pos2String(TYPE_LAT,lat_scr))
                         .arg(Util::pos2String(TYPE_LON,lon_scr))
                         .arg(wph_scr);
-                param_txt=QString().sprintf("%.6f,%.6f@%.1f",lat_scr,lon_scr,wph_scr);
+                param_txt=QString().sprintf("%.6f,%.6f@%.2f",lat_scr,lon_scr,wph_scr);
             }
 	    break;
 	case 3:
@@ -872,7 +872,7 @@ void DialogPilototoInstruction::updateText(bool updateAll)
                         .arg(Util::pos2String(TYPE_LAT,lat_scr))
                         .arg(Util::pos2String(TYPE_LON,lon_scr))
                         .arg(wph_scr);
-                param_txt=QString().sprintf("%.6f,%.6f@%.1f",lat_scr,lon_scr,wph_scr);
+                param_txt=QString().sprintf("%.6f,%.6f@%.2f",lat_scr,lon_scr,wph_scr);
             }
 	    break;
         case 4:
@@ -890,7 +890,7 @@ void DialogPilototoInstruction::updateText(bool updateAll)
                         .arg(Util::pos2String(TYPE_LAT,lat_scr))
                         .arg(Util::pos2String(TYPE_LON,lon_scr))
                         .arg(wph_scr);
-                param_txt=QString().sprintf("%.6f,%.6f@%.1f",lat_scr,lon_scr,wph_scr);
+                param_txt=QString().sprintf("%.6f,%.6f@%.2f",lat_scr,lon_scr,wph_scr);
             }
             break;
     }

@@ -75,7 +75,7 @@ class POI : public QGraphicsWidget
         void setName           (QString name);
         void setLongitude      (double lon);
         void setLatitude       (double lat);
-        void setWph            (float wph) {this->wph=qRound(wph*10.0)/10.0;}
+        void setWph            (float wph);
         void setTimeStamp      (time_t tstamp);
         void setRouteTimeStamp (time_t date);
         void setUseTimeStamp   (bool state){this->useTstamp=state;}

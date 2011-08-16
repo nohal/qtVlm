@@ -661,6 +661,11 @@ void POI::chkIsWP(void)
         }
     }
 }
+void POI::setWph(float wph)
+{
+    this->wph=qRound(wph*100.0)/100.0;
+}
+
 void POI::setRoute(ROUTE *route)
 {
     this->partOfTwa=false;

@@ -501,7 +501,7 @@ void ROUTE::slot_recalculate(boat * boat)
             }
             if(this->autoAt)
             {
-                poi->setWph(cap);
+                poi->setWph(qRound(cap*100)/100.0);
             }
 //            qWarning()<<"Distance Parcourue="<<distanceParcourue<<" remaining_distance="<<remaining_distance<<" previous_rd="<<previous_remaining_distance;
 //            qWarning()<<"newSpeed="<<newSpeed<<" wind_speed="<<wind_speed<<" angle="<<angle;

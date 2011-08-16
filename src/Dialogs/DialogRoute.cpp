@@ -341,7 +341,7 @@ void DialogRoute::fillPilotView(bool def)
         items.append(new QStandardItem(poi->getName()));
         items[1]->setTextAlignment(Qt::AlignCenter| Qt::AlignVCenter);
         items[1]->setEditable(false);
-        items.append(new QStandardItem(QString().sprintf("%.1f",poi->getWph())));
+        items.append(new QStandardItem(QString().sprintf("%.2f",poi->getWph())));
         items[2]->setTextAlignment(Qt::AlignCenter| Qt::AlignVCenter);
         items[2]->setEditable(false);
         switch(poi->getNavMode())

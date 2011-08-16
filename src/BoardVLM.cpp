@@ -376,8 +376,8 @@ void boardVLM::angleUpdated(double angle)
 /* compute VLM angle */
     float val=currentBoat()->getHeading()-currentBoat()->getWindDir();
     float oldAngle=currentBoat()->getTWA();
-    calcAngleSign(val,oldAngle);
-    oldAngle=((float)qRound(oldAngle*10))/10;
+    calcAngleSign(val,oldAngle)
+    oldAngle=((float)qRound(oldAngle*100))/100;
 
 
     if(angle==oldAngle)
@@ -444,7 +444,7 @@ void boardVLM::update_btnWP(void)
         btn_WP->setText(tr("Prochaine balise (0 WP)"));
     else
     {
-        QString str = tr("WP: ");
+        QString str = QString();
         if(WPLat==0)
             str+="0 N";
         else
@@ -460,7 +460,7 @@ void boardVLM::update_btnWP(void)
         if(WPHd!=-1)
         {
             str+=" @";
-            str+=QString().setNum(WPHd);
+            str+=QString().sprintf("%.2f",WPHd);
             str+=tr("deg");
         }
 
@@ -778,7 +778,7 @@ void boardVLM::sendCmd(int cmdNum,double  val1,double val2, double val3)
 
     QTextStream(&data) << "parms=" << json;
     QTextStream(&data) << "&select_idu=" << currentBoat()->getId();
-
+    qWarning()<<"sending:"<<data;
     inetPost(VLM_DO_REQUEST,url,data);
 }
 
