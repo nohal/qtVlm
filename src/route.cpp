@@ -223,7 +223,7 @@ void ROUTE::slot_recalculate(boat * boat)
                 if(myBoat->getType()!=BOAT_VLM)
                     eta=((boatReal*)myBoat)->getLastUpdateTime();
                 else
-                    eta=((boatVLM*)myBoat)->getPrevVac()+((boatVLM*)myBoat)->getVacLen();
+                    eta=((boatVLM*)myBoat)->getPrevVac()/*+((boatVLM*)myBoat)->getVacLen()*/;
                 now = (QDateTime::currentDateTime()).toUTC().toTime_t();
 #warning find a better way to identify a boat that has not yet started
 /*cas du boat inscrit depuis longtemps mais pas encore parti*/
@@ -319,13 +319,18 @@ void ROUTE::slot_recalculate(boat * boat)
             orth.setPoints(lon, lat, poi->getLongitude(),poi->getLatitude());
             //qWarning()<<poi->getName()<<this->my_poiList.at(0)->getName();
             remaining_distance=orth.getDistance();
-            time_t Eta;
+            time_t Eta=0;
             if(has_eta)
             {
                 //if(!busy) this->slot_recalculate();
                 if(parent->getAboutToQuit()) return;
                 do
-                {                    
+                {
+                    if(imported)
+                        eta=poi->getRouteTimeStamp();
+                    else
+                        eta= eta + myBoat->getVacLen()*multVac;
+                    Eta=eta;
                     if(((grib->getInterpolatedValue_byDates(lon, lat,
                                               eta,&wind_speed,&wind_angle,INTERPOLATION_DEFAULT)
                             && eta<=maxDate) || imported))
@@ -453,8 +458,9 @@ void ROUTE::slot_recalculate(boat * boat)
                             {
                                 if(qRound(distanceParcourue*100)>=qRound(remaining_distance*100))
                                 {
-                                    Eta=eta;
                                     badEta=true;
+                                    eta=eta-myBoat->getVacLen()*multVac;
+                                    Eta=eta;
                                     break;
                                 }
                             }
@@ -464,15 +470,11 @@ void ROUTE::slot_recalculate(boat * boat)
                         remaining_distance=orth.getDistance();
                         lon=res_lon;
                         lat=res_lat;
-                        if(imported)
-                            eta=poi->getRouteTimeStamp();
-                        else
-                            eta= eta + myBoat->getVacLen()*multVac;
                         //qWarning() << "" << eta << ";" << wind_angle << ";" << wind_speed << ";" << newSpeed << ";" << distanceParcourue << ";" << remaining_distance;
                         ++nbToReach;
                         if (!optimizing)
                         {
-                            if(lastEta<gribDate && eta>=gribDate && gribDate>start+1000)
+                            if(lastEta<gribDate && Eta>=gribDate && gribDate>start+1000)
                             {
                                 line->setInterpolated(lon,lat);
                                 line->setHasInterpolated(true);
@@ -480,9 +482,9 @@ void ROUTE::slot_recalculate(boat * boat)
                                     parent->centerCompass(lon,lat);
                             }
                             vlmPoint p(lon,lat);
-                            p.eta=eta;
+                            p.eta=Eta;
                             line->addVlmPoint(p);
-                            lastEta=eta;
+                            lastEta=Eta;
                         }
                     }
                     else
@@ -491,10 +493,12 @@ void ROUTE::slot_recalculate(boat * boat)
                         orth.setPoints(res_lon,res_lat,my_poiList.last()->getLongitude(),my_poiList.last()->getLatitude());
                             remain=orth.getDistance();
                     }
+                    if(poi->getIsWp())
+                        qWarning()<<"Eta:"<<QDateTime().fromTime_t(Eta).toUTC().toString("dd MMM-hh:mm")<<"remaining dist"<<remaining_distance<<"distanceParcourue:"<<distanceParcourue;
                     if(!imported &&(qRound(remaining_distance*100)<qRound(distanceParcourue*100) /* ||
                        qRound(previous_remaining_distance*100)<qRound(distanceParcourue*100)*/))
                     {
-                        Eta=eta-myBoat->getVacLen()*multVac;
+                        //Eta=eta-myBoat->getVacLen()*multVac;
                         break;
                     }
                 } while (has_eta && !imported);
