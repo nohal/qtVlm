@@ -134,6 +134,12 @@ boat::~boat()
             delete WPLine;
         if(this->popup)
             delete popup;
+        if(this->trace_drawing)
+            delete trace_drawing;
+        popup=NULL;
+        estimeLine=NULL;
+        trace_drawing=NULL;
+        WPLine=NULL;
     }
 }
 

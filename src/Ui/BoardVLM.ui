@@ -355,13 +355,16 @@
       <widget class="QWidget" name="layoutWidget">
        <property name="geometry">
         <rect>
-         <x>5</x>
-         <y>2</y>
-         <width>81</width>
+         <x>0</x>
+         <y>0</y>
+         <width>91</width>
          <height>54</height>
         </rect>
        </property>
        <layout class="QVBoxLayout" name="verticalLayout">
+        <property name="sizeConstraint">
+         <enum>QLayout::SetNoConstraint</enum>
+        </property>
         <item>
          <widget class="QPushButton" name="btn_chgHeading">
           <property name="enabled">
@@ -686,7 +689,7 @@
            <number>2</number>
           </property>
           <property name="maximum">
-           <double>359.000000000000000</double>
+           <double>359.990000000000009</double>
           </property>
           <property name="singleStep">
            <double>0.100000000000000</double>
@@ -1640,7 +1643,7 @@
          <rect>
           <x>0</x>
           <y>0</y>
-          <width>221</width>
+          <width>231</width>
           <height>30</height>
          </rect>
         </property>

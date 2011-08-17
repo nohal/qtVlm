@@ -278,7 +278,7 @@ void boardVLM::boatUpdated(void)
     else
         angle_val=angle_val-360;
     }
-    angle->setText(QString().setNum(angle_val));
+    angle->setText(QString().sprintf("%.2f",angle_val));
 
     /* Pilot mode */
     /* clearing all buttons*/

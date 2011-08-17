@@ -95,17 +95,6 @@ boatVLM::~boatVLM(void)
             }
         }
     }
-    if(!parent->getAboutToQuit())
-    {
-        if(estimeLine)
-            delete this->estimeLine;
-        if(trace_drawing)
-            delete this->trace_drawing;
-        if(this->WPLine)
-            delete this->WPLine;
-        if(popup)
-            delete popup;
-    }
     saveBoatInfolog();
 }
 

@@ -98,14 +98,6 @@ boatReal::~boatReal()
             parent->getScene()->removeItem(trace);
             delete trace;
         }
-        if(polarData)
-            emit releasePolar(polarData->getName());
-        if(estimeLine)
-            delete estimeLine;
-        if(WPLine)
-            delete WPLine;
-        if(this->popup)
-            delete popup;
     }
 }
 void boatReal::setWp(float la, float lo, float w)
