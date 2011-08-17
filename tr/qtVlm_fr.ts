@@ -4319,7 +4319,7 @@ Voulez-vous egalement supprimer tous les POIs lui appartenant?</source>
     </message>
     <message>
         <source>Tendance a l&apos;estime: </source>
-        <translation>Tendance à l&apos;estime:</translation>
+        <translation type="unfinished">Tendance à l&apos;estime: </translation>
     </message>
 </context>
 <context>

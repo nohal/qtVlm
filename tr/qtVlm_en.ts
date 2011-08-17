@@ -6233,7 +6233,7 @@ Voulez-vous egalement supprimer tous les POIs lui appartenant?</source>
     <message>
         <location filename="../src/boatVLM.cpp" line="749"/>
         <source>Tendance a l&apos;estime: </source>
-        <translation>Tendency at esteem:</translation>
+        <translation type="unfinished">Tendency at esteem: </translation>
     </message>
     <message>
         <source>Tendance: </source>
