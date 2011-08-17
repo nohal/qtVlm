@@ -24,7 +24,6 @@ Copyright (C) 2008 - Jacques Zaninetti - http://zygrib.free.fr
 #ifndef VERSION_H
 #define VERSION_H
 
-
 #define QTVLM_VERSION_NUM   "3.2"
 #define QTVLM_SUB_VERSION_NUM   "beta3+"
 #define QTVLM_VERSION_DATE  __DATE__
