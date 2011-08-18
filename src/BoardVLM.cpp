@@ -369,7 +369,7 @@ void boardVLM::headingUpdated(double heading)
     if((float)heading==currentBoat()->getHeading())
     {
         /* setting back to VLM value */
-        speed->setText(QString().sprintf("#.2f",currentBoat()->getSpeed()));
+        speed->setText(QString().sprintf("%.2f",currentBoat()->getSpeed()));
         speed->setStyleSheet(QString::fromUtf8(SPEED_COLOR_VLM));
         label_6->setStyleSheet(QString::fromUtf8(SPEED_COLOR_VLM));
         float val=currentBoat()->getHeading()-currentBoat()->getWindDir();
