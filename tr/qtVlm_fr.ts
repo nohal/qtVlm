@@ -3116,7 +3116,7 @@ Voulez-vous egalement supprimer tous les POIs lui appartenant?</source>
     </message>
     <message>
         <source>Renseigner le cap a suivre (@) des POIs</source>
-        <translation></translation>
+        <translation>Renseigner le cap à suivre des POIs</translation>
     </message>
     <message>
         <source>A partir de la prochaine vacation</source>
@@ -3499,6 +3499,18 @@ Voulez-vous egalement supprimer tous les POIs lui appartenant?</source>
     </message>
     <message>
         <source>pour les bateaux VLM</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Options par defaut</source>
+        <translation>Options par défaut</translation>
+    </message>
+    <message>
+        <source>Renseigner le cap a suivre (@) des POIs</source>
+        <translation>Renseigner le cap à suivre des POIs</translation>
+    </message>
+    <message>
+        <source>Retirer les POIs avant le WP-VLM</source>
         <translation></translation>
     </message>
 </context>
@@ -3888,15 +3900,15 @@ Voulez-vous egalement supprimer tous les POIs lui appartenant?</source>
     </message>
     <message>
         <source>Angles au degre</source>
-        <translation>Angles au degré</translation>
+        <translation type="obsolete">Angles au degré</translation>
     </message>
     <message>
         <source>Angles au dixieme</source>
-        <translation>Angles au dixième</translation>
+        <translation type="obsolete">Angles au dixième</translation>
     </message>
     <message>
         <source>Angles au centieme</source>
-        <translation>Angles au centième</translation>
+        <translation type="obsolete">Angles au centième</translation>
     </message>
 </context>
 <context>
@@ -4048,6 +4060,10 @@ Voulez-vous egalement supprimer tous les POIs lui appartenant?</source>
     <message>
         <source>deg</source>
         <translation>°</translation>
+    </message>
+    <message>
+        <source>&lt;shift&gt;,&lt;control&gt; et &lt;tab&gt; pour changer la precision de l&apos;increment</source>
+        <translation>&lt;shift&gt;,&lt;control&gt; et &lt;tab&gt; pour changer la précision de l&apos;increment</translation>
     </message>
 </context>
 <context>
@@ -4319,7 +4335,7 @@ Voulez-vous egalement supprimer tous les POIs lui appartenant?</source>
     </message>
     <message>
         <source>Tendance a l&apos;estime: </source>
-        <translation type="unfinished">Tendance à l&apos;estime: </translation>
+        <translation>Tendance à l&apos;estime: </translation>
     </message>
 </context>
 <context>
@@ -5573,11 +5589,11 @@ Voulez-vous egalement supprimer tous les POIs lui appartenant?</source>
     </message>
     <message>
         <source>Pas de sync Vlm depuis plus d&apos;une vac</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <source>! Sync &gt; 1 Vac !</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
 </context>
 <context>
