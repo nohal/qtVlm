@@ -643,7 +643,14 @@ void POI::chkIsWP(void)
     }
     */
 #warning chkIsWp rounded to 4 digits, waiting for a fix by VLM
-    if(qRound(lat*1000.00)==qRound(WPlat*1000.00) && qRound(lon*1000.00)==qRound(WPlon*1000.00))
+    //qWarning()<<qRound(lat*1000)<<qRound(lon*1000)<<qRound(WPlat*1000)<<qRound(WPlon*1000);
+    double trickLat=qRound(lat*1000);
+    double trickLon=qRound(lon*1000);
+    double trickWPlat=qRound(WPlat*1000);
+    double trickWPlon=qRound(WPlon*1000);
+    if(trickLat-1<=trickWPlat && trickLat+1>=trickWPlat &&
+       trickLon-1<=trickWPlon && trickLon+1>=trickWPlon)
+    //if(qRound(lat*1000.00)==qRound(WPlat*1000.00) && qRound(lon*1000.00)==qRound(WPlon*1000.00))
     // if(compDouble(lat,WPlat) && compDouble(lon,WPlon))
     {
         if(!isWp)
@@ -838,7 +845,7 @@ void POI::slot_WPChanged(double tlat,double tlon)
         double wlat=isi.at(3).toDouble();
         double wlon=isi.at(4).split("@").at(0).toDouble();
         //qWarning()<<lon<<lat<<wlon<<wlat;
-        if(qRound(lon*100000)==qRound(wlon*100000) && qRound(lat*100000)==qRound(wlat*100000))
+        if(qRound(lon*1000)==qRound(wlon*1000) && qRound(lat*1000)==qRound(wlat*1000))
         {
             colorPilototo=n+1;
             this->setWph(isi.at(4).split("@").at(1).toDouble());

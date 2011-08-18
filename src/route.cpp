@@ -958,6 +958,7 @@ void ROUTE::do_vbvmg_buffer(double dist,double wanted_heading,
 
     /* first compute the time for the "ortho" heading */
     speed=myBoat->getPolarData()->getSpeed(w_speed,A180(radToDeg(w_angle-wanted_heading)));
+    //speed = find_speed(aboat, w_speed, w_angle - wanted_heading);
     if (speed > 0.0)
     {
         t_min = dist / speed;
@@ -1008,6 +1009,7 @@ void ROUTE::do_vbvmg_buffer(double dist,double wanted_heading,
             d1hypotratio = hypotNeg->at(-i);
         }
         speed_t1=myBoat->getPolarData()->getSpeed(w_speed,A180(radToDeg(angle-alpha)));
+        //speed_t1 = find_speed(aboat, w_speed, angle-alpha);
         if (speed_t1 <= 0.0)
         {
             continue;
@@ -1027,8 +1029,6 @@ void ROUTE::do_vbvmg_buffer(double dist,double wanted_heading,
         for (j=MinJ; j<MaxJ; ++j)
         {
             beta = degToRad((double)j);
-//            if((angle-alpha>0 && angle-beta>0) ||
-//               (angle-alpha<0 && angle-beta<0)) continue;
             if(-j>0)
             {
 //                d1 = dist * (tan(-beta) / (tanalpha + tan(-beta)));
@@ -1044,6 +1044,7 @@ void ROUTE::do_vbvmg_buffer(double dist,double wanted_heading,
             }
             d2 = dist - d1;
             speed_t2=myBoat->getPolarData()->getSpeed(w_speed,A180(radToDeg(angle-beta)));
+            //speed_t2 = find_speed(aboat, w_speed, angle-beta);
             if (speed_t2 <= 0.0)
             {
                 continue;
@@ -1094,6 +1095,7 @@ void ROUTE::do_vbvmg_buffer(double dist,double wanted_heading,
                 }
                 d2 = dist - d1;
                 speed_t2=myBoat->getPolarData()->getSpeed(w_speed,A180(radToDeg(angle-beta)));
+                //speed_t2 = find_speed(aboat, w_speed, angle-beta);
                 if (speed_t2 <= 0.0)
                 {
                     continue;
@@ -1125,8 +1127,10 @@ void ROUTE::do_vbvmg_buffer(double dist,double wanted_heading,
         }
     }
     speed_alpha=myBoat->getPolarData()->getSpeed(w_speed,A180(radToDeg(angle-b_alpha)));
+    //speed_alpha = find_speed(aboat, w_speed, angle-b_alpha);
     vmg_alpha = speed_alpha * cos(b_alpha);
     speed_beta=myBoat->getPolarData()->getSpeed(w_speed,A180(radToDeg(angle-b_beta)));
+    //speed_beta = find_speed(aboat, w_speed, angle-b_beta);
     vmg_beta = speed_beta * cos(b_beta);
 
     if (vmg_alpha > vmg_beta)
