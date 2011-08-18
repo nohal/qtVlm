@@ -101,45 +101,74 @@ boardVLM::boardVLM(MainWindow * mainWin, inetConnexion * inet, board * parent) :
     /* Contextual Menu */
     popup = new QMenu(this);
     ac_showHideCompass = new QAction(tr("Cacher compas"),popup);
-    ac_angle1 = new QAction(tr("Angles au degre"),popup);
-    ac_angle10 = new QAction(tr("Angles au dixieme"),popup);
-    ac_angle100 = new QAction(tr("Angles au centieme"),popup);
-    ac_angle1->setCheckable(true);
-    ac_angle10->setCheckable(true);
-    ac_angle100->setCheckable(true);
-    if(Settings::getSetting("anglePrecision",1)==0)
-    {
-        ac_angle1->setChecked(true);
-        editHeading->setSingleStep(1.0);
-        editAngle->setSingleStep(1.0);
-    }
-    else if (Settings::getSetting("anglePrecision",1)==1)
-    {
-        ac_angle10->setChecked(true);
-        editHeading->setSingleStep(0.1);
-        editAngle->setSingleStep(0.1);
-    }
-    else
-    {
-        ac_angle100->setChecked(true);
-        editHeading->setSingleStep(0.01);
-        editAngle->setSingleStep(0.01);
-    }
     popup->addAction(ac_showHideCompass);
-    popup->addSeparator();
-    popup->addAction(ac_angle1);
-    popup->addAction(ac_angle10);
-    popup->addAction(ac_angle100);
     connect(ac_showHideCompass,SIGNAL(triggered()),this,SLOT(slot_hideShowCompass()));
-    connect(ac_angle1,SIGNAL(triggered()),this,SLOT(slot_angle1()));
-    connect(ac_angle10,SIGNAL(triggered()),this,SLOT(slot_angle10()));
-    connect(ac_angle100,SIGNAL(triggered()),this,SLOT(slot_angle100()));
+    editHeading->setSingleStep(1.0);
+    editAngle->setSingleStep(1.0);
 
     /* Etat du compass */
     if(Settings::getSetting("boardCompassShown", "1").toInt()==1)
         windAngle->show();
     else
         windAngle->hide();
+    this->editHeading->installEventFilter(this);
+    this->editAngle->installEventFilter(this);
+}
+bool boardVLM::eventFilter(QObject *obj, QEvent *event)
+{
+    if(obj!=editHeading && obj!=editAngle) return false;
+    if(event->type()==QEvent::KeyPress)
+    {
+        QKeyEvent *keyEvent = static_cast<QKeyEvent*>(event);
+        if(keyEvent->key()==Qt::Key_Shift)
+        {
+            if(obj==editHeading)
+                editHeading->setSingleStep(0.1);
+            else
+                editAngle->setSingleStep(0.1);
+        }
+        else if(keyEvent->key()==Qt::Key_Control)
+        {
+            if(obj==editHeading)
+                editHeading->setSingleStep(10);
+            else
+                editAngle->setSingleStep(10);
+        }
+        else if(keyEvent->key()==Qt::Key_Alt)
+        {
+            if(obj==editHeading)
+                editHeading->setSingleStep(0.01);
+            else
+                editAngle->setSingleStep(0.01);
+        }
+    }
+    if (event->type()==QEvent::KeyRelease)
+    {
+        QKeyEvent *keyEvent = static_cast<QKeyEvent*>(event);
+        if(keyEvent->key()==Qt::Key_Shift ||
+           keyEvent->key()==Qt::Key_Control ||
+           keyEvent->key()==Qt::Key_Alt)
+        {
+            if(obj==editHeading)
+                editHeading->setSingleStep(1);
+            else
+                editAngle->setSingleStep(1);
+        }
+    }
+    if(event->type()==QEvent::Wheel)
+    {
+        /*by default wheeling with ctrl already multiply singleStep by 10
+          so to get 10 you need to put 1...*/
+        QWheelEvent *wheelEvent = static_cast<QWheelEvent*>(event);
+        if(wheelEvent->modifiers()==Qt::ControlModifier)
+        {
+            if(obj==editHeading)
+                editHeading->setSingleStep(1);
+            else
+                editAngle->setSingleStep(1);
+        }
+    }
+    return false;
 }
 
 void boardVLM::confirmAndSendCmd(QString question,QString info,int cmdNum,float val1,float val2, float val3)
@@ -235,15 +264,15 @@ void boardVLM::boatUpdated(void)
     editHeading->setValue(myBoat->getHeading());
     editAngle->setValue(angle_val);
 
-    w_dir->setText(QString().setNum(myBoat->getWindDir()));
-    w_speed->setText(QString().setNum(myBoat->getWindSpeed()));
-    loch->setText(QString().setNum(myBoat->getLoch()));
-    speed->setText(QString().setNum(myBoat->getSpeed()));
-    avg->setText(QString().setNum(myBoat->getAvg()));
+    w_dir->setText(QString().sprintf("%.2f",myBoat->getWindDir()));
+    w_speed->setText(QString().sprintf("%.2f",myBoat->getWindSpeed()));
+    loch->setText(QString().sprintf("%.2f",myBoat->getLoch()));
+    speed->setText(QString().sprintf("%.2f",myBoat->getSpeed()));
+    avg->setText(QString().sprintf("%.2f",myBoat->getAvg()));
 
     windAngle->setValues(myBoat->getHeading(),myBoat->getWindDir(),myBoat->getWindSpeed(), computeWPdir(myBoat), -1);
-    bvmgU->setText(QString().setNum(myBoat->getBvmgUp(myBoat->getWindSpeed())));
-    bvmgD->setText(QString().setNum(myBoat->getBvmgDown(myBoat->getWindSpeed())));
+    bvmgU->setText(QString().sprintf("%.1f",myBoat->getBvmgUp(myBoat->getWindSpeed())));
+    bvmgD->setText(QString().sprintf("%.1f",myBoat->getBvmgDown(myBoat->getWindSpeed())));
 
     boatName->setText(myBoat->getBoatPseudo());
 
@@ -266,9 +295,9 @@ void boardVLM::boatUpdated(void)
     update_btnWP();
 
     /* WP direction */
-    dnm->setText(QString().setNum(myBoat->getDnm()));
-    ortho->setText(QString().setNum(myBoat->getOrtho()));
-    vmg->setText(QString().setNum(myBoat->getVmg()));
+    dnm->setText(QString().sprintf("%.2f",myBoat->getDnm()));
+    ortho->setText(QString().sprintf("%.2f",myBoat->getOrtho()));
+    vmg->setText(QString().sprintf("%.2f",myBoat->getVmg()));
 
     angle_val=myBoat->getOrtho()-myBoat->getWindDir();
     if(qAbs(angle_val)>180)
@@ -340,12 +369,12 @@ void boardVLM::headingUpdated(double heading)
     if((float)heading==currentBoat()->getHeading())
     {
         /* setting back to VLM value */
-        speed->setText(QString().setNum(currentBoat()->getSpeed()));
+        speed->setText(QString().sprintf("#.2f",currentBoat()->getSpeed()));
         speed->setStyleSheet(QString::fromUtf8(SPEED_COLOR_VLM));
         label_6->setStyleSheet(QString::fromUtf8(SPEED_COLOR_VLM));
         float val=currentBoat()->getHeading()-currentBoat()->getWindDir();
         float angle = currentBoat()->getTWA();
-        calcAngleSign(val,angle);
+        calcAngleSign(val,angle)
         editAngle->setValue(angle);
         /*changing boat rotation*/
         windAngle->setValues(currentBoat()->getHeading(),currentBoat()->getWindDir(),
@@ -371,7 +400,7 @@ void boardVLM::headingUpdated(double heading)
         if(currentBoat()->getPolarData())
         {
             newSpeed=currentBoat()->getPolarData()->getSpeed(currentBoat()->getWindSpeed(),angle);
-            speed->setText(QString().setNum(((float)qRound(newSpeed*100))/100));
+            speed->setText(QString().sprintf("%.2f",newSpeed));
             speed->setStyleSheet(QString::fromUtf8(SPEED_COLOR_UPDATE));
             label_6->setStyleSheet(QString::fromUtf8(SPEED_COLOR_UPDATE));
             //qWarning() << "Angle=" << angle << " w spd=" << currentBoat()->getWindSpeed() << " => boat spd=" << newSpeed;
@@ -414,7 +443,7 @@ void boardVLM::angleUpdated(double angle)
     if(angle==oldAngle)
     {
 /* setting back to VLM value */
-        speed->setText(QString().setNum(currentBoat()->getSpeed()));
+        speed->setText(QString().sprintf("%.2f",currentBoat()->getSpeed()));
         editHeading->setValue(currentBoat()->getHeading());
         speed->setStyleSheet(QString::fromUtf8(SPEED_COLOR_VLM));
         label_6->setStyleSheet(QString::fromUtf8(SPEED_COLOR_VLM));
@@ -436,7 +465,7 @@ void boardVLM::angleUpdated(double angle)
         if(currentBoat()->getPolarData())
         {
             newSpeed=currentBoat()->getPolarData()->getSpeed(currentBoat()->getWindSpeed(),angle);
-            speed->setText(QString().setNum(((float)qRound(newSpeed*100))/100));
+            speed->setText(QString().sprintf("%.2f",newSpeed));
             speed->setStyleSheet(QString::fromUtf8(SPEED_COLOR_UPDATE));
             label_6->setStyleSheet(QString::fromUtf8(SPEED_COLOR_UPDATE));
 
@@ -890,32 +919,6 @@ void boardVLM::slot_hideShowCompass()
     setCompassVisible(!windAngle->isVisible());
 }
 
-void boardVLM::slot_angle1()
-{
-    editHeading->setSingleStep(1.0);
-    editAngle->setSingleStep(1.0);
-    ac_angle10->setChecked(false);
-    ac_angle100->setChecked(false);
-    Settings::setSetting("anglePrecision",0);
-}
-
-void boardVLM::slot_angle10()
-{
-    editHeading->setSingleStep(0.1);
-    editAngle->setSingleStep(0.1);
-    Settings::setSetting("anglePrecision",1);
-    ac_angle1->setChecked(false);
-    ac_angle100->setChecked(false);
-}
-
-void boardVLM::slot_angle100()
-{
-    editHeading->setSingleStep(0.01);
-    editAngle->setSingleStep(0.01);
-    Settings::setSetting("anglePrecision",2);
-    ac_angle1->setChecked(false);
-    ac_angle10->setChecked(false);
-}
 
 
 void boardVLM::setCompassVisible(bool status)

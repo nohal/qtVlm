@@ -48,6 +48,7 @@ void Util::setFontDialog(QObject * o)
         myFont.setStyle(widget->font().style());
         myFont.setBold(widget->font().bold());
         widget->setFont(myFont);
+        widget->setLocale(QLocale::system());
     }
     foreach(QObject * object,o->children())
     {

@@ -78,7 +78,6 @@ ROUTE::ROUTE(QString name, Projection *proj, Grib *grib, QGraphicsScene * myScen
     this->hidePois=false;
     this->imported=false;
     this->multVac=1;
-    this->autoRemove=false;
     this->useVbvmgVlm=Settings::getSetting("useVbvmgVlm",0).toInt()==1;
     this->setNewVbvmgVlm(Settings::getSetting("newVbvmgVlm",0).toInt()==1);
     //this->setNewVbvmgVlm(false);
@@ -95,7 +94,8 @@ ROUTE::ROUTE(QString name, Projection *proj, Grib *grib, QGraphicsScene * myScen
     else
         slot_shHidden();
     this->speedLossOnTack=1;
-    this->autoAt=true;
+    this->autoRemove=Settings::getSetting("autoRemovePoiFromRoute",0).toInt()==1;
+    this->autoAt=Settings::getSetting("autoFillPoiHeading",0).toInt()==1;
     this->pilototo=false;
     this->precalculateTan();
 }

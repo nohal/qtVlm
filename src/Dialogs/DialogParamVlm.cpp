@@ -40,7 +40,6 @@ DialogParamVlm::DialogParamVlm(MainWindow * main,myCentralWidget * parent) : QDi
     opp_labelType->addItem(tr("Numero"));
     opp_labelType->setCurrentIndex(Settings::getSetting("opp_labelType",0).toInt());
 
-    this->chkHideRoute->setCheckState(Settings::getSetting("autoHideRoute",1).toInt()==1?Qt::Checked:Qt::Unchecked);
     this->chkPavillon->setCheckState(Settings::getSetting("showFlag",0).toInt()==1?Qt::Checked:Qt::Unchecked);
 
     /* Colors */
@@ -74,12 +73,17 @@ DialogParamVlm::DialogParamVlm(MainWindow * main,myCentralWidget * parent) : QDi
             radioBtn_dist->setChecked(true);
             break;
     }
-    this->speedLossOnTackReal->setValue(Settings::getSetting("speedLossOnTackReal","100").toInt());
-    this->speedLossOnTackVlm->setValue(Settings::getSetting("speedLossOnTackVlm","100").toInt());
 
     chk_centerOnSynch->setCheckState(Settings::getSetting("centerOnSynch","1").toInt()==1?Qt::Checked:Qt::Unchecked);
     chk_centerOnBoatChange->setCheckState(Settings::getSetting("centerOnBoatChange","1").toInt()==1?Qt::Checked:Qt::Unchecked);
     chk_askConfirm->setCheckState(Settings::getSetting("askConfirmation","0").toInt()==1?Qt::Checked:Qt::Unchecked);
+
+    /*Route*/
+    this->speedLossOnTackReal->setValue(Settings::getSetting("speedLossOnTackReal","100").toInt());
+    this->speedLossOnTackVlm->setValue(Settings::getSetting("speedLossOnTackVlm","100").toInt());
+    this->chkHideRoute->setCheckState(Settings::getSetting("autoHideRoute",1).toInt()==1?Qt::Checked:Qt::Unchecked);
+    this->autoRemove->setCheckState(Settings::getSetting("autoRemovePoiFromRoute",0).toInt()==1?Qt::Checked:Qt::Unchecked);
+    this->autoAt->setCheckState(Settings::getSetting("autoFillPoiHeading",0).toInt()==1?Qt::Checked:Qt::Unchecked);
 
     /* Trace */
     for(int i=1;i<=60;i++)
@@ -160,7 +164,6 @@ void DialogParamVlm::done(int result)
     {
         /*drawing*/
         Settings::setSetting("opp_labelType",QString().setNum(opp_labelType->currentIndex()));
-        Settings::setSetting("autoHideRoute",this->chkHideRoute->checkState()==Qt::Checked?"1":"0");
         Settings::setSetting("showFlag",this->chkPavillon->checkState()==Qt::Checked?"1":"0");
         Settings::setSetting("defaultFontName",this->defFontName->currentText());
         Settings::setSetting("defaultFontSizeInc",QString().setNum(this->defFontSize->value()-8.25));
@@ -180,8 +183,6 @@ void DialogParamVlm::done(int result)
         Settings::setSetting("estimeTime", QString().setNum(estimeVal_time->value()));
         Settings::setSetting("estimeVac", QString().setNum(estimeVal_vac->value()));
 
-        Settings::setSetting("speedLossOnTackReal", QString().setNum(speedLossOnTackReal->value()));
-        Settings::setSetting("speedLossOnTackVlm", QString().setNum(speedLossOnTackVlm->value()));
 
         if(radioBtn_time->isChecked())
             Settings::setSetting("estimeType","0");
@@ -211,6 +212,14 @@ void DialogParamVlm::done(int result)
         else
             Settings::setSetting("scalePolar","2");
         Settings::setSetting("polVac",QString().setNum(polVac->value()));
+
+        /* Route */
+
+        Settings::setSetting("speedLossOnTackReal", QString().setNum(speedLossOnTackReal->value()));
+        Settings::setSetting("speedLossOnTackVlm", QString().setNum(speedLossOnTackVlm->value()));
+        Settings::setSetting("autoHideRoute",this->chkHideRoute->checkState()==Qt::Checked?"1":"0");
+        Settings::setSetting("autoRemovePoiFromRoute",this->autoRemove->isChecked()?"1":"0");
+        Settings::setSetting("autoFillPoiHeading",this->autoAt->isChecked()?"1":"0");
 
         /* Grib */
 

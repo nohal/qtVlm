@@ -43,7 +43,7 @@
     </rect>
    </property>
    <property name="currentIndex">
-    <number>7</number>
+    <number>0</number>
    </property>
    <widget class="QWidget" name="tab">
     <attribute name="title">
@@ -98,37 +98,11 @@
       </property>
      </widget>
     </widget>
-    <widget class="QGroupBox" name="groupBox_12">
-     <property name="geometry">
-      <rect>
-       <x>10</x>
-       <y>70</y>
-       <width>321</width>
-       <height>51</height>
-      </rect>
-     </property>
-     <property name="title">
-      <string>Routes</string>
-     </property>
-     <widget class="QCheckBox" name="chkHideRoute">
-      <property name="geometry">
-       <rect>
-        <x>10</x>
-        <y>20</y>
-        <width>301</width>
-        <height>17</height>
-       </rect>
-      </property>
-      <property name="text">
-       <string>Cacher les routes des bateaux non-selectionnes</string>
-      </property>
-     </widget>
-    </widget>
     <widget class="QGroupBox" name="groupBox_3">
      <property name="geometry">
       <rect>
        <x>10</x>
-       <y>130</y>
+       <y>70</y>
        <width>321</width>
        <height>111</height>
       </rect>
@@ -367,7 +341,7 @@
        <x>0</x>
        <y>5</y>
        <width>331</width>
-       <height>101</height>
+       <height>111</height>
       </rect>
      </property>
      <property name="title">
@@ -379,7 +353,7 @@
         <x>10</x>
         <y>20</y>
         <width>321</width>
-        <height>82</height>
+        <height>81</height>
        </rect>
       </property>
       <layout class="QGridLayout" name="gridLayout_2">
@@ -552,7 +526,7 @@
      <property name="geometry">
       <rect>
        <x>20</x>
-       <y>110</y>
+       <y>130</y>
        <width>291</width>
        <height>20</height>
       </rect>
@@ -571,7 +545,7 @@
      <property name="geometry">
       <rect>
        <x>20</x>
-       <y>130</y>
+       <y>150</y>
        <width>291</width>
        <height>20</height>
       </rect>
@@ -590,7 +564,7 @@
      <property name="geometry">
       <rect>
        <x>20</x>
-       <y>150</y>
+       <y>170</y>
        <width>291</width>
        <height>20</height>
       </rect>
@@ -605,11 +579,16 @@
       <string>Confirmation a chaque ordre vers VLM</string>
      </property>
     </widget>
+   </widget>
+   <widget class="QWidget" name="tab_9">
+    <attribute name="title">
+     <string>Routes</string>
+    </attribute>
     <widget class="QGroupBox" name="groupBox_6">
      <property name="geometry">
       <rect>
        <x>10</x>
-       <y>180</y>
+       <y>10</y>
        <width>321</width>
        <height>71</height>
       </rect>
@@ -700,6 +679,58 @@
       </property>
       <property name="value">
        <number>100</number>
+      </property>
+     </widget>
+    </widget>
+    <widget class="QCheckBox" name="chkHideRoute">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>100</y>
+       <width>321</width>
+       <height>17</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Cacher les routes des bateaux non-selectionnes</string>
+     </property>
+    </widget>
+    <widget class="QGroupBox" name="groupBox_7">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>130</y>
+       <width>321</width>
+       <height>71</height>
+      </rect>
+     </property>
+     <property name="title">
+      <string>Options par defaut</string>
+     </property>
+     <widget class="QCheckBox" name="autoAt">
+      <property name="geometry">
+       <rect>
+        <x>10</x>
+        <y>40</y>
+        <width>301</width>
+        <height>20</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Renseigner le cap a suivre (@) des POIs</string>
+      </property>
+     </widget>
+     <widget class="QCheckBox" name="autoRemove">
+      <property name="geometry">
+       <rect>
+        <x>10</x>
+        <y>20</y>
+        <width>311</width>
+        <height>20</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Retirer les POIs avant le WP-VLM</string>
       </property>
      </widget>
     </widget>
@@ -1305,11 +1336,10 @@
   </widget>
  </widget>
  <tabstops>
-  <tabstop>buttonBox</tabstop>
   <tabstop>tabWidget</tabstop>
   <tabstop>opp_labelType</tabstop>
   <tabstop>chkPavillon</tabstop>
-  <tabstop>chkHideRoute</tabstop>
+  <tabstop>buttonBox</tabstop>
   <tabstop>defFontName</tabstop>
   <tabstop>defFontSize</tabstop>
   <tabstop>pushButton</tabstop>
@@ -1329,6 +1359,9 @@
   <tabstop>chk_askConfirm</tabstop>
   <tabstop>speedLossOnTackReal</tabstop>
   <tabstop>speedLossOnTackVlm</tabstop>
+  <tabstop>chkHideRoute</tabstop>
+  <tabstop>autoRemove</tabstop>
+  <tabstop>autoAt</tabstop>
   <tabstop>trace_step</tabstop>
   <tabstop>trace_length</tabstop>
   <tabstop>speedReplay</tabstop>
