@@ -921,6 +921,26 @@ Etes-vous sur ?</source>
     </message>
 </context>
 <context>
+    <name>DialogVlmLog</name>
+    <message>
+        <source>Dialog</source>
+        <translation>Dialogue</translation>
+    </message>
+    <message>
+        <source>Save</source>
+        <translation>Sauvegarde</translation>
+    </message>
+    <message>
+        <source>Sauvegarde Logs</source>
+        <translatorcomment>Sauvegarde Historique</translatorcomment>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Historique VLM</source>
+        <translation>Historique VLM</translation>
+    </message>
+</context>
+<context>
     <name>DialogWp</name>
     <message>
         <source>Confirmer le changement du WP</source>
@@ -1979,6 +1999,10 @@ Etes-vous sur ?</source>
         <source>Photo d&apos;ecran</source>
         <translation>Photo d&apos;écran</translation>
     </message>
+    <message>
+        <source>Historique VLM</source>
+        <translation>Historique VLM</translation>
+    </message>
 </context>
 <context>
     <name>POI</name>
@@ -2161,39 +2185,15 @@ Etes-vous sur ?</source>
     <name>POI_delete_ui</name>
     <message>
         <source>Selection de type de marque</source>
-        <translation>Sélection de type de marque</translation>
+        <translation type="obsolete">Sélection de type de marque</translation>
     </message>
     <message>
         <source>Cancel</source>
-        <translation>Annuler</translation>
+        <translation type="obsolete">Annuler</translation>
     </message>
     <message>
         <source>Type de marque a supprimer</source>
-        <translation>Type de marque à supprimer</translation>
-    </message>
-    <message>
-        <source>&lt;a href=&quot;titi&quot;&gt;Tous&lt;/a&gt;</source>
-        <translation></translation>
-    </message>
-    <message>
-        <source>&lt;a href=&quot;toto&quot;&gt;Aucun&lt;/a&gt;</source>
-        <translation></translation>
-    </message>
-    <message>
-        <source>POI</source>
-        <translation></translation>
-    </message>
-    <message>
-        <source>Marque</source>
-        <translation></translation>
-    </message>
-    <message>
-        <source>Balise</source>
-        <translation></translation>
-    </message>
-    <message>
-        <source>OK</source>
-        <translation></translation>
+        <translation type="obsolete">Type de marque à supprimer</translation>
     </message>
 </context>
 <context>
@@ -2663,6 +2663,22 @@ VMG %.1fnds</source>
     <message>
         <source>Un nom de fichier valide portant l&apos;extension .png est requis</source>
         <translation></translation>
+    </message>
+    <message>
+        <source>Un nom de fichier valide portant l&apos;extension .txt est requis</source>
+        <translation>Un nom de fichier valide portant l&apos;extension .txt est requis</translation>
+    </message>
+    <message>
+        <source>Sauvegarde Logs VLM</source>
+        <translation>Sauvegarde Logs VLM</translation>
+    </message>
+    <message>
+        <source>Voir Vlm Logs</source>
+        <translation>Voir l&apos;historique VLM</translation>
+    </message>
+    <message>
+        <source>Pas de bateau VLM actif.</source>
+        <translation>Pas de bateau VLM actif.</translation>
     </message>
 </context>
 <context>
