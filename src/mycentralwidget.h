@@ -267,6 +267,7 @@ class myCentralWidget : public QWidget
         void slot_startReplay();
         void slot_replay();
         void slot_takeScreenshot();
+        void slot_showVlmLog();
 
 
     signals:
@@ -351,6 +352,7 @@ class myCentralWidget : public QWidget
         DialogUnits     dialogUnits;
         DialogGraphicsParams  dialogGraphicsParams;
         DialogRealBoatConfig * realBoatConfig;
+        DialogVlmLog * vlmLogViewer;
 
         /* Lists, POI*/
         QList<POI*> poi_list;

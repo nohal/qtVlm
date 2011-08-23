@@ -18,14 +18,17 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ***********************************************************************/
 
+
 #ifndef BOATVLM_H
 #define BOATVLM_H
 
+#include <QStandardItemModel>
 #include "boat.h"
 #include "inetClient.h"
 #include "Player.h"
 #include "class_list.h"
 #include "Grib.h"
+
 
 class boatVLM : public boat, public inetClient
 { Q_OBJECT
@@ -176,4 +179,6 @@ class boatVLM : public boat, public inetClient
         QString npd;
 };
 
+
 #endif // BOATVLM_H
+

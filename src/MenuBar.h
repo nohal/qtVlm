@@ -257,6 +257,7 @@ public:
      QAction *acKeep;
      QAction *acReplay;
     QAction *acScreenshot;
+    QAction *acShowLog;
 
 
     QAction *acHelp_Help;

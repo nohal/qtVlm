@@ -850,41 +850,20 @@ void boatVLM::rotatesBoatInfoLog(QVariantMap lastBoatInfo)
         boatInfoLog.removeFirst();
         boatInfoLog.append(lastBoatInfo);
     }
+
 }
 
 void boatVLM::saveBoatInfolog()
 {
-    QString fileName="./";
-    fileName.append(QString::number(boat_id));
-    fileName.append("InfoLog.dat");
-    QFile file( fileName );
-    if( !file.open( QIODevice::WriteOnly ) )
-      return;
-    QDataStream stream( &file );
-    stream.setVersion( QDataStream::Qt_4_6 );
-    stream << boatInfoLog;
+    player->setBoatLog(boat_id,boatInfoLog);
 }
 
 void boatVLM::loadBoatInfolog()
 {
     boatInfoLog.clear();
-    QString fileName="./";
-    fileName.append(QString::number(boat_id));
-    fileName.append("InfoLog.dat");
-    QFile file( fileName );
-    int logIndex;
+    boatInfoLog = player->getBoatLog(boat_id);
     QVariantMap emptyMap;
-    if( !file.open( QIODevice::ReadOnly ) ) {
-        for(logIndex=0;logIndex<logIndexLimit;logIndex++) {
-            boatInfoLog.append(emptyMap);
-        }
-    }
-    else {
-        QDataStream stream( &file );
-        stream.setVersion( QDataStream::Qt_4_6 );
-        stream >> boatInfoLog;
-    }
-    //Adjust the size if needed
+    //Adjusts the size if needed
     while (boatInfoLog.count()>logIndexLimit && !boatInfoLog.isEmpty()) {
         boatInfoLog.removeFirst();
     }

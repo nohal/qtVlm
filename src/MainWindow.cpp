@@ -85,6 +85,7 @@ void MainWindow::connectSignals()
     connect(mb->acKeep, SIGNAL(toggled(bool)), my_centralWidget, SLOT(slot_keepPos(bool)));
     connect(mb->acReplay, SIGNAL(triggered()), my_centralWidget, SLOT(slot_startReplay()));
     connect(mb->acScreenshot, SIGNAL(triggered()), my_centralWidget, SLOT(slot_takeScreenshot()));
+    connect(mb->acShowLog, SIGNAL(triggered()), my_centralWidget, SLOT(slot_showVlmLog()));
     connect(mb->ac_CreatePOI, SIGNAL(triggered()), this, SLOT(slotCreatePOI()));
     connect(mb->ac_pastePOI, SIGNAL(triggered()), this, SLOT(slotpastePOI()));
     connect(mb->ac_delAllPOIs, SIGNAL(triggered()), my_centralWidget, SLOT(slot_delAllPOIs()));

@@ -77,7 +77,7 @@ MenuBar::MenuBar(QWidget *parent)
                 acKeep->setCheckable(true);
                 acKeep->setChecked(true);
                 acReplay=addAction(menuFile,tr("Rejouer l'historique des traces"),"Y","",tr(""));
-                acScreenshot=addAction(menuFile,tr("Photo d'ecran"),"Ctrl+E","",tr(""));
+                acScreenshot=addAction(menuFile,tr("Photo d'ecran"),"Ctrl+E","",tr(""));                
 
     addMenu(menuFile);
 
@@ -280,6 +280,7 @@ MenuBar::MenuBar(QWidget *parent)
         acRace = addAction(menuBoat,tr("Parametres des courses"),"","","");
         acVLMSync = addAction(menuBoat,tr("VLM Sync"),"","","");
         acPilototo = addAction(menuBoat,tr("Pilototo"),"","","");
+        acShowLog=addAction(menuBoat,tr("Historique VLM"),"Ctrl+Shift+E","",tr(""));
         acShowPolar=addAction(menuBoat,tr("Etudier la polaire"),"","");
     addMenu(menuBoat);
 

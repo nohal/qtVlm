@@ -70,6 +70,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "DialogPlayerAccount.h"
 #include "DialogRoutage.h"
 #include "DialogRealBoatConfig.h"
+#include "DialogVlmLog.h"
 
 /*******************/
 /*    myScene      */
@@ -446,6 +447,7 @@ myCentralWidget::myCentralWidget(Projection * proj,MainWindow * parent,MenuBar *
     connect(menuBar->acOptions_Units, SIGNAL(triggered()), &dialogUnits, SLOT(exec()));
     connect(menuBar->acOptions_GraphicsParams, SIGNAL(triggered()), &dialogGraphicsParams, SLOT(exec()));
 
+    vlmLogViewer = new DialogVlmLog(this);
     /*Routes*/
     connect(menuBar->acRoute_add, SIGNAL(triggered()), this, SLOT(slot_addRouteFromMenu()));
     connect(menuBar->acRoute_import, SIGNAL(triggered()), this, SLOT(slot_importRouteFromMenu()));
@@ -493,6 +495,7 @@ myCentralWidget::~myCentralWidget()
         xmlPOI->slot_writeData(route_list,poi_list,"poi.dat");
         xmlData->slot_writeData(player_list,race_list,QString("boatAcc.dat"));
     }
+    delete currentPlayer;
 }
 
 /***********************/
@@ -1294,8 +1297,20 @@ void myCentralWidget::slot_takeScreenshot()
     Settings::setSetting("screenShotFolder",info.absoluteDir().path());
     // Save it..
     image->save(fileName, "PNG", -1);
+//    if (mainW->getSelectedBoat()->getType()==BOAT_VLM)
+//        ((boatVLM*)mainW->getSelectedBoat())->exportBoatInfoLog(fileName);
+}
+
+void myCentralWidget::slot_showVlmLog()
+{
     if (mainW->getSelectedBoat()->getType()==BOAT_VLM)
-        ((boatVLM*)mainW->getSelectedBoat())->exportBoatInfoLog(fileName);
+        vlmLogViewer->initWithBoat( (boatVLM*)mainW->getSelectedBoat() );
+    else {
+        QMessageBox::warning(0,QObject::tr("Voir Vlm Logs"),
+             QString(QObject::tr("Pas de bateau VLM actif.")));
+        return;
+    }
+
 }
 
 void myCentralWidget::setHorn()

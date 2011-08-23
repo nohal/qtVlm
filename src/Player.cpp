@@ -60,6 +60,7 @@ Player::Player(QString login, QString pass,int type, int id, QString name,
         parent->slot_addBoat(realBoat);
         qWarning() << "... after creating real boat in player constr: " << name;
     }
+    loadBoatsLog();
 }
 
 Player::~Player()
@@ -78,9 +79,12 @@ Player::~Player()
         while(j.hasNext())
         {
             boatVLM * boat = j.next();
+            int boatId = boat->getId();
+            boatsLog[boatId] = boat->getBoatInfoLog();
             emit delBoat(boat);
             delete boat;
         }
+        saveBoatsLog();
         boats.clear();
     }
 }
@@ -218,4 +222,35 @@ void Player::inetError()
     qWarning() << "Inet error";
     updating=false;
     emit playerUpdated(false,this);
+}
+
+void Player::saveBoatsLog()
+{
+    if(type==BOAT_REAL && realBoat)
+        return;
+    QString fileName="./";
+    fileName.append(QString::number(player_id));
+    fileName.append("BoatsLog.dat");
+    QFile file( fileName );
+    if( !file.open( QIODevice::WriteOnly ) )
+      return;
+    QDataStream stream( &file );
+    stream.setVersion( QDataStream::Qt_4_6 );
+    stream << boatsLog;
+}
+
+void Player::loadBoatsLog()
+{
+    if(type==BOAT_REAL && realBoat)
+        return;
+    boatsLog.clear();
+    QString fileName="./";
+    fileName.append(QString::number(player_id));
+    fileName.append("BoatsLog.dat");
+    QFile file( fileName );
+    if( !file.open( QIODevice::ReadOnly ) )
+      return;
+    QDataStream stream( &file );
+    stream.setVersion( QDataStream::Qt_4_6 );
+    stream >> boatsLog;
 }

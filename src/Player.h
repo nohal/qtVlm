@@ -53,6 +53,7 @@ class Player : public QObject, public inetClient
         boatReal * getRealBoat(void) { if(type==BOAT_VLM) return NULL; return realBoat; }
         void setRealBoat(boatReal* boat) {if(type==BOAT_REAL) realBoat=boat; }
 
+
         void authFailed(void);
         void inetError(void);
 
@@ -72,6 +73,8 @@ class Player : public QObject, public inetClient
         void setParam(QString login, QString pass) { this->login=login; this->pass=pass; }
         void setType(int type)          { this->type=type; }
         void setName(QString name)      { this->name=name; }
+        QList<QVariantMap> getBoatLog(int id) { return boatsLog[id]; }
+        void setBoatLog(int id, QList<QVariantMap> boatLog) { boatsLog[id]=boatLog; }
 
         /* boat list */
         void addBoat(boatVLM * boat)    { boats.append(boat); }
@@ -97,6 +100,7 @@ class Player : public QObject, public inetClient
         QList<boatVLM*> boats;
         QList<boatData*> boatsData;
         QString polarName;
+        QMap<int, QList<QVariantMap> > boatsLog;
 
         boatReal * realBoat;
 
@@ -104,6 +108,8 @@ class Player : public QObject, public inetClient
 
         void doRequest(int requestCmd);
         QList<int> fleetList;
+        void loadBoatsLog(void);
+        void saveBoatsLog(void);
 
 };
 

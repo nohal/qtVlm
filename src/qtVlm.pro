@@ -106,7 +106,8 @@ HEADERS += Dialogs/DialogGraphicsParams.h \
     Dialogs/DialogRealBoatPosition.h \
     Dialogs/dialogviewpolar.h \
     GshhsPolyReader.h \
-    Dialogs/dialogpoiconnect.h
+    Dialogs/dialogpoiconnect.h \
+    Dialogs/DialogVlmLog.h
 FORMS += Ui/boatAccount_dialog.ui \
     Ui/BoardVLM.ui \
     Ui/BoardReal.ui \
@@ -135,7 +136,8 @@ FORMS += Ui/boatAccount_dialog.ui \
     Ui/realBoatPosition.ui \
     Ui/paramProxy.ui \
     Ui/dialogviewpolar.ui \
-    Ui/dialogpoiconnect.ui
+    Ui/dialogpoiconnect.ui \
+    Ui/DialogVlmLog.ui
 SOURCES += Dialogs/DialogGraphicsParams.cpp \
     Dialogs/DialogLoadGrib.cpp \
     Dialogs/DialogProxy.cpp \
@@ -210,8 +212,9 @@ SOURCES += Dialogs/DialogGraphicsParams.cpp \
     Dialogs/DialogRealBoatPosition.cpp \
     Dialogs/dialogviewpolar.cpp \
     GshhsPolyReader.cpp \
-    Dialogs/dialogpoiconnect.cpp
-unix:!macx: DEFINES += _TTY_POSIX_ __TERRAIN_QIMAGE __UNIX_QTVLM
+    Dialogs/dialogpoiconnect.cpp \
+    Dialogs/DialogVlmLog.cpp
+unix:!macx: DEFINES += _TTY_POSIX_ __TERRAIN_QIMAGE __UNIX_QTVLM __QTVLM_WITH_TEST
 win32:DEFINES += _TTY_WIN_ \
     QWT_DLL \
     QT_DLL \

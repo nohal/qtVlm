@@ -157,6 +157,9 @@ class Projection;
 /* DialogRace.h */
 class DialogRace;
 
+/* dialogVlmLog.h */
+class DialogVlmLog;
+
 /* routage.h */
 class ROUTAGE;
 
@@ -180,6 +183,9 @@ class Terrain;
 
 /*DialogTwaLine.h*/
 class DialogTwaLine;
+
+/*DialogTwaOptim.h*/
+class DialogTWAOptim;
 
 /* vlmLine.h */
 class vlmLine;
