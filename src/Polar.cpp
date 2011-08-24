@@ -304,14 +304,21 @@ float Polar::getBvmgUp(float windSpeed)
 {
     if(!loaded)
         return 0;
-    return(best_vmg_up[qRound(windSpeed*10)]);
+    if ( qRound(windSpeed*10) <= best_vmg_up.count()-1 )
+        return(best_vmg_up[qRound(windSpeed*10)]);
+    else
+        return(best_vmg_up.last());
 }
 float Polar::getBvmgDown(float windSpeed)
 {
     if(!loaded)
         return 0;
-    return(best_vmg_down[qRound(windSpeed*10)]);
+    if ( qRound(windSpeed*10) <= best_vmg_down.count()-1 )
+        return(best_vmg_down[qRound(windSpeed*10)]);
+    else
+        return(best_vmg_down.last());
 }
+
 float Polar::getSpeed(float windSpeed, float angle)
 {
     return myGetSpeed(windSpeed,angle,false);
