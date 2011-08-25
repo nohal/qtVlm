@@ -168,6 +168,7 @@ class myCentralWidget : public QWidget
         bool get_shOpp_st(void) { return shOpp_st; }
         bool get_shPor_st(void) { return shPor_st; }
         void exportRouteFromMenu(ROUTE * route);
+        void exportRouteFromMenuGPX(ROUTE * route,QString fileName,bool POIonly);
 
         /*races*/
         void drawNSZ(int i);

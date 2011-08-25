@@ -1725,7 +1725,7 @@ void myCentralWidget::exportRouteFromMenu(ROUTE * route)
         Settings::setSetting("importRouteFolder",routePath);
     }
     QString fileName = QFileDialog::getSaveFileName(this,
-                         tr("Exporter une Route"), routePath, "Routes (*.csv *.txt *.CSV *.TXT)");
+                         tr("Exporter une Route"), routePath, "Routes (*.csv *.txt *.CSV *.TXT *.gpx)");
     if(fileName.isEmpty() || fileName.isNull()) return;
     QMessageBox mb(0);
     mb.setText(tr("Exporter seulement les POIs ou egalement tous les details?"));
@@ -1739,15 +1739,21 @@ void myCentralWidget::exportRouteFromMenu(ROUTE * route)
         POIonly=true;
     else if(mb.clickedButton()==ALLbutton)
         POIonly=false;
+
     QFile::remove(fileName);
     QFile routeFile(fileName);
+    QFileInfo info(routeFile);
+    if (QString::compare(info.suffix(),"gpx")==0)
+    {
+        exportRouteFromMenuGPX(route,fileName,POIonly);
+        return;
+    }
     if(!routeFile.open(QIODevice::WriteOnly | QIODevice::Text))
     {
         QMessageBox::warning(0,QObject::tr("Lecture de route"),
              QString(QObject::tr("Impossible de creer le fichier %1")).arg(fileName));
         return;
     }
-    QFileInfo info(routeFile);
     Settings::setSetting("importRouteFolder",info.absoluteDir().path());
     QTextStream stream(&routeFile);
     QStringList list;
@@ -1852,6 +1858,86 @@ void myCentralWidget::exportRouteFromMenu(ROUTE * route)
             stream<<list.join(";")<<endl;
         }
     }
+    routeFile.close();
+}
+void myCentralWidget::exportRouteFromMenuGPX(ROUTE * route,QString fileName,bool POIonly)
+{
+    QFile::remove(fileName);
+    QFile routeFile(fileName);
+    if(!routeFile.open(QIODevice::WriteOnly | QIODevice::Text))
+    {
+        QMessageBox::warning(0,QObject::tr("Lecture de route"),
+             QString(QObject::tr("Impossible de creer le fichier %1")).arg(fileName));
+        return;
+    }
+    QFileInfo info(routeFile);
+    Settings::setSetting("importRouteFolder",info.absoluteDir().path());
+    QTextStream stream(&routeFile);
+    QStringList list;
+    list.append("<?xml version=\"1.0\"?>");
+    list.append("<gpx");
+    list.append(" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"");
+    list.append(" xmlns=\"http://www.topografix.com/GPX/1/0\"");
+    list.append(" xsi:schemaLocation=\"http://www.topografix.com/GPX/1/0 http://www.topografix.com/GPX/1/0/gpx.xsd\">");
+    list.append("<rte>");
+    list.append("<name>"+route->getName()+"</name>");
+    stream<<list.join("\n")<<endl;
+    if(route->getStartFromBoat())
+    {
+        list.clear();
+        QString latitude=QString::number(route->getStartLat());
+        QString longitude=QString::number(route->getStartLon());
+        list.append("<rtept lat=\""+latitude+"\" lon=\""+longitude+"\">");
+        QDateTime time;
+        time.setTime_t(route->getStartDate());
+        time=time.toUTC();
+        time.setTimeSpec(Qt::UTC);
+        list.append( "<time>"+time.toString("yyyy-MM-ddThh:mm:ssZ")+"</time>");
+        list.append( "</rtept>");
+        stream<<list.join("\n")<<endl;
+    }
+    if (POIonly)
+    {
+        QList<POI*> poiList=route->getPoiList();
+        QListIterator<POI*> i(poiList);
+        while(i.hasNext())
+        {
+            list.clear();
+            POI * poi=i.next();
+            QString latitude=QString::number(poi->getLatitude());
+            QString longitude=QString::number(poi->getLongitude());
+            list.append("<rtept lat=\""+latitude+"\" lon=\""+longitude+"\">");
+            QDateTime time;
+            time.setTime_t(route->getStartDate());
+            time=time.toUTC();
+            time.setTimeSpec(Qt::UTC);
+            list.append( "<time>"+time.toString("yyyy-MM-ddThh:mm:ssZ")+"</time>");
+            list.append( "</rtept>");
+            stream<<list.join("\n")<<endl;
+        }
+    }
+    else
+    {
+        QList<vlmPoint> *poiList=route->getLine()->getPoints();
+        QListIterator<vlmPoint> i(*poiList);
+        while(i.hasNext())
+        {
+            list.clear();
+            vlmPoint poi=i.next();
+            QString latitude=QString::number(poi.lat);
+            QString longitude=QString::number(poi.lon);
+            list.append("<rtept lat=\""+latitude+"\" lon=\""+longitude+"\">");
+            QDateTime time;
+            time.setTime_t(route->getStartDate());
+            time=time.toUTC();
+            time.setTimeSpec(Qt::UTC);
+            list.append( "<time>"+time.toString("yyyy-MM-ddThh:mm:ssZ")+"</time>");
+            list.append( "</rtept>");
+            stream<<list.join("\n")<<endl;
+        }
+    }
+    stream<<"</rte>"<<endl;
+    stream<<"</gpx>"<<endl;
     routeFile.close();
 }
 void myCentralWidget::slot_addRouteFromMenu()
