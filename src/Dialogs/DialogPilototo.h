@@ -115,9 +115,13 @@ class DialogPilototoInstruction : public QWidget, public Ui::instruction_ui
 	QWidget * parent;
         QWidget * pilototo;
 
+        QPalette pipPalette;
+        QColor pipColor;
+
         void updateText(bool);
         bool chkHasChanged(void);
         bool checkPIP(bool savChange,bool chgColor);
+        void pickPipColor(void);
 
 
 };
@@ -168,7 +172,6 @@ class DialogPilototo : public QDialog, public Ui::pilototo_ui, public inetClient
 	QList<int> delList;
 	QMessageBox * waitBox;
 	QVBoxLayout * frameLayout;
-
         QString lastOrder;
 
         int selectPOI_mode;

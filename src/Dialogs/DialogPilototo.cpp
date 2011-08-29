@@ -618,7 +618,7 @@ void DialogPilototo::instructionUpdated(void)
 DialogPilototoInstruction::DialogPilototoInstruction(QWidget * main,QWidget * parent) : QWidget(parent)
 {
     setupUi(this);
-
+    pipPalette=parent->palette();
     connect(this,SIGNAL(doEditInstruction(DialogPilototoInstruction*)),
                 ((DialogPilototo*)main)->instructionEditor,SLOT(editInstruction(DialogPilototoInstruction*)));
     connect(this,SIGNAL(doDelInstruction(DialogPilototoInstruction*)),
@@ -648,6 +648,7 @@ DialogPilototoInstruction::DialogPilototoInstruction(QWidget * main,QWidget * pa
 void DialogPilototoInstruction::initVal(void)
 {
     mode=mode_scr=0;
+    pickPipColor();
     mode_sel->setCurrentIndex(mode);
     angle=angle_scr=0;
     lat=lat_scr=0;
@@ -690,6 +691,7 @@ void DialogPilototoInstruction::setMode(int val)
 {
     SETVAL(mode_scr);
     mode_sel->setCurrentIndex(mode_scr);
+    pickPipColor();
 }
 
 void DialogPilototoInstruction::setAngle(float val)
@@ -1095,3 +1097,29 @@ void DialogPilototoInstruction::maintenant(void)
     tstamp_scr = QDateTime::currentDateTime().toUTC();
     horodate->setDateTime(tstamp_scr);
 }
+
+void DialogPilototoInstruction::pickPipColor(void)
+{
+
+    switch(mode_scr)
+    {
+        case 0: //Heading
+            pipColor=QColor(255,255,255,255);
+            break;
+        case 1: //TWA
+            pipColor=QColor(247,246,210,255);
+            break;
+        case 2: //Ortho
+            pipColor=QColor(247,210,237,255);
+            break;
+        case 3: //BVmg
+            pipColor=QColor(210,221,247,255);
+            break;
+        case 4: //VBVmg
+            pipColor=QColor(210,247,210,255);
+            break;
+    }
+    pipPalette.setColor(QPalette::Base, pipColor);
+    instructionText->setPalette(pipPalette);
+}
+
