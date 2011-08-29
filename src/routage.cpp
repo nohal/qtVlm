@@ -2208,7 +2208,9 @@ bool ROUTAGE::findPoint(double lon, double lat, double windAngle, double windSpe
 }
 void ROUTAGE::convertToRoute()
 {
-    bool routeStartBoat=QMessageBox::question(0,tr("Convertion d'un routage en route"),
+    bool routeStartBoat=false;
+    if(this->getRouteFromBoat())
+        routeStartBoat=QMessageBox::question(0,tr("Convertion d'un routage en route"),
                                               tr("Voulez-vous que la route parte du bateau a la prochaine vacation?"),
                                               QMessageBox::Yes|QMessageBox::No)==QMessageBox::Yes;
     this->converted=true;
