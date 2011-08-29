@@ -104,8 +104,8 @@ void MainWindow::connectSignals()
 
 
     //-------------------------------------------------------
-    connect(mb->acMap_GroupQuality, SIGNAL(triggered(QAction *)),
-            this, SLOT(slotMap_Quality()));
+//    connect(mb->acMap_GroupQuality, SIGNAL(triggered(QAction *)),
+//            this, SLOT(slotMap_Quality()));
 
     connect(mb->acMap_Zoom_In, SIGNAL(triggered()),
             my_centralWidget,  SLOT(slot_Zoom_In()));
@@ -430,24 +430,28 @@ MainWindow::MainWindow(int w, int h, QWidget *parent)
 
     /* initialisation du niveau de qualité */
 
-    int quality = Settings::getSetting("gshhsMapQuality", 1).toInt();
-    for (int qual=4; qual>=0; qual--) {
-        if (! my_centralWidget->get_gshhsReader()->gshhsFilesExists(qual)) {
-            switch (qual) {
-                case 0: menuBar->acMap_Quality1->setEnabled(false); break;
-                case 1: menuBar->acMap_Quality2->setEnabled(false); break;
-                case 2: menuBar->acMap_Quality3->setEnabled(false); break;
-                case 3: menuBar->acMap_Quality4->setEnabled(false); break;
-                case 4: menuBar->acMap_Quality5->setEnabled(false); break;
-            }
-            if (quality >= qual)
-            {
-                quality = qual-1;
-            }
-        }
-    }
+    //int quality = Settings::getSetting("gshhsMapQuality", 1).toInt();
+    int quality=4;
+//    for (int qual=4; qual>=0; qual--)
+//    {
+//        if (! my_centralWidget->get_gshhsReader()->gshhsFilesExists(qual))
+//        {
+//            switch (qual) {
+//                case 0: menuBar->acMap_Quality1->setEnabled(false); break;
+//                case 1: menuBar->acMap_Quality2->setEnabled(false); break;
+//                case 2: menuBar->acMap_Quality3->setEnabled(false); break;
+//                case 3: menuBar->acMap_Quality4->setEnabled(false); break;
+//                case 4: menuBar->acMap_Quality5->setEnabled(false); break;
+//            }
+//            if (quality >= qual)
+//            {
+//                quality = qual-1;
+//            }
+//        }
+//    }
 
-    if (quality < 0) {
+    if (quality < 0)
+    {
         QMessageBox::information (this,
             QString(tr("Erreur")),
             QString(tr("Cartes non trouvees.\n\n")
@@ -455,7 +459,7 @@ MainWindow::MainWindow(int w, int h, QWidget *parent)
         );
         quality = 0;
     }
-    menuBar->setQuality(quality);
+    //menuBar->setQuality(quality);
     emit signalMapQuality(quality);
 
     //------------------------------------------------
@@ -792,25 +796,25 @@ void MainWindow::slotOptions_Language()
     }
 }
 //-------------------------------------------------
-void MainWindow::slotMap_Quality()
-{
-    int quality = 0;
-    MenuBar  *mb = menuBar;
-    QAction *act = mb->acMap_GroupQuality->checkedAction();
-    if (act == mb->acMap_Quality1)
-        quality = 0;
-    else if (act == mb->acMap_Quality2)
-        quality = 1;
-    else if (act == mb->acMap_Quality3)
-        quality = 2;
-    else if (act == mb->acMap_Quality4)
-        quality = 3;
-    else if (act == mb->acMap_Quality5)
-        quality = 4;
+//void MainWindow::slotMap_Quality()
+//{
+//    int quality = 0;
+//    MenuBar  *mb = menuBar;
+//    QAction *act = mb->acMap_GroupQuality->checkedAction();
+//    if (act == mb->acMap_Quality1)
+//        quality = 0;
+//    else if (act == mb->acMap_Quality2)
+//        quality = 1;
+//    else if (act == mb->acMap_Quality3)
+//        quality = 2;
+//    else if (act == mb->acMap_Quality4)
+//        quality = 3;
+//    else if (act == mb->acMap_Quality5)
+//        quality = 4;
 
-    Settings::setSetting("gshhsMapQuality", quality);
-    emit signalMapQuality(quality);
-}
+//    Settings::setSetting("gshhsMapQuality", quality);
+//    emit signalMapQuality(quality);
+//}
 //-------------------------------------------------
 
 

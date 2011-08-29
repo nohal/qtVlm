@@ -196,11 +196,18 @@ DialogRoute::DialogRoute(ROUTE *route,myCentralWidget *parent)
     rmModel->setHeaderData(9,Qt::Horizontal,QObject::tr("Lat POI cible"));
     rmModel->setSortRole(Qt::UserRole);
     roadMap->setModel(rmModel);
-    slotInterval();
+    connect(this->tabWidget,SIGNAL(currentChanged(int)),this,SLOT(slotTabChanged(int)));
 }
 DialogRoute::~DialogRoute()
 {
 }
+void DialogRoute::slotTabChanged(int tab)
+{
+    if(tab!=tabWidget->count()-1) return;
+    disconnect(this->tabWidget,SIGNAL(currentChanged(int)),this,SLOT(slotTabChanged(int)));
+    slotInterval();
+}
+
 void DialogRoute::resizeEvent ( QResizeEvent * /*event*/ )
 {
     this->scroll->resize(this->size());

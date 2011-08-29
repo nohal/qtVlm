@@ -614,6 +614,8 @@ void ROUTE::slot_recalculate(boat * boat)
                 tip=tip+tt+QString::number((int)days)+" "+tr("jours")+" "+QString::number((int)hours)+" "+tr("heures")+" "+
                     QString::number((int)mins)+" "+tr("minutes");
                 poi->setRouteTimeStamp(Eta);
+                if(poi==this->my_poiList.last())
+                    eta=Eta;
             }
             poi->setTip(tip);
 //            lon=poi->getLongitude();
@@ -632,6 +634,7 @@ void ROUTE::slot_recalculate(boat * boat)
             }
         }
     }
+
     if(!optimizing)
         line->slot_showMe();
     if(optimizingPOI)
@@ -650,8 +653,8 @@ void ROUTE::slot_recalculate(boat * boat)
     this->slot_shShow();
     line->slot_showMe();
     busy=false;
-    qWarning()<<"VBVMG-VLM calculation time:"<<timeD;
-    qWarning()<<"Route total calculation time:"<<timeTotal.elapsed();
+//    qWarning()<<"VBVMG-VLM calculation time:"<<timeD;
+//    qWarning()<<"Route total calculation time:"<<timeTotal.elapsed();
 }
 void ROUTE::interpolatePos()
 {

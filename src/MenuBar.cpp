@@ -334,18 +334,18 @@ MenuBar::MenuBar(QWidget *parent)
 
 
         QMenu *menuMap = new QMenu(tr("Planisphere"));
-        acMap_GroupQuality = new QActionGroup(menuMap);
-            acMap_Quality1 = addActionCheck(menuMap, tr("Qualite 1"), tr(""), tr("Niveau de detail de la carte"));
-            acMap_Quality2 = addActionCheck(menuMap, tr("Qualite 2"), tr(""), tr("Niveau de detail de la carte"));
-            acMap_Quality3 = addActionCheck(menuMap, tr("Qualite 3"), tr(""), tr("Niveau de detail de la carte"));
-            acMap_Quality4 = addActionCheck(menuMap, tr("Qualite 4"), tr(""), tr("Niveau de detail de la carte"));
-            acMap_Quality5 = addActionCheck(menuMap, tr("Qualite 5"), tr(""), tr("Niveau de detail de la carte"));
-            acMap_GroupQuality->addAction(acMap_Quality1);
-            acMap_GroupQuality->addAction(acMap_Quality2);
-            acMap_GroupQuality->addAction(acMap_Quality3);
-            acMap_GroupQuality->addAction(acMap_Quality4);
-            acMap_GroupQuality->addAction(acMap_Quality5);
-        menuMap->addSeparator();
+//        acMap_GroupQuality = new QActionGroup(menuMap);
+//            acMap_Quality1 = addActionCheck(menuMap, tr("Qualite 1"), tr(""), tr("Niveau de detail de la carte"));
+//            acMap_Quality2 = addActionCheck(menuMap, tr("Qualite 2"), tr(""), tr("Niveau de detail de la carte"));
+//            acMap_Quality3 = addActionCheck(menuMap, tr("Qualite 3"), tr(""), tr("Niveau de detail de la carte"));
+//            acMap_Quality4 = addActionCheck(menuMap, tr("Qualite 4"), tr(""), tr("Niveau de detail de la carte"));
+//            acMap_Quality5 = addActionCheck(menuMap, tr("Qualite 5"), tr(""), tr("Niveau de detail de la carte"));
+//            acMap_GroupQuality->addAction(acMap_Quality1);
+//            acMap_GroupQuality->addAction(acMap_Quality2);
+//            acMap_GroupQuality->addAction(acMap_Quality3);
+//            acMap_GroupQuality->addAction(acMap_Quality4);
+//            acMap_GroupQuality->addAction(acMap_Quality5);
+//        menuMap->addSeparator();
         acMap_Orthodromie = addActionCheck(menuMap, tr("Distance orthodromique"), tr(""), tr(""));
         acMap_Orthodromie->setChecked(Settings::getSetting("showOrthodromie", false).toBool());
 
@@ -519,15 +519,15 @@ QAction* MenuBar::addActionCheck(QWidget *menu,
 }
 
 //-------------------------------------------------
-void MenuBar::setQuality(int q) {
-    switch (q) {
-        case 0: acMap_Quality1->setChecked(true); break;
-        case 1: acMap_Quality2->setChecked(true); break;
-        case 2: acMap_Quality3->setChecked(true); break;
-        case 3: acMap_Quality4->setChecked(true); break;
-        case 4: acMap_Quality5->setChecked(true); break;
-    }
-}
+//void MenuBar::setQuality(int q) {
+//    switch (q) {
+//        case 0: acMap_Quality1->setChecked(true); break;
+//        case 1: acMap_Quality2->setChecked(true); break;
+//        case 2: acMap_Quality3->setChecked(true); break;
+//        case 3: acMap_Quality4->setChecked(true); break;
+//        case 4: acMap_Quality5->setChecked(true); break;
+//    }
+//}
 void MenuBar::addMenuRoute(ROUTE* route)
 {
     QAction *action1;

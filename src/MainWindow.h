@@ -80,7 +80,7 @@ class MainWindow: public QMainWindow
         void slotFile_Close();
         void slotFile_Quit();
         void slotFile_QuitNoSave();
-        void slotMap_Quality();
+        //void slotMap_Quality();
         void slot_gribFileReceived(QString fileName);
 
         void slotShowContextualMenu(QGraphicsSceneContextMenuEvent *);

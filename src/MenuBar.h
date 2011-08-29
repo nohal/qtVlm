@@ -60,7 +60,7 @@ class MenuBar : public QMenuBar
 public:
     MenuBar(QWidget *parent);
 
-    void setQuality(int q);
+    //void setQuality(int q);
     void setCitiesNamesLevel(int level);
     void setMenubarColorMapMode(int colorMapMode);
     void setIsobarsStep(int step);
@@ -220,12 +220,12 @@ public:
         QAction *acMap_CitiesNames3;
         QAction *acMap_CitiesNames4;
 
-    QActionGroup *acMap_GroupQuality;
-        QAction *acMap_Quality1;
-        QAction *acMap_Quality2;
-        QAction *acMap_Quality3;
-        QAction *acMap_Quality4;
-        QAction *acMap_Quality5;
+//    QActionGroup *acMap_GroupQuality;
+//        QAction *acMap_Quality1;
+//        QAction *acMap_Quality2;
+//        QAction *acMap_Quality3;
+//        QAction *acMap_Quality4;
+//        QAction *acMap_Quality5;
     QAction *acMap_Zoom_In;
     QAction *acMap_Zoom_Out;
     QAction *acMap_Zoom_Sel;

@@ -688,6 +688,7 @@ void POI::setRoute(ROUTE *route)
     {
         this->route->insertPoi(this);
         this->routeName=route->getName();
+        this->route->setHidePois(route->getHidePois());
     }
     else
     {
