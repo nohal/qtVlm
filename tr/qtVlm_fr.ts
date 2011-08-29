@@ -722,10 +722,6 @@ Etes-vous sur ?</source>
         <translation></translation>
     </message>
     <message>
-        <source>Pour utiliser cette action il faut que:&lt;br&gt;- La route parte du bateau&lt;br&gt;- La route parte de la prochaine vacation&lt;br&gt;- Le mode VBVMG-VLM soit actif</source>
-        <translation></translation>
-    </message>
-    <message>
         <source> nds</source>
         <translation></translation>
     </message>
@@ -736,6 +732,10 @@ Etes-vous sur ?</source>
     <message>
         <source> NM</source>
         <translation></translation>
+    </message>
+    <message>
+        <source>Pour utiliser cette action il faut que:&lt;br&gt;- La route parte du bateau&lt;br&gt;- Le mode VBVMG-VLM soit actif</source>
+        <translation>Pour utiliser cette action il faut que&lt;br&gt;la route parte du bateau et que le mode VBVMG-VLM soit actif</translation>
     </message>
 </context>
 <context>
@@ -1900,27 +1900,27 @@ Etes-vous sur ?</source>
     </message>
     <message>
         <source>Qualite 1</source>
-        <translation>Qualité 1</translation>
+        <translation type="obsolete">Qualité 1</translation>
     </message>
     <message>
         <source>Niveau de detail de la carte</source>
-        <translation>Niveau de détail de la carte</translation>
+        <translation type="obsolete">Niveau de détail de la carte</translation>
     </message>
     <message>
         <source>Qualite 2</source>
-        <translation>Qualité 2</translation>
+        <translation type="obsolete">Qualité 2</translation>
     </message>
     <message>
         <source>Qualite 3</source>
-        <translation>Qualité 3</translation>
+        <translation type="obsolete">Qualité 3</translation>
     </message>
     <message>
         <source>Qualite 4</source>
-        <translation>Qualité 4</translation>
+        <translation type="obsolete">Qualité 4</translation>
     </message>
     <message>
         <source>Qualite 5</source>
-        <translation>Qualité 5</translation>
+        <translation type="obsolete">Qualité 5</translation>
     </message>
     <message>
         <source>Frontieres</source>
@@ -2565,14 +2565,6 @@ Etes-vous sur ?</source>
     <message>
         <source>La simplification est impossible pour une route figee ou une route sans ETA</source>
         <translation>La simplification est impossible pour une route figée ou une route sans ETA</translation>
-    </message>
-    <message>
-        <source>Simplication de route</source>
-        <translation></translation>
-    </message>
-    <message>
-        <source>Perte maximum de temps sur l&apos;ETA finale (en minutes)</source>
-        <translation></translation>
     </message>
     <message>
         <source>Resultat de la simplification</source>
