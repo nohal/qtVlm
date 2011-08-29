@@ -838,7 +838,7 @@ void boardVLM::sendCmd(int cmdNum,double  val1,double val2, double val3)
 
     QTextStream(&data) << "parms=" << json;
     QTextStream(&data) << "&select_idu=" << currentBoat()->getId();
-    qWarning()<<"sending:"<<data;
+    //qWarning()<<"sending:"<<url<<data;
     inetPost(VLM_DO_REQUEST,url,data);
 }
 

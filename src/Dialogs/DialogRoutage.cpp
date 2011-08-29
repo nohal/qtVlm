@@ -91,6 +91,10 @@ DialogRoutage::DialogRoutage(ROUTAGE *routage,myCentralWidget *parent)
     autoZoom->setChecked(routage->getAutoZoom());
     this->poiPrefix->setText(routage->getPoiPrefix());
     this->startFromBoat->setChecked(routage->getRouteFromBoat());
+    this->maxPortant->setValue(routage->getMaxPortant());
+    this->maxPres->setValue(routage->getMaxPres());
+    this->minPortant->setValue(routage->getMinPortant());
+    this->minPres->setValue(routage->getMinPres());
     if(routage->getFinalEta().isNull())
         this->groupBox_eta->setHidden(true);
     else
@@ -184,6 +188,10 @@ DialogRoutage::DialogRoutage(ROUTAGE *routage,myCentralWidget *parent)
         this->whatIfWind->setDisabled(true);
         this->whatIfTime->setDisabled(true);
         this->multi->setDisabled(true);
+        this->maxPortant->setDisabled(true);
+        this->maxPres->setDisabled(true);;
+        this->minPortant->setDisabled(true);
+        this->minPres->setDisabled(true);;
     }
     if(routage->getIsNewPivot() && !routage->isDone())
     {
@@ -202,6 +210,10 @@ DialogRoutage::DialogRoutage(ROUTAGE *routage,myCentralWidget *parent)
         this->whatIfWind->setDisabled(false);
         this->whatIfTime->setDisabled(false);
         this->multi->setDisabled(false);
+        this->maxPres->setDisabled(false);
+        this->maxPortant->setDisabled(false);
+        this->minPres->setDisabled(false);
+        this->minPortant->setDisabled(false);
     }
 }
 DialogRoutage::~DialogRoutage()
@@ -237,6 +249,10 @@ void DialogRoutage::done(int result)
         routage->setAutoZoom(autoZoom->isChecked());
         routage->setRouteFromBoat(this->startFromBoat->isChecked());
         routage->setSpeedLossOnTack((double)this->speedLossOnTack->value()/100.00);
+        routage->setMaxPortant(this->maxPortant->value());
+        routage->setMaxPres(this->maxPres->value());
+        routage->setMinPortant(this->minPortant->value());
+        routage->setMinPres(this->minPres->value());
         if(parent->getPlayer()->getType()!=BOAT_REAL)
         {
             if(parent->getBoats())

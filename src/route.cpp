@@ -41,6 +41,7 @@ Copyright (C) 2008 - Jacques Zaninetti - http://zygrib.free.fr
 #include "Polar.h"
 #include "Util.h"
 #include "settings.h"
+#include <QCache>
 #define USE_VBVMG_VLM
 
 ROUTE::ROUTE(QString name, Projection *proj, Grib *grib, QGraphicsScene * myScene, myCentralWidget *parentWindow)
@@ -97,6 +98,8 @@ ROUTE::ROUTE(QString name, Projection *proj, Grib *grib, QGraphicsScene * myScen
     this->autoRemove=Settings::getSetting("autoRemovePoiFromRoute",0).toInt()==1;
     this->autoAt=Settings::getSetting("autoFillPoiHeading",0).toInt()==1;
     this->pilototo=false;
+    this->initialDist=0;
+    this->roadMapInterval=60;
     this->precalculateTan();
 }
 
@@ -182,6 +185,7 @@ void ROUTE::slot_recalculate(boat * boat)
     line->setLinePen(pen);
     line->setCoastDetection(false);
     line->slot_showMe();
+    roadMap.clear();
     if(my_poiList.count()==0) return;
     busy=true;
     qSort(my_poiList.begin(),my_poiList.end(),POI::myLessThan);
@@ -279,8 +283,17 @@ void ROUTE::slot_recalculate(boat * boat)
         time_t previousEta=0;
         time_t lastEta=0;
         time_t gribDate=grib->getCurrentDate();
+        if(this->my_poiList.isEmpty())
+            initialDist=0;
+        else
+        {
+            orth.setPoints(lon, lat, my_poiList.last()->getLongitude(),my_poiList.last()->getLatitude());
+            initialDist=orth.getDistance();
+        }
+        double poiNb=-1;
         while(i.hasNext())
         {
+            ++poiNb;
             int nbToReach=0;
             bool badEta=false;
             POI * poi = i.next();
@@ -461,6 +474,19 @@ void ROUTE::slot_recalculate(boat * boat)
                                     badEta=true;
                                     eta=eta-myBoat->getVacLen()*multVac;
                                     Eta=eta;
+                                    QList<double> roadPoint;
+                                    roadPoint.append((double)Eta); // 0
+                                    roadPoint.append(0); // 1
+                                    roadPoint.append(0); // 2
+                                    roadPoint.append(0); //3
+                                    roadPoint.append(-1); //4
+                                    roadPoint.append(0); //5
+                                    roadPoint.append(0); //6
+                                    roadPoint.append(0); //7
+                                    roadPoint.append(0); //8
+                                    roadPoint.append(-1); //9
+                                    roadPoint.append(0);
+                                    roadMap.append(roadPoint);
                                     break;
                                 }
                             }
@@ -484,6 +510,19 @@ void ROUTE::slot_recalculate(boat * boat)
                             vlmPoint p(lon,lat);
                             p.eta=Eta;
                             line->addVlmPoint(p);
+                            QList<double> roadPoint;
+                            roadPoint.append((double)(Eta-myBoat->getVacLen())); // 0
+                            roadPoint.append(poi->getLongitude()); // 1
+                            roadPoint.append(poi->getLatitude()); // 2
+                            roadPoint.append(cap); //3
+                            roadPoint.append(newSpeed); //4
+                            roadPoint.append(distanceParcourue); //5
+                            roadPoint.append(wind_angle); //6
+                            roadPoint.append(wind_speed); //7
+                            roadPoint.append(A180(cap-wind_angle)); //8
+                            roadPoint.append(poiNb); //9
+                            roadPoint.append(remaining_distance); //10
+                            roadMap.append(roadPoint);
                             lastEta=Eta;
                         }
                     }
@@ -499,6 +538,19 @@ void ROUTE::slot_recalculate(boat * boat)
                        qRound(previous_remaining_distance*100)<qRound(distanceParcourue*100)*/))
                     {
                         //Eta=eta-myBoat->getVacLen()*multVac;
+                        QList<double> roadPoint;
+                        roadPoint.append((double)Eta); // 0
+                        roadPoint.append(0); // 1
+                        roadPoint.append(0); // 2
+                        roadPoint.append(0); //3
+                        roadPoint.append(-1); //4
+                        roadPoint.append(0); //5
+                        roadPoint.append(0); //6
+                        roadPoint.append(0); //7
+                        roadPoint.append(0); //8
+                        roadPoint.append(-1); //9
+                        roadPoint.append(0); //10
+                        roadMap.append(roadPoint);
                         break;
                     }
                 } while (has_eta && !imported);
@@ -954,6 +1006,8 @@ void ROUTE::do_vbvmg_buffer(double dist,double wanted_heading,
     b_t1 = b_t2 = b_l1 = b_l2 = b_alpha = b_beta = beta = 0.0;
 
     maxangle = wanted_heading;
+    QCache<int,double> fastSpeed;
+    fastSpeed.setMaxCost(180);
 
 
     /* first compute the time for the "ortho" heading */
@@ -1043,7 +1097,17 @@ void ROUTE::do_vbvmg_buffer(double dist,double wanted_heading,
                 continue;
             }
             d2 = dist - d1;
+#if 1
+            if(fastSpeed.contains(j))
+                speed_t2=*fastSpeed.object(j);
+            else
+            {
+                speed_t2=myBoat->getPolarData()->getSpeed(w_speed,A180(radToDeg(angle-beta)));
+                fastSpeed.insert(j,new double(speed_t2));
+            }
+#else
             speed_t2=myBoat->getPolarData()->getSpeed(w_speed,A180(radToDeg(angle-beta)));
+#endif
             //speed_t2 = find_speed(aboat, w_speed, angle-beta);
             if (speed_t2 <= 0.0)
             {
@@ -1094,7 +1158,17 @@ void ROUTE::do_vbvmg_buffer(double dist,double wanted_heading,
                     continue;
                 }
                 d2 = dist - d1;
+#if 1
+            if(fastSpeed.contains(j))
+                speed_t2=*fastSpeed.object(j);
+            else
+            {
                 speed_t2=myBoat->getPolarData()->getSpeed(w_speed,A180(radToDeg(angle-beta)));
+                fastSpeed.insert(j,new double(speed_t2));
+            }
+#else
+            speed_t2=myBoat->getPolarData()->getSpeed(w_speed,A180(radToDeg(angle-beta)));
+#endif
                 //speed_t2 = find_speed(aboat, w_speed, angle-beta);
                 if (speed_t2 <= 0.0)
                 {
@@ -1177,6 +1251,7 @@ void ROUTE::do_vbvmg_buffer(double dist,double wanted_heading,
     {
         *wangle2 += TWO_PI;
     }
+    fastSpeed.clear();
     *heading1=radToDeg(*heading1);
     *heading2=radToDeg(*heading2);
     *wangle1=radToDeg(*wangle1);

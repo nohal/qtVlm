@@ -522,6 +522,10 @@ ROUTAGE::ROUTAGE(QString name, Projection *proj, Grib *grib, QGraphicsScene * my
     this->poiPrefix="R";
     this->speedLossOnTack=1;
     highlightedIso=0;
+    this->maxPres=70;
+    this->maxPortant=70;
+    this->minPres=0;
+    this->minPortant=0;
 }
 ROUTAGE::~ROUTAGE()
 {
@@ -903,6 +907,19 @@ void ROUTAGE::calculate()
 #endif
                 vlmPoint newPoint(0,0);
                 cap=caps.at(ccc);
+                double twa_x=qAbs(cap-wind_angle);
+                if(qAbs(twa_x)>180)
+                {
+                    if(twa_x<0)
+                        twa_x=360+twa_x;
+                    else
+                        twa_x=twa_x-360;
+                }
+                twa_x=qAbs(twa_x);
+                if(twa_x<=90 && windSpeed>this->maxPres) continue;
+                if(twa_x<=90 && windSpeed<this->minPres) continue;
+                if(twa_x>=90 && windSpeed>this->maxPortant) continue;
+                if(twa_x>=90 && windSpeed<this->minPortant) continue;
                 tfp.start();
                 if(!findPoint(list->at(n).lon, list->at(n).lat, windAngle, windSpeed, cap, &newPoint))
                 {
@@ -2711,6 +2728,10 @@ void ROUTAGE::setFromRoutage(ROUTAGE *fromRoutage, bool editOptions)
     this->routeFromBoat=false;
     this->toPOI=fromRoutage->getToPOI();
     this->autoZoom=fromRoutage->getAutoZoom();
+    this->minPortant=fromRoutage->getMinPortant();
+    this->minPres=fromRoutage->getMinPres();
+    this->maxPres=fromRoutage->getMaxPres();
+    this->maxPortant=fromRoutage->getMaxPortant();
     isPivot=true;
     ROUTAGE *parentRoutage=this;
     result->deleteAll();

@@ -119,6 +119,10 @@ class ROUTE : public QObject
         bool getAutoAt(){return this->autoAt;}
         bool getNewVbvmgVlm(){return newVbvmgVlm;}
         void setNewVbvmgVlm(bool b){newVbvmgVlm=b;}
+        QList<QList<double> > * getRoadMap(){return &roadMap;}
+        double getInitialDist(){return this->initialDist;}
+        int getRoadMapInterval(){return roadMapInterval;}
+        void setRoadMapInterval(int i){roadMapInterval=i;}
     public slots:
         void slot_recalculate(boat * boat=NULL);
         void slot_edit();
@@ -202,5 +206,8 @@ class ROUTE : public QObject
         QList<double> * hypotNeg;
         void precalculateTan();
         bool newVbvmgVlm;
+        QList<QList<double> > roadMap;
+        double initialDist;
+        int roadMapInterval;
 };
 #endif // ROUTE_H

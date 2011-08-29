@@ -154,6 +154,14 @@ class ROUTAGE : public QObject
         double getSpeedLossOnTack(){return speedLossOnTack;}
         void setSpeedLossOnTack(double d){this->speedLossOnTack=d;}
         GshhsReader * getMap(){return this->map;}
+        double getMaxPres(){return maxPres;}
+        double getMaxPortant(){return maxPortant;}
+        double getMinPres(){return minPres;}
+        double getMinPortant(){return minPortant;}
+        void setMaxPres(double d){this->maxPres=d;}
+        void setMaxPortant(double d){this->maxPortant=d;}
+        void setMinPres(double d){this->minPres=d;}
+        void setMinPortant(double d){this->minPortant=d;}
     public slots:
         void slot_edit();
         void slot_abort(){this->aborted=true;}
@@ -271,5 +279,7 @@ class ROUTAGE : public QObject
         bool autoZoom;
         double speedLossOnTack;
         int highlightedIso;
+        double maxPres,maxPortant;
+        double minPres,minPortant;
     };
 #endif // ROUTAGE_H

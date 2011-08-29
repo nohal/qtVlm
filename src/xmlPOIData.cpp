@@ -55,6 +55,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #define ROUTE_SPEED_TACK  "speedTack"
 #define ROUTE_REMOVE      "autoRemovePoi"
 #define ROUTE_AUTO_AT      "autoAt"
+#define ROUTE_ROADMAPINT   "roadMapInterval"
 /* POI */
 #define POI_GROUP_NAME    "POI"
 #define POI_NAME          "name"
@@ -156,6 +157,11 @@ void xml_POIData::slot_writeData(QList<ROUTE*> & route_list,QList<POI*> & poi_li
           tag = doc.createElement(ROUTE_WIDTH);
           group.appendChild(tag);
           t = doc.createTextNode(QString().setNum(route->getWidth()));
+          tag.appendChild(t);
+
+          tag = doc.createElement(ROUTE_ROADMAPINT);
+          group.appendChild(tag);
+          t = doc.createTextNode(QString().setNum(route->getRoadMapInterval()));
           tag.appendChild(t);
 
           tag = doc.createElement(ROUTE_COLOR_R);
@@ -434,7 +440,6 @@ void xml_POIData::slot_readData(QString fname)
                   }
                   if(subNode.toElement().tagName() == ROUTE_BOAT)
                   {
-//a modif pour les real boat ?
                        dataNode = subNode.firstChild();
                        if(dataNode.nodeType() == QDomNode::TextNode)
                        {
@@ -454,6 +459,14 @@ void xml_POIData::slot_readData(QString fname)
                                            break;
                                        }
                                    }
+                               }
+                           }
+                           if(invalidRoute)
+                           {
+                               if(parent->getSelectedBoat()!=NULL && parent->getSelectedBoat()->getType()==BOAT_REAL)
+                               {
+                                   route->setBoat(parent->getSelectedBoat());
+                                   invalidRoute=false;
                                }
                            }
                        }
@@ -497,6 +510,12 @@ void xml_POIData::slot_readData(QString fname)
                        dataNode = subNode.firstChild();
                        if(dataNode.nodeType() == QDomNode::TextNode)
                            route->setWidth(dataNode.toText().data().toFloat());
+                  }
+                  if(subNode.toElement().tagName() == ROUTE_ROADMAPINT)
+                  {
+                       dataNode = subNode.firstChild();
+                       if(dataNode.nodeType() == QDomNode::TextNode)
+                           route->setRoadMapInterval(dataNode.toText().data().toFloat());
                   }
                   if(subNode.toElement().tagName() == ROUTE_COLOR_R)
                   {

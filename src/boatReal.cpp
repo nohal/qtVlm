@@ -82,6 +82,7 @@ boatReal::boatReal(QString pseudo, bool activated, Projection * proj,MainWindow 
     forceEstime=false;
 
     myCreatePopUpMenu();
+    this->lastUpdateTime=QDateTime().currentDateTimeUtc().toTime_t();
 }
 
 boatReal::~boatReal()
