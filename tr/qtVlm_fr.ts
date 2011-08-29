@@ -725,6 +725,18 @@ Etes-vous sur ?</source>
         <source>Pour utiliser cette action il faut que:&lt;br&gt;- La route parte du bateau&lt;br&gt;- La route parte de la prochaine vacation&lt;br&gt;- Le mode VBVMG-VLM soit actif</source>
         <translation></translation>
     </message>
+    <message>
+        <source> nds</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>deg</source>
+        <translation>°</translation>
+    </message>
+    <message>
+        <source> NM</source>
+        <translation></translation>
+    </message>
 </context>
 <context>
     <name>DialogTwaLine</name>
@@ -924,20 +936,19 @@ Etes-vous sur ?</source>
     <name>DialogVlmLog</name>
     <message>
         <source>Dialog</source>
-        <translation>Dialogue</translation>
+        <translation>Grib SailDocs</translation>
     </message>
     <message>
         <source>Save</source>
-        <translation>Sauvegarde</translation>
-    </message>
-    <message>
-        <source>Sauvegarde Logs</source>
-        <translatorcomment>Sauvegarde Historique</translatorcomment>
-        <translation></translation>
+        <translation>Sauver</translation>
     </message>
     <message>
         <source>Historique VLM</source>
-        <translation>Historique VLM</translation>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Sauvegarde Logs</source>
+        <translation></translation>
     </message>
 </context>
 <context>
@@ -2001,7 +2012,7 @@ Etes-vous sur ?</source>
     </message>
     <message>
         <source>Historique VLM</source>
-        <translation>Historique VLM</translation>
+        <translation></translation>
     </message>
 </context>
 <context>
@@ -2185,15 +2196,39 @@ Etes-vous sur ?</source>
     <name>POI_delete_ui</name>
     <message>
         <source>Selection de type de marque</source>
-        <translation type="obsolete">Sélection de type de marque</translation>
+        <translation>Sélection de type de marque</translation>
     </message>
     <message>
         <source>Cancel</source>
-        <translation type="obsolete">Annuler</translation>
+        <translation>Annuler</translation>
     </message>
     <message>
         <source>Type de marque a supprimer</source>
-        <translation type="obsolete">Type de marque à supprimer</translation>
+        <translation>Type de marque à supprimer</translation>
+    </message>
+    <message>
+        <source>&lt;a href=&quot;titi&quot;&gt;Tous&lt;/a&gt;</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>&lt;a href=&quot;toto&quot;&gt;Aucun&lt;/a&gt;</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>POI</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Marque</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Balise</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>OK</source>
+        <translation></translation>
     </message>
 </context>
 <context>
@@ -2665,20 +2700,60 @@ VMG %.1fnds</source>
         <translation></translation>
     </message>
     <message>
+        <source>Date heure</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>TWS</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>TWA</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>TWD</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Vitesse</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Cap</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>POI cible</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Distance</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Lon POI cible</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Lat POI cible</source>
+        <translation></translation>
+    </message>
+    <message>
         <source>Un nom de fichier valide portant l&apos;extension .txt est requis</source>
-        <translation>Un nom de fichier valide portant l&apos;extension .txt est requis</translation>
+        <translation></translation>
     </message>
     <message>
         <source>Sauvegarde Logs VLM</source>
-        <translation>Sauvegarde Logs VLM</translation>
+        <translation></translation>
     </message>
     <message>
         <source>Voir Vlm Logs</source>
-        <translation>Voir l&apos;historique VLM</translation>
+        <translation></translation>
     </message>
     <message>
         <source>Pas de bateau VLM actif.</source>
-        <translation>Pas de bateau VLM actif.</translation>
+        <translation></translation>
     </message>
 </context>
 <context>
@@ -2912,7 +2987,15 @@ deg</extracomment>
     </message>
     <message>
         <source> nds</source>
-        <extracomment>nds</extracomment>
+        <extracomment>nds
+----------
+nds
+----------
+nds
+----------
+nds
+----------
+nds</extracomment>
         <translation></translation>
     </message>
     <message>
@@ -2948,6 +3031,26 @@ avec ce préfixe</translation>
     <message>
         <source>Empannages et
 Virements de bord</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Vent minimum/maximum</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Pres</source>
+        <translation>Près</translation>
+    </message>
+    <message>
+        <source>Portant</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Min</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Max</source>
         <translation></translation>
     </message>
 </context>
@@ -3160,6 +3263,38 @@ Voulez-vous egalement supprimer tous les POIs lui appartenant?</source>
     </message>
     <message>
         <source>Appliquer</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Tableau de marche</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source> min</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Interval</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Statistiques</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Distance orthodromique</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Distance parcourue</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Vitesse moyenne</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>TWS moyen</source>
         <translation></translation>
     </message>
 </context>
