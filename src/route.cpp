@@ -474,19 +474,22 @@ void ROUTE::slot_recalculate(boat * boat)
                                     badEta=true;
                                     eta=eta-myBoat->getVacLen()*multVac;
                                     Eta=eta;
-                                    QList<double> roadPoint;
-                                    roadPoint.append((double)Eta); // 0
-                                    roadPoint.append(0); // 1
-                                    roadPoint.append(0); // 2
-                                    roadPoint.append(0); //3
-                                    roadPoint.append(-1); //4
-                                    roadPoint.append(0); //5
-                                    roadPoint.append(0); //6
-                                    roadPoint.append(0); //7
-                                    roadPoint.append(0); //8
-                                    roadPoint.append(-1); //9
-                                    roadPoint.append(0);
-                                    roadMap.append(roadPoint);
+                                    if(poi==my_poiList.last())
+                                    {
+                                        QList<double> roadPoint;
+                                        roadPoint.append((double)Eta); // 0
+                                        roadPoint.append(0); // 1
+                                        roadPoint.append(0); // 2
+                                        roadPoint.append(0); //3
+                                        roadPoint.append(-1); //4
+                                        roadPoint.append(0); //5
+                                        roadPoint.append(0); //6
+                                        roadPoint.append(0); //7
+                                        roadPoint.append(0); //8
+                                        roadPoint.append(-1); //9
+                                        roadPoint.append(0);
+                                        roadMap.append(roadPoint);
+                                    }
                                     break;
                                 }
                             }
@@ -537,20 +540,22 @@ void ROUTE::slot_recalculate(boat * boat)
                     if(!imported &&(qRound(remaining_distance*100)<qRound(distanceParcourue*100) /* ||
                        qRound(previous_remaining_distance*100)<qRound(distanceParcourue*100)*/))
                     {
-                        //Eta=eta-myBoat->getVacLen()*multVac;
-                        QList<double> roadPoint;
-                        roadPoint.append((double)Eta); // 0
-                        roadPoint.append(0); // 1
-                        roadPoint.append(0); // 2
-                        roadPoint.append(0); //3
-                        roadPoint.append(-1); //4
-                        roadPoint.append(0); //5
-                        roadPoint.append(0); //6
-                        roadPoint.append(0); //7
-                        roadPoint.append(0); //8
-                        roadPoint.append(-1); //9
-                        roadPoint.append(0); //10
-                        roadMap.append(roadPoint);
+                        if(poi==my_poiList.last())
+                        {
+                            QList<double> roadPoint;
+                            roadPoint.append((double)Eta); // 0
+                            roadPoint.append(0); // 1
+                            roadPoint.append(0); // 2
+                            roadPoint.append(0); //3
+                            roadPoint.append(-1); //4
+                            roadPoint.append(0); //5
+                            roadPoint.append(0); //6
+                            roadPoint.append(0); //7
+                            roadPoint.append(0); //8
+                            roadPoint.append(-1); //9
+                            roadPoint.append(0); //10
+                            roadMap.append(roadPoint);
+                        }
                         break;
                     }
                 } while (has_eta && !imported);

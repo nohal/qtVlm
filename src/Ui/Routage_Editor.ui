@@ -67,7 +67,7 @@
        <rect>
         <x>5</x>
         <y>100</y>
-        <width>181</width>
+        <width>211</width>
         <height>121</height>
        </rect>
       </property>
@@ -79,7 +79,7 @@
         <rect>
          <x>7</x>
          <y>20</y>
-         <width>165</width>
+         <width>191</width>
          <height>91</height>
         </rect>
        </property>
@@ -103,9 +103,9 @@
      <widget class="QGroupBox" name="groupBox_4">
       <property name="geometry">
        <rect>
-        <x>190</x>
+        <x>220</x>
         <y>100</y>
-        <width>301</width>
+        <width>271</width>
         <height>61</height>
        </rect>
       </property>
@@ -117,7 +117,7 @@
         <rect>
          <x>10</x>
          <y>20</y>
-         <width>287</width>
+         <width>251</width>
          <height>31</height>
         </rect>
        </property>
@@ -457,9 +457,9 @@ Virements de bord</string>
       </property>
       <property name="geometry">
        <rect>
-        <x>190</x>
+        <x>220</x>
         <y>160</y>
-        <width>301</width>
+        <width>271</width>
         <height>61</height>
        </rect>
       </property>
@@ -471,7 +471,7 @@ Virements de bord</string>
         <rect>
          <x>10</x>
          <y>20</y>
-         <width>287</width>
+         <width>251</width>
          <height>31</height>
         </rect>
        </property>
