@@ -741,7 +741,15 @@ Etes-vous sur ?</source>
 <context>
     <name>DialogTwaLine</name>
     <message>
-        <source> ETA: </source>
+        <source>Twa</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Cap</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>ETA: </source>
         <translation></translation>
     </message>
 </context>
@@ -1816,7 +1824,7 @@ Etes-vous sur ?</source>
     </message>
     <message>
         <source>Tracer une estime TWA</source>
-        <translation></translation>
+        <translation>Tracer une estime grib</translation>
     </message>
     <message>
         <source>Centrer le compass sur l&apos;interpolation de la route</source>
@@ -5736,6 +5744,18 @@ Voulez-vous egalement supprimer tous les POIs lui appartenant?</source>
     </message>
     <message>
         <source>! Sync &gt; 1 Vac !</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Mode</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>TWA</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Cap</source>
         <translation></translation>
     </message>
 </context>
