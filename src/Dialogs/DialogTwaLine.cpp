@@ -42,8 +42,67 @@ DialogTwaLine::DialogTwaLine(QPointF start, myCentralWidget *parent, MainWindow 
     }
     connect(parent,SIGNAL(twaDelPoi(POI *)),this,SLOT(slot_delPOI_list(POI *)));
     this->SyncWarn->hide();
+    connect(TWA,SIGNAL(toggled(bool)),this,SLOT(slotTwa(bool)));
     traceIt();
 }
+void DialogTwaLine::slotTwa(bool b)
+{
+    this->blockSignals(true);
+    if(b)
+    {
+        ltwa1->setText(tr("Twa"));
+        ltwa2->setText(tr("Twa"));
+        ltwa3->setText(tr("Twa"));
+        ltwa4->setText(tr("Twa"));
+        ltwa5->setText(tr("Twa"));
+        this->doubleSpinBox->setMaximum(180);
+        this->doubleSpinBox->setMinimum(-179.99);
+        this->doubleSpinBox_2->setMaximum(180);
+        this->doubleSpinBox_2->setMinimum(-179.99);
+        this->doubleSpinBox_3->setMaximum(180);
+        this->doubleSpinBox_3->setMinimum(-179.99);
+        this->doubleSpinBox_4->setMaximum(180);
+        this->doubleSpinBox_4->setMinimum(-179.99);
+        this->doubleSpinBox_5->setMaximum(180);
+        this->doubleSpinBox_5->setMinimum(-179.99);
+        this->doubleSpinBox->setValue(90);
+        this->doubleSpinBox_2->setValue(90);
+        this->doubleSpinBox_3->setValue(90);
+        this->doubleSpinBox_4->setValue(90);
+        this->doubleSpinBox_5->setValue(90);
+    }
+    else
+    {
+        ltwa1->setText(tr("Cap"));
+        ltwa2->setText(tr("Cap"));
+        ltwa3->setText(tr("Cap"));
+        ltwa4->setText(tr("Cap"));
+        ltwa5->setText(tr("Cap"));
+        this->doubleSpinBox->setMaximum(360);
+        this->doubleSpinBox->setMinimum(0);
+        this->doubleSpinBox_2->setMaximum(360);
+        this->doubleSpinBox_2->setMinimum(0);
+        this->doubleSpinBox_3->setMaximum(360);
+        this->doubleSpinBox_3->setMinimum(0);
+        this->doubleSpinBox_4->setMaximum(360);
+        this->doubleSpinBox_4->setMinimum(0);
+        this->doubleSpinBox_5->setMaximum(360);
+        this->doubleSpinBox_5->setMinimum(0);
+        this->doubleSpinBox->setValue(0);
+        this->doubleSpinBox_2->setValue(0);
+        this->doubleSpinBox_3->setValue(0);
+        this->doubleSpinBox_4->setValue(0);
+        this->doubleSpinBox_5->setValue(0);
+    }
+    this->spinBox->setValue(0);
+    this->spinBox_2->setValue(0);
+    this->spinBox_3->setValue(0);
+    this->spinBox_4->setValue(0);
+    this->spinBox_5->setValue(0);
+    this->blockSignals(false);
+    traceIt();
+}
+
 DialogTwaLine::~DialogTwaLine()
 {
 }
@@ -165,7 +224,10 @@ void DialogTwaLine::traceIt()
                 eta,&wind_speed,&wind_angle,INTERPOLATION_DEFAULT) || eta>maxDate)
                 break;
             wind_angle=radToDeg(wind_angle);
-            cap=A360(wind_angle+twa[page]);
+            if(TWA->isChecked())
+                cap=A360(wind_angle+twa[page]);
+            else
+                cap=twa[page];
             float newSpeed=myBoat->getPolarData()->getSpeed(wind_speed,twa[page]);
             float distanceParcourue=newSpeed*vacLen/3600.00;
             Util::getCoordFromDistanceAngle(current.lat, current.lon, distanceParcourue, cap,&lat,&lon);
@@ -191,9 +253,9 @@ void DialogTwaLine::traceIt()
         QDateTime tm;
         tm.setTimeSpec(Qt::UTC);
         tm.setTime_t(eta);
-        QString name;
-        name.sprintf("Twa %.1f",twa[page]);
-        POI * arrival=parent->slot_addPOI(name+tr(" ETA: ")+tm.toString("dd MMM-hh:mm"),0,lat,lon,-1,0,false,myBoat);
+        //QString name;
+        //name.sprintf("Twa %.1f",twa[page]);
+        POI * arrival=parent->slot_addPOI(tr("ETA: ")+tm.toString("dd MMM-hh:mm"),0,lat,lon,-1,0,false,myBoat);
         arrival->setPartOfTwa(true);
         list.append(arrival);
     }

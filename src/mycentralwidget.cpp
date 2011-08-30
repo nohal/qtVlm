@@ -2042,6 +2042,7 @@ void myCentralWidget::treatRoute(ROUTE* route)
             QMessageBox::critical(0,QString(QObject::tr("Simplification de route")),QString(QObject::tr("La simplification est impossible si le mode de calcul VBVMG est celui de VLM")));
         else
         {
+            route->setSimplify(true);
             int firstPOI=1;
             if(route->getStartFromBoat())
                 firstPOI=0;
@@ -2224,6 +2225,7 @@ void myCentralWidget::treatRoute(ROUTE* route)
 
             p.close();
             route->setDetectCoasts(detectCoast);
+            route->setSimplify(false);
             route->slot_recalculate();
             int diff=(ref_eta-route->getEta())/60;
             QString result;

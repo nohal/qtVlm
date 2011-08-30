@@ -29,6 +29,7 @@ private:
     QColor color;
 public slots:
     void slot_delPOI_list(POI *);
+    void slotTwa(bool b);
 private slots:
     void on_spinBox_5_valueChanged(int );
     void on_doubleSpinBox_5_valueChanged(double );

@@ -474,7 +474,7 @@ void ROUTE::slot_recalculate(boat * boat)
                                     badEta=true;
                                     eta=eta-myBoat->getVacLen()*multVac;
                                     Eta=eta;
-                                    if(poi==my_poiList.last())
+                                    if(!this->getSimplify() && poi==my_poiList.last())
                                     {
                                         QList<double> roadPoint;
                                         roadPoint.append((double)Eta); // 0
@@ -513,19 +513,22 @@ void ROUTE::slot_recalculate(boat * boat)
                             vlmPoint p(lon,lat);
                             p.eta=Eta;
                             line->addVlmPoint(p);
-                            QList<double> roadPoint;
-                            roadPoint.append((double)(Eta-myBoat->getVacLen())); // 0
-                            roadPoint.append(poi->getLongitude()); // 1
-                            roadPoint.append(poi->getLatitude()); // 2
-                            roadPoint.append(cap); //3
-                            roadPoint.append(newSpeed); //4
-                            roadPoint.append(distanceParcourue); //5
-                            roadPoint.append(wind_angle); //6
-                            roadPoint.append(wind_speed); //7
-                            roadPoint.append(A180(cap-wind_angle)); //8
-                            roadPoint.append(poiNb); //9
-                            roadPoint.append(remaining_distance); //10
-                            roadMap.append(roadPoint);
+                            if(!this->getSimplify())
+                            {
+                                QList<double> roadPoint;
+                                roadPoint.append((double)(Eta-myBoat->getVacLen())); // 0
+                                roadPoint.append(poi->getLongitude()); // 1
+                                roadPoint.append(poi->getLatitude()); // 2
+                                roadPoint.append(cap); //3
+                                roadPoint.append(newSpeed); //4
+                                roadPoint.append(distanceParcourue); //5
+                                roadPoint.append(wind_angle); //6
+                                roadPoint.append(wind_speed); //7
+                                roadPoint.append(A180(cap-wind_angle)); //8
+                                roadPoint.append(poiNb); //9
+                                roadPoint.append(remaining_distance); //10
+                                roadMap.append(roadPoint);
+                            }
                             lastEta=Eta;
                         }
                     }
@@ -540,7 +543,7 @@ void ROUTE::slot_recalculate(boat * boat)
                     if(!imported &&(qRound(remaining_distance*100)<qRound(distanceParcourue*100) /* ||
                        qRound(previous_remaining_distance*100)<qRound(distanceParcourue*100)*/))
                     {
-                        if(poi==my_poiList.last())
+                        if(!this->getSimplify() && poi==my_poiList.last())
                         {
                             QList<double> roadPoint;
                             roadPoint.append((double)Eta); // 0

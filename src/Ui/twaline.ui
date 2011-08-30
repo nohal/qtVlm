@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>160</width>
-    <height>220</height>
+    <width>180</width>
+    <height>280</height>
    </rect>
   </property>
   <property name="minimumSize">
@@ -18,8 +18,8 @@
   </property>
   <property name="maximumSize">
    <size>
-    <width>160</width>
-    <height>220</height>
+    <width>180</width>
+    <height>280</height>
    </size>
   </property>
   <property name="baseSize">
@@ -36,8 +36,8 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>161</width>
-     <height>101</height>
+     <width>181</width>
+     <height>111</height>
     </rect>
    </property>
    <property name="currentIndex">
@@ -52,15 +52,15 @@
       <rect>
        <x>10</x>
        <y>50</y>
-       <width>46</width>
-       <height>14</height>
+       <width>61</width>
+       <height>16</height>
       </rect>
      </property>
      <property name="text">
       <string>Nb Vacs</string>
      </property>
     </widget>
-    <widget class="QLabel" name="label">
+    <widget class="QLabel" name="ltwa1">
      <property name="geometry">
       <rect>
        <x>10</x>
@@ -76,8 +76,8 @@
     <widget class="QSpinBox" name="spinBox">
      <property name="geometry">
       <rect>
-       <x>60</x>
-       <y>48</y>
+       <x>70</x>
+       <y>50</y>
        <width>91</width>
        <height>22</height>
       </rect>
@@ -101,8 +101,8 @@
     <widget class="QDoubleSpinBox" name="doubleSpinBox">
      <property name="geometry">
       <rect>
-       <x>60</x>
-       <y>18</y>
+       <x>70</x>
+       <y>20</y>
        <width>91</width>
        <height>22</height>
       </rect>
@@ -114,10 +114,10 @@
       <string> deg</string>
      </property>
      <property name="decimals">
-      <number>1</number>
+      <number>2</number>
      </property>
      <property name="minimum">
-      <double>-179.900000000000006</double>
+      <double>-179.990000000000009</double>
      </property>
      <property name="maximum">
       <double>180.000000000000000</double>
@@ -165,15 +165,15 @@
       <rect>
        <x>10</x>
        <y>50</y>
-       <width>46</width>
-       <height>14</height>
+       <width>61</width>
+       <height>16</height>
       </rect>
      </property>
      <property name="text">
       <string>Nb Vacs</string>
      </property>
     </widget>
-    <widget class="QLabel" name="label_6">
+    <widget class="QLabel" name="ltwa2">
      <property name="geometry">
       <rect>
        <x>10</x>
@@ -189,8 +189,8 @@
     <widget class="QSpinBox" name="spinBox_2">
      <property name="geometry">
       <rect>
-       <x>60</x>
-       <y>48</y>
+       <x>70</x>
+       <y>50</y>
        <width>91</width>
        <height>22</height>
       </rect>
@@ -214,8 +214,8 @@
     <widget class="QDoubleSpinBox" name="doubleSpinBox_2">
      <property name="geometry">
       <rect>
-       <x>60</x>
-       <y>18</y>
+       <x>70</x>
+       <y>20</y>
        <width>91</width>
        <height>22</height>
       </rect>
@@ -227,10 +227,10 @@
       <string> deg</string>
      </property>
      <property name="decimals">
-      <number>1</number>
+      <number>2</number>
      </property>
      <property name="minimum">
-      <double>-179.900000000000006</double>
+      <double>-179.990000000000009</double>
      </property>
      <property name="maximum">
       <double>180.000000000000000</double>
@@ -265,15 +265,15 @@
       <rect>
        <x>10</x>
        <y>50</y>
-       <width>46</width>
-       <height>14</height>
+       <width>61</width>
+       <height>16</height>
       </rect>
      </property>
      <property name="text">
       <string>Nb Vacs</string>
      </property>
     </widget>
-    <widget class="QLabel" name="label_9">
+    <widget class="QLabel" name="ltwa3">
      <property name="geometry">
       <rect>
        <x>10</x>
@@ -289,8 +289,8 @@
     <widget class="QSpinBox" name="spinBox_3">
      <property name="geometry">
       <rect>
-       <x>60</x>
-       <y>48</y>
+       <x>70</x>
+       <y>50</y>
        <width>91</width>
        <height>22</height>
       </rect>
@@ -314,8 +314,8 @@
     <widget class="QDoubleSpinBox" name="doubleSpinBox_3">
      <property name="geometry">
       <rect>
-       <x>60</x>
-       <y>18</y>
+       <x>70</x>
+       <y>20</y>
        <width>91</width>
        <height>22</height>
       </rect>
@@ -327,10 +327,10 @@
       <string> deg</string>
      </property>
      <property name="decimals">
-      <number>1</number>
+      <number>2</number>
      </property>
      <property name="minimum">
-      <double>-179.900000000000006</double>
+      <double>-179.990000000000009</double>
      </property>
      <property name="maximum">
       <double>180.000000000000000</double>
@@ -365,15 +365,15 @@
       <rect>
        <x>10</x>
        <y>50</y>
-       <width>46</width>
-       <height>14</height>
+       <width>61</width>
+       <height>16</height>
       </rect>
      </property>
      <property name="text">
       <string>Nb Vacs</string>
      </property>
     </widget>
-    <widget class="QLabel" name="label_12">
+    <widget class="QLabel" name="ltwa4">
      <property name="geometry">
       <rect>
        <x>10</x>
@@ -389,8 +389,8 @@
     <widget class="QSpinBox" name="spinBox_4">
      <property name="geometry">
       <rect>
-       <x>60</x>
-       <y>48</y>
+       <x>70</x>
+       <y>50</y>
        <width>91</width>
        <height>22</height>
       </rect>
@@ -414,8 +414,8 @@
     <widget class="QDoubleSpinBox" name="doubleSpinBox_4">
      <property name="geometry">
       <rect>
-       <x>60</x>
-       <y>18</y>
+       <x>70</x>
+       <y>20</y>
        <width>91</width>
        <height>22</height>
       </rect>
@@ -427,10 +427,10 @@
       <string> deg</string>
      </property>
      <property name="decimals">
-      <number>1</number>
+      <number>2</number>
      </property>
      <property name="minimum">
-      <double>-179.900000000000006</double>
+      <double>-179.990000000000009</double>
      </property>
      <property name="maximum">
       <double>180.000000000000000</double>
@@ -465,15 +465,15 @@
       <rect>
        <x>10</x>
        <y>50</y>
-       <width>46</width>
-       <height>14</height>
+       <width>61</width>
+       <height>16</height>
       </rect>
      </property>
      <property name="text">
       <string>Nb Vacs</string>
      </property>
     </widget>
-    <widget class="QLabel" name="label_15">
+    <widget class="QLabel" name="ltwa5">
      <property name="geometry">
       <rect>
        <x>10</x>
@@ -489,8 +489,8 @@
     <widget class="QSpinBox" name="spinBox_5">
      <property name="geometry">
       <rect>
-       <x>60</x>
-       <y>48</y>
+       <x>70</x>
+       <y>50</y>
        <width>91</width>
        <height>22</height>
       </rect>
@@ -514,8 +514,8 @@
     <widget class="QDoubleSpinBox" name="doubleSpinBox_5">
      <property name="geometry">
       <rect>
-       <x>60</x>
-       <y>18</y>
+       <x>70</x>
+       <y>20</y>
        <width>91</width>
        <height>22</height>
       </rect>
@@ -527,10 +527,10 @@
       <string> deg</string>
      </property>
      <property name="decimals">
-      <number>1</number>
+      <number>2</number>
      </property>
      <property name="minimum">
-      <double>-179.900000000000006</double>
+      <double>-179.990000000000009</double>
      </property>
      <property name="maximum">
       <double>180.000000000000000</double>
@@ -548,8 +548,8 @@
    <property name="geometry">
     <rect>
      <x>2</x>
-     <y>100</y>
-     <width>151</width>
+     <y>110</y>
+     <width>171</width>
      <height>51</height>
     </rect>
    </property>
@@ -574,7 +574,7 @@
      <rect>
       <x>80</x>
       <y>20</y>
-      <width>71</width>
+      <width>81</width>
       <height>18</height>
      </rect>
     </property>
@@ -587,8 +587,8 @@
    <property name="geometry">
     <rect>
      <x>0</x>
-     <y>150</y>
-     <width>151</width>
+     <y>160</y>
+     <width>171</width>
      <height>61</height>
     </rect>
    </property>
@@ -619,7 +619,7 @@
      <rect>
       <x>80</x>
       <y>20</y>
-      <width>95</width>
+      <width>71</width>
       <height>20</height>
      </rect>
     </property>
@@ -649,6 +649,52 @@
      <string>! Sync &gt; 1 Vac !</string>
     </property>
    </widget>
+  </widget>
+  <widget class="QGroupBox" name="groupBox_3">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>220</y>
+     <width>171</width>
+     <height>51</height>
+    </rect>
+   </property>
+   <property name="title">
+    <string>Mode</string>
+   </property>
+   <widget class="QRadioButton" name="TWA">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>20</y>
+      <width>61</width>
+      <height>20</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>TWA</string>
+    </property>
+    <property name="checked">
+     <bool>true</bool>
+    </property>
+   </widget>
+   <widget class="QRadioButton" name="CAP">
+    <property name="geometry">
+     <rect>
+      <x>80</x>
+      <y>20</y>
+      <width>81</width>
+      <height>20</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Cap</string>
+    </property>
+   </widget>
+   <zorder>TWA</zorder>
+   <zorder>CAP</zorder>
+   <zorder>startVac</zorder>
+   <zorder>checkBox_2</zorder>
   </widget>
  </widget>
  <tabstops>
