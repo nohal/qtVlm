@@ -65,6 +65,10 @@ class DialogRoute : public QDialog, public Ui::ROUTE_Editor_ui
         InputLineParams *inputTraceColor;
         QStandardItemModel * model;
         QList<POI*> listPois;
+        int tabWidthRatio;
+        int roadMapWidthRatio;
+        int tabWidth;
+        int roadMapWidth;
 };
 class DateBoxDelegate : public QItemDelegate
 {

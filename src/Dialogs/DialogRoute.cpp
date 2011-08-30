@@ -49,6 +49,7 @@ DialogRoute::DialogRoute(ROUTE *route,myCentralWidget *parent)
 {
     this->route=route;
     this->parent=parent;
+    tabWidthRatio=-1;
     setupUi(this);
     Util::setFontDialog(this);
     this->resize(this->tabWidget->width()+10,tabWidget->height()+10);
@@ -197,6 +198,10 @@ DialogRoute::DialogRoute(ROUTE *route,myCentralWidget *parent)
     rmModel->setSortRole(Qt::UserRole);
     roadMap->setModel(rmModel);
     connect(this->tabWidget,SIGNAL(currentChanged(int)),this,SLOT(slotTabChanged(int)));
+    tabWidthRatio=this->size().width()-tabWidget->size().width();
+    roadMapWidthRatio=this->size().width()-roadMap->size().width();
+    roadMapWidth=roadMap->size().width();
+    tabWidth=tabWidget->size().width();
 }
 DialogRoute::~DialogRoute()
 {
@@ -208,9 +213,14 @@ void DialogRoute::slotTabChanged(int tab)
     slotInterval();
 }
 
-void DialogRoute::resizeEvent ( QResizeEvent * /*event*/ )
+void DialogRoute::resizeEvent ( QResizeEvent*)
 {
     this->scroll->resize(this->size());
+    if(tabWidthRatio>0.0)
+    {
+        tabWidget->resize(qMax(tabWidth,this->size().width()-tabWidthRatio),tabWidget->size().height());
+        roadMap->resize(qMax(roadMapWidth,this->size().width()-roadMapWidthRatio),roadMap->size().height());
+    }
 }
 void DialogRoute::slotIntervalTimer(int)
 {
