@@ -1375,8 +1375,13 @@ void myCentralWidget::slot_importRouteFromMenu()
         routePath=QApplication::applicationDirPath();
         Settings::setSetting("importRouteFolder",routePath);
     }
+#if 0
     QString fileName = QFileDialog::getOpenFileName(this,
                          tr("Ouvrir un fichier Route"), routePath, "Routes (*.csv *.txt *.xml *.json *.CSV *.TXT *.XML *.Json *.JSON)");
+#else
+    QString fileName = QFileDialog::getOpenFileName(this,
+                         tr("Ouvrir un fichier Route"), routePath, "Routes (*.csv *.txt *.xml *.CSV *.TXT *.XML)");
+#endif
     if(fileName.isEmpty() || fileName.isNull()) return;
 
     QFile routeFile(fileName);
