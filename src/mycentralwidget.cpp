@@ -71,6 +71,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "DialogRoutage.h"
 #include "DialogRealBoatConfig.h"
 #include "DialogVlmLog.h"
+#include "parser.h"
+#include <QVariantMap>
+#include <QVariant>
 
 /*******************/
 /*    myScene      */
@@ -1373,7 +1376,7 @@ void myCentralWidget::slot_importRouteFromMenu()
         Settings::setSetting("importRouteFolder",routePath);
     }
     QString fileName = QFileDialog::getOpenFileName(this,
-                         tr("Ouvrir un fichier Route"), routePath, "Routes (*.csv *.txt *.CSV *.TXT *.xml *.XML)");
+                         tr("Ouvrir un fichier Route"), routePath, "Routes (*.csv *.txt *.xml *.json *.CSV *.TXT *.XML *.Json *.JSON)");
     if(fileName.isEmpty() || fileName.isNull()) return;
 
     QFile routeFile(fileName);
@@ -1387,7 +1390,98 @@ void myCentralWidget::slot_importRouteFromMenu()
     Settings::setSetting("importRouteFolder",info.absoluteDir().path());
     bool ok;
     QString routeName;
-    if(info.suffix().toLower()!="xml")
+    if(info.suffix().toLower()=="json")
+    {
+        QTextStream stream(&routeFile);
+        QString line;
+        line=stream.readLine();
+        line.remove(0,1);
+        line.remove(line.count()-1,1);
+        QStringList lines;
+        while(line.contains("[{"))
+        {
+            int start=line.indexOf("[{")+1;
+            int end=line.indexOf("}]");
+            lines.append(line.mid(start,end-start+1));
+            line.remove(start,end-start+1);
+        }
+        foreach(QString track,lines)
+        {
+            QByteArray buff;
+            buff.append(track);
+            if (track.count()<3) continue;
+            QJson::Parser parser;
+            QVariantMap result = parser.parse (buff, &ok).toMap();
+            if (!ok)
+            {
+                qWarning() << "Error parsing json data ";
+                qWarning() << "Error: " << parser.errorString() << " (line: " << parser.errorLine() << ")";
+                return;
+            }
+            QString frName=result["nom"].toString();
+            routeName=QInputDialog::getText(this,
+                                            tr("Nom de la route a importer"),
+                                            frName+"<br>"+tr("Nom de la route"),
+                                            QLineEdit::Normal,"ImportedRoute",&ok);
+            if(!ok)
+            {
+                continue;
+            }
+            ROUTE * route=addRoute();
+            if (routeName.isEmpty() || !freeRouteName(routeName.trimmed(),route))
+            {
+                QMessageBox msgBox;
+                msgBox.setText(tr("Ce nom est deja utilise ou invalide"));
+                msgBox.setIcon(QMessageBox::Critical);
+                msgBox.exec();
+                routeFile.close();
+                this->deleteRoute(route);
+                continue;
+            }
+            route->setName(routeName);
+            update_menuRoute();
+            route->setBoat(mainW->getSelectedBoat());
+            route->setStartFromBoat(false);
+            route->setStartTimeOption(3);
+            route->setColor(QColor(227,142,42,255));
+            route->setImported();
+            route->setFrozen(true);
+            QVariantList details=result["tracks"].toList();
+            qWarning()<<QDateTime().currentDateTime().toTime_t();
+            QList<int> etas;
+            QList<QPointF> points;
+            for(int n=0;n<details.count();++n)
+            {
+                QVariant detail=details.at(n);
+                QVariantList FTpoint=detail.toList();
+                time_t eta=FTpoint.at(0).toInt();
+                double lon=FTpoint.at(1).toDouble()/1000.00;
+                double lat=FTpoint.at(2).toDouble()/1000.00;
+                etas.append(eta);
+                points.append(QPointF(lon,lat));
+            }
+            for(int n=points.count()-1;n>=0;--n)
+            {
+                int eta=etas.at(n);
+                double lon=points.at(n).x();
+                double lat=points.at(n).y();
+                if(n==points.count()-1)
+                {
+                    QDateTime start=QDateTime().fromTime_t(eta);
+                    route->setStartTime(start);
+                }
+                QString poiName=route->getName()+QString().sprintf("%.5i",details.count()-n);
+                POI * poi = slot_addPOI(poiName,0,lat,lon,-1,false,false,mainW->getSelectedBoat());
+                poi->setRoute(route);
+                poi->setRouteTimeStamp(eta);
+            }
+            route->setHidePois(true);
+            route->setImported();
+            route->setFrozen2(false);//calculate only once and relock immediately
+            route->setFrozen2(true);
+        }
+    }
+    else if(info.suffix().toLower()!="xml")
     {
         QTextStream stream(&routeFile);
         QString line;
@@ -1760,36 +1854,36 @@ void myCentralWidget::exportRouteFromMenu(ROUTE * route)
     list.append("position");
     list.append("heure");
     stream<<list.join(";")<<endl;
-    if(route->getStartFromBoat())
-    {
-        list.clear();
-        int deg = (int) fabs(route->getStartLat());
-        float min = (fabs(route->getStartLat()) - deg)*60.0;
-        const char *cdeg = "°";
-        QString latitude;
-        latitude.sprintf("%02d%s%06.3f", deg, cdeg, min);
-        if(route->getStartLat()<0)
-            latitude=latitude+" S";
-        else
-            latitude=latitude+" N";
-        deg = (int) fabs(route->getStartLon());
-        min = (fabs(route->getStartLon()) - deg)*60.0;
-        QString longitude;
-        longitude.sprintf("%03d%s%06.3f", deg, cdeg, min);
-        if(route->getStartLon()<0)
-            longitude=longitude+" W";
-        else
-            longitude=longitude+" E";
-        list.append(latitude+"  "+longitude);
-        QDateTime time;
-        time.setTime_t(route->getStartDate());
-        time=time.toUTC();
-        time.setTimeSpec(Qt::UTC);
-        list.append(time.toString("dd/MM/yyyy hh:mm:ss"));
-        stream<<list.join(";")<<endl;
-    }
     if (POIonly)
     {
+        if(route->getStartFromBoat())
+        {
+            list.clear();
+            int deg = (int) fabs(route->getStartLat());
+            float min = (fabs(route->getStartLat()) - deg)*60.0;
+            const char *cdeg = "°";
+            QString latitude;
+            latitude.sprintf("%02d%s%06.3f", deg, cdeg, min);
+            if(route->getStartLat()<0)
+                latitude=latitude+" S";
+            else
+                latitude=latitude+" N";
+            deg = (int) fabs(route->getStartLon());
+            min = (fabs(route->getStartLon()) - deg)*60.0;
+            QString longitude;
+            longitude.sprintf("%03d%s%06.3f", deg, cdeg, min);
+            if(route->getStartLon()<0)
+                longitude=longitude+" W";
+            else
+                longitude=longitude+" E";
+            list.append(latitude+"  "+longitude);
+            QDateTime time;
+            time.setTime_t(route->getStartDate());
+            time=time.toUTC();
+            time.setTimeSpec(Qt::UTC);
+            list.append(time.toString("dd/MM/yyyy hh:mm:ss"));
+            stream<<list.join(";")<<endl;
+        }
         QList<POI*> poiList=route->getPoiList();
         QListIterator<POI*> i(poiList);
         while(i.hasNext())
@@ -1817,7 +1911,7 @@ void myCentralWidget::exportRouteFromMenu(ROUTE * route)
             list.append(latitude+"  "+longitude);
             QDateTime time;
             time.setTime_t(poi->getRouteTimeStamp());
-            time.toUTC();
+            time=time.toUTC();
             time.setTimeSpec(Qt::UTC);
             list.append(time.toString("dd/MM/yyyy hh:mm:ss"));
             stream<<list.join(";")<<endl;
@@ -1852,7 +1946,7 @@ void myCentralWidget::exportRouteFromMenu(ROUTE * route)
             list.append(latitude+"  "+longitude);
             QDateTime time;
             time.setTime_t(poi.eta);
-            time.toUTC();
+            time=time.toUTC();
             time.setTimeSpec(Qt::UTC);
             list.append(time.toString("dd/MM/yyyy hh:mm:ss"));
             stream<<list.join(";")<<endl;
