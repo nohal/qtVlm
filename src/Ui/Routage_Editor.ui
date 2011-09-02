@@ -157,21 +157,21 @@
        <property name="geometry">
         <rect>
          <x>20</x>
-         <y>30</y>
-         <width>101</width>
+         <y>50</y>
+         <width>131</width>
          <height>16</height>
         </rect>
        </property>
        <property name="text">
-        <string>Duree Isochrones</string>
+        <string>Isochrones &gt;24h</string>
        </property>
       </widget>
       <widget class="QLabel" name="label_2">
        <property name="geometry">
         <rect>
          <x>20</x>
-         <y>70</y>
-         <width>91</width>
+         <y>80</y>
+         <width>121</width>
          <height>16</height>
         </rect>
        </property>
@@ -184,7 +184,7 @@
         <rect>
          <x>20</x>
          <y>110</y>
-         <width>91</width>
+         <width>121</width>
          <height>16</height>
         </rect>
        </property>
@@ -192,11 +192,11 @@
         <string>Angle Balayage</string>
        </property>
       </widget>
-      <widget class="QSpinBox" name="duree">
+      <widget class="QSpinBox" name="dureeMore24">
        <property name="geometry">
         <rect>
-         <x>130</x>
-         <y>30</y>
+         <x>150</x>
+         <y>50</y>
          <width>81</width>
          <height>22</height>
         </rect>
@@ -226,7 +226,7 @@
       <widget class="QSpinBox" name="range">
        <property name="geometry">
         <rect>
-         <x>130</x>
+         <x>150</x>
          <y>110</y>
          <width>81</width>
          <height>22</height>
@@ -257,8 +257,8 @@
       <widget class="QDoubleSpinBox" name="step">
        <property name="geometry">
         <rect>
-         <x>130</x>
-         <y>70</y>
+         <x>150</x>
+         <y>80</y>
          <width>81</width>
          <height>22</height>
         </rect>
@@ -288,8 +288,8 @@
       <widget class="QCheckBox" name="showIso">
        <property name="geometry">
         <rect>
-         <x>240</x>
-         <y>30</y>
+         <x>260</x>
+         <y>15</y>
          <width>201</width>
          <height>18</height>
         </rect>
@@ -301,8 +301,8 @@
       <widget class="QCheckBox" name="convRoute">
        <property name="geometry">
         <rect>
-         <x>240</x>
-         <y>60</y>
+         <x>260</x>
+         <y>45</y>
          <width>141</width>
          <height>31</height>
         </rect>
@@ -365,7 +365,7 @@ avec ce prefixe</string>
        <property name="geometry">
         <rect>
          <x>410</x>
-         <y>70</y>
+         <y>60</y>
          <width>41</width>
          <height>20</height>
         </rect>
@@ -403,7 +403,7 @@ avec ce prefixe</string>
        <property name="geometry">
         <rect>
          <x>410</x>
-         <y>110</y>
+         <y>100</y>
          <width>61</width>
          <height>21</height>
         </rect>
@@ -433,9 +433,9 @@ avec ce prefixe</string>
       <widget class="QLabel" name="labelTackGybe">
        <property name="geometry">
         <rect>
-         <x>240</x>
-         <y>105</y>
-         <width>171</width>
+         <x>260</x>
+         <y>90</y>
+         <width>141</width>
          <height>31</height>
         </rect>
        </property>
@@ -448,6 +448,50 @@ avec ce prefixe</string>
        <property name="text">
         <string>Empannages et
 Virements de bord</string>
+       </property>
+      </widget>
+      <widget class="QLabel" name="label_11">
+       <property name="geometry">
+        <rect>
+         <x>20</x>
+         <y>20</y>
+         <width>131</width>
+         <height>16</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>Isochrones &lt;24h</string>
+       </property>
+      </widget>
+      <widget class="QSpinBox" name="dureeLess24">
+       <property name="geometry">
+        <rect>
+         <x>150</x>
+         <y>20</y>
+         <width>81</width>
+         <height>22</height>
+        </rect>
+       </property>
+       <property name="alignment">
+        <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+       </property>
+       <property name="suffix">
+        <string extracomment="min"> min</string>
+       </property>
+       <property name="prefix">
+        <string/>
+       </property>
+       <property name="minimum">
+        <number>10</number>
+       </property>
+       <property name="maximum">
+        <number>600</number>
+       </property>
+       <property name="singleStep">
+        <number>5</number>
+       </property>
+       <property name="value">
+        <number>60</number>
        </property>
       </widget>
      </widget>
@@ -1157,7 +1201,8 @@ Virements de bord</string>
   <tabstop>toPOI</tabstop>
   <tabstop>editDateBox</tabstop>
   <tabstop>editDateBox_2</tabstop>
-  <tabstop>duree</tabstop>
+  <tabstop>dureeLess24</tabstop>
+  <tabstop>dureeMore24</tabstop>
   <tabstop>step</tabstop>
   <tabstop>range</tabstop>
   <tabstop>showIso</tabstop>

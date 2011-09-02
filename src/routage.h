@@ -85,8 +85,11 @@ class ROUTAGE : public QObject
         double getAngleRange(void){return this->angleRange;}
         void setAngleStep(double a) {this->angleStep=a;}
         double getAngleStep(void){return this->angleStep;}
-        void setTimeStep(double t) {this->timeStep=t;}
-        double getTimeStep(void){return this->timeStep;}
+        double getTimeStep(void);
+        void setTimeStepMore24(double t) {this->timeStepMore24=t;}
+        double getTimeStepMore24(void){return this->timeStepMore24;}
+        void setTimeStepLess24(double t) {this->timeStepLess24=t;}
+        double getTimeStepLess24(void){return this->timeStepLess24;}
         bool getWindIsForced(void){return this->windIsForced;}
         bool getShowIso(void){return this->showIso;}
         void setShowIso(bool b);
@@ -194,7 +197,8 @@ class ROUTAGE : public QObject
         Grib *grib;
         double angleRange;
         double angleStep;
-        double timeStep;
+        double timeStepMore24;
+        double timeStepLess24;
         int explo;
         bool showIso;
         QDateTime startTime;

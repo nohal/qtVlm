@@ -486,6 +486,7 @@ ROUTAGE::ROUTAGE(QString name, Projection *proj, Grib *grib, QGraphicsScene * my
     this->color=colorsList.at(ncolor);
     this->width=3;
     this->startTime= QDateTime().fromTime_t(parent->getNextVac()).toUTC();
+    this->eta=startTime.toTime_t();
     this->whatIfDate=startTime;
     this->whatIfUsed=false;
     this->whatIfTime=0;
@@ -495,7 +496,8 @@ ROUTAGE::ROUTAGE(QString name, Projection *proj, Grib *grib, QGraphicsScene * my
     pen.setWidthF(2);
     this->angleRange=160;
     this->angleStep=3;
-    this->timeStep=60;
+    this->timeStepLess24=30;
+    this->timeStepMore24=60;
     this->explo=5;
     this->wind_angle=0;
     this->wind_speed=20;
@@ -785,7 +787,7 @@ void ROUTAGE::calculate()
                 if(whatIfUsed && whatIfJour<=eta)
                     workEta=workEta+whatIfTime*3600;
                 if(!grib->getInterpolatedValue_byDates((double) list->at(n).lon,(double) list->at(n).lat,
-                       workEta,&windSpeed,&windAngle,INTERPOLATION_DEFAULT)||workEta+timeStep*60>maxDate)
+                       workEta,&windSpeed,&windAngle,INTERPOLATION_DEFAULT)||workEta+this->getTimeStep()*60>maxDate)
                 {
                     iso->setPointDead(n);
                     continue;
@@ -1369,7 +1371,7 @@ void ROUTAGE::calculate()
                     }
                     msecs_14=msecs_14+t2.elapsed();
                 }
-                tempPoints[n].eta=eta+(int)timeStep*60.00;
+                tempPoints[n].eta=eta+(int)this->getTimeStep()*60.00;
                 currentIso->addVlmPoint(tempPoints[n]);
                 previousIso.append(QPointF(tempPoints.at(n).x,tempPoints.at(n).y));
                 vlmPointGraphic * vg=new vlmPointGraphic(this,nbIso+1,mmm,
@@ -1381,7 +1383,7 @@ void ROUTAGE::calculate()
                 mmm++;
                 QString ss;
                 vg->setDebug(ss.sprintf("mdi=%.2f di=%.2f",tempPoints.at(n).maxDistIso,tempPoints.at(n).distIso));
-                vg->setEta(eta+(int)timeStep*60.00);
+                vg->setEta(eta+(int)this->getTimeStep()*60.00);
                 this->isoPointList.append(vg);
             }
         }
@@ -1427,7 +1429,7 @@ void ROUTAGE::calculate()
         QCoreApplication::processEvents();
         //qWarning()<<"nb of points in iso"<<isochrones.count()<<":"<<iso->count();
         nbIso++;
-        eta=eta+(int)timeStep*60.00;
+        eta=eta+(int)this->getTimeStep()*60.00;
         vlmPoint to(arrival.x(),arrival.y());
         time.restart();
         datathread dataThread;
@@ -1447,12 +1449,12 @@ void ROUTAGE::calculate()
         {
             vlmPoint from=list->at(n);
             orth.setPoints(from.lon,from.lat,to.lon,to.lat);
-            if(orth.getDistance()<myBoat->getPolarData()->getMaxSpeed()*60/timeStep)
+            if(orth.getDistance()<myBoat->getPolarData()->getMaxSpeed()*60/this->getTimeStep())
             {
                 if(checkCoast && map->crossing(QLineF(list->at(n).x,list->at(n).y,xa,ya),QLineF(list->at(n).lon,list->at(n).lat,arrival.x(),arrival.y())))
                     continue;
-                int thisTime=calculateTimeRoute(from,to, &dataThread, NULL, NULL, (timeStep+1)*60);
-                if(thisTime<=timeStep*60)
+                int thisTime=calculateTimeRoute(from,to, &dataThread, NULL, NULL, (this->getTimeStep()+1)*60);
+                if(thisTime<=this->getTimeStep()*60)
                 {
                     arrived=true;
                     break;
@@ -1470,7 +1472,7 @@ void ROUTAGE::calculate()
     int nBest=0;
     if(arrived)
     {
-        int minTime=timeStep*10000*60;
+        int minTime=this->getTimeStep()*10000*60;
         vlmPoint to(arrival.x(),arrival.y());
         datathread dataThread;
         dataThread.Boat=this->getBoat();
@@ -1790,7 +1792,7 @@ int ROUTAGE::routeFunction(double x,vlmPoint from)
     double res_lon,res_lat;
     Util::getCoordFromDistanceAngle(from.lat, from.lon, x, from.capOrigin, &res_lat, &res_lon);
     vlmPoint to(res_lon,res_lat);
-    return calculateTimeRoute(from,to)-timeStep*60;
+    return calculateTimeRoute(from,to)-this->getTimeStep()*60;
 }
 int ROUTAGE::routeFunctionDeriv(double x,vlmPoint from)
 {
@@ -2165,7 +2167,7 @@ bool ROUTAGE::findPoint(double lon, double lat, double windAngle, double windSpe
             else
                 newSpeed=myBoat->getPolarData()->getSpeed(windSpeed,angle);
         }
-        distanceParcourue=newSpeed*timeStep/60.0;
+        distanceParcourue=newSpeed*this->getTimeStep()/60.0;
         Util::getCoordFromDistanceAngle(lat, lon, distanceParcourue, cap, &res_lat, &res_lon);
         pt->lon=res_lon;
         pt->lat=res_lat;
@@ -2179,7 +2181,7 @@ bool ROUTAGE::findPoint(double lon, double lat, double windAngle, double windSpe
                 if(whatIfUsed && whatIfJour<=eta)
                     workEta=workEta+whatIfTime*3600;
                 if(!grib->getInterpolatedValue_byDates(res_lon,res_lat,
-                       workEta+timeStep*60,&newWindSpeed,&newWindAngle,INTERPOLATION_DEFAULT)||workEta+timeStep*60>grib->getMaxDate())
+                       workEta+this->getTimeStep()*60,&newWindSpeed,&newWindAngle,INTERPOLATION_DEFAULT)||workEta+this->getTimeStep()*60>grib->getMaxDate())
                 {
                     return false;
                 }
@@ -2711,6 +2713,7 @@ void ROUTAGE::setFromRoutage(ROUTAGE *fromRoutage, bool editOptions)
     pivotPoint=fromRoutage->getPivotPoint();
     this->myBoat=fromRoutage->getBoat();
     this->startTime= startTime.fromTime_t(pivotPoint.eta);
+    this->eta=startTime.toTime_t();
     this->whatIfDate=fromRoutage->getWhatIfDate();
     this->whatIfUsed=fromRoutage->getWhatIfUsed();
     this->whatIfTime=fromRoutage->getWhatIfTime();
@@ -2718,7 +2721,8 @@ void ROUTAGE::setFromRoutage(ROUTAGE *fromRoutage, bool editOptions)
     this->angleRange=fromRoutage->getAngleRange();
     this->speedLossOnTack=fromRoutage->getSpeedLossOnTack();
     this->angleStep=fromRoutage->getAngleStep();
-    this->timeStep=fromRoutage->getTimeStep();
+    this->timeStepMore24=fromRoutage->getTimeStepMore24();
+    this->timeStepLess24=fromRoutage->getTimeStepLess24();
     this->explo=fromRoutage->getExplo();
     this->wind_angle=fromRoutage->getWindAngle();
     this->wind_speed=fromRoutage->getWindSpeed();
@@ -2804,4 +2808,11 @@ double ROUTAGE::cLFA(double lon)
         else
             return xW-myDiffAngle(A360(xW),lon);
     }
+}
+double ROUTAGE::getTimeStep()
+{
+    if(this->eta-this->startTime.toTime_t()<=24*60*60)
+        return this->timeStepLess24;
+    else
+        return this->timeStepMore24;
 }

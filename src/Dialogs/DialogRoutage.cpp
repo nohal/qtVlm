@@ -146,7 +146,8 @@ DialogRoutage::DialogRoutage(ROUTAGE *routage,myCentralWidget *parent)
     }
     this->range->setValue(routage->getAngleRange());
     this->step->setValue(routage->getAngleStep());
-    this->duree->setValue(routage->getTimeStep());
+    this->dureeLess24->setValue(routage->getTimeStepLess24());
+    this->dureeMore24->setValue(routage->getTimeStepMore24());
     this->windForced->setChecked(routage->getWindIsForced());
     this->showIso->setChecked(routage->getShowIso());
     this->explo->setValue(routage->getExplo());
@@ -169,7 +170,8 @@ DialogRoutage::DialogRoutage(ROUTAGE *routage,myCentralWidget *parent)
         this->editDateBox->setDisabled(true);
         this->fromPOI->setDisabled(true);
         this->toPOI->setDisabled(true);
-        this->duree->setDisabled(true);
+        this->dureeMore24->setDisabled(true);
+        this->dureeLess24->setDisabled(true);
         this->range->setDisabled(true);
         this->step->setDisabled(true);
         this->explo->setDisabled(true);
@@ -197,7 +199,8 @@ DialogRoutage::DialogRoutage(ROUTAGE *routage,myCentralWidget *parent)
     {
         this->speedLossOnTack->setDisabled(false);
         this->autoZoom->setDisabled(false);
-        this->duree->setDisabled(false);
+        this->dureeMore24->setDisabled(false);
+        this->dureeLess24->setDisabled(false);
         this->range->setDisabled(false);
         this->step->setDisabled(false);
         this->explo->setDisabled(false);
@@ -269,7 +272,13 @@ void DialogRoutage::done(int result)
                 }
                 if(this->useVac->isChecked())
                 {
-                    if(this->duree->value()<4*routage->getBoat()->getVacLen()/60)
+                    if(this->dureeLess24->value()<4*routage->getBoat()->getVacLen()/60)
+                    {
+                        QMessageBox::critical(0,tr("Creation d'un routage"),
+                                              tr("Vous ne pouvez pas utiliser le module route<br>avec moins de 4 vacations entre les isochrones.<br>Vous devez donc desactiver cette option ou rallonger la duree"));
+                        return;
+                    }
+                    if(this->dureeMore24->value()<4*routage->getBoat()->getVacLen()/60)
                     {
                         QMessageBox::critical(0,tr("Creation d'un routage"),
                                               tr("Vous ne pouvez pas utiliser le module route<br>avec moins de 4 vacations entre les isochrones.<br>Vous devez donc desactiver cette option ou rallonger la duree"));
@@ -330,7 +339,8 @@ void DialogRoutage::done(int result)
         routage->setWind(TWD->value(),TWS->value());
         routage->setAngleRange(this->range->value());
         routage->setAngleStep(this->step->value());
-        routage->setTimeStep(this->duree->value());
+        routage->setTimeStepMore24(this->dureeMore24->value());
+        routage->setTimeStepLess24(this->dureeLess24->value());
         routage->setExplo(this->explo->value());
         routage->setShowIso(this->showIso->isChecked());
         routage->setUseRouteModule(this->useVac->isChecked());
