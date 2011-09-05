@@ -323,8 +323,8 @@ void  mapCompass::paint(QPainter * pnt, const QStyleOptionGraphicsItem * , QWidg
         double lon1,lat1;
         int X,Y,X1,Y1;
         Util::getCoordFromDistanceAngle(lat,lon,10,90,&lat1,&lon1);
-        Util::computePos(proj,(float)lat,(float)lon, &Y, &X);
-        Util::computePos(proj,(float)lat1,(float)lon1, &Y1, &X1);
+        Util::computePos(proj,(float)lat,(float)Util::cLFA(lon,proj->getXmin()), &Y, &X);
+        Util::computePos(proj,(float)lat1,(float)Util::cLFA(lon1,proj->getXmin()), &Y1, &X1);
 
         float oneMile=QLineF(X,Y,X1,Y1).length()/10;
         float vacLen=parent->getSelectedBoat()->getVacLen()/60.0;
@@ -527,7 +527,7 @@ void mapCompass::slot_projectionUpdated()
         main->get_selectedBoatPos(&myLat,&myLon);
         if((myLon==-1 && myLat==-1)||(myLon==0 && myLat==0)) return;
     }
-    Util::computePos(proj,myLat, myLon, &new_x, &new_y);
+    Util::computePos(proj,myLat, Util::cLFA(myLon,proj->getXmin()), &new_x, &new_y);
     new_x=new_x-size/2;
     new_y=new_y-size/2;
     prepareGeometryChange();
@@ -544,7 +544,7 @@ void mapCompass::slot_compassCenterBoat()
     myLat=lat;
     int new_x=0;
     int new_y=0;
-    Util::computePos(proj,lat, lon, &new_x, &new_y);
+    Util::computePos(proj,lat, Util::cLFA(lon,proj->getXmin()), &new_x, &new_y);
     new_x=new_x-size/2;
     new_y=new_y-size/2;
     prepareGeometryChange();
@@ -556,7 +556,7 @@ void mapCompass::compassCenter(double lon, double lat)
     myLat=lat;
     int new_x=0;
     int new_y=0;
-    Util::computePos(proj,lat, lon, &new_x, &new_y);
+    Util::computePos(proj,lat, Util::cLFA(lon,proj->getXmin()), &new_x, &new_y);
     new_x=new_x-size/2;
     new_y=new_y-size/2;
     prepareGeometryChange();
@@ -572,7 +572,7 @@ void mapCompass::slot_compassCenterWp()
         myLat=lat;
         int new_x=0;
         int new_y=0;
-        Util::computePos(proj,lat, lon, &new_x, &new_y);
+        Util::computePos(proj,lat, Util::cLFA(lon,proj->getXmin()), &new_x, &new_y);
         new_x=new_x-size/2;
         new_y=new_y-size/2;
         prepareGeometryChange();
@@ -660,7 +660,7 @@ void mapCompass::updateCompassLineLabels(int x, int y)
         loxo_angle=qRound(loxo_angle*100.0)/100.0;
         Util::getCoordFromDistanceLoxo(ya,xa,loxo_dist,loxo_angle,&yb,&xb);
         double X,Y;
-        proj->map2screenFloat(xb,yb,&X,&Y);
+        proj->map2screenFloat(Util::cLFA(xb,proj->getXmin()),yb,&X,&Y);
         orth.setEndPoint(xb,yb);
         pos_angle=orth.getAzimutDeg();
         pos_distance=orth.getDistance();

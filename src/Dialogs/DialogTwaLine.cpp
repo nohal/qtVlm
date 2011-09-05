@@ -42,63 +42,100 @@ DialogTwaLine::DialogTwaLine(QPointF start, myCentralWidget *parent, MainWindow 
     }
     connect(parent,SIGNAL(twaDelPoi(POI *)),this,SLOT(slot_delPOI_list(POI *)));
     this->SyncWarn->hide();
-    connect(TWA,SIGNAL(toggled(bool)),this,SLOT(slotTwa(bool)));
+    connect(TWA1,SIGNAL(toggled(bool)),this,SLOT(slotTwa1(bool)));
+    connect(TWA2,SIGNAL(toggled(bool)),this,SLOT(slotTwa2(bool)));
+    connect(TWA3,SIGNAL(toggled(bool)),this,SLOT(slotTwa3(bool)));
+    connect(TWA4,SIGNAL(toggled(bool)),this,SLOT(slotTwa4(bool)));
+    connect(TWA5,SIGNAL(toggled(bool)),this,SLOT(slotTwa5(bool)));
     traceIt();
 }
-void DialogTwaLine::slotTwa(bool b)
+void DialogTwaLine::slotTwa1(bool b)
 {
     this->blockSignals(true);
     if(b)
     {
         ltwa1->setText(tr("Twa"));
-        ltwa2->setText(tr("Twa"));
-        ltwa3->setText(tr("Twa"));
-        ltwa4->setText(tr("Twa"));
-        ltwa5->setText(tr("Twa"));
         this->doubleSpinBox->setMaximum(180);
         this->doubleSpinBox->setMinimum(-179.99);
-        this->doubleSpinBox_2->setMaximum(180);
-        this->doubleSpinBox_2->setMinimum(-179.99);
-        this->doubleSpinBox_3->setMaximum(180);
-        this->doubleSpinBox_3->setMinimum(-179.99);
-        this->doubleSpinBox_4->setMaximum(180);
-        this->doubleSpinBox_4->setMinimum(-179.99);
-        this->doubleSpinBox_5->setMaximum(180);
-        this->doubleSpinBox_5->setMinimum(-179.99);
-        this->doubleSpinBox->setValue(90);
-        this->doubleSpinBox_2->setValue(90);
-        this->doubleSpinBox_3->setValue(90);
-        this->doubleSpinBox_4->setValue(90);
-        this->doubleSpinBox_5->setValue(90);
     }
     else
     {
         ltwa1->setText(tr("Cap"));
-        ltwa2->setText(tr("Cap"));
-        ltwa3->setText(tr("Cap"));
-        ltwa4->setText(tr("Cap"));
-        ltwa5->setText(tr("Cap"));
         this->doubleSpinBox->setMaximum(360);
         this->doubleSpinBox->setMinimum(0);
+    }
+    this->blockSignals(false);
+    traceIt();
+}
+void DialogTwaLine::slotTwa2(bool b)
+{
+    this->blockSignals(true);
+    if(b)
+    {
+        ltwa2->setText(tr("Twa"));
+        this->doubleSpinBox_2->setMaximum(180);
+        this->doubleSpinBox_2->setMinimum(-179.99);
+    }
+    else
+    {
+        ltwa2->setText(tr("Cap"));
         this->doubleSpinBox_2->setMaximum(360);
         this->doubleSpinBox_2->setMinimum(0);
+    }
+    this->blockSignals(false);
+    traceIt();
+}
+void DialogTwaLine::slotTwa3(bool b)
+{
+    this->blockSignals(true);
+    if(b)
+    {
+        ltwa3->setText(tr("Twa"));
+        this->doubleSpinBox_3->setMaximum(180);
+        this->doubleSpinBox_3->setMinimum(-179.99);
+    }
+    else
+    {
+        ltwa3->setText(tr("Cap"));
         this->doubleSpinBox_3->setMaximum(360);
         this->doubleSpinBox_3->setMinimum(0);
+    }
+    this->blockSignals(false);
+    traceIt();
+}
+void DialogTwaLine::slotTwa4(bool b)
+{
+    this->blockSignals(true);
+    if(b)
+    {
+        ltwa4->setText(tr("Twa"));
+        this->doubleSpinBox_4->setMaximum(180);
+        this->doubleSpinBox_4->setMinimum(-179.99);
+    }
+    else
+    {
+        ltwa4->setText(tr("Cap"));
         this->doubleSpinBox_4->setMaximum(360);
         this->doubleSpinBox_4->setMinimum(0);
+    }
+    this->blockSignals(false);
+    traceIt();
+}
+void DialogTwaLine::slotTwa5(bool b)
+{
+    this->blockSignals(true);
+    if(b)
+    {
+        ltwa5->setText(tr("Twa"));
+        this->doubleSpinBox_5->setMaximum(180);
+        this->doubleSpinBox_5->setMinimum(-179.99);
+    }
+    else
+    {
+        ltwa5->setText(tr("Cap"));
         this->doubleSpinBox_5->setMaximum(360);
         this->doubleSpinBox_5->setMinimum(0);
-        this->doubleSpinBox->setValue(0);
-        this->doubleSpinBox_2->setValue(0);
-        this->doubleSpinBox_3->setValue(0);
-        this->doubleSpinBox_4->setValue(0);
-        this->doubleSpinBox_5->setValue(0);
     }
-    this->spinBox->setValue(0);
-    this->spinBox_2->setValue(0);
-    this->spinBox_3->setValue(0);
-    this->spinBox_4->setValue(0);
-    this->spinBox_5->setValue(0);
     this->blockSignals(false);
     traceIt();
 }
@@ -205,6 +242,11 @@ void DialogTwaLine::traceIt()
     twa[2]=this->doubleSpinBox_3->value();
     twa[3]=this->doubleSpinBox_4->value();
     twa[4]=this->doubleSpinBox_5->value();
+    mode[0]=this->TWA1->isChecked();
+    mode[1]=this->TWA2->isChecked();
+    mode[2]=this->TWA3->isChecked();
+    mode[3]=this->TWA4->isChecked();
+    mode[4]=this->TWA5->isChecked();
     int vacLen=myBoat->getVacLen();
     vlmPoint current(start.x(),start.y());
     line->addVlmPoint(current);
@@ -224,7 +266,7 @@ void DialogTwaLine::traceIt()
                 eta,&wind_speed,&wind_angle,INTERPOLATION_DEFAULT) || eta>maxDate)
                 break;
             wind_angle=radToDeg(wind_angle);
-            if(TWA->isChecked())
+            if(mode[page])
                 cap=A360(wind_angle+twa[page]);
             else
                 cap=twa[page];
@@ -234,8 +276,8 @@ void DialogTwaLine::traceIt()
             if(!crossing && mapQuality>=3)
             {
                 double I1,J1,I2,J2;
-                parent->getProj()->map2screenFloat(current.lon,current.lat,&I1,&J1);
-                parent->getProj()->map2screenFloat(lon,lat,&I2,&J2);
+                parent->getProj()->map2screenFloat(Util::cLFA(current.lon, parent->getProj()->getXmin()),current.lat,&I1,&J1);
+                parent->getProj()->map2screenFloat(Util::cLFA(lon,parent->getProj()->getXmin()),lat,&I2,&J2);
                 crossing=map->crossing(QLineF(I1,J1,I2,J2),QLineF(current.lon,current.lat,lon,lat));
             }
             current.lon=lon;

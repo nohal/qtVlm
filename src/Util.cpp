@@ -619,3 +619,32 @@ bool Util::lineIsCrossingRect(const QLineF line, const QRectF rect)
     if(line.y1()<rect.bottomLeft().y() && line.y2()<rect.bottomLeft().y()) return false;
     return true;
 }
+double Util::cLFA(double lon, double xW)
+//convertLonForAntiMeridian
+{
+    if(xW>=0 && lon>=0) return lon;
+    if(xW<=0 && lon<=0) return lon;
+    if(qAbs(qRound(qAbs(lon-xW))-qRound(myDiffAngle(A360(lon),A360(xW))))<=2) return lon;
+    if(xW>=0)
+    {
+        return xW+myDiffAngle(xW,lon+360.0);
+    }
+    else
+    {
+        if(xW<-180)
+            return lon-360;
+        else
+            return xW-myDiffAngle(A360(xW),lon);
+    }
+}
+double Util::A360(double hdg)
+{
+    while (hdg>=360.0) hdg=hdg-360.0;
+    while (hdg<0.0) hdg=hdg+360.0;
+    return hdg;
+}
+double Util::myDiffAngle(double a1,double a2)
+{
+    return qAbs(A360(qAbs(a1)+ 180.0 -qAbs(a2)) -180.0);
+}
+

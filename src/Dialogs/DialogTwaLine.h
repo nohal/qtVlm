@@ -18,6 +18,7 @@ private:
     QPointF start;
     double twa[5];
     int nbVac[5];
+    bool mode[5];
     QList<POI*> list;
     Grib * grib;
     boat * myBoat;
@@ -29,7 +30,11 @@ private:
     QColor color;
 public slots:
     void slot_delPOI_list(POI *);
-    void slotTwa(bool b);
+    void slotTwa1(bool b);
+    void slotTwa2(bool b);
+    void slotTwa3(bool b);
+    void slotTwa4(bool b);
+    void slotTwa5(bool b);
 private slots:
     void on_spinBox_5_valueChanged(int );
     void on_doubleSpinBox_5_valueChanged(double );

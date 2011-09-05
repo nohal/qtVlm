@@ -737,7 +737,7 @@ void POI::slot_editRoute()
 void POI::slotCompassLine()
 {
     double i1,j1;
-    proj->map2screenFloat(this->lon,this->lat,&i1,&j1);
+    proj->map2screenFloat(Util::cLFA(this->lon,proj->getXmin()),this->lat,&i1,&j1);
     emit compassLine(i1,j1);
 }
 void POI::slot_setHorn()

@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>180</width>
-    <height>280</height>
+    <height>298</height>
    </rect>
   </property>
   <property name="minimumSize">
@@ -19,7 +19,7 @@
   <property name="maximumSize">
    <size>
     <width>180</width>
-    <height>280</height>
+    <height>500</height>
    </size>
   </property>
   <property name="baseSize">
@@ -37,7 +37,7 @@
      <x>0</x>
      <y>0</y>
      <width>181</width>
-     <height>111</height>
+     <height>171</height>
     </rect>
    </property>
    <property name="currentIndex">
@@ -142,6 +142,48 @@
       <string>Partie 1</string>
      </property>
     </widget>
+    <widget class="QGroupBox" name="groupBox_3">
+     <property name="geometry">
+      <rect>
+       <x>2</x>
+       <y>80</y>
+       <width>171</width>
+       <height>51</height>
+      </rect>
+     </property>
+     <property name="title">
+      <string>Mode</string>
+     </property>
+     <widget class="QRadioButton" name="TWA1">
+      <property name="geometry">
+       <rect>
+        <x>10</x>
+        <y>20</y>
+        <width>61</width>
+        <height>20</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>TWA</string>
+      </property>
+      <property name="checked">
+       <bool>true</bool>
+      </property>
+     </widget>
+     <widget class="QRadioButton" name="CAP1">
+      <property name="geometry">
+       <rect>
+        <x>80</x>
+        <y>20</y>
+        <width>81</width>
+        <height>20</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Cap</string>
+      </property>
+     </widget>
+    </widget>
    </widget>
    <widget class="QWidget" name="tabWidgetPage2">
     <attribute name="title">
@@ -241,6 +283,48 @@
      <property name="value">
       <double>90.000000000000000</double>
      </property>
+    </widget>
+    <widget class="QGroupBox" name="groupBox_4">
+     <property name="geometry">
+      <rect>
+       <x>2</x>
+       <y>80</y>
+       <width>171</width>
+       <height>51</height>
+      </rect>
+     </property>
+     <property name="title">
+      <string>Mode</string>
+     </property>
+     <widget class="QRadioButton" name="TWA2">
+      <property name="geometry">
+       <rect>
+        <x>10</x>
+        <y>20</y>
+        <width>61</width>
+        <height>20</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>TWA</string>
+      </property>
+      <property name="checked">
+       <bool>true</bool>
+      </property>
+     </widget>
+     <widget class="QRadioButton" name="CAP2">
+      <property name="geometry">
+       <rect>
+        <x>80</x>
+        <y>20</y>
+        <width>81</width>
+        <height>20</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Cap</string>
+      </property>
+     </widget>
     </widget>
    </widget>
    <widget class="QWidget" name="tabWidgetPage3">
@@ -342,6 +426,48 @@
       <double>90.000000000000000</double>
      </property>
     </widget>
+    <widget class="QGroupBox" name="groupBox_5">
+     <property name="geometry">
+      <rect>
+       <x>2</x>
+       <y>80</y>
+       <width>171</width>
+       <height>51</height>
+      </rect>
+     </property>
+     <property name="title">
+      <string>Mode</string>
+     </property>
+     <widget class="QRadioButton" name="TWA3">
+      <property name="geometry">
+       <rect>
+        <x>10</x>
+        <y>20</y>
+        <width>61</width>
+        <height>20</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>TWA</string>
+      </property>
+      <property name="checked">
+       <bool>true</bool>
+      </property>
+     </widget>
+     <widget class="QRadioButton" name="CAP3">
+      <property name="geometry">
+       <rect>
+        <x>80</x>
+        <y>20</y>
+        <width>81</width>
+        <height>20</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Cap</string>
+      </property>
+     </widget>
+    </widget>
    </widget>
    <widget class="QWidget" name="tabWidgetPage4">
     <attribute name="title">
@@ -441,6 +567,48 @@
      <property name="value">
       <double>90.000000000000000</double>
      </property>
+    </widget>
+    <widget class="QGroupBox" name="groupBox_6">
+     <property name="geometry">
+      <rect>
+       <x>2</x>
+       <y>80</y>
+       <width>171</width>
+       <height>51</height>
+      </rect>
+     </property>
+     <property name="title">
+      <string>Mode</string>
+     </property>
+     <widget class="QRadioButton" name="TWA4">
+      <property name="geometry">
+       <rect>
+        <x>10</x>
+        <y>20</y>
+        <width>61</width>
+        <height>20</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>TWA</string>
+      </property>
+      <property name="checked">
+       <bool>true</bool>
+      </property>
+     </widget>
+     <widget class="QRadioButton" name="CAP4">
+      <property name="geometry">
+       <rect>
+        <x>80</x>
+        <y>20</y>
+        <width>81</width>
+        <height>20</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Cap</string>
+      </property>
+     </widget>
     </widget>
    </widget>
    <widget class="QWidget" name="tabWidgetPage5">
@@ -542,13 +710,55 @@
       <double>90.000000000000000</double>
      </property>
     </widget>
+    <widget class="QGroupBox" name="groupBox_7">
+     <property name="geometry">
+      <rect>
+       <x>2</x>
+       <y>80</y>
+       <width>171</width>
+       <height>51</height>
+      </rect>
+     </property>
+     <property name="title">
+      <string>Mode</string>
+     </property>
+     <widget class="QRadioButton" name="TWA5">
+      <property name="geometry">
+       <rect>
+        <x>10</x>
+        <y>20</y>
+        <width>61</width>
+        <height>20</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>TWA</string>
+      </property>
+      <property name="checked">
+       <bool>true</bool>
+      </property>
+     </widget>
+     <widget class="QRadioButton" name="CAP5">
+      <property name="geometry">
+       <rect>
+        <x>80</x>
+        <y>20</y>
+        <width>81</width>
+        <height>20</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Cap</string>
+      </property>
+     </widget>
+    </widget>
    </widget>
   </widget>
   <widget class="QGroupBox" name="groupBox">
    <property name="geometry">
     <rect>
      <x>2</x>
-     <y>110</y>
+     <y>180</y>
      <width>171</width>
      <height>51</height>
     </rect>
@@ -586,8 +796,8 @@
   <widget class="QGroupBox" name="groupBox_2">
    <property name="geometry">
     <rect>
-     <x>0</x>
-     <y>160</y>
+     <x>2</x>
+     <y>230</y>
      <width>171</width>
      <height>61</height>
     </rect>
@@ -611,7 +821,7 @@
      <string>Grib</string>
     </property>
     <property name="checked">
-     <bool>true</bool>
+     <bool>false</bool>
     </property>
    </widget>
    <widget class="QRadioButton" name="startVac">
@@ -649,52 +859,6 @@
      <string>! Sync &gt; 1 Vac !</string>
     </property>
    </widget>
-  </widget>
-  <widget class="QGroupBox" name="groupBox_3">
-   <property name="geometry">
-    <rect>
-     <x>0</x>
-     <y>220</y>
-     <width>171</width>
-     <height>51</height>
-    </rect>
-   </property>
-   <property name="title">
-    <string>Mode</string>
-   </property>
-   <widget class="QRadioButton" name="TWA">
-    <property name="geometry">
-     <rect>
-      <x>10</x>
-      <y>20</y>
-      <width>61</width>
-      <height>20</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>TWA</string>
-    </property>
-    <property name="checked">
-     <bool>true</bool>
-    </property>
-   </widget>
-   <widget class="QRadioButton" name="CAP">
-    <property name="geometry">
-     <rect>
-      <x>80</x>
-      <y>20</y>
-      <width>81</width>
-      <height>20</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>Cap</string>
-    </property>
-   </widget>
-   <zorder>TWA</zorder>
-   <zorder>CAP</zorder>
-   <zorder>startVac</zorder>
-   <zorder>checkBox_2</zorder>
   </widget>
  </widget>
  <tabstops>

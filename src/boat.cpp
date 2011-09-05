@@ -427,8 +427,8 @@ void boat::drawEstime(float myHeading, float mySpeed)
             windEstimeSpeed=-1;
         GshhsReader *map=parent->get_gshhsReader();
         double I1,J1,I2,J2;
-        proj->map2screenFloat(lon,lat,&I1,&J1);
-        proj->map2screenFloat(tmp_lon,tmp_lat,&I2,&J2);
+        proj->map2screenFloat(Util::cLFA(lon,proj->getXmin()),lat,&I1,&J1);
+        proj->map2screenFloat(Util::cLFA(tmp_lon,proj->getXmin()),tmp_lat,&I2,&J2);
         bool coastDetected=false;
         if(map->getQuality()>=2)
         {
@@ -452,10 +452,10 @@ void boat::drawEstime(float myHeading, float mySpeed)
                     double LonTmp=getGates().at(n)->getPoints()->first().lon;
                     double LatTmp=getGates().at(n)->getPoints()->first().lat;
                     double Gx1,Gy1,Gx2,Gy2;
-                    proj->map2screenFloat(LonTmp,LatTmp,&Gx1,&Gy1);
+                    proj->map2screenFloat(Util::cLFA(LonTmp,proj->getXmin()),LatTmp,&Gx1,&Gy1);
                     LonTmp=getGates().at(n)->getPoints()->last().lon;
                     LatTmp=getGates().at(n)->getPoints()->last().lat;
-                    proj->map2screenFloat(LonTmp,LatTmp,&Gx2,&Gy2);
+                    proj->map2screenFloat(Util::cLFA(LonTmp,proj->getXmin()),LatTmp,&Gx2,&Gy2);
                     if(estime>0.0001 && my_intersects(QLineF(I1,J1,I2,J2),QLineF(Gx1,Gy1,Gx2,Gy2)))
                     {
                         penLine1.setColor(Qt::darkGreen);
@@ -474,7 +474,7 @@ void boat::drawEstime(float myHeading, float mySpeed)
         if(WPLat != 0 && WPLon != 0)
         {
             WPLine->setLinePen(penLine2);
-            proj->map2screenFloat(WPLon,WPLat,&I2,&J2);
+            proj->map2screenFloat(Util::cLFA(WPLon,proj->getXmin()),WPLat,&I2,&J2);
             WPLine->initSegment(I1,J1,I2,J2);
         }
         this->updateHint();
@@ -525,7 +525,7 @@ void boat::slot_estimeFlashing()
 void boat::slotCompassLine()
 {
     double i1,j1;
-    proj->map2screenFloat(this->lon,this->lat,&i1,&j1);
+    proj->map2screenFloat(Util::cLFA(this->lon,proj->getXmin()),this->lat,&i1,&j1);
     emit compassLine(i1,j1);
 }
 QPainterPath boat::shape() const

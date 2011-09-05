@@ -538,8 +538,8 @@ void ROUTE::slot_recalculate(boat * boat)
                         orth.setPoints(res_lon,res_lat,my_poiList.last()->getLongitude(),my_poiList.last()->getLatitude());
                             remain=orth.getDistance();
                     }
-                    if(poi->getIsWp())
-                        qWarning()<<"Eta:"<<QDateTime().fromTime_t(Eta).toUTC().toString("dd MMM-hh:mm")<<"remaining dist"<<remaining_distance<<"distanceParcourue:"<<distanceParcourue;
+//                    if(poi->getIsWp())
+//                        qWarning()<<"Eta:"<<QDateTime().fromTime_t(Eta).toUTC().toString("dd MMM-hh:mm")<<"remaining dist"<<remaining_distance<<"distanceParcourue:"<<distanceParcourue;
                     if(!imported &&(qRound(remaining_distance*100)<qRound(distanceParcourue*100) /* ||
                        qRound(previous_remaining_distance*100)<qRound(distanceParcourue*100)*/))
                     {

@@ -131,6 +131,7 @@ class Grib
         void draw_TEMPERATURE_Labels(QPainter &pnt, const Projection *proj);
 
         enum GribFileDataStatus { DATA_IN_FILE, NO_DATA_IN_FILE, COMPUTED_DATA };
+        QRgb   getWindColor     (const double v, const bool smooth);
 
     private:
         bool   ok;
@@ -229,7 +230,6 @@ class Grib
         QRgb   getRainColor     (double mm, bool smooth);
         QRgb   getSnowDepthColor(double mm, bool smooth);
         QRgb   getHumidColor    (double v, bool smooth);
-        QRgb   getWindColor     (double v, bool smooth);
         QRgb   getTemperatureColor (double v, bool smooth);
         QRgb   getPressureColor    (double v, bool smooth);
         QRgb   getDeltaTemperaturesColor (double v, bool smooth);

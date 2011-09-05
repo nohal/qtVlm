@@ -95,6 +95,9 @@ class Util
     static void computePosFloat(Projection * proj, double lat, double lon, double * x, double * y);
     static void addAgent(QNetworkRequest & request);
     static bool lineIsCrossingRect(const QLineF line, const QRectF rect);
+    static double cLFA(const double lon, const double xW);
+    static double myDiffAngle(double a1,double a2);
+    static double A360(double hdg);
 
     //-------------------------------------------------
     template <typename T>

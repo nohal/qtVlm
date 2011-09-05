@@ -40,6 +40,7 @@ Copyright (C) 2008 - Jacques Zaninetti - http://zygrib.free.fr
 #include <QStringListModel>
 #include "POI.h"
 #include <QItemDelegate>
+#include "Grib.h"
 
 //-------------------------------------------------------
 // ROUTE_Editor: Constructor for edit an existing ROUTE
@@ -187,8 +188,8 @@ DialogRoute::DialogRoute(ROUTE *route,myCentralWidget *parent)
     rmModel->setColumnCount(10);
     rmModel->setHeaderData(0,Qt::Horizontal,QObject::tr("Date heure"));
     rmModel->setHeaderData(1,Qt::Horizontal,QObject::tr("TWS"));
-    rmModel->setHeaderData(2,Qt::Horizontal,QObject::tr("TWA"));
-    rmModel->setHeaderData(3,Qt::Horizontal,QObject::tr("TWD"));
+    rmModel->setHeaderData(2,Qt::Horizontal,QObject::tr("TWD"));
+    rmModel->setHeaderData(3,Qt::Horizontal,QObject::tr("TWA"));
     rmModel->setHeaderData(4,Qt::Horizontal,QObject::tr("Vitesse"));
     rmModel->setHeaderData(5,Qt::Horizontal,QObject::tr("Cap"));
     rmModel->setHeaderData(6,Qt::Horizontal,QObject::tr("POI cible"));
@@ -254,10 +255,16 @@ void DialogRoute::slotInterval()
                 roadPoint[0]->setData(roadItems.at(0),Qt::UserRole);
                 roadPoint.append(new QStandardItem(QString().sprintf("%.2f",roadItems.at(7))+tr(" nds")));
                 roadPoint[1]->setData(roadItems.at(7),Qt::UserRole);
-                roadPoint.append(new QStandardItem(QString().sprintf("%.2f",qAbs(roadItems.at(8)))+tr("deg")));
-                roadPoint[2]->setData(roadItems.at(8),Qt::UserRole);
+                if(parent->getGrib() && parent->getGrib()->isOk())
+                {
+                    QColor rgb=QColor(parent->getGrib()->getWindColor(roadItems.at(7),true));
+                    rgb.setAlpha(255);
+                    roadPoint[1]->setData(rgb,Qt::BackgroundRole);
+                }
                 roadPoint.append(new QStandardItem(QString().sprintf("%.2f",roadItems.at(6))+tr("deg")));
-                roadPoint[3]->setData(roadItems.at(6),Qt::UserRole);
+                roadPoint[2]->setData(roadItems.at(6),Qt::UserRole);
+                roadPoint.append(new QStandardItem(QString().sprintf("%.2f",qAbs(roadItems.at(8)))+tr("deg")));
+                roadPoint[3]->setData(roadItems.at(8),Qt::UserRole);
                 roadPoint.append(new QStandardItem(QString().sprintf("%.2f",roadItems.at(4))+tr(" nds")));
                 roadPoint[4]->setData(roadItems.at(4),Qt::UserRole);
                 roadPoint.append(new QStandardItem(QString().sprintf("%.2f",roadItems.at(3))+tr("deg")));
@@ -302,7 +309,7 @@ void DialogRoute::slotInterval()
             {
                 if(n%2==0)
                     roadPoint[n]->setData(QColor(240,240,240),Qt::BackgroundRole);
-                if(n==2)
+                if(n==3)
                     roadPoint[n]->setData(c,Qt::BackgroundRole);
                 roadPoint[n]->setEditable(false);
                 if(n==0 || n==6 || n==9 || roadItems.at(4)==-1)
