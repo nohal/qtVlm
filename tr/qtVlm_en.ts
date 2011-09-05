@@ -2977,7 +2977,7 @@ Etes-vous sur ?</source>
     <message>
         <location filename="../src/MenuBar.cpp" line="476"/>
         <source>Tracer une estime TWA</source>
-        <translation>Draw a grib reckoning</translation>
+        <translation>Draw a Grib esteem</translation>
     </message>
     <message>
         <location filename="../src/MenuBar.cpp" line="477"/>
@@ -3063,7 +3063,7 @@ Etes-vous sur ?</source>
     <message>
         <location filename="../src/POI.cpp" line="201"/>
         <source>Tracer une estime TWA</source>
-        <translation>Draw a TWA reckoning</translation>
+        <translation>Draw a Grib esteem</translation>
     </message>
     <message>
         <location filename="../src/POI.cpp" line="206"/>
@@ -6180,7 +6180,7 @@ Voulez-vous egalement supprimer tous les POIs lui appartenant?</source>
     <message>
         <location filename="../src/boat.cpp" line="163"/>
         <source>Tracer une estime TWA</source>
-        <translation>Draw a TWA reckoning</translation>
+        <translation>Draw a Grib esteem</translation>
     </message>
     <message>
         <location filename="../src/boat.cpp" line="725"/>

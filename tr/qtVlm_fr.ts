@@ -1824,7 +1824,7 @@ Etes-vous sur ?</source>
     </message>
     <message>
         <source>Tracer une estime TWA</source>
-        <translation>Tracer une estime grib</translation>
+        <translation>Tracer une estime Grib</translation>
     </message>
     <message>
         <source>Centrer le compass sur l&apos;interpolation de la route</source>
@@ -2107,7 +2107,7 @@ Etes-vous sur ?</source>
     </message>
     <message>
         <source>Tracer une estime TWA</source>
-        <translation></translation>
+        <translation>Tracer une estime Grib</translation>
     </message>
     <message>
         <source>Detruire la marque</source>
@@ -4225,7 +4225,7 @@ Voulez-vous egalement supprimer tous les POIs lui appartenant?</source>
     </message>
     <message>
         <source>Tracer une estime TWA</source>
-        <translation></translation>
+        <translation>Tracer une estime Grib</translation>
     </message>
     <message>
         <source>Cacher estime</source>
