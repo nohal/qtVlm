@@ -21,6 +21,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <QMessageBox>
 #include <QSettings>
 #include <QDebug>
+#include <QFileDialog>
 
 #include "xmlPOIData.h"
 #include "mycentralwidget.h"
@@ -310,6 +311,84 @@ void xml_POIData::slot_writeData(QList<ROUTE*> & route_list,QList<POI*> & poi_li
 
 void xml_POIData::slot_importZyGrib(void)
 {
+    QString filter;
+    filter =  tr("Fichiers ini (*.ini)")
+            + tr(";;Autres fichiers (*)");
+    QString fileName = QFileDialog::getOpenFileName(this,
+                         tr("Choisir un fichier ini"),
+                         "./",
+                         filter);
+    QFile file(fileName);
+
+    if (!file.open(QIODevice::ReadOnly | QIODevice::Text))
+        return;
+
+    QTextStream stream(&file);
+
+    double lat,lon;
+    QString name;
+    bool foundName,foundLat,foundLon;
+    int curCode=-1;
+    foundName=foundLon=foundLat=false;
+
+
+    while(true) {
+        QString line = stream.readLine();
+        if(line.isNull())
+            break;
+
+        QStringList list1 = line.split('\\');
+        bool ok;
+        if(list1.count()<=1) {
+            qWarning() << "Wrong line (no code): " <<line << " - nb item:" << list1.count();
+            continue;
+        }
+
+        int code=list1.at(0).toInt(&ok);
+        if(!ok) {
+            qWarning() << "Wrong line (code not numeric): " <<line;
+            continue;
+        }
+
+        if(code!=curCode) {
+            qWarning() << "New code " << code;
+            curCode=code;
+            foundName=foundLon=foundLat=false;
+        }
+
+        QStringList list2 = list1.at(1).split('=');
+
+        if(list2.count()<=1) {
+            qWarning() << "Wrong line (no = in data part): " <<line << " - nb item:" << list2.count();
+            continue;
+        }
+
+        if(list2.at(0) == "name") {
+            name=list2.at(1);
+            foundName=true;
+        }
+
+        if(list2.at(0) == "lat") {
+            lat=list2.at(1).toDouble();
+            foundLat=true;
+        }
+
+        if(list2.at(0) == "lon") {
+            lon=list2.at(1).toDouble();
+            foundLon=true;
+        }
+
+        if(foundName && foundLat && foundLon) {
+            qWarning() << "All data ok: " << curCode << " - " << name << " - " << lat << "," << lon;
+            POI * poi = new POI(name, POI_TYPE_POI,lat,lon,proj,main,parent,-1,-1,false,NULL);
+            emit addPOI_list(poi);
+            foundName=foundLon=foundLat=false;
+        }
+
+    }
+    file.close();
+
+#if 0
     /* let's see if we have some zyGrib POI here */
      QSettings settings("zyGrib");
      settings.beginGroup("poi");
@@ -361,6 +440,7 @@ void xml_POIData::slot_importZyGrib(void)
             tr("Pas de POI de zyGrib trouves"));
      }
      settings.endGroup();
+#endif
 }
 
 void xml_POIData::slot_readData(QString fname)
