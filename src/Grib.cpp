@@ -1736,7 +1736,7 @@ void Grib::drawTransformedLine( QPainter &pnt,
     jj = (int) (i*si+j*co +0.5) + dj;
     kk = (int) (k*co-l*si +0.5) + di;
     ll = (int) (k*si+l*co +0.5) + dj;
-    // Clip forcé �  cause d'un bug qpixmap sous windows
+    // Clip force a cause d'un bug qpixmap sous windows
     int w = pnt.device()->width();
     int h = pnt.device()->height();
     if (       Util::isInRange(ii, 0, w)
@@ -1774,19 +1774,19 @@ void Grib::drawWindArrowWithBarbs(
 
     if (vkn < 1)
     {
-        int r = 5;     // vent très faible, dessine un cercle
+        int r = 5;     // vent tres faible, dessine un cercle
         pnt.drawEllipse(i-r,j-r,2*r,2*r);
     }
     else {
-        // Flèche centrée sur l'origine
+        // Fleche centree sur l'origine
         int dec = -windBarbuleSize/2;
         drawTransformedLine(pnt, si,co, i,j,  dec,0,  dec+windBarbuleSize, 0);   // hampe
         drawTransformedLine(pnt, si,co, i,j,  dec,0,  dec+5, 2);    // flèche
         drawTransformedLine(pnt, si,co, i,j,  dec,0,  dec+5, -2);   // flèche
 
-                int b1 = dec+windBarbuleSize -4;  // position de la 1ère barbule
+                int b1 = dec+windBarbuleSize -4;  // position de la 1ere barbule
                 if (vkn >= 7.5  &&  vkn < 45 ) {
-                        b1 = dec+windBarbuleSize;  // position de la 1ère barbule si >= 10 noeuds
+                        b1 = dec+windBarbuleSize;  // position de la 1ere barbule si >= 10 noeuds
                 }
 
         if (vkn < 7.5) {  // 5 ktn

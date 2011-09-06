@@ -41,6 +41,7 @@ Copyright (C) 2008 - Jacques Zaninetti - http://zygrib.free.fr
 #include "POI.h"
 #include <QItemDelegate>
 #include "Grib.h"
+#include <QRadialGradient>
 
 //-------------------------------------------------------
 // ROUTE_Editor: Constructor for edit an existing ROUTE
@@ -185,17 +186,18 @@ DialogRoute::DialogRoute(ROUTE *route,myCentralWidget *parent)
     connect(this->intervalTimer,SIGNAL(timeout()),this,SLOT(slotInterval()));
     connect(this->roadMapInterval,SIGNAL(valueChanged(int)),this,SLOT(slotIntervalTimer(int)));
     rmModel = new QStandardItemModel();
-    rmModel->setColumnCount(10);
+    rmModel->setColumnCount(11);
     rmModel->setHeaderData(0,Qt::Horizontal,QObject::tr("Date heure"));
-    rmModel->setHeaderData(1,Qt::Horizontal,QObject::tr("TWS"));
-    rmModel->setHeaderData(2,Qt::Horizontal,QObject::tr("TWD"));
-    rmModel->setHeaderData(3,Qt::Horizontal,QObject::tr("TWA"));
-    rmModel->setHeaderData(4,Qt::Horizontal,QObject::tr("Vitesse"));
-    rmModel->setHeaderData(5,Qt::Horizontal,QObject::tr("Cap"));
-    rmModel->setHeaderData(6,Qt::Horizontal,QObject::tr("POI cible"));
-    rmModel->setHeaderData(7,Qt::Horizontal,QObject::tr("Distance"));
-    rmModel->setHeaderData(8,Qt::Horizontal,QObject::tr("Lon POI cible"));
-    rmModel->setHeaderData(9,Qt::Horizontal,QObject::tr("Lat POI cible"));
+    rmModel->setHeaderData(1,Qt::Horizontal," ");
+    rmModel->setHeaderData(2,Qt::Horizontal,QObject::tr("TWS"));
+    rmModel->setHeaderData(3,Qt::Horizontal,QObject::tr("TWD"));
+    rmModel->setHeaderData(4,Qt::Horizontal,QObject::tr("TWA"));
+    rmModel->setHeaderData(5,Qt::Horizontal,QObject::tr("Vitesse"));
+    rmModel->setHeaderData(6,Qt::Horizontal,QObject::tr("Cap"));
+    rmModel->setHeaderData(7,Qt::Horizontal,QObject::tr("POI cible"));
+    rmModel->setHeaderData(8,Qt::Horizontal,QObject::tr("Distance"));
+    rmModel->setHeaderData(9,Qt::Horizontal,QObject::tr("Lon POI cible"));
+    rmModel->setHeaderData(10,Qt::Horizontal,QObject::tr("Lat POI cible"));
     rmModel->setSortRole(Qt::UserRole);
     roadMap->setModel(rmModel);
     connect(this->tabWidget,SIGNAL(currentChanged(int)),this,SLOT(slotTabChanged(int)));
@@ -203,6 +205,10 @@ DialogRoute::DialogRoute(ROUTE *route,myCentralWidget *parent)
     roadMapWidthRatio=this->size().width()-roadMap->size().width();
     roadMapWidth=roadMap->size().width();
     tabWidth=tabWidget->size().width();
+    drawBoat.moveTo(20,10);
+    drawBoat.quadTo(12,22,17,30);
+    drawBoat.lineTo(23,30);
+    drawBoat.quadTo(28,22,20,10);
 }
 DialogRoute::~DialogRoute()
 {
@@ -239,12 +245,42 @@ void DialogRoute::slotInterval()
     double dist=0;
     double speedMoy=0;
     double twsMoy=0;
+    QPen pen(Qt::gray);
+    pen.setWidthF(0.5);
+    QRadialGradient radialGrad(QPointF(20, 20), 15);
+    radialGrad.setColorAt(0, Qt::white);
+    radialGrad.setColorAt(0.8, Qt::blue);
     for(int i=0;i<route->getRoadMap()->count();++i)
     {
         QList<double>roadItems=route->getRoadMap()->at(i);
         dist+=roadItems.at(5);
         speedMoy+=roadItems.at(4);
         twsMoy+=roadItems.at(7);
+        QPixmap img(40,40);
+        img.fill(Qt::white);
+        QPainter pnt(&img);
+        pnt.setRenderHint(QPainter::Antialiasing);
+        pen.setColor(Qt::gray);
+        pnt.setPen(pen);
+        pnt.setBrush(QBrush(radialGrad));
+        QMatrix mat=QMatrix().translate(20,20).rotate(roadItems.at(3)).translate(-20,-20);
+        pnt.setMatrix(mat);
+        pnt.drawPath(this->drawBoat);
+        pnt.setMatrixEnabled(false);
+        QColor rgb=Qt::white;
+        if(parent->getGrib() && parent->getGrib()->isOk())
+        {
+            rgb=QColor(parent->getGrib()->getWindColor(roadItems.at(7),true));
+            rgb.setAlpha(255);
+        }
+        pen.setColor(rgb);
+        pen.setWidth(2);
+        pnt.setPen(pen);
+        pnt.setBrush(Qt::NoBrush);
+        this->drawWindArrowWithBarbs(pnt,20,20,
+                                     roadItems.at(7),roadItems.at(6),
+                                     roadItems.at(2)<0);
+
         if(i%(val/step)==0 || i==route->getRoadMap()->count()-1)
         {
             QList<QStandardItem*> roadPoint;
@@ -253,30 +289,27 @@ void DialogRoute::slotInterval()
             {
                 roadPoint.append(new QStandardItem(QDateTime().fromTime_t((int)roadItems.at(0)).toUTC().toString("dd MMM yyyy hh:mm")));
                 roadPoint[0]->setData(roadItems.at(0),Qt::UserRole);
+                roadPoint.append(new QStandardItem());
+                roadPoint[1]->setData(img,Qt::DecorationRole);
                 roadPoint.append(new QStandardItem(QString().sprintf("%.2f",roadItems.at(7))+tr(" nds")));
-                roadPoint[1]->setData(roadItems.at(7),Qt::UserRole);
-                if(parent->getGrib() && parent->getGrib()->isOk())
-                {
-                    QColor rgb=QColor(parent->getGrib()->getWindColor(roadItems.at(7),true));
-                    rgb.setAlpha(255);
-                    roadPoint[1]->setData(rgb,Qt::BackgroundRole);
-                }
+                roadPoint[2]->setData(roadItems.at(7),Qt::UserRole);
+                roadPoint[2]->setData(rgb,Qt::BackgroundRole);
                 roadPoint.append(new QStandardItem(QString().sprintf("%.2f",roadItems.at(6))+tr("deg")));
-                roadPoint[2]->setData(roadItems.at(6),Qt::UserRole);
+                roadPoint[3]->setData(roadItems.at(6),Qt::UserRole);
                 roadPoint.append(new QStandardItem(QString().sprintf("%.2f",qAbs(roadItems.at(8)))+tr("deg")));
-                roadPoint[3]->setData(roadItems.at(8),Qt::UserRole);
+                roadPoint[4]->setData(roadItems.at(8),Qt::UserRole);
                 roadPoint.append(new QStandardItem(QString().sprintf("%.2f",roadItems.at(4))+tr(" nds")));
-                roadPoint[4]->setData(roadItems.at(4),Qt::UserRole);
+                roadPoint[5]->setData(roadItems.at(4),Qt::UserRole);
                 roadPoint.append(new QStandardItem(QString().sprintf("%.2f",roadItems.at(3))+tr("deg")));
-                roadPoint[5]->setData(roadItems.at(3),Qt::UserRole);
+                roadPoint[6]->setData(roadItems.at(3),Qt::UserRole);
                 roadPoint.append(new QStandardItem(route->getPoiList().at((int)roadItems.at(9))->getName()));
-                roadPoint[6]->setData(route->getPoiList().at((int)roadItems.at(9))->getName(),Qt::UserRole);
+                roadPoint[7]->setData(route->getPoiList().at((int)roadItems.at(9))->getName(),Qt::UserRole);
                 roadPoint.append(new QStandardItem(QString().sprintf("%.2f",roadItems.at(10))+tr(" NM")));
-                roadPoint[7]->setData(roadItems.at(0),Qt::UserRole);
+                roadPoint[8]->setData(roadItems.at(0),Qt::UserRole);
                 roadPoint.append(new QStandardItem(Util::formatLongitude(roadItems.at(1))));
-                roadPoint[8]->setData(roadItems.at(1),Qt::UserRole);
+                roadPoint[9]->setData(roadItems.at(1),Qt::UserRole);
                 roadPoint.append(new QStandardItem(Util::formatLatitude(roadItems.at(2))));
-                roadPoint[9]->setData(roadItems.at(2),Qt::UserRole);
+                roadPoint[10]->setData(roadItems.at(2),Qt::UserRole);
                 if(roadItems.at(8)>0)
                     c=Qt::red;
                 else
@@ -304,15 +337,17 @@ void DialogRoute::slotInterval()
                 roadPoint[8]->setData(0,Qt::UserRole);
                 roadPoint.append(new QStandardItem("-"));
                 roadPoint[9]->setData(0,Qt::UserRole);
+                roadPoint.append(new QStandardItem("-"));
+                roadPoint[10]->setData(0,Qt::UserRole);
             }
-            for(int n=0;n<10;++n)
+            for(int n=0;n<11;++n)
             {
-                if(n%2==0)
+                if(n%2==0 && n!=2)
                     roadPoint[n]->setData(QColor(240,240,240),Qt::BackgroundRole);
-                if(n==3)
+                if(n==4)
                     roadPoint[n]->setData(c,Qt::BackgroundRole);
                 roadPoint[n]->setEditable(false);
-                if(n==0 || n==6 || n==9 || roadItems.at(4)==-1)
+                if(n==0 || n==7 || n==10 || roadItems.at(4)==-1)
                     roadPoint[n]->setTextAlignment(Qt::AlignCenter| Qt::AlignVCenter);
                 else
                     roadPoint[n]->setTextAlignment(Qt::AlignRight| Qt::AlignVCenter);
@@ -335,6 +370,133 @@ void DialogRoute::slotInterval()
     this->avgSpeed->setText(QString().sprintf("%.2f",speedMoy)+tr(" nds"));
     this->avgTWS->setText(QString().sprintf("%.2f",twsMoy)+tr(" nds"));
     this->roadMapInterval->blockSignals(false);
+}
+void DialogRoute::drawTransformedLine( QPainter &pnt,
+        double si, double co,int di, int dj, int i,int j, int k,int l)
+{
+    int ii, jj, kk, ll;
+    ii = (int) (i*co-j*si +0.5) + di;
+    jj = (int) (i*si+j*co +0.5) + dj;
+    kk = (int) (k*co-l*si +0.5) + di;
+    ll = (int) (k*si+l*co +0.5) + dj;
+    pnt.drawLine(ii, jj, kk, ll);
+}
+//-----------------------------------------------------------------------------
+void DialogRoute::drawPetiteBarbule(QPainter &pnt, bool south,
+                    double si, double co, int di, int dj, int b)
+{
+    if (south)
+        drawTransformedLine(pnt, si,co, di,dj,  b,0,  b+2, -5);
+    else
+        drawTransformedLine(pnt, si,co, di,dj,  b,0,  b+2, 5);
+}
+//---------------------------------------------------------------
+void DialogRoute::drawGrandeBarbule(QPainter &pnt, bool south,
+                    double si, double co, int di, int dj, int b)
+{
+    if (south)
+        drawTransformedLine(pnt, si,co, di,dj,  b,0,  b+4,-10);
+    else
+        drawTransformedLine(pnt, si,co, di,dj,  b,0,  b+4,10);
+}
+//---------------------------------------------------------------
+void DialogRoute::drawWindArrowWithBarbs(QPainter &pnt, int i, int j, double vkn, double ang,
+                        bool south)
+{
+    int windBarbuleSize = 30;     // longueur des fleches avec barbules
+    ang = degToRad(ang);
+    ang-=PI_2;
+    double si=sin(ang),  co=cos(ang);
+
+
+    if (vkn < 1)
+    {
+        int r = 5;     // vent tres faible, dessine un cercle
+        pnt.drawEllipse(i-r,j-r,2*r,2*r);
+    }
+    else {
+        // Fleche centree sur l'origine
+        int dec = -windBarbuleSize/2;
+        drawTransformedLine(pnt, si,co, i,j,  dec,0,  dec+windBarbuleSize, 0);   // hampe
+        drawTransformedLine(pnt, si,co, i,j,  dec,0,  dec+5, 2);    // fleche
+        drawTransformedLine(pnt, si,co, i,j,  dec,0,  dec+5, -2);   // fleche
+
+                int b1 = dec+windBarbuleSize -4;  // position de la 1ere barbule
+                if (vkn >= 7.5  &&  vkn < 45 ) {
+                        b1 = dec+windBarbuleSize;  // position de la 1ere barbule si >= 10 noeuds
+                }
+
+        if (vkn < 7.5) {  // 5 ktn
+            drawPetiteBarbule(pnt,south, si,co, i,j, b1);
+        }
+        else if (vkn < 12.5) { // 10 ktn
+            drawGrandeBarbule(pnt,south, si,co, i,j, b1);
+        }
+        else if (vkn < 17.5) { // 15 ktn
+            drawGrandeBarbule(pnt,south, si,co, i,j, b1);
+            drawPetiteBarbule(pnt,south, si,co, i,j, b1-4);
+        }
+        else if (vkn < 22.5) { // 20 ktn
+            drawGrandeBarbule(pnt,south, si,co, i,j, b1);
+            drawGrandeBarbule(pnt,south, si,co, i,j, b1-4);
+        }
+        else if (vkn < 27.5) { // 25 ktn
+            drawGrandeBarbule(pnt,south, si,co, i,j, b1);
+            drawGrandeBarbule(pnt,south, si,co, i,j, b1-4);
+            drawPetiteBarbule(pnt,south, si,co, i,j, b1-8);
+        }
+        else if (vkn < 32.5) { // 30 ktn
+            drawGrandeBarbule(pnt,south, si,co, i,j, b1);
+            drawGrandeBarbule(pnt,south, si,co, i,j, b1-4);
+            drawGrandeBarbule(pnt,south, si,co, i,j, b1-8);
+        }
+        else if (vkn < 37.5) { // 35 ktn
+            drawGrandeBarbule(pnt,south, si,co, i,j, b1);
+            drawGrandeBarbule(pnt,south, si,co, i,j, b1-4);
+            drawGrandeBarbule(pnt,south, si,co, i,j, b1-8);
+            drawPetiteBarbule(pnt,south, si,co, i,j, b1-12);
+        }
+        else if (vkn < 45) { // 40 ktn
+            drawGrandeBarbule(pnt,south, si,co, i,j, b1);
+            drawGrandeBarbule(pnt,south, si,co, i,j, b1-4);
+            drawGrandeBarbule(pnt,south, si,co, i,j, b1-8);
+            drawGrandeBarbule(pnt,south, si,co, i,j, b1-12);
+        }
+        else if (vkn < 55) { // 50 ktn
+            drawTriangle(pnt,south, si,co, i,j, b1-4);
+        }
+        else if (vkn < 65) { // 60 ktn
+            drawTriangle(pnt,south, si,co, i,j, b1-4);
+            drawGrandeBarbule(pnt,south, si,co, i,j, b1-8);
+        }
+        else if (vkn < 75) { // 70 ktn
+            drawTriangle(pnt,south, si,co, i,j, b1-4);
+            drawGrandeBarbule(pnt,south, si,co, i,j, b1-8);
+            drawGrandeBarbule(pnt,south, si,co, i,j, b1-12);
+        }
+        else if (vkn < 85) { // 80 ktn
+            drawTriangle(pnt,south, si,co, i,j, b1-4);
+            drawGrandeBarbule(pnt,south, si,co, i,j, b1-8);
+            drawGrandeBarbule(pnt,south, si,co, i,j, b1-12);
+            drawGrandeBarbule(pnt,south, si,co, i,j, b1-16);
+        }
+        else { // > 90 ktn
+            drawTriangle(pnt,south, si,co, i,j, b1-4);
+            drawTriangle(pnt,south, si,co, i,j, b1-12);
+        }
+    }
+}
+void DialogRoute::drawTriangle(QPainter &pnt, bool south,
+                    double si, double co, int di, int dj, int b)
+{
+    if (south) {
+        drawTransformedLine(pnt, si,co, di,dj,  b,0,  b+4,-10);
+        drawTransformedLine(pnt, si,co, di,dj,  b+8,0,  b+4,-10);
+    }
+    else {
+        drawTransformedLine(pnt, si,co, di,dj,  b,0,  b+4,10);
+        drawTransformedLine(pnt, si,co, di,dj,  b+8,0,  b+4,10);
+    }
 }
 
 void DialogRoute::done(int result)

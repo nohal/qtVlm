@@ -69,6 +69,18 @@ class DialogRoute : public QDialog, public Ui::ROUTE_Editor_ui
         int roadMapWidthRatio;
         int tabWidth;
         int roadMapWidth;
+        QPainterPath drawBoat;
+        void drawWindArrowWithBarbs(QPainter &pnt,
+                                    int i, int j, double vkn, double ang,
+                                    bool south);
+        void drawTransformedLine( QPainter &pnt,
+                                  double si, double co,int di, int dj, int i,int j, int k,int l);
+        void drawPetiteBarbule(QPainter &pnt, bool south,
+                    double si, double co, int di, int dj, int b);
+        void drawGrandeBarbule(QPainter &pnt,  bool south,
+                    double si, double co, int di, int dj, int b);
+        void drawTriangle(QPainter &pnt, bool south,
+                    double si, double co, int di, int dj, int b);
 };
 class DateBoxDelegate : public QItemDelegate
 {
