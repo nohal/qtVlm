@@ -216,7 +216,7 @@ inline QList<vlmPoint> findRoute(const QList<vlmPoint> & pointList)
         vlmPoint to(res_lon,res_lat);
         double lastLonFound,lastLatFound;
         int realTime=ROUTAGE::calculateTimeRoute(from, to, &dataThread, &lastLonFound, &lastLatFound);
-        if(realTime==0)
+        if(realTime>10e4)
         {
             resultP.isDead=true;
             resultList.append(resultP);
@@ -243,6 +243,12 @@ inline QList<vlmPoint> findRoute(const QList<vlmPoint> & pointList)
         to.lat=res_lat;
         oldTime=realTime;
         realTime=ROUTAGE::calculateTimeRoute(from, to, &dataThread, &lastLonFound, &lastLatFound);
+        if(realTime>10e4)
+        {
+            resultP.isDead=true;
+            resultList.append(resultP);
+            continue;
+        }
         if(realTime==timeStepSec)
         {
             resultP.distOrigin=newDist;
@@ -262,6 +268,8 @@ inline QList<vlmPoint> findRoute(const QList<vlmPoint> & pointList)
             for (n=2;n<=21;n++) /*20 tries max*/
             {
                 double y=ROUTAGE::routeFunction(x,from,&lastLonFound,&lastLatFound,&dataThread);
+                if(y>10e4)
+                    break;
                 if(qAbs(y)<=60)
                 {
                     found=true;
@@ -437,8 +445,7 @@ inline int ROUTAGE::calculateTimeRoute(vlmPoint routeFrom,vlmPoint routeTo, data
         } while (has_eta);
     if(!has_eta)
     {
-        if(hasLimit)
-            return 10e5;
+        return 10e5;
     }
     if(lastLonFound!=NULL)
     {
@@ -531,7 +538,6 @@ ROUTAGE::ROUTAGE(QString name, Projection *proj, Grib *grib, QGraphicsScene * my
 }
 ROUTAGE::~ROUTAGE()
 {
-    //qWarning() << "Delete of routage: " << name;
     for (int n=0;n<isochrones.count();n++)
         delete isochrones[n];
     for (int n=0;n<segments.count();n++)
@@ -929,6 +935,7 @@ void ROUTAGE::calculate()
                     continue;
                 }
                 msecs_3=msecs_3+tfp.elapsed();
+                if(qAbs(newPoint.lat>84.0)) continue;
                 double x,y;
                 proj->map2screenFloat(cLFA(newPoint.lon),newPoint.lat,&x,&y);
                 newPoint.x=x;
@@ -1240,18 +1247,28 @@ void ROUTAGE::calculate()
                 if(useMultiThreading)
                 {
                     QList<QList<vlmPoint> > listList;
-                    int pp=0;
                     QList<vlmPoint> tempList;
+                    int pp=0;
+#if 0
                     int threadCount=QThread::idealThreadCount()+1;
+                    threadCount=threadCount*10;
                     for (int t=1;t<=threadCount;t++)
                     {
                         tempList.clear();
-                        for (;pp<tempPoints.count()*t/threadCount;pp++)
+                        for (;(double)pp<(double)tempPoints.count()*(double)t/(double)threadCount;pp++)
                         {
                             tempList.append(tempPoints.at(pp));
                         }
                         listList.append(tempList);
                     }
+#else
+                    for (pp=0;pp<tempPoints.count();++pp)
+                    {
+                        tempList.clear();
+                        tempList.append(tempPoints.at(pp));
+                        listList.append(tempList);
+                    }
+#endif
                     tempList.clear();
                     listList = QtConcurrent::blockingMapped(listList, findRoute);
                     tempPoints.clear();
