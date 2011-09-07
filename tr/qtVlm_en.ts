@@ -3259,49 +3259,40 @@ Etes-vous sur ?</source>
 <context>
     <name>POI_delete_ui</name>
     <message>
-        <location filename="../src/Ui/POI_delete.ui" line="14"/>
         <source>Selection de type de marque</source>
-        <translation>Select a mark&apos;s type</translation>
+        <translation type="obsolete">Select a mark&apos;s type</translation>
     </message>
     <message>
-        <location filename="../src/Ui/POI_delete.ui" line="39"/>
         <source>&lt;a href=&quot;titi&quot;&gt;Tous&lt;/a&gt;</source>
-        <translation>&lt;a href=&quot;titi&quot;&gt;All&lt;/a&gt;</translation>
+        <translation type="obsolete">&lt;a href=&quot;titi&quot;&gt;All&lt;/a&gt;</translation>
     </message>
     <message>
-        <location filename="../src/Ui/POI_delete.ui" line="54"/>
         <source>&lt;a href=&quot;toto&quot;&gt;Aucun&lt;/a&gt;</source>
-        <translation>&lt;a href=&quot;toto&quot;&gt;None&lt;/a&gt;</translation>
+        <translation type="obsolete">&lt;a href=&quot;toto&quot;&gt;None&lt;/a&gt;</translation>
     </message>
     <message>
-        <location filename="../src/Ui/POI_delete.ui" line="80"/>
         <source>POI</source>
-        <translation>POI</translation>
+        <translation type="obsolete">POI</translation>
     </message>
     <message>
-        <location filename="../src/Ui/POI_delete.ui" line="90"/>
         <source>Marque</source>
-        <translation>Mark</translation>
+        <translation type="obsolete">Mark</translation>
     </message>
     <message>
-        <location filename="../src/Ui/POI_delete.ui" line="97"/>
         <source>Balise</source>
-        <translation>Beacon</translation>
+        <translation type="obsolete">Beacon</translation>
     </message>
     <message>
-        <location filename="../src/Ui/POI_delete.ui" line="136"/>
         <source>OK</source>
-        <translation>OK</translation>
+        <translation type="obsolete">OK</translation>
     </message>
     <message>
-        <location filename="../src/Ui/POI_delete.ui" line="143"/>
         <source>Cancel</source>
-        <translation>Cancel</translation>
+        <translation type="obsolete">Cancel</translation>
     </message>
     <message>
-        <location filename="../src/Ui/POI_delete.ui" line="180"/>
         <source>Type de marque a supprimer</source>
-        <translation>Name and type of mark to be deleted</translation>
+        <translation type="obsolete">Name and type of mark to be deleted</translation>
     </message>
 </context>
 <context>
@@ -3928,7 +3919,7 @@ Etes-vous sur ?</source>
     </message>
     <message>
         <location filename="../src/xmlBoatData.cpp" line="393"/>
-        <location filename="../src/xmlPOIData.cpp" line="466"/>
+        <location filename="../src/xmlPOIData.cpp" line="472"/>
         <source>Lecture de parametre bateau</source>
         <translation>Reading boat setting</translation>
     </message>
@@ -8418,33 +8409,43 @@ Voulez-vous egalement supprimer tous les POIs lui appartenant?</source>
         <translation>Choose an ini file</translation>
     </message>
     <message>
-        <location filename="../src/xmlPOIData.cpp" line="400"/>
+        <location filename="../src/xmlPOIData.cpp" line="393"/>
+        <source>Zygrib POI import</source>
+        <translation>Zygrib POI import</translation>
+    </message>
+    <message>
+        <location filename="../src/xmlPOIData.cpp" line="393"/>
+        <source>POI imported from zyGrib</source>
+        <translation>POI imported from zyGrib</translation>
+    </message>
+    <message>
+        <location filename="../src/xmlPOIData.cpp" line="406"/>
         <source>%1 POI de zyGrib trouve</source>
         <translation>%1 POIs of zyGrib found</translation>
     </message>
     <message>
-        <location filename="../src/xmlPOIData.cpp" line="401"/>
+        <location filename="../src/xmlPOIData.cpp" line="407"/>
         <source>Supprimer les POI de zyGrib apres importation?</source>
         <translation>Delete zyGRib POI&apos;s after import?</translation>
     </message>
     <message>
-        <location filename="../src/xmlPOIData.cpp" line="432"/>
-        <location filename="../src/xmlPOIData.cpp" line="439"/>
+        <location filename="../src/xmlPOIData.cpp" line="438"/>
+        <location filename="../src/xmlPOIData.cpp" line="445"/>
         <source>POI de zyGrib</source>
         <translation>zyGrib POIs</translation>
     </message>
     <message>
-        <location filename="../src/xmlPOIData.cpp" line="433"/>
+        <location filename="../src/xmlPOIData.cpp" line="439"/>
         <source>POI importes, pensez a sauvegarder les POI</source>
         <translation>POIs imported, don&apos;t forget to save POIs</translation>
     </message>
     <message>
-        <location filename="../src/xmlPOIData.cpp" line="440"/>
+        <location filename="../src/xmlPOIData.cpp" line="446"/>
         <source>Pas de POI de zyGrib trouves</source>
         <translation>No zyGrib POIs found</translation>
     </message>
     <message>
-        <location filename="../src/xmlPOIData.cpp" line="467"/>
+        <location filename="../src/xmlPOIData.cpp" line="473"/>
         <source>Erreur ligne %1, colonne %2:
 %3</source>
         <translation>Error line %1, column %2: %3</translation>

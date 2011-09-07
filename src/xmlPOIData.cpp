@@ -323,6 +323,8 @@ void xml_POIData::slot_importZyGrib(void)
     if (!file.open(QIODevice::ReadOnly | QIODevice::Text))
         return;
 
+    int nbPOI=0;
+
     QTextStream stream(&file);
 
     double lat,lon;
@@ -383,9 +385,13 @@ void xml_POIData::slot_importZyGrib(void)
             POI * poi = new POI(name, POI_TYPE_POI,lat,lon,proj,main,parent,-1,-1,false,NULL);
             emit addPOI_list(poi);
             foundName=foundLon=foundLat=false;
+            nbPOI++;
         }
 
     }
+
+    QMessageBox::information(main,tr("Zygrib POI import"),QString().setNum(nbPOI) +" " +tr("POI imported from zyGrib"));
+
     file.close();
 
 #if 0
