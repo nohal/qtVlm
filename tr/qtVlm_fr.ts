@@ -684,7 +684,7 @@ Etes-vous sur ?</source>
     </message>
     <message>
         <source> processeurs disponibles)</source>
-        <translation></translation>
+        <translation>CPUs disponibles)</translation>
     </message>
     <message>
         <source>Routage: </source>
@@ -2836,11 +2836,11 @@ VMG %.1fnds</source>
     </message>
     <message>
         <source>Convertion d&apos;un routage en route</source>
-        <translation></translation>
+        <translation>Conversion d&apos;un routage en route</translation>
     </message>
     <message>
         <source>Voulez-vous que la route parte du bateau a la prochaine vacation?</source>
-        <translation></translation>
+        <translation>Voulez-vous que la route parte du bateau à la prochaine vacation?</translation>
     </message>
 </context>
 <context>
@@ -2875,7 +2875,7 @@ VMG %.1fnds</source>
     </message>
     <message>
         <source>Duree Isochrones</source>
-        <translation>Durée isochrones</translation>
+        <translation type="obsolete">Durée isochrones</translation>
     </message>
     <message>
         <source>Pas Anglulaire</source>
@@ -2923,7 +2923,7 @@ VMG %.1fnds</source>
     </message>
     <message>
         <source>Calculer en parallele (1 processeur disponible)</source>
-        <translation>Calculer en parallèle (1 processeur disponible)</translation>
+        <translation>Calculer en parallèle (1 CPU disponible)</translation>
     </message>
     <message>
         <source>Date et heure d&apos;arrivee du routage</source>
@@ -2975,7 +2975,9 @@ VMG %.1fnds</source>
     </message>
     <message>
         <source> min</source>
-        <extracomment>min</extracomment>
+        <extracomment>min
+----------
+min</extracomment>
         <translation></translation>
     </message>
     <message>
@@ -3051,6 +3053,14 @@ Virements de bord</source>
     </message>
     <message>
         <source>Max</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Isochrones &gt;24h</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Isochrones &lt;24h</source>
         <translation></translation>
     </message>
 </context>
@@ -5784,6 +5794,18 @@ Voulez-vous egalement supprimer tous les POIs lui appartenant?</source>
     <message>
         <source>Erreur ligne %1, colonne %2:
 %3</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Fichiers ini (*.ini)</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>;;Autres fichiers (*)</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Choisir un fichier ini</source>
         <translation></translation>
     </message>
 </context>
