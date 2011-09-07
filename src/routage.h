@@ -165,6 +165,10 @@ class ROUTAGE : public QObject
         void setMaxPortant(double d){this->maxPortant=d;}
         void setMinPres(double d){this->minPres=d;}
         void setMinPortant(double d){this->minPortant=d;}
+        Projection * getProj(){return proj;}
+        double findDistancePreviousIso(vlmPoint P);
+        QPolygonF * getPreviousIso(){return &previousIso;}
+        QList<QLineF> * getPreviousSegments(){return &previousSegments;}
     public slots:
         void slot_edit();
         void slot_abort(){this->aborted=true;}
@@ -230,7 +234,6 @@ class ROUTAGE : public QObject
         bool intersects(QList<vlmPoint> *iso,int nn,int mm,int * toBeKilled);
         bool done;
         bool converted;
-        double findDistancePreviousIso(vlmPoint P,QPolygonF * isoShape);
         void pruneWake(int wakeAngle);
         //int calculateTimeRoute(vlmPoint RouteFrom,vlmPoint routeTo,int limit=-1);
         //int routeFunction(double x,vlmPoint from);

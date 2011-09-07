@@ -25,4 +25,8 @@ vlmPoint::vlmPoint(float lon,float lat)
     this->notSimplificable=false;
     this->maxDistIso=10e5;
     this->isPOI=false;
+    this->xP1=10e5;
+    this->yP1=10e5;
+    this->xM1=10e5;
+    this->yM1=10e5;
 }

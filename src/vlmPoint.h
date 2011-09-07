@@ -44,6 +44,7 @@ class vlmPoint
         float  maxDistIso;
         ROUTAGE * routage;
         bool    isPOI;
+        double  xP1,yP1,xM1,yM1;
 
 };
 

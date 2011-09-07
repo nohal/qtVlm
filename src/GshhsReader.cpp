@@ -481,14 +481,15 @@ void GshhsReader::drawRivers( QPainter &pnt, Projection *proj)
 //-----------------------------------------------------------------------
 void GshhsReader::selectBestQuality(Projection *proj)
 {
+    //qWarning()<<proj->getCoefremp();
     int bestQuality = 0;
-    if (proj->getCoefremp() > 50)
+    if (proj->getCoefremp() > 100)       /*50*/
         bestQuality = 0;
-    else if (proj->getCoefremp() > 5)
+    else if (proj->getCoefremp() > 50)    /*5*/
         bestQuality = 1;
-    else if (proj->getCoefremp() > 2)
+    else if (proj->getCoefremp() > 15)    /*2*/
         bestQuality = 2;
-    else if (proj->getCoefremp() > 0.8)
+    else if (proj->getCoefremp() > 2)  /*0.8*/
         bestQuality = 3;
     else
         bestQuality = 4;
