@@ -2484,15 +2484,23 @@ void ROUTAGE::epuration(int toBeRemoved)
     QLineF tangente(tempPoints.first().x,tempPoints.first().y,
                     tempPoints.last().x,tempPoints.last().y);
     QPointF dummy=tangente.pointAt(0.5);
-    QLineF limite(xs,ys,dummy.x(),dummy.y());
-    limite.setLength(limite.length()*10.0);
+    QLineF limite;
+    if(!arrivalIsClosest)
+        limite=QLineF(xs,ys,dummy.x(),dummy.y());
+    else
+        limite=QLineF(xa,ya,dummy.x(),dummy.y());
+    limite.setLength(limite.length()*1000.0);
     dummy=limite.p2();
     bool rightSide=true;
     for(int n=0;n<tempPoints.count();n++)
     {
         if(rightSide)
         {
-            Triangle test(Point(dummy.x(),dummy.y()),Point(xa,ya),Point(tempPoints.at(n).x,tempPoints.at(n).y));
+            Triangle test;
+            if(!this->arrivalIsClosest)
+                test=Triangle(Point(xs,ys),Point(dummy.x(),dummy.y()),Point(tempPoints.at(n).x,tempPoints.at(n).y));
+            else
+                test=Triangle(Point(dummy.x(),dummy.y()),Point(xa,ya),Point(tempPoints.at(n).x,tempPoints.at(n).y));
             if(test.orientation()==left_turn)
             {
                 //tempPoints[n].debugBool=true;
