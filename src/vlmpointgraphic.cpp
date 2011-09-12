@@ -41,8 +41,12 @@ void vlmPointGraphic::setEta(time_t eta)
     QDateTime tm;
     tm.setTimeSpec(Qt::UTC);
     tm.setTime_t(eta);
-    QString ss;
-    this->setToolTip("eta: "+tm.toString("dd MMM-hh:mm")/*+"<br>debug->"+this->debug*/);
+    if(this->debug.isEmpty())
+        this->setToolTip("eta: "+tm.toString("dd MMM-hh:mm"));
+    else
+        this->setToolTip("eta: "+tm.toString("dd MMM-hh:mm")
+                     +"<br>IsoNb->"+QString().setNum(isoNb)+" pt nb->"+QString().setNum(this->pointIsoNb)
+                     +"<br>debug->"+this->debug);
 }
 
 //void  vlmPointGraphic::hoverEnterEvent ( QGraphicsSceneHoverEvent * event )

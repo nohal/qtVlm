@@ -79,9 +79,8 @@ ROUTE::ROUTE(QString name, Projection *proj, Grib *grib, QGraphicsScene * myScen
     this->hidePois=false;
     this->imported=false;
     this->multVac=1;
-    this->useVbvmgVlm=Settings::getSetting("useVbvmgVlm",0).toInt()==1;
-    this->setNewVbvmgVlm(Settings::getSetting("newVbvmgVlm",0).toInt()==1);
-    //this->setNewVbvmgVlm(false);
+    this->useVbvmgVlm=false;
+    this->setNewVbvmgVlm(false);
     pen.setColor(color);
     pen.setBrush(color);
     pen.setWidthF(width);

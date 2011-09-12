@@ -535,8 +535,8 @@ void DialogRoute::done(int result)
         route->setAutoRemove(this->autoRemove->isChecked());
         route->setAutoAt(autoAt->isChecked());
         route->setPilototo(this->pilototo->isChecked());
-        Settings::setSetting("useVbvmgVlm",route->getUseVbvmgVlm()?"1":"0"  );
-        Settings::setSetting("useNewVbvmgVlm",route->getNewVbvmgVlm()?"1":"0"  );
+        //Settings::setSetting("useVbvmgVlm",route->getUseVbvmgVlm()?"1":"0"  );
+        //Settings::setSetting("useNewVbvmgVlm",route->getNewVbvmgVlm()?"1":"0"  );
         route->setMultVac(vacStep->value());
         if(editVac->isChecked())
             route->setStartTimeOption(1);
