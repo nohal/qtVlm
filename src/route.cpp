@@ -204,7 +204,10 @@ void ROUTE::slot_recalculate(boat * boat)
         {
             POI * wp=my_poiList.at(n);
             while(my_poiList.first()!=wp)
+            {
+                my_poiList.first()->setMyLabelHidden(false);
                 my_poiList.first()->setRoute(NULL);
+            }
             if(my_poiList.count()==0)
             {
                 busy=false;
