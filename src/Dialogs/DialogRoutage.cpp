@@ -191,9 +191,9 @@ DialogRoutage::DialogRoutage(ROUTAGE *routage,myCentralWidget *parent)
         this->whatIfTime->setDisabled(true);
         this->multi->setDisabled(true);
         this->maxPortant->setDisabled(true);
-        this->maxPres->setDisabled(true);;
+        this->maxPres->setDisabled(true);
         this->minPortant->setDisabled(true);
-        this->minPres->setDisabled(true);;
+        this->minPres->setDisabled(true);
     }
     if(routage->getIsNewPivot() && !routage->isDone())
     {

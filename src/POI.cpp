@@ -216,7 +216,6 @@ void POI::createPopUpMenu(void)
 
     ac_delRoute = new QAction(tr("Supprimer la route "),popup);
     ac_delRoute->setData(QVariant(QMetaType::VoidStar, &route));
-    popup->addAction(ac_delRoute);
     ac_delRoute->setEnabled(false);
     connect(ac_delRoute,SIGNAL(triggered()),parent,SLOT(slot_deleteRoute()));
 
@@ -248,6 +247,9 @@ void POI::createPopUpMenu(void)
     connect(ac_modeList,SIGNAL(triggered(QAction*)),this,SLOT(slot_setMode(QAction*)));
     popup->addMenu(ac_modeList);
 
+    popup->addSeparator();
+    popup->addAction(ac_delRoute);
+    popup->addSeparator();
 
     ac_pilot=new QAction(tr("Pre-selectionner pour le pilototo"),popup);
     ac_pilot->setCheckable(true);

@@ -98,7 +98,7 @@ ROUTE::ROUTE(QString name, Projection *proj, Grib *grib, QGraphicsScene * myScen
     this->autoAt=Settings::getSetting("autoFillPoiHeading",0).toInt()==1;
     this->pilototo=false;
     this->initialDist=0;
-    this->roadMapInterval=60;
+    this->roadMapInterval=1;
     this->precalculateTan();
 }
 

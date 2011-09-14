@@ -295,10 +295,11 @@ MenuBar::MenuBar(QWidget *parent)
         mnRoute_edit = new QMenu(tr("Editer une route"));
         mnRoute_export = new QMenu(tr("Exporter une route"));
         menuRoute->addMenu(mnRoute_edit);
-        menuRoute->addMenu(mnRoute_delete);
         menuRoute->addMenu(mnRoute_export);
         acRoute_import = addAction(menuRoute,
                     tr("Importer une route"),"", "", "");
+        menuRoute->addSeparator();
+        menuRoute->addMenu(mnRoute_delete);
     addMenu(menuRoute);
 
     menuRoutage = new QMenu(tr("Routages"));
@@ -307,6 +308,7 @@ MenuBar::MenuBar(QWidget *parent)
         mnRoutage_delete = new QMenu(tr("Supprimer un routage"));
         mnRoutage_edit = new QMenu(tr("Editer un routage"));
         menuRoutage->addMenu(mnRoutage_edit);
+        menuRoutage->addSeparator();
         menuRoutage->addMenu(mnRoutage_delete);
     addMenu(menuRoutage);
 
