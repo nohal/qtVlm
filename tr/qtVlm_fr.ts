@@ -737,6 +737,10 @@ Etes-vous sur ?</source>
         <source>Pour utiliser cette action il faut que:&lt;br&gt;- La route parte du bateau&lt;br&gt;- Le mode VBVMG-VLM soit actif</source>
         <translation>Pour utiliser cette action il faut que&lt;br&gt;la route parte du bateau et que le mode VBVMG-VLM soit actif</translation>
     </message>
+    <message>
+        <source>Vous ne pouvez figer une route que&lt;br&gt;si elle part d&apos;un POI et d&apos;une date fixe</source>
+        <translation></translation>
+    </message>
 </context>
 <context>
     <name>DialogTwaLine</name>
@@ -2204,15 +2208,39 @@ Etes-vous sur ?</source>
     <name>POI_delete_ui</name>
     <message>
         <source>Selection de type de marque</source>
-        <translation type="obsolete">Sélection de type de marque</translation>
+        <translation>Sélection de type de marque</translation>
     </message>
     <message>
         <source>Cancel</source>
-        <translation type="obsolete">Annuler</translation>
+        <translation>Annuler</translation>
     </message>
     <message>
         <source>Type de marque a supprimer</source>
-        <translation type="obsolete">Type de marque à supprimer</translation>
+        <translation>Type de marque à supprimer</translation>
+    </message>
+    <message>
+        <source>&lt;a href=&quot;titi&quot;&gt;Tous&lt;/a&gt;</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>&lt;a href=&quot;toto&quot;&gt;Aucun&lt;/a&gt;</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>POI</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Marque</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Balise</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>OK</source>
+        <translation></translation>
     </message>
 </context>
 <context>
@@ -2729,6 +2757,10 @@ VMG %.1fnds</source>
     </message>
     <message>
         <source>Pas de bateau VLM actif.</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Export de route</source>
         <translation></translation>
     </message>
 </context>
@@ -5058,12 +5090,8 @@ Etes-vous sur ?</source>
         <translation>Chargement réussi</translation>
     </message>
     <message>
-        <source>Suppression d&apos;une route</source>
-        <translation></translation>
-    </message>
-    <message>
         <source>Vous ne pouvez pas supprimer une route figee</source>
-        <translation>Vous ne pouvez pas supprimer une route figée</translation>
+        <translation type="obsolete">Vous ne pouvez pas supprimer une route figée</translation>
     </message>
     <message>
         <source>Detruire la route : %1</source>
@@ -5110,6 +5138,18 @@ Voulez-vous egalement supprimer tous les POIs lui appartenant?</source>
     <message>
         <source>Pour pouvoir envoyer la route au pilototo if faut que:&lt;br&gt;-La route demarre du bateau et de la prochaine vac&lt;br&gt;et que le mode VbVmg-Vlm soit active</source>
         <translation>Pour pouvoir envoyer la route au pilototo if faut que:&lt;br&gt;-La route demarre du bateau et de la prochaine vacation&lt;br&gt;et que le mode VbVmg-Vlm soit activé</translation>
+    </message>
+    <message>
+        <source>Import de routes</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Import en cours, veuillez patienter...</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Export en cours, veuillez patienter...</source>
+        <translation></translation>
     </message>
 </context>
 <context>
