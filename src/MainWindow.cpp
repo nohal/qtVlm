@@ -217,6 +217,7 @@ void MainWindow::slot_gribFileReceived(QString fileName)
 MainWindow::MainWindow(int w, int h, QWidget *parent)
     : QMainWindow(parent)
 {
+    setWindowIcon (QIcon ("icon/qtVlm_48x48.png"));
     noSave=false;
     isStartingUp=true;
     finishStart=true;
@@ -1067,6 +1068,7 @@ void MainWindow::updatePilototo_Btn(boatVLM * boat)
         menuBar->acPilototo->setToolTip(pilototo_toolTip);
         myBoard->VLMBoard()->btn_Pilototo->setText(pilototo_txt);
         myBoard->VLMBoard()->btn_Pilototo->setToolTip(pilototo_toolTip);
+        myBoard->pilototoCountDown();
     }
     else
     {
@@ -1135,8 +1137,11 @@ void MainWindow::updateNxtVac(void)
     else
     {
         nxtVac_cnt--;
-        if(nxtVac_cnt<0)
+        if(nxtVac_cnt<0) {
             nxtVac_cnt=selectedBoat->getVacLen();
+            myBoard->outdatedVLM();
+            myBoard->pilototoCountDown();
+        }
     }
     drawVacInfo();
 }
