@@ -153,6 +153,11 @@ DialogRoute::DialogRoute(ROUTE *route,myCentralWidget *parent)
         this->autoAt->setChecked(false);
         this->autoAt->hide();
     }
+    if(route->isImported())
+    {
+        this->tabWidget->setTabEnabled(1,false);
+        this->tabWidget->setTabEnabled(2,false);
+    }
 #if 1
     this->pilototo->hide();
     //this->tabWidget->removeTab(1);
@@ -511,6 +516,24 @@ void DialogRoute::done(int result)
             msgBox.exec();
             return;
         }
+        if(this->editFrozen->isChecked() && (!this->editDate->isChecked() || this->startFromBoat->isChecked()))
+        {
+            QMessageBox msgBox;
+            msgBox.setText(tr("Vous ne pouvez figer une route que<br>si elle part d'un POI et d'une date fixe"));
+            msgBox.setIcon(QMessageBox::Critical);
+            msgBox.exec();
+            return;
+        }
+        if(this->editFrozen->isChecked() && route->getFrozen())
+        {
+            if(this->editDateBox->dateTime()!=route->getStartTime())
+                route->shiftEtas(editDateBox->dateTime());
+        }
+        if(!this->editFrozen->isChecked())
+        {
+            this->tabWidget->setTabEnabled(1,true);
+            this->tabWidget->setTabEnabled(2,true);
+        }
         route->setSpeedLossOnTack((double)this->speedLossOnTack->value()/100.00);
         route->setBusy(true);
         route->setName((editName->text()).trimmed());
@@ -567,7 +590,7 @@ void DialogRoute::done(int result)
         else
             route->setBoat((boat *) parent->getRealBoat());
         route->setHidden(hidden->isChecked());
-        route->setFrozen3(editFrozen->isChecked());
+        route->setFrozen(editFrozen->isChecked());
         route->setDetectCoasts(editCoasts->isChecked());
         if(hidePois->isChecked()!=route->getHidePois())
             route->setHidePois(hidePois->isChecked());

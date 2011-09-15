@@ -58,7 +58,7 @@ class ROUTE : public QObject
         void setStartTime(QDateTime date){this->startTime=date;}
         QDateTime getStartTime() {return this->startTime.toUTC();}
 
-        void setFrozen(bool frozen) {if(frozen==this->frozen) return;this->frozen=frozen;if(frozen==false) {imported=false;slot_recalculate();}}
+        void setFrozen(bool frozen) {if(frozen==this->frozen) return;this->frozen=frozen;if(!frozen) {imported=false;slot_recalculate();}}
         void setFrozen2(bool frozen) {if(frozen==this->frozen) return;this->frozen=frozen;if(!frozen)slot_recalculate();}
         void setFrozen3(bool frozen){this->frozen=frozen;}
         bool getFrozen(){return this->frozen;}
@@ -123,6 +123,7 @@ class ROUTE : public QObject
         double getInitialDist(){return this->initialDist;}
         int getRoadMapInterval(){return roadMapInterval;}
         void setRoadMapInterval(int i){roadMapInterval=i;}
+        void shiftEtas(QDateTime newStart);
     public slots:
         void slot_recalculate(boat * boat=NULL);
         void slot_edit();

@@ -127,8 +127,8 @@ void ROUTE::setBoat(boat *curBoat)
         this->boatLogin="";
     if(frozen)
     {
-        setFrozen(false);
-        setFrozen(true);
+        setFrozen2(false);
+        setFrozen2(true);
     }
 }
 void ROUTE::setWidth(double width)
@@ -1289,4 +1289,14 @@ void ROUTE::precalculateTan()
         tanNeg->append(tanG);
         hypotNeg->append(hypot(1,tanG));
     }
+}
+void ROUTE::shiftEtas(QDateTime newStart)
+{
+    int timeDiff=newStart.toTime_t()-this->startTime.toTime_t();
+    this->startTime=newStart;
+    foreach(POI * poi,this->my_poiList)
+        poi->setRouteTimeStamp(poi->getRouteTimeStamp()+timeDiff);
+    this->initialized=false;
+    this->setFrozen2(false);
+    this->setFrozen2(true);
 }

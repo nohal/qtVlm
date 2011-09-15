@@ -1375,7 +1375,7 @@ void myCentralWidget::slot_importRouteFromMenu()
         routePath=QApplication::applicationDirPath();
         Settings::setSetting("importRouteFolder",routePath);
     }
-#if 0
+#if 1
     QString fileName = QFileDialog::getOpenFileName(this,
                          tr("Ouvrir un fichier Route"), routePath, "Routes (*.csv *.txt *.xml *.json *.CSV *.TXT *.XML *.Json *.JSON)");
 #else
@@ -1400,21 +1400,40 @@ void myCentralWidget::slot_importRouteFromMenu()
         QTextStream stream(&routeFile);
         QString line;
         line=stream.readLine();
-        line.remove(0,1);
-        line.remove(line.count()-1,1);
-        QStringList lines;
-        while(line.contains("[{"))
+        routeFile.close();
+        if(line.contains("[{"))
         {
-            int start=line.indexOf("[{")+1;
-            int end=line.indexOf("}]");
-            lines.append(line.mid(start,end-start+1));
-            line.remove(start,end-start+1);
+            line.remove(0,1);
+            line.remove(line.count()-1,1);
+        }
+        QStringList lines;
+        if(line.contains("[{"))
+        {
+            while(line.contains("[{"))
+            {
+                int start=line.indexOf("[{")+1;
+                int end=line.indexOf("}]");
+                lines.append(line.mid(start,end-start+1));
+                line.remove(start,end-start+1);
+            }
+        }
+        else
+        {
+            lines.append(line);
         }
         foreach(QString track,lines)
         {
+            if (track.count()<3) continue;
+
+            if(!track.contains("tracks"))
+            {
+                track.insert(0,"{\"tracks\":");
+                track.append("}");
+            }
+            //qWarning()<<"track"<<track.left(30);
+            QString frName;
             QByteArray buff;
             buff.append(track);
-            if (track.count()<3) continue;
             QJson::Parser parser;
             QVariantMap result = parser.parse (buff, &ok).toMap();
             if (!ok)
@@ -1423,7 +1442,10 @@ void myCentralWidget::slot_importRouteFromMenu()
                 qWarning() << "Error: " << parser.errorString() << " (line: " << parser.errorLine() << ")";
                 return;
             }
-            QString frName=result["nom"].toString();
+            if(track.contains("nom"))
+            {
+                frName=result["nom"].toString();
+            }
             routeName=QInputDialog::getText(this,
                                             tr("Nom de la route a importer"),
                                             frName+"<br>"+tr("Nom de la route"),
@@ -1439,10 +1461,14 @@ void myCentralWidget::slot_importRouteFromMenu()
                 msgBox.setText(tr("Ce nom est deja utilise ou invalide"));
                 msgBox.setIcon(QMessageBox::Critical);
                 msgBox.exec();
-                routeFile.close();
                 this->deleteRoute(route);
                 continue;
             }
+            QMessageBox * waitBox = new QMessageBox(QMessageBox::Information,tr("Import de routes"),
+                                      tr("Import en cours, veuillez patienter..."));
+            waitBox->setStandardButtons(QMessageBox::NoButton);
+            waitBox->show();
+            QApplication::processEvents();
             route->setName(routeName);
             update_menuRoute();
             route->setBoat(mainW->getSelectedBoat());
@@ -1451,10 +1477,9 @@ void myCentralWidget::slot_importRouteFromMenu()
             route->setColor(QColor(227,142,42,255));
             route->setImported();
             route->setFrozen(true);
+            route->setTemp(true);
             QVariantList details=result["tracks"].toList();
-            qWarning()<<QDateTime().currentDateTime().toTime_t();
-            QList<int> etas;
-            QList<QPointF> points;
+            QMap<int,QPointF> points;
             for(int n=0;n<details.count();++n)
             {
                 QVariant detail=details.at(n);
@@ -1462,28 +1487,29 @@ void myCentralWidget::slot_importRouteFromMenu()
                 time_t eta=FTpoint.at(0).toInt();
                 double lon=FTpoint.at(1).toDouble()/1000.00;
                 double lat=FTpoint.at(2).toDouble()/1000.00;
-                etas.append(eta);
-                points.append(QPointF(lon,lat));
+                points.insert(eta,QPointF(lon,lat));
             }
-            for(int n=points.count()-1;n>=0;--n)
+            QDateTime start=QDateTime().fromTime_t(points.begin().key());
+            route->setStartTime(start);
+            QMapIterator<int,QPointF> p(points);
+            int nPoi=0;
+            while(p.hasNext())
             {
-                int eta=etas.at(n);
-                double lon=points.at(n).x();
-                double lat=points.at(n).y();
-                if(n==points.count()-1)
-                {
-                    QDateTime start=QDateTime().fromTime_t(eta);
-                    route->setStartTime(start);
-                }
-                QString poiName=route->getName()+QString().sprintf("%.5i",details.count()-n);
+                ++nPoi;
+                int eta=p.next().key();
+                double lon=p.value().x();
+                double lat=p.value().y();
+                QString poiName=route->getName()+QString().sprintf("%.5i",nPoi);
                 POI * poi = slot_addPOI(poiName,0,lat,lon,-1,false,false,mainW->getSelectedBoat());
                 poi->setRoute(route);
                 poi->setRouteTimeStamp(eta);
             }
             route->setHidePois(true);
             route->setImported();
+            route->setTemp(false);
             route->setFrozen2(false);//calculate only once and relock immediately
             route->setFrozen2(true);
+            delete waitBox;
         }
     }
     else if(info.suffix().toLower()!="xml")
@@ -1824,7 +1850,7 @@ void myCentralWidget::exportRouteFromMenu(ROUTE * route)
         Settings::setSetting("importRouteFolder",routePath);
     }
     QString fileName = QFileDialog::getSaveFileName(this,
-                         tr("Exporter une Route"), routePath, "Routes (*.csv *.txt *.CSV *.TXT *.gpx)");
+                         tr("Exporter une Route"), routePath, "Routes (*.json *.csv *.txt *.CSV *.TXT *.gpx)");
     if(fileName.isEmpty() || fileName.isNull()) return;
     QMessageBox mb(0);
     mb.setText(tr("Exporter seulement les POIs ou egalement tous les details?"));
@@ -1842,18 +1868,69 @@ void myCentralWidget::exportRouteFromMenu(ROUTE * route)
     QFile::remove(fileName);
     QFile routeFile(fileName);
     QFileInfo info(routeFile);
-    if (QString::compare(info.suffix(),"gpx")==0)
-    {
-        exportRouteFromMenuGPX(route,fileName,POIonly);
-        return;
-    }
     if(!routeFile.open(QIODevice::WriteOnly | QIODevice::Text))
     {
-        QMessageBox::warning(0,QObject::tr("Lecture de route"),
+        QMessageBox::warning(0,QObject::tr("Export de route"),
              QString(QObject::tr("Impossible de creer le fichier %1")).arg(fileName));
         return;
     }
     Settings::setSetting("importRouteFolder",info.absoluteDir().path());
+    QMessageBox * waitBox = new QMessageBox(QMessageBox::Information,tr("Import de routes"),
+                              tr("Export en cours, veuillez patienter..."));
+    waitBox->setStandardButtons(QMessageBox::NoButton);
+    waitBox->show();
+    QApplication::processEvents();
+    if (QString::compare(info.suffix(),"gpx")==0)
+    {
+        exportRouteFromMenuGPX(route,fileName,POIonly);
+        delete waitBox;
+        return;
+    }
+    if(info.suffix().toLower()=="json")
+    {
+        QTextStream stream(&routeFile);
+        stream<<"[";
+        bool first=true;
+        if (POIonly)
+        {
+            if(route->getStartFromBoat())
+            {
+                stream<<"[\""<<route->getStartDate()<<"\",\""<<
+                        QString().sprintf("%.10f",route->getStartLon()*1000.00)<<"\",\""<<
+                        QString().sprintf("%.10f",route->getStartLat()*1000.00)<<"\"]";
+                first=false;
+            }
+            foreach(POI * poi, route->getPoiList())
+            {
+                if(!poi->getUseRouteTstamp()) break;
+                if(!first)
+                    stream<<",";
+                else
+                    first=false;
+                stream<<"[\""<<poi->getRouteTimeStamp()<<"\",\""<<
+                        QString().sprintf("%.10f",poi->getLongitude()*1000.00)<<"\",\""<<
+                        QString().sprintf("%.10f",poi->getLatitude()*1000.00)<<"\"]";
+            }
+        }
+        else
+        {
+            for(int nn=0;nn<route->getLine()->getPoints()->count();++nn)
+            {
+                if(!first)
+                    stream<<",";
+                else
+                    first=false;
+                vlmPoint p=route->getLine()->getPoints()->at(nn);
+                stream<<"[\""<<p.eta<<"\",\""<<
+                        QString().sprintf("%.10f",p.lon*1000.00)<<"\",\""<<
+                        QString().sprintf("%.10f",p.lat*1000.00)<<"\"]";
+            }
+        }
+        stream<<"]"<<endl;
+        routeFile.close();
+        delete waitBox;
+        return;
+    }
     QTextStream stream(&routeFile);
     QStringList list;
     list.append("position");
@@ -1958,6 +2035,7 @@ void myCentralWidget::exportRouteFromMenu(ROUTE * route)
         }
     }
     routeFile.close();
+    delete waitBox;
 }
 void myCentralWidget::exportRouteFromMenuGPX(ROUTE * route,QString fileName,bool POIonly)
 {
@@ -2401,13 +2479,6 @@ void myCentralWidget::slot_deleteRoute()
 void myCentralWidget::myDeleteRoute(ROUTE * route)
 {
     if(route->isBusy()) return ;
-    if(route->getFrozen())
-    {
-        QMessageBox::critical(0,
-            tr("Suppression d'une route"),
-            tr("Vous ne pouvez pas supprimer une route figee"));
-        return ;
-    }
     int rep = QMessageBox::question (0,
             tr("Detruire la route : %1").arg(route->getName()),
             tr("La destruction d'une route est definitive.\n\nVoulez-vous egalement supprimer tous les POIs lui appartenant?"),
