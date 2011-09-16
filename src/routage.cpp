@@ -121,6 +121,11 @@ vlmPoint findPointThreaded(vlmPoint pt)
             windSpeed=(windSpeed+newWindSpeed)/2;
         }
     }
+    if(pt.routage->getVisibleOnly() && !pt.routage->getProj()->isPointVisible(pt.lon,pt.lat))
+    {
+        pt.isDead=true;
+        return pt;
+    }
     if(qAbs(pt.lat>84.0))
     {
 #ifdef DEBUG_EPURATION
@@ -630,7 +635,6 @@ ROUTAGE::ROUTAGE(QString name, Projection *proj, Grib *grib, QGraphicsScene * my
     this->myscene=myScene;
     this->isPivot=false;
     this->isNewPivot=false;
-    this->autoZoom=true;
     if(QThread::idealThreadCount()<=1)
         this->useMultiThreading=false;
     else
@@ -676,6 +680,8 @@ ROUTAGE::ROUTAGE(QString name, Projection *proj, Grib *grib, QGraphicsScene * my
     this->useRouteModule=Settings::getSetting("useRouteModule",1).toInt()==1;
     this->useConverge=Settings::getSetting("useConverge",1).toInt()==1;
     this->checkCoast=Settings::getSetting("checkCoast",1).toInt()==1;
+    this->visibleOnly=Settings::getSetting("visibleOnly",1).toInt()==1;
+    this->autoZoom=Settings::getSetting("autoZoom",1).toInt()==1;
     this->wind_angle=0;
     this->wind_speed=20;
     this->windIsForced=false;
@@ -755,6 +761,8 @@ void ROUTAGE::calculate()
     Settings::setSetting("useRouteModule",useRouteModule?1:0);
     Settings::setSetting("useConverge",useConverge?1:0);
     Settings::setSetting("checkCoast",checkCoast?1:0);
+    Settings::setSetting("visibleOnly",visibleOnly?1:0);
+    Settings::setSetting("autoZoom",autoZoom?1:0);
     this->isNewPivot=false;
     this->aborted=false;
     if (!(myBoat && myBoat->getPolarData() && myBoat!=NULL))
@@ -1047,12 +1055,12 @@ void ROUTAGE::calculate()
                                         qMin((double) angleRange,
                                              (double)angleRange/(1+log((list->at(n).distArrival/minDist)))));
                     workAngleStep=qMax(angleStep/3.0,workAngleRange/(angleRange/angleStep));
-                    workAngleStep=qMax(1,qRound(workAngleStep)); /*this allows less points generated but keep orginal total per iso*/
+                    workAngleStep=qMax(3,qRound(workAngleStep)); /*this allows less points generated but keep orginal total per iso*/
                 }
                 else
                 {
                     workAngleRange=angleRange;
-                    workAngleStep=qMax((double)1,angleStep);
+                    workAngleStep=qMax((double)3,angleStep);
                 }
 #endif
             }
@@ -1522,9 +1530,8 @@ void ROUTAGE::calculate()
                     QList<QList<vlmPoint> > listList;
                     QList<vlmPoint> tempList;
                     int pp=0;
-#if 0
-                    int threadCount=QThread::idealThreadCount()+1;
-                    threadCount=threadCount*10;
+#if 1
+                    int threadCount=QThread::idealThreadCount()*2;
                     for (int t=1;t<=threadCount;t++)
                     {
                         tempList.clear();
@@ -1569,6 +1576,8 @@ void ROUTAGE::calculate()
                         tempPList.append(newPoint);
                         newPoint=findRoute(tempPList).first();
                     }
+                    if(this->visibleOnly && !proj->isPointVisible(newPoint.lon,newPoint.lat))
+                        newPoint.isDead=true;
                     if(newPoint.isDead)
                     {
                         tempPoints.removeAt(np);
@@ -2107,11 +2116,6 @@ void ROUTAGE::pruneWake(int wakeAngle)
         {
             if(pIso->at(m).distArrival>tempPoints.at(n).distArrival) continue;
             if(myDiffAngle(pIso->at(m).capArrival,tempPoints.at(n).capArrival)>60) continue;
-            if(this->checkCoast)
-            {
-                if(map->crossing(QLineF(x1,y1,pIso->at(m).x,pIso->at(m).y),QLineF(tempPoints.at(n).lon,tempPoints.at(n).lat,pIso->at(m).lon,pIso->at(m).lat)))
-                    continue;
-            }
             QLineF toArrival(pIso->at(m).x,pIso->at(m).y,xa,ya);
             QLineF toPoint(pIso->at(m).x,pIso->at(m).y,tempPoints.at(n).x,tempPoints.at(n).y);
             if(toArrival.length()/toPoint.length()>0.50) continue;
@@ -2134,180 +2138,23 @@ void ROUTAGE::pruneWake(int wakeAngle)
             wake.append(QPointF(x2,y2));
             if(wake.containsPoint(QPointF(x1,y1),Qt::OddEvenFill))
             {
-                tempPoints.removeAt(n);
-                break;
+                if(this->checkCoast)
+                {
+                    if(!map->crossing(QLineF(x1,y1,pIso->at(m).x,pIso->at(m).y),QLineF(tempPoints.at(n).lon,tempPoints.at(n).lat,pIso->at(m).lon,pIso->at(m).lat)))
+                    {
+                        tempPoints.removeAt(n);
+                        break;
+                    }
+                }
+                else
+                {
+                    tempPoints.removeAt(n);
+                    break;
+                }
             }
         }
     }
 }
-#if 0
-int ROUTAGE::routeFunction(double x,vlmPoint from)
-{
-    double res_lon,res_lat;
-    Util::getCoordFromDistanceAngle(from.lat, from.lon, x, from.capOrigin, &res_lat, &res_lon);
-    vlmPoint to(res_lon,res_lat);
-    return calculateTimeRoute(from,to)-this->getTimeStep()*60;
-}
-int ROUTAGE::routeFunctionDeriv(double x,vlmPoint from)
-{
-    double minGap=x/100;
-    int   yr,yl;
-    double xl,xr;
-    for(int n=1;n<200;n++) /*bad trick to avoid flat spots*/
-    {
-        xr=x+minGap;
-        xl=qMax(x/100,x-minGap);
-        yr=routeFunction(xr,from);
-        yl=routeFunction(xl,from);
-        if(yr!=yl) break;
-        minGap=minGap+x/100;
-    }
-#if 0
-    if(yr==yl)
-        qWarning()<<"couldn't avoid flat spot"<<"xr="<<xr<<"xl="<<xl<<"x="<<x;
-#endif
-    return((yr-yl)/(xr-xl));
-}
-int ROUTAGE::calculateTimeRoute(vlmPoint routeFrom,vlmPoint routeTo,int limit)
-{
-    double  lastTwa=routeFrom.wind_angle;
-    bool    ignoreTackLoss=routeFrom.isStart;
-    tooFar=false;
-    time_t etaRoute=this->eta;
-    time_t etaLimit=eta*2;
-    time_t workEta;
-    bool hasLimit=false;
-    if(limit!=-1)
-    {
-        hasLimit=true;
-        etaLimit=etaRoute+(limit*2);
-    }
-    bool has_eta=true;
-    Orthodromie orth(0,0,0,0);
-    Orthodromie orth2(0,0,0,0);
-    double lon,lat;
-    lon=routeFrom.lon;
-    lat=routeFrom.lat;
-    double newSpeed,distanceParcourue,remaining_distance,res_lon,res_lat,previous_remaining_distance,cap1,cap2,diff1,diff2;
-    double windAngle,windSpeed,cap,angle;
-    time_t maxDate=grib->getMaxDate();
-    newSpeed=0;
-    distanceParcourue=0;
-    res_lon=0;
-    res_lat=0;
-    previous_remaining_distance=0;
-    windAngle=0;
-    windSpeed=0;
-    orth.setPoints(lon, lat, routeTo.lon,routeTo.lat);
-    orth2.setPoints(lon, lat, routeTo.lon,routeTo.lat);
-    remaining_distance=orth.getDistance();
-    double initialDistance=orth2.getDistance();
-    do
-        {
-            workEta=etaRoute;
-            if(whatIfUsed && whatIfJour<=eta)
-                workEta=workEta+whatIfTime*3600;
-            if(this->windIsForced || (grib->getInterpolatedValue_byDates(lon, lat, workEta,&windSpeed,&windAngle,INTERPOLATION_DEFAULT) && workEta<=maxDate && (!hasLimit || etaRoute<=etaLimit)))
-            {
-                if(this->windIsForced)
-                {
-                    windSpeed=this->wind_speed;
-                    windAngle=this->wind_angle;
-                }
-                else
-                {
-                    windAngle=radToDeg(windAngle);
-                }
-                if(whatIfUsed && whatIfJour<=eta)
-                    windSpeed=windSpeed*whatIfWind/100.00;
-                previous_remaining_distance=remaining_distance;
-                cap=orth.getAzimutDeg();
-                angle=cap-windAngle;
-                if(qAbs(angle)>180)
-                {
-                    if(angle<0)
-                        angle=360+angle;
-                    else
-                        angle=angle-360;
-                }
-                if(qAbs(angle)<myBoat->getBvmgUp(windSpeed))
-                {
-                    angle=myBoat->getBvmgUp(windSpeed);
-                    cap1=A360(windAngle+angle);
-                    cap2=A360(windAngle-angle);
-                    diff1=myDiffAngle(cap,cap1);
-                    diff2=myDiffAngle(cap,cap2);
-                    if(diff1<diff2)
-                        cap=cap1;
-                    else
-                        cap=cap2;
-                }
-                else if(qAbs(angle)>myBoat->getBvmgDown(windSpeed))
-                {
-                    angle=myBoat->getBvmgDown(windSpeed);
-                    cap1=A360(windAngle+angle);
-                    cap2=A360(windAngle-angle);
-                    diff1=myDiffAngle(cap,cap1);
-                    diff2=myDiffAngle(cap,cap2);
-                    if(diff1<diff2)
-                        cap=cap1;
-                    else
-                        cap=cap2;
-                }
-                newSpeed=myBoat->getPolarData()->getSpeed(windSpeed,angle);
-                if(!ignoreTackLoss && this->speedLossOnTack!=1)
-                {
-                    if((angle>0 && lastTwa<0) || (angle<0 && lastTwa>0))
-                        newSpeed=newSpeed*this->speedLossOnTack;
-                }
-                else
-                    ignoreTackLoss=false;
-                lastTwa=angle;
-                distanceParcourue=newSpeed*myBoat->getVacLen()/3600.00;
-                Util::getCoordFromDistanceAngle(lat, lon, distanceParcourue, cap,&res_lat,&res_lon);
-                orth.setStartPoint(res_lon, res_lat);
-                remaining_distance=orth.getDistance();
-            }
-            else
-            {
-#if 0
-                if(!grib->getInterpolatedValue_byDates(lon, lat, etaRoute,&windSpeed,&windAngle,INTERPOLATION_DEFAULT))
-                    qWarning()<<"out of grib!!";
-                if(etaRoute>maxDate)
-                    qWarning()<<"out of gribDate!"<<QDateTime::fromTime_t(etaRoute).toString("dd/MM/yy hh:mm:ss")<<QDateTime::fromTime_t(maxDate).toString("dd/MM/yy hh:mm:ss")<<QDateTime::fromTime_t(this->eta).toString("dd/MM/yy hh:mm:ss")<<orth.getDistance();
-#endif
-                has_eta=false;
-                break;
-            }
-            orth2.setEndPoint(res_lon,res_lat);
-            if(orth2.getDistance()>=initialDistance)
-            {
-                lon=res_lon;
-                lat=res_lat;
-                etaRoute= etaRoute + myBoat->getVacLen();
-                break;
-            }
-//            if(remaining_distance<distanceParcourue/2 || remaining_distance>previous_remaining_distance)
-//            {
-//                lon=res_lon;
-//                lat=res_lat;
-//                etaRoute= etaRoute + myBoat->getVacLen();
-//                break;
-//            }
-            lon=res_lon;
-            lat=res_lat;
-            etaRoute= etaRoute + myBoat->getVacLen();
-        } while (has_eta);
-    if(!has_eta)
-    {
-        if(hasLimit)
-            return 10e5;
-    }
-    lastLonFound=lon;
-    lastLatFound=lat;
-    return(etaRoute-eta);
-}
-#endif
 double ROUTAGE::findTime(const vlmPoint * pt, QPointF P, double * cap)
 {
     double angle,newSpeed,lon,lat,windSpeed,windAngle;

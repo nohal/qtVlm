@@ -169,6 +169,8 @@ class ROUTAGE : public QObject
         double findDistancePreviousIso(vlmPoint P);
         QPolygonF * getPreviousIso(){return &previousIso;}
         QList<QLineF> * getPreviousSegments(){return &previousSegments;}
+        bool getVisibleOnly(){return visibleOnly;}
+        void setVisibleOnly(bool b){this->visibleOnly=b;}
     public slots:
         void slot_edit();
         void slot_abort(){this->aborted=true;}
@@ -288,5 +290,6 @@ class ROUTAGE : public QObject
         int highlightedIso;
         double maxPres,maxPortant;
         double minPres,minPortant;
+        bool visibleOnly;
     };
 #endif // ROUTAGE_H

@@ -89,6 +89,7 @@ DialogRoutage::DialogRoutage(ROUTAGE *routage,myCentralWidget *parent)
     whatIfWind->setValue(routage->getWhatIfWind());
     whatIfTime->setValue(routage->getWhatIfTime());
     autoZoom->setChecked(routage->getAutoZoom());
+    visibleOnly->setChecked(routage->getVisibleOnly());
     this->poiPrefix->setText(routage->getPoiPrefix());
     this->startFromBoat->setChecked(routage->getRouteFromBoat());
     this->maxPortant->setValue(routage->getMaxPortant());
@@ -166,6 +167,7 @@ DialogRoutage::DialogRoutage(ROUTAGE *routage,myCentralWidget *parent)
         this->speedLossOnTack->setDisabled(true);
         this->editName->setDisabled(false);
         this->autoZoom->setDisabled(true);
+        this->visibleOnly->setDisabled(true);
         this->editBoat->setDisabled(true);
         this->editDateBox->setDisabled(true);
         this->fromPOI->setDisabled(true);
@@ -199,6 +201,7 @@ DialogRoutage::DialogRoutage(ROUTAGE *routage,myCentralWidget *parent)
     {
         this->speedLossOnTack->setDisabled(false);
         this->autoZoom->setDisabled(false);
+        this->visibleOnly->setDisabled(false);
         this->dureeMore24->setDisabled(false);
         this->dureeLess24->setDisabled(false);
         this->range->setDisabled(false);
@@ -250,6 +253,7 @@ void DialogRoutage::done(int result)
         routage->useConverge=log->isChecked();
         routage->pruneWakeAngle=pruneWakeAngle->value();
         routage->setAutoZoom(autoZoom->isChecked());
+        routage->setVisibleOnly(visibleOnly->isChecked());
         routage->setRouteFromBoat(this->startFromBoat->isChecked());
         routage->setSpeedLossOnTack((double)this->speedLossOnTack->value()/100.00);
         routage->setMaxPortant(this->maxPortant->value());
