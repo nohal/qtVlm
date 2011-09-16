@@ -3071,6 +3071,10 @@ Virements de bord</source>
         <source>Isochrones &lt;24h</source>
         <translation></translation>
     </message>
+    <message>
+        <source>Ne pas router en dehors de l&apos;ecran</source>
+        <translation>Ne pas router en dehors de l&apos;écran</translation>
+    </message>
 </context>
 <context>
     <name>ROUTE</name>
