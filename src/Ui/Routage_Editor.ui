@@ -1228,6 +1228,7 @@ Virements de bord</string>
   <tabstop>multi</tabstop>
   <tabstop>autoZoom</tabstop>
   <tabstop>checkCoast</tabstop>
+  <tabstop>visibleOnly</tabstop>
   <tabstop>tabWidget</tabstop>
   <tabstop>pruneWakeAngle</tabstop>
   <tabstop>explo</tabstop>
