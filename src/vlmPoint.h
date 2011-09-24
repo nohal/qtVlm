@@ -45,7 +45,8 @@ class vlmPoint
         ROUTAGE * routage;
         bool    isPOI;
         double  xP1,yP1,xM1,yM1;
-
+        double  speed;
+        int     protection;
 };
 
 

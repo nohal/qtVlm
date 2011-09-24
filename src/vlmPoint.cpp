@@ -29,4 +29,6 @@ vlmPoint::vlmPoint(float lon,float lat)
     this->yP1=10e5;
     this->xM1=10e5;
     this->yM1=10e5;
+    this->speed=10e5;
+    this->protection=10000;
 }

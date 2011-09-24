@@ -166,7 +166,7 @@ class ROUTAGE : public QObject
         void setMinPres(double d){this->minPres=d;}
         void setMinPortant(double d){this->minPortant=d;}
         Projection * getProj(){return proj;}
-        double findDistancePreviousIso(vlmPoint P);
+        static double findDistancePreviousIso(const vlmPoint P, const QPolygonF * poly);
         QPolygonF * getPreviousIso(){return &previousIso;}
         QList<QLineF> * getPreviousSegments(){return &previousSegments;}
         bool getVisibleOnly(){return visibleOnly;}
@@ -177,6 +177,8 @@ class ROUTAGE : public QObject
         void slot_createPivot();
         void slot_createPivotM();
         void slot_drawWay();
+        void slot_calculate();
+        void slot_calculate_with_tempo();
         void eraseWay();
         void slot_gribDateChanged();
     signals:
@@ -291,5 +293,6 @@ class ROUTAGE : public QObject
         double maxPres,maxPortant;
         double minPres,minPortant;
         bool visibleOnly;
+        QTimer * timerTempo;
     };
 #endif // ROUTAGE_H
