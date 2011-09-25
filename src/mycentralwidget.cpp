@@ -1368,6 +1368,12 @@ bool myCentralWidget::freeRoutageName(QString name,ROUTAGE * thisroutage)
 }
 void myCentralWidget::slot_importRouteFromMenu()
 {
+    if (!mainW->getSelectedBoat())
+    {
+        QMessageBox::warning(0,QObject::tr("Aucun Bateau"),
+             QString(QObject::tr("L'import de route necessite un bateau actif.")));
+        return;
+    }
     QString routePath=Settings::getSetting("importRouteFolder","").toString();
     QDir dirRoute(routePath);
     if(!dirRoute.exists())
@@ -1840,6 +1846,7 @@ void myCentralWidget::twaDraw(double lon, double lat)
     twaTrace->show();
     twaTrace->activateWindow();
 }
+
 void myCentralWidget::exportRouteFromMenu(ROUTE * route)
 {
     QString routePath=Settings::getSetting("importRouteFolder","").toString();
@@ -2067,7 +2074,7 @@ void myCentralWidget::exportRouteFromMenuGPX(ROUTE * route,QString fileName,bool
         list.append("<rtept lat=\""+latitude+"\" lon=\""+longitude+"\">");
         QDateTime time;
         time.setTime_t(route->getStartDate());
-        time=time.toUTC();
+        time.toUTC();
         time.setTimeSpec(Qt::UTC);
         list.append( "<time>"+time.toString("yyyy-MM-ddThh:mm:ssZ")+"</time>");
         list.append( "</rtept>");
