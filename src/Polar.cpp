@@ -228,8 +228,6 @@ void Polar::setPolarName(QString fname)
             }
             wa=wa+0.1;
         }while(wa<wa_limit+0.1);
-        if(wa_u>80)
-            wa_u=0; //better put an anchor and relax
         best_vmg_up.append(wa_u);
         best_vmg_down.append(wa_d);
         wa=qRound(0);

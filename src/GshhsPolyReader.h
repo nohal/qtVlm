@@ -113,6 +113,7 @@ class GshhsPolyReader
 #endif
         bool my_intersects(QLineF line1,QLineF line2) const;
         void readPolygonFileHeader(FILE *polyfile, PolygonFileHeader *header);
+        bool abortRequested;
 };
 inline bool GshhsPolyReader::crossing(QLineF traject, QLineF trajectWorld) const
 {
@@ -135,8 +136,10 @@ inline bool GshhsPolyReader::crossing(QLineF traject, QLineF trajectWorld) const
 
         for (cy=cymin; cy<cymax; cy++)
         {
+            if(this->abortRequested) return false;
             if (cxx>=0 && cxx<=359 && cy>=-90 && cy<=89)
             {
+                if(this->abortRequested) return false;
                 if (allCells[cxx][cy+90] == NULL) continue;
                 cel = allCells[cxx][cy+90];
                 QList<QLineF> *coasts=cel->getCoasts();
@@ -144,6 +147,10 @@ inline bool GshhsPolyReader::crossing(QLineF traject, QLineF trajectWorld) const
                 for(int cs=0;cs<coasts->count();cs++)
                 {
 #if 1
+                    if(this->abortRequested)
+                    {
+                        return false;
+                    }
                     if (my_intersects(traject,coasts->at(cs)))
 #else
                     QPointF dummy;

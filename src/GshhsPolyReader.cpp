@@ -244,6 +244,7 @@ GshhsPolyReader::GshhsPolyReader(std::string Polypath)
     }
     currentQuality = -1;
     setQuality(1);
+    this->abortRequested=false;
 }
 
 
@@ -371,7 +372,7 @@ void GshhsPolyReader::drawGshhsPolyMapSeaBorders( QPainter &pnt, Projection *pro
 {
     if (!fpoly)
         return;
-
+    this->abortRequested=true;
     int cxmin, cxmax, cymax, cymin;  // cellules visibles
     cxmin = (int) floor (proj->getXmin());
     cxmax = (int) ceil  (proj->getXmax());
@@ -403,4 +404,5 @@ void GshhsPolyReader::drawGshhsPolyMapSeaBorders( QPainter &pnt, Projection *pro
             }
         }
     }
+    this->abortRequested=false;
 }

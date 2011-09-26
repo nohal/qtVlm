@@ -173,11 +173,17 @@ void board::pilototoCountDown()
             QDateTime now=QDateTime::currentDateTime();
             now=now.toUTC();
             QStringList * lst = ((boatVLM *)curBoat)->getPilototo();
-            if (lst->at(0).contains("none") ) {
+            if (lst->at(0).contains("none") )
+            {
                 vlm_board->btn_Pilototo->setStyleSheet("background-color: rgb(255, 255, 127);");
                 return;
             }
             QStringList instr_buf = lst->at(0).split(",");
+            if(instr_buf.size()<=1)
+            {
+                vlm_board->btn_Pilototo->setStyleSheet("background-color: rgb(255, 255, 127);");
+                return;
+            }
             firstTotoTime.setTime_t(instr_buf.at(1).toInt());
             int secsTotoDelay = now.secsTo(firstTotoTime);
             float vacsTotoDelay = 1.0*secsTotoDelay/curBoat->getVacLen();

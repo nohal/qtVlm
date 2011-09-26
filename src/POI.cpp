@@ -689,8 +689,13 @@ void POI::setRoute(ROUTE *route)
     if(this->route!=NULL)
     {
         this->route->insertPoi(this);
-        this->routeName=route->getName();
-        this->route->setHidePois(route->getHidePois());
+        if(this->route==NULL) /*route has rejected the poi for some reason*/
+            setRouteTimeStamp(false);
+        else
+        {
+            this->routeName=route->getName();
+            this->route->setHidePois(route->getHidePois());
+        }
     }
     else
     {
