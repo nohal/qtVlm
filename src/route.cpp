@@ -553,7 +553,7 @@ void ROUTE::slot_recalculate(boat * boat)
                             roadPoint.append(0); // 2
                             roadPoint.append(0); //3
                             roadPoint.append(-1); //4
-                            roadPoint.append(0); //5
+                            roadPoint.append(distanceParcourue); //5
                             roadPoint.append(0); //6
                             roadPoint.append(0); //7
                             roadPoint.append(0); //8

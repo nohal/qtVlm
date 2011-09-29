@@ -1224,6 +1224,7 @@ Virements de bord</string>
   <tabstop>showIso</tabstop>
   <tabstop>convRoute</tabstop>
   <tabstop>poiPrefix</tabstop>
+  <tabstop>speedLossOnTack</tabstop>
   <tabstop>useVac</tabstop>
   <tabstop>multi</tabstop>
   <tabstop>autoZoom</tabstop>
@@ -1242,7 +1243,6 @@ Virements de bord</string>
   <tabstop>TWS</tabstop>
   <tabstop>btOk</tabstop>
   <tabstop>btCancel</tabstop>
-  <tabstop>speedLossOnTack</tabstop>
   <tabstop>minPres</tabstop>
   <tabstop>maxPres</tabstop>
   <tabstop>minPortant</tabstop>
