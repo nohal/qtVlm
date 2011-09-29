@@ -45,7 +45,7 @@ Original code: virtual-winds.com
 #include "vlmpointgraphic.h"
 #include "settings.h"
 //#include "Terrain.h"
-inline vlmPoint findPointThreaded(const vlmPoint point)
+inline vlmPoint findPointThreaded(const vlmPoint &point)
 {
     vlmPoint pt=point;
     double cap=pt.capOrigin;
@@ -193,7 +193,6 @@ inline vlmPoint findPointThreaded(const vlmPoint point)
         pt.isDead=true;
         return pt;
     }
-    pt.speed=newSpeed;
     return pt;
 }
 
@@ -2483,20 +2482,10 @@ void ROUTAGE::epuration(int toBeRemoved)
         return;
     }
     QLineF separation;
-    if(arrivalIsClosest || true)
-    {
-        QLineF tempLine(bounding.center(),QPointF(xa,ya));
-        tempLine.setLength(tempLine.length()*10);
-        separation=QLineF(tempLine.p2(),tempLine.p1());
-        separation.setLength(separation.length()*10);
-    }
-    else
-    {
-        QLineF tempLine(QPointF(xs,ys),bounding.center());
-        tempLine.setLength(tempLine.length()*10);
-        separation=QLineF(tempLine.p2(),tempLine.p1());
-        separation.setLength(separation.length()*10);
-    }
+    QLineF tempLine(bounding.center(),QPointF(xa,ya));
+    tempLine.setLength(tempLine.length()*10);
+    separation=QLineF(tempLine.p2(),tempLine.p1());
+    separation.setLength(separation.length()*10);
     bool rightSide=true;
     for(int n=0;n<tempPoints.count();n++)
     {
