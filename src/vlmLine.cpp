@@ -28,6 +28,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 vlmLine::vlmLine(Projection * proj, QGraphicsScene * myScene,int z_level) : QGraphicsWidget()
 {
+    this->moveToThread(QApplication::instance()->thread());
     this->proj=proj;
     this->myScene=myScene;
     connect(proj,SIGNAL(projectionUpdated()),this,SLOT(slot_showMe()));

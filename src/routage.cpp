@@ -42,6 +42,7 @@ Original code: virtual-winds.com
 #include "route.h"
 #include <QDebug>
 #include <QtConcurrentMap>
+#include <QtConcurrentRun>
 #include "vlmpointgraphic.h"
 #include "settings.h"
 //#include "Terrain.h"
@@ -627,6 +628,9 @@ ROUTAGE::ROUTAGE(QString name, Projection *proj, Grib *grib, QGraphicsScene * my
     timerTempo=new QTimer(this);
     timerTempo->setSingleShot(true);
     timerTempo->setInterval(300);
+    timerRefresh=new QTimer(this);
+    timerRefresh->setSingleShot(false);
+    timerRefresh->setInterval(500);
     connect(timerTempo,SIGNAL(timeout()),this,SLOT(slot_calculate()));
     this->proj=proj;
     this->name=name;
@@ -640,6 +644,7 @@ ROUTAGE::ROUTAGE(QString name, Projection *proj, Grib *grib, QGraphicsScene * my
     connect(myScene,SIGNAL(eraseWay()),this,SLOT(eraseWay()));
     this->grib=grib;
     this->parent=parentWindow;
+    connect(timerRefresh,SIGNAL(timeout()),parent,SLOT(slot_processEvents()));
     map=parent->get_gshhsReader();
     QList<QColor> colorsList;
     colorsList.append(Qt::yellow);
@@ -698,6 +703,7 @@ ROUTAGE::ROUTAGE(QString name, Projection *proj, Grib *grib, QGraphicsScene * my
     createPopupMenu();
     connect(parent,SIGNAL(stopCompassLine()),this,SLOT(slot_abort()));
     connect(parent,SIGNAL(updateRoutage()),this,SLOT(slot_gribDateChanged()));
+//    connect(this,SIGNAL(processWithEvents()),parent,SLOT(slot_processEvents()),Qt::DirectConnection);
     this->tempPoints.reserve(180*180);
     this->poiPrefix="R";
     this->speedLossOnTack=1;
@@ -706,6 +712,7 @@ ROUTAGE::ROUTAGE(QString name, Projection *proj, Grib *grib, QGraphicsScene * my
     this->maxPortant=70;
     this->minPres=0;
     this->minPortant=0;
+    connect(&watch,SIGNAL(finished()),this,SLOT(slot_finished()));
 }
 ROUTAGE::~ROUTAGE()
 {
@@ -824,23 +831,85 @@ void ROUTAGE::calculate()
         //proj->blockSignals(true);
         proj->zoomOnZone(xW,yN,xE,yS);
         //proj->blockSignals(false);
-        //connect(proj,SIGNAL(projectionUpdated()),this,SLOT(slot_calculate_with_tempo()));
+        connect(proj,SIGNAL(projectionUpdated()),this,SLOT(slot_calculate_with_tempo()));
         proj->setScale(proj->getScale()*.8);
         //proj->setUseTempo(true);
         QApplication::processEvents();
-        timerTempo->start(2000);
     }
     else
         slot_calculate();
 }
 void ROUTAGE::slot_calculate_with_tempo()
 {
+    disconnect(proj,SIGNAL(projectionUpdated()),this,SLOT(slot_calculate_with_tempo()));
     timerTempo->start();
 }
 
 void ROUTAGE::slot_calculate()
 {
-    disconnect(proj,SIGNAL(projectionUpdated()),this,SLOT(slot_calculate()));
+    timerRefresh->start();
+    QFuture<void> threadRoutage=QtConcurrent::run(this, &ROUTAGE::calculateThreaded);
+    watch.setFuture(threadRoutage);
+}
+void ROUTAGE::slot_finished()
+{
+    timerRefresh->stop();
+    running=false;
+    QMessageBox msgBox;
+    msgBox.setDetailedText(info);
+    finalEta=QDateTime::fromTime_t(eta).toUTC();
+    msgBox.setIcon(QMessageBox::Information);
+    QTime tt(0,0,0,0);
+    tt=tt.addMSecs(msecs);
+    int elapsed=finalEta.toTime_t()-this->startTime.toTime_t();
+    QTime eLapsed(0,0,0,0);
+    double jours=elapsed/(24*60*60);
+    if (qRound(jours)>jours)
+        jours--;
+    jours=qRound(jours);
+    elapsed=elapsed-jours*24*60*60;
+    eLapsed=eLapsed.addSecs(elapsed);
+    QString jour;
+    jour=jour.sprintf("%d",qRound(jours));
+    if(arrived)
+    {
+        msgBox.setText(tr("Date et heure d'arrivee: ")+finalEta.toString("dd MMM-hh:mm")+
+                       tr("<br>Arrivee en: ")+jour+tr(" jours ")+eLapsed.toString("hh'h 'mm'min 'ss'secs'")+
+                       tr("<br><br>Temps de calcul: ")+tt.toString("hh'h 'mm'min 'ss'secs'"));
+    }
+    else
+    {
+        if(aborted)
+            msgBox.setText(tr("Routage arrete par l'utilisateur"));
+        else
+            msgBox.setText(tr("Impossible de rejoindre l'arrivee, desole"));
+    }
+    QSpacerItem * hs=new QSpacerItem(0,0,QSizePolicy::Minimum,QSizePolicy::Expanding);
+    QGridLayout * layout =(QGridLayout*)msgBox.layout();
+    layout->addItem(hs,layout->rowCount(),0,1,layout->columnCount());
+    msgBox.exec();
+    if (!this->showIso)
+        setShowIso(showIso);
+    this->done=true;
+    if(isConverted())
+    {
+        int rep=QMessageBox::Yes;
+        if(whatIfUsed && (whatIfTime!=0 || whatIfWind!=100))
+        {
+            rep = QMessageBox::question (0,
+                    tr("Convertir en route"),
+                    tr("Ce routage a ete calcule avec une hypothese modifiant les donnees du grib<br>La route ne prendra pas ce scenario en compte<br>Etes vous sur de vouloir le convertir en route?"),
+                    QMessageBox::Yes | QMessageBox::No);
+        }
+        if(rep==QMessageBox::Yes)
+            convertToRoute();
+    }
+    this->slot_gribDateChanged();
+    proj->setFrozen(false);
+    qWarning()<<"end of calculation";
+}
+void ROUTAGE::calculateThreaded()
+{
     double   cap;
     QTime timeTotal;
     QTime tfp;
@@ -850,13 +919,13 @@ void ROUTAGE::slot_calculate()
     int msecs_21=0;
     int msecs_3=0;
     int msecs_4=0;
-    //int msecs_5=0;
+    int msecs_5=0;
     int msecs_6=0;
     int msecs_7=0;
     int msecs_8=0;
     int msecs_9=0;
     int msecs_10=0;
-    //int msecs_11=0;
+    int msecs_11=0;
     int msecs_12=0;
     int msecs_13=0;
     int msecs_14=0;
@@ -967,6 +1036,7 @@ void ROUTAGE::slot_calculate()
         int nbNotDead=0;
         double minDist=initialDist*10;
         double distStart=0;
+        tfp.start();
         for(int n=0;n<list->count();n++)
         {
             if(list->at(n).isDead)
@@ -1005,6 +1075,7 @@ void ROUTAGE::slot_calculate()
             myBoat->getPolarData()->getBvmg(A360(list->at(n).capArrival-windAngle),windSpeed,&vmg);
             iso->setPointCapVmg(n,A360(vmg+windAngle));
         }
+        msecs_5+=tfp.elapsed();
         if(minDist<distStart)
             arrivalIsClosest=true;
         else
@@ -1619,9 +1690,11 @@ void ROUTAGE::slot_calculate()
         }
         msecs_15=msecs_15+time.elapsed();
         iso->slot_showMe();
-        isochrones.append(iso);
+//        isochrones.append(iso);
+//        time.restart();
+//        emit processWithEvents();
         QCoreApplication::processEvents();
-        //qWarning()<<"nb of points in iso"<<isochrones.count()<<":"<<iso->count();
+        msecs_11+=time.elapsed();
         nbIso++;
         eta=eta+(int)this->getTimeStep()*60.00;
         vlmPoint to(arrival.x(),arrival.y());
@@ -1714,11 +1787,14 @@ void ROUTAGE::slot_calculate()
     if(routeN==0) routeN=1;
     QString temp;
     QTime tt(0,0,0,0);
-    int msecs=timeTotal.elapsed();
+    msecs=timeTotal.elapsed();
     tt=tt.addMSecs(msecs);
-    QString info;
     qWarning()<<"Total calculation time:"<<tt.toString("hh'h'mm'min'ss.zzz'secs'");
     info="Total calculation time: "+tt.toString("hh'h'mm'min'ss.zzz'secs'");
+    tt.setHMS(0,0,0,0);
+    tt=tt.addMSecs(msecs_5);
+    qWarning()<<"...Preparation loop:"<<tt.toString("hh'h'mm'min'ss.zzz'secs'");
+    info=info+"\n...Preparation loop: "+tt.toString("hh'h'mm'min'ss.zzz'secs'");
     tt.setHMS(0,0,0,0);
     tt=tt.addMSecs(msecs_1);
     qWarning()<<"...Calculating iso points:"<<tt.toString("hh'h'mm'min'ss.zzz'secs'");
@@ -1731,14 +1807,6 @@ void ROUTAGE::slot_calculate()
     tt=tt.addMSecs(msecs_14);
     qWarning()<<".........out of which detecting collision with coasts:"<<tt.toString("hh'h'mm'min'ss.zzz'secs'");
     info=info+"\n.........out of which detecting collision with coasts: "+tt.toString("hh'h'mm'min'ss.zzz'secs'");
-//    tt.setHMS(0,0,0,0);
-//    tt=tt.addMSecs(msecs_5);
-//    qWarning()<<".........out of which detecting collision with previous iso:"<<tt.toString("hh'h'mm'min'ss.zzz'secs'");
-//    info=info+"\n.........out of which detecting collision with previous iso: "+tt.toString("hh'h'mm'min'ss.zzz'secs'");
-//    tt.setHMS(0,0,0,0);
-//    tt=tt.addMSecs(msecs_11);
-//    qWarning()<<".........out of which calculating distance from previous iso:"<<tt.toString("hh'h'mm'min'ss.zzz'secs'");
-//    info=info+"\n.........out of which calculating distance from previous iso: "+tt.toString("hh'h'mm'min'ss.zzz'secs'");
     tt.setHMS(0,0,0,0);
     tt=tt.addMSecs(msecs_21);
     qWarning()<<".........out of which calculating distances and angles:"<<tt.toString("hh'h'mm'min'ss.zzz'secs'");
@@ -1784,10 +1852,14 @@ void ROUTAGE::slot_calculate()
     info=info+"\n...checking if arrived: "+tt.toString("hh'h'mm'min'ss.zzz'secs'");
     tt.setHMS(0,0,0,0);
     tt=tt.addMSecs(msecs_15);
-    qWarning()<<"...displaying segments"<<tt.toString("hh'h'mm'min'ss.zzz'secs'");
-    info=info+"\n...displaying segments: "+tt.toString("hh'h'mm'min'ss.zzz'secs'");
+    qWarning()<<"...generating segments"<<tt.toString("hh'h'mm'min'ss.zzz'secs'");
+    info=info+"\n...generating segments: "+tt.toString("hh'h'mm'min'ss.zzz'secs'");
     tt.setHMS(0,0,0,0);
-    tt=tt.addMSecs(msecs-(msecs_1+msecs_2+msecs_21+msecs_4+msecs_6+msecs_7+msecs_8+msecs_9+msecs_15));
+    tt=tt.addMSecs(msecs_11);
+    qWarning()<<"...processing events"<<tt.toString("hh'h'mm'min'ss.zzz'secs'");
+    info=info+"\n...processing events: "+tt.toString("hh'h'mm'min'ss.zzz'secs'");
+    tt.setHMS(0,0,0,0);
+    tt=tt.addMSecs(msecs-(msecs_1+msecs_2+msecs_4+msecs_5+msecs_6+msecs_7+msecs_8+msecs_9+msecs_10+msecs_11+msecs_15));
     qWarning()<<"...sum of other calculations:"<<tt.toString("hh'h'mm'min'ss.zzz'secs'");
     info=info+"\n...sum of other calculations: "+tt.toString("hh'h'mm'min'ss.zzz'secs'");
     if(msecsD1!=0)
@@ -1804,84 +1876,18 @@ void ROUTAGE::slot_calculate()
     }
     qWarning()<<"nb of caps generated:"<<nbCaps<<"nb of caps ignored:"<<nbCapsPruned;
     qWarning()<<"debugCross0="<<debugCross0<<"debugCross1="<<debugCross1;
-    QMessageBox msgBox;
-    if(this->useRouteModule && !this->useMultiThreading)
-    {
-        info=info+"\n---Route module statistics---";
-        info=info+"\nTotal number of route segments calculated: "+temp.sprintf("%d",routeN);
-        info=info+"\npercentage of correct guesses using rough method: "+temp.sprintf("%.2f",100-((double)(NR_n)/(double)routeN)*100.00)+"%";
-        info=info+"\nAverage number of iterations: "+temp.sprintf("%.2f",(double)routeTotN/(double)routeN);
-        info=info+"\nMax number of iterations made to find a solution: "+temp.sprintf("%d",routeMaxN);
-        info=info+"\nNumber of failures using Route between Iso: "+temp.sprintf("%d",routeFailedN);
-        info=info+"\nNumber of successes using Route between Iso: "+temp.sprintf("%d",routeN-routeFailedN);
-        info=info+"\nNumber of Newton-Raphson calculations: "+temp.sprintf("%d",NR_n);
-        info=info+"\nNumber of Newton-Raphson successful calculations: "+temp.sprintf("%d",NR_success);
-        info=info+"\n-------------------------------";
-    }
-
-    msgBox.setDetailedText(info);
-    finalEta=QDateTime::fromTime_t(eta).toUTC();
-    msgBox.setIcon(QMessageBox::Information);
-    tt.setHMS(0,0,0,0);
-    tt=tt.addMSecs(msecs);
-    int elapsed=finalEta.toTime_t()-this->startTime.toTime_t();
-    QTime eLapsed(0,0,0,0);
-    double jours=elapsed/(24*60*60);
-    if (qRound(jours)>jours)
-        jours--;
-    jours=qRound(jours);
-    elapsed=elapsed-jours*24*60*60;
-    eLapsed=eLapsed.addSecs(elapsed);
-    QString jour;
-    jour=jour.sprintf("%d",qRound(jours));
-    if(arrived)
-    {
-        msgBox.setText(tr("Date et heure d'arrivee: ")+finalEta.toString("dd MMM-hh:mm")+
-                       tr("<br>Arrivee en: ")+jour+tr(" jours ")+eLapsed.toString("hh'h 'mm'min 'ss'secs'")+
-                       tr("<br><br>Temps de calcul: ")+tt.toString("hh'h 'mm'min 'ss'secs'"));
-    }
-    else
-    {
-        if(aborted)
-            msgBox.setText(tr("Routage arrete par l'utilisateur"));
-        else
-            msgBox.setText(tr("Impossible de rejoindre l'arrivee, desole"));
-    }
-    QSpacerItem * hs=new QSpacerItem(0,0,QSizePolicy::Minimum,QSizePolicy::Expanding);
-    QGridLayout * layout =(QGridLayout*)msgBox.layout();
-    layout->addItem(hs,layout->rowCount(),0,1,layout->columnCount());
-    msgBox.exec();
-    if(this->useRouteModule)
-    {
-        qWarning()<<"---Route module statistics---";
-        qWarning()<<"Total number of route segments calculated"<<routeN;
-        qWarning()<<"Average number of iterations"<<(double)routeTotN/(double)routeN;
-        qWarning()<<"Max number of iterations made to find a solution"<<routeMaxN;
-        qWarning()<<"Number of failures using Route between Iso"<<routeFailedN;
-        qWarning()<<"Number of successes using Route between Iso"<<routeN-routeFailedN;
-        qWarning()<<"Number of Newton-Raphson calculations"<<NR_n;
-        qWarning()<<"Number of Newton-Raphson successful calculations"<<NR_success;
-        qWarning()<<"-------------------------------";
-    }
-    if (!this->showIso)
-        setShowIso(showIso);
-    this->done=true;
-    if(isConverted())
-    {
-        int rep=QMessageBox::Yes;
-        if(whatIfUsed && (whatIfTime!=0 || whatIfWind!=100))
-        {
-            rep = QMessageBox::question (0,
-                    tr("Convertir en route"),
-                    tr("Ce routage a ete calcule avec une hypothese modifiant les donnees du grib<br>La route ne prendra pas ce scenario en compte<br>Etes vous sur de vouloir le convertir en route?"),
-                    QMessageBox::Yes | QMessageBox::No);
-        }
-        if(rep==QMessageBox::Yes)
-            convertToRoute();
-    }
-    this->slot_gribDateChanged();
-    running=false;
-    proj->setFrozen(false);
+//    if(this->useRouteModule)
+//    {
+//        qWarning()<<"---Route module statistics---";
+//        qWarning()<<"Total number of route segments calculated"<<routeN;
+//        qWarning()<<"Average number of iterations"<<(double)routeTotN/(double)routeN;
+//        qWarning()<<"Max number of iterations made to find a solution"<<routeMaxN;
+//        qWarning()<<"Number of failures using Route between Iso"<<routeFailedN;
+//        qWarning()<<"Number of successes using Route between Iso"<<routeN-routeFailedN;
+//        qWarning()<<"Number of Newton-Raphson calculations"<<NR_n;
+//        qWarning()<<"Number of Newton-Raphson successful calculations"<<NR_success;
+//        qWarning()<<"-------------------------------";
+//    }
 }
 double ROUTAGE::findDistancePreviousIso(const vlmPoint P, const QPolygonF * poly)
 {
@@ -2740,6 +2746,7 @@ void ROUTAGE::removeCrossedSegments()
             tempPoints.removeAt(nn);
     }
 }
+
 QList<double> ROUTAGE::calculateCaps(vlmPoint point, double workAngleStep, double workAngleRange)
 {
     QList<double> caps;

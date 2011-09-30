@@ -7,6 +7,7 @@
 
 vlmPointGraphic::vlmPointGraphic(ROUTAGE * routage,int isoNb, int pointIsoNb,float lon, float lat, Projection * proj, QGraphicsScene * myScene,int z_level) : QGraphicsWidget()
 {
+    this->moveToThread(QApplication::instance()->thread());
     this->proj=proj;
     this->myScene=myScene;
     this->lon=lon;
@@ -52,6 +53,7 @@ void vlmPointGraphic::setEta(time_t eta)
 //void  vlmPointGraphic::hoverEnterEvent ( QGraphicsSceneHoverEvent * event )
 void vlmPointGraphic::drawWay()
 {
+    if(routage->isRunning()) return;
     routage->setPivotPoint(this->isoNb,this->pointIsoNb);
     routage->slot_drawWay();
 }
