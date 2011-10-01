@@ -30,7 +30,6 @@ Copyright (C) 2008 - Jacques Zaninetti - http://zygrib.free.fr
 #include <QMenu>
 #include <QDateTime>
 #include <cmath>
-#include <QFutureWatcher>
 
 #include "class_list.h"
 
@@ -172,7 +171,6 @@ class ROUTAGE : public QObject
         QList<QLineF> * getPreviousSegments(){return &previousSegments;}
         bool getVisibleOnly(){return visibleOnly;}
         void setVisibleOnly(bool b){this->visibleOnly=b;}
-        void calculateThreaded();
     public slots:
         void slot_edit();
         void slot_abort(){this->aborted=true;}
@@ -183,10 +181,8 @@ class ROUTAGE : public QObject
         void slot_calculate_with_tempo();
         void eraseWay();
         void slot_gribDateChanged();
-        void slot_finished();
     signals:
         void editMe(ROUTAGE *);
-        void processWithEvents();
     private:
         /* parent, main */
         myCentralWidget *parent;
@@ -298,9 +294,5 @@ class ROUTAGE : public QObject
         double minPres,minPortant;
         bool visibleOnly;
         QTimer * timerTempo;
-        QString info;
-        int msecs;
-        QTimer * timerRefresh;
-        QFutureWatcher<void> watch;
     };
 #endif // ROUTAGE_H

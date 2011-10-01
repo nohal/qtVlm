@@ -270,9 +270,6 @@ class myCentralWidget : public QWidget
         void slot_takeScreenshot();
         void slot_showVlmLog();
 
-        /*MultiThreading*/
-        void slot_processEvents();
-
 
     signals:
         /* drawing */

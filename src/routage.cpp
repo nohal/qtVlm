@@ -42,7 +42,6 @@ Original code: virtual-winds.com
 #include "route.h"
 #include <QDebug>
 #include <QtConcurrentMap>
-#include <QtConcurrentRun>
 #include "vlmpointgraphic.h"
 #include "settings.h"
 //#include "Terrain.h"
@@ -628,9 +627,6 @@ ROUTAGE::ROUTAGE(QString name, Projection *proj, Grib *grib, QGraphicsScene * my
     timerTempo=new QTimer(this);
     timerTempo->setSingleShot(true);
     timerTempo->setInterval(300);
-    timerRefresh=new QTimer(this);
-    timerRefresh->setSingleShot(false);
-    timerRefresh->setInterval(500);
     connect(timerTempo,SIGNAL(timeout()),this,SLOT(slot_calculate()));
     this->proj=proj;
     this->name=name;
@@ -644,7 +640,6 @@ ROUTAGE::ROUTAGE(QString name, Projection *proj, Grib *grib, QGraphicsScene * my
     connect(myScene,SIGNAL(eraseWay()),this,SLOT(eraseWay()));
     this->grib=grib;
     this->parent=parentWindow;
-    connect(timerRefresh,SIGNAL(timeout()),parent,SLOT(slot_processEvents()));
     map=parent->get_gshhsReader();
     QList<QColor> colorsList;
     colorsList.append(Qt::yellow);
@@ -703,7 +698,6 @@ ROUTAGE::ROUTAGE(QString name, Projection *proj, Grib *grib, QGraphicsScene * my
     createPopupMenu();
     connect(parent,SIGNAL(stopCompassLine()),this,SLOT(slot_abort()));
     connect(parent,SIGNAL(updateRoutage()),this,SLOT(slot_gribDateChanged()));
-//    connect(this,SIGNAL(processWithEvents()),parent,SLOT(slot_processEvents()),Qt::DirectConnection);
     this->tempPoints.reserve(180*180);
     this->poiPrefix="R";
     this->speedLossOnTack=1;
@@ -712,7 +706,6 @@ ROUTAGE::ROUTAGE(QString name, Projection *proj, Grib *grib, QGraphicsScene * my
     this->maxPortant=70;
     this->minPres=0;
     this->minPortant=0;
-    connect(&watch,SIGNAL(finished()),this,SLOT(slot_finished()));
 }
 ROUTAGE::~ROUTAGE()
 {
@@ -847,73 +840,12 @@ void ROUTAGE::slot_calculate_with_tempo()
 
 void ROUTAGE::slot_calculate()
 {
-    timerRefresh->start();
-    QFuture<void> threadRoutage=QtConcurrent::run(this, &ROUTAGE::calculateThreaded);
-    watch.setFuture(threadRoutage);
-}
-void ROUTAGE::slot_finished()
-{
-    timerRefresh->stop();
-    running=false;
-    QMessageBox msgBox;
-    msgBox.setDetailedText(info);
-    finalEta=QDateTime::fromTime_t(eta).toUTC();
-    msgBox.setIcon(QMessageBox::Information);
-    QTime tt(0,0,0,0);
-    tt=tt.addMSecs(msecs);
-    int elapsed=finalEta.toTime_t()-this->startTime.toTime_t();
-    QTime eLapsed(0,0,0,0);
-    double jours=elapsed/(24*60*60);
-    if (qRound(jours)>jours)
-        jours--;
-    jours=qRound(jours);
-    elapsed=elapsed-jours*24*60*60;
-    eLapsed=eLapsed.addSecs(elapsed);
-    QString jour;
-    jour=jour.sprintf("%d",qRound(jours));
-    if(arrived)
-    {
-        msgBox.setText(tr("Date et heure d'arrivee: ")+finalEta.toString("dd MMM-hh:mm")+
-                       tr("<br>Arrivee en: ")+jour+tr(" jours ")+eLapsed.toString("hh'h 'mm'min 'ss'secs'")+
-                       tr("<br><br>Temps de calcul: ")+tt.toString("hh'h 'mm'min 'ss'secs'"));
-    }
-    else
-    {
-        if(aborted)
-            msgBox.setText(tr("Routage arrete par l'utilisateur"));
-        else
-            msgBox.setText(tr("Impossible de rejoindre l'arrivee, desole"));
-    }
-    QSpacerItem * hs=new QSpacerItem(0,0,QSizePolicy::Minimum,QSizePolicy::Expanding);
-    QGridLayout * layout =(QGridLayout*)msgBox.layout();
-    layout->addItem(hs,layout->rowCount(),0,1,layout->columnCount());
-    msgBox.exec();
-    if (!this->showIso)
-        setShowIso(showIso);
-    this->done=true;
-    if(isConverted())
-    {
-        int rep=QMessageBox::Yes;
-        if(whatIfUsed && (whatIfTime!=0 || whatIfWind!=100))
-        {
-            rep = QMessageBox::question (0,
-                    tr("Convertir en route"),
-                    tr("Ce routage a ete calcule avec une hypothese modifiant les donnees du grib<br>La route ne prendra pas ce scenario en compte<br>Etes vous sur de vouloir le convertir en route?"),
-                    QMessageBox::Yes | QMessageBox::No);
-        }
-        if(rep==QMessageBox::Yes)
-            convertToRoute();
-    }
-    this->slot_gribDateChanged();
-    proj->setFrozen(false);
-    qWarning()<<"end of calculation";
-}
-void ROUTAGE::calculateThreaded()
-{
+    disconnect(proj,SIGNAL(projectionUpdated()),this,SLOT(slot_calculate()));
     double   cap;
     QTime timeTotal;
     QTime tfp;
     timeTotal.start();
+    int refresh=0;
     int msecs_1=0;
     int msecs_2=0;
     int msecs_21=0;
@@ -1690,11 +1622,13 @@ void ROUTAGE::calculateThreaded()
         }
         msecs_15=msecs_15+time.elapsed();
         iso->slot_showMe();
-//        isochrones.append(iso);
-//        time.restart();
-//        emit processWithEvents();
-        QCoreApplication::processEvents();
-        msecs_11+=time.elapsed();
+        isochrones.append(iso);
+        if(++refresh%4==0)
+        {
+            time.restart();
+            QCoreApplication::processEvents(QEventLoop::ExcludeUserInputEvents,10);
+            msecs_11+=time.elapsed();
+        }
         nbIso++;
         eta=eta+(int)this->getTimeStep()*60.00;
         vlmPoint to(arrival.x(),arrival.y());
@@ -1787,8 +1721,9 @@ void ROUTAGE::calculateThreaded()
     if(routeN==0) routeN=1;
     QString temp;
     QTime tt(0,0,0,0);
-    msecs=timeTotal.elapsed();
+    int msecs=timeTotal.elapsed();
     tt=tt.addMSecs(msecs);
+    QString info;
     qWarning()<<"Total calculation time:"<<tt.toString("hh'h'mm'min'ss.zzz'secs'");
     info="Total calculation time: "+tt.toString("hh'h'mm'min'ss.zzz'secs'");
     tt.setHMS(0,0,0,0);
@@ -1876,18 +1811,84 @@ void ROUTAGE::calculateThreaded()
     }
     qWarning()<<"nb of caps generated:"<<nbCaps<<"nb of caps ignored:"<<nbCapsPruned;
     qWarning()<<"debugCross0="<<debugCross0<<"debugCross1="<<debugCross1;
-//    if(this->useRouteModule)
-//    {
-//        qWarning()<<"---Route module statistics---";
-//        qWarning()<<"Total number of route segments calculated"<<routeN;
-//        qWarning()<<"Average number of iterations"<<(double)routeTotN/(double)routeN;
-//        qWarning()<<"Max number of iterations made to find a solution"<<routeMaxN;
-//        qWarning()<<"Number of failures using Route between Iso"<<routeFailedN;
-//        qWarning()<<"Number of successes using Route between Iso"<<routeN-routeFailedN;
-//        qWarning()<<"Number of Newton-Raphson calculations"<<NR_n;
-//        qWarning()<<"Number of Newton-Raphson successful calculations"<<NR_success;
-//        qWarning()<<"-------------------------------";
-//    }
+    QMessageBox msgBox;
+    if(this->useRouteModule && !this->useMultiThreading)
+    {
+        info=info+"\n---Route module statistics---";
+        info=info+"\nTotal number of route segments calculated: "+temp.sprintf("%d",routeN);
+        info=info+"\npercentage of correct guesses using rough method: "+temp.sprintf("%.2f",100-((double)(NR_n)/(double)routeN)*100.00)+"%";
+        info=info+"\nAverage number of iterations: "+temp.sprintf("%.2f",(double)routeTotN/(double)routeN);
+        info=info+"\nMax number of iterations made to find a solution: "+temp.sprintf("%d",routeMaxN);
+        info=info+"\nNumber of failures using Route between Iso: "+temp.sprintf("%d",routeFailedN);
+        info=info+"\nNumber of successes using Route between Iso: "+temp.sprintf("%d",routeN-routeFailedN);
+        info=info+"\nNumber of Newton-Raphson calculations: "+temp.sprintf("%d",NR_n);
+        info=info+"\nNumber of Newton-Raphson successful calculations: "+temp.sprintf("%d",NR_success);
+        info=info+"\n-------------------------------";
+    }
+
+    msgBox.setDetailedText(info);
+    finalEta=QDateTime::fromTime_t(eta).toUTC();
+    msgBox.setIcon(QMessageBox::Information);
+    tt.setHMS(0,0,0,0);
+    tt=tt.addMSecs(msecs);
+    int elapsed=finalEta.toTime_t()-this->startTime.toTime_t();
+    QTime eLapsed(0,0,0,0);
+    double jours=elapsed/(24*60*60);
+    if (qRound(jours)>jours)
+        jours--;
+    jours=qRound(jours);
+    elapsed=elapsed-jours*24*60*60;
+    eLapsed=eLapsed.addSecs(elapsed);
+    QString jour;
+    jour=jour.sprintf("%d",qRound(jours));
+    if(arrived)
+    {
+        msgBox.setText(tr("Date et heure d'arrivee: ")+finalEta.toString("dd MMM-hh:mm")+
+                       tr("<br>Arrivee en: ")+jour+tr(" jours ")+eLapsed.toString("hh'h 'mm'min 'ss'secs'")+
+                       tr("<br><br>Temps de calcul: ")+tt.toString("hh'h 'mm'min 'ss'secs'"));
+    }
+    else
+    {
+        if(aborted)
+            msgBox.setText(tr("Routage arrete par l'utilisateur"));
+        else
+            msgBox.setText(tr("Impossible de rejoindre l'arrivee, desole"));
+    }
+    QSpacerItem * hs=new QSpacerItem(0,0,QSizePolicy::Minimum,QSizePolicy::Expanding);
+    QGridLayout * layout =(QGridLayout*)msgBox.layout();
+    layout->addItem(hs,layout->rowCount(),0,1,layout->columnCount());
+    msgBox.exec();
+    if(this->useRouteModule)
+    {
+        qWarning()<<"---Route module statistics---";
+        qWarning()<<"Total number of route segments calculated"<<routeN;
+        qWarning()<<"Average number of iterations"<<(double)routeTotN/(double)routeN;
+        qWarning()<<"Max number of iterations made to find a solution"<<routeMaxN;
+        qWarning()<<"Number of failures using Route between Iso"<<routeFailedN;
+        qWarning()<<"Number of successes using Route between Iso"<<routeN-routeFailedN;
+        qWarning()<<"Number of Newton-Raphson calculations"<<NR_n;
+        qWarning()<<"Number of Newton-Raphson successful calculations"<<NR_success;
+        qWarning()<<"-------------------------------";
+    }
+    if (!this->showIso)
+        setShowIso(showIso);
+    this->done=true;
+    if(isConverted())
+    {
+        int rep=QMessageBox::Yes;
+        if(whatIfUsed && (whatIfTime!=0 || whatIfWind!=100))
+        {
+            rep = QMessageBox::question (0,
+                    tr("Convertir en route"),
+                    tr("Ce routage a ete calcule avec une hypothese modifiant les donnees du grib<br>La route ne prendra pas ce scenario en compte<br>Etes vous sur de vouloir le convertir en route?"),
+                    QMessageBox::Yes | QMessageBox::No);
+        }
+        if(rep==QMessageBox::Yes)
+            convertToRoute();
+    }
+    this->slot_gribDateChanged();
+    running=false;
+    proj->setFrozen(false);
 }
 double ROUTAGE::findDistancePreviousIso(const vlmPoint P, const QPolygonF * poly)
 {
@@ -2746,7 +2747,6 @@ void ROUTAGE::removeCrossedSegments()
             tempPoints.removeAt(nn);
     }
 }
-
 QList<double> ROUTAGE::calculateCaps(vlmPoint point, double workAngleStep, double workAngleRange)
 {
     QList<double> caps;

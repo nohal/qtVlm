@@ -3050,8 +3050,3 @@ void myCentralWidget::slot_shFla(bool)
     Settings::setSetting("showFlag",f);
     emit shFla();
 }
-void myCentralWidget::slot_processEvents()
-{
-    qWarning()<<"processing events";
-    QCoreApplication::processEvents();
-}
