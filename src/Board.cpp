@@ -161,39 +161,3 @@ void board::outdatedVLM()
         if (!(vlm_board->btn_Synch->styleSheet()).contains("(255, 0, 0)")) //if red stays red
             vlm_board->btn_Synch->setStyleSheet(QString::fromUtf8("background-color: rgb(255, 191, 21);"));
 }
-
-void board::pilototoCountDown()
-{
-    //   int max=2,min=0;
-    //  int randBar = round( rand() % (max-min)+min );
-    if (vlm_board) {
-        boatVLM * vlmBoat = (boatVLM *) curBoat;
-        if ( vlmBoat->getHasPilototo() ) {
-            QDateTime firstTotoTime;
-            QDateTime now=QDateTime::currentDateTime();
-            now=now.toUTC();
-            QStringList * lst = ((boatVLM *)curBoat)->getPilototo();
-            if (lst->at(0).contains("none") )
-            {
-                vlm_board->btn_Pilototo->setStyleSheet("background-color: rgb(255, 255, 127);");
-                return;
-            }
-            QStringList instr_buf = lst->at(0).split(",");
-            if(instr_buf.size()<=1)
-            {
-                vlm_board->btn_Pilototo->setStyleSheet("background-color: rgb(255, 255, 127);");
-                return;
-            }
-            firstTotoTime.setTime_t(instr_buf.at(1).toInt());
-            int secsTotoDelay = now.secsTo(firstTotoTime);
-            float vacsTotoDelay = 1.0*secsTotoDelay/curBoat->getVacLen();
-            if (vacsTotoDelay < 0.1 ) {
-                vlm_board->btn_Pilototo->setStyleSheet("background-color: rgb(255, 191, 21);");
-            }
-
-            else {
-                vlm_board->btn_Pilototo->setStyleSheet("background-color: rgb(255, 255, 127);");
-            }
-        }
-    }
-}

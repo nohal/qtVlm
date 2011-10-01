@@ -1040,6 +1040,7 @@ void MainWindow::updatePilototo_Btn(boatVLM * boat)
         QStringList * lst = boat->getPilototo();
         QString pilototo_txt=tr("Pilototo");
         QString pilototo_toolTip="";
+        myBoard->VLMBoard()->btn_Pilototo->setStyleSheet("background-color: rgb(255, 255, 127);");
         if(boat->getHasPilototo())
         {
             int nbPending=0;
@@ -1057,7 +1058,13 @@ void MainWindow::updatePilototo_Btn(boatVLM * boat)
                 nb++;
             }
             if(nb!=0)
+            {
                 pilototo_txt=pilototo_txt+" ("+QString().setNum(nbPending)+"/"+QString().setNum(nb)+")";
+                if(nbPending!=0)
+                {
+                    myBoard->VLMBoard()->btn_Pilototo->setStyleSheet("background-color: rgb(235, 176, 185);");
+                }
+            }
         }
         else
         {
@@ -1068,7 +1075,6 @@ void MainWindow::updatePilototo_Btn(boatVLM * boat)
         menuBar->acPilototo->setToolTip(pilototo_toolTip);
         myBoard->VLMBoard()->btn_Pilototo->setText(pilototo_txt);
         myBoard->VLMBoard()->btn_Pilototo->setToolTip(pilototo_toolTip);
-        myBoard->pilototoCountDown();
     }
     else
     {
@@ -1140,7 +1146,6 @@ void MainWindow::updateNxtVac(void)
         if(nxtVac_cnt<0) {
             nxtVac_cnt=selectedBoat->getVacLen();
             myBoard->outdatedVLM();
-            myBoard->pilototoCountDown();
         }
     }
     drawVacInfo();

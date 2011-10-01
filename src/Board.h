@@ -41,7 +41,6 @@ class board : public QWidget
         int currentBoardType(void);
         void floatingBoard(bool status);
         void outdatedVLM(void);
-        void pilototoCountDown(void);
 
     public slots:
         void boatUpdated(boat * boat);
