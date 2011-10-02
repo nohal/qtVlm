@@ -2208,15 +2208,39 @@ Etes-vous sur ?</source>
     <name>POI_delete_ui</name>
     <message>
         <source>Selection de type de marque</source>
-        <translation type="obsolete">Sélection de type de marque</translation>
+        <translation>Sélection de type de marque</translation>
     </message>
     <message>
         <source>Cancel</source>
-        <translation type="obsolete">Annuler</translation>
+        <translation>Annuler</translation>
     </message>
     <message>
         <source>Type de marque a supprimer</source>
-        <translation type="obsolete">Type de marque à supprimer</translation>
+        <translation>Type de marque à supprimer</translation>
+    </message>
+    <message>
+        <source>&lt;a href=&quot;titi&quot;&gt;Tous&lt;/a&gt;</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>&lt;a href=&quot;toto&quot;&gt;Aucun&lt;/a&gt;</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>POI</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Marque</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Balise</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>OK</source>
+        <translation></translation>
     </message>
 </context>
 <context>
@@ -2788,11 +2812,11 @@ VMG %.1fnds</source>
     </message>
     <message>
         <source>Date et heure d&apos;arrivee: </source>
-        <translation>Date et heure d&apos;arrivée:</translation>
+        <translation>Date et heure d&apos;arrivée: </translation>
     </message>
     <message>
         <source>&lt;br&gt;Arrivee en: </source>
-        <translation>&lt;br&gt;Arrivée en:</translation>
+        <translation>&lt;br&gt;Arrivée en: </translation>
     </message>
     <message>
         <source> jours </source>
@@ -2800,7 +2824,7 @@ VMG %.1fnds</source>
     </message>
     <message>
         <source>&lt;br&gt;&lt;br&gt;Temps de calcul: </source>
-        <translation></translation>
+        <translation>&lt;br&gt;&lt;br&gt;Temps de calcul: </translation>
     </message>
     <message>
         <source>Routage: </source>
@@ -3668,6 +3692,14 @@ Voulez-vous egalement supprimer tous les POIs lui appartenant?</source>
     </message>
     <message>
         <source>Retirer les POIs avant le WP-VLM</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Divers</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Boutons VLM classiques</source>
         <translation></translation>
     </message>
 </context>
