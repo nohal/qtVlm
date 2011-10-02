@@ -41,6 +41,7 @@ DialogParamVlm::DialogParamVlm(MainWindow * main,myCentralWidget * parent) : QDi
     opp_labelType->setCurrentIndex(Settings::getSetting("opp_labelType",0).toInt());
 
     this->chkPavillon->setCheckState(Settings::getSetting("showFlag",0).toInt()==1?Qt::Checked:Qt::Unchecked);
+    this->classicalButtons->setChecked(Settings::getSetting("classicalButtons",0).toInt()==1);
 
     /* Colors */
 
@@ -165,6 +166,7 @@ void DialogParamVlm::done(int result)
         /*drawing*/
         Settings::setSetting("opp_labelType",QString().setNum(opp_labelType->currentIndex()));
         Settings::setSetting("showFlag",this->chkPavillon->checkState()==Qt::Checked?"1":"0");
+        Settings::setSetting("classicalButtons",this->classicalButtons->checkState()==Qt::Checked?"1":"0");
         Settings::setSetting("defaultFontName",this->defFontName->currentText());
         Settings::setSetting("defaultFontSizeInc",QString().setNum(this->defFontSize->value()-8.25));
 

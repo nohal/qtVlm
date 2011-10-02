@@ -98,6 +98,7 @@ class boardVLM: public QWidget , public Ui::boardVLM_ui, public inetClient
         QTimer * GPS_timer;
 
         QString default_styleSheet;
+        bool classicalButtons;
 
         /* Dialogs */
         DialogWp * wpDialog;

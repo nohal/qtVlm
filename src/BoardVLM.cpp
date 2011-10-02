@@ -113,6 +113,7 @@ boardVLM::boardVLM(MainWindow * mainWin, inetConnexion * inet, board * parent) :
         windAngle->hide();
     this->editHeading->installEventFilter(this);
     this->editAngle->installEventFilter(this);
+    classicalButtons=Settings::getSetting("classicalButtons",0)==1;
     set_style(this->btn_boatInfo);
     set_style(this->btn_chgAngle);
     set_style(this->btn_chgHeading);
@@ -126,33 +127,40 @@ boardVLM::boardVLM(MainWindow * mainWin, inetConnexion * inet, board * parent) :
 }
 void boardVLM::set_style(QPushButton * button, QColor color)
 {
-    QString borderString;
-    if(button==this->btn_Synch)
-        borderString="border: 1px solid #555;border-radius: 11px;padding: 4px;";
-    else if(button==this->btn_boatInfo)
-        borderString="border: 1px solid #555;border-radius: 5px;padding: 1px;";
-    else if(button==this->btn_chgHeading)
-        borderString="border: 1px solid #555;border-radius: 7px;padding: 1px;";
-    else if(button==this->btn_chgAngle)
-        borderString="border: 1px solid #555;border-radius: 11px;padding: 3px;";
-    else if(button==this->goPilotOrtho)
-        borderString="border: 1px solid #555;border-radius: 7px;padding: 1px;";
-    else if(button==this->goVMG)
-        borderString="border: 1px solid #555;border-radius: 7px;padding: 1px;";
-    else if(button==this->goVBVMG)
-        borderString="border: 1px solid #555;border-radius: 7px;padding: 1px;";
-    else if(button==this->btn_virer)
-        borderString="border: 1px solid #555;border-radius: 11px;padding: 3px;";
-    else if(button==this->btn_WP)
-        borderString="border: 1px solid #555;border-radius: 7px;padding: 1px;";
-    else if(button==this->btn_Pilototo)
-        borderString="border: 1px solid #555;border-radius: 7px;padding: 1px;";
-    QColor color2;
-    color2.setHsv(color.hue(),255,220);
-    QString bgString="background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 "+color2.name()+", stop: 1 "+color.name()+");";
-    //QString hoverString="QPushButton:hover {background-color: {qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 "+color.name()+", stop: 1 "+color2.name()+");}}";
-    //qWarning()<<hoverString;
-    //QString hoverString="QPushButton:hover {background-color: "+color.name()+";}";
+    QString borderString, bgString;
+    if(!classicalButtons)
+    {
+        if(button==this->btn_Synch)
+            borderString="border: 1px solid #555;border-radius: 11px;padding: 4px;";
+        else if(button==this->btn_boatInfo)
+            borderString="border: 1px solid #555;border-radius: 5px;padding: 1px;";
+        else if(button==this->btn_chgHeading)
+            borderString="border: 1px solid #555;border-radius: 7px;padding: 1px;";
+        else if(button==this->btn_chgAngle)
+            borderString="border: 1px solid #555;border-radius: 11px;padding: 3px;";
+        else if(button==this->goPilotOrtho)
+            borderString="border: 1px solid #555;border-radius: 7px;padding: 1px;";
+        else if(button==this->goVMG)
+            borderString="border: 1px solid #555;border-radius: 7px;padding: 1px;";
+        else if(button==this->goVBVMG)
+            borderString="border: 1px solid #555;border-radius: 7px;padding: 1px;";
+        else if(button==this->btn_virer)
+            borderString="border: 1px solid #555;border-radius: 11px;padding: 3px;";
+        else if(button==this->btn_WP)
+            borderString="border: 1px solid #555;border-radius: 7px;padding: 1px;";
+        else if(button==this->btn_Pilototo)
+            borderString="border: 1px solid #555;border-radius: 7px;padding: 1px;";
+        QColor color2;
+        color2.setHsv(color.hue(),255,220);
+        bgString="background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 "+color2.name()+", stop: 1 "+color.name()+");";
+        //QString hoverString="QPushButton:hover {background-color: {qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 "+color.name()+", stop: 1 "+color2.name()+");}}";
+        //qWarning()<<hoverString;
+        //QString hoverString="QPushButton:hover {background-color: "+color.name()+";}";
+    }
+    else
+    {
+        bgString="background-color: "+color.name()+";";
+    }
     button->setStyleSheet(borderString+bgString);
 }
 
@@ -251,6 +259,17 @@ void boardVLM::paramChanged(void)
     else
         chk_GPS->show();
     COM=Settings::getSetting("serialName", "COM2").toString();
+    classicalButtons=Settings::getSetting("classicalButtons",0)==1;
+    set_style(this->btn_boatInfo);
+    set_style(this->btn_chgAngle);
+    set_style(this->btn_chgHeading);
+    set_style(this->btn_Pilototo);
+    set_style(this->btn_Synch);
+    set_style(this->btn_virer);
+    set_style(this->btn_WP);
+    set_style(this->goPilotOrtho);
+    set_style(this->goVBVMG);
+    set_style(this->goVMG);
 }
 
 float boardVLM::computeWPdir(boatVLM * myBoat)
