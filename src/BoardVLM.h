@@ -68,6 +68,7 @@ class boardVLM: public QWidget , public Ui::boardVLM_ui, public inetClient
 
         void edtSpinBox_key(void);
         void slot_hideShowCompass();
+        void set_style(QPushButton * button, QColor color=QColor(230,230,230));
 
     signals:
         void VLM_Sync(void);

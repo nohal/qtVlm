@@ -158,6 +158,6 @@ void board::outdatedVLM()
 {
 
     if (vlm_board)
-        if (!(vlm_board->btn_Synch->styleSheet()).contains("(255, 0, 0)")) //if red stays red
-            vlm_board->btn_Synch->setStyleSheet(QString::fromUtf8("background-color: rgb(255, 191, 21);"));
+        if (!(vlm_board->btn_Synch->styleSheet()).contains(QColor(255, 0, 0).name())) //if red stays red
+            vlm_board->set_style(vlm_board->btn_Synch,QColor(255, 191, 21));
 }

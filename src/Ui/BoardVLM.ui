@@ -141,7 +141,7 @@
         </size>
        </property>
        <property name="styleSheet">
-        <string notr="true">background-color: rgb(255, 255, 127);</string>
+        <string notr="true"/>
        </property>
        <property name="text">
         <string>?</string>
@@ -702,10 +702,10 @@
      <widget class="QWidget" name="layoutWidget">
       <property name="geometry">
        <rect>
-        <x>0</x>
+        <x>10</x>
         <y>20</y>
-        <width>121</width>
-        <height>61</height>
+        <width>111</width>
+        <height>51</height>
        </rect>
       </property>
       <layout class="QGridLayout" name="gridLayout_2">

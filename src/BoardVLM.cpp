@@ -84,7 +84,7 @@ boardVLM::boardVLM(MainWindow * mainWin, inetConnexion * inet, board * parent) :
 
     isWaiting=false;
 
-    btn_Pilototo->setStyleSheet(QString::fromUtf8("background-color: rgb(255, 255, 127);"));
+    //btn_Pilototo->setStyleSheet(QString::fromUtf8("background-color: rgb(255, 255, 127);"));
     connect(btn_Pilototo,SIGNAL(clicked()),mainWin, SLOT(slotPilototo()));
 
     chk_GPS->setEnabled(Settings::getSetting("gpsEmulEnable", "0").toString()=="1");
@@ -113,7 +113,49 @@ boardVLM::boardVLM(MainWindow * mainWin, inetConnexion * inet, board * parent) :
         windAngle->hide();
     this->editHeading->installEventFilter(this);
     this->editAngle->installEventFilter(this);
+    set_style(this->btn_boatInfo);
+    set_style(this->btn_chgAngle);
+    set_style(this->btn_chgHeading);
+    set_style(this->btn_Pilototo);
+    set_style(this->btn_Synch);
+    set_style(this->btn_virer);
+    set_style(this->btn_WP);
+    set_style(this->goPilotOrtho);
+    set_style(this->goVBVMG);
+    set_style(this->goVMG);
 }
+void boardVLM::set_style(QPushButton * button, QColor color)
+{
+    QString borderString;
+    if(button==this->btn_Synch)
+        borderString="border: 1px solid #555;border-radius: 11px;padding: 4px;";
+    else if(button==this->btn_boatInfo)
+        borderString="border: 1px solid #555;border-radius: 5px;padding: 1px;";
+    else if(button==this->btn_chgHeading)
+        borderString="border: 1px solid #555;border-radius: 7px;padding: 1px;";
+    else if(button==this->btn_chgAngle)
+        borderString="border: 1px solid #555;border-radius: 11px;padding: 3px;";
+    else if(button==this->goPilotOrtho)
+        borderString="border: 1px solid #555;border-radius: 7px;padding: 1px;";
+    else if(button==this->goVMG)
+        borderString="border: 1px solid #555;border-radius: 7px;padding: 1px;";
+    else if(button==this->goVBVMG)
+        borderString="border: 1px solid #555;border-radius: 7px;padding: 1px;";
+    else if(button==this->btn_virer)
+        borderString="border: 1px solid #555;border-radius: 11px;padding: 3px;";
+    else if(button==this->btn_WP)
+        borderString="border: 1px solid #555;border-radius: 7px;padding: 1px;";
+    else if(button==this->btn_Pilototo)
+        borderString="border: 1px solid #555;border-radius: 7px;padding: 1px;";
+    QColor color2;
+    color2.setHsv(color.hue(),255,220);
+    QString bgString="background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 "+color2.name()+", stop: 1 "+color.name()+");";
+    //QString hoverString="QPushButton:hover {background-color: {qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 "+color.name()+", stop: 1 "+color2.name()+");}}";
+    //qWarning()<<hoverString;
+    //QString hoverString="QPushButton:hover {background-color: "+color.name()+";}";
+    button->setStyleSheet(borderString+bgString);
+}
+
 bool boardVLM::eventFilter(QObject *obj, QEvent *event)
 {
     if(obj!=editHeading && obj!=editAngle) return false;
@@ -285,7 +327,8 @@ void boardVLM::boatUpdated(void)
     longitude->setText(Util::pos2String(TYPE_LON,myBoat->getLon()));
     latitude->setText(Util::pos2String(TYPE_LAT,myBoat->getLat()));
 
-    btn_Synch->setStyleSheet(QString::fromUtf8("background-color: rgb(255, 255, 127);"));
+    //btn_Synch->setStyleSheet(QString::fromUtf8("background-color: rgb(255, 255, 127);"));
+    set_style(this->btn_Synch,QColor(255,255,127));
     isComputing = false;
     speed->setStyleSheet(QString::fromUtf8(SPEED_COLOR_VLM));
     label_6->setStyleSheet(QString::fromUtf8(SPEED_COLOR_VLM));
@@ -311,27 +354,37 @@ void boardVLM::boatUpdated(void)
 
     /* Pilot mode */
     /* clearing all buttons*/
-    btn_chgHeading->setStyleSheet(default_styleSheet);
-    goVMG->setStyleSheet(default_styleSheet);
-    goPilotOrtho->setStyleSheet(default_styleSheet);
-    btn_chgAngle->setStyleSheet(default_styleSheet);
-    goVBVMG->setStyleSheet(default_styleSheet);
+//    btn_chgHeading->setStyleSheet(default_styleSheet);
+//    goVMG->setStyleSheet(default_styleSheet);
+//    goPilotOrtho->setStyleSheet(default_styleSheet);
+//    btn_chgAngle->setStyleSheet(default_styleSheet);
+//    goVBVMG->setStyleSheet(default_styleSheet);
+    set_style(btn_chgHeading);
+    set_style(goVMG);
+    set_style(goPilotOrtho);
+    set_style(btn_chgAngle);
+    set_style(goVBVMG);
     switch(myBoat->getPilotType())
     {
         case 1: /*heading*/
-             btn_chgHeading->setStyleSheet(QString::fromUtf8("background-color: rgb(85, 255, 127);"));
+             //btn_chgHeading->setStyleSheet(QString::fromUtf8("background-color: rgb(85, 255, 127);"));
+            set_style(btn_chgHeading,QColor(85,255,127));
             break;
         case 2: /*constant angle*/
-            btn_chgAngle->setStyleSheet(QString::fromUtf8("background-color: rgb(85, 255, 127);"));
+            //btn_chgAngle->setStyleSheet(QString::fromUtf8("background-color: rgb(85, 255, 127);"));
+            set_style(btn_chgAngle,QColor(85,255,127));
             break;
         case 3: /*pilotortho*/
-            goPilotOrtho->setStyleSheet(QString::fromUtf8("background-color: rgb(85, 255, 127);"));
+            //goPilotOrtho->setStyleSheet(QString::fromUtf8("background-color: rgb(85, 255, 127);"));
+            set_style(goPilotOrtho,QColor(85,255,127));
             break;
         case 4: /*VMG*/
-            goVMG->setStyleSheet(QString::fromUtf8("background-color: rgb(85, 255, 127);"));
+            //goVMG->setStyleSheet(QString::fromUtf8("background-color: rgb(85, 255, 127);"));
+            set_style(goVMG,QColor(85,255,127));
             break;
         case 5: /*VMG*/
-            goVBVMG->setStyleSheet(QString::fromUtf8("background-color: rgb(85, 255, 127);"));
+            //goVBVMG->setStyleSheet(QString::fromUtf8("background-color: rgb(85, 255, 127);"));
+            set_style(goVBVMG,QColor(85,255,127));
             break;
     }
 
@@ -544,7 +597,8 @@ void boardVLM::doSync()
 {
     if(currentBoat())
     {
-        btn_Synch->setStyleSheet(QString::fromUtf8("background-color: rgb(255, 0, 0);"));
+        //btn_Synch->setStyleSheet(QString::fromUtf8("background-color: rgb(255, 0, 0);"));
+        set_style(btn_Synch,QColor(255,0,0));
         emit VLM_Sync();
     }
 }
@@ -778,11 +832,13 @@ void boardVLM::sendCmd(int cmdNum,double  val1,double val2, double val3)
     if(!hasInet() || hasRequest())
     {
         qWarning() <<  "error sendCmd " << cmdNum << " - bad state";
-        btn_Synch->setStyleSheet(QString::fromUtf8("background-color: rgb(255, 255, 127);"));
+        //btn_Synch->setStyleSheet(QString::fromUtf8("background-color: rgb(255, 255, 127);"));
+        set_style(btn_Synch,QColor(255,255,127));
         return;
     }
 
-    btn_Synch->setStyleSheet(QString::fromUtf8("background-color: rgb(255, 0, 0);"));
+    //btn_Synch->setStyleSheet(QString::fromUtf8("background-color: rgb(255, 0, 0);"));
+    set_style(btn_Synch,QColor(255,0,0));
     currentCmdNum=cmdNum;
     cmd_val1=QString().sprintf("%.10f",val1);
     cmd_val2=QString().sprintf("%.10f",val2);
@@ -855,7 +911,8 @@ void boardVLM::requestFinished (QByteArray res)
             if(checkWSResult(res,"BoardVLM",mainWin))
                 currentBoat()->slot_getData(true);
             else
-                btn_Synch->setStyleSheet(QString::fromUtf8("background-color: rgb(255, 170, 0);"));
+                //btn_Synch->setStyleSheet(QString::fromUtf8("background-color: rgb(255, 170, 0);"));
+                set_style(btn_Synch,QColor(255,170,0));
             break;
     }
 }

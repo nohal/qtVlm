@@ -1040,7 +1040,7 @@ void MainWindow::updatePilototo_Btn(boatVLM * boat)
         QStringList * lst = boat->getPilototo();
         QString pilototo_txt=tr("Pilototo");
         QString pilototo_toolTip="";
-        myBoard->VLMBoard()->btn_Pilototo->setStyleSheet("background-color: rgb(255, 255, 127);");
+        myBoard->VLMBoard()->set_style(myBoard->VLMBoard()->btn_Pilototo,QColor(255, 255, 127));
         if(boat->getHasPilototo())
         {
             int nbPending=0;
@@ -1062,7 +1062,7 @@ void MainWindow::updatePilototo_Btn(boatVLM * boat)
                 pilototo_txt=pilototo_txt+" ("+QString().setNum(nbPending)+"/"+QString().setNum(nb)+")";
                 if(nbPending!=0)
                 {
-                    myBoard->VLMBoard()->btn_Pilototo->setStyleSheet("background-color: rgb(235, 176, 185);");
+                    myBoard->VLMBoard()->set_style(myBoard->VLMBoard()->btn_Pilototo,QColor(235, 176, 185));
                 }
             }
         }
