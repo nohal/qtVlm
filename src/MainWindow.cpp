@@ -1062,7 +1062,7 @@ void MainWindow::updatePilototo_Btn(boatVLM * boat)
                 pilototo_txt=pilototo_txt+" ("+QString().setNum(nbPending)+"/"+QString().setNum(nb)+")";
                 if(nbPending!=0)
                 {
-                    myBoard->VLMBoard()->set_style(myBoard->VLMBoard()->btn_Pilototo,QColor(235, 176, 185));
+                    myBoard->VLMBoard()->set_style(myBoard->VLMBoard()->btn_Pilototo,QColor(14,184,63),QColor(255, 255, 127));
                 }
             }
         }

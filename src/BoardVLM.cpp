@@ -125,9 +125,9 @@ boardVLM::boardVLM(MainWindow * mainWin, inetConnexion * inet, board * parent) :
     set_style(this->goVBVMG);
     set_style(this->goVMG);
 }
-void boardVLM::set_style(QPushButton * button, QColor color)
+void boardVLM::set_style(QPushButton * button, QColor color, QColor color2)
 {
-    QString borderString, bgString;
+    QString borderString, bgString, hoverString;
     if(!classicalButtons)
     {
         if(button==this->btn_Synch)
@@ -150,18 +150,19 @@ void boardVLM::set_style(QPushButton * button, QColor color)
             borderString="border: 1px solid #555;border-radius: 7px;padding: 1px;";
         else if(button==this->btn_Pilototo)
             borderString="border: 1px solid #555;border-radius: 7px;padding: 1px;";
-        QColor color2;
-        color2.setHsv(color.hue(),255,220);
-        bgString="background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 "+color2.name()+", stop: 1 "+color.name()+");";
-        //QString hoverString="QPushButton:hover {background-color: {qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 "+color.name()+", stop: 1 "+color2.name()+");}}";
-        //qWarning()<<hoverString;
-        //QString hoverString="QPushButton:hover {background-color: "+color.name()+";}";
+        borderString="QPushButton {"+borderString+"border-style: outset;";
+        if(color2==Qt::white)
+        {
+            color2.setHsv(color.hue(),255,220);
+        }
+        bgString="background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 "+color2.name()+", stop: 1 "+color.name()+");}";
+        hoverString="QPushButton:hover {background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 "+color.name()+", stop: 1 "+color2.name()+");border-style:inset;}";
     }
     else
     {
         bgString="background-color: "+color.name()+";";
     }
-    button->setStyleSheet(borderString+bgString);
+    button->setStyleSheet(borderString+bgString+hoverString);
 }
 
 bool boardVLM::eventFilter(QObject *obj, QEvent *event)

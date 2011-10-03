@@ -843,25 +843,6 @@
      <bool>true</bool>
     </property>
    </widget>
-   <widget class="QLabel" name="SyncWarn">
-    <property name="enabled">
-     <bool>false</bool>
-    </property>
-    <property name="geometry">
-     <rect>
-      <x>20</x>
-      <y>40</y>
-      <width>91</width>
-      <height>16</height>
-     </rect>
-    </property>
-    <property name="toolTip">
-     <string>Pas de sync Vlm depuis plus d'une vac</string>
-    </property>
-    <property name="text">
-     <string>! Sync &gt; 1 Vac !</string>
-    </property>
-   </widget>
   </widget>
  </widget>
  <tabstops>
