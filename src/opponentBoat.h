@@ -160,6 +160,7 @@ class opponentList : public QWidget, public inetClient
         bool was10First;
         Projection * proj;
         int showWhat;
+        bool isBoatVLM(QString id);
 };
 
 

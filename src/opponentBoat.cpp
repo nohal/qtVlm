@@ -626,6 +626,7 @@ void opponentList::requestFinished (QByteArray res_byte)
                                     QVariantMap data = ranking[str].toMap();
                                     if(!data.isEmpty())
                                     {
+                                        if(isBoatVLM(data["idusers"].toString())) continue;
                                         //qWarning() << "(setList) Found " << str << " " << data["boatpseudo"].toString();
                                         opponent_list.append(new opponent(colorTable[pos],str,currentRace,
                                                                     data["latitude"].toFloat(),data["longitude"].toFloat(),
@@ -654,6 +655,7 @@ void opponentList::requestFinished (QByteArray res_byte)
                                 while (it.hasNext())
                                 {
                                     QVariantMap data=it.next().value().toMap();
+                                    if(isBoatVLM(data["idusers"].toString())) continue;
                                     opponent_list.append(new opponent(colorTable[pos],data["idusers"].toString(),currentRace,
                                                                 data["latitude"].toFloat(),data["longitude"].toFloat(),
                                                                 data["boatpseudo"].toString(), data["boatname"].toString(),proj,main,parent));
@@ -677,6 +679,7 @@ void opponentList::requestFinished (QByteArray res_byte)
                                 while (it.hasNext())
                                 {
                                     QVariantMap data=it.next().value().toMap();
+                                    if(isBoatVLM(data["idusers"].toString())) continue;
                                     orth.setEndPoint(data["longitude"].toFloat(),
                                                      data["latitude"].toFloat());
                                     if(orth.getDistance()==0) continue;
@@ -710,6 +713,7 @@ void opponentList::requestFinished (QByteArray res_byte)
                                 while (it.hasNext())
                                 {
                                     QVariantMap data=it.next().value().toMap();
+                                    if(isBoatVLM(data["idusers"].toString())) continue;
                                     int diffRank=qAbs(data["rank"].toInt()-playerRank);
                                     if(diffRank==0) continue;
                                     sorted.insert(diffRank,data);
@@ -776,6 +780,16 @@ void opponentList::requestFinished (QByteArray res_byte)
             getNxtOppData();
             break;
     }
+}
+bool opponentList::isBoatVLM(QString id)
+{
+    QList<boatVLM*> * listBoats=parent->getBoats();
+    for (int n=0;n<listBoats->count();++n)
+    {
+        if(listBoats->at(n)->getId()==id.toInt() && listBoats->at(n)->isActive())
+            return true;
+    }
+    return false;
 }
 
 QStringList opponentList::readData(QString in_data,int type)
