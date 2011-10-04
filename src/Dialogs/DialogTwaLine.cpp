@@ -256,11 +256,25 @@ void DialogTwaLine::traceIt()
                 eta,&wind_speed,&wind_angle,INTERPOLATION_DEFAULT) || eta>maxDate)
                 break;
             wind_angle=radToDeg(wind_angle);
+            double TWA;
             if(mode[page])
+            {
                 cap=A360(wind_angle+twa[page]);
+                TWA=twa[page];
+            }
             else
+            {
                 cap=twa[page];
-            float newSpeed=myBoat->getPolarData()->getSpeed(wind_speed,twa[page]);
+                TWA=A360(cap-wind_angle);
+                if(qAbs(TWA)>180)
+                {
+                    if(TWA<0)
+                        TWA=360+TWA;
+                    else
+                        TWA=TWA-360;
+                }
+            }
+            float newSpeed=myBoat->getPolarData()->getSpeed(wind_speed,TWA);
             float distanceParcourue=newSpeed*vacLen/3600.00;
             Util::getCoordFromDistanceAngle(current.lat, current.lon, distanceParcourue, cap,&lat,&lon);
             if(!crossing && mapQuality>=3)
