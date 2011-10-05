@@ -664,6 +664,7 @@ void mapCompass::updateCompassLineLabels(int x, int y)
         orth.setEndPoint(xb,yb);
         pos_angle=orth.getAzimutDeg();
         pos_distance=orth.getDistance();
+        loxo_dist=orth.getLoxoDistance();
         if(qRound(pos_angle*100)==qRound(loxo_angle*100))
             compassLine->setOrthoMode(false);
         else
