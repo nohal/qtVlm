@@ -592,6 +592,7 @@ void DialogRoute::done(int result)
         route->setHidden(hidden->isChecked());
         route->setFrozen(editFrozen->isChecked());
         route->setDetectCoasts(editCoasts->isChecked());
+        route->getLine()->setCoastDetection(editCoasts->isChecked());
         if(hidePois->isChecked()!=route->getHidePois())
             route->setHidePois(hidePois->isChecked());
         if(this->Simplifier->isChecked())
