@@ -160,6 +160,7 @@ void ROUTE::slot_recalculate(boat * boat)
 {
     QTime timeTotal;
     timeTotal.start();
+    line->setCoastDetection(false);
     QTime timeDebug;
     int timeD=0;
     int nbLoop=0;
@@ -653,7 +654,7 @@ void ROUTE::slot_recalculate(boat * boat)
             hasStartEta=true;
     }
     setHidePois(this->hidePois);
-    if(this->detectCoasts && !optimizingPOI)
+    if(this->detectCoasts && !optimizingPOI && !this->imported && !this->frozen)
     {
         line->setCoastDetection(true);
         line->setMap(parent->get_gshhsReader());

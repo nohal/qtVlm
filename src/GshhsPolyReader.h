@@ -30,6 +30,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "zuFile.h"
 #include "Util.h"
+#include "Projection.h"
 
 #define GSHHS_SCL    1.0e-6    /* Convert micro-degrees to degrees */
 #  define INTER_MAX_LIMIT 1.0000001
@@ -102,6 +103,7 @@ class GshhsPolyReader
         void setQuality(int quality); // 5 levels: 0=low ... 4=full
         bool crossing(QLineF traject, QLineF trajectWorld) const;
         int currentQuality;
+        void setProj(Projection * p){this->proj=p;}
     private:
         std::string path;
         FILE *fpoly;
@@ -114,9 +116,14 @@ class GshhsPolyReader
         bool my_intersects(QLineF line1,QLineF line2) const;
         void readPolygonFileHeader(FILE *polyfile, PolygonFileHeader *header);
         bool abortRequested;
+        Projection * proj;
 };
 inline bool GshhsPolyReader::crossing(QLineF traject, QLineF trajectWorld) const
 {
+    if(!proj || proj==NULL) return false;
+    if(!proj->isInBounderies(traject.p1().x(),traject.p1().y()) &&
+       !proj->isInBounderies(traject.p2().x(),traject.p2().y()))
+        return false;
     //QPointF dummy;
     int cxmin, cxmax, cymax, cymin;  // cellules visibles
     cxmin = (int) floor (qMin(trajectWorld.p1().x(),trajectWorld.p2().x()));

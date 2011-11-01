@@ -308,16 +308,15 @@ void  mapCompass::paint(QPainter * pnt, const QStyleOptionGraphicsItem * , QWidg
         }
         else if(Settings::getSetting("scalePolar",0).toInt()==2)
         {
+            polarModeVac=true;
             if(Settings::getSetting("estimeType",0).toInt()==0)
             {
                 polVac=Settings::getSetting("estimeTime",60).toInt();
-                polarModeVac=true;
                 polarModeTime=true;
             }
             else
             {
                 polVac=Settings::getSetting("estimeVac",12).toInt();
-                polarModeVac=true;
             }
         }
         double lon1,lat1;
@@ -326,23 +325,25 @@ void  mapCompass::paint(QPainter * pnt, const QStyleOptionGraphicsItem * , QWidg
         Util::computePos(proj,(float)lat,(float)Util::cLFA(lon,proj->getXmin()), &Y, &X);
         Util::computePos(proj,(float)lat1,(float)Util::cLFA(lon1,proj->getXmin()), &Y1, &X1);
 
-        float oneMile=QLineF(X,Y,X1,Y1).length()/10;
-        float vacLen=parent->getSelectedBoat()->getVacLen()/60.0;
+        double oneMile=QLineF(X,Y,X1,Y1).length()/10.0;
+        double vacLen=parent->getSelectedBoat()->getVacLen()/60.0;
         for(int i=0;i<=180;i++)
         {
-            float temp=0;
+            double temp=0;
             if(!polarModeVac)
-                temp=speeds[i]*(size/3)/50.000;
+            {
+                temp=speeds[i]*(size/3.0)/50.000;
+            }
             else
             {
                 if(!polarModeTime)
                     temp=(speeds[i]*vacLen*polVac*oneMile)/60.0;
                 else
                     temp=(speeds[i]*polVac*oneMile)/60.0;
-                poly[i]=QPointF(temp*sin(degToRad(i)),-temp*cos(degToRad(i)));
-                if(i!=180)
-                    poly[360-i]=QPointF(-temp*sin(degToRad(i)),-temp*cos(degToRad(i)));
             }
+            poly[i]=QPointF(temp*sin(degToRad(i)),-temp*cos(degToRad(i)));
+            if(i!=180)
+                poly[360-i]=QPointF(-temp*sin(degToRad(i)),-temp*cos(degToRad(i)));
         }
         QMatrix matrix;
         matrix.rotate(wind_angle);

@@ -1623,12 +1623,16 @@ void ROUTAGE::slot_calculate()
         msecs_15=msecs_15+time.elapsed();
         iso->slot_showMe();
         isochrones.append(iso);
+        time.restart();
         if(++refresh%4==0)
         {
-            time.restart();
-            QCoreApplication::processEvents(QEventLoop::ExcludeUserInputEvents,10);
-            msecs_11+=time.elapsed();
+            QCoreApplication::processEvents();
         }
+        else
+        {
+            QCoreApplication::hasPendingEvents(); /*trick to avoid wrong "not responding" message in windows's title on slow systems*/
+        }
+        msecs_11+=time.elapsed();
         nbIso++;
         eta=eta+(int)this->getTimeStep()*60.00;
         vlmPoint to(arrival.x(),arrival.y());
@@ -1885,10 +1889,14 @@ void ROUTAGE::slot_calculate()
         }
         if(rep==QMessageBox::Yes)
             convertToRoute();
+        else
+            this->converted=false;
     }
     this->slot_gribDateChanged();
     running=false;
     proj->setFrozen(false);
+    if(this->isConverted())
+        delete this;
 }
 double ROUTAGE::findDistancePreviousIso(const vlmPoint P, const QPolygonF * poly)
 {

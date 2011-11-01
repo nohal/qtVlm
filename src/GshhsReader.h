@@ -124,6 +124,7 @@ class GshhsReader
         int  getQuality()   {return quality;}
 
         bool crossing(QLineF traject, QLineF trajectWorld) const;
+        void setProj(Projection * p){this->gshhsPoly_reader->setProj(p);}
 
     private:
         int quality, userPreferredQuality;  // 5 levels: 0=low ... 4=full

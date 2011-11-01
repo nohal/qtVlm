@@ -317,6 +317,7 @@ myCentralWidget::myCentralWidget(Projection * proj,MainWindow * parent,MenuBar *
 
     /* other child */
     gshhsReader = new GshhsReader("maps/gshhs", 0);
+    gshhsReader->setProj(proj);
     grib = new Grib();
     inetManager = new inetConnexion(mainW);
     replayTimer=new QTimer(this);
@@ -2466,8 +2467,6 @@ void myCentralWidget::slot_editRoutage(ROUTAGE * routage,bool createMode)
         update_menuRoutage();
         if(createMode || routage->getIsNewPivot())
             routage->calculate();
-        if(routage->isDone() && routage->isConverted())
-            deleteRoutage(routage);
     }
 }
 void myCentralWidget::deleteRoute(ROUTE * route)
