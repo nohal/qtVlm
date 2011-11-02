@@ -141,6 +141,7 @@ class myCentralWidget : public QWidget
         ROUTAGE * addRoutage();
         int getNbRoutage(){return nbRoutage;}
         void addPivot(ROUTAGE * fromRoutage,bool editOptions=false);
+        void deleteRoutage(ROUTAGE * routage);
 /*Other*/
         Projection * getProj(void){return proj;}
         void update_menuRoutage();
@@ -388,7 +389,6 @@ class myCentralWidget : public QWidget
         bool keepPos;
         void deleteRoute(ROUTE * route);
         void myDeleteRoute(ROUTE * route);
-        void deleteRoutage(ROUTAGE * routage);
         int replayStep;
         QTimer *replayTimer;
 };

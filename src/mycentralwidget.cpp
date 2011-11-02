@@ -2465,7 +2465,7 @@ void myCentralWidget::slot_editRoutage(ROUTAGE * routage,bool createMode)
     {
         delete routage_editor;
         update_menuRoutage();
-        if(createMode || routage->getIsNewPivot())
+        if(routage && (createMode || routage->getIsNewPivot()))
             routage->calculate();
     }
 }
@@ -2529,6 +2529,7 @@ void myCentralWidget::deleteRoutage(ROUTAGE * routage)
         routage_list.removeAll(routage);
         update_menuRoutage();
         delete(routage);
+        routage=NULL;
     }
 }
 void myCentralWidget::assignPois()

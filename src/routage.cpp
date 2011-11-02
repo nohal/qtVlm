@@ -1888,15 +1888,16 @@ void ROUTAGE::slot_calculate()
                     QMessageBox::Yes | QMessageBox::No);
         }
         if(rep==QMessageBox::Yes)
+        {
             convertToRoute();
+            return;
+        }
         else
             this->converted=false;
     }
     this->slot_gribDateChanged();
     running=false;
     proj->setFrozen(false);
-    if(this->isConverted())
-        delete this;
 }
 double ROUTAGE::findDistancePreviousIso(const vlmPoint P, const QPolygonF * poly)
 {
@@ -2329,6 +2330,7 @@ void ROUTAGE::convertToRoute()
             }
         }
     }
+    parent->deleteRoutage(this);
 }
 void ROUTAGE::checkSegmentCrossingOwnIso()
 {

@@ -371,7 +371,9 @@ void DialogRoutage::done(int result)
                                 QMessageBox::Yes | QMessageBox::No);
                     }
                     if(rep==QMessageBox::Yes)
+                    {
                         routage->convertToRoute();
+                    }
                 }
                 else
                     routage->setConverted();
