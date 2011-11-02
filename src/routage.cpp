@@ -1877,6 +1877,7 @@ void ROUTAGE::slot_calculate()
     if (!this->showIso)
         setShowIso(showIso);
     this->done=true;
+    proj->setFrozen(false);
     if(isConverted())
     {
         int rep=QMessageBox::Yes;
@@ -1897,7 +1898,6 @@ void ROUTAGE::slot_calculate()
     }
     this->slot_gribDateChanged();
     running=false;
-    proj->setFrozen(false);
 }
 double ROUTAGE::findDistancePreviousIso(const vlmPoint P, const QPolygonF * poly)
 {
