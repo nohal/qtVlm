@@ -2669,7 +2669,9 @@ AWA %d°, AWS %.1fnds</translation>
         <source>TWA %ddeg, BS %.1fnds
 AWA %ddeg, AWS %.1fnds
 VMG %.1fnds</source>
-        <translation></translation>
+        <translation>TWA %d°, BS %.1f nds
+AWA %d°, AWS %.1f nds
+VMG %.1f nds</translation>
     </message>
     <message>
         <source>Sauvegarde ecran</source>

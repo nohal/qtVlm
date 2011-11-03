@@ -3988,9 +3988,9 @@ AWA %d°, AWS %.1fkts</translation>
         <source>TWA %ddeg, BS %.1fnds
 AWA %ddeg, AWS %.1fnds
 VMG %.1fnds</source>
-        <translation>TWA %d°, BS %.1fkts
-AWA %d°, AWS %.1fkts
-VMG %.1kts</translation>
+        <translation>TWA %d°, BS %.1f kts
+AWA %d°, AWS %.1f kts
+VMG %.1 kts</translation>
     </message>
     <message>
         <location filename="../src/Dialogs/DialogRoute.cpp" line="167"/>

@@ -746,6 +746,7 @@ void boatVLM::updateHint(void)
                 previousTWA=qAbs(qRound(previousTWA*100));
                 twa=this->heading-this->windEstimeDir;
                 twa=qAbs(qRound(twa*100));
+                //qWarning()<<"previous:"<<previousTWS<<previousTWA<<"estime:"<<windSpeed<<twa;
                 if(previousTWS==windSpeed && previousTWA==twa)
                     desc=desc+tr("stable.");
                 else if(previousTWS==windSpeed)
@@ -760,7 +761,7 @@ void boatVLM::updateHint(void)
                         desc=desc+tr(", direction stable");
                     else
                     {
-                        if(qAbs(twa)<90)
+                        if(qAbs(twa)<9000)
                         {
                             if(previousTWA>twa)
                                 desc=desc+tr(" en refusant");
