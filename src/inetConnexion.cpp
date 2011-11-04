@@ -145,7 +145,10 @@ void inetConnexion::doRequest(int type,inetClient* client,QString requestUrl,QSt
         currentReply=inetManager->post(request,data.toAscii());
     }
     else
+    {
+        request.setAttribute(QNetworkRequest::CacheLoadControlAttribute,QNetworkRequest::AlwaysNetwork);
         currentReply=inetManager->get(request);
+    }
 
     replyList.push_back(client);
     client->setReply(currentReply);

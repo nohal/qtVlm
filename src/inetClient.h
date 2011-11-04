@@ -68,6 +68,7 @@ class inetClient
        bool checkWSResult(QByteArray res,QString caller,QWidget * parent,QString order=QString());
 
        bool needAuth;
+       void inetAbort(){myReply->abort();delete myReply;myReply=NULL;}
 
     private:
        int currentRequest;

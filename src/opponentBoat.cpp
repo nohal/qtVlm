@@ -419,8 +419,13 @@ void opponentList::setBoatList(QString list_txt,QString race,int showWhat, bool 
     //qWarning() << "SetBoatList - race " << race << " - " << list_txt;
     if(!hasInet() || hasRequest())
     {
-        qWarning() << "getOpponents bad state in inet - setBoatList: " << hasInet() << " " << hasRequest();
-        return;
+        if(!hasInet())
+        {
+            qWarning() << "getOpponents bad state in inet - setBoatList: " << hasInet() << " " << hasRequest();
+            return;
+        }
+        qWarning()<<"Cancelling previous request";
+        this->inetAbort();
     }
     if(showWhat==SHOW_NONE)
     {
@@ -466,8 +471,13 @@ void opponentList::refreshData(void)
     //qWarning() << "refreshData";
     if(!hasInet() || hasRequest())
     {
-        qWarning() << "getOpponents bad state in inet - refreshData: " << hasInet() << " " << hasRequest();
-        return;
+        if(!hasInet())
+        {
+            qWarning() << "getOpponents bad state in inet - refreshData: " << hasInet() << " " << hasRequest();
+            return;
+        }
+        qWarning()<<"Cancelling previous request";
+        this->inetAbort();
     }
 
     if(opponent_list.size()<=0)
