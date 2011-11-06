@@ -289,8 +289,6 @@ void DialogTwaLine::traceIt()
             line->addVlmPoint(current);
             eta=eta+vacLen;
         }
-        if(this->startVac->isChecked())
-                eta=eta-vacLen;
         if(crossing)
             pen.setColor(Qt::red);
         else
@@ -298,7 +296,10 @@ void DialogTwaLine::traceIt()
         line->setLinePen(pen);
         QDateTime tm;
         tm.setTimeSpec(Qt::UTC);
-        tm.setTime_t(eta);
+        if(this->startVac->isChecked())
+            tm.setTime_t(eta-vacLen);
+        else
+            tm.setTime_t(eta);
         //QString name;
         //name.sprintf("Twa %.1f",twa[page]);
         POI * arrival=parent->slot_addPOI(tr("ETA: ")+tm.toString("dd MMM-hh:mm"),0,lat,lon,-1,0,false,myBoat);
