@@ -566,6 +566,8 @@ void ROUTE::slot_recalculate(boat * boat)
                     }
                 } while (has_eta && !imported);
             }
+            orth.setPoints(res_lon,res_lat,my_poiList.last()->getLongitude(),my_poiList.last()->getLatitude());
+            remain=orth.getDistance();
             if(this->autoAt)
             {
                 poi->setWph(qRound(cap*100)/100.0);
@@ -1065,7 +1067,7 @@ void ROUTE::do_vbvmg_buffer(double dist,double wanted_heading,
     {
         alpha = degToRad((double)i);
         double guessTwa=A180(radToDeg(angle-alpha));
-        if(newVbvmgVlm && (qAbs(guessTwa)<20 || qAbs(guessTwa>175))) continue;
+        //if(newVbvmgVlm && (qAbs(guessTwa)<20 || qAbs(guessTwa>175))) continue;
         if(i>0)
         {
             tanalpha = tanPos->at(i);
@@ -1091,8 +1093,8 @@ void ROUTE::do_vbvmg_buffer(double dist,double wanted_heading,
         else
         {
             int guessInt=qRound(guessAngle+guessTwa);
-            MinJ=qMax(guessInt-5,min_j);
-            MaxJ=qMin(guessInt+5,max_j);
+            MinJ=qMax(guessInt-15,min_j);
+            MaxJ=qMin(guessInt+15,max_j);
         }
         for (j=MinJ; j<MaxJ; ++j)
         {
@@ -1153,7 +1155,7 @@ void ROUTE::do_vbvmg_buffer(double dist,double wanted_heading,
         }
         if(newVbvmgVlm)
         {
-            for (j=qMax(-i-5,min_j); j<qMin(-i+5,max_j); ++j)
+            for (j=qMax(-i-15,min_j); j<qMin(-i+15,max_j); ++j)
             {
                 beta = degToRad((double)j);
     //            if((angle-alpha>0 && angle-beta>0) ||

@@ -64,7 +64,7 @@ POI::POI(QString name, int type, double lat, double lon,
     this->myBoat=myBoat;
     this->searchRangeLon=1;
     this->searchRangeLat=1;
-    this->searchStep=0.1;
+    this->searchStep=0.01;
     this->abortSearch=false;
     this->navMode=0;
     this->optimizing=true;
@@ -880,6 +880,13 @@ void POI::slot_routeMenu(QAction* ptr_action)
     ROUTE *  ptr_route = (ROUTE *) ptr_action->data().value<void *>();
     setRoute(ptr_route);
 }
+
+/* Helper struct to store a solution for the Simplex optimizer. */
+typedef struct {
+    double  lon, lat;
+    time_t  eta;
+} POI_Position;
+
 void POI::slot_finePosit()
 {
     if (this->route==NULL) return;
@@ -906,140 +913,155 @@ void POI::slot_finePosit()
     double rangeLon=searchRangeLon;
     double rangeLat=searchRangeLat;
     double step=searchStep;
-    time_t bestEta=0;
-    bool has_bestEta=false;
-    double bestRemain=0;
-    bool has_bestRemain=false;
-    double bestLon=0;
-    double bestLat=0;
-    double sens=1;
     QString r;
     route->setOptimizing(!this->optimizing);
     route->setOptimizingPOI(true);
     route->setPoiName(this->name);
     POI * best=NULL;
     QDateTime tm;
-    route->setFastVmgCalc(true);
+    tm.setTimeSpec (Qt::UTC);
+    //route->setFastVmgCalc(true);
     Orthodromie fromBoat(route->getStartLon(),route->getStartLat(),lon,lat);
-    float bestDistance=0;
     POI * previousMe=NULL;
     route->slot_recalculate();
     if (route->getHas_eta())
     {
-        tm.setTimeSpec(Qt::UTC);
         tm.setTime_t(route->getEta());
         previousMe=new POI(tr("ETA du prochain POI: ")+tm.toString("dd MMM-hh:mm"),0,savedLat,savedLon,this->proj,this->owner,this->parent,0,0,false,this->myBoat);
     }
     else
         previousMe=new POI(tr("Dist. restante du prochain POI: ")+r.sprintf("%.2f milles",route->getRemain()),
-                     0,savedLat,savedLon,this->proj,this->owner,this->parent,0,0,false,this->myBoat);
+                           0,savedLat,savedLon,this->proj,this->owner,this->parent,0,0,false,this->myBoat);
     parent->slot_addPOI_list(previousMe);
-    setLongitude(lon-rangeLon/2.0);
-    setLatitude(lat-rangeLat/2.0);
-    QApplication::processEvents();
-    while(lon<savedLon+rangeLon/2)
-    {
-        while((sens==1.0 && lat<savedLat+rangeLat/2.0)||(sens==-1.0 && lat>savedLat-rangeLat/2.0))
-        {
-            if(this->abortSearch) break;
-            route->slot_recalculate();
-            if (route->getHas_eta())
-            {
-                if (!has_bestEta)
-                {
-                    has_bestEta=true;
-                    bestEta=route->getEta();
-                    bestLon=lon;
-                    bestLat=lat;
-                    tm.setTimeSpec(Qt::UTC);
-                    tm.setTime_t(bestEta);
-                    if(has_bestRemain)
-                    {
-                        parent->slot_delPOI_list(best);
-                        delete best;
-                    }
-                    best=new POI(tr("Meilleure ETA: ")+tm.toString("dd MMM-hh:mm"),0,bestLat,bestLon,this->proj,this->owner,this->parent,0,0,false,this->myBoat);
-                    parent->slot_addPOI_list(best);
-                    fromBoat.setEndPoint(bestLon,bestLat);
-                    bestDistance=fromBoat.getDistance();
-                }
-                else
-                {
-                    if(bestEta>route->getEta())
-                    {
-                        bestEta=route->getEta();
-                        bestLon=lon;
-                        bestLat=lat;
-                        parent->slot_delPOI_list(best);
-                        delete best;
-                        tm.setTimeSpec(Qt::UTC);
-                        tm.setTime_t(bestEta);
-                        best=new POI(tr("Meilleure ETA: ")+tm.toString("dd MMM-hh:mm"),0,bestLat,bestLon,this->proj,this->owner,this->parent,0,0,false,this->myBoat);
-                        parent->slot_addPOI_list(best);
-                        fromBoat.setEndPoint(bestLon,bestLat);
-                        bestDistance=fromBoat.getDistance();
-                    }
-                    else if(bestEta==route->getEta())
-                    {
-                        fromBoat.setEndPoint(lon,lat);
-                        if(fromBoat.getDistance()>bestDistance)
-                        {
-                            bestEta=route->getEta();
-                            bestLon=lon;
-                            bestLat=lat;
-                            parent->slot_delPOI_list(best);
-                            delete best;
-                            tm.setTimeSpec(Qt::UTC);
-                            tm.setTime_t(bestEta);
-                            best=new POI(tr("Meilleure ETA: ")+tm.toString("dd MMM-hh:mm"),0,bestLat,bestLon,this->proj,this->owner,this->parent,0,0,false,this->myBoat);
-                            parent->slot_addPOI_list(best);
-                            bestDistance=fromBoat.getDistance();
-                        }
-                    }
-                }
-            }
-            else
-            {
-                if (!has_bestEta)
-                {
-                    if(!has_bestRemain || bestRemain>route->getRemain())
-                    {
-                        if(has_bestRemain)
-                        {
-                            parent->slot_delPOI_list(best);
-                            delete best;
-                        }
-                        has_bestRemain=true;
-                        bestRemain=route->getRemain();
-                        bestLon=lon;
-                        bestLat=lat;
-                        best=new POI(tr("Meilleure distance restante: ")+r.sprintf("%.2f milles",bestRemain),
-                                     0,bestLat,bestLon,this->proj,this->owner,this->parent,0,0,false,this->myBoat);
-                        parent->slot_addPOI_list(best);
-                    }
-                }
-            }
-            setLatitude(lat+sens*step);
-            Util::computePos(proj,lat, lon, &pi, &pj);
-            setPos(pi, pj-height/2);
-            update();
-            QApplication::processEvents();
+
+    POI_Position    simplex[3];
+    const double boatSpeed = myBoat->getSpeed() / 3600;
+
+    simplex[0].lon = lon;
+    simplex[0].lat = lat;
+    simplex[0].eta = route->getEta() + route->getRemain() / boatSpeed;
+
+    /* Note that if the route did not reach the target, then getEta
+     * returns the last date of the grib. */
+#define TRYPOINT(P) do {                                            \
+        setLongitude ((P).lon);                                     \
+        setLatitude ((P).lat);                                      \
+        route->slot_recalculate();                                  \
+        (P).eta = route->getEta() + route->getRemain() / boatSpeed; \
+        Util::computePos (proj, lat, lon, &pi, &pj);                \
+        setPos (pi, pj-height/2);                                   \
+        update();                                                   \
+    } while (0)
+
+#define UPDATEBEST  do {                                                \
+        if (best != NULL) {                                             \
+            parent->slot_delPOI_list (best);                            \
+            delete best;                                                \
+        }                                                               \
+        tm.setTime_t (simplex[0].eta);                                  \
+        best = new POI (tr ("Meilleure ETA: ") + tm.toString ("dd MMM-hh:mm"), 0, \
+                        simplex[0].lat, simplex[0].lon,                 \
+                        this->proj, this->owner, this->parent, 0, 0, false, this->myBoat); \
+        parent->slot_addPOI_list (best);                                \
+    } while (0)
+
+#define SORTSIMPLEX do {                        \
+        for (int i = 1; i < 3; ++i) {           \
+            POI_Position    tmp = simplex[i];   \
+            int             j;                  \
+                                                \
+            for (j = i; j > 0; --j)             \
+                if (simplex[j-1].eta > tmp.eta) \
+                    simplex[j]  = simplex[j-1]; \
+                else                            \
+                    break;                      \
+                                                \
+            if (j != i)                         \
+                simplex[j] = tmp;               \
+        }                                       \
+    } while (0)
+
+    simplex[1].lon = lon-rangeLon;
+    simplex[1].lat = lat;
+    TRYPOINT (simplex[1]);
+    
+    simplex[2].lon = lon;
+    simplex[2].lat = lat-rangeLat;
+    TRYPOINT (simplex[2]);
+
+    SORTSIMPLEX;
+    UPDATEBEST;
+
+    do {
+        QApplication::processEvents();
+
+        assert ((simplex[0].eta <= simplex[1].eta) && (simplex[1].eta <= simplex[2].eta));
+
+        /* 1st step: reflection */
+        POI_Position    reflect;
+        reflect.lon = simplex[0].lon + simplex[1].lon - simplex[2].lon;
+        reflect.lat = simplex[0].lat + simplex[1].lat - simplex[2].lat;
+        TRYPOINT (reflect);
+        if ((simplex[0].eta <= reflect.eta) && (reflect.eta < simplex[1].eta)) {
+            simplex[2] = simplex[1];
+            simplex[1] = reflect;
+            continue;
         }
-        if(this->abortSearch) break;
-        sens=-sens;
-        setLongitude(lon+step);
-    }
-    if((!has_bestEta && !has_bestRemain))
-    {
-        lon=savedLon;
-        lat=savedLat;
-        if(has_bestEta || has_bestRemain)
-        {
-            parent->slot_delPOI_list(best);
-            delete best;
+
+        /* 2nd step: expansion */
+        if (reflect.eta < simplex[0].eta) {
+            POI_Position    expand;
+            expand.lon = 3*(simplex[0].lon + simplex[1].lon)/2 - 2*simplex[2].lon;
+            expand.lat = 3*(simplex[0].lat + simplex[1].lat)/2 - 2*simplex[2].lat;
+            TRYPOINT (expand);
+
+            simplex[2] = simplex[1];
+            simplex[1] = simplex[0];
+            simplex[0] = (expand.eta < reflect.eta) ? expand : reflect;
+
+            UPDATEBEST;
+            continue;
         }
-    }
-    else if (this->abortSearch)
+
+        /* 3rd step: contraction */
+        POI_Position    contract;
+        contract.lon = (simplex[0].lon + simplex[1].lon)/4 + simplex[2].lon/2;
+        contract.lat = (simplex[0].lat + simplex[1].lat)/4 + simplex[2].lat/2;
+        TRYPOINT (contract);
+
+        if (contract.eta < simplex[2].eta) {
+            if (contract.eta < simplex[0].eta) {
+                simplex[2] = simplex[1];
+                simplex[1] = simplex[0];
+                simplex[0] = contract;
+                UPDATEBEST;
+            } else if (contract.eta < simplex[1].eta) {
+                simplex[2] = simplex[1];
+                simplex[1] = contract;
+            } else
+                simplex[2] = contract;
+            continue;
+        }
+
+        /* 4th step: reduction */
+        simplex[1].lon = (simplex[0].lon + simplex[1].lon)/2;
+        simplex[1].lat = (simplex[0].lat + simplex[1].lat)/2;
+        TRYPOINT (simplex[1]);
+        simplex[2].lon = (simplex[0].lon + simplex[2].lon)/2;
+        simplex[2].lat = (simplex[0].lat + simplex[2].lat)/2;
+        TRYPOINT (simplex[2]);
+
+        SORTSIMPLEX;
+        UPDATEBEST;
+
+    } while ((!abortSearch)
+             /* For some reason, abs gives ridiculous results here... */
+             && ((simplex[2].lat - simplex[0].lat >= step)
+                 || (simplex[2].lat - simplex[0].lat <= -step)
+                 || (simplex[2].lon - simplex[0].lon >= step)
+                 || (simplex[2].lon - simplex[0].lon <= -step)));
+
+    if (this->abortSearch)
     {
         int rep = QMessageBox::question (parent,tr("Abandon du positionnement automatique"), tr("Souhaitez vous conserver la meilleure position deja trouvee?"), QMessageBox::Yes | QMessageBox::No);
         if (rep == QMessageBox::Yes)
@@ -1051,15 +1073,15 @@ void POI::slot_finePosit()
                 parent->slot_delPOI_list(previousMe);
                 delete previousMe;
             }
-            setLongitude(bestLon);
-            setLatitude(bestLat);
+            setLongitude(simplex[0].lon);
+            setLatitude(simplex[0].lat);
             if(isWp) slot_setWP();
         }
         else
         {
             lon=savedLon;
             lat=savedLat;
-            if(has_bestEta || has_bestRemain)
+            if (best != NULL)
             {
                 parent->slot_delPOI_list(best);
                 delete best;
@@ -1077,8 +1099,8 @@ void POI::slot_finePosit()
             parent->slot_delPOI_list(previousMe);
             delete previousMe;
         }
-        setLongitude(bestLon);
-        setLatitude(bestLat);
+        setLongitude(simplex[0].lon);
+        setLatitude(simplex[0].lat);
         if(isWp) slot_setWP();
     }
     Util::computePos(proj,lat, lon, &pi, &pj);

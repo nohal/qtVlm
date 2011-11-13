@@ -2246,8 +2246,8 @@ void myCentralWidget::treatRoute(ROUTE* route)
             {
                 notFinished=false;
                 pois=route->getPoiList();
-                p.setValue(0);
                 p.setMaximum(pois.count()-2);
+                p.setValue(0);
                 for (int n=firstPOI;n<pois.count()-2;++n)
                 {
                     POI *poi=pois.at(n);
@@ -2275,8 +2275,9 @@ void myCentralWidget::treatRoute(ROUTE* route)
                 pois=route->getPoiList();
                 ++phase;
                 p.setLabelText(tr("Phase ")+QString().setNum(phase));
-                p.setValue(pois.count()-2);
                 p.setMaximum(pois.count()-2);
+                p.setValue(0);
+                p.setValue(pois.count()-2);
                 for (int n=pois.count()-2;n>=firstPOI;--n)
                 {
                     POI *poi=pois.at(n);
@@ -2301,8 +2302,8 @@ void myCentralWidget::treatRoute(ROUTE* route)
                 pois=route->getPoiList();
                 ++phase;
                 p.setLabelText(tr("Phase ")+QString().setNum(phase));
-                p.setValue(0);
                 p.setMaximum(pois.count()-2);
+                p.setValue(0);
 
                 for (int n=firstPOI;n<pois.count()-3;++n)
                 {
@@ -2333,8 +2334,8 @@ void myCentralWidget::treatRoute(ROUTE* route)
                         nbDel=nbDel+2;
                         n=firstPOI-1;
                         pois=route->getPoiList();
-                        p.setValue(0);
                         p.setMaximum(pois.count()-2);
+                        p.setValue(0);
                         continue;
                     }
                     else
@@ -2351,8 +2352,8 @@ void myCentralWidget::treatRoute(ROUTE* route)
                 ++phase;
                 p.setLabelText(tr("Phase ")+QString().setNum(phase));
                 pois=route->getPoiList();
-                p.setValue(0);
                 p.setMaximum(pois.count()-2);
+                p.setValue(0);
 
                 for (int n=firstPOI;n<pois.count()-4;++n)
                 {
@@ -2389,8 +2390,8 @@ void myCentralWidget::treatRoute(ROUTE* route)
                         nbDel=nbDel+3;
                         n=firstPOI-1;
                         pois=route->getPoiList();
-                        p.setValue(0);
                         p.setMaximum(pois.count()-2);
+                        p.setValue(0);
                         continue;
                     }
                     else
