@@ -53,7 +53,7 @@ boardVLM::boardVLM(MainWindow * mainWin, inetConnexion * inet, board * parent) :
 
     connect(this,SIGNAL(VLM_Sync()),mainWin,SLOT(slotVLM_Sync()));    
     connect(this,SIGNAL(POI_selectAborted(POI*)),mainWin,SLOT(slot_POIselected(POI*)));
-
+    connect(this->ClearPilot,SIGNAL(clicked()),this,SLOT(clearPilototo()));
     GPS_timer = new QTimer(this);
     GPS_timer->setSingleShot(true);
     connect(GPS_timer,SIGNAL(timeout()),this, SLOT(synch_GPS()));
@@ -118,6 +118,7 @@ boardVLM::boardVLM(MainWindow * mainWin, inetConnexion * inet, board * parent) :
     set_style(this->btn_chgAngle);
     set_style(this->btn_chgHeading);
     set_style(this->btn_Pilototo);
+    set_style(this->ClearPilot);
     set_style(this->btn_Synch);
     set_style(this->btn_virer);
     set_style(this->btn_WP);
@@ -132,6 +133,8 @@ void boardVLM::set_style(QPushButton * button, QColor color, QColor color2)
     {
         if(button==this->btn_Synch)
             borderString="border: 1px solid #555;border-radius: 11px;padding: 4px;";
+        else if(button==this->ClearPilot)
+            borderString="border: 1px solid #555;border-radius: 7px;padding: 1px;";
         else if(button==this->btn_boatInfo)
             borderString="border: 1px solid #555;border-radius: 5px;padding: 1px;";
         else if(button==this->btn_chgHeading)
@@ -349,6 +352,8 @@ void boardVLM::boatUpdated(void)
 
     //btn_Synch->setStyleSheet(QString::fromUtf8("background-color: rgb(255, 255, 127);"));
     set_style(this->btn_Synch,QColor(255,255,127));
+    set_style(this->ClearPilot,QColor(255,255,127));
+    ClearPilot->blockSignals(false);
     isComputing = false;
     speed->setStyleSheet(QString::fromUtf8(SPEED_COLOR_VLM));
     label_6->setStyleSheet(QString::fromUtf8(SPEED_COLOR_VLM));
@@ -1016,7 +1021,12 @@ void boardVLM::setCompassVisible(bool status)
 //    this->adjustSize();
 }
 
-
+void boardVLM::clearPilototo()
+{
+    ClearPilot->blockSignals(true);
+    set_style(ClearPilot,QColor(255,0,0));
+    mainWin->clearPilototo();
+}
 
 /************************/
 /* Board custom spinBox */

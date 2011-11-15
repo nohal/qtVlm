@@ -457,7 +457,8 @@ void DialogPilototo::requestFinished (QByteArray res)
     if(this->myBoat && this->updateBoat && (this->currentList==NULL || this->currentList->isEmpty()))
     {
         this->updateBoat=false;
-        poiToWp->slot_setWP();
+        if(poiToWp!=NULL)
+            poiToWp->slot_setWP();
     }
 }
 
@@ -554,7 +555,6 @@ void DialogPilototo::setInstructions(boat * pvBoat, QList<POI *> pois)
         instr_ptr->param=serializer.serialize(cur_instruction);
         instructions->append(instr_ptr);
     }
-    if(pois.count()<1) return;
     for(int n=1;n<pois.count();++n)
     {
         POI * poi=pois.at(n);
@@ -581,7 +581,10 @@ void DialogPilototo::setInstructions(boat * pvBoat, QList<POI *> pois)
         instructions->append(instr_ptr);
         poi->setPiloteDate(-1);
     }
-    poiToWp=pois.at(0);
+    if(!pois.isEmpty())
+        poiToWp=pois.at(0);
+    else
+        poiToWp=NULL;
     currentList=instructions;
     this->updateBoat=true;
     sendPilototo();

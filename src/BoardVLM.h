@@ -69,6 +69,7 @@ class boardVLM: public QWidget , public Ui::boardVLM_ui, public inetClient
 
         void edtSpinBox_key(void);
         void slot_hideShowCompass();
+        void clearPilototo();
 
     signals:
         void VLM_Sync(void);
@@ -80,7 +81,7 @@ class boardVLM: public QWidget , public Ui::boardVLM_ui, public inetClient
         void contextMenuEvent(QContextMenuEvent  * event);
         bool eventFilter(QObject *obj, QEvent *event);
     private:
-        QMainWindow * mainWin;
+        MainWindow * mainWin;
         board * parent;
 
         boatVLM * currentBoat(void);

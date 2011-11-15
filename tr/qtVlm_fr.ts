@@ -2136,10 +2136,6 @@ Etes-vous sur ?</source>
         <translation></translation>
     </message>
     <message>
-        <source>Meilleure distance restante: </source>
-        <translation></translation>
-    </message>
-    <message>
         <source>ETA du prochain POI: </source>
         <translation>Ancienne ETA du prochain POI: </translation>
     </message>
@@ -4256,6 +4252,10 @@ Voulez-vous egalement supprimer tous les POIs lui appartenant?</source>
         <source>&lt;shift&gt;,&lt;control&gt; et &lt;tab&gt; pour changer la precision de l&apos;increment</source>
         <translation>&lt;shift&gt;,&lt;control&gt; et &lt;tab&gt; pour changer la précision de l&apos;increment</translation>
     </message>
+    <message>
+        <source>Clear</source>
+        <translation>Effacer</translation>
+    </message>
 </context>
 <context>
     <name>boat</name>
@@ -5784,14 +5784,6 @@ Voulez-vous egalement supprimer tous les POIs lui appartenant?</source>
     </message>
     <message>
         <source>Vac</source>
-        <translation></translation>
-    </message>
-    <message>
-        <source>Pas de sync Vlm depuis plus d&apos;une vac</source>
-        <translation></translation>
-    </message>
-    <message>
-        <source>! Sync &gt; 1 Vac !</source>
         <translation></translation>
     </message>
     <message>

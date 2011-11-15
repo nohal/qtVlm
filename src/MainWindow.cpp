@@ -1895,6 +1895,12 @@ void MainWindow::setPilototoFromRoute(QList<POI*> poiList)
     route->setPilototo(false);
     emit setInstructions(route->getBoat(),poiList);
 }
+void MainWindow::clearPilototo()
+{
+    QList<POI*> vide;
+    if(this->selectedBoat)
+        emit setInstructions(this->selectedBoat,vide);
+}
 
 bool MainWindow::isBoat(QString idu)
 {

@@ -53,7 +53,7 @@ class board : public QWidget
         void hideShowCompass();
 
     private:
-        QMainWindow * mainWin;
+        MainWindow * mainWin;
 
         boardVLM * vlm_board;
         QDockWidget * VLMDock;
