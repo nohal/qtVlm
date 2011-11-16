@@ -62,8 +62,8 @@ POI::POI(QString name, int type, double lat, double lon,
     this->type=type;
     this->typeMask=1<<type;
     this->myBoat=myBoat;
-    this->searchRangeLon=1;
-    this->searchRangeLat=1;
+    this->searchRangeLon=3;
+    this->searchRangeLat=3;
     this->searchStep=0.01;
     this->abortSearch=false;
     this->navMode=0;
@@ -887,7 +887,7 @@ typedef struct {
     time_t  eta;
 } POI_Position;
 
-void POI::slot_finePosit()
+void POI::slot_finePosit(bool silent)
 {
     if (this->route==NULL) return;
     if (this->route->getFrozen()) return;
@@ -896,20 +896,24 @@ void POI::slot_finePosit()
     if (route->getOptimizing()) return;
     if (route->getUseVbvmgVlm())
     {
-        QMessageBox::critical(0,tr("Optimisation du placement d'un POI"),
+        if(!silent)
+            QMessageBox::critical(0,tr("Optimisation du placement d'un POI"),
                               tr("Vous ne pouvez pas optimiser en mode VBVMG-VLM"));
         return;
     }
     this->abortSearch=false;
     double savedLon=lon;
     double savedLat=lat;
-    DialogFinePosit * dia=new DialogFinePosit(this,parent);
-    if(dia->exec()!=QDialog::Accepted)
+    if(!silent)
     {
+        DialogFinePosit * dia=new DialogFinePosit(this,parent);
+        if(dia->exec()!=QDialog::Accepted)
+        {
+            delete dia;
+            return;
+        }
         delete dia;
-        return;
     }
-    delete dia;
     double rangeLon=searchRangeLon;
     double rangeLat=searchRangeLat;
     double step=searchStep;
@@ -1054,14 +1058,14 @@ void POI::slot_finePosit()
         SORTSIMPLEX;
         UPDATEBEST;
 
-    } while ((!abortSearch)
+    } while ((!abortSearch) && !silent
              /* For some reason, abs gives ridiculous results here... */
              && ((simplex[2].lat - simplex[0].lat >= step)
                  || (simplex[2].lat - simplex[0].lat <= -step)
                  || (simplex[2].lon - simplex[0].lon >= step)
                  || (simplex[2].lon - simplex[0].lon <= -step)));
 
-    if (this->abortSearch)
+    if (this->abortSearch && !silent)
     {
         int rep = QMessageBox::question (parent,tr("Abandon du positionnement automatique"), tr("Souhaitez vous conserver la meilleure position deja trouvee?"), QMessageBox::Yes | QMessageBox::No);
         if (rep == QMessageBox::Yes)
@@ -1094,14 +1098,14 @@ void POI::slot_finePosit()
     {
         parent->slot_delPOI_list(best);
         delete best;
-        if(Settings::getSetting("keepOldPoi","0").toInt()==0)
+        if(Settings::getSetting("keepOldPoi","0").toInt()==0 || silent)
         {
             parent->slot_delPOI_list(previousMe);
             delete previousMe;
         }
         setLongitude(simplex[0].lon);
         setLatitude(simplex[0].lat);
-        if(isWp) slot_setWP();
+        if(isWp && !silent) slot_setWP();
     }
     Util::computePos(proj,lat, lon, &pi, &pj);
     setPos(pi, pj-height/2);

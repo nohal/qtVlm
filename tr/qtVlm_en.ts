@@ -3185,27 +3185,27 @@ Etes-vous sur ?</source>
         <translation>Route is busy calculating; impossible to delete this POI now</translation>
     </message>
     <message>
-        <location filename="../src/POI.cpp" line="899"/>
+        <location filename="../src/POI.cpp" line="900"/>
         <source>Optimisation du placement d&apos;un POI</source>
         <translation>POI position optimisation</translation>
     </message>
     <message>
-        <location filename="../src/POI.cpp" line="900"/>
+        <location filename="../src/POI.cpp" line="901"/>
         <source>Vous ne pouvez pas optimiser en mode VBVMG-VLM</source>
         <translation>You cannot optimize in VBVMG-VLM</translation>
     </message>
     <message>
-        <location filename="../src/POI.cpp" line="930"/>
+        <location filename="../src/POI.cpp" line="934"/>
         <source>ETA du prochain POI: </source>
         <translation>Previous ETA of next POI: </translation>
     </message>
     <message>
-        <location filename="../src/POI.cpp" line="933"/>
+        <location filename="../src/POI.cpp" line="937"/>
         <source>Dist. restante du prochain POI: </source>
         <translation>Next WP remaining dist.:</translation>
     </message>
     <message>
-        <location filename="../src/POI.cpp" line="962"/>
+        <location filename="../src/POI.cpp" line="966"/>
         <source>Meilleure ETA: </source>
         <translation>Best ETA:</translation>
     </message>
@@ -3248,12 +3248,12 @@ Etes-vous sur ?</source>
         <translation type="obsolete">Shortest remaining distance:</translation>
     </message>
     <message>
-        <location filename="../src/POI.cpp" line="1066"/>
+        <location filename="../src/POI.cpp" line="1070"/>
         <source>Abandon du positionnement automatique</source>
         <translation>Automatic positioning was stopped</translation>
     </message>
     <message>
-        <location filename="../src/POI.cpp" line="1066"/>
+        <location filename="../src/POI.cpp" line="1070"/>
         <source>Souhaitez vous conserver la meilleure position deja trouvee?</source>
         <translation>Do you wish to keep best position found so far?</translation>
     </message>
@@ -3871,6 +3871,11 @@ Etes-vous sur ?</source>
         <translation>Route export</translation>
     </message>
     <message>
+        <location filename="../src/mycentralwidget.cpp" line="2466"/>
+        <source>Resultat de l&apos;optimisation</source>
+        <translation>Optimization results</translation>
+    </message>
+    <message>
         <location filename="../src/Dialogs/DialogVlmLog.cpp" line="146"/>
         <source>Un nom de fichier valide portant l&apos;extension .txt est requis</source>
         <translation>A valid file name with txt extension is required</translation>
@@ -3932,7 +3937,7 @@ Etes-vous sur ?</source>
         <translation type="obsolete">Maximum loss of time on final ETA (in minutes)</translation>
     </message>
     <message>
-        <location filename="../src/mycentralwidget.cpp" line="2438"/>
+        <location filename="../src/mycentralwidget.cpp" line="2439"/>
         <source>Resultat de la simplification</source>
         <translation>Simplification result</translation>
     </message>
@@ -4101,52 +4106,52 @@ VMG %.1 kts</translation>
         <translation>Starting date is not compatible with grib dates</translation>
     </message>
     <message>
-        <location filename="../src/routage.cpp" line="1884"/>
+        <location filename="../src/routage.cpp" line="1860"/>
         <source>Date et heure d&apos;arrivee: </source>
         <translation>Date and time of arrival: </translation>
     </message>
     <message>
-        <location filename="../src/routage.cpp" line="1885"/>
+        <location filename="../src/routage.cpp" line="1861"/>
         <source>&lt;br&gt;Arrivee en: </source>
         <translation>&lt;br&gt;Arrival within: </translation>
     </message>
     <message>
-        <location filename="../src/routage.cpp" line="1885"/>
+        <location filename="../src/routage.cpp" line="1861"/>
         <source> jours </source>
         <translation>days</translation>
     </message>
     <message>
-        <location filename="../src/routage.cpp" line="1886"/>
+        <location filename="../src/routage.cpp" line="1862"/>
         <source>&lt;br&gt;&lt;br&gt;Temps de calcul: </source>
         <translation>&lt;br&gt;&lt;br&gt;Calculation time: </translation>
     </message>
     <message>
-        <location filename="../src/routage.cpp" line="1891"/>
+        <location filename="../src/routage.cpp" line="1867"/>
         <source>Routage arrete par l&apos;utilisateur</source>
         <translation>Routing stopped by user</translation>
     </message>
     <message>
-        <location filename="../src/routage.cpp" line="1893"/>
+        <location filename="../src/routage.cpp" line="1869"/>
         <source>Impossible de rejoindre l&apos;arrivee, desole</source>
         <translation>Sorry, impossible to reach WP&lt;br&gt;Try with another grib</translation>
     </message>
     <message>
-        <location filename="../src/routage.cpp" line="1921"/>
+        <location filename="../src/routage.cpp" line="1897"/>
         <source>Convertir en route</source>
         <translation>Convert to route</translation>
     </message>
     <message>
-        <location filename="../src/routage.cpp" line="1922"/>
+        <location filename="../src/routage.cpp" line="1898"/>
         <source>Ce routage a ete calcule avec une hypothese modifiant les donnees du grib&lt;br&gt;La route ne prendra pas ce scenario en compte&lt;br&gt;Etes vous sur de vouloir le convertir en route?</source>
         <translation>This routing has been calculated with an assumption modifying grib data&lt;br&gt;The route will not take this scenario into account&lt;br&gt;Are you sure you want to convert to route?</translation>
     </message>
     <message>
-        <location filename="../src/routage.cpp" line="2303"/>
+        <location filename="../src/routage.cpp" line="2280"/>
         <source>Convertion d&apos;un routage en route</source>
         <translation>Converting Routage to Route</translation>
     </message>
     <message>
-        <location filename="../src/routage.cpp" line="2304"/>
+        <location filename="../src/routage.cpp" line="2281"/>
         <source>Voulez-vous que la route parte du bateau a la prochaine vacation?</source>
         <translation>Do you want the new route to start from boat?</translation>
     </message>
@@ -4155,7 +4160,7 @@ VMG %.1 kts</translation>
         <translation type="obsolete">Delete routing: %1?</translation>
     </message>
     <message>
-        <location filename="../src/routage.cpp" line="2942"/>
+        <location filename="../src/routage.cpp" line="2912"/>
         <source>Creer un pivot en changeant les options</source>
         <translation>Create a pivot changing the routing options</translation>
     </message>
@@ -4168,12 +4173,22 @@ VMG %.1 kts</translation>
         <translation type="obsolete">Deleting a routing is not reversible.</translation>
     </message>
     <message>
-        <location filename="../src/routage.cpp" line="2308"/>
+        <location filename="../src/routage.cpp" line="2285"/>
         <source>Routage: </source>
         <translation>Routing:</translation>
     </message>
     <message>
-        <location filename="../src/routage.cpp" line="2940"/>
+        <location filename="../src/routage.cpp" line="2298"/>
+        <source>Conversion d&apos;un routage en route</source>
+        <translation>Converting Routage to Route</translation>
+    </message>
+    <message>
+        <location filename="../src/routage.cpp" line="2299"/>
+        <source>Un des routages en amont a ete supprime,&lt;br&gt;la conversion est impossible</source>
+        <translation>One of the parents routing has been deleted,&lt;br&gt;converion is not possible</translation>
+    </message>
+    <message>
+        <location filename="../src/routage.cpp" line="2910"/>
         <source>Creer un pivot</source>
         <translation>Create a pivot point</translation>
     </message>
@@ -6045,175 +6060,175 @@ Voulez-vous egalement supprimer tous les POIs lui appartenant?</source>
         <translation type="obsolete">Speed and Heading</translation>
     </message>
     <message>
-        <location filename="../src/Ui/BoardVLM.ui" line="358"/>
+        <location filename="../src/Ui/BoardVLM.ui" line="364"/>
         <source> Vitesse et Cap</source>
         <translation>Speed and heading</translation>
     </message>
     <message>
-        <location filename="../src/Ui/BoardVLM.ui" line="536"/>
-        <location filename="../src/Ui/BoardVLM.ui" line="1719"/>
-        <location filename="../src/Ui/BoardVLM.ui" line="1747"/>
+        <location filename="../src/Ui/BoardVLM.ui" line="542"/>
+        <location filename="../src/Ui/BoardVLM.ui" line="1725"/>
+        <location filename="../src/Ui/BoardVLM.ui" line="1753"/>
         <source>background-color: rgb(239, 243, 247);</source>
         <translation>background-color: rgb(239, 243, 247);</translation>
     </message>
     <message>
-        <location filename="../src/Ui/BoardVLM.ui" line="539"/>
+        <location filename="../src/Ui/BoardVLM.ui" line="545"/>
         <source>Heading</source>
         <translation>Heading</translation>
     </message>
     <message>
-        <location filename="../src/Ui/BoardVLM.ui" line="706"/>
-        <location filename="../src/Ui/BoardVLM.ui" line="1920"/>
+        <location filename="../src/Ui/BoardVLM.ui" line="712"/>
+        <location filename="../src/Ui/BoardVLM.ui" line="1926"/>
         <source>&lt;shift&gt;,&lt;control&gt; et &lt;tab&gt; pour changer la precision de l&apos;increment</source>
         <translation>&lt;shift&gt;, &lt;control&gt; and &lt;tab&gt; to change single step value</translation>
     </message>
     <message>
-        <location filename="../src/Ui/BoardVLM.ui" line="715"/>
-        <location filename="../src/Ui/BoardVLM.ui" line="1929"/>
+        <location filename="../src/Ui/BoardVLM.ui" line="721"/>
+        <location filename="../src/Ui/BoardVLM.ui" line="1935"/>
         <source>deg</source>
         <translation>°</translation>
     </message>
     <message>
-        <location filename="../src/Ui/BoardVLM.ui" line="792"/>
+        <location filename="../src/Ui/BoardVLM.ui" line="798"/>
         <source>Bateau</source>
         <translation>Boat</translation>
     </message>
     <message>
-        <location filename="../src/Ui/BoardVLM.ui" line="819"/>
-        <location filename="../src/Ui/BoardVLM.ui" line="930"/>
-        <location filename="../src/Ui/BoardVLM.ui" line="1257"/>
-        <location filename="../src/Ui/BoardVLM.ui" line="1572"/>
+        <location filename="../src/Ui/BoardVLM.ui" line="825"/>
+        <location filename="../src/Ui/BoardVLM.ui" line="936"/>
+        <location filename="../src/Ui/BoardVLM.ui" line="1263"/>
+        <location filename="../src/Ui/BoardVLM.ui" line="1578"/>
         <source>99.99</source>
         <translation>99.99</translation>
     </message>
     <message>
-        <location filename="../src/Ui/BoardVLM.ui" line="844"/>
-        <location filename="../src/Ui/BoardVLM.ui" line="865"/>
-        <location filename="../src/Ui/BoardVLM.ui" line="1284"/>
-        <location filename="../src/Ui/BoardVLM.ui" line="1590"/>
+        <location filename="../src/Ui/BoardVLM.ui" line="850"/>
+        <location filename="../src/Ui/BoardVLM.ui" line="871"/>
+        <location filename="../src/Ui/BoardVLM.ui" line="1290"/>
+        <location filename="../src/Ui/BoardVLM.ui" line="1596"/>
         <source>kts</source>
         <translation>kts</translation>
     </message>
     <message>
-        <location filename="../src/Ui/BoardVLM.ui" line="745"/>
+        <location filename="../src/Ui/BoardVLM.ui" line="751"/>
         <source>Avg</source>
         <translation>Avg</translation>
     </message>
     <message>
-        <location filename="../src/Ui/BoardVLM.ui" line="885"/>
+        <location filename="../src/Ui/BoardVLM.ui" line="891"/>
         <source>Loch</source>
         <translation>Loch</translation>
     </message>
     <message>
-        <location filename="../src/Ui/BoardVLM.ui" line="769"/>
+        <location filename="../src/Ui/BoardVLM.ui" line="775"/>
         <source>9999.99</source>
         <translation>9999.99</translation>
     </message>
     <message>
-        <location filename="../src/Ui/BoardVLM.ui" line="316"/>
+        <location filename="../src/Ui/BoardVLM.ui" line="322"/>
         <source>Clear</source>
         <translation>Clear</translation>
     </message>
     <message>
-        <location filename="../src/Ui/BoardVLM.ui" line="909"/>
-        <location filename="../src/Ui/BoardVLM.ui" line="1210"/>
+        <location filename="../src/Ui/BoardVLM.ui" line="915"/>
+        <location filename="../src/Ui/BoardVLM.ui" line="1216"/>
         <source>nm</source>
         <translation>nm</translation>
     </message>
     <message>
-        <location filename="../src/Ui/BoardVLM.ui" line="974"/>
+        <location filename="../src/Ui/BoardVLM.ui" line="980"/>
         <source>WP direction</source>
         <translation>WP direction</translation>
     </message>
     <message>
-        <location filename="../src/Ui/BoardVLM.ui" line="1010"/>
-        <location filename="../src/Ui/BoardVLM.ui" line="1405"/>
+        <location filename="../src/Ui/BoardVLM.ui" line="1016"/>
+        <location filename="../src/Ui/BoardVLM.ui" line="1411"/>
         <source>Ortho</source>
         <translation>Ortho</translation>
     </message>
     <message>
-        <location filename="../src/Ui/BoardVLM.ui" line="1040"/>
-        <location filename="../src/Ui/BoardVLM.ui" line="1135"/>
-        <location filename="../src/Ui/BoardVLM.ui" line="1186"/>
-        <location filename="../src/Ui/BoardVLM.ui" line="1650"/>
-        <location filename="../src/Ui/BoardVLM.ui" line="2023"/>
-        <location filename="../src/Ui/BoardVLM.ui" line="2103"/>
+        <location filename="../src/Ui/BoardVLM.ui" line="1046"/>
+        <location filename="../src/Ui/BoardVLM.ui" line="1141"/>
+        <location filename="../src/Ui/BoardVLM.ui" line="1192"/>
+        <location filename="../src/Ui/BoardVLM.ui" line="1656"/>
+        <location filename="../src/Ui/BoardVLM.ui" line="2029"/>
+        <location filename="../src/Ui/BoardVLM.ui" line="2109"/>
         <source>999.99</source>
         <translation>999.99</translation>
     </message>
     <message>
-        <location filename="../src/Ui/BoardVLM.ui" line="1070"/>
-        <location filename="../src/Ui/BoardVLM.ui" line="1114"/>
-        <location filename="../src/Ui/BoardVLM.ui" line="1667"/>
-        <location filename="../src/Ui/BoardVLM.ui" line="2040"/>
-        <location filename="../src/Ui/BoardVLM.ui" line="2120"/>
+        <location filename="../src/Ui/BoardVLM.ui" line="1076"/>
+        <location filename="../src/Ui/BoardVLM.ui" line="1120"/>
+        <location filename="../src/Ui/BoardVLM.ui" line="1673"/>
+        <location filename="../src/Ui/BoardVLM.ui" line="2046"/>
+        <location filename="../src/Ui/BoardVLM.ui" line="2126"/>
         <source>a</source>
         <translation>a</translation>
     </message>
     <message>
-        <location filename="../src/Ui/BoardVLM.ui" line="1090"/>
-        <location filename="../src/Ui/BoardVLM.ui" line="1722"/>
+        <location filename="../src/Ui/BoardVLM.ui" line="1096"/>
+        <location filename="../src/Ui/BoardVLM.ui" line="1728"/>
         <source>Angle</source>
         <translation>Angle</translation>
     </message>
     <message>
-        <location filename="../src/Ui/BoardVLM.ui" line="1162"/>
+        <location filename="../src/Ui/BoardVLM.ui" line="1168"/>
         <source>DNM</source>
         <translation>DNM</translation>
     </message>
     <message>
-        <location filename="../src/Ui/BoardVLM.ui" line="1230"/>
-        <location filename="../src/Ui/BoardVLM.ui" line="1374"/>
+        <location filename="../src/Ui/BoardVLM.ui" line="1236"/>
+        <location filename="../src/Ui/BoardVLM.ui" line="1380"/>
         <source>VMG</source>
         <translation>VMG</translation>
     </message>
     <message>
-        <location filename="../src/Ui/BoardVLM.ui" line="1331"/>
+        <location filename="../src/Ui/BoardVLM.ui" line="1337"/>
         <source>PushButton</source>
         <translation>PushButton</translation>
     </message>
     <message>
-        <location filename="../src/Ui/BoardVLM.ui" line="1436"/>
+        <location filename="../src/Ui/BoardVLM.ui" line="1442"/>
         <source>VBVMG</source>
         <translation>VBVMG</translation>
     </message>
     <message>
-        <location filename="../src/Ui/BoardVLM.ui" line="1525"/>
+        <location filename="../src/Ui/BoardVLM.ui" line="1531"/>
         <source>Vent</source>
         <translation>Wind</translation>
     </message>
     <message>
-        <location filename="../src/Ui/BoardVLM.ui" line="1696"/>
+        <location filename="../src/Ui/BoardVLM.ui" line="1702"/>
         <source>background-color: rgb(170, 170, 255);</source>
         <translation>background-color: rgb(170, 170, 255);</translation>
     </message>
     <message>
-        <location filename="../src/Ui/BoardVLM.ui" line="1750"/>
+        <location filename="../src/Ui/BoardVLM.ui" line="1756"/>
         <source>+/-</source>
         <translation>+/-</translation>
     </message>
     <message>
-        <location filename="../src/Ui/BoardVLM.ui" line="1554"/>
+        <location filename="../src/Ui/BoardVLM.ui" line="1560"/>
         <source>Speed</source>
         <translation>Speed</translation>
     </message>
     <message>
-        <location filename="../src/Ui/BoardVLM.ui" line="1635"/>
+        <location filename="../src/Ui/BoardVLM.ui" line="1641"/>
         <source>Dir</source>
         <translation>Dir</translation>
     </message>
     <message>
-        <location filename="../src/Ui/BoardVLM.ui" line="1983"/>
+        <location filename="../src/Ui/BoardVLM.ui" line="1989"/>
         <source>Meilleur VMG vent</source>
         <translation>Best VMG wind</translation>
     </message>
     <message>
-        <location filename="../src/Ui/BoardVLM.ui" line="2008"/>
+        <location filename="../src/Ui/BoardVLM.ui" line="2014"/>
         <source>Pres</source>
         <translation>Beating</translation>
     </message>
     <message>
-        <location filename="../src/Ui/BoardVLM.ui" line="2085"/>
+        <location filename="../src/Ui/BoardVLM.ui" line="2091"/>
         <source>Portant</source>
         <translation>Reaching</translation>
     </message>
@@ -6628,9 +6643,13 @@ Voulez-vous egalement supprimer tous les POIs lui appartenant?</source>
         <translation>Dialog</translation>
     </message>
     <message>
-        <location filename="../src/Ui/finePosit.ui" line="42"/>
         <source>Etendue de la recherche (longitude)</source>
-        <translation>Search range (longitude)</translation>
+        <translation type="obsolete">Search range (longitude)</translation>
+    </message>
+    <message>
+        <location filename="../src/Ui/finePosit.ui" line="42"/>
+        <source>Ecart initial (longitude)</source>
+        <translation>Initial gap (longitude)</translation>
     </message>
     <message>
         <location filename="../src/Ui/finePosit.ui" line="55"/>
@@ -6641,6 +6660,11 @@ Voulez-vous egalement supprimer tous les POIs lui appartenant?</source>
         <location filename="../src/Ui/finePosit.ui" line="121"/>
         <source>Afficher les routes calculees</source>
         <translation>Show calculated routes</translation>
+    </message>
+    <message>
+        <location filename="../src/Ui/finePosit.ui" line="162"/>
+        <source>Ecart initial (latitude)</source>
+        <translation>Initial gap (latitude)</translation>
     </message>
     <message>
         <location filename="../src/Ui/finePosit.ui" line="175"/>
@@ -6656,9 +6680,8 @@ Voulez-vous egalement supprimer tous les POIs lui appartenant?</source>
         <translation type="obsolete">Show calculated routes</translation>
     </message>
     <message>
-        <location filename="../src/Ui/finePosit.ui" line="162"/>
         <source>Etendue de la recherche (latitude)</source>
-        <translation>Search range (latitude)</translation>
+        <translation type="obsolete">Search range (latitude)</translation>
     </message>
 </context>
 <context>
@@ -7491,6 +7514,31 @@ Etes-vous sur ?</source>
         <translation></translation>
     </message>
     <message>
+        <location filename="../src/mycentralwidget.cpp" line="2441"/>
+        <source>Optimiser</source>
+        <translation>Optimize</translation>
+    </message>
+    <message>
+        <location filename="../src/mycentralwidget.cpp" line="2455"/>
+        <source> minutes perdues</source>
+        <translation> minutes lost</translation>
+    </message>
+    <message>
+        <location filename="../src/mycentralwidget.cpp" line="2457"/>
+        <source> minutes gagnees</source>
+        <translation> minutes saved</translation>
+    </message>
+    <message>
+        <location filename="../src/mycentralwidget.cpp" line="2464"/>
+        <source>ETA avant optimisation: </source>
+        <translation>ETA before optimization: </translation>
+    </message>
+    <message>
+        <location filename="../src/mycentralwidget.cpp" line="2465"/>
+        <source>ETA apres optimisation: </source>
+        <translation>ETA after optimization: </translation>
+    </message>
+    <message>
         <source>Phase 1...</source>
         <translation type="obsolete">Phase 1...</translation>
     </message>
@@ -7499,28 +7547,28 @@ Etes-vous sur ?</source>
         <translation type="obsolete">Phase 2...</translation>
     </message>
     <message>
-        <location filename="../src/mycentralwidget.cpp" line="2419"/>
+        <location filename="../src/mycentralwidget.cpp" line="2418"/>
         <source> minutes perdues, </source>
         <translation> minutes lost, </translation>
     </message>
     <message>
-        <location filename="../src/mycentralwidget.cpp" line="2420"/>
-        <location filename="../src/mycentralwidget.cpp" line="2425"/>
+        <location filename="../src/mycentralwidget.cpp" line="2419"/>
+        <location filename="../src/mycentralwidget.cpp" line="2424"/>
         <source> POIs supprimes sur </source>
         <translation> POIs suppressed out of </translation>
     </message>
     <message>
-        <location filename="../src/mycentralwidget.cpp" line="2424"/>
+        <location filename="../src/mycentralwidget.cpp" line="2423"/>
         <source> minutes gagnees(!), </source>
         <translation> minutes saved(!), </translation>
     </message>
     <message>
-        <location filename="../src/mycentralwidget.cpp" line="2436"/>
+        <location filename="../src/mycentralwidget.cpp" line="2435"/>
         <source>ETA avant simplification: </source>
         <translation>ETA before simplification: </translation>
     </message>
     <message>
-        <location filename="../src/mycentralwidget.cpp" line="2437"/>
+        <location filename="../src/mycentralwidget.cpp" line="2436"/>
         <source>ETA apres simplification: </source>
         <translation>ETA after simplification: </translation>
     </message>
@@ -7543,44 +7591,44 @@ Etes-vous sur ?</source>
         <translation type="obsolete">You cannot delete a frozen route</translation>
     </message>
     <message>
-        <location filename="../src/mycentralwidget.cpp" line="2490"/>
+        <location filename="../src/mycentralwidget.cpp" line="2520"/>
         <source>Detruire la route : %1</source>
         <translation>Delete route : %1</translation>
     </message>
     <message>
-        <location filename="../src/mycentralwidget.cpp" line="2491"/>
+        <location filename="../src/mycentralwidget.cpp" line="2521"/>
         <source>La destruction d&apos;une route est definitive.
 
 Voulez-vous egalement supprimer tous les POIs lui appartenant?</source>
         <translation>Route deletion is not reversible. Also delete all POIs of this route?</translation>
     </message>
     <message>
-        <location filename="../src/mycentralwidget.cpp" line="2519"/>
+        <location filename="../src/mycentralwidget.cpp" line="2549"/>
         <source>Detruire le routage : %1?</source>
         <translation>Delete routing: %1?</translation>
     </message>
     <message>
-        <location filename="../src/mycentralwidget.cpp" line="2520"/>
+        <location filename="../src/mycentralwidget.cpp" line="2550"/>
         <source>La destruction d&apos;un routage est definitive.</source>
         <translation>Deleting a routing is not reversible.</translation>
     </message>
     <message>
-        <location filename="../src/mycentralwidget.cpp" line="2968"/>
+        <location filename="../src/mycentralwidget.cpp" line="2998"/>
         <source>Sauvegarde des POIs et des routes</source>
         <translation>Save POIs and routes</translation>
     </message>
     <message>
-        <location filename="../src/mycentralwidget.cpp" line="2968"/>
+        <location filename="../src/mycentralwidget.cpp" line="2998"/>
         <source>Sauvegarde reussie</source>
         <translation>Save successful</translation>
     </message>
     <message>
-        <location filename="../src/mycentralwidget.cpp" line="2993"/>
+        <location filename="../src/mycentralwidget.cpp" line="3023"/>
         <source>Chargement des POIs et des routes</source>
         <translation>Load POIs and routes</translation>
     </message>
     <message>
-        <location filename="../src/mycentralwidget.cpp" line="2993"/>
+        <location filename="../src/mycentralwidget.cpp" line="3023"/>
         <source>Chargement reussi</source>
         <translation>Reloading successful</translation>
     </message>

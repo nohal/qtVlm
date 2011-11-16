@@ -128,7 +128,7 @@ class POI : public QGraphicsWidget
         void slot_shPoi(){this->isVisible()?hide():show();}
         void slot_shLab(bool state){this->labelHidden=state;update();}
         void slot_routeMenu(QAction* ptr_action);
-        void slot_finePosit();
+        void slot_finePosit(bool silent=false);
         void slot_abort(){this->abortSearch=true;}
         void slot_setMode(QAction* ptr_action);
         void slot_setHorn();

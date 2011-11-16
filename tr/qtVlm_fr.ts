@@ -2769,6 +2769,10 @@ VMG %.1f nds</translation>
         <source>L&apos;import de route necessite un bateau actif.</source>
         <translation>L&apos;import de route nécessite un bateau actif.</translation>
     </message>
+    <message>
+        <source>Resultat de l&apos;optimisation</source>
+        <translation>Résultats de l&apos;optimisation</translation>
+    </message>
 </context>
 <context>
     <name>ROUTAGE</name>
@@ -2855,6 +2859,14 @@ VMG %.1f nds</translation>
     <message>
         <source>Voulez-vous que la route parte du bateau a la prochaine vacation?</source>
         <translation>Voulez-vous que la route parte du bateau à la prochaine vacation?</translation>
+    </message>
+    <message>
+        <source>Conversion d&apos;un routage en route</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Un des routages en amont a ete supprime,&lt;br&gt;la conversion est impossible</source>
+        <translation>Un des routages en amont a été supprimé,&lt;br&gt;la conversion est impossible</translation>
     </message>
 </context>
 <context>
@@ -4555,14 +4567,6 @@ Voulez-vous egalement supprimer tous les POIs lui appartenant?</source>
         <translation></translation>
     </message>
     <message>
-        <source>Etendue de la recherche (longitude)</source>
-        <translation></translation>
-    </message>
-    <message>
-        <source>Etendue de la recherche (latitude)</source>
-        <translation></translation>
-    </message>
-    <message>
         <source>Precision de la recherche</source>
         <translation>Précision de la recherche</translation>
     </message>
@@ -4573,6 +4577,14 @@ Voulez-vous egalement supprimer tous les POIs lui appartenant?</source>
     <message>
         <source>Conserver une copie du POI apres le calcul</source>
         <translation>Conserver une copie du POI après le calcul</translation>
+    </message>
+    <message>
+        <source>Ecart initial (longitude)</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Ecart initial (latitude)</source>
+        <translation></translation>
     </message>
 </context>
 <context>
@@ -5172,6 +5184,26 @@ Voulez-vous egalement supprimer tous les POIs lui appartenant?</source>
     <message>
         <source>Export en cours, veuillez patienter...</source>
         <translation></translation>
+    </message>
+    <message>
+        <source>Optimiser</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source> minutes perdues</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source> minutes gagnees</source>
+        <translation> minutes gagnées</translation>
+    </message>
+    <message>
+        <source>ETA avant optimisation: </source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>ETA apres optimisation: </source>
+        <translation>ETA après optimisation: </translation>
     </message>
 </context>
 <context>

@@ -1087,9 +1087,6 @@ void ROUTAGE::slot_calculate()
             double windSpeed=list->at(n).wind_speed;
             QList<double> caps=calculateCaps(list->at(n),workAngleStep,workAngleRange);
             QList<vlmPoint> polarPoints;/**/
-            double maxDistIso=0;
-            double averageDistIso=0;
-            int averageDistIsoN=0;
             bool tryingToFindHole=false;
 #if 1 /*calculate angle limits*/
             QLineF limitRight,limitLeft;
@@ -1235,10 +1232,6 @@ void ROUTAGE::slot_calculate()
                         }
                         msecs_14=msecs_14+tfp.elapsed();
                     }
-                    if(maxDistIso<newPoint.distIso)
-                        maxDistIso=newPoint.distIso;
-                    averageDistIso=averageDistIso+newPoint.distIso;
-                    averageDistIsoN++;
                     tfp.start();
                     QLineF tempLine(newPoint.x,newPoint.y,xs,ys);
                     newPoint.distStart=tempLine.length();
@@ -1268,8 +1261,6 @@ void ROUTAGE::slot_calculate()
                 if(!toBeRestarted)
                     break;
             }
-            if(averageDistIsoN>0)
-                averageDistIso=averageDistIso/averageDistIsoN;
 #if 1 /* keep only max 80% of initial number of points per polar, based on distIso*/
             if(!tryingToFindHole && !list->at(n).isStart)
             {
@@ -1385,6 +1376,8 @@ void ROUTAGE::slot_calculate()
                                  tempPoints.at(jj-1).x,tempPoints.at(jj-1).y);
                     QLineF temp2(tempPoints.at(jj).x,tempPoints.at(jj).y,
                                  tempPoints.at(jj+1).x,tempPoints.at(jj+1).y);
+                    if(temp1.length()>tempPoints.at(jj).distIso*5.0) continue;
+                    if(temp2.length()>tempPoints.at(jj).distIso*5.0) continue;
                     double a=qAbs(temp1.angleTo(temp2));
                     if(a>180) a=360-a;
                     if(a>120) continue;
@@ -1592,10 +1585,10 @@ void ROUTAGE::slot_calculate()
                                                        Z_VALUE_ISOPOINT);
                 vg->setParent(this);
                 mmm++;
-                if(tempPoints.at(n).notSimplificable)
-                    vg->setDebug("Not Simplicable");
-                else
-                    vg->setDebug("Simplicable");
+//                if(tempPoints.at(n).notSimplificable)
+//                    vg->setDebug("Not Simplicable");
+//                else
+//                    vg->setDebug("Simplicable");
                 vg->setEta(eta+(int)this->getTimeStep()*60.00);
                 this->isoPointList.append(vg);
 
@@ -1977,18 +1970,19 @@ void ROUTAGE::pruneWake(int wakeAngle)
     if (wakeAngle<1) return;
     double wakeDir=0;
     QList<vlmPoint> *pIso=isochrones.last()->getPoints();
-    for(int n=tempPoints.count()-1;n>=0;n--)
+    for(int n=tempPoints.count()-1;n>=0;--n)
     {
         double x1,y1,x2,y2;
         x1=tempPoints.at(n).x;
         y1=tempPoints.at(n).y;
-        for(int m=0;m<pIso->count();m++)
+        for(int m=0;m<pIso->count();++m)
         {
             if(pIso->at(m).distArrival>tempPoints.at(n).distArrival) continue;
+            double pc1=pIso->at(m).distArrival/initialDist;
+            double pc2=tempPoints.at(n).distArrival/initialDist;
+            if(pc2-pc1<0.30) continue;
             if(ROUTAGE::myDiffAngle(pIso->at(m).capArrival,tempPoints.at(n).capArrival)>60) continue;
             QLineF toArrival(pIso->at(m).x,pIso->at(m).y,xa,ya);
-            QLineF toPoint(pIso->at(m).x,pIso->at(m).y,tempPoints.at(n).x,tempPoints.at(n).y);
-            if(toArrival.length()/toPoint.length()>0.50) continue;
             QLineF toArrival2(tempPoints.at(n).x,tempPoints.at(n).y,xa,ya);
             double a=toArrival.angleTo(toArrival2);
             if(a>180) a=360-a;
@@ -2297,7 +2291,15 @@ void ROUTAGE::convertToRoute()
     while(parentRoutage->getIsPivot())
     {
         if(parentRoutage->getFromRoutage())
+        {
             parentRoutage=parentRoutage->getFromRoutage();
+            if(!parent->getRoutageList().contains(parentRoutage))
+            {
+                QMessageBox::critical(0,tr("Conversion d'un routage en route"),
+                                      tr("Un des routages en amont a ete supprime,<br>la conversion est impossible"));
+                return;
+            }
+        }
         else
             break;
     }
@@ -2440,36 +2442,32 @@ void ROUTAGE::checkIsoCrossingPreviousSegments()
         QPointF dummy;
         QLineF S1(tempPoints.at(nn).x,tempPoints.at(nn).y,tempPoints.at(nn+1).x,tempPoints.at(nn+1).y);
         bool bad=false;
-        for(int mm=0;mm<previousSegments.count();mm++)
+        for(int mm=0;mm<previousSegments.count();++mm)
         {
             if(S1.intersect(previousSegments.at(mm),&dummy)==QLineF::BoundedIntersection)
             {
                 bad=true;
                 somethingHasChanged=true;
-                if(tempPoints.at(nn).distIso<tempPoints.at(nn+1).distIso)
-                {
+                if(tempPoints.at(nn).distArrival>tempPoints.at(nn+1).distArrival)
                     tempPoints.removeAt(nn);
-                    nn--;
-                }
                 else
                     tempPoints.removeAt(nn+1);
+                --nn;
                 break;
             }
         }
         if(bad) continue;
-        for(int mm=0;mm<previousIso.count()-1;mm++) /*also check that new Iso does not cross previous iso*/
+        for(int mm=0;mm<previousIso.count()-1;++mm) /*also check that new Iso does not cross previous iso*/
         {
             QLineF S2(previousIso.at(mm),previousIso.at(mm));
             if(S1.intersect(S2,&dummy)==QLineF::BoundedIntersection)
 //                    if(fastIntersects(S1,S2))
             {
-                if(tempPoints.at(nn).distIso<tempPoints.at(nn+1).distIso)
-                {
+                if(tempPoints.at(nn).distArrival>tempPoints.at(nn+1).distArrival)
                     tempPoints.removeAt(nn);
-                    nn--;
-                }
                 else
                     tempPoints.removeAt(nn+1);
+                --nn;
                 break;
             }
         }

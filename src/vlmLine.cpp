@@ -36,7 +36,7 @@ vlmLine::vlmLine(Projection * proj, QGraphicsScene * myScene,int z_level) : QGra
     this->linePen=QPen(Qt::red);
     linePen.setBrush(Qt::red);
     linePen.setWidth(2);
-    setFocusPolicy(Qt::NoFocus);
+    lineWidth=2;
     pt_color=QColor(Qt::red);
     mode=VLMLINE_LINE_MODE;
     nbVacPerHour=12;
@@ -274,7 +274,20 @@ void vlmLine::calculatePoly(void)
     prepareGeometryChange();
     boundingR=tempBound;
 }
-
+//void vlmLine::mousePressEvent(QGraphicsSceneMouseEvent * e)
+//{
+//    qWarning()<<"click on vlmLine";
+//    if (e->button() != Qt::LeftButton) return;
+//    linePen.setWidthF(lineWidth*2.0);
+//    update();
+//}
+//void vlmLine::mouseReleaseEvent(QGraphicsSceneMouseEvent * e)
+//{
+//    if (e->button() != Qt::LeftButton) return;
+//    qWarning()<<"click on vlmLine";
+//    linePen.setWidthF(lineWidth);
+//    update();
+//}
 void vlmLine::deleteAll()
 {
     line.clear();

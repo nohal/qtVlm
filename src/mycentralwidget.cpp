@@ -2410,12 +2410,11 @@ void myCentralWidget::treatRoute(ROUTE* route)
             }
 
             p.close();
-            route->setDetectCoasts(detectCoast);
             route->setSimplify(false);
             route->slot_recalculate();
             int diff=(ref_eta-route->getEta())/60;
             QString result;
-            if(diff<=0)
+            if(diff<0)
                 result=QString().setNum(-diff)+tr(" minutes perdues, ")+
                        QString().setNum(nbDel)+tr(" POIs supprimes sur ")+
                        QString().setNum(ref_nbPois);
@@ -2435,7 +2434,38 @@ void myCentralWidget::treatRoute(ROUTE* route)
             after.setTimeSpec(Qt::UTC);
             result=result+"<br>"+tr("ETA avant simplification: ")+before.toString("dd/MM/yy hh:mm:ss");
             result=result+"<br>"+tr("ETA apres simplification: ")+after.toString("dd/MM/yy hh:mm:ss");
-            QMessageBox::information(0,QString(QObject::tr("Resultat de la simplification")),result);
+            QMessageBox mb(0);
+            mb.setText(result);
+            mb.setWindowTitle(QObject::tr("Resultat de la simplification"));
+            mb.setIcon(QMessageBox::Information);
+            QPushButton *optim = mb.addButton(tr("Optimiser"),QMessageBox::YesRole);
+            //QPushButton *justOK = mb.addButton(tr("Quitter"),QMessageBox::NoRole);
+            mb.exec();
+            if(mb.clickedButton()==optim)
+            {
+                foreach(POI* poi,route->getPoiList())
+                {
+                    if(poi->getNotSimplificable()) continue;
+                    poi->slot_finePosit(true);
+                }
+                route->slot_recalculate();
+                diff=(ref_eta-route->getEta())/60;
+                result.clear();
+                if(diff<0)
+                    result=QString().setNum(-diff)+tr(" minutes perdues");
+                else
+                    result=QString().setNum(diff)+tr(" minutes gagnees");
+                before=before.fromTime_t(ref_eta);
+                before=before.toUTC();
+                before.setTimeSpec(Qt::UTC);
+                after=after.fromTime_t(route->getEta());
+                after=after.toUTC();
+                after.setTimeSpec(Qt::UTC);
+                result=result+"<br>"+tr("ETA avant optimisation: ")+before.toString("dd/MM/yy hh:mm:ss");
+                result=result+"<br>"+tr("ETA apres optimisation: ")+after.toString("dd/MM/yy hh:mm:ss");
+                QMessageBox::information(0,QString(QObject::tr("Resultat de l'optimisation")),result);
+            }
+            route->setDetectCoasts(detectCoast);
         }
     }
 }

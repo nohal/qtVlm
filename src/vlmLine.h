@@ -26,6 +26,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <QGraphicsWidget>
 #include <QPainter>
 #include <QObject>
+#include <QGraphicsSceneMouseEvent>
 
 #include "class_list.h"
 #include "Projection.h"
@@ -46,7 +47,7 @@ class vlmLine : public QGraphicsWidget
         void addVlmPoint(vlmPoint point);
         void removeVlmPoint(int index);
         void deleteAll(void);
-        void setLinePen ( const QPen & pen ) {linePen = pen;update(); }
+        void setLinePen ( const QPen & pen ) {linePen = pen;lineWidth=linePen.widthF();update(); }
         QPen getLinePen (){return this->linePen;}
         void setPoly(QList<vlmPoint> & points);
 
@@ -88,7 +89,8 @@ class vlmLine : public QGraphicsWidget
     protected:
         void paint(QPainter * pnt, const QStyleOptionGraphicsItem * , QWidget * );
         QRectF boundingRect() const;
-
+//        void  mousePressEvent(QGraphicsSceneMouseEvent * e);
+//        void  mouseReleaseEvent(QGraphicsSceneMouseEvent * e);
     public slots:
         void slot_showMe(void);
         void slot_shLab(bool state){this->labelHidden=state;update();}
@@ -126,6 +128,7 @@ class vlmLine : public QGraphicsWidget
         bool coastDetected;
         QList<bool>collision;
         GshhsReader *map;
+        double lineWidth;
 };
 
 

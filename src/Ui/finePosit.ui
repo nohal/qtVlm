@@ -39,7 +39,7 @@
     </rect>
    </property>
    <property name="text">
-    <string>Etendue de la recherche (longitude)</string>
+    <string>Ecart initial (longitude)</string>
    </property>
   </widget>
   <widget class="QLabel" name="label_2">
@@ -68,10 +68,10 @@
     <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
    </property>
    <property name="minimum">
-    <double>0.010000000000000</double>
+    <double>-3.000000000000000</double>
    </property>
    <property name="maximum">
-    <double>10.000000000000000</double>
+    <double>3.000000000000000</double>
    </property>
    <property name="singleStep">
     <double>1.000000000000000</double>
@@ -105,7 +105,7 @@
     <double>0.010000000000000</double>
    </property>
    <property name="value">
-    <double>0.100000000000000</double>
+    <double>0.010000000000000</double>
    </property>
   </widget>
   <widget class="QCheckBox" name="drawRoute">
@@ -137,10 +137,10 @@
     <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
    </property>
    <property name="minimum">
-    <double>0.010000000000000</double>
+    <double>-3.000000000000000</double>
    </property>
    <property name="maximum">
-    <double>10.000000000000000</double>
+    <double>3.000000000000000</double>
    </property>
    <property name="singleStep">
     <double>1.000000000000000</double>
@@ -159,7 +159,7 @@
     </rect>
    </property>
    <property name="text">
-    <string>Etendue de la recherche (latitude)</string>
+    <string>Ecart initial (latitude)</string>
    </property>
   </widget>
   <widget class="QCheckBox" name="keepOldMe">
