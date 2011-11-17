@@ -645,6 +645,58 @@ void ROUTE::slot_recalculate(boat * boat)
                 previousPoiName=poi->getName();
                 previousEta=Eta;
             }
+            if(poi==this->my_poiList.last())
+            {
+                tip=tr("Route: ")+name;
+                if(!has_eta)
+                {
+                    tip=tip+tr("<br>ETA: Non joignable avec ce fichier GRIB");
+                }
+                else if(Eta-start<=0)
+                {
+                    tip=tip+tr("<br>ETA: deja atteint");
+                }
+                else
+                {
+                    time_t Start=start;
+                    if(startTimeOption==1)
+                        Start=QDateTime::currentDateTimeUtc().toTime_t();
+                    double days=(Eta-Start)/86400.0000;
+                    if(qRound(days)>days)
+                        days=qRound(days)-1;
+                    else
+                        days=qRound(days);
+                    double hours=(Eta-Start-days*86400)/3600.0000;
+                    if(qRound(hours)>hours)
+                        hours=qRound(hours)-1;
+                    else
+                        hours=qRound(hours);
+                    double mins=qRound((Eta-Start-days*86400-hours*3600)/60.0000);
+                    QString tt;
+                    QDateTime tm;
+                    tm.setTimeSpec(Qt::UTC);
+                    tm.setTime_t(Start);
+                    //qWarning()<<"tm="<<tm.toString();
+                    switch(startTimeOption)
+                    {
+                        case 1:
+                                tt="<br>"+tr("ETA a partir de maintenant")+" ("+tm.toString("dd MMM-hh:mm")+"):<br>";
+                                break;
+                        case 2:
+                                tt="<br>"+tr("ETA depuis la date Grib")+" ("+tm.toString("dd MMM-hh:mm")+"):<br>";
+                                break;
+                        case 3:
+                                tt="<br>"+tr("ETA depuis la date fixe")+" ("+tm.toString("dd MMM-hh:mm")+"):<br>";
+                                break;
+                    }
+                    tip=tip+tt+QString::number((int)days)+" "+tr("jours")+" "+QString::number((int)hours)+" "+tr("heures")+" "+
+                        QString::number((int)mins)+" "+tr("minutes");
+                    poi->setRouteTimeStamp(Eta);
+                    if(poi==this->my_poiList.last())
+                        eta=Eta;
+                }
+                this->line->setTip(tip);
+            }
         }
     }
 

@@ -27,6 +27,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <QPainter>
 #include <QObject>
 #include <QGraphicsSceneMouseEvent>
+#include <QGraphicsSceneHoverEvent>
 
 #include "class_list.h"
 #include "Projection.h"
@@ -80,7 +81,6 @@ class vlmLine : public QGraphicsWidget
         void setHasInterpolated(bool b){this->hasInterpolated=b;update();}
         vlmPoint * getLastPoint() {return & line.last();}
         void setRoundedEnd(bool b){this->roundedEnd=b;}
-        QPainterPath shape() const;
         void setCoastDetection(bool b){this->coastDetection=b;}
         bool getCoastDetected(){return this->coastDetected;}
         void setMap(GshhsReader * map){this->map=map;}
@@ -89,6 +89,9 @@ class vlmLine : public QGraphicsWidget
     protected:
         void paint(QPainter * pnt, const QStyleOptionGraphicsItem * , QWidget * );
         QRectF boundingRect() const;
+        QPainterPath shape() const;
+        void hoverEnterEvent(QGraphicsSceneHoverEvent *event);
+        void hoverLeaveEvent(QGraphicsSceneHoverEvent *event);
 //        void  mousePressEvent(QGraphicsSceneMouseEvent * e);
 //        void  mouseReleaseEvent(QGraphicsSceneMouseEvent * e);
     public slots:
@@ -129,6 +132,7 @@ class vlmLine : public QGraphicsWidget
         QList<bool>collision;
         GshhsReader *map;
         double lineWidth;
+        QPainterPath myPath;
 };
 
 

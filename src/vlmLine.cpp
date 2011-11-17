@@ -54,6 +54,7 @@ vlmLine::vlmLine(Projection * proj, QGraphicsScene * myScene,int z_level) : QGra
     this->coastDetected=false;
     this->coastDetection=false;
     map=NULL;
+    this->setAcceptHoverEvents(true);
     show();
 }
 
@@ -274,6 +275,17 @@ void vlmLine::calculatePoly(void)
     prepareGeometryChange();
     boundingR=tempBound;
 }
+void vlmLine::hoverEnterEvent(QGraphicsSceneHoverEvent *event)
+{
+    qWarning()<<"hover detected";
+    this->linePen.setWidthF(this->lineWidth*2.0);
+    update();
+}
+void vlmLine::hoverLeaveEvent(QGraphicsSceneHoverEvent *event)
+{
+    this->linePen.setWidthF(this->lineWidth);
+    update();
+}
 //void vlmLine::mousePressEvent(QGraphicsSceneMouseEvent * e)
 //{
 //    qWarning()<<"click on vlmLine";
@@ -314,6 +326,7 @@ void vlmLine::paint(QPainter * pnt, const QStyleOptionGraphicsItem * , QWidget *
     QListIterator<QPolygon*> nPoly (polyList);
     bool labelAlreadyMade=false;
     int nn=-1;
+    myPath=QPainterPath();
     while(nPoly.hasNext())
     {
         poly=nPoly.next();
@@ -329,11 +342,15 @@ void vlmLine::paint(QPainter * pnt, const QStyleOptionGraphicsItem * , QWidget *
             if(!hidden)
             {
                 if (!solid)
+                {
                     pnt->drawPolyline(*poly);
+                    myPath.addPolygon(*poly);
+                }
                 else
                 {
                     pnt->setBrush(linePen.brush());
                     pnt->drawPolygon(*poly,Qt::WindingFill);
+                    myPath.addPolygon(*poly);
                 }
             }
             break;
@@ -344,6 +361,7 @@ void vlmLine::paint(QPainter * pnt, const QStyleOptionGraphicsItem * , QWidget *
                 int step=Settings::getSetting("trace_step",60/5-1).toInt()+1;
                 int x0=poly->point(0).x();
                 int y0=poly->point(0).y();
+                myPath.addPolygon(*poly);
                 for(int i=1;i<poly->count() && i<nbVac;i++)
                 {
                     int x,y;
@@ -372,7 +390,10 @@ void vlmLine::paint(QPainter * pnt, const QStyleOptionGraphicsItem * , QWidget *
                 pnt->setPen(linePen);
             }
             if(!hidden)
+            {
                 pnt->drawPolyline(*poly);
+                myPath.addPolygon(*poly);
+            }
             linePen.setWidthF(penW*2);
             if(onePoint)
             {
@@ -439,13 +460,21 @@ void vlmLine::paint(QPainter * pnt, const QStyleOptionGraphicsItem * , QWidget *
 //        pnt->setPen(linePen);
 //    }
 }
+
 QPainterPath vlmLine::shape() const
 {
     QPainterPath path;
-    if(this->labelHidden)
-        path.addRect(0,0,0,0);
+    if(mode==VLMLINE_GATE_MODE)
+    {
+        if(this->labelHidden)
+            path.addRect(QRect(0,0,0,0));
+        else
+            path.addRect(r);
+    }
     else
-        path.addRect(r);
+    {
+        path=myPath;
+    }
     return path;
 }
 double vlmLine::cLFA(double lon)

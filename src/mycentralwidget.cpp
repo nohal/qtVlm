@@ -2445,6 +2445,8 @@ void myCentralWidget::treatRoute(ROUTE* route)
             {
                 foreach(POI* poi,route->getPoiList())
                 {
+                    if(poi==route->getPoiList().last()) break;
+                    if(!route->getStartFromBoat() && poi==route->getPoiList().first()) continue;
                     if(poi->getNotSimplificable()) continue;
                     poi->slot_finePosit(true);
                 }
