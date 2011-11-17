@@ -2266,7 +2266,7 @@ void myCentralWidget::treatRoute(ROUTE* route)
             mb.setWindowTitle(QObject::tr("Resultat de la simplification"));
             mb.setIcon(QMessageBox::Information);
             QPushButton *optim = mb.addButton(tr("Optimiser"),QMessageBox::YesRole);
-            //QPushButton *justOK = mb.addButton(tr("Quitter"),QMessageBox::NoRole);
+            mb.addButton(QMessageBox::Close);
             mb.exec();
             time_t ref_eta2=route->getEta();
             poiCt=route->getPoiList().count();
@@ -2280,10 +2280,7 @@ void myCentralWidget::treatRoute(ROUTE* route)
                 for (int maxLoop=0;maxLoop<10;++maxLoop)
                 {
                     time_t ref_eta3=route->getEta();
-                    before=before.fromTime_t(ref_eta3);
-                    before=before.toUTC();
-                    before.setTimeSpec(Qt::UTC);
-                    qWarning()<<"before op:"<<before.toString("dd/MM/yy hh:mm:ss");
+                    int nPois=route->getPoiList().count();
                     foreach(POI* poi,route->getPoiList())
                     {
                         if(poi==route->getPoiList().last()) break;
@@ -2291,16 +2288,13 @@ void myCentralWidget::treatRoute(ROUTE* route)
                         if(poi->getNotSimplificable()) continue;
                         poi->slot_finePosit(true);
                     }
-                    before=before.fromTime_t(route->getEta());
-                    before=before.toUTC();
-                    before.setTimeSpec(Qt::UTC);
-                    qWarning()<<"after op:"<<before.toString("dd/MM/yy hh:mm:ss");
+                    if(route->getEta()>ref_eta3)
+                        qWarning()<<"wrong optimization!!";
+                    time_t ref_eta4=route->getEta();
                     doSimplifyRoute(route,true);
-                    before=before.fromTime_t(route->getEta());
-                    before=before.toUTC();
-                    before.setTimeSpec(Qt::UTC);
-                    qWarning()<<"after simp:"<<before.toString("dd/MM/yy hh:mm:ss");
-                    if(ref_eta3-route->getEta()==0) break;
+                    if(route->getEta()>ref_eta4)
+                        qWarning()<<"wrong simplification!!";
+                    if(ref_eta3-route->getEta()==0 && nPois==route->getPoiList().count()) break;
                 }
                 nbDel=poiCt-route->getPoiList().count();
                 diff=(ref_eta2-route->getEta())/60;

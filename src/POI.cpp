@@ -926,20 +926,24 @@ void POI::slot_finePosit(bool silent)
     QDateTime tm;
     tm.setTimeSpec (Qt::UTC);
     //route->setFastVmgCalc(true);
-    Orthodromie fromBoat(route->getStartLon(),route->getStartLat(),lon,lat);
+    //Orthodromie fromBoat(route->getStartLon(),route->getStartLat(),lon,lat);
     POI * previousMe=NULL;
     route->slot_recalculate();
-    if (route->getHas_eta())
+    if(!silent)
     {
-        tm.setTime_t(route->getEta());
-        previousMe=new POI(tr("ETA du prochain POI: ")+tm.toString("dd MMM-hh:mm"),0,savedLat,savedLon,this->proj,this->owner,this->parent,0,0,false,this->myBoat);
+        if (route->getHas_eta())
+        {
+            tm.setTime_t(route->getEta());
+            previousMe=new POI(tr("ETA du prochain POI: ")+tm.toString("dd MMM-hh:mm"),0,savedLat,savedLon,this->proj,this->owner,this->parent,0,0,false,this->myBoat);
+        }
+        else
+            previousMe=new POI(tr("Dist. restante du prochain POI: ")+r.sprintf("%.2f milles",route->getRemain()),
+                               0,savedLat,savedLon,this->proj,this->owner,this->parent,0,0,false,this->myBoat);
+        parent->slot_addPOI_list(previousMe);
     }
-    else
-        previousMe=new POI(tr("Dist. restante du prochain POI: ")+r.sprintf("%.2f milles",route->getRemain()),
-                           0,savedLat,savedLon,this->proj,this->owner,this->parent,0,0,false,this->myBoat);
-    parent->slot_addPOI_list(previousMe);
 
     POI_Position    simplex[3];
+
     const double boatSpeed = myBoat->getSpeed() / 3600;
 
     simplex[0].lon = lon;
@@ -1059,7 +1063,7 @@ void POI::slot_finePosit(bool silent)
         SORTSIMPLEX;
         UPDATEBEST;
 
-    } while ((!abortSearch) && !silent
+    } while ((!abortSearch || silent)
              /* For some reason, abs gives ridiculous results here... */
              && ((simplex[2].lat - simplex[0].lat >= step)
                  || (simplex[2].lat - simplex[0].lat <= -step)
@@ -1099,7 +1103,7 @@ void POI::slot_finePosit(bool silent)
     {
         parent->slot_delPOI_list(best);
         delete best;
-        if(Settings::getSetting("keepOldPoi","0").toInt()==0 || silent)
+        if(Settings::getSetting("keepOldPoi","0").toInt()==0 && silent)
         {
             parent->slot_delPOI_list(previousMe);
             delete previousMe;
