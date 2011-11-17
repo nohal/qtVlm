@@ -161,12 +161,18 @@ void ROUTE::removePoi(POI *poi)
 void ROUTE::hovered()
 {
     foreach(POI* poi, this->my_poiList)
+    {
+        poi->setLabelTransp(false);
         poi->setZValue(30);
+    }
 }
 void ROUTE::unHovered()
 {
     foreach(POI* poi, this->my_poiList)
+    {
+        poi->setLabelTransp(true);
         poi->setZValue(Z_VALUE_POI);
+    }
 }
 
 void ROUTE::slot_recalculate(boat * boat)

@@ -83,6 +83,7 @@ POI::POI(QString name, int type, double lat, double lon,
     routeName="";
     this->labelHidden=parentWindow->get_shLab_st();
     this->myLabelHidden=false;
+    this->labelTransp=true;
 //    qWarning() << "Init POI label: " << loxoCap<<" name: "<<name;
 
     WPlon=WPlat=-1;
@@ -1124,7 +1125,7 @@ void POI::slot_finePosit(bool silent)
 void POI::paint(QPainter * pnt, const QStyleOptionGraphicsItem * , QWidget * )
 {
     QFont myFont=(QFont(QApplication::font()));
-    if(this->piloteSelected)
+    if(this->piloteSelected || !labelTransp)
         myFont.setBold(true);
     this->setFont(myFont);
     QFontMetrics fm(font());
@@ -1137,16 +1138,20 @@ void POI::paint(QPainter * pnt, const QStyleOptionGraphicsItem * , QWidget * )
             pnt->fillRect(9,0, width-10,height-1, QBrush(bgcolor));
         else
         {
+            int alpha=160;
+            if(!this->labelTransp)
+                alpha=255;
+
             switch (this->navMode)
             {
             case 0:
-                pnt->fillRect(9,0, width-10,height-1, QBrush(QColor(147,255,147,160)));
+                pnt->fillRect(9,0, width-10,height-1, QBrush(QColor(147,255,147,alpha)));
                 break;
             case 1:
-                pnt->fillRect(9,0, width-10,height-1, QBrush(QColor(168,226,255,160)));
+                pnt->fillRect(9,0, width-10,height-1, QBrush(QColor(168,226,255,alpha)));
                 break;
             case 2:
-                pnt->fillRect(9,0, width-10,height-1, QBrush(QColor(255,168,198,160)));
+                pnt->fillRect(9,0, width-10,height-1, QBrush(QColor(255,168,198,alpha)));
                 break;
             default:
                 pnt->fillRect(9,0, width-10,height-1, QBrush(QColor(255,0,0,60)));

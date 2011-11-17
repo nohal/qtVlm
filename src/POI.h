@@ -112,6 +112,7 @@ class POI : public QGraphicsWidget
         bool tryMoving(int x, int y);
         time_t getPiloteDate(){return piloteDate;}
         void setPiloteDate(time_t t){this->piloteDate=t;}
+        void setLabelTransp(bool b){this->labelTransp=b;}
 
     public slots:
         void slot_updateProjection();
@@ -233,6 +234,7 @@ class POI : public QGraphicsWidget
         int colorPilototo;
         bool piloteSelected;
         time_t piloteDate;
+        bool labelTransp;
 };
 
 #endif
