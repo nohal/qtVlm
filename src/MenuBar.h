@@ -114,7 +114,9 @@ public:
     QAction *acRoute_add;
     QMenu   *mnRoute_edit;
     QMenu   *mnRoute_delete;
+    QMenu   *mnRoute_import;
     QAction   *acRoute_import;
+    QAction   *acRoute_import2;
     QMenu   *mnRoute_export;
 
     QAction *acRoutage_add;

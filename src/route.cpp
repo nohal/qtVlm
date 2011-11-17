@@ -58,6 +58,8 @@ ROUTE::ROUTE(QString name, Projection *proj, Grib *grib, QGraphicsScene * myScen
     this->startFromBoat=true;
     this->startTimeOption=1;
     this->line=new vlmLine(proj,myScene,Z_VALUE_ROUTE);
+    connect(line,SIGNAL(hovered()),this,SLOT(hovered()));
+    connect(line,SIGNAL(unHovered()),this,SLOT(unHovered()));
     line->setParent(this);
     this->frozen=false;
     this->superFrozen=false;
@@ -156,6 +158,17 @@ void ROUTE::removePoi(POI *poi)
     disconnect(poi,SIGNAL(poiMoving()),this,SLOT(slot_recalculate()));
     slot_recalculate();
 }
+void ROUTE::hovered()
+{
+    foreach(POI* poi, this->my_poiList)
+        poi->setZValue(30);
+}
+void ROUTE::unHovered()
+{
+    foreach(POI* poi, this->my_poiList)
+        poi->setZValue(Z_VALUE_POI);
+}
+
 void ROUTE::slot_recalculate(boat * boat)
 {
     QTime timeTotal;
@@ -689,7 +702,9 @@ void ROUTE::slot_recalculate(boat * boat)
                                 tt="<br>"+tr("ETA depuis la date fixe")+" ("+tm.toString("dd MMM-hh:mm")+"):<br>";
                                 break;
                     }
-                    tip=tip+tt+QString::number((int)days)+" "+tr("jours")+" "+QString::number((int)hours)+" "+tr("heures")+" "+
+                    tm.setTime_t(poi->getRouteTimeStamp());
+                    tip=tip+tt+tm.toString("dd MMM-hh:mm")+"<br>";
+                    tip=tip+QString::number((int)days)+" "+tr("jours")+" "+QString::number((int)hours)+" "+tr("heures")+" "+
                         QString::number((int)mins)+" "+tr("minutes");
                     poi->setRouteTimeStamp(Eta);
                     if(poi==this->my_poiList.last())

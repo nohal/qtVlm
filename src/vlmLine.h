@@ -92,6 +92,7 @@ class vlmLine : public QGraphicsWidget
         QPainterPath shape() const;
         void hoverEnterEvent(QGraphicsSceneHoverEvent *event);
         void hoverLeaveEvent(QGraphicsSceneHoverEvent *event);
+//        void hoverMoveEvent(QGraphicsSceneHoverEvent *event);
 //        void  mousePressEvent(QGraphicsSceneMouseEvent * e);
 //        void  mouseReleaseEvent(QGraphicsSceneMouseEvent * e);
     public slots:
@@ -99,7 +100,9 @@ class vlmLine : public QGraphicsWidget
         void slot_shLab(bool state){this->labelHidden=state;update();}
         void slot_startReplay(bool b){this->replayMode=b;slot_showMe();}
         void slot_replay(int i);
-
+    signals:
+        void hovered();
+        void unHovered();
     private:
         QList<vlmPoint> line;
         QPen linePen;
@@ -133,6 +136,7 @@ class vlmLine : public QGraphicsWidget
         GshhsReader *map;
         double lineWidth;
         QPainterPath myPath;
+        int myZvalue;
 };
 
 

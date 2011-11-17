@@ -257,7 +257,6 @@ class ROUTAGE : public QObject
         QPolygonF previousIso;
         QList<QLineF> previousSegments;
         bool somethingHasChanged;
-        void checkSegmentCrossingOwnIso();
         void checkIsoCrossingPreviousSegments();
         void epuration(int toBeRemoved);
         void removeCrossedSegments();

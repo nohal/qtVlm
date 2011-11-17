@@ -216,7 +216,8 @@ class myCentralWidget : public QWidget
 
         /*Routes */
         void slot_addRouteFromMenu();
-        void slot_importRouteFromMenu();
+        void slot_importRouteFromMenu(bool ortho=false);
+        void slot_importRouteFromMenu2();
         void slot_editRoute(ROUTE * route,bool createMode=false);
         void slot_twaLine();
         void slot_releaseCompassFollow(){this->compassRoute=NULL;}
@@ -391,6 +392,7 @@ class myCentralWidget : public QWidget
         void myDeleteRoute(ROUTE * route);
         int replayStep;
         QTimer *replayTimer;
+        void doSimplifyRoute(ROUTE * route, bool fast=false);
 };
 
 #endif // MYCENTRALWIDGET_H

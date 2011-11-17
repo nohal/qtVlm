@@ -89,8 +89,10 @@ void opponent::init(QColor color,bool isQtBoat,QString idu,QString race, float l
     this->isQtBoat = isQtBoat;
     trace.clear();
     trace_drawing = new vlmLine(proj,parentWindow->getScene(),Z_VALUE_OPP);
-    trace_drawing->setLinePen(QPen(color));
-    trace_drawing->setPointMode(color);
+    QPen penTrace=QPen(color);
+    penTrace.setWidthF(1);
+    trace_drawing->setLinePen(penTrace);
+    trace_drawing->setLineMode();
     connect(parentWindow,SIGNAL(startReplay(bool)),trace_drawing,SLOT(slot_startReplay(bool)));
     connect(parentWindow,SIGNAL(replay(int)),trace_drawing,SLOT(slot_replay(int)));
     this->flag=QImage();

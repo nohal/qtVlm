@@ -279,16 +279,51 @@ inline QList<vlmPoint> finalEpuration(const QList<vlmPoint> &listPointsX)
         if(!d.hasNext()) break;
         QPoint couple=d.next().value();
         int badOne=0;
+#if 1
         if(listPoints.at(couple.x()).distIso<listPoints.at(couple.y()).distIso)
             badOne=couple.x();
         else
             badOne=couple.y();
+#else
+        if(couple.x()==0)
+            badOne=couple.y();
+        else if(couple.y()==listPoints.count()-1)
+            badOne=couple.x();
+        else
+        {
+            int avant=-1;
+            if(couple.x()-1>0)
+                avant=deadStatus.lastIndexOf(false,couple.x()-1);
+            int apres=-1;
+            if(couple.y()+1<listPoints.count()-1)
+                apres=deadStatus.indexOf(false,couple.y()+1);
+            if(avant==-1 || apres==-1)
+            {
+                if(listPoints.at(couple.x()).distIso<listPoints.at(couple.y()).distIso)
+                    badOne=couple.x();
+                else
+                    badOne=couple.y();
+            }
+            else
+            {
+                s=s.sprintf("%d;%d",avant,couple.x());
+                double a1=byIndices.value(s);
+                s=s.sprintf("%d;%d",couple.y(),apres);
+                double a2=byIndices.value(s);
+                if(a1<a2)
+                    badOne=couple.x();
+                else
+                    badOne=couple.y();
+            }
+        }
+#endif
         deadStatus.replace(badOne,true);
-        int previous=0;
-        int next=0;
-        previous=-1;
-        previous=deadStatus.lastIndexOf(false,badOne);
-        next=deadStatus.indexOf(false,badOne);
+        int previous=-1;
+        int next=-1;
+        if(badOne>0)
+            previous=deadStatus.lastIndexOf(false,badOne);
+        if(badOne<listPoints.count()-1)
+            next=deadStatus.indexOf(false,badOne);
         if(currentCount<=1) break;
         if(previous!=-1 && next!=-1)
         {
@@ -1321,14 +1356,6 @@ void ROUTAGE::slot_calculate()
 
         if(tempPoints.count()==0)
             break;
-#if 1 //Check that no segment is crossing it's own isochron. If this is the case remove worst point
-        time.restart();
-        if(!tempPoints.at(0).origin->isStart)
-        {
-            checkSegmentCrossingOwnIso();
-        }
-        msecs_4=msecs_4+time.elapsed();
-#endif
 #if 1 /*check that the new iso itself does not cross previous segments or iso*/
         time.restart();
         if(!tempPoints.at(0).origin->isStart)
@@ -1358,9 +1385,10 @@ void ROUTAGE::slot_calculate()
         {
             epuration(toBeRemoved*0.5);
         }
+        msecs_6=msecs_6+time.elapsed();
         //qWarning()<<"after first epuration"<<tempPoints.count();
 #if 1 /*smoothing iso*/
-        //qWarning()<<"before smoothing:"<<tempPoints.count();
+        time.restart();
         for(int pass=0;pass<2;++pass)
         {
             for(int jj=1;jj<tempPoints.count()-1;++jj)
@@ -1386,9 +1414,10 @@ void ROUTAGE::slot_calculate()
                 }
             }
         }
+        msecs_4=msecs_4+time.elapsed();
+
         //qWarning()<<"after smoothing:"<<tempPoints.count();
 #endif
-        msecs_6=msecs_6+time.elapsed();
         /*final checking and calculating route between Iso*/
         somethingHasChanged=true;
         time.restart();
@@ -1405,12 +1434,6 @@ void ROUTAGE::slot_calculate()
             if(nbLoop>maxLoop)
                 maxLoop=nbLoop;
             somethingHasChanged=false;
-/*Recheck that no segment is crossing it's own isochron*/
-            if(!tempPoints.at(0).origin->isStart)
-            {
-                checkSegmentCrossingOwnIso();
-            }
-            if(somethingHasChanged) continue;
 /*recheck that the new iso itself does not cross previous segments*/
             if(!tempPoints.at(0).origin->isStart)
             {
@@ -1766,8 +1789,8 @@ void ROUTAGE::slot_calculate()
     info=info+"\n...removing crossed segments: "+tt.toString("hh'h'mm'min'ss.zzz'secs'");
     tt.setHMS(0,0,0,0);
     tt=tt.addMSecs(msecs_4);
-    qWarning()<<"...removing segments crossing their own isochron:"<<tt.toString("hh'h'mm'min'ss.zzz'secs'");
-    info=info+"\n...removing segments crossing their own isochron: "+tt.toString("hh'h'mm'min'ss.zzz'secs'");
+    qWarning()<<"...smoothing isochron:"<<tt.toString("hh'h'mm'min'ss.zzz'secs'");
+    info=info+"\n...smoothing isochron: "+tt.toString("hh'h'mm'min'ss.zzz'secs'");
     tt.setHMS(0,0,0,0);
     tt=tt.addMSecs(msecs_9);
     qWarning()<<"...checking iso not crossing previous segments or iso:"<<tt.toString("hh'h'mm'min'ss.zzz'secs'");
@@ -2282,7 +2305,7 @@ void ROUTAGE::convertToRoute()
                                               QMessageBox::Yes|QMessageBox::No)==QMessageBox::Yes;
     this->converted=true;
     ROUTE * route=parent->addRoute();
-    route->setName(tr("Routage: ")+name);
+    route->setName(name);
     route->setUseVbVmgVlm(false);
     parent->update_menuRoute();
     route->setBoat(this->myBoat);
@@ -2350,90 +2373,6 @@ void ROUTAGE::convertToRoute()
         }
     }
     parent->deleteRoutage(this);
-}
-void ROUTAGE::checkSegmentCrossingOwnIso()
-{
-    return;
-    int nn=0;
-    int mm=0;
-    QPointF crossPoint;
-    int maxLook=30;
-    for (nn=0;nn<tempPoints.count()-1;nn++)
-    {
-        QLineF S1(tempPoints.at(nn).lon,tempPoints.at(nn).lat,tempPoints.at(nn+1).lon,tempPoints.at(nn+1).lat);
-        bool foundCross=false;
-        for(mm=(qMax(0,nn-maxLook));mm<tempPoints.count();mm++)
-        {
-            if(mm>nn+maxLook) break;
-            //if(tempPoints.at(nn).originNb==tempPoints.at(mm).originNb) continue;
-            if(mm==nn || mm==nn+1 || mm==nn-1) continue;
-            QLineF S2(tempPoints.at(mm).lon,tempPoints.at(mm).lat,tempPoints.at(mm).origin->lon,tempPoints.at(mm).origin->lat);
-            if(S1.intersect(S2,&crossPoint)==QLineF::BoundedIntersection)
-            {
-                if(crossPoint!=S1.p1() && crossPoint!=S1.p2())
-                {
-                    foundCross=true;
-                    break;
-                }
-            }
-        }
-        if(foundCross)
-        {
-            somethingHasChanged=true;
-#if 0 /*debug*/
-            qWarning()<<"nn="<<nn<<"mm="<<mm;
-            QPen penDebug;
-            penDebug.setColor(Qt::red);
-            penDebug.setBrush(Qt::red);
-            penDebug.setWidthF(1);
-            vlmLine *L1=new vlmLine(proj,myscene,Z_VALUE_ROUTAGE);
-            L1->setLinePen(penDebug);
-            L1->addVlmPoint(tempPoints.at(nn));
-            L1->addVlmPoint(tempPoints.at(nn+1));
-            vlmLine *L2=new vlmLine(proj,myscene,Z_VALUE_ROUTAGE);
-            penDebug.setColor(Qt::black);
-            penDebug.setBrush(Qt::black);
-            L2->setLinePen(penDebug);
-            L2->addVlmPoint(tempPoints.at(mm));
-            vlmPoint O(tempPoints.at(mm).origin->lon,tempPoints.at(mm).origin->lat);
-            L2->addVlmPoint(O);
-            L1->slot_showMe();
-            L2->slot_showMe();
-            QApplication::processEvents();
-            QMessageBox::information(0,"cross found","cross found!");
-            delete L1;
-            delete L2;
-#endif
-            int badOne=0;
-#if 1
-            QLineF S1(tempPoints.at(nn).lon,tempPoints.at(nn).lat,crossPoint.x(),crossPoint.y());
-            QLineF S2(tempPoints.at(mm).lon,tempPoints.at(mm).lat,crossPoint.x(),crossPoint.y());
-            QLineF S3(tempPoints.at(nn+1).lon,tempPoints.at(nn+1).lat,crossPoint.x(),crossPoint.y());
-            if(S1.length()<S2.length())
-            {
-                badOne=nn;
-                if(S3.length()<S1.length())
-                    badOne=nn+1;
-            }
-            else
-            {
-                badOne=mm;
-                if(S3.length()<S2.length())
-                    badOne=nn+1;
-            }
-#else
-            if(tempPoints.at(nn).distIso<tempPoints.at(nn+1).distIso)
-                badOne=nn;
-            else
-                badOne=nn+1;
-            if(tempPoints.at(badOne).distIso<tempPoints.at(mm).distIso)
-                badOne=mm;
-#endif
-            tempPoints.removeAt(badOne);
-            nn=qMax(-1,nn-maxLook); //not so clever restart of the loop
-            maxLook=30;
-        }
-    }
 }
 void ROUTAGE::checkIsoCrossingPreviousSegments()
 {

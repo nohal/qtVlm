@@ -196,6 +196,7 @@ void  myScene::keyReleaseEvent (QKeyEvent *e)
 
 void myScene::mouseMoveEvent(QGraphicsSceneMouseEvent* e)
 {
+    QGraphicsScene::mouseMoveEvent(e);
     if(itemAt(e->scenePos())->data(0)==ISOPOINT)
     {
         ((vlmPointGraphic *) itemAt(e->scenePos()))->drawWay();
@@ -455,6 +456,7 @@ myCentralWidget::myCentralWidget(Projection * proj,MainWindow * parent,MenuBar *
     /*Routes*/
     connect(menuBar->acRoute_add, SIGNAL(triggered()), this, SLOT(slot_addRouteFromMenu()));
     connect(menuBar->acRoute_import, SIGNAL(triggered()), this, SLOT(slot_importRouteFromMenu()));
+    connect(menuBar->acRoute_import2, SIGNAL(triggered()), this, SLOT(slot_importRouteFromMenu2()));
 
     /*Routages*/
     connect(menuBar->acRoutage_add, SIGNAL(triggered()), this, SLOT(slot_addRoutageFromMenu()));
@@ -760,7 +762,7 @@ void myCentralWidget::keyModif(QKeyEvent *e)
         //cur_cursor=Qt::SizeAllCursor;
     }
     else {
-        terre->setCursor(Qt::CrossCursor);
+        terre->setCursor(Qt::ArrowCursor);
         //cur_cursor=Qt::SizeAllCursor;
     }
 }
@@ -1367,7 +1369,12 @@ bool myCentralWidget::freeRoutageName(QString name,ROUTAGE * thisroutage)
     }
     return true;
 }
-void myCentralWidget::slot_importRouteFromMenu()
+void myCentralWidget::slot_importRouteFromMenu2()
+{
+    slot_importRouteFromMenu(true);
+}
+
+void myCentralWidget::slot_importRouteFromMenu(bool ortho)
 {
     if (!mainW->getSelectedBoat())
     {
@@ -1508,6 +1515,8 @@ void myCentralWidget::slot_importRouteFromMenu()
                 double lat=p.value().y();
                 QString poiName=route->getName()+QString().sprintf("%.5i",nPoi);
                 POI * poi = slot_addPOI(poiName,0,lat,lon,-1,false,false,mainW->getSelectedBoat());
+                if(ortho)
+                    poi->setNavMode(2);
                 poi->setRoute(route);
                 poi->setRouteTimeStamp(eta);
             }
@@ -1707,6 +1716,8 @@ void myCentralWidget::slot_importRouteFromMenu()
             poiN.sprintf("%.5i",n);
             poiName=route->getName()+poiN;
             POI * poi = slot_addPOI(poiName,0,lat,lon,-1,false,false,mainW->getSelectedBoat());
+            if(ortho)
+                poi->setNavMode(2);
             poi->setRoute(route);
             poi->setRouteTimeStamp(start.toTime_t());
             line=stream.readLine();
@@ -1811,6 +1822,8 @@ void myCentralWidget::slot_importRouteFromMenu()
                 poiN.sprintf("%.5i",n);
                 poiName="I"+poiN;
                 POI * poi = slot_addPOI(poiName,0,lat,lon,-1,false,false,mainW->getSelectedBoat());
+                if(ortho)
+                    poi->setNavMode(2);
                 poi->setRoute(route);
                 poi->setRouteTimeStamp(start.toTime_t());
                 trackPoint=trackPoint.nextSiblingElement("TrackPoint");
@@ -2227,203 +2240,17 @@ void myCentralWidget::treatRoute(ROUTE* route)
             QMessageBox::critical(0,QString(QObject::tr("Simplification de route")),QString(QObject::tr("La simplification est impossible si le mode de calcul VBVMG est celui de VLM")));
         else
         {
-            route->setSimplify(true);
-            int firstPOI=1;
-            if(route->getStartFromBoat())
-                firstPOI=0;
-            QList<POI*> pois=route->getPoiList();
-            int ref_nbPois=pois.count();
+            int poiCt=route->getPoiList().count();
             time_t ref_eta=route->getEta();
-            int nbDel=0;
-            QProgressDialog p(tr("Simplification en cours"),"",1,ref_nbPois-2);
-            p.setCancelButton(0);
-            int phase=1;
-            p.setLabelText(tr("Phase ")+QString().setNum(phase));
-            bool notFinished=true;
-            time_t bestEta=ref_eta;
-
-            while(notFinished)
-            {
-                notFinished=false;
-                pois=route->getPoiList();
-                p.setMaximum(pois.count()-2);
-                p.setValue(0);
-                for (int n=firstPOI;n<pois.count()-2;++n)
-                {
-                    POI *poi=pois.at(n);
-                    //qWarning()<<"trying"<<poi->getName();
-                    if(poi->getNotSimplificable()) continue;
-                    poi->setRoute(NULL);
-                    QApplication::processEvents();
-//                    if(poi->getName()=="R00011")
-//                        qWarning()<<"this gives"<<bestEta<<route->getEta();
-                    if(!route->getHas_eta())
-                        poi->setRoute(route);
-                    else if(route->getEta()<=bestEta)
-                    {
-                        bestEta=route->getEta();
-                        notFinished=true;
-                        slot_delPOI_list(poi);
-                        delete poi;
-                        ++nbDel;
-                    }
-                    else
-                        poi->setRoute(route);
-                    p.setValue(n);
-                    QApplication::processEvents();
-                }
-                pois=route->getPoiList();
-                ++phase;
-                p.setLabelText(tr("Phase ")+QString().setNum(phase));
-                p.setMaximum(pois.count()-2);
-                p.setValue(0);
-                p.setValue(pois.count()-2);
-                for (int n=pois.count()-2;n>=firstPOI;--n)
-                {
-                    POI *poi=pois.at(n);
-                    if(poi->getNotSimplificable()) continue;
-                    poi->setRoute(NULL);
-                    QApplication::processEvents();
-                    if(!route->getHas_eta())
-                        poi->setRoute(route);
-                    else if(route->getEta()<=bestEta)
-                    {
-                        bestEta=route->getEta();
-                        notFinished=true;
-                        slot_delPOI_list(poi);
-                        delete poi;
-                        ++nbDel;
-                    }
-                    else
-                        poi->setRoute(route);
-                    p.setValue(n);
-                    QApplication::processEvents();
-                }
-                pois=route->getPoiList();
-                ++phase;
-                p.setLabelText(tr("Phase ")+QString().setNum(phase));
-                p.setMaximum(pois.count()-2);
-                p.setValue(0);
-
-                for (int n=firstPOI;n<pois.count()-3;++n)
-                {
-                    POI *poi1=pois.at(n);
-                    if(poi1->getNotSimplificable()) continue;
-                    POI *poi2=pois.at(n+1);
-                    if(poi2->getNotSimplificable()) continue;
-                    route->setTemp(true);
-                    poi1->setRoute(NULL);
-                    route->setTemp(false);
-                    poi2->setRoute(NULL);
-                    QApplication::processEvents();
-                    if(!route->getHas_eta())
-                    {
-                        route->setTemp(true);
-                        poi1->setRoute(route);
-                        route->setTemp(false);
-                        poi2->setRoute(route);
-                    }
-                    else if(route->getEta()<=bestEta)
-                    {
-                        bestEta=route->getEta();
-                        notFinished=true;
-                        slot_delPOI_list(poi1);
-                        delete poi1;
-                        slot_delPOI_list(poi2);
-                        delete poi2;
-                        nbDel=nbDel+2;
-                        n=firstPOI-1;
-                        pois=route->getPoiList();
-                        p.setMaximum(pois.count()-2);
-                        p.setValue(0);
-                        continue;
-                    }
-                    else
-                    {
-                        route->setTemp(true);
-                        poi1->setRoute(route);
-                        route->setTemp(false);
-                        poi2->setRoute(route);
-                    }
-                    p.setValue(n);
-                    QApplication::processEvents();
-                }
-
-                ++phase;
-                p.setLabelText(tr("Phase ")+QString().setNum(phase));
-                pois=route->getPoiList();
-                p.setMaximum(pois.count()-2);
-                p.setValue(0);
-
-                for (int n=firstPOI;n<pois.count()-4;++n)
-                {
-                    POI *poi1=pois.at(n);
-                    if(poi1->getNotSimplificable()) continue;
-                    POI *poi2=pois.at(n+1);
-                    if(poi2->getNotSimplificable()) continue;
-                    POI *poi3=pois.at(n+2);
-                    if(poi3->getNotSimplificable()) continue;
-                    route->setTemp(true);
-                    poi1->setRoute(NULL);
-                    poi2->setRoute(NULL);
-                    route->setTemp(false);
-                    poi3->setRoute(NULL);
-                    QApplication::processEvents();
-                    if(!route->getHas_eta())
-                    {
-                        route->setTemp(true);
-                        poi1->setRoute(route);
-                        poi2->setRoute(route);
-                        route->setTemp(false);
-                        poi3->setRoute(route);
-                    }
-                    else if(route->getEta()<=bestEta)
-                    {
-                        bestEta=route->getEta();
-                        notFinished=true;
-                        slot_delPOI_list(poi1);
-                        delete poi1;
-                        slot_delPOI_list(poi2);
-                        delete poi2;
-                        slot_delPOI_list(poi3);
-                        delete poi3;
-                        nbDel=nbDel+3;
-                        n=firstPOI-1;
-                        pois=route->getPoiList();
-                        p.setMaximum(pois.count()-2);
-                        p.setValue(0);
-                        continue;
-                    }
-                    else
-                    {
-                        route->setTemp(true);
-                        poi1->setRoute(route);
-                        poi2->setRoute(route);
-                        route->setTemp(false);
-                        poi3->setRoute(route);
-                    }
-                    p.setValue(n);
-                    QApplication::processEvents();
-                }
-
-
-            }
-
-            p.close();
-            route->setSimplify(false);
-            route->slot_recalculate();
+            doSimplifyRoute(route);
+            int nbDel=poiCt-route->getPoiList().count();
             int diff=(ref_eta-route->getEta())/60;
             QString result;
             if(diff<0)
-                result=QString().setNum(-diff)+tr(" minutes perdues, ")+
-                       QString().setNum(nbDel)+tr(" POIs supprimes sur ")+
-                       QString().setNum(ref_nbPois);
-//                        result=result.sprintf(tr("%d minutes perdues, %d POIs supprimes sur %d").toStdString(),-diff,nbDel,ref_nbPois);
+                result=QString().setNum(-diff)+tr(" minutes perdues, ");
             else
-                result=QString().setNum(diff)+tr(" minutes gagnees(!), ")+
-                       QString().setNum(nbDel)+tr(" POIs supprimes sur ")+
-                       QString().setNum(ref_nbPois);
-//                        result=result.sprintf("%d minutes gagnees(!), %d POIs supprimes sur %d",diff,nbDel,ref_nbPois);
+                result=QString().setNum(diff)+tr(" minutes gagnees(!), ");
+            result+=QString().setNum(nbDel)+tr(" POIs supprimes sur ")+QString().setNum(poiCt);
             QDateTime before;
             before=before.fromTime_t(ref_eta);
             before=before.toUTC();
@@ -2441,23 +2268,49 @@ void myCentralWidget::treatRoute(ROUTE* route)
             QPushButton *optim = mb.addButton(tr("Optimiser"),QMessageBox::YesRole);
             //QPushButton *justOK = mb.addButton(tr("Quitter"),QMessageBox::NoRole);
             mb.exec();
+            time_t ref_eta2=route->getEta();
+            poiCt=route->getPoiList().count();
             if(mb.clickedButton()==optim)
             {
-                foreach(POI* poi,route->getPoiList())
+                QMessageBox * waitBox = new QMessageBox(QMessageBox::Information,tr("Optimisation en cours"),
+                                          tr("Veuillez patienter..."));
+                waitBox->setStandardButtons(QMessageBox::NoButton);
+                waitBox->show();
+                waitBox->setFixedWidth(300);
+                for (int maxLoop=0;maxLoop<10;++maxLoop)
                 {
-                    if(poi==route->getPoiList().last()) break;
-                    if(!route->getStartFromBoat() && poi==route->getPoiList().first()) continue;
-                    if(poi->getNotSimplificable()) continue;
-                    poi->slot_finePosit(true);
+                    time_t ref_eta3=route->getEta();
+                    before=before.fromTime_t(ref_eta3);
+                    before=before.toUTC();
+                    before.setTimeSpec(Qt::UTC);
+                    qWarning()<<"before op:"<<before.toString("dd/MM/yy hh:mm:ss");
+                    foreach(POI* poi,route->getPoiList())
+                    {
+                        if(poi==route->getPoiList().last()) break;
+                        if(!route->getStartFromBoat() && poi==route->getPoiList().first()) continue;
+                        if(poi->getNotSimplificable()) continue;
+                        poi->slot_finePosit(true);
+                    }
+                    before=before.fromTime_t(route->getEta());
+                    before=before.toUTC();
+                    before.setTimeSpec(Qt::UTC);
+                    qWarning()<<"after op:"<<before.toString("dd/MM/yy hh:mm:ss");
+                    doSimplifyRoute(route,true);
+                    before=before.fromTime_t(route->getEta());
+                    before=before.toUTC();
+                    before.setTimeSpec(Qt::UTC);
+                    qWarning()<<"after simp:"<<before.toString("dd/MM/yy hh:mm:ss");
+                    if(ref_eta3-route->getEta()==0) break;
                 }
-                route->slot_recalculate();
-                diff=(ref_eta-route->getEta())/60;
+                nbDel=poiCt-route->getPoiList().count();
+                diff=(ref_eta2-route->getEta())/60;
                 result.clear();
                 if(diff<0)
                     result=QString().setNum(-diff)+tr(" minutes perdues");
                 else
                     result=QString().setNum(diff)+tr(" minutes gagnees");
-                before=before.fromTime_t(ref_eta);
+                result+=", "+QString().setNum(nbDel)+tr(" POIs supprimes sur ")+QString().setNum(poiCt);
+                before=before.fromTime_t(ref_eta2);
                 before=before.toUTC();
                 before.setTimeSpec(Qt::UTC);
                 after=after.fromTime_t(route->getEta());
@@ -2465,11 +2318,221 @@ void myCentralWidget::treatRoute(ROUTE* route)
                 after.setTimeSpec(Qt::UTC);
                 result=result+"<br>"+tr("ETA avant optimisation: ")+before.toString("dd/MM/yy hh:mm:ss");
                 result=result+"<br>"+tr("ETA apres optimisation: ")+after.toString("dd/MM/yy hh:mm:ss");
+                waitBox->close();
+                delete waitBox;
                 QMessageBox::information(0,QString(QObject::tr("Resultat de l'optimisation")),result);
             }
             route->setDetectCoasts(detectCoast);
         }
     }
+}
+void myCentralWidget::doSimplifyRoute(ROUTE * route, bool fast)
+{
+    route->setSimplify(true);
+    int firstPOI=1;
+    if(route->getStartFromBoat())
+        firstPOI=0;
+    QList<POI*> pois=route->getPoiList();
+    int ref_nbPois=pois.count();
+    time_t ref_eta=route->getEta();
+    int nbDel=0;
+    int phase=1;
+    QProgressDialog p("","",1,ref_nbPois-2);
+    if(!fast)
+    {
+        p.setWindowTitle(tr("Simplification en cours"));
+        p.setFixedWidth(300);
+        p.setAutoClose(false);
+        p.setCancelButton(0);
+        p.setLabelText(tr("Phase ")+QString().setNum(phase));
+    }
+    else
+        p.close();
+    bool notFinished=true;
+    time_t bestEta=ref_eta;
+
+    while(notFinished)
+    {
+        notFinished=false;
+        pois=route->getPoiList();
+        if(!fast)
+        {
+            p.setMaximum(pois.count()-2);
+            p.setValue(0);
+        }
+        for (int n=firstPOI;n<pois.count()-2;++n)
+        {
+            POI *poi=pois.at(n);
+            if(poi->getNotSimplificable()) continue;
+            poi->setRoute(NULL);
+            QApplication::processEvents();
+            if(!route->getHas_eta())
+                poi->setRoute(route);
+            else if(route->getEta()<=bestEta)
+            {
+                bestEta=route->getEta();
+                notFinished=true;
+                slot_delPOI_list(poi);
+                delete poi;
+                ++nbDel;
+            }
+            else
+                poi->setRoute(route);
+            if(!fast)
+                p.setValue(n);
+            QApplication::processEvents();
+        }
+        pois=route->getPoiList();
+        ++phase;
+        if(!fast)
+        {
+            p.setLabelText(tr("Phase ")+QString().setNum(phase));
+            p.setMaximum(pois.count()-2);
+            p.setValue(0);
+            p.setValue(pois.count()-2);
+        }
+        for (int n=pois.count()-2;n>=firstPOI;--n)
+        {
+            POI *poi=pois.at(n);
+            if(poi->getNotSimplificable()) continue;
+            poi->setRoute(NULL);
+            QApplication::processEvents();
+            if(!route->getHas_eta())
+                poi->setRoute(route);
+            else if(route->getEta()<=bestEta)
+            {
+                bestEta=route->getEta();
+                notFinished=true;
+                slot_delPOI_list(poi);
+                delete poi;
+                ++nbDel;
+            }
+            else
+                poi->setRoute(route);
+            if(!fast)
+                p.setValue(n);
+            QApplication::processEvents();
+        }
+        if(fast)
+        {
+            if(notFinished)
+                continue;
+            else
+                break;
+        }
+        pois=route->getPoiList();
+        ++phase;
+        p.setLabelText(tr("Phase ")+QString().setNum(phase));
+        p.setMaximum(pois.count()-2);
+        p.setValue(0);
+
+        for (int n=firstPOI;n<pois.count()-3;++n)
+        {
+            POI *poi1=pois.at(n);
+            if(poi1->getNotSimplificable()) continue;
+            POI *poi2=pois.at(n+1);
+            if(poi2->getNotSimplificable()) continue;
+            route->setTemp(true);
+            poi1->setRoute(NULL);
+            route->setTemp(false);
+            poi2->setRoute(NULL);
+            QApplication::processEvents();
+            if(!route->getHas_eta())
+            {
+                route->setTemp(true);
+                poi1->setRoute(route);
+                route->setTemp(false);
+                poi2->setRoute(route);
+            }
+            else if(route->getEta()<=bestEta)
+            {
+                bestEta=route->getEta();
+                notFinished=true;
+                slot_delPOI_list(poi1);
+                delete poi1;
+                slot_delPOI_list(poi2);
+                delete poi2;
+                nbDel=nbDel+2;
+                n=firstPOI-1;
+                pois=route->getPoiList();
+                p.setMaximum(pois.count()-2);
+                p.setValue(0);
+                continue;
+            }
+            else
+            {
+                route->setTemp(true);
+                poi1->setRoute(route);
+                route->setTemp(false);
+                poi2->setRoute(route);
+            }
+            p.setValue(n);
+            QApplication::processEvents();
+        }
+
+        ++phase;
+        p.setLabelText(tr("Phase ")+QString().setNum(phase));
+        pois=route->getPoiList();
+        p.setMaximum(pois.count()-2);
+        p.setValue(0);
+
+        for (int n=firstPOI;n<pois.count()-4;++n)
+        {
+            POI *poi1=pois.at(n);
+            if(poi1->getNotSimplificable()) continue;
+            POI *poi2=pois.at(n+1);
+            if(poi2->getNotSimplificable()) continue;
+            POI *poi3=pois.at(n+2);
+            if(poi3->getNotSimplificable()) continue;
+            route->setTemp(true);
+            poi1->setRoute(NULL);
+            poi2->setRoute(NULL);
+            route->setTemp(false);
+            poi3->setRoute(NULL);
+            QApplication::processEvents();
+            if(!route->getHas_eta())
+            {
+                route->setTemp(true);
+                poi1->setRoute(route);
+                poi2->setRoute(route);
+                route->setTemp(false);
+                poi3->setRoute(route);
+            }
+            else if(route->getEta()<=bestEta)
+            {
+                bestEta=route->getEta();
+                notFinished=true;
+                slot_delPOI_list(poi1);
+                delete poi1;
+                slot_delPOI_list(poi2);
+                delete poi2;
+                slot_delPOI_list(poi3);
+                delete poi3;
+                nbDel=nbDel+3;
+                n=firstPOI-1;
+                pois=route->getPoiList();
+                p.setMaximum(pois.count()-2);
+                p.setValue(0);
+                continue;
+            }
+            else
+            {
+                route->setTemp(true);
+                poi1->setRoute(route);
+                poi2->setRoute(route);
+                route->setTemp(false);
+                poi3->setRoute(route);
+            }
+            p.setValue(n);
+            QApplication::processEvents();
+        }
+
+
+    }
+    if(!fast)
+        p.close();
+    route->setSimplify(false);
+    route->slot_recalculate();
 }
 
 void myCentralWidget::setPilototo(QList<POI *> poiList)

@@ -133,6 +133,8 @@ class ROUTE : public QObject
         void slot_export(){parent->exportRouteFromMenu(this);}
         void slot_boatPointerHasChanged(boat * acc);
         void slot_compassFollow(){parent->setCompassFollow(this);}
+        void hovered();
+        void unHovered();
     signals:
         void editMe(ROUTE *);
     private:

@@ -25,9 +25,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "vlmLine.h"
 #include "settings.h"
 #include "Util.h"
+#include "mycentralwidget.h"
 
 vlmLine::vlmLine(Projection * proj, QGraphicsScene * myScene,int z_level) : QGraphicsWidget()
 {
+    this->myZvalue=z_level;
     this->proj=proj;
     this->myScene=myScene;
     connect(proj,SIGNAL(projectionUpdated()),this,SLOT(slot_showMe()));
@@ -54,7 +56,8 @@ vlmLine::vlmLine(Projection * proj, QGraphicsScene * myScene,int z_level) : QGra
     this->coastDetected=false;
     this->coastDetection=false;
     map=NULL;
-    this->setAcceptHoverEvents(true);
+    if(myZvalue==Z_VALUE_ROUTE || myZvalue==Z_VALUE_BOAT || myZvalue==Z_VALUE_OPP)
+        this->setAcceptHoverEvents(true);
     show();
 }
 
@@ -148,6 +151,7 @@ void vlmLine::calculatePoly(void)
 //    int debug;
 //    if(this->desc=="WP2: Arrivee Bayonne") //for debug point
 //        debug=0;
+    QPainterPath myPath2;
     collision.clear();
     QRectF tempBound;
     tempBound.setRect(0,0,0,0);
@@ -271,35 +275,27 @@ void vlmLine::calculatePoly(void)
             tempBound.getCoords(&x1,&y1,&x2,&y2);
             tempBound.setCoords(x1-linePen.widthF()*2,y1-linePen.widthF()*2,x2+linePen.widthF()*2,y2+linePen.widthF()*2);
         }
+        foreach(QPolygon * pol,polyList)
+            myPath2.addPolygon(*pol);
     }
     prepareGeometryChange();
     boundingR=tempBound;
+    myPath=myPath2;
 }
-void vlmLine::hoverEnterEvent(QGraphicsSceneHoverEvent *event)
+void vlmLine::hoverEnterEvent(QGraphicsSceneHoverEvent *)
 {
-    qWarning()<<"hover detected";
+    emit hovered();
+    this->setZValue(myZvalue+30);
     this->linePen.setWidthF(this->lineWidth*2.0);
     update();
 }
-void vlmLine::hoverLeaveEvent(QGraphicsSceneHoverEvent *event)
+void vlmLine::hoverLeaveEvent(QGraphicsSceneHoverEvent *)
 {
+    emit unHovered();
+    this->setZValue(this->myZvalue);
     this->linePen.setWidthF(this->lineWidth);
     update();
 }
-//void vlmLine::mousePressEvent(QGraphicsSceneMouseEvent * e)
-//{
-//    qWarning()<<"click on vlmLine";
-//    if (e->button() != Qt::LeftButton) return;
-//    linePen.setWidthF(lineWidth*2.0);
-//    update();
-//}
-//void vlmLine::mouseReleaseEvent(QGraphicsSceneMouseEvent * e)
-//{
-//    if (e->button() != Qt::LeftButton) return;
-//    qWarning()<<"click on vlmLine";
-//    linePen.setWidthF(lineWidth);
-//    update();
-//}
 void vlmLine::deleteAll()
 {
     line.clear();
@@ -326,7 +322,6 @@ void vlmLine::paint(QPainter * pnt, const QStyleOptionGraphicsItem * , QWidget *
     QListIterator<QPolygon*> nPoly (polyList);
     bool labelAlreadyMade=false;
     int nn=-1;
-    myPath=QPainterPath();
     while(nPoly.hasNext())
     {
         poly=nPoly.next();
@@ -344,13 +339,11 @@ void vlmLine::paint(QPainter * pnt, const QStyleOptionGraphicsItem * , QWidget *
                 if (!solid)
                 {
                     pnt->drawPolyline(*poly);
-                    myPath.addPolygon(*poly);
                 }
                 else
                 {
                     pnt->setBrush(linePen.brush());
                     pnt->drawPolygon(*poly,Qt::WindingFill);
-                    myPath.addPolygon(*poly);
                 }
             }
             break;
@@ -361,7 +354,6 @@ void vlmLine::paint(QPainter * pnt, const QStyleOptionGraphicsItem * , QWidget *
                 int step=Settings::getSetting("trace_step",60/5-1).toInt()+1;
                 int x0=poly->point(0).x();
                 int y0=poly->point(0).y();
-                myPath.addPolygon(*poly);
                 for(int i=1;i<poly->count() && i<nbVac;i++)
                 {
                     int x,y;
@@ -392,7 +384,6 @@ void vlmLine::paint(QPainter * pnt, const QStyleOptionGraphicsItem * , QWidget *
             if(!hidden)
             {
                 pnt->drawPolyline(*poly);
-                myPath.addPolygon(*poly);
             }
             linePen.setWidthF(penW*2);
             if(onePoint)

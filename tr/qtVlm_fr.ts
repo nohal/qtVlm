@@ -2026,6 +2026,14 @@ Etes-vous sur ?</source>
         <source>Historique VLM</source>
         <translation></translation>
     </message>
+    <message>
+        <source>En mode VB-VMG</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>En mode Ortho</source>
+        <translation></translation>
+    </message>
 </context>
 <context>
     <name>POI</name>
@@ -2829,10 +2837,6 @@ VMG %.1f nds</translation>
         <translation>&lt;br&gt;&lt;br&gt;Temps de calcul: </translation>
     </message>
     <message>
-        <source>Routage: </source>
-        <translation></translation>
-    </message>
-    <message>
         <source>Routage</source>
         <translation></translation>
     </message>
@@ -3157,6 +3161,10 @@ Voulez-vous egalement supprimer tous les POIs lui appartenant?</source>
     <message>
         <source>ETA a partir de maintenant</source>
         <translation>ETA: à partir de maintenant</translation>
+    </message>
+    <message>
+        <source>Route: </source>
+        <translation></translation>
     </message>
 </context>
 <context>
@@ -5204,6 +5212,14 @@ Voulez-vous egalement supprimer tous les POIs lui appartenant?</source>
     <message>
         <source>ETA apres optimisation: </source>
         <translation>ETA après optimisation: </translation>
+    </message>
+    <message>
+        <source>Optimisation en cours</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Veuillez patienter...</source>
+        <translation></translation>
     </message>
 </context>
 <context>

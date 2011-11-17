@@ -296,8 +296,12 @@ MenuBar::MenuBar(QWidget *parent)
         mnRoute_export = new QMenu(tr("Exporter une route"));
         menuRoute->addMenu(mnRoute_edit);
         menuRoute->addMenu(mnRoute_export);
-        acRoute_import = addAction(menuRoute,
-                    tr("Importer une route"),"", "", "");
+        mnRoute_import=new QMenu(tr("Importer une route"));
+        acRoute_import = addAction(mnRoute_import,
+                    tr("En mode VB-VMG"),"", "", "");
+        acRoute_import2 = addAction(mnRoute_import,
+                    tr("En mode Ortho"),"", "", "");
+        menuRoute->addMenu(mnRoute_import);
         menuRoute->addSeparator();
         menuRoute->addMenu(mnRoute_delete);
     addMenu(menuRoute);
