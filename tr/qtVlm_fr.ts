@@ -687,10 +687,6 @@ Etes-vous sur ?</source>
         <translation>CPUs disponibles)</translation>
     </message>
     <message>
-        <source>Routage: </source>
-        <translation></translation>
-    </message>
-    <message>
         <source>Creation d&apos;un routage</source>
         <translation>Création d&apos;un routage</translation>
     </message>
@@ -2575,12 +2571,8 @@ Etes-vous sur ?</source>
         <translation>Impossible de créer le fichier %1</translation>
     </message>
     <message>
-        <source>Simplification de route</source>
-        <translation></translation>
-    </message>
-    <message>
         <source>La simplification est impossible pour une route figee ou une route sans ETA</source>
-        <translation>La simplification est impossible pour une route figée ou une route sans ETA</translation>
+        <translation type="obsolete">La simplification est impossible pour une route figée ou une route sans ETA</translation>
     </message>
     <message>
         <source>Resultat de la simplification</source>
@@ -2646,10 +2638,6 @@ Etes-vous sur ?</source>
     <message>
         <source>Complement: </source>
         <translation>Complément:</translation>
-    </message>
-    <message>
-        <source>La simplification est impossible si le mode de calcul VBVMG est celui de VLM</source>
-        <translation></translation>
     </message>
     <message>
         <source>Le bateau </source>
@@ -2780,6 +2768,18 @@ VMG %.1f nds</translation>
     <message>
         <source>Resultat de l&apos;optimisation</source>
         <translation>Résultats de l&apos;optimisation</translation>
+    </message>
+    <message>
+        <source>Simplification/Optimisation de route</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Cette operation est impossible pour une route figee ou une route sans ETA</source>
+        <translation>Cette opération est impossible pour une route figée ou une route sans ETA</translation>
+    </message>
+    <message>
+        <source>Cette operation est impossible si le mode de calcul VBVMG est celui de VLM</source>
+        <translation>Cette opération est impossible pour une route figée ou une route sans ETA</translation>
     </message>
 </context>
 <context>
@@ -3343,6 +3343,18 @@ Voulez-vous egalement supprimer tous les POIs lui appartenant?</source>
     </message>
     <message>
         <source>TWS moyen</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:7.8pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;Optimise le placement sur la route de tous les POIs simplifiables en utilisant l&apos;algorithme Simplex de Nelder-Mead.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Optimiser</source>
         <translation></translation>
     </message>
 </context>

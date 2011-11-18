@@ -89,6 +89,9 @@ ROUTE::ROUTE(QString name, Projection *proj, Grib *grib, QGraphicsScene * myScen
     this->initialized=false;
     connect (parent,SIGNAL(boatPointerHasChanged(boat*)),this,SLOT(slot_boatPointerHasChanged(boat*)));
     this->simplify=false;
+    this->optimize=false;
+    this->lastKnownSpeed=10e-4;
+    qWarning()<<"lastKnownSpeed="<<lastKnownSpeed;
     this->hidden=false;
     this->temp=false;
     if(!parentWindow->get_shRoute_st())
@@ -298,6 +301,8 @@ void ROUTE::slot_recalculate(boat * boat)
             line->addVlmPoint(p);
         }
         double newSpeed,distanceParcourue,remaining_distance,res_lon,res_lat,previous_remaining_distance,cap1,cap2,diff1,diff2;
+        remaining_distance=0;
+        lastKnownSpeed=10e-4;
         double wind_angle,wind_speed,cap,angle;
         cap=-1;
         time_t maxDate=grib->getMaxDate();
@@ -487,6 +492,7 @@ void ROUTE::slot_recalculate(boat * boat)
                                     newSpeed=newSpeed*speedLossOnTack;
                                 }
                             }
+                            lastKnownSpeed=qMax(10e-4,newSpeed);
                             lastTwa=angle;
                             distanceParcourue=newSpeed*myBoat->getVacLen()*multVac/3600.00;
                             if(!imported && nbToReach==0)

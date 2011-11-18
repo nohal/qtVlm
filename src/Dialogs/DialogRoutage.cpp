@@ -354,7 +354,7 @@ void DialogRoutage::done(int result)
             {
                 if(routage->isDone())
                 {
-                    if (!parent->freeRouteName(tr("Routage: ")+(editName->text()).trimmed(),NULL))
+                    if (!parent->freeRouteName(editName->text().trimmed(),NULL))
                     {
                         QMessageBox msgBox;
                         msgBox.setText(tr("Ce nom de route est deja utilise, veuillez changer le nom du routage"));

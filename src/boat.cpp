@@ -331,14 +331,14 @@ void boat::updateTraceColor(void)
     if(selected)
     {
         QPen penLine(selColor,1);
-        penLine.setWidthF(1);
+        penLine.setWidthF(0.5);
         trace_drawing->setLinePen(penLine);
         trace_drawing->setPointMode(selColor);
     }
     else
     {
         QPen penLine(myColor,1);
-        penLine.setWidthF(1);
+        penLine.setWidthF(0.5);
         trace_drawing->setLinePen(penLine);
         trace_drawing->setPointMode(myColor);
     }

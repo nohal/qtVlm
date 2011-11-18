@@ -598,7 +598,11 @@ void DialogRoute::done(int result)
         if(this->Simplifier->isChecked())
             route->setSimplify(true);
         else
+        {
             route->setSimplify(false);
+            if(this->Optimiser->isChecked())
+                route->setOptimize(true);
+        }
         route->setBusy(false);
         if(result==99)
         {
@@ -618,7 +622,7 @@ void DialogRoute::slotApply()
     this->btCancel->setEnabled(false);
     this->btOk->setEnabled(false);
     this->tabWidget->setEnabled(false);
-    if(this->Simplifier->isChecked())
+    if(this->Simplifier->isChecked() || this->Optimiser->isChecked())
         this->hide();
     this->done(99);
     this->btAppliquer->setEnabled(true);
@@ -626,6 +630,7 @@ void DialogRoute::slotApply()
     this->btOk->setEnabled(true);
     this->tabWidget->setEnabled(true);
     this->Simplifier->setChecked(false);
+    this->Optimiser->setChecked(false);
     this->show();
 }
 

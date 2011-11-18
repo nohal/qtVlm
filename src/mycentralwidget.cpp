@@ -753,6 +753,7 @@ void myCentralWidget::mouseMove(int x, int y, QGraphicsItem * )
 
 void myCentralWidget::keyModif(QKeyEvent *e)
 {
+#if 0
     if (e->modifiers() == Qt::ControlModifier) {
         terre->setCursor(Qt::SizeAllCursor);
         //cur_cursor=Qt::SizeAllCursor;
@@ -765,6 +766,7 @@ void myCentralWidget::keyModif(QKeyEvent *e)
         terre->setCursor(Qt::ArrowCursor);
         //cur_cursor=Qt::SizeAllCursor;
     }
+#endif
 }
 
 void myCentralWidget::mouseDoubleClick(int x, int y, QGraphicsItem * )
@@ -2229,49 +2231,57 @@ void myCentralWidget::treatRoute(ROUTE* route)
     update_menuRoute();
     route->slot_recalculate();
     QApplication::processEvents();
-    if(route->getSimplify() && !route->isBusy())
+    if((route->getSimplify() || route->getOptimize()) && !route->isBusy())
     {
+        bool simplify=route->getSimplify();
+        bool optimize=route->getOptimize();
         bool detectCoast=route->getDetectCoasts();
         route->setDetectCoasts(false);
         route->setSimplify(false);
+        route->setOptimize(false);
         if(route->getFrozen() || !route->getHas_eta())
-            QMessageBox::critical(0,QString(QObject::tr("Simplification de route")),QString(QObject::tr("La simplification est impossible pour une route figee ou une route sans ETA")));
+            QMessageBox::critical(0,QString(QObject::tr("Simplification/Optimisation de route")),QString(QObject::tr("Cette operation est impossible pour une route figee ou une route sans ETA")));
         else if(route->getUseVbvmgVlm())
-            QMessageBox::critical(0,QString(QObject::tr("Simplification de route")),QString(QObject::tr("La simplification est impossible si le mode de calcul VBVMG est celui de VLM")));
+            QMessageBox::critical(0,QString(QObject::tr("Simplification/Optimisation de route")),QString(QObject::tr("Cette operation est impossible si le mode de calcul VBVMG est celui de VLM")));
         else
         {
             int poiCt=route->getPoiList().count();
             time_t ref_eta=route->getEta();
-            doSimplifyRoute(route);
-            int nbDel=poiCt-route->getPoiList().count();
-            int diff=(ref_eta-route->getEta())/60;
-            QString result;
-            if(diff<0)
-                result=QString().setNum(-diff)+tr(" minutes perdues, ");
-            else
-                result=QString().setNum(diff)+tr(" minutes gagnees(!), ");
-            result+=QString().setNum(nbDel)+tr(" POIs supprimes sur ")+QString().setNum(poiCt);
-            QDateTime before;
-            before=before.fromTime_t(ref_eta);
-            before=before.toUTC();
-            before.setTimeSpec(Qt::UTC);
-            QDateTime after;
-            after=after.fromTime_t(route->getEta());
-            after=after.toUTC();
-            after.setTimeSpec(Qt::UTC);
-            result=result+"<br>"+tr("ETA avant simplification: ")+before.toString("dd/MM/yy hh:mm:ss");
-            result=result+"<br>"+tr("ETA apres simplification: ")+after.toString("dd/MM/yy hh:mm:ss");
-            QMessageBox mb(0);
-            mb.setText(result);
-            mb.setWindowTitle(QObject::tr("Resultat de la simplification"));
-            mb.setIcon(QMessageBox::Information);
-            QPushButton *optim = mb.addButton(tr("Optimiser"),QMessageBox::YesRole);
-            mb.addButton(QMessageBox::Close);
-            mb.exec();
-            time_t ref_eta2=route->getEta();
-            poiCt=route->getPoiList().count();
-            if(mb.clickedButton()==optim)
+            if(simplify)
             {
+                doSimplifyRoute(route);
+                int nbDel=poiCt-route->getPoiList().count();
+                int diff=(ref_eta-route->getEta())/60;
+                QString result;
+                if(diff<0)
+                    result=QString().setNum(-diff)+tr(" minutes perdues, ");
+                else
+                    result=QString().setNum(diff)+tr(" minutes gagnees(!), ");
+                result+=QString().setNum(nbDel)+tr(" POIs supprimes sur ")+QString().setNum(poiCt);
+                QDateTime before;
+                before=before.fromTime_t(ref_eta);
+                before=before.toUTC();
+                before.setTimeSpec(Qt::UTC);
+                QDateTime after;
+                after=after.fromTime_t(route->getEta());
+                after=after.toUTC();
+                after.setTimeSpec(Qt::UTC);
+                result=result+"<br>"+tr("ETA avant simplification: ")+before.toString("dd/MM/yy hh:mm:ss");
+                result=result+"<br>"+tr("ETA apres simplification: ")+after.toString("dd/MM/yy hh:mm:ss");
+                QMessageBox mb(0);
+                mb.setText(result);
+                mb.setWindowTitle(QObject::tr("Resultat de la simplification"));
+                mb.setIcon(QMessageBox::Information);
+                QPushButton *optim = mb.addButton(tr("Optimiser"),QMessageBox::YesRole);
+                mb.addButton(QMessageBox::Close);
+                mb.exec();
+                if(mb.clickedButton()==optim)
+                    optimize=true;
+            }
+            if(optimize)
+            {
+                time_t ref_eta2=route->getEta();
+                poiCt=route->getPoiList().count();
                 QMessageBox * waitBox = new QMessageBox(QMessageBox::Information,tr("Optimisation en cours"),
                                           tr("Veuillez patienter..."));
                 waitBox->setStandardButtons(QMessageBox::NoButton);
@@ -2281,10 +2291,10 @@ void myCentralWidget::treatRoute(ROUTE* route)
                 {
                     time_t ref_eta3=route->getEta();
                     int nPois=route->getPoiList().count();
-                    foreach(POI* poi,route->getPoiList())
+                    for (int poiN=0;poiN<route->getPoiList().count()-2;++poiN)
                     {
-                        if(poi==route->getPoiList().last()) break;
-                        if(!route->getStartFromBoat() && poi==route->getPoiList().first()) continue;
+                        if(!route->getStartFromBoat() && poiN==0) continue;
+                        POI * poi=route->getPoiList().at(poiN);
                         if(poi->getNotSimplificable()) continue;
                         poi->slot_finePosit(true);
                     }
@@ -2295,19 +2305,22 @@ void myCentralWidget::treatRoute(ROUTE* route)
                     if(route->getEta()>ref_eta4)
                         qWarning()<<"wrong simplification!!";
                     if(ref_eta3-route->getEta()==0 && nPois==route->getPoiList().count()) break;
+                    qWarning()<<maxLoop<<QDateTime().fromTime_t(ref_eta3).toUTC().toString("dd/MM/yy hh:mm:ss")<<
+                                QDateTime().fromTime_t(route->getEta()).toUTC().toString("dd/MM/yy hh:mm:ss")<<
+                                nPois<<"/"<<route->getPoiList().count();
                 }
-                nbDel=poiCt-route->getPoiList().count();
-                diff=(ref_eta2-route->getEta())/60;
-                result.clear();
+                int nbDel=poiCt-route->getPoiList().count();
+                int diff=(ref_eta2-route->getEta())/60;
+                QString result;
                 if(diff<0)
                     result=QString().setNum(-diff)+tr(" minutes perdues");
                 else
                     result=QString().setNum(diff)+tr(" minutes gagnees");
                 result+=", "+QString().setNum(nbDel)+tr(" POIs supprimes sur ")+QString().setNum(poiCt);
-                before=before.fromTime_t(ref_eta2);
+                QDateTime before=before.fromTime_t(ref_eta2);
                 before=before.toUTC();
                 before.setTimeSpec(Qt::UTC);
-                after=after.fromTime_t(route->getEta());
+                QDateTime after=after.fromTime_t(route->getEta());
                 after=after.toUTC();
                 after.setTimeSpec(Qt::UTC);
                 result=result+"<br>"+tr("ETA avant optimisation: ")+before.toString("dd/MM/yy hh:mm:ss");
@@ -2385,6 +2398,7 @@ void myCentralWidget::doSimplifyRoute(ROUTE * route, bool fast)
             p.setValue(0);
             p.setValue(pois.count()-2);
         }
+        else if(!notFinished) break;
         for (int n=pois.count()-2;n>=firstPOI;--n)
         {
             POI *poi=pois.at(n);

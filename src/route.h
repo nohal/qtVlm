@@ -124,6 +124,9 @@ class ROUTE : public QObject
         int getRoadMapInterval(){return roadMapInterval;}
         void setRoadMapInterval(int i){roadMapInterval=i;}
         void shiftEtas(QDateTime newStart);
+        void setOptimize(bool b){this->optimize=b;}
+        bool getOptimize(){return this->optimize;}
+        double getLastKnownSpeed(){return this->lastKnownSpeed;}
     public slots:
         void slot_recalculate(boat * boat=NULL);
         void slot_edit();
@@ -183,6 +186,7 @@ class ROUTE : public QObject
         bool imported;
         int multVac;
         bool simplify;
+        bool optimize;
         bool hidden;
         void do_vbvmg_context(double dist,double wanted_heading,
                               double w_speed,double w_angle,
@@ -212,5 +216,6 @@ class ROUTE : public QObject
         QList<QList<double> > roadMap;
         double initialDist;
         int roadMapInterval;
+        double lastKnownSpeed;
 };
 #endif // ROUTE_H

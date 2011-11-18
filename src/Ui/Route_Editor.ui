@@ -488,7 +488,7 @@
       <property name="geometry">
        <rect>
         <x>490</x>
-        <y>100</y>
+        <y>120</y>
         <width>75</width>
         <height>23</height>
        </rect>
@@ -551,13 +551,33 @@
       <property name="geometry">
        <rect>
         <x>490</x>
-        <y>70</y>
+        <y>90</y>
         <width>75</width>
         <height>23</height>
        </rect>
       </property>
       <property name="text">
        <string>Appliquer</string>
+      </property>
+     </widget>
+     <widget class="QCheckBox" name="Optimiser">
+      <property name="geometry">
+       <rect>
+        <x>490</x>
+        <y>60</y>
+        <width>91</width>
+        <height>17</height>
+       </rect>
+      </property>
+      <property name="toolTip">
+       <string>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'MS Shell Dlg 2'; font-size:7.8pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;Optimise le placement sur la route de tous les POIs simplifiables en utilisant l'algorithme Simplex de Nelder-Mead.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+      </property>
+      <property name="text">
+       <string>Optimiser</string>
       </property>
      </widget>
     </widget>
@@ -848,6 +868,22 @@
     <hint type="destinationlabel">
      <x>486</x>
      <y>270</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>Simplifier</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>Optimiser</receiver>
+   <slot>setDisabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>567</x>
+     <y>93</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>567</x>
+     <y>113</y>
     </hint>
    </hints>
   </connection>

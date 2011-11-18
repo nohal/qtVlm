@@ -938,13 +938,13 @@ void POI::slot_finePosit(bool silent)
         }
         else
             previousMe=new POI(tr("Dist. restante du prochain POI: ")+r.sprintf("%.2f milles",route->getRemain()),
-                               0,savedLat,savedLon,this->proj,this->owner,this->parent,0,0,false,this->myBoat);
+                               0,savedLat,savedLon,this->proj,this->owner,this->parent,0,0,false,route->getBoat());
         parent->slot_addPOI_list(previousMe);
     }
 
     POI_Position    simplex[3];
 
-    const double boatSpeed = myBoat->getSpeed() / 3600;
+    const double boatSpeed = route->getBoat()->getSpeed() / 3600.0;
 
     simplex[0].lon = lon;
     simplex[0].lat = lat;
@@ -970,7 +970,7 @@ void POI::slot_finePosit(bool silent)
         tm.setTime_t (simplex[0].eta);                                  \
         best = new POI (tr ("Meilleure ETA: ") + tm.toString ("dd MMM-hh:mm"), 0, \
                         simplex[0].lat, simplex[0].lon,                 \
-                        this->proj, this->owner, this->parent, 0, 0, false, this->myBoat); \
+                        this->proj, this->owner, this->parent, 0, 0, false, route->getBoat()); \
         parent->slot_addPOI_list (best);                                \
     } while (0)
 
@@ -1103,7 +1103,7 @@ void POI::slot_finePosit(bool silent)
     {
         parent->slot_delPOI_list(best);
         delete best;
-        if(Settings::getSetting("keepOldPoi","0").toInt()==0 && silent)
+        if(Settings::getSetting("keepOldPoi","0").toInt()==0 && !silent)
         {
             parent->slot_delPOI_list(previousMe);
             delete previousMe;
