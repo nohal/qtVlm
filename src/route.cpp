@@ -592,7 +592,14 @@ void ROUTE::slot_recalculate(boat * boat)
                 } while (has_eta && !imported);
             }
             orth.setPoints(res_lon,res_lat,my_poiList.last()->getLongitude(),my_poiList.last()->getLatitude());
-            remain=orth.getDistance();
+            // If the target was "reached", this will be the remaining
+            // distance between the position at the end of the last
+            // vacation and the target. Otherwise, it will be the
+            // distance between the end of the route and the last POI
+            // of the route.
+            remain = orth.getDistance();
+
+
             if(this->autoAt)
             {
                 poi->setWph(qRound(cap*100)/100.0);

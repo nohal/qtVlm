@@ -944,22 +944,25 @@ void POI::slot_finePosit(bool silent)
 
     POI_Position    simplex[3];
 
-    const double boatSpeed = route->getBoat()->getSpeed() / 3600.0;
-
     simplex[0].lon = lon;
     simplex[0].lat = lat;
-    simplex[0].eta = route->getEta() + route->getRemain() / boatSpeed;
-
+    simplex[0].eta = route->getEta() + route->getRemain() * 3600 / route->getLastKnownSpeed();
+//    tm.setTime_t (route->getEta());
+//    printf ("Current ETA: %s, current remaining: %g -> estimated ETA: ",
+//    tm.toString("dd MMM-hh:mm").toAscii().constData(), route->getRemain());
+//    tm.setTime_t (simplex[0].eta);
+//    printf ("%s\n", tm.toString("dd MMM-hh:mm").toAscii().constData());
     /* Note that if the route did not reach the target, then getEta
      * returns the last date of the grib. */
-#define TRYPOINT(P) do {                                            \
-        setLongitude ((P).lon);                                     \
-        setLatitude ((P).lat);                                      \
-        route->slot_recalculate();                                  \
-        (P).eta = route->getEta() + route->getRemain() / boatSpeed; \
-        Util::computePos (proj, lat, lon, &pi, &pj);                \
-        setPos (pi, pj-height/2);                                   \
-        update();                                                   \
+#define TRYPOINT(P) do {                                                \
+        setLongitude ((P).lon);                                         \
+        setLatitude ((P).lat);                                          \
+        route->slot_recalculate();                                      \
+        (P).eta = route->getEta()                                         +           + route->getRemain() * 3600 / route->getLastKnownSpeed();    \
+        Util::computePos (proj, lat, lon, &pi, &pj);                    \
+        setPos (pi, pj-height/2);                                       \
+        update();                                                       \
+        QApplication::processEvents();                                  \
     } while (0)
 
 #define UPDATEBEST  do {                                                \
@@ -1002,7 +1005,6 @@ void POI::slot_finePosit(bool silent)
     UPDATEBEST;
 
     do {
-        QApplication::processEvents();
 
         assert ((simplex[0].eta <= simplex[1].eta) && (simplex[1].eta <= simplex[2].eta));
 
@@ -1069,6 +1071,9 @@ void POI::slot_finePosit(bool silent)
                  || (simplex[2].lat - simplex[0].lat <= -step)
                  || (simplex[2].lon - simplex[0].lon >= step)
                  || (simplex[2].lon - simplex[0].lon <= -step)));
+//    tm.setTime_t (simplex[0].eta);
+//    printf ("Final estimated ETA: %s\n", tm.toString("dd MMM-hh:mm").toAscii().constData());
+
 
     if (this->abortSearch && !silent)
     {
