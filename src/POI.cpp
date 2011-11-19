@@ -62,8 +62,8 @@ POI::POI(QString name, int type, double lat, double lon,
     this->type=type;
     this->typeMask=1<<type;
     this->myBoat=myBoat;
-    this->searchRangeLon=3;
-    this->searchRangeLat=3;
+    this->searchRangeLon=1;
+    this->searchRangeLat=1;
     this->searchStep=0.01;
     this->abortSearch=false;
     this->navMode=0;
@@ -917,6 +917,26 @@ void POI::slot_finePosit(bool silent)
     }
     double rangeLon=searchRangeLon;
     double rangeLat=searchRangeLat;
+    if(silent)
+    {
+        int myRank=route->getPoiList().indexOf(this);/* if 0 starts from boat, cannot be last*/
+        double lonPrevious, latPrevious, lonNext, latNext;
+        if(myRank==0)
+        {
+            lonPrevious=route->getBoat()->getLon();
+            latPrevious=route->getBoat()->getLat();
+        }
+        else
+        {
+            lonPrevious=route->getPoiList().at(myRank-1)->getLongitude();
+            latPrevious=route->getPoiList().at(myRank-1)->getLatitude();
+        }
+        lonNext=route->getPoiList().at(myRank+1)->getLongitude();
+        latNext=route->getPoiList().at(myRank+1)->getLatitude();
+        rangeLon=qMin(3.0,qMax(0.5,ceil(qAbs(lonNext-lonPrevious)/2.0)));
+        rangeLat=qMin(3.0,qMax(0.5,ceil(qAbs(latNext-latPrevious)/2.0)));
+    }
+    //qWarning()<<"ranges:"<<rangeLon<<rangeLat;
     double step=searchStep;
     QString r;
     route->setOptimizing(!this->optimizing);
@@ -947,18 +967,22 @@ void POI::slot_finePosit(bool silent)
     simplex[0].lon = lon;
     simplex[0].lat = lat;
     simplex[0].eta = route->getEta() + route->getRemain() * 3600 / route->getLastKnownSpeed();
-//    tm.setTime_t (route->getEta());
-//    printf ("Current ETA: %s, current remaining: %g -> estimated ETA: ",
-//    tm.toString("dd MMM-hh:mm").toAscii().constData(), route->getRemain());
-//    tm.setTime_t (simplex[0].eta);
-//    printf ("%s\n", tm.toString("dd MMM-hh:mm").toAscii().constData());
+
+#if 0
+    tm.setTime_t (route->getEta());
+    printf ("Current ETA: %s, current remaining: %g -> estimated ETA: ",
+            tm.toString("dd MMM-hh:mm").toAscii().constData(), route->getRemain());
+    tm.setTime_t (simplex[0].eta);
+    printf ("%s\n", tm.toString("dd MMM-hh:mm").toAscii().constData());
+#endif
     /* Note that if the route did not reach the target, then getEta
      * returns the last date of the grib. */
 #define TRYPOINT(P) do {                                                \
         setLongitude ((P).lon);                                         \
         setLatitude ((P).lat);                                          \
         route->slot_recalculate();                                      \
-        (P).eta = route->getEta()                                         +           + route->getRemain() * 3600 / route->getLastKnownSpeed();    \
+        (P).eta = route->getEta()                                       \
+           + route->getRemain() * 3600 / route->getLastKnownSpeed();    \
         Util::computePos (proj, lat, lon, &pi, &pj);                    \
         setPos (pi, pj-height/2);                                       \
         update();                                                       \
@@ -1005,6 +1029,7 @@ void POI::slot_finePosit(bool silent)
     UPDATEBEST;
 
     do {
+        //QApplication::processEvents();
 
         assert ((simplex[0].eta <= simplex[1].eta) && (simplex[1].eta <= simplex[2].eta));
 
@@ -1071,10 +1096,10 @@ void POI::slot_finePosit(bool silent)
                  || (simplex[2].lat - simplex[0].lat <= -step)
                  || (simplex[2].lon - simplex[0].lon >= step)
                  || (simplex[2].lon - simplex[0].lon <= -step)));
-//    tm.setTime_t (simplex[0].eta);
-//    printf ("Final estimated ETA: %s\n", tm.toString("dd MMM-hh:mm").toAscii().constData());
-
-
+#if 0
+    tm.setTime_t (simplex[0].eta);
+    printf ("Final estimated ETA: %s\n", tm.toString("dd MMM-hh:mm").toAscii().constData());
+#endif
     if (this->abortSearch && !silent)
     {
         int rep = QMessageBox::question (parent,tr("Abandon du positionnement automatique"), tr("Souhaitez vous conserver la meilleure position deja trouvee?"), QMessageBox::Yes | QMessageBox::No);
