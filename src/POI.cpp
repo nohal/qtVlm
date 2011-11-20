@@ -905,6 +905,7 @@ void POI::slot_finePosit(bool silent)
     this->abortSearch=false;
     double savedLon=lon;
     double savedLat=lat;
+    time_t previousEta=route->getEta();
     if(!silent)
     {
         DialogFinePosit * dia=new DialogFinePosit(this,parent);
@@ -1149,6 +1150,16 @@ void POI::slot_finePosit(bool silent)
     route->setOptimizingPOI(false);
     route->setFastVmgCalc(false);
     route->slot_recalculate();
+    if(route->getEta()>previousEta)
+    {
+        qWarning()<<"wrong optimisation, restoring previous POI position";
+        lon=savedLon;
+        lat=savedLat;
+        Util::computePos(proj,lat, lon, &pi, &pj);
+        setPos(pi, pj-height/2);
+        update();
+        route->slot_recalculate();
+    }
     QApplication::processEvents();
 }
 

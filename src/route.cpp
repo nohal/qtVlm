@@ -91,7 +91,6 @@ ROUTE::ROUTE(QString name, Projection *proj, Grib *grib, QGraphicsScene * myScen
     this->simplify=false;
     this->optimize=false;
     this->lastKnownSpeed=10e-4;
-    qWarning()<<"lastKnownSpeed="<<lastKnownSpeed;
     this->hidden=false;
     this->temp=false;
     if(!parentWindow->get_shRoute_st())

@@ -2242,7 +2242,7 @@ void myCentralWidget::treatRoute(ROUTE* route)
         if(route->getFrozen() || !route->getHas_eta())
             QMessageBox::critical(0,QString(QObject::tr("Simplification/Optimisation de route")),QString(QObject::tr("Cette operation est impossible pour une route figee ou une route sans ETA")));
         else if(route->getUseVbvmgVlm())
-            QMessageBox::critical(0,QString(QObject::tr("Simplification/Optimisation de route")),QString(QObject::tr("Cette operation est impossible si le mode de calcul VBVMG est celui de VLM")));
+             QMessageBox::critical(0,QString(QObject::tr("Simplification/Optimisation de route")),QString(QObject::tr("Cette operation est impossible si le mode de calcul VBVMG est celui de VLM")));
         else
         {
             int poiCt=route->getPoiList().count();
@@ -2291,7 +2291,7 @@ void myCentralWidget::treatRoute(ROUTE* route)
                 {
                     time_t ref_eta3=route->getEta();
                     int nPois=route->getPoiList().count();
-                    for (int poiN=0;poiN<route->getPoiList().count()-2;++poiN)
+                    for (int poiN=0;poiN<route->getPoiList().count()-1;++poiN)
                     {
                         if(!route->getStartFromBoat() && poiN==0) continue;
                         POI * poi=route->getPoiList().at(poiN);
@@ -2305,9 +2305,11 @@ void myCentralWidget::treatRoute(ROUTE* route)
                     if(route->getEta()>ref_eta4)
                         qWarning()<<"wrong simplification!!";
                     if(ref_eta3-route->getEta()==0 && nPois==route->getPoiList().count()) break;
+#if 0
                     qWarning()<<maxLoop<<QDateTime().fromTime_t(ref_eta3).toUTC().toString("dd/MM/yy hh:mm:ss")<<
                                 QDateTime().fromTime_t(route->getEta()).toUTC().toString("dd/MM/yy hh:mm:ss")<<
                                 nPois<<"/"<<route->getPoiList().count();
+#endif
                 }
                 int nbDel=poiCt-route->getPoiList().count();
                 int diff=(ref_eta2-route->getEta())/60;
@@ -2352,6 +2354,7 @@ void myCentralWidget::doSimplifyRoute(ROUTE * route, bool fast)
         p.setAutoClose(false);
         p.setCancelButton(0);
         p.setLabelText(tr("Phase ")+QString().setNum(phase));
+        p.setMinimumDuration (0);
     }
     else
         p.close();

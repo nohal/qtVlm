@@ -2779,7 +2779,7 @@ VMG %.1f nds</translation>
     </message>
     <message>
         <source>Cette operation est impossible si le mode de calcul VBVMG est celui de VLM</source>
-        <translation>Cette opération est impossible pour une route figée ou une route sans ETA</translation>
+        <translation>Cette opération est impossible si le mode de calcul VBVMG est celui de VLM</translation>
     </message>
 </context>
 <context>
