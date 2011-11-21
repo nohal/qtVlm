@@ -18,7 +18,7 @@ vlmPoint::vlmPoint(float lon,float lat)
     this->capOrigin=0;
     this->needRoute=false;
     this->isBroken=false;
-    this->debugBool=false;
+    this->debugInt=0;
     this->internal_1=0;
     this->internal_2=0;
     this->capVmg=0;

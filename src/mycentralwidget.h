@@ -29,17 +29,18 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "DialogUnits.h"
 #include "DialogGraphicsParams.h"
+#include "selectionWidget.h"
 #include <qsound.h>
 #include <qdatetime.h>
 #include <MainWindow.h>
 
 /* Z value according to type */
 #define Z_VALUE_TERRE      0
-#define Z_VALUE_OPP        2
-#define Z_VALUE_ESTIME     3
-#define Z_VALUE_ROUTE      4
-#define Z_VALUE_ROUTAGE    5
-#define Z_VALUE_ISOPOINT   6
+#define Z_VALUE_ROUTAGE    1
+#define Z_VALUE_ISOPOINT   2
+#define Z_VALUE_OPP        3
+#define Z_VALUE_ESTIME     4
+#define Z_VALUE_ROUTE      5
 #define Z_VALUE_POI        7
 #define Z_VALUE_GATE       8
 #define Z_VALUE_NEXT_GATE  9
@@ -124,6 +125,7 @@ class myCentralWidget : public QWidget
 
         void manageAccount(bool * res=NULL);
         void updatePlayer(Player * player);
+        bool getIsSelecting(){return this->selection->isSelecting();}
 
         /* route */
         QList<ROUTE*> & getRouteList(){ return this->route_list;}

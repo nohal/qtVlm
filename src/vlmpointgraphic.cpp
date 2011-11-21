@@ -52,6 +52,8 @@ void vlmPointGraphic::setEta(time_t eta)
 //void  vlmPointGraphic::hoverEnterEvent ( QGraphicsSceneHoverEvent * event )
 void vlmPointGraphic::drawWay()
 {
+    if(!routage->getShowIso())
+        return;
     routage->setPivotPoint(this->isoNb,this->pointIsoNb);
     routage->slot_drawWay();
 }

@@ -23,7 +23,7 @@ class vlmPoint
 	double distOrigin;
         int    internal_1;
         double internal_2;
-        bool   debugBool;
+        int    debugInt;
         double distStart;
         double capStart;
         double distArrival;

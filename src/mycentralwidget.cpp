@@ -196,19 +196,25 @@ void  myScene::keyReleaseEvent (QKeyEvent *e)
 
 void myScene::mouseMoveEvent(QGraphicsSceneMouseEvent* e)
 {
-    QGraphicsScene::mouseMoveEvent(e);
-    if(itemAt(e->scenePos())->data(0)==ISOPOINT)
-    {
-        ((vlmPointGraphic *) itemAt(e->scenePos()))->drawWay();
-        hasWay=true;
-        return;
-    }
-    else if(hasWay)
+    if(hasWay)
     {
         emit eraseWay();
         hasWay=false;
     }
+    if(!parent->getIsSelecting())
+    {
+        if(itemAt(e->scenePos())->data(0)==ISOPOINT)
+        {
+            vlmPointGraphic * vg=((vlmPointGraphic *) itemAt(e->scenePos()));
+            if(vg->getRoutage()->isDone() && vg->getRoutage()->getShowIso())
+            {
+                vg->drawWay();
+                hasWay=true;
+            }
+        }
+    }
     parent->mouseMove(e->scenePos().x(),e->scenePos().y(),itemAt(e->scenePos()));
+    QGraphicsScene::mouseMoveEvent(e);
 }
 
 void myScene::mouseDoubleClickEvent(QGraphicsSceneMouseEvent* e)

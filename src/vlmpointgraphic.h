@@ -18,6 +18,7 @@ public:
     void shown(bool b){if (b) show(); else hide();}
     void setDebug(QString f){this->debug=f;}
     void createPopupMenu();
+    ROUTAGE * getRoutage(){return routage;}
 protected:
     void paint(QPainter * pnt, const QStyleOptionGraphicsItem * , QWidget * );
     QRectF boundingRect() const;
