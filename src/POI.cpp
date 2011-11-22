@@ -886,7 +886,20 @@ void POI::slot_routeMenu(QAction* ptr_action)
 typedef struct {
     double  lon, lat;
     time_t  eta;
+    double  remain;
 } POI_Position;
+
+static inline bool operator< (const POI_Position& a, const POI_Position& b)
+{
+    return ((a.eta < b.eta)
+            || ((a.eta == b.eta) && (a.remain < b.remain)));
+}
+
+static inline bool operator<= (const POI_Position& a, const POI_Position& b)
+{
+    return ((a.eta < b.eta)
+            || ((a.eta == b.eta) && (a.remain <= b.remain)));
+}
 
 void POI::slot_finePosit(bool silent)
 {
@@ -967,29 +980,23 @@ void POI::slot_finePosit(bool silent)
 
     POI_Position    simplex[3];
 
-    simplex[0].lon = lon;
-    simplex[0].lat = lat;
-    simplex[0].eta = route->getEta() + route->getRemain() * 3600 / route->getLastKnownSpeed();
+    simplex[0].lon    = lon;
+    simplex[0].lat    = lat;
+    simplex[0].eta    = route->getEta();
+    simplex[0].remain = route->getRemain();
 
-#if 0
-    tm.setTime_t (route->getEta());
-    printf ("Current ETA: %s, current remaining: %g -> estimated ETA: ",
-            tm.toString("dd MMM-hh:mm").toAscii().constData(), route->getRemain());
-    tm.setTime_t (simplex[0].eta);
-    printf ("%s\n", tm.toString("dd MMM-hh:mm").toAscii().constData());
-#endif
     /* Note that if the route did not reach the target, then getEta
      * returns the last date of the grib. */
-#define TRYPOINT(P) do {                                                \
-        setLongitude ((P).lon);                                         \
-        setLatitude ((P).lat);                                          \
-        route->slot_recalculate();                                      \
-        (P).eta = route->getEta()                                       \
-           + route->getRemain() * 3600 / route->getLastKnownSpeed();    \
-        Util::computePos (proj, lat, lon, &pi, &pj);                    \
-        setPos (pi, pj-height/2);                                       \
-        update();                                                       \
-        QApplication::processEvents();                                  \
+#define TRYPOINT(P) do {                                \
+        setLongitude ((P).lon);                         \
+        setLatitude ((P).lat);                          \
+        route->slot_recalculate();                      \
+        (P).eta    = route->getEta();                   \
+        (P).remain = route->getRemain();                \
+        Util::computePos (proj, lat, lon, &pi, &pj);    \
+        setPos (pi, pj-height/2);                       \
+        update();                                       \
+        QApplication::processEvents();                  \
     } while (0)
 
 #define UPDATEBEST  do {                                                \
@@ -998,7 +1005,10 @@ void POI::slot_finePosit(bool silent)
             delete best;                                                \
         }                                                               \
         tm.setTime_t (simplex[0].eta);                                  \
-        best = new POI (tr ("Meilleure ETA: ") + tm.toString ("dd MMM-hh:mm"), 0, \
+        best = new POI (tr ("Meilleure ETA: ")                          \
+                        + tm.toString ("dd MMM-hh:mm")                  \
+                        + QString (" (+%1 milles)").arg (simplex[0].remain, 0, 'g', 2), \
+                        0,                                              \
                         simplex[0].lat, simplex[0].lon,                 \
                         this->proj, this->owner, this->parent, 0, 0, false, route->getBoat()); \
         parent->slot_addPOI_list (best);                                \
@@ -1010,7 +1020,7 @@ void POI::slot_finePosit(bool silent)
             int             j;                  \
                                                 \
             for (j = i; j > 0; --j)             \
-                if (simplex[j-1].eta > tmp.eta) \
+                if (tmp < simplex[j-1])         \
                     simplex[j]  = simplex[j-1]; \
                 else                            \
                     break;                      \
@@ -1034,21 +1044,21 @@ void POI::slot_finePosit(bool silent)
     do {
         //QApplication::processEvents();
 
-        assert ((simplex[0].eta <= simplex[1].eta) && (simplex[1].eta <= simplex[2].eta));
+        assert ((simplex[0] <= simplex[1]) && (simplex[1] <= simplex[2]));
 
         /* 1st step: reflection */
         POI_Position    reflect;
         reflect.lon = simplex[0].lon + simplex[1].lon - simplex[2].lon;
         reflect.lat = simplex[0].lat + simplex[1].lat - simplex[2].lat;
         TRYPOINT (reflect);
-        if ((simplex[0].eta <= reflect.eta) && (reflect.eta < simplex[1].eta)) {
+        if ((simplex[0] <= reflect) && (reflect < simplex[1])) {
             simplex[2] = simplex[1];
             simplex[1] = reflect;
             continue;
         }
 
         /* 2nd step: expansion */
-        if (reflect.eta < simplex[0].eta) {
+        if (reflect < simplex[0]) {
             POI_Position    expand;
             expand.lon = 3*(simplex[0].lon + simplex[1].lon)/2 - 2*simplex[2].lon;
             expand.lat = 3*(simplex[0].lat + simplex[1].lat)/2 - 2*simplex[2].lat;
@@ -1056,7 +1066,7 @@ void POI::slot_finePosit(bool silent)
 
             simplex[2] = simplex[1];
             simplex[1] = simplex[0];
-            simplex[0] = (expand.eta < reflect.eta) ? expand : reflect;
+            simplex[0] = (expand < reflect) ? expand : reflect;
 
             UPDATEBEST;
             continue;
@@ -1068,13 +1078,13 @@ void POI::slot_finePosit(bool silent)
         contract.lat = (simplex[0].lat + simplex[1].lat)/4 + simplex[2].lat/2;
         TRYPOINT (contract);
 
-        if (contract.eta < simplex[2].eta) {
-            if (contract.eta < simplex[0].eta) {
+        if (contract < simplex[2]) {
+            if (contract < simplex[0]) {
                 simplex[2] = simplex[1];
                 simplex[1] = simplex[0];
                 simplex[0] = contract;
                 UPDATEBEST;
-            } else if (contract.eta < simplex[1].eta) {
+            } else if (contract < simplex[1]) {
                 simplex[2] = simplex[1];
                 simplex[1] = contract;
             } else
@@ -1099,10 +1109,7 @@ void POI::slot_finePosit(bool silent)
                  || (simplex[2].lat - simplex[0].lat <= -step)
                  || (simplex[2].lon - simplex[0].lon >= step)
                  || (simplex[2].lon - simplex[0].lon <= -step)));
-#if 0
-    tm.setTime_t (simplex[0].eta);
-    printf ("Final estimated ETA: %s\n", tm.toString("dd MMM-hh:mm").toAscii().constData());
-#endif
+
     if (this->abortSearch && !silent)
     {
         int rep = QMessageBox::question (parent,tr("Abandon du positionnement automatique"), tr("Souhaitez vous conserver la meilleure position deja trouvee?"), QMessageBox::Yes | QMessageBox::No);
