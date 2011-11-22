@@ -3097,6 +3097,10 @@ Virements de bord</source>
         <source>Ne pas router en dehors de l&apos;ecran</source>
         <translation>Ne pas router en dehors de l&apos;écran</translation>
     </message>
+    <message>
+        <source>Cette valeur est egalement utilisee en approche de l&apos;arrivee</source>
+        <translation>Cette valeur est également utilisée en approche de l&apos;arrivée</translation>
+    </message>
 </context>
 <context>
     <name>ROUTE</name>

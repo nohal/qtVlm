@@ -4127,52 +4127,52 @@ VMG %.1 kts</translation>
         <translation>Starting date is not compatible with grib dates</translation>
     </message>
     <message>
-        <location filename="../src/routage.cpp" line="1888"/>
+        <location filename="../src/routage.cpp" line="1891"/>
         <source>Date et heure d&apos;arrivee: </source>
         <translation>Date and time of arrival: </translation>
     </message>
     <message>
-        <location filename="../src/routage.cpp" line="1889"/>
+        <location filename="../src/routage.cpp" line="1892"/>
         <source>&lt;br&gt;Arrivee en: </source>
         <translation>&lt;br&gt;Arrival within: </translation>
     </message>
     <message>
-        <location filename="../src/routage.cpp" line="1889"/>
+        <location filename="../src/routage.cpp" line="1892"/>
         <source> jours </source>
         <translation>days</translation>
     </message>
     <message>
-        <location filename="../src/routage.cpp" line="1890"/>
+        <location filename="../src/routage.cpp" line="1893"/>
         <source>&lt;br&gt;&lt;br&gt;Temps de calcul: </source>
         <translation>&lt;br&gt;&lt;br&gt;Calculation time: </translation>
     </message>
     <message>
-        <location filename="../src/routage.cpp" line="1895"/>
+        <location filename="../src/routage.cpp" line="1898"/>
         <source>Routage arrete par l&apos;utilisateur</source>
         <translation>Routing stopped by user</translation>
     </message>
     <message>
-        <location filename="../src/routage.cpp" line="1897"/>
+        <location filename="../src/routage.cpp" line="1900"/>
         <source>Impossible de rejoindre l&apos;arrivee, desole</source>
         <translation>Sorry, impossible to reach WP&lt;br&gt;Try with another grib</translation>
     </message>
     <message>
-        <location filename="../src/routage.cpp" line="1925"/>
+        <location filename="../src/routage.cpp" line="1928"/>
         <source>Convertir en route</source>
         <translation>Convert to route</translation>
     </message>
     <message>
-        <location filename="../src/routage.cpp" line="1926"/>
+        <location filename="../src/routage.cpp" line="1929"/>
         <source>Ce routage a ete calcule avec une hypothese modifiant les donnees du grib&lt;br&gt;La route ne prendra pas ce scenario en compte&lt;br&gt;Etes vous sur de vouloir le convertir en route?</source>
         <translation>This routing has been calculated with an assumption modifying grib data&lt;br&gt;The route will not take this scenario into account&lt;br&gt;Are you sure you want to convert to route?</translation>
     </message>
     <message>
-        <location filename="../src/routage.cpp" line="2321"/>
+        <location filename="../src/routage.cpp" line="2324"/>
         <source>Convertion d&apos;un routage en route</source>
         <translation>Converting Routage to Route</translation>
     </message>
     <message>
-        <location filename="../src/routage.cpp" line="2322"/>
+        <location filename="../src/routage.cpp" line="2325"/>
         <source>Voulez-vous que la route parte du bateau a la prochaine vacation?</source>
         <translation>Do you want the new route to start from boat?</translation>
     </message>
@@ -4181,7 +4181,7 @@ VMG %.1 kts</translation>
         <translation type="obsolete">Delete routing: %1?</translation>
     </message>
     <message>
-        <location filename="../src/routage.cpp" line="2912"/>
+        <location filename="../src/routage.cpp" line="2915"/>
         <source>Creer un pivot en changeant les options</source>
         <translation>Create a pivot changing the routing options</translation>
     </message>
@@ -4198,17 +4198,17 @@ VMG %.1 kts</translation>
         <translation type="obsolete">Routing:</translation>
     </message>
     <message>
-        <location filename="../src/routage.cpp" line="2339"/>
+        <location filename="../src/routage.cpp" line="2342"/>
         <source>Conversion d&apos;un routage en route</source>
         <translation>Converting Routage to Route</translation>
     </message>
     <message>
-        <location filename="../src/routage.cpp" line="2340"/>
+        <location filename="../src/routage.cpp" line="2343"/>
         <source>Un des routages en amont a ete supprime,&lt;br&gt;la conversion est impossible</source>
         <translation>One of the parents routing has been deleted,&lt;br&gt;converion is not possible</translation>
     </message>
     <message>
-        <location filename="../src/routage.cpp" line="2910"/>
+        <location filename="../src/routage.cpp" line="2913"/>
         <source>Creer un pivot</source>
         <translation>Create a pivot point</translation>
     </message>
@@ -4216,12 +4216,12 @@ VMG %.1 kts</translation>
 <context>
     <name>ROUTAGE_Editor_ui</name>
     <message>
-        <location filename="../src/Ui/Routage_Editor.ui" line="1178"/>
+        <location filename="../src/Ui/Routage_Editor.ui" line="1181"/>
         <source>Valider</source>
         <translation>OK</translation>
     </message>
     <message>
-        <location filename="../src/Ui/Routage_Editor.ui" line="1191"/>
+        <location filename="../src/Ui/Routage_Editor.ui" line="1194"/>
         <source>Annuler</source>
         <translation>Cancel</translation>
     </message>
@@ -4247,8 +4247,8 @@ VMG %.1 kts</translation>
     </message>
     <message>
         <location filename="../src/Ui/Routage_Editor.ui" line="134"/>
-        <location filename="../src/Ui/Routage_Editor.ui" line="548"/>
-        <location filename="../src/Ui/Routage_Editor.ui" line="763"/>
+        <location filename="../src/Ui/Routage_Editor.ui" line="551"/>
+        <location filename="../src/Ui/Routage_Editor.ui" line="766"/>
         <source>M/d/yyyy hh:mm:ss</source>
         <translation>MM/dd/yyyy hh:mm:ss</translation>
     </message>
@@ -4277,32 +4277,37 @@ VMG %.1 kts</translation>
         <translation></translation>
     </message>
     <message>
-        <location filename="../src/Ui/Routage_Editor.ui" line="507"/>
+        <location filename="../src/Ui/Routage_Editor.ui" line="476"/>
+        <source>Cette valeur est egalement utilisee en approche de l&apos;arrivee</source>
+        <translation>This value is also used when approaching arrival</translation>
+    </message>
+    <message>
+        <location filename="../src/Ui/Routage_Editor.ui" line="510"/>
         <source>Ne pas router en dehors de l&apos;ecran</source>
         <translation>Do not route outside screen</translation>
     </message>
     <message>
-        <location filename="../src/Ui/Routage_Editor.ui" line="990"/>
+        <location filename="../src/Ui/Routage_Editor.ui" line="993"/>
         <source>Vent minimum/maximum</source>
         <translation>Minimum/Maximum wind speed</translation>
     </message>
     <message>
-        <location filename="../src/Ui/Routage_Editor.ui" line="1030"/>
+        <location filename="../src/Ui/Routage_Editor.ui" line="1033"/>
         <source>Pres</source>
         <translation>Beating</translation>
     </message>
     <message>
-        <location filename="../src/Ui/Routage_Editor.ui" line="1043"/>
+        <location filename="../src/Ui/Routage_Editor.ui" line="1046"/>
         <source>Portant</source>
         <translation>Reaching</translation>
     </message>
     <message>
-        <location filename="../src/Ui/Routage_Editor.ui" line="1140"/>
+        <location filename="../src/Ui/Routage_Editor.ui" line="1143"/>
         <source>Min</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../src/Ui/Routage_Editor.ui" line="1156"/>
+        <location filename="../src/Ui/Routage_Editor.ui" line="1159"/>
         <source>Max</source>
         <translation></translation>
     </message>
@@ -4317,13 +4322,13 @@ VMG %.1 kts</translation>
         <translation type="obsolete"> </translation>
     </message>
     <message>
-        <location filename="../src/Ui/Routage_Editor.ui" line="882"/>
-        <location filename="../src/Ui/Routage_Editor.ui" line="963"/>
+        <location filename="../src/Ui/Routage_Editor.ui" line="885"/>
+        <location filename="../src/Ui/Routage_Editor.ui" line="966"/>
         <source>Forcer le vent</source>
         <translation>Force wind</translation>
     </message>
     <message>
-        <location filename="../src/Ui/Routage_Editor.ui" line="950"/>
+        <location filename="../src/Ui/Routage_Editor.ui" line="953"/>
         <source>TWS</source>
         <translation>TWS</translation>
     </message>
@@ -4334,7 +4339,7 @@ VMG %.1 kts</translation>
     </message>
     <message>
         <location filename="../src/Ui/Routage_Editor.ui" line="208"/>
-        <location filename="../src/Ui/Routage_Editor.ui" line="479"/>
+        <location filename="../src/Ui/Routage_Editor.ui" line="482"/>
         <source> min</source>
         <extracomment>min
 ----------
@@ -4344,7 +4349,7 @@ min</extracomment>
     <message>
         <location filename="../src/Ui/Routage_Editor.ui" line="239"/>
         <location filename="../src/Ui/Routage_Editor.ui" line="270"/>
-        <location filename="../src/Ui/Routage_Editor.ui" line="900"/>
+        <location filename="../src/Ui/Routage_Editor.ui" line="903"/>
         <source> deg</source>
         <extracomment>deg
 ----------
@@ -4365,11 +4370,11 @@ Virements de bord</source>
         <translation>Tacks and Gybes</translation>
     </message>
     <message>
-        <location filename="../src/Ui/Routage_Editor.ui" line="928"/>
-        <location filename="../src/Ui/Routage_Editor.ui" line="1008"/>
-        <location filename="../src/Ui/Routage_Editor.ui" line="1062"/>
-        <location filename="../src/Ui/Routage_Editor.ui" line="1090"/>
-        <location filename="../src/Ui/Routage_Editor.ui" line="1118"/>
+        <location filename="../src/Ui/Routage_Editor.ui" line="931"/>
+        <location filename="../src/Ui/Routage_Editor.ui" line="1011"/>
+        <location filename="../src/Ui/Routage_Editor.ui" line="1065"/>
+        <location filename="../src/Ui/Routage_Editor.ui" line="1093"/>
+        <location filename="../src/Ui/Routage_Editor.ui" line="1121"/>
         <source> nds</source>
         <extracomment>nds
 ----------
@@ -4383,7 +4388,7 @@ nds</extracomment>
         <translation>kts</translation>
     </message>
     <message>
-        <location filename="../src/Ui/Routage_Editor.ui" line="976"/>
+        <location filename="../src/Ui/Routage_Editor.ui" line="979"/>
         <source>TWD</source>
         <translation>TWD</translation>
     </message>
@@ -4436,38 +4441,38 @@ nds</extracomment>
         <translation type="obsolete">Tacks/Gybes</translation>
     </message>
     <message>
-        <location filename="../src/Ui/Routage_Editor.ui" line="527"/>
+        <location filename="../src/Ui/Routage_Editor.ui" line="530"/>
         <source>Date et heure d&apos;arrivee du routage</source>
         <translation>Date and time of routing arrival</translation>
     </message>
     <message>
-        <location filename="../src/Ui/Routage_Editor.ui" line="568"/>
+        <location filename="../src/Ui/Routage_Editor.ui" line="571"/>
         <source>Name</source>
         <translation>Name</translation>
     </message>
     <message>
-        <location filename="../src/Ui/Routage_Editor.ui" line="601"/>
+        <location filename="../src/Ui/Routage_Editor.ui" line="604"/>
         <source>Taille et couleur du resultat du routage</source>
         <translation>Size and color of routing result</translation>
     </message>
     <message>
-        <location filename="../src/Ui/Routage_Editor.ui" line="618"/>
+        <location filename="../src/Ui/Routage_Editor.ui" line="621"/>
         <source>Parametres avances</source>
         <translation>Advanced settings</translation>
     </message>
     <message>
-        <location filename="../src/Ui/Routage_Editor.ui" line="630"/>
+        <location filename="../src/Ui/Routage_Editor.ui" line="633"/>
         <source>Modification des previsions (what if...)</source>
         <translation>Forecast modification (what if...)</translation>
     </message>
     <message>
-        <location filename="../src/Ui/Routage_Editor.ui" line="642"/>
+        <location filename="../src/Ui/Routage_Editor.ui" line="645"/>
         <source>A partir de cette date</source>
         <translation>From this date</translation>
     </message>
     <message>
         <location filename="../src/Ui/Routage_Editor.ui" line="418"/>
-        <location filename="../src/Ui/Routage_Editor.ui" line="661"/>
+        <location filename="../src/Ui/Routage_Editor.ui" line="664"/>
         <source>%</source>
         <translation>%</translation>
     </message>
@@ -4477,22 +4482,22 @@ nds</extracomment>
         <translation></translation>
     </message>
     <message>
-        <location filename="../src/Ui/Routage_Editor.ui" line="683"/>
+        <location filename="../src/Ui/Routage_Editor.ui" line="686"/>
         <source>La force du vent est a</source>
         <translation>Wind strength is</translation>
     </message>
     <message>
-        <location filename="../src/Ui/Routage_Editor.ui" line="696"/>
+        <location filename="../src/Ui/Routage_Editor.ui" line="699"/>
         <source>du grib</source>
         <translation>from Grib</translation>
     </message>
     <message>
-        <location filename="../src/Ui/Routage_Editor.ui" line="709"/>
+        <location filename="../src/Ui/Routage_Editor.ui" line="712"/>
         <source>Les previsions du grib sont decalees de</source>
         <translation>Offset grib forecast</translation>
     </message>
     <message>
-        <location filename="../src/Ui/Routage_Editor.ui" line="728"/>
+        <location filename="../src/Ui/Routage_Editor.ui" line="731"/>
         <source> heures</source>
         <translation> hours</translation>
     </message>
@@ -4501,27 +4506,27 @@ nds</extracomment>
         <translation type="obsolete">hours</translation>
     </message>
     <message>
-        <location filename="../src/Ui/Routage_Editor.ui" line="747"/>
+        <location filename="../src/Ui/Routage_Editor.ui" line="750"/>
         <source>Utiliser ce scenario</source>
         <translation>Use this scenario</translation>
     </message>
     <message>
-        <location filename="../src/Ui/Routage_Editor.ui" line="780"/>
+        <location filename="../src/Ui/Routage_Editor.ui" line="783"/>
         <source>Options supplementaires</source>
         <translation>More options</translation>
     </message>
     <message>
-        <location filename="../src/Ui/Routage_Editor.ui" line="792"/>
+        <location filename="../src/Ui/Routage_Editor.ui" line="795"/>
         <source>Prune Wake Angle</source>
         <translation>Prune Wake Angle</translation>
     </message>
     <message>
-        <location filename="../src/Ui/Routage_Editor.ui" line="824"/>
+        <location filename="../src/Ui/Routage_Editor.ui" line="827"/>
         <source>Coeff Exploration</source>
         <translation>Exploration coeff</translation>
     </message>
     <message>
-        <location filename="../src/Ui/Routage_Editor.ui" line="868"/>
+        <location filename="../src/Ui/Routage_Editor.ui" line="871"/>
         <source>Utiliser une convergence logarithmique vers l&apos;arrivee</source>
         <translation>Use a logarithmic convergence towards the finish</translation>
     </message>
