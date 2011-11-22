@@ -2239,6 +2239,7 @@ void myCentralWidget::treatRoute(ROUTE* route)
     QApplication::processEvents();
     if((route->getSimplify() || route->getOptimize()) && !route->isBusy())
     {
+        this->abortRequest=false;
         bool simplify=route->getSimplify();
         bool optimize=route->getOptimize();
         bool detectCoast=route->getDetectCoasts();
@@ -2290,27 +2291,36 @@ void myCentralWidget::treatRoute(ROUTE* route)
                 poiCt=route->getPoiList().count();
                 QMessageBox * waitBox = new QMessageBox(QMessageBox::Information,tr("Optimisation en cours"),
                                           tr("Veuillez patienter..."));
-                waitBox->setStandardButtons(QMessageBox::NoButton);
+                waitBox->setStandardButtons(QMessageBox::Abort);
+                connect(waitBox->button(QMessageBox::Abort),SIGNAL(clicked()),this,SLOT(slot_abortRequest()));
+                this->abortRequest=false;
+                connect(waitBox,SIGNAL(rejected()),this,SLOT(slot_abortRequest()));
                 waitBox->show();
-                waitBox->setFixedWidth(300);
+                //bad trick because setFixWidth() is not working
+                QSpacerItem* dummy = new QSpacerItem(300,0,QSizePolicy::Minimum, QSizePolicy::Expanding);
+                QGridLayout * lay= (QGridLayout*)waitBox->layout();
+                lay->addItem(dummy,lay->rowCount(),0,1,lay->columnCount());
                 for (int maxLoop=0;maxLoop<10;++maxLoop)
                 {
+                    if(abortRequest) break;
                     time_t ref_eta3=route->getEta();
                     int nPois=route->getPoiList().count();
                     for (int poiN=0;poiN<route->getPoiList().count()-1;++poiN)
                     {
+                        if(abortRequest) break;
                         if(!route->getStartFromBoat() && poiN==0) continue;
                         POI * poi=route->getPoiList().at(poiN);
                         if(poi->getNotSimplificable()) continue;
                         poi->slot_finePosit(true);
                     }
+                    if(abortRequest) break;
                     if(route->getEta()>ref_eta3)
                         qWarning()<<"wrong optimization!!";
                     time_t ref_eta4=route->getEta();
                     doSimplifyRoute(route,true);
                     if(route->getEta()>ref_eta4)
                         qWarning()<<"wrong simplification!!";
-                    if(ref_eta3-route->getEta()==0 && nPois==route->getPoiList().count()) break;
+                    if(ref_eta3==route->getEta() && nPois==route->getPoiList().count()) break;
 #if 0
                     qWarning()<<maxLoop<<QDateTime().fromTime_t(ref_eta3).toUTC().toString("dd/MM/yy hh:mm:ss")<<
                                 QDateTime().fromTime_t(route->getEta()).toUTC().toString("dd/MM/yy hh:mm:ss")<<
@@ -2341,6 +2351,12 @@ void myCentralWidget::treatRoute(ROUTE* route)
         }
     }
 }
+void myCentralWidget::slot_abortRequest()
+{
+    this->abortRequest=true;
+    qWarning()<<"abort request received";
+}
+
 void myCentralWidget::doSimplifyRoute(ROUTE * route, bool fast)
 {
     route->setSimplify(true);
@@ -2356,18 +2372,20 @@ void myCentralWidget::doSimplifyRoute(ROUTE * route, bool fast)
     if(!fast)
     {
         p.setWindowTitle(tr("Simplification en cours"));
-        p.setFixedWidth(300);
         p.setAutoClose(false);
-        p.setCancelButton(0);
+        this->abortRequest=false;
+        p.setCancelButtonText(tr("Abandonner"));
+        connect(&p,SIGNAL(canceled()),this,SLOT(slot_abortRequest()));
         p.setLabelText(tr("Phase ")+QString().setNum(phase));
         p.setMinimumDuration (0);
+        p.setFixedWidth(300);
     }
     else
         p.close();
     bool notFinished=true;
     time_t bestEta=ref_eta;
 
-    while(notFinished)
+    while(notFinished && !abortRequest)
     {
         notFinished=false;
         pois=route->getPoiList();
@@ -2378,6 +2396,7 @@ void myCentralWidget::doSimplifyRoute(ROUTE * route, bool fast)
         }
         for (int n=firstPOI;n<pois.count()-2;++n)
         {
+            if(abortRequest) break;
             POI *poi=pois.at(n);
             if(poi->getNotSimplificable()) continue;
             poi->setRoute(NULL);
@@ -2398,6 +2417,7 @@ void myCentralWidget::doSimplifyRoute(ROUTE * route, bool fast)
                 p.setValue(n);
             QApplication::processEvents();
         }
+        if(abortRequest) break;
         pois=route->getPoiList();
         ++phase;
         if(!fast)
@@ -2410,6 +2430,7 @@ void myCentralWidget::doSimplifyRoute(ROUTE * route, bool fast)
         else if(!notFinished) break;
         for (int n=pois.count()-2;n>=firstPOI;--n)
         {
+            if(abortRequest) break;
             POI *poi=pois.at(n);
             if(poi->getNotSimplificable()) continue;
             poi->setRoute(NULL);
@@ -2437,6 +2458,7 @@ void myCentralWidget::doSimplifyRoute(ROUTE * route, bool fast)
             else
                 break;
         }
+        if(abortRequest) break;
         pois=route->getPoiList();
         ++phase;
         p.setLabelText(tr("Phase ")+QString().setNum(phase));
@@ -2445,6 +2467,7 @@ void myCentralWidget::doSimplifyRoute(ROUTE * route, bool fast)
 
         for (int n=firstPOI;n<pois.count()-3;++n)
         {
+            if(abortRequest) break;
             POI *poi1=pois.at(n);
             if(poi1->getNotSimplificable()) continue;
             POI *poi2=pois.at(n+1);
@@ -2486,7 +2509,7 @@ void myCentralWidget::doSimplifyRoute(ROUTE * route, bool fast)
             p.setValue(n);
             QApplication::processEvents();
         }
-
+        if(abortRequest) break;
         ++phase;
         p.setLabelText(tr("Phase ")+QString().setNum(phase));
         pois=route->getPoiList();
@@ -2495,6 +2518,7 @@ void myCentralWidget::doSimplifyRoute(ROUTE * route, bool fast)
 
         for (int n=firstPOI;n<pois.count()-4;++n)
         {
+            if(abortRequest) break;
             POI *poi1=pois.at(n);
             if(poi1->getNotSimplificable()) continue;
             POI *poi2=pois.at(n+1);

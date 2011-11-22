@@ -193,6 +193,7 @@ class myCentralWidget : public QWidget
         void slot_Go_Down();
         void slot_Zoom_Sel();
         void slot_keepPos(bool b){this->keepPos=b;}
+        void slot_abortRequest();
 
         /* POI */
         POI * slot_addPOI(QString name,int type,float lat,float lon, float wph,int timestamp,bool useTimeStamp, boat *boat);
@@ -395,6 +396,7 @@ class myCentralWidget : public QWidget
         int replayStep;
         QTimer *replayTimer;
         void doSimplifyRoute(ROUTE * route, bool fast=false);
+        bool abortRequest;
 };
 
 #endif // MYCENTRALWIDGET_H

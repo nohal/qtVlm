@@ -5233,6 +5233,10 @@ Voulez-vous egalement supprimer tous les POIs lui appartenant?</source>
         <source>Veuillez patienter...</source>
         <translation></translation>
     </message>
+    <message>
+        <source>Abandonner</source>
+        <translation></translation>
+    </message>
 </context>
 <context>
     <name>myScene</name>

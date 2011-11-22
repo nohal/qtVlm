@@ -284,21 +284,21 @@ void vlmLine::calculatePoly(void)
 }
 void vlmLine::hoverEnterEvent(QGraphicsSceneHoverEvent *)
 {
-    qWarning()<<"entering hoverEnter event";
+    //qWarning()<<"entering hoverEnter event";
     emit hovered();
     this->setZValue(myZvalue+30);
     this->linePen.setWidthF(this->lineWidth*2.0);
     update();
-    qWarning()<<"end of hoverEnter event";
+    //qWarning()<<"end of hoverEnter event";
 }
 void vlmLine::hoverLeaveEvent(QGraphicsSceneHoverEvent *)
 {
-    qWarning()<<"entering hoverLeave event";
+    //qWarning()<<"entering hoverLeave event";
     emit unHovered();
     this->setZValue(this->myZvalue);
     this->linePen.setWidthF(this->lineWidth);
     update();
-    qWarning()<<"end of hoverLeave event";
+    //qWarning()<<"end of hoverLeave event";
 }
 void vlmLine::deleteAll()
 {
