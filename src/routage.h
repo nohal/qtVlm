@@ -293,5 +293,6 @@ class ROUTAGE : public QObject
         double minPres,minPortant;
         bool visibleOnly;
         QTimer * timerTempo;
+        bool approaching;
     };
 #endif // ROUTAGE_H

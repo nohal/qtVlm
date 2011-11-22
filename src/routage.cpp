@@ -953,6 +953,7 @@ void ROUTAGE::slot_calculate()
     point.distOrigin=0;
     initialDist=tempLine.length();
 #endif
+    approaching=false;
     point.origin=NULL;
     point.routage=this;
     point.capOrigin=A360(loxoCap);
@@ -1015,6 +1016,8 @@ void ROUTAGE::slot_calculate()
             {
                 minDist=list->at(n).distArrival;
                 distStart=list->at(n).distStart;
+                if(distStart>0 && ((eta-this->startTime.toTime_t())*minDist)/distStart < 12*3600)
+                    approaching=true;
             }
             double windSpeed,windAngle;
             if(!windIsForced)
@@ -2935,7 +2938,7 @@ double ROUTAGE::cLFA(double lon)
 }
 double ROUTAGE::getTimeStep()
 {
-    if(this->eta-this->startTime.toTime_t()<=24*60*60)
+    if(approaching || this->eta-this->startTime.toTime_t()<=24*60*60)
         return this->timeStepLess24;
     else
         return this->timeStepMore24;

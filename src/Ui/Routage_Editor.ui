@@ -472,6 +472,9 @@ Virements de bord</string>
          <height>22</height>
         </rect>
        </property>
+       <property name="toolTip">
+        <string>Cette valeur est egalement utilisee en approche de l'arrivee</string>
+       </property>
        <property name="alignment">
         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
        </property>
@@ -485,7 +488,7 @@ Virements de bord</string>
         <number>10</number>
        </property>
        <property name="maximum">
-        <number>600</number>
+        <number>60</number>
        </property>
        <property name="singleStep">
         <number>5</number>
