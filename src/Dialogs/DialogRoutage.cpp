@@ -96,6 +96,8 @@ DialogRoutage::DialogRoutage(ROUTAGE *routage,myCentralWidget *parent)
     this->maxPres->setValue(routage->getMaxPres());
     this->minPortant->setValue(routage->getMinPortant());
     this->minPres->setValue(routage->getMinPres());
+    if(!routage->isDone())
+        this->convRoute->setChecked(Settings::getSetting("autoConvertToRoute","0").toInt()==1);
     if(routage->getFinalEta().isNull())
         this->groupBox_eta->setHidden(true);
     else
@@ -186,6 +188,7 @@ DialogRoutage::DialogRoutage(ROUTAGE *routage,myCentralWidget *parent)
         this->checkCoast->setDisabled(true);
         if(routage->isConverted())
             this->convRoute->setDisabled(true);
+
         this->startFromBoat->setDisabled(true);
         this->whatIfUse->setDisabled(true);
         this->whatIfDate->setDisabled(true);
@@ -348,6 +351,8 @@ void DialogRoutage::done(int result)
         routage->setExplo(this->explo->value());
         routage->setShowIso(this->showIso->isChecked());
         routage->setUseRouteModule(this->useVac->isChecked());
+        if(!routage->isDone())
+            Settings::setSetting("autoConvertToRoute",convRoute->isChecked()?1:0);
         if(this->convRoute->isChecked())
         {
             if(!routage->isConverted())

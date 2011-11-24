@@ -668,6 +668,7 @@ ROUTAGE::ROUTAGE(QString name, Projection *proj, Grib *grib, QGraphicsScene * my
     this->name=name;
     this->myscene=myScene;
     this->isPivot=false;
+    fromRoutage=NULL;
     this->isNewPivot=false;
     if(QThread::idealThreadCount()<=1)
         this->useMultiThreading=false;
@@ -1676,6 +1677,12 @@ void ROUTAGE::slot_calculate()
         msecs_11+=time.elapsed();
         nbIso++;
         eta=eta+(int)this->getTimeStep()*60.00;
+#if 0
+        if(this->getTimeStep()==this->timeStepLess24)
+            qWarning()<<"using less than 24 hours iso step";
+        else
+            qWarning()<<"using more than 24 hours iso step";
+#endif
         vlmPoint to(arrival.x(),arrival.y());
         time.restart();
         datathread dataThread;
@@ -2150,11 +2157,6 @@ void ROUTAGE::setShowIso(bool b)
         result->show();
         result->slot_showMe();
     }
-    else if(result && !b)
-    {
-        result->hide();
-    }
-    this->blockSignals(!b);
 }
 void ROUTAGE::drawResult(vlmPoint P)
 {
@@ -2175,6 +2177,7 @@ void ROUTAGE::drawResult(vlmPoint P)
         if (P.isStart) break;
         P= (*P.origin);
     }
+    result->setNotSimplificable(result->count()-1);
     for(int n=1;n<initialRoad.count();n++)
         result->addVlmPoint(initialRoad.at(n));
     pen.setWidthF(width);
@@ -2216,6 +2219,7 @@ void ROUTAGE::slot_drawWay()
     while (ncolor>=colorsList.count())
         ncolor=ncolor-colorsList.count();
     vlmPoint P=pivotPoint;
+    P.notSimplificable=true;
     way->deleteAll();
     while (true)
     {
@@ -2236,7 +2240,7 @@ void ROUTAGE::slot_drawWay()
 }
 void ROUTAGE::eraseWay()
 {
-    way->deleteAll();
+    //way->deleteAll();
     way->hide();
 }
 
@@ -2320,17 +2324,6 @@ bool ROUTAGE::findPoint(double lon, double lat, double windAngle, double windSpe
 void ROUTAGE::convertToRoute()
 {
     bool routeStartBoat=false;
-    if(this->getRouteFromBoat())
-        routeStartBoat=QMessageBox::question(0,tr("Convertion d'un routage en route"),
-                                              tr("Voulez-vous que la route parte du bateau a la prochaine vacation?"),
-                                              QMessageBox::Yes|QMessageBox::No)==QMessageBox::Yes;
-    this->converted=true;
-    ROUTE * route=parent->addRoute();
-    route->setName(name);
-    route->setUseVbVmgVlm(false);
-    parent->update_menuRoute();
-    route->setBoat(this->myBoat);
-    route->setDetectCoasts(this->checkCoast);
     ROUTAGE * parentRoutage=this;
     while(parentRoutage->getIsPivot())
     {
@@ -2347,6 +2340,17 @@ void ROUTAGE::convertToRoute()
         else
             break;
     }
+    if(parentRoutage->getRouteFromBoat())
+        routeStartBoat=QMessageBox::question(0,tr("Convertion d'un routage en route"),
+                                              tr("Voulez-vous que la route parte du bateau a la prochaine vacation?"),
+                                              QMessageBox::Yes|QMessageBox::No)==QMessageBox::Yes;
+    this->converted=true;
+    ROUTE * route=parent->addRoute();
+    route->setName(name);
+    route->setUseVbVmgVlm(false);
+    parent->update_menuRoute();
+    route->setBoat(this->myBoat);
+    route->setDetectCoasts(this->checkCoast);
     route->setStartTime(parentRoutage->getStartTime());
     if(routeStartBoat)
     {
@@ -2363,11 +2367,11 @@ void ROUTAGE::convertToRoute()
     //route->setWidth(this->width);
     route->setFrozen(true);
     QList<vlmPoint> * list=result->getPoints();
-    for (int n=0;n<list->count();n++)
+    for (int n=0;n<list->count();++n)
     {
-       if(n!=0)
+       if(n!=list->count()-1)
        {
-           if(list->at(n-1)==list->at(n)) continue;
+           if(list->at(n)==list->at(n+1)) continue;
        }
        QString poiName;
        poiName.sprintf("%.5i",list->count()-n);
@@ -2872,15 +2876,17 @@ void ROUTAGE::setFromRoutage(ROUTAGE *fromRoutage, bool editOptions)
     while(true)
     {
         QList<vlmPoint> parentWay=*parentRoutage->getFromRoutage()->getWay()->getPoints();
-        for(int n=1;n<parentWay.count();n++)
-            initialRoad.append(parentWay.at(n));
-        if(!parentRoutage->getFromRoutage()->getIsPivot() || !parentRoutage->getFromRoutage())
+        for(int n=1;n<parentWay.count();++n)
         {
-//            initialRoad.prepend(parentWay.at(0));
+            initialRoad.append(parentWay.at(n));
+        }
+        if(!parentRoutage->getFromRoutage() || !parentRoutage->getFromRoutage()->getIsPivot())
+        {
             break;
         }
         parentRoutage=parentRoutage->getFromRoutage();
     }
+    pivotPoint.notSimplificable=true;
     initialRoad.prepend(pivotPoint);
     for(int n=0;n<initialRoad.count();n++)
     {

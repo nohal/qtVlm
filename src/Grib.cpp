@@ -68,7 +68,8 @@ void Grib::initNewGrib()
 
     isCloudsColorModeWhite = Settings::getSetting("cloudsColorMode", "white").toString() == "white";
 
-    isobarsStep = 4;
+    isobarsStep = Settings::getSetting("isobarsStep", 2).toDouble();
+
     isotherms0Step = 50;
 
     dewpointDataStatus = NO_DATA_IN_FILE;

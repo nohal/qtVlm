@@ -1092,6 +1092,8 @@ void myCentralWidget::slot_addPOI_list(POI * poi)
     connect(this, SIGNAL(hideALL(bool)),poi,SLOT(slot_shHidden()));
     connect(this, SIGNAL(shPoi(bool)),poi,SLOT(slot_shPoi()));
     connect(this, SIGNAL(shLab(bool)),poi,SLOT(slot_shLab(bool)));
+    if (mainW->getSelectedBoat()->getType()==BOAT_VLM)
+        connect(poi,SIGNAL(wpChanged()),mainW,SIGNAL(wpChanged()));
 }
 
 void myCentralWidget::slot_delPOI_list(POI * poi)
@@ -2249,7 +2251,7 @@ void myCentralWidget::treatRoute(ROUTE* route)
         if(route->getFrozen() || !route->getHas_eta())
             QMessageBox::critical(0,QString(QObject::tr("Simplification/Optimisation de route")),QString(QObject::tr("Cette operation est impossible pour une route figee ou une route sans ETA")));
         else if(route->getUseVbvmgVlm())
-             QMessageBox::critical(0,QString(QObject::tr("Simplification/Optimisation de route")),QString(QObject::tr("Cette operation est impossible si le mode de calcul VBVMG est celui de VLM")));
+            QMessageBox::critical(0,QString(QObject::tr("Simplification/Optimisation de route")),QString(QObject::tr("Cette operation est impossible si le mode de calcul VBVMG est celui de VLM")));
         else
         {
             int poiCt=route->getPoiList().count();

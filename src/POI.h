@@ -42,7 +42,7 @@ class POI : public QGraphicsWidget
     public:
         /* constructeurs, destructeurs */
         POI(QString name, int type, double lat, double lon,
-                    Projection *proj, QWidget *ownerMeteotable, myCentralWidget *parentWindow,
+                    Projection *proj, MainWindow *ownerMeteotable, myCentralWidget *parentWindow,
                     float wph, int tstamp,bool useTstamp, boat *boat);
 
         ~POI();
@@ -150,6 +150,7 @@ class POI : public QGraphicsWidget
         void updateTip(boat*);
         void poiMoving();
         void compassLine(double,double);
+        void wpChanged();
 
     protected:
         void  mousePressEvent(QGraphicsSceneMouseEvent * e);
@@ -161,7 +162,7 @@ class POI : public QGraphicsWidget
     private:
         /* parent, main */
         myCentralWidget   *parent;
-        QWidget   *owner;
+        MainWindow   *owner;
         Projection   *proj;
 
         /* widget component */

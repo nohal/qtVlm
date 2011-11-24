@@ -46,7 +46,7 @@ Copyright (C) 2008 - Jacques Zaninetti - http://zygrib.free.fr
 /**************************/
 
 POI::POI(QString name, int type, double lat, double lon,
-                 Projection *proj, QWidget *main, myCentralWidget *parentWindow,
+                 Projection *proj, MainWindow *main, myCentralWidget *parentWindow,
                  float wph,int tstamp,bool useTstamp,boat *myBoat)
     : QGraphicsWidget()
 {
@@ -137,6 +137,11 @@ POI::~POI()
         delete lineBetweenPois;
         this->connectedPoi->setConnectedPoi(NULL);
         this->connectedPoi->setLineBetweenPois(NULL);
+    }
+    if(isWp)
+    {
+        isWp=false;
+        emit wpChanged();
     }
     if(popup && !parent->getAboutToQuit())
         delete popup;
@@ -571,7 +576,9 @@ void POI::setTip(QString tip)
             pilot="<br>"+tr("5eme cible du pilototo");
             break;
     }
-    QString at=QString().sprintf(" @%.1f",this->wph);
+    QString at;
+    if(wph!=-1)
+        at=QString().sprintf(" @%.1f",this->wph);
     if(w_boat)
     {
         Orthodromie orth2boat(w_boat->getLon(), w_boat->getLat(), lon, lat);
@@ -653,13 +660,12 @@ void POI::chkIsWP(void)
     double trickWPlon=qRound(WPlon*1000);
     if(trickLat-1<=trickWPlat && trickLat+1>=trickWPlat &&
        trickLon-1<=trickWPlon && trickLon+1>=trickWPlon)
-    //if(qRound(lat*1000.00)==qRound(WPlat*1000.00) && qRound(lon*1000.00)==qRound(WPlon*1000.00))
-    // if(compDouble(lat,WPlat) && compDouble(lon,WPlon))
     {
         if(!isWp)
         {
             isWp=true;
             update();
+            emit wpChanged();
         }
     }
     else
@@ -668,12 +674,18 @@ void POI::chkIsWP(void)
         {
             isWp=false;
             update();
+            parent->getPois().swap(parent->getPois().indexOf(this),0);
+            emit wpChanged();
         }
     }
 }
 void POI::setWph(float wph)
 {
-    this->wph=qRound(wph*100.0)/100.0;
+    this->wph=qRound(wph*10.0)/10.0;
+    if(this->isWp)
+    {
+        emit wpChanged();
+    }
 }
 
 void POI::setRoute(ROUTE *route)
@@ -818,8 +830,9 @@ void POI::slot_delPoi()
             setRoute(NULL);
         }
         emit delPOI_list(this);
-        rmSignal();
-        close();
+//        rmSignal();
+//        close();
+        delete this;
     }
 }
 
@@ -921,6 +934,7 @@ void POI::slot_finePosit(bool silent)
     time_t previousEta=route->getEta();
     double previousRemain=route->getRemain();
     bool previousHasEta=route->getHas_eta();
+    bool detectCoast=route->getDetectCoasts();
     if(!silent)
     {
         DialogFinePosit * dia=new DialogFinePosit(this,parent);
@@ -930,6 +944,8 @@ void POI::slot_finePosit(bool silent)
             return;
         }
         delete dia;
+        if(detectCoast)
+            route->setDetectCoasts(false);
     }
     double rangeLon=searchRangeLon;
     double rangeLat=searchRangeLat;
@@ -988,6 +1004,8 @@ void POI::slot_finePosit(bool silent)
     /* Note that if the route did not reach the target, then getEta
      * returns the last date of the grib. */
 #define TRYPOINT(P) do {                                \
+        if ((P).lat > 85)        (P).lat = 85;          \
+        else if ((P).lat < -85)  (P).lat = -85;         \
         setLongitude ((P).lon);                         \
         setLatitude ((P).lat);                          \
         route->slot_recalculate();                      \
@@ -1171,6 +1189,8 @@ void POI::slot_finePosit(bool silent)
         update();
         route->slot_recalculate();
     }
+    if(!silent)
+        route->setDetectCoasts(detectCoast);
     QApplication::processEvents();
 }
 
@@ -1219,7 +1239,19 @@ void POI::paint(QPainter * pnt, const QStyleOptionGraphicsItem * , QWidget * )
     }
     QColor myColor;
     if(isWp)
+    {
         myColor=mwpColor;
+#if 0
+        if(parent->getSelectedBoat()->getWPHd()!=wph)
+        {
+            //qWarning()<<"wp_at"<<parent->getSelectedBoat()->getWPHd()<<wph;
+            if(myColor==Qt::red)
+                myColor=QColor(255,75,156);
+            else
+                myColor=Qt::red;
+        }
+#endif
+    }
     else
     {
         switch(type)

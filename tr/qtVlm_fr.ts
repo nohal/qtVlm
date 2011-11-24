@@ -4133,6 +4133,30 @@ p, li { white-space: pre-wrap; }
         <source>Angles au centieme</source>
         <translation type="obsolete">Angles au centième</translation>
     </message>
+    <message>
+        <source>Pas de WP actif</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>WP defini dans VLM (pas de POI correspondant)</source>
+        <translation>WP défini dans VLM (pas de WP correspondant dans qtVLM)</translation>
+    </message>
+    <message>
+        <source>WP defini dans VLM (</source>
+        <translation>WP défini dans VLM (</translation>
+    </message>
+    <message>
+        <source> dans qtVlm)</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Le cap a suivre n&apos;est pas le meme</source>
+        <translation>Attention: le cap à suivre est différent</translation>
+    </message>
+    <message>
+        <source>WP defini dans VLM mais le mode de navigation n&apos;est pas coherent</source>
+        <translation>WP défini dans VLM mais le mode de navigation n&apos;est pas compatible</translation>
+    </message>
 </context>
 <context>
     <name>boardVLM_ui</name>

@@ -58,7 +58,7 @@ class MainWindow: public QMainWindow
         float getBoatPolarMaxSpeed();
         boat * getSelectedBoat(void) {if(selectedBoat) return selectedBoat;else return NULL;}
         polarList * getPolarList(void) {return polar_list;}
-
+        QList<POI *> * getPois();
         void statusBar_showWindData(double x,double y);
         void statusBar_showSelectedZone(float x0, float y0, float x1, float y1);
         void drawVacInfo(void);
@@ -168,6 +168,7 @@ class MainWindow: public QMainWindow
         void boatChanged(boat *);
         void moveBoat(double lat, double lon);
         void setInstructions(boat * boat,QList<POI *>);
+        void wpChanged();
 
 
     protected:

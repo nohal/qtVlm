@@ -1387,3 +1387,16 @@ void ROUTE::shiftEtas(QDateTime newStart)
     this->setFrozen2(false);
     this->setFrozen2(true);
 }
+void ROUTE::setAutoAt(bool b)
+{
+    if(!b && this->autoAt)
+    {
+        foreach(POI * poi, this->my_poiList)
+        {
+            poi->setWph(-1);
+//            if(poi->getIsWp())
+//                poi->slot_setWP();
+        }
+    }
+    autoAt=b;
+}

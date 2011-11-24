@@ -149,6 +149,7 @@ DialogRoute::DialogRoute(ROUTE *route,myCentralWidget *parent)
         editBoat->setEnabled(false);
         this->pilototo->hide();
         this->tabWidget->removeTab(1);
+        this->autoRemove->setChecked(false);
         this->autoRemove->hide();
         this->autoAt->setChecked(false);
         this->autoAt->hide();

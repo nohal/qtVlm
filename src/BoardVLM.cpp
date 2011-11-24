@@ -577,11 +577,57 @@ void boardVLM::update_btnWP(void)
     float WPLat = currentBoat()->getWPLat();
     float WPLon = currentBoat()->getWPLon();
     float WPHd = currentBoat()->getWPHd();
-
+    QString tip;
     if(WPLat==0 && WPLon==0)
+    {
         btn_WP->setText(tr("Prochaine balise (0 WP)"));
+        set_style(btn_WP,Qt::lightGray);
+        tip=tr("Pas de WP actif");
+    }
     else
     {
+        if(currentBoat()->getPilotType()>=3)
+        {
+            bool foundWP=false;
+            bool correctWPH=false;
+            QString wpName;
+            for(int n=0;n<mainWin->getPois()->count();++n)
+            {
+                if(mainWin->getPois()->at(n)->getIsWp())
+                {
+                    foundWP=true;
+                    wpName=mainWin->getPois()->at(n)->getName();
+                    if(mainWin->getPois()->at(n)->getWph()==currentBoat()->getWPHd())
+                        correctWPH=true;
+                    break;
+                }
+            }
+            if(!foundWP)
+            {
+                set_style(btn_WP,QColor(255, 255, 127));/*yellow*/
+                tip=tr("WP defini dans VLM (pas de POI correspondant)");
+            }
+            else
+            {
+                if(correctWPH)
+                {
+                    set_style(btn_WP,Qt::green);/*green*/
+                    tip=tr("WP defini dans VLM (")+wpName+tr(" dans qtVlm)");
+                }
+                else
+                {
+                    set_style(btn_WP,Qt::blue);/*blue*/
+                    QString tip=tr("WP defini dans VLM (")+wpName+tr(" dans qtVlm)");
+                    tip=tip+"<br>"+tr("Le cap a suivre n'est pas le meme");
+                }
+            }
+        }
+        else
+        {
+            set_style(btn_WP,QColor(255, 191, 21));/*orange*/
+            tip=tr("WP defini dans VLM mais le mode de navigation n'est pas coherent");
+        }
+        btn_WP->setToolTip(tip.replace(" ","&nbsp;"));
         QString str = QString();
         if(WPLat==0)
             str+="0 N";
@@ -598,7 +644,7 @@ void boardVLM::update_btnWP(void)
         if(WPHd!=-1)
         {
             str+=" @";
-            str+=QString().sprintf("%.2f",WPHd);
+            str+=QString().sprintf("%.1f",WPHd);
             str+=tr("deg");
         }
 

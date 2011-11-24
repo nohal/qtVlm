@@ -416,6 +416,7 @@ MainWindow::MainWindow(int w, int h, QWidget *parent)
 
     param = new DialogParamVlm(this,my_centralWidget);
     connect(param,SIGNAL(paramVLMChanged()),myBoard,SLOT(paramChanged()));
+    connect(this,SIGNAL(wpChanged()),myBoard->VLMBoard(),SLOT(update_btnWP()));
     connect(param,SIGNAL(paramVLMChanged()),this,SLOT(slot_ParamVLMchanged()));
 
     progress->setLabelText("Preparing coffee");
@@ -1150,6 +1151,10 @@ void MainWindow::updateNxtVac(void)
     }
     drawVacInfo();
 }
+QList<POI*> * MainWindow::getPois()
+{
+    return my_centralWidget->getPoisList();
+}
 
 void MainWindow::drawVacInfo(void)
 {
@@ -1756,7 +1761,10 @@ void MainWindow::slotChgWP(float lat,float lon, float wph)
     if(this->selectedBoat->getType()==BOAT_VLM)
     {
         if(myBoard->VLMBoard())
+        {
+            ((boatVLM*)selectedBoat)->setWph(wph);
             myBoard->VLMBoard()->setWP(lat,lon,wph);
+        }
     }
     else
     {

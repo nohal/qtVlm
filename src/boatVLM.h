@@ -105,6 +105,7 @@ class boatVLM : public boat, public inetClient
         void setNpd(QString s){this->npd=s;}
         void exportBoatInfoLog(QString fileName);
         QList<vlmLine*> getGates(){return gates;}
+        void setWph(float w){this->WPHd=w;}
 
     public slots:
         void slot_getData(bool doingSync);

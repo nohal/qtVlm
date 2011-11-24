@@ -70,6 +70,7 @@ class boardVLM: public QWidget , public Ui::boardVLM_ui, public inetClient
         void edtSpinBox_key(void);
         void slot_hideShowCompass();
         void clearPilototo();
+        void update_btnWP(void);
 
     signals:
         void VLM_Sync(void);
@@ -92,7 +93,6 @@ class boardVLM: public QWidget , public Ui::boardVLM_ui, public inetClient
 
         QString cmd_val1,cmd_val2,cmd_val3;
         float computeWPdir(boatVLM * boat);
-        void update_btnWP(void);
 
         void sendCmd(int cmdNum,double  val1,double val2, double val3);
 

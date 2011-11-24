@@ -109,6 +109,7 @@ class myCentralWidget : public QWidget
         QList<Player*> &  getPlayers() { return this->player_list; }
         QList<raceData*> & getRaces() { return this->race_list; }
         QList<POI*> & getPois() { return this->poi_list; }
+        QList<POI*> * getPoisList() { return & this->poi_list; }
         GshhsReader * get_gshhsReader(void) { return gshhsReader; }
         opponentList * getOppList() { return opponents; }
         inetConnexion * getInet(void) { return inetManager; }

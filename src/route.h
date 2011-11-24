@@ -115,7 +115,7 @@ class ROUTE : public QObject
         bool getPilototo(){return this->pilototo;}
         void setAutoRemove(bool b){this->autoRemove=b;}
         bool getAutoRemove(){return this->autoRemove;}
-        void setAutoAt(bool b){this->autoAt=b;}
+        void setAutoAt(bool b);
         bool getAutoAt(){return this->autoAt;}
         bool getNewVbvmgVlm(){return newVbvmgVlm;}
         void setNewVbvmgVlm(bool b){newVbvmgVlm=b;}
