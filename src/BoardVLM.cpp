@@ -578,6 +578,7 @@ void boardVLM::update_btnWP(void)
     float WPLon = currentBoat()->getWPLon();
     float WPHd = currentBoat()->getWPHd();
     QString tip;
+
     if(WPLat==0 && WPLon==0)
     {
         btn_WP->setText(tr("Prochaine balise (0 WP)"));
@@ -617,7 +618,7 @@ void boardVLM::update_btnWP(void)
                 else
                 {
                     set_style(btn_WP,Qt::blue);/*blue*/
-                    QString tip=tr("WP defini dans VLM (")+wpName+tr(" dans qtVlm)");
+                    tip=tr("WP defini dans VLM (")+wpName+tr(" dans qtVlm)");
                     tip=tip+"<br>"+tr("Le cap a suivre n'est pas le meme");
                 }
             }
@@ -627,7 +628,8 @@ void boardVLM::update_btnWP(void)
             set_style(btn_WP,QColor(255, 191, 21));/*orange*/
             tip=tr("WP defini dans VLM mais le mode de navigation n'est pas coherent");
         }
-        btn_WP->setToolTip(tip.replace(" ","&nbsp;"));
+//        tip=tip.replace(" ","&nbsp;");
+        btn_WP->setToolTip(tip);
         QString str = QString();
         if(WPLat==0)
             str+="0 N";
