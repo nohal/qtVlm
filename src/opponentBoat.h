@@ -32,6 +32,7 @@ Copyright (C) 2008 - Jacques Zaninetti - http://zygrib.free.fr
 #include "class_list.h"
 #include "dataDef.h"
 #include "inetClient.h"
+#include "vlmLine.h"
 struct raceData {
     QString idrace;
     QString oppList;
@@ -40,6 +41,8 @@ struct raceData {
     double widthNSZ;
     QColor colorNSZ;
     int showWhat;
+    bool showReal;
+    bool hasReal;
 };
 
 class opponent : public QGraphicsWidget
@@ -59,6 +62,7 @@ class opponent : public QGraphicsWidget
         QColor getColor() { return myColor; }
 
         void setNewData(float lat, float lon,QString name);
+        void setRealData(QString shortName, QString longName, QString desc, QString pavillon);
         void setOtherData(int rank, QString loch1h, QString loch3h, QString loch24h, QString statusVLM,QString pavillon){this->rank=rank;this->loch1h=loch1h;
                                                                                               this->loch3h=loch3h;this->loch24h=loch24h;
                                                                                               this->statusVLM=statusVLM;updateName();
@@ -66,6 +70,8 @@ class opponent : public QGraphicsWidget
         void setIsQtBoat(bool status);
         void updateName();
         void drawTrace();
+        bool getIsReal(){return isReal;}
+        void setIsReal(bool b){this->isReal=b;}
 
         /* graphicsWidget */
         QRectF boundingRect() const;
@@ -73,6 +79,7 @@ class opponent : public QGraphicsWidget
             return "test";}
         QString getAuthPass(bool * ok=NULL) {if(ok) *ok=true;
             return "test";}
+        void setLastUpdate(time_t t){this->lastUpdate=t;}
 
     public slots:
         void updateProjection();
@@ -112,10 +119,13 @@ class opponent : public QGraphicsWidget
         void updatePosition();
         bool labelHidden;
         int rank;
-        QString loch1h,loch3h,loch24h,pavillon;
+        QString loch1h,loch3h,loch24h,pavillon, longName, desc;
         QString statusVLM;
         QImage flag;
         bool drawFlag;
+        bool isReal;
+        time_t lastUpdate;
+
 };
 
 class opponentList : public QWidget, public inetClient
@@ -124,7 +134,7 @@ class opponentList : public QWidget, public inetClient
 
     public:
         opponentList(Projection * proj,MainWindow * main,myCentralWidget * parent, inetConnexion * inet);
-        void setBoatList(QString list_txt, QString race, int showWhat, bool force);
+        void setBoatList(QString list_txt, QString race, int showWhat, bool force, bool showReal);
         void refreshData(void);
         void clear(void);
         QString getRaceId();
@@ -160,7 +170,9 @@ class opponentList : public QWidget, public inetClient
         bool was10First;
         Projection * proj;
         int showWhat;
+        bool showReal;
         bool isBoatVLM(QString id);
+        opponent * opp;
 };
 
 

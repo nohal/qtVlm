@@ -1092,8 +1092,7 @@ void myCentralWidget::slot_addPOI_list(POI * poi)
     connect(this, SIGNAL(hideALL(bool)),poi,SLOT(slot_shHidden()));
     connect(this, SIGNAL(shPoi(bool)),poi,SLOT(slot_shPoi()));
     connect(this, SIGNAL(shLab(bool)),poi,SLOT(slot_shLab(bool)));
-    if (mainW->getSelectedBoat()->getType()==BOAT_VLM)
-        connect(poi,SIGNAL(wpChanged()),mainW,SIGNAL(wpChanged()));
+    poi->chkIsWP();
 }
 
 void myCentralWidget::slot_delPOI_list(POI * poi)
@@ -1272,14 +1271,20 @@ void myCentralWidget::slot_startReplay()
 }
 void myCentralWidget::slot_replay()
 {
-    replayStep++;
+    ++replayStep;
     if(replayStep>Settings::getSetting("trace_length",12).toInt()*60*60/mainW->getSelectedBoat()->getVacLen())
     {
         replayTimer->stop();
         emit startReplay(false);
         return;
     }
-    emit replay(replayStep);
+    if(mainW->getSelectedBoat()->getTraceDrawing()->getPoints()->count()<=replayStep)
+    {
+        replayTimer->stop();
+        emit startReplay(false);
+        return;
+    }
+    emit replay(mainW->getSelectedBoat()->getTraceDrawing()->getPoints()->at(replayStep).timeStamp);
     QApplication::processEvents();
     replayTimer->start();
 }
@@ -2302,6 +2307,16 @@ void myCentralWidget::treatRoute(ROUTE* route)
                 QSpacerItem* dummy = new QSpacerItem(300,0,QSizePolicy::Minimum, QSizePolicy::Expanding);
                 QGridLayout * lay= (QGridLayout*)waitBox->layout();
                 lay->addItem(dummy,lay->rowCount(),0,1,lay->columnCount());
+                bool hasWP=false;
+                for (int poiN=0;poiN<route->getPoiList().count()-1;++poiN)
+                {
+                    if(route->getPoiList().at(poiN)->getIsWp())
+                    {
+                        hasWP=true;
+                        route->getPoiList().at(poiN)->setWasWP(true);
+                        break;
+                    }
+                }
                 for (int maxLoop=0;maxLoop<10;++maxLoop)
                 {
                     if(abortRequest) break;
@@ -2328,6 +2343,19 @@ void myCentralWidget::treatRoute(ROUTE* route)
                                 QDateTime().fromTime_t(route->getEta()).toUTC().toString("dd/MM/yy hh:mm:ss")<<
                                 nPois<<"/"<<route->getPoiList().count();
 #endif
+                }
+                if(hasWP)
+                {
+                    for (int poiN=0;poiN<route->getPoiList().count()-1;++poiN)
+                    {
+                        if(route->getPoiList().at(poiN)->getWasWP())
+                        {
+                            hasWP=false;
+                            route->getPoiList().at(poiN)->setWasWP(false);
+                            route->getPoiList().at(poiN)->slot_setWP();
+                            break;
+                        }
+                    }
                 }
                 int nbDel=poiCt-route->getPoiList().count();
                 int diff=(ref_eta2-route->getEta())/60;

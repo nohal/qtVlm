@@ -68,6 +68,7 @@ POI::POI(QString name, int type, double lat, double lon,
     this->abortSearch=false;
     this->navMode=0;
     this->optimizing=true;
+    this->wasWP=false;
     this->partOfTwa=false;
     this->notSimplificable=false;
     this->connectedPoi=NULL;
@@ -118,11 +119,12 @@ POI::POI(QString name, int type, double lat, double lon,
     connect(main,SIGNAL(WPChanged(double,double)),this,SLOT(slot_WPChanged(double,double)));
     connect(main,SIGNAL(boatHasUpdated(boat*)),this,SLOT(slot_updateTip(boat*)));
     connect(parent,SIGNAL(stopCompassLine()),this,SLOT(slot_abort()));
+    if (main->getSelectedBoat()->getType()==BOAT_VLM)
+        connect(this,SIGNAL(wpChanged()),main,SIGNAL(wpChanged()));
 
     ((MainWindow*)main)->getBoatWP(&WPlat,&WPlon);
     setName(name);
     slot_updateProjection();
-    chkIsWP();
     if(!parentWindow->get_shPoi_st())
         show();
     else
@@ -578,7 +580,7 @@ void POI::setTip(QString tip)
     }
     QString at;
     if(wph!=-1)
-        at=QString().sprintf(" @%.1f",this->wph);
+        at=QString().sprintf(" @%.1f",this->wph)+tr("deg");
     if(w_boat)
     {
         Orthodromie orth2boat(w_boat->getLon(), w_boat->getLat(), lon, lat);
@@ -1169,6 +1171,7 @@ void POI::slot_finePosit(bool silent)
         setLongitude(simplex[0].lon);
         setLatitude(simplex[0].lat);
         if(isWp && !silent) slot_setWP();
+        else this->chkIsWP();
     }
     Util::computePos(proj,lat, lon, &pi, &pj);
     setPos(pi, pj-height/2);

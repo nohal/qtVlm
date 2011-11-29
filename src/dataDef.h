@@ -134,6 +134,8 @@ struct raceParam {
     double widthNSZ;
     QColor colorNSZ;
     int showWhat;
+    bool showReal;
+    bool hasReal;
 };
 
 

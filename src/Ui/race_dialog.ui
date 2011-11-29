@@ -378,7 +378,7 @@
     <widget class="QRadioButton" name="button10distance">
      <property name="geometry">
       <rect>
-       <x>290</x>
+       <x>260</x>
        <y>20</y>
        <width>361</width>
        <height>17</height>
@@ -391,7 +391,7 @@
     <widget class="QRadioButton" name="button10ranking">
      <property name="geometry">
       <rect>
-       <x>290</x>
+       <x>260</x>
        <y>40</y>
        <width>371</width>
        <height>17</height>
@@ -404,7 +404,7 @@
     <widget class="QRadioButton" name="buttonNone">
      <property name="geometry">
       <rect>
-       <x>680</x>
+       <x>630</x>
        <y>20</y>
        <width>82</width>
        <height>17</height>
@@ -412,6 +412,22 @@
      </property>
      <property name="text">
       <string>Aucun</string>
+     </property>
+    </widget>
+    <widget class="QCheckBox" name="buttonReal">
+     <property name="geometry">
+      <rect>
+       <x>630</x>
+       <y>40</y>
+       <width>151</width>
+       <height>20</height>
+      </rect>
+     </property>
+     <property name="toolTip">
+      <string>Cette information peut ne pas etre disponible</string>
+     </property>
+     <property name="text">
+      <string>Afficher les reels</string>
      </property>
     </widget>
    </widget>
@@ -501,8 +517,8 @@
    <slot>accept()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>366</x>
-     <y>636</y>
+     <x>356</x>
+     <y>637</y>
     </hint>
     <hint type="destinationlabel">
      <x>127</x>
@@ -638,6 +654,22 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>buttonReal</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>race_dialog_ui</receiver>
+   <slot>showRealToggle(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>725</x>
+     <y>589</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>403</x>
+     <y>327</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>chgRace(int)</slot>
@@ -648,5 +680,6 @@
   <slot>tenFirstRankToggle(bool)</slot>
   <slot>noneToggle(bool)</slot>
   <slot>NSZToggle(bool)</slot>
+  <slot>showRealToggle(bool)</slot>
  </slots>
 </ui>

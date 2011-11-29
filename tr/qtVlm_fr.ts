@@ -737,6 +737,14 @@ Etes-vous sur ?</source>
         <source>Vous ne pouvez figer une route que&lt;br&gt;si elle part d&apos;un POI et d&apos;une date fixe</source>
         <translation></translation>
     </message>
+    <message>
+        <source>Chargement du tableau de marche</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Veuillez patienter...</source>
+        <translation></translation>
+    </message>
 </context>
 <context>
     <name>DialogTwaLine</name>
@@ -2202,6 +2210,10 @@ Etes-vous sur ?</source>
     <message>
         <source>Le calcul de la route n&apos;est pas fini, impossible de supprimer ce POI</source>
         <translation></translation>
+    </message>
+    <message>
+        <source>deg</source>
+        <translation>°</translation>
     </message>
 </context>
 <context>
@@ -5307,6 +5319,18 @@ Voulez-vous egalement supprimer tous les POIs lui appartenant?</source>
         <source>Status VLM: </source>
         <translation>Statut VLM: </translation>
     </message>
+    <message>
+        <source>Date de la position: </source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Latitude:  </source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Longitude: </source>
+        <translation></translation>
+    </message>
 </context>
 <context>
     <name>paramAccount</name>
@@ -5636,6 +5660,14 @@ Voulez-vous egalement supprimer tous les POIs lui appartenant?</source>
     <message>
         <source>Aucun</source>
         <translation></translation>
+    </message>
+    <message>
+        <source>Cette information peut ne pas etre disponible</source>
+        <translation>Cette information n&apos;est pas toujours disponible</translation>
+    </message>
+    <message>
+        <source>Afficher les reels</source>
+        <translation>Afficher les réels</translation>
     </message>
 </context>
 <context>

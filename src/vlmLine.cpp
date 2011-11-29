@@ -167,17 +167,20 @@ void vlmLine::calculatePoly(void)
     polyList.append(poly);
     poly->resize(0);
     vlmPoint worldPoint(0,0),previousWorldPoint(0,0);
-    int cc=-1;
     bool coasted=false;
     coastDetected=false;
+    int cc=-1;
     if(line.count()>1)
     {
         QListIterator<vlmPoint> i (line);
         while(i.hasNext())
         {
-            cc++;
-            if(replayMode && cc>replayStep) break;
+            ++cc;
             worldPoint=i.next();
+            if(replayMode)
+            {
+                if(worldPoint.timeStamp>replayStep) break;
+            }
             if(worldPoint.isDead) continue;
             if(worldPoint.isBroken && n==0) continue;
             //Util::computePos(proj,worldPoint.lat, worldPoint.lon, &X, &Y);

@@ -36,10 +36,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "settings.h"
 #include <QDebug>
 
-#define RACE_NO_REQUEST 0
-#define RACE_LIST_BOAT  1
-#define RESULT_LIST_BOAT 2
-#define FLAG_REQUEST 3
+#define RACE_NO_REQUEST     0
+#define RACE_LIST_BOAT      1
+#define RESULT_LIST_BOAT    2
+#define FLAG_REQUEST        3
+#define RACE_LIST_REAL      4
 
 DialogRace::DialogRace(MainWindow * main,myCentralWidget * parent, inetConnexion * inet) :
         QDialog(parent),
@@ -212,6 +213,8 @@ void DialogRace::initList(QList<boatVLM*> & boat_list_ptr,QList<raceData*> & rac
             ptr->widthNSZ=2;
             ptr->displayNSZ=false;
             ptr->showWhat=SHOW_MY_LIST;
+            ptr->showReal=false;
+            ptr->hasReal=false;
             param_list.append(ptr);
         }
     }
@@ -238,6 +241,7 @@ void DialogRace::initList(QList<boatVLM*> & boat_list_ptr,QList<raceData*> & rac
         this->button10ranking->setEnabled(false);
         this->buttonMySelection->setEnabled(false);
         this->buttonNone->setEnabled(false);
+        this->buttonReal->setEnabled(false);
     }
     getNextRace();
 }
@@ -273,6 +277,10 @@ void DialogRace::noneToggle(bool b)
 {
     if(b)
         param_list[numRace]->showWhat=SHOW_NONE;
+}
+void DialogRace::showRealToggle(bool b)
+{
+    param_list[numRace]->showReal=buttonReal->isChecked();
 }
 
 void DialogRace::itemChanged(QStandardItem * item)
@@ -335,6 +343,8 @@ void DialogRace::getNextRace()
     currentLatNSZ=-60;
     currentColorNSZ=Qt::black;
     currentWidthNSZ=2;
+    currentShowReal=false;
+    currentHasReal=false;
 
     for(int i=0;i<race_list->size();i++)
         if(race_list->at(i)->idrace==param_list[currentRace]->id)
@@ -345,6 +355,8 @@ void DialogRace::getNextRace()
             currentWidthNSZ=race_list->at(i)->widthNSZ;
             currentColorNSZ=race_list->at(i)->colorNSZ;
             currentShowWhat=race_list->at(i)->showWhat;
+            currentShowReal=race_list->at(i)->showReal;
+            currentHasReal=race_list->at(i)->hasReal;
             break;
         }
 
@@ -420,6 +432,8 @@ void DialogRace::requestFinished (QByteArray res_byte)
             param_list[currentRace]->widthNSZ=currentWidthNSZ;
             param_list[currentRace]->colorNSZ=currentColorNSZ;
             param_list[currentRace]->showWhat=currentShowWhat;
+            param_list[currentRace]->showReal=currentShowReal;
+            param_list[currentRace]->hasReal=currentHasReal;
             QString page;
             QTextStream(&page)
                     << "/ws/raceinfo/results.php?idr="
@@ -453,8 +467,24 @@ void DialogRace::requestFinished (QByteArray res_byte)
             for(int ii=0;ii<param_list[currentRace]->arrived.count();ii++)
                 param_list[currentRace]->arrived[ii]->fromFirst=QString().setNum(qAbs(param_list[currentRace]->arrived.at(ii)->last3h.toInt()-firstTime));
             jj=0;
+            QString page;
+            QTextStream(&page)
+                    << "/ws/raceinfo/reals.php?idr="
+                    << param_list[currentRace]->id;
+            clearCurrentRequest();
+            inetGet(RACE_LIST_REAL,page);
+            break;
+        }
+        case RACE_LIST_REAL:
+        {
+            if(result["nb_boats"].toInt()==0)
+            {
+                param_list[currentRace]->showReal=false;
+                param_list[currentRace]->hasReal=false;
+            }
+            else
+                param_list[currentRace]->hasReal=true;
             getMissingFlags();
-            //getNextRace();
             break;
         }
         case FLAG_REQUEST:
@@ -559,6 +589,8 @@ void DialogRace::saveData(bool save)
         ptr->displayNSZ=param_list[i]->displayNSZ;
         ptr->latNSZ=param_list[i]->latNSZ;
         ptr->showWhat=param_list[i]->showWhat;
+        ptr->showReal=param_list[i]->showReal;
+        ptr->hasReal=param_list[i]->hasReal;
         race_list->append(ptr);
     }
 
@@ -596,6 +628,7 @@ void DialogRace::chgRace(int id)
             param_list[numRace]->showWhat=SHOW_TEN_CLOSEST_RANKING;
         if(this->buttonNone->isChecked())
             param_list[numRace]->showWhat=SHOW_NONE;
+        param_list[numRace]->showReal=this->buttonReal->isChecked();
     }
 
     /* find race data */
@@ -814,6 +847,8 @@ void DialogRace::chgRace(int id)
         this->button10distance->setChecked(true);
     if(param_list[numRace]->showWhat==SHOW_TEN_CLOSEST_RANKING)
         this->button10ranking->setChecked(true);
+    this->buttonReal->setChecked(param_list[numRace]->showReal);
+    this->buttonReal->setEnabled(param_list[numRace]->hasReal);
 
     verticalLayout_4->removeWidget(inputTraceColor);
     delete inputTraceColor;

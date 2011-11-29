@@ -46,6 +46,7 @@ class vlmPoint
         bool    isPOI;
         double  xP1,yP1,xM1,yM1;
         double  speed;
+        time_t timeStamp;
 };
 
 

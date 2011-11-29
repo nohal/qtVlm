@@ -357,16 +357,16 @@ void DialogRoutage::done(int result)
         {
             if(!routage->isConverted())
             {
+                if (!parent->freeRouteName(editName->text().trimmed(),NULL))
+                {
+                    QMessageBox msgBox;
+                    msgBox.setText(tr("Ce nom de route est deja utilise, veuillez changer le nom du routage"));
+                    msgBox.setIcon(QMessageBox::Critical);
+                    msgBox.exec();
+                    return;
+                }
                 if(routage->isDone())
                 {
-                    if (!parent->freeRouteName(editName->text().trimmed(),NULL))
-                    {
-                        QMessageBox msgBox;
-                        msgBox.setText(tr("Ce nom de route est deja utilise, veuillez changer le nom du routage"));
-                        msgBox.setIcon(QMessageBox::Critical);
-                        msgBox.exec();
-                        return;
-                    }
                     int rep=QMessageBox::Yes;
                     if(routage->getWhatIfUsed() && (routage->getWhatIfTime()!=0 || routage->getWhatIfWind()!=100))
                     {

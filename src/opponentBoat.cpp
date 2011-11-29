@@ -67,6 +67,10 @@ void opponent::init(QColor color,bool isQtBoat,QString idu,QString race, float l
     this->proj=proj;
     this->main=main;
     this->parentWindow=parentWindow;
+    this->desc="";
+    this->longName="";
+    this->isReal=false;
+    this->lastUpdate=QDateTime().currentDateTimeUtc().toTime_t();
 
     this->opp_trace=1;
     this->labelHidden=parentWindow->get_shLab_st();
@@ -147,6 +151,8 @@ void opponent::paint(QPainter * pnt, const QStyleOptionGraphicsItem * , QWidget 
         hide();
         return;
     }
+    if(name.isEmpty())
+        return;
 
     if(Settings::getSetting("showFlag",0).toInt()==1)
     {
@@ -179,7 +185,9 @@ void opponent::paint(QPainter * pnt, const QStyleOptionGraphicsItem * , QWidget 
     QFontMetrics fm(font());
     if(!labelHidden)
     {
-        if(this->statusVLM.toLower()=="on_coast" || this->statusVLM.toLower()=="locked")
+        if(this->isReal)
+            bgcolor=QColor(128,126,219,150);
+        else if(this->statusVLM.toLower()=="on_coast" || this->statusVLM.toLower()=="locked")
             bgcolor=QColor(239,48,36,150);
         else
             bgcolor = QColor(255,255,255,150);
@@ -257,28 +265,47 @@ void opponent::drawTrace()
 void opponent::updateName()
 {
     QString str2;
-    switch(label_type)
+    if(!isReal)
     {
-        case SHOW_PSEUDO:
-            my_str = pseudo;
-            str2 = idu + " - " + name;
-            break;
-        case SHOW_NAME:
-            my_str = name;
-            str2 = idu + " - " + pseudo;
-            break;
-        case SHOW_IDU:
-            my_str = idu;
-            str2 = pseudo + " - " + name;
-            break;
+        switch(label_type)
+        {
+            case SHOW_PSEUDO:
+                my_str = pseudo;
+                str2 = idu + " - " + name;
+                break;
+            case SHOW_NAME:
+                my_str = name;
+                str2 = idu + " - " + pseudo;
+                break;
+            case SHOW_IDU:
+                my_str = idu;
+                str2 = pseudo + " - " + name;
+                break;
+        }
     }
+    else
+        my_str=name;
     QString tt;
-    str2=str2+"<br>"+tr("Classement: ")+tt.sprintf("%d",this->rank);
-    str2=str2+"<br>"+tr("Loch 1h: ")+this->loch1h;
-    str2=str2+"<br>"+tr("Loch 3h: ")+this->loch3h;
-    str2=str2+"<br>"+tr("Loch 24h: ")+this->loch24h;
-    str2=str2+"<br>"+tr("Status VLM: ")+this->statusVLM;
-    str2.replace(" ","&nbsp;");
+    if(!isReal)
+    {
+        str2=str2+"<br>"+tr("Classement: ")+tt.sprintf("%d",this->rank);
+        str2=str2+"<br>"+tr("Loch 1h: ")+this->loch1h;
+        str2=str2+"<br>"+tr("Loch 3h: ")+this->loch3h;
+        str2=str2+"<br>"+tr("Loch 24h: ")+this->loch24h;
+        str2=str2+"<br>"+tr("Status VLM: ")+this->statusVLM;
+        str2.replace(" ","&nbsp;");
+    }
+    else
+    {
+        str2=str2+this->longName;
+        str2=str2+"<br>"+tr("Date de la position: ")+
+                QDateTime().fromTime_t(this->lastUpdate).toUTC().toString("dd MMM-hh:mm");
+        str2+="<br>"+tr("Latitude:  ")+Util::pos2String(TYPE_LAT,this->lat);
+        str2+="<br>"+tr("Longitude: ")+Util::pos2String(TYPE_LON,this->lon);
+        str2.replace(" ","&nbsp;");
+        if(!desc.isEmpty() && !desc.contains("arazzia"))
+            str2=str2+"<br>"+desc;
+    }
     setToolTip(str2);
     /* compute size */
     /* computing widget size */
@@ -287,6 +314,15 @@ void opponent::updateName()
     width = fm.width(my_str) + 10 + 2;
     height = qMax(fm.height()+2,10);
 
+}
+void opponent::setRealData(QString shortName, QString longName, QString desc, QString pavillon)
+{
+    this->name=shortName;
+    this->longName=longName;
+    this->desc=desc;
+    this->pavillon=pavillon;
+    updateName();
+    update();
 }
 
 void opponent::setNewData(float lat, float lon,QString name)
@@ -373,6 +409,8 @@ void opponent::slot_shHidden()
 #define OPP_BOAT_DATA      1
 #define OPP_BOAT_TRJ       2
 #define OPP_LIST           3
+#define OPP_BOAT_REAL      4
+#define OPP_INFO_REAL      5
 
 #define OPP_MODE_REFRESH   0
 #define OPP_MODE_NEWLIST   1
@@ -405,6 +443,7 @@ opponentList::opponentList(Projection * proj,MainWindow * main,myCentralWidget *
     colorTable[13] = QColor(170,170,255);
     colorTable[14] = QColor(170,0,255);
     showWhat=SHOW_MY_LIST;
+    showReal=false;
 }
 
 QString opponentList::getRaceId()
@@ -415,9 +454,11 @@ QString opponentList::getRaceId()
     return opponent_list[0]->getRace();
 }
 
-void opponentList::setBoatList(QString list_txt,QString race,int showWhat, bool force)
+void opponentList::setBoatList(QString list_txt,QString race,int showWhat, bool force, bool showReal)
 {
     this->showWhat=showWhat;
+    this->showReal=showReal;
+    currentRace = race;
     //qWarning() << "SetBoatList - race " << race << " - " << list_txt;
     if(!hasInet() || hasRequest())
     {
@@ -429,7 +470,7 @@ void opponentList::setBoatList(QString list_txt,QString race,int showWhat, bool 
         qWarning()<<"Cancelling previous request";
         this->inetAbort();
     }
-    if(showWhat==SHOW_NONE)
+    if(showWhat==SHOW_NONE && !showReal)
     {
         clear();
         return;
@@ -454,9 +495,8 @@ void opponentList::setBoatList(QString list_txt,QString race,int showWhat, bool 
         currentList = list_txt.split(";");
     else
         currentList.clear();
-    currentRace = race;
     currentMode = OPP_MODE_NEWLIST;
-    if(currentList.size() > 0 || showWhat!=SHOW_MY_LIST)
+    if(currentList.size() > 0 || showWhat!=SHOW_MY_LIST || showReal)
         getGenData();
 
 
@@ -482,10 +522,10 @@ void opponentList::refreshData(void)
         this->inetAbort();
     }
 
-    if(opponent_list.size()<=0)
+    if(opponent_list.size()<=0 && !this->showReal)
         return;
 
-    currentRace = opponent_list[0]->getRace();
+    //currentRace = opponent_list[0]->getRace();
     currentOpponent = 0;
     currentMode=OPP_MODE_REFRESH;
     getGenData();
@@ -542,14 +582,14 @@ void opponentList::getNxtOppData()
 
     idu = opponent_list[currentOpponent]->getIduser();
 
-    if(main->isBoat(idu))
+    if(main->isBoat(idu) && !opponent_list[currentOpponent]->getIsReal())
     {
         opponent_list[currentOpponent]->setIsQtBoat(true);
-        currentOpponent++;
+        ++currentOpponent;
         getNxtOppData();
         return;
     }
-    currentOpponent++;
+    ++currentOpponent;
 
     //qWarning() << "OPP, clearReq 1";
     clearCurrentRequest();
@@ -557,13 +597,27 @@ void opponentList::getNxtOppData()
     time_t endtime=QDateTime::currentDateTime().toUTC().toTime_t();
     time_t starttime=endtime-(Settings::getSetting("trace_length",12).toInt()*60*60);
     QString page;
-    QTextStream(&page)
+    if(!opponent_list[currentOpponent-1]->getIsReal())
+    {
+        QTextStream(&page)
             << "/ws/boatinfo/tracks.php?"
             << "idu="
             << idu
             << "&starttime="
             << starttime;
 
+    }
+    else
+    {
+        QTextStream(&page)
+            << "/ws/realinfo/tracks.php?"
+            << "idreals="
+            << idu
+            << "&idr="
+            << currentRace
+            << "&starttime="
+            << starttime;
+    }
     inetGet(OPP_BOAT_TRJ,page);
 }
 
@@ -583,6 +637,35 @@ void opponentList::requestFinished (QByteArray res_byte)
 {
     switch(getCurrentRequest())
     {        
+        case OPP_BOAT_REAL:
+        {
+            QJson::Parser parser;
+            bool ok;
+
+            QVariantMap result = parser.parse (res_byte, &ok).toMap();
+            if (!ok) {
+                qWarning() << "Error parsing json data " << res_byte;
+                qWarning() << "Error: " << parser.errorString() << " (line: " << parser.errorLine() << ")";
+            }
+            QVariantList vv=result["reals"].toList();
+
+            foreach(QVariant v,vv)
+            {
+                QVariantMap data = v.toMap();
+                opponent_list.append(new opponent(Qt::black,data["idreals"].toString(), currentRace,
+                                     0,0,QString(), QString(), proj, main, parent));
+                opponent_list.last()->setIsReal(true);
+                opponent_list.last()->setLastUpdate(data["tracks_updated"].toInt());
+            }
+            if(opponent_list.count()>0)
+            {
+                //currentRace = opponent_list[0]->getRace();
+                currentOpponent = 0;
+                currentMode=OPP_MODE_REFRESH;
+                getNxtOppData();
+            }
+            break;
+        }
         case OPP_BOAT_DATA:
             {
                 QJson::Parser parser;
@@ -602,6 +685,7 @@ void opponentList::requestFinished (QByteArray res_byte)
                         for (int o=opponent_list.count()-1;o>=0;o--)
                         {
                             opponent * ptr=opponent_list[o];
+                            if(opponent_list[o]->getIsReal()) continue;
                             QVariantMap data = ranking[ptr->getIduser()].toMap();
                             if(!data.isEmpty())
                             {
@@ -750,9 +834,18 @@ void opponentList::requestFinished (QByteArray res_byte)
                             }
                         }
                     }
-                    if(opponent_list.count()>0)
+                    if(this->showReal)
                     {
-                        currentRace = opponent_list[0]->getRace();
+                        QString page;
+                        QTextStream(&page)
+                                            << "/ws/raceinfo/reals.php?idr="
+                                            << currentRace;
+                        clearCurrentRequest();
+                        inetGet(OPP_BOAT_REAL,page);
+                    }
+                    else if(opponent_list.count()>0)
+                    {
+                        //currentRace = opponent_list[0]->getRace();
                         currentOpponent = 0;
                         currentMode=OPP_MODE_REFRESH;
                         getNxtOppData();
@@ -767,6 +860,7 @@ void opponentList::requestFinished (QByteArray res_byte)
 
 
         case OPP_BOAT_TRJ:
+            opp=NULL;
             if(currentMode==OPP_MODE_REFRESH)
             {
                 //qWarning() << "Refresh";
@@ -775,22 +869,74 @@ void opponentList::requestFinished (QByteArray res_byte)
                     //qWarning() << currentOpponent << " - " << opponent_list.size();
                     break;
                 }
-                getTrace(res_byte,opponent_list[currentOpponent-1]->getTrace());
+                opp=opponent_list[currentOpponent-1];
+                getTrace(res_byte,opp->getTrace());
+                if(opp->getIsReal())
+                {
+                    if(!opp->getTrace()->isEmpty())
+                    {
+                        //qWarning()<<"last point in trace:"<<opp->getTrace()->last().lon<<opp->getTrace()->last().lat;
+                        opp->setNewData(opp->getTrace()->last().lat,
+                                        opp->getTrace()->last().lon,
+                                        QString());
+                    }
+                    else
+                        qWarning()<<"trace is empty??";
+                }
                 if(!parent->get_shOpp_st())
-                    opponent_list[currentOpponent-1]->drawTrace();
+                    opp->drawTrace();
             }
             else
             {
                 //qWarning() << "Not Refresh";
                 if(!opponent_list.isEmpty())
                 {
-                    getTrace(res_byte,opponent_list.last()->getTrace());
+                    opp=opponent_list.last();
+                    getTrace(res_byte,opp->getTrace());
+                    if(opp->getIsReal())
+                    {
+                        if(!opp->getTrace()->isEmpty())
+                            opp->setNewData(opp->getTrace()->last().lat,
+                                            opp->getTrace()->last().lon,
+                                            QString());
+                    }
                     if(!parent->get_shOpp_st())
-                        opponent_list.last()->drawTrace();
+                        opp->drawTrace();
                 }
             }
+            if(!opponent_list.isEmpty() && opp && opp->getIsReal())
+            {
+                QString page;
+                QTextStream(&page)
+                    << "/ws/realinfo/profile.php?"
+                    << "idreals="
+                    << opp->getIduser()
+                    <<"&idr="
+                    <<opp->getRace();
+                inetGet(OPP_INFO_REAL,page);
+            }
+            else
+                getNxtOppData();
+            break;
+        case OPP_INFO_REAL:
+        {
+            //qWarning()<<"inside OPP_INFO_REAL";
+            QJson::Parser parser;
+            bool ok;
+
+            QVariantMap result=parser.parse (res_byte, &ok).toMap();
+            if (!ok) {
+                qWarning() << "Error parsing json data " << res_byte;
+                qWarning() << "Error: " << parser.errorString() << " (line: " << parser.errorLine() << ")";
+            }
+            QVariantMap real = result["profile"].toMap();
+            opp->setRealData(real["shortname"].toString(),
+                             real["boatname"].toString(),
+                             real["description"].toString(),
+                             real["flag"].toString());
             getNxtOppData();
             break;
+        }
     }
 }
 bool opponentList::isBoatVLM(QString id)
@@ -863,6 +1009,7 @@ void opponentList::getTrace(QByteArray buff, QList<vlmPoint> * trace)
                 double lat = pos_list[2].toDouble()/1000;
                 //qWarning() << i << ": " << QDateTime::fromTime_t(pos_list[0].toInt()) << " - " << lon << "," << lat;
                 vlmPoint pt(lon,lat);
+                pt.timeStamp=pos_list[0].toInt();
                 //trace->prepend(pt);
                 trace->append(pt);
                 //i++;

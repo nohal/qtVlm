@@ -99,6 +99,7 @@ class boat: public QGraphicsWidget
         /* graphicsWidget */
         QPainterPath shape() const;
         QRectF boundingRect() const;
+        vlmLine * getTraceDrawing(){return this->trace_drawing;}
 
     public slots:
         void slot_projectionUpdated();

@@ -242,6 +242,12 @@ void DialogRoute::slotIntervalTimer(int)
 
 void DialogRoute::slotInterval()
 {
+    QMessageBox * waitBox = new QMessageBox(QMessageBox::Information,tr("Chargement du tableau de marche"),
+                              tr("Veuillez patienter..."));
+    waitBox->setStandardButtons(QMessageBox::NoButton);
+    waitBox->show();
+    waitBox->setFixedWidth(400);
+    QApplication::processEvents();
     this->roadMapInterval->blockSignals(true);
     int val=roadMapInterval->value();
     int step=roadMapInterval->minimum();
@@ -376,6 +382,7 @@ void DialogRoute::slotInterval()
     this->avgSpeed->setText(QString().sprintf("%.2f",speedMoy)+tr(" nds"));
     this->avgTWS->setText(QString().sprintf("%.2f",twsMoy)+tr(" nds"));
     this->roadMapInterval->blockSignals(false);
+    delete waitBox;
 }
 void DialogRoute::drawTransformedLine( QPainter &pnt,
         double si, double co,int di, int dj, int i,int j, int k,int l)

@@ -59,6 +59,7 @@ class DialogRace : public QDialog, public Ui::race_dialog_ui, public inetClient
         void tenFirstDistToggle(bool b);
         void tenFirstRankToggle(bool b);
         void noneToggle(bool b);
+        void showRealToggle(bool b);
         void NSZToggle(bool b);
 
     protected:
@@ -92,6 +93,8 @@ class DialogRace : public QDialog, public Ui::race_dialog_ui, public inetClient
         bool currentDisplayNSZ;
         double currentLatNSZ;
         double currentWidthNSZ;
+        bool currentShowReal;
+        bool currentHasReal;
         QColor currentColorNSZ;
         int currentShowWhat;
         InputLineParams *inputTraceColor;

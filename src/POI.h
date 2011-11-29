@@ -65,8 +65,8 @@ class POI : public QGraphicsWidget
         double   getSearchRangeLat(void) {return this->searchRangeLat;}
         double   getSearchStep(void) {return this->searchStep;}
         bool    getOptimizing(void) {return this->optimizing;}
-        bool    isPartOfTwa(void) {return this->partOfTwa;}
-        void    setPartOfTwa(bool b){this->partOfTwa=b;}
+        bool    getWasWP(void) {return this->wasWP;}
+        void    setWasWP(bool b){this->wasWP=b;}
         static QString  getTypeStr(int index);
         QString  getTypeStr(void)      {return getTypeStr(type); }
         int     getNavMode(){return this->navMode;}
@@ -113,6 +113,9 @@ class POI : public QGraphicsWidget
         time_t getPiloteDate(){return piloteDate;}
         void setPiloteDate(time_t t){this->piloteDate=t;}
         void setLabelTransp(bool b){this->labelTransp=b;}
+        void chkIsWP(void);
+        bool isPartOfTwa(){return partOfTwa;}
+        void setPartOfTwa(bool b){this->partOfTwa=b;}
 
     public slots:
         void slot_updateProjection();
@@ -212,7 +215,6 @@ class POI : public QGraphicsWidget
         QAction * ac_pilot;
         void createPopUpMenu(void);
 
-        void chkIsWP(void);
         void rmSignal(void);
         ROUTE *route;
         QString routeName;
@@ -223,7 +225,7 @@ class POI : public QGraphicsWidget
         double searchStep;
         bool abortSearch;
         int  navMode;
-        bool isPartOfBvmg;
+        bool wasWP;
         bool optimizing;
         bool myLabelHidden;
         bool partOfTwa;
