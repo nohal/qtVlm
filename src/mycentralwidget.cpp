@@ -2904,6 +2904,7 @@ void myCentralWidget::slot_playerSelected(Player * player)
     {
         if(player->getType() == BOAT_VLM)
         {
+            if(player->getWrong()) return;
             //qWarning() << "Activate player: managing boats (VLM)";
             menuBar->boatList->setVisible(true);
             menuBar->ac_moveBoat->setVisible(false);

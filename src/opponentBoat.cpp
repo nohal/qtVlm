@@ -336,7 +336,7 @@ void opponent::setNewData(float lat, float lon,QString name)
        updatePosition();
        needUpdate = true;
     }
-
+    if(name.isEmpty()) name=this->pseudo;
     if(name != this->name)
     {
         this->name=name;
@@ -597,6 +597,17 @@ void opponentList::getNxtOppData()
     time_t endtime=QDateTime::currentDateTime().toUTC().toTime_t();
     time_t starttime=endtime-(Settings::getSetting("trace_length",12).toInt()*60*60);
     QString page;
+    QList<vlmPoint> * previousTrace=opponent_list[currentOpponent-1]->getTrace();
+    if(!previousTrace->isEmpty())
+    {
+        for(int i=previousTrace->count()-1;i>=0;--i)
+        {
+            if(previousTrace->at(i).timeStamp<starttime)
+                previousTrace->removeAt(i);
+        }
+        if(!previousTrace->isEmpty())
+            starttime=previousTrace->last().timeStamp+10;
+    }
     if(!opponent_list[currentOpponent-1]->getIsReal())
     {
         QTextStream(&page)
@@ -648,18 +659,49 @@ void opponentList::requestFinished (QByteArray res_byte)
                 qWarning() << "Error: " << parser.errorString() << " (line: " << parser.errorLine() << ")";
             }
             QVariantList vv=result["reals"].toList();
-
+            QStringList idReals;
             foreach(QVariant v,vv)
             {
                 QVariantMap data = v.toMap();
-                opponent_list.append(new opponent(Qt::black,data["idreals"].toString(), currentRace,
-                                     0,0,QString(), QString(), proj, main, parent));
-                opponent_list.last()->setIsReal(true);
-                opponent_list.last()->setLastUpdate(data["tracks_updated"].toInt());
+                bool foundIt=false;
+                int foundNb=-1;
+                for(int o=opponent_list.count()-1;o>=0;--o)
+                {
+                    if(!opponent_list.at(o)->getIsReal()) continue;
+                    if(opponent_list.at(o)->getIduser()==data["idreals"].toString())
+                    {
+                        foundNb=o;
+                        foundIt=true;
+                        break;
+                    }
+                }
+                if(!foundIt)
+                {
+                    opponent_list.append(new opponent(Qt::black,data["idreals"].toString(), currentRace,
+                                         0,0,QString(), QString(), proj, main, parent));
+                    opponent_list.last()->setIsReal(true);
+                    opponent_list.last()->setLastUpdate(data["tracks_updated"].toInt());
+                }
+                else
+                {
+                    opponent_list[foundNb]->setLastUpdate(data["tracks_updated"].toInt());
+                }
+                idReals.append(data["idreals"].toString());
             }
+            for (int i=opponent_list.count()-1;i>=0;--i)
+            {
+                if(!opponent_list.at(i)->getIsReal()) continue;
+                if(!idReals.contains(opponent_list.at(i)->getIduser()))
+                    delete opponent_list.takeAt(i);
+            }
+#if 0
+            for (int i=opponent_list.count()-1;i>=0;--i)
+            {
+                qWarning()<<"opponent->"<<opponent_list.at(i)->getIduser();
+            }
+#endif
             if(opponent_list.count()>0)
             {
-                //currentRace = opponent_list[0]->getRace();
                 currentOpponent = 0;
                 currentMode=OPP_MODE_REFRESH;
                 getNxtOppData();
@@ -685,7 +727,11 @@ void opponentList::requestFinished (QByteArray res_byte)
                         for (int o=opponent_list.count()-1;o>=0;o--)
                         {
                             opponent * ptr=opponent_list[o];
-                            if(opponent_list[o]->getIsReal()) continue;
+                            if(opponent_list[o]->getIsReal())
+                            {
+//                                delete opponent_list.takeAt(o);
+                                continue;
+                            }
                             QVariantMap data = ranking[ptr->getIduser()].toMap();
                             if(!data.isEmpty())
                             {
@@ -987,7 +1033,7 @@ void opponentList::getTrace(QByteArray buff, QList<vlmPoint> * trace)
     bool ok;
 
     /* clear current trace*/
-    trace->clear();
+    //trace->clear();
 
     QVariantMap result = parser.parse (buff, &ok).toMap();
     if (!ok) {
@@ -1005,6 +1051,8 @@ void opponentList::getTrace(QByteArray buff, QList<vlmPoint> * trace)
             foreach (QVariant pos, result["tracks"].toList())
             {
                 QList<QVariant> pos_list = pos.toList();
+                if(!trace->isEmpty() && trace->last().timeStamp>=pos_list[0].toInt())
+                    continue;
                 double lon = pos_list[1].toDouble()/1000;
                 double lat = pos_list[2].toDouble()/1000;
                 //qWarning() << i << ": " << QDateTime::fromTime_t(pos_list[0].toInt()) << " - " << lon << "," << lat;

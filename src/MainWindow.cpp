@@ -1662,8 +1662,10 @@ void MainWindow::slot_updPlayerFinished(bool res_ok, Player * player)
             }
         }
         my_centralWidget->loadPOI();
+        qWarning()<<"after load poi";
         slot_deleteProgress();
         my_centralWidget->emitUpdateRoute(NULL);
+        qWarning()<<"after updateRoute";
         return;
     }
 

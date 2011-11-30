@@ -79,6 +79,7 @@ class Player : public QObject, public inetClient
         /* boat list */
         void addBoat(boatVLM * boat)    { boats.append(boat); }
         QList<int> getFleetList(){return fleetList;}
+        bool getWrong(){return wrong;}
 
     signals:
         void addBoat(boat* boat);
@@ -110,6 +111,7 @@ class Player : public QObject, public inetClient
         QList<int> fleetList;
         void loadBoatsLog(void);
         void saveBoatsLog(void);
+        bool wrong;
 
 };
 

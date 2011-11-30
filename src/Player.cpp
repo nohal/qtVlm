@@ -37,6 +37,7 @@ Player::Player(QString login, QString pass,int type, int id, QString name,
     this->player_id=id;
     this->type=type;
     this->polarName="";
+    this->wrong=false;
 
     realBoat=NULL;
 
@@ -146,8 +147,10 @@ void Player::requestFinished (QByteArray res_byte)
         qWarning() << "Error: " << parser.errorString() << " (line: " << parser.errorLine() << ")";
         updating=false;
         emit playerUpdated(false,this);
+        this->wrong=true;
         return;
     }
+    this->wrong=false;
 
     if(checkWSResult(res_byte,"Player: " + login,parent))
     {

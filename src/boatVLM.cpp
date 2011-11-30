@@ -164,7 +164,7 @@ void boatVLM::doRequest(int requestCmd)
                 break;
             case VLM_REQUEST_TRJ:
             {
-                trace_drawing->deleteAll();
+                //trace_drawing->deleteAll();
                 if(race_id==0)
                 {
                     qWarning() << "boat Acc no request TRJ for:" << pseudo << " id=" << boat_id;
@@ -173,6 +173,16 @@ void boatVLM::doRequest(int requestCmd)
                 time_t et=QDateTime::currentDateTime().toUTC().toTime_t();
                 time_t st=et-(Settings::getSetting("trace_length",12).toInt()*60*60);
                 clearCurrentRequest();
+                if(!trace_drawing->getPoints()->isEmpty())
+                {
+                    for(int i=trace_drawing->getPoints()->count()-1;i>=0;--i)
+                    {
+                        if(trace_drawing->getPoints()->at(i).timeStamp<st)
+                            trace_drawing->getPoints()->removeAt(i);
+                    }
+                    if(!trace_drawing->getPoints()->isEmpty())
+                        st=trace_drawing->getPoints()->last().timeStamp+10;
+                }
                 QTextStream(&page)
                         << "/ws/boatinfo/tracks_private.php?"
                         << "idu="
