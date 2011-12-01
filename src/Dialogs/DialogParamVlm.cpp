@@ -87,9 +87,6 @@ DialogParamVlm::DialogParamVlm(MainWindow * main,myCentralWidget * parent) : QDi
     this->autoAt->setCheckState(Settings::getSetting("autoFillPoiHeading",0).toInt()==1?Qt::Checked:Qt::Unchecked);
 
     /* Trace */
-    for(int i=1;i<=60;i++)
-        trace_step->addItem(QString().setNum(i));
-    trace_step->setCurrentIndex(Settings::getSetting("trace_step",60/5-1).toInt());
     trace_length->setValue(Settings::getSetting("trace_length",12).toInt());
     speedReplay->setValue(Settings::getSetting("speed_replay",20).toInt());
     chk_oppTrace->setCheckState(Settings::getSetting("opp_trace","1").toInt()==1?Qt::Checked:Qt::Unchecked);
@@ -199,7 +196,6 @@ void DialogParamVlm::done(int result)
 
         /* Trace */
 
-        Settings::setSetting("trace_step",QString().setNum(trace_step->currentIndex()));
         Settings::setSetting("trace_length",QString().setNum(trace_length->value()));
         Settings::setSetting("speed_replay",QString().setNum(speedReplay->value()));
         Settings::setSetting("opp_trace",chk_oppTrace->checkState()==Qt::Checked?"1":"0");

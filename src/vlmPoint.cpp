@@ -30,4 +30,5 @@ vlmPoint::vlmPoint(float lon,float lat)
     this->xM1=10e5;
     this->yM1=10e5;
     this->speed=10e5;
+    this->timeStamp=0;
 }

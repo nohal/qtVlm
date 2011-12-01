@@ -80,6 +80,7 @@ class Player : public QObject, public inetClient
         void addBoat(boatVLM * boat)    { boats.append(boat); }
         QList<int> getFleetList(){return fleetList;}
         bool getWrong(){return wrong;}
+        void setWrong(bool b){this->wrong=b;}
 
     signals:
         void addBoat(boat* boat);

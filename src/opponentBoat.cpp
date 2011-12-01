@@ -71,6 +71,7 @@ void opponent::init(QColor color,bool isQtBoat,QString idu,QString race, float l
     this->longName="";
     this->isReal=false;
     this->lastUpdate=QDateTime().currentDateTimeUtc().toTime_t();
+    this->updateRequired=true;
 
     this->opp_trace=1;
     this->labelHidden=parentWindow->get_shLab_st();
@@ -91,7 +92,6 @@ void opponent::init(QColor color,bool isQtBoat,QString idu,QString race, float l
     bgcolor = QColor(gr,gr,gr,150);
 
     this->isQtBoat = isQtBoat;
-    trace.clear();
     trace_drawing = new vlmLine(proj,parentWindow->getScene(),Z_VALUE_OPP);
     QPen penTrace=QPen(color);
     penTrace.setWidthF(1);
@@ -249,11 +249,22 @@ void opponent::updatePosition()
 void opponent::drawTrace()
 {
     trace_drawing->setNbVacPerHour(3600/main->get_selectedBoatVacLen());
-    if(!trace.isEmpty() && (trace.last().lat!=lat || trace.last().lon!=lon))
-        trace.append(vlmPoint(lon,lat));
+    if(!trace_drawing->getPoints()->isEmpty())
+    {
+        if(qRound(trace_drawing->getPoints()->last().lat*1000)!=qRound(lat*1000)
+                            || qRound(trace_drawing->getPoints()->last().lon*1000)!=qRound(lon*1000))
+        {
+            if(trace_drawing->getPoints()->count()>1 && qRound(trace_drawing->getPoints()->at(trace_drawing->getPoints()->count()-1).lat*1000)==qRound(lat*1000)
+                                                         && qRound(trace_drawing->getPoints()->at(trace_drawing->getPoints()->count()-1).lon*1000)==qRound(lon*1000))
+                this->setNewData(trace_drawing->getPoints()->at(trace_drawing->getPoints()->count()-1).lat,
+                                 trace_drawing->getPoints()->at(trace_drawing->getPoints()->count()-1).lon,
+                                 this->name);
+            else
+                trace_drawing->getPoints()->append(vlmPoint(lon,lat));
+        }
+    }
     if(opp_trace==1)
     {
-        trace_drawing->setPoly(trace);
         trace_drawing->slot_showMe();
     }
     else
@@ -589,6 +600,12 @@ void opponentList::getNxtOppData()
         getNxtOppData();
         return;
     }
+    if(!opponent_list[currentOpponent]->getUpdateRequired())
+    {
+        ++currentOpponent;
+        getNxtOppData();
+        return;
+    }
     ++currentOpponent;
 
     //qWarning() << "OPP, clearReq 1";
@@ -684,7 +701,15 @@ void opponentList::requestFinished (QByteArray res_byte)
                 }
                 else
                 {
-                    opponent_list[foundNb]->setLastUpdate(data["tracks_updated"].toInt());
+                    if(opponent_list[foundNb]->getLastUpdate()==data["tracks_updated"].toInt())
+                    {
+                        opponent_list[foundNb]->setUpdateRequired(false);
+                    }
+                    else
+                    {
+                        opponent_list[foundNb]->setUpdateRequired(true);
+                        opponent_list[foundNb]->setLastUpdate(data["tracks_updated"].toInt());
+                    }
                 }
                 idReals.append(data["idreals"].toString());
             }
@@ -1058,9 +1083,8 @@ void opponentList::getTrace(QByteArray buff, QList<vlmPoint> * trace)
                 //qWarning() << i << ": " << QDateTime::fromTime_t(pos_list[0].toInt()) << " - " << lon << "," << lat;
                 vlmPoint pt(lon,lat);
                 pt.timeStamp=pos_list[0].toInt();
-                //trace->prepend(pt);
                 trace->append(pt);
-                //i++;
+                //++i;
             }
         }
     }

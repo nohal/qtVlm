@@ -61,7 +61,6 @@ boatVLM::boatVLM(QString pseudo, bool activated, int boatId, int playerId,Player
     this->porteHidden=parent->get_shPor_st();
     firstSynch=false;
     race_name="";
-    trace.clear();
     playerName=player->getName();
     needAuth=true;
     this->rank=1;
@@ -173,6 +172,7 @@ void boatVLM::doRequest(int requestCmd)
                 time_t et=QDateTime::currentDateTime().toUTC().toTime_t();
                 time_t st=et-(Settings::getSetting("trace_length",12).toInt()*60*60);
                 clearCurrentRequest();
+                //qWarning()<<this->name<<"normal st"<<QDateTime::fromTime_t(st).toUTC();
                 if(!trace_drawing->getPoints()->isEmpty())
                 {
                     for(int i=trace_drawing->getPoints()->count()-1;i>=0;--i)
@@ -181,8 +181,9 @@ void boatVLM::doRequest(int requestCmd)
                             trace_drawing->getPoints()->removeAt(i);
                     }
                     if(!trace_drawing->getPoints()->isEmpty())
-                        st=trace_drawing->getPoints()->last().timeStamp+10;
+                        st=trace_drawing->getPoints()->last().timeStamp;
                 }
+                //qWarning()<<"after st"<<QDateTime::fromTime_t(st).toUTC();
                 QTextStream(&page)
                         << "/ws/boatinfo/tracks_private.php?"
                         << "idu="
@@ -257,7 +258,6 @@ void boatVLM::requestFinished (QByteArray res_byte)
                     if(result["error"].toMap()["code"].toString()=="XXXXXXX" || boat_id!=result["IDU"].toInt()) /* cas de la radiation du boatsit*/
                     {
                         /* clearing trace */
-                        trace.clear();
                         trace_drawing->deleteAll();
                         /*updating everything*/
                         updateBoatData();
@@ -363,7 +363,6 @@ void boatVLM::requestFinished (QByteArray res_byte)
                     if(race_id==0)
                     {
                         /* clearing trace */
-                        trace.clear();
                         trace_drawing->deleteAll();
                         /*updating everything*/
                         updateBoatData();
@@ -385,7 +384,6 @@ void boatVLM::requestFinished (QByteArray res_byte)
                 else
                 {
                     /* clearing trace */
-                    trace.clear();
                     trace_drawing->deleteAll();
                     updateBoatData();
                     updating=false;
@@ -397,10 +395,15 @@ void boatVLM::requestFinished (QByteArray res_byte)
             }
             break;
         case VLM_REQUEST_TRJ:
-            emit getTrace(res_byte,&trace);
-            if(!trace.isEmpty() && (trace.last().lon!=this->lon || trace.last().lat!=this->lat))
-                trace.append(vlmPoint(lon,lat));
-            trace_drawing->setPoly(trace);
+            emit getTrace(res_byte,trace_drawing->getPoints());
+            if(!trace_drawing->getPoints()->isEmpty() &&
+              (qRound(trace_drawing->getPoints()->last().lon*1000)!=qRound(this->lon*1000) ||
+               qRound(trace_drawing->getPoints()->last().lat*1000)!=qRound(this->lat*1000)))
+            {
+                //qWarning()<<"missing last point in trace???"<<trace_drawing->getPoints()->last().lon<<this->lon<<trace_drawing->getPoints()->last().lat<<this->lat<<QDateTime::fromTime_t(trace_drawing->getPoints()->last().timeStamp).toUTC();
+                trace_drawing->getPoints()->append(vlmPoint(lon,lat));
+            }
+            trace_drawing->slot_showMe();
 
             /* we can now update everything */
             updateBoatData();

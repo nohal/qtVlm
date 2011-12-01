@@ -327,7 +327,7 @@ void xml_POIData::slot_importZyGrib(void)
 
     QTextStream stream(&file);
 
-    double lat,lon;
+    double lat=0,lon=0;
     QString name;
     bool foundName,foundLat,foundLon;
     int curCode=-1;

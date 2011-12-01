@@ -58,7 +58,7 @@ class opponent : public QGraphicsWidget
         QString getRace(void)    { return idrace; }
         QString getIduser(void)  { return idu; }
         bool    getIsQtBoat()    { return isQtBoat; }
-        QList<vlmPoint> * getTrace() { return &trace; }
+        QList<vlmPoint> * getTrace() { return trace_drawing->getPoints(); }
         QColor getColor() { return myColor; }
 
         void setNewData(float lat, float lon,QString name);
@@ -80,6 +80,9 @@ class opponent : public QGraphicsWidget
         QString getAuthPass(bool * ok=NULL) {if(ok) *ok=true;
             return "test";}
         void setLastUpdate(time_t t){this->lastUpdate=t;}
+        time_t getLastUpdate(){return this->lastUpdate;}
+        void setUpdateRequired(bool b){this->updateRequired=b;}
+        bool getUpdateRequired(){return this->updateRequired;}
 
     public slots:
         void updateProjection();
@@ -113,7 +116,6 @@ class opponent : public QGraphicsWidget
         QString   my_str;
         int       width,height;
 
-        QList<vlmPoint>  trace;
         vlmLine * trace_drawing;
 
         void updatePosition();
@@ -125,6 +127,7 @@ class opponent : public QGraphicsWidget
         bool drawFlag;
         bool isReal;
         time_t lastUpdate;
+        bool updateRequired;
 
 };
 

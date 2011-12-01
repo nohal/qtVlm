@@ -147,7 +147,6 @@ void Player::requestFinished (QByteArray res_byte)
         qWarning() << "Error: " << parser.errorString() << " (line: " << parser.errorLine() << ")";
         updating=false;
         emit playerUpdated(false,this);
-        this->wrong=true;
         return;
     }
     this->wrong=false;

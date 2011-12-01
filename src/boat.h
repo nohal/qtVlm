@@ -176,7 +176,6 @@ class boat: public QGraphicsWidget
 
         /* trace */
         vlmLine * trace_drawing;
-        QList<vlmPoint> trace;
         void updateTraceColor(void);
 
         /* estime param */

@@ -296,6 +296,7 @@ myCentralWidget::myCentralWidget(Projection * proj,MainWindow * parent,MenuBar *
     this->mainW=parent;
     this->menuBar=menuBar;
     this->aboutToQuit=false;
+    this->boat_list=NULL;
 
     currentPlayer=NULL;
 
@@ -2853,7 +2854,7 @@ void myCentralWidget::slot_manageAccount()
 void myCentralWidget::manageAccount(bool * res)
 {
     /* managing previous account */
-    if(currentPlayer && boat_list)
+    if(currentPlayer && !currentPlayer->getWrong() && boat_list)
     {
         if(currentPlayer->getType()==BOAT_VLM)
         {
@@ -2886,7 +2887,7 @@ void myCentralWidget::slot_playerSelected(Player * player)
     if(currentPlayer && boat_list)
     {
         //qWarning() << "Deactivate current player";
-        if(currentPlayer->getType()==BOAT_VLM)
+        if(boat_list && currentPlayer->getType()==BOAT_VLM)
         {
             QListIterator<boatVLM*> i(*boat_list);
             while(i.hasNext())

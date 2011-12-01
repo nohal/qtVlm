@@ -119,7 +119,7 @@ POI::POI(QString name, int type, double lat, double lon,
     connect(main,SIGNAL(WPChanged(double,double)),this,SLOT(slot_WPChanged(double,double)));
     connect(main,SIGNAL(boatHasUpdated(boat*)),this,SLOT(slot_updateTip(boat*)));
     connect(parent,SIGNAL(stopCompassLine()),this,SLOT(slot_abort()));
-    if (main->getSelectedBoat()->getType()==BOAT_VLM)
+    if (!parent->getPlayer()->getWrong() && main->getSelectedBoat()->getType()==BOAT_VLM)
         connect(this,SIGNAL(wpChanged()),main,SIGNAL(wpChanged()));
 
     ((MainWindow*)main)->getBoatWP(&WPlat,&WPlon);

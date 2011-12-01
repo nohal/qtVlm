@@ -43,7 +43,7 @@
     </rect>
    </property>
    <property name="currentIndex">
-    <number>0</number>
+    <number>4</number>
    </property>
    <widget class="QWidget" name="tab">
     <attribute name="title">
@@ -379,7 +379,7 @@
         <x>10</x>
         <y>20</y>
         <width>321</width>
-        <height>81</height>
+        <height>82</height>
        </rect>
       </property>
       <layout class="QGridLayout" name="gridLayout_2">
@@ -765,19 +765,6 @@
     <attribute name="title">
      <string>Trace</string>
     </attribute>
-    <widget class="QLabel" name="label_9">
-     <property name="geometry">
-      <rect>
-       <x>10</x>
-       <y>10</y>
-       <width>131</width>
-       <height>21</height>
-      </rect>
-     </property>
-     <property name="text">
-      <string>Pas de la trace</string>
-     </property>
-    </widget>
     <widget class="QLabel" name="label_10">
      <property name="geometry">
       <rect>
@@ -810,16 +797,6 @@
       <string>Afficher la trace des concurrents</string>
      </property>
     </widget>
-    <widget class="QComboBox" name="trace_step">
-     <property name="geometry">
-      <rect>
-       <x>180</x>
-       <y>10</y>
-       <width>69</width>
-       <height>22</height>
-      </rect>
-     </property>
-    </widget>
     <widget class="QSpinBox" name="trace_length">
      <property name="geometry">
       <rect>
@@ -837,19 +814,6 @@
      </property>
      <property name="maximum">
       <number>48</number>
-     </property>
-    </widget>
-    <widget class="QLabel" name="label_11">
-     <property name="geometry">
-      <rect>
-       <x>260</x>
-       <y>15</y>
-       <width>71</width>
-       <height>16</height>
-      </rect>
-     </property>
-     <property name="text">
-      <string>vacations</string>
      </property>
     </widget>
     <widget class="QLabel" name="label_12">
@@ -1388,7 +1352,6 @@
   <tabstop>chkHideRoute</tabstop>
   <tabstop>autoRemove</tabstop>
   <tabstop>autoAt</tabstop>
-  <tabstop>trace_step</tabstop>
   <tabstop>trace_length</tabstop>
   <tabstop>speedReplay</tabstop>
   <tabstop>chk_oppTrace</tabstop>

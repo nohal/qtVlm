@@ -358,14 +358,11 @@ void vlmLine::paint(QPainter * pnt, const QStyleOptionGraphicsItem * , QWidget *
             if(!hidden)
             {
                 int nbVac=nbVacPerHour*Settings::getSetting("trace_length",12).toInt()+1;
-                int step=Settings::getSetting("trace_step",60/5-1).toInt()+1;
                 int x0=poly->point(0).x();
                 int y0=poly->point(0).y();
                 for(int i=1;i<poly->count() && i<nbVac;i++)
                 {
                     int x,y;
-                    if(i%step) /* not taking all vac*/
-                        continue;
                     x=poly->point(i).x();
                     y=poly->point(i).y();
                     if(i%10)

@@ -1347,7 +1347,8 @@ void MainWindow::VLM_Sync_sync(void)
         menuBar->boatList->setEnabled(true);
         slotDateGribChanged_now(false);
         isStartingUp=false;
-        this->slot_centerBoat();
+        if(Settings::getSetting("centerOnBoatChange","1").toInt()==1)
+            this->slot_centerBoat();
         my_centralWidget->emitUpdateRoute(NULL);
     }
 }
@@ -1645,22 +1646,10 @@ void MainWindow::slot_updPlayerFinished(bool res_ok, Player * player)
     disconnect(player,SIGNAL(playerUpdated(bool,Player*)),this,SLOT(slot_updPlayerFinished(bool,Player*)));
     if(!res_ok)
     {
+        player->setWrong(true);
         qWarning() << "Erreur de MaJ player";
         isStartingUp=false;
         my_centralWidget->slot_playerSelected(player);
-        QList<boatVLM*> listBoats = *my_centralWidget->getBoats();
-        int lastBoatSelected=Settings::getSetting("LastBoatSelected","-10").toInt();
-        if(lastBoatSelected!=-10)
-        {
-            for(nBoat=0;nBoat<listBoats.count();nBoat++)
-            {
-                if(listBoats.at(nBoat)->getId()==lastBoatSelected)
-                {
-                    listBoats.at(nBoat)->slot_selectBoat();
-                    break;
-                }
-            }
-        }
         my_centralWidget->loadPOI();
         qWarning()<<"after load poi";
         slot_deleteProgress();
@@ -2012,8 +2001,16 @@ void MainWindow::getBoatWP(double * lat,double * lon)
    }
    else
    {
-       *lat = ((boatVLM*)selectedBoat)->getWPLat();
-       *lon = ((boatVLM*)selectedBoat)->getWPLon();
+       if(this->my_centralWidget->getPlayer()->getWrong())
+       {
+           *lat=-1;
+           *lon=-1;
+       }
+       else
+       {
+           *lat = ((boatVLM*)selectedBoat)->getWPLat();
+           *lon = ((boatVLM*)selectedBoat)->getWPLon();
+       }
    }
 }
 

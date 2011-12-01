@@ -75,7 +75,6 @@ boat::boat(QString pseudo, bool activated,
     connect(parent, SIGNAL(showALL(bool)),this,SLOT(slot_shSall()));
     connect(parent, SIGNAL(hideALL(bool)),this,SLOT(slot_shHall()));
 
-    trace.clear();
     trace_drawing = new vlmLine(proj,parent->getScene(),Z_VALUE_BOAT);
     connect(parent,SIGNAL(startReplay(bool)),trace_drawing,SLOT(slot_startReplay(bool)));
     connect(parent,SIGNAL(replay(int)),trace_drawing,SLOT(slot_replay(int)));
