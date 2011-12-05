@@ -231,6 +231,12 @@ void POI::createPopUpMenu(void)
     connect(ac_finePosit,SIGNAL(triggered()),this,SLOT(slot_finePosit()));
     popup->addAction(ac_finePosit);
 
+    ac_simplifiable = new QAction(tr("Non simplifiable"),popup);
+    ac_simplifiable->setCheckable(true);
+    ac_simplifiable->setChecked(this->notSimplificable);
+    connect(ac_simplifiable,SIGNAL(toggled(bool)),this,SLOT(slot_notSimplificable(bool)));
+    popup->addAction(ac_simplifiable);
+
     ac_modeList = new QMenu(tr("Mode de navigation vers ce POI"));
     QActionGroup * ptr_group = new QActionGroup(ac_modeList);
 

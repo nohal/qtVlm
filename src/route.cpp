@@ -749,6 +749,7 @@ void ROUTE::slot_recalculate(boat * boat)
         line->setCoastDetection(false);
     this->slot_shShow();
     line->slot_showMe();
+    interpolatePos(); /*to cover the case when grib date has changed during calculations*/
     busy=false;
 //    qWarning()<<"VBVMG-VLM calculation time:"<<timeD;
 //    qWarning()<<"Route total calculation time:"<<timeTotal.elapsed();
@@ -765,7 +766,7 @@ void ROUTE::interpolatePos()
     if(parent->getCompassFollow()==this)
         parent->centerCompass(list->at(0).lon,list->at(0).lat);
     if(gribDate<lastEta+1000) return;
-    for (int n=1; n<list->count();n++)
+    for (int n=1; n<list->count();++n)
     {
         if(lastEta<gribDate && list->at(n).eta>=gribDate)
         {

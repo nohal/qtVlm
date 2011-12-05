@@ -308,14 +308,15 @@ void opponent::updateName()
     }
     else
     {
-        str2=str2+this->longName;
-        str2=str2+"<br>"+tr("Date de la position: ")+
-                QDateTime().fromTime_t(this->lastUpdate).toUTC().toString("dd MMM-hh:mm");
-        str2+="<br>"+tr("Latitude:  ")+Util::pos2String(TYPE_LAT,this->lat);
-        str2+="<br>"+tr("Longitude: ")+Util::pos2String(TYPE_LON,this->lon);
+        str2="<qt><table><tr><td>"+this->longName+"</td><td></td></tr>";
+        str2=str2+"<tr><td>"+tr("Date de la position: ")+"</td><td>"+
+                QDateTime().fromTime_t(this->lastUpdate).toUTC().toString("dd MMM-hh:mm")+"</td></tr>";
+        str2+="<tr><td>"+tr("Latitude:  ")+"</td><td>"+Util::pos2String(TYPE_LAT,this->lat)+"</td></tr>";
+        str2+="<tr><td>"+tr("Longitude: ")+"</td><td>"+Util::pos2String(TYPE_LON,this->lon)+"</td></tr>";
         str2.replace(" ","&nbsp;");
         if(!desc.isEmpty() && !desc.contains("arazzia"))
-            str2=str2+"<br>"+desc;
+            str2=str2+"<tr><td>"+desc+"</td><td></td></tr>";
+        str2=str2+"</table></qt>";
     }
     setToolTip(str2);
     /* compute size */
@@ -524,7 +525,7 @@ void opponentList::refreshData(void)
     //qWarning() << "refreshData";
     if(!hasInet() || hasRequest())
     {
-        if(!hasInet())
+        if(!hasInet() || parent->getIsStartingUp())
         {
             qWarning() << "getOpponents bad state in inet - refreshData: " << hasInet() << " " << hasRequest();
             return;
@@ -600,7 +601,7 @@ void opponentList::getNxtOppData()
         getNxtOppData();
         return;
     }
-    if(!opponent_list[currentOpponent]->getUpdateRequired())
+    if(!opponent_list[currentOpponent]->getUpdateRequired() && !parent->getIsStartingUp())
     {
         ++currentOpponent;
         getNxtOppData();

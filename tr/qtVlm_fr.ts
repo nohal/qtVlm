@@ -2215,6 +2215,10 @@ Etes-vous sur ?</source>
         <source>deg</source>
         <translation>°</translation>
     </message>
+    <message>
+        <source>Non simplifiable</source>
+        <translation></translation>
+    </message>
 </context>
 <context>
     <name>POI_delete_ui</name>
@@ -3529,10 +3533,6 @@ p, li { white-space: pre-wrap; }
         <translation></translation>
     </message>
     <message>
-        <source>Pas de la trace</source>
-        <translation></translation>
-    </message>
-    <message>
         <source>Longueur de la trace</source>
         <translation></translation>
     </message>
@@ -3598,10 +3598,6 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Calcul de l&apos;estime</source>
-        <translation></translation>
-    </message>
-    <message>
-        <source>vacations</source>
         <translation></translation>
     </message>
     <message>
