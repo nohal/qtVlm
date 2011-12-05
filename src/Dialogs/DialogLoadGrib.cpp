@@ -230,7 +230,7 @@ void DialogLoadGrib::updateParameters()
     if (xmin > xmax) {
         tmp = xmin;   xmin = xmax;   xmax = tmp;
     }
-    if (ymin < ymax) {    // Ã©chelle Y inversÃ©e (90=nord)
+    if (ymin < ymax) {    // echelle Y inversee (90=nord)
         tmp = ymin;   ymin = ymax;   ymax = tmp;
     }
     // trop grand ?
@@ -542,7 +542,7 @@ QFrame *DialogLoadGrib::createFrameButtonsZone(QWidget *parent)
     sbEast->setReadOnly(true);
 
         //------------------------------------------------
-        // Résolution, intervalle, durée
+        // Resolution, intervalle, duree
         //------------------------------------------------
     cbResolution = new QComboBox(this);
     assert(cbResolution);
@@ -562,14 +562,14 @@ QFrame *DialogLoadGrib::createFrameButtonsZone(QWidget *parent)
 
     cbDays = new QComboBox(this);
     assert(cbDays);
-    cbDays->addItems(QStringList()<< "1"<<"2"<<"3"<<"4"<<"5"<<"6"<<"7");
+    cbDays->addItems(QStringList()<< "1"<<"2"<<"3"<<"4"<<"5"<<"6"<<"7"<<"8");
     cbDays->setMinimumWidth (sizemin);
         ind = Settings::getSetting("downloadIndNbDays", 4).toInt();
         ind = Util::inRange(ind, 0, cbDays->count()-1);
     cbDays->setCurrentIndex(ind);
 
         //------------------------------------------------
-        // Choix des données météo
+        // Choix des donnees meteo
         //------------------------------------------------
     chkWind     = new QCheckBox(tr("Wind (10 m)"));
     assert(chkWind);

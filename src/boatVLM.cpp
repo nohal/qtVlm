@@ -31,6 +31,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "settings.h"
 #include "orthoSegment.h"
 #include <Grib.h>
+#include "Orthodromie.h"
 
 
 boatVLM::boatVLM(QString pseudo, bool activated, int boatId, int playerId,Player * player, int isOwn,
@@ -395,6 +396,7 @@ void boatVLM::requestFinished (QByteArray res_byte)
             }
             break;
         case VLM_REQUEST_TRJ:
+        {
             emit getTrace(res_byte,trace_drawing->getPoints());
             if(!trace_drawing->getPoints()->isEmpty() &&
               (qRound(trace_drawing->getPoints()->last().lon*1000)!=qRound(this->lon*1000) ||
@@ -403,8 +405,25 @@ void boatVLM::requestFinished (QByteArray res_byte)
                 //qWarning()<<"missing last point in trace???"<<trace_drawing->getPoints()->last().lon<<this->lon<<trace_drawing->getPoints()->last().lat<<this->lat<<QDateTime::fromTime_t(trace_drawing->getPoints()->last().timeStamp).toUTC();
                 trace_drawing->getPoints()->append(vlmPoint(lon,lat));
             }
+#if 0
+            double estimatedSpeed=0;
+            QList<vlmPoint> * t=this->trace_drawing->getPoints();
+            if(t->count()>=2)
+            {
+                if(t->at(t->count()-1).timeStamp!=0 &&
+                   t->at(t->count()-2).timeStamp!=0)
+                {
+                    Orthodromie oo(t->at(t->count()-1).lon,
+                                   t->at(t->count()-1).lat,
+                                   t->at(t->count()-2).lon,
+                                   t->at(t->count()-2).lat);
+                    estimatedSpeed=oo.getDistance()/
+                            ((t->at(t->count()-1).timeStamp-t->at(t->count()-2).timeStamp)/3600.0);
+                }
+            }
+            qWarning()<<"Estimated speed:"<<QString().sprintf("%.2f",estimatedSpeed)<<"kts";
+#endif
             trace_drawing->slot_showMe();
-
             /* we can now update everything */
             updateBoatData();
             updateTraceColor();
@@ -426,6 +445,7 @@ void boatVLM::requestFinished (QByteArray res_byte)
             }
             showNextGates();
             break;
+        }
         case VLM_REQUEST_GATE:
             {
                 QJson::Parser parser;

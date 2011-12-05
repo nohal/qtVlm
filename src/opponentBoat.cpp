@@ -70,7 +70,7 @@ void opponent::init(QColor color,bool isQtBoat,QString idu,QString race, float l
     this->desc="";
     this->longName="";
     this->isReal=false;
-    this->lastUpdate=QDateTime().currentDateTimeUtc().toTime_t();
+    this->lastUpdate=0;
     this->updateRequired=true;
 
     this->opp_trace=1;
@@ -271,6 +271,8 @@ void opponent::drawTrace()
     {
         trace_drawing->hide();
     }
+    if(!isReal)
+        this->updateName();
 }
 
 void opponent::updateName()
@@ -297,6 +299,21 @@ void opponent::updateName()
     else
         my_str=name;
     QString tt;
+    double estimatedSpeed=0;
+    QList<vlmPoint> * t=this->getTrace();
+    if(t->count()>=2)
+    {
+        if(t->at(t->count()-1).timeStamp!=0 &&
+           t->at(t->count()-2).timeStamp!=0)
+        {
+            Orthodromie oo(t->at(t->count()-1).lon,
+                           t->at(t->count()-1).lat,
+                           t->at(t->count()-2).lon,
+                           t->at(t->count()-2).lat);
+            estimatedSpeed=oo.getDistance()/
+                    ((t->at(t->count()-1).timeStamp-t->at(t->count()-2).timeStamp)/3600.0);
+        }
+    }
     if(!isReal)
     {
         str2=str2+"<br>"+tr("Classement: ")+tt.sprintf("%d",this->rank);
@@ -304,6 +321,10 @@ void opponent::updateName()
         str2=str2+"<br>"+tr("Loch 3h: ")+this->loch3h;
         str2=str2+"<br>"+tr("Loch 24h: ")+this->loch24h;
         str2=str2+"<br>"+tr("Status VLM: ")+this->statusVLM;
+        if(estimatedSpeed!=0 && false)
+            str2=str2+"<br>"+tr("Vitesse estimee ")+
+                 QString().sprintf("%.2f ",estimatedSpeed)+
+                 tr(" nds");
         str2.replace(" ","&nbsp;");
     }
     else
@@ -313,6 +334,13 @@ void opponent::updateName()
                 QDateTime().fromTime_t(this->lastUpdate).toUTC().toString("dd MMM-hh:mm")+"</td></tr>";
         str2+="<tr><td>"+tr("Latitude:  ")+"</td><td>"+Util::pos2String(TYPE_LAT,this->lat)+"</td></tr>";
         str2+="<tr><td>"+tr("Longitude: ")+"</td><td>"+Util::pos2String(TYPE_LON,this->lon)+"</td></tr>";
+        if(estimatedSpeed!=0)
+        {
+            str2+="<tr><td>"+tr("Vitesse estimee ")+"</td><td>"+
+                    QString().sprintf("%.2f ",estimatedSpeed)+
+                    tr(" nds")+"</td></tr>";
+
+        }
         str2.replace(" ","&nbsp;");
         if(!desc.isEmpty() && !desc.contains("arazzia"))
             str2=str2+"<tr><td>"+desc+"</td><td></td></tr>";

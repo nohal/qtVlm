@@ -5327,6 +5327,18 @@ Voulez-vous egalement supprimer tous les POIs lui appartenant?</source>
         <source>Longitude: </source>
         <translation></translation>
     </message>
+    <message>
+        <source>nds</source>
+        <translation type="obsolete">nds</translation>
+    </message>
+    <message>
+        <source>Vitesse estimee </source>
+        <translation>Vitesse estimée</translation>
+    </message>
+    <message>
+        <source> nds</source>
+        <translation></translation>
+    </message>
 </context>
 <context>
     <name>paramAccount</name>
