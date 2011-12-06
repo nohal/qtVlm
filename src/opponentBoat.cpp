@@ -307,10 +307,10 @@ void opponent::updateName()
         if(t->at(t->count()-1).timeStamp!=0 &&
            t->at(t->count()-2).timeStamp!=0)
         {
-            Orthodromie oo(t->at(t->count()-1).lon,
-                           t->at(t->count()-1).lat,
-                           t->at(t->count()-2).lon,
-                           t->at(t->count()-2).lat);
+            Orthodromie oo(t->at(t->count()-2).lon,
+                           t->at(t->count()-2).lat,
+                           t->at(t->count()-1).lon,
+                           t->at(t->count()-1).lat);
             estimatedSpeed=oo.getDistance()/
                     ((t->at(t->count()-1).timeStamp-t->at(t->count()-2).timeStamp)/3600.0);
             estimatedHeading=oo.getAzimutDeg();
