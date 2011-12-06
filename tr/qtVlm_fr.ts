@@ -5339,6 +5339,14 @@ Voulez-vous egalement supprimer tous les POIs lui appartenant?</source>
         <source> nds</source>
         <translation></translation>
     </message>
+    <message>
+        <source>Cap estime</source>
+        <translation>Cap estimé</translation>
+    </message>
+    <message>
+        <source>deg</source>
+        <translation>°</translation>
+    </message>
 </context>
 <context>
     <name>paramAccount</name>

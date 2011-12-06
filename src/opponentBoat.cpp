@@ -284,15 +284,15 @@ void opponent::updateName()
         {
             case SHOW_PSEUDO:
                 my_str = pseudo;
-                str2 = idu + " - " + name;
+                str2 = "<qt><table><tr><td>"+idu + "</td><td>" + name+"</td></tr>";
                 break;
             case SHOW_NAME:
                 my_str = name;
-                str2 = idu + " - " + pseudo;
+                str2 = "<qt><table><tr><td>"+idu + "</td><td>" + pseudo+"</td></tr>";
                 break;
             case SHOW_IDU:
                 my_str = idu;
-                str2 = pseudo + " - " + name;
+                str2 = "<qt><table><tr><td>"+pseudo + "</td><td>" + name+"</td></tr>";
                 break;
         }
     }
@@ -300,6 +300,7 @@ void opponent::updateName()
         my_str=name;
     QString tt;
     double estimatedSpeed=0;
+    double estimatedHeading=0;
     QList<vlmPoint> * t=this->getTrace();
     if(t->count()>=2)
     {
@@ -312,24 +313,36 @@ void opponent::updateName()
                            t->at(t->count()-2).lat);
             estimatedSpeed=oo.getDistance()/
                     ((t->at(t->count()-1).timeStamp-t->at(t->count()-2).timeStamp)/3600.0);
+            estimatedHeading=oo.getAzimutDeg();
         }
     }
     if(!isReal)
     {
-        str2=str2+"<br>"+tr("Classement: ")+tt.sprintf("%d",this->rank);
-        str2=str2+"<br>"+tr("Loch 1h: ")+this->loch1h;
-        str2=str2+"<br>"+tr("Loch 3h: ")+this->loch3h;
-        str2=str2+"<br>"+tr("Loch 24h: ")+this->loch24h;
-        str2=str2+"<br>"+tr("Status VLM: ")+this->statusVLM;
+        str2=str2+"<tr><td>"+tr("Classement: ")+"</td><td>"+tt.sprintf("%d",this->rank)+"</td></tr>";
+        str2=str2+"<tr><td>"+tr("Loch 1h: ")+"</td><td>"+this->loch1h+"</td></tr>";
+        str2=str2+"<tr><td>"+tr("Loch 3h: ")+"</td><td>"+this->loch3h+"</td></tr>";
+        str2=str2+"<tr><td>"+tr("Loch 24h: ")+"</td><td>"+this->loch24h+"</td></tr>";
+        str2=str2+"<tr><td>"+tr("Status VLM: ")+"</td><td>"+this->statusVLM+"</td></tr>";
         if(estimatedSpeed!=0 && false)
-            str2=str2+"<br>"+tr("Vitesse estimee ")+
+        {
+            str2=str2+"<tr><td>"+tr("Vitesse estimee ")+"</td><td>"+
                  QString().sprintf("%.2f ",estimatedSpeed)+
-                 tr(" nds");
+                 tr(" nds")+"</td></tr>";
+            str2+="<tr><td>"+tr("Cap estime")+"</td><td>"+
+                    QString().sprintf("%.2f ",estimatedHeading)+
+                    tr("deg")+"</td></tr>";
+        }
         str2.replace(" ","&nbsp;");
     }
     else
     {
-        str2="<qt><table><tr><td>"+this->longName+"</td><td></td></tr>";
+        str2="<qt>";
+        QFile img("img/"+name+".jpg");
+        if(img.exists() && img.size()<20*1024)
+        {
+            str2="<img src='img/"+name+".jpg'>";
+        }
+        str2+="<table><tr><td>"+this->longName+"</td><td></td></tr>";
         str2=str2+"<tr><td>"+tr("Date de la position: ")+"</td><td>"+
                 QDateTime().fromTime_t(this->lastUpdate).toUTC().toString("dd MMM-hh:mm")+"</td></tr>";
         str2+="<tr><td>"+tr("Latitude:  ")+"</td><td>"+Util::pos2String(TYPE_LAT,this->lat)+"</td></tr>";
@@ -339,9 +352,11 @@ void opponent::updateName()
             str2+="<tr><td>"+tr("Vitesse estimee ")+"</td><td>"+
                     QString().sprintf("%.2f ",estimatedSpeed)+
                     tr(" nds")+"</td></tr>";
-
+            str2+="<tr><td>"+tr("Cap estime")+"</td><td>"+
+                    QString().sprintf("%.2f ",estimatedHeading)+
+                    tr("deg")+"</td></tr>";
         }
-        str2.replace(" ","&nbsp;");
+        //str2.replace(" ","&nbsp;");
         if(!desc.isEmpty() && !desc.contains("arazzia"))
             str2=str2+"<tr><td>"+desc+"</td><td></td></tr>";
         str2=str2+"</table></qt>";
@@ -502,13 +517,18 @@ void opponentList::setBoatList(QString list_txt,QString race,int showWhat, bool 
     //qWarning() << "SetBoatList - race " << race << " - " << list_txt;
     if(!hasInet() || hasRequest())
     {
-        if(!hasInet())
+        if(!hasInet() || parent->getIsStartingUp())
         {
             qWarning() << "getOpponents bad state in inet - setBoatList: " << hasInet() << " " << hasRequest();
             return;
         }
-        qWarning()<<"Cancelling previous request";
+        qWarning()<<"Cancelling previous request (setBoatList)";
         this->inetAbort();
+//        for(int n=opponent_list.count()-1;n>=0;--n)
+//        {
+//            if(opponent_list.at(n)->getIsReal())
+//                delete opponent_list.takeAt(n);
+//        }
     }
     if(showWhat==SHOW_NONE && !showReal)
     {
@@ -558,8 +578,13 @@ void opponentList::refreshData(void)
             qWarning() << "getOpponents bad state in inet - refreshData: " << hasInet() << " " << hasRequest();
             return;
         }
-        qWarning()<<"Cancelling previous request";
+        qWarning()<<"Cancelling previous request (refreshData)";
         this->inetAbort();
+//        for(int n=opponent_list.count()-1;n>=0;--n)
+//        {
+//            if(opponent_list.at(n)->getIsReal())
+//                delete opponent_list.takeAt(n);
+//        }
     }
 
     if(opponent_list.size()<=0 && !this->showReal)
@@ -934,7 +959,7 @@ void opponentList::requestFinished (QByteArray res_byte)
                             }
                         }
                     }
-                    if(this->showReal)
+                    if(this->showReal && !parent->getIsStartingUp())
                     {
                         QString page;
                         QTextStream(&page)
@@ -945,6 +970,11 @@ void opponentList::requestFinished (QByteArray res_byte)
                     }
                     else if(opponent_list.count()>0)
                     {
+                       for(int n=opponent_list.count()-1;n>=0;--n)
+                       {
+                            if(opponent_list.at(n)->getIsReal())
+                                delete opponent_list.takeAt(n);
+                       }
                         //currentRace = opponent_list[0]->getRace();
                         currentOpponent = 0;
                         currentMode=OPP_MODE_REFRESH;

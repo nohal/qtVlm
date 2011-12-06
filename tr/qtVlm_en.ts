@@ -3984,7 +3984,7 @@ Etes-vous sur ?</source>
     </message>
     <message>
         <location filename="../src/boatVLM.cpp" line="590"/>
-        <location filename="../src/opponentBoat.cpp" line="683"/>
+        <location filename="../src/opponentBoat.cpp" line="702"/>
         <source>Parametre bateau</source>
         <translation>Boat settings</translation>
     </message>
@@ -7807,54 +7807,66 @@ Voulez-vous egalement supprimer tous les POIs lui appartenant?</source>
         <translation type="obsolete">VLM status:</translation>
     </message>
     <message>
-        <location filename="../src/opponentBoat.cpp" line="319"/>
+        <location filename="../src/opponentBoat.cpp" line="321"/>
         <source>Classement: </source>
         <translation>Ranking: </translation>
     </message>
     <message>
-        <location filename="../src/opponentBoat.cpp" line="320"/>
+        <location filename="../src/opponentBoat.cpp" line="322"/>
         <source>Loch 1h: </source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../src/opponentBoat.cpp" line="321"/>
+        <location filename="../src/opponentBoat.cpp" line="323"/>
         <source>Loch 3h: </source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../src/opponentBoat.cpp" line="322"/>
+        <location filename="../src/opponentBoat.cpp" line="324"/>
         <source>Loch 24h: </source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../src/opponentBoat.cpp" line="323"/>
+        <location filename="../src/opponentBoat.cpp" line="325"/>
         <source>Status VLM: </source>
         <translation>VLM status: </translation>
     </message>
     <message>
-        <location filename="../src/opponentBoat.cpp" line="325"/>
-        <location filename="../src/opponentBoat.cpp" line="339"/>
+        <location filename="../src/opponentBoat.cpp" line="328"/>
+        <location filename="../src/opponentBoat.cpp" line="346"/>
         <source>Vitesse estimee </source>
         <translation>Estimated speed </translation>
     </message>
     <message>
-        <location filename="../src/opponentBoat.cpp" line="327"/>
-        <location filename="../src/opponentBoat.cpp" line="341"/>
+        <location filename="../src/opponentBoat.cpp" line="330"/>
+        <location filename="../src/opponentBoat.cpp" line="348"/>
         <source> nds</source>
         <translation> kts</translation>
     </message>
     <message>
+        <location filename="../src/opponentBoat.cpp" line="331"/>
+        <location filename="../src/opponentBoat.cpp" line="349"/>
+        <source>Cap estime</source>
+        <translation>Estimated heading</translation>
+    </message>
+    <message>
         <location filename="../src/opponentBoat.cpp" line="333"/>
+        <location filename="../src/opponentBoat.cpp" line="351"/>
+        <source>deg</source>
+        <translation>°</translation>
+    </message>
+    <message>
+        <location filename="../src/opponentBoat.cpp" line="340"/>
         <source>Date de la position: </source>
         <translation>Position date: </translation>
     </message>
     <message>
-        <location filename="../src/opponentBoat.cpp" line="335"/>
+        <location filename="../src/opponentBoat.cpp" line="342"/>
         <source>Latitude:  </source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../src/opponentBoat.cpp" line="336"/>
+        <location filename="../src/opponentBoat.cpp" line="343"/>
         <source>Longitude: </source>
         <translation></translation>
     </message>
