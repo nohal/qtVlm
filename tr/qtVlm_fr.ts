@@ -2677,7 +2677,7 @@ AWA %d°, AWS %.1fnds</translation>
         <source>TWA %ddeg, BS %.1fnds
 AWA %ddeg, AWS %.1fnds
 VMG %.1fnds</source>
-        <translation>TWA %d°, BS %.1f nds
+        <translation type="obsolete">TWA %d°, BS %.1f nds
 AWA %d°, AWS %.1f nds
 VMG %.1f nds</translation>
     </message>
@@ -2796,6 +2796,14 @@ VMG %.1f nds</translation>
     <message>
         <source>Cette operation est impossible si le mode de calcul VBVMG est celui de VLM</source>
         <translation>Cette opération est impossible si le mode de calcul VBVMG est celui de VLM</translation>
+    </message>
+    <message>
+        <source>TWA %ddeg, BS %.2fnds
+AWA %.2fdeg, AWS %.2fnds
+VMG %.2fnds</source>
+        <translation>TWA %d°, BS %.2f nds
+AWA %2f°, AWS %.2f nds
+VMG %.2f nds</translation>
     </message>
 </context>
 <context>

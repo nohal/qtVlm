@@ -3984,7 +3984,7 @@ Etes-vous sur ?</source>
     </message>
     <message>
         <location filename="../src/boatVLM.cpp" line="590"/>
-        <location filename="../src/opponentBoat.cpp" line="702"/>
+        <location filename="../src/opponentBoat.cpp" line="708"/>
         <source>Parametre bateau</source>
         <translation>Boat settings</translation>
     </message>
@@ -4027,11 +4027,10 @@ AWA %ddeg, AWS %.1fnds</source>
 AWA %d°, AWS %.1fkts</translation>
     </message>
     <message>
-        <location filename="../src/Dialogs/dialogviewpolar.cpp" line="57"/>
         <source>TWA %ddeg, BS %.1fnds
 AWA %ddeg, AWS %.1fnds
 VMG %.1fnds</source>
-        <translation>TWA %d°, BS %.1f kts
+        <translation type="obsolete">TWA %d°, BS %.1f kts
 AWA %d°, AWS %.1f kts
 VMG %.1 kts</translation>
     </message>
@@ -4104,6 +4103,15 @@ VMG %.1 kts</translation>
         <location filename="../src/Dialogs/DialogRoute.cpp" line="206"/>
         <source>Lat POI cible</source>
         <translation>Lat target POI</translation>
+    </message>
+    <message>
+        <location filename="../src/Dialogs/dialogviewpolar.cpp" line="57"/>
+        <source>TWA %ddeg, BS %.2fnds
+AWA %.2fdeg, AWS %.2fnds
+VMG %.2fnds</source>
+        <translation>TWA %d°, BS %.2f kts
+AWA %2f°, AWS %.2f kts
+VMG %.2f kts</translation>
     </message>
 </context>
 <context>
@@ -7833,40 +7841,40 @@ Voulez-vous egalement supprimer tous les POIs lui appartenant?</source>
     </message>
     <message>
         <location filename="../src/opponentBoat.cpp" line="328"/>
-        <location filename="../src/opponentBoat.cpp" line="346"/>
+        <location filename="../src/opponentBoat.cpp" line="352"/>
         <source>Vitesse estimee </source>
         <translation>Estimated speed </translation>
     </message>
     <message>
         <location filename="../src/opponentBoat.cpp" line="330"/>
-        <location filename="../src/opponentBoat.cpp" line="348"/>
+        <location filename="../src/opponentBoat.cpp" line="354"/>
         <source> nds</source>
         <translation> kts</translation>
     </message>
     <message>
         <location filename="../src/opponentBoat.cpp" line="331"/>
-        <location filename="../src/opponentBoat.cpp" line="349"/>
+        <location filename="../src/opponentBoat.cpp" line="355"/>
         <source>Cap estime</source>
         <translation>Estimated heading</translation>
     </message>
     <message>
         <location filename="../src/opponentBoat.cpp" line="333"/>
-        <location filename="../src/opponentBoat.cpp" line="351"/>
+        <location filename="../src/opponentBoat.cpp" line="357"/>
         <source>deg</source>
         <translation>°</translation>
     </message>
     <message>
-        <location filename="../src/opponentBoat.cpp" line="340"/>
+        <location filename="../src/opponentBoat.cpp" line="346"/>
         <source>Date de la position: </source>
         <translation>Position date: </translation>
     </message>
     <message>
-        <location filename="../src/opponentBoat.cpp" line="342"/>
+        <location filename="../src/opponentBoat.cpp" line="348"/>
         <source>Latitude:  </source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../src/opponentBoat.cpp" line="343"/>
+        <location filename="../src/opponentBoat.cpp" line="349"/>
         <source>Longitude: </source>
         <translation></translation>
     </message>

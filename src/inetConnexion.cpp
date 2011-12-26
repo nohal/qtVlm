@@ -116,7 +116,9 @@ void inetConnexion::doRequest(int type,inetClient* client,QString requestUrl,QSt
         host=Util::getHost();
     Util::paramProxy(inetManager,host);
 
-    page=host+requestUrl;
+    page = host+requestUrl;
+    if(type == REQUEST_POST)
+        page += "?" + data;
 #if 0
     //if(page.contains("track"))
         qWarning() << "Doing inet request: " << page ;
@@ -142,7 +144,7 @@ void inetConnexion::doRequest(int type,inetClient* client,QString requestUrl,QSt
     if(type==REQUEST_POST)
     {
         //qWarning() << "Posting data: " << data;
-        currentReply=inetManager->post(request,data.toAscii());
+        currentReply=inetManager->post(request,"");
     }
     else
     {
