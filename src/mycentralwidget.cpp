@@ -71,6 +71,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "DialogRoutage.h"
 #include "DialogRealBoatConfig.h"
 #include "DialogVlmLog.h"
+#include "DialogDownloadTracks.h"
 #include "parser.h"
 #include <QVariantMap>
 #include <QVariant>
@@ -460,6 +461,7 @@ myCentralWidget::myCentralWidget(Projection * proj,MainWindow * parent,MenuBar *
     connect(menuBar->acOptions_GraphicsParams, SIGNAL(triggered()), &dialogGraphicsParams, SLOT(exec()));
 
     vlmLogViewer = new DialogVlmLog(this);
+    vlmTrackRetriever = new DialogDownloadTracks(parent,this,this->getInet());
     /*Routes*/
     connect(menuBar->acRoute_add, SIGNAL(triggered()), this, SLOT(slot_addRouteFromMenu()));
     connect(menuBar->acRoute_import, SIGNAL(triggered()), this, SLOT(slot_importRouteFromMenu()));
@@ -1335,6 +1337,19 @@ void myCentralWidget::slot_showVlmLog()
 
 }
 
+void myCentralWidget::slot_fetchVLMTrack()
+{
+    Player * cur_player=this->getPlayer();
+    if(cur_player)
+        vlmTrackRetriever->exec();
+    else {
+        QMessageBox::warning(0,QObject::tr("Telecharger traces VLM"),
+             QString(QObject::tr("Pas de compte VLM actif.")));
+        return;
+    }
+
+}
+
 void myCentralWidget::setHorn()
 {
     if(this->hornIsActivated())
@@ -2154,6 +2169,69 @@ void myCentralWidget::exportRouteFromMenuGPX(ROUTE * route,QString fileName,bool
     stream<<"</gpx>"<<endl;
     routeFile.close();
 }
+
+void myCentralWidget::withdrawRouteFromBank(QString routeName,QList<QVariant> details)
+{
+    bool ortho=true;
+    ROUTE * route=addRoute();
+    if (routeName.isEmpty() || !freeRouteName(routeName.trimmed(),route))
+    {
+        QMessageBox msgBox;
+        msgBox.setText(tr("Ce nom est deja utilise ou invalide"));
+        msgBox.setIcon(QMessageBox::Critical);
+        msgBox.exec();
+        this->deleteRoute(route);
+    }
+    QMessageBox * waitBox = new QMessageBox(QMessageBox::Information,tr("Import de routes"),
+                              tr("Import en cours, veuillez patienter..."));
+    waitBox->setStandardButtons(QMessageBox::NoButton);
+    waitBox->show();
+    QApplication::processEvents();
+    route->setName(routeName);
+    update_menuRoute();
+    route->setBoat(mainW->getSelectedBoat());
+    route->setStartFromBoat(false);
+    route->setStartTimeOption(3);
+    route->setColor(QColor(227,142,42,255));
+    route->setImported();
+    route->setFrozen(true);
+    route->setTemp(true);
+    QMap<int,QPointF> points;
+    for(int n=0;n<details.count();++n)
+    {
+        QVariant detail=details.at(n);
+        QVariantList FTpoint=detail.toList();
+        time_t eta=FTpoint.at(0).toInt();
+        double lon=FTpoint.at(1).toDouble()/1000.00;
+        double lat=FTpoint.at(2).toDouble()/1000.00;
+        points.insert(eta,QPointF(lon,lat));
+    }
+    QDateTime start=QDateTime().fromTime_t(points.begin().key());
+    route->setStartTime(start);
+    QMapIterator<int,QPointF> p(points);
+    int nPoi=0;
+    while(p.hasNext())
+    {
+        ++nPoi;
+        int eta=p.next().key();
+        double lon=p.value().x();
+        double lat=p.value().y();
+        QString poiName=route->getName()+QString().sprintf("%.5i",nPoi);
+        POI * poi = slot_addPOI(poiName,0,lat,lon,-1,false,false,mainW->getSelectedBoat());
+        if(ortho)
+            poi->setNavMode(2);
+        poi->setRoute(route);
+        poi->setRouteTimeStamp(eta);
+    }
+    route->setHidePois(true);
+    route->setImported();
+    route->setTemp(false);
+    route->setFrozen2(false);//calculate only once and relock immediately
+    route->setFrozen2(true);
+    delete waitBox;
+
+}
+
 void myCentralWidget::slot_addRouteFromMenu()
 {
     ROUTE * route=addRoute();

@@ -281,6 +281,7 @@ MenuBar::MenuBar(QWidget *parent)
         acVLMSync = addAction(menuBoat,tr("VLM Sync"),"","","");
         acPilototo = addAction(menuBoat,tr("Pilototo"),"","","");
         acShowLog=addAction(menuBoat,tr("Historique VLM"),"Ctrl+Shift+E","",tr(""));
+        acGetTrack=addAction(menuBoat,tr("Telecharger trace"),"Ctrl+Shift+T","",tr(""));
         acShowPolar=addAction(menuBoat,tr("Etudier la polaire"),"","");
     addMenu(menuBoat);
 

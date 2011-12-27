@@ -260,7 +260,7 @@ public:
      QAction *acReplay;
     QAction *acScreenshot;
     QAction *acShowLog;
-
+    QAction *acGetTrack;
 
     QAction *acHelp_Help;
     QAction *acHelp_APropos;

@@ -226,6 +226,7 @@ class myCentralWidget : public QWidget
         void slot_twaLine();
         void slot_releaseCompassFollow(){this->compassRoute=NULL;}
         void slot_deleteRoute();
+        void withdrawRouteFromBank(QString routeName,QList<QVariant> details);
 
         /*Routages */
         void slot_addRoutageFromMenu();
@@ -275,7 +276,7 @@ class myCentralWidget : public QWidget
         void slot_replay();
         void slot_takeScreenshot();
         void slot_showVlmLog();
-
+        void slot_fetchVLMTrack();
 
     signals:
         /* drawing */
@@ -360,6 +361,7 @@ class myCentralWidget : public QWidget
         DialogGraphicsParams  dialogGraphicsParams;
         DialogRealBoatConfig * realBoatConfig;
         DialogVlmLog * vlmLogViewer;
+        DialogDownloadTracks * vlmTrackRetriever;
 
         /* Lists, POI*/
         QList<POI*> poi_list;

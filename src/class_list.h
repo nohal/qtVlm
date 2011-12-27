@@ -157,6 +157,9 @@ class Projection;
 /* DialogRace.h */
 class DialogRace;
 
+/* DialogDownloadTracks.h */
+class DialogDownloadTracks;
+
 /* dialogVlmLog.h */
 class DialogVlmLog;
 
