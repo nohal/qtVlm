@@ -21,10 +21,10 @@ DialogDownloadTracks::DialogDownloadTracks(MainWindow * main ,myCentralWidget * 
     this->parent=parent;
     ui->setupUi(this);
     this->raceIsValid=false;
-    ui->raceIDEdit->setToolTip(tr("Numero de la course\n http://www.virtual-loup-de-mer.org/races.php?fulllist=1","",0));
-    ui->boatIDEdit->setToolTip(tr("Numero du bateau","",0));
-    ui->startTimeEdit->setToolTip(tr("Debut de la trace","",0));
-    ui->endTimeEdit->setToolTip(tr("Fin de la trace","",0));
+    ui->raceIDEdit->setToolTip(tr("Numero de la course\n http://www.virtual-loup-de-mer.org/races.php?fulllist=1"));
+    ui->boatIDEdit->setToolTip(tr("Numero du bateau"));
+    ui->startTimeEdit->setToolTip(tr("Debut de la trace"));
+    ui->endTimeEdit->setToolTip(tr("Fin de la trace"));
 }
 
 DialogDownloadTracks::~DialogDownloadTracks()

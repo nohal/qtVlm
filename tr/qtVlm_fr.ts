@@ -22,6 +22,42 @@
     </message>
 </context>
 <context>
+    <name>DialogDownloadTracks</name>
+    <message>
+        <source>Numero de la course
+ http://www.virtual-loup-de-mer.org/races.php?fulllist=1</source>
+        <translation>Numéro de la course</translation>
+    </message>
+    <message>
+        <source>Numero du bateau</source>
+        <translation>Numéro du bateau</translation>
+    </message>
+    <message>
+        <source>Debut de la trace</source>
+        <translation>Date et heure du début de la trace</translation>
+    </message>
+    <message>
+        <source>Fin de la trace</source>
+        <translation>Date et heure de fin de la trace</translation>
+    </message>
+    <message>
+        <source>Course inconnue</source>
+        <translation>Course inconnue</translation>
+    </message>
+    <message>
+        <source>Sauvegarde du fichier JSON</source>
+        <translation>Sauvegarde du fichier json</translation>
+    </message>
+    <message>
+        <source>Erreur</source>
+        <translation>Erreur</translation>
+    </message>
+    <message>
+        <source>Ecriture du fichier impossible.</source>
+        <translation>Ecriture du fichier impossible.</translation>
+    </message>
+</context>
+<context>
     <name>DialogFinePosit</name>
     <message>
         <source>Parametres du positionnement automatique</source>
@@ -2038,6 +2074,10 @@ Etes-vous sur ?</source>
         <source>En mode Ortho</source>
         <translation></translation>
     </message>
+    <message>
+        <source>Telecharger trace</source>
+        <translation>Télécharger trace</translation>
+    </message>
 </context>
 <context>
     <name>POI</name>
@@ -2224,39 +2264,15 @@ Etes-vous sur ?</source>
     <name>POI_delete_ui</name>
     <message>
         <source>Selection de type de marque</source>
-        <translation>Sélection de type de marque</translation>
+        <translation type="obsolete">Sélection de type de marque</translation>
     </message>
     <message>
         <source>Cancel</source>
-        <translation>Annuler</translation>
+        <translation type="obsolete">Annuler</translation>
     </message>
     <message>
         <source>Type de marque a supprimer</source>
-        <translation>Type de marque à supprimer</translation>
-    </message>
-    <message>
-        <source>&lt;a href=&quot;titi&quot;&gt;Tous&lt;/a&gt;</source>
-        <translation></translation>
-    </message>
-    <message>
-        <source>&lt;a href=&quot;toto&quot;&gt;Aucun&lt;/a&gt;</source>
-        <translation></translation>
-    </message>
-    <message>
-        <source>POI</source>
-        <translation></translation>
-    </message>
-    <message>
-        <source>Marque</source>
-        <translation></translation>
-    </message>
-    <message>
-        <source>Balise</source>
-        <translation></translation>
-    </message>
-    <message>
-        <source>OK</source>
-        <translation></translation>
+        <translation type="obsolete">Type de marque à supprimer</translation>
     </message>
 </context>
 <context>
@@ -2804,6 +2820,14 @@ VMG %.2fnds</source>
         <translation>TWA %d°, BS %.2f nds
 AWA %2f°, AWS %.2f nds
 VMG %.2f nds</translation>
+    </message>
+    <message>
+        <source>Telecharger traces VLM</source>
+        <translation type="unfinished">Télécharger traces VLM</translation>
+    </message>
+    <message>
+        <source>Pas de compte VLM actif.</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
