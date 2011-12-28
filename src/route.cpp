@@ -317,6 +317,7 @@ void ROUTE::slot_recalculate(boat * boat)
             initialDist=orth.getDistance();
         }
         double poiNb=-1;
+        Orthodromie orth2(lon,lat,lon,lat);
         while(i.hasNext())
         {
             ++poiNb;
@@ -335,9 +336,12 @@ void ROUTE::slot_recalculate(boat * boat)
                     vlmPoint p(lon,lat);
                     p.eta=eta;
                     line->addVlmPoint(p);
+                    orth2.setPoints(lon,lat,lon,lat);
                     continue;
                 }
             }
+            if(optimizingPOI)
+                orth2.setEndPoint(poi->getLongitude(),poi->getLatitude());
             if(!grib->isOk() && !imported)
             {
                 tip=tr("<br>Route: ")+name;
@@ -597,7 +601,13 @@ void ROUTE::slot_recalculate(boat * boat)
             // distance between the end of the route and the last POI
             // of the route.
             remain = orth.getDistance();
-
+            if(this->optimizingPOI && has_eta && !imported)
+            {
+                double dist1=orth2.getDistance();
+                orth2.setEndPoint(lon,lat);
+                if(orth2.getDistance()>dist1)
+                    remain=-remain; /*case where we went over the target*/
+            }
             if(this->autoAt)
             {
                 poi->setWph(qRound(cap*100)/100.0);

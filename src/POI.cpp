@@ -1033,7 +1033,7 @@ void POI::slot_finePosit(bool silent)
         tm.setTime_t (simplex[0].eta);                                  \
         best = new POI (tr ("Meilleure ETA: ")                          \
                         + tm.toString ("dd MMM-hh:mm")                  \
-                        + QString (" (+%1 milles)").arg (simplex[0].remain, 0, 'g', 2), \
+                        + QString().sprintf(" (%+.3f milles)",simplex[0].remain),\
                         0,                                              \
                         simplex[0].lat, simplex[0].lon,                 \
                         this->proj, this->owner, this->parent, 0, 0, false, route->getBoat()); \
