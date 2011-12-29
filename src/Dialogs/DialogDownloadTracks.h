@@ -29,14 +29,17 @@ private:
     Ui::DialogDownloadTracks *ui;
     int userID, raceID, boatID;
     time_t startTime, endTime;
+    QDateTime qStartTime,qEndTime;
     QString url,fileName;
     myCentralWidget * parent;
-    bool raceIsValid;
+    bool raceIsValid,boatIsValid;
 
     bool jsonFileReceived ( QByteArray * content);
     bool doRequest(int reqType);
 private slots:
     void on_raceIDEdit_valueChanged(int);
+    void on_boatIDEdit_valueChanged(int);
+    void on_frameTrackCheckbox_stateChanged(int);
 };
 
 #endif // DIALOGDOWNLOADTRACKS_H

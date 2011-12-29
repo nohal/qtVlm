@@ -12,6 +12,8 @@
 #define VLM_DL_TRACK 1
 #define VLM_RACE_INFO 2
 #define VLM_GET_TRACK 3
+#define VLM_GET_PARTIAL_TRACK 4
+#define VLM_BOAT_INFO 5
 
 DialogDownloadTracks::DialogDownloadTracks(MainWindow * main ,myCentralWidget * parent,inetConnexion * inet) :
     QDialog(parent),
@@ -21,10 +23,16 @@ DialogDownloadTracks::DialogDownloadTracks(MainWindow * main ,myCentralWidget * 
     this->parent=parent;
     ui->setupUi(this);
     this->raceIsValid=false;
+    this->setWhatsThis(tr("Permet de telecharger manuellement une trace pour une course VLM.\nLa boîte à cocher trace partielle s'active apres l'entree d'un numero de course valide, et permet de requérir une trace tronquée."));
     ui->raceIDEdit->setToolTip(tr("Numero de la course\n http://www.virtual-loup-de-mer.org/races.php?fulllist=1"));
     ui->boatIDEdit->setToolTip(tr("Numero du bateau"));
     ui->startTimeEdit->setToolTip(tr("Debut de la trace"));
+    ui->startTimeEdit->setEnabled(false);
     ui->endTimeEdit->setToolTip(tr("Fin de la trace"));
+    ui->endTimeEdit->setEnabled(false);
+    ui->labelStartTime->setEnabled(false);
+    ui->labelEndTime->setEnabled(false);
+    ui->frameTrackCheckBox->setEnabled(false);
 }
 
 DialogDownloadTracks::~DialogDownloadTracks()
@@ -32,35 +40,62 @@ DialogDownloadTracks::~DialogDownloadTracks()
     delete ui;
 }
 
-
 void DialogDownloadTracks::accept()
 {
+    if (raceIsValid&&boatIsValid)
+    {
         raceID=ui->raceIDEdit->value();
         boatID=ui->boatIDEdit->value();
-        QDateTime qStartTime=ui->startTimeEdit->dateTime();
-        startTime=qStartTime.toTime_t();
-        QDateTime qEndTime=ui->endTimeEdit->dateTime();
-        endTime=qEndTime.toTime_t();
-        if (!raceIsValid)
+        if (ui->frameTrackCheckBox->isChecked())
         {
-            QMessageBox msgBox;
-            msgBox.setText(tr("Course inconnue"));
-            msgBox.setIcon(QMessageBox::Critical);
-            msgBox.exec();
+            qStartTime=ui->startTimeEdit->dateTime();
+            startTime=qStartTime.toTime_t();
+            qEndTime=ui->endTimeEdit->dateTime();
+            endTime=qEndTime.toTime_t();
+            doRequest(VLM_GET_PARTIAL_TRACK);
         }
         else
-        {
-        if (!doRequest(VLM_GET_TRACK))
-            QDialog::done(QDialog::Rejected);
-        else
-            QDialog::done(QDialog::Accepted);
-        }
+            doRequest(VLM_GET_TRACK);
+        QDialog::done(QDialog::Accepted);
+    }
+    else
+    {
+        QMessageBox msgBox;
+        msgBox.setText(tr("Course ou bateau inconnu"));
+        msgBox.setIcon(QMessageBox::Critical);
+        msgBox.exec();
+        QDialog::done(QDialog::Rejected);
+    }
+}
+
+void DialogDownloadTracks::on_boatIDEdit_valueChanged(int)
+{
+    boatID=ui->boatIDEdit->value();
+    doRequest(VLM_BOAT_INFO);
 }
 
 void DialogDownloadTracks::on_raceIDEdit_valueChanged(int)
 {
     raceID=ui->raceIDEdit->value();
     doRequest(VLM_RACE_INFO);
+}
+
+void DialogDownloadTracks::on_frameTrackCheckbox_stateChanged(int)
+{
+    if (ui->frameTrackCheckBox->isChecked())
+    {
+        ui->startTimeEdit->setEnabled(true);
+        ui->endTimeEdit->setEnabled(true);
+        ui->labelStartTime->setEnabled(true);
+        ui->labelEndTime->setEnabled(true);
+    }
+    else
+    {
+        ui->startTimeEdit->setEnabled(false);
+        ui->endTimeEdit->setEnabled(false);
+        ui->labelStartTime->setEnabled(false);
+        ui->labelEndTime->setEnabled(false);
+    }
 }
 
 /*****************************************
@@ -124,9 +159,9 @@ bool DialogDownloadTracks::doRequest(int reqType)
                << "&idu="
                << boatID
                << "&starttime="
-               << startTime
-               << "&endtime="
-               << endTime;
+               << startTime;
+//               << "&endtime="
+//               << endTime;
         inetGet(VLM_DL_TRACK,page);
         qWarning()<<"Sending Track Request: "<<page;
         break;
@@ -138,10 +173,24 @@ bool DialogDownloadTracks::doRequest(int reqType)
                << "&idu="
                << boatID
                << "&starttime="
+               << startTime;
+//               << "&endtime="
+//               << endTime;
+        inetGet(VLM_GET_TRACK,page);
+        qWarning()<<"Sending Track Request: "<<page;
+        break;
+    case VLM_GET_PARTIAL_TRACK:
+        QTextStream(&page)
+               << "/ws/boatinfo/tracks.php?"
+               <<"idr="
+               << raceID
+               << "&idu="
+               << boatID
+               << "&starttime="
                << startTime
                << "&endtime="
                << endTime;
-        inetGet(VLM_GET_TRACK,page);
+        inetGet(VLM_GET_PARTIAL_TRACK,page);
         qWarning()<<"Sending Track Request: "<<page;
         break;
     case VLM_RACE_INFO:
@@ -150,6 +199,14 @@ bool DialogDownloadTracks::doRequest(int reqType)
                <<"idrace="
                << raceID;
         inetGet(VLM_RACE_INFO,page);
+        qWarning()<<"Sending Track Request: "<<page;
+        break;
+    case VLM_BOAT_INFO:
+        QTextStream(&page)
+               << "/ws/boatinfo/profile.php?"
+               <<"idu="
+               << boatID;
+        inetGet(VLM_BOAT_INFO,page);
         qWarning()<<"Sending Track Request: "<<page;
         break;
     }
@@ -177,17 +234,111 @@ void DialogDownloadTracks::requestFinished (QByteArray data)
         QJson::Parser parser;
         bool ok;
         QVariantMap result=parser.parse (data, &ok).toMap();
+        QString routeName;
+        routeName=routeName.sprintf("%d_%d_",raceID,boatID);
+        if (routeName.isEmpty())
+        {
+            QMessageBox msgBox;
+            msgBox.setText(tr("Ce nom est deja utilise ou invalide"));
+            msgBox.setIcon(QMessageBox::Critical);
+            msgBox.exec();
+            return;
+        }
         if (!ok) {
             qWarning() << "Error parsing json data " << data;
             qWarning() << "Error: " << parser.errorString() << " (line: " << parser.errorLine() << ")";
         }
-        QVariant trackRaw=result["tracks"];
-        QList<QVariant> details=trackRaw.toList();
+        if (result["nb_tracks"]!=0)
+        {
+            QVariant trackRaw=result["tracks"];
+            QList<QVariant> details=trackRaw.toList();
+            parent->withdrawRouteFromBank(routeName,details);
+        }
+        else
+        {
+            if (result["tracks_hidden"]=="true") //maybe consider BO case here.
+            {
+                QString errMsg;
+                QStringList errMsgList;
+                errMsgList<< tr("Trace cachee pour:");
+                errMsgList<< tr(QString("Course: %1").arg(raceID).toAscii());
+                errMsgList<< tr(QString("Bateau: %1").arg(boatID).toAscii());
+                errMsg=errMsgList.join("\n");
+                QMessageBox::warning(this,
+                                     tr("Pas de trace"),
+                                     errMsg);
+            }
+            else
+            {
+                QString errMsg;
+                QStringList errMsgList;
+                errMsgList<< tr("Pas de trace correspondant a la requete:");
+                errMsgList<< tr(QString("Course: %1").arg(raceID).toAscii());
+                errMsgList<< tr(QString("Bateau: %1").arg(boatID).toAscii());
+                errMsgList<< tr(QString("Heure debut: %1").arg(startTime).toAscii());
+                errMsg=errMsgList.join("\n");
+                QMessageBox::warning(this,
+                                     tr("Requete incorrecte"),
+                                     errMsg);
+            }
+        }
+    }
+    break;
+    case VLM_GET_PARTIAL_TRACK:
+    {
+        QJson::Parser parser;
+        bool ok;
+        QVariantMap result=parser.parse (data, &ok).toMap();
         QString routeName;
         routeName=routeName.sprintf("%d_%d_",raceID,boatID);
-        parent->withdrawRouteFromBank(routeName,details);
+        if (routeName.isEmpty())
+        {
+            QMessageBox msgBox;
+            msgBox.setText(tr("Ce nom est deja utilise ou invalide"));
+            msgBox.setIcon(QMessageBox::Critical);
+            msgBox.exec();
+            return;
+        }
+        if (!ok) {
+            qWarning() << "Error parsing json data " << data;
+            qWarning() << "Error: " << parser.errorString() << " (line: " << parser.errorLine() << ")";
+        }
+        if (result["nb_tracks"]!=0)
+        {
+            QVariant trackRaw=result["tracks"];
+            QList<QVariant> details=trackRaw.toList();
+            parent->withdrawRouteFromBank(routeName,details);
+        }
+        else
+        {
+            if (result["tracks_hidden"]=="true")
+            {
+                QString errMsg;
+                QStringList errMsgList;
+                errMsgList<< tr("Trace cachee pour:");
+                errMsgList<< tr(QString("Course: %1").arg(raceID).toAscii());
+                errMsgList<< tr(QString("Bateau: %1").arg(boatID).toAscii());
+                errMsgList<< tr(QString("Heure debut: %1").arg(qStartTime.toString("yyyy/MM/dd hh:mm:ss UTC")).toAscii());
+                errMsgList<< tr(QString("Heure fin: %1").arg(qEndTime.toString("yyyy/MM/dd hh:mm:ss UTC")).toAscii());
+                errMsg=errMsgList.join("\n");
+                QMessageBox::warning(this,
+                                     tr("Pas de trace"),
+                                     errMsg);
+            }
+            QString errMsg;
+            QStringList errMsgList;
+            errMsgList<< tr("Pas de trace correspondant a la requete:");
+            errMsgList<< tr(QString("Course: %1").arg(raceID).toAscii());
+            errMsgList<< tr(QString("Bateau: %1").arg(boatID).toAscii());
+            errMsgList<< tr(QString("Heure debut: %1").arg(qStartTime.toString("yyyy/MM/dd hh:mm:ss UTC")).toAscii());
+            errMsgList<< tr(QString("Heure fin: %1").arg(qEndTime.toString("yyyy/MM/dd hh:mm:ss UTC")).toAscii());
+            errMsg=errMsgList.join("\n");
+            QMessageBox::warning(this,
+                                 tr("Requete incorrecte"),
+                                 errMsg);
+        }
     }
-        break;
+    break;
     case VLM_RACE_INFO:
     {
         //http://virtual-loup-de-mer.org/ws/raceinfo.php?idrace=20110524
@@ -199,26 +350,68 @@ void DialogDownloadTracks::requestFinished (QByteArray data)
 
         QVariantMap result=parser.parse (data, &ok).toMap();
         if (!ok) {
-            qWarning() << "Error parsing json data " << data;
-            qWarning() << "Error: " << parser.errorString() << " (line: " << parser.errorLine() << ")";
+            if (data.startsWith("0"))
+                qWarning()<<"No race such as: "<<raceID;
+            else
+            {
+                qWarning() << "Error parsing json data " << data;
+                qWarning() << "Error: " << parser.errorString() << " (line: " << parser.errorLine() << ")";
+            }
+            raceIsValid=false;
+            ui->labelDisplayRaceName->setText("N/A");
+            ui->startTimeEdit->setEnabled(false);
+            ui->labelStartTime->setEnabled(false);
+            ui->labelEndTime->setEnabled(false);
+            ui->endTimeEdit->setEnabled(false);
+            return;
         }
-        if (result.contains("racename"))
+        else
         {
              raceIsValid=true;
              ui->labelDisplayRaceName->setText(result["racename"].toString());
              QDateTime tempTime;
              tempTime.setTimeSpec(Qt::UTC);
              tempTime.setTime_t(result["deptime"].toInt());
+             ui->frameTrackCheckBox->setEnabled(true);
              ui->startTimeEdit->setMinimumDateTime(tempTime);
              ui->startTimeEdit->setDateTime(tempTime);
+             startTime=result["deptime"].toInt();
              ui->endTimeEdit->setMinimumDateTime(tempTime);
+             tempTime.setTime_t(result["closetime"].toInt());
              ui->endTimeEdit->setDateTime(tempTime);
+//             ui->startTimeEdit->setEnabled(true);
+//             ui->endTimeEdit->setEnabled(true);
+        }
+        break;
+    }
+    case VLM_BOAT_INFO:
+    {
+        //qWarning()<<"inside VLM_BOAT_INFO";
+        QJson::Parser parser;
+        bool ok;
+
+        QVariantMap result=parser.parse (data, &ok).toMap();
+        if (!ok)
+        {
+            qWarning() << "Error parsing json data " << data;
+            qWarning() << "Error: " << parser.errorString() << " (line: " << parser.errorLine() << ")";
+
+            boatIsValid=false;
+            ui->labelDisplayBoatName->setText("N/A");
+            return;
         }
         else
-        {
-            raceIsValid=false;
-            ui->labelDisplayRaceName->setText("N/A");
-        }
+            if (result["success"]=="true")
+            {
+                boatIsValid=true;
+                QVariantMap profile=result["profile"].toMap();
+                ui->labelDisplayBoatName->setText(profile["OWN"].toString());
+            }
+            else
+            {
+                boatIsValid=false;
+                ui->labelDisplayBoatName->setText("N/A");
+            }
         break;
     }
     }
