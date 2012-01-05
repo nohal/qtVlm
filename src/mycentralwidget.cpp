@@ -1341,7 +1341,7 @@ void myCentralWidget::slot_fetchVLMTrack()
 {
     Player * cur_player=this->getPlayer();
     if(cur_player)
-        vlmTrackRetriever->exec();
+        vlmTrackRetriever->init();
     else {
         QMessageBox::warning(0,QObject::tr("Telecharger traces VLM"),
              QString(QObject::tr("Pas de compte VLM actif.")));
@@ -2180,7 +2180,7 @@ void myCentralWidget::withdrawRouteFromBank(QString routeName,QList<QVariant> de
         msgBox.setText(tr("Ce nom est deja utilise ou invalide"));
         msgBox.setIcon(QMessageBox::Critical);
         msgBox.exec();
-        this->deleteRoute(route);
+        return;
     }
     QMessageBox * waitBox = new QMessageBox(QMessageBox::Information,tr("Import de routes"),
                               tr("Import en cours, veuillez patienter..."));

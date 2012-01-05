@@ -5,6 +5,7 @@
 #include "inetClient.h"
 #include "ui_DialogDownloadTracks.h"
 #include "class_list.h"
+#include <QDateTime>
 
 namespace Ui {
     class DialogDownloadTracks;
@@ -24,22 +25,21 @@ public:
     void authFailed(void);
     void inetError(void);
     void requestFinished (QByteArray);
+    void init(void);
 
 private:
     Ui::DialogDownloadTracks *ui;
     int userID, raceID, boatID;
     time_t startTime, endTime;
     QDateTime qStartTime,qEndTime;
-    QString url,fileName;
+    QString url,fileName,routeName;
     myCentralWidget * parent;
     bool raceIsValid,boatIsValid;
 
-    bool jsonFileReceived ( QByteArray * content);
     bool doRequest(int reqType);
 private slots:
     void on_raceIDEdit_valueChanged(int);
     void on_boatIDEdit_valueChanged(int);
-    void on_frameTrackCheckbox_stateChanged(int);
 };
 
 #endif // DIALOGDOWNLOADTRACKS_H
