@@ -48,6 +48,20 @@ int main(int argc, char *argv[])
         curDir=QDir::currentPath();
         qWarning() << "currentPath modified: " << curDir << "applicationDirPath returns: " << appExeFolder;
     }
+    //checks tree
+    QDir dirCheck;
+    QStringList appDirs;
+    QString dirName;
+    appDirs<<"icon"<<"img"<<"img/flags"<<"grib"<<"maps"<<"polar"<<"tr"<<"tracks";
+    QStringListIterator dirIterator(appDirs);
+    while (dirIterator.hasNext())
+    {
+        dirName=appExeFolder+"/"+dirIterator.next();
+        dirCheck=QDir(dirName);
+        if (!dirCheck.exists())
+            dirCheck.mkdir(dirName);
+        //qWarning() << "Checking folder: " << dirName;
+    }
 #endif
     QTextCodec::setCodecForTr(QTextCodec::codecForName("utf8"));
     QTextCodec::setCodecForCStrings(QTextCodec::codecForName("utf8"));
