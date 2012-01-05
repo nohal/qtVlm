@@ -34,19 +34,19 @@
     </message>
     <message>
         <source>Debut de la trace</source>
-        <translation>Date et heure du début de la trace</translation>
+        <translation type="obsolete">Date et heure du début de la trace</translation>
     </message>
     <message>
         <source>Fin de la trace</source>
-        <translation>Date et heure de fin de la trace</translation>
+        <translation type="obsolete">Date et heure de fin de la trace</translation>
     </message>
     <message>
         <source>Course inconnue</source>
-        <translation>Course inconnue</translation>
+        <translation type="obsolete">Course inconnue</translation>
     </message>
     <message>
         <source>Sauvegarde du fichier JSON</source>
-        <translation>Sauvegarde du fichier json</translation>
+        <translation type="obsolete">Sauvegarde du fichier json</translation>
     </message>
     <message>
         <source>Erreur</source>
@@ -55,6 +55,37 @@
     <message>
         <source>Ecriture du fichier impossible.</source>
         <translation>Ecriture du fichier impossible.</translation>
+    </message>
+    <message>
+        <source>Permet de telecharger manuellement une trace pour une course VLM.
+Necessite d&apos;entrer un numero de bateau et un numero de courses valides.</source>
+        <translation>Permet de télécharger manuellement une trace pour une course VLM.
+Nécessite d&apos;entrer un numéro de bateau et un numéro de courses valides.</translation>
+    </message>
+    <message>
+        <source>Course ou bateau inconnu</source>
+        <translation>Course ou bateau inconnu</translation>
+    </message>
+    <message>
+        <source>Ce nom est deja utilise ou invalide</source>
+        <translatorcomment>Ce nom est déjà utilisé ou invalide</translatorcomment>
+        <translation>Ce nom est déjà utilisé ou invalide</translation>
+    </message>
+    <message>
+        <source>Trace cachee pour:</source>
+        <translation>Trace cachée pour:</translation>
+    </message>
+    <message>
+        <source>Pas de trace</source>
+        <translation>Pas de trace</translation>
+    </message>
+    <message>
+        <source>Pas de trace correspondant a la requete:</source>
+        <translation>Pas de trace correspondant a la requête:</translation>
+    </message>
+    <message>
+        <source>Requete incorrecte</source>
+        <translation>Requête incorrecte</translation>
     </message>
 </context>
 <context>
@@ -2823,11 +2854,11 @@ VMG %.2f nds</translation>
     </message>
     <message>
         <source>Telecharger traces VLM</source>
-        <translation type="unfinished">Télécharger traces VLM</translation>
+        <translation>Télécharger traces VLM</translation>
     </message>
     <message>
         <source>Pas de compte VLM actif.</source>
-        <translation type="unfinished"></translation>
+        <translation>Pas de compte VLM actif.</translation>
     </message>
 </context>
 <context>

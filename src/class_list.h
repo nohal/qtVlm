@@ -187,9 +187,6 @@ class Terrain;
 /*DialogTwaLine.h*/
 class DialogTwaLine;
 
-/*DialogTwaOptim.h*/
-class DialogTWAOptim;
-
 /* vlmLine.h */
 class vlmLine;
 

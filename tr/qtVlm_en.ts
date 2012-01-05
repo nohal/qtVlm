@@ -36,42 +36,75 @@
     <name>DialogDownloadTracks</name>
     <message>
         <location filename="../src/Dialogs/DialogDownloadTracks.cpp" line="24"/>
+        <source>Permet de telecharger manuellement une trace pour une course VLM.
+Necessite d&apos;entrer un numero de bateau et un numero de courses valides.</source>
+        <translation>Provides a manual download for a VLM race&apos;s track.
+Valid boat ID and race ID required.</translation>
+    </message>
+    <message>
+        <location filename="../src/Dialogs/DialogDownloadTracks.cpp" line="25"/>
         <source>Numero de la course
  http://www.virtual-loup-de-mer.org/races.php?fulllist=1</source>
         <translation>Race Unique ID</translation>
     </message>
     <message>
-        <location filename="../src/Dialogs/DialogDownloadTracks.cpp" line="25"/>
+        <location filename="../src/Dialogs/DialogDownloadTracks.cpp" line="26"/>
         <source>Numero du bateau</source>
         <translation>Boat Number</translation>
     </message>
     <message>
-        <location filename="../src/Dialogs/DialogDownloadTracks.cpp" line="26"/>
+        <location filename="../src/Dialogs/DialogDownloadTracks.cpp" line="90"/>
+        <source>Course ou bateau inconnu</source>
+        <translation>Unknown race or boat</translation>
+    </message>
+    <message>
+        <location filename="../src/Dialogs/DialogDownloadTracks.cpp" line="206"/>
+        <source>Ce nom est deja utilise ou invalide</source>
+        <translation>This name is already used or invalid</translation>
+    </message>
+    <message>
+        <location filename="../src/Dialogs/DialogDownloadTracks.cpp" line="249"/>
+        <source>Trace cachee pour:</source>
+        <translation>Track hidden for:</translation>
+    </message>
+    <message>
+        <location filename="../src/Dialogs/DialogDownloadTracks.cpp" line="254"/>
+        <source>Pas de trace</source>
+        <translation>No track</translation>
+    </message>
+    <message>
+        <location filename="../src/Dialogs/DialogDownloadTracks.cpp" line="261"/>
+        <source>Pas de trace correspondant a la requete:</source>
+        <translation>No track for request:</translation>
+    </message>
+    <message>
+        <location filename="../src/Dialogs/DialogDownloadTracks.cpp" line="267"/>
+        <source>Requete incorrecte</source>
+        <translation>Invalid query</translation>
+    </message>
+    <message>
         <source>Debut de la trace</source>
-        <translation>Valid Start Time for the track</translation>
+        <translation type="obsolete">Valid Start Time for the track</translation>
     </message>
     <message>
-        <location filename="../src/Dialogs/DialogDownloadTracks.cpp" line="27"/>
         <source>Fin de la trace</source>
-        <translation>Valid end time for the track</translation>
+        <translation type="obsolete">Valid end time for the track</translation>
     </message>
     <message>
-        <location filename="../src/Dialogs/DialogDownloadTracks.cpp" line="47"/>
         <source>Course inconnue</source>
-        <translation>Unknown race</translation>
+        <translation type="obsolete">Unknown race</translation>
     </message>
     <message>
-        <location filename="../src/Dialogs/DialogDownloadTracks.cpp" line="241"/>
         <source>Sauvegarde du fichier JSON</source>
-        <translation>Saving json file</translation>
+        <translation type="obsolete">Saving json file</translation>
     </message>
     <message>
-        <location filename="../src/Dialogs/DialogDownloadTracks.cpp" line="259"/>
+        <location filename="../src/Dialogs/DialogDownloadTracks.cpp" line="235"/>
         <source>Erreur</source>
         <translation>Error</translation>
     </message>
     <message>
-        <location filename="../src/Dialogs/DialogDownloadTracks.cpp" line="260"/>
+        <location filename="../src/Dialogs/DialogDownloadTracks.cpp" line="236"/>
         <source>Ecriture du fichier impossible.</source>
         <translation>Unable to create file.</translation>
     </message>
@@ -3898,7 +3931,7 @@ Etes-vous sur ?</source>
     <message>
         <location filename="../src/mycentralwidget.cpp" line="1347"/>
         <source>Pas de compte VLM actif.</source>
-        <translation type="unfinished"></translation>
+        <translation>No active VLM user.</translation>
     </message>
     <message>
         <location filename="../src/mycentralwidget.cpp" line="1378"/>
@@ -4033,7 +4066,7 @@ Etes-vous sur ?</source>
         <translation>Simplification result</translation>
     </message>
     <message>
-        <location filename="../src/Dialogs/DialogDownloadTracks.cpp" line="97"/>
+        <location filename="../src/Dialogs/DialogDownloadTracks.cpp" line="140"/>
         <location filename="../src/boatVLM.cpp" line="590"/>
         <location filename="../src/opponentBoat.cpp" line="708"/>
         <source>Parametre bateau</source>
