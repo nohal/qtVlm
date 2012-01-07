@@ -104,6 +104,10 @@ ROUTE::ROUTE(QString name, Projection *proj, Grib *grib, QGraphicsScene * myScen
     this->initialDist=0;
     this->roadMapInterval=1;
     this->precalculateTan();
+    routeDelay=new QTimer(this);
+    routeDelay->setInterval(5);
+    routeDelay->setSingleShot(true);
+    connect(routeDelay,SIGNAL(timeout()),this,SLOT(slot_recalculate()));
 }
 
 ROUTE::~ROUTE()
@@ -120,6 +124,11 @@ ROUTE::~ROUTE()
     delete tanNeg;
     delete hypotPos;
     delete hypotNeg;
+}
+void ROUTE::slot_calculateWithDelay()
+{
+    if(!routeDelay->isActive())
+        routeDelay->start(10);
 }
 
 void ROUTE::setBoat(boat *curBoat)
@@ -151,13 +160,13 @@ void ROUTE::setColor(QColor color)
 void ROUTE::insertPoi(POI *poi)
 {
     my_poiList.append(poi);
-    connect(poi,SIGNAL(poiMoving()),this,SLOT(slot_recalculate()));
+    connect(poi,SIGNAL(poiMoving()),this,SLOT(slot_calculateWithDelay()));
     slot_recalculate();
 }
 void ROUTE::removePoi(POI *poi)
 {
     my_poiList.removeAll(poi);
-    disconnect(poi,SIGNAL(poiMoving()),this,SLOT(slot_recalculate()));
+    disconnect(poi,SIGNAL(poiMoving()),this,SLOT(slot_calculateWithDelay()));
     slot_recalculate();
 }
 void ROUTE::hovered()

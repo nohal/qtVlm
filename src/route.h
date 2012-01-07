@@ -138,6 +138,7 @@ class ROUTE : public QObject
         void slot_compassFollow(){parent->setCompassFollow(this);}
         void hovered();
         void unHovered();
+        void slot_calculateWithDelay();
     signals:
         void editMe(ROUTE *);
     private:
@@ -217,5 +218,6 @@ class ROUTE : public QObject
         double initialDist;
         int roadMapInterval;
         double lastKnownSpeed;
+        QTimer * routeDelay;
 };
 #endif // ROUTE_H
