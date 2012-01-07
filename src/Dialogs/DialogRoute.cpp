@@ -182,7 +182,9 @@ DialogRoute::DialogRoute(ROUTE *route,myCentralWidget *parent)
     this->pilotView->setColumnWidth(0,this->pilotView->columnWidth(0)+30);
     this->pilotView->setColumnWidth(3,pilotView->columnWidth(2));
     this->roadMapInterval->setValue(route->getRoadMapInterval());
-    int min=route->getBoat()->getVacLen()/60;
+    int min=5;
+    if(route->getBoat() && route->getBoat()!=NULL)
+        min=route->getBoat()->getVacLen()/60;
     this->roadMapInterval->setMinimum(min);
     this->roadMapInterval->setSingleStep(min);
     this->roadMapInterval->setValue(route->getRoadMapInterval());
