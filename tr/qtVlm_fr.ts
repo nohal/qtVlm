@@ -34,19 +34,19 @@
     </message>
     <message>
         <source>Debut de la trace</source>
-        <translation type="obsolete">Date et heure du début de la trace</translation>
+        <translation type="unfinished">Date et heure du début de la trace</translation>
     </message>
     <message>
         <source>Fin de la trace</source>
-        <translation type="obsolete">Date et heure de fin de la trace</translation>
+        <translation type="unfinished">Date et heure de fin de la trace</translation>
     </message>
     <message>
         <source>Course inconnue</source>
-        <translation type="obsolete">Course inconnue</translation>
+        <translation type="unfinished">Course inconnue</translation>
     </message>
     <message>
         <source>Sauvegarde du fichier JSON</source>
-        <translation type="obsolete">Sauvegarde du fichier json</translation>
+        <translation type="unfinished">Sauvegarde du fichier json</translation>
     </message>
     <message>
         <source>Erreur</source>
@@ -59,33 +59,65 @@
     <message>
         <source>Permet de telecharger manuellement une trace pour une course VLM.
 Necessite d&apos;entrer un numero de bateau et un numero de courses valides.</source>
-        <translation>Permet de télécharger manuellement une trace pour une course VLM.
+        <translation type="obsolete">Permet de télécharger manuellement une trace pour une course VLM.
 Nécessite d&apos;entrer un numéro de bateau et un numéro de courses valides.</translation>
     </message>
     <message>
         <source>Course ou bateau inconnu</source>
-        <translation>Course ou bateau inconnu</translation>
+        <translation type="obsolete">Course ou bateau inconnu</translation>
     </message>
     <message>
         <source>Ce nom est deja utilise ou invalide</source>
         <translatorcomment>Ce nom est déjà utilisé ou invalide</translatorcomment>
-        <translation>Ce nom est déjà utilisé ou invalide</translation>
+        <translation type="obsolete">Ce nom est déjà utilisé ou invalide</translation>
     </message>
     <message>
         <source>Trace cachee pour:</source>
-        <translation>Trace cachée pour:</translation>
+        <translation type="obsolete">Trace cachée pour:</translation>
     </message>
     <message>
         <source>Pas de trace</source>
-        <translation>Pas de trace</translation>
+        <translation type="obsolete">Pas de trace</translation>
     </message>
     <message>
         <source>Pas de trace correspondant a la requete:</source>
-        <translation>Pas de trace correspondant a la requête:</translation>
+        <translation type="obsolete">Pas de trace correspondant a la requête:</translation>
     </message>
     <message>
         <source>Requete incorrecte</source>
-        <translation>Requête incorrecte</translation>
+        <translation type="obsolete">Requête incorrecte</translation>
+    </message>
+    <message>
+        <source>Banque des Traces</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Boat ID</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Race ID</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Race Name</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>N/A</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Start Time</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>dd/MM/yyyy hh:mm UTC</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>End Time</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -2295,15 +2327,39 @@ Etes-vous sur ?</source>
     <name>POI_delete_ui</name>
     <message>
         <source>Selection de type de marque</source>
-        <translation type="obsolete">Sélection de type de marque</translation>
+        <translation>Sélection de type de marque</translation>
     </message>
     <message>
         <source>Cancel</source>
-        <translation type="obsolete">Annuler</translation>
+        <translation>Annuler</translation>
     </message>
     <message>
         <source>Type de marque a supprimer</source>
-        <translation type="obsolete">Type de marque à supprimer</translation>
+        <translation>Type de marque à supprimer</translation>
+    </message>
+    <message>
+        <source>&lt;a href=&quot;titi&quot;&gt;Tous&lt;/a&gt;</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>&lt;a href=&quot;toto&quot;&gt;Aucun&lt;/a&gt;</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>POI</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Marque</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Balise</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>OK</source>
+        <translation></translation>
     </message>
 </context>
 <context>
@@ -2859,6 +2915,14 @@ VMG %.2f nds</translation>
     <message>
         <source>Pas de compte VLM actif.</source>
         <translation>Pas de compte VLM actif.</translation>
+    </message>
+    <message>
+        <source>AWS</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>AWA</source>
+        <translation></translation>
     </message>
 </context>
 <context>
