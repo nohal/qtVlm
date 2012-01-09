@@ -140,7 +140,7 @@ FORMS += Ui/boatAccount_dialog.ui \
     Ui/dialogviewpolar.ui \
     Ui/dialogpoiconnect.ui \
     Ui/DialogVlmLog.ui \
-    Ui/DialogDownloadTracks.Ui
+    Ui/DialogDownloadTracks.ui
 
 SOURCES += Dialogs/DialogGraphicsParams.cpp \
     Dialogs/DialogLoadGrib.cpp \
@@ -219,6 +219,7 @@ SOURCES += Dialogs/DialogGraphicsParams.cpp \
     Dialogs/dialogpoiconnect.cpp \
     Dialogs/DialogVlmLog.cpp \
     Dialogs/DialogDownloadTracks.cpp
+
 unix:!macx: DEFINES += _TTY_POSIX_ __TERRAIN_QIMAGE __UNIX_QTVLM
 win32:DEFINES += _TTY_WIN_ \
     QWT_DLL \

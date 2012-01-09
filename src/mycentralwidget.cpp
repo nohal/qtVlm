@@ -2180,6 +2180,7 @@ void myCentralWidget::withdrawRouteFromBank(QString routeName,QList<QVariant> de
         msgBox.setText(tr("Ce nom est deja utilise ou invalide"));
         msgBox.setIcon(QMessageBox::Critical);
         msgBox.exec();
+        deleteRoute(route);
         return;
     }
     QMessageBox * waitBox = new QMessageBox(QMessageBox::Information,tr("Import de routes"),
