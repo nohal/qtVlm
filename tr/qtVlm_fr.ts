@@ -34,19 +34,19 @@
     </message>
     <message>
         <source>Debut de la trace</source>
-        <translation type="unfinished">Date et heure du début de la trace</translation>
+        <translation type="obsolete">Date et heure du début de la trace</translation>
     </message>
     <message>
         <source>Fin de la trace</source>
-        <translation type="unfinished">Date et heure de fin de la trace</translation>
+        <translation type="obsolete">Date et heure de fin de la trace</translation>
     </message>
     <message>
         <source>Course inconnue</source>
-        <translation type="unfinished">Course inconnue</translation>
+        <translation type="obsolete">Course inconnue</translation>
     </message>
     <message>
         <source>Sauvegarde du fichier JSON</source>
-        <translation type="unfinished">Sauvegarde du fichier json</translation>
+        <translation type="obsolete">Sauvegarde du fichier json</translation>
     </message>
     <message>
         <source>Erreur</source>
@@ -59,65 +59,61 @@
     <message>
         <source>Permet de telecharger manuellement une trace pour une course VLM.
 Necessite d&apos;entrer un numero de bateau et un numero de courses valides.</source>
-        <translation type="obsolete">Permet de télécharger manuellement une trace pour une course VLM.
+        <translation>Permet de télécharger manuellement une trace pour une course VLM.
 Nécessite d&apos;entrer un numéro de bateau et un numéro de courses valides.</translation>
     </message>
     <message>
         <source>Course ou bateau inconnu</source>
-        <translation type="obsolete">Course ou bateau inconnu</translation>
+        <translation>Course ou bateau inconnu</translation>
     </message>
     <message>
         <source>Ce nom est deja utilise ou invalide</source>
         <translatorcomment>Ce nom est déjà utilisé ou invalide</translatorcomment>
-        <translation type="obsolete">Ce nom est déjà utilisé ou invalide</translation>
+        <translation>Ce nom est déjà utilisé ou invalide</translation>
     </message>
     <message>
         <source>Trace cachee pour:</source>
-        <translation type="obsolete">Trace cachée pour:</translation>
+        <translation>Trace cachée pour:</translation>
     </message>
     <message>
         <source>Pas de trace</source>
-        <translation type="obsolete">Pas de trace</translation>
+        <translation>Pas de trace</translation>
     </message>
     <message>
         <source>Pas de trace correspondant a la requete:</source>
-        <translation type="obsolete">Pas de trace correspondant a la requête:</translation>
+        <translation>Pas de trace correspondant a la requête:</translation>
     </message>
     <message>
         <source>Requete incorrecte</source>
-        <translation type="obsolete">Requête incorrecte</translation>
-    </message>
-    <message>
-        <source>Banque des Traces</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Boat ID</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Race ID</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Race Name</source>
-        <translation type="unfinished"></translation>
+        <translation>Requête incorrecte</translation>
     </message>
     <message>
         <source>N/A</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
-        <source>Start Time</source>
-        <translation type="unfinished"></translation>
+        <source>Banque des Traces VLM</source>
+        <translation></translation>
     </message>
     <message>
-        <source>dd/MM/yyyy hh:mm UTC</source>
-        <translation type="unfinished"></translation>
+        <source>ID Bateau</source>
+        <translation></translation>
     </message>
     <message>
-        <source>End Time</source>
-        <translation type="unfinished"></translation>
+        <source>Armateur</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Nom Course</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Pour eviter de surcharger le serveur VLM, les traces demandees sont sauvegardees localement dans le dossier tracks. Priere de ne les renommer qu&apos;en cas de necessite.</source>
+        <translation>Pour éviter de surcharger le serveur VLM, les traces demandées sont sauvegardées localement dans le dossier tracks. Prière de ne les renommer qu&apos;en cas de nécessité.</translation>
+    </message>
+    <message>
+        <source>ID Course</source>
+        <translation></translation>
     </message>
 </context>
 <context>

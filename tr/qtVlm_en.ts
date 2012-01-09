@@ -35,116 +35,114 @@
 <context>
     <name>DialogDownloadTracks</name>
     <message>
+        <location filename="../src/Dialogs/DialogDownloadTracks.cpp" line="24"/>
         <source>Permet de telecharger manuellement une trace pour une course VLM.
 Necessite d&apos;entrer un numero de bateau et un numero de courses valides.</source>
-        <translation type="obsolete">Provides a manual download for a VLM race&apos;s track.
+        <translation>Provides a manual download for a VLM race&apos;s track.
 Valid boat ID and race ID required.</translation>
     </message>
     <message>
-        <location filename="../src/Dialogs/DialogDownloadTracks.cpp" line="24"/>
+        <location filename="../src/Dialogs/DialogDownloadTracks.cpp" line="25"/>
         <source>Numero de la course
  http://www.virtual-loup-de-mer.org/races.php?fulllist=1</source>
         <translation>Race Unique ID</translation>
     </message>
     <message>
-        <location filename="../src/Dialogs/DialogDownloadTracks.cpp" line="25"/>
+        <location filename="../src/Dialogs/DialogDownloadTracks.cpp" line="26"/>
         <source>Numero du bateau</source>
         <translation>Boat Number</translation>
     </message>
     <message>
+        <location filename="../src/Dialogs/DialogDownloadTracks.cpp" line="90"/>
         <source>Course ou bateau inconnu</source>
-        <translation type="obsolete">Unknown race or boat</translation>
+        <translation>Unknown race or boat</translation>
     </message>
     <message>
+        <location filename="../src/Dialogs/DialogDownloadTracks.cpp" line="206"/>
         <source>Ce nom est deja utilise ou invalide</source>
-        <translation type="obsolete">This name is already used or invalid</translation>
+        <translation>This name is already used or invalid</translation>
     </message>
     <message>
+        <location filename="../src/Dialogs/DialogDownloadTracks.cpp" line="249"/>
         <source>Trace cachee pour:</source>
-        <translation type="obsolete">Track hidden for:</translation>
+        <translation>Track hidden for:</translation>
     </message>
     <message>
+        <location filename="../src/Dialogs/DialogDownloadTracks.cpp" line="254"/>
         <source>Pas de trace</source>
-        <translation type="obsolete">No track</translation>
+        <translation>No track</translation>
     </message>
     <message>
+        <location filename="../src/Dialogs/DialogDownloadTracks.cpp" line="261"/>
         <source>Pas de trace correspondant a la requete:</source>
-        <translation type="obsolete">No track for request:</translation>
+        <translation>No track for request:</translation>
     </message>
     <message>
+        <location filename="../src/Dialogs/DialogDownloadTracks.cpp" line="267"/>
         <source>Requete incorrecte</source>
-        <translation type="obsolete">Invalid query</translation>
+        <translation>Invalid query</translation>
     </message>
     <message>
-        <location filename="../src/Dialogs/DialogDownloadTracks.cpp" line="26"/>
         <source>Debut de la trace</source>
-        <translation type="unfinished">Valid Start Time for the track</translation>
+        <translation type="obsolete">Valid Start Time for the track</translation>
     </message>
     <message>
-        <location filename="../src/Dialogs/DialogDownloadTracks.cpp" line="27"/>
         <source>Fin de la trace</source>
-        <translation type="unfinished">Valid end time for the track</translation>
+        <translation type="obsolete">Valid end time for the track</translation>
     </message>
     <message>
-        <location filename="../src/Dialogs/DialogDownloadTracks.cpp" line="47"/>
         <source>Course inconnue</source>
-        <translation type="unfinished">Unknown race</translation>
+        <translation type="obsolete">Unknown race</translation>
     </message>
     <message>
-        <location filename="../src/Dialogs/DialogDownloadTracks.cpp" line="241"/>
         <source>Sauvegarde du fichier JSON</source>
-        <translation type="unfinished">Saving json file</translation>
+        <translation type="obsolete">Saving json file</translation>
     </message>
     <message>
-        <location filename="../src/Dialogs/DialogDownloadTracks.cpp" line="259"/>
+        <location filename="../src/Dialogs/DialogDownloadTracks.cpp" line="235"/>
         <source>Erreur</source>
         <translation>Error</translation>
     </message>
     <message>
-        <location filename="../src/Dialogs/DialogDownloadTracks.cpp" line="260"/>
+        <location filename="../src/Dialogs/DialogDownloadTracks.cpp" line="236"/>
         <source>Ecriture du fichier impossible.</source>
         <translation>Unable to create file.</translation>
     </message>
     <message>
         <location filename="../src/Ui/DialogDownloadTracks.Ui" line="14"/>
-        <source>Banque des Traces</source>
-        <translation type="unfinished"></translation>
+        <source>Banque des Traces VLM</source>
+        <translation>VLM Track bank</translation>
     </message>
     <message>
-        <location filename="../src/Ui/DialogDownloadTracks.Ui" line="22"/>
-        <source>Boat ID</source>
-        <translation type="unfinished"></translation>
+        <location filename="../src/Ui/DialogDownloadTracks.Ui" line="31"/>
+        <source>ID Bateau</source>
+        <translation>Boat ID</translation>
     </message>
     <message>
-        <location filename="../src/Ui/DialogDownloadTracks.Ui" line="48"/>
-        <source>Race ID</source>
-        <translation type="unfinished"></translation>
+        <location filename="../src/Ui/DialogDownloadTracks.Ui" line="57"/>
+        <source>Armateur</source>
+        <translation>Player&apos;s name</translation>
     </message>
     <message>
-        <location filename="../src/Ui/DialogDownloadTracks.Ui" line="71"/>
-        <source>Race Name</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/Ui/DialogDownloadTracks.Ui" line="78"/>
+        <location filename="../src/Ui/DialogDownloadTracks.Ui" line="64"/>
+        <location filename="../src/Ui/DialogDownloadTracks.Ui" line="94"/>
         <source>N/A</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
-        <location filename="../src/Ui/DialogDownloadTracks.Ui" line="85"/>
-        <source>Start Time</source>
-        <translation type="unfinished"></translation>
+        <location filename="../src/Ui/DialogDownloadTracks.Ui" line="87"/>
+        <source>Nom Course</source>
+        <translation>Race Name</translation>
     </message>
     <message>
-        <location filename="../src/Ui/DialogDownloadTracks.Ui" line="105"/>
-        <location filename="../src/Ui/DialogDownloadTracks.Ui" line="132"/>
-        <source>dd/MM/yyyy hh:mm UTC</source>
-        <translation type="unfinished"></translation>
+        <location filename="../src/Ui/DialogDownloadTracks.Ui" line="101"/>
+        <source>Pour eviter de surcharger le serveur VLM, les traces demandees sont sauvegardees localement dans le dossier tracks. Priere de ne les renommer qu&apos;en cas de necessite.</source>
+        <translation>To avoid overloading VLM server, downloaded tracks are saved in the tracks folder. Please rename then only if really needed.</translation>
     </message>
     <message>
-        <location filename="../src/Ui/DialogDownloadTracks.Ui" line="115"/>
-        <source>End Time</source>
-        <translation type="unfinished"></translation>
+        <location filename="../src/Ui/DialogDownloadTracks.Ui" line="124"/>
+        <source>ID Course</source>
+        <translation>Race ID</translation>
     </message>
 </context>
 <context>
@@ -1141,60 +1139,60 @@ Etes-vous sur ?</source>
         <translation>Last position update date/time</translation>
     </message>
     <message>
-        <location filename="../src/Dialogs/DialogRoute.cpp" line="247"/>
+        <location filename="../src/Dialogs/DialogRoute.cpp" line="249"/>
         <source>Chargement du tableau de marche</source>
         <translation>Loading road book</translation>
     </message>
     <message>
-        <location filename="../src/Dialogs/DialogRoute.cpp" line="248"/>
+        <location filename="../src/Dialogs/DialogRoute.cpp" line="250"/>
         <source>Veuillez patienter...</source>
         <translation>Please wait...</translation>
     </message>
     <message>
-        <location filename="../src/Dialogs/DialogRoute.cpp" line="308"/>
-        <location filename="../src/Dialogs/DialogRoute.cpp" line="315"/>
-        <location filename="../src/Dialogs/DialogRoute.cpp" line="330"/>
-        <location filename="../src/Dialogs/DialogRoute.cpp" line="403"/>
-        <location filename="../src/Dialogs/DialogRoute.cpp" line="404"/>
+        <location filename="../src/Dialogs/DialogRoute.cpp" line="310"/>
+        <location filename="../src/Dialogs/DialogRoute.cpp" line="317"/>
+        <location filename="../src/Dialogs/DialogRoute.cpp" line="332"/>
+        <location filename="../src/Dialogs/DialogRoute.cpp" line="405"/>
+        <location filename="../src/Dialogs/DialogRoute.cpp" line="406"/>
         <source> nds</source>
         <translation> kts</translation>
     </message>
     <message>
-        <location filename="../src/Dialogs/DialogRoute.cpp" line="311"/>
         <location filename="../src/Dialogs/DialogRoute.cpp" line="313"/>
-        <location filename="../src/Dialogs/DialogRoute.cpp" line="317"/>
-        <location filename="../src/Dialogs/DialogRoute.cpp" line="332"/>
+        <location filename="../src/Dialogs/DialogRoute.cpp" line="315"/>
+        <location filename="../src/Dialogs/DialogRoute.cpp" line="319"/>
+        <location filename="../src/Dialogs/DialogRoute.cpp" line="334"/>
         <source>deg</source>
         <translation>°</translation>
     </message>
     <message>
-        <location filename="../src/Dialogs/DialogRoute.cpp" line="336"/>
-        <location filename="../src/Dialogs/DialogRoute.cpp" line="401"/>
-        <location filename="../src/Dialogs/DialogRoute.cpp" line="402"/>
+        <location filename="../src/Dialogs/DialogRoute.cpp" line="338"/>
+        <location filename="../src/Dialogs/DialogRoute.cpp" line="403"/>
+        <location filename="../src/Dialogs/DialogRoute.cpp" line="404"/>
         <source> NM</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../src/Dialogs/DialogRoute.cpp" line="543"/>
+        <location filename="../src/Dialogs/DialogRoute.cpp" line="545"/>
         <source>Ce nom est deja utilise, choisissez en un autre</source>
         <translation>This name is already used, choose another one</translation>
     </message>
     <message>
-        <location filename="../src/Dialogs/DialogRoute.cpp" line="551"/>
+        <location filename="../src/Dialogs/DialogRoute.cpp" line="553"/>
         <source>Vous ne pouvez figer une route que&lt;br&gt;si elle part d&apos;un POI et d&apos;une date fixe</source>
         <translation>You can freeze a route only&lt;br&gt;if it starts from a POI and from a fixed date</translation>
     </message>
     <message>
-        <location filename="../src/Dialogs/DialogRoute.cpp" line="680"/>
-        <location filename="../src/Dialogs/DialogRoute.cpp" line="694"/>
-        <location filename="../src/Dialogs/DialogRoute.cpp" line="708"/>
+        <location filename="../src/Dialogs/DialogRoute.cpp" line="682"/>
+        <location filename="../src/Dialogs/DialogRoute.cpp" line="696"/>
+        <location filename="../src/Dialogs/DialogRoute.cpp" line="710"/>
         <source>Pilototo</source>
         <translation>Autopilot</translation>
     </message>
     <message>
-        <location filename="../src/Dialogs/DialogRoute.cpp" line="680"/>
-        <location filename="../src/Dialogs/DialogRoute.cpp" line="694"/>
-        <location filename="../src/Dialogs/DialogRoute.cpp" line="708"/>
+        <location filename="../src/Dialogs/DialogRoute.cpp" line="682"/>
+        <location filename="../src/Dialogs/DialogRoute.cpp" line="696"/>
+        <location filename="../src/Dialogs/DialogRoute.cpp" line="710"/>
         <source>Pour utiliser cette action il faut que:&lt;br&gt;- La route parte du bateau&lt;br&gt;- Le mode VBVMG-VLM soit actif</source>
         <translation>To use this action it is needed that&lt;br&gt;route starts from boat and that VBVMG-VLM is activated</translation>
     </message>
@@ -1207,7 +1205,7 @@ Etes-vous sur ?</source>
         <translation type="obsolete">To use this action it is needed that:&lt;br&gt;-Route starts from boat&lt;br&gt;-Route starts from next vacation&lt;br&gt;VBVMG-VLM is activated</translation>
     </message>
     <message>
-        <location filename="../src/Dialogs/DialogRoute.cpp" line="738"/>
+        <location filename="../src/Dialogs/DialogRoute.cpp" line="740"/>
         <source>WP-VLM</source>
         <translation>WP-VLM</translation>
     </message>
@@ -4115,9 +4113,9 @@ Etes-vous sur ?</source>
         <translation>Simplification result</translation>
     </message>
     <message>
-        <location filename="../src/Dialogs/DialogDownloadTracks.cpp" line="97"/>
+        <location filename="../src/Dialogs/DialogDownloadTracks.cpp" line="140"/>
         <location filename="../src/boatVLM.cpp" line="590"/>
-        <location filename="../src/opponentBoat.cpp" line="708"/>
+        <location filename="../src/opponentBoat.cpp" line="725"/>
         <source>Parametre bateau</source>
         <translation>Boat settings</translation>
     </message>
@@ -4188,62 +4186,62 @@ VMG %.1 kts</translation>
         <translation>Mode</translation>
     </message>
     <message>
-        <location filename="../src/Dialogs/DialogRoute.cpp" line="196"/>
+        <location filename="../src/Dialogs/DialogRoute.cpp" line="198"/>
         <source>Date heure</source>
         <translation>Date time</translation>
     </message>
     <message>
-        <location filename="../src/Dialogs/DialogRoute.cpp" line="198"/>
+        <location filename="../src/Dialogs/DialogRoute.cpp" line="200"/>
         <source>TWS</source>
         <translation>TWS</translation>
     </message>
     <message>
-        <location filename="../src/Dialogs/DialogRoute.cpp" line="200"/>
+        <location filename="../src/Dialogs/DialogRoute.cpp" line="202"/>
         <source>TWA</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../src/Dialogs/DialogRoute.cpp" line="199"/>
+        <location filename="../src/Dialogs/DialogRoute.cpp" line="201"/>
         <source>TWD</source>
         <translation>TWD</translation>
     </message>
     <message>
-        <location filename="../src/Dialogs/DialogRoute.cpp" line="201"/>
+        <location filename="../src/Dialogs/DialogRoute.cpp" line="203"/>
         <source>Vitesse</source>
         <translation>Speed</translation>
     </message>
     <message>
-        <location filename="../src/Dialogs/DialogRoute.cpp" line="202"/>
+        <location filename="../src/Dialogs/DialogRoute.cpp" line="204"/>
         <source>Cap</source>
         <translation>Heading</translation>
     </message>
     <message>
-        <location filename="../src/Dialogs/DialogRoute.cpp" line="203"/>
+        <location filename="../src/Dialogs/DialogRoute.cpp" line="205"/>
         <source>AWS</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../src/Dialogs/DialogRoute.cpp" line="204"/>
+        <location filename="../src/Dialogs/DialogRoute.cpp" line="206"/>
         <source>AWA</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../src/Dialogs/DialogRoute.cpp" line="205"/>
+        <location filename="../src/Dialogs/DialogRoute.cpp" line="207"/>
         <source>POI cible</source>
         <translation>Target POI</translation>
     </message>
     <message>
-        <location filename="../src/Dialogs/DialogRoute.cpp" line="206"/>
+        <location filename="../src/Dialogs/DialogRoute.cpp" line="208"/>
         <source>Distance</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../src/Dialogs/DialogRoute.cpp" line="207"/>
+        <location filename="../src/Dialogs/DialogRoute.cpp" line="209"/>
         <source>Lon POI cible</source>
         <translation>Lon target POI</translation>
     </message>
     <message>
-        <location filename="../src/Dialogs/DialogRoute.cpp" line="208"/>
+        <location filename="../src/Dialogs/DialogRoute.cpp" line="210"/>
         <source>Lat POI cible</source>
         <translation>Lat target POI</translation>
     </message>
@@ -4352,7 +4350,7 @@ VMG %.2f kts</translation>
         <translation type="obsolete">Delete routing: %1?</translation>
     </message>
     <message>
-        <location filename="../src/routage.cpp" line="2947"/>
+        <location filename="../src/routage.cpp" line="2950"/>
         <source>Creer un pivot en changeant les options</source>
         <translation>Create a pivot changing the routing options</translation>
     </message>
@@ -4379,7 +4377,7 @@ VMG %.2f kts</translation>
         <translation>One of the parents routing has been deleted,&lt;br&gt;converion is not possible</translation>
     </message>
     <message>
-        <location filename="../src/routage.cpp" line="2945"/>
+        <location filename="../src/routage.cpp" line="2948"/>
         <source>Creer un pivot</source>
         <translation>Create a pivot point</translation>
     </message>
@@ -4705,25 +4703,25 @@ nds</extracomment>
 <context>
     <name>ROUTE</name>
     <message>
-        <location filename="../src/route.cpp" line="347"/>
-        <location filename="../src/route.cpp" line="618"/>
+        <location filename="../src/route.cpp" line="363"/>
+        <location filename="../src/route.cpp" line="634"/>
         <source>&lt;br&gt;Route: </source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../src/route.cpp" line="624"/>
-        <location filename="../src/route.cpp" line="693"/>
+        <location filename="../src/route.cpp" line="640"/>
+        <location filename="../src/route.cpp" line="709"/>
         <source>&lt;br&gt;ETA: Non joignable avec ce fichier GRIB</source>
         <translation>&lt;br&gt;ETA: not reachable with this GRIB file</translation>
     </message>
     <message>
-        <location filename="../src/route.cpp" line="629"/>
-        <location filename="../src/route.cpp" line="697"/>
+        <location filename="../src/route.cpp" line="645"/>
+        <location filename="../src/route.cpp" line="713"/>
         <source>&lt;br&gt;ETA: deja atteint</source>
         <translation>ETA: already reached</translation>
     </message>
     <message>
-        <location filename="../src/route.cpp" line="634"/>
+        <location filename="../src/route.cpp" line="650"/>
         <source>Note: la date indiquee correspond a la desactivation du WP</source>
         <translation>Note: indicated ETA corresponds to WP deactivation</translation>
     </message>
@@ -4732,43 +4730,43 @@ nds</extracomment>
         <translation type="obsolete">ETA from last crank</translation>
     </message>
     <message>
-        <location filename="../src/route.cpp" line="658"/>
-        <location filename="../src/route.cpp" line="723"/>
+        <location filename="../src/route.cpp" line="674"/>
+        <location filename="../src/route.cpp" line="739"/>
         <source>ETA a partir de maintenant</source>
         <translation>ETA: from now</translation>
     </message>
     <message>
-        <location filename="../src/route.cpp" line="661"/>
-        <location filename="../src/route.cpp" line="726"/>
+        <location filename="../src/route.cpp" line="677"/>
+        <location filename="../src/route.cpp" line="742"/>
         <source>ETA depuis la date Grib</source>
         <translation>ETA from GRIB date</translation>
     </message>
     <message>
-        <location filename="../src/route.cpp" line="664"/>
-        <location filename="../src/route.cpp" line="729"/>
+        <location filename="../src/route.cpp" line="680"/>
+        <location filename="../src/route.cpp" line="745"/>
         <source>ETA depuis la date fixe</source>
         <translation>ETA from fixed date</translation>
     </message>
     <message>
-        <location filename="../src/route.cpp" line="667"/>
-        <location filename="../src/route.cpp" line="734"/>
+        <location filename="../src/route.cpp" line="683"/>
+        <location filename="../src/route.cpp" line="750"/>
         <source>jours</source>
         <translation>days</translation>
     </message>
     <message>
-        <location filename="../src/route.cpp" line="667"/>
-        <location filename="../src/route.cpp" line="734"/>
+        <location filename="../src/route.cpp" line="683"/>
+        <location filename="../src/route.cpp" line="750"/>
         <source>heures</source>
         <translation>hours</translation>
     </message>
     <message>
-        <location filename="../src/route.cpp" line="668"/>
-        <location filename="../src/route.cpp" line="735"/>
+        <location filename="../src/route.cpp" line="684"/>
+        <location filename="../src/route.cpp" line="751"/>
         <source>minutes</source>
         <translation>minutes</translation>
     </message>
     <message>
-        <location filename="../src/route.cpp" line="690"/>
+        <location filename="../src/route.cpp" line="706"/>
         <source>Route: </source>
         <translation></translation>
     </message>
