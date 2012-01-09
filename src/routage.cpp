@@ -119,11 +119,6 @@ inline vlmPoint findPointThreaded(const vlmPoint &point)
             windSpeed=(windSpeed+newWindSpeed)/2;
         }
     }
-    if(pt.routage->getVisibleOnly() && !pt.routage->getProj()->isPointVisible(pt.lon,pt.lat))
-    {
-        pt.isDead=true;
-        return pt;
-    }
     if(qAbs(pt.lat>84.0))
     {
         pt.isDead=true;
@@ -133,6 +128,11 @@ inline vlmPoint findPointThreaded(const vlmPoint &point)
     pt.routage->getProj()->map2screenFloat(pt.routage->cLFA(pt.lon),pt.lat,&x,&y);
     pt.x=x;
     pt.y=y;
+    if(pt.routage->getVisibleOnly() && !pt.routage->getProj()->isInBounderies(pt.x,pt.y))
+    {
+        pt.isDead=true;
+        return pt;
+    }
     if(pt.xM1<10e4)
     {
         Triangle t(Point(pt.origin->x,pt.origin->y),
@@ -711,7 +711,7 @@ ROUTAGE::ROUTAGE(QString name, Projection *proj, Grib *grib, QGraphicsScene * my
     this->angleStep=Settings::getSetting("angleStep",3).toDouble();
     this->timeStepLess24=Settings::getSetting("timeStepLess24",30).toDouble();
     this->timeStepMore24=Settings::getSetting("timeStepMore24",60).toDouble();
-    this->explo=Settings::getSetting("explo",5).toDouble();
+    this->explo=Settings::getSetting("exploNew",70).toDouble();
     this->useRouteModule=Settings::getSetting("useRouteModule",1).toInt()==1;
     this->useConverge=Settings::getSetting("useConverge",1).toInt()==1;
     this->checkCoast=Settings::getSetting("checkCoast",1).toInt()==1;
@@ -792,7 +792,7 @@ void ROUTAGE::calculate()
     Settings::setSetting("angleStep",this->angleStep);
     Settings::setSetting("timeStepLess24",this->timeStepLess24);
     Settings::setSetting("timeStepMore24",this->timeStepMore24);
-    Settings::setSetting("explo",this->explo);
+    Settings::setSetting("exploNew",this->explo);
     Settings::setSetting("useRouteModule",useRouteModule?1:0);
     Settings::setSetting("useConverge",useConverge?1:0);
     Settings::setSetting("checkCoast",checkCoast?1:0);
@@ -1515,7 +1515,7 @@ void ROUTAGE::slot_calculate()
                         tempPList.append(newPoint);
                         newPoint=findRoute(tempPList).first();
                     }
-                    if(this->visibleOnly && !proj->isPointVisible(newPoint.lon,newPoint.lat))
+                    if(this->visibleOnly && !proj->isInBounderies(newPoint.x,newPoint.y))
                         newPoint.isDead=true;
                     if(newPoint.isDead)
                     {
@@ -2904,7 +2904,10 @@ void ROUTAGE::setFromRoutage(ROUTAGE *fromRoutage, bool editOptions)
         QList<vlmPoint> parentWay=*parentRoutage->getFromRoutage()->getWay()->getPoints();
         for(int n=1;n<parentWay.count();++n)
         {
-            initialRoad.append(parentWay.at(n));
+            vlmPoint p=parentWay.at(n);
+            if(n==parentWay.count()-1)
+                p.notSimplificable=true;
+            initialRoad.append(p);
         }
         if(!parentRoutage->getFromRoutage() || !parentRoutage->getFromRoutage()->getIsPivot())
         {

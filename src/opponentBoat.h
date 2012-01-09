@@ -156,6 +156,7 @@ class opponentList : public QWidget, public inetClient
 
     private:
         QList<opponent*> opponent_list;
+        QMap<QString,QList<vlmPoint> > traceCache;
 
         myCentralWidget * parent;
         MainWindow * main;

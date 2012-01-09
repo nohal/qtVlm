@@ -511,6 +511,9 @@ QString opponentList::getRaceId()
 
 void opponentList::setBoatList(QString list_txt,QString race,int showWhat, bool force, bool showReal)
 {
+    //qWarning()<<"traceCache count="<<traceCache.count();
+    if(traceCache.count()>1000)
+        traceCache.clear(); /*just in case*/
     this->showWhat=showWhat;
     this->showReal=showReal;
     currentRace = race;
@@ -668,6 +671,20 @@ void opponentList::getNxtOppData()
     time_t endtime=QDateTime::currentDateTime().toUTC().toTime_t();
     time_t starttime=endtime-(Settings::getSetting("trace_length",12).toInt()*60*60);
     QString page;
+    QString pref="V";
+    if(opponent_list[currentOpponent-1]->getIsReal())
+        pref="R";
+    if(traceCache.contains(pref+opponent_list[currentOpponent-1]->getIduser()))
+    {
+        //qWarning()<<"found "+pref+opponent_list[currentOpponent-1]->getIduser();
+        opponent_list[currentOpponent-1]->getTrace()->clear();
+        QList<vlmPoint> t=traceCache.value(pref+opponent_list[currentOpponent-1]->getIduser());
+        for (int pp=0;pp<t.count();++pp)
+            opponent_list[currentOpponent-1]->getTrace()->append(t.at(pp));
+        traceCache.remove(pref+opponent_list[currentOpponent-1]->getIduser());
+    }
+//    else
+//        qWarning()<<"not found "+pref+opponent_list[currentOpponent-1]->getIduser();
     QList<vlmPoint> * previousTrace=opponent_list[currentOpponent-1]->getTrace();
     if(!previousTrace->isEmpty())
     {
@@ -990,6 +1007,7 @@ void opponentList::requestFinished (QByteArray res_byte)
 
 
         case OPP_BOAT_TRJ:
+        {
             opp=NULL;
             if(currentMode==OPP_MODE_REFRESH)
             {
@@ -1034,6 +1052,16 @@ void opponentList::requestFinished (QByteArray res_byte)
                         opp->drawTrace();
                 }
             }
+            QString pref="V";
+            if(opp && opp->getIsReal())
+            {
+                pref="R";
+            }
+            if(opp)
+            {
+                traceCache.remove(pref+opp->getIduser());
+                traceCache.insert(pref+opp->getIduser(),*opp->getTrace());
+            }
             if(!opponent_list.isEmpty() && opp && opp->getIsReal())
             {
                 QString page;
@@ -1048,6 +1076,7 @@ void opponentList::requestFinished (QByteArray res_byte)
             else
                 getNxtOppData();
             break;
+        }
         case OPP_INFO_REAL:
         {
             //qWarning()<<"inside OPP_INFO_REAL";

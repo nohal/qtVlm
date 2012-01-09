@@ -219,5 +219,6 @@ class ROUTE : public QObject
         int roadMapInterval;
         double lastKnownSpeed;
         QTimer * routeDelay;
+        int delay;
 };
 #endif // ROUTE_H

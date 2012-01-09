@@ -108,6 +108,7 @@ ROUTE::ROUTE(QString name, Projection *proj, Grib *grib, QGraphicsScene * myScen
     routeDelay->setInterval(5);
     routeDelay->setSingleShot(true);
     connect(routeDelay,SIGNAL(timeout()),this,SLOT(slot_recalculate()));
+    delay=10;
 }
 
 ROUTE::~ROUTE()
@@ -127,8 +128,14 @@ ROUTE::~ROUTE()
 }
 void ROUTE::slot_calculateWithDelay()
 {
+    //qWarning()<<"delay="<<delay;
     if(!routeDelay->isActive())
-        routeDelay->start(10);
+    {
+        if(delay>30)
+            routeDelay->start(delay);
+        else
+            this->slot_recalculate();
+    }
 }
 
 void ROUTE::setBoat(boat *curBoat)
@@ -772,6 +779,7 @@ void ROUTE::slot_recalculate(boat * boat)
     busy=false;
 //    qWarning()<<"VBVMG-VLM calculation time:"<<timeD;
 //    qWarning()<<"Route total calculation time:"<<timeTotal.elapsed();
+    delay=timeTotal.elapsed();
 }
 void ROUTE::interpolatePos()
 {
