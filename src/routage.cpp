@@ -861,7 +861,7 @@ void ROUTAGE::calculate()
         proj->zoomOnZone(xW,yN,xE,yS);
         //proj->blockSignals(false);
         connect(proj,SIGNAL(projectionUpdated()),this,SLOT(slot_calculate_with_tempo()));
-        double angle=ortho.getAzimutDeg();
+        double angle=ortho.getLoxoCap();
         if(angle>180)
             angle=360-angle;
         if(angle>90)

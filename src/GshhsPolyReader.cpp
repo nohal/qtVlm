@@ -275,7 +275,7 @@ int GshhsPolyReader::getPolyVersion()
     if(!fpoly) return 0;
 
     readPolygonFileHeader(fpoly,&polyHeader);
-    fclose(fpoly);
+    //fclose(fpoly);
     return polyHeader.version;
 }
 
