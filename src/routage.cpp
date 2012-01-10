@@ -840,54 +840,38 @@ void ROUTAGE::calculate()
     if(autoZoom)
     {
         Orthodromie ortho (start.x(), start.y(), arrival.x(), arrival.y());
-        double      xC, yC;
-#if 0
-        // For some reason, this gives absurd results
-        ortho.getMidPoint (&xC, &yC);
-#else
-        const double    lngSRad = degToRad (start.x());
-        const double    latSRad = degToRad (start.y());
-        const double    startX  = cos (latSRad) * cos (lngSRad);
-        const double    startY  = cos (latSRad) * sin (lngSRad);
-        const double    startZ  = sin (latSRad);
+        double xW=qMin(start.x(),arrival.x());
+        double xE=qMax(start.x(),arrival.x());
+        if((xW>0 && xE<0) || (xW<0 && xE>0))
+        {
+            if(qAbs(xW-xE)>180)
+            {
+                double xTemp=xW;
+                xW=xE;
+                xE=xTemp;
+                if(xW>0)
+                    xW-=360;
+                else
+                    xE-=360;
 
-        const double    lngARad  = degToRad (arrival.x());
-        const double    latARad  = degToRad (arrival.y());
-        const double    arrivalX = cos (latARad) * cos (lngARad);
-        const double    arrivalY = cos (latARad) * sin (lngARad);
-        const double    arrivalZ = sin (latARad);
-
-        const double    midX = (startX + arrivalX) / 2;
-        const double    midY = (startY + arrivalY) / 2;
-        const double    midZ = (startZ + arrivalZ) / 2;
-
-        xC = radToDeg (atan2 (midY, midX));
-        yC = radToDeg (atan2 (midZ, sqrt (midX*midX + midY*midY)));
-#endif
-        const double    distance = ortho.getDistance();
-
-        double xW, xE, yN, yS, tmp;
-        Util::getCoordFromDistanceAngle (yC, xC, distance/2,   0,  &yN, &tmp);
-        Util::getCoordFromDistanceAngle (yC, xC, distance/2,  90, &tmp,  &xE);
-        Util::getCoordFromDistanceAngle (yC, xC, distance/2, 180,  &yS, &tmp);
-        Util::getCoordFromDistanceAngle (yC, xC, distance/2, 270, &tmp,  &xW);
-
-        if (xW > xE) xW -= 360;
-#if 0
-        qWarning() << "Routing from " << start.x() << ", " << start.y() << " to " << arrival.x() << ", " << arrival.y();
-        qWarning() << "-- Distance: " << distance;
-        qWarning() << "-- Center:   " << xC << ", " << yC;
-        qWarning() << "-- North:    " << yN;
-        qWarning() << "-- South:    " << yS;
-        qWarning() << "-- West:     " << xW;
-        qWarning() << "-- East:     " << xE;
-#endif
-        //proj->setUseTempo(false);
-        //proj->blockSignals(true);
+            }
+        }
+        double yN=qMax(start.y(),arrival.y());
+        double yS=qMin(start.y(),arrival.y());
         proj->zoomOnZone(xW,yN,xE,yS);
         //proj->blockSignals(false);
         connect(proj,SIGNAL(projectionUpdated()),this,SLOT(slot_calculate_with_tempo()));
-        proj->setScale(proj->getScale()*.8);
+        double angle=ortho.getAzimutDeg();
+        if(angle>180)
+            angle=360-angle;
+        if(angle>90)
+            angle=180-angle;
+        double ratio=0;
+        if(angle<45)
+            ratio=0.9*cos(degToRad(angle));
+        else
+            ratio=0.9*sin(degToRad(angle));
+        proj->setScale(proj->getScale()*qAbs(ratio));
         //proj->setUseTempo(true);
         QApplication::processEvents();
     }
