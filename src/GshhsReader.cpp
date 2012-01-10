@@ -155,6 +155,10 @@ GshhsReader::GshhsReader(std::string fpath_, int quality)
     quality=-1;
     setQuality(userPreferredQuality);
 }
+int GshhsReader::getPolyVersion()
+{
+    return gshhsPoly_reader->getPolyVersion();
+}
 
 //-------------------------------------------------------
 // Recopie

@@ -327,6 +327,13 @@ myCentralWidget::myCentralWidget(Projection * proj,MainWindow * parent,MenuBar *
     /* other child */
     gshhsReader = new GshhsReader("maps/gshhs", 0);
     gshhsReader->setProj(proj);
+    if(gshhsReader->getPolyVersion()!=220)
+    {
+        qWarning()<<"wrong poly version->"<<gshhsReader->getPolyVersion();
+        QMessageBox::warning (this,
+            tr("Chargement des cartes VLM"),
+            tr("Vous n'avez pas la bonne version des cartes VLM"));
+    }
     grib = new Grib();
     inetManager = new inetConnexion(mainW);
     replayTimer=new QTimer(this);

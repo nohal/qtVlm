@@ -109,38 +109,38 @@ Valid boat ID and race ID required.</translation>
         <translation>Unable to create file.</translation>
     </message>
     <message>
-        <location filename="../src/Ui/DialogDownloadTracks.Ui" line="14"/>
+        <location filename="../src/Ui/DialogDownloadTracks.ui" line="14"/>
         <source>Banque des Traces VLM</source>
         <translation>VLM Track bank</translation>
     </message>
     <message>
-        <location filename="../src/Ui/DialogDownloadTracks.Ui" line="31"/>
+        <location filename="../src/Ui/DialogDownloadTracks.ui" line="31"/>
         <source>ID Bateau</source>
         <translation>Boat ID</translation>
     </message>
     <message>
-        <location filename="../src/Ui/DialogDownloadTracks.Ui" line="57"/>
+        <location filename="../src/Ui/DialogDownloadTracks.ui" line="57"/>
         <source>Armateur</source>
         <translation>Player&apos;s name</translation>
     </message>
     <message>
-        <location filename="../src/Ui/DialogDownloadTracks.Ui" line="64"/>
-        <location filename="../src/Ui/DialogDownloadTracks.Ui" line="94"/>
+        <location filename="../src/Ui/DialogDownloadTracks.ui" line="64"/>
+        <location filename="../src/Ui/DialogDownloadTracks.ui" line="94"/>
         <source>N/A</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../src/Ui/DialogDownloadTracks.Ui" line="87"/>
+        <location filename="../src/Ui/DialogDownloadTracks.ui" line="87"/>
         <source>Nom Course</source>
         <translation>Race Name</translation>
     </message>
     <message>
-        <location filename="../src/Ui/DialogDownloadTracks.Ui" line="101"/>
+        <location filename="../src/Ui/DialogDownloadTracks.ui" line="101"/>
         <source>Pour eviter de surcharger le serveur VLM, les traces demandees sont sauvegardees localement dans le dossier tracks. Priere de ne les renommer qu&apos;en cas de necessite.</source>
         <translation>To avoid overloading VLM server, downloaded tracks are saved in the tracks folder. Please rename then only if really needed.</translation>
     </message>
     <message>
-        <location filename="../src/Ui/DialogDownloadTracks.Ui" line="124"/>
+        <location filename="../src/Ui/DialogDownloadTracks.ui" line="124"/>
         <source>ID Course</source>
         <translation>Race ID</translation>
     </message>
@@ -3791,7 +3791,7 @@ Etes-vous sur ?</source>
     </message>
     <message>
         <location filename="../src/Polar.cpp" line="96"/>
-        <location filename="../src/mycentralwidget.cpp" line="1436"/>
+        <location filename="../src/mycentralwidget.cpp" line="1443"/>
         <source>Impossible d&apos;ouvrir le fichier %1</source>
         <translation>Impossible to open file %1</translation>
     </message>
@@ -3802,7 +3802,7 @@ Etes-vous sur ?</source>
     </message>
     <message>
         <location filename="../src/Polar.cpp" line="125"/>
-        <location filename="../src/mycentralwidget.cpp" line="1571"/>
+        <location filename="../src/mycentralwidget.cpp" line="1578"/>
         <source>Fichier %1 vide</source>
         <translation>File %1 is empty</translation>
     </message>
@@ -3956,97 +3956,97 @@ Etes-vous sur ?</source>
         <translation>VLM server inaccessible</translation>
     </message>
     <message>
-        <location filename="../src/mycentralwidget.cpp" line="1312"/>
+        <location filename="../src/mycentralwidget.cpp" line="1319"/>
         <source>Un nom de fichier valide portant l&apos;extension .png est requis</source>
         <translation>A valid file name with .png extension is required</translation>
     </message>
     <message>
-        <location filename="../src/mycentralwidget.cpp" line="1333"/>
+        <location filename="../src/mycentralwidget.cpp" line="1340"/>
         <source>Voir Vlm Logs</source>
         <translation>See Vlm logs</translation>
     </message>
     <message>
-        <location filename="../src/mycentralwidget.cpp" line="1334"/>
+        <location filename="../src/mycentralwidget.cpp" line="1341"/>
         <source>Pas de bateau VLM actif.</source>
         <translation>No active VLM boat.</translation>
     </message>
     <message>
-        <location filename="../src/mycentralwidget.cpp" line="1346"/>
+        <location filename="../src/mycentralwidget.cpp" line="1353"/>
         <source>Telecharger traces VLM</source>
         <translation>Download tracks from VLM</translation>
     </message>
     <message>
-        <location filename="../src/mycentralwidget.cpp" line="1347"/>
+        <location filename="../src/mycentralwidget.cpp" line="1354"/>
         <source>Pas de compte VLM actif.</source>
         <translation>No active VLM user.</translation>
     </message>
     <message>
-        <location filename="../src/mycentralwidget.cpp" line="1378"/>
+        <location filename="../src/mycentralwidget.cpp" line="1385"/>
         <source>Corne de brume activee</source>
         <translation>Fog horn activated</translation>
     </message>
     <message>
-        <location filename="../src/mycentralwidget.cpp" line="1378"/>
+        <location filename="../src/mycentralwidget.cpp" line="1385"/>
         <source>Arreter la corne de brume</source>
         <translation>Stop fog horn</translation>
     </message>
     <message>
-        <location filename="../src/mycentralwidget.cpp" line="1412"/>
+        <location filename="../src/mycentralwidget.cpp" line="1419"/>
         <source>Aucun Bateau</source>
         <translation>No boat selected</translation>
     </message>
     <message>
-        <location filename="../src/mycentralwidget.cpp" line="1413"/>
+        <location filename="../src/mycentralwidget.cpp" line="1420"/>
         <source>L&apos;import de route necessite un bateau actif.</source>
         <translation>Importing a route requires an active boat.</translation>
     </message>
     <message>
-        <location filename="../src/mycentralwidget.cpp" line="1435"/>
-        <location filename="../src/mycentralwidget.cpp" line="1570"/>
-        <location filename="../src/mycentralwidget.cpp" line="1598"/>
-        <location filename="../src/mycentralwidget.cpp" line="1793"/>
-        <location filename="../src/mycentralwidget.cpp" line="2098"/>
+        <location filename="../src/mycentralwidget.cpp" line="1442"/>
+        <location filename="../src/mycentralwidget.cpp" line="1577"/>
+        <location filename="../src/mycentralwidget.cpp" line="1605"/>
+        <location filename="../src/mycentralwidget.cpp" line="1800"/>
+        <location filename="../src/mycentralwidget.cpp" line="2105"/>
         <source>Lecture de route</source>
         <translation>Reading the route</translation>
     </message>
     <message>
-        <location filename="../src/mycentralwidget.cpp" line="1584"/>
+        <location filename="../src/mycentralwidget.cpp" line="1591"/>
         <source>Importation de routage MaxSea</source>
         <translation>Import route from MaxSea</translation>
     </message>
     <message>
-        <location filename="../src/mycentralwidget.cpp" line="1584"/>
+        <location filename="../src/mycentralwidget.cpp" line="1591"/>
         <source>Heures a ajouter/enlever pour obtenir UTC (par ex -2 pour la France)</source>
         <translation>Hours to add/remove to get UTC (i.e. -2 for France)</translation>
     </message>
     <message>
-        <location filename="../src/mycentralwidget.cpp" line="1599"/>
+        <location filename="../src/mycentralwidget.cpp" line="1606"/>
         <source>Fichier %1 invalide (doit commencer par POSITION et non &apos;%2&apos;), ou alors etre au format sbsRouteur</source>
         <translation>File %1 invalid (should start with POSITION et not with&apos;%2&apos;), or should be in sbsRouteur format</translation>
     </message>
     <message>
-        <location filename="../src/mycentralwidget.cpp" line="1925"/>
+        <location filename="../src/mycentralwidget.cpp" line="1932"/>
         <source>Export de route</source>
         <translation>Route export</translation>
     </message>
     <message>
-        <location filename="../src/mycentralwidget.cpp" line="2336"/>
-        <location filename="../src/mycentralwidget.cpp" line="2338"/>
+        <location filename="../src/mycentralwidget.cpp" line="2344"/>
+        <location filename="../src/mycentralwidget.cpp" line="2346"/>
         <source>Simplification/Optimisation de route</source>
         <translation>Route Simplification/Optimization</translation>
     </message>
     <message>
-        <location filename="../src/mycentralwidget.cpp" line="2336"/>
+        <location filename="../src/mycentralwidget.cpp" line="2344"/>
         <source>Cette operation est impossible pour une route figee ou une route sans ETA</source>
         <translation>This operation is not possible for a frozen route or a route without ETA</translation>
     </message>
     <message>
-        <location filename="../src/mycentralwidget.cpp" line="2338"/>
+        <location filename="../src/mycentralwidget.cpp" line="2346"/>
         <source>Cette operation est impossible si le mode de calcul VBVMG est celui de VLM</source>
         <translation>This operation is not allowed if VB-VMG mode is set to VLM</translation>
     </message>
     <message>
-        <location filename="../src/mycentralwidget.cpp" line="2457"/>
+        <location filename="../src/mycentralwidget.cpp" line="2465"/>
         <source>Resultat de l&apos;optimisation</source>
         <translation>Optimization results</translation>
     </message>
@@ -4064,16 +4064,16 @@ Etes-vous sur ?</source>
         <location filename="../src/Dialogs/DialogVlmLog.cpp" line="152"/>
         <location filename="../src/boatVLM.cpp" line="931"/>
         <location filename="../src/boatVLM.cpp" line="937"/>
-        <location filename="../src/mycentralwidget.cpp" line="1318"/>
-        <location filename="../src/mycentralwidget.cpp" line="1926"/>
-        <location filename="../src/mycentralwidget.cpp" line="2099"/>
+        <location filename="../src/mycentralwidget.cpp" line="1325"/>
+        <location filename="../src/mycentralwidget.cpp" line="1933"/>
+        <location filename="../src/mycentralwidget.cpp" line="2106"/>
         <source>Impossible de creer le fichier %1</source>
         <translation>Impossible to create file %1</translation>
     </message>
     <message>
         <location filename="../src/Dialogs/DialogVlmLog.cpp" line="145"/>
-        <location filename="../src/mycentralwidget.cpp" line="1311"/>
-        <location filename="../src/mycentralwidget.cpp" line="1317"/>
+        <location filename="../src/mycentralwidget.cpp" line="1318"/>
+        <location filename="../src/mycentralwidget.cpp" line="1324"/>
         <source>Sauvegarde ecran</source>
         <translation>Screen shot</translation>
     </message>
@@ -4108,7 +4108,7 @@ Etes-vous sur ?</source>
         <translation type="obsolete">Maximum loss of time on final ETA (in minutes)</translation>
     </message>
     <message>
-        <location filename="../src/mycentralwidget.cpp" line="2366"/>
+        <location filename="../src/mycentralwidget.cpp" line="2374"/>
         <source>Resultat de la simplification</source>
         <translation>Simplification result</translation>
     </message>
@@ -4296,52 +4296,52 @@ VMG %.2f kts</translation>
         <translation>Starting date is not compatible with grib dates</translation>
     </message>
     <message>
-        <location filename="../src/routage.cpp" line="1924"/>
+        <location filename="../src/routage.cpp" line="1908"/>
         <source>Date et heure d&apos;arrivee: </source>
         <translation>Date and time of arrival: </translation>
     </message>
     <message>
-        <location filename="../src/routage.cpp" line="1925"/>
+        <location filename="../src/routage.cpp" line="1909"/>
         <source>&lt;br&gt;Arrivee en: </source>
         <translation>&lt;br&gt;Arrival within: </translation>
     </message>
     <message>
-        <location filename="../src/routage.cpp" line="1925"/>
+        <location filename="../src/routage.cpp" line="1909"/>
         <source> jours </source>
         <translation>days</translation>
     </message>
     <message>
-        <location filename="../src/routage.cpp" line="1926"/>
+        <location filename="../src/routage.cpp" line="1910"/>
         <source>&lt;br&gt;&lt;br&gt;Temps de calcul: </source>
         <translation>&lt;br&gt;&lt;br&gt;Calculation time: </translation>
     </message>
     <message>
-        <location filename="../src/routage.cpp" line="1931"/>
+        <location filename="../src/routage.cpp" line="1915"/>
         <source>Routage arrete par l&apos;utilisateur</source>
         <translation>Routing stopped by user</translation>
     </message>
     <message>
-        <location filename="../src/routage.cpp" line="1933"/>
+        <location filename="../src/routage.cpp" line="1917"/>
         <source>Impossible de rejoindre l&apos;arrivee, desole</source>
         <translation>Sorry, impossible to reach WP&lt;br&gt;Try with another grib</translation>
     </message>
     <message>
-        <location filename="../src/routage.cpp" line="1961"/>
+        <location filename="../src/routage.cpp" line="1945"/>
         <source>Convertir en route</source>
         <translation>Convert to route</translation>
     </message>
     <message>
-        <location filename="../src/routage.cpp" line="1962"/>
+        <location filename="../src/routage.cpp" line="1946"/>
         <source>Ce routage a ete calcule avec une hypothese modifiant les donnees du grib&lt;br&gt;La route ne prendra pas ce scenario en compte&lt;br&gt;Etes vous sur de vouloir le convertir en route?</source>
         <translation>This routing has been calculated with an assumption modifying grib data&lt;br&gt;The route will not take this scenario into account&lt;br&gt;Are you sure you want to convert to route?</translation>
     </message>
     <message>
-        <location filename="../src/routage.cpp" line="2370"/>
+        <location filename="../src/routage.cpp" line="2354"/>
         <source>Convertion d&apos;un routage en route</source>
         <translation>Converting Routage to Route</translation>
     </message>
     <message>
-        <location filename="../src/routage.cpp" line="2371"/>
+        <location filename="../src/routage.cpp" line="2355"/>
         <source>Voulez-vous que la route parte du bateau a la prochaine vacation?</source>
         <translation>Do you want the new route to start from boat?</translation>
     </message>
@@ -4350,7 +4350,7 @@ VMG %.2f kts</translation>
         <translation type="obsolete">Delete routing: %1?</translation>
     </message>
     <message>
-        <location filename="../src/routage.cpp" line="2950"/>
+        <location filename="../src/routage.cpp" line="2934"/>
         <source>Creer un pivot en changeant les options</source>
         <translation>Create a pivot changing the routing options</translation>
     </message>
@@ -4367,17 +4367,17 @@ VMG %.2f kts</translation>
         <translation type="obsolete">Routing:</translation>
     </message>
     <message>
-        <location filename="../src/routage.cpp" line="2361"/>
+        <location filename="../src/routage.cpp" line="2345"/>
         <source>Conversion d&apos;un routage en route</source>
         <translation>Converting Routage to Route</translation>
     </message>
     <message>
-        <location filename="../src/routage.cpp" line="2362"/>
+        <location filename="../src/routage.cpp" line="2346"/>
         <source>Un des routages en amont a ete supprime,&lt;br&gt;la conversion est impossible</source>
         <translation>One of the parents routing has been deleted,&lt;br&gt;converion is not possible</translation>
     </message>
     <message>
-        <location filename="../src/routage.cpp" line="2948"/>
+        <location filename="../src/routage.cpp" line="2932"/>
         <source>Creer un pivot</source>
         <translation>Create a pivot point</translation>
     </message>
@@ -7216,35 +7216,45 @@ p, li { white-space: pre-wrap; }
         <translation type="obsolete">You must select a zone on the map.</translation>
     </message>
     <message>
-        <location filename="../src/mycentralwidget.cpp" line="962"/>
+        <location filename="../src/mycentralwidget.cpp" line="969"/>
         <source>Demande d&apos;un fichier GRIB a sailsDoc</source>
         <translation>Ask SailDocs for a GRIB file</translation>
     </message>
     <message>
-        <location filename="../src/mycentralwidget.cpp" line="918"/>
-        <location filename="../src/mycentralwidget.cpp" line="963"/>
+        <location filename="../src/mycentralwidget.cpp" line="925"/>
+        <location filename="../src/mycentralwidget.cpp" line="970"/>
         <source>Vous devez selectionner une zone de la carte.</source>
         <translation>You must select a zone on the map.</translation>
     </message>
     <message>
-        <location filename="../src/mycentralwidget.cpp" line="917"/>
+        <location filename="../src/mycentralwidget.cpp" line="334"/>
+        <source>Chargement des cartes VLM</source>
+        <translation>Loading VLM maps</translation>
+    </message>
+    <message>
+        <location filename="../src/mycentralwidget.cpp" line="335"/>
+        <source>Vous n&apos;avez pas la bonne version des cartes VLM</source>
+        <translation>You don&apos;t have the correct version of the VLM maps</translation>
+    </message>
+    <message>
+        <location filename="../src/mycentralwidget.cpp" line="924"/>
         <source>Telechargement d&apos;un fichier GRIB</source>
         <translation>Download a GRIB file</translation>
     </message>
     <message>
-        <location filename="../src/mycentralwidget.cpp" line="941"/>
+        <location filename="../src/mycentralwidget.cpp" line="948"/>
         <source>dd/MM/yyyy hh:mm</source>
         <translation>MM/dd/yyyy hh:mm:ss</translation>
     </message>
     <message>
-        <location filename="../src/mycentralwidget.cpp" line="977"/>
-        <location filename="../src/mycentralwidget.cpp" line="993"/>
+        <location filename="../src/mycentralwidget.cpp" line="984"/>
+        <location filename="../src/mycentralwidget.cpp" line="1000"/>
         <source>oui</source>
         <translation>yes</translation>
     </message>
     <message>
-        <location filename="../src/mycentralwidget.cpp" line="981"/>
-        <location filename="../src/mycentralwidget.cpp" line="997"/>
+        <location filename="../src/mycentralwidget.cpp" line="988"/>
+        <location filename="../src/mycentralwidget.cpp" line="1004"/>
         <source>non</source>
         <translation>no</translation>
     </message>
@@ -7253,8 +7263,8 @@ p, li { white-space: pre-wrap; }
         <translation type="obsolete">yes (using the Magnus-Tetens formula)</translation>
     </message>
     <message>
-        <location filename="../src/mycentralwidget.cpp" line="1009"/>
-        <location filename="../src/mycentralwidget.cpp" line="1063"/>
+        <location filename="../src/mycentralwidget.cpp" line="1016"/>
+        <location filename="../src/mycentralwidget.cpp" line="1070"/>
         <source>Informations sur le fichier GRIB</source>
         <translation>Info about GRIB file</translation>
     </message>
@@ -7392,12 +7402,12 @@ p, li { white-space: pre-wrap; }
         <translation type="obsolete">Reference date : %1</translation>
     </message>
     <message>
-        <location filename="../src/mycentralwidget.cpp" line="986"/>
+        <location filename="../src/mycentralwidget.cpp" line="993"/>
         <source>oui (calcule par la formule de Magnus-Tetens)</source>
         <translation>yes (using the Magnus-Tetens formula)</translation>
     </message>
     <message>
-        <location filename="../src/mycentralwidget.cpp" line="1010"/>
+        <location filename="../src/mycentralwidget.cpp" line="1017"/>
         <source>Aucun fichir GRIB n&apos;est charge.</source>
         <translation>No GRIB file loaded.</translation>
     </message>
@@ -7450,12 +7460,12 @@ p, li { white-space: pre-wrap; }
         <translation type="obsolete">Reference date : %1</translation>
     </message>
     <message>
-        <location filename="../src/mycentralwidget.cpp" line="1076"/>
+        <location filename="../src/mycentralwidget.cpp" line="1083"/>
         <source>POI</source>
         <translation>POI</translation>
     </message>
     <message>
-        <location filename="../src/mycentralwidget.cpp" line="1121"/>
+        <location filename="../src/mycentralwidget.cpp" line="1128"/>
         <source>Suppression de toutes les marques</source>
         <translation>Deletion of all marks</translation>
     </message>
@@ -7464,213 +7474,213 @@ p, li { white-space: pre-wrap; }
         <translation type="obsolete">Deleting a mark is final.  Are you sure?</translation>
     </message>
     <message>
-        <location filename="../src/mycentralwidget.cpp" line="1013"/>
+        <location filename="../src/mycentralwidget.cpp" line="1020"/>
         <source>Fichier : %1
 </source>
         <translation>File : %1
 </translation>
     </message>
     <message>
-        <location filename="../src/mycentralwidget.cpp" line="1014"/>
+        <location filename="../src/mycentralwidget.cpp" line="1021"/>
         <source>Taille : %1 octets
 </source>
         <translation>Size : %1 bytes</translation>
     </message>
     <message>
-        <location filename="../src/mycentralwidget.cpp" line="1015"/>
-        <location filename="../src/mycentralwidget.cpp" line="1024"/>
-        <location filename="../src/mycentralwidget.cpp" line="1048"/>
-        <location filename="../src/mycentralwidget.cpp" line="1051"/>
+        <location filename="../src/mycentralwidget.cpp" line="1022"/>
+        <location filename="../src/mycentralwidget.cpp" line="1031"/>
+        <location filename="../src/mycentralwidget.cpp" line="1055"/>
         <location filename="../src/mycentralwidget.cpp" line="1058"/>
+        <location filename="../src/mycentralwidget.cpp" line="1065"/>
         <source>
 </source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../src/mycentralwidget.cpp" line="1017"/>
+        <location filename="../src/mycentralwidget.cpp" line="1024"/>
         <source>%1 enregistrements, </source>
         <translation>%1 registration,</translation>
     </message>
     <message>
-        <location filename="../src/mycentralwidget.cpp" line="1018"/>
+        <location filename="../src/mycentralwidget.cpp" line="1025"/>
         <source>%1 dates :
 </source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../src/mycentralwidget.cpp" line="1021"/>
+        <location filename="../src/mycentralwidget.cpp" line="1028"/>
         <source>    du %1
 </source>
         <translation>   from %1</translation>
     </message>
     <message>
-        <location filename="../src/mycentralwidget.cpp" line="1022"/>
+        <location filename="../src/mycentralwidget.cpp" line="1029"/>
         <source>    au %1
 </source>
         <translation>   to %1</translation>
     </message>
     <message>
-        <location filename="../src/mycentralwidget.cpp" line="1025"/>
+        <location filename="../src/mycentralwidget.cpp" line="1032"/>
         <source>Donnees disponibles :
 </source>
         <translation>Available data :
 </translation>
     </message>
     <message>
-        <location filename="../src/mycentralwidget.cpp" line="1026"/>
+        <location filename="../src/mycentralwidget.cpp" line="1033"/>
         <source>    Temperature : %1
 </source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../src/mycentralwidget.cpp" line="1027"/>
+        <location filename="../src/mycentralwidget.cpp" line="1034"/>
         <source>    Pression : %1
 </source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../src/mycentralwidget.cpp" line="1028"/>
+        <location filename="../src/mycentralwidget.cpp" line="1035"/>
         <source>    Vent  : %1
 </source>
         <translation>   Wind  : %1
 </translation>
     </message>
     <message>
-        <location filename="../src/mycentralwidget.cpp" line="1029"/>
+        <location filename="../src/mycentralwidget.cpp" line="1036"/>
         <source>    Cumul de précipitations : %1
 </source>
         <translation>   Cumul of precipitation : %1
 </translation>
     </message>
     <message>
-        <location filename="../src/mycentralwidget.cpp" line="1030"/>
+        <location filename="../src/mycentralwidget.cpp" line="1037"/>
         <source>    Nebulosite : %1
 </source>
         <translation>    Cloud cover : %1
 </translation>
     </message>
     <message>
-        <location filename="../src/mycentralwidget.cpp" line="1031"/>
+        <location filename="../src/mycentralwidget.cpp" line="1038"/>
         <source>    Humidite relative : %1
 </source>
         <translation>    Relative humidity : %1
 </translation>
     </message>
     <message>
-        <location filename="../src/mycentralwidget.cpp" line="1032"/>
+        <location filename="../src/mycentralwidget.cpp" line="1039"/>
         <source>    Isotherme 0degC : %1
 </source>
         <translation>    Isotherm 0°C : %1
 </translation>
     </message>
     <message>
-        <location filename="../src/mycentralwidget.cpp" line="1033"/>
+        <location filename="../src/mycentralwidget.cpp" line="1040"/>
         <source>    Point de rosee : %1
 </source>
         <translation>    Dewpoint : %1
 </translation>
     </message>
     <message>
-        <location filename="../src/mycentralwidget.cpp" line="1034"/>
+        <location filename="../src/mycentralwidget.cpp" line="1041"/>
         <source>    Temperature (min) : %1
 </source>
         <translation>    Temperature (min) : %1
 </translation>
     </message>
     <message>
-        <location filename="../src/mycentralwidget.cpp" line="1035"/>
+        <location filename="../src/mycentralwidget.cpp" line="1042"/>
         <source>    Temperature (max) : %1
 </source>
         <translation>    Temperature (max) : %1
 </translation>
     </message>
     <message>
-        <location filename="../src/mycentralwidget.cpp" line="1036"/>
+        <location filename="../src/mycentralwidget.cpp" line="1043"/>
         <source>    Temperature (pot) : %1
 </source>
         <translation>    Temperature (pot) : %1
 </translation>
     </message>
     <message>
-        <location filename="../src/mycentralwidget.cpp" line="1037"/>
+        <location filename="../src/mycentralwidget.cpp" line="1044"/>
         <source>    Neige (risque) : %1
 </source>
         <translation>    Snow (risk) : %1
 </translation>
     </message>
     <message>
-        <location filename="../src/mycentralwidget.cpp" line="1038"/>
+        <location filename="../src/mycentralwidget.cpp" line="1045"/>
         <source>    Neige (epaisseur) : %1
 </source>
         <translation>    Snow (depth) : %1
 </translation>
     </message>
     <message>
-        <location filename="../src/mycentralwidget.cpp" line="1039"/>
+        <location filename="../src/mycentralwidget.cpp" line="1046"/>
         <source>    Humidite specifique :
 </source>
         <translation>    Specific humidity :
 </translation>
     </message>
     <message>
-        <location filename="../src/mycentralwidget.cpp" line="1040"/>
+        <location filename="../src/mycentralwidget.cpp" line="1047"/>
         <source>        - 200: %1
 </source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../src/mycentralwidget.cpp" line="1041"/>
+        <location filename="../src/mycentralwidget.cpp" line="1048"/>
         <source>        - 300: %1
 </source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../src/mycentralwidget.cpp" line="1042"/>
+        <location filename="../src/mycentralwidget.cpp" line="1049"/>
         <source>        - 500: %1
 </source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../src/mycentralwidget.cpp" line="1043"/>
+        <location filename="../src/mycentralwidget.cpp" line="1050"/>
         <source>        - 700: %1
 </source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../src/mycentralwidget.cpp" line="1044"/>
+        <location filename="../src/mycentralwidget.cpp" line="1051"/>
         <source>        - 850: %1
 </source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../src/mycentralwidget.cpp" line="1049"/>
+        <location filename="../src/mycentralwidget.cpp" line="1056"/>
         <source>Grille : %1 points (%2x%3)
 </source>
         <translation>Grid : %1 points (%2x%3)
 </translation>
     </message>
     <message>
-        <location filename="../src/mycentralwidget.cpp" line="1052"/>
+        <location filename="../src/mycentralwidget.cpp" line="1059"/>
         <source>Etendue :
 </source>
         <translation>Extension :
 </translation>
     </message>
     <message>
-        <location filename="../src/mycentralwidget.cpp" line="1056"/>
+        <location filename="../src/mycentralwidget.cpp" line="1063"/>
         <source>%1  -&gt;  %2
 </source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../src/mycentralwidget.cpp" line="1059"/>
+        <location filename="../src/mycentralwidget.cpp" line="1066"/>
         <source>Date de reference : %1
 </source>
         <translation>Reference date : %1
 </translation>
     </message>
     <message>
-        <location filename="../src/mycentralwidget.cpp" line="1122"/>
+        <location filename="../src/mycentralwidget.cpp" line="1129"/>
         <source>La destruction d&apos;une marque est definitive.
 
 Etes-vous sur ?</source>
@@ -7679,136 +7689,136 @@ Etes-vous sur ?</source>
 </translation>
     </message>
     <message>
-        <location filename="../src/mycentralwidget.cpp" line="1305"/>
+        <location filename="../src/mycentralwidget.cpp" line="1312"/>
         <source>Photo Ecran</source>
         <translation>Screen Shot</translation>
     </message>
     <message>
-        <location filename="../src/mycentralwidget.cpp" line="1425"/>
-        <location filename="../src/mycentralwidget.cpp" line="1428"/>
+        <location filename="../src/mycentralwidget.cpp" line="1432"/>
+        <location filename="../src/mycentralwidget.cpp" line="1435"/>
         <source>Ouvrir un fichier Route</source>
         <translation>Open a Route file</translation>
     </message>
     <message>
-        <location filename="../src/mycentralwidget.cpp" line="1495"/>
-        <location filename="../src/mycentralwidget.cpp" line="1607"/>
-        <location filename="../src/mycentralwidget.cpp" line="1807"/>
+        <location filename="../src/mycentralwidget.cpp" line="1502"/>
+        <location filename="../src/mycentralwidget.cpp" line="1614"/>
+        <location filename="../src/mycentralwidget.cpp" line="1814"/>
         <source>Nom de la route a importer</source>
         <translation>Name of route to import</translation>
     </message>
     <message>
-        <location filename="../src/mycentralwidget.cpp" line="1496"/>
-        <location filename="../src/mycentralwidget.cpp" line="1607"/>
-        <location filename="../src/mycentralwidget.cpp" line="1807"/>
+        <location filename="../src/mycentralwidget.cpp" line="1503"/>
+        <location filename="../src/mycentralwidget.cpp" line="1614"/>
+        <location filename="../src/mycentralwidget.cpp" line="1814"/>
         <source>Nom de la route</source>
         <translation>Name of route</translation>
     </message>
     <message>
-        <location filename="../src/mycentralwidget.cpp" line="1506"/>
-        <location filename="../src/mycentralwidget.cpp" line="1617"/>
-        <location filename="../src/mycentralwidget.cpp" line="1816"/>
-        <location filename="../src/mycentralwidget.cpp" line="2180"/>
+        <location filename="../src/mycentralwidget.cpp" line="1513"/>
+        <location filename="../src/mycentralwidget.cpp" line="1624"/>
+        <location filename="../src/mycentralwidget.cpp" line="1823"/>
+        <location filename="../src/mycentralwidget.cpp" line="2187"/>
         <source>Ce nom est deja utilise ou invalide</source>
         <translation>This name is already used or invalid</translation>
     </message>
     <message>
-        <location filename="../src/mycentralwidget.cpp" line="1512"/>
-        <location filename="../src/mycentralwidget.cpp" line="1930"/>
-        <location filename="../src/mycentralwidget.cpp" line="2185"/>
+        <location filename="../src/mycentralwidget.cpp" line="1519"/>
+        <location filename="../src/mycentralwidget.cpp" line="1937"/>
+        <location filename="../src/mycentralwidget.cpp" line="2193"/>
         <source>Import de routes</source>
         <translation>Routes import</translation>
     </message>
     <message>
-        <location filename="../src/mycentralwidget.cpp" line="1513"/>
-        <location filename="../src/mycentralwidget.cpp" line="2186"/>
+        <location filename="../src/mycentralwidget.cpp" line="1520"/>
+        <location filename="../src/mycentralwidget.cpp" line="2194"/>
         <source>Import en cours, veuillez patienter...</source>
         <translation>Import in progress, please wait...</translation>
     </message>
     <message>
-        <location filename="../src/mycentralwidget.cpp" line="1905"/>
+        <location filename="../src/mycentralwidget.cpp" line="1912"/>
         <source>Exporter une Route</source>
         <translation>Export a route</translation>
     </message>
     <message>
-        <location filename="../src/mycentralwidget.cpp" line="1908"/>
+        <location filename="../src/mycentralwidget.cpp" line="1915"/>
         <source>Exporter seulement les POIs ou egalement tous les details?</source>
         <translation>Export only POIs or also all details?</translation>
     </message>
     <message>
-        <location filename="../src/mycentralwidget.cpp" line="1909"/>
+        <location filename="../src/mycentralwidget.cpp" line="1916"/>
         <source>Exporter une route</source>
         <translation>Export a route</translation>
     </message>
     <message>
-        <location filename="../src/mycentralwidget.cpp" line="1911"/>
+        <location filename="../src/mycentralwidget.cpp" line="1918"/>
         <source>POIs</source>
         <translation>POIs</translation>
     </message>
     <message>
-        <location filename="../src/mycentralwidget.cpp" line="1912"/>
+        <location filename="../src/mycentralwidget.cpp" line="1919"/>
         <source>Details</source>
         <translation>Details</translation>
     </message>
     <message>
-        <location filename="../src/mycentralwidget.cpp" line="1931"/>
+        <location filename="../src/mycentralwidget.cpp" line="1938"/>
         <source>Export en cours, veuillez patienter...</source>
         <translation>Export in progress, please wait...</translation>
     </message>
     <message>
-        <location filename="../src/mycentralwidget.cpp" line="2278"/>
+        <location filename="../src/mycentralwidget.cpp" line="2286"/>
         <source>Routage%d</source>
         <translation>Routing%d</translation>
     </message>
     <message>
-        <location filename="../src/mycentralwidget.cpp" line="2378"/>
+        <location filename="../src/mycentralwidget.cpp" line="2386"/>
         <source>Optimisation en cours</source>
         <translation>Optimization running</translation>
     </message>
     <message>
-        <location filename="../src/mycentralwidget.cpp" line="2379"/>
+        <location filename="../src/mycentralwidget.cpp" line="2387"/>
         <source>Veuillez patienter...</source>
         <translation>Please wait...</translation>
     </message>
     <message>
-        <location filename="../src/mycentralwidget.cpp" line="2483"/>
+        <location filename="../src/mycentralwidget.cpp" line="2491"/>
         <source>Simplification en cours</source>
         <translation>Ongoing simplification</translation>
     </message>
     <message>
-        <location filename="../src/mycentralwidget.cpp" line="2486"/>
+        <location filename="../src/mycentralwidget.cpp" line="2494"/>
         <source>Abandonner</source>
         <translation>Abort</translation>
     </message>
     <message>
-        <location filename="../src/mycentralwidget.cpp" line="2488"/>
-        <location filename="../src/mycentralwidget.cpp" line="2534"/>
-        <location filename="../src/mycentralwidget.cpp" line="2573"/>
-        <location filename="../src/mycentralwidget.cpp" line="2623"/>
+        <location filename="../src/mycentralwidget.cpp" line="2496"/>
+        <location filename="../src/mycentralwidget.cpp" line="2542"/>
+        <location filename="../src/mycentralwidget.cpp" line="2581"/>
+        <location filename="../src/mycentralwidget.cpp" line="2631"/>
         <source>Phase </source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../src/mycentralwidget.cpp" line="2368"/>
+        <location filename="../src/mycentralwidget.cpp" line="2376"/>
         <source>Optimiser</source>
         <translation>Optimize</translation>
     </message>
     <message>
-        <location filename="../src/mycentralwidget.cpp" line="2443"/>
+        <location filename="../src/mycentralwidget.cpp" line="2451"/>
         <source> minutes perdues</source>
         <translation> minutes lost</translation>
     </message>
     <message>
-        <location filename="../src/mycentralwidget.cpp" line="2445"/>
+        <location filename="../src/mycentralwidget.cpp" line="2453"/>
         <source> minutes gagnees</source>
         <translation> minutes saved</translation>
     </message>
     <message>
-        <location filename="../src/mycentralwidget.cpp" line="2453"/>
+        <location filename="../src/mycentralwidget.cpp" line="2461"/>
         <source>ETA avant optimisation: </source>
         <translation>ETA before optimization: </translation>
     </message>
     <message>
-        <location filename="../src/mycentralwidget.cpp" line="2454"/>
+        <location filename="../src/mycentralwidget.cpp" line="2462"/>
         <source>ETA apres optimisation: </source>
         <translation>ETA after optimization: </translation>
     </message>
@@ -7821,38 +7831,38 @@ Etes-vous sur ?</source>
         <translation type="obsolete">Phase 2...</translation>
     </message>
     <message>
-        <location filename="../src/mycentralwidget.cpp" line="2350"/>
+        <location filename="../src/mycentralwidget.cpp" line="2358"/>
         <source> minutes perdues, </source>
         <translation> minutes lost, </translation>
     </message>
     <message>
-        <location filename="../src/mycentralwidget.cpp" line="2353"/>
-        <location filename="../src/mycentralwidget.cpp" line="2446"/>
+        <location filename="../src/mycentralwidget.cpp" line="2361"/>
+        <location filename="../src/mycentralwidget.cpp" line="2454"/>
         <source> POIs supprimes sur </source>
         <translation> POIs suppressed out of </translation>
     </message>
     <message>
-        <location filename="../src/mycentralwidget.cpp" line="2352"/>
+        <location filename="../src/mycentralwidget.cpp" line="2360"/>
         <source> minutes gagnees(!), </source>
         <translation> minutes saved(!), </translation>
     </message>
     <message>
-        <location filename="../src/mycentralwidget.cpp" line="2362"/>
+        <location filename="../src/mycentralwidget.cpp" line="2370"/>
         <source>ETA avant simplification: </source>
         <translation>ETA before simplification: </translation>
     </message>
     <message>
-        <location filename="../src/mycentralwidget.cpp" line="2363"/>
+        <location filename="../src/mycentralwidget.cpp" line="2371"/>
         <source>ETA apres simplification: </source>
         <translation>ETA after simplification: </translation>
     </message>
     <message>
-        <location filename="../src/mycentralwidget.cpp" line="2314"/>
+        <location filename="../src/mycentralwidget.cpp" line="2322"/>
         <source>Envoyer la route au pilototo</source>
         <translation>Send Route to Autopilot</translation>
     </message>
     <message>
-        <location filename="../src/mycentralwidget.cpp" line="2314"/>
+        <location filename="../src/mycentralwidget.cpp" line="2322"/>
         <source>Pour pouvoir envoyer la route au pilototo if faut que:&lt;br&gt;-La route demarre du bateau et de la prochaine vac&lt;br&gt;et que le mode VbVmg-Vlm soit active</source>
         <translation>To be able to send route to Autopilot:t&lt;br&gt;-Route must start from boat and next vacation&lt;br&gt;-VbVmg Vlm mode must be activated</translation>
     </message>
@@ -7865,44 +7875,44 @@ Etes-vous sur ?</source>
         <translation type="obsolete">You cannot delete a frozen route</translation>
     </message>
     <message>
-        <location filename="../src/mycentralwidget.cpp" line="2735"/>
+        <location filename="../src/mycentralwidget.cpp" line="2743"/>
         <source>Detruire la route : %1</source>
         <translation>Delete route : %1</translation>
     </message>
     <message>
-        <location filename="../src/mycentralwidget.cpp" line="2736"/>
+        <location filename="../src/mycentralwidget.cpp" line="2744"/>
         <source>La destruction d&apos;une route est definitive.
 
 Voulez-vous egalement supprimer tous les POIs lui appartenant?</source>
         <translation>Route deletion is not reversible. Also delete all POIs of this route?</translation>
     </message>
     <message>
-        <location filename="../src/mycentralwidget.cpp" line="2764"/>
+        <location filename="../src/mycentralwidget.cpp" line="2772"/>
         <source>Detruire le routage : %1?</source>
         <translation>Delete routing: %1?</translation>
     </message>
     <message>
-        <location filename="../src/mycentralwidget.cpp" line="2765"/>
+        <location filename="../src/mycentralwidget.cpp" line="2773"/>
         <source>La destruction d&apos;un routage est definitive.</source>
         <translation>Deleting a routing is not reversible.</translation>
     </message>
     <message>
-        <location filename="../src/mycentralwidget.cpp" line="3214"/>
+        <location filename="../src/mycentralwidget.cpp" line="3222"/>
         <source>Sauvegarde des POIs et des routes</source>
         <translation>Save POIs and routes</translation>
     </message>
     <message>
-        <location filename="../src/mycentralwidget.cpp" line="3214"/>
+        <location filename="../src/mycentralwidget.cpp" line="3222"/>
         <source>Sauvegarde reussie</source>
         <translation>Save successful</translation>
     </message>
     <message>
-        <location filename="../src/mycentralwidget.cpp" line="3239"/>
+        <location filename="../src/mycentralwidget.cpp" line="3247"/>
         <source>Chargement des POIs et des routes</source>
         <translation>Load POIs and routes</translation>
     </message>
     <message>
-        <location filename="../src/mycentralwidget.cpp" line="3239"/>
+        <location filename="../src/mycentralwidget.cpp" line="3247"/>
         <source>Chargement reussi</source>
         <translation>Reloading successful</translation>
     </message>

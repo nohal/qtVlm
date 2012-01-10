@@ -263,6 +263,22 @@ GshhsPolyReader::~GshhsPolyReader()
 }
 
 //-------------------------------------------------------------------------
+int GshhsPolyReader::getPolyVersion()
+{
+    char txtn='c';
+    QString fname=QString().fromStdString(path)+QString().sprintf("poly-%c-1.dat",txtn);
+    if (fpoly)
+        fclose(fpoly);
+    fpoly = fopen( fname.toStdString().c_str(), "rb");
+
+    /* init header */
+    if(!fpoly) return 0;
+
+    readPolygonFileHeader(fpoly,&polyHeader);
+    fclose(fpoly);
+    return polyHeader.version;
+}
+
 void GshhsPolyReader::setQuality(int quality)  // 5 levels: 0=low ... 4=full
 {
     if (currentQuality != quality)

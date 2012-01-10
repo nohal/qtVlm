@@ -104,6 +104,7 @@ class GshhsPolyReader
         bool crossing(QLineF traject, QLineF trajectWorld) const;
         int currentQuality;
         void setProj(Projection * p){this->proj=p;}
+        int  getPolyVersion();
     private:
         std::string path;
         FILE *fpoly;

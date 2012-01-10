@@ -5396,6 +5396,14 @@ Voulez-vous egalement supprimer tous les POIs lui appartenant?</source>
         <source>Abandonner</source>
         <translation></translation>
     </message>
+    <message>
+        <source>Chargement des cartes VLM</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Vous n&apos;avez pas la bonne version des cartes VLM</source>
+        <translation></translation>
+    </message>
 </context>
 <context>
     <name>myScene</name>
