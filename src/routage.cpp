@@ -717,6 +717,7 @@ ROUTAGE::ROUTAGE(QString name, Projection *proj, Grib *grib, QGraphicsScene * my
     this->checkCoast=Settings::getSetting("checkCoast",1).toInt()==1;
     this->visibleOnly=Settings::getSetting("visibleOnly",1).toInt()==1;
     this->autoZoom=Settings::getSetting("autoZoom",1).toInt()==1;
+    this->zoomLevel=Settings::getSetting("autoZoomLevel",2).toInt();
     this->wind_angle=0;
     this->wind_speed=20;
     this->windIsForced=false;
@@ -798,6 +799,7 @@ void ROUTAGE::calculate()
     Settings::setSetting("checkCoast",checkCoast?1:0);
     Settings::setSetting("visibleOnly",visibleOnly?1:0);
     Settings::setSetting("autoZoom",autoZoom?1:0);
+    Settings::setSetting("autoZoomLevel",zoomLevel);
     this->isNewPivot=false;
     this->aborted=false;
     if (!(myBoat && myBoat->getPolarData() && myBoat!=NULL))
@@ -840,38 +842,86 @@ void ROUTAGE::calculate()
     if(autoZoom)
     {
         Orthodromie ortho (start.x(), start.y(), arrival.x(), arrival.y());
-        double xW=qMin(start.x(),arrival.x());
-        double xE=qMax(start.x(),arrival.x());
-        if((xW>0 && xE<0) || (xW<0 && xE>0))
-        {
-            if(qAbs(xW-xE)>180)
-            {
-                double xTemp=xW;
-                xW=xE;
-                xE=xTemp;
-                if(xW>0)
-                    xW-=360;
-                else
-                    xE-=360;
+//         double      xC, yC;
+// #if 0
+//         // For some reason, this gives absurd results
+//         ortho.getMidPoint (&xC, &yC);
+// #else
+//         const double    lngSRad = degToRad (start.x());
+//         const double    latSRad = degToRad (start.y());
+//         const double    startX  = cos (latSRad) * cos (lngSRad);
+//         const double    startY  = cos (latSRad) * sin (lngSRad);
+//         const double    startZ  = sin (latSRad);
 
-            }
+//         const double    lngARad  = degToRad (arrival.x());
+//         const double    latARad  = degToRad (arrival.y());
+//         const double    arrivalX = cos (latARad) * cos (lngARad);
+//         const double    arrivalY = cos (latARad) * sin (lngARad);
+//         const double    arrivalZ = sin (latARad);
+
+//         const double    midX = (startX + arrivalX) / 2;
+//         const double    midY = (startY + arrivalY) / 2;
+//         const double    midZ = (startZ + arrivalZ) / 2;
+
+//         xC = radToDeg (atan2 (midY, midX));
+//         yC = radToDeg (atan2 (midZ, sqrt (midX*midX + midY*midY)));
+// #endif
+        const double    distance = ortho.getDistance();
+
+        double xW, xE, yN, yS, xTmp, yTmp;
+//         Util::getCoordFromDistanceAngle (yC, xC, distance/2,   0,  &yN, &tmp);
+//         Util::getCoordFromDistanceAngle (yC, xC, distance/2,  90, &tmp,  &xE);
+//         Util::getCoordFromDistanceAngle (yC, xC, distance/2, 180,  &yS, &tmp);
+//         Util::getCoordFromDistanceAngle (yC, xC, distance/2, 270, &tmp,  &xW);
+        double    ratio = 0.5;
+        switch (zoomLevel)
+        {
+            case 3:
+                ratio=0.1;
+                break;
+            case 2:
+                ratio=0.5;
+                break;
+            case 1:
+                ratio=0.8;
+                break;
         }
-        double yN=qMax(start.y(),arrival.y());
-        double yS=qMin(start.y(),arrival.y());
+        const double    angle = ortho.getLoxoCap();
+        Util::getCoordFromDistanceAngle (start.y(), start.x(), ratio*distance/2, angle+90, &yTmp, &xTmp);
+        xW = xE = xTmp;
+        yN = yS = yTmp;
+        Util::getCoordFromDistanceAngle (start.y(), start.x(), ratio*distance/2, angle-90, &yTmp, &xTmp);
+        if (xTmp < xW) xW = xTmp;
+        if (xTmp > xE) xE = xTmp;
+        if (yTmp < yS) yS = yTmp;
+        if (yTmp > yN) yN = yTmp;
+        Util::getCoordFromDistanceAngle (arrival.y(), arrival.x(), ratio*distance/2, angle+90, &yTmp, &xTmp);
+        if (xTmp < xW) xW = xTmp;
+        if (xTmp > xE) xE = xTmp;
+        if (yTmp < yS) yS = yTmp;
+        if (yTmp > yN) yN = yTmp;
+        Util::getCoordFromDistanceAngle (arrival.y(), arrival.x(), ratio*distance/2, angle-90, &yTmp, &xTmp);
+        if (xTmp < xW) xW = xTmp;
+        if (xTmp > xE) xE = xTmp;
+        if (yTmp < yS) yS = yTmp;
+        if (yTmp > yN) yN = yTmp;
+
+        if (xW > xE) xW -= 360;
+#if 1
+        qWarning() << "Routing from " << start.x() << ", " << start.y() << " to " << arrival.x() << ", " << arrival.y();
+        qWarning() << "-- Distance: " << distance;
+//         qWarning() << "-- Center:   " << xC << ", " << yC;
+        qWarning() << "-- North:    " << yN;
+        qWarning() << "-- South:    " << yS;
+        qWarning() << "-- West:     " << xW;
+        qWarning() << "-- East:     " << xE;
+#endif
+        //proj->setUseTempo(false);
+        //proj->blockSignals(true);
         proj->zoomOnZone(xW,yN,xE,yS);
         //proj->blockSignals(false);
         connect(proj,SIGNAL(projectionUpdated()),this,SLOT(slot_calculate_with_tempo()));
-        double angle=ortho.getLoxoCap();
-        if(angle>180)
-            angle=360-angle;
-        if(angle>90)
-            angle=180-angle;
-        double ratio=0;
-        if(angle<45)
-            ratio=0.9*cos(degToRad(angle));
-        else
-            ratio=0.9*sin(degToRad(angle));
-        proj->setScale(proj->getScale()*qAbs(ratio));
+        proj->setScale(proj->getScale()*.9);
         //proj->setUseTempo(true);
         QApplication::processEvents();
     }
@@ -2875,6 +2925,7 @@ void ROUTAGE::setFromRoutage(ROUTAGE *fromRoutage, bool editOptions)
     this->routeFromBoat=false;
     this->toPOI=fromRoutage->getToPOI();
     this->autoZoom=fromRoutage->getAutoZoom();
+    this->zoomLevel=fromRoutage->getZoomLevel();
     this->minPortant=fromRoutage->getMinPortant();
     this->minPres=fromRoutage->getMinPres();
     this->maxPres=fromRoutage->getMaxPres();

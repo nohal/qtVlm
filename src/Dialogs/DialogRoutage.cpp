@@ -89,6 +89,8 @@ DialogRoutage::DialogRoutage(ROUTAGE *routage,myCentralWidget *parent)
     whatIfWind->setValue(routage->getWhatIfWind());
     whatIfTime->setValue(routage->getWhatIfTime());
     autoZoom->setChecked(routage->getAutoZoom());
+    this->zoomLevel->setValue(routage->getZoomLevel());
+    qWarning()<<"zoomLevel="<<routage->getZoomLevel();
     visibleOnly->setChecked(routage->getVisibleOnly());
     this->poiPrefix->setText(routage->getPoiPrefix());
     this->startFromBoat->setChecked(routage->getRouteFromBoat());
@@ -169,6 +171,7 @@ DialogRoutage::DialogRoutage(ROUTAGE *routage,myCentralWidget *parent)
         this->speedLossOnTack->setDisabled(true);
         this->editName->setDisabled(false);
         this->autoZoom->setDisabled(true);
+        this->zoomLevel->setDisabled(true);
         this->visibleOnly->setDisabled(true);
         this->editBoat->setDisabled(true);
         this->editDateBox->setDisabled(true);
@@ -204,6 +207,7 @@ DialogRoutage::DialogRoutage(ROUTAGE *routage,myCentralWidget *parent)
     {
         this->speedLossOnTack->setDisabled(false);
         this->autoZoom->setDisabled(false);
+        this->zoomLevel->setDisabled(false);
         this->visibleOnly->setDisabled(false);
         this->dureeMore24->setDisabled(false);
         this->dureeLess24->setDisabled(false);
@@ -256,6 +260,7 @@ void DialogRoutage::done(int result)
         routage->useConverge=log->isChecked();
         routage->pruneWakeAngle=pruneWakeAngle->value();
         routage->setAutoZoom(autoZoom->isChecked());
+        routage->setZoomLevel(this->zoomLevel->value());
         routage->setVisibleOnly(visibleOnly->isChecked());
         routage->setRouteFromBoat(this->startFromBoat->isChecked());
         routage->setSpeedLossOnTack((double)this->speedLossOnTack->value()/100.00);

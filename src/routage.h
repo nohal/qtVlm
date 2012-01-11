@@ -171,6 +171,8 @@ class ROUTAGE : public QObject
         QList<QLineF> * getPreviousSegments(){return &previousSegments;}
         bool getVisibleOnly(){return visibleOnly;}
         void setVisibleOnly(bool b){this->visibleOnly=b;}
+        int getZoomLevel(){return this->zoomLevel;}
+        void setZoomLevel(int i){this->zoomLevel=i;}
     public slots:
         void slot_edit();
         void slot_abort(){this->aborted=true;}
@@ -294,5 +296,6 @@ class ROUTAGE : public QObject
         bool visibleOnly;
         QTimer * timerTempo;
         bool approaching;
+        int zoomLevel;
     };
 #endif // ROUTAGE_H

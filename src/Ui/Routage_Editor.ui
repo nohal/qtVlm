@@ -46,6 +46,9 @@
      <verstretch>0</verstretch>
     </sizepolicy>
    </property>
+   <property name="toolTip">
+    <string/>
+   </property>
    <widget class="QTabWidget" name="tabWidget">
     <property name="geometry">
      <rect>
@@ -339,7 +342,7 @@ avec ce prefixe</string>
        <property name="geometry">
         <rect>
          <x>330</x>
-         <y>170</y>
+         <y>190</y>
          <width>141</width>
          <height>17</height>
         </rect>
@@ -511,6 +514,40 @@ Virements de bord</string>
        </property>
        <property name="checked">
         <bool>true</bool>
+       </property>
+      </widget>
+      <widget class="QSlider" name="zoomLevel">
+       <property name="geometry">
+        <rect>
+         <x>360</x>
+         <y>170</y>
+         <width>91</width>
+         <height>19</height>
+        </rect>
+       </property>
+       <property name="toolTip">
+        <string>Reglage du niveau de zoom</string>
+       </property>
+       <property name="minimum">
+        <number>1</number>
+       </property>
+       <property name="maximum">
+        <number>3</number>
+       </property>
+       <property name="pageStep">
+        <number>1</number>
+       </property>
+       <property name="sliderPosition">
+        <number>2</number>
+       </property>
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <property name="tickPosition">
+        <enum>QSlider::NoTicks</enum>
+       </property>
+       <property name="tickInterval">
+        <number>1</number>
        </property>
       </widget>
      </widget>
@@ -691,8 +728,8 @@ Virements de bord</string>
         <rect>
          <x>330</x>
          <y>90</y>
-         <width>46</width>
-         <height>13</height>
+         <width>71</width>
+         <height>16</height>
         </rect>
        </property>
        <property name="text">

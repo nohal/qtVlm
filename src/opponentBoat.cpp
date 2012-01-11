@@ -337,10 +337,10 @@ void opponent::updateName()
     else
     {
         str2="<qt>";
-        QFile img("img/"+name+".png");
+        QFile img("img/boats/"+name+".png");
         if(img.exists() && img.size()<200*1024)
         {
-            str2="<img src='img/"+name+".png'>";
+            str2="<img src='img/boats/"+name+".png'>";
         }
         str2+="<table><tr><td>"+this->longName+"</td><td></td></tr>";
         str2=str2+"<tr><td>"+tr("Date de la position: ")+"</td><td>"+
