@@ -63,7 +63,8 @@ void opponent::init(QColor color,bool isQtBoat,QString idu,QString race, float l
     this->lat=lat;
     this->lon=lon;
     this->pseudo=pseudo;
-    this->name=name;
+    this->name=name.trimmed();
+    if(this->name.isEmpty()) this->name=this->pseudo;
     this->proj=proj;
     this->main=main;
     this->parentWindow=parentWindow;
@@ -391,6 +392,7 @@ void opponent::setNewData(float lat, float lon,QString name)
        updatePosition();
        needUpdate = true;
     }
+    name=name.trimmed();
     if(name.isEmpty()) name=this->pseudo;
     if(name != this->name)
     {
