@@ -633,6 +633,15 @@ inline int ROUTAGE::calculateTimeRoute(vlmPoint routeFrom,vlmPoint routeTo, data
                 Util::getCoordFromDistanceAngle(lat, lon, distanceParcourue, cap,&res_lat,&res_lon);
                 orth.setStartPoint(res_lon, res_lat);
                 remaining_distance=orth.getDistance();
+#if 1 /*note for self*/
+                if(remaining_distance<=distanceParcourue)
+                {
+                    lon=res_lon;
+                    lat=res_lat;
+                    has_eta=true;
+                    break;
+                }
+#endif
             }
             else
             {
@@ -1625,7 +1634,7 @@ void ROUTAGE::slot_calculate()
                 msecs_12=msecs_12+t1.elapsed();
                 if(tempPoints.count()>0 && !tempPoints.at(0).origin->isStart)
                 {
-                    //removeCrossedSegments();
+                    removeCrossedSegments();
                     t1.start();
                     checkIsoCrossingPreviousSegments();
                     msecs_13=msecs_13+t1.elapsed();
@@ -2012,6 +2021,7 @@ void ROUTAGE::slot_calculate()
         if(rep==QMessageBox::Yes)
         {
             convertToRoute();
+            running=false;
             return;
         }
         else
@@ -2413,10 +2423,15 @@ void ROUTAGE::convertToRoute()
         else
             break;
     }
+    this->converted=false;
     if(parentRoutage->getRouteFromBoat())
-        routeStartBoat=QMessageBox::question(0,tr("Convertion d'un routage en route"),
+    {
+        int answ=QMessageBox::question(0,tr("Convertion d'un routage en route"),
                                               tr("Voulez-vous que la route parte du bateau a la prochaine vacation?"),
-                                              QMessageBox::Yes|QMessageBox::No)==QMessageBox::Yes;
+                                              QMessageBox::Yes|QMessageBox::No|QMessageBox::Cancel);
+        if(answ==QMessageBox::Cancel) return;
+        routeStartBoat=answ==QMessageBox::Yes;
+    }
     this->converted=true;
     ROUTE * route=parent->addRoute();
     route->setName(name);

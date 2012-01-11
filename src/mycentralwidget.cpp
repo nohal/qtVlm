@@ -2465,6 +2465,8 @@ void myCentralWidget::treatRoute(ROUTE* route)
                 QMessageBox::information(0,QString(QObject::tr("Resultat de l'optimisation")),result);
             }
             route->setDetectCoasts(detectCoast);
+            if(detectCoast)
+                route->slot_recalculate();
         }
     }
 }

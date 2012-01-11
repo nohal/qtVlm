@@ -3240,6 +3240,10 @@ Virements de bord</source>
         <source>Cette valeur est egalement utilisee en approche de l&apos;arrivee</source>
         <translation>Cette valeur est également utilisée en approche de l&apos;arrivée</translation>
     </message>
+    <message>
+        <source>Reglage du niveau de zoom</source>
+        <translation>Réglage du niveau de zoom</translation>
+    </message>
 </context>
 <context>
     <name>ROUTE</name>
