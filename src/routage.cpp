@@ -906,7 +906,20 @@ void ROUTAGE::calculate()
         if (yTmp < yS) yS = yTmp;
         if (yTmp > yN) yN = yTmp;
 
-        if (xW > xE) xW -= 360;
+        //if (xW > xE) xW -= 360;
+        if((xW>0 && xE<0) || (xW<0 && xE>0))
+        {
+            if(qAbs(xW-xE)>180)
+            {
+                swap(xW,xE);
+                if(xW>0)
+                    xW-=360;
+                else
+                    xE-=360;
+
+            }
+        }
+
 #if 1
         qWarning() << "Routing from " << start.x() << ", " << start.y() << " to " << arrival.x() << ", " << arrival.y();
         qWarning() << "-- Distance: " << distance;
