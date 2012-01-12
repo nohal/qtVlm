@@ -1165,15 +1165,7 @@ Etes-vous sur ?</source>
         <translation></translation>
     </message>
     <message>
-        <source>http://qtvlm.sf.net</source>
-        <translation></translation>
-    </message>
-    <message>
         <source>Grib part is originaly from zygrib project</source>
-        <translation></translation>
-    </message>
-    <message>
-        <source>http://www.zygrib.org</source>
         <translation></translation>
     </message>
     <message>
@@ -2323,39 +2315,15 @@ Etes-vous sur ?</source>
     <name>POI_delete_ui</name>
     <message>
         <source>Selection de type de marque</source>
-        <translation>Sélection de type de marque</translation>
+        <translation type="obsolete">Sélection de type de marque</translation>
     </message>
     <message>
         <source>Cancel</source>
-        <translation>Annuler</translation>
+        <translation type="obsolete">Annuler</translation>
     </message>
     <message>
         <source>Type de marque a supprimer</source>
-        <translation>Type de marque à supprimer</translation>
-    </message>
-    <message>
-        <source>&lt;a href=&quot;titi&quot;&gt;Tous&lt;/a&gt;</source>
-        <translation></translation>
-    </message>
-    <message>
-        <source>&lt;a href=&quot;toto&quot;&gt;Aucun&lt;/a&gt;</source>
-        <translation></translation>
-    </message>
-    <message>
-        <source>POI</source>
-        <translation></translation>
-    </message>
-    <message>
-        <source>Marque</source>
-        <translation></translation>
-    </message>
-    <message>
-        <source>Balise</source>
-        <translation></translation>
-    </message>
-    <message>
-        <source>OK</source>
-        <translation></translation>
+        <translation type="obsolete">Type de marque à supprimer</translation>
     </message>
 </context>
 <context>
@@ -3242,7 +3210,13 @@ Virements de bord</source>
     </message>
     <message>
         <source>Reglage du niveau de zoom</source>
-        <translation>Réglage du niveau de zoom</translation>
+        <translation type="obsolete">Réglage du niveau de zoom</translation>
+    </message>
+    <message>
+        <source>Réglage du niveau de zoom (plus à droite = plus serré).
+La différence est surtout sensible lors d&apos;un routage en diagonale.</source>
+        <translation>Réglage du niveau de zoom (plus à droite = plus serré).
+La différence est surtout sensible lors d&apos;un routage en diagonale.</translation>
     </message>
 </context>
 <context>
@@ -3938,10 +3912,6 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Information</source>
-        <translation></translation>
-    </message>
-    <message>
-        <source>Bientot des infos ici</source>
         <translation></translation>
     </message>
     <message>
