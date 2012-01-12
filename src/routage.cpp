@@ -128,7 +128,7 @@ inline vlmPoint findPointThreaded(const vlmPoint &point)
     pt.routage->getProj()->map2screenFloat(pt.routage->cLFA(pt.lon),pt.lat,&x,&y);
     pt.x=x;
     pt.y=y;
-    if(pt.routage->getVisibleOnly() && !pt.routage->getProj()->isInBounderies(pt.x,pt.y))
+    if(pt.routage->getVisibleOnly() && !pt.routage->getProj()->isInBounderies_strict(pt.x,pt.y))
     {
         pt.isDead=true;
         return pt;
@@ -501,10 +501,10 @@ inline QList<vlmPoint> findRoute(const QList<vlmPoint> & pointListX)
         }
         else
         {
-            resultP.distOrigin=bestDist;
-            Util::getCoordFromDistanceAngle(lat, lon, bestDist, cap, &res_lat, &res_lon);
-            resultP.lon=res_lon;
-            resultP.lat=res_lat;
+//            resultP.distOrigin=bestDist;
+//            Util::getCoordFromDistanceAngle(lat, lon, bestDist, cap, &res_lat, &res_lon);
+//            resultP.lon=res_lon;
+//            resultP.lat=res_lat;
             resultP.isDead=true; /*no route to point, better delete it(?)*/
         }
         resultList.append(resultP);
@@ -638,7 +638,7 @@ inline int ROUTAGE::calculateTimeRoute(vlmPoint routeFrom,vlmPoint routeTo, data
                 {
                     lon=res_lon;
                     lat=res_lat;
-                    has_eta=true;
+                    etaRoute+=vacLen;
                     break;
                 }
 #endif
@@ -851,37 +851,9 @@ void ROUTAGE::calculate()
     if(autoZoom)
     {
         Orthodromie ortho (start.x(), start.y(), arrival.x(), arrival.y());
-//         double      xC, yC;
-// #if 0
-//         // For some reason, this gives absurd results
-//         ortho.getMidPoint (&xC, &yC);
-// #else
-//         const double    lngSRad = degToRad (start.x());
-//         const double    latSRad = degToRad (start.y());
-//         const double    startX  = cos (latSRad) * cos (lngSRad);
-//         const double    startY  = cos (latSRad) * sin (lngSRad);
-//         const double    startZ  = sin (latSRad);
-
-//         const double    lngARad  = degToRad (arrival.x());
-//         const double    latARad  = degToRad (arrival.y());
-//         const double    arrivalX = cos (latARad) * cos (lngARad);
-//         const double    arrivalY = cos (latARad) * sin (lngARad);
-//         const double    arrivalZ = sin (latARad);
-
-//         const double    midX = (startX + arrivalX) / 2;
-//         const double    midY = (startY + arrivalY) / 2;
-//         const double    midZ = (startZ + arrivalZ) / 2;
-
-//         xC = radToDeg (atan2 (midY, midX));
-//         yC = radToDeg (atan2 (midZ, sqrt (midX*midX + midY*midY)));
-// #endif
         const double    distance = ortho.getDistance();
 
         double xW, xE, yN, yS, xTmp, yTmp;
-//         Util::getCoordFromDistanceAngle (yC, xC, distance/2,   0,  &yN, &tmp);
-//         Util::getCoordFromDistanceAngle (yC, xC, distance/2,  90, &tmp,  &xE);
-//         Util::getCoordFromDistanceAngle (yC, xC, distance/2, 180,  &yS, &tmp);
-//         Util::getCoordFromDistanceAngle (yC, xC, distance/2, 270, &tmp,  &xW);
         double    ratio = 0.5;
         switch (zoomLevel)
         {
@@ -915,7 +887,6 @@ void ROUTAGE::calculate()
         if (yTmp < yS) yS = yTmp;
         if (yTmp > yN) yN = yTmp;
 
-        //if (xW > xE) xW -= 360;
         if((xW>0 && xE<0) || (xW<0 && xE>0))
         {
             if(qAbs(xW-xE)>180)
@@ -929,22 +900,17 @@ void ROUTAGE::calculate()
             }
         }
 
-#if 1
+#if 0
         qWarning() << "Routing from " << start.x() << ", " << start.y() << " to " << arrival.x() << ", " << arrival.y();
         qWarning() << "-- Distance: " << distance;
-//         qWarning() << "-- Center:   " << xC << ", " << yC;
         qWarning() << "-- North:    " << yN;
         qWarning() << "-- South:    " << yS;
         qWarning() << "-- West:     " << xW;
         qWarning() << "-- East:     " << xE;
 #endif
-        //proj->setUseTempo(false);
-        //proj->blockSignals(true);
         proj->zoomOnZone(xW,yN,xE,yS);
-        //proj->blockSignals(false);
         connect(proj,SIGNAL(projectionUpdated()),this,SLOT(slot_calculate_with_tempo()));
         proj->setScale(proj->getScale()*.9);
-        //proj->setUseTempo(true);
         QApplication::processEvents();
     }
     else
@@ -1605,10 +1571,16 @@ void ROUTAGE::slot_calculate()
                         {
                             msecs_14=msecs_14+t2.elapsed();
                             tempPoints.removeAt(np);
-                            np--;
+                            --np;
                             continue;
                         }
                         msecs_14=msecs_14+t2.elapsed();
+                        if(this->getVisibleOnly() && !proj->isInBounderies_strict(x2,y2))
+                        {
+                            tempPoints.removeAt(np);
+                            --np;
+                            continue;
+                        }
                     }
 #endif
                     if(newPoint.origin->isStart)
@@ -1627,6 +1599,13 @@ void ROUTAGE::slot_calculate()
                         {
                             tempPoints.removeAt(np);
                             --np;
+                            continue;
+                        }
+                        if(this->getVisibleOnly() && !proj->isInBounderies_strict(tempPoints.at(np).x,tempPoints.at(np).y))
+                        {
+                            tempPoints.removeAt(np);
+                            --np;
+                            continue;
                         }
                     }
                     msecs_14=msecs_14+t2.elapsed();
@@ -1634,8 +1613,8 @@ void ROUTAGE::slot_calculate()
                 msecs_12=msecs_12+t1.elapsed();
                 if(tempPoints.count()>0 && !tempPoints.at(0).origin->isStart)
                 {
-                    removeCrossedSegments();
                     t1.start();
+                    removeCrossedSegments();
                     checkIsoCrossingPreviousSegments();
                     msecs_13=msecs_13+t1.elapsed();
                 }

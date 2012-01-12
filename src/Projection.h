@@ -75,6 +75,7 @@ Q_OBJECT
         bool intersect(double w,double e,double s,double n)  const;
         bool isPointVisible (double x,double y) const;
         bool isInBounderies (int x,int y) const;
+        bool isInBounderies_strict (int x,int y) const;
         void setFrozen(bool b){this->frozen=b;}
         bool getFrozen(void){return this->frozen;}
         void setUseTempo(bool b){this->useTempo=b;}
@@ -150,6 +151,10 @@ inline bool Projection::isPointVisible (double x,double y) const
 inline bool Projection::isInBounderies (int x,int y) const
 {
     return (x>=0 && y>=0 && x<=W && y<=H);
+}
+inline bool Projection::isInBounderies_strict (int x,int y) const
+{
+    return (x>0 && y>0 && x<W && y<H);
 }
 
 #endif
