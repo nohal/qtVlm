@@ -19,6 +19,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ***********************************************************************/
 
 #include <QMessageBox>
+#include "DialogSailDocs.h"
 #include <QMenu>
 #include <QDebug>
 #include <QString>
@@ -247,7 +248,36 @@ void boardReal::paramChanged()
 
 void boardReal::disp_boatInfo()
 {
-    QMessageBox::information(this,tr("Information"),tr("Bientot des infos ici"));
+    QString t="TIME: "+QDateTime::currentDateTimeUtc().toString("yyyy/MM/dd hh:mm");
+    QString letter;
+    double lat=this->currentBoat()->getLat();
+    double lon=this->currentBoat()->getLon();
+    if(lat<0)
+        letter="S";
+    else
+        letter="N";
+    lat=qAbs(lat);
+    int x1=floor(lat);
+    int x2=qRound((lat-x1)*60.0);
+    t=t+"<br>"+"LATITUDE: "+QString().sprintf("%02d-%02d",x1,x2)+letter;
+    if(lon<0)
+        letter="W";
+    else
+        letter="E";
+    lon=qAbs(lon);
+    x1=floor(lon);
+    x2=qRound((lon-x1)*60.0);
+    t=t+"<br>"+"LONGITUDE: "+QString().sprintf("%03d-%02d",x1,x2)+letter;
+    t=t+"<br>"+QString().sprintf("COURSE: %d",qRound(currentBoat()->getHeading()));
+    t=t+"<br>"+QString().sprintf("SPEED: %d",qRound(currentBoat()->getSpeed()));
+    DialogSailDocs * s = new DialogSailDocs(t,this);
+    s->label_3->hide();
+    s->label_2->hide();
+    s->lineEdit->hide();
+    s->label->hide();
+    s->setWindowTitle(tr("Information"));
+    s->exec();
+    delete s;
 }
 
 void boardReal::chgBoatPosition(void)

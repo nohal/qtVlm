@@ -829,7 +829,7 @@ void MainWindow::slotHelp_Help() {
 
 //-------------------------------------------------
 void MainWindow::slotHelp_APropos() {
-    QMessageBox::information (this,
+    QMessageBox::about (this,
             tr("A propos"),
             tr("qtVlm : GUI pour Virtual loup de mer")
             +"\nhttp://www.virtual-loup-de-mer.org\n"+
@@ -837,9 +837,10 @@ void MainWindow::slotHelp_APropos() {
             tr("Version : ")+Version::getVersion()
                     +"      "+Version::getDate()
             +"\n"+ tr("Licence : GNU GPL v3")
-            +"\n"+ tr("http://qtvlm.sf.net")
+            +"\n"+ "http://qtvlm.sf.net"
+            +"\n"+ "http://virtual-winds.com/forum"
             +"\n"+ tr("Grib part is originaly from zygrib project")
-            +"\n"+ tr("http://www.zygrib.org")
+            +"\n"+ "http://www.zygrib.org"
         );
 }
 //-------------------------------------------------
