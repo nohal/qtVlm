@@ -720,7 +720,7 @@ ROUTAGE::ROUTAGE(QString name, Projection *proj, Grib *grib, QGraphicsScene * my
     this->angleStep=Settings::getSetting("angleStep",3).toDouble();
     this->timeStepLess24=Settings::getSetting("timeStepLess24",30).toDouble();
     this->timeStepMore24=Settings::getSetting("timeStepMore24",60).toDouble();
-    this->explo=Settings::getSetting("exploNew",70).toDouble();
+    this->explo=Settings::getSetting("exploNew",40).toDouble();
     this->useRouteModule=Settings::getSetting("useRouteModule",1).toInt()==1;
     this->useConverge=Settings::getSetting("useConverge",1).toInt()==1;
     this->checkCoast=Settings::getSetting("checkCoast",1).toInt()==1;
