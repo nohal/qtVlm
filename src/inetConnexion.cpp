@@ -144,6 +144,7 @@ void inetConnexion::doRequest(int type,inetClient* client,QString requestUrl,QSt
     if(type==REQUEST_POST)
     {
         //qWarning() << "Posting data: " << data;
+        request.setHeader(QNetworkRequest::ContentTypeHeader, "application/octet-stream");
         currentReply=inetManager->post(request,"");
     }
     else

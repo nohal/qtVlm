@@ -3408,40 +3408,49 @@ Etes-vous sur ?</source>
 <context>
     <name>POI_delete_ui</name>
     <message>
+        <location filename="../src/Ui/POI_delete.ui" line="14"/>
         <source>Selection de type de marque</source>
-        <translation type="obsolete">Select a mark&apos;s type</translation>
+        <translation>Select a mark&apos;s type</translation>
     </message>
     <message>
+        <location filename="../src/Ui/POI_delete.ui" line="39"/>
         <source>&lt;a href=&quot;titi&quot;&gt;Tous&lt;/a&gt;</source>
-        <translation type="obsolete">&lt;a href=&quot;titi&quot;&gt;All&lt;/a&gt;</translation>
+        <translation>&lt;a href=&quot;titi&quot;&gt;All&lt;/a&gt;</translation>
     </message>
     <message>
+        <location filename="../src/Ui/POI_delete.ui" line="54"/>
         <source>&lt;a href=&quot;toto&quot;&gt;Aucun&lt;/a&gt;</source>
-        <translation type="obsolete">&lt;a href=&quot;toto&quot;&gt;None&lt;/a&gt;</translation>
+        <translation>&lt;a href=&quot;toto&quot;&gt;None&lt;/a&gt;</translation>
     </message>
     <message>
+        <location filename="../src/Ui/POI_delete.ui" line="80"/>
         <source>POI</source>
-        <translation type="obsolete">POI</translation>
+        <translation>POI</translation>
     </message>
     <message>
+        <location filename="../src/Ui/POI_delete.ui" line="90"/>
         <source>Marque</source>
-        <translation type="obsolete">Mark</translation>
+        <translation>Mark</translation>
     </message>
     <message>
+        <location filename="../src/Ui/POI_delete.ui" line="97"/>
         <source>Balise</source>
-        <translation type="obsolete">Beacon</translation>
+        <translation>Beacon</translation>
     </message>
     <message>
+        <location filename="../src/Ui/POI_delete.ui" line="136"/>
         <source>OK</source>
-        <translation type="obsolete">OK</translation>
+        <translation>OK</translation>
     </message>
     <message>
+        <location filename="../src/Ui/POI_delete.ui" line="143"/>
         <source>Cancel</source>
-        <translation type="obsolete">Cancel</translation>
+        <translation>Cancel</translation>
     </message>
     <message>
+        <location filename="../src/Ui/POI_delete.ui" line="180"/>
         <source>Type de marque a supprimer</source>
-        <translation type="obsolete">Name and type of mark to be deleted</translation>
+        <translation>Name and type of mark to be deleted</translation>
     </message>
 </context>
 <context>
@@ -3935,12 +3944,12 @@ Etes-vous sur ?</source>
         <translation>Order:</translation>
     </message>
     <message>
-        <location filename="../src/inetConnexion.cpp" line="203"/>
+        <location filename="../src/inetConnexion.cpp" line="204"/>
         <source>Erreur internet</source>
         <translation>Internet error</translation>
     </message>
     <message>
-        <location filename="../src/inetConnexion.cpp" line="204"/>
+        <location filename="../src/inetConnexion.cpp" line="205"/>
         <source>Serveur VLM inaccessible</source>
         <translation>VLM server inaccessible</translation>
     </message>
