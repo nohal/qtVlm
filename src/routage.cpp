@@ -1470,11 +1470,13 @@ void ROUTAGE::slot_calculate()
         //qWarning()<<"after smoothing:"<<tempPoints.count();
 #endif
         /*final checking and calculating route between Iso*/
+        if(tempPoints.count()==0)
+            break;
         somethingHasChanged=true;
         time.restart();
         bool routeDone=false;
         int nbLoop=0;
-        while (somethingHasChanged)
+        while (somethingHasChanged && !tempPoints.isEmpty())
         {
             nbLoop++;
             if(nbLoop>10)
