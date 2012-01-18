@@ -114,6 +114,27 @@ void  GribRecord::translateDataType()
 
         }
         //------------------------
+        // NOAA Waves
+        //------------------------
+        else if (
+                            (idCenter==7 && idModel==122 && idGrid==239)  // akw.all.grb
+                         || (idCenter==7 && idModel==124 && idGrid==253)  // enp.all.grb
+                         || (idCenter==7 && idModel==123 && idGrid==244)  // nah.all.grb
+                         || (idCenter==7 && idModel==125 && idGrid==253)  // nph.all.grb
+                         || (idCenter==7 && idModel==88 && idGrid==233)	  // nwww3.all.grb
+                         || (idCenter==7 && idModel==121 && idGrid==238)  // wna.all.grb
+                         || (idCenter==7 && idModel==88 && idGrid==255)   // saildocs
+        )
+        {
+            if ( (getDataType()==GRB_WIND_VX || getDataType()==GRB_WIND_VY)
+                    && getLevelType()==LV_GND_SURF
+                    && getLevelValue()==1)
+            {
+                    levelType  = LV_ABOV_GND;
+                    levelValue = 10;
+            }
+        }
+        //------------------------
         // WRF NMM grib.meteorologic.net
         //------------------------
         else if (idCenter==7 && idModel==89 && idGrid==255)
@@ -168,9 +189,8 @@ void  GribRecord::translateDataType()
         //------------------------
         else
         {
-                printf("Unknown GribRecord: ");
-                this->print();
-                this->knownData = false;
+            qWarning()<<"Unknown GribRecord: idcenter="<<idCenter<<"idModel="<<idModel<<"idGrid="<<idGrid;
+            this->knownData = false;
 
         }
                 //this->print();

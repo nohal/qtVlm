@@ -245,7 +245,7 @@ void Grib::readAllGribRecords()
 {
     //--------------------------------------------------------
     // Lecture de l'ensemble des GribRecord du fichier
-    // et stockage dans les listes appropriées.
+    // et stockage dans les listes appropriees.
     //--------------------------------------------------------
     GribRecord *rec;
     int id = 0;
@@ -294,7 +294,7 @@ void Grib::readAllGribRecords()
                                                         && rec->getLevelValue()==0 )
                                         || ( (rec->getDataType()==GRB_WIND_VX || rec->getDataType()==GRB_WIND_VY)
                                                         && rec->getLevelType()==LV_GND_SURF
-                                                        && rec->getLevelValue()==0 )
+                                                        && (rec->getLevelValue()==0 || rec->getLevelValue()==1))
                                         || ( (rec->getDataType()==GRB_WIND_VX || rec->getDataType()==GRB_WIND_VY)
                                                         && rec->getLevelType()==LV_ISOBARIC
                                                         && (   rec->getLevelValue()==850
@@ -404,7 +404,7 @@ void Grib::readGribFileContent()
                 GribRecord *recModel = getGribRecord(GRB_TEMP,LV_ABOV_GND,2,date);
                 if (recModel != NULL)
                 {
-                    // Crée un GribRecord avec les dewpoints calculés
+                    // Crée un GribRecord avec les dewpoints calcules
                     GribRecord *recDewpoint = new GribRecord(*recModel);
                     if (recDewpoint != NULL)
                     {
@@ -543,7 +543,7 @@ GribRecord * Grib::getGribRecord(int dataType,int levelType,int levelValue, time
 {
     std::vector<GribRecord *> *ls = getListOfGribRecords(dataType,levelType,levelValue);
     if (ls != NULL) {
-        // Cherche le premier enregistrement �  la bonne date
+        // Cherche le premier enregistrement a la bonne date
         GribRecord *res = NULL;
         zuint nb = ls->size();
         for (zuint i=0; i<nb && res==NULL; i++) {
@@ -717,7 +717,7 @@ bool Grib::getInterpolatedValue_byDates(double d_long, double d_lat, time_t now,
 }
 
 //---------------------------------------------------
-// Rectangle de la zone couverte par les données
+// Rectangle de la zone couverte par les donnees
 bool Grib::getZoneExtension(double *x0,double *y0, double *x1,double *y1)
 {
     if(!isOk())
@@ -752,7 +752,7 @@ bool Grib::getZoneExtension(double *x0,double *y0, double *x1,double *y1)
     }
 }
 //---------------------------------------------------
-// Premier GribRecord trouvé (pour récupérer la grille)
+// Premier GribRecord trouve (pour recuperer la grille)
 GribRecord * Grib::getFirstGribRecord()
 {
     std::vector<GribRecord *> *ls = getFirstNonEmptyList();
@@ -764,7 +764,7 @@ GribRecord * Grib::getFirstGribRecord()
     }
 }
 //---------------------------------------------------
-// Délai en heures entre 2 records
+// Delai en heures entre 2 records
 // On suppose qu'il est fixe pour tout le fichier !!!
 double Grib::computeHoursBeetweenGribRecords()
 {
@@ -781,9 +781,9 @@ double Grib::computeHoursBeetweenGribRecords()
 }
 
 //-------------------------------------------------------
-// Génère la liste des dates pour lesquelles des prévisions existent
+// Genere la liste des dates pour lesquelles des previsions existent
 void Grib::createListDates()
-{   // Le set assure l'ordre et l'unicité des dates
+{   // Le set assure l'ordre et l'unicite des dates
     minDate=-1;
     maxDate=-1;
     setAllDates.clear();
@@ -997,8 +997,8 @@ QRgb  Grib::getHumidColor(double v, bool smooth) {
 QRgb  Grib::getCAPEColor(double v, bool smooth)
 {
         double x = sqrt(v)*70.71;
-        double t0 = 0;  // valeur mini de l'échelle
-        double t1 = 3000;  // valeur maxi de l'échelle
+        double t0 = 0;  // valeur mini de l'echelle
+        double t1 = 3000;  // valeur maxi de l'echelle
         double b0 = 0;    // min beauforts
         double b1 = 12;   // max beauforts
         double eqbeauf = b0 + (x-t0)*(b1-b0)/(t1-t0);
@@ -1011,10 +1011,10 @@ QRgb  Grib::getCAPEColor(double v, bool smooth)
 //--------------------------------------------------------------------------
 QRgb  Grib::getTemperatureColor(double v, bool smooth)
 {
-        // Même échelle colorée que pour le vent
+        // Meme echelle coloree que pour le vent
         double x = v-273.15;
-        double t0 = -30;  // valeur mini de l'échelle
-        double t1 =  40;  // valeur maxi de l'échelle
+        double t0 = -30;  // valeur mini de l'echelle
+        double t1 =  40;  // valeur maxi de l'echelle
         double b0 = 0;    // min beauforts
         double b1 = 12;   // max beauforts
         double eqbeauf = b0 + (x-t0)*(b1-b0)/(t1-t0);
@@ -1027,10 +1027,10 @@ QRgb  Grib::getTemperatureColor(double v, bool smooth)
 //--------------------------------------------------------------------------
 QRgb  Grib::getPressureColor(double v, bool smooth)
 {
-        // Même échelle colorée que pour le vent
+        // Meme echelle coloree que pour le vent
         double x = v;
-        double t0 = 960;  // valeur mini de l'échelle
-        double t1 = 1050;  // valeur maxi de l'échelle
+        double t0 = 960;  // valeur mini de l'echelle
+        double t1 = 1050;  // valeur maxi de l'echelle
         double b0 = 0;    // min beauforts
         double b1 = 12;   // max beauforts
         double eqbeauf = b0 + (x-t0)*(b1-b0)/(t1-t0);
@@ -1066,7 +1066,7 @@ QRgb Grib::getWindColor(double v, bool smooth)
 }
 
 //--------------------------------------------------------------------------
-// Carte de couleurs générique en dimension 1
+// Carte de couleurs generique en dimension 1
 //--------------------------------------------------------------------------
 void Grib::drawColorMapGeneric_1D (
                 QPainter &pnt, const Projection *proj, bool smooth,
@@ -1283,7 +1283,7 @@ void Grib::draw_GribGrid(QPainter &pnt, const Projection *proj)
 }
 
 //--------------------------------------------------------------------------
-// Carte de couleurs générique de la différence entre 2 champs
+// Carte de couleurs generique de la difference entre 2 champs
 //--------------------------------------------------------------------------
 void  Grib::drawColorMapGeneric_Abs_Delta_Data (
                 QPainter &pnt, const Projection *proj, bool smooth,time_t now,
@@ -1345,7 +1345,7 @@ void  Grib::drawColorMapGeneric_Abs_Delta_Data (
 
 
 //--------------------------------------------------------------------------
-// Carte de couleurs des précipitations
+// Carte de couleurs des precipitations
 //--------------------------------------------------------------------------
 void Grib::draw_RAIN_Color(QPainter &pnt, const Projection *proj, bool smooth)
 {
@@ -1401,7 +1401,7 @@ void Grib::draw_FRZRAIN_CATEG_Color(QPainter &pnt, const Projection *proj, bool 
 }
 
 //--------------------------------------------------------------------------
-// Carte de couleurs de la nébulosité
+// Carte de couleurs de la nebulosite
 //--------------------------------------------------------------------------
 void Grib::draw_CLOUD_Color(QPainter &pnt, const Projection *proj, bool smooth)
 {
@@ -1418,7 +1418,7 @@ void Grib::draw_CLOUD_Color(QPainter &pnt, const Projection *proj, bool smooth)
     }
 }
 //--------------------------------------------------------------------------
-// Carte de couleurs de l'humidité relative
+// Carte de couleurs de l'humidite relative
 //--------------------------------------------------------------------------
 void Grib::draw_HUMID_Color(QPainter &pnt, const Projection *proj, bool smooth)
 {
@@ -1486,7 +1486,7 @@ void Grib::draw_CAPEsfc(QPainter &pnt, const Projection *proj, bool smooth)
     }
 }
 //--------------------------------------------------------------------------
-// Carte de l'écart température-point de rosée
+// Carte de l'ecart temperature-point de rosee
 //--------------------------------------------------------------------------
 void Grib::draw_DeltaDewpoint_Color(QPainter &pnt, const Projection *proj, bool smooth)
 {
