@@ -226,7 +226,6 @@ void Grib::clean_vector(std::vector<GribRecord *> &ls)
     }
     ls.clear();
 }
-
 //---------------------------------------------------------------------------------
 void Grib::storeRecordInMap(GribRecord *rec)
 {

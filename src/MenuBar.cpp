@@ -271,6 +271,16 @@ MenuBar::MenuBar(QWidget *parent)
                             tr("Afficher les étiquettes des isothermes 0degC"));
         acView_Isotherms0Labels->setChecked(Settings::getSetting("showIsotherms0Labels", false).toBool());
                 menuView->addMenu(menuIsotherms0);
+        menuView->addSeparator();
+        mn_fax=new QMenu(tr("Fax meteo"));
+        acFax_Open = addAction(mn_fax, tr("Ouvrir un fax meteo"), "", tr(""));
+        mn_fax->addAction(acFax_Open);
+        acFax_Close = addAction(mn_fax, tr("Fermer le fax meteo"), "", tr(""));
+        mn_fax->addAction(acFax_Close);
+        acFax_Settings = addAction(mn_fax, tr("Parametres du fax meteo"), "", tr(""));
+        mn_fax->addAction(acFax_Settings);
+        menuView->addMenu(mn_fax);
+
     addMenu(menuView);
 
     //-------------------------------------

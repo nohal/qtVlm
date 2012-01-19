@@ -75,6 +75,7 @@ class MainWindow: public QMainWindow
         void setPilototoFromRoute(QList<POI*> poiList);
         bool getStartEstimeSpeedFromGrib();
         void clearPilototo();
+        QPixmap * getfax(){return fax;}
 
     public slots:
         void slotFile_Open();
@@ -83,6 +84,9 @@ class MainWindow: public QMainWindow
         void slotFile_QuitNoSave();
         //void slotMap_Quality();
         void slot_gribFileReceived(QString fileName);
+        void slotFax_open();
+        void slotFax_close();
+        void slotFax_settings();
 
         void slotShowContextualMenu(QGraphicsSceneContextMenuEvent *);
 
@@ -243,6 +247,7 @@ class MainWindow: public QMainWindow
 
         void listAllChildren(QObject * ptr,int);
         bool noSave;
+        QPixmap * fax;
 };
 
 #endif

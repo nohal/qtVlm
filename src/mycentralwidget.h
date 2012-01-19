@@ -156,6 +156,7 @@ class myCentralWidget : public QWidget
         time_t getCurrentDate(void);
         void showGribDate_dialog(void);
         void loadGribFile(QString fileName, bool zoom);
+        QPixmap * getFax(){return mainW->getfax();}
 
         /* events */
         void mouseMove(int x, int y, QGraphicsItem * item);

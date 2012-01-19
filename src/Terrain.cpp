@@ -220,6 +220,33 @@ void Terrain::draw_GSHHSandGRIB()
 #else
     pnt.drawPixmap(0,0, *imgEarth);
 #endif
+    if(parent->getFax()!=NULL)
+    {
+        QPixmap * fax=parent->getFax();
+//        double scale=Settings::getSetting("faxScale",0).toDouble();
+        double faxLatN=65;
+        double faxLatS=10;
+        double faxLon=-101;
+
+        double distFax=qAbs(faxLatN-faxLatS);
+
+        double distProj=qAbs(proj->getYmax()-proj->getYmin());
+
+        double newHeight=height*distFax/distProj;
+        if(newHeight<2048)
+        {
+            QPixmap faxResized=fax->scaledToHeight(newHeight,Qt::SmoothTransformation);
+            int xFax,yFax;
+            proj->map2screen(faxLon,faxLatN,&xFax,&yFax);
+            qWarning()<<proj->getYmax()<<proj->getYmin();
+            qWarning()<<distFax<<distProj<<"fax height="<<fax->height()<<"new height="<<newHeight;
+            qWarning()<<"xFax="<<xFax<<"yFax="<<yFax;
+            pnt.setBackgroundMode(Qt::TransparentMode);
+            pnt.setCompositionMode(QPainter::CompositionMode_Source);
+            pnt.drawPixmap(xFax,yFax,faxResized);
+            pnt.setCompositionMode(QPainter::CompositionMode_SourceOver);
+        }
+    }
 
     //===================================================
     // Dessin des bordures et frontieres

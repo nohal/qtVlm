@@ -367,22 +367,22 @@ bool GribRecord::readGribSection2_GDS(ZUFILE* file) {
         ok = false;
     }
 
-    Ni  = readInt2(file);				// byte 7-8
-    Nj  = readInt2(file);				// byte 9-10
+    Ni  = readInt2(file);		// byte 7-8
+    Nj  = readInt2(file);		// byte 9-10
     La1 = readSignedInt3(file)/1000.0;	// byte 11-12-13
     Lo1 = readSignedInt3(file)/1000.0;	// byte 14-15-16
-    resolFlags = readChar(file);		// byte 17
+    resolFlags = readChar(file);	// byte 17
     La2 = readSignedInt3(file)/1000.0;	// byte 18-19-20
     Lo2 = readSignedInt3(file)/1000.0;	// byte 21-22-23
-
+    Di  = readSignedInt2(file)/1000.0;	// byte 24-25
+    Dj  = readSignedInt2(file)/1000.0;	// byte 26-27
+    /*force Lo2 and La2 to be square with Di*/
+    Lo2=Lo1+Di*(Ni-1);
+    La2=La1+Dj*(Nj-1);
     if (Lo1>=0 && Lo1<=180 && Lo2<0) {
         Lo2 += 360.0;    // cross the 180 deg meridien,beetwen alaska and russia
     }
-
-    Di  = readSignedInt2(file)/1000.0;	// byte 24-25
-    Dj  = readSignedInt2(file)/1000.0;	// byte 26-27
-
-    while ( Lo1> Lo2   &&  Di >0) {   // horizontal size > 360 Â°
+    while ( Lo1> Lo2   &&  Di >0) {   // horizontal size > 360deg
         Lo1 -= 360.0;
     }
 
@@ -399,41 +399,41 @@ bool GribRecord::readGribSection2_GDS(ZUFILE* file) {
     isScanIpositive = (scanFlags&0x80) ==0;
     isScanJpositive = (scanFlags&0x40) !=0;
     isAdjacentI     = (scanFlags&0x20) ==0;
-    
-   	if (Lo2 > Lo1) {
-	    lonMin = Lo1;
-	    lonMax = Lo2;
-	}
-  	else {
-	    lonMin = Lo2;
-	    lonMax = Lo1;
-	}
-   	if (La2 > La1) {
-	    latMin = La1;
-	    latMax = La2;
-	}
-  	else {
-	    latMin = La2;
-	    latMax = La1;
-	}    
-	if (Ni<=1 || Nj<=1) {
-		erreur("Record %d: Ni=%d Nj=%d",id,Ni,Nj);
-		ok = false;
-	}
-	else {
-		Di = (Lo2-Lo1) / (Ni-1);
-		Dj = (La2-La1) / (Nj-1);
-	}
+    if (Lo2 > Lo1) {
+        lonMin = Lo1;
+        lonMax = Lo2;
+    }
+    else {
+        lonMin = Lo2;
+        lonMax = Lo1;
+    }
+    if (La2 > La1) {
+        latMin = La1;
+        latMax = La2;
+    }
+    else {
+        latMin = La2;
+        latMax = La1;
+    }
+    if (Ni<=1 || Nj<=1) {
+            erreur("Record %d: Ni=%d Nj=%d",id,Ni,Nj);
+            ok = false;
+    }
+    else
+    {
+        qWarning()<<"old Di="<<Di<<"new Di="<<(Lo2-Lo1) / (Ni-1)<<Lo2<<Lo1;
+        qWarning()<<"old Dj="<<Dj<<"new Dj="<<(La2-La1) / (Nj-1)<<La2<<La1;
+    }
 
-if (false) {
-printf("====\n");
-printf("Lo1=%f Lo2=%f    La1=%f La2=%f\n", Lo1,Lo2,La1,La2);
-printf("Ni=%d Nj=%d\n", Ni,Nj);
-printf("hasDiDj=%d Di,Dj=(%f %f)\n", hasDiDj, Di,Dj);
-printf("hasBMS=%d\n", hasBMS);
-printf("isScanIpositive=%d isScanJpositive=%d isAdjacentI=%d\n",
-                        isScanIpositive,isScanJpositive,isAdjacentI );
-}
+    if (false) {
+        printf("====\n");
+        printf("Lo1=%f Lo2=%f    La1=%f La2=%f\n", Lo1,Lo2,La1,La2);
+        printf("Ni=%d Nj=%d\n", Ni,Nj);
+        printf("hasDiDj=%d Di,Dj=(%f %f)\n", hasDiDj, Di,Dj);
+        printf("hasBMS=%d\n", hasBMS);
+        printf("isScanIpositive=%d isScanJpositive=%d isAdjacentI=%d\n",
+                                isScanIpositive,isScanJpositive,isAdjacentI );
+    }
     return ok;
 }
 //----------------------------------------------
@@ -763,9 +763,9 @@ bool GribRecord::getValue_TWSA(double px, double py,double * a00,double * a01,do
         return false;
 
      if (!isPointInMap(px,py)) {
-        px += 360.0;               // tour du monde Ã  droite ?
+        px += 360.0;               // tour du monde a droite ?
         if (!isPointInMap(px,py)) {
-            px -= 2*360.0;              // tour du monde Ã  gauche ?
+            px -= 2*360.0;              // tour du monde a gauche ?
             if (!isPointInMap(px,py)) {
                 return false;
             }
@@ -856,9 +856,9 @@ double GribRecord::getInterpolatedValue(double px, double py, bool numericalInte
         return GRIB_NOTDEF;
     }
     if (!isPointInMap(px,py)) {
-        px += 360.0;               // tour du monde Ã  droite ?
+        px += 360.0;               // tour du monde a droite ?
         if (!isPointInMap(px,py)) {
-            px -= 2*360.0;              // tour du monde Ã  gauche ?
+            px -= 2*360.0;              // tour du monde a gauche ?
             if (!isPointInMap(px,py)) {
                 return GRIB_NOTDEF;
             }
