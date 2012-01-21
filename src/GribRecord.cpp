@@ -376,9 +376,6 @@ bool GribRecord::readGribSection2_GDS(ZUFILE* file) {
     Lo2 = readSignedInt3(file)/1000.0;	// byte 21-22-23
     Di  = readSignedInt2(file)/1000.0;	// byte 24-25
     Dj  = readSignedInt2(file)/1000.0;	// byte 26-27
-    /*force Lo2 and La2 to be square with Di*/
-    Lo2=Lo1+Di*(Ni-1);
-    La2=La1+Dj*(Nj-1);
     if (Lo1>=0 && Lo1<=180 && Lo2<0) {
         Lo2 += 360.0;    // cross the 180 deg meridien,beetwen alaska and russia
     }
@@ -421,8 +418,23 @@ bool GribRecord::readGribSection2_GDS(ZUFILE* file) {
     }
     else
     {
-        qWarning()<<"old Di="<<Di<<"new Di="<<(Lo2-Lo1) / (Ni-1)<<Lo2<<Lo1;
-        qWarning()<<"old Dj="<<Dj<<"new Dj="<<(La2-La1) / (Nj-1)<<La2<<La1;
+#if 1
+        /*force Lo2 and La2 to be square with Di*/
+        double adjust=((Lo2-Lo1)/(Ni-1))/Di;
+        if(qAbs(adjust)!=1.0)
+        {
+            qWarning()<<"Adjusting Lo2!!";
+            Lo2+=(Di*(1.0-adjust))*(Ni-1);
+        }
+        adjust=((La2-La1)/(Nj-1))/Dj;
+        if(qAbs(adjust)!=1.0)
+        {
+            qWarning()<<"Adjusting La2!!";
+            La2+=(Dj*(1.0-adjust))*(Nj-1);
+        }
+#endif
+        Di = (Lo2-Lo1) / (Ni-1);
+        Dj = (La2-La1) / (Nj-1);
     }
 
     if (false) {
