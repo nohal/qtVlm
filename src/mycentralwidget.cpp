@@ -57,6 +57,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "boat.h"
 #include "boatReal.h"
 #include "boatVLM.h"
+#include "faxMeteo.h"
 
 #include "DialogSailDocs.h"
 #include "DialogHorn.h"
@@ -72,6 +73,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "DialogRealBoatConfig.h"
 #include "DialogVlmLog.h"
 #include "DialogDownloadTracks.h"
+#include "dialogFaxMeteo.h"
 #include "parser.h"
 #include <QVariantMap>
 #include <QVariant>
@@ -298,6 +300,7 @@ myCentralWidget::myCentralWidget(Projection * proj,MainWindow * parent,MenuBar *
     this->menuBar=menuBar;
     this->aboutToQuit=false;
     this->boat_list=NULL;
+    this->fax=NULL;
 
     currentPlayer=NULL;
 
@@ -759,6 +762,10 @@ void myCentralWidget::mouseMove(int x, int y, QGraphicsItem * )
             break ;
         }
         if(item->data(0) == BOATREAL_WTYPE && ((boatReal*)item)->tryMoving(x,y))
+        {
+            break ;
+        }
+        if(item->data(0) == FAXMETEO_WTYPE && ((faxMeteo*)item)->tryMoving(x,y))
         {
             break ;
         }
@@ -3306,4 +3313,25 @@ void myCentralWidget::slot_shFla(bool)
     else f=0;
     Settings::setSetting("showFlag",f);
     emit shFla();
+}
+void myCentralWidget::slotFax_open()
+{
+    bool newFax=false;
+    if(!fax)
+    {
+        newFax=true;
+        fax=new faxMeteo(proj,this);
+    }
+    dialogFaxMeteo * dFax=new dialogFaxMeteo(fax,this);
+    if(dFax->exec()!=QDialog::Accepted && newFax)
+        delete fax;
+    else if(fax->getFileName().isEmpty())
+        delete fax;
+    delete dFax;
+}
+void myCentralWidget::slotFax_close()
+{
+    if (fax)
+        delete fax;
+    fax=NULL;
 }

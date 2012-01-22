@@ -277,8 +277,6 @@ MenuBar::MenuBar(QWidget *parent)
         mn_fax->addAction(acFax_Open);
         acFax_Close = addAction(mn_fax, tr("Fermer le fax meteo"), "", tr(""));
         mn_fax->addAction(acFax_Close);
-        acFax_Settings = addAction(mn_fax, tr("Parametres du fax meteo"), "", tr(""));
-        mn_fax->addAction(acFax_Settings);
         menuView->addMenu(mn_fax);
 
     addMenu(menuView);

@@ -113,7 +113,6 @@ public:
     QMenu   *mn_fax;
     QAction *acFax_Open;
     QAction *acFax_Close;
-    QAction *acFax_Settings;
 
     QAction *acRoute_add;
     QMenu   *mnRoute_edit;

@@ -104,9 +104,8 @@ void MainWindow::connectSignals()
     connect(mb->acFile_QuitNoSave, SIGNAL(triggered()), this, SLOT(slotFile_QuitNoSave()));
 
 
-    connect(mb->acFax_Open, SIGNAL(triggered()), this, SLOT(slotFax_open()));
-    connect(mb->acFax_Close, SIGNAL(triggered()), this, SLOT(slotFax_close()));
-    connect(mb->acFax_Settings, SIGNAL(triggered()), this, SLOT(slotFax_settings()));
+    connect(mb->acFax_Open, SIGNAL(triggered()), my_centralWidget, SLOT(slotFax_open()));
+    connect(mb->acFax_Close, SIGNAL(triggered()), my_centralWidget, SLOT(slotFax_close()));
     //-------------------------------------------------------
 //    connect(mb->acMap_GroupQuality, SIGNAL(triggered(QAction *)),
 //            this, SLOT(slotMap_Quality()));
@@ -230,7 +229,6 @@ MainWindow::MainWindow(int w, int h, QWidget *parent)
     setWindowTitle("QtVlm "+Version::getVersion());
     selectedBoat = NULL;
     showingSelectionMessage=false;
-    fax=NULL;
 
     //settings = new Settings();
 
@@ -868,50 +866,6 @@ void MainWindow::setBoardToggleAction(QAction * action)
 }
 
 //-------------------------------------------------
-void MainWindow::slotFax_open()
-{
-    QString filter;
-    filter =  tr("Fichiers Fax (*.png *.jpg *.tiff")
-            + tr(";;Autres fichiers (*)");
-    QString faxPath=Settings::getSetting("faxPath",".").toString();
-    if(faxPath==".") faxPath=QApplication::applicationDirPath();
-    QDir dirFax(faxPath);
-    if(!dirFax.exists())
-    {
-        faxPath=QApplication::applicationDirPath();
-        Settings::setSetting("faxPath",faxPath);
-    }
-    QString fileName = QFileDialog::getOpenFileName(this,
-                         tr("Choisir un fichier FAX METEO"),
-                         faxPath,
-                         filter);
-
-    if (fileName != "")
-    {
-        QFileInfo finfo(fileName);
-        faxPath = finfo.absolutePath();
-        Settings::setSetting("faxPath",faxPath);
-        if(fax)
-        {
-            delete fax;
-            fax=NULL;
-        }
-        fax=new QPixmap(fileName);
-        QPainter p(fax);
-        p.setCompositionMode(QPainter::CompositionMode_DestinationIn);
-        p.fillRect(fax->rect(),QColor(0,0,0,120));
-        p.end();
-    }
-}
-void MainWindow::slotFax_close()
-{
-    delete fax;
-    fax=NULL;
-}
-void MainWindow::slotFax_settings()
-{
-
-}
 
 void MainWindow::slotFile_Open()
 {

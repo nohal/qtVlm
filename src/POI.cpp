@@ -300,7 +300,7 @@ void POI::mousePressEvent(QGraphicsSceneMouseEvent * e)
              route->setFastVmgCalc(true);
          mouse_x=e->scenePos().x();
          mouse_y=e->scenePos().y();
-         setCursor(Qt::BlankCursor);
+         setCursor(Qt::ClosedHandCursor);
          update();
      }
     else if(!((MainWindow*)owner)->get_selPOI_instruction())

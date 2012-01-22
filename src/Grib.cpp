@@ -209,7 +209,7 @@ void Grib::loadGribFile(QString fileName)
 void Grib::clean_all_vectors()
 {
         std::map < std::string, std::vector<GribRecord *>* >::iterator it;
-        for (it=mapGribRecords.begin(); it!=mapGribRecords.end(); it++) {
+        for (it=mapGribRecords.begin(); it!=mapGribRecords.end(); ++it) {
                 std::vector<GribRecord *> *ls = (*it).second;
                 clean_vector( *ls );
                 delete ls;
@@ -220,7 +220,7 @@ void Grib::clean_all_vectors()
 void Grib::clean_vector(std::vector<GribRecord *> &ls)
 {
     std::vector<GribRecord *>::iterator it;
-    for (it=ls.begin(); it!=ls.end(); it++) {
+    for (it=ls.begin(); it!=ls.end(); ++it) {
         delete *it;
         *it = NULL;
     }
@@ -250,7 +250,7 @@ void Grib::readAllGribRecords()
     int id = 0;
     time_t firstdate = -1;
     do {
-        id ++;
+        ++id ;
         rec = new GribRecord(file, id);
         assert(rec);
         if (rec->isOk())
@@ -397,7 +397,7 @@ void Grib::readGribFileContent()
         {
             dewpointDataStatus = COMPUTED_DATA;
             std::set<time_t>::iterator iter;
-            for (iter=setAllDates.begin(); iter!=setAllDates.end(); iter++)
+            for (iter=setAllDates.begin(); iter!=setAllDates.end(); ++iter)
             {
                 time_t date = *iter;
                 GribRecord *recModel = getGribRecord(GRB_TEMP,LV_ABOV_GND,2,date);
@@ -408,8 +408,8 @@ void Grib::readGribFileContent()
                     if (recDewpoint != NULL)
                     {
                         recDewpoint->setDataType(GRB_DEWPOINT);
-                        for (zuint i=0; i<(zuint)recModel->getNi(); i++)
-                            for (zuint j=0; j<(zuint)recModel->getNj(); j++)
+                        for (zuint i=0; i<(zuint)recModel->getNi(); ++i)
+                            for (zuint j=0; j<(zuint)recModel->getNj(); ++j)
                             {
                             double x = recModel->getX(i);
                             double y = recModel->getY(j);
@@ -466,7 +466,7 @@ double Grib::computeDewPoint(double lon, double lat, time_t now)
 int Grib::getTotalNumberOfGribRecords() {
         int nb=0;
         std::map < std::string, std::vector<GribRecord *>* >::iterator it;
-        for (it=mapGribRecords.begin(); it!=mapGribRecords.end(); it++)
+        for (it=mapGribRecords.begin(); it!=mapGribRecords.end(); ++it)
         {
                 nb += (*it).second->size();
         }
@@ -478,7 +478,7 @@ std::vector<GribRecord *> * Grib::getFirstNonEmptyList()
 {
     std::vector<GribRecord *> *ls = NULL;
         std::map < std::string, std::vector<GribRecord *>* >::iterator it;
-        for (it=mapGribRecords.begin(); ls==NULL && it!=mapGribRecords.end(); it++)
+        for (it=mapGribRecords.begin(); ls==NULL && it!=mapGribRecords.end(); ++it)
         {
                 if ((*it).second->size()>0)
                         ls = (*it).second;
@@ -522,7 +522,7 @@ void Grib::findGribsAroundDate (int dataType,int levelType,int levelValue, time_
             return;
 
         zuint nb = ls->size();
-        for (zuint i=0; i<nb && /**before==NULL &&*/ *after==NULL; i++)
+        for (zuint i=0; i<nb && /**before==NULL &&*/ *after==NULL; ++i)
         {
                 GribRecord *rec = (*ls)[i];
                 if (rec->getRecordCurrentDate() == date) {
@@ -545,7 +545,7 @@ GribRecord * Grib::getGribRecord(int dataType,int levelType,int levelValue, time
         // Cherche le premier enregistrement a la bonne date
         GribRecord *res = NULL;
         zuint nb = ls->size();
-        for (zuint i=0; i<nb && res==NULL; i++) {
+        for (zuint i=0; i<nb && res==NULL; ++i) {
             if ((*ls)[i]->getRecordCurrentDate() == date)
                 res = (*ls)[i];
         }
@@ -787,10 +787,10 @@ void Grib::createListDates()
     maxDate=-1;
     setAllDates.clear();
     std::map < std::string, std::vector<GribRecord *>* >::iterator it;
-    for (it=mapGribRecords.begin(); it!=mapGribRecords.end(); it++)
+    for (it=mapGribRecords.begin(); it!=mapGribRecords.end(); ++it)
     {
         std::vector<GribRecord *> *ls = (*it).second;
-        for (zuint i=0; i<ls->size(); i++)
+        for (zuint i=0; i<ls->size(); ++i)
         {
             time_t cur=ls->at(i)->getRecordCurrentDate();
             if(minDate==-1)
@@ -1181,7 +1181,7 @@ void Grib::draw_WIND_Color(QPainter &pnt, const Projection *proj, bool smooth,
         y_tab = new bool[W_s*H_s];
 
         /* clearing u_tab array */
-        for(i=0;i<W_s*H_s;i++)
+        for(i=0;i<W_s*H_s;++i)
         {
             u_tab[i]=-1;
         }
@@ -1230,9 +1230,9 @@ void Grib::draw_WIND_Color(QPainter &pnt, const Projection *proj, bool smooth,
 
     if(showWindArrows)
     {
-        for (i=0; i<W_s; i++)
+        for (i=0; i<W_s; ++i)
         {
-            for (j=0; j<H_s; j++)
+            for (j=0; j<H_s; ++j)
             {
                 u=u_tab[i*H_s+j];
                 v=v_tab[i*H_s+j];
@@ -1266,8 +1266,8 @@ void Grib::draw_GribGrid(QPainter &pnt, const Projection *proj)
     if (rec == NULL)
         return;
     int px,py, i,j, dl=2;
-    for (i=0; i<rec->getNi(); i++)
-        for (j=0; j<rec->getNj(); j++)
+    for (i=0; i<rec->getNi(); ++i)
+        for (j=0; j<rec->getNj(); ++j)
         {
             if (rec->hasValue(i,j))
             {
@@ -1532,7 +1532,7 @@ QString Grib::drawCartouche(QPainter &pnt)
 void Grib::draw_Isobars(QPainter &pnt, const Projection *proj)
 {
     std::list<IsoLine *>::iterator it;
-    for(it=listIsobars.begin(); it!=listIsobars.end(); it++)
+    for(it=listIsobars.begin(); it!=listIsobars.end(); ++it)
     {
         (*it)->drawIsoLine(pnt, proj);
     }
@@ -1542,7 +1542,7 @@ void Grib::draw_Isobars(QPainter &pnt, const Projection *proj)
 void Grib::draw_Isotherms0(QPainter &pnt, const Projection *proj)
 {
     std::list<IsoLine *>::iterator it;
-    for(it=listIsotherms0.begin(); it!=listIsotherms0.end(); it++)
+    for(it=listIsotherms0.begin(); it!=listIsotherms0.end(); ++it)
     {
         (*it)->drawIsoLine(pnt, proj);
     }
@@ -1553,7 +1553,7 @@ void Grib::draw_IsoLinesLabels(QPainter &pnt, QColor &couleur, const Projection 
 {
     std::list<IsoLine *>::iterator it;
     int nbseg = 0;
-    for(it=liste.begin(); it!=liste.end(); it++)
+    for(it=liste.begin(); it!=liste.end(); ++it)
     {
         nbseg += (*it)->getNbSegments();
     }
@@ -1567,7 +1567,7 @@ void Grib::draw_IsoLinesLabels(QPainter &pnt, QColor &couleur, const Projection 
     if (density < 20)
         density = 20;
     first = 0;
-    for(it=liste.begin(); it!=liste.end(); it++)
+    for(it=liste.begin(); it!=liste.end(); ++it)
     {
         first += 20;
         (*it)->drawIsoLineLabels(pnt, couleur, proj, density, first, coef);
@@ -1609,8 +1609,8 @@ void Grib::draw_PRESSURE_MinMax(QPainter &pnt, const Projection *proj)
     W = rec_prev->getNi();
     H = rec_prev->getNj();
 
-    for (j=1; j<H-1; j++) {     // !!!! 1 to end-1
-        for (i=1; i<W-1; i++) {
+    for (j=1; j<H-1; ++j) {     // !!!! 1 to end-1
+        for (i=1; i<W-1; ++i) {
             v = rec_prev->getValue( i, j );
 
             a=rec_prev->getValue( i-1, j-1 );

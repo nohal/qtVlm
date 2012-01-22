@@ -36,6 +36,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 /* Z value according to type */
 #define Z_VALUE_TERRE      0
+#define Z_VALUE_FAXMETEO   0.1
 #define Z_VALUE_ROUTAGE    1
 #define Z_VALUE_ISOPOINT   2
 #define Z_VALUE_OPP        3
@@ -58,6 +59,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #define OPP_WTYPE         6
 #define ISOPOINT          7
 #define BOATREAL_WTYPE    8
+#define FAXMETEO_WTYPE    9
 
 /* compass mode */
 #define COMPASS_NOTHING  0
@@ -156,7 +158,6 @@ class myCentralWidget : public QWidget
         time_t getCurrentDate(void);
         void showGribDate_dialog(void);
         void loadGribFile(QString fileName, bool zoom);
-        QPixmap * getFax(){return mainW->getfax();}
 
         /* events */
         void mouseMove(int x, int y, QGraphicsItem * item);
@@ -255,6 +256,8 @@ class myCentralWidget : public QWidget
         void slot_fileLoad_GRIB(void);
         void slot_fileInfo_GRIB(void);
         void slotLoadSailsDocGrib(void);
+        void slotFax_open();
+        void slotFax_close();
 
         /* Dialogs */
         void slot_boatDialog(void);
@@ -401,6 +404,7 @@ class myCentralWidget : public QWidget
         QTimer *replayTimer;
         void doSimplifyRoute(ROUTE * route, bool fast=false);
         bool abortRequest;
+        faxMeteo * fax;
 };
 
 #endif // MYCENTRALWIDGET_H

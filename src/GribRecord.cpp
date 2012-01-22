@@ -41,13 +41,13 @@ GribRecord::GribRecord(const GribRecord &rec)
     if (rec.data != NULL) {
         int size = rec.Ni*rec.Nj;
         this->data = new double[size];
-        for (int i=0; i<size; i++)
+        for (int i=0; i<size; ++i)
             this->data[i] = rec.data[i];
     }
     if (rec.BMSbits != NULL) {
         int size = rec.sectionSize3-6;
         this->BMSbits = new zuchar[size];
-        for (int i=0; i<size; i++)
+        for (int i=0; i<size; ++i)
             this->BMSbits[i] = rec.BMSbits[i];
     }
 }
@@ -178,7 +178,7 @@ void  GribRecord::translateDataType()
 
         }
         //---------------
-        //PredictWind
+        //PredictWinds
         //---------------
         else if (idCenter==255 && idModel==1 && idGrid==255)
         {
@@ -213,8 +213,8 @@ void GribRecord::print()
 
 void  GribRecord::multiplyAllData(double k)
 {
-        for (zuint j=0; j<Nj; j++) {
-                for (zuint i=0; i<Ni; i++)
+        for (zuint j=0; j<Nj; ++j) {
+                for (zuint i=0; i<Ni; ++i)
                 {
                         if (hasValue(i,j)) {
                                 data[j*Ni+i] *= k;
@@ -423,13 +423,13 @@ bool GribRecord::readGribSection2_GDS(ZUFILE* file) {
         double adjust=((Lo2-Lo1)/(Ni-1))/Di;
         if(qAbs(adjust)!=1.0)
         {
-            qWarning()<<"Adjusting Lo2!!";
+            //qWarning()<<"Adjusting Lo2!!";
             Lo2+=(Di*(1.0-adjust))*(Ni-1);
         }
         adjust=((La2-La1)/(Nj-1))/Dj;
         if(qAbs(adjust)!=1.0)
         {
-            qWarning()<<"Adjusting La2!!";
+            //qWarning()<<"Adjusting La2!!";
             La2+=(Dj*(1.0-adjust))*(Nj-1);
         }
 #endif
@@ -469,7 +469,7 @@ bool GribRecord::readGribSection3_BMS(ZUFILE* file) {
         erreur("Record %d: out of memory",id);
         ok = false;
     }
-    for (zuint i=0; i<sectionSize3-6; i++) {
+    for (zuint i=0; i<sectionSize3-6; ++i) {
         BMSbits[i] = readChar(file);
     }
     return ok;
@@ -537,8 +537,8 @@ bool GribRecord::readGribSection4_BDS(ZUFILE* file) {
     zuint i, j, x;
     int ind;
     if (isAdjacentI) {
-        for (j=0; j<Nj; j++) {
-            for (i=0; i<Ni; i++) {
+        for (j=0; j<Nj; ++j) {
+            for (i=0; i<Ni; ++i) {
                 if (!hasDiDj && !isScanJpositive) {
                     ind = (Nj-1 -j)*Ni+i;
                 }
@@ -557,8 +557,8 @@ bool GribRecord::readGribSection4_BDS(ZUFILE* file) {
         }
     }
     else {
-        for (i=0; i<Ni; i++) {
-            for (j=0; j<Nj; j++) {
+        for (i=0; i<Ni; ++i) {
+            for (j=0; j<Nj; ++j) {
                 if (!hasDiDj && !isScanJpositive) {
                     ind = (Nj-1 -j)*Ni+i;
                 }
@@ -807,7 +807,7 @@ bool GribRecord::getValue_TWSA(double px, double py,double * a00,double * a01,do
         if(Dj<0)
         {
             sigDj=-1;
-            j0++;
+            ++j0;
         }
         else
             sigDj=1;
@@ -822,13 +822,13 @@ bool GribRecord::getValue_TWSA(double px, double py,double * a00,double * a01,do
 
     int nbval = 0;     // how many values in grid ?
     if (hasValue(i0,   j0))
-        nbval ++;
+        ++nbval ;
     if (hasValue(i1, j0))
-        nbval ++;
+        ++nbval ;
     if (hasValue(i0,   j0+sigDj))
-        nbval ++;
+        ++nbval ;
     if (hasValue(i1, j0+sigDj))
-        nbval ++;
+        ++nbval ;
 
     if(debug)
         qWarning() << "Nb Val =" << nbval;
@@ -888,13 +888,13 @@ double GribRecord::getInterpolatedValue(double px, double py, bool numericalInte
     bool h00,h01,h10,h11;
     int nbval = 0;     // how many values in grid ?
     if ((h00=hasValue(i0,   j0)))
-        nbval ++;
+        ++nbval ;
     if ((h10=hasValue(i0+1, j0)))
-        nbval ++;
+        ++nbval ;
     if ((h01=hasValue(i0,   j0+1)))
-        nbval ++;
+        ++nbval ;
     if ((h11=hasValue(i0+1, j0+1)))
-        nbval ++;
+        ++nbval ;
 
     if (nbval <3) {
         return GRIB_NOTDEF;

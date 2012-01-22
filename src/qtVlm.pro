@@ -99,6 +99,7 @@ HEADERS += Dialogs/DialogGraphicsParams.h \
     boatVLM.h \
     Board.h \
     BoardReal.h \
+    faxMeteo.h \
     Player.h \
     interpolation.h \
     Dialogs/DialogRealBoatConfig.h \
@@ -108,7 +109,8 @@ HEADERS += Dialogs/DialogGraphicsParams.h \
     GshhsPolyReader.h \
     Dialogs/dialogpoiconnect.h \
     Dialogs/DialogVlmLog.h \
-    Dialogs/DialogDownloadTracks.h
+    Dialogs/DialogDownloadTracks.h \
+    Dialogs/dialogFaxMeteo.h
 
 FORMS += Ui/boatAccount_dialog.ui \
     Ui/BoardVLM.ui \
@@ -140,7 +142,8 @@ FORMS += Ui/boatAccount_dialog.ui \
     Ui/dialogviewpolar.ui \
     Ui/dialogpoiconnect.ui \
     Ui/DialogVlmLog.ui \
-    Ui/DialogDownloadTracks.ui
+    Ui/DialogDownloadTracks.ui \
+    Ui/dialogFaxMeteo.ui
 
 SOURCES += Dialogs/DialogGraphicsParams.cpp \
     Dialogs/DialogLoadGrib.cpp \
@@ -209,6 +212,7 @@ SOURCES += Dialogs/DialogGraphicsParams.cpp \
     boatVLM.cpp \
     Board.cpp \
     BoardReal.cpp \
+    faxMeteo.cpp \
     Player.cpp \
     interpolation.cpp \
     Dialogs/DialogRealBoatConfig.cpp \
@@ -218,7 +222,8 @@ SOURCES += Dialogs/DialogGraphicsParams.cpp \
     GshhsPolyReader.cpp \
     Dialogs/dialogpoiconnect.cpp \
     Dialogs/DialogVlmLog.cpp \
-    Dialogs/DialogDownloadTracks.cpp
+    Dialogs/DialogDownloadTracks.cpp \
+    Dialogs/dialogFaxMeteo.cpp
 
 unix:!macx: DEFINES += _TTY_POSIX_ __TERRAIN_QIMAGE __UNIX_QTVLM
 win32:DEFINES += _TTY_WIN_ \

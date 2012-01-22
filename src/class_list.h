@@ -214,4 +214,8 @@ class DialogInetProgess;
 /* DialogRealBoatConfig.h */
 class DialogRealBoatConfig;
 
+/* faxMeteo.h */
+class faxMeteo;
+class dialogFaxMeteo;
+
 #endif // CLASS_LIST_H

@@ -220,6 +220,7 @@ void Terrain::draw_GSHHSandGRIB()
 #else
     pnt.drawPixmap(0,0, *imgEarth);
 #endif
+#if 0
     if(parent->getFax()!=NULL)
     {
         QPixmap * fax=parent->getFax();
@@ -247,7 +248,7 @@ void Terrain::draw_GSHHSandGRIB()
             pnt.setCompositionMode(QPainter::CompositionMode_SourceOver);
         }
     }
-
+#endif
     //===================================================
     // Dessin des bordures et frontieres
     //===================================================

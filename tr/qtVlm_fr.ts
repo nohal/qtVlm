@@ -2129,6 +2129,18 @@ Etes-vous sur ?</source>
         <source>Telecharger trace</source>
         <translation>Télécharger trace</translation>
     </message>
+    <message>
+        <source>Fax meteo</source>
+        <translation>Fax Météo</translation>
+    </message>
+    <message>
+        <source>Ouvrir un fax meteo</source>
+        <translation>Ouvrir un fax météo</translation>
+    </message>
+    <message>
+        <source>Fermer le fax meteo</source>
+        <translation>Fermer le météo fax</translation>
+    </message>
 </context>
 <context>
     <name>POI</name>
@@ -4716,6 +4728,96 @@ p, li { white-space: pre-wrap; }
     <message>
         <source>Tendance a l&apos;estime: </source>
         <translation>Tendance à l&apos;estime: </translation>
+    </message>
+</context>
+<context>
+    <name>dialogFaxMeteo</name>
+    <message>
+        <source>Fichiers Fax (*.png *.jpg *.tiff *.bmp)</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>;;Autres fichiers (*)</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Choisir un fichier FAX METEO</source>
+        <translation></translation>
+    </message>
+</context>
+<context>
+    <name>dialogFaxMeteo_ui</name>
+    <message>
+        <source>Dialog</source>
+        <translation>Fax Météo</translation>
+    </message>
+    <message>
+        <source>Position du coin gauche</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Nord</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Sud</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source> °</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source> &apos;</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Est</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Ouest</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Latitude</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Longitude</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Nom du fichier Fax</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Parcourir</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Etendue</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>deg</source>
+        <translation>°</translation>
+    </message>
+    <message>
+        <source>Transparence</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p align=&quot;justify&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;Vous pouvez aussi utiliser la souris Pour bouger l&apos;image (touche SHIFT enfoncee), pour la retailler (touche CTRL enfoncee), ou pour regler la transparence (touche ALT enfoncee)&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p align=&quot;justify&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;Vous pouvez aussi utiliser la souris pour bouger l&apos;image (touche SHIFT), pour la retailler (touche CTRL), ou pour régler la transparence (touche ALT)&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
 </context>
 <context>
