@@ -43,7 +43,7 @@
     </rect>
    </property>
    <property name="currentIndex">
-    <number>4</number>
+    <number>0</number>
    </property>
    <widget class="QWidget" name="tab">
     <attribute name="title">
@@ -1319,6 +1319,61 @@
         <width>281</width>
         <height>21</height>
        </rect>
+      </property>
+     </widget>
+    </widget>
+    <widget class="QGroupBox" name="groupBox_15">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>180</y>
+       <width>311</width>
+       <height>61</height>
+      </rect>
+     </property>
+     <property name="title">
+      <string>Interpolation des donnees GRIB</string>
+     </property>
+     <widget class="QRadioButton" name="interpolHyb">
+      <property name="geometry">
+       <rect>
+        <x>10</x>
+        <y>30</y>
+        <width>111</width>
+        <height>20</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Hybride(VLM)</string>
+      </property>
+      <property name="checked">
+       <bool>true</bool>
+      </property>
+     </widget>
+     <widget class="QRadioButton" name="interpolTWSA">
+      <property name="geometry">
+       <rect>
+        <x>130</x>
+        <y>30</y>
+        <width>61</width>
+        <height>20</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>TWSA</string>
+      </property>
+     </widget>
+     <widget class="QRadioButton" name="interpolSelect">
+      <property name="geometry">
+       <rect>
+        <x>210</x>
+        <y>30</y>
+        <width>95</width>
+        <height>20</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Selective</string>
       </property>
      </widget>
     </widget>

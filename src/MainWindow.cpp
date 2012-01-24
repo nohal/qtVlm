@@ -70,6 +70,7 @@ Copyright (C) 2008 - Jacques Zaninetti - http://zygrib.free.fr
 #include "DialogParamVlm.h"
 #include "DialogPilototo.h"
 #include "dialogviewpolar.h"
+int INTERPOLATION_DEFAULT=INTERPOLATION_HYBRID;
 
 //-----------------------------------------------------------
 // Connexions des signaux
@@ -229,6 +230,7 @@ MainWindow::MainWindow(int w, int h, QWidget *parent)
     setWindowTitle("QtVlm "+Version::getVersion());
     selectedBoat = NULL;
     showingSelectionMessage=false;
+    INTERPOLATION_DEFAULT=Settings::getSetting("defaultInterpolation",INTERPOLATION_HYBRID).toInt();
 
     //settings = new Settings();
 

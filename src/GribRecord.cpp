@@ -421,20 +421,39 @@ bool GribRecord::readGribSection2_GDS(ZUFILE* file) {
 #if 1
         /*force Lo2 and La2 to be square with Di*/
         double adjust=((Lo2-Lo1)/(Ni-1))/Di;
+        bool dbg=false;
         if(qAbs(adjust)!=1.0)
         {
-            //qWarning()<<"Adjusting Lo2!!";
+            dbg=true;
+            qWarning()<<"Lo2="<<Lo2;
             Lo2+=(Di*(1.0-adjust))*(Ni-1);
         }
         adjust=((La2-La1)/(Nj-1))/Dj;
         if(qAbs(adjust)!=1.0)
         {
-            //qWarning()<<"Adjusting La2!!";
+            dbg=true;
+            qWarning()<<"La2="<<La2;
             La2+=(Dj*(1.0-adjust))*(Nj-1);
         }
 #endif
         Di = (Lo2-Lo1) / (Ni-1);
         Dj = (La2-La1) / (Nj-1);
+        if (Lo2 > Lo1) {
+            lonMax = Lo2;
+        }
+        else {
+            lonMin = Lo2;
+        }
+        if (La2 > La1) {
+            latMax = La2;
+        }
+        else {
+            latMin = La2;
+        }
+        if(dbg)
+        {
+            qWarning()<<"Lo/La adj:"<<Lo1<<Lo2<<Ni<<Di<<La1<<La2<<Nj<<Dj;
+        }
     }
 
     if (false) {

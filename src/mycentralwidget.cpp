@@ -3324,9 +3324,15 @@ void myCentralWidget::slotFax_open()
     }
     dialogFaxMeteo * dFax=new dialogFaxMeteo(fax,this);
     if(dFax->exec()!=QDialog::Accepted && newFax)
+    {
         delete fax;
+        fax=NULL;
+    }
     else if(fax->getFileName().isEmpty())
+    {
         delete fax;
+        fax=NULL;
+    }
     delete dFax;
 }
 void myCentralWidget::slotFax_close()

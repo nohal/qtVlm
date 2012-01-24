@@ -6,12 +6,14 @@
 #include <QDir>
 #include <QFileDialog>
 #include <QDebug>
+#include "Util.h"
 
 dialogFaxMeteo::dialogFaxMeteo(faxMeteo * fax, myCentralWidget *parent)
     : QDialog(parent)
 {
     this->fax=fax;
     setupUi(this);
+    Util::setFontDialog(this);
     this->FileName->setText(fax->getFileName());
     QPointF leftCorner=fax->getLonLat();
     if (leftCorner.y()<0)
@@ -29,6 +31,7 @@ dialogFaxMeteo::dialogFaxMeteo(faxMeteo * fax, myCentralWidget *parent)
     this->latRange->setValue(fax->getLatRange());
     this->lonRange->setValue(fax->getLonRange());
     this->alpha->setValue(qRound((1.0-fax->getAlpha())*100));
+    this->alpha->setMaximum((1.0-MIN_ALPHA)*100);
     connect(this->Browse,SIGNAL(clicked()),this,SLOT(browseFile()));
 }
 
@@ -56,7 +59,7 @@ void dialogFaxMeteo::done(int result)
 void dialogFaxMeteo::browseFile()
 {
     QString filter;
-    filter =  tr("Fichiers Fax (*.png *.jpg *.tiff *.bmp)")
+    filter =  tr("Fichiers Fax (*.png *.jpg *.tiff *.gif *.bmp)")
             + tr(";;Autres fichiers (*)");
     QString faxPath=Settings::getSetting("faxPath",".").toString();
     if(faxPath==".") faxPath=QApplication::applicationDirPath();

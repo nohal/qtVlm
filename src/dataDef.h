@@ -94,7 +94,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #define INTERPOLATION_SELECTIVE_TWSA   2
 #define INTERPOLATION_HYBRID           3
 
-#define INTERPOLATION_DEFAULT          INTERPOLATION_HYBRID
+extern int INTERPOLATION_DEFAULT;
 
 #define SHOW_PSEUDO 0
 #define SHOW_NAME   1

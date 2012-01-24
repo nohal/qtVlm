@@ -31,6 +31,7 @@ Copyright (C) 2008 - Jacques Zaninetti - http://zygrib.free.fr
 
 #include "class_list.h"
 #include "mycentralwidget.h"
+#define MIN_ALPHA 0.2
 
 //===================================================================
 class faxMeteo : public QGraphicsWidget

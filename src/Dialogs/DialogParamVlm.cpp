@@ -142,6 +142,18 @@ DialogParamVlm::DialogParamVlm(MainWindow * main,myCentralWidget * parent) : QDi
     for(int i=0;i<NB_URL;i++)
         url_list->addItem(url_name[i]+": "+url_str[i]);
     url_list->setCurrentIndex(Settings::getSetting("vlm_url",0).toInt());
+    switch(::INTERPOLATION_DEFAULT)
+    {
+        case INTERPOLATION_TWSA:
+            this->interpolTWSA->setChecked(true);
+            break;
+        case INTERPOLATION_HYBRID:
+            this->interpolHyb->setChecked(true);
+            break;
+        case INTERPOLATION_SELECTIVE_TWSA:
+            this->interpolSelect->setChecked(true);
+            break;
+    }
 
 //#ifndef __QTVLM_WITH_TEST
 //    urlGroup->setVisible(false);
@@ -237,6 +249,13 @@ void DialogParamVlm::done(int result)
 
         int oldUrl = Settings::getSetting("vlm_url",0).toInt();
         Settings::setSetting("vlm_url",QString().setNum(url_list->currentIndex()));
+        if(interpolTWSA->isChecked())
+            INTERPOLATION_DEFAULT=INTERPOLATION_TWSA;
+        else if(interpolSelect->isChecked())
+            INTERPOLATION_DEFAULT=INTERPOLATION_SELECTIVE_TWSA;
+        else
+            INTERPOLATION_DEFAULT=INTERPOLATION_HYBRID;
+        Settings::setSetting("defaultInterpolation",INTERPOLATION_DEFAULT);
         //qWarning() << "old url=" << oldUrl << " new=" << url_list->currentIndex();
         if(oldUrl!=url_list->currentIndex())
             emit inetUpdated();

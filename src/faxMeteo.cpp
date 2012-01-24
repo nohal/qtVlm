@@ -50,6 +50,8 @@ faxMeteo::faxMeteo(Projection *proj, myCentralWidget *parent)
     this->latRange=Settings::getSetting("faxMeteoLatRange",10).toDouble();
     this->lonRange=Settings::getSetting("faxMeteoLonRange",10).toDouble();
     this->alpha=Settings::getSetting("faxMeteoAlpha",0.7).toDouble();
+    if(alpha<MIN_ALPHA) alpha=MIN_ALPHA;
+    if(alpha>1) alpha=1;
     this->setImgFileName(Settings::getSetting("faxMeteoFileName","").toString());
 //    this->lat=65;
 //    this->lon=-101;
@@ -128,12 +130,9 @@ bool faxMeteo::tryMoving(int x, int y)
         }
         else if (modifier==Qt::AltModifier)
         {
-            if(y>mouse_y)
-                alpha=alpha+0.01;
-            else
-                alpha=alpha-0.01;
+            alpha+=0.01*(y-mouse_y);
             if(alpha>1) alpha=1;
-            if(alpha<0.1) alpha=0.1;
+            if(alpha<MIN_ALPHA) alpha=MIN_ALPHA;
             this->setOpacity(alpha);
             update();
         }
@@ -210,6 +209,7 @@ void faxMeteo::paint(QPainter * pnt, const QStyleOptionGraphicsItem * , QWidget 
     double newWidth=QLineF(x1Fax,y1Fax,x2Fax,y2Fax).length();
     if(newHeight<faxImg.height()*20.0)
     {
+        qWarning()<<"fax resized:"<<newWidth<<"X"<<newHeight;
         QPixmap faxResized=faxImg.scaled(newWidth,newHeight,Qt::IgnoreAspectRatio,Qt::SmoothTransformation);
         pnt->drawPixmap(0,0,faxResized);
         br=QRectF(faxResized.rect());
@@ -217,6 +217,8 @@ void faxMeteo::paint(QPainter * pnt, const QStyleOptionGraphicsItem * , QWidget 
         br.setSize(QSize(br.width()*1.2,br.height()*1.2));
         br.moveCenter(center);
     }
+    else
+        qWarning()<<"fax resized is too big!!"<<newWidth<<"X"<<newHeight;
 }
 
 QRectF faxMeteo::boundingRect() const
