@@ -34,6 +34,7 @@ Copyright (C) 2008 - Jacques Zaninetti - http://zygrib.free.fr
 #include "settings.h"
 #include "mycentralwidget.h"
 #include "Projection.h"
+//#define debugMe
 
 
 faxMeteo::faxMeteo(Projection *proj, myCentralWidget *parent)
@@ -69,8 +70,11 @@ faxMeteo::faxMeteo(Projection *proj, myCentralWidget *parent)
     this->proj->map2screen(lonRight,lat,&x2Fax,&y2Fax);
     double newWidth=QLineF(x1Fax,y1Fax,x2Fax,y2Fax).length();
     this->br=QRectF(0,0,newWidth,newHeight);
-
-
+#ifdef debugMe
+    debugString+="Initializing fax\n";
+    debugString+=QString().sprintf("left corner at %.2f %.2f",lon,lat)+"\n";
+    debugString+=QString().sprintf("opacity %.2f",alpha)+"\n";
+#endif
     connect (proj,SIGNAL(projectionUpdated()),this,SLOT(slot_updateProjection()));
     this->parent->getScene()->addItem(this);
     this->setOpacity(alpha);
@@ -90,7 +94,16 @@ faxMeteo::~faxMeteo()
 void faxMeteo::setImgFileName(QString imgFileName)
 {
     this->imgFileName=imgFileName;
-    faxImg=QPixmap(this->imgFileName);
+#ifdef debugMe
+    bool ok=faxImg.load(this->imgFileName);
+    debugString+="loading image: "+imgFileName+"\n";
+    if(ok)
+        debugString+="successfully loaded, size="+QString().setNum(faxImg.width())+" x "+QString().setNum(faxImg.height())+"\n";
+    else
+        debugString+="Error while loading image \n";
+#else
+    faxImg.load(this->imgFileName);
+#endif
 }
 
 /**************************/
@@ -192,11 +205,20 @@ void faxMeteo::slot_updateProjection()
 
 void faxMeteo::paint(QPainter * pnt, const QStyleOptionGraphicsItem * , QWidget * )
 {
+#ifdef debugMe
+    debugString+=QString().sprintf("Painting event with opacity=%.2f",alpha)+"\n";
+#endif
     if(faxImg.isNull())
     {
+#ifdef debugMe
+        debugString+="NULL image, no painting\n";
+#endif
         br=QRectF(0,0,0,0);
         return;
     }
+#ifdef debugMe
+    debugString+=QString().sprintf("Position in scene=%.2f %.2f ",this->pos().x(),this->pos().y())+"\n";
+#endif
     pnt->setRenderHint(QPainter::Antialiasing, true);
     pnt->setRenderHint(QPainter::SmoothPixmapTransform, true);
     int x1Fax,y1Fax,x2Fax,y2Fax;
@@ -207,18 +229,25 @@ void faxMeteo::paint(QPainter * pnt, const QStyleOptionGraphicsItem * , QWidget 
     if(lonRight>180) lonRight=360-lonRight;
     this->proj->map2screen(lonRight,lat,&x2Fax,&y2Fax);
     double newWidth=QLineF(x1Fax,y1Fax,x2Fax,y2Fax).length();
+#ifdef debugMe
+    debugString+=QString().sprintf("new width=%.2f new height=%.2f",newWidth,newHeight)+"\n";
+#endif
     if(newHeight<faxImg.height()*20.0)
     {
-        qWarning()<<"fax resized:"<<newWidth<<"X"<<newHeight;
         QPixmap faxResized=faxImg.scaled(newWidth,newHeight,Qt::IgnoreAspectRatio,Qt::SmoothTransformation);
         pnt->drawPixmap(0,0,faxResized);
         br=QRectF(faxResized.rect());
         QPointF center=br.center();
         br.setSize(QSize(br.width()*1.2,br.height()*1.2));
         br.moveCenter(center);
+#ifdef debugMe
+        debugString+=QString().sprintf("painting done with resized size=%d x %d\n",faxResized.width(),faxResized.height());
+#endif
     }
+#ifdef debugMe
     else
-        qWarning()<<"fax resized is too big!!"<<newWidth<<"X"<<newHeight;
+        debugString+="painting failed (image resized is too big)\n";
+#endif
 }
 
 QRectF faxMeteo::boundingRect() const

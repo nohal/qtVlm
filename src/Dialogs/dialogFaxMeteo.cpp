@@ -33,6 +33,7 @@ dialogFaxMeteo::dialogFaxMeteo(faxMeteo * fax, myCentralWidget *parent)
     this->alpha->setValue(qRound((1.0-fax->getAlpha())*100));
     this->alpha->setMaximum((1.0-MIN_ALPHA)*100);
     connect(this->Browse,SIGNAL(clicked()),this,SLOT(browseFile()));
+    //this->debug->setText(fax->getDebugString());
 }
 
 dialogFaxMeteo::~dialogFaxMeteo()
