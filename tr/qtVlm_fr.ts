@@ -3881,6 +3881,22 @@ p, li { white-space: pre-wrap; }
         <source>Boutons VLM classiques</source>
         <translation></translation>
     </message>
+    <message>
+        <source>Interpolation des donnees GRIB</source>
+        <translation>Interpolqtion des données Grib</translation>
+    </message>
+    <message>
+        <source>Hybride(VLM)</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>TWSA</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Selective</source>
+        <translation></translation>
+    </message>
 </context>
 <context>
     <name>WP_dialog_ui</name>
@@ -4733,15 +4749,15 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>dialogFaxMeteo</name>
     <message>
-        <source>Fichiers Fax (*.png *.jpg *.tiff *.bmp)</source>
-        <translation></translation>
-    </message>
-    <message>
         <source>;;Autres fichiers (*)</source>
         <translation></translation>
     </message>
     <message>
         <source>Choisir un fichier FAX METEO</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Fichiers Fax (*.png *.jpg *.tiff *.gif *.bmp)</source>
         <translation></translation>
     </message>
 </context>
@@ -4819,6 +4835,26 @@ p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
 &lt;p align=&quot;justify&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;Vous pouvez aussi utiliser la souris pour bouger l&apos;image (touche SHIFT), pour la retailler (touche CTRL), ou pour régler la transparence (touche ALT)&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
+    <message>
+        <source>Configuration number</source>
+        <translation>Numéro de configuration</translation>
+    </message>
+    <message>
+        <source>1</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>2</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>3</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>4</source>
+        <translation></translation>
+    </message>
 </context>
 <context>
     <name>dialog_gribDate_ui</name>
@@ -4837,6 +4873,13 @@ p, li { white-space: pre-wrap; }
     <message>
         <source>M/d/yyyy hh:mm:ss</source>
         <translation>dd/MM/yyyy hh:mm:ss</translation>
+    </message>
+</context>
+<context>
+    <name>faxMeteo</name>
+    <message>
+        <source>Trop de zoom pour le faxMeteo</source>
+        <translation>Trop de zoom pour le fax météo</translation>
     </message>
 </context>
 <context>

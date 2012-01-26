@@ -75,6 +75,7 @@ class MainWindow: public QMainWindow
         void setPilototoFromRoute(QList<POI*> poiList);
         bool getStartEstimeSpeedFromGrib();
         void clearPilototo();
+        myCentralWidget * getMy_centralWidget(){return this->my_centralWidget;}
 
     public slots:
         void slotFile_Open();

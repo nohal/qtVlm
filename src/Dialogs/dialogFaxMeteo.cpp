@@ -12,8 +12,54 @@ dialogFaxMeteo::dialogFaxMeteo(faxMeteo * fax, myCentralWidget *parent)
     : QDialog(parent)
 {
     this->fax=fax;
+    fax->savePreset();
     setupUi(this);
     Util::setFontDialog(this);
+    this->presetNb=fax->getPresetNb();
+    this->previousPresetNb=presetNb;
+    if(presetNb=="1")
+        this->preset1->setChecked(true);
+    else if(presetNb=="2")
+        this->preset2->setChecked(true);
+    else if(presetNb=="3")
+        this->preset3->setChecked(true);
+    else if(presetNb=="4")
+        this->preset4->setChecked(true);
+    this->loadPreset();
+    connect(this->Browse,SIGNAL(clicked()),this,SLOT(browseFile()));
+    connect(this->preset1,SIGNAL(clicked()),this,SLOT(slotPreset1()));
+    connect(this->preset2,SIGNAL(clicked()),this,SLOT(slotPreset2()));
+    connect(this->preset3,SIGNAL(clicked()),this,SLOT(slotPreset3()));
+    connect(this->preset4,SIGNAL(clicked()),this,SLOT(slotPreset4()));
+}
+
+dialogFaxMeteo::~dialogFaxMeteo()
+{
+}
+void dialogFaxMeteo::slotPreset1()
+{
+    this->presetNb="1";
+    this->loadPreset();
+}
+void dialogFaxMeteo::slotPreset2()
+{
+    this->presetNb="2";
+    this->loadPreset();
+}
+void dialogFaxMeteo::slotPreset3()
+{
+    this->presetNb="3";
+    this->loadPreset();
+}
+void dialogFaxMeteo::slotPreset4()
+{
+    this->presetNb="4";
+    this->loadPreset();
+}
+void dialogFaxMeteo::loadPreset()
+{
+    fax->setPresetNb(this->presetNb);
+    fax->loadPreset();
     this->FileName->setText(fax->getFileName());
     QPointF leftCorner=fax->getLonLat();
     if (leftCorner.y()<0)
@@ -32,13 +78,8 @@ dialogFaxMeteo::dialogFaxMeteo(faxMeteo * fax, myCentralWidget *parent)
     this->lonRange->setValue(fax->getLonRange());
     this->alpha->setValue(qRound((1.0-fax->getAlpha())*100));
     this->alpha->setMaximum((1.0-MIN_ALPHA)*100);
-    connect(this->Browse,SIGNAL(clicked()),this,SLOT(browseFile()));
-    //this->debug->setText(fax->getDebugString());
 }
 
-dialogFaxMeteo::~dialogFaxMeteo()
-{
-}
 void dialogFaxMeteo::done(int result)
 {
     if(result == QDialog::Accepted)
@@ -54,6 +95,11 @@ void dialogFaxMeteo::done(int result)
         fax->setLonLatRange(this->lonRange->value(),this->latRange->value());
         fax->setAlpha(1.0-(this->alpha->value()/100.0));
         fax->slot_updateProjection();
+    }
+    else if(presetNb!=previousPresetNb)
+    {
+        fax->setPresetNb(previousPresetNb);
+        fax->loadPreset();
     }
     QDialog::done(result);
 }

@@ -52,7 +52,10 @@ class faxMeteo : public QGraphicsWidget
         double getLatRange(){return latRange;}
         double getLonRange(){return lonRange;}
         double getAlpha(){return this->alpha;}
-        QString getDebugString(){return debugString;}
+        void setPresetNb(QString i){this->presetNb=i;}
+        QString getPresetNb(){return this->presetNb;}
+        void savePreset();
+        void loadPreset();
         /* event propagé par la scene */
         bool tryMoving(int x, int y);
 
@@ -81,7 +84,7 @@ class faxMeteo : public QGraphicsWidget
         QRectF  br;
         int     mouse_x,mouse_y;
         int     modifier;
-        QString debugString;
+        QString presetNb;
 
         /*popup menu*/
 };

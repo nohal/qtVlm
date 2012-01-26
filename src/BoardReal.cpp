@@ -98,6 +98,11 @@ void boardReal::setWp(float lat,float lon,float wph)
         angle->setText("---");
     }
 }
+void boardReal::gribUpdated()
+{
+    boatUpdated();
+}
+
 void boardReal::boatUpdated(void)
 {
     boatReal * myBoat=currentBoat();

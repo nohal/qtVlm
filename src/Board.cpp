@@ -46,6 +46,7 @@ board::board(MainWindow * mainWin, inetConnexion * inet,QStatusBar * statusBar)
     real_board=new boardReal(mainWin,this);
     connect(this,SIGNAL(sig_paramChanged()),real_board,SLOT(paramChanged()));
     connect(real_board,SIGNAL(showMessage(QString,int)),statusBar,SLOT(showMessage(QString,int)));
+    connect(mainWin->getMy_centralWidget(),SIGNAL(redrawGrib()),real_board,SLOT(gribUpdated()));
     connect(this,SIGNAL(hideShowCompass()),real_board,SLOT(slot_hideShowCompass()));
     realDock = new QDockWidget(tr("Mon bateau"));
     realDock->setWidget(real_board);

@@ -34,7 +34,6 @@ Copyright (C) 2008 - Jacques Zaninetti - http://zygrib.free.fr
 #include "settings.h"
 #include "mycentralwidget.h"
 #include "Projection.h"
-//#define debugMe
 
 
 faxMeteo::faxMeteo(Projection *proj, myCentralWidget *parent)
@@ -45,20 +44,9 @@ faxMeteo::faxMeteo(Projection *proj, myCentralWidget *parent)
     this->setZValue(Z_VALUE_FAXMETEO);
     this->setData(0,FAXMETEO_WTYPE);
     this->isMoving=false;
+    this->presetNb="1";
+    this->loadPreset();
 
-    this->lat=Settings::getSetting("faxMeteoLat",0).toDouble();
-    this->lon=Settings::getSetting("faxMeteoLon",0).toDouble();
-    this->latRange=Settings::getSetting("faxMeteoLatRange",10).toDouble();
-    this->lonRange=Settings::getSetting("faxMeteoLonRange",10).toDouble();
-    this->alpha=Settings::getSetting("faxMeteoAlpha",0.7).toDouble();
-    if(alpha<MIN_ALPHA) alpha=MIN_ALPHA;
-    if(alpha>1) alpha=1;
-    this->setImgFileName(Settings::getSetting("faxMeteoFileName","").toString());
-//    this->lat=65;
-//    this->lon=-101;
-//    this->latRange=52;
-//    this->lonRange=111;
-//    this->alpha=0.7;
     this->modifier=0;
 
     int x1Fax,y1Fax,x2Fax,y2Fax;
@@ -70,11 +58,6 @@ faxMeteo::faxMeteo(Projection *proj, myCentralWidget *parent)
     this->proj->map2screen(lonRight,lat,&x2Fax,&y2Fax);
     double newWidth=QLineF(x1Fax,y1Fax,x2Fax,y2Fax).length();
     this->br=QRectF(0,0,newWidth,newHeight);
-#ifdef debugMe
-    debugString+="Initializing fax\n";
-    debugString+=QString().sprintf("left corner at %.2f %.2f",lon,lat)+"\n";
-    debugString+=QString().sprintf("opacity %.2f",alpha)+"\n";
-#endif
     connect (proj,SIGNAL(projectionUpdated()),this,SLOT(slot_updateProjection()));
     this->parent->getScene()->addItem(this);
     this->setOpacity(alpha);
@@ -84,26 +67,47 @@ faxMeteo::faxMeteo(Projection *proj, myCentralWidget *parent)
 
 faxMeteo::~faxMeteo()
 {
-    Settings::setSetting("faxMeteoLat",lat);
-    Settings::setSetting("faxMeteoLon",lon);
-    Settings::setSetting("faxMeteoLatRange",latRange);
-    Settings::setSetting("faxMeteoLonRange",lonRange);
-    Settings::setSetting("faxMeteoAlpha",alpha);
-    Settings::setSetting("faxMeteoFileName",imgFileName);
+    savePreset();
 }
+void faxMeteo::savePreset()
+{
+    Settings::setSetting("faxMeteoLat"+presetNb,lat);
+    Settings::setSetting("faxMeteoLon"+presetNb,lon);
+    Settings::setSetting("faxMeteoLatRange"+presetNb,latRange);
+    Settings::setSetting("faxMeteoLonRange"+presetNb,lonRange);
+    Settings::setSetting("faxMeteoAlpha"+presetNb,alpha);
+    Settings::setSetting("faxMeteoFileName"+presetNb,imgFileName);
+}
+void faxMeteo::loadPreset()
+{
+    this->lat=Settings::getSetting("faxMeteoLat"+presetNb,0).toDouble();
+    this->lon=Settings::getSetting("faxMeteoLon"+presetNb,0).toDouble();
+    this->latRange=Settings::getSetting("faxMeteoLatRange"+presetNb,10).toDouble();
+    this->lonRange=Settings::getSetting("faxMeteoLonRange"+presetNb,10).toDouble();
+    this->alpha=Settings::getSetting("faxMeteoAlpha"+presetNb,0.7).toDouble();
+    if(alpha<MIN_ALPHA) alpha=MIN_ALPHA;
+    if(alpha>1) alpha=1;
+    this->setImgFileName(Settings::getSetting("faxMeteoFileName"+presetNb,"").toString());
+    this->setOpacity(alpha);
+    int x1Fax,y1Fax,x2Fax,y2Fax;
+    this->proj->map2screen(this->lon,this->lat,&x1Fax,&y1Fax);
+    this->proj->map2screen(this->lon,this->lat-latRange,&x2Fax,&y2Fax);
+    double newHeight=QLineF(x1Fax,y1Fax,x2Fax,y2Fax).length();
+    double lonRight=this->lon-lonRange;
+    if(lonRight>180) lonRight=360-lonRight;
+    this->proj->map2screen(lonRight,lat,&x2Fax,&y2Fax);
+    double newWidth=QLineF(x1Fax,y1Fax,x2Fax,y2Fax).length();
+    prepareGeometryChange();
+    this->br=QRectF(0,0,newWidth,newHeight);
+    this->slot_updateProjection();
+}
+
 void faxMeteo::setImgFileName(QString imgFileName)
 {
     this->imgFileName=imgFileName;
-#ifdef debugMe
-    bool ok=faxImg.load(this->imgFileName);
-    debugString+="loading image: "+imgFileName+"\n";
-    if(ok)
-        debugString+="successfully loaded, size="+QString().setNum(faxImg.width())+" x "+QString().setNum(faxImg.height())+"\n";
-    else
-        debugString+="Error while loading image \n";
-#else
-    faxImg.load(this->imgFileName);
-#endif
+    if(!faxImg.load(this->imgFileName))
+        faxImg=faxImg.scaled(0,0);
+
 }
 
 /**************************/
@@ -205,20 +209,11 @@ void faxMeteo::slot_updateProjection()
 
 void faxMeteo::paint(QPainter * pnt, const QStyleOptionGraphicsItem * , QWidget * )
 {
-#ifdef debugMe
-    debugString+=QString().sprintf("Painting event with opacity=%.2f",alpha)+"\n";
-#endif
-    if(faxImg.isNull())
+    if(faxImg.isNull() || faxImg.height()==0)
     {
-#ifdef debugMe
-        debugString+="NULL image, no painting\n";
-#endif
         br=QRectF(0,0,0,0);
         return;
     }
-#ifdef debugMe
-    debugString+=QString().sprintf("Position in scene=%.2f %.2f ",this->pos().x(),this->pos().y())+"\n";
-#endif
     pnt->setRenderHint(QPainter::Antialiasing, true);
     pnt->setRenderHint(QPainter::SmoothPixmapTransform, true);
     int x1Fax,y1Fax,x2Fax,y2Fax;
@@ -229,25 +224,38 @@ void faxMeteo::paint(QPainter * pnt, const QStyleOptionGraphicsItem * , QWidget 
     if(lonRight>180) lonRight=360-lonRight;
     this->proj->map2screen(lonRight,lat,&x2Fax,&y2Fax);
     double newWidth=QLineF(x1Fax,y1Fax,x2Fax,y2Fax).length();
-#ifdef debugMe
-    debugString+=QString().sprintf("new width=%.2f new height=%.2f",newWidth,newHeight)+"\n";
-#endif
-    if(newHeight<faxImg.height()*20.0)
+    QPixmap faxResized;
+    if(newHeight<3000)
     {
-        QPixmap faxResized=faxImg.scaled(newWidth,newHeight,Qt::IgnoreAspectRatio,Qt::SmoothTransformation);
-        pnt->drawPixmap(0,0,faxResized);
+        faxResized=faxImg.scaled(newWidth,newHeight,Qt::IgnoreAspectRatio,Qt::SmoothTransformation);
         br=QRectF(faxResized.rect());
-        QPointF center=br.center();
-        br.setSize(QSize(br.width()*1.2,br.height()*1.2));
-        br.moveCenter(center);
-#ifdef debugMe
-        debugString+=QString().sprintf("painting done with resized size=%d x %d\n",faxResized.width(),faxResized.height());
-#endif
+        this->setOpacity(alpha);
     }
-#ifdef debugMe
     else
-        debugString+="painting failed (image resized is too big)\n";
-#endif
+    {
+        QPen pen;
+        pen.setColor(Qt::red);
+        pnt->setPen(pen);
+        QFont fontbig("TypeWriter", 12, QFont::Bold, false);
+        fontbig.setStyleHint(QFont::TypeWriter);
+        fontbig.setStretch(QFont::Condensed);
+        QColor   transpcolor(255,255,255,120);
+        pnt->setBrush(transpcolor);
+        pnt->setFont(fontbig);
+        pnt->setPen(transpcolor);
+        QFontMetrics fm(fontbig);
+        QString badZoom=tr("Trop de zoom pour le faxMeteo");
+        QSize Fsize=fm.size(Qt::TextSingleLine,badZoom);
+        pnt->drawRect(-x1Fax+3,-y1Fax+33,Fsize.width()+2,Fsize.height());
+        pnt->setPen(pen);
+        pnt->drawText(-x1Fax+5,-y1Fax+38+Fsize.height()/2,badZoom);
+        br=QRectF(-x1Fax,-y1Fax,500,500);
+        this->setOpacity(1.0);
+    }
+    pnt->drawPixmap(0,0,faxResized);
+    QPointF center=br.center();
+    br.setSize(QSize(br.width()*1.2,br.height()*1.2));
+    br.moveCenter(center);
 }
 
 QRectF faxMeteo::boundingRect() const

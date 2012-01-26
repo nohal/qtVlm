@@ -16,7 +16,15 @@ public:
     void done(int result);
 public slots:
     void browseFile();
+    void slotPreset1();
+    void slotPreset2();
+    void slotPreset3();
+    void slotPreset4();
 private:
+    QString presetNb;
+    void loadPreset();
+    void savePreset();
+    QString previousPresetNb;
     faxMeteo * fax;
     myCentralWidget * parent;
 };

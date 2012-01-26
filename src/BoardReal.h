@@ -47,6 +47,7 @@ class boardReal: public QWidget , public Ui::boardReal_ui
         void statusGPS(void);
         void chgBoatPosition();
         void resetWp(){this->setWp(0,0,-1);}
+        void gribUpdated();
 
     signals:
         void showMessage(QString,int);
