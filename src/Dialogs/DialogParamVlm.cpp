@@ -154,6 +154,7 @@ DialogParamVlm::DialogParamVlm(MainWindow * main,myCentralWidget * parent) : QDi
             this->interpolSelect->setChecked(true);
             break;
     }
+    interpolBox->hide();
 
 //#ifndef __QTVLM_WITH_TEST
 //    urlGroup->setVisible(false);
@@ -255,6 +256,7 @@ void DialogParamVlm::done(int result)
             INTERPOLATION_DEFAULT=INTERPOLATION_SELECTIVE_TWSA;
         else
             INTERPOLATION_DEFAULT=INTERPOLATION_HYBRID;
+        INTERPOLATION_DEFAULT=INTERPOLATION_HYBRID;
         Settings::setSetting("defaultInterpolation",INTERPOLATION_DEFAULT);
         //qWarning() << "old url=" << oldUrl << " new=" << url_list->currentIndex();
         if(oldUrl!=url_list->currentIndex())

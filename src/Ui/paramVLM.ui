@@ -1322,7 +1322,7 @@
       </property>
      </widget>
     </widget>
-    <widget class="QGroupBox" name="groupBox_15">
+    <widget class="QGroupBox" name="interpolBox">
      <property name="geometry">
       <rect>
        <x>10</x>
