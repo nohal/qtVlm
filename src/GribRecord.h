@@ -55,9 +55,9 @@ class GribRecord
         GribRecord(const GribRecord &rec);
         ~GribRecord();
         
-        bool  isOk()  const   {return ok;};
-        bool  isDataKnown()  const   {return knownData;};
-        bool  isEof() const   {return eof;};
+        bool  isOk()  const   {return ok;}
+        bool  isDataKnown()  const   {return knownData;}
+        bool  isEof() const   {return eof;}
         
         //-----------------------------------------
         zuchar  getDataType() const         { return dataType; }
@@ -97,8 +97,8 @@ class GribRecord
         double getInterpolatedValue(double px, double py, bool numericalInterpolation=true);
 
         // coordonnées d'un point de la grille
-        inline double  getX(int i) const   { return ok ? Lo1+i*Di : GRIB_NOTDEF;}
-        inline double  getY(int j) const   { return ok ? La1+j*Dj : GRIB_NOTDEF;}
+        inline double  getX(int i) const   { return ok ? lonMin+i*Di : GRIB_NOTDEF;}
+        inline double  getY(int j) const   { return ok ? latMin+j*Dj : GRIB_NOTDEF;}
         
         double  getLatMin() const   { return latMin;}
         double  getLonMin() const   { return lonMin;}
@@ -163,9 +163,11 @@ class GribRecord
         zuchar NV, PV;
         zuchar gridType;
         zuint  Ni, Nj;
-        double La1, Lo1, La2, Lo2;
+        //double La1, Lo1, La2, Lo2;
         double latMin, lonMin, latMax, lonMax;
         double Di, Dj;        
+        double savLatMin, savLonMin, savLatMax, savLonMax;
+        double savDi, savDj;
         zuchar resolFlags, scanFlags;
         bool  hasDiDj;
         bool  isEarthSpheric;
@@ -220,6 +222,9 @@ class GribRecord
 
         void   print();
         void   multiplyAllData(double k);
+        bool   verticalDataAreMirrored();
+        void   reverseData (char orientation);
+        void   checkOrientation ();
 
 
 };
@@ -266,17 +271,17 @@ inline bool GribRecord::isXInMap(double x) const
         a=Di;
 
     if (Di > 0)
-        return x>=Lo1 && x<=(Lo2+a);
+        return x>=lonMin && x<=(lonMax+a);
     else
-        return x>=(Lo2+a) && x<=Lo1;
+        return x>=(lonMax+a) && x<=lonMin;
 }
 //-----------------------------------------------------------------
 inline bool GribRecord::isYInMap(double y) const
 {
     if (Dj < 0)
-        return y<=La1 && y>=La2;
+        return y<=latMin && y>=latMax;
     else
-        return y>=La1 && y<=La2;
+        return y>=latMin && y<=latMax;
 }
 
 #endif
