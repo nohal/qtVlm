@@ -971,10 +971,14 @@ void POI::slot_finePosit(bool silent)
             lonPrevious=route->getPoiList().at(myRank-1)->getLongitude();
             latPrevious=route->getPoiList().at(myRank-1)->getLatitude();
         }
-        lonNext=route->getPoiList().at(myRank+1)->getLongitude();
-        latNext=route->getPoiList().at(myRank+1)->getLatitude();
-        rangeLon=qMin(3.0,qMax(0.5,ceil(qAbs(lonNext-lonPrevious)/2.0)));
-        rangeLat=qMin(3.0,qMax(0.5,ceil(qAbs(latNext-latPrevious)/2.0)));
+        lonNext = route->getPoiList().at(myRank+1)->getLongitude();
+        latNext = route->getPoiList().at(myRank+1)->getLatitude();
+        rangeLon
+           = rangeLat
+           = qMin (3.0,
+                   qMax (0.1,
+                         qMax (qAbs (lonNext-lonPrevious) / 2,
+                               qAbs (latNext-latPrevious) / 2)));
     }
     //qWarning()<<"ranges:"<<rangeLon<<rangeLat;
     double step=searchStep;
