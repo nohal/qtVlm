@@ -1199,6 +1199,7 @@ void POI::slot_finePosit(bool silent)
         lat=savedLat;
         Util::computePos(proj,lat, lon, &pi, &pj);
         setPos(pi, pj-height/2);
+        if(isWp && !silent) slot_setWP();
         update();
         route->slot_recalculate();
     }
