@@ -727,6 +727,10 @@ ROUTAGE::ROUTAGE(QString name, Projection *proj, Grib *grib, QGraphicsScene * my
     this->visibleOnly=Settings::getSetting("visibleOnly",1).toInt()==1;
     this->autoZoom=Settings::getSetting("autoZoom",1).toInt()==1;
     this->zoomLevel=Settings::getSetting("autoZoomLevel",2).toInt();
+    this->maxPres=Settings::getSetting("routageMaxPres",70).toDouble();
+    this->maxPortant=Settings::getSetting("routageMaxPortant",70).toDouble();
+    this->minPres=Settings::getSetting("routageMinPres",0).toDouble();
+    this->minPortant=Settings::getSetting("routageMinPortant",0).toDouble();
     this->wind_angle=0;
     this->wind_speed=20;
     this->windIsForced=false;
@@ -749,10 +753,6 @@ ROUTAGE::ROUTAGE(QString name, Projection *proj, Grib *grib, QGraphicsScene * my
     this->poiPrefix="R";
     this->speedLossOnTack=1;
     highlightedIso=0;
-    this->maxPres=70;
-    this->maxPortant=70;
-    this->minPres=0;
-    this->minPortant=0;
 }
 ROUTAGE::~ROUTAGE()
 {
@@ -809,6 +809,10 @@ void ROUTAGE::calculate()
     Settings::setSetting("visibleOnly",visibleOnly?1:0);
     Settings::setSetting("autoZoom",autoZoom?1:0);
     Settings::setSetting("autoZoomLevel",zoomLevel);
+    Settings::setSetting("routageMaxPres",maxPres);
+    Settings::setSetting("routageMaxPortant",maxPortant);
+    Settings::setSetting("routageMinPres",minPres);
+    Settings::setSetting("routageMinPortant",minPortant);
     this->isNewPivot=false;
     this->aborted=false;
     if (!(myBoat && myBoat->getPolarData() && myBoat!=NULL))

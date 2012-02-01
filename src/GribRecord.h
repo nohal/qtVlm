@@ -54,27 +54,27 @@ class GribRecord
         GribRecord(ZUFILE* file, int id_);
         GribRecord(const GribRecord &rec);
         ~GribRecord();
-        
-        bool  isOk()  const   {return ok;}
-        bool  isDataKnown()  const   {return knownData;}
-        bool  isEof() const   {return eof;}
-        
+
+        bool  isOk()  const   {return ok;};
+        bool  isDataKnown()  const   {return knownData;};
+        bool  isEof() const   {return eof;};
+
         //-----------------------------------------
         zuchar  getDataType() const         { return dataType; }
         void    setDataType(const zuchar t);
         void    translateDataType();  // adapte les codes des différents centres météo
-        
+
         zuchar  getLevelType() const   { return levelType; }
         zuint   getLevelValue() const  { return levelValue; }
-        
+
         zuchar   getIdCenter() const  { return idCenter; }
         zuchar   getIdModel() const   { return idModel; }
         zuchar   getIdGrid() const    { return idGrid; }
-        
+
         //-----------------------------------------
         std::string getKey() const  { return dataKey; }
-		static std::string makeKey(int dataType,int levelType,int levelValue);
-        
+                static std::string makeKey(int dataType,int levelType,int levelValue);
+
         //-----------------------------------------
         int    getPeriodP1() const  { return periodP1; }
         int    getPeriodP2() const  { return periodP2; }
@@ -84,22 +84,22 @@ class GribRecord
         int    getNj() const     { return Nj; }
         double  getDi() const    { return Di; }
         double  getDj() const    { return Dj; }
-        
+
         // Valeur pour un point de la grille
         double getValue(int i, int j) const  { return ok ? data[j*Ni+i] : GRIB_NOTDEF;}
-        
+
         void setValue(zuint i, zuint j, double v)
-        		{ if (i<Ni && j<Nj)
-        			data[j*Ni+i] = v; }
-        
+                        { if (i<Ni && j<Nj)
+                                data[j*Ni+i] = v; }
+
         // Valeur pour un point quelconque
         bool getValue_TWSA(double px, double py,double * a00,double * a01,double * a10,double * a11,bool debug=false);
         double getInterpolatedValue(double px, double py, bool numericalInterpolation=true);
 
         // coordonnées d'un point de la grille
-        inline double  getX(int i) const   { return ok ? lonMin+i*Di : GRIB_NOTDEF;}
-        inline double  getY(int j) const   { return ok ? latMin+j*Dj : GRIB_NOTDEF;}
-        
+        inline double  getX(int i) const   { return ok ? Lo1+i*Di : GRIB_NOTDEF;}
+        inline double  getY(int j) const   { return ok ? La1+j*Dj : GRIB_NOTDEF;}
+
         double  getLatMin() const   { return latMin;}
         double  getLonMin() const   { return lonMin;}
         double  getLatMax() const   { return latMax;}
@@ -112,11 +112,11 @@ class GribRecord
         // La valeur est-elle définie (grille �  trous) ?
         inline bool   hasValue(int i, int j) const;
         bool getIsFull() {return isFull; }
-        
+
         // Date de référence (création du fichier)
         time_t getRecordRefDate () const         { return refDate; }
         const char* getStrRecordRefDate () const { return strRefDate; }
-        
+
         // Date courante des prévisions
         time_t getRecordCurrentDate () const     { return curDate; }
 
@@ -163,11 +163,9 @@ class GribRecord
         zuchar NV, PV;
         zuchar gridType;
         zuint  Ni, Nj;
-        //double La1, Lo1, La2, Lo2;
+        double La1, Lo1, La2, Lo2;
         double latMin, lonMin, latMax, lonMax;
-        double Di, Dj;        
-        double savLatMin, savLonMin, savLatMax, savLonMax;
-        double savDi, savDj;
+        double Di, Dj;
         zuchar resolFlags, scanFlags;
         bool  hasDiDj;
         bool  isEarthSpheric;
@@ -192,7 +190,7 @@ class GribRecord
         zuint  nbBitsInPack;
         double  *data;
         // SECTION 5: END SECTION (ES)
-        
+
         //---------------------------------------------
         // Lecture des données
         //---------------------------------------------
@@ -212,19 +210,16 @@ class GribRecord
         zuint  readInt2(ZUFILE* file);
         zuint  readInt3(ZUFILE* file);
         double readFloat4(ZUFILE* file);
-        
+
         zuint  readPackedBits(zuchar *buf, zuint first, zuint nbBits);
         zuint  makeInt3(zuchar a, zuchar b, zuchar c);
         zuint  makeInt2(zuchar b, zuchar c);
-        
+
         time_t makeDate(zuint year,zuint month,zuint day,zuint hour,zuint min,zuint sec);
         zuint  periodSeconds(zuchar unit, zuchar P1, zuchar P2, zuchar range);
 
         void   print();
         void   multiplyAllData(double k);
-        bool   verticalDataAreMirrored();
-        void   reverseData (char orientation);
-        void   checkOrientation ();
 
 
 };
@@ -271,17 +266,17 @@ inline bool GribRecord::isXInMap(double x) const
         a=Di;
 
     if (Di > 0)
-        return x>=lonMin && x<=(lonMax+a);
+        return x>=Lo1 && x<=(Lo2+a);
     else
-        return x>=(lonMax+a) && x<=lonMin;
+        return x>=(Lo2+a) && x<=Lo1;
 }
 //-----------------------------------------------------------------
 inline bool GribRecord::isYInMap(double y) const
 {
     if (Dj < 0)
-        return y<=latMin && y>=latMax;
+        return y<=La1 && y>=La2;
     else
-        return y>=latMin && y<=latMax;
+        return y>=La1 && y<=La2;
 }
 
 #endif

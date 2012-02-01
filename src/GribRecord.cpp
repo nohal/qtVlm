@@ -30,7 +30,7 @@ Copyright (C) 2008 - Jacques Zaninetti - http://zygrib.free.fr
 
 
 #include "GribRecord.h"
-		
+
 //-------------------------------------------------------------------------------
 // Constructeur de recopie
 //-------------------------------------------------------------------------------
@@ -41,13 +41,13 @@ GribRecord::GribRecord(const GribRecord &rec)
     if (rec.data != NULL) {
         int size = rec.Ni*rec.Nj;
         this->data = new double[size];
-        for (int i=0; i<size; ++i)
+        for (int i=0; i<size; i++)
             this->data[i] = rec.data[i];
     }
     if (rec.BMSbits != NULL) {
         int size = rec.sectionSize3-6;
         this->BMSbits = new zuchar[size];
-        for (int i=0; i<size; ++i)
+        for (int i=0; i<size; i++)
             this->BMSbits[i] = rec.BMSbits[i];
     }
 }
@@ -61,9 +61,9 @@ GribRecord::GribRecord(ZUFILE* file, int id_)
     eof     = false;
     isFull = false;
     knownData = true;
-    
+
     ok = readGribSection0_IS(file);
-    
+
     if (ok) {
         ok = readGribSection1_PDS(file);
         zu_seek(file, fileOffset1+sectionSize1, SEEK_SET);
@@ -87,119 +87,10 @@ GribRecord::GribRecord(ZUFILE* file, int id_)
         zu_seek(file, seekStart+totalSize, SEEK_SET);
     }
 
-    checkOrientation ();
-
     if (ok) {
         translateDataType();
         setDataType(dataType);
     }
-}
-void  GribRecord::checkOrientation ()
-{
-        if (!ok || !data || latMin==latMax  ||  lonMin==lonMax
-                || Ni<=1 || Nj<=1
-        ) {
-                ok = false;
-                return;
-        }
-        double v;
-        if (lonMin > lonMax)
-        {
-            reverseData ('H');
-            v=lonMin;  lonMin=lonMax;  lonMax=v;
-            Di = fabs(Di);
-        }
-        if (latMin > latMax)
-        {
-                //printf("GribRecord::checkOrientation (): ymin>ymax => must reverse data\n");
-                reverseData ('V');
-                v=latMin;  latMin=latMax;  latMax=v;
-                Dj = fabs(Dj);
-        }
-
-    while (lonMin<=-180) {
-        lonMin += 360.0;
-        lonMax += 360.0;
-    }
-
-        if (verticalDataAreMirrored())
-        {
-                //printf("GribRecord::checkOrientation (): AMBIGUOUS FILE => must reverse data\n");
-                reverseData ('V');
-                Dj = fabs(Dj);
-        }
-}
-void GribRecord::reverseData (char orientation) // orientation = 'H' or 'V'
-{
-        zuint i, j, i1, j1, i2, j2;
-        double v;
-        if (orientation == 'H')
-        {
-                for (j=0; j<Nj; j++) {
-                        for (i1=0,i2=Ni-1;  i1<i2;  i1++,i2--) // Reverse line j
-                        {
-                                v = data [j*Ni+i1];
-                                data [j*Ni+i1] = data [j*Ni+i2];
-                                data [j*Ni+i2] = v;
-                        }
-                }
-        }
-        else if (orientation == 'V')
-        {
-                for (i=0; i<Ni; i++) {
-                        for (j1=0,j2=Nj-1;  j1<j2;  j1++,j2--) // Reverse row i
-                        {
-                                v = data [j1*Ni+i];
-                                data [j1*Ni+i] = data [j2*Ni+i];
-                                data [j2*Ni+i] = v;
-                        }
-                }
-        }
-}
-bool GribRecord::verticalDataAreMirrored() {
-        //---------------------------------------------
-        // Malformed Maxsea grib file ?
-        //---------------------------------------------
-        if (    (idCenter==7 && idModel==96 && idGrid==4)   // same ident than NOAA
-             || (idCenter==7 && idModel==81 && idGrid==4)	// 2nd ident values
-             || (idCenter==7 && idModel==96 && idGrid==3)	// "oceanic" model
-             || (idCenter==7 && idModel==88 && idGrid==233)	// "oceanic" model
-             || (idCenter==255 && idModel==255 && idGrid==255)	// "oceanic" model: tide current
-        ) {
-                if ( ! hasDiDj
-                        && savLonMin < savLonMax
-                        && savLatMin > savLatMax
-                        && Di>0  && Dj>0
-                        && isScanIpositive
-                        && !isScanJpositive
-                   )
-                {
-                        //verticalOrientationIsAmbiguous = true;
-                        return true;
-                }
-        }
-        //---------------------------------------------
-        // Malformed Meteorem (Scannav) grib file ?
-        //---------------------------------------------
-        else if (    (idCenter==59 && idModel==78 && idGrid==255)
-        ) {
-                if ( ! hasDiDj
-                        && savLonMin < savLonMax
-                        && savLatMin < savLatMax
-                        && Di>0  && Dj>0
-                        && isScanIpositive
-                        && !isScanJpositive
-                   )
-                {
-                        //verticalOrientationIsAmbiguous = true;
-                        return true;
-                }
-        }
-        else {
-                //print ("verticalDataAreMirrored()");
-        }
-
-        return false;
 }
 
 void  GribRecord::translateDataType()
@@ -287,7 +178,7 @@ void  GribRecord::translateDataType()
 
         }
         //---------------
-        //PredictWinds
+        //PredictWind
         //---------------
         else if (idCenter==255 && idModel==1 && idGrid==255)
         {
@@ -322,8 +213,8 @@ void GribRecord::print()
 
 void  GribRecord::multiplyAllData(double k)
 {
-        for (zuint j=0; j<Nj; ++j) {
-                for (zuint i=0; i<Ni; ++i)
+        for (zuint j=0; j<Nj; j++) {
+                for (zuint i=0; i<Ni; i++)
                 {
                         if (hasValue(i,j)) {
                                 data[j*Ni+i] *= k;
@@ -334,15 +225,15 @@ void  GribRecord::multiplyAllData(double k)
 //------------------------------------------------------------------------------
 void  GribRecord::setDataType(const zuchar t)
 {
-	dataType = t;
-	dataKey = makeKey(dataType, levelType, levelValue);
+        dataType = t;
+        dataKey = makeKey(dataType, levelType, levelValue);
 }
 //------------------------------------------------------------------------------
 std::string GribRecord::makeKey(int dataType,int levelType,int levelValue)
 {   // Make data type key  sample:'11-100-850'
-	char ktmp[32];
-	snprintf(ktmp, 32, "%d-%d-%d", dataType, levelType, levelValue);
-	return std::string(ktmp);
+        char ktmp[32];
+        snprintf(ktmp, 32, "%d-%d-%d", dataType, levelType, levelValue);
+        return std::string(ktmp);
 }
 //-----------------------------------------
 GribRecord::~GribRecord()
@@ -367,11 +258,11 @@ bool GribRecord::readGribSection0_IS(ZUFILE* file) {
     char strgrib[4];
     fileOffset0 = zu_tell(file);
 
-	// Cherche le 1er 'G'
-	while ( (zu_read(file, strgrib, 1) == 1)
-		   		&&  (strgrib[0] != 'G') )
-	{ }
-	
+        // Cherche le 1er 'G'
+        while ( (zu_read(file, strgrib, 1) == 1)
+                                &&  (strgrib[0] != 'G') )
+        { }
+
     if (strgrib[0] != 'G') {
         ok = false;
         eof = true;
@@ -418,19 +309,19 @@ bool GribRecord::readGribSection1_PDS(ZUFILE* file) {
     idGrid   = data1[6];
     hasGDS = (data1[7]&128)!=0;
     hasBMS = (data1[7]&64)!=0;
-    
+
     dataType = data1[8];	 // octet 9 = parameters and units
-	levelType = data1[9];
-	levelValue = makeInt2(data1[10],data1[11]);
+        levelType = data1[9];
+        levelValue = makeInt2(data1[10],data1[11]);
 
     refyear   = (data1[24]-1)*100+data1[12];
     refmonth  = data1[13];
     refday    = data1[14];
     refhour   = data1[15];
     refminute = data1[16];
-    
+
     refDate = makeDate(refyear,refmonth,refday,refhour,refminute,0);
-	sprintf(strRefDate, "%04d-%02d-%02d %02d:%02d", refyear,refmonth,refday,refhour,refminute);
+        sprintf(strRefDate, "%04d-%02d-%02d %02d:%02d", refyear,refmonth,refday,refhour,refminute);
 
     periodP1  = data1[18];
     periodP2  = data1[19];
@@ -438,8 +329,8 @@ bool GribRecord::readGribSection1_PDS(ZUFILE* file) {
     periodsec = periodSeconds(data1[17],data1[18],data1[19],timeRange);
     curDate = makeDate(refyear,refmonth,refday,refhour,refminute,periodsec);
 
-//if (dataType == GRB_PRECIP_TOT) printf("P1=%d p2=%d\n", periodP1,periodP2);    
-    
+//if (dataType == GRB_PRECIP_TOT) printf("P1=%d p2=%d\n", periodP1,periodP2);
+
     int decim;
     decim = (int)(((((zuint)data1[26]&0x7F)<<8)+(zuint)data1[27])&0x7FFF);
     if (data1[26]&0x80)
@@ -465,9 +356,9 @@ bool GribRecord::readGribSection2_GDS(ZUFILE* file) {
         return 0;
     fileOffset2 = zu_tell(file);
     sectionSize2 = readInt3(file);  // byte 1-2-3
-    NV = readChar(file);	    // byte 4
-    PV = readChar(file); 	    // byte 5
-    gridType = readChar(file); 	    // byte 6
+    NV = readChar(file);			// byte 4
+    PV = readChar(file); 			// byte 5
+    gridType = readChar(file); 		// byte 6
 
     if (gridType != 0
                 // && gridType != 4
@@ -476,26 +367,31 @@ bool GribRecord::readGribSection2_GDS(ZUFILE* file) {
         ok = false;
     }
 
-    Ni  = readInt2(file);                       // byte 7-8
-    Nj  = readInt2(file);                       // byte 9-10
-    latMin = readSignedInt3(file)/1000.0;	// byte 11-12-13
-    lonMin = readSignedInt3(file)/1000.0;	// byte 14-15-16
-    resolFlags = readChar(file);                // byte 17
-    latMax = readSignedInt3(file)/1000.0;	// byte 18-19-20
-    lonMax = readSignedInt3(file)/1000.0;	// byte 21-22-23
-        savLatMin = latMin;
-        savLatMax = latMax;
-        savLonMin = lonMin;
-        savLonMax = lonMax;
+    Ni  = readInt2(file);				// byte 7-8
+    Nj  = readInt2(file);				// byte 9-10
+    La1 = readSignedInt3(file)/1000.0;	// byte 11-12-13
+    Lo1 = readSignedInt3(file)/1000.0;	// byte 14-15-16
+    resolFlags = readChar(file);		// byte 17
+    La2 = readSignedInt3(file)/1000.0;	// byte 18-19-20
+    Lo2 = readSignedInt3(file)/1000.0;	// byte 21-22-23
+
+    if (Lo1>=0 && Lo1<=180 && Lo2<0) {
+        Lo2 += 360.0;    // cross the 180 deg meridien,beetwen alaska and russia
+    }
 
     Di  = readSignedInt2(file)/1000.0;	// byte 24-25
     Dj  = readSignedInt2(file)/1000.0;	// byte 26-27
-        savDi = Di;
-        savDj = Dj;
+    qWarning()<<"previous Di,Dj="<<Di<<Dj;
 
-    while ( lonMin> lonMax   &&  Di >0) {   // horizontal size > 360 deg
-        lonMin -= 360.0;
+    while ( Lo1> Lo2   &&  Di >0) {   // horizontal size > 360 Â°
+        Lo1 -= 360.0;
     }
+
+    double val=Lo2+Di;
+    while(val>=360) val-=360;
+    if(val==Lo1)
+        isFull=true;
+
     hasDiDj = (resolFlags&0x80) !=0;
     isEarthSpheric = (resolFlags&0x40) ==0;
     isUeastVnorth =  (resolFlags&0x08) ==0;
@@ -505,18 +401,41 @@ bool GribRecord::readGribSection2_GDS(ZUFILE* file) {
     isScanJpositive = (scanFlags&0x40) !=0;
     isAdjacentI     = (scanFlags&0x20) ==0;
 
-
+        if (Lo2 > Lo1) {
+            lonMin = Lo1;
+            lonMax = Lo2;
+        }
+        else {
+            lonMin = Lo2;
+            lonMax = Lo1;
+        }
+        if (La2 > La1) {
+            latMin = La1;
+            latMax = La2;
+        }
+        else {
+            latMin = La2;
+            latMax = La1;
+        }
         if (Ni<=1 || Nj<=1) {
                 erreur("Record %d: Ni=%d Nj=%d",id,Ni,Nj);
                 ok = false;
         }
         else {
-                Di = (lonMax-lonMin) / (Ni-1);
-                Dj = (latMax-latMin) / (Nj-1);
+                Di = (Lo2-Lo1) / (Ni-1);
+                Dj = (La2-La1) / (Nj-1);
+                qWarning()<<"new Di,Dj="<<Di<<Dj;
         }
-// printf ("Ni=%d Nj=%d\n", Ni, Nj);
-//print ("readGribSection2_GDS");
 
+if (false) {
+printf("====\n");
+printf("Lo1=%f Lo2=%f    La1=%f La2=%f\n", Lo1,Lo2,La1,La2);
+printf("Ni=%d Nj=%d\n", Ni,Nj);
+printf("hasDiDj=%d Di,Dj=(%f %f)\n", hasDiDj, Di,Dj);
+printf("hasBMS=%d\n", hasBMS);
+printf("isScanIpositive=%d isScanJpositive=%d isAdjacentI=%d\n",
+                        isScanIpositive,isScanJpositive,isAdjacentI );
+}
     return ok;
 }
 //----------------------------------------------
@@ -540,7 +459,7 @@ bool GribRecord::readGribSection3_BMS(ZUFILE* file) {
         erreur("Record %d: out of memory",id);
         ok = false;
     }
-    for (zuint i=0; i<sectionSize3-6; ++i) {
+    for (zuint i=0; i<sectionSize3-6; i++) {
         BMSbits[i] = readChar(file);
     }
     return ok;
@@ -551,7 +470,7 @@ bool GribRecord::readGribSection3_BMS(ZUFILE* file) {
 bool GribRecord::readGribSection4_BDS(ZUFILE* file) {
     fileOffset4  = zu_tell(file);
     sectionSize4 = readInt3(file);  // byte 1-2-3
-    
+
     zuchar flags  = readChar(file);			// byte 4
     scaleFactorE = readSignedInt2(file);	// byte 5-6
     refValue     = readFloat4(file);		// byte 7-8-9-10
@@ -576,7 +495,7 @@ bool GribRecord::readGribSection4_BDS(ZUFILE* file) {
         erreur("Record %d: need double values",id);
         ok = false;
     }
-    
+
     if (!ok) {
         return ok;
     }
@@ -587,7 +506,7 @@ bool GribRecord::readGribSection4_BDS(ZUFILE* file) {
         erreur("Record %d: out of memory",id);
         ok = false;
     }
-    
+
     zuint  startbit  = 0;
     int  datasize = sectionSize4-11;
     zuchar *buf = new zuchar[datasize+4];  // +4 pour simplifier les dÃ©calages ds readPackedBits
@@ -608,8 +527,8 @@ bool GribRecord::readGribSection4_BDS(ZUFILE* file) {
     zuint i, j, x;
     int ind;
     if (isAdjacentI) {
-        for (j=0; j<Nj; ++j) {
-            for (i=0; i<Ni; ++i) {
+        for (j=0; j<Nj; j++) {
+            for (i=0; i<Ni; i++) {
                 if (!hasDiDj && !isScanJpositive) {
                     ind = (Nj-1 -j)*Ni+i;
                 }
@@ -628,8 +547,8 @@ bool GribRecord::readGribSection4_BDS(ZUFILE* file) {
         }
     }
     else {
-        for (i=0; i<Ni; ++i) {
-            for (j=0; j<Nj; ++j) {
+        for (i=0; i<Ni; i++) {
+            for (j=0; j<Nj; j++) {
                 if (!hasDiDj && !isScanJpositive) {
                     ind = (Nj-1 -j)*Ni+i;
                 }
@@ -767,7 +686,7 @@ zuint GribRecord::readPackedBits(zuchar *buf, zuint first, zuint nbBits)
 {
     zuint oct = first / 8;
     zuint bit = first % 8;
-    
+
     zuint val = (buf[oct]<<24) + (buf[oct+1]<<16) + (buf[oct+2]<<8) + (buf[oct+3]);
     val = val << bit;
     val = val >> (32-nbBits);
@@ -857,17 +776,17 @@ bool GribRecord::getValue_TWSA(double px, double py,double * a00,double * a01,do
 
     // 00 10      point is in a square
     // 01 11
-    int i0 = (int) ((px-lonMin)/Di);  // point 00
-    int j0 = (int) ((py-latMin)/Dj);
+    int i0 = (int) ((px-Lo1)/Di);  // point 00
+    int j0 = (int) ((py-La1)/Dj);
     int j0_init=j0;
     int i1;
 
-    if(isFull && px>=lonMax)
+    if(isFull && px>=Lo2)
         i1=0;
     else
         i1=i0+1;
 
-    if(((py-latMin)/Dj)-j0==0.0)
+    if(((py-La1)/Dj)-j0==0.0)
     {
         if(debug)
             qWarning() << "on grib point";
@@ -878,7 +797,7 @@ bool GribRecord::getValue_TWSA(double px, double py,double * a00,double * a01,do
         if(Dj<0)
         {
             sigDj=-1;
-            ++j0;
+            j0++;
         }
         else
             sigDj=1;
@@ -886,20 +805,20 @@ bool GribRecord::getValue_TWSA(double px, double py,double * a00,double * a01,do
 
     if(debug)
     {
-        qWarning() << "Lo1=" << lonMin << ", La1=" << latMin << ", Di=" << Di << ", Dj" << Dj;
+        qWarning() << "Lo1=" << Lo1 << ", La1=" << La1 << ", Di=" << Di << ", Dj" << Dj;
         qWarning() << "Rec date = " << this->getRecordCurrentDate();
         qWarning() << "px=" << px << ", py=" << py << ", i0=" << i0 << ", j0=" << j0 << ", i1=" << i1 << ", j1=" << j0+sigDj;
     }
 
     int nbval = 0;     // how many values in grid ?
     if (hasValue(i0,   j0))
-        ++nbval ;
+        nbval ++;
     if (hasValue(i1, j0))
-        ++nbval ;
+        nbval ++;
     if (hasValue(i0,   j0+sigDj))
-        ++nbval ;
+        nbval ++;
     if (hasValue(i1, j0+sigDj))
-        ++nbval ;
+        nbval ++;
 
     if(debug)
         qWarning() << "Nb Val =" << nbval;
@@ -939,17 +858,17 @@ double GribRecord::getInterpolatedValue(double px, double py, bool numericalInte
         return GRIB_NOTDEF;
     }
     if (!isPointInMap(px,py)) {
-        px += 360.0;               // tour du monde a droite ?
+        px += 360.0;               // tour du monde Ã  droite ?
         if (!isPointInMap(px,py)) {
-            px -= 2*360.0;              // tour du monde a gauche ?
+            px -= 2*360.0;              // tour du monde Ã  gauche ?
             if (!isPointInMap(px,py)) {
                 return GRIB_NOTDEF;
             }
         }
     }
     double pi, pj;     // coord. in grid unit
-    pi = (px-lonMin)/Di;
-    pj = (py-latMin)/Dj;
+    pi = (px-Lo1)/Di;
+    pj = (py-La1)/Dj;
 
     // 00 10      point is in a square
     // 01 11
@@ -959,13 +878,13 @@ double GribRecord::getInterpolatedValue(double px, double py, bool numericalInte
     bool h00,h01,h10,h11;
     int nbval = 0;     // how many values in grid ?
     if ((h00=hasValue(i0,   j0)))
-        ++nbval ;
+        nbval ++;
     if ((h10=hasValue(i0+1, j0)))
-        ++nbval ;
+        nbval ++;
     if ((h01=hasValue(i0,   j0+1)))
-        ++nbval ;
+        nbval ++;
     if ((h11=hasValue(i0+1, j0+1)))
-        ++nbval ;
+        nbval ++;
 
     if (nbval <3) {
         return GRIB_NOTDEF;

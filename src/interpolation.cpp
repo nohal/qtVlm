@@ -593,20 +593,44 @@ void interpolation::get_wind_info_latlong_hybrid_compute(double longitude,  doub
     }
     d_lat = latitude + 90; /* is there a +90 drift? see grib*/
 
-    if(debug)
-    {
-        qWarning("Donnée IN (step=%f)\n",lat_step);
-        qWarning("Lat= %f (=> %f ), Lon= %f (=> %f )\n",latitude,d_lat,longitude,d_long);
-        qWarning("grid : lat= %f, Lon= %f\n",floor(d_lat),floor(d_long));
-        qWarning("P0: u= %f, v= %f\n",u0,v0);
-        qWarning("P1: u= %f, v= %f\n",u1,v1);
-        qWarning("P2: u= %f, v= %f\n",u2,v2);
-        qWarning("P3: u= %f, v= %f\n",u3,v3);
-    }
-
+    double ratioLat,ratioLon;
+#if 0
     d_long = (d_long-gridOriginLon)/lon_step;
     d_lat = (d_lat-gridOriginLat)/lat_step;
-
+    ratioLat=d_lat - floor(d_lat);
+    ratioLon=d_long - floor(d_long);
+#else
+    d_long = d_long / lon_step;
+    d_lat = d_lat / lat_step;
+    ratioLat=d_lat - floor(d_lat);
+    ratioLon=d_long - floor(d_long);
+#endif
+#if 1
+    int i0 = (int) ((longitude-gridOriginLon)/lon_step);  // point 00
+    int j0 = (int) ((latitude-gridOriginLat)/lat_step);
+    if(((latitude-gridOriginLat)/lat_step)-j0!=0.0)
+    {
+        if(lat_step<0)
+        {
+            ++j0;
+        }
+    }
+    d_long=gridOriginLon+(i0*lon_step);
+    d_lat=gridOriginLat+(j0*lat_step);
+    ratioLon=(longitude-d_long)/lon_step;
+    ratioLat=(latitude-d_lat)/lat_step;
+#endif
+    if(debug)
+    {
+        qWarning("Donnee IN (step=%fx%f)",lat_step,lon_step);
+        qWarning("Lat= %f (=> %f ), Lon= %f (=> %f )",latitude,d_lat,longitude,d_long);
+        qWarning("grid : Lat= %f, Lon= %f",gridOriginLat,gridOriginLon);
+        qWarning("ratios : Lat= %f, Lon= %f",ratioLat,ratioLon);
+        qWarning("P0: u0= %f, v0= %f",u0,v0);
+        qWarning("P1: u1= %f, v1= %f",u1,v1);
+        qWarning("P2: u2= %f, v2= %f",u2,v2);
+        qWarning("P3: u3= %f, v3= %f",u3,v3);
+    }
     /*
       simple bilinear interpolation, we might factor the cos(lat) in
       the computation to tackle the shape of the pseudo square
@@ -620,19 +644,19 @@ void interpolation::get_wind_info_latlong_hybrid_compute(double longitude,  doub
     _speed_u_v(u3, v3, ro3);
 
     /* UV for geting the angle without too much hashing */
-    u01 = u0 + (u1 - u0) * (d_lat - floor(d_lat));
-    v01 = v0 + (v1 - v0) * (d_lat - floor(d_lat));
-    u23 = u2 + (u3 - u2) * (d_lat - floor(d_lat));
-    v23 = v2 + (v3 - v2) * (d_lat - floor(d_lat));
+    u01 = u0 + (u1 - u0) * ratioLat;
+    v01 = v0 + (v1 - v0) * ratioLat;
+    u23 = u2 + (u3 - u2) * ratioLat;
+    v23 = v2 + (v3 - v2) * ratioLat;
 
-    u = u01 + (u23 - u01) * (d_long - floor(d_long));
-    v = v01 + (v23 - v01) * (d_long - floor(d_long));
+    u = u01 + (u23 - u01) * ratioLon;
+    v = v01 + (v23 - v01) * ratioLon;
 
     /* now the speed part */
-    ro01 = ro0 + (ro1 - ro0) * (d_lat - floor(d_lat));
-    ro23 = ro2 + (ro3 - ro2) * (d_lat - floor(d_lat));
+    ro01 = ro0 + (ro1 - ro0) * ratioLat;
+    ro23 = ro2 + (ro3 - ro2) * ratioLat;
 
-    ro = ro01 + (ro23 - ro01) * (d_long - floor(d_long));
+    ro = ro01 + (ro23 - ro01) * ratioLon;
 
     if(debug)
     {
