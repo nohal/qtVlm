@@ -27,7 +27,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "mycentralwidget.h"
 #include "Util.h"
 #include "dataDef.h"
-
+extern int nbWarning;
 DialogGribValidation::DialogGribValidation(myCentralWidget * my_centralWidget,MainWindow * mainWindow) :  QDialog(my_centralWidget)
 {
     setupUi(this);
@@ -35,6 +35,7 @@ DialogGribValidation::DialogGribValidation(myCentralWidget * my_centralWidget,Ma
     this->my_centralWidget=my_centralWidget;
     this->mainWindow=mainWindow;
     tstamp->setText(QString().setNum(my_centralWidget->getGrib()->getCurrentDate()));
+    this->label_date->setText(QDateTime().fromTime_t(tstamp->text().toInt()).toUTC().toString("dd MMM-hh:mm:ss"));
     latitude->setText("0");
     longitude->setText("0");
     this->latitude->blockSignals(true);
@@ -90,6 +91,7 @@ void DialogGribValidation::interpolationChanged(int newMode)
 
 void DialogGribValidation::inputChanged(void)
 {
+    nbWarning=0;
     /* recompute interpolation */
     double lat,lon;
     int tstamp;
@@ -112,8 +114,10 @@ void DialogGribValidation::inputChanged(void)
     if(!ok)
     {
         this->vitesse->setText("Err tstamp");
+        this->label_date->setText("Err tstamp");
         return;
     }
+    this->label_date->setText(QDateTime().fromTime_t(this->tstamp->text().toInt()).toUTC().toString("dd MMM-hh:mm:ss"));
     //qWarning() << "Get new param: " << lat << "," << lon << " - " << tstamp;
 
     if(!this->my_centralWidget->getGrib())

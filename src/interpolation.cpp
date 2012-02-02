@@ -21,6 +21,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <QDebug>
 
 #include <complex>
+extern int nbWarning;
 using namespace std;
 typedef complex<double> dcmplx;
 
@@ -593,12 +594,12 @@ void interpolation::get_wind_info_latlong_hybrid_compute(double longitude,  doub
     }
     d_lat = latitude + 90; /* is there a +90 drift? see grib*/
 
-    double ratioLat,ratioLon;
-#if 0
+    double ratioLat,ratioLon,ratioLonDebug,ratioLatDebug;
+#if 1
     d_long = (d_long-gridOriginLon)/lon_step;
     d_lat = (d_lat-gridOriginLat)/lat_step;
-    ratioLat=d_lat - floor(d_lat);
-    ratioLon=d_long - floor(d_long);
+    ratioLatDebug=d_lat - floor(d_lat);
+    ratioLonDebug=d_long - floor(d_long);
 #else
     d_long = d_long / lon_step;
     d_lat = d_lat / lat_step;
@@ -606,8 +607,8 @@ void interpolation::get_wind_info_latlong_hybrid_compute(double longitude,  doub
     ratioLon=d_long - floor(d_long);
 #endif
 #if 1
-    int i0 = (int) ((longitude-gridOriginLon)/lon_step);  // point 00
-    int j0 = (int) ((latitude-gridOriginLat)/lat_step);
+    int i0 = qRound ((longitude-gridOriginLon)/lon_step);  // point 00
+    int j0 = qRound ((latitude-gridOriginLat)/lat_step);
     if(((latitude-gridOriginLat)/lat_step)-j0!=0.0)
     {
         if(lat_step<0)
@@ -619,6 +620,14 @@ void interpolation::get_wind_info_latlong_hybrid_compute(double longitude,  doub
     d_lat=gridOriginLat+(j0*lat_step);
     ratioLon=(longitude-d_long)/lon_step;
     ratioLat=(latitude-d_lat)/lat_step;
+    if(qAbs(qRound(ratioLon*10e7))==0)
+        ratioLon=0;
+    if(qAbs(qRound(ratioLat*10e7))==0)
+        ratioLat=0;
+    if(ratioLon<0)
+        ratioLon=1.0+ratioLon;
+    if(ratioLat<0)
+        ratioLat=1.0+ratioLat;
 #endif
     if(debug)
     {
@@ -630,6 +639,25 @@ void interpolation::get_wind_info_latlong_hybrid_compute(double longitude,  doub
         qWarning("P1: u1= %f, v1= %f",u1,v1);
         qWarning("P2: u2= %f, v2= %f",u2,v2);
         qWarning("P3: u3= %f, v3= %f",u3,v3);
+    }
+    if(qRound(ratioLonDebug*10e7)!=qRound(ratioLon*10e7) || qRound(ratioLatDebug*10e7)!=qRound(ratioLat*10e7))
+    {
+        ++nbWarning;
+        if(nbWarning<100)
+        {
+            qWarning("DIFFERENCE in RATIOS!! rLonD=%.7f rLon=%.7f rLatD=%.7f rLat=%.7f",ratioLonDebug,ratioLon,ratioLatDebug,ratioLat);
+            qWarning()<<qAbs(ratioLon-ratioLonDebug)<<qAbs(ratioLat-ratioLatDebug);
+            qWarning("Donnee IN (step=%fx%f)",lat_step,lon_step);
+            qWarning("Lat= %f (=> %f ), Lon= %f (=> %f )",latitude,d_lat,longitude,d_long);
+            qWarning("grid : Lat= %f, Lon= %f",gridOriginLat,gridOriginLon);
+            qWarning("ratios : Lat= %f, Lon= %f",ratioLat,ratioLon);
+            qWarning("i0= %d, j0= %d",i0,j0);
+            ratioLon=(longitude-d_long)/lon_step;
+            qWarning()<<ratioLon<<qAbs(qRound(ratioLon*10e7));
+        }
+        else if(nbWarning==100)
+            qWarning()<<"stopping qWarning() messages concerning ratios";
+
     }
     /*
       simple bilinear interpolation, we might factor the cos(lat) in

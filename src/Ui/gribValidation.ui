@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>438</width>
-    <height>209</height>
+    <height>281</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -17,7 +17,7 @@
    <property name="geometry">
     <rect>
      <x>10</x>
-     <y>170</y>
+     <y>220</y>
      <width>421</width>
      <height>31</height>
     </rect>
@@ -89,7 +89,7 @@
      <x>10</x>
      <y>50</y>
      <width>211</width>
-     <height>111</height>
+     <height>141</height>
     </rect>
    </property>
    <property name="title">
@@ -101,7 +101,7 @@
       <x>10</x>
       <y>20</y>
       <width>191</width>
-      <height>76</height>
+      <height>82</height>
      </rect>
     </property>
     <layout class="QGridLayout" name="gridLayout">
@@ -137,6 +137,19 @@
      </item>
     </layout>
    </widget>
+   <widget class="QLabel" name="label_date">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>110</y>
+      <width>191</width>
+      <height>20</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>TextLabel</string>
+    </property>
+   </widget>
   </widget>
   <widget class="QGroupBox" name="groupBox_2">
    <property name="geometry">
@@ -156,7 +169,7 @@
       <x>10</x>
       <y>20</y>
       <width>177</width>
-      <height>49</height>
+      <height>53</height>
      </rect>
     </property>
     <layout class="QGridLayout" name="gridLayout_2">
@@ -223,7 +236,7 @@
      <x>10</x>
      <y>10</y>
      <width>421</width>
-     <height>22</height>
+     <height>24</height>
     </rect>
    </property>
    <layout class="QHBoxLayout" name="horizontalLayout">

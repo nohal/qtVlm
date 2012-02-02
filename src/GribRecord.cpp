@@ -381,7 +381,6 @@ bool GribRecord::readGribSection2_GDS(ZUFILE* file) {
 
     Di  = readSignedInt2(file)/1000.0;	// byte 24-25
     Dj  = readSignedInt2(file)/1000.0;	// byte 26-27
-    qWarning()<<"previous Di,Dj="<<Di<<Dj;
 
     while ( Lo1> Lo2   &&  Di >0) {   // horizontal size > 360 °
         Lo1 -= 360.0;
@@ -424,7 +423,6 @@ bool GribRecord::readGribSection2_GDS(ZUFILE* file) {
         else {
                 Di = (Lo2-Lo1) / (Ni-1);
                 Dj = (La2-La1) / (Nj-1);
-                qWarning()<<"new Di,Dj="<<Di<<Dj;
         }
 
 if (false) {
@@ -509,7 +507,7 @@ bool GribRecord::readGribSection4_BDS(ZUFILE* file) {
 
     zuint  startbit  = 0;
     int  datasize = sectionSize4-11;
-    zuchar *buf = new zuchar[datasize+4];  // +4 pour simplifier les décalages ds readPackedBits
+    zuchar *buf = new zuchar[datasize+4];  // +4 pour simplifier les decalages ds readPackedBits
     if (!buf) {
         erreur("Record %d: out of memory",id);
         ok = false;
@@ -776,8 +774,8 @@ bool GribRecord::getValue_TWSA(double px, double py,double * a00,double * a01,do
 
     // 00 10      point is in a square
     // 01 11
-    int i0 = (int) ((px-Lo1)/Di);  // point 00
-    int j0 = (int) ((py-La1)/Dj);
+     int i0 = (int) ((px-Lo1)/Di);  // point 00
+     int j0 = (int) ((py-La1)/Dj);
     int j0_init=j0;
     int i1;
 
@@ -872,8 +870,8 @@ double GribRecord::getInterpolatedValue(double px, double py, bool numericalInte
 
     // 00 10      point is in a square
     // 01 11
-    int i0 = (int) pi;  // point 00
-    int j0 = (int) pj;
+    int i0 = qRound (pi);  // point 00
+    int j0 = qRound (pj);
 
     bool h00,h01,h10,h11;
     int nbval = 0;     // how many values in grid ?

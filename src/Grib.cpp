@@ -38,7 +38,7 @@ Copyright (C) 2008 - Jacques Zaninetti - http://zygrib.free.fr
 
 #include "interpolation.h"
 
-
+int nbWarning;
 
 //-------------------------------------------------------------------------------
 Grib::Grib()
@@ -57,6 +57,7 @@ Grib::Grib(const Grib &model)
 void Grib::initNewGrib()
 {
     ok = false;
+    nbWarning=0;
 
     QString interpol_name[4] = { "UKN", "TWSA", "selecive TWSA", "Hybride" };
 
