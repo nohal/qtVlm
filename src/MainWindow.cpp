@@ -533,6 +533,17 @@ MainWindow::MainWindow(int w, int h, QWidget *parent)
     //slot_deleteProgress();
 
     QList<Player*> players=my_centralWidget->getPlayers();
+
+#ifdef __REAL_BOAT_ONLY
+    if(players.count()==0) {
+        Player * newPlayer = new Player("MyBoat","",BOAT_REAL,0,"MyBoat",proj,this,my_centralWidget,my_centralWidget->getInet());
+        my_centralWidget->slot_addPlayer_list(newPlayer);
+        players=my_centralWidget->getPlayers();
+    }
+
+#endif
+
+
     if(players.count()==1)
     {
         myBoard->playerChanged(players.at(0));
@@ -555,6 +566,7 @@ MainWindow::MainWindow(int w, int h, QWidget *parent)
         Util::setFontDialog(menuBar);
         return;
     }
+
 
 
     bool res;

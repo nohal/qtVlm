@@ -284,6 +284,9 @@ MenuBar::MenuBar(QWidget *parent)
     //-------------------------------------
     menuBoat = new QMenu(tr("Bateau"));
         acVLMParamPlayer = addAction(menuBoat,tr("Gestion des comptes"),"","","");
+ #ifdef __REAL_BOAT_ONLY
+        acVLMParamPlayer->setEnabled(false);
+#endif
         acVLMParamBoat = addAction(menuBoat,tr("Parametres du/des bateaux"),"","","");
         acRace = addAction(menuBoat,tr("Parametres des courses"),"","","");
         acVLMSync = addAction(menuBoat,tr("VLM Sync"),"","","");
