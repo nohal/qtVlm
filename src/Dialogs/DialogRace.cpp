@@ -35,6 +35,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <QDesktopWidget>
 #include "settings.h"
 #include <QDebug>
+#include <QInputDialog>
 
 #define RACE_NO_REQUEST     0
 #define RACE_LIST_BOAT      1
@@ -135,6 +136,7 @@ DialogRace::DialogRace(MainWindow * main,myCentralWidget * parent, inetConnexion
     waitBox = new QMessageBox(QMessageBox::Information,tr("Parametrage des courses"),
                               tr("Chargement des courses et des bateaux"));
     waitBox->setStandardButtons(QMessageBox::NoButton);
+    connect(this->filterReal,SIGNAL(clicked()),this,SLOT(slotFilterReal()));
 }
 
 DialogRace::~DialogRace()
@@ -215,6 +217,7 @@ void DialogRace::initList(QList<boatVLM*> & boat_list_ptr,QList<raceData*> & rac
             ptr->showWhat=SHOW_MY_LIST;
             ptr->showReal=false;
             ptr->hasReal=false;
+            ptr->realFilter.clear();
             param_list.append(ptr);
         }
     }
@@ -242,6 +245,7 @@ void DialogRace::initList(QList<boatVLM*> & boat_list_ptr,QList<raceData*> & rac
         this->buttonMySelection->setEnabled(false);
         this->buttonNone->setEnabled(false);
         this->buttonReal->setEnabled(false);
+        this->filterReal->setEnabled(false);
     }
     getNextRace();
 }
@@ -281,6 +285,7 @@ void DialogRace::noneToggle(bool b)
 void DialogRace::showRealToggle(bool b)
 {
     param_list[numRace]->showReal=buttonReal->isChecked();
+    this->filterReal->setEnabled(buttonReal->isChecked());
 }
 
 void DialogRace::itemChanged(QStandardItem * item)
@@ -345,6 +350,7 @@ void DialogRace::getNextRace()
     currentWidthNSZ=2;
     currentShowReal=false;
     currentHasReal=false;
+    currentFilterReal.clear();
 
     for(int i=0;i<race_list->size();i++)
         if(race_list->at(i)->idrace==param_list[currentRace]->id)
@@ -356,6 +362,7 @@ void DialogRace::getNextRace()
             currentColorNSZ=race_list->at(i)->colorNSZ;
             currentShowWhat=race_list->at(i)->showWhat;
             currentShowReal=race_list->at(i)->showReal;
+            currentFilterReal=race_list->at(i)->realFilter;
             currentHasReal=race_list->at(i)->hasReal;
             break;
         }
@@ -433,6 +440,7 @@ void DialogRace::requestFinished (QByteArray res_byte)
             param_list[currentRace]->colorNSZ=currentColorNSZ;
             param_list[currentRace]->showWhat=currentShowWhat;
             param_list[currentRace]->showReal=currentShowReal;
+            param_list[currentRace]->realFilter=currentFilterReal;
             param_list[currentRace]->hasReal=currentHasReal;
             QString page;
             QTextStream(&page)
@@ -481,9 +489,12 @@ void DialogRace::requestFinished (QByteArray res_byte)
             {
                 param_list[currentRace]->showReal=false;
                 param_list[currentRace]->hasReal=false;
+                param_list[currentRace]->realFilter.clear();
             }
             else
+            {
                 param_list[currentRace]->hasReal=true;
+            }
             getMissingFlags();
             break;
         }
@@ -495,7 +506,7 @@ void DialogRace::requestFinished (QByteArray res_byte)
                 img.save("img/flags/"+imgFileName);
                 //qWarning()<<"saving flag"<<imgFileName;
             }
-            jj++;
+            ++jj;
             getMissingFlags();
             break;
         }
@@ -590,6 +601,7 @@ void DialogRace::saveData(bool save)
         ptr->latNSZ=param_list[i]->latNSZ;
         ptr->showWhat=param_list[i]->showWhat;
         ptr->showReal=param_list[i]->showReal;
+        ptr->realFilter=param_list[i]->realFilter;
         ptr->hasReal=param_list[i]->hasReal;
         race_list->append(ptr);
     }
@@ -849,6 +861,7 @@ void DialogRace::chgRace(int id)
         this->button10ranking->setChecked(true);
     this->buttonReal->setChecked(param_list[numRace]->showReal);
     this->buttonReal->setEnabled(param_list[numRace]->hasReal);
+    this->filterReal->setEnabled(param_list[numRace]->hasReal);
 
     verticalLayout_4->removeWidget(inputTraceColor);
     delete inputTraceColor;
@@ -867,4 +880,12 @@ void DialogRace::on_displayNSZ_clicked()
     latNSZ->setEnabled(displayNSZ->isChecked());
     nsNSZ->setEnabled(displayNSZ->isChecked());
     inputTraceColor->setEnabled(displayNSZ->isChecked());
+}
+void DialogRace::slotFilterReal()
+{
+    bool ok;
+    QString filter = QInputDialog::getText(this, tr("Filtrer les reels"),
+                                           tr("Ids (separes par ';':"),QLineEdit::Normal, param_list[numRace]->realFilter,&ok);
+    if(!ok) return;
+    param_list[numRace]->realFilter=filter;
 }

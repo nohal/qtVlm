@@ -78,6 +78,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #define COLOR_NSZ_B       "colorNSZ_B"
 #define SHOWWHAT          "showWhat"
 #define SHOWREAL          "showReal"
+#define REALFILTER        "realFilter"
 
 #define OLD_DOM_FILE_TYPE "zygVLM_config"
 #define OLD_ROOT_NAME     "zygVLM_boat"
@@ -365,6 +366,11 @@ void xml_boatData::slot_writeData(QList<Player*> & player_list,QList<raceData*> 
          tag = doc.createElement(SHOWREAL);
          group.appendChild(tag);
          t = doc.createTextNode(QString().setNum(race_data->showReal?1:0));
+         tag.appendChild(t);
+
+         tag = doc.createElement(REALFILTER);
+         group.appendChild(tag);
+         t = doc.createTextNode(race_data->realFilter);
          tag.appendChild(t);
      }
 
@@ -718,6 +724,7 @@ void xml_boatData::readRace(QDomNode node)
             double widthNSZ=2;
             int showWhat=0;
             bool showReal=false;
+            QString filter="";
             QColor colorNSZ=Qt::black;
 
             while(!subNode.isNull())
@@ -783,6 +790,14 @@ void xml_boatData::readRace(QDomNode node)
                     if(dataNode.nodeType() == QDomNode::TextNode)
                         showReal=(dataNode.toText().data().toInt()==1);
                 }
+
+                if(subNode.toElement().tagName() == REALFILTER)
+                {
+                    dataNode = subNode.firstChild();
+                    if(dataNode.nodeType() == QDomNode::TextNode)
+                        filter=(dataNode.toText().data());
+                }
+
                 subNode = subNode.nextSibling();
             }
             if(!race.isEmpty() /*&& !opp_list.isEmpty()*/)
@@ -808,6 +823,7 @@ void xml_boatData::readRace(QDomNode node)
                 race_data->widthNSZ=widthNSZ;
                 race_data->showWhat=showWhat;
                 race_data->showReal=showReal;
+                race_data->realFilter=filter;
                 emit addRace_list(race_data);
             }
             else

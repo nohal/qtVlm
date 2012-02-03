@@ -187,7 +187,10 @@ void opponent::paint(QPainter * pnt, const QStyleOptionGraphicsItem * , QWidget 
     if(!labelHidden)
     {
         if(this->isReal)
-            bgcolor=QColor(128,126,219,150);
+        {
+            bgcolor=myColor;
+            bgcolor.setAlpha(150);
+        }
         else if(this->statusVLM.toLower()=="on_coast" || this->statusVLM.toLower()=="locked")
             bgcolor=QColor(239,48,36,150);
         else
@@ -326,10 +329,10 @@ void opponent::updateName()
         str2=str2+"<tr><td>"+tr("Status VLM: ")+"</td><td>"+this->statusVLM+"</td></tr>";
         if(estimatedSpeed!=0 && false)
         {
-            str2=str2+"<tr><td>"+tr("Vitesse estimee ")+"</td><td>"+
+            str2=str2+"<tr><td>"+tr("Vitesse estimee: ")+"</td><td>"+
                  QString().sprintf("%.2f ",estimatedSpeed)+
                  tr(" nds")+"</td></tr>";
-            str2+="<tr><td>"+tr("Cap estime")+"</td><td>"+
+            str2+="<tr><td>"+tr("Cap estime: ")+"</td><td>"+
                     QString().sprintf("%.2f ",estimatedHeading)+
                     tr("deg")+"</td></tr>";
         }
@@ -344,16 +347,17 @@ void opponent::updateName()
             str2="<img src='img/boats/"+name+".png'>";
         }
         str2+="<table><tr><td>"+this->longName+"</td><td></td></tr>";
+        str2=str2+"<tr><td>"+tr("Id: ")+"</td><td>"+this->idu+"</td></tr>";
         str2=str2+"<tr><td>"+tr("Date de la position: ")+"</td><td>"+
                 QDateTime().fromTime_t(this->lastUpdate).toUTC().toString("dd MMM-hh:mm")+"</td></tr>";
         str2+="<tr><td>"+tr("Latitude:  ")+"</td><td>"+Util::pos2String(TYPE_LAT,this->lat)+"</td></tr>";
         str2+="<tr><td>"+tr("Longitude: ")+"</td><td>"+Util::pos2String(TYPE_LON,this->lon)+"</td></tr>";
         if(estimatedSpeed!=0)
         {
-            str2+="<tr><td>"+tr("Vitesse estimee ")+"</td><td>"+
+            str2+="<tr><td>"+tr("Vitesse estimee: ")+"</td><td>"+
                     QString().sprintf("%.2f ",estimatedSpeed)+
                     tr(" nds")+"</td></tr>";
-            str2+="<tr><td>"+tr("Cap estime")+"</td><td>"+
+            str2+="<tr><td>"+tr("Cap estime: ")+"</td><td>"+
                     QString().sprintf("%.2f ",estimatedHeading)+
                     tr("deg")+"</td></tr>";
         }
@@ -371,12 +375,19 @@ void opponent::updateName()
     height = qMax(fm.height()+2,10);
 
 }
-void opponent::setRealData(QString shortName, QString longName, QString desc, QString pavillon)
+void opponent::setRealData(QString shortName, QString longName, QString desc, QString pavillon, QString color)
 {
     this->name=shortName;
     this->longName=longName;
     this->desc=desc;
     this->pavillon=pavillon;
+    if(QColor::isValidColor("#"+color))
+    {
+        this->myColor.setNamedColor("#"+color);
+        QPen penTrace=QPen(myColor);
+        penTrace.setWidthF(1);
+        trace_drawing->setLinePen(penTrace);
+    }
     updateName();
     update();
 }
@@ -511,13 +522,17 @@ QString opponentList::getRaceId()
     return opponent_list[0]->getRace();
 }
 
-void opponentList::setBoatList(QString list_txt,QString race,int showWhat, bool force, bool showReal)
+void opponentList::setBoatList(QString list_txt,QString race,int showWhat, bool force, bool showReal, QString filter)
 {
     //qWarning()<<"traceCache count="<<traceCache.count();
     if(traceCache.count()>1000)
         traceCache.clear(); /*just in case*/
     this->showWhat=showWhat;
     this->showReal=showReal;
+    if(filter.isEmpty())
+        filterList.clear();
+    else
+        this->filterList=filter.split(";");
     currentRace = race;
     //qWarning() << "SetBoatList - race " << race << " - " << list_txt;
     if(!hasInet() || hasRequest())
@@ -755,6 +770,8 @@ void opponentList::requestFinished (QByteArray res_byte)
                 QVariantMap data = v.toMap();
                 bool foundIt=false;
                 int foundNb=-1;
+                if(!filterList.isEmpty() && !filterList.contains(data["idreals"].toString()))
+                    continue;
                 for(int o=opponent_list.count()-1;o>=0;--o)
                 {
                     if(!opponent_list.at(o)->getIsReal()) continue;
@@ -1094,7 +1111,8 @@ void opponentList::requestFinished (QByteArray res_byte)
             opp->setRealData(real["shortname"].toString(),
                              real["boatname"].toString(),
                              real["description"].toString(),
-                             real["flag"].toString());
+                             real["flag"].toString(),
+                             real["color"].toString());
             getNxtOppData();
             break;
         }

@@ -750,7 +750,7 @@ void MainWindow::slotUpdateOpponent(void)
         if(my_centralWidget->getRaces()[i]->idrace ==  ((boatVLM *)selectedBoat)->getRaceId())
         {
             //qWarning() << "Set1";
-            my_centralWidget->getOppList()->setBoatList(my_centralWidget->getRaces()[i]->oppList,my_centralWidget->getRaces()[i]->idrace,my_centralWidget->getRaces()[i]->showWhat,true,my_centralWidget->getRaces()[i]->showReal);
+            my_centralWidget->getOppList()->setBoatList(my_centralWidget->getRaces()[i]->oppList,my_centralWidget->getRaces()[i]->idrace,my_centralWidget->getRaces()[i]->showWhat,true,my_centralWidget->getRaces()[i]->showReal,my_centralWidget->getRaces()[i]->realFilter);
             my_centralWidget->drawNSZ(i);
             found=true;
             break;
@@ -1421,7 +1421,7 @@ void MainWindow::slotBoatUpdated(boat * upBoat,bool newRace,bool doingSync)
                         if(!my_centralWidget->getRaces()[i]->oppList.isEmpty() || my_centralWidget->getRaces()[i]->showWhat!=SHOW_MY_LIST || my_centralWidget->getRaces()[i]->showReal)
                         {
                             //qWarning() << "Set4";
-                            my_centralWidget->getOppList()->setBoatList(my_centralWidget->getRaces()[i]->oppList,my_centralWidget->getRaces()[i]->idrace,my_centralWidget->getRaces()[i]->showWhat,false,my_centralWidget->getRaces()[i]->showReal);
+                            my_centralWidget->getOppList()->setBoatList(my_centralWidget->getRaces()[i]->oppList,my_centralWidget->getRaces()[i]->idrace,my_centralWidget->getRaces()[i]->showWhat,false,my_centralWidget->getRaces()[i]->showReal,my_centralWidget->getRaces()[i]->realFilter);
                             found=true;
                         }
                         my_centralWidget->drawNSZ(i);

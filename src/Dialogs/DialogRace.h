@@ -61,6 +61,7 @@ class DialogRace : public QDialog, public Ui::race_dialog_ui, public inetClient
         void noneToggle(bool b);
         void showRealToggle(bool b);
         void NSZToggle(bool b);
+        void slotFilterReal();
 
     protected:
         void resizeEvent ( QResizeEvent * event );
@@ -95,6 +96,7 @@ class DialogRace : public QDialog, public Ui::race_dialog_ui, public inetClient
         double currentWidthNSZ;
         bool currentShowReal;
         bool currentHasReal;
+        QString currentFilterReal;
         QColor currentColorNSZ;
         int currentShowWhat;
         InputLineParams *inputTraceColor;

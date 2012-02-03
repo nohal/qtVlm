@@ -136,6 +136,7 @@ struct raceParam {
     int showWhat;
     bool showReal;
     bool hasReal;
+    QString realFilter;
 };
 
 

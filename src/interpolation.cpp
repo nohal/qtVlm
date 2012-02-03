@@ -21,7 +21,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <QDebug>
 
 #include <complex>
+#include "dataDef.h"
+#ifdef __QTVLM_WITH_TEST
 extern int nbWarning;
+#endif
 using namespace std;
 typedef complex<double> dcmplx;
 
@@ -586,6 +589,9 @@ void interpolation::get_wind_info_latlong_hybrid_compute(double longitude,  doub
     v2=data->v2;
     v3=data->v3;
 
+    double ratioLat,ratioLon;
+#ifdef __QTVLM_WITH_TEST
+    double ratioLonDebug,ratioLatDebug;
     d_long = longitude; /* is there a +180 drift? see grib */
     if (d_long < 0) {
         d_long += 360;
@@ -593,22 +599,13 @@ void interpolation::get_wind_info_latlong_hybrid_compute(double longitude,  doub
         d_long -= 360;
     }
     d_lat = latitude + 90; /* is there a +90 drift? see grib*/
-
-    double ratioLat,ratioLon,ratioLonDebug,ratioLatDebug;
-#if 1
     d_long = (d_long-gridOriginLon)/lon_step;
     d_lat = (d_lat-gridOriginLat)/lat_step;
     ratioLatDebug=d_lat - floor(d_lat);
     ratioLonDebug=d_long - floor(d_long);
-#else
-    d_long = d_long / lon_step;
-    d_lat = d_lat / lat_step;
-    ratioLat=d_lat - floor(d_lat);
-    ratioLon=d_long - floor(d_long);
 #endif
-#if 1
-    int i0 = qRound ((longitude-gridOriginLon)/lon_step);  // point 00
-    int j0 = qRound ((latitude-gridOriginLat)/lat_step);
+    int i0 = floor ((longitude-gridOriginLon)/lon_step);
+    int j0 = floor ((latitude-gridOriginLat)/lat_step);
     if(((latitude-gridOriginLat)/lat_step)-j0!=0.0)
     {
         if(lat_step<0)
@@ -628,7 +625,6 @@ void interpolation::get_wind_info_latlong_hybrid_compute(double longitude,  doub
         ratioLon=1.0+ratioLon;
     if(ratioLat<0)
         ratioLat=1.0+ratioLat;
-#endif
     if(debug)
     {
         qWarning("Donnee IN (step=%fx%f)",lat_step,lon_step);
@@ -640,25 +636,26 @@ void interpolation::get_wind_info_latlong_hybrid_compute(double longitude,  doub
         qWarning("P2: u2= %f, v2= %f",u2,v2);
         qWarning("P3: u3= %f, v3= %f",u3,v3);
     }
-    if(qRound(ratioLonDebug*10e7)!=qRound(ratioLon*10e7) || qRound(ratioLatDebug*10e7)!=qRound(ratioLat*10e7))
+#ifdef __QTVLM_WITH_TEST
+    if(qAbs(ratioLonDebug-ratioLon)>10e-10 || qAbs(ratioLatDebug-ratioLat)>10e-10)
     {
         ++nbWarning;
         if(nbWarning<100)
         {
             qWarning("DIFFERENCE in RATIOS!! rLonD=%.7f rLon=%.7f rLatD=%.7f rLat=%.7f",ratioLonDebug,ratioLon,ratioLatDebug,ratioLat);
+            qWarning("rLonD=%d rLon=%d rLatD=%d rLat=%d",qRound(ratioLonDebug*10e7),qRound(ratioLon*10e7),qRound(ratioLatDebug*10e7),qRound(ratioLat*10e7));
             qWarning()<<qAbs(ratioLon-ratioLonDebug)<<qAbs(ratioLat-ratioLatDebug);
             qWarning("Donnee IN (step=%fx%f)",lat_step,lon_step);
             qWarning("Lat= %f (=> %f ), Lon= %f (=> %f )",latitude,d_lat,longitude,d_long);
             qWarning("grid : Lat= %f, Lon= %f",gridOriginLat,gridOriginLon);
             qWarning("ratios : Lat= %f, Lon= %f",ratioLat,ratioLon);
             qWarning("i0= %d, j0= %d",i0,j0);
-            ratioLon=(longitude-d_long)/lon_step;
-            qWarning()<<ratioLon<<qAbs(qRound(ratioLon*10e7));
         }
         else if(nbWarning==100)
             qWarning()<<"stopping qWarning() messages concerning ratios";
 
     }
+#endif
     /*
       simple bilinear interpolation, we might factor the cos(lat) in
       the computation to tackle the shape of the pseudo square

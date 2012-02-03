@@ -109,7 +109,6 @@ void boardReal::boatUpdated(void)
 
     if(!myBoat)
     {
-        qWarning() << "No current real boat";
         return;
     }
     /* boat position */

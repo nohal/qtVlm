@@ -27,7 +27,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "mycentralwidget.h"
 #include "Util.h"
 #include "dataDef.h"
+#ifdef __QTVLM_WITH_TEST
 extern int nbWarning;
+#endif
 DialogGribValidation::DialogGribValidation(myCentralWidget * my_centralWidget,MainWindow * mainWindow) :  QDialog(my_centralWidget)
 {
     setupUi(this);
@@ -39,6 +41,9 @@ DialogGribValidation::DialogGribValidation(myCentralWidget * my_centralWidget,Ma
     latitude->setText("0");
     longitude->setText("0");
     this->latitude->blockSignals(true);
+#ifdef __QTVLM_WITH_TEST
+    nbWarning=0;
+#endif
 }
 
 DialogGribValidation::~DialogGribValidation()
@@ -91,7 +96,9 @@ void DialogGribValidation::interpolationChanged(int newMode)
 
 void DialogGribValidation::inputChanged(void)
 {
+#ifdef __QTVLM_WITH_TEST
     nbWarning=0;
+#endif
     /* recompute interpolation */
     double lat,lon;
     int tstamp;

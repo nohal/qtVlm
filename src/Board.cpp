@@ -39,7 +39,7 @@ board::board(MainWindow * mainWin, inetConnexion * inet,QStatusBar * statusBar)
     connect(this,SIGNAL(sig_paramChanged()),vlm_board,SLOT(paramChanged()));
     connect(vlm_board,SIGNAL(showMessage(QString,int)),statusBar,SLOT(showMessage(QString,int)));
     connect(this,SIGNAL(hideShowCompass()),vlm_board,SLOT(slot_hideShowCompass()));
-    VLMDock = new QDockWidget("Virtual Loup de Mer");
+    VLMDock = new QDockWidget(tr("Tableau de bord VLM"));
     VLMDock->setWidget(vlm_board);
     VLMDock->setAllowedAreas(Qt::LeftDockWidgetArea | Qt::RightDockWidgetArea );
 
@@ -48,7 +48,7 @@ board::board(MainWindow * mainWin, inetConnexion * inet,QStatusBar * statusBar)
     connect(real_board,SIGNAL(showMessage(QString,int)),statusBar,SLOT(showMessage(QString,int)));
     connect(mainWin->getMy_centralWidget(),SIGNAL(redrawGrib()),real_board,SLOT(gribUpdated()));
     connect(this,SIGNAL(hideShowCompass()),real_board,SLOT(slot_hideShowCompass()));
-    realDock = new QDockWidget(tr("Mon bateau"));
+    realDock = new QDockWidget(tr("Tableau de bord"));
     realDock->setWidget(real_board);
     realDock->setAllowedAreas(Qt::LeftDockWidgetArea | Qt::RightDockWidgetArea);
 

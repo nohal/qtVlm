@@ -743,6 +743,14 @@ Etes-vous sur ?</source>
         <source>dd MMM yyyy hh:mm:ss</source>
         <translation></translation>
     </message>
+    <message>
+        <source>Filtrer les reels</source>
+        <translation>Filtrer les réels</translation>
+    </message>
+    <message>
+        <source>Ids (separes par &apos;;&apos;:</source>
+        <translation>Ids (séparés par &apos;;&apos;):</translation>
+    </message>
 </context>
 <context>
     <name>DialogRealBoatConfig</name>
@@ -3952,7 +3960,11 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>board</name>
     <message>
-        <source>Mon bateau</source>
+        <source>Tableau de bord VLM</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Tableau de bord</source>
         <translation></translation>
     </message>
 </context>
@@ -4979,6 +4991,10 @@ p, li { white-space: pre-wrap; }
         <source>Le type est egalement utilise pour l&apos;affichage du grib</source>
         <translation>Le type est également utilisé pour l&apos;affichage du grib</translation>
     </message>
+    <message>
+        <source>TextLabel</source>
+        <translation></translation>
+    </message>
 </context>
 <context>
     <name>inetConn_progressDialog_ui</name>
@@ -5607,7 +5623,7 @@ Voulez-vous egalement supprimer tous les POIs lui appartenant?</source>
     </message>
     <message>
         <source>Vitesse estimee </source>
-        <translation>Vitesse estimée</translation>
+        <translation type="obsolete">Vitesse estimée</translation>
     </message>
     <message>
         <source> nds</source>
@@ -5615,11 +5631,23 @@ Voulez-vous egalement supprimer tous les POIs lui appartenant?</source>
     </message>
     <message>
         <source>Cap estime</source>
-        <translation>Cap estimé</translation>
+        <translation type="obsolete">Cap estimé</translation>
     </message>
     <message>
         <source>deg</source>
         <translation>°</translation>
+    </message>
+    <message>
+        <source>Vitesse estimee: </source>
+        <translation>Vitesse estimée: </translation>
+    </message>
+    <message>
+        <source>Cap estime: </source>
+        <translation>Cap estimé: </translation>
+    </message>
+    <message>
+        <source>Id: </source>
+        <translation></translation>
     </message>
 </context>
 <context>
@@ -5958,6 +5986,14 @@ Voulez-vous egalement supprimer tous les POIs lui appartenant?</source>
     <message>
         <source>Afficher les reels</source>
         <translation>Afficher les réels</translation>
+    </message>
+    <message>
+        <source>Filtrer les reels</source>
+        <translation>Filtrer les réels</translation>
+    </message>
+    <message>
+        <source>...</source>
+        <translation></translation>
     </message>
 </context>
 <context>

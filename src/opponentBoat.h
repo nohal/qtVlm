@@ -43,6 +43,7 @@ struct raceData {
     int showWhat;
     bool showReal;
     bool hasReal;
+    QString realFilter;
 };
 
 class opponent : public QGraphicsWidget
@@ -62,7 +63,7 @@ class opponent : public QGraphicsWidget
         QColor getColor() { return myColor; }
 
         void setNewData(float lat, float lon,QString name);
-        void setRealData(QString shortName, QString longName, QString desc, QString pavillon);
+        void setRealData(QString shortName, QString longName, QString desc, QString pavillon, QString color);
         void setOtherData(int rank, QString loch1h, QString loch3h, QString loch24h, QString statusVLM,QString pavillon){this->rank=rank;this->loch1h=loch1h;
                                                                                               this->loch3h=loch3h;this->loch24h=loch24h;
                                                                                               this->statusVLM=statusVLM;updateName();
@@ -137,7 +138,7 @@ class opponentList : public QWidget, public inetClient
 
     public:
         opponentList(Projection * proj,MainWindow * main,myCentralWidget * parent, inetConnexion * inet);
-        void setBoatList(QString list_txt, QString race, int showWhat, bool force, bool showReal);
+        void setBoatList(QString list_txt, QString race, int showWhat, bool force, bool showReal, QString filter);
         void refreshData(void);
         void clear(void);
         QString getRaceId();
@@ -177,6 +178,7 @@ class opponentList : public QWidget, public inetClient
         bool showReal;
         bool isBoatVLM(QString id);
         opponent * opp;
+        QStringList filterList;
 };
 
 

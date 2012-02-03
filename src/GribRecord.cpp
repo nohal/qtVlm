@@ -774,6 +774,7 @@ bool GribRecord::getValue_TWSA(double px, double py,double * a00,double * a01,do
 
     // 00 10      point is in a square
     // 01 11
+/*note that (int) truncates, for instance (int) -3.5 returns 3, while floor(-3.5) returns -4*/
      int i0 = (int) ((px-Lo1)/Di);  // point 00
      int j0 = (int) ((py-La1)/Dj);
     int j0_init=j0;
