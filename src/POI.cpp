@@ -908,18 +908,25 @@ typedef struct {
     double  lon, lat;
     time_t  eta;
     double  remain;
+    bool    arrived;
 } POI_Position;
 
 static inline bool operator< (const POI_Position& a, const POI_Position& b)
 {
-    return ((a.eta < b.eta)
-            || ((a.eta == b.eta) && (a.remain < b.remain)));
+    return ((a.arrived && (!b.arrived
+                           || ((a.eta < b.eta)
+                               || ((a.eta == b.eta) && (a.remain < b.remain)))))
+            ||
+            (!a.arrived && !b.arrived && (a.remain < b.remain)));
 }
 
 static inline bool operator<= (const POI_Position& a, const POI_Position& b)
 {
-    return ((a.eta < b.eta)
-            || ((a.eta == b.eta) && (a.remain <= b.remain)));
+    return ((a.arrived && (!b.arrived
+                           || ((a.eta < b.eta)
+                               || ((a.eta == b.eta) && (a.remain <= b.remain)))))
+            ||
+            (!a.arrived && !b.arrived && (a.remain <= b.remain)));
 }
 
 void POI::slot_finePosit(bool silent)
@@ -933,7 +940,7 @@ void POI::slot_finePosit(bool silent)
     {
         if(!silent)
             QMessageBox::critical(0,tr("Optimisation du placement d'un POI"),
-                              tr("Vous ne pouvez pas optimiser en mode VBVMG-VLM"));
+                                  tr("Vous ne pouvez pas optimiser en mode VBVMG-VLM"));
         return;
     }
     this->abortSearch=false;
@@ -974,11 +981,11 @@ void POI::slot_finePosit(bool silent)
         lonNext = route->getPoiList().at(myRank+1)->getLongitude();
         latNext = route->getPoiList().at(myRank+1)->getLatitude();
         rangeLon
-           = rangeLat
-           = qMin (3.0,
-                   qMax (0.1,
-                         qMax (qAbs (lonNext-lonPrevious) / 2,
-                               qAbs (latNext-latPrevious) / 2)));
+            = rangeLat
+            = qMin (3.0,
+                    qMax (0.1,
+                          qMax (qAbs (lonNext-lonPrevious) / 2,
+                                qAbs (latNext-latPrevious) / 2)));
     }
     //qWarning()<<"ranges:"<<rangeLon<<rangeLat;
     double step=searchStep;
@@ -1008,10 +1015,11 @@ void POI::slot_finePosit(bool silent)
 
     POI_Position    simplex[3];
 
-    simplex[0].lon    = lon;
-    simplex[0].lat    = lat;
-    simplex[0].eta    = route->getEta();
-    simplex[0].remain = route->getRemain();
+    simplex[0].lon     = lon;
+    simplex[0].lat     = lat;
+    simplex[0].eta     = route->getEta();
+    simplex[0].remain  = route->getRemain();
+    simplex[0].arrived = route->getHas_eta();
 
     /* Note that if the route did not reach the target, then getEta
      * returns the last date of the grib. */
@@ -1021,8 +1029,9 @@ void POI::slot_finePosit(bool silent)
         setLongitude ((P).lon);                         \
         setLatitude ((P).lat);                          \
         route->slot_recalculate();                      \
-        (P).eta    = route->getEta();                   \
-        (P).remain = route->getRemain();                \
+        (P).eta     = route->getEta();                  \
+        (P).remain  = route->getRemain();               \
+        (P).arrived = route->getHas_eta();              \
         Util::computePos (proj, lat, lon, &pi, &pj);    \
         setPos (pi, pj-height/2);                       \
         update();                                       \
@@ -1037,7 +1046,7 @@ void POI::slot_finePosit(bool silent)
         tm.setTime_t (simplex[0].eta);                                  \
         best = new POI (tr ("Meilleure ETA: ")                          \
                         + tm.toString ("dd MMM-hh:mm")                  \
-                        + QString().sprintf(" (%+.3f milles)",simplex[0].remain),\
+                        + QString().sprintf(" (%+.3f milles)",simplex[0].remain), \
                         0,                                              \
                         simplex[0].lat, simplex[0].lon,                 \
                         this->proj, this->owner, this->parent, 0, 0, false, route->getBoat()); \
