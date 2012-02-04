@@ -188,7 +188,10 @@ void opponent::paint(QPainter * pnt, const QStyleOptionGraphicsItem * , QWidget 
     {
         if(this->isReal)
         {
-            bgcolor=myColor;
+            if(myColor.name()=="#000000")
+                bgcolor=QColor(128,126,219);
+            else
+                bgcolor=myColor;
             bgcolor.setAlpha(150);
         }
         else if(this->statusVLM.toLower()=="on_coast" || this->statusVLM.toLower()=="locked")
@@ -264,7 +267,11 @@ void opponent::drawTrace()
                                  trace_drawing->getPoints()->at(trace_drawing->getPoints()->count()-1).lon,
                                  this->name);
             else
+            {
+                vlmPoint lastOne(lon,lat);
+                lastOne.timeStamp=main->getSelectedBoat()->getPrevVac();
                 trace_drawing->getPoints()->append(vlmPoint(lon,lat));
+            }
         }
     }
     if(opp_trace==1)
@@ -327,7 +334,7 @@ void opponent::updateName()
         str2=str2+"<tr><td>"+tr("Loch 3h: ")+"</td><td>"+this->loch3h+"</td></tr>";
         str2=str2+"<tr><td>"+tr("Loch 24h: ")+"</td><td>"+this->loch24h+"</td></tr>";
         str2=str2+"<tr><td>"+tr("Status VLM: ")+"</td><td>"+this->statusVLM+"</td></tr>";
-        if(estimatedSpeed!=0 && false)
+        if(estimatedSpeed!=0 /*&& false*/)
         {
             str2=str2+"<tr><td>"+tr("Vitesse estimee: ")+"</td><td>"+
                  QString().sprintf("%.2f ",estimatedSpeed)+
@@ -1181,6 +1188,36 @@ void opponentList::getTrace(QByteArray buff, QList<vlmPoint> * trace)
         if(nbPoints > 0)
         {
             //int i=0;
+            if(!trace->isEmpty())
+            {
+#if 0
+                qWarning()<<"trace last timestamp=   "<<QDateTime().fromTime_t(trace->last().timeStamp);
+#endif
+                QVariant pos_list0 = result["tracks"].toList();
+                QList<QVariant> pos_list1=pos_list0.toList()[0].toList();
+#if 0
+                qWarning()<<"received trace starts at"<<QDateTime().fromTime_t(pos_list1[0].toInt());
+#endif
+                pos_list1=pos_list0.toList().last().toList();
+#if 0
+                qWarning()<<"received trace ends at  "<<QDateTime().fromTime_t(pos_list1[0].toInt());
+#endif
+            }
+            else
+            {
+#if 0
+                qWarning()<<"trace is empty";
+#endif
+                QVariant pos_list0 = result["tracks"].toList();
+                QList<QVariant> pos_list1=pos_list0.toList()[0].toList();
+#if 0
+                qWarning()<<"received trace starts at"<<QDateTime().fromTime_t(pos_list1[0].toInt());
+#endif
+                pos_list1=pos_list0.toList().last().toList();
+#if 0
+                qWarning()<<"received trace ends at  "<<QDateTime().fromTime_t(pos_list1[0].toInt());
+#endif
+            }
             foreach (QVariant pos, result["tracks"].toList())
             {
                 QList<QVariant> pos_list = pos.toList();

@@ -433,10 +433,10 @@
     <widget class="QToolButton" name="filterReal">
      <property name="geometry">
       <rect>
-       <x>740</x>
-       <y>40</y>
+       <x>700</x>
+       <y>38</y>
        <width>27</width>
-       <height>22</height>
+       <height>20</height>
       </rect>
      </property>
      <property name="toolTip">
