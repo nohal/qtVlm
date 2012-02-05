@@ -2347,7 +2347,7 @@ void myCentralWidget::treatRoute(ROUTE* route)
         route->setDetectCoasts(false);
         route->setSimplify(false);
         route->setOptimize(false);
-        if(route->getFrozen() || !route->getHas_eta())
+        if(route->getFrozen() || (simplify && !route->getHas_eta()))
             QMessageBox::critical(0,QString(QObject::tr("Simplification/Optimisation de route")),QString(QObject::tr("Cette operation est impossible pour une route figee ou une route sans ETA")));
         else if(route->getUseVbvmgVlm())
             QMessageBox::critical(0,QString(QObject::tr("Simplification/Optimisation de route")),QString(QObject::tr("Cette operation est impossible si le mode de calcul VBVMG est celui de VLM")));
@@ -2388,7 +2388,9 @@ void myCentralWidget::treatRoute(ROUTE* route)
             }
             if(optimize)
             {
-                time_t ref_eta2=route->getEta();
+                POI*    lastReachedPoi  = route->getLastReachedPoi();
+                time_t  ref_eta2        = lastReachedPoi ? lastReachedPoi->getRouteTimeStamp() : route->getEta();
+                QString ref_lastPoiName = lastReachedPoi ? lastReachedPoi->getName() : (QString ("<em>%1</em>").arg (tr("aucun")));
                 poiCt=route->getPoiList().count();
                 QMessageBox * waitBox = new QMessageBox(QMessageBox::Information,tr("Optimisation en cours"),
                                           tr("Veuillez patienter..."));
@@ -2414,24 +2416,34 @@ void myCentralWidget::treatRoute(ROUTE* route)
                 for (int maxLoop=0;maxLoop<10;++maxLoop)
                 {
                     if(abortRequest) break;
-                    time_t ref_eta3=route->getEta();
-                    int nPois=route->getPoiList().count();
-                    for (int poiN=0;poiN<route->getPoiList().count()-1;++poiN)
+                    POI*    lastReachedPoi = route->getLastReachedPoi();
+                    if(lastReachedPoi == NULL) break;
+                    time_t  ref_eta3       = lastReachedPoi->getRouteTimeStamp();
+                    int     nPois          = route->getPoiList().count();
+                    POI*    nextPoi        = route->getPoiList().at(route->getStartFromBoat() ? 0 : 1);
+                    for (int poiN = route->getStartFromBoat() ? 0 : 1;poiN<route->getPoiList().count()-1;++poiN)
                     {
                         if(abortRequest) break;
-                        if(!route->getStartFromBoat() && poiN==0) continue;
-                        POI * poi=route->getPoiList().at(poiN);
+                        POI*    poi = nextPoi;
+                        nextPoi     = route->getPoiList().at(poiN+1);
+                        if (!nextPoi->getHas_eta()) break;
                         if(poi->getNotSimplificable()) continue;
                         poi->slot_finePosit(true);
                     }
                     if(abortRequest) break;
-                    if(route->getEta()>ref_eta3)
+                    if ((route->getLastReachedPoi() == lastReachedPoi)
+                        && (lastReachedPoi->getRouteTimeStamp() > ref_eta3))
                         qWarning()<<"wrong optimization!!";
-                    time_t ref_eta4=route->getEta();
-                    doSimplifyRoute(route,true);
-                    if(route->getEta()>ref_eta4)
-                        qWarning()<<"wrong simplification!!";
-                    if(ref_eta3==route->getEta() && nPois==route->getPoiList().count()) break;
+                    if (route->getHas_eta()) {
+                        time_t  ref_eta4 = route->getEta();
+                        doSimplifyRoute(route,true);
+                        if(route->getEta()>ref_eta4)
+                            qWarning()<<"wrong simplification!!";
+                    }
+                    if(lastReachedPoi        == route->getLastReachedPoi()
+                       && ref_eta3           == lastReachedPoi->getRouteTimeStamp()
+                       && nPois              == route->getPoiList().count())
+                        break;
 #if 0
                     qWarning()<<maxLoop<<QDateTime().fromTime_t(ref_eta3).toUTC().toString("dd/MM/yy hh:mm:ss")<<
                                 QDateTime().fromTime_t(route->getEta()).toUTC().toString("dd/MM/yy hh:mm:ss")<<
@@ -2451,22 +2463,42 @@ void myCentralWidget::treatRoute(ROUTE* route)
                         }
                     }
                 }
-                int nbDel=poiCt-route->getPoiList().count();
-                int diff=(ref_eta2-route->getEta())/60;
+                int     nbDel = poiCt-route->getPoiList().count();
                 QString result;
-                if(diff<0)
-                    result=QString().setNum(-diff)+tr(" minutes perdues");
-                else
-                    result=QString().setNum(diff)+tr(" minutes gagnees");
-                result+=", "+QString().setNum(nbDel)+tr(" POIs supprimes sur ")+QString().setNum(poiCt);
-                QDateTime before=before.fromTime_t(ref_eta2);
-                before=before.toUTC();
-                before.setTimeSpec(Qt::UTC);
-                QDateTime after=after.fromTime_t(route->getEta());
-                after=after.toUTC();
-                after.setTimeSpec(Qt::UTC);
-                result=result+"<br>"+tr("ETA avant optimisation: ")+before.toString("dd/MM/yy hh:mm:ss");
-                result=result+"<br>"+tr("ETA apres optimisation: ")+after.toString("dd/MM/yy hh:mm:ss");
+                if (route->getHas_eta()) {
+                    int diff   = (ref_eta2-route->getEta())/60;
+                    if(diff<0)
+                        result = QString().setNum(-diff)+tr(" minutes perdues");
+                    else
+                        result = QString().setNum(diff)+tr(" minutes gagnees");
+                    result+=", "+QString().setNum(nbDel)+tr(" POIs supprimes sur ")+QString().setNum(poiCt);
+                    QDateTime before=before.fromTime_t(ref_eta2);
+                    before=before.toUTC();
+                    before.setTimeSpec(Qt::UTC);
+                    QDateTime after=after.fromTime_t(route->getEta());
+                    after=after.toUTC();
+                    after.setTimeSpec(Qt::UTC);
+                    result=result+"<br>"+tr("ETA avant optimisation: ")+before.toString("dd/MM/yy hh:mm:ss");
+                    result=result+"<br>"+tr("ETA apres optimisation: ")+after.toString("dd/MM/yy hh:mm:ss");
+                } else {
+                    result             = tr("Optimisation terminee");
+
+                    QDateTime   before = QDateTime::fromTime_t (ref_eta2).toUTC();
+                    before.setTimeSpec (Qt::UTC);
+                    result             = result + "<br>" + (QString (tr("Dernier POI avant optimisation: %1 (ETA: %2)"))
+                                                            .arg (ref_lastPoiName, before.toString ("dd/MM/yy hh:mm:ss")));
+
+                    POI*    lastReachedPoi = route->getLastReachedPoi();
+                    if (lastReachedPoi != NULL) {
+                        QDateTime   after = QDateTime::fromTime_t (lastReachedPoi->getRouteTimeStamp()).toUTC();
+                        after.setTimeSpec (Qt::UTC);
+                        result = result + "<br>" + (QString (tr("Dernier POI apres optimisation: %1 (ETA: %2)"))
+                                                    .arg (lastReachedPoi->getName(), after.toString ("dd/MM/yy hh:mm:ss")));
+                    } else {
+                        result = result + "<br>" + (QString (tr("Dernier POI apres optimisation: %1 (ETA: %2)"))
+                                                    .arg (QString ("<em>%1</em>").arg (tr("aucun")), "--/--/-- --:--:--"));
+                    }
+                }
                 waitBox->close();
                 delete waitBox;
                 QMessageBox::information(0,QString(QObject::tr("Resultat de l'optimisation")),result);

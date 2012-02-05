@@ -1200,9 +1200,15 @@ void POI::slot_finePosit(bool silent)
     route->setFastVmgCalc(false);
     route->slot_recalculate();
     if((!route->getHas_eta() && previousHasEta) ||
-       (route->getHas_eta() && route->getEta()>previousEta) ||
-       (!route->getHas_eta() && route->getRemain()>previousRemain))
+       (route->getHas_eta() && route->getEta()>previousEta))
     {
+        /* We used to also check route->getRemain() when the route
+         * does not have an ETA, but if there is a loss it will always
+         * be insignificant (since this loss can only happen at the
+         * end of the route, i.e at a point where weather uncertainty
+         * is greater than the optimization difference) and checking
+         * it may prevent route optimization from working when the
+         * last POI is outside the grib. */
         qWarning()<<"wrong optimisation, restoring previous POI position";
         lon=savedLon;
         lat=savedLat;

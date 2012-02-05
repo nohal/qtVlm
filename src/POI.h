@@ -70,6 +70,7 @@ class POI : public QGraphicsWidget
         static QString  getTypeStr(int index);
         QString  getTypeStr(void)      {return getTypeStr(type); }
         int     getNavMode(){return this->navMode;}
+        bool    getHas_eta(void)        {return useRouteTstamp;}
 
         /* modification des données */
         void setName           (QString name);

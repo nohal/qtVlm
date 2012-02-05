@@ -82,6 +82,7 @@ class ROUTE : public QObject
         time_t getEta(){return this->eta;}
         time_t getStartDate(){return this->start;}
         bool getHas_eta(){return this->has_eta;}
+        POI* getLastReachedPoi(){return this->lastReachedPoi;}
         double getRemain(){return this->remain;}
         bool isPartOfBvmg(POI * poi);
         void setOptimizing(bool b){this->optimizing=b;}
@@ -172,6 +173,7 @@ class ROUTE : public QObject
         time_t eta;
         time_t start;
         bool has_eta;
+        POI* lastReachedPoi;
         double remain;
         bool optimizing;
         bool fastVmgCalc;

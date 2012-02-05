@@ -2335,39 +2335,15 @@ Etes-vous sur ?</source>
     <name>POI_delete_ui</name>
     <message>
         <source>Selection de type de marque</source>
-        <translation>Sélection de type de marque</translation>
+        <translation type="obsolete">Sélection de type de marque</translation>
     </message>
     <message>
         <source>Cancel</source>
-        <translation>Annuler</translation>
+        <translation type="obsolete">Annuler</translation>
     </message>
     <message>
         <source>Type de marque a supprimer</source>
-        <translation>Type de marque à supprimer</translation>
-    </message>
-    <message>
-        <source>&lt;a href=&quot;titi&quot;&gt;Tous&lt;/a&gt;</source>
-        <translation></translation>
-    </message>
-    <message>
-        <source>&lt;a href=&quot;toto&quot;&gt;Aucun&lt;/a&gt;</source>
-        <translation></translation>
-    </message>
-    <message>
-        <source>POI</source>
-        <translation></translation>
-    </message>
-    <message>
-        <source>Marque</source>
-        <translation></translation>
-    </message>
-    <message>
-        <source>Balise</source>
-        <translation></translation>
-    </message>
-    <message>
-        <source>OK</source>
-        <translation></translation>
+        <translation type="obsolete">Type de marque à supprimer</translation>
     </message>
 </context>
 <context>
@@ -5562,6 +5538,22 @@ Voulez-vous egalement supprimer tous les POIs lui appartenant?</source>
     <message>
         <source>Vous n&apos;avez pas la bonne version des cartes VLM</source>
         <translation></translation>
+    </message>
+    <message>
+        <source>aucun</source>
+        <translation>aucun</translation>
+    </message>
+    <message>
+        <source>Optimisation terminee</source>
+        <translation>Optimisation terminée</translation>
+    </message>
+    <message>
+        <source>Dernier POI avant optimisation: %1 (ETA: %2)</source>
+        <translation>Dernier POI avant optimisation : %1 (ETA : %2)</translation>
+    </message>
+    <message>
+        <source>Dernier POI apres optimisation: %1 (ETA: %2)</source>
+        <translation>Dernier POI après optimisation : %1 (ETA : %2)</translation>
     </message>
 </context>
 <context>

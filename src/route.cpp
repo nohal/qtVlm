@@ -68,7 +68,8 @@ ROUTE::ROUTE(QString name, Projection *proj, Grib *grib, QGraphicsScene * myScen
     this->optimizingPOI=false;
     this->busy=false;
     this->startTime= QDateTime::currentDateTime().toUTC();
-    this->has_eta=false,
+    this->has_eta=false;
+    this->lastReachedPoi = NULL;
     this->eta=0;
     this->remain=0;
     this->myBoat=NULL;
@@ -293,6 +294,7 @@ void ROUTE::slot_recalculate(boat * boat)
         {
             lon=myBoat->getLon();
             lat=myBoat->getLat();
+            lastReachedPoi = NULL;
         }
         else
         {
@@ -303,6 +305,7 @@ void ROUTE::slot_recalculate(boat * boat)
             tip="<br>Starting point for route "+name;
             poi->setRouteTimeStamp((int)eta);
             poi->setTip(tip);
+            lastReachedPoi = poi;
         }
         startLat=lat;
         startLon=lon;
@@ -610,6 +613,8 @@ void ROUTE::slot_recalculate(boat * boat)
                     }
                 } while (has_eta && !imported);
             }
+            if (has_eta)
+                lastReachedPoi = poi;
 
             // If the target was "reached", this will be the remaining
             // distance between the position at the end of the last
