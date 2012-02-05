@@ -923,9 +923,27 @@ static inline bool operator< (const POI_Position& a, const POI_Position& b)
             ||
             (!a.arrived && !b.arrived
              && (a.reached && (!b.reached
-                               || (a.remain < b.remain))))
+                               || ((a.eta < b.eta)
+                                   || ((a.eta == b.eta) && (a.remain < b.remain))))))
+            // Note that we need to compare ETAs even when a.arrived
+            // and b.arrived are both false because the arrival may be
+            // outside the area covered by the grib which might lead
+            // the optimization to choose a solution that takes longer
+            // to reach the border of the grib if this solution gets
+            // closer to the arrival.
+            //
+            // This is not perfect: the optimizer may choose the wrong
+            // grib border (for example, try optimizing the route,
+            // moving the arrival to the other side of the grib and
+            // optimizing again, there is a fair chance that the route
+            // will remain stuck to the wrong side of the
+            // grib). However it is the best compromise I can find
+            // (and should work just fine if the arrival is inside the
+            // area covered by the grib but too far to be reachable).
             ||
-            (!a.reached && !b.reached && (a.remain < b.remain)));
+            (!a.reached && !b.reached
+             && ((a.eta < b.eta)
+                 || ((a.eta == b.eta) && (a.remain < b.remain)))));
 }
 
 static inline bool operator<= (const POI_Position& a, const POI_Position& b)
@@ -937,9 +955,12 @@ static inline bool operator<= (const POI_Position& a, const POI_Position& b)
             ||
             (!a.arrived && !b.arrived
              && (a.reached && (!b.reached
-                               || (a.remain <= b.remain))))
+                               || ((a.eta < b.eta)
+                                   || ((a.eta == b.eta) && (a.remain <= b.remain))))))
             ||
-            (!a.reached && !b.reached && (a.remain <= b.remain)));
+            (!a.reached && !b.reached
+             && ((a.eta < b.eta)
+                 || ((a.eta == b.eta) && (a.remain <= b.remain)))));
 }
 
 void POI::slot_finePosit(bool silent)
