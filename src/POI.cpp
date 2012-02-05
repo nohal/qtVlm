@@ -909,24 +909,37 @@ typedef struct {
     time_t  eta;
     double  remain;
     bool    arrived;
+    bool    reached;
 } POI_Position;
 
 static inline bool operator< (const POI_Position& a, const POI_Position& b)
 {
     return ((a.arrived && (!b.arrived
+                           || !b.reached
                            || ((a.eta < b.eta)
                                || ((a.eta == b.eta) && (a.remain < b.remain)))))
+            // Note that if a.arrived and b.arrived are true, then a
+            // fortiori so are a.reached and b.reached
             ||
-            (!a.arrived && !b.arrived && (a.remain < b.remain)));
+            (!a.arrived && !b.arrived
+             && (a.reached && (!b.reached
+                               || (a.remain < b.remain))))
+            ||
+            (!a.reached && !b.reached && (a.remain < b.remain)));
 }
 
 static inline bool operator<= (const POI_Position& a, const POI_Position& b)
 {
     return ((a.arrived && (!b.arrived
+                           || !b.reached
                            || ((a.eta < b.eta)
                                || ((a.eta == b.eta) && (a.remain <= b.remain)))))
             ||
-            (!a.arrived && !b.arrived && (a.remain <= b.remain)));
+            (!a.arrived && !b.arrived
+             && (a.reached && (!b.reached
+                               || (a.remain <= b.remain))))
+            ||
+            (!a.reached && !b.reached && (a.remain <= b.remain)));
 }
 
 void POI::slot_finePosit(bool silent)
@@ -1032,6 +1045,7 @@ void POI::slot_finePosit(bool silent)
         (P).eta     = route->getEta();                  \
         (P).remain  = route->getRemain();               \
         (P).arrived = route->getHas_eta();              \
+        (P).reached = useRouteTstamp;                   \
         Util::computePos (proj, lat, lon, &pi, &pj);    \
         setPos (pi, pj-height/2);                       \
         update();                                       \
