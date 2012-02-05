@@ -2420,13 +2420,11 @@ void myCentralWidget::treatRoute(ROUTE* route)
                     if(lastReachedPoi == NULL) break;
                     time_t  ref_eta3       = lastReachedPoi->getRouteTimeStamp();
                     int     nPois          = route->getPoiList().count();
-                    POI*    nextPoi        = route->getPoiList().at(route->getStartFromBoat() ? 0 : 1);
                     for (int poiN = route->getStartFromBoat() ? 0 : 1;poiN<route->getPoiList().count()-1;++poiN)
                     {
                         if(abortRequest) break;
-                        POI*    poi = nextPoi;
-                        nextPoi     = route->getPoiList().at(poiN+1);
-                        if (!nextPoi->getHas_eta()) break;
+                        POI*    poi = route->getPoiList().at(poiN);
+                        if (!poi->getHas_eta()) break;
                         if(poi->getNotSimplificable()) continue;
                         poi->slot_finePosit(true);
                     }
