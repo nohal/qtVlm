@@ -491,7 +491,7 @@ Virements de bord</string>
         <number>10</number>
        </property>
        <property name="maximum">
-        <number>60</number>
+        <number>600</number>
        </property>
        <property name="singleStep">
         <number>5</number>
@@ -1200,6 +1200,19 @@ La différence est surtout sensible lors d'un routage en diagonale.</string>
         <set>Qt::AlignCenter</set>
        </property>
       </widget>
+     </widget>
+     <widget class="QPushButton" name="Default">
+      <property name="geometry">
+       <rect>
+        <x>30</x>
+        <y>510</y>
+        <width>111</width>
+        <height>23</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Options par defaut</string>
+      </property>
      </widget>
     </widget>
    </widget>

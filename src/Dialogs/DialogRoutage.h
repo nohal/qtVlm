@@ -52,6 +52,7 @@ class DialogRoutage : public QDialog, public Ui::ROUTAGE_Editor_ui
 
 private slots:
     void on_windForced_toggled(bool checked);
+    void slot_default();
 };
 
 #endif

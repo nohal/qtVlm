@@ -26,7 +26,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <cassert>
 #include <QColor>
 
-#define __QTVLM_WITH_TEST
+//#define __QTVLM_WITH_TEST
 
 /* some constant */
 

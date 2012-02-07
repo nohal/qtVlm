@@ -58,6 +58,7 @@ DialogRoutage::DialogRoutage(ROUTAGE *routage,myCentralWidget *parent)
     scroll->setWidget(widget);
     QSize mySize=QSize(widget->size().width()+20,widget->size().height()+20);
     QSize screenSize=QApplication::desktop()->screenGeometry().size()*.8;
+    connect(this->Default,SIGNAL(clicked()),this,SLOT(slot_default()));
     if(mySize.height() > screenSize.height())
     {
         mySize.setHeight(screenSize.height());
@@ -202,6 +203,7 @@ DialogRoutage::DialogRoutage(ROUTAGE *routage,myCentralWidget *parent)
         this->maxPres->setDisabled(true);
         this->minPortant->setDisabled(true);
         this->minPres->setDisabled(true);
+        this->Default->setDisabled(true);
     }
     if(routage->getIsNewPivot() && !routage->isDone())
     {
@@ -227,6 +229,7 @@ DialogRoutage::DialogRoutage(ROUTAGE *routage,myCentralWidget *parent)
         this->maxPortant->setDisabled(false);
         this->minPres->setDisabled(false);
         this->minPortant->setDisabled(false);
+        this->Default->setDisabled(false);
     }
 }
 DialogRoutage::~DialogRoutage()
@@ -237,6 +240,31 @@ void DialogRoutage::resizeEvent ( QResizeEvent * /*event*/ )
 {
     this->scroll->resize(this->size());
 }
+void DialogRoutage::slot_default()
+{
+    this->maxPres->setValue(70);
+    this->minPres->setValue(0);
+    this->maxPortant->setValue(70);
+    this->minPortant->setValue(0);
+    this->step->setValue(3);
+    this->dureeLess24->setValue(30);
+    this->dureeMore24->setValue(60);
+    this->range->setValue(180);
+    this->showIso->setChecked(true);
+    this->speedLossOnTack->setValue(100);
+    this->useVac->setChecked(true);
+    this->multi->setChecked(true);
+    this->visibleOnly->setChecked(true);
+    this->autoZoom->setChecked(true);
+    this->zoomLevel->setValue(2);
+    this->pruneWakeAngle->setValue(30);
+    this->explo->setValue(40);
+    this->log->setChecked(true);
+    this->whatIfUse->setChecked(false);
+    this->windForced->setChecked(false);
+    this->checkCoast->setChecked(true);
+}
+
 //---------------------------------------
 void DialogRoutage::done(int result)
 {

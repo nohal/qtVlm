@@ -716,7 +716,7 @@ ROUTAGE::ROUTAGE(QString name, Projection *proj, Grib *grib, QGraphicsScene * my
     pen.setColor(color);
     pen.setBrush(color);
     pen.setWidthF(2);
-    this->angleRange=Settings::getSetting("angleRange",160).toDouble();
+    this->angleRange=Settings::getSetting("angleRange",180).toDouble();
     this->angleStep=Settings::getSetting("angleStep",3).toDouble();
     this->timeStepLess24=Settings::getSetting("timeStepLess24",30).toDouble();
     this->timeStepMore24=Settings::getSetting("timeStepMore24",60).toDouble();
@@ -731,6 +731,7 @@ ROUTAGE::ROUTAGE(QString name, Projection *proj, Grib *grib, QGraphicsScene * my
     this->maxPortant=Settings::getSetting("routageMaxPortant",70).toDouble();
     this->minPres=Settings::getSetting("routageMinPres",0).toDouble();
     this->minPortant=Settings::getSetting("routageMinPortant",0).toDouble();
+    this->pruneWakeAngle=Settings::getSetting("routagePruneWake",30).toInt();
     this->wind_angle=0;
     this->wind_speed=20;
     this->windIsForced=false;
@@ -743,7 +744,6 @@ ROUTAGE::ROUTAGE(QString name, Projection *proj, Grib *grib, QGraphicsScene * my
     result->setParent(this);
     way=new vlmLine(proj,myscene,Z_VALUE_ROUTAGE+0.1);
     way->setParent(this);
-    this->pruneWakeAngle=30;
     this->routeFromBoat=true;
     this->aborted=false;
     createPopupMenu();
@@ -813,6 +813,7 @@ void ROUTAGE::calculate()
     Settings::setSetting("routageMaxPortant",maxPortant);
     Settings::setSetting("routageMinPres",minPres);
     Settings::setSetting("routageMinPortant",minPortant);
+    Settings::setSetting("routagePruneWake",pruneWakeAngle);
     this->isNewPivot=false;
     this->aborted=false;
     if (!(myBoat && myBoat->getPolarData() && myBoat!=NULL))

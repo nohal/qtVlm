@@ -2335,15 +2335,39 @@ Etes-vous sur ?</source>
     <name>POI_delete_ui</name>
     <message>
         <source>Selection de type de marque</source>
-        <translation type="obsolete">Sélection de type de marque</translation>
+        <translation>Sélection de type de marque</translation>
     </message>
     <message>
         <source>Cancel</source>
-        <translation type="obsolete">Annuler</translation>
+        <translation>Annuler</translation>
     </message>
     <message>
         <source>Type de marque a supprimer</source>
-        <translation type="obsolete">Type de marque à supprimer</translation>
+        <translation>Type de marque à supprimer</translation>
+    </message>
+    <message>
+        <source>&lt;a href=&quot;titi&quot;&gt;Tous&lt;/a&gt;</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>&lt;a href=&quot;toto&quot;&gt;Aucun&lt;/a&gt;</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>POI</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Marque</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Balise</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>OK</source>
+        <translation></translation>
     </message>
 </context>
 <context>
@@ -3237,6 +3261,10 @@ Virements de bord</source>
 La différence est surtout sensible lors d&apos;un routage en diagonale.</source>
         <translation>Réglage du niveau de zoom (plus à droite = plus serré).
 La différence est surtout sensible lors d&apos;un routage en diagonale.</translation>
+    </message>
+    <message>
+        <source>Options par defaut</source>
+        <translation>Options par défaut</translation>
     </message>
 </context>
 <context>
