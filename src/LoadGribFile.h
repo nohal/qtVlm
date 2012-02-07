@@ -61,6 +61,7 @@ class LoadGribFile : public QObject
                     bool altitudeData850);
         void stop();
         void getServerStatus();
+        void checkQtvlmVersion();
 
     private:
         QNetworkAccessManager *inetManager;
@@ -68,6 +69,7 @@ class LoadGribFile : public QObject
         QNetworkReply * step1_InetReply;
         QNetworkReply * step2_InetReply;
         QNetworkReply * step3_InetReply;
+        QNetworkReply * step_checkVersion;
 
         QString host;
         QByteArray arrayContent;

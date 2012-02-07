@@ -34,6 +34,7 @@ Copyright (C) 2008 - Jacques Zaninetti - http://zygrib.free.fr
 #include "Version.h"
 #include "libs/sha1/sha1.h"
 #include <QMessageBox>
+#include <QDebug>
 
 // zyGrib dwn n'utilise pas les classes std
 
@@ -46,7 +47,7 @@ LoadGribFile::LoadGribFile()
     zygribpwd = "61c9b2b17db77a27841bbeeabff923448b0f6388";
 
     inetManager = new QNetworkAccessManager(this);
-    step1_InetReply=step2_InetReply=step3_InetReply=NULL;
+    step1_InetReply=step2_InetReply=step3_InetReply=step_checkVersion=NULL;
     assert(inetManager);
 
     host = "http://www.zygrib.org";
@@ -67,6 +68,8 @@ void LoadGribFile::stop () {
         step1_InetReply->abort();
     if(step2_InetReply)
         step2_InetReply->abort();
+    if(step3_InetReply)
+        step3_InetReply->abort();
 }
 
 //-------------------------------------------------------------------------------
@@ -165,7 +168,7 @@ void LoadGribFile::getGribFile(
                 << "&client=" << "zyGrib-3.9.2"
                 ;
 
-        step1_InetReply=step2_InetReply=NULL;
+        step1_InetReply=step2_InetReply=step3_InetReply=step_checkVersion=NULL;
         QNetworkRequest request;
         request.setUrl(QUrl(page));
         request.setAttribute(QNetworkRequest::CacheLoadControlAttribute,QNetworkRequest::AlwaysNetwork);
@@ -181,7 +184,23 @@ void LoadGribFile::requestFinished ( QNetworkReply* inetReply)
 {
     QString page;
     if (inetReply->error() != QNetworkReply::NoError) {
+        qWarning()<<"inetReply error from LoadGribFile";
+        if(inetReply==step_checkVersion) return;
         emit signalGribLoadError(QString("Http error: %1 (step=%2)").arg(inetReply->error()).arg(step));
+    }
+    else if(inetReply == step_checkVersion)
+    {
+        QString strbuf=inetReply->readAll();
+        QString vers=QTVLM_VERSION_NUM;
+        vers.append(".");
+        vers.append(QTVLM_SUB_VERSION_NUM);
+        vers.remove("+");
+        if(vers!=strbuf)
+            QMessageBox::warning (0,
+                tr("qtVlm version"),
+                tr("Vous n'utilisez pas la derniere version de qtVlm: ")+strbuf);
+
+
     }
     else if(inetReply == step1_InetReply)
     {
@@ -296,5 +315,14 @@ void LoadGribFile::getServerStatus()
     request.setAttribute(QNetworkRequest::CacheLoadControlAttribute,QNetworkRequest::AlwaysNetwork);
     Util::addAgent(request);
     step3_InetReply=inetManager->get(request);
+}
+void LoadGribFile::checkQtvlmVersion()
+{
+    Util::paramProxy(inetManager,host);
+    QNetworkRequest request;
+    request.setUrl(QUrl("http://www.virtual-winds.com/~oxygen/getLastVersion.php"));
+    request.setAttribute(QNetworkRequest::CacheLoadControlAttribute,QNetworkRequest::AlwaysNetwork);
+    Util::addAgent(request);
+    step_checkVersion=inetManager->get(request);
 }
 

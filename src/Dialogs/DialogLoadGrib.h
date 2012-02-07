@@ -36,6 +36,7 @@ Copyright (C) 2008 - Jacques Zaninetti - http://zygrib.free.fr
 #include <QFileDialog>
 #include <QTime>
 #include <QProgressBar>
+#include "LoadGribFile.h"
 
 //#define HAS_TEMP
 
@@ -48,7 +49,7 @@ class DialogLoadGrib : public QDialog
         ~DialogLoadGrib();
 
         void setZone(float x0, float y0, float x1, float y1);
-
+        void checkQtvlmVersion(){loadgrib->checkQtvlmVersion();}
     public slots:
         void slotBtOK();
         void slotBtCancel();
