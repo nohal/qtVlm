@@ -48,6 +48,7 @@ int main(int argc, char *argv[])
         curDir=QDir::currentPath();
         qWarning() << "currentPath modified: " << curDir << "applicationDirPath returns: " << appExeFolder;
     }
+#endif
     //checks tree
     QDir dirCheck;
     QStringList appDirs;
@@ -62,7 +63,6 @@ int main(int argc, char *argv[])
             dirCheck.mkdir(dirName);
         //qWarning() << "Checking folder: " << dirName;
     }
-#endif
     QTextCodec::setCodecForTr(QTextCodec::codecForName("utf8"));
     QTextCodec::setCodecForCStrings(QTextCodec::codecForName("utf8"));
     Settings::initSettings();
