@@ -140,6 +140,7 @@ class myCentralWidget : public QWidget
         ROUTE * getCompassFollow(){return this->compassRoute;}
         void centerCompass(double lon,double lat);
         void update_menuRoute();
+        void simpAllPOIs(bool b);
 /* routage */
         QList<ROUTAGE*> & getRoutageList(){ return this->routage_list;}
         bool freeRoutageName(QString name, ROUTAGE * routage);
@@ -207,6 +208,8 @@ class myCentralWidget : public QWidget
         void slot_POIimport(void); // import data from zyGrib
         void slot_delAllPOIs(void);
         void slot_delSelPOIs(void);
+        void slot_notSimpAllPOIs(void);
+        void slot_simpAllPOIs(void);
 
         /* item state */
         void slot_showALL(bool);

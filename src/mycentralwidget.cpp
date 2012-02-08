@@ -1112,6 +1112,40 @@ void myCentralWidget::slot_addPOI_list(POI * poi)
     connect(this, SIGNAL(shLab(bool)),poi,SLOT(slot_shLab(bool)));
     poi->chkIsWP();
 }
+void myCentralWidget::slot_simpAllPOIs()
+{
+    simpAllPOIs(false);
+}
+void myCentralWidget::slot_notSimpAllPOIs()
+{
+    simpAllPOIs(true);
+}
+
+void myCentralWidget::simpAllPOIs(bool simp)
+{
+    double lat0,lon0,lat1,lon1;
+    double lat,lon;
+
+    if(selection->getZone(&lon0,&lat0,&lon1,&lat1))
+    {
+        QListIterator<POI*> i (poi_list);
+
+
+        while(i.hasNext())
+        {
+            POI * poi = i.next();
+            lat=poi->getLatitude();
+            lon=poi->getLongitude();
+
+            if(lat1<=lat && lat<=lat0 && lon0<=lon && lon<=lon1)
+            {
+                poi->setNotSimplificable(simp);
+            }
+
+        }
+    }
+}
+
 
 void myCentralWidget::slot_delPOI_list(POI * poi)
 {

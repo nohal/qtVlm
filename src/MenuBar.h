@@ -91,6 +91,8 @@ public:
     QAction *ac_pastePOI;
     QAction *ac_delAllPOIs;
     QAction *ac_delSelPOIs;
+    QAction *ac_notSimpSelPOIs;
+    QAction *ac_simpSelPOIs;
     QAction *acPOIAdd;
     QAction *ac_twaLine;
     QAction *ac_compassLine;

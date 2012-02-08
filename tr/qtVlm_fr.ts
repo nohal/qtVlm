@@ -2157,6 +2157,14 @@ Etes-vous sur ?</source>
         <source>Fermer le fax meteo</source>
         <translation>Fermer le météo fax</translation>
     </message>
+    <message>
+        <source>Rendre toutes les marques non-simplifiables</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Rendre toutes les marques simplifiables</source>
+        <translation></translation>
+    </message>
 </context>
 <context>
     <name>POI</name>
