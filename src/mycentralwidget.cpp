@@ -2872,6 +2872,7 @@ void myCentralWidget::assignPois()
         route->setFrozen(frozens.at(n));
         n++;
     }
+    qWarning()<<"finished assigning POIs to Routes";
 }
 
 

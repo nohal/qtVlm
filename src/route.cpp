@@ -227,7 +227,7 @@ void ROUTE::slot_recalculate(boat * boat)
     if(my_poiList.count()==0) return;
     busy=true;
     qSort(my_poiList.begin(),my_poiList.end(),POI::myLessThan);
-    if(!this->optimizing && !this->optimizingPOI && autoRemove && this->startFromBoat)
+    if(!parent->getIsStartingUp() && !this->optimizing && !this->optimizingPOI && autoRemove && this->startFromBoat)
     {
         bool foundWP=false;
         int n=0;
