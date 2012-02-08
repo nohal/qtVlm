@@ -5,7 +5,6 @@
 #include "inetClient.h"
 #include "ui_DialogDownloadTracks.h"
 #include "class_list.h"
-#include <QDateTime>
 
 namespace Ui {
     class DialogDownloadTracks;
@@ -25,7 +24,7 @@ public:
     void authFailed(void);
     void inetError(void);
     void requestFinished (QByteArray);
-    void init(void);
+    void init();
 
 private:
     Ui::DialogDownloadTracks *ui;
@@ -40,6 +39,7 @@ private:
 private slots:
     void on_raceIDEdit_valueChanged(int);
     void on_boatIDEdit_valueChanged(int);
+    void on_frameTrackCheckBox_clicked(bool checked=false);
 };
 
 #endif // DIALOGDOWNLOADTRACKS_H

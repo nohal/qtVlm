@@ -7,128 +7,214 @@
     <x>0</x>
     <y>0</y>
     <width>474</width>
-    <height>290</height>
+    <height>390</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>Banque des Traces VLM</string>
   </property>
-  <widget class="QWidget" name="horizontalLayoutWidget">
-   <property name="geometry">
-    <rect>
-     <x>10</x>
-     <y>10</y>
-     <width>441</width>
-     <height>261</height>
-    </rect>
-   </property>
-   <layout class="QHBoxLayout" name="horizontalLayout">
-    <item>
-     <layout class="QGridLayout" name="gridLayout">
-      <item row="0" column="0">
-       <widget class="QLabel" name="labelBoatID">
-        <property name="text">
-         <string>ID Bateau</string>
-        </property>
-       </widget>
-      </item>
-      <item row="0" column="1">
-       <widget class="QSpinBox" name="boatIDEdit">
-        <property name="toolTip">
-         <string/>
-        </property>
-        <property name="buttonSymbols">
-         <enum>QAbstractSpinBox::NoButtons</enum>
-        </property>
-        <property name="keyboardTracking">
-         <bool>false</bool>
-        </property>
-        <property name="maximum">
-         <number>999999</number>
-        </property>
-        <property name="value">
-         <number>20000</number>
-        </property>
-       </widget>
-      </item>
-      <item row="1" column="0">
-       <widget class="QLabel" name="labelBoatName">
-        <property name="text">
-         <string>Armateur</string>
-        </property>
-       </widget>
-      </item>
-      <item row="1" column="1">
-       <widget class="QLabel" name="labelDisplayBoatName">
-        <property name="text">
-         <string>N/A</string>
-        </property>
-       </widget>
-      </item>
-      <item row="2" column="1">
-       <widget class="QSpinBox" name="raceIDEdit">
-        <property name="buttonSymbols">
-         <enum>QAbstractSpinBox::NoButtons</enum>
-        </property>
-        <property name="keyboardTracking">
-         <bool>false</bool>
-        </property>
-        <property name="maximum">
-         <number>99999999</number>
-        </property>
-        <property name="value">
-         <number>20120101</number>
-        </property>
-       </widget>
-      </item>
-      <item row="3" column="0">
-       <widget class="QLabel" name="labelRaceName">
-        <property name="text">
-         <string>Nom Course</string>
-        </property>
-       </widget>
-      </item>
-      <item row="3" column="1">
-       <widget class="QLabel" name="labelDisplayRaceName">
-        <property name="text">
-         <string>N/A</string>
-        </property>
-       </widget>
-      </item>
-      <item row="4" column="0" colspan="2">
-       <widget class="QLabel" name="InfoLabel">
-        <property name="text">
-         <string>Pour eviter de surcharger le serveur VLM, les traces demandees sont sauvegardees localement dans le dossier tracks. Priere de ne les renommer qu'en cas de necessite.</string>
-        </property>
-        <property name="wordWrap">
-         <bool>true</bool>
-        </property>
-        <property name="indent">
-         <number>-1</number>
-        </property>
-       </widget>
-      </item>
-      <item row="5" column="0" colspan="2">
-       <widget class="QDialogButtonBox" name="buttonBox">
-        <property name="orientation">
-         <enum>Qt::Horizontal</enum>
-        </property>
-        <property name="standardButtons">
-         <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
-        </property>
-       </widget>
-      </item>
-      <item row="2" column="0">
-       <widget class="QLabel" name="labelRaceID">
-        <property name="text">
-         <string>ID Course</string>
-        </property>
-       </widget>
-      </item>
-     </layout>
-    </item>
-   </layout>
-  </widget>
+  <layout class="QHBoxLayout" name="horizontalLayout_7">
+   <item>
+    <layout class="QVBoxLayout" name="verticalLayout">
+     <item>
+      <layout class="QHBoxLayout" name="horizontalLayout_4">
+       <item>
+        <widget class="QLabel" name="labelBoatID">
+         <property name="text">
+          <string>ID Bateau</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QSpinBox" name="boatIDEdit">
+         <property name="toolTip">
+          <string/>
+         </property>
+         <property name="buttonSymbols">
+          <enum>QAbstractSpinBox::NoButtons</enum>
+         </property>
+         <property name="keyboardTracking">
+          <bool>false</bool>
+         </property>
+         <property name="maximum">
+          <number>999999</number>
+         </property>
+         <property name="value">
+          <number>20000</number>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </item>
+     <item>
+      <layout class="QHBoxLayout" name="horizontalLayout_5">
+       <item>
+        <widget class="QLabel" name="labelBoatName">
+         <property name="text">
+          <string>Armateur</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QLabel" name="labelDisplayBoatName">
+         <property name="text">
+          <string>N/A</string>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </item>
+     <item>
+      <layout class="QHBoxLayout" name="horizontalLayout_3">
+       <item>
+        <widget class="QLabel" name="labelRaceID">
+         <property name="text">
+          <string>ID Course</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QSpinBox" name="raceIDEdit">
+         <property name="buttonSymbols">
+          <enum>QAbstractSpinBox::NoButtons</enum>
+         </property>
+         <property name="keyboardTracking">
+          <bool>false</bool>
+         </property>
+         <property name="maximum">
+          <number>99999999</number>
+         </property>
+         <property name="value">
+          <number>20120101</number>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </item>
+     <item>
+      <layout class="QHBoxLayout" name="horizontalLayout_6">
+       <item>
+        <widget class="QLabel" name="labelRaceName">
+         <property name="text">
+          <string>Nom Course</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QLabel" name="labelDisplayRaceName">
+         <property name="text">
+          <string>N/A</string>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </item>
+     <item>
+      <widget class="QLabel" name="CacheDescLabel">
+       <property name="font">
+        <font>
+         <italic>true</italic>
+        </font>
+       </property>
+       <property name="text">
+        <string>Les traces au format json sont sauvegardées dans le dossier tracks du répertoire de qtVlm.</string>
+       </property>
+       <property name="alignment">
+        <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+       </property>
+       <property name="wordWrap">
+        <bool>true</bool>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QCheckBox" name="frameTrackCheckBox">
+       <property name="enabled">
+        <bool>true</bool>
+       </property>
+       <property name="text">
+        <string>Trace Partielle</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <layout class="QHBoxLayout" name="horizontalLayout">
+       <item>
+        <widget class="QLabel" name="labelStartTime">
+         <property name="text">
+          <string>Heure Debut</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QDateTimeEdit" name="startTimeEdit">
+         <property name="inputMethodHints">
+          <set>Qt::ImhPreferNumbers</set>
+         </property>
+         <property name="dateTime">
+          <datetime>
+           <hour>9</hour>
+           <minute>0</minute>
+           <second>0</second>
+           <year>2011</year>
+           <month>11</month>
+           <day>2</day>
+          </datetime>
+         </property>
+         <property name="displayFormat">
+          <string>yyyy/MM/dd hh:mm UTC</string>
+         </property>
+         <property name="timeSpec">
+          <enum>Qt::UTC</enum>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </item>
+     <item>
+      <layout class="QHBoxLayout" name="horizontalLayout_2">
+       <item>
+        <widget class="QLabel" name="labelEndTime">
+         <property name="text">
+          <string>Heure Fin</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QDateTimeEdit" name="endTimeEdit">
+         <property name="dateTime">
+          <datetime>
+           <hour>8</hour>
+           <minute>0</minute>
+           <second>0</second>
+           <year>2011</year>
+           <month>11</month>
+           <day>16</day>
+          </datetime>
+         </property>
+         <property name="displayFormat">
+          <string>yyyy/MM/dd hh:mm UTC</string>
+         </property>
+         <property name="timeSpec">
+          <enum>Qt::UTC</enum>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </item>
+     <item>
+      <widget class="QDialogButtonBox" name="buttonBox">
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <property name="standardButtons">
+        <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </item>
+  </layout>
  </widget>
  <resources/>
  <connections>
