@@ -38,9 +38,9 @@ int main(int argc, char *argv[])
 {
     QApplication app(argc, argv);
     qsrand(QTime::currentTime().msec());
+    QString appExeFolder=QApplication::applicationDirPath();
 #ifdef __UNIX_QTVLM
     QString curDir=QDir::currentPath();
-    QString appExeFolder=QApplication::applicationDirPath();
     qWarning() << "currentPath returns: " << curDir << "applicationDirPath returns: " << appExeFolder;
     if ( QString::compare(curDir,appExeFolder,Qt::CaseSensitive)!=0 )
     {
@@ -53,7 +53,7 @@ int main(int argc, char *argv[])
     QDir dirCheck;
     QStringList appDirs;
     QString dirName;
-    appDirs<<"icon"<<"img"<<"img/flags"<<"grib"<<"maps"<<"polar"<<"tr"<<"tracks";
+    appDirs<<"icon"<<"img"<<"img/flags"<<"img/boats"<<"grib"<<"maps"<<"polar"<<"tr"<<"tracks";
     QStringListIterator dirIterator(appDirs);
     while (dirIterator.hasNext())
     {
