@@ -6,7 +6,6 @@
 #include "ui_DialogDownloadTracks.h"
 #include "mycentralwidget.h"
 #include "Player.h"
-#include "parser.h"
 #include "settings.h"
 
 #define VLM_RACE_INFO 2
@@ -49,6 +48,7 @@ void DialogDownloadTracks::init()
     ui->labelStartTime->setEnabled(false);
     ui->labelEndTime->setEnabled(false);
     ui->frameTrackCheckBox->setEnabled(false);
+    ui->frameTrackCheckBox->setChecked(false);
     ui->boatIDEdit->selectAll();
     ui->buttonBox->button(QDialogButtonBox::Ok)->setEnabled(false);
     fileName="";
@@ -70,7 +70,7 @@ void DialogDownloadTracks::accept()
             startTime=qStartTime.toTime_t();
             qEndTime=ui->endTimeEdit->dateTime();
             endTime=qEndTime.toTime_t();
-            routeName=routeName.sprintf("%d_%d_%d_%d",raceID,boatID,qStartTime.toTime_t(),qEndTime.toTime_t());
+            routeName=routeName.sprintf("%d_%d_%d_%d_",raceID,boatID,qStartTime.toTime_t(),qEndTime.toTime_t());
             QString appExeFolder=QApplication::applicationDirPath();
             fileName=appExeFolder+"/tracks/"+routeName+".json";
             QFile jsonFile(fileName);
@@ -85,8 +85,8 @@ void DialogDownloadTracks::accept()
                 stream>>data;
                 QVariantMap result=parser.parse (data, &ok).toMap();
                 if (!ok) {
-                    qWarning() << "Error parsing json data " << data;
-                    qWarning() << "Error: " << parser.errorString() << " (line: " << parser.errorLine() << ")";
+                    jsonError(&parser);
+                    return;
                 }
                 if (result["nb_tracks"]!=0)
                 {
@@ -97,6 +97,7 @@ void DialogDownloadTracks::accept()
              }
         }
         else
+        {
             routeName=routeName.sprintf("%d_%d_",raceID,boatID);
             QString appExeFolder=QApplication::applicationDirPath();
             fileName=appExeFolder+"/tracks/"+routeName+".json";
@@ -112,8 +113,8 @@ void DialogDownloadTracks::accept()
                 stream>>data;
                 QVariantMap result=parser.parse (data, &ok).toMap();
                 if (!ok) {
-                    qWarning() << "Error parsing json data " << data;
-                    qWarning() << "Error: " << parser.errorString() << " (line: " << parser.errorLine() << ")";
+                    jsonError(&parser);
+                    return;
                 }
                 if (result["nb_tracks"]!=0)
                 {
@@ -121,7 +122,8 @@ void DialogDownloadTracks::accept()
                     QList<QVariant> details=trackRaw.toList();
                     parent->withdrawRouteFromBank(routeName,details);
                 }
-             }
+            }
+        }
         QDialog::done(QDialog::Accepted);
     }
     else
@@ -267,14 +269,13 @@ void DialogDownloadTracks::requestFinished (QByteArray data)
         if (routeName.isEmpty())
         {
             QMessageBox msgBox;
-            msgBox.setText(tr("Ce nom est deja utilise ou invalide"));
+            msgBox.setText(tr("Trace entiere: pas de nom de route."));
             msgBox.setIcon(QMessageBox::Critical);
             msgBox.exec();
             return;
         }
         if (!ok) {
-            qWarning() << "Error parsing json data " << data;
-            qWarning() << "Error: " << parser.errorString() << " (line: " << parser.errorLine() << ")";
+            jsonError(&parser);
             return;
         }
         if (result["nb_tracks"]!=0)
@@ -340,19 +341,17 @@ void DialogDownloadTracks::requestFinished (QByteArray data)
         QJson::Parser parser;
         bool ok;
         QVariantMap result=parser.parse (data, &ok).toMap();
-        QString routeName;
-        routeName=routeName.sprintf("%d_%d_%d_%d",raceID,boatID,qStartTime.toTime_t(),qEndTime.toTime_t());
+        routeName=routeName.sprintf("%d_%d_%d_%d_",raceID,boatID,qStartTime.toTime_t(),qEndTime.toTime_t());
         if (routeName.isEmpty())
         {
             QMessageBox msgBox;
-            msgBox.setText(tr("Ce nom est deja utilise ou invalide"));
+            msgBox.setText(tr("Trace partielle: pas de nom de route."));
             msgBox.setIcon(QMessageBox::Critical);
             msgBox.exec();
             return;
         }
         if (!ok) {
-            qWarning() << "Error parsing json data " << data;
-            qWarning() << "Error: " << parser.errorString() << " (line: " << parser.errorLine() << ")";
+            jsonError(&parser);
             return;
         }
         if (result["nb_tracks"]!=0)
@@ -428,8 +427,8 @@ void DialogDownloadTracks::requestFinished (QByteArray data)
                 qWarning()<<"No race such as: "<<raceID;
             else
             {
-                qWarning() << "Error parsing json data " << data;
-                qWarning() << "Error: " << parser.errorString() << " (line: " << parser.errorLine() << ")";
+                jsonError(&parser);
+                return;
             }
             raceIsValid=false;
             ui->labelDisplayRaceName->setText("N/A");
@@ -468,9 +467,7 @@ void DialogDownloadTracks::requestFinished (QByteArray data)
         QVariantMap result=parser.parse (data, &ok).toMap();
         if (!ok)
         {
-            qWarning() << "Error parsing json data " << data;
-            qWarning() << "Error: " << parser.errorString() << " (line: " << parser.errorLine() << ")";
-
+            jsonError(&parser);
             boatIsValid=false;
             ui->labelDisplayBoatName->setText("N/A");
             ui->buttonBox->button(QDialogButtonBox::Ok)->setEnabled(false);
@@ -496,3 +493,11 @@ void DialogDownloadTracks::requestFinished (QByteArray data)
     }
 }
 
+void DialogDownloadTracks::jsonError (QJson::Parser * parser)
+{
+    //qWarning() << "Error parsing json data " << data;
+    qWarning() << "Error: " << parser->errorString() << " (line: " << parser->errorLine() << ")";
+    QMessageBox::critical (this,
+                           tr("Erreur"),
+                           tr("Erreur de lecture json."));
+}

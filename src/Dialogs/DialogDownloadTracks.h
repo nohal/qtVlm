@@ -5,6 +5,7 @@
 #include "inetClient.h"
 #include "ui_DialogDownloadTracks.h"
 #include "class_list.h"
+#include "parser.h"
 
 namespace Ui {
     class DialogDownloadTracks;
@@ -36,6 +37,7 @@ private:
     bool raceIsValid,boatIsValid;
 
     bool doRequest(int reqType);
+    void jsonError (QJson::Parser * parser);
 private slots:
     void on_raceIDEdit_valueChanged(int);
     void on_boatIDEdit_valueChanged(int);

@@ -34,11 +34,11 @@
     </message>
     <message>
         <source>Debut de la trace</source>
-        <translation type="obsolete">Date et heure du début de la trace</translation>
+        <translation>Date et heure du début de la trace</translation>
     </message>
     <message>
         <source>Fin de la trace</source>
-        <translation type="obsolete">Date et heure de fin de la trace</translation>
+        <translation>Date et heure de fin de la trace</translation>
     </message>
     <message>
         <source>Course inconnue</source>
@@ -59,7 +59,7 @@
     <message>
         <source>Permet de telecharger manuellement une trace pour une course VLM.
 Necessite d&apos;entrer un numero de bateau et un numero de courses valides.</source>
-        <translation>Permet de télécharger manuellement une trace pour une course VLM.
+        <translation type="obsolete">Permet de télécharger manuellement une trace pour une course VLM.
 Nécessite d&apos;entrer un numéro de bateau et un numéro de courses valides.</translation>
     </message>
     <message>
@@ -69,7 +69,7 @@ Nécessite d&apos;entrer un numéro de bateau et un numéro de courses valides.<
     <message>
         <source>Ce nom est deja utilise ou invalide</source>
         <translatorcomment>Ce nom est déjà utilisé ou invalide</translatorcomment>
-        <translation>Ce nom est déjà utilisé ou invalide</translation>
+        <translation type="obsolete">Ce nom est déjà utilisé ou invalide</translation>
     </message>
     <message>
         <source>Trace cachee pour:</source>
@@ -109,11 +109,49 @@ Nécessite d&apos;entrer un numéro de bateau et un numéro de courses valides.<
     </message>
     <message>
         <source>Pour eviter de surcharger le serveur VLM, les traces demandees sont sauvegardees localement dans le dossier tracks. Priere de ne les renommer qu&apos;en cas de necessite.</source>
-        <translation>Pour éviter de surcharger le serveur VLM, les traces demandées sont sauvegardées localement dans le dossier tracks. Prière de ne les renommer qu&apos;en cas de nécessité.</translation>
+        <translation type="obsolete">Pour éviter de surcharger le serveur VLM, les traces demandées sont sauvegardées localement dans le dossier tracks. Prière de ne les renommer qu&apos;en cas de nécessité.</translation>
     </message>
     <message>
         <source>ID Course</source>
         <translation></translation>
+    </message>
+    <message>
+        <source>Les traces au format json sont sauvegardées dans le dossier tracks du répertoire de qtVlm.</source>
+        <translation>Les traces au format json sont sauvegardées dans le dossier tracks du répertoire de qtVlm.</translation>
+    </message>
+    <message>
+        <source>Trace Partielle</source>
+        <translation>Trace Partielle</translation>
+    </message>
+    <message>
+        <source>Heure Debut</source>
+        <translation>Heure Début</translation>
+    </message>
+    <message>
+        <source>yyyy/MM/dd hh:mm UTC</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Heure Fin</source>
+        <translation>Heure Fin</translation>
+    </message>
+    <message>
+        <source>Permet de telecharger manuellement une trace pour une course VLM.
+La bo�te � cocher trace partielle s&apos;active apres l&apos;entree d&apos;un numero de course valide, et permet de requ�rir une trace tronqu�e.</source>
+        <translation>Permet de telecharger manuellement une trace pour une course VLM.
+La boîte à cocher trace partielle s&apos;active apres l&apos;entree d&apos;un numero de course valide, et permet de requérir une trace tronquée.</translation>
+    </message>
+    <message>
+        <source>Trace entiere: pas de nom de route.</source>
+        <translation>Trace entière: pas de nom de route.</translation>
+    </message>
+    <message>
+        <source>Trace partielle: pas de nom de route.</source>
+        <translation>Trace partielle: pas de nom de route.</translation>
+    </message>
+    <message>
+        <source>Erreur de lecture json.</source>
+        <translation>Erreur de lecture json.</translation>
     </message>
 </context>
 <context>
@@ -2351,39 +2389,15 @@ Etes-vous sur ?</source>
     <name>POI_delete_ui</name>
     <message>
         <source>Selection de type de marque</source>
-        <translation>Sélection de type de marque</translation>
+        <translation type="obsolete">Sélection de type de marque</translation>
     </message>
     <message>
         <source>Cancel</source>
-        <translation>Annuler</translation>
+        <translation type="obsolete">Annuler</translation>
     </message>
     <message>
         <source>Type de marque a supprimer</source>
-        <translation>Type de marque à supprimer</translation>
-    </message>
-    <message>
-        <source>&lt;a href=&quot;titi&quot;&gt;Tous&lt;/a&gt;</source>
-        <translation></translation>
-    </message>
-    <message>
-        <source>&lt;a href=&quot;toto&quot;&gt;Aucun&lt;/a&gt;</source>
-        <translation></translation>
-    </message>
-    <message>
-        <source>POI</source>
-        <translation></translation>
-    </message>
-    <message>
-        <source>Marque</source>
-        <translation></translation>
-    </message>
-    <message>
-        <source>Balise</source>
-        <translation></translation>
-    </message>
-    <message>
-        <source>OK</source>
-        <translation></translation>
+        <translation type="obsolete">Type de marque à supprimer</translation>
     </message>
 </context>
 <context>
