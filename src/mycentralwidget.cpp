@@ -1193,7 +1193,7 @@ void myCentralWidget::slot_delAllPOIs(void)
                     poi->setRoute(NULL);
                 }
                 slot_delPOI_list(poi);
-                delete poi;
+                poi->deleteLater();
             }
 
         }
@@ -1246,7 +1246,7 @@ void myCentralWidget::slot_delSelPOIs(void)
                     poi->setRoute(NULL);
                 }
                 slot_delPOI_list(poi);
-                delete poi;
+                poi->deleteLater();
             }
         }
         selection->clearSelection();
@@ -2633,7 +2633,7 @@ void myCentralWidget::doSimplifyRoute(ROUTE * route, bool fast)
                 bestEta=route->getEta();
                 notFinished=true;
                 slot_delPOI_list(poi);
-                delete poi;
+                poi->deleteLater();
                 ++nbDel;
             }
             else
@@ -2680,9 +2680,9 @@ void myCentralWidget::doSimplifyRoute(ROUTE * route, bool fast)
                 bestEta=route->getEta();
                 notFinished=true;
                 slot_delPOI_list(poi1);
-                delete poi1;
+                poi1->deleteLater();
                 slot_delPOI_list(poi2);
-                delete poi2;
+                poi2->deleteLater();
                 nbDel=nbDel+2;
                 n=firstPOI-1;
                 pois=route->getPoiList();
@@ -2735,11 +2735,11 @@ void myCentralWidget::doSimplifyRoute(ROUTE * route, bool fast)
                 bestEta=route->getEta();
                 notFinished=true;
                 slot_delPOI_list(poi1);
-                delete poi1;
+                poi1->deleteLater();
                 slot_delPOI_list(poi2);
-                delete poi2;
+                poi2->deleteLater();
                 slot_delPOI_list(poi3);
-                delete poi3;
+                poi3->deleteLater();
                 nbDel=nbDel+3;
                 n=firstPOI-1;
                 pois=route->getPoiList();
@@ -2801,7 +2801,7 @@ void myCentralWidget::deleteRoute(ROUTE * route)
 {
     route_list.removeAll(route);
     update_menuRoute();
-    delete route;
+    route->deleteLater();
 }
 void myCentralWidget::slot_deleteRoute()
 {
@@ -2831,7 +2831,7 @@ void myCentralWidget::myDeleteRoute(ROUTE * route)
         if(rep==QMessageBox::Yes)
         {
             slot_delPOI_list(poi);
-            delete poi;
+            poi->deleteLater();
         }
     }
     deleteRoute(route);
@@ -2856,7 +2856,7 @@ void myCentralWidget::deleteRoutage(ROUTAGE * routage)
     {
         routage_list.removeAll(routage);
         update_menuRoutage();
-        delete(routage);
+        routage->deleteLater();
         routage=NULL;
     }
 }
@@ -3308,7 +3308,7 @@ void myCentralWidget::slot_POIRestore(void)
             poi->setRoute(NULL);
             poi->setMyLabelHidden(false);
             slot_delPOI_list(poi);
-            delete poi;
+            poi->deleteLater();
         }
         deleteRoute(route_list.first());
     }
@@ -3316,7 +3316,7 @@ void myCentralWidget::slot_POIRestore(void)
     {
         POI * poi=poi_list.first();
         slot_delPOI_list(poi);
-        delete poi;
+        poi->deleteLater();
     }
     loadPOI();
     QMessageBox::information(this,tr("Chargement des POIs et des routes"),tr("Chargement reussi"));

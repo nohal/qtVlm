@@ -114,13 +114,17 @@ ROUTE::ROUTE(QString name, Projection *proj, Grib *grib, QGraphicsScene * myScen
 
 ROUTE::~ROUTE()
 {
-    qWarning() << "Deleting route: " << name;
+    qWarning() << "Deleting route: " << name<<"busy="<<busy;
 
 
     if(line)
     {
         if(!parent->getAboutToQuit())
-            delete line;
+        {
+            disconnect(line,SIGNAL(hovered()),this,SLOT(hovered()));
+            disconnect(line,SIGNAL(unHovered()),this,SLOT(unHovered()));
+            line->deleteLater();
+        }
     }
     delete tanPos;
     delete tanNeg;
@@ -196,6 +200,7 @@ void ROUTE::unHovered()
 
 void ROUTE::slot_recalculate(boat * boat)
 {
+    if(temp) return;
     QTime timeTotal;
     timeTotal.start();
     line->setCoastDetection(false);
@@ -203,7 +208,6 @@ void ROUTE::slot_recalculate(boat * boat)
     int timeD=0;
     int nbLoop=0;
     if(parent->getAboutToQuit()) return;
-    if(temp) return;
     if(busy)
     {
         //busy=false; /*recursion*/
