@@ -184,7 +184,7 @@ void vlmLine::calculatePoly(void)
             if(worldPoint.isDead) continue;
             if(worldPoint.isBroken && n==0) continue;
             //Util::computePos(proj,worldPoint.lat, worldPoint.lon, &X, &Y);
-            proj->map2screenFloat(cLFA(worldPoint.lon),worldPoint.lat,&X,&Y);
+            proj->map2screenFloat(Util::cLFA(worldPoint.lon,proj->getXmin()),worldPoint.lat,&X,&Y);
             X=X-(int)x();
             Y=Y-(int)y();
             if(n>0)
@@ -471,33 +471,4 @@ QPainterPath vlmLine::shape() const
         path=myPath;
     }
     return path;
-}
-double vlmLine::cLFA(double lon)
-//convertLonForAntiMeridian
-{
-    double xW=proj->getXmin();
-    if(xW>=0 && lon>=0) return lon;
-    if(xW<=0 && lon<=0) return lon;
-    if(qAbs(qRound(qAbs(lon-xW))-qRound(myDiffAngle(A360(lon),A360(xW))))<=2) return lon;
-    if(xW>=0)
-    {
-        return xW+myDiffAngle(xW,lon+360.0);
-    }
-    else
-    {
-        if(xW<-180)
-            return lon-360;
-        else
-            return xW-myDiffAngle(A360(xW),lon);
-    }
-}
-float vlmLine::myDiffAngle(float a1,float a2)
-{
-    return qAbs(A360(qAbs(a1)+ 180.0 -qAbs(a2)) -180.0);
-}
-float vlmLine::A360(float hdg)
-{
-    while (hdg>=360.0) hdg=hdg-360.0;
-    while (hdg<0.0) hdg=hdg+360.0;
-    return hdg;
 }

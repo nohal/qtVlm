@@ -113,7 +113,6 @@ class ROUTAGE : public QObject
 
         static bool myLessThan(ROUTAGE * ROUTAGE_1,ROUTAGE* ROUTAGE_2) {return ROUTAGE_1->name < ROUTAGE_2->name;}
         static bool myEqual(ROUTAGE * ROUTAGE_1,ROUTAGE* ROUTAGE_2) {return ROUTAGE_1->name == ROUTAGE_2->name;}
-        double cLFA(double cx);
 
         void setFromPOI(POI *poi){this->fromPOI=poi;}
         POI * getFromPOI(){return this->fromPOI;}
@@ -146,8 +145,6 @@ class ROUTAGE : public QObject
         static int calculateTimeRoute(vlmPoint RouteFrom,vlmPoint routeTo, datathread *dataThread,double * lastLonFound=NULL, double * lastLatFound=NULL, int limit=-1);
         static int routeFunction(double x,vlmPoint from, double * lastLonFound, double * lastLatFound, datathread *dataThread);
         static int routeFunctionDeriv(double x,vlmPoint from, double * lastLonFound, double * lastLatFound, datathread *dataThread);
-        static double A360(double hdg);
-        static double myDiffAngle(double a1,double a2);
         bool getUseMultiThreading(){return this->useMultiThreading;}
         void setUseMultiThreading(bool b){this->useMultiThreading=b;}
         vlmLine * getResult(){return result;}

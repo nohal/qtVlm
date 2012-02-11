@@ -619,32 +619,21 @@ bool Util::lineIsCrossingRect(const QLineF line, const QRectF rect)
     if(line.y1()<rect.bottomLeft().y() && line.y2()<rect.bottomLeft().y()) return false;
     return true;
 }
-double Util::cLFA(double lon, double xW)
-//convertLonForAntiMeridian
-{
-    if(xW>=0 && lon>=0) return lon;
-    if(xW<=0 && lon<=0) return lon;
-    if(qAbs(qRound(qAbs(lon-xW))-qRound(myDiffAngle(A360(lon),A360(xW))))<=2) return lon;
-    if(xW>=0)
-    {
-        return xW+myDiffAngle(xW,lon+360.0);
-    }
-    else
-    {
-        if(xW<-180)
-            return lon-360;
-        else
-            return xW-myDiffAngle(A360(xW),lon);
-    }
+int Util::kmhToBeaufort(float v) {
+    return (int)(kmhToBeaufort_F(v)+0.5);
 }
-double Util::A360(double hdg)
-{
-    while (hdg>=360.0) hdg=hdg-360.0;
-    while (hdg<0.0) hdg=hdg+360.0;
-    return hdg;
+//-----------------------------------------------------------------------------
+float Util::kmhToBeaufort_F(float v) {
+    float bf = pow( v*v/9.0 , 0.33333);
+    if (bf > 12.0)
+        bf = 12.0;
+    else if (bf < 0.0)
+        bf = 0.0;
+    return bf;
 }
-double Util::myDiffAngle(double a1,double a2)
-{
-    return qAbs(A360(qAbs(a1)+ 180.0 -qAbs(a2)) -180.0);
+//-----------------------------------------------------------------------------
+float Util::BeaufortToKmh_F(float bf) {
+    float v = sqrt(bf*bf*bf*9.0);
+    return v;
 }
 

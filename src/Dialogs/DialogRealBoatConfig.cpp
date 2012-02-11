@@ -72,6 +72,7 @@ void DialogRealBoatConfig::launch(boatReal * boat)
         polarList->setCurrentIndex(polarStr.isEmpty()?0:polarList->findText(polarStr));
         //qWarning() << "Init dialog with polar: " << polarStr;
     }
+    this->declinaison->setValue(Settings::getSetting("declinaison",0).toDouble());
 
     exec();
 }
@@ -88,8 +89,11 @@ void DialogRealBoatConfig::done(int result)
 
             curBoat->setPolar(polarList->currentIndex()==0?QString():polarList->currentText());
         }
+        Settings::setSetting("declinaison",QString().sprintf("%.1f",this->declinaison->value()));
     }
     curBoat->setDisplayNMEA(this->displayNMEA->isChecked());
+    curBoat->setDeclinaison(declinaison->value());
+    curBoat->emitMoveBoat();
     QDialog::done(result);
 }
 

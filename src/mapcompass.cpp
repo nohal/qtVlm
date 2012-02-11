@@ -679,7 +679,16 @@ void mapCompass::updateCompassLineLabels(int x, int y)
             meters=QString().sprintf("<br>%.2f ",loxo_dist*1852)+tr("Metres");
         if(map->crossing(QLineF(XX,YY,X,Y),QLineF(xa,ya,xb,yb)))
         {
-            hdg_label->setHtml(QString().sprintf("<b><big>Ortho->Hdg: %.2f%c Dist: %.2f NM",pos_angle,176,pos_distance)+"<br>"+
+            if(main->getSelectedBoat()->getType()!=BOAT_VLM)
+            {
+                double cap1=Util::A360(pos_angle-main->getSelectedBoat()->getDeclinaison());
+                double cap2=Util::A360(loxo_angle-main->getSelectedBoat()->getDeclinaison());
+                hdg_label->setHtml(QString().sprintf("<b><big>Ortho->Hdg: %.2f%c (Mag: %.2f%c) Dist: %.2f NM",pos_angle,176,cap1,176,pos_distance)+"<br>"+
+                       QString().sprintf("<b><big>Loxo-->Hdg: %.2f%c (Mag: %.2f%c) Dist: %.2f NM",loxo_angle,176,cap2,176,loxo_dist)+meters+"<br>"+
+                       "<font color=\"#FF0000\">"+tr("Collision avec les terres detectee")+"</font>");
+            }
+            else
+                hdg_label->setHtml(QString().sprintf("<b><big>Ortho->Hdg: %.2f%c Dist: %.2f NM",pos_angle,176,pos_distance)+"<br>"+
                        QString().sprintf("<b><big>Loxo-->Hdg: %.2f%c Dist: %.2f NM",loxo_angle,176,loxo_dist)+meters+"<br>"+
                        "<font color=\"#FF0000\">"+tr("Collision avec les terres detectee")+"</font>");
             penLine.setColor(Qt::red);
@@ -687,7 +696,15 @@ void mapCompass::updateCompassLineLabels(int x, int y)
         }
         else
         {
-            hdg_label->setHtml(QString().sprintf("<b><big>Ortho->Hdg: %.2f%c Dist: %.2f NM",pos_angle,176,pos_distance)+"<br>"+
+            if(main->getSelectedBoat()->getType()!=BOAT_VLM)
+            {
+                double cap1=Util::A360(pos_angle-main->getSelectedBoat()->getDeclinaison());
+                double cap2=Util::A360(loxo_angle-main->getSelectedBoat()->getDeclinaison());
+                hdg_label->setHtml(QString().sprintf("<b><big>Ortho->Hdg: %.2f%c (Mag: %.2f%c) Dist: %.2f NM",pos_angle,176,cap1,176,pos_distance)+"<br>"+
+                       QString().sprintf("<b><big>Loxo-->Hdg: %.2f%c (Mag: %.2f%c) Dist: %.2f NM",loxo_angle,176,cap2,176,loxo_dist)+meters);
+            }
+            else
+                hdg_label->setHtml(QString().sprintf("<b><big>Ortho->Hdg: %.2f%c Dist: %.2f NM",pos_angle,176,pos_distance)+"<br>"+
                        QString().sprintf("<b><big>Loxo-->Hdg: %.2f%c Dist: %.2f NM",loxo_angle,176,loxo_dist)+meters);
             penLine.setColor(Qt::white);
             compassLine->setLinePen(penLine);
@@ -795,6 +812,7 @@ void mapCompass::slot_stopCompassLine(void)
     if(drawCompassLine) /* toggle compass line only if it is ON */
         slot_compassLine(0,0);
 }
+
 
 void mapCompass::slot_compassLine(double click_x, double click_y)
 {

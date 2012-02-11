@@ -71,6 +71,7 @@ boat::boat(QString pseudo, bool activated,
     estimeTimer->setInterval(1000);
     connect(estimeTimer,SIGNAL(timeout()),this,SLOT(slot_estimeFlashing()));
     WPLine = new orthoSegment(proj,parent->getScene(),Z_VALUE_ESTIME);
+    this->declinaison=0;
 
     connect(parent, SIGNAL(showALL(bool)),this,SLOT(slot_shSall()));
     connect(parent, SIGNAL(hideALL(bool)),this,SLOT(slot_shHall()));

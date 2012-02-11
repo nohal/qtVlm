@@ -95,6 +95,8 @@ class boat: public QGraphicsWidget
         int getType(void) { return boat_type; }
 
         void drawEstime(float myHeading, float mySpeed);
+        double getDeclinaison(){return this->declinaison;}
+        void setDeclinaison(double d){this->declinaison=d;}
 
         /* graphicsWidget */
         QPainterPath shape() const;
@@ -216,6 +218,7 @@ class boat: public QGraphicsWidget
         bool my_intersects(QLineF line1,QLineF line2) const;
         double windEstimeDir;
         double windEstimeSpeed;
+        double declinaison;
 };
 
 #endif // BOAT_H

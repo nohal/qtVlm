@@ -604,8 +604,8 @@ void interpolation::get_wind_info_latlong_hybrid_compute(double longitude,  doub
     ratioLatDebug=d_lat - floor(d_lat);
     ratioLonDebug=d_long - floor(d_long);
 #endif
-    int i0 = floor ((longitude-gridOriginLon)/lon_step);
-    int j0 = floor ((latitude-gridOriginLat)/lat_step);
+    int i0 = (int) floor ((longitude-gridOriginLon)/lon_step);
+    int j0 = (int) floor ((latitude-gridOriginLat)/lat_step);
     if(((latitude-gridOriginLat)/lat_step)-j0!=0.0)
     {
         if(lat_step<0)

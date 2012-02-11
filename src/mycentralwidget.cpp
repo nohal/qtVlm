@@ -2934,12 +2934,6 @@ void myCentralWidget::update_menuRoutage()
     while(i.hasNext())
         menuBar->addMenuRoutage(i.next());
 }
-float myCentralWidget::A360(float hdg)
-{
-    if(hdg>=360) hdg=hdg-360;
-    if(hdg<0) hdg=hdg+360;
-    return hdg;
-}
 
 /**************************/
 /* Players                */

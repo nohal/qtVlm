@@ -80,6 +80,7 @@ boatReal::boatReal(QString pseudo, bool activated, Projection * proj,MainWindow 
     this->eta=-1;
     changeLocked=false;
     forceEstime=false;
+    this->declinaison=Settings::getSetting("declinaison",0).toDouble();
 
     myCreatePopUpMenu();
     this->lastUpdateTime=QDateTime().currentDateTimeUtc().toTime_t();
@@ -182,6 +183,10 @@ void boatReal::updateBoat(nmeaINFO info)
 //        "speed:"<<info.speed<<"cap:"<<info.direction<<"lat:"<<info.lat;
     this->fix=info.fix;
     this->sig=info.sig;
+    if(info.declination!=0)
+        this->declinaison=info.declination;
+    else
+        this->declinaison=Settings::getSetting("declinaison",0).toDouble();
     this->pdop=info.PDOP;
     if(sig<0 || sig>3)
         qWarning()<<"strange sig value:"<<sig;

@@ -167,9 +167,7 @@ class ROUTE : public QObject
         bool superFrozen;
         bool detectCoasts;
         bool busy;
-        double A360(double hdg);
         double A180(double hdg);
-        double myDiffAngle(double a1,double a2);
         time_t eta;
         time_t start;
         bool has_eta;

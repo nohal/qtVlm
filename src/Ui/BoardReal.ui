@@ -178,6 +178,32 @@
     </layout>
    </item>
    <item>
+    <widget class="QGroupBox" name="groupBox_4">
+     <property name="minimumSize">
+      <size>
+       <width>0</width>
+       <height>52</height>
+      </size>
+     </property>
+     <property name="title">
+      <string>Declinaison</string>
+     </property>
+     <widget class="QCheckBox" name="declinaison">
+      <property name="geometry">
+       <rect>
+        <x>20</x>
+        <y>20</y>
+        <width>231</width>
+        <height>17</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Inclure la declinaison</string>
+      </property>
+     </widget>
+    </widget>
+   </item>
+   <item>
     <layout class="QHBoxLayout" name="horizontalLayout_5">
      <item>
       <widget class="QGroupBox" name="groupBox_2">
@@ -626,6 +652,14 @@
    </item>
   </layout>
  </widget>
+ <tabstops>
+  <tabstop>btn_chgPosition</tabstop>
+  <tabstop>btn_boatInfo</tabstop>
+  <tabstop>declinaison</tabstop>
+  <tabstop>reset</tabstop>
+  <tabstop>startBtn</tabstop>
+  <tabstop>statusBtn</tabstop>
+ </tabstops>
  <resources/>
  <connections>
   <connection>

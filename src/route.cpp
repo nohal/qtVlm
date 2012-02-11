@@ -464,10 +464,10 @@ void ROUTE::slot_recalculate(boat * boat)
                                         if(qAbs(angle)<myBoat->getBvmgUp(wind_speed))
                                         {
                                             angle=myBoat->getBvmgUp(wind_speed);
-                                            cap1=A360(wind_angle+angle);
-                                            cap2=A360(wind_angle-angle);
-                                            diff1=myDiffAngle(cap,cap1);
-                                            diff2=myDiffAngle(cap,cap2);
+                                            cap1=Util::A360(wind_angle+angle);
+                                            cap2=Util::A360(wind_angle-angle);
+                                            diff1=Util::myDiffAngle(cap,cap1);
+                                            diff2=Util::myDiffAngle(cap,cap2);
                                             if(diff1<diff2)
                                                 cap=cap1;
                                             else
@@ -476,10 +476,10 @@ void ROUTE::slot_recalculate(boat * boat)
                                         else if(qAbs(angle)>myBoat->getBvmgDown(wind_speed))
                                         {
                                             angle=myBoat->getBvmgDown(wind_speed);
-                                            cap1=A360(wind_angle+angle);
-                                            cap2=A360(wind_angle-angle);
-                                            diff1=myDiffAngle(cap,cap1);
-                                            diff2=myDiffAngle(cap,cap2);
+                                            cap1=Util::A360(wind_angle+angle);
+                                            cap2=Util::A360(wind_angle-angle);
+                                            diff1=Util::myDiffAngle(cap,cap1);
+                                            diff2=Util::myDiffAngle(cap,cap2);
                                             if(diff1<diff2)
                                                 cap=cap1;
                                             else
@@ -498,7 +498,7 @@ void ROUTE::slot_recalculate(boat * boat)
                                     if(qRound(angle*100.00)!=qRound(angleDebug*100.00))
                                         qWarning()<<"angle="<<angle<<" angleDebug="<<angleDebug;
     #endif
-                                    cap=A360(angle+wind_angle);
+                                    cap=Util::A360(angle+wind_angle);
                                     break;
                                 case 2: //ORTHO
                                     angle=A180(cap-wind_angle);
@@ -815,12 +815,6 @@ void ROUTE::interpolatePos()
         lastEta=list->at(n).eta;
     }
 }
-double ROUTE::A360(double hdg)
-{
-    if(hdg>=360) hdg=hdg-360;
-    if(hdg<0) hdg=hdg+360;
-    return hdg;
-}
 double ROUTE::A180(double angle)
 {
     if(qAbs(angle)>180)
@@ -840,11 +834,6 @@ bool ROUTE::isPartOfBvmg(POI * poi)
     if (my_poiList.at(my_poiList.indexOf(poi)+1)->getNavMode()==1) return true;
     return false;
 }
-double ROUTE::myDiffAngle(double a1,double a2)
-{
-    return qAbs(A360(qAbs(a1)+ 180 -qAbs(a2)) -180);
-}
-
 void ROUTE::slot_edit()
 {
     emit editMe(this);

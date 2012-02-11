@@ -383,7 +383,6 @@ class myCentralWidget : public QWidget
         /* Data file */
         xml_POIData * xmlPOI;
         xml_boatData * xmlData;
-        float A360(float hdg);
         bool aboutToQuit;
 
         /* items state */

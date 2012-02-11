@@ -2405,15 +2405,39 @@ Etes-vous sur ?</source>
     <name>POI_delete_ui</name>
     <message>
         <source>Selection de type de marque</source>
-        <translation type="obsolete">Sélection de type de marque</translation>
+        <translation>Sélection de type de marque</translation>
     </message>
     <message>
         <source>Cancel</source>
-        <translation type="obsolete">Annuler</translation>
+        <translation>Annuler</translation>
     </message>
     <message>
         <source>Type de marque a supprimer</source>
-        <translation type="obsolete">Type de marque à supprimer</translation>
+        <translation>Type de marque à supprimer</translation>
+    </message>
+    <message>
+        <source>&lt;a href=&quot;titi&quot;&gt;Tous&lt;/a&gt;</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>&lt;a href=&quot;toto&quot;&gt;Aucun&lt;/a&gt;</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>POI</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Marque</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Balise</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>OK</source>
+        <translation></translation>
     </message>
 </context>
 <context>
@@ -4109,6 +4133,11 @@ p, li { white-space: pre-wrap; }
         <source>Portant</source>
         <translation></translation>
     </message>
+    <message>
+        <source>Inclure la declinaison (</source>
+        <translatorcomment>Inclure la déclinaison (</translatorcomment>
+        <translation></translation>
+    </message>
 </context>
 <context>
     <name>boardReal_ui</name>
@@ -4200,6 +4229,14 @@ p, li { white-space: pre-wrap; }
     <message>
         <source>Wind information (from grib)</source>
         <translation>Information Vent (Grib)</translation>
+    </message>
+    <message>
+        <source>Declinaison</source>
+        <translation>Déclinaison</translation>
+    </message>
+    <message>
+        <source>Inclure la declinaison</source>
+        <translation>Include la déclinaison</translation>
     </message>
 </context>
 <context>
@@ -6174,7 +6211,23 @@ Voulez-vous egalement supprimer tous les POIs lui appartenant?</source>
     </message>
     <message>
         <source>Afficher les donnees brutes</source>
+        <translation type="obsolete">Afficher les données NMEA brutes</translation>
+    </message>
+    <message>
+        <source>Afficher les donnees NMEA brutes</source>
         <translation>Afficher les données NMEA brutes</translation>
+    </message>
+    <message>
+        <source>Declinaison par defaut</source>
+        <translation>Déclinaison par defaut</translation>
+    </message>
+    <message>
+        <source>Positif pour Est, negatif pour Ouest</source>
+        <translation>Positif pour Est, négatif pour Ouest</translation>
+    </message>
+    <message>
+        <source>deg</source>
+        <translation>°</translation>
     </message>
 </context>
 <context>

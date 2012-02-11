@@ -124,9 +124,6 @@ class vlmLine : public QGraphicsWidget
         float interpolatedLat;
         bool hasInterpolated;
         QRectF r;
-        double cLFA(double lon);
-        float myDiffAngle(float a1,float a2);
-        float A360(float hdg);
         bool replayMode;
         int replayStep;
         bool roundedEnd;

@@ -58,6 +58,7 @@ boardReal::boardReal(MainWindow * mainWin, board * parent) : QWidget(mainWin)
     pntImgInfo.setFont(font);
     this->gpsInfo->hide();
     this->statusBtn->setEnabled(false);
+    connect(this->declinaison,SIGNAL(clicked()),this,SLOT(paramChanged()));
 //    /* Etat du compass */
 //    if(Settings::getSetting("boardCompassShown", "1").toInt()==1)
 //        windAngle->show();
@@ -86,9 +87,19 @@ void boardReal::setWp(float lat,float lon,float wph)
     if(myBoat->getWPLat()!=0 && myBoat->getWPLat()!=0)
     {
         dnm_2->setText(QString().setNum(myBoat->getDnm()));
-        ortho->setText(QString().setNum(myBoat->getOrtho()));
         vmg_2->setText(QString().setNum(myBoat->getVmg()));
-        angle->setText(QString().setNum(myBoat->getLoxo()));
+        if(!declinaison->isChecked())
+        {
+            ortho->setText(QString().setNum(myBoat->getOrtho()));
+            angle->setText(QString().setNum(myBoat->getLoxo()));
+        }
+        else
+        {
+            double cap=Util::A360(myBoat->getOrtho()-myBoat->getDeclinaison());
+            ortho->setText(QString().setNum(cap));
+            cap=Util::A360(myBoat->getLoxo()-myBoat->getDeclinaison());
+            angle->setText(QString().setNum(cap));
+        }
     }
     else
     {
@@ -98,6 +109,7 @@ void boardReal::setWp(float lat,float lon,float wph)
         angle->setText("---");
     }
 }
+
 void boardReal::gribUpdated()
 {
     boatUpdated();
@@ -117,7 +129,17 @@ void boardReal::boatUpdated(void)
 
     /* boat heading */
     //windAngle->setValues(myBoat->getHeading(),0,myBoat->getWindSpeed(), -1, -1);
-    this->dir->display(myBoat->getHeading());
+    if(this->declinaison->isChecked())
+    {
+        double cap=Util::A360(myBoat->getHeading()-myBoat->getDeclinaison());
+        this->dir->display(cap);
+    }
+    else
+        this->dir->display(myBoat->getHeading());
+    QString EW=" E";
+    if(myBoat->getDeclinaison()<0)
+        EW=" W";
+    this->declinaison->setText(tr("Inclure la declinaison (")+QString().sprintf("%.1f",qAbs(myBoat->getDeclinaison()))+tr("deg")+EW+")");
 
     /* boat speed*/
     this->speed->display(myBoat->getSpeed());
@@ -126,9 +148,19 @@ void boardReal::boatUpdated(void)
     if(myBoat->getWPLat()!=0 && myBoat->getWPLat()!=0)
     {
         dnm_2->setText(QString().setNum(myBoat->getDnm()));
-        ortho->setText(QString().setNum(myBoat->getOrtho()));
         vmg_2->setText(QString().setNum(myBoat->getVmg()));
-        angle->setText(QString().setNum(myBoat->getLoxo()));
+        if(this->declinaison->isChecked())
+        {
+            double cap=Util::A360(myBoat->getOrtho()-myBoat->getDeclinaison());
+            ortho->setText(QString().setNum(cap));
+            cap=Util::A360(myBoat->getLoxo()-myBoat->getDeclinaison());
+            angle->setText(QString().setNum(cap));
+        }
+        else
+        {
+            ortho->setText(QString().setNum(myBoat->getOrtho()));
+            angle->setText(QString().setNum(myBoat->getLoxo()));
+        }
     }
     else
     {
@@ -247,7 +279,7 @@ void boardReal::setChangeStatus(bool /*status*/)
 
 void boardReal::paramChanged()
 {
-
+    this->boatUpdated();
 }
 
 void boardReal::disp_boatInfo()

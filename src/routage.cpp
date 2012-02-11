@@ -53,7 +53,7 @@ inline vlmPoint findPointThreaded(const vlmPoint &point)
     double windSpeed=pt.wind_speed;
     double lat=pt.origin->lat;
     double lon=pt.origin->lon;
-    cap=ROUTAGE::A360(cap);
+    cap=Util::A360(cap);
     double angle,newSpeed;
     time_t workEta;
     double res_lon,res_lat;
@@ -115,7 +115,7 @@ inline vlmPoint findPointThreaded(const vlmPoint &point)
             }
             if(pt.routage->getWhatIfUsed() && pt.routage->getWhatIfJour()<=pt.eta)
                 windSpeed=windSpeed*pt.routage->getWhatIfWind()/100.00;
-            windAngle=ROUTAGE::A360((windAngle+newWindAngle)/2);
+            windAngle=Util::A360((windAngle+newWindAngle)/2);
             windSpeed=(windSpeed+newWindSpeed)/2;
         }
     }
@@ -125,7 +125,7 @@ inline vlmPoint findPointThreaded(const vlmPoint &point)
         return pt;
     }
     double x,y;
-    pt.routage->getProj()->map2screenFloat(pt.routage->cLFA(pt.lon),pt.lat,&x,&y);
+    pt.routage->getProj()->map2screenFloat(Util::cLFA(pt.lon,pt.routage->getProj()->getXmin()),pt.lat,&x,&y);
     pt.x=x;
     pt.y=y;
     if(pt.routage->getVisibleOnly() && !pt.routage->getProj()->isInBounderies_strict(pt.x,pt.y))
@@ -232,7 +232,7 @@ inline QList<vlmPoint> finalEpuration(const QList<vlmPoint> &listPointsX)
     for(int n=0;n<listPoints.size()-1;n++)
     {
 #if 1
-        if(qAbs(ROUTAGE::myDiffAngle(listPoints.at(n).capArrival,
+        if(qAbs(Util::myDiffAngle(listPoints.at(n).capArrival,
                                 listPoints.at(n+1).capArrival)) > 90)
             critere=179;
         else
@@ -599,10 +599,10 @@ inline int ROUTAGE::calculateTimeRoute(vlmPoint routeFrom,vlmPoint routeTo, data
                 if(qAbs(angle)<dataThread->Boat->getBvmgUp(windSpeed))
                 {
                     angle=dataThread->Boat->getBvmgUp(windSpeed);
-                    cap1=ROUTAGE::A360(windAngle+angle);
-                    cap2=ROUTAGE::A360(windAngle-angle);
-                    diff1=ROUTAGE::myDiffAngle(cap,cap1);
-                    diff2=ROUTAGE::myDiffAngle(cap,cap2);
+                    cap1=Util::A360(windAngle+angle);
+                    cap2=Util::A360(windAngle-angle);
+                    diff1=Util::myDiffAngle(cap,cap1);
+                    diff2=Util::myDiffAngle(cap,cap2);
                     if(diff1<diff2)
                         cap=cap1;
                     else
@@ -611,10 +611,10 @@ inline int ROUTAGE::calculateTimeRoute(vlmPoint routeFrom,vlmPoint routeTo, data
                 else if(qAbs(angle)>dataThread->Boat->getBvmgDown(windSpeed))
                 {
                     angle=dataThread->Boat->getBvmgDown(windSpeed);
-                    cap1=ROUTAGE::A360(windAngle+angle);
-                    cap2=ROUTAGE::A360(windAngle-angle);
-                    diff1=ROUTAGE::myDiffAngle(cap,cap1);
-                    diff2=ROUTAGE::myDiffAngle(cap,cap2);
+                    cap1=Util::A360(windAngle+angle);
+                    cap2=Util::A360(windAngle-angle);
+                    diff1=Util::myDiffAngle(cap,cap1);
+                    diff2=Util::myDiffAngle(cap,cap2);
                     if(diff1<diff2)
                         cap=cap1;
                     else
@@ -988,8 +988,8 @@ void ROUTAGE::slot_calculate()
     iso->setParent(this);
     vlmPoint point(start.x(),start.y());
     point.isStart=true;
-    proj->map2screenFloat(cLFA(start.x()),start.y(),&xs,&ys);
-    proj->map2screenFloat(cLFA(arrival.x()),arrival.y(),&xa,&ya);
+    proj->map2screenFloat(Util::cLFA(start.x(),proj->getXmin()),start.y(),&xs,&ys);
+    proj->map2screenFloat(Util::cLFA(arrival.x(),proj->getXmin()),arrival.y(),&xa,&ya);
     point.x=xs;
     point.y=ys;
 #if 0
@@ -1002,14 +1002,14 @@ void ROUTAGE::slot_calculate()
     point.distStart=0;
     point.capStart=0;
     point.distArrival=tempLine.length();
-    point.capArrival=A360(-tempLine.angle()+90);
+    point.capArrival=Util::A360(-tempLine.angle()+90);
     point.distOrigin=0;
     initialDist=tempLine.length();
 #endif
     approaching=false;
     point.origin=NULL;
     point.routage=this;
-    point.capOrigin=A360(loxoCap);
+    point.capOrigin=Util::A360(loxoCap);
     point.eta=eta;
     iso->addVlmPoint(point);
     isochrones.append(iso);
@@ -1096,8 +1096,8 @@ void ROUTAGE::slot_calculate()
             nbNotDead++;
             iso->setPointWind(n,windAngle,windSpeed);
             double vmg;
-            myBoat->getPolarData()->getBvmg(A360(list->at(n).capArrival-windAngle),windSpeed,&vmg);
-            iso->setPointCapVmg(n,A360(vmg+windAngle));
+            myBoat->getPolarData()->getBvmg(Util::A360(list->at(n).capArrival-windAngle),windSpeed,&vmg);
+            iso->setPointCapVmg(n,Util::A360(vmg+windAngle));
         }
         msecs_5+=tfp.elapsed();
         if(minDist<distStart)
@@ -1185,14 +1185,14 @@ void ROUTAGE::slot_calculate()
             {
                 limitRight.setPoints(QPointF(list->at(n-2).x,list->at(n-2).y),QPointF(xa,ya));
 //                limitRight.setAngle(A360(90-list->at(n).capVmg));
-                limitRight.setAngle(A360(90-list->at(n-2).capOrigin));
+                limitRight.setAngle(Util::A360(90-list->at(n-2).capOrigin));
                 limitRight.setLength(list->at(n-2).distIso);
             }
             if(n<list->count()-2)
             {
                 limitLeft.setPoints(QPointF(list->at(n+2).x,list->at(n+2).y),QPointF(xa,ya));
 //                limitLeft.setAngle(A360(90-list->at(n).capVmg));
-                limitLeft.setAngle(A360(90-list->at(n+2).capOrigin));
+                limitLeft.setAngle(Util::A360(90-list->at(n+2).capOrigin));
                 limitLeft.setLength(list->at(n+2).distIso);
             }
 #endif
@@ -1206,7 +1206,7 @@ void ROUTAGE::slot_calculate()
                     if(!tryingToFindHole && !list->at(0).isStart)
                     {
                         QLineF temp(list->at(n).x,list->at(n).y,xa,ya);
-                        temp.setAngle(A360(90-caps.at(ccc)));
+                        temp.setAngle(Util::A360(90-caps.at(ccc)));
                         temp.setLength(list->at(n).distIso);
                         QPointF dummy;
                         if(n>1)
@@ -1252,14 +1252,14 @@ void ROUTAGE::slot_calculate()
                     newPoint.routage=this;
                     newPoint.origin=iso->getPoint(n);
                     newPoint.originNb=n;
-                    newPoint.capOrigin=A360(cap);
+                    newPoint.capOrigin=Util::A360(cap);
                     newPoint.wind_angle=windAngle;
                     newPoint.wind_speed=windSpeed;
                     newPoint.capOrigin=cap;
                     newPoint.eta=eta;
                     if(n!=list->count()-1)
                     {
-                        if(ROUTAGE::myDiffAngle(newPoint.origin->capArrival,
+                        if(Util::myDiffAngle(newPoint.origin->capArrival,
                                        list->at(n+1).capArrival)<60)
                         {
                             newPoint.xP1=list->at(n+1).x;
@@ -1268,7 +1268,7 @@ void ROUTAGE::slot_calculate()
                     }
                     if(n!=0)
                     {
-                        if(ROUTAGE::myDiffAngle(newPoint.origin->capArrival,
+                        if(Util::myDiffAngle(newPoint.origin->capArrival,
                                        list->at(n-1).capArrival)<60)
                         {
                             newPoint.xM1=list->at(n-1).x;
@@ -1326,10 +1326,10 @@ void ROUTAGE::slot_calculate()
                     tfp.start();
                     QLineF tempLine(newPoint.x,newPoint.y,xs,ys);
                     newPoint.distStart=tempLine.length();
-                    newPoint.capStart=A360(-tempLine.angle()+90);
+                    newPoint.capStart=Util::A360(-tempLine.angle()+90);
                     tempLine.setP2(QPointF(xa,ya));
                     newPoint.distArrival=tempLine.length();
-                    newPoint.capArrival=A360(-tempLine.angle()+90);
+                    newPoint.capArrival=Util::A360(-tempLine.angle()+90);
                     orth.setPoints(list->at(n).lon,list->at(n).lat,newPoint.lon,newPoint.lat);
                     newPoint.distOrigin=orth.getDistance();
                     msecs_21=msecs_21+tfp.elapsed();
@@ -1562,7 +1562,7 @@ void ROUTAGE::slot_calculate()
                         }
                     }
                     double x,y;
-                    proj->map2screenFloat(cLFA(newPoint.lon),newPoint.lat,&x,&y);
+                    proj->map2screenFloat(Util::cLFA(newPoint.lon,proj->getXmin()),newPoint.lat,&x,&y);
                     newPoint.x=x;
                     newPoint.y=y;
 #if 1 /*check again if crossing with coast*/
@@ -1668,7 +1668,7 @@ void ROUTAGE::slot_calculate()
                 currentIso->addVlmPoint(tempPoints[n]);
                 if(n>0)
                 {
-                    if(qAbs(ROUTAGE::myDiffAngle(tempPoints.at(n).capArrival,
+                    if(qAbs(Util::myDiffAngle(tempPoints.at(n).capArrival,
                                                             tempPoints.at(n-1).capArrival)) < 60)
                         previousIso.append(QPointF(tempPoints.at(n).x,tempPoints.at(n).y));
                     else //insert same point not to loose increment
@@ -2088,7 +2088,7 @@ void ROUTAGE::pruneWake(int wakeAngle)
             double pc1=pIso->at(m).distArrival/initialDist;
             double pc2=tempPoints.at(n).distArrival/initialDist;
             if(pc2-pc1<0.30) continue;
-            if(ROUTAGE::myDiffAngle(pIso->at(m).capArrival,tempPoints.at(n).capArrival)>60) continue;
+            if(Util::myDiffAngle(pIso->at(m).capArrival,tempPoints.at(n).capArrival)>60) continue;
             QLineF toArrival(pIso->at(m).x,pIso->at(m).y,xa,ya);
             QLineF toArrival2(tempPoints.at(n).x,tempPoints.at(n).y,xa,ya);
             double a=toArrival.angleTo(toArrival2);
@@ -2101,10 +2101,10 @@ void ROUTAGE::pruneWake(int wakeAngle)
             QLineF temp(xa,ya,x1,y1);
             wakeDir=temp.angle();
             QLineF temp1(x2,y2,x1,y1);
-            temp1.setAngle(A360(wakeDir+wakeAngle));
+            temp1.setAngle(Util::A360(wakeDir+wakeAngle));
             temp1.setLength(10e5);
             wake.append(temp1.p2());
-            temp1.setAngle(A360(wakeDir-wakeAngle));
+            temp1.setAngle(Util::A360(wakeDir-wakeAngle));
             wake.append(temp1.p2());
             wake.append(QPointF(x2,y2));
             if(wake.containsPoint(QPointF(x1,y1),Qt::OddEvenFill))
@@ -2159,19 +2159,9 @@ double ROUTAGE::findTime(const vlmPoint * pt, QPointF P, double * cap)
         newSpeed=myBoat->getPolarData()->getSpeed(windSpeed,angle);
     return orth.getDistance()/newSpeed;
 }
-double ROUTAGE::A360(double hdg)
-{
-    while (hdg>=360.0) hdg=hdg-360.0;
-    while (hdg<0.0) hdg=hdg+360.0;
-    return hdg;
-}
-double ROUTAGE::myDiffAngle(double a1,double a2)
-{
-    return qAbs(A360(qAbs(a1)+ 180 -qAbs(a2)) -180);
-}
 double ROUTAGE::mySignedDiffAngle(double a1,double a2)
 {
-    return (A360(qAbs(a1)+ 180 -qAbs(a2)) -180);
+    return (Util::A360(qAbs(a1)+ 180 -qAbs(a2)) -180);
 }
 void ROUTAGE::slot_edit()
 {
@@ -2315,7 +2305,7 @@ void ROUTAGE::eraseWay()
 
 bool ROUTAGE::findPoint(double lon, double lat, double windAngle, double windSpeed, double cap, vlmPoint *pt)
 {
-    cap=A360(cap);
+    cap=Util::A360(cap);
     double angle,newSpeed;
     time_t workEta;
     double res_lon,res_lat;
@@ -2376,7 +2366,7 @@ bool ROUTAGE::findPoint(double lon, double lat, double windAngle, double windSpe
             }
             if(whatIfUsed && whatIfJour<=eta)
                 windSpeed=windSpeed*whatIfWind/100.00;
-            windAngle=A360((windAngle+newWindAngle)/2);
+            windAngle=Util::A360((windAngle+newWindAngle)/2);
             windSpeed=(windSpeed+newWindSpeed)/2;
 //            if(!this->useDistIso)
 //            {
@@ -2666,7 +2656,7 @@ void ROUTAGE::removeCrossedSegments()
     for(int n=0;n<tempPoints.size()-1;n++)
     {
         bool differentDirection=false;
-        if(ROUTAGE::myDiffAngle(tempPoints.at(n).capArrival,tempPoints.at(n+1).capArrival)>60)
+        if(Util::myDiffAngle(tempPoints.at(n).capArrival,tempPoints.at(n+1).capArrival)>60)
         {
             if(tempPoints.at(n).originNb!=tempPoints.at(n+1).originNb)
             {
@@ -2730,7 +2720,7 @@ void ROUTAGE::removeCrossedSegments()
 
 
             bool differentDirection=false;
-            if(ROUTAGE::myDiffAngle(tempPoints.at(previous).capArrival,tempPoints.at(next).capArrival)>60)
+            if(Util::myDiffAngle(tempPoints.at(previous).capArrival,tempPoints.at(next).capArrival)>60)
             {
                 if(tempPoints.at(previous).originNb!=tempPoints.at(next).originNb)
                 {
@@ -2852,9 +2842,9 @@ QList<double> ROUTAGE::calculateCaps(vlmPoint point, double workAngleStep, doubl
     {
         if(cc>workAngleRange/2.0)
             cc=workAngleRange/2;
-        caps.append(A360(point.capArrival-cc));
+        caps.append(Util::A360(point.capArrival-cc));
         if(cc!=0)
-            caps.prepend(A360(point.capArrival+cc));
+            caps.prepend(Util::A360(point.capArrival+cc));
         if(cc>=workAngleRange/2.0) break;
     }
 #if 1
@@ -3000,25 +2990,6 @@ void ROUTAGE::createPopupMenu()
     popup->addAction(ac_pivotM);
     connect(ac_pivot,SIGNAL(triggered()),this,SLOT(slot_createPivot()));
     connect(ac_pivotM,SIGNAL(triggered()),this,SLOT(slot_createPivotM()));
-}
-double ROUTAGE::cLFA(double lon)
-//convertLonForAntiMeridian
-{
-    double xW=proj->getXmin();
-    if(xW>=0 && lon>=0) return lon;
-    if(xW<=0 && lon<=0) return lon;
-    if(qAbs(qRound(qAbs(lon-xW))-qRound(ROUTAGE::myDiffAngle(A360(lon),A360(xW))))<=2) return lon;
-    if(xW>=0)
-    {
-        return xW+ROUTAGE::myDiffAngle(xW,lon+360.0);
-    }
-    else
-    {
-        if(xW<-180)
-            return lon-360;
-        else
-            return xW-ROUTAGE::myDiffAngle(A360(xW),lon);
-    }
 }
 double ROUTAGE::getTimeStep()
 {
