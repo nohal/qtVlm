@@ -2,6 +2,7 @@
 #define DIALOGDOWNLOADTRACKS_H
 
 #include <QDialog>
+#include <QFileDialog>
 #include "inetClient.h"
 #include "ui_DialogDownloadTracks.h"
 #include "class_list.h"
@@ -32,15 +33,20 @@ private:
     int userID, raceID, boatID;
     time_t startTime, endTime;
     QDateTime qStartTime,qEndTime;
-    QString url,fileName,routeName;
+    QString url,filePath,fileName,fullFileName,routeName,playerName;
+    QFile jsonFile;
     myCentralWidget * parent;
-    bool raceIsValid,boatIsValid;
+    bool raceIsValid,boatIsValid,cached;
 
     bool doRequest(int reqType);
     void jsonError (QJson::Parser * parser);
+    void updateFileName(bool truncTrack);
+
 private slots:
     void on_raceIDEdit_valueChanged(int);
     void on_boatIDEdit_valueChanged(int);
+    void on_startTimeEdit_dateTimeChanged(QDateTime);
+    void on_endTimeEdit_dateTimeChanged(QDateTime);
     void on_frameTrackCheckBox_clicked(bool checked=false);
 };
 

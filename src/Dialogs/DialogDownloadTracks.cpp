@@ -1,9 +1,7 @@
 #include <QMessageBox>
 #include <QTextStream>
 #include <QDebug>
-#include <QFileDialog>
 #include "DialogDownloadTracks.h"
-#include "ui_DialogDownloadTracks.h"
 #include "mycentralwidget.h"
 #include "Player.h"
 #include "settings.h"
@@ -50,11 +48,23 @@ void DialogDownloadTracks::init()
     ui->frameTrackCheckBox->setEnabled(false);
     ui->frameTrackCheckBox->setChecked(false);
     ui->boatIDEdit->selectAll();
+    ui->editRouteName->setEnabled(false);
+    ui->editRouteName->setText("");
+    ui->labelPathName->setEnabled(false);
+    ui->labelPathName->setText("N/A");
+    ui->labelPath->setEnabled(false);
+    ui->labelFileName->setText("N/A");
+    ui->labelStatus->setEnabled(false);
     ui->buttonBox->button(QDialogButtonBox::Ok)->setEnabled(false);
     fileName="";
+    fullFileName="";
     routeName="";
     qStartTime.setTimeSpec(Qt::UTC);
     qEndTime.setTimeSpec(Qt::UTC);
+    QString appExeFolder=QApplication::applicationDirPath();
+    filePath=appExeFolder+"/tracks";
+    ui->labelPathName->setText(filePath);
+    cached=false;
     this->show();
 }
 
@@ -64,17 +74,15 @@ void DialogDownloadTracks::accept()
     {
         raceID=ui->raceIDEdit->value();
         boatID=ui->boatIDEdit->value();
+        routeName=ui->editRouteName->text();
         if (ui->frameTrackCheckBox->isChecked())
         {
             qStartTime=ui->startTimeEdit->dateTime();
             startTime=qStartTime.toTime_t();
             qEndTime=ui->endTimeEdit->dateTime();
             endTime=qEndTime.toTime_t();
-            routeName=routeName.sprintf("%d_%d_%d_%d_",raceID,boatID,qStartTime.toTime_t(),qEndTime.toTime_t());
-            QString appExeFolder=QApplication::applicationDirPath();
-            fileName=appExeFolder+"/tracks/"+routeName+".json";
-            QFile jsonFile(fileName);
-            if ( !jsonFile.open(QIODevice::ReadOnly) )
+            updateFileName(ui->frameTrackCheckBox->isChecked());
+            if ( !cached )
                 doRequest(VLM_GET_PARTIAL_TRACK);
             else
             {
@@ -98,11 +106,8 @@ void DialogDownloadTracks::accept()
         }
         else
         {
-            routeName=routeName.sprintf("%d_%d_",raceID,boatID);
-            QString appExeFolder=QApplication::applicationDirPath();
-            fileName=appExeFolder+"/tracks/"+routeName+".json";
-            QFile jsonFile(fileName);
-            if ( !jsonFile.open(QIODevice::ReadOnly) )
+            updateFileName(ui->frameTrackCheckBox->isChecked());
+            if ( !cached )
                 doRequest(VLM_GET_TRACK);
             else
             {
@@ -148,12 +153,47 @@ void DialogDownloadTracks::on_raceIDEdit_valueChanged(int)
     doRequest(VLM_RACE_INFO);
 }
 
+void DialogDownloadTracks::on_startTimeEdit_dateTimeChanged(QDateTime)
+{
+    qStartTime=ui->startTimeEdit->dateTime();
+    updateFileName(ui->frameTrackCheckBox->isChecked());
+}
+
+void DialogDownloadTracks::on_endTimeEdit_dateTimeChanged(QDateTime)
+{
+    qEndTime=ui->endTimeEdit->dateTime();
+    updateFileName(ui->frameTrackCheckBox->isChecked());
+}
+
+void DialogDownloadTracks::updateFileName(bool truncTrack)
+{
+    if (!truncTrack)
+        fileName=fileName.sprintf("%d_%d_",raceID,boatID);
+    else
+        fileName=fileName.sprintf("%d_%d_%d_%d_",raceID,boatID,qStartTime.toTime_t(),qEndTime.toTime_t());
+    fileName=fileName+".json";
+    fullFileName=filePath+"/"+fileName;
+    ui->labelFileName->setText(fileName);
+    jsonFile.setFileName(fullFileName);
+    if (jsonFile.open(QIODevice::ReadOnly))
+    {
+        ui->labelStatus->setText(tr("En cache."));
+        cached=true;
+    }
+    else
+    {
+        ui->labelStatus->setText("VLM.");
+        cached=false;
+    }
+}
+
 void DialogDownloadTracks::on_frameTrackCheckBox_clicked(bool checked)
 {
     ui->startTimeEdit->setEnabled(checked);
     ui->endTimeEdit->setEnabled(checked);
     ui->labelStartTime->setEnabled(checked);
     ui->labelEndTime->setEnabled(checked);
+    updateFileName(ui->frameTrackCheckBox->isChecked());
 }
 
 /*****************************************
@@ -280,20 +320,20 @@ void DialogDownloadTracks::requestFinished (QByteArray data)
         }
         if (result["nb_tracks"]!=0)
         {
-            if(fileName.isEmpty())
+            if(fullFileName.isEmpty())
             {
                 qWarning() << "Empty file name in VLM track save";
             }
             else
             {
-                QFile *saveFile = new QFile(fileName);
+                QFile *saveFile = new QFile(fullFileName);
                 assert(saveFile);
                 if (saveFile->open(QIODevice::WriteOnly))
                 {
                     int nb=saveFile->write(data);
                     if(nb>0)
                         saveFile->close();
-                    //qWarning() << nb << " bytes saved in " << fileName;
+                    //qWarning() << nb << " bytes saved in " << fullFileName;
                 }
                 else
                 {
@@ -341,7 +381,6 @@ void DialogDownloadTracks::requestFinished (QByteArray data)
         QJson::Parser parser;
         bool ok;
         QVariantMap result=parser.parse (data, &ok).toMap();
-        routeName=routeName.sprintf("%d_%d_%d_%d_",raceID,boatID,qStartTime.toTime_t(),qEndTime.toTime_t());
         if (routeName.isEmpty())
         {
             QMessageBox msgBox;
@@ -356,20 +395,20 @@ void DialogDownloadTracks::requestFinished (QByteArray data)
         }
         if (result["nb_tracks"]!=0)
         {
-            if(fileName.isEmpty())
+            if(fullFileName.isEmpty())
             {
                 qWarning() << "Empty file name in VLM track save";
             }
             else
             {
-                QFile *saveFile = new QFile(fileName);
+                QFile *saveFile = new QFile(fullFileName);
                 assert(saveFile);
                 if (saveFile->open(QIODevice::WriteOnly))
                 {
                     int nb=saveFile->write(data);
                     if(nb>0)
                         saveFile->close();
-                    //qWarning() << nb << " bytes saved in " << fileName;
+                    //qWarning() << nb << " bytes saved in " << fullFileName;
                 }
                 else
                 {
@@ -443,7 +482,6 @@ void DialogDownloadTracks::requestFinished (QByteArray data)
         {
              raceIsValid=true;
              ui->labelDisplayRaceName->setText(result["racename"].toString());
-             ui->frameTrackCheckBox->setEnabled(true);
              startTime=result["deptime"].toInt();
              qStartTime.setTime_t(startTime);
              ui->startTimeEdit->setMinimumDateTime(qStartTime);
@@ -452,7 +490,13 @@ void DialogDownloadTracks::requestFinished (QByteArray data)
              ui->endTimeEdit->setDateTime(qStartTime);
              ui->labelDisplayRaceName->setText(result["racename"].toString());
              if (boatIsValid)
+             {
+                 ui->editRouteName->setEnabled(true);
+                 ui->frameTrackCheckBox->setEnabled(true);
+                 ui->frameTrackCheckBox->setChecked(false);
+                 updateFileName(ui->frameTrackCheckBox->isChecked());
                  ui->buttonBox->button(QDialogButtonBox::Ok)->setEnabled(true);
+             }
 //             ui->startTimeEdit->setEnabled(true);
 //             ui->endTimeEdit->setEnabled(true);
         }
@@ -478,14 +522,21 @@ void DialogDownloadTracks::requestFinished (QByteArray data)
             {
                 boatIsValid=true;
                 QVariantMap profile=result["profile"].toMap();
-                ui->labelDisplayBoatName->setText(profile["OWN"].toString());
+                playerName=profile["OWN"].toString();
+                routeName=playerName;
+                ui->editRouteName->setText(routeName);
+                ui->labelDisplayBoatName->setText(playerName);
                 if (raceIsValid)
                     ui->buttonBox->button(QDialogButtonBox::Ok)->setEnabled(true);
             }
             else
             {
                 boatIsValid=false;
+                playerName="";
                 ui->labelDisplayBoatName->setText("N/A");
+                routeName="";
+                ui->editRouteName->setText(routeName);
+                ui->editRouteName->setEnabled(false);
                 ui->buttonBox->button(QDialogButtonBox::Ok)->setEnabled(false);
             }
         break;

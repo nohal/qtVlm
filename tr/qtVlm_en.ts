@@ -41,18 +41,18 @@ Necessite d&apos;entrer un numero de bateau et un numero de courses valides.</so
 Valid boat ID and race ID required.</translation>
     </message>
     <message>
-        <location filename="../src/Dialogs/DialogDownloadTracks.cpp" line="25"/>
+        <location filename="../src/Dialogs/DialogDownloadTracks.cpp" line="23"/>
         <source>Numero de la course
  http://www.virtual-loup-de-mer.org/races.php?fulllist=1</source>
         <translation>Race Unique ID</translation>
     </message>
     <message>
-        <location filename="../src/Dialogs/DialogDownloadTracks.cpp" line="26"/>
+        <location filename="../src/Dialogs/DialogDownloadTracks.cpp" line="24"/>
         <source>Numero du bateau</source>
         <translation>Boat Number</translation>
     </message>
     <message>
-        <location filename="../src/Dialogs/DialogDownloadTracks.cpp" line="132"/>
+        <location filename="../src/Dialogs/DialogDownloadTracks.cpp" line="137"/>
         <source>Course ou bateau inconnu</source>
         <translation>Unknown race or boat</translation>
     </message>
@@ -61,57 +61,62 @@ Valid boat ID and race ID required.</translation>
         <translation type="obsolete">This name is already used or invalid</translation>
     </message>
     <message>
-        <location filename="../src/Dialogs/DialogDownloadTracks.cpp" line="272"/>
+        <location filename="../src/Dialogs/DialogDownloadTracks.cpp" line="180"/>
+        <source>En cache.</source>
+        <translation>Cached.</translation>
+    </message>
+    <message>
+        <location filename="../src/Dialogs/DialogDownloadTracks.cpp" line="312"/>
         <source>Trace entiere: pas de nom de route.</source>
         <translation>Full Track: missing route name.</translation>
     </message>
     <message>
-        <location filename="../src/Dialogs/DialogDownloadTracks.cpp" line="315"/>
-        <location filename="../src/Dialogs/DialogDownloadTracks.cpp" line="391"/>
+        <location filename="../src/Dialogs/DialogDownloadTracks.cpp" line="355"/>
+        <location filename="../src/Dialogs/DialogDownloadTracks.cpp" line="430"/>
         <source>Trace cachee pour:</source>
         <translation>Track hidden for:</translation>
     </message>
     <message>
-        <location filename="../src/Dialogs/DialogDownloadTracks.cpp" line="320"/>
-        <location filename="../src/Dialogs/DialogDownloadTracks.cpp" line="398"/>
+        <location filename="../src/Dialogs/DialogDownloadTracks.cpp" line="360"/>
+        <location filename="../src/Dialogs/DialogDownloadTracks.cpp" line="437"/>
         <source>Pas de trace</source>
         <translation>No track</translation>
     </message>
     <message>
-        <location filename="../src/Dialogs/DialogDownloadTracks.cpp" line="327"/>
-        <location filename="../src/Dialogs/DialogDownloadTracks.cpp" line="403"/>
+        <location filename="../src/Dialogs/DialogDownloadTracks.cpp" line="367"/>
+        <location filename="../src/Dialogs/DialogDownloadTracks.cpp" line="442"/>
         <source>Pas de trace correspondant a la requete:</source>
         <translation>No track for request:</translation>
     </message>
     <message>
-        <location filename="../src/Dialogs/DialogDownloadTracks.cpp" line="333"/>
-        <location filename="../src/Dialogs/DialogDownloadTracks.cpp" line="410"/>
+        <location filename="../src/Dialogs/DialogDownloadTracks.cpp" line="373"/>
+        <location filename="../src/Dialogs/DialogDownloadTracks.cpp" line="449"/>
         <source>Requete incorrecte</source>
         <translation>Invalid query</translation>
     </message>
     <message>
-        <location filename="../src/Dialogs/DialogDownloadTracks.cpp" line="348"/>
+        <location filename="../src/Dialogs/DialogDownloadTracks.cpp" line="387"/>
         <source>Trace partielle: pas de nom de route.</source>
         <translation>Truncated track: missing route name.</translation>
     </message>
     <message>
-        <location filename="../src/Dialogs/DialogDownloadTracks.cpp" line="502"/>
+        <location filename="../src/Dialogs/DialogDownloadTracks.cpp" line="553"/>
         <source>Erreur de lecture json.</source>
         <translation>Json parse error.</translation>
     </message>
     <message>
-        <location filename="../src/Dialogs/DialogDownloadTracks.cpp" line="27"/>
+        <location filename="../src/Dialogs/DialogDownloadTracks.cpp" line="25"/>
         <source>Debut de la trace</source>
         <translation>Valid Start Time for the track</translation>
     </message>
     <message>
-        <location filename="../src/Dialogs/DialogDownloadTracks.cpp" line="24"/>
+        <location filename="../src/Dialogs/DialogDownloadTracks.cpp" line="22"/>
         <source>Permet de telecharger manuellement une trace pour une course VLM.
 La bo�te � cocher trace partielle s&apos;active apres l&apos;entree d&apos;un numero de course valide, et permet de requ�rir une trace tronqu�e.</source>
         <translation>Enables manual download of Vlm tracks. Valid boat and race ID required to enable Truncated tracks checkbox.</translation>
     </message>
     <message>
-        <location filename="../src/Dialogs/DialogDownloadTracks.cpp" line="29"/>
+        <location filename="../src/Dialogs/DialogDownloadTracks.cpp" line="27"/>
         <source>Fin de la trace</source>
         <translation>Valid end time for the track</translation>
     </message>
@@ -124,15 +129,15 @@ La bo�te � cocher trace partielle s&apos;active apres l&apos;entree d&apos;u
         <translation type="obsolete">Saving json file</translation>
     </message>
     <message>
-        <location filename="../src/Dialogs/DialogDownloadTracks.cpp" line="301"/>
-        <location filename="../src/Dialogs/DialogDownloadTracks.cpp" line="377"/>
-        <location filename="../src/Dialogs/DialogDownloadTracks.cpp" line="501"/>
+        <location filename="../src/Dialogs/DialogDownloadTracks.cpp" line="341"/>
+        <location filename="../src/Dialogs/DialogDownloadTracks.cpp" line="416"/>
+        <location filename="../src/Dialogs/DialogDownloadTracks.cpp" line="552"/>
         <source>Erreur</source>
         <translation>Error</translation>
     </message>
     <message>
-        <location filename="../src/Dialogs/DialogDownloadTracks.cpp" line="302"/>
-        <location filename="../src/Dialogs/DialogDownloadTracks.cpp" line="378"/>
+        <location filename="../src/Dialogs/DialogDownloadTracks.cpp" line="342"/>
+        <location filename="../src/Dialogs/DialogDownloadTracks.cpp" line="417"/>
         <source>Ecriture du fichier impossible.</source>
         <translation>Unable to create file.</translation>
     </message>
@@ -142,49 +147,65 @@ La bo�te � cocher trace partielle s&apos;active apres l&apos;entree d&apos;u
         <translation>VLM Track bank</translation>
     </message>
     <message>
-        <location filename="../src/Ui/DialogDownloadTracks.ui" line="24"/>
+        <location filename="../src/Ui/DialogDownloadTracks.ui" line="22"/>
         <source>ID Bateau</source>
         <translation>Boat ID</translation>
     </message>
     <message>
-        <location filename="../src/Ui/DialogDownloadTracks.ui" line="54"/>
+        <location filename="../src/Ui/DialogDownloadTracks.ui" line="52"/>
         <source>Armateur</source>
         <translation>Player&apos;s name</translation>
     </message>
     <message>
-        <location filename="../src/Ui/DialogDownloadTracks.ui" line="61"/>
-        <location filename="../src/Ui/DialogDownloadTracks.ui" line="106"/>
+        <location filename="../src/Ui/DialogDownloadTracks.ui" line="59"/>
+        <location filename="../src/Ui/DialogDownloadTracks.ui" line="104"/>
+        <location filename="../src/Ui/DialogDownloadTracks.ui" line="237"/>
+        <location filename="../src/Ui/DialogDownloadTracks.ui" line="261"/>
         <source>N/A</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../src/Ui/DialogDownloadTracks.ui" line="99"/>
+        <location filename="../src/Ui/DialogDownloadTracks.ui" line="97"/>
         <source>Nom Course</source>
         <translation>Race Name</translation>
     </message>
     <message>
-        <location filename="../src/Ui/DialogDownloadTracks.ui" line="120"/>
-        <source>Les traces au format json sont sauvegardées dans le dossier tracks du répertoire de qtVlm.</source>
-        <translation>Tracks are saved in the tracks folder inside the qtVlm directory.</translation>
+        <location filename="../src/Ui/DialogDownloadTracks.ui" line="210"/>
+        <source>Nom de route:</source>
+        <translation>Route name:</translation>
     </message>
     <message>
-        <location filename="../src/Ui/DialogDownloadTracks.ui" line="136"/>
+        <location filename="../src/Ui/DialogDownloadTracks.ui" line="230"/>
+        <source>Location:</source>
+        <translation>Location:</translation>
+    </message>
+    <message>
+        <location filename="../src/Ui/DialogDownloadTracks.ui" line="254"/>
+        <source>Status:</source>
+        <translation>Status:</translation>
+    </message>
+    <message>
+        <source>Les traces au format json sont sauvegardées dans le dossier tracks du répertoire de qtVlm.</source>
+        <translation type="obsolete">Tracks are saved in the tracks folder inside the qtVlm directory.</translation>
+    </message>
+    <message>
+        <location filename="../src/Ui/DialogDownloadTracks.ui" line="123"/>
         <source>Trace Partielle</source>
         <translation>Truncated track</translation>
     </message>
     <message>
-        <location filename="../src/Ui/DialogDownloadTracks.ui" line="145"/>
+        <location filename="../src/Ui/DialogDownloadTracks.ui" line="132"/>
         <source>Heure Debut</source>
         <translation>Start Time</translation>
     </message>
     <message>
-        <location filename="../src/Ui/DialogDownloadTracks.ui" line="165"/>
-        <location filename="../src/Ui/DialogDownloadTracks.ui" line="196"/>
+        <location filename="../src/Ui/DialogDownloadTracks.ui" line="155"/>
+        <location filename="../src/Ui/DialogDownloadTracks.ui" line="189"/>
         <source>yyyy/MM/dd hh:mm UTC</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../src/Ui/DialogDownloadTracks.ui" line="179"/>
+        <location filename="../src/Ui/DialogDownloadTracks.ui" line="169"/>
         <source>Heure Fin</source>
         <translation>End Time</translation>
     </message>
@@ -193,7 +214,7 @@ La bo�te � cocher trace partielle s&apos;active apres l&apos;entree d&apos;u
         <translation type="obsolete">To avoid overloading VLM server, downloaded tracks are saved in the tracks folder. Please rename then only if really needed.</translation>
     </message>
     <message>
-        <location filename="../src/Ui/DialogDownloadTracks.ui" line="72"/>
+        <location filename="../src/Ui/DialogDownloadTracks.ui" line="70"/>
         <source>ID Course</source>
         <translation>Race ID</translation>
     </message>
@@ -4200,7 +4221,7 @@ Etes-vous sur ?</source>
         <translation>Simplification result</translation>
     </message>
     <message>
-        <location filename="../src/Dialogs/DialogDownloadTracks.cpp" line="190"/>
+        <location filename="../src/Dialogs/DialogDownloadTracks.cpp" line="230"/>
         <location filename="../src/boatVLM.cpp" line="590"/>
         <location filename="../src/opponentBoat.cpp" line="749"/>
         <source>Parametre bateau</source>

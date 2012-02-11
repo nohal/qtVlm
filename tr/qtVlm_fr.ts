@@ -117,7 +117,7 @@ Nécessite d&apos;entrer un numéro de bateau et un numéro de courses valides.<
     </message>
     <message>
         <source>Les traces au format json sont sauvegardées dans le dossier tracks du répertoire de qtVlm.</source>
-        <translation>Les traces au format json sont sauvegardées dans le dossier tracks du répertoire de qtVlm.</translation>
+        <translation type="obsolete">Les traces au format json sont sauvegardées dans le dossier tracks du répertoire de qtVlm.</translation>
     </message>
     <message>
         <source>Trace Partielle</source>
@@ -152,6 +152,22 @@ La boîte à cocher trace partielle s&apos;active apres l&apos;entree d&apos;un 
     <message>
         <source>Erreur de lecture json.</source>
         <translation>Erreur de lecture json.</translation>
+    </message>
+    <message>
+        <source>Nom de route:</source>
+        <translation>Nom de route:</translation>
+    </message>
+    <message>
+        <source>Location:</source>
+        <translation>Location:</translation>
+    </message>
+    <message>
+        <source>Status:</source>
+        <translation>Status:</translation>
+    </message>
+    <message>
+        <source>En cache.</source>
+        <translation>En cache.</translation>
     </message>
 </context>
 <context>
