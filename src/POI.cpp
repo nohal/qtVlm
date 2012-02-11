@@ -981,7 +981,7 @@ void POI::slot_finePosit(bool silent)
     double savedLon=lon;
     double savedLat=lat;
     time_t previousEta=route->getEta();
-    double previousRemain=route->getRemain();
+    //double previousRemain=route->getRemain();
     bool previousHasEta=route->getHas_eta();
     bool detectCoast=route->getDetectCoasts();
     if(!silent)

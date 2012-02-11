@@ -157,5 +157,22 @@ inline double Util::myDiffAngle(double a1,double a2)
     return qAbs(A360(qAbs(a1)+ 180.0 -qAbs(a2)) -180.0);
 }
 
+inline int Util::kmhToBeaufort(float v) {
+    return (int)(kmhToBeaufort_F(v)+0.5);
+}
+//-----------------------------------------------------------------------------
+inline float Util::kmhToBeaufort_F(float v) {
+    float bf = pow( v*v/9.0 , 0.33333);
+    if (bf > 12.0)
+        bf = 12.0;
+    else if (bf < 0.0)
+        bf = 0.0;
+    return bf;
+}
+//-----------------------------------------------------------------------------
+inline float Util::BeaufortToKmh_F(float bf) {
+    float v = sqrt(bf*bf*bf*9.0);
+    return v;
+}
 
 #endif

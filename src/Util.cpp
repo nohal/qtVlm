@@ -619,21 +619,4 @@ bool Util::lineIsCrossingRect(const QLineF line, const QRectF rect)
     if(line.y1()<rect.bottomLeft().y() && line.y2()<rect.bottomLeft().y()) return false;
     return true;
 }
-int Util::kmhToBeaufort(float v) {
-    return (int)(kmhToBeaufort_F(v)+0.5);
-}
-//-----------------------------------------------------------------------------
-float Util::kmhToBeaufort_F(float v) {
-    float bf = pow( v*v/9.0 , 0.33333);
-    if (bf > 12.0)
-        bf = 12.0;
-    else if (bf < 0.0)
-        bf = 0.0;
-    return bf;
-}
-//-----------------------------------------------------------------------------
-float Util::BeaufortToKmh_F(float bf) {
-    float v = sqrt(bf*bf*bf*9.0);
-    return v;
-}
 
