@@ -529,8 +529,9 @@ MainWindow::MainWindow(int w, int h, QWidget *parent)
 
 
     /* init du dialog de validation de grib (present uniquement en mode debug)*/
+#ifdef __QTVLM_WITH_TEST
     gribValidation_dialog = new DialogGribValidation(my_centralWidget,this);
-
+#endif
     //********************************************
 
     //slot_deleteProgress();
@@ -2071,11 +2072,13 @@ void MainWindow::slotVLM_Test(void)
 #endif
 void MainWindow::slotGribInterpolation(void)
 {
+#ifdef __QTVLM_WITH_TEST
     if(my_centralWidget->getGrib())
     {
         gribValidation_dialog->setMode(this->my_centralWidget->getGrib()->getInterpolationMode());
         gribValidation_dialog->show();
     }
+#endif
 }
 
 void MainWindow::slotEstime(int valeur)

@@ -36,7 +36,10 @@ DialogGribValidation::DialogGribValidation(myCentralWidget * my_centralWidget,Ma
     Util::setFontDialog(this);
     this->my_centralWidget=my_centralWidget;
     this->mainWindow=mainWindow;
-    tstamp->setText(QString().setNum(my_centralWidget->getGrib()->getCurrentDate()));
+    if(my_centralWidget->getGrib() && my_centralWidget->getGrib()->isOk())
+        tstamp->setText(QString().setNum(my_centralWidget->getGrib()->getCurrentDate()));
+    else
+        tstamp->setText(QString().setNum(QDateTime::currentDateTime().toTime_t()));
     this->label_date->setText(QDateTime().fromTime_t(tstamp->text().toInt()).toUTC().toString("dd MMM-hh:mm:ss"));
     latitude->setText("0");
     longitude->setText("0");
