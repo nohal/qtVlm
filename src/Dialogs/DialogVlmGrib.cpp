@@ -126,7 +126,7 @@ bool DialogVlmGrib::gribFileReceived(QByteArray * content)
     QDir dirGrib(gribPath);
     if(!dirGrib.exists())
     {
-        gribPath=QApplication::applicationDirPath()+"/grib";
+        gribPath=QDir::currentPath()+"/grib";
         Settings::setSetting("askGribFolder",1);
         Settings::setSetting("edtGribFolder",gribPath);
     }

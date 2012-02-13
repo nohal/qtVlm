@@ -893,7 +893,7 @@ void MainWindow::slotFile_Open()
     QDir dirGrib(gribFilePath);
     if(!dirGrib.exists())
     {
-        gribFilePath=QApplication::applicationDirPath()+"/grib";
+        gribFilePath=QDir::currentPath()+"/grib";
         Settings::setSetting("askGribFolder",1);
         Settings::setSetting("edtGribFolder",gribFilePath);
     }

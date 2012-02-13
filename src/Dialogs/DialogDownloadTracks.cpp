@@ -5,6 +5,7 @@
 #include "mycentralwidget.h"
 #include "Player.h"
 #include "settings.h"
+#include <QDir>
 
 #define VLM_RACE_INFO 2
 #define VLM_GET_TRACK 3
@@ -61,7 +62,7 @@ void DialogDownloadTracks::init()
     routeName="";
     qStartTime.setTimeSpec(Qt::UTC);
     qEndTime.setTimeSpec(Qt::UTC);
-    QString appExeFolder=QApplication::applicationDirPath();
+    QString appExeFolder=QDir::currentPath();
     filePath=appExeFolder+"/tracks";
     ui->labelPathName->setText(filePath);
     cached=false;

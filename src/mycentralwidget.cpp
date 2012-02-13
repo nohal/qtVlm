@@ -1466,7 +1466,7 @@ void myCentralWidget::slot_importRouteFromMenu(bool ortho)
     QDir dirRoute(routePath);
     if(!dirRoute.exists())
     {
-        routePath=QApplication::applicationDirPath();
+        routePath=QDir::currentPath();
         Settings::setSetting("importRouteFolder",routePath);
     }
 #if 1
@@ -1947,7 +1947,7 @@ void myCentralWidget::exportRouteFromMenu(ROUTE * route)
     QDir dirRoute(routePath);
     if(!dirRoute.exists())
     {
-        routePath=QApplication::applicationDirPath();
+        routePath=QDir::currentPath();
         Settings::setSetting("importRouteFolder",routePath);
     }
     QString fileName = QFileDialog::getSaveFileName(this,

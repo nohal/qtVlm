@@ -49,6 +49,8 @@ int main(int argc, char *argv[])
         qWarning() << "currentPath modified: " << curDir << "applicationDirPath returns: " << appExeFolder;
     }
 #endif
+    appExeFolder=QDir::currentPath();
+    qWarning()<<"Current path"<<appExeFolder;
     //checks tree
     QDir dirCheck;
     QStringList appDirs;

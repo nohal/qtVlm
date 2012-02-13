@@ -109,11 +109,11 @@ void dialogFaxMeteo::browseFile()
     filter =  tr("Fichiers Fax (*.png *.jpg *.tiff *.gif *.bmp)")
             + tr(";;Autres fichiers (*)");
     QString faxPath=Settings::getSetting("faxPath",".").toString();
-    if(faxPath==".") faxPath=QApplication::applicationDirPath();
+    if(faxPath==".") faxPath=QDir::currentPath();
     QDir dirFax(faxPath);
     if(!dirFax.exists())
     {
-        faxPath=QApplication::applicationDirPath();
+        faxPath=QDir::currentPath();
         Settings::setSetting("faxPath",faxPath);
     }
     QString fileName = QFileDialog::getOpenFileName(this,
