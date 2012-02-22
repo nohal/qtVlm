@@ -44,7 +44,7 @@ Copyright (C) 2008 - Jacques Zaninetti - http://zygrib.free.fr
 * Opponent methods
 ****************************************/
 
-opponent::opponent(QColor color, QString idu,QString race, float lat, float lon, QString pseudo,
+opponent::opponent(QColor color, QString idu,QString race, double lat, double lon, QString pseudo,
                             QString name,Projection * proj,MainWindow *main, myCentralWidget *parentWindow):QGraphicsWidget()
 {
     init(color,false,idu,race,lat,lon,pseudo,name,proj,main,parentWindow);
@@ -55,7 +55,7 @@ opponent::opponent(QColor color, QString idu,QString race,Projection * proj,Main
     init(color,true,idu,race,0,0,"","",proj,main,parentWindow);
 }
 
-void opponent::init(QColor color,bool isQtBoat,QString idu,QString race, float lat, float lon, QString pseudo,
+void opponent::init(QColor color,bool isQtBoat,QString idu,QString race, double lat, double lon, QString pseudo,
                             QString name,Projection * proj,MainWindow *main, myCentralWidget *parentWindow)
 {
     this->idu=idu;
@@ -334,7 +334,7 @@ void opponent::updateName()
         str2=str2+"<tr><td>"+tr("Loch 3h: ")+"</td><td>"+this->loch3h+"</td></tr>";
         str2=str2+"<tr><td>"+tr("Loch 24h: ")+"</td><td>"+this->loch24h+"</td></tr>";
         str2=str2+"<tr><td>"+tr("Status VLM: ")+"</td><td>"+this->statusVLM+"</td></tr>";
-        if(estimatedSpeed!=0 /*&& false*/)
+        if(estimatedSpeed!=0 && false)
         {
             str2=str2+"<tr><td>"+tr("Vitesse estimee: ")+"</td><td>"+
                  QString().sprintf("%.2f ",estimatedSpeed)+
@@ -399,7 +399,7 @@ void opponent::setRealData(QString shortName, QString longName, QString desc, QS
     update();
 }
 
-void opponent::setNewData(float lat, float lon,QString name)
+void opponent::setNewData(double lat, double lon,QString name)
 {
     bool needUpdate = false;
 
@@ -858,13 +858,13 @@ void opponentList::requestFinished (QByteArray res_byte)
                             if(!data.isEmpty())
                             {
                                 //qWarning() << "Found " << ptr->getIduser() ;
-                                ptr->setNewData(data["latitude"].toFloat(),
-                                                 data["longitude"].toFloat(),
+                                ptr->setNewData(data["latitude"].toDouble(),
+                                                 data["longitude"].toDouble(),
                                                  data["boatname"].toString());
                                 QString h1,h3,h24,pavillon;
-                                h1=h1.sprintf("%.2f",data["last1h"].toFloat());
-                                h3=h3.sprintf("%.2f",data["last3h"].toFloat());
-                                h24=h24.sprintf("%.2f",data["last24h"].toFloat());
+                                h1=h1.sprintf("%.2f",data["last1h"].toDouble());
+                                h3=h3.sprintf("%.2f",data["last3h"].toDouble());
+                                h24=h24.sprintf("%.2f",data["last24h"].toDouble());
                                 pavillon=data["country"].toString();
                                 ptr->setOtherData(data["rank"].toInt(),h1,h3,h24,data["status"].toString(),pavillon);
                             }
@@ -893,12 +893,12 @@ void opponentList::requestFinished (QByteArray res_byte)
                                         if(isBoatVLM(data["idusers"].toString())) continue;
                                         //qWarning() << "(setList) Found " << str << " " << data["boatpseudo"].toString();
                                         opponent_list.append(new opponent(colorTable[pos],str,currentRace,
-                                                                    data["latitude"].toFloat(),data["longitude"].toFloat(),
+                                                                    data["latitude"].toDouble(),data["longitude"].toDouble(),
                                                                     data["boatpseudo"].toString(), data["boatname"].toString(),proj,main,parent));
                                         QString h1,h3,h24,pavillon;
-                                        h1=h1.sprintf("%.2f",data["last1h"].toFloat());
-                                        h3=h3.sprintf("%.2f",data["last3h"].toFloat());
-                                        h24=h24.sprintf("%.2f",data["last24h"].toFloat());
+                                        h1=h1.sprintf("%.2f",data["last1h"].toDouble());
+                                        h3=h3.sprintf("%.2f",data["last3h"].toDouble());
+                                        h24=h24.sprintf("%.2f",data["last24h"].toDouble());
                                         pavillon=data["country"].toString();
                                         opponent_list.last()->setOtherData(data["rank"].toInt(),h1,h3,h24,data["status"].toString(),pavillon);
 
@@ -921,12 +921,12 @@ void opponentList::requestFinished (QByteArray res_byte)
                                     QVariantMap data=it.next().value().toMap();
                                     if(isBoatVLM(data["idusers"].toString())) continue;
                                     opponent_list.append(new opponent(colorTable[pos],data["idusers"].toString(),currentRace,
-                                                                data["latitude"].toFloat(),data["longitude"].toFloat(),
+                                                                data["latitude"].toDouble(),data["longitude"].toDouble(),
                                                                 data["boatpseudo"].toString(), data["boatname"].toString(),proj,main,parent));
                                     QString h1,h3,h24,pavillon;
-                                    h1=h1.sprintf("%.2f",data["last1h"].toFloat());
-                                    h3=h3.sprintf("%.2f",data["last3h"].toFloat());
-                                    h24=h24.sprintf("%.2f",data["last24h"].toFloat());
+                                    h1=h1.sprintf("%.2f",data["last1h"].toDouble());
+                                    h3=h3.sprintf("%.2f",data["last3h"].toDouble());
+                                    h24=h24.sprintf("%.2f",data["last24h"].toDouble());
                                     pavillon=data["country"].toString();
                                     opponent_list.last()->setOtherData(data["rank"].toInt(),h1,h3,h24,data["status"].toString(),pavillon);
                                     pos++;
@@ -938,28 +938,28 @@ void opponentList::requestFinished (QByteArray res_byte)
                                 Orthodromie orth(parent->getSelectedBoat()->getLon(),
                                                  parent->getSelectedBoat()->getLat(),
                                                  0,0);
-                                QMultiMap<float,QVariantMap> sorted;
+                                QMultiMap<double,QVariantMap> sorted;
                                 QMapIterator<QString,QVariant> it(ranking);
                                 while (it.hasNext())
                                 {
                                     QVariantMap data=it.next().value().toMap();
                                     if(isBoatVLM(data["idusers"].toString())) continue;
-                                    orth.setEndPoint(data["longitude"].toFloat(),
-                                                     data["latitude"].toFloat());
+                                    orth.setEndPoint(data["longitude"].toDouble(),
+                                                     data["latitude"].toDouble());
                                     if(orth.getDistance()==0) continue;
                                     sorted.insert(orth.getDistance(),data);
                                 }
-                                QMapIterator<float,QVariantMap> s(sorted);
+                                QMapIterator<double,QVariantMap> s(sorted);
                                 while (s.hasNext())
                                 {
                                     QVariantMap data=s.next().value();
                                     opponent_list.append(new opponent(colorTable[pos],data["idusers"].toString(),currentRace,
-                                                                data["latitude"].toFloat(),data["longitude"].toFloat(),
+                                                                data["latitude"].toDouble(),data["longitude"].toDouble(),
                                                                 data["boatpseudo"].toString(), data["boatname"].toString(),proj,main,parent));
                                     QString h1,h3,h24,pavillon;
-                                    h1=h1.sprintf("%.2f",data["last1h"].toFloat());
-                                    h3=h3.sprintf("%.2f",data["last3h"].toFloat());
-                                    h24=h24.sprintf("%.2f",data["last24h"].toFloat());
+                                    h1=h1.sprintf("%.2f",data["last1h"].toDouble());
+                                    h3=h3.sprintf("%.2f",data["last3h"].toDouble());
+                                    h24=h24.sprintf("%.2f",data["last24h"].toDouble());
                                     pavillon=data["country"].toString();
                                     opponent_list.last()->setOtherData(data["rank"].toInt(),h1,h3,h24,data["status"].toString(),pavillon);
                                     pos++;
@@ -987,12 +987,12 @@ void opponentList::requestFinished (QByteArray res_byte)
                                 {
                                     QVariantMap data=s.next().value();
                                     opponent_list.append(new opponent(colorTable[pos],data["idusers"].toString(),currentRace,
-                                                                data["latitude"].toFloat(),data["longitude"].toFloat(),
+                                                                data["latitude"].toDouble(),data["longitude"].toDouble(),
                                                                 data["boatpseudo"].toString(), data["boatname"].toString(),proj,main,parent));
                                     QString h1,h3,h24,pavillon;
-                                    h1=h1.sprintf("%.2f",data["last1h"].toFloat());
-                                    h3=h3.sprintf("%.2f",data["last3h"].toFloat());
-                                    h24=h24.sprintf("%.2f",data["last24h"].toFloat());
+                                    h1=h1.sprintf("%.2f",data["last1h"].toDouble());
+                                    h3=h3.sprintf("%.2f",data["last3h"].toDouble());
+                                    h24=h24.sprintf("%.2f",data["last24h"].toDouble());
                                     pavillon=data["country"].toString();
                                     opponent_list.last()->setOtherData(data["rank"].toInt(),h1,h3,h24,data["status"].toString(),pavillon);
                                     pos++;

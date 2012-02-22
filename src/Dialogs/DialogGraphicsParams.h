@@ -42,19 +42,19 @@ Copyright (C) 2008 - Jacques Zaninetti - http://zygrib.free.fr
 class InputLineParams_testZone : public QWidget
 { Q_OBJECT
     public:
-    	InputLineParams_testZone(float width, QColor color)
+        InputLineParams_testZone(double width, QColor color)
         		{ lineWidth = width; lineColor=color;}
         		
-        void setWidth (float width)
+        void setWidth (double width)
         		{ lineWidth = width; update(); }
         void setColor (QColor color)
         		{ lineColor=color; update(); }
 
-		float  getLineWidth()   {return lineWidth;}
+                double  getLineWidth()   {return lineWidth;}
 		QColor getLineColor()   {return lineColor;}
     
     private:
-		float  lineWidth;
+                double  lineWidth;
 		QColor lineColor;
     	void   paintEvent(QPaintEvent *);
     	void   mouseReleaseEvent(QMouseEvent * );
@@ -64,18 +64,18 @@ class InputLineParams_testZone : public QWidget
 class InputLineParams : public QWidget
 { Q_OBJECT
     public:
-        InputLineParams(float width, QColor color,
-						float defaultWidth, QColor defaultColor,
+        InputLineParams(double width, QColor color,
+                                                double defaultWidth, QColor defaultColor,
 						QWidget *parent,
-                                                float minWidth=0.2, float maxWidth=6,int decimal=1,
+                                                double minWidth=0.2, double maxWidth=6,int decimal=1,
                                                 bool useTestZone=true
         			);
         			
-        float  getLineWidth() {return sbWidth->value();}
+        double  getLineWidth() {return sbWidth->value();}
         QColor getLineColor() {return testZone->getLineColor();}
     
     private:
-		float defaultWidth;
+                double defaultWidth;
                 bool useTestZone;
 		QColor defaultColor, color;
 		

@@ -552,7 +552,7 @@ void xml_boatData::readBoat(QDomNode node,PlayerMap * pList)
             bool chk_alias=false;
             QString alias="";
             bool force_estime=false;
-            float zoom=-1;
+            double zoom=-1;
             int isOwn=0;
             double lat=0,lon=0;
             QString npd="";
@@ -633,7 +633,7 @@ void xml_boatData::readBoat(QDomNode node,PlayerMap * pList)
                 {
                     dataNode = subNode.firstChild();
                     if(dataNode.nodeType() == QDomNode::TextNode)
-                        zoom = dataNode.toText().data().toFloat();
+                        zoom = dataNode.toText().data().toDouble();
                 }
                 if(subNode.toElement().tagName() == BOAT_ESTIME_NAME)
                 {
@@ -751,13 +751,13 @@ void xml_boatData::readRace(QDomNode node)
                 {
                     dataNode = subNode.firstChild();
                     if(dataNode.nodeType() == QDomNode::TextNode)
-                        latNSZ=(dataNode.toText().data().toFloat());
+                        latNSZ=(dataNode.toText().data().toDouble());
                 }
                 if(subNode.toElement().tagName() == WIDTH_NSZ)
                 {
                     dataNode = subNode.firstChild();
                     if(dataNode.nodeType() == QDomNode::TextNode)
-                        widthNSZ=(dataNode.toText().data().toFloat());
+                        widthNSZ=(dataNode.toText().data().toDouble());
                 }
                 if(subNode.toElement().tagName() == COLOR_NSZ_R)
                 {

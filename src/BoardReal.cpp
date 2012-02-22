@@ -79,7 +79,7 @@ boatReal * boardReal::currentBoat(void)
         return NULL;
 }
 
-void boardReal::setWp(float lat,float lon,float wph)
+void boardReal::setWp(double lat,double lon,double wph)
 {
     boatReal * myBoat=currentBoat();
     if(myBoat)
@@ -194,8 +194,8 @@ void boardReal::boatUpdated(void)
             if(myBoat->getPolarData())
             {
                 QString s1;
-                float bvmgUp=myBoat->getBvmgUp(tws);
-                float bvmgDown=myBoat->getBvmgDown(tws);
+                double bvmgUp=myBoat->getBvmgUp(tws);
+                double bvmgDown=myBoat->getBvmgDown(tws);
                 s=s+s1.sprintf("<br>Pres %.0fdeg Portant %.0fdeg",bvmgUp,bvmgDown);
             }
             s=s.replace("nds",tr("nds"));

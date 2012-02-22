@@ -48,7 +48,7 @@ class DialogLoadGrib : public QDialog
         DialogLoadGrib();
         ~DialogLoadGrib();
 
-        void setZone(float x0, float y0, float x1, float y1);
+        void setZone(double x0, double y0, double x1, double y1);
         void checkQtvlmVersion(){loadgrib->checkQtvlmVersion();}
     public slots:
         void slotBtOK();
@@ -112,7 +112,7 @@ class DialogLoadGrib : public QDialog
 
         QFrame *createFrameButtonsZone(QWidget *parent);
 
-        float   xmin,ymin,xmax,ymax,resolution;
+        double   xmin,ymin,xmax,ymax,resolution;
         int     interval,days;
         bool    rain, cloud, pressure, wind, temp, humid, isotherm0;
         bool	tempPot, tempMin, tempMax, snowDepth, snowCateg, frzRainCateg;

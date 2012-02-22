@@ -74,8 +74,8 @@ void LoadGribFile::stop () {
 
 //-------------------------------------------------------------------------------
 void LoadGribFile::getGribFile(
-        float x0, float y0, float x1, float y1,
-        float resolution, int interval, int days,
+        double x0, double y0, double x1, double y1,
+        double resolution, int interval, int days,
         bool wind, bool pressure, bool rain,
         bool cloud, bool temp, bool humid, bool isotherm0,
                 bool tempPot, bool tempMin, bool tempMax, bool snowDepth,

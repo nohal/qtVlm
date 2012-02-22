@@ -113,9 +113,9 @@ void InputLineParams_testZone::mouseReleaseEvent(QMouseEvent * )
 	}
 }
 //----------------------------------------------------------------------
-InputLineParams::InputLineParams(float width, QColor color,
-						float defaultWidth, QColor defaultColor, QWidget *parent,
-                                                float minWidth, float maxWidth,int decimal,bool useTestZone)
+InputLineParams::InputLineParams(double width, QColor color,
+                                                double defaultWidth, QColor defaultColor, QWidget *parent,
+                                                double minWidth, double maxWidth,int decimal,bool useTestZone)
 		: QWidget(parent)
 {
 	this->defaultWidth = defaultWidth;

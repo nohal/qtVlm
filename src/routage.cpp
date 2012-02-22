@@ -125,7 +125,7 @@ inline vlmPoint findPointThreaded(const vlmPoint &point)
         return pt;
     }
     double x,y;
-    pt.routage->getProj()->map2screenFloat(Util::cLFA(pt.lon,pt.routage->getProj()->getXmin()),pt.lat,&x,&y);
+    pt.routage->getProj()->map2screenDouble(Util::cLFA(pt.lon,pt.routage->getProj()->getXmin()),pt.lat,&x,&y);
     pt.x=x;
     pt.y=y;
     if(pt.routage->getVisibleOnly() && !pt.routage->getProj()->isInBounderies_strict(pt.x,pt.y))
@@ -988,8 +988,8 @@ void ROUTAGE::slot_calculate()
     iso->setParent(this);
     vlmPoint point(start.x(),start.y());
     point.isStart=true;
-    proj->map2screenFloat(Util::cLFA(start.x(),proj->getXmin()),start.y(),&xs,&ys);
-    proj->map2screenFloat(Util::cLFA(arrival.x(),proj->getXmin()),arrival.y(),&xa,&ya);
+    proj->map2screenDouble(Util::cLFA(start.x(),proj->getXmin()),start.y(),&xs,&ys);
+    proj->map2screenDouble(Util::cLFA(arrival.x(),proj->getXmin()),arrival.y(),&xa,&ya);
     point.x=xs;
     point.y=ys;
 #if 0
@@ -1562,7 +1562,7 @@ void ROUTAGE::slot_calculate()
                         }
                     }
                     double x,y;
-                    proj->map2screenFloat(Util::cLFA(newPoint.lon,proj->getXmin()),newPoint.lat,&x,&y);
+                    proj->map2screenDouble(Util::cLFA(newPoint.lon,proj->getXmin()),newPoint.lat,&x,&y);
                     newPoint.x=x;
                     newPoint.y=y;
 #if 1 /*check again if crossing with coast*/

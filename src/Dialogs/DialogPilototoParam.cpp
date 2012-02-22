@@ -49,7 +49,7 @@ DialogPilototoParam::DialogPilototoParam(QWidget *parent) : QDialog(parent)
 
 void DialogPilototoParam::editInstruction(DialogPilototoInstruction * instruction)
 {
-    float val;
+    double val;
     
     this->instruction=instruction;
 
@@ -71,7 +71,7 @@ void DialogPilototoParam::editInstruction(DialogPilototoInstruction * instructio
 
 void DialogPilototoParam::editInstructionPOI(DialogPilototoInstruction * instruction,POI * poi)
 {
-    float val;
+    double val;
 
     this->instruction=instruction;
 
@@ -111,7 +111,7 @@ void DialogPilototoParam::done(int result)
             if(editWph->text().isEmpty())
                 instruction->setWph(-1);
             else
-                instruction->setWph(editWph->text().toFloat());
+                instruction->setWph(editWph->text().toDouble());
         }
     }
     QDialog::done(result);
@@ -143,7 +143,7 @@ void DialogPilototoParam::modeChanged(int mode)
 
 void DialogPilototoParam::pastePOI(void)
 {
-    float lat,lon,wph;
+    double lat,lon,wph;
     
     if(!Util::getWPClipboard(NULL,&lat,&lon,&wph,NULL))
         return;
@@ -160,13 +160,13 @@ void DialogPilototoParam::pastePOI(void)
 
 void DialogPilototoParam::copyPOI(void)
 {
-    float lat=getValue(EDT_LAT);
-    float lon=getValue(EDT_LON);
-    float wph;
+    double lat=getValue(EDT_LAT);
+    double lon=getValue(EDT_LON);
+    double wph;
     if(editWph->text().isEmpty())
         wph=-1;
     else
-        wph=editWph->text().toFloat();
+        wph=editWph->text().toDouble();
     Util::setWPClipboard(lat,lon,wph);
 }
 
@@ -177,12 +177,12 @@ void DialogPilototoParam::selectPOI(void)
 }
 
 
-float DialogPilototoParam::getValue(int type)
+double DialogPilototoParam::getValue(int type)
 {
-    float deg = (type==EDT_LAT?lat_deg->value():lon_deg->value());
-    float min = (type==EDT_LAT?lat_min->value():lon_min->value())/60.0;
-    float res;
-    float sig;
+    double deg = (type==EDT_LAT?lat_deg->value():lon_deg->value());
+    double min = (type==EDT_LAT?lat_min->value():lon_min->value())/60.0;
+    double res;
+    double sig;
     if(type==EDT_LAT)
         sig=lat_sig->currentIndex()==0?1.0:-1.0;
     else
@@ -211,12 +211,12 @@ float DialogPilototoParam::getValue(int type)
     return res;
 }
 
-void DialogPilototoParam::setValue(int type,float val)
+void DialogPilototoParam::setValue(int type,double val)
 {
     int sig=val<0?1:0;
     val=fabs(val);
     int   deg = (int) trunc(val);
-    float min = 60.0*fabs(val-trunc(val));
+    double min = 60.0*fabs(val-trunc(val));
 
     /*if(deg==0 && val < 0)
         min=-min;*/

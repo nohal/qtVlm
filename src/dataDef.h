@@ -120,8 +120,8 @@ struct boatParam {
     QString last24h;
     QString fromFirst;
     QString pavillon;
-    float longitude;
-    float latitude;
+    double longitude;
+    double latitude;
     QString dnm;
 };
 struct raceParam {
@@ -168,20 +168,6 @@ struct windData
 #define QWARN qWarning() << "In" << __FILE__ << ", (line" << __LINE__ << "): "
 
 /* angle helper functions */
-
-#define adjustFloat(VAR) ({ \
-    VAR = ((float)((int)qRound(VAR*1000)))/1000; \
-    })
-
-#define compFloat(VAR1,VAR2) ({ \
-    bool _res;                 \
-    float _v1=VAR1;            \
-    adjustFloat(_v1);           \
-    float _v2=VAR2;            \
-    adjustFloat(_v2);           \
-    _res = (qAbs(_v1-_v2)<0.0001);         \
-    _res;                      \
-    })
 
 #define adjustDouble(VAR) ({ \
     VAR = ((double)((int)qRound(VAR*1000)))/1000; \

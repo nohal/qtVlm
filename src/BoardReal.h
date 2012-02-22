@@ -36,7 +36,7 @@ class boardReal: public QWidget , public Ui::boardReal_ui
         void boatUpdated(void);
         void setChangeStatus(bool);
         void setCompassVisible(bool status);
-        void setWp(float lat,float lon,float wph);
+        void setWp(double lat,double lon,double wph);
         time_t getETA(void)            {    return eta; }
 
     public slots:

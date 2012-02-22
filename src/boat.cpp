@@ -226,12 +226,12 @@ void boat::unSelectBoat(bool needUpdate)
 /* data access            */
 /**************************/
 
-float boat::getBvmgUp(float ws)
+double boat::getBvmgUp(double ws)
 {
     if(polarData) return(polarData->getBvmgUp(ws));
     return -1;
 }
-float boat::getBvmgDown(float ws)
+double boat::getBvmgDown(double ws)
 {
     if(polarData) return(polarData->getBvmgDown(ws));
     return -1;
@@ -362,7 +362,7 @@ void boat::drawEstime(void)
             else
                 twa=twa-360;
         }
-        float newSpeed=getPolarData()->getSpeed(wind_speed,twa);
+        double newSpeed=getPolarData()->getSpeed(wind_speed,twa);
         drawEstime(getHeading(), newSpeed);
         //qWarning()<<"new speed for estime"<<newSpeed<<twa<<wind_speed;
     }
@@ -370,7 +370,7 @@ void boat::drawEstime(void)
         drawEstime(getHeading(),getSpeed());
 }
 
-void boat::drawEstime(float myHeading, float mySpeed)
+void boat::drawEstime(double myHeading, double mySpeed)
 {
 
     estimeLine->deleteAll();
@@ -426,8 +426,8 @@ void boat::drawEstime(float myHeading, float mySpeed)
             windEstimeSpeed=-1;
         GshhsReader *map=parent->get_gshhsReader();
         double I1,J1,I2,J2;
-        proj->map2screenFloat(Util::cLFA(lon,proj->getXmin()),lat,&I1,&J1);
-        proj->map2screenFloat(Util::cLFA(tmp_lon,proj->getXmin()),tmp_lat,&I2,&J2);
+        proj->map2screenDouble(Util::cLFA(lon,proj->getXmin()),lat,&I1,&J1);
+        proj->map2screenDouble(Util::cLFA(tmp_lon,proj->getXmin()),tmp_lat,&I2,&J2);
         bool coastDetected=false;
         if(map->getQuality()>=2)
         {
@@ -451,10 +451,10 @@ void boat::drawEstime(float myHeading, float mySpeed)
                     double LonTmp=getGates().at(n)->getPoints()->first().lon;
                     double LatTmp=getGates().at(n)->getPoints()->first().lat;
                     double Gx1,Gy1,Gx2,Gy2;
-                    proj->map2screenFloat(Util::cLFA(LonTmp,proj->getXmin()),LatTmp,&Gx1,&Gy1);
+                    proj->map2screenDouble(Util::cLFA(LonTmp,proj->getXmin()),LatTmp,&Gx1,&Gy1);
                     LonTmp=getGates().at(n)->getPoints()->last().lon;
                     LatTmp=getGates().at(n)->getPoints()->last().lat;
-                    proj->map2screenFloat(Util::cLFA(LonTmp,proj->getXmin()),LatTmp,&Gx2,&Gy2);
+                    proj->map2screenDouble(Util::cLFA(LonTmp,proj->getXmin()),LatTmp,&Gx2,&Gy2);
                     if(estime>0.0001 && my_intersects(QLineF(I1,J1,I2,J2),QLineF(Gx1,Gy1,Gx2,Gy2)))
                     {
                         penLine1.setColor(Qt::darkGreen);
@@ -473,7 +473,7 @@ void boat::drawEstime(float myHeading, float mySpeed)
         if(WPLat != 0 && WPLon != 0)
         {
             WPLine->setLinePen(penLine2);
-            proj->map2screenFloat(Util::cLFA(WPLon,proj->getXmin()),WPLat,&I2,&J2);
+            proj->map2screenDouble(Util::cLFA(WPLon,proj->getXmin()),WPLat,&I2,&J2);
             WPLine->initSegment(I1,J1,I2,J2);
         }
         this->updateHint();
@@ -524,7 +524,7 @@ void boat::slot_estimeFlashing()
 void boat::slotCompassLine()
 {
     double i1,j1;
-    proj->map2screenFloat(Util::cLFA(this->lon,proj->getXmin()),this->lat,&i1,&j1);
+    proj->map2screenDouble(Util::cLFA(this->lon,proj->getXmin()),this->lat,&i1,&j1);
     emit compassLine(i1,j1);
 }
 QPainterPath boat::shape() const
@@ -712,7 +712,7 @@ void boat::contextMenuEvent(QGraphicsSceneContextMenuEvent * e)
 {
     bool onlyLineOff = false;
 
-    switch(parent->getCompassMode((float)e->scenePos().x(),(float)e->scenePos().y()))
+    switch(parent->getCompassMode(e->scenePos().x(),e->scenePos().y()))
     {
         case 0:
             /* not showing menu line, default text*/

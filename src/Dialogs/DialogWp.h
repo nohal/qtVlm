@@ -41,12 +41,12 @@ class DialogWp: public QDialog, public Ui::WP_dialog_ui
         void show_WPdialog(POI * poi);
 
     signals:
-        void confirmAndSendCmd(QString,QString,int cmdNum,float,float,float);
+        void confirmAndSendCmd(QString,QString,int cmdNum,double,double,double);
         void selectPOI(void);
 
     private:
         boatVLM * currentBoat;
-        void initDialog(float WPLat,float WPLon,float WPHd);
+        void initDialog(double WPLat,double WPLon,double WPHd);
 };
 
 #endif // DIALOGWP_H

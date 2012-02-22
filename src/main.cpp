@@ -68,7 +68,7 @@ int main(int argc, char *argv[])
     QTextCodec::setCodecForTr(QTextCodec::codecForName("utf8"));
     QTextCodec::setCodecForCStrings(QTextCodec::codecForName("utf8"));
     Settings::initSettings();
-    float fontInc=Settings::getSetting("defaultFontSizeInc",0).toFloat();
+    double fontInc=Settings::getSetting("defaultFontSizeInc",0).toDouble();
     if(fontInc<-3 || fontInc>5)
     {
         fontInc=0;

@@ -75,9 +75,9 @@ DialogPoi::DialogPoi(MainWindow * main,myCentralWidget * parent)
     connect(this,SIGNAL(addPOI_list(POI*)),parent,SLOT(slot_addPOI_list(POI*)));
     connect(this,SIGNAL(delPOI_list(POI*)),parent,SLOT(slot_delPOI_list(POI*)));
 
-    connect(main, SIGNAL(newPOI(float,float,Projection *, boat *)),
-            this, SLOT(newPOI(float,float,Projection *, boat*)));
-    connect(this,SIGNAL(doChgWP(float,float,float)),main,SLOT(slotChgWP(float,float,float)));
+    connect(main, SIGNAL(newPOI(double,double,Projection *, boat *)),
+            this, SLOT(newPOI(double,double,Projection *, boat*)));
+    connect(this,SIGNAL(doChgWP(double,double,double)),main,SLOT(slotChgWP(double,double,double)));
 }
 void DialogPoi::resizeEvent ( QResizeEvent * /*event*/ )
 {
@@ -96,7 +96,7 @@ void DialogPoi::editPOI(POI * poi_)
     exec();
 }
 
-void DialogPoi::newPOI(float lon, float lat,Projection *proj, boat *boat)
+void DialogPoi::newPOI(double lon, double lat,Projection *proj, boat *boat)
 {
     //=> set name
     modeCreation = true;
@@ -179,7 +179,7 @@ void DialogPoi::done(int result)
         if(editWph->text().isEmpty())
             poi->setWph(-1);
         else
-            poi->setWph(editWph->text().toFloat());
+            poi->setWph(editWph->text().toDouble());
         poi->slot_updateProjection();
 
         if (modeCreation) {
@@ -226,7 +226,7 @@ void DialogPoi::btDeleteClicked()
 
 void DialogPoi::btPasteClicked()
 {
-    float lat,lon,wph;
+    double lat,lon,wph;
     QString name;
     int tstamp;
     if(!Util::getWPClipboard(&name,&lat,&lon,&wph,&tstamp))
@@ -263,16 +263,16 @@ void DialogPoi::btPasteClicked()
 void DialogPoi::btCopyClicked()
 {
     Util::setWPClipboard(getValue(POI_EDT_LAT),getValue(POI_EDT_LON),
-        editWph->text().isEmpty()?-1:editWph->text().toFloat());
+        editWph->text().isEmpty()?-1:editWph->text().toDouble());
 }
 
 void DialogPoi::btSaveWPClicked()
 {
-    float wph;
+    double wph;
     if(editWph->text().isEmpty())
         wph=-1;
     else
-        wph=editWph->text().toFloat();
+        wph=editWph->text().toDouble();
     emit doChgWP(getValue(POI_EDT_LAT),getValue(POI_EDT_LON),wph);
     done(QDialog::Accepted);
 }
@@ -390,12 +390,12 @@ void DialogPoi::type_chg(int index)
 }
 
 
-float DialogPoi::getValue(int type)
+double DialogPoi::getValue(int type)
 {
-    float res;
-    float deg = (type==POI_EDT_LAT?lat_deg->value():lon_deg->value());
-    float min = (type==POI_EDT_LAT?lat_min->value():lon_min->value())/60.0;
-    float sig;
+    double res;
+    double deg = (type==POI_EDT_LAT?lat_deg->value():lon_deg->value());
+    double min = (type==POI_EDT_LAT?lat_min->value():lon_min->value())/60.0;
+    double sig;
     if(type==POI_EDT_LAT)
         sig=lat_sig->currentIndex()==0?1.0:-1.0;
     else
@@ -404,12 +404,12 @@ float DialogPoi::getValue(int type)
     return res;
 }
 
-void DialogPoi::setValue(int type,float val)
+void DialogPoi::setValue(int type,double val)
 {
     int sig=val<0?1:0;
     val=fabs(val);
     int   deg = (int) trunc(val);
-    float min = 60.0*fabs(val-trunc(val));
+    double min = 60.0*fabs(val-trunc(val));
     if(type==POI_EDT_LAT)
     {
         lat_deg->setValue(deg);

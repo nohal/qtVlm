@@ -69,7 +69,7 @@ Q_OBJECT
         /* coord conversion */
         void screen2map(int i, int j, double *x, double *y) const;
         void map2screen(double x, double y, int *i, int *j) const;
-        void map2screenFloat(double x, double y, double *i, double *j) const;
+        void map2screenDouble(double x, double y, double *i, double *j) const;
 
         /* position / region validation*/
         bool intersect(double w,double e,double s,double n)  const;
@@ -115,10 +115,10 @@ inline void Projection::map2screen(double x, double y, int *i, int *j) const
 //        x=360+x;
 //    if(xW<0 && x>0)
 //        x=x-360;
-    *i = (int) (scale * (x-xW));
-    *j = H/2 + (int) (scale * (PY-radToDeg(log(tan(degToRad(y)/2 + M_PI_4)))));
+    *i = qRound (scale * (x-xW));
+    *j = H/2 + qRound (scale * (PY-radToDeg(log(tan(degToRad(y)/2 + M_PI_4)))));
 }
-inline void Projection::map2screenFloat(double x, double y, double *i, double *j) const
+inline void Projection::map2screenDouble(double x, double y, double *i, double *j) const
 {
     if(y<=-90) y=-89.9999999999999999999999999999999999999999999999999999999;
     if(y>=90) y=89.999999999999999999999999999999999999999999999999999999999;

@@ -51,8 +51,8 @@ class DialogPilototoParam : public QDialog, public Ui::pilototo_param_ui
     private:
         DialogPilototoInstruction * instruction;
 
-        float getValue(int type);
-        void setValue(int type,float val);
+        double getValue(int type);
+        void setValue(int type,double val);
 };
 
 #endif

@@ -53,14 +53,14 @@ class MainWindow: public QMainWindow
         bool get_selPOI_instruction();
         void get_selectedBoatPos(double * lat,double* lon);
         int get_selectedBoatVacLen();
-        void getBoatBvmg(float * up, float * down, float ws);
-        float getBoatPolarSpeed(float ws,float angle);
-        float getBoatPolarMaxSpeed();
+        void getBoatBvmg(double * up, double * down, double ws);
+        double getBoatPolarSpeed(double ws,double angle);
+        double getBoatPolarMaxSpeed();
         boat * getSelectedBoat(void) {if(selectedBoat) return selectedBoat;else return NULL;}
         polarList * getPolarList(void) {return polar_list;}
         QList<POI *> * getPois();
         void statusBar_showWindData(double x,double y);
-        void statusBar_showSelectedZone(float x0, float y0, float x1, float y1);
+        void statusBar_showSelectedZone(double x0, double y0, double x1, double y1);
         void drawVacInfo(void);
 
         void setBoardToggleAction(QAction * action);
@@ -113,7 +113,7 @@ class MainWindow: public QMainWindow
         void slot_centerBoat();
         void slot_moveBoat(void);
 
-        void slotChgWP(float lat,float lon, float wph);
+        void slotChgWP(double lat,double lon, double wph);
         void slotBoatLockStatusChanged(boat*,bool);
         void slotPilototo(void);
         void slotShowPolar(void);
@@ -151,7 +151,7 @@ class MainWindow: public QMainWindow
         void signalMapQuality(int quality);
         void setChangeStatus(bool);
         void editPOI(POI *);
-        void newPOI(float,float,Projection *, boat *);
+        void newPOI(double,double,Projection *, boat *);
         void editInstructions(void);
         void editInstructionsPOI(DialogPilototoInstruction * ,POI*);
         void editWP_POI(POI*);
@@ -161,7 +161,7 @@ class MainWindow: public QMainWindow
         void updateInet(void);
         void showCompassLine(double,double);
         void addPOI_list(POI*);
-        void addPOI(QString name,int type,float lat,float lon, float wph,int timestamp,bool useTimeStamp, boat *);
+        void addPOI(QString name,int type,double lat,double lon, double wph,int timestamp,bool useTimeStamp, boat *);
         void updateRoute(boat * boat);
         void showCompassCenterBoat();
         void showCompassCenterWp();

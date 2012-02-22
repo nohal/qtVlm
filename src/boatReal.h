@@ -87,7 +87,7 @@ class boatReal : public boat
         int getSig(){return sig;}
         double getPdop(){return pdop;}
         time_t getEta(){return eta;}
-        void setWp(float lat, float lon, float wph);
+        void setWp(double lat, double lon, double wph);
         nmeaINFO getInfo(void){return info;}
         void emitMoveBoat(){emit boatUpdated(this,false,false);}
         bool getDisplayNMEA(){return this->displayNMEA;}

@@ -139,7 +139,7 @@ void  myScene::keyPressEvent (QKeyEvent *e)
                 position=Settings::getSetting("f9map","-1;-1;-1").toString();
                 positions=position.split(";");
                 if(positions[0]!="-1")
-                    parent->getProj()->setScaleAndCenterInMap(positions[0].toFloat(), positions[1].toDouble(), positions[2].toDouble());
+                    parent->getProj()->setScaleAndCenterInMap(positions[0].toDouble(), positions[1].toDouble(), positions[2].toDouble());
             }
             break;
         case Qt::Key_F10:
@@ -154,7 +154,7 @@ void  myScene::keyPressEvent (QKeyEvent *e)
                 position=Settings::getSetting("f10map","-1;-1;-1").toString();
                 positions=position.split(";");
                 if(positions[0]!="-1")
-                    parent->getProj()->setScaleAndCenterInMap(positions[0].toFloat(), positions[1].toDouble(), positions[2].toDouble());
+                    parent->getProj()->setScaleAndCenterInMap(positions[0].toDouble(), positions[1].toDouble(), positions[2].toDouble());
             }
             break;
         case Qt::Key_F11:
@@ -169,7 +169,7 @@ void  myScene::keyPressEvent (QKeyEvent *e)
                 position=Settings::getSetting("f11map","-1;-1;-1").toString();
                 positions=position.split(";");
                 if(positions[0]!="-1")
-                    parent->getProj()->setScaleAndCenterInMap(positions[0].toFloat(), positions[1].toDouble(), positions[2].toDouble());
+                    parent->getProj()->setScaleAndCenterInMap(positions[0].toDouble(), positions[1].toDouble(), positions[2].toDouble());
             }
             break;
         case Qt::Key_F12:
@@ -184,7 +184,7 @@ void  myScene::keyPressEvent (QKeyEvent *e)
                 position=Settings::getSetting("f12map","-1;-1;-1").toString();
                 positions=position.split(";");
                 if(positions[0]!="-1")
-                    parent->getProj()->setScaleAndCenterInMap(positions[0].toFloat(), positions[1].toDouble(), positions[2].toDouble());
+                    parent->getProj()->setScaleAndCenterInMap(positions[0].toDouble(), positions[1].toDouble(), positions[2].toDouble());
             }
             break;
         default:
@@ -491,6 +491,31 @@ myCentralWidget::myCentralWidget(Projection * proj,MainWindow * parent,MenuBar *
     xmlPOI = new xml_POIData(proj,parent,this);
     /*Races*/
     this->NSZ=NULL;
+#if 0 //test pb de marano (resolu)
+    QLineF marano(17.5895855642,-61.926110110422,17.582814750193,-61.915067613033);
+    QLineF gate(17.5840000000,-61.9170000000,17.5840000000,-61.8630000000);
+    QPointF cross;
+    if(marano.intersect(gate,&cross)==QLineF::BoundedIntersection)
+        qWarning()<<"Marano is crossing at"<<QString().sprintf("%.10f",cross.x())<<QString().sprintf("%.10f",cross.y());
+    else
+        qWarning()<<"Marano is NOT crossing"<<QString().sprintf("%.10f",cross.x())<<QString().sprintf("%.10f",cross.y());
+    QPen pen;
+    pen.setColor(Qt::black);
+    pen.setBrush(Qt::black);
+    pen.setWidthF(1.0);
+    vlmLine * mar=new vlmLine(proj,this->scene,10);
+    mar->setLinePen(pen);
+    vlmLine * gat=new vlmLine(proj,this->scene,10);
+    pen.setColor(Qt::red);
+    pen.setBrush(Qt::red);
+    gat->setLinePen(pen);
+    gat->addPoint(17.5840000000,-61.9170000000);
+    gat->addPoint(17.5840000000,-61.8630000000);
+    gat->slot_showMe();
+    mar->addPoint(17.5895855642,-61.926110110422);
+    mar->addPoint(17.582814750193,-61.915067613033);
+    mar->slot_showMe();
+#endif
 }
 void myCentralWidget::setCompassFollow(ROUTE * route)
 {
@@ -617,7 +642,7 @@ void myCentralWidget::slot_Go_Down()
     UNBLOCK_SIG_BOAT()
 }
 
-void myCentralWidget::slot_Zoom_In(float quantity)
+void myCentralWidget::slot_Zoom_In(double quantity)
 {
     BLOCK_SIG_BOAT()
     if(keepPos)
@@ -636,7 +661,7 @@ void myCentralWidget::slot_Zoom_In(float quantity)
     UNBLOCK_SIG_BOAT()
 }
 
-void myCentralWidget::slot_Zoom_Out(float quantity)
+void myCentralWidget::slot_Zoom_Out(double quantity)
 {
     BLOCK_SIG_BOAT()
     if(keepPos)
@@ -655,7 +680,7 @@ void myCentralWidget::slot_Zoom_Out(float quantity)
     UNBLOCK_SIG_BOAT()
 }
 
-void myCentralWidget::slot_Zoom_Wheel(float quantity, int XX, int YY, bool centerOnWheel)
+void myCentralWidget::slot_Zoom_Wheel(double quantity, int XX, int YY, bool centerOnWheel)
 {
     BLOCK_SIG_BOAT()
     double lat,lon;
@@ -798,7 +823,7 @@ void myCentralWidget::mouseDoubleClick(int x, int y, QGraphicsItem * )
     double lon, lat;
     proj->screen2map(x,y, &lon, &lat);
     qWarning() << "Creating POI at: " << lat << "," << lon << " - " << Util::formatLatitude(lat) << "," << Util::formatLongitude(lon);
-    slot_addPOI("",POI_TYPE_POI,(float)lat,(float)lon,-1,-1,false,mainW->getSelectedBoat());
+    slot_addPOI("",POI_TYPE_POI,lat,lon,-1,-1,false,mainW->getSelectedBoat());
 }
 
 void myCentralWidget::escapeKeyPressed(void)
@@ -1083,7 +1108,7 @@ void myCentralWidget::slot_fileInfo_GRIB()
 /**************************/
 /* POI                    */
 /**************************/
-POI * myCentralWidget::slot_addPOI(QString name,int type,float lat,float lon, float wph,int timestamp,bool useTimeStamp,boat *boat)
+POI * myCentralWidget::slot_addPOI(QString name,int type,double lat,double lon, double wph,int timestamp,bool useTimeStamp,boat *boat)
 {
     POI * poi;
 
@@ -1693,9 +1718,9 @@ void myCentralWidget::slot_importRouteFromMenu(bool ortho)
             case ADRENA_FORMAT:
                 {
                     list = line.split(';');
-                    lat=list[0].mid(0,2).toInt()+list[0].mid(3,6).toFloat()/60.0;
+                    lat=list[0].mid(0,2).toInt()+list[0].mid(3,6).toDouble()/60.0;
                     if(list[0].mid(10,1)!="N") lat=-lat;
-                    lon=list[0].mid(13,3).toInt()+list[0].mid(17,6).toFloat()/60.0;
+                    lon=list[0].mid(13,3).toInt()+list[0].mid(17,6).toDouble()/60.0;
                     if(list[0].mid(24,1)!="E") lon=-lon;
                     start=QDateTime::fromString(list[1],"dd/MM/yyyy hh:mm:ss");
                     start.setTimeSpec(Qt::UTC);
@@ -1722,11 +1747,11 @@ void myCentralWidget::slot_importRouteFromMenu(bool ortho)
                     else
                         position.truncate(position.indexOf("S")+1);
                     QStringList temp=position.split("d");
-                    float deg=temp[0].toInt();
+                    double deg=temp[0].toInt();
                     temp=temp[1].split("'");
-                    float min=temp[0].toInt();
+                    double min=temp[0].toInt();
                     temp=temp[1].split("q");
-                    float sec=temp[0].toFloat();
+                    double sec=temp[0].toDouble();
                     min=min+sec/60;
                     lat=deg+min/60;
                     if(list[3].contains("S"))
@@ -1745,7 +1770,7 @@ void myCentralWidget::slot_importRouteFromMenu(bool ortho)
                     temp=temp[1].split("'");
                     min=temp[0].toInt();
                     temp=temp[1].split("q");
-                    sec=temp[0].toFloat();
+                    sec=temp[0].toDouble();
                     min=min+sec/60;
                     lon=deg+min/60;
                     if(list[3].contains("W",Qt::CaseInsensitive))
@@ -1766,12 +1791,12 @@ void myCentralWidget::slot_importRouteFromMenu(bool ortho)
                     if(temp.contains("N",Qt::CaseInsensitive))
                     {
                         temp.truncate(temp.indexOf("N")-1);
-                        lat=lat+temp.toFloat()/60;
+                        lat=lat+temp.toDouble()/60;
                     }
                     else
                     {
                         temp.truncate(temp.indexOf("S")-1);
-                        lat=-(lat+temp.toFloat()/60);
+                        lat=-(lat+temp.toDouble()/60);
                     }
                     position=list[14].split(QChar(0xB0));
                     lon=position.at(0).toInt();
@@ -1779,13 +1804,13 @@ void myCentralWidget::slot_importRouteFromMenu(bool ortho)
                     if(temp.contains("E",Qt::CaseInsensitive))
                     {
                         temp.truncate(temp.indexOf("E")-1);
-                        lon=lon+temp.toFloat()/60;
+                        lon=lon+temp.toDouble()/60;
                     }
                     else
                     {
                         temp.replace("O","W");
                         temp.truncate(temp.indexOf("W")-1);
-                        lon=-(lon+temp.toFloat()/60);
+                        lon=-(lon+temp.toDouble()/60);
                     }
                     break;
                 }
@@ -1897,8 +1922,8 @@ void myCentralWidget::slot_importRouteFromMenu(bool ortho)
                     route->setStartTime(start);
                 n++;
                 QString poiN;
-                lon=trackPoint.firstChildElement("Coords").firstChildElement("Lon").firstChild().toText().data().toFloat();
-                lat=trackPoint.firstChildElement("Coords").firstChildElement("Lat").firstChild().toText().data().toFloat();
+                lon=trackPoint.firstChildElement("Coords").firstChildElement("Lon").firstChild().toText().data().toDouble();
+                lat=trackPoint.firstChildElement("Coords").firstChildElement("Lat").firstChild().toText().data().toDouble();
                 poiN.sprintf("%.5i",n);
                 poiName="I"+poiN;
                 POI * poi = slot_addPOI(poiName,0,lat,lon,-1,false,false,mainW->getSelectedBoat());
@@ -2043,7 +2068,7 @@ void myCentralWidget::exportRouteFromMenu(ROUTE * route)
         {
             list.clear();
             int deg = (int) fabs(route->getStartLat());
-            float min = (fabs(route->getStartLat()) - deg)*60.0;
+            double min = (fabs(route->getStartLat()) - deg)*60.0;
             const char *cdeg = "°";
             QString latitude;
             latitude.sprintf("%02d%s%06.3f", deg, cdeg, min);
@@ -2075,7 +2100,7 @@ void myCentralWidget::exportRouteFromMenu(ROUTE * route)
             POI * poi=i.next();
 
             int deg = (int) fabs(poi->getLatitude());
-            float min = (fabs(poi->getLatitude()) - deg)*60.0;
+            double min = (fabs(poi->getLatitude()) - deg)*60.0;
             const char *cdeg = "°";
             QString latitude;
             latitude.sprintf("%02d%s%06.3f", deg, cdeg, min);
@@ -2110,7 +2135,7 @@ void myCentralWidget::exportRouteFromMenu(ROUTE * route)
             vlmPoint poi=i.next();
 
             int deg = (int) fabs(poi.lat);
-            float min = (fabs(poi.lat) - deg)*60.0;
+            double min = (fabs(poi.lat) - deg)*60.0;
             const char *cdeg = "°";
             QString latitude;
             latitude.sprintf("%02d%s%06.3f", deg, cdeg, min);

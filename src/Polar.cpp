@@ -60,9 +60,9 @@ Polar::Polar(QString fname,MainWindow * mainWindow)
     }                          \
 }
 
-#define getFloat(INC,RES) { \
+#define getDouble(INC,RES) { \
     bool ok;                 \
-    RES=list[INC].toFloat(&ok);  \
+    RES=list[INC].toDouble(&ok);  \
     if(!ok)                    \
     {                          \
          QMessageBox::warning(0,QObject::tr("Lecture de polaire"), \
@@ -141,7 +141,7 @@ void Polar::setPolarName(QString fname)
     }
     list.removeLast();
     int i;
-    for(i=1;i<list.count();i++) tws.append(list[i].toFloat());
+    for(i=1;i<list.count();i++) tws.append(list[i].toDouble());
     while(true)
     {
         line=stream.readLine();
@@ -150,11 +150,11 @@ void Polar::setPolarName(QString fname)
             list = line.split(";");
         else
             list = line.split("\t");
-        twa.append(list[0].toFloat());
+        twa.append(list[0].toDouble());
         for(i=1;i<list.count();i++)
         {
             if(i>tws.count()) break;
-            polar_data.append(list[i].toFloat());
+            polar_data.append(list[i].toDouble());
         }
         while(i<=tws.count())
             polar_data.append(0);
@@ -165,16 +165,16 @@ void Polar::setPolarName(QString fname)
 
 /* pre-calculate B-VMG for every tws at 0.1 precision with a twa step of 1 and then .1 */
 
-    float ws=qRound(0);
-    float wa=qRound(0);
-    float bvmg,bvmg_d,bvmg_u,wa_u,wa_d,wa_limit;
+    double ws=qRound(0);
+    double wa=qRound(0);
+    double bvmg,bvmg_d,bvmg_u,wa_u,wa_d,wa_limit;
     maxSpeed=qRound(0);
     do
     {
         wa_u=qRound(0);
         wa_d=qRound(180);
         bvmg_u=bvmg_d=qRound(0);
-        float speed;
+        double speed;
         do
         {
             speed=myGetSpeed(ws,wa,true);
@@ -298,7 +298,7 @@ void Polar::printPolar(void)
 //    }
 }
 
-float Polar::getBvmgUp(float windSpeed)
+double Polar::getBvmgUp(double windSpeed)
 {
     if(!loaded)
         return 0;
@@ -307,7 +307,7 @@ float Polar::getBvmgUp(float windSpeed)
     else
         return(best_vmg_up.last());
 }
-float Polar::getBvmgDown(float windSpeed)
+double Polar::getBvmgDown(double windSpeed)
 {
     if(!loaded)
         return 0;
@@ -317,18 +317,18 @@ float Polar::getBvmgDown(float windSpeed)
         return(best_vmg_down.last());
 }
 
-float Polar::getSpeed(float windSpeed, float angle)
+double Polar::getSpeed(double windSpeed, double angle)
 {
     return myGetSpeed(windSpeed,angle,false);
 }
 
-float Polar::myGetSpeed(float windSpeed, float angle, bool force)
+double Polar::myGetSpeed(double windSpeed, double angle, bool force)
 {
     //qWarning() << "My get speed";
     int i1,i2,k1,k2,k;
-    float a,b,c,d;
-    float infSpeed,supSpeed;
-    float boatSpeed;
+    double a,b,c,d;
+    double infSpeed,supSpeed;
+    double boatSpeed;
 
     if(!loaded && !force)
         return 0;
@@ -454,7 +454,7 @@ void Polar::getBvmg(double twaOrtho, double tws, double *twaVMG)
     double twa;
     bool babord=false;
 //    double debug=twaOrtho;
-    twaOrtho=((float)qRound(twaOrtho*10.0))/10.0;
+    twaOrtho=((double)qRound(twaOrtho*10.0))/10.0;
     if (twaOrtho<0)
     {
         twaOrtho=-twaOrtho;
@@ -550,7 +550,7 @@ void Polar::myBvmgWind(double w_angle, double w_speed, double *wangle)
     }
 }
 
-float Polar::A180(float angle)
+double Polar::A180(double angle)
 {
     if(qAbs(angle)>180)
     {

@@ -188,9 +188,9 @@ class myCentralWidget : public QWidget
     public slots :
         /* Zoom & position */
         void slot_Zoom_All();
-        void slot_Zoom_In(float quantity=1.3);
-        void slot_Zoom_Out(float quantity=1.3);
-        void slot_Zoom_Wheel(float quantity, int XX, int YY, bool centerOnWheel);
+        void slot_Zoom_In(double quantity=1.3);
+        void slot_Zoom_Out(double quantity=1.3);
+        void slot_Zoom_Wheel(double quantity, int XX, int YY, bool centerOnWheel);
         void slot_Go_Left();
         void slot_Go_Right();
         void slot_Go_Up();
@@ -200,7 +200,7 @@ class myCentralWidget : public QWidget
         void slot_abortRequest();
 
         /* POI */
-        POI * slot_addPOI(QString name,int type,float lat,float lon, float wph,int timestamp,bool useTimeStamp, boat *boat);
+        POI * slot_addPOI(QString name,int type,double lat,double lon, double wph,int timestamp,bool useTimeStamp, boat *boat);
         void slot_addPOI_list(POI * poi);
         void slot_delPOI_list(POI * poi);
         void slot_POISave(void);

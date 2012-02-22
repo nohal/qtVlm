@@ -84,7 +84,7 @@ QRectF vlmLine::boundingRect() const
     return boundingR;
 }
 
-void vlmLine::addPoint(float lat,float lon)
+void vlmLine::addPoint(double lat,double lon)
 {
     vlmPoint point(lon,lat);
     line.append(point);
@@ -184,9 +184,9 @@ void vlmLine::calculatePoly(void)
             if(worldPoint.isDead) continue;
             if(worldPoint.isBroken && n==0) continue;
             //Util::computePos(proj,worldPoint.lat, worldPoint.lon, &X, &Y);
-            proj->map2screenFloat(Util::cLFA(worldPoint.lon,proj->getXmin()),worldPoint.lat,&X,&Y);
-            X=X-(int)x();
-            Y=Y-(int)y();
+            proj->map2screenDouble(Util::cLFA(worldPoint.lon,proj->getXmin()),worldPoint.lat,&X,&Y);
+            X=X-x();
+            Y=Y-y();
             if(n>0)
             {
                 orth.setPoints(previousWorldPoint.lon,previousWorldPoint.lat,worldPoint.lon,worldPoint.lat);
@@ -204,10 +204,10 @@ void vlmLine::calculatePoly(void)
 //                    wrongNS=-1; // on devrait etre au sud et on est en dessous
                 if(wrongEW!=0 && mode==VLMLINE_GATE_MODE)
                 {
-                    proj->map2screenFloat(worldPoint.lon-wrongEW*360, worldPoint.lat, &Xbis, &Ybis);
+                    proj->map2screenDouble(worldPoint.lon-wrongEW*360, worldPoint.lat, &Xbis, &Ybis);
                     poly->putPoints(n,1,Xbis,Ybis);
                     tempBound=tempBound.united(poly->boundingRect());
-                    proj->map2screenFloat(previousWorldPoint.lon+wrongEW*360, previousWorldPoint.lat, &Xbis, &Ybis);
+                    proj->map2screenDouble(previousWorldPoint.lon+wrongEW*360, previousWorldPoint.lat, &Xbis, &Ybis);
                     collision.append(coasted);
                     poly=new QPolygon();
                     poly->resize(0);
@@ -323,7 +323,7 @@ void vlmLine::paint(QPainter * pnt, const QStyleOptionGraphicsItem * , QWidget *
     else
         coastedPen.setColor(Qt::red);
     coastedPen.setWidthF(linePen.widthF()*2);
-    float penW=linePen.widthF();
+    double penW=linePen.widthF();
     if(polyList.isEmpty()) return;
     QPolygon * poly;
     QListIterator<QPolygon*> nPoly (polyList);

@@ -28,8 +28,8 @@ DialogPoiInput::DialogPoiInput(myCentralWidget * parent) : QDialog(parent)
 {
     setupUi(this);
     Util::setFontDialog(this);
-    connect(this,SIGNAL(addPOI(QString,int,float,float,float,int,bool,boat*)),
-            parent,SLOT(slot_addPOI(QString,int,float,float,float,int,bool,boat*)));
+    connect(this,SIGNAL(addPOI(QString,int,double,double,double,int,bool,boat*)),
+            parent,SLOT(slot_addPOI(QString,int,double,double,double,int,bool,boat*)));
 }
 
 void DialogPoiInput::slot_showPOI_input(void)
@@ -69,7 +69,7 @@ void DialogPoiInput::done(int result)
     {
         QStringList lsbuf,lsval1,lsval2,lsval3;
         QString name;
-        float lat,lon,wph;
+        double lat,lon,wph;
         int tstamp;
         lsbuf = POI_list->toPlainText().split("\n");
         for (int i=0; i < lsbuf.size(); i++)

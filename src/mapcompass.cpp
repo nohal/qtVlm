@@ -127,9 +127,9 @@ void  mapCompass::paint(QPainter * pnt, const QStyleOptionGraphicsItem * , QWidg
     int str_w,str_h,x,y;
     double lat,lon;
     double WP_lat,WP_lon;
-    float WP_angle=-1;
+    double WP_angle=-1;
     double WP_dist=-1;
-    float angle;
+    double angle;
     QString str;
 
     lat=lon=0;
@@ -162,8 +162,8 @@ void  mapCompass::paint(QPainter * pnt, const QStyleOptionGraphicsItem * , QWidg
             str=QString().setNum(i);
             str_w=fm.width(str);
             angle=degToRad(i-90);
-            x=(int)((diam+12)*cos(angle)-(float)(str_w/2));
-            y=(int)((diam+12)*sin(angle)+(float)(str_h/2));
+            x=(int)((diam+12)*cos(angle)-(double)(str_w/2));
+            y=(int)((diam+12)*sin(angle)+(double)(str_h/2));
             pnt->drawText(x,y,str);
         }
 
@@ -224,8 +224,8 @@ void  mapCompass::paint(QPainter * pnt, const QStyleOptionGraphicsItem * , QWidg
             str=QString().setNum(i>180?i-360:i);
             str_w=fm.width(str);
             angle=degToRad((i+wind_angle)-90);
-            x=(int)((diam-2*MARK_SIZE-4*DELTA)*cos(angle)-(float)(str_w/2));
-            y=(int)((diam-2*MARK_SIZE-4*DELTA)*sin(angle)+(float)(str_h/2));
+            x=(int)((diam-2*MARK_SIZE-4*DELTA)*cos(angle)-(double)(str_w/2));
+            y=(int)((diam-2*MARK_SIZE-4*DELTA)*sin(angle)+(double)(str_h/2));
             pnt->drawText(x,y,str);
         }
 
@@ -294,13 +294,13 @@ void  mapCompass::paint(QPainter * pnt, const QStyleOptionGraphicsItem * , QWidg
             }
         }
         main->getBoatBvmg(&bvmg_up,&bvmg_down,wind_speed);
-        float speeds[181];
+        double speeds[181];
         for(int i=0;i<=180;i++)
         {
             speeds[i]=main->getBoatPolarSpeed(wind_speed,i);
         }
         poly.resize(361);
-        float polVac=0;
+        double polVac=0;
         if(Settings::getSetting("scalePolar",0).toInt()==0)
         {
             polVac=Settings::getSetting("polVac",12).toInt();
@@ -322,8 +322,8 @@ void  mapCompass::paint(QPainter * pnt, const QStyleOptionGraphicsItem * , QWidg
         double lon1,lat1;
         int X,Y,X1,Y1;
         Util::getCoordFromDistanceAngle(lat,lon,10,90,&lat1,&lon1);
-        Util::computePos(proj,(float)lat,(float)Util::cLFA(lon,proj->getXmin()), &Y, &X);
-        Util::computePos(proj,(float)lat1,(float)Util::cLFA(lon1,proj->getXmin()), &Y1, &X1);
+        Util::computePos(proj,lat,Util::cLFA(lon,proj->getXmin()), &Y, &X);
+        Util::computePos(proj,lat1,Util::cLFA(lon1,proj->getXmin()), &Y1, &X1);
 
         double oneMile=QLineF(X,Y,X1,Y1).length()/10.0;
         double vacLen=parent->getSelectedBoat()->getVacLen()/60.0;
@@ -661,7 +661,7 @@ void mapCompass::updateCompassLineLabels(int x, int y)
         loxo_angle=qRound(loxo_angle*100.0)/100.0;
         Util::getCoordFromDistanceLoxo(ya,xa,loxo_dist,loxo_angle,&yb,&xb);
         double X,Y;
-        proj->map2screenFloat(Util::cLFA(xb,proj->getXmin()),yb,&X,&Y);
+        proj->map2screenDouble(Util::cLFA(xb,proj->getXmin()),yb,&X,&Y);
         orth.setEndPoint(xb,yb);
         pos_angle=orth.getAzimutDeg();
         pos_distance=orth.getDistance();
@@ -733,27 +733,27 @@ void mapCompass::updateCompassLineLabels(int x, int y)
 //        {
             windAngle_label->setDefaultTextColor(QColor(Qt::black));
 //        }
-        float bs=main->getBoatPolarSpeed(wind_speed,qAbs(pos_wind_angle));
+        double bs=main->getBoatPolarSpeed(wind_speed,qAbs(pos_wind_angle));
         QString s_eta;
         if(bs>0)
         {
-            float ts=pos_distance/bs*60*60;
-            float days=ts/86400.0000;
+            double ts=pos_distance/bs*60*60;
+            double days=ts/86400.0000;
             if(qRound(days)>days)
                 days=qRound(days)-1;
             else
                 days=qRound(days);
-            float hours=(ts-days*86400)/3600.0000;
+            double hours=(ts-days*86400)/3600.0000;
             if(qRound(hours)>hours)
                 hours=qRound(hours)-1;
             else
                 hours=qRound(hours);
-            float mins=(ts-days*86400-hours*3600)/60.0000;
+            double mins=(ts-days*86400-hours*3600)/60.0000;
             if(qRound(mins)>mins)
                 mins=qRound(mins)-1;
             else
                 mins=qRound(mins);
-            float secs=qRound(ts-days*86400-hours*3600-mins*60);
+            double secs=qRound(ts-days*86400-hours*3600-mins*60);
             s_eta="Estime: "+QString::number((int)days)+" "+tr("jours")+" "+QString::number((int)hours)+" "+tr("heures")+" "+
                     QString::number((int)mins)+" "+tr("minutes")+" "+
                     QString::number((int)secs)+" "+tr("secondes");

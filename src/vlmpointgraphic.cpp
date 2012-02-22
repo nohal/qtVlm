@@ -5,7 +5,7 @@
 
 #include "routage.h"
 
-vlmPointGraphic::vlmPointGraphic(ROUTAGE * routage,int isoNb, int pointIsoNb,float lon, float lat, Projection * proj, QGraphicsScene * myScene,int z_level) : QGraphicsWidget()
+vlmPointGraphic::vlmPointGraphic(ROUTAGE * routage,int isoNb, int pointIsoNb,double lon, double lat, Projection * proj, QGraphicsScene * myScene,int z_level) : QGraphicsWidget()
 {
     this->proj=proj;
     this->myScene=myScene;

@@ -61,7 +61,7 @@ void Util::setFontDialog(QWidget * o)
     setFontDialog(object);
 }
 
-QString Util::formatTemperature(float tempKelvin)
+QString Util::formatTemperature(double tempKelvin)
 {
     QString tunit = Settings::getSetting("unitsTemp", "").toString();
     QString unit = (tunit=="") ? "degC" : tunit;
@@ -79,7 +79,7 @@ QString Util::formatTemperature(float tempKelvin)
     return r+unit;
 }
 //-------------------------------------------------------
-QString Util::formatTemperature_short(float tempKelvin)
+QString Util::formatTemperature_short(double tempKelvin)
 {
     QString tunit = Settings::getSetting("unitsTemp", "").toString();
     QString unit = (tunit=="") ? "degC" : tunit;
@@ -97,7 +97,7 @@ QString Util::formatTemperature_short(float tempKelvin)
     return r; //+unit;
 }
 //----------------------------------------------------------------
-QString Util::formatSpeed(float meterspersecond)
+QString Util::formatSpeed(double meterspersecond)
 {
     QString tunit = Settings::getSetting("unitsWindSpeed", "").toString();
     QString unit = (tunit=="") ? "km/h" : tunit;
@@ -114,12 +114,12 @@ QString Util::formatSpeed(float meterspersecond)
     return r;
 }
 //----------------------------------------------------------------
-QString Util::formatDistance(float mille)
+QString Util::formatDistance(double mille)
 {
     QString tunit = Settings::getSetting("unitsDistance", "").toString();
     QString unit = (tunit=="") ? "km" : tunit;
     QString r, unite;
-    float d;
+    double d;
     if (unit == "km") {
         unite = "km";
         d= mille*1.852;
@@ -137,7 +137,7 @@ QString Util::formatDistance(float mille)
     return r;
 }
 //----------------------------------------------------------------
-QString Util::formatDegres(float x)     // 123.4 -> 123°24.00'
+QString Util::formatDegres(double x)     // 123.4 -> 123°24.00'
 {
     QString tunit = Settings::getSetting("unitsPosition", "").toString();
     QString unit = (tunit=="") ? "dddegmm'ss" : tunit;
@@ -146,7 +146,7 @@ QString Util::formatDegres(float x)     // 123.4 -> 123°24.00'
     if (unit == "dddegmm,mm'")
     {
         int deg = (int) fabs(x);
-        float min = (fabs(x) - deg)*60.0;
+        double min = (fabs(x) - deg)*60.0;
         char sign = (x<0) ? '-' : ' ';
         const char *cdeg = "°";
         r.sprintf("%c%03d%s%05.2f'", sign,deg,cdeg, min);
@@ -170,12 +170,12 @@ QString Util::formatDegres(float x)     // 123.4 -> 123°24.00'
     return r;
 }
 //---------------------------------------------------------------------
-QString Util::formatPosition(float x, float y)  // 123°24.00'W 45°67.89'N
+QString Util::formatPosition(double x, double y)  // 123°24.00'W 45°67.89'N
 {
     return formatLongitude(x)+" "+formatLatitude(y);
 }
 //---------------------------------------------------------------------
-QString Util::formatLongitude(float x)
+QString Util::formatLongitude(double x)
 {
     QString dir = Settings::getSetting("longitudeDirection", "").toString();
     if(fabs(x)>100000)
@@ -208,7 +208,7 @@ QString Util::formatLongitude(float x)
     }
 }
 //---------------------------------------------------------------------
-QString Util::formatLatitude(float y)
+QString Util::formatLatitude(double y)
 {
     QString dir = Settings::getSetting("latitudeDirection", "").toString();
     if (dir == "Sud positive")
@@ -224,7 +224,7 @@ QString Util::formatLatitude(float y)
     }
 }
 //---------------------------------------------------------------------
-QString Util::formatPercentValue(float v)
+QString Util::formatPercentValue(double v)
 {
     QString r;
     if (v<0)
@@ -330,7 +330,7 @@ void Util::paramProxy(QNetworkAccessManager *inetManager,QString host)
 }
 
 /* format: LAT,LON@WPH,TSTAMP */
-bool Util::getWPClipboard(QString * name,float * lat,float * lon, float * wph, int * tstamp)
+bool Util::getWPClipboard(QString * name,double * lat,double * lon, double * wph, int * tstamp)
 {
     QClipboard *clipboard = QApplication::clipboard();
     QString WP_txt = clipboard->text();
@@ -347,16 +347,15 @@ bool Util::getWPClipboard(QString * name,float * lat,float * lon, float * wph, i
     return false;
 }
 
-#define convertCheckDouble(VAR1,VAR2) {bool _ok; float _val = VAR1.toDouble(&_ok); if(_ok) *VAR2=_val; else return false; }
-#define convertCheckFloat(VAR1,VAR2) {bool _ok; float _val = VAR1.toFloat(&_ok); if(_ok) *VAR2=_val; else return false; }
-#define convertCheckInt(VAR1,VAR2) {bool _ok; float _val = VAR1.toInt(&_ok); if(_ok) *VAR2=_val; else return false; }
+#define convertCheckDouble(VAR1,VAR2) {bool _ok; double _val = VAR1.toDouble(&_ok); if(_ok) *VAR2=_val; else return false; }
+#define convertCheckInt(VAR1,VAR2) {bool _ok; double _val = VAR1.toInt(&_ok); if(_ok) *VAR2=_val; else return false; }
 
 
-bool Util::convertPOI(const QString & str,QString * name,float * lat,float * lon,float * wph,int * tstamp,
+bool Util::convertPOI(const QString & str,QString * name,double * lat,double * lon,double * wph,int * tstamp,
                       int type)
 {
     QStringList lsval1,lsval2,lsval3;
-    //float val;
+    //double val;
     //bool ok;
 
     //qWarning() << "Converting: " << str;
@@ -374,13 +373,13 @@ bool Util::convertPOI(const QString & str,QString * name,float * lat,float * lon
         {
             case 2:
                 if(name)    *name=POI::getTypeStr(type);
-                if(lat)     convertCheckFloat(lsval2[0],lat)
-                if(lon)     convertCheckFloat(lsval2[1],lon)
+                if(lat)     convertCheckDouble(lsval2[0],lat)
+                if(lon)     convertCheckDouble(lsval2[1],lon)
                 break;
             case 3:
                 if(name)    *name=lsval2[0];
-                if(lat)     convertCheckFloat(lsval2[1],lat)
-                if(lon)     convertCheckFloat(lsval2[2],lon)
+                if(lat)     convertCheckDouble(lsval2[1],lat)
+                if(lon)     convertCheckDouble(lsval2[2],lon)
                 break;
             default:
                 return false; /* bad format */
@@ -409,8 +408,8 @@ bool Util::convertPOI(const QString & str,QString * name,float * lat,float * lon
             if(lsval2.size()==2)
             {
                 if(name)    *name=POI::getTypeStr(type);
-                if(lat)     convertCheckFloat(lsval2[0],lat)
-                if(lon)     convertCheckFloat(lsval2[1],lon)
+                if(lat)     convertCheckDouble(lsval2[0],lat)
+                if(lon)     convertCheckDouble(lsval2[1],lon)
                 if(wph)     *wph=-1;
                 if(tstamp) *tstamp=-1;
                 return true;
@@ -420,7 +419,7 @@ bool Util::convertPOI(const QString & str,QString * name,float * lat,float * lon
     return false; /* bad format */
 }
 
-void Util::setWPClipboard(float lat,float lon, float wph)
+void Util::setWPClipboard(double lat,double lon, double wph)
 {
     /*if(wph==-1)
         QApplication::clipboard()->setText(QString("%1,%2").arg(lat).arg(lon));
@@ -501,15 +500,15 @@ void Util::getCoordFromDistanceAngle(double latitude, double longitude,
     *res_lon=radToDeg(lon);
 }
 
-QString Util::pos2String(int type,float value)
+QString Util::pos2String(int type,double value)
 {
     QString str;
 //    int d,m,s;
-//    float l;
+//    double l;
 //    l=value<0?-value:value;
 //    d=(int)l;
 //    m=(int)((l-d)*60);
-//    s=(int)((l-d-(float)m/60)*3600);
+//    s=(int)((l-d-(double)m/60)*3600);
 
     if(type==TYPE_LON)
 //        str.sprintf("%03d%c%02d'%02d\"%s",d,176,m,s,value<0?"W":"E");
@@ -552,7 +551,7 @@ QString Util::getHost()
 #endif
 }
 
-void Util::computePos(Projection * proj, float lat, float lon, int * x, int * y)
+void Util::computePos(Projection * proj, double lat, double lon, int * x, int * y)
 {
     if (proj->isPointVisible(lon, lat)) {      // tour du monde ?
         proj->map2screen(lon, lat, x, y);
@@ -568,20 +567,20 @@ void Util::computePos(Projection * proj, float lat, float lon, int * x, int * y)
         proj->map2screen(lon, lat, x, y);
     }
 }
-void Util::computePosFloat(Projection * proj, double lat, double lon, double * x, double * y)
+void Util::computePosDouble(Projection * proj, double lat, double lon, double * x, double * y)
 {
     if (proj->isPointVisible(lon, lat)) {      // tour du monde ?
-        proj->map2screenFloat(lon, lat, x, y);
+        proj->map2screenDouble(lon, lat, x, y);
     }
     else if (proj->isPointVisible(lon-360, lat)) {
-        proj->map2screenFloat(lon-360, lat, x, y);
+        proj->map2screenDouble(lon-360, lat, x, y);
     }
     else  if (proj->isPointVisible(lon+360,lat)) {
-        proj->map2screenFloat(lon+360, lat, x, y);
+        proj->map2screenDouble(lon+360, lat, x, y);
     }
     else
     {
-        proj->map2screenFloat(lon, lat, x, y);
+        proj->map2screenDouble(lon, lat, x, y);
     }
 }
 

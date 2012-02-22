@@ -92,7 +92,7 @@ void orthoSegment::paint(QPainter * pnt, const QStyleOptionGraphicsItem * , QWid
         pnt->drawLine(xa-x(),ya-y(),xb-x(),yb-y());
     if(roundedEnd)
     {
-        float w=linePen.widthF();
+        double w=linePen.widthF();
         linePen.setWidthF(w*3);
         pnt->setPen(linePen);
         pnt->drawPoint(xb-x(),yb-y());

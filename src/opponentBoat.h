@@ -49,10 +49,10 @@ struct raceData {
 class opponent : public QGraphicsWidget
 {Q_OBJECT
     public:
-        opponent(QColor color,QString idu,QString race, float lat, float lon, QString pseudo,
+        opponent(QColor color,QString idu,QString race, double lat, double lon, QString pseudo,
                             QString name,Projection * proj,MainWindow *main, myCentralWidget *parentWindow);
         opponent(QColor color,QString idu,QString race,Projection * proj,MainWindow *main, myCentralWidget *parentWindow);
-        void init(QColor color, bool isQtBoat,QString idu,QString race, float lat, float lon, QString pseudo,
+        void init(QColor color, bool isQtBoat,QString idu,QString race, double lat, double lon, QString pseudo,
                             QString name,Projection * proj,MainWindow *main, myCentralWidget *parentWindow);
         ~opponent();
 
@@ -62,7 +62,7 @@ class opponent : public QGraphicsWidget
         QList<vlmPoint> * getTrace() { return trace_drawing->getPoints(); }
         QColor getColor() { return myColor; }
 
-        void setNewData(float lat, float lon,QString name);
+        void setNewData(double lat, double lon,QString name);
         void setRealData(QString shortName, QString longName, QString desc, QString pavillon, QString color);
         void setOtherData(int rank, QString loch1h, QString loch3h, QString loch24h, QString statusVLM,QString pavillon){this->rank=rank;this->loch1h=loch1h;
                                                                                               this->loch3h=loch3h;this->loch24h=loch24h;
@@ -97,7 +97,7 @@ class opponent : public QGraphicsWidget
         void paint(QPainter * pnt, const QStyleOptionGraphicsItem * , QWidget * );
 
     private:
-        float lat,lon;
+        double lat,lon;
         QString name;
         QString pseudo;
         QString idu;

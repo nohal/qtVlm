@@ -62,8 +62,8 @@ class boardVLM: public QWidget , public Ui::boardVLM_ui, public inetClient
         void doWP_edit();
         void disp_boatInfo();
         void synch_GPS();
-        void confirmAndSendCmd(QString,QString,int cmdNum,float,float,float);
-        void setWP(float lat,float lon,float wph=-1);
+        void confirmAndSendCmd(QString,QString,int cmdNum,double,double,double);
+        void setWP(double lat,double lon,double wph=-1);
 
         void paramChanged(void);
 
@@ -92,7 +92,7 @@ class boardVLM: public QWidget , public Ui::boardVLM_ui, public inetClient
         bool isWaiting;
 
         QString cmd_val1,cmd_val2,cmd_val3;
-        float computeWPdir(boatVLM * boat);
+        double computeWPdir(boatVLM * boat);
 
         void sendCmd(int cmdNum,double  val1,double val2, double val3);
 

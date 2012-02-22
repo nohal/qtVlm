@@ -60,8 +60,8 @@ boardVLM::boardVLM(MainWindow * mainWin, inetConnexion * inet, board * parent) :
 
     /* wpDialog */
     wpDialog = new DialogWp();
-    connect(wpDialog,SIGNAL(confirmAndSendCmd(QString,QString,int,float,float,float)),
-            this,SLOT(confirmAndSendCmd(QString,QString,int,float,float,float)));
+    connect(wpDialog,SIGNAL(confirmAndSendCmd(QString,QString,int,double,double,double)),
+            this,SLOT(confirmAndSendCmd(QString,QString,int,double,double,double)));
     connect(wpDialog,SIGNAL(selectPOI()),mainWin,SLOT(slotSelectWP_POI()));
     connect(mainWin,SIGNAL(editWP_POI(POI*)),wpDialog,SLOT(show_WPdialog(POI *)));
 
@@ -225,7 +225,7 @@ bool boardVLM::eventFilter(QObject *obj, QEvent *event)
     return false;
 }
 
-void boardVLM::confirmAndSendCmd(QString question,QString info,int cmdNum,float val1,float val2, float val3)
+void boardVLM::confirmAndSendCmd(QString question,QString info,int cmdNum,double val1,double val2, double val3)
 {
     if(confirmChange(question,info))
         sendCmd(cmdNum,val1,val2,val3);
@@ -276,11 +276,11 @@ void boardVLM::paramChanged(void)
     set_style(this->goVMG);
 }
 
-float boardVLM::computeWPdir(boatVLM * myBoat)
+double boardVLM::computeWPdir(boatVLM * myBoat)
 {
-    float dirAngle;
-    float WPLat = myBoat->getWPLat();
-    float WPLon = myBoat->getWPLon();
+    double dirAngle;
+    double WPLat = myBoat->getWPLat();
+    double WPLon = myBoat->getWPLon();
     if(WPLat != 0 && WPLon != 0)
     {
         Orthodromie orth = Orthodromie(myBoat->getLon(),myBoat->getLat(),WPLon,WPLat);
@@ -306,7 +306,7 @@ boatVLM * boardVLM::currentBoat(void)
 
 void boardVLM::boatUpdated(void)
 {
-    float angle_val;
+    double angle_val;
 
     boatVLM * myBoat=currentBoat();
 
@@ -316,10 +316,10 @@ void boardVLM::boatUpdated(void)
         return;
 
     isComputing = true;
-    float val=myBoat->getHeading()-myBoat->getWindDir();
+    double val=myBoat->getHeading()-myBoat->getWindDir();
 
     if(myBoat->getPilotType() == 2)
-        angle_val = myBoat->getPilotString().toFloat();
+        angle_val = myBoat->getPilotString().toDouble();
     else
     {
         angle_val = myBoat->getTWA();
@@ -417,7 +417,7 @@ void boardVLM::boatUpdated(void)
     synch_GPS();
 }
 
-void boardVLM::setWP(float lat,float lon,float wph)
+void boardVLM::setWP(double lat,double lon,double wph)
 {
 //    QString debug;
 //    debug=debug.sprintf("sending WPLon %.10f WPLat %.10f @WP %.10f",lon,lat,wph);
@@ -444,14 +444,14 @@ void boardVLM::headingUpdated(double heading)
     isComputing=true;
 
 
-    if((float)heading==currentBoat()->getHeading())
+    if(heading==currentBoat()->getHeading())
     {
         /* setting back to VLM value */
         speed->setText(QString().sprintf("%.2f",currentBoat()->getSpeed()));
         speed->setStyleSheet(QString::fromUtf8(SPEED_COLOR_VLM));
         label_6->setStyleSheet(QString::fromUtf8(SPEED_COLOR_VLM));
-        float val=currentBoat()->getHeading()-currentBoat()->getWindDir();
-        float angle = currentBoat()->getTWA();
+        double val=currentBoat()->getHeading()-currentBoat()->getWindDir();
+        double angle = currentBoat()->getTWA();
         calcAngleSign(val,angle)
         editAngle->setValue(angle);
         /*changing boat rotation*/
@@ -462,8 +462,8 @@ void boardVLM::headingUpdated(double heading)
     else
     {
         /* heading value has changed => compute angle */
-        float angle=heading-currentBoat()->getWindDir();
-        float newSpeed=0;
+        double angle=heading-currentBoat()->getWindDir();
+        double newSpeed=0;
         if(qAbs(angle)>180)
         {
             if(angle<0)
@@ -512,10 +512,10 @@ void boardVLM::angleUpdated(double angle)
     isComputing=true;
 
 /* compute VLM angle */
-    float val=currentBoat()->getHeading()-currentBoat()->getWindDir();
-    float oldAngle=currentBoat()->getTWA();
+    double val=currentBoat()->getHeading()-currentBoat()->getWindDir();
+    double oldAngle=currentBoat()->getTWA();
     calcAngleSign(val,oldAngle)
-    oldAngle=((float)qRound(oldAngle*100))/100;
+    oldAngle=((double)qRound(oldAngle*100))/100;
 
 
     if(angle==oldAngle)
@@ -534,8 +534,8 @@ void boardVLM::angleUpdated(double angle)
     {
         /* angle has changed */
         /* compute heading */
-        float heading = currentBoat()->getWindDir() + angle;
-        float newSpeed=0;
+        double heading = currentBoat()->getWindDir() + angle;
+        double newSpeed=0;
         if(heading<0) heading+=360;
         else if(heading>360) heading-=360;
         editHeading->setValue(heading);
@@ -574,9 +574,9 @@ void boardVLM::update_btnWP(void)
     if(isComputing) return;
     isComputing=true;
 
-    float WPLat = currentBoat()->getWPLat();
-    float WPLon = currentBoat()->getWPLon();
-    float WPHd = currentBoat()->getWPHd();
+    double WPLat = currentBoat()->getWPLat();
+    double WPLon = currentBoat()->getWPLon();
+    double WPHd = currentBoat()->getWPHd();
     QString tip;
 
     if(WPLat==0 && WPLon==0)
@@ -679,7 +679,7 @@ void boardVLM::doSync()
 
 void boardVLM::doVirer()
 {
-    float val = editAngle->value();
+    double val = editAngle->value();
     editAngle->setValue(-val);
 }
 
@@ -774,13 +774,13 @@ void boardVLM::synch_GPS()
         QString TWA;
         QString TWS;
         char ch;
-        float fTWA;
-        float lat=qAbs(currentBoat()->getLat());
+        double fTWA;
+        double lat=qAbs(currentBoat()->getLat());
         int deg=((int)lat);
         lat=(lat-deg)*60;
         deg=deg*100;
         lat=lat+deg;
-        float lon=qAbs(currentBoat()->getLon());
+        double lon=qAbs(currentBoat()->getLon());
         deg=((int)lon);
         lon=(lon-deg)*60;
         deg=deg*100;
@@ -1120,8 +1120,8 @@ tool_navCenter::tool_navCenter(QWidget * parent):QWidget(parent)
 
 }
 
-void tool_navCenter::setValues(float lat, float lon, float speed, float avg, float heading,
-                               float dnm, float loch, float ortho, float loxo, float vmg)
+void tool_navCenter::setValues(double lat, double lon, double speed, double avg, double heading,
+                               double dnm, double loch, double ortho, double loxo, double vmg)
 {
     this->lat=lat;
     this->lon=lon;
@@ -1169,15 +1169,15 @@ void tool_navCenter::draw(QPainter * painter)
         painter->setPen(QColor(0, 0, 0));
         font.setBold(false);
         int d1,m1,s1,d2,m2,s2;
-        float l;
+        double l;
         l=lat<0?-lat:lat;
         d1=(int)l;
         m1=(int)((l-d1)*60);
-        s1=(int)((l-d1-(float)m1/60)*3600);
+        s1=(int)((l-d1-(double)m1/60)*3600);
         l=lon<0?-lon:lon;
         d2=(int)l;
         m2=(int)((l-d2)*60);
-        s2=(int)((l-d2-(float)m2/60)*3600);
+        s2=(int)((l-d2-(double)m2/60)*3600);
         QRect rect;
         str.sprintf("%02d%c%02d'%02d\" %s\n%03d%c%02d'%02d\" %s",
                     d1,176,m1,s1,lat<0?"S":"N",
@@ -1348,7 +1348,7 @@ QColor tool_windAngle::windSpeed_toColor()
 
 }
 
-void tool_windAngle::setValues(float heading,float windDir, float windSpeed, float WPdir,float newHeading)
+void tool_windAngle::setValues(double heading,double windDir, double windSpeed, double WPdir,double newHeading)
 {
     //qWarning() << "windAngle set: heading=" << heading << " windDir=" << windDir << " windSpeed=" << windSpeed << " WPdir=" << WPdir << " " << newHeading;
     this->heading=heading;
@@ -1476,7 +1476,7 @@ void tool_windStation::draw(QPainter * painter)
     }
 }
 
-void tool_windStation::setValues(float windDir, float windSpeed, float windAngle)
+void tool_windStation::setValues(double windDir, double windSpeed, double windAngle)
 {
     this->windDir=windDir;
     this->windSpeed=windSpeed;

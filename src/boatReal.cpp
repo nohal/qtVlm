@@ -102,7 +102,7 @@ boatReal::~boatReal()
         }
     }
 }
-void boatReal::setWp(float la, float lo, float w)
+void boatReal::setWp(double la, double lo, double w)
 {
     this->WPLat=la;
     this->WPLon=lo;

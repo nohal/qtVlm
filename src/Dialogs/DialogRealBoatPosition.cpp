@@ -67,7 +67,7 @@ void DialogRealBoatPosition::latChanged(QString txt)
         conv_lat->setText("");
     else
     {
-        float val = txt.toFloat();
+        double val = txt.toDouble();
         conv_lat->setText(Util::pos2String(TYPE_LAT,val));
     }
 }
@@ -78,7 +78,7 @@ void DialogRealBoatPosition::lonChanged(QString txt)
         conv_lon->setText("");
     else
     {
-        float val = txt.toFloat();
+        double val = txt.toDouble();
         conv_lon->setText(Util::pos2String(TYPE_LON,val));
     }
 }

@@ -274,14 +274,14 @@ void DialogTwaLine::traceIt()
                         TWA=TWA-360;
                 }
             }
-            float newSpeed=myBoat->getPolarData()->getSpeed(wind_speed,TWA);
-            float distanceParcourue=newSpeed*vacLen/3600.00;
+            double newSpeed=myBoat->getPolarData()->getSpeed(wind_speed,TWA);
+            double distanceParcourue=newSpeed*vacLen/3600.00;
             Util::getCoordFromDistanceAngle(current.lat, current.lon, distanceParcourue, cap,&lat,&lon);
             if(!crossing && mapQuality>=3)
             {
                 double I1,J1,I2,J2;
-                parent->getProj()->map2screenFloat(Util::cLFA(current.lon, parent->getProj()->getXmin()),current.lat,&I1,&J1);
-                parent->getProj()->map2screenFloat(Util::cLFA(lon,parent->getProj()->getXmin()),lat,&I2,&J2);
+                parent->getProj()->map2screenDouble(Util::cLFA(current.lon, parent->getProj()->getXmin()),current.lat,&I1,&J1);
+                parent->getProj()->map2screenDouble(Util::cLFA(lon,parent->getProj()->getXmin()),lat,&I2,&J2);
                 crossing=map->crossing(QLineF(I1,J1,I2,J2),QLineF(current.lon,current.lat,lon,lat));
             }
             current.lon=lon;

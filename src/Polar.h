@@ -45,11 +45,11 @@ class Polar : public QObject
         Polar(QString fname,MainWindow * mainWindow);
 
         QString getName() { if(loaded) return name; else return ""; }
-        float   getSpeed(float windSpeed, float angle);
-        float   getBvmgUp(float windSpeed);
-        float   getBvmgDown(float windSpeed);
+        double   getSpeed(double windSpeed, double angle);
+        double   getBvmgUp(double windSpeed);
+        double   getBvmgDown(double windSpeed);
         bool    isLoaded() { return loaded; }
-        float   getMaxSpeed() {return maxSpeed;}
+        double   getMaxSpeed() {return maxSpeed;}
         bool    getIsCsv(){return this->isCsv;}
         int     nbUsed;
 
@@ -61,11 +61,11 @@ class Polar : public QObject
 
     private:
         MainWindow * mainWindow;
-        QList<float> polar_data;
-        QList<float> tws;
-        QList<float> twa;
-        QList<float> best_vmg_up;
-        QList<float> best_vmg_down;
+        QList<double> polar_data;
+        QList<double> tws;
+        QList<double> twa;
+        QList<double> best_vmg_up;
+        QList<double> best_vmg_down;
         int     mid_twa,mid_tws;
         bool    loaded;
         QString name;
@@ -73,14 +73,14 @@ class Polar : public QObject
         int     windSpeed_min,windSpeed_max,windSpeed_step;
         int     windAngle_min,windAngle_max,windAngle_step;
 
-        float   myGetSpeed(float windSpeed, float angle, bool force);
+        double   myGetSpeed(double windSpeed, double angle, bool force);
 
         void    clearPolar(void);
         void    setPolarName(QString fname);
         void    printPolar(void);
-        float   maxSpeed;
+        double   maxSpeed;
         bool    isCsv;
-        float   A180(float angle);
+        double   A180(double angle);
         void    myBvmgWind(double w_angle, double w_speed,double *wangle);
         double  A360(double hdg);
         QFile   fileVMG;

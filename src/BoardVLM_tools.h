@@ -32,8 +32,8 @@ class tool_navCenter: public QWidget
     public:
         tool_navCenter(QWidget * parent=0);
         void draw(QPainter * painter);
-        void setValues(float lat, float lon, float speed, float avg, float heading,
-                               float dnm, float loch, float ortho, float loxo, float vmg);
+        void setValues(double lat, double lon, double speed, double avg, double heading,
+                               double dnm, double loch, double ortho, double loxo, double vmg);
 
     protected:
         void paintEvent(QPaintEvent * event);
@@ -42,9 +42,9 @@ class tool_navCenter: public QWidget
         QImage *img_fond;
         int w,h;
         QRgb bg;
-        float lat,lon;
-        float speed,avg,heading;
-        float dnm,loch,ortho,loxo,vmg;
+        double lat,lon;
+        double speed,avg,heading;
+        double dnm,loch,ortho,loxo,vmg;
 };
 
 class tool_windAngle: public QWidget
@@ -52,7 +52,7 @@ class tool_windAngle: public QWidget
     public:
         tool_windAngle(QWidget * parent=0);
         void draw(QPainter * painter);
-        void setValues(float heading,float windDir, float windSpeed, float WPdir,float newHeading);
+        void setValues(double heading,double windDir, double windSpeed, double WPdir,double newHeading);
         
     protected:
         void paintEvent(QPaintEvent * event);
@@ -63,7 +63,7 @@ class tool_windAngle: public QWidget
         QImage *img_boat;
         QImage *img_boat2;
         int w,h;
-        float heading,windDir,windSpeed,WPdir,newHeading;
+        double heading,windDir,windSpeed,WPdir,newHeading;
 
         QColor windSpeed_toColor(void);
 
@@ -74,7 +74,7 @@ class tool_windStation: public QWidget
     public:
         tool_windStation(QWidget * parent=0);
         void draw(QPainter * painter);
-        void setValues(float windDir, float windSpeed, float windAngle);
+        void setValues(double windDir, double windSpeed, double windAngle);
 
     protected:
         void paintEvent(QPaintEvent * event);
@@ -83,7 +83,7 @@ class tool_windStation: public QWidget
         QImage *img_fond;
         int w,h;
 
-        float windSpeed,windDir,windAngle;
+        double windSpeed,windDir,windAngle;
 
 };
 

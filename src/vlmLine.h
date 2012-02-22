@@ -44,7 +44,7 @@ class vlmLine : public QGraphicsWidget
     public:
         vlmLine(Projection * proj, QGraphicsScene * myScene,int z_level);
 
-        void addPoint(float lat,float lon);
+        void addPoint(double lat,double lon);
         void addVlmPoint(vlmPoint point);
         void removeVlmPoint(int index);
         void deleteAll(void);
@@ -67,8 +67,8 @@ class vlmLine : public QGraphicsWidget
 
         int count(void) { return line.count(); }
         void setPointDead(int n){this->line[n].isDead=true;}
-        void setPointStartCap(int n,float c){this->line[n].startCap=c;}
-        void setPointWind(int n, float twd, float tws){this->line[n].wind_angle=twd;this->line[n].wind_speed=tws;}
+        void setPointStartCap(int n,double c){this->line[n].startCap=c;}
+        void setPointWind(int n, double twd, double tws){this->line[n].wind_angle=twd;this->line[n].wind_speed=tws;}
         void setPointDistIso(int n, double d){this->line[n].distIso=d;}
         void setPointCapVmg(int n, double d){this->line[n].capVmg=d;}
         void setPointcapOrigin(int n,double d){this->line[n].capOrigin=d;}
@@ -77,7 +77,7 @@ class vlmLine : public QGraphicsWidget
         void setLastPointIsPoi(){this->line[line.count()-1].isPOI=true;}
         const vlmPoint * getOrigin(int n) {return this->line.at(n).origin;}
         const vlmPoint * getPoint(int n) {return & line.at(n);}
-        void setInterpolated(float lon,float lat){this->interpolatedLon=lon;this->interpolatedLat=lat;update();}
+        void setInterpolated(double lon,double lat){this->interpolatedLon=lon;this->interpolatedLat=lat;update();}
         void setHasInterpolated(bool b){this->hasInterpolated=b;update();}
         vlmPoint * getLastPoint() {return & line.last();}
         void setRoundedEnd(bool b){this->roundedEnd=b;}
@@ -120,8 +120,8 @@ class vlmLine : public QGraphicsWidget
         bool hidden;
         bool labelHidden;
         bool solid;
-        float interpolatedLon;
-        float interpolatedLat;
+        double interpolatedLon;
+        double interpolatedLat;
         bool hasInterpolated;
         QRectF r;
         bool replayMode;

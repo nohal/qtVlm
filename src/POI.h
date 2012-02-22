@@ -43,7 +43,7 @@ class POI : public QGraphicsWidget
         /* constructeurs, destructeurs */
         POI(QString name, int type, double lat, double lon,
                     Projection *proj, MainWindow *ownerMeteotable, myCentralWidget *parentWindow,
-                    float wph, int tstamp,bool useTstamp, boat *boat);
+                    double wph, int tstamp,bool useTstamp, boat *boat);
 
         ~POI();
 
@@ -52,7 +52,7 @@ class POI : public QGraphicsWidget
         ROUTE    *getRoute(void)        {return route;}
         double    getLongitude(void)    {return lon;}
         double    getLatitude(void)     {return lat;}
-        float    getWph(void)          {return wph;}
+        double    getWph(void)          {return wph;}
         int      getTimeStamp(void)    {if(useRouteTstamp && !useTstamp) return routeTimeStamp; else return timeStamp;}
         bool     getUseTimeStamp(void) {if(timeStamp==-1) return false; else return useTstamp;}
         bool     getUseRouteTstamp(void) {if(routeTimeStamp==-1) return false; else return useRouteTstamp;}
@@ -76,7 +76,7 @@ class POI : public QGraphicsWidget
         void setName           (QString name);
         void setLongitude      (double lon);
         void setLatitude       (double lat);
-        void setWph            (float wph);
+        void setWph            (double wph);
         void setTimeStamp      (time_t tstamp);
         void setRouteTimeStamp (time_t date);
         void setUseTimeStamp   (bool state){this->useTstamp=state;}
@@ -95,8 +95,8 @@ class POI : public QGraphicsWidget
         bool getNotSimplificable(){return this->notSimplificable;}
         QColor getLineColor(){return lineColor;}
         void setLineColor(QColor c){lineColor=c;}
-        float getLineWidth(){return lineWidth;}
-        void setLineWidth(float f){lineWidth=f;}
+        double getLineWidth(){return lineWidth;}
+        void setLineWidth(double f){lineWidth=f;}
         POI * getConnectedPoi(){return connectedPoi;}
         void setConnectedPoi(POI * p){connectedPoi=p;}
         void setLineBetweenPois(vlmLine * line){this->lineBetweenPois=line;}
@@ -145,7 +145,7 @@ class POI : public QGraphicsWidget
         void slot_notSimplificable(bool b){this->notSimplificable=b;}
 
     signals:
-        void chgWP(float,float,float);
+        void chgWP(double,double,double);
         void addPOI_list(POI*);
         void delPOI_list(POI*);
         void editPOI(POI*);
@@ -180,7 +180,7 @@ class POI : public QGraphicsWidget
         QString  name;
         double   lon, lat;
         double   previousLon,previousLat;
-        float    wph;
+        double    wph;
         double   WPlon,WPlat;
         int      pi, pj;
         time_t      timeStamp;
@@ -236,7 +236,7 @@ class POI : public QGraphicsWidget
         POI * connectedPoi;
         vlmLine * lineBetweenPois;
         QColor lineColor;
-        float lineWidth;
+        double lineWidth;
         int colorPilototo;
         bool piloteSelected;
         time_t piloteDate;

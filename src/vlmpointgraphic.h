@@ -10,7 +10,7 @@
 class vlmPointGraphic : public QGraphicsWidget
 { Q_OBJECT
 public:
-    vlmPointGraphic(ROUTAGE * routage,int isoNb, int pointIsoNb, float lon, float lat, Projection * proj, QGraphicsScene * myScene,int z_level);
+    vlmPointGraphic(ROUTAGE * routage,int isoNb, int pointIsoNb, double lon, double lat, Projection * proj, QGraphicsScene * myScene,int z_level);
     ~vlmPointGraphic();
     void setIsoNb(int n){this->isoNb=n;}
     void setPointIsoNb(int n){this->pointIsoNb=n;}
@@ -35,7 +35,7 @@ private:
     ROUTAGE * routage;
     int isoNb;
     int pointIsoNb;
-    float lon,lat;
+    double lon,lat;
     time_t eta;
     QString debug;
 };

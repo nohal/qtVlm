@@ -6,17 +6,17 @@
 class vlmPoint
 {
     public:
-        vlmPoint(float lon,float lat);
+        vlmPoint(double lon,double lat);
         vlmPoint(){vlmPoint(0,0);}
         QPointF getPointF() {return QPointF(lon,lat);}
-        float  lon;
-        float  lat;
+        double  lon;
+        double  lat;
         const  vlmPoint *origin;
         bool   isStart;
-        float  startCap;
+        double  startCap;
         bool   isDead;
-        float  wind_angle;
-        float  wind_speed;
+        double  wind_angle;
+        double  wind_speed;
         time_t eta;
         double distIso;
         double capOrigin;
@@ -32,16 +32,16 @@ class vlmPoint
         double lonProj;
         double latProj;
         bool   needRoute;
-        float  vmgSpeed;
+        double  vmgSpeed;
         bool   isBroken;
-        float  x;
-        float  y;
-        float  capVmg;
+        double  x;
+        double  y;
+        double  capVmg;
         bool   notSimplificable;
         bool   operator==(const vlmPoint &other) const
                {return (qRound(this->lon*1000)==qRound(other.lon*1000) &&
                         qRound(this->lat*1000)==qRound(other.lat*1000));}
-        float  maxDistIso;
+        double  maxDistIso;
         ROUTAGE * routage;
         bool    isPOI;
         double  xP1,yP1,xM1,yM1;

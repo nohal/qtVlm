@@ -208,9 +208,9 @@ void DialogPilototo::slot_boatUpdated(boat * pvBoat)
     this->myBoat=my_boat;
     int mode;
     int ref;
-    float angle=0;
-    float lat=0,lon=0;
-    float wph=-1;
+    double angle=0;
+    double lat=0,lon=0;
+    double wph=-1;
     int pos;
 
     QStringList * list = my_boat->getPilototo();
@@ -251,26 +251,26 @@ void DialogPilototo::slot_boatUpdated(boat * pvBoat)
                 //instr->setMode(mode);
 		if(mode == 0 || mode == 1)
 		{
-                    //instr->setAngle(instr_buf.at(3).toFloat());
-                    angle=instr_buf.at(3).toFloat();
+                    //instr->setAngle(instr_buf.at(3).toDouble());
+                    angle=instr_buf.at(3).toDouble();
 		    pos=4;
 		}
 		else
 		{
-                    //instr->setLat(instr_buf.at(3).toFloat());
-                    lat=instr_buf.at(3).toFloat();
+                    //instr->setLat(instr_buf.at(3).toDouble());
+                    lat=instr_buf.at(3).toDouble();
 		    QStringList instr_buf2 = instr_buf.at(4).split("@");
 		    if(instr_buf2.count() == 2)
 		    {
-                        //instr->setLon(instr_buf2.at(0).toFloat());
-                        lon=instr_buf2.at(0).toFloat();
-                        //instr->setWph(instr_buf2.at(1).toFloat());
-                        wph=instr_buf2.at(1).toFloat();
+                        //instr->setLon(instr_buf2.at(0).toDouble());
+                        lon=instr_buf2.at(0).toDouble();
+                        //instr->setWph(instr_buf2.at(1).toDouble());
+                        wph=instr_buf2.at(1).toDouble();
 		    }
 		    else
 		    {
-                        //instr->setLon(instr_buf.at(4).toFloat());
-                        lon=instr_buf2.at(0).toFloat();
+                        //instr->setLon(instr_buf.at(4).toDouble());
+                        lon=instr_buf2.at(0).toDouble();
 		    }
 		    pos=5;
 		}
@@ -668,7 +668,7 @@ void DialogPilototoInstruction::initVal(void)
     hide();
 }
 
-void DialogPilototoInstruction::initVal(int mode_ini,float angle_ini,float lat_ini,float lon_ini, float wph_ini,int ref_ini)
+void DialogPilototoInstruction::initVal(int mode_ini,double angle_ini,double lat_ini,double lon_ini, double wph_ini,int ref_ini)
 {
     mode=mode_scr=mode_ini;
     mode_sel->setCurrentIndex(mode);
@@ -697,22 +697,22 @@ void DialogPilototoInstruction::setMode(int val)
     pickPipColor();
 }
 
-void DialogPilototoInstruction::setAngle(float val)
+void DialogPilototoInstruction::setAngle(double val)
 {
     SETVAL(angle_scr);
 }
 
-void DialogPilototoInstruction::setLat(float val)
+void DialogPilototoInstruction::setLat(double val)
 {
     SETVAL(lat_scr);
 }
 
-void DialogPilototoInstruction::setLon(float val)
+void DialogPilototoInstruction::setLon(double val)
 {
     SETVAL(lon_scr);
 }
 
-void DialogPilototoInstruction::setWph(float val)
+void DialogPilototoInstruction::setWph(double val)
 {
     SETVAL(wph_scr);
 }
@@ -739,19 +739,19 @@ bool DialogPilototoInstruction::chkHasChanged(void)
 
 bool DialogPilototoInstruction::checkPIP(bool savChange,bool chgColor)
 {
-    float lat_val,lon_val,wph_val;
+    double lat_val,lon_val,wph_val;
     int tstamp_int;
-    float angle_val=0;
+    double angle_val=0;
     bool ok;
     bool res=false;
     //qWarning() << "New PIP=" << instructionText->text() << " " << savChange << "-" << chgColor;
     switch(mode_scr)
     {
         case 0:
-        case 1: /*converting a float */
+        case 1: /*converting a double */
             ok=false;
             if(!instructionText->text().contains(QChar(','),Qt::CaseInsensitive))
-                angle_val=instructionText->text().toFloat(&ok);
+                angle_val=instructionText->text().toDouble(&ok);
             if(ok)
             {
                 if(chgColor)
@@ -957,7 +957,7 @@ void DialogPilototoInstruction::editInstruction(void)
 
 void DialogPilototoInstruction::pastePOI(void)
 {
-    float lat,lon,wph;
+    double lat,lon,wph;
     int tstamp_int;
     if(!Util::getWPClipboard(NULL,&lat,&lon,&wph,&tstamp_int))
 	return;

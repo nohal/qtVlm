@@ -47,7 +47,7 @@ Copyright (C) 2008 - Jacques Zaninetti - http://zygrib.free.fr
 
 POI::POI(QString name, int type, double lat, double lon,
                  Projection *proj, MainWindow *main, myCentralWidget *parentWindow,
-                 float wph,int tstamp,bool useTstamp,boat *myBoat)
+                 double wph,int tstamp,bool useTstamp,boat *myBoat)
     : QGraphicsWidget()
 {
     this->parent = parentWindow;
@@ -109,7 +109,7 @@ POI::POI(QString name, int type, double lat, double lon,
     connect(this,SIGNAL(addPOI_list(POI*)),parent,SLOT(slot_addPOI_list(POI*)));
     connect(this,SIGNAL(delPOI_list(POI*)),parent,SLOT(slot_delPOI_list(POI*)));
 
-    connect(this,SIGNAL(chgWP(float,float,float)),main,SLOT(slotChgWP(float,float,float)));
+    connect(this,SIGNAL(chgWP(double,double,double)),main,SLOT(slotChgWP(double,double,double)));
 
     connect(this,SIGNAL(selectPOI(POI*)),main,SLOT(slot_POIselected(POI*)));
 
@@ -163,7 +163,7 @@ void POI::rmSignal(void)
 {
     disconnect(this,SIGNAL(addPOI_list(POI*)),parent,SLOT(slot_addPOI_list(POI*)));
     disconnect(this,SIGNAL(delPOI_list(POI*)),parent,SLOT(slot_delPOI_list(POI*)));
-    disconnect(this,SIGNAL(chgWP(float,float,float)),owner,SLOT(slotChgWP(float,float,float)));
+    disconnect(this,SIGNAL(chgWP(double,double,double)),owner,SLOT(slotChgWP(double,double,double)));
 
     disconnect(this,SIGNAL(setGribDate(time_t)),owner,SLOT(slotSetGribDate(time_t)));
 
@@ -687,7 +687,7 @@ void POI::chkIsWP(void)
         }
     }
 }
-void POI::setWph(float wph)
+void POI::setWph(double wph)
 {
     this->wph=qRound(wph*10.0)/10.0;
     if(this->isWp)
@@ -765,7 +765,7 @@ void POI::slot_editRoute()
 void POI::slotCompassLine()
 {
     double i1,j1;
-    proj->map2screenFloat(Util::cLFA(this->lon,proj->getXmin()),this->lat,&i1,&j1);
+    proj->map2screenDouble(Util::cLFA(this->lon,proj->getXmin()),this->lat,&i1,&j1);
     emit compassLine(i1,j1);
 }
 void POI::slot_setHorn()

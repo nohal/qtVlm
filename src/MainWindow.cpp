@@ -229,7 +229,7 @@ MainWindow::MainWindow(int w, int h, QWidget *parent)
     isStartingUp=true;
     finishStart=true;
     nBoat=0;
-    float prcx,prcy,scale;
+    double prcx,prcy,scale;
     setWindowTitle("QtVlm "+Version::getVersion());
     selectedBoat = NULL;
     showingSelectionMessage=false;
@@ -252,11 +252,11 @@ MainWindow::MainWindow(int w, int h, QWidget *parent)
     nxtVac_cnt=0;
     connect(timer,SIGNAL(timeout()),this, SLOT(updateNxtVac()));
 
-    prcx = (float) Settings::getSetting("projectionCX", 0.0).toDouble();
-    prcy = (float) Settings::getSetting("projectionCY", 0.0).toDouble();
+    prcx = Settings::getSetting("projectionCX", 0.0).toDouble();
+    prcy = Settings::getSetting("projectionCY", 0.0).toDouble();
     proj = new Projection (width(), height(),prcx,prcy);
 
-    scale = (float) Settings::getSetting("projectionScale", 0.5).toDouble();
+    scale = Settings::getSetting("projectionScale", 0.5).toDouble();
     proj->setScale(scale);
 
     connect(proj,SIGNAL(newZoom(double)),this,SLOT(slotNewZoom(double)));
@@ -273,8 +273,8 @@ MainWindow::MainWindow(int w, int h, QWidget *parent)
     menuBar->setMCW(this->my_centralWidget);
     this->setCentralWidget(my_centralWidget);
     connect(this,SIGNAL(addPOI_list(POI*)),my_centralWidget,SLOT(slot_addPOI_list(POI*)));
-    connect(this,SIGNAL(addPOI(QString,int,float,float,float,int,bool,boat*)),
-            my_centralWidget,SLOT(slot_addPOI(QString,int,float,float,float,int,bool,boat*)));
+    connect(this,SIGNAL(addPOI(QString,int,double,double,double,int,bool,boat*)),
+            my_centralWidget,SLOT(slot_addPOI(QString,int,double,double,double,int,bool,boat*)));
     connect(my_centralWidget,SIGNAL(POI_selectAborted(POI*)),this,SLOT(slot_POIselected(POI*)));
     connect(this,SIGNAL(moveBoat(double,double)),my_centralWidget,SLOT(slot_moveBoat(double,double)));
    // connect(this,SIGNAL(updateRoute()),my_centralWidget,SLOT(slot_updateRoute()));
@@ -771,7 +771,7 @@ void MainWindow::slotCreatePOI()
 {
     double lon, lat;
     proj->screen2map(mouseClicX,mouseClicY, &lon, &lat);
-    emit newPOI((float)lon,(float)lat,proj,selectedBoat);
+    emit newPOI(lon,lat,proj,selectedBoat);
 }
 
 void MainWindow::slot_newPOI(void)
@@ -1137,7 +1137,7 @@ void MainWindow::statusBar_showWindData(double x,double y)
     stBar_label_2->setText(res);
 }
 
-void MainWindow::statusBar_showSelectedZone(float x0, float y0, float x1, float y1)
+void MainWindow::statusBar_showSelectedZone(double x0, double y0, double x1, double y1)
 {
     QString message =
             tr("Selection: ")
@@ -1775,7 +1775,7 @@ void MainWindow::slotAccountListUpdated(void)
     slotVLM_Sync();
 }
 
-void MainWindow::slotChgWP(float lat,float lon, float wph)
+void MainWindow::slotChgWP(double lat,double lon, double wph)
 {
     if(this->selectedBoat->getType()==BOAT_VLM)
     {
@@ -1797,7 +1797,7 @@ void MainWindow::slotChgWP(float lat,float lon, float wph)
 
 void MainWindow::slotpastePOI()
 {
-    float lon, lat,wph;
+    double lon, lat,wph;
     int tstamp;
     QString name;
 
@@ -1955,7 +1955,7 @@ void MainWindow::slotParamChanged(void)
     emit paramVLMChanged();
 }
 
-void MainWindow::getBoatBvmg(float * up,float * down,float ws)
+void MainWindow::getBoatBvmg(double * up,double * down,double ws)
 {
    boat *bateau;
    if(my_centralWidget->getCompassFollow()!=NULL)
@@ -1979,7 +1979,7 @@ void MainWindow::getBoatBvmg(float * up,float * down,float ws)
             *down=-1;
        }
 }
-float MainWindow::getBoatPolarSpeed(float ws,float angle)
+double MainWindow::getBoatPolarSpeed(double ws,double angle)
 {
    boat *bateau;
    if(my_centralWidget->getCompassFollow()!=NULL)
@@ -2000,7 +2000,7 @@ float MainWindow::getBoatPolarSpeed(float ws,float angle)
             return 0;
        }
 }
-float MainWindow::getBoatPolarMaxSpeed()
+double MainWindow::getBoatPolarMaxSpeed()
 {
    if(!selectedBoat)
    {

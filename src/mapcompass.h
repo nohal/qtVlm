@@ -79,8 +79,8 @@ class mapCompass : public QGraphicsWidget
         QCursor enterCursor;
         double wind_angle;
         double wind_speed;
-        float bvmg_up;
-        float bvmg_down;
+        double bvmg_up;
+        double bvmg_down;
 
         /* Compass Line */        
         bool drawCompassLine;

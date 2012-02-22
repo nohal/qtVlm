@@ -216,14 +216,14 @@ void DialogLoadGrib::slotGribStartLoadData()
 //-------------------------------------------------------------------------------
 void DialogLoadGrib::updateParameters()
 {
-    float tmp, xm, ym;
+    double tmp, xm, ym;
 
-//    xmin = sbWest->cleanText().toFloat();
-//    xmax = sbEast->cleanText().toFloat();
-//    ymin = sbNorth->cleanText().toFloat();
-//    ymax = sbSouth->cleanText().toFloat();
+//    xmin = sbWest->cleanText().toDouble();
+//    xmax = sbEast->cleanText().toDouble();
+//    ymin = sbNorth->cleanText().toDouble();
+//    ymax = sbSouth->cleanText().toDouble();
 
-    resolution = cbResolution->currentText().toFloat();
+    resolution = cbResolution->currentText().toDouble();
     interval   = cbInterval->currentText().toInt();
     days       = cbDays->currentText().toInt();
 
@@ -428,7 +428,7 @@ void DialogLoadGrib::slotBtCancel()
 }
 
 //-------------------------------------------------------------------------------
-void DialogLoadGrib::setZone(float x0, float y0, float x1, float y1)
+void DialogLoadGrib::setZone(double x0, double y0, double x1, double y1)
 {
     this->progressBar->setRange(0,100);
     this->progressBar->setValue(0);

@@ -50,7 +50,7 @@ class DialogPoi : public QDialog, public Ui::POI_editor_ui
         void chkTStamp_chg(int);
         void nameHasChanged(QString);
         void editPOI(POI *);
-        void newPOI(float lon, float lat,Projection *proj, boat *);
+        void newPOI(double lon, double lat,Projection *proj, boat *);
         void latLonChg(double);
         void latLonSignChg(int);
         void type_chg(int);
@@ -58,7 +58,7 @@ class DialogPoi : public QDialog, public Ui::POI_editor_ui
     signals:
         void addPOI_list(POI*);
         void delPOI_list(POI*);
-        void doChgWP(float,float,float);
+        void doChgWP(double,double,double);
         void updateRoute();
 
     protected:
@@ -74,8 +74,8 @@ class DialogPoi : public QDialog, public Ui::POI_editor_ui
         myCentralWidget * parent;
 
         void initPOI(void);
-        float getValue(int type);
-        void setValue(int type,float val);
+        double getValue(int type);
+        void setValue(int type,double val);
         void data_chg(int type);
         void val_chg(int type);
 };

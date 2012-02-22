@@ -42,7 +42,7 @@ class boat: public QGraphicsWidget
         void setParam(QString pseudo);
         void setParam(QString pseudo, bool activated);
         void setLockStatus(bool status);
-        void setZoom(float zoom)   { this->zoom=zoom; }
+        void setZoom(double zoom)   { this->zoom=zoom; }
         void setForceEstime(bool force_estime) { this->forceEstime=force_estime;}
         virtual void unSelectBoat(bool needUpdate);
         virtual int getId(void) {return -1; }
@@ -60,25 +60,25 @@ class boat: public QGraphicsWidget
         int getVacLen(void)             {    return vacLen; }
         double getLat(void)             {    return lat; }
         double getLon(void)             {    return lon; }
-        float getSpeed(void)            {    return speed; }
-        float getHeading(void)          {    return heading; }
-        float getAvg(void)              {    return avg; }
-        float getDnm(void)              {    return dnm; }
-        float getLoch(void)             {    return loch; }
-        float getOrtho(void)            {    return ortho; }
-        float getLoxo(void)             {    return loxo; }
-        float getVmg(void)              {    return vmg; }
-        float getWindDir(void)          {    return windDir; }
-        float getWindSpeed(void)        {    return windSpeed; }
-        float getTWA(void)              {    return TWA; }
-        float getWPHd(void)             {    return WPHd; }
+        double getSpeed(void)            {    return speed; }
+        double getHeading(void)          {    return heading; }
+        double getAvg(void)              {    return avg; }
+        double getDnm(void)              {    return dnm; }
+        double getLoch(void)             {    return loch; }
+        double getOrtho(void)            {    return ortho; }
+        double getLoxo(void)             {    return loxo; }
+        double getVmg(void)              {    return vmg; }
+        double getWindDir(void)          {    return windDir; }
+        double getWindSpeed(void)        {    return windSpeed; }
+        double getTWA(void)              {    return TWA; }
+        double getWPHd(void)             {    return WPHd; }
         QString getPolarName(void)      {    return polarName; }
         Polar * getPolarData(void)      {    return polarData; }
         bool getLockStatus(void)        {    return changeLocked;}
         bool getForceEstime(void)       {    return forceEstime; }
         int getEstimeType(void)         {    return estime_type; }
         bool getIsSelected(void)        {    return selected; }
-        float getZoom(void)             {    return zoom; }
+        double getZoom(void)             {    return zoom; }
         bool isUpdating()               {    return false; }
         double getWPLat(void)           {    return WPLat; }
         double getWPLon(void)           {    return WPLon; }
@@ -87,14 +87,14 @@ class boat: public QGraphicsWidget
         QString getBoatPseudo(void)     {    return pseudo; }
         QString getOwn(void)            {    return own; }
 
-        float getBvmgUp(float ws);
-        float getBvmgDown(float ws);
+        double getBvmgUp(double ws);
+        double getBvmgDown(double ws);
         int getX(){return x();}
         int getY(){return y();}
 
         int getType(void) { return boat_type; }
 
-        void drawEstime(float myHeading, float mySpeed);
+        void drawEstime(double myHeading, double mySpeed);
         double getDeclinaison(){return this->declinaison;}
         void setDeclinaison(double d){this->declinaison=d;}
 
@@ -143,15 +143,15 @@ class boat: public QGraphicsWidget
         bool selected;
         double lat,lon;
         double WPLat,WPLon;
-        float speed,heading;
+        double speed,heading;
 
 
-        float avg;
-        float dnm,loch,ortho,loxo,vmg;
-        float windDir,windSpeed;
-        float TWA;
+        double avg;
+        double dnm,loch,ortho,loxo,vmg;
+        double windDir,windSpeed;
+        double TWA;
 
-        float WPHd;
+        double WPHd;
         QString ETA;
         QString score;
         QString stopAndGo;
@@ -163,7 +163,7 @@ class boat: public QGraphicsWidget
 
 
 
-        float zoom;
+        double zoom;
 
         Projection * proj;
 

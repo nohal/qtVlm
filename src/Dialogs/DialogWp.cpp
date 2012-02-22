@@ -54,7 +54,7 @@ void DialogWp::show_WPdialog(POI * poi)
     exec();
 }
 
-void DialogWp::initDialog(float WPLat,float WPLon,float WPHd)
+void DialogWp::initDialog(double WPLat,double WPLon,double WPHd)
 {
     if(WPLat == 0 && WPLon == 0)
     {
@@ -81,8 +81,8 @@ void DialogWp::done(int result)
             confirmAndSendCmd(tr("Confirmer le changement du WP"),tr("WP change"),VLM_CMD_WP,0,0,-1);
         else
             confirmAndSendCmd(tr("Confirmer le changement du WP"),tr("WP change"),
-                              VLM_CMD_WP,WP_lat->text().toFloat(),WP_lon->text().toFloat(),
-                    WP_heading->text().isEmpty()?-1:WP_heading->text().toFloat());
+                              VLM_CMD_WP,WP_lat->text().toDouble(),WP_lon->text().toDouble(),
+                    WP_heading->text().isEmpty()?-1:WP_heading->text().toDouble());
     }
     QDialog::done(result);
 }
@@ -100,7 +100,7 @@ void DialogWp::chgLat()
         WP_conv_lat->setText("");
     else
     {
-        float val = WP_lat->text().toFloat();
+        double val = WP_lat->text().toDouble();
         WP_conv_lat->setText(Util::pos2String(TYPE_LAT,val));
     }
 }
@@ -111,14 +111,14 @@ void DialogWp::chgLon()
         WP_conv_lon->setText("");
     else
     {
-        float val = WP_lon->text().toFloat();
+        double val = WP_lon->text().toDouble();
         WP_conv_lon->setText(Util::pos2String(TYPE_LON,val));
     }
 }
 
 void DialogWp::doPaste()
 {
-    float lat,lon,wph;
+    double lat,lon,wph;
     if(!currentBoat)
         return;
     if(!Util::getWPClipboard(NULL,&lat,&lon,&wph,NULL)) /*no need to get timestamp*/
@@ -133,11 +133,11 @@ void DialogWp::doCopy()
     if(!currentBoat)
         return;
     if(WP_heading->text().isEmpty())
-        Util::setWPClipboard(WP_lat->text().toFloat(),WP_lon->text().toFloat(),
+        Util::setWPClipboard(WP_lat->text().toDouble(),WP_lon->text().toDouble(),
             -1);
     else
-        Util::setWPClipboard(WP_lat->text().toFloat(),WP_lon->text().toFloat(),
-            WP_heading->text().toFloat());
+        Util::setWPClipboard(WP_lat->text().toDouble(),WP_lon->text().toDouble(),
+            WP_heading->text().toDouble());
     QDialog::done(QDialog::Rejected);
 
 }

@@ -46,10 +46,10 @@ class DialogPilototoInstruction : public QWidget, public Ui::instruction_ui
         DialogPilototoInstruction(QWidget * main,QWidget * parent=0);
 
         int   getMode(void)       { return mode_scr; }
-        float getAngle(void)      { return angle_scr; }
-        float getLat(void)        { return lat_scr; }
-        float getLon(void)        { return lon_scr; }
-        float getWph(void)        { return wph_scr; }
+        double getAngle(void)      { return angle_scr; }
+        double getLat(void)        { return lat_scr; }
+        double getLon(void)        { return lon_scr; }
+        double getWph(void)        { return wph_scr; }
 	bool  getLockStatus(void) { return locked; }
 	int   getRef(void)        { return ref; }
         int   getStatus(void)     { return status_scr; }
@@ -58,17 +58,17 @@ class DialogPilototoInstruction : public QWidget, public Ui::instruction_ui
         QString getPip(void);
 
 	void setMode(int val);
-	void setAngle(float val);
-	void setLat(float val);
-	void setLon(float val);
-	void setWph(float val);
+        void setAngle(double val);
+        void setLat(double val);
+        void setLon(double val);
+        void setWph(double val);
 	void setLock(bool status);
 	void setStatus(int val);
 	void setTstamp(int val);
 
 	void setRef(int val) { ref=val; }
 
-        void initVal(int mode_ini,float angle_ini,float lat_ini,float lon_ini, float wph_ini,int ref_ini);
+        void initVal(int mode_ini,double angle_ini,double lat_ini,double lon_ini, double wph_ini,int ref_ini);
 	void initVal(void);
 	void updateHasChanged(bool status);
 
@@ -94,15 +94,15 @@ class DialogPilototoInstruction : public QWidget, public Ui::instruction_ui
 
     private:
 	int mode;
-	float angle;
-	float lat;
-	float lon;
-	float wph;
+        double angle;
+        double lat;
+        double lon;
+        double wph;
         int mode_scr;
-        float angle_scr;
-        float lat_scr;
-        float lon_scr;
-        float wph_scr;
+        double angle_scr;
+        double lat_scr;
+        double lon_scr;
+        double wph_scr;
 	QDateTime tstamp;
         QDateTime tstamp_scr;
 	int ref;

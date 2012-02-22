@@ -32,9 +32,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //==========================================================
 class GisPoint {
     public:
-        float   x,y;    // longitude, latitude
+        double   x,y;    // longitude, latitude
         
-        GisPoint(float x_, float y_) {
+        GisPoint(double x_, double y_) {
             x = x_;
             y = y_;
         }
@@ -49,7 +49,7 @@ class GisCountry : public GisPoint
         QString code;
         QString name;
 
-        GisCountry (QString code_, QString name_, float lon, float lat)
+        GisCountry (QString code_, QString name_, double lon, double lat)
             : GisPoint(lon, lat)
             {
                 code = code_;
@@ -69,7 +69,7 @@ class GisCity : public GisPoint
 		int     level;
 		int     fontCode;
 
-        GisCity (QString country_, QString name_, int pop, float lon, float lat)
+        GisCity (QString country_, QString name_, int pop, double lon, double lat)
             : GisPoint(lon, lat)
             {
                 country = country_;

@@ -56,10 +56,10 @@ class Util
     //-------------------------------------------------
     static void setFontDialog(QObject * o);
     static void setFontDialog(QWidget * o);
-    static QString formatDegres(float x);           // 123.4 -> 123°24.00'
-    static QString formatPosition(float x, float y);    // 123°24.00'W 45°67.89'N
-    static QString formatLongitude(float x);
-    static QString formatLatitude(float y);
+    static QString formatDegres(double x);           // 123.4 -> 123°24.00'
+    static QString formatPosition(double x, double y);    // 123°24.00'W 45°67.89'N
+    static QString formatLongitude(double x);
+    static QString formatLatitude(double y);
 
     static QString formatDateLong(time_t t);
 
@@ -68,20 +68,20 @@ class Util
     static QString formatDateTime_date(time_t t);
     static QString formatDateTime_hour(time_t t);
 
-    static QString formatSpeed(float meterspersecond);
-    static QString formatDistance(float mille);
-    static QString formatTemperature(float tempKelvin);
-    static QString formatTemperature_short(float tempKelvin);
-    static QString formatPercentValue(float v);
+    static QString formatSpeed(double meterspersecond);
+    static QString formatDistance(double mille);
+    static QString formatTemperature(double tempKelvin);
+    static QString formatTemperature_short(double tempKelvin);
+    static QString formatPercentValue(double v);
 
-    static int    kmhToBeaufort(float v);
-    static float  kmhToBeaufort_F(float v);
-    static float  BeaufortToKmh_F(float bf);
+    static int    kmhToBeaufort(double v);
+    static double  kmhToBeaufort_F(double v);
+    static double  BeaufortToKmh_F(double bf);
 
     static void paramProxy(QNetworkAccessManager *inetManager,QString host);
-    static bool getWPClipboard(QString *,float * lat,float * lon, float * wph, int * tStamp);
-    static void setWPClipboard(float lat,float lon, float wph);
-    static bool convertPOI(const QString & str,QString * name,float * lat,float * lon,float * wph,int * tstamp,
+    static bool getWPClipboard(QString *,double * lat,double * lon, double * wph, int * tStamp);
+    static void setWPClipboard(double lat,double lon, double wph);
+    static bool convertPOI(const QString & str,QString * name,double * lat,double * lon,double * wph,int * tstamp,
                            int type);
     static void getCoordFromDistanceAngle(double latitude, double longitude,
              double distance,double heading, double * res_lat,double * res_lon);
@@ -89,10 +89,10 @@ class Util
              double distance,double heading, double * res_lat,double * res_lon);
     static void getCoordFromDistanceAngle2(double latitude, double longitude,
                                            double distance,double heading, double * res_lat,double * res_lon);
-    static QString pos2String(int type,float value);
+    static QString pos2String(int type,double value);
     static QString getHost();
-    static void computePos(Projection * proj, float lat, float lon, int * x, int * y);
-    static void computePosFloat(Projection * proj, double lat, double lon, double * x, double * y);
+    static void computePos(Projection * proj, double lat, double lon, int * x, int * y);
+    static void computePosDouble(Projection * proj, double lat, double lon, double * x, double * y);
     static void addAgent(QNetworkRequest & request);
     static bool lineIsCrossingRect(const QLineF line, const QRectF rect);
     static double cLFA(const double lon, const double xW);
@@ -157,12 +157,12 @@ inline double Util::myDiffAngle(double a1,double a2)
     return qAbs(A360(qAbs(a1)+ 180.0 -qAbs(a2)) -180.0);
 }
 
-inline int Util::kmhToBeaufort(float v) {
+inline int Util::kmhToBeaufort(double v) {
     return (int)(kmhToBeaufort_F(v)+0.5);
 }
 //-----------------------------------------------------------------------------
-inline float Util::kmhToBeaufort_F(float v) {
-    float bf = pow( v*v/9.0 , 0.33333);
+inline double Util::kmhToBeaufort_F(double v) {
+    double bf = pow( v*v/9.0 , 0.33333);
     if (bf > 12.0)
         bf = 12.0;
     else if (bf < 0.0)
@@ -170,8 +170,8 @@ inline float Util::kmhToBeaufort_F(float v) {
     return bf;
 }
 //-----------------------------------------------------------------------------
-inline float Util::BeaufortToKmh_F(float bf) {
-    float v = sqrt(bf*bf*bf*9.0);
+inline double Util::BeaufortToKmh_F(double bf) {
+    double v = sqrt(bf*bf*bf*9.0);
     return v;
 }
 
