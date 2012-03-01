@@ -91,7 +91,8 @@ DialogRoutage::DialogRoutage(ROUTAGE *routage,myCentralWidget *parent)
     whatIfTime->setValue(routage->getWhatIfTime());
     autoZoom->setChecked(routage->getAutoZoom());
     this->zoomLevel->setValue(routage->getZoomLevel());
-    qWarning()<<"zoomLevel="<<routage->getZoomLevel();
+    showCloud->setChecked(routage->getShowCloud());
+    this->cloudLevel->setValue((routage->getCloudLevel()-1)*100);
     visibleOnly->setChecked(routage->getVisibleOnly());
     this->poiPrefix->setText(routage->getPoiPrefix());
     this->startFromBoat->setChecked(routage->getRouteFromBoat());
@@ -263,6 +264,8 @@ void DialogRoutage::slot_default()
     this->whatIfUse->setChecked(false);
     this->windForced->setChecked(false);
     this->checkCoast->setChecked(true);
+    this->showCloud->setChecked(false);
+    this->cloudLevel->setValue(3);
 }
 
 //---------------------------------------
@@ -296,6 +299,8 @@ void DialogRoutage::done(int result)
         routage->setMaxPres(this->maxPres->value());
         routage->setMinPortant(this->minPortant->value());
         routage->setMinPres(this->minPres->value());
+        routage->setShowCloud(this->showCloud->isChecked());
+        routage->setCloudLevel((this->cloudLevel->value()/100.0)+1.0);
         if(parent->getPlayer()->getType()!=BOAT_REAL)
         {
             if(parent->getBoats())
@@ -386,6 +391,8 @@ void DialogRoutage::done(int result)
         routage->setUseRouteModule(this->useVac->isChecked());
         if(!routage->isDone())
             Settings::setSetting("autoConvertToRoute",convRoute->isChecked()?1:0);
+        else
+            routage->drawCloud();
         if(this->convRoute->isChecked())
         {
             if(!routage->isConverted())

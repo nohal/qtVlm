@@ -386,7 +386,7 @@ avec ce prefixe</string>
         <set>Qt::AlignCenter</set>
        </property>
       </widget>
-      <widget class="QCheckBox" name="autoZoom">
+      <widget class="QCheckBox" name="showCloud">
        <property name="geometry">
         <rect>
          <x>330</x>
@@ -396,7 +396,7 @@ avec ce prefixe</string>
         </rect>
        </property>
        <property name="text">
-        <string>Auto Zoom</string>
+        <string>Zone sensible</string>
        </property>
        <property name="checked">
         <bool>true</bool>
@@ -516,7 +516,7 @@ Virements de bord</string>
         <bool>true</bool>
        </property>
       </widget>
-      <widget class="QSlider" name="zoomLevel">
+      <widget class="QSlider" name="cloudLevel">
        <property name="geometry">
         <rect>
          <x>360</x>
@@ -526,20 +526,19 @@ Virements de bord</string>
         </rect>
        </property>
        <property name="toolTip">
-        <string>Réglage du niveau de zoom (plus à droite = plus serré).
-La différence est surtout sensible lors d'un routage en diagonale.</string>
+        <string>Reglage du niveau de la zone sensible </string>
        </property>
        <property name="minimum">
-        <number>1</number>
+        <number>0</number>
        </property>
        <property name="maximum">
-        <number>3</number>
+        <number>30</number>
        </property>
        <property name="pageStep">
         <number>1</number>
        </property>
        <property name="sliderPosition">
-        <number>2</number>
+        <number>3</number>
        </property>
        <property name="orientation">
         <enum>Qt::Horizontal</enum>
@@ -1205,13 +1204,64 @@ La différence est surtout sensible lors d'un routage en diagonale.</string>
       <property name="geometry">
        <rect>
         <x>30</x>
-        <y>510</y>
-        <width>111</width>
-        <height>23</height>
+        <y>502</y>
+        <width>141</width>
+        <height>31</height>
        </rect>
       </property>
       <property name="text">
        <string>Options par defaut</string>
+      </property>
+     </widget>
+     <widget class="QCheckBox" name="autoZoom">
+      <property name="geometry">
+       <rect>
+        <x>290</x>
+        <y>500</y>
+        <width>131</width>
+        <height>17</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Auto Zoom</string>
+      </property>
+      <property name="checked">
+       <bool>true</bool>
+      </property>
+     </widget>
+     <widget class="QSlider" name="zoomLevel">
+      <property name="geometry">
+       <rect>
+        <x>320</x>
+        <y>520</y>
+        <width>91</width>
+        <height>19</height>
+       </rect>
+      </property>
+      <property name="toolTip">
+       <string>Réglage du niveau de zoom (plus à droite = plus serré).
+La différence est surtout sensible lors d'un routage en diagonale.</string>
+      </property>
+      <property name="minimum">
+       <number>1</number>
+      </property>
+      <property name="maximum">
+       <number>3</number>
+      </property>
+      <property name="pageStep">
+       <number>1</number>
+      </property>
+      <property name="sliderPosition">
+       <number>2</number>
+      </property>
+      <property name="orientation">
+       <enum>Qt::Horizontal</enum>
+      </property>
+      <property name="tickPosition">
+       <enum>QSlider::NoTicks</enum>
+      </property>
+      <property name="tickInterval">
+       <number>1</number>
       </property>
      </widget>
     </widget>
@@ -1281,9 +1331,10 @@ La différence est surtout sensible lors d'un routage en diagonale.</string>
   <tabstop>speedLossOnTack</tabstop>
   <tabstop>useVac</tabstop>
   <tabstop>multi</tabstop>
-  <tabstop>autoZoom</tabstop>
-  <tabstop>checkCoast</tabstop>
   <tabstop>visibleOnly</tabstop>
+  <tabstop>showCloud</tabstop>
+  <tabstop>cloudLevel</tabstop>
+  <tabstop>checkCoast</tabstop>
   <tabstop>tabWidget</tabstop>
   <tabstop>pruneWakeAngle</tabstop>
   <tabstop>explo</tabstop>
@@ -1301,6 +1352,9 @@ La différence est surtout sensible lors d'un routage en diagonale.</string>
   <tabstop>maxPres</tabstop>
   <tabstop>minPortant</tabstop>
   <tabstop>maxPortant</tabstop>
+  <tabstop>Default</tabstop>
+  <tabstop>autoZoom</tabstop>
+  <tabstop>zoomLevel</tabstop>
  </tabstops>
  <resources/>
  <connections>

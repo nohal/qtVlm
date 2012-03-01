@@ -3336,6 +3336,14 @@ La différence est surtout sensible lors d&apos;un routage en diagonale.</transl
         <source>Options par defaut</source>
         <translation>Options par défaut</translation>
     </message>
+    <message>
+        <source>Zone sensible</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Reglage du niveau de la zone sensible </source>
+        <translation></translation>
+    </message>
 </context>
 <context>
     <name>ROUTE</name>

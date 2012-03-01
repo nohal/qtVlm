@@ -170,6 +170,11 @@ class ROUTAGE : public QObject
         void setVisibleOnly(bool b){this->visibleOnly=b;}
         int getZoomLevel(){return this->zoomLevel;}
         void setZoomLevel(int i){this->zoomLevel=i;}
+        double getCloudLevel(){return this->cloudLevel;}
+        void setCloudLevel(double d){this->cloudLevel=d;}
+        bool getShowCloud(){return showCloud;}
+        void setShowCloud(bool b){this->showCloud=b;}
+        void drawCloud();
     public slots:
         void slot_edit();
         void slot_abort(){this->aborted=true;}
@@ -294,5 +299,9 @@ class ROUTAGE : public QObject
         QTimer * timerTempo;
         bool approaching;
         int zoomLevel;
+        double cloudLevel;
+        bool showCloud;
+        vlmLine * cloud;
+
     };
 #endif // ROUTAGE_H

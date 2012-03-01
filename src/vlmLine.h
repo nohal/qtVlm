@@ -42,7 +42,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 class vlmLine : public QGraphicsWidget
 { Q_OBJECT
     public:
-        vlmLine(Projection * proj, QGraphicsScene * myScene,int z_level);
+        vlmLine(Projection * proj, QGraphicsScene * myScene,double z_level);
 
         void addPoint(double lat,double lon);
         void addVlmPoint(vlmPoint point);
@@ -133,7 +133,7 @@ class vlmLine : public QGraphicsWidget
         GshhsReader *map;
         double lineWidth;
         QPainterPath myPath;
-        int myZvalue;
+        double myZvalue;
 };
 
 
