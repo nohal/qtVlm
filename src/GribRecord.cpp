@@ -173,7 +173,8 @@ void  GribRecord::translateDataType()
         //---------------
         //Navimail
         //---------------
-        else if (idCenter==85 && idModel==5 && idGrid==255)
+        else if ( (idCenter==85 && idModel==5 && idGrid==255)
+                 ||(idCenter==85 && idModel==83 && idGrid==255) )
         {
 
         }
@@ -847,7 +848,7 @@ bool GribRecord::getValue_TWSA(double px, double py,double * a00,double * a01,do
 }
 
 //===============================================================================================
-// Interpolation pour données 1D
+// Interpolation pour donnï¿½es 1D
 //
 
 double GribRecord::getInterpolatedValue(double px, double py, bool numericalInterpolation)
@@ -857,9 +858,9 @@ double GribRecord::getInterpolatedValue(double px, double py, bool numericalInte
         return GRIB_NOTDEF;
     }
     if (!isPointInMap(px,py)) {
-        px += 360.0;               // tour du monde Ã  droite ?
+        px += 360.0;               // tour du monde ï¿½  droite ?
         if (!isPointInMap(px,py)) {
-            px -= 2*360.0;              // tour du monde Ã  gauche ?
+            px -= 2*360.0;              // tour du monde ï¿½  gauche ?
             if (!isPointInMap(px,py)) {
                 return GRIB_NOTDEF;
             }
