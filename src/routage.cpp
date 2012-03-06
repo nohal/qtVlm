@@ -3243,7 +3243,6 @@ void ROUTAGE::showIsoRoute()
         vlmPoint Cross;
         double lon,lat;
         Cross=result->getPoints()->at(n);
-        qWarning()<<"SIR: filling left";
         for(int s=indice;s<isochrone->getPoints()->count()-1;++s)
         {
             vlmPoint p1=isochrone->getPoints()->at(s);
@@ -3266,14 +3265,12 @@ void ROUTAGE::showIsoRoute()
                     Cross.x=cross.x();
                     Cross.y=cross.y();
                     found=true;
-                    qWarning()<<"found in left";
                     break;
                 }
             }
             if(found) break;
         }
         left.append(Cross);
-        qWarning()<<"SIR: filling right";
         found=false;
         Cross=result->getPoints()->at(n);
         for(int s=indice;s>0;--s)
@@ -3298,7 +3295,6 @@ void ROUTAGE::showIsoRoute()
                     Cross.x=cross.x();
                     Cross.y=cross.y();
                     found=true;
-                    qWarning()<<"found in right";
                     break;
                 }
             }
@@ -3307,7 +3303,7 @@ void ROUTAGE::showIsoRoute()
         right.prepend(Cross);
     }
     left.append(right);
-    qWarning()<<"SIR: left has "<<left.count()<<"points";
+    qWarning()<<"SIR: isoRoute has "<<left.count()<<"points";
     for(int n=0;n<left.count();++n)
         isoRoute->addVlmPoint(left.at(n));
     QColor c=Qt::lightGray;
