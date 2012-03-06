@@ -55,6 +55,7 @@ struct datathread
     boat *Boat;
     int timeStep;
     double speedLossOnTack;
+    bool i_iso;
 };
 
 //===================================================================
@@ -175,6 +176,11 @@ class ROUTAGE : public QObject
         bool getShowCloud(){return showCloud;}
         void setShowCloud(bool b){this->showCloud=b;}
         void drawCloud();
+        void calculateInverse();
+        bool getI_iso(){return i_iso;}
+        void setI_iso(bool b){this->i_iso=b;}
+        bool getI_done(){return i_done;}
+        time_t getI_eta(){return i_eta;}
     public slots:
         void slot_edit();
         void slot_abort(){this->aborted=true;}
@@ -203,8 +209,6 @@ class ROUTAGE : public QObject
         QString name;
         POI * fromPOI;
         POI * toPOI;
-        QList<vlmLine *> isochrones;
-        QList<vlmLine *> segments;
         boat *myBoat;
         Grib *grib;
         double angleRange;
@@ -230,17 +234,14 @@ class ROUTAGE : public QObject
 
 
 
-        bool arrived;
         bool windIsForced;
         double wind_speed;
         double wind_angle;
-        time_t eta;
 
         vlmLine * result;
         vlmLine * way;
         void drawResult(vlmPoint P);
         bool intersects(QList<vlmPoint> *iso,int nn,int mm,int * toBeKilled);
-        bool done;
         bool converted;
         void pruneWake(int wakeAngle);
         //int calculateTimeRoute(vlmPoint RouteFrom,vlmPoint routeTo,int limit=-1);
@@ -279,7 +280,6 @@ class ROUTAGE : public QObject
         int       whatIfWind;
         time_t whatIfJour;
         bool tooFar;
-        QList<vlmPointGraphic *> isoPointList;
         vlmPoint pivotPoint;
         bool isPivot;
         QMenu * popup;
@@ -302,6 +302,19 @@ class ROUTAGE : public QObject
         double cloudLevel;
         bool showCloud;
         vlmLine * cloud;
-
+        QList<vlmPointGraphic *> isoPointList;
+        bool arrived;
+        time_t eta;
+        QList<vlmLine *> isochrones;
+        QList<vlmLine *> segments;
+        bool done;
+        /*iso inversed*/
+        bool i_iso;
+        bool i_arrived;
+        time_t i_eta;
+        QList<vlmLine *> i_isochrones;
+        QList<vlmLine *> i_segments;
+        bool i_done;
+        void showIsoRoute();
     };
 #endif // ROUTAGE_H

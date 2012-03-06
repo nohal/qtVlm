@@ -1164,6 +1164,7 @@ void myCentralWidget::simpAllPOIs(bool simp)
 
             if(lat1<=lat && lat<=lat0 && lon0<=lon && lon<=lon1)
             {
+                qWarning()<<"zone="<<lon0<<lon1<<lat0<<lat1<<"poi="<<lon<<lat<<simp;
                 poi->setNotSimplificable(simp);
             }
 
@@ -2820,6 +2821,8 @@ void myCentralWidget::slot_editRoutage(ROUTAGE * routage,bool createMode)
         update_menuRoutage();
         if(routage && (createMode || routage->getIsNewPivot()))
             routage->calculate();
+        else if(routage && routage->getI_iso() && !routage->getI_done())
+            routage->calculateInverse();
     }
 }
 void myCentralWidget::deleteRoute(ROUTE * route)

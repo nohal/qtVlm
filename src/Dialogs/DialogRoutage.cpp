@@ -59,6 +59,8 @@ DialogRoutage::DialogRoutage(ROUTAGE *routage,myCentralWidget *parent)
     QSize mySize=QSize(widget->size().width()+20,widget->size().height()+20);
     QSize screenSize=QApplication::desktop()->screenGeometry().size()*.8;
     connect(this->Default,SIGNAL(clicked()),this,SLOT(slot_default()));
+    this->i_iso->setChecked(routage->getI_done());
+    this->i_iso->setDisabled((!routage->isDone() || routage->getI_done()));
     if(mySize.height() > screenSize.height())
     {
         mySize.setHeight(screenSize.height());
@@ -424,6 +426,8 @@ void DialogRoutage::done(int result)
                     routage->setConverted();
             }
         }
+        else
+            routage->setI_iso(this->i_iso->isChecked());
     }
     if(result == QDialog::Rejected)
     {

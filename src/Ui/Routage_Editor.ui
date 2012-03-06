@@ -386,22 +386,6 @@ avec ce prefixe</string>
         <set>Qt::AlignCenter</set>
        </property>
       </widget>
-      <widget class="QCheckBox" name="showCloud">
-       <property name="geometry">
-        <rect>
-         <x>330</x>
-         <y>150</y>
-         <width>131</width>
-         <height>17</height>
-        </rect>
-       </property>
-       <property name="text">
-        <string>Zone sensible</string>
-       </property>
-       <property name="checked">
-        <bool>true</bool>
-       </property>
-      </widget>
       <widget class="QSpinBox" name="speedLossOnTack">
        <property name="geometry">
         <rect>
@@ -516,38 +500,17 @@ Virements de bord</string>
         <bool>true</bool>
        </property>
       </widget>
-      <widget class="QSlider" name="cloudLevel">
+      <widget class="QCheckBox" name="i_iso">
        <property name="geometry">
         <rect>
-         <x>360</x>
-         <y>170</y>
-         <width>91</width>
-         <height>19</height>
+         <x>330</x>
+         <y>150</y>
+         <width>151</width>
+         <height>20</height>
         </rect>
        </property>
-       <property name="toolTip">
-        <string>Reglage du niveau de la zone sensible </string>
-       </property>
-       <property name="minimum">
-        <number>0</number>
-       </property>
-       <property name="maximum">
-        <number>30</number>
-       </property>
-       <property name="pageStep">
-        <number>1</number>
-       </property>
-       <property name="sliderPosition">
-        <number>3</number>
-       </property>
-       <property name="orientation">
-        <enum>Qt::Horizontal</enum>
-       </property>
-       <property name="tickPosition">
-        <enum>QSlider::NoTicks</enum>
-       </property>
-       <property name="tickInterval">
-        <number>1</number>
+       <property name="text">
+        <string>Inversed iso</string>
        </property>
       </widget>
      </widget>
@@ -1216,8 +1179,8 @@ Virements de bord</string>
      <widget class="QCheckBox" name="autoZoom">
       <property name="geometry">
        <rect>
-        <x>290</x>
-        <y>500</y>
+        <x>190</x>
+        <y>490</y>
         <width>131</width>
         <height>17</height>
        </rect>
@@ -1232,8 +1195,8 @@ Virements de bord</string>
      <widget class="QSlider" name="zoomLevel">
       <property name="geometry">
        <rect>
-        <x>320</x>
-        <y>520</y>
+        <x>220</x>
+        <y>510</y>
         <width>91</width>
         <height>19</height>
        </rect>
@@ -1262,6 +1225,56 @@ La différence est surtout sensible lors d'un routage en diagonale.</string>
       </property>
       <property name="tickInterval">
        <number>1</number>
+      </property>
+     </widget>
+     <widget class="QSlider" name="cloudLevel">
+      <property name="geometry">
+       <rect>
+        <x>380</x>
+        <y>510</y>
+        <width>91</width>
+        <height>19</height>
+       </rect>
+      </property>
+      <property name="toolTip">
+       <string>Reglage du niveau de la zone sensible </string>
+      </property>
+      <property name="minimum">
+       <number>0</number>
+      </property>
+      <property name="maximum">
+       <number>30</number>
+      </property>
+      <property name="pageStep">
+       <number>1</number>
+      </property>
+      <property name="sliderPosition">
+       <number>3</number>
+      </property>
+      <property name="orientation">
+       <enum>Qt::Horizontal</enum>
+      </property>
+      <property name="tickPosition">
+       <enum>QSlider::NoTicks</enum>
+      </property>
+      <property name="tickInterval">
+       <number>1</number>
+      </property>
+     </widget>
+     <widget class="QCheckBox" name="showCloud">
+      <property name="geometry">
+       <rect>
+        <x>350</x>
+        <y>490</y>
+        <width>131</width>
+        <height>17</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Zone sensible</string>
+      </property>
+      <property name="checked">
+       <bool>true</bool>
       </property>
      </widget>
     </widget>
