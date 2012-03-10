@@ -68,6 +68,7 @@ Q_OBJECT
 
         /* coord conversion */
         void screen2map(int i, int j, double *x, double *y) const;
+        void screen2mapDouble(double i, double j, double *x, double *y) const;
         void map2screen(double x, double y, int *i, int *j) const;
         void map2screenDouble(double x, double y, double *i, double *j) const;
 
@@ -130,6 +131,11 @@ inline void Projection::map2screenDouble(double x, double y, double *i, double *
 
 //-------------------------------------------------------------------------------
 inline void Projection::screen2map(int i, int j, double *x, double *y) const
+{
+    *x = (double)(i/scale+xW);
+    *y = radToDeg((2*atan(exp((double)(degToRad(PY-(j-H/2)/scale)))))-M_PI_2);
+}
+inline void Projection::screen2mapDouble(double i, double j, double *x, double *y) const
 {
     *x = (double)(i/scale+xW);
     *y = radToDeg((2*atan(exp((double)(degToRad(PY-(j-H/2)/scale)))))-M_PI_2);

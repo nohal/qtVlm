@@ -334,7 +334,7 @@ void opponent::updateName()
         str2=str2+"<tr><td>"+tr("Loch 3h: ")+"</td><td>"+this->loch3h+"</td></tr>";
         str2=str2+"<tr><td>"+tr("Loch 24h: ")+"</td><td>"+this->loch24h+"</td></tr>";
         str2=str2+"<tr><td>"+tr("Status VLM: ")+"</td><td>"+this->statusVLM+"</td></tr>";
-        if(estimatedSpeed!=0 && false)
+        if(estimatedSpeed!=0 /*&& false*/)
         {
             str2=str2+"<tr><td>"+tr("Vitesse estimee: ")+"</td><td>"+
                  QString().sprintf("%.2f ",estimatedSpeed)+

@@ -2823,6 +2823,8 @@ void myCentralWidget::slot_editRoutage(ROUTAGE * routage,bool createMode)
             routage->calculate();
         else if(routage && routage->getI_iso() && !routage->getI_done())
             routage->calculateInverse();
+        else if(routage && routage->getI_iso() && routage->getI_done())
+            routage->showIsoRoute();
     }
 }
 void myCentralWidget::deleteRoute(ROUTE * route)

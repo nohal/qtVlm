@@ -745,8 +745,6 @@ ROUTAGE::ROUTAGE(QString name, Projection *proj, Grib *grib, QGraphicsScene * my
     this->minPres=Settings::getSetting("routageMinPres",0).toDouble();
     this->minPortant=Settings::getSetting("routageMinPortant",0).toDouble();
     this->pruneWakeAngle=Settings::getSetting("routagePruneWake",30).toInt();
-    this->showCloud=Settings::getSetting("showCloud",0).toInt()==1;
-    this->cloudLevel=Settings::getSetting("cloudLevel",1.0).toDouble();
     this->wind_angle=0;
     this->wind_speed=20;
     this->windIsForced=false;
@@ -770,7 +768,8 @@ ROUTAGE::ROUTAGE(QString name, Projection *proj, Grib *grib, QGraphicsScene * my
     this->poiPrefix="R";
     this->speedLossOnTack=1;
     highlightedIso=0;
-    cloud=NULL;
+    this->isoRoute=NULL;
+    isoRouteValue=10e6;
 }
 ROUTAGE::~ROUTAGE()
 {
@@ -838,8 +837,6 @@ void ROUTAGE::calculate()
         Settings::setSetting("routageMinPres",minPres);
         Settings::setSetting("routageMinPortant",minPortant);
         Settings::setSetting("routagePruneWake",pruneWakeAngle);
-        Settings::setSetting("showCloud",showCloud?1:0);
-        Settings::setSetting("cloudLevel",cloudLevel);
     }
     this->isNewPivot=false;
     this->aborted=false;
@@ -1877,7 +1874,6 @@ void ROUTAGE::slot_calculate()
             }
             eta=eta+minTime;
             drawResult(list->at(nBest));
-            drawCloud();
         }
         else
         {
@@ -2137,6 +2133,65 @@ double ROUTAGE::findDistancePreviousIso(const vlmPoint P, const QPolygonF * poly
     }
     return minDistanceSegment;
 }
+double ROUTAGE::findDistancePoly(const QPointF P, const QPolygonF * poly, QPointF * closest)
+{
+    double cx=P.x();
+    double cy=P.y();
+    double minDistanceSegment=10e6;
+
+    for(int i=0;i<poly->count()-1;++i)
+    {
+        double ax=poly->at(i).x();
+        double ay=poly->at(i).y();
+        double bx=poly->at(i+1).x();
+        double by=poly->at(i+1).y();
+        double r_numerator = (cx-ax)*(bx-ax) + (cy-ay)*(by-ay);
+        double r_denomenator = (bx-ax)*(bx-ax) + (by-ay)*(by-ay);
+        double r = r_numerator / r_denomenator;
+//
+        double px = ax + r*(bx-ax);
+        double py = ay + r*(by-ay);
+//
+        double s =  ((ay-cy)*(bx-ax)-(ax-cx)*(by-ay) ) / r_denomenator;
+
+        double distanceLine = fabs(s)*sqrt(r_denomenator);
+
+//
+// (xx,yy) is the point on the lineSegment closest to (cx,cy)
+//
+        double xx = px;
+        double yy = py;
+        double distanceSegment=0;
+        if ( (r >= 0) && (r <= 1) )
+        {
+            distanceSegment = distanceLine;
+            closest->setX(xx);
+            closest->setY(yy);
+        }
+        else
+        {
+            double dist1 = (cx-ax)*(cx-ax) + (cy-ay)*(cy-ay);
+            double dist2 = (cx-bx)*(cx-bx) + (cy-by)*(cy-by);
+            if (dist1 < dist2)
+            {
+                    xx = ax;
+                    yy = ay;
+                    distanceSegment = sqrt(dist1);
+            }
+            else
+            {
+                    xx = bx;
+                    yy = by;
+                    distanceSegment = sqrt(dist2);
+            }
+            closest->setX(xx);
+            closest->setY(yy);
+        }
+        if(distanceSegment<minDistanceSegment)
+            minDistanceSegment=distanceSegment;
+    }
+    return minDistanceSegment;
+}
 void ROUTAGE::pruneWake(int wakeAngle)
 {
     if (wakeAngle<1) return;
@@ -2290,121 +2345,6 @@ void ROUTAGE::setShowIso(bool b)
         result->show();
         result->slot_showMe();
     }
-}
-void ROUTAGE::drawCloud()
-{
-    return;
-    Settings::setSetting("showCloud",showCloud?1:0);
-    Settings::setSetting("cloudLevel",cloudLevel);
-    if(cloud)
-    {
-        delete cloud;
-        cloud=NULL;
-    }
-    if(!showCloud || !arrived) return;
-    datathread dataThread;
-    dataThread.Boat=this->getBoat();
-    dataThread.Eta=this->getEta();
-    dataThread.GriB=this->getGrib();
-    dataThread.whatIfJour=this->getWhatIfJour();
-    dataThread.whatIfUsed=this->getWhatIfUsed();
-    dataThread.windIsForced=this->getWindIsForced();
-    dataThread.whatIfTime=this->getWhatIfTime();
-    dataThread.windAngle=this->getWindAngle();
-    dataThread.windSpeed=this->getWindSpeed();
-    dataThread.whatIfWind=this->getWhatIfWind();
-    dataThread.timeStep=this->getTimeStep();
-    dataThread.speedLossOnTack=this->getSpeedLossOnTack();
-    dataThread.i_iso=i_iso;
-    QList<vlmPoint> leftCloud, rightCloud;
-    leftCloud.prepend(vlmPoint(arrival.x(),arrival.y()));
-    rightCloud.append(vlmPoint(arrival.x(),arrival.y()));
-    int i=isochrones.count();
-    for (int r=1;r<result->getPoints()->count()-1;++r)
-    {
-        --i;
-        if(i<1) break;
-        vlmPoint pp=result->getPoints()->at(r);
-        int indice=isochrones[i]->getPoints()->indexOf(pp);
-        for (int current=indice-1;current>=0;--current)
-        {
-            vlmPoint p=isochrones[i]->getPoints()->at(current);
-            int oldTime=p.eta-p.origin->eta;
-            if(checkCoast && map->crossing(QLineF(p.x,p.y,leftCloud.first().x,leftCloud.first().y),QLineF(p.lon,p.lat,leftCloud.first().lon,leftCloud.first().lat)))
-                break;
-            dataThread.Eta=p.eta;
-            int thisTime=calculateTimeRoute(p,leftCloud.first(),&dataThread);
-            if(thisTime<=oldTime*cloudLevel)
-            {
-                if(!pp.isStart)
-                {
-                    vlmPoint po=result->getPoints()->at(r+1);
-                    dataThread.Eta=po.eta;
-                    thisTime=calculateTimeRoute(po,p,&dataThread);
-                    if(thisTime<=oldTime*cloudLevel)
-                    {
-                        pp=p;
-                    }
-                }
-                else
-                    break;
-            }
-            else
-                break;
-        }
-        leftCloud.prepend(pp);
-    }
-    leftCloud.prepend(vlmPoint(start.x(),start.y()));
-    i=isochrones.count();
-    for (int r=1;r<result->getPoints()->count()-1;++r)
-    {
-        --i;
-        if(i<1) break;
-        vlmPoint pp=result->getPoints()->at(r);
-        int indice=isochrones[i]->getPoints()->indexOf(pp);
-        for (int current=indice+1;current<isochrones[i]->getPoints()->count();++current)
-        {
-            vlmPoint p=isochrones[i]->getPoints()->at(current);
-            int oldTime=p.eta-p.origin->eta;
-            if(checkCoast && map->crossing(QLineF(p.x,p.y,rightCloud.last().x,rightCloud.last().y),QLineF(p.lon,p.lat,rightCloud.last().lon,rightCloud.last().lat)))
-                break;
-            dataThread.Eta=p.eta;
-            int thisTime=calculateTimeRoute(p,rightCloud.last(),&dataThread);
-            if(thisTime<=oldTime*cloudLevel)
-            {
-                if(!pp.isStart)
-                {
-                    vlmPoint po=result->getPoints()->at(r+1);
-                    dataThread.Eta=po.eta;
-                    thisTime=calculateTimeRoute(po,p,&dataThread);
-                    if(thisTime<=oldTime*cloudLevel)
-                    {
-                        pp=p;
-                    }
-                }
-                else
-                    break;
-            }
-            else
-                break;
-        }
-        rightCloud.append(pp);
-    }
-    rightCloud.removeFirst();
-    rightCloud.append(vlmPoint(start.x(),start.y()));
-    cloud=new vlmLine(proj,this->myscene,Z_VALUE_ROUTAGE);
-    cloud->setParent(this);
-    leftCloud.append(rightCloud);
-    for(int n=0;n<leftCloud.count();++n)
-        cloud->addVlmPoint(leftCloud.at(n));
-    QColor c=Qt::lightGray;
-    c.setAlpha(200);
-    QPen cloudPen(c);
-    cloudPen.setWidthF(width);
-    cloudPen.setBrush(QBrush(c));
-    cloud->setLinePen(cloudPen);
-    cloud->setSolid(true);
-    cloud->slot_showMe();
 }
 void ROUTAGE::drawResult(vlmPoint P)
 {
@@ -3215,13 +3155,17 @@ void ROUTAGE::calculateInverse()
 }
 void ROUTAGE::showIsoRoute()
 {
-    qWarning()<<"inside SIR";
-    vlmLine * isoRoute=new vlmLine(proj, this->myscene,Z_VALUE_ROUTAGE);
-    isoRoute->setParent(this);
-    int i=isochrones.count()-1;
-    int ii=1;
+    if(isoRoute)
+    {
+        delete isoRoute;
+        isoRoute=NULL;
+    }
+    double goal=(double)(timeStepMore24-isoRouteValue)/(double)timeStepMore24;
+    qWarning()<<"inside SIR with goal="<<goal;
+    int i=isochrones.count();
+    int ii=0;
     QList<vlmPoint> left,right;
-    for(int n=arrived?2:1;n<result->count();++n)
+    for(int n=arrived?1:0;n<result->count()-1;++n)
     {
         --i;
         if(i<1) break;
@@ -3238,11 +3182,11 @@ void ROUTAGE::showIsoRoute()
             qWarning()<<"erreur SIR 1";
             return;
         }
-        qWarning()<<"indice="<<indice;
         bool found=false;
         vlmPoint Cross;
         double lon,lat;
         Cross=result->getPoints()->at(n);
+        int js=0;
         for(int s=indice;s<isochrone->getPoints()->count()-1;++s)
         {
             vlmPoint p1=isochrone->getPoints()->at(s);
@@ -3259,20 +3203,134 @@ void ROUTAGE::showIsoRoute()
                 QPointF cross;
                 if(line1.intersect(line2,&cross)==QLineF::BoundedIntersection)
                 {
-                    proj->screen2map(cross.x(),cross.y(),&lon,&lat);
+                    proj->screen2mapDouble(cross.x(),cross.y(),&lon,&lat);
                     Cross.lon=lon;
                     Cross.lat=lat;
                     Cross.x=cross.x();
                     Cross.y=cross.y();
                     found=true;
+                    js=qMax(0,is-1);
                     break;
                 }
             }
             if(found) break;
         }
-        left.append(Cross);
+        if(qRound(goal*10000)!=0)
+        {
+            Cross=result->getPoints()->at(n);
+            vlmLine * prev_isochrone=isochrones.at(i-1);
+            QPolygonF poly,prev_poly,i_poly;
+            double  x1,y1;
+            for(int s=indice;s<isochrone->getPoints()->count();++s)
+            {
+                vlmPoint p1=isochrone->getPoints()->at(s);
+                proj->map2screenDouble(Util::cLFA(p1.lon,proj->getXmin()),p1.lat,&x1,&y1);
+                poly.append(QPointF(x1,y1));
+            }
+            int indicePrev=prev_isochrone->getPoints()->indexOf(result->getPoints()->at(n+1));
+            if(indicePrev<0)
+            {
+                qWarning()<<"erreur SIR 2";
+                return;
+            }
+            for(int s=indicePrev;s<prev_isochrone->getPoints()->count();++s)
+            {
+                vlmPoint p1=prev_isochrone->getPoints()->at(s);
+                proj->map2screenDouble(Util::cLFA(p1.lon,proj->getXmin()),p1.lat,&x1,&y1);
+                prev_poly.append(QPointF(x1,y1));
+            }
+            for(int s=js;s<i_isochrone->count();++s)
+            {
+                vlmPoint p1=i_isochrone->getPoints()->at(s);
+                double x1,y1; /*recalculation necessary because zoom has changed*/
+                proj->map2screenDouble(Util::cLFA(p1.lon,proj->getXmin()),p1.lat,&x1,&y1);
+                i_poly.append(QPointF(x1,y1));
+            }
+#if 1
+            for (int rrr=0;rrr<result->count()-1;++rrr)
+            {
+                double x2,y2;
+                vlmPoint p1=result->getPoints()->at(rrr);
+                vlmPoint p2=result->getPoints()->at(rrr+1);
+                proj->map2screenDouble(Util::cLFA(p1.lon,proj->getXmin()),p1.lat,&x1,&y1);
+                proj->map2screenDouble(Util::cLFA(p2.lon,proj->getXmin()),p2.lat,&x2,&y2);
+                QLineF rLine(x1,y1,x2,y2);
+                found=false;
+                for(int pp=0;pp<i_poly.count()-1;++pp)
+                {
+                    QPointF dummy;
+                    QLineF iLine(i_poly.at(pp),i_poly.at(pp+1));
+                    if(rLine.intersect(iLine,&dummy)==QLineF::BoundedIntersection)
+                    {
+                        while(i_poly.count()>pp+1)
+                            i_poly.remove(i_poly.count()-1);
+                        found=true;
+                        break;
+                    }
+                }
+                if(found) break;
+            }
+#endif
+#if 1
+//            if(i==10 || i==8)
+            {
+                QPen pendebug(Qt::blue);
+                pendebug.setWidthF(5);
+#if 0
+                vlmLine * debug1=new vlmLine(proj,myscene,Z_VALUE_ROUTAGE+10);
+                debug1->setParent(this);
+                debug1->setLinePen(pendebug);
+                foreach (QPointF pp,poly)
+                {
+                    proj->screen2mapDouble(pp.x(),pp.y(),&lon,&lat);
+                    debug1->addPoint(lat,lon);
+                }
+                debug1->slot_showMe();
+#endif
+#if 0
+                vlmLine * debug2=new vlmLine(proj,myscene,Z_VALUE_ROUTAGE+10);
+                debug2->setParent(this);
+                pendebug.setColor(Qt::white);
+                debug2->setLinePen(pendebug);
+                foreach (QPointF pp,i_poly)
+                {
+                    proj->screen2mapDouble(pp.x(),pp.y(),&lon,&lat);
+                    debug2->addPoint(lat,lon);
+                }
+                debug2->slot_showMe();
+#endif
+#if 0
+                vlmLine * debug3=new vlmLine(proj,myscene,Z_VALUE_ROUTAGE+10);
+                debug3->setParent(this);
+                pendebug.setColor(Qt::magenta);
+                debug3->setLinePen(pendebug);
+                foreach (QPointF pp,prev_poly)
+                {
+                    proj->screen2mapDouble(pp.x(),pp.y(),&lon,&lat);
+                    debug3->addPoint(lat,lon);
+                }
+                debug3->slot_showMe();
+#endif
+            }
+#endif
+            double root=0.5;
+            double precision=0.01;
+            if(newtownRaphson(&root,goal,precision,&poly,&prev_poly,&i_poly))
+            {
+                QPointF cross=pointAt(&i_poly,root);
+                proj->screen2mapDouble(cross.x(),cross.y(),&lon,&lat);
+                Cross.lon=lon;
+                Cross.lat=lat;
+                Cross.x=cross.x();
+                Cross.y=cross.y();
+                left.append(Cross);
+            }
+            /*if not found let it draw a line hoping that next i_iso will be ok*/
+        }
+        else if (found)
+            left.append(Cross);
+        js=0;
         found=false;
-        Cross=result->getPoints()->at(n);
         for(int s=indice;s>0;--s)
         {
             vlmPoint p1=isochrone->getPoints()->at(s);
@@ -3281,37 +3339,426 @@ void ROUTAGE::showIsoRoute()
             proj->map2screenDouble(Util::cLFA(p1.lon,proj->getXmin()),p1.lat,&x1,&y1);
             proj->map2screenDouble(Util::cLFA(p2.lon,proj->getXmin()),p2.lat,&x2,&y2);
             QLineF line1(x1,y1,x2,y2);
-            for(int is=0;is<i_isochrone->getPoints()->count()-1;++is)
+            for(int is=i_isochrone->getPoints()->count()-1;is>0;--is)
             {
                 vlmPoint ip1=i_isochrone->getPoints()->at(is);
-                vlmPoint ip2=i_isochrone->getPoints()->at(is+1);
+                vlmPoint ip2=i_isochrone->getPoints()->at(is-1);
                 QLineF line2(ip1.x,ip1.y,ip2.x,ip2.y);
                 QPointF cross;
                 if(line1.intersect(line2,&cross)==QLineF::BoundedIntersection)
                 {
-                    proj->screen2map(cross.x(),cross.y(),&lon,&lat);
+                    proj->screen2mapDouble(cross.x(),cross.y(),&lon,&lat);
                     Cross.lon=lon;
                     Cross.lat=lat;
                     Cross.x=cross.x();
                     Cross.y=cross.y();
                     found=true;
+                    js=qMax(0,is);
                     break;
                 }
             }
             if(found) break;
         }
-        right.prepend(Cross);
+        if(qRound(goal*10000)!=0)
+        {
+            Cross=result->getPoints()->at(n);
+            vlmLine * prev_isochrone=isochrones.at(i-1);
+            QPolygonF poly,prev_poly,i_poly;
+            double  x1,y1;
+            for(int s=indice;s>=0;--s)
+            {
+                vlmPoint p1=isochrone->getPoints()->at(s);
+                proj->map2screenDouble(Util::cLFA(p1.lon,proj->getXmin()),p1.lat,&x1,&y1);
+                poly.append(QPointF(x1,y1));
+            }
+            int indicePrev=prev_isochrone->getPoints()->indexOf(result->getPoints()->at(n+1));
+            if(indicePrev<0)
+            {
+                qWarning()<<"erreur SIR 2-2";
+                return;
+            }
+            for(int s=indicePrev;s>=0;--s)
+            {
+                vlmPoint p1=prev_isochrone->getPoints()->at(s);
+                proj->map2screenDouble(Util::cLFA(p1.lon,proj->getXmin()),p1.lat,&x1,&y1);
+                prev_poly.append(QPointF(x1,y1));
+            }
+            for(int s=js;s>=0;--s)
+            {
+                vlmPoint p1=i_isochrone->getPoints()->at(s);
+                double x1,y1; /*recalculation necessary because zoom has changed*/
+                proj->map2screenDouble(Util::cLFA(p1.lon,proj->getXmin()),p1.lat,&x1,&y1);
+                i_poly.append(QPointF(x1,y1));
+            }
+#if 1
+            for (int rrr=0;rrr<result->count()-1;++rrr)
+            {
+                double x2,y2;
+                vlmPoint p1=result->getPoints()->at(rrr);
+                vlmPoint p2=result->getPoints()->at(rrr+1);
+                proj->map2screenDouble(Util::cLFA(p1.lon,proj->getXmin()),p1.lat,&x1,&y1);
+                proj->map2screenDouble(Util::cLFA(p2.lon,proj->getXmin()),p2.lat,&x2,&y2);
+                QLineF rLine(x1,y1,x2,y2);
+                found=false;
+                for(int pp=0;pp<i_poly.count()-1;++pp)
+                {
+                    QPointF dummy;
+                    QLineF iLine(i_poly.at(pp),i_poly.at(pp+1));
+                    if(rLine.intersect(iLine,&dummy)==QLineF::BoundedIntersection)
+                    {
+                        while(i_poly.count()>pp+1)
+                            i_poly.remove(i_poly.count()-1);
+                        found=true;
+                        break;
+                    }
+                }
+                if(found) break;
+            }
+#endif
+#if 1
+//            if(i==10 || i==8)
+            {
+                QPen pendebug(Qt::blue);
+                pendebug.setWidthF(5);
+#if 0
+                vlmLine * debug1=new vlmLine(proj,myscene,Z_VALUE_ROUTAGE+10);
+                debug1->setParent(this);
+                debug1->setLinePen(pendebug);
+                foreach (QPointF pp,poly)
+                {
+                    proj->screen2mapDouble(pp.x(),pp.y(),&lon,&lat);
+                    debug1->addPoint(lat,lon);
+                }
+                debug1->slot_showMe();
+#endif
+#if 0
+                vlmLine * debug2=new vlmLine(proj,myscene,Z_VALUE_ROUTAGE+10);
+                debug2->setParent(this);
+                pendebug.setColor(Qt::white);
+                debug2->setLinePen(pendebug);
+                foreach (QPointF pp,i_poly)
+                {
+                    proj->screen2mapDouble(pp.x(),pp.y(),&lon,&lat);
+                    debug2->addPoint(lat,lon);
+                }
+                debug2->slot_showMe();
+#endif
+#if 0
+                vlmLine * debug3=new vlmLine(proj,myscene,Z_VALUE_ROUTAGE+10);
+                debug3->setParent(this);
+                pendebug.setColor(Qt::magenta);
+                debug3->setLinePen(pendebug);
+                foreach (QPointF pp,prev_poly)
+                {
+                    proj->screen2mapDouble(pp.x(),pp.y(),&lon,&lat);
+                    debug3->addPoint(lat,lon);
+                }
+                debug3->slot_showMe();
+#endif
+            }
+#endif
+            double root=0.5;
+            double precision=0.01;
+            if(newtownRaphson(&root,goal,precision,&poly,&prev_poly,&i_poly))
+            {
+                QPointF cross=pointAt(&i_poly,root);
+                proj->screen2mapDouble(cross.x(),cross.y(),&lon,&lat);
+                Cross.lon=lon;
+                Cross.lat=lat;
+                Cross.x=cross.x();
+                Cross.y=cross.y();
+                right.prepend(Cross);
+            }
+            /*if not found let it draw a line hoping that next i_iso will be ok*/
+        }
+        else if (found)
+            right.prepend(Cross);
     }
+    right.prepend(result->getPoints()->last());
+    right.append(result->getPoints()->first());
     left.append(right);
     qWarning()<<"SIR: isoRoute has "<<left.count()<<"points";
+    isoRoute=new vlmLine(proj, this->myscene,Z_VALUE_ROUTAGE);
+    isoRoute->setParent(this);
     for(int n=0;n<left.count();++n)
         isoRoute->addVlmPoint(left.at(n));
     QColor c=Qt::lightGray;
-    c.setAlpha(200);
+    c.setAlpha(150);
     QPen Pen(c);
     Pen.setWidthF(width);
     Pen.setBrush(QBrush(c));
     isoRoute->setLinePen(Pen);
     isoRoute->setSolid(true);
     isoRoute->slot_showMe();
+}
+QPointF ROUTAGE::pointAt(const QPolygonF * poly,const double ratio)
+
+{
+    if(poly->isEmpty())
+        qWarning()<<"erreur in pointAt()";
+    if(poly->count()==1)
+        return poly->first();
+    if(ratio>=1)
+        return poly->last();
+    if(ratio<=0)
+        return poly->first();
+    QPointF resultPoint;
+    double fullLength=0;
+    for(int n=0;n<poly->size()-1;++n)
+        fullLength+=QLineF(poly->at(n),poly->at(n+1)).length();
+    double ratioLength=fullLength*ratio;
+    for(int n=0;n<poly->size()-1;++n)
+    {
+        QLineF line(poly->at(n),poly->at(n+1));
+        if(line.length()<ratioLength)
+        {
+            ratioLength-=line.length();
+            continue;
+        }
+        resultPoint=line.pointAt(ratioLength/line.length());
+        break;
+    }
+    return resultPoint;
+}
+double ROUTAGE::pointDistanceRatio(double x, double goal, QPolygonF *poly, QPolygonF *prev_poly, QPolygonF *i_poly)
+{
+    if(i_poly->isEmpty())
+        qWarning()<<"i_poly is empty";
+    if(poly->isEmpty())
+        qWarning()<<"poly is empty";
+    if(prev_poly->isEmpty())
+        qWarning()<<"prev_poly is empty";
+    if(i_poly->isEmpty() || poly->isEmpty() || prev_poly->isEmpty())
+        return 10e6;
+    QPointF point=pointAt(i_poly,x);
+#if 0
+//    qWarning()<<"i_poly counts"<<i_poly->count();
+//    qWarning()<<"poly counts"<<poly->count();
+//    qWarning()<<"prev_poly counts"<<prev_poly->count();
+    double angle=QLineF(poly->first(),prev_poly->first()).angle();
+    QLineF cutter(point,poly->first());
+    cutter.setLength(cutter.length()*100.0);
+    cutter.setAngle(angle);
+    cutter.setPoints(cutter.p2(),cutter.p1());
+    cutter.setLength(cutter.length()*100.0);
+    double dist1=10e6, dist2=10e3;
+    QPointF dummy;
+    for (int n=0;n<poly->count()-1;++n)
+    {
+        if(QLineF(poly->at(n),poly->at(n+1)).intersect(cutter,&dummy)==QLineF::BoundedIntersection)
+        {
+            dist1=QLineF(dummy,point).length();
+            break;
+        }
+    }
+    for (int n=0;n<prev_poly->count()-1;++n)
+    {
+        if(QLineF(prev_poly->at(n),prev_poly->at(n+1)).intersect(cutter,&dummy)==QLineF::BoundedIntersection)
+        {
+            dist2=QLineF(dummy,point).length();
+            break;
+        }
+    }
+#else
+    QPointF dummy;
+    double dist1=this->findDistancePoly(point,poly,&dummy);
+    double dist2=this->findDistancePoly(point,prev_poly,&dummy);
+#endif
+    if(dist2==0) return -goal;
+    if(dist1+dist2==0) return 10e6;
+    return (dist1/(dist1+dist2))-goal;
+}
+double ROUTAGE::pointDistanceRatioDeriv(double x, double xStep, double goal, bool * status, QPolygonF *poly, QPolygonF *prev_poly, QPolygonF *i_poly)
+{
+    double yr,yl;
+    double xl,xr;
+    double xMin=0.0;
+    double xMax=1.0;
+    xl=x-xStep;
+    if(xl<xMin)
+        xl=x;
+    xr=x+xStep;
+    if(xr>xMax)
+        xr=x;
+    if(xr==xl)
+    {
+        *status=false;
+        qWarning()<<"error in deriv:"<<xr<<x<<xStep;
+        return 0;
+    }
+    yl=pointDistanceRatio(xl,goal,poly,prev_poly,i_poly);
+    yr=pointDistanceRatio(xr,goal,poly,prev_poly,i_poly);
+    *status=true;
+    return((yr-yl)/(xr-xl));
+}
+bool ROUTAGE::newtownRaphson(double * root, double goal,double precision,QPolygonF *poly, QPolygonF *prev_poly, QPolygonF *i_poly)
+{
+    double stepGap=1000000;
+    double x0=0.5;
+    double x1=0.5;
+    double y0=0,y1=0;
+    double xMin=0;
+    double xMax=1;
+    bool status=false;
+    bool haveXneg=false;
+    bool haveXpos=false;
+    double xStep;
+    double xPos=0,xNeg=0, yPos=0, yNeg=0;
+    double df0=0;
+    int iterations;
+    double bestY=10e6,bestX=0;
+    for (iterations=1;iterations<200;++iterations)
+    {
+        if(x0<xMin)
+            x0=xMin;
+        if(x0>xMax)
+            x0=xMax;
+        y0=pointDistanceRatio(x0,goal,poly,prev_poly,i_poly);
+        //qWarning()<<x0<<y0;
+        if(qAbs(y0)<=precision)
+        {
+            *root=x0;
+            qWarning()<<"found it (lucky mode) in"<<iterations<<"loop(s)";
+            return true;
+        }
+        if(qAbs(y0)<bestY)
+        {
+            bestY=qAbs(y0);
+            bestX=x0;
+        }
+
+/*update data*/
+        if(y0>0)
+        {
+            if(haveXpos)
+            {
+                if(haveXneg)
+                {
+                    if(qAbs(x0-xNeg)<qAbs(xPos-xNeg))
+                    {
+                        xPos=x0;
+                        yPos=y0;
+                    }
+                }
+                else if(y0<yPos)
+                {
+                    xPos=x0;
+                    yPos=y0;
+                }
+            }
+            else
+            {
+                xPos=x0;
+                yPos=y0;
+                haveXpos=true;
+            }
+            status=false;
+        }
+        else if(y0<0)
+        {
+            if(haveXneg)
+            {
+                if(haveXpos)
+                {
+                    if(qAbs(x0-xPos)<qAbs(xPos-xNeg))
+                    {
+                        xNeg=x0;
+                        yNeg=y0;
+                    }
+                }
+                else if(-y0<-yNeg)
+                {
+                    xNeg=x0;
+                    yNeg=y0;
+                }
+            }
+            else
+            {
+                xNeg=x0;
+                yNeg=y0;
+                haveXneg=true;
+            }
+            status=false;
+        }
+        else
+        {
+            *root=x0;
+            status=true;
+        }
+/*end of update data*/
+        if(status)
+        {
+            qWarning()<<"found it in"<<iterations<<"loop(s)";
+            return status;
+        }
+        if(y0==y1 && iterations!=1)
+        {
+            qWarning()<<"not found (flat case 1)";
+            break;
+        }
+        y1=y0;
+        while(true)
+        {
+            if(qAbs(x0)<.0000000001)
+            {
+                if(haveXneg && haveXpos)
+                    xStep=qAbs(xPos-xNeg)/stepGap;
+                else
+                    xStep=(xMax-xMin)/stepGap;
+            }
+            else
+                xStep=qAbs(x0)/stepGap;
+            status=true;
+            for (int idf=0;idf<5;++idf)
+            {
+                df0=pointDistanceRatioDeriv(x0,xStep,goal,&status,poly,prev_poly,i_poly);
+                if(!status)
+                {
+                    double debugXstep=xStep;
+                    xStep=xStep/2.0;
+                    qWarning()<<"retrying deriv"<<debugXstep<<xStep;
+                }
+                else break;
+            }
+            //qWarning()<<"x0,xStep="<<x0<<xStep;
+            if(!status)
+            {
+                qWarning()<<"not found (anomaly in derivative function)";
+                return status;
+            }
+            if(qRound(qAbs(df0*100000000))==0) /* hit a flat spot->trouble*/
+            {
+                if(stepGap>10.0)
+                {
+                    stepGap=stepGap/10.0;
+                    continue;
+                }
+                else
+                {
+                    qWarning()<<"not found (flat case 2)";
+                    return false;
+                }
+            }
+            else
+                break;
+        }
+        /*Overshoot a bit to prevent from staying on just one side of root*/
+        x1=x0-1.000001*y0/df0;
+        double stepSize=qAbs(x1-x0)/qAbs(x0+x1);
+        if(stepSize<precision)
+        {
+            *root=x0;
+            qWarning()<<"found it after"<<iterations<<"loop(s)";
+            return true;
+        }
+        x0=x1;
+    }
+    if(bestY<precision*10.0 && bestX>=xMin &&bestY<=xMax)
+    {
+        *root=bestX;
+        qWarning()<<"found something not so good but still usable:"<<bestY;
+        return true;
+    }
+    qWarning()<<"not found after"<<iterations<<"loops. (Best find:"<<bestY<<")";
+    return false;
 }

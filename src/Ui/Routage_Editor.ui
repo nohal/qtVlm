@@ -500,19 +500,6 @@ Virements de bord</string>
         <bool>true</bool>
        </property>
       </widget>
-      <widget class="QCheckBox" name="i_iso">
-       <property name="geometry">
-        <rect>
-         <x>330</x>
-         <y>150</y>
-         <width>151</width>
-         <height>20</height>
-        </rect>
-       </property>
-       <property name="text">
-        <string>Inversed iso</string>
-       </property>
-      </widget>
      </widget>
      <widget class="QGroupBox" name="groupBox_eta">
       <property name="enabled">
@@ -1179,8 +1166,8 @@ Virements de bord</string>
      <widget class="QCheckBox" name="autoZoom">
       <property name="geometry">
        <rect>
-        <x>190</x>
-        <y>490</y>
+        <x>230</x>
+        <y>500</y>
         <width>131</width>
         <height>17</height>
        </rect>
@@ -1195,8 +1182,8 @@ Virements de bord</string>
      <widget class="QSlider" name="zoomLevel">
       <property name="geometry">
        <rect>
-        <x>220</x>
-        <y>510</y>
+        <x>260</x>
+        <y>520</y>
         <width>91</width>
         <height>19</height>
        </rect>
@@ -1225,56 +1212,6 @@ La différence est surtout sensible lors d'un routage en diagonale.</string>
       </property>
       <property name="tickInterval">
        <number>1</number>
-      </property>
-     </widget>
-     <widget class="QSlider" name="cloudLevel">
-      <property name="geometry">
-       <rect>
-        <x>380</x>
-        <y>510</y>
-        <width>91</width>
-        <height>19</height>
-       </rect>
-      </property>
-      <property name="toolTip">
-       <string>Reglage du niveau de la zone sensible </string>
-      </property>
-      <property name="minimum">
-       <number>0</number>
-      </property>
-      <property name="maximum">
-       <number>30</number>
-      </property>
-      <property name="pageStep">
-       <number>1</number>
-      </property>
-      <property name="sliderPosition">
-       <number>3</number>
-      </property>
-      <property name="orientation">
-       <enum>Qt::Horizontal</enum>
-      </property>
-      <property name="tickPosition">
-       <enum>QSlider::NoTicks</enum>
-      </property>
-      <property name="tickInterval">
-       <number>1</number>
-      </property>
-     </widget>
-     <widget class="QCheckBox" name="showCloud">
-      <property name="geometry">
-       <rect>
-        <x>350</x>
-        <y>490</y>
-        <width>131</width>
-        <height>17</height>
-       </rect>
-      </property>
-      <property name="text">
-       <string>Zone sensible</string>
-      </property>
-      <property name="checked">
-       <bool>true</bool>
       </property>
      </widget>
     </widget>
@@ -1306,6 +1243,40 @@ La différence est surtout sensible lors d'un routage en diagonale.</string>
       <widget class="QPushButton" name="btCancel">
        <property name="text">
         <string>Annuler</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QCheckBox" name="i_iso">
+       <property name="text">
+        <string>Isochrones
+inverses</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QLabel" name="label_12">
+       <property name="text">
+        <string>Valeur Isoroute</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QSpinBox" name="isoRoute">
+       <property name="alignment">
+        <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+       </property>
+       <property name="suffix">
+        <string> min</string>
+       </property>
+       <property name="minimum">
+        <number>0</number>
+       </property>
+       <property name="maximum">
+        <number>99999</number>
+       </property>
+       <property name="value">
+        <number>60</number>
        </property>
       </widget>
      </item>
@@ -1345,8 +1316,6 @@ La différence est surtout sensible lors d'un routage en diagonale.</string>
   <tabstop>useVac</tabstop>
   <tabstop>multi</tabstop>
   <tabstop>visibleOnly</tabstop>
-  <tabstop>showCloud</tabstop>
-  <tabstop>cloudLevel</tabstop>
   <tabstop>checkCoast</tabstop>
   <tabstop>tabWidget</tabstop>
   <tabstop>pruneWakeAngle</tabstop>

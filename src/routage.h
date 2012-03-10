@@ -171,16 +171,14 @@ class ROUTAGE : public QObject
         void setVisibleOnly(bool b){this->visibleOnly=b;}
         int getZoomLevel(){return this->zoomLevel;}
         void setZoomLevel(int i){this->zoomLevel=i;}
-        double getCloudLevel(){return this->cloudLevel;}
-        void setCloudLevel(double d){this->cloudLevel=d;}
-        bool getShowCloud(){return showCloud;}
-        void setShowCloud(bool b){this->showCloud=b;}
-        void drawCloud();
         void calculateInverse();
         bool getI_iso(){return i_iso;}
         void setI_iso(bool b){this->i_iso=b;}
         bool getI_done(){return i_done;}
         time_t getI_eta(){return i_eta;}
+        void showIsoRoute();
+        int getIsoRouteValue(){return isoRouteValue;}
+        void setIsoRouteValue(int i){this->isoRouteValue=i;}
     public slots:
         void slot_edit();
         void slot_abort(){this->aborted=true;}
@@ -299,9 +297,6 @@ class ROUTAGE : public QObject
         QTimer * timerTempo;
         bool approaching;
         int zoomLevel;
-        double cloudLevel;
-        bool showCloud;
-        vlmLine * cloud;
         QList<vlmPointGraphic *> isoPointList;
         bool arrived;
         time_t eta;
@@ -315,6 +310,12 @@ class ROUTAGE : public QObject
         QList<vlmLine *> i_isochrones;
         QList<vlmLine *> i_segments;
         bool i_done;
-        void showIsoRoute();
+        static QPointF pointAt(const QPolygonF * poly, const double ratio);
+        double findDistancePoly(const QPointF P, const QPolygonF * poly, QPointF * closest);
+        double pointDistanceRatio(double x, double goal, QPolygonF *poly, QPolygonF *prev_poly, QPolygonF *i_poly);
+        double pointDistanceRatioDeriv(double x, double xStep, double goal, bool * status, QPolygonF *poly, QPolygonF *prev_poly, QPolygonF *i_poly);
+        bool newtownRaphson(double * root, double goal,double precision,QPolygonF *poly, QPolygonF *prev_poly, QPolygonF *i_poly);
+        vlmLine * isoRoute;
+        int isoRouteValue;
     };
 #endif // ROUTAGE_H

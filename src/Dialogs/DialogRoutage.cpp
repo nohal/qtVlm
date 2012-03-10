@@ -61,6 +61,12 @@ DialogRoutage::DialogRoutage(ROUTAGE *routage,myCentralWidget *parent)
     connect(this->Default,SIGNAL(clicked()),this,SLOT(slot_default()));
     this->i_iso->setChecked(routage->getI_done());
     this->i_iso->setDisabled((!routage->isDone() || routage->getI_done()));
+    this->isoRoute->setDisabled(!routage->isDone());
+    if(routage->isDone())
+    {
+        this->isoRoute->setMaximum(routage->getTimeStepMore24());
+        this->isoRoute->setValue(routage->getIsoRouteValue());
+    }
     if(mySize.height() > screenSize.height())
     {
         mySize.setHeight(screenSize.height());
@@ -93,8 +99,6 @@ DialogRoutage::DialogRoutage(ROUTAGE *routage,myCentralWidget *parent)
     whatIfTime->setValue(routage->getWhatIfTime());
     autoZoom->setChecked(routage->getAutoZoom());
     this->zoomLevel->setValue(routage->getZoomLevel());
-    showCloud->setChecked(routage->getShowCloud());
-    this->cloudLevel->setValue((routage->getCloudLevel()-1)*100);
     visibleOnly->setChecked(routage->getVisibleOnly());
     this->poiPrefix->setText(routage->getPoiPrefix());
     this->startFromBoat->setChecked(routage->getRouteFromBoat());
@@ -266,8 +270,6 @@ void DialogRoutage::slot_default()
     this->whatIfUse->setChecked(false);
     this->windForced->setChecked(false);
     this->checkCoast->setChecked(true);
-    this->showCloud->setChecked(false);
-    this->cloudLevel->setValue(3);
 }
 
 //---------------------------------------
@@ -301,8 +303,6 @@ void DialogRoutage::done(int result)
         routage->setMaxPres(this->maxPres->value());
         routage->setMinPortant(this->minPortant->value());
         routage->setMinPres(this->minPres->value());
-        routage->setShowCloud(this->showCloud->isChecked());
-        routage->setCloudLevel((this->cloudLevel->value()/100.0)+1.0);
         if(parent->getPlayer()->getType()!=BOAT_REAL)
         {
             if(parent->getBoats())
@@ -393,8 +393,6 @@ void DialogRoutage::done(int result)
         routage->setUseRouteModule(this->useVac->isChecked());
         if(!routage->isDone())
             Settings::setSetting("autoConvertToRoute",convRoute->isChecked()?1:0);
-        else
-            routage->drawCloud();
         if(this->convRoute->isChecked())
         {
             if(!routage->isConverted())
@@ -427,7 +425,16 @@ void DialogRoutage::done(int result)
             }
         }
         else
+        {
+            if(i_iso->isChecked() && routage->getTimeStepLess24()!=routage->getTimeStepMore24())
+            {
+                QMessageBox::critical(0,tr("Isochrones inverses"),
+                                      tr("Pour l'instant, on ne peut pas calculer les isochrones inverses<br>si la duree des isochrones est variable"));
+                return;
+            }
+            routage->setIsoRouteValue(this->isoRoute->value());
             routage->setI_iso(this->i_iso->isChecked());
+        }
     }
     if(result == QDialog::Rejected)
     {
