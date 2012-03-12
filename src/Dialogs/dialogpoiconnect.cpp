@@ -19,7 +19,7 @@ DialogPoiConnect::DialogPoiConnect(POI * poi,myCentralWidget *parent) :
         {
             this->comboPoi->addItem(p->getName(),m);
             if(p->getConnectedPoi()==poi)
-                this->comboPoi->setCurrentIndex(m);
+                this->comboPoi->setCurrentIndex(comboPoi->count()-1);
         }
     }
 }

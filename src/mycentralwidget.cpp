@@ -537,6 +537,36 @@ void myCentralWidget::loadBoat(void)
 void myCentralWidget::loadPOI(void)
 {
     emit readPOIData("poi.dat");
+    foreach(POI * poi1,this->poi_list)
+    {
+        if(poi1->getLonConnected()!=-1)
+        {
+            foreach (POI * poi2,poi_list)
+            {
+                if(qRound(poi2->getLongitude()*10000)==qRound(poi1->getLonConnected()*10000)&&
+                   qRound(poi2->getLatitude()*10000)==qRound(poi1->getLatConnected()*10000))
+                {
+                    if(poi2->getConnectedPoi()==NULL)
+                    {
+                        poi1->setConnectedPoi(poi2);
+                        poi2->setConnectedPoi(poi1);
+                        poi2->setLineWidth(poi1->getLineWidth());
+                        poi2->setLineColor(poi1->getLineColor());
+                        vlmLine * lineBetweenPois=new vlmLine(proj,this->getScene(),Z_VALUE_POI);
+                        lineBetweenPois->addVlmPoint(vlmPoint(poi1->getLongitude(),poi1->getLatitude()));
+                        lineBetweenPois->addVlmPoint(vlmPoint(poi2->getLongitude(),poi2->getLatitude()));
+                        poi1->setLineBetweenPois(lineBetweenPois);
+                        poi2->setLineBetweenPois(lineBetweenPois);
+                        QPen pen(poi1->getLineColor());
+                        pen.setWidthF(poi1->getLineWidth());
+                        lineBetweenPois->setLinePen(pen);
+                        lineBetweenPois->slot_showMe();
+                    }
+                    break;
+                }
+            }
+        }
+    }
 }
 
 myCentralWidget::~myCentralWidget()

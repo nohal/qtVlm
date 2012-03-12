@@ -215,7 +215,8 @@ inline vlmPoint checkCoastCollision(const vlmPoint point)
     y1=newPoint.origin->y;
     x2=newPoint.x;
     y2=newPoint.y;
-    newPoint.isDead=newPoint.routage->getMap()->crossing(QLineF(x1,y1,x2,y2),QLineF(newPoint.origin->lon,newPoint.origin->lat,newPoint.lon,newPoint.lat));
+    newPoint.isDead=(newPoint.routage->getCheckCoast() && newPoint.routage->getMap()->crossing(QLineF(x1,y1,x2,y2),QLineF(newPoint.origin->lon,newPoint.origin->lat,newPoint.lon,newPoint.lat)))
+                 || (newPoint.routage->getCheckLine() && newPoint.routage->crossBarriere(QLineF(x1,y1,x2,y2)));
     return newPoint;
 }
 inline QList<vlmPoint> finalEpuration(const QList<vlmPoint> &listPointsX)
@@ -737,6 +738,7 @@ ROUTAGE::ROUTAGE(QString name, Projection *proj, Grib *grib, QGraphicsScene * my
     this->useRouteModule=Settings::getSetting("useRouteModule",1).toInt()==1;
     this->useConverge=Settings::getSetting("useConverge",1).toInt()==1;
     this->checkCoast=Settings::getSetting("checkCoast",1).toInt()==1;
+    this->checkLine=Settings::getSetting("checkLine",1).toInt()==1;
     this->visibleOnly=Settings::getSetting("visibleOnly",1).toInt()==1;
     this->autoZoom=Settings::getSetting("autoZoom",1).toInt()==1;
     this->zoomLevel=Settings::getSetting("autoZoomLevel",2).toInt();
@@ -829,6 +831,7 @@ void ROUTAGE::calculate()
         Settings::setSetting("useRouteModule",useRouteModule?1:0);
         Settings::setSetting("useConverge",useConverge?1:0);
         Settings::setSetting("checkCoast",checkCoast?1:0);
+        Settings::setSetting("checkLine",checkLine?1:0);
         Settings::setSetting("visibleOnly",visibleOnly?1:0);
         Settings::setSetting("autoZoom",autoZoom?1:0);
         Settings::setSetting("autoZoomLevel",zoomLevel);
@@ -994,6 +997,21 @@ void ROUTAGE::slot_calculate()
     int msecs_15=0;
     int nbCaps=0;
     int nbCapsPruned=0;
+    QList<POI *> poiList=parent->getPois();
+    for(int p=0;p<poiList.count();++p)
+    {
+        if(poiList.at(p)->getConnectedPoi()!=NULL)
+        {
+            POI * poi1=poiList.at(p);
+            POI * poi2=poiList.at(p)->getConnectedPoi();
+            poiList.removeAll(poi2);
+            double x1,y1,x2,y2;
+            proj->map2screenDouble(Util::cLFA(poi1->getLongitude(),proj->getXmin()),poi1->getLatitude(),&x1,&y1);
+            proj->map2screenDouble(Util::cLFA(poi2->getLongitude(),proj->getXmin()),poi2->getLatitude(),&x2,&y2);
+            barrieres.append(QLineF(x1,y1,x2,y2));
+        }
+    }
+    qWarning()<<"barrieres has"<<barrieres.count()<<"line(s)";
     msecsD1=0;
     msecsD2=0;
     debugCross0=0;
@@ -1311,11 +1329,12 @@ void ROUTAGE::slot_calculate()
                 for(int fp=0;fp<findPoints.count();++fp)
                 {
                     vlmPoint newPoint=findPoints.at(fp);
-                    if(checkCoast)
+                    if(checkCoast||checkLine)
                     {
 /*check crossing with coast*/
                         tfp.start();
-                        if(map->crossing(QLineF(list->at(n).x,list->at(n).y,newPoint.x,newPoint.y),QLineF(list->at(n).lon,list->at(n).lat,newPoint.lon,newPoint.lat)))
+                        if((checkCoast && map->crossing(QLineF(list->at(n).x,list->at(n).y,newPoint.x,newPoint.y),QLineF(list->at(n).lon,list->at(n).lat,newPoint.lon,newPoint.lat)))
+                                || (checkLine && crossBarriere(QLineF(list->at(n).x,list->at(n).y,newPoint.x,newPoint.y))))
                         {
                             msecs_14=msecs_14+tfp.elapsed();
 
@@ -1576,7 +1595,7 @@ void ROUTAGE::slot_calculate()
                     newPoint.x=x;
                     newPoint.y=y;
 #if 1 /*check again if crossing with coast*/
-                    if(checkCoast && !this->useMultiThreading)
+                    if((checkCoast||checkLine) && !this->useMultiThreading)
                     {
                         t2.start();
                         double x1,y1,x2,y2;
@@ -1584,7 +1603,8 @@ void ROUTAGE::slot_calculate()
                         y1=newPoint.origin->y;
                         x2=newPoint.x;
                         y2=newPoint.y;
-                        if(map->crossing(QLineF(x1,y1,x2,y2),QLineF(newPoint.origin->lon,newPoint.origin->lat,newPoint.lon,newPoint.lat)))
+                        if((checkCoast && map->crossing(QLineF(x1,y1,x2,y2),QLineF(newPoint.origin->lon,newPoint.origin->lat,newPoint.lon,newPoint.lat)))
+                            ||( checkLine && crossBarriere(QLineF(x1,y1,x2,y2))))
                         {
                             msecs_14=msecs_14+t2.elapsed();
                             tempPoints.removeAt(np);
@@ -1606,7 +1626,7 @@ void ROUTAGE::slot_calculate()
                         newPoint.distIso=ROUTAGE::findDistancePreviousIso(newPoint, &previousIso);
                     tempPoints.replace(np,newPoint);
                 }
-                if(checkCoast && this->useMultiThreading)
+                if((checkCoast || checkLine) && this->useMultiThreading)
                 {
                     t2.start();
                     tempPoints = QtConcurrent::blockingMapped(tempPoints, checkCoastCollision);
@@ -1657,14 +1677,15 @@ void ROUTAGE::slot_calculate()
             for (int n=0;n<tempPoints.count();++n)
             {
                 if(tempPoints.at(n).isDead) continue;
-                if(n!=tempPoints.count()-1 && checkCoast)
+                if(n!=tempPoints.count()-1 && (checkCoast || checkLine))
                 {
                     t2.start();
                     x1=tempPoints.at(n).x;
                     y1=tempPoints.at(n).y;
                     x2=tempPoints.at(n+1).x;
                     y2=tempPoints.at(n+1).y;
-                    if(map->crossing(QLineF(x1,y1,x2,y2),QLineF(tempPoints.at(n).lon,tempPoints.at(n).lat,tempPoints.at(n+1).lon,tempPoints.at(n+1).lat)))
+                    if((checkCoast && map->crossing(QLineF(x1,y1,x2,y2),QLineF(tempPoints.at(n).lon,tempPoints.at(n).lat,tempPoints.at(n+1).lon,tempPoints.at(n+1).lat)))
+                        || (checkLine && crossBarriere(QLineF(x1,y1,x2,y2))))
                     {
                         vlmPoint temp=tempPoints.at(n);
                         temp.isBroken=true;
@@ -1813,7 +1834,8 @@ void ROUTAGE::slot_calculate()
                 orth.setPoints(from.lon,from.lat,to.lon,to.lat);
                 if(orth.getDistance()<myBoat->getPolarData()->getMaxSpeed()*60/this->getTimeStep())
                 {
-                    if(checkCoast && map->crossing(QLineF(list->at(n).x,list->at(n).y,xa,ya),QLineF(list->at(n).lon,list->at(n).lat,arrival.x(),arrival.y())))
+                    if(checkCoast && (map->crossing(QLineF(list->at(n).x,list->at(n).y,xa,ya),QLineF(list->at(n).lon,list->at(n).lat,arrival.x(),arrival.y()))
+                       || (checkLine && crossBarriere(QLineF(list->at(n).x,list->at(n).y,xa,ya)))))
                         continue;
                     int thisTime=calculateTimeRoute(from,to, &dataThread, NULL, NULL, (this->getTimeStep()+1)*60);
                     qWarning()<<"thisTime="<<thisTime<<this->getTimeStep()*60;
@@ -1862,7 +1884,9 @@ void ROUTAGE::slot_calculate()
             dataThread.i_iso=i_iso;
             for(int n=0;n<list->count();++n)
             {
-                if(checkCoast && map->crossing(QLineF(list->at(n).x,list->at(n).y,xa,ya),QLineF(list->at(n).lon,list->at(n).lat,arrival.x(),arrival.y())))
+                if((checkCoast && map->crossing(QLineF(list->at(n).x,list->at(n).y,xa,ya),
+                        QLineF(list->at(n).lon,list->at(n).lat,arrival.x(),arrival.y())))
+                    || (checkLine && crossBarriere(QLineF(list->at(n).x,list->at(n).y,xa,ya))))
                     continue;
                 vlmPoint from=list->at(n);
                 int thisTime=calculateTimeRoute(from,to,&dataThread);
@@ -2233,9 +2257,10 @@ void ROUTAGE::pruneWake(int wakeAngle)
             wake.append(QPointF(x2,y2));
             if(wake.containsPoint(QPointF(x1,y1),Qt::OddEvenFill))
             {
-                if(this->checkCoast)
+                if(this->checkCoast || checkLine)
                 {
-                    if(!map->crossing(QLineF(x1,y1,pIso->at(m).x,pIso->at(m).y),QLineF(tempPoints.at(n).lon,tempPoints.at(n).lat,pIso->at(m).lon,pIso->at(m).lat)))
+                    if((!checkCoast || !map->crossing(QLineF(x1,y1,pIso->at(m).x,pIso->at(m).y),QLineF(tempPoints.at(n).lon,tempPoints.at(n).lat,pIso->at(m).lon,pIso->at(m).lat)))
+                        && (!checkLine || !crossBarriere(QLineF(x1,y1,pIso->at(m).x,pIso->at(m).y))))
                     {
                         tempPoints.removeAt(n);
                         break;
@@ -3053,6 +3078,7 @@ void ROUTAGE::setFromRoutage(ROUTAGE *fromRoutage, bool editOptions)
     this->windIsForced=fromRoutage->getWindIsForced();
     this->useRouteModule=fromRoutage->getUseRouteModule();
     this->checkCoast=fromRoutage->getCheckCoast();
+    this->checkLine=fromRoutage->getCheckLine();
     this->useConverge=fromRoutage->useConverge;
     this->pruneWakeAngle=fromRoutage->pruneWakeAngle;
     this->routeFromBoat=false;
@@ -3155,6 +3181,17 @@ void ROUTAGE::calculateInverse()
 }
 void ROUTAGE::showIsoRoute()
 {
+<<<<<<< .mine
+    isoRouteValue=60;
+    while(!isoRoutes.isEmpty())
+        delete isoRoutes.takeFirst();
+    QColor red=QColor(Qt::red).lighter(170);
+    red.setAlpha(100);
+    double goal=(double)(timeStepMore24-isoRouteValue)/(double)timeStepMore24;
+    double goalInc=0.1;
+    goal-=goalInc;
+    while (true)
+=======
     if(isoRoute)
     {
         delete isoRoute;
@@ -3166,19 +3203,28 @@ void ROUTAGE::showIsoRoute()
     int ii=0;
     QList<vlmPoint> left,right;
     for(int n=arrived?1:0;n<result->count()-1;++n)
+>>>>>>> .r1181
     {
-        --i;
-        if(i<1) break;
-        ++ii;
-        if(ii>=i_isochrones.count()) break;
-        qWarning()<<i<<ii<<isochrones.count()<<i_isochrones.count();
-        vlmLine * isochrone=isochrones.at(i);
-        vlmLine * i_isochrone=i_isochrones.at(ii);
-        qWarning()<<QDateTime().fromTime_t(isochrone->getPoints()->first().eta).toUTC().toString("dd MMM-hh:mm")<<
-                    QDateTime().fromTime_t(i_isochrone->getPoints()->first().eta).toUTC().toString("dd MMM-hh:mm");
-        int indice=isochrone->getPoints()->indexOf(result->getPoints()->at(n));
-        if(indice<0)
+        goal=qMax(0.0,goal+goalInc);
+        if(goal>.999) break;
+        int i=isochrones.count();
+        int ii=0;
+        QList<vlmPoint> left,right;
+        for(int n=arrived?1:0;n<result->count()-1;++n)
         {
+<<<<<<< .mine
+            --i;
+            if(i<1) break;
+            ++ii;
+            if(ii>=i_isochrones.count()) break;
+            qWarning()<<i<<ii<<isochrones.count()<<i_isochrones.count();
+            vlmLine * isochrone=isochrones.at(i);
+            vlmLine * i_isochrone=i_isochrones.at(ii);
+            qWarning()<<QDateTime().fromTime_t(isochrone->getPoints()->first().eta).toUTC().toString("dd MMM-hh:mm")<<
+                        QDateTime().fromTime_t(i_isochrone->getPoints()->first().eta).toUTC().toString("dd MMM-hh:mm");
+            int indice=isochrone->getPoints()->indexOf(result->getPoints()->at(n));
+            if(indice<0)
+=======
             qWarning()<<"erreur SIR 1";
             return;
         }
@@ -3196,23 +3242,169 @@ void ROUTAGE::showIsoRoute()
             proj->map2screenDouble(Util::cLFA(p2.lon,proj->getXmin()),p2.lat,&x2,&y2);
             QLineF line1(x1,y1,x2,y2);
             for(int is=0;is<i_isochrone->getPoints()->count()-1;++is)
+>>>>>>> .r1181
             {
-                vlmPoint ip1=i_isochrone->getPoints()->at(is);
-                vlmPoint ip2=i_isochrone->getPoints()->at(is+1);
-                QLineF line2(ip1.x,ip1.y,ip2.x,ip2.y);
-                QPointF cross;
-                if(line1.intersect(line2,&cross)==QLineF::BoundedIntersection)
+                qWarning()<<"erreur SIR 1";
+                return;
+            }
+            bool found=false;
+            vlmPoint Cross;
+            double lon,lat;
+            Cross=result->getPoints()->at(n);
+            int js=0;
+            for(int s=indice;s<isochrone->getPoints()->count()-1;++s)
+            {
+                vlmPoint p1=isochrone->getPoints()->at(s);
+                vlmPoint p2=isochrone->getPoints()->at(s+1);
+                double x1,y1,x2,y2; /*recalculation necessary because zoom has changed*/
+                proj->map2screenDouble(Util::cLFA(p1.lon,proj->getXmin()),p1.lat,&x1,&y1);
+                proj->map2screenDouble(Util::cLFA(p2.lon,proj->getXmin()),p2.lat,&x2,&y2);
+                QLineF line1(x1,y1,x2,y2);
+                for(int is=0;is<i_isochrone->getPoints()->count()-1;++is)
                 {
+<<<<<<< .mine
+                    vlmPoint ip1=i_isochrone->getPoints()->at(is);
+                    vlmPoint ip2=i_isochrone->getPoints()->at(is+1);
+                    QLineF line2(ip1.x,ip1.y,ip2.x,ip2.y);
+                    QPointF cross;
+                    if(line1.intersect(line2,&cross)==QLineF::BoundedIntersection)
+                    {
+                        proj->screen2mapDouble(cross.x(),cross.y(),&lon,&lat);
+                        Cross.lon=lon;
+                        Cross.lat=lat;
+                        Cross.x=cross.x();
+                        Cross.y=cross.y();
+                        found=true;
+                        js=qMax(0,is-1);
+                        break;
+                    }
+                }
+                if(found) break;
+            }
+            if(qRound(goal*10000)!=0)
+            {
+                Cross=result->getPoints()->at(n);
+                vlmLine * prev_isochrone=isochrones.at(i-1);
+                QPolygonF poly,prev_poly,i_poly;
+                double  x1,y1;
+                for(int s=indice;s<isochrone->getPoints()->count();++s)
+                {
+                    vlmPoint p1=isochrone->getPoints()->at(s);
+                    proj->map2screenDouble(Util::cLFA(p1.lon,proj->getXmin()),p1.lat,&x1,&y1);
+                    poly.append(QPointF(x1,y1));
+                }
+                int indicePrev=prev_isochrone->getPoints()->indexOf(result->getPoints()->at(n+1));
+                if(indicePrev<0)
+                {
+                    qWarning()<<"erreur SIR 2";
+                    return;
+                }
+                for(int s=indicePrev;s<prev_isochrone->getPoints()->count();++s)
+                {
+                    vlmPoint p1=prev_isochrone->getPoints()->at(s);
+                    proj->map2screenDouble(Util::cLFA(p1.lon,proj->getXmin()),p1.lat,&x1,&y1);
+                    prev_poly.append(QPointF(x1,y1));
+                }
+                for(int s=js;s<i_isochrone->count();++s)
+                {
+                    vlmPoint p1=i_isochrone->getPoints()->at(s);
+                    if(p1.isBroken) break;
+                    double x1,y1; /*recalculation necessary because zoom has changed*/
+                    proj->map2screenDouble(Util::cLFA(p1.lon,proj->getXmin()),p1.lat,&x1,&y1);
+                    i_poly.append(QPointF(x1,y1));
+                }
+#if 1
+                for (int rrr=0;rrr<result->count()-1;++rrr)
+                {
+                    double x2,y2;
+                    vlmPoint p1=result->getPoints()->at(rrr);
+                    vlmPoint p2=result->getPoints()->at(rrr+1);
+                    proj->map2screenDouble(Util::cLFA(p1.lon,proj->getXmin()),p1.lat,&x1,&y1);
+                    proj->map2screenDouble(Util::cLFA(p2.lon,proj->getXmin()),p2.lat,&x2,&y2);
+                    QLineF rLine(x1,y1,x2,y2);
+                    found=false;
+                    for(int pp=0;pp<i_poly.count()-1;++pp)
+                    {
+                        QPointF dummy;
+                        QLineF iLine(i_poly.at(pp),i_poly.at(pp+1));
+                        if(rLine.intersect(iLine,&dummy)==QLineF::BoundedIntersection)
+                        {
+                            while(i_poly.count()>pp+2)
+                                i_poly.remove(i_poly.count()-1);
+                            found=true;
+                            break;
+                        }
+                    }
+                    if(found) break;
+                }
+#endif
+                QPen pendebug(Qt::blue);
+                pendebug.setWidthF(5);
+#if 0
+                vlmLine * debug1=new vlmLine(proj,myscene,Z_VALUE_ROUTAGE+10);
+                debug1->setParent(this);
+                debug1->setLinePen(pendebug);
+                foreach (QPointF pp,poly)
+                {
+                    proj->screen2mapDouble(pp.x(),pp.y(),&lon,&lat);
+                    debug1->addPoint(lat,lon);
+                }
+                debug1->slot_showMe();
+#endif
+#if 0
+                vlmLine * debug2=new vlmLine(proj,myscene,Z_VALUE_ROUTAGE+10);
+                debug2->setParent(this);
+                pendebug.setColor(Qt::white);
+                debug2->setLinePen(pendebug);
+                foreach (QPointF pp,i_poly)
+                {
+                    proj->screen2mapDouble(pp.x(),pp.y(),&lon,&lat);
+                    debug2->addPoint(lat,lon);
+                }
+                debug2->slot_showMe();
+#endif
+#if 0
+                vlmLine * debug3=new vlmLine(proj,myscene,Z_VALUE_ROUTAGE+10);
+                debug3->setParent(this);
+                pendebug.setColor(Qt::magenta);
+                debug3->setLinePen(pendebug);
+                foreach (QPointF pp,prev_poly)
+                {
+                    proj->screen2mapDouble(pp.x(),pp.y(),&lon,&lat);
+                    debug3->addPoint(lat,lon);
+                }
+                debug3->slot_showMe();
+#endif
+                double root=0.5;
+                double precision=0.01;
+                if(newtownRaphson(&root,goal,precision,&poly,&prev_poly,&i_poly))
+                {
+                    QPointF cross=pointAt(&i_poly,root);
                     proj->screen2mapDouble(cross.x(),cross.y(),&lon,&lat);
+=======
+                    proj->screen2mapDouble(cross.x(),cross.y(),&lon,&lat);
+>>>>>>> .r1181
                     Cross.lon=lon;
                     Cross.lat=lat;
                     Cross.x=cross.x();
                     Cross.y=cross.y();
+<<<<<<< .mine
+                    left.append(Cross);
+=======
                     found=true;
                     js=qMax(0,is-1);
                     break;
+>>>>>>> .r1181
                 }
+                /*if not found let it draw a line hoping that next i_iso will be ok*/
             }
+<<<<<<< .mine
+            else if (found)
+                left.append(Cross);
+            js=i_isochrone->getPoints()->count()-1;
+            found=false;
+            for(int s=indice;s>0;--s)
+=======
             if(found) break;
         }
         if(qRound(goal*10000)!=0)
@@ -3340,25 +3532,193 @@ void ROUTAGE::showIsoRoute()
             proj->map2screenDouble(Util::cLFA(p2.lon,proj->getXmin()),p2.lat,&x2,&y2);
             QLineF line1(x1,y1,x2,y2);
             for(int is=i_isochrone->getPoints()->count()-1;is>0;--is)
+>>>>>>> .r1181
             {
+<<<<<<< .mine
+                vlmPoint p1=isochrone->getPoints()->at(s);
+                vlmPoint p2=isochrone->getPoints()->at(s-1);
+                double x1,y1,x2,y2; /*recalculation necessary because zoom has changed*/
+                proj->map2screenDouble(Util::cLFA(p1.lon,proj->getXmin()),p1.lat,&x1,&y1);
+                proj->map2screenDouble(Util::cLFA(p2.lon,proj->getXmin()),p2.lat,&x2,&y2);
+                QLineF line1(x1,y1,x2,y2);
+                for(int is=i_isochrone->getPoints()->count()-1;is>0;--is)
+=======
                 vlmPoint ip1=i_isochrone->getPoints()->at(is);
                 vlmPoint ip2=i_isochrone->getPoints()->at(is-1);
                 QLineF line2(ip1.x,ip1.y,ip2.x,ip2.y);
                 QPointF cross;
                 if(line1.intersect(line2,&cross)==QLineF::BoundedIntersection)
+>>>>>>> .r1181
                 {
+<<<<<<< .mine
+                    vlmPoint ip1=i_isochrone->getPoints()->at(is);
+                    vlmPoint ip2=i_isochrone->getPoints()->at(is-1);
+                    QLineF line2(ip1.x,ip1.y,ip2.x,ip2.y);
+                    QPointF cross;
+                    if(line1.intersect(line2,&cross)==QLineF::BoundedIntersection)
+                    {
+                        proj->screen2mapDouble(cross.x(),cross.y(),&lon,&lat);
+                        Cross.lon=lon;
+                        Cross.lat=lat;
+                        Cross.x=cross.x();
+                        Cross.y=cross.y();
+                        found=true;
+                        js=qMax(0,is);
+                        break;
+                    }
+                }
+                if(found) break;
+            }
+            if(qRound(goal*10000)!=0)
+            {
+                Cross=result->getPoints()->at(n);
+                vlmLine * prev_isochrone=isochrones.at(i-1);
+                QPolygonF poly,prev_poly,i_poly;
+                double  x1,y1;
+                for(int s=indice;s>=0;--s)
+                {
+                    vlmPoint p1=isochrone->getPoints()->at(s);
+                    proj->map2screenDouble(Util::cLFA(p1.lon,proj->getXmin()),p1.lat,&x1,&y1);
+                    poly.append(QPointF(x1,y1));
+                }
+                int indicePrev=prev_isochrone->getPoints()->indexOf(result->getPoints()->at(n+1));
+                if(indicePrev<0)
+                {
+                    qWarning()<<"erreur SIR 2-2";
+                    return;
+                }
+                for(int s=indicePrev;s>=0;--s)
+                {
+                    vlmPoint p1=prev_isochrone->getPoints()->at(s);
+                    proj->map2screenDouble(Util::cLFA(p1.lon,proj->getXmin()),p1.lat,&x1,&y1);
+                    prev_poly.append(QPointF(x1,y1));
+                }
+#if 1
+                int intersection=i_isochrone->getPoints()->count()-1;
+                for (int rrr=0;rrr<result->count()-1;++rrr)
+                {
+                    double x2,y2;
+                    vlmPoint p1=result->getPoints()->at(rrr);
+                    vlmPoint p2=result->getPoints()->at(rrr+1);
+                    proj->map2screenDouble(Util::cLFA(p1.lon,proj->getXmin()),p1.lat,&x1,&y1);
+                    proj->map2screenDouble(Util::cLFA(p2.lon,proj->getXmin()),p2.lat,&x2,&y2);
+                    QLineF rLine(x1,y1,x2,y2);
+                    found=false;
+                    for(int pp=0;pp<i_isochrone->getPoints()->count()-1;++pp)
+                    {
+                        QPointF dummy;
+                        p1=i_isochrone->getPoints()->at(pp);
+                        p2=i_isochrone->getPoints()->at(pp+1);
+                        proj->map2screenDouble(Util::cLFA(p1.lon,proj->getXmin()),p1.lat,&x1,&y1);
+                        proj->map2screenDouble(Util::cLFA(p2.lon,proj->getXmin()),p2.lat,&x2,&y2);
+                        QLineF iLine(x1,y1,x2,y2);
+                        if(rLine.intersect(iLine,&dummy)==QLineF::BoundedIntersection)
+                        {
+                            intersection=pp;
+                            found=true;
+                            break;
+                        }
+                    }
+                    if(found) break;
+                }
+                if(!found)
+                    qWarning()<<"i_poly does NOT cross result(right)!!!!!";
+#endif
+                for(int s=js;s>=0;--s)
+                {
+                    vlmPoint p1=i_isochrone->getPoints()->at(s);
+                    if(s<intersection) break;
+                    if(p1.isBroken)
+                    {
+                        i_poly.clear();
+                    }
+                    double x1,y1; /*recalculation necessary because zoom has changed*/
+                    proj->map2screenDouble(Util::cLFA(p1.lon,proj->getXmin()),p1.lat,&x1,&y1);
+                    i_poly.append(QPointF(x1,y1));
+                }
+                QPen pendebug(Qt::blue);
+                pendebug.setWidthF(5);
+#if 0
+                if(n==39)
+                    pendebug.setColor(Qt::magenta);
+                vlmLine * debug1=new vlmLine(proj,myscene,Z_VALUE_ROUTAGE+10);
+                debug1->setParent(this);
+                debug1->setLinePen(pendebug);
+                foreach (QPointF pp,poly)
+                {
+                    proj->screen2mapDouble(pp.x(),pp.y(),&lon,&lat);
+                    debug1->addPoint(lat,lon);
+                }
+                debug1->slot_showMe();
+#endif
+#if 0
+                vlmLine * debug2=new vlmLine(proj,myscene,Z_VALUE_ROUTAGE+10);
+                debug2->setParent(this);
+                pendebug.setColor(Qt::white);
+                debug2->setLinePen(pendebug);
+                foreach (QPointF pp,i_poly)
+                {
+                    proj->screen2mapDouble(pp.x(),pp.y(),&lon,&lat);
+                    debug2->addPoint(lat,lon);
+                }
+                debug2->slot_showMe();
+#endif
+#if 0
+                vlmLine * debug3=new vlmLine(proj,myscene,Z_VALUE_ROUTAGE+10);
+                debug3->setParent(this);
+                pendebug.setColor(Qt::magenta);
+                debug3->setLinePen(pendebug);
+                foreach (QPointF pp,prev_poly)
+                {
+                    proj->screen2mapDouble(pp.x(),pp.y(),&lon,&lat);
+                    debug3->addPoint(lat,lon);
+                }
+                debug3->slot_showMe();
+#endif
+                double root=0.5;
+                double precision=0.01;
+                if(newtownRaphson(&root,goal,precision,&poly,&prev_poly,&i_poly))
+                {
+                    QPointF cross=pointAt(&i_poly,root);
                     proj->screen2mapDouble(cross.x(),cross.y(),&lon,&lat);
+=======
+                    proj->screen2mapDouble(cross.x(),cross.y(),&lon,&lat);
+>>>>>>> .r1181
                     Cross.lon=lon;
                     Cross.lat=lat;
                     Cross.x=cross.x();
                     Cross.y=cross.y();
+<<<<<<< .mine
+                    right.prepend(Cross);
+=======
                     found=true;
                     js=qMax(0,is);
                     break;
+>>>>>>> .r1181
                 }
+                /*if not found let it draw a line hoping that next i_iso will be ok*/
             }
-            if(found) break;
+            else if (found)
+                right.prepend(Cross);
         }
+<<<<<<< .mine
+        right.prepend(result->getPoints()->last());
+        right.append(result->getPoints()->first());
+        left.append(right);
+        qWarning()<<"SIR: isoRoute has "<<left.count()<<"points";
+        isoRoute=new vlmLine(proj, this->myscene,Z_VALUE_ROUTAGE);
+        isoRoute->setParent(this);
+        for(int n=0;n<left.count();++n)
+            isoRoute->addVlmPoint(left.at(n));
+        red=red.darker(110);
+        QPen Pen(Qt::NoPen);
+        Pen.setWidthF(width);
+        Pen.setBrush(QBrush(red));
+        isoRoute->setLinePen(Pen);
+        isoRoute->setSolid(true);
+        isoRoute->slot_showMe();
+        isoRoutes.append(isoRoute);
+=======
         if(qRound(goal*10000)!=0)
         {
             Cross=result->getPoints()->at(n);
@@ -3473,7 +3833,10 @@ void ROUTAGE::showIsoRoute()
         }
         else if (found)
             right.prepend(Cross);
+>>>>>>> .r1181
     }
+<<<<<<< .mine
+=======
     right.prepend(result->getPoints()->last());
     right.append(result->getPoints()->first());
     left.append(right);
@@ -3490,7 +3853,302 @@ void ROUTAGE::showIsoRoute()
     isoRoute->setLinePen(Pen);
     isoRoute->setSolid(true);
     isoRoute->slot_showMe();
+>>>>>>> .r1181
 }
+<<<<<<< .mine
+QPointF ROUTAGE::pointAt(const QPolygonF * poly,const double ratio)
+
+{
+    if(poly->isEmpty())
+        qWarning()<<"erreur in pointAt()";
+    if(poly->count()==1)
+        return poly->first();
+    if(ratio>=1)
+        return poly->last();
+    if(ratio<=0)
+        return poly->first();
+    QPointF resultPoint;
+    double fullLength=0;
+    for(int n=0;n<poly->size()-1;++n)
+        fullLength+=QLineF(poly->at(n),poly->at(n+1)).length();
+    double ratioLength=fullLength*ratio;
+    for(int n=0;n<poly->size()-1;++n)
+    {
+        QLineF line(poly->at(n),poly->at(n+1));
+        if(line.length()<ratioLength)
+        {
+            ratioLength-=line.length();
+            continue;
+        }
+        resultPoint=line.pointAt(ratioLength/line.length());
+        break;
+    }
+    return resultPoint;
+}
+double ROUTAGE::pointDistanceRatio(double x, double goal, QPolygonF *poly, QPolygonF *prev_poly, QPolygonF *i_poly)
+{
+    if(i_poly->isEmpty())
+        qWarning()<<"i_poly is empty";
+    if(poly->isEmpty())
+        qWarning()<<"poly is empty";
+    if(prev_poly->isEmpty())
+        qWarning()<<"prev_poly is empty";
+    if(i_poly->isEmpty() || poly->isEmpty() || prev_poly->isEmpty())
+        return 10e6;
+    QPointF point=pointAt(i_poly,x);
+#if 0
+//    qWarning()<<"i_poly counts"<<i_poly->count();
+//    qWarning()<<"poly counts"<<poly->count();
+//    qWarning()<<"prev_poly counts"<<prev_poly->count();
+    double angle=QLineF(poly->first(),prev_poly->first()).angle();
+    QLineF cutter(point,poly->first());
+    cutter.setLength(cutter.length()*100.0);
+    cutter.setAngle(angle);
+    cutter.setPoints(cutter.p2(),cutter.p1());
+    cutter.setLength(cutter.length()*100.0);
+    double dist1=10e6, dist2=10e3;
+    QPointF dummy;
+    for (int n=0;n<poly->count()-1;++n)
+    {
+        if(QLineF(poly->at(n),poly->at(n+1)).intersect(cutter,&dummy)==QLineF::BoundedIntersection)
+        {
+            dist1=QLineF(dummy,point).length();
+            break;
+        }
+    }
+    for (int n=0;n<prev_poly->count()-1;++n)
+    {
+        if(QLineF(prev_poly->at(n),prev_poly->at(n+1)).intersect(cutter,&dummy)==QLineF::BoundedIntersection)
+        {
+            dist2=QLineF(dummy,point).length();
+            break;
+        }
+    }
+#else
+    QPointF dummy;
+    double dist1=this->findDistancePoly(point,poly,&dummy);
+    double dist2=this->findDistancePoly(point,prev_poly,&dummy);
+#endif
+    if(dist2==0) return -goal;
+    if(dist1+dist2==0) return 10e6;
+    return (dist1/(dist1+dist2))-goal;
+}
+double ROUTAGE::pointDistanceRatioDeriv(double x, double xStep, double goal, bool * status, QPolygonF *poly, QPolygonF *prev_poly, QPolygonF *i_poly)
+{
+    double yr,yl;
+    double xl,xr;
+    double xMin=0.0;
+    double xMax=1.0;
+    xl=x-xStep;
+    if(xl<xMin)
+        xl=x;
+    xr=x+xStep;
+    if(xr>xMax)
+        xr=x;
+    if(xr==xl)
+    {
+        *status=false;
+        qWarning()<<"error in deriv:"<<xr<<x<<xStep;
+        return 0;
+    }
+    yl=pointDistanceRatio(xl,goal,poly,prev_poly,i_poly);
+    yr=pointDistanceRatio(xr,goal,poly,prev_poly,i_poly);
+    *status=true;
+    return((yr-yl)/(xr-xl));
+}
+bool ROUTAGE::newtownRaphson(double * root, double goal,double precision,QPolygonF *poly, QPolygonF *prev_poly, QPolygonF *i_poly)
+{
+    double stepGap=1000000;
+    double x0=0.5;
+    double x1=0.5;
+    double y0=0,y1=0;
+    double xMin=0;
+    double xMax=1;
+    bool status=false;
+    bool haveXneg=false;
+    bool haveXpos=false;
+    double xStep;
+    double xPos=0,xNeg=0, yPos=0, yNeg=0;
+    double df0=0;
+    int iterations;
+    double bestY=10e6,bestX=0;
+    int nbRestart=-1;
+    QList<double> alternativeGuesses;
+    alternativeGuesses<<0.1<<0.2<<0.3<<0.4<<0.6<<0.7<<0.8<<0.9;
+    for (iterations=1;iterations<200;++iterations)
+    {
+        if(x0<xMin)
+            x0=xMin;
+        if(x0>xMax)
+            x0=xMax;
+        y0=pointDistanceRatio(x0,goal,poly,prev_poly,i_poly);
+        //qWarning()<<x0<<y0;
+        if(qAbs(y0)<=precision)
+        {
+            *root=x0;
+            qWarning()<<"found it (lucky mode) in"<<iterations<<"loop(s)";
+            return true;
+        }
+        if(qAbs(y0)<bestY)
+        {
+            bestY=qAbs(y0);
+            bestX=x0;
+        }
+
+/*update data*/
+        if(y0>0)
+        {
+            if(haveXpos)
+            {
+                if(haveXneg)
+                {
+                    if(qAbs(x0-xNeg)<qAbs(xPos-xNeg))
+                    {
+                        xPos=x0;
+                        yPos=y0;
+                    }
+                }
+                else if(y0<yPos)
+                {
+                    xPos=x0;
+                    yPos=y0;
+                }
+            }
+            else
+            {
+                xPos=x0;
+                yPos=y0;
+                haveXpos=true;
+            }
+            status=false;
+        }
+        else if(y0<0)
+        {
+            if(haveXneg)
+            {
+                if(haveXpos)
+                {
+                    if(qAbs(x0-xPos)<qAbs(xPos-xNeg))
+                    {
+                        xNeg=x0;
+                        yNeg=y0;
+                    }
+                }
+                else if(-y0<-yNeg)
+                {
+                    xNeg=x0;
+                    yNeg=y0;
+                }
+            }
+            else
+            {
+                xNeg=x0;
+                yNeg=y0;
+                haveXneg=true;
+            }
+            status=false;
+        }
+        else
+        {
+            *root=x0;
+            status=true;
+        }
+/*end of update data*/
+        if(status)
+        {
+            qWarning()<<"found it in"<<iterations<<"loop(s)";
+            return status;
+        }
+        if(y0==y1 && iterations!=1)
+        {
+            if(++nbRestart<8)
+            {
+                //x0=qrand()/(double)RAND_MAX;
+                //qWarning()<<"restarting with a random number"<<x0;
+                x0=alternativeGuesses[nbRestart];
+                qWarning()<<"restarting with alternate guess:"<<x0;
+                continue;
+            }
+            qWarning()<<"not found (flat case 1)";
+            break;
+        }
+        y1=y0;
+        while(true)
+        {
+            if(qAbs(x0)<.0000000001)
+            {
+                if(haveXneg && haveXpos)
+                    xStep=qAbs(xPos-xNeg)/stepGap;
+                else
+                    xStep=(xMax-xMin)/stepGap;
+            }
+            else
+                xStep=qAbs(x0)/stepGap;
+            status=true;
+            for (int idf=0;idf<5;++idf)
+            {
+                df0=pointDistanceRatioDeriv(x0,xStep,goal,&status,poly,prev_poly,i_poly);
+                if(!status)
+                {
+                    double debugXstep=xStep;
+                    xStep=xStep/2.0;
+                    qWarning()<<"retrying deriv"<<debugXstep<<xStep;
+                }
+                else break;
+            }
+            //qWarning()<<"x0,xStep="<<x0<<xStep;
+            if(!status)
+            {
+                qWarning()<<"not found (anomaly in derivative function)";
+                return status;
+            }
+            if(qRound(qAbs(df0*100000000))==0) /* hit a flat spot->trouble*/
+            {
+                if(stepGap>10.0)
+                {
+                    stepGap=stepGap/10.0;
+                    continue;
+                }
+                else
+                {
+                    qWarning()<<"not found (flat case 2)";
+                    return false;
+                }
+            }
+            else
+                break;
+        }
+        /*Overshoot a bit to prevent from staying on just one side of root*/
+        x1=x0-1.000001*y0/df0;
+        double stepSize=qAbs(x1-x0)/qAbs(x0+x1);
+        if(stepSize<precision)
+        {
+            *root=x0;
+            qWarning()<<"found it after"<<iterations<<"loop(s)";
+            return true;
+        }
+        x0=x1;
+    }
+    if(bestY<precision*20.0 && bestX>=xMin && bestX<=xMax)
+    {
+        *root=bestX;
+        qWarning()<<"found something not so good but still usable:"<<bestY<<goal+bestY<<"instead of"<<goal;
+        return true;
+    }
+    qWarning()<<"not found after"<<iterations<<"loops. (Best find:"<<bestY<<goal+bestY<<"instead of"<<goal<<")";
+    return false;
+}
+const bool ROUTAGE::crossBarriere(const QLineF line)
+{
+    QPointF dummy;
+    foreach (QLineF barriere,barrieres)
+    {
+        if(barriere.intersect(line,&dummy)==QLineF::BoundedIntersection)
+            return true;
+    }
+    return false;
+}
+=======
 QPointF ROUTAGE::pointAt(const QPolygonF * poly,const double ratio)
 
 {
@@ -3762,3 +4420,4 @@ bool ROUTAGE::newtownRaphson(double * root, double goal,double precision,QPolygo
     qWarning()<<"not found after"<<iterations<<"loops. (Best find:"<<bestY<<")";
     return false;
 }
+>>>>>>> .r1181

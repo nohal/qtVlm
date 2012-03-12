@@ -173,6 +173,7 @@ DialogRoutage::DialogRoutage(ROUTAGE *routage,myCentralWidget *parent)
         this->TWS->setValue(routage->getWindSpeed());
     }
     this->checkCoast->setChecked(routage->getCheckCoast());
+    this->checkLines->setChecked(routage->getCheckLine());
     if(routage->isDone() || routage->getIsNewPivot())
     {
         this->speedLossOnTack->setValue(qRound(routage->getSpeedLossOnTack()*100));
@@ -197,6 +198,7 @@ DialogRoutage::DialogRoutage(ROUTAGE *routage,myCentralWidget *parent)
         this->log->setDisabled(true);
         this->pruneWakeAngle->setDisabled(true);
         this->checkCoast->setDisabled(true);
+        this->checkLines->setDisabled(true);
         if(routage->isConverted())
             this->convRoute->setDisabled(true);
 
@@ -227,6 +229,7 @@ DialogRoutage::DialogRoutage(ROUTAGE *routage,myCentralWidget *parent)
         this->log->setDisabled(false);
         this->pruneWakeAngle->setDisabled(false);
         this->checkCoast->setDisabled(false);
+        this->checkLines->setDisabled(false);
         this->whatIfUse->setDisabled(false);
         this->whatIfDate->setDisabled(false);
         this->whatIfWind->setDisabled(false);
@@ -270,6 +273,7 @@ void DialogRoutage::slot_default()
     this->whatIfUse->setChecked(false);
     this->windForced->setChecked(false);
     this->checkCoast->setChecked(true);
+    this->checkLines->setChecked(true);
 }
 
 //---------------------------------------
@@ -292,6 +296,7 @@ void DialogRoutage::done(int result)
         routage->setColor(inputTraceColor->getLineColor());
         routage->setStartTime(editDateBox->dateTime());
         routage->setCheckCoast(checkCoast->isChecked());
+        routage->setCheckLine(checkLines->isChecked());
         routage->useConverge=log->isChecked();
         routage->pruneWakeAngle=pruneWakeAngle->value();
         routage->setAutoZoom(autoZoom->isChecked());

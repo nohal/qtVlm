@@ -342,7 +342,7 @@ avec ce prefixe</string>
        <property name="geometry">
         <rect>
          <x>330</x>
-         <y>190</y>
+         <y>150</y>
          <width>141</width>
          <height>17</height>
         </rect>
@@ -498,6 +498,20 @@ Virements de bord</string>
        </property>
        <property name="checked">
         <bool>true</bool>
+       </property>
+      </widget>
+      <widget class="QCheckBox" name="checkLines">
+       <property name="geometry">
+        <rect>
+         <x>330</x>
+         <y>169</y>
+         <width>151</width>
+         <height>31</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>Eviter les lignes
+tracées entre POIs</string>
        </property>
       </widget>
      </widget>
@@ -1270,10 +1284,13 @@ inverses</string>
         <string> min</string>
        </property>
        <property name="minimum">
-        <number>0</number>
+        <number>1</number>
        </property>
        <property name="maximum">
         <number>99999</number>
+       </property>
+       <property name="singleStep">
+        <number>5</number>
        </property>
        <property name="value">
         <number>60</number>

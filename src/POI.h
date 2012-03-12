@@ -71,6 +71,8 @@ class POI : public QGraphicsWidget
         QString  getTypeStr(void)      {return getTypeStr(type); }
         int     getNavMode(){return this->navMode;}
         bool    getHas_eta(void)        {return useRouteTstamp;}
+        double getLonConnected(){return lonConnected;}
+        double getLatConnected(){return latConnected;}
 
         /* modification des données */
         void setName           (QString name);
@@ -99,11 +101,14 @@ class POI : public QGraphicsWidget
         void setLineWidth(double f){lineWidth=f;}
         POI * getConnectedPoi(){return connectedPoi;}
         void setConnectedPoi(POI * p){connectedPoi=p;}
+        void setPosConnected(double lon,double lat){lonConnected=lon;latConnected=lat;}
         void setLineBetweenPois(vlmLine * line){this->lineBetweenPois=line;}
         bool getPiloteSelected(){return piloteSelected;}
         void setPiloteSelected(bool b){this->piloteSelected=b;this->ac_pilot->setChecked(b);}
         /* comparateur de classe pour le tri */
         static bool myLessThan(POI * POI_1,POI* POI_2) {return POI_1->name < POI_2->name;}
+//        static bool operator =(POI * other){return qRound(this->getLongitude()*1000000)==qRound(other->getLongitude()*1000000) &&
+//                                                   qRound(this->getLatitude()*1000000)==qRound(other->getLatitude()*1000000);}
 
         /* graphicsWidget */
         QPainterPath shape() const;
@@ -241,6 +246,7 @@ class POI : public QGraphicsWidget
         bool piloteSelected;
         time_t piloteDate;
         bool labelTransp;
+        double lonConnected,latConnected;
 };
 
 #endif

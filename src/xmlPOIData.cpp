@@ -62,6 +62,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #define POI_NAME          "name"
 #define LAT_NAME          "Lat"
 #define LON_NAME          "Lon"
+#define LAT_NAME_CONNECTED "LatConnected"
+#define LON_NAME_CONNECTED "LonConnected"
+#define LINE_COLOR_R      "LineColorR"
+#define LINE_COLOR_G      "LineColorG"
+#define LINE_COLOR_B      "LineColorB"
+#define LINE_WIDTH        "lineWidth"
 #define LON_NAME_OLD      "Pass"
 #define WPH_NAME          "Wph"
 #define TYPE_NAME         "type"
@@ -250,6 +256,34 @@ void xml_POIData::slot_writeData(QList<ROUTE*> & route_list,QList<POI*> & poi_li
           tag = doc.createElement(LON_NAME);
           group.appendChild(tag);
           t = doc.createTextNode(QString().sprintf("%.10f",poi->getLongitude()));
+          tag.appendChild(t);
+          if(poi->getConnectedPoi()!=NULL)
+          {
+              tag = doc.createElement(LON_NAME_CONNECTED);
+              group.appendChild(tag);
+              t = doc.createTextNode(QString().sprintf("%.10f",poi->getConnectedPoi()->getLongitude()));
+              tag.appendChild(t);
+
+              tag = doc.createElement(LAT_NAME_CONNECTED);
+              group.appendChild(tag);
+              t = doc.createTextNode(QString().sprintf("%.10f",poi->getConnectedPoi()->getLatitude()));
+              tag.appendChild(t);
+          }
+          tag = doc.createElement(LINE_COLOR_R);
+          group.appendChild(tag);
+          t = doc.createTextNode(QString().setNum(poi->getLineColor().red()));
+          tag.appendChild(t);
+          tag = doc.createElement(LINE_COLOR_G);
+          group.appendChild(tag);
+          t = doc.createTextNode(QString().setNum(poi->getLineColor().green()));
+          tag.appendChild(t);
+          tag = doc.createElement(LINE_COLOR_B);
+          group.appendChild(tag);
+          t = doc.createTextNode(QString().setNum(poi->getLineColor().blue()));
+          tag.appendChild(t);
+          tag = doc.createElement(LINE_WIDTH);
+          group.appendChild(tag);
+          t = doc.createTextNode(QString().setNum(poi->getLineWidth()));
           tag.appendChild(t);
 
           tag = doc.createElement(WPH_NAME);
@@ -701,6 +735,7 @@ void xml_POIData::slot_readData(QString fname)
               QString name="";
               QString routeName="";
               double lon=-1, lat=-1,wph=-1;
+              double lonConnected=-1, latConnected=-1;
               int type = -1;
               int tstamp=-1;
               bool useTstamp=false;
@@ -708,6 +743,8 @@ void xml_POIData::slot_readData(QString fname)
               int navMode=0;
               bool notSimplificable=false;
               bool pilote=false;
+              QColor lineColor=Qt::blue;
+              double lineWidth=2;
 
               while(!subNode.isNull())
               {
@@ -728,6 +765,48 @@ void xml_POIData::slot_readData(QString fname)
                       dataNode = subNode.firstChild();
                       if(dataNode.nodeType() == QDomNode::TextNode)
                           lon = dataNode.toText().data().toDouble();
+                   }
+                   if(subNode.toElement().tagName() == LAT_NAME_CONNECTED)
+                   {
+                      dataNode = subNode.firstChild();
+                      if(dataNode.nodeType() == QDomNode::TextNode)
+                          latConnected = dataNode.toText().data().toDouble();
+                   }
+                   if(subNode.toElement().tagName() == LON_NAME_CONNECTED)
+                   {
+                      dataNode = subNode.firstChild();
+                      if(dataNode.nodeType() == QDomNode::TextNode)
+                          lonConnected = dataNode.toText().data().toDouble();
+                   }
+                   if(subNode.toElement().tagName() == LINE_COLOR_R)
+                   {
+                        dataNode = subNode.firstChild();
+                        if(dataNode.nodeType() == QDomNode::TextNode)
+                        {
+                            lineColor.setRed(dataNode.toText().data().toInt());
+                        }
+                   }
+                   if(subNode.toElement().tagName() == LINE_COLOR_G)
+                   {
+                        dataNode = subNode.firstChild();
+                        if(dataNode.nodeType() == QDomNode::TextNode)
+                        {
+                            lineColor.setGreen(dataNode.toText().data().toInt());
+                        }
+                   }
+                   if(subNode.toElement().tagName() == LINE_COLOR_B)
+                   {
+                        dataNode = subNode.firstChild();
+                        if(dataNode.nodeType() == QDomNode::TextNode)
+                        {
+                            lineColor.setBlue(dataNode.toText().data().toInt());
+                        }
+                   }
+                   if(subNode.toElement().tagName() == LINE_WIDTH)
+                   {
+                        dataNode = subNode.firstChild();
+                        if(dataNode.nodeType() == QDomNode::TextNode)
+                            lineWidth=dataNode.toText().data().toDouble();
                    }
                    if(subNode.toElement().tagName() == WPH_NAME)
                    {
@@ -804,6 +883,9 @@ void xml_POIData::slot_readData(QString fname)
                    poi->setMyLabelHidden(labelHidden);
                    poi->setNotSimplificable(notSimplificable);
                    poi->setPiloteSelected(pilote);
+                   poi->setPosConnected(lonConnected,latConnected);
+                   poi->setLineColor(lineColor);
+                   poi->setLineWidth(lineWidth);
                    emit addPOI_list(poi);
               }
               else

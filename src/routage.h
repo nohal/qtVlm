@@ -127,6 +127,8 @@ class ROUTAGE : public QObject
         QDateTime getFinalEta(void){return finalEta;}
         bool getCheckCoast(){return this->checkCoast;}
         void setCheckCoast(bool b){this->checkCoast=b;}
+        bool getCheckLine(){return this->checkLine;}
+        void setCheckLine(bool b){this->checkLine=b;}
         bool isRunning(){return this->running;}
         void setFromRoutage(ROUTAGE * fromRoutage,bool editOptions);
         vlmPoint getPivotPoint(){return pivotPoint;}
@@ -176,9 +178,16 @@ class ROUTAGE : public QObject
         void setI_iso(bool b){this->i_iso=b;}
         bool getI_done(){return i_done;}
         time_t getI_eta(){return i_eta;}
+<<<<<<< .mine
         void showIsoRoute();
         int getIsoRouteValue(){return isoRouteValue;}
         void setIsoRouteValue(int i){this->isoRouteValue=i;}
+        const bool crossBarriere(const QLineF line);
+=======
+        void showIsoRoute();
+        int getIsoRouteValue(){return isoRouteValue;}
+        void setIsoRouteValue(int i){this->isoRouteValue=i;}
+>>>>>>> .r1181
     public slots:
         void slot_edit();
         void slot_abort(){this->aborted=true;}
@@ -264,7 +273,7 @@ class ROUTAGE : public QObject
         void epuration(int toBeRemoved);
         void removeCrossedSegments();
         double xa,ya,xs,ys;
-        bool checkCoast;
+        bool checkCoast,checkLine;
         bool arrivalIsClosest;
         bool routeFromBoat;
         QList<double> calculateCaps(vlmPoint point,double workAngleStep, double workAngleRange);
@@ -310,6 +319,7 @@ class ROUTAGE : public QObject
         QList<vlmLine *> i_isochrones;
         QList<vlmLine *> i_segments;
         bool i_done;
+<<<<<<< .mine
         static QPointF pointAt(const QPolygonF * poly, const double ratio);
         double findDistancePoly(const QPointF P, const QPolygonF * poly, QPointF * closest);
         double pointDistanceRatio(double x, double goal, QPolygonF *poly, QPolygonF *prev_poly, QPolygonF *i_poly);
@@ -317,5 +327,16 @@ class ROUTAGE : public QObject
         bool newtownRaphson(double * root, double goal,double precision,QPolygonF *poly, QPolygonF *prev_poly, QPolygonF *i_poly);
         vlmLine * isoRoute;
         int isoRouteValue;
+        QList<vlmLine*> isoRoutes;
+        QList<QLineF> barrieres;
+=======
+        static QPointF pointAt(const QPolygonF * poly, const double ratio);
+        double findDistancePoly(const QPointF P, const QPolygonF * poly, QPointF * closest);
+        double pointDistanceRatio(double x, double goal, QPolygonF *poly, QPolygonF *prev_poly, QPolygonF *i_poly);
+        double pointDistanceRatioDeriv(double x, double xStep, double goal, bool * status, QPolygonF *poly, QPolygonF *prev_poly, QPolygonF *i_poly);
+        bool newtownRaphson(double * root, double goal,double precision,QPolygonF *poly, QPolygonF *prev_poly, QPolygonF *i_poly);
+        vlmLine * isoRoute;
+        int isoRouteValue;
+>>>>>>> .r1181
     };
 #endif // ROUTAGE_H
