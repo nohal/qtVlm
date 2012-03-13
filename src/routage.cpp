@@ -770,7 +770,6 @@ ROUTAGE::ROUTAGE(QString name, Projection *proj, Grib *grib, QGraphicsScene * my
     this->poiPrefix="R";
     this->speedLossOnTack=1;
     highlightedIso=0;
-    this->isoRoute=NULL;
     isoRouteValue=10e6;
 }
 ROUTAGE::~ROUTAGE()
@@ -790,6 +789,8 @@ ROUTAGE::~ROUTAGE()
     delete way;
     if(this->popup && !parent->getAboutToQuit())
         delete popup;
+    while(!isoRoutes.isEmpty())
+        delete isoRoutes.takeFirst();
 }
 void ROUTAGE::setBoat(boat *myBoat)
 {
@@ -3181,7 +3182,7 @@ void ROUTAGE::calculateInverse()
 }
 void ROUTAGE::showIsoRoute()
 {
-    isoRouteValue=60;
+    if(this->isConverted()) return;
     while(!isoRoutes.isEmpty())
         delete isoRoutes.takeFirst();
     QColor red=QColor(Qt::red).lighter(170);
@@ -3513,7 +3514,7 @@ void ROUTAGE::showIsoRoute()
         right.append(result->getPoints()->first());
         left.append(right);
         qWarning()<<"SIR: isoRoute has "<<left.count()<<"points";
-        isoRoute=new vlmLine(proj, this->myscene,Z_VALUE_ROUTAGE);
+        vlmLine * isoRoute=new vlmLine(proj, this->myscene,Z_VALUE_ROUTAGE);
         isoRoute->setParent(this);
         for(int n=0;n<left.count();++n)
             isoRoute->addVlmPoint(left.at(n));

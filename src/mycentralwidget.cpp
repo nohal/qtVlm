@@ -2851,9 +2851,9 @@ void myCentralWidget::slot_editRoutage(ROUTAGE * routage,bool createMode)
         update_menuRoutage();
         if(routage && (createMode || routage->getIsNewPivot()))
             routage->calculate();
-        else if(routage && routage->getI_iso() && !routage->getI_done())
+        else if(routage && routage->getI_iso() && !routage->getI_done() && !routage->isConverted())
             routage->calculateInverse();
-        else if(routage && routage->getI_iso() && routage->getI_done())
+        else if(routage && routage->getI_iso() && routage->getI_done() && !routage->isConverted())
             routage->showIsoRoute();
     }
 }

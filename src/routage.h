@@ -318,7 +318,6 @@ class ROUTAGE : public QObject
         double pointDistanceRatio(double x, double goal, QPolygonF *poly, QPolygonF *prev_poly, QPolygonF *i_poly);
         double pointDistanceRatioDeriv(double x, double xStep, double goal, bool * status, QPolygonF *poly, QPolygonF *prev_poly, QPolygonF *i_poly);
         bool newtownRaphson(double * root, double goal,double precision,QPolygonF *poly, QPolygonF *prev_poly, QPolygonF *i_poly);
-        vlmLine * isoRoute;
         int isoRouteValue;
         QList<vlmLine*> isoRoutes;
         QList<QLineF> barrieres;
