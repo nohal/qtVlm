@@ -182,6 +182,12 @@ class ROUTAGE : public QObject
         int getIsoRouteValue(){return isoRouteValue;}
         void setIsoRouteValue(int i){this->isoRouteValue=i;}
         const bool crossBarriere(const QLineF line);
+        void setThresholdAlternative(int i){this->thresholdAlternative=i;}
+        int getThresholdAlternative(){return this->thresholdAlternative;}
+        void setNbAlternative(int i){this->nbAlternative=i;}
+        int getNbAlternative(){return this->nbAlternative;}
+        void setcomputeAlternative(bool b){this->computeAlternative=b;}
+        int getcomputeAlternative(){return this->computeAlternative;}
     public slots:
         void slot_edit();
         void slot_abort(){this->aborted=true;}
@@ -268,6 +274,9 @@ class ROUTAGE : public QObject
         void removeCrossedSegments();
         double xa,ya,xs,ys;
         bool checkCoast,checkLine;
+        bool computeAlternative;
+        int  nbAlternative;
+        int  thresholdAlternative;
         bool arrivalIsClosest;
         bool routeFromBoat;
         QList<double> calculateCaps(vlmPoint point,double workAngleStep, double workAngleRange);
@@ -312,6 +321,8 @@ class ROUTAGE : public QObject
         time_t i_eta;
         QList<vlmLine *> i_isochrones;
         QList<vlmLine *> i_segments;
+        QList<vlmLine *> o_isochrones;
+        QList<vlmLine *> o_segments;
         bool i_done;
         static QPointF pointAt(const QPolygonF * poly, const double ratio);
         double findDistancePoly(const QPointF P, const QPolygonF * poly, QPointF * closest);
@@ -320,7 +331,8 @@ class ROUTAGE : public QObject
         bool newtownRaphson(double * root, double goal,double precision,QPolygonF *poly, QPolygonF *prev_poly, QPolygonF *i_poly);
         int isoRouteValue;
         QList<vlmLine*> isoRoutes;
-        QList<vlmLine*> routesBis;
+        QList<vlmLine*> alternateRoutes;
         QList<QLineF> barrieres;
+        bool searchingForOptions;
     };
 #endif // ROUTAGE_H

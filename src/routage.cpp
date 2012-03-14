@@ -708,7 +708,6 @@ ROUTAGE::ROUTAGE(QString name, Projection *proj, Grib *grib, QGraphicsScene * my
     colorsList.append(Qt::green);
     colorsList.append(Qt::cyan);
     colorsList.append(Qt::magenta);
-    colorsList.append(Qt::white);
     colorsList.append(Qt::black);
     colorsList.append(Qt::darkRed);
     colorsList.append(Qt::darkGreen);
@@ -739,6 +738,9 @@ ROUTAGE::ROUTAGE(QString name, Projection *proj, Grib *grib, QGraphicsScene * my
     this->useConverge=Settings::getSetting("useConverge",1).toInt()==1;
     this->checkCoast=Settings::getSetting("checkCoast",1).toInt()==1;
     this->checkLine=Settings::getSetting("checkLine",1).toInt()==1;
+    this->computeAlternative=Settings::getSetting("computeAlternative",0).toInt()==1;
+    this->thresholdAlternative=Settings::getSetting("thresholdAlternative",75).toInt();
+    this->nbAlternative=Settings::getSetting("nbAlternative",3).toInt();
     this->visibleOnly=Settings::getSetting("visibleOnly",1).toInt()==1;
     this->autoZoom=Settings::getSetting("autoZoom",1).toInt()==1;
     this->zoomLevel=Settings::getSetting("autoZoomLevel",2).toInt();
@@ -774,23 +776,29 @@ ROUTAGE::ROUTAGE(QString name, Projection *proj, Grib *grib, QGraphicsScene * my
 }
 ROUTAGE::~ROUTAGE()
 {
-    for (int n=0;n<isochrones.count();++n)
-        delete isochrones[n];
-    for (int n=0;n<segments.count();++n)
-        delete segments[n];
-    for (int n=0;n<i_isochrones.count();++n)
-        delete i_isochrones[n];
-    for (int n=0;n<i_segments.count();++n)
-        delete i_segments[n];
+    while(!isochrones.isEmpty())
+        delete isochrones.takeFirst();
+    while(!segments.isEmpty())
+        delete segments.takeFirst();
+    while(!i_isochrones.isEmpty())
+        delete i_isochrones.takeFirst();
+    while(!i_segments.isEmpty())
+        delete i_segments.takeFirst();
     if(result!=NULL)
         delete result;
-    for (int n=0;n<isoPointList.count();++n)
-        delete isoPointList[n];
+    while(!isoPointList.isEmpty())
+        delete isoPointList.takeFirst();
     delete way;
     if(this->popup && !parent->getAboutToQuit())
         delete popup;
     while(!isoRoutes.isEmpty())
         delete isoRoutes.takeFirst();
+    while(!alternateRoutes.isEmpty())
+        delete alternateRoutes.takeFirst();
+    while(!o_segments.isEmpty())
+        delete o_segments.takeFirst();
+    while(!o_isochrones.isEmpty())
+        delete o_isochrones.takeFirst();
 }
 void ROUTAGE::setBoat(boat *myBoat)
 {
@@ -833,6 +841,9 @@ void ROUTAGE::calculate()
         Settings::setSetting("useConverge",useConverge?1:0);
         Settings::setSetting("checkCoast",checkCoast?1:0);
         Settings::setSetting("checkLine",checkLine?1:0);
+        Settings::setSetting("computeAlternative",computeAlternative?1:0);
+        Settings::setSetting("thresholdAlternative",thresholdAlternative);
+        Settings::setSetting("nbAlternative",nbAlternative);
         Settings::setSetting("visibleOnly",visibleOnly?1:0);
         Settings::setSetting("autoZoom",autoZoom?1:0);
         Settings::setSetting("autoZoomLevel",zoomLevel);
@@ -998,6 +1009,7 @@ void ROUTAGE::slot_calculate()
     int msecs_15=0;
     int nbCaps=0;
     int nbCapsPruned=0;
+    searchingForOptions=false;
     QList<POI *> poiList=parent->getPois();
     for(int p=0;p<poiList.count();++p)
     {
@@ -1019,7 +1031,6 @@ void ROUTAGE::slot_calculate()
     debugCross1=0;
     QTime time,tDebug;
     QList<QColor> colorsList;
-    colorsList.append(Qt::white);
     colorsList.append(Qt::black);
     colorsList.append(Qt::red);
     colorsList.append(Qt::darkRed);
@@ -1078,10 +1089,12 @@ void ROUTAGE::slot_calculate()
     {
         i_isochrones.append(iso);
     }
-    else
+    else if(!searchingForOptions)
     {
         isochrones.append(iso);
     }
+    else if(searchingForOptions)
+        o_isochrones.append(iso);
     int nbIso=0;
     if(!i_iso)
         arrived=false;
@@ -1107,6 +1120,8 @@ void ROUTAGE::slot_calculate()
     time_t maxDate=grib->getMaxDate();
     if(angleRange>=180) angleRange=179;
     arrivalIsClosest=false;
+    QList<vlmPoint> optionsLimits;
+    time_t realEta=eta;
     while(!aborted)
     {
         tDebug.start();
@@ -1771,22 +1786,34 @@ void ROUTAGE::slot_calculate()
                 penSegment.setColor(Qt::magenta);
 #endif
             segment->setLinePen(penSegment);
-            segment->slot_showMe();
+            if(!searchingForOptions)
+                segment->slot_showMe();
             if(i_iso)
             {
                 i_segments.append(segment);
                 segment->setHidden(true);
             }
-            else
+            else if(!searchingForOptions)
                 segments.append(segment);
+            else if(searchingForOptions)
+            {
+                o_segments.append(segment);
+                segment->setHidden(true);
+            }
             previousSegments.append(QLineF(list->at(n).origin->x,list->at(n).origin->y,list->at(n).x,list->at(n).y));
         }
         msecs_15=msecs_15+time.elapsed();
-        iso->slot_showMe();
+        //if(!searchingForOptions)
+            iso->slot_showMe();
         if(i_iso)
             i_isochrones.append(iso);
         else
-            isochrones.append(iso);
+        {
+            if(!searchingForOptions)
+                isochrones.append(iso);
+            else
+                o_isochrones.append(iso);
+        }
         time.restart();
         if(++refresh%4==0)
         {
@@ -1801,72 +1828,56 @@ void ROUTAGE::slot_calculate()
         }
         else
             eta=eta+(int)this->getTimeStep()*60.00;
-#if 0
-        if(this->getTimeStep()==this->timeStepLess24)
-            qWarning()<<"using less than 24 hours iso step";
+        vlmPoint to(arrival.x(),arrival.y());
+        time.restart();
+        datathread dataThread;
+        dataThread.Boat=this->getBoat();
+        if(i_iso)
+            dataThread.Eta=i_eta;
         else
-            qWarning()<<"using more than 24 hours iso step";
-#endif
-        if(!i_iso || true)
+            dataThread.Eta=eta;
+        dataThread.GriB=this->getGrib();
+        dataThread.whatIfJour=this->getWhatIfJour();
+        dataThread.whatIfUsed=this->getWhatIfUsed();
+        dataThread.windIsForced=this->getWindIsForced();
+        dataThread.whatIfTime=this->getWhatIfTime();
+        dataThread.windAngle=this->getWindAngle();
+        dataThread.windSpeed=this->getWindSpeed();
+        dataThread.whatIfWind=this->getWhatIfWind();
+        dataThread.timeStep=this->getTimeStep();
+        dataThread.speedLossOnTack=this->getSpeedLossOnTack();
+        dataThread.i_iso=i_iso;
+        bool i_arrived=false;
+        bool optionFound=false;
+        for (int n=0;n<list->count();++n)
         {
-            vlmPoint to(arrival.x(),arrival.y());
-            time.restart();
-            datathread dataThread;
-            dataThread.Boat=this->getBoat();
-            if(i_iso)
-                dataThread.Eta=i_eta;
-            else
-                dataThread.Eta=eta;
-            dataThread.GriB=this->getGrib();
-            dataThread.whatIfJour=this->getWhatIfJour();
-            dataThread.whatIfUsed=this->getWhatIfUsed();
-            dataThread.windIsForced=this->getWindIsForced();
-            dataThread.whatIfTime=this->getWhatIfTime();
-            dataThread.windAngle=this->getWindAngle();
-            dataThread.windSpeed=this->getWindSpeed();
-            dataThread.whatIfWind=this->getWhatIfWind();
-            dataThread.timeStep=this->getTimeStep();
-            dataThread.speedLossOnTack=this->getSpeedLossOnTack();
-            dataThread.i_iso=i_iso;
-            bool i_arrived=false;
-            for (int n=0;n<list->count();++n)
+            vlmPoint from=list->at(n);
+            orth.setPoints(from.lon,from.lat,to.lon,to.lat);
+            if(orth.getDistance()<myBoat->getPolarData()->getMaxSpeed()*60/this->getTimeStep())
             {
-                vlmPoint from=list->at(n);
-                orth.setPoints(from.lon,from.lat,to.lon,to.lat);
-                if(orth.getDistance()<myBoat->getPolarData()->getMaxSpeed()*60/this->getTimeStep())
+                if(checkCoast && (map->crossing(QLineF(list->at(n).x,list->at(n).y,xa,ya),QLineF(list->at(n).lon,list->at(n).lat,arrival.x(),arrival.y()))
+                   || (checkLine && crossBarriere(QLineF(list->at(n).x,list->at(n).y,xa,ya)))))
+                    continue;
+                int thisTime=calculateTimeRoute(from,to, &dataThread, NULL, NULL, (this->getTimeStep()+1)*60);
+                if(thisTime<=this->getTimeStep()*60)
                 {
-                    if(checkCoast && (map->crossing(QLineF(list->at(n).x,list->at(n).y,xa,ya),QLineF(list->at(n).lon,list->at(n).lat,arrival.x(),arrival.y()))
-                       || (checkLine && crossBarriere(QLineF(list->at(n).x,list->at(n).y,xa,ya)))))
-                        continue;
-                    int thisTime=calculateTimeRoute(from,to, &dataThread, NULL, NULL, (this->getTimeStep()+1)*60);
-                    qWarning()<<"thisTime="<<thisTime<<this->getTimeStep()*60;
-                    if(thisTime<=this->getTimeStep()*60)
+                    if(!searchingForOptions)
                     {
                         arrived=true;
                         i_arrived=true;
-                        break;
                     }
+                    else
+                        optionFound=true;
+                    break;
                 }
             }
-            msecs_8=msecs_8+time.elapsed();
-            if((!i_iso && arrived) || i_arrived) break;
         }
-        else /*not used*/
+        msecs_8=msecs_8+time.elapsed();
+        if (i_iso && i_arrived) break;
+        if (!i_iso && arrived && !searchingForOptions)
         {
-            if(i_isochrones.count()==isochrones.count())
-                break;
-        }
-        if(nbIso>3000 || nbNotDead==0)
-        {
-            break;
-        }
-    }
-    list=iso->getPoints();
-    int nBest=0;
-    if(!i_iso)
-    {
-        if(arrived)
-        {
+            list=iso->getPoints();
+            int nBest=0;
             int minTime=this->getTimeStep()*10000*60;
             vlmPoint to(arrival.x(),arrival.y());
             datathread dataThread;
@@ -1890,18 +1901,134 @@ void ROUTAGE::slot_calculate()
                     || (checkLine && crossBarriere(QLineF(list->at(n).x,list->at(n).y,xa,ya))))
                     continue;
                 vlmPoint from=list->at(n);
-                int thisTime=calculateTimeRoute(from,to,&dataThread);
+                int thisTime=calculateTimeRoute(from,to,&dataThread, NULL, NULL, (this->getTimeStep()+1)*60);
                 if(thisTime<minTime)
                 {
                     nBest=n;
                     minTime=thisTime;
                 }
             }
-            eta=eta+minTime;
+            realEta=eta+minTime;
             drawResult(list->at(nBest));
+            QApplication::processEvents();
+            if(!computeAlternative) break;
+            double optionThreshold=(double)thresholdAlternative/100.0;
+            vlmPoint t=result->getPoints()->at(qRound(result->getPoints()->count()*optionThreshold));
+            optionsLimits.append(t);
+            searchingForOptions=true;
+            qWarning()<<"result drawn and stored";
         }
-        else
+        if(optionFound)
         {
+            qWarning()<<"option found";
+            list=iso->getPoints();
+            vlmPoint to(arrival.x(),arrival.y());
+            datathread dataThread;
+            dataThread.Boat=this->getBoat();
+            dataThread.Eta=this->getEta();
+            dataThread.GriB=this->getGrib();
+            dataThread.whatIfJour=this->getWhatIfJour();
+            dataThread.whatIfUsed=this->getWhatIfUsed();
+            dataThread.windIsForced=this->getWindIsForced();
+            dataThread.whatIfTime=this->getWhatIfTime();
+            dataThread.windAngle=this->getWindAngle();
+            dataThread.windSpeed=this->getWindSpeed();
+            dataThread.whatIfWind=this->getWhatIfWind();
+            dataThread.timeStep=this->getTimeStep();
+            dataThread.speedLossOnTack=this->getSpeedLossOnTack();
+            dataThread.i_iso=i_iso;
+            QMultiMap<int,int> sortedArrivals;
+            for(int n=0;n<list->count();++n)
+            {
+                if((checkCoast && map->crossing(QLineF(list->at(n).x,list->at(n).y,xa,ya),
+                        QLineF(list->at(n).lon,list->at(n).lat,arrival.x(),arrival.y())))
+                    || (checkLine && crossBarriere(QLineF(list->at(n).x,list->at(n).y,xa,ya))))
+                    continue;
+                vlmPoint from=list->at(n);
+                int thisTime=calculateTimeRoute(from,to,&dataThread, NULL, NULL, (this->getTimeStep()+1)*60);
+                if(thisTime<=this->getTimeStep()*60.0)
+                {
+                    sortedArrivals.insert(thisTime,n);
+                }
+            }
+            QMapIterator<int,int> iter(sortedArrivals);
+            while(iter.hasNext())
+            {
+                iter.next();
+                vlmPoint point=list->at(iter.value());
+                vlmLine * option=new vlmLine(proj,parent->getScene(),Z_VALUE_ROUTAGE);
+                option->setParent(this);
+                vlmPoint P=point;
+                while(true)
+                {
+                    if(optionsLimits.contains(P))
+                    {
+                        delete option;
+                        option=NULL;
+                        point.isDead=true;
+                        iso->getPoints()->replace(iter.value(),point);
+                        --nbNotDead;
+                        break;
+                    }
+                    option->addVlmPoint(P);
+                    if(P.isStart) break;
+                    P=*P.origin;
+                }
+                if(option!=NULL)
+                {
+                    pen.setColor(Qt::white);
+                    pen.setWidthF(this->width*.75);
+                    option->setLinePen(pen);
+                    pen.setColor(color);
+                    pen.setWidthF(this->width);
+                    option->slot_showMe();
+                    QApplication::processEvents();
+                    double optionThreshold=(double)thresholdAlternative/100.0;
+                    vlmPoint t=option->getPoints()->at(qRound(result->getPoints()->count()*optionThreshold));
+                    optionsLimits.append(t);
+                    qWarning()<<"option drawn";
+                    alternateRoutes.append(option);
+                    if(alternateRoutes.count()>=nbAlternative) break;
+                }
+            }
+            if(alternateRoutes.count()>=nbAlternative) break;
+        }
+        if(searchingForOptions)
+        {
+            qWarning()<<"cleaning iso for options";
+            for(int n=0;n<iso->getPoints()->count();++n)
+            {
+                vlmPoint point=iso->getPoints()->at(n);
+                if(point.isDead) continue;
+                vlmPoint p=point;
+                while (true)
+                {
+                    if(p.isStart) break;
+                    if(optionsLimits.contains(p))
+                    {
+                        point.isDead=true;
+                        iso->getPoints()->replace(n,point);
+                        --nbNotDead;
+                        break;
+                    }
+                    p=*p.origin;
+                }
+            }
+            qWarning()<<"end cleaning iso for options";
+        }
+        if(nbIso>3000 || nbNotDead<=0)
+        {
+            break;
+        }
+    }
+    searchingForOptions=false;
+    if(!i_iso)
+    {
+        if(!arrived)
+        {
+            eta=realEta;
+            list=iso->getPoints();
+            int nBest=0;
             int minDist=10e5;
             Orthodromie oo(0,0,arrival.x(),arrival.y());
             for(int n=0;n<list->count();++n)
@@ -2219,7 +2346,7 @@ double ROUTAGE::findDistancePoly(const QPointF P, const QPolygonF * poly, QPoint
 }
 void ROUTAGE::pruneWake(int wakeAngle)
 {
-    if (wakeAngle<1) return;
+    if (wakeAngle<1 || searchingForOptions) return;
     QList<vlmPoint> *pIso;
     double wakeDir=0;
     if(i_iso)
@@ -2355,6 +2482,11 @@ void ROUTAGE::setShowIso(bool b)
         i_isochrones[n]->setHidden(!showIso);
         i_isochrones[n]->blockSignals(!b);
     }
+    for (int n=0;n<o_isochrones.count();++n)
+    {
+        o_isochrones[n]->setHidden(!showIso);
+        o_isochrones[n]->blockSignals(!b);
+    }
     for (int n=0;n<segments.count();++n)
     {
         segments[n]->setHidden(!showIso);
@@ -2421,7 +2553,6 @@ void ROUTAGE::slot_drawWay()
     colorsList.append(Qt::green);
     colorsList.append(Qt::cyan);
     colorsList.append(Qt::magenta);
-    colorsList.append(Qt::white);
     colorsList.append(Qt::black);
     colorsList.append(Qt::darkRed);
     colorsList.append(Qt::darkGreen);
@@ -3037,6 +3168,7 @@ QList<double> ROUTAGE::calculateCaps(vlmPoint point, double workAngleStep, doubl
 }
 void ROUTAGE::showContextMenu(int isoNb, int pointNb)
 {
+    if(isoNb>=isochrones.count()) return;
     pivotPoint=isochrones.at(isoNb)->getPoints()->at(pointNb);
     popup->exec(QCursor::pos());
 }
@@ -3151,6 +3283,7 @@ double ROUTAGE::getTimeStep()
 {
     if(!i_iso)
     {
+        if(arrived) return this->timeStepLess24;
         if(approaching || this->eta-this->startTime.toTime_t()<=24*60*60)
             return this->timeStepLess24;
         else
