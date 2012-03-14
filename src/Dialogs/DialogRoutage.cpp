@@ -144,17 +144,33 @@ DialogRoutage::DialogRoutage(ROUTAGE *routage,myCentralWidget *parent)
         editBoat->setEnabled(false);
     }
     n=0;
-    for(int m=0;m<parent->getPois().count();m++)
+    if(routage->isDone())
     {
-        POI * poi = parent->getPois().at(m);
-        if(poi->getRoute()==NULL)
+        if(routage->getFromPOI())
         {
-            fromPOI->addItem(poi->getName(),m);
-            if(poi==routage->getFromPOI()) fromPOI->setCurrentIndex(n);
+            fromPOI->addItem(routage->getFromPOI()->getName());
+            fromPOI->setCurrentIndex(0);
+        }
+        if(routage->getToPOI())
+        {
+            toPOI->addItem(routage->getToPOI()->getName());
+            toPOI->setCurrentIndex(0);
+        }
+    }
+    else
+    {
+        for(int m=0;m<parent->getPois().count();m++)
+        {
+            POI * poi = parent->getPois().at(m);
+            if(poi->getType()!= POI_TYPE_BALISE && poi->getRoute()==NULL)
+            {
+                fromPOI->addItem(poi->getName(),m);
+                if(poi==routage->getFromPOI()) fromPOI->setCurrentIndex(n);
 
-            toPOI->addItem(poi->getName(),m);
-            if(poi==routage->getToPOI()) toPOI->setCurrentIndex(n);
-            n++;
+                toPOI->addItem(poi->getName(),m);
+                if(poi==routage->getToPOI()) toPOI->setCurrentIndex(n);
+                n++;
+            }
         }
     }
     this->range->setValue(routage->getAngleRange());

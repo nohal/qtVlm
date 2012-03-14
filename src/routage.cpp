@@ -3183,12 +3183,68 @@ void ROUTAGE::calculateInverse()
 void ROUTAGE::showIsoRoute()
 {
     if(this->isConverted()) return;
+#if 0
+    while(!routesBis.isEmpty())
+        delete routesBis.takeFirst();
+    bool showEquivRoutes=true;
+    if(showEquivRoutes && arrived)
+    {
+        datathread dataThread;
+        dataThread.Boat=this->getBoat();
+        dataThread.Eta=this->getEta();
+        dataThread.GriB=this->getGrib();
+        dataThread.whatIfJour=this->getWhatIfJour();
+        dataThread.whatIfUsed=this->getWhatIfUsed();
+        dataThread.windIsForced=this->getWindIsForced();
+        dataThread.whatIfTime=this->getWhatIfTime();
+        dataThread.windAngle=this->getWindAngle();
+        dataThread.windSpeed=this->getWindSpeed();
+        dataThread.whatIfWind=this->getWhatIfWind();
+        dataThread.timeStep=this->getTimeStep();
+        dataThread.speedLossOnTack=this->getSpeedLossOnTack();
+        dataThread.i_iso=i_iso;
+        QColor cc=color.lighter(120);
+        pen.setWidthF(width);
+        pen.setColor(cc);
+        pen.setBrush(cc);
+        vlmPoint to(this->getToPOI()->getLongitude(),this->getToPOI()->getLatitude());
+        foreach(vlmLine * isochrone,isochrones)
+        {
+            for (int pp=0;pp<isochrone->getPoints()->count();++pp)
+            {
+                vlmPoint p=isochrone->getPoints()->at(pp);
+                if(result->getPoints()->contains(p)) continue;
+                int ptime=calculateTimeRoute(p,to,&dataThread)+p.eta;
+                if(ptime<this->getEta()+isoRouteValue*60)
+                {
+                    vlmLine * routeBis=new vlmLine(proj,parent->getScene(),Z_VALUE_ROUTAGE+0.2);
+                    routesBis.append(routeBis);
+                    routeBis->setParent(this);
+                    routeBis->addVlmPoint(to);
+                    while (true)
+                    {
+                        p.isBroken=false;
+                        routeBis->addVlmPoint(p);
+                        if (p.isStart) break;
+                        if(result->getPoints()->contains(p)) break;
+                        p= (*p.origin);
+                    }
+                    routeBis->setLinePen(pen);
+                    routeBis->slot_showMe();
+                }
+            }
+        }
+        pen.setColor(color);
+        pen.setBrush(color);
+        pen.setWidthF(2);
+    }
+#endif
     while(!isoRoutes.isEmpty())
         delete isoRoutes.takeFirst();
-    QColor red=QColor(Qt::red).lighter(170);
-    red.setAlpha(100);
+    QColor colorCloud=QColor(Qt::lightGray);
+    colorCloud.setAlpha(150);
     double goal=(double)(timeStepMore24-isoRouteValue)/(double)timeStepMore24;
-    double goalInc=0.1;
+    double goalInc=0.2;
     goal-=goalInc;
     while (true)
     {
@@ -3518,10 +3574,10 @@ void ROUTAGE::showIsoRoute()
         isoRoute->setParent(this);
         for(int n=0;n<left.count();++n)
             isoRoute->addVlmPoint(left.at(n));
-        red=red.darker(110);
+        colorCloud=colorCloud.darker(110);
         QPen Pen(Qt::NoPen);
         Pen.setWidthF(width);
-        Pen.setBrush(QBrush(red));
+        Pen.setBrush(QBrush(colorCloud));
         isoRoute->setLinePen(Pen);
         isoRoute->setSolid(true);
         isoRoute->slot_showMe();

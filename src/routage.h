@@ -320,6 +320,7 @@ class ROUTAGE : public QObject
         bool newtownRaphson(double * root, double goal,double precision,QPolygonF *poly, QPolygonF *prev_poly, QPolygonF *i_poly);
         int isoRouteValue;
         QList<vlmLine*> isoRoutes;
+        QList<vlmLine*> routesBis;
         QList<QLineF> barrieres;
     };
 #endif // ROUTAGE_H
