@@ -276,6 +276,7 @@ public:
     QAction *acVLMParamPlayer;
     QAction *acPOIinput;
     QAction *acPOIimport;
+    QAction *acPOIgeoData;
     QAction *acVLMSync;
     QAction *acPOISave;
     QAction *acPOIRestore;

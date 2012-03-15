@@ -597,7 +597,7 @@ void POI::setTip(QString tip)
         setToolTip(getTypeStr() + " : " + my_str +at+pilot+ "<br>"+tt+tip);
     }
     else
-        setToolTip(getTypeStr() + " : "+my_str+at+pilot);
+        setToolTip(getTypeStr() + " : "+my_str+at+pilot+"<br>"+tip);
 }
 void POI::update_myStr(void)
 {

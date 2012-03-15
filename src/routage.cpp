@@ -960,7 +960,7 @@ void ROUTAGE::calculate()
             }
         }
 
-#if 0
+#if 1
         qWarning() << "Routing from " << start.x() << ", " << start.y() << " to " << arrival.x() << ", " << arrival.y();
         qWarning() << "-- Distance: " << distance;
         qWarning() << "-- North:    " << yN;
@@ -1010,6 +1010,7 @@ void ROUTAGE::slot_calculate()
     int nbCaps=0;
     int nbCapsPruned=0;
     searchingForOptions=false;
+    bool doNotCheckCrossing=false;
     QList<POI *> poiList=parent->getPois();
     for(int p=0;p<poiList.count();++p)
     {
@@ -1459,7 +1460,7 @@ void ROUTAGE::slot_calculate()
             break;
 #if 1 /*check that the new iso itself does not cross previous segments or iso*/
         time.restart();
-        if(!tempPoints.at(0).origin->isStart)
+        if(!tempPoints.at(0).origin->isStart && !doNotCheckCrossing)
         {
             checkIsoCrossingPreviousSegments();
         }
@@ -1538,7 +1539,7 @@ void ROUTAGE::slot_calculate()
                 maxLoop=nbLoop;
             somethingHasChanged=false;
 /*recheck that the new iso itself does not cross previous segments*/
-            if(!tempPoints.at(0).origin->isStart)
+            if(!tempPoints.at(0).origin->isStart && !doNotCheckCrossing)
             {
                 checkIsoCrossingPreviousSegments();
             }
@@ -1668,7 +1669,8 @@ void ROUTAGE::slot_calculate()
                 {
                     t1.start();
                     removeCrossedSegments();
-                    checkIsoCrossingPreviousSegments();
+                    if(!doNotCheckCrossing)
+                        checkIsoCrossingPreviousSegments();
                     msecs_13=msecs_13+t1.elapsed();
                 }
             }
@@ -1814,6 +1816,8 @@ void ROUTAGE::slot_calculate()
             else
                 o_isochrones.append(iso);
         }
+        if(searchingForOptions)
+            doNotCheckCrossing=false;
         time.restart();
         if(++refresh%4==0)
         {
@@ -1916,6 +1920,7 @@ void ROUTAGE::slot_calculate()
             vlmPoint t=result->getPoints()->at(qRound(result->getPoints()->count()*optionThreshold));
             optionsLimits.append(t);
             searchingForOptions=true;
+            doNotCheckCrossing=true;
             qWarning()<<"result drawn and stored";
         }
         if(optionFound)

@@ -165,6 +165,7 @@ void MainWindow::connectSignals()
     connect(mb->acShowPolar, SIGNAL(triggered()),this,SLOT(slotShowPolar()));
 
     connect(mb->acPOIimport, SIGNAL(triggered()), my_centralWidget, SLOT(slot_POIimport()));
+    connect(mb->acPOIgeoData, SIGNAL(triggered()), my_centralWidget, SLOT(slot_POIimportGeoData()));
 
     connect(dialogProxy, SIGNAL(proxyUpdated()), this, SLOT(slotInetUpdated()));
 

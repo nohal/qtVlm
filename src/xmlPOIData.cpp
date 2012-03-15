@@ -482,6 +482,73 @@ void xml_POIData::slot_importZyGrib(void)
      settings.endGroup();
 #endif
 }
+void xml_POIData::importGeoData(void)
+{
+    QString filter;
+    filter =  tr("Fichiers textes (*.txt)")
+            + tr(";;Autres fichiers (*)");
+    QString fileName = QFileDialog::getOpenFileName(this,
+                         tr("Choisir un fichier GeoData"),
+                         "./",
+                         filter);
+    QFile file(fileName);
+
+    if (!file.open(QIODevice::ReadOnly | QIODevice::Text))
+        return;
+
+    int nbPOI=0;
+
+    QTextStream stream(&file);
+
+    double lat=0,lon=0;
+    QString name;
+    bool foundName,foundLat,foundLon;
+    int curCode=-1;
+    foundName=foundLon=foundLat=false;
+
+
+    while(true)
+    {
+        QString line = stream.readLine();
+        if(line.isNull())
+            break;
+
+        QStringList list1 = line.split(';');
+        bool ok;
+        if(list1.count()<5)
+        {
+            qWarning() << "Wrong line (no code): " <<line << " - nb item:" << list1.count();
+            continue;
+        }
+        QString pRank=list1[0];
+        QString pId=list1[1];
+        QString temp=list1[2];
+        QString letter=temp.at(temp.count()-1);
+        double  pLat=temp.remove(letter).toDouble(&ok);
+        if(!ok)
+        {
+            qWarning() << "Wrong line (code not numeric): " <<line;
+            continue;
+        }
+        if(letter=="S") pLat=-pLat;
+        temp=list1[3];
+        letter=temp.at(temp.count()-1);
+        double  pLon=temp.remove(letter).toDouble(&ok);
+        if(!ok)
+        {
+            qWarning() << "Wrong line (code not numeric): " <<line;
+            continue;
+        }
+        if(letter=="W") pLon=-pLon;
+        QString pTime=list1[4];
+        POI * poi = new POI(pId, POI_TYPE_BALISE,pLat,pLon,proj,main,parent,-1,-1,false,NULL);
+        poi->setTip(tr("Classement ")+pRank+"<br>"+pTime);
+        emit addPOI_list(poi);
+        nbPOI++;
+    }
+    QMessageBox::information(main,tr("GeoData POI import"),QString().setNum(nbPOI) +" " +tr("POI imported from GeoData"));
+    file.close();
+}
 
 void xml_POIData::slot_readData(QString fname)
 {

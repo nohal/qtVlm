@@ -35,6 +35,7 @@ class xml_POIData: public QWidget
 
     public:
         xml_POIData(Projection * proj,MainWindow * main, myCentralWidget * parent);
+        void importGeoData();
 
     public slots:
         void slot_writeData(QList<ROUTE*> & route_list,QList<POI*> & poi_list,QString fname);

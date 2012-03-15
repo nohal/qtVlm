@@ -336,6 +336,7 @@ MenuBar::MenuBar(QWidget *parent)
         menuPOI->addSeparator();
         QMenu *menuImportPoi = new QMenu(tr("Importer"));
         acPOIimport = addAction(menuImportPoi,tr("Importer de zyGrib"),"","","");
+        acPOIgeoData = addAction(menuImportPoi,tr("Importer un fichier GeoData"),"","","");
         menuPOI->addMenu(menuImportPoi);
         acPOIAdd = addAction(menuPOI,tr("Ajouter une marque"),"","","");
     addMenu(menuPOI);

@@ -3397,6 +3397,10 @@ void myCentralWidget::slot_POIimport(void)
 {
     emit importZyGrib();
 }
+void myCentralWidget::slot_POIimportGeoData(void)
+{
+    xmlPOI->importGeoData();
+}
 
 /**************************/
 /* Selection Widget       */

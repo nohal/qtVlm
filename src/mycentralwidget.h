@@ -206,6 +206,7 @@ class myCentralWidget : public QWidget
         void slot_POISave(void);
         void slot_POIRestore(void);
         void slot_POIimport(void); // import data from zyGrib
+        void slot_POIimportGeoData(void);
         void slot_delAllPOIs(void);
         void slot_delSelPOIs(void);
         void slot_notSimpAllPOIs(void);
