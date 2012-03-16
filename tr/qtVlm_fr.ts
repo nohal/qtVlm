@@ -851,6 +851,14 @@ Etes-vous sur ?</source>
         <source>Vous ne pouvez pas utiliser le module route&lt;br&gt;avec moins de 4 vacations entre les isochrones.&lt;br&gt;Vous devez donc desactiver cette option ou rallonger la duree</source>
         <translation>Vous ne pouvez pas utiliser le module route&lt;br&gt;avec moins de 4 vacations entre les isochrones.&lt;br&gt;Vous devez donc désactiver cette option ou rallonger la durée</translation>
     </message>
+    <message>
+        <source>Isochrones inverses</source>
+        <translation>Isochrones inversés</translation>
+    </message>
+    <message>
+        <source>Pour l&apos;instant, on ne peut pas calculer les isochrones inverses&lt;br&gt;si la duree des isochrones est variable</source>
+        <translation>Pour l&apos;instant, on ne peut pas calculer les isochrones inversés&lt;br&gt;si la durée des isochrones est variable</translation>
+    </message>
 </context>
 <context>
     <name>DialogRoute</name>
@@ -2219,6 +2227,10 @@ Etes-vous sur ?</source>
         <source>Rendre toutes les marques simplifiables</source>
         <translation></translation>
     </message>
+    <message>
+        <source>Importer un fichier GeoData</source>
+        <translation></translation>
+    </message>
 </context>
 <context>
     <name>POI</name>
@@ -3218,7 +3230,7 @@ VMG %.2f nds</translation>
     </message>
     <message>
         <source>Prune Wake Angle</source>
-        <translation>Prune Wake Angle</translation>
+        <translation type="obsolete">Prune Wake Angle</translation>
     </message>
     <message>
         <source>Utiliser une convergence logarithmique vers l&apos;arrivee</source>
@@ -3337,11 +3349,45 @@ La différence est surtout sensible lors d&apos;un routage en diagonale.</transl
         <translation>Options par défaut</translation>
     </message>
     <message>
-        <source>Zone sensible</source>
+        <source>Eviter les barrieres</source>
+        <translation>Eviter les barrières</translation>
+    </message>
+    <message>
+        <source>Le parametrage de cette option se trouve dans les options avancees</source>
+        <translation>Le paramétrage de cette option se trouve dans les options avancées</translation>
+    </message>
+    <message>
+        <source>Calculer des routes
+alternatives</source>
         <translation></translation>
     </message>
     <message>
-        <source>Reglage du niveau de la zone sensible </source>
+        <source>Angle d&apos;epuration par sillage</source>
+        <translation>Angle d&apos;épuration par sillage</translation>
+    </message>
+    <message>
+        <source>Routes alternatives</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Nombre de routes alternatives</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Seuil de divergence (% mini non commun)</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source> %</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Isochrones
+inverses</source>
+        <translation>Isochrones inversés</translation>
+    </message>
+    <message>
+        <source>Enveloppe</source>
         <translation></translation>
     </message>
 </context>
@@ -6422,6 +6468,26 @@ Voulez-vous egalement supprimer tous les POIs lui appartenant?</source>
     <message>
         <source>POI imported from zyGrib</source>
         <translation>POI importé(s) de zyGrib</translation>
+    </message>
+    <message>
+        <source>Fichiers textes (*.txt)</source>
+        <translation>Fichiers texte</translation>
+    </message>
+    <message>
+        <source>Choisir un fichier GeoData</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Classement </source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>GeoData POI import</source>
+        <translation>Import de POIs GeoData</translation>
+    </message>
+    <message>
+        <source>POI imported from GeoData</source>
+        <translation>POIs importés de geoData</translation>
     </message>
 </context>
 <context>
