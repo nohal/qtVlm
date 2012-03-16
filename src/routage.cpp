@@ -3220,6 +3220,7 @@ void ROUTAGE::setFromRoutage(ROUTAGE *fromRoutage, bool editOptions)
     this->useConverge=fromRoutage->useConverge;
     this->pruneWakeAngle=fromRoutage->pruneWakeAngle;
     this->routeFromBoat=false;
+    this->fromPOI=fromRoutage->getFromPOI();
     this->toPOI=fromRoutage->getToPOI();
     this->autoZoom=fromRoutage->getAutoZoom();
     this->zoomLevel=fromRoutage->getZoomLevel();
@@ -3391,8 +3392,14 @@ void ROUTAGE::showIsoRoute()
         int i=isochrones.count();
         int ii=0;
         QList<vlmPoint> left,right;
+        vlmPoint lastInResult=result->getPoints()->last();
         for(int n=arrived?1:0;n<result->count()-1;++n)
         {
+            if(result->getPoints()->at(n).isStart)  /*to deal with pivot*/
+            {
+                lastInResult=result->getPoints()->at(n);
+                break;
+            }
             --i;
             if(i<1) break;
             ++ii;
@@ -3704,7 +3711,7 @@ void ROUTAGE::showIsoRoute()
             else if (found)
                 right.prepend(Cross);
         }
-        right.prepend(result->getPoints()->last());
+        right.prepend(lastInResult);
         right.append(result->getPoints()->first());
         left.append(right);
         qWarning()<<"SIR: isoRoute has "<<left.count()<<"points";
