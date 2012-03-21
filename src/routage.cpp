@@ -1483,15 +1483,18 @@ void ROUTAGE::slot_calculate()
         if(hasTouchCoast) limit=limit*1.5;
         int c=tempPoints.count();
         int toBeRemoved=c-limit;
+        //qWarning()<<"before epuration()"<<tempPoints.count();
         if(tempPoints.count()>limit)
         {
             epuration(toBeRemoved*0.5);
         }
         msecs_6=msecs_6+time.elapsed();
-        //qWarning()<<"after first epuration"<<tempPoints.count();
+        if(i_iso)
+            qWarning()<<"after epuration()"<<tempPoints.count();
 #if 1 /*smoothing iso*/
         time.restart();
-        for(int pass=0;pass<2;++pass)
+        int nbPathSmooth=i_iso?10:2;
+        for(int pass=1;pass<=nbPathSmooth;++pass)
         {
             for(int jj=1;jj<tempPoints.count()-1;++jj)
             {
@@ -1518,7 +1521,8 @@ void ROUTAGE::slot_calculate()
         }
         msecs_4=msecs_4+time.elapsed();
 
-        //qWarning()<<"after smoothing:"<<tempPoints.count();
+        if(i_iso)
+            qWarning()<<"after smoothing:"<<tempPoints.count();
 #endif
         /*final checking and calculating route between Iso*/
         if(tempPoints.count()==0)
@@ -1857,7 +1861,7 @@ void ROUTAGE::slot_calculate()
         {
             vlmPoint from=list->at(n);
             orth.setPoints(from.lon,from.lat,to.lon,to.lat);
-            if(orth.getDistance()<myBoat->getPolarData()->getMaxSpeed()*60/this->getTimeStep())
+            if(orth.getDistance()<myBoat->getPolarData()->getMaxSpeed()*(this->getTimeStep()/60.0))
             {
                 if(checkCoast && (map->crossing(QLineF(list->at(n).x,list->at(n).y,xa,ya),QLineF(list->at(n).lon,list->at(n).lat,arrival.x(),arrival.y()))
                    || (checkLine && crossBarriere(QLineF(list->at(n).x,list->at(n).y,xa,ya)))))
@@ -1915,13 +1919,14 @@ void ROUTAGE::slot_calculate()
             realEta=eta+minTime;
             drawResult(list->at(nBest));
             QApplication::processEvents();
+            qWarning()<<"result drawn and stored";
             if(!computeAlternative) break;
             double optionThreshold=(double)thresholdAlternative/100.0;
             vlmPoint t=result->getPoints()->at(qRound(result->getPoints()->count()*optionThreshold));
             optionsLimits.append(t);
             searchingForOptions=true;
             doNotCheckCrossing=true;
-            qWarning()<<"result drawn and stored";
+            qWarning()<<"Searching for alternative routes";
         }
         if(optionFound)
         {
@@ -2366,6 +2371,7 @@ void ROUTAGE::pruneWake(int wakeAngle)
         for(int m=0;m<pIso->count();++m)
         {
             if(pIso->at(m).distArrival>tempPoints.at(n).distArrival) continue;
+            if(pIso->at(m).isDead) continue;
             double pc1=pIso->at(m).distArrival/initialDist;
             double pc2=tempPoints.at(n).distArrival/initialDist;
             if(pc2-pc1<0.30) continue;
@@ -3322,62 +3328,6 @@ void ROUTAGE::calculateInverse()
 void ROUTAGE::showIsoRoute()
 {
     if(this->isConverted()) return;
-#if 0
-    while(!routesBis.isEmpty())
-        delete routesBis.takeFirst();
-    bool showEquivRoutes=true;
-    if(showEquivRoutes && arrived)
-    {
-        datathread dataThread;
-        dataThread.Boat=this->getBoat();
-        dataThread.Eta=this->getEta();
-        dataThread.GriB=this->getGrib();
-        dataThread.whatIfJour=this->getWhatIfJour();
-        dataThread.whatIfUsed=this->getWhatIfUsed();
-        dataThread.windIsForced=this->getWindIsForced();
-        dataThread.whatIfTime=this->getWhatIfTime();
-        dataThread.windAngle=this->getWindAngle();
-        dataThread.windSpeed=this->getWindSpeed();
-        dataThread.whatIfWind=this->getWhatIfWind();
-        dataThread.timeStep=this->getTimeStep();
-        dataThread.speedLossOnTack=this->getSpeedLossOnTack();
-        dataThread.i_iso=i_iso;
-        QColor cc=color.lighter(120);
-        pen.setWidthF(width);
-        pen.setColor(cc);
-        pen.setBrush(cc);
-        vlmPoint to(this->getToPOI()->getLongitude(),this->getToPOI()->getLatitude());
-        foreach(vlmLine * isochrone,isochrones)
-        {
-            for (int pp=0;pp<isochrone->getPoints()->count();++pp)
-            {
-                vlmPoint p=isochrone->getPoints()->at(pp);
-                if(result->getPoints()->contains(p)) continue;
-                int ptime=calculateTimeRoute(p,to,&dataThread)+p.eta;
-                if(ptime<this->getEta()+isoRouteValue*60)
-                {
-                    vlmLine * routeBis=new vlmLine(proj,parent->getScene(),Z_VALUE_ROUTAGE+0.2);
-                    routesBis.append(routeBis);
-                    routeBis->setParent(this);
-                    routeBis->addVlmPoint(to);
-                    while (true)
-                    {
-                        p.isBroken=false;
-                        routeBis->addVlmPoint(p);
-                        if (p.isStart) break;
-                        if(result->getPoints()->contains(p)) break;
-                        p= (*p.origin);
-                    }
-                    routeBis->setLinePen(pen);
-                    routeBis->slot_showMe();
-                }
-            }
-        }
-        pen.setColor(color);
-        pen.setBrush(color);
-        pen.setWidthF(2);
-    }
-#endif
     while(!isoRoutes.isEmpty())
         delete isoRoutes.takeFirst();
     QColor colorCloud=QColor(Qt::lightGray);
@@ -3388,7 +3338,8 @@ void ROUTAGE::showIsoRoute()
     while (true)
     {
         goal=qMax(0.0,goal+goalInc);
-        if(goal>.999) break;
+        if(goal>.99) break;
+        //if(goal>.1) break;
         int i=isochrones.count();
         int ii=0;
         QList<vlmPoint> left,right;
@@ -3417,9 +3368,11 @@ void ROUTAGE::showIsoRoute()
             }
             bool found=false;
             vlmPoint Cross;
-            double lon,lat;
+            double lon,lat,X,Y;
             Cross=result->getPoints()->at(n);
+            proj->map2screenDouble(Util::cLFA(Cross.lon,proj->getXmin()),Cross.lat,&X,&Y);
             int js=0;
+            double minDist=10e10;
             for(int s=indice;s<isochrone->getPoints()->count()-1;++s)
             {
                 vlmPoint p1=isochrone->getPoints()->at(s);
@@ -3436,19 +3389,24 @@ void ROUTAGE::showIsoRoute()
                     QPointF cross;
                     if(line1.intersect(line2,&cross)==QLineF::BoundedIntersection)
                     {
-                        proj->screen2mapDouble(cross.x(),cross.y(),&lon,&lat);
-                        Cross.lon=lon;
-                        Cross.lat=lat;
-                        Cross.x=cross.x();
-                        Cross.y=cross.y();
-                        found=true;
-                        js=qMax(0,is-1);
-                        break;
+                        QLineF line3(X,Y,cross.x(),cross.y());
+                        if(line3.length()<minDist)
+                        {
+                            minDist=line3.length();
+                            proj->screen2mapDouble(cross.x(),cross.y(),&lon,&lat);
+                            Cross.lon=lon;
+                            Cross.lat=lat;
+                            Cross.x=cross.x();
+                            Cross.y=cross.y();
+                            found=true;
+                            js=qMax(0,is-1);
+                        }
+                        //break;
                     }
                 }
-                if(found) break;
+                //if(found) break;
             }
-            if(qRound(goal*10000)!=0)
+            if(qRound(goal*10000)!=0 && found)
             {
                 Cross=result->getPoints()->at(n);
                 vlmLine * prev_isochrone=isochrones.at(i-1);
@@ -3556,10 +3514,13 @@ void ROUTAGE::showIsoRoute()
                 }
                 /*if not found let it draw a line hoping that next i_iso will be ok*/
             }
-            else if (found)
+            else /*if (found)*/
                 left.append(Cross);
             js=i_isochrone->getPoints()->count()-1;
+            Cross=result->getPoints()->at(n);
+            proj->map2screenDouble(Util::cLFA(Cross.lon,proj->getXmin()),Cross.lat,&X,&Y);
             found=false;
+            minDist=10e10;
             for(int s=indice;s>0;--s)
             {
                 vlmPoint p1=isochrone->getPoints()->at(s);
@@ -3576,19 +3537,24 @@ void ROUTAGE::showIsoRoute()
                     QPointF cross;
                     if(line1.intersect(line2,&cross)==QLineF::BoundedIntersection)
                     {
-                        proj->screen2mapDouble(cross.x(),cross.y(),&lon,&lat);
-                        Cross.lon=lon;
-                        Cross.lat=lat;
-                        Cross.x=cross.x();
-                        Cross.y=cross.y();
-                        found=true;
-                        js=qMax(0,is);
-                        break;
+                        QLineF line3(X,Y,cross.x(),cross.y());
+                        if(line3.length()<minDist)
+                        {
+                            minDist=line3.length();
+                            proj->screen2mapDouble(cross.x(),cross.y(),&lon,&lat);
+                            Cross.lon=lon;
+                            Cross.lat=lat;
+                            Cross.x=cross.x();
+                            Cross.y=cross.y();
+                            found=true;
+                            js=qMax(0,is);
+                        }
+                        //break;
                     }
                 }
-                if(found) break;
+                //if(found) break;
             }
-            if(qRound(goal*10000)!=0)
+            if(qRound(goal*10000)!=0 && found)
             {
                 Cross=result->getPoints()->at(n);
                 vlmLine * prev_isochrone=isochrones.at(i-1);
@@ -3708,7 +3674,7 @@ void ROUTAGE::showIsoRoute()
                 }
                 /*if not found let it draw a line hoping that next i_iso will be ok*/
             }
-            else if (found)
+            else /*if (found)*/
                 right.prepend(Cross);
         }
         right.prepend(lastInResult);

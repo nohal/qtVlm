@@ -469,8 +469,10 @@ void DialogRoutage::done(int result)
                 return;
             }
             routage->setIsoRouteValue(this->isoRoute->value());
-            routage->setI_iso(this->i_iso->isChecked());
+            routage->setI_iso(i_iso->isChecked());
         }
+        if(!routage->isDone())
+            routage->setIsoRouteValue(routage->getTimeStepMore24());
     }
     if(result == QDialog::Rejected)
     {

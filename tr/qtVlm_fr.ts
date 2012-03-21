@@ -841,7 +841,7 @@ Etes-vous sur ?</source>
     </message>
     <message>
         <source> processeurs disponibles)</source>
-        <translation>CPUs disponibles)</translation>
+        <translation> CPUs disponibles)</translation>
     </message>
     <message>
         <source>Creation d&apos;un routage</source>
@@ -3384,7 +3384,8 @@ alternatives</source>
     <message>
         <source>Isochrones
 inverses</source>
-        <translation>Isochrones inversés</translation>
+        <translation>Isochrones
+inversés</translation>
     </message>
     <message>
         <source>Enveloppe</source>

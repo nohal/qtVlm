@@ -1176,7 +1176,7 @@ Etes-vous sur ?</source>
     <message>
         <location filename="../src/Dialogs/DialogRoutage.cpp" line="81"/>
         <source> processeurs disponibles)</source>
-        <translation>CPUs available)</translation>
+        <translation> CPUs available)</translation>
     </message>
     <message>
         <location filename="../src/Dialogs/DialogRoutage.cpp" line="360"/>
@@ -4873,7 +4873,8 @@ alternatives</source>
         <location filename="../src/Ui/Routage_Editor.ui" line="1365"/>
         <source>Isochrones
 inverses</source>
-        <translation>Inversed isochrons</translation>
+        <translation>Inversed
+isochrons</translation>
     </message>
     <message>
         <location filename="../src/Ui/Routage_Editor.ui" line="1373"/>
