@@ -739,7 +739,7 @@ ROUTAGE::ROUTAGE(QString name, Projection *proj, Grib *grib, QGraphicsScene * my
     this->checkCoast=Settings::getSetting("checkCoast",1).toInt()==1;
     this->checkLine=Settings::getSetting("checkLine",1).toInt()==1;
     this->computeAlternative=Settings::getSetting("computeAlternative",0).toInt()==1;
-    this->thresholdAlternative=Settings::getSetting("thresholdAlternative",75).toInt();
+    this->thresholdAlternative=Settings::getSetting("thresholdAlternative",50).toInt();
     this->nbAlternative=Settings::getSetting("nbAlternative",3).toInt();
     this->visibleOnly=Settings::getSetting("visibleOnly",1).toInt()==1;
     this->autoZoom=Settings::getSetting("autoZoom",1).toInt()==1;
@@ -795,10 +795,6 @@ ROUTAGE::~ROUTAGE()
         delete isoRoutes.takeFirst();
     while(!alternateRoutes.isEmpty())
         delete alternateRoutes.takeFirst();
-    while(!o_segments.isEmpty())
-        delete o_segments.takeFirst();
-    while(!o_isochrones.isEmpty())
-        delete o_isochrones.takeFirst();
 }
 void ROUTAGE::setBoat(boat *myBoat)
 {
@@ -906,7 +902,7 @@ void ROUTAGE::calculate()
         i_eta=i_start.eta;
         start.setX(i_start.lon);
         start.setY(i_start.lat);
-        qWarning()<<QDateTime().fromTime_t(i_eta).toUTC().toString("dd MMM-hh:mm");
+        //qWarning()<<QDateTime().fromTime_t(i_eta).toUTC().toString("dd MMM-hh:mm");
     }
     if(autoZoom)
     {
@@ -960,7 +956,7 @@ void ROUTAGE::calculate()
             }
         }
 
-#if 1
+#if 0
         qWarning() << "Routing from " << start.x() << ", " << start.y() << " to " << arrival.x() << ", " << arrival.y();
         qWarning() << "-- Distance: " << distance;
         qWarning() << "-- North:    " << yN;
@@ -1009,8 +1005,6 @@ void ROUTAGE::slot_calculate()
     int msecs_15=0;
     int nbCaps=0;
     int nbCapsPruned=0;
-    searchingForOptions=false;
-    bool doNotCheckCrossing=false;
     QList<POI *> poiList=parent->getPois();
     for(int p=0;p<poiList.count();++p)
     {
@@ -1025,7 +1019,7 @@ void ROUTAGE::slot_calculate()
             barrieres.append(QLineF(x1,y1,x2,y2));
         }
     }
-    qWarning()<<"barrieres has"<<barrieres.count()<<"line(s)";
+    //qWarning()<<"barrieres has"<<barrieres.count()<<"line(s)";
     msecsD1=0;
     msecsD2=0;
     debugCross0=0;
@@ -1090,12 +1084,10 @@ void ROUTAGE::slot_calculate()
     {
         i_isochrones.append(iso);
     }
-    else if(!searchingForOptions)
+    else
     {
         isochrones.append(iso);
     }
-    else if(searchingForOptions)
-        o_isochrones.append(iso);
     int nbIso=0;
     if(!i_iso)
         arrived=false;
@@ -1121,7 +1113,6 @@ void ROUTAGE::slot_calculate()
     time_t maxDate=grib->getMaxDate();
     if(angleRange>=180) angleRange=179;
     arrivalIsClosest=false;
-    QList<vlmPoint> optionsLimits;
     time_t realEta=eta;
     while(!aborted)
     {
@@ -1460,7 +1451,7 @@ void ROUTAGE::slot_calculate()
             break;
 #if 1 /*check that the new iso itself does not cross previous segments or iso*/
         time.restart();
-        if(!tempPoints.at(0).origin->isStart && !doNotCheckCrossing)
+        if(!tempPoints.at(0).origin->isStart)
         {
             checkIsoCrossingPreviousSegments();
         }
@@ -1489,8 +1480,8 @@ void ROUTAGE::slot_calculate()
             epuration(toBeRemoved*0.5);
         }
         msecs_6=msecs_6+time.elapsed();
-        if(i_iso)
-            qWarning()<<"after epuration()"<<tempPoints.count();
+//        if(i_iso)
+//            qWarning()<<"after epuration()"<<tempPoints.count();
 #if 1 /*smoothing iso*/
         time.restart();
         int nbPathSmooth=i_iso?10:2;
@@ -1521,8 +1512,8 @@ void ROUTAGE::slot_calculate()
         }
         msecs_4=msecs_4+time.elapsed();
 
-        if(i_iso)
-            qWarning()<<"after smoothing:"<<tempPoints.count();
+//        if(i_iso)
+//            qWarning()<<"after smoothing:"<<tempPoints.count();
 #endif
         /*final checking and calculating route between Iso*/
         if(tempPoints.count()==0)
@@ -1543,7 +1534,7 @@ void ROUTAGE::slot_calculate()
                 maxLoop=nbLoop;
             somethingHasChanged=false;
 /*recheck that the new iso itself does not cross previous segments*/
-            if(!tempPoints.at(0).origin->isStart && !doNotCheckCrossing)
+            if(!tempPoints.at(0).origin->isStart)
             {
                 checkIsoCrossingPreviousSegments();
             }
@@ -1673,8 +1664,7 @@ void ROUTAGE::slot_calculate()
                 {
                     t1.start();
                     removeCrossedSegments();
-                    if(!doNotCheckCrossing)
-                        checkIsoCrossingPreviousSegments();
+                    checkIsoCrossingPreviousSegments();
                     msecs_13=msecs_13+t1.elapsed();
                 }
             }
@@ -1746,6 +1736,7 @@ void ROUTAGE::slot_calculate()
     //                else
     //                    vg->setDebug("Simplicable");
                     vg->setEta(eta+(int)this->getTimeStep()*60.00);
+                    connect(this,SIGNAL(updateVgTip(int,int,QString)),vg,SLOT(slot_updateTip(int,int,QString)));
                     this->isoPointList.append(vg);
                 }
             }
@@ -1792,36 +1783,24 @@ void ROUTAGE::slot_calculate()
                 penSegment.setColor(Qt::magenta);
 #endif
             segment->setLinePen(penSegment);
-            if(!searchingForOptions)
-                segment->slot_showMe();
+            segment->slot_showMe();
             if(i_iso)
             {
                 i_segments.append(segment);
                 segment->setHidden(true);
             }
-            else if(!searchingForOptions)
+            else
                 segments.append(segment);
-            else if(searchingForOptions)
-            {
-                o_segments.append(segment);
-                segment->setHidden(true);
-            }
             previousSegments.append(QLineF(list->at(n).origin->x,list->at(n).origin->y,list->at(n).x,list->at(n).y));
         }
         msecs_15=msecs_15+time.elapsed();
-        //if(!searchingForOptions)
-            iso->slot_showMe();
+        iso->slot_showMe();
         if(i_iso)
             i_isochrones.append(iso);
         else
         {
-            if(!searchingForOptions)
-                isochrones.append(iso);
-            else
-                o_isochrones.append(iso);
+            isochrones.append(iso);
         }
-        if(searchingForOptions)
-            doNotCheckCrossing=false;
         time.restart();
         if(++refresh%4==0)
         {
@@ -1832,7 +1811,7 @@ void ROUTAGE::slot_calculate()
         if(i_iso)
         {
             i_eta=i_eta-(int)this->getTimeStep()*60.00;
-            qWarning()<<nbIso<<QDateTime().fromTime_t(i_eta).toUTC().toString("dd MMM-hh:mm");
+            //qWarning()<<nbIso<<QDateTime().fromTime_t(i_eta).toUTC().toString("dd MMM-hh:mm");
         }
         else
             eta=eta+(int)this->getTimeStep()*60.00;
@@ -1856,7 +1835,6 @@ void ROUTAGE::slot_calculate()
         dataThread.speedLossOnTack=this->getSpeedLossOnTack();
         dataThread.i_iso=i_iso;
         bool i_arrived=false;
-        bool optionFound=false;
         for (int n=0;n<list->count();++n)
         {
             vlmPoint from=list->at(n);
@@ -1869,20 +1847,15 @@ void ROUTAGE::slot_calculate()
                 int thisTime=calculateTimeRoute(from,to, &dataThread, NULL, NULL, (this->getTimeStep()+1)*60);
                 if(thisTime<=this->getTimeStep()*60)
                 {
-                    if(!searchingForOptions)
-                    {
-                        arrived=true;
-                        i_arrived=true;
-                    }
-                    else
-                        optionFound=true;
+                    arrived=true;
+                    i_arrived=true;
                     break;
                 }
             }
         }
         msecs_8=msecs_8+time.elapsed();
         if (i_iso && i_arrived) break;
-        if (!i_iso && arrived && !searchingForOptions)
+        if (!i_iso && arrived)
         {
             list=iso->getPoints();
             int nBest=0;
@@ -1919,119 +1892,15 @@ void ROUTAGE::slot_calculate()
             realEta=eta+minTime;
             drawResult(list->at(nBest));
             QApplication::processEvents();
-            qWarning()<<"result drawn and stored";
-            if(!computeAlternative) break;
-            double optionThreshold=(double)thresholdAlternative/100.0;
-            vlmPoint t=result->getPoints()->at(qRound(result->getPoints()->count()*optionThreshold));
-            optionsLimits.append(t);
-            searchingForOptions=true;
-            doNotCheckCrossing=true;
-            qWarning()<<"Searching for alternative routes";
-        }
-        if(optionFound)
-        {
-            qWarning()<<"option found";
-            list=iso->getPoints();
-            vlmPoint to(arrival.x(),arrival.y());
-            datathread dataThread;
-            dataThread.Boat=this->getBoat();
-            dataThread.Eta=this->getEta();
-            dataThread.GriB=this->getGrib();
-            dataThread.whatIfJour=this->getWhatIfJour();
-            dataThread.whatIfUsed=this->getWhatIfUsed();
-            dataThread.windIsForced=this->getWindIsForced();
-            dataThread.whatIfTime=this->getWhatIfTime();
-            dataThread.windAngle=this->getWindAngle();
-            dataThread.windSpeed=this->getWindSpeed();
-            dataThread.whatIfWind=this->getWhatIfWind();
-            dataThread.timeStep=this->getTimeStep();
-            dataThread.speedLossOnTack=this->getSpeedLossOnTack();
-            dataThread.i_iso=i_iso;
-            QMultiMap<int,int> sortedArrivals;
-            for(int n=0;n<list->count();++n)
-            {
-                if((checkCoast && map->crossing(QLineF(list->at(n).x,list->at(n).y,xa,ya),
-                        QLineF(list->at(n).lon,list->at(n).lat,arrival.x(),arrival.y())))
-                    || (checkLine && crossBarriere(QLineF(list->at(n).x,list->at(n).y,xa,ya))))
-                    continue;
-                vlmPoint from=list->at(n);
-                int thisTime=calculateTimeRoute(from,to,&dataThread, NULL, NULL, (this->getTimeStep()+1)*60);
-                if(thisTime<=this->getTimeStep()*60.0)
-                {
-                    sortedArrivals.insert(thisTime,n);
-                }
-            }
-            QMapIterator<int,int> iter(sortedArrivals);
-            while(iter.hasNext())
-            {
-                iter.next();
-                vlmPoint point=list->at(iter.value());
-                vlmLine * option=new vlmLine(proj,parent->getScene(),Z_VALUE_ROUTAGE);
-                option->setParent(this);
-                vlmPoint P=point;
-                while(true)
-                {
-                    if(optionsLimits.contains(P))
-                    {
-                        delete option;
-                        option=NULL;
-                        point.isDead=true;
-                        iso->getPoints()->replace(iter.value(),point);
-                        --nbNotDead;
-                        break;
-                    }
-                    option->addVlmPoint(P);
-                    if(P.isStart) break;
-                    P=*P.origin;
-                }
-                if(option!=NULL)
-                {
-                    pen.setColor(Qt::white);
-                    pen.setWidthF(this->width*.75);
-                    option->setLinePen(pen);
-                    pen.setColor(color);
-                    pen.setWidthF(this->width);
-                    option->slot_showMe();
-                    QApplication::processEvents();
-                    double optionThreshold=(double)thresholdAlternative/100.0;
-                    vlmPoint t=option->getPoints()->at(qRound(result->getPoints()->count()*optionThreshold));
-                    optionsLimits.append(t);
-                    qWarning()<<"option drawn";
-                    alternateRoutes.append(option);
-                    if(alternateRoutes.count()>=nbAlternative) break;
-                }
-            }
-            if(alternateRoutes.count()>=nbAlternative) break;
-        }
-        if(searchingForOptions)
-        {
-            qWarning()<<"cleaning iso for options";
-            for(int n=0;n<iso->getPoints()->count();++n)
-            {
-                vlmPoint point=iso->getPoints()->at(n);
-                if(point.isDead) continue;
-                vlmPoint p=point;
-                while (true)
-                {
-                    if(p.isStart) break;
-                    if(optionsLimits.contains(p))
-                    {
-                        point.isDead=true;
-                        iso->getPoints()->replace(n,point);
-                        --nbNotDead;
-                        break;
-                    }
-                    p=*p.origin;
-                }
-            }
-            qWarning()<<"end cleaning iso for options";
+            //qWarning()<<"result drawn and stored";
+            if(computeAlternative) calculateAlternative();
+            break;
         }
         if(nbIso>3000 || nbNotDead<=0)
         {
             break;
         }
     }
-    searchingForOptions=false;
     if(!i_iso)
     {
         if(!arrived)
@@ -2356,7 +2225,7 @@ double ROUTAGE::findDistancePoly(const QPointF P, const QPolygonF * poly, QPoint
 }
 void ROUTAGE::pruneWake(int wakeAngle)
 {
-    if (wakeAngle<1 || searchingForOptions) return;
+    if (wakeAngle<1) return;
     QList<vlmPoint> *pIso;
     double wakeDir=0;
     if(i_iso)
@@ -2492,11 +2361,6 @@ void ROUTAGE::setShowIso(bool b)
     {
         i_isochrones[n]->setHidden(!showIso);
         i_isochrones[n]->blockSignals(!b);
-    }
-    for (int n=0;n<o_isochrones.count();++n)
-    {
-        o_isochrones[n]->setHidden(!showIso);
-        o_isochrones[n]->blockSignals(!b);
     }
     for (int n=0;n<segments.count();++n)
     {
@@ -3313,7 +3177,7 @@ double ROUTAGE::getTimeStep()
 void ROUTAGE::calculateInverse()
 {
     i_iso=true;
-    qWarning()<<"launching inversed iso calculation";
+    //qWarning()<<"launching inversed iso calculation";
     QColor col=Qt::black;
     QPen Pen=pen;
     col.setAlpha(160);
@@ -3355,11 +3219,11 @@ void ROUTAGE::showIsoRoute()
             if(i<1) break;
             ++ii;
             if(ii>=i_isochrones.count()) break;
-            qWarning()<<i<<ii<<isochrones.count()<<i_isochrones.count();
+            //qWarning()<<i<<ii<<isochrones.count()<<i_isochrones.count();
             vlmLine * isochrone=isochrones.at(i);
             vlmLine * i_isochrone=i_isochrones.at(ii);
-            qWarning()<<QDateTime().fromTime_t(isochrone->getPoints()->first().eta).toUTC().toString("dd MMM-hh:mm")<<
-                        QDateTime().fromTime_t(i_isochrone->getPoints()->first().eta).toUTC().toString("dd MMM-hh:mm");
+//            qWarning()<<QDateTime().fromTime_t(isochrone->getPoints()->first().eta).toUTC().toString("dd MMM-hh:mm")<<
+//                        QDateTime().fromTime_t(i_isochrone->getPoints()->first().eta).toUTC().toString("dd MMM-hh:mm");
             int indice=isochrone->getPoints()->indexOf(result->getPoints()->at(n));
             if(indice<0)
             {
@@ -3680,7 +3544,7 @@ void ROUTAGE::showIsoRoute()
         right.prepend(lastInResult);
         right.append(result->getPoints()->first());
         left.append(right);
-        qWarning()<<"SIR: isoRoute has "<<left.count()<<"points";
+        //qWarning()<<"SIR: isoRoute has "<<left.count()<<"points";
         vlmLine * isoRoute=new vlmLine(proj, this->myscene,Z_VALUE_ROUTAGE);
         isoRoute->setParent(this);
         for(int n=0;n<left.count();++n)
@@ -3787,7 +3651,7 @@ double ROUTAGE::pointDistanceRatioDeriv(double x, double xStep, double goal, boo
     if(xr==xl)
     {
         *status=false;
-        qWarning()<<"error in deriv:"<<xr<<x<<xStep;
+        //qWarning()<<"error in deriv:"<<xr<<x<<xStep;
         return 0;
     }
     yl=pointDistanceRatio(xl,goal,poly,prev_poly,i_poly);
@@ -3825,7 +3689,7 @@ bool ROUTAGE::newtownRaphson(double * root, double goal,double precision,QPolygo
         if(qAbs(y0)<=precision)
         {
             *root=x0;
-            qWarning()<<"found it (lucky mode) in"<<iterations<<"loop(s)";
+            //qWarning()<<"found it (lucky mode) in"<<iterations<<"loop(s)";
             return true;
         }
         if(qAbs(y0)<bestY)
@@ -3895,7 +3759,7 @@ bool ROUTAGE::newtownRaphson(double * root, double goal,double precision,QPolygo
 /*end of update data*/
         if(status)
         {
-            qWarning()<<"found it in"<<iterations<<"loop(s)";
+            //qWarning()<<"found it in"<<iterations<<"loop(s)";
             return status;
         }
         if(y0==y1 && iterations!=1)
@@ -3905,10 +3769,10 @@ bool ROUTAGE::newtownRaphson(double * root, double goal,double precision,QPolygo
                 //x0=qrand()/(double)RAND_MAX;
                 //qWarning()<<"restarting with a random number"<<x0;
                 x0=alternativeGuesses[nbRestart];
-                qWarning()<<"restarting with alternate guess:"<<x0;
+                //qWarning()<<"restarting with alternate guess:"<<x0;
                 continue;
             }
-            qWarning()<<"not found (flat case 1)";
+            //qWarning()<<"not found (flat case 1)";
             break;
         }
         y1=y0;
@@ -3929,16 +3793,16 @@ bool ROUTAGE::newtownRaphson(double * root, double goal,double precision,QPolygo
                 df0=pointDistanceRatioDeriv(x0,xStep,goal,&status,poly,prev_poly,i_poly);
                 if(!status)
                 {
-                    double debugXstep=xStep;
+                    //double debugXstep=xStep;
                     xStep=xStep/2.0;
-                    qWarning()<<"retrying deriv"<<debugXstep<<xStep;
+                    //qWarning()<<"retrying deriv"<<debugXstep<<xStep;
                 }
                 else break;
             }
             //qWarning()<<"x0,xStep="<<x0<<xStep;
             if(!status)
             {
-                qWarning()<<"not found (anomaly in derivative function)";
+                //qWarning()<<"not found (anomaly in derivative function)";
                 return status;
             }
             if(qRound(qAbs(df0*100000000))==0) /* hit a flat spot->trouble*/
@@ -3950,7 +3814,7 @@ bool ROUTAGE::newtownRaphson(double * root, double goal,double precision,QPolygo
                 }
                 else
                 {
-                    qWarning()<<"not found (flat case 2)";
+                    //qWarning()<<"not found (flat case 2)";
                     return false;
                 }
             }
@@ -3963,7 +3827,7 @@ bool ROUTAGE::newtownRaphson(double * root, double goal,double precision,QPolygo
         if(stepSize<precision)
         {
             *root=x0;
-            qWarning()<<"found it after"<<iterations<<"loop(s)";
+            //qWarning()<<"found it after"<<iterations<<"loop(s)";
             return true;
         }
         x0=x1;
@@ -3971,10 +3835,10 @@ bool ROUTAGE::newtownRaphson(double * root, double goal,double precision,QPolygo
     if(bestY<precision*20.0 && bestX>=xMin && bestX<=xMax)
     {
         *root=bestX;
-        qWarning()<<"found something not so good but still usable:"<<bestY<<goal+bestY<<"instead of"<<goal;
+        //qWarning()<<"found something not so good but still usable:"<<bestY<<goal+bestY<<"instead of"<<goal;
         return true;
     }
-    qWarning()<<"not found after"<<iterations<<"loops. (Best find:"<<bestY<<goal+bestY<<"instead of"<<goal<<")";
+    //qWarning()<<"not found after"<<iterations<<"loops. (Best find:"<<bestY<<goal+bestY<<"instead of"<<goal<<")";
     return false;
 }
 const bool ROUTAGE::crossBarriere(const QLineF line)
@@ -3986,4 +3850,104 @@ const bool ROUTAGE::crossBarriere(const QLineF line)
             return true;
     }
     return false;
+}
+void ROUTAGE::calculateAlternative()
+{
+    while(!this->alternateRoutes.isEmpty())
+        delete alternateRoutes.takeFirst();
+    Settings::setSetting("computeAlternative",computeAlternative?1:0);
+    Settings::setSetting("thresholdAlternative",thresholdAlternative);
+    Settings::setSetting("nbAlternative",nbAlternative);
+    if(!this->computeAlternative || nbAlternative==0) return;
+    if(i_iso || !arrived) return;
+    vlmPoint to(this->toPOI->getLongitude(),this->toPOI->getLatitude());
+    datathread dataThread;
+    dataThread.Boat=this->getBoat();
+    dataThread.Eta=this->getEta();
+    dataThread.GriB=this->getGrib();
+    dataThread.whatIfJour=this->getWhatIfJour();
+    dataThread.whatIfUsed=this->getWhatIfUsed();
+    dataThread.windIsForced=this->getWindIsForced();
+    dataThread.whatIfTime=this->getWhatIfTime();
+    dataThread.windAngle=this->getWindAngle();
+    dataThread.windSpeed=this->getWindSpeed();
+    dataThread.whatIfWind=this->getWhatIfWind();
+    dataThread.timeStep=this->getTimeStep();
+    dataThread.speedLossOnTack=this->getSpeedLossOnTack();
+    dataThread.i_iso=i_iso;
+    QList<vlmPoint> tempResult;
+    for (int r=0;r<result->count();++r) /*to deal with pivots*/
+    {
+        if(result->getPoints()->at(r).isStart) break;
+        tempResult.append(result->getPoints()->at(r));
+    }
+    double optionThreshold=1.0-(double)thresholdAlternative/100.0;
+    int limitNb=qRound(tempResult.count()*optionThreshold);
+    vlmPoint t=tempResult.at(limitNb);
+    QList<vlmPoint> limits;
+    limits.append(t);
+    //qWarning()<<"Searching for alternative routes";
+    QMultiMap<int,vlmPoint> alternateTimes;
+    int i=qRound((double)isochrones.count()*.9);
+    vlmLine *isoc=isochrones.at(i);
+    for (int is=0;is<isoc->getPoints()->count();++is)
+    {
+        vlmPoint P=isoc->getPoints()->at(is);
+        bool bad=false;
+        while(true)
+        {
+            if(P.isStart) break;
+            if(P==t)
+            {
+                bad=true;
+                break;
+            }
+            P=*P.origin;
+        }
+        if(bad) continue;
+        P=isoc->getPoints()->at(is);
+        dataThread.Eta=P.eta;
+        int thisTime=calculateTimeRoute(P,to,&dataThread, NULL, NULL);
+        alternateTimes.insert(P.eta+thisTime,P);
+    }
+    QMapIterator<int,vlmPoint> times(alternateTimes);
+    while(times.hasNext())
+    {
+        times.next();
+        vlmPoint P=times.value();
+        vlmLine *res=new vlmLine(proj,parent->getScene(),Z_VALUE_ROUTAGE);
+        bool bad=false;
+        while(true)
+        {
+            res->addVlmPoint(P);
+            if(P.isStart) break;
+            if(limits.contains(P))
+            {
+                bad=true;
+                break;
+            }
+            P=*P.origin;
+        }
+        if(bad)
+        {
+            delete res;
+            continue;
+        }
+        alternateRoutes.append(res);
+        QPen penA=pen;
+        penA.setColor(Qt::white);
+        res->setLinePen(penA);
+        res->slot_showMe();
+        QDateTime tm;
+        tm.setTimeSpec(Qt::UTC);
+        tm.setTime_t(times.key());
+        QString tip=tr("Arrivee (estimation): ")+tm.toString("dd MMM-hh:mm");
+        P=times.value();
+        int ii=isoc->getPoints()->indexOf(P);
+        emit updateVgTip(i,ii,tip);
+        if(alternateRoutes.count()>=this->nbAlternative) break;
+        limitNb=qRound(res->getPoints()->count()*optionThreshold);
+        vlmPoint t=res->getPoints()->at(limitNb);
+        limits.append(t);
+    }
 }

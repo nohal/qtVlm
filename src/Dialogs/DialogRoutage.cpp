@@ -218,9 +218,9 @@ DialogRoutage::DialogRoutage(ROUTAGE *routage,myCentralWidget *parent)
         this->pruneWakeAngle->setDisabled(true);
         this->checkCoast->setDisabled(true);
         this->checkLines->setDisabled(true);
-        this->checkOptions->setDisabled(true);
-        this->diver->setDisabled(true);
-        this->nbAlter->setDisabled(true);
+        //this->checkOptions->setDisabled(true);
+        //this->diver->setDisabled(true);
+        //this->nbAlter->setDisabled(true);
         if(routage->isConverted())
             this->convRoute->setDisabled(true);
 
@@ -325,6 +325,11 @@ void DialogRoutage::done(int result)
         routage->setStartTime(editDateBox->dateTime());
         routage->setCheckCoast(checkCoast->isChecked());
         routage->setCheckLine(checkLines->isChecked());
+        bool reCalculateAlternative=false;
+        if(routage->isDone() && (routage->getcomputeAlternative()!=this->checkOptions->isChecked() ||
+                                 routage->getNbAlternative()!=nbAlter->value()||
+                                 routage->getThresholdAlternative()!=diver->value()))
+            reCalculateAlternative=true;
         routage->setcomputeAlternative(this->checkOptions->isChecked());
         routage->setNbAlternative(this->nbAlter->value());
         routage->setThresholdAlternative(this->diver->value());
@@ -473,6 +478,8 @@ void DialogRoutage::done(int result)
         }
         if(!routage->isDone())
             routage->setIsoRouteValue(routage->getTimeStepMore24());
+        else if(reCalculateAlternative)
+            routage->calculateAlternative();
     }
     if(result == QDialog::Rejected)
     {

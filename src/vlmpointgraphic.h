@@ -29,6 +29,7 @@ protected:
 public slots:
     void drawWay(void);
     void slot_showMe(void);
+    void slot_updateTip(int i,int n, QString t);
 private:
     QGraphicsScene * myScene;
     Projection * proj;

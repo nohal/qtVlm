@@ -188,6 +188,7 @@ class ROUTAGE : public QObject
         int getNbAlternative(){return this->nbAlternative;}
         void setcomputeAlternative(bool b){this->computeAlternative=b;}
         int getcomputeAlternative(){return this->computeAlternative;}
+        void calculateAlternative();
     public slots:
         void slot_edit();
         void slot_abort(){this->aborted=true;}
@@ -200,6 +201,7 @@ class ROUTAGE : public QObject
         void slot_gribDateChanged();
     signals:
         void editMe(ROUTAGE *);
+        void updateVgTip(int,int,QString);
     private:
         /* parent, main */
         myCentralWidget *parent;
@@ -321,8 +323,6 @@ class ROUTAGE : public QObject
         time_t i_eta;
         QList<vlmLine *> i_isochrones;
         QList<vlmLine *> i_segments;
-        QList<vlmLine *> o_isochrones;
-        QList<vlmLine *> o_segments;
         bool i_done;
         static QPointF pointAt(const QPolygonF * poly, const double ratio);
         double findDistancePoly(const QPointF P, const QPolygonF * poly, QPointF * closest);
@@ -333,6 +333,5 @@ class ROUTAGE : public QObject
         QList<vlmLine*> isoRoutes;
         QList<vlmLine*> alternateRoutes;
         QList<QLineF> barrieres;
-        bool searchingForOptions;
     };
 #endif // ROUTAGE_H

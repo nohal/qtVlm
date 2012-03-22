@@ -48,8 +48,16 @@ void vlmPointGraphic::setEta(time_t eta)
                      +"<br>IsoNb->"+QString().setNum(isoNb)+" pt nb->"+QString().setNum(this->pointIsoNb)
                      +"<br>debug->"+this->debug);
 }
+void vlmPointGraphic::slot_updateTip(int i,int n, QString t)
+{
+    if(i!=isoNb) return;
+    if(n!=pointIsoNb) return;
+    setEta(eta);
+    QString newtip=this->toolTip()+"<br>"+t;
+    newtip=newtip.replace(" ","&nbsp;");
+    setToolTip(newtip);
+}
 
-//void  vlmPointGraphic::hoverEnterEvent ( QGraphicsSceneHoverEvent * event )
 void vlmPointGraphic::drawWay()
 {
     if(!routage->getShowIso())
