@@ -737,7 +737,7 @@ void boatVLM::updateHint(void)
                            this->getPrevVac(),&windSpeed,&windAngle,INTERPOLATION_DEFAULT))
     {
         windAngle=radToDeg(windAngle);
-        desc=desc+"<br>"+tr("Donnees GRIB a la derniere vac:")+"<br>"+
+        desc=desc+"<br><b>"+tr("Donnees GRIB a la derniere vac:")+"</b><br>"+
              QString().sprintf("TWS: %.2f TWD: %.2f",windSpeed,windAngle)+tr("deg");
         double twa=this->heading-windAngle;
         if(qAbs(twa)>180)
@@ -757,7 +757,7 @@ void boatVLM::updateHint(void)
         parent->getGrib()->getInterpolatedValue_byDates(this->lon,this->lat,
                             this->getPrevVac()+this->getVacLen(),&windSpeed,&windAngle,INTERPOLATION_DEFAULT);
         windAngle=radToDeg(windAngle);
-        desc=desc+"<br>"+tr("Donnees GRIB a la prochaine vac:")+"<br>"+
+        desc=desc+"<br><b>"+tr("Donnees GRIB a la prochaine vac:")+"</b><br>"+
              QString().sprintf("TWS: %.2f TWD: %.2f",windSpeed,windAngle)+tr("deg");
         if(this->getPolarData())
         {
@@ -771,9 +771,13 @@ void boatVLM::updateHint(void)
             }
             double bs=this->getPolarData()->getSpeed(windSpeed,twa);
             desc=desc+"<br>"+tr("BS polaire: ")+QString().sprintf("%.2f",bs)+tr(" nds");
+            double bVmgUp=this->getPolarData()->getBvmgUp(windSpeed);
+            double bVmgDown=this->getPolarData()->getBvmgDown(windSpeed);
+            desc=desc+"<br>"+tr("BVMG vent (pres): ")+QString().sprintf("%.2f",bVmgUp)+tr("deg");
+            desc=desc+"<br>"+tr("BVMG vent (portant): ")+QString().sprintf("%.2f",bVmgDown)+tr("deg");
             if(windEstimeSpeed!=-1)
             {
-                desc=desc+"<br>"+tr("Tendance a l'estime: ");
+                desc=desc+"<br><b>"+tr("Tendance a l'estime: ")+"</b>";
                 previousTWS=qRound(previousTWS*100);
                 windSpeed=qRound(windEstimeSpeed*100);
                 previousTWA=qAbs(qRound(previousTWA*100));
