@@ -37,6 +37,7 @@ Copyright (C) 2008 - Jacques Zaninetti - http://zygrib.free.fr
 #include "vlmpointgraphic.h"
 #include "vlmPoint.h"
 #include "GshhsReader.h"
+#include "vlmLine.h"
 #define NO_CROSS 1
 #define BOUNDED_CROSS 2
 #define L1_CROSS 3
@@ -189,6 +190,8 @@ class ROUTAGE : public QObject
         void setcomputeAlternative(bool b){this->computeAlternative=b;}
         int getcomputeAlternative(){return this->computeAlternative;}
         void calculateAlternative();
+        void deleteAlternative(){while(!alternateRoutes.isEmpty())
+                delete alternateRoutes.takeFirst();}
     public slots:
         void slot_edit();
         void slot_abort(){this->aborted=true;}

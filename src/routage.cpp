@@ -456,7 +456,7 @@ inline QList<vlmPoint> findRoute(const QList<vlmPoint> & pointListX)
         to.lat=res_lat;
         oldTime=realTime;
         realTime=ROUTAGE::calculateTimeRoute(from, to, &dataThread, &lastLonFound, &lastLatFound);
-        if(realTime>10e4)
+        if(realTime>10e7)
         {
             resultP.isDead=true;
             resultList.append(resultP);
@@ -670,7 +670,7 @@ inline int ROUTAGE::calculateTimeRoute(vlmPoint routeFrom,vlmPoint routeTo, data
         } while (has_eta);
     if(!has_eta)
     {
-        return 10e5;
+        return 10e10;
     }
     if(lastLonFound!=NULL)
     {
@@ -793,8 +793,7 @@ ROUTAGE::~ROUTAGE()
         delete popup;
     while(!isoRoutes.isEmpty())
         delete isoRoutes.takeFirst();
-    while(!alternateRoutes.isEmpty())
-        delete alternateRoutes.takeFirst();
+    deleteAlternative();
 }
 void ROUTAGE::setBoat(boat *myBoat)
 {
@@ -3136,6 +3135,7 @@ void ROUTAGE::setFromRoutage(ROUTAGE *fromRoutage, bool editOptions)
     fromRoutage->setShowIso(false);
     fromRoutage->getResult()->hide();
     fromRoutage->getWay()->hide();
+    fromRoutage->deleteAlternative();
     if(editOptions)
     {
         isNewPivot=true;
@@ -3192,8 +3192,7 @@ void ROUTAGE::calculateInverse()
 void ROUTAGE::showIsoRoute()
 {
     if(this->isConverted()) return;
-    while(!isoRoutes.isEmpty())
-        delete isoRoutes.takeFirst();
+    deleteAlternative();
     QColor colorCloud=QColor(Qt::lightGray);
     colorCloud.setAlpha(150);
     double goal=(double)(timeStepMore24-isoRouteValue)/(double)timeStepMore24;
@@ -3876,12 +3875,12 @@ void ROUTAGE::calculateAlternative()
     dataThread.speedLossOnTack=this->getSpeedLossOnTack();
     dataThread.i_iso=i_iso;
     QList<vlmPoint> tempResult;
-    for (int r=0;r<result->count();++r) /*to deal with pivots*/
+    for (int r=0;r<result->count();++r)
     {
         if(result->getPoints()->at(r).isStart) break;
         tempResult.append(result->getPoints()->at(r));
     }
-    double optionThreshold=1.0-(double)thresholdAlternative/100.0;
+    double optionThreshold=(double)thresholdAlternative/100.0;
     int limitNb=qRound(tempResult.count()*optionThreshold);
     vlmPoint t=tempResult.at(limitNb);
     QList<vlmPoint> limits;

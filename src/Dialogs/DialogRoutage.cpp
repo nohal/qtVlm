@@ -377,14 +377,17 @@ void DialogRoutage::done(int result)
         }
         else
             routage->setBoat((boat *) parent->getRealBoat());
-        routage->setFromPOI(NULL);
-        routage->setToPOI(NULL);
+        if(!routage->isDone())
+        {
+            routage->setFromPOI(NULL);
+            routage->setToPOI(NULL);
+        }
         if(toPOI->currentIndex()==-1)
         {
             QMessageBox::critical(0,QString(QObject::tr("Routage")),QString(QObject::tr("Le POI de destination est invalide")));
             return;
         }
-        else
+        else if(!routage->isDone())
         {
             routage->setToPOI(parent->getPois().at(toPOI->itemData(toPOI->currentIndex(),Qt::UserRole).toInt()));
         }
