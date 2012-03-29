@@ -187,8 +187,6 @@ class ROUTAGE : public QObject
         int getThresholdAlternative(){return this->thresholdAlternative;}
         void setNbAlternative(int i){this->nbAlternative=i;}
         int getNbAlternative(){return this->nbAlternative;}
-        void setcomputeAlternative(bool b){this->computeAlternative=b;}
-        int getcomputeAlternative(){return this->computeAlternative;}
         void calculateAlternative();
         void deleteAlternative(){while(!alternateRoutes.isEmpty())
                 delete alternateRoutes.takeFirst();}
@@ -279,7 +277,6 @@ class ROUTAGE : public QObject
         void removeCrossedSegments();
         double xa,ya,xs,ys;
         bool checkCoast,checkLine;
-        bool computeAlternative;
         int  nbAlternative;
         int  thresholdAlternative;
         bool arrivalIsClosest;

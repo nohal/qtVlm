@@ -190,7 +190,6 @@ DialogRoutage::DialogRoutage(ROUTAGE *routage,myCentralWidget *parent)
     }
     this->checkCoast->setChecked(routage->getCheckCoast());
     this->checkLines->setChecked(routage->getCheckLine());
-    this->checkOptions->setChecked(routage->getcomputeAlternative());
     this->nbAlter->setValue(routage->getNbAlternative());
     this->diver->setValue(routage->getThresholdAlternative());
     if(routage->isDone() || routage->getIsNewPivot())
@@ -218,7 +217,6 @@ DialogRoutage::DialogRoutage(ROUTAGE *routage,myCentralWidget *parent)
         this->pruneWakeAngle->setDisabled(true);
         this->checkCoast->setDisabled(true);
         this->checkLines->setDisabled(true);
-        //this->checkOptions->setDisabled(true);
         //this->diver->setDisabled(true);
         //this->nbAlter->setDisabled(true);
         if(routage->isConverted())
@@ -252,7 +250,6 @@ DialogRoutage::DialogRoutage(ROUTAGE *routage,myCentralWidget *parent)
         this->pruneWakeAngle->setDisabled(false);
         this->checkCoast->setDisabled(false);
         this->checkLines->setDisabled(false);
-        this->checkOptions->setDisabled(false);
         this->diver->setDisabled(false);
         this->nbAlter->setDisabled(false);
         this->whatIfUse->setDisabled(false);
@@ -299,7 +296,6 @@ void DialogRoutage::slot_default()
     this->windForced->setChecked(false);
     this->checkCoast->setChecked(true);
     this->checkLines->setChecked(true);
-    this->checkOptions->setChecked(false);
     this->nbAlter->setValue(3);
     this->diver->setValue(75);
 }
@@ -326,11 +322,9 @@ void DialogRoutage::done(int result)
         routage->setCheckCoast(checkCoast->isChecked());
         routage->setCheckLine(checkLines->isChecked());
         bool reCalculateAlternative=false;
-        if(routage->isDone() && (routage->getcomputeAlternative()!=this->checkOptions->isChecked() ||
-                                 routage->getNbAlternative()!=nbAlter->value()||
+        if(routage->isDone() && (routage->getNbAlternative()!=nbAlter->value()||
                                  routage->getThresholdAlternative()!=diver->value()))
             reCalculateAlternative=true;
-        routage->setcomputeAlternative(this->checkOptions->isChecked());
         routage->setNbAlternative(this->nbAlter->value());
         routage->setThresholdAlternative(this->diver->value());
         routage->useConverge=log->isChecked();

@@ -513,23 +513,6 @@ Virements de bord</string>
         <string>Eviter les barrieres</string>
        </property>
       </widget>
-      <widget class="QCheckBox" name="checkOptions">
-       <property name="geometry">
-        <rect>
-         <x>330</x>
-         <y>210</y>
-         <width>151</width>
-         <height>31</height>
-        </rect>
-       </property>
-       <property name="toolTip">
-        <string>Le parametrage de cette option se trouve dans les options avancees</string>
-       </property>
-       <property name="text">
-        <string>Calculer des routes
-alternatives</string>
-       </property>
-      </widget>
      </widget>
      <widget class="QGroupBox" name="groupBox_eta">
       <property name="enabled">
@@ -1434,7 +1417,6 @@ inverses</string>
   <tabstop>visibleOnly</tabstop>
   <tabstop>checkCoast</tabstop>
   <tabstop>checkLines</tabstop>
-  <tabstop>checkOptions</tabstop>
   <tabstop>tabWidget</tabstop>
   <tabstop>pruneWakeAngle</tabstop>
   <tabstop>explo</tabstop>

@@ -456,7 +456,7 @@ inline QList<vlmPoint> findRoute(const QList<vlmPoint> & pointListX)
         to.lat=res_lat;
         oldTime=realTime;
         realTime=ROUTAGE::calculateTimeRoute(from, to, &dataThread, &lastLonFound, &lastLatFound);
-        if(realTime>10e7)
+        if(realTime>10e4)
         {
             resultP.isDead=true;
             resultList.append(resultP);
@@ -670,7 +670,7 @@ inline int ROUTAGE::calculateTimeRoute(vlmPoint routeFrom,vlmPoint routeTo, data
         } while (has_eta);
     if(!has_eta)
     {
-        return 10e10;
+        return 10e6;
     }
     if(lastLonFound!=NULL)
     {
@@ -738,9 +738,8 @@ ROUTAGE::ROUTAGE(QString name, Projection *proj, Grib *grib, QGraphicsScene * my
     this->useConverge=Settings::getSetting("useConverge",1).toInt()==1;
     this->checkCoast=Settings::getSetting("checkCoast",1).toInt()==1;
     this->checkLine=Settings::getSetting("checkLine",1).toInt()==1;
-    this->computeAlternative=Settings::getSetting("computeAlternative",0).toInt()==1;
     this->thresholdAlternative=Settings::getSetting("thresholdAlternative",50).toInt();
-    this->nbAlternative=Settings::getSetting("nbAlternative",3).toInt();
+    this->nbAlternative=Settings::getSetting("nbAlternative",0).toInt();
     this->visibleOnly=Settings::getSetting("visibleOnly",1).toInt()==1;
     this->autoZoom=Settings::getSetting("autoZoom",1).toInt()==1;
     this->zoomLevel=Settings::getSetting("autoZoomLevel",2).toInt();
@@ -836,7 +835,6 @@ void ROUTAGE::calculate()
         Settings::setSetting("useConverge",useConverge?1:0);
         Settings::setSetting("checkCoast",checkCoast?1:0);
         Settings::setSetting("checkLine",checkLine?1:0);
-        Settings::setSetting("computeAlternative",computeAlternative?1:0);
         Settings::setSetting("thresholdAlternative",thresholdAlternative);
         Settings::setSetting("nbAlternative",nbAlternative);
         Settings::setSetting("visibleOnly",visibleOnly?1:0);
@@ -1892,7 +1890,7 @@ void ROUTAGE::slot_calculate()
             drawResult(list->at(nBest));
             QApplication::processEvents();
             //qWarning()<<"result drawn and stored";
-            if(computeAlternative) calculateAlternative();
+            if(nbAlternative!=0) calculateAlternative();
             break;
         }
         if(nbIso>3000 || nbNotDead<=0)
@@ -3854,11 +3852,14 @@ void ROUTAGE::calculateAlternative()
 {
     while(!this->alternateRoutes.isEmpty())
         delete alternateRoutes.takeFirst();
-    Settings::setSetting("computeAlternative",computeAlternative?1:0);
     Settings::setSetting("thresholdAlternative",thresholdAlternative);
     Settings::setSetting("nbAlternative",nbAlternative);
-    if(!this->computeAlternative || nbAlternative==0) return;
+    if(nbAlternative==0) return;
     if(i_iso || !arrived) return;
+    QMessageBox * waitBox = new QMessageBox(QMessageBox::Information,tr("Calcul des routes alternatives"),
+                              tr("Veuillez patienter..."));
+    waitBox->setStandardButtons(QMessageBox::NoButton);
+    waitBox->show();
     vlmPoint to(this->toPOI->getLongitude(),this->toPOI->getLatitude());
     datathread dataThread;
     dataThread.Boat=this->getBoat();
@@ -3907,6 +3908,7 @@ void ROUTAGE::calculateAlternative()
         P=isoc->getPoints()->at(is);
         dataThread.Eta=P.eta;
         int thisTime=calculateTimeRoute(P,to,&dataThread, NULL, NULL);
+        if(thisTime>10e4) continue;
         alternateTimes.insert(P.eta+thisTime,P);
     }
     QMapIterator<int,vlmPoint> times(alternateTimes);
@@ -3949,4 +3951,6 @@ void ROUTAGE::calculateAlternative()
         vlmPoint t=res->getPoints()->at(limitNb);
         limits.append(t);
     }
+    delete waitBox;
+    QApplication::processEvents();
 }

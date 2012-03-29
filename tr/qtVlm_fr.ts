@@ -3105,6 +3105,18 @@ VMG %.2f nds</translation>
         <source>Un des routages en amont a ete supprime,&lt;br&gt;la conversion est impossible</source>
         <translation>Un des routages en amont a été supprimé,&lt;br&gt;la conversion est impossible</translation>
     </message>
+    <message>
+        <source>Calcul des routes alternatives</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Veuillez patienter...</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Arrivee (estimation): </source>
+        <translation>Arrivée (estimation):</translation>
+    </message>
 </context>
 <context>
     <name>ROUTAGE_Editor_ui</name>
@@ -3354,12 +3366,7 @@ La différence est surtout sensible lors d&apos;un routage en diagonale.</transl
     </message>
     <message>
         <source>Le parametrage de cette option se trouve dans les options avancees</source>
-        <translation>Le paramétrage de cette option se trouve dans les options avancées</translation>
-    </message>
-    <message>
-        <source>Calculer des routes
-alternatives</source>
-        <translation></translation>
+        <translation type="obsolete">Le paramétrage de cette option se trouve dans les options avancées</translation>
     </message>
     <message>
         <source>Angle d&apos;epuration par sillage</source>
@@ -4898,6 +4905,14 @@ p, li { white-space: pre-wrap; }
     <message>
         <source>Tendance a l&apos;estime: </source>
         <translation>Tendance à l&apos;estime: </translation>
+    </message>
+    <message>
+        <source>BVMG vent (pres): </source>
+        <translation>BVMG vent (près):</translation>
+    </message>
+    <message>
+        <source>BVMG vent (portant): </source>
+        <translation></translation>
     </message>
 </context>
 <context>
