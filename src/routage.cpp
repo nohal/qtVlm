@@ -1735,6 +1735,7 @@ void ROUTAGE::slot_calculate()
                     vg->setEta(eta+(int)this->getTimeStep()*60.00);
                     connect(this,SIGNAL(updateVgTip(int,int,QString)),vg,SLOT(slot_updateTip(int,int,QString)));
                     this->isoPointList.append(vg);
+                    vg->slot_showMe();
                 }
             }
         }
@@ -2368,6 +2369,11 @@ void ROUTAGE::setShowIso(bool b)
     {
         isoPointList[n]->shown(b);
         isoPointList[n]->blockSignals(!b);
+    }
+    for (int n=0;n<alternateRoutes.count();++n)
+    {
+        alternateRoutes[n]->setHidden(!showIso);
+        alternateRoutes[n]->blockSignals(!b);
     }
     way->hide();
     if(result && b)
@@ -3133,7 +3139,6 @@ void ROUTAGE::setFromRoutage(ROUTAGE *fromRoutage, bool editOptions)
     fromRoutage->setShowIso(false);
     fromRoutage->getResult()->hide();
     fromRoutage->getWay()->hide();
-    fromRoutage->deleteAlternative();
     if(editOptions)
     {
         isNewPivot=true;
@@ -3860,6 +3865,7 @@ void ROUTAGE::calculateAlternative()
                               tr("Veuillez patienter..."));
     waitBox->setStandardButtons(QMessageBox::NoButton);
     waitBox->show();
+    QApplication::processEvents();
     vlmPoint to(this->toPOI->getLongitude(),this->toPOI->getLatitude());
     datathread dataThread;
     dataThread.Boat=this->getBoat();
@@ -3951,6 +3957,6 @@ void ROUTAGE::calculateAlternative()
         vlmPoint t=res->getPoints()->at(limitNb);
         limits.append(t);
     }
-    delete waitBox;
     QApplication::processEvents();
+    delete waitBox;
 }

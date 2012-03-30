@@ -29,7 +29,9 @@ vlmPointGraphic::~vlmPointGraphic()
 }
 void vlmPointGraphic::slot_showMe()
 {
-    update();
+    int pi,pj;
+    Util::computePos(proj,lat, lon, &pi, &pj);
+    setPos(pi,pj);
 }
 QRectF vlmPointGraphic::boundingRect() const
 {
@@ -75,9 +77,6 @@ void vlmPointGraphic::contextMenuEvent(QGraphicsSceneContextMenuEvent * e)
 {
     routage->showContextMenu(this->isoNb,this->pointIsoNb);
 }
-void vlmPointGraphic::paint(QPainter * pnt, const QStyleOptionGraphicsItem * , QWidget * )
+void vlmPointGraphic::paint(QPainter *, const QStyleOptionGraphicsItem * , QWidget * )
 {
-    int pi,pj;
-    Util::computePos(proj,lat, lon, &pi, &pj);
-    setPos(pi,pj);
 }
