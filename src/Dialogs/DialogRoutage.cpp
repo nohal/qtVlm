@@ -148,12 +148,12 @@ DialogRoutage::DialogRoutage(ROUTAGE *routage,myCentralWidget *parent)
     {
         if(routage->getFromPOI())
         {
-            fromPOI->addItem(routage->getFromPOI()->getName());
+            fromPOI->addItem(routage->getFromPOI()->getName(),parent->getPois().indexOf(routage->getFromPOI()));
             fromPOI->setCurrentIndex(0);
         }
         if(routage->getToPOI())
         {
-            toPOI->addItem(routage->getToPOI()->getName());
+            toPOI->addItem(routage->getToPOI()->getName(),parent->getPois().indexOf(routage->getToPOI()));
             toPOI->setCurrentIndex(0);
         }
     }
@@ -375,44 +375,41 @@ void DialogRoutage::done(int result)
         {
             routage->setFromPOI(NULL);
             routage->setToPOI(NULL);
-        }
-        if(toPOI->currentIndex()==-1)
-        {
-            QMessageBox::critical(0,QString(QObject::tr("Routage")),QString(QObject::tr("Le POI de destination est invalide")));
-            return;
-        }
-        else if(!routage->isDone())
-        {
+            if(toPOI->currentIndex()==-1)
+            {
+                QMessageBox::critical(0,QString(QObject::tr("Routage")),QString(QObject::tr("Le POI de destination est invalide")));
+                return;
+            }
             routage->setToPOI(parent->getPois().at(toPOI->itemData(toPOI->currentIndex(),Qt::UserRole).toInt()));
-        }
-        if(!startFromBoat->isChecked() && fromPOI->currentIndex()==-1)
-        {
-            QMessageBox::critical(0,QString(QObject::tr("Routage")),QString(QObject::tr("Le POI de depart est invalide")));
-            return;
-        }
-        else
-        {
-            routage->setFromPOI(parent->getPois().at(fromPOI->itemData(fromPOI->currentIndex(),Qt::UserRole).toInt()));
-        }
-        if(routage->getToPOI()==NULL)
-        {
-            QMessageBox::critical(0,QString(QObject::tr("Routage")),QString(QObject::tr("Le POI de destination est invalide")));
-            return;
-        }
-        if(!routage->getRouteFromBoat())
-        {
-            if(routage->getFromPOI()==NULL)
+            if(!startFromBoat->isChecked() && fromPOI->currentIndex()==-1)
             {
                 QMessageBox::critical(0,QString(QObject::tr("Routage")),QString(QObject::tr("Le POI de depart est invalide")));
                 return;
             }
-            if(routage->getFromPOI()->getLongitude()==routage->getToPOI()->getLongitude() &&
-               routage->getFromPOI()->getLatitude()==routage->getToPOI()->getLatitude())
+            else
             {
-                if(!routage->getIsNewPivot() && !routage->getIsPivot())
+                routage->setFromPOI(parent->getPois().at(fromPOI->itemData(fromPOI->currentIndex(),Qt::UserRole).toInt()));
+            }
+            if(routage->getToPOI()==NULL)
+            {
+                QMessageBox::critical(0,QString(QObject::tr("Routage")),QString(QObject::tr("Le POI de destination est invalide")));
+                return;
+            }
+            if(!routage->getRouteFromBoat())
+            {
+                if(routage->getFromPOI()==NULL)
                 {
-                    QMessageBox::critical(0,QString(QObject::tr("Routage")),QString(QObject::tr("Le POI de depart et d'arrivee sont les memes, vous etes deja arrive...")));
+                    QMessageBox::critical(0,QString(QObject::tr("Routage")),QString(QObject::tr("Le POI de depart est invalide")));
                     return;
+                }
+                if(routage->getFromPOI()->getLongitude()==routage->getToPOI()->getLongitude() &&
+                   routage->getFromPOI()->getLatitude()==routage->getToPOI()->getLatitude())
+                {
+                    if(!routage->getIsNewPivot() && !routage->getIsPivot())
+                    {
+                        QMessageBox::critical(0,QString(QObject::tr("Routage")),QString(QObject::tr("Le POI de depart et d'arrivee sont les memes, vous etes deja arrive...")));
+                        return;
+                    }
                 }
             }
         }

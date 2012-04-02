@@ -3888,7 +3888,13 @@ void ROUTAGE::calculateAlternative()
         tempResult.append(result->getPoints()->at(r));
     }
     double optionThreshold=(double)thresholdAlternative/100.0;
-    int limitNb=qRound(tempResult.count()*optionThreshold);
+    int limitNb=qRound((tempResult.count()-1)*optionThreshold);
+    //qWarning()<<"(1) limitNb="<<limitNb<<"count="<<tempResult.count()<<optionThreshold;
+    if(limitNb<0 || limitNb>=tempResult.count())
+    {
+        delete waitBox;
+        return;
+    }
     vlmPoint t=tempResult.at(limitNb);
     QList<vlmPoint> limits;
     limits.append(t);
@@ -3953,7 +3959,9 @@ void ROUTAGE::calculateAlternative()
         int ii=isoc->getPoints()->indexOf(P);
         emit updateVgTip(i,ii,tip);
         if(alternateRoutes.count()>=this->nbAlternative) break;
-        limitNb=qRound(res->getPoints()->count()*optionThreshold);
+        limitNb=qRound((res->getPoints()->count()-1)*optionThreshold);
+        //qWarning()<<"(2) limitNb="<<limitNb<<"count="<<res->getPoints()->count();
+        if(limitNb<0 || limitNb>=res->getPoints()->count()) break;
         vlmPoint t=res->getPoints()->at(limitNb);
         limits.append(t);
     }
