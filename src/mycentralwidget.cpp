@@ -1186,7 +1186,7 @@ void myCentralWidget::simpAllPOIs(bool simp)
         double x0,y0,x1,y1;
         proj->map2screenDouble(Util::cLFA(lon0,proj->getXmin()),lat0,&x0,&y0);
         proj->map2screenDouble(Util::cLFA(lon1,proj->getXmin()),lat1,&x1,&y1);
-        QRectF selRect=QRectF(x0,y0,x1,y1).normalized();
+        QRectF selRect=QRectF(QPointF(x0,y0),QPointF(x1,y1)).normalized();
         QListIterator<POI*> i (poi_list);
 
 
@@ -1228,7 +1228,8 @@ void myCentralWidget::slot_delAllPOIs(void)
         double x0,y0,x1,y1;
         proj->map2screenDouble(Util::cLFA(lon0,proj->getXmin()),lat0,&x0,&y0);
         proj->map2screenDouble(Util::cLFA(lon1,proj->getXmin()),lat1,&x1,&y1);
-        QRectF selRect=QRectF(x0,y0,x1,y1).normalized();
+        QRectF selRect=QRectF(QPointF(x0,y0),QPointF(x1,y1)).normalized();
+        //qWarning()<<"selRect="<<x0<<y0<<x1<<y1;
         QListIterator<POI*> i (poi_list);
 
         int rep = QMessageBox::question (this,
@@ -1254,6 +1255,7 @@ void myCentralWidget::slot_delAllPOIs(void)
 
             if(selRect.contains(x,y))
             {
+                //qWarning()<<"poi inside"<<poi->getName()<<x<<y;
                 if(poi->getRoute()!=NULL)
                 {
                     if(poi->getRoute()->getFrozen()||poi->getRoute()->getHidden()||poi->getRoute()->isBusy()) continue;
@@ -1262,7 +1264,8 @@ void myCentralWidget::slot_delAllPOIs(void)
                 slot_delPOI_list(poi);
                 poi->deleteLater();
             }
-
+//            else
+//                qWarning()<<"poi outside"<<poi->getName()<<x<<y;
         }
         selection->clearSelection();
         r.toFront();
@@ -1285,7 +1288,7 @@ void myCentralWidget::slot_delSelPOIs(void)
         double x0,y0,x1,y1;
         proj->map2screenDouble(Util::cLFA(lon0,proj->getXmin()),lat0,&x0,&y0);
         proj->map2screenDouble(Util::cLFA(lon1,proj->getXmin()),lat1,&x1,&y1);
-        QRectF selRect=QRectF(x0,y0,x1,y1).normalized();
+        QRectF selRect=QRectF(QPointF(x0,y0),QPointF(x1,y1)).normalized();
         int res_mask;
         DialogPoiDelete * dialog_sel = new DialogPoiDelete();
         dialog_sel->exec();
