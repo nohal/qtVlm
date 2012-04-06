@@ -334,14 +334,25 @@ void opponent::updateName()
         str2=str2+"<tr><td>"+tr("Loch 3h: ")+"</td><td>"+this->loch3h+"</td></tr>";
         str2=str2+"<tr><td>"+tr("Loch 24h: ")+"</td><td>"+this->loch24h+"</td></tr>";
         str2=str2+"<tr><td>"+tr("Status VLM: ")+"</td><td>"+this->statusVLM+"</td></tr>";
-        if(estimatedSpeed!=0 && false)
+        if(estimatedSpeed!=0)
         {
-            str2=str2+"<tr><td>"+tr("Vitesse estimee: ")+"</td><td>"+
-                 QString().sprintf("%.2f ",estimatedSpeed)+
-                 tr(" nds")+"</td></tr>";
-            str2+="<tr><td>"+tr("Cap estime: ")+"</td><td>"+
-                    QString().sprintf("%.2f ",estimatedHeading)+
-                    tr("deg")+"</td></tr>";
+            if(parentWindow->getSelectedBoat())
+            {
+                Orthodromie oo(parentWindow->getSelectedBoat()->getLon(),parentWindow->getSelectedBoat()->getLat(),this->lon,this->lat);
+                if(oo.getDistance()<=25.0)
+                {
+                    str2=str2+"<tr><td>"+tr("Vitesse estimee: ")+"</td><td>"+
+                         QString().sprintf("%.2f ",estimatedSpeed)+
+                         tr(" nds")+"</td></tr>";
+                    str2+="<tr><td>"+tr("Cap estime: ")+"</td><td>"+
+                          QString().sprintf("%.2f ",estimatedHeading)+
+                          tr("deg")+"</td></tr>";
+                }
+                else
+                {
+                    str2+=tr("Trop loin pour estimer le cap et la vitesse");
+                }
+            }
         }
         str2.replace(" ","&nbsp;");
     }
