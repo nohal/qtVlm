@@ -3900,7 +3900,12 @@ void ROUTAGE::calculateAlternative()
     limits.append(t);
     //qWarning()<<"Searching for alternative routes";
     QMultiMap<int,vlmPoint> alternateTimes;
-    int i=qRound((double)isochrones.count()*.9);
+    int i=qRound(((double)isochrones.count()-1)*.85);
+    if(i<0 || i>=isochrones.count())
+    {
+        delete waitBox;
+        return;
+    }
     vlmLine *isoc=isochrones.at(i);
     for (int is=0;is<isoc->getPoints()->count();++is)
     {
