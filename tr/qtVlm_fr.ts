@@ -2995,7 +2995,7 @@ VMG %.1f nds</translation>
 AWA %.2fdeg, AWS %.2fnds
 VMG %.2fnds</source>
         <translation>TWA %d°, BS %.2f nds
-AWA %2f°, AWS %.2f nds
+AWA %.2f°, AWS %.2f nds
 VMG %.2f nds</translation>
     </message>
     <message>
@@ -5820,6 +5820,10 @@ Voulez-vous egalement supprimer tous les POIs lui appartenant?</source>
     </message>
     <message>
         <source>Id: </source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Trop loin pour estimer le cap et la vitesse</source>
         <translation></translation>
     </message>
 </context>
