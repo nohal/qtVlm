@@ -82,7 +82,7 @@ class IsoLine
         void drawIsoLineLabels(QPainter &pnt, QColor &couleur, const Projection *proj,
                                 int density, int first, double coef);
 
-        int getNbSegments()     {return trace.size();}
+        int getNbSegments()     {return (int)trace.size();}
 
     private:
         double value;

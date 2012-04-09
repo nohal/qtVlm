@@ -119,7 +119,7 @@ bool inetClient::checkWSResult(QByteArray res,QString caller,QWidget * parent,QS
     else
     {
         QVariantMap errorData = result["error"].toMap();
-#warning Radiation de boatsit: a remplacer par le code erreur ad-hoc qd paparazia aura fait la modif necessaire
+//#warning Radiation de boatsit: a remplacer par le code erreur ad-hoc qd paparazia aura fait la modif necessaire
         if(errorData["code"].toString()=="XXXXXX") return true; /*cas de la radiation de boatsit*/
         qWarning() << "Error doing " << caller << " cmd: code=" << errorData["code"].toString()
                 << " - message=" << errorData["msg"].toString();

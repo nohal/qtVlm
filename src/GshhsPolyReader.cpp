@@ -339,7 +339,7 @@ void GshhsPolyReader::readPolygonFileHeader(FILE *polyfile, PolygonFileHeader *h
     int FReadResult = 0;
 
     fseek(polyfile, 0 , SEEK_SET);
-    FReadResult = fread(header, sizeof(PolygonFileHeader), 1, polyfile);
+    FReadResult = (int)fread(header, sizeof(PolygonFileHeader), 1, polyfile);
 }
 
 //-------------------------------------------------------------------------

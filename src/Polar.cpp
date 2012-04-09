@@ -27,7 +27,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <QProgressDialog>
 #include "MainWindow.h"
 #include "Polar.h"
-
+#include "dataDef.h"
 #include "parser.h"
 #include "Orthodromie.h"
 

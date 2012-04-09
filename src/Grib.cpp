@@ -471,7 +471,7 @@ int Grib::getTotalNumberOfGribRecords() {
         std::map < std::string, std::vector<GribRecord *>* >::iterator it;
         for (it=mapGribRecords.begin(); it!=mapGribRecords.end(); it++)
         {
-                nb += (*it).second->size();
+                nb += (int)(*it).second->size();
         }
         return nb;
 }
@@ -494,7 +494,7 @@ int Grib::getNumberOfGribRecords(int dataType,int levelType,int levelValue)
 {
         std::vector<GribRecord *> *liste = getListOfGribRecords(dataType,levelType,levelValue);
         if (liste != NULL)
-                return liste->size();
+                return (int)liste->size();
         else
                 return 0;
 }
@@ -524,7 +524,7 @@ void Grib::findGribsAroundDate (int dataType,int levelType,int levelValue, time_
         if(ls==NULL)
             return;
 
-        zuint nb = ls->size();
+        zuint nb = (int)ls->size();
         for (zuint i=0; i<nb && /**before==NULL &&*/ *after==NULL; i++)
         {
                 GribRecord *rec = (*ls)[i];
@@ -547,7 +547,7 @@ GribRecord * Grib::getGribRecord(int dataType,int levelType,int levelValue, time
     if (ls != NULL) {
         // Cherche le premier enregistrement a la bonne date
         GribRecord *res = NULL;
-        zuint nb = ls->size();
+        zuint nb = (int)ls->size();
         for (zuint i=0; i<nb && res==NULL; i++) {
             if ((*ls)[i]->getRecordCurrentDate() == date)
                 res = (*ls)[i];
@@ -775,7 +775,7 @@ double Grib::computeHoursBeetweenGribRecords()
     if (ls != NULL) {
         time_t t0 = (*ls)[0]->getRecordCurrentDate();
         time_t t1 = (*ls)[1]->getRecordCurrentDate();
-        res = abs(t1-t0) / 3600.0;
+        res = qAbs(t1-t0) / 3600.0;
         if (res < 1)
                 res = 1;
     }
@@ -859,7 +859,7 @@ QRgb  Grib::getRainColor(double v, bool smooth)
     QRgb rgb = 0;
     int  ind;
 
-    double indf = cbrt(67.5*v);        // TODO better color map!!!!
+    double indf = pow(67.5*v,1.0/3.0);        // TODO better color map!!!!
         if (v > 0)
                 indf += 0.2;
 
@@ -890,7 +890,7 @@ QRgb  Grib::getSnowDepthColor(double mm, bool smooth)
     QRgb rgb = 0;
     int  ind;
     double v = mm / 3.0;
-    double indf = cbrt(900*v);        // TODO better color map!!!!
+    double indf = pow(900*v,1.0/3.0);        // TODO better color map!!!!
         if (v > 0)
                 indf += 0.2;
     ind = (int) floor(Util::inRange(indf, 0.0, 15.0));
@@ -1513,7 +1513,7 @@ void Grib::draw_DeltaDewpoint_Color(QPainter &pnt, const Projection *proj, bool 
     }
 }
 
-QString Grib::drawCartouche(QPainter &pnt)
+QString Grib::drawCartouche(QPainter &)
 {
     if (!ok) return QString();
     return Util::formatDateTimeLong(currentDate);

@@ -258,7 +258,7 @@ void ROUTE::slot_recalculate(boat * boat)
             }
         }
     }
-    bool firstPoint;
+    bool firstPoint=true;
     double lastTwa=0;
     eta=0;
     has_eta=false;
@@ -274,7 +274,7 @@ void ROUTE::slot_recalculate(boat * boat)
                 else
                     eta=((boatVLM*)myBoat)->getPrevVac()/*+((boatVLM*)myBoat)->getVacLen()*/;
                 now = (QDateTime::currentDateTime()).toUTC().toTime_t();
-#warning find a better way to identify a boat that has not yet started
+//#warning find a better way to identify a boat that has not yet started
 /*cas du boat inscrit depuis longtemps mais pas encore parti*/
                 //if(eta < now - 2*myBoat->getVacLen() && myBoat->getType()==BOAT_VLM)
                 if(myBoat->getLoch()<0.01 && myBoat->getType()==BOAT_VLM)

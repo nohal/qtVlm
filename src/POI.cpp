@@ -660,7 +660,7 @@ void POI::chkIsWP(void)
         qWarning()<<debug;
     }
     */
-#warning chkIsWp rounded to 4 digits, waiting for a fix by VLM
+//#warning chkIsWp rounded to 4 digits, waiting for a fix by VLM
     //qWarning()<<qRound(lat*1000)<<qRound(lon*1000)<<qRound(WPlat*1000)<<qRound(WPlon*1000);
     double trickLat=qRound(lat*1000);
     double trickLon=qRound(lon*1000);

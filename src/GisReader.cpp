@@ -128,7 +128,7 @@ void GisReader::clearLists() {
 
 
 //-----------------------------------------------------------------------
-void GisPoint::draw(QPainter */*img*/, Projection */*proj*/)
+void GisPoint::draw(QPainter *, Projection *)
 {
 }
 //-----------------------------------------------------------------------

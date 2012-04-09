@@ -53,7 +53,7 @@ ZUFILE * zu_open(const char *fname, const char *mode, int type)
 
     f->ok = 1;
     f->pos = 0;
-    f->fname = strdup(fname);
+    f->fname = _strdup(fname);
 
     if(type == ZU_COMPRESS_AUTO)
     {
@@ -120,7 +120,7 @@ int  zu_read(ZUFILE *f, void *buf, long len)
     int bzerror=BZ_OK;
     switch(f->type) {
         case ZU_COMPRESS_NONE :
-            nb = fread(buf, 1, len, (FILE*)(f->zfile));
+            nb = (int)fread(buf, 1, len, (FILE*)(f->zfile));
             break;
         case ZU_COMPRESS_GZIP :
             nb = gzread((gzFile)(f->zfile), buf, len);

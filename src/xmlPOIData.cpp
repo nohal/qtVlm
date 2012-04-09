@@ -500,10 +500,7 @@ void xml_POIData::importGeoData(void)
 
     QTextStream stream(&file);
 
-    double lat=0,lon=0;
-    QString name;
     bool foundName,foundLat,foundLon;
-    int curCode=-1;
     foundName=foundLon=foundLat=false;
 
 

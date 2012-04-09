@@ -120,7 +120,7 @@ inline vlmPoint findPointThreaded(const vlmPoint &point)
             windSpeed=(windSpeed+newWindSpeed)/2;
         }
     }
-    if(qAbs(pt.lat>84.0))
+    if(qAbs(pt.lat)>84.0)
     {
         pt.isDead=true;
         return pt;

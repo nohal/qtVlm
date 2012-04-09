@@ -136,7 +136,7 @@ void  mapCompass::paint(QPainter * pnt, const QStyleOptionGraphicsItem * , QWidg
 
     proj->screen2map(this->x()+size/2,this->y()+size/2,&lon,&lat);
 
-    QPen pen(QColor(Qt::black));
+    QPen pen(Qt::black);
 
     str_h=fm.height();
     int diam=(size/2-2*COMPASS_MARGIN)/2;

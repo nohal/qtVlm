@@ -195,7 +195,7 @@ inline bool GshhsPolyReader::my_intersects(QLineF line1,QLineF line2) const
 
     return true;
 }
-#if false
+#if 0
 inline bool GshhsPolyReader::vlm_intersects(QLineF line1,QLineF line2) const
 {
 

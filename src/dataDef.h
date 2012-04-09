@@ -256,6 +256,22 @@ struct windData
 #define GEOPOTidx(h) ((h)==850?0:(h)==700?1:(h)==500?2:(h)==300?3:(h)==200?4:-1)
 #define GEOPOThgt(i) ((i)==0?850:(i)==1?700:(i)==2?500:(i)==3?300:(i)==4?200:-1)
 
+#ifndef M_PI
+#define M_E        2.71828182845904523536
+#define M_LOG2E    1.44269504088896340736
+#define M_LOG10E   0.434294481903251827651
+#define M_LN2      0.693147180559945309417
+#define M_LN10     2.30258509299404568402
+#define M_PI       3.14159265358979323846
+#define M_PI_2     1.57079632679489661923
+#define M_PI_4     0.785398163397448309616
+#define M_1_PI     0.318309886183790671538
+#define M_2_PI     0.636619772367581343076
+#define M_2_SQRTPI 1.12837916709551257390
+#define M_SQRT2    1.41421356237309504880
+#define M_SQRT1_2  0.707106781186547524401
+#endif
+
 //--------------------------------------------------------
 // Data definition
 //--------------------------------------------------------
@@ -305,17 +321,17 @@ class DataCode
                            this->levelType  = alt.levelType;
                            this->levelValue = alt.levelValue;  }
 
-                DataCode (uint32_t v)   { fromInt32 (v); }
+                DataCode (int v)   { fromInt32 (v); }
 
                 int dataType;
                 int levelType;
                 int levelValue;
 
                 // int32 = #aabbccdd    aabb=levelValue cc=levelType dd=dataCode
-                uint32_t toInt32 () {
+                int toInt32 () {
                         return ((levelValue&0xFFFF)<<16)+((levelType&0xFF)<<8)+(dataType&0xFF);
                 }
-                void fromInt32 (uint32_t v) {
+                void fromInt32 (int v) {
                         levelValue = (v>>16) & 0xFFFF;
                         levelType  = (v>>8) & 0xFF;
                         dataType   =  v     & 0xFF;

@@ -233,7 +233,8 @@ void  GribRecord::setDataType(const zuchar t)
 std::string GribRecord::makeKey(int dataType,int levelType,int levelValue)
 {   // Make data type key  sample:'11-100-850'
         char ktmp[32];
-        snprintf(ktmp, 32, "%d-%d-%d", dataType, levelType, levelValue);
+//        snprintf(ktmp, 32, "%d-%d-%d", dataType, levelType, levelValue);
+        sprintf(ktmp,"%d-%d-%d", dataType, levelType, levelValue);
         return std::string(ktmp);
 }
 //-----------------------------------------
@@ -474,7 +475,7 @@ bool GribRecord::readGribSection4_BDS(ZUFILE* file) {
     scaleFactorE = readSignedInt2(file);	// byte 5-6
     refValue     = readFloat4(file);		// byte 7-8-9-10
     nbBitsInPack = readChar(file);			// byte 11
-    scaleFactorEpow2 = pow(2,scaleFactorE);
+    scaleFactorEpow2 = pow(2.0,scaleFactorE);
     unusedBitsEndBDS = flags & 0x0F;
     isGridData      = (flags&0x80) ==0;
     isSimplePacking = (flags&0x80) ==0;
@@ -608,7 +609,7 @@ double GribRecord::readFloat4(ZUFILE* file) {
     int A = (zuint)t[0]&0x7F;
     int B = ((zuint)t[1]<<16)+((zuint)t[2]<<8)+(zuint)t[3];
 
-    val = pow(2,-24)*B*pow(16,A-64);
+    val = pow(2.0,-24)*B*pow(16.0,A-64);
     if (t[0]&0x80)
         return -val;
     else

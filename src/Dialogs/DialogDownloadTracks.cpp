@@ -12,7 +12,7 @@
 #define VLM_GET_PARTIAL_TRACK 4
 #define VLM_BOAT_INFO 5
 
-DialogDownloadTracks::DialogDownloadTracks(MainWindow * main ,myCentralWidget * parent,inetConnexion * inet) :
+DialogDownloadTracks::DialogDownloadTracks(MainWindow * ,myCentralWidget * parent,inetConnexion * inet) :
     QDialog(parent),
     inetClient(inet),
     ui(new Ui::DialogDownloadTracks)

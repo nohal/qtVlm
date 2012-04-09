@@ -776,7 +776,7 @@ void DialogRoute::slotEnvoyer()
     QList<POI*> poiList;
     for (int n=0;n<model->rowCount();++n)
     {
-        POI * poi=reinterpret_cast<struct POI *>(qvariant_cast<void*>(model->item(n,0)->data(Qt::UserRole)));
+        POI * poi=reinterpret_cast<class POI *>(qvariant_cast<void*>(model->item(n,0)->data(Qt::UserRole)));
         QDateTime tt=QDateTime().fromString(model->item(n,0)->data(Qt::EditRole).toString(),"dd MMM yyyy-hh:mm:ss");
         tt.setTimeSpec(Qt::UTC);
         //qWarning()<<poi->getName()<<tt;

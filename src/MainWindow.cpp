@@ -231,7 +231,8 @@ MainWindow::MainWindow(int w, int h, QWidget *parent)
     finishStart=true;
     nBoat=0;
     double prcx,prcy,scale;
-    setWindowTitle("QtVlm "+Version::getVersion());
+
+    setWindowTitle("QtVlm "+QString().setNum(sizeof(int*)*8)+" bits "+Version::getVersion());
     selectedBoat = NULL;
     showingSelectionMessage=false;
     INTERPOLATION_DEFAULT=Settings::getSetting("defaultInterpolation",INTERPOLATION_HYBRID).toInt();
@@ -710,7 +711,7 @@ void MainWindow::openGribFile(QString fileName, bool zoom)
         startGribDate.setTimeSpec(Qt::UTC);
         QDateTime endGribDate=QDateTime().fromTime_t(my_centralWidget->getGrib()->getMaxDate()).toUTC();
         endGribDate.setTimeSpec(Qt::UTC);
-        setWindowTitle("qtVlm "+Version::getVersion()+" grib: "+ QFileInfo(fileName).fileName()+tr(" (du ")+
+        setWindowTitle("qtVlm "+QString().setNum(sizeof(int*)*8)+" bits "+Version::getVersion()+" grib: "+ QFileInfo(fileName).fileName()+tr(" (du ")+
                        startGribDate.toString(tr("dd/MM/yyyy hh:mm:ss"))+tr(" au ")+
                        endGribDate.toString(tr("dd/MM/yyyy hh:mm:ss"))+")");
         slotDateGribChanged_now();
@@ -727,7 +728,7 @@ void MainWindow::openGribFile(QString fileName, bool zoom)
                 + tr("ou il contient des donnees non reconnues,") + "\n"
                 + tr("ou...")
         );
-        setWindowTitle("qtVlm "+Version::getVersion());
+        setWindowTitle("qtVlm "+QString().setNum(sizeof(int*)*8)+" bits "+Version::getVersion());
 
         menuBar->cbGribStep->setEnabled(false);
         menuBar->acDatesGrib_prev->setEnabled(false);
@@ -922,7 +923,7 @@ void MainWindow::slotFile_Close() {
     menuBar->datesGrib_sel->setEnabled(false);
     menuBar->datesGrib_now->setEnabled(false);
 
-    setWindowTitle(tr("qtVlm"));
+    setWindowTitle(tr("qtVlm ")+QString().setNum(sizeof(int*)*8)+" bits");
 
 }
 

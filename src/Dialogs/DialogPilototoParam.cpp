@@ -215,8 +215,8 @@ void DialogPilototoParam::setValue(int type,double val)
 {
     int sig=val<0?1:0;
     val=fabs(val);
-    int   deg = (int) trunc(val);
-    double min = 60.0*fabs(val-trunc(val));
+    int   deg = (int) val;
+    double min = 60.0*fabs(val-deg);
 
     /*if(deg==0 && val < 0)
         min=-min;*/

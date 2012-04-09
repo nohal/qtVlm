@@ -282,7 +282,7 @@ void DialogRace::noneToggle(bool b)
     if(b)
         param_list[numRace]->showWhat=SHOW_NONE;
 }
-void DialogRace::showRealToggle(bool b)
+void DialogRace::showRealToggle(bool)
 {
     param_list[numRace]->showReal=buttonReal->isChecked();
     this->filterReal->setEnabled(buttonReal->isChecked());

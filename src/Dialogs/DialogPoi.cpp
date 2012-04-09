@@ -324,8 +324,8 @@ void DialogPoi::latLonChg(double /*value*/)
         }
         else
             s=0;
-        b=(int) trunc(a);
-        c=60.0*fabs(a-trunc(a));
+        b=(int) a;
+        c=60.0*fabs(a-b);
         lat_deg->blockSignals(true);
         lat_min->blockSignals(true);
         lat_sig->blockSignals(true);
@@ -346,8 +346,8 @@ void DialogPoi::latLonChg(double /*value*/)
         }
         else
             s=0;
-        b=(int) trunc(a);
-        c=60.0*fabs(a-trunc(a));
+        b=(int) a;
+        c=60.0*fabs(a-b);
         lon_deg->blockSignals(true);
         lon_min->blockSignals(true);
         lon_sig->blockSignals(true);
@@ -408,8 +408,8 @@ void DialogPoi::setValue(int type,double val)
 {
     int sig=val<0?1:0;
     val=fabs(val);
-    int   deg = (int) trunc(val);
-    double min = 60.0*fabs(val-trunc(val));
+    int   deg = (int) val;
+    double min = 60.0*fabs(val-deg);
     if(type==POI_EDT_LAT)
     {
         lat_deg->setValue(deg);

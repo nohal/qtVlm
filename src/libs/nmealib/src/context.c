@@ -9,7 +9,7 @@
  */
 
 #include "nmea/context.h"
-
+#include <stdint.h>
 #include <string.h>
 #include <stdarg.h>
 #include <stdio.h>
@@ -50,12 +50,10 @@ void nmea_trace_buff(const char *buff, int buff_size)
 
 void nmea_error(const char *str, ...)
 {
-#if 1
-    FILE *file;
-    file = fopen("nmeaError.txt","a+");
-    fprintf(file,"%s\n",str);
-    fclose(file);
-#endif
+//    FILE *file;
+//    file = fopen("nmeaError.txt","a+");
+//    fprintf(file,"%s\n",str);
+//    fclose(file);
     int size;
     va_list arg_list;
     char buff[NMEA_DEF_PARSEBUFF];

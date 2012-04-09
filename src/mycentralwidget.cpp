@@ -830,7 +830,7 @@ void myCentralWidget::mouseMove(int x, int y, QGraphicsItem * )
     /* no current move in sub item */
 }
 
-void myCentralWidget::keyModif(QKeyEvent *e)
+void myCentralWidget::keyModif(QKeyEvent *)
 {
 #if 0
     if (e->modifiers() == Qt::ControlModifier) {
@@ -2886,7 +2886,7 @@ void myCentralWidget::deleteRoute(ROUTE * route)
 void myCentralWidget::slot_deleteRoute()
 {
     QAction *sender=(QAction*)QObject::sender();
-    ROUTE *route=reinterpret_cast<struct ROUTE *>(qvariant_cast<void*>(sender->data()));
+    ROUTE *route=reinterpret_cast<class ROUTE *>(qvariant_cast<void*>(sender->data()));
     if(!route || route==NULL) return;
     myDeleteRoute(route);
 }
@@ -2919,7 +2919,7 @@ void myCentralWidget::myDeleteRoute(ROUTE * route)
 void myCentralWidget::slot_deleteRoutage()
 {
     QAction *sender=(QAction*)QObject::sender();
-    ROUTAGE *routage=reinterpret_cast<struct ROUTAGE *>(qvariant_cast<void*>(sender->data()));
+    ROUTAGE *routage=reinterpret_cast<class ROUTAGE *>(qvariant_cast<void*>(sender->data()));
     if(!routage || routage==NULL) return;
     if(routage->isRunning()) return;
     int rep = QMessageBox::question (0,

@@ -372,7 +372,7 @@ void boatReal::unSelectBoat(bool needUpdate)
 
 void boatReal::paramUpdated()
 {
-    if(gpsReader->initPort());
+    if(gpsReader->initPort())
         startRead();
 }
 
@@ -559,7 +559,7 @@ void ReceiverThread::run()
 #endif
         }
 //        qWarning()<<"sleeping";
-#warning a mettre en parametre
+//#warning a mettre en parametre
         this->msleep(3000);
 //        qWarning()<<"waking up";
     }

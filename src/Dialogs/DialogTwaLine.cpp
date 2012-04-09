@@ -174,7 +174,7 @@ void DialogTwaLine::setStart(QPointF start)
     traceIt();
 }
 
-void DialogTwaLine::closeEvent(QCloseEvent */*event => unused*/)
+void DialogTwaLine::closeEvent(QCloseEvent *)
 {
     if(!this->checkBox_2->isChecked())
     {

@@ -1,5 +1,6 @@
 #include "dialogviewpolar.h"
 #include "ui_dialogviewpolar.h"
+#include "dataDef.h"
 #include <QDebug>
 //#include <QEvent>
 
@@ -17,7 +18,7 @@ DialogViewPolar::DialogViewPolar(QWidget *parent) :
     imageContainer->installEventFilter(this);
     connect(this->closeButton,SIGNAL(clicked()),this,SLOT(close()));
 }
-bool DialogViewPolar::eventFilter(QObject */*obj*/, QEvent *event)
+bool DialogViewPolar::eventFilter(QObject *, QEvent *event)
 {
     if(this->allSpeed->isChecked()) return false;
     if(event->type()==QEvent::MouseButtonRelease)

@@ -73,7 +73,7 @@ void vlmPointGraphic::drawWay()
 //    routage->eraseWay();
 //}
 
-void vlmPointGraphic::contextMenuEvent(QGraphicsSceneContextMenuEvent * e)
+void vlmPointGraphic::contextMenuEvent(QGraphicsSceneContextMenuEvent *)
 {
     routage->showContextMenu(this->isoNb,this->pointIsoNb);
 }
