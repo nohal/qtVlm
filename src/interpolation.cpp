@@ -515,7 +515,7 @@ void interpolation::get_wind_info_latlong_selective_TWSA_compute(double longitud
 #else
 
 #define _speed_u_v(a, b, ro)	  \
-    ro = msToKts(_hypot(a, b));
+    ro = msToKts(hypot(a, b));
 
 #define _hybrid_comp(u,v,angle,ro) { \
     dcmplx __c(- v, -u);     \

@@ -53,7 +53,7 @@ ZUFILE * zu_open(const char *fname, const char *mode, int type)
 
     f->ok = 1;
     f->pos = 0;
-    f->fname = _strdup(fname);
+    f->fname = strdup(fname);
 
     if(type == ZU_COMPRESS_AUTO)
     {

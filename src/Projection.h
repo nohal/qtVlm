@@ -30,9 +30,12 @@ Copyright (C) 2008 - Jacques Zaninetti - http://zygrib.free.fr
 #include <QObject>
 #include "dataDef.h"
 #include <QDebug>
+#ifndef M_PI_2
 #define M_PI_2     1.57079632679489661923
+#endif
+#ifndef M_PI_4
 #define M_PI_4     0.785398163397448309616
-
+#endif
 class Projection : public QObject
 {
 Q_OBJECT
