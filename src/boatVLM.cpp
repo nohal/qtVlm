@@ -34,9 +34,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "Orthodromie.h"
 
 
-boatVLM::boatVLM(QString pseudo, bool activated, int boatId, int playerId,Player * player, int isOwn,
-                 Projection * proj,MainWindow * main, myCentralWidget * parent,
-                 inetConnexion * inet): boat(pseudo,activated,proj,main,parent), inetClient(inet)
+boatVLM::boatVLM(QString        pseudo, bool activated, int boatId, int playerId,Player * player, int isOwn,
+                 Projection *   proj,MainWindow * main, myCentralWidget * parent,
+                 inetConnexion * inet):
+   boat(pseudo,activated,proj,main,parent),
+   inetClient(inet),
+   pilotType (0)
 {    
     this->boat_type=BOAT_VLM;
     setFont(QApplication::font());

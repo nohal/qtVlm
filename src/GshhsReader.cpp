@@ -142,7 +142,8 @@ GshhsPolygon::~GshhsPolygon() {
 //==========================================================
 //==========================================================
 //==========================================================
-GshhsReader::GshhsReader(std::string fpath_, int quality)
+GshhsReader::GshhsReader(std::string fpath_, int quality):
+   quality (-1)
 {
     fpath = fpath_;
     gshhsPoly_reader = new GshhsPolyReader(fpath);
@@ -152,7 +153,6 @@ GshhsReader::GshhsReader(std::string fpath_, int quality)
         lsPoly_rivers[qual] = new std::list<GshhsPolygon*>;
     }
     userPreferredQuality = quality;
-    quality=-1;
     setQuality(userPreferredQuality);
 }
 int GshhsReader::getPolyVersion()
@@ -162,7 +162,8 @@ int GshhsReader::getPolyVersion()
 
 //-------------------------------------------------------
 // Recopie
-GshhsReader::GshhsReader(const GshhsReader &model)
+GshhsReader::GshhsReader(const GshhsReader &model):
+   quality (-1)
 {
     fpath = model.fpath;
     gshhsPoly_reader = new GshhsPolyReader(fpath);
@@ -173,7 +174,6 @@ GshhsReader::GshhsReader(const GshhsReader &model)
         lsPoly_rivers[qual] = model.lsPoly_rivers[qual];
     }
     userPreferredQuality = model.userPreferredQuality;
-    quality = -1;
     setQuality(model.quality);
 }
 

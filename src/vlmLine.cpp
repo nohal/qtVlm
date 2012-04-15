@@ -27,7 +27,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "Util.h"
 #include "mycentralwidget.h"
 
-vlmLine::vlmLine(Projection * proj, QGraphicsScene * myScene,double z_level) : QGraphicsWidget()
+vlmLine::vlmLine(Projection * proj, QGraphicsScene * myScene,double z_level) :
+   QGraphicsWidget(),
+   roundedEnd (false)
 {
     this->myZvalue=z_level;
     this->proj=proj;

@@ -167,7 +167,9 @@ class GshhsReader
 //-------------------------------------------------
 inline int GshhsPolygon::readInt4() {
     unsigned char tab[4];
-    if (zu_read(file, tab, 4) != 4) {
+    int nb = zu_read(file, tab, 4);
+    if (nb != 4) {
+        for (; nb < 4; ++nb) tab[nb] = 0;
         ok = false;
     }
     return ((int)tab[3]<<24)+((int)tab[2]<<16)+((int)tab[1]<<8)+((int)tab[0]);
@@ -176,7 +178,9 @@ inline int GshhsPolygon::readInt4() {
 //-------------------------------------------------
 inline int GshhsPolygon_WDB::readInt4() {    // pas le même indien
     unsigned char tab[4];
-    if (zu_read(file, tab, 4) != 4) {
+    int nb = zu_read(file, tab, 4);
+    if (nb != 4) {
+        for (; nb < 4; ++nb) tab[nb] = 0;
         ok = false;
     }
     return ((int)tab[0]<<24)+((int)tab[1]<<16)+((int)tab[2]<<8)+((int)tab[3]);
@@ -185,7 +189,9 @@ inline int GshhsPolygon_WDB::readInt4() {    // pas le même indien
 //-------------------------------------------------
 inline int GshhsPolygon::readInt2() {
     unsigned char tab[2];
-    if (zu_read(file, tab, 2) != 2) {
+    int nb = zu_read(file, tab, 2);
+    if (nb != 2) {
+        for (; nb < 2; ++nb) tab[nb] = 0;
         ok = false;
     }
     return ((int)tab[1]<<8)+((int)tab[0]);
@@ -193,7 +199,9 @@ inline int GshhsPolygon::readInt2() {
 //-------------------------------------------------
 inline int GshhsPolygon_WDB::readInt2() {
     unsigned char tab[2];
-    if (zu_read(file, tab, 2) != 2) {
+    int nb = zu_read(file, tab, 2);
+    if (nb != 2) {
+        for (; nb < 2; ++nb) tab[nb] = 0;
         ok = false;
     }
     return ((int)tab[0]<<8)+((int)tab[1]);

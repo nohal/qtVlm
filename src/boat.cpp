@@ -32,8 +32,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "boat.h"
 #include "Grib.h"
 
-boat::boat(QString pseudo, bool activated,
-           Projection * proj,MainWindow * main,myCentralWidget * parent): QGraphicsWidget()
+boat::boat(QString      pseudo, bool activated,
+           Projection * proj,MainWindow * main,myCentralWidget * parent):
+   QGraphicsWidget(),
+   boat_type (BOAT_NOBOAT),
+   prevVac (0),
+   nextVac (0)
 {
     this->mainWindow=main;
     this->parent=parent;

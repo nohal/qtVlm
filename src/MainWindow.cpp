@@ -245,6 +245,8 @@ MainWindow::MainWindow(int w, int h, QWidget *parent)
     progress->setMaximum(100);
     progress->setMinimum(0);
     progress->setCancelButton(NULL);
+    progress->setMinimumDuration (0);
+    progress->setValue(0);
     progress->show();
     timerprogress=NULL;
 

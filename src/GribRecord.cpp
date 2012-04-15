@@ -257,7 +257,9 @@ GribRecord::~GribRecord()
 // SECTION 0: THE INDICATOR SECTION (IS)
 //----------------------------------------------
 bool GribRecord::readGribSection0_IS(ZUFILE* file) {
-    char strgrib[4];
+    char    strgrib[4];
+    memset (strgrib, 0, sizeof (strgrib));
+    
     fileOffset0 = zu_tell(file);
 
         // Cherche le 1er 'G'
@@ -522,6 +524,8 @@ bool GribRecord::readGribSection4_BDS(ZUFILE* file) {
     if (!ok) {
         return ok;
     }
+    // Initialize the las 4 bytes of buf since we didn't read them
+    buf[datasize+0] = buf[datasize+1] = buf[datasize+2] = buf[datasize+3] = 0;
 
     // Read data in the order given by isAdjacentI
     zuint i, j, x;

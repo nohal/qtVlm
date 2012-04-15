@@ -31,7 +31,12 @@ Copyright (C) 2008 - Jacques Zaninetti - http://zygrib.free.fr
 //-----------------------------
 // Constructeur
 //-----------------------------
-Projection::Projection(int w, int h, double cx, double cy) {
+Projection::Projection(int w, int h, double cx, double cy):
+    W (0), H (0),
+    CX (0), CY (0),
+    xW (-90), xE (90), yN (90), yS (-90),
+    PX (0), PY (0)
+{
     frozen=false;
         scalemax = 10e20;
     scale = -1;
@@ -262,7 +267,7 @@ void Projection::my_setScreenSize(int w, int h)
 
     //qWarning() << "ScaleALL: " << sx << "," << sy1 << "," << sy2 << "," << sy;
 
-    double sX,sY,sYN,sYS;
+    double  sX,sY,sYN,sYS;
     sX=W/fabs(xE-xW);
     sYN=log(tan(degToRad(yN)/2 + M_PI_4));
     sYS=log(tan(degToRad(yS)/2 + M_PI_4));

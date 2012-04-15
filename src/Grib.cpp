@@ -1249,9 +1249,9 @@ void Grib::draw_WIND_Color(QPainter &pnt, const Projection *proj, bool smooth,
 
             }
         }
-        delete u_tab;
-        delete v_tab;
-        delete y_tab;
+        delete[] u_tab;
+        delete[] v_tab;
+        delete[] y_tab;
     }
 }
 
