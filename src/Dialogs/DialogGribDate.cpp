@@ -36,7 +36,6 @@ DialogGribDate::DialogGribDate(QWidget * parent) : QDialog(parent)
 void DialogGribDate::showDialog(time_t current,std::set<time_t>  * listGrib,time_t * result)
 {
 
-
     if(!result)
         return;
     this->result=result;
@@ -46,8 +45,14 @@ void DialogGribDate::showDialog(time_t current,std::set<time_t>  * listGrib,time
 
     /* clear current status*/
     listGribDates.clear();
+    dateList->blockSignals(true); /*to avoid a qt bug with win64 compile*/
     while (dateList->count() > 0)
+    {
         dateList->removeItem(0);
+    }
+    dateList->blockSignals(false);
+    dateList->setCurrentIndex(-1);
+    QApplication::processEvents();
 
     /* init with new data*/
     /* init internal list*/
@@ -55,6 +60,7 @@ void DialogGribDate::showDialog(time_t current,std::set<time_t>  * listGrib,time
     for (its=listGrib->begin(); its!=listGrib->end(); its++)
         listGribDates.push_back(*its);
 
+    QApplication::processEvents();
     /* init dialog*/
     QDateTime dt;
     dt.setTimeSpec(Qt::UTC);
@@ -80,6 +86,7 @@ void DialogGribDate::showDialog(time_t current,std::set<time_t>  * listGrib,time
         if(max==-1) max=tps;
         else if(max<tps) max=tps;
     }
+    QApplication::processEvents();
     listIsChanging=true;
     if(index!=-1)
         dateList->setCurrentIndex(index+1);
