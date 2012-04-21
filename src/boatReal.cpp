@@ -430,7 +430,11 @@ bool ReceiverThread::initPort(void)
     if(port && port->isOpen())
         port->close();
     /* init serial port */
+#ifdef __WIN_QTVLM
     port->setPortName("\\\\.\\"+Settings::getSetting("gpsPortName","COM1").toString());
+#else
+    port->setPortName(Settings::getSetting("gpsPortName","COM1").toString());
+#endif
     port->setBaudRate((BaudRateType)Settings::getSetting("gpsBaudRate",BAUD4800).toInt());
     port->setFlowControl(FLOW_OFF);
     port->setParity(PAR_NONE);

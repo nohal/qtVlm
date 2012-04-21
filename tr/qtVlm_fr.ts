@@ -1227,10 +1227,6 @@ Etes-vous sur ?</source>
         <translation></translation>
     </message>
     <message>
-        <source>qtVlm</source>
-        <translation></translation>
-    </message>
-    <message>
         <source>A propos</source>
         <translation></translation>
     </message>
@@ -1410,6 +1406,10 @@ Etes-vous sur ?</source>
     </message>
     <message>
         <source> NM </source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>qtVlm </source>
         <translation></translation>
     </message>
 </context>
