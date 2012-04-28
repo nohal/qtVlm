@@ -2530,6 +2530,7 @@ void myCentralWidget::treatRoute(ROUTE* route)
                     POI*    lastReachedPoi = route->getLastReachedPoi();
                     if(lastReachedPoi == NULL) break;
                     time_t  ref_eta3       = lastReachedPoi->getRouteTimeStamp();
+                    double  ref_remain     = route->getRemain();
                     int     nPois          = route->getPoiList().count();
                     for (int poiN = route->getStartFromBoat() ? 0 : 1;poiN<route->getPoiList().count()-1;++poiN)
                     {
@@ -2541,17 +2542,19 @@ void myCentralWidget::treatRoute(ROUTE* route)
                     }
                     if(abortRequest) break;
                     if ((route->getLastReachedPoi() == lastReachedPoi)
-                        && (lastReachedPoi->getRouteTimeStamp() > ref_eta3))
+                        && (lastReachedPoi->getRouteTimeStamp() > ref_eta3)
+                        || ((lastReachedPoi->getRouteTimeStamp() == ref_eta3) && (route->getRemain() > ref_remain)))
                         qWarning()<<"wrong optimization!!";
-                    if (route->getHas_eta()) {
+                    if (route->getHas_eta() && simplify) {
                         time_t  ref_eta4 = route->getEta();
                         doSimplifyRoute(route,true);
                         if(route->getEta()>ref_eta4)
                             qWarning()<<"wrong simplification!!";
                     }
-                    if(lastReachedPoi        == route->getLastReachedPoi()
-                       && ref_eta3           == lastReachedPoi->getRouteTimeStamp()
-                       && nPois              == route->getPoiList().count())
+                    if ((lastReachedPoi == route->getLastReachedPoi())
+                        && (ref_eta3    == lastReachedPoi->getRouteTimeStamp())
+                        && (ref_remain  <= (route->getRemain() + 0.001)) // Should probably be configurable...
+                        && (nPois       == route->getPoiList().count()))
                         break;
 #if 0
                     qWarning()<<maxLoop<<QDateTime().fromTime_t(ref_eta3).toUTC().toString("dd/MM/yy hh:mm:ss")<<
