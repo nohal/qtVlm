@@ -58,6 +58,14 @@ void Projection::setScreenSize(int w, int h)
 /* zoom and scale */
 void Projection::zoomOnZone(double x0, double y0, double x1, double y1)
 {
+    if(x0>180.0) x0=x0-360.0;
+    if(x1>180.0) x1=x1-360.0;
+    if(x0<-180.0) x0=x0+360.0;
+    if(x1<-180.0) x1=x1+360.0;
+    if(y0>180.0) y0=y0-360.0;
+    if(y1>180.0) y1=y1-360.0;
+    if(y0<-180.0) y0=y0+360.0;
+    if(y1<-180.0) y1=y1+360.0;
     double coef;
 
     if(frozen) return;
