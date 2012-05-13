@@ -126,7 +126,7 @@ FORMS += Ui/boatAccount_dialog.ui \
     Ui/dialog_gribDate.ui \
     Ui/DialogVLM_grib.ui \
     Ui/inetConn_progessDialog.ui \
-    Ui/POI_delete.ui \
+    Ui/poi_delete.ui \
     Ui/Route_Editor.ui \
     Ui/Routage_Editor.ui \
     Ui/gribValidation.ui \
