@@ -51,13 +51,6 @@ DialogRoutage::DialogRoutage(ROUTAGE *routage,myCentralWidget *parent)
     this->parent=parent;
     setupUi(this);
     Util::setFontDialog(this);
-    this->resize(widget->width()+10,widget->height()+10);
-    widget->setParent(0);
-    scroll=new QScrollArea(this);
-    scroll->resize(widget->size());
-    scroll->setWidget(widget);
-    QSize mySize=QSize(widget->size().width()+20,widget->size().height()+20);
-    QSize screenSize=QApplication::desktop()->screenGeometry().size()*.8;
     connect(this->Default,SIGNAL(clicked()),this,SLOT(slot_default()));
     this->i_iso->setChecked(routage->getI_done());
     this->i_iso->setDisabled((!routage->isDone() || routage->getI_done()));
@@ -67,16 +60,6 @@ DialogRoutage::DialogRoutage(ROUTAGE *routage,myCentralWidget *parent)
         this->isoRoute->setMaximum(routage->getTimeStepMore24());
         this->isoRoute->setValue(routage->getIsoRouteValue());
     }
-    if(mySize.height() > screenSize.height())
-    {
-        mySize.setHeight(screenSize.height());
-    }
-    if(mySize.width() > screenSize.width())
-    {
-        mySize.setWidth(screenSize.width());
-    }
-    this->resize(mySize);
-    scroll->resize(mySize);
     m.sprintf("%d",QThread::idealThreadCount());
     m=tr("Calculer en parallele (")+m+tr(" processeurs disponibles)");
     multi->setText(m);
@@ -88,7 +71,7 @@ DialogRoutage::DialogRoutage(ROUTAGE *routage,myCentralWidget *parent)
     multi->setChecked(routage->getUseMultiThreading());
     editName->setFocus();
     inputTraceColor =new InputLineParams(routage->getWidth(),routage->getColor(),1.6,  QColor(Qt::red),this,0.1,5);
-    verticalLayout_2->addWidget( inputTraceColor);
+    colorBox->layout()->addWidget(inputTraceColor);
     setWindowTitle(tr("Parametres Routage"));
     editName->setText(routage->getName());
     editDateBox->setDateTime(routage->getStartTime());
@@ -268,10 +251,6 @@ DialogRoutage::~DialogRoutage()
 {
 }
 
-void DialogRoutage::resizeEvent ( QResizeEvent * /*event*/ )
-{
-    this->scroll->resize(this->size());
-}
 void DialogRoutage::slot_default()
 {
     this->maxPres->setValue(70);

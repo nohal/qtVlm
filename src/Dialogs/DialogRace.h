@@ -32,7 +32,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "inetClient.h"
 #include <QStandardItemModel>
-#include <QScrollArea>
 #include <dataDef.h>
 
 
@@ -63,15 +62,12 @@ class DialogRace : public QDialog, public Ui::race_dialog_ui, public inetClient
         void NSZToggle(bool b);
         void slotFilterReal();
 
-    protected:
-        void resizeEvent ( QResizeEvent * event );
     signals:
         void readRace(void);
         void writeBoat(void);
         void updateOpponent(void);
 
     private:
-        QScrollArea *scroll;
         QList<boatVLM*> * boat_list;
         QList<raceData*> * race_list;
 

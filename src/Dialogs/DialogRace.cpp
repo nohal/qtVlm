@@ -54,25 +54,7 @@ DialogRace::DialogRace(MainWindow * main,myCentralWidget * parent, inetConnexion
     needAuth=true;
     setupUi(this);
     Util::setFontDialog(this);
-    this->resize(widget->width()+10,widget->height()+10);
-    widget->setParent(0);
-    scroll=new QScrollArea(this);
-    scroll->resize(widget->minimumSize());
-    scroll->setWidget(widget);
-    QSize mySize=QSize(widget->size().width()+20,widget->size().height()+20);
-    QSize screenSize=QApplication::desktop()->screenGeometry().size()*.8;
-    if(mySize.height() > screenSize.height())
-    {
-        mySize.setHeight(screenSize.height());
-    }
-    if(mySize.width() > screenSize.width())
-    {
-        mySize.setWidth(screenSize.width());
-    }
-    this->resize(mySize);
-    scroll->resize(mySize);
 
-    screenSize=QApplication::desktop()->screenGeometry().size();
     model= new QStandardItemModel();
     model->setColumnCount(10);
     model->setHeaderData(0,Qt::Horizontal,QObject::tr("Sel"));
@@ -131,22 +113,20 @@ DialogRace::DialogRace(MainWindow * main,myCentralWidget * parent, inetConnexion
     //ranking->viewOptions().decorationAlignment=Qt::AlignCenter|Qt::AlignVCenter;
     chooser_raceList->setInsertPolicy(QComboBox::InsertAlphabetically);
     inputTraceColor =new InputLineParams(1,QColor(Qt::red),1.6,  QColor(Qt::red),this,0.1,5);
-    verticalLayout_4->addWidget( inputTraceColor);
+    noSailZoneGroup->layout()->addWidget(inputTraceColor);
     connect(model,SIGNAL(itemChanged(QStandardItem*)),this,SLOT(itemChanged(QStandardItem*)));
     waitBox = new QMessageBox(QMessageBox::Information,tr("Parametrage des courses"),
                               tr("Chargement des courses et des bateaux"));
     waitBox->setStandardButtons(QMessageBox::NoButton);
     connect(this->filterReal,SIGNAL(clicked()),this,SLOT(slotFilterReal()));
+
+    connect(buttonBox->button(QDialogButtonBox::Apply), SIGNAL(clicked()), this, SLOT(doSynch()));
 }
 
 DialogRace::~DialogRace()
 {
     if(model)
         delete model;
-}
-void DialogRace::resizeEvent ( QResizeEvent * /*event*/ )
-{
-    scroll->resize(this->size());
 }
 QString DialogRace::getAuthLogin(bool * ok)
 {
@@ -238,7 +218,7 @@ void DialogRace::initList(QList<boatVLM*> & boat_list_ptr,QList<raceData*> & rac
     waitBox->show();
     if(param_list.isEmpty())
     {
-        this->btn_Ok->setEnabled(false);
+        this->buttonBox->button(QDialogButtonBox::Ok)->setEnabled(false);
         this->button10distance->setEnabled(false);
         this->button10First->setEnabled(false);
         this->button10ranking->setEnabled(false);
@@ -863,10 +843,10 @@ void DialogRace::chgRace(int id)
     this->buttonReal->setEnabled(param_list[numRace]->hasReal);
     this->filterReal->setEnabled(param_list[numRace]->hasReal);
 
-    verticalLayout_4->removeWidget(inputTraceColor);
+    noSailZoneGroup->layout()->removeWidget(inputTraceColor);
     delete inputTraceColor;
     inputTraceColor =new InputLineParams(param_list[numRace]->widthNSZ,param_list[numRace]->colorNSZ,2,  QColor(Qt::black),this,0.1,5);
-    verticalLayout_4->addWidget( inputTraceColor);
+    noSailZoneGroup->layout()->addWidget( inputTraceColor);
     latNSZ->setEnabled(param_list[numRace]->displayNSZ);
     nsNSZ->setEnabled(param_list[numRace]->displayNSZ);
     inputTraceColor->setEnabled(param_list[numRace]->displayNSZ);

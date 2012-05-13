@@ -28,7 +28,6 @@ Copyright (C) 2008 - Jacques Zaninetti - http://zygrib.free.fr
 #include "class_list.h"
 
 #include "ui_Route_Editor.h"
-#include <QScrollArea>
 #include <QStandardItemModel>
 #include <QItemDelegate>
 #include <QTimer>
@@ -51,14 +50,11 @@ class DialogRoute : public QDialog, public Ui::ROUTE_Editor_ui
         void slotIntervalTimer(int);
         void slotInterval();
         void slotTabChanged(int);
-    protected:
-        void resizeEvent ( QResizeEvent * event );
     signals:
 
     private:
         QTimer  * intervalTimer;
         QStandardItemModel *rmModel;
-        QScrollArea *scroll;
         ROUTE   *route;
         myCentralWidget *parent;
         bool  modeCreation;

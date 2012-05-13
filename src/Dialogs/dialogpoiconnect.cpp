@@ -9,7 +9,7 @@ DialogPoiConnect::DialogPoiConnect(POI * poi,myCentralWidget *parent) :
     this->poi=poi;
     this->parent=parent;
     inputLineColor =new InputLineParams(poi->getLineWidth(),poi->getLineColor(),1.6,  QColor(Qt::red),this,0.1,5);
-    verticalLayout->addWidget( inputLineColor);
+    colorBox->layout()->addWidget( inputLineColor);
     setWindowTitle(tr("Tracer une ligne entre deux POIs"));
     QList<POI*> poiList=parent->getPois();
     for(int m=0;m<poiList.count();m++)

@@ -45,26 +45,9 @@ DialogPoi::DialogPoi(MainWindow * main,myCentralWidget * parent)
 {
     setupUi(this);
     Util::setFontDialog(this);
-    this->resize(widget->width()+10,widget->height()+10);
 //    int minSize=qMax(this->lat_sig->width(),this->lon_sig->width());
 //    lat_sig->setMinimumWidth(minSize);
 //    lon_sig->setMinimumWidth(minSize);
-    widget->setParent(0);
-    scroll=new QScrollArea(this);
-    scroll->resize(widget->size());
-    scroll->setWidget(widget);
-    QSize mySize=QSize(widget->size().width()+20,widget->size().height()+20);
-    QSize screenSize=QApplication::desktop()->screenGeometry().size()*.8;
-    if(mySize.height() > screenSize.height())
-    {
-        mySize.setHeight(screenSize.height());
-    }
-    if(mySize.width() > screenSize.width())
-    {
-        mySize.setWidth(screenSize.width());
-    }
-    this->resize(mySize);
-    scroll->resize(mySize);
     this->poi = NULL;
     this->parent=parent;
     this->main=main;
@@ -78,10 +61,6 @@ DialogPoi::DialogPoi(MainWindow * main,myCentralWidget * parent)
     connect(main, SIGNAL(newPOI(double,double,Projection *, boat *)),
             this, SLOT(newPOI(double,double,Projection *, boat*)));
     connect(this,SIGNAL(doChgWP(double,double,double)),main,SLOT(slotChgWP(double,double,double)));
-}
-void DialogPoi::resizeEvent ( QResizeEvent * /*event*/ )
-{
-    scroll->resize(this->size());
 }
 
 void DialogPoi::editPOI(POI * poi_)

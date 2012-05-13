@@ -6,318 +6,238 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>308</width>
-    <height>266</height>
+    <width>286</width>
+    <height>234</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>Instruction du pilototo</string>
   </property>
-  <widget class="QGroupBox" name="position_grp">
-   <property name="geometry">
-    <rect>
-     <x>10</x>
-     <y>70</y>
-     <width>291</width>
-     <height>141</height>
-    </rect>
-   </property>
-   <property name="title">
-    <string>Position</string>
-   </property>
-   <widget class="QWidget" name="layoutWidget">
-    <property name="geometry">
-     <rect>
-      <x>10</x>
-      <y>50</y>
-      <width>271</width>
-      <height>26</height>
-     </rect>
-    </property>
-    <layout class="QHBoxLayout" name="horizontalLayout_3">
-     <item>
-      <widget class="QLabel" name="label_3">
+  <layout class="QVBoxLayout" name="verticalLayout">
+   <item>
+    <layout class="QFormLayout" name="formLayout">
+     <property name="formAlignment">
+      <set>Qt::AlignCenter</set>
+     </property>
+     <item row="0" column="0">
+      <widget class="QLabel" name="label">
        <property name="text">
-        <string>Longitude</string>
+        <string>Mode de pilotage</string>
        </property>
       </widget>
      </item>
-     <item>
-      <widget class="QComboBox" name="lon_sig">
-       <item>
-        <property name="text">
-         <string>Est</string>
-        </property>
-       </item>
-       <item>
-        <property name="text">
-         <string>Ouest</string>
-        </property>
-       </item>
+     <item row="0" column="1">
+      <widget class="QComboBox" name="mode"/>
+     </item>
+     <item row="1" column="0">
+      <widget class="QLabel" name="label_2">
+       <property name="text">
+        <string>Cap / Angle</string>
+       </property>
       </widget>
      </item>
-     <item>
-      <widget class="QSpinBox" name="lon_deg">
-       <property name="suffix">
-        <string> °</string>
-       </property>
-       <property name="prefix">
-        <string/>
-       </property>
+     <item row="1" column="1">
+      <widget class="QDoubleSpinBox" name="angle">
        <property name="minimum">
-        <number>0</number>
+        <double>-179.990000000000009</double>
        </property>
        <property name="maximum">
-        <number>359</number>
-       </property>
-       <property name="value">
-        <number>0</number>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QDoubleSpinBox" name="lon_min">
-       <property name="suffix">
-        <string> '</string>
-       </property>
-       <property name="minimum">
-        <double>0.000000000000000</double>
-       </property>
-       <property name="maximum">
-        <double>59.990000000000002</double>
-       </property>
-       <property name="value">
-        <double>59.990000000000002</double>
+        <double>179.990000000000009</double>
        </property>
       </widget>
      </item>
     </layout>
-   </widget>
-   <widget class="QWidget" name="layoutWidget_2">
-    <property name="geometry">
-     <rect>
-      <x>10</x>
-      <y>80</y>
-      <width>271</width>
-      <height>26</height>
-     </rect>
-    </property>
-    <layout class="QHBoxLayout" name="horizontalLayout_4">
-     <item>
-      <widget class="QLabel" name="label_4">
-       <property name="text">
-        <string>Prochain cap</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QLineEdit" name="editWph"/>
-     </item>
-    </layout>
-   </widget>
-   <widget class="QWidget" name="layoutWidget_3">
-    <property name="geometry">
-     <rect>
-      <x>10</x>
-      <y>20</y>
-      <width>271</width>
-      <height>26</height>
-     </rect>
-    </property>
-    <layout class="QHBoxLayout" name="horizontalLayout_5">
-     <item>
-      <widget class="QLabel" name="label_5">
-       <property name="text">
-        <string>Latitude</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QComboBox" name="lat_sig">
-       <item>
-        <property name="text">
-         <string>Nord</string>
-        </property>
-       </item>
-       <item>
-        <property name="text">
-         <string>Sud</string>
-        </property>
-       </item>
-      </widget>
-     </item>
-     <item>
-      <widget class="QSpinBox" name="lat_deg">
-       <property name="suffix">
-        <string> °</string>
-       </property>
-       <property name="prefix">
-        <string/>
-       </property>
-       <property name="minimum">
-        <number>0</number>
-       </property>
-       <property name="maximum">
-        <number>89</number>
-       </property>
-       <property name="value">
-        <number>0</number>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QDoubleSpinBox" name="lat_min">
-       <property name="suffix">
-        <string> '</string>
-       </property>
-       <property name="minimum">
-        <double>0.000000000000000</double>
-       </property>
-       <property name="maximum">
-        <double>59.990000000000002</double>
-       </property>
-       <property name="value">
-        <double>59.990000000000002</double>
-       </property>
-      </widget>
-     </item>
-    </layout>
-   </widget>
-   <widget class="QWidget" name="layoutWidget">
-    <property name="geometry">
-     <rect>
-      <x>10</x>
-      <y>110</y>
-      <width>271</width>
-      <height>30</height>
-     </rect>
-    </property>
-    <layout class="QHBoxLayout" name="horizontalLayout_6">
-     <item>
-      <widget class="QPushButton" name="btn_copyPOI">
-       <property name="maximumSize">
-        <size>
-         <width>28</width>
-         <height>16777215</height>
-        </size>
-       </property>
-       <property name="text">
-        <string/>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QPushButton" name="btn_pastePOI">
-       <property name="maximumSize">
-        <size>
-         <width>28</width>
-         <height>16777215</height>
-        </size>
-       </property>
-       <property name="text">
-        <string/>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QPushButton" name="btn_selectPOI">
-       <property name="text">
-        <string>Selectionner une marque</string>
-       </property>
-      </widget>
-     </item>
-    </layout>
-   </widget>
-  </widget>
-  <widget class="QPushButton" name="pushButton">
-   <property name="geometry">
-    <rect>
-     <x>11</x>
-     <y>221</y>
-     <width>75</width>
-     <height>25</height>
-    </rect>
-   </property>
-   <property name="text">
-    <string>Valider</string>
-   </property>
-   <property name="autoDefault">
-    <bool>false</bool>
-   </property>
-   <property name="default">
-    <bool>true</bool>
-   </property>
-  </widget>
-  <widget class="QPushButton" name="pushButton_2">
-   <property name="geometry">
-    <rect>
-     <x>101</x>
-     <y>221</y>
-     <width>75</width>
-     <height>25</height>
-    </rect>
-   </property>
-   <property name="text">
-    <string>Annuler</string>
-   </property>
-  </widget>
-  <widget class="QWidget" name="layoutWidget">
-   <property name="geometry">
-    <rect>
-     <x>10</x>
-     <y>10</y>
-     <width>188</width>
-     <height>58</height>
-    </rect>
-   </property>
-   <layout class="QVBoxLayout" name="verticalLayout">
-    <property name="sizeConstraint">
-     <enum>QLayout::SetFixedSize</enum>
-    </property>
-    <item>
-     <layout class="QHBoxLayout" name="horizontalLayout">
-      <property name="sizeConstraint">
-       <enum>QLayout::SetFixedSize</enum>
-      </property>
+   </item>
+   <item>
+    <widget class="QGroupBox" name="position_grp">
+     <property name="title">
+      <string>Position</string>
+     </property>
+     <layout class="QVBoxLayout" name="verticalLayout_2">
       <item>
-       <widget class="QLabel" name="label">
-        <property name="text">
-         <string>Mode de pilotage</string>
-        </property>
-       </widget>
+       <layout class="QHBoxLayout" name="horizontalLayout_5">
+        <item>
+         <widget class="QLabel" name="label_5">
+          <property name="text">
+           <string>Latitude</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QComboBox" name="lat_sig">
+          <item>
+           <property name="text">
+            <string>Nord</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>Sud</string>
+           </property>
+          </item>
+         </widget>
+        </item>
+        <item>
+         <widget class="QSpinBox" name="lat_deg">
+          <property name="suffix">
+           <string> °</string>
+          </property>
+          <property name="prefix">
+           <string/>
+          </property>
+          <property name="minimum">
+           <number>0</number>
+          </property>
+          <property name="maximum">
+           <number>89</number>
+          </property>
+          <property name="value">
+           <number>0</number>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QDoubleSpinBox" name="lat_min">
+          <property name="suffix">
+           <string> '</string>
+          </property>
+          <property name="minimum">
+           <double>0.000000000000000</double>
+          </property>
+          <property name="maximum">
+           <double>59.990000000000002</double>
+          </property>
+          <property name="value">
+           <double>59.990000000000002</double>
+          </property>
+         </widget>
+        </item>
+       </layout>
       </item>
       <item>
-       <widget class="QComboBox" name="mode"/>
+       <layout class="QHBoxLayout" name="horizontalLayout_3">
+        <item>
+         <widget class="QLabel" name="label_3">
+          <property name="text">
+           <string>Longitude</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QComboBox" name="lon_sig">
+          <item>
+           <property name="text">
+            <string>Est</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>Ouest</string>
+           </property>
+          </item>
+         </widget>
+        </item>
+        <item>
+         <widget class="QSpinBox" name="lon_deg">
+          <property name="suffix">
+           <string> °</string>
+          </property>
+          <property name="prefix">
+           <string/>
+          </property>
+          <property name="minimum">
+           <number>0</number>
+          </property>
+          <property name="maximum">
+           <number>359</number>
+          </property>
+          <property name="value">
+           <number>0</number>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QDoubleSpinBox" name="lon_min">
+          <property name="suffix">
+           <string> '</string>
+          </property>
+          <property name="minimum">
+           <double>0.000000000000000</double>
+          </property>
+          <property name="maximum">
+           <double>59.990000000000002</double>
+          </property>
+          <property name="value">
+           <double>59.990000000000002</double>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </item>
+      <item>
+       <layout class="QHBoxLayout" name="horizontalLayout_4">
+        <item>
+         <widget class="QLabel" name="label_4">
+          <property name="text">
+           <string>Prochain cap</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QLineEdit" name="editWph"/>
+        </item>
+       </layout>
+      </item>
+      <item>
+       <layout class="QHBoxLayout" name="horizontalLayout_6">
+        <item>
+         <widget class="QPushButton" name="btn_copyPOI">
+          <property name="maximumSize">
+           <size>
+            <width>28</width>
+            <height>16777215</height>
+           </size>
+          </property>
+          <property name="text">
+           <string/>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QPushButton" name="btn_pastePOI">
+          <property name="maximumSize">
+           <size>
+            <width>28</width>
+            <height>16777215</height>
+           </size>
+          </property>
+          <property name="text">
+           <string/>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QPushButton" name="btn_selectPOI">
+          <property name="text">
+           <string>Selectionner une marque</string>
+          </property>
+         </widget>
+        </item>
+       </layout>
       </item>
      </layout>
-    </item>
-    <item>
-     <layout class="QHBoxLayout" name="horizontalLayout_2">
-      <item>
-       <widget class="QLabel" name="label_2">
-        <property name="text">
-         <string>Cap / Angle</string>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QDoubleSpinBox" name="angle">
-        <property name="minimum">
-         <double>-179.990000000000009</double>
-        </property>
-        <property name="maximum">
-         <double>179.990000000000009</double>
-        </property>
-       </widget>
-      </item>
-     </layout>
-    </item>
-   </layout>
-  </widget>
+    </widget>
+   </item>
+   <item>
+    <widget class="QDialogButtonBox" name="buttonBox">
+     <property name="standardButtons">
+      <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
+     </property>
+    </widget>
+   </item>
+  </layout>
  </widget>
  <tabstops>
-  <tabstop>mode</tabstop>
-  <tabstop>angle</tabstop>
   <tabstop>lat_sig</tabstop>
   <tabstop>lat_deg</tabstop>
   <tabstop>lat_min</tabstop>
@@ -328,8 +248,6 @@
   <tabstop>btn_copyPOI</tabstop>
   <tabstop>btn_pastePOI</tabstop>
   <tabstop>btn_selectPOI</tabstop>
-  <tabstop>pushButton</tabstop>
-  <tabstop>pushButton_2</tabstop>
  </tabstops>
  <resources/>
  <connections>
@@ -350,14 +268,14 @@
    </hints>
   </connection>
   <connection>
-   <sender>pushButton</sender>
-   <signal>clicked()</signal>
+   <sender>buttonBox</sender>
+   <signal>accepted()</signal>
    <receiver>pilototo_param_ui</receiver>
    <slot>accept()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>64</x>
-     <y>232</y>
+     <x>217</x>
+     <y>372</y>
     </hint>
     <hint type="destinationlabel">
      <x>232</x>
@@ -366,14 +284,14 @@
    </hints>
   </connection>
   <connection>
-   <sender>pushButton_2</sender>
-   <signal>clicked()</signal>
+   <sender>buttonBox</sender>
+   <signal>rejected()</signal>
    <receiver>pilototo_param_ui</receiver>
    <slot>reject()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>152</x>
-     <y>235</y>
+     <x>217</x>
+     <y>372</y>
     </hint>
     <hint type="destinationlabel">
      <x>200</x>

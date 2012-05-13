@@ -31,800 +31,555 @@
   <property name="windowTitle">
    <string notr="true">Route Parameters</string>
   </property>
-  <widget class="QTabWidget" name="tabWidget">
-   <property name="geometry">
-    <rect>
-     <x>10</x>
-     <y>10</y>
-     <width>621</width>
-     <height>551</height>
-    </rect>
-   </property>
-   <property name="currentIndex">
-    <number>0</number>
-   </property>
-   <widget class="QWidget" name="tab">
-    <attribute name="title">
-     <string>Route</string>
-    </attribute>
-    <widget class="QWidget" name="widget" native="true">
-     <property name="geometry">
-      <rect>
-       <x>20</x>
-       <y>10</y>
-       <width>581</width>
-       <height>511</height>
-      </rect>
+  <layout class="QGridLayout" name="gridLayout">
+   <item row="0" column="0">
+    <widget class="QTabWidget" name="tabWidget">
+     <property name="currentIndex">
+      <number>0</number>
      </property>
-     <property name="sizePolicy">
-      <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-       <horstretch>0</horstretch>
-       <verstretch>0</verstretch>
-      </sizepolicy>
-     </property>
-     <widget class="QGroupBox" name="groupBox_6">
-      <property name="geometry">
-       <rect>
-        <x>10</x>
-        <y>10</y>
-        <width>471</width>
-        <height>71</height>
-       </rect>
-      </property>
-      <property name="title">
-       <string>Nom</string>
-      </property>
-      <widget class="QLineEdit" name="editName">
-       <property name="geometry">
-        <rect>
-         <x>10</x>
-         <y>20</y>
-         <width>311</width>
-         <height>21</height>
-        </rect>
-       </property>
-      </widget>
-      <widget class="QComboBox" name="editBoat">
-       <property name="geometry">
-        <rect>
-         <x>340</x>
-         <y>20</y>
-         <width>91</width>
-         <height>22</height>
-        </rect>
-       </property>
-      </widget>
-     </widget>
-     <widget class="QGroupBox" name="groupBox_7">
-      <property name="geometry">
-       <rect>
-        <x>10</x>
-        <y>360</y>
-        <width>561</width>
-        <height>151</height>
-       </rect>
-      </property>
-      <property name="title">
-       <string>Options</string>
-      </property>
-      <widget class="QCheckBox" name="editFrozen">
-       <property name="geometry">
-        <rect>
-         <x>20</x>
-         <y>20</y>
-         <width>111</width>
-         <height>18</height>
-        </rect>
-       </property>
-       <property name="toolTip">
-        <string/>
-       </property>
-       <property name="text">
-        <string>Figer la route</string>
-       </property>
-      </widget>
-      <widget class="QCheckBox" name="editCoasts">
-       <property name="geometry">
-        <rect>
-         <x>140</x>
-         <y>20</y>
-         <width>411</width>
-         <height>18</height>
-        </rect>
-       </property>
-       <property name="toolTip">
-        <string>Les cotes invibles a l'ecran ne sont pas prises en compte</string>
-       </property>
-       <property name="text">
-        <string>Detecter les collisions avec les cotes visibles a l'ecran</string>
-       </property>
-       <property name="checked">
-        <bool>true</bool>
-       </property>
-      </widget>
-      <widget class="QCheckBox" name="hidePois">
-       <property name="geometry">
-        <rect>
-         <x>20</x>
-         <y>50</y>
-         <width>221</width>
-         <height>18</height>
-        </rect>
-       </property>
-       <property name="text">
-        <string>Cacher les POIs intermediaires</string>
-       </property>
-      </widget>
-      <widget class="QSpinBox" name="vacStep">
-       <property name="geometry">
-        <rect>
-         <x>500</x>
-         <y>50</y>
-         <width>42</width>
-         <height>22</height>
-        </rect>
-       </property>
-       <property name="alignment">
-        <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-       </property>
-       <property name="minimum">
-        <number>1</number>
-       </property>
-      </widget>
-      <widget class="QLabel" name="label">
-       <property name="geometry">
-        <rect>
-         <x>270</x>
-         <y>50</y>
-         <width>221</width>
-         <height>20</height>
-        </rect>
-       </property>
-       <property name="text">
-        <string>Nbre de vac par pas de calcul</string>
-       </property>
-      </widget>
-      <widget class="QCheckBox" name="hidden">
-       <property name="geometry">
-        <rect>
-         <x>20</x>
-         <y>80</y>
-         <width>221</width>
-         <height>17</height>
-        </rect>
-       </property>
-       <property name="text">
-        <string>Cacher la route et tous ses POIs</string>
-       </property>
-      </widget>
-      <widget class="QCheckBox" name="useVbvmgVlm">
-       <property name="geometry">
-        <rect>
-         <x>290</x>
-         <y>80</y>
-         <width>271</width>
-         <height>17</height>
-        </rect>
-       </property>
-       <property name="palette">
-        <palette>
-         <active>
-          <colorrole role="WindowText">
-           <brush brushstyle="SolidPattern">
-            <color alpha="255">
-             <red>0</red>
-             <green>0</green>
-             <blue>255</blue>
-            </color>
-           </brush>
-          </colorrole>
-         </active>
-         <inactive>
-          <colorrole role="WindowText">
-           <brush brushstyle="SolidPattern">
-            <color alpha="255">
-             <red>0</red>
-             <green>0</green>
-             <blue>255</blue>
-            </color>
-           </brush>
-          </colorrole>
-         </inactive>
-         <disabled>
-          <colorrole role="WindowText">
-           <brush brushstyle="SolidPattern">
-            <color alpha="255">
-             <red>120</red>
-             <green>120</green>
-             <blue>120</blue>
-            </color>
-           </brush>
-          </colorrole>
-         </disabled>
-        </palette>
-       </property>
-       <property name="toolTip">
-        <string>Ce bouton a 3 etats, selon que vous utilisez la formule qtVlm, une formule VLM optimisee, ou la formule VLM originale. La formule VLM optimisee donne en principe exactement les memes resultats que la formule non optimisee.</string>
-       </property>
-       <property name="statusTip">
-        <string/>
-       </property>
-       <property name="text">
-        <string>Formule VLM pour le VB-VMG</string>
-       </property>
-       <property name="tristate">
-        <bool>true</bool>
-       </property>
-      </widget>
-      <widget class="QLabel" name="labelTackGybe">
-       <property name="geometry">
-        <rect>
-         <x>20</x>
-         <y>110</y>
-         <width>181</width>
-         <height>16</height>
-        </rect>
-       </property>
-       <property name="text">
-        <string>Empannages/Virements</string>
-       </property>
-      </widget>
-      <widget class="QSpinBox" name="speedLossOnTack">
-       <property name="geometry">
-        <rect>
-         <x>210</x>
-         <y>110</y>
-         <width>61</width>
-         <height>21</height>
-        </rect>
-       </property>
-       <property name="toolTip">
-        <string>Pourcentage de la polaire a appliquer pendant une vacation</string>
-       </property>
-       <property name="alignment">
-        <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-       </property>
-       <property name="suffix">
-        <string>%</string>
-       </property>
-       <property name="minimum">
-        <number>1</number>
-       </property>
-       <property name="maximum">
-        <number>100</number>
-       </property>
-       <property name="singleStep">
-        <number>10</number>
-       </property>
-       <property name="value">
-        <number>100</number>
-       </property>
-      </widget>
-      <widget class="QCheckBox" name="autoRemove">
-       <property name="geometry">
-        <rect>
-         <x>290</x>
-         <y>100</y>
-         <width>261</width>
-         <height>20</height>
-        </rect>
-       </property>
-       <property name="text">
-        <string>Retirer les POIs avant le WP-VLM</string>
-       </property>
-      </widget>
-      <widget class="QCheckBox" name="autoAt">
-       <property name="geometry">
-        <rect>
-         <x>290</x>
-         <y>120</y>
-         <width>271</width>
-         <height>20</height>
-        </rect>
-       </property>
-       <property name="text">
-        <string>Renseigner le cap a suivre (@) des POIs</string>
-       </property>
-      </widget>
-     </widget>
-     <widget class="QGroupBox" name="groupBox_8">
-      <property name="geometry">
-       <rect>
-        <x>10</x>
-        <y>250</y>
-        <width>561</width>
-        <height>101</height>
-       </rect>
-      </property>
-      <property name="title">
-       <string>Taille et couleur</string>
-      </property>
-      <widget class="QWidget" name="verticalLayoutWidget_2">
-       <property name="geometry">
-        <rect>
-         <x>10</x>
-         <y>20</y>
-         <width>541</width>
-         <height>71</height>
-        </rect>
-       </property>
-       <layout class="QVBoxLayout" name="verticalLayout"/>
-      </widget>
-     </widget>
-     <widget class="QGroupBox" name="groupBox_9">
-      <property name="geometry">
-       <rect>
-        <x>180</x>
-        <y>140</y>
-        <width>391</width>
-        <height>101</height>
-       </rect>
-      </property>
-      <property name="title">
-       <string>Date et heure de depart de la route</string>
-      </property>
-      <widget class="QWidget" name="formLayoutWidget_2">
-       <property name="geometry">
-        <rect>
-         <x>10</x>
-         <y>20</y>
-         <width>371</width>
-         <height>78</height>
-        </rect>
-       </property>
-       <layout class="QFormLayout" name="formLayout">
-        <item row="1" column="0">
-         <widget class="QRadioButton" name="editGrib">
-          <property name="text">
-           <string>Depuis la date du grib</string>
-          </property>
-         </widget>
-        </item>
-        <item row="2" column="0">
-         <widget class="QRadioButton" name="editDate">
-          <property name="text">
-           <string>Date fixe</string>
-          </property>
-         </widget>
-        </item>
-        <item row="2" column="1">
-         <widget class="QDateTimeEdit" name="editDateBox">
-          <property name="enabled">
-           <bool>false</bool>
-          </property>
-          <property name="displayFormat">
-           <string>M/d/yyyy hh:mm:ss</string>
-          </property>
-          <property name="timeSpec">
-           <enum>Qt::UTC</enum>
-          </property>
-         </widget>
-        </item>
-        <item row="0" column="0" colspan="2">
-         <widget class="QRadioButton" name="editVac">
-          <property name="text">
-           <string>A partir de la prochaine vacation</string>
-          </property>
-          <property name="checked">
-           <bool>true</bool>
-          </property>
-         </widget>
-        </item>
-       </layout>
-      </widget>
-     </widget>
-     <widget class="QGroupBox" name="groupBox_10">
-      <property name="geometry">
-       <rect>
-        <x>10</x>
-        <y>140</y>
-        <width>171</width>
-        <height>101</height>
-       </rect>
-      </property>
-      <property name="title">
-       <string>Point de depart de la route</string>
-      </property>
-      <widget class="QWidget" name="layoutWidget_2">
-       <property name="geometry">
-        <rect>
-         <x>7</x>
-         <y>30</y>
-         <width>161</width>
-         <height>49</height>
-        </rect>
-       </property>
-       <layout class="QVBoxLayout" name="verticalLayout_5">
-        <item>
-         <widget class="QRadioButton" name="startFromBoat">
-          <property name="text">
-           <string>Du bateau</string>
-          </property>
-          <property name="checked">
-           <bool>true</bool>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QRadioButton" name="startFromMark">
-          <property name="text">
-           <string>Depuis la 1ere marque</string>
-          </property>
-         </widget>
-        </item>
-       </layout>
-      </widget>
-     </widget>
-     <widget class="QPushButton" name="btOk">
-      <property name="geometry">
-       <rect>
-        <x>490</x>
-        <y>8</y>
-        <width>75</width>
-        <height>23</height>
-       </rect>
-      </property>
-      <property name="text">
-       <string>Valider</string>
-      </property>
-     </widget>
-     <widget class="QCheckBox" name="Simplifier">
-      <property name="geometry">
-       <rect>
-        <x>490</x>
-        <y>40</y>
-        <width>91</width>
-        <height>17</height>
-       </rect>
-      </property>
-      <property name="toolTip">
-       <string>Simplifie la route en supprimant les POIs qui ne changent pas l'eta finale.</string>
-      </property>
-      <property name="text">
-       <string>Simplifier</string>
-      </property>
-     </widget>
-     <widget class="QPushButton" name="btCancel">
-      <property name="geometry">
-       <rect>
-        <x>490</x>
-        <y>120</y>
-        <width>75</width>
-        <height>23</height>
-       </rect>
-      </property>
-      <property name="text">
-       <string>Annuler</string>
-      </property>
-     </widget>
-     <widget class="QCheckBox" name="pilototo">
-      <property name="geometry">
-       <rect>
-        <x>20</x>
-        <y>100</y>
-        <width>81</width>
-        <height>17</height>
-       </rect>
-      </property>
-      <property name="palette">
-       <palette>
-        <active>
-         <colorrole role="WindowText">
-          <brush brushstyle="SolidPattern">
-           <color alpha="255">
-            <red>170</red>
-            <green>0</green>
-            <blue>0</blue>
-           </color>
-          </brush>
-         </colorrole>
-        </active>
-        <inactive>
-         <colorrole role="WindowText">
-          <brush brushstyle="SolidPattern">
-           <color alpha="255">
-            <red>170</red>
-            <green>0</green>
-            <blue>0</blue>
-           </color>
-          </brush>
-         </colorrole>
-        </inactive>
-        <disabled>
-         <colorrole role="WindowText">
-          <brush brushstyle="SolidPattern">
-           <color alpha="255">
-            <red>120</red>
-            <green>120</green>
-            <blue>120</blue>
-           </color>
-          </brush>
-         </colorrole>
-        </disabled>
-       </palette>
-      </property>
-      <property name="text">
-       <string>Pilototo</string>
-      </property>
-     </widget>
-     <widget class="QPushButton" name="btAppliquer">
-      <property name="geometry">
-       <rect>
-        <x>490</x>
-        <y>90</y>
-        <width>75</width>
-        <height>23</height>
-       </rect>
-      </property>
-      <property name="text">
-       <string>Appliquer</string>
-      </property>
-     </widget>
-     <widget class="QCheckBox" name="Optimiser">
-      <property name="geometry">
-       <rect>
-        <x>490</x>
-        <y>60</y>
-        <width>91</width>
-        <height>17</height>
-       </rect>
-      </property>
-      <property name="toolTip">
-       <string>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+     <widget class="QWidget" name="tab">
+      <attribute name="title">
+       <string>Route</string>
+      </attribute>
+      <layout class="QVBoxLayout" name="verticalLayout_3">
+       <item>
+        <layout class="QHBoxLayout" name="horizontalLayout_3">
+         <item>
+          <layout class="QVBoxLayout" name="verticalLayout_4">
+           <item>
+            <widget class="QGroupBox" name="groupBox_6">
+             <property name="title">
+              <string>Nom</string>
+             </property>
+             <layout class="QHBoxLayout" name="horizontalLayout">
+              <item>
+               <widget class="QLineEdit" name="editName"/>
+              </item>
+              <item>
+               <widget class="QComboBox" name="editBoat"/>
+              </item>
+             </layout>
+            </widget>
+           </item>
+           <item>
+            <spacer name="verticalSpacer_2">
+             <property name="orientation">
+              <enum>Qt::Vertical</enum>
+             </property>
+             <property name="sizeHint" stdset="0">
+              <size>
+               <width>20</width>
+               <height>40</height>
+              </size>
+             </property>
+            </spacer>
+           </item>
+          </layout>
+         </item>
+         <item>
+          <layout class="QVBoxLayout" name="verticalLayout_5">
+           <item>
+            <widget class="QPushButton" name="btOk">
+             <property name="text">
+              <string>Valider</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QCheckBox" name="Simplifier">
+             <property name="toolTip">
+              <string>Simplifie la route en supprimant les POIs qui ne changent pas l'eta finale.</string>
+             </property>
+             <property name="text">
+              <string>Simplifier</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QCheckBox" name="Optimiser">
+             <property name="toolTip">
+              <string>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'MS Shell Dlg 2'; font-size:7.8pt; font-weight:400; font-style:normal;&quot;&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;Optimise le placement sur la route de tous les POIs simplifiables en utilisant l'algorithme Simplex de Nelder-Mead.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-      </property>
-      <property name="text">
-       <string>Optimiser</string>
-      </property>
+             </property>
+             <property name="text">
+              <string>Optimiser</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QPushButton" name="btAppliquer">
+             <property name="text">
+              <string>Appliquer</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QPushButton" name="btCancel">
+             <property name="text">
+              <string>Annuler</string>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </item>
+        </layout>
+       </item>
+       <item>
+        <layout class="QHBoxLayout" name="horizontalLayout_2">
+         <item>
+          <widget class="QGroupBox" name="groupBox_10">
+           <property name="title">
+            <string>Point de depart de la route</string>
+           </property>
+           <layout class="QVBoxLayout" name="verticalLayout_2">
+            <item>
+             <widget class="QRadioButton" name="startFromBoat">
+              <property name="text">
+               <string>Du bateau</string>
+              </property>
+              <property name="checked">
+               <bool>true</bool>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QRadioButton" name="startFromMark">
+              <property name="text">
+               <string>Depuis la 1ere marque</string>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </widget>
+         </item>
+         <item>
+          <widget class="QGroupBox" name="groupBox_9">
+           <property name="title">
+            <string>Date et heure de depart de la route</string>
+           </property>
+           <layout class="QFormLayout" name="formLayout">
+            <item row="0" column="0" colspan="2">
+             <widget class="QRadioButton" name="editVac">
+              <property name="text">
+               <string>A partir de la prochaine vacation</string>
+              </property>
+              <property name="checked">
+               <bool>true</bool>
+              </property>
+             </widget>
+            </item>
+            <item row="1" column="0">
+             <widget class="QRadioButton" name="editGrib">
+              <property name="text">
+               <string>Depuis la date du grib</string>
+              </property>
+             </widget>
+            </item>
+            <item row="2" column="0">
+             <widget class="QRadioButton" name="editDate">
+              <property name="text">
+               <string>Date fixe</string>
+              </property>
+             </widget>
+            </item>
+            <item row="2" column="1">
+             <widget class="QDateTimeEdit" name="editDateBox">
+              <property name="enabled">
+               <bool>false</bool>
+              </property>
+              <property name="displayFormat">
+               <string>M/d/yyyy hh:mm:ss</string>
+              </property>
+              <property name="timeSpec">
+               <enum>Qt::UTC</enum>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </widget>
+         </item>
+        </layout>
+       </item>
+       <item>
+        <widget class="QGroupBox" name="colorBox">
+         <property name="minimumSize">
+          <size>
+           <width>0</width>
+           <height>120</height>
+          </size>
+         </property>
+         <property name="title">
+          <string>Taille et couleur</string>
+         </property>
+         <layout class="QVBoxLayout" name="verticalLayout"/>
+        </widget>
+       </item>
+       <item>
+        <widget class="QGroupBox" name="groupBox_7">
+         <property name="title">
+          <string>Options</string>
+         </property>
+         <layout class="QGridLayout" name="gridLayout_4">
+          <item row="3" column="2" rowspan="2">
+           <widget class="QSpinBox" name="speedLossOnTack">
+            <property name="toolTip">
+             <string>Pourcentage de la polaire a appliquer pendant une vacation</string>
+            </property>
+            <property name="alignment">
+             <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+            </property>
+            <property name="suffix">
+             <string>%</string>
+            </property>
+            <property name="minimum">
+             <number>1</number>
+            </property>
+            <property name="maximum">
+             <number>100</number>
+            </property>
+            <property name="singleStep">
+             <number>10</number>
+            </property>
+            <property name="value">
+             <number>100</number>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="4">
+           <widget class="QSpinBox" name="vacStep">
+            <property name="alignment">
+             <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+            </property>
+            <property name="minimum">
+             <number>1</number>
+            </property>
+           </widget>
+          </item>
+          <item row="4" column="3" colspan="2">
+           <widget class="QCheckBox" name="autoAt">
+            <property name="text">
+             <string>Renseigner le cap a suivre (@) des POIs</string>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="0">
+           <widget class="QCheckBox" name="editFrozen">
+            <property name="toolTip">
+             <string/>
+            </property>
+            <property name="text">
+             <string>Figer la route</string>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="0" colspan="3">
+           <widget class="QCheckBox" name="hidePois">
+            <property name="text">
+             <string>Cacher les POIs intermediaires</string>
+            </property>
+           </widget>
+          </item>
+          <item row="3" column="0" rowspan="2" colspan="2">
+           <widget class="QLabel" name="labelTackGybe">
+            <property name="text">
+             <string>Empannages/Virements</string>
+            </property>
+           </widget>
+          </item>
+          <item row="2" column="3" colspan="2">
+           <widget class="QCheckBox" name="useVbvmgVlm">
+            <property name="palette">
+             <palette>
+              <active>
+               <colorrole role="WindowText">
+                <brush brushstyle="SolidPattern">
+                 <color alpha="255">
+                  <red>0</red>
+                  <green>0</green>
+                  <blue>255</blue>
+                 </color>
+                </brush>
+               </colorrole>
+              </active>
+              <inactive>
+               <colorrole role="WindowText">
+                <brush brushstyle="SolidPattern">
+                 <color alpha="255">
+                  <red>0</red>
+                  <green>0</green>
+                  <blue>255</blue>
+                 </color>
+                </brush>
+               </colorrole>
+              </inactive>
+              <disabled>
+               <colorrole role="WindowText">
+                <brush brushstyle="SolidPattern">
+                 <color alpha="255">
+                  <red>120</red>
+                  <green>120</green>
+                  <blue>120</blue>
+                 </color>
+                </brush>
+               </colorrole>
+              </disabled>
+             </palette>
+            </property>
+            <property name="toolTip">
+             <string>Ce bouton a 3 etats, selon que vous utilisez la formule qtVlm, une formule VLM optimisee, ou la formule VLM originale. La formule VLM optimisee donne en principe exactement les memes resultats que la formule non optimisee.</string>
+            </property>
+            <property name="statusTip">
+             <string/>
+            </property>
+            <property name="text">
+             <string>Formule VLM pour le VB-VMG</string>
+            </property>
+            <property name="tristate">
+             <bool>true</bool>
+            </property>
+           </widget>
+          </item>
+          <item row="3" column="3" colspan="2">
+           <widget class="QCheckBox" name="autoRemove">
+            <property name="text">
+             <string>Retirer les POIs avant le WP-VLM</string>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="3">
+           <widget class="QLabel" name="label">
+            <property name="text">
+             <string>Nbre de vac par pas de calcul</string>
+            </property>
+           </widget>
+          </item>
+          <item row="2" column="0" colspan="3">
+           <widget class="QCheckBox" name="hidden">
+            <property name="text">
+             <string>Cacher la route et tous ses POIs</string>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="1" colspan="4">
+           <widget class="QCheckBox" name="editCoasts">
+            <property name="toolTip">
+             <string>Les cotes invibles a l'ecran ne sont pas prises en compte</string>
+            </property>
+            <property name="text">
+             <string>Detecter les collisions avec les cotes visibles a l'ecran</string>
+            </property>
+            <property name="checked">
+             <bool>true</bool>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+     <widget class="QWidget" name="tab_2">
+      <attribute name="title">
+       <string>Pilototo</string>
+      </attribute>
+      <layout class="QGridLayout" name="gridLayout_2">
+       <item row="2" column="0" colspan="2">
+        <widget class="QTreeView" name="pilotView"/>
+       </item>
+       <item row="1" column="1">
+        <widget class="QPushButton" name="customOrders">
+         <property name="text">
+          <string>Charger les POIs preselectionnes</string>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="1">
+        <widget class="QPushButton" name="defaultOrders">
+         <property name="text">
+          <string>Charger automatiquement</string>
+         </property>
+        </widget>
+       </item>
+       <item row="3" column="1">
+        <widget class="QPushButton" name="Envoyer">
+         <property name="text">
+          <string>Envoyer les ordres</string>
+         </property>
+        </widget>
+       </item>
+       <item row="4" column="0" colspan="2">
+        <spacer name="verticalSpacer">
+         <property name="orientation">
+          <enum>Qt::Vertical</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>20</width>
+           <height>40</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+       <item row="0" column="0" rowspan="2">
+        <spacer name="horizontalSpacer">
+         <property name="orientation">
+          <enum>Qt::Horizontal</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>40</width>
+           <height>20</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+      </layout>
+     </widget>
+     <widget class="QWidget" name="tab_3">
+      <attribute name="title">
+       <string>Tableau de marche</string>
+      </attribute>
+      <layout class="QVBoxLayout" name="verticalLayout_6">
+       <item>
+        <layout class="QHBoxLayout" name="horizontalLayout_4">
+         <item>
+          <spacer name="horizontalSpacer_2">
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>40</width>
+             <height>20</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+         <item>
+          <widget class="QLabel" name="label_2">
+           <property name="text">
+            <string>Interval</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QSpinBox" name="roadMapInterval">
+           <property name="alignment">
+            <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+           </property>
+           <property name="suffix">
+            <string> min</string>
+           </property>
+           <property name="minimum">
+            <number>5</number>
+           </property>
+           <property name="maximum">
+            <number>1440</number>
+           </property>
+           <property name="singleStep">
+            <number>5</number>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
+       <item>
+        <widget class="QTreeView" name="roadMap">
+         <property name="sortingEnabled">
+          <bool>true</bool>
+         </property>
+         <attribute name="headerStretchLastSection">
+          <bool>false</bool>
+         </attribute>
+        </widget>
+       </item>
+       <item>
+        <widget class="QGroupBox" name="groupBox">
+         <property name="title">
+          <string>Statistiques</string>
+         </property>
+         <layout class="QGridLayout" name="gridLayout_3">
+          <item row="0" column="0">
+           <widget class="QLabel" name="label_3">
+            <property name="text">
+             <string>Distance orthodromique</string>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="1">
+           <widget class="QLineEdit" name="orthDist">
+            <property name="alignment">
+             <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+            </property>
+            <property name="readOnly">
+             <bool>true</bool>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="2">
+           <widget class="QLabel" name="label_4">
+            <property name="text">
+             <string>Distance parcourue</string>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="3">
+           <widget class="QLineEdit" name="orthDistParcourue">
+            <property name="alignment">
+             <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+            </property>
+            <property name="readOnly">
+             <bool>true</bool>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="0">
+           <widget class="QLabel" name="label_5">
+            <property name="text">
+             <string>Vitesse moyenne</string>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="1">
+           <widget class="QLineEdit" name="avgSpeed">
+            <property name="alignment">
+             <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+            </property>
+            <property name="readOnly">
+             <bool>true</bool>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="2">
+           <widget class="QLabel" name="label_6">
+            <property name="text">
+             <string>TWS moyen</string>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="3">
+           <widget class="QLineEdit" name="avgTWS">
+            <property name="alignment">
+             <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+            </property>
+            <property name="readOnly">
+             <bool>true</bool>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+       </item>
+      </layout>
      </widget>
     </widget>
-   </widget>
-   <widget class="QWidget" name="tab_2">
-    <attribute name="title">
-     <string>Pilototo</string>
-    </attribute>
-    <widget class="QPushButton" name="Envoyer">
-     <property name="geometry">
-      <rect>
-       <x>330</x>
-       <y>420</y>
-       <width>251</width>
-       <height>28</height>
-      </rect>
-     </property>
-     <property name="text">
-      <string>Envoyer les ordres</string>
-     </property>
-    </widget>
-    <widget class="QPushButton" name="defaultOrders">
-     <property name="geometry">
-      <rect>
-       <x>330</x>
-       <y>20</y>
-       <width>251</width>
-       <height>28</height>
-      </rect>
-     </property>
-     <property name="text">
-      <string>Charger automatiquement</string>
-     </property>
-    </widget>
-    <widget class="QTreeView" name="pilotView">
-     <property name="geometry">
-      <rect>
-       <x>10</x>
-       <y>130</y>
-       <width>591</width>
-       <height>192</height>
-      </rect>
-     </property>
-    </widget>
-    <widget class="QPushButton" name="customOrders">
-     <property name="geometry">
-      <rect>
-       <x>330</x>
-       <y>50</y>
-       <width>251</width>
-       <height>28</height>
-      </rect>
-     </property>
-     <property name="text">
-      <string>Charger les POIs preselectionnes</string>
-     </property>
-    </widget>
-   </widget>
-   <widget class="QWidget" name="tab_3">
-    <attribute name="title">
-     <string>Tableau de marche</string>
-    </attribute>
-    <widget class="QSpinBox" name="roadMapInterval">
-     <property name="geometry">
-      <rect>
-       <x>420</x>
-       <y>10</y>
-       <width>101</width>
-       <height>22</height>
-      </rect>
-     </property>
-     <property name="alignment">
-      <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-     </property>
-     <property name="suffix">
-      <string> min</string>
-     </property>
-     <property name="minimum">
-      <number>5</number>
-     </property>
-     <property name="maximum">
-      <number>1440</number>
-     </property>
-     <property name="singleStep">
-      <number>5</number>
-     </property>
-    </widget>
-    <widget class="QLabel" name="label_2">
-     <property name="geometry">
-      <rect>
-       <x>310</x>
-       <y>10</y>
-       <width>81</width>
-       <height>16</height>
-      </rect>
-     </property>
-     <property name="text">
-      <string>Interval</string>
-     </property>
-    </widget>
-    <widget class="QTreeView" name="roadMap">
-     <property name="geometry">
-      <rect>
-       <x>20</x>
-       <y>40</y>
-       <width>551</width>
-       <height>391</height>
-      </rect>
-     </property>
-     <property name="sortingEnabled">
-      <bool>true</bool>
-     </property>
-    </widget>
-    <widget class="QGroupBox" name="groupBox">
-     <property name="geometry">
-      <rect>
-       <x>20</x>
-       <y>440</y>
-       <width>551</width>
-       <height>81</height>
-      </rect>
-     </property>
-     <property name="title">
-      <string>Statistiques</string>
-     </property>
-     <widget class="QLabel" name="label_3">
-      <property name="geometry">
-       <rect>
-        <x>20</x>
-        <y>20</y>
-        <width>151</width>
-        <height>16</height>
-       </rect>
-      </property>
-      <property name="text">
-       <string>Distance orthodromique</string>
-      </property>
-     </widget>
-     <widget class="QLineEdit" name="orthDist">
-      <property name="geometry">
-       <rect>
-        <x>190</x>
-        <y>20</y>
-        <width>91</width>
-        <height>22</height>
-       </rect>
-      </property>
-      <property name="alignment">
-       <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-      </property>
-      <property name="readOnly">
-       <bool>true</bool>
-      </property>
-     </widget>
-     <widget class="QLineEdit" name="orthDistParcourue">
-      <property name="geometry">
-       <rect>
-        <x>450</x>
-        <y>20</y>
-        <width>91</width>
-        <height>22</height>
-       </rect>
-      </property>
-      <property name="alignment">
-       <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-      </property>
-      <property name="readOnly">
-       <bool>true</bool>
-      </property>
-     </widget>
-     <widget class="QLabel" name="label_4">
-      <property name="geometry">
-       <rect>
-        <x>300</x>
-        <y>20</y>
-        <width>131</width>
-        <height>16</height>
-       </rect>
-      </property>
-      <property name="text">
-       <string>Distance parcourue</string>
-      </property>
-     </widget>
-     <widget class="QLineEdit" name="avgSpeed">
-      <property name="geometry">
-       <rect>
-        <x>190</x>
-        <y>50</y>
-        <width>91</width>
-        <height>22</height>
-       </rect>
-      </property>
-      <property name="alignment">
-       <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-      </property>
-      <property name="readOnly">
-       <bool>true</bool>
-      </property>
-     </widget>
-     <widget class="QLabel" name="label_5">
-      <property name="geometry">
-       <rect>
-        <x>20</x>
-        <y>50</y>
-        <width>151</width>
-        <height>16</height>
-       </rect>
-      </property>
-      <property name="text">
-       <string>Vitesse moyenne</string>
-      </property>
-     </widget>
-     <widget class="QLineEdit" name="avgTWS">
-      <property name="geometry">
-       <rect>
-        <x>450</x>
-        <y>50</y>
-        <width>91</width>
-        <height>22</height>
-       </rect>
-      </property>
-      <property name="alignment">
-       <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-      </property>
-      <property name="readOnly">
-       <bool>true</bool>
-      </property>
-     </widget>
-     <widget class="QLabel" name="label_6">
-      <property name="geometry">
-       <rect>
-        <x>300</x>
-        <y>50</y>
-        <width>91</width>
-        <height>16</height>
-       </rect>
-      </property>
-      <property name="text">
-       <string>TWS moyen</string>
-      </property>
-     </widget>
-    </widget>
-   </widget>
-  </widget>
+   </item>
+  </layout>
  </widget>
  <tabstops>
-  <tabstop>tabWidget</tabstop>
   <tabstop>editName</tabstop>
   <tabstop>editBoat</tabstop>
   <tabstop>editFrozen</tabstop>
@@ -842,12 +597,6 @@ p, li { white-space: pre-wrap; }
   <tabstop>editVac</tabstop>
   <tabstop>startFromBoat</tabstop>
   <tabstop>startFromMark</tabstop>
-  <tabstop>btOk</tabstop>
-  <tabstop>Simplifier</tabstop>
-  <tabstop>btAppliquer</tabstop>
-  <tabstop>btCancel</tabstop>
-  <tabstop>pilototo</tabstop>
-  <tabstop>Envoyer</tabstop>
   <tabstop>defaultOrders</tabstop>
   <tabstop>pilotView</tabstop>
   <tabstop>customOrders</tabstop>

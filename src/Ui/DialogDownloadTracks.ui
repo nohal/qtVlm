@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>373</width>
-    <height>437</height>
+    <width>258</width>
+    <height>276</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -15,16 +15,25 @@
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
    <item>
-    <layout class="QHBoxLayout" name="horizontalLayout_4">
-     <item>
+    <layout class="QFormLayout" name="formLayout">
+     <property name="fieldGrowthPolicy">
+      <enum>QFormLayout::ExpandingFieldsGrow</enum>
+     </property>
+     <item row="0" column="0">
       <widget class="QLabel" name="labelBoatID">
        <property name="text">
         <string>ID Bateau</string>
        </property>
       </widget>
      </item>
-     <item>
+     <item row="0" column="1">
       <widget class="QSpinBox" name="boatIDEdit">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
        <property name="toolTip">
         <string/>
        </property>
@@ -42,37 +51,41 @@
        </property>
       </widget>
      </item>
-    </layout>
-   </item>
-   <item>
-    <layout class="QHBoxLayout" name="horizontalLayout_5">
-     <item>
+     <item row="1" column="0">
       <widget class="QLabel" name="labelBoatName">
        <property name="text">
         <string>Armateur</string>
        </property>
       </widget>
      </item>
-     <item>
+     <item row="1" column="1">
       <widget class="QLabel" name="labelDisplayBoatName">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
        <property name="text">
         <string>N/A</string>
        </property>
       </widget>
      </item>
-    </layout>
-   </item>
-   <item>
-    <layout class="QHBoxLayout" name="horizontalLayout_3">
-     <item>
+     <item row="2" column="0">
       <widget class="QLabel" name="labelRaceID">
        <property name="text">
         <string>ID Course</string>
        </property>
       </widget>
      </item>
-     <item>
+     <item row="2" column="1">
       <widget class="QSpinBox" name="raceIDEdit">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
        <property name="buttonSymbols">
         <enum>QAbstractSpinBox::NoButtons</enum>
        </property>
@@ -87,54 +100,52 @@
        </property>
       </widget>
      </item>
-    </layout>
-   </item>
-   <item>
-    <layout class="QHBoxLayout" name="horizontalLayout_6">
-     <item>
+     <item row="4" column="0">
       <widget class="QLabel" name="labelRaceName">
        <property name="text">
         <string>Nom Course</string>
        </property>
       </widget>
      </item>
-     <item>
+     <item row="4" column="1">
       <widget class="QLabel" name="labelDisplayRaceName">
        <property name="text">
         <string>N/A</string>
        </property>
       </widget>
      </item>
-    </layout>
-   </item>
-   <item>
-    <widget class="Line" name="line">
-     <property name="orientation">
-      <enum>Qt::Horizontal</enum>
-     </property>
-    </widget>
-   </item>
-   <item>
-    <widget class="QCheckBox" name="frameTrackCheckBox">
-     <property name="enabled">
-      <bool>true</bool>
-     </property>
-     <property name="text">
-      <string>Trace Partielle</string>
-     </property>
-    </widget>
-   </item>
-   <item>
-    <layout class="QHBoxLayout" name="horizontalLayout">
-     <item>
+     <item row="6" column="1">
+      <widget class="QCheckBox" name="frameTrackCheckBox">
+       <property name="enabled">
+        <bool>true</bool>
+       </property>
+       <property name="text">
+        <string>Trace Partielle</string>
+       </property>
+      </widget>
+     </item>
+     <item row="5" column="1">
+      <widget class="Line" name="line">
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+      </widget>
+     </item>
+     <item row="7" column="0">
       <widget class="QLabel" name="labelStartTime">
        <property name="text">
         <string>Heure Debut</string>
        </property>
       </widget>
      </item>
-     <item>
+     <item row="7" column="1">
       <widget class="QDateTimeEdit" name="startTimeEdit">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
        <property name="inputMethodHints">
         <set>Qt::ImhPreferNumbers</set>
        </property>
@@ -143,7 +154,7 @@
        </property>
        <property name="dateTime">
         <datetime>
-         <hour>7</hour>
+         <hour>6</hour>
          <minute>0</minute>
          <second>0</second>
          <year>2011</year>
@@ -159,25 +170,27 @@
        </property>
       </widget>
      </item>
-    </layout>
-   </item>
-   <item>
-    <layout class="QHBoxLayout" name="horizontalLayout_2">
-     <item>
+     <item row="8" column="0">
       <widget class="QLabel" name="labelEndTime">
        <property name="text">
         <string>Heure Fin</string>
        </property>
       </widget>
      </item>
-     <item>
+     <item row="8" column="1">
       <widget class="QDateTimeEdit" name="endTimeEdit">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
        <property name="keyboardTracking">
         <bool>false</bool>
        </property>
        <property name="dateTime">
         <datetime>
-         <hour>6</hour>
+         <hour>5</hour>
          <minute>0</minute>
          <second>0</second>
          <year>2011</year>
@@ -193,32 +206,24 @@
        </property>
       </widget>
      </item>
-    </layout>
-   </item>
-   <item>
-    <widget class="Line" name="line_2">
-     <property name="orientation">
-      <enum>Qt::Horizontal</enum>
-     </property>
-    </widget>
-   </item>
-   <item>
-    <layout class="QHBoxLayout" name="horizontalLayout_9">
-     <item>
+     <item row="9" column="1">
+      <widget class="Line" name="line_2">
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+      </widget>
+     </item>
+     <item row="10" column="0">
       <widget class="QLabel" name="labelRouteName">
        <property name="text">
         <string>Nom de route:</string>
        </property>
       </widget>
      </item>
-     <item>
+     <item row="10" column="1">
       <widget class="QLineEdit" name="editRouteName"/>
      </item>
-    </layout>
-   </item>
-   <item>
-    <layout class="QHBoxLayout" name="horizontalLayout_7">
-     <item>
+     <item row="11" column="0">
       <widget class="QLabel" name="labelPath">
        <property name="maximumSize">
         <size>
@@ -231,18 +236,20 @@
        </property>
       </widget>
      </item>
-     <item>
+     <item row="11" column="1">
       <widget class="QLabel" name="labelPathName">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
        <property name="text">
         <string>N/A</string>
        </property>
       </widget>
      </item>
-    </layout>
-   </item>
-   <item>
-    <layout class="QHBoxLayout" name="horizontalLayout_8">
-     <item>
+     <item row="12" column="0">
       <widget class="QLabel" name="labelStatus">
        <property name="maximumSize">
         <size>
@@ -255,8 +262,14 @@
        </property>
       </widget>
      </item>
-     <item>
+     <item row="12" column="1">
       <widget class="QLabel" name="labelFileName">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
        <property name="text">
         <string>N/A</string>
        </property>
@@ -275,10 +288,6 @@
     </widget>
    </item>
   </layout>
-  <zorder>frameTrackCheckBox</zorder>
-  <zorder>buttonBox</zorder>
-  <zorder>line</zorder>
-  <zorder>line_2</zorder>
  </widget>
  <resources/>
  <connections>
@@ -305,11 +314,11 @@
    <slot>reject()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>316</x>
-     <y>260</y>
+     <x>253</x>
+     <y>271</y>
     </hint>
     <hint type="destinationlabel">
-     <x>286</x>
+     <x>257</x>
      <y>274</y>
     </hint>
    </hints>

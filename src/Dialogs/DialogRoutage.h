@@ -27,7 +27,6 @@ Copyright (C) 2008 - Jacques Zaninetti - http://zygrib.free.fr
 
 #include "class_list.h"
 #include "ui_Routage_Editor.h"
-#include <QScrollArea>
 
 //===================================================================
 class DialogRoutage : public QDialog, public Ui::ROUTAGE_Editor_ui
@@ -41,10 +40,7 @@ class DialogRoutage : public QDialog, public Ui::ROUTAGE_Editor_ui
         void GybeTack(int i);
     signals:
 
-    protected:
-        void resizeEvent ( QResizeEvent * event );
     private:
-        QScrollArea *scroll;
         ROUTAGE   *routage;
         myCentralWidget *parent;
         bool  modeCreation;

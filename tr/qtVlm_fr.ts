@@ -2421,7 +2421,7 @@ Etes-vous sur ?</source>
     </message>
     <message>
         <source>Cancel</source>
-        <translation>Annuler</translation>
+        <translation type="obsolete">Annuler</translation>
     </message>
     <message>
         <source>Type de marque a supprimer</source>
@@ -2445,10 +2445,6 @@ Etes-vous sur ?</source>
     </message>
     <message>
         <source>Balise</source>
-        <translation></translation>
-    </message>
-    <message>
-        <source>OK</source>
         <translation></translation>
     </message>
 </context>
@@ -2488,7 +2484,7 @@ Etes-vous sur ?</source>
     </message>
     <message>
         <source>Horadatage de passage</source>
-        <translation>Horodatage de passage</translation>
+        <translation type="obsolete">Horodatage de passage</translation>
     </message>
     <message>
         <source>Activer</source>
@@ -2566,6 +2562,10 @@ Etes-vous sur ?</source>
         <source>Non simplifiable</source>
         <translation></translation>
     </message>
+    <message>
+        <source>Horodatage de passage</source>
+        <translation></translation>
+    </message>
 </context>
 <context>
     <name>POI_input_ui</name>
@@ -2578,12 +2578,8 @@ Etes-vous sur ?</source>
         <translation>Coller ou insérer des POIs au format LAT,LON@WPH</translation>
     </message>
     <message>
-        <source>Ok</source>
-        <translation></translation>
-    </message>
-    <message>
         <source>Cancel</source>
-        <translation>Annuler</translation>
+        <translation type="obsolete">Annuler</translation>
     </message>
     <message>
         <source>0/0 valid WP</source>
@@ -3129,12 +3125,8 @@ VMG %.2f nds</translation>
         <translation>Points de départ et d&apos;arrivée</translation>
     </message>
     <message>
-        <source>Valider</source>
-        <translation></translation>
-    </message>
-    <message>
         <source>Annuler</source>
-        <translation>Annuler</translation>
+        <translation type="obsolete">Annuler</translation>
     </message>
     <message>
         <source>Taille et couleur du resultat du routage</source>
@@ -3697,10 +3689,6 @@ p, li { white-space: pre-wrap; }
         <translation></translation>
     </message>
     <message>
-        <source>OK</source>
-        <translation></translation>
-    </message>
-    <message>
         <source>Sujet du mail indifferent</source>
         <translation>Sujet du mail indifférent</translation>
     </message>
@@ -4081,12 +4069,8 @@ p, li { white-space: pre-wrap; }
         <translation>Copier</translation>
     </message>
     <message>
-        <source>Sauver</source>
-        <translation></translation>
-    </message>
-    <message>
         <source>Annuler</source>
-        <translation>Annuler</translation>
+        <translation type="obsolete">Annuler</translation>
     </message>
     <message>
         <source>Selectionner une marque</source>
@@ -5032,12 +5016,8 @@ p, li { white-space: pre-wrap; }
         <translation>dates Grib</translation>
     </message>
     <message>
-        <source>Valider</source>
-        <translation></translation>
-    </message>
-    <message>
         <source>Annuler</source>
-        <translation>Annuler</translation>
+        <translation type="obsolete">Annuler</translation>
     </message>
     <message>
         <source>M/d/yyyy hh:mm:ss</source>
@@ -5085,12 +5065,8 @@ p, li { white-space: pre-wrap; }
         <translation></translation>
     </message>
     <message>
-        <source>OK</source>
-        <translation></translation>
-    </message>
-    <message>
         <source>Cancel</source>
-        <translation>Annuler</translation>
+        <translation type="obsolete">Annuler</translation>
     </message>
     <message>
         <source>Prametres du calcul</source>
@@ -5157,11 +5133,15 @@ p, li { white-space: pre-wrap; }
     <name>inetConn_progressDialog_ui</name>
     <message>
         <source>Download progess</source>
-        <translation>Téléchargement en cours</translation>
+        <translation type="obsolete">Téléchargement en cours</translation>
     </message>
     <message>
         <source>TextLabel</source>
         <translation></translation>
+    </message>
+    <message>
+        <source>Download progress</source>
+        <translation>Téléchargement en cours</translation>
     </message>
 </context>
 <context>
@@ -5865,10 +5845,6 @@ Voulez-vous egalement supprimer tous les POIs lui appartenant?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>proxyState</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Connection using a proxy</source>
         <translation type="unfinished"></translation>
     </message>
@@ -5936,12 +5912,8 @@ Voulez-vous egalement supprimer tous les POIs lui appartenant?</source>
         <translation>Sélectionner une marque</translation>
     </message>
     <message>
-        <source>Valider</source>
-        <translation></translation>
-    </message>
-    <message>
         <source>Annuler</source>
-        <translation>Annuler</translation>
+        <translation type="obsolete">Annuler</translation>
     </message>
     <message>
         <source>Mode de pilotage</source>
@@ -6057,19 +6029,11 @@ Voulez-vous egalement supprimer tous les POIs lui appartenant?</source>
         <translation>Paramètre des courses</translation>
     </message>
     <message>
-        <source>OK</source>
-        <translation></translation>
-    </message>
-    <message>
         <source>Cancel</source>
-        <translation>Annuler</translation>
+        <translation type="obsolete">Annuler</translation>
     </message>
     <message>
         <source>XXX</source>
-        <translation></translation>
-    </message>
-    <message>
-        <source>Appliquer</source>
         <translation></translation>
     </message>
     <message>

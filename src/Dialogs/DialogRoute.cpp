@@ -54,25 +54,8 @@ DialogRoute::DialogRoute(ROUTE *route,myCentralWidget *parent)
     tabWidthRatio=-1;
     setupUi(this);
     Util::setFontDialog(this);
-    this->resize(this->tabWidget->width()+10,tabWidget->height()+10);
-    tabWidget->setParent(0);
-    scroll=new QScrollArea(this);
-    scroll->resize(tabWidget->size());
-    scroll->setWidget(tabWidget);
-    QSize mySize=QSize(tabWidget->size().width()+20,tabWidget->size().height()+20);
-    QSize screenSize=QApplication::desktop()->screenGeometry().size()*.8;
-    if(mySize.height() > screenSize.height())
-    {
-        mySize.setHeight(screenSize.height());
-    }
-    if(mySize.width() > screenSize.width())
-    {
-        mySize.setWidth(screenSize.width());
-    }
-    this->resize(mySize);
-    scroll->resize(mySize);
     inputTraceColor =new InputLineParams(route->getWidth(),route->getColor(),1.6,  QColor(Qt::red),this,0.1,5);
-    verticalLayout->addWidget( inputTraceColor);
+    colorBox->layout()->addWidget( inputTraceColor);
     setWindowTitle(tr("Parametres Route"));
     editName->setText(route->getName());
     editFrozen->setChecked(route->getFrozen());
@@ -147,7 +130,6 @@ DialogRoute::DialogRoute(ROUTE *route,myCentralWidget *parent)
         this->editVac->setText(tr("Date de la derniere MAJ de la position"));
         editBoat->addItem(parent->getPlayer()->getName());
         editBoat->setEnabled(false);
-        this->pilototo->hide();
         this->tabWidget->removeTab(1);
         this->autoRemove->setChecked(false);
         this->autoRemove->hide();
@@ -159,10 +141,6 @@ DialogRoute::DialogRoute(ROUTE *route,myCentralWidget *parent)
         this->tabWidget->setTabEnabled(1,false);
         this->tabWidget->setTabEnabled(2,false);
     }
-#if 1
-    this->pilototo->hide();
-    //this->tabWidget->removeTab(1);
-#endif
     model= new QStandardItemModel();
     model->setColumnCount(4);
     model->setHeaderData(0,Qt::Horizontal,QObject::tr("Date et heure"));
@@ -230,15 +208,6 @@ void DialogRoute::slotTabChanged(int tab)
     slotInterval();
 }
 
-void DialogRoute::resizeEvent ( QResizeEvent*)
-{
-    this->scroll->resize(this->size());
-    if(tabWidthRatio>0.0)
-    {
-        tabWidget->resize(qMax(tabWidth,this->size().width()-tabWidthRatio),tabWidget->size().height());
-        roadMap->resize(qMax(roadMapWidth,this->size().width()-roadMapWidthRatio),roadMap->size().height());
-    }
-}
 void DialogRoute::slotIntervalTimer(int)
 {
     intervalTimer->start();
@@ -588,7 +557,6 @@ void DialogRoute::done(int result)
         }
         route->setAutoRemove(this->autoRemove->isChecked());
         route->setAutoAt(autoAt->isChecked());
-        route->setPilototo(this->pilototo->isChecked());
         //Settings::setSetting("useVbvmgVlm",route->getUseVbvmgVlm()?"1":"0"  );
         //Settings::setSetting("useNewVbvmgVlm",route->getNewVbvmgVlm()?"1":"0"  );
         route->setMultVac(vacStep->value());

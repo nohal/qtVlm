@@ -566,14 +566,12 @@ DialogParamAccount::DialogParamAccount(QWidget * parent): QDialog(parent)
     edit_pass->setText(QString());
 
 #if 1
-    type_layout->setEnabled(true);
     type_cb->show();
     type_label->show();
     type_cb->setCurrentIndex(0);
 #else
     type_cb->hide();
     type_label->hide();
-    type_layout->setEnabled(false);
 #endif
 }
 

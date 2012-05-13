@@ -33,7 +33,6 @@ class POI_Editor;
 #include "MainWindow.h"
 #include "mycentralwidget.h"
 #include "route.h"
-#include <QScrollArea>
 
 //===================================================================
 class DialogPoi : public QDialog, public Ui::POI_editor_ui
@@ -61,10 +60,7 @@ class DialogPoi : public QDialog, public Ui::POI_editor_ui
         void doChgWP(double,double,double);
         void updateRoute();
 
-    protected:
-        void resizeEvent ( QResizeEvent * event );
     private:
-        QScrollArea *scroll;
         POI   *poi;
         bool  modeCreation;
         bool lock;

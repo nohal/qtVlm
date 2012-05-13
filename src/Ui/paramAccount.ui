@@ -6,112 +6,71 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>388</width>
-    <height>165</height>
+    <width>245</width>
+    <height>111</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>Paramétrage Compte</string>
   </property>
-  <widget class="QWidget" name="">
-   <property name="geometry">
-    <rect>
-     <x>10</x>
-     <y>10</y>
-     <width>361</width>
-     <height>131</height>
-    </rect>
-   </property>
-   <layout class="QVBoxLayout" name="verticalLayout">
-    <item>
-     <layout class="QHBoxLayout" name="_2">
-      <item>
-       <widget class="QLabel" name="label_2">
-        <property name="text">
-         <string>Identifiant</string>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QLineEdit" name="edit_login"/>
-      </item>
-     </layout>
-    </item>
-    <item>
-     <layout class="QHBoxLayout">
-      <item>
-       <widget class="QLabel" name="label">
-        <property name="text">
-         <string>Mot de passe</string>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QLineEdit" name="edit_pass">
-        <property name="echoMode">
-         <enum>QLineEdit::Password</enum>
-        </property>
-       </widget>
-      </item>
-     </layout>
-    </item>
-    <item>
-     <layout class="QHBoxLayout" name="type_layout">
-      <item>
-       <widget class="QLabel" name="type_label">
-        <property name="text">
-         <string>Type</string>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QComboBox" name="type_cb">
-        <item>
-         <property name="text">
-          <string>Vrai bateau</string>
-         </property>
-        </item>
-        <item>
-         <property name="text">
-          <string>Bateau VLM</string>
-         </property>
-        </item>
-       </widget>
-      </item>
-      <item>
-       <spacer name="horizontalSpacer">
-        <property name="orientation">
-         <enum>Qt::Horizontal</enum>
-        </property>
-        <property name="sizeHint" stdset="0">
-         <size>
-          <width>40</width>
-          <height>20</height>
-         </size>
-        </property>
-       </spacer>
-      </item>
-     </layout>
-    </item>
-    <item>
-     <widget class="QDialogButtonBox" name="buttonBox">
-      <property name="orientation">
-       <enum>Qt::Horizontal</enum>
+  <layout class="QFormLayout" name="formLayout">
+   <item row="0" column="0">
+    <widget class="QLabel" name="label_2">
+     <property name="text">
+      <string>Identifiant</string>
+     </property>
+    </widget>
+   </item>
+   <item row="0" column="1">
+    <widget class="QLineEdit" name="edit_login"/>
+   </item>
+   <item row="1" column="0">
+    <widget class="QLabel" name="label">
+     <property name="text">
+      <string>Mot de passe</string>
+     </property>
+    </widget>
+   </item>
+   <item row="1" column="1">
+    <widget class="QLineEdit" name="edit_pass">
+     <property name="echoMode">
+      <enum>QLineEdit::Password</enum>
+     </property>
+    </widget>
+   </item>
+   <item row="2" column="0">
+    <widget class="QLabel" name="type_label">
+     <property name="text">
+      <string>Type</string>
+     </property>
+    </widget>
+   </item>
+   <item row="2" column="1">
+    <widget class="QComboBox" name="type_cb">
+     <item>
+      <property name="text">
+       <string>Vrai bateau</string>
       </property>
-      <property name="standardButtons">
-       <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
+     </item>
+     <item>
+      <property name="text">
+       <string>Bateau VLM</string>
       </property>
-     </widget>
-    </item>
-   </layout>
-  </widget>
+     </item>
+    </widget>
+   </item>
+   <item row="3" column="1">
+    <widget class="QDialogButtonBox" name="buttonBox">
+     <property name="orientation">
+      <enum>Qt::Horizontal</enum>
+     </property>
+     <property name="standardButtons">
+      <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
+     </property>
+    </widget>
+   </item>
+  </layout>
  </widget>
- <tabstops>
-  <tabstop>edit_login</tabstop>
-  <tabstop>edit_pass</tabstop>
-  <tabstop>type_cb</tabstop>
-  <tabstop>buttonBox</tabstop>
- </tabstops>
  <resources/>
  <connections>
   <connection>
