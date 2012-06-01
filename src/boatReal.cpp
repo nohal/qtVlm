@@ -222,6 +222,7 @@ void boatReal::setPosition(double lat, double lon)
     this->lastUpdateTime=QDateTime().currentDateTimeUtc().toTime_t();
     this->setWp(WPLat,WPLon,WPHd);
     updateBoatData();
+    this->parent->emitUpdateRoute(this);
 }
 
 QString boatReal::parseMask(int mask)
@@ -265,6 +266,7 @@ bool boatReal::tryMoving(int x, int y)
         proj->screen2map(mouse_x+3,mouse_y, &newlon, &newlat);
         setPosition(newlat,newlon);
         emit boatUpdated(this,false,false);
+        this->parent->emitUpdateRoute(this);
         return true;
     }
     return false;
@@ -288,6 +290,7 @@ void boatReal::mouseReleaseEvent(QGraphicsSceneMouseEvent * e)
         isMoving=false;
         setCursor(Qt::PointingHandCursor);
         emit boatUpdated(this,false,false);
+        this->parent->emitUpdateRoute(this);
         return;
     }
 
@@ -379,7 +382,7 @@ void boatReal::paramUpdated()
 void boatReal::setPolar(QString polarName)
 {
     this->polarName=polarName;
-    boat::reloadPolar();
+    boat::reloadPolar(true);
 }
 
 void boatReal::slot_chgPos(void)

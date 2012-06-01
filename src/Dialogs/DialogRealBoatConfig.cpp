@@ -44,6 +44,7 @@ void DialogRealBoatConfig::launch(boatReal * boat)
     /* init dialog */
     serialName->setText(Settings::getSetting("gpsPortName","COM1").toString());
     baudRate->setCurrentIndex(Settings::getSetting("gpsBaudRate",BAUD4800).toInt());
+    polarEfficiency->setValue(Settings::getSetting("polarEfficiency",100).toInt());
     this->displayNMEA->setChecked(boat->getDisplayNMEA());
     QDir polarDir = QDir("polar");
     QStringList extStr;
@@ -83,6 +84,7 @@ void DialogRealBoatConfig::done(int result)
     {
         Settings::setSetting("gpsPortName",serialName->text());
         Settings::setSetting("gpsBaudRate",QString().setNum(baudRate->currentIndex()));
+        Settings::setSetting("polarEfficiency",polarEfficiency->value());
         if(curBoat)
         {
             //qWarning() << "Saving polar in boat: " << polarList->currentText();
@@ -94,6 +96,7 @@ void DialogRealBoatConfig::done(int result)
     curBoat->setDisplayNMEA(this->displayNMEA->isChecked());
     curBoat->setDeclinaison(declinaison->value());
     curBoat->emitMoveBoat();
+    this->parent->emitUpdateRoute(curBoat);
     QDialog::done(result);
 }
 

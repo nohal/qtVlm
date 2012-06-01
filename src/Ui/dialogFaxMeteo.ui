@@ -171,8 +171,6 @@
            </widget>
           </item>
          </layout>
-         <zorder>layoutWidget_2</zorder>
-         <zorder>lat_min</zorder>
         </widget>
        </item>
        <item>

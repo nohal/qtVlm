@@ -84,6 +84,7 @@ class Polar : public QObject
         void    myBvmgWind(double w_angle, double w_speed,double *wangle);
         double  A360(double hdg);
         QFile   fileVMG;
+        double  coeffPolar;
 };
 
 class polarList : public QObject, public inetClient

@@ -2328,7 +2328,7 @@ Etes-vous sur ?</source>
     </message>
     <message>
         <source>Distance Ortho a partir de </source>
-        <translation>Distance Ortho à partir de </translation>
+        <translation type="obsolete">Distance Ortho à partir de </translation>
     </message>
     <message>
         <source>La destruction d&apos;une marque est definitive.
@@ -2411,6 +2411,10 @@ Etes-vous sur ?</source>
     <message>
         <source>Non simplifiable</source>
         <translation></translation>
+    </message>
+    <message>
+        <source>Ortho a partir de </source>
+        <translation>Ortho à partir de </translation>
     </message>
 </context>
 <context>
@@ -6257,7 +6261,7 @@ Voulez-vous egalement supprimer tous les POIs lui appartenant?</source>
     </message>
     <message>
         <source>Declinaison par defaut</source>
-        <translation>Déclinaison par defaut</translation>
+        <translation type="obsolete">Déclinaison par defaut</translation>
     </message>
     <message>
         <source>Positif pour Est, negatif pour Ouest</source>
@@ -6266,6 +6270,22 @@ Voulez-vous egalement supprimer tous les POIs lui appartenant?</source>
     <message>
         <source>deg</source>
         <translation>°</translation>
+    </message>
+    <message>
+        <source>Declinaison</source>
+        <translation>Déclinaison</translation>
+    </message>
+    <message>
+        <source>Valeur par defaut</source>
+        <translation>Valeur par défaut</translation>
+    </message>
+    <message>
+        <source>Efficacite</source>
+        <translation>Efficacité</translation>
+    </message>
+    <message>
+        <source> %</source>
+        <translation></translation>
     </message>
 </context>
 <context>

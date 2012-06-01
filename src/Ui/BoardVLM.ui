@@ -1542,7 +1542,7 @@
       <property name="orientation">
        <enum>Qt::Vertical</enum>
       </property>
-      <widget class="QWidget" name="layoutWidget">
+      <widget class="QWidget" name="layoutWidget1">
        <layout class="QHBoxLayout" name="horizontalLayout_7">
         <item>
          <layout class="QGridLayout" name="gridLayout">
@@ -1988,7 +1988,7 @@
      <property name="title">
       <string>Meilleur VMG vent</string>
      </property>
-     <widget class="QWidget" name="layoutWidget">
+     <widget class="QWidget" name="layoutWidget2">
       <property name="geometry">
        <rect>
         <x>0</x>

@@ -2542,8 +2542,8 @@ void myCentralWidget::treatRoute(ROUTE* route)
                     }
                     if(abortRequest) break;
                     if ((route->getLastReachedPoi() == lastReachedPoi)
-                        && (lastReachedPoi->getRouteTimeStamp() > ref_eta3)
-                        || ((lastReachedPoi->getRouteTimeStamp() == ref_eta3) && (route->getRemain() > ref_remain)))
+                        && ((lastReachedPoi->getRouteTimeStamp() > ref_eta3)
+                        || ((lastReachedPoi->getRouteTimeStamp() == ref_eta3) && (route->getRemain() > ref_remain))))
                         qWarning()<<"wrong optimization!!";
                     if (route->getHas_eta() && simplify) {
                         time_t  ref_eta4 = route->getEta();

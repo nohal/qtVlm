@@ -30,6 +30,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "dataDef.h"
 #include "parser.h"
 #include "Orthodromie.h"
+#include "settings.h"
 
 Polar::Polar(MainWindow * mainWindow)
 {
@@ -79,7 +80,7 @@ void Polar::setPolarName(QString fname)
     isCsv=true;
     loaded=false;
     clearPolar();
-
+    coeffPolar=Settings::getSetting("polarEfficiency",100).toInt()/100.0;
 
     //qWarning() << "Opening polar " << fname;
 
@@ -154,14 +155,14 @@ void Polar::setPolarName(QString fname)
         for(i=1;i<list.count();i++)
         {
             if(i>tws.count()) break;
-            polar_data.append(list[i].toDouble());
+            polar_data.append(list[i].toDouble()*this->coeffPolar);
         }
         while(i<=tws.count())
             polar_data.append(0);
     }
     mid_twa=qRound(twa.count()/2);
     mid_tws=qRound(tws.count()/2);
-    /* polaire chargée */
+    /* polaire chargee */
 
 /* pre-calculate B-VMG for every tws at 0.1 precision with a twa step of 1 and then .1 */
 

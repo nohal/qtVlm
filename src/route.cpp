@@ -325,8 +325,9 @@ void ROUTE::slot_recalculate(boat * boat)
         double newSpeed,distanceParcourue,remaining_distance,res_lon,res_lat,previous_remaining_distance,cap1,cap2,diff1,diff2;
         remaining_distance=0;
         lastKnownSpeed=10e-4;
-        double wind_angle,wind_speed,cap,angle;
+        double wind_angle,wind_speed,cap,angle,capSaved;
         cap=-1;
+        capSaved=cap;
         time_t maxDate=grib->getMaxDate();
         QString previousPoiName="";
         time_t previousEta=0;
@@ -405,6 +406,7 @@ void ROUTE::slot_recalculate(boat * boat)
                         previous_remaining_distance=remaining_distance;
                         wind_angle=radToDeg(wind_angle);
                         cap=orth.getAzimutDeg();
+                        capSaved=cap;
                         if(imported)
                         {
                             res_lon=poi->getLongitude();
@@ -541,7 +543,8 @@ void ROUTE::slot_recalculate(boat * boat)
                                         roadPoint.append(0); //7
                                         roadPoint.append(0); //8
                                         roadPoint.append(-1); //9
-                                        roadPoint.append(0);
+                                        roadPoint.append(0); //10
+                                        roadPoint.append(0); //11
                                         roadMap.append(roadPoint);
                                     }
                                     break;
@@ -573,7 +576,7 @@ void ROUTE::slot_recalculate(boat * boat)
                                 roadPoint.append((double)(Eta-myBoat->getVacLen())); // 0
                                 roadPoint.append(poi->getLongitude()); // 1
                                 roadPoint.append(poi->getLatitude()); // 2
-                                roadPoint.append(cap); //3
+                                roadPoint.append(Util::A360(cap-myBoat->getDeclinaison())); //3
                                 roadPoint.append(newSpeed); //4
                                 roadPoint.append(distanceParcourue); //5
                                 roadPoint.append(wind_angle); //6
@@ -581,6 +584,7 @@ void ROUTE::slot_recalculate(boat * boat)
                                 roadPoint.append(A180(cap-wind_angle)); //8
                                 roadPoint.append(poiNb); //9
                                 roadPoint.append(remaining_distance); //10
+                                roadPoint.append(Util::A360(capSaved-myBoat->getDeclinaison())); //11
                                 roadMap.append(roadPoint);
                             }
                             lastEta=Eta;
@@ -611,6 +615,7 @@ void ROUTE::slot_recalculate(boat * boat)
                             roadPoint.append(0); //8
                             roadPoint.append(-1); //9
                             roadPoint.append(0); //10
+                            roadPoint.append(0); //11
                             roadMap.append(roadPoint);
                         }
                         break;
