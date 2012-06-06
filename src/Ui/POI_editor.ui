@@ -395,6 +395,15 @@
  <tabstops>
   <tabstop>editName</tabstop>
   <tabstop>POI_type_liste</tabstop>
+  <tabstop>lat_sig</tabstop>
+  <tabstop>lat_deg</tabstop>
+  <tabstop>lat_min</tabstop>
+  <tabstop>lat_val</tabstop>
+  <tabstop>lon_sig</tabstop>
+  <tabstop>lon_deg</tabstop>
+  <tabstop>lon_min</tabstop>
+  <tabstop>lon_val</tabstop>
+  <tabstop>editWph</tabstop>
   <tabstop>cb_routeList</tabstop>
   <tabstop>notSimplicable</tabstop>
   <tabstop>chk_tstamp</tabstop>
