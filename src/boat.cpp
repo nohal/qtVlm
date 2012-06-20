@@ -625,7 +625,7 @@ void boat::setParam(QString pseudo, bool activated)
 void boat::reloadPolar(bool forced)
 {
     //qWarning()<<"inside reloadPolar with forced="<<forced;
-    if(forced && polarName.isEmpty())
+    if(forced && polarName.isEmpty() && polarData)
         polarName=polarData->getName();
     //qWarning()<<"polarName="<<polarName;
     if(polarName.isEmpty()) /* nom de la polaire est vide => pas de chargement */

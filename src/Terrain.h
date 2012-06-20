@@ -179,6 +179,7 @@ private:
     void indicateWaitingMap(void);
     void updateRoutine(void);
     bool isWaiting;
+    bool mustRestart;
 };
 
 #endif

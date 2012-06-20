@@ -100,6 +100,7 @@ Terrain::Terrain(myCentralWidget *parent, Projection *proj_) : QGraphicsWidget()
     isWindMapValid  = false;
     mustRedraw = true;
     isWaiting=false;
+    mustRestart=false;
 
     gshhsReader = NULL;
     gisReader = new GisReader();
@@ -180,7 +181,7 @@ void Terrain::draw_GSHHSandGRIB()
     //===================================================
     // Dessin du fond de carte et des donnees GRIB
     //===================================================
-    if (!isEarthMapValid)
+    if (!isEarthMapValid || mustRedraw)
     {
         if (imgEarth != NULL) {
             delete imgEarth;
@@ -687,7 +688,11 @@ void Terrain::paint(QPainter * pnt, const QStyleOptionGraphicsItem * , QWidget *
 
 void Terrain::indicateWaitingMap()
 {
-    if(isWaiting) return;
+    if(isWaiting)
+    {
+        mustRestart=true;
+        return;
+    }
     isWaiting=true;
     if(imgAll!=NULL)
     {
@@ -705,18 +710,59 @@ void Terrain::indicateWaitingMap()
         rect.moveTo(20,20);
         pnt_1.drawRect(rect);
         pnt_1.drawText(rect, Qt::AlignHCenter|Qt::AlignVCenter , txt);
+        if(mustRestart)
+        {
+            mustRestart=false;
+            mustRedraw=true;
+            isEarthMapValid = false;
+            isWindMapValid = false;
+            isWaiting=false;
+            indicateWaitingMap();
+            return;
+        }
         updateRoutine();
+        if(mustRestart)
+        {
+            mustRestart=false;
+            mustRedraw=true;
+            isEarthMapValid = false;
+            isWindMapValid = false;
+            isWaiting=false;
+            indicateWaitingMap();
+            return;
+        }
    }
    if (mustRedraw  ||  !isEarthMapValid  || !isWindMapValid)
    {
         draw_GSHHSandGRIB();
-
+        if(mustRestart)
+        {
+            mustRestart=false;
+            isEarthMapValid = false;
+            isWindMapValid = false;
+            mustRedraw=true;
+            isWaiting=false;
+            indicateWaitingMap();
+            return;
+        }
         isEarthMapValid = true;
         isWindMapValid = true;
         mustRedraw = false;
     }
     updateRoutine();
+    if(mustRestart)
+    {
+        mustRestart=false;
+        mustRedraw=true;
+        isWaiting=false;
+        isEarthMapValid = false;
+        isWindMapValid = false;
+        indicateWaitingMap();
+        return;
+    }
     isWaiting=false;
+    mustRestart=false;
+    mustRedraw = false;
 }
 void Terrain::updateRoutine()
 {

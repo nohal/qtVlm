@@ -1827,7 +1827,7 @@ Etes-vous sur ?</source>
     <message>
         <location filename="../src/MainWindow.cpp" line="716"/>
         <source> (du </source>
-        <translation>(from </translation>
+        <translation> (from </translation>
     </message>
     <message>
         <location filename="../src/MainWindow.cpp" line="717"/>
@@ -4451,7 +4451,7 @@ VMG %.2f kts</translation>
     <message>
         <location filename="../src/routage.cpp" line="2051"/>
         <source> jours </source>
-        <translation type="unfinished"> days </translation>
+        <translation> days </translation>
     </message>
     <message>
         <location filename="../src/routage.cpp" line="2052"/>
