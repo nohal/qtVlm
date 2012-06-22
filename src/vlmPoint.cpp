@@ -31,4 +31,5 @@ vlmPoint::vlmPoint(double lon,double lat)
     this->yM1=10e5;
     this->speed=10e5;
     this->timeStamp=0;
+    this->distArrival=0;
 }

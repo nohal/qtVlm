@@ -28,6 +28,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "Player.h"
 #include "class_list.h"
 #include "Grib.h"
+#include "vlmPoint.h"
 
 
 class boatVLM : public boat, public inetClient
@@ -106,6 +107,7 @@ class boatVLM : public boat, public inetClient
         void exportBoatInfoLog(QString fileName);
         QList<vlmLine*> getGates(){return gates;}
         void setWph(double w){this->WPHd=w;}
+        vlmPoint getClosest(){return closest;}
 
     public slots:
         void slot_getData(bool doingSync);
@@ -178,6 +180,9 @@ class boatVLM : public boat, public inetClient
         bool initialized;
         bool showNpd;
         QString npd;
+        vlmPoint closest;
+        void getDistHdgGate();
+
 };
 
 

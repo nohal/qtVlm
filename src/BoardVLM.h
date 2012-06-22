@@ -33,6 +33,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "ui_BoardVLM.h"
 #include <QAction>
+#include "vlmPoint.h"
 
 class boardVLM: public QWidget , public Ui::boardVLM_ui, public inetClient
 { Q_OBJECT

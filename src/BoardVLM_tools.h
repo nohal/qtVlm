@@ -26,6 +26,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <QImage>
 #include <QPainter>
 #include <QDoubleSpinBox>
+#include "vlmPoint.h"
 
 class tool_navCenter: public QWidget
 { Q_OBJECT
@@ -53,7 +54,8 @@ class tool_windAngle: public QWidget
         tool_windAngle(QWidget * parent=0);
         void draw(QPainter * painter);
         void setValues(double heading,double windDir, double windSpeed, double WPdir,double newHeading);
-        
+        void setClosest(vlmPoint p){this->closest=p;}
+
     protected:
         void paintEvent(QPaintEvent * event);
 
@@ -64,6 +66,7 @@ class tool_windAngle: public QWidget
         QImage *img_boat2;
         int w,h;
         double heading,windDir,windSpeed,WPdir,newHeading;
+        vlmPoint closest;
 
         QColor windSpeed_toColor(void);
 
@@ -82,7 +85,6 @@ class tool_windStation: public QWidget
     private:
         QImage *img_fond;
         int w,h;
-
         double windSpeed,windDir,windAngle;
 
 };

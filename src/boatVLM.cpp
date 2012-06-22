@@ -442,6 +442,7 @@ void boatVLM::requestFinished (QByteArray res_byte)
             else
             {
                 updating=false;
+                this->getDistHdgGate();
                 drawEstime();
                 emit hasFinishedUpdating();
                 emit boatUpdated(this,newRace,doingSync);
@@ -568,6 +569,7 @@ void boatVLM::requestFinished (QByteArray res_byte)
 
                 }
                 gatesLoaded=true;
+                this->getDistHdgGate();
                 updating=false;
                 emit hasFinishedUpdating();
                 emit boatUpdated(this,newRace,doingSync);
@@ -821,6 +823,11 @@ void boatVLM::updateHint(void)
         }
 
     }
+    if(closest.distArrival!=0)
+    {
+        str=tr("Prochaine porte: ")+QString().sprintf("%.2f",closest.capArrival)+tr("deg")+"/"+
+                QString().sprintf("%.2f NM<br>",closest.distArrival)+str;
+    }
     str=str.replace(" ","&nbsp;");
     desc=desc.replace(" ","&nbsp;");
     setToolTip(desc+"<br>"+str);
@@ -980,4 +987,68 @@ void boatVLM::exportBoatInfoLog(QString fileName)
     tableStream<<"\n"<<"grib\t"<<gribFileName<<"\n";
     textFile.close();
     summaryFile.close();
+}
+void boatVLM::getDistHdgGate()
+{
+    if(gates.isEmpty() || nWP<=0 || nWP>gates.count())
+    {
+        closest=vlmPoint(0,0);
+        return;
+    }
+    vlmLine *porte;
+    for (int i=nWP-1;i<gates.count();++i)
+    {
+        porte=gates.at(i);
+        if (!porte->isIceGate()) break;
+    }
+    double x,y;
+    proj->map2screenDouble(lon,lat,&x,&y);
+    double cx=x;
+    double cy=y;
+    proj->map2screenDouble(porte->getPoints()->first().lon,porte->getPoints()->first().lat,&x,&y);
+    double ax=x;
+    double ay=y;
+    proj->map2screenDouble(porte->getPoints()->last().lon,porte->getPoints()->last().lat,&x,&y);
+    double bx=x;
+    double by=y;
+    double r_numerator = (cx-ax)*(bx-ax) + (cy-ay)*(by-ay);
+    double r_denomenator = (bx-ax)*(bx-ax) + (by-ay)*(by-ay);
+    double r = r_numerator / r_denomenator;
+//
+    double px = ax + r*(bx-ax);
+    double py = ay + r*(by-ay);
+//
+
+
+//
+// (xx,yy) is the point on the lineSegment closest to (cx,cy)
+//
+    double xx = px;
+    double yy = py;
+    if ( (r >= 0) && (r <= 1) )
+    {
+    }
+    else
+    {
+        double dist1 = (cx-ax)*(cx-ax) + (cy-ay)*(cy-ay);
+        double dist2 = (cx-bx)*(cx-bx) + (cy-by)*(cy-by);
+        if (dist1 < dist2)
+        {
+                xx = ax;
+                yy = ay;
+        }
+        else
+        {
+                xx = bx;
+                yy = by;
+        }
+
+    }
+    double a,b;
+    proj->screen2mapDouble(xx,yy,&a,&b);
+    closest=vlmPoint(a,b);
+    Orthodromie oo(lon,lat,a,b);
+    closest.distArrival=oo.getDistance();
+    closest.capArrival=oo.getAzimutDeg();
+    return;
 }

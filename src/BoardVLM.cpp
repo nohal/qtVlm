@@ -334,7 +334,7 @@ void boardVLM::boatUpdated(void)
     loch->setText(QString().sprintf("%.2f",myBoat->getLoch()));
     speed->setText(QString().sprintf("%.2f",myBoat->getSpeed()));
     avg->setText(QString().sprintf("%.2f",myBoat->getAvg()));
-
+    windAngle->setClosest(myBoat->getClosest());
     windAngle->setValues(myBoat->getHeading(),myBoat->getWindDir(),myBoat->getWindSpeed(), computeWPdir(myBoat), -1);
     bvmgU->setText(QString().sprintf("%.1f",myBoat->getBvmgUp(myBoat->getWindSpeed())));
     bvmgD->setText(QString().sprintf("%.1f",myBoat->getBvmgDown(myBoat->getWindSpeed())));
@@ -455,6 +455,7 @@ void boardVLM::headingUpdated(double heading)
         calcAngleSign(val,angle)
         editAngle->setValue(angle);
         /*changing boat rotation*/
+        windAngle->setClosest(currentBoat()->getClosest());
         windAngle->setValues(currentBoat()->getHeading(),currentBoat()->getWindDir(),
                              currentBoat()->getWindSpeed(), computeWPdir(currentBoat()), -1);
         currentBoat()->drawEstime(heading,currentBoat()->getSpeed());
@@ -489,6 +490,7 @@ void boardVLM::headingUpdated(double heading)
             label_6->setStyleSheet(QString::fromUtf8(SPEED_COLOR_NO_POLAR));
         }
         /*changing boat rotation*/
+        windAngle->setClosest(currentBoat()->getClosest());
         windAngle->setValues(currentBoat()->getHeading(),currentBoat()->getWindDir(),
                              currentBoat()->getWindSpeed(), computeWPdir(currentBoat()), heading);
         /* update estime */
@@ -526,6 +528,7 @@ void boardVLM::angleUpdated(double angle)
         speed->setStyleSheet(QString::fromUtf8(SPEED_COLOR_VLM));
         label_6->setStyleSheet(QString::fromUtf8(SPEED_COLOR_VLM));
         /*changing boat rotation*/
+        windAngle->setClosest(currentBoat()->getClosest());
         windAngle->setValues(currentBoat()->getHeading(),currentBoat()->getWindDir(),
                              currentBoat()->getWindSpeed(), computeWPdir(currentBoat()), -1);
         currentBoat()->drawEstime(currentBoat()->getHeading(),currentBoat()->getSpeed());
@@ -555,6 +558,7 @@ void boardVLM::angleUpdated(double angle)
             label_6->setStyleSheet(QString::fromUtf8(SPEED_COLOR_NO_POLAR));
         }
         /*changing boat rotation*/
+        windAngle->setClosest(currentBoat()->getClosest());
         windAngle->setValues(currentBoat()->getHeading(),currentBoat()->getWindDir(),
                              currentBoat()->getWindSpeed(), computeWPdir(currentBoat()), heading);
         /* update estime */
@@ -1237,6 +1241,7 @@ tool_windAngle::tool_windAngle(QWidget * parent):QWidget(parent)
     heading =windDir=windSpeed=0;
     WPdir = -1;
     newHeading=-1;
+    closest=vlmPoint(0,0);
 }
 
 void tool_windAngle::paintEvent(QPaintEvent * /*event*/)
@@ -1298,6 +1303,17 @@ void tool_windAngle::draw(QPainter * painter)
             painter->fillRect(-2,-h/2,4,20,QColor(0,0,0));
             painter->setPen(curPen);
             painter->rotate(-WPdir);
+        }
+
+        /* rotate + gate DIR */
+        if(closest.distArrival!=0)
+        {
+            painter->rotate(closest.capArrival);
+            QPen curPen = painter->pen();
+            painter->setPen(Qt::darkRed);
+            painter->fillRect(-2,-h/2,4,20,QBrush(Qt::darkRed));
+            painter->setPen(curPen);
+            painter->rotate(-closest.capArrival);
         }
 
         painter->translate(-x, -y) ;
