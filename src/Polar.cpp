@@ -31,6 +31,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "parser.h"
 #include "Orthodromie.h"
 #include "settings.h"
+#include "boat.h"
 
 Polar::Polar(MainWindow * mainWindow)
 {
@@ -80,7 +81,10 @@ void Polar::setPolarName(QString fname)
     isCsv=true;
     loaded=false;
     clearPolar();
-    coeffPolar=Settings::getSetting("polarEfficiency",100).toInt()/100.0;
+    if(this->mainWindow->getSelectedBoat()->getType()==BOAT_REAL)
+        coeffPolar=Settings::getSetting("polarEfficiency",100).toInt()/100.0;
+    else
+        coeffPolar=1.0;
 
     //qWarning() << "Opening polar " << fname;
 
