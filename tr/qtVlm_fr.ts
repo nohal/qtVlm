@@ -4902,6 +4902,10 @@ p, li { white-space: pre-wrap; }
         <source>BVMG vent (portant): </source>
         <translation></translation>
     </message>
+    <message>
+        <source>Prochaine porte: </source>
+        <translation></translation>
+    </message>
 </context>
 <context>
     <name>dialogFaxMeteo</name>
