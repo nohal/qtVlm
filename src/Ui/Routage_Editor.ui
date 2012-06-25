@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>573</width>
-    <height>580</height>
+    <width>643</width>
+    <height>655</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -344,7 +344,7 @@ avec ce prefixe</string>
                <string/>
               </property>
               <property name="minimum">
-               <number>10</number>
+               <number>5</number>
               </property>
               <property name="maximum">
                <number>600</number>
@@ -383,7 +383,7 @@ avec ce prefixe</string>
                <string/>
               </property>
               <property name="minimum">
-               <number>10</number>
+               <number>5</number>
               </property>
               <property name="maximum">
                <number>600</number>

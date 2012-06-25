@@ -2861,11 +2861,14 @@ void myCentralWidget::slot_editRoutage(ROUTAGE * routage,bool createMode)
     {
         if(createMode || routage->getIsNewPivot())
         {
+            bool b=routage->getIsNewPivot();
             delete routage;
             routage_list.removeAll(routage);
             routage=NULL;
             delete routage_editor;
             nbRoutage--;
+            if(b)
+                update_menuRoutage();
         }
     }
     else

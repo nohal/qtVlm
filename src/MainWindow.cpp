@@ -289,8 +289,9 @@ MainWindow::MainWindow(int w, int h, QWidget *parent)
     QFontInfo finfo = statusBar->fontInfo();
     QFont font("", finfo.pointSize(), QFont::Normal, false);
     font.setStyleHint(QFont::TypeWriter);
-    font.setStretch(QFont::SemiCondensed);
-
+    //font.setStretch(QFont::SemiCondensed);
+    font.setFamily("Courier");
+    font.setFixedPitch(true);
     statusBar->setFont(font);
     statusBar->setStyleSheet("QStatusBar::item {border: 0px;}");
 
@@ -298,7 +299,6 @@ MainWindow::MainWindow(int w, int h, QWidget *parent)
     stBar_label_1->setFont(font);
     stBar_label_1->setStyleSheet("color: rgb(0, 0, 255);");
     statusBar->addWidget(stBar_label_1);
-
     font.setBold(true);
     stBar_label_2 = new QLabel("", statusBar);
     stBar_label_2->setFont(font);
@@ -310,6 +310,7 @@ MainWindow::MainWindow(int w, int h, QWidget *parent)
     stBar_label_3->setFont(font);
     //stBar_label_3->setStyleSheet("color: rgb(255, 0, 0);");
     statusBar->addWidget(stBar_label_3);
+    font.setFixedPitch(false);
     //--------------------------------------------------
     toolBar = addToolBar(tr("Outils"));
     toolBar->setFloatable(false);
@@ -375,7 +376,7 @@ MainWindow::MainWindow(int w, int h, QWidget *parent)
     Util::setFontDialog(tool_ETA);
     Util::setFontDialog(tool_ESTIME);
     Util::setFontDialog(tool_ESTIMEUNIT);
-    Util::setFontDialog(statusBar);
+    //Util::setFontDialog(statusBar);
     Util::setFontDialog(menuBar);
     //--------------------------------------------------
 
@@ -570,7 +571,7 @@ MainWindow::MainWindow(int w, int h, QWidget *parent)
             slot_deleteProgress();            
             my_centralWidget->emitUpdateRoute(NULL);
         }
-        Util::setFontDialog(statusBar);
+        //Util::setFontDialog(statusBar);
         Util::setFontDialog(menuBar);
         return;
     }
@@ -631,7 +632,7 @@ MainWindow::MainWindow(int w, int h, QWidget *parent)
     }
 
     slot_deleteProgress();
-    Util::setFontDialog(statusBar);
+    //Util::setFontDialog(statusBar);
     Util::setFontDialog(menuBar);
 }
 
@@ -1125,17 +1126,23 @@ void MainWindow::statusBar_showWindData(double x,double y)
     if(!statusBar->currentMessage().isEmpty())
         return;
 
-
-    stBar_label_1->setText( Util::pos2String(TYPE_LAT,y) + ", " + Util::pos2String(TYPE_LON,x));
+    QString label1= Util::pos2String(TYPE_LAT,y) + ", " + Util::pos2String(TYPE_LON,x);
+    if(this->getSelectedBoat())
+    {
+        Orthodromie oo(this->getSelectedBoat()->getLon(),this->getSelectedBoat()->getLat(),x,y);
+        label1=label1+QString().sprintf(" - %6.2f",oo.getAzimutDeg())+tr("deg")+
+                QString().sprintf("/%7.2fNM",oo.getDistance());
+    }
+    stBar_label_1->setText(label1);
 
     Grib * grib = my_centralWidget->getGrib();
 
     if(grib && grib->getInterpolatedValue_byDates(x,y,grib->getCurrentDate(),&a,&b))
     {
         res = "- " + tr("Vent") + ": ";
-        s.sprintf("%.1f", radToDeg(b));
+        s.sprintf("%6.2f", radToDeg(b));
         res += s+tr("deg")+", ";
-        s.sprintf("%.1f",a);
+        s.sprintf("%6.2f",a);
         res += s+tr(" kts");
     }
     stBar_label_2->setText(res);
@@ -1190,7 +1197,7 @@ void MainWindow::drawVacInfo(void)
         QDateTime lastVac_date;
         lastVac_date.setTimeSpec(Qt::UTC);
         lastVac_date.setTime_t(((boatVLM*)selectedBoat)->getPrevVac());
-        stBar_label_3->setText("- "+ tr("Vacation de la derniere synchro") + ": " + lastVac_date.toString(tr("dd-MM-yyyy, HH:mm:ss")) + " - "+
+        stBar_label_3->setText("- "+ tr("Derniere synchro") + ": " + lastVac_date.toString(tr("dd-MM-yyyy, HH:mm:ss")) + " - "+
                                tr("Prochaine vac dans") + ": " + QString().setNum(nxtVac_cnt) + "s");
     }
 }

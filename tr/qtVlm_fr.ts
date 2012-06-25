@@ -1308,7 +1308,7 @@ Etes-vous sur ?</source>
     </message>
     <message>
         <source>Vacation de la derniere synchro</source>
-        <translation>Vacation de la dernière synchro</translation>
+        <translation type="obsolete">Vacation de la dernière synchro</translation>
     </message>
     <message>
         <source>j</source>
@@ -1411,6 +1411,10 @@ Etes-vous sur ?</source>
     <message>
         <source>qtVlm </source>
         <translation></translation>
+    </message>
+    <message>
+        <source>Derniere synchro</source>
+        <translation>Dernière synchro</translation>
     </message>
 </context>
 <context>

@@ -1011,6 +1011,17 @@ void boatVLM::getDistHdgGate()
     proj->map2screenDouble(porte->getPoints()->last().lon,porte->getPoints()->last().lat,&x,&y);
     double bx=x;
     double by=y;
+#if 1 /*reduce line by 1% to make sure we cross*/
+    QLineF porteLine(ax,ay,bx,by);
+    QLineF p1(porteLine.pointAt(0.5),porteLine.p1());
+    p1.setLength(p1.length()*.995);
+    QLineF p2(porteLine.pointAt(0.5),porteLine.p2());
+    p2.setLength(p2.length()*.995);
+    ax=p1.p2().x();
+    ay=p1.p2().y();
+    bx=p2.p2().x();
+    by=p2.p2().y();
+#endif
     double r_numerator = (cx-ax)*(bx-ax) + (cy-ay)*(by-ay);
     double r_denomenator = (bx-ax)*(bx-ax) + (by-ay)*(by-ay);
     double r = r_numerator / r_denomenator;
