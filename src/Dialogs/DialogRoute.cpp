@@ -54,6 +54,10 @@ DialogRoute::DialogRoute(ROUTE *route,myCentralWidget *parent)
     tabWidthRatio=-1;
     setupUi(this);
     Util::setFontDialog(this);
+    int ww=Settings::getSetting("routeDialogWidth",-1).toInt();
+    int hh=Settings::getSetting("routeDialogHeight",-1).toInt();
+    if(ww+hh>0)
+        this->resize(ww,hh);
     inputTraceColor =new InputLineParams(route->getWidth(),route->getColor(),1.6,  QColor(Qt::red),this,0.1,5);
     colorBox->layout()->addWidget( inputTraceColor);
     setWindowTitle(tr("Parametres Route"));
@@ -511,6 +515,12 @@ void DialogRoute::drawTriangle(QPainter &pnt, bool south,
 
 void DialogRoute::done(int result)
 {
+    int ww=this->size().width();
+    int hh=this->size().height();
+    Settings::setSetting("routeDialogWidth",ww);
+    Settings::setSetting("routeDialogHeight",hh);
+    if(ww+hh>0)
+        this->resize(ww,hh);
     if(result == QDialog::Accepted || result==99)
     {
         if (!parent->freeRouteName((editName->text()).trimmed(),route))
