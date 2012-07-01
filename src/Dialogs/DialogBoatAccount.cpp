@@ -30,6 +30,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "mycentralwidget.h"
 #include "MainWindow.h"
 #include "Util.h"
+#include "settings.h"
 DialogBoatAccount::DialogBoatAccount(Projection * proj, MainWindow * main, myCentralWidget * parent,inetConnexion * inet) : QDialog(parent)
 {
     setupUi(this);
@@ -49,7 +50,8 @@ DialogBoatAccount::DialogBoatAccount(Projection * proj, MainWindow * main, myCen
 
 DialogBoatAccount::~DialogBoatAccount()
 {
-
+    Settings::setSetting(this->objectName()+".height",this->height());
+    Settings::setSetting(this->objectName()+".width",this->width());
 }
 
 bool DialogBoatAccount::initList( QList<boatVLM*> * boat_list, Player * player)

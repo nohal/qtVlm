@@ -99,21 +99,11 @@ DialogParamVlm::DialogParamVlm(MainWindow * main,myCentralWidget * parent) : QDi
     if(Settings::getSetting("scalePolar",0).toInt()==1)
     {
         chk_scalePolarF->setChecked(true);
-        polVac->setEnabled(false);
-    }
-    else if(Settings::getSetting("scalePolar",0).toInt()==2)
-    {
-        chk_scaleEstime->setChecked(true);
-        polVac->setEnabled(false);
-        this->radioBtn_time->setEnabled(true);
-        this->radioBtn_dist->setEnabled(false);
     }
     else
     {
-        chk_scalePolarR->setChecked(true);
-        polVac->setEnabled(true);
+        chk_scaleEstime->setChecked(true);
     }
-    polVac->setValue(Settings::getSetting("polVac",12).toInt());
 
      /* Grib */
 
@@ -171,6 +161,8 @@ DialogParamVlm::DialogParamVlm(MainWindow * main,myCentralWidget * parent) : QDi
 
 void DialogParamVlm::done(int result)
 {
+    Settings::setSetting(this->objectName()+".height",this->height());
+    Settings::setSetting(this->objectName()+".width",this->width());
     if(result == QDialog::Accepted)
     {
         /*drawing*/
@@ -216,13 +208,10 @@ void DialogParamVlm::done(int result)
         /* Compas */
         Settings::setSetting("showCompass",chk_showCompass->checkState()==Qt::Checked?"1":"0");
         Settings::setSetting("showPolar",chk_showPolar->checkState()==Qt::Checked?"1":"0");
-        if(this->chk_scalePolarR->isChecked())
-            Settings::setSetting("scalePolar","0");
-        else if(this->chk_scalePolarF->isChecked())
+        if(this->chk_scalePolarF->isChecked())
             Settings::setSetting("scalePolar","1");
         else
             Settings::setSetting("scalePolar","2");
-        Settings::setSetting("polVac",QString().setNum(polVac->value()));
 
         /* Route */
 

@@ -23,6 +23,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "DialogPoiInput.h"
 #include "Util.h"
 #include "mycentralwidget.h"
+#include "settings.h"
 
 DialogPoiInput::DialogPoiInput(myCentralWidget * parent) : QDialog(parent)
 {
@@ -65,6 +66,8 @@ void DialogPoiInput::txtHasChanged(void)
 
 void DialogPoiInput::done(int result)
 {
+    Settings::setSetting(this->objectName()+".height",this->height());
+    Settings::setSetting(this->objectName()+".width",this->width());
     if(result == QDialog::Accepted)
     {
         QStringList lsbuf,lsval1,lsval2,lsval3;

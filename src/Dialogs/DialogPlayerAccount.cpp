@@ -32,6 +32,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "routage.h"
 #include "boatReal.h"
 #include "Util.h"
+#include "settings.h"
 
 
 DialogPlayerAccount::DialogPlayerAccount(Projection * proj, MainWindow * main,
@@ -103,6 +104,8 @@ void DialogPlayerAccount::initList(QList<Player*> * player_list)
 
 void DialogPlayerAccount::done(int result)
 {
+    Settings::setSetting(this->objectName()+".height",this->height());
+    Settings::setSetting(this->objectName()+".width",this->width());
     if(result == QDialog::Accepted)
     {
         /* sync players */

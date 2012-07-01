@@ -1,11 +1,14 @@
 #include "dialogpoiconnect.h"
 #include "DialogGraphicsParams.h"
 #include <QMessageBox>
+#include "Util.h"
+#include "settings.h"
 
 DialogPoiConnect::DialogPoiConnect(POI * poi,myCentralWidget *parent) :
     QDialog(parent)
 {
     setupUi(this);
+    Util::setFontDialog(this);
     this->poi=poi;
     this->parent=parent;
     inputLineColor =new InputLineParams(poi->getLineWidth(),poi->getLineColor(),1.6,  QColor(Qt::red),this,0.1,5);
@@ -26,6 +29,8 @@ DialogPoiConnect::DialogPoiConnect(POI * poi,myCentralWidget *parent) :
 
 DialogPoiConnect::~DialogPoiConnect()
 {
+    Settings::setSetting(this->objectName()+".height",this->height());
+    Settings::setSetting(this->objectName()+".width",this->width());
 }
 void DialogPoiConnect::done(int result)
 {

@@ -23,6 +23,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "DialogRealBoatPosition.h"
 #include "Util.h"
 #include "boatReal.h"
+#include "settings.h"
 
 DialogRealBoatPosition::DialogRealBoatPosition(QWidget * parent) : QDialog(parent)
 {
@@ -46,6 +47,8 @@ void DialogRealBoatPosition::showDialog(boatReal * boat)
 
 void DialogRealBoatPosition::done(int result)
 {
+    Settings::setSetting(this->objectName()+".height",this->height());
+    Settings::setSetting(this->objectName()+".width",this->width());
     if(result == QDialog::Accepted)
     {
         double boatLat,boatLon;

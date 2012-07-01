@@ -80,7 +80,6 @@ HEADERS += Dialogs/DialogGraphicsParams.h \
     orthoSegment.h \
     selectionWidget.h \
     vlmLine.h \
-    Font.h \
     inetClient.h \
     route.h \
     routage.h \
@@ -100,6 +99,7 @@ HEADERS += Dialogs/DialogGraphicsParams.h \
     Board.h \
     BoardReal.h \
     faxMeteo.h \
+    Font.h \
     Player.h \
     interpolation.h \
     Dialogs/DialogRealBoatConfig.h \

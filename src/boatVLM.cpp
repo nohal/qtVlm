@@ -995,7 +995,7 @@ void boatVLM::getDistHdgGate()
         closest=vlmPoint(0,0);
         return;
     }
-    vlmLine *porte;
+    vlmLine *porte=NULL;
     for (int i=nWP-1;i<gates.count();++i)
     {
         porte=gates.at(i);

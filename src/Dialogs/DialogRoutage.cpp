@@ -249,6 +249,8 @@ DialogRoutage::DialogRoutage(ROUTAGE *routage,myCentralWidget *parent)
 }
 DialogRoutage::~DialogRoutage()
 {
+    Settings::setSetting(this->objectName()+".height",this->height());
+    Settings::setSetting(this->objectName()+".width",this->width());
 }
 
 void DialogRoutage::slot_default()

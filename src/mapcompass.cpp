@@ -301,12 +301,7 @@ void  mapCompass::paint(QPainter * pnt, const QStyleOptionGraphicsItem * , QWidg
         }
         poly.resize(361);
         double polVac=0;
-        if(Settings::getSetting("scalePolar",0).toInt()==0)
-        {
-            polVac=Settings::getSetting("polVac",12).toInt();
-            polarModeVac=true;
-        }
-        else if(Settings::getSetting("scalePolar",0).toInt()==2)
+        if(Settings::getSetting("scalePolar",0).toInt()==2)
         {
             polarModeVac=true;
             if(Settings::getSetting("estimeType",0).toInt()==0)
@@ -314,10 +309,12 @@ void  mapCompass::paint(QPainter * pnt, const QStyleOptionGraphicsItem * , QWidg
                 polVac=Settings::getSetting("estimeTime",60).toInt();
                 polarModeTime=true;
             }
-            else
+            else if(Settings::getSetting("estimeType",0).toInt()==1)
             {
                 polVac=Settings::getSetting("estimeVac",12).toInt();
             }
+            else
+                polarModeVac=false;
         }
         double lon1,lat1;
         int X,Y,X1,Y1;

@@ -58,6 +58,12 @@ void Util::setFontDialog(QObject * o)
 void Util::setFontDialog(QWidget * o)
 {
     QObject * object=qobject_cast<QObject*>(o);
+    int h=Settings::getSetting(object->objectName()+".height",-1).toInt();
+    if(h>0)
+    {
+        int w=Settings::getSetting(object->objectName()+".width",-1).toInt();
+        o->resize(w,h);
+    }
     setFontDialog(object);
 }
 

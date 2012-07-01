@@ -336,10 +336,11 @@ void GshhsPolyReader::setQuality(int quality)  // 5 levels: 0=low ... 4=full
 
 void GshhsPolyReader::readPolygonFileHeader(FILE *polyfile, PolygonFileHeader *header)
 {
-    int FReadResult = 0;
+//    int FReadResult = 0;
 
     fseek(polyfile, 0 , SEEK_SET);
-    FReadResult = (int)fread(header, sizeof(PolygonFileHeader), 1, polyfile);
+    //FReadResult = (int)fread(header, sizeof(PolygonFileHeader), 1, polyfile);
+    fread(header, sizeof(PolygonFileHeader), 1, polyfile);
 }
 
 //-------------------------------------------------------------------------

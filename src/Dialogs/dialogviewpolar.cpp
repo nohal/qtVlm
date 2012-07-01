@@ -3,11 +3,14 @@
 #include "dataDef.h"
 #include <QDebug>
 //#include <QEvent>
+#include "Util.h"
+#include "settings.h"
 
 DialogViewPolar::DialogViewPolar(QWidget *parent) :
     QDialog(parent)
 {
     setupUi(this);
+    Util::setFontDialog(this);
     image=QPixmap(this->imageContainer->size());
     image.fill(Qt::red);
     pnt.begin(&image);
@@ -71,6 +74,8 @@ void DialogViewPolar::setBoat(boat *myboat)
 
 DialogViewPolar::~DialogViewPolar()
 {
+    Settings::setSetting(this->objectName()+".height",this->height());
+    Settings::setSetting(this->objectName()+".width",this->width());
 }
 void DialogViewPolar::reloadPolar()
 {

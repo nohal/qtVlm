@@ -21,6 +21,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <QtGui>
 #include "Util.h"
 #include "DialogPoiDelete.h"
+#include "settings.h"
 
 DialogPoiDelete::DialogPoiDelete(QWidget * parent) : QDialog(parent)
 {
@@ -31,6 +32,8 @@ DialogPoiDelete::DialogPoiDelete(QWidget * parent) : QDialog(parent)
 
 void DialogPoiDelete::done(int result)
 {
+    Settings::setSetting(this->objectName()+".height",this->height());
+    Settings::setSetting(this->objectName()+".width",this->width());
     if(result == QDialog::Accepted)
     {
         mask=0;

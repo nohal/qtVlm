@@ -29,6 +29,7 @@ class DialogSailDocs : public QDialog, public Ui::SailDocs
 {
     public:
         DialogSailDocs(QString param,QWidget * parent=NULL);
+        ~DialogSailDocs();
 };
 
 #endif // SAILDOCS_H

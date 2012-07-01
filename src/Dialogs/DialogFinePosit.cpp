@@ -45,6 +45,8 @@ DialogFinePosit::DialogFinePosit(POI * poi,myCentralWidget *parent)
 }
 DialogFinePosit::~DialogFinePosit()
 {
+    Settings::setSetting(this->objectName()+".height",this->height());
+    Settings::setSetting(this->objectName()+".width",this->width());
 }
 //---------------------------------------
 void DialogFinePosit::done(int result)

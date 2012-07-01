@@ -121,6 +121,8 @@ DialogLoadGrib::DialogLoadGrib() : QDialog()
 //-------------------------------------------------------------------------------
 DialogLoadGrib::~DialogLoadGrib()
 {
+    Settings::setSetting(this->objectName()+".height",this->height());
+    Settings::setSetting(this->objectName()+".width",this->width());
     if (loadgrib != NULL)
         delete loadgrib;
 }

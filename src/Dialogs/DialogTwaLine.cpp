@@ -141,6 +141,8 @@ void DialogTwaLine::slotTwa5(bool b)
 
 DialogTwaLine::~DialogTwaLine()
 {
+    Settings::setSetting(this->objectName()+".height",this->height());
+    Settings::setSetting(this->objectName()+".width",this->width());
 }
 void DialogTwaLine::slot_delPOI_list(POI * poi)
 {

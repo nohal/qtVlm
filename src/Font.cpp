@@ -24,7 +24,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "settings.h"
 
 QFont GLOB_Font [FONT_MaxValue];
-	
+
 //-------------------------------------------------------------------
 QString Font::getFontCodeString (FontCode code) {
 	switch (code) {

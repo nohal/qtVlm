@@ -80,6 +80,8 @@ void DialogRealBoatConfig::launch(boatReal * boat)
 
 void DialogRealBoatConfig::done(int result)
 {
+    Settings::setSetting(this->objectName()+".height",this->height());
+    Settings::setSetting(this->objectName()+".width",this->width());
     if(result == QDialog::Accepted)
     {
         Settings::setSetting("gpsPortName",serialName->text());

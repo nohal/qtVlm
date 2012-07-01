@@ -20,10 +20,16 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "DialogSailDocs.h"
 #include "Util.h"
+#include "settings.h"
 DialogSailDocs::DialogSailDocs(QString param, QWidget * parent) : QDialog(parent)
 {
     setupUi(this);
     Util::setFontDialog(this);
     this->param->setText(param);
+}
+DialogSailDocs::~DialogSailDocs()
+{
+    Settings::setSetting(this->objectName()+".height",this->height());
+    Settings::setSetting(this->objectName()+".width",this->width());
 }
 

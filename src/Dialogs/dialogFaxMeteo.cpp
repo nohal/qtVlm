@@ -35,6 +35,8 @@ dialogFaxMeteo::dialogFaxMeteo(faxMeteo * fax, myCentralWidget *parent)
 
 dialogFaxMeteo::~dialogFaxMeteo()
 {
+    Settings::setSetting(this->objectName()+".height",this->height());
+    Settings::setSetting(this->objectName()+".width",this->width());
 }
 void dialogFaxMeteo::slotPreset1()
 {

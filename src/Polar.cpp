@@ -81,7 +81,7 @@ void Polar::setPolarName(QString fname)
     isCsv=true;
     loaded=false;
     clearPolar();
-    if(this->mainWindow->getSelectedBoat()->getType()==BOAT_REAL)
+    if(this->mainWindow->getSelectedBoat() && this->mainWindow->getSelectedBoat()->getType()==BOAT_REAL)
         coeffPolar=Settings::getSetting("polarEfficiency",100).toInt()/100.0;
     else
         coeffPolar=1.0;

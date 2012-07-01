@@ -27,6 +27,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "mycentralwidget.h"
 #include "Util.h"
 #include "dataDef.h"
+#include "settings.h"
 #ifdef __QTVLM_WITH_TEST
 extern int nbWarning;
 #endif
@@ -51,7 +52,8 @@ DialogGribValidation::DialogGribValidation(myCentralWidget * my_centralWidget,Ma
 
 DialogGribValidation::~DialogGribValidation()
 {
-
+    Settings::setSetting(this->objectName()+".height",this->height());
+    Settings::setSetting(this->objectName()+".width",this->width());
 }
 
 void DialogGribValidation::setMode(int mode)

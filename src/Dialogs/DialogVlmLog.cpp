@@ -5,6 +5,7 @@
 
 #include "DialogVlmLog.h"
 #include "ui_DialogVlmLog.h"
+#include "Util.h"
 #include "settings.h"
 
 
@@ -13,6 +14,7 @@ DialogVlmLog::DialogVlmLog(myCentralWidget *parent) :
     ui(new Ui::DialogVlmLog)
 {
     ui->setupUi(this);
+    Util::setFontDialog(this);
     this->model = new QStandardItemModel();
     this->vlmBoat = NULL;
     this->setModal(false);
@@ -21,6 +23,8 @@ DialogVlmLog::DialogVlmLog(myCentralWidget *parent) :
 
 DialogVlmLog::~DialogVlmLog()
 {
+    Settings::setSetting(this->objectName()+".height",this->height());
+    Settings::setSetting(this->objectName()+".width",this->width());
     if(ui)
         delete ui;
 }

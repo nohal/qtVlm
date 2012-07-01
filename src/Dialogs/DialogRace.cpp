@@ -125,6 +125,8 @@ DialogRace::DialogRace(MainWindow * main,myCentralWidget * parent, inetConnexion
 
 DialogRace::~DialogRace()
 {
+    Settings::setSetting(this->objectName()+".height",this->height());
+    Settings::setSetting(this->objectName()+".width",this->width());
     if(model)
         delete model;
 }

@@ -49,6 +49,8 @@ DialogVlmGrib::DialogVlmGrib(MainWindow * ,myCentralWidget * parent,inetConnexio
 
 void DialogVlmGrib::done(int res)
 {
+    Settings::setSetting(this->objectName()+".height",this->height());
+    Settings::setSetting(this->objectName()+".width",this->width());
     if(res == QDialog::Accepted)
     {        
         if(!doRequest(VLM_REQUEST_GET_FILE))

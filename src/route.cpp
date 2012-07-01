@@ -322,7 +322,8 @@ void ROUTE::slot_recalculate(boat * boat)
             p.isPOI=true;
             line->addVlmPoint(p);
         }
-        double newSpeed,distanceParcourue,remaining_distance,res_lon,res_lat,previous_remaining_distance,cap1,cap2,diff1,diff2;
+        double newSpeed,distanceParcourue,remaining_distance,res_lon,res_lat,cap1,cap2,diff1,diff2;
+//        double previous_remaining_distance;
         remaining_distance=0;
         lastKnownSpeed=10e-4;
         double wind_angle,wind_speed,cap,angle,capSaved;
@@ -346,7 +347,6 @@ void ROUTE::slot_recalculate(boat * boat)
         {
             ++poiNb;
             int nbToReach=0;
-            bool badEta=false;
             POI * poi = i.next();
             if(optimizingPOI && hasStartEta)
             {
@@ -380,7 +380,7 @@ void ROUTE::slot_recalculate(boat * boat)
             distanceParcourue=0;
             res_lon=0;
             res_lat=0;
-            previous_remaining_distance=0;
+            //previous_remaining_distance=0;
             wind_angle=0;
             wind_speed=0;
             orth.setPoints(lon, lat, poi->getLongitude(),poi->getLatitude());
@@ -403,7 +403,7 @@ void ROUTE::slot_recalculate(boat * boat)
                             && eta<=maxDate) || imported))
                     {
                         //qWarning() << lon << ";" << lat << ";" << eta << ";" << wind_speed << ";" << wind_angle;
-                        previous_remaining_distance=remaining_distance;
+                        //previous_remaining_distance=remaining_distance;
                         wind_angle=radToDeg(wind_angle);
                         cap=orth.getAzimutDeg();
                         capSaved=cap;
@@ -527,7 +527,6 @@ void ROUTE::slot_recalculate(boat * boat)
                             {
                                 if(qRound(distanceParcourue*100)>=qRound(remaining_distance*100))
                                 {
-                                    badEta=true;
                                     eta=eta-myBoat->getVacLen()*multVac;
                                     Eta=eta;
                                     if(!this->getSimplify() && poi==my_poiList.last())
@@ -647,8 +646,6 @@ void ROUTE::slot_recalculate(boat * boat)
             line->setLastPointIsPoi();
             tip=tr("<br>Route: ")+name;
             //time_t Eta=eta-myBoat->getVacLen();
-//            if(badEta)
-//                Eta=eta-myBoat->getVacLen();
             if(!has_eta)
             {
                 tip=tip+tr("<br>ETA: Non joignable avec ce fichier GRIB");
@@ -906,7 +903,7 @@ void ROUTE::do_vbvmg_context(double dist,double wanted_heading,
                              double *dist1, double *dist2) {
    double alpha, beta;
    double speed, speed_t1, speed_t2, l1, l2, d1, d2;
-   double angle, maxangle, t, t1, t2, t_min;
+   double angle, t, t1, t2, t_min;
    //double wanted_heading;
    //double w_speed, w_angle;
    double tanalpha, d1hypotratio;
@@ -920,7 +917,6 @@ void ROUTE::do_vbvmg_context(double dist,double wanted_heading,
 
    b_t1 = b_t2 = b_l1 = b_l2 = b_alpha = b_beta = beta = 0.0;
 
-   maxangle = wanted_heading;
 
 
    /* first compute the time for the "ortho" heading */
@@ -1125,7 +1121,7 @@ void ROUTE::do_vbvmg_buffer(double dist,double wanted_heading,
 {
     double alpha, beta;
     double speed, speed_t1, speed_t2, l1, l2, d1, d2;
-    double angle, maxangle, t, t1, t2, t_min;
+    double angle, t, t1, t2, t_min;
     double tanalpha, d1hypotratio;
     double b_alpha, b_beta, b_t1, b_t2, b_l1, b_l2;
     double speed_alpha, speed_beta;
@@ -1136,7 +1132,6 @@ void ROUTE::do_vbvmg_buffer(double dist,double wanted_heading,
 
     b_t1 = b_t2 = b_l1 = b_l2 = b_alpha = b_beta = beta = 0.0;
 
-    maxangle = wanted_heading;
     QCache<int,double> fastSpeed;
     fastSpeed.setMaxCost(180);
 

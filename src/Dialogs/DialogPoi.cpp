@@ -33,6 +33,7 @@ class POI_Editor;
 #include "MainWindow.h"
 #include "boatVLM.h"
 #include <QDesktopWidget>
+#include "settings.h"
 
 #define POI_EDT_LAT 1
 #define POI_EDT_LON 2
@@ -141,6 +142,8 @@ void DialogPoi::initPOI(void)
 //---------------------------------------
 void DialogPoi::done(int result)
 {
+    Settings::setSetting(this->objectName()+".height",this->height());
+    Settings::setSetting(this->objectName()+".width",this->width());
     if(result == QDialog::Accepted)
     {
         poi->setPartOfTwa(false);

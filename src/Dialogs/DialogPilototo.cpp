@@ -33,6 +33,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "DialogPilototo.h"
 #include "DialogPilototoParam.h"
+#include "settings.h"
 
 DialogPilototo::DialogPilototo(MainWindow *main,myCentralWidget * parent,inetConnexion * inet):QDialog(parent), inetClient(inet)
 {
@@ -297,6 +298,8 @@ void DialogPilototo::slot_boatUpdated(boat * pvBoat)
 
 void DialogPilototo::done(int result)
 {
+    Settings::setSetting(this->objectName()+".height",this->height());
+    Settings::setSetting(this->objectName()+".width",this->width());
     if(result==QDialog::Accepted)
     {
 	/* checking if there is un validated instructions */

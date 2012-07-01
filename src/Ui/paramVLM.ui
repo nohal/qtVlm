@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>343</width>
-    <height>383</height>
+    <width>383</width>
+    <height>448</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -21,7 +21,7 @@
   </property>
   <property name="windowIcon">
    <iconset>
-    <normaloff>../../../../../../../../.designer/backup/sailing-ship.ico</normaloff>../../../../../../../../.designer/backup/sailing-ship.ico</iconset>
+    <normaloff>../../../../.designer/backup/sailing-ship.ico</normaloff>../../../../.designer/backup/sailing-ship.ico</iconset>
   </property>
   <property name="sizeGripEnabled">
    <bool>true</bool>
@@ -30,7 +30,7 @@
    <item>
     <widget class="QTabWidget" name="tabWidget">
      <property name="currentIndex">
-      <number>8</number>
+      <number>0</number>
      </property>
      <widget class="QWidget" name="tab">
       <property name="sizePolicy">
@@ -857,33 +857,7 @@
             </property>
            </widget>
           </item>
-          <item row="2" column="0">
-           <widget class="QRadioButton" name="chk_scalePolarR">
-            <property name="text">
-             <string>Nombre de vacations</string>
-            </property>
-           </widget>
-          </item>
-          <item row="2" column="1">
-           <widget class="QSpinBox" name="polVac">
-            <property name="alignment">
-             <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-            </property>
-            <property name="suffix">
-             <string> vac</string>
-            </property>
-            <property name="minimum">
-             <number>1</number>
-            </property>
-            <property name="maximum">
-             <number>9999</number>
-            </property>
-            <property name="value">
-             <number>12</number>
-            </property>
-           </widget>
-          </item>
-          <item row="3" column="0" colspan="2">
+          <item row="2" column="0" colspan="2">
            <widget class="QRadioButton" name="chk_scaleEstime">
             <property name="text">
              <string>Meme duree que l'estime</string>
@@ -1255,8 +1229,6 @@
   <tabstop>chk_showCompass</tabstop>
   <tabstop>chk_showPolar</tabstop>
   <tabstop>chk_scalePolarF</tabstop>
-  <tabstop>chk_scalePolarR</tabstop>
-  <tabstop>polVac</tabstop>
   <tabstop>chk_scaleEstime</tabstop>
   <tabstop>chk_askGribFolder</tabstop>
   <tabstop>edt_gribFolder</tabstop>

@@ -1,6 +1,7 @@
 #include "DialogHorn.h"
 #include "ui_dialoghorn.h"
 #include "Util.h"
+#include "settings.h"
 
 
 DialogHorn::DialogHorn(myCentralWidget *parent) : QDialog(parent)
@@ -21,6 +22,8 @@ DialogHorn::DialogHorn(myCentralWidget *parent) : QDialog(parent)
 
 DialogHorn::~DialogHorn()
 {
+    Settings::setSetting(this->objectName()+".height",this->height());
+    Settings::setSetting(this->objectName()+".width",this->width());
 }
 
 

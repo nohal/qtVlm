@@ -445,7 +445,6 @@ inline QList<vlmPoint> findRoute(const QList<vlmPoint> & pointListX)
             continue;
         }
         int minDiff=qAbs(realTime-timeStepSec);
-        double bestDist=distanceParcourue;
         bool found=false;
         int n=1;
         int oldTime=timeStepSec;
@@ -472,7 +471,6 @@ inline QList<vlmPoint> findRoute(const QList<vlmPoint> & pointListX)
             if(minDiff>qAbs(realTime-timeStepSec))
             {
                 minDiff=qAbs(realTime-timeStepSec);
-                bestDist=newDist;
             }
     #if 1 /*find it using Newtown-Raphson method*/
             double x=distanceParcourue;
@@ -492,7 +490,6 @@ inline QList<vlmPoint> findRoute(const QList<vlmPoint> & pointListX)
                 double deriv=ROUTAGE::routeFunctionDeriv(x,from,&lastLonFound,&lastLatFound,&dataThread);
                 if (deriv==0)
                 {
-                    bestDist=distanceParcourue;
                     break; /*flat spot, there is no solution*/
                 }
                 term=y/deriv;
@@ -507,10 +504,6 @@ inline QList<vlmPoint> findRoute(const QList<vlmPoint> & pointListX)
         }
         else
         {
-//            resultP.distOrigin=bestDist;
-//            Util::getCoordFromDistanceAngle(lat, lon, bestDist, cap, &res_lat, &res_lon);
-//            resultP.lon=res_lon;
-//            resultP.lat=res_lat;
             resultP.isDead=true; /*no route to point, better delete it(?)*/
         }
         resultList.append(resultP);
@@ -560,14 +553,13 @@ inline int ROUTAGE::calculateTimeRoute(vlmPoint routeFrom,vlmPoint routeTo, data
     lon=routeFrom.lon;
     lat=routeFrom.lat;
     int vacLen=dataThread->Boat->getVacLen();
-    double newSpeed,distanceParcourue,remaining_distance,res_lon,res_lat,previous_remaining_distance,cap1,cap2,diff1,diff2;
+    double newSpeed,distanceParcourue,remaining_distance,res_lon,res_lat,cap1,cap2,diff1,diff2;
     double windAngle,windSpeed,cap,angle;
     time_t maxDate=dataThread->GriB->getMaxDate();
     newSpeed=0;
     distanceParcourue=0;
     res_lon=0;
     res_lat=0;
-    previous_remaining_distance=0;
     windAngle=0;
     windSpeed=0;
     orth.setPoints(lon, lat, routeTo.lon,routeTo.lat);
@@ -594,7 +586,6 @@ inline int ROUTAGE::calculateTimeRoute(vlmPoint routeFrom,vlmPoint routeTo, data
                     windAngle=Util::A360(windAngle+180.0);
                 if(dataThread->whatIfUsed && dataThread->whatIfJour<=dataThread->Eta)
                     windSpeed=windSpeed*dataThread->whatIfWind/100.00;
-                previous_remaining_distance=remaining_distance;
                 cap=orth.getAzimutDeg();
                 angle=cap-windAngle;
                 if(qAbs(angle)>180)
@@ -2122,8 +2113,8 @@ double ROUTAGE::findDistancePreviousIso(const vlmPoint P, const QPolygonF * poly
         double r_denomenator = (bx-ax)*(bx-ax) + (by-ay)*(by-ay);
         double r = r_numerator / r_denomenator;
 //
-        double px = ax + r*(bx-ax);
-        double py = ay + r*(by-ay);
+//        double px = ax + r*(bx-ax);
+//        double py = ay + r*(by-ay);
 //
         double s =  ((ay-cy)*(bx-ax)-(ax-cx)*(by-ay) ) / r_denomenator;
 
@@ -2132,8 +2123,8 @@ double ROUTAGE::findDistancePreviousIso(const vlmPoint P, const QPolygonF * poly
 //
 // (xx,yy) is the point on the lineSegment closest to (cx,cy)
 //
-        double xx = px;
-        double yy = py;
+//        double xx = px;
+//        double yy = py;
         double distanceSegment=0;
         if ( (r >= 0) && (r <= 1) )
         {
@@ -2145,14 +2136,14 @@ double ROUTAGE::findDistancePreviousIso(const vlmPoint P, const QPolygonF * poly
             double dist2 = (cx-bx)*(cx-bx) + (cy-by)*(cy-by);
             if (dist1 < dist2)
             {
-                    xx = ax;
-                    yy = ay;
+//                    xx = ax;
+//                    yy = ay;
                     distanceSegment = sqrt(dist1);
             }
             else
             {
-                    xx = bx;
-                    yy = by;
+//                    xx = bx;
+//                    yy = by;
                     distanceSegment = sqrt(dist2);
             }
 

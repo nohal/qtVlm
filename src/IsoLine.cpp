@@ -35,7 +35,7 @@ IsoLine::IsoLine(double val, time_t now, time_t tPrev, time_t tNxt,GribRecord *r
     int gr = 80;
     isoLineColor = QColor(gr,gr,gr);
     //---------------------------------------------------------
-    // Génère la liste des segments.
+    // Genere la liste des segments.
     extractIsoLine(now,tPrev,tNxt, rec_prev,rec_nxt);
 //printf("create Isobar : press=%4.0f long=%d\n", pressure/100, trace.size());
 }
@@ -70,7 +70,7 @@ void IsoLine::drawIsoLine(QPainter &pnt,
     {
         Segment *seg = *it;
 
-        // Teste la visibilité (bug clipping sous windows avec pen.setWidthF())
+        // Teste la visibilite (bug clipping sous windows avec pen.setWidthF())
         if ( proj->isPointVisible(seg->px1, seg->py1)
                  ||    proj->isPointVisible(seg->px2, seg->py2))
         {
@@ -177,7 +177,7 @@ void Segment::intersectionAreteGrille(int i,int j, int k,int l, double *x, doubl
     if (fabs(dec)>1)
         dec = 0.5;
     *x = a+(b-a)*dec;
-    // Ordonnée
+    // Ordonnee
     a = rec_prev->getY(j);
     b = rec_prev->getY(l);
     if (pb != pa)
@@ -200,13 +200,14 @@ void Segment::traduitCode(int I, int J, char c1, int &i, int &j) {
 }
 
 //-----------------------------------------------------------------------
-// Génère la liste des segments.
-// Les coordonnées sont les indices dans la grille du GribRecord
+// Genere la liste des segments.
+// Les coordonnees sont les indices dans la grille du GribRecord
 //---------------------------------------------------------
 void IsoLine::extractIsoLine(time_t now, time_t tPrev, time_t tNxt,GribRecord *rec_prev,GribRecord *rec_nxt)
 {
     int i, j, W, H;
-    double x, y, a,b,c,d,a1,b1,c1,d1;
+    double a,b,c,d,a1,b1,c1,d1;
+//    double x,y;
     W = rec_prev->getNi();
     H = rec_prev->getNj();
 
@@ -214,8 +215,8 @@ void IsoLine::extractIsoLine(time_t now, time_t tPrev, time_t tNxt,GribRecord *r
     {
         for (i=1; i<W; i++)
         {
-            x = rec_prev->getX(i);
-            y = rec_prev->getY(j);
+//            x = rec_prev->getX(i);
+//            y = rec_prev->getY(j);
 
             a = rec_prev->getValue( i-1, j-1 );
             b = rec_prev->getValue( i,   j-1 );
@@ -235,7 +236,7 @@ void IsoLine::extractIsoLine(time_t now, time_t tPrev, time_t tNxt,GribRecord *r
                 d = d + ((d1-d)/((double)(tNxt-tPrev)))*((double)(now-tPrev));
             }
 
-            // Détermine si 1 ou 2 segments traversent la case ab-cd
+            // Determine si 1 ou 2 segments traversent la case ab-cd
             // a  b
             // c  d
             //--------------------------------

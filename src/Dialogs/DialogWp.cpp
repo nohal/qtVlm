@@ -23,6 +23,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "boatVLM.h"
 #include "POI.h"
 #include "Util.h"
+#include "settings.h"
 
 
 /************************/
@@ -75,6 +76,8 @@ void DialogWp::initDialog(double WPLat,double WPLon,double WPHd)
 
 void DialogWp::done(int result)
 {
+    Settings::setSetting(this->objectName()+".height",this->height());
+    Settings::setSetting(this->objectName()+".width",this->width());
     if(result == QDialog::Accepted)
     {
         if(WP_lat->text().isEmpty() && WP_lon->text().isEmpty())

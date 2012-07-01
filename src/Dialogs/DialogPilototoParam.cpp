@@ -26,6 +26,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "Util.h"
 #include "DialogPilototo.h"
 #include "POI.h"
+#include "settings.h"
 
 #define EDT_LAT 1
 #define EDT_LON 2
@@ -96,6 +97,8 @@ void DialogPilototoParam::editInstructionPOI(DialogPilototoInstruction * instruc
 
 void DialogPilototoParam::done(int result)
 {
+    Settings::setSetting(this->objectName()+".height",this->height());
+    Settings::setSetting(this->objectName()+".width",this->width());
     if(result==QDialog::Accepted)
     {
         int index=mode->currentIndex();

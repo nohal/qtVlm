@@ -6,6 +6,7 @@
 #include "Player.h"
 #include "settings.h"
 #include <QDir>
+#include "Util.h"
 
 #define VLM_RACE_INFO 2
 #define VLM_GET_TRACK 3
@@ -19,6 +20,7 @@ DialogDownloadTracks::DialogDownloadTracks(MainWindow * ,myCentralWidget * paren
 {
     this->parent=parent;
     ui->setupUi(this);
+    Util::setFontDialog(this);
     this->raceIsValid=false;
     this->setWhatsThis(tr("Permet de telecharger manuellement une trace pour une course VLM.\nLa boîte à cocher trace partielle s'active apres l'entree d'un numero de course valide, et permet de requérir une trace tronquée."));
     ui->raceIDEdit->setToolTip(tr("Numero de la course\n http://www.virtual-loup-de-mer.org/races.php?fulllist=1"));
@@ -30,6 +32,8 @@ DialogDownloadTracks::DialogDownloadTracks(MainWindow * ,myCentralWidget * paren
 
 DialogDownloadTracks::~DialogDownloadTracks()
 {
+    Settings::setSetting(this->objectName()+".height",this->height());
+    Settings::setSetting(this->objectName()+".width",this->width());
     delete ui;
 }
 

@@ -67,6 +67,8 @@ void DialogProxy::slot_proxyType_changed(int /*type*/)
 
 void DialogProxy::done(int result)
 {
+    Settings::setSetting(this->objectName()+".height",this->height());
+    Settings::setSetting(this->objectName()+".width",this->width());
     if(result == QDialog::Accepted)
     {
         int type;
