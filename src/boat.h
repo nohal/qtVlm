@@ -72,6 +72,7 @@ class boat: public QGraphicsWidget
         double getWindSpeed(void)        {    return windSpeed; }
         double getTWA(void)              {    return TWA; }
         double getWPHd(void)             {    return WPHd; }
+        int getNWP(){return nWP;}
         QString getPolarName(void)      {    return polarName; }
         Polar * getPolarData(void)      {    return polarData; }
         bool getLockStatus(void)        {    return changeLocked;}

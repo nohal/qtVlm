@@ -244,6 +244,7 @@ class MainWindow: public QMainWindow
 
         void listAllChildren(QObject * ptr,int);
         bool noSave;
+        //POI * debugPOI;
 };
 
 #endif

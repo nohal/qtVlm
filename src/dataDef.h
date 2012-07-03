@@ -64,6 +64,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #define VLM_REQUEST_WS    7
 #define VLM_REQUEST_PROFILE 8
 #define VLM_REQUEST_FLEET   9
+#define VLM_REQUEST_POLAR 10
 
 /* VLM CMD type */
 #define VLM_CMD_HD     1

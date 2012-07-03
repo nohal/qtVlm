@@ -116,6 +116,7 @@ class boatVLM : public boat, public inetClient
         void slot_selectBoat();
         void slot_shSall() { this->porteHidden=false; showNextGates();}
         void slot_shHall() { this->porteHidden=true; showNextGates();}
+        void slot_errorDuringGet();
 
     signals:
         void getTrace(QByteArray,QList<vlmPoint> *);
@@ -182,6 +183,7 @@ class boatVLM : public boat, public inetClient
         QString npd;
         vlmPoint closest;
         void getDistHdgGate();
+        void endOfUpdating();
 
 };
 

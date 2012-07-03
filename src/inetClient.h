@@ -35,7 +35,7 @@ class inetClient
         virtual QString getAuthLogin(bool * ok=NULL) {if(ok) *ok=false; return QString();}
         virtual QString getAuthPass(bool * ok=NULL) {if(ok) *ok=false; return QString();}
         virtual void authFailed(void) { clearCurrentRequest(); }
-        virtual void inetError(void) { clearCurrentRequest(); }
+        virtual void inetError(void) { clearCurrentRequest();}
 
         void resetReply();
         void clearCurrentRequest() { currentRequest=-1; hasProgress=false;}

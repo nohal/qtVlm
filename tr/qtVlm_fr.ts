@@ -3018,6 +3018,14 @@ VMG %.2f nds</translation>
         <source>AWA</source>
         <translation></translation>
     </message>
+    <message>
+        <source>Telechargement de la polaire</source>
+        <translation>Téléchargement de la polaire</translation>
+    </message>
+    <message>
+        <source>La polaire </source>
+        <translation></translation>
+    </message>
 </context>
 <context>
     <name>ROUTAGE</name>
@@ -3902,10 +3910,6 @@ p, li { white-space: pre-wrap; }
         <translation>Cacher les routes des bateaux non-sélectionnés</translation>
     </message>
     <message>
-        <source>Nombre de vacations</source>
-        <translation></translation>
-    </message>
-    <message>
         <source>Meme duree que l&apos;estime</source>
         <translation>Même durée que l&apos;estime</translation>
     </message>
@@ -3948,10 +3952,6 @@ p, li { white-space: pre-wrap; }
     <message>
         <source>Avance</source>
         <translation>Avancé</translation>
-    </message>
-    <message>
-        <source> vac</source>
-        <translation></translation>
     </message>
     <message>
         <source>Confirmation a chaque ordre vers VLM</source>
@@ -4908,6 +4908,10 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Prochaine porte: </source>
+        <translation></translation>
+    </message>
+    <message>
+        <source> est introuvable sur le site VLM</source>
         <translation></translation>
     </message>
 </context>

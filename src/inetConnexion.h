@@ -47,6 +47,8 @@ class inetConnexion : public QObject
 
         bool isAvailable(void);
 
+    signals:
+        void errorDuringGet();
     public slots:
         void slot_progess(qint64 bytesReceived, qint64 bytesTotal );
         void slot_updateInet(void);

@@ -32,6 +32,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "orthoSegment.h"
 #include <Grib.h>
 #include "Orthodromie.h"
+#include "inetConnexion.h"
 
 
 boatVLM::boatVLM(QString        pseudo, bool activated, int boatId, int playerId,Player * player, int isOwn,
@@ -199,11 +200,13 @@ void boatVLM::doRequest(int requestCmd)
             case VLM_REQUEST_GATE:
                 QTextStream(&page) << "/ws/raceinfo.php?idrace="<<race_id;
                 break;
-             default:
+            case VLM_REQUEST_POLAR:
+                QTextStream(&page) << "/Polaires/"+this->polarVlm+".csv";
+                break;
+            default:
                 qWarning() << "[boatVLM-doRequest] error: unknown request: " << requestCmd;
                 break;
         }
-
         inetGet(requestCmd,page);
     }
     else
@@ -227,7 +230,7 @@ void boatVLM::requestFinished (QByteArray res_byte)
 {
     double latitude=0,longitude=0;
 
-    QString res(res_byte);
+    //QString res(res_byte);
 
     //QWARN << "Request finished: " << getCurrentRequest() << " boat: " << this->boat_id;
 
@@ -237,167 +240,159 @@ void boatVLM::requestFinished (QByteArray res_byte)
             break;
 
         case VLM_REQUEST_BOAT:
-            {
-                QJson::Parser parser;
-                bool ok;
+        {
+            QJson::Parser parser;
+            bool ok;
 
-                QVariantMap result = parser.parse (res_byte, &ok).toMap();
-                if (!ok) {
-                    qWarning() << "Error parsing json data " << res_byte;
-                    qWarning() << "Error: " << parser.errorString() << " (line: " << parser.errorLine() << ")";
+            QVariantMap result = parser.parse (res_byte, &ok).toMap();
+            if (!ok) {
+                qWarning() << "Error parsing json data " << res_byte;
+                qWarning() << "Error: " << parser.errorString() << " (line: " << parser.errorLine() << ")";
+            }
+
+            if(1 /*checkWSResult(res_byte,"BoatVLM_boatf",mainWindow)*/) // pas de wsCheck car VLM ne renvoit pas "success"
+            {
+                hasPilototo=false;
+                newRace=false;
+                vacLen=300;
+                pilototo.clear();
+                for(int i=0;i<5;i++)
+                    pilototo.append("none");
+
+
+                if(race_id != result["RAC"].toInt())
+                    newRace=true;
+                if(result["error"].toMap()["code"].toString()=="XXXXXXX" || boat_id!=result["IDU"].toInt()) /* cas de la radiation du boatsit*/
+                {
+                    /* clearing trace */
+                    trace_drawing->deleteAll();
+                    /*updating everything*/
+                    updateBoatData();
+                    updating=false;
+                    QMessageBox::warning(0,QObject::tr("Bateau au ponton"),
+                                         QObject::tr("Le bateau ")+"'"+pseudo+"' "+QObject::tr("a ete desactive car vous n'etes plus boatsitter"));
+                    setStatus(false);
+                    while(!gates.isEmpty())
+                       delete gates.takeFirst();
+                    this->gatesLoaded=false;
+                    emit boatUpdated(this,newRace,doingSync);
+                    emit hasFinishedUpdating();
+                    return;
                 }
 
-                if(1 /*checkWSResult(res_byte,"BoatVLM_boatf",mainWindow)*/) // pas de wsCheck car VLM ne renvoit pas "success"
-                {
-                    hasPilototo=false;
-                    newRace=false;
-                    vacLen=300;
-                    pilototo.clear();
-                    for(int i=0;i<5;i++)
-                        pilototo.append("none");
-
-
-                    if(race_id != result["RAC"].toInt())
-                        newRace=true;
-                    if(result["error"].toMap()["code"].toString()=="XXXXXXX" || boat_id!=result["IDU"].toInt()) /* cas de la radiation du boatsit*/
-                    {
-                        /* clearing trace */
-                        trace_drawing->deleteAll();
-                        /*updating everything*/
-                        updateBoatData();
-                        updating=false;
-                        QMessageBox::warning(0,QObject::tr("Bateau au ponton"),
-                                             QObject::tr("Le bateau ")+"'"+pseudo+"' "+QObject::tr("a ete desactive car vous n'etes plus boatsitter"));
-                        setStatus(false);
-                        while(!gates.isEmpty())
-                           delete gates.takeFirst();
-                        this->gatesLoaded=false;
-                        emit boatUpdated(this,newRace,doingSync);
-                        emit hasFinishedUpdating();
-                        return;
-                    }
-
-                    boat_id     = result["IDU"].toInt();
-                    race_id     = result["RAC"].toInt();
-                    name        = result["IDB"].toString();
-                    own         = result["OWN"].toString();
-                    latitude    = result["LAT"].toDouble();
-                    longitude   = result["LON"].toDouble();
-                    race_name   = result["RAN"].toString();
-                    speed       = result["BSP"].toDouble();
-                    heading     = result["HDG"].toDouble();
-                    avg         = result["AVG"].toDouble();
-                    dnm         = result["DNM"].toDouble();
-                    loch        = result["LOC"].toDouble();
-                    loch        = qRound(loch*100)/100.00;
-                    ortho       = result["ORT"].toDouble();
-                    loxo        = result["LOX"].toDouble();
-                    vmg         = result["VMG"].toDouble();
-                    windDir     = result["TWD"].toDouble();
-                    country     = result["CNT"].toString();
-                    windSpeed   = result["TWS"].toDouble();
-                    WPLat       = result["WPLAT"].toDouble();
-                    WPLon       = result["WPLON"].toDouble();
-                    WPHd        = result["H@WP"].toDouble();
+                boat_id     = result["IDU"].toInt();
+                race_id     = result["RAC"].toInt();
+                name        = result["IDB"].toString();
+                own         = result["OWN"].toString();
+                latitude    = result["LAT"].toDouble();
+                longitude   = result["LON"].toDouble();
+                race_name   = result["RAN"].toString();
+                speed       = result["BSP"].toDouble();
+                heading     = result["HDG"].toDouble();
+                avg         = result["AVG"].toDouble();
+                dnm         = result["DNM"].toDouble();
+                loch        = result["LOC"].toDouble();
+                loch        = qRound(loch*100)/100.00;
+                ortho       = result["ORT"].toDouble();
+                loxo        = result["LOX"].toDouble();
+                vmg         = result["VMG"].toDouble();
+                windDir     = result["TWD"].toDouble();
+                country     = result["CNT"].toString();
+                windSpeed   = result["TWS"].toDouble();
+                WPLat       = result["WPLAT"].toDouble();
+                WPLon       = result["WPLON"].toDouble();
+                WPHd        = result["H@WP"].toDouble();
 //                    QString debug;
 //                    debug=debug.sprintf("receiving WPLon %.10f WPLat %.10f @WP %.10f",WPLon,WPLat,WPHd);
 //                    qWarning()<<debug;
-                    pilotType   = result["PIM"].toInt();
-                    pilotString = result["PIP"].toString();
-                    TWA         = result["TWA"].toDouble();
-                    ETA         = result["ETA"].toString();
-                    score       = result["POS"].toString();
-                    prevVac     = result["LUP"].toUInt();
-                    nextVac     = result["NUP"].toUInt();
-                    nWP         = result["NWP"].toInt();
-                    rank        = result["RNK"].toInt();
-                    pilototo[0] = result["PIL1"].toString();
-                    pilototo[1] = result["PIL2"].toString();
-                    pilototo[2] = result["PIL3"].toString();
-                    pilototo[3] = result["PIL4"].toString();
-                    pilototo[4] = result["PIL5"].toString();
+                pilotType   = result["PIM"].toInt();
+                pilotString = result["PIP"].toString();
+                TWA         = result["TWA"].toDouble();
+                ETA         = result["ETA"].toString();
+                score       = result["POS"].toString();
+                prevVac     = result["LUP"].toUInt();
+                nextVac     = result["NUP"].toUInt();
+                nWP         = result["NWP"].toInt();
+                rank        = result["RNK"].toInt();
+                pilototo[0] = result["PIL1"].toString();
+                pilototo[1] = result["PIL2"].toString();
+                pilototo[2] = result["PIL3"].toString();
+                pilototo[3] = result["PIL4"].toString();
+                pilototo[4] = result["PIL5"].toString();
 //                    qWarning()<<"pil0="<<pilototo[0];
 //                    qWarning()<<"pil1="<<pilototo[1];
 //                    qWarning()<<"pil2="<<pilototo[2];
 //                    qWarning()<<"pil3="<<pilototo[3];
 //                    qWarning()<<"pil4="<<pilototo[4];
-                    stopAndGo   = result["S&G"].toString();
-                    polarVlm = result["POL"].toString();
-                    email = result["EML"].toString();
-                    vacLen = result["VAC"].toInt();
-                    if(vacLen==0)
-                        vacLen=1;
-                    if(npd!=result["NPD"].toString())
-                    {
-                        //qWarning()<<"old npd"<<npd;
-                        npd=result["NPD"].toString();
-                        //qWarning()<<"new npd"<<npd;
-                        showNpd=true;
-                    }
-                    //else
-                        //showNpd=false;
-
-                    lat = latitude/1000;
-                    lon = longitude/1000;
-                    initialized=true;
-                    if(!activated)
-                    {
-                        updating=false;
-                        emit hasFinishedUpdating();
-                        return;
-                    }
-//                    if(result["RAC"].toInt() == 0)
-//                    {
-//                        initialized=true;
-//                        QMessageBox::warning(0,QObject::tr("Bateau au ponton"),
-//                                             QString("Le bateau '")+pseudo+"' a ete desactive car hors course");
-//                        setStatus(false);
-//                        emit boatUpdated(this,false,doingSync);
-//                        emit hasFinishedUpdating();
-//                        break;
-//                    }
-                    hasPilototo=true;
-                    if(newRace)
-                    {
-                        while(!gates.isEmpty())
-                            delete gates.takeFirst();
-                        this->gatesLoaded=false;
-                    }
-                    /* request trace points */
-                    if(race_id==0)
-                    {
-                        /* clearing trace */
-                        trace_drawing->deleteAll();
-                        /*updating everything*/
-                        updateBoatData();
-                        updating=false;
-                        QMessageBox::warning(0,QObject::tr("Bateau au ponton"),
-                                             QObject::tr("Le bateau ")+"'"+pseudo+"' "+QObject::tr("a ete desactive car hors course"));
-                        setStatus(false);
-                        while(!gates.isEmpty())
-                           delete gates.takeFirst();
-                        this->gatesLoaded=false;
-                        emit boatUpdated(this,newRace,doingSync);
-                        emit hasFinishedUpdating();
-                    }
-                    else
-                    {
-                        doRequest(VLM_REQUEST_TRJ);
-                    }
-                }
-                else
+                stopAndGo   = result["S&G"].toString();
+                polarVlm = result["POL"].toString();
+                email = result["EML"].toString();
+                vacLen = result["VAC"].toInt();
+                if(vacLen==0)
+                    vacLen=1;
+                if(npd!=result["NPD"].toString())
                 {
-                    /* clearing trace */
-                    trace_drawing->deleteAll();
-                    updateBoatData();
-                    updating=false;
-                    setStatus(false);
-                    emit boatUpdated(this,newRace,doingSync);
-                    emit hasFinishedUpdating();
+                    //qWarning()<<"old npd"<<npd;
+                    npd=result["NPD"].toString();
+                    //qWarning()<<"new npd"<<npd;
+                    showNpd=true;
                 }
-                rotatesBoatInfoLog(result);
+                //else
+                    //showNpd=false;
+
+                lat = latitude/1000;
+                lon = longitude/1000;
+                if(activated && !this->forcePolar && !polarVlm.isEmpty())
+                {
+                    if(!this->polarData || this->polarData->getName()!=polarName)
+                    {
+                        QFile file;
+                        file.setFileName("polar/"+polarVlm+".csv");
+                        if(!file.exists())
+                        {
+                            file.setFileName("polar/"+polarVlm+".pol");
+                        }
+                        if(!file.exists())
+                        {
+                            connect(this->getInet(),SIGNAL(errorDuringGet()),this,SLOT(slot_errorDuringGet()));
+                            doRequest(VLM_REQUEST_POLAR);
+                            break;
+                        }
+                    }
+                }
+                endOfUpdating();
             }
+            else /*this is dead code, never occurs*/
+            {
+                /* clearing trace */
+                trace_drawing->deleteAll();
+                updateBoatData();
+                updating=false;
+                setStatus(false);
+                emit boatUpdated(this,newRace,doingSync);
+                emit hasFinishedUpdating();
+            }
+            rotatesBoatInfoLog(result);
             break;
+        }
+        case VLM_REQUEST_POLAR:
+        {
+            disconnect(this->getInet(),SIGNAL(errorDuringGet()),this,SLOT(slot_errorDuringGet()));
+            if(res_byte.size()==0)
+            {
+            }
+            else
+            {
+                QFile filePolar("polar/"+polarVlm+".csv");
+                if(!filePolar.exists() && filePolar.open(QIODevice::WriteOnly))
+                {
+                    filePolar.write(res_byte);
+                    filePolar.close();
+                }
+            }
+            endOfUpdating();
+            break;
+        }
         case VLM_REQUEST_TRJ:
         {
             emit getTrace(res_byte,trace_drawing->getPoints());
@@ -588,6 +583,52 @@ void boatVLM::requestFinished (QByteArray res_byte)
         qWarning()<<"Cap BVMG: "<<res_h<<" TWA BVMG: "<<res_wangle;
     }
 #endif
+}
+void boatVLM::slot_errorDuringGet()
+{
+    disconnect(this->getInet(),SIGNAL(errorDuringGet()),this,SLOT(slot_errorDuringGet()));
+    QMessageBox::warning(0,QObject::tr("Telechargement de la polaire"),
+                         QObject::tr("La polaire ")+polarVlm+tr(" est introuvable sur le site VLM"));
+    endOfUpdating();
+}
+
+void boatVLM::endOfUpdating()
+{
+    initialized=true;
+    if(!activated)
+    {
+        updating=false;
+        emit hasFinishedUpdating();
+        return;
+    }
+    hasPilototo=true;
+    if(newRace)
+    {
+        while(!gates.isEmpty())
+            delete gates.takeFirst();
+        this->gatesLoaded=false;
+    }
+    /* request trace points */
+    if(race_id==0)
+    {
+        /* clearing trace */
+        trace_drawing->deleteAll();
+        /*updating everything*/
+        updateBoatData();
+        updating=false;
+        QMessageBox::warning(0,QObject::tr("Bateau au ponton"),
+                             QObject::tr("Le bateau ")+"'"+pseudo+"' "+QObject::tr("a ete desactive car hors course"));
+        setStatus(false);
+        while(!gates.isEmpty())
+           delete gates.takeFirst();
+        this->gatesLoaded=false;
+        emit boatUpdated(this,newRace,doingSync);
+        emit hasFinishedUpdating();
+    }
+    else
+    {
+        doRequest(VLM_REQUEST_TRJ);
+    }
 }
 
 void boatVLM::authFailed(void)
@@ -1011,12 +1052,12 @@ void boatVLM::getDistHdgGate()
     proj->map2screenDouble(porte->getPoints()->last().lon,porte->getPoints()->last().lat,&x,&y);
     double bx=x;
     double by=y;
-#if 1 /*reduce line by 1% to make sure we cross*/
+#if 1 /*reduce line a bit at each end to make sure we cross*/
     QLineF porteLine(ax,ay,bx,by);
     QLineF p1(porteLine.pointAt(0.5),porteLine.p1());
-    p1.setLength(p1.length()*.995);
+    p1.setLength(p1.length()-0.5);
     QLineF p2(porteLine.pointAt(0.5),porteLine.p2());
-    p2.setLength(p2.length()*.995);
+    p2.setLength(p2.length()-0.5);
     ax=p1.p2().x();
     ay=p1.p2().y();
     bx=p2.p2().x();

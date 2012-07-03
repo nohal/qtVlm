@@ -206,6 +206,7 @@ void inetConnexion::slot_requestFinished(QNetworkReply * currentReply)
             currentClient->inetError();
             currentClient->resetReply();
             currentClient->clearCurrentRequest();
+            emit errorDuringGet();
         }
         else
         {
