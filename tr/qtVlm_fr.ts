@@ -2927,19 +2927,7 @@ VMG %.1f nds</translation>
         <translation></translation>
     </message>
     <message>
-        <source>Vitesse</source>
-        <translation></translation>
-    </message>
-    <message>
-        <source>Cap</source>
-        <translation></translation>
-    </message>
-    <message>
         <source>POI cible</source>
-        <translation></translation>
-    </message>
-    <message>
-        <source>Distance</source>
         <translation></translation>
     </message>
     <message>
@@ -3024,6 +3012,22 @@ VMG %.2f nds</translation>
     </message>
     <message>
         <source>La polaire </source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>BS</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>HDG</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>CNM</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Information au point d&apos;interpolation pour </source>
         <translation></translation>
     </message>
 </context>
@@ -3664,6 +3668,10 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Optimiser</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Afficher infos du point d&apos;interpolation</source>
         <translation></translation>
     </message>
 </context>
@@ -6329,6 +6337,81 @@ Voulez-vous egalement supprimer tous les POIs lui appartenant?</source>
     <message>
         <source>Annuler</source>
         <translation>Annuler</translation>
+    </message>
+</context>
+<context>
+    <name>routeInfo</name>
+    <message>
+        <source>Dialog</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Informations Vent</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>TWD</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>TWS</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>TWA</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>AWS</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>AWA</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Amure</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>deg</source>
+        <translation>°</translation>
+    </message>
+    <message>
+        <source> nds</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Informations Bateau et WPs</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>BS</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>HDG</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>CNM</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>DNM</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source> NM</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Babord amure</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Tribord amure</source>
+        <translation></translation>
     </message>
 </context>
 <context>

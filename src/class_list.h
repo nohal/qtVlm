@@ -187,6 +187,9 @@ class Terrain;
 /*DialogTwaLine.h*/
 class DialogTwaLine;
 
+/*routeInfo.h*/
+class routeInfo;
+
 /* vlmLine.h */
 class vlmLine;
 

@@ -73,6 +73,7 @@ DialogRoute::DialogRoute(ROUTE *route,myCentralWidget *parent)
     autoAt->setChecked(route->getAutoAt());
     vacStep->setValue(route->getMultVac());
     hidden->setChecked(route->getHidden());
+    showInterpolData->setChecked(route->getShowInterpolData());
     connect(this->btOk,SIGNAL(clicked()),this,SLOT(accept()));
     connect(this->btCancel,SIGNAL(clicked()),this,SLOT(reject()));
     connect(this->btAppliquer,SIGNAL(clicked()),this,SLOT(slotApply()));
@@ -178,13 +179,13 @@ DialogRoute::DialogRoute(ROUTE *route,myCentralWidget *parent)
     rmModel->setHeaderData(2,Qt::Horizontal,QObject::tr("TWS"));
     rmModel->setHeaderData(3,Qt::Horizontal,QObject::tr("TWD"));
     rmModel->setHeaderData(4,Qt::Horizontal,QObject::tr("TWA"));
-    rmModel->setHeaderData(5,Qt::Horizontal,QObject::tr("Vitesse"));
-    rmModel->setHeaderData(6,Qt::Horizontal,QObject::tr("Cap"));
+    rmModel->setHeaderData(5,Qt::Horizontal,QObject::tr("BS"));
+    rmModel->setHeaderData(6,Qt::Horizontal,QObject::tr("HDG"));
     rmModel->setHeaderData(7,Qt::Horizontal,QObject::tr("AWS"));
     rmModel->setHeaderData(8,Qt::Horizontal,QObject::tr("AWA"));
     rmModel->setHeaderData(9,Qt::Horizontal,QObject::tr("POI cible"));
-    rmModel->setHeaderData(10,Qt::Horizontal,QObject::tr("Distance"));
-    rmModel->setHeaderData(11,Qt::Horizontal,QObject::tr("Cap"));
+    rmModel->setHeaderData(10,Qt::Horizontal,QObject::tr("DNM"));
+    rmModel->setHeaderData(11,Qt::Horizontal,QObject::tr("CNM"));
     rmModel->setHeaderData(12,Qt::Horizontal,QObject::tr("Lon POI cible"));
     rmModel->setHeaderData(13,Qt::Horizontal,QObject::tr("Lat POI cible"));
     rmModel->setSortRole(Qt::UserRole);
@@ -567,6 +568,7 @@ void DialogRoute::done(int result)
         //Settings::setSetting("useVbvmgVlm",route->getUseVbvmgVlm()?"1":"0"  );
         //Settings::setSetting("useNewVbvmgVlm",route->getNewVbvmgVlm()?"1":"0"  );
         route->setMultVac(vacStep->value());
+        route->setShowInterpolData(showInterpolData->isChecked());
         if(editVac->isChecked())
             route->setStartTimeOption(1);
         if (editGrib->isChecked())

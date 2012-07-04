@@ -38,6 +38,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 DialogPilototo::DialogPilototo(MainWindow *main,myCentralWidget * parent,inetConnexion * inet):QDialog(parent), inetClient(inet)
 {
     this->parent=parent;
+    poiToWp=NULL;
+    navModeToDo=false;
     this->move(250,100);
     setupUi(this);
     Util::setFontDialog(this);
@@ -456,12 +458,57 @@ void DialogPilototo::requestFinished (QByteArray res)
                 }
             }
 	    break;
+    case 999:
+    {
+
+    }
     }
     if(this->myBoat && this->updateBoat && (this->currentList==NULL || this->currentList->isEmpty()))
     {
+#if 1
+        if(poiToWp!=NULL && navModeToDo)
+        {
+            if(poiToWp->getNavMode()==0 && this->myBoat->getPilotType()!=5) //VBVMG
+            {
+                QString url="/ws/boatsetup/pilot_set.php";
+                QString data="parms={ \"idu\" : "+QString().setNum(myBoat->getId())+
+                        ", \"pim\" : 5}&select_idu="+
+                        QString().setNum(myBoat->getId());
+                qWarning()<<"route sends"<<url<<data;
+                navModeToDo=false;
+                inetPost(999,"/ws/boatsetup/pilot_set.php",
+                         "parms={ \"idu\" : "+QString().setNum(myBoat->getId())+
+                         ", \"pim\" : 5}&select_idu="+
+                         QString().setNum(myBoat->getId()));
+                return;
+            }
+            else if(poiToWp->getNavMode()==1 && this->myBoat->getPilotType()!=4) //VMG
+            {
+                navModeToDo=false;
+                inetPost(999,"/ws/boatsetup/pilot_set.php",
+                         "parms={ \"idu\" : "+QString().setNum(myBoat->getId())+
+                         ", \"pim\" : 4}&select_idu="+
+                         QString().setNum(myBoat->getId()));
+                return;
+            }
+            else if(poiToWp->getNavMode()==2 && this->myBoat->getPilotType()!=3) //ORTHO
+            {
+                navModeToDo=false;
+                inetPost(999,"/ws/boatsetup/pilot_set.php",
+                         "parms={ \"idu\" : "+QString().setNum(myBoat->getId())+
+                         ", \"pim\" : 3}&select_idu="+
+                         QString().setNum(myBoat->getId()));
+                return;
+            }
+        }
+#endif
+        navModeToDo=false;
         this->updateBoat=false;
         if(poiToWp!=NULL)
+        {
             poiToWp->slot_setWP();
+            poiToWp=NULL;
+        }
     }
 }
 
@@ -585,9 +632,15 @@ void DialogPilototo::setInstructions(boat * pvBoat, QList<POI *> pois)
         poi->setPiloteDate(-1);
     }
     if(!pois.isEmpty())
+    {
         poiToWp=pois.at(0);
+        navModeToDo=true;
+    }
     else
+    {
         poiToWp=NULL;
+        navModeToDo=false;
+    }
     currentList=instructions;
     this->updateBoat=true;
     sendPilototo();

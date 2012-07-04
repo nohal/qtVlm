@@ -110,7 +110,8 @@ HEADERS += Dialogs/DialogGraphicsParams.h \
     Dialogs/dialogpoiconnect.h \
     Dialogs/DialogVlmLog.h \
     Dialogs/DialogDownloadTracks.h \
-    Dialogs/dialogFaxMeteo.h
+    Dialogs/dialogFaxMeteo.h \
+    Dialogs/routeInfo.h
 
 FORMS += Ui/boatAccount_dialog.ui \
     Ui/BoardVLM.ui \
@@ -143,7 +144,8 @@ FORMS += Ui/boatAccount_dialog.ui \
     Ui/dialogpoiconnect.ui \
     Ui/DialogVlmLog.ui \
     Ui/DialogDownloadTracks.ui \
-    Ui/dialogFaxMeteo.ui
+    Ui/dialogFaxMeteo.ui \
+    Ui/routeInfo.ui
 
 SOURCES += Dialogs/DialogGraphicsParams.cpp \
     Dialogs/DialogLoadGrib.cpp \
@@ -223,7 +225,8 @@ SOURCES += Dialogs/DialogGraphicsParams.cpp \
     Dialogs/dialogpoiconnect.cpp \
     Dialogs/DialogVlmLog.cpp \
     Dialogs/DialogDownloadTracks.cpp \
-    Dialogs/dialogFaxMeteo.cpp
+    Dialogs/dialogFaxMeteo.cpp \
+    Dialogs/routeInfo.cpp
 
 unix:!macx: DEFINES += _TTY_POSIX_ __TERRAIN_QIMAGE __UNIX_QTVLM
 win32:DEFINES += _TTY_WIN_ \

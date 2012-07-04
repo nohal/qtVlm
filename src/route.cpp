@@ -84,6 +84,8 @@ ROUTE::ROUTE(QString name, Projection *proj, Grib *grib, QGraphicsScene * myScen
     this->multVac=1;
     this->useVbvmgVlm=false;
     this->setNewVbvmgVlm(false);
+    roadInfo=new routeInfo(parent,this);
+    roadInfo->hide();
     pen.setColor(color);
     pen.setBrush(color);
     pen.setWidthF(width);
@@ -110,12 +112,13 @@ ROUTE::ROUTE(QString name, Projection *proj, Grib *grib, QGraphicsScene * myScen
     routeDelay->setSingleShot(true);
     connect(routeDelay,SIGNAL(timeout()),this,SLOT(slot_recalculate()));
     delay=10;
+    showInterpolData=false;
 }
 
 ROUTE::~ROUTE()
 {
-    qWarning() << "Deleting route: " << name<<"busy="<<busy;
-
+    //qWarning() << "Deleting route: " << name<<"busy="<<busy;
+    delete roadInfo;
 
     if(line)
     {
@@ -130,6 +133,14 @@ ROUTE::~ROUTE()
     delete tanNeg;
     delete hypotPos;
     delete hypotNeg;
+}
+void ROUTE::setShowInterpolData(bool b)
+{
+    this->showInterpolData=b;
+    if(!this->hidden && b)
+        roadInfo->show();
+    else
+        roadInfo->hide();
 }
 void ROUTE::slot_calculateWithDelay()
 {
@@ -559,13 +570,6 @@ void ROUTE::slot_recalculate(boat * boat)
                         ++nbToReach;
                         if (!optimizing)
                         {
-                            if(lastEta<gribDate && Eta>=gribDate && gribDate>start+1000)
-                            {
-                                line->setInterpolated(lon,lat);
-                                line->setHasInterpolated(true);
-                                if(parent->getCompassFollow()==this)
-                                    parent->centerCompass(lon,lat);
-                            }
                             vlmPoint p(lon,lat);
                             p.eta=Eta;
                             line->addVlmPoint(p);
@@ -585,6 +589,20 @@ void ROUTE::slot_recalculate(boat * boat)
                                 roadPoint.append(remaining_distance); //10
                                 roadPoint.append(Util::A360(capSaved-myBoat->getDeclinaison())); //11
                                 roadMap.append(roadPoint);
+                            }
+                            if(lastEta<gribDate && Eta>=gribDate)
+                            {
+                                QList<double> roadPoint=roadMap.last();
+                                roadInfo->setValues(roadPoint.at(6),roadPoint.at(7),roadPoint.at(8),
+                                                    roadPoint.at(4),roadPoint.at(3),roadPoint.at(11),
+                                                    roadPoint.at(10));
+                                if(gribDate>start+1000)
+                                {
+                                    line->setInterpolated(lon,lat);
+                                    line->setHasInterpolated(true);
+                                    if(parent->getCompassFollow()==this)
+                                        parent->centerCompass(lon,lat);
+                                }
                             }
                             lastEta=Eta;
                         }
@@ -853,6 +871,8 @@ void ROUTE::slot_shShow()
     {
         line->show();
     }
+    if(showInterpolData)
+        roadInfo->show();
 }
 
 void ROUTE::slot_shHidden()
@@ -860,6 +880,7 @@ void ROUTE::slot_shHidden()
     bool toBeHidden=this->hidden || (Settings::getSetting("autoHideRoute",1).toInt()==1 && (this->myBoat==NULL || !this->myBoat->getIsSelected()));
     if(line)
         line->hide();
+    roadInfo->hide();
     if(toBeHidden)
         setHidePois(hidePois);
 }

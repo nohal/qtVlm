@@ -31,6 +31,7 @@ Copyright (C) 2008 - Jacques Zaninetti - http://zygrib.free.fr
 #include <QDateTime>
 #include "mycentralwidget.h"
 #include "vlmLine.h"
+#include "routeInfo.h"
 #include "class_list.h"
 
 
@@ -128,6 +129,8 @@ class ROUTE : public QObject
         void setOptimize(bool b){this->optimize=b;}
         bool getOptimize(){return this->optimize;}
         double getLastKnownSpeed(){return this->lastKnownSpeed;}
+        bool getShowInterpolData(){return showInterpolData;}
+        void setShowInterpolData(bool b);
     public slots:
         void slot_recalculate(boat * boat=NULL);
         void slot_edit();
@@ -220,5 +223,7 @@ class ROUTE : public QObject
         double lastKnownSpeed;
         QTimer * routeDelay;
         int delay;
+        routeInfo * roadInfo;
+        bool showInterpolData;
 };
 #endif // ROUTE_H

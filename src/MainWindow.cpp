@@ -2012,6 +2012,7 @@ void MainWindow::setPilototoFromRoute(QList<POI*> poiList)
         route->setPilototo(false);
         return;
     }
+#if 0
     if(poiList.count()==1)
     {
         poiList.at(0)->slot_setWP();
@@ -2019,6 +2020,7 @@ void MainWindow::setPilototoFromRoute(QList<POI*> poiList)
         route->setPilototo(false);
         return;
     }
+#endif
     route->setPilototo(false);
     emit setInstructions(route->getBoat(),poiList);
 }

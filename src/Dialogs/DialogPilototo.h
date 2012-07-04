@@ -179,7 +179,8 @@ class DialogPilototo : public QDialog, public Ui::pilototo_ui, public inetClient
         boatVLM * myBoat;
 	int nbInstruction;
 
-	void updateDrawList(void);
+    bool navModeToDo;
+    void updateDrawList(void);
 	void updateNbInstruction(void);
 
         QList<struct instruction*> * currentList;
