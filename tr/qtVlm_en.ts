@@ -3464,44 +3464,44 @@ Etes-vous sur ?</source>
         <translation type="obsolete">Orthodromic distance from </translation>
     </message>
     <message>
-        <location filename="../src/POI.cpp" line="828"/>
+        <location filename="../src/POI.cpp" line="843"/>
         <source>La destruction d&apos;une marque est definitive.
 
 Etes-vous sur ?</source>
         <translation>Deleting a mark is not reversible.  Are you sure?</translation>
     </message>
     <message>
-        <location filename="../src/POI.cpp" line="836"/>
+        <location filename="../src/POI.cpp" line="851"/>
         <source>Destruction d&apos;un marque</source>
         <translation>Mark deletion</translation>
     </message>
     <message>
-        <location filename="../src/POI.cpp" line="836"/>
+        <location filename="../src/POI.cpp" line="851"/>
         <source>Le calcul de la route n&apos;est pas fini, impossible de supprimer ce POI</source>
         <translation>Route is busy calculating; impossible to delete this POI now</translation>
     </message>
     <message>
-        <location filename="../src/POI.cpp" line="977"/>
+        <location filename="../src/POI.cpp" line="992"/>
         <source>Optimisation du placement d&apos;un POI</source>
         <translation>POI position optimisation</translation>
     </message>
     <message>
-        <location filename="../src/POI.cpp" line="978"/>
+        <location filename="../src/POI.cpp" line="993"/>
         <source>Vous ne pouvez pas optimiser en mode VBVMG-VLM</source>
         <translation>You cannot optimize in VBVMG-VLM</translation>
     </message>
     <message>
-        <location filename="../src/POI.cpp" line="1043"/>
+        <location filename="../src/POI.cpp" line="1058"/>
         <source>ETA du prochain POI: </source>
         <translation>Previous ETA of next POI: </translation>
     </message>
     <message>
-        <location filename="../src/POI.cpp" line="1046"/>
+        <location filename="../src/POI.cpp" line="1061"/>
         <source>Dist. restante du prochain POI: </source>
         <translation>Next WP remaining dist.:</translation>
     </message>
     <message>
-        <location filename="../src/POI.cpp" line="1083"/>
+        <location filename="../src/POI.cpp" line="1098"/>
         <source>Meilleure ETA: </source>
         <translation>Best ETA:</translation>
     </message>
@@ -3523,7 +3523,19 @@ Etes-vous sur ?</source>
         <translation>Can&apos;t be reached with this Grib</translation>
     </message>
     <message>
-        <location filename="../src/POI.cpp" line="827"/>
+        <location filename="../src/POI.cpp" line="814"/>
+        <source>Definition du WP-VLM</source>
+        <translation>WP-VLM set-up</translation>
+    </message>
+    <message>
+        <location filename="../src/POI.cpp" line="815"/>
+        <source>Attention le mode de navigation n&apos;est pas compatible.
+
+Etes-vous sur ?</source>
+        <translation></translation>
+    </message>
+    <message>
+        <location filename="../src/POI.cpp" line="842"/>
         <source>Detruire la marque</source>
         <translation>Delete mark</translation>
     </message>
@@ -3544,12 +3556,12 @@ Etes-vous sur ?</source>
         <translation type="obsolete">Shortest remaining distance:</translation>
     </message>
     <message>
-        <location filename="../src/POI.cpp" line="1190"/>
+        <location filename="../src/POI.cpp" line="1205"/>
         <source>Abandon du positionnement automatique</source>
         <translation>Automatic positioning was stopped</translation>
     </message>
     <message>
-        <location filename="../src/POI.cpp" line="1190"/>
+        <location filename="../src/POI.cpp" line="1205"/>
         <source>Souhaitez vous conserver la meilleure position deja trouvee?</source>
         <translation>Do you wish to keep best position found so far?</translation>
     </message>

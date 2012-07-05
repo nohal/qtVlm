@@ -127,6 +127,7 @@ class POI : public QGraphicsWidget
         void slot_updateProjection();
         void slot_editPOI();
         void slot_setWP();
+        void slot_setWP_ask();
         void slot_setGribDate();
         void slot_delPoi();
         void slot_copy();

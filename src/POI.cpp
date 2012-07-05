@@ -191,7 +191,7 @@ void POI::createPopUpMenu(void)
 
     ac_setWp = new QAction(tr("Marque->WP"),popup);
     popup->addAction(ac_setWp);
-    connect(ac_setWp,SIGNAL(triggered()),this,SLOT(slot_setWP()));
+    connect(ac_setWp,SIGNAL(triggered()),this,SLOT(slot_setWP_ask()));
 
     ac_setGribDate = new QAction(tr("Set Date"),popup);
     popup->addAction(ac_setGribDate);
@@ -804,6 +804,21 @@ void POI::slot_editPOI()
 void POI::slot_copy()
 {
     Util::setWPClipboard(lat,lon,wph);
+}
+void POI::slot_setWP_ask()
+{
+    if (parent->getSelectedBoat() && parent->getSelectedBoat()->getType()==BOAT_VLM &&
+       ((boatVLM *)parent->getSelectedBoat())->getPilotType()<=2)
+    {
+        int rep = QMessageBox::question (parent,
+                tr("Definition du WP-VLM"),
+                tr("Attention le mode de navigation n'est pas compatible.\n\nEtes-vous sur ?"),
+                QMessageBox::Yes | QMessageBox::No);
+        if(rep==QMessageBox::Yes)
+            slot_setWP();
+    }
+    else
+        slot_setWP();
 }
 
 void POI::slot_setWP()

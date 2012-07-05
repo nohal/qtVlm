@@ -2420,6 +2420,19 @@ Etes-vous sur ?</source>
         <source>Ortho a partir de </source>
         <translation>Ortho à partir de </translation>
     </message>
+    <message>
+        <source>Definition du WP-VLM</source>
+        <translation>Définition du WP-VLM</translation>
+    </message>
+    <message>
+        <source>Attention le mode de navigation n&apos;est pas compatible.
+
+Etes-vous sur ?</source>
+        <translatorcomment>Warning: the navigation mode is not compatible.
+Are you sure?</translatorcomment>
+        <translation>Attention le mode de navigation n&apos;est pas compatible.
+Etes-vous sûr?</translation>
+    </message>
 </context>
 <context>
     <name>POI_delete_ui</name>
