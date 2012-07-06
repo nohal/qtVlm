@@ -910,6 +910,10 @@ Etes-vous sur ?</source>
         <source>Veuillez patienter...</source>
         <translation></translation>
     </message>
+    <message>
+        <source> jours </source>
+        <translation></translation>
+    </message>
 </context>
 <context>
     <name>DialogTwaLine</name>
@@ -3687,6 +3691,14 @@ p, li { white-space: pre-wrap; }
         <source>Afficher infos du point d&apos;interpolation</source>
         <translation></translation>
     </message>
+    <message>
+        <source>Temps de navigation</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Duree moteur</source>
+        <translation>Durée au moteur</translation>
+    </message>
 </context>
 <context>
     <name>ReceiverThread</name>
@@ -4771,6 +4783,10 @@ p, li { white-space: pre-wrap; }
     <message>
         <source> (format POL)</source>
         <translation></translation>
+    </message>
+    <message>
+        <source>Definir la position</source>
+        <translation>Définir la position</translation>
     </message>
 </context>
 <context>
@@ -6320,6 +6336,18 @@ Voulez-vous egalement supprimer tous les POIs lui appartenant?</source>
         <source> %</source>
         <translation></translation>
     </message>
+    <message>
+        <source>Moteur si vitesse inferieure a</source>
+        <translation>Moteur si vitesse inférieure à</translation>
+    </message>
+    <message>
+        <source> nds</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Vitesse au moteur</source>
+        <translation></translation>
+    </message>
 </context>
 <context>
     <name>realBoatPos</name>
@@ -6424,6 +6452,10 @@ Voulez-vous egalement supprimer tous les POIs lui appartenant?</source>
     </message>
     <message>
         <source>Tribord amure</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Au moteur</source>
         <translation></translation>
     </message>
 </context>

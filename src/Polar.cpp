@@ -303,28 +303,53 @@ void Polar::printPolar(void)
 //    }
 }
 
-double Polar::getBvmgUp(double windSpeed)
+double Polar::getBvmgUp(double windSpeed, bool engine)
 {
     if(!loaded)
         return 0;
+    double angle=0;
     if ( qRound(windSpeed*10) <= best_vmg_up.count()-1 )
-        return(best_vmg_up[qRound(windSpeed*10)]);
+        angle=best_vmg_up[qRound(windSpeed*10)];
     else
-        return(best_vmg_up.last());
+        angle=best_vmg_up.last();
+    if(engine && this->mainWindow->getSelectedBoat() && this->mainWindow->getSelectedBoat()->getMinSpeedForEngine()>0)
+    {
+        double bs=this->myGetSpeed(windSpeed,angle,false);
+        if(bs<this->mainWindow->getSelectedBoat()->getMinSpeedForEngine())
+            angle=0;
+    }
+    return angle;
 }
-double Polar::getBvmgDown(double windSpeed)
+double Polar::getBvmgDown(double windSpeed, bool engine)
 {
     if(!loaded)
         return 0;
+    double angle=0;
     if ( qRound(windSpeed*10) <= best_vmg_down.count()-1 )
-        return(best_vmg_down[qRound(windSpeed*10)]);
+        angle=best_vmg_down[qRound(windSpeed*10)];
     else
-        return(best_vmg_down.last());
+        angle=best_vmg_down.last();
+    if(engine && this->mainWindow->getSelectedBoat() && this->mainWindow->getSelectedBoat()->getMinSpeedForEngine()>0)
+    {
+        double bs=this->getSpeed(windSpeed,angle,false);
+        if(bs<this->mainWindow->getSelectedBoat()->getMinSpeedForEngine())
+            angle=180;
+    }
+    return angle;
 }
 
-double Polar::getSpeed(double windSpeed, double angle)
+double Polar::getSpeed(double windSpeed, double angle, bool engine,bool * engineUsed)
 {
-    return myGetSpeed(windSpeed,angle,false);
+    double bs=myGetSpeed(windSpeed,angle,false);
+    if(engineUsed!=NULL)
+        *engineUsed=false;
+    if(engine && mainWindow->getSelectedBoat() && bs<this->mainWindow->getSelectedBoat()->getMinSpeedForEngine())
+    {
+        bs=this->mainWindow->getSelectedBoat()->getSpeedWithEngine();
+        if(engineUsed!=NULL)
+            *engineUsed=true;
+    }
+    return bs;
 }
 
 double Polar::myGetSpeed(double windSpeed, double angle, bool force)

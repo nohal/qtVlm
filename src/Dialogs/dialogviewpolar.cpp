@@ -116,8 +116,8 @@ void DialogViewPolar::drawIt()
         polarValues.clear();
         polarLine.clear();
         polarGreen.clear();
-        double bvmgUp=polar->getBvmgUp(ws);
-        double bvmgDown=polar->getBvmgDown(ws);
+        double bvmgUp=polar->getBvmgUp(ws,false);
+        double bvmgDown=polar->getBvmgDown(ws,false);
         pen.setColor(Qt::red);
         pen.setWidth(2);
         pnt.setPen(pen);
@@ -130,7 +130,7 @@ void DialogViewPolar::drawIt()
         }
         for(int angle=0;angle<=180;++angle)
         {
-            double speed=polar->getSpeed(ws,angle);
+            double speed=polar->getSpeed(ws,angle,false);
             polarValues.append(speed);
             if(speed>maxSpeed && !this->allSpeed->isChecked()) maxSpeed=speed;
         }

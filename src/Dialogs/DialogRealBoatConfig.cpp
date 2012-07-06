@@ -74,6 +74,8 @@ void DialogRealBoatConfig::launch(boatReal * boat)
         //qWarning() << "Init dialog with polar: " << polarStr;
     }
     this->declinaison->setValue(Settings::getSetting("declinaison",0).toDouble());
+    this->minSpeedForEngine->setValue(Settings::getSetting("minSpeedForEngine",0).toDouble());
+    this->speedWithEngine->setValue(Settings::getSetting("speedWithEngine",6).toDouble());
 
     exec();
 }
@@ -87,6 +89,8 @@ void DialogRealBoatConfig::done(int result)
         Settings::setSetting("gpsPortName",serialName->text());
         Settings::setSetting("gpsBaudRate",QString().setNum(baudRate->currentIndex()));
         Settings::setSetting("polarEfficiency",polarEfficiency->value());
+        Settings::setSetting("minSpeedForEngine",minSpeedForEngine->value());
+        Settings::setSetting("speedWithEngine",speedWithEngine->value());
         if(curBoat)
         {
             //qWarning() << "Saving polar in boat: " << polarList->currentText();
@@ -98,6 +102,8 @@ void DialogRealBoatConfig::done(int result)
     curBoat->setDisplayNMEA(this->displayNMEA->isChecked());
     curBoat->setDeclinaison(declinaison->value());
     curBoat->emitMoveBoat();
+    curBoat->setMinSpeedForEngine(minSpeedForEngine->value());
+    curBoat->setSpeedWithEngine(speedWithEngine->value());
     this->parent->emitUpdateRoute(curBoat);
     QDialog::done(result);
 }

@@ -232,7 +232,6 @@ void Projection::setScaleAndCenterInMap(double sc,double x, double y)
 void Projection::my_setScale(double sc)
 {
     scale = sc;
-    //qWarning() << "my setScale " << sc;
     if (scale < scaleall)
         scale = scaleall;
     if (scale > scalemax)
@@ -285,7 +284,7 @@ void Projection::my_setScreenSize(int w, int h)
 #if 0
     scale=sX<sY?sY:sX;
 #else
-    scale=sX>sY?sY:sX;
+    //scale=sX>sY?sY:sX;
 #endif
 
     if (scale < scaleall)

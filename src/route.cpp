@@ -398,6 +398,7 @@ void ROUTE::slot_recalculate(boat * boat)
             //qWarning()<<poi->getName()<<this->my_poiList.at(0)->getName();
             remaining_distance=orth.getDistance();
             time_t Eta=0;
+            bool engineUsed=false;
             if(has_eta)
             {
                 //if(!busy) this->slot_recalculate();
@@ -474,9 +475,9 @@ void ROUTE::slot_recalculate(boat * boat)
                                     else
                                     {
                                         angle=A180(cap-wind_angle);
-                                        if(qAbs(angle)<myBoat->getBvmgUp(wind_speed))
+                                        if(qAbs(angle)<myBoat->getPolarData()->getBvmgUp(wind_speed))
                                         {
-                                            angle=myBoat->getBvmgUp(wind_speed);
+                                            angle=myBoat->getPolarData()->getBvmgUp(wind_speed);
                                             cap1=Util::A360(wind_angle+angle);
                                             cap2=Util::A360(wind_angle-angle);
                                             diff1=Util::myDiffAngle(cap,cap1);
@@ -486,9 +487,9 @@ void ROUTE::slot_recalculate(boat * boat)
                                             else
                                                 cap=cap2;
                                         }
-                                        else if(qAbs(angle)>myBoat->getBvmgDown(wind_speed))
+                                        else if(qAbs(angle)>myBoat->getPolarData()->getBvmgDown(wind_speed))
                                         {
-                                            angle=myBoat->getBvmgDown(wind_speed);
+                                            angle=myBoat->getPolarData()->getBvmgDown(wind_speed);
                                             cap1=Util::A360(wind_angle+angle);
                                             cap2=Util::A360(wind_angle-angle);
                                             diff1=Util::myDiffAngle(cap,cap1);
@@ -503,7 +504,7 @@ void ROUTE::slot_recalculate(boat * boat)
                                 }
 
                                 case 1: //BVMG
-                                    if(fastVmgCalc)
+                                    if(fastVmgCalc || myBoat->getType()==BOAT_REAL)
                                         myBoat->getPolarData()->getBvmg((cap-wind_angle),wind_speed,&angle);
                                     else
                                         myBoat->getPolarData()->bvmgWind((cap-wind_angle),wind_speed,&angle);
@@ -518,7 +519,13 @@ void ROUTE::slot_recalculate(boat * boat)
                                     break;
                             }
 
-                            newSpeed=myBoat->getPolarData()->getSpeed(wind_speed,angle);
+                            newSpeed=myBoat->getPolarData()->getSpeed(wind_speed,angle,true,&engineUsed);
+                            qWarning()<<"angle="<<angle<<wind_speed<<"newSpeed="<<newSpeed;
+                            if(engineUsed && poi->getNavMode()==1)
+                            {
+                                cap=capSaved;
+                                angle=A180(cap-wind_angle);
+                            }
                             if (firstPoint)
                             {
                                 firstPoint=false;
@@ -555,6 +562,7 @@ void ROUTE::slot_recalculate(boat * boat)
                                         roadPoint.append(-1); //9
                                         roadPoint.append(0); //10
                                         roadPoint.append(0); //11
+                                        roadPoint.append(-1); //12
                                         roadMap.append(roadPoint);
                                     }
                                     break;
@@ -588,14 +596,18 @@ void ROUTE::slot_recalculate(boat * boat)
                                 roadPoint.append(poiNb); //9
                                 roadPoint.append(remaining_distance); //10
                                 roadPoint.append(Util::A360(capSaved-myBoat->getDeclinaison())); //11
+                                roadPoint.append(engineUsed?1:-1); //12
                                 roadMap.append(roadPoint);
                             }
                             if(lastEta<gribDate && Eta>=gribDate)
                             {
-                                QList<double> roadPoint=roadMap.last();
-                                roadInfo->setValues(roadPoint.at(6),roadPoint.at(7),roadPoint.at(8),
-                                                    roadPoint.at(4),roadPoint.at(3),roadPoint.at(11),
-                                                    roadPoint.at(10));
+                                if(!this->getSimplify())
+                                {
+                                    QList<double> roadPoint=roadMap.last();
+                                    roadInfo->setValues(roadPoint.at(6),roadPoint.at(7),roadPoint.at(8),
+                                                        roadPoint.at(4),roadPoint.at(3),roadPoint.at(11),
+                                                        roadPoint.at(10),engineUsed);
+                                }
                                 if(gribDate>start+1000)
                                 {
                                     line->setInterpolated(lon,lat);

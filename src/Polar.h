@@ -45,9 +45,9 @@ class Polar : public QObject
         Polar(QString fname,MainWindow * mainWindow);
 
         QString getName() { if(loaded) return name; else return ""; }
-        double   getSpeed(double windSpeed, double angle);
-        double   getBvmgUp(double windSpeed);
-        double   getBvmgDown(double windSpeed);
+        double   getSpeed(double windSpeed, double angle, bool engine=true, bool * engineUsed=NULL);
+        double   getBvmgUp(double windSpeed, bool engine=true);
+        double   getBvmgDown(double windSpeed, bool engine=true);
         bool    isLoaded() { return loaded; }
         double   getMaxSpeed() {return maxSpeed;}
         bool    getIsCsv(){return this->isCsv;}

@@ -299,6 +299,10 @@ void xml_boatData::slot_writeData(QList<Player*> & player_list,QList<raceData*> 
                 t = doc.createTextNode(QString().setNum(boat->getLon()));
                 tag.appendChild(t);
 
+                tag = doc.createElement(BOAT_ZOOM_NAME);
+                group.appendChild(tag);
+                t = doc.createTextNode(QString().setNum(boat->getZoom()));
+                tag.appendChild(t);
             }
         }
     }
@@ -692,10 +696,13 @@ void xml_boatData::readBoat(QDomNode node,PlayerMap * pList)
                     //player->setRealBoat(new boatReal(pseudo,true,proj,main,parent));
                     // should init players variable here
                     boatReal * boat=player->getRealBoat();
+                    qWarning()<<"zoom restored"<<zoom;
                     if(boat)
                     {
                         boat->setPosition(lat,lon);
                         boat->setPolar(polar);
+                        boat->setZoom(zoom);
+                        proj->setScaleAndCenterInMap(boat->getZoom(),boat->getLon(),boat->getLat());
                     }
 
 

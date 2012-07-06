@@ -285,7 +285,7 @@ void GshhsReader::setQuality(int quality_) // 5 levels: 0=low ... 4=full
             zu_close(file);
         }
     }
-    // Rivières
+    // Rivieres
     if (lsPoly_rivers[quality]->size() == 0) { // on ne lit qu'une fois le fichier
         fname = getFileName_rivers(quality);
         file = zu_open(fname.c_str(), "rb");

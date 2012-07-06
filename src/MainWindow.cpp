@@ -260,11 +260,11 @@ MainWindow::MainWindow(int w, int h, QWidget *parent)
     prcx = Settings::getSetting("projectionCX", 0.0).toDouble();
     prcy = Settings::getSetting("projectionCY", 0.0).toDouble();
     proj = new Projection (width(), height(),prcx,prcy);
+    connect(proj,SIGNAL(newZoom(double)),this,SLOT(slotNewZoom(double)));
 
     scale = Settings::getSetting("projectionScale", 0.5).toDouble();
     proj->setScale(scale);
 
-    connect(proj,SIGNAL(newZoom(double)),this,SLOT(slotNewZoom(double)));
 
     dialogProxy = new DialogProxy();
 
@@ -489,12 +489,12 @@ MainWindow::MainWindow(int w, int h, QWidget *parent)
     // get screen geometry
     QDesktopWidget * desktopWidget = QApplication::desktop ();
 
-    qWarning() << "Display info:";
-    qWarning() << "Number of screen: " << desktopWidget->screenCount();
-    for(int i=0;i < desktopWidget->screenCount(); i++)
-    {
-        qWarning() << i << ": " << desktopWidget->screenGeometry(i) << (i==desktopWidget->primaryScreen()?" (qtVlm screen)":" (Other screen)");
-    }
+    //qWarning() << "Display info:";
+    //qWarning() << "Number of screen: " << desktopWidget->screenCount();
+//    for(int i=0;i < desktopWidget->screenCount(); i++)
+//    {
+//        qWarning() << i << ": " << desktopWidget->screenGeometry(i) << (i==desktopWidget->primaryScreen()?" (qtVlm screen)":" (Other screen)");
+//    }
 
     QRect screenRect = desktopWidget->screenGeometry(desktopWidget->primaryScreen());
 
@@ -671,7 +671,7 @@ MainWindow::~MainWindow()
     if(noSave) return;
     if(Settings::getSetting("saveMainWindowGeometry","1").toInt())
     {
-        qWarning() << "Saving window geometry: " << size() << " " << pos();
+        //qWarning() << "Saving window geometry: " << size() << " " << pos();
         Settings::setSetting("mainWindowSize", size());
         Settings::setSetting("mainWindowPos", pos());
         Settings::setSetting("mainWindowMaximized",this->isMaximized()?"1":"0");
@@ -693,11 +693,11 @@ MainWindow::~MainWindow()
 
 void MainWindow::keyPressEvent ( QKeyEvent * event )
 {
-    qWarning() << "Key pressed in main: " << event->key();
+    //qWarning() << "Key pressed in main: " << event->key();
 }
 void MainWindow::slot_deleteProgress (void)
 {
-    qWarning() << "Removing progress";
+    //qWarning() << "Removing progress";
     progress->close();
     delete progress;
     if(timerprogress)
@@ -1381,7 +1381,7 @@ void MainWindow::slotVLM_Sync(void)
         return ;
     }
 
-    qWarning() << "Doing a synch with VLM";
+    //qWarning() << "Doing a synch with VLM";
 
     QList<boatVLM*> listBoats = *my_centralWidget->getBoats();
     for(int n=0;n<listBoats.count();n++)
@@ -1390,7 +1390,7 @@ void MainWindow::slotVLM_Sync(void)
         {
             if(selectedBoat==NULL && listBoats.at(n)->getStatus())
             {
-                qWarning() << "Selecting boat " << listBoats[n]->getName();
+                //qWarning() << "Selecting boat " << listBoats[n]->getName();
                 listBoats[n]->slot_selectBoat();
             }
             else
@@ -1421,7 +1421,7 @@ void MainWindow::VLM_Sync_sync(void)
         acc = listBoats.at(nBoat);
         if(acc->getStatus() || !acc->isInitialized())
         {
-            qWarning() << "Doing a synch_synch with VLM: " << acc->getName();
+            //qWarning() << "Doing a synch_synch with VLM: " << acc->getName();
             connect(acc,SIGNAL(hasFinishedUpdating(void)),this,SLOT(slot_boatHasUpdated()));
             //toBeCentered=nBoat;
 //            if(selectedBoat==NULL)
@@ -1431,7 +1431,7 @@ void MainWindow::VLM_Sync_sync(void)
         }
         else
         {
-            qWarning() << "Calling again SyncSync with next boat";
+            //qWarning() << "Calling again SyncSync with next boat";
             VLM_Sync_sync();
         }
     }
@@ -1506,7 +1506,7 @@ void MainWindow::slotBoatUpdated(boat * upBoat,bool newRace,bool doingSync)
         if(boat == selectedBoat)
         {
             bool found=false;
-            qWarning() << "selected boat update: " << boat->getName();
+            //qWarning() << "selected boat update: " << boat->getName();
             timer->stop();
             /* managing race data: opponnents position and trace*/
             int i=0;
@@ -1668,6 +1668,7 @@ void MainWindow::slotSelectBoat(boat* newSelect)
     {
         selectedBoat=newSelect;
         selectedBoat->slot_selectBoat();
+        selectedBoat->setZoom(proj->getScale());
         return;
     }
 
@@ -1691,7 +1692,7 @@ void MainWindow::slotSelectBoat(boat* newSelect)
         {            
             if(newSelect->getType()==BOAT_VLM)
             {
-                qWarning() << "getData from slot_selectBoat";
+                //qWarning() << "getData from slot_selectBoat";
                 ((boatVLM*)newSelect)->slot_getData(false);
                 menuBar->acPilototo->setEnabled(!newSelect->getLockStatus());
             }
@@ -1739,7 +1740,7 @@ void MainWindow::slotChgBoat(int num)
     QListIterator<boatVLM*> i (*my_centralWidget->getBoats());
     int cnt=0;
 
-    qWarning() << "Selecting boat " << num;
+    //qWarning() << "Selecting boat " << num;
 
     while(i.hasNext())
     {
@@ -1778,10 +1779,8 @@ void MainWindow::slot_updPlayerFinished(bool res_ok, Player * player)
         isStartingUp=false;
         my_centralWidget->slot_playerSelected(player);
         my_centralWidget->loadPOI();
-        qWarning()<<"after load poi";
         slot_deleteProgress();
         my_centralWidget->emitUpdateRoute(NULL);
-        qWarning()<<"after updateRoute";
         return;
     }
 
@@ -1852,7 +1851,7 @@ void MainWindow::slot_POIselected(POI* poi)
 
 void MainWindow::slotInetUpdated(void)
 {
-    qWarning() << "Inet Updated";
+    //qWarning() << "Inet Updated";
     emit updateInet();
     slotVLM_Sync();
 }

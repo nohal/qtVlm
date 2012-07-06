@@ -81,6 +81,8 @@ boatReal::boatReal(QString pseudo, bool activated, Projection * proj,MainWindow 
     changeLocked=false;
     forceEstime=false;
     this->declinaison=Settings::getSetting("declinaison",0).toDouble();
+    this->minSpeedForEngine=Settings::getSetting("minSpeedForEngine",0).toDouble();
+    this->speedWithEngine=Settings::getSetting("speedWithEngine",4).toDouble();
 
     myCreatePopUpMenu();
     this->lastUpdateTime=QDateTime().currentDateTimeUtc().toTime_t();
@@ -128,7 +130,7 @@ void boatReal::setWp(double la, double lo, double w)
 
 void boatReal::myCreatePopUpMenu(void)
 {
-    ac_chgPos = new QAction("Definir la position",popup);
+    ac_chgPos = new QAction(tr("Definir la position"),popup);
     popup->addAction(ac_chgPos);
     connect(ac_chgPos,SIGNAL(triggered()),this,SLOT(slot_chgPos()));
 }

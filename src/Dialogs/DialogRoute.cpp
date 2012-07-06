@@ -42,6 +42,7 @@ Copyright (C) 2008 - Jacques Zaninetti - http://zygrib.free.fr
 #include <QItemDelegate>
 #include "Grib.h"
 #include <QRadialGradient>
+#include <QTime>
 
 //-------------------------------------------------------
 // ROUTE_Editor: Constructor for edit an existing ROUTE
@@ -108,6 +109,8 @@ DialogRoute::DialogRoute(ROUTE *route,myCentralWidget *parent)
     int n=0;
     if(parent->getPlayer()->getType()!=BOAT_REAL)
     {
+        this->engineLabel->hide();
+        this->engineTime->hide();
         if(parent->getBoats())
         {
             QListIterator<boatVLM*> i (*parent->getBoats());
@@ -128,6 +131,8 @@ DialogRoute::DialogRoute(ROUTE *route,myCentralWidget *parent)
     }
     else
     {
+        this->useVbvmgVlm->setChecked(false);
+        this->useVbvmgVlm->hide();
         this->editVac->setText(tr("Date de la derniere MAJ de la position"));
         editBoat->addItem(parent->getPlayer()->getName());
         editBoat->setEnabled(false);
@@ -163,10 +168,13 @@ DialogRoute::DialogRoute(ROUTE *route,myCentralWidget *parent)
     this->roadMapInterval->setValue(route->getRoadMapInterval());
     int min=5;
     if(route->getBoat() && route->getBoat()!=NULL)
+    {
         min=route->getBoat()->getVacLen()/60;
+        if(route->getBoat()->getType()==BOAT_REAL)
+            roadMapInterval->setValue(Settings::getSetting("roadMapInterval",5).toInt());
+    }
     this->roadMapInterval->setMinimum(min);
     this->roadMapInterval->setSingleStep(min);
-    this->roadMapInterval->setValue(route->getRoadMapInterval());
     intervalTimer=new QTimer(this);
     intervalTimer->setSingleShot(true);
     intervalTimer->setInterval(800);
@@ -202,8 +210,6 @@ DialogRoute::DialogRoute(ROUTE *route,myCentralWidget *parent)
 }
 DialogRoute::~DialogRoute()
 {
-    Settings::setSetting(this->objectName()+".height",this->height());
-    Settings::setSetting(this->objectName()+".width",this->width());
 }
 void DialogRoute::slotTabChanged(int tab)
 {
@@ -230,6 +236,7 @@ void DialogRoute::slotInterval()
     int step=roadMapInterval->minimum();
     val=qRound(val/step)*step;
     roadMapInterval->setValue(val);
+    Settings::setSetting("roadMapInterval",val);
     rmModel->removeRows(0,rmModel->rowCount());
     double dist=0;
     double speedMoy=0;
@@ -239,6 +246,7 @@ void DialogRoute::slotInterval()
     QRadialGradient radialGrad(QPointF(20, 20), 15);
     radialGrad.setColorAt(0, Qt::white);
     radialGrad.setColorAt(0.8, Qt::blue);
+    int totalTimeMoteur=0;
     for(int i=0;i<route->getRoadMap()->count();++i)
     {
         QList<double>roadItems=route->getRoadMap()->at(i);
@@ -246,7 +254,14 @@ void DialogRoute::slotInterval()
         speedMoy+=roadItems.at(4);
         twsMoy+=roadItems.at(7);
         QPixmap img(40,40);
-        img.fill(Qt::white);
+        if(roadItems.at(12)>0)
+        {
+            img.load("img/propeller.png");
+            if(i>0)
+                totalTimeMoteur+=roadItems.at(0)-route->getRoadMap()->at(i-1).at(0);
+        }
+        else
+            img.fill(Qt::white);
         QPainter pnt(&img);
         pnt.setRenderHint(QPainter::Antialiasing);
         pen.setColor(Qt::gray);
@@ -266,7 +281,8 @@ void DialogRoute::slotInterval()
         pen.setWidth(2);
         pnt.setPen(pen);
         pnt.setBrush(Qt::NoBrush);
-        this->drawWindArrowWithBarbs(pnt,20,20,
+        if(roadItems.at(12)<=0)
+            this->drawWindArrowWithBarbs(pnt,20,20,
                                      roadItems.at(7),roadItems.at(6),
                                      roadItems.at(2)<0);
 
@@ -382,6 +398,34 @@ void DialogRoute::slotInterval()
     this->avgSpeed->setText(QString().sprintf("%.2f",speedMoy)+tr(" nds"));
     this->avgTWS->setText(QString().sprintf("%.2f",twsMoy)+tr(" nds"));
     this->roadMapInterval->blockSignals(false);
+    if(route->getRoadMap()->count()>=2)
+    {
+        int elapsed=route->getRoadMap()->last().at(0)-route->getRoadMap()->first().at(0);
+        QTime eLapsed(0,0,0,0);
+        double jours=elapsed/(24*60*60);
+        if (qRound(jours)>jours)
+            --jours;
+        jours=qRound(jours);
+        elapsed=elapsed-jours*24*60*60;
+        eLapsed=eLapsed.addSecs(elapsed);
+        QString jour;
+        jour=jour.sprintf("%d",qRound(jours));
+        this->navTime->setText(jour+tr(" jours ")+eLapsed.toString("H'h 'mm'min '"));
+    }
+    if(totalTimeMoteur>=0)
+    {
+        int elapsed=totalTimeMoteur;
+        QTime eLapsed(0,0,0,0);
+        double jours=elapsed/(24*60*60);
+        if (qRound(jours)>jours)
+            --jours;
+        jours=qRound(jours);
+        elapsed=elapsed-jours*24*60*60;
+        eLapsed=eLapsed.addSecs(elapsed);
+        QString jour;
+        jour=jour.sprintf("%d",qRound(jours));
+        this->engineTime->setText(jour+tr(" jours ")+eLapsed.toString("H'h 'mm'min '"));
+    }
     delete waitBox;
 }
 void DialogRoute::drawTransformedLine( QPainter &pnt,
@@ -514,6 +558,8 @@ void DialogRoute::drawTriangle(QPainter &pnt, bool south,
 
 void DialogRoute::done(int result)
 {
+    Settings::setSetting(this->objectName()+".height",this->height());
+    Settings::setSetting(this->objectName()+".width",this->width());
     if(result == QDialog::Accepted || result==99)
     {
         if (!parent->freeRouteName((editName->text()).trimmed(),route))

@@ -37,7 +37,9 @@ boat::boat(QString      pseudo, bool activated,
    QGraphicsWidget(),
    boat_type (BOAT_NOBOAT),
    prevVac (0),
-   nextVac (0)
+   nextVac (0),
+   minSpeedForEngine (0),
+   speedWithEngine (4)
 {
     this->mainWindow=main;
     this->parent=parent;
@@ -232,12 +234,12 @@ void boat::unSelectBoat(bool needUpdate)
 
 double boat::getBvmgUp(double ws)
 {
-    if(polarData) return(polarData->getBvmgUp(ws));
+    if(polarData) return(polarData->getBvmgUp(ws,false));
     return -1;
 }
 double boat::getBvmgDown(double ws)
 {
-    if(polarData) return(polarData->getBvmgDown(ws));
+    if(polarData) return(polarData->getBvmgDown(ws,false));
     return -1;
 }
 

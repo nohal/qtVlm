@@ -103,6 +103,10 @@ class boat: public QGraphicsWidget
         QPainterPath shape() const;
         QRectF boundingRect() const;
         vlmLine * getTraceDrawing(){return this->trace_drawing;}
+        double getMinSpeedForEngine(){return this->minSpeedForEngine;}
+        void setMinSpeedForEngine(double d){this->minSpeedForEngine=d;}
+        double getSpeedWithEngine(){return this->speedWithEngine;}
+        void setSpeedWithEngine(double d){this->speedWithEngine=d;}
 
     public slots:
         void slot_projectionUpdated();
@@ -220,6 +224,8 @@ class boat: public QGraphicsWidget
         double windEstimeDir;
         double windEstimeSpeed;
         double declinaison;
+        double minSpeedForEngine;
+        double speedWithEngine;
 };
 
 #endif // BOAT_H

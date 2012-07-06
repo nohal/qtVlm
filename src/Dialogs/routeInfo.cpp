@@ -13,7 +13,7 @@ routeInfo::routeInfo(myCentralWidget *parent, ROUTE *route) :
     this->setWindowTitle(QObject::tr("Information au point d'interpolation pour ")+route->getName());
     //this->activateWindow();
 }
-void routeInfo::setValues(double twd, double tws, double twa, double bs, double hdg, double cnm, double dnm)
+void routeInfo::setValues(double twd, double tws, double twa, double bs, double hdg, double cnm, double dnm, bool engineUsed)
 {
     TWD->setValue(twd);
     TWS->setValue(tws);
@@ -30,10 +30,17 @@ void routeInfo::setValues(double twd, double tws, double twa, double bs, double 
     double awa=90-radToDeg(atan(bb/a));
     AWA->setValue(awa);
     AWS->setValue(aws);
-    if(twa>=0)
-        amure->setText(tr("Babord amure"));
+    if(engineUsed)
+    {
+        amure->setText(tr("Au moteur"));
+    }
     else
-        amure->setText(tr("Tribord amure"));
+    {
+        if(twa>=0)
+            amure->setText(tr("Babord amure"));
+        else
+            amure->setText(tr("Tribord amure"));
+    }
 }
 
 routeInfo::~routeInfo()

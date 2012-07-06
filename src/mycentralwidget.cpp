@@ -780,6 +780,7 @@ void myCentralWidget::resizeEvent (QResizeEvent * /*e*/)
     view->setGeometry(0,0,width(), height());
     scene->setSceneRect(QRect(0,0,width()-4, height()-4));
     terre->updateSize(width()-4, height()-4);
+    //qWarning()<<"calling resize due to resizeEvent in mcw";
     proj->setScreenSize( width()-4, height()-4);
     resizing=false;
 }
@@ -2419,6 +2420,7 @@ void myCentralWidget::slot_editRoute(ROUTE * route,bool createMode)
     DialogRoute *route_editor=new DialogRoute(route,this);
     if(route_editor->exec()!=QDialog::Accepted)
     {
+        delete route_editor;
         if(createMode)
         {
             route_list.removeAll(route);
@@ -2429,10 +2431,10 @@ void myCentralWidget::slot_editRoute(ROUTE * route,bool createMode)
     }
     else
     {
+        delete route_editor;
         this->treatRoute(route);
     }
     //route->slot_recalculate();
-    delete route_editor;
     if(route->getPilototo())
     {
         if(!route->getStartFromBoat() || route->getStartTimeOption()!=1 || !route->getUseVbvmgVlm())
@@ -2446,8 +2448,11 @@ void myCentralWidget::slot_editRoute(ROUTE * route,bool createMode)
 }
 void myCentralWidget::treatRoute(ROUTE* route)
 {
+    qWarning()<<"inside treatRoute";
     update_menuRoute();
+    qWarning()<<"inside treatRoute1";
     route->slot_recalculate();
+    qWarning()<<"inside treatRoute2";
     QApplication::processEvents();
     if((route->getSimplify() || route->getOptimize()) && !route->isBusy())
     {
@@ -2629,6 +2634,7 @@ void myCentralWidget::slot_abortRequest()
 
 void myCentralWidget::doSimplifyRoute(ROUTE * route, bool fast)
 {
+    qWarning()<<"inside doSimplify";
     route->setSimplify(true);
     int firstPOI=1;
     if(route->getStartFromBoat())
@@ -2859,13 +2865,13 @@ void myCentralWidget::slot_editRoutage(ROUTAGE * routage,bool createMode)
     DialogRoutage *routage_editor=new DialogRoutage(routage,this);
     if(routage_editor->exec()!=QDialog::Accepted)
     {
+        delete routage_editor;
         if(createMode || routage->getIsNewPivot())
         {
             bool b=routage->getIsNewPivot();
             delete routage;
             routage_list.removeAll(routage);
             routage=NULL;
-            delete routage_editor;
             nbRoutage--;
             if(b)
                 update_menuRoutage();
