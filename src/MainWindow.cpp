@@ -2094,7 +2094,7 @@ double MainWindow::getBoatPolarSpeed(double ws,double angle)
    else
        if(bateau->getPolarData())
        {
-            return bateau->getPolarData()->getSpeed(ws,angle);
+            return bateau->getPolarData()->getSpeed(ws,angle,false);
        }
        else
        {
