@@ -3416,6 +3416,11 @@ Etes-vous sur ?</source>
         <translation>Ortho from </translation>
     </message>
     <message>
+        <location filename="../src/POI.cpp" line="820"/>
+        <source>Etes-vous sur ?</source>
+        <translation>Are you sure?</translation>
+    </message>
+    <message>
         <source>Relier ce poi a un autre poi</source>
         <translation type="obsolete">Draw a line between this POI and anoter POI</translation>
     </message>
@@ -3470,44 +3475,44 @@ Etes-vous sur ?</source>
         <translation type="obsolete">Orthodromic distance from </translation>
     </message>
     <message>
-        <location filename="../src/POI.cpp" line="843"/>
+        <location filename="../src/POI.cpp" line="848"/>
         <source>La destruction d&apos;une marque est definitive.
 
 Etes-vous sur ?</source>
         <translation>Deleting a mark is not reversible.  Are you sure?</translation>
     </message>
     <message>
-        <location filename="../src/POI.cpp" line="851"/>
+        <location filename="../src/POI.cpp" line="856"/>
         <source>Destruction d&apos;un marque</source>
         <translation>Mark deletion</translation>
     </message>
     <message>
-        <location filename="../src/POI.cpp" line="851"/>
+        <location filename="../src/POI.cpp" line="856"/>
         <source>Le calcul de la route n&apos;est pas fini, impossible de supprimer ce POI</source>
         <translation>Route is busy calculating; impossible to delete this POI now</translation>
     </message>
     <message>
-        <location filename="../src/POI.cpp" line="992"/>
+        <location filename="../src/POI.cpp" line="997"/>
         <source>Optimisation du placement d&apos;un POI</source>
         <translation>POI position optimisation</translation>
     </message>
     <message>
-        <location filename="../src/POI.cpp" line="993"/>
+        <location filename="../src/POI.cpp" line="998"/>
         <source>Vous ne pouvez pas optimiser en mode VBVMG-VLM</source>
         <translation>You cannot optimize in VBVMG-VLM</translation>
     </message>
     <message>
-        <location filename="../src/POI.cpp" line="1058"/>
+        <location filename="../src/POI.cpp" line="1063"/>
         <source>ETA du prochain POI: </source>
         <translation>Previous ETA of next POI: </translation>
     </message>
     <message>
-        <location filename="../src/POI.cpp" line="1061"/>
+        <location filename="../src/POI.cpp" line="1066"/>
         <source>Dist. restante du prochain POI: </source>
         <translation>Next WP remaining dist.:</translation>
     </message>
     <message>
-        <location filename="../src/POI.cpp" line="1098"/>
+        <location filename="../src/POI.cpp" line="1103"/>
         <source>Meilleure ETA: </source>
         <translation>Best ETA:</translation>
     </message>
@@ -3529,19 +3534,22 @@ Etes-vous sur ?</source>
         <translation>Can&apos;t be reached with this Grib</translation>
     </message>
     <message>
-        <location filename="../src/POI.cpp" line="814"/>
+        <location filename="../src/POI.cpp" line="815"/>
+        <source>Attention: votre bateau est en mode cap fixe</source>
+        <translation>Warning: your boat is in fix heading mode</translation>
+    </message>
+    <message>
+        <location filename="../src/POI.cpp" line="817"/>
+        <source>Attention: votre bateau est en mode Regulateur d&apos;Allure (angle au vent fixe)</source>
+        <translation>Warning: your boat is in fix wind angle mode</translation>
+    </message>
+    <message>
+        <location filename="../src/POI.cpp" line="819"/>
         <source>Definition du WP-VLM</source>
         <translation>WP-VLM set-up</translation>
     </message>
     <message>
-        <location filename="../src/POI.cpp" line="815"/>
-        <source>Attention le mode de navigation n&apos;est pas compatible.
-
-Etes-vous sur ?</source>
-        <translation></translation>
-    </message>
-    <message>
-        <location filename="../src/POI.cpp" line="842"/>
+        <location filename="../src/POI.cpp" line="847"/>
         <source>Detruire la marque</source>
         <translation>Delete mark</translation>
     </message>
@@ -3562,12 +3570,12 @@ Etes-vous sur ?</source>
         <translation type="obsolete">Shortest remaining distance:</translation>
     </message>
     <message>
-        <location filename="../src/POI.cpp" line="1205"/>
+        <location filename="../src/POI.cpp" line="1210"/>
         <source>Abandon du positionnement automatique</source>
         <translation>Automatic positioning was stopped</translation>
     </message>
     <message>
-        <location filename="../src/POI.cpp" line="1205"/>
+        <location filename="../src/POI.cpp" line="1210"/>
         <source>Souhaitez vous conserver la meilleure position deja trouvee?</source>
         <translation>Do you wish to keep best position found so far?</translation>
     </message>
@@ -4983,24 +4991,24 @@ isochrons</translation>
     <name>ROUTE</name>
     <message>
         <location filename="../src/route.cpp" line="382"/>
-        <location filename="../src/route.cpp" line="677"/>
+        <location filename="../src/route.cpp" line="676"/>
         <source>&lt;br&gt;Route: </source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../src/route.cpp" line="681"/>
-        <location filename="../src/route.cpp" line="750"/>
+        <location filename="../src/route.cpp" line="680"/>
+        <location filename="../src/route.cpp" line="749"/>
         <source>&lt;br&gt;ETA: Non joignable avec ce fichier GRIB</source>
         <translation>&lt;br&gt;ETA: not reachable with this GRIB file</translation>
     </message>
     <message>
-        <location filename="../src/route.cpp" line="686"/>
-        <location filename="../src/route.cpp" line="754"/>
+        <location filename="../src/route.cpp" line="685"/>
+        <location filename="../src/route.cpp" line="753"/>
         <source>&lt;br&gt;ETA: deja atteint</source>
         <translation>ETA: already reached</translation>
     </message>
     <message>
-        <location filename="../src/route.cpp" line="691"/>
+        <location filename="../src/route.cpp" line="690"/>
         <source>Note: la date indiquee correspond a la desactivation du WP</source>
         <translation>Note: indicated ETA corresponds to WP deactivation</translation>
     </message>
@@ -5009,43 +5017,43 @@ isochrons</translation>
         <translation type="obsolete">ETA from last crank</translation>
     </message>
     <message>
-        <location filename="../src/route.cpp" line="715"/>
-        <location filename="../src/route.cpp" line="780"/>
+        <location filename="../src/route.cpp" line="714"/>
+        <location filename="../src/route.cpp" line="779"/>
         <source>ETA a partir de maintenant</source>
         <translation>ETA: from now</translation>
     </message>
     <message>
-        <location filename="../src/route.cpp" line="718"/>
-        <location filename="../src/route.cpp" line="783"/>
+        <location filename="../src/route.cpp" line="717"/>
+        <location filename="../src/route.cpp" line="782"/>
         <source>ETA depuis la date Grib</source>
         <translation>ETA from GRIB date</translation>
     </message>
     <message>
-        <location filename="../src/route.cpp" line="721"/>
-        <location filename="../src/route.cpp" line="786"/>
+        <location filename="../src/route.cpp" line="720"/>
+        <location filename="../src/route.cpp" line="785"/>
         <source>ETA depuis la date fixe</source>
         <translation>ETA from fixed date</translation>
     </message>
     <message>
-        <location filename="../src/route.cpp" line="724"/>
-        <location filename="../src/route.cpp" line="791"/>
+        <location filename="../src/route.cpp" line="723"/>
+        <location filename="../src/route.cpp" line="790"/>
         <source>jours</source>
         <translation>days</translation>
     </message>
     <message>
-        <location filename="../src/route.cpp" line="724"/>
-        <location filename="../src/route.cpp" line="791"/>
+        <location filename="../src/route.cpp" line="723"/>
+        <location filename="../src/route.cpp" line="790"/>
         <source>heures</source>
         <translation>hours</translation>
     </message>
     <message>
-        <location filename="../src/route.cpp" line="725"/>
-        <location filename="../src/route.cpp" line="792"/>
+        <location filename="../src/route.cpp" line="724"/>
+        <location filename="../src/route.cpp" line="791"/>
         <source>minutes</source>
         <translation>minutes</translation>
     </message>
     <message>
-        <location filename="../src/route.cpp" line="747"/>
+        <location filename="../src/route.cpp" line="746"/>
         <source>Route: </source>
         <translation></translation>
     </message>

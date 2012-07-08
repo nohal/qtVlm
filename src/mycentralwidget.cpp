@@ -853,7 +853,7 @@ void myCentralWidget::mouseDoubleClick(int x, int y, QGraphicsItem * )
 {
     double lon, lat;
     proj->screen2map(x,y, &lon, &lat);
-    qWarning() << "Creating POI at: " << lat << "," << lon << " - " << Util::formatLatitude(lat) << "," << Util::formatLongitude(lon);
+    //qWarning() << "Creating POI at: " << lat << "," << lon << " - " << Util::formatLatitude(lat) << "," << Util::formatLongitude(lon);
     slot_addPOI("",POI_TYPE_POI,lat,lon,-1,-1,false,mainW->getSelectedBoat());
 }
 
@@ -2448,11 +2448,8 @@ void myCentralWidget::slot_editRoute(ROUTE * route,bool createMode)
 }
 void myCentralWidget::treatRoute(ROUTE* route)
 {
-    qWarning()<<"inside treatRoute";
     update_menuRoute();
-    qWarning()<<"inside treatRoute1";
     route->slot_recalculate();
-    qWarning()<<"inside treatRoute2";
     QApplication::processEvents();
     if((route->getSimplify() || route->getOptimize()) && !route->isBusy())
     {
@@ -2629,12 +2626,10 @@ void myCentralWidget::treatRoute(ROUTE* route)
 void myCentralWidget::slot_abortRequest()
 {
     this->abortRequest=true;
-    qWarning()<<"abort request received";
 }
 
 void myCentralWidget::doSimplifyRoute(ROUTE * route, bool fast)
 {
-    qWarning()<<"inside doSimplify";
     route->setSimplify(true);
     int firstPOI=1;
     if(route->getStartFromBoat())
@@ -2954,7 +2949,7 @@ void myCentralWidget::deleteRoutage(ROUTAGE * routage)
 }
 void myCentralWidget::assignPois()
 {
-    qWarning() << "AssignPOI "  << route_list.count() << " routes, " << poi_list.count() << " pois";
+    //qWarning() << "AssignPOI "  << route_list.count() << " routes, " << poi_list.count() << " pois";
     QList<bool> frozens;
     QListIterator<ROUTE*> r (route_list);
     while(r.hasNext())
@@ -2998,7 +2993,7 @@ void myCentralWidget::assignPois()
         route->setFrozen(frozens.at(n));
         n++;
     }
-    qWarning()<<"finished assigning POIs to Routes";
+    //qWarning()<<"finished assigning POIs to Routes";
 }
 
 
@@ -3445,7 +3440,7 @@ void myCentralWidget::drawNSZ(int i)
         for (int j=-180;j<361;j++)
             NSZ->addPoint(race_list[i]->latNSZ,j);
         NSZ->slot_showMe();
-        qWarning()<<"drawing NSZ";
+        //qWarning()<<"drawing NSZ";
     }
 }
 void myCentralWidget::removeOpponent(QString oppId, QString raceId)

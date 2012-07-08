@@ -520,7 +520,6 @@ void ROUTE::slot_recalculate(boat * boat)
                             }
 
                             newSpeed=myBoat->getPolarData()->getSpeed(wind_speed,angle,true,&engineUsed);
-                            qWarning()<<"angle="<<angle<<wind_speed<<"newSpeed="<<newSpeed;
                             if(engineUsed && poi->getNavMode()==1)
                             {
                                 cap=capSaved;
@@ -601,12 +600,12 @@ void ROUTE::slot_recalculate(boat * boat)
                             }
                             if(lastEta<gribDate && Eta>=gribDate)
                             {
-                                if(!this->getSimplify())
+                                if(!this->getSimplify() && roadInfo->isVisible())
                                 {
                                     QList<double> roadPoint=roadMap.last();
                                     roadInfo->setValues(roadPoint.at(6),roadPoint.at(7),roadPoint.at(8),
                                                         roadPoint.at(4),roadPoint.at(3),roadPoint.at(11),
-                                                        roadPoint.at(10),engineUsed);
+                                                        roadPoint.at(10),engineUsed,lat<0);
                                 }
                                 if(gribDate>start+1000)
                                 {

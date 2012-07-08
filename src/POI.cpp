@@ -810,9 +810,14 @@ void POI::slot_setWP_ask()
     if (parent->getSelectedBoat() && parent->getSelectedBoat()->getType()==BOAT_VLM &&
        ((boatVLM *)parent->getSelectedBoat())->getPilotType()<=2)
     {
+        QString mes;
+        if(((boatVLM *)parent->getSelectedBoat())->getPilotType()==1)
+            mes=tr("Attention: votre bateau est en mode cap fixe");
+        else
+            mes=tr("Attention: votre bateau est en mode Regulateur d'Allure (angle au vent fixe)");
         int rep = QMessageBox::question (parent,
                 tr("Definition du WP-VLM"),
-                tr("Attention le mode de navigation n'est pas compatible.\n\nEtes-vous sur ?"),
+                mes+"\n\n"+tr("Etes-vous sur ?"),
                 QMessageBox::Yes | QMessageBox::No);
         if(rep==QMessageBox::Yes)
             slot_setWP();

@@ -434,7 +434,7 @@ void boardVLM::chgHeading()
 
 void boardVLM::headingUpdated(double heading)
 {
-    qWarning()<<"heading value changed"<<heading;
+    //qWarning()<<"heading value changed"<<heading;
     if(!currentBoat()) /*no current boat, nothing to do*/
         return;
 
@@ -972,7 +972,7 @@ void boardVLM::sendCmd(int cmdNum,double  val1,double val2, double val3)
 
     QTextStream(&data) << "parms=" << json;
     QTextStream(&data) << "&select_idu=" << currentBoat()->getId();
-    qWarning()<<"sending:"<<url<<data;
+    //qWarning()<<"sending:"<<url<<data;
     inetPost(VLM_DO_REQUEST,url,data);
 }
 

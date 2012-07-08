@@ -2434,8 +2434,20 @@ Etes-vous sur ?</source>
 Etes-vous sur ?</source>
         <translatorcomment>Warning: the navigation mode is not compatible.
 Are you sure?</translatorcomment>
-        <translation>Attention le mode de navigation n&apos;est pas compatible.
+        <translation type="obsolete">Attention le mode de navigation n&apos;est pas compatible.
 Etes-vous sûr?</translation>
+    </message>
+    <message>
+        <source>Attention: votre bateau est en mode cap fixe</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Attention: votre bateau est en mode Regulateur d&apos;Allure (angle au vent fixe)</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Etes-vous sur ?</source>
+        <translation>Etes-vous sûr?</translation>
     </message>
 </context>
 <context>

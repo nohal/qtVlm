@@ -936,8 +936,8 @@ void xml_POIData::slot_readData(QString fname)
               }
               if(!name.isEmpty() && lat!=-1 && lon != -1)
               {
-                   QString warn="POI info present => create item "+name+QString().sprintf(" %.10f, %.10f @%.3f",lat,lon,wph);
-                   qWarning()<<warn;
+                   //QString warn="POI info present => create item "+name+QString().sprintf(" %.10f, %.10f @%.3f",lat,lon,wph);
+                   //qWarning()<<warn;
                    if(type==-1) type=POI_TYPE_POI;
                    POI * poi = new POI(name,type,lat,lon,proj,main,parent,wph,tstamp,useTstamp,NULL);
                    poi->setRouteName(routeName);
