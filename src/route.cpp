@@ -644,6 +644,7 @@ void ROUTE::slot_recalculate(boat * boat)
                             roadPoint.append(-1); //9
                             roadPoint.append(0); //10
                             roadPoint.append(0); //11
+                            roadPoint.append(-1); //12
                             roadMap.append(roadPoint);
                         }
                         break;
