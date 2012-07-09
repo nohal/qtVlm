@@ -22,6 +22,7 @@ routeInfo::routeInfo(myCentralWidget *parent, ROUTE *route) :
 }
 void routeInfo::setValues(double twd, double tws, double twa, double bs, double hdg, double cnm, double dnm, bool engineUsed, bool south)
 {
+    //qWarning()<<"inside routeInfo::setValues()";
     TWD->setValue(twd);
     TWS->setValue(tws);
     TWA->setValue(qAbs(twa));

@@ -34,8 +34,32 @@ Copyright (C) 2008 - Jacques Zaninetti - http://zygrib.free.fr
 #include "MainWindow.h"
 #include "settings.h"
 
+#if 0 /*put 1 to force crash on assert, useful for debugging*/
+void crashingMessageHandler(QtMsgType type, const char *msg)
+{
+    switch(type){
+    case QtDebugMsg:
+        fprintf(stderr,"Debug: %s\n", msg);
+        break;
+    case QtWarningMsg:
+        fprintf(stderr,"Warning: %s\n", msg);
+        break;
+    case QtCriticalMsg:
+        fprintf(stderr,"Critical: %s\n", msg);
+        break;
+    case QtFatalMsg:
+        fprintf(stderr,"Fatal: %s\n", msg);
+        __asm("int3");
+        abort();
+    }
+}
 int main(int argc, char *argv[])
 {
+    qInstallMsgHandler(crashingMessageHandler);
+#else
+int main(int argc, char *argv[])
+{
+#endif
     QApplication app(argc, argv);
     qsrand(QTime::currentTime().msec());
     QString appExeFolder=QApplication::applicationDirPath();
