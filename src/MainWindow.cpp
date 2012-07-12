@@ -226,6 +226,7 @@ MainWindow::MainWindow(int w, int h, QWidget *parent)
     : QMainWindow(parent)
 {
     //debugPOI=NULL;
+    restartNeeded=false;
     setWindowIcon (QIcon ("icon/qtVlm_48x48.png"));
     noSave=false;
     isStartingUp=true;
@@ -702,6 +703,11 @@ void MainWindow::slot_deleteProgress (void)
     delete progress;
     if(timerprogress)
         delete timerprogress;
+    if(restartNeeded)
+        this->my_centralWidget->setAboutToQuit();
+    else if(selectedBoat && selectedBoat->getType()==BOAT_REAL)
+        proj->setScaleAndCenterInMap(selectedBoat->getZoom(),selectedBoat->getLon(),selectedBoat->getLat());
+
 }
 
 //-------------------------------------------------

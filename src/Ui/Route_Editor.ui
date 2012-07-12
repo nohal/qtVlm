@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>640</width>
-    <height>659</height>
+    <height>686</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -82,6 +82,9 @@
             <widget class="QPushButton" name="btOk">
              <property name="text">
               <string>Valider</string>
+             </property>
+             <property name="default">
+              <bool>true</bool>
              </property>
             </widget>
            </item>
@@ -651,23 +654,40 @@ p, li { white-space: pre-wrap; }
  <tabstops>
   <tabstop>editName</tabstop>
   <tabstop>editBoat</tabstop>
+  <tabstop>startFromBoat</tabstop>
+  <tabstop>startFromMark</tabstop>
+  <tabstop>editVac</tabstop>
+  <tabstop>editGrib</tabstop>
+  <tabstop>editDate</tabstop>
+  <tabstop>editDateBox</tabstop>
   <tabstop>editFrozen</tabstop>
   <tabstop>editCoasts</tabstop>
   <tabstop>hidePois</tabstop>
   <tabstop>hidden</tabstop>
+  <tabstop>showInterpolData</tabstop>
+  <tabstop>speedLossOnTack</tabstop>
+  <tabstop>vacStep</tabstop>
   <tabstop>useVbvmgVlm</tabstop>
   <tabstop>autoRemove</tabstop>
   <tabstop>autoAt</tabstop>
-  <tabstop>editGrib</tabstop>
-  <tabstop>editDate</tabstop>
-  <tabstop>editDateBox</tabstop>
-  <tabstop>editVac</tabstop>
-  <tabstop>startFromBoat</tabstop>
-  <tabstop>startFromMark</tabstop>
   <tabstop>defaultOrders</tabstop>
-  <tabstop>pilotView</tabstop>
   <tabstop>customOrders</tabstop>
+  <tabstop>pilotView</tabstop>
+  <tabstop>Envoyer</tabstop>
   <tabstop>roadMapInterval</tabstop>
+  <tabstop>roadMap</tabstop>
+  <tabstop>orthDist</tabstop>
+  <tabstop>avgSpeed</tabstop>
+  <tabstop>navTime</tabstop>
+  <tabstop>orthDistParcourue</tabstop>
+  <tabstop>avgTWS</tabstop>
+  <tabstop>engineTime</tabstop>
+  <tabstop>btOk</tabstop>
+  <tabstop>Simplifier</tabstop>
+  <tabstop>Optimiser</tabstop>
+  <tabstop>btAppliquer</tabstop>
+  <tabstop>btCancel</tabstop>
+  <tabstop>tabWidget</tabstop>
  </tabstops>
  <resources/>
  <connections>

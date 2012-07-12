@@ -507,6 +507,17 @@ La boîte à cocher trace partielle s&apos;active apres l&apos;entree d&apos;un 
     </message>
 </context>
 <context>
+    <name>DialogParamAccount</name>
+    <message>
+        <source>Identifiant</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Nom du bateau</source>
+        <translation></translation>
+    </message>
+</context>
+<context>
     <name>DialogParamVlm</name>
     <message>
         <source>Nom</source>
@@ -693,6 +704,14 @@ Continuer la sauvegarde?</source>
     <message>
         <source>Mise a jour du compte en cours pour </source>
         <translation>Mise à jour de compte en cours pour </translation>
+    </message>
+    <message>
+        <source>Gestion des comptes</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Aucun compte cree</source>
+        <translation>Aucun compte créé</translation>
     </message>
 </context>
 <context>
@@ -1071,7 +1090,7 @@ Etes-vous sur ?</source>
     </message>
     <message>
         <source>Best VMG pres</source>
-        <translation></translation>
+        <translation>Meilleur VMG près</translation>
     </message>
     <message>
         <source>00.0</source>
@@ -1079,7 +1098,7 @@ Etes-vous sur ?</source>
     </message>
     <message>
         <source>Best VMG portant</source>
-        <translation></translation>
+        <translation>Meilleur VMG portant</translation>
     </message>
     <message>
         <source>Tout afficher</source>
@@ -4235,7 +4254,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <source>Inclure la declinaison (</source>
         <translatorcomment>Inclure la déclinaison (</translatorcomment>
-        <translation></translation>
+        <translation>Inclure la déclinaison (</translation>
     </message>
 </context>
 <context>
@@ -4335,7 +4354,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Inclure la declinaison</source>
-        <translation>Include la déclinaison</translation>
+        <translation>Inclure la déclinaison</translation>
     </message>
 </context>
 <context>
@@ -5887,16 +5906,16 @@ Voulez-vous egalement supprimer tous les POIs lui appartenant?</source>
         <translation></translation>
     </message>
     <message>
-        <source>Type</source>
-        <translation></translation>
+        <source>Type of boat</source>
+        <translation>Type de bateau</translation>
     </message>
     <message>
-        <source>Vrai bateau</source>
-        <translation></translation>
+        <source>Real boat</source>
+        <translation>Bateau réel</translation>
     </message>
     <message>
-        <source>Bateau VLM</source>
-        <translation></translation>
+        <source>VLM boat</source>
+        <translation>Bateau VLM</translation>
     </message>
 </context>
 <context>
@@ -6085,6 +6104,18 @@ Voulez-vous egalement supprimer tous les POIs lui appartenant?</source>
     <message>
         <source>Name</source>
         <translation>Nom</translation>
+    </message>
+    <message>
+        <source>Language/Langage</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Francais</source>
+        <translation>Français</translation>
+    </message>
+    <message>
+        <source>English</source>
+        <translation></translation>
     </message>
 </context>
 <context>

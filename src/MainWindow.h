@@ -76,6 +76,8 @@ class MainWindow: public QMainWindow
         bool getStartEstimeSpeedFromGrib();
         void clearPilototo();
         myCentralWidget * getMy_centralWidget(){return this->my_centralWidget;}
+        void setRestartNeeded(){this->restartNeeded=true;}
+        bool getRestartNeeded(){return this->restartNeeded;}
 
     public slots:
         void slotFile_Open();
@@ -244,6 +246,7 @@ class MainWindow: public QMainWindow
 
         void listAllChildren(QObject * ptr,int);
         bool noSave;
+        bool restartNeeded;
         //POI * debugPOI;
 };
 

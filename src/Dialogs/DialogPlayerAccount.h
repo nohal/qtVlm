@@ -42,7 +42,8 @@ class DialogParamAccount : public QDialog, public Ui::paramAccount
         bool initDialog(player_data * data);
 
     public slots:
-        void slot_typeChanged(int);
+        void slot_typeChanged(bool);
+        void slot_loginPassChanged(QString);
 };
 
 class DialogPlayerAccount : public QDialog, public Ui::playerAccount
@@ -64,6 +65,7 @@ class DialogPlayerAccount : public QDialog, public Ui::playerAccount
         void slot_selectItem_player(QListWidgetItem *);
         void slot_selectAndValidateItem(QListWidgetItem* item);
         void slot_updFinished(bool res, Player * player);
+        void slot_langChanged(bool frSelected);
 
     signals:
         void addPlayer(Player*);

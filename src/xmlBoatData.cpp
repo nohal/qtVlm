@@ -696,13 +696,13 @@ void xml_boatData::readBoat(QDomNode node,PlayerMap * pList)
                     //player->setRealBoat(new boatReal(pseudo,true,proj,main,parent));
                     // should init players variable here
                     boatReal * boat=player->getRealBoat();
-                    qWarning()<<"zoom restored"<<zoom;
+                    //qWarning()<<"zoom restored"<<zoom;
                     if(boat)
                     {
                         boat->setPosition(lat,lon);
                         boat->setPolar(polar);
                         boat->setZoom(zoom);
-                        proj->setScaleAndCenterInMap(boat->getZoom(),boat->getLon(),boat->getLat());
+                        //proj->setScaleAndCenterInMap(boat->getZoom(),boat->getLon(),boat->getLat());
                     }
 
 

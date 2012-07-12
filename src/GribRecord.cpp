@@ -174,7 +174,8 @@ void  GribRecord::translateDataType()
         //Navimail
         //---------------
         else if ( (idCenter==85 && idModel==5 && idGrid==255)
-                 ||(idCenter==85 && idModel==83 && idGrid==255) )
+                 ||(idCenter==85 && idModel==83 && idGrid==255)
+                 ||(idCenter==85 && idModel==86 && idGrid==255) )
         {
 
         }

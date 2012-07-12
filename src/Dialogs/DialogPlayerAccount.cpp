@@ -33,6 +33,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "boatReal.h"
 #include "Util.h"
 #include "settings.h"
+#include <QTranslator>
+#include <QCoreApplication>
 
 
 DialogPlayerAccount::DialogPlayerAccount(Projection * proj, MainWindow * main,
@@ -57,6 +59,10 @@ DialogPlayerAccount::DialogPlayerAccount(Projection * proj, MainWindow * main,
     connect(this,SIGNAL(delPlayer(Player*)),parent,SLOT(slot_delPlayer_list(Player*)));
 
     connect(this,SIGNAL(playerSelected(Player*)),parent,SLOT(slot_playerSelected(Player*)));
+    if(!parent->getIsStartingUp())
+        lang->hide();
+    else
+        connect(fr,SIGNAL(toggled(bool)),this,SLOT(slot_langChanged(bool)));
 }
 
 void DialogPlayerAccount::initList(QList<Player*> * player_list)
@@ -98,8 +104,48 @@ void DialogPlayerAccount::initList(QList<Player*> * player_list)
         list_player->setCurrentRow(0);
         slot_selectItem_player(list_player->currentItem());
     }
-
+    if(list_player->count()>0)
+        this->lang->hide();
     updBtnAndString();
+}
+void DialogPlayerAccount::slot_langChanged(bool frSelected)
+{
+    if(frSelected)
+        Settings::setSetting("appLanguage", "fr");
+    else
+        Settings::setSetting("appLanguage", "en");
+    QTranslator translator;
+    QTranslator translatorQt;
+    QString langage = Settings::getSetting("appLanguage", "none").toString();
+    if (langage == "none") {  // first call
+        qWarning() << "Setting default lang=fr";
+        langage = "fr";
+        Settings::setSetting("appLanguage", langage);
+    }
+
+    if (langage == "fr") {
+        qWarning() << "Loading fr";
+        translator.load( QString("tr/qtVlm_") + langage);
+        QCoreApplication::removeTranslator(&translator);
+        QLocale::setDefault(QLocale("fr_FR"));
+        translator.load( QString("qtVlm_") + langage,"tr/");
+        translatorQt.load( QString("qt_fr"),"tr/");
+        QCoreApplication::installTranslator(&translatorQt);
+        QCoreApplication::installTranslator(&translator);
+    }
+    else if (langage == "en") {
+        qWarning() << "Loading en";
+        translator.load( QString("qtVlm_") + langage,"tr/");
+        translatorQt.load( QString("qt_fr"),"tr/");
+        QCoreApplication::removeTranslator(&translator);
+        QCoreApplication::removeTranslator(&translatorQt);
+        QLocale::setDefault(QLocale("en_US"));
+        translator.load( QString("tr/qtVlm_") + langage);
+        QCoreApplication::installTranslator(&translator);
+    }
+    this->retranslateUi(this);
+    accDialog.retranslateUi(&accDialog);
+    main->setRestartNeeded();
 }
 
 void DialogPlayerAccount::done(int result)
@@ -108,6 +154,13 @@ void DialogPlayerAccount::done(int result)
     Settings::setSetting(this->objectName()+".width",this->width());
     if(result == QDialog::Accepted)
     {
+        if(list_player->count()==0)
+        {
+            QMessageBox::critical(parent,tr("Gestion des comptes"),
+                                  tr("Aucun compte cree"));
+            return;
+        }
+
         /* sync players */
         player_list->clear();
 
@@ -567,15 +620,6 @@ DialogParamAccount::DialogParamAccount(QWidget * parent): QDialog(parent)
     setupUi(this);
     edit_login->setText(QString());
     edit_pass->setText(QString());
-
-#if 1
-    type_cb->show();
-    type_label->show();
-    type_cb->setCurrentIndex(0);
-#else
-    type_cb->hide();
-    type_label->hide();
-#endif
 }
 
 bool DialogParamAccount::initDialog(player_data * data)
@@ -584,9 +628,16 @@ bool DialogParamAccount::initDialog(player_data * data)
         return false;
     edit_login->setText(data->login);
     edit_pass->setText(data->pass);
+    connect(vlmBoat,SIGNAL(toggled(bool)),this,SLOT(slot_typeChanged(bool)));
+    connect(this->edit_login,SIGNAL(textChanged(QString)),this,SLOT(slot_loginPassChanged(QString)));
+    connect(this->edit_pass,SIGNAL(textChanged(QString)),this,SLOT(slot_loginPassChanged(QString)));
 #if 1
-    type_cb->setCurrentIndex(data->type);
+    vlmBoat->setChecked(data->type==BOAT_VLM);
     edit_pass->setEnabled(data->type==BOAT_VLM);
+    edit_pass->setHidden(realBoat->isChecked());
+    labelBoatName->setText(vlmBoat->isChecked()?tr("Identifiant"):tr("Nom du bateau"));
+    labelPass->setHidden(realBoat->isChecked());
+    slot_loginPassChanged(QString());
 #endif
 
     if(exec()==QDialog::Accepted)
@@ -594,7 +645,7 @@ bool DialogParamAccount::initDialog(player_data * data)
         data->login=edit_login->text();
         data->pass=edit_pass->text();
 #if 1
-        data->type=type_cb->currentIndex();
+        data->type=vlmBoat->isChecked()?BOAT_VLM:BOAT_REAL;
 #else
         data->type=BOAT_VLM;
 #endif
@@ -603,7 +654,18 @@ bool DialogParamAccount::initDialog(player_data * data)
     return false;
 }
 
-void DialogParamAccount::slot_typeChanged(int)
+void DialogParamAccount::slot_typeChanged(bool)
 {
-    edit_pass->setEnabled(type_cb->currentIndex()==BOAT_VLM);
+    edit_pass->setEnabled(vlmBoat->isChecked());
+    labelBoatName->setText(vlmBoat->isChecked()?tr("Identifiant"):tr("Nom du bateau"));
+    edit_pass->setHidden(realBoat->isChecked());
+    labelPass->setHidden(realBoat->isChecked());
+    slot_loginPassChanged(QString());
+}
+void DialogParamAccount::slot_loginPassChanged(QString)
+{
+    if(vlmBoat->isChecked())
+        this->buttonBox->button(QDialogButtonBox::Ok)->setDisabled((edit_login->text().isEmpty() || edit_pass->text().isEmpty()));
+    else
+        this->buttonBox->button(QDialogButtonBox::Ok)->setDisabled((edit_login->text().isEmpty()));
 }

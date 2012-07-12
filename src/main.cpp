@@ -60,6 +60,8 @@ int main(int argc, char *argv[])
 int main(int argc, char *argv[])
 {
 #endif
+    int currentExitCode=0;
+    do{
     QApplication app(argc, argv);
     qsrand(QTime::currentTime().msec());
     QString appExeFolder=QApplication::applicationDirPath();
@@ -126,16 +128,28 @@ int main(int argc, char *argv[])
         app.installTranslator(&translator);
     }
     app.setQuitOnLastWindowClosed(true);
-    
+
     MainWindow win(800, 600);
+    if(win.getRestartNeeded())
+    {
+        app.quit();
+        continue;
+    }
     if(win.getFinishStart())
     {
         win.show();
-    
+
         app.installTranslator(NULL);
 
-        return app.exec();
+        currentExitCode= app.exec();
+        break;
     }
     else
-        return 0;
+    {
+        app.quit();
+        currentExitCode= 0;
+        break;
+    }
+    }while (true);
+    return currentExitCode;
 }
