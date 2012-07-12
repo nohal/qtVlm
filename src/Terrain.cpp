@@ -47,6 +47,7 @@ Copyright (C) 2008 - Jacques Zaninetti - http://zygrib.free.fr
 //---------------------------------------------------------
 Terrain::Terrain(myCentralWidget *parent, Projection *proj_) : QGraphicsWidget()
 {
+    busy=false;
     this->parent=parent;
     proj = proj_;
     connect(proj,SIGNAL(projectionUpdated()),this,SLOT(redrawAll()));
@@ -163,6 +164,8 @@ void Terrain::draw_GSHHSandGRIB()
 //        gshhsReader->drawSeaBorders(pnt, proj);
 //        return;
 //    }
+    if(busy) return;
+    busy=true;
     QCursor oldcursor = cursor();
     setCursor(Qt::WaitCursor);
     if (imgAll != NULL) {
@@ -306,6 +309,7 @@ void Terrain::draw_GSHHSandGRIB()
     pnt.drawText(5, 8+Fsize.height()/2, cartouche);// forecast validity date
 
     setCursor(oldcursor);
+    busy=false;
 }
 
 void Terrain::drawGrib(QPainter &pnt, Grib *gribPlot)

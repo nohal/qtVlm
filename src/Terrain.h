@@ -180,6 +180,7 @@ private:
     void updateRoutine(void);
     bool isWaiting;
     bool mustRestart;
+    bool busy;
 };
 
 #endif
