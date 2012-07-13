@@ -689,13 +689,19 @@ void Terrain::indicateWaitingMap()
 {
     if(imgAll!=NULL && imgAll->paintingActive())
     {
-        qWarning()<<"painting active in indicateWaitingMap()";
+        qWarning()<<"painting active in indicateWaitingMap()(1)";
         toBeRestarted=true;
         return;
     }
     if(imgAll!=NULL)
     {
-        QPainter pnt_1(imgAll);
+        QPainter pnt_1;
+        if(!pnt_1.begin(imgAll))
+        {
+            qWarning()<<"painting active in indicateWaitingMap()(2)";
+            toBeRestarted=true;
+            return;
+        }
         pnt_1.setRenderHint(QPainter::Antialiasing, true);
         QFont fontWait("Helvetica", 12, QFont::Bold, true);
         QFontMetrics fmet(fontWait);
