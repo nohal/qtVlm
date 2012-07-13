@@ -47,7 +47,8 @@ Copyright (C) 2008 - Jacques Zaninetti - http://zygrib.free.fr
 //---------------------------------------------------------
 Terrain::Terrain(myCentralWidget *parent, Projection *proj_) : QGraphicsWidget()
 {
-    busy=false;
+    mutex= new QMutex(QMutex::Recursive);
+    mutex->unlock();
     this->parent=parent;
     proj = proj_;
     connect(proj,SIGNAL(projectionUpdated()),this,SLOT(redrawAll()));
@@ -100,8 +101,6 @@ Terrain::Terrain(myCentralWidget *parent, Projection *proj_) : QGraphicsWidget()
     isEarthMapValid = false;
     isWindMapValid  = false;
     mustRedraw = true;
-    isWaiting=false;
-    mustRestart=false;
 
     gshhsReader = NULL;
     gisReader = new GisReader();
@@ -164,8 +163,6 @@ void Terrain::draw_GSHHSandGRIB()
 //        gshhsReader->drawSeaBorders(pnt, proj);
 //        return;
 //    }
-    if(busy) return;
-    busy=true;
     QCursor oldcursor = cursor();
     setCursor(Qt::WaitCursor);
     if (imgAll != NULL) {
@@ -309,7 +306,6 @@ void Terrain::draw_GSHHSandGRIB()
     pnt.drawText(5, 8+Fsize.height()/2, cartouche);// forecast validity date
 
     setCursor(oldcursor);
-    busy=false;
 }
 
 void Terrain::drawGrib(QPainter &pnt, Grib *gribPlot)
@@ -692,12 +688,7 @@ void Terrain::paint(QPainter * pnt, const QStyleOptionGraphicsItem * , QWidget *
 
 void Terrain::indicateWaitingMap()
 {
-    if(isWaiting)
-    {
-        mustRestart=true;
-        return;
-    }
-    isWaiting=true;
+    mutex->lock();
     if(imgAll!=NULL)
     {
         QPainter pnt_1(imgAll);
@@ -714,59 +705,19 @@ void Terrain::indicateWaitingMap()
         rect.moveTo(20,20);
         pnt_1.drawRect(rect);
         pnt_1.drawText(rect, Qt::AlignHCenter|Qt::AlignVCenter , txt);
-        if(mustRestart)
-        {
-            mustRestart=false;
-            mustRedraw=true;
-            isEarthMapValid = false;
-            isWindMapValid = false;
-            isWaiting=false;
-            indicateWaitingMap();
-            return;
-        }
         updateRoutine();
-        if(mustRestart)
-        {
-            mustRestart=false;
-            mustRedraw=true;
-            isEarthMapValid = false;
-            isWindMapValid = false;
-            isWaiting=false;
-            indicateWaitingMap();
-            return;
-        }
+        pnt_1.end();
    }
    if (mustRedraw  ||  !isEarthMapValid  || !isWindMapValid)
    {
         draw_GSHHSandGRIB();
-        if(mustRestart)
-        {
-            mustRestart=false;
-            isEarthMapValid = false;
-            isWindMapValid = false;
-            mustRedraw=true;
-            isWaiting=false;
-            indicateWaitingMap();
-            return;
-        }
         isEarthMapValid = true;
         isWindMapValid = true;
         mustRedraw = false;
     }
     updateRoutine();
-    if(mustRestart)
-    {
-        mustRestart=false;
-        mustRedraw=true;
-        isWaiting=false;
-        isEarthMapValid = false;
-        isWindMapValid = false;
-        indicateWaitingMap();
-        return;
-    }
-    isWaiting=false;
-    mustRestart=false;
     mustRedraw = false;
+    mutex->unlock();
 }
 void Terrain::updateRoutine()
 {

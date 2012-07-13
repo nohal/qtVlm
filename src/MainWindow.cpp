@@ -692,7 +692,7 @@ MainWindow::~MainWindow()
 
 }
 
-void MainWindow::keyPressEvent ( QKeyEvent * event )
+void MainWindow::keyPressEvent ( QKeyEvent  * /* event */ )
 {
     //qWarning() << "Key pressed in main: " << event->key();
 }

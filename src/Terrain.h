@@ -30,6 +30,7 @@ Copyright (C) 2008 - Jacques Zaninetti - http://zygrib.free.fr
 #include <QPainter>
 #include <QToolBar>
 #include <QBitmap>
+#include <QMutex>
 
 #include "class_list.h"
 
@@ -178,9 +179,7 @@ private:
     void drawGrib(QPainter &pnt, Grib *gribPlot);
     void indicateWaitingMap(void);
     void updateRoutine(void);
-    bool isWaiting;
-    bool mustRestart;
-    bool busy;
+    QMutex * mutex;
 };
 
 #endif
