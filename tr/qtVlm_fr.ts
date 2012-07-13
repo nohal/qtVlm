@@ -510,11 +510,11 @@ La boîte à cocher trace partielle s&apos;active apres l&apos;entree d&apos;un 
     <name>DialogParamAccount</name>
     <message>
         <source>Identifiant</source>
-        <translation></translation>
+        <translation type="obsolete">Identifiant</translation>
     </message>
     <message>
         <source>Nom du bateau</source>
-        <translation></translation>
+        <translation type="obsolete">Nom du bateau</translation>
     </message>
 </context>
 <context>
@@ -712,6 +712,18 @@ Continuer la sauvegarde?</source>
     <message>
         <source>Aucun compte cree</source>
         <translation>Aucun compte créé</translation>
+    </message>
+    <message>
+        <source>Mise a jour</source>
+        <translation>Mise à jour</translation>
+    </message>
+    <message>
+        <source>Bateau reel</source>
+        <translation>Bateau réel</translation>
+    </message>
+    <message>
+        <source>Details du compte</source>
+        <translation>Détails du compte</translation>
     </message>
 </context>
 <context>
@@ -5895,15 +5907,15 @@ Voulez-vous egalement supprimer tous les POIs lui appartenant?</source>
     <name>paramAccount</name>
     <message>
         <source>Paramétrage Compte</source>
-        <translation></translation>
+        <translation>Paramétrage Compte</translation>
     </message>
     <message>
         <source>Identifiant</source>
-        <translation></translation>
+        <translation>Identifiant</translation>
     </message>
     <message>
         <source>Mot de passe</source>
-        <translation></translation>
+        <translation>Mot de passe</translation>
     </message>
     <message>
         <source>Type of boat</source>
@@ -6075,27 +6087,27 @@ Voulez-vous egalement supprimer tous les POIs lui appartenant?</source>
     <name>playerAccount</name>
     <message>
         <source>Gestion des comptes</source>
-        <translation></translation>
+        <translation>Gestion des comptes</translation>
     </message>
     <message>
         <source>Id</source>
-        <translation></translation>
+        <translation>Id</translation>
     </message>
     <message>
         <source>Nouveau</source>
-        <translation></translation>
+        <translation>Nouveau</translation>
     </message>
     <message>
         <source>Modifier</source>
-        <translation></translation>
+        <translation>Modifier</translation>
     </message>
     <message>
         <source>Mise a jour</source>
-        <translation></translation>
+        <translation>Mise à jour</translation>
     </message>
     <message>
         <source>Supprimer</source>
-        <translation></translation>
+        <translation>Supprimer</translation>
     </message>
     <message>
         <source>nb boat</source>
@@ -6115,7 +6127,7 @@ Voulez-vous egalement supprimer tous les POIs lui appartenant?</source>
     </message>
     <message>
         <source>English</source>
-        <translation></translation>
+        <translation>English</translation>
     </message>
 </context>
 <context>

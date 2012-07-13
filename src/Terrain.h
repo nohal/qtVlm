@@ -179,7 +179,7 @@ private:
     void drawGrib(QPainter &pnt, Grib *gribPlot);
     void indicateWaitingMap(void);
     void updateRoutine(void);
-    QMutex * mutex;
+    bool toBeRestarted;
 };
 
 #endif

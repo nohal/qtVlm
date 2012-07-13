@@ -675,16 +675,12 @@ La bo�te � cocher trace partielle s&apos;active apres l&apos;entree d&apos;u
 <context>
     <name>DialogParamAccount</name>
     <message>
-        <location filename="../src/Dialogs/DialogPlayerAccount.cpp" line="638"/>
-        <location filename="../src/Dialogs/DialogPlayerAccount.cpp" line="660"/>
         <source>Identifiant</source>
-        <translation>Login</translation>
+        <translation type="obsolete">Login</translation>
     </message>
     <message>
-        <location filename="../src/Dialogs/DialogPlayerAccount.cpp" line="638"/>
-        <location filename="../src/Dialogs/DialogPlayerAccount.cpp" line="660"/>
         <source>Nom du bateau</source>
-        <translation>Boat name</translation>
+        <translation type="obsolete">Boat name</translation>
     </message>
 </context>
 <context>
@@ -887,9 +883,9 @@ Continuer la sauvegarde?</source>
         <translation type="obsolete">Error during account loading, actual account disappeared, restart qtVlm</translation>
     </message>
     <message>
-        <location filename="../src/Dialogs/DialogPlayerAccount.cpp" line="354"/>
-        <location filename="../src/Dialogs/DialogPlayerAccount.cpp" line="363"/>
-        <location filename="../src/Dialogs/DialogPlayerAccount.cpp" line="370"/>
+        <location filename="../src/Dialogs/DialogPlayerAccount.cpp" line="356"/>
+        <location filename="../src/Dialogs/DialogPlayerAccount.cpp" line="365"/>
+        <location filename="../src/Dialogs/DialogPlayerAccount.cpp" line="372"/>
         <source>Suppression de compte</source>
         <translation>Delete account</translation>
     </message>
@@ -898,12 +894,12 @@ Continuer la sauvegarde?</source>
         <translation type="obsolete">Do you want to delete this account</translation>
     </message>
     <message>
-        <location filename="../src/Dialogs/DialogPlayerAccount.cpp" line="355"/>
+        <location filename="../src/Dialogs/DialogPlayerAccount.cpp" line="357"/>
         <source>Ce compte possede un bateau utilise dans une route.&lt;br&gt;Impossible de supprimer ce compte.</source>
         <translation>This account owns a boat used in a route.&lt;br&gt;Impossible to delete this account.</translation>
     </message>
     <message>
-        <location filename="../src/Dialogs/DialogPlayerAccount.cpp" line="364"/>
+        <location filename="../src/Dialogs/DialogPlayerAccount.cpp" line="366"/>
         <source>Ce compte possede un bateau utilise dans un routage.&lt;br&gt;Impossible de supprimer ce compte.</source>
         <translation>This account owns a boat used in a routing.&lt;br&gt;Impossible to delete this account.</translation>
     </message>
@@ -916,7 +912,7 @@ Continuer la sauvegarde?</source>
         <translation type="obsolete">Updating account</translation>
     </message>
     <message>
-        <location filename="../src/Dialogs/DialogPlayerAccount.cpp" line="419"/>
+        <location filename="../src/Dialogs/DialogPlayerAccount.cpp" line="421"/>
         <source>Mise a jour de compte</source>
         <translation>Updating account</translation>
     </message>
@@ -925,42 +921,57 @@ Continuer la sauvegarde?</source>
         <translation type="obsolete">Updating account for</translation>
     </message>
     <message>
-        <location filename="../src/Dialogs/DialogPlayerAccount.cpp" line="159"/>
+        <location filename="../src/Dialogs/DialogPlayerAccount.cpp" line="123"/>
+        <source>Mise a jour</source>
+        <translation>Mise à jour</translation>
+    </message>
+    <message>
+        <location filename="../src/Dialogs/DialogPlayerAccount.cpp" line="132"/>
+        <source>Bateau reel</source>
+        <translation>Bateau réel</translation>
+    </message>
+    <message>
+        <location filename="../src/Dialogs/DialogPlayerAccount.cpp" line="133"/>
+        <source>Details du compte</source>
+        <translation>Détails du compte</translation>
+    </message>
+    <message>
+        <location filename="../src/Dialogs/DialogPlayerAccount.cpp" line="162"/>
         <source>Gestion des comptes</source>
         <translation>Accounts management</translation>
     </message>
     <message>
-        <location filename="../src/Dialogs/DialogPlayerAccount.cpp" line="160"/>
+        <location filename="../src/Dialogs/DialogPlayerAccount.cpp" line="163"/>
         <source>Aucun compte cree</source>
         <translation>No account created</translation>
     </message>
     <message>
-        <location filename="../src/Dialogs/DialogPlayerAccount.cpp" line="371"/>
+        <location filename="../src/Dialogs/DialogPlayerAccount.cpp" line="373"/>
         <source>La suppression est definitive&lt;br&gt;Voulez-vous VRAIMENT supprimer le compte </source>
         <translation>Deletion is not reversible&lt;br&gt;Do you REALLY want to delete the account </translation>
     </message>
     <message>
-        <location filename="../src/Dialogs/DialogPlayerAccount.cpp" line="420"/>
+        <location filename="../src/Dialogs/DialogPlayerAccount.cpp" line="422"/>
         <source>Mise a jour du compte en cours pour </source>
         <translation>Updating account for </translation>
     </message>
     <message>
-        <location filename="../src/Dialogs/DialogPlayerAccount.cpp" line="563"/>
+        <location filename="../src/Dialogs/DialogPlayerAccount.cpp" line="565"/>
         <source>NO NAME ?</source>
         <translation>NO NAME ?</translation>
     </message>
     <message>
-        <location filename="../src/Dialogs/DialogPlayerAccount.cpp" line="572"/>
+        <location filename="../src/Dialogs/DialogPlayerAccount.cpp" line="574"/>
         <source>Pas de bateau</source>
         <translation>No boat</translation>
     </message>
     <message>
-        <location filename="../src/Dialogs/DialogPlayerAccount.cpp" line="576"/>
+        <location filename="../src/Dialogs/DialogPlayerAccount.cpp" line="578"/>
         <source>1 bateau</source>
         <translation>1 boat</translation>
     </message>
     <message>
-        <location filename="../src/Dialogs/DialogPlayerAccount.cpp" line="578"/>
+        <location filename="../src/Dialogs/DialogPlayerAccount.cpp" line="580"/>
         <source>bateaux</source>
         <translation>boats</translation>
     </message>
@@ -5116,17 +5127,17 @@ Voulez-vous egalement supprimer tous les POIs lui appartenant?</source>
         <translation type="obsolete">Name</translation>
     </message>
     <message>
-        <location filename="../src/Ui/Route_Editor.ui" line="135"/>
+        <location filename="../src/Ui/Route_Editor.ui" line="138"/>
         <source>Point de depart de la route</source>
         <translation>Starting point of route</translation>
     </message>
     <message>
-        <location filename="../src/Ui/Route_Editor.ui" line="141"/>
+        <location filename="../src/Ui/Route_Editor.ui" line="144"/>
         <source>Du bateau</source>
         <translation>From boat</translation>
     </message>
     <message>
-        <location filename="../src/Ui/Route_Editor.ui" line="151"/>
+        <location filename="../src/Ui/Route_Editor.ui" line="154"/>
         <source>Depuis la 1ere marque</source>
         <translation>From 1st mark</translation>
     </message>
@@ -5136,22 +5147,22 @@ Voulez-vous egalement supprimer tous les POIs lui appartenant?</source>
         <translation>OK</translation>
     </message>
     <message>
-        <location filename="../src/Ui/Route_Editor.ui" line="91"/>
+        <location filename="../src/Ui/Route_Editor.ui" line="94"/>
         <source>Simplifie la route en supprimant les POIs qui ne changent pas l&apos;eta finale.</source>
         <translation>Simplify route removing POIs but without changing final ETA.</translation>
     </message>
     <message>
-        <location filename="../src/Ui/Route_Editor.ui" line="94"/>
+        <location filename="../src/Ui/Route_Editor.ui" line="97"/>
         <source>Simplifier</source>
         <translation>Simplify</translation>
     </message>
     <message>
-        <location filename="../src/Ui/Route_Editor.ui" line="122"/>
+        <location filename="../src/Ui/Route_Editor.ui" line="125"/>
         <source>Annuler</source>
         <translation>Cancel</translation>
     </message>
     <message>
-        <location filename="../src/Ui/Route_Editor.ui" line="215"/>
+        <location filename="../src/Ui/Route_Editor.ui" line="218"/>
         <source>Taille et couleur</source>
         <translation>Size and color</translation>
     </message>
@@ -5161,12 +5172,12 @@ Voulez-vous egalement supprimer tous les POIs lui appartenant?</source>
         <translation>Route</translation>
     </message>
     <message>
-        <location filename="../src/Ui/Route_Editor.ui" line="323"/>
+        <location filename="../src/Ui/Route_Editor.ui" line="326"/>
         <source>Les cotes invibles a l&apos;ecran ne sont pas prises en compte</source>
         <translation>Coasts not visible on screen are not taken into account</translation>
     </message>
     <message>
-        <location filename="../src/Ui/Route_Editor.ui" line="326"/>
+        <location filename="../src/Ui/Route_Editor.ui" line="329"/>
         <source>Detecter les collisions avec les cotes visibles a l&apos;ecran</source>
         <translation></translation>
     </message>
@@ -5175,7 +5186,7 @@ Voulez-vous egalement supprimer tous les POIs lui appartenant?</source>
         <translation type="obsolete">Use VLM formula for VB-VMG</translation>
     </message>
     <message>
-        <location filename="../src/Ui/Route_Editor.ui" line="161"/>
+        <location filename="../src/Ui/Route_Editor.ui" line="164"/>
         <source>Date et heure de depart de la route</source>
         <translation>Start date and time of route</translation>
     </message>
@@ -5184,17 +5195,17 @@ Voulez-vous egalement supprimer tous les POIs lui appartenant?</source>
         <translation type="obsolete">From last crank</translation>
     </message>
     <message>
-        <location filename="../src/Ui/Route_Editor.ui" line="177"/>
+        <location filename="../src/Ui/Route_Editor.ui" line="180"/>
         <source>Depuis la date du grib</source>
         <translation>From GRIB date</translation>
     </message>
     <message>
-        <location filename="../src/Ui/Route_Editor.ui" line="184"/>
+        <location filename="../src/Ui/Route_Editor.ui" line="187"/>
         <source>Date fixe</source>
         <translation>Fixed date</translation>
     </message>
     <message>
-        <location filename="../src/Ui/Route_Editor.ui" line="223"/>
+        <location filename="../src/Ui/Route_Editor.ui" line="226"/>
         <source>Options</source>
         <translation>Options</translation>
     </message>
@@ -5204,7 +5215,7 @@ Voulez-vous egalement supprimer tous les POIs lui appartenant?</source>
         <translation>Name</translation>
     </message>
     <message>
-        <location filename="../src/Ui/Route_Editor.ui" line="316"/>
+        <location filename="../src/Ui/Route_Editor.ui" line="319"/>
         <source>Figer la route</source>
         <translation>Freeze route</translation>
     </message>
@@ -5217,77 +5228,77 @@ Voulez-vous egalement supprimer tous les POIs lui appartenant?</source>
         <translation type="obsolete">Recalculate route simultaneously POIs movements</translation>
     </message>
     <message>
-        <location filename="../src/Ui/Route_Editor.ui" line="246"/>
+        <location filename="../src/Ui/Route_Editor.ui" line="249"/>
         <source>Cacher les POIs intermediaires</source>
         <translation>Hide intermediates POIs</translation>
     </message>
     <message>
-        <location filename="../src/Ui/Route_Editor.ui" line="253"/>
+        <location filename="../src/Ui/Route_Editor.ui" line="256"/>
         <source>Nbre de vac par pas de calcul</source>
         <translation>Crank nb per calculation step</translation>
     </message>
     <message>
-        <location filename="../src/Ui/Route_Editor.ui" line="239"/>
+        <location filename="../src/Ui/Route_Editor.ui" line="242"/>
         <source>Cacher la route et tous ses POIs</source>
         <translation>Hide route and all her POIs</translation>
     </message>
     <message>
-        <location filename="../src/Ui/Route_Editor.ui" line="297"/>
+        <location filename="../src/Ui/Route_Editor.ui" line="300"/>
         <source>Ce bouton a 3 etats, selon que vous utilisez la formule qtVlm, une formule VLM optimisee, ou la formule VLM originale. La formule VLM optimisee donne en principe exactement les memes resultats que la formule non optimisee.</source>
         <translation>This&amp;nbsp;button&amp;nbsp;has&amp;nbsp;3&amp;nbsp;states,&amp;nbsp;depending&amp;nbsp;whether&amp;nbsp;you&amp;nbsp;use&lt;br&gt;qtVlm&amp;nbsp;formula,&amp;nbsp;an&amp;nbsp;optimized&amp;nbsp;version&amp;nbsp;of&amp;nbsp;vbVmg-Vlm,&lt;r&gt;or&amp;nbsp;the&amp;nbsp;orginal&amp;nbsp;vbVmg&amp;nbsp;formula&amp;nbsp;from&amp;nbsp;VLM.&lt;br&gt;Optimized&amp;nbsp;version&amp;nbsp;and&amp;nbsp;original&amp;nbsp;version&amp;nbsp;are&amp;nbsp;supposed&amp;nbsp;to&amp;nbsp;give&lt;br&gt;the&amp;nbsp;same&amp;nbsp;results.</translation>
     </message>
     <message>
-        <location filename="../src/Ui/Route_Editor.ui" line="303"/>
+        <location filename="../src/Ui/Route_Editor.ui" line="306"/>
         <source>Formule VLM pour le VB-VMG</source>
         <translation>VLM formula for VB-VMG</translation>
     </message>
     <message>
-        <location filename="../src/Ui/Route_Editor.ui" line="365"/>
+        <location filename="../src/Ui/Route_Editor.ui" line="368"/>
         <source>Empannages/Virements</source>
         <translation>Tacks/Gybes</translation>
     </message>
     <message>
-        <location filename="../src/Ui/Route_Editor.ui" line="378"/>
+        <location filename="../src/Ui/Route_Editor.ui" line="381"/>
         <source>Pourcentage de la polaire a appliquer pendant une vacation</source>
         <translation>Pourcentage of polar used for one vacation after tack or gybe</translation>
     </message>
     <message>
-        <location filename="../src/Ui/Route_Editor.ui" line="384"/>
+        <location filename="../src/Ui/Route_Editor.ui" line="387"/>
         <source>%</source>
         <translation>%</translation>
     </message>
     <message>
-        <location filename="../src/Ui/Route_Editor.ui" line="336"/>
+        <location filename="../src/Ui/Route_Editor.ui" line="339"/>
         <source>Retirer les POIs avant le WP-VLM</source>
         <translation>Remove POIs before WP-VLM</translation>
     </message>
     <message>
-        <location filename="../src/Ui/Route_Editor.ui" line="343"/>
+        <location filename="../src/Ui/Route_Editor.ui" line="346"/>
         <source>Renseigner le cap a suivre (@) des POIs</source>
         <translation>Add heading info (@) in POIs</translation>
     </message>
     <message>
-        <location filename="../src/Ui/Route_Editor.ui" line="194"/>
+        <location filename="../src/Ui/Route_Editor.ui" line="197"/>
         <source>M/d/yyyy hh:mm:ss</source>
         <translation>MM/dd/yyyy hh:mm:ss</translation>
     </message>
     <message>
-        <location filename="../src/Ui/Route_Editor.ui" line="167"/>
+        <location filename="../src/Ui/Route_Editor.ui" line="170"/>
         <source>A partir de la prochaine vacation</source>
         <translation>From next vacation</translation>
     </message>
     <message>
-        <location filename="../src/Ui/Route_Editor.ui" line="415"/>
+        <location filename="../src/Ui/Route_Editor.ui" line="418"/>
         <source>Pilototo</source>
         <translation>Autopilot</translation>
     </message>
     <message>
-        <location filename="../src/Ui/Route_Editor.ui" line="115"/>
+        <location filename="../src/Ui/Route_Editor.ui" line="118"/>
         <source>Appliquer</source>
         <translation>Apply</translation>
     </message>
     <message>
-        <location filename="../src/Ui/Route_Editor.ui" line="101"/>
+        <location filename="../src/Ui/Route_Editor.ui" line="104"/>
         <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
@@ -5300,77 +5311,77 @@ p, li { white-space: pre-wrap; }
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;Optimize all simplificable POIs by using Simplex Nelder-Mead algoryhm.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../src/Ui/Route_Editor.ui" line="108"/>
+        <location filename="../src/Ui/Route_Editor.ui" line="111"/>
         <source>Optimiser</source>
         <translation>Optimize</translation>
     </message>
     <message>
-        <location filename="../src/Ui/Route_Editor.ui" line="438"/>
+        <location filename="../src/Ui/Route_Editor.ui" line="441"/>
         <source>Envoyer les ordres</source>
         <translation>Send orders</translation>
     </message>
     <message>
-        <location filename="../src/Ui/Route_Editor.ui" line="431"/>
+        <location filename="../src/Ui/Route_Editor.ui" line="434"/>
         <source>Charger automatiquement</source>
         <translation>Load automatically</translation>
     </message>
     <message>
-        <location filename="../src/Ui/Route_Editor.ui" line="424"/>
+        <location filename="../src/Ui/Route_Editor.ui" line="427"/>
         <source>Charger les POIs preselectionnes</source>
         <translation>Load preselected POIs</translation>
     </message>
     <message>
-        <location filename="../src/Ui/Route_Editor.ui" line="472"/>
+        <location filename="../src/Ui/Route_Editor.ui" line="475"/>
         <source>Tableau de marche</source>
         <translation>Route details</translation>
     </message>
     <message>
-        <location filename="../src/Ui/Route_Editor.ui" line="503"/>
+        <location filename="../src/Ui/Route_Editor.ui" line="506"/>
         <source> min</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../src/Ui/Route_Editor.ui" line="493"/>
+        <location filename="../src/Ui/Route_Editor.ui" line="496"/>
         <source>Interval</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../src/Ui/Route_Editor.ui" line="404"/>
+        <location filename="../src/Ui/Route_Editor.ui" line="407"/>
         <source>Afficher infos du point d&apos;interpolation</source>
         <translation>Display interpolation point data</translation>
     </message>
     <message>
-        <location filename="../src/Ui/Route_Editor.ui" line="537"/>
+        <location filename="../src/Ui/Route_Editor.ui" line="540"/>
         <source>Statistiques</source>
         <translation>Statistics</translation>
     </message>
     <message>
-        <location filename="../src/Ui/Route_Editor.ui" line="543"/>
+        <location filename="../src/Ui/Route_Editor.ui" line="546"/>
         <source>Distance orthodromique</source>
         <translation>Orthodromic distance</translation>
     </message>
     <message>
-        <location filename="../src/Ui/Route_Editor.ui" line="560"/>
+        <location filename="../src/Ui/Route_Editor.ui" line="563"/>
         <source>Distance parcourue</source>
         <translation>Route Loch</translation>
     </message>
     <message>
-        <location filename="../src/Ui/Route_Editor.ui" line="577"/>
+        <location filename="../src/Ui/Route_Editor.ui" line="580"/>
         <source>Vitesse moyenne</source>
         <translation>Average speed</translation>
     </message>
     <message>
-        <location filename="../src/Ui/Route_Editor.ui" line="594"/>
+        <location filename="../src/Ui/Route_Editor.ui" line="597"/>
         <source>TWS moyen</source>
         <translation>Average TWS</translation>
     </message>
     <message>
-        <location filename="../src/Ui/Route_Editor.ui" line="631"/>
+        <location filename="../src/Ui/Route_Editor.ui" line="634"/>
         <source>Temps de navigation</source>
         <translation>Navigation time</translation>
     </message>
     <message>
-        <location filename="../src/Ui/Route_Editor.ui" line="638"/>
+        <location filename="../src/Ui/Route_Editor.ui" line="641"/>
         <source>Duree moteur</source>
         <translation>Time with engine</translation>
     </message>
@@ -5450,12 +5461,12 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>Terrain</name>
     <message>
-        <location filename="../src/Terrain.cpp" line="292"/>
+        <location filename="../src/Terrain.cpp" line="291"/>
         <source>Niveau de detail des cotes: </source>
         <translation>Coast detail level: </translation>
     </message>
     <message>
-        <location filename="../src/Terrain.cpp" line="708"/>
+        <location filename="../src/Terrain.cpp" line="707"/>
         <source>Calculs en cours...</source>
         <translation>Calculating...</translation>
     </message>
@@ -8647,17 +8658,17 @@ Voulez-vous egalement supprimer tous les POIs lui appartenant?</source>
     <message>
         <location filename="../src/Ui/paramAccount.ui" line="57"/>
         <source>Type of boat</source>
-        <translation></translation>
+        <translation>Type of boat</translation>
     </message>
     <message>
         <location filename="../src/Ui/paramAccount.ui" line="63"/>
         <source>Real boat</source>
-        <translation></translation>
+        <translation>Real Boat</translation>
     </message>
     <message>
         <location filename="../src/Ui/paramAccount.ui" line="70"/>
         <source>VLM boat</source>
-        <translation></translation>
+        <translation>VLM boat</translation>
     </message>
     <message>
         <source>Type</source>
@@ -9239,28 +9250,28 @@ Voulez-vous egalement supprimer tous les POIs lui appartenant?</source>
         <translation>Default value</translation>
     </message>
     <message>
-        <location filename="../src/Ui/realBoatConfig.ui" line="244"/>
+        <location filename="../src/Ui/realBoatConfig.ui" line="235"/>
         <source>Efficacite</source>
         <translation>Efficiency</translation>
     </message>
     <message>
-        <location filename="../src/Ui/realBoatConfig.ui" line="267"/>
+        <location filename="../src/Ui/realBoatConfig.ui" line="258"/>
         <source> %</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../src/Ui/realBoatConfig.ui" line="283"/>
+        <location filename="../src/Ui/realBoatConfig.ui" line="274"/>
         <source>Moteur si vitesse inferieure a</source>
         <translation>Use engine if boat speed is less than</translation>
     </message>
     <message>
-        <location filename="../src/Ui/realBoatConfig.ui" line="306"/>
-        <location filename="../src/Ui/realBoatConfig.ui" line="345"/>
+        <location filename="../src/Ui/realBoatConfig.ui" line="297"/>
+        <location filename="../src/Ui/realBoatConfig.ui" line="336"/>
         <source> nds</source>
         <translation> kts</translation>
     </message>
     <message>
-        <location filename="../src/Ui/realBoatConfig.ui" line="322"/>
+        <location filename="../src/Ui/realBoatConfig.ui" line="313"/>
         <source>Vitesse au moteur</source>
         <translation>Speed with engine</translation>
     </message>

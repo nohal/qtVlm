@@ -59,6 +59,8 @@ DialogPlayerAccount::DialogPlayerAccount(Projection * proj, MainWindow * main,
     connect(this,SIGNAL(delPlayer(Player*)),parent,SLOT(slot_delPlayer_list(Player*)));
 
     connect(this,SIGNAL(playerSelected(Player*)),parent,SLOT(slot_playerSelected(Player*)));
+    this->en->setChecked(Settings::getSetting("appLanguage","fr").toString()=="en");
+    qWarning()<<"langage is"<<Settings::getSetting("appLanguage","fr").toString();
     if(!parent->getIsStartingUp())
         lang->hide();
     else
@@ -114,37 +116,38 @@ void DialogPlayerAccount::slot_langChanged(bool frSelected)
         Settings::setSetting("appLanguage", "fr");
     else
         Settings::setSetting("appLanguage", "en");
-    QTranslator translator;
-    QTranslator translatorQt;
-    QString langage = Settings::getSetting("appLanguage", "none").toString();
-    if (langage == "none") {  // first call
-        qWarning() << "Setting default lang=fr";
-        langage = "fr";
-        Settings::setSetting("appLanguage", langage);
+    if(frSelected)
+    {
+        this->btn_playerAdd->setText("Nouveau");
+        this->btn_playerChg->setText("Modifier");
+        this->btn_playerUpd->setText(tr("Mise a jour"));
+        this->btn_playerDel->setText("Supprimer");
+        this->pl_data_name->setText("Nom");
+        this->pl_data_nbboat->setText("Nb bateaux");
+        this->setWindowTitle("Gestion des comptes");
+        accDialog.labelBoatName->setText("Identifiant");
+        accDialog.labelPass->setText("Mot de passe");
+        accDialog.groupBox->setTitle("Type de bateau");
+        accDialog.vlmBoat->setText("Bateau VLM");
+        accDialog.realBoat->setText(tr("Bateau reel"));
+        accDialog.setWindowTitle(tr("Details du compte"));
     }
-
-    if (langage == "fr") {
-        qWarning() << "Loading fr";
-        translator.load( QString("tr/qtVlm_") + langage);
-        QCoreApplication::removeTranslator(&translator);
-        QLocale::setDefault(QLocale("fr_FR"));
-        translator.load( QString("qtVlm_") + langage,"tr/");
-        translatorQt.load( QString("qt_fr"),"tr/");
-        QCoreApplication::installTranslator(&translatorQt);
-        QCoreApplication::installTranslator(&translator);
+    else
+    {
+        this->btn_playerAdd->setText("New");
+        this->btn_playerChg->setText("Modify");
+        this->btn_playerUpd->setText("Update");
+        this->btn_playerDel->setText("Delete");
+        this->pl_data_name->setText("Name");
+        this->pl_data_nbboat->setText("Nb boats");
+        this->setWindowTitle("Accounts management");
+        accDialog.labelBoatName->setText("Login");
+        accDialog.labelPass->setText("Password");
+        accDialog.groupBox->setTitle("Type of boat");
+        accDialog.vlmBoat->setText("VLM boat");
+        accDialog.realBoat->setText("Real boat");
+        accDialog.setWindowTitle("Account details");
     }
-    else if (langage == "en") {
-        qWarning() << "Loading en";
-        translator.load( QString("qtVlm_") + langage,"tr/");
-        translatorQt.load( QString("qt_fr"),"tr/");
-        QCoreApplication::removeTranslator(&translator);
-        QCoreApplication::removeTranslator(&translatorQt);
-        QLocale::setDefault(QLocale("en_US"));
-        translator.load( QString("tr/qtVlm_") + langage);
-        QCoreApplication::installTranslator(&translator);
-    }
-    this->retranslateUi(this);
-    accDialog.retranslateUi(&accDialog);
     main->setRestartNeeded();
 }
 
@@ -322,7 +325,6 @@ void DialogPlayerAccount::slot_modPlayer(void)
         qWarning() << "Modification annulée";
     }
     delete data;
-
 }
 
 void DialogPlayerAccount::slot_delPlayer(void)
@@ -620,6 +622,7 @@ DialogParamAccount::DialogParamAccount(QWidget * parent): QDialog(parent)
     setupUi(this);
     edit_login->setText(QString());
     edit_pass->setText(QString());
+    //this->retranslateUi(this);
 }
 
 bool DialogParamAccount::initDialog(player_data * data)
@@ -635,7 +638,14 @@ bool DialogParamAccount::initDialog(player_data * data)
     vlmBoat->setChecked(data->type==BOAT_VLM);
     edit_pass->setEnabled(data->type==BOAT_VLM);
     edit_pass->setHidden(realBoat->isChecked());
-    labelBoatName->setText(vlmBoat->isChecked()?tr("Identifiant"):tr("Nom du bateau"));
+    QString s1="Identifiant";
+    QString s2="Nom du bateau";
+    if(Settings::getSetting("appLanguage", "en").toString()=="en")
+    {
+        s1="Login";
+        s2="Boat name";
+    }
+    labelBoatName->setText(vlmBoat->isChecked()?s1:s2);
     labelPass->setHidden(realBoat->isChecked());
     slot_loginPassChanged(QString());
 #endif
@@ -657,7 +667,14 @@ bool DialogParamAccount::initDialog(player_data * data)
 void DialogParamAccount::slot_typeChanged(bool)
 {
     edit_pass->setEnabled(vlmBoat->isChecked());
-    labelBoatName->setText(vlmBoat->isChecked()?tr("Identifiant"):tr("Nom du bateau"));
+    QString s1="Identifiant";
+    QString s2="Nom du bateau";
+    if(Settings::getSetting("appLanguage", "en").toString()=="en")
+    {
+        s1="Login";
+        s2="Boat name";
+    }
+    labelBoatName->setText(vlmBoat->isChecked()?s1:s2);
     edit_pass->setHidden(realBoat->isChecked());
     labelPass->setHidden(realBoat->isChecked());
     slot_loginPassChanged(QString());

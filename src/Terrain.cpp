@@ -47,8 +47,7 @@ Copyright (C) 2008 - Jacques Zaninetti - http://zygrib.free.fr
 //---------------------------------------------------------
 Terrain::Terrain(myCentralWidget *parent, Projection *proj_) : QGraphicsWidget()
 {
-    mutex= new QMutex(QMutex::Recursive);
-    mutex->unlock();
+    toBeRestarted=false;
     this->parent=parent;
     proj = proj_;
     connect(proj,SIGNAL(projectionUpdated()),this,SLOT(redrawAll()));
@@ -688,7 +687,12 @@ void Terrain::paint(QPainter * pnt, const QStyleOptionGraphicsItem * , QWidget *
 
 void Terrain::indicateWaitingMap()
 {
-    mutex->lock();
+    if(imgAll!=NULL && imgAll->paintingActive())
+    {
+        qWarning()<<"painting active in indicateWaitingMap()";
+        toBeRestarted=true;
+        return;
+    }
     if(imgAll!=NULL)
     {
         QPainter pnt_1(imgAll);
@@ -717,7 +721,14 @@ void Terrain::indicateWaitingMap()
     }
     updateRoutine();
     mustRedraw = false;
-    mutex->unlock();
+    if(toBeRestarted)
+    {
+        toBeRestarted=false;
+        isEarthMapValid = true;
+        isWindMapValid = true;
+        mustRedraw = false;
+        this->indicateWaitingMap();
+    }
 }
 void Terrain::updateRoutine()
 {
