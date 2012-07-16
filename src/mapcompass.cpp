@@ -352,12 +352,16 @@ void  mapCompass::paint(QPainter * pnt, const QStyleOptionGraphicsItem * , QWidg
         QPolygonF polyRed(0);
         pen.setColor(Qt::red);
         pnt->setPen(pen);
-        for (int n=0;n<=qRound(bvmg_up);n++)
-            polyRed.append(poly[qRound(360-bvmg_up)+n]);
-        for (int n=0;n<=qRound(bvmg_up);n++)
+        int maxValue=qRound(bvmg_up);
+        int offset=qRound(360.0-bvmg_up);
+        if(maxValue+offset>360) maxValue--;
+        for (int n=0;n<=maxValue;n++)
+            polyRed.append(poly[offset+n]);
+        for (int n=0;n<=maxValue;n++)
             polyRed.append(poly[n]);
         pnt->drawPolyline(polyRed);
-        polyRed.resize(0);
+
+        polyRed.resize(0);       
         for (int n=0;n<=qRound(180-bvmg_down);n++)
             polyRed.append(poly[qRound(bvmg_down)+n]);
         for (int n=0;n<=qRound(180-bvmg_down);n++)
