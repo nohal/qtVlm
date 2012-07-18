@@ -1764,7 +1764,7 @@ Etes-vous sur ?</source>
     </message>
     <message>
         <location filename="../src/MainWindow.cpp" line="473"/>
-        <location filename="../src/MainWindow.cpp" line="732"/>
+        <location filename="../src/MainWindow.cpp" line="736"/>
         <source>Erreur</source>
         <translation>Error</translation>
     </message>
@@ -1785,7 +1785,7 @@ Etes-vous sur ?</source>
         <translation type="obsolete">File :</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="734"/>
+        <location filename="../src/MainWindow.cpp" line="738"/>
         <source>Echec lors de l&apos;ouverture.</source>
         <translation>Error during opening.</translation>
     </message>
@@ -1794,12 +1794,12 @@ Etes-vous sur ?</source>
         <translation type="obsolete">File can&apos;t be opened,</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="736"/>
+        <location filename="../src/MainWindow.cpp" line="740"/>
         <source>ou ce n&apos;est pas un fichier GRIB,</source>
         <translation>or it&apos;s NOT a GRIB file,</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="737"/>
+        <location filename="../src/MainWindow.cpp" line="741"/>
         <source>ou le fichier est corrompu,</source>
         <translation>or file is corrupt,</translation>
     </message>
@@ -1817,17 +1817,17 @@ Etes-vous sur ?</source>
         <translation>Check program installation.</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="735"/>
+        <location filename="../src/MainWindow.cpp" line="739"/>
         <source>Le fichier ne peut pas etre ouvert,</source>
         <translation>File can&apos;t be opened,</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="738"/>
+        <location filename="../src/MainWindow.cpp" line="742"/>
         <source>ou il contient des donnees non reconnues,</source>
         <translation>or it contains unrecognized data,</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="739"/>
+        <location filename="../src/MainWindow.cpp" line="743"/>
         <source>ou...</source>
         <translation>or...</translation>
     </message>
@@ -1836,12 +1836,12 @@ Etes-vous sur ?</source>
         <translation type="obsolete">qtVlm</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="865"/>
+        <location filename="../src/MainWindow.cpp" line="869"/>
         <source>A propos</source>
         <translation>About</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="866"/>
+        <location filename="../src/MainWindow.cpp" line="870"/>
         <source>qtVlm : GUI pour Virtual loup de mer</source>
         <translation>qtVlm : GUI for Virtual loup de mer</translation>
     </message>
@@ -1867,33 +1867,33 @@ Etes-vous sur ?</source>
         <translation>Maps not found.</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="724"/>
+        <location filename="../src/MainWindow.cpp" line="728"/>
         <source> (du </source>
         <translation> (from </translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="725"/>
-        <location filename="../src/MainWindow.cpp" line="726"/>
+        <location filename="../src/MainWindow.cpp" line="729"/>
+        <location filename="../src/MainWindow.cpp" line="730"/>
         <source>dd/MM/yyyy hh:mm:ss</source>
         <translation>MM-dd-yyyy hh:mm:ss</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="725"/>
+        <location filename="../src/MainWindow.cpp" line="729"/>
         <source> au </source>
         <translation> to </translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="733"/>
+        <location filename="../src/MainWindow.cpp" line="737"/>
         <source>Fichier : </source>
         <translation>File :</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="869"/>
+        <location filename="../src/MainWindow.cpp" line="873"/>
         <source>Version : </source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="871"/>
+        <location filename="../src/MainWindow.cpp" line="875"/>
         <source>Licence : GNU GPL v3</source>
         <translation>Licence : GNU GPL v3</translation>
     </message>
@@ -1902,7 +1902,7 @@ Etes-vous sur ?</source>
         <translation type="obsolete">http://qtvlm.sf.net</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="874"/>
+        <location filename="../src/MainWindow.cpp" line="878"/>
         <source>Grib part is originaly from zygrib project</source>
         <translation>Grib part is originally from zygrib project</translation>
     </message>
@@ -1911,103 +1911,103 @@ Etes-vous sur ?</source>
         <translation type="obsolete">http://www.zygrib.org</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="903"/>
+        <location filename="../src/MainWindow.cpp" line="907"/>
         <source>Fichiers GRIB (*.grb *.grib *.grb.bz2 *.grib.bz2 *.grb.gz *.grib.gz)</source>
         <translation>GRIB files (*.grb *.grib *.grb.bz2 *.grib.bz2 *.grb.gz *.grib.gz)</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="904"/>
+        <location filename="../src/MainWindow.cpp" line="908"/>
         <source>;;Autres fichiers (*)</source>
         <translation>;;Other files (*)</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="913"/>
+        <location filename="../src/MainWindow.cpp" line="917"/>
         <source>Choisir un fichier GRIB</source>
         <translation>Choose a GRIB file</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="936"/>
+        <location filename="../src/MainWindow.cpp" line="940"/>
         <source>qtVlm </source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="1077"/>
+        <location filename="../src/MainWindow.cpp" line="1081"/>
         <source>Pilototo</source>
         <translation>Autopilot</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="1107"/>
+        <location filename="../src/MainWindow.cpp" line="1111"/>
         <source>Imp. de lire le pilototo de VLM</source>
         <translation>Can&apos;t read VLM&apos;s autopilot</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="1117"/>
-        <location filename="../src/MainWindow.cpp" line="1118"/>
+        <location filename="../src/MainWindow.cpp" line="1121"/>
+        <location filename="../src/MainWindow.cpp" line="1122"/>
         <source>Selection d&apos;une marque</source>
         <translation>Select a mark</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="1237"/>
+        <location filename="../src/MainWindow.cpp" line="1241"/>
         <source>Vent</source>
         <translation>Wind</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="1228"/>
-        <location filename="../src/MainWindow.cpp" line="1239"/>
+        <location filename="../src/MainWindow.cpp" line="1232"/>
+        <location filename="../src/MainWindow.cpp" line="1243"/>
         <source>deg</source>
         <translation>°</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="1241"/>
+        <location filename="../src/MainWindow.cpp" line="1245"/>
         <source> kts</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="1249"/>
+        <location filename="../src/MainWindow.cpp" line="1253"/>
         <source>Selection: </source>
         <translation>Selection:</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="1260"/>
+        <location filename="../src/MainWindow.cpp" line="1264"/>
         <source>  init.dir: %1deg</source>
         <translation>  init.dir: %1°</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="1295"/>
-        <location filename="../src/MainWindow.cpp" line="1594"/>
-        <location filename="../src/MainWindow.cpp" line="1656"/>
+        <location filename="../src/MainWindow.cpp" line="1299"/>
+        <location filename="../src/MainWindow.cpp" line="1598"/>
+        <location filename="../src/MainWindow.cpp" line="1660"/>
         <source>dd-MM-yyyy, HH:mm:ss</source>
         <translation>MM-dd-yyyy, HH:mm:ss</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="1295"/>
+        <location filename="../src/MainWindow.cpp" line="1299"/>
         <source>Derniere synchro</source>
         <translation>Last sync</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="1594"/>
-        <location filename="../src/MainWindow.cpp" line="1656"/>
+        <location filename="../src/MainWindow.cpp" line="1598"/>
+        <location filename="../src/MainWindow.cpp" line="1660"/>
         <source> Arrivee WP</source>
         <translation>WP arrival</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="1616"/>
+        <location filename="../src/MainWindow.cpp" line="1620"/>
         <source>Votre blocnote a change!</source>
         <translation>Your notepad has changed!</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="2214"/>
-        <location filename="../src/MainWindow.cpp" line="2226"/>
+        <location filename="../src/MainWindow.cpp" line="2218"/>
+        <location filename="../src/MainWindow.cpp" line="2230"/>
         <source> mins </source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="2218"/>
+        <location filename="../src/MainWindow.cpp" line="2222"/>
         <source> vacs </source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="2222"/>
+        <location filename="../src/MainWindow.cpp" line="2226"/>
         <source> NM </source>
         <translation></translation>
     </message>
@@ -2028,37 +2028,37 @@ Etes-vous sur ?</source>
         <translation type="obsolete">Last synchronization crank</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="1324"/>
-        <location filename="../src/MainWindow.cpp" line="1337"/>
+        <location filename="../src/MainWindow.cpp" line="1328"/>
+        <location filename="../src/MainWindow.cpp" line="1341"/>
         <source>Tirer un cap</source>
         <translation>Draw a heading</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="1331"/>
+        <location filename="../src/MainWindow.cpp" line="1335"/>
         <source>Arret du cap</source>
         <translation>Stop the heading</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="1590"/>
-        <location filename="../src/MainWindow.cpp" line="1652"/>
+        <location filename="../src/MainWindow.cpp" line="1594"/>
+        <location filename="../src/MainWindow.cpp" line="1656"/>
         <source>j</source>
         <translation>d</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="1591"/>
-        <location filename="../src/MainWindow.cpp" line="1653"/>
+        <location filename="../src/MainWindow.cpp" line="1595"/>
+        <location filename="../src/MainWindow.cpp" line="1657"/>
         <source>h</source>
         <translation>h</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="1592"/>
-        <location filename="../src/MainWindow.cpp" line="1654"/>
+        <location filename="../src/MainWindow.cpp" line="1596"/>
+        <location filename="../src/MainWindow.cpp" line="1658"/>
         <source>m</source>
         <translation>m</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="1593"/>
-        <location filename="../src/MainWindow.cpp" line="1655"/>
+        <location filename="../src/MainWindow.cpp" line="1597"/>
+        <location filename="../src/MainWindow.cpp" line="1659"/>
         <source>s</source>
         <translation>s</translation>
     </message>
@@ -2079,7 +2079,7 @@ Etes-vous sur ?</source>
         <translation type="obsolete">Selection :</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="1257"/>
+        <location filename="../src/MainWindow.cpp" line="1261"/>
         <source>(dist.orthodromique:</source>
         <translation>(orthodromic distance:</translation>
     </message>
@@ -2092,7 +2092,7 @@ Etes-vous sur ?</source>
         <translation type="obsolete">Timestamp last VLM sync</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="1296"/>
+        <location filename="../src/MainWindow.cpp" line="1300"/>
         <source>Prochaine vac dans</source>
         <translation>Next crank in</translation>
     </message>
@@ -5348,7 +5348,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../src/Ui/Route_Editor.ui" line="407"/>
         <source>Afficher infos du point d&apos;interpolation</source>
-        <translation>Display interpolation point data</translation>
+        <translation>Display data from roadbook at grib date</translation>
     </message>
     <message>
         <location filename="../src/Ui/Route_Editor.ui" line="540"/>
@@ -5466,7 +5466,7 @@ p, li { white-space: pre-wrap; }
         <translation>Coast detail level: </translation>
     </message>
     <message>
-        <location filename="../src/Terrain.cpp" line="707"/>
+        <location filename="../src/Terrain.cpp" line="713"/>
         <source>Calculs en cours...</source>
         <translation>Calculating...</translation>
     </message>
@@ -7685,14 +7685,14 @@ p, li { white-space: pre-wrap; }
         <translation type="obsolete"> </translation>
     </message>
     <message>
-        <location filename="../src/mapcompass.cpp" line="391"/>
+        <location filename="../src/mapcompass.cpp" line="395"/>
         <source>nds</source>
         <translation>kts</translation>
     </message>
     <message>
-        <location filename="../src/mapcompass.cpp" line="391"/>
-        <location filename="../src/mapcompass.cpp" line="411"/>
-        <location filename="../src/mapcompass.cpp" line="416"/>
+        <location filename="../src/mapcompass.cpp" line="395"/>
+        <location filename="../src/mapcompass.cpp" line="415"/>
+        <location filename="../src/mapcompass.cpp" line="420"/>
         <source>deg</source>
         <translation>°</translation>
     </message>
@@ -7709,59 +7709,59 @@ p, li { white-space: pre-wrap; }
         <translation type="obsolete">nm</translation>
     </message>
     <message>
-        <location filename="../src/mapcompass.cpp" line="391"/>
+        <location filename="../src/mapcompass.cpp" line="395"/>
         <source>Vent: </source>
         <translation>Wind:</translation>
     </message>
     <message>
-        <location filename="../src/mapcompass.cpp" line="411"/>
-        <location filename="../src/mapcompass.cpp" line="421"/>
+        <location filename="../src/mapcompass.cpp" line="415"/>
+        <location filename="../src/mapcompass.cpp" line="425"/>
         <source>WP: </source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../src/mapcompass.cpp" line="416"/>
+        <location filename="../src/mapcompass.cpp" line="420"/>
         <source>WP%vent: </source>
         <translation>WP%wind:</translation>
     </message>
     <message>
-        <location filename="../src/mapcompass.cpp" line="421"/>
+        <location filename="../src/mapcompass.cpp" line="425"/>
         <source> nm</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../src/mapcompass.cpp" line="674"/>
+        <location filename="../src/mapcompass.cpp" line="678"/>
         <source>Centimetres</source>
         <translation>Centimeters</translation>
     </message>
     <message>
-        <location filename="../src/mapcompass.cpp" line="676"/>
+        <location filename="../src/mapcompass.cpp" line="680"/>
         <source>Metres</source>
         <translation>Meters</translation>
     </message>
     <message>
-        <location filename="../src/mapcompass.cpp" line="685"/>
-        <location filename="../src/mapcompass.cpp" line="690"/>
+        <location filename="../src/mapcompass.cpp" line="689"/>
+        <location filename="../src/mapcompass.cpp" line="694"/>
         <source>Collision avec les terres detectee</source>
         <translation>Collision with land detected</translation>
     </message>
     <message>
-        <location filename="../src/mapcompass.cpp" line="754"/>
+        <location filename="../src/mapcompass.cpp" line="758"/>
         <source>jours</source>
         <translation>days</translation>
     </message>
     <message>
-        <location filename="../src/mapcompass.cpp" line="754"/>
+        <location filename="../src/mapcompass.cpp" line="758"/>
         <source>heures</source>
         <translation>hours</translation>
     </message>
     <message>
-        <location filename="../src/mapcompass.cpp" line="755"/>
+        <location filename="../src/mapcompass.cpp" line="759"/>
         <source>minutes</source>
         <translation>minutes</translation>
     </message>
     <message>
-        <location filename="../src/mapcompass.cpp" line="756"/>
+        <location filename="../src/mapcompass.cpp" line="760"/>
         <source>secondes</source>
         <translation>seconds</translation>
     </message>

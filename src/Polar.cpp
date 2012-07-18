@@ -86,7 +86,7 @@ void Polar::setPolarName(QString fname)
     else
         coeffPolar=1.0;
 
-    //qWarning() << "Opening polar " << fname;
+    //qWarning() << "Opening polar" << fname<<"with coeff"<<coeffPolar;
 
     name=fname;
     QString nameF = "polar/"+fname+".csv";

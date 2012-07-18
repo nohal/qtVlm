@@ -3732,7 +3732,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Afficher infos du point d&apos;interpolation</source>
-        <translation></translation>
+        <translation>Afficher infos du Tableau de Marche  à la date du grib</translation>
     </message>
     <message>
         <source>Temps de navigation</source>

@@ -706,7 +706,14 @@ void MainWindow::slot_deleteProgress (void)
     if(restartNeeded)
         this->my_centralWidget->setAboutToQuit();
     else if(selectedBoat && selectedBoat->getType()==BOAT_REAL)
+    {
         proj->setScaleAndCenterInMap(selectedBoat->getZoom(),selectedBoat->getLon(),selectedBoat->getLat());
+        if(Settings::getSetting("polarEfficiency",100).toInt()!=100)
+        {
+            selectedBoat->reloadPolar(true);
+            emit boatHasUpdated(selectedBoat);
+        }
+    }
 
 }
 
