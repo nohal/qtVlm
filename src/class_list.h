@@ -221,4 +221,7 @@ class DialogRealBoatConfig;
 class faxMeteo;
 class dialogFaxMeteo;
 
+/* loadImg.h */
+class loadImg;
+class dialogLoadImg;
 #endif // CLASS_LIST_H

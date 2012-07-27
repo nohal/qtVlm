@@ -36,7 +36,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 /* Z value according to type */
 #define Z_VALUE_TERRE      0
-#define Z_VALUE_FAXMETEO   0.1
+#define Z_VALUE_LOADIMG    0.4
+#define Z_VALUE_FAXMETEO   0.5
 #define Z_VALUE_ROUTAGE    1
 #define Z_VALUE_ISOPOINT   2
 #define Z_VALUE_OPP        3
@@ -262,6 +263,8 @@ class myCentralWidget : public QWidget
         void slotLoadSailsDocGrib(void);
         void slotFax_open();
         void slotFax_close();
+        void slotImg_open();
+        void slotImg_close();
 
         /* Dialogs */
         void slot_boatDialog(void);
@@ -408,6 +411,7 @@ class myCentralWidget : public QWidget
         void doSimplifyRoute(ROUTE * route, bool fast=false);
         bool abortRequest;
         faxMeteo * fax;
+        loadImg * img;
 };
 
 #endif // MYCENTRALWIDGET_H

@@ -110,6 +110,8 @@ void MainWindow::connectSignals()
 
     connect(mb->acFax_Open, SIGNAL(triggered()), my_centralWidget, SLOT(slotFax_open()));
     connect(mb->acFax_Close, SIGNAL(triggered()), my_centralWidget, SLOT(slotFax_close()));
+    connect(mb->acImg_Open, SIGNAL(triggered()), my_centralWidget, SLOT(slotImg_open()));
+    connect(mb->acImg_Close, SIGNAL(triggered()), my_centralWidget, SLOT(slotImg_close()));
     //-------------------------------------------------------
 //    connect(mb->acMap_GroupQuality, SIGNAL(triggered(QAction *)),
 //            this, SLOT(slotMap_Quality()));

@@ -99,6 +99,7 @@ HEADERS += Dialogs/DialogGraphicsParams.h \
     Board.h \
     BoardReal.h \
     faxMeteo.h \
+    loadImg.h \
     Font.h \
     Player.h \
     interpolation.h \
@@ -111,6 +112,7 @@ HEADERS += Dialogs/DialogGraphicsParams.h \
     Dialogs/DialogVlmLog.h \
     Dialogs/DialogDownloadTracks.h \
     Dialogs/dialogFaxMeteo.h \
+    Dialogs/dialogLoadImg.h \
     Dialogs/routeInfo.h
 
 FORMS += Ui/boatAccount_dialog.ui \
@@ -145,6 +147,7 @@ FORMS += Ui/boatAccount_dialog.ui \
     Ui/DialogVlmLog.ui \
     Ui/DialogDownloadTracks.ui \
     Ui/dialogFaxMeteo.ui \
+    Ui/dialogLoadImg.ui \
     Ui/routeInfo.ui
 
 SOURCES += Dialogs/DialogGraphicsParams.cpp \
@@ -215,6 +218,7 @@ SOURCES += Dialogs/DialogGraphicsParams.cpp \
     Board.cpp \
     BoardReal.cpp \
     faxMeteo.cpp \
+    loadImg.cpp \
     Player.cpp \
     interpolation.cpp \
     Dialogs/DialogRealBoatConfig.cpp \
@@ -226,6 +230,7 @@ SOURCES += Dialogs/DialogGraphicsParams.cpp \
     Dialogs/DialogVlmLog.cpp \
     Dialogs/DialogDownloadTracks.cpp \
     Dialogs/dialogFaxMeteo.cpp \
+    Dialogs/dialogLoadImg.cpp \
     Dialogs/routeInfo.cpp
 
 unix:!macx: DEFINES += _TTY_POSIX_ __TERRAIN_QIMAGE __UNIX_QTVLM

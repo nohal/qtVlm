@@ -112,6 +112,9 @@ public:
     QAction *acFile_Info_GRIB;
     QAction *acFile_Quit;
     QAction *acFile_QuitNoSave;
+    QMenu   *mn_img;
+    QAction *acImg_Open;
+    QAction *acImg_Close;
     QMenu   *mn_fax;
     QAction *acFax_Open;
     QAction *acFax_Close;

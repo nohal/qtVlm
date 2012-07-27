@@ -58,6 +58,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "boatReal.h"
 #include "boatVLM.h"
 #include "faxMeteo.h"
+#include "loadImg.h"
 
 #include "DialogSailDocs.h"
 #include "DialogHorn.h"
@@ -74,6 +75,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "DialogVlmLog.h"
 #include "DialogDownloadTracks.h"
 #include "dialogFaxMeteo.h"
+#include "dialogLoadImg.h"
 #include "parser.h"
 #include <QVariantMap>
 #include <QVariant>
@@ -899,7 +901,12 @@ void myCentralWidget::zoomOnGrib(void)
     double x0,y0, x1,y1, mh, mv;
     if (grib->getZoneExtension(&x0,&y0, &x1,&y1))
     {
-        //qWarning() << "zoom on " << x0 << "," << y0 << " " << x1 << "," << y1;
+        if(x0 > 180.0 && x1 > 180.0)
+        {
+            x0-=360.0;
+            x1-=360.0;
+        }
+        //qWarning() << "zoom on grib" << x0 << "," << y0 << " " << x1 << "," << y1;
         mh = fabs(x0-x1)*0.05;
         mv = fabs(y0-y1)*0.05;
         //proj->zoomOnZone(x0-mh,y0-mv, x1+mh,y1+mv);
@@ -3491,4 +3498,31 @@ void myCentralWidget::slotFax_close()
     if (fax)
         delete fax;
     fax=NULL;
+}
+void myCentralWidget::slotImg_open()
+{
+    bool newImg=false;
+    if(!img)
+    {
+        newImg=true;
+        img=new loadImg(proj,this);
+    }
+    dialogLoadImg * dImg=new dialogLoadImg(img,this);
+    if(dImg->exec()!=QDialog::Accepted && newImg)
+    {
+        delete img;
+        img=NULL;
+    }
+    else if(img->getMyImgFileName().isEmpty())
+    {
+        delete img;
+        img=NULL;
+    }
+    delete dImg;
+}
+void myCentralWidget::slotImg_close()
+{
+    if (img)
+        delete img;
+    img=NULL;
 }

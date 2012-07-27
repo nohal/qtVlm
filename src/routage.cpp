@@ -2022,7 +2022,7 @@ void ROUTAGE::slot_calculate()
         }
 
         msgBox.setDetailedText(info);
-        finalEta=QDateTime::fromTime_t(eta).toUTC();
+        finalEta=QDateTime::fromTime_t(realEta).toUTC();
         msgBox.setIcon(QMessageBox::Information);
         tt.setHMS(0,0,0,0);
         tt=tt.addMSecs(msecs);
