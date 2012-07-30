@@ -143,7 +143,6 @@ void loadImg::slot_updateProjection()
     QRectF br=bordersXY.boundingRect();
     QRectF view(QPointF(0,0),QPointF(proj->getW(),proj->getH()));
     QRectF portion=view.intersected(br).normalized();
-    qWarning()<<br<<portion;
     if(portion.isEmpty() || portion.isEmpty())
     {
         this->setPixmap(QPixmap(0,0));
@@ -196,7 +195,6 @@ void loadImg::slot_updateProjection()
             }
         }
     }
-    //delete[] row;
     pnt.end();
     this->setPixmap(img);
     setPos(portion.topLeft());
