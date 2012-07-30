@@ -36,11 +36,16 @@ Copyright (C) 2008 - Jacques Zaninetti - http://zygrib.free.fr
 #include "Projection.h"
 #include "Orthodromie.h"
 #include <QPixmap>
+#include <QImage>
+#include <QColor>
 
 
 loadImg::loadImg(Projection *proj, myCentralWidget *parent)
     : QGraphicsPixmapItem()
+
 {
+    this->bsb=NULL;
+    this->bsbBuf=0;
     this->parent = parent;
     this->proj=proj;
     this->setZValue(Z_VALUE_LOADIMG);
@@ -61,67 +66,116 @@ void loadImg::setLonLat(double lon1, double lat1, double lon2, double lat2)
 
 loadImg::~loadImg()
 {
-}
-
-void loadImg::setMyImgFileName(QString s)
-{
-    this->myImgFileName=s;
-    if(!img.load(this->myImgFileName))
+    if(bsb!=NULL)
     {
-        img=img.scaled(0,0);
-        this->myImgFileName.clear();
+        delete[] bsbBuf;
+        bsb_close(bsb);
+        delete bsb;
+        bsb=NULL;
     }
 }
 
-/**************************/
-/* Events                 */
-/**************************/
-
-
-/*********************/
-/* data manipulation */
-/*********************/
-
-void loadImg::slot_updateProjection()
+bool loadImg::setMyImgFileName(QString s)
 {
-    if(img.width()==0) return;
-    double x1,y1,x2,y2;
-    proj->map2screenDouble(lon1,lat1,&x1,&y1);
-    proj->map2screenDouble(lon2,lat2,&x2,&y2);
-    QRectF ibr(QPointF(x1,y1),QPointF(x2,y2));
-    QRectF pbr(QPointF(0,0),QSize(proj->getW(),proj->getH()));
-    QRectF intersection=ibr.intersected(pbr);
-    if(intersection.isEmpty() || intersection.isNull())
+    this->myImgFileName=s;
+    delete[] bsbBuf;
+    if(bsb!=NULL)
     {
-        imgTemp=QPixmap(0,0);
-        this->setPixmap(imgTemp);
-        this->hide();
+        bsb_close(bsb);
+        delete bsb;
+        bsb=NULL;
+    }
+    bsb=new BSBImage();
+    if(bsb_open_header(s.toLocal8Bit().data(), bsb))
+    {
+        bsbBuf=new uint8_t[bsb->width];
+        return true;
     }
     else
     {
-        proj->screen2mapDouble(intersection.topLeft().x(),intersection.topLeft().y(),&x1,&y1);
-        proj->screen2mapDouble(intersection.bottomRight().x(),intersection.bottomRight().y(),&x2,&y2);
-        double i1,i2,i3,i4;
-        this->map2Image(lon1,lat1,&i1,&i2);
-        this->map2Image(x1,y1,&i1,&i2);
-        this->map2Image(x2,y2,&i3,&i4);
-        QRectF rr(QPointF(i1,i2),QPointF(i3,i4));
-#if 1
-        imgTemp=img.copy(rr.toRect()).scaled(intersection.size().toSize(),Qt::IgnoreAspectRatio,Qt::SmoothTransformation);
-#else
-        imgTemp=QPixmap(intersection.size().toSize());
-        QRectF r(QPoint(0,0),intersection.size());
-        QPainter pnt(&imgTemp);
-        pnt.setRenderHint(QPainter::Antialiasing, true);
-        pnt.setRenderHint(QPainter::SmoothPixmapTransform, true);
-        pnt.drawPixmap(r,img,rr);
-        pnt.end();
-#endif
-        this->setPixmap(imgTemp);
-        setPos(intersection.topLeft());
-        this->show();
+        bsb_close(bsb);
+        delete bsb;
+        bsb=NULL;
+        return false;
     }
 }
+void loadImg::convertBsb2Pixmap(BSBImage * b)
+{
+    QImage i(b->width,b->height,QImage::Format_Indexed8);
+    i.setNumColors(b->num_colors);
+    for(int col=0;col<b->num_colors;++col)
+    {
+        i.setColor(col,qRgb(b->red[col],b->green[col],b->blue[col]));
+    }
+    for(int y=0;y<i.height();++y)
+    {
+        uchar * ppix = i.scanLine(y);
+        bsb_read_row(b,ppix);
+    }
+    //img=QPixmap().fromImage(i);
+}
+uint8_t * loadImg::getRow(int row)
+{
+    uint8_t * p =0;
+    if(row>=0 && row<bsb->height)
+    {
+        bsb_read_row_at(bsb,row,bsbBuf);
+        p=bsbBuf;
+    }
+    return p;
+}
+
+void loadImg::slot_updateProjection()
+{
+    if(bsb==NULL) return;
+    QPixmap img(proj->getW(),proj->getH());
+    img.fill(Qt::transparent);
+    QPainter pnt(&img);
+    QPen pen;
+    pen.setWidth(1);
+    pnt.setRenderHint(QPainter::Antialiasing, true);
+    pnt.setRenderHint(QPainter::SmoothPixmapTransform, true);
+    uint8_t * row=0;
+    for(int y=0;y<=proj->getH();++y)
+    {
+        row=0;
+        for(int x=0;x<=proj->getW();++x)
+        {
+            int r=0, g=0, b=0;
+            double lon,lat;
+            proj->screen2map(x,y,&lon,&lat);
+            int X,Y;
+            if(bsb_LLtoXY(bsb,lon,lat,&X,&Y))
+            {
+                if (Y<0||Y>=bsb->height)
+                {
+                    row=0;
+                    break;
+                }
+                if(row==0)
+                    row=getRow(Y);
+                if(X<0)
+                    continue;
+                if(X>bsb->width)
+                    break;
+                if(row==0) continue;
+                r=bsb->red[row[X]];
+                g=bsb->green[row[X]];
+                b=bsb->blue[row[X]];
+                QColor color(r,g,b);
+                pen.setColor(color);
+                pnt.setPen(pen);
+                pnt.drawPoint(x,y);
+            }
+        }
+    }
+    //delete[] row;
+    pnt.end();
+    this->setPixmap(img);
+    setPos(0,0);
+    this->show();
+}
+#if 0
 void loadImg::map2Image(double lon, double lat, double *i, double *j)
 {
     double x=(lon-lon1)*(img.width()/(lon2-lon1));
@@ -132,4 +186,5 @@ void loadImg::map2Image(double lon, double lat, double *i, double *j)
     *i=x;
     *j=y;
 }
+#endif
 

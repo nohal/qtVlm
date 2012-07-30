@@ -7,11 +7,11 @@
     <x>0</x>
     <y>0</y>
     <width>623</width>
-    <height>385</height>
+    <height>241</height>
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Dialog</string>
+   <string>Ouvrir un fichier KAP</string>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout_2">
    <item>
@@ -21,7 +21,7 @@
        <item>
         <widget class="QGroupBox" name="groupBox">
          <property name="title">
-          <string>Nom du fichier Fax</string>
+          <string>Nom du fichier Kap</string>
          </property>
          <layout class="QHBoxLayout" name="horizontalLayout_3">
           <item>
@@ -31,278 +31,6 @@
            <widget class="QPushButton" name="Browse">
             <property name="text">
              <string>Parcourir</string>
-            </property>
-           </widget>
-          </item>
-         </layout>
-        </widget>
-       </item>
-       <item>
-        <widget class="QGroupBox" name="groupBox_2">
-         <property name="title">
-          <string>Position du coin superieur gauche</string>
-         </property>
-         <layout class="QGridLayout" name="gridLayout">
-          <item row="0" column="2">
-           <widget class="QDoubleSpinBox" name="lat_deg_UL">
-            <property name="alignment">
-             <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-            </property>
-            <property name="prefix">
-             <string/>
-            </property>
-            <property name="suffix">
-             <string> °</string>
-            </property>
-            <property name="decimals">
-             <number>0</number>
-            </property>
-            <property name="maximum">
-             <double>89.000000000000000</double>
-            </property>
-            <property name="value">
-             <double>89.000000000000000</double>
-            </property>
-           </widget>
-          </item>
-          <item row="0" column="3">
-           <widget class="QDoubleSpinBox" name="lat_min_UL">
-            <property name="alignment">
-             <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-            </property>
-            <property name="suffix">
-             <string> '</string>
-            </property>
-            <property name="decimals">
-             <number>4</number>
-            </property>
-            <property name="minimum">
-             <double>0.000000000000000</double>
-            </property>
-            <property name="maximum">
-             <double>59.999899999999997</double>
-            </property>
-            <property name="value">
-             <double>59.999899999999997</double>
-            </property>
-           </widget>
-          </item>
-          <item row="1" column="0">
-           <widget class="QLabel" name="label_5">
-            <property name="text">
-             <string>Longitude</string>
-            </property>
-           </widget>
-          </item>
-          <item row="1" column="1">
-           <widget class="QComboBox" name="lon_sig_UL">
-            <item>
-             <property name="text">
-              <string>Est</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>Ouest</string>
-             </property>
-            </item>
-           </widget>
-          </item>
-          <item row="0" column="0">
-           <widget class="QLabel" name="label_2">
-            <property name="text">
-             <string>Latitude</string>
-            </property>
-           </widget>
-          </item>
-          <item row="0" column="1">
-           <widget class="QComboBox" name="lat_sig_UL">
-            <item>
-             <property name="text">
-              <string>Nord</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>Sud</string>
-             </property>
-            </item>
-           </widget>
-          </item>
-          <item row="1" column="2">
-           <widget class="QDoubleSpinBox" name="lon_deg_UL">
-            <property name="alignment">
-             <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-            </property>
-            <property name="suffix">
-             <string> °</string>
-            </property>
-            <property name="decimals">
-             <number>0</number>
-            </property>
-            <property name="maximum">
-             <double>359.000000000000000</double>
-            </property>
-            <property name="value">
-             <double>359.000000000000000</double>
-            </property>
-           </widget>
-          </item>
-          <item row="1" column="3">
-           <widget class="QDoubleSpinBox" name="lon_min_UL">
-            <property name="alignment">
-             <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-            </property>
-            <property name="suffix">
-             <string> '</string>
-            </property>
-            <property name="decimals">
-             <number>4</number>
-            </property>
-            <property name="minimum">
-             <double>0.000000000000000</double>
-            </property>
-            <property name="maximum">
-             <double>59.999899999999997</double>
-            </property>
-            <property name="value">
-             <double>59.999899999999997</double>
-            </property>
-           </widget>
-          </item>
-         </layout>
-        </widget>
-       </item>
-       <item>
-        <widget class="QGroupBox" name="groupBox_3">
-         <property name="title">
-          <string>Position du coin inferieur droit</string>
-         </property>
-         <layout class="QGridLayout" name="gridLayout_2">
-          <item row="0" column="2">
-           <widget class="QDoubleSpinBox" name="lat_deg_LR">
-            <property name="alignment">
-             <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-            </property>
-            <property name="prefix">
-             <string/>
-            </property>
-            <property name="suffix">
-             <string> °</string>
-            </property>
-            <property name="decimals">
-             <number>0</number>
-            </property>
-            <property name="maximum">
-             <double>89.000000000000000</double>
-            </property>
-            <property name="value">
-             <double>89.000000000000000</double>
-            </property>
-           </widget>
-          </item>
-          <item row="0" column="3">
-           <widget class="QDoubleSpinBox" name="lat_min_LR">
-            <property name="alignment">
-             <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-            </property>
-            <property name="suffix">
-             <string> '</string>
-            </property>
-            <property name="decimals">
-             <number>4</number>
-            </property>
-            <property name="minimum">
-             <double>0.000000000000000</double>
-            </property>
-            <property name="maximum">
-             <double>59.999899999999997</double>
-            </property>
-            <property name="value">
-             <double>59.999899999999997</double>
-            </property>
-           </widget>
-          </item>
-          <item row="1" column="0">
-           <widget class="QLabel" name="label_6">
-            <property name="text">
-             <string>Longitude</string>
-            </property>
-           </widget>
-          </item>
-          <item row="1" column="1">
-           <widget class="QComboBox" name="lon_sig_LR">
-            <item>
-             <property name="text">
-              <string>Est</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>Ouest</string>
-             </property>
-            </item>
-           </widget>
-          </item>
-          <item row="0" column="0">
-           <widget class="QLabel" name="label_3">
-            <property name="text">
-             <string>Latitude</string>
-            </property>
-           </widget>
-          </item>
-          <item row="0" column="1">
-           <widget class="QComboBox" name="lat_sig_LR">
-            <item>
-             <property name="text">
-              <string>Nord</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>Sud</string>
-             </property>
-            </item>
-           </widget>
-          </item>
-          <item row="1" column="2">
-           <widget class="QDoubleSpinBox" name="lon_deg_LR">
-            <property name="alignment">
-             <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-            </property>
-            <property name="suffix">
-             <string> °</string>
-            </property>
-            <property name="decimals">
-             <number>0</number>
-            </property>
-            <property name="maximum">
-             <double>359.000000000000000</double>
-            </property>
-            <property name="value">
-             <double>359.000000000000000</double>
-            </property>
-           </widget>
-          </item>
-          <item row="1" column="3">
-           <widget class="QDoubleSpinBox" name="lon_min_LR">
-            <property name="alignment">
-             <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-            </property>
-            <property name="suffix">
-             <string> '</string>
-            </property>
-            <property name="decimals">
-             <number>4</number>
-            </property>
-            <property name="minimum">
-             <double>0.000000000000000</double>
-            </property>
-            <property name="maximum">
-             <double>59.999899999999997</double>
-            </property>
-            <property name="value">
-             <double>59.999899999999997</double>
             </property>
            </widget>
           </item>
@@ -356,18 +84,6 @@
  <tabstops>
   <tabstop>FileName</tabstop>
   <tabstop>Browse</tabstop>
-  <tabstop>lat_sig_UL</tabstop>
-  <tabstop>lat_deg_UL</tabstop>
-  <tabstop>lat_min_UL</tabstop>
-  <tabstop>lon_sig_UL</tabstop>
-  <tabstop>lon_deg_UL</tabstop>
-  <tabstop>lon_min_UL</tabstop>
-  <tabstop>lat_sig_LR</tabstop>
-  <tabstop>lat_deg_LR</tabstop>
-  <tabstop>lat_min_LR</tabstop>
-  <tabstop>lon_sig_LR</tabstop>
-  <tabstop>lon_deg_LR</tabstop>
-  <tabstop>lon_min_LR</tabstop>
   <tabstop>alpha</tabstop>
   <tabstop>buttonBox</tabstop>
  </tabstops>

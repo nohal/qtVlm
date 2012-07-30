@@ -49,13 +49,13 @@ MenuBar::MenuBar(QWidget *parent)
         acFile_QuitNoSave = addAction(menuFile,
                     tr("Quitter sans sauver"), tr("Ctrl+Shift+Q"), tr("Bye"), "img/exit2.png");
         menuFile->addSeparator();
-        mn_img=new QMenu(tr("Gestion des images"));
-        acImg_Open = addAction(mn_img, tr("Ouvrir une image"), "", tr(""));
+        mn_img=new QMenu(tr("Gestion des fichiers KAP"));
+        acImg_Open = addAction(mn_img, tr("Ouvrir un fichier KAP"), "", tr(""));
         mn_img->addAction(acImg_Open);
-        acImg_Close = addAction(mn_img, tr("Fermer l'image"), "", tr(""));
+        acImg_Close = addAction(mn_img, tr("Fermer le fichier KAP"), "", tr(""));
         mn_img->addAction(acImg_Close);
-//        menuFile->addMenu(mn_img);
-//        menuFile->addSeparator();
+        menuFile->addMenu(mn_img);
+        menuFile->addSeparator();
 
         QMenu *menuShowHide = new QMenu(tr("Montrer/cacher"));
            acOptions_GroupShowHide = new QActionGroup(menuShowHide);

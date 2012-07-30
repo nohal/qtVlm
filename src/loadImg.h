@@ -31,6 +31,8 @@ Copyright (C) 2008 - Jacques Zaninetti - http://zygrib.free.fr
 
 #include "class_list.h"
 #include "mycentralwidget.h"
+#include "bsb.h"
+
 #define MIN_ALPHA 0.2
 
 //===================================================================
@@ -43,7 +45,7 @@ class loadImg : public QObject, public QGraphicsPixmapItem
         ~loadImg();
 
         /* accés aux données */
-        void setMyImgFileName(QString s);
+        bool setMyImgFileName(QString s);
         void setLonLat(double lon1, double lat1, double lon2, double lat2);
         QString getMyImgFileName(){return this->myImgFileName;}
         void setAlpha(double alpha){this->alpha=alpha;this->setOpacity(alpha);}
@@ -63,9 +65,15 @@ class loadImg : public QObject, public QGraphicsPixmapItem
         double  alpha;
         QString myImgFileName;
         /*internal*/
-        QPixmap img;
-        QPixmap imgTemp;
+        void convertBsb2Pixmap(BSBImage * b);
         void map2Image(double lon, double lat,double * x, double * y);
+        BSBImage * bsb;
+        uint8_t * bsbBuf;
+        int xc_ofs;
+        int yc_ofs;
+        int x_dwn;
+        int y_dwn;
+        uint8_t * getRow(int row);
 };
 
 #endif
