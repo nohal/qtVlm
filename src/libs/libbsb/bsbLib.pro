@@ -1,7 +1,7 @@
 DESTDIR=../build
 TEMPLATE=lib
 TARGET=bsb
-CONFIG+=staticlib
+CONFIG+=qt staticlib
 DEPENDPATH += .
 INCLUDEPATH += .
 

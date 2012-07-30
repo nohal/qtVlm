@@ -157,12 +157,13 @@ static
 int bsb_read_row_index( BSBImage* p )
 {
     /* Read start-of-index offset */
+    uint32_t st,start_of_index;
+    int i,max_row_size;
     if (fseek(p->pFile, -4, SEEK_END) == -1)
         return 0;
-    uint32_t st;
     if (fread(&st, 4, 1, p->pFile) != 1)
         return 0;
-    uint32_t start_of_index = bsb_ntohl(st);
+    start_of_index = bsb_ntohl(st);
     /* Read start-of-rows offset */
     if (fseek(p->pFile, start_of_index, SEEK_SET) == -1)
         return 0;
@@ -175,11 +176,10 @@ int bsb_read_row_index( BSBImage* p )
     /* remember end of last row, which is start of the index */
     p->row_index[p->height] = start_of_index;
     /* convert endiannes */
-    int i;
     for ( i = 0; i < p->height; i++ )
         p->row_index[i] = bsb_ntohl(p->row_index[i]);
     /* convert endiannes */
-    int max_row_size = 0;
+    max_row_size = 0;
     for ( i = 0; i < p->height; i++ )
     {
         int row_size = p->row_index[i+1]-p->row_index[i];
@@ -222,6 +222,7 @@ extern int bsb_open_header(char *filename, BSBImage *p)
 {
     int text_size = 0, c, depth;
     char *p_ext, *pt, *text_buf, line[1024];
+    long pos;
 
     /* zerofill entire BSB structure - not very strict
        as we would want some 0.0l and 0.0f but this works just the same */
@@ -444,7 +445,7 @@ extern int bsb_open_header(char *filename, BSBImage *p)
                 "Warning: depth from IFM tag (%d) != depth from bitstream (%d)\n",
                 p->depth, depth);
     }
-    long pos = ftell(p->pFile);
+    pos = ftell(p->pFile);
     if ( !bsb_read_row_index(p) )
     {
        /* printf("Could not read row index\n"); */
@@ -498,10 +499,11 @@ static double polytrans( double* coeff, double lon, double lat )
  */
 extern int bsb_LLtoXY(BSBImage *p, double lon, double  lat, int* x, int* y)
 {
+    double xd,yd;
     /* change longitude phase (CPH) */
     lon = (lon < 0) ? lon + p->cph : lon - p->cph;
-    double xd = polytrans( p->wpx, lon, lat );
-    double yd = polytrans( p->wpy, lon, lat );
+    xd = polytrans( p->wpx, lon, lat );
+    yd = polytrans( p->wpy, lon, lat );
     *x = (int)(xd + 0.5);
     *y = (int)(yd + 0.5);
     return 1;
@@ -680,12 +682,15 @@ extern int bsb_read_row_at(BSBImage *p, int row, uint8_t *buf)
  */
 extern int bsb_read_row_part(BSBImage *p, int row, uint8_t *buf, int xoffset, int buflen)
 {
+    int len,size,cidx,c,row_num,maxWidth;
+    int multiplier, pixel = 1, rowx = 0, bufidx = 0;
+    unsigned char* rbuf;
 	/* trying to read outside of image? */
 	if( row >= p->height )
 		return 0;
 	if( xoffset >= p->width )
 		return 0;
-	int len = buflen;
+    len = buflen;
 	if( xoffset+len > p->width )
 	{
 		len = p->width-xoffset;
@@ -701,8 +706,8 @@ extern int bsb_read_row_part(BSBImage *p, int row, uint8_t *buf, int xoffset, in
     if ( fseek( p->pFile, p->row_index[row], SEEK_SET ) == -1 )
         return 0;
 
-    int size = p->row_index[row+1]-p->row_index[row];
-    unsigned char* rbuf = p->rbuf;
+    size = p->row_index[row+1]-p->row_index[row];
+    rbuf = p->rbuf;
     /* read compressed row in one step */
     if ( fread( rbuf, size, 1, p->pFile ) != 1 )
     {
@@ -714,16 +719,16 @@ extern int bsb_read_row_part(BSBImage *p, int row, uint8_t *buf, int xoffset, in
     /* The row number is stored in the low 7 bits of each byte.		*/
     /* The 8th bit indicates if row number is continued in the next byte.	*/
 	
-    int cidx = 0;
-    int c, row_num = 0;	
+    cidx = 0;
+    c=0;
+    row_num = 0;
 	do
     {
         c = rbuf[cidx++];
         row_num = ((row_num & 0x7f) << 7) + c;
     } while (c >= 0x80);
 
-    int multiplier, pixel = 1, rowx = 0, bufidx = 0;
- 	int maxWidth = xoffset + len;
+    maxWidth = xoffset + len;
 	
     /* Rows are terminated by '\0'.  Note that rows can contain a '\0'	*/
     /* as part of the run-length data, so '\0' does not delimit rows.	*/

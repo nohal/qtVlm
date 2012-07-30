@@ -24,14 +24,14 @@
  */
 
 #include <stdio.h>
-
+#include <qglobal.h>
 #ifdef HAVE_INTTYPES_H
     #include <inttypes.h>
 #else
 // not ISO C99 - use best guess instead
-typedef unsigned char uint8_t;
-typedef unsigned short uint16_t;
-typedef unsigned int uint32_t;
+typedef quint8 uint8_t;
+typedef quint16 uint16_t;
+typedef quint32 uint32_t;
 #endif
 
 #define BSB_MAX_REFS 200
