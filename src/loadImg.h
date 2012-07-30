@@ -69,11 +69,8 @@ class loadImg : public QObject, public QGraphicsPixmapItem
         void map2Image(double lon, double lat,double * x, double * y);
         BSBImage * bsb;
         uint8_t * bsbBuf;
-        int xc_ofs;
-        int yc_ofs;
-        int x_dwn;
-        int y_dwn;
         uint8_t * getRow(int row);
+        QPolygonF borders;
 };
 
 #endif

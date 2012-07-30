@@ -79,6 +79,7 @@ bool loadImg::setMyImgFileName(QString s)
 {
     this->myImgFileName=s;
     delete[] bsbBuf;
+    borders.clear();
     if(bsb!=NULL)
     {
         bsb_close(bsb);
@@ -89,6 +90,10 @@ bool loadImg::setMyImgFileName(QString s)
     if(bsb_open_header(s.toLocal8Bit().data(), bsb))
     {
         bsbBuf=new uint8_t[bsb->width];
+        for(int i=0;i<bsb->num_plys;++i)
+        {
+            borders.append(QPointF(bsb->ply[i].lon,bsb->ply[i].lat));
+        }
         return true;
     }
     else
@@ -128,7 +133,24 @@ uint8_t * loadImg::getRow(int row)
 void loadImg::slot_updateProjection()
 {
     if(bsb==NULL) return;
-    QPixmap img(proj->getW(),proj->getH());
+    QPolygon bordersXY;
+    for(int i=0;i<borders.count();++i)
+    {
+        int X,Y;
+        proj->map2screen(borders.at(i).x(),borders.at(i).y(),&X,&Y);
+        bordersXY.append(QPoint(X,Y));
+    }
+    QRectF br=bordersXY.boundingRect();
+    QRectF view(QPointF(0,0),QPointF(proj->getW(),proj->getH()));
+    QRectF portion=view.intersected(br).normalized();
+    qWarning()<<br<<portion;
+    if(portion.isEmpty() || portion.isEmpty())
+    {
+        this->setPixmap(QPixmap(0,0));
+        this->hide();
+        return;
+    }
+    QPixmap img(portion.size().toSize());
     img.fill(Qt::transparent);
     QPainter pnt(&img);
     QPen pen;
@@ -136,11 +158,16 @@ void loadImg::slot_updateProjection()
     pnt.setRenderHint(QPainter::Antialiasing, true);
     pnt.setRenderHint(QPainter::SmoothPixmapTransform, true);
     uint8_t * row=0;
-    for(int y=0;y<=proj->getH();++y)
+    int imgX=-1;
+    int imgY=-1;
+    for(int y=portion.topLeft().y();y<=portion.bottomRight().y();++y)
     {
+        ++imgY;
         row=0;
-        for(int x=0;x<=proj->getW();++x)
+        imgX=-1;
+        for(int x=portion.topLeft().x();x<=portion.bottomRight().x();++x)
         {
+            ++imgX;
             int r=0, g=0, b=0;
             double lon,lat;
             proj->screen2map(x,y,&lon,&lat);
@@ -165,14 +192,14 @@ void loadImg::slot_updateProjection()
                 QColor color(r,g,b);
                 pen.setColor(color);
                 pnt.setPen(pen);
-                pnt.drawPoint(x,y);
+                pnt.drawPoint(imgX,imgY);
             }
         }
     }
     //delete[] row;
     pnt.end();
     this->setPixmap(img);
-    setPos(0,0);
+    setPos(portion.topLeft());
     this->show();
 }
 #if 0
