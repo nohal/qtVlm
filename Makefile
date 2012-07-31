@@ -31,7 +31,8 @@ all:
 	$(CD) $(call FixPath,src/libs/zlib-1.2.3) $(SEP) $(QMAKE) CONFIG+=$(TARGET) $(SEP) make 
 	$(CD) $(call FixPath,src/libs/qextserialport) $(SEP) $(QMAKE) CONFIG+=$(TARGET) $(SEP) make 
 	$(CD) $(call FixPath,src/libs/qjson) $(SEP) $(QMAKE) CONFIG+=$(TARGET) $(SEP) make 
-	$(CD) $(call FixPath,src/libs/nmealib/src) $(SEP) $(QMAKE) CONFIG+=$(TARGET) $(SEP) make 
+	$(CD) $(call FixPath,src/libs/nmealib/src) $(SEP) $(QMAKE) CONFIG+=$(TARGET) $(SEP) make
+	$(CD) $(call FixPath,src/libs/libbsb) $(SEP) $(QMAKE) CONFIG+=$(TARGET) $(SEP) make
 	$(CD) src $(SEP) $(QMAKE) CONFIG+=$(TARGET) $(SEP) make 
 
 clean:
@@ -41,6 +42,7 @@ clean:
 	$(CD) $(call FixPath,src/libs/qextserialport) $(SEP) $(QMAKE) $(SEP) make clean
 	$(CD) $(call FixPath,src/libs/qjson) $(SEP) $(QMAKE) $(SEP) make clean
 	$(CD) $(call FixPath,src/libs/nmealib/src) $(SEP) $(QMAKE) $(SEP) make clean
+	$(CD) $(call FixPath,src/libs/libbsb) $(SEP) $(QMAKE) $(SEP) make clean
 	$(CD) src $(SEP) $(QMAKE) $(SEP) make clean
 	$(CD) $(call FixPath,src/libs/bzip2) $(SEP) $(RM) Makefile Makefile.Release Makefile.Debug $(SEP) $(RMFOLDER) release debug
 	$(CD) $(call FixPath,src/libs/zlib-1.2.3) $(SEP) $(RM) Makefile Makefile.Release Makefile.Debug $(SEP) $(RMFOLDER) release debug
