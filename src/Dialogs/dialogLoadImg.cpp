@@ -30,6 +30,7 @@ void dialogLoadImg::done(int result)
 {
     if(result == QDialog::Accepted)
     {
+        carte->setAlpha(1.0-(this->alpha->value()/100.0));
         if(!carte->setMyImgFileName(this->FileName->text()))
         {
             QMessageBox msgBox;
@@ -38,8 +39,6 @@ void dialogLoadImg::done(int result)
             msgBox.exec();
             return;
         }
-        carte->setAlpha(1.0-(this->alpha->value()/100.0));
-        carte->slot_updateProjection();
     }
     QDialog::done(result);
 }

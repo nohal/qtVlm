@@ -94,6 +94,18 @@ bool loadImg::setMyImgFileName(QString s)
         {
             borders.append(QPointF(bsb->ply[i].lon,bsb->ply[i].lat));
         }
+        QPolygon bordersXY;
+        for(int i=0;i<borders.count();++i)
+        {
+            int X,Y;
+            proj->map2screen(borders.at(i).x(),borders.at(i).y(),&X,&Y);
+            bordersXY.append(QPoint(X,Y));
+        }
+        QRectF br=bordersXY.boundingRect();
+        double lo1,la1,lo2,la2;
+        proj->screen2map(br.topLeft().x(),br.topLeft().y(),&lo1,&la1);
+        proj->screen2map(br.bottomRight().x(),br.bottomRight().y(),&lo2,&la2);
+        proj->zoomOnZone(lo1,la1,lo2,la2);
         return true;
     }
     else
