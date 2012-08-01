@@ -38,6 +38,7 @@ Copyright (C) 2008 - Jacques Zaninetti - http://zygrib.free.fr
 #include <QPixmap>
 #include <QImage>
 #include <QColor>
+#include <QBitmap>
 
 
 loadImg::loadImg(Projection *proj, myCentralWidget *parent)
@@ -52,7 +53,7 @@ loadImg::loadImg(Projection *proj, myCentralWidget *parent)
     this->setZValue(Z_VALUE_LOADIMG);
     gribKap->setZValue(Z_VALUE_LOADIMG+0.1);
     gribKap->setFlag(QGraphicsItem::ItemIgnoresParentOpacity,true);
-    gribKap->setOpacity(0.2);
+    gribKap->setOpacity(1);
     gribKap->setPos(0,0);
     connect (proj,SIGNAL(projectionUpdated()),this,SLOT(slot_updateProjection()));
     this->parent->getScene()->addItem(this);
@@ -81,6 +82,9 @@ loadImg::~loadImg()
 }
 void loadImg::setImgGribKap(QPixmap imgGribKap)
 {
+    QBitmap mask=imgGribKap.createMaskFromColor(Qt::white,Qt::MaskOutColor);
+    imgGribKap.fill(Qt::black);
+    imgGribKap.setMask(mask);
     gribKap->setPixmap(imgGribKap);
 }
 
