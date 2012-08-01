@@ -224,6 +224,8 @@ extern int bsb_open_header(char *filename, BSBImage *p)
     char *p_ext, *pt, *text_buf, line[1024];
     long pos;
 
+    setlocale( LC_ALL, "C" );
+
     /* zerofill entire BSB structure - not very strict
        as we would want some 0.0l and 0.0f but this works just the same */
     memset( p, 0, sizeof(*p) );
@@ -239,6 +241,7 @@ extern int bsb_open_header(char *filename, BSBImage *p)
         if (! (inputFile = fopen(filename, "rb")))
         {
             perror(filename);
+            setlocale( LC_ALL, "" );
             return 0;
         }
 
@@ -246,6 +249,7 @@ extern int bsb_open_header(char *filename, BSBImage *p)
         if (! (p->pFile = tmpfile()))
         {
             perror("tmpfile()");
+            setlocale( LC_ALL, "" );
             return 0;
         }
 
@@ -264,12 +268,15 @@ extern int bsb_open_header(char *filename, BSBImage *p)
         if (! (p->pFile = fopen(filename, "rb")))
         {
             perror(filename);
+            setlocale( LC_ALL, "" );
             return 0;
         }
     }
 
-    if ((text_size = bsb_get_header_size(p->pFile)) == 0)
+    if ((text_size = bsb_get_header_size(p->pFile)) == 0) {
+        setlocale( LC_ALL, "" );
         return 0;
+    }
 
     /* allocate space & read in the entire text header */
     text_buf = (char *)malloc(text_size + 1);
@@ -278,12 +285,15 @@ extern int bsb_open_header(char *filename, BSBImage *p)
         fprintf(stderr,
                 "malloc(%d) failed for text header - BSB file possibly corrupt",
                 text_size + 1);
+        setlocale( LC_ALL, "" );
         return 0;
     }
 
     fseek(p->pFile, 0, SEEK_SET);
-    if (fread(text_buf, text_size, 1, p->pFile) != 1)
+    if (fread(text_buf, text_size, 1, p->pFile) != 1) {
+        setlocale( LC_ALL, "" );
         return 0;
+    }
     text_buf[text_size] = '\0';
 
     pt = text_buf;
@@ -395,6 +405,7 @@ extern int bsb_open_header(char *filename, BSBImage *p)
                 (sscanf(s,"RA=%d,%d", &p->width, &p->height) != 2))
             {
                 fprintf(stderr, "failed to read width,height from RA=\n");
+                setlocale( LC_ALL, "" );
                 return 0;
             }
         }
@@ -403,6 +414,7 @@ extern int bsb_open_header(char *filename, BSBImage *p)
             if ( sscanf(s, "DX=%lf", &p->xresolution) != 1 )
             {
                 fprintf(stderr, "failed to read xresolution\n");
+                setlocale( LC_ALL, "" );
                 return 0;
             }
         }
@@ -411,6 +423,7 @@ extern int bsb_open_header(char *filename, BSBImage *p)
             if ( sscanf(s, "DY=%lf", &p->yresolution) != 1 )
             {
                 fprintf(stderr, "failed to read xresolution\n");
+                setlocale( LC_ALL, "" );
                 return 0;
             }
         }
@@ -428,7 +441,8 @@ extern int bsb_open_header(char *filename, BSBImage *p)
     }
     if (p->width == -1 || p->height == -1)
     {
-        fprintf(stderr, "Error: Could not read RA=<width>,<height>\n");
+        printf("Error: Could not read RA=<width>,<height>\n");
+        setlocale( LC_ALL, "" );
         return 0;
     }
     /* done with the header */
@@ -458,6 +472,7 @@ extern int bsb_open_header(char *filename, BSBImage *p)
        /* position at the first row - it is safer to use index if exists */
        bsb_seek_to_row(p, 0);
     }
+    setlocale( LC_ALL, "" );
     return 1;
 }
 

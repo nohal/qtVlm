@@ -34,6 +34,8 @@ typedef quint16 uint16_t;
 typedef quint32 uint32_t;
 #endif
 
+#include <locale.h>
+
 #define BSB_MAX_REFS 512
 #define BSB_MAX_PLYS 200
 #define BSB_MAX_AFTS 200
