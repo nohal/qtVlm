@@ -50,6 +50,8 @@ class loadImg : public QObject, public QGraphicsPixmapItem
         QString getMyImgFileName(){return this->myImgFileName;}
         void setAlpha(double alpha){this->alpha=alpha;this->setOpacity(alpha);}
         double getAlpha(){return alpha;}
+        QPolygonF getBorders(){return borders;}
+        void setImgGribKap(QPixmap imgGribKap);
 
     public slots:
         void slot_updateProjection();
@@ -71,6 +73,7 @@ class loadImg : public QObject, public QGraphicsPixmapItem
         uint8_t * bsbBuf;
         uint8_t * getRow(int row);
         QPolygonF borders;
+        QGraphicsPixmapItem * gribKap;
 };
 
 #endif

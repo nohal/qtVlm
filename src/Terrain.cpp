@@ -41,6 +41,7 @@ Copyright (C) 2008 - Jacques Zaninetti - http://zygrib.free.fr
 #include "mycentralwidget.h"
 #include "GshhsReader.h"
 #include "Grib.h"
+#include "loadImg.h"
 
 //---------------------------------------------------------
 // Constructeur
@@ -213,7 +214,25 @@ void Terrain::draw_GSHHSandGRIB()
     Grib * grib=parent->getGrib();
 
     if(grib)
+    {
         drawGrib(pnt,grib);
+        if(parent->getKap())
+        {
+            QPolygon bordersXY;
+            QPolygonF borders=parent->getKap()->getBorders();
+            for(int i=0;i<borders.count();++i)
+            {
+                int X,Y;
+                proj->map2screen(borders.at(i).x(),borders.at(i).y(),&X,&Y);
+                bordersXY.append(QPoint(X,Y));
+            }
+            QRectF br=bordersXY.boundingRect();
+            if(!br.isNull() && !br.isEmpty())
+                parent->getKap()->setImgGribKap(imgAll->copy(br.toRect()));
+            else
+                parent->getKap()->setImgGribKap(QPixmap(0,0));
+        }
+    }
 
 #ifdef __TERRAIN_QIMAGE
     pnt.drawImage(0,0, *imgEarth);

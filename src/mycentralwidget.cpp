@@ -3501,28 +3501,28 @@ void myCentralWidget::slotFax_close()
 }
 void myCentralWidget::slotImg_open()
 {
-    bool newImg=false;
-    if(!img)
+    bool newKap=false;
+    if(!kap)
     {
-        newImg=true;
-        img=new loadImg(proj,this);
+        newKap=true;
+        kap=new loadImg(proj,this);
     }
-    dialogLoadImg * dImg=new dialogLoadImg(img,this);
-    if(dImg->exec()!=QDialog::Accepted && newImg)
+    dialogLoadImg * dKap=new dialogLoadImg(kap,this);
+    if(dKap->exec()!=QDialog::Accepted && newKap)
     {
-        delete img;
-        img=NULL;
+        delete kap;
+        kap=NULL;
     }
-    else if(img->getMyImgFileName().isEmpty())
+    else if(kap->getMyImgFileName().isEmpty())
     {
-        delete img;
-        img=NULL;
+        delete kap;
+        kap=NULL;
     }
-    delete dImg;
+    delete dKap;
 }
 void myCentralWidget::slotImg_close()
 {
-    if (img)
-        delete img;
-    img=NULL;
+    if (kap)
+        delete kap;
+    kap=NULL;
 }

@@ -15,9 +15,9 @@ dialogLoadImg::dialogLoadImg(loadImg * carte, myCentralWidget *parent)
     this->carte=carte;
     setupUi(this);
     Util::setFontDialog(this);
-    //this->FileName->setText(carte->getFileName());
-    //this->alpha->setValue(qRound((1.0-carte->getAlpha())*100));
-    //this->alpha->setMaximum((1.0-MIN_ALPHA)*100);
+    this->FileName->setText(carte->getMyImgFileName());
+    this->alpha->setValue(qRound((1.0-carte->getAlpha())*100));
+    this->alpha->setMaximum((1.0-MIN_ALPHA)*100);
     connect(this->Browse,SIGNAL(clicked()),this,SLOT(browseFile()));
 }
 

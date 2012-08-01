@@ -47,8 +47,13 @@ loadImg::loadImg(Projection *proj, myCentralWidget *parent)
     this->bsb=NULL;
     this->bsbBuf=0;
     this->parent = parent;
+    gribKap=new QGraphicsPixmapItem(this);
     this->proj=proj;
     this->setZValue(Z_VALUE_LOADIMG);
+    gribKap->setZValue(Z_VALUE_LOADIMG+0.1);
+    gribKap->setFlag(QGraphicsItem::ItemIgnoresParentOpacity,true);
+    gribKap->setOpacity(0.2);
+    gribKap->setPos(0,0);
     connect (proj,SIGNAL(projectionUpdated()),this,SLOT(slot_updateProjection()));
     this->parent->getScene()->addItem(this);
     this->alpha=1.0;
@@ -73,6 +78,10 @@ loadImg::~loadImg()
         delete bsb;
         bsb=NULL;
     }
+}
+void loadImg::setImgGribKap(QPixmap imgGribKap)
+{
+    gribKap->setPixmap(imgGribKap);
 }
 
 bool loadImg::setMyImgFileName(QString s)

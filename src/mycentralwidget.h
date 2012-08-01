@@ -185,6 +185,7 @@ class myCentralWidget : public QWidget
         time_t getNextVac();
         void setPilototo(QList<POI*> poiList);
         void treatRoute(ROUTE* route);
+        loadImg * getKap(){return kap;}
 
     public slots :
         /* Zoom & position */
@@ -411,7 +412,7 @@ class myCentralWidget : public QWidget
         void doSimplifyRoute(ROUTE * route, bool fast=false);
         bool abortRequest;
         faxMeteo * fax;
-        loadImg * img;
+        loadImg * kap;
 };
 
 #endif // MYCENTRALWIDGET_H
