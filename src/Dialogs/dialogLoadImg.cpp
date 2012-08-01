@@ -15,10 +15,16 @@ dialogLoadImg::dialogLoadImg(loadImg * carte, myCentralWidget *parent)
     this->carte=carte;
     setupUi(this);
     Util::setFontDialog(this);
+    this->alpha->setMaximum(100);
+    this->gribAlpha->setMaximum(100);
     this->FileName->setText(carte->getMyImgFileName());
-    this->alpha->setValue(qRound((1.0-carte->getAlpha())*100));
-    this->alpha->setMaximum((1.0-MIN_ALPHA)*100);
+    this->alpha->setValue(carte->getAlpha()*100);
+    this->drawGribOverKap->setChecked(carte->getDrawGribOverKap());
+    this->gribColored->setChecked(!carte->getGribColored());
+    this->gribAlpha->setValue(carte->getGribAlpha()*100);
     connect(this->Browse,SIGNAL(clicked()),this,SLOT(browseFile()));
+    connect(this->alpha,SIGNAL(valueChanged(int)),this,SLOT(setKapOpacity(int)));
+    connect(this->gribAlpha,SIGNAL(valueChanged(int)),this,SLOT(setGribOpacity(int)));
 }
 
 dialogLoadImg::~dialogLoadImg()
@@ -30,15 +36,26 @@ void dialogLoadImg::done(int result)
 {
     if(result == QDialog::Accepted)
     {
-        carte->setAlpha(1.0-(this->alpha->value()/100.0));
-        if(!carte->setMyImgFileName(this->FileName->text()))
+        carte->setParams(this->alpha->value()/100.0,
+                         this->gribAlpha->value()/100.0,
+                         drawGribOverKap->isChecked(),
+                         !gribColored->isChecked());
+        if(carte->getMyImgFileName()!=this->FileName->text())
         {
-            QMessageBox msgBox;
-            msgBox.setText(tr("Fichier Kap invalide"));
-            msgBox.setIcon(QMessageBox::Critical);
-            msgBox.exec();
-            return;
+            if(!carte->setMyImgFileName(this->FileName->text()))
+            {
+                QMessageBox msgBox;
+                msgBox.setText(tr("Fichier Kap invalide"));
+                msgBox.setIcon(QMessageBox::Critical);
+                msgBox.exec();
+                return;
+            }
         }
+    }
+    else
+    {
+        carte->setGribOpacity(carte->getGribAlpha());
+        carte->setOpacity(carte->getAlpha());
     }
     QDialog::done(result);
 }
@@ -66,4 +83,12 @@ void dialogLoadImg::browseFile()
         this->FileName->setText(fileName);
         Settings::setSetting("cartePath",cartePath);
     }
+}
+void dialogLoadImg::setGribOpacity(int i)
+{
+    carte->setGribOpacity((double)i/100.0);
+}
+void dialogLoadImg::setKapOpacity(int i)
+{
+    carte->setOpacity((double)i/100.0);
 }

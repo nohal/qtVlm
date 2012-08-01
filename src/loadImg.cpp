@@ -52,22 +52,45 @@ loadImg::loadImg(Projection *proj, myCentralWidget *parent)
     this->proj=proj;
     this->setZValue(Z_VALUE_LOADIMG);
     gribKap->setZValue(Z_VALUE_LOADIMG+0.1);
-    gribKap->setFlag(QGraphicsItem::ItemIgnoresParentOpacity,true);
+    //gribKap->setFlag(QGraphicsItem::ItemIgnoresParentOpacity,true);
     gribKap->setOpacity(1);
     gribKap->setPos(0,0);
     connect (proj,SIGNAL(projectionUpdated()),this,SLOT(slot_updateProjection()));
     this->parent->getScene()->addItem(this);
-    this->alpha=1.0;
+    this->alpha=Settings::getSetting("kapAlpha",1.0).toDouble();
+    this->gribAlpha=Settings::getSetting("kapGribAlpha",1.0).toDouble();
+    this->drawGribOverKap=Settings::getSetting("kapDrawGrib",1).toInt()==1;
+    this->gribColored=Settings::getSetting("kapGribColored",0).toInt()==1;
     this->setOpacity(alpha);
     this->slot_updateProjection();
     this->hide();
 }
-void loadImg::setLonLat(double lon1, double lat1, double lon2, double lat2)
+void loadImg::setGribOpacity(double d)
 {
-    this->lat1=lat1;
-    this->lon1=lon1;
-    this->lat2=lat2;
-    this->lon2=lon2;
+    gribKap->setOpacity(d);
+}
+
+void loadImg::setParams(double alpha, double gribAlpha, bool drawGribOverKap, bool gribColored)
+{
+    this->alpha=alpha;
+    this->gribAlpha=gribAlpha;
+    this->drawGribOverKap=drawGribOverKap;
+    bool b=this->gribColored;
+    this->gribColored=gribColored;
+    Settings::setSetting("kapAlpha",alpha);
+    Settings::setSetting("kapGribAlpha",gribAlpha);
+    Settings::setSetting("kapDrawGrib",drawGribOverKap?1:0);
+    Settings::setSetting("kapGribColored",gribColored?1:0);
+    this->setOpacity(alpha);
+    this->gribKap->setOpacity(gribAlpha);
+    if(drawGribOverKap)
+    {
+        if(b!=this->gribColored)
+            this->setImgGribKap(this->imgGribKap);
+        gribKap->show();
+    }
+    else
+        gribKap->hide();
 }
 
 loadImg::~loadImg()
@@ -82,9 +105,18 @@ loadImg::~loadImg()
 }
 void loadImg::setImgGribKap(QPixmap imgGribKap)
 {
-    QBitmap mask=imgGribKap.createMaskFromColor(Qt::white,Qt::MaskOutColor);
-    imgGribKap.fill(Qt::black);
-    imgGribKap.setMask(mask);
+    this->imgGribKap=imgGribKap;
+    if(!drawGribOverKap)
+    {
+        gribKap->hide();
+        return;
+    }
+    if(!gribColored)
+    {
+        QBitmap mask=imgGribKap.createMaskFromColor(Qt::white,Qt::MaskOutColor);
+        imgGribKap.fill(Qt::black);
+        imgGribKap.setMask(mask);
+    }
     gribKap->setPixmap(imgGribKap);
 }
 

@@ -46,13 +46,16 @@ class loadImg : public QObject, public QGraphicsPixmapItem
 
         /* accés aux données */
         bool setMyImgFileName(QString s);
-        void setLonLat(double lon1, double lat1, double lon2, double lat2);
         QString getMyImgFileName(){return this->myImgFileName;}
         void setAlpha(double alpha){this->alpha=alpha;this->setOpacity(alpha);}
+        void setGribOpacity(double d);
         double getAlpha(){return alpha;}
         QPolygonF getBorders(){return borders;}
         void setImgGribKap(QPixmap imgGribKap);
-
+        bool getGribColored(){return gribColored;}
+        double getGribAlpha(){return gribAlpha;}
+        bool getDrawGribOverKap(){return drawGribOverKap;}
+        void setParams(double alpha,double gribAlpha,bool drawGribOverKap,bool gribColored);
     public slots:
         void slot_updateProjection();
 
@@ -63,9 +66,11 @@ class loadImg : public QObject, public QGraphicsPixmapItem
         Projection * proj;
 
         /* data */
-        double  lon1, lat1, lat2, lon2;
         double  alpha;
         QString myImgFileName;
+        double  gribAlpha;
+        bool drawGribOverKap;
+        bool gribColored;
         /*internal*/
         void convertBsb2Pixmap(BSBImage * b);
         void map2Image(double lon, double lat,double * x, double * y);
@@ -74,6 +79,7 @@ class loadImg : public QObject, public QGraphicsPixmapItem
         uint8_t * getRow(int row);
         QPolygonF borders;
         QGraphicsPixmapItem * gribKap;
+        QPixmap imgGribKap;
 };
 
 #endif
