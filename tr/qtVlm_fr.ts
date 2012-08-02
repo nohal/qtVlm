@@ -2270,6 +2270,18 @@ Etes-vous sur ?</source>
         <source>Importer un fichier GeoData</source>
         <translation></translation>
     </message>
+    <message>
+        <source>Gestion des fichiers KAP</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Ouvrir un fichier KAP</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Fermer le fichier KAP</source>
+        <translation></translation>
+    </message>
 </context>
 <context>
     <name>POI</name>
@@ -5102,6 +5114,52 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>4</source>
+        <translation></translation>
+    </message>
+</context>
+<context>
+    <name>dialogLoadImg</name>
+    <message>
+        <source>Fichier Kap invalide</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Choisir un fichier kap</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Fichiers kap (*.kap *.KAP)</source>
+        <translation></translation>
+    </message>
+</context>
+<context>
+    <name>dialogLoadImg_ui</name>
+    <message>
+        <source>Ouvrir un fichier KAP</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Nom du fichier Kap</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Parcourir</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Opacite</source>
+        <translation>Opacité</translation>
+    </message>
+    <message>
+        <source>Grib</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Ne pas colorer le grib</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Afficher au dessus du KAP</source>
         <translation></translation>
     </message>
 </context>

@@ -216,7 +216,7 @@ void Terrain::draw_GSHHSandGRIB()
     if(grib)
     {
         drawGrib(pnt,grib);
-        if(parent->getKap() && parent->getKap()->getDrawGribOverKap())
+        if(parent->getKap() /*&& parent->getKap()->getDrawGribOverKap()*/)
         {
             QPolygon bordersXY;
             QPolygonF borders=parent->getKap()->getBorders();

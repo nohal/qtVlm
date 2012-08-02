@@ -103,11 +103,23 @@ loadImg::~loadImg()
         bsb=NULL;
     }
 }
+void loadImg::redraw(bool b1, bool b2)
+{
+    bool s1=drawGribOverKap;
+    bool s2=gribColored;
+    drawGribOverKap=b1;
+    gribColored=b2;
+    setImgGribKap(imgGribKap);
+    drawGribOverKap=s1;
+    gribColored=s2;
+}
+
 void loadImg::setImgGribKap(QPixmap imgGribKap)
 {
     this->imgGribKap=imgGribKap;
-    if(!drawGribOverKap)
+    if(!drawGribOverKap || imgGribKap.isNull() || imgGribKap.size().isEmpty())
     {
+        gribKap->setPixmap(QPixmap(0,0));
         gribKap->hide();
         return;
     }
@@ -118,6 +130,7 @@ void loadImg::setImgGribKap(QPixmap imgGribKap)
         imgGribKap.setMask(mask);
     }
     gribKap->setPixmap(imgGribKap);
+    gribKap->show();
 }
 
 bool loadImg::setMyImgFileName(QString s)

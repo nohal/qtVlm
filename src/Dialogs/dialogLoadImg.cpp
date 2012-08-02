@@ -24,6 +24,8 @@ dialogLoadImg::dialogLoadImg(loadImg * carte, myCentralWidget *parent)
     this->gribAlpha->setValue(carte->getGribAlpha()*100);
     connect(this->Browse,SIGNAL(clicked()),this,SLOT(browseFile()));
     connect(this->alpha,SIGNAL(valueChanged(int)),this,SLOT(setKapOpacity(int)));
+    connect(this->drawGribOverKap,SIGNAL(toggled(bool)),this,SLOT(slotGribKap()));
+    connect(this->gribColored,SIGNAL(toggled(bool)),this,SLOT(slotGribKap()));
     connect(this->gribAlpha,SIGNAL(valueChanged(int)),this,SLOT(setGribOpacity(int)));
 }
 
@@ -59,10 +61,15 @@ void dialogLoadImg::done(int result)
     }
     QDialog::done(result);
 }
+void dialogLoadImg::slotGribKap()
+{
+    carte->redraw(this->drawGribOverKap->isChecked(),!this->gribColored->isChecked());
+}
+
 void dialogLoadImg::browseFile()
 {
     QString filter;
-    filter =  tr("Fichiers kap (*.kap *.KAP");
+    filter =  tr("Fichiers kap (*.kap *.KAP)");
     QString cartePath=Settings::getSetting("cartePath",".").toString();
     if(cartePath==".") cartePath=QDir::currentPath();
     QDir dircarte(cartePath);

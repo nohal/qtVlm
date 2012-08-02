@@ -18,6 +18,7 @@ public slots:
     void browseFile();
     void setGribOpacity(int i);
     void setKapOpacity(int i);
+    void slotGribKap();
 private:
     loadImg * carte;
     myCentralWidget * parent;

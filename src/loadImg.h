@@ -56,6 +56,7 @@ class loadImg : public QObject, public QGraphicsPixmapItem
         double getGribAlpha(){return gribAlpha;}
         bool getDrawGribOverKap(){return drawGribOverKap;}
         void setParams(double alpha,double gribAlpha,bool drawGribOverKap,bool gribColored);
+        void redraw(bool b1, bool b2);
     public slots:
         void slot_updateProjection();
 
