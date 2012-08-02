@@ -186,6 +186,13 @@ void  GribRecord::translateDataType()
         {
 
         }
+        //---------------
+        //Theyr.com
+        //---------------
+        else if (idCenter==131 && idModel==75 && idGrid==237)
+        {
+
+        }
         //------------------------
         // Unknown center
         //------------------------
