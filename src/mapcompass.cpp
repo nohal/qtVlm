@@ -376,7 +376,7 @@ void  mapCompass::paint(QPainter * pnt, const QStyleOptionGraphicsItem * , QWidg
     pen.setColor(Qt::black);
     pnt->setPen(pen);
 
-    /* text de lattitude/longitude*/
+    /* text de latitude/longitude*/
     if(isMoving)
     {
         QString lat_txt,lon_txt,wind_txt,s,z,WP_txt;
@@ -680,7 +680,7 @@ void mapCompass::updateCompassLineLabels(int x, int y)
             meters=QString().sprintf("<br>%.2f ",loxo_dist*1852)+tr("Metres");
         if(map->crossing(QLineF(XX,YY,X,Y),QLineF(xa,ya,xb,yb)))
         {
-            if(main->getSelectedBoat()->getType()!=BOAT_VLM)
+            if(main->getSelectedBoat() && main->getSelectedBoat()->getType()!=BOAT_VLM)
             {
                 double cap1=Util::A360(pos_angle-main->getSelectedBoat()->getDeclinaison());
                 double cap2=Util::A360(loxo_angle-main->getSelectedBoat()->getDeclinaison());
@@ -697,7 +697,7 @@ void mapCompass::updateCompassLineLabels(int x, int y)
         }
         else
         {
-            if(main->getSelectedBoat()->getType()!=BOAT_VLM)
+            if(main->getSelectedBoat() && main->getSelectedBoat()->getType()!=BOAT_VLM)
             {
                 double cap1=Util::A360(pos_angle-main->getSelectedBoat()->getDeclinaison());
                 double cap2=Util::A360(loxo_angle-main->getSelectedBoat()->getDeclinaison());

@@ -735,6 +735,8 @@ void MainWindow::openGribFile(QString fileName, bool zoom)
                        endGribDate.toString(tr("dd/MM/yyyy hh:mm:ss"))+")");
         slotDateGribChanged_now();
         gribFileName = fileName;
+        Settings::setSetting("gribFileName",  gribFileName);
+        Settings::setSetting("gribFilePath",  gribFilePath);
     }
     else {
         QMessageBox::critical (this,

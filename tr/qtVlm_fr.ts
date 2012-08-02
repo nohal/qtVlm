@@ -3740,7 +3740,8 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Optimiser</source>
-        <translation></translation>
+        <translation>Optimiser
+sans simplifier</translation>
     </message>
     <message>
         <source>Afficher infos du point d&apos;interpolation</source>

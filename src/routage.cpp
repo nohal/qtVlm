@@ -842,11 +842,13 @@ void ROUTAGE::calculate()
     if (!(myBoat && myBoat->getPolarData() && myBoat!=NULL))
     {
         QMessageBox::critical(0,tr("Routage"),tr("Pas de polaire chargee"));
+        delete this;
         return;
     }
     if(!grib)
     {
         QMessageBox::critical(0,tr("Routage"),tr("Pas de grib charge"));
+        delete this;
         return;
     }
     if(!i_iso)
@@ -856,6 +858,7 @@ void ROUTAGE::calculate()
     if ( eta>grib->getMaxDate() || eta<grib->getMinDate() )
     {
         QMessageBox::critical(0,tr("Routage"),tr("Date de depart choisie incoherente avec le grib"));
+        delete this;
         return;
     }
     running=true;

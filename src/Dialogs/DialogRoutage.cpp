@@ -323,6 +323,12 @@ void DialogRoutage::done(int result)
         {
             if(parent->getBoats())
             {
+                if(editBoat->currentText().isEmpty() || editBoat->count()==0)
+                {
+                    QMessageBox::critical(0,tr("Creation d'un routage"),
+                                          tr("Pas de bateau selectionne, pas de routage possible"));
+                    return;
+                }
                 QListIterator<boatVLM*> i (*parent->getBoats());
                 while(i.hasNext())
                 {

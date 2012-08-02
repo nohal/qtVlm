@@ -303,6 +303,7 @@ myCentralWidget::myCentralWidget(Projection * proj,MainWindow * parent,MenuBar *
     this->aboutToQuit=false;
     this->boat_list=NULL;
     this->fax=NULL;
+    this->kap=NULL;
 
     currentPlayer=NULL;
 

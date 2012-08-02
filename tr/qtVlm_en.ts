@@ -5328,7 +5328,8 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../src/Ui/Route_Editor.ui" line="111"/>
         <source>Optimiser</source>
-        <translation>Optimize</translation>
+        <translation>Optimize
+without simplication</translation>
     </message>
     <message>
         <location filename="../src/Ui/Route_Editor.ui" line="441"/>
