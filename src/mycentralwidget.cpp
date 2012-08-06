@@ -2235,7 +2235,7 @@ void myCentralWidget::exportRouteFromMenu(ROUTE * route)
 void myCentralWidget::importRouteFromMenuKML(QString fileName,bool toClipboard)
 {
     fileName="";
-    toClipBoard=false;
+    toClipboard=false;
 }
 
 void myCentralWidget::exportRouteFromMenuKML(ROUTE * route,QString fileName,bool toClipboard)
