@@ -177,6 +177,8 @@ class myCentralWidget : public QWidget
         bool get_shPor_st(void) { return shPor_st; }
         void exportRouteFromMenu(ROUTE * route);
         void exportRouteFromMenuGPX(ROUTE * route,QString fileName,bool POIonly);
+        void exportRouteFromMenuKML(ROUTE * route,QString fileName,bool toClipboard);
+        void importRouteFromMenuKML(QString fileName,bool toClipboard);
 
         /*races*/
         void drawNSZ(int i);

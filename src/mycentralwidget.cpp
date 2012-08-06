@@ -79,6 +79,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "parser.h"
 #include <QVariantMap>
 #include <QVariant>
+#include <QClipboard>
 
 /*******************/
 /*    myScene      */
@@ -1556,10 +1557,10 @@ void myCentralWidget::slot_importRouteFromMenu(bool ortho)
     }
 #if 1
     QString fileName = QFileDialog::getOpenFileName(this,
-                         tr("Ouvrir un fichier Route"), routePath, "Routes (*.csv *.txt *.xml *.json *.CSV *.TXT *.XML *.Json *.JSON)");
+                         tr("Ouvrir un fichier Route"), routePath, "Routes (*.csv *.txt *.xml *.json *.kml *.CSV *.TXT *.XML *.Json *.JSON *.KML)");
 #else
     QString fileName = QFileDialog::getOpenFileName(this,
-                         tr("Ouvrir un fichier Route"), routePath, "Routes (*.csv *.txt *.xml *.CSV *.TXT *.XML)");
+                         tr("Ouvrir un fichier Route"), routePath, "Routes (*.csv *.txt *.xml *.csv *.txt *.xml *.kml *.json)");
 #endif
     if(fileName.isEmpty() || fileName.isNull()) return;
 
@@ -1574,7 +1575,9 @@ void myCentralWidget::slot_importRouteFromMenu(bool ortho)
     Settings::setSetting("importRouteFolder",info.absoluteDir().path());
     bool ok;
     QString routeName;
-    if(info.suffix().toLower()=="json")
+    if(info.suffix().toLower()=="kml")
+        this->importRouteFromMenuKML(fileName,false);
+    else if(info.suffix().toLower()=="json")
     {
         QTextStream stream(&routeFile);
         QString line;
@@ -2036,8 +2039,25 @@ void myCentralWidget::exportRouteFromMenu(ROUTE * route)
         Settings::setSetting("importRouteFolder",routePath);
     }
     QString fileName = QFileDialog::getSaveFileName(this,
-                         tr("Exporter une Route"), routePath, "Routes (*.json *.csv *.txt *.CSV *.TXT *.gpx)");
+                         tr("Exporter une Route"), routePath, "Routes (*.json *.csv *.txt *.CSV *.gpx *.kml)");
     if(fileName.isEmpty() || fileName.isNull()) return;
+
+    QFile::remove(fileName);
+    QFile routeFile(fileName);
+    QFileInfo info(routeFile);
+    if(!routeFile.open(QIODevice::WriteOnly | QIODevice::Text))
+    {
+        QMessageBox::warning(0,QObject::tr("Export de route"),
+             QString(QObject::tr("Impossible de creer le fichier %1")).arg(fileName));
+        return;
+    }
+    Settings::setSetting("importRouteFolder",info.absoluteDir().path());
+    if (QString::compare(info.suffix().toLower(),"kml")==0)
+    {
+        routeFile.close();
+        exportRouteFromMenuKML(route,fileName,false);
+        return;
+    }
     QMessageBox mb(0);
     mb.setText(tr("Exporter seulement les POIs ou egalement tous les details?"));
     mb.setWindowTitle(tr("Exporter une route"));
@@ -2050,23 +2070,12 @@ void myCentralWidget::exportRouteFromMenu(ROUTE * route)
         POIonly=true;
     else if(mb.clickedButton()==ALLbutton)
         POIonly=false;
-
-    QFile::remove(fileName);
-    QFile routeFile(fileName);
-    QFileInfo info(routeFile);
-    if(!routeFile.open(QIODevice::WriteOnly | QIODevice::Text))
-    {
-        QMessageBox::warning(0,QObject::tr("Export de route"),
-             QString(QObject::tr("Impossible de creer le fichier %1")).arg(fileName));
-        return;
-    }
-    Settings::setSetting("importRouteFolder",info.absoluteDir().path());
     QMessageBox * waitBox = new QMessageBox(QMessageBox::Information,tr("Import de routes"),
                               tr("Export en cours, veuillez patienter..."));
     waitBox->setStandardButtons(QMessageBox::NoButton);
     waitBox->show();
     QApplication::processEvents();
-    if (QString::compare(info.suffix(),"gpx")==0)
+    if (QString::compare(info.suffix().toLower(),"gpx")==0)
     {
         exportRouteFromMenuGPX(route,fileName,POIonly);
         delete waitBox;
@@ -2223,6 +2232,278 @@ void myCentralWidget::exportRouteFromMenu(ROUTE * route)
     routeFile.close();
     delete waitBox;
 }
+void myCentralWidget::importRouteFromMenuKML(QString fileName,bool toClipboard)
+{
+    fileName="";
+    toClipBoard=false;
+}
+
+void myCentralWidget::exportRouteFromMenuKML(ROUTE * route,QString fileName,bool toClipboard)
+{
+    QList<POI *> pList=route->getPoiList();
+    if(pList.isEmpty()) return;
+    QFile::remove(fileName);
+    QDomDocument doc;
+    doc.appendChild(doc.createProcessingInstruction("xml","version=\"1.0\""));
+    QDomElement kml = doc.createElement("kml");
+    doc.appendChild(kml);
+
+    kml.setAttribute("xmlns","http://www.opengis.net/kml/2.2");
+    kml.setAttribute("xmlns:gx","http://www.google.com/kml/ext/2.2");
+    kml.setAttribute("xmlns:kml","http://www.opengis.net/kml/2.2");
+    kml.setAttribute("xmlns:atom","http://www.w3.org/2005/Atom");
+    QDomElement d1 = doc.createElement("Document");
+    kml.appendChild(d1);
+    QDomElement d2=doc.createElement("name");
+    d1.appendChild(d2);
+    QDomText d3=doc.createTextNode(route->getName());
+    d2.appendChild(d3);
+    QDomText t;
+    for (int i=0;i<pList.count();++i)
+    {
+        QDomElement qd1=doc.createElement("Placemark");
+        d1.appendChild(qd1);
+        QDomElement qd2=doc.createElement("name");
+        qd1.appendChild(qd2);
+        t=doc.createTextNode(pList.at(i)->getName());
+        qd2.appendChild(t);
+        QDomElement qd3=doc.createElement("description");
+        qd1.appendChild(qd3);
+        QDomElement qd4=doc.createElement("extradata");
+        qd3.appendChild(qd4);
+        QDomElement ex1=doc.createElement("sequence");
+        qd4.appendChild(ex1);
+        t=doc.createTextNode(QString().sprintf("%04d",i));
+        ex1.appendChild(t);
+        QDomElement ex2=doc.createElement("eta");
+        qd4.appendChild(ex2);
+        if(pList.at(i)->getRouteTimeStamp()!=-1)
+            t=doc.createTextNode(QDateTime().fromTime_t(pList.at(i)->getRouteTimeStamp()).toUTC().toString("yyyy-MM-ddThh:mm:ssZ"));
+        else
+            t=doc.createTextNode("N/A");
+        ex2.appendChild(t);
+
+
+        if(i==0)
+        {
+            QDomElement qd7=doc.createElement("route");
+            qd4.appendChild(qd7);
+            QDomElement qd8=doc.createElement("startFromBoat");
+            qd7.appendChild(qd8);
+            t=doc.createTextNode(route->getStartFromBoat()?"true":"false");
+            qd8.appendChild(t);
+            qd8=doc.createElement("startTimeOption");
+            qd7.appendChild(qd8);
+            t=doc.createTextNode(QString().setNum(route->getStartTimeOption()));
+            qd8.appendChild(t);
+            qd8=doc.createElement("startDateTime");
+            qd7.appendChild(qd8);
+            t=doc.createTextNode(QDateTime().fromTime_t(route->getStartDate()).toUTC().toString("yyyy-MM-ddThh:mm:ssZ"));
+            qd8.appendChild(t);
+            qd8=doc.createElement("eta");
+            qd7.appendChild(qd8);
+            if(route->getHas_eta())
+                t=doc.createTextNode(QDateTime().fromTime_t(route->getEta()).toUTC().toString("yyyy-MM-ddThh:mm:ssZ"));
+            else
+                t=doc.createTextNode("N/A");
+            qd8.appendChild(t);
+            qd8=doc.createElement("speedTackGybe");
+            qd7.appendChild(qd8);
+            t=doc.createTextNode(QString().sprintf("%.2f",route->getSpeedLossOnTack()*100.0)+"%");
+            qd8.appendChild(t);
+            qd8=doc.createElement("color");
+            qd7.appendChild(qd8);
+            t=doc.createTextNode(QString().sprintf("%03d %03d %03d",route->getColor().red(),route->getColor().green(),route->getColor().blue()));
+            qd8.appendChild(t);
+            qd8=doc.createElement("width");
+            qd7.appendChild(qd8);
+            t=doc.createTextNode(QString().sprintf("%.2f",route->getWidth()));
+            qd8.appendChild(t);
+            qd8=doc.createElement("detectCoast");
+            qd7.appendChild(qd8);
+            t=doc.createTextNode(route->getDetectCoasts()?"true":"false");
+            qd8.appendChild(t);
+            if(!route->getFrozen())
+            {
+                qd8=doc.createElement("roadBook");
+                qd4.appendChild(qd8);
+                QList<QList<double> > * roadBook=route->getRoadMap();
+                for (int i=0;i<roadBook->count();++i)
+                {
+                    if(roadBook->at(i).at(4)==-1) continue;
+                    QDomElement qd9=doc.createElement("roadPoint");
+                    qd8.appendChild(qd9);
+                    QDomElement qd10=doc.createElement("coordinates");
+                    qd9.appendChild(qd10);
+                    t=doc.createTextNode(QString().sprintf("%.14f,%.14f,0.0",
+                                                           roadBook->at(i).at(14),
+                                                           roadBook->at(i).at(13)));
+                    qd10.appendChild(t);
+
+                    qd10=doc.createElement("eta");
+                    qd9.appendChild(qd10);
+                    t=doc.createTextNode(QDateTime().fromTime_t(qRound(roadBook->at(i).at(0))).toUTC().toString("yyyy-MM-ddThh:mm:ssZ"));
+                    qd10.appendChild(t);
+
+                    qd10=doc.createElement("bs");
+                    qd9.appendChild(qd10);
+                    t=doc.createTextNode(QString().sprintf("%.2f",roadBook->at(i).at(4)));
+                    qd10.appendChild(t);
+
+                    qd10=doc.createElement("hdg");
+                    qd9.appendChild(qd10);
+                    t=doc.createTextNode(QString().sprintf("%.2f",roadBook->at(i).at(15)));
+                    qd10.appendChild(t);
+
+                    qd10=doc.createElement("cnm");
+                    qd9.appendChild(qd10);
+                    t=doc.createTextNode(QString().sprintf("%.2f",roadBook->at(i).at(16)));
+                    qd10.appendChild(t);
+
+                    qd10=doc.createElement("dnm");
+                    qd9.appendChild(qd10);
+                    t=doc.createTextNode(QString().sprintf("%.2f",roadBook->at(i).at(10)));
+                    qd10.appendChild(t);
+
+                    qd10=doc.createElement("engineUsed");
+                    qd9.appendChild(qd10);
+                    t=doc.createTextNode(roadBook->at(i).at(12)==-1?"false":"true");
+                    qd10.appendChild(t);
+
+                    qd10=doc.createElement("twd");
+                    qd9.appendChild(qd10);
+                    t=doc.createTextNode(QString().sprintf("%.2f",roadBook->at(i).at(6)));
+                    qd10.appendChild(t);
+
+                    qd10=doc.createElement("tws");
+                    qd9.appendChild(qd10);
+                    t=doc.createTextNode(QString().sprintf("%.2f",roadBook->at(i).at(7)));
+                    qd10.appendChild(t);
+
+                    qd10=doc.createElement("twa");
+                    qd9.appendChild(qd10);
+                    t=doc.createTextNode(QString().sprintf("%.2f",roadBook->at(i).at(8)));
+                    qd10.appendChild(t);
+
+                    double twa=qAbs(roadBook->at(i).at(8));
+                    double tws=roadBook->at(i).at(7);
+                    double Y=90-twa;
+                    double a=tws*cos(degToRad(Y));
+                    double b=tws*sin(degToRad(Y));
+                    double bb=b+roadBook->at(i).at(4);
+                    double aws=sqrt(a*a+bb*bb);
+                    double awa=90-radToDeg(atan(bb/a));
+                    if(roadBook->at(i).at(8)<0) awa = -awa;
+
+                    qd10=doc.createElement("aws");
+                    qd9.appendChild(qd10);
+                    t=doc.createTextNode(QString().sprintf("%.2f",aws));
+                    qd10.appendChild(t);
+
+                    qd10=doc.createElement("awa");
+                    qd9.appendChild(qd10);
+                    t=doc.createTextNode(QString().sprintf("%.2f",awa));
+                    qd10.appendChild(t);
+
+                    qd10=doc.createElement("targetPoi");
+                    qd9.appendChild(qd10);
+                    QDomElement qd11=doc.createElement("name");
+                    qd10.appendChild(qd11);
+                    t=doc.createTextNode(route->getPoiList().at((int)roadBook->at(i).at(9))->getName());
+                    qd11.appendChild(t);
+                    qd11=doc.createElement("coordinates");
+                    qd10.appendChild(qd11);
+                    t=doc.createTextNode(QString().sprintf("%.14f,%.14f,0.0",
+                                                           roadBook->at(i).at(2),
+                                                           roadBook->at(i).at(1)));
+                    qd11.appendChild(t);
+                }
+            }
+        }
+
+
+
+        QDomElement qd5=doc.createElement("Point");
+        qd1.appendChild(qd5);
+        QDomElement qd6=doc.createElement("coordinates");
+        qd5.appendChild(qd6);
+        t=doc.createTextNode(QString().sprintf("%.14f,%.14f,0.0",
+                                               pList.at(i)->getLatitude(),
+                                               pList.at(i)->getLongitude()));
+        qd6.appendChild(t);
+    }
+    QDomElement qd1=doc.createElement("Placemark");
+    d1.appendChild(qd1);
+    QDomElement qd2=doc.createElement("Name");
+    qd1.appendChild(qd2);
+    t=doc.createTextNode("path");
+    qd2.appendChild(t);
+    QDomElement qd3=doc.createElement("gx:Track");
+    qd1.appendChild(qd3);
+    if(route->getFrozen())
+    {
+        QList<vlmPoint> * listPoint=route->getLine()->getPoints();
+        for (int i=0;i<listPoint->count();++i)
+        {
+            QDomElement qd4=doc.createElement("when");
+            qd3.appendChild(qd4);
+            t=doc.createTextNode(QDateTime().fromTime_t(qRound(listPoint->at(i).eta)).toUTC().toString("yyyy-MM-ddThh:mm:ssZ"));
+            qd4.appendChild(t);
+
+        }
+        for (int i=0;i<listPoint->count();++i)
+        {
+            QDomElement qd4=doc.createElement("gx:coord");
+            qd3.appendChild(qd4);
+            t=doc.createTextNode(QString().sprintf("%.14f %.14f 0.0 ",
+                                                   listPoint->at(i).lat,
+                                                   listPoint->at(i).lon));
+            qd4.appendChild(t);
+        }
+    }
+    else
+    {
+        QList<QList<double> > * roadBook=route->getRoadMap();
+        for (int i=0;i<roadBook->count();++i)
+        {
+            if(roadBook->at(i).at(4)==-1) continue;
+            QDomElement qd4=doc.createElement("when");
+            qd3.appendChild(qd4);
+            t=doc.createTextNode(QDateTime().fromTime_t(qRound(roadBook->at(i).at(0))).toUTC().toString("yyyy-MM-ddThh:mm:ssZ"));
+            qd4.appendChild(t);
+
+        }
+        for (int i=0;i<roadBook->count();++i)
+        {
+            if(roadBook->at(i).at(4)==-1) continue;
+            QDomElement qd4=doc.createElement("gx:coord");
+            qd3.appendChild(qd4);
+            t=doc.createTextNode(QString().sprintf("%.14f %.14f 0.0 ",
+                                    roadBook->at(i).at(14),
+                                    roadBook->at(i).at(13)));
+            qd4.appendChild(t);
+        }
+    }
+    if(!toClipboard)
+    {
+        QTextStream out;
+        QFile file(fileName);
+        if (!file.open(QIODevice::ReadWrite | QIODevice::Text | QIODevice::Truncate))
+            return ;
+        out.setDevice(&file);
+        doc.save(out,4);
+    }
+    else
+    {
+        QString buf;
+        QTextStream out(&buf);
+        doc.save(out,4);
+        QClipboard *clipboard = QApplication::clipboard();
+        clipboard->clear();
+        clipboard->setText(buf);
+    }
+}
+
 void myCentralWidget::exportRouteFromMenuGPX(ROUTE * route,QString fileName,bool POIonly)
 {
     QFile::remove(fileName);

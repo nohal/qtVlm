@@ -316,6 +316,7 @@ void DialogRoute::slotInterval()
                 double bb=b+roadItems.at(4);
                 double aws=sqrt(a*a+bb*bb);
                 double awa=90-radToDeg(atan(bb/a));
+                if(roadItems.at(8)<0) awa = -awa;
 
 
                 roadPoint.append(new QStandardItem(QString().sprintf("%.2f",aws)+tr(" nds")));

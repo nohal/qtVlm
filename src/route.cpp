@@ -298,7 +298,6 @@ void ROUTE::slot_recalculate(boat * boat)
                 eta=startTime.toUTC().toTime_t();
                 break;
         }
-        start=eta;
         has_eta=true;
         Orthodromie orth(0,0,0,0);
         //qWarning()<<"??"<<my_poiList.first()->getName();
@@ -322,8 +321,18 @@ void ROUTE::slot_recalculate(boat * boat)
             poi->setTip(tip);
             lastReachedPoi = poi;
         }
-        startLat=lat;
-        startLon=lon;
+        if (simplify || optimizing || optimizingPOI)
+        {
+            eta=start;
+            lat=startLat;
+            lon=startLon;
+        }
+        else
+        {
+            start=eta;
+            startLat=lat;
+            startLon=lon;
+        }
         if(parent->getCompassFollow()==this)
             parent->centerCompass(lon,lat);
         if(!optimizing && (!optimizingPOI || !hasStartEta))
@@ -562,6 +571,10 @@ void ROUTE::slot_recalculate(boat * boat)
                                         roadPoint.append(0); //10
                                         roadPoint.append(0); //11
                                         roadPoint.append(-1); //12
+                                        roadPoint.append(-1); //13
+                                        roadPoint.append(-1); //14
+                                        roadPoint.append(-1); //15
+                                        roadPoint.append(-1); //16
                                         roadMap.append(roadPoint);
                                     }
                                     break;
@@ -596,6 +609,10 @@ void ROUTE::slot_recalculate(boat * boat)
                                 roadPoint.append(remaining_distance); //10
                                 roadPoint.append(Util::A360(capSaved-myBoat->getDeclinaison())); //11
                                 roadPoint.append(engineUsed?1:-1); //12
+                                roadPoint.append(p.lon); //13
+                                roadPoint.append(p.lat); //14
+                                roadPoint.append(Util::A360(cap)); //15
+                                roadPoint.append(Util::A360(capSaved)); //16
                                 roadMap.append(roadPoint);
                             }
                             if(lastEta<gribDate && Eta>=gribDate)
@@ -645,6 +662,10 @@ void ROUTE::slot_recalculate(boat * boat)
                             roadPoint.append(0); //10
                             roadPoint.append(0); //11
                             roadPoint.append(-1); //12
+                            roadPoint.append(-1); //13
+                            roadPoint.append(-1); //14
+                            roadPoint.append(-1); //15
+                            roadPoint.append(-1); //16
                             roadMap.append(roadPoint);
                         }
                         break;

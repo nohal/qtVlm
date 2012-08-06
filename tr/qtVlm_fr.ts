@@ -890,6 +890,10 @@ Etes-vous sur ?</source>
         <source>Pour l&apos;instant, on ne peut pas calculer les isochrones inverses&lt;br&gt;si la duree des isochrones est variable</source>
         <translation>Pour l&apos;instant, on ne peut pas calculer les isochrones inversés&lt;br&gt;si la durée des isochrones est variable</translation>
     </message>
+    <message>
+        <source>Pas de bateau selectionne, pas de routage possible</source>
+        <translation>Pas de bateau selectionné, pas de routage possible</translation>
+    </message>
 </context>
 <context>
     <name>DialogRoute</name>
