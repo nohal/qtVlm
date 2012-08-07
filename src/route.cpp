@@ -199,6 +199,7 @@ void ROUTE::hovered()
         poi->setLabelTransp(false);
         poi->setZValue(30);
     }
+    parent->setRouteToClipboard(this);
 }
 void ROUTE::unHovered()
 {
@@ -207,6 +208,7 @@ void ROUTE::unHovered()
         poi->setLabelTransp(true);
         poi->setZValue(Z_VALUE_POI);
     }
+    parent->setRouteToClipboard(NULL);
 }
 
 void ROUTE::slot_recalculate(boat * boat)

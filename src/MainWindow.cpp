@@ -39,6 +39,7 @@ Copyright (C) 2008 - Jacques Zaninetti - http://zygrib.free.fr
 #include <QTimer>
 #include <QDesktopServices>
 #include <QDesktopWidget>
+#include <QClipboard>
 
 #include "MainWindow.h"
 #include "Util.h"
@@ -156,6 +157,8 @@ void MainWindow::connectSignals()
     connect(mb->ac_compassCenterWp,SIGNAL(triggered()), this, SLOT(slotCompassCenterWp()));
     connect(mb->ac_centerMap,SIGNAL(triggered()), this, SLOT(slot_centerMap()));
 
+    connect(mb->ac_copyRoute,SIGNAL(triggered()), this, SLOT(slot_copyRoute()));
+    connect(mb->ac_pasteRoute,SIGNAL(triggered()), this, SLOT(slot_pasteRoute()));
 #ifdef __QTVLM_WITH_TEST
     if(mb->acVLMTest)
         connect(mb->acVLMTest, SIGNAL(triggered()), this, SLOT(slotVLM_Test()));
@@ -1350,9 +1353,48 @@ void MainWindow::slotShowContextualMenu(QGraphicsSceneContextMenuEvent * e)
             menuBar->ac_compassCenterBoat->setEnabled(true);
             menuBar->ac_compassCenterWp->setEnabled(true);
             break;
-        }
+    }
+    if(my_centralWidget->getRouteToClipboard()!=NULL)
+    {
+        menuBar->ac_copyRoute->setEnabled(true);
+        menuBar->ac_copyRoute->setData(my_centralWidget->getRouteToClipboard()->getName());
+    }
+    else
+    {
+        menuBar->ac_copyRoute->setEnabled(false);
+        menuBar->ac_copyRoute->setData(QString());
+    }
+    QString clipboard=QApplication::clipboard()->text();
+    if(clipboard.isEmpty() || !clipboard.contains("kml") || !clipboard.contains("navigationMode") || !clipboard.contains("ExtendedData"))
+        menuBar->ac_pasteRoute->setEnabled(false);
+    else
+        menuBar->ac_pasteRoute->setEnabled(true);
 
     menuPopupBtRight->exec(QCursor::pos());
+}
+void MainWindow::slot_copyRoute()
+{
+    ROUTE *route=NULL;
+    for (int n=0;n<my_centralWidget->getRouteList().count();++n)
+    {
+        if(my_centralWidget->getRouteList().at(n)->getName()==menuBar->ac_copyRoute->data().toString())
+        {
+            route=my_centralWidget->getRouteList().at(n);
+            break;
+        }
+    }
+    if(route!=NULL)
+        my_centralWidget->exportRouteFromMenuKML(route,"",true);
+}
+void MainWindow::slot_pasteRoute()
+{
+    my_centralWidget->importRouteFromMenuKML("",true);
+}
+void MainWindow::slotInetUpdated(void)
+{
+    //qWarning() << "Inet Updated";
+    emit updateInet();
+    slotVLM_Sync();
 }
 
 void MainWindow::slot_centerMap()
@@ -1864,13 +1906,6 @@ void MainWindow::slot_POIselected(POI* poi)
         emit editWP_POI(poi);
     }
 
-}
-
-void MainWindow::slotInetUpdated(void)
-{
-    //qWarning() << "Inet Updated";
-    emit updateInet();
-    slotVLM_Sync();
 }
 
 void MainWindow::slotAccountListUpdated(void)

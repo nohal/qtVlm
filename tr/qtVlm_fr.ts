@@ -2286,6 +2286,14 @@ Etes-vous sur ?</source>
         <source>Fermer le fichier KAP</source>
         <translation></translation>
     </message>
+    <message>
+        <source>Copier la route au format kml</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Coller une route</source>
+        <translation></translation>
+    </message>
 </context>
 <context>
     <name>POI</name>
@@ -5874,6 +5882,24 @@ Voulez-vous egalement supprimer tous les POIs lui appartenant?</source>
     <message>
         <source>Dernier POI apres optimisation: %1 (ETA: %2)</source>
         <translation>Dernier POI après optimisation : %1 (ETA : %2)</translation>
+    </message>
+    <message>
+        <source>deg</source>
+        <translation>°</translation>
+    </message>
+    <message>
+        <source>Le nom de la route est invalide</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Importer la route : %1</source>
+        <translation>Importer la route: %1</translation>
+    </message>
+    <message>
+        <source>Cette route existe deja.
+
+Voulez-vous la remplacer?</source>
+        <translation>Cette route existe déjà. Voulez-vous la remplacer?</translation>
     </message>
 </context>
 <context>

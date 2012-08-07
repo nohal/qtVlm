@@ -142,6 +142,8 @@ class myCentralWidget : public QWidget
         void centerCompass(double lon,double lat);
         void update_menuRoute();
         void simpAllPOIs(bool b);
+        void setRouteToClipboard(ROUTE * route){this->routeClipboard=route;}
+        ROUTE * getRouteToClipboard(){return this->routeClipboard;}
 /* routage */
         QList<ROUTAGE*> & getRoutageList(){ return this->routage_list;}
         bool freeRoutageName(QString name, ROUTAGE * routage);
@@ -386,6 +388,7 @@ class myCentralWidget : public QWidget
         QList<raceData*> race_list;
         Player * currentPlayer;
         boatReal * realBoat;
+        ROUTE * routeClipboard;
 
         /* Data file */
         xml_POIData * xmlPOI;

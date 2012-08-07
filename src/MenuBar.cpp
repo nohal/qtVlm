@@ -517,6 +517,9 @@ QMenu * MenuBar::createPopupBtRight(QWidget *parent)
     ac_moveBoatSep = popup->addSeparator();
     ac_moveBoat = addAction(popup, tr("Deplacer le bateau ici"),tr(""),tr(""),"");
 
+    popup->addSeparator();
+    ac_copyRoute=addAction(popup,tr("Copier la route au format kml"),"","","");
+    ac_pasteRoute=addAction(popup,tr("Coller une route"),"","","");
     return popup;
 }
 

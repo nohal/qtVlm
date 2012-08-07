@@ -104,6 +104,9 @@ public:
     QAction * ac_moveBoat;
     QAction * ac_moveBoatSep;
 
+    QAction * ac_copyRoute;
+    QAction * ac_pasteRoute;
+
     QAction *acFile_Open;
     QAction *acFile_Close;
     QAction *acFile_Load_GRIB;
