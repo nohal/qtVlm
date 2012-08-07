@@ -2323,7 +2323,7 @@ void myCentralWidget::exportRouteFromMenuKML(ROUTE * route,QString fileName,bool
             qd7.appendChild(qd8);
             t=doc.createTextNode(route->getDetectCoasts()?"true":"false");
             qd8.appendChild(t);
-            if(!route->getFrozen())
+            if(!route->getFrozen() && false)
             {
                 qd8=doc.createElement("roadBook");
                 qd4.appendChild(qd8);
