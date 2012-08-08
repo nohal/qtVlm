@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>620</width>
-    <height>268</height>
+    <width>642</width>
+    <height>349</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -282,6 +282,33 @@
            <widget class="QComboBox" name="cb_routeList"/>
           </item>
           <item>
+           <layout class="QHBoxLayout" name="horizontalLayout_4">
+            <item>
+             <widget class="QLabel" name="label_4">
+              <property name="text">
+               <string>Ordre dans la route</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QSpinBox" name="sequence">
+              <property name="alignment">
+               <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+              </property>
+              <property name="suffix">
+               <string/>
+              </property>
+              <property name="prefix">
+               <string/>
+              </property>
+              <property name="maximum">
+               <number>9999</number>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </item>
+          <item>
            <widget class="QCheckBox" name="notSimplicable">
             <property name="text">
              <string>Non simplifiable</string>
@@ -405,6 +432,7 @@
   <tabstop>lon_val</tabstop>
   <tabstop>editWph</tabstop>
   <tabstop>cb_routeList</tabstop>
+  <tabstop>sequence</tabstop>
   <tabstop>notSimplicable</tabstop>
   <tabstop>chk_tstamp</tabstop>
   <tabstop>editTStamp</tabstop>

@@ -129,6 +129,7 @@ public:
     QAction   *acRoute_import;
     QAction   *acRoute_import2;
     QMenu   *mnRoute_export;
+    QAction   *acRoute_paste;
 
     QAction *acRoutage_add;
     QMenu   *mnRoutage_edit;

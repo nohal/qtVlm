@@ -56,6 +56,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #define ROUTE_SPEED_TACK  "speedTack"
 #define ROUTE_REMOVE      "autoRemovePoi"
 #define ROUTE_AUTO_AT      "autoAt"
+#define ROUTE_SORT_BY_NAME "routeSortByName"
 #define ROUTE_ROADMAPINT   "roadMapInterval"
 /* POI */
 #define POI_GROUP_NAME    "POI"
@@ -78,6 +79,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #define POI_LABEL_HIDDEN  "LabelHidden"
 #define POI_NOT_SIMPLIFICABLE "IsSimplificable"
 #define POI_PILOTE         "Pilote"
+#define POI_SEQUENCE       "Sequence"
 
 xml_POIData::xml_POIData(Projection * proj,MainWindow * main, myCentralWidget * parent)
 : QWidget(parent)
@@ -225,6 +227,9 @@ void xml_POIData::slot_writeData(QList<ROUTE*> & route_list,QList<POI*> & poi_li
           t = doc.createTextNode(QString().setNum(route->getAutoAt()?1:0));
           tag.appendChild(t);
 
+          tag = doc.createElement(ROUTE_SORT_BY_NAME);
+          group.appendChild(tag);
+          t = doc.createTextNode(QString().setNum(route->getSortPoisByName()?1:0));
           tag.appendChild(t);
      }
 
@@ -246,6 +251,11 @@ void xml_POIData::slot_writeData(QList<ROUTE*> & route_list,QList<POI*> & poi_li
           tag = doc.createElement(TYPE_NAME);
           group.appendChild(tag);
           t = doc.createTextNode(QString().setNum(poi->getType()));
+          tag.appendChild(t);
+
+          tag = doc.createElement(POI_SEQUENCE);
+          group.appendChild(tag);
+          t = doc.createTextNode(QString().setNum(poi->getSequence()));
           tag.appendChild(t);
 
           tag = doc.createElement(LAT_NAME);
@@ -329,7 +339,6 @@ void xml_POIData::slot_writeData(QList<ROUTE*> & route_list,QList<POI*> & poi_li
           t = doc.createTextNode(QString().setNum(poi->getNavMode()));
           tag.appendChild(t);
 
-          tag.appendChild(t);
      }
 
      QFile file(fname);
@@ -782,6 +791,13 @@ void xml_POIData::slot_readData(QString fname)
                            route->setAutoAt(dataNode.toText().data().toInt()==1);
                   }
 
+                  if(subNode.toElement().tagName() == ROUTE_SORT_BY_NAME)
+                  {
+                       dataNode = subNode.firstChild();
+                       if(dataNode.nodeType() == QDomNode::TextNode)
+                           route->setSortPoisByName(dataNode.toText().data().toInt()==1);
+                  }
+
                   subNode = subNode.nextSibling();
               }
               if(invalidRoute) /*route->boat does not exist anymore*/
@@ -807,6 +823,7 @@ void xml_POIData::slot_readData(QString fname)
               bool pilote=false;
               QColor lineColor=Qt::blue;
               double lineWidth=2;
+              int sequence=0;
 
               while(!subNode.isNull())
               {
@@ -883,6 +900,13 @@ void xml_POIData::slot_readData(QString fname)
                           type = dataNode.toText().data().toInt();
                    }
 
+                   if(subNode.toElement().tagName() == POI_SEQUENCE)
+                   {
+                      dataNode = subNode.firstChild();
+                      if(dataNode.nodeType() == QDomNode::TextNode)
+                          sequence = dataNode.toText().data().toInt();
+                   }
+
                    if(subNode.toElement().tagName() == TSTAMP_NAME)
                    {
                        dataNode = subNode.firstChild();
@@ -948,6 +972,7 @@ void xml_POIData::slot_readData(QString fname)
                    poi->setPosConnected(lonConnected,latConnected);
                    poi->setLineColor(lineColor);
                    poi->setLineWidth(lineWidth);
+                   poi->setSequence(sequence);
                    emit addPOI_list(poi);
               }
               else

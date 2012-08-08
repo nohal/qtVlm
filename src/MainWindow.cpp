@@ -159,6 +159,7 @@ void MainWindow::connectSignals()
 
     connect(mb->ac_copyRoute,SIGNAL(triggered()), this, SLOT(slot_copyRoute()));
     connect(mb->ac_pasteRoute,SIGNAL(triggered()), this, SLOT(slot_pasteRoute()));
+    connect(mb->acRoute_paste,SIGNAL(triggered()), this, SLOT(slot_pasteRoute()));
 #ifdef __QTVLM_WITH_TEST
     if(mb->acVLMTest)
         connect(mb->acVLMTest, SIGNAL(triggered()), this, SLOT(slotVLM_Test()));
@@ -1365,7 +1366,7 @@ void MainWindow::slotShowContextualMenu(QGraphicsSceneContextMenuEvent * e)
         menuBar->ac_copyRoute->setData(QString());
     }
     QString clipboard=QApplication::clipboard()->text();
-    if(clipboard.isEmpty() || !clipboard.contains("kml") || !clipboard.contains("navigationMode") || !clipboard.contains("ExtendedData"))
+    if(clipboard.isEmpty() || !clipboard.contains("<kml") || !clipboard.contains("Placemark"))
         menuBar->ac_pasteRoute->setEnabled(false);
     else
         menuBar->ac_pasteRoute->setEnabled(true);

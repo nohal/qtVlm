@@ -78,6 +78,7 @@ POI::POI(QString name, int type, double lat, double lon,
     this->colorPilototo=0;
     this->piloteSelected=false;
     this->piloteDate=-1;
+    this->sequence=0;
     useRouteTstamp=false;
     routeTimeStamp=-1;
     route=NULL;
@@ -221,6 +222,11 @@ void POI::createPopUpMenu(void)
     popup->addAction(ac_editRoute);
     ac_editRoute->setEnabled(false);;
     connect(ac_editRoute,SIGNAL(triggered()),this,SLOT(slot_editRoute()));
+    ac_copyRoute = new QAction(tr("Copier la route "),popup);
+    ac_copyRoute->setData(QVariant(QMetaType::VoidStar, &route));
+    popup->addAction(ac_copyRoute);
+    ac_copyRoute->setEnabled(false);;
+    connect(ac_copyRoute,SIGNAL(triggered()),this,SLOT(slot_copyRoute()));
 
     ac_delRoute = new QAction(tr("Supprimer la route "),popup);
     ac_delRoute->setData(QVariant(QMetaType::VoidStar, &route));
@@ -458,6 +464,7 @@ void POI::contextMenuEvent(QGraphicsSceneContextMenuEvent * e)
         ac_delRoute->setEnabled(false);
         ac_delRoute->setData(QVariant(QMetaType::VoidStar, &route));
         ac_editRoute->setEnabled(false);
+        ac_copyRoute->setEnabled(false);
     }
     else
     {
@@ -469,11 +476,13 @@ void POI::contextMenuEvent(QGraphicsSceneContextMenuEvent * e)
         ac_routeList->setEnabled(true);
         ac_delRoute->setEnabled(true);
         ac_editRoute->setEnabled(true);
+        ac_copyRoute->setEnabled(true);
         ac_delRoute->setData(QVariant(QMetaType::VoidStar, &route));
         if(route==NULL)
         {
             ac_delRoute->setEnabled(false);
             ac_editRoute->setEnabled(false);
+            ac_copyRoute->setEnabled(false);
         }
         else
         {
@@ -481,6 +490,8 @@ void POI::contextMenuEvent(QGraphicsSceneContextMenuEvent * e)
             ac_delRoute->setEnabled(true);
             ac_editRoute->setText(tr("Editer la route ")+route->getName());
             ac_editRoute->setEnabled(true);
+            ac_copyRoute->setText(tr("Copier la route ")+route->getName());
+            ac_copyRoute->setEnabled(true);
         }
         /*clear current actions */
         ac_routeList->clear();
@@ -1412,4 +1423,9 @@ void POI::slot_pilote()
 {
     this->piloteSelected=ac_pilot->isChecked();
     update();
+}
+void POI::slot_copyRoute()
+{
+    if(this->route==NULL) return;
+    parent->exportRouteFromMenuKML(this->route,"",true);
 }

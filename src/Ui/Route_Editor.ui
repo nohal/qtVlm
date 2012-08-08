@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>640</width>
-    <height>686</height>
+    <height>647</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -51,28 +51,29 @@
              <property name="title">
               <string>Nom</string>
              </property>
-             <layout class="QHBoxLayout" name="horizontalLayout">
-              <item>
+             <layout class="QGridLayout" name="gridLayout_5">
+              <item row="0" column="1">
                <widget class="QLineEdit" name="editName"/>
               </item>
-              <item>
+              <item row="0" column="2">
                <widget class="QComboBox" name="editBoat"/>
+              </item>
+              <item row="1" column="1">
+               <widget class="QGroupBox" name="colorBox">
+                <property name="minimumSize">
+                 <size>
+                  <width>0</width>
+                  <height>120</height>
+                 </size>
+                </property>
+                <property name="title">
+                 <string>Taille et couleur</string>
+                </property>
+                <layout class="QVBoxLayout" name="verticalLayout"/>
+               </widget>
               </item>
              </layout>
             </widget>
-           </item>
-           <item>
-            <spacer name="verticalSpacer_2">
-             <property name="orientation">
-              <enum>Qt::Vertical</enum>
-             </property>
-             <property name="sizeHint" stdset="0">
-              <size>
-               <width>20</width>
-               <height>40</height>
-              </size>
-             </property>
-            </spacer>
            </item>
           </layout>
          </item>
@@ -120,6 +121,13 @@ p, li { white-space: pre-wrap; }
             </widget>
            </item>
            <item>
+            <widget class="QPushButton" name="btCopy">
+             <property name="text">
+              <string>Copier</string>
+             </property>
+            </widget>
+           </item>
+           <item>
             <widget class="QPushButton" name="btCancel">
              <property name="text">
               <string>Annuler</string>
@@ -132,6 +140,9 @@ p, li { white-space: pre-wrap; }
        </item>
        <item>
         <layout class="QHBoxLayout" name="horizontalLayout_2">
+         <property name="sizeConstraint">
+          <enum>QLayout::SetMinimumSize</enum>
+         </property>
          <item>
           <widget class="QGroupBox" name="groupBox_10">
            <property name="title">
@@ -155,6 +166,19 @@ p, li { white-space: pre-wrap; }
               </property>
              </widget>
             </item>
+            <item>
+             <spacer name="verticalSpacer_2">
+              <property name="orientation">
+               <enum>Qt::Vertical</enum>
+              </property>
+              <property name="sizeHint" stdset="0">
+               <size>
+                <width>20</width>
+                <height>40</height>
+               </size>
+              </property>
+             </spacer>
+            </item>
            </layout>
           </widget>
          </item>
@@ -164,6 +188,9 @@ p, li { white-space: pre-wrap; }
             <string>Date et heure de depart de la route</string>
            </property>
            <layout class="QFormLayout" name="formLayout">
+            <property name="fieldGrowthPolicy">
+             <enum>QFormLayout::AllNonFixedFieldsGrow</enum>
+            </property>
             <item row="0" column="0" colspan="2">
              <widget class="QRadioButton" name="editVac">
               <property name="text">
@@ -193,6 +220,9 @@ p, li { white-space: pre-wrap; }
               <property name="enabled">
                <bool>false</bool>
               </property>
+              <property name="alignment">
+               <set>Qt::AlignCenter</set>
+              </property>
               <property name="displayFormat">
                <string>M/d/yyyy hh:mm:ss</string>
               </property>
@@ -201,63 +231,71 @@ p, li { white-space: pre-wrap; }
               </property>
              </widget>
             </item>
+            <item row="3" column="1">
+             <spacer name="verticalSpacer_3">
+              <property name="orientation">
+               <enum>Qt::Vertical</enum>
+              </property>
+              <property name="sizeHint" stdset="0">
+               <size>
+                <width>20</width>
+                <height>40</height>
+               </size>
+              </property>
+             </spacer>
+            </item>
            </layout>
           </widget>
          </item>
         </layout>
        </item>
        <item>
-        <widget class="QGroupBox" name="colorBox">
-         <property name="minimumSize">
-          <size>
-           <width>0</width>
-           <height>120</height>
-          </size>
-         </property>
-         <property name="title">
-          <string>Taille et couleur</string>
-         </property>
-         <layout class="QVBoxLayout" name="verticalLayout"/>
-        </widget>
-       </item>
-       <item>
-        <widget class="QGroupBox" name="groupBox_7">
+        <widget class="QGroupBox" name="options">
          <property name="title">
           <string>Options</string>
          </property>
          <layout class="QGridLayout" name="gridLayout_4">
-          <item row="1" column="4">
-           <widget class="QSpinBox" name="vacStep">
-            <property name="alignment">
-             <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+          <item row="0" column="0">
+           <widget class="QCheckBox" name="editFrozen">
+            <property name="toolTip">
+             <string/>
             </property>
-            <property name="minimum">
-             <number>1</number>
-            </property>
-           </widget>
-          </item>
-          <item row="3" column="0" colspan="3">
-           <widget class="QCheckBox" name="hidden">
             <property name="text">
-             <string>Cacher la route et tous ses POIs</string>
+             <string>Figer la route</string>
             </property>
            </widget>
           </item>
-          <item row="1" column="0" colspan="3">
+          <item row="0" column="1" colspan="2">
+           <widget class="QCheckBox" name="editCoasts">
+            <property name="toolTip">
+             <string>Les cotes invibles a l'ecran ne sont pas prises en compte</string>
+            </property>
+            <property name="text">
+             <string>Detecter les collisions avec les cotes visibles a l'ecran</string>
+            </property>
+            <property name="checked">
+             <bool>true</bool>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="3" rowspan="6">
+           <widget class="QFrame" name="frame">
+            <property name="frameShape">
+             <enum>QFrame::StyledPanel</enum>
+            </property>
+            <property name="frameShadow">
+             <enum>QFrame::Raised</enum>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="0" colspan="2">
            <widget class="QCheckBox" name="hidePois">
             <property name="text">
              <string>Cacher les POIs intermediaires</string>
             </property>
            </widget>
           </item>
-          <item row="1" column="3">
-           <widget class="QLabel" name="label">
-            <property name="text">
-             <string>Nbre de vac par pas de calcul</string>
-            </property>
-           </widget>
-          </item>
-          <item row="3" column="3" colspan="2">
+          <item row="1" column="2">
            <widget class="QCheckBox" name="useVbvmgVlm">
             <property name="palette">
              <palette>
@@ -310,101 +348,97 @@ p, li { white-space: pre-wrap; }
             </property>
            </widget>
           </item>
-          <item row="0" column="0">
-           <widget class="QCheckBox" name="editFrozen">
-            <property name="toolTip">
-             <string/>
-            </property>
+          <item row="2" column="0" colspan="2">
+           <widget class="QCheckBox" name="hidden">
             <property name="text">
-             <string>Figer la route</string>
+             <string>Cacher la route et tous ses POIs</string>
             </property>
            </widget>
           </item>
-          <item row="0" column="1" colspan="4">
-           <widget class="QCheckBox" name="editCoasts">
-            <property name="toolTip">
-             <string>Les cotes invibles a l'ecran ne sont pas prises en compte</string>
-            </property>
-            <property name="text">
-             <string>Detecter les collisions avec les cotes visibles a l'ecran</string>
-            </property>
-            <property name="checked">
-             <bool>true</bool>
-            </property>
-           </widget>
-          </item>
-          <item row="6" column="3" colspan="2">
+          <item row="2" column="2">
            <widget class="QCheckBox" name="autoRemove">
             <property name="text">
              <string>Retirer les POIs avant le WP-VLM</string>
             </property>
            </widget>
           </item>
-          <item row="7" column="3" colspan="2">
+          <item row="3" column="0" colspan="2">
+           <widget class="QCheckBox" name="showInterpolData">
+            <property name="text">
+             <string>Afficher infos du point d'interpolation</string>
+            </property>
+           </widget>
+          </item>
+          <item row="3" column="2">
            <widget class="QCheckBox" name="autoAt">
             <property name="text">
              <string>Renseigner le cap a suivre (@) des POIs</string>
             </property>
            </widget>
           </item>
-          <item row="7" column="0" colspan="3">
-           <widget class="QFrame" name="frame">
-            <property name="frameShape">
-             <enum>QFrame::StyledPanel</enum>
+          <item row="4" column="0">
+           <widget class="QLabel" name="labelTackGybe">
+            <property name="text">
+             <string>Empannages/Virements</string>
             </property>
-            <property name="frameShadow">
-             <enum>QFrame::Raised</enum>
-            </property>
-            <widget class="QLabel" name="labelTackGybe">
-             <property name="geometry">
-              <rect>
-               <x>10</x>
-               <y>0</y>
-               <width>136</width>
-               <height>18</height>
-              </rect>
-             </property>
-             <property name="text">
-              <string>Empannages/Virements</string>
-             </property>
-            </widget>
-            <widget class="QSpinBox" name="speedLossOnTack">
-             <property name="geometry">
-              <rect>
-               <x>174</x>
-               <y>0</y>
-               <width>71</width>
-               <height>20</height>
-              </rect>
-             </property>
-             <property name="toolTip">
-              <string>Pourcentage de la polaire a appliquer pendant une vacation</string>
-             </property>
-             <property name="alignment">
-              <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-             </property>
-             <property name="suffix">
-              <string>%</string>
-             </property>
-             <property name="minimum">
-              <number>1</number>
-             </property>
-             <property name="maximum">
-              <number>100</number>
-             </property>
-             <property name="singleStep">
-              <number>10</number>
-             </property>
-             <property name="value">
-              <number>100</number>
-             </property>
-            </widget>
            </widget>
           </item>
-          <item row="4" column="0" colspan="3">
-           <widget class="QCheckBox" name="showInterpolData">
+          <item row="4" column="1">
+           <widget class="QSpinBox" name="speedLossOnTack">
+            <property name="toolTip">
+             <string>Pourcentage de la polaire a appliquer pendant une vacation</string>
+            </property>
+            <property name="alignment">
+             <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+            </property>
+            <property name="suffix">
+             <string>%</string>
+            </property>
+            <property name="minimum">
+             <number>1</number>
+            </property>
+            <property name="maximum">
+             <number>100</number>
+            </property>
+            <property name="singleStep">
+             <number>10</number>
+            </property>
+            <property name="value">
+             <number>100</number>
+            </property>
+           </widget>
+          </item>
+          <item row="4" column="2">
+           <widget class="QRadioButton" name="sortByName">
             <property name="text">
-             <string>Afficher infos du point d'interpolation</string>
+             <string>Trier les POIs par nom</string>
+            </property>
+           </widget>
+          </item>
+          <item row="5" column="0">
+           <widget class="QLabel" name="label">
+            <property name="text">
+             <string>Nbre de vac par pas de calcul</string>
+            </property>
+           </widget>
+          </item>
+          <item row="5" column="1">
+           <widget class="QSpinBox" name="vacStep">
+            <property name="alignment">
+             <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+            </property>
+            <property name="minimum">
+             <number>1</number>
+            </property>
+           </widget>
+          </item>
+          <item row="5" column="2">
+           <widget class="QRadioButton" name="sortBySequence">
+            <property name="text">
+             <string>Trier les POIs par numero d'ordre</string>
+            </property>
+            <property name="checked">
+             <bool>true</bool>
             </property>
            </widget>
           </item>
@@ -652,6 +686,7 @@ p, li { white-space: pre-wrap; }
   </layout>
  </widget>
  <tabstops>
+  <tabstop>tabWidget</tabstop>
   <tabstop>editName</tabstop>
   <tabstop>editBoat</tabstop>
   <tabstop>startFromBoat</tabstop>
@@ -661,15 +696,18 @@ p, li { white-space: pre-wrap; }
   <tabstop>editDate</tabstop>
   <tabstop>editDateBox</tabstop>
   <tabstop>editFrozen</tabstop>
-  <tabstop>editCoasts</tabstop>
   <tabstop>hidePois</tabstop>
   <tabstop>hidden</tabstop>
   <tabstop>showInterpolData</tabstop>
-  <tabstop>speedLossOnTack</tabstop>
-  <tabstop>vacStep</tabstop>
-  <tabstop>useVbvmgVlm</tabstop>
-  <tabstop>autoRemove</tabstop>
-  <tabstop>autoAt</tabstop>
+  <tabstop>editCoasts</tabstop>
+  <tabstop>sortByName</tabstop>
+  <tabstop>sortBySequence</tabstop>
+  <tabstop>btOk</tabstop>
+  <tabstop>Simplifier</tabstop>
+  <tabstop>Optimiser</tabstop>
+  <tabstop>btAppliquer</tabstop>
+  <tabstop>btCopy</tabstop>
+  <tabstop>btCancel</tabstop>
   <tabstop>defaultOrders</tabstop>
   <tabstop>customOrders</tabstop>
   <tabstop>pilotView</tabstop>
@@ -682,12 +720,6 @@ p, li { white-space: pre-wrap; }
   <tabstop>orthDistParcourue</tabstop>
   <tabstop>avgTWS</tabstop>
   <tabstop>engineTime</tabstop>
-  <tabstop>btOk</tabstop>
-  <tabstop>Simplifier</tabstop>
-  <tabstop>Optimiser</tabstop>
-  <tabstop>btAppliquer</tabstop>
-  <tabstop>btCancel</tabstop>
-  <tabstop>tabWidget</tabstop>
  </tabstops>
  <resources/>
  <connections>

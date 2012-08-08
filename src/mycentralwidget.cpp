@@ -2235,6 +2235,7 @@ void myCentralWidget::exportRouteFromMenu(ROUTE * route)
 }
 void myCentralWidget::importRouteFromMenuKML(QString fileName,bool toClipboard)
 {
+    if(!mainW->getSelectedBoat()) return;
     QDomDocument doc;
     if(!toClipboard)
     {
@@ -2254,6 +2255,7 @@ void myCentralWidget::importRouteFromMenuKML(QString fileName,bool toClipboard)
                                  .arg(errorLine)
                                  .arg(errorColumn)
                                  .arg(errorStr));
+            routeFile.close();
             return ;
         }
         routeFile.close();
@@ -2261,10 +2263,11 @@ void myCentralWidget::importRouteFromMenuKML(QString fileName,bool toClipboard)
     else
     {
         QString clip=QApplication::clipboard()->text();
+        if(!clip.contains("<kml") || !clip.contains("Placemark")) return;
         int errorLine,errorColumn;
         QString errorStr;
         QByteArray clipBoard;
-        clipBoard.append(clip.toLatin1());
+        clipBoard.append(clip.toUtf8());
         if(!doc.setContent(clipBoard,true,&errorStr,&errorLine,&errorColumn))
         {
             QMessageBox::warning(0,QObject::tr("Lecture de route"),
@@ -2288,6 +2291,7 @@ void myCentralWidget::importRouteFromMenuKML(QString fileName,bool toClipboard)
         return;
     }
     ROUTE * route=addRoute();
+    route->setName(name.trimmed());
     if(!freeRouteName(name.trimmed(),route))
     {
         int rep = QMessageBox::question (0,
@@ -2323,31 +2327,37 @@ void myCentralWidget::importRouteFromMenuKML(QString fileName,bool toClipboard)
         }
         QApplication::processEvents();
     }
-    route->setName(name);
     update_menuRoute();
     route->setBoat(mainW->getSelectedBoat());
+    route->setHidePois(false);
     route->setTemp(true);
+    route->setSortPoisByName(false);
     QDomElement placeMark=root.firstChildElement("Placemark");
     while(!placeMark.isNull())
     {
         name=placeMark.firstChildElement("name").firstChild().toText().data();
         qWarning()<<"importing POI"<<name;
         QDomElement point=placeMark.firstChildElement("Point");
+        bool hasRouteData=false;
+        route->setStartTimeOption(3);
+        route->setStartFromBoat(false);
+        route->setStartTime(QDateTime().currentDateTimeUtc());
         if(!point.isNull())
         {
             QStringList position=point.firstChildElement("coordinates").firstChild().toText().data().split(",");
-            double lat=position.at(0).toDouble();
-            double lon=position.at(1).toDouble();
+            double lon=position.at(0).toDouble();
+            double lat=position.at(1).toDouble();
             POI * poi = slot_addPOI(name,0,lat,lon,-1,false,false,mainW->getSelectedBoat());
             QDomElement extData=placeMark.firstChildElement("ExtendedData");
             if(extData.isNull())
-                qWarning()<<"extData is NULL!!";
-            QString navMode=extData.firstChildElement("navigationMode").firstChild().toText().data();
-            if(!navMode.isNull())
+                continue;
+            QDomElement poiOption=extData.firstChildElement("navigationMode");
+            if(!poiOption.isNull())
             {
-                if(navMode=="vbVmg")
+                name=poiOption.firstChild().toText().data();
+                if(name=="vbVmg")
                     poi->setNavMode(0);
-                else if(navMode=="vmg")
+                else if(name=="vmg")
                     poi->setNavMode(1);
                 else
                     poi->setNavMode(2);
@@ -2355,6 +2365,14 @@ void myCentralWidget::importRouteFromMenuKML(QString fileName,bool toClipboard)
             else
                 poi->setNavMode(0);
             poi->setRoute(route);
+            poiOption=extData.firstChildElement("sequence");
+            if(!poiOption.isNull())
+            {
+                name=poiOption.firstChild().toText().data();
+                poi->setSequence(name.toInt());
+            }
+            else
+                route->setSortPoisByName(true);
             QDomElement routeData=extData.firstChildElement("route");
             if(!routeData.isNull())
             {
@@ -2366,8 +2384,17 @@ void myCentralWidget::importRouteFromMenuKML(QString fileName,bool toClipboard)
                 routeOption=routeData.firstChildElement("startTimeOption");
                 if(!routeOption.isNull())
                 {
-                    route->setStartTimeOption(routeOption.firstChild().toText().data().toInt());
-                    routeOption=routeData.firstChildElement("startDateTime");
+                    name=routeOption.firstChild().toText().data();
+                    if(name=="lastBoatUpdateTime")
+                        route->setStartTimeOption(1);
+                    else if (name=="gribDate")
+                        route->setStartTimeOption(2);
+                    else if (name=="fixedDate")
+                        route->setStartTimeOption(3);
+                }
+                routeOption=routeData.firstChildElement("startDateTime");
+                if(!routeOption.isNull())
+                {
                     name=routeOption.firstChild().toText().data();
                     QDateTime sd=QDateTime().fromString(name,"yyyy'-'MM'-'dd'T'hh':'mm':'ss'Z'");
                     sd.setTimeSpec(Qt::UTC);
@@ -2402,6 +2429,18 @@ void myCentralWidget::importRouteFromMenuKML(QString fileName,bool toClipboard)
                 {
                     name=routeOption.firstChild().toText().data();
                     route->setDetectCoasts(name=="true");
+                }
+                routeOption=routeData.firstChildElement("sortPoisbyName");
+                if(!routeOption.isNull())
+                {
+                    name=routeOption.firstChild().toText().data();
+                    route->setSortPoisByName(name=="true");
+                }
+                routeOption=routeData.firstChildElement("hideIntermediaryPois");
+                if(!routeOption.isNull())
+                {
+                    name=routeOption.firstChild().toText().data();
+                    route->setHidePois(name=="true");
                 }
             }
         }
@@ -2457,8 +2496,16 @@ void myCentralWidget::exportRouteFromMenuKML(ROUTE * route,QString fileName,bool
 
         QDomElement qd4=doc.createElement("vlm:sequence");
         qd3.appendChild(qd4);
-        t=doc.createTextNode(QString().sprintf("%04d",i));
-        qd4.appendChild(t);
+        if(route->getSortPoisByName())
+        {
+            t=doc.createTextNode(QString().sprintf("%04d",i));
+            qd4.appendChild(t);
+        }
+        else
+        {
+            t=doc.createTextNode(QString().sprintf("%04d",pList.at(i)->getSequence()));
+            qd4.appendChild(t);
+        }
 
         qd4=doc.createElement("Data");
         qd3.appendChild(qd4);
@@ -2520,7 +2567,12 @@ void myCentralWidget::exportRouteFromMenuKML(ROUTE * route,QString fileName,bool
             qd8.appendChild(t);
             qd8=doc.createElement("startTimeOption");
             qd7.appendChild(qd8);
-            t=doc.createTextNode(QString().setNum(route->getStartTimeOption()));
+            if(route->getStartTimeOption()==1)
+                t=doc.createTextNode("lastBoatUpdateTime");
+            else if(route->getStartTimeOption()==1)
+                t=doc.createTextNode("fixedDate");
+            else
+                t=doc.createTextNode("gribDate");
             qd8.appendChild(t);
             qd8=doc.createElement("startDateTime");
             qd7.appendChild(qd8);
@@ -2549,6 +2601,14 @@ void myCentralWidget::exportRouteFromMenuKML(ROUTE * route,QString fileName,bool
             qd7.appendChild(qd8);
             t=doc.createTextNode(route->getDetectCoasts()?"true":"false");
             qd8.appendChild(t);
+            qd8=doc.createElement("sortPoisByName");
+            qd7.appendChild(qd8);
+            t=doc.createTextNode(route->getSortPoisByName()?"true":"false");
+            qd8.appendChild(t);
+            qd8=doc.createElement("hideIntermediaryPois");
+            qd7.appendChild(qd8);
+            t=doc.createTextNode(route->getHidePois()?"true":"false");
+            qd8.appendChild(t);
 #if 0 //unflag to send roadBook in kml
             if(!route->getFrozen())
             {
@@ -2563,8 +2623,8 @@ void myCentralWidget::exportRouteFromMenuKML(ROUTE * route,QString fileName,bool
                     QDomElement qd10=doc.createElement("coordinates");
                     qd9.appendChild(qd10);
                     t=doc.createTextNode(QString().sprintf("%.14f,%.14f,0.0",
-                                                           roadBook->at(i).at(14),
-                                                           roadBook->at(i).at(13)));
+                                                           roadBook->at(i).at(13),
+                                                           roadBook->at(i).at(14)));
                     qd10.appendChild(t);
 
                     qd10=doc.createElement("eta");
@@ -2641,8 +2701,8 @@ void myCentralWidget::exportRouteFromMenuKML(ROUTE * route,QString fileName,bool
                     qd11=doc.createElement("coordinates");
                     qd10.appendChild(qd11);
                     t=doc.createTextNode(QString().sprintf("%.14f,%.14f,0.0",
-                                                           roadBook->at(i).at(2),
-                                                           roadBook->at(i).at(1)));
+                                                           roadBook->at(i).at(1),
+                                                           roadBook->at(i).at(2)));
                     qd11.appendChild(t);
                 }
             }
@@ -2654,8 +2714,8 @@ void myCentralWidget::exportRouteFromMenuKML(ROUTE * route,QString fileName,bool
         QDomElement qd6=doc.createElement("coordinates");
         qd5.appendChild(qd6);
         t=doc.createTextNode(QString().sprintf("%.14f,%.14f,0.0",
-                                               pList.at(i)->getLatitude(),
-                                               pList.at(i)->getLongitude()));
+                                               pList.at(i)->getLongitude(),
+                                               pList.at(i)->getLatitude()));
         qd6.appendChild(t);
     }
     QDomElement qd1=doc.createElement("Placemark");
@@ -2682,8 +2742,8 @@ void myCentralWidget::exportRouteFromMenuKML(ROUTE * route,QString fileName,bool
             QDomElement qd4=doc.createElement("gx:coord");
             qd3.appendChild(qd4);
             t=doc.createTextNode(QString().sprintf("%.14f %.14f 0.0 ",
-                                                   listPoint->at(i).lat,
-                                                   listPoint->at(i).lon));
+                                                   listPoint->at(i).lon,
+                                                   listPoint->at(i).lat));
             qd4.appendChild(t);
         }
     }
@@ -2705,8 +2765,8 @@ void myCentralWidget::exportRouteFromMenuKML(ROUTE * route,QString fileName,bool
             QDomElement qd4=doc.createElement("gx:coord");
             qd3.appendChild(qd4);
             t=doc.createTextNode(QString().sprintf("%.14f %.14f 0.0 ",
-                                    roadBook->at(i).at(14),
-                                    roadBook->at(i).at(13)));
+                                    roadBook->at(i).at(13),
+                                    roadBook->at(i).at(14)));
             qd4.appendChild(t);
         }
     }

@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>383</width>
+    <width>489</width>
     <height>448</height>
    </rect>
   </property>
@@ -697,6 +697,20 @@
             </property>
            </widget>
           </item>
+          <item>
+           <widget class="QRadioButton" name="routeSortByName">
+            <property name="text">
+             <string>Trier les POIs par nom</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QRadioButton" name="routeSortBySequence">
+            <property name="text">
+             <string>Trier les POIs par numero d'ordre</string>
+            </property>
+           </widget>
+          </item>
          </layout>
         </widget>
        </item>
@@ -1224,6 +1238,8 @@
   <tabstop>chkHideRoute</tabstop>
   <tabstop>autoRemove</tabstop>
   <tabstop>autoAt</tabstop>
+  <tabstop>routeSortByName</tabstop>
+  <tabstop>routeSortBySequence</tabstop>
   <tabstop>trace_length</tabstop>
   <tabstop>speedReplay</tabstop>
   <tabstop>chk_showCompass</tabstop>
@@ -1243,6 +1259,27 @@
   <tabstop>chk_forceUserAgent</tabstop>
   <tabstop>userAgent</tabstop>
   <tabstop>url_list</tabstop>
+  <tabstop>opp_labelType</tabstop>
+  <tabstop>chkPavillon</tabstop>
+  <tabstop>classicalButtons</tabstop>
+  <tabstop>pushButton_2</tabstop>
+  <tabstop>pushButton_5</tabstop>
+  <tabstop>pushButton</tabstop>
+  <tabstop>pushButton_6</tabstop>
+  <tabstop>pushButton_3</tabstop>
+  <tabstop>pushButton_4</tabstop>
+  <tabstop>radioBtn_vac</tabstop>
+  <tabstop>radioBtn_dist</tabstop>
+  <tabstop>estimeVal_time</tabstop>
+  <tabstop>estimeVal_vac</tabstop>
+  <tabstop>radioBtn_time</tabstop>
+  <tabstop>estimeVal_dist</tabstop>
+  <tabstop>speedLossOnTackReal</tabstop>
+  <tabstop>speedLossOnTackVlm</tabstop>
+  <tabstop>chk_oppTrace</tabstop>
+  <tabstop>interpolHyb</tabstop>
+  <tabstop>interpolTWSA</tabstop>
+  <tabstop>interpolSelect</tabstop>
  </tabstops>
  <resources/>
  <connections>

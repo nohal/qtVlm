@@ -131,6 +131,8 @@ class ROUTE : public QObject
         double getLastKnownSpeed(){return this->lastKnownSpeed;}
         bool getShowInterpolData(){return showInterpolData;}
         void setShowInterpolData(bool b);
+        void setSortPoisByName(bool b){this->sortPoisbyName=b;}
+        bool getSortPoisByName(){return this->sortPoisbyName;}
     public slots:
         void slot_recalculate(boat * boat=NULL);
         void slot_edit();
@@ -225,5 +227,6 @@ class ROUTE : public QObject
         int delay;
         routeInfo * roadInfo;
         bool showInterpolData;
+        bool sortPoisbyName;
 };
 #endif // ROUTE_H

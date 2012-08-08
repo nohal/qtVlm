@@ -103,6 +103,7 @@ ROUTE::ROUTE(QString name, Projection *proj, Grib *grib, QGraphicsScene * myScen
     this->speedLossOnTack=1;
     this->autoRemove=Settings::getSetting("autoRemovePoiFromRoute",0).toInt()==1;
     this->autoAt=Settings::getSetting("autoFillPoiHeading",0).toInt()==1;
+    this->sortPoisbyName=Settings::getSetting("routeSortByName",1).toInt()==1;
     this->pilototo=false;
     this->initialDist=0;
     this->roadMapInterval=1;
@@ -243,7 +244,10 @@ void ROUTE::slot_recalculate(boat * boat)
     roadMap.clear();
     if(my_poiList.count()==0) return;
     busy=true;
-    qSort(my_poiList.begin(),my_poiList.end(),POI::myLessThan);
+    if(this->sortPoisbyName)
+        qSort(my_poiList.begin(),my_poiList.end(),POI::byName);
+    else
+        qSort(my_poiList.begin(),my_poiList.end(),POI::bySequence);
     if(!parent->getIsStartingUp() && !this->optimizing && !this->optimizingPOI && autoRemove && this->startFromBoat)
     {
         bool foundWP=false;

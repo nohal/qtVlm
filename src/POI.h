@@ -106,9 +106,8 @@ class POI : public QGraphicsWidget
         bool getPiloteSelected(){return piloteSelected;}
         void setPiloteSelected(bool b){this->piloteSelected=b;this->ac_pilot->setChecked(b);}
         /* comparateur de classe pour le tri */
-        static bool myLessThan(POI * POI_1,POI* POI_2) {return POI_1->name < POI_2->name;}
-//        static bool operator =(POI * other){return qRound(this->getLongitude()*1000000)==qRound(other->getLongitude()*1000000) &&
-//                                                   qRound(this->getLatitude()*1000000)==qRound(other->getLatitude()*1000000);}
+        static bool byName(POI * POI_1,POI* POI_2) {return POI_1->name < POI_2->name;}
+        static bool bySequence(POI * POI_1,POI* POI_2) {return POI_1->sequence < POI_2->sequence;}
 
         /* graphicsWidget */
         QPainterPath shape() const;
@@ -122,6 +121,8 @@ class POI : public QGraphicsWidget
         void chkIsWP(void);
         bool isPartOfTwa(){return partOfTwa;}
         void setPartOfTwa(bool b){this->partOfTwa=b;}
+        void setSequence(int i){this->sequence=i;}
+        int getSequence(){return this->sequence;}
 
     public slots:
         void slot_updateProjection();
@@ -146,6 +147,7 @@ class POI : public QGraphicsWidget
         void slot_twaLine(){parent->twaDraw(lon,lat);}
         void slotCompassLine();
         void slot_editRoute();
+        void slot_copyRoute();
         void slot_relier();
         void slot_pilote();
         void slot_notSimplificable(bool b){this->notSimplificable=b;}
@@ -209,6 +211,7 @@ class POI : public QGraphicsWidget
         QAction * ac_delPoi;
         QAction * ac_delRoute;
         QAction * ac_editRoute;
+        QAction * ac_copyRoute;
         QAction * ac_copy;
         QAction * ac_compassLine;
         QAction * ac_twaLine;
@@ -248,6 +251,7 @@ class POI : public QGraphicsWidget
         time_t piloteDate;
         bool labelTransp;
         double lonConnected,latConnected;
+        int sequence;
 };
 
 #endif

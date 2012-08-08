@@ -50,6 +50,7 @@ class DialogRoute : public QDialog, public Ui::ROUTE_Editor_ui
         void slotIntervalTimer(int);
         void slotInterval();
         void slotTabChanged(int);
+        void slotCopy();
     signals:
 
     private:

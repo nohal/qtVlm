@@ -91,6 +91,7 @@ void DialogPoi::newPOI(double lon, double lat,Projection *proj, boat *boat)
 void DialogPoi::initPOI(void)
 {
     editName->setText(poi->getName());
+    this->sequence->setValue(poi->getSequence());
     oldType=poi->getType();
     POI_type_liste->setCurrentIndex(oldType);
     QListIterator<ROUTE*> i (parent->getRouteList());
@@ -152,6 +153,7 @@ void DialogPoi::done(int result)
         tm.setTimeSpec(Qt::UTC);
         poi->setTimeStamp(tm.toTime_t());
         poi->setUseTimeStamp(chk_tstamp->checkState()==Qt::Checked);
+        poi->setSequence(this->sequence->value());
 
         poi->setLongitude(getValue(POI_EDT_LON));
         poi->setLatitude (getValue(POI_EDT_LAT));

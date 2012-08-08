@@ -2035,10 +2035,6 @@ Etes-vous sur ?</source>
         <translation></translation>
     </message>
     <message>
-        <source>Ctrl+V</source>
-        <translation></translation>
-    </message>
-    <message>
         <source>Tracer une estime TWA</source>
         <translation>Tracer une estime Grib</translation>
     </message>
@@ -2116,7 +2112,7 @@ Etes-vous sur ?</source>
     </message>
     <message>
         <source>Parametres VLM</source>
-        <translation>Paramètres VLM</translation>
+        <translation type="obsolete">Paramètres VLM</translation>
     </message>
     <message>
         <source>Planisphere</source>
@@ -2293,6 +2289,10 @@ Etes-vous sur ?</source>
     <message>
         <source>Coller une route</source>
         <translation></translation>
+    </message>
+    <message>
+        <source>Parametres</source>
+        <translation>Paramètres</translation>
     </message>
 </context>
 <context>
@@ -2504,6 +2504,10 @@ Etes-vous sûr?</translation>
         <source>Etes-vous sur ?</source>
         <translation>Etes-vous sûr?</translation>
     </message>
+    <message>
+        <source>Copier la route </source>
+        <translation></translation>
+    </message>
 </context>
 <context>
     <name>POI_delete_ui</name>
@@ -2656,6 +2660,10 @@ Etes-vous sûr?</translation>
     </message>
     <message>
         <source>Horodatage de passage</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Ordre dans la route</source>
         <translation></translation>
     </message>
 </context>
@@ -3767,6 +3775,18 @@ sans simplifier</translation>
         <source>Duree moteur</source>
         <translation>Durée au moteur</translation>
     </message>
+    <message>
+        <source>Copier</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Trier les POIs par nom</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Trier les POIs par numero d&apos;ordre</source>
+        <translation></translation>
+    </message>
 </context>
 <context>
     <name>ReceiverThread</name>
@@ -4136,6 +4156,14 @@ sans simplifier</translation>
     </message>
     <message>
         <source>Selective</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Trier les POIs par nom</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Trier les POIs par numero d&apos;ordre</source>
         <translation></translation>
     </message>
 </context>

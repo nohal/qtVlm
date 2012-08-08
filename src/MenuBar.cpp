@@ -320,6 +320,8 @@ MenuBar::MenuBar(QWidget *parent)
                     tr("En mode VB-VMG"),"", "", "");
         acRoute_import2 = addAction(mnRoute_import,
                     tr("En mode Ortho"),"", "", "");
+        acRoute_paste = addAction(menuRoute,
+                    tr("Coller une route"),"Ctrl+V", "", "");
         menuRoute->addMenu(mnRoute_import);
         menuRoute->addSeparator();
         menuRoute->addMenu(mnRoute_delete);
@@ -356,7 +358,7 @@ MenuBar::MenuBar(QWidget *parent)
         acOptions_Units = addAction(menuOptions, tr("Unites"),tr("Ctrl+U"),tr(""),"");
         acOptions_GraphicsParams = addAction(menuOptions,
                             tr("Parametres graphiques"),tr("Ctrl+G"),tr(""),"");
-        acVLMParam = addAction(menuOptions,tr("Parametres VLM"),tr("Ctrl+V"),"","");
+        acVLMParam = addAction(menuOptions,tr("Parametres"),"","","");
 
 
         QMenu *menuMap = new QMenu(tr("Planisphere"));

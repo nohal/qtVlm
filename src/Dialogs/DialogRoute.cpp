@@ -75,10 +75,12 @@ DialogRoute::DialogRoute(ROUTE *route,myCentralWidget *parent)
     vacStep->setValue(route->getMultVac());
     hidden->setChecked(route->getHidden());
     showInterpolData->setChecked(route->getShowInterpolData());
+    this->sortByName->setChecked(route->getSortPoisByName());
     connect(this->btOk,SIGNAL(clicked()),this,SLOT(accept()));
     connect(this->btCancel,SIGNAL(clicked()),this,SLOT(reject()));
     connect(this->btAppliquer,SIGNAL(clicked()),this,SLOT(slotApply()));
     connect(this->Envoyer,SIGNAL(clicked()),this,SLOT(slotEnvoyer()));
+    connect(this->btCopy,SIGNAL(clicked()),this,SLOT(slotCopy()));
     if(route->getUseVbvmgVlm())
     {
         if(route->getNewVbvmgVlm())
@@ -132,15 +134,26 @@ DialogRoute::DialogRoute(ROUTE *route,myCentralWidget *parent)
     else
     {
         this->useVbvmgVlm->setChecked(false);
-        this->useVbvmgVlm->hide();
         this->editVac->setText(tr("Date de la derniere MAJ de la position"));
         editBoat->addItem(parent->getPlayer()->getName());
         editBoat->setEnabled(false);
         this->tabWidget->removeTab(1);
         this->autoRemove->setChecked(false);
-        this->autoRemove->hide();
         this->autoAt->setChecked(false);
+        this->useVbvmgVlm->hide();
+        this->autoRemove->hide();
         this->autoAt->hide();
+        QGridLayout * opLay=(QGridLayout *)options->layout();
+        int x1,y1,r1,c1,x2,y2,r2,c2;
+        int i1=opLay->indexOf(useVbvmgVlm);
+        int i2=opLay->indexOf(autoRemove);
+        opLay->getItemPosition(i1,&x1,&y1,&r1,&c1);
+        opLay->getItemPosition(i2,&x2,&y2,&r2,&c2);
+        delete autoAt;
+        delete useVbvmgVlm;
+        delete autoRemove;
+        opLay->addWidget(this->sortByName,x1,y1,r1,c1);
+        opLay->addWidget(this->sortBySequence,x2,y2,r2,c2);
     }
     if(route->isImported())
     {
@@ -221,6 +234,10 @@ void DialogRoute::slotTabChanged(int tab)
 void DialogRoute::slotIntervalTimer(int)
 {
     intervalTimer->start();
+}
+void DialogRoute::slotCopy()
+{
+    parent->exportRouteFromMenuKML(this->route,"",true);
 }
 
 void DialogRoute::slotInterval()
@@ -595,27 +612,9 @@ void DialogRoute::done(int result)
         route->setWidth(inputTraceColor->getLineWidth());
         route->setColor(inputTraceColor->getLineColor());
         route->setRoadMapInterval(this->roadMapInterval->value());
-        if(this->useVbvmgVlm->checkState()==Qt::Unchecked)
-        {
-            route->setUseVbVmgVlm(false);
-            route->setNewVbvmgVlm(false);
-        }
-        else if(this->useVbvmgVlm->checkState()==Qt::PartiallyChecked)
-        {
-            route->setUseVbVmgVlm(true);
-            route->setNewVbvmgVlm(true);
-        }
-        else
-        {
-            route->setUseVbVmgVlm(true);
-            route->setNewVbvmgVlm(false);
-        }
-        route->setAutoRemove(this->autoRemove->isChecked());
-        route->setAutoAt(autoAt->isChecked());
-        //Settings::setSetting("useVbvmgVlm",route->getUseVbvmgVlm()?"1":"0"  );
-        //Settings::setSetting("useNewVbvmgVlm",route->getNewVbvmgVlm()?"1":"0"  );
         route->setMultVac(vacStep->value());
         route->setShowInterpolData(showInterpolData->isChecked());
+        route->setSortPoisByName(this->sortByName->isChecked());
         if(editVac->isChecked())
             route->setStartTimeOption(1);
         if (editGrib->isChecked())
@@ -628,6 +627,25 @@ void DialogRoute::done(int result)
         route->setStartFromBoat(startFromBoat->isChecked());
         if(parent->getPlayer()->getType()!=BOAT_REAL)
         {
+            if(this->useVbvmgVlm->checkState()==Qt::Unchecked)
+            {
+                route->setUseVbVmgVlm(false);
+                route->setNewVbvmgVlm(false);
+            }
+            else if(this->useVbvmgVlm->checkState()==Qt::PartiallyChecked)
+            {
+                route->setUseVbVmgVlm(true);
+                route->setNewVbvmgVlm(true);
+            }
+            else
+            {
+                route->setUseVbVmgVlm(true);
+                route->setNewVbvmgVlm(false);
+            }
+            route->setAutoRemove(this->autoRemove->isChecked());
+            route->setAutoAt(autoAt->isChecked());
+            //Settings::setSetting("useVbvmgVlm",route->getUseVbvmgVlm()?"1":"0"  );
+            //Settings::setSetting("useNewVbvmgVlm",route->getNewVbvmgVlm()?"1":"0"  );
             if(parent->getBoats())
             {
                 QListIterator<boatVLM*> i (*parent->getBoats());
@@ -643,7 +661,13 @@ void DialogRoute::done(int result)
             }
         }
         else
+        {
+            route->setUseVbVmgVlm(false);
+            route->setNewVbvmgVlm(false);
+            route->setAutoRemove(false);
+            route->setAutoAt(false);
             route->setBoat((boat *) parent->getRealBoat());
+        }
         route->setHidden(hidden->isChecked());
         route->setFrozen(editFrozen->isChecked());
         route->setDetectCoasts(editCoasts->isChecked());
