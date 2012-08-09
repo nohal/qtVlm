@@ -62,6 +62,7 @@ ROUTE::ROUTE(QString name, Projection *proj, Grib *grib, QGraphicsScene * myScen
     connect(line,SIGNAL(unHovered()),this,SLOT(unHovered()));
     line->setParent(this);
     this->frozen=false;
+    this->poiName="";
     this->superFrozen=false;
     this->detectCoasts=true;
     this->optimizing=false;
@@ -162,6 +163,11 @@ void ROUTE::setBoat(boat *curBoat)
         this->boatLogin=((boatVLM*)myBoat)->getBoatPseudo();
     else
         this->boatLogin="";
+    if(myBoat!=NULL && myBoat->getType()==BOAT_REAL)
+    {
+        this->autoAt=false;
+        this->autoRemove=false;
+    }
     if(frozen)
     {
         setFrozen2(false);
@@ -306,7 +312,6 @@ void ROUTE::slot_recalculate(boat * boat)
         }
         has_eta=true;
         Orthodromie orth(0,0,0,0);
-        //qWarning()<<"??"<<my_poiList.first()->getName();
         QListIterator<POI*> i (my_poiList);
         QString tip;
         double lon,lat;
@@ -376,9 +381,18 @@ void ROUTE::slot_recalculate(boat * boat)
             POI * poi = i.next();
             if(optimizingPOI && hasStartEta)
             {
-                if(poi->getName()<startPoiName)
-                    continue;
-                if(poi->getName()==startPoiName)
+                if(sortPoisbyName)
+                {
+                    if(poi->getName()<startPoiName)
+                        continue;
+                }
+                else
+                {
+                    if(poi->getSequence()<startPoiName.toInt())
+                        continue;
+                }
+                if ((sortPoisbyName && poi->getName()==startPoiName)||
+                    (!sortPoisbyName && poi->getSequence()==startPoiName.toInt()))
                 {
                     lon=poi->getLongitude();
                     lat=poi->getLatitude();
@@ -410,7 +424,6 @@ void ROUTE::slot_recalculate(boat * boat)
             wind_angle=0;
             wind_speed=0;
             orth.setPoints(lon, lat, poi->getLongitude(),poi->getLatitude());
-            //qWarning()<<poi->getName()<<this->my_poiList.at(0)->getName();
             remaining_distance=orth.getDistance();
             time_t Eta=0;
             bool engineUsed=false;
@@ -429,7 +442,6 @@ void ROUTE::slot_recalculate(boat * boat)
                                               eta,&wind_speed,&wind_angle,INTERPOLATION_DEFAULT)
                             && eta<=maxDate) || imported))
                     {
-                        //qWarning() << lon << ";" << lat << ";" << eta << ";" << wind_speed << ";" << wind_angle;
                         //previous_remaining_distance=remaining_distance;
                         wind_angle=radToDeg(wind_angle);
                         cap=orth.getAzimutDeg();
@@ -453,7 +465,6 @@ void ROUTE::slot_recalculate(boat * boat)
                                         double h1,h2,w1,w2,t1,t2,d1,d2;
                                         this->do_vbvmg_context(remaining_distance,cap,wind_speed,wind_angle,&h1,&h2,&w1,&w2,&t1,&t2,&d1,&d2);
                                         angle=A180(w1);
-                                        //qWarning()<<"cap="<<cap<<"h1="<<h1<<"twa="<<angle;
                                         cap=h1;
                                     }
 #endif
@@ -476,7 +487,6 @@ void ROUTE::slot_recalculate(boat * boat)
                                         this->do_vbvmg_buffer(remaining_distance,cap,wind_speed,wind_angle,&h1,&h2,&w1,&w2,&t1,&t2,&d1,&d2);
                                         timeD+=timeDebug.elapsed();
 #if 0
-                                        //qWarning()<<w1<<w2;
                                         if(qRound(w1*1000)!=qRound(w1Save*1000) || qRound(h1*1000)!=qRound(h1Save*1000))
                                         {
                                             qWarning()<<"error in new vbvmg vlm"<<h1<<w1<<w2<<"should be"<<h1Save<<w1Save<<w2Save;
@@ -484,7 +494,6 @@ void ROUTE::slot_recalculate(boat * boat)
                                         }
 #endif
                                         angle=A180(w1);
-                                        //qWarning()<<"cap="<<cap<<"h1="<<h1<<"twa="<<angle;
                                         cap=h1;
                                     }
                                     else
@@ -766,7 +775,10 @@ void ROUTE::slot_recalculate(boat * boat)
                     startEta=previousEta;
                     startPoiName=previousPoiName;
                 }
-                previousPoiName=poi->getName();
+                if(sortPoisbyName)
+                    previousPoiName=poi->getName();
+                else
+                    previousPoiName.setNum(poi->getSequence());
                 previousEta=Eta;
             }
             if(poi==this->my_poiList.last())

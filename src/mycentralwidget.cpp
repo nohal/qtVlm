@@ -1577,7 +1577,7 @@ void myCentralWidget::slot_importRouteFromMenu(bool ortho)
     bool ok;
     QString routeName;
     if(info.suffix().toLower()=="kml")
-        this->importRouteFromMenuKML(fileName,false);
+        this->importRouteFromMenuKML(fileName,false,ortho);
     else if(info.suffix().toLower()=="json")
     {
         QTextStream stream(&routeFile);
@@ -2233,7 +2233,7 @@ void myCentralWidget::exportRouteFromMenu(ROUTE * route)
     routeFile.close();
     delete waitBox;
 }
-void myCentralWidget::importRouteFromMenuKML(QString fileName,bool toClipboard)
+void myCentralWidget::importRouteFromMenuKML(QString fileName,bool toClipboard, bool ortho)
 {
     if(!mainW->getSelectedBoat()) return;
     QDomDocument doc;
@@ -2336,9 +2336,7 @@ void myCentralWidget::importRouteFromMenuKML(QString fileName,bool toClipboard)
     while(!placeMark.isNull())
     {
         name=placeMark.firstChildElement("name").firstChild().toText().data();
-        qWarning()<<"importing POI"<<name;
         QDomElement point=placeMark.firstChildElement("Point");
-        bool hasRouteData=false;
         route->setStartTimeOption(3);
         route->setStartFromBoat(false);
         route->setStartTime(QDateTime().currentDateTimeUtc());
@@ -2348,6 +2346,8 @@ void myCentralWidget::importRouteFromMenuKML(QString fileName,bool toClipboard)
             double lon=position.at(0).toDouble();
             double lat=position.at(1).toDouble();
             POI * poi = slot_addPOI(name,0,lat,lon,-1,false,false,mainW->getSelectedBoat());
+            if(ortho)
+                poi->setNavMode(2);
             QDomElement extData=placeMark.firstChildElement("ExtendedData");
             if(extData.isNull())
                 continue;
@@ -2363,7 +2363,7 @@ void myCentralWidget::importRouteFromMenuKML(QString fileName,bool toClipboard)
                     poi->setNavMode(2);
             }
             else
-                poi->setNavMode(0);
+                poi->setNavMode(ortho?2:0);
             poi->setRoute(route);
             poiOption=extData.firstChildElement("sequence");
             if(!poiOption.isNull())
@@ -2405,7 +2405,7 @@ void myCentralWidget::importRouteFromMenuKML(QString fileName,bool toClipboard)
                 {
                     name=routeOption.firstChild().toText().data();
                     name.remove("%");
-                    route->setSpeedLossOnTack(name.toDouble());
+                    route->setSpeedLossOnTack(name.toDouble()/100.0);
                 }
                 routeOption=routeData.firstChildElement("color");
                 if(!routeOption.isNull())
@@ -2442,10 +2442,23 @@ void myCentralWidget::importRouteFromMenuKML(QString fileName,bool toClipboard)
                     name=routeOption.firstChild().toText().data();
                     route->setHidePois(name=="true");
                 }
+                if(mainW->getSelectedBoat() && mainW->getSelectedBoat()->getType()==BOAT_REAL)
+                {
+                    if(!((boatReal *)mainW->getSelectedBoat())->gpsIsRunning())
+                    {
+                        routeOption=routeData.firstChildElement("ownship");
+                        if(!routeOption.isNull())
+                        {
+                            position=routeOption.firstChild().toText().data().split(" ");
+                            this->slot_moveBoat(position.at(1).toDouble(),position.at(0).toDouble());
+                        }
+                    }
+                }
             }
         }
         placeMark=placeMark.nextSiblingElement("Placemark");
     }
+    QApplication::processEvents();
     route->setTemp(false);
     route->slot_recalculate();
 }

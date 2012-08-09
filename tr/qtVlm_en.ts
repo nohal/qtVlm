@@ -4626,7 +4626,7 @@ VMG %.2f kts</translation>
     <message>
         <location filename="../src/routage.cpp" line="2561"/>
         <source>Voulez-vous que la route parte du bateau a la prochaine vacation?</source>
-        <translation>Do you want the new route to start from boat?</translation>
+        <translation>Do you want the new route to start from boat at next vacation?</translation>
     </message>
     <message>
         <location filename="../src/routage.cpp" line="3855"/>
@@ -5404,7 +5404,7 @@ without simplication</translation>
     <message>
         <location filename="../src/Ui/Route_Editor.ui" line="246"/>
         <source>Trier les POIs par nom</source>
-        <translation>Sort POIs by name</translation>
+        <translation>POIs by alphabetical order</translation>
     </message>
     <message>
         <location filename="../src/Ui/Route_Editor.ui" line="416"/>
@@ -5414,7 +5414,7 @@ without simplication</translation>
     <message>
         <location filename="../src/Ui/Route_Editor.ui" line="239"/>
         <source>Trier les POIs par numero d&apos;ordre</source>
-        <translation>Sort POIs by sequence number</translation>
+        <translation>POIs by sequence number</translation>
     </message>
     <message>
         <location filename="../src/Ui/Route_Editor.ui" line="562"/>
@@ -5751,12 +5751,12 @@ without simplication</translation>
     <message>
         <location filename="../src/Ui/paramVLM.ui" line="703"/>
         <source>Trier les POIs par nom</source>
-        <translation>Sort POIs by name</translation>
+        <translation>POIs by alphabetical order</translation>
     </message>
     <message>
         <location filename="../src/Ui/paramVLM.ui" line="710"/>
         <source>Trier les POIs par numero d&apos;ordre</source>
-        <translation>Sort POIs by sequence number</translation>
+        <translation>POIs by sequence number</translation>
     </message>
     <message>
         <location filename="../src/Ui/paramVLM.ui" line="773"/>

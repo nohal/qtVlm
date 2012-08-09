@@ -1058,7 +1058,10 @@ void POI::slot_finePosit(bool silent)
     QString r;
     route->setOptimizing(!this->optimizing);
     route->setOptimizingPOI(true);
-    route->setPoiName(this->name);
+    if(route->getSortPoisByName())
+        route->setPoiName(this->name);
+    else
+        route->setPoiName(QString().setNum(this->sequence));
     POI * best=NULL;
     QDateTime tm;
     tm.setTimeSpec (Qt::UTC);

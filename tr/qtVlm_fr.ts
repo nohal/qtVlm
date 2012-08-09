@@ -3781,11 +3781,11 @@ sans simplifier</translation>
     </message>
     <message>
         <source>Trier les POIs par nom</source>
-        <translation></translation>
+        <translation>POIs par ordre alphabétique</translation>
     </message>
     <message>
         <source>Trier les POIs par numero d&apos;ordre</source>
-        <translation></translation>
+        <translation>POIs par numéro de séquence</translation>
     </message>
 </context>
 <context>
@@ -4160,11 +4160,11 @@ sans simplifier</translation>
     </message>
     <message>
         <source>Trier les POIs par nom</source>
-        <translation></translation>
+        <translation>POIs par ordre alphabétique</translation>
     </message>
     <message>
         <source>Trier les POIs par numero d&apos;ordre</source>
-        <translation></translation>
+        <translation>POIs par numéro de séquence</translation>
     </message>
 </context>
 <context>

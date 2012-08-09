@@ -180,7 +180,7 @@ class myCentralWidget : public QWidget
         void exportRouteFromMenu(ROUTE * route);
         void exportRouteFromMenuGPX(ROUTE * route,QString fileName,bool POIonly);
         void exportRouteFromMenuKML(ROUTE * route,QString fileName,bool toClipboard);
-        void importRouteFromMenuKML(QString fileName,bool toClipboard);
+        void importRouteFromMenuKML(QString fileName,bool toClipboard, bool ortho=false);
 
         /*races*/
         void drawNSZ(int i);
