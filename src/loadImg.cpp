@@ -164,6 +164,9 @@ bool loadImg::setMyImgFileName(QString s)
         proj->screen2map(br.topLeft().x(),br.topLeft().y(),&lo1,&la1);
         proj->screen2map(br.bottomRight().x(),br.bottomRight().y(),&lo2,&la2);
         proj->zoomOnZone(lo1,la1,lo2,la2);
+#if 1
+        this->convertBsb2Pixmap(bsb); //for debugging, just see if we can decode the image. Result in myKap.png
+#endif
         return true;
     }
     else
@@ -187,7 +190,7 @@ void loadImg::convertBsb2Pixmap(BSBImage * b)
         uchar * ppix = i.scanLine(y);
         bsb_read_row(b,ppix);
     }
-    //img=QPixmap().fromImage(i);
+    i.save("myKap.png");
 }
 uint8_t * loadImg::getRow(int row)
 {
