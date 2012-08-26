@@ -525,8 +525,11 @@ myCentralWidget::myCentralWidget(Projection * proj,MainWindow * parent,MenuBar *
 void myCentralWidget::setCompassFollow(ROUTE * route)
 {
     this->compassRoute=route;
-    menuBar->ac_compassCenterBoat->setChecked(false);
-    Settings::setSetting("compassCenterBoat", "0");
+    if(route!=NULL)
+    {
+        menuBar->ac_compassCenterBoat->setChecked(false);
+        Settings::setSetting("compassCenterBoat", "0");
+    }
     emitUpdateRoute(mainW->getSelectedBoat());
 }
 void myCentralWidget::centerCompass(double lon, double lat)
@@ -3476,6 +3479,8 @@ void myCentralWidget::slot_editRoutage(ROUTAGE * routage,bool createMode)
 }
 void myCentralWidget::deleteRoute(ROUTE * route)
 {
+    if(this->compassRoute==route)
+        this->setCompassFollow(NULL);
     route_list.removeAll(route);
     update_menuRoute();
     route->deleteLater();
