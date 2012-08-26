@@ -516,6 +516,14 @@ La boîte à cocher trace partielle s&apos;active apres l&apos;entree d&apos;un 
         <source>Nom du bateau</source>
         <translation type="obsolete">Nom du bateau</translation>
     </message>
+    <message>
+        <source>Jmeno</source>
+        <translation>Jméno</translation>
+    </message>
+    <message>
+        <source>Lod jmeno</source>
+        <translation>Loď jméno</translation>
+    </message>
 </context>
 <context>
     <name>DialogParamVlm</name>
@@ -724,6 +732,30 @@ Continuer la sauvegarde?</source>
     <message>
         <source>Details du compte</source>
         <translation>Détails du compte</translation>
+    </message>
+    <message>
+        <source>Novy</source>
+        <translation>Nový</translation>
+    </message>
+    <message>
+        <source>Jmeno</source>
+        <translation>Jméno</translation>
+    </message>
+    <message>
+        <source>Sprava uctu</source>
+        <translation>Správa účtu</translation>
+    </message>
+    <message>
+        <source>Skutecna lod</source>
+        <translation>Skutečná loď</translation>
+    </message>
+    <message>
+        <source>Detaily uctu</source>
+        <translation>Detaily účtu</translation>
+    </message>
+    <message>
+        <source>Pocet lodi</source>
+        <translation>Počet lodí</translation>
     </message>
 </context>
 <context>
@@ -2293,6 +2325,10 @@ Etes-vous sur ?</source>
     <message>
         <source>Parametres</source>
         <translation>Paramètres</translation>
+    </message>
+    <message>
+        <source>Czech</source>
+        <translation>Čeština</translation>
     </message>
 </context>
 <context>
@@ -6236,7 +6272,7 @@ Voulez-vous la remplacer?</source>
     </message>
     <message>
         <source>Language/Langage</source>
-        <translation></translation>
+        <translation>Language/Langage/Jazyk</translation>
     </message>
     <message>
         <source>Francais</source>
@@ -6245,6 +6281,10 @@ Voulez-vous la remplacer?</source>
     <message>
         <source>English</source>
         <translation>English</translation>
+    </message>
+    <message>
+        <source>Czech</source>
+        <translation>Čeština</translation>
     </message>
 </context>
 <context>

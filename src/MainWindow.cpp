@@ -844,6 +844,15 @@ void MainWindow::slotOptions_Language()
               + QString("Please reload application to activate language.\n")
         );
     }
+    else if (act == mb->acOptions_Lang_cz) {
+        lang = "cz";
+        Settings::setSetting("appLanguage", lang);
+        QMessageBox::information (this,
+            QString("Application Language"),
+            QString("Language : English\n\n")
+              + QString("Please reload application to activate language.\n")
+        );
+    }
 }
 //-------------------------------------------------
 //void MainWindow::slotMap_Quality()

@@ -2478,7 +2478,7 @@ void myCentralWidget::exportRouteFromMenuKML(ROUTE * route,QString fileName,bool
     else
         QApplication::clipboard()->clear();
     QDomDocument doc;
-    doc.appendChild(doc.createProcessingInstruction("xml","version=\"1.0\""));
+    doc.appendChild(doc.createProcessingInstruction("xml","version=\"1.0\" encoding=\"UTF-8\""));
     QDomElement kml = doc.createElement("kml");
     doc.appendChild(kml);
 

@@ -405,8 +405,10 @@ MenuBar::MenuBar(QWidget *parent)
             acOptions_GroupLanguage = new QActionGroup(menuLanguage);
                 acOptions_Lang_fr = addActionCheck(menuLanguage, tr("Francais"), tr(""), tr(""));
                 acOptions_Lang_en = addActionCheck(menuLanguage, tr("English"), tr(""), tr(""));
+                acOptions_Lang_cz = addActionCheck(menuLanguage, tr("Czech"), tr(""), tr(""));
                 acOptions_GroupLanguage->addAction(acOptions_Lang_fr);
                 acOptions_GroupLanguage->addAction(acOptions_Lang_en);
+                acOptions_GroupLanguage->addAction(acOptions_Lang_cz);
         menuOptions->addMenu(menuLanguage);
         QString lang = Settings::getSetting("appLanguage", "none").toString();
         if (lang == "fr")

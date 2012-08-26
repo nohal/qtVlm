@@ -64,7 +64,11 @@ DialogPlayerAccount::DialogPlayerAccount(Projection * proj, MainWindow * main,
     if(!parent->getIsStartingUp())
         lang->hide();
     else
+    {
         connect(fr,SIGNAL(toggled(bool)),this,SLOT(slot_langChanged(bool)));
+        connect(en,SIGNAL(toggled(bool)),this,SLOT(slot_langChanged(bool)));
+        connect(cz,SIGNAL(toggled(bool)),this,SLOT(slot_langChanged(bool)));
+    }
 }
 
 void DialogPlayerAccount::initList(QList<Player*> * player_list)
@@ -110,13 +114,26 @@ void DialogPlayerAccount::initList(QList<Player*> * player_list)
         this->lang->hide();
     updBtnAndString();
 }
-void DialogPlayerAccount::slot_langChanged(bool frSelected)
+void DialogPlayerAccount::slot_langChanged(bool)
 {
-    if(frSelected)
+    QString la;
+    if(fr->isChecked())
+    {
         Settings::setSetting("appLanguage", "fr");
-    else
+        la="fr";
+    }
+    else if (en->isChecked())
+    {
         Settings::setSetting("appLanguage", "en");
-    if(frSelected)
+        la="en";
+    }
+    else if (cz->isChecked())
+    {
+        Settings::setSetting("appLanguage", "cz");
+        la="cz";
+    }
+
+    if(la=="fr")
     {
         this->btn_playerAdd->setText("Nouveau");
         this->btn_playerChg->setText("Modifier");
@@ -132,7 +149,7 @@ void DialogPlayerAccount::slot_langChanged(bool frSelected)
         accDialog.realBoat->setText(tr("Bateau reel"));
         accDialog.setWindowTitle(tr("Details du compte"));
     }
-    else
+    else if (la=="en")
     {
         this->btn_playerAdd->setText("New");
         this->btn_playerChg->setText("Modify");
@@ -147,6 +164,22 @@ void DialogPlayerAccount::slot_langChanged(bool frSelected)
         accDialog.vlmBoat->setText("VLM boat");
         accDialog.realBoat->setText("Real boat");
         accDialog.setWindowTitle("Account details");
+    }
+    else if (la=="cz")
+    {
+        this->btn_playerAdd->setText(tr("Novy"));
+        this->btn_playerChg->setText("Upravit");
+        this->btn_playerUpd->setText("Aktualizovat");
+        this->btn_playerDel->setText("Smazat");
+        this->pl_data_name->setText(tr("Jmeno"));
+        this->pl_data_nbboat->setText(tr("Pocet lodi"));
+        this->setWindowTitle(tr("Sprava uctu"));
+        accDialog.labelBoatName->setText(tr("Jmeno"));
+        accDialog.labelPass->setText("Heslo");
+        accDialog.groupBox->setTitle("Typ lodi");
+        accDialog.vlmBoat->setText("VLM lod");
+        accDialog.realBoat->setText(tr("Skutecna lod"));
+        accDialog.setWindowTitle(tr("Detaily uctu"));
     }
     main->setRestartNeeded();
 }
@@ -673,6 +706,11 @@ void DialogParamAccount::slot_typeChanged(bool)
     {
         s1="Login";
         s2="Boat name";
+    }
+    else if(Settings::getSetting("appLanguage", "en").toString()=="cz")
+    {
+        s1=tr("Jmeno");
+        s2=tr("Lod jmeno");
     }
     labelBoatName->setText(vlmBoat->isChecked()?s1:s2);
     edit_pass->setHidden(realBoat->isChecked());

@@ -127,6 +127,14 @@ int main(int argc, char *argv[])
         translator.load( QString("tr/qtVlm_") + lang);
         app.installTranslator(&translator);
     }
+    else if (lang == "cz") {
+        qWarning() << "Loading cz";
+        QLocale::setDefault(QLocale("cs_CZ"));
+        translatorQt.load( QString("qt_cs"),"tr/");
+        app.installTranslator(&translatorQt);
+        translator.load( QString("tr/qtVlm_") + lang);
+        app.installTranslator(&translator);
+    }
     app.setQuitOnLastWindowClosed(true);
 
     MainWindow win(800, 600);

@@ -203,6 +203,13 @@
         </property>
        </widget>
       </item>
+      <item>
+       <widget class="QRadioButton" name="cz">
+        <property name="text">
+         <string>Czech</string>
+        </property>
+       </widget>
+      </item>
      </layout>
     </widget>
    </item>

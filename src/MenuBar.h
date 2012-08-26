@@ -251,6 +251,7 @@ public:
     QActionGroup *acOptions_GroupLanguage;
     QAction *acOptions_Lang_fr;
     QAction *acOptions_Lang_en;
+    QAction *acOptions_Lang_cz;
 
 
 

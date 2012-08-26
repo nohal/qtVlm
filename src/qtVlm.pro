@@ -29,7 +29,8 @@ QT += network \
 CODECFORTR = UTF-8
 CODECFORSRC = UTF-8
 TRANSLATIONS = ../tr/qtVlm_en.ts \
-    ../tr/qtVlm_fr.ts
+    ../tr/qtVlm_fr.ts \
+    ../tr/qtVlm_cz.ts
 RC_FILE = qtVlm.rc
 HEADERS += Dialogs/DialogGraphicsParams.h \
     Dialogs/DialogLoadGrib.h \
