@@ -2605,7 +2605,7 @@ void myCentralWidget::exportRouteFromMenuKML(ROUTE * route,QString fileName,bool
                                 qd4.setAttribute("name","DNM");
                                 qd5=doc.createElement("value");
                                 qd4.appendChild(qd5);
-                                t=doc.createTextNode(QString().sprintf("%.2f kts",roadBook->at(ind).at(10)));
+                                t=doc.createTextNode(QString().sprintf("%.2f NM",roadBook->at(ind).at(10)));
                                 qd5.appendChild(t);
                             }
                             break;
