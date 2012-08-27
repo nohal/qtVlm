@@ -2570,6 +2570,48 @@ void myCentralWidget::exportRouteFromMenuKML(ROUTE * route,QString fileName,bool
                 qd4.appendChild(qd5);
                 t=doc.createTextNode(QString().sprintf("%.2f",wind_angle)+tr("deg"));
                 qd5.appendChild(t);
+                if(!route->getFrozen())
+                {
+                    QList<QList<double> > * roadBook=route->getRoadMap();
+                    for(int ind=0;ind<roadBook->count();++ind)
+                    {
+                        if(roadBook->at(ind).at(0)==pList.at(i)->getRouteTimeStamp())
+                        {
+                            if(roadBook->at(ind).at(4)!=-1)
+                            {
+                                qd4=doc.createElement("Data");
+                                qd3.appendChild(qd4);
+                                qd4.setAttribute("name","BS");
+                                qd5=doc.createElement("value");
+                                qd4.appendChild(qd5);
+                                t=doc.createTextNode(QString().sprintf("%.2f kts",roadBook->at(ind).at(4)));
+                                qd5.appendChild(t);
+                                qd4=doc.createElement("Data");
+                                qd3.appendChild(qd4);
+                                qd4.setAttribute("name","HDG");
+                                qd5=doc.createElement("value");
+                                qd4.appendChild(qd5);
+                                t=doc.createTextNode(QString().sprintf("%.2f",roadBook->at(ind).at(15))+tr("deg"));
+                                qd5.appendChild(t);
+                                qd4=doc.createElement("Data");
+                                qd3.appendChild(qd4);
+                                qd4.setAttribute("name","CNM");
+                                qd5=doc.createElement("value");
+                                qd4.appendChild(qd5);
+                                t=doc.createTextNode(QString().sprintf("%.2f",roadBook->at(ind).at(16))+tr("deg"));
+                                qd5.appendChild(t);
+                                qd4=doc.createElement("Data");
+                                qd3.appendChild(qd4);
+                                qd4.setAttribute("name","DNM");
+                                qd5=doc.createElement("value");
+                                qd4.appendChild(qd5);
+                                t=doc.createTextNode(QString().sprintf("%.2f kts",roadBook->at(ind).at(10)));
+                                qd5.appendChild(t);
+                            }
+                            break;
+                        }
+                    }
+                }
             }
         }
 
