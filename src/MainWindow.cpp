@@ -101,6 +101,8 @@ void MainWindow::connectSignals()
 
     connect(mb->acFile_Open, SIGNAL(triggered()), this, SLOT(slotFile_Open()));
     connect(mb->acFile_Close, SIGNAL(triggered()), this, SLOT(slotFile_Close()));
+    connect(mb->acFile_Open_Current, SIGNAL(triggered()), this, SLOT(slotFile_Open_Current()));
+    connect(mb->acFile_Close_Current, SIGNAL(triggered()), this, SLOT(slotFile_Close_Current()));
     connect(mb->acFile_Load_GRIB, SIGNAL(triggered()), my_centralWidget, SLOT(slot_fileLoad_GRIB()));
     connect(mb->acFile_Load_VLM_GRIB, SIGNAL(triggered()), this, SLOT(slotLoadVLMGrib()));
     connect(mb->acFile_Load_SAILSDOC_GRIB, SIGNAL(triggered()), my_centralWidget, SLOT(slotLoadSailsDocGrib()));
@@ -240,7 +242,7 @@ MainWindow::MainWindow(int w, int h, QWidget *parent)
     nBoat=0;
     double prcx,prcy,scale;
 
-    setWindowTitle("QtVlm "+QString().setNum(sizeof(int*)*8)+" bits "+Version::getVersion());
+    updateTitle();
     selectedBoat = NULL;
     showingSelectionMessage=false;
     INTERPOLATION_DEFAULT=Settings::getSetting("defaultInterpolation",INTERPOLATION_HYBRID).toInt();
@@ -399,6 +401,15 @@ MainWindow::MainWindow(int w, int h, QWidget *parent)
     {
    //     qWarning() << "Opening grib :" << fname;
         openGribFile(fname, false);
+        gribFileName=fname;
+   //     qWarning() << "Grib opened";
+    }
+    fname = Settings::getSetting("gribFileNameCurrent", "").toString();
+    if (fname != "" && QFile::exists(fname))
+    {
+   //     qWarning() << "Opening grib :" << fname;
+        openGribFile(fname, false,true);
+        gribFileNameCurrent=fname;
    //     qWarning() << "Grib opened";
     }
     progress->setValue(20);
@@ -687,6 +698,7 @@ MainWindow::~MainWindow()
     Settings::setSetting("projectionCY", proj->getCY());
     Settings::setSetting("projectionScale",  proj->getScale());
     Settings::setSetting("gribFileName",  gribFileName);
+    Settings::setSetting("gribFileNameCurrent",  gribFileNameCurrent);
     Settings::setSetting("gribFilePath",  gribFilePath);
     Settings::setSetting("startSpeedEstime",startEstime->isChecked()?1:0);
     /*freeze all routes*/
@@ -724,25 +736,44 @@ void MainWindow::slot_deleteProgress (void)
 }
 
 //-------------------------------------------------
-void MainWindow::openGribFile(QString fileName, bool zoom)
+void MainWindow::openGribFile(QString fileName, bool zoom, bool current)
 {
-    my_centralWidget->loadGribFile(fileName, zoom);
-
-    if (my_centralWidget->getGrib())
+    Grib * myGrib;
+    bool badCurrent=false;
+    if(current)
     {
-        QDateTime startGribDate=QDateTime().fromTime_t(my_centralWidget->getGrib()->getMinDate()).toUTC();
-        startGribDate.setTimeSpec(Qt::UTC);
-        QDateTime endGribDate=QDateTime().fromTime_t(my_centralWidget->getGrib()->getMaxDate()).toUTC();
-        endGribDate.setTimeSpec(Qt::UTC);
-        setWindowTitle("qtVlm "+QString().setNum(sizeof(int*)*8)+" bits "+Version::getVersion()+" grib: "+ QFileInfo(fileName).fileName()+tr(" (du ")+
-                       startGribDate.toString(tr("dd/MM/yyyy hh:mm:ss"))+tr(" au ")+
-                       endGribDate.toString(tr("dd/MM/yyyy hh:mm:ss"))+")");
-        slotDateGribChanged_now();
-        gribFileName = fileName;
-        Settings::setSetting("gribFileName",  gribFileName);
-        Settings::setSetting("gribFilePath",  gribFilePath);
+        my_centralWidget->loadGribFileCurrent(fileName, zoom);
+        myGrib=my_centralWidget->getGribCurrent();
+        if(myGrib && myGrib->getNumberOfGribRecords(GRB_CURRENT_VX,LV_MSL,0)==0)
+        {
+            slotFile_Close_Current();
+            badCurrent=true;
+            myGrib=NULL;
+        }
     }
-    else {
+    else
+    {
+        my_centralWidget->loadGribFile(fileName, zoom);
+        myGrib=my_centralWidget->getGrib();
+    }
+    if (myGrib && !badCurrent)
+    {
+        slotDateGribChanged_now();
+        if(!current)
+        {
+            gribFileName = fileName;
+            Settings::setSetting("gribFileName",  gribFileName);
+            Settings::setSetting("gribFilePath",  gribFilePath);
+        }
+        else
+        {
+            gribFileNameCurrent = fileName;
+            Settings::setSetting("gribFileNameCurrent",  gribFileNameCurrent);
+            Settings::setSetting("gribFilePath",  gribFilePath);
+        }
+    }
+    else if (!badCurrent)
+    {
         QMessageBox::critical (this,
             tr("Erreur"),
             tr("Fichier : ") + fileName + "\n\n"
@@ -751,16 +782,64 @@ void MainWindow::openGribFile(QString fileName, bool zoom)
                 + tr("ou ce n'est pas un fichier GRIB,") + "\n"
                 + tr("ou le fichier est corrompu,") + "\n"
                 + tr("ou il contient des donnees non reconnues,") + "\n"
-                + tr("ou...")
-        );
-        setWindowTitle("qtVlm "+QString().setNum(sizeof(int*)*8)+" bits "+Version::getVersion());
-
+                               + tr("ou..."));
+    }
+    else
+    {
+        QMessageBox::critical (this,
+            tr("Erreur"),
+            tr("Fichier : ") + fileName + "\n\n"
+                + tr("Echec lors de l'ouverture.") + "\n\n"
+                + tr("Ce fichier ne contient pas") + "\n"
+                + tr("de donnees Courants"));
+    }
+    if(!my_centralWidget->getGrib() && !my_centralWidget->getGribCurrent())
+    {
         menuBar->cbGribStep->setEnabled(false);
         menuBar->acDatesGrib_prev->setEnabled(false);
         menuBar->acDatesGrib_next->setEnabled(false);
         menuBar->datesGrib_sel->setEnabled(false);
         menuBar->datesGrib_now->setEnabled(false);
     }
+    else
+    {
+        menuBar->cbGribStep->setEnabled(true);
+        menuBar->acDatesGrib_prev->setEnabled(true);
+        menuBar->acDatesGrib_next->setEnabled(true);
+        menuBar->datesGrib_sel->setEnabled(true);
+        menuBar->datesGrib_now->setEnabled(true);
+    }
+    updateTitle();
+}
+void MainWindow::updateTitle()
+{
+    Grib * g=my_centralWidget->getGrib();
+    Grib * gc=my_centralWidget->getGribCurrent();
+    QString ver="qtVlm "+QString().setNum(sizeof(int*)*8)+" bits "+Version::getVersion();
+    QString g1,g2;
+    if(g && g->isOk())
+    {
+        QFileInfo i(gribFileName);
+        QDateTime startGribDate=QDateTime().fromTime_t(g->getMinDate()).toUTC();
+        startGribDate.setTimeSpec(Qt::UTC);
+        QDateTime endGribDate=QDateTime().fromTime_t(g->getMaxDate()).toUTC();
+        endGribDate.setTimeSpec(Qt::UTC);
+        g1 = " grib: "+ i.fileName() +tr(" (du ")+
+                   startGribDate.toString(tr("dd/MM/yyyy hh:mm"))+tr(" au ")+
+                   endGribDate.toString(tr("dd/MM/yyyy hh:mm"))+")";
+    }
+    if(gc && gc->isOk())
+    {
+        QFileInfo i(gribFileNameCurrent);
+        QDateTime startGribDate=QDateTime().fromTime_t(gc->getMinDate()).toUTC();
+        startGribDate.setTimeSpec(Qt::UTC);
+        QDateTime endGribDate=QDateTime().fromTime_t(gc->getMaxDate()).toUTC();
+        endGribDate.setTimeSpec(Qt::UTC);
+        g2 = tr(" courant: ")+ i.fileName() +tr(" (du ")+
+                   startGribDate.toString(tr("dd/MM/yyyy hh:mm"))+tr(" au ")+
+                   endGribDate.toString(tr("dd/MM/yyyy hh:mm"))+")";
+    }
+    setWindowTitle(ver+g1+g2);
 }
 
 //-------------------------------------------------
@@ -946,19 +1025,61 @@ void MainWindow::slotFile_Open()
         openGribFile(fileName, zoom);
     }
 }
+void MainWindow::slotFile_Open_Current()
+{
+    QString filter;
+    filter =  tr("Fichiers GRIB (*.grb *.grib *.grb.bz2 *.grib.bz2 *.grb.gz *.grib.gz)")
+            + tr(";;Autres fichiers (*)");
+    QDir dirGrib(gribFilePath);
+    if(!dirGrib.exists())
+    {
+        gribFilePath=QDir::currentPath()+"/grib";
+        Settings::setSetting("askGribFolder",1);
+        Settings::setSetting("edtGribFolder",gribFilePath);
+    }
+    QString fileName = QFileDialog::getOpenFileName(this,
+                         tr("Choisir un fichier GRIB"),
+                         gribFilePath,
+                         filter);
+
+    if (fileName != "")
+    {
+        QFileInfo finfo(fileName);
+        gribFilePath = finfo.absolutePath();
+        bool zoom =  (Settings::getSetting("gribZoomOnLoad",0).toInt()==1);
+        openGribFile(fileName, zoom, true);
+    }
+}
 //-------------------------------------------------
-void MainWindow::slotFile_Close() {
+void MainWindow::slotFile_Close_Current() {
+    gribFileNameCurrent = "";
+    my_centralWidget->loadGribFileCurrent("", false);
+    if(!(my_centralWidget->getGrib() && my_centralWidget->getGrib()->isOk()))
+    {
+        menuBar->acDatesGrib_prev->setEnabled(false);
+        menuBar->acDatesGrib_next->setEnabled(false);
+        menuBar->cbGribStep->setEnabled(false);
+        menuBar->datesGrib_sel->setEnabled(false);
+        menuBar->datesGrib_now->setEnabled(false);
+
+    }
+    updateTitle();
+}
+//-------------------------------------------------
+void MainWindow::slotFile_Close()
+{
     gribFileName = "";
     my_centralWidget->loadGribFile("", false);
+    if(!(my_centralWidget->getGribCurrent() && my_centralWidget->getGribCurrent()->isOk()))
+    {
+        menuBar->acDatesGrib_prev->setEnabled(false);
+        menuBar->acDatesGrib_next->setEnabled(false);
+        menuBar->cbGribStep->setEnabled(false);
+        menuBar->datesGrib_sel->setEnabled(false);
+        menuBar->datesGrib_now->setEnabled(false);
 
-    menuBar->acDatesGrib_prev->setEnabled(false);
-    menuBar->acDatesGrib_next->setEnabled(false);
-    menuBar->cbGribStep->setEnabled(false);
-    menuBar->datesGrib_sel->setEnabled(false);
-    menuBar->datesGrib_now->setEnabled(false);
-
-    setWindowTitle(tr("qtVlm ")+QString().setNum(sizeof(int*)*8)+" bits");
-
+    }
+    updateTitle();
 }
 
 //========================================================================
@@ -1255,10 +1376,17 @@ void MainWindow::statusBar_showWindData(double x,double y)
     stBar_label_1->setText(label1);
 
     Grib * grib = my_centralWidget->getGrib();
-
-    if(grib && grib->getInterpolatedValue_byDates(x,y,grib->getCurrentDate(),&a,&b))
+    bool bo=false;
+    if(menuBar->acView_CurrentColors->isChecked())
+        bo=(grib && grib->getInterpolatedValueCurrent_byDates(x,y,grib->getCurrentDate(),&a,&b));
+    else
+        bo=(grib && grib->getInterpolatedValue_byDates(x,y,grib->getCurrentDate(),&a,&b));
+    if(bo)
     {
-        res = "- " + tr("Vent") + ": ";
+        if(menuBar->acView_CurrentColors->isChecked())
+            res = "- " + tr(" Courant") + ": ";
+        else
+            res = "- " + tr(" Vent") + ": ";
         s.sprintf("%6.2f", radToDeg(b));
         res += s+tr("deg")+", ";
         s.sprintf("%6.2f",a);

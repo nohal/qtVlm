@@ -343,6 +343,9 @@ myCentralWidget::myCentralWidget(Projection * proj,MainWindow * parent,MenuBar *
             tr("Vous n'avez pas la bonne version des cartes VLM"));
     }
     grib = new Grib();
+    gribCurrent = new Grib();
+    gribCurrent->setIsCurrentGrib();
+    grib->setGribCurrent(gribCurrent);
     inetManager = new inetConnexion(mainW);
     replayTimer=new QTimer(this);
     replayTimer->setSingleShot(true);
@@ -616,6 +619,13 @@ Grib * myCentralWidget::getGrib(void)
 {
     if(grib && grib->isOk())
         return grib;
+    else
+        return NULL;
+}
+Grib * myCentralWidget::getGribCurrent(void)
+{
+    if(gribCurrent && gribCurrent->isOk())
+        return gribCurrent;
     else
         return NULL;
 }
@@ -904,8 +914,13 @@ void myCentralWidget::slot_mouseRelease(QGraphicsSceneMouseEvent* e)
 
 void myCentralWidget::zoomOnGrib(void)
 {
+    Grib * myGrib;
+    if(menuBar->acView_CurrentColors->isChecked() && grib->getNumberOfGribRecords(GRB_CURRENT_VX,LV_MSL,0) == 0)
+        myGrib=gribCurrent;
+    else
+        myGrib=grib;
     double x0,y0, x1,y1, mh, mv;
-    if (grib->getZoneExtension(&x0,&y0, &x1,&y1))
+    if (myGrib->getZoneExtension(&x0,&y0, &x1,&y1))
     {
         if(x0 > 180.0 && x1 > 180.0)
         {
@@ -953,12 +968,33 @@ void myCentralWidget::loadGribFile(QString fileName, bool zoom)
     //else
         emit redrawAll();
 }
+void myCentralWidget::loadGribFileCurrent(QString fileName, bool zoom)
+{
+    if (!gribCurrent)
+        return;
+
+    gribCurrent->loadGribFile(fileName);
+    if(!gribCurrent->isOk())
+    {
+        emit redrawAll();
+        return;
+    }
+    if (zoom)
+    {
+        proj->blockSignals(true);
+        zoomOnGrib();
+        proj->blockSignals(false);
+    }
+    //else
+        emit redrawAll();
+}
 
 void myCentralWidget::setCurrentDate(time_t t, bool uRoute)
 {
     if (grib->getCurrentDate() != t)
     {
         grib->setCurrentDate(t);
+        gribCurrent->setCurrentDate(t);
         emit redrawGrib();
         if(uRoute)
         {
@@ -1071,15 +1107,25 @@ QString myCentralWidget::dataPresentInGrib(Grib* grib,
                                 break;
                 }
         }
-        else {
-                if (grib->getNumberOfGribRecords(dataType,levelType,levelValue) > 0) {
+        else
+        {
+            if (grib->getNumberOfGribRecords(dataType,levelType,levelValue) > 0) {
+                    if (ok != NULL) *ok = true;
+                    return tr("oui");
+            }
+            else
+            {
+                if(dataType==GRB_CURRENT_VX)
+                {
+                    if (gribCurrent && gribCurrent->isOk() && gribCurrent->getNumberOfGribRecords(dataType,levelType,levelValue) > 0)
+                    {
                         if (ok != NULL) *ok = true;
-                        return tr("oui");
+                        return tr("oui (GRIB Courants)");
+                    }
                 }
-                else {
-                        if (ok != NULL) *ok = false;
-                        return tr("non");
-                }
+                if (ok != NULL) *ok = false;
+                return tr("non");
+            }
         }
 }
 
@@ -1110,7 +1156,8 @@ void myCentralWidget::slot_fileInfo_GRIB()
         msg += tr("    Temperature : %1\n").arg(dataPresentInGrib(grib,GRB_TEMP,LV_ABOV_GND,2));
 	msg += tr("    Pression : %1\n").arg(dataPresentInGrib(grib,GRB_PRESSURE,LV_MSL,0));
 	msg += tr("    Vent  : %1\n").arg(dataPresentInGrib(grib,GRB_WIND_VX,LV_ABOV_GND,10));
-	msg += tr("    Cumul de précipitations : %1\n").arg(dataPresentInGrib(grib,GRB_PRECIP_TOT,LV_GND_SURF,0));
+    msg += tr("    Courant  : %1\n").arg(dataPresentInGrib(grib,GRB_CURRENT_VX,LV_MSL,0));
+    msg += tr("    Cumul de précipitations : %1\n").arg(dataPresentInGrib(grib,GRB_PRECIP_TOT,LV_GND_SURF,0));
         msg += tr("    Nebulosite : %1\n").arg(dataPresentInGrib(grib,GRB_CLOUD_TOT,LV_ATMOS_ALL,0));
         msg += tr("    Humidite relative : %1\n").arg(dataPresentInGrib(grib,GRB_HUMID_REL,LV_ABOV_GND,2));
         msg += tr("    Isotherme 0degC : %1\n").arg(dataPresentInGrib(grib,GRB_GEOPOT_HGT,LV_ISOTHERM0,0));
@@ -3977,6 +4024,8 @@ void myCentralWidget::slot_setColorMapMode(QAction* act)
     int mode;
     if (act == mb->acView_WindColors)
         mode = Terrain::drawWind;
+    else if (act == mb->acView_CurrentColors)
+        mode = Terrain::drawCurrent;
     else if (act == mb->acView_RainColors)
         mode = Terrain::drawRain;
     else if (act == mb->acView_CloudColors)

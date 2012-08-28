@@ -53,6 +53,7 @@ public:
     enum DrawGribPlainDataMode {
              drawNone,
              drawWind,
+             drawCurrent,
              drawCloud,
              drawRain,
              drawCAPEsfc,

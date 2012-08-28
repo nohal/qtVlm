@@ -109,6 +109,8 @@ public:
 
     QAction *acFile_Open;
     QAction *acFile_Close;
+    QAction *acFile_Open_Current;
+    QAction *acFile_Close_Current;
     QAction *acFile_Load_GRIB;
     QAction *acFile_Load_VLM_GRIB;
     QAction *acFile_Load_SAILSDOC_GRIB;
@@ -138,6 +140,7 @@ public:
     QMenu   *menuGroupColorMap;
     ZeroOneActionGroup *acView_GroupColorMap;
     QAction *acView_WindColors;
+    QAction *acView_CurrentColors;
     QAction *acView_RainColors;
     QAction *acView_CloudColors;
     QAction *acView_HumidColors;

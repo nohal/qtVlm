@@ -104,6 +104,7 @@ class myCentralWidget : public QWidget
 
         /* access to pointer & data */
         Grib * getGrib(void);
+        Grib * getGribCurrent(void);
         QGraphicsScene * getScene(void) { return scene; }
         bool compassHasLine(void);
         int getCompassMode(int m_x,int m_y);
@@ -162,6 +163,7 @@ class myCentralWidget : public QWidget
         time_t getCurrentDate(void);
         void showGribDate_dialog(void);
         void loadGribFile(QString fileName, bool zoom);
+        void loadGribFileCurrent(QString fileName, bool zoom);
 
         /* events */
         void mouseMove(int x, int y, QGraphicsItem * item);
@@ -354,6 +356,7 @@ class myCentralWidget : public QWidget
 
         /* Grib */
         Grib *grib;
+        Grib *gribCurrent;
         void zoomOnGrib(void);
         QString  dataPresentInGrib(Grib* grib,
                                    int dataType,int levelType,int levelValue,

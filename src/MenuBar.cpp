@@ -106,6 +106,13 @@ MenuBar::MenuBar(QWidget *parent)
                                                 tr(""),
                                                 tr("Telechargement SailsDoc"), "img/kmail.png");
         menuView->addSeparator();
+        acFile_Open_Current = addAction(menuView, tr("Ouvrir un GRIB Courants"),
+                    tr(""),
+                    tr("Ouvrir un fichier GRIB Courants"), "img/fileopen.png");
+        acFile_Close_Current = addAction(menuView, tr("Fermer le GRIB Courants"),
+                    tr(""),
+                    tr("Fermer le GRIB Courants"), "img/fileclose.png");
+        menuView->addSeparator();
         acFile_Info_GRIB = addAction(menuView, tr("Informations sur le fichier"),
                     tr("Ctrl+I"),
                     tr("Informations sur le fichier GRIB"), "img/info.png");
@@ -114,6 +121,7 @@ MenuBar::MenuBar(QWidget *parent)
         menuGroupColorMap = new QMenu(tr("Type de carte"));
         acView_GroupColorMap = new ZeroOneActionGroup (menuGroupColorMap);
                 acView_WindColors = addActionCheck(menuGroupColorMap, tr("Carte du vent"), "", "");
+                acView_CurrentColors = addActionCheck(menuGroupColorMap, tr("Carte du courant"), "", "");
                 acView_RainColors = addActionCheck(menuGroupColorMap, tr("Carte des preecipitations"),"","");
                 acView_CloudColors = addActionCheck(menuGroupColorMap, tr("Couverture nuageuse"), "","");
                 acView_HumidColors = addActionCheck(menuGroupColorMap, tr("Carte de l'humidite relative"),"","");
@@ -125,6 +133,7 @@ MenuBar::MenuBar(QWidget *parent)
                 acView_FrzRainCateg = addActionCheck(menuGroupColorMap, tr("Pluie verglacante (chute possible)"), "", "");
                 acView_CAPEsfc = addActionCheck(menuGroupColorMap, tr("CAPE (surface)"), "", "");
                 acView_GroupColorMap->addAction(acView_WindColors);
+                acView_GroupColorMap->addAction(acView_CurrentColors);
                 acView_GroupColorMap->addAction(acView_RainColors);
                 acView_GroupColorMap->addAction(acView_CloudColors);
                 acView_GroupColorMap->addAction(acView_HumidColors);
@@ -681,6 +690,9 @@ void MenuBar::setMenubarColorMapMode(int colorMapMode)
     {
         case Terrain::drawWind :
             act = acView_WindColors;
+            break;
+        case Terrain::drawCurrent :
+            act = acView_CurrentColors;
             break;
         case Terrain::drawRain :
             act = acView_RainColors;

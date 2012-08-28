@@ -57,6 +57,7 @@ Grib::Grib(const Grib &model)
 void Grib::initNewGrib()
 {
     ok = false;
+    isCurrentGrib=false;
 #ifdef __QTVLM_WITH_TEST
     nbWarning=0;
 #endif
@@ -304,6 +305,9 @@ void Grib::readAllGribRecords()
                                                                 || rec->getLevelValue()==500
                                                                 || rec->getLevelValue()==300
                                                                 || rec->getLevelValue()==200 ) )
+                                        || ( (rec->getDataType()==GRB_CURRENT_VX || rec->getDataType()==GRB_CURRENT_VY)
+                                                        && rec->getLevelType()==LV_MSL
+                                                        && rec->getLevelValue()==0 )
                                         //-----------------------------------------
                                         //-----------------------------------------
                                         || (rec->getDataType()==GRB_HUMID_SPEC
@@ -359,6 +363,7 @@ void Grib::readAllGribRecords()
                                                         && rec->getLevelType()==LV_GND_SURF && rec->getLevelValue()==0)
                                 )
                                 {
+                                    if(!isCurrentGrib || (rec->getDataType()==GRB_CURRENT_VX || rec->getDataType()==GRB_CURRENT_VY))
                                         storeRecordInMap(rec);
                                 }
                                 else {
@@ -617,6 +622,36 @@ bool Grib::getInterpolatedValue_byDates(double d_long, double d_lat, time_t now,
     }
     return false;
 }
+bool Grib::getInterpolatedValueCurrent_byDates(double d_long, double d_lat, time_t now,double * u, double * v,
+                                        int interpolation_type,bool debug)
+{
+
+    GribRecord *recU1,*recV1,*recU2,*recV2;
+    time_t t1,t2;
+
+    if(interpolation_type==INTERPOLATION_UKN)
+        interpolation_type=interpolation_param;
+
+    if(u) *u=0;
+    if(v) *v=0;
+
+    if(isOk())
+    {
+        if(this->getNumberOfGribRecords(GRB_CURRENT_VX,LV_MSL,0)>0)
+        {
+            if(getInterpolationParamCurrent(now,&t1,&t2,&recU1,&recV1,&recU2,&recV2,debug))
+            {
+                if(debug)
+                    qWarning() << "Param ok => go interpolation";
+                return getInterpolatedValue_byDates(d_long,d_lat,now,t1,t2,recU1,recV1,recU2,recV2,u,v,interpolation_type,debug);
+            }
+        }
+    }
+    if(!isCurrentGrib)
+        return gribCurrent->getInterpolatedValueCurrent_byDates(d_long, d_lat, now, u, v, interpolation_type, debug);
+    else
+        return false;
+}
 
 bool Grib::getInterpolationParam(time_t now,time_t * t1,time_t * t2,GribRecord ** recU1,GribRecord ** recV1,
                            GribRecord ** recU2,GribRecord ** recV2,bool debug)
@@ -625,6 +660,39 @@ bool Grib::getInterpolationParam(time_t now,time_t * t1,time_t * t2,GribRecord *
     {
         findGribsAroundDate(GRB_WIND_VX,LV_ABOV_GND,10,now,recU1,recU2);
         findGribsAroundDate(GRB_WIND_VY,LV_ABOV_GND,10,now,recV1,recV2);
+        if(*recU1 && *recV1)
+        {
+            if(*recU1==*recU2)
+            {
+                *t1=(*recU1)->getRecordCurrentDate();
+                *t2=*t1;
+                *recU2=NULL;
+                *recV2=NULL;
+            }
+            else
+            {
+                *t1=(*recU1)->getRecordCurrentDate();
+                if(*recU2!=NULL && *recV2!=0)
+                    *t2=(*recU2)->getRecordCurrentDate();
+            }
+
+            if(debug)
+            {
+                qWarning() << "Time: now=" << now << " , t1=" << *t1 << ", t2=" << *t2;
+            }
+
+            return true;
+        }
+    }
+    return false;
+}
+bool Grib::getInterpolationParamCurrent(time_t now,time_t * t1,time_t * t2,GribRecord ** recU1,GribRecord ** recV1,
+                           GribRecord ** recU2,GribRecord ** recV2,bool debug)
+{
+    if(t1 && t2 && recU1 && recV1 && recU2 && recV2)
+    {
+        findGribsAroundDate(GRB_CURRENT_VX,LV_MSL,0,now,recU1,recU2);
+        findGribsAroundDate(GRB_CURRENT_VY,LV_MSL,0,now,recV1,recV2);
         if(*recU1 && *recV1)
         {
             if(*recU1==*recU2)
@@ -1209,6 +1277,120 @@ void Grib::draw_WIND_Color(QPainter &pnt, const Projection *proj, bool smooth,
                 }
 
                 rgb=getWindColor(u, smooth);
+                image->setPixel(i,  j,rgb);
+                image->setPixel(i+1,j,rgb);
+                image->setPixel(i,  j+1,rgb);
+                image->setPixel(i+1,j+1,rgb);
+            }
+            /*else
+            {
+                if(showWindArrows && i%space==0 && j%space==0)
+                {
+                    int i_s=i/space;
+                    int j_s=j/space;
+                    u_tab[i_s*H_s+j_s]=-1;
+                }
+            }*/
+        }
+    }
+
+    pnt.drawImage(0,0,*image);
+
+    delete image;
+
+
+    if(showWindArrows)
+    {
+        for (i=0; i<W_s; i++)
+        {
+            for (j=0; j<H_s; j++)
+            {
+                u=u_tab[i*H_s+j];
+                v=v_tab[i*H_s+j];
+
+                if(u==-1)
+                    continue;
+                if (barbules)
+                    drawWindArrowWithBarbs(pnt, i*space,j*space, u,v, y_tab[i*H_s+j]);
+                else
+                    drawWindArrow(pnt, i*space,j*space, v);
+
+            }
+        }
+        delete[] u_tab;
+        delete[] v_tab;
+        delete[] y_tab;
+    }
+}
+//--------------------------------------------------------------------------
+// Carte de couleurs du courant
+//--------------------------------------------------------------------------
+void Grib::draw_CURRENT_Color(QPainter &pnt, const Projection *proj, bool smooth,
+                               bool showWindArrows,bool barbules)
+{
+    int i, j;
+    double u,v,x,y;
+    double * u_tab=NULL, * v_tab=NULL;
+    bool * y_tab=NULL;
+    int W = proj->getW();
+    int H = proj->getH();
+    int space=0;
+    int W_s=0,H_s=0;
+    QRgb   rgb;
+    QImage *image= new QImage(W,H,QImage::Format_ARGB32);
+
+    GribRecord *recU1,*recV1,*recU2,*recV2;
+    time_t t1,t2;
+
+    //qWarning() << "Drawing on " << proj->getW() << " " << proj->getH();
+
+    if (!ok) {
+        return;
+    }
+
+    if(!getInterpolationParamCurrent(currentDate,&t1,&t2,&recU1,&recV1,&recU2,&recV2))
+        return;
+
+    if(showWindArrows)
+    {
+        if (barbules)
+            space =  windBarbuleSpace;
+        else
+            space =  windArrowSpace;
+
+        W_s=W/space+1;
+        H_s=H/space+1;
+
+        u_tab = new double[W_s*H_s];
+        v_tab = new double[W_s*H_s];
+        y_tab = new bool[W_s*H_s];
+
+        /* clearing u_tab array */
+        for(i=0;i<W_s*H_s;i++)
+        {
+            u_tab[i]=-1;
+        }
+    }
+
+    image->fill( qRgba(0,0,0,0));
+
+    for (i=0; i<W-2; i+=2)
+    {
+        for (j=0; j<H-2; j+=2)
+        {
+            proj->screen2map(i,j, &x, &y);
+            if(getInterpolatedValue_byDates(x,y,currentDate,t1,t2,recU1,recV1,recU2,recV2,&u,&v))
+            {
+                if(showWindArrows && i%space==0 && j%space==0)
+                {
+                    int i_s=i/space;
+                    int j_s=j/space;
+                    u_tab[i_s*H_s+j_s]=u;
+                    v_tab[i_s*H_s+j_s]=v;
+                    y_tab[i_s*H_s+j_s]=(y<0);
+                }
+
+                rgb=getWindColor(u*10.0, smooth); //for current
                 image->setPixel(i,  j,rgb);
                 image->setPixel(i+1,j,rgb);
                 image->setPixel(i,  j+1,rgb);

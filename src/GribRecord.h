@@ -55,9 +55,9 @@ class GribRecord
         GribRecord(const GribRecord &rec);
         ~GribRecord();
 
-        bool  isOk()  const   {return ok;};
-        bool  isDataKnown()  const   {return knownData;};
-        bool  isEof() const   {return eof;};
+        bool  isOk()  const   {return ok;}
+        bool  isDataKnown()  const   {return knownData;}
+        bool  isEof() const   {return eof;}
 
         //-----------------------------------------
         zuchar  getDataType() const         { return dataType; }

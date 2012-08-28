@@ -44,7 +44,7 @@ class MainWindow: public QMainWindow
         MainWindow(int w, int h, QWidget *parent = 0);
         ~MainWindow();
 
-        void openGribFile(QString fileName, bool zoom=true);
+        void openGribFile(QString fileName, bool zoom=true, bool current=false);
         bool getBoatLockStatus(void);
         bool isBoat(QString idu);
         Grib * getGrib();
@@ -82,6 +82,8 @@ class MainWindow: public QMainWindow
     public slots:
         void slotFile_Open();
         void slotFile_Close();
+        void slotFile_Open_Current();
+        void slotFile_Close_Current();
         void slotFile_Quit();
         void slotFile_QuitNoSave();
         //void slotMap_Quality();
@@ -187,6 +189,7 @@ class MainWindow: public QMainWindow
         bool finishStart;
 
         QString      gribFileName;
+        QString      gribFileNameCurrent;
         QString      gribFilePath;
 
         DialogProxy   * dialogProxy;
@@ -249,6 +252,7 @@ class MainWindow: public QMainWindow
         void listAllChildren(QObject * ptr,int);
         bool noSave;
         bool restartNeeded;
+        void updateTitle();
         //POI * debugPOI;
 };
 

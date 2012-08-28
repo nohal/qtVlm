@@ -1342,10 +1342,6 @@ Etes-vous sur ?</source>
         <translation>Sélection d&apos;une marque</translation>
     </message>
     <message>
-        <source>Vent</source>
-        <translation></translation>
-    </message>
-    <message>
         <source>Prochaine vac dans</source>
         <translation></translation>
     </message>
@@ -1448,10 +1444,6 @@ Etes-vous sur ?</source>
         <translation></translation>
     </message>
     <message>
-        <source>dd/MM/yyyy hh:mm:ss</source>
-        <translation></translation>
-    </message>
-    <message>
         <source> (du </source>
         <translation></translation>
     </message>
@@ -1480,12 +1472,32 @@ Etes-vous sur ?</source>
         <translation></translation>
     </message>
     <message>
-        <source>qtVlm </source>
+        <source>Derniere synchro</source>
+        <translation>Dernière synchro</translation>
+    </message>
+    <message>
+        <source> Courant</source>
         <translation></translation>
     </message>
     <message>
-        <source>Derniere synchro</source>
-        <translation>Dernière synchro</translation>
+        <source>dd/MM/yyyy hh:mm</source>
+        <translation>dd/MM/yyyy hh:mm</translation>
+    </message>
+    <message>
+        <source> courant: </source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Ce fichier ne contient pas</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>de donnees Courants</source>
+        <translation>de données Courants</translation>
+    </message>
+    <message>
+        <source> Vent</source>
+        <translation></translation>
     </message>
 </context>
 <context>
@@ -2329,6 +2341,22 @@ Etes-vous sur ?</source>
     <message>
         <source>Czech</source>
         <translation>Čeština</translation>
+    </message>
+    <message>
+        <source>Carte du courant</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Ouvrir un GRIB Courants</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Ouvrir un fichier GRIB Courants</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Fermer le GRIB Courants</source>
+        <translation></translation>
     </message>
 </context>
 <context>
@@ -5964,6 +5992,15 @@ Voulez-vous egalement supprimer tous les POIs lui appartenant?</source>
 
 Voulez-vous la remplacer?</source>
         <translation>Cette route existe déjà. Voulez-vous la remplacer?</translation>
+    </message>
+    <message>
+        <source>    Courant  : %1
+</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>oui (GRIB Courants)</source>
+        <translation></translation>
     </message>
 </context>
 <context>

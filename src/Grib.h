@@ -85,6 +85,8 @@ class Grib
 
         bool getInterpolatedValue_byDates(double d_long, double d_lat, time_t now,double * u, double * v,
                                           int interpolation_type=INTERPOLATION_UKN,bool debug=false);
+        bool getInterpolatedValueCurrent_byDates(double d_long, double d_lat, time_t now,double * u, double * v,
+                                          int interpolation_type=INTERPOLATION_UKN,bool debug=false);
 
         // Rectangle de la zone couverte par les données
         bool getZoneExtension (double *x0,double *y0, double *x1,double *y1);
@@ -99,6 +101,8 @@ class Grib
 
         // Carte de couleurs du vent
         void draw_WIND_Color(QPainter &pnt, const Projection *proj, bool smooth,
+                               bool showWindArrows,bool barbules);
+        void draw_CURRENT_Color(QPainter &pnt, const Projection *proj, bool smooth,
                                bool showWindArrows,bool barbules);
         QString drawCartouche(QPainter &pnt);
         void show_CoverZone(QPainter &pnt, Projection * proj);
@@ -132,9 +136,12 @@ class Grib
 
         enum GribFileDataStatus { DATA_IN_FILE, NO_DATA_IN_FILE, COMPUTED_DATA };
         QRgb   getWindColor     (const double v, const bool smooth);
+        void setIsCurrentGrib(){this->isCurrentGrib=true;}
+        void setGribCurrent(Grib * g){this->gribCurrent=g;}
 
     private:
         bool   ok;
+        bool   isCurrentGrib;
         std::string fname;
         ZUFILE *file;
         long    fileSize;
@@ -187,6 +194,8 @@ class Grib
         void 	findGribsAroundDate (int dataType,int levelType,int levelValue, time_t date,
                                      GribRecord **before, GribRecord **after);
         bool getInterpolationParam(time_t now,time_t * t1,time_t * t2,GribRecord ** recU1,GribRecord ** recV1,
+                           GribRecord ** recU2,GribRecord ** recV2,bool debug=false);
+        bool getInterpolationParamCurrent(time_t now,time_t * t1,time_t * t2,GribRecord ** recU1,GribRecord ** recV1,
                            GribRecord ** recU2,GribRecord ** recV2,bool debug=false);
 
         bool getInterpolatedValue_byDates(double d_long, double d_lat, time_t now, time_t t1,time_t t2,
@@ -242,6 +251,7 @@ class Grib
         bool mustInterpolateValues;
         double  isobarsStep;          // Ecart entre isobares
         double  isotherms0Step;          // Ecart entre isothermes 0C
+        Grib * gribCurrent;
 };
 
 

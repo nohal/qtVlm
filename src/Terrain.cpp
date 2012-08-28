@@ -210,10 +210,14 @@ void Terrain::draw_GSHHSandGRIB()
     //===================================================
     // Dessin des donnees GRIB
     //===================================================
-
     Grib * grib=parent->getGrib();
+    if(colorMapMode==Terrain::drawCurrent)
+    {
+        if (!grib || !grib->isOk() || grib->getNumberOfGribRecords(GRB_CURRENT_VX,LV_MSL,0) == 0)
+            grib=parent->getGribCurrent();
+    }
 
-    if(grib)
+    if(grib && grib->isOk())
     {
         drawGrib(pnt,grib);
         if(parent->getKap()!=NULL /*&& parent->getKap()->getDrawGribOverKap()*/)
@@ -338,6 +342,10 @@ void Terrain::drawGrib(QPainter &pnt, Grib *gribPlot)
                 case Terrain::drawWind :
                         windArrowsColor.setRgb(255, 255, 255);                        
                         gribPlot->draw_WIND_Color(pnt, proj, colorMapSmooth,showWindArrows,showBarbules);
+                        break;
+                case Terrain::drawCurrent :
+                        windArrowsColor.setRgb(255, 255, 255);
+                        gribPlot->draw_CURRENT_Color(pnt, proj, colorMapSmooth,showWindArrows,false);
                         break;
                 case Terrain::drawRain :
                         windArrowsColor.setRgb(140, 120, 100);
