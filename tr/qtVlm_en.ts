@@ -1316,67 +1316,75 @@ Etes-vous sur ?</source>
         <translation>Last position update date/time</translation>
     </message>
     <message>
-        <location filename="../src/Dialogs/DialogRoute.cpp" line="245"/>
+        <location filename="../src/Dialogs/DialogRoute.cpp" line="249"/>
         <source>Chargement du tableau de marche</source>
         <translation>Loading road book</translation>
     </message>
     <message>
-        <location filename="../src/Dialogs/DialogRoute.cpp" line="246"/>
+        <location filename="../src/Dialogs/DialogRoute.cpp" line="250"/>
         <source>Veuillez patienter...</source>
         <translation>Please wait...</translation>
     </message>
     <message>
-        <location filename="../src/Dialogs/DialogRoute.cpp" line="316"/>
-        <location filename="../src/Dialogs/DialogRoute.cpp" line="323"/>
-        <location filename="../src/Dialogs/DialogRoute.cpp" line="339"/>
-        <location filename="../src/Dialogs/DialogRoute.cpp" line="416"/>
-        <location filename="../src/Dialogs/DialogRoute.cpp" line="417"/>
+        <location filename="../src/Dialogs/DialogRoute.cpp" line="320"/>
+        <location filename="../src/Dialogs/DialogRoute.cpp" line="327"/>
+        <location filename="../src/Dialogs/DialogRoute.cpp" line="347"/>
+        <location filename="../src/Dialogs/DialogRoute.cpp" line="446"/>
+        <location filename="../src/Dialogs/DialogRoute.cpp" line="447"/>
         <source> nds</source>
         <translation> kts</translation>
     </message>
     <message>
-        <location filename="../src/Dialogs/DialogRoute.cpp" line="319"/>
-        <location filename="../src/Dialogs/DialogRoute.cpp" line="321"/>
+        <location filename="../src/Dialogs/DialogRoute.cpp" line="323"/>
         <location filename="../src/Dialogs/DialogRoute.cpp" line="325"/>
-        <location filename="../src/Dialogs/DialogRoute.cpp" line="341"/>
-        <location filename="../src/Dialogs/DialogRoute.cpp" line="347"/>
+        <location filename="../src/Dialogs/DialogRoute.cpp" line="329"/>
+        <location filename="../src/Dialogs/DialogRoute.cpp" line="333"/>
+        <location filename="../src/Dialogs/DialogRoute.cpp" line="349"/>
+        <location filename="../src/Dialogs/DialogRoute.cpp" line="362"/>
+        <location filename="../src/Dialogs/DialogRoute.cpp" line="369"/>
         <source>deg</source>
         <translation>°</translation>
     </message>
     <message>
-        <location filename="../src/Dialogs/DialogRoute.cpp" line="345"/>
-        <location filename="../src/Dialogs/DialogRoute.cpp" line="414"/>
-        <location filename="../src/Dialogs/DialogRoute.cpp" line="415"/>
+        <location filename="../src/Dialogs/DialogRoute.cpp" line="331"/>
+        <location filename="../src/Dialogs/DialogRoute.cpp" line="360"/>
+        <source>kts</source>
+        <translation> kts</translation>
+    </message>
+    <message>
+        <location filename="../src/Dialogs/DialogRoute.cpp" line="367"/>
+        <location filename="../src/Dialogs/DialogRoute.cpp" line="444"/>
+        <location filename="../src/Dialogs/DialogRoute.cpp" line="445"/>
         <source> NM</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../src/Dialogs/DialogRoute.cpp" line="431"/>
-        <location filename="../src/Dialogs/DialogRoute.cpp" line="445"/>
+        <location filename="../src/Dialogs/DialogRoute.cpp" line="461"/>
+        <location filename="../src/Dialogs/DialogRoute.cpp" line="475"/>
         <source> jours </source>
         <translation> days </translation>
     </message>
     <message>
-        <location filename="../src/Dialogs/DialogRoute.cpp" line="586"/>
+        <location filename="../src/Dialogs/DialogRoute.cpp" line="616"/>
         <source>Ce nom est deja utilise, choisissez en un autre</source>
         <translation>This name is already used, choose another one</translation>
     </message>
     <message>
-        <location filename="../src/Dialogs/DialogRoute.cpp" line="594"/>
+        <location filename="../src/Dialogs/DialogRoute.cpp" line="624"/>
         <source>Vous ne pouvez figer une route que&lt;br&gt;si elle part d&apos;un POI et d&apos;une date fixe</source>
         <translation>You can freeze a route only&lt;br&gt;if it starts from a POI and from a fixed date</translation>
     </message>
     <message>
-        <location filename="../src/Dialogs/DialogRoute.cpp" line="730"/>
-        <location filename="../src/Dialogs/DialogRoute.cpp" line="744"/>
-        <location filename="../src/Dialogs/DialogRoute.cpp" line="758"/>
+        <location filename="../src/Dialogs/DialogRoute.cpp" line="760"/>
+        <location filename="../src/Dialogs/DialogRoute.cpp" line="774"/>
+        <location filename="../src/Dialogs/DialogRoute.cpp" line="788"/>
         <source>Pilototo</source>
         <translation>Autopilot</translation>
     </message>
     <message>
-        <location filename="../src/Dialogs/DialogRoute.cpp" line="730"/>
-        <location filename="../src/Dialogs/DialogRoute.cpp" line="744"/>
-        <location filename="../src/Dialogs/DialogRoute.cpp" line="758"/>
+        <location filename="../src/Dialogs/DialogRoute.cpp" line="760"/>
+        <location filename="../src/Dialogs/DialogRoute.cpp" line="774"/>
+        <location filename="../src/Dialogs/DialogRoute.cpp" line="788"/>
         <source>Pour utiliser cette action il faut que:&lt;br&gt;- La route parte du bateau&lt;br&gt;- Le mode VBVMG-VLM soit actif</source>
         <translation>To use this action it is needed that&lt;br&gt;route starts from boat and that VBVMG-VLM is activated</translation>
     </message>
@@ -1389,7 +1397,7 @@ Etes-vous sur ?</source>
         <translation type="obsolete">To use this action it is needed that:&lt;br&gt;-Route starts from boat&lt;br&gt;-Route starts from next vacation&lt;br&gt;VBVMG-VLM is activated</translation>
     </message>
     <message>
-        <location filename="../src/Dialogs/DialogRoute.cpp" line="788"/>
+        <location filename="../src/Dialogs/DialogRoute.cpp" line="818"/>
         <source>WP-VLM</source>
         <translation>WP-VLM</translation>
     </message>
@@ -1979,18 +1987,18 @@ Etes-vous sur ?</source>
         <translation>Choose a GRIB file</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="1222"/>
+        <location filename="../src/MainWindow.cpp" line="1224"/>
         <source>Pilototo</source>
         <translation>Autopilot</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="1252"/>
+        <location filename="../src/MainWindow.cpp" line="1254"/>
         <source>Imp. de lire le pilototo de VLM</source>
         <translation>Can&apos;t read VLM&apos;s autopilot</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="1262"/>
-        <location filename="../src/MainWindow.cpp" line="1263"/>
+        <location filename="../src/MainWindow.cpp" line="1264"/>
+        <location filename="../src/MainWindow.cpp" line="1265"/>
         <source>Selection d&apos;une marque</source>
         <translation>Select a mark</translation>
     </message>
@@ -1999,8 +2007,8 @@ Etes-vous sur ?</source>
         <translation type="obsolete">Wind</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="1373"/>
-        <location filename="../src/MainWindow.cpp" line="1391"/>
+        <location filename="../src/MainWindow.cpp" line="1375"/>
+        <location filename="../src/MainWindow.cpp" line="1393"/>
         <source>deg</source>
         <translation>°</translation>
     </message>
@@ -2028,66 +2036,66 @@ Etes-vous sur ?</source>
         <translation> current: </translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="1387"/>
+        <location filename="../src/MainWindow.cpp" line="1389"/>
         <source> Courant</source>
         <translation> Current</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="1389"/>
+        <location filename="../src/MainWindow.cpp" line="1391"/>
         <source> Vent</source>
         <translation> Wind</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="1393"/>
+        <location filename="../src/MainWindow.cpp" line="1395"/>
         <source> kts</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="1401"/>
+        <location filename="../src/MainWindow.cpp" line="1403"/>
         <source>Selection: </source>
         <translation>Selection:</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="1412"/>
+        <location filename="../src/MainWindow.cpp" line="1414"/>
         <source>  init.dir: %1deg</source>
         <translation>  init.dir: %1°</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="1447"/>
-        <location filename="../src/MainWindow.cpp" line="1785"/>
-        <location filename="../src/MainWindow.cpp" line="1847"/>
+        <location filename="../src/MainWindow.cpp" line="1449"/>
+        <location filename="../src/MainWindow.cpp" line="1787"/>
+        <location filename="../src/MainWindow.cpp" line="1849"/>
         <source>dd-MM-yyyy, HH:mm:ss</source>
         <translation>MM-dd-yyyy, HH:mm:ss</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="1447"/>
+        <location filename="../src/MainWindow.cpp" line="1449"/>
         <source>Derniere synchro</source>
         <translation>Last sync</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="1785"/>
-        <location filename="../src/MainWindow.cpp" line="1847"/>
+        <location filename="../src/MainWindow.cpp" line="1787"/>
+        <location filename="../src/MainWindow.cpp" line="1849"/>
         <source> Arrivee WP</source>
         <translation>WP arrival</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="1807"/>
+        <location filename="../src/MainWindow.cpp" line="1809"/>
         <source>Votre blocnote a change!</source>
         <translation>Your notepad has changed!</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="2398"/>
-        <location filename="../src/MainWindow.cpp" line="2410"/>
+        <location filename="../src/MainWindow.cpp" line="2400"/>
+        <location filename="../src/MainWindow.cpp" line="2412"/>
         <source> mins </source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="2402"/>
+        <location filename="../src/MainWindow.cpp" line="2404"/>
         <source> vacs </source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="2406"/>
+        <location filename="../src/MainWindow.cpp" line="2408"/>
         <source> NM </source>
         <translation></translation>
     </message>
@@ -2108,37 +2116,37 @@ Etes-vous sur ?</source>
         <translation type="obsolete">Last synchronization crank</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="1476"/>
-        <location filename="../src/MainWindow.cpp" line="1489"/>
+        <location filename="../src/MainWindow.cpp" line="1478"/>
+        <location filename="../src/MainWindow.cpp" line="1491"/>
         <source>Tirer un cap</source>
         <translation>Draw a heading</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="1483"/>
+        <location filename="../src/MainWindow.cpp" line="1485"/>
         <source>Arret du cap</source>
         <translation>Stop the heading</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="1781"/>
-        <location filename="../src/MainWindow.cpp" line="1843"/>
+        <location filename="../src/MainWindow.cpp" line="1783"/>
+        <location filename="../src/MainWindow.cpp" line="1845"/>
         <source>j</source>
         <translation>d</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="1782"/>
-        <location filename="../src/MainWindow.cpp" line="1844"/>
+        <location filename="../src/MainWindow.cpp" line="1784"/>
+        <location filename="../src/MainWindow.cpp" line="1846"/>
         <source>h</source>
         <translation>h</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="1783"/>
-        <location filename="../src/MainWindow.cpp" line="1845"/>
+        <location filename="../src/MainWindow.cpp" line="1785"/>
+        <location filename="../src/MainWindow.cpp" line="1847"/>
         <source>m</source>
         <translation>m</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="1784"/>
-        <location filename="../src/MainWindow.cpp" line="1846"/>
+        <location filename="../src/MainWindow.cpp" line="1786"/>
+        <location filename="../src/MainWindow.cpp" line="1848"/>
         <source>s</source>
         <translation>s</translation>
     </message>
@@ -2159,7 +2167,7 @@ Etes-vous sur ?</source>
         <translation type="obsolete">Selection :</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="1409"/>
+        <location filename="../src/MainWindow.cpp" line="1411"/>
         <source>(dist.orthodromique:</source>
         <translation>(orthodromic distance:</translation>
     </message>
@@ -2172,7 +2180,7 @@ Etes-vous sur ?</source>
         <translation type="obsolete">Timestamp last VLM sync</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="1448"/>
+        <location filename="../src/MainWindow.cpp" line="1450"/>
         <source>Prochaine vac dans</source>
         <translation>Next crank in</translation>
     </message>
@@ -4080,7 +4088,7 @@ Etes-vous sur ?</source>
     </message>
     <message>
         <location filename="../src/Dialogs/DialogRace.cpp" line="79"/>
-        <location filename="../src/Dialogs/DialogRoute.cpp" line="208"/>
+        <location filename="../src/Dialogs/DialogRoute.cpp" line="212"/>
         <source>DNM</source>
         <translation>DNM</translation>
     </message>
@@ -4581,7 +4589,27 @@ VMG %.1 kts</translation>
         <translation></translation>
     </message>
     <message>
+        <location filename="../src/Dialogs/DialogRoute.cpp" line="205"/>
+        <source>SOG</source>
+        <translation></translation>
+    </message>
+    <message>
+        <location filename="../src/Dialogs/DialogRoute.cpp" line="206"/>
+        <source>COG</source>
+        <translation></translation>
+    </message>
+    <message>
         <location filename="../src/Dialogs/DialogRoute.cpp" line="209"/>
+        <source>CS</source>
+        <translation></translation>
+    </message>
+    <message>
+        <location filename="../src/Dialogs/DialogRoute.cpp" line="210"/>
+        <source>CD</source>
+        <translation></translation>
+    </message>
+    <message>
+        <location filename="../src/Dialogs/DialogRoute.cpp" line="213"/>
         <source>CNM</source>
         <translation></translation>
     </message>
@@ -4599,27 +4627,27 @@ VMG %.1 kts</translation>
         <translation type="obsolete">Heading</translation>
     </message>
     <message>
-        <location filename="../src/Dialogs/DialogRoute.cpp" line="205"/>
+        <location filename="../src/Dialogs/DialogRoute.cpp" line="207"/>
         <source>AWS</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../src/Dialogs/DialogRoute.cpp" line="206"/>
+        <location filename="../src/Dialogs/DialogRoute.cpp" line="208"/>
         <source>AWA</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../src/Dialogs/DialogRoute.cpp" line="207"/>
+        <location filename="../src/Dialogs/DialogRoute.cpp" line="211"/>
         <source>POI cible</source>
         <translation>Target POI</translation>
     </message>
     <message>
-        <location filename="../src/Dialogs/DialogRoute.cpp" line="210"/>
+        <location filename="../src/Dialogs/DialogRoute.cpp" line="214"/>
         <source>Lon POI cible</source>
         <translation>Lon target POI</translation>
     </message>
     <message>
-        <location filename="../src/Dialogs/DialogRoute.cpp" line="211"/>
+        <location filename="../src/Dialogs/DialogRoute.cpp" line="215"/>
         <source>Lat POI cible</source>
         <translation>Lat target POI</translation>
     </message>
@@ -5177,24 +5205,24 @@ isochrons</translation>
     <name>ROUTE</name>
     <message>
         <location filename="../src/route.cpp" line="411"/>
-        <location filename="../src/route.cpp" line="713"/>
+        <location filename="../src/route.cpp" line="751"/>
         <source>&lt;br&gt;Route: </source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../src/route.cpp" line="717"/>
-        <location filename="../src/route.cpp" line="789"/>
+        <location filename="../src/route.cpp" line="755"/>
+        <location filename="../src/route.cpp" line="827"/>
         <source>&lt;br&gt;ETA: Non joignable avec ce fichier GRIB</source>
         <translation>&lt;br&gt;ETA: not reachable with this GRIB file</translation>
     </message>
     <message>
-        <location filename="../src/route.cpp" line="722"/>
-        <location filename="../src/route.cpp" line="793"/>
+        <location filename="../src/route.cpp" line="760"/>
+        <location filename="../src/route.cpp" line="831"/>
         <source>&lt;br&gt;ETA: deja atteint</source>
         <translation>ETA: already reached</translation>
     </message>
     <message>
-        <location filename="../src/route.cpp" line="727"/>
+        <location filename="../src/route.cpp" line="765"/>
         <source>Note: la date indiquee correspond a la desactivation du WP</source>
         <translation>Note: indicated ETA corresponds to WP deactivation</translation>
     </message>
@@ -5203,43 +5231,43 @@ isochrons</translation>
         <translation type="obsolete">ETA from last crank</translation>
     </message>
     <message>
-        <location filename="../src/route.cpp" line="751"/>
-        <location filename="../src/route.cpp" line="819"/>
+        <location filename="../src/route.cpp" line="789"/>
+        <location filename="../src/route.cpp" line="857"/>
         <source>ETA a partir de maintenant</source>
         <translation>ETA: from now</translation>
     </message>
     <message>
-        <location filename="../src/route.cpp" line="754"/>
-        <location filename="../src/route.cpp" line="822"/>
+        <location filename="../src/route.cpp" line="792"/>
+        <location filename="../src/route.cpp" line="860"/>
         <source>ETA depuis la date Grib</source>
         <translation>ETA from GRIB date</translation>
     </message>
     <message>
-        <location filename="../src/route.cpp" line="757"/>
-        <location filename="../src/route.cpp" line="825"/>
+        <location filename="../src/route.cpp" line="795"/>
+        <location filename="../src/route.cpp" line="863"/>
         <source>ETA depuis la date fixe</source>
         <translation>ETA from fixed date</translation>
     </message>
     <message>
-        <location filename="../src/route.cpp" line="760"/>
-        <location filename="../src/route.cpp" line="830"/>
+        <location filename="../src/route.cpp" line="798"/>
+        <location filename="../src/route.cpp" line="868"/>
         <source>jours</source>
         <translation>days</translation>
     </message>
     <message>
-        <location filename="../src/route.cpp" line="760"/>
-        <location filename="../src/route.cpp" line="830"/>
+        <location filename="../src/route.cpp" line="798"/>
+        <location filename="../src/route.cpp" line="868"/>
         <source>heures</source>
         <translation>hours</translation>
     </message>
     <message>
-        <location filename="../src/route.cpp" line="761"/>
-        <location filename="../src/route.cpp" line="831"/>
+        <location filename="../src/route.cpp" line="799"/>
+        <location filename="../src/route.cpp" line="869"/>
         <source>minutes</source>
         <translation>minutes</translation>
     </message>
     <message>
-        <location filename="../src/route.cpp" line="786"/>
+        <location filename="../src/route.cpp" line="824"/>
         <source>Route: </source>
         <translation></translation>
     </message>
@@ -9619,12 +9647,11 @@ Voulez-vous egalement supprimer tous les POIs lui appartenant?</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../src/Ui/routeInfo.ui" line="20"/>
         <source>Informations Vent</source>
-        <translation>Wind data</translation>
+        <translation type="obsolete">Wind data</translation>
     </message>
     <message>
-        <location filename="../src/Ui/routeInfo.ui" line="26"/>
+        <location filename="../src/Ui/routeInfo.ui" line="82"/>
         <source>TWD</source>
         <translation>TWD</translation>
     </message>
@@ -9639,78 +9666,107 @@ Voulez-vous egalement supprimer tous les POIs lui appartenant?</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../src/Ui/routeInfo.ui" line="101"/>
+        <location filename="../src/Ui/routeInfo.ui" line="140"/>
         <source>AWS</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../src/Ui/routeInfo.ui" line="149"/>
+        <location filename="../src/Ui/routeInfo.ui" line="45"/>
         <source>AWA</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../src/Ui/routeInfo.ui" line="172"/>
+        <location filename="../src/Ui/routeInfo.ui" line="221"/>
         <source>Amure</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../src/Ui/routeInfo.ui" line="39"/>
-        <location filename="../src/Ui/routeInfo.ui" line="88"/>
-        <location filename="../src/Ui/routeInfo.ui" line="162"/>
-        <location filename="../src/Ui/routeInfo.ui" line="201"/>
-        <location filename="../src/Ui/routeInfo.ui" line="250"/>
+        <location filename="../src/Ui/routeInfo.ui" line="32"/>
+        <location filename="../src/Ui/routeInfo.ui" line="65"/>
+        <location filename="../src/Ui/routeInfo.ui" line="127"/>
+        <location filename="../src/Ui/routeInfo.ui" line="167"/>
+        <location filename="../src/Ui/routeInfo.ui" line="243"/>
+        <location filename="../src/Ui/routeInfo.ui" line="262"/>
+        <location filename="../src/Ui/routeInfo.ui" line="344"/>
         <source>deg</source>
         <translation>°</translation>
     </message>
     <message>
-        <location filename="../src/Ui/routeInfo.ui" line="65"/>
-        <location filename="../src/Ui/routeInfo.ui" line="114"/>
-        <location filename="../src/Ui/routeInfo.ui" line="227"/>
+        <location filename="../src/Ui/routeInfo.ui" line="20"/>
+        <source>Informations Vent/Courant</source>
+        <translation>Wind/Current data</translation>
+    </message>
+    <message>
+        <location filename="../src/Ui/routeInfo.ui" line="95"/>
+        <location filename="../src/Ui/routeInfo.ui" line="111"/>
+        <location filename="../src/Ui/routeInfo.ui" line="186"/>
+        <location filename="../src/Ui/routeInfo.ui" line="307"/>
         <source> nds</source>
         <translation> kts</translation>
     </message>
     <message>
-        <location filename="../src/Ui/routeInfo.ui" line="182"/>
+        <location filename="../src/Ui/routeInfo.ui" line="147"/>
+        <source>CS</source>
+        <translation></translation>
+    </message>
+    <message>
+        <location filename="../src/Ui/routeInfo.ui" line="154"/>
+        <source>CD</source>
+        <translation></translation>
+    </message>
+    <message>
+        <location filename="../src/Ui/routeInfo.ui" line="231"/>
         <source>Informations Bateau et WPs</source>
         <translation>Boat and WP data</translation>
     </message>
     <message>
-        <location filename="../src/Ui/routeInfo.ui" line="214"/>
+        <location filename="../src/Ui/routeInfo.ui" line="294"/>
         <source>BS</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../src/Ui/routeInfo.ui" line="188"/>
+        <location filename="../src/Ui/routeInfo.ui" line="324"/>
         <source>HDG</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../src/Ui/routeInfo.ui" line="237"/>
+        <location filename="../src/Ui/routeInfo.ui" line="331"/>
         <source>CNM</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../src/Ui/routeInfo.ui" line="263"/>
+        <location filename="../src/Ui/routeInfo.ui" line="357"/>
+        <source>COG</source>
+        <translation></translation>
+    </message>
+    <message>
+        <location filename="../src/Ui/routeInfo.ui" line="364"/>
+        <source>SOG</source>
+        <translation></translation>
+    </message>
+    <message>
+        <location filename="../src/Ui/routeInfo.ui" line="317"/>
         <source>DNM</source>
         <translation>DNM</translation>
     </message>
     <message>
-        <location filename="../src/Ui/routeInfo.ui" line="276"/>
+        <location filename="../src/Ui/routeInfo.ui" line="281"/>
+        <location filename="../src/Ui/routeInfo.ui" line="377"/>
         <source> NM</source>
-        <translation>NM</translation>
+        <translation> NM</translation>
     </message>
     <message>
-        <location filename="../src/Dialogs/routeInfo.cpp" line="43"/>
+        <location filename="../src/Dialogs/routeInfo.cpp" line="47"/>
         <source>Au moteur</source>
         <translation>With engine</translation>
     </message>
     <message>
-        <location filename="../src/Dialogs/routeInfo.cpp" line="48"/>
+        <location filename="../src/Dialogs/routeInfo.cpp" line="52"/>
         <source>Babord amure</source>
         <translation>Port tack</translation>
     </message>
     <message>
-        <location filename="../src/Dialogs/routeInfo.cpp" line="50"/>
+        <location filename="../src/Dialogs/routeInfo.cpp" line="54"/>
         <source>Tribord amure</source>
         <translation>Starboard tack</translation>
     </message>

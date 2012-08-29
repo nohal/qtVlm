@@ -235,7 +235,6 @@ class ROUTAGE : public QObject
         QPointF start;
         QPointF arrival;
         double mySignedDiffAngle(double a1,double a2);
-        bool findPoint(double lon, double lat, double wind_angle, double wind_speed, double cap, vlmPoint *pt);
         double findTime(const vlmPoint * pt, QPointF P, double * cap);
         double loxoCap;
         double initialDist;

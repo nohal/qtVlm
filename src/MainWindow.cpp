@@ -1064,6 +1064,7 @@ void MainWindow::slotFile_Close_Current() {
 
     }
     updateTitle();
+    my_centralWidget->emitUpdateRoute(NULL);
 }
 //-------------------------------------------------
 void MainWindow::slotFile_Close()
@@ -1080,6 +1081,7 @@ void MainWindow::slotFile_Close()
 
     }
     updateTitle();
+    my_centralWidget->emitUpdateRoute(NULL);
 }
 
 //========================================================================
@@ -1377,16 +1379,20 @@ void MainWindow::statusBar_showWindData(double x,double y)
 
     Grib * grib = my_centralWidget->getGrib();
     bool bo=false;
-    if(menuBar->acView_CurrentColors->isChecked())
-        bo=(grib && grib->getInterpolatedValueCurrent_byDates(x,y,grib->getCurrentDate(),&a,&b));
-    else
-        bo=(grib && grib->getInterpolatedValue_byDates(x,y,grib->getCurrentDate(),&a,&b));
+    res.clear();
+    bo=(grib && grib->getInterpolatedValue_byDates(x,y,grib->getCurrentDate(),&a,&b));
     if(bo)
     {
-        if(menuBar->acView_CurrentColors->isChecked())
-            res = "- " + tr(" Courant") + ": ";
-        else
-            res = "- " + tr(" Vent") + ": ";
+        res = "- " + tr(" Vent") + ": ";
+        s.sprintf("%6.2f", radToDeg(b));
+        res += s+tr("deg")+", ";
+        s.sprintf("%6.2f",a);
+        res += s+tr(" kts");
+    }
+    bo=(grib && grib->getInterpolatedValueCurrent_byDates(x,y,grib->getCurrentDate(),&a,&b));
+    if(bo)
+    {
+        res += " - " + tr(" Courant") + ": ";
         s.sprintf("%6.2f", radToDeg(b));
         res += s+tr("deg")+", ";
         s.sprintf("%6.2f",a);

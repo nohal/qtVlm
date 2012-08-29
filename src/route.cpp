@@ -442,10 +442,24 @@ void ROUTE::slot_recalculate(boat * boat)
                                               eta,&wind_speed,&wind_angle,INTERPOLATION_DEFAULT)
                             && eta<=maxDate) || imported))
                     {
-                        //previous_remaining_distance=remaining_distance;
                         wind_angle=radToDeg(wind_angle);
+                        double current_speed=-1;
+                        double current_angle=0;
+                        //calculate surface wind if any current
+                        if(grib->getInterpolatedValueCurrent_byDates(lon, lat,
+                                                  eta,&current_speed,&current_angle,INTERPOLATION_DEFAULT))
+                        {
+                            current_angle=radToDeg(current_angle);
+                            QPointF p=Util::calculateSumVect(wind_angle,wind_speed,current_angle,current_speed);
+                            wind_speed=p.x();
+                            wind_angle=p.y();
+                        }
                         cap=orth.getAzimutDeg();
                         capSaved=cap;
+                        double cog=cap;
+                        double hdg=cap;
+                        double sog=0;
+                        double bs=0;
                         if(imported)
                         {
                             res_lon=poi->getLongitude();
@@ -549,6 +563,16 @@ void ROUTE::slot_recalculate(boat * boat)
                                 cap=capSaved;
                                 angle=A180(cap-wind_angle);
                             }
+                            hdg=cap;
+                            bs=newSpeed;
+                            if(current_speed>0)
+                            {
+                                QPointF p=Util::calculateSumVect(cap,newSpeed,Util::A360(current_angle),current_speed);
+                                newSpeed=p.x(); //in this case newSpeed is SOG
+                                cap=p.y(); //in this case cap is COG
+                            }
+                            sog=newSpeed;
+                            cog=cap;
                             if (firstPoint)
                             {
                                 firstPoint=false;
@@ -564,6 +588,7 @@ void ROUTE::slot_recalculate(boat * boat)
                             lastKnownSpeed=qMax(10e-4,newSpeed);
                             lastTwa=angle;
                             distanceParcourue=newSpeed*myBoat->getVacLen()*multVac/3600.00;
+
                             if(!imported && nbToReach==0)
                             {
                                 if(qRound(distanceParcourue*100)>=qRound(remaining_distance*100))
@@ -590,6 +615,10 @@ void ROUTE::slot_recalculate(boat * boat)
                                         roadPoint.append(-1); //14
                                         roadPoint.append(-1); //15
                                         roadPoint.append(-1); //16
+                                        roadPoint.append(-1); //17
+                                        roadPoint.append(-1); //18
+                                        roadPoint.append(-1); //19
+                                        roadPoint.append(-1); //20
                                         roadMap.append(roadPoint);
                                     }
                                     break;
@@ -614,20 +643,24 @@ void ROUTE::slot_recalculate(boat * boat)
                                 roadPoint.append((double)(Eta-myBoat->getVacLen())); // 0
                                 roadPoint.append(poi->getLongitude()); // 1
                                 roadPoint.append(poi->getLatitude()); // 2
-                                roadPoint.append(Util::A360(cap-myBoat->getDeclinaison())); //3
-                                roadPoint.append(newSpeed); //4
+                                roadPoint.append(Util::A360(hdg-myBoat->getDeclinaison())); //3
+                                roadPoint.append(bs); //4
                                 roadPoint.append(distanceParcourue); //5
                                 roadPoint.append(wind_angle); //6
                                 roadPoint.append(wind_speed); //7
-                                roadPoint.append(A180(cap-wind_angle)); //8
+                                roadPoint.append(A180(hdg-wind_angle)); //8
                                 roadPoint.append(poiNb); //9
                                 roadPoint.append(remaining_distance); //10
                                 roadPoint.append(Util::A360(capSaved-myBoat->getDeclinaison())); //11
                                 roadPoint.append(engineUsed?1:-1); //12
                                 roadPoint.append(p.lon); //13
                                 roadPoint.append(p.lat); //14
-                                roadPoint.append(Util::A360(cap)); //15
+                                roadPoint.append(Util::A360(hdg)); //15
                                 roadPoint.append(Util::A360(capSaved)); //16
+                                roadPoint.append(Util::A360(cog)); //17
+                                roadPoint.append(sog); //18
+                                roadPoint.append(current_speed); //19
+                                roadPoint.append(current_angle); //20
                                 roadMap.append(roadPoint);
                             }
                             if(lastEta<gribDate && Eta>=gribDate)
@@ -637,7 +670,8 @@ void ROUTE::slot_recalculate(boat * boat)
                                     QList<double> roadPoint=roadMap.last();
                                     roadInfo->setValues(roadPoint.at(6),roadPoint.at(7),roadPoint.at(8),
                                                         roadPoint.at(4),roadPoint.at(3),roadPoint.at(11),
-                                                        roadPoint.at(10),engineUsed,lat<0);
+                                                        roadPoint.at(10),engineUsed,lat<0,roadPoint.at(17),
+                                                        roadPoint.at(18),roadPoint.at(19),roadPoint.at(20));
                                 }
                                 if(gribDate>start+1000)
                                 {
@@ -681,6 +715,10 @@ void ROUTE::slot_recalculate(boat * boat)
                             roadPoint.append(-1); //14
                             roadPoint.append(-1); //15
                             roadPoint.append(-1); //16
+                            roadPoint.append(-1); //17
+                            roadPoint.append(-1); //18
+                            roadPoint.append(-1); //19
+                            roadPoint.append(-1); //20
                             roadMap.append(roadPoint);
                         }
                         break;

@@ -20,7 +20,7 @@ routeInfo::routeInfo(myCentralWidget *parent, ROUTE *route) :
     drawBoat.quadTo(28,22,20,10);
     //qWarning()<<"end of roadInfo init";
 }
-void routeInfo::setValues(double twd, double tws, double twa, double bs, double hdg, double cnm, double dnm, bool engineUsed, bool south)
+void routeInfo::setValues(double twd, double tws, double twa, double bs, double hdg, double cnm, double dnm, bool engineUsed, bool south, double cog, double sog, double cs, double cd)
 {
     //qWarning()<<"inside routeInfo::setValues()";
     TWD->setValue(twd);
@@ -30,6 +30,10 @@ void routeInfo::setValues(double twd, double tws, double twa, double bs, double 
     HDG->setValue(hdg);
     CNM->setValue(cnm);
     DNM->setValue(dnm);
+    COG->setValue(cog);
+    SOG->setValue(sog);
+    CS->setValue(cs);
+    CD->setValue(cd);
     double Y=90-qAbs(twa);
     double a=tws*cos(degToRad(Y));
     double b=tws*sin(degToRad(Y));

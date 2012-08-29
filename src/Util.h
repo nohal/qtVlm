@@ -39,6 +39,7 @@ Copyright (C) 2008 - Jacques Zaninetti - http://zygrib.free.fr
 
 #include "class_list.h"
 #include "dataDef.h"
+#include <QLineF>
 
 #ifdef __QTVLM_WITH_TEST
 #define NB_URL 4
@@ -77,6 +78,7 @@ class Util
     static int    kmhToBeaufort(double v);
     static double  kmhToBeaufort_F(double v);
     static double  BeaufortToKmh_F(double bf);
+    static QPointF calculateSumVect(double angle1,double length1,double angle2,double length2);
 
     static void paramProxy(QNetworkAccessManager *inetManager,QString host);
     static bool getWPClipboard(QString *,double * lat,double * lon, double * wph, int * tStamp);
@@ -173,6 +175,18 @@ inline double Util::kmhToBeaufort_F(double v) {
 inline double Util::BeaufortToKmh_F(double bf) {
     double v = sqrt(bf*bf*bf*9.0);
     return v;
+}
+inline QPointF Util::calculateSumVect(double angle1,double length1,double angle2,double length2)
+{
+    QLineF line1(0,0,1,1);
+    line1.setLength(length1);
+    line1.setAngle(A360(angle1));
+    QLineF line2(line1.p2().x(),line1.p2().y(),1,1);
+    line2.setLength(length2);
+    line2.setAngle(A360(angle2));
+    QLineF temp(0,0,line2.p2().x(),line2.p2().y());
+    QPointF pointF(temp.length(),A360(temp.angle()));
+    return pointF;
 }
 
 #endif

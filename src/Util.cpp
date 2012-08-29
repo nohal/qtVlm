@@ -624,4 +624,3 @@ bool Util::lineIsCrossingRect(const QLineF line, const QRectF rect)
     if(line.y1()<rect.bottomLeft().y() && line.y2()<rect.bottomLeft().y()) return false;
     return true;
 }
-

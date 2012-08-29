@@ -58,6 +58,8 @@ inline vlmPoint findPointThreaded(const vlmPoint &point)
     time_t workEta;
     double res_lon,res_lat;
     double distanceParcourue=0;
+    double current_speed=-1;
+    double current_angle=0;
     for(int a=0;a<=1;++a)
     {
         angle=cap-(double)windAngle;
@@ -85,6 +87,12 @@ inline vlmPoint findPointThreaded(const vlmPoint &point)
             else
                 newSpeed=pt.routage->getBoat()->getPolarData()->getSpeed(windSpeed,angle);
         }
+        if(current_speed>0)
+        {
+            QPointF p=Util::calculateSumVect(cap,newSpeed,Util::A360(current_angle+180.0),current_speed);
+            newSpeed=p.x(); //in this case newSpeed is SOG
+            cap=p.y(); //in this case cap is COG
+        }
         distanceParcourue=newSpeed*pt.routage->getTimeStep()/60.0;
         Util::getCoordFromDistanceAngle(lat, lon, distanceParcourue, cap, &res_lat, &res_lon);
         pt.lon=res_lon;
@@ -106,6 +114,14 @@ inline vlmPoint findPointThreaded(const vlmPoint &point)
                     return pt;
                 }
                 newWindAngle=radToDeg(newWindAngle);
+                if(pt.routage->getGrib()->getInterpolatedValueCurrent_byDates(res_lon,res_lat,
+                       workEta+pt.routage->getTimeStep()*60,&current_speed,&current_angle,INTERPOLATION_DEFAULT))
+                {
+                    current_angle=radToDeg(current_angle);
+                    QPointF p=Util::calculateSumVect(newWindAngle,newWindSpeed,current_angle,current_speed);
+                    newWindSpeed=p.x();
+                    newWindAngle=p.y();
+                }
             }
             else
             {
@@ -566,6 +582,8 @@ inline int ROUTAGE::calculateTimeRoute(vlmPoint routeFrom,vlmPoint routeTo, data
     orth2.setPoints(lon, lat, routeTo.lon,routeTo.lat);
     remaining_distance=orth.getDistance();
     double initialDistance=orth2.getDistance();
+    double current_speed=-1;
+    double current_angle=0;
     do
         {
             workEta=etaRoute;
@@ -581,6 +599,13 @@ inline int ROUTAGE::calculateTimeRoute(vlmPoint routeFrom,vlmPoint routeTo, data
                 else
                 {
                     windAngle=radToDeg(windAngle);
+                    if (dataThread->GriB->getInterpolatedValueCurrent_byDates(lon, lat, workEta,&current_speed,&current_angle,INTERPOLATION_DEFAULT))
+                    {
+                        current_angle=radToDeg(current_angle);
+                        QPointF p=Util::calculateSumVect(windAngle,windSpeed,current_angle,current_speed);
+                        windSpeed=p.x();
+                        windAngle=p.y();
+                    }
                 }
                 if(dataThread->i_iso)
                     windAngle=Util::A360(windAngle+180.0);
@@ -620,6 +645,13 @@ inline int ROUTAGE::calculateTimeRoute(vlmPoint routeFrom,vlmPoint routeTo, data
                         cap=cap2;
                 }
                 newSpeed=dataThread->Boat->getPolarData()->getSpeed(windSpeed,angle);
+                if(current_speed>0)
+                {
+                    QPointF p=Util::calculateSumVect(cap,newSpeed,Util::A360(current_angle),current_speed);
+                    newSpeed=p.x(); //in this case newSpeed is SOG
+                    cap=p.y(); //in this case cap is COG
+                }
+
                 if(!ignoreTackLoss && dataThread->speedLossOnTack!=1)
                 {
                     if((angle>0 && lastTwa<0) || (angle<0 && lastTwa>0))
@@ -1126,6 +1158,8 @@ void ROUTAGE::slot_calculate()
                     approaching=true;
             }
             double windSpeed,windAngle;
+            double current_speed=-1;
+            double current_angle=0;
             if(!windIsForced)
             {
                 if(i_iso)
@@ -1141,6 +1175,14 @@ void ROUTAGE::slot_calculate()
                     continue;
                 }
                 windAngle=radToDeg(windAngle);
+                if(grib->getInterpolatedValueCurrent_byDates((double) list->at(n).lon,(double) list->at(n).lat,
+                       workEta,&current_speed,&current_angle,INTERPOLATION_DEFAULT))
+                {
+                    current_angle=radToDeg(current_angle);
+                    QPointF p=Util::calculateSumVect(windAngle,windSpeed,current_angle,current_speed);
+                    windSpeed=p.x();
+                    windAngle=p.y();
+                }
             }
             else
             {
@@ -2458,83 +2500,6 @@ void ROUTAGE::eraseWay()
     way->hide();
 }
 
-bool ROUTAGE::findPoint(double lon, double lat, double windAngle, double windSpeed, double cap, vlmPoint *pt)
-{
-    cap=Util::A360(cap);
-    double angle,newSpeed;
-    time_t workEta;
-    double res_lon,res_lat;
-    double distanceParcourue=0;
-    for(int a=0;a<=1;++a)
-    {
-        angle=cap-(double)windAngle;
-        if(qAbs(angle)>180)
-        {
-            if(angle<0)
-                angle=360+angle;
-            else
-                angle=angle-360;
-        }
-        double limit=myBoat->getPolarData()->getBvmgUp(windSpeed);
-        if(qAbs(angle)<limit && angle!=90) //if too close to wind then use VB-VMG technique
-        {
-            newSpeed=myBoat->getPolarData()->getSpeed(windSpeed,limit);
-//            newSpeed=newSpeed*qAbs(cos(degToRad(myDiffAngle(limit,qAbs(angle)))));
-            newSpeed=newSpeed*qAbs(cos(degToRad(limit))/cos(degToRad(qAbs(angle))));
-        }
-        else
-        {
-            limit=myBoat->getPolarData()->getBvmgDown(windSpeed);
-            if(qAbs(angle)>limit && angle!=90)
-            {
-                newSpeed=myBoat->getPolarData()->getSpeed(windSpeed,limit);
-//                newSpeed=newSpeed*qAbs(cos(degToRad(myDiffAngle(qAbs(angle),limit))));
-                newSpeed=newSpeed*qAbs(cos(degToRad(limit))/cos(degToRad(qAbs(angle))));
-            }
-            else
-                newSpeed=myBoat->getPolarData()->getSpeed(windSpeed,angle);
-        }
-        distanceParcourue=newSpeed*this->getTimeStep()/60.0;
-        Util::getCoordFromDistanceAngle(lat, lon, distanceParcourue, cap, &res_lat, &res_lon);
-        pt->lon=res_lon;
-        pt->lat=res_lat;
-        pt->distOrigin=distanceParcourue;
-        if(a==0)
-        {
-            double newWindAngle,newWindSpeed;
-            if(!this->windIsForced)
-            {
-                workEta=eta;
-                if(whatIfUsed && whatIfJour<=eta)
-                    workEta=workEta+whatIfTime*3600;
-                if(!grib->getInterpolatedValue_byDates(res_lon,res_lat,
-                       workEta+this->getTimeStep()*60,&newWindSpeed,&newWindAngle,INTERPOLATION_DEFAULT)||workEta+this->getTimeStep()*60>grib->getMaxDate())
-                {
-                    return false;
-                }
-                newWindAngle=radToDeg(newWindAngle);
-            }
-            else
-            {
-                newWindAngle=this->wind_angle;
-                newWindSpeed=this->wind_speed;
-            }
-            if(whatIfUsed && whatIfJour<=eta)
-                windSpeed=windSpeed*whatIfWind/100.00;
-            windAngle=Util::A360((windAngle+newWindAngle)/2);
-            windSpeed=(windSpeed+newWindSpeed)/2;
-//            if(!this->useDistIso)
-//            {
-//                double vmg=0;
-//                Orthodromie oo(res_lon,res_lat,arrival.x(),arrival.y());
-//                double loxo=oo.getLoxoCap();
-//                myBoat->getPolarData()->getBvmg(A360(loxo-newWindAngle),newWindSpeed,&vmg);
-//                pt->vmgSpeed=qAbs(myBoat->getPolarData()  ->getSpeed(newWindSpeed,vmg)*cos(degToRad(A360(myDiffAngle(loxo,cap)))));
-//            }
-        }
-    }
-    return true;
-}
 void ROUTAGE::convertToRoute()
 {
     bool routeStartBoat=false;

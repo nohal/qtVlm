@@ -1390,7 +1390,7 @@ void Grib::draw_CURRENT_Color(QPainter &pnt, const Projection *proj, bool smooth
                     y_tab[i_s*H_s+j_s]=(y<0);
                 }
 
-                rgb=getWindColor(u*10.0, smooth); //for current
+                rgb=getWindColor(u*20.0, smooth); //for current
                 image->setPixel(i,  j,rgb);
                 image->setPixel(i+1,j,rgb);
                 image->setPixel(i,  j+1,rgb);

@@ -254,10 +254,21 @@ void DialogTwaLine::traceIt()
         if (nbVac[page]==0) continue;
         for(int i=1;i<=nbVac[page];i++)
         {
+            double current_speed=-1;
+            double current_angle=0;
             if(!grib->getInterpolatedValue_byDates(current.lon, current.lat,
                 eta,&wind_speed,&wind_angle,INTERPOLATION_DEFAULT) || eta>maxDate)
                 break;
             wind_angle=radToDeg(wind_angle);
+            if(grib->getInterpolatedValueCurrent_byDates(current.lon, current.lat,
+                eta,&current_speed,&current_angle,INTERPOLATION_DEFAULT))
+            {
+                current_angle=radToDeg(current_angle);
+                QPointF p=Util::calculateSumVect(wind_angle,wind_speed,current_angle,current_speed);
+                //qWarning()<<"cs="<<current_speed<<"cd="<<current_angle<<"tws="<<wind_speed<<"twd="<<wind_angle<<"Ltws="<<p.x()<<"Ltwd="<<p.y();
+                wind_speed=p.x();
+                wind_angle=p.y();
+            }
             double TWA;
             if(mode[page])
             {
@@ -277,6 +288,12 @@ void DialogTwaLine::traceIt()
                 }
             }
             double newSpeed=myBoat->getPolarData()->getSpeed(wind_speed,TWA);
+            if(current_speed>0)
+            {
+                QPointF p=Util::calculateSumVect(cap,newSpeed,A360(current_angle+180.0),current_speed);
+                newSpeed=p.x(); //in this case newSpeed is SOG
+                cap=p.y(); //in this case cap is COG
+            }
             double distanceParcourue=newSpeed*vacLen/3600.00;
             Util::getCoordFromDistanceAngle(current.lat, current.lon, distanceParcourue, cap,&lat,&lon);
             if(!crossing && mapQuality>=3)

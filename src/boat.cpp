@@ -353,24 +353,43 @@ void boat::updateTraceColor(void)
 
 void boat::drawEstime(void)
 {
-    if(this->getType()==BOAT_VLM && mainWindow->getStartEstimeSpeedFromGrib() && parent->getGrib() && parent->getGrib()->isOk() && this->getPolarData())
+    if(mainWindow->getStartEstimeSpeedFromGrib() && parent->getGrib() && parent->getGrib()->isOk() && this->getPolarData())
     {
-        double wind_speed,wind_angle;
-        parent->getGrib()->getInterpolatedValue_byDates(lon,lat,this->getPrevVac()+this->getVacLen(),&wind_speed,&wind_angle);
-        wind_angle=radToDeg(wind_angle);
-        double twa=getHeading()-wind_angle;
-        if(twa>=360) twa=twa-360;
-        if(twa<0) twa=twa+360;
-        if(qAbs(twa)>180)
+        double wind_speed=0;
+        double wind_angle=0;
+        double current_speed=-1;
+        double current_angle=0;
+        if(parent->getGrib()->getInterpolatedValue_byDates(lon,lat,this->getPrevVac()+this->getVacLen(),&wind_speed,&wind_angle) &&
+                !(this->getType()==BOAT_REAL && getSpeed()==0 && getHeading()==0))
         {
-            if(twa<0)
-                twa=360+twa;
-            else
-                twa=twa-360;
+            wind_angle=radToDeg(wind_angle);
+            if(parent->getGrib()->getInterpolatedValueCurrent_byDates(lon,lat,this->getPrevVac()+this->getVacLen(),&current_speed,&current_angle))
+            {
+                current_angle=radToDeg(current_angle);
+                QPointF p=Util::calculateSumVect(wind_angle,wind_speed,current_angle,current_speed);
+                wind_speed=p.x();
+                wind_angle=p.y();
+            }
+            double twa=getHeading()-wind_angle;
+            if(twa>=360) twa=twa-360;
+            if(twa<0) twa=twa+360;
+            if(qAbs(twa)>180)
+            {
+                if(twa<0)
+                    twa=360+twa;
+                else
+                    twa=twa-360;
+            }
+            double newSpeed=getPolarData()->getSpeed(wind_speed,twa);
+            double cap=getHeading();
+            if(current_speed>0)
+            {
+                QPointF p=Util::calculateSumVect(cap,newSpeed,Util::A360(current_angle+180.0),current_speed);
+                newSpeed=p.x(); //in this case newSpeed is SOG
+                cap=p.y(); //in this case cap is COG
+            }
+            drawEstime(cap, newSpeed);
         }
-        double newSpeed=getPolarData()->getSpeed(wind_speed,twa);
-        drawEstime(getHeading(), newSpeed);
-        //qWarning()<<"new speed for estime"<<newSpeed<<twa<<wind_speed;
     }
     else
         drawEstime(getHeading(),getSpeed());

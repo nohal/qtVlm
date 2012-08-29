@@ -981,6 +981,10 @@ Etes-vous sur ?</source>
         <source> jours </source>
         <translation></translation>
     </message>
+    <message>
+        <source>kts</source>
+        <translation>nds</translation>
+    </message>
 </context>
 <context>
     <name>DialogTwaLine</name>
@@ -3184,6 +3188,22 @@ VMG %.2f nds</translation>
     </message>
     <message>
         <source>Information au point d&apos;interpolation pour </source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>SOG</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>COG</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>CS</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>CD</source>
         <translation></translation>
     </message>
 </context>
@@ -6636,10 +6656,6 @@ Voulez-vous la remplacer?</source>
         <translation></translation>
     </message>
     <message>
-        <source>Informations Vent</source>
-        <translation></translation>
-    </message>
-    <message>
         <source>TWD</source>
         <translation></translation>
     </message>
@@ -6705,6 +6721,26 @@ Voulez-vous la remplacer?</source>
     </message>
     <message>
         <source>Au moteur</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Informations Vent/Courant</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>CS</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>CD</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>COG</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>SOG</source>
         <translation></translation>
     </message>
 </context>
