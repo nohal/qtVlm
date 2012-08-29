@@ -813,9 +813,16 @@ void MainWindow::openGribFile(QString fileName, bool zoom, bool current)
 }
 void MainWindow::updateTitle()
 {
+    QString ver="qtVlm "+QString().setNum(sizeof(int*)*8)+" bits "+Version::getVersion();
+
+    if(isStartingUp) {
+        setWindowTitle(ver);
+        return;
+    }
+
     Grib * g=my_centralWidget->getGrib();
     Grib * gc=my_centralWidget->getGribCurrent();
-    QString ver="qtVlm "+QString().setNum(sizeof(int*)*8)+" bits "+Version::getVersion();
+
     QString g1,g2;
     if(g && g->isOk())
     {
