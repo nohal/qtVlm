@@ -102,11 +102,13 @@ void  GribRecord::translateDataType()
         //------------------------
         if (idCenter==7 && (idModel==96 || idModel==81) && (idGrid==4 || idGrid==255))
         {
-                if (dataType == GRB_PRECIP_TOT) {	// mm/period -> mm/h
+                if (dataType == GRB_PRECIP_TOT)
+                {	// mm/period -> mm/h
                         if (periodP2 > periodP1)
                                 multiplyAllData( 1.0/(periodP2-periodP1) );
                 }
-                if (dataType == GRB_PRECIP_RATE) {	// mm/s -> mm/h
+                if (dataType == GRB_PRECIP_RATE)
+                {	// mm/s -> mm/h
                         if (periodP2 > periodP1)
                                 multiplyAllData( 3600.0 );
                 }
@@ -123,8 +125,7 @@ void  GribRecord::translateDataType()
                          || (idCenter==7 && idModel==125 && idGrid==253)  // nph.all.grb
                          || (idCenter==7 && idModel==88 && idGrid==233)	  // nwww3.all.grb
                          || (idCenter==7 && idModel==121 && idGrid==238)  // wna.all.grb
-                         || (idCenter==7 && idModel==88 && idGrid==255)   // saildocs
-        )
+                         || (idCenter==7 && idModel==88 && idGrid==255))   // saildocs
         {
             if ( (getDataType()==GRB_WIND_VX || getDataType()==GRB_WIND_VY)
                     && getLevelType()==LV_GND_SURF
@@ -192,6 +193,21 @@ void  GribRecord::translateDataType()
         else if (idCenter==131 && idModel==75 && idGrid==237)
         {
 
+        }
+        //---------------
+        //Theyr.com
+        //---------------
+        else if (idCenter==131 && idModel==75 && idGrid==237)
+        {
+
+        }
+        //---------------
+        //TydeTech.com
+        //---------------
+        else if (idCenter==0 && idModel==0 && idGrid==255)
+        {
+            if(this->dataType==GRB_CURRENT_VX || this->dataType==GRB_CURRENT_VY)
+                this->levelType=LV_MSL;
         }
         //------------------------
         // Unknown center

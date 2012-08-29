@@ -62,7 +62,7 @@ class GribRecord
         //-----------------------------------------
         zuchar  getDataType() const         { return dataType; }
         void    setDataType(const zuchar t);
-        void    translateDataType();  // adapte les codes des différents centres météo
+        void    translateDataType();  // adapte les codes des differents centres meteo
 
         zuchar  getLevelType() const   { return levelType; }
         zuint   getLevelValue() const  { return levelValue; }
