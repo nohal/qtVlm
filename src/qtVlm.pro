@@ -5,7 +5,7 @@ DEPENDPATH += .
 INCLUDEPATH += objs \
     Dialogs \
     libs/bzip2 \
-    libs/zlib-1.2.3 \
+    libs/zlib-1.2.7 \
     libs/qextserialport \
     libs/qjson \
     libs/nmealib/src/nmea \
