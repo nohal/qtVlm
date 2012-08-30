@@ -32,4 +32,6 @@ vlmPoint::vlmPoint(double lon,double lat)
     this->speed=10e5;
     this->timeStamp=0;
     this->distArrival=0;
+    current_speed=-1;
+    current_angle=0;
 }

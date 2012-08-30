@@ -58,8 +58,8 @@ inline vlmPoint findPointThreaded(const vlmPoint &point)
     time_t workEta;
     double res_lon,res_lat;
     double distanceParcourue=0;
-    double current_speed=-1;
-    double current_angle=0;
+    double current_speed=pt.current_speed;
+    double current_angle=pt.current_angle;
     for(int a=0;a<=1;++a)
     {
         angle=cap-(double)windAngle;
@@ -98,6 +98,7 @@ inline vlmPoint findPointThreaded(const vlmPoint &point)
         pt.lon=res_lon;
         pt.lat=res_lat;
         pt.distOrigin=distanceParcourue;
+        pt.capOrigin=cap;
         //if(!pt.routage->getUseRouteModule()) break;
         if(a==0)
         {
@@ -122,6 +123,11 @@ inline vlmPoint findPointThreaded(const vlmPoint &point)
                     newWindSpeed=p.x();
                     newWindAngle=p.y();
                 }
+                else
+                {
+                    current_speed=-1;
+                    current_angle=0;
+                }
             }
             else
             {
@@ -129,11 +135,19 @@ inline vlmPoint findPointThreaded(const vlmPoint &point)
                 newWindSpeed=pt.routage->getWindSpeed();
             }
             if(pt.routage->getI_iso())
+            {
                 newWindAngle=Util::A360(newWindAngle+180.0);
+                current_angle=Util::A360(current_angle+180.0);
+            }
             if(pt.routage->getWhatIfUsed() && pt.routage->getWhatIfJour()<=pt.eta)
                 windSpeed=windSpeed*pt.routage->getWhatIfWind()/100.00;
-            windAngle=Util::A360((windAngle+newWindAngle)/2);
-            windSpeed=(windSpeed+newWindSpeed)/2;
+            windAngle=Util::A360((windAngle+newWindAngle)/2.0);
+            windSpeed=(windSpeed+newWindSpeed)/2.0;
+            if(current_speed!=-1 && pt.current_speed!=-1)
+            {
+                current_speed=(pt.current_speed+current_speed)/2.0;
+                current_angle=Util::A360((current_angle+pt.current_angle)/2.0);
+            }
         }
     }
     if(qAbs(pt.lat)>84.0)
@@ -497,7 +511,8 @@ inline QList<vlmPoint> findRoute(const QList<vlmPoint> & pointListX)
                 double y=ROUTAGE::routeFunction(x,from,&lastLonFound,&lastLatFound,&dataThread);
                 if(y>10e4)
                     break;
-                if(qAbs(y)<=60)
+                //if(qAbs(y)<=60)
+                if(qAbs(qRound(y))==0)
                 {
                     found=true;
                     resultP.distOrigin=x;
@@ -564,7 +579,7 @@ inline int ROUTAGE::calculateTimeRoute(vlmPoint routeFrom,vlmPoint routeTo, data
     }
     bool has_eta=true;
     Orthodromie orth(0,0,0,0);
-    Orthodromie orth2(0,0,0,0);
+    //Orthodromie orth2(0,0,0,0);
     double lon,lat;
     lon=routeFrom.lon;
     lat=routeFrom.lat;
@@ -579,118 +594,127 @@ inline int ROUTAGE::calculateTimeRoute(vlmPoint routeFrom,vlmPoint routeTo, data
     windAngle=0;
     windSpeed=0;
     orth.setPoints(lon, lat, routeTo.lon,routeTo.lat);
-    orth2.setPoints(lon, lat, routeTo.lon,routeTo.lat);
+    //orth2.setPoints(lon, lat, routeTo.lon,routeTo.lat);
     remaining_distance=orth.getDistance();
-    double initialDistance=orth2.getDistance();
+    //double initialDistance=orth2.getDistance();
     double current_speed=-1;
     double current_angle=0;
     do
+    {
+        if(dataThread->i_iso)
+            etaRoute-=vacLen;
+        else
+            etaRoute+=vacLen;
+        workEta=etaRoute;
+        if(dataThread->whatIfUsed && dataThread->whatIfJour<=dataThread->Eta)
+            workEta=workEta+dataThread->whatIfTime*3600;
+        if(dataThread->windIsForced || (dataThread->GriB->getInterpolatedValue_byDates(lon, lat, workEta,&windSpeed,&windAngle,INTERPOLATION_DEFAULT) && workEta<=maxDate && (!hasLimit || etaRoute<=etaLimit)))
         {
-            workEta=etaRoute;
-            if(dataThread->whatIfUsed && dataThread->whatIfJour<=dataThread->Eta)
-                workEta=workEta+dataThread->whatIfTime*3600;
-            if(dataThread->windIsForced || (dataThread->GriB->getInterpolatedValue_byDates(lon, lat, workEta,&windSpeed,&windAngle,INTERPOLATION_DEFAULT) && workEta<=maxDate && (!hasLimit || etaRoute<=etaLimit)))
+            if(dataThread->windIsForced)
             {
-                if(dataThread->windIsForced)
-                {
-                    windSpeed=dataThread->windSpeed;
-                    windAngle=dataThread->windAngle;
-                }
-                else
-                {
-                    windAngle=radToDeg(windAngle);
-                    if (dataThread->GriB->getInterpolatedValueCurrent_byDates(lon, lat, workEta,&current_speed,&current_angle,INTERPOLATION_DEFAULT))
-                    {
-                        current_angle=radToDeg(current_angle);
-                        QPointF p=Util::calculateSumVect(windAngle,windSpeed,current_angle,current_speed);
-                        windSpeed=p.x();
-                        windAngle=p.y();
-                    }
-                }
-                if(dataThread->i_iso)
-                    windAngle=Util::A360(windAngle+180.0);
-                if(dataThread->whatIfUsed && dataThread->whatIfJour<=dataThread->Eta)
-                    windSpeed=windSpeed*dataThread->whatIfWind/100.00;
-                cap=orth.getAzimutDeg();
-                angle=cap-windAngle;
-                if(qAbs(angle)>180)
-                {
-                    if(angle<0)
-                        angle=360+angle;
-                    else
-                        angle=angle-360;
-                }
-                if(qAbs(angle)<dataThread->Boat->getPolarData()->getBvmgUp(windSpeed))
-                {
-                    angle=dataThread->Boat->getPolarData()->getBvmgUp(windSpeed);
-                    cap1=Util::A360(windAngle+angle);
-                    cap2=Util::A360(windAngle-angle);
-                    diff1=Util::myDiffAngle(cap,cap1);
-                    diff2=Util::myDiffAngle(cap,cap2);
-                    if(diff1<diff2)
-                        cap=cap1;
-                    else
-                        cap=cap2;
-                }
-                else if(qAbs(angle)>dataThread->Boat->getPolarData()->getBvmgDown(windSpeed))
-                {
-                    angle=dataThread->Boat->getPolarData()->getBvmgDown(windSpeed);
-                    cap1=Util::A360(windAngle+angle);
-                    cap2=Util::A360(windAngle-angle);
-                    diff1=Util::myDiffAngle(cap,cap1);
-                    diff2=Util::myDiffAngle(cap,cap2);
-                    if(diff1<diff2)
-                        cap=cap1;
-                    else
-                        cap=cap2;
-                }
-                newSpeed=dataThread->Boat->getPolarData()->getSpeed(windSpeed,angle);
-                if(current_speed>0)
-                {
-                    QPointF p=Util::calculateSumVect(cap,newSpeed,Util::A360(current_angle),current_speed);
-                    newSpeed=p.x(); //in this case newSpeed is SOG
-                    cap=p.y(); //in this case cap is COG
-                }
-
-                if(!ignoreTackLoss && dataThread->speedLossOnTack!=1)
-                {
-                    if((angle>0 && lastTwa<0) || (angle<0 && lastTwa>0))
-                        newSpeed=newSpeed*dataThread->speedLossOnTack;
-                }
-                else
-                    ignoreTackLoss=false;
-                lastTwa=angle;
-                distanceParcourue=newSpeed*vacLen/3600.00;
-                Util::getCoordFromDistanceAngle(lat, lon, distanceParcourue, cap,&res_lat,&res_lon);
-                orth.setStartPoint(res_lon, res_lat);
-                remaining_distance=orth.getDistance();
-#if 1 /*note for self*/
-                if(remaining_distance<=distanceParcourue)
-                {
-                    lon=res_lon;
-                    lat=res_lat;
-                    if(dataThread->i_iso)
-                        etaRoute-=vacLen;
-                    else
-                        etaRoute+=vacLen;
-                    break;
-                }
-#endif
+                windSpeed=dataThread->windSpeed;
+                windAngle=dataThread->windAngle;
             }
             else
             {
-                has_eta=false;
+                windAngle=radToDeg(windAngle);
+                if (dataThread->GriB->getInterpolatedValueCurrent_byDates(lon, lat, workEta,&current_speed,&current_angle,INTERPOLATION_DEFAULT))
+                {
+                    current_angle=radToDeg(current_angle);
+                    QPointF p=Util::calculateSumVect(windAngle,windSpeed,current_angle,current_speed);
+                    windSpeed=p.x();
+                    windAngle=p.y();
+                }
+                else
+                {
+                    current_speed=-1;
+                    current_angle=0;
+                }
+            }
+            if(dataThread->i_iso)
+                windAngle=Util::A360(windAngle+180.0);
+            if(dataThread->whatIfUsed && dataThread->whatIfJour<=dataThread->Eta)
+                windSpeed=windSpeed*dataThread->whatIfWind/100.00;
+            cap=orth.getAzimutDeg();
+            angle=cap-windAngle;
+            if(qAbs(angle)>180)
+            {
+                if(angle<0)
+                    angle=360+angle;
+                else
+                    angle=angle-360;
+            }
+            if(qAbs(angle)<dataThread->Boat->getPolarData()->getBvmgUp(windSpeed))
+            {
+                angle=dataThread->Boat->getPolarData()->getBvmgUp(windSpeed);
+                cap1=Util::A360(windAngle+angle);
+                cap2=Util::A360(windAngle-angle);
+                diff1=Util::myDiffAngle(cap,cap1);
+                diff2=Util::myDiffAngle(cap,cap2);
+                if(diff1<diff2)
+                    cap=cap1;
+                else
+                    cap=cap2;
+            }
+            else if(qAbs(angle)>dataThread->Boat->getPolarData()->getBvmgDown(windSpeed))
+            {
+                angle=dataThread->Boat->getPolarData()->getBvmgDown(windSpeed);
+                cap1=Util::A360(windAngle+angle);
+                cap2=Util::A360(windAngle-angle);
+                diff1=Util::myDiffAngle(cap,cap1);
+                diff2=Util::myDiffAngle(cap,cap2);
+                if(diff1<diff2)
+                    cap=cap1;
+                else
+                    cap=cap2;
+            }
+            newSpeed=dataThread->Boat->getPolarData()->getSpeed(windSpeed,angle);
+            if(current_speed>0)
+            {
+                QPointF p=Util::calculateSumVect(cap,newSpeed,Util::A360(current_angle+180.0),current_speed);
+                newSpeed=p.x(); //in this case newSpeed is SOG
+                cap=p.y(); //in this case cap is COG
+            }
+
+            if(!ignoreTackLoss && dataThread->speedLossOnTack!=1)
+            {
+                if((angle>0 && lastTwa<0) || (angle<0 && lastTwa>0))
+                    newSpeed=newSpeed*dataThread->speedLossOnTack;
+            }
+            else
+                ignoreTackLoss=false;
+            lastTwa=angle;
+            distanceParcourue=newSpeed*vacLen/3600.00;
+            Util::getCoordFromDistanceAngle(lat, lon, distanceParcourue, cap,&res_lat,&res_lon);
+            orth.setStartPoint(res_lon, res_lat);
+            remaining_distance=orth.getDistance();
+#if 1 /*note for self*/
+            if(qRound(distanceParcourue*100)>=qRound(remaining_distance*100))
+            {
+                lon=res_lon;
+                lat=res_lat;
+//                if(dataThread->i_iso)
+//                    etaRoute-=vacLen;
+//                else
+//                    etaRoute+=vacLen;
                 break;
             }
-            orth2.setEndPoint(res_lon,res_lat);
-            lon=res_lon;
-            lat=res_lat;
-            if(dataThread->i_iso)
-                etaRoute-=vacLen;
-            else
-                etaRoute+=vacLen;
-            if(orth2.getDistance()>=initialDistance) break;
-        } while (has_eta);
+#endif
+        }
+        else
+        {
+            has_eta=false;
+            break;
+        }
+        //orth2.setEndPoint(res_lon,res_lat);
+        lon=res_lon;
+        lat=res_lat;
+//        if(dataThread->i_iso)
+//            etaRoute-=vacLen;
+//        else
+//            etaRoute+=vacLen;
+        //if(orth2.getDistance()>=initialDistance) break;
+    } while (has_eta);
     if(!has_eta)
     {
         return 10e6;
@@ -1183,6 +1207,11 @@ void ROUTAGE::slot_calculate()
                     windSpeed=p.x();
                     windAngle=p.y();
                 }
+                else
+                {
+                    current_speed=-1;
+                    current_angle=0;
+                }
             }
             else
             {
@@ -1192,9 +1221,13 @@ void ROUTAGE::slot_calculate()
             if((!i_iso && whatIfUsed && whatIfJour<=eta) || (i_iso && whatIfUsed && whatIfJour<=i_eta))
                 windSpeed=windSpeed*whatIfWind/100.00;
             if(i_iso)
-                windAngle=Util::A360(windAngle+180);
+            {
+                windAngle=Util::A360(windAngle+180.0);
+                current_angle=Util::A360(current_angle+180.0);
+            }
             ++nbNotDead;
             iso->setPointWind(n,windAngle,windSpeed);
+            iso->setPointCurrent(n,current_angle,current_speed);
             double vmg;
             myBoat->getPolarData()->getBvmg(Util::A360(list->at(n).capArrival-windAngle),windSpeed,&vmg);
             iso->setPointCapVmg(n,Util::A360(vmg+windAngle));
@@ -1239,6 +1272,8 @@ void ROUTAGE::slot_calculate()
             }
             double windAngle=list->at(n).wind_angle;
             double windSpeed=list->at(n).wind_speed;
+            double currentAngle=list->at(n).current_angle;
+            double currentSpeed=list->at(n).current_speed;
             QList<double> caps=calculateCaps(list->at(n),workAngleStep,workAngleRange);
             QList<vlmPoint> polarPoints;/**/
             bool tryingToFindHole=false;
@@ -1315,9 +1350,10 @@ void ROUTAGE::slot_calculate()
                     newPoint.routage=this;
                     newPoint.origin=iso->getPoint(n);
                     newPoint.originNb=n;
-                    newPoint.capOrigin=Util::A360(cap);
                     newPoint.wind_angle=windAngle;
                     newPoint.wind_speed=windSpeed;
+                    newPoint.current_speed=currentSpeed;
+                    newPoint.current_angle=currentAngle;
                     newPoint.capOrigin=cap;
                     if(i_iso)
                         newPoint.eta=i_eta;
@@ -1358,9 +1394,7 @@ void ROUTAGE::slot_calculate()
                 for (int pp=findPoints.count()-1;pp>=0;--pp)
                 {
                     if(findPoints.at(pp).isDead)
-                    {
                         findPoints.removeAt(pp);
-                    }
                 }
                 msecs_3=msecs_3+tfp.elapsed();
                 bool toBeRestarted=false;

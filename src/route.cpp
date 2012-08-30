@@ -454,6 +454,11 @@ void ROUTE::slot_recalculate(boat * boat)
                             wind_speed=p.x();
                             wind_angle=p.y();
                         }
+                        else
+                        {
+                            current_speed=-1;
+                            current_angle=0;
+                        }
                         cap=orth.getAzimutDeg();
                         capSaved=cap;
                         double cog=cap;
@@ -567,7 +572,7 @@ void ROUTE::slot_recalculate(boat * boat)
                             bs=newSpeed;
                             if(current_speed>0)
                             {
-                                QPointF p=Util::calculateSumVect(cap,newSpeed,Util::A360(current_angle),current_speed);
+                                QPointF p=Util::calculateSumVect(cap,newSpeed,Util::A360(current_angle+180.0),current_speed);
                                 newSpeed=p.x(); //in this case newSpeed is SOG
                                 cap=p.y(); //in this case cap is COG
                             }
@@ -660,7 +665,7 @@ void ROUTE::slot_recalculate(boat * boat)
                                 roadPoint.append(Util::A360(cog)); //17
                                 roadPoint.append(sog); //18
                                 roadPoint.append(current_speed); //19
-                                roadPoint.append(current_angle); //20
+                                roadPoint.append(Util::A360(current_angle+180.0)); //20
                                 roadMap.append(roadPoint);
                             }
                             if(lastEta<gribDate && Eta>=gribDate)

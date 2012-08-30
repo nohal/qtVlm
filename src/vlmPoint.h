@@ -47,6 +47,8 @@ class vlmPoint
         double  xP1,yP1,xM1,yM1;
         double  speed;
         time_t timeStamp;
+        double current_speed;
+        double current_angle;
 };
 
 

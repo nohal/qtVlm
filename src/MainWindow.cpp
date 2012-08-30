@@ -227,6 +227,7 @@ void MainWindow::slot_gribFileReceived(QString fileName)
 {
     bool zoom =  (Settings::getSetting("gribZoomOnLoad",0).toInt()==1);
     openGribFile(fileName, zoom);
+    updateTitle();
 }
 
 //=============================================================
@@ -587,6 +588,7 @@ MainWindow::MainWindow(int w, int h, QWidget *parent)
             my_centralWidget->slot_playerSelected(players.at(0));
             my_centralWidget->loadPOI();
             isStartingUp=false;
+            updateTitle();
             slot_deleteProgress();            
             my_centralWidget->emitUpdateRoute(NULL);
         }
@@ -638,6 +640,7 @@ MainWindow::MainWindow(int w, int h, QWidget *parent)
                 else
                 {
                     isStartingUp=false;
+                    updateTitle();
                     my_centralWidget->emitUpdateRoute(NULL);
                 }
 
@@ -646,6 +649,7 @@ MainWindow::MainWindow(int w, int h, QWidget *parent)
         else
         {
             isStartingUp=false;
+            updateTitle();
             my_centralWidget->emitUpdateRoute(NULL);
         }
     }
@@ -1031,6 +1035,7 @@ void MainWindow::slotFile_Open()
         bool zoom =  (Settings::getSetting("gribZoomOnLoad",0).toInt()==1);
         openGribFile(fileName, zoom);
     }
+    updateTitle();
 }
 void MainWindow::slotFile_Open_Current()
 {
@@ -1056,6 +1061,7 @@ void MainWindow::slotFile_Open_Current()
         bool zoom =  (Settings::getSetting("gribZoomOnLoad",0).toInt()==1);
         openGribFile(fileName, zoom, true);
     }
+    updateTitle();
 }
 //-------------------------------------------------
 void MainWindow::slotFile_Close_Current() {
@@ -1400,7 +1406,7 @@ void MainWindow::statusBar_showWindData(double x,double y)
     if(bo)
     {
         res += " - " + tr(" Courant") + ": ";
-        s.sprintf("%6.2f", radToDeg(b));
+        s.sprintf("%6.2f", Util::A360(radToDeg(b)+180.0));
         res += s+tr("deg")+", ";
         s.sprintf("%6.2f",a);
         res += s+tr(" kts");
@@ -1687,6 +1693,7 @@ void MainWindow::VLM_Sync_sync(void)
         if(Settings::getSetting("centerOnBoatChange","1").toInt()==1)
             this->slot_centerBoat();
         my_centralWidget->emitUpdateRoute(NULL);
+        updateTitle();
     }
 }
 void MainWindow::slot_boatHasUpdated()
@@ -1987,6 +1994,7 @@ void MainWindow::slot_updPlayerFinished(bool res_ok, Player * player)
         player->setWrong(true);
         qWarning() << "Erreur de MaJ player";
         isStartingUp=false;
+        updateTitle();
         my_centralWidget->slot_playerSelected(player);
         my_centralWidget->loadPOI();
         slot_deleteProgress();
@@ -2013,7 +2021,10 @@ void MainWindow::slot_updPlayerFinished(bool res_ok, Player * player)
         return;
     }
     else
+    {
         isStartingUp=false;
+        updateTitle();
+    }
     my_centralWidget->emitUpdateRoute(NULL);
     slot_deleteProgress();
 }

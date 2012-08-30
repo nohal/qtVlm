@@ -69,6 +69,7 @@ class vlmLine : public QGraphicsWidget
         void setPointDead(int n){this->line[n].isDead=true;}
         void setPointStartCap(int n,double c){this->line[n].startCap=c;}
         void setPointWind(int n, double twd, double tws){this->line[n].wind_angle=twd;this->line[n].wind_speed=tws;}
+        void setPointCurrent(int n, double cd, double cs){this->line[n].current_angle=cd;this->line[n].current_speed=cs;}
         void setPointDistIso(int n, double d){this->line[n].distIso=d;}
         void setPointCapVmg(int n, double d){this->line[n].capVmg=d;}
         void setPointcapOrigin(int n,double d){this->line[n].capOrigin=d;}
