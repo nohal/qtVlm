@@ -96,7 +96,7 @@ class GribRecord
         bool getValue_TWSA(double px, double py,double * a00,double * a01,double * a10,double * a11,bool debug=false);
         double getInterpolatedValue(double px, double py, bool numericalInterpolation=true);
 
-        // coordonnées d'un point de la grille
+        // coordonnees d'un point de la grille
         inline double  getX(int i) const   { return ok ? Lo1+i*Di : GRIB_NOTDEF;}
         inline double  getY(int j) const   { return ok ? La1+j*Dj : GRIB_NOTDEF;}
 
@@ -105,24 +105,24 @@ class GribRecord
         double  getLatMax() const   { return latMax;}
         double  getLonMax() const   { return lonMax;}
 
-        // Le point est-il �  l'intérieur de la grille ?
+        // Le point est-il a  l'interieur de la grille ?
         inline bool   isPointInMap(double x, double y) const;
         inline bool   isXInMap(double x) const;
         inline bool   isYInMap(double y) const;
-        // La valeur est-elle définie (grille �  trous) ?
+        // La valeur est-elle definie (grille a trous) ?
         inline bool   hasValue(int i, int j) const;
         bool getIsFull() {return isFull; }
 
-        // Date de référence (création du fichier)
+        // Date de reference (creation du fichier)
         time_t getRecordRefDate () const         { return refDate; }
         const char* getStrRecordRefDate () const { return strRefDate; }
 
-        // Date courante des prévisions
+        // Date courante des previsions
         time_t getRecordCurrentDate () const     { return curDate; }
 
     private:
         int    id;    // unique identifiant
-        bool   ok;    // validité des données
+        bool   ok;    // validite des donnees
         bool   eof;   // fin de fichier atteinte lors de la lecture
         bool knownData;
         std::string dataKey;

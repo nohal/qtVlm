@@ -1179,6 +1179,7 @@ void myCentralWidget::slot_fileInfo_GRIB()
         msg += tr("\n");
         msg += tr("Grille : %1 points (%2x%3)\n")
                         .arg(gr->getNi()*gr->getNj()).arg(gr->getNi()).arg(gr->getNj());
+        msg += tr("Resolution : %1x%2\n").arg(gr->getDi()).arg(gr->getDj());
         msg += tr("\n");
         msg += tr("Etendue :\n");
         QString pos1, pos2;
