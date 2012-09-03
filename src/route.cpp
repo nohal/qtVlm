@@ -699,10 +699,6 @@ void ROUTE::slot_recalculate(boat * boat)
                     if(!imported &&(remaining_distance<distanceParcourue  ||
                                     previous_remaining_distance<distanceParcourue))
                     {
-                        if(imported)
-                            Eta=poi->getRouteTimeStamp();
-                        else
-                            Eta= eta + myBoat->getVacLen()*multVac;
                         if(!this->getSimplify() && poi==my_poiList.last())
                         {
                             QList<double> roadPoint;

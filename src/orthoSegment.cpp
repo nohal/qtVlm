@@ -37,6 +37,7 @@ orthoSegment::orthoSegment(Projection * proj, QGraphicsScene * myScene,int z_lev
     isOrtho=true;
     setFocusPolicy(Qt::NoFocus);
     hide();
+    connect(this->proj,SIGNAL(projectionUpdated()),this,SLOT(projUpdated()));
 }
 
 QRectF orthoSegment::boundingRect() const

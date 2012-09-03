@@ -29,7 +29,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "class_list.h"
 
 class orthoSegment : public QGraphicsWidget
-{
+{Q_OBJECT
     public:
         orthoSegment(Projection * proj, QGraphicsScene * myScene,int z_level,bool roundedEnd=false);
 
@@ -46,6 +46,8 @@ class orthoSegment : public QGraphicsWidget
 
     protected:
         void paint(QPainter * pnt, const QStyleOptionGraphicsItem * , QWidget * );
+    public slots:
+        void projUpdated(){updateSizeAndPosition();}
 
     private:
         int size;

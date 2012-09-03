@@ -105,7 +105,7 @@ boat::boat(QString      pseudo, bool activated,
     updateBoatData();
     this->activated=activated;
     hide();
-    WPLine->hide();
+    this->WPLine->setParent(this);
     estimeTimer->stop();
     estimeLine->slot_showMe();
     estimeLine->setHidden(false);
@@ -209,6 +209,7 @@ void boat::slot_selectBoat()
     }
     selected = true;
     trace_drawing->show();
+    WPLine->show();
     drawEstime();
     if(this->boat_type==BOAT_REAL) return;
     updateTraceColor();
@@ -218,6 +219,7 @@ void boat::slot_selectBoat()
 void boat::unSelectBoat(bool needUpdate)
 {
     selected = false;
+    WPLine->hide();
     if(needUpdate)
     {
         drawEstime();
