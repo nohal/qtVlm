@@ -307,7 +307,7 @@ void ROUTE::slot_recalculate(boat * boat)
                 eta=grib->getCurrentDate();
                 break;
             case 3:
-                eta=startTime.toUTC().toTime_t();
+                eta=startTime.toUTC().toTime_t()-myBoat->getVacLen();
                 break;
         }
         has_eta=true;
@@ -328,7 +328,7 @@ void ROUTE::slot_recalculate(boat * boat)
             lon=poi->getLongitude();
             lat=poi->getLatitude();
             tip="<br>Starting point for route "+name;
-            poi->setRouteTimeStamp((int)eta);
+            poi->setRouteTimeStamp((int)eta+myBoat->getVacLen());
             poi->setTip(tip);
             lastReachedPoi = poi;
         }
@@ -354,8 +354,8 @@ void ROUTE::slot_recalculate(boat * boat)
             line->addVlmPoint(p);
         }
         double newSpeed,distanceParcourue,remaining_distance,res_lon,res_lat,cap1,cap2,diff1,diff2;
-//        double previous_remaining_distance;
         remaining_distance=0;
+        double previous_remaining_distance=10e6;
         lastKnownSpeed=10e-4;
         double wind_angle,wind_speed,cap,angle,capSaved;
         cap=-1;
@@ -420,7 +420,6 @@ void ROUTE::slot_recalculate(boat * boat)
             distanceParcourue=0;
             res_lon=0;
             res_lat=0;
-            //previous_remaining_distance=0;
             wind_angle=0;
             wind_speed=0;
             orth.setPoints(lon, lat, poi->getLongitude(),poi->getLatitude());
@@ -596,7 +595,7 @@ void ROUTE::slot_recalculate(boat * boat)
 
                             if(!imported && nbToReach==0)
                             {
-                                if(qRound(distanceParcourue*100)>=qRound(remaining_distance*100))
+                                if(distanceParcourue>remaining_distance)
                                 {
                                     eta=eta-myBoat->getVacLen()*multVac;
                                     Eta=eta;
@@ -631,6 +630,7 @@ void ROUTE::slot_recalculate(boat * boat)
                             }
                             Util::getCoordFromDistanceAngle(lat, lon, distanceParcourue, cap,&res_lat,&res_lon);
                         }
+                        previous_remaining_distance=orth.getDistance();
                         orth.setStartPoint(res_lon, res_lat);
                         remaining_distance=orth.getDistance();
                         lon=res_lon;
@@ -693,13 +693,16 @@ void ROUTE::slot_recalculate(boat * boat)
                     {
                         has_eta=false;
                         orth.setPoints(res_lon,res_lat,my_poiList.last()->getLongitude(),my_poiList.last()->getLatitude());
-                            remain=orth.getDistance();
+                        remain=orth.getDistance();
+                        break;
                     }
-//                    if(poi->getIsWp())
-//                        qWarning()<<"Eta:"<<QDateTime().fromTime_t(Eta).toUTC().toString("dd MMM-hh:mm")<<"remaining dist"<<remaining_distance<<"distanceParcourue:"<<distanceParcourue;
-                    if(!imported &&(qRound(remaining_distance*100)<qRound(distanceParcourue*100) /* ||
-                       qRound(previous_remaining_distance*100)<qRound(distanceParcourue*100)*/))
+                    if(!imported &&(remaining_distance<distanceParcourue  ||
+                                    previous_remaining_distance<distanceParcourue))
                     {
+                        if(imported)
+                            Eta=poi->getRouteTimeStamp();
+                        else
+                            Eta= eta + myBoat->getVacLen()*multVac;
                         if(!this->getSimplify() && poi==my_poiList.last())
                         {
                             QList<double> roadPoint;

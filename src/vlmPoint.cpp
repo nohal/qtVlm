@@ -34,4 +34,6 @@ vlmPoint::vlmPoint(double lon,double lat)
     this->distArrival=0;
     current_speed=-1;
     current_angle=0;
+    this->debug=0;
+    this->foundByNewtonRaphson=false;
 }

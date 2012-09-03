@@ -1411,6 +1411,19 @@ void MainWindow::statusBar_showWindData(double x,double y)
         s.sprintf("%6.2f",a);
         res += s+tr(" kts");
     }
+    else
+    {
+        grib=my_centralWidget->getGribCurrent();
+        bo=(grib && grib->getInterpolatedValueCurrent_byDates(x,y,grib->getCurrentDate(),&a,&b));
+        if(bo)
+        {
+            res += " - " + tr(" Courant") + ": ";
+            s.sprintf("%6.2f", Util::A360(radToDeg(b)+180.0));
+            res += s+tr("deg")+", ";
+            s.sprintf("%6.2f",a);
+            res += s+tr(" kts");
+        }
+    }
     stBar_label_2->setText(res);
 }
 

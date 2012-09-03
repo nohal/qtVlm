@@ -146,9 +146,9 @@ class ROUTAGE : public QObject
         time_t getEta(){return eta;}
         Grib * getGrib(){return grib;}
         time_t getWhatIfJour(){return whatIfJour;}
-        static int calculateTimeRoute(vlmPoint RouteFrom,vlmPoint routeTo, datathread *dataThread,double * lastLonFound=NULL, double * lastLatFound=NULL, int limit=-1);
-        static int routeFunction(double x,vlmPoint from, double * lastLonFound, double * lastLatFound, datathread *dataThread);
-        static int routeFunctionDeriv(double x,vlmPoint from, double * lastLonFound, double * lastLatFound, datathread *dataThread);
+        static int calculateTimeRoute(const vlmPoint RouteFrom,const vlmPoint routeTo, const datathread *dataThread,double * lastLonFound=NULL, double * lastLatFound=NULL, const int limit=-1);
+        static int routeFunction(const double x,const vlmPoint from, double * lastLonFound, double * lastLatFound, const datathread *dataThread);
+        static int routeFunctionDeriv(const double x,const vlmPoint from, double * lastLonFound, double * lastLatFound, const datathread *dataThread);
         bool getUseMultiThreading(){return this->useMultiThreading;}
         void setUseMultiThreading(bool b){this->useMultiThreading=b;}
         vlmLine * getResult(){return result;}

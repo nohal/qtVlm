@@ -49,6 +49,10 @@ class vlmPoint
         time_t timeStamp;
         double current_speed;
         double current_angle;
+        bool foundByNewtonRaphson;
+        double convertionLon;
+        double convertionLat;
+        int debug;
 };
 
 

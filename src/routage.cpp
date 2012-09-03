@@ -224,6 +224,8 @@ inline vlmPoint findPointThreaded(const vlmPoint &point)
         pt.isDead=true;
         return pt;
     }
+    pt.convertionLat=pt.lat;
+    pt.convertionLon=pt.lon;
     return pt;
 }
 
@@ -431,6 +433,7 @@ inline QList<vlmPoint> findRoute(const QList<vlmPoint> & pointListX)
         dataThread.Eta=routage->getI_eta();
     else
         dataThread.Eta=routage->getEta();
+    dataThread.Eta=pointList.first().origin->eta;
     dataThread.GriB=routage->getGrib();
     dataThread.whatIfJour=routage->getWhatIfJour();
     dataThread.whatIfUsed=routage->getWhatIfUsed();
@@ -462,93 +465,86 @@ inline QList<vlmPoint> findRoute(const QList<vlmPoint> & pointListX)
         if(realTime>10e4)
         {
             resultP.isDead=true;
-            resultList.append(resultP);
+            //resultList.append(resultP);
             continue;
         }
-        int timeStep=point.routage->getTimeStep();
-        int timeStepSec=timeStep*60;
-        if(realTime==timeStepSec)
-        {
-            resultP.lon=lastLonFound;
-            resultP.lat=lastLatFound;
-            resultList.append(resultP);
-            continue;
-        }
-        int minDiff=qAbs(realTime-timeStepSec);
         bool found=false;
-        int n=1;
-        int oldTime=timeStepSec;
-        /*first, trying to be clever*/
-        double newDist=distanceParcourue*oldTime/realTime;
-        Util::getCoordFromDistanceAngle(lat, lon, newDist, cap, &res_lat, &res_lon);
-        to.lon=res_lon;
-        to.lat=res_lat;
-        oldTime=realTime;
-        realTime=ROUTAGE::calculateTimeRoute(from, to, &dataThread, &lastLonFound, &lastLatFound);
-        if(realTime>10e4)
-        {
-            resultP.isDead=true;
-            resultList.append(resultP);
-            continue;
-        }
+        int timeStepSec=point.routage->getTimeStep()*60.0;
         if(realTime==timeStepSec)
         {
-            resultP.distOrigin=newDist;
             found=true;
         }
         if(!found)
         {
-            if(minDiff>qAbs(realTime-timeStepSec))
+            int oldTime=timeStepSec;
+            /*first, trying to be clever*/
+            distanceParcourue=distanceParcourue*oldTime/realTime;
+            Util::getCoordFromDistanceAngle(lat, lon, distanceParcourue, cap, &res_lat, &res_lon);
+            to.lon=res_lon;
+            to.lat=res_lat;
+            realTime=ROUTAGE::calculateTimeRoute(from, to, &dataThread, &lastLonFound, &lastLatFound);
+            if(realTime>10e4)
             {
-                minDiff=qAbs(realTime-timeStepSec);
+                resultP.isDead=true;
+                //resultList.append(resultP);
+                continue;
             }
-    #if 1 /*find it using Newtown-Raphson method*/
-            double x=distanceParcourue;
-            double term=0;
-            from.capOrigin=cap;
-            for (n=2;n<=21;++n) /*20 tries max*/
+            if(realTime==timeStepSec)
             {
-                double y=ROUTAGE::routeFunction(x,from,&lastLonFound,&lastLatFound,&dataThread);
-                if(y>10e4)
-                    break;
-                //if(qAbs(y)<=60)
-                if(qAbs(qRound(y))==0)
-                {
-                    found=true;
-                    resultP.distOrigin=x;
-                    break;
-                }
-                double deriv=ROUTAGE::routeFunctionDeriv(x,from,&lastLonFound,&lastLatFound,&dataThread);
-                if (deriv==0)
-                {
-                    break; /*flat spot, there is no solution*/
-                }
-                term=y/deriv;
-                x=qAbs(x-term);
+                found=true;
             }
-    #endif
+            if(!found)
+            {
+                /*find it using Newtown-Raphson method*/
+                double x=distanceParcourue;
+                double term=0;
+                from.capOrigin=cap;
+                for (int n=2;n<=21;++n) /*20 tries max*/
+                {
+                    double y=ROUTAGE::routeFunction(x,from,&lastLonFound,&lastLatFound,&dataThread)-timeStepSec;
+                    if(y>10e4)
+                        break;
+                    if(qAbs(qRound(y))==0)
+                    {
+                        found=true;
+                        double res_lon,res_lat;
+                        Util::getCoordFromDistanceAngle(from.lat, from.lon, x, from.capOrigin, &res_lat, &res_lon);
+                        to=vlmPoint(res_lon,res_lat);
+                        resultP.foundByNewtonRaphson=true;
+                        break;
+                    }
+                    double deriv=ROUTAGE::routeFunctionDeriv(x,from,&lastLonFound,&lastLatFound,&dataThread);
+                    if (deriv==0)
+                    {
+                        break; /*flat spot, there is no solution*/
+                    }
+                    term=y/deriv;
+                    x=qAbs(x-term);
+                }
+            }
         }
         if(found)
         {
+            resultP.convertionLat=to.lat;
+            resultP.convertionLon=to.lon;
             resultP.lon=lastLonFound;
             resultP.lat=lastLatFound;
+            Orthodromie oo(from.lon,from.lat,resultP.lon,resultP.lat);
+            resultP.distOrigin=oo.getDistance();
+            resultP.capOrigin=oo.getAzimutDeg();
+            resultList.append(resultP);
         }
-        else
-        {
-            resultP.isDead=true; /*no route to point, better delete it(?)*/
-        }
-        resultList.append(resultP);
     }
     return resultList;
 }
-inline int ROUTAGE::routeFunction(double x,vlmPoint from, double * lastLonFound, double * lastLatFound, datathread * dataThread)
+inline int ROUTAGE::routeFunction(const double x,const vlmPoint from, double * lastLonFound, double * lastLatFound, const datathread * dataThread)
 {
     double res_lon,res_lat;
     Util::getCoordFromDistanceAngle(from.lat, from.lon, x, from.capOrigin, &res_lat, &res_lon);
     vlmPoint to(res_lon,res_lat);
-    return ROUTAGE::calculateTimeRoute(from,to,dataThread,lastLonFound,lastLatFound)-dataThread->timeStep*60;
+    return ROUTAGE::calculateTimeRoute(from,to,dataThread,lastLonFound,lastLatFound);
 }
-inline int ROUTAGE::routeFunctionDeriv(double x,vlmPoint from, double * lastLonFound, double * lastLatFound,datathread *dataThread)
+inline int ROUTAGE::routeFunctionDeriv(const double x,const vlmPoint from, double * lastLonFound, double * lastLatFound, const datathread *dataThread)
 {
     double minGap=x/100;
     int   yr,yl;
@@ -564,7 +560,7 @@ inline int ROUTAGE::routeFunctionDeriv(double x,vlmPoint from, double * lastLonF
     }
     return((yr-yl)/(xr-xl));
 }
-inline int ROUTAGE::calculateTimeRoute(vlmPoint routeFrom,vlmPoint routeTo, datathread * dataThread, double * lastLonFound, double * lastLatFound, int limit)
+inline int ROUTAGE::calculateTimeRoute(const vlmPoint routeFrom,const vlmPoint routeTo, const datathread * dataThread, double * lastLonFound, double * lastLatFound, const int limit)
 {
     double  lastTwa=routeFrom.wind_angle;
     bool    ignoreTackLoss=routeFrom.isStart;
@@ -601,10 +597,6 @@ inline int ROUTAGE::calculateTimeRoute(vlmPoint routeFrom,vlmPoint routeTo, data
     double current_angle=0;
     do
     {
-        if(dataThread->i_iso)
-            etaRoute-=vacLen;
-        else
-            etaRoute+=vacLen;
         workEta=etaRoute;
         if(dataThread->whatIfUsed && dataThread->whatIfJour<=dataThread->Eta)
             workEta=workEta+dataThread->whatIfTime*3600;
@@ -686,17 +678,19 @@ inline int ROUTAGE::calculateTimeRoute(vlmPoint routeFrom,vlmPoint routeTo, data
             lastTwa=angle;
             distanceParcourue=newSpeed*vacLen/3600.00;
             Util::getCoordFromDistanceAngle(lat, lon, distanceParcourue, cap,&res_lat,&res_lon);
+            double p_remaining_distance=orth.getDistance();
             orth.setStartPoint(res_lon, res_lat);
             remaining_distance=orth.getDistance();
 #if 1 /*note for self*/
-            if(qRound(distanceParcourue*100)>=qRound(remaining_distance*100))
+            if (remaining_distance<distanceParcourue  ||
+                p_remaining_distance<distanceParcourue)
             {
                 lon=res_lon;
                 lat=res_lat;
-//                if(dataThread->i_iso)
-//                    etaRoute-=vacLen;
-//                else
-//                    etaRoute+=vacLen;
+                if(dataThread->i_iso)
+                    etaRoute-=vacLen;
+                else
+                    etaRoute+=vacLen;
                 break;
             }
 #endif
@@ -709,11 +703,10 @@ inline int ROUTAGE::calculateTimeRoute(vlmPoint routeFrom,vlmPoint routeTo, data
         //orth2.setEndPoint(res_lon,res_lat);
         lon=res_lon;
         lat=res_lat;
-//        if(dataThread->i_iso)
-//            etaRoute-=vacLen;
-//        else
-//            etaRoute+=vacLen;
-        //if(orth2.getDistance()>=initialDistance) break;
+        if(dataThread->i_iso)
+            etaRoute-=vacLen;
+        else
+            etaRoute+=vacLen;
     } while (has_eta);
     if(!has_eta)
     {
@@ -1096,6 +1089,8 @@ void ROUTAGE::slot_calculate()
     iso=new vlmLine(proj,myscene,Z_VALUE_ROUTAGE);
     iso->setParent(this);
     vlmPoint point(start.x(),start.y());
+    point.convertionLat=point.lat;
+    point.convertionLon=point.lon;
     point.isStart=true;
     proj->map2screenDouble(Util::cLFA(start.x(),proj->getXmin()),start.y(),&xs,&ys);
     proj->map2screenDouble(Util::cLFA(arrival.x(),proj->getXmin()),arrival.y(),&xa,&ya);
@@ -1449,9 +1444,8 @@ void ROUTAGE::slot_calculate()
                     }
                     polarPoints.append(newPoint);
                 } /*end looping on caps*/
-                if(aborted) break;
-                if(!toBeRestarted)
-                    break;
+                if(!toBeRestarted || aborted) break;
+                polarPoints.clear();
             }
 #if 1 /* keep only max 80% of initial number of points per polar, based on distIso*/
             if(!tryingToFindHole && !list->at(n).isStart)
@@ -1598,7 +1592,7 @@ void ROUTAGE::slot_calculate()
                 maxLoop=nbLoop;
             somethingHasChanged=false;
 /*recheck that the new iso itself does not cross previous segments*/
-            if(!tempPoints.at(0).origin->isStart)
+            if(!tempPoints.at(0).origin->isStart && nbLoop<=5)
             {
                 checkIsoCrossingPreviousSegments();
             }
@@ -1647,7 +1641,9 @@ void ROUTAGE::slot_calculate()
                     {
                         QList<vlmPoint> tempPList;
                         tempPList.append(newPoint);
-                        newPoint=findRoute(tempPList).first();
+                        tempPList=findRoute(tempPList);
+                        if(tempPList.isEmpty()) continue;
+                        newPoint=tempPList.first();
                     }
                     if(this->visibleOnly && !proj->isInBounderies(newPoint.x,newPoint.y))
                         newPoint.isDead=true;
@@ -1795,14 +1791,44 @@ void ROUTAGE::slot_calculate()
                                                            Z_VALUE_ISOPOINT);
                     vg->setParent(this);
                     ++mmm;
-    //                if(tempPoints.at(n).notSimplificable)
-    //                    vg->setDebug("Not Simplicable");
-    //                else
-    //                    vg->setDebug("Simplicable");
+#if 0
+                    if(tempPoints.at(n).notSimplificable)
+                        vg->setDebug("Not Simplicable");
+                    else
+                        vg->setDebug("Simplicable");
+#endif
                     vg->setEta(eta+(int)this->getTimeStep()*60.00);
                     connect(this,SIGNAL(updateVgTip(int,int,QString)),vg,SLOT(slot_updateTip(int,int,QString)));
                     this->isoPointList.append(vg);
                     vg->slot_showMe();
+#if 0
+                    datathread dataThread;
+                    dataThread.Boat=this->getBoat();
+                    dataThread.GriB=this->getGrib();
+                    dataThread.whatIfJour=this->getWhatIfJour();
+                    dataThread.whatIfUsed=this->getWhatIfUsed();
+                    dataThread.windIsForced=this->getWindIsForced();
+                    dataThread.whatIfTime=this->getWhatIfTime();
+                    dataThread.windAngle=this->getWindAngle();
+                    dataThread.windSpeed=this->getWindSpeed();
+                    dataThread.whatIfWind=this->getWhatIfWind();
+                    dataThread.timeStep=this->getTimeStep();
+                    dataThread.speedLossOnTack=this->getSpeedLossOnTack();
+                    dataThread.i_iso=i_iso;
+                    vlmPoint to=tempPoints.at(n);
+                    to.lon=tempPoints.at(n).convertionLon;
+                    to.lat=tempPoints.at(n).convertionLat;
+                    vlmPoint from(to.origin->lon, to.origin->lat);
+                    dataThread.Eta=to.origin->eta;
+                    int realTime=calculateTimeRoute(from,to,&dataThread);
+                    if(realTime!=this->getTimeStep()*60)
+                    {
+                        qWarning()<<"anomaly"<<n<<nbIso+1<<realTime<<to.foundByNewtonRaphson<<"debug="<<to.debug;
+                    }
+//                    else
+//                        qWarning()<<"OK"<<n<<nbIso+1<<realTime<<to.foundByNewtonRaphson<<"dead="<<to.isDead;
+
+#endif
                 }
             }
         }
@@ -2083,19 +2109,19 @@ void ROUTAGE::slot_calculate()
         qWarning()<<"nb of caps generated:"<<nbCaps<<"nb of caps ignored:"<<nbCapsPruned;
         qWarning()<<"debugCross0="<<debugCross0<<"debugCross1="<<debugCross1;
         QMessageBox msgBox;
-        if(this->useRouteModule && !this->useMultiThreading)
-        {
-            info=info+"\n---Route module statistics---";
-            info=info+"\nTotal number of route segments calculated: "+temp.sprintf("%d",routeN);
-            info=info+"\npercentage of correct guesses using rough method: "+temp.sprintf("%.2f",100-((double)(NR_n)/(double)routeN)*100.00)+"%";
-            info=info+"\nAverage number of iterations: "+temp.sprintf("%.2f",(double)routeTotN/(double)routeN);
-            info=info+"\nMax number of iterations made to find a solution: "+temp.sprintf("%d",routeMaxN);
-            info=info+"\nNumber of failures using Route between Iso: "+temp.sprintf("%d",routeFailedN);
-            info=info+"\nNumber of successes using Route between Iso: "+temp.sprintf("%d",routeN-routeFailedN);
-            info=info+"\nNumber of Newton-Raphson calculations: "+temp.sprintf("%d",NR_n);
-            info=info+"\nNumber of Newton-Raphson successful calculations: "+temp.sprintf("%d",NR_success);
-            info=info+"\n-------------------------------";
-        }
+//        if(this->useRouteModule && !this->useMultiThreading)
+//        {
+//            info=info+"\n---Route module statistics---";
+//            info=info+"\nTotal number of route segments calculated: "+temp.sprintf("%d",routeN);
+//            info=info+"\npercentage of correct guesses using rough method: "+temp.sprintf("%.2f",100-((double)(NR_n)/(double)routeN)*100.00)+"%";
+//            info=info+"\nAverage number of iterations: "+temp.sprintf("%.2f",(double)routeTotN/(double)routeN);
+//            info=info+"\nMax number of iterations made to find a solution: "+temp.sprintf("%d",routeMaxN);
+//            info=info+"\nNumber of failures using Route between Iso: "+temp.sprintf("%d",routeFailedN);
+//            info=info+"\nNumber of successes using Route between Iso: "+temp.sprintf("%d",routeN-routeFailedN);
+//            info=info+"\nNumber of Newton-Raphson calculations: "+temp.sprintf("%d",NR_n);
+//            info=info+"\nNumber of Newton-Raphson successful calculations: "+temp.sprintf("%d",NR_success);
+//            info=info+"\n-------------------------------";
+//        }
 
         msgBox.setDetailedText(info);
         finalEta=QDateTime::fromTime_t(realEta).toUTC();
@@ -2129,18 +2155,18 @@ void ROUTAGE::slot_calculate()
         QGridLayout * layout =(QGridLayout*)msgBox.layout();
         layout->addItem(hs,layout->rowCount(),0,1,layout->columnCount());
         msgBox.exec();
-        if(this->useRouteModule)
-        {
-            qWarning()<<"---Route module statistics---";
-            qWarning()<<"Total number of route segments calculated"<<routeN;
-            qWarning()<<"Average number of iterations"<<(double)routeTotN/(double)routeN;
-            qWarning()<<"Max number of iterations made to find a solution"<<routeMaxN;
-            qWarning()<<"Number of failures using Route between Iso"<<routeFailedN;
-            qWarning()<<"Number of successes using Route between Iso"<<routeN-routeFailedN;
-            qWarning()<<"Number of Newton-Raphson calculations"<<NR_n;
-            qWarning()<<"Number of Newton-Raphson successful calculations"<<NR_success;
-            qWarning()<<"-------------------------------";
-        }
+//        if(this->useRouteModule)
+//        {
+//            qWarning()<<"---Route module statistics---";
+//            qWarning()<<"Total number of route segments calculated"<<routeN;
+//            qWarning()<<"Average number of iterations"<<(double)routeTotN/(double)routeN;
+//            qWarning()<<"Max number of iterations made to find a solution"<<routeMaxN;
+//            qWarning()<<"Number of failures using Route between Iso"<<routeFailedN;
+//            qWarning()<<"Number of successes using Route between Iso"<<routeN-routeFailedN;
+//            qWarning()<<"Number of Newton-Raphson calculations"<<NR_n;
+//            qWarning()<<"Number of Newton-Raphson successful calculations"<<NR_success;
+//            qWarning()<<"-------------------------------";
+//        }
         if (!this->showIso)
             setShowIso(showIso);
         this->done=true;
@@ -2460,7 +2486,12 @@ void ROUTAGE::drawResult(vlmPoint P)
     }
     result->deleteAll();
     if(arrived)
-        result->addPoint(arrival.y(),arrival.x());
+    {
+        vlmPoint ar(arrival.x(),arrival.y());
+        ar.convertionLat=ar.lat;
+        ar.convertionLon=ar.lon;
+        result->addVlmPoint(ar);
+    }
     while (true)
     {
         P.isBroken=false;
@@ -2594,7 +2625,7 @@ void ROUTAGE::convertToRoute()
        QString poiName;
        poiName.sprintf("%.5i",list->count()-n);
        poiName=poiPrefix+poiName;
-       POI * poi = parent->slot_addPOI(poiName,0,list->at(n).lat,list->at(n).lon,-1,false,false,myBoat);
+       POI * poi = parent->slot_addPOI(poiName,0,list->at(n).convertionLat,list->at(n).convertionLon,-1,false,false,myBoat);
        poi->setRoute(route);
        poi->setNotSimplificable(list->at(n).notSimplificable);
     }

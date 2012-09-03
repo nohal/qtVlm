@@ -502,8 +502,13 @@ void Util::getCoordFromDistanceAngle(double latitude, double longitude,
         lon += TWO_PI;
     }
 
-    *res_lat=radToDeg(lat);
-    *res_lon=radToDeg(lon);
+    lat=radToDeg(lat);
+    lon=radToDeg(lon);
+    lat=(double)qRound(lat*1000000.0)/1000000.0;
+    lon=(double)qRound(lon*1000000.0)/1000000.0;
+    *res_lat=lat;
+    *res_lon=lon;
+
 }
 
 QString Util::pos2String(int type,double value)
