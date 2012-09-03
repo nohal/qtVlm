@@ -2388,8 +2388,11 @@ void MainWindow::slotLoadVLMGrib(void)
 /*************************************/
 #ifdef __QTVLM_WITH_TEST
 
+#include "miniunz.h"
+
 void MainWindow::slotVLM_Test(void)
 {    
+    qWarning() << "unzip reports: " << miniunzip(UZ_EXTRACT_WOPATH | UZ_OVERWRITE,"test2.zip","./",NULL,NULL);
 
 
 }
