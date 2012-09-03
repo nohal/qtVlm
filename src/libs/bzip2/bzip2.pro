@@ -10,15 +10,10 @@ HEADERS += bzlib.h \
            bzlib_private.h
 
 SOURCES += blocksort.c \
-           bzip2.c \
-           bzip2recover.c \
+           huffman.c \
            bzlib.c \
            compress.c \
            crctable.c \
            decompress.c \
-           dlltest.c \
-           huffman.c \
-           mk251.c \
-           randtable.c \
-           unzcrash.c
+           randtable.c
 
