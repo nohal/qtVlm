@@ -35,7 +35,8 @@ class inetConnexion : public QObject
     Q_OBJECT
     public:
         inetConnexion(QWidget * main);
-	~inetConnexion(void);
+        DialogInetProgess * getProgressDialog() {return progressDialog;}
+    ~inetConnexion(void);
 
         void doRequestGet(inetClient* client,QString requestUrl);
         void doRequestGetProgress(inetClient* client,QString requestUrl);

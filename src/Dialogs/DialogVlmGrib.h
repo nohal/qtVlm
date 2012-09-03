@@ -41,6 +41,8 @@ class DialogVlmGrib : public QDialog, public Ui::DialogVLM_grib_ui, public inetC
 
     signals:
         void signalGribFileReceived(QString);
+    public slots:
+        void slot_abort();
 
     private:
         QRadioButton * listRadio[5];

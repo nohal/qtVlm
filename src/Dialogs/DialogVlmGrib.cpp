@@ -25,7 +25,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "DialogVlmGrib.h"
 #include "settings.h"
 #include "mycentralwidget.h"
+#include <QNetworkRequest>
 #include "Util.h"
+#include "inetConnexion.h"
+#include "DialogInetProgess.h"
 #define VLM_REQUEST_GET_FOLDER 0
 #define VLM_REQUEST_GET_FILE   1
 
@@ -194,10 +197,16 @@ bool DialogVlmGrib::doRequest(int reqType)
             else
                 filename=filename.mid(0,23);
             page="/"+filename;
+            connect (this->getInet()->getProgressDialog(),SIGNAL(rejected()),this,SLOT(slot_abort()));
             inetGetProgress(VLM_REQUEST_GET_FILE,page,"http://grib.virtual-loup-de-mer.org");
             break;
     }
     return true;
+}
+void DialogVlmGrib::slot_abort()
+{
+    qWarning()<<"aborting VLM grib donwload";
+    this->inetAbort();
 }
 
 void DialogVlmGrib::requestFinished (QByteArray data)
