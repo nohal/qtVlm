@@ -22,14 +22,10 @@
 
 #include <QtCore/qglobal.h>
 
-#ifndef QJSON_EXPORT
-# if defined(QJSON_MAKEDLL)
-   /* We are building this library */
-#  define QJSON_EXPORT Q_DECL_EXPORT
-# else
-   /* We are using this library */
-#  define QJSON_EXPORT Q_DECL_IMPORT
-# endif
+#ifdef QJSON_EXPORT
+	#undef QJSON_EXPORT
 #endif
+
+#define QJSON_EXPORT
 
 #endif
