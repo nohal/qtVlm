@@ -3181,22 +3181,24 @@ void ROUTAGE::createPopupMenu()
 }
 double ROUTAGE::getTimeStep()
 {
+    double step;
     if(!i_iso)
     {
-        if(arrived) return this->timeStepLess24;
+        if(arrived) step = this->timeStepLess24;
         if(approaching || this->eta-this->startTime.toTime_t()<=24*60*60)
-            return this->timeStepLess24;
+            step = this->timeStepLess24;
         else
-            return this->timeStepMore24;
+            step = this->timeStepMore24;
     }
     else
     {
         if(i_isochrones.count()>=isochrones.count()-1 || i_isochrones.count()<=1)
-            return timeStepLess24;
+            step =  timeStepLess24;
         int inc=arrived?1:0;
-        return qAbs((result->getPoints()->at(i_isochrones.count()+inc).eta-
+        step = qAbs((result->getPoints()->at(i_isochrones.count()+inc).eta-
                 result->getPoints()->at(i_isochrones.count()+inc-1).eta)/60.0);
     }
+    return step;
 }
 void ROUTAGE::calculateInverse()
 {

@@ -307,7 +307,7 @@ void ROUTE::slot_recalculate(boat * boat)
                 eta=grib->getCurrentDate();
                 break;
             case 3:
-                eta=startTime.toUTC().toTime_t()-myBoat->getVacLen();
+                eta=startTime.toUTC().toTime_t()-myBoat->getVacLen()*multVac;
                 break;
         }
         has_eta=true;
@@ -328,7 +328,10 @@ void ROUTE::slot_recalculate(boat * boat)
             lon=poi->getLongitude();
             lat=poi->getLatitude();
             tip="<br>Starting point for route "+name;
-            poi->setRouteTimeStamp((int)eta+myBoat->getVacLen());
+            if(startTimeOption==3)
+                poi->setRouteTimeStamp((int)eta+myBoat->getVacLen()*multVac);
+            else
+                poi->setRouteTimeStamp((int)eta);
             poi->setTip(tip);
             lastReachedPoi = poi;
         }
@@ -766,7 +769,8 @@ void ROUTE::slot_recalculate(boat * boat)
             }
             else
             {
-                tip=tip+"<br>"+tr("Note: la date indiquee correspond a la desactivation du WP");
+                if(myBoat->getType()==BOAT_VLM)
+                    tip=tip+"<br>"+tr("Note: la date indiquee correspond a la desactivation du WP");
                 time_t Start=start;
                 if(startTimeOption==1)
                     Start=QDateTime::currentDateTimeUtc().toTime_t();
@@ -801,7 +805,10 @@ void ROUTE::slot_recalculate(boat * boat)
                 }
                 tip=tip+tt+QString::number((int)days)+" "+tr("jours")+" "+QString::number((int)hours)+" "+tr("heures")+" "+
                     QString::number((int)mins)+" "+tr("minutes");
-                poi->setRouteTimeStamp(Eta);
+                if(myBoat->getType()==BOAT_REAL)
+                    poi->setRouteTimeStamp(Eta+myBoat->getVacLen());
+                else
+                    poi->setRouteTimeStamp(Eta);
                 if(poi==this->my_poiList.last())
                     eta=Eta;
             }
@@ -871,7 +878,10 @@ void ROUTE::slot_recalculate(boat * boat)
                     tip=tip+tt+tm.toString("dd MMM-hh:mm")+"<br>";
                     tip=tip+QString::number((int)days)+" "+tr("jours")+" "+QString::number((int)hours)+" "+tr("heures")+" "+
                         QString::number((int)mins)+" "+tr("minutes");
-                    poi->setRouteTimeStamp(Eta);
+                    if(myBoat->getType()==BOAT_REAL)
+                        poi->setRouteTimeStamp(Eta+myBoat->getVacLen());
+                    else
+                        poi->setRouteTimeStamp(Eta);
                     if(poi==this->my_poiList.last())
                         eta=Eta;
                 }
