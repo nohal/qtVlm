@@ -587,6 +587,8 @@ myCentralWidget::~myCentralWidget()
         xmlPOI->slot_writeData(route_list,poi_list,"poi.dat");
         xmlData->slot_writeData(player_list,race_list,QString("boatAcc.dat"));
     }
+    delete gribCurrent;
+    delete grib;
     delete currentPlayer;
 }
 
