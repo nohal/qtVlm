@@ -5,6 +5,8 @@
 #define UZ_EXTRACT_WOPATH 1
 #define UZ_OVERWRITE 2
 
+#include "unzip.h"
+
 #ifdef  __cplusplus
 extern "C" {
 #endif

@@ -92,6 +92,9 @@ class GshhsReader;
 /* GshhsPolyReader.h */
 class GshhsPolyReader;
 
+/* GshhsDwnload.h */
+class GshhsDwnload;
+
 /* DialogGribValidation.h */
 class DialogGribValidation;
 

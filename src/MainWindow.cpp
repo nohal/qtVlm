@@ -485,7 +485,7 @@ MainWindow::MainWindow(int w, int h, QWidget *parent)
 //        }
 //    }
 
-    if (quality < 0)
+    /*if (quality < 0)
     {
         QMessageBox::information (this,
             QString(tr("Erreur")),
@@ -493,7 +493,7 @@ MainWindow::MainWindow(int w, int h, QWidget *parent)
                     +tr("Verifiez l'installation du programme."))
         );
         quality = 0;
-    }
+    }*/
     //menuBar->setQuality(quality);
     emit signalMapQuality(quality);
 

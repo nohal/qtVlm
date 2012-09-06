@@ -48,7 +48,6 @@ public:
 
     QRectF boundingRect() const;
     QPainterPath shape() const;
-    //GshhsRangsReader * getMap(){return gshhsReader->getGshhsRangsReader();}
 
     enum DrawGribPlainDataMode {
              drawNone,
@@ -95,7 +94,7 @@ public slots :
     void setDrawIsotherms0Labels (bool);
     void setIsotherms0Step	     (double step);
 
-    void redrawAll(void);
+    void redrawAll();
     void redrawGrib(void);
 
 

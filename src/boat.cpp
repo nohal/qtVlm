@@ -456,7 +456,7 @@ void boat::drawEstime(double myHeading, double mySpeed)
         proj->map2screenDouble(Util::cLFA(lon,proj->getXmin()),lat,&I1,&J1);
         proj->map2screenDouble(Util::cLFA(tmp_lon,proj->getXmin()),tmp_lat,&I2,&J2);
         bool coastDetected=false;
-        if(map->getQuality()>=2)
+        if(map && map->getQuality()>=2)
         {
             //qWarning("crossing (%.5f,%.5f,%.5f,%.5f) (%.5f,%.5f,%.5f,%.5f)",I1,J1,I2,J2,lon,lat,tmp_lon,tmp_lat);
             //qWarning("estime=%.5f, myHeading=%.5f",estime,myHeading);

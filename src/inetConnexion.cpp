@@ -92,7 +92,6 @@ void inetConnexion::doRequestGetProgress(inetClient* client,QString requestUrl,Q
     {
         qWarning() << "Already running request with progress";
         doRequest(REQUEST_GET,client,requestUrl,QString(),host);
-
     }
     else
     {
@@ -193,6 +192,7 @@ void inetConnexion::slot_requestFinished(QNetworkReply * currentReply)
         /* managing progress bar */
         if(currentClient->getHasProgress())
         {
+            qWarning() << "Removing progress";
             currentClient->setHasProgress(false);
             progressDialog->hide();
             disconnect(currentReply,SIGNAL(downloadProgress(qint64,qint64)),this,SLOT(slot_progess(qint64,qint64)));
@@ -256,6 +256,35 @@ void inetConnexion::slot_authRequired(QNetworkReply* currentReply,QAuthenticator
 
 void inetConnexion::slot_progess(qint64 bytesReceived, qint64 bytesTotal )
 {
-    if(hasProgress)
+    QNetworkReply* currentReply = (QNetworkReply*)sender();
+    if(!currentReply) {
+        qWarning() << "Draw progress - can't get sender";
+        return;
+    }
+    inetClient * currentClient;
+    QListIterator<inetClient*> i (replyList);
+
+    bool found=true;
+
+    while(!found && i.hasNext())
+    {
+        inetClient * ptr = i.next();
+        if(ptr->getReply() == currentReply)
+        {
+            found=true;
+            currentClient = ptr;
+            //replyList.removeAll(ptr);
+            break;
+        }
+    }
+
+    if(!found) {
+        qWarning() << "Draw progress - can't found client";
+        return;
+    }
+
+    if(currentClient->getHasProgress()) {
         progressDialog->updateProgress(bytesReceived,bytesTotal);
+        //qWarning() << "Progress " << bytesReceived << "/" << bytesTotal;
+    }
 }

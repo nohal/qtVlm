@@ -248,7 +248,7 @@ void DialogTwaLine::traceIt()
     bool crossing=false;
     //int i1,j1,i2,j2;
     GshhsReader *map=parent->get_gshhsReader();
-    int mapQuality=map->getQuality();
+    int mapQuality=map?map->getQuality():4;
     for (int page=0;page<5;page++)
     {
         if (nbVac[page]==0) continue;
@@ -296,7 +296,7 @@ void DialogTwaLine::traceIt()
             }
             double distanceParcourue=newSpeed*vacLen/3600.00;
             Util::getCoordFromDistanceAngle(current.lat, current.lon, distanceParcourue, cap,&lat,&lon);
-            if(!crossing && mapQuality>=3)
+            if(!crossing && map && mapQuality>=3)
             {
                 double I1,J1,I2,J2;
                 parent->getProj()->map2screenDouble(Util::cLFA(current.lon, parent->getProj()->getXmin()),current.lat,&I1,&J1);

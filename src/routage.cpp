@@ -247,7 +247,7 @@ inline vlmPoint checkCoastCollision(const vlmPoint point)
     y1=newPoint.origin->y;
     x2=newPoint.x;
     y2=newPoint.y;
-    newPoint.isDead=(newPoint.routage->getCheckCoast() && newPoint.routage->getMap()->crossing(QLineF(x1,y1,x2,y2),QLineF(newPoint.origin->lon,newPoint.origin->lat,newPoint.lon,newPoint.lat)))
+    newPoint.isDead=(newPoint.routage->getCheckCoast() && (newPoint.routage->getMap() && newPoint.routage->getMap()->crossing(QLineF(x1,y1,x2,y2),QLineF(newPoint.origin->lon,newPoint.origin->lat,newPoint.lon,newPoint.lat))))
                  || (newPoint.routage->getCheckLine() && newPoint.routage->crossBarriere(QLineF(x1,y1,x2,y2)));
     return newPoint;
 }
@@ -1400,7 +1400,7 @@ void ROUTAGE::slot_calculate()
                     {
 /*check crossing with coast*/
                         tfp.start();
-                        if((checkCoast && map->crossing(QLineF(list->at(n).x,list->at(n).y,newPoint.x,newPoint.y),QLineF(list->at(n).lon,list->at(n).lat,newPoint.lon,newPoint.lat)))
+                        if((checkCoast && map && map->crossing(QLineF(list->at(n).x,list->at(n).y,newPoint.x,newPoint.y),QLineF(list->at(n).lon,list->at(n).lat,newPoint.lon,newPoint.lat)))
                                 || (checkLine && crossBarriere(QLineF(list->at(n).x,list->at(n).y,newPoint.x,newPoint.y))))
                         {
                             msecs_14=msecs_14+tfp.elapsed();
@@ -1675,7 +1675,7 @@ void ROUTAGE::slot_calculate()
                         y1=newPoint.origin->y;
                         x2=newPoint.x;
                         y2=newPoint.y;
-                        if((checkCoast && map->crossing(QLineF(x1,y1,x2,y2),QLineF(newPoint.origin->lon,newPoint.origin->lat,newPoint.lon,newPoint.lat)))
+                        if((checkCoast && map && map->crossing(QLineF(x1,y1,x2,y2),QLineF(newPoint.origin->lon,newPoint.origin->lat,newPoint.lon,newPoint.lat)))
                             ||( checkLine && crossBarriere(QLineF(x1,y1,x2,y2))))
                         {
                             msecs_14=msecs_14+t2.elapsed();
@@ -1756,7 +1756,7 @@ void ROUTAGE::slot_calculate()
                     y1=tempPoints.at(n).y;
                     x2=tempPoints.at(n+1).x;
                     y2=tempPoints.at(n+1).y;
-                    if((checkCoast && map->crossing(QLineF(x1,y1,x2,y2),QLineF(tempPoints.at(n).lon,tempPoints.at(n).lat,tempPoints.at(n+1).lon,tempPoints.at(n+1).lat)))
+                    if((checkCoast && map && map->crossing(QLineF(x1,y1,x2,y2),QLineF(tempPoints.at(n).lon,tempPoints.at(n).lat,tempPoints.at(n+1).lon,tempPoints.at(n+1).lat)))
                         || (checkLine && crossBarriere(QLineF(x1,y1,x2,y2))))
                     {
                         vlmPoint temp=tempPoints.at(n);
@@ -1932,8 +1932,8 @@ void ROUTAGE::slot_calculate()
             orth.setPoints(from.lon,from.lat,to.lon,to.lat);
             if(orth.getDistance()<myBoat->getPolarData()->getMaxSpeed()*1.1*(this->getTimeStep()/60.0))
             {
-                if(checkCoast && (map->crossing(QLineF(list->at(n).x,list->at(n).y,xa,ya),QLineF(list->at(n).lon,list->at(n).lat,arrival.x(),arrival.y()))
-                   || (checkLine && crossBarriere(QLineF(list->at(n).x,list->at(n).y,xa,ya)))))
+                if(checkCoast && ((map && map->crossing(QLineF(list->at(n).x,list->at(n).y,xa,ya),QLineF(list->at(n).lon,list->at(n).lat,arrival.x(),arrival.y()))
+                   )|| (checkLine && crossBarriere(QLineF(list->at(n).x,list->at(n).y,xa,ya)))))
                     continue;
                 int thisTime=calculateTimeRoute(from,to, &dataThread, NULL, NULL, (this->getTimeStep()+1)*60);
                 if(thisTime<=this->getTimeStep()*60)
@@ -1968,7 +1968,7 @@ void ROUTAGE::slot_calculate()
             dataThread.i_iso=i_iso;
             for(int n=0;n<list->count();++n)
             {
-                if((checkCoast && map->crossing(QLineF(list->at(n).x,list->at(n).y,xa,ya),
+                if((checkCoast && map && map->crossing(QLineF(list->at(n).x,list->at(n).y,xa,ya),
                         QLineF(list->at(n).lon,list->at(n).lat,arrival.x(),arrival.y())))
                     || (checkLine && crossBarriere(QLineF(list->at(n).x,list->at(n).y,xa,ya))))
                     continue;
@@ -2358,7 +2358,7 @@ void ROUTAGE::pruneWake(int wakeAngle)
             {
                 if(this->checkCoast || checkLine)
                 {
-                    if((!checkCoast || !map->crossing(QLineF(x1,y1,pIso->at(m).x,pIso->at(m).y),QLineF(tempPoints.at(n).lon,tempPoints.at(n).lat,pIso->at(m).lon,pIso->at(m).lat)))
+                    if((!checkCoast || (map &&!map->crossing(QLineF(x1,y1,pIso->at(m).x,pIso->at(m).y),QLineF(tempPoints.at(n).lon,tempPoints.at(n).lat,pIso->at(m).lon,pIso->at(m).lat))))
                         && (!checkLine || !crossBarriere(QLineF(x1,y1,pIso->at(m).x,pIso->at(m).y))))
                     {
                         tempPoints.removeAt(n);

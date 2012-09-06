@@ -152,6 +152,7 @@ void Terrain::setGSHHS_map(GshhsReader *map)
 {
     gshhsReader = map;
     isEarthMapValid = false;
+    redrawAll();
 }
 
 //-------------------------------------------------------

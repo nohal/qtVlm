@@ -128,6 +128,8 @@ class myCentralWidget : public QWidget
         boatReal * getRealBoat(void) {return realBoat; }
         bool getIsStartingUp(void){return mainW->isStartingUp;}
 
+        void loadGshhs(void);
+
         void manageAccount(bool * res=NULL);
         void updatePlayer(Player * player);
         bool getIsSelecting(){return this->selection->isSelecting();}
@@ -361,8 +363,9 @@ class myCentralWidget : public QWidget
         QString  dataPresentInGrib(Grib* grib,
                                    int dataType,int levelType,int levelValue,
                                    bool *ok=NULL);
-        /* other child */
+        /* other child */        
         GshhsReader *gshhsReader;
+        GshhsDwnload * gshhsDwnload;
         inetConnexion * inetManager;
 
         /* Scene & view */

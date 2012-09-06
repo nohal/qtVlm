@@ -59,6 +59,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "boatVLM.h"
 #include "faxMeteo.h"
 #include "loadImg.h"
+#include "GshhsDwnload.h"
 
 #include "DialogSailDocs.h"
 #include "DialogHorn.h"
@@ -318,6 +319,8 @@ myCentralWidget::myCentralWidget(Projection * proj,MainWindow * parent,MenuBar *
     shOpp_st = false;
     shPor_st = false;
 
+    gshhsReader = NULL;
+
     /* scene and views */
     scene =  new myScene(this);
     scene->setItemIndexMethod(QGraphicsScene::NoIndex);
@@ -333,20 +336,17 @@ myCentralWidget::myCentralWidget(Projection * proj,MainWindow * parent,MenuBar *
 //    view->grabGesture(Qt::PinchGesture);
 
     /* other child */
-    gshhsReader = new GshhsReader("maps/gshhs", 0);
-    gshhsReader->setProj(proj);
-    if(gshhsReader->getPolyVersion()!=220)
-    {
-        qWarning()<<"wrong poly version->"<<gshhsReader->getPolyVersion();
-        QMessageBox::warning (this,
-            tr("Chargement des cartes VLM"),
-            tr("Vous n'avez pas la bonne version des cartes VLM"));
-    }
+    inetManager = new inetConnexion(mainW);
+
+    gshhsDwnload = new GshhsDwnload(this,inetManager);
+
+    loadGshhs();
+
     grib = new Grib();
     gribCurrent = new Grib();
     gribCurrent->setIsCurrentGrib();
     grib->setGribCurrent(gribCurrent);
-    inetManager = new inetConnexion(mainW);
+
     replayTimer=new QTimer(this);
     replayTimer->setSingleShot(true);
     replayTimer->setInterval(Settings::getSetting("speed_replay",20).toInt());
@@ -473,7 +473,7 @@ myCentralWidget::myCentralWidget(Projection * proj,MainWindow * parent,MenuBar *
     connect(raceDialog,SIGNAL(writeBoat()),this,SLOT(slot_writeBoatData()));
 
     dialogLoadGrib = new DialogLoadGrib();
-    dialogLoadGrib->checkQtvlmVersion();
+    //dialogLoadGrib->checkQtvlmVersion();
     connect(dialogLoadGrib, SIGNAL(signalGribFileReceived(QString)),
             parent,  SLOT(slot_gribFileReceived(QString)));
     connect(menuBar->acOptions_Units, SIGNAL(triggered()), &dialogUnits, SLOT(exec()));
@@ -525,6 +525,58 @@ myCentralWidget::myCentralWidget(Projection * proj,MainWindow * parent,MenuBar *
     mar->slot_showMe();
 #endif
 }
+
+void myCentralWidget::loadGshhs(void) {
+
+    if(gshhsReader) {
+        if(terre)
+            terre->setGSHHS_map(NULL);
+
+        delete gshhsReader;
+        gshhsReader=NULL;
+    }
+
+    gshhsReader = new GshhsReader("maps/gshhs", 0);
+    gshhsReader->setProj(proj);
+
+    int polyVersion = gshhsReader->getPolyVersion();
+    bool dwnloadMaps = false;
+    bool gshhsOk=true;
+
+    if(polyVersion == -1) {
+        qWarning() << "Missing maps";
+        gshhsOk=false;
+        if(QMessageBox::question(this,tr("Ouverture des cartes"),tr("Les cartes sont absentes\nVoulez vous les telecharger?"),
+                                 QMessageBox::Ok|QMessageBox::Cancel,QMessageBox::Ok)==QMessageBox::Ok) {
+            dwnloadMaps=true;
+        }
+        delete gshhsReader;
+        gshhsReader=NULL;
+    }
+    else if(polyVersion!=220) {
+        qWarning()<<"wrong poly version->"<<gshhsReader->getPolyVersion();
+        gshhsOk=false;
+        if(QMessageBox::question(this,tr("Ouverture des cartes"),tr("Vous n'avez pas la bonne version des cartes\nVoulez vous les telecharger?"),
+                                 QMessageBox::Ok|QMessageBox::Cancel,QMessageBox::Ok)==QMessageBox::Ok) {
+            dwnloadMaps=true;
+        }
+        delete gshhsReader;
+        gshhsReader=NULL;
+    }
+
+    if(dwnloadMaps) {
+        gshhsDwnload->getMaps();
+    }
+
+    if(gshhsOk) {
+        if(terre) {
+            terre->setGSHHS_map(gshhsReader);
+            terre->slot_setMapQuality(4);
+        }
+    }
+
+}
+
 void myCentralWidget::setCompassFollow(ROUTE * route)
 {
     this->compassRoute=route;

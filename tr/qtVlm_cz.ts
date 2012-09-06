@@ -1712,6 +1712,35 @@ Etes-vous sur ?</source>
     </message>
 </context>
 <context>
+    <name>GshhsDwnload</name>
+    <message>
+        <location filename="../src/GshhsDwnload.cpp" line="68"/>
+        <location filename="../src/GshhsDwnload.cpp" line="86"/>
+        <source>Sauvegarde des cartes</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/GshhsDwnload.cpp" line="69"/>
+        <source>Le fichier zip </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/GshhsDwnload.cpp" line="69"/>
+        <source> ne peut �tre dezippe</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/GshhsDwnload.cpp" line="87"/>
+        <source>Le fichier </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/GshhsDwnload.cpp" line="87"/>
+        <source> ne peut etre ouvert</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>InputColor</name>
     <message>
         <source>Valeurs par défauts</source>
@@ -1816,7 +1845,6 @@ Etes-vous sur ?</source>
         <translation type="obsolete">Reckoning</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="491"/>
         <location filename="../src/MainWindow.cpp" line="782"/>
         <location filename="../src/MainWindow.cpp" line="794"/>
         <source>Erreur</source>
@@ -1867,9 +1895,8 @@ Etes-vous sur ?</source>
         <translation type="obsolete">Maps not found.</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="493"/>
         <source>Verifiez l&apos;installation du programme.</source>
-        <translation>Zkontroluj instalaci programu.</translation>
+        <translation type="obsolete">Zkontroluj instalaci programu.</translation>
     </message>
     <message>
         <location filename="../src/MainWindow.cpp" line="785"/>
@@ -1915,11 +1942,10 @@ Etes-vous sur ?</source>
         <translation>Pokud je tato volba zaškrtnuta&lt;br&gt;rychlost lodi je určena odhadem&lt;br&gt;v příští mezeře.&lt;br&gt;Jinak je použita rychlost dodaná VLM</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="492"/>
         <source>Cartes non trouvees.
 
 </source>
-        <translation>Mapy nenalezeny.</translation>
+        <translation type="obsolete">Mapy nenalezeny.</translation>
     </message>
     <message>
         <location filename="../src/MainWindow.cpp" line="838"/>
@@ -4170,8 +4196,8 @@ Určitě to chceš?</translation>
     </message>
     <message>
         <location filename="../src/Polar.cpp" line="101"/>
-        <location filename="../src/mycentralwidget.cpp" line="1623"/>
-        <location filename="../src/mycentralwidget.cpp" line="2297"/>
+        <location filename="../src/mycentralwidget.cpp" line="1677"/>
+        <location filename="../src/mycentralwidget.cpp" line="2351"/>
         <source>Impossible d&apos;ouvrir le fichier %1</source>
         <translation>Nelze otevřít soubor %1</translation>
     </message>
@@ -4182,7 +4208,7 @@ Určitě to chceš?</translation>
     </message>
     <message>
         <location filename="../src/Polar.cpp" line="131"/>
-        <location filename="../src/mycentralwidget.cpp" line="1760"/>
+        <location filename="../src/mycentralwidget.cpp" line="1814"/>
         <source>Fichier %1 vide</source>
         <translation>Soubor %1 je prázdný</translation>
     </message>
@@ -4346,100 +4372,100 @@ Určitě to chceš?</translation>
         <translation>VLM server neodpovídá</translation>
     </message>
     <message>
-        <location filename="../src/mycentralwidget.cpp" line="1499"/>
+        <location filename="../src/mycentralwidget.cpp" line="1553"/>
         <source>Un nom de fichier valide portant l&apos;extension .png est requis</source>
         <translation>Je potřeba platný název souboru s příponou .png</translation>
     </message>
     <message>
-        <location filename="../src/mycentralwidget.cpp" line="1520"/>
+        <location filename="../src/mycentralwidget.cpp" line="1574"/>
         <source>Voir Vlm Logs</source>
         <translation>Zkontroluj logy Vlm</translation>
     </message>
     <message>
-        <location filename="../src/mycentralwidget.cpp" line="1521"/>
+        <location filename="../src/mycentralwidget.cpp" line="1575"/>
         <source>Pas de bateau VLM actif.</source>
         <translation>Žádná aktivní loď ve VLM.</translation>
     </message>
     <message>
-        <location filename="../src/mycentralwidget.cpp" line="1533"/>
+        <location filename="../src/mycentralwidget.cpp" line="1587"/>
         <source>Telecharger traces VLM</source>
         <translation>Stáhnout trasy z VLM</translation>
     </message>
     <message>
-        <location filename="../src/mycentralwidget.cpp" line="1534"/>
+        <location filename="../src/mycentralwidget.cpp" line="1588"/>
         <source>Pas de compte VLM actif.</source>
         <translation>Žádný aktivní uživatel VLM.</translation>
     </message>
     <message>
-        <location filename="../src/mycentralwidget.cpp" line="1565"/>
+        <location filename="../src/mycentralwidget.cpp" line="1619"/>
         <source>Corne de brume activee</source>
         <translation>Mlžný roh aktivován</translation>
     </message>
     <message>
-        <location filename="../src/mycentralwidget.cpp" line="1565"/>
+        <location filename="../src/mycentralwidget.cpp" line="1619"/>
         <source>Arreter la corne de brume</source>
         <translation>Zastav mlžný roh</translation>
     </message>
     <message>
-        <location filename="../src/mycentralwidget.cpp" line="1599"/>
+        <location filename="../src/mycentralwidget.cpp" line="1653"/>
         <source>Aucun Bateau</source>
         <translation>Není vybrána loď</translation>
     </message>
     <message>
-        <location filename="../src/mycentralwidget.cpp" line="1600"/>
+        <location filename="../src/mycentralwidget.cpp" line="1654"/>
         <source>L&apos;import de route necessite un bateau actif.</source>
         <translation>Importování trasy vyžaduje aktivní loď.</translation>
     </message>
     <message>
-        <location filename="../src/mycentralwidget.cpp" line="1622"/>
-        <location filename="../src/mycentralwidget.cpp" line="1759"/>
-        <location filename="../src/mycentralwidget.cpp" line="1787"/>
-        <location filename="../src/mycentralwidget.cpp" line="1982"/>
-        <location filename="../src/mycentralwidget.cpp" line="2296"/>
-        <location filename="../src/mycentralwidget.cpp" line="2304"/>
-        <location filename="../src/mycentralwidget.cpp" line="2324"/>
-        <location filename="../src/mycentralwidget.cpp" line="2907"/>
+        <location filename="../src/mycentralwidget.cpp" line="1676"/>
+        <location filename="../src/mycentralwidget.cpp" line="1813"/>
+        <location filename="../src/mycentralwidget.cpp" line="1841"/>
+        <location filename="../src/mycentralwidget.cpp" line="2036"/>
+        <location filename="../src/mycentralwidget.cpp" line="2350"/>
+        <location filename="../src/mycentralwidget.cpp" line="2358"/>
+        <location filename="../src/mycentralwidget.cpp" line="2378"/>
+        <location filename="../src/mycentralwidget.cpp" line="2961"/>
         <source>Lecture de route</source>
         <translation>Načítání trasy</translation>
     </message>
     <message>
-        <location filename="../src/mycentralwidget.cpp" line="1773"/>
+        <location filename="../src/mycentralwidget.cpp" line="1827"/>
         <source>Importation de routage MaxSea</source>
         <translation>Importuj trasu z MaxSea</translation>
     </message>
     <message>
-        <location filename="../src/mycentralwidget.cpp" line="1773"/>
+        <location filename="../src/mycentralwidget.cpp" line="1827"/>
         <source>Heures a ajouter/enlever pour obtenir UTC (par ex -2 pour la France)</source>
         <translation>Hodin přidat/ubrat k dosažení UTC (např. -2 pro Francii)</translation>
     </message>
     <message>
-        <location filename="../src/mycentralwidget.cpp" line="1788"/>
+        <location filename="../src/mycentralwidget.cpp" line="1842"/>
         <source>Fichier %1 invalide (doit commencer par POSITION et non &apos;%2&apos;), ou alors etre au format sbsRouteur</source>
         <translation>Soubor %1 neplatný (měl by začínat pozicí (POSITION) a ne&apos;%2&apos;), nebo by měl býtve formátu sbsRouteur</translation>
     </message>
     <message>
-        <location filename="../src/mycentralwidget.cpp" line="2102"/>
+        <location filename="../src/mycentralwidget.cpp" line="2156"/>
         <source>Export de route</source>
         <translation>Export trasy</translation>
     </message>
     <message>
-        <location filename="../src/mycentralwidget.cpp" line="3147"/>
-        <location filename="../src/mycentralwidget.cpp" line="3149"/>
+        <location filename="../src/mycentralwidget.cpp" line="3201"/>
+        <location filename="../src/mycentralwidget.cpp" line="3203"/>
         <source>Simplification/Optimisation de route</source>
         <translation>Zjednodušení/optimalizace trasy</translation>
     </message>
     <message>
-        <location filename="../src/mycentralwidget.cpp" line="3147"/>
+        <location filename="../src/mycentralwidget.cpp" line="3201"/>
         <source>Cette operation est impossible pour une route figee ou une route sans ETA</source>
         <translation>Tato operace je nemožná pro zmrazenou trasu nebo trasu bez ETA</translation>
     </message>
     <message>
-        <location filename="../src/mycentralwidget.cpp" line="3149"/>
+        <location filename="../src/mycentralwidget.cpp" line="3203"/>
         <source>Cette operation est impossible si le mode de calcul VBVMG est celui de VLM</source>
         <translation>Tato operace není povolena pokud mód VB-VMG je nastaven na VLM</translation>
     </message>
     <message>
-        <location filename="../src/mycentralwidget.cpp" line="3301"/>
+        <location filename="../src/mycentralwidget.cpp" line="3355"/>
         <source>Resultat de l&apos;optimisation</source>
         <translation>Pravidla pro optimalizaci</translation>
     </message>
@@ -4457,16 +4483,16 @@ Určitě to chceš?</translation>
         <location filename="../src/Dialogs/DialogVlmLog.cpp" line="156"/>
         <location filename="../src/boatVLM.cpp" line="986"/>
         <location filename="../src/boatVLM.cpp" line="992"/>
-        <location filename="../src/mycentralwidget.cpp" line="1505"/>
-        <location filename="../src/mycentralwidget.cpp" line="2103"/>
-        <location filename="../src/mycentralwidget.cpp" line="2908"/>
+        <location filename="../src/mycentralwidget.cpp" line="1559"/>
+        <location filename="../src/mycentralwidget.cpp" line="2157"/>
+        <location filename="../src/mycentralwidget.cpp" line="2962"/>
         <source>Impossible de creer le fichier %1</source>
         <translation>Nelze vytvořit soubor %1</translation>
     </message>
     <message>
         <location filename="../src/Dialogs/DialogVlmLog.cpp" line="149"/>
-        <location filename="../src/mycentralwidget.cpp" line="1498"/>
-        <location filename="../src/mycentralwidget.cpp" line="1504"/>
+        <location filename="../src/mycentralwidget.cpp" line="1552"/>
+        <location filename="../src/mycentralwidget.cpp" line="1558"/>
         <source>Sauvegarde ecran</source>
         <translation>Snímek obrazovky</translation>
     </message>
@@ -4501,7 +4527,7 @@ Určitě to chceš?</translation>
         <translation type="obsolete">Maximum loss of time on final ETA (in minutes)</translation>
     </message>
     <message>
-        <location filename="../src/mycentralwidget.cpp" line="3177"/>
+        <location filename="../src/mycentralwidget.cpp" line="3231"/>
         <source>Resultat de la simplification</source>
         <translation>Výsledek zjednodušení</translation>
     </message>
@@ -5675,12 +5701,12 @@ bez zjednodušení</translation>
 <context>
     <name>Terrain</name>
     <message>
-        <location filename="../src/Terrain.cpp" line="314"/>
+        <location filename="../src/Terrain.cpp" line="315"/>
         <source>Niveau de detail des cotes: </source>
         <translation>Úroveň podrobnosti pobřeží: </translation>
     </message>
     <message>
-        <location filename="../src/Terrain.cpp" line="740"/>
+        <location filename="../src/Terrain.cpp" line="741"/>
         <source>Calculs en cours...</source>
         <translation>Počítám...</translation>
     </message>
@@ -8056,45 +8082,43 @@ p, li { white-space: pre-wrap; }
         <translation type="obsolete">You must select a zone on the map.</translation>
     </message>
     <message>
-        <location filename="../src/mycentralwidget.cpp" line="1082"/>
+        <location filename="../src/mycentralwidget.cpp" line="1136"/>
         <source>Demande d&apos;un fichier GRIB a sailsDoc</source>
         <translation>Vyžádat soubor GRIB u SailDocs</translation>
     </message>
     <message>
-        <location filename="../src/mycentralwidget.cpp" line="1038"/>
-        <location filename="../src/mycentralwidget.cpp" line="1083"/>
+        <location filename="../src/mycentralwidget.cpp" line="1092"/>
+        <location filename="../src/mycentralwidget.cpp" line="1137"/>
         <source>Vous devez selectionner une zone de la carte.</source>
         <translation>Musíš vybrat na mapě zónu.</translation>
     </message>
     <message>
-        <location filename="../src/mycentralwidget.cpp" line="342"/>
         <source>Chargement des cartes VLM</source>
-        <translation>Nahrávání map VLM</translation>
+        <translation type="obsolete">Nahrávání map VLM</translation>
     </message>
     <message>
-        <location filename="../src/mycentralwidget.cpp" line="343"/>
         <source>Vous n&apos;avez pas la bonne version des cartes VLM</source>
-        <translation>Nemáš správnou verzi map VLM</translation>
+        <translation type="obsolete">Nemáš správnou verzi map VLM</translation>
     </message>
     <message>
-        <location filename="../src/mycentralwidget.cpp" line="1037"/>
+        <location filename="../src/mycentralwidget.cpp" line="1091"/>
         <source>Telechargement d&apos;un fichier GRIB</source>
         <translation>Stáhnout GRIB soubor</translation>
     </message>
     <message>
-        <location filename="../src/mycentralwidget.cpp" line="1061"/>
+        <location filename="../src/mycentralwidget.cpp" line="1115"/>
         <source>dd/MM/yyyy hh:mm</source>
         <translation>dd/MM/yyyy hh:mm:ss</translation>
     </message>
     <message>
-        <location filename="../src/mycentralwidget.cpp" line="1097"/>
-        <location filename="../src/mycentralwidget.cpp" line="1114"/>
+        <location filename="../src/mycentralwidget.cpp" line="1151"/>
+        <location filename="../src/mycentralwidget.cpp" line="1168"/>
         <source>oui</source>
         <translation>ano</translation>
     </message>
     <message>
-        <location filename="../src/mycentralwidget.cpp" line="1101"/>
-        <location filename="../src/mycentralwidget.cpp" line="1127"/>
+        <location filename="../src/mycentralwidget.cpp" line="1155"/>
+        <location filename="../src/mycentralwidget.cpp" line="1181"/>
         <source>non</source>
         <translation>ne</translation>
     </message>
@@ -8103,8 +8127,8 @@ p, li { white-space: pre-wrap; }
         <translation type="obsolete">yes (using the Magnus-Tetens formula)</translation>
     </message>
     <message>
-        <location filename="../src/mycentralwidget.cpp" line="1139"/>
-        <location filename="../src/mycentralwidget.cpp" line="1195"/>
+        <location filename="../src/mycentralwidget.cpp" line="1193"/>
+        <location filename="../src/mycentralwidget.cpp" line="1249"/>
         <source>Informations sur le fichier GRIB</source>
         <translation>Informace o GRIB souboru</translation>
     </message>
@@ -8242,12 +8266,12 @@ p, li { white-space: pre-wrap; }
         <translation type="obsolete">Reference date : %1</translation>
     </message>
     <message>
-        <location filename="../src/mycentralwidget.cpp" line="1106"/>
+        <location filename="../src/mycentralwidget.cpp" line="1160"/>
         <source>oui (calcule par la formule de Magnus-Tetens)</source>
         <translation>ano (použít vzorec Magnus-Tetens)</translation>
     </message>
     <message>
-        <location filename="../src/mycentralwidget.cpp" line="1140"/>
+        <location filename="../src/mycentralwidget.cpp" line="1194"/>
         <source>Aucun fichir GRIB n&apos;est charge.</source>
         <translation>Není nahrán GRIB soubor.</translation>
     </message>
@@ -8300,12 +8324,12 @@ p, li { white-space: pre-wrap; }
         <translation type="obsolete">Reference date : %1</translation>
     </message>
     <message>
-        <location filename="../src/mycentralwidget.cpp" line="1208"/>
+        <location filename="../src/mycentralwidget.cpp" line="1262"/>
         <source>POI</source>
         <translation>POI</translation>
     </message>
     <message>
-        <location filename="../src/mycentralwidget.cpp" line="1298"/>
+        <location filename="../src/mycentralwidget.cpp" line="1352"/>
         <source>Suppression de toutes les marques</source>
         <translation>Smazání všech značek</translation>
     </message>
@@ -8314,224 +8338,224 @@ p, li { white-space: pre-wrap; }
         <translation type="obsolete">Deleting a mark is final.  Are you sure?</translation>
     </message>
     <message>
-        <location filename="../src/mycentralwidget.cpp" line="1143"/>
+        <location filename="../src/mycentralwidget.cpp" line="1197"/>
         <source>Fichier : %1
 </source>
         <translation>Soubor : %1
 </translation>
     </message>
     <message>
-        <location filename="../src/mycentralwidget.cpp" line="1144"/>
+        <location filename="../src/mycentralwidget.cpp" line="1198"/>
         <source>Taille : %1 octets
 </source>
         <translation>Velikost : %1 bytů</translation>
     </message>
     <message>
-        <location filename="../src/mycentralwidget.cpp" line="1145"/>
-        <location filename="../src/mycentralwidget.cpp" line="1154"/>
-        <location filename="../src/mycentralwidget.cpp" line="1179"/>
-        <location filename="../src/mycentralwidget.cpp" line="1183"/>
-        <location filename="../src/mycentralwidget.cpp" line="1190"/>
+        <location filename="../src/mycentralwidget.cpp" line="1199"/>
+        <location filename="../src/mycentralwidget.cpp" line="1208"/>
+        <location filename="../src/mycentralwidget.cpp" line="1233"/>
+        <location filename="../src/mycentralwidget.cpp" line="1237"/>
+        <location filename="../src/mycentralwidget.cpp" line="1244"/>
         <source>
 </source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../src/mycentralwidget.cpp" line="1147"/>
+        <location filename="../src/mycentralwidget.cpp" line="1201"/>
         <source>%1 enregistrements, </source>
         <translation>%1 registrace,</translation>
     </message>
     <message>
-        <location filename="../src/mycentralwidget.cpp" line="1148"/>
+        <location filename="../src/mycentralwidget.cpp" line="1202"/>
         <source>%1 dates :
 </source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../src/mycentralwidget.cpp" line="1151"/>
+        <location filename="../src/mycentralwidget.cpp" line="1205"/>
         <source>    du %1
 </source>
         <translation>   od %1</translation>
     </message>
     <message>
-        <location filename="../src/mycentralwidget.cpp" line="1152"/>
+        <location filename="../src/mycentralwidget.cpp" line="1206"/>
         <source>    au %1
 </source>
         <translation>   do %1</translation>
     </message>
     <message>
-        <location filename="../src/mycentralwidget.cpp" line="1155"/>
+        <location filename="../src/mycentralwidget.cpp" line="1209"/>
         <source>Donnees disponibles :
 </source>
         <translation>Dostipná data :
 </translation>
     </message>
     <message>
-        <location filename="../src/mycentralwidget.cpp" line="1156"/>
+        <location filename="../src/mycentralwidget.cpp" line="1210"/>
         <source>    Temperature : %1
 </source>
         <translation>    Teplota : %1</translation>
     </message>
     <message>
-        <location filename="../src/mycentralwidget.cpp" line="1157"/>
+        <location filename="../src/mycentralwidget.cpp" line="1211"/>
         <source>    Pression : %1
 </source>
         <translation>    Tlak : %1</translation>
     </message>
     <message>
-        <location filename="../src/mycentralwidget.cpp" line="1158"/>
+        <location filename="../src/mycentralwidget.cpp" line="1212"/>
         <source>    Vent  : %1
 </source>
         <translation>    Vítr  : %1</translation>
     </message>
     <message>
-        <location filename="../src/mycentralwidget.cpp" line="1159"/>
+        <location filename="../src/mycentralwidget.cpp" line="1213"/>
         <source>    Courant  : %1
 </source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/mycentralwidget.cpp" line="1160"/>
+        <location filename="../src/mycentralwidget.cpp" line="1214"/>
         <source>    Cumul de précipitations : %1
 </source>
         <translation>   Úhrn srážek : %1
 </translation>
     </message>
     <message>
-        <location filename="../src/mycentralwidget.cpp" line="1161"/>
+        <location filename="../src/mycentralwidget.cpp" line="1215"/>
         <source>    Nebulosite : %1
 </source>
         <translation>    Oblačnost : %1
 </translation>
     </message>
     <message>
-        <location filename="../src/mycentralwidget.cpp" line="1162"/>
+        <location filename="../src/mycentralwidget.cpp" line="1216"/>
         <source>    Humidite relative : %1
 </source>
         <translation>    Relativní vlhkost : %1
 </translation>
     </message>
     <message>
-        <location filename="../src/mycentralwidget.cpp" line="1163"/>
+        <location filename="../src/mycentralwidget.cpp" line="1217"/>
         <source>    Isotherme 0degC : %1
 </source>
         <translation>    Isotherma 0°C : %1
 </translation>
     </message>
     <message>
-        <location filename="../src/mycentralwidget.cpp" line="1164"/>
+        <location filename="../src/mycentralwidget.cpp" line="1218"/>
         <source>    Point de rosee : %1
 </source>
         <translation>    Rosný bod : %1
 </translation>
     </message>
     <message>
-        <location filename="../src/mycentralwidget.cpp" line="1165"/>
+        <location filename="../src/mycentralwidget.cpp" line="1219"/>
         <source>    Temperature (min) : %1
 </source>
         <translation>    Teplota (min) : %1
 </translation>
     </message>
     <message>
-        <location filename="../src/mycentralwidget.cpp" line="1166"/>
+        <location filename="../src/mycentralwidget.cpp" line="1220"/>
         <source>    Temperature (max) : %1
 </source>
         <translation>    Teplota (max) : %1
 </translation>
     </message>
     <message>
-        <location filename="../src/mycentralwidget.cpp" line="1167"/>
+        <location filename="../src/mycentralwidget.cpp" line="1221"/>
         <source>    Temperature (pot) : %1
 </source>
         <translation>    Teplota (pot) : %1
 </translation>
     </message>
     <message>
-        <location filename="../src/mycentralwidget.cpp" line="1168"/>
+        <location filename="../src/mycentralwidget.cpp" line="1222"/>
         <source>    Neige (risque) : %1
 </source>
         <translation>    Sníh (riziko) : %1
 </translation>
     </message>
     <message>
-        <location filename="../src/mycentralwidget.cpp" line="1169"/>
+        <location filename="../src/mycentralwidget.cpp" line="1223"/>
         <source>    Neige (epaisseur) : %1
 </source>
         <translation>    Sníh (pokrývka) : %1
 </translation>
     </message>
     <message>
-        <location filename="../src/mycentralwidget.cpp" line="1170"/>
+        <location filename="../src/mycentralwidget.cpp" line="1224"/>
         <source>    Humidite specifique :
 </source>
         <translation>    Specifická vlhkost :
 </translation>
     </message>
     <message>
-        <location filename="../src/mycentralwidget.cpp" line="1171"/>
+        <location filename="../src/mycentralwidget.cpp" line="1225"/>
         <source>        - 200: %1
 </source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../src/mycentralwidget.cpp" line="1172"/>
+        <location filename="../src/mycentralwidget.cpp" line="1226"/>
         <source>        - 300: %1
 </source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../src/mycentralwidget.cpp" line="1173"/>
+        <location filename="../src/mycentralwidget.cpp" line="1227"/>
         <source>        - 500: %1
 </source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../src/mycentralwidget.cpp" line="1174"/>
+        <location filename="../src/mycentralwidget.cpp" line="1228"/>
         <source>        - 700: %1
 </source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../src/mycentralwidget.cpp" line="1175"/>
+        <location filename="../src/mycentralwidget.cpp" line="1229"/>
         <source>        - 850: %1
 </source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../src/mycentralwidget.cpp" line="1180"/>
+        <location filename="../src/mycentralwidget.cpp" line="1234"/>
         <source>Grille : %1 points (%2x%3)
 </source>
         <translation>Grid : %1 body (%2x%3)
 </translation>
     </message>
     <message>
-        <location filename="../src/mycentralwidget.cpp" line="1182"/>
+        <location filename="../src/mycentralwidget.cpp" line="1236"/>
         <source>Resolution : %1x%2
 </source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/mycentralwidget.cpp" line="1184"/>
+        <location filename="../src/mycentralwidget.cpp" line="1238"/>
         <source>Etendue :
 </source>
         <translation>Rozsah :
 </translation>
     </message>
     <message>
-        <location filename="../src/mycentralwidget.cpp" line="1188"/>
+        <location filename="../src/mycentralwidget.cpp" line="1242"/>
         <source>%1  -&gt;  %2
 </source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../src/mycentralwidget.cpp" line="1191"/>
+        <location filename="../src/mycentralwidget.cpp" line="1245"/>
         <source>Date de reference : %1
 </source>
         <translation>Referenční datum : %1
 </translation>
     </message>
     <message>
-        <location filename="../src/mycentralwidget.cpp" line="1299"/>
+        <location filename="../src/mycentralwidget.cpp" line="1353"/>
         <source>La destruction d&apos;une marque est definitive.
 
 Etes-vous sur ?</source>
@@ -8540,95 +8564,95 @@ Etes-vous sur ?</source>
 Jsi si jist?</translation>
     </message>
     <message>
-        <location filename="../src/mycentralwidget.cpp" line="1492"/>
+        <location filename="../src/mycentralwidget.cpp" line="1546"/>
         <source>Photo Ecran</source>
         <translation>Snímek obrazovky</translation>
     </message>
     <message>
-        <location filename="../src/mycentralwidget.cpp" line="1612"/>
-        <location filename="../src/mycentralwidget.cpp" line="1615"/>
+        <location filename="../src/mycentralwidget.cpp" line="1666"/>
+        <location filename="../src/mycentralwidget.cpp" line="1669"/>
         <source>Ouvrir un fichier Route</source>
         <translation>Otevřít soubor trasy</translation>
     </message>
     <message>
-        <location filename="../src/mycentralwidget.cpp" line="1684"/>
-        <location filename="../src/mycentralwidget.cpp" line="1796"/>
-        <location filename="../src/mycentralwidget.cpp" line="1996"/>
+        <location filename="../src/mycentralwidget.cpp" line="1738"/>
+        <location filename="../src/mycentralwidget.cpp" line="1850"/>
+        <location filename="../src/mycentralwidget.cpp" line="2050"/>
         <source>Nom de la route a importer</source>
         <translation>Jméno trasy pro import</translation>
     </message>
     <message>
-        <location filename="../src/mycentralwidget.cpp" line="1685"/>
-        <location filename="../src/mycentralwidget.cpp" line="1796"/>
-        <location filename="../src/mycentralwidget.cpp" line="1996"/>
+        <location filename="../src/mycentralwidget.cpp" line="1739"/>
+        <location filename="../src/mycentralwidget.cpp" line="1850"/>
+        <location filename="../src/mycentralwidget.cpp" line="2050"/>
         <source>Nom de la route</source>
         <translation>Jméno trasy</translation>
     </message>
     <message>
-        <location filename="../src/mycentralwidget.cpp" line="1695"/>
-        <location filename="../src/mycentralwidget.cpp" line="1806"/>
-        <location filename="../src/mycentralwidget.cpp" line="2005"/>
-        <location filename="../src/mycentralwidget.cpp" line="2989"/>
+        <location filename="../src/mycentralwidget.cpp" line="1749"/>
+        <location filename="../src/mycentralwidget.cpp" line="1860"/>
+        <location filename="../src/mycentralwidget.cpp" line="2059"/>
+        <location filename="../src/mycentralwidget.cpp" line="3043"/>
         <source>Ce nom est deja utilise ou invalide</source>
         <translation>Toto jméno už je použito nebo je neplatné</translation>
     </message>
     <message>
-        <location filename="../src/mycentralwidget.cpp" line="1701"/>
-        <location filename="../src/mycentralwidget.cpp" line="2125"/>
-        <location filename="../src/mycentralwidget.cpp" line="2522"/>
-        <location filename="../src/mycentralwidget.cpp" line="2995"/>
+        <location filename="../src/mycentralwidget.cpp" line="1755"/>
+        <location filename="../src/mycentralwidget.cpp" line="2179"/>
+        <location filename="../src/mycentralwidget.cpp" line="2576"/>
+        <location filename="../src/mycentralwidget.cpp" line="3049"/>
         <source>Import de routes</source>
         <translation>Import tras</translation>
     </message>
     <message>
-        <location filename="../src/mycentralwidget.cpp" line="1702"/>
-        <location filename="../src/mycentralwidget.cpp" line="2996"/>
+        <location filename="../src/mycentralwidget.cpp" line="1756"/>
+        <location filename="../src/mycentralwidget.cpp" line="3050"/>
         <source>Import en cours, veuillez patienter...</source>
         <translation>Probíhá import, prosím počkej...</translation>
     </message>
     <message>
-        <location filename="../src/mycentralwidget.cpp" line="2094"/>
+        <location filename="../src/mycentralwidget.cpp" line="2148"/>
         <source>Exporter une Route</source>
         <translation>Export trasy</translation>
     </message>
     <message>
-        <location filename="../src/mycentralwidget.cpp" line="2114"/>
+        <location filename="../src/mycentralwidget.cpp" line="2168"/>
         <source>Exporter seulement les POIs ou egalement tous les details?</source>
         <translation>Exportovat jen POIs nebo i detaily?</translation>
     </message>
     <message>
-        <location filename="../src/mycentralwidget.cpp" line="2115"/>
+        <location filename="../src/mycentralwidget.cpp" line="2169"/>
         <source>Exporter une route</source>
         <translation>Export trasy</translation>
     </message>
     <message>
-        <location filename="../src/mycentralwidget.cpp" line="2117"/>
+        <location filename="../src/mycentralwidget.cpp" line="2171"/>
         <source>POIs</source>
         <translation>POI</translation>
     </message>
     <message>
-        <location filename="../src/mycentralwidget.cpp" line="2118"/>
+        <location filename="../src/mycentralwidget.cpp" line="2172"/>
         <source>Details</source>
         <translation>Detaily</translation>
     </message>
     <message>
-        <location filename="../src/mycentralwidget.cpp" line="2126"/>
-        <location filename="../src/mycentralwidget.cpp" line="2523"/>
+        <location filename="../src/mycentralwidget.cpp" line="2180"/>
+        <location filename="../src/mycentralwidget.cpp" line="2577"/>
         <source>Export en cours, veuillez patienter...</source>
         <translation>Probíhá export, prosím počkej...</translation>
     </message>
     <message>
-        <location filename="../src/mycentralwidget.cpp" line="2339"/>
+        <location filename="../src/mycentralwidget.cpp" line="2393"/>
         <source>Le nom de la route est invalide</source>
         <translation>Jméno trasy je neplatné</translation>
     </message>
     <message>
-        <location filename="../src/mycentralwidget.cpp" line="2349"/>
+        <location filename="../src/mycentralwidget.cpp" line="2403"/>
         <source>Importer la route : %1</source>
         <translation>Import trasy: %1</translation>
     </message>
     <message>
-        <location filename="../src/mycentralwidget.cpp" line="2350"/>
+        <location filename="../src/mycentralwidget.cpp" line="2404"/>
         <source>Cette route existe deja.
 
 Voulez-vous la remplacer?</source>
@@ -8637,94 +8661,112 @@ Voulez-vous la remplacer?</source>
 Chceš ji nahradit?</translation>
     </message>
     <message>
-        <location filename="../src/mycentralwidget.cpp" line="2619"/>
-        <location filename="../src/mycentralwidget.cpp" line="2642"/>
-        <location filename="../src/mycentralwidget.cpp" line="2649"/>
+        <location filename="../src/mycentralwidget.cpp" line="2673"/>
+        <location filename="../src/mycentralwidget.cpp" line="2696"/>
+        <location filename="../src/mycentralwidget.cpp" line="2703"/>
         <source>deg</source>
         <translation>°</translation>
     </message>
     <message>
-        <location filename="../src/mycentralwidget.cpp" line="3088"/>
+        <location filename="../src/mycentralwidget.cpp" line="3142"/>
         <source>Routage%d</source>
         <translation>Routing%d</translation>
     </message>
     <message>
-        <location filename="../src/mycentralwidget.cpp" line="3189"/>
-        <location filename="../src/mycentralwidget.cpp" line="3296"/>
+        <location filename="../src/mycentralwidget.cpp" line="3243"/>
+        <location filename="../src/mycentralwidget.cpp" line="3350"/>
         <source>aucun</source>
         <translation>Žádný</translation>
     </message>
     <message>
-        <location filename="../src/mycentralwidget.cpp" line="3191"/>
+        <location filename="../src/mycentralwidget.cpp" line="3245"/>
         <source>Optimisation en cours</source>
         <translation>Optimizace probíhá</translation>
     </message>
     <message>
-        <location filename="../src/mycentralwidget.cpp" line="3192"/>
+        <location filename="../src/mycentralwidget.cpp" line="3246"/>
         <source>Veuillez patienter...</source>
         <translation>Prosím čekej...</translation>
     </message>
     <message>
-        <location filename="../src/mycentralwidget.cpp" line="3281"/>
+        <location filename="../src/mycentralwidget.cpp" line="3335"/>
         <source>Optimisation terminee</source>
         <translation>Optimizace dokončena</translation>
     </message>
     <message>
-        <location filename="../src/mycentralwidget.cpp" line="3285"/>
+        <location filename="../src/mycentralwidget.cpp" line="3339"/>
         <source>Dernier POI avant optimisation: %1 (ETA: %2)</source>
         <translation>Poslední POI před optimalizací: %1 (ETA: %2)</translation>
     </message>
     <message>
-        <location filename="../src/mycentralwidget.cpp" line="3292"/>
-        <location filename="../src/mycentralwidget.cpp" line="3295"/>
+        <location filename="../src/mycentralwidget.cpp" line="3346"/>
+        <location filename="../src/mycentralwidget.cpp" line="3349"/>
         <source>Dernier POI apres optimisation: %1 (ETA: %2)</source>
         <translation>Poslední POI po optimalizaci: %1 (ETA: %2)</translation>
     </message>
     <message>
-        <location filename="../src/mycentralwidget.cpp" line="3328"/>
+        <location filename="../src/mycentralwidget.cpp" line="3382"/>
         <source>Simplification en cours</source>
         <translation>Probíhá zjednodušení</translation>
     </message>
     <message>
-        <location filename="../src/mycentralwidget.cpp" line="3331"/>
+        <location filename="../src/mycentralwidget.cpp" line="3385"/>
         <source>Abandonner</source>
         <translation>Zastavit</translation>
     </message>
     <message>
-        <location filename="../src/mycentralwidget.cpp" line="3333"/>
-        <location filename="../src/mycentralwidget.cpp" line="3379"/>
-        <location filename="../src/mycentralwidget.cpp" line="3418"/>
-        <location filename="../src/mycentralwidget.cpp" line="3468"/>
+        <location filename="../src/mycentralwidget.cpp" line="3387"/>
+        <location filename="../src/mycentralwidget.cpp" line="3433"/>
+        <location filename="../src/mycentralwidget.cpp" line="3472"/>
+        <location filename="../src/mycentralwidget.cpp" line="3522"/>
         <source>Phase </source>
         <translation>Fáze </translation>
     </message>
     <message>
-        <location filename="../src/mycentralwidget.cpp" line="3179"/>
+        <location filename="../src/mycentralwidget.cpp" line="3233"/>
         <source>Optimiser</source>
         <translation>Optimalizovat</translation>
     </message>
     <message>
-        <location filename="../src/mycentralwidget.cpp" line="1123"/>
+        <location filename="../src/mycentralwidget.cpp" line="549"/>
+        <location filename="../src/mycentralwidget.cpp" line="559"/>
+        <source>Ouverture des cartes</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/mycentralwidget.cpp" line="549"/>
+        <source>Les cartes sont absentes
+Voulez vous les telecharger?</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/mycentralwidget.cpp" line="559"/>
+        <source>Vous n&apos;avez pas la bonne version des cartes
+Voulez vous les telecharger?</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/mycentralwidget.cpp" line="1177"/>
         <source>oui (GRIB Courants)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/mycentralwidget.cpp" line="3268"/>
+        <location filename="../src/mycentralwidget.cpp" line="3322"/>
         <source> minutes perdues</source>
         <translation> minut ztraceno</translation>
     </message>
     <message>
-        <location filename="../src/mycentralwidget.cpp" line="3270"/>
+        <location filename="../src/mycentralwidget.cpp" line="3324"/>
         <source> minutes gagnees</source>
         <translation> minut ušetřeno</translation>
     </message>
     <message>
-        <location filename="../src/mycentralwidget.cpp" line="3278"/>
+        <location filename="../src/mycentralwidget.cpp" line="3332"/>
         <source>ETA avant optimisation: </source>
         <translation>ETA před optimalizací: </translation>
     </message>
     <message>
-        <location filename="../src/mycentralwidget.cpp" line="3279"/>
+        <location filename="../src/mycentralwidget.cpp" line="3333"/>
         <source>ETA apres optimisation: </source>
         <translation>ETA po optimalizaci: </translation>
     </message>
@@ -8737,38 +8779,38 @@ Chceš ji nahradit?</translation>
         <translation type="obsolete">Phase 2...</translation>
     </message>
     <message>
-        <location filename="../src/mycentralwidget.cpp" line="3161"/>
+        <location filename="../src/mycentralwidget.cpp" line="3215"/>
         <source> minutes perdues, </source>
         <translation> minut ztraceno, </translation>
     </message>
     <message>
-        <location filename="../src/mycentralwidget.cpp" line="3164"/>
-        <location filename="../src/mycentralwidget.cpp" line="3271"/>
+        <location filename="../src/mycentralwidget.cpp" line="3218"/>
+        <location filename="../src/mycentralwidget.cpp" line="3325"/>
         <source> POIs supprimes sur </source>
         <translation> POI vypuštěno z </translation>
     </message>
     <message>
-        <location filename="../src/mycentralwidget.cpp" line="3163"/>
+        <location filename="../src/mycentralwidget.cpp" line="3217"/>
         <source> minutes gagnees(!), </source>
         <translation> minut ušetřeno(!), </translation>
     </message>
     <message>
-        <location filename="../src/mycentralwidget.cpp" line="3173"/>
+        <location filename="../src/mycentralwidget.cpp" line="3227"/>
         <source>ETA avant simplification: </source>
         <translation>ETA před zjednodušením: </translation>
     </message>
     <message>
-        <location filename="../src/mycentralwidget.cpp" line="3174"/>
+        <location filename="../src/mycentralwidget.cpp" line="3228"/>
         <source>ETA apres simplification: </source>
         <translation>ETA po zjednodušení: </translation>
     </message>
     <message>
-        <location filename="../src/mycentralwidget.cpp" line="3125"/>
+        <location filename="../src/mycentralwidget.cpp" line="3179"/>
         <source>Envoyer la route au pilototo</source>
         <translation>Pošli trasu do autopilota</translation>
     </message>
     <message>
-        <location filename="../src/mycentralwidget.cpp" line="3125"/>
+        <location filename="../src/mycentralwidget.cpp" line="3179"/>
         <source>Pour pouvoir envoyer la route au pilototo if faut que:&lt;br&gt;-La route demarre du bateau et de la prochaine vac&lt;br&gt;et que le mode VbVmg-Vlm soit active</source>
         <translation>Abys mohl poslat trasu do autopilota, je třeba:&lt;br&gt;-Trasa musí začínat od lodi a příští mezery&lt;br&gt;-Musí být aktivován mód VbVmg ve Vlm</translation>
     </message>
@@ -8781,44 +8823,44 @@ Chceš ji nahradit?</translation>
         <translation type="obsolete">You cannot delete a frozen route</translation>
     </message>
     <message>
-        <location filename="../src/mycentralwidget.cpp" line="3589"/>
+        <location filename="../src/mycentralwidget.cpp" line="3643"/>
         <source>Detruire la route : %1</source>
         <translation>Smazat trasu : %1</translation>
     </message>
     <message>
-        <location filename="../src/mycentralwidget.cpp" line="3590"/>
+        <location filename="../src/mycentralwidget.cpp" line="3644"/>
         <source>La destruction d&apos;une route est definitive.
 
 Voulez-vous egalement supprimer tous les POIs lui appartenant?</source>
         <translation>Smazání trasy nelze zvrátit. Chceš také smazat POI této trasy?</translation>
     </message>
     <message>
-        <location filename="../src/mycentralwidget.cpp" line="3618"/>
+        <location filename="../src/mycentralwidget.cpp" line="3672"/>
         <source>Detruire le routage : %1?</source>
         <translation>Smazat routing: %1?</translation>
     </message>
     <message>
-        <location filename="../src/mycentralwidget.cpp" line="3619"/>
+        <location filename="../src/mycentralwidget.cpp" line="3673"/>
         <source>La destruction d&apos;un routage est definitive.</source>
         <translation>Smazání routingu nelze zvrátit.</translation>
     </message>
     <message>
-        <location filename="../src/mycentralwidget.cpp" line="4065"/>
+        <location filename="../src/mycentralwidget.cpp" line="4119"/>
         <source>Sauvegarde des POIs et des routes</source>
         <translation>Uložit POI a trasy</translation>
     </message>
     <message>
-        <location filename="../src/mycentralwidget.cpp" line="4065"/>
+        <location filename="../src/mycentralwidget.cpp" line="4119"/>
         <source>Sauvegarde reussie</source>
         <translation>Uložení proběhlo úspěšně</translation>
     </message>
     <message>
-        <location filename="../src/mycentralwidget.cpp" line="4090"/>
+        <location filename="../src/mycentralwidget.cpp" line="4144"/>
         <source>Chargement des POIs et des routes</source>
         <translation>Nahrát POI a trasy</translation>
     </message>
     <message>
-        <location filename="../src/mycentralwidget.cpp" line="4090"/>
+        <location filename="../src/mycentralwidget.cpp" line="4144"/>
         <source>Chargement reussi</source>
         <translation>Znovunačtení úspěšné</translation>
     </message>
@@ -8834,20 +8876,20 @@ Voulez-vous egalement supprimer tous les POIs lui appartenant?</source>
 <context>
     <name>myScene</name>
     <message>
-        <location filename="../src/mycentralwidget.cpp" line="265"/>
-        <location filename="../src/mycentralwidget.cpp" line="274"/>
-        <location filename="../src/mycentralwidget.cpp" line="285"/>
+        <location filename="../src/mycentralwidget.cpp" line="266"/>
+        <location filename="../src/mycentralwidget.cpp" line="275"/>
+        <location filename="../src/mycentralwidget.cpp" line="286"/>
         <source>Gesture</source>
         <translation>Gesto</translation>
     </message>
     <message>
-        <location filename="../src/mycentralwidget.cpp" line="266"/>
-        <location filename="../src/mycentralwidget.cpp" line="275"/>
+        <location filename="../src/mycentralwidget.cpp" line="267"/>
+        <location filename="../src/mycentralwidget.cpp" line="276"/>
         <source>Pan gesture detected</source>
         <translation>Gesto tažení detekováno</translation>
     </message>
     <message>
-        <location filename="../src/mycentralwidget.cpp" line="286"/>
+        <location filename="../src/mycentralwidget.cpp" line="287"/>
         <source>Other gesture detected!!</source>
         <translation>Jiné gesto detekováno!!</translation>
     </message>

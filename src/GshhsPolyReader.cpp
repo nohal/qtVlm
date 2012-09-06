@@ -272,7 +272,7 @@ int GshhsPolyReader::getPolyVersion()
     fpoly = fopen( fname.toStdString().c_str(), "rb");
 
     /* init header */
-    if(!fpoly) return 0;
+    if(!fpoly) return -1;
 
     readPolygonFileHeader(fpoly,&polyHeader);
     //fclose(fpoly);

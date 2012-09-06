@@ -644,7 +644,7 @@ void mapCompass::updateCompassLineLabels(int x, int y)
     GshhsReader *map=parent->get_gshhsReader();
     if(this->isVisible())
     {
-//        if(map->crossing(QLineF(XX,YY,x,y),QLineF(xa,ya,xb,yb)))
+//        if(map && map->crossing(QLineF(XX,YY,x,y),QLineF(xa,ya,xb,yb)))
 //            hdg_label->setHtml(QString().sprintf("Hdg: %.2f %c, Tws: %.1f nds",pos_angle,176,wind_speed)+"<br>"+
 //                           "Distance: "+Util::formatDistance(pos_distance)+"<br>"+
 //                           "<font color=\"#FF0000\">"+tr("Collision avec les terres detectee")+"</font>");
@@ -678,7 +678,7 @@ void mapCompass::updateCompassLineLabels(int x, int y)
             meters=QString().sprintf("<br>%.2f ",loxo_dist*185200)+tr("Centimetres");
         else if(loxo_dist*1852<=1000)
             meters=QString().sprintf("<br>%.2f ",loxo_dist*1852)+tr("Metres");
-        if(map->crossing(QLineF(XX,YY,X,Y),QLineF(xa,ya,xb,yb)))
+        if(map && map->crossing(QLineF(XX,YY,X,Y),QLineF(xa,ya,xb,yb)))
         {
             if(main->getSelectedBoat() && main->getSelectedBoat()->getType()!=BOAT_VLM)
             {

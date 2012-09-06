@@ -1207,6 +1207,29 @@ Etes-vous sur ?</source>
     </message>
 </context>
 <context>
+    <name>GshhsDwnload</name>
+    <message>
+        <source>Sauvegarde des cartes</source>
+        <translation>Sauvegarde des cartes</translation>
+    </message>
+    <message>
+        <source>Le fichier zip </source>
+        <translation>Le fichier zip</translation>
+    </message>
+    <message>
+        <source> ne peut �tre dezippe</source>
+        <translation>ne peut être dézippé</translation>
+    </message>
+    <message>
+        <source>Le fichier </source>
+        <translation>Le fichier</translation>
+    </message>
+    <message>
+        <source> ne peut etre ouvert</source>
+        <translation>ne peut être ouvert</translation>
+    </message>
+</context>
+<context>
     <name>InputColor</name>
     <message>
         <source>Valeurs par defauts</source>
@@ -1343,7 +1366,7 @@ Etes-vous sur ?</source>
     </message>
     <message>
         <source>Verifiez l&apos;installation du programme.</source>
-        <translation>Vérifiez l&apos;installation du programme.</translation>
+        <translation type="obsolete">Vérifiez l&apos;installation du programme.</translation>
     </message>
     <message>
         <source>Le fichier ne peut pas etre ouvert,</source>
@@ -1405,7 +1428,7 @@ Etes-vous sur ?</source>
         <source>Cartes non trouvees.
 
 </source>
-        <translation>Cartes non trouvées.</translation>
+        <translation type="obsolete">Cartes non trouvées.</translation>
     </message>
     <message>
         <source>Fichier : </source>
@@ -5968,14 +5991,6 @@ Voulez-vous egalement supprimer tous les POIs lui appartenant?</source>
         <translation></translation>
     </message>
     <message>
-        <source>Chargement des cartes VLM</source>
-        <translation></translation>
-    </message>
-    <message>
-        <source>Vous n&apos;avez pas la bonne version des cartes VLM</source>
-        <translation></translation>
-    </message>
-    <message>
         <source>aucun</source>
         <translation>aucun</translation>
     </message>
@@ -6022,6 +6037,22 @@ Voulez-vous la remplacer?</source>
         <source>Resolution : %1x%2
 </source>
         <translation>Résolution : %1x%</translation>
+    </message>
+    <message>
+        <source>Ouverture des cartes</source>
+        <translation>Ouverte des cartes</translation>
+    </message>
+    <message>
+        <source>Les cartes sont absentes
+Voulez vous les telecharger?</source>
+        <translation>Les cartes sont absentes
+VOulez-vous les télécharger ?</translation>
+    </message>
+    <message>
+        <source>Vous n&apos;avez pas la bonne version des cartes
+Voulez vous les telecharger?</source>
+        <translation>Vous n&apos;avez pas la bonne version des cartes
+Voulez-vous les télécharger ?</translation>
     </message>
 </context>
 <context>
@@ -6145,55 +6176,55 @@ Voulez-vous la remplacer?</source>
     <name>paramProxy_ui</name>
     <message>
         <source>Proxy parameter</source>
-        <translation type="unfinished"></translation>
+        <translation>Paramètre proxy</translation>
     </message>
     <message>
         <source>Direct connection to internet</source>
-        <translation type="unfinished"></translation>
+        <translation>Connection direct à internet</translation>
     </message>
     <message>
         <source>Connection using a proxy</source>
-        <translation type="unfinished"></translation>
+        <translation>Connection via un proxy</translation>
     </message>
     <message>
         <source>Proxy config</source>
-        <translation type="unfinished"></translation>
+        <translation>Configuration proxy</translation>
     </message>
     <message>
         <source>Proxy type</source>
-        <translation type="unfinished"></translation>
+        <translation>Type de proxy</translation>
     </message>
     <message>
         <source>System default proxy</source>
-        <translation type="unfinished"></translation>
+        <translation>Proxy par défault (système)</translation>
     </message>
     <message>
         <source>HTTP proxy</source>
-        <translation type="unfinished"></translation>
+        <translation>proxy HTTP</translation>
     </message>
     <message>
         <source>SOCKS5 proxy</source>
-        <translation type="unfinished"></translation>
+        <translation>Proxy SOCKS5</translation>
     </message>
     <message>
         <source>Proxy server</source>
-        <translation type="unfinished"></translation>
+        <translation>Server</translation>
     </message>
     <message>
         <source>Port number</source>
-        <translation type="unfinished"></translation>
+        <translation>Port</translation>
     </message>
     <message>
         <source>User *</source>
-        <translation type="unfinished"></translation>
+        <translation>Utilisateur *</translation>
     </message>
     <message>
         <source>Password *</source>
-        <translation type="unfinished"></translation>
+        <translation>Mot de passe *</translation>
     </message>
     <message>
         <source>(* if needed)</source>
-        <translation type="unfinished"></translation>
+        <translation>(* si necessaire)</translation>
     </message>
 </context>
 <context>

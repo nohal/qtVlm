@@ -120,7 +120,8 @@ HEADERS += Dialogs/DialogGraphicsParams.h \
     Dialogs/DialogDownloadTracks.h \
     Dialogs/dialogFaxMeteo.h \
     Dialogs/dialogLoadImg.h \
-    Dialogs/routeInfo.h
+    Dialogs/routeInfo.h \
+    GshhsDwnload.h
 
 FORMS += Ui/boatAccount_dialog.ui \
     Ui/BoardVLM.ui \
@@ -238,7 +239,8 @@ SOURCES += Dialogs/DialogGraphicsParams.cpp \
     Dialogs/DialogDownloadTracks.cpp \
     Dialogs/dialogFaxMeteo.cpp \
     Dialogs/dialogLoadImg.cpp \
-    Dialogs/routeInfo.cpp
+    Dialogs/routeInfo.cpp \
+    GshhsDwnload.cpp
 
 unix:!macx: DEFINES += _TTY_POSIX_ __TERRAIN_QIMAGE __UNIX_QTVLM
 win32:DEFINES += _TTY_WIN_ \
