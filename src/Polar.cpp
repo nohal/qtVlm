@@ -124,6 +124,7 @@ void Polar::setPolarName(QString fname)
     QStringList list;
     /* read first line to see line length */
     line=stream.readLine();
+    line.remove("\"");
     if(line.isNull())
     {
         QMessageBox::warning(0,QObject::tr("Lecture de polaire"),
@@ -146,16 +147,38 @@ void Polar::setPolarName(QString fname)
     }
     list.removeLast();
     int i;
-    for(i=1;i<list.count();i++) tws.append(list[i].toDouble());
+    for(i=1;i<list.count();i++)
+        tws.append(list[i].toDouble());
+    bool missingTws0=false;
+    if(tws.first()!=0.0)
+    {
+        missingTws0=true;
+        tws.prepend(0.0);
+    }
+    bool firstTWA=true;
     while(true)
     {
         line=stream.readLine();
         if(line.isNull()) break;
+        line.remove("\"");
         if (isCsv)
             list = line.split(";");
         else
             list = line.split("\t");
+        if(firstTWA)
+        {
+            firstTWA=false;
+            if(list.first().toDouble()!=0.0)
+            {
+                for(int t=0;t<tws.count();++t)
+                {
+                    polar_data.append(0);
+                }
+            }
+        }
         twa.append(list[0].toDouble());
+        if(missingTws0)
+            polar_data.append(0);
         for(i=1;i<list.count();i++)
         {
             if(i>tws.count()) break;

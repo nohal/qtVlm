@@ -105,18 +105,8 @@ QString Util::formatTemperature_short(double tempKelvin)
 //----------------------------------------------------------------
 QString Util::formatSpeed(double meterspersecond)
 {
-    QString tunit = Settings::getSetting("unitsWindSpeed", "").toString();
-    QString unit = (tunit=="") ? "km/h" : tunit;
     QString r;
-    if (unit == "m/s") {
-        r.sprintf("%.1f m/s", meterspersecond);
-    }
-    else if (unit == "km/h") {
-        r.sprintf("%.1f km/h", meterspersecond*3.6);
-    }
-    else  {   // if (unit == "noeuds")
-        r.sprintf("%.1f knt", meterspersecond*3.6/1.852);
-    }
+    r.sprintf("%.1f ", meterspersecond*3.6/1.852)+QObject::tr("nds");
     return r;
 }
 //----------------------------------------------------------------
@@ -143,7 +133,7 @@ QString Util::formatDistance(double mille)
     return r;
 }
 //----------------------------------------------------------------
-QString Util::formatDegres(double x)     // 123.4 -> 123°24.00'
+QString Util::formatDegres(double x)
 {
     QString tunit = Settings::getSetting("unitsPosition", "").toString();
     QString unit = (tunit=="") ? "dddegmm'ss" : tunit;

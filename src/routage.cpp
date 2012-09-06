@@ -1930,7 +1930,7 @@ void ROUTAGE::slot_calculate()
         {
             vlmPoint from=list->at(n);
             orth.setPoints(from.lon,from.lat,to.lon,to.lat);
-            if(orth.getDistance()<myBoat->getPolarData()->getMaxSpeed()*(this->getTimeStep()/60.0))
+            if(orth.getDistance()<myBoat->getPolarData()->getMaxSpeed()*1.1*(this->getTimeStep()/60.0))
             {
                 if(checkCoast && (map->crossing(QLineF(list->at(n).x,list->at(n).y,xa,ya),QLineF(list->at(n).lon,list->at(n).lat,arrival.x(),arrival.y()))
                    || (checkLine && crossBarriere(QLineF(list->at(n).x,list->at(n).y,xa,ya)))))

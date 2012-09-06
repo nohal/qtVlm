@@ -75,7 +75,7 @@ DialogParamVlm::DialogParamVlm(MainWindow * main,myCentralWidget * parent) : QDi
             break;
     }
 
-    chk_centerOnSynch->setCheckState(Settings::getSetting("centerOnSynch","1").toInt()==1?Qt::Checked:Qt::Unchecked);
+    chk_centerOnSynch->setCheckState(Settings::getSetting("centerOnSynch","0").toInt()==1?Qt::Checked:Qt::Unchecked);
     chk_centerOnBoatChange->setCheckState(Settings::getSetting("centerOnBoatChange","1").toInt()==1?Qt::Checked:Qt::Unchecked);
     chk_askConfirm->setCheckState(Settings::getSetting("askConfirmation","0").toInt()==1?Qt::Checked:Qt::Unchecked);
 

@@ -74,6 +74,8 @@ class DialogPoi : public QDialog, public Ui::POI_editor_ui
         void setValue(int type,double val);
         void data_chg(int type);
         void val_chg(int type);
+        void formatLatLon();
+        bool formatWithSeconds;
 };
 
 #endif

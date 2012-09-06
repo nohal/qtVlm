@@ -29,14 +29,16 @@ class DialogRealBoatPosition: public QDialog, public Ui::realBoatPos
     public:
         DialogRealBoatPosition(QWidget * parent);
         void showDialog(boatReal * boat);
-
-    public slots:
-        void latChanged(QString);
-        void lonChanged(QString);
         void done(int result);
-
-private:
+    public slots:
+        void latLonChg(double);
+        void latLonSignChg(int i);
+    private:
         boatReal * currentBoat;
+        void formatLatLon();
+        bool formatWithSeconds;
+        double getValue(int type);
+        void setValue(int type,double val);
 };
 
 #endif // DIALOGREALBOATPOSITION_H

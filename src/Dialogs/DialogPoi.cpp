@@ -62,6 +62,28 @@ DialogPoi::DialogPoi(MainWindow * main,myCentralWidget * parent)
     connect(main, SIGNAL(newPOI(double,double,Projection *, boat *)),
             this, SLOT(newPOI(double,double,Projection *, boat*)));
     connect(this,SIGNAL(doChgWP(double,double,double)),main,SLOT(slotChgWP(double,double,double)));
+    QString tunit = Settings::getSetting("unitsPosition", "").toString();
+    QString unit = (tunit=="") ? "dddegmm'ss" : tunit;
+    formatWithSeconds=unit=="dddegmm'ss";
+}
+void DialogPoi::formatLatLon()
+{
+    if(formatWithSeconds)
+    {
+        this->lat_sec->show();
+        this->lon_sec->show();
+        this->lat_min->setDecimals(0);
+        this->lon_min->setDecimals(0);
+    }
+    else
+    {
+        this->lat_sec->hide();
+        this->lon_sec->hide();
+        this->lat_min->setDecimals(3);
+        this->lon_min->setDecimals(3);
+    }
+    lat_sec->setValue(0);
+    lon_sec->setValue(0);
 }
 
 void DialogPoi::editPOI(POI * poi_)
@@ -72,7 +94,6 @@ void DialogPoi::editPOI(POI * poi_)
     initPOI();
     setWindowTitle(tr("Marque : ")+poi->getName());
     btDelete->setEnabled(true);
-
     exec();
 }
 
@@ -90,6 +111,10 @@ void DialogPoi::newPOI(double lon, double lat,Projection *proj, boat *boat)
 
 void DialogPoi::initPOI(void)
 {
+    QString tunit = Settings::getSetting("unitsPosition", "").toString();
+    QString unit = (tunit=="") ? "dddegmm'ss" : tunit;
+    formatWithSeconds=unit=="dddegmm'ss";
+    this->formatLatLon();
     editName->setText(poi->getName());
     this->sequence->setValue(poi->getSequence());
     oldType=poi->getType();
@@ -274,25 +299,27 @@ void DialogPoi::nameHasChanged(QString newName)
 
 void DialogPoi::latLonChg(double /*value*/)
 {
-    double a,b,c;
+    double a,b,c,sec;
     int s;
-    if(this->lat_deg->hasFocus() || this->lat_min->hasFocus())
+    if(this->lat_deg->hasFocus() || this->lat_min->hasFocus() || this->lat_sec->hasFocus())
     {
         a=lat_deg->value();
         b=lat_min->value();
+        sec=lat_sec->value();
         s=lat_sig->currentIndex();
-        c=a+b/60;
+        c=a+b/60.0+sec/3600.0;
         if(s==1) c=-c;
         lat_val->blockSignals(true);
         lat_val->setValue(c);
         lat_val->blockSignals(false);
     }
-    else if(this->lon_deg->hasFocus() || this->lon_min->hasFocus())
+    else if(this->lon_deg->hasFocus() || this->lon_min->hasFocus() || this->lon_sec->hasFocus())
     {
         a=lon_deg->value();
         b=lon_min->value();
+        sec=lon_sec->value();
         s=lon_sig->currentIndex();
-        c=a+b/60;
+        c=a+b/60.0+sec/3600.0;
         if(s==1) c=-c;
         lon_val->blockSignals(true);
         lon_val->setValue(c);
@@ -312,12 +339,26 @@ void DialogPoi::latLonChg(double /*value*/)
         c=60.0*fabs(a-b);
         lat_deg->blockSignals(true);
         lat_min->blockSignals(true);
+        lat_sec->blockSignals(true);
         lat_sig->blockSignals(true);
         lat_deg->setValue(b);
-        lat_min->setValue(c);
+        if(formatWithSeconds)
+        {
+            sec=c;
+            c=(int) sec;
+            sec=60.0*fabs(sec-c);
+            lat_min->setValue(c);
+            lat_sec->setValue(sec);
+        }
+        else
+        {
+            lat_min->setValue(c);
+            lat_sec->setValue(0);
+        }
         lat_sig->setCurrentIndex(s);
         lat_deg->blockSignals(false);
         lat_min->blockSignals(false);
+        lat_sec->blockSignals(false);
         lat_sig->blockSignals(false);
     }
     else if(this->lon_val->hasFocus())
@@ -334,12 +375,26 @@ void DialogPoi::latLonChg(double /*value*/)
         c=60.0*fabs(a-b);
         lon_deg->blockSignals(true);
         lon_min->blockSignals(true);
+        lon_sec->blockSignals(true);
         lon_sig->blockSignals(true);
         lon_deg->setValue(b);
-        lon_min->setValue(c);
+        if(formatWithSeconds)
+        {
+            sec=c;
+            c=(int) sec;
+            sec=60.0*fabs(sec-c);
+            lon_min->setValue(c);
+            lon_sec->setValue(sec);
+        }
+        else
+        {
+            lon_min->setValue(c);
+            lon_sec->setValue(0);
+        }
         lon_sig->setCurrentIndex(s);
         lon_deg->blockSignals(false);
         lon_min->blockSignals(false);
+        lon_sec->blockSignals(false);
         lon_sig->blockSignals(false);
     }
 }
@@ -379,25 +434,44 @@ double DialogPoi::getValue(int type)
     double res;
     double deg = (type==POI_EDT_LAT?lat_deg->value():lon_deg->value());
     double min = (type==POI_EDT_LAT?lat_min->value():lon_min->value())/60.0;
+    double sec = (type==POI_EDT_LAT?lat_sec->value():lon_sec->value())/3600.0;
     double sig;
     if(type==POI_EDT_LAT)
         sig=lat_sig->currentIndex()==0?1.0:-1.0;
     else
         sig=lon_sig->currentIndex()==0?1.0:-1.0;
-    res=sig*(deg+min);
+    res=sig*(deg+min+sec);
     return res;
 }
 
 void DialogPoi::setValue(int type,double val)
 {
+    lat_sig->blockSignals(true);
+    lat_deg->blockSignals(true);
+    lat_min->blockSignals(true);
+    lat_sec->blockSignals(true);
+    lon_sig->blockSignals(true);
+    lon_deg->blockSignals(true);
+    lon_min->blockSignals(true);
+    lon_sec->blockSignals(true);
+    lat_val->blockSignals(true);
+    lon_val->blockSignals(true);
     int sig=val<0?1:0;
     val=fabs(val);
     int   deg = (int) val;
     double min = 60.0*fabs(val-deg);
+    double sec=0;
+    if(formatWithSeconds)
+    {
+        double Min=min;
+        min=(int) Min;
+        sec=60.0*fabs(Min-min);
+    }
     if(type==POI_EDT_LAT)
     {
         lat_deg->setValue(deg);
         lat_min->setValue(min);
+        lat_sec->setValue(sec);
         lat_sig->setCurrentIndex(sig);
         if(sig==1)
             lat_val->setValue(-val);
@@ -408,10 +482,21 @@ void DialogPoi::setValue(int type,double val)
     {
         lon_deg->setValue(deg);
         lon_min->setValue(min);
+        lon_sec->setValue(sec);
         lon_sig->setCurrentIndex(sig);
         if(sig==1)
             lon_val->setValue(-val);
         else
             lon_val->setValue(val);
     }
+    lat_sig->blockSignals(false);
+    lat_deg->blockSignals(false);
+    lat_min->blockSignals(false);
+    lat_sec->blockSignals(false);
+    lon_sig->blockSignals(false);
+    lon_deg->blockSignals(false);
+    lon_min->blockSignals(false);
+    lon_sec->blockSignals(false);
+    lat_val->blockSignals(false);
+    lon_val->blockSignals(false);
 }

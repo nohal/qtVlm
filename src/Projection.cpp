@@ -266,11 +266,11 @@ void Projection::my_setScreenSize(int w, int h)
 
     //qWarning() << "ScaleALL: " << sx << "," << sy1 << "," << sy2 << "," << sy;
 
-    double  sX,sY,sYN,sYS;
-    sX=W/fabs(xE-xW);
-    sYN=log(tan(degToRad(yN)/2 + M_PI_4));
-    sYS=log(tan(degToRad(yS)/2 + M_PI_4));
-    sY=H/fabs(radToDeg(sYN-sYS));
+//    double  sX,sY,sYN,sYS;
+//    sX=W/fabs(xE-xW);
+//    sYN=log(tan(degToRad(yN)/2 + M_PI_4));
+//    sYS=log(tan(degToRad(yS)/2 + M_PI_4));
+//    sY=H/fabs(radToDeg(sYN-sYS));
 
     //qWarning() << "scale: X=" << sX << " Y=" << sY;
 #if 0

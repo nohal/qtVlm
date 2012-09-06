@@ -1016,14 +1016,6 @@ Etes-vous sur ?</source>
         <translation></translation>
     </message>
     <message>
-        <source>m/s</source>
-        <translation></translation>
-    </message>
-    <message>
-        <source>km/h</source>
-        <translation></translation>
-    </message>
-    <message>
         <source>Distances :</source>
         <translation></translation>
     </message>
@@ -1066,10 +1058,6 @@ Etes-vous sur ?</source>
     <message>
         <source>Unites</source>
         <translation>Unités</translation>
-    </message>
-    <message>
-        <source>noeuds</source>
-        <translation></translation>
     </message>
     <message>
         <source>Coordonnees :</source>
@@ -2734,6 +2722,10 @@ Etes-vous sûr?</translation>
         <source>Ordre dans la route</source>
         <translation></translation>
     </message>
+    <message>
+        <source>&apos;&apos;</source>
+        <translation></translation>
+    </message>
 </context>
 <context>
     <name>POI_input_ui</name>
@@ -3205,6 +3197,10 @@ VMG %.2f nds</translation>
     <message>
         <source>CD</source>
         <translation></translation>
+    </message>
+    <message>
+        <source>nds</source>
+        <translation>nds</translation>
     </message>
 </context>
 <context>
@@ -6022,6 +6018,11 @@ Voulez-vous la remplacer?</source>
         <source>oui (GRIB Courants)</source>
         <translation></translation>
     </message>
+    <message>
+        <source>Resolution : %1x%2
+</source>
+        <translation>Résolution : %1x%</translation>
+    </message>
 </context>
 <context>
     <name>myScene</name>
@@ -6626,27 +6627,75 @@ Voulez-vous la remplacer?</source>
     </message>
     <message>
         <source>Lat</source>
-        <translation>Lat</translation>
+        <translation type="obsolete">Lat</translation>
     </message>
     <message>
         <source>Lon</source>
-        <translation>Lon</translation>
+        <translation type="obsolete">Lon</translation>
     </message>
     <message>
         <source>000a00a00W</source>
-        <translation>000a00a00W</translation>
+        <translation type="obsolete">000a00a00W</translation>
     </message>
     <message>
         <source>000a00a00N</source>
-        <translation>00a00a00N</translation>
+        <translation type="obsolete">00a00a00N</translation>
     </message>
     <message>
         <source>Deplacer</source>
-        <translation>Déplacer</translation>
+        <translation type="obsolete">Déplacer</translation>
     </message>
     <message>
         <source>Annuler</source>
-        <translation>Annuler</translation>
+        <translation type="obsolete">Annuler</translation>
+    </message>
+    <message>
+        <source>Position</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source> °</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Latitude (dd,dd)</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Longitude (dd,dd)</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source> &apos;</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Est</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Ouest</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Latitude</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Nord</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Sud</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>&apos;&apos;</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Longitude</source>
+        <translation></translation>
     </message>
 </context>
 <context>

@@ -70,9 +70,9 @@ DialogUnits::DialogUnits() : QDialog()
     QString tunit;
     int ind;
 
-    tunit = Settings::getSetting("unitsWindSpeed", "").toString();
-    ind = (tunit=="") ? 0 : cbWindSpeedUnit->findData(tunit);
-    cbWindSpeedUnit->setCurrentIndex( ind );
+//    tunit = Settings::getSetting("unitsWindSpeed", "").toString();
+//    ind = (tunit=="") ? 0 : cbWindSpeedUnit->findData(tunit);
+//    cbWindSpeedUnit->setCurrentIndex( ind );
 
     tunit = Settings::getSetting("unitsPosition", "").toString();
     ind = (tunit=="") ? 0 : cbPositionUnit->findData(tunit);
@@ -102,8 +102,8 @@ void DialogUnits::slotBtOK()
     Settings::setSetting(this->objectName()+".width",this->width());
     QComboBox *cb;
 
-    cb = cbWindSpeedUnit;
-    Settings::setSetting("unitsWindSpeed", cb->itemData(cb->currentIndex()).toString());
+//    cb = cbWindSpeedUnit;
+//    Settings::setSetting("unitsWindSpeed", cb->itemData(cb->currentIndex()).toString());
     cb = cbPositionUnit;
     Settings::setSetting("unitsPosition",  cb->itemData(cb->currentIndex()).toString());
     cb = cbDistanceUnit;
@@ -137,12 +137,12 @@ QFrame *DialogUnits::createFrameGui(QWidget *parent)
     lig ++;
     label = new QLabel(tr("Vitesse du vent :"), frm);
     lay->addWidget( label,    lig,0, Qt::AlignRight);
-    cbWindSpeedUnit = new QComboBox(this);
-    cbWindSpeedUnit->addItem( tr("m/s") ,  "m/s");
-    cbWindSpeedUnit->addItem( tr("km/h"),  "km/h");
-    cbWindSpeedUnit->addItem( tr("noeuds"), "noeuds");
-    cbWindSpeedUnit->setMinimumWidth (sizemin);
-    lay->addWidget( cbWindSpeedUnit, lig,1, Qt::AlignLeft);
+//    cbWindSpeedUnit = new QComboBox(this);
+//    cbWindSpeedUnit->addItem( tr("m/s") ,  "m/s");
+//    cbWindSpeedUnit->addItem( tr("km/h"),  "km/h");
+//    cbWindSpeedUnit->addItem( tr("noeuds"), "noeuds");
+//    cbWindSpeedUnit->setMinimumWidth (sizemin);
+//    lay->addWidget( cbWindSpeedUnit, lig,1, Qt::AlignLeft);
     //-------------------------
     lig ++;
     label = new QLabel(tr("Distances :"), frm);

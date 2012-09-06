@@ -269,9 +269,9 @@ void DialogLoadGrib::updateParameters()
     frzRainCateg = chkFrzRainCateg->isChecked();
     CAPEsfc      = chkCAPEsfc->isChecked();
 
-    Settings::setSetting("downloadIndResolution", cbResolution->currentIndex());
-    Settings::setSetting("downloadIndInterval",  cbInterval->currentIndex());
-    Settings::setSetting("downloadIndNbDays",  cbDays->currentIndex());
+    Settings::setSetting("downloadGribResolution", cbResolution->currentIndex());
+    Settings::setSetting("downloadGribInterval",  cbInterval->currentIndex());
+    Settings::setSetting("downloadGribNbDays",  cbDays->currentIndex());
 
     Settings::setSetting("downloadWind",  wind);
     Settings::setSetting("downloadPressure", pressure);
@@ -550,7 +550,7 @@ QFrame *DialogLoadGrib::createFrameButtonsZone(QWidget *parent)
     assert(cbResolution);
     cbResolution->addItems(QStringList()<< "0.5" << "1" << "2");
     cbResolution->setMinimumWidth (sizemin);
-        ind = Settings::getSetting("downloadIndResolution", 1).toInt();
+        ind = Settings::getSetting("downloadGribResolution", 0).toInt();
         ind = Util::inRange(ind, 0, cbResolution->count()-1);
     cbResolution->setCurrentIndex(ind);
 
@@ -558,7 +558,7 @@ QFrame *DialogLoadGrib::createFrameButtonsZone(QWidget *parent)
     assert(cbInterval);
     cbInterval->addItems(QStringList()<< "3" << "6" << "12" << "24");
     cbInterval->setMinimumWidth (sizemin);
-        ind = Settings::getSetting("downloadIndInterval", 1).toInt();
+        ind = Settings::getSetting("downloadGribInterval", 0).toInt();
         ind = Util::inRange(ind, 0, cbInterval->count()-1);
     cbInterval->setCurrentIndex(ind);
 
@@ -566,7 +566,7 @@ QFrame *DialogLoadGrib::createFrameButtonsZone(QWidget *parent)
     assert(cbDays);
     cbDays->addItems(QStringList()<< "1"<<"2"<<"3"<<"4"<<"5"<<"6"<<"7"<<"8");
     cbDays->setMinimumWidth (sizemin);
-        ind = Settings::getSetting("downloadIndNbDays", 4).toInt();
+        ind = Settings::getSetting("downloadGribNbDays", 7).toInt();
         ind = Util::inRange(ind, 0, cbDays->count()-1);
     cbDays->setCurrentIndex(ind);
 
