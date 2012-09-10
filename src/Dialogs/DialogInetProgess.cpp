@@ -37,7 +37,7 @@ void DialogInetProgess::showDialog(QString name)
     progress->reset();
     progress_txt->setText("0/0 Kb");
     setWindowModality(Qt::ApplicationModal);
-    setWindowFlags(Qt::WindowStaysOnTopHint);
+    //setWindowFlags(Qt::WindowStaysOnTopHint);
     show();
 }
 void DialogInetProgess::hideDialog()

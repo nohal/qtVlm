@@ -339,9 +339,8 @@ myCentralWidget::myCentralWidget(Projection * proj,MainWindow * parent,MenuBar *
     inetManager = new inetConnexion(mainW);
 
     gshhsDwnload = new GshhsDwnload(this,inetManager);
-
+    terre=NULL;
     loadGshhs();
-
     grib = new Grib();
     gribCurrent = new Grib();
     gribCurrent->setIsCurrentGrib();
@@ -640,7 +639,9 @@ myCentralWidget::~myCentralWidget()
         xmlData->slot_writeData(player_list,race_list,QString("boatAcc.dat"));
     }
     delete gribCurrent;
+    gribCurrent=NULL;
     delete grib;
+    grib=NULL;
     delete currentPlayer;
 }
 

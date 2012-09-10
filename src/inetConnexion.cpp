@@ -261,10 +261,10 @@ void inetConnexion::slot_progess(qint64 bytesReceived, qint64 bytesTotal )
         qWarning() << "Draw progress - can't get sender";
         return;
     }
-    inetClient * currentClient;
+    inetClient * currentClient=NULL;
     QListIterator<inetClient*> i (replyList);
 
-    bool found=true;
+    bool found=false;
 
     while(!found && i.hasNext())
     {
