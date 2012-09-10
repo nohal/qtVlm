@@ -2654,25 +2654,44 @@ void myCentralWidget::exportRouteFromMenuKML(ROUTE * route,QString fileName,bool
         qd4.appendChild(t);
         if(grib && grib->isOk() && pList.at(i)->getRouteTimeStamp()!=-1)
         {
-            double wind_speed,wind_angle;
+            double speed,angle;
             if(grib->getInterpolatedValue_byDates(pList.at(i)->getLongitude(), pList.at(i)->getLatitude(),
-                                                  pList.at(i)->getRouteTimeStamp(),&wind_speed,&wind_angle,INTERPOLATION_DEFAULT))
+                                                  pList.at(i)->getRouteTimeStamp(),&speed,&angle,INTERPOLATION_DEFAULT))
             {
                 qd4=doc.createElement("Data");
                 qd3.appendChild(qd4);
-                qd4.setAttribute("name","TWS (grib/eta)");
+                qd4.setAttribute("name","TWS");
                 qd5=doc.createElement("value");
                 qd4.appendChild(qd5);
-                t=doc.createTextNode(QString().sprintf("%.2f kts",wind_speed));
+                t=doc.createTextNode(QString().sprintf("%.2f kts",speed));
                 qd5.appendChild(t);
 
                 qd4=doc.createElement("Data");
                 qd3.appendChild(qd4);
-                qd4.setAttribute("name","TWD (grib/eta)");
+                qd4.setAttribute("name","TWD");
                 qd5=doc.createElement("value");
                 qd4.appendChild(qd5);
-                t=doc.createTextNode(QString().sprintf("%.2f",wind_angle)+tr("deg"));
+                t=doc.createTextNode(QString().sprintf("%.2f",angle)+tr("deg"));
                 qd5.appendChild(t);
+                if(grib->getInterpolatedValueCurrent_byDates(pList.at(i)->getLongitude(), pList.at(i)->getLatitude(),
+                                                      pList.at(i)->getRouteTimeStamp(),&speed,&angle,INTERPOLATION_DEFAULT))
+                {
+                    qd4=doc.createElement("Data");
+                    qd3.appendChild(qd4);
+                    qd4.setAttribute("name","CS");
+                    qd5=doc.createElement("value");
+                    qd4.appendChild(qd5);
+                    t=doc.createTextNode(QString().sprintf("%.2f kts",speed));
+                    qd5.appendChild(t);
+
+                    qd4=doc.createElement("Data");
+                    qd3.appendChild(qd4);
+                    qd4.setAttribute("name","CD");
+                    qd5=doc.createElement("value");
+                    qd4.appendChild(qd5);
+                    t=doc.createTextNode(QString().sprintf("%.2f",angle)+tr("deg"));
+                    qd5.appendChild(t);
+                }
                 if(!route->getFrozen())
                 {
                     QList<QList<double> > * roadBook=route->getRoadMap();

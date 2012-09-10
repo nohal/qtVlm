@@ -138,7 +138,6 @@ int main(int argc, char *argv[])
     app.setQuitOnLastWindowClosed(true);
 
     MainWindow win(800, 600);
-    qWarning()<<"closing qtVlm";
     if(win.getRestartNeeded())
     {
         app.quit();
