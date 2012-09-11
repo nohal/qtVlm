@@ -332,5 +332,6 @@ class ROUTAGE : public QObject
         QList<vlmLine*> isoRoutes;
         QList<vlmLine*> alternateRoutes;
         QList<QLineF> barrieres;
+        void countDebug(int nbIso, QString s);
     };
 #endif // ROUTAGE_H

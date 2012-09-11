@@ -45,6 +45,7 @@ Original code: virtual-winds.com
 #include "vlmpointgraphic.h"
 #include "settings.h"
 //#include "Terrain.h"
+//#define debugCount;
 inline vlmPoint findPointThreaded(const vlmPoint &point)
 {
     vlmPoint pt=point;
@@ -1491,17 +1492,24 @@ void ROUTAGE::slot_calculate()
                 }
             }
 #endif
+            //qWarning()<<nbIso<<"/"<<n<<"generated"<<polarPoints.count()<<"points";
             if(!polarPoints.isEmpty())
             {
                 tempPoints.append(polarPoints);
             }
         }
+#ifdef debugCount
+        this->countDebug(nbIso,"initial count in tempPoints");
+#endif
         msecs_1=msecs_1+time.elapsed();
 /*1eme epuration: on supprime les segments qui se croisent */
         time.restart();
 #if 1
         if(tempPoints.count()>0 && !tempPoints.at(0).origin->isStart)
              removeCrossedSegments();
+#endif
+#ifdef debugCount
+        this->countDebug(nbIso,"after removeCrossedSegments()");
 #endif
         msecs_2=msecs_2+time.elapsed();
 
@@ -1513,6 +1521,9 @@ void ROUTAGE::slot_calculate()
         {
             checkIsoCrossingPreviousSegments();
         }
+#ifdef debugCount
+        this->countDebug(nbIso,"after checkIsoCrossingPreviousSegments()");
+#endif
         msecs_9=msecs_9+time.elapsed();
 
 #endif
@@ -1522,6 +1533,9 @@ void ROUTAGE::slot_calculate()
         {
             pruneWake(pruneWakeAngle);
         }
+#ifdef debugCount
+        this->countDebug(nbIso,"after pruneWake()");
+#endif
         msecs_10=msecs_10+time.elapsed();
 #endif
 
@@ -1537,6 +1551,9 @@ void ROUTAGE::slot_calculate()
         {
             epuration(toBeRemoved*0.5);
         }
+#ifdef debugCount
+        this->countDebug(nbIso,"After elimination of 50%");
+#endif
         msecs_6=msecs_6+time.elapsed();
 //        if(i_iso)
 //            qWarning()<<"after epuration()"<<tempPoints.count();
@@ -1568,6 +1585,9 @@ void ROUTAGE::slot_calculate()
                 }
             }
         }
+#ifdef debugCount
+        this->countDebug(nbIso,"after smoothing iso");
+#endif
         msecs_4=msecs_4+time.elapsed();
 
 //        if(i_iso)
@@ -1596,6 +1616,9 @@ void ROUTAGE::slot_calculate()
             {
                 checkIsoCrossingPreviousSegments();
             }
+#ifdef debugCount
+            this->countDebug(nbIso,"after checkIsoCrossingPreviousSegments() -2");
+#endif
             if(somethingHasChanged) continue;
 /* now that some fast calculations have been made, compute real thing using route*/
             if(this->useRouteModule && !routeDone)
@@ -1727,6 +1750,9 @@ void ROUTAGE::slot_calculate()
                     checkIsoCrossingPreviousSegments();
                     msecs_13=msecs_13+t1.elapsed();
                 }
+#ifdef debugCount
+                this->countDebug(nbIso,"at end of final loop");
+#endif
             }
         }
         msecs_7=msecs_7+time.elapsed();
@@ -1738,6 +1764,9 @@ void ROUTAGE::slot_calculate()
         {
             epuration(toBeRemoved);
         }
+#ifdef debugCount
+        this->countDebug(nbIso,"after final epuration");
+#endif
         //qWarning()<<"after final epuration"<<tempPoints.count();
         msecs_6=msecs_6+time.elapsed();
         previousIso.clear();
@@ -2199,6 +2228,18 @@ void ROUTAGE::slot_calculate()
     this->slot_gribDateChanged();
     running=false;
 }
+void ROUTAGE::countDebug(int nbIso, QString s)
+{
+    if(nbIso!=15) return;
+    int count=0;
+    for (int n=0;n<tempPoints.count();++n)
+    {
+        if(tempPoints.at(n).originNb>116)
+            ++count;
+    }
+    qWarning()<<"remains"<<count<<"points"<<s;
+}
+
 double ROUTAGE::findDistancePreviousIso(const vlmPoint P, const QPolygonF * poly)
 {
     double cx=P.x;
@@ -2652,6 +2693,8 @@ void ROUTAGE::checkIsoCrossingPreviousSegments()
 {
     for(int nn=0;nn<tempPoints.count()-1;++nn)
     {
+        if(tempPoints.at(nn).notSimplificable || tempPoints.at(nn+1).notSimplificable)
+            continue;
         QPointF dummy;
         QLineF S1(tempPoints.at(nn).x,tempPoints.at(nn).y,tempPoints.at(nn+1).x,tempPoints.at(nn+1).y);
         bool bad=false;
@@ -2672,7 +2715,7 @@ void ROUTAGE::checkIsoCrossingPreviousSegments()
         if(bad) continue;
         for(int mm=0;mm<previousIso.count()-1;++mm) /*also check that new Iso does not cross previous iso*/
         {
-            QLineF S2(previousIso.at(mm),previousIso.at(mm));
+            QLineF S2(previousIso.at(mm),previousIso.at(mm+1));
             if(S1.intersect(S2,&dummy)==QLineF::BoundedIntersection)
 //                    if(fastIntersects(S1,S2))
             {
