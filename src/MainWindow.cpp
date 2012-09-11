@@ -236,7 +236,7 @@ MainWindow::MainWindow(int w, int h, QWidget *parent)
 {
     //debugPOI=NULL;
     restartNeeded=false;
-    setWindowIcon (QIcon ("icon/qtVlm_48x48.png"));
+    setWindowIcon (QIcon (appFolder.value("icon")+"qtVlm_48x48.png"));
     noSave=false;
     isStartingUp=true;
     finishStart=true;
@@ -396,7 +396,9 @@ MainWindow::MainWindow(int w, int h, QWidget *parent)
 
     //--------------------------------------------------
     progress->setLabelText("opening grib");
-    gribFilePath = Settings::getSetting("gribFilePath", "grib").toString();
+    gribFilePath = Settings::getSetting("gribFilePath", appFolder.value("grib")).toString();
+    if(gribFilePath.isEmpty())
+        gribFilePath = appFolder.value("grib");
     QString fname = Settings::getSetting("gribFileName", "").toString();
     if (fname != "" && QFile::exists(fname))
     {
@@ -1019,7 +1021,7 @@ void MainWindow::slotFile_Open()
     QDir dirGrib(gribFilePath);
     if(!dirGrib.exists())
     {
-        gribFilePath=QDir::currentPath()+"/grib";
+        gribFilePath=appFolder.value("grib");
         Settings::setSetting("askGribFolder",1);
         Settings::setSetting("edtGribFolder",gribFilePath);
     }
@@ -1045,7 +1047,7 @@ void MainWindow::slotFile_Open_Current()
     QDir dirGrib(gribFilePath);
     if(!dirGrib.exists())
     {
-        gribFilePath=QDir::currentPath()+"/grib";
+        gribFilePath=appFolder.value("grib");
         Settings::setSetting("askGribFolder",1);
         Settings::setSetting("edtGribFolder",gribFilePath);
     }

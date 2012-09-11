@@ -25,12 +25,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
 #include "settings.h"
+#include "dataDef.h"
 
 QSettings *fileSettings;
 
 void Settings::initSettings(void)
 {
-    if (! QFile::exists (SETTINGS_FILE))
+    if (! QFile::exists (appFolder.value("userFiles")+SETTINGS_FILE))
     {
         qWarning() << "No setting file found";
         QSettings loc_settings("qtVlm");
@@ -50,7 +51,7 @@ void Settings::initSettings(void)
 
     if(!fileSettings)
     {
-        fileSettings = new QSettings(SETTINGS_FILE, QSettings::IniFormat);
+        fileSettings = new QSettings(appFolder.value("userFiles")+SETTINGS_FILE, QSettings::IniFormat);
     }
 }
 
@@ -58,7 +59,7 @@ void Settings::loadFromReg(void)
 {
     if(!fileSettings)
     {
-        fileSettings = new QSettings(SETTINGS_FILE, QSettings::IniFormat);
+        fileSettings = new QSettings(appFolder.value("userFiles")+SETTINGS_FILE, QSettings::IniFormat);
     }
 
     QSettings loc_settings("qtVlm");

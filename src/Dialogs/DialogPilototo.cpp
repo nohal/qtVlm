@@ -59,7 +59,7 @@ DialogPilototo::DialogPilototo(MainWindow *main,myCentralWidget * parent,inetCon
             this,SLOT(editInstructionsPOI(DialogPilototoInstruction * ,POI * )));
     connect(main,SIGNAL(boatHasUpdated(boat*)),this,SLOT(slot_boatUpdated(boat*)));
 
-    btn_addInstruction->setIcon(QIcon("img/add.png"));
+    btn_addInstruction->setIcon(QIcon(appFolder.value("img")+"add.png"));
 
     instructions_list.clear();
     drawList.clear();
@@ -692,12 +692,12 @@ DialogPilototoInstruction::DialogPilototoInstruction(QWidget * main,QWidget * pa
     mode_sel->addItem(tr("Meilleur VMG (4)"));
     mode_sel->addItem(tr("VBVMG (5)"));
 
-    btn_delInstruction->setIcon(QIcon("img/del.png"));
-    btn_validate->setIcon(QIcon("img/apply.png"));
-    btn_cancel->setIcon(QIcon("img/undo.png"));
-    btn_updateTime->setIcon(QIcon("img/clock.png"));
-    btn_copy->setIcon(QIcon("img/copy.png"));
-    btn_paste->setIcon(QIcon("img/paste.png"));
+    btn_delInstruction->setIcon(QIcon(appFolder.value("img")+"del.png"));
+    btn_validate->setIcon(QIcon(appFolder.value("img")+"apply.png"));
+    btn_cancel->setIcon(QIcon(appFolder.value("img")+"undo.png"));
+    btn_updateTime->setIcon(QIcon(appFolder.value("img")+"clock.png"));
+    btn_copy->setIcon(QIcon(appFolder.value("img")+"copy.png"));
+    btn_paste->setIcon(QIcon(appFolder.value("img")+"paste.png"));
 
 
     updateHasChanged(true); /*instruction is not saved when created*/

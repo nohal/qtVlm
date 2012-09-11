@@ -44,8 +44,8 @@ DialogPilototoParam::DialogPilototoParam(QWidget *parent) : QDialog(parent)
     mode->addItem(tr("Meilleur VMG (4)"));
     mode->addItem(tr("VBVMG (5)"));
 
-    btn_copyPOI->setIcon(QIcon("img/copy.png"));
-    btn_pastePOI->setIcon(QIcon("img/paste.png"));
+    btn_copyPOI->setIcon(QIcon(appFolder.value("img")+"copy.png"));
+    btn_pastePOI->setIcon(QIcon(appFolder.value("img")+"paste.png"));
 }
 
 void DialogPilototoParam::editInstruction(DialogPilototoInstruction * instruction)

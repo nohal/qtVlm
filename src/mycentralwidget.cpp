@@ -414,7 +414,7 @@ myCentralWidget::myCentralWidget(Projection * proj,MainWindow * parent,MenuBar *
     connect(&dialogUnits, SIGNAL(accepted()), terre, SLOT(redrawAll()));
     connect(&dialogGraphicsParams, SIGNAL(accepted()), terre, SLOT(updateGraphicsParameters()));
     scene->addItem(terre);
-    horn=new QSound("img/boat_horn.wav");
+    horn=new QSound(appFolder.value("img")+"boat_horn.wav");
     hornTimer=new QTimer(this);
     connect(hornTimer,SIGNAL(timeout()),this,SLOT(slot_playHorn()));
     this->hornDate=QDateTime::currentDateTime().toUTC();
@@ -535,7 +535,7 @@ void myCentralWidget::loadGshhs(void) {
         gshhsReader=NULL;
     }
 
-    gshhsReader = new GshhsReader("maps/gshhs", 0);
+    gshhsReader = new GshhsReader((appFolder.value("maps")+"/gshhs").toAscii().data(), 0);
     gshhsReader->setProj(proj);
 
     int polyVersion = gshhsReader->getPolyVersion();
@@ -593,12 +593,12 @@ void myCentralWidget::centerCompass(double lon, double lat)
 
 void myCentralWidget::loadBoat(void)
 {
-    emit readBoatData("boatAcc.dat",true);
+    emit readBoatData(appFolder.value("userFiles")+"boatAcc.dat",true);
 }
 
 void myCentralWidget::loadPOI(void)
 {
-    emit readPOIData("poi.dat");
+    emit readPOIData(appFolder.value("userFiles")+"poi.dat");
     foreach(POI * poi1,this->poi_list)
     {
         if(poi1->getLonConnected()!=-1)
@@ -635,8 +635,8 @@ myCentralWidget::~myCentralWidget()
 {
     if(!mainW->getNoSave() && xmlPOI && xmlData)
     {
-        xmlPOI->slot_writeData(route_list,poi_list,"poi.dat");
-        xmlData->slot_writeData(player_list,race_list,QString("boatAcc.dat"));
+        xmlPOI->slot_writeData(route_list,poi_list,appFolder.value("userFiles")+"poi.dat");
+        xmlData->slot_writeData(player_list,race_list,QString(appFolder.value("userFiles")+"boatAcc.dat"));
     }
     delete gribCurrent;
     gribCurrent=NULL;
@@ -3980,14 +3980,14 @@ void myCentralWidget::slot_playerSelected(Player * player)
 
 void myCentralWidget::slot_writeBoatData(void)
 {
-    emit writeBoatData(player_list,race_list,QString("boatAcc.dat"));
+    emit writeBoatData(player_list,race_list,appFolder.value("userFiles")+"boatAcc.dat");
 }
 
 void myCentralWidget::slot_readBoatData(void)
 {
     // on vide la liste
 
-    emit readBoatData("boatAcc.dat",true);
+    emit readBoatData(appFolder.value("userFiles")+"boatAcc.dat",true);
 }
 
 /**************************/
@@ -4018,7 +4018,7 @@ void myCentralWidget::slot_readRaceData(void)
         slot_delRace_list(ptr);
         delete ptr;
     }
-    emit readBoatData("boatAcc.dat",false);
+    emit readBoatData(appFolder.value("userFiles")+"boatAcc.dat",false);
 }
 
 /**************************/
@@ -4135,7 +4135,7 @@ void myCentralWidget::slot_setColorMapMode(QAction* act)
 
 void myCentralWidget::slot_POISave(void)
 {
-    emit writePOIData(route_list,poi_list,"poi.dat");
+    emit writePOIData(route_list,poi_list,appFolder.value("userFiles")+"poi.dat");
     QMessageBox::information(this,tr("Sauvegarde des POIs et des routes"),tr("Sauvegarde reussie"));
 }
 void myCentralWidget::slot_POIRestore(void)

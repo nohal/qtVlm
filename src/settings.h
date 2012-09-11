@@ -26,7 +26,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <QSettings>
 #include <QObject>
 
-#define SETTINGS_FILE "./qtVlm.ini"
+#define SETTINGS_FILE "qtVlm.ini"
 
 class Settings : QObject
 { Q_OBJECT

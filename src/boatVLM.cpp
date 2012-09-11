@@ -347,10 +347,10 @@ void boatVLM::requestFinished (QByteArray res_byte)
                     if(!this->polarData || this->polarData->getName()!=polarName)
                     {
                         QFile file;
-                        file.setFileName("polar/"+polarVlm+".csv");
+                        file.setFileName(appFolder.value("polar")+polarVlm+".csv");
                         if(!file.exists())
                         {
-                            file.setFileName("polar/"+polarVlm+".pol");
+                            file.setFileName(appFolder.value("polar")+polarVlm+".pol");
                         }
                         if(!file.exists())
                         {
@@ -383,7 +383,7 @@ void boatVLM::requestFinished (QByteArray res_byte)
             }
             else
             {
-                QFile filePolar("polar/"+polarVlm+".csv");
+                QFile filePolar(appFolder.value("polar")+polarVlm+".csv");
                 if(!filePolar.exists() && filePolar.open(QIODevice::WriteOnly))
                 {
                     filePolar.write(res_byte);

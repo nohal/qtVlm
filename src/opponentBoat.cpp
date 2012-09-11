@@ -159,7 +159,7 @@ void opponent::paint(QPainter * pnt, const QStyleOptionGraphicsItem * , QWidget 
     {
         if(flag.isNull())
         {
-            if(flag.load("img/flags/"+this->pavillon+".png"))
+            if(flag.load(appFolder.value("flags")+this->pavillon+".png"))
             {
                 flag=flag.scaled(30,20,Qt::KeepAspectRatio);
                 drawFlag=true;
@@ -359,10 +359,10 @@ void opponent::updateName()
     else
     {
         str2="<qt>";
-        QFile img("img/boats/"+name+".png");
+        QFile img(appFolder.value("boatsImg")+name+".png");
         if(img.exists() && img.size()<200*1024)
         {
-            str2="<img src='img/boats/"+name+".png'>";
+            str2="<img src='"+appFolder.value("boatsImg")+name+".png'>";
         }
         str2+="<table><tr><td>"+this->longName+"</td><td></td></tr>";
         str2=str2+"<tr><td>"+tr("Id: ")+"</td><td>"+this->idu+"</td></tr>";

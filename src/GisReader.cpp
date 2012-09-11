@@ -44,7 +44,7 @@ GisReader::GisReader()
     // Read countries file
     //------------------------------------
     fname = (lang == "fr") ?
-            "maps/gis/countries_fr.txt.gz" : "maps/gis/countries_en.txt.gz";
+            appFolder.value("maps")+"gis/countries_fr.txt.gz" : appFolder.value("maps")+"/gis/countries_en.txt.gz";
     f = zu_open(qPrintable(fname), "rb");
     if (f != NULL) {
         long sz = zu_read(f, buf, szmax);
@@ -72,7 +72,7 @@ GisReader::GisReader()
     //------------------------------------
     // Read cities file
     //------------------------------------
-    fname = "maps/gis/cities.txt.gz";
+    fname = appFolder.value("maps")+"/gis/cities.txt.gz";
     f = zu_open(qPrintable(fname), "rb");
     if (f != NULL) {
         long sz = zu_read(f, buf, szmax);

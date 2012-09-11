@@ -89,11 +89,11 @@ void Polar::setPolarName(QString fname)
     //qWarning() << "Opening polar" << fname<<"with coeff"<<coeffPolar;
 
     name=fname;
-    QString nameF = "polar/"+fname+".csv";
+    QString nameF = appFolder.value("polar")+fname+".csv";
     QFile file(nameF);
     if (fname.endsWith(".csv",Qt::CaseInsensitive) || fname.endsWith(".pol",Qt::CaseInsensitive))
     {
-        nameF="polar/"+fname;
+        nameF=appFolder.value("polar")+fname;
         file.setFileName(nameF);
         if (!file.open(QIODevice::ReadOnly | QIODevice::Text ))
         {
@@ -109,7 +109,7 @@ void Polar::setPolarName(QString fname)
         if (!file.open(QIODevice::ReadOnly | QIODevice::Text ))
         {
             isCsv=false;
-            nameF = "polar/"+fname+".pol";
+            nameF = appFolder.value("polar")+fname+".pol";
             file.setFileName(nameF);
             if (!file.open(QIODevice::ReadOnly | QIODevice::Text ))
             {
@@ -263,7 +263,7 @@ void Polar::setPolarName(QString fname)
     }while(ws<60.1);
     loaded=true;
     QFileInfo fi(file.fileName());
-    QString nameFVmg = "polar/"+fi.baseName()+".vmg";
+    QString nameFVmg = appFolder.value("polar")+fi.baseName()+".vmg";
     fileVMG.setFileName(nameFVmg);
     if (fileVMG.open(QIODevice::ReadOnly | QIODevice::Text ))
     {

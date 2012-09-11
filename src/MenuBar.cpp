@@ -45,9 +45,9 @@ MenuBar::MenuBar(QWidget *parent)
     menuFile = new QMenu(tr("QtVlm"));
 
         acFile_Quit = addAction(menuFile,
-                    tr("Quitter"), tr("Ctrl+Q"), tr("Bye"), "img/exit.png");
+                    tr("Quitter"), tr("Ctrl+Q"), tr("Bye"), appFolder.value("img")+"exit.png");
         acFile_QuitNoSave = addAction(menuFile,
-                    tr("Quitter sans sauver"), tr("Ctrl+Shift+Q"), tr("Bye"), "img/exit2.png");
+                    tr("Quitter sans sauver"), tr("Ctrl+Shift+Q"), tr("Bye"), appFolder.value("img")+"exit2.png");
         menuFile->addSeparator();
         mn_img=new QMenu(tr("Gestion des fichiers KAP"));
         acImg_Open = addAction(mn_img, tr("Ouvrir un fichier KAP"), "", tr(""));
@@ -92,30 +92,30 @@ MenuBar::MenuBar(QWidget *parent)
     menuView = new QMenu(tr("Fichier GRIB"));
         acFile_Open = addAction(menuView, tr("Ouvrir"),
                     tr("Ctrl+O"),
-                    tr("Ouvrir un fichier GRIB"), "img/fileopen.png");
+                    tr("Ouvrir un fichier GRIB"), appFolder.value("img")+"fileopen.png");
         acFile_Close = addAction(menuView, tr("Fermer"),
                     tr("Ctrl+W"),
-                    tr("Fermer"), "img/fileclose.png");
+                    tr("Fermer"), appFolder.value("img")+"fileclose.png");
         acFile_Load_GRIB = addAction(menuView, tr("Telechargement"),
                     tr("Ctrl+D"),
-                    tr("Telechargement"), "img/network.png");
+                    tr("Telechargement"), appFolder.value("img")+"network.png");
         acFile_Load_VLM_GRIB = addAction(menuView, tr("Telechargement VLM"),
                     tr(""),
-                    tr("Telechargement VLM"), "img/VLM_mto.png");
+                    tr("Telechargement VLM"), appFolder.value("img")+"VLM_mto.png");
         acFile_Load_SAILSDOC_GRIB = addAction(menuView, tr("Telechargement SailsDoc"),
                                                 tr(""),
-                                                tr("Telechargement SailsDoc"), "img/kmail.png");
+                                                tr("Telechargement SailsDoc"), appFolder.value("img")+"kmail.png");
         menuView->addSeparator();
         acFile_Open_Current = addAction(menuView, tr("Ouvrir un GRIB Courants"),
                     tr(""),
-                    tr("Ouvrir un fichier GRIB Courants"), "img/fileopen.png");
+                    tr("Ouvrir un fichier GRIB Courants"), appFolder.value("img")+"fileopen.png");
         acFile_Close_Current = addAction(menuView, tr("Fermer le GRIB Courants"),
                     tr(""),
-                    tr("Fermer le GRIB Courants"), "img/fileclose.png");
+                    tr("Fermer le GRIB Courants"), appFolder.value("img")+"fileclose.png");
         menuView->addSeparator();
         acFile_Info_GRIB = addAction(menuView, tr("Informations sur le fichier"),
                     tr("Ctrl+I"),
-                    tr("Informations sur le fichier GRIB"), "img/info.png");
+                    tr("Informations sur le fichier GRIB"), appFolder.value("img")+"info.png");
         menuView->addSeparator();
 
         menuGroupColorMap = new QMenu(tr("Type de carte"));
@@ -437,7 +437,7 @@ MenuBar::MenuBar(QWidget *parent)
 
     //-------------------------------------
     menuHelp = new QMenu(tr("Aide"));
-        acHelp_Help = addAction(menuHelp, tr("Aide"),tr("Ctrl+H"),tr(""),"img/help.png");
+        acHelp_Help = addAction(menuHelp, tr("Aide"),tr("Ctrl+H"),tr(""),appFolder.value("img")+"help.png");
         acHelp_APropos = addAction(menuHelp, tr("A propos de qtVlm"),tr(""),tr(""),"");
         acHelp_AProposQT = addAction(menuHelp, tr("A propos de QT"),tr(""),tr(""),"");
     addMenu(menuHelp);
@@ -447,23 +447,23 @@ MenuBar::MenuBar(QWidget *parent)
     // Autres objets de l'interface
     //-------------------------------------
     acMap_Zoom_In = addAction(NULL,  tr("Augmenter l'echelle de la carte"), tr(""),
-                              tr("Augmenter l'echelle de la carte"), "img/viewmag+.png");
+                              tr("Augmenter l'echelle de la carte"), appFolder.value("img")+"viewmag+.png");
     acMap_Zoom_Out = addAction(NULL, tr("Diminuer l'echelle de la carte"), tr(""),
-                               tr("Diminuer l'echelle de la carte"), "img/viewmag-.png");
+                               tr("Diminuer l'echelle de la carte"), appFolder.value("img")+"viewmag-.png");
     acMap_Zoom_In->setData("zoomIn");
     acMap_Zoom_Out->setData("zoomOut");
     acMap_Zoom_Sel = addAction(NULL,
                                tr("Zoom (selection ou fichier Grib)"),
                                tr("Ctrl+Z"),
                                tr("Zoomer sur la zone selectionnee ou sur la surface du fichier Grib"),
-                               "img/viewmagfit.png");
+                               appFolder.value("img")+"viewmagfit.png");
     acMap_Zoom_All = addAction(NULL, tr("Afficher la carte entiere"), tr(""),
-                               tr("Afficher la carte entiere"), "img/viewmag1.png");
+                               tr("Afficher la carte entiere"), appFolder.value("img")+"viewmag1.png");
 
     acDatesGrib_prev = addAction( NULL,
-            tr("Prevision precedente [page prec]"),tr("PgUp"),tr(""),"img/1leftarrow.png");
+            tr("Prevision precedente [page prec]"),tr("PgUp"),tr(""),appFolder.value("img")+"1leftarrow.png");
     acDatesGrib_next = addAction( NULL,
-            tr("Prevision suivante [page suiv]"),tr("PgDown"),tr(""),"img/1rightarrow.png");
+            tr("Prevision suivante [page suiv]"),tr("PgDown"),tr(""),appFolder.value("img")+"1rightarrow.png");
 
     datesGrib_now = new QPushButton(tr("Now"));
     datesGrib_sel = new QPushButton(tr("Select"));

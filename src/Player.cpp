@@ -232,7 +232,7 @@ void Player::saveBoatsLog()
         return;
     QString fileName="./";
     fileName.append(QString::number(player_id));
-    fileName.append("BoatsLog.dat");
+    fileName.append(appFolder.value("userFiles")+"BoatsLog.dat");
     QFile file( fileName );
     if( !file.open( QIODevice::WriteOnly ) )
       return;
@@ -248,7 +248,7 @@ void Player::loadBoatsLog()
     boatsLog.clear();
     QString fileName="./";
     fileName.append(QString::number(player_id));
-    fileName.append("BoatsLog.dat");
+    fileName.append(appFolder.value("userFiles")+"BoatsLog.dat");
     QFile file( fileName );
     if( !file.open( QIODevice::ReadOnly ) )
       return;

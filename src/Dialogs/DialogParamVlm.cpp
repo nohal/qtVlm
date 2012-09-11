@@ -109,7 +109,7 @@ DialogParamVlm::DialogParamVlm(MainWindow * main,myCentralWidget * parent) : QDi
      /* Grib */
 
     chk_askGribFolder->setCheckState(Settings::getSetting("askGribFolder",1).toInt()==1?Qt::Checked:Qt::Unchecked);
-    edt_gribFolder->setText(Settings::getSetting("edtGribFolder","grib/").toString());
+    edt_gribFolder->setText(Settings::getSetting("edtGribFolder",appFolder.value("grib")).toString());
 
     chk_gribZoomOnLoad->setCheckState(Settings::getSetting("gribZoomOnLoad",0).toInt()==1?Qt::Checked:Qt::Unchecked);
     chk_autoGribDate->setCheckState(Settings::getSetting("autoGribDate",0).toInt()==1?Qt::Checked:Qt::Unchecked);

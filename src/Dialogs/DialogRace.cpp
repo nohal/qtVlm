@@ -485,7 +485,7 @@ void DialogRace::requestFinished (QByteArray res_byte)
             QImage img;
             if(img.loadFromData(res_byte))
             {
-                img.save("img/flags/"+imgFileName);
+                img.save(appFolder.value("flags")+imgFileName);
                 //qWarning()<<"saving flag"<<imgFileName;
             }
             ++jj;
@@ -500,7 +500,7 @@ void DialogRace::getMissingFlags()
     for (;jj<param_list[currentRace]->boats.count();jj++)
     {
         imgFileName=param_list[currentRace]->boats.at(jj)->pavillon+".png";
-        file.setFileName("img/flags/"+imgFileName);
+        file.setFileName(appFolder.value("flags")+imgFileName);
         if(!file.exists())
         {
             //qWarning()<<"requesting flag"<<imgFileName;
@@ -700,7 +700,7 @@ void DialogRace::chgRace(int id)
         items.append(new QStandardItem(str));
         items[2]->setData(str.toLower(),Qt::UserRole);
         QImage flag;
-        if(flag.load("img/flags/"+param_list[numRace]->boats[i]->pavillon+".png"))
+        if(flag.load(appFolder.value("flags")+param_list[numRace]->boats[i]->pavillon+".png"))
         {
             items.append(new QStandardItem());
             items[3]->setData(QPixmap::fromImage(flag),Qt::DecorationRole);
@@ -774,7 +774,7 @@ void DialogRace::chgRace(int id)
         items.append(new QStandardItem(str));
         items[1]->setData(str.toLower(),Qt::UserRole);
         QImage flag;
-        if(flag.load("img/flags/"+param_list[numRace]->arrived[i]->pavillon+".png"))
+        if(flag.load(appFolder.value("flags")+param_list[numRace]->arrived[i]->pavillon+".png"))
         {
             items.append(new QStandardItem());
             items[2]->setData(QPixmap::fromImage(flag),Qt::DecorationRole);

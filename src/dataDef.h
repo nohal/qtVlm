@@ -25,7 +25,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <cmath>
 #include <cassert>
 #include <QColor>
+#include <QMap>
 //#define __QTVLM_WITH_TEST
+
+extern QMap<QString,QString> appFolder;
 
 /* some constant */
 

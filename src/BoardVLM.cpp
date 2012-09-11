@@ -1112,7 +1112,7 @@ void tool_edtSpinBox::keyReleaseEvent ( QKeyEvent * event )
 tool_navCenter::tool_navCenter(QWidget * parent):QWidget(parent)
 {
     /* load image */
-    img_fond = new QImage("img/tool_2zones_2.png");
+    img_fond = new QImage(appFolder.value("img")+"tool_2zones_2.png");
     w=img_fond->width();
     h=img_fond->height();
     setFixedSize(w,h);
@@ -1229,14 +1229,14 @@ void tool_navCenter::draw(QPainter * painter)
 tool_windAngle::tool_windAngle(QWidget * parent):QWidget(parent)
 {
     /* load image */
-    img_fond = new QImage("img/tool_1zone_2.png");
+    img_fond = new QImage(appFolder.value("img")+"tool_1zone_2.png");
     w=img_fond->width();
     h=img_fond->height();
     setFixedSize(w,h);
 
-    img_compas = new QImage("img/tool_compas.png");
-    img_boat = new QImage("img/tool_boat.png");
-    img_boat2 = new QImage("img/tool_boat_2.png");
+    img_compas = new QImage(appFolder.value("img")+"tool_compas.png");
+    img_boat = new QImage(appFolder.value("img")+"tool_boat.png");
+    img_boat2 = new QImage(appFolder.value("img")+"tool_boat_2.png");
 
     heading =windDir=windSpeed=0;
     WPdir = -1;
@@ -1381,7 +1381,7 @@ void tool_windAngle::setValues(double heading,double windDir, double windSpeed, 
 tool_windStation::tool_windStation(QWidget * parent):QWidget(parent)
 {
     /* load image */
-    img_fond = new QImage("img/tool_1zone_2.png");
+    img_fond = new QImage(appFolder.value("img")+"tool_1zone_2.png");
     w=img_fond->width();
     h=img_fond->height();
     setFixedSize(w,h);

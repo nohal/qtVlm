@@ -56,7 +56,7 @@ void routeInfo::setValues(double twd, double tws, double twa, double bs, double 
     QPixmap img(40,40);
     if(engineUsed)
     {
-        img.load("img/propeller.png");
+        img.load(appFolder.value("img")+"propeller.png");
     }
     else
         img.fill(Qt::white);

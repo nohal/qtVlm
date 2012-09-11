@@ -277,7 +277,7 @@ void DialogRoute::slotInterval()
         QPixmap img(40,40);
         if(roadItems.at(12)>0)
         {
-            img.load("img/propeller.png");
+            img.load(appFolder.value("img")+"propeller.png");
             if(i>0)
                 totalTimeMoteur+=roadItems.at(0)-route->getRoadMap()->at(i-1).at(0);
         }

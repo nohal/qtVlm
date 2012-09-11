@@ -269,7 +269,7 @@ void boat::paint(QPainter * pnt, const QStyleOptionGraphicsItem * , QWidget * )
         {
             if(flag.isNull())
             {
-                if(flag.load("img/flags/"+this->country+".png"))
+                if(flag.load(appFolder.value("flags")+this->country+".png"))
                 {
                     flag=flag.scaled(30,20,Qt::KeepAspectRatio);
                     drawFlag=true;

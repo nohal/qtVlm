@@ -141,11 +141,11 @@ void DialogLoadGrib::slotGribMessage(QString msg)
 //----------------------------------------------------
 void DialogLoadGrib::slotGribDataReceived(QByteArray *content, QString fileName)
 {
-    QString gribPath=Settings::getSetting("edtGribFolder","grib").toString();
+    QString gribPath=Settings::getSetting("edtGribFolder",appFolder.value("grib")).toString();
     QDir dirGrib(gribPath);
     if(!dirGrib.exists())
     {
-        gribPath=QDir::currentPath()+"/grib";
+        gribPath=appFolder.value("grib");
         Settings::setSetting("askGribFolder",1);
         Settings::setSetting("edtGribFolder",gribPath);
     }

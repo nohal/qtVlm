@@ -66,8 +66,7 @@ void DialogDownloadTracks::init()
     routeName="";
     qStartTime.setTimeSpec(Qt::UTC);
     qEndTime.setTimeSpec(Qt::UTC);
-    QString appExeFolder=QDir::currentPath();
-    filePath=appExeFolder+"/tracks";
+    filePath=appFolder.value("tracks");
     ui->labelPathName->setText(filePath);
     cached=false;
     this->show();
@@ -177,7 +176,7 @@ void DialogDownloadTracks::updateFileName(bool truncTrack)
     else
         fileName=fileName.sprintf("%d_%d_%d_%d_",raceID,boatID,qStartTime.toTime_t(),qEndTime.toTime_t());
     fileName=fileName+".json";
-    fullFileName=filePath+"/"+fileName;
+    fullFileName=filePath+fileName;
     ui->labelFileName->setText(fileName);
     jsonFile.setFileName(fullFileName);
     if (jsonFile.open(QIODevice::ReadOnly))

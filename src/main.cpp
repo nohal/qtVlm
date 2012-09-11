@@ -30,9 +30,12 @@ Copyright (C) 2008 - Jacques Zaninetti - http://zygrib.free.fr
 #include <QLocale>
 #include <QDebug>
 #include <QDir>
+#include <QMap>
 
 #include "MainWindow.h"
 #include "settings.h"
+
+QMap<QString,QString> appFolder;
 
 #if 0 /*put 1 to force crash on assert, useful for debugging*/
 void crashingMessageHandler(QtMsgType type, const char *msg)
@@ -76,21 +79,54 @@ int main(int argc, char *argv[])
     }
 #endif
     appExeFolder=QDir::currentPath();
-    qWarning()<<"Current path"<<appExeFolder;
+    qWarning()<<"Current app path"<<appExeFolder;
+    // home folder
+    QString homeDir="";
+#ifdef Q_WS_WIN
+    qWarning() << "Home path: " << QDir::homePath();
+    QSettings settings(QSettings::UserScope, "Microsoft", "Windows");
+    settings.beginGroup("CurrentVersion/Explorer/Shell Folders");
+    homeDir = settings.value("Personal").toString();
+
+
+#elif defined(Q_WS_X11)
+    homeDir = QDir::homePath();
+#elif defined(Q_WS_MAC)
+    homeDir = QDir::homePath();
+#endif
+
+    homeDir += "/qtVlm";
+    qWarning() << "Home :" << homeDir;
+
     //checks tree
+
+
+
+    appFolder.insert("img",appExeFolder+"/img/");
+    appFolder.insert("flags",homeDir+"/img/flags/");
+    appFolder.insert("boatsImg",homeDir+"/img/boats/");
+    appFolder.insert("grib",homeDir+"/grib/");
+    appFolder.insert("maps",homeDir+"/maps/");
+    appFolder.insert("polar",homeDir+"/polar/");
+    appFolder.insert("tr",appExeFolder+"/tr/");
+    appFolder.insert("tracks",homeDir+"/tracks/");
+    appFolder.insert("userFiles",homeDir+"/");
+    appFolder.insert("icon",appExeFolder+"/icon/");
+
+    //qWarning() << appFolder;
+
+    QList<QString> folderList=appFolder.values();
+
     QDir dirCheck;
-    QStringList appDirs;
-    QString dirName;
-    appDirs<<"icon"<<"img"<<"img/flags"<<"img/boats"<<"grib"<<"maps"<<"polar"<<"tr"<<"tracks";
-    QStringListIterator dirIterator(appDirs);
-    while (dirIterator.hasNext())
-    {
-        dirName=appExeFolder+"/"+dirIterator.next();
-        dirCheck=QDir(dirName);
-        if (!dirCheck.exists())
-            dirCheck.mkdir(dirName);
-        //qWarning() << "Checking folder: " << dirName;
+    for(int i=0;i<folderList.count();i++) {
+        dirCheck=QDir(folderList.value(i));
+        qWarning() << "Checking: " << folderList.value(i);
+        if (!dirCheck.exists()) {
+            dirCheck.mkpath(folderList.value(i));
+            qWarning() << "Creating folder";
+        }
     }
+
     QTextCodec::setCodecForTr(QTextCodec::codecForName("utf8"));
     QTextCodec::setCodecForCStrings(QTextCodec::codecForName("utf8"));
     Settings::initSettings();
@@ -116,23 +152,23 @@ int main(int argc, char *argv[])
     if (lang == "fr") {
         qWarning() << "Loading fr";
         QLocale::setDefault(QLocale("fr_FR"));
-        translator.load( QString("qtVlm_") + lang,"tr/");
-        translatorQt.load( QString("qt_fr"),"tr/");
+        translator.load( QString("qtVlm_") + lang,appFolder.value("tr"));
+        translatorQt.load( QString("qt_fr"),appFolder.value("tr"));
         app.installTranslator(&translatorQt);
         app.installTranslator(&translator);
     }
     else if (lang == "en") {
         qWarning() << "Loading en";
         QLocale::setDefault(QLocale("en_US"));
-        translator.load( QString("tr/qtVlm_") + lang);
+        translator.load( appFolder.value("tr")+"qtVlm_" + lang);
         app.installTranslator(&translator);
     }
     else if (lang == "cz") {
         qWarning() << "Loading cz";
         QLocale::setDefault(QLocale("cs_CZ"));
-        translatorQt.load( QString("qt_cs"),"tr/");
+        translatorQt.load( QString("qt_cs"),appFolder.value("tr"));
         app.installTranslator(&translatorQt);
-        translator.load( QString("tr/qtVlm_") + lang);
+        translator.load( appFolder.value("tr")+"qtVlm_" + lang);
         app.installTranslator(&translator);
     }
     app.setQuitOnLastWindowClosed(true);
