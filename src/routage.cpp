@@ -45,7 +45,7 @@ Original code: virtual-winds.com
 #include "vlmpointgraphic.h"
 #include "settings.h"
 //#include "Terrain.h"
-//#define debugCount;
+//#define debugCount
 inline vlmPoint findPointThreaded(const vlmPoint &point)
 {
     vlmPoint pt=point;
@@ -266,12 +266,21 @@ inline QList<vlmPoint> finalEpuration(const QList<vlmPoint> &listPointsX)
     double critere=0;
     for(int n=0;n<listPoints.size()-1;++n)
     {
-#if 1
         if(qAbs(Util::myDiffAngle(listPoints.at(n).capArrival,
                                 listPoints.at(n+1).capArrival)) > 90)
             critere=179;
+//        else if(listPoints.at(n).originNb!=listPoints.at(n+1).originNb)
+//        {
+//            if(listPoints.at(n).origin->notSimplificable ||
+//               listPoints.at(n+1).origin->notSimplificable)
+//                critere=179;
+//            else if(listPoints.at(n).notSimplificable ||
+//               listPoints.at(n+1).notSimplificable)
+//                critere=179;
+//        }
         else
         {
+            critere=0;
             QLineF temp1;
             QPointF middle;
             if(listPoints.at(n).originNb!=listPoints.at(n+1).originNb)
@@ -295,11 +304,12 @@ inline QList<vlmPoint> finalEpuration(const QList<vlmPoint> &listPointsX)
             {
                 critere=360-critere;
             }
+            if(listPoints.at(n).notSimplificable ||
+               listPoints.at(n+1).notSimplificable ||
+               listPoints.at(n).origin->notSimplificable ||
+               listPoints.at(n+1).origin->notSimplificable)
+                    critere=critere*2.0;
         }
-#else
-        QLineF ecart(listPoints.at(n).x,listPoints.at(n).y,listPoints.at(n+1).x,listPoints.at(n+1).y);
-        double critere=ecart.length();
-#endif
         byCriteres.insert(critere,QPoint(n,n+1));
         s=s.sprintf("%d;%d",n,n+1);
         byIndices.insert(s,critere);
@@ -314,44 +324,22 @@ inline QList<vlmPoint> finalEpuration(const QList<vlmPoint> &listPointsX)
         if(!d.hasNext()) break;
         QPoint couple=d.next().value();
         int badOne=0;
-#if 1
-        if(listPoints.at(couple.x()).distIso<listPoints.at(couple.y()).distIso)
+        if(!listPoints.at(couple.x()).notSimplificable &&
+           listPoints.at(couple.y()).notSimplificable)
+            badOne=couple.x();
+        else if(listPoints.at(couple.x()).notSimplificable &&
+           !listPoints.at(couple.y()).notSimplificable)
+            badOne=couple.y();
+        else if(listPoints.at(couple.x()).origin->notSimplificable &&
+           !listPoints.at(couple.y()).origin->notSimplificable)
+            badOne=couple.y();
+        else if(!listPoints.at(couple.x()).origin->notSimplificable &&
+           listPoints.at(couple.y()).origin->notSimplificable)
+            badOne=couple.x();
+        else if(listPoints.at(couple.x()).distIso<listPoints.at(couple.y()).distIso)
             badOne=couple.x();
         else
             badOne=couple.y();
-#else
-        if(couple.x()==0)
-            badOne=couple.y();
-        else if(couple.y()==listPoints.count()-1)
-            badOne=couple.x();
-        else
-        {
-            int avant=-1;
-            if(couple.x()-1>0)
-                avant=deadStatus.lastIndexOf(false,couple.x()-1);
-            int apres=-1;
-            if(couple.y()+1<listPoints.count()-1)
-                apres=deadStatus.indexOf(false,couple.y()+1);
-            if(avant==-1 || apres==-1)
-            {
-                if(listPoints.at(couple.x()).distIso<listPoints.at(couple.y()).distIso)
-                    badOne=couple.x();
-                else
-                    badOne=couple.y();
-            }
-            else
-            {
-                s=s.sprintf("%d;%d",avant,couple.x());
-                double a1=byIndices.value(s);
-                s=s.sprintf("%d;%d",couple.y(),apres);
-                double a2=byIndices.value(s);
-                if(a1<a2)
-                    badOne=couple.x();
-                else
-                    badOne=couple.y();
-            }
-        }
-#endif
         deadStatus.replace(badOne,true);
         int previous=-1;
         int next=-1;
@@ -368,7 +356,6 @@ inline QList<vlmPoint> finalEpuration(const QList<vlmPoint> &listPointsX)
             double critereNext=byIndices.value(s);
             byCriteres.remove(criterePrevious,QPoint(previous,badOne));
             byCriteres.remove(critereNext,QPoint(badOne,next));
-#if 1
             QLineF temp1;
             QPointF middle;
             if(listPoints.at(previous).originNb!=listPoints.at(next).originNb)
@@ -392,10 +379,6 @@ inline QList<vlmPoint> finalEpuration(const QList<vlmPoint> &listPointsX)
             {
                 critere=360-critere;
             }
-#else
-            QLineF ecart(listPoints.at(previous).x,listPoints.at(previous).y,listPoints.at(next).x,listPoints.at(next).y);
-            double critere=ecart.length();
-#endif
             byCriteres.insert(critere,QPoint(previous,next));
             s=s.sprintf("%d;%d",previous,next);
             byIndices.insert(s,critere);
@@ -1297,7 +1280,7 @@ void ROUTAGE::slot_calculate()
                 {
                     ++nbCaps;
     #if 1 /*use angle limits*/
-                    if(!tryingToFindHole && !list->at(0).isStart)
+                    if(!tryingToFindHole && !list->at(0).isStart && !list->at(n).notSimplificable)
                     {
                         QLineF temp(list->at(n).x,list->at(n).y,xa,ya);
                         temp.setAngle(Util::A360(90-caps.at(ccc)));
@@ -1432,7 +1415,7 @@ void ROUTAGE::slot_calculate()
                     msecs_21=msecs_21+tfp.elapsed();
                     if(tryingToFindHole)
                         newPoint.notSimplificable=true;
-                    else
+                    else if(!list->at(n).notSimplificable)
                     {
                         if(newPoint.distStart<newPoint.distArrival)
                         {
@@ -1448,8 +1431,9 @@ void ROUTAGE::slot_calculate()
                 if(!toBeRestarted || aborted) break;
                 polarPoints.clear();
             }
+            if(aborted) break;
 #if 1 /* keep only max 80% of initial number of points per polar, based on distIso*/
-            if(!tryingToFindHole && !list->at(n).isStart)
+            if(!tryingToFindHole && !list->at(n).isStart && !list->at(n).notSimplificable)
             {
                 int max=(angleRange/angleStep)*0.8;
                 if(max<polarPoints.count())
@@ -1457,38 +1441,14 @@ void ROUTAGE::slot_calculate()
                     QMultiMap<double,vlmPoint> dist;
                     for (int nn=polarPoints.count()-1;nn>=0;--nn)
                     {
-#if 0
-                        if(minDist<initialDist/10)
-                            dist.insert(polarPoints.at(nn).distArrival,polarPoints.at(nn));
-                        else
-#endif
-                            dist.insert(polarPoints.at(nn).distIso,polarPoints.at(nn));
+                        dist.insert(polarPoints.at(nn).distIso,polarPoints.at(nn));
                     }
                     QMapIterator<double,vlmPoint> it(dist);
-#if 0
-                    if(minDist<initialDist/10)
-                    {
-                        it.toBack();
-                        while(it.hasPrevious() && polarPoints.count()>max)
-                        {
-                            polarPoints.removeOne(it.previous().value());
-                        }
-                    }
-                    else
-                    {
-                        it.toFront();
-                        while(it.hasNext() && polarPoints.count()>max)
-                        {
-                            polarPoints.removeOne(it.next().value());
-                        }
-                    }
-#else
                     it.toFront();
                     while(it.hasNext() && polarPoints.count()>max)
                     {
                         polarPoints.removeOne(it.next().value());
                     }
-#endif
                 }
             }
 #endif
@@ -1503,6 +1463,7 @@ void ROUTAGE::slot_calculate()
 #endif
         msecs_1=msecs_1+time.elapsed();
 /*1eme epuration: on supprime les segments qui se croisent */
+        if(aborted) break;
         time.restart();
 #if 1
         if(tempPoints.count()>0 && !tempPoints.at(0).origin->isStart)
@@ -1567,6 +1528,10 @@ void ROUTAGE::slot_calculate()
                 if(tempPoints.at(jj).notSimplificable &&
                    !tempPoints.at(jj-1).notSimplificable &&
                    !tempPoints.at(jj+1).notSimplificable)
+                    continue;
+                if(tempPoints.at(jj).origin->notSimplificable &&
+                   !tempPoints.at(jj-1).origin->notSimplificable &&
+                   !tempPoints.at(jj+1).origin->notSimplificable)
                     continue;
                 if(tempPoints.at(jj).distIso<tempPoints.at(jj-1).distIso &&
                    tempPoints.at(jj).distIso<tempPoints.at(jj+1).distIso)
@@ -1760,6 +1725,9 @@ void ROUTAGE::slot_calculate()
         time.restart();
         c=tempPoints.count();
         toBeRemoved=c-limit;
+#ifdef debugCount
+        this->countDebug(nbIso,"before final epuration");
+#endif
         if(tempPoints.count()>limit)
         {
             epuration(toBeRemoved);
@@ -2234,8 +2202,21 @@ void ROUTAGE::countDebug(int nbIso, QString s)
     int count=0;
     for (int n=0;n<tempPoints.count();++n)
     {
-        if(tempPoints.at(n).originNb>116)
+        if(tempPoints.at(n).originNb==74)
+        {
             ++count;
+            if(s.contains("before"))
+            {
+                QPen pendebug(Qt::blue);
+                pendebug.setWidthF(1);
+                vlmLine * debug1=new vlmLine(proj,myscene,Z_VALUE_ROUTAGE+10);
+                debug1->setParent(this);
+                debug1->setLinePen(pendebug);
+                debug1->addVlmPoint(tempPoints.at(n));
+                debug1->addVlmPoint(*tempPoints.at(n).origin);
+                debug1->slot_showMe();
+            }
+        }
     }
     qWarning()<<"remains"<<count<<"points"<<s;
 }
@@ -2691,12 +2672,23 @@ void ROUTAGE::convertToRoute()
 }
 void ROUTAGE::checkIsoCrossingPreviousSegments()
 {
+    QPointF dummy;
     for(int nn=0;nn<tempPoints.count()-1;++nn)
     {
         if(tempPoints.at(nn).notSimplificable || tempPoints.at(nn+1).notSimplificable)
             continue;
-        QPointF dummy;
+        if(tempPoints.at(nn).origin->notSimplificable || tempPoints.at(nn+1).origin->notSimplificable)
+            continue;
         QLineF S1(tempPoints.at(nn).x,tempPoints.at(nn).y,tempPoints.at(nn+1).x,tempPoints.at(nn+1).y);
+#if 0 /*better but slower*/
+        QLineF s1(tempPoints.at(nn).lon,tempPoints.at(nn).lat,tempPoints.at(nn+1).lon,tempPoints.at(nn+1).lat);
+        if(S1.length()>tempPoints.at(nn).distIso)
+            continue;
+        if(checkCoast && getMap() && getMap()->crossing(S1,s1))
+            continue;
+        if(checkLine && crossBarriere(S1))
+            continue;
+#endif
         bool bad=false;
         for(int mm=0;mm<previousSegments.count();++mm)
         {
@@ -2713,6 +2705,7 @@ void ROUTAGE::checkIsoCrossingPreviousSegments()
             }
         }
         if(bad) continue;
+#if 1
         for(int mm=0;mm<previousIso.count()-1;++mm) /*also check that new Iso does not cross previous iso*/
         {
             QLineF S2(previousIso.at(mm),previousIso.at(mm+1));
@@ -2727,6 +2720,7 @@ void ROUTAGE::checkIsoCrossingPreviousSegments()
                 break;
             }
         }
+#endif
     }
 }
 void ROUTAGE::epuration(int toBeRemoved)
