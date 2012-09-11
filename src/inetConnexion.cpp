@@ -41,7 +41,7 @@ inetConnexion::inetConnexion(QWidget * main)
             this,SLOT(slot_authRequired(QNetworkReply*,QAuthenticator*)));
 
     slot_updateInet();
-    progressDialog=new DialogInetProgess();
+    progressDialog=new DialogInetProgess(main);
     hasProgress=false;
 }
 
