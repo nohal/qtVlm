@@ -5265,7 +5265,7 @@ isochrony</translation>
         <location filename="../src/route.cpp" line="767"/>
         <location filename="../src/route.cpp" line="842"/>
         <source>&lt;br&gt;ETA: deja atteint</source>
-        <translation>ETA: již dosaženo</translation>
+        <translation>&lt;br&gt;ETA: již dosaženo</translation>
     </message>
     <message>
         <location filename="../src/route.cpp" line="773"/>

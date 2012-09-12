@@ -3664,7 +3664,7 @@ Voulez-vous egalement supprimer tous les POIs lui appartenant?</source>
     </message>
     <message>
         <source>&lt;br&gt;ETA: deja atteint</source>
-        <translation>ETA: déjà atteint</translation>
+        <translation>&lt;br&gt;ETA: déjà atteint</translation>
     </message>
     <message>
         <source>ETA a partir de maintenant</source>

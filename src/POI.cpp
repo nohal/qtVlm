@@ -1268,6 +1268,8 @@ void POI::slot_finePosit(bool silent)
     route->setOptimizing(false);
     route->setOptimizingPOI(false);
     route->setFastVmgCalc(false);
+    if(!silent)
+        route->setDetectCoasts(detectCoast);
     route->slot_recalculate();
     if((!route->getHas_eta() && previousHasEta) ||
        (route->getHas_eta() && route->getEta()>previousEta))
@@ -1288,8 +1290,6 @@ void POI::slot_finePosit(bool silent)
         update();
         route->slot_recalculate();
     }
-    if(!silent)
-        route->setDetectCoasts(detectCoast);
     QApplication::processEvents();
 }
 
