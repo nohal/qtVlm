@@ -2,6 +2,8 @@
 
 TARGET = "release"
 
+prefix = ~/qtVlm
+
 ifdef SystemRoot
 	RM = del /Q
 	RMFOLDER = rmdir /S /Q
@@ -10,6 +12,7 @@ ifdef SystemRoot
 	SEP = &&
 	RMAPPNAME = $(RM) qtVlm.exe
 	QMAKE = qmake
+	MKDIR = mkdir
 else
 	RM = rm -f
 	RMFOLDER = rm -Rf
@@ -23,6 +26,7 @@ else
 	else
 		RMAPPNAME = $(RMFOLDER) qtVlm.app
 	endif
+	MKDIR = mkdir
 endif
 
 all:
@@ -56,3 +60,12 @@ clean:
 	$(CD) $(call FixPath,src) $(SEP) $(RM) Makefile Makefile.Release Makefile.Debug
 	$(RMFOLDER) $(call FixPath,src/libs/build)
 	$(RMFOLDER) $(call FixPath,src/objs)
+
+install: all
+	mkdir $(prefix)
+	cp -Rf qtVlm tr/ $(prefix)
+	cd ../base_dir/
+	cp -Rf icon img polar $(prefix)
+	mkdir $(prefix)/grib
+	mkdir $(prefix)/maps
+	
