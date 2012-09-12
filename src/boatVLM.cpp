@@ -70,7 +70,7 @@ boatVLM::boatVLM(QString        pseudo, bool activated, int boatId, int playerId
     needAuth=true;
     this->rank=1;
     connect(parent, SIGNAL(shPor(bool)),this,SLOT(slot_shPor()));
-
+    connect(parent,SIGNAL(resetTraceCache()),this,SLOT(slot_resetTraceCache()));
     myCreatePopUpMenu();
     this->initialized=false;
     own=QString();
@@ -117,6 +117,10 @@ void boatVLM::updateData(boatData * data)
 /***********************************/
 /* VLM link                        */
 
+void boatVLM::slot_resetTraceCache()
+{
+    this->trace_drawing->deleteAll();
+}
 
 void boatVLM::slot_getData(bool doingSync)
 {

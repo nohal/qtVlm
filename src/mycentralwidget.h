@@ -319,6 +319,7 @@ class myCentralWidget : public QWidget
         void readBoatData(QString fname, bool readAll);
         void boatPointerHasChanged(boat *);
         void accountListUpdated(void);
+        void resetTraceCache(void);
 
         /* compass */
         void stopCompassLine(void);

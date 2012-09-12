@@ -92,6 +92,7 @@ class opponent : public QGraphicsWidget
         void slot_shHidden();
         void slot_shOpp(){if(this->isVisible())slot_shHidden();else slot_shShow();}
         void slot_shLab(bool state){this->labelHidden=state;update();}
+        void slot_resetTraceCache();
 
     protected:
         void paint(QPainter * pnt, const QStyleOptionGraphicsItem * , QWidget * );
@@ -154,6 +155,7 @@ class opponentList : public QWidget, public inetClient
 
     public slots:
         void getTrace(QByteArray buff, QList<vlmPoint> * trace);
+        void slot_resetTraceCache();
 
     private:
         QList<opponent*> opponent_list;

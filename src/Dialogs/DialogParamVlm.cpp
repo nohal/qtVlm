@@ -30,7 +30,7 @@ DialogParamVlm::DialogParamVlm(MainWindow * main,myCentralWidget * parent) : QDi
 {
     setupUi(this);
     Util::setFontDialog(this);
-
+    connect(this,SIGNAL(resetTraceCache()),parent,SIGNAL(resetTraceCache()));
     connect(this,SIGNAL(paramVLMChanged()),main,SLOT(slotParamChanged()));
     connect(this, SIGNAL(inetUpdated()), main, SLOT(slotInetUpdated()));
 
@@ -93,8 +93,8 @@ DialogParamVlm::DialogParamVlm(MainWindow * main,myCentralWidget * parent) : QDi
     chk_oppTrace->setCheckState(Settings::getSetting("opp_trace","1").toInt()==1?Qt::Checked:Qt::Unchecked);
 
     /* Compas */
-    chk_showCompass->setCheckState(Settings::getSetting("showCompass",1).toInt()==1?Qt::Checked:Qt::Unchecked);
-    chk_showPolar->setCheckState(Settings::getSetting("showPolar",1).toInt()==1?Qt::Checked:Qt::Unchecked);
+    chk_showCompass->setCheckState(Settings::getSetting("showCompass",0).toInt()==1?Qt::Checked:Qt::Unchecked);
+    chk_showPolar->setCheckState(Settings::getSetting("showPolar",0).toInt()==1?Qt::Checked:Qt::Unchecked);
     this->radioBtn_time->setEnabled(true);
     this->radioBtn_dist->setEnabled(true);
     if(Settings::getSetting("scalePolar",0).toInt()==1)
@@ -201,7 +201,8 @@ void DialogParamVlm::done(int result)
         Settings::setSetting("askConfirmation",chk_askConfirm->checkState()==Qt::Checked?"1":"0");
 
         /* Trace */
-
+        if(Settings::getSetting("trace_length",12).toInt()!=trace_length->value())
+            emit resetTraceCache();
         Settings::setSetting("trace_length",QString().setNum(trace_length->value()));
         Settings::setSetting("speed_replay",QString().setNum(speedReplay->value()));
         Settings::setSetting("opp_trace",chk_oppTrace->checkState()==Qt::Checked?"1":"0");
@@ -387,7 +388,7 @@ void DialogParamVlm::doBtn_browseGrib(void)
 }
 void DialogParamVlm::changeParam()
 {
-    chk_showCompass->setCheckState(Settings::getSetting("showCompass",1).toInt()==1?Qt::Checked:Qt::Unchecked);
+    chk_showCompass->setCheckState(Settings::getSetting("showCompass",0).toInt()==1?Qt::Checked:Qt::Unchecked);
 }
 
 void DialogParamVlm::on_chk_scaleEstime_toggled(bool checked)

@@ -54,6 +54,7 @@ class DialogParamVlm : public QDialog, public Ui::VLM_param_ui
     signals:
         void paramVLMChanged(void);
         void inetUpdated(void);
+        void resetTraceCache();
 
     private:
         void changeColor(int type);

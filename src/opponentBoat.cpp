@@ -58,6 +58,7 @@ opponent::opponent(QColor color, QString idu,QString race,Projection * proj,Main
 void opponent::init(QColor color,bool isQtBoat,QString idu,QString race, double lat, double lon, QString pseudo,
                             QString name,Projection * proj,MainWindow *main, myCentralWidget *parentWindow)
 {
+    connect(parentWindow,SIGNAL(resetTraceCache()),this,SLOT(slot_resetTraceCache()));
     this->idu=idu;
     this->idrace=race;
     this->lat=lat;
@@ -133,10 +134,14 @@ opponent::~opponent(void)
     }
 }
 
+void opponent::slot_resetTraceCache()
+{
+    trace_drawing->deleteAll();
+}
+
 /**************************/
 /* boundingRect, Paint    */
 /**************************/
-
 QRectF opponent::boundingRect() const
 {
     if(!drawFlag)
@@ -510,6 +515,7 @@ opponentList::opponentList(Projection * proj,MainWindow * main,myCentralWidget *
     needAuth=true;
 
     this->parent=parent;
+    connect(parent,SIGNAL(resetTraceCache()),this,SLOT(slot_resetTraceCache()));
     this->main=main;
     this->proj=proj;
     currentRace="";
@@ -530,6 +536,10 @@ opponentList::opponentList(Projection * proj,MainWindow * main,myCentralWidget *
     colorTable[14] = QColor(170,0,255);
     showWhat=SHOW_MY_LIST;
     showReal=false;
+}
+void opponentList::slot_resetTraceCache()
+{
+    traceCache.clear();
 }
 
 QString opponentList::getRaceId()
