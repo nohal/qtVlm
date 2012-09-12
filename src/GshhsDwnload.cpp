@@ -26,11 +26,14 @@ Copyright (C) 2008 - Jacques Zaninetti - http://zygrib.free.fr
 #include <QFile>
 #include <QMessageBox>
 #include <QDebug>
+#include <QFileDialog>
 
 #include "mycentralwidget.h"
 #include "miniunz.h"
 #include "inetConnexion.h"
 #include "DialogInetProgess.h"
+#include "settings.h"
+#include "dataDef.h"
 
 #include "GshhsDwnload.h"
 
@@ -63,7 +66,16 @@ void GshhsDwnload::requestFinished(QByteArray res) {
         saveFile->close();
         qWarning() << "gshhs zip, " << nb << " bytes saved in " << filename;
         if(nb>0) {
-            if(miniunzip(UZ_OVERWRITE,(const char*)filename.toAscii().data(),"./",NULL,NULL)!=UNZ_OK) {
+
+            /* asking for folder holding maps */
+            QString dir = Settings::getSetting("mapsFolder",appFolder.value("maps")).toString();
+
+            dir = QFileDialog::getExistingDirectory(centralWidget, tr("Select maps folder"),
+                                                            dir,
+                                                            QFileDialog::ShowDirsOnly);
+
+
+            if(miniunzip(UZ_OVERWRITE,(const char*)filename.toAscii().data(),dir.toAscii().data(),NULL,NULL)!=UNZ_OK) {
                 QMessageBox::critical(centralWidget,
                                       tr("Sauvegarde des cartes"),
                                       tr("Le fichier zip ") + filename + tr(" ne peut être dezippe"));

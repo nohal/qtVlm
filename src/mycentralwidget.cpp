@@ -535,30 +535,47 @@ void myCentralWidget::loadGshhs(void) {
         gshhsReader=NULL;
     }
 
-    gshhsReader = new GshhsReader((appFolder.value("maps")+"/gshhs").toAscii().data(), 0);
+    QString mapDir = Settings::getSetting("mapsFolder",appFolder.value("maps")).toString();
+
+    gshhsReader = new GshhsReader((mapDir+"/gshhs").toAscii().data(), 0);
     gshhsReader->setProj(proj);
 
     int polyVersion = gshhsReader->getPolyVersion();
     bool dwnloadMaps = false;
     bool gshhsOk=true;
 
+    QMessageBox msgBox(QMessageBox::Question,tr("Ouverture des cartes"),"",QMessageBox::NoButton,this);
+    QPushButton * selectFolderBtn = msgBox.addButton(tr("Choisir un repertoire"),QMessageBox::ApplyRole);
+    QPushButton * downloadMapBtn = msgBox.addButton(tr("Telechargement"),QMessageBox::AcceptRole);
+    msgBox.addButton(tr("Annuler"),QMessageBox::RejectRole);
+
     if(polyVersion == -1) {
         qWarning() << "Missing maps";
         gshhsOk=false;
-        if(QMessageBox::question(this,tr("Ouverture des cartes"),tr("Les cartes sont absentes\nVoulez vous les telecharger?"),
-                                 QMessageBox::Ok|QMessageBox::Cancel,QMessageBox::Ok)==QMessageBox::Ok) {
-            dwnloadMaps=true;
-        }
-        delete gshhsReader;
-        gshhsReader=NULL;
+        msgBox.setText(tr("Les cartes sont absentes\nQue voulez vous faire?"));
     }
     else if(polyVersion!=220) {
         qWarning()<<"wrong poly version->"<<gshhsReader->getPolyVersion();
         gshhsOk=false;
-        if(QMessageBox::question(this,tr("Ouverture des cartes"),tr("Vous n'avez pas la bonne version des cartes\nVoulez vous les telecharger?"),
-                                 QMessageBox::Ok|QMessageBox::Cancel,QMessageBox::Ok)==QMessageBox::Ok) {
+        msgBox.setText(tr("Vous n'avez pas la bonne version des cartes\nQue voulez vous faire?"));
+    }
+
+    if(!gshhsOk) {
+        msgBox.exec();
+
+        if(msgBox.clickedButton() == downloadMapBtn) {
             dwnloadMaps=true;
         }
+        else if(msgBox.clickedButton() == selectFolderBtn) {
+            mapDir = QFileDialog::getExistingDirectory(this, tr("Select maps folder"),
+                                                            mapDir,
+                                                            QFileDialog::ShowDirsOnly);
+            qWarning() << "Setting map folder to " << mapDir;
+            Settings::setSetting("mapsFolder",mapDir);
+            loadGshhs();
+            return;
+        }
+
         delete gshhsReader;
         gshhsReader=NULL;
     }

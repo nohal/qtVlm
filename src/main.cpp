@@ -100,17 +100,19 @@ int main(int argc, char *argv[])
 
     //checks tree
 
+    /* setting dataDir to app exe dir */
+    QString dataDir = appExeFolder;
 
 
     appFolder.insert("img",appExeFolder+"/img/");
-    appFolder.insert("flags",homeDir+"/img/flags/");
-    appFolder.insert("boatsImg",homeDir+"/img/boats/");
-    appFolder.insert("grib",homeDir+"/grib/");
-    appFolder.insert("maps",homeDir+"/maps/");
-    appFolder.insert("polar",homeDir+"/polar/");
+    appFolder.insert("flags",dataDir+"/img/flags/");
+    appFolder.insert("boatsImg",dataDir+"/img/boats/");
+    appFolder.insert("grib",dataDir+"/grib/");
+    appFolder.insert("maps",dataDir+"/maps/");
+    appFolder.insert("polar",dataDir+"/polar/");
     appFolder.insert("tr",appExeFolder+"/tr/");
-    appFolder.insert("tracks",homeDir+"/tracks/");
-    appFolder.insert("userFiles",homeDir+"/");
+    appFolder.insert("tracks",dataDir+"/tracks/");
+    appFolder.insert("userFiles",dataDir+"/");
     appFolder.insert("icon",appExeFolder+"/icon/");
 
     //qWarning() << appFolder;
