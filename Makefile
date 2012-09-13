@@ -62,10 +62,10 @@ clean:
 	$(RMFOLDER) $(call FixPath,src/objs)
 
 install: all
-	mkdir $(prefix)
+	mkdir -p $(prefix)
 	cp -Rf qtVlm tr/ $(prefix)
 	cd ../base_dir/
 	cp -Rf icon img polar $(prefix)
-	mkdir $(prefix)/grib
-	mkdir $(prefix)/maps
+	mkdir -p $(prefix)/grib
+	mkdir -p $(prefix)/maps
 	
