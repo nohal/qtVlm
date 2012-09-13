@@ -145,15 +145,16 @@ void Polar::setPolarName(QString fname)
         file.close();
         return;
     }
-    list.removeLast();
     int i;
-    for(i=1;i<list.count();i++)
+    for(i=1;i<list.count();++i)
+    {
+        if(!tws.isEmpty() && list[i].toDouble()<=tws.last()) break;
         tws.append(list[i].toDouble());
+    }
     bool missingTws0=false;
     if(tws.first()!=0.0)
     {
         missingTws0=true;
-        tws.prepend(0.0);
     }
     bool firstTWA=true;
     while(true)
@@ -174,12 +175,15 @@ void Polar::setPolarName(QString fname)
                 {
                     polar_data.append(0);
                 }
+                if(missingTws0)
+                    polar_data.append(0);
+                twa.append(0.0);
             }
         }
         twa.append(list[0].toDouble());
         if(missingTws0)
             polar_data.append(0);
-        for(i=1;i<list.count();i++)
+        for(i=1;i<list.count();++i)
         {
             if(i>tws.count()) break;
             polar_data.append(list[i].toDouble()*this->coeffPolar);
@@ -187,6 +191,25 @@ void Polar::setPolarName(QString fname)
         while(i<=tws.count())
             polar_data.append(0);
     }
+    if(missingTws0)
+        tws.prepend(0.0);
+#if 0
+    qWarning()<<"polar data for"<<nameF;
+    QString debug="xxx.x ";
+    foreach(double dd,tws)
+        debug+=QString().sprintf("%04.1f ",dd);
+    qWarning()<<debug;
+    QListIterator<double> i1(polar_data);
+    QListIterator<double> i2(twa);
+    while(i2.hasNext())
+    {
+        debug=QString().sprintf("%05.1f ",i2.next());
+        for(int nn=0;nn<tws.count();++nn)
+            debug+=QString().sprintf("%04.1f ",i1.next());
+        qWarning()<<debug;
+    }
+#endif
+
     mid_twa=qRound(twa.count()/2);
     mid_tws=qRound(tws.count()/2);
     /* polaire chargee */
@@ -274,6 +297,8 @@ void Polar::setPolarName(QString fname)
             QFileInfo info1(fileVMG);
             QFileInfo info2(file);
             if(this->mainWindow->isStartingUp && info1.lastModified()<info2.lastModified())
+                fileVMG.remove();
+            else if(this->mainWindow->isStartingUp && info1.lastModified()<QDateTime().fromString("dd/MM/yyyy hh:mm:ss","13/09/2012 00:00:00"))
                 fileVMG.remove();
             else
             {
