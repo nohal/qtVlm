@@ -21,6 +21,7 @@ DialogViewPolar::DialogViewPolar(QWidget *parent) :
     imageContainer->installEventFilter(this);
     connect(this->closeButton,SIGNAL(clicked()),this,SLOT(close()));
 }
+
 bool DialogViewPolar::eventFilter(QObject *, QEvent *event)
 {
     if(this->allSpeed->isChecked()) return false;

@@ -715,7 +715,7 @@ void polarList::loadPolars(void)
         }
 
         if(res==NULL)
-            qWarning() << "Polar not found";
+            qWarning() << "Polar not found: " << fname;
         //qWarning() << "Sending polar " << fname;
         emit polarLoaded(fname,res);
     }

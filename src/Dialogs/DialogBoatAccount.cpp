@@ -99,7 +99,7 @@ bool DialogBoatAccount::initList( QList<boatVLM*> * boat_list, Player * player)
     polarList->setEnabled(false);
 
     /* browse polar folder */
-    QDir polarDir = QDir("polar");
+    QDir polarDir = QDir(appFolder.value("polar"));
     QStringList extStr;
     extStr.append("*.pol");
     extStr.append("*.POL");
@@ -333,6 +333,7 @@ void DialogBoatAccount::saveItem(QListWidgetItem * item)
     }
     else
     {
+        qWarning() << "Setting polar to " << polarList->currentText();
         boat->usePolar=true;
         boat->polar=polarList->currentText();
     }

@@ -900,6 +900,7 @@ void boatVLM::reloadPolar(bool forced)
         polarName=polarVlm;
     boat::reloadPolar(forced);
 }
+
 void boatVLM::setPolar(bool state,QString polar)
 {
     this->polarForcedName=polar;

@@ -537,6 +537,8 @@ void myCentralWidget::loadGshhs(void) {
 
     QString mapDir = Settings::getSetting("mapsFolder",appFolder.value("maps")).toString();
 
+    qWarning() << "Searching for maps in " << mapDir;
+
     gshhsReader = new GshhsReader((mapDir+"/gshhs").toAscii().data(), 0);
     gshhsReader->setProj(proj);
 
@@ -572,10 +574,13 @@ void myCentralWidget::loadGshhs(void) {
                                                             QFileDialog::ShowDirsOnly);
             qWarning() << "Setting map folder to " << mapDir;
             Settings::setSetting("mapsFolder",mapDir);
+            delete gshhsReader;
+            gshhsReader=NULL;
+
             loadGshhs();
+
             return;
         }
-
         delete gshhsReader;
         gshhsReader=NULL;
     }
