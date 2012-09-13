@@ -626,6 +626,7 @@ void DialogRoute::done(int result)
             msgBox.exec();
             return;
         }
+        route->setTemp(true);
         if(this->editFrozen->isChecked() && route->getFrozen())
         {
             if(this->editDateBox->dateTime()!=route->getStartTime())
@@ -637,7 +638,6 @@ void DialogRoute::done(int result)
             this->tabWidget->setTabEnabled(2,true);
         }
         route->setSpeedLossOnTack((double)this->speedLossOnTack->value()/100.00);
-        route->setBusy(true);
         route->setName((editName->text()).trimmed());
         route->setWidth(inputTraceColor->getLineWidth());
         route->setColor(inputTraceColor->getLineColor());
@@ -674,8 +674,6 @@ void DialogRoute::done(int result)
             }
             route->setAutoRemove(this->autoRemove->isChecked());
             route->setAutoAt(autoAt->isChecked());
-            //Settings::setSetting("useVbvmgVlm",route->getUseVbvmgVlm()?"1":"0"  );
-            //Settings::setSetting("useNewVbvmgVlm",route->getNewVbvmgVlm()?"1":"0"  );
             if(parent->getBoats())
             {
                 QListIterator<boatVLM*> i (*parent->getBoats());
@@ -712,9 +710,11 @@ void DialogRoute::done(int result)
             if(this->Optimiser->isChecked())
                 route->setOptimize(true);
         }
-        route->setBusy(false);
+        route->setTemp(false);
         if(result==99)
         {
+            model->removeRows(0,model->rowCount());
+            listPois.clear();
             parent->treatRoute(route);
             connect(this->tabWidget,SIGNAL(currentChanged(int)),this,SLOT(slotTabChanged(int)));
             return;
