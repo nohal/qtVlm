@@ -6764,8 +6764,7 @@ without simplication</translation>
         <location filename="../src/BoardVLM.cpp" line="620"/>
         <location filename="../src/BoardVLM.cpp" line="625"/>
         <source>WP defini dans VLM (</source>
-        <translatorcomment>WP defined in VLM (</translatorcomment>
-        <translation></translation>
+        <translation>WP defined in VLM (</translation>
     </message>
     <message>
         <location filename="../src/BoardVLM.cpp" line="620"/>
