@@ -78,7 +78,7 @@ void GshhsDwnload::requestFinished(QByteArray res) {
             if(miniunzip(UZ_OVERWRITE,(const char*)filename.toAscii().data(),dir.toAscii().data(),NULL,NULL)!=UNZ_OK) {
                 QMessageBox::critical(centralWidget,
                                       tr("Sauvegarde des cartes"),
-                                      tr("Le fichier zip ") + filename + tr(" ne peut être dezippe"));
+                                      tr("Le fichier zip ") + filename + tr(" ne peut etre dezippe"));
             }
             else {
                 centralWidget->loadGshhs();

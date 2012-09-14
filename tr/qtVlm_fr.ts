@@ -1218,7 +1218,7 @@ Etes-vous sur ?</source>
     </message>
     <message>
         <source> ne peut �tre dezippe</source>
-        <translation>ne peut être dézippé</translation>
+        <translation type="obsolete">ne peut être dézippé</translation>
     </message>
     <message>
         <source>Le fichier </source>
@@ -1226,7 +1226,15 @@ Etes-vous sur ?</source>
     </message>
     <message>
         <source> ne peut etre ouvert</source>
-        <translation>ne peut être ouvert</translation>
+        <translation> ne peut pas être ouvert</translation>
+    </message>
+    <message>
+        <source>Select maps folder</source>
+        <translation>Sélection du répertoire des cartes</translation>
+    </message>
+    <message>
+        <source> ne peut etre dezippe</source>
+        <translation> ne peut pas être dézippé</translation>
     </message>
 </context>
 <context>
@@ -6036,7 +6044,8 @@ Voulez-vous la remplacer?</source>
     <message>
         <source>Resolution : %1x%2
 </source>
-        <translation>Résolution : %1x%</translation>
+        <translation>Résolution : %1x%2
+</translation>
     </message>
     <message>
         <source>Ouverture des cartes</source>
@@ -6045,14 +6054,40 @@ Voulez-vous la remplacer?</source>
     <message>
         <source>Les cartes sont absentes
 Voulez vous les telecharger?</source>
-        <translation>Les cartes sont absentes
+        <translation type="obsolete">Les cartes sont absentes
 VOulez-vous les télécharger ?</translation>
     </message>
     <message>
         <source>Vous n&apos;avez pas la bonne version des cartes
 Voulez vous les telecharger?</source>
-        <translation>Vous n&apos;avez pas la bonne version des cartes
+        <translation type="obsolete">Vous n&apos;avez pas la bonne version des cartes
 Voulez-vous les télécharger ?</translation>
+    </message>
+    <message>
+        <source>Choisir un repertoire</source>
+        <translation>Choisir un répertoire</translation>
+    </message>
+    <message>
+        <source>Telechargement</source>
+        <translation>Téléchargement</translation>
+    </message>
+    <message>
+        <source>Annuler</source>
+        <translation>Annuler</translation>
+    </message>
+    <message>
+        <source>Les cartes sont absentes
+Que voulez vous faire?</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Vous n&apos;avez pas la bonne version des cartes
+Que voulez vous faire?</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Select maps folder</source>
+        <translation>Sélection du répertoire des cartes</translation>
     </message>
 </context>
 <context>

@@ -91,7 +91,7 @@ mapCompass::~mapCompass()
 }
 void mapCompass::slot_paramChanged(void)
 {
-    if(!(Settings::getSetting("showCompass",1).toInt()==1) && !(Settings::getSetting("showPolar",1).toInt()==1))
+    if(!(Settings::getSetting("showCompass",0).toInt()==1) && !(Settings::getSetting("showPolar",0).toInt()==1))
        hide();
     else
        show();
@@ -152,7 +152,7 @@ void  mapCompass::paint(QPainter * pnt, const QStyleOptionGraphicsItem * , QWidg
 
     pnt->drawLine(-(CROSS_SIZE/2),0,(CROSS_SIZE/2),0);
     pnt->drawLine(0,-(CROSS_SIZE/2),0,(CROSS_SIZE/2));
-    if(Settings::getSetting("showCompass",1).toInt()==1)
+    if(Settings::getSetting("showCompass",0).toInt()==1)
     {
         /* external compass : direction */
 
@@ -282,9 +282,9 @@ void  mapCompass::paint(QPainter * pnt, const QStyleOptionGraphicsItem * , QWidg
     /* draw Polar */
     polarModeVac=false;
     bool polarModeTime=false;
-    if(bvmg_up!=-1 && Settings::getSetting("showPolar",1).toInt()==1)
+    if(bvmg_up!=-1 && Settings::getSetting("showPolar",0).toInt()==1)
     {
-        if(Settings::getSetting("showCompass",1).toInt()==0)
+        if(Settings::getSetting("showCompass",0).toInt()==0)
         {
             Grib * grib = parent->getGrib();
             if(grib)
@@ -473,9 +473,9 @@ void mapCompass::slot_shCom()
         shCom=true;
     }
     else
-        shCom=!(Settings::getSetting("showCompass",1).toInt()==1);
+        shCom=!(Settings::getSetting("showCompass",0).toInt()==1);
     Settings::setSetting("showCompass",shCom?1:0);
-    if(!shCom && !Settings::getSetting("showPolar",1).toInt()==1)
+    if(!shCom && !Settings::getSetting("showPolar",0).toInt()==1)
         hide();
     else
     {
@@ -502,10 +502,10 @@ void mapCompass::slot_shPol()
         shPol=true;
     }
     else
-        shPol=!(Settings::getSetting("showPolar",1).toInt()==1);
+        shPol=!(Settings::getSetting("showPolar",0).toInt()==1);
 
     Settings::setSetting("showPolar",shPol?1:0);
-    if(!shPol && !Settings::getSetting("showCompass",1).toInt()==1)
+    if(!shPol && !Settings::getSetting("showCompass",0).toInt()==1)
         hide();
     else
     {
