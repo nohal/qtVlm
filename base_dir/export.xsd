@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!--Created with Liquid XML Studio - FREE Community Edition 7.0.4.795 (http://www.liquid-technologies.com)-->
+<xs:schema elementFormDefault="qualified" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+  <xs:complexType name="Generator">
+    <xs:sequence>
+      <xs:element name="Name" type="xs:string" />
+      <xs:element name="Version" type="xs:string" />
+      <xs:element name="ExportDate" type="xs:dateTime" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="RouteElement">
+    <xs:sequence>
+      <xs:element name="Name" type="xs:string" />
+      <xs:element name="RaceID" type="xs:string" />
+      <xs:element name="TrackColor" type="RouteColor" />
+      <xs:element name="Track">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element minOccurs="0" maxOccurs="unbounded" name="TrackPoint" type="RoutePoint" />
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="RoutePoint">
+    <xs:sequence>
+      <xs:element name="ActionDate" type="xs:dateTime" />
+      <xs:element name="Type" type="RouteActionType" />
+      <xs:element name="ActionValue">
+        <xs:complexType>
+          <xs:choice>
+            <xs:element name="DoubleAction" type="DoubleActionValue" />
+            <xs:element name="WPAction" type="WPActionValue" />
+          </xs:choice>
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="Coords" type="RouteCoords" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="RouteColor">
+    <xs:sequence>
+      <xs:element name="R" type="xs:unsignedByte" />
+      <xs:element name="G" type="xs:unsignedByte" />
+      <xs:element name="B" type="xs:unsignedByte" />
+      <xs:element name="A" type="xs:unsignedByte" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="RouteCoords">
+    <xs:sequence>
+      <xs:element name="Lon">
+        <xs:simpleType>
+          <xs:restriction base="xs:double">
+            <xs:minExclusive value="-180" />
+            <xs:maxExclusive value="180" />
+          </xs:restriction>
+        </xs:simpleType>
+      </xs:element>
+      <xs:element name="Lat">
+        <xs:simpleType>
+          <xs:restriction base="xs:double">
+            <xs:maxInclusive value="180" />
+            <xs:minExclusive value="-180" />
+          </xs:restriction>
+        </xs:simpleType>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:simpleType name="RouteActionType">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="Bearing" />
+      <xs:enumeration value="Angle" />
+      <xs:enumeration value="Ortho" />
+      <xs:enumeration value="VMG" />
+      <xs:enumeration value="VBVMG" />
+      <xs:enumeration value="HISTORY" />
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:simpleType name="DoubleActionValue">
+    <xs:restriction base="xs:double" />
+  </xs:simpleType>
+  <xs:complexType name="WPActionValue">
+    <xs:sequence>
+      <xs:element minOccurs="1" maxOccurs="1" name="WP" type="RouteCoords" />
+      <xs:element minOccurs="0" maxOccurs="1" name="AngleAtWP" type="xs:double" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="RouteExport">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element name="Generator" type="Generator" />
+        <xs:element name="RouteList">
+          <xs:complexType>
+            <xs:sequence>
+              <xs:element name="Route" type="RouteElement" />
+            </xs:sequence>
+          </xs:complexType>
+        </xs:element>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+</xs:schema>

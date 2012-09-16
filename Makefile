@@ -64,7 +64,7 @@ clean:
 install: all
 	mkdir -p $(prefix)
 	cp -Rf qtVlm tr/ $(prefix)
-	cd ../base_dir/ && cp -Rf icon img polar $(prefix)
+	cp -Rf base_dir/icon base_dir/img base_dir/polar $(prefix)
 	mkdir -p $(prefix)/grib
 	mkdir -p $(prefix)/maps
 	
