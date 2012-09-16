@@ -176,6 +176,7 @@ int main(int argc, char *argv[])
     app.setQuitOnLastWindowClosed(true);
 
     MainWindow win(800, 600);
+    win.continueSetup();
     if(win.getRestartNeeded())
     {
         app.quit();

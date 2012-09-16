@@ -274,8 +274,36 @@ MainWindow::MainWindow(int w, int h, QWidget *parent)
 
     scale = Settings::getSetting("projectionScale", 0.5).toDouble();
     proj->setScale(scale);
+    QDesktopWidget * desktopWidget = QApplication::desktop ();
+    QRect screenRect = desktopWidget->screenGeometry(desktopWidget->primaryScreen());
+    if(Settings::getSetting("saveMainWindowGeometry","1").toInt())
+    {
+        QSize savedSize = Settings::getSetting("mainWindowSize", QSize(w,h)).toSize();
 
+        //qWarning() << "Have saved size: " << savedSize;
 
+        if(savedSize.height()>screenRect.height() || savedSize.width() > screenRect.width())
+        {
+            move(QPoint(0,0));
+            showMaximized();
+        }
+        else
+        {
+            //qWarning() << "Resizing to saved size";
+            resize( Settings::getSetting("mainWindowSize", QSize(w,h)).toSize() );
+            move  ( Settings::getSetting("mainWindowPos", QPoint()).toPoint() );
+            if(Settings::getSetting("mainWindowMaximized","0").toInt()==1)
+                showMaximized();
+        }
+    }
+    else
+        showMaximized ();
+
+}
+void MainWindow::continueSetup()
+{
+    this->show();
+    this->activateWindow();
     dialogProxy = new DialogProxy();
 
     //--------------------------------------------------
@@ -283,7 +311,6 @@ MainWindow::MainWindow(int w, int h, QWidget *parent)
     progress->setLabelText("initializing menus and toolbars");
     menuBar = new MenuBar(this);
     setMenuBar(menuBar);
-
     my_centralWidget = new myCentralWidget(proj,this,menuBar);
     menuBar->setMCW(this->my_centralWidget);
     this->setCentralWidget(my_centralWidget);
@@ -510,13 +537,6 @@ MainWindow::MainWindow(int w, int h, QWidget *parent)
     // get screen geometry
     QDesktopWidget * desktopWidget = QApplication::desktop ();
 
-    //qWarning() << "Display info:";
-    //qWarning() << "Number of screen: " << desktopWidget->screenCount();
-//    for(int i=0;i < desktopWidget->screenCount(); i++)
-//    {
-//        qWarning() << i << ": " << desktopWidget->screenGeometry(i) << (i==desktopWidget->primaryScreen()?" (qtVlm screen)":" (Other screen)");
-//    }
-
     QRect screenRect = desktopWidget->screenGeometry(desktopWidget->primaryScreen());
 
     if(screenRect.height()<=600)
@@ -530,28 +550,6 @@ MainWindow::MainWindow(int w, int h, QWidget *parent)
     else
         myBoard->floatingBoard(false);
 
-    if(Settings::getSetting("saveMainWindowGeometry","1").toInt())
-    {
-        QSize savedSize = Settings::getSetting("mainWindowSize", QSize(w,h)).toSize();
-
-        //qWarning() << "Have saved size: " << savedSize;
-
-        if(savedSize.height()>screenRect.height() || savedSize.width() > screenRect.width())
-        {
-            move(QPoint(0,0));
-            showMaximized();
-        }
-        else
-        {
-            //qWarning() << "Resizing to saved size";
-            resize( Settings::getSetting("mainWindowSize", QSize(w,h)).toSize() );
-            move  ( Settings::getSetting("mainWindowPos", QPoint()).toPoint() );
-            if(Settings::getSetting("mainWindowMaximized","0").toInt()==1)
-                showMaximized();
-        }
-    }
-    else
-        showMaximized ();
 
 
 

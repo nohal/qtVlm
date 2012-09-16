@@ -561,6 +561,7 @@ void myCentralWidget::loadGshhs(void) {
         gshhsOk=false;
         msgBox.setText(tr("Vous n'avez pas la bonne version des cartes\nQue voulez vous faire?"));
     }
+    //msgBox.setWindowFlags(Qt::WindowStaysOnTopHint);
 
     if(!gshhsOk) {
         msgBox.exec();

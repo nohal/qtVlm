@@ -78,6 +78,7 @@ class MainWindow: public QMainWindow
         myCentralWidget * getMy_centralWidget(){return this->my_centralWidget;}
         void setRestartNeeded(){this->restartNeeded=true;}
         bool getRestartNeeded(){return this->restartNeeded;}
+        void continueSetup();
 
     public slots:
         void slotFile_Open();
