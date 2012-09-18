@@ -112,7 +112,7 @@ QString Util::formatSpeed(double meterspersecond)
 //----------------------------------------------------------------
 QString Util::formatDistance(double mille)
 {
-    QString tunit = Settings::getSetting("unitsDistance", "").toString();
+    QString tunit = Settings::getSetting("unitsDistance", "NM").toString();
     QString unit = (tunit=="") ? "km" : tunit;
     QString r, unite;
     double d;

@@ -78,7 +78,7 @@ DialogUnits::DialogUnits() : QDialog()
     ind = (tunit=="") ? 0 : cbPositionUnit->findData(tunit);
     cbPositionUnit->setCurrentIndex( ind );
     
-    tunit = Settings::getSetting("unitsDistance", "").toString();
+    tunit = Settings::getSetting("unitsDistance", "NM").toString();
     ind = (tunit=="") ? 0 : cbDistanceUnit->findData(tunit);
     cbDistanceUnit->setCurrentIndex( ind );
     
