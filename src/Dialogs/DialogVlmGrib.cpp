@@ -212,6 +212,7 @@ void DialogVlmGrib::slot_abort()
 void DialogVlmGrib::requestFinished (QByteArray data)
 {
     int nb;
+    if(data.isEmpty() || data.isNull()) return;
     switch(getCurrentRequest())
     {
         case VLM_REQUEST_GET_FOLDER:
