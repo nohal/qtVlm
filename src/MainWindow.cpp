@@ -666,7 +666,7 @@ void MainWindow::listAllChildren(QObject * ptr,int depth=0)
     QObjectList childList=ptr->children();
     if(childList.count()!=0)
     {
-        for(int i=0;i<childList.count();i++)
+        for(int i=0;i<childList.count();++i)
             listAllChildren(childList[i],depth+1);
     }
     //qWarning() << ptr << " (" << ptr->x() << "," << ptr->y() << ") " << ptr->objectName();
@@ -866,7 +866,7 @@ void MainWindow::slotUpdateOpponent(void)
         return;
     }
 
-    for(int i=0;i<my_centralWidget->getRaces().size();i++)
+    for(int i=0;i<my_centralWidget->getRaces().size();++i)
     {
         if(my_centralWidget->getRaces()[i]->idrace ==  ((boatVLM *)selectedBoat)->getRaceId())
         {
@@ -1233,7 +1233,7 @@ void MainWindow::updatePilototo_Btn(boatVLM * boat)
     if(!selPOI_instruction)
     {
         /* compute nb Pilototo instructions */
-        QStringList * lst = boat->getPilototo();
+        QStringList lst = boat->getPilototo();
         QString pilototo_txt=tr("Pilototo");
         QString pilototo_toolTip="";
         myBoard->VLMBoard()->set_style(myBoard->VLMBoard()->btn_Pilototo,QColor(255, 255, 127));
@@ -1241,17 +1241,17 @@ void MainWindow::updatePilototo_Btn(boatVLM * boat)
         {
             int nbPending=0;
             int nb=0;
-            for(int i=0;i<lst->count();i++)
-                if(lst->at(i)!="none")
+            for(int i=0;i<lst.count();++i)
+                if(lst.at(i)!="none")
                 {
-                QStringList instr_buf = lst->at(i).split(",");
+                QStringList instr_buf = lst.at(i).split(",");
                 int mode=instr_buf.at(2).toInt()-1;
                 int pos =5;
                 if(mode == 0 || mode == 1)
                     pos=4;
                 if(instr_buf.at(pos) == "pending")
-                    nbPending++;
-                nb++;
+                    ++nbPending;
+                ++nb;
             }
             if(nb!=0)
             {
@@ -1613,7 +1613,7 @@ void MainWindow::slotVLM_Sync(void)
     //qWarning() << "Doing a synch with VLM";
 
     QList<boatVLM*> listBoats = *my_centralWidget->getBoats();
-    for(int n=0;n<listBoats.count();n++)
+    for(int n=0;n<listBoats.count();++n)
     {
         if(listBoats[n]->getStatus()|| !listBoats.at(n)->isInitialized())
         {
@@ -1670,7 +1670,7 @@ void MainWindow::VLM_Sync_sync(void)
         if(lastBoatSelected!=-10)
         {
             bool found=false;
-            for(nBoat=0;nBoat<listBoats.count();nBoat++)
+            for(nBoat=0;nBoat<listBoats.count();++nBoat)
             {
                 if(listBoats.at(nBoat)->getId()==lastBoatSelected)
                 {
@@ -1690,7 +1690,7 @@ void MainWindow::VLM_Sync_sync(void)
         }
         if(lastBoatSelected==-10)
         {
-            for(nBoat=0;nBoat<listBoats.count();nBoat++)
+            for(nBoat=0;nBoat<listBoats.count();++nBoat)
             {
                 if(listBoats.at(nBoat)->getStatus())
                 {
@@ -1740,7 +1740,7 @@ void MainWindow::slotBoatUpdated(boat * upBoat,bool newRace,bool doingSync)
             timer->stop();
             /* managing race data: opponnents position and trace*/
             int i=0;
-            for(i=0;i<my_centralWidget->getRaces().size();i++)
+            for(i=0;i<my_centralWidget->getRaces().size();++i)
             {
                 if(my_centralWidget->getRaces()[i]->idrace == boat->getRaceId())
                 {
@@ -1940,7 +1940,7 @@ void MainWindow::slotSelectBoat(boat* newSelect)
         if(newSelect->getType()==BOAT_VLM)
         {
             int cnt=0;
-            for(int i=0;i<my_centralWidget->getBoats()->count();i++)
+            for(int i=0;i<my_centralWidget->getBoats()->count();++i)
             {
                 if(my_centralWidget->getBoats()->at(i) == newSelect)
                 {
@@ -1948,7 +1948,7 @@ void MainWindow::slotSelectBoat(boat* newSelect)
                     break;
                 }
                 if(my_centralWidget->getBoats()->at(i)->getStatus())
-                    cnt++;
+                    ++cnt;
             }
         }
 
@@ -1984,7 +1984,7 @@ void MainWindow::slotChgBoat(int num)
                 /* sync lunched, update grib date */
                 //slotDateGribChanged_now();
                 emit selectedBoatChanged();
-                for(int i=0;i<my_centralWidget->getRaces().size();i++)
+                for(int i=0;i<my_centralWidget->getRaces().size();++i)
                 {
                     if(my_centralWidget->getRaces()[i]->idrace == acc->getRaceId())
                     {
@@ -1994,7 +1994,7 @@ void MainWindow::slotChgBoat(int num)
                 }
                 break;
             }
-            cnt++;
+            ++cnt;
         }
     }
 }
@@ -2265,7 +2265,7 @@ bool MainWindow::isBoat(QString idu)
         return false;
     }
 
-    for(int i=0;i<my_centralWidget->getBoats()->count();i++)
+    for(int i=0;i<my_centralWidget->getBoats()->count();++i)
         if(my_centralWidget->getBoats()->at(i)->getBoatId() == idu)
         {
 //            if(my_centralWidget->getBoats()->at(i)->getStatus()

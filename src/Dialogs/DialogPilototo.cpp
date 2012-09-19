@@ -87,7 +87,7 @@ void DialogPilototo::updateDrawList(void)
 {
     bool added;
     /* remove all instruction from screen */
-    for(int i=0;i<drawList.count();i++)
+    for(int i=0;i<drawList.count();++i)
     {
 	drawList[i]->hide();
 	frameLayout->removeWidget(drawList[i]);
@@ -95,7 +95,7 @@ void DialogPilototo::updateDrawList(void)
 
     drawList.clear();
 
-    for(int i=0;i<instructions_list.count();i++)
+    for(int i=0;i<instructions_list.count();++i)
     {
         DialogPilototoInstruction * instr=instructions_list[i];
 	added = false;
@@ -104,7 +104,7 @@ void DialogPilototo::updateDrawList(void)
 	    /* search for the first not validated item */
 	    bool found = false;
 	    int j;
-	    for(j=0;j<drawList.count();j++)
+        for(j=0;j<drawList.count();++j)
 	    {
 		if(drawList[j]->getHasChanged())
 		{
@@ -119,7 +119,7 @@ void DialogPilototo::updateDrawList(void)
 	    else
 	    {
 		/* order not validated items by tstamp */
-		for(/*not changing j*/;j<drawList.count();j++)
+        for(/*not changing j*/;j<drawList.count();++j)
 		{
 		    if(drawList[j]->getTstamp() > instr->getTstamp())
 		    {
@@ -136,7 +136,7 @@ void DialogPilototo::updateDrawList(void)
 	}
 	else
 	{ /* date have been validated */
-	    for(int j=0;j<drawList.count();j++)
+        for(int j=0;j<drawList.count();++j)
 	    {
 		if(drawList[j]->getHasChanged())
 		{
@@ -163,7 +163,7 @@ void DialogPilototo::updateDrawList(void)
 
     /* we now have the list of items to be shown => adding them to grid layout */
 
-    for(int j=0;j<drawList.count();j++)
+    for(int j=0;j<drawList.count();++j)
     {
 	frameLayout->addWidget(drawList[j], j, 0);
 	drawList[j]->show();
@@ -216,7 +216,7 @@ void DialogPilototo::slot_boatUpdated(boat * pvBoat)
     double wph=-1;
     int pos;
 
-    QStringList * list = my_boat->getPilototo();
+    QStringList list = my_boat->getPilototo();
 
     if(my_boat)
         titreBateau->setText(tr("Pilototo pour ") + my_boat->getBoatPseudo());
@@ -235,9 +235,9 @@ void DialogPilototo::slot_boatUpdated(boat * pvBoat)
             tr("La recuperation des donnees pilototo de VLM n'a pas fonctionne\nVous pouvez ajouter des instructions mais sans voir le resultat dans QtVlm"),
 	    QMessageBox::Ok);
 
-    for(int i=0;i<list->count();i++)
+    for(int i=0;i<list.count();++i)
     {
-	QString instr_txt=list->at(i);
+    QString instr_txt=list.at(i);
 	if(instr_txt!="none")
 	{
 	    QStringList instr_buf = instr_txt.split(",");
@@ -306,7 +306,7 @@ void DialogPilototo::done(int result)
     {
 	/* checking if there is un validated instructions */
 	bool hasUnValidated =false;
-	for(int i=0;i<instructions_list.count();i++)
+    for(int i=0;i<instructions_list.count();++i)
 	{
 	    if(instructions_list[i]->getHasChanged())
 	    {
@@ -329,7 +329,7 @@ void DialogPilototo::done(int result)
         QJson::Serializer serializer;
         struct instruction * instr_ptr;
 	/* processing del */
-	for(int i=0;i<delList.count();i++)
+    for(int i=0;i<delList.count();++i)
         {
             QVariantMap cur_instruction;
             cur_instruction.insert("taskid",delList[i]);
@@ -340,7 +340,7 @@ void DialogPilototo::done(int result)
             instructions->append(instr_ptr);
         }
 	/* processing others */
-	for(int i=0;i<instructions_list.count();i++)
+    for(int i=0;i<instructions_list.count();++i)
 	{
             DialogPilototoInstruction * instr=instructions_list[i];
             if(instr->getTstamp()<(int)QDateTime::currentDateTime().toUTC().toTime_t()) continue;
@@ -388,7 +388,7 @@ void DialogPilototo::done(int result)
 	/* ready to send */
         currentList=instructions;
 
-        for(int i=0;i<currentList->count();i++)
+        for(int i=0;i<currentList->count();++i)
             qWarning() << i << ": " << currentList->at(i)->script << " - " << currentList->at(i)->param;
 
         sendPilototo();
@@ -592,10 +592,10 @@ void DialogPilototo::setInstructions(boat * pvBoat, QList<POI *> pois)
     QList<struct instruction*> * instructions = new QList<struct instruction*>;
     QJson::Serializer serializer;
     struct instruction * instr_ptr;
-    QStringList * plist = my_boat->getPilototo();
-    for(int n=0;n<plist->count();n++)
+    QStringList plist = my_boat->getPilototo();
+    for(int n=0;n<plist.count();++n)
     {
-        QStringList i=plist->at(n).split(",");
+        QStringList i=plist.at(n).split(",");
         if(i.at(0)=="none") continue;
         QVariantMap cur_instruction;
         cur_instruction.insert("taskid",i.at(0).toInt());

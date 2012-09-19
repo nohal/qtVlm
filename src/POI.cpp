@@ -897,7 +897,7 @@ void POI::slot_WPChanged(double tlat,double tlon)
     if(parent->getSelectedBoat()->getType()!=BOAT_VLM) return;
     boatVLM * b=(boatVLM *)parent->getSelectedBoat();
     if(!b->getHasPilototo()) return;
-    QStringList is=*(b->getPilototo()); /*do not use a pointer since it might change during treatment*/
+    QStringList is=b->getPilototo();
     for(int n=0;n<is.count();++n)
     {
         QStringList isi=is.at(n).split(",");

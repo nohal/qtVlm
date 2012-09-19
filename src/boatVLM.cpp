@@ -260,7 +260,7 @@ void boatVLM::requestFinished (QByteArray res_byte)
                 newRace=false;
                 vacLen=300;
                 pilototo.clear();
-                for(int i=0;i<5;i++)
+                for(int i=0;i<5;++i)
                     pilototo.append("none");
 
 
@@ -464,7 +464,7 @@ void boatVLM::requestFinished (QByteArray res_byte)
                 //qWarning() << "race name: " << result["racename"].toString();
 
                 QVariantMap wps= result["races_waypoints"].toMap();
-                for(int i=1;true;i++)
+                for(int i=1;true;++i)
                 {
                     QString str;
                     QVariantMap wp= wps[str.setNum(i)].toMap();
@@ -688,7 +688,7 @@ void boatVLM::showNextGates()
             continue;
         }
         porte->show();
-        j++;
+        ++j;
         if(j<nWP)
         {
             porte->setHidden(true);
@@ -1003,11 +1003,11 @@ void boatVLM::exportBoatInfoLog(QString fileName)
     QStringList textOutput;
     QString key,gribFileName=QString::fromStdString((parent->getGrib())->getFileName());
     if (!boatInfoLog.isEmpty())
-    for( logIndex=0;logIndex<boatInfoLog.count();logIndex++) {
+    for( logIndex=0;logIndex<boatInfoLog.count();++logIndex) {
         boatInfoRecord=boatInfoLog[logIndex];
         recordKeys=boatInfoRecord.keys();
         if (!boatInfoLog[logIndex].isEmpty()) {
-            for(keysIndex=0;keysIndex<recordKeys.count();keysIndex++) {
+            for(keysIndex=0;keysIndex<recordKeys.count();++keysIndex) {
                 textOutput=QStringList();
                 key=recordKeys[keysIndex];
                 textOutput.append(key);
@@ -1018,12 +1018,12 @@ void boatVLM::exportBoatInfoLog(QString fileName)
             stream<<"\n\n";
             QDateTime time;
             QString timeString;
-            for (tableIndex=0 ; tableIndex<2; tableIndex++) {
+            for (tableIndex=0 ; tableIndex<2; ++tableIndex) {
                 time.setTime_t(boatInfoRecord[tableKeys[tableIndex]].toUInt());
                 timeString=time.toUTC().toString("yyyy/MM/dd hh:mm:ss");
                 tableStream <<  timeString <<"\t";
             }
-            for (tableIndex=2 ; tableIndex<tableKeys.size(); tableIndex++) {
+            for (tableIndex=2 ; tableIndex<tableKeys.size(); ++tableIndex) {
                 tableStream <<  boatInfoRecord[tableKeys[tableIndex]].toString() <<"\t";
             }
             tableStream<<"\n";

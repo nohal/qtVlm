@@ -82,7 +82,7 @@ class boatVLM : public boat, public inetClient
         time_t getPrevVac(void)         {    return prevVac; }
         time_t getNextVac(void)         {    return nextVac; }
         QString getPolarName(void)      {    return polarForcedName; }
-        QStringList * getPilototo(void) {    return &pilototo; }
+        QStringList getPilototo(void) {      return pilototo; }
         bool getHasPilototo(void)       {    return hasPilototo; }
 
         bool getPolarState(void)        {    return forcePolar; }
