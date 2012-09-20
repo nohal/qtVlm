@@ -28,7 +28,7 @@ else
 	endif
 	MKDIR = mkdir
 endif
-.PHONY create_usage_file help
+
 all:
 	$(RMAPPNAME)
 	$(CD) $(call FixPath,src/libs/bzip2) $(SEP) $(QMAKE) CONFIG+=$(TARGET) $(SEP) make 
@@ -62,18 +62,15 @@ clean:
 	$(RMFOLDER) $(call FixPath,src/objs)
 
 install: all
-	create_usage_file
-	ifeq($(prefix),~qtVlm)
-		@$(MAKE) help
-		@exit 2
-	endif
+	@echo "***********************************************************"
+	@echo "* Installing qtVlm in " $(prefix)
+	@echo "***********************************************************"
 	mkdir -p $(prefix)
 	cp -Rf qtVlm tr/ $(prefix)
 	cp -Rf base_dir/icon base_dir/img base_dir/polar $(prefix)
 	mkdir -p $(prefix)/grib
 	mkdir -p $(prefix)/maps
-create_usage_file:
-	@echo "make install failed because you didn't specify where you want to install qtVlm">qtVlm_usage
-	@echo "Please read the README file">>qtVlm_usage
-help:
-	@cat qtVlm_usage	
+	@echo "***********************************************************"
+	@echo "* Install done (" $(prefix) ")"
+	@echo "***********************************************************"
+	
