@@ -103,8 +103,7 @@ Terrain::Terrain(myCentralWidget *parent, Projection *proj_) : QGraphicsWidget()
     mustRedraw = true;
 
     gshhsReader = NULL;
-    gisReader = new GisReader();
-    assert(gisReader);
+    gisReader = NULL;
 
     setPalette(QPalette(backgroundColor));
 
@@ -151,6 +150,9 @@ void Terrain::updateGraphicsParameters()
 void Terrain::setGSHHS_map(GshhsReader *map)
 {
     gshhsReader = map;
+    /* new gshhs => reload gis */
+    if(gisReader) delete gisReader;
+    gisReader=new GisReader();
     isEarthMapValid = false;
     redrawAll();
 }
@@ -290,14 +292,10 @@ void Terrain::draw_GSHHSandGRIB()
         }
     }
 
-    if (showCountriesNames)
-    {
-
+    if (gisReader && showCountriesNames)
         gisReader->drawCountriesNames(pnt, proj);
-    }
-    if (showCitiesNamesLevel > 0) {
+    if (gisReader && showCitiesNamesLevel > 0)
         gisReader->drawCitiesNames(pnt, proj, showCitiesNamesLevel);
-    }
     //===================================================
 
     if (gshhsReader != NULL)

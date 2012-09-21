@@ -148,8 +148,7 @@ class Grib
         double  hoursBetweenRecords;
         int	dewpointDataStatus;
 
-        std::map < std::string,
-        		   std::vector<GribRecord *>* >  mapGribRecords;
+        std::map < std::string,std::vector<GribRecord *>* >  mapGribRecords;
         void initNewGrib();
         void storeRecordInMap(GribRecord *rec);
 		
