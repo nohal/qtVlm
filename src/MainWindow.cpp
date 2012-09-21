@@ -736,7 +736,9 @@ void MainWindow::slot_deleteProgress (void)
             emit boatHasUpdated(selectedBoat);
         }
     }
-
+    statusBar->show();
+    toolBar->show();
+    menuBar->show();
 }
 
 //-------------------------------------------------
