@@ -799,6 +799,7 @@ void DialogRoute::fillPilotView(bool def)
         if(model->rowCount()==6) break;
         POI * poi=route->getPoiList().at(n);
         if(!def && !poi->getPiloteSelected()) continue;
+        if(!poi->getHas_eta()) break;
         listPois.append(poi);
         time_t eta;
         QList<QStandardItem*> items;

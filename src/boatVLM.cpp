@@ -848,20 +848,10 @@ void boatVLM::updateHint(void)
                         desc=desc+tr(", direction stable");
                     else
                     {
-                        if(qAbs(twa)<9000)
-                        {
-                            if(previousTWA>twa)
-                                desc=desc+tr(" en refusant");
-                            else
-                                desc=desc+tr(" en adonnant");
-                        }
-                        else
-                        {
-                            if(previousTWA<twa)
-                                desc=desc+tr(" en refusant");
-                            else
-                                desc=desc+tr(" en adonnant");
-                        }
+                       if(previousTWA>twa)
+                            desc=desc+tr(" en refusant");
+                       else
+                            desc=desc+tr(" en adonnant");
                     }
                 }
             }
