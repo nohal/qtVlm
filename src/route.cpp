@@ -748,7 +748,7 @@ void ROUTE::slot_recalculate(boat * boat)
                 if(orth2.getDistance()>dist1)
                     remain=-remain; /*case where we went over the target*/
             }
-            if(this->autoAt)
+            if(this->autoAt && has_eta)
             {
                 poi->setWph(qRound(cap*100)/100.0);
             }

@@ -799,15 +799,20 @@ void DialogRoute::fillPilotView(bool def)
         if(model->rowCount()==6) break;
         POI * poi=route->getPoiList().at(n);
         if(!def && !poi->getPiloteSelected()) continue;
-        if(!poi->getHas_eta()) break;
+        //if(!poi->getHas_eta()) break;
         listPois.append(poi);
         time_t eta;
         QList<QStandardItem*> items;
         if(listPois.count()!=1)
         {
             eta=listPois.at(listPois.count()-2)->getRouteTimeStamp();
+            //qWarning()<<"treating"<<listPois.at(listPois.count()-2)->getName();
+            if(!listPois.at(listPois.count()-2)->getHas_eta() || eta==-1)
+            {
+                //qWarning()<<"false"<<eta;
+                break;
+            }
             eta=eta+20;
-            if(eta==-1) break;
             items.append(new QStandardItem());
             QDateTime tt=QDateTime().fromTime_t(eta).toUTC();
             tt.setTimeSpec(Qt::UTC);
