@@ -472,7 +472,7 @@ myCentralWidget::myCentralWidget(Projection * proj,MainWindow * parent,MenuBar *
     connect(raceDialog,SIGNAL(writeBoat()),this,SLOT(slot_writeBoatData()));
 
     dialogLoadGrib = new DialogLoadGrib();
-    //dialogLoadGrib->checkQtvlmVersion();
+    dialogLoadGrib->checkQtvlmVersion();
     connect(dialogLoadGrib, SIGNAL(signalGribFileReceived(QString)),
             parent,  SLOT(slot_gribFileReceived(QString)));
     connect(menuBar->acOptions_Units, SIGNAL(triggered()), &dialogUnits, SLOT(exec()));

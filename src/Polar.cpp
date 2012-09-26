@@ -298,8 +298,6 @@ void Polar::setPolarName(QString fname)
             QFileInfo info2(file);
             if(this->mainWindow->isStartingUp && info1.lastModified()<info2.lastModified())
                 fileVMG.remove();
-            else if(this->mainWindow->isStartingUp && info1.lastModified()<QDateTime().fromString("dd/MM/yyyy hh:mm:ss","13/09/2012 00:00:00"))
-                fileVMG.remove();
             else
             {
                 file.close();
