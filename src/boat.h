@@ -1,0 +1,231 @@
+/**********************************************************************
+qtVlm: Virtual Loup de mer GUI
+Copyright (C) 2010 - Christophe Thomas aka Oxygen77
+
+http://qtvlm.sf.net
+
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program.  If not, see <http://www.gnu.org/licenses/>.
+***********************************************************************/
+
+#ifndef BOAT_H
+#define BOAT_H
+
+#include <QPainter>
+#include <QGraphicsWidget>
+#include <QMenuBar>
+#include <QLabel>
+
+#include "mycentralwidget.h"
+
+#include "class_list.h"
+
+class boat: public QGraphicsWidget
+{ Q_OBJECT
+    public:
+        boat(QString pseudo, bool activated,
+            Projection * proj,MainWindow * main,myCentralWidget * parent);
+        ~boat();
+
+        virtual void setStatus(bool activated);
+        virtual void showNextGates(){return;}
+        void setParam(QString pseudo);
+        void setParam(QString pseudo, bool activated);
+        void setLockStatus(bool status);
+        void setZoom(double zoom)   { this->zoom=zoom; }
+        void setForceEstime(bool force_estime) { this->forceEstime=force_estime;}
+        virtual void unSelectBoat(bool needUpdate);
+        virtual int getId(void) {return -1; }
+        QString getplayerName(void)     {    return playerName; }
+        virtual void stopRead(){return;}
+        virtual time_t getPrevVac(){return QDateTime::currentDateTimeUtc().toTime_t();}
+
+        virtual void reloadPolar(bool forced=false);
+        virtual QList<vlmLine*> getGates();
+
+        void playerDeActivated(void);
+        void playerActivated(void) { setStatus(activated); }
+
+        bool getStatus(void)            {    return activated; }
+        int getVacLen(void)             {    return vacLen; }
+        double getLat(void)             {    return lat; }
+        double getLon(void)             {    return lon; }
+        double getSpeed(void)            {    return speed; }
+        double getHeading(void)          {    return heading; }
+        double getAvg(void)              {    return avg; }
+        double getDnm(void)              {    return dnm; }
+        double getLoch(void)             {    return loch; }
+        double getOrtho(void)            {    return ortho; }
+        double getLoxo(void)             {    return loxo; }
+        double getVmg(void)              {    return vmg; }
+        double getWindDir(void)          {    return windDir; }
+        double getWindSpeed(void)        {    return windSpeed; }
+        double getTWA(void)              {    return TWA; }
+        double getWPHd(void)             {    return WPHd; }
+        int getNWP(){return nWP;}
+        QString getPolarName(void)      {    return polarName; }
+        Polar * getPolarData(void)      {    return polarData; }
+        bool getLockStatus(void)        {    return changeLocked;}
+        bool getForceEstime(void)       {    return forceEstime; }
+        int getEstimeType(void)         {    return estime_type; }
+        bool getIsSelected(void)        {    return selected; }
+        double getZoom(void)             {    return zoom; }
+        bool isUpdating()               {    return false; }
+        double getWPLat(void)           {    return WPLat; }
+        double getWPLon(void)           {    return WPLon; }
+        int getRank(void)               {    return rank; }
+        QString getScore(void)          {    return score;}
+        QString getBoatPseudo(void)     {    return pseudo; }
+        QString getOwn(void)            {    return own; }
+
+        double getBvmgUp(double ws);
+        double getBvmgDown(double ws);
+        int getX(){return x();}
+        int getY(){return y();}
+
+        int getType(void) { return boat_type; }
+
+        void drawEstime(double myHeading, double mySpeed);
+        double getDeclinaison(){return this->declinaison;}
+        void setDeclinaison(double d){this->declinaison=d;}
+
+        /* graphicsWidget */
+        QPainterPath shape() const;
+        QRectF boundingRect() const;
+        vlmLine * getTraceDrawing(){return this->trace_drawing;}
+        double getMinSpeedForEngine(){return this->minSpeedForEngine;}
+        void setMinSpeedForEngine(double d){this->minSpeedForEngine=d;}
+        double getSpeedWithEngine(){return this->speedWithEngine;}
+        void setSpeedWithEngine(double d){this->speedWithEngine=d;}
+
+    public slots:
+        void slot_projectionUpdated();
+        void slot_paramChanged();
+        virtual void slot_selectBoat();
+        void slot_toggleEstime();
+        void slot_updateGraphicsParameters();
+        void slot_shLab(bool state){this->labelHidden=state;update();}
+        virtual void slot_shSall() { }
+        virtual void slot_shHall() { }
+        void slotTwaLine(){parent->twaDraw(lon,lat);}
+        void slotCompassLine(void);
+        void slot_estimeFlashing(void);
+        void polarLoaded(QString,Polar *);
+
+    signals:
+        void boatSelected(boat*);
+        void boatUpdated(boat*,bool,bool);
+        void boatLockStatusChanged(boat*,bool);
+        void getPolar(QString);
+        void releasePolar(QString fname);
+        void clearSelection(void);
+        void compassLine(double,double);
+        void getTrace(QByteArray,QList<vlmPoint> *);
+
+    protected:
+        void contextMenuEvent(QGraphicsSceneContextMenuEvent * event);
+        void paint(QPainter * pnt, const QStyleOptionGraphicsItem * , QWidget * );
+
+        /* DATA */
+        int boat_type;
+
+        QString polarName;
+        Polar * polarData;
+
+        QString pseudo;
+        bool activated;
+        bool changeLocked;
+        bool selected;
+        double lat,lon;
+        double WPLat,WPLon;
+        double speed,heading;
+
+
+        double avg;
+        double dnm,loch,ortho,loxo,vmg;
+        double windDir,windSpeed;
+        double TWA;
+
+        double WPHd;
+        QString ETA;
+        QString score;
+        QString stopAndGo;
+        time_t prevVac;
+        time_t nextVac;
+        int nWP;
+        int   vacLen;
+        int rank;
+
+
+
+        double zoom;
+
+        Projection * proj;
+
+        QLabel    *label;
+        QColor    bgcolor,fgcolor;
+        QColor    myColor;
+        QColor    selColor;
+        QCursor   enterCursor;
+        int       width,height;
+        QString   my_str;
+        QString   playerName;
+
+        /* trace */
+        vlmLine * trace_drawing;
+        void updateTraceColor(void);
+
+        /* estime param */
+        int estime_type;
+        int estime_param;
+        vlmLine * estimeLine;
+        orthoSegment * WPLine;
+
+        myCentralWidget * parent;
+        MainWindow * mainWindow;
+
+        void updatePosition(void);
+
+        bool forceEstime;
+
+        void drawEstime(void);
+        bool labelHidden;
+
+        /* MENU */
+        QMenu *popup;
+        QAction * ac_select;
+        QAction * ac_estime;
+        QAction * ac_compassLine;
+        QAction * ac_twaLine;
+        void createPopUpMenu();        
+
+        void updateBoatData(void);        
+        virtual void updateBoatString(void)  { }
+        virtual void updateHint(void)      { }
+        virtual void myCreatePopUpMenu(void)   {  }
+        QString country;
+        QImage flag;
+        bool drawFlag;
+        QString own;
+        QTimer * estimeTimer;
+
+        polarList * polar_list;
+        bool my_intersects(QLineF line1,QLineF line2) const;
+        double windEstimeDir;
+        double windEstimeSpeed;
+        double declinaison;
+        double minSpeedForEngine;
+        double speedWithEngine;
+};
+
+#endif // BOAT_H

@@ -1,0 +1,15 @@
+Building qtVlm
+ In order de build qtVlm you'll need to have Qt developpement suite.
+
+ To launch build: go in trunk folder and run: make
+
+ Installing:
+
+ Warning: install is only working on unix like arch
+
+ 1/edit Makefile to adjust the install folder (prefix variable: prefix = ~/qtVlm)
+ 2/ run: make install
+
+ For windows in order to install qtVlm, you'll need to copy qtVlm.exe and tr folder to the place where you want to install qtVlm, you'll then need to copy a list of folder from base_dir to qtVlm install folder: grib, icon, img, maps, polar
+
+ 
