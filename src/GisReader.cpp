@@ -43,8 +43,9 @@ GisReader::GisReader()
     //------------------------------------
     // Read countries file
     //------------------------------------
+    QString dir = Settings::getSetting("mapsFolder",appFolder.value("maps")).toString();
     fname = (lang == "fr") ?
-            appFolder.value("maps")+"gis/countries_fr.txt.gz" : appFolder.value("maps")+"gis/countries_en.txt.gz";
+            dir+"/gis/countries_fr.txt.gz" : dir+"/gis/countries_en.txt.gz";
     f = zu_open(qPrintable(fname), "rb");
     if (f != NULL) {
         long sz = zu_read(f, buf, szmax);
@@ -72,7 +73,7 @@ GisReader::GisReader()
     //------------------------------------
     // Read cities file
     //------------------------------------
-    fname = appFolder.value("maps")+"/gis/cities.txt.gz";
+    fname = dir+"/gis/cities.txt.gz";
     f = zu_open(qPrintable(fname), "rb");
     if (f != NULL) {
         long sz = zu_read(f, buf, szmax);
