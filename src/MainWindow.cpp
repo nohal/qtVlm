@@ -304,6 +304,20 @@ void MainWindow::continueSetup()
 {
     this->show();
     this->activateWindow();
+    QFile testWrite;
+    testWrite.setFileName("testWrite.txt");
+    if(testWrite.open(QIODevice::WriteOnly | QIODevice::Text ))
+        testWrite.remove();
+    else
+    {
+        QMessageBox::critical (this,
+           tr("Erreur"),
+           tr("Unable to write in qtVlm folder")+"<br>"+tr("Please change the folder permission or")+"<br>"+
+           tr("reinstall qtVlm elsewhere"));
+        my_centralWidget->setAboutToQuit();
+        QApplication::quit();
+    }
+
     dialogProxy = new DialogProxy();
 
     //--------------------------------------------------
