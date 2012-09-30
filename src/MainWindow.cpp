@@ -673,8 +673,11 @@ void MainWindow::slot_deleteProgress (void)
     //qWarning() << "Removing progress";
     progress->close();
     delete progress;
-    if(timerprogress)
+    progress=NULL;
+    if(timerprogress) {
         delete timerprogress;
+        timerprogress=NULL;
+    }
     if(restartNeeded)
         this->my_centralWidget->setAboutToQuit();
     else if(selectedBoat && selectedBoat->getType()==BOAT_REAL)

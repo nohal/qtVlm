@@ -543,6 +543,22 @@ La boîte à cocher trace partielle s&apos;active apres l&apos;entree d&apos;un 
         <source>Pseudo</source>
         <translation></translation>
     </message>
+    <message>
+        <source>Select maps folder</source>
+        <translation>Sélection du répertoire des cartes</translation>
+    </message>
+    <message>
+        <source>Changing maps folder</source>
+        <translation>Changement du répértoire des cartes</translation>
+    </message>
+    <message>
+        <source>Selected folder doesn&apos;t contain maps</source>
+        <translation>Le repertoire selectionné ne contient pas de cartes</translation>
+    </message>
+    <message>
+        <source>Selected folder contains maps with wrong version</source>
+        <translation>Le répértoire selectionné contient une mauvaise version des cartes</translation>
+    </message>
 </context>
 <context>
     <name>DialogPilototo</name>
@@ -1210,11 +1226,11 @@ Etes-vous sur ?</source>
     <name>GshhsDwnload</name>
     <message>
         <source>Sauvegarde des cartes</source>
-        <translation>Sauvegarde des cartes</translation>
+        <translation type="obsolete">Sauvegarde des cartes</translation>
     </message>
     <message>
         <source>Le fichier zip </source>
-        <translation>Le fichier zip</translation>
+        <translation type="obsolete">Le fichier zip</translation>
     </message>
     <message>
         <source> ne peut �tre dezippe</source>
@@ -1222,19 +1238,39 @@ Etes-vous sur ?</source>
     </message>
     <message>
         <source>Le fichier </source>
-        <translation>Le fichier</translation>
+        <translation type="obsolete">Le fichier</translation>
     </message>
     <message>
         <source> ne peut etre ouvert</source>
-        <translation> ne peut pas être ouvert</translation>
+        <translation type="obsolete"> ne peut pas être ouvert</translation>
     </message>
     <message>
         <source>Select maps folder</source>
-        <translation>Sélection du répertoire des cartes</translation>
+        <translation type="obsolete">Sélection du répertoire des cartes</translation>
     </message>
     <message>
         <source> ne peut etre dezippe</source>
-        <translation> ne peut pas être dézippé</translation>
+        <translation type="obsolete"> ne peut pas être dézippé</translation>
+    </message>
+    <message>
+        <source>Saving maps</source>
+        <translation>Sauvegarde des cartes</translation>
+    </message>
+    <message>
+        <source>Zip file </source>
+        <translation>Fichier zip</translation>
+    </message>
+    <message>
+        <source> can&apos;t be opened</source>
+        <translation>ne peut être ouvert</translation>
+    </message>
+    <message>
+        <source>Decompressing maps</source>
+        <translation>Décompression des cartes</translation>
+    </message>
+    <message>
+        <source> can&apos;t be unzip</source>
+        <translation>ne peut être dézippé</translation>
     </message>
 </context>
 <context>
@@ -4289,6 +4325,14 @@ sans simplifier</translation>
         <source>Trier les POIs par numero d&apos;ordre</source>
         <translation>POIs par numéro de séquence</translation>
     </message>
+    <message>
+        <source>Repertoire des cartes</source>
+        <translation>Repertoire des cartes</translation>
+    </message>
+    <message>
+        <source>TextLabel</source>
+        <translation></translation>
+    </message>
 </context>
 <context>
     <name>WP_dialog_ui</name>
@@ -6100,6 +6144,14 @@ Que voulez vous faire?</source>
     <message>
         <source>Select maps folder</source>
         <translation>Sélection du répertoire des cartes</translation>
+    </message>
+    <message>
+        <source>Download and decompress maps</source>
+        <translation>Téléchargement et décompression des cartes</translation>
+    </message>
+    <message>
+        <source>Finishing map init</source>
+        <translation>Finalisation de l&apos;initialisation des cartes</translation>
     </message>
 </context>
 <context>

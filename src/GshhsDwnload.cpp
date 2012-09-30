@@ -79,8 +79,8 @@ void GshhsDwnload::requestFinished(QByteArray res) {
 
     if(errorDuringDownload) {
         QMessageBox::critical(centralWidget,
-                              tr("Sauvegarde des cartes"),
-                              tr("Le fichier ") + filename + tr(" ne peut etre ouvert"));
+                              tr("Saving maps"),
+                              tr("Zip file ") + filename + tr(" can't be opened"));
     }
     finished=true;
 }
@@ -104,10 +104,6 @@ void GshhsDwnload::getMaps(void) {
         /* asking for folder holding maps */
         QString dir = Settings::getSetting("mapsFolder",appFolder.value("maps")).toString();
 
-        /*dir = QFileDialog::getExistingDirectory(centralWidget, tr("Select maps folder"),
-                                                        dir,
-                                                        QFileDialog::ShowDirsOnly);*/
-
         QProgressDialog * progress=centralWidget->getMainWindow()->get_progress();
 
         if(progress) {
@@ -120,8 +116,8 @@ void GshhsDwnload::getMaps(void) {
 
         if(miniunzip(UZ_OVERWRITE,(const char*)filename.toAscii().data(),dir.toAscii().data(),NULL,NULL)!=UNZ_OK) {
             QMessageBox::critical(centralWidget,
-                                  tr("Sauvegarde des cartes"),
-                                  tr("Le fichier zip ") + filename + tr(" ne peut etre dezippe"));
+                                  tr("Saving maps"),
+                                  tr("Zip file ") + filename + tr(" can't be unzip"));
         }
         else {
             centralWidget->loadGshhs();

@@ -51,6 +51,8 @@ class DialogParamVlm : public QDialog, public Ui::VLM_param_ui
 
         void doBtn_browseGrib(void);
 
+        void slot_chgMapFolder(void);
+
     signals:
         void paramVLMChanged(void);
         void inetUpdated(void);
@@ -60,6 +62,8 @@ class DialogParamVlm : public QDialog, public Ui::VLM_param_ui
         void changeColor(int type);
         void setColor(QString color,int type);
         QColor getColor(int type);
+
+        myCentralWidget * centralWidget;
 
         QString POI_color,Marque_WP_color,qtBoat_color,qtBoat_sel_color,WP_color,Balise_color;
 

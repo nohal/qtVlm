@@ -19,15 +19,18 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ***********************************************************************/
 
 #include <QtGui>
+#include <QMessageBox>
 
 #include "DialogParamVlm.h"
 #include "settings.h"
 #include "MainWindow.h"
 #include "mycentralwidget.h"
+#include "GshhsReader.h"
 #include "Util.h"
 
 DialogParamVlm::DialogParamVlm(MainWindow * main,myCentralWidget * parent) : QDialog(parent)
 {
+    centralWidget=parent;
     setupUi(this);
     Util::setFontDialog(this);
     connect(this,SIGNAL(resetTraceCache()),parent,SIGNAL(resetTraceCache()));
@@ -42,6 +45,11 @@ DialogParamVlm::DialogParamVlm(MainWindow * main,myCentralWidget * parent) : QDi
 
     this->chkPavillon->setCheckState(Settings::getSetting("showFlag",0).toInt()==1?Qt::Checked:Qt::Unchecked);
     this->classicalButtons->setChecked(Settings::getSetting("classicalButtons",0).toInt()==1);
+
+    QString mapsFolderString = Settings::getSetting("mapsFolder",appFolder.value("maps")).toString();
+    mapsFolder->setText(mapsFolderString);
+    mapsFolder->setToolTip(mapsFolderString);
+
 
     /* Colors */
 
@@ -173,6 +181,11 @@ void DialogParamVlm::done(int result)
         Settings::setSetting("defaultFontName",this->defFontName->currentText());
         Settings::setSetting("defaultFontSizeInc",QString().setNum(this->defFontSize->value()-8.25));
 
+        if(Settings::getSetting("mapsFolder",appFolder.value("maps")).toString() != mapsFolder->text()) {
+            Settings::setSetting("mapsFolder",mapsFolder->text());
+            centralWidget->loadGshhs();
+        }
+
 
         /* colors */
 
@@ -259,6 +272,40 @@ void DialogParamVlm::done(int result)
         emit paramVLMChanged();
     }
     QDialog::done(result);
+}
+
+void DialogParamVlm::slot_chgMapFolder(void) {
+    QString dir = mapsFolder->text();
+    bool exitLoop = false;
+
+    while (!exitLoop) {
+
+        dir = QFileDialog::getExistingDirectory(centralWidget, tr("Select maps folder"),
+                                                    dir,
+                                                    QFileDialog::ShowDirsOnly);
+        if(dir.isEmpty()) {
+            exitLoop=true;
+        }
+        else if(dir != mapsFolder->text()) {
+            GshhsReader * gshhsReaderPv = new GshhsReader((dir+"/gshhs").toAscii().data(), 0);
+
+            int polyVersion = gshhsReaderPv->getPolyVersion();
+            if(polyVersion == -1) {
+                QMessageBox::warning(this,tr("Changing maps folder"),tr("Selected folder doesn't contain maps"));
+            }
+            else if(polyVersion!=220) {
+                QMessageBox::warning(this,tr("Changing maps folder"),tr("Selected folder contains maps with wrong version"));
+            }
+            else {
+                exitLoop=true;
+                mapsFolder->setText(dir);
+                mapsFolder->setToolTip(dir);
+            }
+            delete gshhsReaderPv;
+        }
+        else
+            exitLoop=true;
+    }
 }
 
 void DialogParamVlm::forceUserAgent_changed(int newVal)

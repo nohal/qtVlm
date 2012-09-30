@@ -134,17 +134,50 @@
         </widget>
        </item>
        <item>
-        <spacer name="verticalSpacer_5">
-         <property name="orientation">
-          <enum>Qt::Vertical</enum>
+        <widget class="QGroupBox" name="groupBox_15">
+         <property name="title">
+          <string>Repertoire des cartes</string>
          </property>
-         <property name="sizeHint" stdset="0">
-          <size>
-           <width>20</width>
-           <height>40</height>
-          </size>
-         </property>
-        </spacer>
+         <layout class="QVBoxLayout" name="verticalLayout_17">
+          <item>
+           <widget class="QLabel" name="mapsFolder">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="text">
+             <string>TextLabel</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <layout class="QHBoxLayout" name="horizontalLayout_6">
+            <item>
+             <widget class="QPushButton" name="pushButton_7">
+              <property name="text">
+               <string>Changer</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <spacer name="horizontalSpacer_2">
+              <property name="orientation">
+               <enum>Qt::Horizontal</enum>
+              </property>
+              <property name="sizeHint" stdset="0">
+               <size>
+                <width>40</width>
+                <height>20</height>
+               </size>
+              </property>
+             </spacer>
+            </item>
+           </layout>
+          </item>
+         </layout>
+        </widget>
        </item>
       </layout>
      </widget>
@@ -1216,6 +1249,19 @@
     </widget>
    </item>
    <item>
+    <spacer name="verticalSpacer_5">
+     <property name="orientation">
+      <enum>Qt::Vertical</enum>
+     </property>
+     <property name="sizeHint" stdset="0">
+      <size>
+       <width>20</width>
+       <height>40</height>
+      </size>
+     </property>
+    </spacer>
+   </item>
+   <item>
     <widget class="QDialogButtonBox" name="buttonBox">
      <property name="orientation">
       <enum>Qt::Horizontal</enum>
@@ -1290,8 +1336,8 @@
    <slot>accept()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>258</x>
-     <y>324</y>
+     <x>262</x>
+     <y>443</y>
     </hint>
     <hint type="destinationlabel">
      <x>157</x>
@@ -1306,8 +1352,8 @@
    <slot>reject()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>326</x>
-     <y>330</y>
+     <x>330</x>
+     <y>443</y>
     </hint>
     <hint type="destinationlabel">
      <x>286</x>
@@ -1322,8 +1368,8 @@
    <slot>forceUserAgent_changed(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>126</x>
-     <y>115</y>
+     <x>141</x>
+     <y>142</y>
     </hint>
     <hint type="destinationlabel">
      <x>328</x>
@@ -1338,8 +1384,8 @@
    <slot>changeColor_POI()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>274</x>
-     <y>89</y>
+     <x>347</x>
+     <y>61</y>
     </hint>
     <hint type="destinationlabel">
      <x>347</x>
@@ -1354,8 +1400,8 @@
    <slot>changeColor_qtBoat()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>274</x>
-     <y>225</y>
+     <x>347</x>
+     <y>169</y>
     </hint>
     <hint type="destinationlabel">
      <x>347</x>
@@ -1370,8 +1416,8 @@
    <slot>changeColor_Marque_WP()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>274</x>
-     <y>191</y>
+     <x>347</x>
+     <y>142</y>
     </hint>
     <hint type="destinationlabel">
      <x>347</x>
@@ -1386,8 +1432,8 @@
    <slot>changeColor_qtBoat_sel()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>274</x>
-     <y>259</y>
+     <x>347</x>
+     <y>196</y>
     </hint>
     <hint type="destinationlabel">
      <x>347</x>
@@ -1402,7 +1448,7 @@
    <slot>radioBtn_time_toggle(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>63</x>
+     <x>127</x>
      <y>81</y>
     </hint>
     <hint type="destinationlabel">
@@ -1418,8 +1464,8 @@
    <slot>radioBtn_vac_toggle(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>63</x>
-     <y>108</y>
+     <x>127</x>
+     <y>107</y>
     </hint>
     <hint type="destinationlabel">
      <x>9</x>
@@ -1434,8 +1480,8 @@
    <slot>radioBtn_dist_toggle(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>63</x>
-     <y>135</y>
+     <x>127</x>
+     <y>133</y>
     </hint>
     <hint type="destinationlabel">
      <x>126</x>
@@ -1450,8 +1496,8 @@
    <slot>changeColor_WP()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>274</x>
-     <y>123</y>
+     <x>347</x>
+     <y>88</y>
     </hint>
     <hint type="destinationlabel">
      <x>347</x>
@@ -1466,8 +1512,8 @@
    <slot>changeColor_Balise()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>274</x>
-     <y>157</y>
+     <x>347</x>
+     <y>115</y>
     </hint>
     <hint type="destinationlabel">
      <x>347</x>
@@ -1482,12 +1528,28 @@
    <slot>doBtn_browseGrib()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>288</x>
-     <y>126</y>
+     <x>468</x>
+     <y>137</y>
     </hint>
     <hint type="destinationlabel">
      <x>213</x>
      <y>5</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>pushButton_7</sender>
+   <signal>clicked()</signal>
+   <receiver>VLM_param_ui</receiver>
+   <slot>slot_chgMapFolder()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>87</x>
+     <y>329</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>166</x>
+     <y>455</y>
     </hint>
    </hints>
   </connection>
@@ -1505,5 +1567,6 @@
   <slot>changeColor_WP()</slot>
   <slot>changeColor_Balise()</slot>
   <slot>doBtn_browseGrib()</slot>
+  <slot>slot_chgMapFolder()</slot>
  </slots>
 </ui>
