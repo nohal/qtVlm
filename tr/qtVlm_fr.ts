@@ -1522,6 +1522,18 @@ Etes-vous sur ?</source>
         <source> Vent</source>
         <translation></translation>
     </message>
+    <message>
+        <source>Unable to write in qtVlm folder</source>
+        <translation>Impossible d&apos;écrire dans le répertoire de qtVlm</translation>
+    </message>
+    <message>
+        <source>Please change the folder permission or</source>
+        <translation>Changez les permissions de ce répertoire ou</translation>
+    </message>
+    <message>
+        <source>reinstall qtVlm elsewhere</source>
+        <translation>réinstallew qtVlm autre part</translation>
+    </message>
 </context>
 <context>
     <name>MenuBar</name>

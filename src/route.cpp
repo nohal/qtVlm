@@ -752,8 +752,8 @@ void ROUTE::slot_recalculate(boat * boat)
             {
                 poi->setWph(qRound(cap*100)/100.0);
             }
-            else
-                poi->setWph(-1);
+//            else
+//                poi->setWph(-1);
 //            qWarning()<<"Distance Parcourue="<<distanceParcourue<<" remaining_distance="<<remaining_distance<<" previous_rd="<<previous_remaining_distance;
 //            qWarning()<<"newSpeed="<<newSpeed<<" wind_speed="<<wind_speed<<" angle="<<angle;
             line->setLastPointIsPoi();
