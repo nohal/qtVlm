@@ -89,7 +89,6 @@ class MainWindow: public QMainWindow
         void slotFile_Close_Current();
         void slotFile_Quit();
         void slotFile_QuitNoSave();
-        //void slotMap_Quality();
         void slot_gribFileReceived(QString fileName);
 
         void slotShowContextualMenu(QGraphicsSceneContextMenuEvent *);
@@ -184,7 +183,6 @@ class MainWindow: public QMainWindow
     protected:
         void closeEvent(QCloseEvent *) {QApplication::quit();}
         void keyPressEvent ( QKeyEvent * event );
-        //bool eventFilter(QObject * obj, QEvent * e);
 
     private:
         Projection  *proj;
@@ -211,7 +209,6 @@ class MainWindow: public QMainWindow
         QLabel       * tool_ESTIME;
         QLabel       * tool_ESTIMEUNIT;
         QCheckBox    * startEstime;
-        //QPushButton  * btn_Pilototo;
 
         Settings * settings;
 
@@ -256,7 +253,6 @@ class MainWindow: public QMainWindow
         bool noSave;
         bool restartNeeded;
         void updateTitle();
-        //POI * debugPOI;
 };
 
 #endif

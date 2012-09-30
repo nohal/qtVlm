@@ -55,12 +55,7 @@ inetConnexion::~inetConnexion(void)
 void inetConnexion::slot_updateInet(void)
 {
     if(inetManager)
-    {
-        /*if(!hasSpecHost)
-            host=Util::getHost();
-        Util::paramProxy(inetManager,host);*/
         resetInet();
-    }
 }
 
 bool inetConnexion::isAvailable(void)
@@ -192,7 +187,7 @@ void inetConnexion::slot_requestFinished(QNetworkReply * currentReply)
         /* managing progress bar */
         if(currentClient->getHasProgress())
         {
-            qWarning() << "Removing progress";
+            qWarning() << "Removing dwnld progress";
             currentClient->setHasProgress(false);
             progressDialog->hide();
             disconnect(currentReply,SIGNAL(downloadProgress(qint64,qint64)),this,SLOT(slot_progess(qint64,qint64)));

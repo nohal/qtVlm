@@ -558,7 +558,6 @@ void myCentralWidget::loadGshhs(void) {
         gshhsOk=false;
         msgBox.setText(tr("Vous n'avez pas la bonne version des cartes\nQue voulez vous faire?"));
     }
-    //msgBox.setWindowFlags(Qt::WindowStaysOnTopHint);
 
     if(!gshhsOk) {
         msgBox.exec();
@@ -583,9 +582,22 @@ void myCentralWidget::loadGshhs(void) {
         gshhsReader=NULL;
     }
 
+    QProgressDialog * progress=mainW->get_progress();
+
     if(dwnloadMaps) {
+        if(progress) {
+            progress->setLabelText(tr("Download and decompress maps"));
+            progress->setValue(progress->value()+5);
+        }
         gshhsDwnload->getMaps();
 
+    }
+
+
+
+    if(progress) {
+        progress->setLabelText(tr("Finishing map init"));
+        progress->setValue(progress->value()+5);
     }
 
     if(gshhsOk) {

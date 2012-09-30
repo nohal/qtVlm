@@ -27,6 +27,7 @@ Copyright (C) 2008 - Jacques Zaninetti - http://zygrib.free.fr
 #include <QMessageBox>
 #include <QDebug>
 #include <QFileDialog>
+#include <QThread>
 
 #include "mycentralwidget.h"
 #include "miniunz.h"
@@ -46,7 +47,7 @@ GshhsDwnload::GshhsDwnload(myCentralWidget * centralWidget, inetConnexion *inet)
     needAuth=false;
 }
 
-#define MAP_FNAME  "qtVlmMaps.zip"
+#define MAP_FNAME  "qtVlmMaps.zip" //"win_exe-3.1-1.zip"
 //"qtVlmMaps.zip"
 
 void GshhsDwnload::requestFinished(QByteArray res) {
@@ -87,7 +88,11 @@ void GshhsDwnload::requestFinished(QByteArray res) {
 
 void GshhsDwnload::getMaps(void) {
     QString page="/~oxygen/qtvlmMaps/";
-    page += MAP_FNAME;
+
+    //QString page = "/~oxygen/";
+
+    page+= MAP_FNAME;
+
     connect (this->getInet()->getProgressDialog(),SIGNAL(rejected()),this,SLOT(slot_abort()));
     finished=false;
     filename="";
@@ -99,17 +104,17 @@ void GshhsDwnload::getMaps(void) {
         /* asking for folder holding maps */
         QString dir = Settings::getSetting("mapsFolder",appFolder.value("maps")).toString();
 
-        dir = QFileDialog::getExistingDirectory(centralWidget, tr("Select maps folder"),
+        /*dir = QFileDialog::getExistingDirectory(centralWidget, tr("Select maps folder"),
                                                         dir,
-                                                        QFileDialog::ShowDirsOnly);
+                                                        QFileDialog::ShowDirsOnly);*/
 
         QProgressDialog * progress=centralWidget->getMainWindow()->get_progress();
 
         if(progress) {
-            progress->setLabelText(tr("Decompression des cartes"));
+            qWarning() << "Updating progress";
+            progress->setLabelText(tr("Decompressing maps"));
             progress->setValue(progress->value()+5);
-            progress->raise();
-            progress->activateWindow();
+            QCoreApplication::processEvents();
         }
 
 
