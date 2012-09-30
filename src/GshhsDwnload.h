@@ -49,6 +49,9 @@ class GshhsDwnload: public QObject, public inetClient
 
     private:
         myCentralWidget * centralWidget;
+        bool errorDuringDownload;
+        bool finished;
+        QString filename;
 
 };
 

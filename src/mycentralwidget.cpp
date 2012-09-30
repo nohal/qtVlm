@@ -328,12 +328,9 @@ myCentralWidget::myCentralWidget(Projection * proj,MainWindow * parent,MenuBar *
 
     view = new QGraphicsView(scene, this);
     view->setGeometry(0,0,width(),height());
-//   view->viewport()->setAttribute(Qt::WA_AcceptTouchEvents);
     view->viewport()->grabGesture(Qt::PanGesture);
     view->viewport()->grabGesture(Qt::PinchGesture);
-//    view->setAttribute(Qt::WA_AcceptTouchEvents);
-//    view->grabGesture(Qt::PanGesture);
-//    view->grabGesture(Qt::PinchGesture);
+
 
     /* other child */
     inetManager = new inetConnexion(mainW);
@@ -588,6 +585,7 @@ void myCentralWidget::loadGshhs(void) {
 
     if(dwnloadMaps) {
         gshhsDwnload->getMaps();
+
     }
 
     if(gshhsOk) {

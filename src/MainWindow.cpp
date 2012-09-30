@@ -312,6 +312,10 @@ void MainWindow::continueSetup()
     menuBar = new MenuBar(this);
     setMenuBar(menuBar);
     my_centralWidget = new myCentralWidget(proj,this,menuBar);
+    /* make sure it is still here */
+    progress->raise();
+    progress->setValue(progress->value()+5);
+
     menuBar->setMCW(this->my_centralWidget);
     this->setCentralWidget(my_centralWidget);
     connect(this,SIGNAL(addPOI_list(POI*)),my_centralWidget,SLOT(slot_addPOI_list(POI*)));
@@ -319,7 +323,6 @@ void MainWindow::continueSetup()
             my_centralWidget,SLOT(slot_addPOI(QString,int,double,double,double,int,bool,boat*)));
     connect(my_centralWidget,SIGNAL(POI_selectAborted(POI*)),this,SLOT(slot_POIselected(POI*)));
     connect(this,SIGNAL(moveBoat(double,double)),my_centralWidget,SLOT(slot_moveBoat(double,double)));
-   // connect(this,SIGNAL(updateRoute()),my_centralWidget,SLOT(slot_updateRoute()));
 
     //--------------------------------------------------
 
@@ -346,9 +349,9 @@ void MainWindow::continueSetup()
     font.setBold(false);
     stBar_label_3 = new QLabel("", statusBar);
     stBar_label_3->setFont(font);
-    //stBar_label_3->setStyleSheet("color: rgb(255, 0, 0);");
     statusBar->addWidget(stBar_label_3);
     font.setFixedPitch(false);
+
     //--------------------------------------------------
     toolBar = addToolBar(tr("Outils"));
     toolBar->setFloatable(false);
@@ -362,7 +365,6 @@ void MainWindow::continueSetup()
     toolBar->addAction(menuBar->acFile_Close);
     toolBar->addWidget(menuBar->datesGrib_sel);
     toolBar->addWidget(menuBar->datesGrib_now);
-    //toolBar->addWidget(menuBar->cbDatesGrib);
     toolBar->addAction(menuBar->acDatesGrib_prev);
     toolBar->addWidget(menuBar->cbGribStep);
     toolBar->addAction(menuBar->acDatesGrib_next);
@@ -401,10 +403,6 @@ void MainWindow::continueSetup()
     toolBar->addWidget(startEstime);
     slot_ParamVLMchanged();
     toolBar->addSeparator();
-    /*btn_Pilototo = new QPushButton(tr("Pilototo"),toolBar);
-    btn_Pilototo->setStyleSheet(QString::fromUtf8("background-color: rgb(255, 255, 127);"));
-    toolBar->addWidget(btn_Pilototo);
-    connect(btn_Pilototo,SIGNAL(clicked()),this, SLOT(slotPilototo()));*/
 
     tool_ETA = new QLabel("", toolBar);
     tool_ETA->setFont(font);
@@ -414,7 +412,6 @@ void MainWindow::continueSetup()
     Util::setFontDialog(tool_ETA);
     Util::setFontDialog(tool_ESTIME);
     Util::setFontDialog(tool_ESTIMEUNIT);
-    //Util::setFontDialog(statusBar);
     Util::setFontDialog(menuBar);
     //--------------------------------------------------
 
@@ -429,19 +426,16 @@ void MainWindow::continueSetup()
     QString fname = Settings::getSetting("gribFileName", "").toString();
     if (fname != "" && QFile::exists(fname))
     {
-   //     qWarning() << "Opening grib :" << fname;
         openGribFile(fname, false);
         gribFileName=fname;
-   //     qWarning() << "Grib opened";
     }
     fname = Settings::getSetting("gribFileNameCurrent", "").toString();
     if (fname != "" && QFile::exists(fname))
     {
-   //     qWarning() << "Opening grib :" << fname;
         openGribFile(fname, false,true);
         gribFileNameCurrent=fname;
-   //     qWarning() << "Grib opened";
     }
+
     progress->setValue(20);
 
 
@@ -459,7 +453,7 @@ void MainWindow::continueSetup()
 
     progress->setLabelText("loading polars list");
     polar_list = new polarList(my_centralWidget->getInet(),this);
-//    progress->setValue(30);
+
     progress->setLabelText("reading boats data");
     my_centralWidget->loadBoat();
     progress->setValue(60);
@@ -470,8 +464,6 @@ void MainWindow::continueSetup()
 
     selPOI_instruction=NULL;
     isSelectingWP=false;
-
-    //menuBar->updateBoatList(my_centralWidget->getBoats());
 
     myBoard = new board(this,my_centralWidget->getInet(),statusBar);
     connect(menuBar->acOptions_SH_ComBandeau,SIGNAL(triggered()),myBoard,SLOT(slot_hideShowCompass()));
@@ -493,42 +485,8 @@ void MainWindow::continueSetup()
     connectSignals();
 
     /* initialisation du niveau de qualité */
-
-    //int quality = Settings::getSetting("gshhsMapQuality", 1).toInt();
     int quality=4;
-//    for (int qual=4; qual>=0; qual--)
-//    {
-//        if (! my_centralWidget->get_gshhsReader()->gshhsFilesExists(qual))
-//        {
-//            switch (qual) {
-//                case 0: menuBar->acMap_Quality1->setEnabled(false); break;
-//                case 1: menuBar->acMap_Quality2->setEnabled(false); break;
-//                case 2: menuBar->acMap_Quality3->setEnabled(false); break;
-//                case 3: menuBar->acMap_Quality4->setEnabled(false); break;
-//                case 4: menuBar->acMap_Quality5->setEnabled(false); break;
-//            }
-//            if (quality >= qual)
-//            {
-//                quality = qual-1;
-//            }
-//        }
-//    }
-
-    /*if (quality < 0)
-    {
-        QMessageBox::information (this,
-            QString(tr("Erreur")),
-            QString(tr("Cartes non trouvees.\n\n")
-                    +tr("Verifiez l'installation du programme."))
-        );
-        quality = 0;
-    }*/
-    //menuBar->setQuality(quality);
     emit signalMapQuality(quality);
-
-    //------------------------------------------------
-    // sync all boat
-
 
     progress->setLabelText("Drawing all");
     progress->setValue(90);
@@ -596,8 +554,6 @@ void MainWindow::continueSetup()
         Util::setFontDialog(menuBar);
         return;
     }
-
-
 
     bool res;
     progress->setLabelText("Calling player dialog");

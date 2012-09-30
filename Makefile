@@ -29,7 +29,7 @@ else
 	MKDIR = mkdir
 endif
 
-all:
+libs:
 	$(RMAPPNAME)
 	$(CD) $(call FixPath,src/libs/bzip2) $(SEP) $(QMAKE) CONFIG+=$(TARGET) $(SEP) make 
 	$(CD) $(call FixPath,src/libs/zlib-1.2.7) $(SEP) $(QMAKE) CONFIG+=$(TARGET) $(SEP) make
@@ -38,6 +38,8 @@ all:
 	$(CD) $(call FixPath,src/libs/nmealib/src) $(SEP) $(QMAKE) CONFIG+=$(TARGET) $(SEP) make
 	$(CD) $(call FixPath,src/libs/libbsb) $(SEP) $(QMAKE) CONFIG+=$(TARGET) $(SEP) make
 	$(CD) $(call FixPath,src/libs/miniunz) $(SEP) $(QMAKE) CONFIG+=$(TARGET) $(SEP) make
+
+all: libs
 	$(CD) src $(SEP) $(QMAKE) CONFIG+=$(TARGET) $(SEP) make 
 
 clean:

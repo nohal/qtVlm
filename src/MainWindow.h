@@ -63,6 +63,8 @@ class MainWindow: public QMainWindow
         void statusBar_showSelectedZone(double x0, double y0, double x1, double y1);
         void drawVacInfo(void);
 
+        QProgressDialog * get_progress(void) { return progress; }
+
         void setBoardToggleAction(QAction * action);
         void getXY(int *X,int *Y){*X=this->mouseClicX;*Y=this->mouseClicY;}
         bool isStartingUp;
