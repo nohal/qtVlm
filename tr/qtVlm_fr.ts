@@ -1570,6 +1570,62 @@ Etes-vous sur ?</source>
         <source>reinstall qtVlm elsewhere</source>
         <translation>réinstallew qtVlm autre part</translation>
     </message>
+    <message>
+        <source>Starting qtVLM</source>
+        <translation>Démarrage de qtVlm</translation>
+    </message>
+    <message>
+        <source>Initializing menus</source>
+        <translation>Initialisation des menus</translation>
+    </message>
+    <message>
+        <source>Initializing maps drawing</source>
+        <translation>Initialisation des cartes</translation>
+    </message>
+    <message>
+        <source>Initializing toolbars</source>
+        <translation>Initialisation des barres d&apos;outils</translation>
+    </message>
+    <message>
+        <source>Opening grib</source>
+        <translation>Ouverture du grib</translation>
+    </message>
+    <message>
+        <source>Creating context menus</source>
+        <translation>Création des menus contextuels</translation>
+    </message>
+    <message>
+        <source>Loading polars list</source>
+        <translation>Chargement des polaires</translation>
+    </message>
+    <message>
+        <source>Reading boats data</source>
+        <translation>Lecture des données bateaux</translation>
+    </message>
+    <message>
+        <source>Drawing some</source>
+        <translation>Dessin des côtes</translation>
+    </message>
+    <message>
+        <source>Preparing coffee</source>
+        <translation>Préparation du café</translation>
+    </message>
+    <message>
+        <source>Drawing all</source>
+        <translation>Finalisation du dessin des côtes</translation>
+    </message>
+    <message>
+        <source>Updating player</source>
+        <translation>Mise à jour des comptes</translation>
+    </message>
+    <message>
+        <source>Calling player dialog</source>
+        <translation>Chargement des comptes</translation>
+    </message>
+    <message>
+        <source>Updating boats</source>
+        <translation>Mise à jour des bateaux</translation>
+    </message>
 </context>
 <context>
     <name>MenuBar</name>

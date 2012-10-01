@@ -884,7 +884,12 @@ void ROUTAGE::calculate()
         return;
     }
     if(!i_iso)
-        eta=startTime.toUTC().toTime_t();
+    {
+        if(!isPivot)
+            eta=startTime.toUTC().toTime_t()+myBoat->getVacLen();
+        else
+            eta=startTime.toUTC().toTime_t();
+    }
     else
         i_eta=eta;
     if ( eta>grib->getMaxDate() || eta<grib->getMinDate() )
@@ -1898,12 +1903,6 @@ void ROUTAGE::slot_calculate()
         }
         msecs_15=msecs_15+time.elapsed();
         iso->slot_showMe();
-        if(i_iso)
-            i_isochrones.append(iso);
-        else
-        {
-            isochrones.append(iso);
-        }
         time.restart();
         if(++refresh%4==0)
         {
@@ -1918,6 +1917,10 @@ void ROUTAGE::slot_calculate()
         }
         else
             eta=eta+(int)this->getTimeStep()*60.00;
+        if(i_iso)
+            i_isochrones.append(iso);
+        else
+            isochrones.append(iso);
         vlmPoint to(arrival.x(),arrival.y());
         time.restart();
         datathread dataThread;
@@ -3246,6 +3249,8 @@ double ROUTAGE::getTimeStep()
             step = this->timeStepLess24;
         else
             step = this->timeStepMore24;
+        if(!isPivot && this->isochrones.count()==1)
+            step-=myBoat->getVacLen()/60.0;
     }
     else
     {

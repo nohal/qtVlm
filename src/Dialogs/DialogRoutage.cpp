@@ -299,7 +299,14 @@ void DialogRoutage::done(int result)
         routage->setName((editName->text()).trimmed());
         routage->setWidth(inputTraceColor->getLineWidth());
         routage->setColor(inputTraceColor->getLineColor());
-        routage->setStartTime(editDateBox->dateTime());
+        QDateTime dd=editDateBox->dateTime();
+        if(routage->getBoat()->getType()==BOAT_VLM)
+        {
+            time_t ddd=dd.toTime_t();
+            ddd=floor(ddd/routage->getBoat()->getVacLen())*routage->getBoat()->getVacLen();
+            dd=dd.fromTime_t(ddd);
+        }
+        routage->setStartTime(dd);
         routage->setCheckCoast(checkCoast->isChecked());
         routage->setCheckLine(checkLines->isChecked());
         bool reCalculateAlternative=false;
