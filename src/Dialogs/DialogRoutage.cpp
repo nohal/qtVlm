@@ -303,7 +303,7 @@ void DialogRoutage::done(int result)
         if(routage->getBoat()->getType()==BOAT_VLM)
         {
             time_t ddd=dd.toTime_t();
-            ddd=floor(ddd/routage->getBoat()->getVacLen())*routage->getBoat()->getVacLen();
+            ddd=floor((double)ddd/(double)routage->getBoat()->getVacLen())*routage->getBoat()->getVacLen();
             dd=dd.fromTime_t(ddd);
         }
         routage->setStartTime(dd);
