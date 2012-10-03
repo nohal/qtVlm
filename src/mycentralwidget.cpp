@@ -540,6 +540,14 @@ void myCentralWidget::loadGshhs(void) {
     gshhsReader->setProj(proj);
 
     int polyVersion = gshhsReader->getPolyVersion();
+    if(polyVersion==-1 || polyVersion!=220)
+    {
+        mapDir=".";
+        delete gshhsReader;
+        gshhsReader = new GshhsReader((mapDir+"/gshhs").toAscii().data(), 0);
+        gshhsReader->setProj(proj);
+        polyVersion = gshhsReader->getPolyVersion();
+    }
     bool dwnloadMaps = false;
     bool gshhsOk=true;
 
@@ -558,7 +566,14 @@ void myCentralWidget::loadGshhs(void) {
         gshhsOk=false;
         msgBox.setText(tr("Vous n'avez pas la bonne version des cartes\nQue voulez vous faire?"));
     }
-
+    QDir dir(mapDir);
+    QDir appDir=QDir::currentPath();
+    if(dir.rootPath()==appDir.rootPath())
+        mapDir=appDir.relativeFilePath(mapDir);
+    else
+        mapDir=appDir.absoluteFilePath(mapDir);
+    qWarning() << "Setting map folder to " << mapDir;
+    Settings::setSetting("mapsFolder",mapDir);
     if(!gshhsOk) {
         msgBox.exec();
 
@@ -569,6 +584,12 @@ void myCentralWidget::loadGshhs(void) {
             mapDir = QFileDialog::getExistingDirectory(this, tr("Select maps folder"),
                                                             mapDir,
                                                             QFileDialog::ShowDirsOnly);
+            QDir dir(mapDir);
+            QDir appDir=QDir::currentPath();
+            if(dir.rootPath()==appDir.rootPath())
+                mapDir=appDir.relativeFilePath(mapDir);
+            else
+                mapDir=appDir.absoluteFilePath(mapDir);
             qWarning() << "Setting map folder to " << mapDir;
             Settings::setSetting("mapsFolder",mapDir);
             delete gshhsReader;

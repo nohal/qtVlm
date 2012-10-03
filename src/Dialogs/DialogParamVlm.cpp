@@ -181,8 +181,17 @@ void DialogParamVlm::done(int result)
         Settings::setSetting("defaultFontName",this->defFontName->currentText());
         Settings::setSetting("defaultFontSizeInc",QString().setNum(this->defFontSize->value()-8.25));
 
-        if(Settings::getSetting("mapsFolder",appFolder.value("maps")).toString() != mapsFolder->text()) {
-            Settings::setSetting("mapsFolder",mapsFolder->text());
+        if(Settings::getSetting("mapsFolder",appFolder.value("maps")).toString() != mapsFolder->text())
+        {
+            QString mapDir = mapsFolder->text();
+            QDir dir(mapDir);
+            QDir appDir=QDir::currentPath();
+            if(dir.rootPath()==appDir.rootPath())
+                mapDir=appDir.relativeFilePath(mapDir);
+            else
+                mapDir=appDir.absoluteFilePath(mapDir);
+            qWarning() << "Setting map folder to " << mapDir;
+            Settings::setSetting("mapsFolder",mapDir);
             centralWidget->loadGshhs();
         }
 
