@@ -551,20 +551,20 @@ void myCentralWidget::loadGshhs(void) {
     bool dwnloadMaps = false;
     bool gshhsOk=true;
 
-    QMessageBox msgBox(QMessageBox::Question,tr("Ouverture des cartes"),"",QMessageBox::NoButton,this);
-    QPushButton * selectFolderBtn = msgBox.addButton(tr("Choisir un repertoire"),QMessageBox::ApplyRole);
-    QPushButton * downloadMapBtn = msgBox.addButton(tr("Telechargement"),QMessageBox::AcceptRole);
+    QMessageBox msgBox(QMessageBox::Question,tr("Maps loading"),"",QMessageBox::NoButton,this);
+    QPushButton * selectFolderBtn = msgBox.addButton(tr("Select existing maps folder"),QMessageBox::ApplyRole);
+    QPushButton * downloadMapBtn = msgBox.addButton(tr("Downloading"),QMessageBox::AcceptRole);
     msgBox.addButton(tr("Annuler"),QMessageBox::RejectRole);
 
     if(polyVersion == -1) {
         qWarning() << "Missing maps";
         gshhsOk=false;
-        msgBox.setText(tr("Les cartes sont absentes\nQue voulez vous faire?"));
+        msgBox.setText(tr("Maps are missing\nWhat do you want to do?"));
     }
     else if(polyVersion!=220) {
         qWarning()<<"wrong poly version->"<<gshhsReader->getPolyVersion();
         gshhsOk=false;
-        msgBox.setText(tr("Vous n'avez pas la bonne version des cartes\nQue voulez vous faire?"));
+        msgBox.setText(tr("An old version of maps has been detected\nWhat do you want to do?"));
     }
     QDir dir(mapDir);
     QDir appDir=QDir::currentPath();

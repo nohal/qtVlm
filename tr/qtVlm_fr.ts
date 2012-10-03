@@ -6161,7 +6161,7 @@ Voulez-vous la remplacer?</source>
     </message>
     <message>
         <source>Ouverture des cartes</source>
-        <translation>Ouverte des cartes</translation>
+        <translation type="obsolete">Ouverte des cartes</translation>
     </message>
     <message>
         <source>Les cartes sont absentes
@@ -6177,25 +6177,15 @@ Voulez-vous les télécharger ?</translation>
     </message>
     <message>
         <source>Choisir un repertoire</source>
-        <translation>Choisir un répertoire</translation>
+        <translation type="obsolete">Choisir un répertoire</translation>
     </message>
     <message>
         <source>Telechargement</source>
-        <translation>Téléchargement</translation>
+        <translation type="obsolete">Téléchargement</translation>
     </message>
     <message>
         <source>Annuler</source>
         <translation>Annuler</translation>
-    </message>
-    <message>
-        <source>Les cartes sont absentes
-Que voulez vous faire?</source>
-        <translation></translation>
-    </message>
-    <message>
-        <source>Vous n&apos;avez pas la bonne version des cartes
-Que voulez vous faire?</source>
-        <translation></translation>
     </message>
     <message>
         <source>Select maps folder</source>
@@ -6208,6 +6198,30 @@ Que voulez vous faire?</source>
     <message>
         <source>Finishing map init</source>
         <translation>Finalisation de l&apos;initialisation des cartes</translation>
+    </message>
+    <message>
+        <source>Maps loading</source>
+        <translation>Chargement des cartes</translation>
+    </message>
+    <message>
+        <source>Select existing maps folder</source>
+        <translation>Selectionner un repertoire de cartes existant</translation>
+    </message>
+    <message>
+        <source>Downloading</source>
+        <translation>Téléchargement</translation>
+    </message>
+    <message>
+        <source>Maps are missing
+What do you want to do?</source>
+        <translation>Les cartes sont absentes
+Que voulez vous faire?</translation>
+    </message>
+    <message>
+        <source>An old version of maps has been detected
+What do you want to do?</source>
+        <translation>Les cartes sontd&apos;une mauvaise version
+Que voulez vous faire?</translation>
     </message>
 </context>
 <context>
