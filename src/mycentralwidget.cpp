@@ -677,8 +677,8 @@ void myCentralWidget::loadPOI(void)
                         pen.setWidthF(poi1->getLineWidth());
                         lineBetweenPois->setLinePen(pen);
                         lineBetweenPois->slot_showMe();
+                        break;
                     }
-                    break;
                 }
             }
         }
