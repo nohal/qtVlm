@@ -1213,8 +1213,7 @@ void ROUTAGE::slot_calculate()
             ++nbNotDead;
             iso->setPointWind(n,windAngle,windSpeed);
             iso->setPointCurrent(n,current_angle,current_speed);
-            double vmg;
-            myBoat->getPolarData()->getBvmg(Util::A360(list->at(n).capArrival-windAngle),windSpeed,&vmg);
+            double vmg=myBoat->getPolarData()->getBvmg(Util::A360(list->at(n).capArrival-windAngle),windSpeed,&vmg);
             iso->setPointCapVmg(n,Util::A360(vmg+windAngle));
         }
         msecs_5+=tfp.elapsed();
