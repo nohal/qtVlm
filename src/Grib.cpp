@@ -211,7 +211,7 @@ void Grib::loadGribFile(QString fileName)
 //-------------------------------------------------------------------------------
 void Grib::clean_all_vectors()
 {
-        std::map < std::string, std::vector<GribRecord *>* >::iterator it;
+        std::map < int, std::vector<GribRecord *>* >::iterator it;
         for (it=mapGribRecords.begin(); it!=mapGribRecords.end(); it++) {
                 std::vector<GribRecord *> *ls = (*it).second;
                 clean_vector( *ls );
@@ -233,7 +233,7 @@ void Grib::clean_vector(std::vector<GribRecord *> &ls)
 //---------------------------------------------------------------------------------
 void Grib::storeRecordInMap(GribRecord *rec)
 {
-        std::map <std::string, std::vector<GribRecord *>* >::iterator it;
+        std::map <int, std::vector<GribRecord *>* >::iterator it;
         it = mapGribRecords.find(rec->getKey());
         if (it == mapGribRecords.end())
         {
@@ -368,8 +368,8 @@ void Grib::readAllGribRecords()
                                 }
                                 else {
                                         fprintf(stderr,
-                                                "GribReader: unknown record type: key=%s  idCenter==%d && idModel==%d && idGrid==%d\n",
-                                                rec->getKey().c_str(),
+                                                "GribReader: unknown record type: key=%d  idCenter==%d && idModel==%d && idGrid==%d\n",
+                                                rec->getKey(),
                                                 rec->getIdCenter(), rec->getIdModel(), rec->getIdGrid()
                                                 );
                                 }
@@ -473,7 +473,7 @@ double Grib::computeDewPoint(double lon, double lat, time_t now)
 //---------------------------------------------------
 int Grib::getTotalNumberOfGribRecords() {
         int nb=0;
-        std::map < std::string, std::vector<GribRecord *>* >::iterator it;
+        std::map < int, std::vector<GribRecord *>* >::iterator it;
         for (it=mapGribRecords.begin(); it!=mapGribRecords.end(); it++)
         {
                 nb += (int)(*it).second->size();
@@ -485,7 +485,7 @@ int Grib::getTotalNumberOfGribRecords() {
 std::vector<GribRecord *> * Grib::getFirstNonEmptyList()
 {
     std::vector<GribRecord *> *ls = NULL;
-        std::map < std::string, std::vector<GribRecord *>* >::iterator it;
+        std::map < int, std::vector<GribRecord *>* >::iterator it;
         for (it=mapGribRecords.begin(); ls==NULL && it!=mapGribRecords.end(); it++)
         {
                 if ((*it).second->size()>0)
@@ -507,7 +507,7 @@ int Grib::getNumberOfGribRecords(int dataType,int levelType,int levelValue)
 //---------------------------------------------------------------------
 std::vector<GribRecord *> * Grib::getListOfGribRecords(int dataType,int levelType,int levelValue)
 {
-        std::string key = GribRecord::makeKey(dataType,levelType,levelValue);
+        int key = GribRecord::makeKey(dataType,levelType,levelValue);
         if (mapGribRecords.find(key) != mapGribRecords.end())
                 return mapGribRecords[key];
         else
@@ -863,7 +863,7 @@ void Grib::createListDates()
     minDate=-1;
     maxDate=-1;
     setAllDates.clear();
-    std::map < std::string, std::vector<GribRecord *>* >::iterator it;
+    std::map < int, std::vector<GribRecord *>* >::iterator it;
     for (it=mapGribRecords.begin(); it!=mapGribRecords.end(); it++)
     {
         std::vector<GribRecord *> *ls = (*it).second;

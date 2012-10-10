@@ -1947,8 +1947,8 @@ void ROUTAGE::slot_calculate()
             orth.setPoints(from.lon,from.lat,to.lon,to.lat);
             if(orth.getDistance()<myBoat->getPolarData()->getMaxSpeed()*1.1*(this->getTimeStep()/60.0))
             {
-                if(checkCoast && ((map && map->crossing(QLineF(list->at(n).x,list->at(n).y,xa,ya),QLineF(list->at(n).lon,list->at(n).lat,arrival.x(),arrival.y()))
-                   )|| (checkLine && crossBarriere(QLineF(list->at(n).x,list->at(n).y,xa,ya)))))
+                if((checkCoast && map && map->crossing(QLineF(list->at(n).x,list->at(n).y,xa,ya),QLineF(list->at(n).lon,list->at(n).lat,arrival.x(),arrival.y())))
+                   || (checkLine && crossBarriere(QLineF(list->at(n).x,list->at(n).y,xa,ya))))
                     continue;
                 int thisTime=calculateTimeRoute(from,to, &dataThread, NULL, NULL, (this->getTimeStep()+1)*60);
                 if(thisTime<=this->getTimeStep()*60)

@@ -72,8 +72,8 @@ class GribRecord
         zuchar   getIdGrid() const    { return idGrid; }
 
         //-----------------------------------------
-        std::string getKey() const  { return dataKey; }
-                static std::string makeKey(int dataType,int levelType,int levelValue);
+        int getKey() const  { return dataKey; }
+        static int makeKey(int dataType,int levelType,int levelValue);
 
         //-----------------------------------------
         int    getPeriodP1() const  { return periodP1; }
@@ -124,8 +124,8 @@ class GribRecord
         int    id;    // unique identifiant
         bool   ok;    // validite des donnees
         bool   eof;   // fin de fichier atteinte lors de la lecture
-        bool knownData;
-        std::string dataKey;
+        bool   knownData;
+        int    dataKey;
         char   strRefDate [32];
         char   strCurDate [32];
 

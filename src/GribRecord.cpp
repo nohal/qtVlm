@@ -254,12 +254,9 @@ void  GribRecord::setDataType(const zuchar t)
         dataKey = makeKey(dataType, levelType, levelValue);
 }
 //------------------------------------------------------------------------------
-std::string GribRecord::makeKey(int dataType,int levelType,int levelValue)
-{   // Make data type key  sample:'11-100-850'
-        char ktmp[32];
-//        snprintf(ktmp, 32, "%d-%d-%d", dataType, levelType, levelValue);
-        sprintf(ktmp,"%d-%d-%d", dataType, levelType, levelValue);
-        return std::string(ktmp);
+int GribRecord::makeKey(int dataType,int levelType,int levelValue)
+{
+        return dataType*10e6+levelType*10e3+levelValue;
 }
 //-----------------------------------------
 GribRecord::~GribRecord()
