@@ -254,10 +254,6 @@ void  GribRecord::setDataType(const zuchar t)
         dataKey = makeKey(dataType, levelType, levelValue);
 }
 //------------------------------------------------------------------------------
-int GribRecord::makeKey(int dataType,int levelType,int levelValue)
-{
-        return dataType*10e6+levelType*10e3+levelValue;
-}
 //-----------------------------------------
 GribRecord::~GribRecord()
 {

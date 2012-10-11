@@ -261,24 +261,15 @@ inline QList<vlmPoint> finalEpuration(const QList<vlmPoint> &listPointsX)
     double initialDist=listPoints.at(0).internal_2;
     if(toBeRemoved<=0) return listPoints;
     QMultiMap<double,QPoint> byCriteres;
-    QHash<QString,double> byIndices;
+    QHash<quint32,double> byIndices;
     QList<bool> deadStatus;
-    QString s;
+    quint32 s;
     double critere=0;
     for(int n=0;n<listPoints.size()-1;++n)
     {
         if(qAbs(Util::myDiffAngle(listPoints.at(n).capArrival,
                                 listPoints.at(n+1).capArrival)) > 90)
             critere=179;
-//        else if(listPoints.at(n).originNb!=listPoints.at(n+1).originNb)
-//        {
-//            if(listPoints.at(n).origin->notSimplificable ||
-//               listPoints.at(n+1).origin->notSimplificable)
-//                critere=179;
-//            else if(listPoints.at(n).notSimplificable ||
-//               listPoints.at(n+1).notSimplificable)
-//                critere=179;
-//        }
         else
         {
             critere=0;
@@ -312,7 +303,7 @@ inline QList<vlmPoint> finalEpuration(const QList<vlmPoint> &listPointsX)
                     critere=critere*2.0;
         }
         byCriteres.insert(critere,QPoint(n,n+1));
-        s=s.sprintf("%d;%d",n,n+1);
+        s=n*10e6+n+1;
         byIndices.insert(s,critere);
         deadStatus.append(false);
     }
@@ -351,9 +342,9 @@ inline QList<vlmPoint> finalEpuration(const QList<vlmPoint> &listPointsX)
         if(currentCount<=1) break;
         if(previous!=-1 && next!=-1)
         {
-            s=s.sprintf("%d;%d",previous,badOne);
+            s=previous*10e6+badOne;
             double criterePrevious=byIndices.value(s);
-            s=s.sprintf("%d;%d",badOne,next);
+            s=badOne*10e6+next;
             double critereNext=byIndices.value(s);
             byCriteres.remove(criterePrevious,QPoint(previous,badOne));
             byCriteres.remove(critereNext,QPoint(badOne,next));
@@ -381,18 +372,18 @@ inline QList<vlmPoint> finalEpuration(const QList<vlmPoint> &listPointsX)
                 critere=360-critere;
             }
             byCriteres.insert(critere,QPoint(previous,next));
-            s=s.sprintf("%d;%d",previous,next);
+            s=previous*10e6+next;
             byIndices.insert(s,critere);
         }
         else if(previous==-1)
         {
-            s=s.sprintf("%d;%d",badOne,next);
+            s=badOne*10e6+next;
             double critereNext=byIndices.value(s);
             byCriteres.remove(critereNext,QPoint(badOne,next));
         }
         else if(next==-1)
         {
-            s=s.sprintf("%d;%d",previous,badOne);
+            s=previous*10e6+badOne;
             double criterePrevious=byIndices.value(s);
             byCriteres.remove(criterePrevious,QPoint(previous,badOne));
         }
@@ -2894,9 +2885,9 @@ void ROUTAGE::removeCrossedSegments()
 {
     if(tempPoints.isEmpty()) return;
     QMultiMap<double,QPoint> byCriteres;
-    QHash<QString,double> byIndices;
+    QHash<quint32,double> byIndices;
     QList<bool> deadStatus;
-    QString s;
+    quint32 s;
     double critere=0;
     for(int n=0;n<tempPoints.size()-1;++n)
     {
@@ -2928,7 +2919,7 @@ void ROUTAGE::removeCrossedSegments()
             if(critere<0) critere+=360;
         }
         byCriteres.insert(critere,QPoint(n,n+1));
-        s=s.sprintf("%d;%d",n,n+1);
+        s=n*10e6+n+1;
         byIndices.insert(s,critere);
         deadStatus.append(false);
     }
@@ -2955,10 +2946,9 @@ void ROUTAGE::removeCrossedSegments()
         if(currentCount<=1) break;
         if(previous!=-1 && next!=-1)
         {
-            QString s;
-            s=s.sprintf("%d;%d",previous,badOne);
+            s=previous*10e6+badOne;
             double criterePrevious=byIndices.value(s);
-            s=s.sprintf("%d;%d",badOne,next);
+            s=badOne*10e6+next;
             double critereNext=byIndices.value(s);
             byCriteres.remove(criterePrevious,QPoint(previous,badOne));
             byCriteres.remove(critereNext,QPoint(badOne,next));
@@ -2993,87 +2983,23 @@ void ROUTAGE::removeCrossedSegments()
 
 
             byCriteres.insert(critere,QPoint(previous,next));
-            s=s.sprintf("%d;%d",previous,next);
+            s=previous*10e6+next;
             byIndices.insert(s,critere);
         }
         else if(previous==-1)
         {
-            QString s;
-            s=s.sprintf("%d;%d",badOne,next);
+            s=badOne*10e6+next;
             double critereNext=byIndices.value(s);
             byCriteres.remove(critereNext,QPoint(badOne,next));
         }
         else if(next==-1)
         {
-            QString s;
-            s=s.sprintf("%d;%d",previous,badOne);
+            s=previous*10e6+badOne;
             double criterePrevious=byIndices.value(s);
             byCriteres.remove(criterePrevious,QPoint(previous,badOne));
         }
         --currentCount;
     }
-    /*remove points too close from each other*/
-#if 0
-    while(currentCount>0)
-    {
-        d.toFront();
-        if(!d.hasNext()) break;
-        d.next();
-        if(d.key()>this->angleStep) break;
-        QPoint couple=d.value();
-        int badOne=0;
-        if(tempPoints.at(couple.x()).distIso<tempPoints.at(couple.y()).distIso)
-            badOne=couple.x();
-        else
-            badOne=couple.y();
-        deadStatus.replace(badOne,true);
-        int previous=-1;
-        int next=-1;
-        previous=deadStatus.lastIndexOf(false,badOne);
-        next=deadStatus.indexOf(false,badOne);
-        if(currentCount<=1) break;
-        if(previous!=-1 && next!=-1)
-        {
-            QString s;
-            s=s.sprintf("%d;%d",previous,badOne);
-            double criterePrevious=byIndices.value(s);
-            s=s.sprintf("%d;%d",badOne,next);
-            double critereNext=byIndices.value(s);
-            byCriteres.remove(criterePrevious,QPoint(previous,badOne));
-            byCriteres.remove(critereNext,QPoint(badOne,next));
-//            double length=QLineF(QPointF(tempPoints.at(previous).lon,tempPoints.at(previous).lat),QPointF(tempPoints.at(next).lon,tempPoints.at(next).lat)).length();
-#if 1
-            QLineF temp1(tempPoints.at(previous).origin->x,tempPoints.at(previous).origin->y,
-                         tempPoints.at(next).origin->x,tempPoints.at(next).origin->y);
-            QPointF middle=temp1.pointAt(0.5);
-            QLineF temp2(middle.x(),middle.y(),tempPoints.at(previous).x,tempPoints.at(previous).y);
-            QLineF temp3(middle.x(),middle.y(),tempPoints.at(next).x,tempPoints.at(next).y);
-            double critere=temp2.angleTo(temp3);
-#else
-            Orthodromie oo(tempPoints.at(previous).lon,tempPoints.at(previous).lat,tempPoints.at(next).lon,tempPoints.at(next).lat);
-            double critere=oo.getDistance();
-#endif
-            byCriteres.insert(critere,QPoint(previous,next));
-            s=s.sprintf("%d;%d",previous,next);
-            byIndices.insert(s,critere);
-        }
-        else if(previous==-1)
-        {
-            QString s;
-            s=s.sprintf("%d;%d",badOne,next);
-            double critereNext=byIndices.value(s);
-            byCriteres.remove(critereNext,QPoint(badOne,next));
-        }
-        else if(next==-1)
-        {
-            QString s;
-            s=s.sprintf("%d;%d",previous,badOne);
-            double criterePrevious=byIndices.value(s);
-            byCriteres.remove(criterePrevious,QPoint(previous,badOne));
-        }
-        --currentCount;
-    }
-#endif
     for (int nn=deadStatus.count()-1;nn>=0;--nn)
     {
         if(deadStatus.at(nn))
