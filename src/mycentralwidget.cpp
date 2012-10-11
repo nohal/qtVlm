@@ -2712,6 +2712,7 @@ void myCentralWidget::exportRouteFromMenuKML(ROUTE * route,QString fileName,bool
             if(grib->getInterpolatedValue_byDates(pList.at(i)->getLongitude(), pList.at(i)->getLatitude(),
                                                   pList.at(i)->getRouteTimeStamp(),&speed,&angle,INTERPOLATION_DEFAULT))
             {
+                angle=radToDeg(angle);
                 qd4=doc.createElement("Data");
                 qd3.appendChild(qd4);
                 qd4.setAttribute("name","TWS");
