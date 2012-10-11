@@ -2716,7 +2716,7 @@ void ROUTAGE::convertToRoute()
     if(parentRoutage->getRouteFromBoat())
     {
         int answ=QMessageBox::question(0,tr("Convertion d'un routage en route"),
-                                              tr("Voulez-vous que la route parte du bateau a la prochaine vacation?"),
+                                         tr("Voulez-vous que le point de depart de la route suive le bateau maintenant?"),
                                               QMessageBox::Yes|QMessageBox::No|QMessageBox::Cancel);
         if(answ==QMessageBox::Cancel) return;
         routeStartBoat=answ==QMessageBox::Yes;

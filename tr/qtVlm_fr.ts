@@ -3418,7 +3418,7 @@ VMG %.2f nds</translation>
     </message>
     <message>
         <source>Voulez-vous que la route parte du bateau a la prochaine vacation?</source>
-        <translation>Voulez-vous que la route parte du bateau à la prochaine vacation?</translation>
+        <translation type="obsolete">Voulez-vous que la route parte du bateau à la prochaine vacation?</translation>
     </message>
     <message>
         <source>Conversion d&apos;un routage en route</source>
@@ -3439,6 +3439,10 @@ VMG %.2f nds</translation>
     <message>
         <source>Arrivee (estimation): </source>
         <translation>Arrivée (estimation):</translation>
+    </message>
+    <message>
+        <source>Voulez-vous que le point de depart de la route suive le bateau maintenant?</source>
+        <translation>Voulez-vous que le point de départ de la route suive le bateau maintenant?</translation>
     </message>
 </context>
 <context>
