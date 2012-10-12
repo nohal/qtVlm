@@ -368,8 +368,8 @@ void Grib::readAllGribRecords()
                                 }
                                 else {
                                         fprintf(stderr,
-                                                "GribReader: unknown record type: key=%Ld  idCenter==%d && idModel==%d && idGrid==%d\n",
-                                                rec->getKey(),
+                                                "GribReader: unknown record type: key=%d  idCenter==%d && idModel==%d && idGrid==%d\n",
+                                                (int)rec->getKey(),
                                                 rec->getIdCenter(), rec->getIdModel(), rec->getIdGrid()
                                                 );
                                 }

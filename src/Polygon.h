@@ -260,5 +260,6 @@ public:
     };
 
 };
+Q_DECLARE_TYPEINFO(PolyGon,Q_MOVABLE_TYPE);
 
 #endif

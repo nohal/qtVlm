@@ -127,6 +127,8 @@ struct boatParam {
     double latitude;
     QString dnm;
 };
+Q_DECLARE_TYPEINFO(boatParam,Q_PRIMITIVE_TYPE);
+
 struct raceParam {
     QString id;
     QString name;
@@ -141,6 +143,7 @@ struct raceParam {
     bool hasReal;
     QString realFilter;
 };
+Q_DECLARE_TYPEINFO(raceParam,Q_PRIMITIVE_TYPE);
 
 
 
@@ -155,6 +158,7 @@ struct windData
         double v2;
         double v3;
 } ;
+Q_DECLARE_TYPEINFO(windData,Q_PRIMITIVE_TYPE);
 
 /* Export Import format */
 
@@ -312,6 +316,7 @@ class Altitude
                                                 ||
                                         (alt.levelType==levelType && alt.levelValue<levelValue); }
 };
+Q_DECLARE_TYPEINFO(Altitude,Q_MOVABLE_TYPE);
 //--------------------------------------------------------
 class DataCode
 {
@@ -367,6 +372,7 @@ class DataCode
                                                 ||
                                         (dtc.dataType==dataType && getAltitude()<dtc.getAltitude()); }
 };
+Q_DECLARE_TYPEINFO(DataCode,Q_MOVABLE_TYPE);
 
 
 #endif // DATADEF_H

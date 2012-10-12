@@ -62,5 +62,6 @@ class orthoSegment : public QGraphicsWidget
         bool roundedEnd;
         bool alsoDrawLoxo;
 };
+Q_DECLARE_TYPEINFO(orthoSegment,Q_MOVABLE_TYPE);
 
 #endif // ORTHOSEGMENT_H

@@ -82,5 +82,6 @@ class loadImg : public QObject, public QGraphicsPixmapItem
         QGraphicsPixmapItem * gribKap;
         QPixmap imgGribKap;
 };
+Q_DECLARE_TYPEINFO(loadImg,Q_MOVABLE_TYPE);
 
 #endif

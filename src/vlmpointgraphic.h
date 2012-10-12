@@ -40,5 +40,6 @@ private:
     time_t eta;
     QString debug;
 };
+Q_DECLARE_TYPEINFO(vlmPointGraphic,Q_MOVABLE_TYPE);
 
 #endif // VLMPOINTGRAPHIC_H

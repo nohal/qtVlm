@@ -281,7 +281,7 @@ class ROUTAGE : public QObject
         int  thresholdAlternative;
         bool arrivalIsClosest;
         bool routeFromBoat;
-        QList<double> calculateCaps(vlmPoint point,double workAngleStep, double workAngleRange);
+        void calculateCaps(QList<double> *caps, const vlmPoint &point, const double &workAngleStep, const double &workAngleRange);
         bool aborted;
         bool running;
         int debugCross0;
@@ -335,4 +335,5 @@ class ROUTAGE : public QObject
         QList<QLineF> barrieres;
         void countDebug(int nbIso, QString s);
     };
+Q_DECLARE_TYPEINFO(ROUTAGE,Q_MOVABLE_TYPE);
 #endif // ROUTAGE_H

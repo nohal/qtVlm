@@ -94,6 +94,7 @@ class LoadGribFile : public QObject
         void ungrayButtons();
         void progress(qint64,qint64);
 };
+Q_DECLARE_TYPEINFO(LoadGribFile,Q_MOVABLE_TYPE);
 
 
 #endif

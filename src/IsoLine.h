@@ -68,6 +68,7 @@ class Segment
                 double *x, double *y,
                 time_t now, time_t tPrev, time_t tNxt,GribRecord *rec_prev,GribRecord *rec_nxt, double pressure);
 };
+Q_DECLARE_TYPEINFO(Segment,Q_MOVABLE_TYPE);
 
 //===============================================================
 class IsoLine
@@ -101,6 +102,7 @@ class IsoLine
         //---------------------------------------------------------
         void extractIsoLine(time_t now, time_t tPrev, time_t tNxt,GribRecord *rec_prev,GribRecord *rec_nxt);
 };
+Q_DECLARE_TYPEINFO(IsoLine,Q_MOVABLE_TYPE);
 
 
 

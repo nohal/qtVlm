@@ -7,7 +7,7 @@
 
 #ifndef __POINT_H__
 #define __POINT_H__
-
+#include<qglobal.h>
 class Segment;
 class Triangle;
 class PolyGon;
@@ -57,6 +57,7 @@ public:
 private:
     double x,y;
 };
+Q_DECLARE_TYPEINFO(Point,Q_MOVABLE_TYPE);
 
 
 inline Point operator* (double x, const Point & p)

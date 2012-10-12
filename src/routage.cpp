@@ -1033,7 +1033,7 @@ void ROUTAGE::slot_calculate()
         {
             POI * poi1=poiList.at(p);
             POI * poi2=poiList.at(p)->getConnectedPoi();
-            poiList.removeAll(poi2);
+            poiList.removeOne(poi2);
             double x1,y1,x2,y2;
             proj->map2screenDouble(Util::cLFA(poi1->getLongitude(),proj->getXmin()),poi1->getLatitude(),&x1,&y1);
             proj->map2screenDouble(Util::cLFA(poi2->getLongitude(),proj->getXmin()),poi2->getLatitude(),&x2,&y2);
@@ -1263,7 +1263,9 @@ void ROUTAGE::slot_calculate()
             double windSpeed=list->at(n).wind_speed;
             double currentAngle=list->at(n).current_angle;
             double currentSpeed=list->at(n).current_speed;
-            QList<double> caps=calculateCaps(list->at(n),workAngleStep,workAngleRange);
+            QList<double> caps;
+            caps.reserve(workAngleRange/workAngleStep);
+            calculateCaps(&caps,list->at(n),workAngleStep,workAngleRange);
             QList<vlmPoint> polarPoints;/**/
             bool tryingToFindHole=false;
 #if 1 /*calculate angle limits*/
@@ -1286,6 +1288,7 @@ void ROUTAGE::slot_calculate()
             while(true)
             {
                 QList<vlmPoint> findPoints;
+                findPoints.reserve(caps.count());
                 for(int ccc=0;ccc<caps.count();++ccc)
                 {
                     ++nbCaps;
@@ -1412,7 +1415,8 @@ void ROUTAGE::slot_calculate()
                                 tryingToFindHole=true;
                                 hasTouchCoast=true;
                                 polarPoints.clear();
-                                caps=calculateCaps(list->at(n),1,179);
+                                caps.clear();
+                                calculateCaps(&caps,list->at(n),1,179);
                                 iso->setNotSimplificable(n);
                                 break;
                             }
@@ -1466,11 +1470,13 @@ void ROUTAGE::slot_calculate()
                     {
                         dist.insert(polarPoints.at(nn).distIso,polarPoints.at(nn));
                     }
-                    QMapIterator<double,vlmPoint> it(dist);
-                    it.toFront();
-                    while(it.hasNext() && polarPoints.count()>max)
+//                    QMapIterator<double,vlmPoint> it(dist);
+//                    it.toFront();
+//                    while(it.hasNext() && polarPoints.count()>max)
+                    QMap<double,vlmPoint>::const_iterator it;
+                    for(it=dist.constBegin();polarPoints.count()>max && it!=dist.constEnd();++it)
                     {
-                        polarPoints.removeOne(it.next().value());
+                        polarPoints.removeOne(it.value());
                     }
                 }
             }
@@ -1937,6 +1943,7 @@ void ROUTAGE::slot_calculate()
             {
                 continue;
             }
+#if 0
             segment=new vlmLine(proj,myscene,Z_VALUE_ROUTAGE);
             segment->setParent(this);
             vlmPoint temp=* iso->getOrigin(n);
@@ -1966,6 +1973,7 @@ void ROUTAGE::slot_calculate()
             }
             else
                 segments.append(segment);
+#endif
             previousSegments.append(QLineF(list->at(n).origin->x,list->at(n).origin->y,list->at(n).x,list->at(n).y));
         }
 #ifdef traceTime
@@ -3098,50 +3106,32 @@ void ROUTAGE::removeCrossedSegments()
             tempPoints.removeAt(nn);
     }
 }
-QList<double> ROUTAGE::calculateCaps(vlmPoint point, double workAngleStep, double workAngleRange)
+void ROUTAGE::calculateCaps(QList<double> *caps, const vlmPoint &point, const double &workAngleStep, const double &workAngleRange)
 {
-    QList<double> caps;
     for(double cc=0;true;cc=cc+workAngleStep)
     {
         if(cc>workAngleRange/2.0)
             cc=workAngleRange/2;
-        caps.append(Util::A360(point.capArrival-cc));
+        caps->append(Util::A360(point.capArrival-cc));
         if(cc!=0)
-            caps.prepend(Util::A360(point.capArrival+cc));
+            caps->prepend(Util::A360(point.capArrival+cc));
         if(cc>=workAngleRange/2.0) break;
     }
 #if 1
     Point vmg(cos(degToRad(point.capVmg)),sin(degToRad(point.capVmg)));
     Point O(0,0);
-    for (int n=0;n<caps.count();++n)
+    for (int n=0;n<caps->count();++n)
     {
-        Point C(cos(degToRad(caps.at(n))),sin(degToRad(caps.at(n))));
+        Point C(cos(degToRad(caps->at(n))),sin(degToRad(caps->at(n))));
         Triangle T(O,C,vmg);
         if(T.orientation()==left_turn)
         {
-            caps.insert(n,point.capVmg);
+            caps->insert(n,point.capVmg);
             break;
         }
     }
 #endif
-#if 0
-/*sort headings*/
-    double rightMostCap=A360(point.capArrival+89);
-    QLineF repere(0,0,100,100);
-    repere.setAngle(rightMostCap);
-    QMultiMap<double,double> sortedCaps;
-    for (int cc=0;cc<caps.count();++cc)
-    {
-        QLineF temp(0,0,100,100);
-        temp.setAngle(caps.at(cc));
-        sortedCaps.insert(temp.angleTo(repere),caps.at(cc));
-    }
-    caps.clear();
-    QMapIterator<double,double> iterator(sortedCaps);
-    while (iterator.hasNext())
-        caps.append(iterator.next().value());
-#endif
-    return caps;
+    return;
 }
 void ROUTAGE::showContextMenu(const int &isoNb,const int &pointNb)
 {
@@ -4031,6 +4021,7 @@ void ROUTAGE::calculateAlternative()
         if(thisTime>10e4) continue;
         alternateTimes.insert(P.eta+thisTime,P);
     }
+    //QMap::const_iterator<int,vlmPoint> times(alternateTimes);
     QMapIterator<int,vlmPoint> times(alternateTimes);
     while(times.hasNext())
     {

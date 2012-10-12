@@ -252,6 +252,7 @@ class Grib
         double  isotherms0Step;          // Ecart entre isothermes 0C
         Grib * gribCurrent;
 };
+Q_DECLARE_TYPEINFO(Grib,Q_MOVABLE_TYPE);
 
 
 #endif

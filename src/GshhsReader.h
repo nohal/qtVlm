@@ -55,6 +55,7 @@ class GshhsPoint {
             lat = la;
         }
 };
+Q_DECLARE_TYPEINFO(GshhsPoint,Q_MOVABLE_TYPE);
 
 //==========================================================
 // GshhsPolygon  (compatible avec le format .rim de RANGS)
@@ -62,14 +63,14 @@ class GshhsPoint {
 class GshhsPolygon
 {
     public:
-        GshhsPolygon() {};
+        GshhsPolygon() {}
         GshhsPolygon(ZUFILE *file);
         virtual ~GshhsPolygon();
         
-        int  getLevel()     {return flag&255;};
-        int  isGreenwich()  {return greenwich;};
-        int  isAntarctic()  {return antarctic;};
-        bool isOk()         {return ok;};
+        int  getLevel()     {return flag&255;}
+        int  isGreenwich()  {return greenwich;}
+        int  isAntarctic()  {return antarctic;}
+        bool isOk()         {return ok;}
         //----------------------
         int id;				/* Unique polygon id number, starting at 0 */
         int n;				/* Number of points in this polygon */
@@ -87,6 +88,7 @@ class GshhsPolygon
         inline virtual int readInt4();
         inline virtual int readInt2();
 };
+Q_DECLARE_TYPEINFO(GshhsPolygon,Q_MOVABLE_TYPE);
 
 //==========================================================
 // GshhsPolygon_WDB     (entete de type GSHHS récent)
@@ -100,6 +102,7 @@ class GshhsPolygon_WDB : public GshhsPolygon
         inline virtual int readInt4();
         inline virtual int readInt2();
 };
+Q_DECLARE_TYPEINFO(GshhsPolygon_WDB,Q_MOVABLE_TYPE);
 
 //==========================================================
 class GshhsReader
@@ -163,6 +166,7 @@ class GshhsReader
     
 
 };
+Q_DECLARE_TYPEINFO(GshhsReader,Q_MOVABLE_TYPE);
 
 //-------------------------------------------------
 inline int GshhsPolygon::readInt4() {

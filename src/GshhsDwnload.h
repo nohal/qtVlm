@@ -54,5 +54,6 @@ class GshhsDwnload: public QObject, public inetClient
         QString filename;
 
 };
+Q_DECLARE_TYPEINFO(GshhsDwnload,Q_MOVABLE_TYPE);
 
 #endif // GSHHSDWNLOAD_H

@@ -48,6 +48,7 @@ private:
 
     double signed_area () const;
 };
+Q_DECLARE_TYPEINFO(Triangle,Q_MOVABLE_TYPE);
 
 
 inline int turn (const Point & p1, const Point & p2, const Point & p3)

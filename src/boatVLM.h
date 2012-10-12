@@ -187,6 +187,7 @@ class boatVLM : public boat, public inetClient
         void endOfUpdating();
 
 };
+Q_DECLARE_TYPEINFO(boatVLM,Q_MOVABLE_TYPE);
 
 
 #endif // BOATVLM_H

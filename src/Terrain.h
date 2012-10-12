@@ -181,5 +181,6 @@ private:
     void updateRoutine(void);
     bool toBeRestarted;
 };
+Q_DECLARE_TYPEINFO(Terrain,Q_MOVABLE_TYPE);
 
 #endif

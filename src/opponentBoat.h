@@ -45,6 +45,7 @@ struct raceData {
     bool hasReal;
     QString realFilter;
 };
+Q_DECLARE_TYPEINFO(raceData,Q_PRIMITIVE_TYPE);
 
 class opponent : public QGraphicsWidget
 {Q_OBJECT
@@ -132,6 +133,7 @@ class opponent : public QGraphicsWidget
         bool updateRequired;
 
 };
+Q_DECLARE_TYPEINFO(opponent,Q_MOVABLE_TYPE);
 
 class opponentList : public QWidget, public inetClient
 {
@@ -182,6 +184,7 @@ class opponentList : public QWidget, public inetClient
         opponent * opp;
         QStringList filterList;
 };
+Q_DECLARE_TYPEINFO(opponentList,Q_MOVABLE_TYPE);
 
 
 

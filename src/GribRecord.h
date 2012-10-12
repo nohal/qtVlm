@@ -223,6 +223,7 @@ class GribRecord
 
 
 };
+Q_DECLARE_TYPEINFO(GribRecord,Q_MOVABLE_TYPE);
 
 //==========================================================================
 inline bool   GribRecord::hasValue(int i, int j) const
