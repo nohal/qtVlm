@@ -1943,7 +1943,7 @@ void ROUTAGE::slot_calculate()
             {
                 continue;
             }
-#if 0
+#if 1
             segment=new vlmLine(proj,myscene,Z_VALUE_ROUTAGE);
             segment->setParent(this);
             vlmPoint temp=* iso->getOrigin(n);
