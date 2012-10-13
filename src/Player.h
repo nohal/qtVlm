@@ -34,6 +34,7 @@ struct boatData {
     int isOwn;
     int engaged;
 };
+Q_DECLARE_TYPEINFO(boatData,Q_PRIMITIVE_TYPE);
 
 class Player : public QObject, public inetClient
 { Q_OBJECT
@@ -115,5 +116,6 @@ class Player : public QObject, public inetClient
         bool wrong;
 
 };
+Q_DECLARE_TYPEINFO(Player,Q_MOVABLE_TYPE);
 
 #endif // PLAYER_H

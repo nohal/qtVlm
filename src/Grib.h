@@ -23,7 +23,7 @@ Copyright (C) 2008 - Jacques Zaninetti - http://zygrib.free.fr
 ***********************************************************************/
 
 /*************************
-Lecture mise en mémoire d'un fichier GRIB
+Lecture mise en memoire d'un fichier GRIB
 
 *************************/
 
@@ -88,7 +88,7 @@ class Grib
         bool getInterpolatedValueCurrent_byDates(double d_long, double d_lat, time_t now,double * u, double * v,
                                           int interpolation_type=INTERPOLATION_UKN,bool debug=false);
 
-        // Rectangle de la zone couverte par les données
+        // Rectangle de la zone couverte par les donnees
         bool getZoneExtension (double *x0,double *y0, double *x1,double *y1);
 
         void setCurrentDate(time_t t);
@@ -107,20 +107,20 @@ class Grib
         QString drawCartouche(QPainter &pnt);
         void show_CoverZone(QPainter &pnt, Projection * proj);
         void draw_GribGrid(QPainter &pnt, const Projection *proj);
-        // Carte de couleurs des précipitations
+        // Carte de couleurs des precipitations
         void draw_RAIN_Color(QPainter &pnt, const Projection *proj, bool smooth);
         void draw_SNOW_DEPTH_Color(QPainter &pnt, const Projection *proj, bool smooth);
         void draw_SNOW_CATEG_Color(QPainter &pnt, const Projection *proj, bool smooth);
         void draw_CAPEsfc(QPainter &pnt, const Projection *proj, bool smooth);
         void draw_FRZRAIN_CATEG_Color(QPainter &pnt, const Projection *proj, bool smooth);
-        // Carte de couleurs de nébulosité
+        // Carte de couleurs de nebulosite
         void draw_CLOUD_Color(QPainter &pnt, const Projection *proj, bool smooth);
-        // Carte de l'humidité relative en couleurs
+        // Carte de l'humidite relative en couleurs
         void draw_HUMID_Color(QPainter &pnt, const Projection *proj, bool smooth);
         void draw_Temp_Color(QPainter &pnt, const Projection *proj, bool smooth);
         void draw_TempPot_Color(QPainter &pnt, const Projection *proj, bool smooth);
         void draw_Dewpoint_Color(QPainter &pnt, const Projection *proj, bool smooth);
-        // Carte de l'écart température-point de rosée
+        // Carte de l'ecart temperature-point de rosee
         void draw_DeltaDewpoint_Color(QPainter &pnt, const Projection *proj, bool smooth);
 
         void draw_PRESSURE_MinMax (QPainter &pnt, const Projection *proj);
@@ -131,7 +131,7 @@ class Grib
         void  draw_Isotherms0 (QPainter &pnt, const Projection *proj);
         void  draw_Isotherms0Labels (QPainter &pnt, const Projection *proj);
 
-        // Températue (labels répartis sur la carte)
+        // Temperature (labels repartis sur la carte)
         void draw_TEMPERATURE_Labels(QPainter &pnt, const Projection *proj);
 
         enum GribFileDataStatus { DATA_IN_FILE, NO_DATA_IN_FILE, COMPUTED_DATA };
@@ -148,7 +148,7 @@ class Grib
         double  hoursBetweenRecords;
         int	dewpointDataStatus;
 
-        std::map < std::string,std::vector<GribRecord *>* >  mapGribRecords;
+        std::map <long int,std::vector<GribRecord *>* >  mapGribRecords;
         void initNewGrib();
         void storeRecordInMap(GribRecord *rec);
 		
@@ -165,8 +165,8 @@ class Grib
 
         void initIsobars();
         void initIsotherms0();
-        std::list<IsoLine *> listIsobars;      // liste d'isobares précalculées
-        std::list<IsoLine *> listIsotherms0;   // liste d'isothermes 0C précalculées
+        std::list<IsoLine *> listIsobars;      // liste d'isobares precalculees
+        std::list<IsoLine *> listIsotherms0;   // liste d'isothermes 0C precalculees
 
         QString 	fileName;
 
@@ -178,18 +178,18 @@ class Grib
         QColor rainColor[17];
         int    mapColorTransp;
 
-        int    windArrowSpace;        // distance mini entre flèches (pixels)
-        int    windArrowSpaceOnGrid;  // distance mini entre flèches si affichage sur grille
-        int    windBarbuleSpace;      // distance mini entre flèches (pixels)
-        int    windBarbuleSpaceOnGrid;  // distance mini entre flèches
+        int    windArrowSpace;        // distance mini entre fleches (pixels)
+        int    windArrowSpaceOnGrid;  // distance mini entre fleches si affichage sur grille
+        int    windBarbuleSpace;      // distance mini entre fleches (pixels)
+        int    windBarbuleSpaceOnGrid;  // distance mini entre fleches
 
-        int    windArrowSize;         // longueur des flèches
-        int    windBarbuleSize;       // longueur des flèches
+        int    windArrowSize;         // longueur des fleches
+        int    windBarbuleSize;       // longueur des fleches
 
         bool	mustDuplicateFirstCumulativeRecord;
         bool	isCloudsColorModeWhite;
 
-        // Détermine les GribRecord qui encadrent une date
+        // Determine les GribRecord qui encadrent une date
         void 	findGribsAroundDate (int dataType,int levelType,int levelValue, time_t date,
                                      GribRecord **before, GribRecord **after);
         bool getInterpolationParam(time_t now,time_t * t1,time_t * t2,GribRecord ** recU1,GribRecord ** recV1,
@@ -252,6 +252,7 @@ class Grib
         double  isotherms0Step;          // Ecart entre isothermes 0C
         Grib * gribCurrent;
 };
+Q_DECLARE_TYPEINFO(Grib,Q_MOVABLE_TYPE);
 
 
 #endif

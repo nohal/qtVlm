@@ -42,6 +42,7 @@ class GisPoint {
         
         virtual void draw (QPainter *pnt, Projection *proj);
 };
+Q_DECLARE_TYPEINFO(GisPoint,Q_MOVABLE_TYPE);
 //----------------------------------------------------------
 class GisCountry : public GisPoint
 {
@@ -59,6 +60,7 @@ class GisCountry : public GisPoint
 		
         virtual void draw (QPainter *pnt, Projection *proj);
 };
+Q_DECLARE_TYPEINFO(GisCountry,Q_MOVABLE_TYPE);
 //----------------------------------------------------------
 class GisCity : public GisPoint
 {
@@ -101,6 +103,7 @@ class GisCity : public GisPoint
 	private:
 	    int     x0, y0;   // for drawing
 };
+Q_DECLARE_TYPEINFO(GisCity,Q_MOVABLE_TYPE);
 
 //==========================================================
 class GisReader
@@ -118,6 +121,7 @@ class GisReader
         
         void clearLists();
 };
+Q_DECLARE_TYPEINFO(GisReader,Q_MOVABLE_TYPE);
 
 
 

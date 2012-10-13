@@ -72,8 +72,8 @@ class GribRecord
         zuchar   getIdGrid() const    { return idGrid; }
 
         //-----------------------------------------
-        std::string getKey() const  { return dataKey; }
-                static std::string makeKey(int dataType,int levelType,int levelValue);
+        long int getKey() const  { return dataKey; }
+        static long int makeKey(int dataType,int levelType,int levelValue);
 
         //-----------------------------------------
         int    getPeriodP1() const  { return periodP1; }
@@ -124,8 +124,8 @@ class GribRecord
         int    id;    // unique identifiant
         bool   ok;    // validite des donnees
         bool   eof;   // fin de fichier atteinte lors de la lecture
-        bool knownData;
-        std::string dataKey;
+        bool   knownData;
+        long int dataKey;
         char   strRefDate [32];
         char   strCurDate [32];
 
@@ -223,6 +223,7 @@ class GribRecord
 
 
 };
+Q_DECLARE_TYPEINFO(GribRecord,Q_MOVABLE_TYPE);
 
 //==========================================================================
 inline bool   GribRecord::hasValue(int i, int j) const
@@ -277,6 +278,10 @@ inline bool GribRecord::isYInMap(double y) const
         return y<=La1 && y>=La2;
     else
         return y>=La1 && y<=La2;
+}
+inline long int GribRecord::makeKey(int dataType,int levelType,int levelValue)
+{
+    return levelValue*10e6+dataType*10e3+levelType;
 }
 
 #endif

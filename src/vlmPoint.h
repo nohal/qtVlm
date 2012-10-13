@@ -54,6 +54,7 @@ class vlmPoint
         double convertionLat;
         int debug;
 };
+Q_DECLARE_TYPEINFO(vlmPoint,Q_MOVABLE_TYPE);
 
 
 #endif // VLMPOINT_H

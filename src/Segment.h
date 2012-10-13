@@ -49,5 +49,6 @@ public:
 private:
     Point p1, p2;
 };
+Q_DECLARE_TYPEINFO(Segment,Q_MOVABLE_TYPE);
 
 #endif

@@ -307,7 +307,7 @@ void ROUTE::slot_recalculate(boat * boat)
                 eta=grib->getCurrentDate();
                 break;
             case 3:
-                eta=startTime.toUTC().toTime_t()-myBoat->getVacLen()*multVac;
+                eta=startTime.toUTC().toTime_t();
                 break;
         }
         has_eta=true;
@@ -328,10 +328,14 @@ void ROUTE::slot_recalculate(boat * boat)
             lon=poi->getLongitude();
             lat=poi->getLatitude();
             tip="<br>Starting point for route "+name;
+#if 0
             if(startTimeOption==3)
                 poi->setRouteTimeStamp((int)eta+myBoat->getVacLen()*multVac);
             else
                 poi->setRouteTimeStamp((int)eta);
+#else
+            poi->setRouteTimeStamp((int)eta);
+#endif
             poi->setTip(tip);
             lastReachedPoi = poi;
         }
@@ -807,10 +811,14 @@ void ROUTE::slot_recalculate(boat * boat)
                 }
                 tip=tip+tt+QString::number((int)days)+" "+tr("jours")+" "+QString::number((int)hours)+" "+tr("heures")+" "+
                     QString::number((int)mins)+" "+tr("minutes");
+#if 0
                 if(myBoat->getType()==BOAT_REAL)
                     poi->setRouteTimeStamp(Eta+myBoat->getVacLen());
                 else
                     poi->setRouteTimeStamp(Eta);
+#else
+                poi->setRouteTimeStamp(Eta);
+#endif
                 if(poi==this->my_poiList.last())
                     eta=Eta;
             }
@@ -880,10 +888,14 @@ void ROUTE::slot_recalculate(boat * boat)
                     tip=tip+tt+tm.toString("dd MMM-hh:mm")+"<br>";
                     tip=tip+QString::number((int)days)+" "+tr("jours")+" "+QString::number((int)hours)+" "+tr("heures")+" "+
                         QString::number((int)mins)+" "+tr("minutes");
+#if 0
                     if(myBoat->getType()==BOAT_REAL)
                         poi->setRouteTimeStamp(Eta+myBoat->getVacLen());
                     else
                         poi->setRouteTimeStamp(Eta);
+#else
+                    poi->setRouteTimeStamp(Eta);
+#endif
                     if(poi==this->my_poiList.last())
                         eta=Eta;
                 }

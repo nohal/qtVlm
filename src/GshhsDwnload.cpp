@@ -27,6 +27,7 @@ Copyright (C) 2008 - Jacques Zaninetti - http://zygrib.free.fr
 #include <QMessageBox>
 #include <QDebug>
 #include <QFileDialog>
+#include <QThread>
 
 #include "mycentralwidget.h"
 #include "miniunz.h"
@@ -46,7 +47,7 @@ GshhsDwnload::GshhsDwnload(myCentralWidget * centralWidget, inetConnexion *inet)
     needAuth=false;
 }
 
-#define MAP_FNAME  "qtVlmMaps.zip"
+#define MAP_FNAME  "qtVlmMaps.zip" //"win_exe-3.1-1.zip"
 //"qtVlmMaps.zip"
 
 void GshhsDwnload::requestFinished(QByteArray res) {
@@ -54,9 +55,9 @@ void GshhsDwnload::requestFinished(QByteArray res) {
     if(!tmpPath.endsWith("/") && !tmpPath.endsWith("\\"))
         tmpPath.append('/');
 
-    QString filename = tmpPath + MAP_FNAME;
+    filename = tmpPath + MAP_FNAME;
 
-    bool error=false;
+    errorDuringDownload=false;
 
     QDir::temp().remove(MAP_FNAME);
 
@@ -65,52 +66,71 @@ void GshhsDwnload::requestFinished(QByteArray res) {
         int nb=saveFile->write(res);
         saveFile->close();
         qWarning() << "gshhs zip, " << nb << " bytes saved in " << filename;
-        if(nb>0) {
-
-            /* asking for folder holding maps */
-            QString dir = Settings::getSetting("mapsFolder",appFolder.value("maps")).toString();
-
-            dir = QFileDialog::getExistingDirectory(centralWidget, tr("Select maps folder"),
-                                                            dir,
-                                                            QFileDialog::ShowDirsOnly);
-
-
-            if(miniunzip(UZ_OVERWRITE,(const char*)filename.toAscii().data(),dir.toAscii().data(),NULL,NULL)!=UNZ_OK) {
-                QMessageBox::critical(centralWidget,
-                                      tr("Sauvegarde des cartes"),
-                                      tr("Le fichier zip ") + filename + tr(" ne peut etre dezippe"));
-            }
-            else {
-                centralWidget->loadGshhs();
-            }
+        if(nb<=0) {
+            errorDuringDownload = true;
+            QDir::temp().remove(MAP_FNAME);
         }
-        else
-            error = true;
 
-        QDir::temp().remove(MAP_FNAME);
+
     }
     else {
-        error = true;
+        errorDuringDownload = true;
     }
 
-    if(error) {
+    if(errorDuringDownload) {
         QMessageBox::critical(centralWidget,
-                              tr("Sauvegarde des cartes"),
-                              tr("Le fichier ") + filename + tr(" ne peut etre ouvert"));
+                              tr("Saving maps"),
+                              tr("Zip file ") + filename + tr(" can't be opened"));
     }
-
+    finished=true;
 }
 
 
 void GshhsDwnload::getMaps(void) {
     QString page="/~oxygen/qtvlmMaps/";
-    page += MAP_FNAME;
+
+    //QString page = "/~oxygen/";
+
+    page+= MAP_FNAME;
+
     connect (this->getInet()->getProgressDialog(),SIGNAL(rejected()),this,SLOT(slot_abort()));
+    finished=false;
+    filename="";
     inetGetProgress(1,page,"http://www.virtual-winds.com");
+    while(!finished) {
+        QCoreApplication::processEvents(QEventLoop::AllEvents, 10);
+    }
+    if(!errorDuringDownload) {
+        /* asking for folder holding maps */
+        QString dir = Settings::getSetting("mapsFolder",appFolder.value("maps")).toString();
+
+        QProgressDialog * progress=centralWidget->getMainWindow()->get_progress();
+
+        if(progress) {
+            qWarning() << "Updating progress";
+            progress->setLabelText(tr("Decompressing maps"));
+            progress->setValue(progress->value()+5);
+            QCoreApplication::processEvents();
+        }
+
+
+        if(miniunzip(UZ_OVERWRITE,(const char*)filename.toAscii().data(),dir.toAscii().data(),NULL,NULL)!=UNZ_OK) {
+            QMessageBox::critical(centralWidget,
+                                  tr("Saving maps"),
+                                  tr("Zip file ") + filename + tr(" can't be unzip"));
+        }
+        else {
+            centralWidget->loadGshhs();
+        }
+        QDir::temp().remove(MAP_FNAME);
+
+    }
 }
 
 void GshhsDwnload::slot_abort(void) {
     this->inetAbort();
+    errorDuringDownload=true;
+    finished=true;
 }
 
 

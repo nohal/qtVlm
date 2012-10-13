@@ -86,6 +86,7 @@ class Polar : public QObject
         QFile   fileVMG;
         double  coeffPolar;
 };
+Q_DECLARE_TYPEINFO(Polar,Q_MOVABLE_TYPE);
 
 class polarList : public QObject, public inetClient
 { Q_OBJECT
@@ -115,5 +116,6 @@ class polarList : public QObject, public inetClient
         MainWindow * mainWindow;
         void loadPolars(void);
 };
+Q_DECLARE_TYPEINFO(polarList,Q_MOVABLE_TYPE);
 
 #endif

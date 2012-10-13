@@ -253,5 +253,6 @@ class POI : public QGraphicsWidget
         double lonConnected,latConnected;
         int sequence;
 };
+Q_DECLARE_TYPEINFO(POI,Q_MOVABLE_TYPE);
 
 #endif

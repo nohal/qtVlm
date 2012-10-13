@@ -88,5 +88,6 @@ class faxMeteo : public QGraphicsWidget
 
         /*popup menu*/
 };
+Q_DECLARE_TYPEINFO(faxMeteo,Q_MOVABLE_TYPE);
 
 #endif

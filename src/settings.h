@@ -37,5 +37,6 @@ class Settings : QObject
         static void     setSetting(const QString &key, const QVariant &value);
         static QVariant getSetting(const QString &key, const QVariant &defaultValue);
 };
+Q_DECLARE_TYPEINFO(Settings,Q_MOVABLE_TYPE);
 
 #endif // SETTINGS_H

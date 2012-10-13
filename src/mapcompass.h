@@ -92,5 +92,6 @@ class mapCompass : public QGraphicsWidget
         QRectF boundingR;
         bool busy;
 };
+Q_DECLARE_TYPEINFO(mapCompass,Q_MOVABLE_TYPE);
 
 #endif // MAPCOMPASS_H

@@ -110,6 +110,7 @@ Q_OBJECT
 
 };
 
+Q_DECLARE_TYPEINFO(Projection,Q_MOVABLE_TYPE);
 
 //===============================================================================
 inline void Projection::map2screen(double x, double y, int *i, int *j) const

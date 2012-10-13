@@ -77,6 +77,7 @@ class Orthodromie
 
         
 };
+Q_DECLARE_TYPEINFO(Orthodromie,Q_MOVABLE_TYPE);
 
 
 

@@ -58,6 +58,7 @@ struct datathread
     double speedLossOnTack;
     bool i_iso;
 };
+Q_DECLARE_TYPEINFO(datathread,Q_PRIMITIVE_TYPE);
 
 //===================================================================
 class ROUTAGE : public QObject
@@ -67,126 +68,126 @@ class ROUTAGE : public QObject
         ROUTAGE(QString name, Projection *proj, Grib *grib, QGraphicsScene * myScene, myCentralWidget *parentWindow);
 
         ~ROUTAGE();
-        void setName(QString name){this->name=name;}
-        QString getName() {return(this->name);}
+        void setName(const QString &name){this->name=name;}
+        const QString getName() const {return(this->name);}
 
         void setBoat(boat *myBoat);
         boat * getBoat(){return this->myBoat;}
 
-        void setColor(QColor color);
-        QColor getColor(){return this->color;}
+        void setColor(const QColor &color);
+        const QColor getColor() const {return this->color;}
 
-        void setWidth(double width);
-        double getWidth() {return this->width;}
+        void setWidth(const double &width);
+        const double getWidth() const {return this->width;}
 
-        void setWindIsForced(bool b){this->windIsForced=b;}
-        void setWind(double twd, double tws){this->wind_angle=twd;this->wind_speed=tws;}
-        double getWindAngle(void){return this->wind_angle;}
-        double getWindSpeed(void){return this->wind_speed;}
-        void setAngleRange(double a) {this->angleRange=a;}
-        double getAngleRange(void){return this->angleRange;}
-        void setAngleStep(double a) {this->angleStep=a;}
-        double getAngleStep(void){return this->angleStep;}
-        double getTimeStep(void);
-        void setTimeStepMore24(double t) {this->timeStepMore24=t;}
-        double getTimeStepMore24(void){return this->timeStepMore24;}
-        void setTimeStepLess24(double t) {this->timeStepLess24=t;}
-        double getTimeStepLess24(void){return this->timeStepLess24;}
-        bool getWindIsForced(void){return this->windIsForced;}
-        bool getShowIso(void){return this->showIso;}
-        void setShowIso(bool b);
-        void setExplo(double e){this->explo=e;}
-        double getExplo(void){return explo;}
-        bool getUseRouteModule(void){return useRouteModule;}
-        void setUseRouteModule(bool b){this->useRouteModule=b;}
-        bool getRouteFromBoat(){return this->routeFromBoat;}
-        void setRouteFromBoat(bool b){this->routeFromBoat=b;}
+        void setWindIsForced(const bool &b){this->windIsForced=b;}
+        void setWind(const double &twd, const double &tws){this->wind_angle=twd;this->wind_speed=tws;}
+        const double getWindAngle(void) const {return this->wind_angle;}
+        const double getWindSpeed(void) const {return this->wind_speed;}
+        void setAngleRange(const double &a) {this->angleRange=a;}
+        const double getAngleRange(void) const {return this->angleRange;}
+        void setAngleStep(const double &a) {this->angleStep=a;}
+        const double getAngleStep(void) const {return this->angleStep;}
+        const double getTimeStep(void) const;
+        void setTimeStepMore24(const double &t) {this->timeStepMore24=t;}
+        const double getTimeStepMore24(void) const {return this->timeStepMore24;}
+        void setTimeStepLess24(const double &t) {this->timeStepLess24=t;}
+        const double getTimeStepLess24(void) const {return this->timeStepLess24;}
+        const bool getWindIsForced(void) const {return this->windIsForced;}
+        const bool getShowIso(void) const {return this->showIso;}
+        void setShowIso(const bool &b);
+        void setExplo(const double &e){this->explo=e;}
+        const double getExplo(void) const {return explo;}
+        const bool getUseRouteModule(void) const {return useRouteModule;}
+        void setUseRouteModule(const bool &b){this->useRouteModule=b;}
+        const bool getRouteFromBoat() const {return this->routeFromBoat;}
+        void setRouteFromBoat(const bool &b){this->routeFromBoat=b;}
 
-        void setStartTime(QDateTime date){this->startTime=date;}
-        QDateTime getStartTime() {return this->startTime.toUTC();}
-        void setWhatIfDate(QDateTime date){this->whatIfDate=date;}
-        QDateTime getWhatIfDate() {return this->whatIfDate.toUTC();}
-        bool getWhatIfUsed(void){return this->whatIfUsed;}
-        void setWhatIfUsed(bool b){this->whatIfUsed=b;}
-        int getWhatIfTime(void){return this->whatIfTime;}
-        void setWhatIfTime(int t){this->whatIfTime=t;}
-        int getWhatIfWind(void){return this->whatIfWind;}
-        void setWhatIfWind(int p){this->whatIfWind=p;}
+        void setStartTime(const QDateTime &date){this->startTime=date;}
+        const QDateTime getStartTime() const {return this->startTime.toUTC();}
+        void setWhatIfDate(const QDateTime &date){this->whatIfDate=date;}
+        const QDateTime getWhatIfDate() const {return this->whatIfDate.toUTC();}
+        const bool getWhatIfUsed(void) const {return this->whatIfUsed;}
+        void setWhatIfUsed(const bool &b){this->whatIfUsed=b;}
+        const int getWhatIfTime(void) const {return this->whatIfTime;}
+        void setWhatIfTime(const int &t){this->whatIfTime=t;}
+        const int getWhatIfWind(void) const {return this->whatIfWind;}
+        void setWhatIfWind(const int &p){this->whatIfWind=p;}
 
-        static bool myLessThan(ROUTAGE * ROUTAGE_1,ROUTAGE* ROUTAGE_2) {return ROUTAGE_1->name < ROUTAGE_2->name;}
-        static bool myEqual(ROUTAGE * ROUTAGE_1,ROUTAGE* ROUTAGE_2) {return ROUTAGE_1->name == ROUTAGE_2->name;}
+        static bool myLessThan(const ROUTAGE * ROUTAGE_1,const ROUTAGE* ROUTAGE_2) {return ROUTAGE_1->name < ROUTAGE_2->name;}
+        static bool myEqual(const ROUTAGE * ROUTAGE_1,const ROUTAGE* ROUTAGE_2) {return ROUTAGE_1->name == ROUTAGE_2->name;}
 
         void setFromPOI(POI *poi){this->fromPOI=poi;}
-        POI * getFromPOI(){return this->fromPOI;}
+        POI * getFromPOI() const {return this->fromPOI;}
         void setToPOI(POI *poi){this->toPOI=poi;}
-        POI * getToPOI(){return this->toPOI;}
+        POI * getToPOI() const {return this->toPOI;}
         void calculate();
-        bool isDone(void){return this->done;}
-        bool isConverted(void) {return this->converted;}
+        const bool isDone(void) const {return this->done;}
+        const bool isConverted(void) const {return this->converted;}
         void setConverted(void) {this->converted=true;}
         void convertToRoute(void);
-        QDateTime getFinalEta(void){return finalEta;}
-        bool getCheckCoast(){return this->checkCoast;}
-        void setCheckCoast(bool b){this->checkCoast=b;}
-        bool getCheckLine(){return this->checkLine;}
-        void setCheckLine(bool b){this->checkLine=b;}
-        bool isRunning(){return this->running;}
+        const QDateTime getFinalEta(void) const {return finalEta;}
+        const bool getCheckCoast() const {return this->checkCoast;}
+        void setCheckCoast(const bool &b){this->checkCoast=b;}
+        const bool getCheckLine() const {return this->checkLine;}
+        void setCheckLine(const bool &b){this->checkLine=b;}
+        const bool isRunning() const {return this->running;}
         void setFromRoutage(ROUTAGE * fromRoutage,bool editOptions);
-        vlmPoint getPivotPoint(){return pivotPoint;}
+        const vlmPoint getPivotPoint() const {return pivotPoint;}
         vlmLine * getWay(){return way;}
-        void setPivotPoint(int isoNb,int pointNb);
-        void showContextMenu(int isoNb,int pointNb);
-        bool getIsNewPivot(){return isNewPivot;}
-        void setIsNewPivot(bool b){isNewPivot=b;}
-        bool getIsPivot(){return this->isPivot;}
-        void setPoiPrefix(QString s){this->poiPrefix=s;}
-        QString getPoiPrefix(){return this->poiPrefix;}
+        void setPivotPoint(const int &isoNb,const int &pointNb);
+        void showContextMenu(const int &isoNb,const int &pointNb);
+        const bool getIsNewPivot() const {return isNewPivot;}
+        void setIsNewPivot(const bool &b){isNewPivot=b;}
+        const bool getIsPivot() const {return this->isPivot;}
+        void setPoiPrefix(const QString &s){this->poiPrefix=s;}
+        const QString getPoiPrefix() const {return this->poiPrefix;}
         int  pruneWakeAngle;
         bool useConverge;
-        time_t getEta(){return eta;}
-        Grib * getGrib(){return grib;}
-        time_t getWhatIfJour(){return whatIfJour;}
-        static int calculateTimeRoute(const vlmPoint RouteFrom,const vlmPoint routeTo, const datathread *dataThread,double * lastLonFound=NULL, double * lastLatFound=NULL, const int limit=-1);
-        static int routeFunction(const double x,const vlmPoint from, double * lastLonFound, double * lastLatFound, const datathread *dataThread);
-        static int routeFunctionDeriv(const double x,const vlmPoint from, double * lastLonFound, double * lastLatFound, const datathread *dataThread);
+        const time_t getEta() const {return eta;}
+        Grib * getGrib() const {return grib;}
+        const time_t getWhatIfJour() const {return whatIfJour;}
+        static int calculateTimeRoute(const vlmPoint &RouteFrom,const vlmPoint &routeTo, const datathread *dataThread,double * lastLonFound=NULL, double * lastLatFound=NULL, const int &limit=-1);
+        static int routeFunction(const double &x,const vlmPoint &from, double * lastLonFound, double * lastLatFound, const datathread *dataThread);
+        static int routeFunctionDeriv(const double &x,const vlmPoint &from, double * lastLonFound, double * lastLatFound, const datathread *dataThread);
         bool getUseMultiThreading(){return this->useMultiThreading;}
         void setUseMultiThreading(bool b){this->useMultiThreading=b;}
-        vlmLine * getResult(){return result;}
-        ROUTAGE * getFromRoutage(){return fromRoutage;}
-        bool getAutoZoom(){return autoZoom;}
-        void setAutoZoom(bool b){this->autoZoom=b;}
-        double getSpeedLossOnTack(){return speedLossOnTack;}
-        void setSpeedLossOnTack(double d){this->speedLossOnTack=d;}
-        GshhsReader * getMap(){return this->map;}
-        double getMaxPres(){return maxPres;}
-        double getMaxPortant(){return maxPortant;}
-        double getMinPres(){return minPres;}
-        double getMinPortant(){return minPortant;}
-        void setMaxPres(double d){this->maxPres=d;}
-        void setMaxPortant(double d){this->maxPortant=d;}
-        void setMinPres(double d){this->minPres=d;}
-        void setMinPortant(double d){this->minPortant=d;}
-        Projection * getProj(){return proj;}
-        static double findDistancePreviousIso(const vlmPoint P, const QPolygonF * poly);
-        QPolygonF * getPreviousIso(){return &previousIso;}
-        QList<QLineF> * getPreviousSegments(){return &previousSegments;}
-        bool getVisibleOnly(){return visibleOnly;}
-        void setVisibleOnly(bool b){this->visibleOnly=b;}
-        int getZoomLevel(){return this->zoomLevel;}
-        void setZoomLevel(int i){this->zoomLevel=i;}
+        vlmLine * getResult() const {return result;}
+        ROUTAGE * getFromRoutage() const {return fromRoutage;}
+        const bool getAutoZoom() const {return autoZoom;}
+        void setAutoZoom(const bool &b){this->autoZoom=b;}
+        const double getSpeedLossOnTack() const {return speedLossOnTack;}
+        void setSpeedLossOnTack(const double &d){this->speedLossOnTack=d;}
+        GshhsReader * getMap() const {return this->map;}
+        const double getMaxPres() const {return maxPres;}
+        const double getMaxPortant() const {return maxPortant;}
+        const double getMinPres() const {return minPres;}
+        const double getMinPortant() const {return minPortant;}
+        void setMaxPres(const double &d){this->maxPres=d;}
+        void setMaxPortant(const double &d){this->maxPortant=d;}
+        void setMinPres(const double &d){this->minPres=d;}
+        void setMinPortant(const double &d){this->minPortant=d;}
+        Projection * getProj() const {return proj;}
+        static double findDistancePreviousIso(const vlmPoint &P, const QPolygonF * poly);
+        QPolygonF * getPreviousIso() {return &previousIso;}
+        QList<QLineF> * getPreviousSegments() {return &previousSegments;}
+        const bool getVisibleOnly() const {return visibleOnly;}
+        void setVisibleOnly(const bool &b){this->visibleOnly=b;}
+        const int getZoomLevel() const {return this->zoomLevel;}
+        void setZoomLevel(const int &i){this->zoomLevel=i;}
         void calculateInverse();
-        bool getI_iso(){return i_iso;}
-        void setI_iso(bool b){this->i_iso=b;}
-        bool getI_done(){return i_done;}
-        time_t getI_eta(){return i_eta;}
+        const bool getI_iso() const {return i_iso;}
+        void setI_iso(const bool &b){this->i_iso=b;}
+        const bool getI_done() const {return i_done;}
+        const time_t getI_eta() const {return i_eta;}
         void showIsoRoute();
-        int getIsoRouteValue(){return isoRouteValue;}
-        void setIsoRouteValue(int i){this->isoRouteValue=i;}
-        const bool crossBarriere(const QLineF line);
-        void setThresholdAlternative(int i){this->thresholdAlternative=i;}
-        int getThresholdAlternative(){return this->thresholdAlternative;}
-        void setNbAlternative(int i){this->nbAlternative=i;}
-        int getNbAlternative(){return this->nbAlternative;}
+        const int getIsoRouteValue() const {return isoRouteValue;}
+        void setIsoRouteValue(const int &i){this->isoRouteValue=i;}
+        bool crossBarriere(const QLineF &line);
+        void setThresholdAlternative(const int &i){this->thresholdAlternative=i;}
+        const int getThresholdAlternative() const {return this->thresholdAlternative;}
+        void setNbAlternative(const int &i){this->nbAlternative=i;}
+        const int getNbAlternative() const {return this->nbAlternative;}
         void calculateAlternative();
         void deleteAlternative(){while(!alternateRoutes.isEmpty())
                 delete alternateRoutes.takeFirst();}
@@ -234,7 +235,7 @@ class ROUTAGE : public QObject
         /*various*/
         QPointF start;
         QPointF arrival;
-        double mySignedDiffAngle(double a1,double a2);
+        double mySignedDiffAngle(const double a1,const double a2);
         double findTime(const vlmPoint * pt, QPointF P, double * cap);
         double loxoCap;
         double initialDist;
@@ -280,7 +281,7 @@ class ROUTAGE : public QObject
         int  thresholdAlternative;
         bool arrivalIsClosest;
         bool routeFromBoat;
-        QList<double> calculateCaps(vlmPoint point,double workAngleStep, double workAngleRange);
+        void calculateCaps(QList<double> *caps, const vlmPoint &point, const double &workAngleStep, const double &workAngleRange);
         bool aborted;
         bool running;
         int debugCross0;
@@ -334,4 +335,5 @@ class ROUTAGE : public QObject
         QList<QLineF> barrieres;
         void countDebug(int nbIso, QString s);
     };
+Q_DECLARE_TYPEINFO(ROUTAGE,Q_MOVABLE_TYPE);
 #endif // ROUTAGE_H

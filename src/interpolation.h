@@ -52,5 +52,6 @@ class interpolation
         static void get_wind_info_latlong_hybrid_compute(double longitude,  double latitude, windData * data,double lat_step, double lon_step,
                 double * u_res, double * v_res, double * ro_res,double gridOriginLat,double gridOriginLon,int debug);
 };
+Q_DECLARE_TYPEINFO(interpolation,Q_MOVABLE_TYPE);
 
 #endif // INTERPOLATION_H

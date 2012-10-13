@@ -86,21 +86,21 @@ QRectF vlmLine::boundingRect() const
     return boundingR;
 }
 
-void vlmLine::addPoint(double lat,double lon)
+void vlmLine::addPoint(const double &lat, const double &lon)
 {
     vlmPoint point(lon,lat);
     line.append(point);
 }
-void vlmLine::addVlmPoint(vlmPoint point)
+void vlmLine::addVlmPoint(const vlmPoint &point)
 {
     line.append(point);
 }
-void vlmLine::removeVlmPoint(int index)
+void vlmLine::removeVlmPoint(const int &index)
 {
     line.removeAt(index);
 }
 
-void vlmLine::setPoly(QList<vlmPoint> & points)
+void vlmLine::setPoly(const QList<vlmPoint> & points)
 {
     line=points;
     calculatePoly();
@@ -125,14 +125,14 @@ void vlmLine::setLineMode()
     update();
 }
 
-void vlmLine::setPointMode(QColor pt_color)
+void vlmLine::setPointMode(const QColor &pt_color)
 {
     mode = VLMLINE_POINT_MODE;
     this->pt_color = pt_color;
     calculatePoly();
     update();
 }
-void vlmLine::setGateMode(QString desc)
+void vlmLine::setGateMode(const QString &desc)
 {
     mode = VLMLINE_GATE_MODE;
     this->desc=desc;
@@ -174,11 +174,11 @@ void vlmLine::calculatePoly(void)
     int cc=-1;
     if(line.count()>1)
     {
-        QListIterator<vlmPoint> i (line);
-        while(i.hasNext())
+        QList<vlmPoint>::const_iterator i;
+        for (i = line.constBegin(); i != line.constEnd(); ++i)
         {
             ++cc;
-            worldPoint=i.next();
+            const vlmPoint worldPoint=*i;
             if(replayMode)
             {
                 if(worldPoint.timeStamp>replayStep) break;
@@ -280,7 +280,7 @@ void vlmLine::calculatePoly(void)
             tempBound.getCoords(&x1,&y1,&x2,&y2);
             tempBound.setCoords(x1-linePen.widthF()*2,y1-linePen.widthF()*2,x2+linePen.widthF()*2,y2+linePen.widthF()*2);
         }
-        foreach(QPolygon * pol,polyList)
+        foreach(const QPolygon * pol,polyList)
             myPath2.addPolygon(*pol);
     }
     prepareGeometryChange();

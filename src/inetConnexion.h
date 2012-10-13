@@ -67,5 +67,6 @@ class inetConnexion : public QObject
 
         QList<inetClient*> replyList;
 };
+Q_DECLARE_TYPEINFO(inetConnexion,Q_MOVABLE_TYPE);
 
 #endif

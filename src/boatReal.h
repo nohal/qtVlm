@@ -134,6 +134,7 @@ class boatReal : public boat
         bool displayNMEA;
 };
 
+Q_DECLARE_TYPEINFO(boatReal,Q_MOVABLE_TYPE);
 
 
 

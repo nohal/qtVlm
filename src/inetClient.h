@@ -77,5 +77,6 @@ class inetClient
        QNetworkReply * myReply;
        QString name;
 };
+Q_DECLARE_TYPEINFO(inetClient,Q_MOVABLE_TYPE);
 
 #endif // INETCLIENT_H

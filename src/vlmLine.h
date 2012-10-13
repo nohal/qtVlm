@@ -44,45 +44,45 @@ class vlmLine : public QGraphicsWidget
     public:
         vlmLine(Projection * proj, QGraphicsScene * myScene,double z_level);
 
-        void addPoint(double lat,double lon);
-        void addVlmPoint(vlmPoint point);
-        void removeVlmPoint(int index);
+        void addPoint(const double &lat,const double &lon);
+        void addVlmPoint(const vlmPoint &point);
+        void removeVlmPoint(const int &index);
         void deleteAll(void);
         void setLinePen ( const QPen & pen ) {linePen = pen;lineWidth=linePen.widthF();update(); }
-        QPen getLinePen (){return this->linePen;}
-        void setPoly(QList<vlmPoint> & points);
+        const QPen getLinePen () const {return this->linePen;}
+        void setPoly(const QList<vlmPoint> & points);
 
         void setLineMode();
-        void setPointMode(QColor pt_color);
-        void setGateMode(QString desc);
-        void setIceGate(int i){iceGate=i;}
-        int  isIceGate(){return iceGate;}
+        void setPointMode(const QColor &pt_color);
+        void setGateMode(const QString &desc);
+        void setIceGate(const int &i){iceGate=i;}
+        const int  isIceGate() const {return iceGate;}
         void setTip(QString tip);
-        void setNbVacPerHour(int nbVacPerHour) {this->nbVacPerHour=nbVacPerHour;}
+        void setNbVacPerHour(const int &nbVacPerHour) {this->nbVacPerHour=nbVacPerHour;}
         void setPorteOnePoint(void){this->onePoint=true;}
-        void setHidden(bool hidden) {this->hidden=hidden;update();}
-        bool getHidden(void){return this->hidden;}
+        void setHidden(const bool &hidden) {this->hidden=hidden;update();}
+        const bool getHidden(void) const {return this->hidden;}
         QList<vlmPoint> * getPoints(){return & this->line;}
-        void setSolid(bool solid){this->solid=solid;}
+        void setSolid(const bool &solid){this->solid=solid;}
 
-        int count(void) { return line.count(); }
-        void setPointDead(int n){this->line[n].isDead=true;}
-        void setPointStartCap(int n,double c){this->line[n].startCap=c;}
-        void setPointWind(int n, double twd, double tws){this->line[n].wind_angle=twd;this->line[n].wind_speed=tws;}
-        void setPointCurrent(int n, double cd, double cs){this->line[n].current_angle=cd;this->line[n].current_speed=cs;}
-        void setPointDistIso(int n, double d){this->line[n].distIso=d;}
-        void setPointCapVmg(int n, double d){this->line[n].capVmg=d;}
-        void setPointcapOrigin(int n,double d){this->line[n].capOrigin=d;}
-        void setPointCoordProj(int n,double x,double y){this->line[n].lonProj=x;this->line[n].latProj=y;}
-        void setNotSimplificable(int n){this->line[n].notSimplificable=true;}
+        const int count(void) const { return line.count(); }
+        void setPointDead(const int &n){this->line[n].isDead=true;}
+        void setPointStartCap(const int &n,const double &c){this->line[n].startCap=c;}
+        void setPointWind(const int &n, const double &twd, const double &tws){this->line[n].wind_angle=twd;this->line[n].wind_speed=tws;}
+        void setPointCurrent(const int &n, const double &cd, const double &cs){this->line[n].current_angle=cd;this->line[n].current_speed=cs;}
+        void setPointDistIso(const int &n, const double &d){this->line[n].distIso=d;}
+        void setPointCapVmg(const int &n, const double &d){this->line[n].capVmg=d;}
+        void setPointcapOrigin(const int &n,const double &d){this->line[n].capOrigin=d;}
+        void setPointCoordProj(const int &n,const double &x,const double &y){this->line[n].lonProj=x;this->line[n].latProj=y;}
+        void setNotSimplificable(const int &n){this->line[n].notSimplificable=true;}
         void setLastPointIsPoi(){this->line[line.count()-1].isPOI=true;}
-        const vlmPoint * getOrigin(int n) {return this->line.at(n).origin;}
-        const vlmPoint * getPoint(int n) {return & line.at(n);}
-        void setInterpolated(double lon,double lat){this->interpolatedLon=lon;this->interpolatedLat=lat;update();}
-        void setHasInterpolated(bool b){this->hasInterpolated=b;update();}
+        const vlmPoint * getOrigin(const int &n) {return this->line.at(n).origin;}
+        const vlmPoint * getPoint(const int &n) {return & line.at(n);}
+        void setInterpolated(const double &lon,const double &lat){this->interpolatedLon=lon;this->interpolatedLat=lat;update();}
+        void setHasInterpolated(const bool &b){this->hasInterpolated=b;update();}
         vlmPoint * getLastPoint() {return & line.last();}
-        void setRoundedEnd(bool b){this->roundedEnd=b;}
-        void setCoastDetection(bool b){this->coastDetection=b;}
+        void setRoundedEnd(const bool &b){this->roundedEnd=b;}
+        void setCoastDetection(const bool &b){this->coastDetection=b;}
         bool getCoastDetected(){return this->coastDetected;}
         void setMap(GshhsReader * map){this->map=map;}
         ~vlmLine();
@@ -136,6 +136,7 @@ class vlmLine : public QGraphicsWidget
         QPainterPath myPath;
         double myZvalue;
 };
+Q_DECLARE_TYPEINFO(vlmLine,Q_MOVABLE_TYPE);
 
 
 #endif // VLMLINE_H

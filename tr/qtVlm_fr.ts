@@ -543,6 +543,22 @@ La boîte à cocher trace partielle s&apos;active apres l&apos;entree d&apos;un 
         <source>Pseudo</source>
         <translation></translation>
     </message>
+    <message>
+        <source>Select maps folder</source>
+        <translation>Sélection du répertoire des cartes</translation>
+    </message>
+    <message>
+        <source>Changing maps folder</source>
+        <translation>Changement du répértoire des cartes</translation>
+    </message>
+    <message>
+        <source>Selected folder doesn&apos;t contain maps</source>
+        <translation>Le repertoire selectionné ne contient pas de cartes</translation>
+    </message>
+    <message>
+        <source>Selected folder contains maps with wrong version</source>
+        <translation>Le répértoire selectionné contient une mauvaise version des cartes</translation>
+    </message>
 </context>
 <context>
     <name>DialogPilototo</name>
@@ -1210,11 +1226,11 @@ Etes-vous sur ?</source>
     <name>GshhsDwnload</name>
     <message>
         <source>Sauvegarde des cartes</source>
-        <translation>Sauvegarde des cartes</translation>
+        <translation type="obsolete">Sauvegarde des cartes</translation>
     </message>
     <message>
         <source>Le fichier zip </source>
-        <translation>Le fichier zip</translation>
+        <translation type="obsolete">Le fichier zip</translation>
     </message>
     <message>
         <source> ne peut �tre dezippe</source>
@@ -1222,19 +1238,39 @@ Etes-vous sur ?</source>
     </message>
     <message>
         <source>Le fichier </source>
-        <translation>Le fichier</translation>
+        <translation type="obsolete">Le fichier</translation>
     </message>
     <message>
         <source> ne peut etre ouvert</source>
-        <translation> ne peut pas être ouvert</translation>
+        <translation type="obsolete"> ne peut pas être ouvert</translation>
     </message>
     <message>
         <source>Select maps folder</source>
-        <translation>Sélection du répertoire des cartes</translation>
+        <translation type="obsolete">Sélection du répertoire des cartes</translation>
     </message>
     <message>
         <source> ne peut etre dezippe</source>
-        <translation> ne peut pas être dézippé</translation>
+        <translation type="obsolete"> ne peut pas être dézippé</translation>
+    </message>
+    <message>
+        <source>Saving maps</source>
+        <translation>Sauvegarde des cartes</translation>
+    </message>
+    <message>
+        <source>Zip file </source>
+        <translation>Fichier zip</translation>
+    </message>
+    <message>
+        <source> can&apos;t be opened</source>
+        <translation>ne peut être ouvert</translation>
+    </message>
+    <message>
+        <source>Decompressing maps</source>
+        <translation>Décompression des cartes</translation>
+    </message>
+    <message>
+        <source> can&apos;t be unzip</source>
+        <translation>ne peut être dézippé</translation>
     </message>
 </context>
 <context>
@@ -1533,6 +1569,62 @@ Etes-vous sur ?</source>
     <message>
         <source>reinstall qtVlm elsewhere</source>
         <translation>réinstallew qtVlm autre part</translation>
+    </message>
+    <message>
+        <source>Starting qtVLM</source>
+        <translation>Démarrage de qtVlm</translation>
+    </message>
+    <message>
+        <source>Initializing menus</source>
+        <translation>Initialisation des menus</translation>
+    </message>
+    <message>
+        <source>Initializing maps drawing</source>
+        <translation>Initialisation des cartes</translation>
+    </message>
+    <message>
+        <source>Initializing toolbars</source>
+        <translation>Initialisation des barres d&apos;outils</translation>
+    </message>
+    <message>
+        <source>Opening grib</source>
+        <translation>Ouverture du grib</translation>
+    </message>
+    <message>
+        <source>Creating context menus</source>
+        <translation>Création des menus contextuels</translation>
+    </message>
+    <message>
+        <source>Loading polars list</source>
+        <translation>Chargement des polaires</translation>
+    </message>
+    <message>
+        <source>Reading boats data</source>
+        <translation>Lecture des données bateaux</translation>
+    </message>
+    <message>
+        <source>Drawing some</source>
+        <translation>Dessin des côtes</translation>
+    </message>
+    <message>
+        <source>Preparing coffee</source>
+        <translation>Préparation du café</translation>
+    </message>
+    <message>
+        <source>Drawing all</source>
+        <translation>Finalisation du dessin des côtes</translation>
+    </message>
+    <message>
+        <source>Updating player</source>
+        <translation>Mise à jour des comptes</translation>
+    </message>
+    <message>
+        <source>Calling player dialog</source>
+        <translation>Chargement des comptes</translation>
+    </message>
+    <message>
+        <source>Updating boats</source>
+        <translation>Mise à jour des bateaux</translation>
     </message>
 </context>
 <context>
@@ -3326,7 +3418,7 @@ VMG %.2f nds</translation>
     </message>
     <message>
         <source>Voulez-vous que la route parte du bateau a la prochaine vacation?</source>
-        <translation>Voulez-vous que la route parte du bateau à la prochaine vacation?</translation>
+        <translation type="obsolete">Voulez-vous que la route parte du bateau à la prochaine vacation?</translation>
     </message>
     <message>
         <source>Conversion d&apos;un routage en route</source>
@@ -3347,6 +3439,10 @@ VMG %.2f nds</translation>
     <message>
         <source>Arrivee (estimation): </source>
         <translation>Arrivée (estimation):</translation>
+    </message>
+    <message>
+        <source>Voulez-vous que le point de depart de la route suive le bateau maintenant?</source>
+        <translation>Voulez-vous que le point de départ de la route suive le bateau maintenant?</translation>
     </message>
 </context>
 <context>
@@ -4288,6 +4384,14 @@ sans simplifier</translation>
     <message>
         <source>Trier les POIs par numero d&apos;ordre</source>
         <translation>POIs par numéro de séquence</translation>
+    </message>
+    <message>
+        <source>Repertoire des cartes</source>
+        <translation>Repertoire des cartes</translation>
+    </message>
+    <message>
+        <source>TextLabel</source>
+        <translation></translation>
     </message>
 </context>
 <context>
@@ -6061,7 +6165,7 @@ Voulez-vous la remplacer?</source>
     </message>
     <message>
         <source>Ouverture des cartes</source>
-        <translation>Ouverte des cartes</translation>
+        <translation type="obsolete">Ouverte des cartes</translation>
     </message>
     <message>
         <source>Les cartes sont absentes
@@ -6077,29 +6181,51 @@ Voulez-vous les télécharger ?</translation>
     </message>
     <message>
         <source>Choisir un repertoire</source>
-        <translation>Choisir un répertoire</translation>
+        <translation type="obsolete">Choisir un répertoire</translation>
     </message>
     <message>
         <source>Telechargement</source>
-        <translation>Téléchargement</translation>
+        <translation type="obsolete">Téléchargement</translation>
     </message>
     <message>
         <source>Annuler</source>
         <translation>Annuler</translation>
     </message>
     <message>
-        <source>Les cartes sont absentes
-Que voulez vous faire?</source>
-        <translation></translation>
-    </message>
-    <message>
-        <source>Vous n&apos;avez pas la bonne version des cartes
-Que voulez vous faire?</source>
-        <translation></translation>
-    </message>
-    <message>
         <source>Select maps folder</source>
         <translation>Sélection du répertoire des cartes</translation>
+    </message>
+    <message>
+        <source>Download and decompress maps</source>
+        <translation>Téléchargement et décompression des cartes</translation>
+    </message>
+    <message>
+        <source>Finishing map init</source>
+        <translation>Finalisation de l&apos;initialisation des cartes</translation>
+    </message>
+    <message>
+        <source>Maps loading</source>
+        <translation>Chargement des cartes</translation>
+    </message>
+    <message>
+        <source>Select existing maps folder</source>
+        <translation>Selectionner un repertoire de cartes existant</translation>
+    </message>
+    <message>
+        <source>Downloading</source>
+        <translation>Téléchargement</translation>
+    </message>
+    <message>
+        <source>Maps are missing
+What do you want to do?</source>
+        <translation>Les cartes sont absentes
+Que voulez vous faire?</translation>
+    </message>
+    <message>
+        <source>An old version of maps has been detected
+What do you want to do?</source>
+        <translation>Les cartes sontd&apos;une mauvaise version
+Que voulez vous faire?</translation>
     </message>
 </context>
 <context>

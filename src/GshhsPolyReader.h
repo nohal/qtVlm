@@ -51,6 +51,7 @@ struct PolygonFileHeader
         int p4;
         int p5;
     } ;
+Q_DECLARE_TYPEINFO(PolygonFileHeader,Q_PRIMITIVE_TYPE);
 
 typedef QList<QPointF> contour;
 typedef QList<contour> contour_list;
@@ -88,6 +89,7 @@ class GshhsPolyCell
                                 contour_list *p1, contour_list *p2, contour_list *p3, contour_list *p4, contour_list *p5);
 
 };
+Q_DECLARE_TYPEINFO(GshhsPolyCell,Q_MOVABLE_TYPE);
 
 class GshhsPolyReader
 {
@@ -119,6 +121,7 @@ class GshhsPolyReader
         bool abortRequested;
         Projection * proj;
 };
+Q_DECLARE_TYPEINFO(GshhsPolyReader,Q_MOVABLE_TYPE);
 inline bool GshhsPolyReader::crossing(QLineF traject, QLineF trajectWorld) const
 {
     if(!proj || proj==NULL) return false;

@@ -39,8 +39,8 @@ class GshhsDwnload: public QObject, public inetClient
         void requestFinished(QByteArray res);
         QString getAuthLogin(bool * ok=NULL) { return inetClient::getAuthLogin(ok);}
         QString getAuthPass(bool * ok=NULL) { return inetClient::getAuthPass(ok); }
-        void authFailed(void) { inetClient::authFailed(); }
-        void inetError(void) { inetClient::inetError(); }
+        void authFailed(void) { errorDuringDownload=true; finished=true; inetClient::authFailed(); }
+        void inetError(void) { errorDuringDownload=true; finished=true; inetClient::inetError(); }
 
         void getMaps(void);
 
@@ -49,7 +49,11 @@ class GshhsDwnload: public QObject, public inetClient
 
     private:
         myCentralWidget * centralWidget;
+        bool errorDuringDownload;
+        bool finished;
+        QString filename;
 
 };
+Q_DECLARE_TYPEINFO(GshhsDwnload,Q_MOVABLE_TYPE);
 
 #endif // GSHHSDWNLOAD_H

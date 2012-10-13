@@ -127,6 +127,7 @@ class myCentralWidget : public QWidget
         Player * getPlayer(void) { return currentPlayer; }
         boatReal * getRealBoat(void) {return realBoat; }
         bool getIsStartingUp(void){return mainW->isStartingUp;}
+        MainWindow * getMainWindow(void) { return mainW; }
 
         void loadGshhs(void);
 

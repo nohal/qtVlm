@@ -328,12 +328,9 @@ myCentralWidget::myCentralWidget(Projection * proj,MainWindow * parent,MenuBar *
 
     view = new QGraphicsView(scene, this);
     view->setGeometry(0,0,width(),height());
-//   view->viewport()->setAttribute(Qt::WA_AcceptTouchEvents);
     view->viewport()->grabGesture(Qt::PanGesture);
     view->viewport()->grabGesture(Qt::PinchGesture);
-//    view->setAttribute(Qt::WA_AcceptTouchEvents);
-//    view->grabGesture(Qt::PanGesture);
-//    view->grabGesture(Qt::PinchGesture);
+
 
     /* other child */
     inetManager = new inetConnexion(mainW);
@@ -543,26 +540,40 @@ void myCentralWidget::loadGshhs(void) {
     gshhsReader->setProj(proj);
 
     int polyVersion = gshhsReader->getPolyVersion();
+    if(polyVersion==-1 || polyVersion!=220)
+    {
+        mapDir=".";
+        delete gshhsReader;
+        gshhsReader = new GshhsReader((mapDir+"/gshhs").toAscii().data(), 0);
+        gshhsReader->setProj(proj);
+        polyVersion = gshhsReader->getPolyVersion();
+    }
     bool dwnloadMaps = false;
     bool gshhsOk=true;
 
-    QMessageBox msgBox(QMessageBox::Question,tr("Ouverture des cartes"),"",QMessageBox::NoButton,this);
-    QPushButton * selectFolderBtn = msgBox.addButton(tr("Choisir un repertoire"),QMessageBox::ApplyRole);
-    QPushButton * downloadMapBtn = msgBox.addButton(tr("Telechargement"),QMessageBox::AcceptRole);
+    QMessageBox msgBox(QMessageBox::Question,tr("Maps loading"),"",QMessageBox::NoButton,this);
+    QPushButton * selectFolderBtn = msgBox.addButton(tr("Select existing maps folder"),QMessageBox::ApplyRole);
+    QPushButton * downloadMapBtn = msgBox.addButton(tr("Downloading"),QMessageBox::AcceptRole);
     msgBox.addButton(tr("Annuler"),QMessageBox::RejectRole);
 
     if(polyVersion == -1) {
         qWarning() << "Missing maps";
         gshhsOk=false;
-        msgBox.setText(tr("Les cartes sont absentes\nQue voulez vous faire?"));
+        msgBox.setText(tr("Maps are missing\nWhat do you want to do?"));
     }
     else if(polyVersion!=220) {
         qWarning()<<"wrong poly version->"<<gshhsReader->getPolyVersion();
         gshhsOk=false;
-        msgBox.setText(tr("Vous n'avez pas la bonne version des cartes\nQue voulez vous faire?"));
+        msgBox.setText(tr("An old version of maps has been detected\nWhat do you want to do?"));
     }
-    //msgBox.setWindowFlags(Qt::WindowStaysOnTopHint);
-
+    QDir dir(mapDir);
+    QDir appDir=QDir::currentPath();
+    if(dir.rootPath()==appDir.rootPath())
+        mapDir=appDir.relativeFilePath(mapDir);
+    else
+        mapDir=appDir.absoluteFilePath(mapDir);
+    qWarning() << "Setting map folder to " << mapDir;
+    Settings::setSetting("mapsFolder",mapDir);
     if(!gshhsOk) {
         msgBox.exec();
 
@@ -573,6 +584,12 @@ void myCentralWidget::loadGshhs(void) {
             mapDir = QFileDialog::getExistingDirectory(this, tr("Select maps folder"),
                                                             mapDir,
                                                             QFileDialog::ShowDirsOnly);
+            QDir dir(mapDir);
+            QDir appDir=QDir::currentPath();
+            if(dir.rootPath()==appDir.rootPath())
+                mapDir=appDir.relativeFilePath(mapDir);
+            else
+                mapDir=appDir.absoluteFilePath(mapDir);
             qWarning() << "Setting map folder to " << mapDir;
             Settings::setSetting("mapsFolder",mapDir);
             delete gshhsReader;
@@ -586,8 +603,22 @@ void myCentralWidget::loadGshhs(void) {
         gshhsReader=NULL;
     }
 
+    QProgressDialog * progress=mainW->get_progress();
+
     if(dwnloadMaps) {
+        if(progress) {
+            progress->setLabelText(tr("Download and decompress maps"));
+            progress->setValue(progress->value()+5);
+        }
         gshhsDwnload->getMaps();
+
+    }
+
+
+
+    if(progress) {
+        progress->setLabelText(tr("Finishing map init"));
+        progress->setValue(progress->value()+5);
     }
 
     if(gshhsOk) {
@@ -646,8 +677,8 @@ void myCentralWidget::loadPOI(void)
                         pen.setWidthF(poi1->getLineWidth());
                         lineBetweenPois->setLinePen(pen);
                         lineBetweenPois->slot_showMe();
+                        break;
                     }
-                    break;
                 }
             }
         }
@@ -2681,6 +2712,7 @@ void myCentralWidget::exportRouteFromMenuKML(ROUTE * route,QString fileName,bool
             if(grib->getInterpolatedValue_byDates(pList.at(i)->getLongitude(), pList.at(i)->getLatitude(),
                                                   pList.at(i)->getRouteTimeStamp(),&speed,&angle,INTERPOLATION_DEFAULT))
             {
+                angle=radToDeg(angle);
                 qd4=doc.createElement("Data");
                 qd3.appendChild(qd4);
                 qd4.setAttribute("name","TWS");

@@ -229,4 +229,5 @@ class ROUTE : public QObject
         bool showInterpolData;
         bool sortPoisbyName;
 };
+Q_DECLARE_TYPEINFO(ROUTE,Q_MOVABLE_TYPE);
 #endif // ROUTE_H

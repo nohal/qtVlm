@@ -87,6 +87,7 @@ class Font {
 		static void initAppFonts ();
 	
 };
+Q_DECLARE_TYPEINFO(Font,Q_MOVABLE_TYPE);
 
 
 

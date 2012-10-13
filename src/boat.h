@@ -227,5 +227,5 @@ class boat: public QGraphicsWidget
         double minSpeedForEngine;
         double speedWithEngine;
 };
-
+Q_DECLARE_TYPEINFO(boat,Q_MOVABLE_TYPE);
 #endif // BOAT_H

@@ -53,6 +53,7 @@ class ZeroOneActionGroup : public QObject
         private:
                 QList <QAction *> lsactions;
 };
+Q_DECLARE_TYPEINFO(ZeroOneActionGroup,Q_MOVABLE_TYPE);
 
 class MenuBar : public QMenuBar
 {
@@ -336,5 +337,6 @@ private:
 
 
 };
+Q_DECLARE_TYPEINFO(MenuBar,Q_MOVABLE_TYPE);
 
 #endif

@@ -60,5 +60,6 @@ class selectionWidget : public QGraphicsWidget
 
         void updateSize(void);
 };
+Q_DECLARE_TYPEINFO(selectionWidget,Q_MOVABLE_TYPE);
 
 #endif // SELECTIONWIDGET_H
