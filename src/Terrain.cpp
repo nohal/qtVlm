@@ -51,6 +51,7 @@ Terrain::Terrain(myCentralWidget *parent, Projection *proj_) : QGraphicsWidget()
     toBeRestarted=false;
     this->parent=parent;
     proj = proj_;
+    this->routageGrib=NULL;
     connect(proj,SIGNAL(projectionUpdated()),this,SLOT(redrawAll()));
     connect(parent,SIGNAL(redrawAll()),this,SLOT(redrawAll()));
     connect(parent,SIGNAL(redrawGrib()),this,SLOT(redrawGrib()));
@@ -238,6 +239,69 @@ void Terrain::draw_GSHHSandGRIB()
                 parent->getKap()->setImgGribKap(imgAll->copy(br.toRect()));
             else
                 parent->getKap()->setImgGribKap(QPixmap(0,0));
+        }
+        if(routageGrib!=NULL)
+        {
+            mutex.lock();
+            QPen penRoutage;
+            penRoutage.setWidth(1);
+            QList<vlmLine*> isochrones=routageGrib->getIsochrones();
+            for(int i=isochrones.count()-1;i>0;--i)
+            {
+                QList<vlmPoint> * iso=isochrones.at(i)->getPoints();
+                for(int p=0;p<iso->count()-1;++p)
+                {
+                    double x,y;
+                    double windAverage=0;
+                    QPolygonF poly;
+
+                    vlmPoint ip=*(iso->at(p).origin);
+                    windAverage+=ip.wind_speed;
+                    proj->map2screenDouble(Util::cLFA(ip.lon,proj->getXmin()),ip.lat,&x,&y);
+                    poly.append(QPointF(x,y));
+
+                    ip=iso->at(p);
+                    windAverage+=ip.wind_speed;
+                    proj->map2screenDouble(Util::cLFA(ip.lon,proj->getXmin()),ip.lat,&x,&y);
+                    poly.append(QPointF(x,y));
+
+                    ip=iso->at(p+1);
+                    windAverage+=ip.wind_speed;
+                    proj->map2screenDouble(Util::cLFA(ip.lon,proj->getXmin()),ip.lat,&x,&y);
+                    poly.append(QPointF(x,y));
+
+                    ip=*(iso->at(p+1).origin);
+                    windAverage+=ip.wind_speed;
+                    proj->map2screenDouble(Util::cLFA(ip.lon,proj->getXmin()),ip.lat,&x,&y);
+                    poly.append(QPointF(x,y));
+
+
+                    vlmPoint O1=*(iso->at(p).origin);
+                    vlmPoint O2=*(iso->at(p+1).origin);
+                    iso=isochrones.at(i-1)->getPoints();
+                    int o1=iso->indexOf(O1);
+                    int o2=iso->indexOf(O2);
+                    if(o2>o1)
+                    while(o2>o1)
+                    {
+                        --o2;
+                        ip=iso->at(o2);
+                        windAverage+=ip.wind_speed;
+                        proj->map2screenDouble(Util::cLFA(ip.lon,proj->getXmin()),ip.lat,&x,&y);
+                        poly.append(QPointF(x,y));
+                    }
+
+                    QColor color_r=grib->getWindColor(windAverage/poly.count(),true);
+                    color_r.setAlpha(255);
+                    penRoutage.setColor(color_r);
+                    penRoutage.setBrush(QBrush(color_r));
+                    pnt.setPen(penRoutage);
+                    pnt.setBrush(penRoutage.brush());
+                    pnt.drawPolygon(poly,Qt::WindingFill);
+                    //qWarning()<<"drawing iso"<<poly.toPolygon();
+                }
+            }
+            mutex.unlock();
         }
     }
 
@@ -767,4 +831,15 @@ void Terrain::updateRoutine()
     update();
     QCoreApplication::sendPostedEvents();
     QCoreApplication::processEvents(QEventLoop::AllEvents);
+}
+void Terrain::setRoutageGrib(ROUTAGE * routage)
+{
+    mutex.lock();
+    this->routageGrib=routage;
+    mutex.unlock();
+    redrawGrib();
+}
+ROUTAGE * Terrain::getRoutageGrib()
+{
+    return routageGrib;
 }

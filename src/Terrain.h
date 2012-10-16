@@ -31,6 +31,7 @@ Copyright (C) 2008 - Jacques Zaninetti - http://zygrib.free.fr
 #include <QToolBar>
 #include <QBitmap>
 #include <QMutex>
+#include "routage.h"
 
 #include "class_list.h"
 
@@ -48,6 +49,8 @@ public:
 
     QRectF boundingRect() const;
     QPainterPath shape() const;
+    ROUTAGE * getRoutageGrib();
+    void setRoutageGrib(ROUTAGE * routage);
 
     enum DrawGribPlainDataMode {
              drawNone,
@@ -180,6 +183,8 @@ private:
     void indicateWaitingMap(void);
     void updateRoutine(void);
     bool toBeRestarted;
+    ROUTAGE * routageGrib;
+    QMutex mutex;
 };
 Q_DECLARE_TYPEINFO(Terrain,Q_MOVABLE_TYPE);
 

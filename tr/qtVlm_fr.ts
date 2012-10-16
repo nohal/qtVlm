@@ -3721,6 +3721,10 @@ inversés</translation>
         <source>Enveloppe</source>
         <translation></translation>
     </message>
+    <message>
+        <source>Colorer TWS entre isos</source>
+        <translation></translation>
+    </message>
 </context>
 <context>
     <name>ROUTE</name>

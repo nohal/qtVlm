@@ -38,6 +38,7 @@ Copyright (C) 2008 - Jacques Zaninetti - http://zygrib.free.fr
 #include <QThread>
 #include <QDesktopWidget>
 #include "settings.h"
+#include "Terrain.h"
 
 
 //-------------------------------------------------------
@@ -166,6 +167,7 @@ DialogRoutage::DialogRoutage(ROUTAGE *routage,myCentralWidget *parent)
     this->useVac->setChecked(routage->getUseRouteModule());
     this->log->setChecked(routage->useConverge);
     this->pruneWakeAngle->setValue(routage->pruneWakeAngle);
+    this->colorIso->setChecked(routage->getColorGrib());
     if(routage->getWindIsForced())
     {
         this->TWD->setValue(routage->getWindAngle());
@@ -271,6 +273,7 @@ void DialogRoutage::slot_default()
     this->autoZoom->setChecked(true);
     this->zoomLevel->setValue(2);
     this->pruneWakeAngle->setValue(30);
+    this->colorIso->setChecked(false);
     this->explo->setValue(40);
     this->log->setChecked(true);
     this->whatIfUse->setChecked(false);
@@ -317,6 +320,7 @@ void DialogRoutage::done(int result)
         routage->setThresholdAlternative(this->diver->value());
         routage->useConverge=log->isChecked();
         routage->pruneWakeAngle=pruneWakeAngle->value();
+        routage->setColorGrib(this->colorIso->isChecked());
         routage->setAutoZoom(autoZoom->isChecked());
         routage->setZoomLevel(this->zoomLevel->value());
         routage->setVisibleOnly(visibleOnly->isChecked());
@@ -468,6 +472,15 @@ void DialogRoutage::done(int result)
             routage->setIsoRouteValue(routage->getTimeStepMore24());
         else if(reCalculateAlternative)
             routage->calculateAlternative();
+    }
+    if(routage->isDone())
+    {
+//        if(routage->getColorGrib())
+//            routage->setShowIso(false);
+        if(!routage->getColorGrib() && parent->getTerre()->getRoutageGrib()==routage)
+            parent->getTerre()->setRoutageGrib(NULL);
+        else if(routage->getColorGrib() && parent->getTerre()->getRoutageGrib()!=routage)
+            parent->getTerre()->setRoutageGrib(routage);
     }
     if(result == QDialog::Rejected)
     {

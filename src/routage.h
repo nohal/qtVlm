@@ -191,6 +191,9 @@ class ROUTAGE : public QObject
         void calculateAlternative();
         void deleteAlternative(){while(!alternateRoutes.isEmpty())
                 delete alternateRoutes.takeFirst();}
+        QList<vlmLine*> getIsochrones(){return isochrones;}
+        void setColorGrib(const bool &b){this->colorGrib=b;}
+        bool getColorGrib(){return this->colorGrib;}
     public slots:
         void slot_edit();
         void slot_abort(){this->aborted=true;}
@@ -315,7 +318,7 @@ class ROUTAGE : public QObject
         bool arrived;
         time_t eta;
         QList<vlmLine *> isochrones;
-        QList<vlmLine *> segments;
+            QList<vlmLine *> segments;
         bool done;
         /*iso inversed*/
         bool i_iso;
@@ -334,6 +337,7 @@ class ROUTAGE : public QObject
         QList<vlmLine*> alternateRoutes;
         QList<QLineF> barrieres;
         void countDebug(int nbIso, QString s);
+        bool colorGrib;
     };
 Q_DECLARE_TYPEINFO(ROUTAGE,Q_MOVABLE_TYPE);
 #endif // ROUTAGE_H
