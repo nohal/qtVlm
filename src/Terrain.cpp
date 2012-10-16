@@ -278,14 +278,13 @@ void Terrain::draw_GSHHSandGRIB()
 
                     vlmPoint O1=*(iso->at(p).origin);
                     vlmPoint O2=*(iso->at(p+1).origin);
-                    iso=isochrones.at(i-1)->getPoints();
-                    int o1=iso->indexOf(O1);
-                    int o2=iso->indexOf(O2);
-                    if(o2>o1)
+                    QList<vlmPoint> * previousIso=isochrones.at(i-1)->getPoints();
+                    int o1=previousIso->indexOf(O1,0);
+                    int o2=previousIso->indexOf(O2,0);
                     while(o2>o1)
                     {
                         --o2;
-                        ip=iso->at(o2);
+                        ip=previousIso->at(o2);
                         windAverage+=ip.wind_speed;
                         proj->map2screenDouble(Util::cLFA(ip.lon,proj->getXmin()),ip.lat,&x,&y);
                         poly.append(QPointF(x,y));
@@ -298,7 +297,6 @@ void Terrain::draw_GSHHSandGRIB()
                     pnt.setPen(penRoutage);
                     pnt.setBrush(penRoutage.brush());
                     pnt.drawPolygon(poly,Qt::WindingFill);
-                    //qWarning()<<"drawing iso"<<poly.toPolygon();
                 }
             }
             mutex.unlock();
