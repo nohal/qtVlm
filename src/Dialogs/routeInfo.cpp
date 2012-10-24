@@ -32,8 +32,16 @@ void routeInfo::setValues(double twd, double tws, double twa, double bs, double 
     DNM->setValue(dnm);
     COG->setValue(cog);
     SOG->setValue(sog);
-    CS->setValue(cs);
-    CD->setValue(cd);
+    if(cs<0)
+    {
+        CS->setValue(-1);
+        CD->setValue(-1);
+    }
+    else
+    {
+        CS->setValue(cs);
+        CD->setValue(cd);
+    }
     double Y=90-qAbs(twa);
     double a=tws*cos(degToRad(Y));
     double b=tws*sin(degToRad(Y));

@@ -28,6 +28,9 @@
         <property name="readOnly">
          <bool>true</bool>
         </property>
+        <property name="buttonSymbols">
+         <enum>QAbstractSpinBox::NoButtons</enum>
+        </property>
         <property name="suffix">
          <string>deg</string>
         </property>
@@ -61,6 +64,9 @@
         <property name="readOnly">
          <bool>true</bool>
         </property>
+        <property name="buttonSymbols">
+         <enum>QAbstractSpinBox::NoButtons</enum>
+        </property>
         <property name="suffix">
          <string>deg</string>
         </property>
@@ -91,6 +97,9 @@
         <property name="readOnly">
          <bool>true</bool>
         </property>
+        <property name="buttonSymbols">
+         <enum>QAbstractSpinBox::NoButtons</enum>
+        </property>
         <property name="suffix">
          <string> nds</string>
         </property>
@@ -107,6 +116,9 @@
         <property name="readOnly">
          <bool>true</bool>
         </property>
+        <property name="buttonSymbols">
+         <enum>QAbstractSpinBox::NoButtons</enum>
+        </property>
         <property name="suffix">
          <string> nds</string>
         </property>
@@ -122,6 +134,9 @@
         </property>
         <property name="readOnly">
          <bool>true</bool>
+        </property>
+        <property name="buttonSymbols">
+         <enum>QAbstractSpinBox::NoButtons</enum>
         </property>
         <property name="suffix">
          <string>deg</string>
@@ -163,11 +178,20 @@
         <property name="readOnly">
          <bool>true</bool>
         </property>
+        <property name="buttonSymbols">
+         <enum>QAbstractSpinBox::NoButtons</enum>
+        </property>
+        <property name="specialValueText">
+         <string notr="true">N/A</string>
+        </property>
         <property name="suffix">
          <string>deg</string>
         </property>
         <property name="decimals">
          <number>1</number>
+        </property>
+        <property name="minimum">
+         <double>-1.000000000000000</double>
         </property>
         <property name="maximum">
          <double>500.000000000000000</double>
@@ -182,11 +206,20 @@
         <property name="readOnly">
          <bool>true</bool>
         </property>
+        <property name="buttonSymbols">
+         <enum>QAbstractSpinBox::NoButtons</enum>
+        </property>
+        <property name="specialValueText">
+         <string notr="true">N/A</string>
+        </property>
         <property name="suffix">
          <string> nds</string>
         </property>
         <property name="decimals">
          <number>1</number>
+        </property>
+        <property name="minimum">
+         <double>-1.000000000000000</double>
         </property>
        </widget>
       </item>
@@ -239,6 +272,9 @@
         <property name="readOnly">
          <bool>true</bool>
         </property>
+        <property name="buttonSymbols">
+         <enum>QAbstractSpinBox::NoButtons</enum>
+        </property>
         <property name="suffix">
          <string>deg</string>
         </property>
@@ -258,6 +294,9 @@
         <property name="readOnly">
          <bool>true</bool>
         </property>
+        <property name="buttonSymbols">
+         <enum>QAbstractSpinBox::NoButtons</enum>
+        </property>
         <property name="suffix">
          <string>deg</string>
         </property>
@@ -276,6 +315,9 @@
         </property>
         <property name="readOnly">
          <bool>true</bool>
+        </property>
+        <property name="buttonSymbols">
+         <enum>QAbstractSpinBox::NoButtons</enum>
         </property>
         <property name="suffix">
          <string> NM</string>
@@ -302,6 +344,9 @@
         </property>
         <property name="readOnly">
          <bool>true</bool>
+        </property>
+        <property name="buttonSymbols">
+         <enum>QAbstractSpinBox::NoButtons</enum>
         </property>
         <property name="suffix">
          <string> nds</string>
@@ -340,6 +385,9 @@
         <property name="readOnly">
          <bool>true</bool>
         </property>
+        <property name="buttonSymbols">
+         <enum>QAbstractSpinBox::NoButtons</enum>
+        </property>
         <property name="suffix">
          <string>deg</string>
         </property>
@@ -372,6 +420,9 @@
         </property>
         <property name="readOnly">
          <bool>true</bool>
+        </property>
+        <property name="buttonSymbols">
+         <enum>QAbstractSpinBox::NoButtons</enum>
         </property>
         <property name="suffix">
          <string> NM</string>
