@@ -202,12 +202,33 @@ void  GribRecord::translateDataType()
 
         }
         //---------------
+        //NOGAPS model
+        //---------------
+        else if (idCenter==58 && idModel==58 && idGrid==255)    {
+            /* Nothing to do */
+        }
+        //---------------
         //TydeTech.com
         //---------------
         else if (idCenter==0 && idModel==0 && idGrid==255)
         {
             if(this->dataType==GRB_CURRENT_VX || this->dataType==GRB_CURRENT_VY)
+            {
                 this->levelType=LV_MSL;
+                this->levelValue=0;
+            }
+        }
+        //---------------
+        //Navimail-Mercator
+        //---------------
+        else if (idCenter==85 && idModel==10 && idGrid==255)
+        {
+            qWarning()<<"dataType="<<dataType;
+            if(this->dataType==GRB_CURRENT_VX || this->dataType==GRB_CURRENT_VY)
+            {
+                this->levelType=LV_MSL;
+                this->levelValue=0;
+            }
         }
         //------------------------
         // Unknown center

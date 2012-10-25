@@ -3258,7 +3258,7 @@ void ROUTAGE::createPopupMenu()
     connect(ac_pivot,SIGNAL(triggered()),this,SLOT(slot_createPivot()));
     connect(ac_pivotM,SIGNAL(triggered()),this,SLOT(slot_createPivotM()));
 }
-const double ROUTAGE::getTimeStep() const
+double ROUTAGE::getTimeStep() const
 {
     double step;
     if(!i_iso)

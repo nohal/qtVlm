@@ -362,17 +362,20 @@ void Grib::readAllGribRecords()
                                         || (rec->getDataType()==GRB_CAPE
                                                         && rec->getLevelType()==LV_GND_SURF && rec->getLevelValue()==0)
                                 )
-                                {
-                                    if(!isCurrentGrib || (rec->getDataType()==GRB_CURRENT_VX || rec->getDataType()==GRB_CURRENT_VY))
-                                        storeRecordInMap(rec);
-                                }
-                                else {
-                                        fprintf(stderr,
-                                                "GribReader: unknown record type: key=%d  idCenter==%d && idModel==%d && idGrid==%d\n",
-                                                (int)rec->getKey(),
-                                                rec->getIdCenter(), rec->getIdModel(), rec->getIdGrid()
-                                                );
-                                }
+                                    {
+                                        if(!isCurrentGrib || (rec->getDataType()==GRB_CURRENT_VX || rec->getDataType()==GRB_CURRENT_VY))
+                                            storeRecordInMap(rec);
+                                    }
+                                else
+                                    {
+                                        qWarning()<<"GribReader: unknown record type: key="<<(int)rec->getKey();
+                                        qWarning()<<"dataType="<<rec->getDataType();
+                                        qWarning()<<"levelType"<<rec->getLevelType();
+                                        qWarning()<<"levelValue"<<rec->getLevelValue();
+                                        qWarning()<<"IdCenter="<<rec->getIdCenter();
+                                        qWarning()<<"IdModel="<<rec->getIdModel();
+                                        qWarning()<<"IdGrid="<<rec->getIdGrid();
+                                    }
                         }
         }
         else {    // ! rec-isOk
