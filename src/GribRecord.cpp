@@ -219,11 +219,22 @@ void  GribRecord::translateDataType()
             }
         }
         //---------------
+        //Actimar: courants bretagne, contient les vagues aussi (exclues pour le moment)
+        //---------------
+        else if (idCenter==255 && idModel==220 && idGrid==255 /*&& (dataType==GRB_CURRENT_VX || dataType==GRB_CURRENT_VY)*/)
+        {
+            //qWarning()<<dataType;
+            if(this->dataType==GRB_CURRENT_VX || this->dataType==GRB_CURRENT_VY)
+            {
+                this->levelType=LV_MSL;
+                this->levelValue=0;
+            }
+        }
+        //---------------
         //Navimail-Mercator
         //---------------
         else if (idCenter==85 && idModel==10 && idGrid==255)
         {
-            qWarning()<<"dataType="<<dataType;
             if(this->dataType==GRB_CURRENT_VX || this->dataType==GRB_CURRENT_VY)
             {
                 this->levelType=LV_MSL;
@@ -299,27 +310,36 @@ bool GribRecord::readGribSection0_IS(ZUFILE* file) {
     memset (strgrib, 0, sizeof (strgrib));
     
     fileOffset0 = zu_tell(file);
-
+/*very dirty trick to find first 'GRIB'*/
         // Cherche le 1er 'G'
-        while ( (zu_read(file, strgrib, 1) == 1)
-                                &&  (strgrib[0] != 'G') )
-        { }
+        while ( zu_read(file, strgrib, 4) == 4)
+        {
+            if (strncmp(strgrib, "GRIB", 4) != 0)
+            {
+                zu_seek(file,++fileOffset0,SEEK_SET);
+            }
+            else
+                break;
+        }
 
     if (strgrib[0] != 'G') {
         ok = false;
+        qWarning()<<"eof 01";
         eof = true;
         return false;
     }
-    if (zu_read(file, strgrib+1, 3) != 3) {
-        ok = false;
-        eof = true;
-        return false;
-    }
+//    if (zu_read(file, strgrib+1, 3) != 3) {
+//        ok = false;
+//        qWarning()<<"eof 02";
+//        eof = true;
+//        return false;
+//    }
 
     if (strncmp(strgrib, "GRIB", 4) != 0)  {
-        erreur("readGribSection0_IS(): Unknown file header : %c%c%c%c",
-                    strgrib[0],strgrib[1],strgrib[2],strgrib[3]);
+        qWarning()<<"readGribSection0_IS(): Unknown file header : "<<QString().fromAscii(strgrib,4);
+        qWarning()<<"file offset="<<fileOffset0;
         ok = false;
+        qWarning()<<"eof 03";
         eof = true;
         return false;
     }
@@ -328,6 +348,7 @@ bool GribRecord::readGribSection0_IS(ZUFILE* file) {
     editionNumber = readChar(file);
     if (editionNumber != 1)  {
         ok = false;
+        qWarning()<<"eof 04";
         eof = true;
         return false;
     }
@@ -341,6 +362,7 @@ bool GribRecord::readGribSection1_PDS(ZUFILE* file) {
     fileOffset1 = zu_tell(file);
     if (zu_read(file, data1, 28) != 28) {
         ok=false;
+        qWarning()<<"eof 05";
         eof = true;
         return false;
     }
@@ -557,6 +579,7 @@ bool GribRecord::readGribSection4_BDS(ZUFILE* file) {
     if (zu_read(file, buf, datasize) != datasize) {
         erreur("Record %d: data read error",id);
         ok = false;
+        qWarning()<<"eof 06";
         eof = true;
     }
     if (!ok) {
@@ -625,6 +648,7 @@ bool GribRecord::readGribSection5_ES(ZUFILE* file) {
     char str[4];
     if (zu_read(file, str, 4) != 4) {
         ok = false;
+        qWarning()<<"eof 07";
         eof = true;
         return false;
     }
@@ -643,6 +667,7 @@ double GribRecord::readFloat4(ZUFILE* file) {
     unsigned char t[4];
     if (zu_read(file, t, 4) != 4) {
         ok = false;
+        qWarning()<<"eof 08";
         eof = true;
         return 0;
     }
@@ -662,6 +687,7 @@ zuchar GribRecord::readChar(ZUFILE* file) {
     zuchar t;
     if (zu_read(file, &t, 1) != 1) {
         ok = false;
+        qWarning()<<"eof 09";
         eof = true;
         return 0;
     }
@@ -672,6 +698,7 @@ int GribRecord::readSignedInt3(ZUFILE* file) {
     unsigned char t[3];
     if (zu_read(file, t, 3) != 3) {
         ok = false;
+        qWarning()<<"eof 10";
         eof = true;
         return 0;
     }
@@ -686,6 +713,7 @@ int GribRecord::readSignedInt2(ZUFILE* file) {
     unsigned char t[2];
     if (zu_read(file, t, 2) != 2) {
         ok = false;
+        qWarning()<<"eof 11";
         eof = true;
         return 0;
     }
@@ -700,6 +728,7 @@ zuint GribRecord::readInt3(ZUFILE* file) {
     unsigned char t[3];
     if (zu_read(file, t, 3) != 3) {
         ok = false;
+        qWarning()<<"eof 12";
         eof = true;
         return 0;
     }
@@ -710,6 +739,7 @@ zuint GribRecord::readInt2(ZUFILE* file) {
     unsigned char t[2];
     if (zu_read(file, t, 2) != 2) {
         ok = false;
+        qWarning()<<"eof 13";
         eof = true;
         return 0;
     }
