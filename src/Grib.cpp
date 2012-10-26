@@ -305,7 +305,9 @@ void Grib::readAllGribRecords()
                                                                 || rec->getLevelValue()==500
                                                                 || rec->getLevelValue()==300
                                                                 || rec->getLevelValue()==200 ) )
-                                        || ( (rec->getDataType()==GRB_CURRENT_VX || rec->getDataType()==GRB_CURRENT_VY))
+                                        || ( (rec->getDataType()==GRB_CURRENT_VX || rec->getDataType()==GRB_CURRENT_VY)
+                                                        && rec->getLevelType()==LV_MSL
+                                                        && rec->getLevelValue()==0 )
                                         //-----------------------------------------
                                         //-----------------------------------------
                                         || (rec->getDataType()==GRB_HUMID_SPEC
@@ -366,7 +368,6 @@ void Grib::readAllGribRecords()
                                     }
                                 else
                                     {
-#if 0
                                         qWarning()<<"GribReader: unknown record type: key="<<(int)rec->getKey();
                                         qWarning()<<"dataType="<<rec->getDataType();
                                         qWarning()<<"levelType"<<rec->getLevelType();
@@ -374,24 +375,10 @@ void Grib::readAllGribRecords()
                                         qWarning()<<"IdCenter="<<rec->getIdCenter();
                                         qWarning()<<"IdModel="<<rec->getIdModel();
                                         qWarning()<<"IdGrid="<<rec->getIdGrid();
-#endif
-                                        delete rec;
-                                        rec=NULL;
-                                        continue;
                                     }
                         }
         }
         else {    // ! rec-isOk
-#if 0
-            qWarning()<<"Grib record not OK!";
-            qWarning()<<"dataType="<<rec->getDataType();
-            qWarning()<<"levelType"<<rec->getLevelType();
-            qWarning()<<"levelValue"<<rec->getLevelValue();
-            qWarning()<<"IdCenter="<<rec->getIdCenter();
-            qWarning()<<"IdModel="<<rec->getIdModel();
-            qWarning()<<"IdGrid="<<rec->getIdGrid();
-            qWarning()<<"IsEOF"<<rec->isEof();
-#endif
             delete rec;
             rec = NULL;
         }
@@ -862,7 +849,7 @@ double Grib::computeHoursBeetweenGribRecords()
 {
         double res = 1;
     std::vector<GribRecord *> *ls = getFirstNonEmptyList();
-    if (ls != NULL && ls->size()>1) {
+    if (ls != NULL) {
         time_t t0 = (*ls)[0]->getRecordCurrentDate();
         time_t t1 = (*ls)[1]->getRecordCurrentDate();
         res = qAbs(t1-t0) / 3600.0;
