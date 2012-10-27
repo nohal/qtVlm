@@ -44,6 +44,7 @@ Original code: virtual-winds.com
 #include <QtConcurrentMap>
 #include "vlmpointgraphic.h"
 #include "settings.h"
+#include "Terrain.h"
 //#include "Terrain.h"
 //#define debugCount
 //#define traceTime;
@@ -763,10 +764,11 @@ ROUTAGE::ROUTAGE(QString name, Projection *proj, Grib *grib, QGraphicsScene * my
     this->minPres=Settings::getSetting("routageMinPres",0).toDouble();
     this->minPortant=Settings::getSetting("routageMinPortant",0).toDouble();
     this->pruneWakeAngle=Settings::getSetting("routagePruneWake",30).toInt();
+    this->colorGrib=Settings::getSetting("routageColorGrib",0).toInt()==1;
+    this->showIso=Settings::getSetting("routageShowIso",1).toInt()==1;
     this->wind_angle=0;
     this->wind_speed=20;
     this->windIsForced=false;
-    this->showIso=true;
     this->done=false;
     this->i_done=false;
     this->i_iso=false;
@@ -790,6 +792,10 @@ ROUTAGE::ROUTAGE(QString name, Projection *proj, Grib *grib, QGraphicsScene * my
 }
 ROUTAGE::~ROUTAGE()
 {
+    if(parent->getTerre()->getRoutageGrib()==this)
+    {
+        parent->getTerre()->setRoutageGrib(NULL);
+    }
     while(!isochrones.isEmpty())
         delete isochrones.takeFirst();
     while(!segments.isEmpty())
@@ -860,6 +866,8 @@ void ROUTAGE::calculate()
         Settings::setSetting("routageMinPres",minPres);
         Settings::setSetting("routageMinPortant",minPortant);
         Settings::setSetting("routagePruneWake",pruneWakeAngle);
+        Settings::setSetting("routageColorGrib",colorGrib?1:0);
+        Settings::setSetting("routageShowIso",showIso?1:0);
     }
     this->isNewPivot=false;
     this->aborted=false;
@@ -2274,8 +2282,10 @@ void ROUTAGE::slot_calculate()
 //            qWarning()<<"-------------------------------";
 //        }
         if (!this->showIso)
-            setShowIso(showIso);
+            setShowIso(false);
         this->done=true;
+        if(this->colorGrib)
+            parent->getTerre()->setRoutageGrib(this);
     }
     proj->setFrozen(false);
     if(isConverted() && !i_iso)
@@ -3181,6 +3191,7 @@ void ROUTAGE::setFromRoutage(ROUTAGE *fromRoutage, bool editOptions)
     this->checkLine=fromRoutage->getCheckLine();
     this->useConverge=fromRoutage->useConverge;
     this->pruneWakeAngle=fromRoutage->pruneWakeAngle;
+    this->colorGrib=fromRoutage->colorGrib;
     this->routeFromBoat=false;
     this->fromPOI=fromRoutage->getFromPOI();
     this->toPOI=fromRoutage->getToPOI();
@@ -3247,7 +3258,7 @@ void ROUTAGE::createPopupMenu()
     connect(ac_pivot,SIGNAL(triggered()),this,SLOT(slot_createPivot()));
     connect(ac_pivotM,SIGNAL(triggered()),this,SLOT(slot_createPivotM()));
 }
-const double ROUTAGE::getTimeStep() const
+double ROUTAGE::getTimeStep() const
 {
     double step;
     if(!i_iso)

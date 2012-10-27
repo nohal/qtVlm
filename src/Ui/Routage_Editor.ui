@@ -502,6 +502,16 @@ avec ce prefixe</string>
               </property>
              </widget>
             </item>
+            <item row="2" column="1">
+             <widget class="QCheckBox" name="colorIso">
+              <property name="statusTip">
+               <string/>
+              </property>
+              <property name="text">
+               <string>Colorer TWS entre isos</string>
+              </property>
+             </widget>
+            </item>
            </layout>
           </item>
          </layout>
@@ -1060,12 +1070,14 @@ La différence est surtout sensible lors d'un routage en diagonale.</string>
   </layout>
  </widget>
  <tabstops>
+  <tabstop>tabWidget</tabstop>
+  <tabstop>buttonBox</tabstop>
   <tabstop>editName</tabstop>
   <tabstop>editBoat</tabstop>
   <tabstop>startFromBoat</tabstop>
+  <tabstop>editDateBox</tabstop>
   <tabstop>fromPOI</tabstop>
   <tabstop>toPOI</tabstop>
-  <tabstop>editDateBox</tabstop>
   <tabstop>editDateBox_2</tabstop>
   <tabstop>dureeLess24</tabstop>
   <tabstop>dureeMore24</tabstop>
@@ -1073,12 +1085,16 @@ La différence est surtout sensible lors d'un routage en diagonale.</string>
   <tabstop>range</tabstop>
   <tabstop>showIso</tabstop>
   <tabstop>convRoute</tabstop>
+  <tabstop>poiPrefix</tabstop>
   <tabstop>speedLossOnTack</tabstop>
   <tabstop>useVac</tabstop>
   <tabstop>multi</tabstop>
+  <tabstop>visibleOnly</tabstop>
   <tabstop>checkCoast</tabstop>
   <tabstop>checkLines</tabstop>
-  <tabstop>tabWidget</tabstop>
+  <tabstop>colorIso</tabstop>
+  <tabstop>i_iso</tabstop>
+  <tabstop>isoRoute</tabstop>
   <tabstop>pruneWakeAngle</tabstop>
   <tabstop>explo</tabstop>
   <tabstop>log</tabstop>
@@ -1086,12 +1102,18 @@ La différence est surtout sensible lors d'un routage en diagonale.</string>
   <tabstop>diver</tabstop>
   <tabstop>whatIfUse</tabstop>
   <tabstop>whatIfDate</tabstop>
+  <tabstop>whatIfWind</tabstop>
   <tabstop>whatIfTime</tabstop>
-  <tabstop>windForced</tabstop>
   <tabstop>minPres</tabstop>
-  <tabstop>maxPres</tabstop>
   <tabstop>minPortant</tabstop>
-  <tabstop>i_iso</tabstop>
+  <tabstop>maxPres</tabstop>
+  <tabstop>maxPortant</tabstop>
+  <tabstop>windForced</tabstop>
+  <tabstop>TWS</tabstop>
+  <tabstop>TWD</tabstop>
+  <tabstop>autoZoom</tabstop>
+  <tabstop>zoomLevel</tabstop>
+  <tabstop>Default</tabstop>
  </tabstops>
  <resources/>
  <connections>

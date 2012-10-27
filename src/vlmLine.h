@@ -56,16 +56,16 @@ class vlmLine : public QGraphicsWidget
         void setPointMode(const QColor &pt_color);
         void setGateMode(const QString &desc);
         void setIceGate(const int &i){iceGate=i;}
-        const int  isIceGate() const {return iceGate;}
+        int  isIceGate() const {return iceGate;}
         void setTip(QString tip);
         void setNbVacPerHour(const int &nbVacPerHour) {this->nbVacPerHour=nbVacPerHour;}
         void setPorteOnePoint(void){this->onePoint=true;}
         void setHidden(const bool &hidden) {this->hidden=hidden;update();}
-        const bool getHidden(void) const {return this->hidden;}
+        bool getHidden(void) const {return this->hidden;}
         QList<vlmPoint> * getPoints(){return & this->line;}
         void setSolid(const bool &solid){this->solid=solid;}
 
-        const int count(void) const { return line.count(); }
+        int count(void) const { return line.count(); }
         void setPointDead(const int &n){this->line[n].isDead=true;}
         void setPointStartCap(const int &n,const double &c){this->line[n].startCap=c;}
         void setPointWind(const int &n, const double &twd, const double &tws){this->line[n].wind_angle=twd;this->line[n].wind_speed=tws;}

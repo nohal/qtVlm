@@ -39,8 +39,8 @@ class vlmPoint
         double  capVmg;
         bool   notSimplificable;
         bool   operator==(const vlmPoint &other) const
-               {return (qRound(this->lon*10000)==qRound(other.lon*10000) &&
-                        qRound(this->lat*10000)==qRound(other.lat*10000));}
+               {return this->lon==other.lon &&
+                       this->lat==other.lat;}
         double  maxDistIso;
         ROUTAGE * routage;
         bool    isPOI;

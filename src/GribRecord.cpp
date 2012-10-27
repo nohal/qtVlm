@@ -202,12 +202,44 @@ void  GribRecord::translateDataType()
 
         }
         //---------------
+        //NOGAPS model
+        //---------------
+        else if (idCenter==58 && idModel==58 && idGrid==255)    {
+            /* Nothing to do */
+        }
+        //---------------
         //TydeTech.com
         //---------------
         else if (idCenter==0 && idModel==0 && idGrid==255)
         {
             if(this->dataType==GRB_CURRENT_VX || this->dataType==GRB_CURRENT_VY)
+            {
                 this->levelType=LV_MSL;
+                this->levelValue=0;
+            }
+        }
+        //---------------
+        //Actimar: courants bretagne, contient les vagues aussi (exclues pour le moment)
+        //---------------
+        else if (idCenter==255 && idModel==220 && idGrid==255)
+        {
+            if(this->dataType==GRB_CURRENT_VX || this->dataType==GRB_CURRENT_VY)
+            {
+                this->levelType=LV_MSL;
+                this->levelValue=0;
+            }
+        }
+        //---------------
+        //Navimail-Mercator
+        //---------------
+        else if (idCenter==85 && idModel==10 && idGrid==255)
+        {
+            qWarning()<<"dataType="<<dataType;
+            if(this->dataType==GRB_CURRENT_VX || this->dataType==GRB_CURRENT_VY)
+            {
+                this->levelType=LV_MSL;
+                this->levelValue=0;
+            }
         }
         //------------------------
         // Unknown center
@@ -276,33 +308,33 @@ GribRecord::~GribRecord()
 bool GribRecord::readGribSection0_IS(ZUFILE* file) {
     char    strgrib[4];
     memset (strgrib, 0, sizeof (strgrib));
-    
+
+
+    zuint initFoffset;
     fileOffset0 = zu_tell(file);
+    initFoffset=fileOffset0;
 
-        // Cherche le 1er 'G'
-        while ( (zu_read(file, strgrib, 1) == 1)
-                                &&  (strgrib[0] != 'G') )
-        { }
+    while((zu_read(file, strgrib, 4) == 4) &&
+          (strgrib[0] != 'G' || strgrib[1] != 'R' ||
+           strgrib[2] != 'I' || strgrib[3] != 'B')) {
+          zu_seek(file,++fileOffset0,SEEK_SET);
+    }
 
-    if (strgrib[0] != 'G') {
+    if(strgrib[0] != 'G' || strgrib[1] != 'R' ||
+            strgrib[2] != 'I' || strgrib[3] != 'B') {
+        if((fileOffset0-10)>initFoffset) // displaying error msg only if we are really far from initial offset
+            qWarning() << "Can't find next record / EOF - offset=" << fileOffset0 << ", initOffset=" << initFoffset ;
         ok = false;
         eof = true;
         return false;
     }
-    if (zu_read(file, strgrib+1, 3) != 3) {
-        ok = false;
-        eof = true;
-        return false;
-    }
 
-    if (strncmp(strgrib, "GRIB", 4) != 0)  {
-        erreur("readGribSection0_IS(): Unknown file header : %c%c%c%c",
-                    strgrib[0],strgrib[1],strgrib[2],strgrib[3]);
-        ok = false;
-        eof = true;
-        return false;
-    }
+
+    seekStart=zu_tell(file)-4;
     totalSize = readInt3(file);
+
+
+    //qWarning() << "Start = " << seekStart << ", size = " << totalSize;
 
     editionNumber = readChar(file);
     if (editionNumber != 1)  {

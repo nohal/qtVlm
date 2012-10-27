@@ -1255,10 +1255,12 @@ void myCentralWidget::slot_fileInfo_GRIB()
 
         msg += tr("%1 enregistrements, ").arg(grib->getTotalNumberOfGribRecords());
         msg += tr("%1 dates :\n").arg(grib->getNumberOfDates());
-
-        std::set<time_t> * sdates = grib->getListDates();
-        msg += tr("    du %1\n").arg( Util::formatDateTimeLong(*(sdates->begin())) );
-        msg += tr("    au %1\n").arg( Util::formatDateTimeLong(*(sdates->rbegin())) );
+        if(grib->getNumberOfDates()!=0 && grib->getTotalNumberOfGribRecords()!=0)
+        {
+            std::set<time_t> * sdates = grib->getListDates();
+            msg += tr("    du %1\n").arg( Util::formatDateTimeLong(*(sdates->begin())) );
+            msg += tr("    au %1\n").arg( Util::formatDateTimeLong(*(sdates->rbegin())) );
+        }
 
         msg += tr("\n");
         msg += tr("Donnees disponibles :\n");
@@ -1283,23 +1285,25 @@ void myCentralWidget::slot_fileInfo_GRIB()
         msg += tr("        - 700: %1\n").arg(dataPresentInGrib(grib,GRB_HUMID_SPEC,LV_ISOBARIC,700));
         msg += tr("        - 850: %1\n").arg(dataPresentInGrib(grib,GRB_HUMID_SPEC,LV_ISOBARIC,850));
         
+        if(grib->getNumberOfDates()!=0 && grib->getTotalNumberOfGribRecords()!=0)
+        {
 
-        GribRecord * gr = grib->getFirstGribRecord();
-        msg += tr("\n");
-        msg += tr("Grille : %1 points (%2x%3)\n")
-                        .arg(gr->getNi()*gr->getNj()).arg(gr->getNi()).arg(gr->getNj());
-        msg += tr("Resolution : %1x%2\n").arg(gr->getDi()).arg(gr->getDj());
-        msg += tr("\n");
-        msg += tr("Etendue :\n");
-        QString pos1, pos2;
-        pos1 = Util::formatPosition( gr->getX(0), gr->getY(0) );
-        pos2 = Util::formatPosition( gr->getX(gr->getNi()-1), gr->getY(gr->getNj()-1) );
-        msg += tr("%1  ->  %2\n").arg( pos1, pos2);
+            GribRecord * gr = grib->getFirstGribRecord();
+            msg += tr("\n");
+            msg += tr("Grille : %1 points (%2x%3)\n")
+                            .arg(gr->getNi()*gr->getNj()).arg(gr->getNi()).arg(gr->getNj());
+            msg += tr("Resolution : %1x%2\n").arg(gr->getDi()).arg(gr->getDj());
+            msg += tr("\n");
+            msg += tr("Etendue :\n");
+            QString pos1, pos2;
+            pos1 = Util::formatPosition( gr->getX(0), gr->getY(0) );
+            pos2 = Util::formatPosition( gr->getX(gr->getNi()-1), gr->getY(gr->getNj()-1) );
+            msg += tr("%1  ->  %2\n").arg( pos1, pos2);
 
-        msg += tr("\n");
-        msg += tr("Date de reference : %1\n")
-                        .arg(Util::formatDateTimeLong(gr->getRecordRefDate()));
-
+            msg += tr("\n");
+            msg += tr("Date de reference : %1\n")
+                            .arg(Util::formatDateTimeLong(gr->getRecordRefDate()));
+        }
         QMessageBox::information (this,
             tr("Informations sur le fichier GRIB"),
             msg );
