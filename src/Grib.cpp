@@ -258,13 +258,18 @@ void Grib::readAllGribRecords()
 
     while(true) {
         ++id;
-        rec = new GribRecord(file, id);
-        assert(rec);
+        rec = new GribRecord(file, id);        
 
         recAdded=false;
 
-        if(rec->isEof())
+        if(!rec || rec->isEof()) {
+            if(rec) {
+                delete rec;
+                rec=NULL;
+            }
+            --id;
             break;
+        }
 
         if (rec->isOk())
         {
@@ -377,6 +382,7 @@ void Grib::readAllGribRecords()
                         storeRecordInMap(rec);
                     }
                 }
+#if 0
                 else
                 {
                     qWarning()<<"GribReader: unknown record type: key="<<(int)rec->getKey();
@@ -387,6 +393,7 @@ void Grib::readAllGribRecords()
                     qWarning()<<"IdModel="<<rec->getIdModel();
                     qWarning()<<"IdGrid="<<rec->getIdGrid();
                 }
+#endif
             }
         }
 
