@@ -309,33 +309,27 @@ bool GribRecord::readGribSection0_IS(ZUFILE* file) {
     char    strgrib[4];
     memset (strgrib, 0, sizeof (strgrib));
 
+
+    zuint initFoffset;
     fileOffset0 = zu_tell(file);
+    initFoffset=fileOffset0;
 
-    //qWarning() << "Offset: " << fileOffset0;
+    while((zu_read(file, strgrib, 4) == 4) &&
+          (strgrib[0] != 'G' || strgrib[1] != 'R' ||
+           strgrib[2] != 'I' || strgrib[3] != 'B')) {
+          zu_seek(file,++fileOffset0,SEEK_SET);
+    }
 
-        // Cherche le 1er 'G'
-        while ( (zu_read(file, strgrib, 1) == 1)
-                                &&  (strgrib[0] != 'G') )
-        { }
-
-    if (strgrib[0] != 'G') {
+    if(strgrib[0] != 'G' || strgrib[1] != 'R' ||
+            strgrib[2] != 'I' || strgrib[3] != 'B') {
+        if((fileOffset0-10)>initFoffset) // displaying error msg only if we are really far from initial offset
+            qWarning() << "Can't find next record / EOF - offset=" << fileOffset0 << ", initOffset=" << initFoffset ;
         ok = false;
         eof = true;
         return false;
     }
-    if (zu_read(file, strgrib+1, 3) != 3) {
-        ok = false;
-        eof = true;
-        return false;
-    }
 
-    if (strncmp(strgrib, "GRIB", 4) != 0)  {
-        erreur("readGribSection0_IS(): Unknown file header : %c%c%c%c",
-                    strgrib[0],strgrib[1],strgrib[2],strgrib[3]);
-        ok = false;
-        eof = true;
-        return false;
-    }
+
     seekStart=zu_tell(file)-4;
     totalSize = readInt3(file);
 
