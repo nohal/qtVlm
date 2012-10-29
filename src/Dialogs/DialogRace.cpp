@@ -55,7 +55,7 @@ DialogRace::DialogRace(MainWindow * main,myCentralWidget * parent, inetConnexion
     setupUi(this);
     Util::setFontDialog(this);
 
-    model= new QStandardItemModel();
+    model= new QStandardItemModel(this);
     model->setColumnCount(10);
     model->setHeaderData(0,Qt::Horizontal,QObject::tr("Sel"));
     model->setHeaderData(1,Qt::Horizontal,QObject::tr("Rang"));
@@ -84,7 +84,7 @@ DialogRace::DialogRace(MainWindow * main,myCentralWidget * parent, inetConnexion
 
 
 
-    modelResult= new QStandardItemModel();
+    modelResult= new QStandardItemModel(this);
     modelResult->setColumnCount(7);
     modelResult->setHeaderData(0,Qt::Horizontal,QObject::tr("Rang"));
     switch (Settings::getSetting("opp_labelType",0).toInt())
@@ -129,6 +129,8 @@ DialogRace::~DialogRace()
     Settings::setSetting(this->objectName()+".width",this->width());
     if(model)
         delete model;
+    if(modelResult)
+        delete modelResult;
 }
 QString DialogRace::getAuthLogin(bool * ok)
 {

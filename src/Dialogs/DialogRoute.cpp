@@ -43,6 +43,7 @@ Copyright (C) 2008 - Jacques Zaninetti - http://zygrib.free.fr
 #include "Grib.h"
 #include <QRadialGradient>
 #include <QTime>
+#include <QFileDialog>
 
 //-------------------------------------------------------
 // ROUTE_Editor: Constructor for edit an existing ROUTE
@@ -81,6 +82,7 @@ DialogRoute::DialogRoute(ROUTE *route,myCentralWidget *parent)
     connect(this->btAppliquer,SIGNAL(clicked()),this,SLOT(slotApply()));
     connect(this->Envoyer,SIGNAL(clicked()),this,SLOT(slotEnvoyer()));
     connect(this->btCopy,SIGNAL(clicked()),this,SLOT(slotCopy()));
+    connect(this->exportCSV,SIGNAL(clicked()),this,SLOT(slotExportCSV()));
     if(route->getUseVbvmgVlm())
     {
         if(route->getNewVbvmgVlm())
@@ -160,7 +162,7 @@ DialogRoute::DialogRoute(ROUTE *route,myCentralWidget *parent)
         this->tabWidget->setTabEnabled(1,false);
         this->tabWidget->setTabEnabled(2,false);
     }
-    model= new QStandardItemModel();
+    model= new QStandardItemModel(this);
     model->setColumnCount(4);
     model->setHeaderData(0,Qt::Horizontal,QObject::tr("Date et heure"));
     model->setHeaderData(1,Qt::Horizontal,QObject::tr("Aller vers"));
@@ -193,7 +195,7 @@ DialogRoute::DialogRoute(ROUTE *route,myCentralWidget *parent)
     intervalTimer->setInterval(800);
     connect(this->intervalTimer,SIGNAL(timeout()),this,SLOT(slotInterval()));
     connect(this->roadMapInterval,SIGNAL(valueChanged(int)),this,SLOT(slotIntervalTimer(int)));
-    rmModel = new QStandardItemModel();
+    rmModel = new QStandardItemModel(this);
     rmModel->setColumnCount(18);
     rmModel->setHeaderData(0,Qt::Horizontal,QObject::tr("Date heure"));
     rmModel->setHeaderData(1,Qt::Horizontal," ");
@@ -227,6 +229,8 @@ DialogRoute::DialogRoute(ROUTE *route,myCentralWidget *parent)
 }
 DialogRoute::~DialogRoute()
 {
+    delete model;
+    delete rmModel;
 }
 void DialogRoute::slotTabChanged(int tab)
 {
@@ -309,7 +313,8 @@ void DialogRoute::slotInterval()
 
         if(i%(val/step)==0 || i==route->getRoadMap()->count()-1)
         {
-            QList<QStandardItem*> roadPoint;
+//            qDeleteAll (roadPoint.begin(),roadPoint.end());
+            roadPoint.clear();
             QColor c=Qt::white;
             if(roadItems.at(4)!=-1)
             {
@@ -317,6 +322,7 @@ void DialogRoute::slotInterval()
                 roadPoint[0]->setData(roadItems.at(0),Qt::UserRole);
                 roadPoint.append(new QStandardItem());
                 roadPoint[1]->setData(img,Qt::DecorationRole);
+                roadPoint[1]->setData(roadItems.at(12),Qt::UserRole);
                 roadPoint.append(new QStandardItem(QString().sprintf("%.2f",roadItems.at(7))+tr(" nds")));
                 roadPoint[2]->setData(roadItems.at(7),Qt::UserRole);
                 roadPoint[2]->setData(rgb,Qt::BackgroundRole);
@@ -802,7 +808,8 @@ void DialogRoute::fillPilotView(bool def)
         //if(!poi->getHas_eta()) break;
         listPois.append(poi);
         time_t eta;
-        QList<QStandardItem*> items;
+//        qDeleteAll(items.begin(),items.end());
+        items.clear();
         if(listPois.count()!=1)
         {
             eta=listPois.at(listPois.count()-2)->getRouteTimeStamp();
@@ -855,6 +862,63 @@ void DialogRoute::fillPilotView(bool def)
     this->pilotView->setColumnWidth(0,this->pilotView->columnWidth(0)+30);
     this->pilotView->setColumnWidth(3,pilotView->columnWidth(2));
 }
+void DialogRoute::slotExportCSV()
+{
+    QString routePath=Settings::getSetting("exportRouteCSVFolder","").toString();
+    QDir dirRoute(routePath);
+    if(!dirRoute.exists())
+    {
+        routePath=QDir::currentPath();
+        Settings::setSetting("exportRouteCSVFolder",routePath);
+    }
+    QString fileName = QFileDialog::getSaveFileName(this,
+                         tr("Exporter un tableau de marche"), routePath, "CSV  (*.csv)");
+    if(fileName.isEmpty() || fileName.isNull()) return;
+    QFile::remove(fileName);
+    QFile routeFile(fileName);
+    QFileInfo info(routeFile);
+    if(!routeFile.open(QIODevice::WriteOnly | QIODevice::Text))
+    {
+        QMessageBox::warning(0,QObject::tr("Export de tableau de marche"),
+             QString(QObject::tr("Impossible de creer le fichier %1")).arg(fileName));
+        return;
+    }
+    Settings::setSetting("exportRouteCSVFolder",info.absoluteDir().path());
+    QTextStream stream(&routeFile);
+    QString line;
+    for (int n=0;n<rmModel->columnCount();++n)
+    {
+        if(n>0)
+            line+=";";
+        if(n==1)
+            line+=tr("Voile/Moteur");
+        else
+            line+=rmModel->headerData(n,Qt::Horizontal).toString();
+    }
+    stream<<line<<endl;
+    line.clear();
+    for (int row=0;row<rmModel->rowCount();++row)
+    {
+        line.clear();
+        for(int col=0;col<rmModel->columnCount();++col)
+        {
+            if(col>0)
+                line+=";";
+            if(col==1)
+            {
+                if(rmModel->item(row,col)->data(Qt::DisplayRole).toInt()>0)
+                    line+=tr("Moteur");
+                else
+                    line+=tr("Voile");
+            }
+            else
+                line+=rmModel->item(row,col)->data(Qt::DisplayRole).toString();
+        }
+        stream<<line<<endl;
+    }
+    routeFile.close();
+}
+
 void DialogRoute::slotEnvoyer()
 {
     QList<POI*> poiList;

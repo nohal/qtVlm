@@ -1001,6 +1001,22 @@ Etes-vous sur ?</source>
         <source>kts</source>
         <translation>nds</translation>
     </message>
+    <message>
+        <source>Exporter un tableau de marche</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Voile/Moteur</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Moteur</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Voile</source>
+        <translation></translation>
+    </message>
 </context>
 <context>
     <name>DialogTwaLine</name>
@@ -3345,6 +3361,10 @@ VMG %.2f nds</translation>
         <source>nds</source>
         <translation>nds</translation>
     </message>
+    <message>
+        <source>Export de tableau de marche</source>
+        <translation></translation>
+    </message>
 </context>
 <context>
     <name>ROUTAGE</name>
@@ -4017,6 +4037,10 @@ sans simplifier</translation>
     <message>
         <source>Trier les POIs par numero d&apos;ordre</source>
         <translation>POIs par numéro de séquence</translation>
+    </message>
+    <message>
+        <source>Export (format CSV)</source>
+        <translation></translation>
     </message>
 </context>
 <context>
