@@ -592,6 +592,16 @@ void boat::updatePosition(void)
     //qWarning() << "upd position: " << x() << "," << y() << " -> " << boat_i << "," << boat_j;
     setPos(boat_i, boat_j);
     drawEstime();
+    if(WPLat != 0 && WPLon != 0)
+    {
+        double I1,J1,I2,J2;
+        QPen penLine2(QColor(Qt::black),1,Qt::DotLine);
+        penLine2.setWidthF(1.2);
+        proj->map2screenDouble(Util::cLFA(lon,proj->getXmin()),lat,&I1,&J1);
+        proj->map2screenDouble(Util::cLFA(WPLon,proj->getXmin()),WPLat,&I2,&J2);
+        WPLine->setLinePen(penLine2);
+        WPLine->initSegment(I1,J1,I2,J2);
+    }
 }
 
 void boat::slot_projectionUpdated()
