@@ -195,11 +195,19 @@ void LoadGribFile::requestFinished ( QNetworkReply* inetReply)
         vers.append(".");
         vers.append(QTVLM_SUB_VERSION_NUM);
         vers.remove("+");
-        if(vers!=strbuf)
+        if(vers!=strbuf || true)
+        {
+            QString m=tr("Vous n'utilisez pas la derniere version de qtVlm: ")+strbuf;
+#ifdef __WIN_QTVLM
+            m+="<br>"+tr("Emplacement:")+" <a href='http://www.virtual-winds.com/~oxygen'>"+tr("qtVlm downloads")+"</a>";
+#endif
+#ifdef __MAC_QTVLM
+            m+="<br>"+tr("Emplacement:")+" <a href='http://www.virtual-winds.com/~oxygen/mac'>"+tr("qtVlm downloads")+"</a>";
+#endif
             QMessageBox::warning (0,
                 tr("qtVlm version"),
-                tr("Vous n'utilisez pas la derniere version de qtVlm: ")+strbuf);
-
+                m);
+        }
 
     }
     else if(inetReply == step1_InetReply)
@@ -270,9 +278,8 @@ gfs_run_hour:6
         // Reçu le contenu du fichier Grib
         //--------------------------------------------------
         arrayContent = inetReply->readAll();
-        QString content= arrayContent;
         //--------------------------------------------------
-        // Vérifie le checksum
+        // Verifie le checksum
         //--------------------------------------------------
         emit signalGribSendMessage(tr("CheckSum control"));
         SHA1 sha1;

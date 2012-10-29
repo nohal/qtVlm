@@ -251,6 +251,7 @@ class Grib
         double  isobarsStep;          // Ecart entre isobares
         double  isotherms0Step;          // Ecart entre isothermes 0C
         Grib * gribCurrent;
+        bool findCompression();
 };
 Q_DECLARE_TYPEINFO(Grib,Q_MOVABLE_TYPE);
 

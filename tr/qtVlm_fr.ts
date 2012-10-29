@@ -1329,6 +1329,14 @@ Etes-vous sur ?</source>
         <source>Vous n&apos;utilisez pas la derniere version de qtVlm: </source>
         <translation>Vous n&apos;utilisez pas la dernière version de qtVlm: </translation>
     </message>
+    <message>
+        <source>Emplacement:</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>qtVlm downloads</source>
+        <translation>Téléchargement qtVlm</translation>
+    </message>
 </context>
 <context>
     <name>MainWindow</name>

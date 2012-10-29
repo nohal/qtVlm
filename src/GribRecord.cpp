@@ -313,13 +313,52 @@ bool GribRecord::readGribSection0_IS(ZUFILE* file) {
     zuint initFoffset;
     fileOffset0 = zu_tell(file);
     initFoffset=fileOffset0;
-
+#if 1
+    char buf[1];
+    memset (buf, 0, sizeof (buf));
+    while(true)
+    {
+        if(zu_read(file,buf,1)!=1) break;
+        ++fileOffset0;
+        if(buf[0]!='G')
+            continue;
+        if(zu_read(file,buf,1)!=1) break;
+        ++fileOffset0;
+        if(buf[0]!='R')
+        {
+            if(buf[0]=='G')
+                zu_seek(file,--fileOffset0,SEEK_SET);
+            continue;
+        }
+        if(zu_read(file,buf,1)!=1) break;
+        ++fileOffset0;
+        if(buf[0]!='I')
+        {
+            if(buf[0]=='G')
+                zu_seek(file,--fileOffset0,SEEK_SET);
+            continue;
+        }
+        if(zu_read(file,buf,1)!=1) break;
+        ++fileOffset0;
+        if(buf[0]!='B')
+        {
+            if(buf[0]=='G')
+                zu_seek(file,--fileOffset0,SEEK_SET);
+            continue;
+        }
+        strgrib[0]='G';
+        strgrib[1]='R';
+        strgrib[2]='I';
+        strgrib[3]='B';
+        break;
+    }
+#else
     while((zu_read(file, strgrib, 4) == 4) &&
           (strgrib[0] != 'G' || strgrib[1] != 'R' ||
            strgrib[2] != 'I' || strgrib[3] != 'B')) {
           zu_seek(file,++fileOffset0,SEEK_SET);
     }
-
+#endif
     if(strgrib[0] != 'G' || strgrib[1] != 'R' ||
             strgrib[2] != 'I' || strgrib[3] != 'B') {
         if((fileOffset0-10)>initFoffset) // displaying error msg only if we are really far from initial offset

@@ -122,6 +122,7 @@ void Grib::initNewGrib()
     rainColor[14].setRgba(qRgba(150,  0,150,  mapColorTransp));
     rainColor[15].setRgba(qRgba(100,  0,100,  mapColorTransp));
     rainColor[16].setRgba(qRgba( 50,  0,50,  mapColorTransp));
+    file=NULL;
 }
 
 //-------------------------------------------------------------------------------
@@ -159,8 +160,10 @@ void Grib::setIsotherms0Step(double step)
 
 void Grib::loadGribFile(QString fileName)
 {
+//    QTime td;
+//    td.start();
     this->fileName = fileName;
-
+    file=NULL;
     Util::cleanListPointers(listIsobars);
     Util::cleanListPointers(listIsotherms0);
 
@@ -173,39 +176,81 @@ void Grib::loadGribFile(QString fileName)
         //--------------------------------------------------------
         // Ouverture du fichier
         //--------------------------------------------------------
-        file = zu_open(fname.c_str(), "rb", ZU_COMPRESS_AUTO);
-        if (file == NULL) {
-            erreur("Can't open file: %s", fname.c_str());
+        QList<int> compressModes;
+        compressModes.append(ZU_COMPRESS_AUTO);
+        compressModes.append(ZU_COMPRESS_BZIP);
+        compressModes.append(ZU_COMPRESS_GZIP);
+        compressModes.append(ZU_COMPRESS_NONE);
+
+        bool found=false;
+        int compressMode;
+        for(compressMode=0;compressMode<compressModes.count();++compressMode)
+        {
+            if(file!=NULL)
+                zu_close(file);
+            file = zu_open(fname.c_str(), "rb", compressModes.at(compressMode));
+            found=findCompression();
+            if (found) break;
+        }
+        if(!found || file==NULL)
+        {
+            if(file!=NULL)
+                zu_close(file);
+            file=NULL;
+            qWarning()<<"Unable to find a suitable compression mode";
             return;
         }
+        zu_rewind(file);
         readGribFileContent();
-
-        // Essaie d'autres compressions (extension non reconnue ?)
-        if (! ok) {
-            if (file != NULL)
-                zu_close(file);
-            file = zu_open(fname.c_str(), "rb", ZU_COMPRESS_BZIP);
-            if (file != NULL)
-                readGribFileContent();
-        }
-        if (! ok) {
-            if (file != NULL)
-                zu_close(file);
-            file = zu_open(fname.c_str(), "rb", ZU_COMPRESS_GZIP);
-            if (file != NULL)
-                readGribFileContent();
-        }
-        if (! ok) {
-            if (file != NULL)
-                zu_close(file);
-            file = zu_open(fname.c_str(), "rb", ZU_COMPRESS_NONE);
-            if (file != NULL)
-                readGribFileContent();
-        }
         setCurrentDate ( setAllDates.size()>0 ? *(setAllDates.begin()) : 0);
         if (file != NULL)
             zu_close(file);
+        file=NULL;
     }
+//    qWarning()<<"time to load grib:"<<td.elapsed();
+}
+bool Grib::findCompression()
+{
+    if(file==NULL) return false;
+    char buf[1];
+    memset (buf, 0, sizeof (buf));
+    int fileOffset0=0;
+    bool found=false;
+    while(fileOffset0<100)
+    {
+        if(zu_read(file,buf,1)!=1) break;
+        ++fileOffset0;
+        if(buf[0]!='G')
+            continue;
+        if(zu_read(file,buf,1)!=1) break;
+        ++fileOffset0;
+        if(buf[0]!='R')
+        {
+            if(buf[0]=='G')
+                zu_seek(file,--fileOffset0,SEEK_SET);
+            continue;
+        }
+        if(zu_read(file,buf,1)!=1) break;
+        ++fileOffset0;
+        if(buf[0]!='I')
+        {
+            if(buf[0]=='G')
+                zu_seek(file,--fileOffset0,SEEK_SET);
+            continue;
+        }
+        if(zu_read(file,buf,1)!=1) break;
+        ++fileOffset0;
+        if(buf[0]!='B')
+        {
+            if(buf[0]=='G')
+                zu_seek(file,--fileOffset0,SEEK_SET);
+            continue;
+        }
+        found=true;
+        break;
+    }
+    //qWarning()<<"fileOffset="<<fileOffset0;
+    return found;
 }
 
 //-------------------------------------------------------------------------------
