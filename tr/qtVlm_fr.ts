@@ -4042,6 +4042,14 @@ sans simplifier</translation>
         <source>Export (format CSV)</source>
         <translation></translation>
     </message>
+    <message>
+        <source>Ecart HDG</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source> deg</source>
+        <translation>°</translation>
+    </message>
 </context>
 <context>
     <name>ReceiverThread</name>

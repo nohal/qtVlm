@@ -58,6 +58,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #define ROUTE_AUTO_AT      "autoAt"
 #define ROUTE_SORT_BY_NAME "routeSortByName"
 #define ROUTE_ROADMAPINT   "roadMapInterval"
+#define ROUTE_ROADMAPHDG   "roadMapHDG"
+#define ROUTE_ROADUSEINT   "roadUseInt"
 /* POI */
 #define POI_GROUP_NAME    "POI"
 #define POI_NAME          "name"
@@ -171,6 +173,16 @@ void xml_POIData::slot_writeData(QList<ROUTE*> & route_list,QList<POI*> & poi_li
           tag = doc.createElement(ROUTE_ROADMAPINT);
           group.appendChild(tag);
           t = doc.createTextNode(QString().setNum(route->getRoadMapInterval()));
+          tag.appendChild(t);
+
+          tag = doc.createElement(ROUTE_ROADMAPHDG);
+          group.appendChild(tag);
+          t = doc.createTextNode(QString().setNum(route->getRoadMapHDG()));
+          tag.appendChild(t);
+
+          tag = doc.createElement(ROUTE_ROADUSEINT);
+          group.appendChild(tag);
+          t = doc.createTextNode(QString().setNum(route->getUseInterval()?1:0));
           tag.appendChild(t);
 
           tag = doc.createElement(ROUTE_COLOR_R);
@@ -707,6 +719,18 @@ void xml_POIData::slot_readData(QString fname)
                        dataNode = subNode.firstChild();
                        if(dataNode.nodeType() == QDomNode::TextNode)
                            route->setRoadMapInterval(dataNode.toText().data().toFloat());
+                  }
+                  if(subNode.toElement().tagName() == ROUTE_ROADMAPHDG)
+                  {
+                       dataNode = subNode.firstChild();
+                       if(dataNode.nodeType() == QDomNode::TextNode)
+                           route->setRoadMapHDG(dataNode.toText().data().toFloat());
+                  }
+                  if(subNode.toElement().tagName() == ROUTE_ROADUSEINT)
+                  {
+                       dataNode = subNode.firstChild();
+                       if(dataNode.nodeType() == QDomNode::TextNode)
+                           route->setUseInterval(dataNode.toText().data().toInt()==1);
                   }
                   if(subNode.toElement().tagName() == ROUTE_COLOR_R)
                   {

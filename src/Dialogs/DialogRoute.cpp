@@ -181,13 +181,40 @@ DialogRoute::DialogRoute(ROUTE *route,myCentralWidget *parent)
     this->pilotView->setColumnWidth(0,this->pilotView->columnWidth(0)+30);
     this->pilotView->setColumnWidth(3,pilotView->columnWidth(2));
     this->roadMapInterval->setValue(route->getRoadMapInterval());
+    this->roadMapHDG->setValue(route->getRoadMapHDG());
+    if(route->getUseInterval())
+    {
+        useInterval->setChecked(true);
+        useHDG->setChecked(false);
+    }
+    else
+    {
+        useInterval->setChecked(false);
+        useHDG->setChecked(true);
+    }
     int min=5;
     if(route->getBoat() && route->getBoat()!=NULL)
     {
         min=route->getBoat()->getVacLen()/60;
         if(route->getBoat()->getType()==BOAT_REAL)
+        {
             roadMapInterval->setValue(Settings::getSetting("roadMapInterval",5).toInt());
+            roadMapHDG->setValue(Settings::getSetting("roadMapHDG",0).toInt());
+            useInterval->setChecked(Settings::getSetting("roadMapUseInterval",1).toInt()==1);
+            if((Settings::getSetting("roadMapUseInterval",1).toInt()==1))
+            {
+                useInterval->setChecked(true);
+                useHDG->setChecked(false);
+            }
+            else
+            {
+                useInterval->setChecked(false);
+                useHDG->setChecked(true);
+            }
+        }
     }
+    this->roadMapHDG->setDisabled(useInterval->isChecked());
+    this->roadMapInterval->setEnabled(useInterval->isChecked());
     this->roadMapInterval->setMinimum(min);
     this->roadMapInterval->setSingleStep(min);
     intervalTimer=new QTimer(this);
@@ -195,6 +222,8 @@ DialogRoute::DialogRoute(ROUTE *route,myCentralWidget *parent)
     intervalTimer->setInterval(800);
     connect(this->intervalTimer,SIGNAL(timeout()),this,SLOT(slotInterval()));
     connect(this->roadMapInterval,SIGNAL(valueChanged(int)),this,SLOT(slotIntervalTimer(int)));
+    connect(this->roadMapHDG,SIGNAL(valueChanged(int)),this,SLOT(slotIntervalTimer(int)));
+    connect(this->useInterval,SIGNAL(toggled(bool)),this,SLOT(slotIntervalTimerBool(bool)));
     rmModel = new QStandardItemModel(this);
     rmModel->setColumnCount(18);
     rmModel->setHeaderData(0,Qt::Horizontal,QObject::tr("Date heure"));
@@ -243,6 +272,10 @@ void DialogRoute::slotIntervalTimer(int)
 {
     intervalTimer->start();
 }
+void DialogRoute::slotIntervalTimerBool(bool)
+{
+    intervalTimer->start();
+}
 void DialogRoute::slotCopy()
 {
     parent->exportRouteFromMenuKML(this->route,"",true);
@@ -257,11 +290,25 @@ void DialogRoute::slotInterval()
     waitBox->setFixedWidth(400);
     QApplication::processEvents();
     this->roadMapInterval->blockSignals(true);
+    this->roadMapHDG->blockSignals(true);
+    this->useInterval->blockSignals(true);
+    this->useHDG->blockSignals(true);
     int val=roadMapInterval->value();
     int step=roadMapInterval->minimum();
     val=qRound(val/step)*step;
-    roadMapInterval->setValue(val);
-    Settings::setSetting("roadMapInterval",val);
+    if(useHDG->isChecked())
+    {
+        val=roadMapHDG->value();
+        Settings::setSetting("roadMapHDG",val);
+    }
+    else
+    {
+        roadMapInterval->setValue(val);
+        Settings::setSetting("roadMapInterval",val);
+    }
+    roadMapHDG->setDisabled(useInterval->isChecked());
+    roadMapInterval->setEnabled(useInterval->isChecked());
+    Settings::setSetting("roadMapUseInterval",useInterval->isChecked()?1:0);
     rmModel->removeRows(0,rmModel->rowCount());
     double dist=0;
     double speedMoy=0;
@@ -272,6 +319,7 @@ void DialogRoute::slotInterval()
     radialGrad.setColorAt(0, Qt::white);
     radialGrad.setColorAt(0.8, Qt::blue);
     int totalTimeMoteur=0;
+    double lastHeading=10e5;
     for(int i=0;i<route->getRoadMap()->count();++i)
     {
         QList<double>roadItems=route->getRoadMap()->at(i);
@@ -310,10 +358,22 @@ void DialogRoute::slotInterval()
             this->drawWindArrowWithBarbs(pnt,20,20,
                                      roadItems.at(7),roadItems.at(6),
                                      roadItems.at(2)<0);
-
-        if(i%(val/step)==0 || i==route->getRoadMap()->count()-1)
+        bool insertIt=false;
+        if(useInterval->isChecked())
         {
-//            qDeleteAll (roadPoint.begin(),roadPoint.end());
+            if(i%(val/step)==0 || i==route->getRoadMap()->count()-1)
+                insertIt=true;
+        }
+        else
+        {
+            if(i==0 || i==route->getRoadMap()->count()-1 || Util::myDiffAngle(lastHeading,roadItems.at(3))>=val)
+            {
+                lastHeading=roadItems.at(3);
+                insertIt=true;
+            }
+        }
+        if(insertIt)
+        {
             roadPoint.clear();
             QColor c=Qt::white;
             if(roadItems.at(4)!=-1)
@@ -452,6 +512,9 @@ void DialogRoute::slotInterval()
     this->avgSpeed->setText(QString().sprintf("%.2f",speedMoy)+tr(" nds"));
     this->avgTWS->setText(QString().sprintf("%.2f",twsMoy)+tr(" nds"));
     this->roadMapInterval->blockSignals(false);
+    this->roadMapHDG->blockSignals(false);
+    this->useHDG->blockSignals(false);
+    this->useInterval->blockSignals(false);
     if(route->getRoadMap()->count()>=2)
     {
         int elapsed=route->getRoadMap()->last().at(0)-route->getRoadMap()->first().at(0);
@@ -648,6 +711,8 @@ void DialogRoute::done(int result)
         route->setWidth(inputTraceColor->getLineWidth());
         route->setColor(inputTraceColor->getLineColor());
         route->setRoadMapInterval(this->roadMapInterval->value());
+        route->setRoadMapHDG(this->roadMapHDG->value());
+        route->setUseInterval(this->useInterval->isChecked());
         route->setMultVac(vacStep->value());
         route->setShowInterpolData(showInterpolData->isChecked());
         route->setSortPoisByName(this->sortByName->isChecked());
