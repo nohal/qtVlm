@@ -512,6 +512,13 @@ p, li { white-space: pre-wrap; }
        <item>
         <layout class="QHBoxLayout" name="horizontalLayout_4">
          <item>
+          <widget class="QPushButton" name="exportCSV">
+           <property name="text">
+            <string>Export (format CSV)</string>
+           </property>
+          </widget>
+         </item>
+         <item>
           <spacer name="horizontalSpacer_2">
            <property name="orientation">
             <enum>Qt::Horizontal</enum>
@@ -525,9 +532,32 @@ p, li { white-space: pre-wrap; }
           </spacer>
          </item>
          <item>
-          <widget class="QLabel" name="label_2">
+          <widget class="QRadioButton" name="useHDG">
+           <property name="text">
+            <string>Ecart HDG</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QSpinBox" name="roadMapHDG">
+           <property name="alignment">
+            <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+           </property>
+           <property name="suffix">
+            <string> deg</string>
+           </property>
+           <property name="maximum">
+            <number>180</number>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QRadioButton" name="useInterval">
            <property name="text">
             <string>Interval</string>
+           </property>
+           <property name="checked">
+            <bool>true</bool>
            </property>
           </widget>
          </item>
@@ -700,26 +730,35 @@ p, li { white-space: pre-wrap; }
   <tabstop>hidden</tabstop>
   <tabstop>showInterpolData</tabstop>
   <tabstop>editCoasts</tabstop>
+  <tabstop>useVbvmgVlm</tabstop>
+  <tabstop>autoRemove</tabstop>
+  <tabstop>autoAt</tabstop>
+  <tabstop>speedLossOnTack</tabstop>
+  <tabstop>vacStep</tabstop>
   <tabstop>sortByName</tabstop>
   <tabstop>sortBySequence</tabstop>
+  <tabstop>defaultOrders</tabstop>
+  <tabstop>customOrders</tabstop>
+  <tabstop>pilotView</tabstop>
+  <tabstop>Envoyer</tabstop>
+  <tabstop>exportCSV</tabstop>
+  <tabstop>useHDG</tabstop>
+  <tabstop>roadMapHDG</tabstop>
+  <tabstop>useInterval</tabstop>
+  <tabstop>roadMapInterval</tabstop>
+  <tabstop>roadMap</tabstop>
+  <tabstop>orthDist</tabstop>
+  <tabstop>orthDistParcourue</tabstop>
+  <tabstop>avgSpeed</tabstop>
+  <tabstop>avgTWS</tabstop>
+  <tabstop>navTime</tabstop>
+  <tabstop>engineTime</tabstop>
   <tabstop>btOk</tabstop>
   <tabstop>Simplifier</tabstop>
   <tabstop>Optimiser</tabstop>
   <tabstop>btAppliquer</tabstop>
   <tabstop>btCopy</tabstop>
   <tabstop>btCancel</tabstop>
-  <tabstop>defaultOrders</tabstop>
-  <tabstop>customOrders</tabstop>
-  <tabstop>pilotView</tabstop>
-  <tabstop>Envoyer</tabstop>
-  <tabstop>roadMapInterval</tabstop>
-  <tabstop>roadMap</tabstop>
-  <tabstop>orthDist</tabstop>
-  <tabstop>avgSpeed</tabstop>
-  <tabstop>navTime</tabstop>
-  <tabstop>orthDistParcourue</tabstop>
-  <tabstop>avgTWS</tabstop>
-  <tabstop>engineTime</tabstop>
  </tabstops>
  <resources/>
  <connections>

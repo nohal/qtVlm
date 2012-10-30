@@ -48,9 +48,11 @@ class DialogRoute : public QDialog, public Ui::ROUTE_Editor_ui
         void slotEnvoyer();
         void slotApply();
         void slotIntervalTimer(int);
+        void slotIntervalTimerBool(bool);
         void slotInterval();
         void slotTabChanged(int);
         void slotCopy();
+        void slotExportCSV();
     signals:
 
     private:
@@ -78,6 +80,8 @@ class DialogRoute : public QDialog, public Ui::ROUTE_Editor_ui
                     double si, double co, int di, int dj, int b);
         void drawTriangle(QPainter &pnt, bool south,
                     double si, double co, int di, int dj, int b);
+        QList<QStandardItem*> items;
+        QList<QStandardItem*> roadPoint;
 };
 class DateBoxDelegate : public QItemDelegate
 {

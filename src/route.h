@@ -125,6 +125,10 @@ class ROUTE : public QObject
         double getInitialDist(){return this->initialDist;}
         int getRoadMapInterval(){return roadMapInterval;}
         void setRoadMapInterval(int i){roadMapInterval=i;}
+        int getRoadMapHDG(){return roadMapHDG;}
+        void setRoadMapHDG(int i){roadMapHDG=i;}
+        bool getUseInterval(){return useInterval;}
+        void setUseInterval(bool b){this->useInterval=b;}
         void shiftEtas(QDateTime newStart);
         void setOptimize(bool b){this->optimize=b;}
         bool getOptimize(){return this->optimize;}
@@ -222,6 +226,8 @@ class ROUTE : public QObject
         QList<QList<double> > roadMap;
         double initialDist;
         int roadMapInterval;
+        int roadMapHDG;
+        bool useInterval;
         double lastKnownSpeed;
         QTimer * routeDelay;
         int delay;

@@ -55,7 +55,7 @@ DialogRace::DialogRace(MainWindow * main,myCentralWidget * parent, inetConnexion
     setupUi(this);
     Util::setFontDialog(this);
 
-    model= new QStandardItemModel();
+    model= new QStandardItemModel(this);
     model->setColumnCount(10);
     model->setHeaderData(0,Qt::Horizontal,QObject::tr("Sel"));
     model->setHeaderData(1,Qt::Horizontal,QObject::tr("Rang"));
@@ -84,7 +84,7 @@ DialogRace::DialogRace(MainWindow * main,myCentralWidget * parent, inetConnexion
 
 
 
-    modelResult= new QStandardItemModel();
+    modelResult= new QStandardItemModel(this);
     modelResult->setColumnCount(7);
     modelResult->setHeaderData(0,Qt::Horizontal,QObject::tr("Rang"));
     switch (Settings::getSetting("opp_labelType",0).toInt())
@@ -129,6 +129,9 @@ DialogRace::~DialogRace()
     Settings::setSetting(this->objectName()+".width",this->width());
     if(model)
         delete model;
+    if(modelResult)
+        delete modelResult;
+    delete waitBox;
 }
 QString DialogRace::getAuthLogin(bool * ok)
 {
@@ -178,13 +181,13 @@ void DialogRace::initList(QList<boatVLM*> & boat_list_ptr,QList<raceData*> & rac
             continue;
 
         /* on cherche si la course existe deja ds la liste */
-        for(int j=0;j<param_list.size();j++)
+        for(int j=0;j<param_list.size();++j)
             if(param_list[j]->id == boat_list->at(i)->getRaceId())
             {
                 found=true;
                 break;
             }
-        /* Elle n'existe pas => on cr�e un nv raceParam */
+        /* Elle n'existe pas => on cree un nv raceParam */
         //qWarning()<<"race found:"<<found;
         if(!found)
         {

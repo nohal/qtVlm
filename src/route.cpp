@@ -108,6 +108,8 @@ ROUTE::ROUTE(QString name, Projection *proj, Grib *grib, QGraphicsScene * myScen
     this->pilototo=false;
     this->initialDist=0;
     this->roadMapInterval=1;
+    this->roadMapHDG=0;
+    this->useInterval=true;
     this->precalculateTan();
     routeDelay=new QTimer(this);
     routeDelay->setInterval(5);
