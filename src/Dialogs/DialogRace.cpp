@@ -131,6 +131,7 @@ DialogRace::~DialogRace()
         delete model;
     if(modelResult)
         delete modelResult;
+    delete waitBox;
 }
 QString DialogRace::getAuthLogin(bool * ok)
 {
@@ -180,13 +181,13 @@ void DialogRace::initList(QList<boatVLM*> & boat_list_ptr,QList<raceData*> & rac
             continue;
 
         /* on cherche si la course existe deja ds la liste */
-        for(int j=0;j<param_list.size();j++)
+        for(int j=0;j<param_list.size();++j)
             if(param_list[j]->id == boat_list->at(i)->getRaceId())
             {
                 found=true;
                 break;
             }
-        /* Elle n'existe pas => on cr�e un nv raceParam */
+        /* Elle n'existe pas => on cree un nv raceParam */
         //qWarning()<<"race found:"<<found;
         if(!found)
         {

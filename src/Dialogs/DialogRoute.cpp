@@ -168,7 +168,7 @@ DialogRoute::DialogRoute(ROUTE *route,myCentralWidget *parent)
     model->setHeaderData(1,Qt::Horizontal,QObject::tr("Aller vers"));
     model->setHeaderData(2,Qt::Horizontal,QObject::tr("Cap a suivre apres"));
     model->setHeaderData(3,Qt::Horizontal,QObject::tr("Mode"));
-    DateBoxDelegate * delegate=new DateBoxDelegate();
+    DateBoxDelegate * delegate=new DateBoxDelegate(this);
     pilotView->setModel(model);
     pilotView->setItemDelegate(delegate);
     pilotView->header()->setAlternatingRowColors(true);
