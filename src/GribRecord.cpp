@@ -308,9 +308,6 @@ GribRecord::~GribRecord()
 bool GribRecord::readGribSection0_IS(ZUFILE* file) {
     char    strgrib[4];
     memset (strgrib, 0, sizeof (strgrib));
-    initFoffset=fileOffset0;
-
-
     zuint initFoffset;
     fileOffset0 = zu_tell(file);
     initFoffset=fileOffset0;
