@@ -37,7 +37,7 @@ DialogPilototoParam::DialogPilototoParam(QWidget *parent) : QDialog(parent)
     Util::setFontDialog(this);
     instruction=NULL;
     //btn_selectPOI->setEnabled(false);
-    
+
     mode->addItem(tr("Cap constant (1)"));
     mode->addItem(tr("Angle du vent (2)"));
     mode->addItem(tr("Pilote ortho (3)"));
@@ -51,14 +51,14 @@ DialogPilototoParam::DialogPilototoParam(QWidget *parent) : QDialog(parent)
 void DialogPilototoParam::editInstruction(DialogPilototoInstruction * instruction)
 {
     double val;
-    
+
     this->instruction=instruction;
 
     //qWarning() << "Edit instruction std";
 
     mode->setCurrentIndex(instruction->getMode());
     angle->setValue(instruction->getAngle());
-    
+
     setValue(EDT_LAT,instruction->getLat());
     setValue(EDT_LON,instruction->getLon());
 
@@ -72,8 +72,6 @@ void DialogPilototoParam::editInstruction(DialogPilototoInstruction * instructio
 
 void DialogPilototoParam::editInstructionPOI(DialogPilototoInstruction * instruction,POI * poi)
 {
-    double val;
-
     this->instruction=instruction;
 
     //qWarning() << "Edit instruction with POI";
@@ -86,7 +84,7 @@ void DialogPilototoParam::editInstructionPOI(DialogPilototoInstruction * instruc
         setValue(EDT_LAT,poi->getLatitude());
         setValue(EDT_LON,poi->getLongitude());
 
-        val=poi->getWph();
+        const double val=poi->getWph();
         if(val==-1)
             editWph->setText(QString());
         else
@@ -147,10 +145,10 @@ void DialogPilototoParam::modeChanged(int mode)
 void DialogPilototoParam::pastePOI(void)
 {
     double lat,lon,wph;
-    
+
     if(!Util::getWPClipboard(NULL,&lat,&lon,&wph,NULL))
         return;
-    
+
     setValue(EDT_LON,lon);
     setValue(EDT_LAT,lat);
 

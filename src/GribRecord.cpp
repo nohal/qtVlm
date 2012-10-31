@@ -195,13 +195,6 @@ void  GribRecord::translateDataType()
 
         }
         //---------------
-        //Theyr.com
-        //---------------
-        else if (idCenter==131 && idModel==75 && idGrid==237)
-        {
-
-        }
-        //---------------
         //NOGAPS model
         //---------------
         else if (idCenter==58 && idModel==58 && idGrid==255)    {
@@ -411,7 +404,7 @@ bool GribRecord::readGribSection1_PDS(ZUFILE* file) {
     refminute = data1[16];
 
     refDate = makeDate(refyear,refmonth,refday,refhour,refminute,0);
-        sprintf(strRefDate, "%04d-%02d-%02d %02d:%02d", refyear,refmonth,refday,refhour,refminute);
+        sprintf(strRefDate, "%04u-%02u-%02u %02u:%02u", refyear,refmonth,refday,refhour,refminute);
 
     periodP1  = data1[18];
     periodP2  = data1[19];
@@ -507,7 +500,7 @@ bool GribRecord::readGribSection2_GDS(ZUFILE* file) {
             latMax = La1;
         }
         if (Ni<=1 || Nj<=1) {
-                erreur("Record %d: Ni=%d Nj=%d",id,Ni,Nj);
+                erreur("Record %d: Ni=%u Nj=%u",id,Ni,Nj);
                 ok = false;
         }
         else {
@@ -518,7 +511,7 @@ bool GribRecord::readGribSection2_GDS(ZUFILE* file) {
 if (false) {
 printf("====\n");
 printf("Lo1=%f Lo2=%f    La1=%f La2=%f\n", Lo1,Lo2,La1,La2);
-printf("Ni=%d Nj=%d\n", Ni,Nj);
+printf("Ni=%u Nj=%u\n", Ni,Nj);
 printf("hasDiDj=%d Di,Dj=(%f %f)\n", hasDiDj, Di,Dj);
 printf("hasBMS=%d\n", hasBMS);
 printf("isScanIpositive=%d isScanJpositive=%d isAdjacentI=%d\n",

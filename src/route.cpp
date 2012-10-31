@@ -236,7 +236,7 @@ void ROUTE::slot_recalculate(boat * boat)
         return;
     }
     if(boat!=NULL && this->myBoat!=boat) return;
-    if(!myBoat || myBoat==NULL  || !myBoat->getStatus()) return;
+    if(myBoat==NULL  || !myBoat->getStatus()) return;
     if(this->hidden) return;
     if (frozen && initialized)
     {
@@ -288,7 +288,7 @@ void ROUTE::slot_recalculate(boat * boat)
     eta=0;
     has_eta=false;
     time_t now;
-    if(myBoat  && myBoat!=NULL && myBoat->getPolarData() && grib)
+    if(myBoat!=NULL && myBoat->getPolarData() && grib)
     {
         initialized=true;
         switch(startTimeOption)

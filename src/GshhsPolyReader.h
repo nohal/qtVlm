@@ -124,7 +124,7 @@ class GshhsPolyReader
 Q_DECLARE_TYPEINFO(GshhsPolyReader,Q_MOVABLE_TYPE);
 inline bool GshhsPolyReader::crossing(QLineF traject, QLineF trajectWorld) const
 {
-    if(!proj || proj==NULL) return false;
+    if(proj==NULL) return false;
     if(!proj->isInBounderies(traject.p1().x(),traject.p1().y()) &&
        !proj->isInBounderies(traject.p2().x(),traject.p2().y()))
         return false;

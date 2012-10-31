@@ -576,10 +576,7 @@ void DialogRace::saveData(bool save)
         }
         ptr = new raceData();
         ptr->idrace=param_list[i]->id;
-        if(!boats.isEmpty())
-            ptr->oppList=boats.join(";");
-        else
-            ptr->oppList=boats.join(";");
+        ptr->oppList=boats.join(";");
         ptr->colorNSZ=param_list[i]->colorNSZ;
         ptr->widthNSZ=param_list[i]->widthNSZ;
         ptr->displayNSZ=param_list[i]->displayNSZ;

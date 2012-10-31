@@ -29,17 +29,15 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 GisReader::GisReader()
 {
     QString lang = Settings::getSetting("appLanguage", "none").toString();
-    
+
     QString fname;
     bool ok1, ok2, ok3;
     char *buf;
-    GisCountry *country;
-    GisCity    *city;
     long szmax = 10000000;
     buf = new char[szmax];
     assert(buf);
     ZUFILE *f;
-    
+
     //------------------------------------
     // Read countries file
     //------------------------------------
@@ -56,7 +54,7 @@ GisReader::GisReader()
             QByteArray bline = blist.at(i);
             QList<QByteArray> bwords = bline.split(';');
             if (bwords.size() == 4) {
-                country = new GisCountry(
+                GisCountry *country = new GisCountry(
                             bwords.at(0),
                             bwords.at(1),
                             bwords.at(3).toFloat(&ok1),
@@ -85,7 +83,7 @@ GisReader::GisReader()
             QByteArray bline = blist.at(i);
             QList<QByteArray> bwords = bline.split(';');
             if (bwords.size() == 5) {
-                city = new GisCity(
+                GisCity *city = new GisCity(
                             bwords.at(0),
                             bwords.at(1),
                             bwords.at(2).toInt(&ok3),
@@ -113,14 +111,14 @@ GisReader::~GisReader() {
 //-----------------------------------------------------------------------
 void GisReader::clearLists() {
     std::list<GisPoint*>::iterator itp;
-    for (itp=lsCountries.begin(); itp != lsCountries.end(); itp++) {
+    for (itp=lsCountries.begin(); itp != lsCountries.end(); ++itp) {
         delete *itp;
         *itp = NULL;
     }
     lsCountries.clear();
-    
+
     std::list<GisCity*>::iterator it2;
-    for (it2=lsCities.begin(); it2 != lsCities.end(); it2++) {
+    for (it2=lsCities.begin(); it2 != lsCities.end(); ++it2) {
         delete *it2;
         *it2 = NULL;
     }
@@ -148,7 +146,7 @@ void GisReader::drawCountriesNames(QPainter &pnt, Projection *proj)
     pnt.setPen(QColor(120,100,60));
     pnt.setFont(Font::getFont(FONT_MapCountry));
     std::list<GisPoint*>::iterator itp;
-    for (itp=lsCountries.begin(); itp != lsCountries.end(); itp++) {
+    for (itp=lsCountries.begin(); itp != lsCountries.end(); ++itp) {
         (*itp)->draw(&pnt, proj);
     }
 }
@@ -203,27 +201,27 @@ void GisReader::drawCitiesNames (QPainter &pnt, Projection *proj, int level)
 	std::list<QRect*> lsZonesOccupees;
 	std::list<QRect*>::iterator itz;
 
-	for (itp=lsCities.begin(); itp != lsCities.end(); itp++) {
+	for (itp=lsCities.begin(); itp != lsCities.end(); ++itp) {
 		GisCity *p = *itp;
 		if (  (p->level <= level)
-			&&  proj->isPointVisible(p->x, p->y) ) 
+			&&  proj->isPointVisible(p->x, p->y) )
 		{
 			lsVisibleCities.push_back(p);
 		}
     }
-	
+
 	// sort by population
 	lsVisibleCities.sort(compareCities_sup);
 
 	// draw if place is free
 	bool freePlace;
-    for (itp=lsVisibleCities.begin(); itp != lsVisibleCities.end(); itp++) {
+    for (itp=lsVisibleCities.begin(); itp != lsVisibleCities.end(); ++itp) {
 		GisCity *city = *itp;
 		QRect *rect = new QRect();
 		city->getRectName  (&pnt, proj, rect);
 		freePlace = true;
-		for (itz = lsZonesOccupees.begin(); 
-					freePlace && itz != lsZonesOccupees.end(); itz++) {
+		for (itz = lsZonesOccupees.begin();
+					freePlace && itz != lsZonesOccupees.end(); ++itz) {
 			QRect *pr = *itz;
 			if (rect->intersects(*pr))
 				freePlace = false;
@@ -235,8 +233,8 @@ void GisReader::drawCitiesNames (QPainter &pnt, Projection *proj, int level)
 		else {
 			delete rect;
 		}
-    }	
-	
+    }
+
 	Util::cleanListPointers(lsZonesOccupees);
 	lsVisibleCities.clear();
 }

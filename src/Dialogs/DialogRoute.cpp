@@ -110,13 +110,13 @@ DialogRoute::DialogRoute(ROUTE *route,myCentralWidget *parent)
         editDateBox->setEnabled(true);
     }
     this->tabWidget->setCurrentIndex(0);
-    int n=0;
     if(parent->getPlayer()->getType()!=BOAT_REAL)
     {
         this->engineLabel->hide();
         this->engineTime->hide();
         if(parent->getBoats())
         {
+            int n=0;
             QListIterator<boatVLM*> i (*parent->getBoats());
             while(i.hasNext())
             {
@@ -577,7 +577,6 @@ void DialogRoute::drawGrandeBarbule(QPainter &pnt, bool south,
 void DialogRoute::drawWindArrowWithBarbs(QPainter &pnt, int i, int j, double vkn, double ang,
                         bool south)
 {
-    int windBarbuleSize = 30;     // longueur des fleches avec barbules
     ang = degToRad(ang);
     ang-=PI_2;
     double si=sin(ang),  co=cos(ang);
@@ -589,6 +588,7 @@ void DialogRoute::drawWindArrowWithBarbs(QPainter &pnt, int i, int j, double vkn
         pnt.drawEllipse(i-r,j-r,2*r,2*r);
     }
     else {
+        const int windBarbuleSize = 30;     // longueur des fleches avec barbules
         // Fleche centree sur l'origine
         int dec = -windBarbuleSize/2;
         drawTransformedLine(pnt, si,co, i,j,  dec,0,  dec+windBarbuleSize, 0);   // hampe

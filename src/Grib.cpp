@@ -202,7 +202,7 @@ void Grib::loadGribFile(QString fileName)
         }
         zu_rewind(file);
         readGribFileContent();
-        setCurrentDate ( setAllDates.size()>0 ? *(setAllDates.begin()) : 0);
+        setCurrentDate ( setAllDates.empty() ? 0: *(setAllDates.begin()));
         if (file != NULL)
             zu_close(file);
         file=NULL;
@@ -268,7 +268,7 @@ void Grib::clean_all_vectors()
 void Grib::clean_vector(std::vector<GribRecord *> &ls)
 {
     std::vector<GribRecord *>::iterator it;
-    for (it=ls.begin(); it!=ls.end(); it++) {
+    for (it=ls.begin(); it!=ls.end(); ++it) {
         delete *it;
         *it = NULL;
     }
@@ -303,7 +303,7 @@ void Grib::readAllGribRecords()
 
     while(true) {
         ++id;
-        rec = new GribRecord(file, id);        
+        rec = new GribRecord(file, id);
 
         recAdded=false;
 
@@ -473,7 +473,7 @@ void Grib::readGribFileContent()
         {
             dewpointDataStatus = COMPUTED_DATA;
             std::set<time_t>::iterator iter;
-            for (iter=setAllDates.begin(); iter!=setAllDates.end(); iter++)
+            for (iter=setAllDates.begin(); iter!=setAllDates.end(); ++iter)
             {
                 time_t date = *iter;
                 GribRecord *recModel = getGribRecord(GRB_TEMP,LV_ABOV_GND,2,date);
@@ -526,12 +526,9 @@ double Grib::computeDewPoint(double lon, double lat, time_t now)
                 double b = 237.7;
                 double t  = temp-273.15;
                 double rh = humid;
-                //if ( t>0 && t<60 && rh>0.01)
-                {
-                    double alpha = a*t/(b+t)+log(rh/100.0);
-                    diewpoint = b*alpha/(a-alpha);
-                    diewpoint += 273.15;
-                }
+                double alpha = a*t/(b+t)+log(rh/100.0);
+                diewpoint = b*alpha/(a-alpha);
+                diewpoint += 273.15;
             }
         }
     }
@@ -1188,9 +1185,8 @@ QRgb  Grib::getPressureColor(double v, bool smooth)
 QRgb Grib::getWindColor(double v, bool smooth)
 {
     QRgb rgb = 0;
-    int beauf;
     if (! smooth) {
-        beauf = Util::kmhToBeaufort(v);
+        const int beauf = Util::kmhToBeaufort(v);
         rgb = windColor[beauf].rgba();
     }
     else {
@@ -1585,7 +1581,7 @@ void  Grib::drawColorMapGeneric_Abs_Delta_Data (
                         vy=vy+((vy2-vy)/((double)(tNxtDewpoint-tPrevDewpoint)))*((double)(now-tPrevDewpoint));
                 }
 
-                if (vx != GRIB_NOTDEF && vx != GRIB_NOTDEF)
+                if (vx != GRIB_NOTDEF && vy != GRIB_NOTDEF)
                 {
                     v = fabs(vx-vy);
                     rgb = (this->*function_getColor) (v, smooth);
@@ -1791,7 +1787,7 @@ QString Grib::drawCartouche(QPainter &)
 void Grib::draw_Isobars(QPainter &pnt, const Projection *proj)
 {
     std::list<IsoLine *>::iterator it;
-    for(it=listIsobars.begin(); it!=listIsobars.end(); it++)
+    for(it=listIsobars.begin(); it!=listIsobars.end(); ++it)
     {
         (*it)->drawIsoLine(pnt, proj);
     }
@@ -1801,7 +1797,7 @@ void Grib::draw_Isobars(QPainter &pnt, const Projection *proj)
 void Grib::draw_Isotherms0(QPainter &pnt, const Projection *proj)
 {
     std::list<IsoLine *>::iterator it;
-    for(it=listIsotherms0.begin(); it!=listIsotherms0.end(); it++)
+    for(it=listIsotherms0.begin(); it!=listIsotherms0.end(); ++it)
     {
         (*it)->drawIsoLine(pnt, proj);
     }
@@ -1812,7 +1808,7 @@ void Grib::draw_IsoLinesLabels(QPainter &pnt, QColor &couleur, const Projection 
 {
     std::list<IsoLine *>::iterator it;
     int nbseg = 0;
-    for(it=liste.begin(); it!=liste.end(); it++)
+    for(it=liste.begin(); it!=liste.end(); ++it)
     {
         nbseg += (*it)->getNbSegments();
     }
@@ -1826,7 +1822,7 @@ void Grib::draw_IsoLinesLabels(QPainter &pnt, QColor &couleur, const Projection 
     if (density < 20)
         density = 20;
     first = 0;
-    for(it=liste.begin(); it!=liste.end(); it++)
+    for(it=liste.begin(); it!=liste.end(); ++it)
     {
         first += 20;
         (*it)->drawIsoLineLabels(pnt, couleur, proj, density, first, coef);

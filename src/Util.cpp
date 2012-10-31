@@ -426,12 +426,11 @@ void Util::setWPClipboard(double lat,double lon, double wph)
 void Util::getCoordFromDistanceAngle2(double latitude, double longitude,
              double distance,double heading, double * res_lat,double * res_lon)
 {
-    double ld, la;
     *res_lat = latitude + degToRad( (cos(heading)*distance)/60.0 );
     if (fabs(*res_lat - latitude) > degToRad(0.001))
     {
-        ld = log(tan(M_PI_4 + (latitude/2.0)));
-        la = log(tan(M_PI_4 + (*res_lat/2.0)));
+        const double ld = log(tan(M_PI_4 + (latitude/2.0)));
+        const double la = log(tan(M_PI_4 + (*res_lat/2.0)));
         *res_lon = longitude + (la-ld)*tan(heading);
     }
     else
@@ -465,7 +464,6 @@ void Util::getCoordFromDistanceAngle(double latitude, double longitude,
              double distance,double heading, double * res_lat,double * res_lon)
 {
     double lat,lon;
-    double ratio;
 
     if(!res_lat || !res_lon)
         return;
@@ -478,7 +476,7 @@ void Util::getCoordFromDistanceAngle(double latitude, double longitude,
 
     if (fabs(lat) > degToRad(80.0))
     {
-        ratio = (degToRad(80.0)-fabs(latitude)) / (fabs(lat)-fabs(latitude));
+        const double ratio = (degToRad(80.0)-fabs(latitude)) / (fabs(lat)-fabs(latitude));
         distance *= ratio;
         getCoordFromDistanceAngle2(latitude,longitude,distance,heading,&lat,&lon);
     }

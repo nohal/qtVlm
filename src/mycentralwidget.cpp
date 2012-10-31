@@ -1028,7 +1028,7 @@ void myCentralWidget::zoomOnGrib(void)
         myGrib=gribCurrent;
     else
         myGrib=grib;
-    double x0,y0, x1,y1, mh, mv;
+    double x0,y0, x1,y1;
     if (myGrib->getZoneExtension(&x0,&y0, &x1,&y1))
     {
         if(x0 > 180.0 && x1 > 180.0)
@@ -1037,8 +1037,8 @@ void myCentralWidget::zoomOnGrib(void)
             x1-=360.0;
         }
         //qWarning() << "zoom on grib" << x0 << "," << y0 << " " << x1 << "," << y1;
-        mh = fabs(x0-x1)*0.05;
-        mv = fabs(y0-y1)*0.05;
+        const double mh = fabs(x0-x1)*0.05;
+        const double mv = fabs(y0-y1)*0.05;
         //proj->zoomOnZone(x0-mh,y0-mv, x1+mh,y1+mv);
         if(x0>x1)
         {
@@ -1240,7 +1240,7 @@ QString myCentralWidget::dataPresentInGrib(Grib* grib,
 
 void myCentralWidget::slot_fileInfo_GRIB()
 {
-    
+
     QString msg;
     if (!grib ||  ! grib->isOk())
     {
@@ -1284,7 +1284,7 @@ void myCentralWidget::slot_fileInfo_GRIB()
         msg += tr("        - 500: %1\n").arg(dataPresentInGrib(grib,GRB_HUMID_SPEC,LV_ISOBARIC,500));
         msg += tr("        - 700: %1\n").arg(dataPresentInGrib(grib,GRB_HUMID_SPEC,LV_ISOBARIC,700));
         msg += tr("        - 850: %1\n").arg(dataPresentInGrib(grib,GRB_HUMID_SPEC,LV_ISOBARIC,850));
-        
+
         if(grib->getNumberOfDates()!=0 && grib->getTotalNumberOfGribRecords()!=0)
         {
 
@@ -1354,7 +1354,6 @@ void myCentralWidget::slot_notSimpAllPOIs()
 void myCentralWidget::simpAllPOIs(bool simp)
 {
     double lat0,lon0,lat1,lon1;
-    double lat,lon;
 
     if(selection->getZone(&lon0,&lat0,&lon1,&lat1))
     {
@@ -1368,8 +1367,8 @@ void myCentralWidget::simpAllPOIs(bool simp)
         while(i.hasNext())
         {
             POI * poi = i.next();
-            lat=poi->getLatitude();
-            lon=poi->getLongitude();
+            const double lat=poi->getLatitude();
+            const double lon=poi->getLongitude();
             double x,y;
             proj->map2screenDouble(Util::cLFA(lon,proj->getXmin()),lat,&x,&y);
 
@@ -1396,7 +1395,6 @@ void myCentralWidget::slot_delPOI_list(POI * poi)
 void myCentralWidget::slot_delAllPOIs(void)
 {
     double lat0,lon0,lat1,lon1;
-    double lat,lon;
 
     if(selection->getZone(&lon0,&lat0,&lon1,&lat1))
     {
@@ -1423,8 +1421,8 @@ void myCentralWidget::slot_delAllPOIs(void)
         while(i.hasNext())
         {
             POI * poi = i.next();
-            lat=poi->getLatitude();
-            lon=poi->getLongitude();
+            const double lat=poi->getLatitude();
+            const double lon=poi->getLongitude();
             double x,y;
             proj->map2screenDouble(Util::cLFA(lon,proj->getXmin()),lat,&x,&y);
 
@@ -1456,7 +1454,6 @@ void myCentralWidget::slot_delAllPOIs(void)
 void myCentralWidget::slot_delSelPOIs(void)
 {
     double lat0,lon0,lat1,lon1;
-    double lat,lon;
 
     if(selection->getZone(&lon0,&lat0,&lon1,&lat1))
     {
@@ -1484,8 +1481,8 @@ void myCentralWidget::slot_delSelPOIs(void)
             if(!(poi->getTypeMask() & res_mask))
                 continue;
             //qWarning() << "POI: " << poi->getName() << " mask=" << poi->getTypeMask();
-            lat=poi->getLatitude();
-            lon=poi->getLongitude();
+            const double lat=poi->getLatitude();
+            const double lon=poi->getLongitude();
             double x,y;
             proj->map2screenDouble(Util::cLFA(lon,proj->getXmin()),lat,&x,&y);
 
@@ -3712,7 +3709,7 @@ void myCentralWidget::slot_deleteRoute()
 {
     QAction *sender=(QAction*)QObject::sender();
     ROUTE *route=reinterpret_cast<class ROUTE *>(qvariant_cast<void*>(sender->data()));
-    if(!route || route==NULL) return;
+    if(route==NULL) return;
     myDeleteRoute(route);
 }
 void myCentralWidget::myDeleteRoute(ROUTE * route)
@@ -3745,7 +3742,7 @@ void myCentralWidget::slot_deleteRoutage()
 {
     QAction *sender=(QAction*)QObject::sender();
     ROUTAGE *routage=reinterpret_cast<class ROUTAGE *>(qvariant_cast<void*>(sender->data()));
-    if(!routage || routage==NULL) return;
+    if(routage==NULL) return;
     if(routage->isRunning()) return;
     int rep = QMessageBox::question (0,
             tr("Detruire le routage : %1?").arg(routage->getName()),

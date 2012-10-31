@@ -218,7 +218,7 @@ void DialogLoadGrib::slotGribStartLoadData()
 //-------------------------------------------------------------------------------
 void DialogLoadGrib::updateParameters()
 {
-    double tmp, xm, ym;
+    double tmp;
 
 //    xmin = sbWest->cleanText().toDouble();
 //    xmax = sbEast->cleanText().toDouble();
@@ -243,12 +243,12 @@ void DialogLoadGrib::updateParameters()
 
     // trop petit ?
     if (fabs(xmax-xmin) < 2*resolution) {
-        xm = (xmin+xmax)/2;
+        const double xm = (xmin+xmax)/2;
         xmin = xm - 2*resolution;
         xmax = xm + 2*resolution;
     }
     if (fabs(ymin-ymax) < 2*resolution) {
-        ym = (ymin+ymax)/2;
+        const double ym = (ymin+ymax)/2;
         ymin = ym + 2*resolution;
         ymax = ym - 2*resolution;
     }

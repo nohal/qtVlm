@@ -2179,10 +2179,10 @@ void ROUTAGE::slot_calculate()
         tt.setHMS(0,0,0,0);
         tt=tt.addMSecs(msecs_12);
 #endif
+#ifdef traceTime
         int nbCpu=1;
         if(this->useMultiThreading)
             nbCpu=QThread::idealThreadCount();
-#ifdef traceTime
         qWarning()<<"........out of which calculating route between Isos:"<<tt.toString("hh'h'mm'min'ss.zzz'secs'")<<"(ran on"<<nbCpu<<"threads)";
         info=info+"\n........out of which calculating route between Isos: "+tt.toString("hh'h'mm'min'ss.zzz'secs'")+" (ran on "+temp.sprintf("%d",nbCpu)+" threads)";
         tt.setHMS(0,0,0,0);

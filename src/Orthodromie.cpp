@@ -28,7 +28,7 @@ Copyright (C) 2008 - Jacques Zaninetti - http://zygrib.free.fr
 #include "Orthodromie.h"
 #include "Projection.h"
 
-    
+
 //------------------------------------------------------------------------------
 Orthodromie::Orthodromie(double x0,double y0, double x1,double y1)
 {
@@ -57,7 +57,7 @@ void Orthodromie::initOrthodromie()
     double cosang = sinStartLat*sinEndLat + cosStartLat*cosEndLat*cosDeltaLng;
     cosang = (cosang < -1.0) ? -1.0 : (cosang > 1.0) ? 1.0 : cosang;
     distanceNM = 6378.0/1.852 * acos(cosang);
-    
+
     azimut = reduceAzimut(
                  atan2(sin(lon1-lon0)*cos(lat1),
                        cos(lat0)*sin(lat1)-sin(lat0)*cos(lat1)*cos(lon1-lon0)));
@@ -65,7 +65,7 @@ void Orthodromie::initOrthodromie()
     cosAzimut = cos(azimut);
     azimutDeg = 180.0/M_PI*azimut;
 }
-    
+
 //------------------------------------------------------------------------------
 void Orthodromie::setStartPoint (double x,double y)
 {
@@ -80,7 +80,7 @@ void Orthodromie::setEndPoint   (double x,double y)
     lon1 = x *M_PI/180.0;
     initOrthodromie();
 }
-    
+
 //------------------------------------------------------------------------------
 void Orthodromie::getMidPoint(double *x, double *y)
 {
@@ -119,7 +119,6 @@ void Orthodromie::draw_OrthodromieSegment(Projection * proj, QPainter * pnt,
 {
     if (recurs > 10) // this is bugging under win :100)
         return;
-    Orthodromie *ortho;
     int i0,j0, i1,j1, im,jm;
     double eps = 0.5;
     if (y0 > 90-eps) y0 = 90-eps;
@@ -146,7 +145,7 @@ void Orthodromie::draw_OrthodromieSegment(Projection * proj, QPainter * pnt,
         {
             double xm, ym;
 
-            ortho = new Orthodromie(x0, y0, x1, y1);
+            Orthodromie *ortho = new Orthodromie(x0, y0, x1, y1);
             ortho->getMidPoint(&xm, &ym);
             delete ortho;
             ortho = NULL;

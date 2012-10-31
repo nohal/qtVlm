@@ -430,7 +430,7 @@ bool ReceiverThread::initPort(void)
 {
 #ifndef GPS_FILE
     /* close existing port */
-    if(!port || port==NULL)
+    if(port==NULL)
         port=new QextSerialPort();
     if(port && port->isOpen())
         port->close();

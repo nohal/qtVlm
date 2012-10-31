@@ -240,7 +240,6 @@ void loadImg::slot_updateProjection()
         for(int x=portion.topLeft().x();x<=portion.bottomRight().x();++x)
         {
             ++imgX;
-            int r=0, g=0, b=0;
             double lon,lat;
             proj->screen2map(x,y,&lon,&lat);
             int X,Y;
@@ -258,9 +257,9 @@ void loadImg::slot_updateProjection()
                 if(X>bsb->width)
                     break;
                 if(row==0) continue;
-                r=bsb->red[row[X]];
-                g=bsb->green[row[X]];
-                b=bsb->blue[row[X]];
+                const int r=bsb->red[row[X]];
+                const int g=bsb->green[row[X]];
+                const int b=bsb->blue[row[X]];
                 QColor color(r,g,b);
                 pen.setColor(color);
                 pnt.setPen(pen);

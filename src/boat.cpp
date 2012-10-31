@@ -51,7 +51,7 @@ boat::boat(QString      pseudo, bool activated,
     selected = false;
     polarName="";
     polarData=NULL;
-    changeLocked=false;    
+    changeLocked=false;
     forceEstime=false;
     width=height=0;
 
@@ -411,14 +411,11 @@ void boat::drawEstime(double myHeading, double mySpeed)
     QPen penLine2(QColor(Qt::black),1,Qt::DotLine);
     penLine2.setWidthF(1.2);
 
-    double estime_param_2;
-    double estime;
-
     /* draw estime */
     if(getIsSelected() || getForceEstime())
     {
         double tmp_lat,tmp_lon;
-
+        double estime;
 
         switch(estime_type)
         {
@@ -429,12 +426,14 @@ void boat::drawEstime(double myHeading, double mySpeed)
                     estime = (double)estime_param/60.0*(double)mySpeed;
                 break;
             case 1: /* nb vac */
-                estime_param_2=getVacLen();
+            {
+                const double estime_param_2=getVacLen();
                 if(mySpeed<0.001)
                     estime=0;
                 else
                     estime = ((double) estime_param*estime_param_2)*mySpeed/3600.0;
                 break;
+            }
             default: /* dist */
                 estime = estime_param;
                 break;
@@ -684,7 +683,7 @@ void boat::reloadPolar(bool forced)
     if(polarData!=NULL)
     {
         //qWarning() << "Releasing polar " << polarData->getName();
-        emit releasePolar(polarData->getName()); /* release si une polaire déjà chargée */
+        emit releasePolar(polarData->getName()); /* release si une polaire deja chargee */
     }
     connect(polar_list,SIGNAL(polarLoaded(QString,Polar *)),this,SLOT(polarLoaded(QString,Polar *)));
     //qWarning() << pseudo << " request polar " << polarName;

@@ -120,7 +120,7 @@ class Util
         static void cleanListPointers( std::list<T *> & ls)
         {
             typename std::list<T *>::iterator it;
-            for (it=ls.begin(); it!=ls.end(); it++) {
+            for (it=ls.begin(); it!=ls.end(); ++it) {
                 delete *it;
                 *it = NULL;
             }
