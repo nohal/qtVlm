@@ -295,7 +295,8 @@ boatVLM * boardVLM::currentBoat(void)
 {
     if(parent)
     {
-        if(parent->currentBoat()->getType()==BOAT_VLM)
+        boat* theBoat = parent->currentBoat();
+        if((theBoat != NULL) && (theBoat->getType()==BOAT_VLM))
             return (boatVLM*)parent->currentBoat();
         else
             return NULL;
