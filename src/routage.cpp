@@ -789,6 +789,7 @@ ROUTAGE::ROUTAGE(QString name, Projection *proj, Grib *grib, QGraphicsScene * my
     this->speedLossOnTack=1;
     highlightedIso=0;
     isoRouteValue=10e6;
+    this->running=false;
 }
 ROUTAGE::~ROUTAGE()
 {
