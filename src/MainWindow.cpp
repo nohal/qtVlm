@@ -277,6 +277,17 @@ MainWindow::MainWindow(int w, int h, QWidget *parent)
     }
     else
         showMaximized ();
+    QString ver="qtVlm "+QString().setNum(sizeof(int*)*8)+" bits "+Version::getVersion();
+#ifdef __UNIX_QTVLM
+    ver+=" (UNIX)";
+#endif
+#ifdef __WIN_QTVLM
+    ver+=" (WINDOWS)";
+#endif
+#ifdef __MAC_QTVLM
+    ver+=" (MAC)";
+#endif
+    Settings::setSetting("qtVlm_version",ver);
 }
 void MainWindow::continueSetup()
 {
