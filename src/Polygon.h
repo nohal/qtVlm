@@ -53,7 +53,7 @@ public:
     class iterator
     {
     public:
-        iterator (const list<Point>::iterator & _i = list<Point>::iterator(), 
+        iterator (const list<Point>::iterator & _i = list<Point>::iterator(),
                   const list<Point>::iterator & _last = list<Point>::iterator())
             : i(_i), last(_last) {}
 
@@ -71,7 +71,7 @@ public:
         {
             if (++i == last)
             {
-                i++;
+                ++i;
             }
             return *this;
         }
@@ -82,7 +82,7 @@ public:
 
             if (++i == last)
             {
-                i++;
+                ++i;
             }
             return original;
         }
@@ -93,7 +93,7 @@ public:
 
             for (int i = 0; i < n; i++)
             {
-                result++;
+                ++result;
             }
 
             return result;
@@ -103,7 +103,7 @@ public:
         {
             if (--i == last)
             {
-                i--;
+                --i;
             }
             return *this;
         }
@@ -114,7 +114,7 @@ public:
 
             if (--i == last)
             {
-                i--;
+                --i;
             }
             return original;
         }
@@ -125,7 +125,7 @@ public:
 
             for (int i = 0; i < n; i++)
             {
-                result--;
+                --result;
             }
 
             return result;
@@ -159,9 +159,9 @@ public:
     class const_iterator
     {
     public:
-        const_iterator (const list<Point>::const_iterator & _i = 
-                              list<Point>::const_iterator(), 
-                        const list<Point>::const_iterator & _last = 
+        const_iterator (const list<Point>::const_iterator & _i =
+                              list<Point>::const_iterator(),
+                        const list<Point>::const_iterator & _last =
                               list<Point>::const_iterator())
             : i(_i), last(_last) {}
 
@@ -179,7 +179,7 @@ public:
         {
             if (++i == last)
             {
-                i++;
+                ++i;
             }
             return *this;
         }
@@ -190,7 +190,7 @@ public:
 
             if (++i == last)
             {
-                i++;
+                ++i;
             }
             return original;
         }
@@ -201,7 +201,7 @@ public:
 
             for (int i = 0; i < n; i++)
             {
-                result++;
+                ++result;
             }
 
             return result;
@@ -211,7 +211,7 @@ public:
         {
             if (--i == last)
             {
-                i--;
+                --i;
             }
             return *this;
         }
@@ -222,7 +222,7 @@ public:
 
             if (--i == last)
             {
-                i--;
+                --i;
             }
             return original;
         }
@@ -233,7 +233,7 @@ public:
 
             for (int i = 0; i < n; i++)
             {
-                result--;
+                --result;
             }
 
             return result;

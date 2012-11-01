@@ -1,9 +1,9 @@
 // **********************************************************
 //   File: triangulation.cpp
-//   Description: Triangulation algorithm.  The function 
+//   Description: Triangulation algorithm.  The function
 //                triangulate() is called by client code,
 //                and the function recursive_triangulation()
-//                is used by triangulate() to execute the 
+//                is used by triangulate() to execute the
 //                recursive algorithm
 //
 //   Author: Carlos Moreno
@@ -20,10 +20,10 @@ void triangulate (const PolyGon & input_P, list<Triangle> & output)
 {
     PolyGon P = input_P;    // Make a working copy of parameter
 
-    output.clear ();        // Only the first time.  Recursive 
-                            // calls should not clear the list 
+    output.clear ();        // Only the first time.  Recursive
+                            // calls should not clear the list
                             // of triangles
-    
+
     recursive_triangulation (P, output);
 }
 
@@ -32,7 +32,7 @@ static void recursive_triangulation (PolyGon & P, list<Triangle> & output)
 {
     PolyGon::iterator current = P.begin();
 
-    
+
     if ((current+3) == current)   // If PolyGon contains 3 vertices
     {
         output.push_back (Triangle (*current, *(current+1), *(current+2)));
@@ -54,13 +54,13 @@ static void recursive_triangulation (PolyGon & P, list<Triangle> & output)
                 if (t.contains (*i))
                 {
                     empty_triangle = false;
-                    if (Triangle(*(current+1), *(current-1), *i).area() > 
+                    if (Triangle(*(current+1), *(current-1), *i).area() >
                         Triangle(*(current+1), *(current-1), *farthest_point).area())
                     {
                         farthest_point = i;
                     }
                 }
-                i++;
+                ++i;
             }
             while (i != current-1);
 
@@ -68,7 +68,7 @@ static void recursive_triangulation (PolyGon & P, list<Triangle> & output)
             {
                 output.push_back (t);
                 current = P.remove (current);
-                current--;
+                --current;
                 if ((current+3) == current)     // If P became a triangle, done
                 {
                     output.push_back (Triangle (*current, *(current+1), *(current+2)));
@@ -79,7 +79,7 @@ static void recursive_triangulation (PolyGon & P, list<Triangle> & output)
             {
                 PolyGon first_half, second_half;
 
-                for (i = current; i != farthest_point; i++)
+                for (i = current; i != farthest_point; ++i)
                 {
                     first_half.push_back (*i);
                 }
@@ -87,7 +87,7 @@ static void recursive_triangulation (PolyGon & P, list<Triangle> & output)
 
                 recursive_triangulation (first_half, output);
 
-                for (i = farthest_point; i != current; i++)
+                for (i = farthest_point; i != current; ++i)
                 {
                     second_half.push_back (*i);
                 }
@@ -98,7 +98,7 @@ static void recursive_triangulation (PolyGon & P, list<Triangle> & output)
                 return;
             }
         }
-        current++;
+        ++current;
     }
     while (true);
 }

@@ -112,10 +112,10 @@ void Font::initAppFonts ()
 	initGlobalFont (FONT_MapCity_2);
 	initGlobalFont (FONT_MapCity_3);
 	initGlobalFont (FONT_MapCity_4);
-	
+
 	initGlobalFont (FONT_GRIB_Temp);
 	initGlobalFont (FONT_GRIB_PressHL);
-	
+
 	initGlobalFont (FONT_IAC_Isobar);
 	initGlobalFont (FONT_IAC_PressHLVal);
 	initGlobalFont (FONT_IAC_PressHL);
@@ -150,7 +150,6 @@ void Font::loadAllFonts()
 {
 
 	QString dirname = "fonts/liberation-fonts/";
-	int nb = 0;
 	QDir dir(dirname);
 	if (dir.exists()) {
 		dir.setFilter(QDir::Files);
@@ -160,8 +159,7 @@ void Font::loadAllFonts()
 		QStringList lst=dir.entryList();
 		for (int i=0; i<lst.size(); i++) {
 			//printf("file: %s\n", qPrintable(lst.at(i)));
-			if (loadFontFamily(dirname+lst.at(i)))
-				nb++;
+			loadFontFamily(dirname+lst.at(i));
 		}
 	}
 

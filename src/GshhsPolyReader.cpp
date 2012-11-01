@@ -33,12 +33,13 @@ GshhsPolyCell::GshhsPolyCell(FILE *fpoly_, int x0_, int y0_,Projection *proj_,Po
 
     ReadPolygonFile(fpoly,x0cell,y0cell,header->pasx,header->pasy,&poly1,&poly2,&poly3,&poly4,&poly5);
 
+#if 0
     int cnt=0;
     for(int i=0;i<poly1.count();i++)
         cnt+=poly1.at(i).count();
 
-    //qWarning() << "Cell " << x0cell << "," << y0cell << ": " << poly1.count() << " poly in p1 - total points:"<<cnt;
-
+    qWarning() << "Cell " << x0cell << "," << y0cell << ": " << poly1.count() << " poly in p1 - total points:"<<cnt;
+#endif
 }
 
 GshhsPolyCell::~GshhsPolyCell()
@@ -232,9 +233,9 @@ void GshhsPolyCell::drawSeaBorderLines(QPainter &pnt, double dx, Projection *pro
 //========================================================================
 //========================================================================
 //========================================================================
-GshhsPolyReader::GshhsPolyReader(std::string Polypath)
+GshhsPolyReader::GshhsPolyReader(std::string Polypath):
+    path (Polypath + "/")
 {
-    path = Polypath+"/";
     fpoly = NULL;
 
     for (int i=0; i<360; i++) {

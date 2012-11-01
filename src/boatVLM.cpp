@@ -41,7 +41,7 @@ boatVLM::boatVLM(QString        pseudo, bool activated, int boatId, int playerId
    boat(pseudo,activated,proj,main,parent),
    inetClient(inet),
    pilotType (0)
-{    
+{
     this->boat_type=BOAT_VLM;
     setFont(QApplication::font());
 
@@ -987,36 +987,39 @@ void boatVLM::exportBoatInfoLog(QString fileName)
              QString(QObject::tr("Impossible de creer le fichier %1")).arg(fileName));
         return;
     }
-    int logIndex,keysIndex,tableIndex;
     QVariantMap boatInfoRecord;
     QList<QString> recordKeys;
     QStringList textOutput;
     QString key,gribFileName=QString::fromStdString((parent->getGrib())->getFileName());
-    if (!boatInfoLog.isEmpty())
-    for( logIndex=0;logIndex<boatInfoLog.count();++logIndex) {
-        boatInfoRecord=boatInfoLog[logIndex];
-        recordKeys=boatInfoRecord.keys();
-        if (!boatInfoLog[logIndex].isEmpty()) {
-            for(keysIndex=0;keysIndex<recordKeys.count();++keysIndex) {
-                textOutput=QStringList();
-                key=recordKeys[keysIndex];
-                textOutput.append(key);
-                textOutput.append(boatInfoRecord[key].toString());
-                stream<<textOutput.join("\t");
-                stream<<"\n";
+    if (!boatInfoLog.isEmpty()) {
+        int logIndex;
+        for( logIndex=0;logIndex<boatInfoLog.count();++logIndex) {
+            boatInfoRecord=boatInfoLog[logIndex];
+            recordKeys=boatInfoRecord.keys();
+            if (!boatInfoLog[logIndex].isEmpty()) {
+                int keysIndex;
+                for(keysIndex=0;keysIndex<recordKeys.count();++keysIndex) {
+                    textOutput=QStringList();
+                    key=recordKeys[keysIndex];
+                    textOutput.append(key);
+                    textOutput.append(boatInfoRecord[key].toString());
+                    stream<<textOutput.join("\t");
+                    stream<<"\n";
+                }
+                stream<<"\n\n";
+                QDateTime time;
+                QString timeString;
+                int tableIndex;
+                for (tableIndex=0 ; tableIndex<2; ++tableIndex) {
+                    time.setTime_t(boatInfoRecord[tableKeys[tableIndex]].toUInt());
+                    timeString=time.toUTC().toString("yyyy/MM/dd hh:mm:ss");
+                    tableStream <<  timeString <<"\t";
+                }
+                for (tableIndex=2 ; tableIndex<tableKeys.size(); ++tableIndex) {
+                    tableStream <<  boatInfoRecord[tableKeys[tableIndex]].toString() <<"\t";
+                }
+                tableStream<<"\n";
             }
-            stream<<"\n\n";
-            QDateTime time;
-            QString timeString;
-            for (tableIndex=0 ; tableIndex<2; ++tableIndex) {
-                time.setTime_t(boatInfoRecord[tableKeys[tableIndex]].toUInt());
-                timeString=time.toUTC().toString("yyyy/MM/dd hh:mm:ss");
-                tableStream <<  timeString <<"\t";
-            }
-            for (tableIndex=2 ; tableIndex<tableKeys.size(); ++tableIndex) {
-                tableStream <<  boatInfoRecord[tableKeys[tableIndex]].toString() <<"\t";
-            }
-            tableStream<<"\n";
         }
     }
     stream<<"grib\t"<<gribFileName<<"\n";

@@ -52,7 +52,7 @@ class Grib
         Grib();
         Grib(const Grib &model);
         ~Grib();
-        
+
         void  loadGribFile(QString fileName);
         bool  isOk()                 {return ok;}
         long  getFileSize()          {return fileSize;}
@@ -63,18 +63,18 @@ class Grib
         int          getTotalNumberOfGribRecords();
 
         GribRecord * getFirstGribRecord();
-		
+
         std::vector<GribRecord *> * getListOfGribRecords(int dataType,int levelType,int levelValue);
-        
+
         double		 getHoursBeetweenGribRecords()  {return hoursBetweenRecords;}
         GribRecord * getGribRecord(int dataType,int levelType,int levelValue, time_t date);
         int getDewpointDataStatus(int /*levelType*/,int /*levelValue*/);
-        
+
         std::set<time_t>  * getListDates()   {return &setAllDates;}
-        
+
         int        getNumberOfDates()      {return qRound(setAllDates.size());}
-        time_t     getRefDate()            {return setAllDates.size()>0 ?
-                                                       *setAllDates.begin() : 0;}
+        time_t     getRefDate()            {return setAllDates.empty() ?
+                                                       0 : *setAllDates.begin();}
         time_t     getMinDate()            {return ok?minDate:-1; }
         time_t     getMaxDate()            {return ok?maxDate:-1; }
 
@@ -151,14 +151,14 @@ class Grib
         std::map <long int,std::vector<GribRecord *>* >  mapGribRecords;
         void initNewGrib();
         void storeRecordInMap(GribRecord *rec);
-		
+
         void   readGribFileContent();
         void   readAllGribRecords();
         void   createListDates();
         double computeHoursBeetweenGribRecords();
         double computeDewPoint(double lon, double lat, time_t now);
         std::set<time_t> setAllDates;
-        
+
         void clean_vector(std::vector<GribRecord *> &ls);
         void clean_all_vectors();
         std::vector<GribRecord *> * getFirstNonEmptyList();

@@ -218,10 +218,7 @@ void DialogPilototo::slot_boatUpdated(boat * pvBoat)
 
     QStringList list = my_boat->getPilototo();
 
-    if(my_boat)
-        titreBateau->setText(tr("Pilototo pour ") + my_boat->getBoatPseudo());
-    else
-        titreBateau->setText(tr("Pilototo"));
+    titreBateau->setText(tr("Pilototo pour ") + my_boat->getBoatPseudo());
 
     delList.clear(); /* this is a list of int => no delete*/
     drawList.clear(); /*all item are also in instructions_list */
@@ -247,7 +244,7 @@ void DialogPilototo::slot_boatUpdated(boat * pvBoat)
 	    {
                 DialogPilototoInstruction * instr = new DialogPilototoInstruction(this,frame);
 		instructions_list.append(instr);
-                //instr->setRef(instr_buf.at(0).toInt());                
+                //instr->setRef(instr_buf.at(0).toInt());
                 ref=instr_buf.at(0).toInt();
 		instr->setTstamp(instr_buf.at(1).toInt());
 		mode=instr_buf.at(2).toInt()-1;
@@ -404,8 +401,6 @@ void DialogPilototo::done(int result)
 
 void DialogPilototo::sendPilototo(void)
 {
-    struct instruction* data;
-
     if(!currentList)
     {
         qWarning("error can't send pilototo list does not exists");
@@ -428,7 +423,7 @@ void DialogPilototo::sendPilototo(void)
     }
     else
     {
-        data = currentList->takeFirst();
+        struct instruction* data = currentList->takeFirst();
         QString scriptList[3]={"pilototo_add.php","pilototo_update.php","pilototo_delete.php" };
         clearCurrentRequest();
         //qWarning() << "Sending: " << data->script << "(" << scriptList[data->script] << ") - " << data->param;
@@ -992,7 +987,7 @@ void DialogPilototoInstruction::updateHasChanged(bool status)
     {
         if(ref!=-1)
             status_scr=PILOTOTO_STATUS_CHG;
-	btn_validate->setStyleSheet(QString::fromUtf8("background-color: rgb(255, 0, 0);"));        
+	btn_validate->setStyleSheet(QString::fromUtf8("background-color: rgb(255, 0, 0);"));
     }
     else
     {
@@ -1047,7 +1042,7 @@ void DialogPilototoInstruction::doSelectPOI(void)
 void DialogPilototoInstruction::dateTime_changed(QDateTime tm)
 {
     if(tm!=tstamp_scr)
-    {        
+    {
         tstamp_scr=tm;
         updateHasChanged(chkHasChanged());
         updateText(true);

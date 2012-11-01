@@ -76,7 +76,7 @@ mapCompass::mapCompass(Projection * proj,MainWindow * main,myCentralWidget *pare
     windAngle_label->setAcceptHoverEvents(false);
     windAngle_label->hide();
     windAngle_label->setFont(fnt);
-    parent->getScene()->addItem(windAngle_label);    
+    parent->getScene()->addItem(windAngle_label);
 
     //   size = 310;
     size = 620;
@@ -361,7 +361,7 @@ void  mapCompass::paint(QPainter * pnt, const QStyleOptionGraphicsItem * , QWidg
             polyRed.append(poly[n]);
         pnt->drawPolyline(polyRed);
 
-        polyRed.resize(0);       
+        polyRed.resize(0);
         for (int n=0;n<=qRound(180-bvmg_down);n++)
             polyRed.append(poly[qRound(bvmg_down)+n]);
         for (int n=0;n<=qRound(180-bvmg_down);n++)

@@ -54,7 +54,6 @@ typedef complex<double> dcmplx;
                                 ,double * u_res, double * v_res,int debug)
 {
     double u1,u2,v1,v2;
-    double t_ratio,angle;
     double u,v;
 
     get_wind_info_latlong_TWSA_compute(longitude,latitude,data_prev,lat_step_t1,lon_step_t1,&u1,&v1,debug);
@@ -63,10 +62,10 @@ typedef complex<double> dcmplx;
     {
         get_wind_info_latlong_TWSA_compute(longitude,latitude,data_nxt,lat_step_t2,lon_step_t2,&u2,&v2,debug);
 
-        t_ratio = ((double)(now - t1)) / ((double)(t2 - t1));
+        const double t_ratio = ((double)(now - t1)) / ((double)(t2 - t1));
 
         u = u1 + (u2 - u1) * t_ratio;
-        angle = (v2 - v1);
+        double angle = (v2 - v1);
         _check_angle_interp(angle);
         v = v1 + (angle) * t_ratio;
         _positive_angle(v);
@@ -111,7 +110,7 @@ void interpolation::get_wind_info_latlong_TWSA_compute(double longitude,  double
 #else
     dcmplx c;
 #endif
-  
+
 
 
   double d_long,d_lat;
@@ -188,7 +187,6 @@ void interpolation::get_wind_info_latlong_selective_TWSA(double longitude,  doub
                                 double * u_res, double * v_res,int debug)
 {
     double u1,u2,v1,v2;
-    double t_ratio,angle;
     double u,v;
     int rot_1,rot_2;
 #if OLD_C
@@ -213,7 +211,7 @@ void interpolation::get_wind_info_latlong_selective_TWSA(double longitude,  doub
             qWarning("\nInterpolation t2: vit=%f, ang=%f (rot=%d)\n\n",u2,v2,rot_2);
         }
 
-        t_ratio = ((double)(now - t1)) / ((double)(t2 - t1));
+        const double t_ratio = ((double)(now - t1)) / ((double)(t2 - t1));
 
         if(debug)
         {
@@ -228,7 +226,7 @@ void interpolation::get_wind_info_latlong_selective_TWSA(double longitude,  doub
             }
 
             u = u1 + (u2 - u1) * t_ratio;
-            angle = (v2 - v1);
+            double angle = (v2 - v1);
             _check_angle_interp(angle);
             v = v1 + (angle) * t_ratio;
             _positive_angle(v);
@@ -540,8 +538,8 @@ void interpolation::get_wind_info_latlong_hybrid(double longitude,  double latit
                                 double * u_res, double * v_res,double gridOriginLat,double gridOriginLon,int debug)
 {
     double u1,u2,v1,v2,ro1,ro2;
-    double t_ratio,angle;
-    double u,v,ro;
+    double angle;
+    double ro;
 
     get_wind_info_latlong_hybrid_compute(longitude,latitude,data_prev,lat_step_t1,lon_step_t1,&u1,&v1,&ro1,gridOriginLat,gridOriginLon,debug);
 
@@ -549,10 +547,10 @@ void interpolation::get_wind_info_latlong_hybrid(double longitude,  double latit
     {
         get_wind_info_latlong_hybrid_compute(longitude,latitude,data_nxt,lat_step_t2,lon_step_t2,&u2,&v2,&ro2,gridOriginLat,gridOriginLon,debug);
 
-        t_ratio = ((double)(now - t1)) / ((double)(t2 - t1));
+        const double t_ratio = ((double)(now - t1)) / ((double)(t2 - t1));
 
-        u = u1 + (u2 - u1) * t_ratio;
-        v = v1 + (v2 - v1) * t_ratio;
+        const double u = u1 + (u2 - u1) * t_ratio;
+        const double v = v1 + (v2 - v1) * t_ratio;
 
         ro = ro1 + (ro2 - ro1) * t_ratio;
 

@@ -45,7 +45,7 @@ IsoLine::~IsoLine()
 //printf("delete Isobar : press=%4.0f long=%d\n", pressure/100, trace.size());
 
     std::list<Segment *>::iterator it;
-    for (it=trace.begin(); it!=trace.end(); it++) {
+    for (it=trace.begin(); it!=trace.end(); ++it) {
         delete *it;
         *it = NULL;
     }
@@ -66,7 +66,7 @@ void IsoLine::drawIsoLine(QPainter &pnt,
     //---------------------------------------------------------
     // Dessine les segments
     //---------------------------------------------------------
-    for (it=trace.begin(); it!=trace.end(); it++,nb++)
+    for (it=trace.begin(); it!=trace.end(); ++it,++nb)
     {
         Segment *seg = *it;
 
@@ -118,7 +118,7 @@ void IsoLine::drawIsoLineLabels(QPainter &pnt, QColor &couleur,
     //---------------------------------------------------------
     // Ecrit les labels
     //---------------------------------------------------------
-    for (it=trace.begin(); it!=trace.end(); it++,nb++)
+    for (it=trace.begin(); it!=trace.end(); ++it,++nb)
     {
         if (nb % density == 0) {
             Segment *seg = *it;
@@ -157,14 +157,14 @@ Segment::Segment(int I, int J,
 void Segment::intersectionAreteGrille(int i,int j, int k,int l, double *x, double *y,
                 time_t now, time_t tPrev, time_t tNxt,GribRecord *rec_prev,GribRecord *rec_nxt, double pressure)
 {
-    double a,b, pa, pb, pa1,pb1,dec;
+    double a,b, pa, pb, dec;
     pa = rec_prev->getValue(i,j);
     pb = rec_prev->getValue(k,l);
     if(tPrev!=tNxt)
     {
-        pa1=rec_nxt->getValue(i,j);
+        const double pa1=rec_nxt->getValue(i,j);
         pa = pa + ((pa1-pa)/((double)(tNxt-tPrev)))*((double)(now-tPrev));
-        pb1=rec_nxt->getValue(k,l);
+        const double pb1=rec_nxt->getValue(k,l);
         pb = pb + ((pb1-pb)/((double)(tNxt-tPrev)))*((double)(now-tPrev));
     }
     // Abscisse

@@ -44,7 +44,7 @@ GshhsPolygon::GshhsPolygon(ZUFILE *file_)
     if (ok)
     {
         double x, y=-90;
-        
+
         for (int i=0; i<n; i++) {
             x = readInt4() * 1e-6;
             if (greenwich && x > 270)
@@ -56,7 +56,7 @@ GshhsPolygon::GshhsPolygon(ZUFILE *file_)
 	printf("x %12.8f %12.8f\n", x,y);
 }*/
         }
-        
+
     	// force l'Antarctic �  être un "rectangle" qui passe par le pôle
         if (antarctic) {
             lsPoints.push_front(new GshhsPoint(360, y));
@@ -82,7 +82,7 @@ GshhsPolygon_WDB::GshhsPolygon_WDB(ZUFILE *file_)
     south = readInt4() * 1e-6;
     north = readInt4() * 1e-6;
     area  = readInt4();
-    
+
     if ( ( (flag >> 8) & 255 ) >= 7) { //GSHHS Release 2.0
         areaFull  = readInt4();
         container  = readInt4();
@@ -127,7 +127,7 @@ GshhsPolygon_WDB::GshhsPolygon_WDB(ZUFILE *file_)
 // Destructeur
 GshhsPolygon::~GshhsPolygon() {
     std::list<GshhsPoint *>::iterator itp;
-    for (itp=lsPoints.begin(); itp != lsPoints.end(); itp++) {
+    for (itp=lsPoints.begin(); itp != lsPoints.end(); ++itp) {
         delete *itp;
         *itp = NULL;
     }
@@ -143,9 +143,9 @@ GshhsPolygon::~GshhsPolygon() {
 //==========================================================
 //==========================================================
 GshhsReader::GshhsReader(std::string fpath_, int quality):
-   quality (-1)
+   quality (-1),
+   fpath (fpath_)
 {
-    fpath = fpath_;
     gshhsPoly_reader = new GshhsPolyReader(fpath);
     for (int qual=0; qual<5; qual++)
     {
@@ -163,9 +163,9 @@ int GshhsReader::getPolyVersion()
 //-------------------------------------------------------
 // Recopie
 GshhsReader::GshhsReader(const GshhsReader &model):
-   quality (-1)
+   quality (-1),
+   fpath (model.fpath)
 {
-    fpath = model.fpath;
     gshhsPoly_reader = new GshhsPolyReader(fpath);
     // reuse lists of polygons
     for (int qual=0; qual<5; qual++)
@@ -188,11 +188,11 @@ void GshhsReader::clearLists() {
     std::list<GshhsPolygon*>::iterator itp;
     for (int qual=0; qual<5; qual++)
     {
-        for (itp=lsPoly_boundaries[qual]->begin(); itp != lsPoly_boundaries[qual]->end(); itp++) {
+        for (itp=lsPoly_boundaries[qual]->begin(); itp != lsPoly_boundaries[qual]->end(); ++itp) {
             delete *itp;
             *itp = NULL;
         }
-        for (itp=lsPoly_rivers[qual]->begin(); itp != lsPoly_rivers[qual]->end(); itp++) {
+        for (itp=lsPoly_rivers[qual]->begin(); itp != lsPoly_rivers[qual]->end(); ++itp) {
             delete *itp;
             *itp = NULL;
         }
@@ -263,7 +263,7 @@ void GshhsReader::setQuality(int quality_) // 5 levels: 0=low ... 4=full
     quality = quality_;
     if (quality < 0) quality = 0;
     else if (quality > 4) quality = 4;
-    
+
     //gshhsRangsReader->setQuality(quality);
     gshhsPoly_reader->setQuality(quality);
 
@@ -279,7 +279,7 @@ void GshhsReader::setQuality(int quality_) // 5 levels: 0=low ... 4=full
                 ok = poly->isOk();
                 if (ok)
                 {
-                    if (poly->getLevel() < 2) 
+                    if (poly->getLevel() < 2)
                         lsPoly_boundaries[quality]->push_back(poly);
                     else
                         delete poly;
@@ -317,7 +317,7 @@ std::list<GshhsPolygon*> & GshhsReader::getList_boundaries() {
 std::list<GshhsPolygon*> & GshhsReader::getList_rivers() {
     return * lsPoly_rivers[quality];
 }
-        
+
 //=====================================================================
 // Dessin de la carte
 //=====================================================================
@@ -340,13 +340,13 @@ int GshhsReader::GSHHS_scaledPoints(
     if (a1==a2 && b1==b2) {
         return 0;
     }
-    
+
     double x, y;
     std::list<GshhsPoint *>::iterator itp;
     int xx, yy, oxx=0, oyy=0;
     int j = 0;
-    
-    for  (itp=(pol->lsPoints).begin(); itp!=(pol->lsPoints).end(); itp++)
+
+    for  (itp=(pol->lsPoints).begin(); itp!=(pol->lsPoints).end(); ++itp)
     {
         x = (*itp)->lon+decx;
         y = (*itp)->lat;
@@ -361,7 +361,7 @@ int GshhsReader::GSHHS_scaledPoints(
             j ++;
         }
     }
-	//if (j>1000)printf("%d\n", j);    
+	//if (j>1000)printf("%d\n", j);
     return j;
 }
 
@@ -375,21 +375,21 @@ void GshhsReader::GsshDrawLines(QPainter &pnt, std::list<GshhsPolygon*> &lst,
     QPoint *pts = NULL;
     int i;
     int nbp;
-    
+
     int nbmax = 10000;
     pts = new QPoint[nbmax];
     assert(pts);
-    
-    for  (i=0, iter=lst.begin(); iter!=lst.end(); iter++,i++) {
+
+    for  (i=0, iter=lst.begin(); iter!=lst.end(); ++iter,++i) {
         pol = *iter;
-        
+
         if (nbmax < pol->n+2) {
             nbmax = pol->n+2;
             pts = new QPoint[nbmax];
             assert(pts);
         }
-        
-		
+
+
 		//--------------------------------------------------------------
         nbp = GSHHS_scaledPoints(pol, pts, 0, proj);
 		if (nbp > 1) {
@@ -407,7 +407,7 @@ void GshhsReader::GsshDrawLines(QPainter &pnt, std::list<GshhsPolygon*> &lst,
 					pnt.drawLine(pts[0], pts[nbp-1]);
 			}
 		}
-        
+
 		//--------------------------------------------------------------
         nbp = GSHHS_scaledPoints(pol, pts, -360, proj);
 		if (nbp > 1) {
@@ -438,7 +438,7 @@ void GshhsReader::drawBackground( QPainter &pnt, Projection *proj,
     pnt.setBrush(backgroundColor);
     pnt.setPen(backgroundColor);
     pnt.drawRect(0,0,proj->getW(), proj->getH());
-    
+
     // oceans bleus (peint toute la zone entre les 2 poles)
     pnt.setBrush(seaColor);
     pnt.setPen(seaColor);
@@ -447,7 +447,7 @@ void GshhsReader::drawBackground( QPainter &pnt, Projection *proj,
     proj->map2screen(0,-90, &x1,&y1);
 
 	//printf("drawBackground y0=%d y1=%d\n", y0,y1);
-    
+
     pnt.drawRect(0, y0, proj->getW(), y1-y0);
 
 }
@@ -468,7 +468,7 @@ void GshhsReader::drawSeaBorders( QPainter &pnt, Projection *proj)
 {
     selectBestQuality(proj);
 
-    pnt.setBrush(Qt::transparent);    
+    pnt.setBrush(Qt::transparent);
 
     gshhsPoly_reader->drawGshhsPolyMapSeaBorders(pnt, proj);
 }

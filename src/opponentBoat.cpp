@@ -617,7 +617,7 @@ void opponentList::clear(void)
 }
 
 void opponentList::refreshData(void)
-{    
+{
     //qWarning() << "refreshData";
     if(!hasInet() || hasRequest())
     {
@@ -780,7 +780,7 @@ void opponentList::inetError()
 void opponentList::requestFinished (QByteArray res_byte)
 {
     switch(getCurrentRequest())
-    {        
+    {
         case OPP_BOAT_REAL:
         {
             QJson::Parser parser;
@@ -866,7 +866,7 @@ void opponentList::requestFinished (QByteArray res_byte)
                 {
                     QVariantMap ranking = result["ranking"].toMap();
                     if(currentMode==OPP_MODE_REFRESH && showWhat==SHOW_MY_LIST)
-                    {                        
+                    {
                         for (int o=opponent_list.count()-1;o>=0;o--)
                         {
                             opponent * ptr=opponent_list[o];
@@ -1209,36 +1209,18 @@ void opponentList::getTrace(QByteArray buff, QList<vlmPoint> * trace)
         if(nbPoints > 0)
         {
             //int i=0;
-            if(!trace->isEmpty())
-            {
 #if 0
-                qWarning()<<"trace last timestamp=   "<<QDateTime().fromTime_t(trace->last().timeStamp);
+            qWarning()<<"trace last timestamp=   "<<QDateTime().fromTime_t(trace->last().timeStamp);
 #endif
-                QVariant pos_list0 = result["tracks"].toList();
-                QList<QVariant> pos_list1=pos_list0.toList()[0].toList();
+            QVariant pos_list0 = result["tracks"].toList();
+            QList<QVariant> pos_list1=pos_list0.toList()[0].toList();
 #if 0
-                qWarning()<<"received trace starts at"<<QDateTime().fromTime_t(pos_list1[0].toInt());
+            qWarning()<<"received trace starts at"<<QDateTime().fromTime_t(pos_list1[0].toInt());
 #endif
-                pos_list1=pos_list0.toList().last().toList();
+            pos_list1=pos_list0.toList().last().toList();
 #if 0
-                qWarning()<<"received trace ends at  "<<QDateTime().fromTime_t(pos_list1[0].toInt());
+            qWarning()<<"received trace ends at  "<<QDateTime().fromTime_t(pos_list1[0].toInt());
 #endif
-            }
-            else
-            {
-#if 0
-                qWarning()<<"trace is empty";
-#endif
-                QVariant pos_list0 = result["tracks"].toList();
-                QList<QVariant> pos_list1=pos_list0.toList()[0].toList();
-#if 0
-                qWarning()<<"received trace starts at"<<QDateTime().fromTime_t(pos_list1[0].toInt());
-#endif
-                pos_list1=pos_list0.toList().last().toList();
-#if 0
-                qWarning()<<"received trace ends at  "<<QDateTime().fromTime_t(pos_list1[0].toInt());
-#endif
-            }
             foreach (QVariant pos, result["tracks"].toList())
             {
                 QList<QVariant> pos_list = pos.toList();

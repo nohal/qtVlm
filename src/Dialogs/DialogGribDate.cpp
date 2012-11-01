@@ -57,7 +57,7 @@ void DialogGribDate::showDialog(time_t current,std::set<time_t>  * listGrib,time
     /* init with new data*/
     /* init internal list*/
     std::set<time_t>::iterator its;
-    for (its=listGrib->begin(); its!=listGrib->end(); its++)
+    for (its=listGrib->begin(); its!=listGrib->end(); ++its)
         listGribDates.push_back(*its);
 
     QApplication::processEvents();
@@ -72,7 +72,7 @@ void DialogGribDate::showDialog(time_t current,std::set<time_t>  * listGrib,time
     int i=0;
     dateList->addItem("");
 
-    for (it=listGribDates.begin(); it!=listGribDates.end(); it++)
+    for (it=listGribDates.begin(); it!=listGribDates.end(); ++it)
     {
         time_t tps = *it;
         QString str = Util::formatDateTimeLong(tps);

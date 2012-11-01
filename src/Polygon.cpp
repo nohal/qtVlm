@@ -75,14 +75,14 @@ bool PolyGon::contains (const Point & p) const
         {
             p_max_x = *current;
         }
-        current++;
+        ++current;
     }
     while (current != begin());
 
     Point outside = p_max_x + Point (1,0);
     Segment line (p, outside);
 
-        // Now check the number of intersections of segment 
+        // Now check the number of intersections of segment
         // p - outside with the edges of the PolyGon
 
         // The loop must start in a vertex that is not exactly
@@ -92,7 +92,7 @@ bool PolyGon::contains (const Point & p) const
 
     current = begin();
 
-    while ((*current).is_on (line))  current++;
+    while ((*current).is_on (line))  ++current;
 
     PolyGon::const_iterator first_point = current;
 
@@ -109,15 +109,15 @@ bool PolyGon::contains (const Point & p) const
             while ((*++current).is_on (line));
                 // Skip all the vertices that are on the line
 
-            if (turn(line.get_p1(), line.get_p2(), v) == 
+            if (turn(line.get_p1(), line.get_p2(), v) ==
                 turn (line.get_p1(), line.get_p2(), *current))
             {
                 intersections--;
             }
-                // If previous and next points are on the same 
-                // side of line, then line doesn't intersect the 
+                // If previous and next points are on the same
+                // side of line, then line doesn't intersect the
                 // PolyGon;  it merely touches it at the vertex.
-                // Since one intersection was counted by the test 
+                // Since one intersection was counted by the test
                 // with the first edge, decrement the count.
         }
     }
@@ -191,14 +191,14 @@ PolyGon PolyGon::convex_hull() const
             // The list is circular
 
         Point p = *input_iter++;
-        
+
         if (turn (*(first+1), *first, p) == left_turn ||
             turn (*(last-1), *last, p) == right_turn)
         {
             hull.push_back (p);
             hull.push_front (p);
 
-                // Now fix the possible concavities after insertion 
+                // Now fix the possible concavities after insertion
                 // of new point (on both ends of the output list)
 
             first = hull.begin();
@@ -229,7 +229,7 @@ int PolyGon::orientation() const
     bool empty_triangle_found = false;
     Triangle t;
 
-        // Find a triangle (three consecutive vertices of 
+        // Find a triangle (three consecutive vertices of
         // the PolyGon) that doesn't contain any other
         // vertex of the PolyGon.
 
@@ -246,7 +246,7 @@ int PolyGon::orientation() const
                 t_is_empty = false;
                 break;
             }
-            i++;
+            ++i;
         }
         while (i != begin());
 
@@ -256,16 +256,16 @@ int PolyGon::orientation() const
         }
         else
         {
-            current++;
+            ++current;
         }
     }
     while (!empty_triangle_found);
 
-        // Now we know that either all the points inside the 
+        // Now we know that either all the points inside the
         // triangle are inside the PolyGon, are all are
         // outside the PolyGon.
-    
-        // Given the orientation of t, and checking if a 
+
+        // Given the orientation of t, and checking if a
         // point inside t is also inside the PolyGon, we
         // determine the orientation of the PolyGon.
 

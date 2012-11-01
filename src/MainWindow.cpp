@@ -277,6 +277,17 @@ MainWindow::MainWindow(int w, int h, QWidget *parent)
     }
     else
         showMaximized ();
+    QString ver="qtVlm "+QString().setNum(sizeof(int*)*8)+" bits "+Version::getVersion();
+#ifdef __UNIX_QTVLM
+    ver+=" (UNIX)";
+#endif
+#ifdef __WIN_QTVLM
+    ver+=" (WINDOWS)";
+#endif
+#ifdef __MAC_QTVLM
+    ver+=" (MAC)";
+#endif
+    Settings::setSetting("qtVlm_version",ver);
 }
 void MainWindow::continueSetup()
 {
@@ -354,7 +365,7 @@ void MainWindow::continueSetup()
     toolBar->addAction(menuBar->acFile_Quit);
     toolBar->addSeparator();
     toolBar->addAction(menuBar->acFile_Open);
-    toolBar->addAction(menuBar->acFile_Load_GRIB);    
+    toolBar->addAction(menuBar->acFile_Load_GRIB);
     toolBar->addAction(menuBar->acFile_Load_VLM_GRIB);
     toolBar->addAction(menuBar->acFile_Load_SAILSDOC_GRIB);
     toolBar->addAction(menuBar->acFile_Close);
@@ -544,7 +555,7 @@ void MainWindow::continueSetup()
             my_centralWidget->loadPOI();
             isStartingUp=false;
             updateTitle();
-            slot_deleteProgress();            
+            slot_deleteProgress();
             my_centralWidget->emitUpdateRoute(NULL);
         }
         //Util::setFontDialog(statusBar);
@@ -1813,13 +1824,13 @@ void MainWindow::slotBoatUpdated(boat * upBoat,bool newRace,bool doingSync)
             tool_ETA->clear();
         else
         {
-            int nbS,j,h,m;
             QString txt;
             QDateTime dtm =QDateTime::fromTime_t(boat->getEta()).toUTC();
             if(!dtm.isValid())
                 tool_ETA->clear();
             else
             {
+                int nbS,j,h,m;
                 dtm.setTimeSpec(Qt::UTC);
                 QDateTime now = (QDateTime::currentDateTime()).toUTC();
                 nbS=now.secsTo(dtm);
@@ -1876,7 +1887,7 @@ void MainWindow::slotSelectBoat(boat* newSelect)
         //emit boatChanged(selectedBoat);
 
         if(newSelect->getStatus()) /* is selected boat activated ?*/
-        {            
+        {
             if(newSelect->getType()==BOAT_VLM)
             {
                 //qWarning() << "getData from slot_selectBoat";
@@ -2348,7 +2359,7 @@ void MainWindow::slotLoadVLMGrib(void)
 #include "miniunz.h"
 
 void MainWindow::slotVLM_Test(void)
-{    
+{
     qWarning() << "unzip reports: " << miniunzip(UZ_EXTRACT_WOPATH | UZ_OVERWRITE,"test2.zip","./",NULL,NULL);
 
 
