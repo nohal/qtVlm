@@ -6156,7 +6156,7 @@ without simplication</translation>
     <message>
         <location filename="../src/Ui/paramVLM.ui" line="1142"/>
         <source>Avance</source>
-        <translation>Avanced</translation>
+        <translation type="unfinished">Advanced</translation>
     </message>
     <message>
         <location filename="../src/Ui/paramVLM.ui" line="1160"/>
