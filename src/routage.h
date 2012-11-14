@@ -316,7 +316,7 @@ class ROUTAGE : public QObject
         int zoomLevel;
         QList<vlmPointGraphic *> isoPointList;
         bool arrived;
-        time_t eta;
+        time_t eta, etaStart;
         QList<vlmLine *> isochrones;
             QList<vlmLine *> segments;
         bool done;
