@@ -134,6 +134,13 @@ p, li { white-space: pre-wrap; }
              </property>
             </widget>
            </item>
+           <item>
+            <widget class="QPushButton" name="btLoadFromVlm">
+             <property name="text">
+              <string>Charger VLM</string>
+             </property>
+            </widget>
+           </item>
           </layout>
          </item>
         </layout>

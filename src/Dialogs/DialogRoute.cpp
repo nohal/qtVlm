@@ -80,6 +80,7 @@ DialogRoute::DialogRoute(ROUTE *route,myCentralWidget *parent)
     connect(this->btOk,SIGNAL(clicked()),this,SLOT(accept()));
     connect(this->btCancel,SIGNAL(clicked()),this,SLOT(reject()));
     connect(this->btAppliquer,SIGNAL(clicked()),this,SLOT(slotApply()));
+    connect(this->btLoadFromVlm,SIGNAL(clicked()),this,SLOT(slotLoadFromVlm()));
     connect(this->Envoyer,SIGNAL(clicked()),this,SLOT(slotEnvoyer()));
     connect(this->btCopy,SIGNAL(clicked()),this,SLOT(slotCopy()));
     connect(this->exportCSV,SIGNAL(clicked()),this,SLOT(slotExportCSV()));
@@ -998,6 +999,74 @@ void DialogRoute::slotEnvoyer()
     }
     parent->setPilototo(poiList);
     this->done(QDialog::Accepted);
+}
+
+void DialogRoute::slotLoadFromVlm (void)
+{
+   boatVLM* boat = dynamic_cast<boatVLM*> (route->getBoat());
+   if (boat == NULL) {
+      QMessageBox::warning (this, tr("Attention!"), tr("Le bateau courant n'est pas un bateau VLM!"));
+      return;
+   }
+
+   QList<POI*>& route = this->route->getPoiList();
+   if (route.isEmpty()) {
+      QMessageBox::warning (this, tr("Attention!"), tr("La route ne doit pas etre vide pour pouvoir etre chargee depuis VLM."));
+      return;
+   }
+   QList<POI*>::iterator    poi = route.begin();
+
+   if ((boat->getPilotType()    != 3)
+       && (boat->getPilotType() != 4)
+       && (boat->getPilotType() != 5))
+   {
+      QMessageBox::warning (this, tr("Attention!"), tr("Le bateau ne navigue pas actuellement vers un POI"));
+   }
+   else
+   {
+      (*poi)->setLongitude (boat->getWPLon());
+      (*poi)->setLatitude (boat->getWPLat());
+      (*poi)->setWph (boat->getWPHd());
+      (*poi)->slot_updateProjection();
+      ++poi;
+   }
+
+   QStringList  pilototo = boat->getPilototo();
+   for (int n = 0;
+        (!pilototo.isEmpty()) && (poi != route.end());
+        ++n)
+   {
+      QString   instr = pilototo.takeFirst();
+      if (instr == "none") continue;
+
+      QStringList   parse = instr.split(",");
+      int           mode  = parse.at (2).toInt()-1;
+
+      if ((mode != 3) && (mode != 4) && (mode != 5))
+      {
+         QMessageBox::warning (this, tr("Attention!"), tr("L'instruction #%1 n'a pas de POI, elle sera ignoree.").arg (n));
+      }
+      else if (parse.at (5) == "pending")
+      {
+         QStringList    parse2 = parse.at (4).split ("@");
+         
+         (*poi)->setLongitude (parse2.at (0).toDouble());
+         (*poi)->setLatitude (parse.at (3).toDouble());
+         (*poi)->setWph ((parse2.length() == 2) ? parse2.at (1).toDouble() : -1);
+         (*poi)->slot_updateProjection();
+         ++poi;
+      }
+   }
+
+   if (!pilototo.isEmpty()) {
+      QMessageBox::warning (this, tr("Attention!"), tr("La route etait plus courte que le pilototo, seuls les premiers points ont ete charges."));
+   } else if (poi != route.end()) {
+      QMessageBox::information (this, tr("Information"), tr("Les premiers points de la route ont ete charges depuis VLM."));
+   } else {
+      QMessageBox::information (this, tr("Information"), tr("La route a ete chargee depuis VLM."));
+   }
+
+   this->done(QDialog::Accepted);
 }
 
 //---------------------------------------
