@@ -1017,6 +1017,42 @@ Etes-vous sur ?</source>
         <source>Voile</source>
         <translation></translation>
     </message>
+    <message>
+        <source>Attention!</source>
+        <translation>Attention!</translation>
+    </message>
+    <message>
+        <source>Le bateau courant n&apos;est pas un bateau VLM!</source>
+        <translation>Le bateau courant n&apos;est pas un bateau VLM!</translation>
+    </message>
+    <message>
+        <source>La route ne doit pas etre vide pour pouvoir etre chargee depuis VLM.</source>
+        <translation>La route ne doit pas être vide pour pouvoir être chargée depuis VLM.</translation>
+    </message>
+    <message>
+        <source>Le bateau ne navigue pas actuellement vers un POI</source>
+        <translation>Le bateau ne navigue pas actuellement vers un POI.</translation>
+    </message>
+    <message>
+        <source>L&apos;instruction #%1 n&apos;a pas de POI, elle sera ignoree.</source>
+        <translation>L&apos;instruction #%1 n&apos;a pas de POI, elle sera ignorée.</translation>
+    </message>
+    <message>
+        <source>La route etait plus courte que le pilototo, seuls les premiers points ont ete charges.</source>
+        <translation>La route était plus courte que le pilototo, seuls les premiers points ont été chargés.</translation>
+    </message>
+    <message>
+        <source>Information</source>
+        <translation>Information</translation>
+    </message>
+    <message>
+        <source>Les premiers points de la route ont ete charges depuis VLM.</source>
+        <translation>Les premiers points de la route ont été chargés depuis VLM.</translation>
+    </message>
+    <message>
+        <source>La route a ete chargee depuis VLM.</source>
+        <translation>La route a été chargée depuis VLM.</translation>
+    </message>
 </context>
 <context>
     <name>DialogTwaLine</name>
@@ -2723,6 +2759,10 @@ Etes-vous sûr?</translation>
         <source>Copier la route </source>
         <translation></translation>
     </message>
+    <message>
+        <source>Zoom sur la route </source>
+        <translation>Zoom sur la route </translation>
+    </message>
 </context>
 <context>
     <name>POI_delete_ui</name>
@@ -4049,6 +4089,10 @@ sans simplifier</translation>
     <message>
         <source> deg</source>
         <translation>°</translation>
+    </message>
+    <message>
+        <source>Charger VLM</source>
+        <translation>Charger VLM</translation>
     </message>
 </context>
 <context>
