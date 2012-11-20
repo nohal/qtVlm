@@ -1003,7 +1003,7 @@ void DialogRoute::slotEnvoyer()
 
 void DialogRoute::slotLoadFromVlm (void)
 {
-   boatVLM* boat = dynamic_cast<boatVLM*> (route->getBoat());
+   boatVLM* boat = (boatVLM*) (route->getBoat());
    if (boat == NULL) {
       QMessageBox::warning (this, tr("Attention!"), tr("Le bateau courant n'est pas un bateau VLM!"));
       return;
