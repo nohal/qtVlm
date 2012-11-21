@@ -53,8 +53,6 @@ class DialogRoute : public QDialog, public Ui::ROUTE_Editor_ui
         void slotTabChanged(int);
         void slotCopy();
         void slotExportCSV();
-        void slotLoadFromVlm(void);
-
     signals:
 
     private:
