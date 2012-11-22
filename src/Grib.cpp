@@ -1424,7 +1424,7 @@ void Grib::draw_WIND_Color(QPainter &pnt, const Projection *proj, bool smooth,
     int H = proj->getH();
     int space=0;
     int W_s=0,H_s=0;
-    QImage image(W,H,QImage::QImage::Format_ARGB32_Premultiplied);
+    QImage image(W,H,QImage::Format_ARGB32_Premultiplied);
     GribRecord *recU1,*recV1,*recU2,*recV2;
     time_t t1,t2;
     if (!ok) {
@@ -1549,7 +1549,7 @@ void Grib::draw_CURRENT_Color(QPainter &pnt, const Projection *proj, bool smooth
     int space=0;
     int W_s=0,H_s=0;
     QRgb   rgb;
-    QImage *image= new QImage(W,H,QImage::Format_ARGB32);
+    QImage *image= new QImage(W,H,QImage::Format_ARGB32_Premultiplied);
 
     GribRecord *recU1,*recV1,*recU2,*recV2;
     time_t t1,t2;
