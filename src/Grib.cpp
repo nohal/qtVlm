@@ -37,9 +37,25 @@ Copyright (C) 2008 - Jacques Zaninetti - http://zygrib.free.fr
 #include "settings.h"
 
 #include "interpolation.h"
+#include <QtConcurrentMap>
+#include <QVector>
 #ifdef __QTVLM_WITH_TEST
 int nbWarning;
 #endif
+GribThreadResult interpolateThreaded(const GribThreadData &g)
+{
+    double tws=-1, twd=-1;
+    GribThreadResult r;
+    if(g.grib->getInterpolatedValue_byDates(g.p.x(),g.p.y(),g.cD,g.tP,g.tN,
+                                                   g.recU1,g.recV1,g.recU2,g.recV2,&tws,&twd,
+                                                   g.interpolMode))
+        r.rgb=g.grib->getWindColor(tws, g.smooth);
+    else
+        tws=-1;
+    r.tws=tws;
+    r.twd=twd;
+    return r;
+}
 //-------------------------------------------------------------------------------
 Grib::Grib()
 {
@@ -1280,7 +1296,7 @@ void Grib::show_CoverZone(QPainter &pnt, Projection * proj)
 //--------------------------------------------------------------------------
 // Carte de couleurs du vent
 //--------------------------------------------------------------------------
-void Grib::draw_WIND_Color(QPainter &pnt, const Projection *proj, bool smooth,
+void Grib::draw_WIND_Color_old(QPainter &pnt, const Projection *proj, bool smooth,
                                bool showWindArrows,bool barbules)
 {
 
@@ -1391,6 +1407,132 @@ void Grib::draw_WIND_Color(QPainter &pnt, const Projection *proj, bool smooth,
         delete[] v_tab;
         delete[] y_tab;
     }
+}
+void Grib::draw_WIND_Color(QPainter &pnt, const Projection *proj, bool smooth,
+                               bool showWindArrows,bool barbules)
+{
+#if 0
+    QTime time;
+    time.start();
+    draw_WIND_Color_old(pnt,proj,smooth,showWindArrows,barbules);
+    int msec1=time.elapsed();
+    time.start();
+#endif
+    int i, j;
+    double u,v,x,y;
+    int W = proj->getW();
+    int H = proj->getH();
+    int space=0;
+    int W_s=0,H_s=0;
+    QImage image(W,H,QImage::QImage::Format_ARGB32_Premultiplied);
+    GribRecord *recU1,*recV1,*recU2,*recV2;
+    time_t t1,t2;
+    if (!ok) {
+        return;
+    }
+
+    if(!getInterpolationParam(currentDate,&t1,&t2,&recU1,&recV1,&recU2,&recV2))
+        return;
+    int sz=1;
+    if(showWindArrows)
+    {
+        if (barbules)
+            space =  windBarbuleSpace;
+        else
+            space =  windArrowSpace;
+
+        W_s=W/space+1;
+        H_s=H/space+1;
+        sz=W_s*H_s;
+    }
+    QVector<double> u_tab(sz,-1.0);
+    QVector<double> v_tab(sz);
+    QVector<bool> y_tab(sz);
+
+    image.fill(Qt::transparent);
+
+    int pass=-1;
+    GribThreadData g;
+    g.cD=currentDate;
+    g.recU1=recU1;
+    g.recU2=recU2;
+    g.recV1=recV1;
+    g.recV2=recV2;
+    g.tN=t1;
+    g.tP=t2;
+    g.interpolMode=this->getInterpolationMode();
+    g.smooth=smooth;
+    g.grib=this;
+    QList<GribThreadData> windData;
+    windData.reserve(W*H);
+    for (i=0; i<W-2; i+=2)
+    {
+        for (j=0; j<H-2; j+=2)
+        {
+            proj->screen2map(i,j, &x, &y);
+            g.p=QPointF(x,y);
+            windData.append(g);
+        }
+    }
+#if 0
+    qWarning()<<"Multithreading disabled for grib in debug mode";
+    QList<GribThreadResult> windResults;
+    foreach (const GribThreadData &gg,windData)
+        windResults.append(interpolateThreaded(gg));
+#else
+    QList<GribThreadResult> windResults  = QtConcurrent::blockingMapped(windData, interpolateThreaded);
+#endif
+    int indice;
+    for (i=0; i<W-2; i+=2)
+    {
+        for (j=0; j<H-2; j+=2)
+        {
+            ++pass;
+            if(windResults.at(pass).tws!=-1)
+            {
+                if(showWindArrows && i%space==0 && j%space==0)
+                {
+                    int i_s=i/space;
+                    int j_s=j/space;
+                    indice=i_s*H_s+j_s;
+                    u_tab[indice]=windResults.at(pass).tws;
+                    v_tab[indice]=windResults.at(pass).twd;
+                    y_tab[indice]=windData.at(pass).p.y()<0;
+                }
+                const QRgb rg=windResults.at(pass).rgb;
+                image.setPixel(i,  j,rg);
+                image.setPixel(i+1,j,rg);
+                image.setPixel(i,  j+1,rg);
+                image.setPixel(i+1,j+1,rg);
+            }
+        }
+    }
+
+    pnt.drawImage(0,0,image);
+
+    if(showWindArrows)
+    {
+        for (i=0; i<W_s; ++i)
+        {
+            for (j=0; j<H_s; ++j)
+            {
+                indice=i*H_s+j;
+                u=u_tab.at(indice);
+
+                if(u<0)
+                    continue;
+                v=v_tab.at(indice);
+                if (barbules)
+                    drawWindArrowWithBarbs(pnt, i*space,j*space, u,v, y_tab.at(indice));
+                else
+                    drawWindArrow(pnt, i*space,j*space, v);
+
+            }
+        }
+    }
+#if 0
+    qWarning()<<"old way"<<msec1<<"new way"<<time.elapsed();
+#endif
 }
 //--------------------------------------------------------------------------
 // Carte de couleurs du courant

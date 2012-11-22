@@ -887,6 +887,10 @@ void POI::slot_setWP_ask()
 void POI::slot_setWP()
 {
     this->partOfTwa=false;
+    if(parent->getSelectedBoat()->getLockStatus()){
+        chkIsWP();
+        return;
+    }
     VLMBoardIsBusy=true;
     emit chgWP(lat,lon,wph);
 }

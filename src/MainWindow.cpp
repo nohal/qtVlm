@@ -108,6 +108,7 @@ void MainWindow::connectSignals()
     connect(mb->acFile_Load_SAILSDOC_GRIB, SIGNAL(triggered()), my_centralWidget, SLOT(slotLoadSailsDocGrib()));
     connect(mb->acFile_Info_GRIB, SIGNAL(triggered()), my_centralWidget, SLOT(slot_fileInfo_GRIB()));
     connect(mb->acFile_Quit, SIGNAL(triggered()), this, SLOT(slotFile_Quit()));
+    connect(mb->acFile_Lock, SIGNAL(triggered()), this, SLOT(slotFile_Lock()));
     connect(mb->acFile_QuitNoSave, SIGNAL(triggered()), this, SLOT(slotFile_QuitNoSave()));
 
 
@@ -306,6 +307,11 @@ void MainWindow::continueSetup()
         my_centralWidget->setAboutToQuit();
         QApplication::quit();
     }
+    if(!QFile(appFolder.value("img")+"unlock.png").exists())
+        QMessageBox::critical (this,
+           tr("Erreur"),
+           tr("Icon 'unlock.png' cannot be find in img directory")+"<br>"+tr("Please check your installation"));
+
 
     dialogProxy = new DialogProxy();
 
@@ -364,6 +370,8 @@ void MainWindow::continueSetup()
     toolBar->setMovable(false);
     toolBar->addAction(menuBar->acFile_Quit);
     toolBar->addSeparator();
+    toolBar->addAction(menuBar->acFile_Lock);
+    this->separator1=toolBar->addSeparator();
     toolBar->addAction(menuBar->acFile_Open);
     toolBar->addAction(menuBar->acFile_Load_GRIB);
     toolBar->addAction(menuBar->acFile_Load_VLM_GRIB);
@@ -695,6 +703,10 @@ void MainWindow::slot_deleteProgress (void)
         this->my_centralWidget->setAboutToQuit();
     else if(selectedBoat && selectedBoat->getType()==BOAT_REAL)
     {
+        menuBar->acFile_Lock->setEnabled(false);
+        menuBar->acFile_Lock->setVisible(false);
+        menuBar->separator1->setVisible(false);
+        this->separator1->setVisible(false);
         proj->setScaleAndCenterInMap(selectedBoat->getZoom(),selectedBoat->getLon(),selectedBoat->getLat());
         if(Settings::getSetting("polarEfficiency",100).toInt()!=100)
         {
@@ -963,6 +975,20 @@ void MainWindow::slotHelp_AProposQT() {
 }
 
 //-------------------------------------------------
+void MainWindow::slotFile_Lock(bool readOnly)
+{
+    if(!selectedBoat) return;
+
+    if(!readOnly)
+        selectedBoat->setLockStatus(!selectedBoat->getLockStatus());
+    QIcon ic;
+    if(selectedBoat->getLockStatus())
+        ic=QIcon(appFolder.value("img")+"lock.png");
+    else
+        ic=QIcon(appFolder.value("img")+"unlock.png");
+    menuBar->acFile_Lock->setIcon(ic);
+}
+
 void MainWindow::slotFile_Quit() {
     my_centralWidget->setAboutToQuit();
     QApplication::quit();
@@ -1892,7 +1918,8 @@ void MainWindow::slotSelectBoat(boat* newSelect)
             {
                 //qWarning() << "getData from slot_selectBoat";
                 ((boatVLM*)newSelect)->slot_getData(false);
-                menuBar->acPilototo->setEnabled(!newSelect->getLockStatus());
+                menuBar->acPilototo->setEnabled(true);
+                slotFile_Lock(true);
             }
 
             slotDateGribChanged_now(false);
@@ -1960,6 +1987,9 @@ void MainWindow::slotChgBoat(int num)
                         break;
                     }
                 }
+                slotFile_Lock(true);
+                myBoard->VLMBoard()->setChangeStatus(!selectedBoat->getLockStatus());
+
                 break;
             }
             ++cnt;
@@ -2071,6 +2101,7 @@ void MainWindow::slotAccountListUpdated(void)
 
 void MainWindow::slotChgWP(double lat,double lon, double wph)
 {
+    if(selectedBoat->getLockStatus()) return;
     if(this->selectedBoat->getType()==BOAT_VLM)
     {
         if(myBoard->VLMBoard())
@@ -2124,7 +2155,7 @@ void MainWindow::slotBoatLockStatusChanged(boat* boat,bool status)
             emit setChangeStatus(status);
             menuBar->acPilototo->setEnabled(!status);
             menuBar->acVLMSync->setEnabled(true);
-            myBoard->VLMBoard()->btn_Pilototo->setEnabled(!status);
+            myBoard->VLMBoard()->btn_Pilototo->setEnabled(true);
         }
     }
 }
@@ -2157,11 +2188,8 @@ void MainWindow::slotPilototo(void)
     }
     else
     {
-        if(!getBoatLockStatus())
-        {
-            emit editInstructions();
-            ((boatVLM*)selectedBoat)->slot_getData(true);
-        }
+        emit editInstructions();
+        ((boatVLM*)selectedBoat)->slot_getData(true);
     }
 }
 void MainWindow::setPilototoFromRoute(ROUTE *route)

@@ -1019,39 +1019,39 @@ Etes-vous sur ?</source>
     </message>
     <message>
         <source>Attention!</source>
-        <translation>Attention!</translation>
+        <translation type="obsolete">Attention!</translation>
     </message>
     <message>
         <source>Le bateau courant n&apos;est pas un bateau VLM!</source>
-        <translation>Le bateau courant n&apos;est pas un bateau VLM!</translation>
+        <translation type="obsolete">Le bateau courant n&apos;est pas un bateau VLM!</translation>
     </message>
     <message>
         <source>La route ne doit pas etre vide pour pouvoir etre chargee depuis VLM.</source>
-        <translation>La route ne doit pas être vide pour pouvoir être chargée depuis VLM.</translation>
+        <translation type="obsolete">La route ne doit pas être vide pour pouvoir être chargée depuis VLM.</translation>
     </message>
     <message>
         <source>Le bateau ne navigue pas actuellement vers un POI</source>
-        <translation>Le bateau ne navigue pas actuellement vers un POI.</translation>
+        <translation type="obsolete">Le bateau ne navigue pas actuellement vers un POI.</translation>
     </message>
     <message>
         <source>L&apos;instruction #%1 n&apos;a pas de POI, elle sera ignoree.</source>
-        <translation>L&apos;instruction #%1 n&apos;a pas de POI, elle sera ignorée.</translation>
+        <translation type="obsolete">L&apos;instruction #%1 n&apos;a pas de POI, elle sera ignorée.</translation>
     </message>
     <message>
         <source>La route etait plus courte que le pilototo, seuls les premiers points ont ete charges.</source>
-        <translation>La route était plus courte que le pilototo, seuls les premiers points ont été chargés.</translation>
+        <translation type="obsolete">La route était plus courte que le pilototo, seuls les premiers points ont été chargés.</translation>
     </message>
     <message>
         <source>Information</source>
-        <translation>Information</translation>
+        <translation type="obsolete">Information</translation>
     </message>
     <message>
         <source>Les premiers points de la route ont ete charges depuis VLM.</source>
-        <translation>Les premiers points de la route ont été chargés depuis VLM.</translation>
+        <translation type="obsolete">Les premiers points de la route ont été chargés depuis VLM.</translation>
     </message>
     <message>
         <source>La route a ete chargee depuis VLM.</source>
-        <translation>La route a été chargée depuis VLM.</translation>
+        <translation type="obsolete">La route a été chargée depuis VLM.</translation>
     </message>
 </context>
 <context>
@@ -1685,6 +1685,14 @@ Etes-vous sur ?</source>
     <message>
         <source>Updating boats</source>
         <translation>Mise à jour des bateaux</translation>
+    </message>
+    <message>
+        <source>Icon &apos;unlock.png&apos; cannot be find in img directory</source>
+        <translation>Le fichier icone &apos;unlock.png&apos; n&apos;existe pas dans votre répertoire &apos;img&apos;</translation>
+    </message>
+    <message>
+        <source>Please check your installation</source>
+        <translation>Veuillez vérifier votre installation</translation>
     </message>
 </context>
 <context>
@@ -2544,6 +2552,18 @@ Etes-vous sur ?</source>
     <message>
         <source>Fermer le GRIB Courants</source>
         <translation></translation>
+    </message>
+    <message>
+        <source>Verrouiller</source>
+        <translation>Verrouiller/déverrouiller l&apos;envoi d&apos;ordres à VLM</translation>
+    </message>
+    <message>
+        <source>Ctrl+L</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Verrouiller l&apos;envoi d&apos;ordre a VLM</source>
+        <translation>Verrouiller/déverrouiller l&apos;envoi d&apos;ordres à VLM</translation>
     </message>
 </context>
 <context>
@@ -4092,7 +4112,7 @@ sans simplifier</translation>
     </message>
     <message>
         <source>Charger VLM</source>
-        <translation>Charger VLM</translation>
+        <translation type="obsolete">Charger VLM</translation>
     </message>
 </context>
 <context>

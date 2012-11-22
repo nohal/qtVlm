@@ -194,6 +194,7 @@ class ROUTAGE : public QObject
         QList<vlmLine*> getIsochrones(){return isochrones;}
         void setColorGrib(const bool &b){this->colorGrib=b;}
         bool getColorGrib(){return this->colorGrib;}
+        bool getArrived() const {return this->arrived;}
     public slots:
         void slot_edit();
         void slot_abort(){this->aborted=true;}
