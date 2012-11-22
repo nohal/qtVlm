@@ -228,6 +228,11 @@ void POI::createPopUpMenu(void)
     ac_copyRoute->setEnabled(false);;
     connect(ac_copyRoute,SIGNAL(triggered()),this,SLOT(slot_copyRoute()));
 
+    ac_zoomRoute = new QAction(tr("Zoom sur la route "),popup);
+    ac_zoomRoute->setEnabled(false);
+    popup->addAction(ac_zoomRoute);
+    connect(ac_zoomRoute,SIGNAL(triggered()),this,SLOT(slot_zoomRoute()));
+
     ac_delRoute = new QAction(tr("Supprimer la route "),popup);
     ac_delRoute->setData(QVariant(QMetaType::VoidStar, &route));
     ac_delRoute->setEnabled(false);
@@ -465,6 +470,7 @@ void POI::contextMenuEvent(QGraphicsSceneContextMenuEvent * e)
         ac_delRoute->setData(QVariant(QMetaType::VoidStar, &route));
         ac_editRoute->setEnabled(false);
         ac_copyRoute->setEnabled(false);
+        ac_zoomRoute->setEnabled(false);
     }
     else
     {
@@ -474,15 +480,13 @@ void POI::contextMenuEvent(QGraphicsSceneContextMenuEvent * e)
         ac_delPoi->setEnabled(true);
         ac_copy->setEnabled(true);
         ac_routeList->setEnabled(true);
-        ac_delRoute->setEnabled(true);
-        ac_editRoute->setEnabled(true);
-        ac_copyRoute->setEnabled(true);
         ac_delRoute->setData(QVariant(QMetaType::VoidStar, &route));
         if(route==NULL)
         {
             ac_delRoute->setEnabled(false);
             ac_editRoute->setEnabled(false);
             ac_copyRoute->setEnabled(false);
+            ac_zoomRoute->setEnabled(false);
         }
         else
         {
@@ -492,6 +496,8 @@ void POI::contextMenuEvent(QGraphicsSceneContextMenuEvent * e)
             ac_editRoute->setEnabled(true);
             ac_copyRoute->setText(tr("Copier la route ")+route->getName());
             ac_copyRoute->setEnabled(true);
+            ac_zoomRoute->setText(tr("Zoom sur la route ")+route->getName());
+            ac_zoomRoute->setEnabled(true);
         }
         /*clear current actions */
         ac_routeList->clear();
@@ -774,6 +780,47 @@ void POI::slot_editRoute()
     if (this->route==NULL) return;
     parent->slot_editRoute(route);
 }
+void POI::slot_zoomRoute()
+{
+   if (this->route == NULL) return;
+
+   double   xW, xE, yN, yS;
+
+   QList<POI*>&                 route = this->route->getPoiList();
+   QList<POI*>::const_iterator  poi   = route.begin();
+   if (poi == route.end()) return;
+
+   if (this->route->getStartFromBoat()) {
+      xW = xE = this->route->getBoat()->getLon();
+      yN = yS = this->route->getBoat()->getLat();
+   } else {
+      xW = xE = (*poi)->getLongitude();
+      yN = yS = (*poi)->getLatitude();
+      ++poi;
+   }
+
+   for (; poi != route.end(); ++poi) {
+      const double  lon = (*poi)->getLongitude();
+      if (lon < xW) {
+         if (xW-lon < 180)
+            xW = lon;
+         else if (lon+360 > xE)
+            xE = lon+360;
+      } else if (lon > xE) {
+         if (lon-xE < 180)
+            xE = lon;
+         else if (lon-360 < xW)
+            xW = lon-360;
+      }
+      const double  lat = (*poi)->getLatitude();
+      if (lat < yS) yS  = lat;
+      if (lat > yN) yN  = lat;
+   }
+
+   qWarning() << "Zooming to" << xW << "-" << xE << "by" << yS << "-" << yN;
+   proj->zoomOnZone (xW,yN,xE,yS);
+   proj->setScale (proj->getScale()*.9);
+}
 void POI::slotCompassLine()
 {
     double i1,j1;
@@ -840,6 +887,10 @@ void POI::slot_setWP_ask()
 void POI::slot_setWP()
 {
     this->partOfTwa=false;
+    if(parent->getSelectedBoat()->getLockStatus()){
+        chkIsWP();
+        return;
+    }
     VLMBoardIsBusy=true;
     emit chgWP(lat,lon,wph);
 }

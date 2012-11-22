@@ -738,6 +738,7 @@ ROUTAGE::ROUTAGE(QString name, Projection *proj, Grib *grib, QGraphicsScene * my
     this->width=3;
     this->startTime= QDateTime().fromTime_t(parent->getNextVac()).toUTC();
     this->eta=startTime.toTime_t();
+    this->etaStart=eta;
     this->whatIfDate=startTime;
     this->whatIfUsed=false;
     this->whatIfTime=0;
@@ -885,9 +886,9 @@ void ROUTAGE::calculate()
     if(!i_iso)
     {
         if(!isPivot)
-            eta=startTime.toUTC().toTime_t()+myBoat->getVacLen();
+            eta=etaStart+myBoat->getVacLen();
         else
-            eta=startTime.toUTC().toTime_t();
+            eta=etaStart;
     }
     else
         i_eta=eta;
@@ -1172,7 +1173,7 @@ void ROUTAGE::slot_calculate()
             {
                 minDist=list->at(n).distArrival;
                 distStart=list->at(n).distStart;
-                if(!i_iso && distStart>0 && ((eta-this->startTime.toTime_t())*minDist)/distStart < 12*3600)
+                if(!i_iso && distStart>0 && ((eta-etaStart)*minDist)/distStart < 12*3600)
                     approaching=true;
             }
             double windSpeed,windAngle;
@@ -3174,6 +3175,7 @@ void ROUTAGE::setFromRoutage(ROUTAGE *fromRoutage, bool editOptions)
     this->myBoat=fromRoutage->getBoat();
     this->startTime= startTime.fromTime_t(pivotPoint.eta);
     this->eta=startTime.toTime_t();
+    this->etaStart=eta;
     this->whatIfDate=fromRoutage->getWhatIfDate();
     this->whatIfUsed=fromRoutage->getWhatIfUsed();
     this->whatIfTime=fromRoutage->getWhatIfTime();
@@ -3261,25 +3263,15 @@ void ROUTAGE::createPopupMenu()
 }
 double ROUTAGE::getTimeStep() const
 {
+    if(timeStepLess24==timeStepMore24) return timeStepLess24; //cover also the case of i_iso
     double step;
-    if(!i_iso)
-    {
-        if(arrived) step = this->timeStepLess24;
-        if(approaching || this->eta-this->startTime.toTime_t()<=24*60*60)
-            step = this->timeStepLess24;
-        else
-            step = this->timeStepMore24;
-        if(!isPivot && this->isochrones.count()==1)
-            step-=myBoat->getVacLen()/60.0;
-    }
+    if(arrived) step = this->timeStepLess24;
+    if(approaching || eta-etaStart<=24*60*60)
+        step = this->timeStepLess24;
     else
-    {
-        if(i_isochrones.count()>=isochrones.count()-1 || i_isochrones.count()<=1)
-            step =  timeStepLess24;
-        int inc=arrived?1:0;
-        step = qAbs((result->getPoints()->at(i_isochrones.count()+inc).eta-
-                result->getPoints()->at(i_isochrones.count()+inc-1).eta)/60.0);
-    }
+        step = this->timeStepMore24;
+    if(!isPivot && this->isochrones.count()==1)
+        step-=myBoat->getVacLen()/60.0;
     return step;
 }
 void ROUTAGE::calculateInverse()
@@ -3291,9 +3283,13 @@ void ROUTAGE::calculateInverse()
     col.setAlpha(160);
     Pen.setColor(col);
     Pen.setBrush(col);
+    if(!this->showIso)
+        this->setShowIso(true);
+    if(this->colorGrib)
+        this->setColorGrib(false);
     foreach(vlmLine *isoc,isochrones)
         isoc->setLinePen(Pen);
-    foreach(vlmLine* seg,segments)
+    foreach(vlmLine *seg,segments)
         seg->setHidden(true);
     this->calculate();
 }
@@ -3309,8 +3305,8 @@ void ROUTAGE::showIsoRoute()
     while (true)
     {
         goal=qMax(0.0,goal+goalInc);
-        if(goal>.99) break;
-        //if(goal>.1) break;
+        //if(goal>.99) break;
+        if(goal>0.3) break;
         int i=isochrones.count();
         int ii=0;
         QList<vlmPoint> left,right;

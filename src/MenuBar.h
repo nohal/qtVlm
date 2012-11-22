@@ -117,6 +117,8 @@ public:
     QAction *acFile_Load_SAILSDOC_GRIB;
     QAction *acFile_Info_GRIB;
     QAction *acFile_Quit;
+    QAction *acFile_Lock;
+    QAction *separator1;
     QAction *acFile_QuitNoSave;
     QMenu   *mn_img;
     QAction *acImg_Open;

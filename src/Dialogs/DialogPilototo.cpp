@@ -85,6 +85,8 @@ DialogPilototo::DialogPilototo(MainWindow *main,myCentralWidget * parent,inetCon
 
 void DialogPilototo::updateDrawList(void)
 {
+    this->btn_addInstruction->setDisabled(parent->getSelectedBoat()->getLockStatus());
+    this->pushButton_3->setDisabled(parent->getSelectedBoat()->getLockStatus());
     bool added;
     /* remove all instruction from screen */
     for(int i=0;i<drawList.count();++i)

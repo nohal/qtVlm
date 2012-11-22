@@ -423,6 +423,7 @@ void boardVLM::setWP(double lat,double lon,double wph)
 //    QString debug;
 //    debug=debug.sprintf("sending WPLon %.10f WPLat %.10f @WP %.10f",lon,lat,wph);
 //    qWarning()<<debug;
+    if(currentBoat()->getLockStatus()) return;
     if(confirmChange(tr("Confirmer le changement du WP"),tr("WP change")))
        sendCmd(VLM_CMD_WP,lat,lon,wph);
 }
@@ -892,12 +893,15 @@ void boardVLM::setChangeStatus(bool status)
 {
     bool st=!status;
     btn_chgHeading->setEnabled(st);
+    ClearPilot->setEnabled(st);
+
     editHeading->setEnabled(st);
     btn_virer->setEnabled(st);
     btn_chgAngle->setEnabled(st);
     editAngle->setEnabled(st);
     goPilotOrtho->setEnabled(st);
     goVMG->setEnabled(st);
+    goVBVMG->setEnabled(st);
     btn_WP->setEnabled(st);
     btn_Synch->setEnabled(!((MainWindow*)mainWin)->get_selPOI_instruction());
 }

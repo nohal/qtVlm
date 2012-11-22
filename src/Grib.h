@@ -44,6 +44,23 @@ Lecture mise en memoire d'un fichier GRIB
 #include "dataDef.h"
 #include "zuFile.h"
 
+struct GribThreadData
+{
+    QPointF p;
+    time_t  cD, tP, tN;
+    GribRecord *recU1, *recV1, *recU2, *recV2;
+    int interpolMode;
+    bool smooth;
+    Grib * grib;
+};
+Q_DECLARE_TYPEINFO(GribThreadData,Q_PRIMITIVE_TYPE);
+struct GribThreadResult
+{
+    double tws;
+    double twd;
+    QRgb rgb;
+};
+Q_DECLARE_TYPEINFO(GribThreadResult,Q_PRIMITIVE_TYPE);
 
 //===============================================================
 class Grib
@@ -88,6 +105,9 @@ class Grib
         bool getInterpolatedValueCurrent_byDates(double d_long, double d_lat, time_t now,double * u, double * v,
                                           int interpolation_type=INTERPOLATION_UKN,bool debug=false);
 
+        bool getInterpolatedValue_byDates(double d_long, double d_lat, time_t now, time_t t1,time_t t2,
+                                              GribRecord *recU1,GribRecord *recV1,GribRecord *recU2,GribRecord *recV2,
+                                              double * u, double * v,int interpolation_type=INTERPOLATION_UKN,bool debug=false);
         // Rectangle de la zone couverte par les donnees
         bool getZoneExtension (double *x0,double *y0, double *x1,double *y1);
 
@@ -100,6 +120,7 @@ class Grib
         double  getIsotherms0Step() const {return isotherms0Step;}
 
         // Carte de couleurs du vent
+        void draw_WIND_Color_old(QPainter &pnt, const Projection *proj, bool smooth, bool showWindArrows, bool barbules);
         void draw_WIND_Color(QPainter &pnt, const Projection *proj, bool smooth,
                                bool showWindArrows,bool barbules);
         void draw_CURRENT_Color(QPainter &pnt, const Projection *proj, bool smooth,
@@ -139,7 +160,7 @@ class Grib
         void setIsCurrentGrib(){this->isCurrentGrib=true;}
         void setGribCurrent(Grib * g){this->gribCurrent=g;}
 
-    private:
+private:
         bool   ok;
         bool   isCurrentGrib;
         std::string fname;
@@ -197,9 +218,6 @@ class Grib
         bool getInterpolationParamCurrent(time_t now,time_t * t1,time_t * t2,GribRecord ** recU1,GribRecord ** recV1,
                            GribRecord ** recU2,GribRecord ** recV2,bool debug=false);
 
-        bool getInterpolatedValue_byDates(double d_long, double d_lat, time_t now, time_t t1,time_t t2,
-                                              GribRecord *recU1,GribRecord *recV1,GribRecord *recU2,GribRecord *recV2,
-                                              double * u, double * v,int interpolation_type=INTERPOLATION_UKN,bool debug=false);
         bool getGribRecordArroundDates(int dataType,int levelType,int levelValue,
                                         time_t now,time_t * tPrev,time_t * tNxt,
                                         GribRecord ** recPrev,GribRecord ** recNxt);

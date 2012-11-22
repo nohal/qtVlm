@@ -49,6 +49,9 @@ MenuBar::MenuBar(QWidget *parent)
         acFile_QuitNoSave = addAction(menuFile,
                     tr("Quitter sans sauver"), tr("Ctrl+Shift+Q"), tr("Bye"), appFolder.value("img")+"exit2.png");
         menuFile->addSeparator();
+        acFile_Lock = addAction(menuFile,
+                    tr("Verrouiller"), tr("Ctrl+L"), tr("Verrouiller l'envoi d'ordre a VLM"), appFolder.value("img")+"unlock.png");
+        separator1=menuFile->addSeparator();
         mn_img=new QMenu(tr("Gestion des fichiers KAP"));
         acImg_Open = addAction(mn_img, tr("Ouvrir un fichier KAP"), "", tr(""));
         mn_img->addAction(acImg_Open);

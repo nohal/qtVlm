@@ -148,6 +148,7 @@ class POI : public QGraphicsWidget
         void slotCompassLine();
         void slot_editRoute();
         void slot_copyRoute();
+        void slot_zoomRoute();
         void slot_relier();
         void slot_pilote();
         void slot_notSimplificable(bool b){this->notSimplificable=b;}
@@ -212,6 +213,7 @@ class POI : public QGraphicsWidget
         QAction * ac_delRoute;
         QAction * ac_editRoute;
         QAction * ac_copyRoute;
+        QAction * ac_zoomRoute;
         QAction * ac_copy;
         QAction * ac_compassLine;
         QAction * ac_twaLine;

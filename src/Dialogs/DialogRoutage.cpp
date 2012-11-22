@@ -248,6 +248,9 @@ DialogRoutage::DialogRoutage(ROUTAGE *routage,myCentralWidget *parent)
         this->minPortant->setDisabled(false);
         this->Default->setDisabled(false);
     }
+    if(routage->isDone() && !routage->getArrived())
+        i_iso->setEnabled(false);
+
 }
 DialogRoutage::~DialogRoutage()
 {

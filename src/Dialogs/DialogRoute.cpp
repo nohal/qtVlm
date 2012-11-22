@@ -255,6 +255,8 @@ DialogRoute::DialogRoute(ROUTE *route,myCentralWidget *parent)
     drawBoat.quadTo(12,22,17,30);
     drawBoat.lineTo(23,30);
     drawBoat.quadTo(28,22,20,10);
+    if(route->getBoat()->getLockStatus())
+        this->Envoyer->setDisabled(true);
 }
 DialogRoute::~DialogRoute()
 {
