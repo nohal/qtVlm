@@ -159,6 +159,7 @@ class Grib
         QRgb   getWindColor     (const double v, const bool smooth);
         void setIsCurrentGrib(){this->isCurrentGrib=true;}
         void setGribCurrent(Grib * g){this->gribCurrent=g;}
+        void setGribMonoCpu(const bool &b){this->gribMonoCpu=b;}
 
 private:
         bool   ok;
@@ -270,6 +271,7 @@ private:
         double  isotherms0Step;          // Ecart entre isothermes 0C
         Grib * gribCurrent;
         bool findCompression();
+        bool gribMonoCpu;
 };
 Q_DECLARE_TYPEINFO(Grib,Q_MOVABLE_TYPE);
 

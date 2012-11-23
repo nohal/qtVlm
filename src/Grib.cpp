@@ -77,6 +77,7 @@ void Grib::initNewGrib()
 #ifdef __QTVLM_WITH_TEST
     nbWarning=0;
 #endif
+    this->gribMonoCpu=Settings::getSetting("gribMonoCpu",0).toInt()==1;
     QString interpol_name[4] = { "UKN", "TWSA", "selecive TWSA", "Hybride" };
 
     interpolation_param = INTERPOLATION_DEFAULT;
@@ -1394,7 +1395,7 @@ void Grib::draw_WIND_Color(QPainter &pnt, const Projection *proj, bool smooth,
 {
 //    QTime timeG;
 //    int msecsG=0;
-    if(QThread::idealThreadCount()<=1)
+    if(gribMonoCpu || QThread::idealThreadCount()<=1)
     {
         draw_WIND_Color_old(pnt,proj,smooth,showWindArrows,barbules);
         return;

@@ -130,6 +130,13 @@
             </property>
            </widget>
           </item>
+          <item>
+           <widget class="QCheckBox" name="gribMonoCpu">
+            <property name="text">
+             <string>Do not use multi-threading for drawing grib</string>
+            </property>
+           </widget>
+          </item>
          </layout>
         </widget>
        </item>
@@ -1274,13 +1281,31 @@
   </layout>
  </widget>
  <tabstops>
-  <tabstop>tabWidget</tabstop>
   <tabstop>buttonBox</tabstop>
+  <tabstop>opp_labelType</tabstop>
+  <tabstop>chkPavillon</tabstop>
   <tabstop>defFontName</tabstop>
   <tabstop>defFontSize</tabstop>
+  <tabstop>classicalButtons</tabstop>
+  <tabstop>gribMonoCpu</tabstop>
+  <tabstop>pushButton_7</tabstop>
+  <tabstop>pushButton</tabstop>
+  <tabstop>pushButton_3</tabstop>
+  <tabstop>pushButton_6</tabstop>
+  <tabstop>pushButton_5</tabstop>
+  <tabstop>pushButton_2</tabstop>
+  <tabstop>pushButton_4</tabstop>
+  <tabstop>radioBtn_time</tabstop>
+  <tabstop>estimeVal_time</tabstop>
+  <tabstop>radioBtn_vac</tabstop>
+  <tabstop>estimeVal_vac</tabstop>
+  <tabstop>radioBtn_dist</tabstop>
+  <tabstop>estimeVal_dist</tabstop>
   <tabstop>chk_centerOnSynch</tabstop>
   <tabstop>chk_centerOnBoatChange</tabstop>
   <tabstop>chk_askConfirm</tabstop>
+  <tabstop>speedLossOnTackReal</tabstop>
+  <tabstop>speedLossOnTackVlm</tabstop>
   <tabstop>chkHideRoute</tabstop>
   <tabstop>autoRemove</tabstop>
   <tabstop>autoAt</tabstop>
@@ -1288,6 +1313,7 @@
   <tabstop>routeSortBySequence</tabstop>
   <tabstop>trace_length</tabstop>
   <tabstop>speedReplay</tabstop>
+  <tabstop>chk_oppTrace</tabstop>
   <tabstop>chk_showCompass</tabstop>
   <tabstop>chk_showPolar</tabstop>
   <tabstop>chk_scalePolarF</tabstop>
@@ -1305,27 +1331,10 @@
   <tabstop>chk_forceUserAgent</tabstop>
   <tabstop>userAgent</tabstop>
   <tabstop>url_list</tabstop>
-  <tabstop>opp_labelType</tabstop>
-  <tabstop>chkPavillon</tabstop>
-  <tabstop>classicalButtons</tabstop>
-  <tabstop>pushButton_2</tabstop>
-  <tabstop>pushButton_5</tabstop>
-  <tabstop>pushButton</tabstop>
-  <tabstop>pushButton_6</tabstop>
-  <tabstop>pushButton_3</tabstop>
-  <tabstop>pushButton_4</tabstop>
-  <tabstop>radioBtn_vac</tabstop>
-  <tabstop>radioBtn_dist</tabstop>
-  <tabstop>estimeVal_time</tabstop>
-  <tabstop>estimeVal_vac</tabstop>
-  <tabstop>radioBtn_time</tabstop>
-  <tabstop>estimeVal_dist</tabstop>
-  <tabstop>speedLossOnTackReal</tabstop>
-  <tabstop>speedLossOnTackVlm</tabstop>
-  <tabstop>chk_oppTrace</tabstop>
   <tabstop>interpolHyb</tabstop>
   <tabstop>interpolTWSA</tabstop>
   <tabstop>interpolSelect</tabstop>
+  <tabstop>tabWidget</tabstop>
  </tabstops>
  <resources/>
  <connections>

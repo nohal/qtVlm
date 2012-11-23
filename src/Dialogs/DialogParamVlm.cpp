@@ -49,6 +49,13 @@ DialogParamVlm::DialogParamVlm(MainWindow * main,myCentralWidget * parent) : QDi
     QString mapsFolderString = Settings::getSetting("mapsFolder",appFolder.value("maps")).toString();
     mapsFolder->setText(mapsFolderString);
     mapsFolder->setToolTip(mapsFolderString);
+    if(QThread::idealThreadCount()<=1)
+    {
+        this->gribMonoCpu->setChecked(true);
+        this->gribMonoCpu->setEnabled(false);
+    }
+    else
+        this->gribMonoCpu->setChecked(Settings::getSetting("gribMonoCpu",0).toInt()==1);
 
 
     /* Colors */
@@ -178,6 +185,7 @@ void DialogParamVlm::done(int result)
         Settings::setSetting("opp_labelType",QString().setNum(opp_labelType->currentIndex()));
         Settings::setSetting("showFlag",this->chkPavillon->checkState()==Qt::Checked?"1":"0");
         Settings::setSetting("classicalButtons",this->classicalButtons->checkState()==Qt::Checked?"1":"0");
+        Settings::setSetting("gribMonoCpu",this->gribMonoCpu->checkState()==Qt::Checked?"1":"0");
         Settings::setSetting("defaultFontName",this->defFontName->currentText());
         Settings::setSetting("defaultFontSizeInc",QString().setNum(this->defFontSize->value()-8.25));
 
