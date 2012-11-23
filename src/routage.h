@@ -103,7 +103,7 @@ class ROUTAGE : public QObject
         bool getRouteFromBoat() const {return this->routeFromBoat;}
         void setRouteFromBoat(const bool &b){this->routeFromBoat=b;}
 
-        void setStartTime(const QDateTime &date){this->startTime=date;}
+        void setStartTime(const QDateTime &date){this->startTime=date;this->etaStart=date.toTime_t();}
         QDateTime getStartTime() const {return this->startTime.toUTC();}
         void setWhatIfDate(const QDateTime &date){this->whatIfDate=date;}
         const QDateTime getWhatIfDate() const {return this->whatIfDate.toUTC();}
