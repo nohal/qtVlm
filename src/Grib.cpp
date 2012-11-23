@@ -1443,7 +1443,7 @@ void Grib::draw_WIND_Color(QPainter &pnt, const Projection *proj, bool smooth,
 
         W_s=W/space+1;
         H_s=H/space+1;
-        sz=W_s*H_s;
+        sz=(W_s+2)*(H_s+2);
     }
     QVector<double> u_tab(sz,-1.0);
     QVector<double> v_tab(sz);
