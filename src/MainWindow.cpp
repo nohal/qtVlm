@@ -2446,5 +2446,7 @@ void MainWindow::slot_ParamVLMchanged()
             tool_ESTIMEUNIT->setText(tr(" mins "));
             menuBar->estime->setValue(0);
     }
+    if(my_centralWidget->getGrib() && my_centralWidget->getGrib()->isOk())
+        my_centralWidget->getGrib()->setGribMonoCpu(Settings::getSetting("gribMonoCpu",0).toInt()==1);
 
 }

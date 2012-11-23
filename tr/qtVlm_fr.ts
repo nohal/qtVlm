@@ -4501,6 +4501,10 @@ sans simplifier</translation>
         <source>TextLabel</source>
         <translation></translation>
     </message>
+    <message>
+        <source>Do not use multi-threading for drawing grib</source>
+        <translation>Ne pas utiliser le mode multiThreading pour afficher le grib</translation>
+    </message>
 </context>
 <context>
     <name>WP_dialog_ui</name>

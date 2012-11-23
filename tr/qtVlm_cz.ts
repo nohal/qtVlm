@@ -721,28 +721,28 @@ La bo�te � cocher trace partielle s&apos;active apres l&apos;entree d&apos;u
         <translation>Číslo</translation>
     </message>
     <message>
-        <location filename="../src/Dialogs/DialogParamVlm.cpp" line="292"/>
+        <location filename="../src/Dialogs/DialogParamVlm.cpp" line="300"/>
         <source>Select maps folder</source>
         <translation>Vyber složku map</translation>
     </message>
     <message>
-        <location filename="../src/Dialogs/DialogParamVlm.cpp" line="303"/>
-        <location filename="../src/Dialogs/DialogParamVlm.cpp" line="306"/>
+        <location filename="../src/Dialogs/DialogParamVlm.cpp" line="311"/>
+        <location filename="../src/Dialogs/DialogParamVlm.cpp" line="314"/>
         <source>Changing maps folder</source>
         <translation>Měním složku map</translation>
     </message>
     <message>
-        <location filename="../src/Dialogs/DialogParamVlm.cpp" line="303"/>
+        <location filename="../src/Dialogs/DialogParamVlm.cpp" line="311"/>
         <source>Selected folder doesn&apos;t contain maps</source>
         <translation>Vybraná složka neobsahuje mapy</translation>
     </message>
     <message>
-        <location filename="../src/Dialogs/DialogParamVlm.cpp" line="306"/>
+        <location filename="../src/Dialogs/DialogParamVlm.cpp" line="314"/>
         <source>Selected folder contains maps with wrong version</source>
         <translation>Vybraná složka obsahuje špatnou verzi map</translation>
     </message>
     <message>
-        <location filename="../src/Dialogs/DialogParamVlm.cpp" line="440"/>
+        <location filename="../src/Dialogs/DialogParamVlm.cpp" line="448"/>
         <source>Repertoire Grib</source>
         <translation>Složka Grib</translation>
     </message>
@@ -6034,12 +6034,12 @@ bez zjednodušení</translation>
         <translation>Kreslit vlajky na mapě (F)</translation>
     </message>
     <message>
-        <location filename="../src/Ui/paramVLM.ui" line="633"/>
+        <location filename="../src/Ui/paramVLM.ui" line="640"/>
         <source>Routes</source>
         <translation>Trasy</translation>
     </message>
     <message>
-        <location filename="../src/Ui/paramVLM.ui" line="709"/>
+        <location filename="../src/Ui/paramVLM.ui" line="716"/>
         <source>Cacher les routes des bateaux non-selectionnes</source>
         <translation>Schovat trasy nevybraných lodí</translation>
     </message>
@@ -6073,171 +6073,176 @@ bez zjednodušení</translation>
         <translation>Klasické čudlíky VLM</translation>
     </message>
     <message>
-        <location filename="../src/Ui/paramVLM.ui" line="192"/>
+        <location filename="../src/Ui/paramVLM.ui" line="199"/>
         <source>Couleurs</source>
         <translation>Barvy</translation>
     </message>
     <message>
-        <location filename="../src/Ui/paramVLM.ui" line="214"/>
+        <location filename="../src/Ui/paramVLM.ui" line="221"/>
         <source>POI</source>
         <translation>POI</translation>
     </message>
     <message>
-        <location filename="../src/Ui/paramVLM.ui" line="160"/>
-        <location filename="../src/Ui/paramVLM.ui" line="207"/>
-        <location filename="../src/Ui/paramVLM.ui" line="221"/>
-        <location filename="../src/Ui/paramVLM.ui" line="267"/>
-        <location filename="../src/Ui/paramVLM.ui" line="290"/>
-        <location filename="../src/Ui/paramVLM.ui" line="334"/>
-        <location filename="../src/Ui/paramVLM.ui" line="380"/>
+        <location filename="../src/Ui/paramVLM.ui" line="167"/>
+        <location filename="../src/Ui/paramVLM.ui" line="214"/>
+        <location filename="../src/Ui/paramVLM.ui" line="228"/>
+        <location filename="../src/Ui/paramVLM.ui" line="274"/>
+        <location filename="../src/Ui/paramVLM.ui" line="297"/>
+        <location filename="../src/Ui/paramVLM.ui" line="341"/>
+        <location filename="../src/Ui/paramVLM.ui" line="387"/>
         <source>Changer</source>
         <translation>Změnit</translation>
     </message>
     <message>
-        <location filename="../src/Ui/paramVLM.ui" line="260"/>
+        <location filename="../src/Ui/paramVLM.ui" line="267"/>
         <source>Waypoint</source>
         <translation>Waypoint</translation>
     </message>
     <message>
-        <location filename="../src/Ui/paramVLM.ui" line="320"/>
+        <location filename="../src/Ui/paramVLM.ui" line="327"/>
         <source>Balise</source>
         <translation>Maják</translation>
     </message>
     <message>
-        <location filename="../src/Ui/paramVLM.ui" line="313"/>
+        <location filename="../src/Ui/paramVLM.ui" line="320"/>
         <source>Marque est proc WP</source>
         <translation>Značka a další WP</translation>
     </message>
     <message>
-        <location filename="../src/Ui/paramVLM.ui" line="327"/>
+        <location filename="../src/Ui/paramVLM.ui" line="334"/>
         <source>Bateau qtVlm</source>
         <translation>Loď qtVlm</translation>
     </message>
     <message>
-        <location filename="../src/Ui/paramVLM.ui" line="357"/>
+        <location filename="../src/Ui/paramVLM.ui" line="364"/>
         <source>Bateau qtVlm sel.</source>
         <translation>Vybraná loď qtVlm.</translation>
     </message>
     <message>
-        <location filename="../src/Ui/paramVLM.ui" line="397"/>
+        <location filename="../src/Ui/paramVLM.ui" line="404"/>
         <source>Bateau</source>
         <translation>Loď</translation>
     </message>
     <message>
-        <location filename="../src/Ui/paramVLM.ui" line="403"/>
+        <location filename="../src/Ui/paramVLM.ui" line="410"/>
         <source>Calcul de l&apos;estime</source>
         <translation>Výpočet odhadu</translation>
     </message>
     <message>
-        <location filename="../src/Ui/paramVLM.ui" line="542"/>
+        <location filename="../src/Ui/paramVLM.ui" line="549"/>
         <source>En temps</source>
         <translation>Čas</translation>
     </message>
     <message>
-        <location filename="../src/Ui/paramVLM.ui" line="507"/>
+        <location filename="../src/Ui/paramVLM.ui" line="514"/>
         <source>min</source>
         <translation>min</translation>
     </message>
     <message>
-        <location filename="../src/Ui/paramVLM.ui" line="415"/>
+        <location filename="../src/Ui/paramVLM.ui" line="422"/>
         <source>En nombre de vacations</source>
         <translation>Počet zlomů</translation>
     </message>
     <message>
-        <location filename="../src/Ui/paramVLM.ui" line="466"/>
+        <location filename="../src/Ui/paramVLM.ui" line="473"/>
         <source>vac</source>
         <translation>zlom</translation>
     </message>
     <message>
-        <location filename="../src/Ui/paramVLM.ui" line="428"/>
+        <location filename="../src/Ui/paramVLM.ui" line="435"/>
         <source>En distance</source>
         <translation>Vzdálenost</translation>
     </message>
     <message>
-        <location filename="../src/Ui/paramVLM.ui" line="139"/>
+        <location filename="../src/Ui/paramVLM.ui" line="136"/>
+        <source>Do not use multi-threading for drawing grib</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/Ui/paramVLM.ui" line="146"/>
         <source>Repertoire des cartes</source>
         <translation>Nabídka karet</translation>
     </message>
     <message>
-        <location filename="../src/Ui/paramVLM.ui" line="151"/>
+        <location filename="../src/Ui/paramVLM.ui" line="158"/>
         <source>TextLabel</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../src/Ui/paramVLM.ui" line="447"/>
+        <location filename="../src/Ui/paramVLM.ui" line="454"/>
         <source>milles</source>
         <translation>mil</translation>
     </message>
     <message>
-        <location filename="../src/Ui/paramVLM.ui" line="580"/>
+        <location filename="../src/Ui/paramVLM.ui" line="587"/>
         <source>Centrage sur bateau apres synchro VLM</source>
         <translation>Vycentrovat na loď po synchronizaci VLM</translation>
     </message>
     <message>
-        <location filename="../src/Ui/paramVLM.ui" line="593"/>
+        <location filename="../src/Ui/paramVLM.ui" line="600"/>
         <source>Centrage apres changement de bateau</source>
         <translation>Vycentrovat na loď po změně lodě</translation>
     </message>
     <message>
-        <location filename="../src/Ui/paramVLM.ui" line="606"/>
+        <location filename="../src/Ui/paramVLM.ui" line="613"/>
         <source>Confirmation a chaque ordre vers VLM</source>
         <translation>Potvrdit každý příkaz do VLM</translation>
     </message>
     <message>
-        <location filename="../src/Ui/paramVLM.ui" line="639"/>
+        <location filename="../src/Ui/paramVLM.ui" line="646"/>
         <source>Parametres des virements/empanages</source>
         <translatorcomment>Tacks/Gybes</translatorcomment>
         <translation>Parametry obratů</translation>
     </message>
     <message>
-        <location filename="../src/Ui/paramVLM.ui" line="652"/>
-        <location filename="../src/Ui/paramVLM.ui" line="677"/>
+        <location filename="../src/Ui/paramVLM.ui" line="659"/>
+        <location filename="../src/Ui/paramVLM.ui" line="684"/>
         <source>Pourcentage de la polaire a appliquer pendant une vacation</source>
         <translation>Percentáž poláru použitá pro jednu mezeru po obratu</translation>
     </message>
     <message>
-        <location filename="../src/Ui/paramVLM.ui" line="661"/>
-        <location filename="../src/Ui/paramVLM.ui" line="683"/>
+        <location filename="../src/Ui/paramVLM.ui" line="668"/>
+        <location filename="../src/Ui/paramVLM.ui" line="690"/>
         <source>%</source>
         <translation>%</translation>
     </message>
     <message>
-        <location filename="../src/Ui/paramVLM.ui" line="645"/>
+        <location filename="../src/Ui/paramVLM.ui" line="652"/>
         <source>pour les bateaux reels</source>
         <translation>pro skutečné lodě</translation>
     </message>
     <message>
-        <location filename="../src/Ui/paramVLM.ui" line="699"/>
+        <location filename="../src/Ui/paramVLM.ui" line="706"/>
         <source>pour les bateaux VLM</source>
         <translation>pro VLM lodě</translation>
     </message>
     <message>
-        <location filename="../src/Ui/paramVLM.ui" line="716"/>
+        <location filename="../src/Ui/paramVLM.ui" line="723"/>
         <source>Options par defaut</source>
         <translation>Výchozí nastavení</translation>
     </message>
     <message>
-        <location filename="../src/Ui/paramVLM.ui" line="729"/>
+        <location filename="../src/Ui/paramVLM.ui" line="736"/>
         <source>Renseigner le cap a suivre (@) des POIs</source>
         <translation>Přidej informaci o kurzu (@) do POI</translation>
     </message>
     <message>
-        <location filename="../src/Ui/paramVLM.ui" line="722"/>
+        <location filename="../src/Ui/paramVLM.ui" line="729"/>
         <source>Retirer les POIs avant le WP-VLM</source>
         <translation>Odstranit POI před WP-VLM</translation>
     </message>
     <message>
-        <location filename="../src/Ui/paramVLM.ui" line="736"/>
+        <location filename="../src/Ui/paramVLM.ui" line="743"/>
         <source>Trier les POIs par nom</source>
         <translation>POI podle abecedy</translation>
     </message>
     <message>
-        <location filename="../src/Ui/paramVLM.ui" line="743"/>
+        <location filename="../src/Ui/paramVLM.ui" line="750"/>
         <source>Trier les POIs par numero d&apos;ordre</source>
         <translation>POI podle pořadí</translation>
     </message>
     <message>
-        <location filename="../src/Ui/paramVLM.ui" line="806"/>
+        <location filename="../src/Ui/paramVLM.ui" line="813"/>
         <source>Vitesse du replay</source>
         <translation>Rychlost přehrávání</translation>
     </message>
@@ -6246,47 +6251,47 @@ bez zjednodušení</translation>
         <translation type="obsolete">crank</translation>
     </message>
     <message>
-        <location filename="../src/Ui/paramVLM.ui" line="952"/>
+        <location filename="../src/Ui/paramVLM.ui" line="959"/>
         <source>Demander l&apos;emplacement lors du telechargement</source>
         <translation>Dotázat se na destinaci během stahování</translation>
     </message>
     <message>
-        <location filename="../src/Ui/paramVLM.ui" line="1013"/>
+        <location filename="../src/Ui/paramVLM.ui" line="1020"/>
         <source>Date automatique a chaque synchro VLM</source>
         <translation>Automatické datum při každé synchronizaci VLM</translation>
     </message>
     <message>
-        <location filename="../src/Ui/paramVLM.ui" line="1087"/>
+        <location filename="../src/Ui/paramVLM.ui" line="1094"/>
         <source>Delais d&apos;envoi (sec)</source>
         <translation>Zpoždění odeslání (sek)</translation>
     </message>
     <message>
-        <location filename="../src/Ui/paramVLM.ui" line="1142"/>
+        <location filename="../src/Ui/paramVLM.ui" line="1149"/>
         <source>Avance</source>
         <translation>Rozšířené</translation>
     </message>
     <message>
-        <location filename="../src/Ui/paramVLM.ui" line="1160"/>
+        <location filename="../src/Ui/paramVLM.ui" line="1167"/>
         <source>Sauvegarde a la fermeture</source>
         <translation>Uložit při ukončení</translation>
     </message>
     <message>
-        <location filename="../src/Ui/paramVLM.ui" line="1204"/>
+        <location filename="../src/Ui/paramVLM.ui" line="1211"/>
         <source>Interpolation des donnees GRIB</source>
         <translation>Interpolace Grib</translation>
     </message>
     <message>
-        <location filename="../src/Ui/paramVLM.ui" line="1210"/>
+        <location filename="../src/Ui/paramVLM.ui" line="1217"/>
         <source>Hybride(VLM)</source>
         <translation>Hybridní(VLM)</translation>
     </message>
     <message>
-        <location filename="../src/Ui/paramVLM.ui" line="1220"/>
+        <location filename="../src/Ui/paramVLM.ui" line="1227"/>
         <source>TWSA</source>
         <translation>TWSA</translation>
     </message>
     <message>
-        <location filename="../src/Ui/paramVLM.ui" line="1227"/>
+        <location filename="../src/Ui/paramVLM.ui" line="1234"/>
         <source>Selective</source>
         <translation>Selektivní</translation>
     </message>
@@ -6303,7 +6308,7 @@ bez zjednodušení</translation>
         <translation type="obsolete">Confirm each order to VLM</translation>
     </message>
     <message>
-        <location filename="../src/Ui/paramVLM.ui" line="773"/>
+        <location filename="../src/Ui/paramVLM.ui" line="780"/>
         <source>Trace</source>
         <translation>Stopa</translation>
     </message>
@@ -6312,12 +6317,12 @@ bez zjednodušení</translation>
         <translation type="obsolete">Trace step</translation>
     </message>
     <message>
-        <location filename="../src/Ui/paramVLM.ui" line="779"/>
+        <location filename="../src/Ui/paramVLM.ui" line="786"/>
         <source>Longueur de la trace</source>
         <translation>Délka stopy</translation>
     </message>
     <message>
-        <location filename="../src/Ui/paramVLM.ui" line="845"/>
+        <location filename="../src/Ui/paramVLM.ui" line="852"/>
         <source>Afficher la trace des concurrents</source>
         <translation>Zobrazit stopy protivníků</translation>
     </message>
@@ -6326,37 +6331,37 @@ bez zjednodušení</translation>
         <translation type="obsolete">crank</translation>
     </message>
     <message>
-        <location filename="../src/Ui/paramVLM.ui" line="799"/>
+        <location filename="../src/Ui/paramVLM.ui" line="806"/>
         <source>heures</source>
         <translation>hodin</translation>
     </message>
     <message>
-        <location filename="../src/Ui/paramVLM.ui" line="859"/>
+        <location filename="../src/Ui/paramVLM.ui" line="866"/>
         <source>Compas</source>
         <translation>Kompas</translation>
     </message>
     <message>
-        <location filename="../src/Ui/paramVLM.ui" line="865"/>
+        <location filename="../src/Ui/paramVLM.ui" line="872"/>
         <source>Affichage du compas</source>
         <translation>Zobraz kompas</translation>
     </message>
     <message>
-        <location filename="../src/Ui/paramVLM.ui" line="871"/>
+        <location filename="../src/Ui/paramVLM.ui" line="878"/>
         <source>Afficher le compas (C)</source>
         <translation>Zobraz kompas (C)</translation>
     </message>
     <message>
-        <location filename="../src/Ui/paramVLM.ui" line="884"/>
+        <location filename="../src/Ui/paramVLM.ui" line="891"/>
         <source>Polaire</source>
         <translation>Polár</translation>
     </message>
     <message>
-        <location filename="../src/Ui/paramVLM.ui" line="890"/>
+        <location filename="../src/Ui/paramVLM.ui" line="897"/>
         <source>Afficher la polaire (L)</source>
         <translation>Zobraz polár (L)</translation>
     </message>
     <message>
-        <location filename="../src/Ui/paramVLM.ui" line="900"/>
+        <location filename="../src/Ui/paramVLM.ui" line="907"/>
         <source>Echelle fixe (50nds)</source>
         <translation>Fixní měřítko (50knots)</translation>
     </message>
@@ -6365,17 +6370,17 @@ bez zjednodušení</translation>
         <translation type="obsolete">Number of cranks</translation>
     </message>
     <message>
-        <location filename="../src/Ui/paramVLM.ui" line="910"/>
+        <location filename="../src/Ui/paramVLM.ui" line="917"/>
         <source>Meme duree que l&apos;estime</source>
         <translation>Stejné trvání jako odhad</translation>
     </message>
     <message>
-        <location filename="../src/Ui/paramVLM.ui" line="940"/>
+        <location filename="../src/Ui/paramVLM.ui" line="947"/>
         <source>Grib</source>
         <translation>Grib</translation>
     </message>
     <message>
-        <location filename="../src/Ui/paramVLM.ui" line="946"/>
+        <location filename="../src/Ui/paramVLM.ui" line="953"/>
         <source>Fichier grib</source>
         <translation>Soubor Grib</translation>
     </message>
@@ -6384,22 +6389,22 @@ bez zjednodušení</translation>
         <translation type="obsolete">Ask for destination during download</translation>
     </message>
     <message>
-        <location filename="../src/Ui/paramVLM.ui" line="961"/>
+        <location filename="../src/Ui/paramVLM.ui" line="968"/>
         <source>Repertoire</source>
         <translation>Složka</translation>
     </message>
     <message>
-        <location filename="../src/Ui/paramVLM.ui" line="988"/>
+        <location filename="../src/Ui/paramVLM.ui" line="995"/>
         <source>Parcourir</source>
         <translation>Procházet</translation>
     </message>
     <message>
-        <location filename="../src/Ui/paramVLM.ui" line="997"/>
+        <location filename="../src/Ui/paramVLM.ui" line="1004"/>
         <source>zoom sur grib au chargement</source>
         <translation>po stažení přiblížit na grib</translation>
     </message>
     <message>
-        <location filename="../src/Ui/paramVLM.ui" line="1007"/>
+        <location filename="../src/Ui/paramVLM.ui" line="1014"/>
         <source>Grib horodate</source>
         <translation>Časová značka Gribu</translation>
     </message>
@@ -6408,27 +6413,27 @@ bez zjednodušení</translation>
         <translation type="obsolete">Automatic date at each VLM sync</translation>
     </message>
     <message>
-        <location filename="../src/Ui/paramVLM.ui" line="1023"/>
+        <location filename="../src/Ui/paramVLM.ui" line="1030"/>
         <source>SailsDoc</source>
         <translation>SailDocs</translation>
     </message>
     <message>
-        <location filename="../src/Ui/paramVLM.ui" line="1029"/>
+        <location filename="../src/Ui/paramVLM.ui" line="1036"/>
         <source>Utilisation d&apos;un client mail externe</source>
         <translation>Použít externí poštovní klient</translation>
     </message>
     <message>
-        <location filename="../src/Ui/paramVLM.ui" line="1059"/>
+        <location filename="../src/Ui/paramVLM.ui" line="1066"/>
         <source>GPS</source>
         <translation>GPS</translation>
     </message>
     <message>
-        <location filename="../src/Ui/paramVLM.ui" line="1065"/>
+        <location filename="../src/Ui/paramVLM.ui" line="1072"/>
         <source>Emulation de GPS</source>
         <translation>Emulace GPS</translation>
     </message>
     <message>
-        <location filename="../src/Ui/paramVLM.ui" line="1073"/>
+        <location filename="../src/Ui/paramVLM.ui" line="1080"/>
         <source>Port serie</source>
         <translation>Sériový port</translation>
     </message>
@@ -6437,7 +6442,7 @@ bez zjednodušení</translation>
         <translation type="obsolete">Delay to send (sec)</translation>
     </message>
     <message>
-        <location filename="../src/Ui/paramVLM.ui" line="1110"/>
+        <location filename="../src/Ui/paramVLM.ui" line="1117"/>
         <source>Activer</source>
         <translation>Aktivovat</translation>
     </message>
@@ -6446,12 +6451,12 @@ bez zjednodušení</translation>
         <translation type="obsolete">Advanced</translation>
     </message>
     <message>
-        <location filename="../src/Ui/paramVLM.ui" line="1192"/>
+        <location filename="../src/Ui/paramVLM.ui" line="1199"/>
         <source>Url</source>
         <translation>URL</translation>
     </message>
     <message>
-        <location filename="../src/Ui/paramVLM.ui" line="1148"/>
+        <location filename="../src/Ui/paramVLM.ui" line="1155"/>
         <source>Position et taille de qtVlm</source>
         <translation>Pozice a velikost qtVlm</translation>
     </message>
@@ -6460,12 +6465,12 @@ bez zjednodušení</translation>
         <translation type="obsolete">Save when closing</translation>
     </message>
     <message>
-        <location filename="../src/Ui/paramVLM.ui" line="1170"/>
+        <location filename="../src/Ui/paramVLM.ui" line="1177"/>
         <source>User agent</source>
         <translation>User agent</translation>
     </message>
     <message>
-        <location filename="../src/Ui/paramVLM.ui" line="1176"/>
+        <location filename="../src/Ui/paramVLM.ui" line="1183"/>
         <source>Force user agent</source>
         <translation>Vnutit user agent</translation>
     </message>

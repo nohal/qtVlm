@@ -77,6 +77,7 @@ void Grib::initNewGrib()
 #ifdef __QTVLM_WITH_TEST
     nbWarning=0;
 #endif
+    this->gribMonoCpu=Settings::getSetting("gribMonoCpu",0).toInt()==1;
     QString interpol_name[4] = { "UKN", "TWSA", "selecive TWSA", "Hybride" };
 
     interpolation_param = INTERPOLATION_DEFAULT;
@@ -1302,14 +1303,12 @@ void Grib::draw_WIND_Color_old(QPainter &pnt, const Projection *proj, bool smoot
 
     int i, j;
     double u,v,x,y;
-    double * u_tab=NULL, * v_tab=NULL;
-    bool * y_tab=NULL;
     int W = proj->getW();
     int H = proj->getH();
     int space=0;
     int W_s=0,H_s=0;
     QRgb   rgb;
-    QImage *image= new QImage(W,H,QImage::Format_ARGB32);
+    QImage image(W,H,QImage::Format_ARGB32);
 
     GribRecord *recU1,*recV1,*recU2,*recV2;
     time_t t1,t2;
@@ -1322,7 +1321,7 @@ void Grib::draw_WIND_Color_old(QPainter &pnt, const Projection *proj, bool smoot
 
     if(!getInterpolationParam(currentDate,&t1,&t2,&recU1,&recV1,&recU2,&recV2))
         return;
-
+    int sz=1;
     if(showWindArrows)
     {
         if (barbules)
@@ -1332,20 +1331,14 @@ void Grib::draw_WIND_Color_old(QPainter &pnt, const Projection *proj, bool smoot
 
         W_s=W/space+1;
         H_s=H/space+1;
-
-        u_tab = new double[W_s*H_s];
-        v_tab = new double[W_s*H_s];
-        y_tab = new bool[W_s*H_s];
-
-        /* clearing u_tab array */
-        for(i=0;i<W_s*H_s;i++)
-        {
-            u_tab[i]=-1;
-        }
+        sz=(W_s+2)*(H_s+2);
     }
+    QVector<double> u_tab(sz,-1.0);
+    QVector<double> v_tab(sz);
+    QVector<bool> y_tab(sz);
 
-    image->fill( qRgba(0,0,0,0));
-
+    image.fill(Qt::transparent);
+    int indice=0;
     for (i=0; i<W-2; i+=2)
     {
         for (j=0; j<H-2; j+=2)
@@ -1357,67 +1350,63 @@ void Grib::draw_WIND_Color_old(QPainter &pnt, const Projection *proj, bool smoot
                 {
                     int i_s=i/space;
                     int j_s=j/space;
-                    u_tab[i_s*H_s+j_s]=u;
-                    v_tab[i_s*H_s+j_s]=v;
-                    y_tab[i_s*H_s+j_s]=(y<0);
+                    indice=i_s*H_s+j_s;
+                    u_tab[indice]=u;
+                    v_tab[indice]=v;
+                    y_tab[indice]=(y<0);
                 }
 
                 rgb=getWindColor(u, smooth);
-                image->setPixel(i,  j,rgb);
-                image->setPixel(i+1,j,rgb);
-                image->setPixel(i,  j+1,rgb);
-                image->setPixel(i+1,j+1,rgb);
+                image.setPixel(i,  j,rgb);
+                image.setPixel(i+1,j,rgb);
+                image.setPixel(i,  j+1,rgb);
+                image.setPixel(i+1,j+1,rgb);
             }
-            /*else
-            {
-                if(showWindArrows && i%space==0 && j%space==0)
-                {
-                    int i_s=i/space;
-                    int j_s=j/space;
-                    u_tab[i_s*H_s+j_s]=-1;
-                }
-            }*/
         }
     }
 
-    pnt.drawImage(0,0,*image);
+    pnt.drawImage(0,0,image);
 
-    delete image;
 
 
     if(showWindArrows)
     {
-        for (i=0; i<W_s; i++)
+        for (i=0; i<W_s; ++i)
         {
-            for (j=0; j<H_s; j++)
+            for (j=0; j<H_s; ++j)
             {
-                u=u_tab[i*H_s+j];
-                v=v_tab[i*H_s+j];
+                indice=i*H_s+j;
+                u=u_tab.at(indice);
+                v=v_tab.at(indice);
 
-                if(u==-1)
+                if(u<0)
                     continue;
                 if (barbules)
-                    drawWindArrowWithBarbs(pnt, i*space,j*space, u,v, y_tab[i*H_s+j]);
+                    drawWindArrowWithBarbs(pnt, i*space,j*space, u,v, y_tab.at(indice));
                 else
                     drawWindArrow(pnt, i*space,j*space, v);
 
             }
         }
-        delete[] u_tab;
-        delete[] v_tab;
-        delete[] y_tab;
     }
 }
 void Grib::draw_WIND_Color(QPainter &pnt, const Projection *proj, bool smooth,
                                bool showWindArrows,bool barbules)
 {
-#if 0
-    QTime time;
-    time.start();
-    draw_WIND_Color_old(pnt,proj,smooth,showWindArrows,barbules);
-    int msec1=time.elapsed();
-    time.start();
-#endif
+//    QTime timeG;
+//    int msecsG=0;
+    if(gribMonoCpu || QThread::idealThreadCount()<=1)
+    {
+        draw_WIND_Color_old(pnt,proj,smooth,showWindArrows,barbules);
+        return;
+    }
+//    else
+//    {
+//        timeG.start();
+//        draw_WIND_Color_old(pnt,proj,smooth,showWindArrows,barbules);
+//        msecsG=timeG.elapsed();
+//    }
+//    timeG.start();
     int i, j;
     double u,v,x,y;
     int W = proj->getW();
@@ -1474,14 +1463,9 @@ void Grib::draw_WIND_Color(QPainter &pnt, const Projection *proj, bool smooth,
             windData.append(g);
         }
     }
-#if 0
-    qWarning()<<"Multithreading disabled for grib in debug mode";
-    QList<GribThreadResult> windResults;
-    foreach (const GribThreadData &gg,windData)
-        windResults.append(interpolateThreaded(gg));
-#else
+
     QList<GribThreadResult> windResults  = QtConcurrent::blockingMapped(windData, interpolateThreaded);
-#endif
+
     int indice;
     for (i=0; i<W-2; i+=2)
     {
@@ -1531,7 +1515,7 @@ void Grib::draw_WIND_Color(QPainter &pnt, const Projection *proj, bool smooth,
         }
     }
 #if 0
-    qWarning()<<"old way"<<msec1<<"new way"<<time.elapsed();
+    qWarning()<<"old way"<<msecsG<<"new way"<<timeG.elapsed();
 #endif
 }
 //--------------------------------------------------------------------------
