@@ -2565,6 +2565,14 @@ Etes-vous sur ?</source>
         <source>Verrouiller l&apos;envoi d&apos;ordre a VLM</source>
         <translation>Verrouiller/déverrouiller l&apos;envoi d&apos;ordres à VLM</translation>
     </message>
+    <message>
+        <source>Recharcher</source>
+        <translation>Recharger</translation>
+    </message>
+    <message>
+        <source>Recharger le fichier GRIB actuel</source>
+        <translation>Recharger le fichier GRIB actuel.</translation>
+    </message>
 </context>
 <context>
     <name>POI</name>

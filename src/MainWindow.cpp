@@ -100,6 +100,7 @@ void MainWindow::connectSignals()
     connect(mb->ac_moveBoat, SIGNAL(triggered()), this,SLOT(slot_moveBoat()));
 
     connect(mb->acFile_Open, SIGNAL(triggered()), this, SLOT(slotFile_Open()));
+    connect(mb->acFile_Reopen, SIGNAL(triggered()), this, SLOT(slotFile_Reopen()));
     connect(mb->acFile_Close, SIGNAL(triggered()), this, SLOT(slotFile_Close()));
     connect(mb->acFile_Open_Current, SIGNAL(triggered()), this, SLOT(slotFile_Open_Current()));
     connect(mb->acFile_Close_Current, SIGNAL(triggered()), this, SLOT(slotFile_Close_Current()));
@@ -1030,6 +1031,11 @@ void MainWindow::slotFile_Open()
         openGribFile(fileName, zoom);
     }
     updateTitle();
+}
+void MainWindow::slotFile_Reopen()
+{
+   openGribFile (gribFileName, (Settings::getSetting("gribZoomOnLoad",0).toInt() == 1));
+   updateTitle();
 }
 void MainWindow::slotFile_Open_Current()
 {
