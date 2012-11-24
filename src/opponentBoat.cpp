@@ -36,7 +36,7 @@ Copyright (C) 2008 - Jacques Zaninetti - http://zygrib.free.fr
 #include "Projection.h"
 #include "vlmLine.h"
 #include "Util.h"
-#include "parser.h"
+#include "qjson/parser.h"
 #include "Orthodromie.h"
 #include "boat.h"
 

@@ -20,8 +20,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <QTextStream>
 #include <QDebug>
-#include <parser.h>
-#include <serializer.h>
+#include <qjson/parser.h>
+#include <qjson/serializer.h>
 
 #include "Util.h"
 #include "boat.h"

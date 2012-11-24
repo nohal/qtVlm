@@ -22,8 +22,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <QMessageBox>
 #include <QDebug>
 /* QJson */
-#include <serializer.h>
-#include <parser.h>
+#include <qjson/serializer.h>
+#include <qjson/parser.h>
 
 #include "dataDef.h"
 

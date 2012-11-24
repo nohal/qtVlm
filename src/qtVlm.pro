@@ -2,12 +2,12 @@ CONFIG += qt
 TEMPLATE = app
 TARGET = 
 DEPENDPATH += .
-INCLUDEPATH += objs \
+INCLUDEPATH += \
+    objs \
     Dialogs \
     libs/bzip2 \
     libs/zlib-1.2.7 \
     libs/qextserialport \
-    libs/qjson \
     libs/nmealib/src/nmea \
     libs/libbsb \
     libs/miniunz \

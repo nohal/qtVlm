@@ -6,7 +6,7 @@
 #include "inetClient.h"
 #include "ui_DialogDownloadTracks.h"
 #include "class_list.h"
-#include "parser.h"
+#include "qjson/parser.h"
 
 namespace Ui {
     class DialogDownloadTracks;
