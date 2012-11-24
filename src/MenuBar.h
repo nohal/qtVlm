@@ -109,6 +109,7 @@ public:
     QAction * ac_pasteRoute;
 
     QAction *acFile_Open;
+    QAction *acFile_Reopen;
     QAction *acFile_Close;
     QAction *acFile_Open_Current;
     QAction *acFile_Close_Current;

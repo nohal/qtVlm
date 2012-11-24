@@ -96,6 +96,9 @@ MenuBar::MenuBar(QWidget *parent)
         acFile_Open = addAction(menuView, tr("Ouvrir"),
                     tr("Ctrl+O"),
                     tr("Ouvrir un fichier GRIB"), appFolder.value("img")+"fileopen.png");
+        acFile_Reopen = addAction(menuView, tr("Recharcher"),
+                    "",
+                    tr("Recharger le fichier GRIB actuel"), appFolder.value("img")+"fileopen.png");
         acFile_Close = addAction(menuView, tr("Fermer"),
                     tr("Ctrl+W"),
                     tr("Fermer"), appFolder.value("img")+"fileclose.png");

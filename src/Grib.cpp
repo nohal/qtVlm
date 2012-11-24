@@ -1447,8 +1447,8 @@ void Grib::draw_WIND_Color(QPainter &pnt, const Projection *proj, bool smooth,
     g.recU2=recU2;
     g.recV1=recV1;
     g.recV2=recV2;
-    g.tN=t1;
-    g.tP=t2;
+    g.tP=t1;
+    g.tN=t2;
     g.interpolMode=this->getInterpolationMode();
     g.smooth=smooth;
     g.grib=this;

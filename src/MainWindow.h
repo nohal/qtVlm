@@ -84,6 +84,7 @@ class MainWindow: public QMainWindow
 
     public slots:
         void slotFile_Open();
+        void slotFile_Reopen();
         void slotFile_Close();
         void slotFile_Open_Current();
         void slotFile_Close_Current();
