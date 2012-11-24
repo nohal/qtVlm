@@ -25,7 +25,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "MainWindow.h"
 #include "vlmLine.h"
-#include "qjson/parser.h"
+#include "parser.h"
 #include "Util.h"
 #include "Polar.h"
 #include "settings.h"

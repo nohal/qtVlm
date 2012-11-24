@@ -20,7 +20,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <QMessageBox>
 #include <QDebug>
-#include <qjson/parser.h>
+#include <parser.h>
 
 #include "boatVLM.h"
 #include "boatReal.h"

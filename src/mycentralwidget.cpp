@@ -77,7 +77,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "DialogDownloadTracks.h"
 #include "dialogFaxMeteo.h"
 #include "dialogLoadImg.h"
-#include "qjson/parser.h"
+#include "parser.h"
 #include <QVariantMap>
 #include <QVariant>
 #include <QClipboard>

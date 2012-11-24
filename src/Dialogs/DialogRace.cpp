@@ -27,7 +27,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "mycentralwidget.h"
 #include "boatVLM.h"
 #include "MainWindow.h"
-#include "qjson/parser.h"
+#include "parser.h"
 #include <QStandardItemModel>
 #include <QStandardItem>
 #include "Orthodromie.h"
