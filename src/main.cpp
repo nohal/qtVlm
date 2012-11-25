@@ -173,6 +173,14 @@ int main(int argc, char *argv[])
         translator.load( appFolder.value("tr")+"qtVlm_" + lang);
         app.installTranslator(&translator);
     }
+    else if (lang == "es") {
+        qWarning() << "Loading es";
+        QLocale::setDefault(QLocale("es_ES"));
+        translatorQt.load( QString("qt_es"),appFolder.value("tr"));
+        app.installTranslator(&translatorQt);
+        translator.load( appFolder.value("tr")+"qtVlm_" + lang);
+        app.installTranslator(&translator);
+    }
     app.setQuitOnLastWindowClosed(true);
 
     MainWindow win(800, 600);

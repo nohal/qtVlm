@@ -920,7 +920,16 @@ void MainWindow::slotOptions_Language()
         Settings::setSetting("appLanguage", lang);
         QMessageBox::information (this,
             QString("Application Language"),
-            QString("Language : English\n\n")
+            QString("Language : Czech\n\n")
+              + QString("Please reload application to activate language.\n")
+        );
+    }
+    else if (act == mb->acOptions_Lang_es) {
+        lang = "es";
+        Settings::setSetting("appLanguage", lang);
+        QMessageBox::information (this,
+            QString("Application Language"),
+            QString("Language : Spanish\n\n")
               + QString("Please reload application to activate language.\n")
         );
     }
