@@ -356,7 +356,6 @@ myCentralWidget::myCentralWidget(Projection * proj,MainWindow * parent,MenuBar *
 //voir s'il faut mettre le slot ds centralWidget ou utiliser myScene
     connect(terre,SIGNAL(showContextualMenu(QGraphicsSceneContextMenuEvent *)),
             parent, SLOT(slotShowContextualMenu(QGraphicsSceneContextMenuEvent *)));
-    connect(parent, SIGNAL(signalMapQuality(int)), terre, SLOT(slot_setMapQuality(int)));
     connect(menuBar->acView_GroupColorMap, SIGNAL(triggered(QAction *)), this, SLOT(slot_setColorMapMode(QAction *)));
     connect(menuBar->acMap_Rivers, SIGNAL(triggered(bool)), terre,  SLOT(setDrawRivers(bool)));
     connect(menuBar->acMap_CountriesBorders, SIGNAL(triggered(bool)), terre,  SLOT(setDrawCountriesBorders(bool)));
@@ -527,6 +526,8 @@ void myCentralWidget::loadGshhs(void) {
     if(gshhsReader) {
         if(terre)
             terre->setGSHHS_map(NULL);
+        else
+            qWarning()<<"1- Terre is null??";
 
         delete gshhsReader;
         gshhsReader=NULL;
@@ -536,7 +537,7 @@ void myCentralWidget::loadGshhs(void) {
 
     qWarning() << "Searching for maps in " << mapDir;
 
-    gshhsReader = new GshhsReader((mapDir+"/gshhs").toAscii().data(), 0);
+    gshhsReader = new GshhsReader((mapDir+"/gshhs").toAscii().data());
     gshhsReader->setProj(proj);
 
     int polyVersion = gshhsReader->getPolyVersion();
@@ -544,7 +545,7 @@ void myCentralWidget::loadGshhs(void) {
     {
         mapDir=".";
         delete gshhsReader;
-        gshhsReader = new GshhsReader((mapDir+"/gshhs").toAscii().data(), 0);
+        gshhsReader = new GshhsReader((mapDir+"/gshhs").toAscii().data());
         gshhsReader->setProj(proj);
         polyVersion = gshhsReader->getPolyVersion();
     }
@@ -574,7 +575,8 @@ void myCentralWidget::loadGshhs(void) {
         mapDir=appDir.absoluteFilePath(mapDir);
     qWarning() << "Setting map folder to " << mapDir;
     Settings::setSetting("mapsFolder",mapDir);
-    if(!gshhsOk) {
+    if(!gshhsOk)
+    {
         msgBox.exec();
 
         if(msgBox.clickedButton() == downloadMapBtn) {
@@ -621,11 +623,14 @@ void myCentralWidget::loadGshhs(void) {
         progress->setValue(progress->value()+5);
     }
 
-    if(gshhsOk) {
-        if(terre) {
+    if(gshhsOk)
+    {
+        if(terre)
+        {
             terre->setGSHHS_map(gshhsReader);
-            terre->slot_setMapQuality(4);
         }
+        else
+            qWarning()<<"Terre is NULL??";
     }
 
 }

@@ -65,7 +65,6 @@ Terrain::Terrain(myCentralWidget *parent, Projection *proj_) : QGraphicsWidget()
     height=50;
     setPos(0,0);
     //qWarning() << "Terre is at " << x() << "," << y() << ", size: " << size().width() << "," << size().height();
-    quality = 0;
 
     //---------------------------------------------------------------------
     showCountriesBorders  = Settings::getSetting("showCountriesBorders", true).toBool();
@@ -152,7 +151,13 @@ void Terrain::setGSHHS_map(GshhsReader *map)
 {
     gshhsReader = map;
     /* new gshhs => reload gis */
-    if(gisReader) delete gisReader;
+    if(gisReader)
+    {
+        delete gisReader;
+        gisReader=NULL;
+    }
+    if(!gshhsReader)
+        return;
     gisReader=new GisReader();
     isEarthMapValid = false;
     redrawAll();
@@ -209,6 +214,8 @@ void Terrain::draw_GSHHSandGRIB()
             pnt1.setCompositionMode(QPainter::CompositionMode_Source);
             gshhsReader->drawContinents(pnt1, proj, tranparent, landColor);
         }
+        else
+            qWarning()<<"1-gshhsReader is NULL??";
     }
 
     //===================================================
@@ -353,6 +360,8 @@ void Terrain::draw_GSHHSandGRIB()
             gshhsReader->drawRivers(pnt, proj);
         }
     }
+    else
+        qWarning()<<"2-gshhsReader is NULL??";
 
     if (gisReader && showCountriesNames)
         gisReader->drawCountriesNames(pnt, proj);
@@ -533,16 +542,6 @@ void Terrain::setCitiesNamesLevel  (int level) {
 }
 
 //-------------------------------------------------------
-void Terrain::slot_setMapQuality(int q) {
-    if (quality != q) {
-        if (gshhsReader == NULL)
-            return;
-        quality = q;        
-        gshhsReader->setUserPreferredQuality(q);
-        isEarthMapValid = false;
-        indicateWaitingMap();
-    }
-}
 
 //-------------------------------------------------------
 void Terrain::switchGribDisplay(bool windArrowOnly)

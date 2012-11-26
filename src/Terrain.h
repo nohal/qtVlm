@@ -77,7 +77,6 @@ public slots :
     void setDrawRivers(bool);
     void setDrawCountriesBorders(bool);
     void setCountriesNames(bool);
-    void slot_setMapQuality(int q);    
 
     void updateGraphicsParameters();
 
@@ -157,7 +156,6 @@ private:
     QPen    isobarsPen;
     QPen    isotherms0Pen;
 
-    int     quality;
 
     //-----------------------------------------------
     // Flags indiquant les éléments �  dessiner

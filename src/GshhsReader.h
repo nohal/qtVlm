@@ -91,7 +91,7 @@ class GshhsPolygon
 Q_DECLARE_TYPEINFO(GshhsPolygon,Q_MOVABLE_TYPE);
 
 //==========================================================
-// GshhsPolygon_WDB     (entete de type GSHHS récent)
+// GshhsPolygon_WDB     (entete de type GSHHS recent)
 //==========================================================
 class GshhsPolygon_WDB : public GshhsPolygon
 {
@@ -108,11 +108,9 @@ Q_DECLARE_TYPEINFO(GshhsPolygon_WDB,Q_MOVABLE_TYPE);
 class GshhsReader
 {
     public:
-        GshhsReader(std::string fpath, int quality);
-        GshhsReader(const GshhsReader &model);
+        GshhsReader(std::string fpath);
         ~GshhsReader();
         
-        void setUserPreferredQuality(int quality); // 5 levels: 0=low ... 4=full
         
         void drawBackground( QPainter &pnt, Projection *proj,
                 QColor seaColor, QColor backgroundColor);
@@ -131,7 +129,7 @@ class GshhsReader
         int  getPolyVersion();
 
     private:
-        int quality, userPreferredQuality;  // 5 levels: 0=low ... 4=full
+        int quality;  // 5 levels: 0=low ... 4=full
         void setQuality(int quality);
         void selectBestQuality(Projection *proj);
 
@@ -145,8 +143,8 @@ class GshhsReader
         
         //-----------------------------------------------------
         // Listes de polygones
-        // Pour chaque type, une liste par niveau de qualité,
-        // pour éviter les relectures de fichier (pb mémoire ?)
+        // Pour chaque type, une liste par niveau de qualite,
+        // pour eviter les relectures de fichier (pb memoire ?)
 
         std::list<GshhsPolygon*> * lsPoly_boundaries [5];
         std::list<GshhsPolygon*> * lsPoly_rivers  [5];
@@ -180,7 +178,7 @@ inline int GshhsPolygon::readInt4() {
 }
 
 //-------------------------------------------------
-inline int GshhsPolygon_WDB::readInt4() {    // pas le même indien
+inline int GshhsPolygon_WDB::readInt4() {    // pas le meme indien
     unsigned char tab[4];
     int nb = zu_read(file, tab, 4);
     if (nb != 4) {

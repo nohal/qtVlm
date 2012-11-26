@@ -501,9 +501,6 @@ void MainWindow::continueSetup()
     //---------------------------------------------------------
     connectSignals();
 
-    /* initialisation du niveau de qualité */
-    int quality=4;
-    emit signalMapQuality(quality);
 
     progress->setLabelText(tr("Drawing all"));
     progress->setValue(progress->value()+10);

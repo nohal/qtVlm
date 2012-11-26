@@ -35,7 +35,7 @@ GshhsPolyCell::GshhsPolyCell(FILE *fpoly_, int x0_, int y0_,Projection *proj_,Po
 
 #if 0
     int cnt=0;
-    for(int i=0;i<poly1.count();i++)
+    for(int i=0;i<poly1.count();++i)
         cnt+=poly1.at(i).count();
 
     qWarning() << "Cell " << x0cell << "," << y0cell << ": " << poly1.count() << " poly in p1 - total points:"<<cnt;
@@ -54,13 +54,13 @@ int num_vertices,num_contours; \
 int value; \
 POLY->clear(); \
 fread(&(num_contours), sizeof(int), 1, polyfile); \
-for (int c= 0; c < num_contours; c++) \
+for (int c= 0; c < num_contours; ++c) \
 { \
     fread(&(value), sizeof(int), 1, polyfile); /* discarding hole value */ \
     fread(&(value), sizeof(int), 1, polyfile); \
     num_vertices=value; \
     tmp_contour.clear(); \
-    for (int v= 0; v < num_vertices; v++) \
+    for (int v= 0; v < num_vertices; ++v) \
     { \
         fread(&(X), sizeof(double), 1, polyfile); \
         fread(&(Y), sizeof(double), 1, polyfile); \
@@ -105,12 +105,12 @@ void  GshhsPolyCell::DrawPolygonFilled(QPainter &pnt,contour_list * p,double dx,
     int y_old=0;
 
 
-    for (c= 0; c < p->count(); c++)
+    for (c= 0; c < p->count(); ++c)
     {
         if(!p->at(c).count())
             continue;
 
-        for (v= 0; v < p->at(c).count(); v++)
+        for (v= 0; v < p->at(c).count(); ++v)
         {
             proj->map2screen(p->at(c).at(v).x()+dx, p->at(c).at(v).y(), &x, &y);
             /*if(c==0 && v==0)
@@ -159,12 +159,12 @@ void GshhsPolyCell::DrawPolygonContour(QPainter &pnt,contour_list * p, double dx
 
     //qWarning()  << long_min << "," << lat_min << long_max << "," << lat_max;
 
-    for (int i= 0; i < p->count(); i++)
+    for (int i= 0; i < p->count(); ++i)
     {
         if(!p->at(i).count())
             continue;
         int v;
-        for (v= 0; v < (p->at(i).count()-1); v++)
+        for (v= 0; v < (p->at(i).count()-1); ++v)
         {
             x1=p->at(i).at(v).x();
             y1=p->at(i).at(v).y();
@@ -238,13 +238,12 @@ GshhsPolyReader::GshhsPolyReader(std::string Polypath):
 {
     fpoly = NULL;
 
-    for (int i=0; i<360; i++) {
-        for (int j=0; j<180; j++) {
+    for (int i=0; i<360; ++i) {
+        for (int j=0; j<180; ++j) {
             allCells[i][j] = NULL;
         }
     }
     currentQuality = -1;
-    setQuality(1);
     this->abortRequested=false;
 }
 
@@ -252,8 +251,8 @@ GshhsPolyReader::GshhsPolyReader(std::string Polypath):
 //-------------------------------------------------------------------------
 GshhsPolyReader::~GshhsPolyReader()
 {
-        for (int i=0; i<360; i++) {
-                for (int j=0; j<180; j++) {
+        for (int i=0; i<360; ++i) {
+                for (int j=0; j<180; ++j) {
                         if (allCells[i][j] != NULL)
                         {
                                 delete allCells[i][j];
@@ -261,6 +260,8 @@ GshhsPolyReader::~GshhsPolyReader()
                         }
                 }
         }
+        if(fpoly)
+            fclose(fpoly);
 }
 
 //-------------------------------------------------------------------------
@@ -277,12 +278,14 @@ int GshhsPolyReader::getPolyVersion()
 
     readPolygonFileHeader(fpoly,&polyHeader);
     //fclose(fpoly);
+    currentQuality=0;
     return polyHeader.version;
 }
 
 void GshhsPolyReader::setQuality(int quality)  // 5 levels: 0=low ... 4=full
 {
-    if (currentQuality != quality)
+    qWarning()<<"currentQuality="<<currentQuality<<"asked for"<<quality;
+    if (currentQuality != quality || fpoly==NULL)
     {
         currentQuality = quality;
 
@@ -323,8 +326,8 @@ void GshhsPolyReader::setQuality(int quality)  // 5 levels: 0=low ... 4=full
         if(fpoly)
             readPolygonFileHeader(fpoly,&polyHeader);
 
-        for (int i=0; i<360; i++) {
-            for (int j=0; j<180; j++) {
+        for (int i=0; i<360; ++i) {
+            for (int j=0; j<180; ++j) {
                 if (allCells[i][j] != NULL)
                 {
                     delete allCells[i][j];
@@ -360,14 +363,14 @@ void GshhsPolyReader::drawGshhsPolyMapPlain( QPainter &pnt, Projection *proj,
     GshhsPolyCell *cel;
 
 //printf("cxmin=%d cxmax=%d    cymin=%d cymax=%d\n", cxmin,cxmax, cymin,cymax);
-    for (cx=cxmin; cx<cxmax; cx++) {
+    for (cx=cxmin; cx<cxmax; ++cx) {
         cxx = cx;
         while (cxx < 0)
             cxx += 360;
         while (cxx >= 360)
             cxx -= 360;
 
-        for (cy=cymin; cy<cymax; cy++) {
+        for (cy=cymin; cy<cymax; ++cy) {
             if (cxx>=0 && cxx<=359 && cy>=-90 && cy<=89)
             {
                 if (allCells[cxx][cy+90] == NULL) {
@@ -399,14 +402,14 @@ void GshhsPolyReader::drawGshhsPolyMapSeaBorders( QPainter &pnt, Projection *pro
     int dx, cx, cxx, cy;
     GshhsPolyCell *cel;
 
-    for (cx=cxmin; cx<cxmax; cx++) {
+    for (cx=cxmin; cx<cxmax; ++cx) {
         cxx = cx;
         while (cxx < 0)
             cxx += 360;
         while (cxx >= 360)
             cxx -= 360;
 
-        for (cy=cymin; cy<cymax; cy++) {
+        for (cy=cymin; cy<cymax; ++cy) {
             if (cxx>=0 && cxx<=359 && cy>=-90 && cy<=89)
             {
                 if (allCells[cxx][cy+90] == NULL) {

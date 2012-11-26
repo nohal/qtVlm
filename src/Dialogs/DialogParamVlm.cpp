@@ -304,7 +304,7 @@ void DialogParamVlm::slot_chgMapFolder(void) {
             exitLoop=true;
         }
         else if(dir != mapsFolder->text()) {
-            GshhsReader * gshhsReaderPv = new GshhsReader((dir+"/gshhs").toAscii().data(), 0);
+            GshhsReader * gshhsReaderPv = new GshhsReader((dir+"/gshhs").toAscii().data());
 
             int polyVersion = gshhsReaderPv->getPolyVersion();
             if(polyVersion == -1) {

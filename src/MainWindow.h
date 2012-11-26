@@ -158,7 +158,6 @@ class MainWindow: public QMainWindow
         void slot_pasteRoute();
 
     signals:
-        void signalMapQuality(int quality);
         void setChangeStatus(bool);
         void editPOI(POI *);
         void newPOI(double,double,Projection *, boat *);
