@@ -702,13 +702,13 @@ bool DialogParamAccount::initDialog(player_data * data)
     }
     else if(Settings::getSetting("appLanguage", "en").toString()=="cz")
     {
-        s1=tr("Jmeno");
-        s2=tr("Lod jmeno");
+        s1="Jmeno";
+        s2="Lod jmeno";
     }
     else if(Settings::getSetting("appLanguage", "en").toString()=="es")
     {
-        s1=tr("Login");
-        s2=tr("Nombre del barco");
+        s1="Login";
+        s2="Nombre del barco";
     }
     labelBoatName->setText(vlmBoat->isChecked()?s1:s2);
     labelPass->setHidden(realBoat->isChecked());
@@ -741,13 +741,13 @@ void DialogParamAccount::slot_typeChanged(bool)
     }
     else if(Settings::getSetting("appLanguage", "en").toString()=="cz")
     {
-        s1=tr("Jmeno");
-        s2=tr("Lod jmeno");
+        s1="Jmeno";
+        s2="Lod jmeno";
     }
     else if(Settings::getSetting("appLanguage", "en").toString()=="es")
     {
-        s1=tr("Login");
-        s2=tr("Nombre del barco");
+        s1="Login";
+        s2="Nombre del barco";
     }
     labelBoatName->setText(vlmBoat->isChecked()?s1:s2);
     edit_pass->setHidden(realBoat->isChecked());

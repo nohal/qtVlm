@@ -71,6 +71,7 @@ public:
              drawDeltaDewpoint
     };
     void switchGribDisplay(bool windArrowOnly);
+    QSize getSize() const {return QSize(width,height);}
 
 public slots :
     // Map

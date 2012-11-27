@@ -214,8 +214,6 @@ void Terrain::draw_GSHHSandGRIB()
             pnt1.setCompositionMode(QPainter::CompositionMode_Source);
             gshhsReader->drawContinents(pnt1, proj, tranparent, landColor);
         }
-        else
-            qWarning()<<"1-gshhsReader is NULL??";
     }
 
     //===================================================
@@ -360,8 +358,6 @@ void Terrain::draw_GSHHSandGRIB()
             gshhsReader->drawRivers(pnt, proj);
         }
     }
-    else
-        qWarning()<<"2-gshhsReader is NULL??";
 
     if (gisReader && showCountriesNames)
         gisReader->drawCountriesNames(pnt, proj);

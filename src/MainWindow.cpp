@@ -432,7 +432,6 @@ void MainWindow::continueSetup()
     setStatusBar(statusBar);
 
     this->slotParamChanged();
-
     progress->setLabelText(tr("Opening grib"));
     progress->setValue(progress->value()+10);
     gribFilePath = Settings::getSetting("gribFilePath", appFolder.value("grib")).toString();
@@ -689,6 +688,49 @@ void MainWindow::keyPressEvent ( QKeyEvent  * /* event */ )
 }
 void MainWindow::slot_deleteProgress (void)
 {
+    progress->setValue(99);
+    if(QThread::idealThreadCount()>1 && QFile(appFolder.value("img")+"benchmark.grb").exists())
+    {
+        progress->setLabelText(tr("Calibrating grib display"));
+        QApplication::processEvents();
+        Grib * grib=new Grib();
+        grib->loadGribFile(appFolder.value("img")+"benchmark.grb");
+        if(grib && grib->isOk())
+        {
+            grib->setCurrentDate(grib->getMinDate()+3650); //not to be on a gribrecord;
+            proj->blockSignals(true);
+            double xW=proj->getXmin();
+            double xE=proj->getXmax();
+            double yS=proj->getYmin();
+            double yN=proj->getYmax();
+            my_centralWidget->zoomOnGrib(grib);
+            QPixmap * imgAll = new QPixmap(my_centralWidget->getTerre()->getSize());
+            imgAll->fill(Qt::transparent);
+            QPainter pnt(imgAll);
+            pnt.setRenderHint(QPainter::Antialiasing, true);
+            pnt.setRenderHint(QPainter::SmoothPixmapTransform, true);
+            QTime calibration;
+            calibration.start();
+            grib->draw_WIND_Color(pnt,proj,true,true,true);
+            int cal1=calibration.elapsed();
+            pnt.end();
+            //imgAll->save("calib1.jpg");
+            imgAll->fill(Qt::transparent);
+            pnt.begin(imgAll);
+            calibration.start();
+            grib->draw_WIND_Color_old(pnt,proj,true,true,true);
+            int cal2=calibration.elapsed();
+            pnt.end();
+            //imgAll->save("calib2.jpg");
+            delete imgAll;
+            proj->zoomOnZone(xW,yN, xE,yS);
+            proj->blockSignals(false);
+            qWarning()<<"result of benchmark: multiThread="<<cal1<<"monoThread="<<cal2;
+            Settings::setSetting("gribBench1",cal1);
+            Settings::setSetting("gribBench2",cal2);
+        }
+        delete grib;
+    }
     //qWarning() << "Removing progress";
     progress->close();
     delete progress;
@@ -2459,6 +2501,13 @@ void MainWindow::slot_ParamVLMchanged()
             menuBar->estime->setValue(0);
     }
     if(my_centralWidget->getGrib() && my_centralWidget->getGrib()->isOk())
-        my_centralWidget->getGrib()->setGribMonoCpu(Settings::getSetting("gribMonoCpu",0).toInt()==1);
+    {
+        bool gribMulti=false;
+        if(Settings::getSetting("gribDrawingMethod",0).toInt()==0)
+            gribMulti=Settings::getSetting("gribBench1",-1).toInt()<Settings::getSetting("gribBench2",-1).toInt();
+        else
+            gribMulti=Settings::getSetting("gribDrawingMethod",0).toInt()==2;
+        my_centralWidget->getGrib()->setGribMonoCpu(!gribMulti);
+    }
 
 }

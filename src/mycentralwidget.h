@@ -103,7 +103,7 @@ class myCentralWidget : public QWidget
         ~myCentralWidget();
 
         /* access to pointer & data */
-        Grib * getGrib(void);
+        Grib * getGrib(bool calibrate=false);
         Grib * getGribCurrent(void);
         QGraphicsScene * getScene(void) { return scene; }
         bool compassHasLine(void);
@@ -275,6 +275,7 @@ class myCentralWidget : public QWidget
         void slotFax_close();
         void slotImg_open();
         void slotImg_close();
+        void zoomOnGrib(Grib * gr=NULL);
 
         /* Dialogs */
         void slot_boatDialog(void);
@@ -361,7 +362,6 @@ class myCentralWidget : public QWidget
         /* Grib */
         Grib *grib;
         Grib *gribCurrent;
-        void zoomOnGrib(void);
         QString  dataPresentInGrib(Grib* grib,
                                    int dataType,int levelType,int levelValue,
                                    bool *ok=NULL);

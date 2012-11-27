@@ -51,11 +51,35 @@ DialogParamVlm::DialogParamVlm(MainWindow * main,myCentralWidget * parent) : QDi
     mapsFolder->setToolTip(mapsFolderString);
     if(QThread::idealThreadCount()<=1)
     {
-        this->gribMonoCpu->setChecked(true);
-        this->gribMonoCpu->setEnabled(false);
+        this->gribMono->setChecked(true);
+        this->gribMono->setEnabled(false);
+        this->gribMulti->setEnabled(false);
+        this->gribAuto->setEnabled(false);
     }
     else
-        this->gribMonoCpu->setChecked(Settings::getSetting("gribMonoCpu",0).toInt()==1);
+    {
+        int gdm=Settings::getSetting("gribDrawingMethod",0).toInt();
+        if(gdm==0)
+            this->gribAuto->setChecked(true);
+        else if (gdm==1)
+            this->gribMono->setChecked(true);
+        else
+            this->gribMulti->setChecked(true);
+        int cal1=Settings::getSetting("gribBench1",-1).toInt();
+        if(cal1>0)
+        {
+            int cal2=Settings::getSetting("gribBench2",-1).toInt();
+            QString tt=tr("If checked, let qtVlm choose the fastest way for your computer")+"<br>"+
+                    tr("to display the Grib.")+"<br>";
+            tt+=tr("The result of the benchmark gives ")+QString().setNum(cal1)+tr(" ms for multithread against")+"<br>"+
+                    QString().setNum(cal2)+tr(" ms for monothread.")+"<br>";
+            if(cal1<cal2)
+                tt+=tr("Therefore the automatic choice will be multithread");
+            else
+                tt+=tr("Therefore the automatic choice will be monothread");
+            gribAuto->setToolTip(tt.replace(" ","&nbsp;"));
+        }
+    }
 
 
     /* Colors */
@@ -185,7 +209,12 @@ void DialogParamVlm::done(int result)
         Settings::setSetting("opp_labelType",QString().setNum(opp_labelType->currentIndex()));
         Settings::setSetting("showFlag",this->chkPavillon->checkState()==Qt::Checked?"1":"0");
         Settings::setSetting("classicalButtons",this->classicalButtons->checkState()==Qt::Checked?"1":"0");
-        Settings::setSetting("gribMonoCpu",this->gribMonoCpu->checkState()==Qt::Checked?"1":"0");
+        int gdm=2;
+        if(this->gribAuto->isChecked())
+            gdm=0;
+        else if (this->gribMono->isChecked())
+            gdm=1;
+        Settings::setSetting("gribDrawingMethod",gdm);
         Settings::setSetting("defaultFontName",this->defFontName->currentText());
         Settings::setSetting("defaultFontSizeInc",QString().setNum(this->defFontSize->value()-8.25));
 

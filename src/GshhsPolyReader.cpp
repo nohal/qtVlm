@@ -284,7 +284,6 @@ int GshhsPolyReader::getPolyVersion()
 
 void GshhsPolyReader::setQuality(int quality)  // 5 levels: 0=low ... 4=full
 {
-    qWarning()<<"currentQuality="<<currentQuality<<"asked for"<<quality;
     if (currentQuality != quality || fpoly==NULL)
     {
         currentQuality = quality;

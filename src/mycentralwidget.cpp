@@ -526,8 +526,6 @@ void myCentralWidget::loadGshhs(void) {
     if(gshhsReader) {
         if(terre)
             terre->setGSHHS_map(NULL);
-        else
-            qWarning()<<"1- Terre is null??";
 
         delete gshhsReader;
         gshhsReader=NULL;
@@ -629,8 +627,6 @@ void myCentralWidget::loadGshhs(void) {
         {
             terre->setGSHHS_map(gshhsReader);
         }
-        else
-            qWarning()<<"Terre is NULL??";
     }
 
 }
@@ -729,8 +725,9 @@ int myCentralWidget::getCompassMode(int m_x,int m_y)
     return COMPASS_NOTHING;
 }
 
-Grib * myCentralWidget::getGrib(void)
+Grib * myCentralWidget::getGrib(bool calibrate)
 {
+    if(calibrate) return grib;
     if(grib && grib->isOk())
         return grib;
     else
@@ -1026,13 +1023,18 @@ void myCentralWidget::slot_mouseRelease(QGraphicsSceneMouseEvent* e)
 /* Grib                   */
 /**************************/
 
-void myCentralWidget::zoomOnGrib(void)
+void myCentralWidget::zoomOnGrib(Grib * gr)
 {
     Grib * myGrib;
-    if(menuBar->acView_CurrentColors->isChecked() && grib->getNumberOfGribRecords(GRB_CURRENT_VX,LV_MSL,0) == 0)
-        myGrib=gribCurrent;
+    if(gr!=NULL)
+        myGrib=gr;
     else
-        myGrib=grib;
+    {
+        if(menuBar->acView_CurrentColors->isChecked() && grib->getNumberOfGribRecords(GRB_CURRENT_VX,LV_MSL,0) == 0)
+            myGrib=gribCurrent;
+        else
+            myGrib=grib;
+    }
     double x0,y0, x1,y1;
     if (myGrib->getZoneExtension(&x0,&y0, &x1,&y1))
     {

@@ -518,11 +518,11 @@ La boîte à cocher trace partielle s&apos;active apres l&apos;entree d&apos;un 
     </message>
     <message>
         <source>Jmeno</source>
-        <translation>Jméno</translation>
+        <translation type="obsolete">Jméno</translation>
     </message>
     <message>
         <source>Lod jmeno</source>
-        <translation>Loď jméno</translation>
+        <translation type="obsolete">Loď jméno</translation>
     </message>
 </context>
 <context>
@@ -558,6 +558,34 @@ La boîte à cocher trace partielle s&apos;active apres l&apos;entree d&apos;un 
     <message>
         <source>Selected folder contains maps with wrong version</source>
         <translation>Le répértoire selectionné contient une mauvaise version des cartes</translation>
+    </message>
+    <message>
+        <source>If checked, let qtVlm choose the fastest way for your computer</source>
+        <translation>Si coché, qtVlm choisit automatiquement la facon la plus rapide</translation>
+    </message>
+    <message>
+        <source>to display the Grib.</source>
+        <translation>pour afficher le Grib.</translation>
+    </message>
+    <message>
+        <source>The result of the benchmark gives </source>
+        <translation>Le résultat du test donne </translation>
+    </message>
+    <message>
+        <source> ms for multithread against</source>
+        <translation> ms pour le mode multithread contre</translation>
+    </message>
+    <message>
+        <source> ms for monothread.</source>
+        <translation> ms pour le monothread.</translation>
+    </message>
+    <message>
+        <source>Therefore the automatic choice will be multithread</source>
+        <translation>Le choix automatique sera donc multithread</translation>
+    </message>
+    <message>
+        <source>Therefore the automatic choice will be monothread</source>
+        <translation>Le choix automatique sera donc monothread</translation>
     </message>
 </context>
 <context>
@@ -1694,6 +1722,10 @@ Etes-vous sur ?</source>
         <source>Please check your installation</source>
         <translation>Veuillez vérifier votre installation</translation>
     </message>
+    <message>
+        <source>Calibrating grib display</source>
+        <translation>Calibrage de l&apos;affichage du grib</translation>
+    </message>
 </context>
 <context>
     <name>MenuBar</name>
@@ -2572,6 +2604,10 @@ Etes-vous sur ?</source>
     <message>
         <source>Recharger le fichier GRIB actuel</source>
         <translation>Recharger le fichier GRIB actuel.</translation>
+    </message>
+    <message>
+        <source>Spanish</source>
+        <translation></translation>
     </message>
 </context>
 <context>
@@ -4511,7 +4547,23 @@ sans simplifier</translation>
     </message>
     <message>
         <source>Do not use multi-threading for drawing grib</source>
-        <translation>Ne pas utiliser le mode multiThreading pour afficher le grib</translation>
+        <translation type="obsolete">Ne pas utiliser le mode multiThreading pour afficher le grib</translation>
+    </message>
+    <message>
+        <source>Mode d&apos;affichage du grib</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>MultiThread</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>MonoThread</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Automatique</source>
+        <translation></translation>
     </message>
 </context>
 <context>
@@ -6654,7 +6706,7 @@ Que voulez vous faire?</translation>
     </message>
     <message>
         <source>Language/Langage</source>
-        <translation>Language/Langage/Jazyk</translation>
+        <translation type="obsolete">Language/Langage/Jazyk</translation>
     </message>
     <message>
         <source>Francais</source>
@@ -6667,6 +6719,14 @@ Que voulez vous faire?</translation>
     <message>
         <source>Czech</source>
         <translation>Čeština</translation>
+    </message>
+    <message>
+        <source>Language/Langage/Idioma</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Spanish</source>
+        <translation></translation>
     </message>
 </context>
 <context>
