@@ -906,8 +906,8 @@ void POI::slot_delPoi()
     if(route!=NULL)
         if(route->getFrozen()) return;
     int rep = QMessageBox::question (parent,
-            tr("Detruire la marque"),
-            tr("La destruction d'une marque est definitive.\n\nEtes-vous sur ?"),
+                                     tr("Detruire la marque")+" - "+this->getName(),
+                                     tr("La destruction d'une marque est definitive.\n\nEtes-vous sur de vouloir supprimer")+" "+getName()+"?",
             QMessageBox::Yes | QMessageBox::No);
     if (rep == QMessageBox::Yes) {
 
@@ -915,7 +915,7 @@ void POI::slot_delPoi()
         {
             if(route->isBusy())
             {
-                QMessageBox::critical(0,tr("Destruction d'un marque"),tr("Le calcul de la route n'est pas fini, impossible de supprimer ce POI"));
+                QMessageBox::critical(0,tr("Destruction d'une marque")+" - "+this->getName(),tr("Le calcul de la route n'est pas fini, impossible de supprimer ce POI"));
                 return;
             }
             setRoute(NULL);

@@ -347,6 +347,8 @@ MenuBar::MenuBar(QWidget *parent)
                     tr("Creer un routage"),"", "", "");
         mnRoutage_delete = new QMenu(tr("Supprimer un routage"));
         mnRoutage_edit = new QMenu(tr("Editer un routage"));
+        mnRoutage_edit->setEnabled(false);
+        mnRoutage_delete->setEnabled(false);
         menuRoutage->addMenu(mnRoutage_edit);
         menuRoutage->addSeparator();
         menuRoutage->addMenu(mnRoutage_delete);

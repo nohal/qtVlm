@@ -3828,17 +3828,30 @@ void myCentralWidget::update_menuRoute()
     menuBar->mnCompassCenterRoute->clear();
     QAction * a=menuBar->addReleaseCompass();
     connect(a, SIGNAL(triggered()), this, SLOT(slot_releaseCompassFollow()));
+    bool hasRoute=!route_list.isEmpty();
+    menuBar->mnRoute_edit->setEnabled(hasRoute);
+    menuBar->mnRoute_delete->setEnabled(hasRoute);
+    menuBar->mnRoute_export->setEnabled(hasRoute);
+    menuBar->mnCompassCenterRoute->setEnabled(hasRoute);
+
     QListIterator<ROUTE*> i (route_list);
     while(i.hasNext())
     {
         menuBar->addMenuRoute(i.next());
     }
+
 }
 void myCentralWidget::update_menuRoutage()
 {
     qSort(routage_list.begin(),routage_list.end(),ROUTAGE::myLessThan);
+
     menuBar->mnRoutage_edit->clear();
     menuBar->mnRoutage_delete->clear();
+
+    bool hasRoutage=!routage_list.isEmpty();
+    menuBar->mnRoutage_edit->setEnabled(hasRoutage);
+    menuBar->mnRoutage_delete->setEnabled(hasRoutage);
+
     QListIterator<ROUTAGE*> i (routage_list);
     while(i.hasNext())
         menuBar->addMenuRoutage(i.next());
