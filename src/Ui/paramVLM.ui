@@ -1002,22 +1002,6 @@
         </widget>
        </item>
        <item>
-        <widget class="QGroupBox" name="groupBox_13">
-         <property name="title">
-          <string>Grib horodate</string>
-         </property>
-         <layout class="QGridLayout" name="gridLayout_10">
-          <item row="0" column="0">
-           <widget class="QCheckBox" name="chk_autoGribDate">
-            <property name="text">
-             <string>Date automatique a chaque synchro VLM</string>
-            </property>
-           </widget>
-          </item>
-         </layout>
-        </widget>
-       </item>
-       <item>
         <widget class="QGroupBox" name="groupBox_14">
          <property name="title">
           <string>SailsDoc</string>
@@ -1267,6 +1251,19 @@
          </layout>
         </widget>
        </item>
+       <item>
+        <spacer name="verticalSpacer_8">
+         <property name="orientation">
+          <enum>Qt::Vertical</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>20</width>
+           <height>40</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
       </layout>
      </widget>
     </widget>
@@ -1337,7 +1334,6 @@
   <tabstop>edt_gribFolder</tabstop>
   <tabstop>btn_browseGrib</tabstop>
   <tabstop>chk_gribZoomOnLoad</tabstop>
-  <tabstop>chk_autoGribDate</tabstop>
   <tabstop>chk_externalMail</tabstop>
   <tabstop>serialName</tabstop>
   <tabstop>spn_gpsDelay</tabstop>
