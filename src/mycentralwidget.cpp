@@ -416,6 +416,10 @@ myCentralWidget::myCentralWidget(Projection * proj,MainWindow * parent,MenuBar *
     this->hornDate=QDateTime::currentDateTime().toUTC();
     this->hornDate.setTimeSpec(Qt::UTC);
     this->hornActivated=false;
+    routeTimer=new QTimer(this);
+    routeTimer->setInterval(300);
+    routeTimer->setSingleShot(true);
+    connect(routeTimer, SIGNAL(timeout()),this,SLOT(slot_routeTimer()));
 
     // Compass
     compass = new mapCompass(proj,parent,this);
@@ -3769,11 +3773,17 @@ void myCentralWidget::deleteRoutage(ROUTAGE * routage, ROUTE * route)
         routage=NULL;
         if(route!=NULL)
         {
-            route->setSimplify(true);
-            this->treatRoute(route);
+            routeSimplify=route;
+            routeTimer->start();
         }
     }
 }
+void myCentralWidget::slot_routeTimer()
+{
+    routeSimplify->setSimplify(true);
+    treatRoute(routeSimplify);
+}
+
 void myCentralWidget::assignPois()
 {
     //qWarning() << "AssignPOI "  << route_list.count() << " routes, " << poi_list.count() << " pois";

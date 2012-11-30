@@ -245,6 +245,7 @@ class myCentralWidget : public QWidget
         void slot_releaseCompassFollow(){this->compassRoute=NULL;}
         void slot_deleteRoute();
         void withdrawRouteFromBank(QString routeName,QList<QVariant> details);
+        void slot_routeTimer();
 
         /*Routages */
         void slot_addRoutageFromMenu();
@@ -426,6 +427,8 @@ class myCentralWidget : public QWidget
         bool abortRequest;
         faxMeteo * fax;
         loadImg * kap;
+        QTimer * routeTimer;
+        ROUTE * routeSimplify;
 };
 
 #endif // MYCENTRALWIDGET_H
