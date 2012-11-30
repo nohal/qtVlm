@@ -162,6 +162,8 @@ void MainWindow::connectSignals()
     connect(mb->ac_centerMap,SIGNAL(triggered()), this, SLOT(slot_centerMap()));
 
     connect(mb->ac_copyRoute,SIGNAL(triggered()), this, SLOT(slot_copyRoute()));
+    connect(mb->ac_deleteRoute,SIGNAL(triggered()), this, SLOT(slot_deleteRoute()));
+    connect(mb->ac_editRoute,SIGNAL(triggered()), this, SLOT(slot_editRoute()));
     connect(mb->ac_pasteRoute,SIGNAL(triggered()), this, SLOT(slot_pasteRoute()));
     connect(mb->acRoute_paste,SIGNAL(triggered()), this, SLOT(slot_pasteRoute()));
 #ifdef __QTVLM_WITH_TEST
@@ -1574,13 +1576,21 @@ void MainWindow::slotShowContextualMenu(QGraphicsSceneContextMenuEvent * e)
     }
     if(my_centralWidget->getRouteToClipboard()!=NULL)
     {
-        menuBar->ac_copyRoute->setEnabled(true);
+        menuBar->ac_copyRoute->setVisible(true);
         menuBar->ac_copyRoute->setData(my_centralWidget->getRouteToClipboard()->getName());
+        menuBar->ac_deleteRoute->setVisible(true);
+        menuBar->ac_deleteRoute->setData(my_centralWidget->getRouteToClipboard()->getName());
+        menuBar->ac_editRoute->setVisible(true);
+        menuBar->ac_editRoute->setData(my_centralWidget->getRouteToClipboard()->getName());
     }
     else
     {
-        menuBar->ac_copyRoute->setEnabled(false);
+        menuBar->ac_copyRoute->setVisible(false);
         menuBar->ac_copyRoute->setData(QString());
+        menuBar->ac_deleteRoute->setVisible(false);
+        menuBar->ac_deleteRoute->setData(QString());
+        menuBar->ac_editRoute->setVisible(false);
+        menuBar->ac_editRoute->setData(QString());
     }
     QString clipboard=QApplication::clipboard()->text();
     if(clipboard.isEmpty() || !clipboard.contains("<kml") || !clipboard.contains("Placemark"))
@@ -1603,6 +1613,34 @@ void MainWindow::slot_copyRoute()
     }
     if(route!=NULL)
         my_centralWidget->exportRouteFromMenuKML(route,"",true);
+}
+void MainWindow::slot_deleteRoute()
+{
+    ROUTE *route=NULL;
+    for (int n=0;n<my_centralWidget->getRouteList().count();++n)
+    {
+        if(my_centralWidget->getRouteList().at(n)->getName()==menuBar->ac_copyRoute->data().toString())
+        {
+            route=my_centralWidget->getRouteList().at(n);
+            break;
+        }
+    }
+    if(route!=NULL)
+        my_centralWidget->myDeleteRoute(route);
+}
+void MainWindow::slot_editRoute()
+{
+    ROUTE *route=NULL;
+    for (int n=0;n<my_centralWidget->getRouteList().count();++n)
+    {
+        if(my_centralWidget->getRouteList().at(n)->getName()==menuBar->ac_copyRoute->data().toString())
+        {
+            route=my_centralWidget->getRouteList().at(n);
+            break;
+        }
+    }
+    if(route!=NULL)
+        route->slot_edit();
 }
 void MainWindow::slot_pasteRoute()
 {

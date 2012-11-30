@@ -155,6 +155,8 @@ class MainWindow: public QMainWindow
         void slot_boatHasUpdated(void);
         void slot_updPlayerFinished(bool res_ok, Player * player);
         void slot_copyRoute();
+        void slot_deleteRoute();
+        void slot_editRoute();
         void slot_pasteRoute();
 
     signals:

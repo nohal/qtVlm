@@ -1716,7 +1716,7 @@ Etes-vous sur ?</source>
     </message>
     <message>
         <source>Icon &apos;unlock.png&apos; cannot be find in img directory</source>
-        <translation>Le fichier icone &apos;unlock.png&apos; n&apos;existe pas dans votre répertoire &apos;img&apos;</translation>
+        <translation type="obsolete">Le fichier icone &apos;unlock.png&apos; n&apos;existe pas dans votre répertoire &apos;img&apos;</translation>
     </message>
     <message>
         <source>Please check your installation</source>
@@ -1725,6 +1725,10 @@ Etes-vous sur ?</source>
     <message>
         <source>Calibrating grib display</source>
         <translation>Calibrage de l&apos;affichage du grib</translation>
+    </message>
+    <message>
+        <source>File &apos;benchmark.grb&apos; cannot be find in img directory</source>
+        <translation>Le fichier &apos;benchmark.grb&apos; n&apos;existe pas dans le répertoire &apos;img&apos;</translation>
     </message>
 </context>
 <context>
@@ -2603,10 +2607,18 @@ Etes-vous sur ?</source>
     </message>
     <message>
         <source>Recharger le fichier GRIB actuel</source>
-        <translation>Recharger le fichier GRIB actuel.</translation>
+        <translation>Recharger le fichier GRIB actuel</translation>
     </message>
     <message>
         <source>Spanish</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Supprimer la route</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Editer la route</source>
         <translation></translation>
     </message>
 </context>
@@ -2712,7 +2724,7 @@ Etes-vous sur ?</source>
         <source>La destruction d&apos;une marque est definitive.
 
 Etes-vous sur ?</source>
-        <translation>La destruction d&apos;une marque est définitive.  Etes-vous sur?</translation>
+        <translation type="obsolete">La destruction d&apos;une marque est définitive.  Etes-vous sur?</translation>
     </message>
     <message>
         <source>Meilleure ETA: </source>
@@ -2776,7 +2788,7 @@ Etes-vous sur ?</source>
     </message>
     <message>
         <source>Destruction d&apos;un marque</source>
-        <translation>Destruction d&apos;une marque</translation>
+        <translation type="obsolete">Destruction d&apos;une marque</translation>
     </message>
     <message>
         <source>Le calcul de la route n&apos;est pas fini, impossible de supprimer ce POI</source>
@@ -2826,6 +2838,18 @@ Etes-vous sûr?</translation>
     <message>
         <source>Zoom sur la route </source>
         <translation>Zoom sur la route </translation>
+    </message>
+    <message>
+        <source>La destruction d&apos;une marque est definitive.
+
+Etes-vous sur de vouloir supprimer</source>
+        <translation>La suppression d&apos;une marque est définitive.
+
+Etes-vous sur de vouloir supprimer</translation>
+    </message>
+    <message>
+        <source>Destruction d&apos;une marque</source>
+        <translation>Destruction d&apos;une marque</translation>
     </message>
 </context>
 <context>
@@ -3546,7 +3570,7 @@ VMG %.2f nds</translation>
     </message>
     <message>
         <source>Convertion d&apos;un routage en route</source>
-        <translation>Conversion d&apos;un routage en route</translation>
+        <translation type="obsolete">Conversion d&apos;un routage en route</translation>
     </message>
     <message>
         <source>Voulez-vous que la route parte du bateau a la prochaine vacation?</source>
@@ -3575,6 +3599,10 @@ VMG %.2f nds</translation>
     <message>
         <source>Voulez-vous que le point de depart de la route suive le bateau maintenant?</source>
         <translation>Voulez-vous que le point de départ de la route suive le bateau maintenant?</translation>
+    </message>
+    <message>
+        <source>Simplifier/Optimiser automatiquement</source>
+        <translation></translation>
     </message>
 </context>
 <context>
@@ -3686,10 +3714,6 @@ VMG %.2f nds</translation>
     <message>
         <source>Les previsions du grib sont decalees de</source>
         <translation>Les prévisions du grib sont décalées de</translation>
-    </message>
-    <message>
-        <source>Utiliser ce scenario</source>
-        <translation></translation>
     </message>
     <message>
         <source>Options supplementaires</source>
@@ -4246,10 +4270,6 @@ sans simplifier</translation>
         <translation></translation>
     </message>
     <message>
-        <source>Grib horodate</source>
-        <translation></translation>
-    </message>
-    <message>
         <source>Couleurs</source>
         <translation></translation>
     </message>
@@ -4435,7 +4455,7 @@ sans simplifier</translation>
     </message>
     <message>
         <source>Date automatique a chaque synchro VLM</source>
-        <translation>Date automatique à chaque synchro VLM</translation>
+        <translation type="obsolete">Date automatique à chaque synchro VLM</translation>
     </message>
     <message>
         <source>Delais d&apos;envoi (sec)</source>

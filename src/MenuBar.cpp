@@ -34,6 +34,7 @@ Copyright (C) 2008 - Jacques Zaninetti - http://zygrib.free.fr
 #include "routage.h"
 #include "Terrain.h"
 #include "settings.h"
+#include <QIcon>
 
 //===================================================================================
 MenuBar::MenuBar(QWidget *parent)
@@ -542,6 +543,8 @@ QMenu * MenuBar::createPopupBtRight(QWidget *parent)
 
     popup->addSeparator();
     ac_copyRoute=addAction(popup,tr("Copier la route au format kml"),"","","");
+    ac_deleteRoute=addAction(popup,tr("Supprimer la route"),"","","");
+    ac_editRoute=addAction(popup,tr("Editer la route"),"","","");
     ac_pasteRoute=addAction(popup,tr("Coller une route"),"","","");
     return popup;
 }
@@ -589,6 +592,9 @@ void MenuBar::addMenuRoute(ROUTE* route)
     QAction *action2;
     QAction *action3;
     QAction *action4;
+    QPixmap iconI(20,10);
+    iconI.fill(route->getColor());
+    QIcon icon(iconI);
     action1=addAction(mnRoute_edit,route->getName(),"","","");
     connect(action1, SIGNAL(triggered()), route, SLOT(slot_edit()));
     action2=addAction(mnRoute_delete,route->getName(),"","","");
@@ -598,6 +604,10 @@ void MenuBar::addMenuRoute(ROUTE* route)
     connect(action3, SIGNAL(triggered()), route, SLOT(slot_export()));
     action4=addAction(mnCompassCenterRoute,route->getName(),"","","");
     connect(action4, SIGNAL(triggered()), route, SLOT(slot_compassFollow()));
+    action1->setIcon(icon);
+    action2->setIcon(icon);
+    action3->setIcon(icon);
+    action4->setIcon(icon);
 }
 QAction * MenuBar::addReleaseCompass()
 {

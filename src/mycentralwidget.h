@@ -148,13 +148,14 @@ class myCentralWidget : public QWidget
         void simpAllPOIs(bool b);
         void setRouteToClipboard(ROUTE * route){this->routeClipboard=route;}
         ROUTE * getRouteToClipboard(){return this->routeClipboard;}
+        void myDeleteRoute(ROUTE * route);
 /* routage */
         QList<ROUTAGE*> & getRoutageList(){ return this->routage_list;}
         bool freeRoutageName(QString name, ROUTAGE * routage);
         ROUTAGE * addRoutage();
         int getNbRoutage(){return nbRoutage;}
         void addPivot(ROUTAGE * fromRoutage,bool editOptions=false);
-        void deleteRoutage(ROUTAGE * routage);
+        void deleteRoutage(ROUTAGE * routage, ROUTE * route=NULL);
 /*Other*/
         Projection * getProj(void){return proj;}
         void update_menuRoutage();
@@ -419,7 +420,6 @@ class myCentralWidget : public QWidget
         int nbRoutage;
         bool keepPos;
         void deleteRoute(ROUTE * route);
-        void myDeleteRoute(ROUTE * route);
         int replayStep;
         QTimer *replayTimer;
         void doSimplifyRoute(ROUTE * route, bool fast=false);

@@ -2733,12 +2733,20 @@ void ROUTAGE::convertToRoute()
             break;
     }
     this->converted=false;
+    bool simp=false;
     if(parentRoutage->getRouteFromBoat())
     {
-        int answ=QMessageBox::question(0,tr("Convertion d'un routage en route"),
-                                         tr("Voulez-vous que le point de depart de la route suive le bateau maintenant?"),
-                                              QMessageBox::Yes|QMessageBox::No|QMessageBox::Cancel);
+        QMessageBox msgBox(QMessageBox::Question,tr("Conversion d'un routage en route"),
+                           tr("Voulez-vous que le point de depart de la route suive le bateau maintenant?"));
+        QCheckBox simplify(tr("Simplifier/Optimiser automatiquement"),0);
+        simplify.blockSignals(true);
+        simplify.setChecked(Settings::getSetting("convertAndSimplify",1).toInt()==1);
+        msgBox.addButton(&simplify,QMessageBox::ActionRole);
+        msgBox.setStandardButtons(QMessageBox::Yes|QMessageBox::No|QMessageBox::Cancel);
+        int answ=msgBox.exec();
         if(answ==QMessageBox::Cancel) return;
+        simp=simplify.isChecked();
+        Settings::setSetting("convertAndSimplify",simp?1:0);
         routeStartBoat=answ==QMessageBox::Yes;
     }
     this->converted=true;
@@ -2794,7 +2802,7 @@ void ROUTAGE::convertToRoute()
             }
         }
     }
-    parent->deleteRoutage(this);
+    parent->deleteRoutage(this,simp?route:NULL);
 }
 void ROUTAGE::checkIsoCrossingPreviousSegments()
 {

@@ -3759,7 +3759,7 @@ void myCentralWidget::slot_deleteRoutage()
     deleteRoutage(routage);
 }
 
-void myCentralWidget::deleteRoutage(ROUTAGE * routage)
+void myCentralWidget::deleteRoutage(ROUTAGE * routage, ROUTE * route)
 {
     if(routage)
     {
@@ -3767,6 +3767,11 @@ void myCentralWidget::deleteRoutage(ROUTAGE * routage)
         update_menuRoutage();
         routage->deleteLater();
         routage=NULL;
+        if(route!=NULL)
+        {
+            route->setSimplify(true);
+            this->treatRoute(route);
+        }
     }
 }
 void myCentralWidget::assignPois()

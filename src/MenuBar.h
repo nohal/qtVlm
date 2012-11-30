@@ -106,6 +106,8 @@ public:
     QAction * ac_moveBoatSep;
 
     QAction * ac_copyRoute;
+    QAction * ac_deleteRoute;
+    QAction * ac_editRoute;
     QAction * ac_pasteRoute;
 
     QAction *acFile_Open;
