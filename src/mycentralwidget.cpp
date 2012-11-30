@@ -1186,7 +1186,7 @@ void myCentralWidget::slotLoadSailsDocGrib(void)
             QDesktopServices::openUrl(QUrl(queryStr));
         else
         {
-            DialogSailDocs * sailDocs_diag = new DialogSailDocs("send GFS:" + param + "|0.5,0.5|0,3,6..384|WIND",this);
+            DialogSailDocs * sailDocs_diag = new DialogSailDocs("GFS:" + param + "|0.5,0.5|0,3,6..384|WIND",this);
             sailDocs_diag->exec();
             delete sailDocs_diag;
         }

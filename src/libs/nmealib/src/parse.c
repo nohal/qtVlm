@@ -110,6 +110,11 @@ int nmea_pack_type(const char *buff, int buff_sz)
         "IIGSV",
         "IIRMC",
         "IIVTG",
+        "ECGGA",
+        "ECGSA",
+        "ECGSV",
+        "ECRMC",
+        "ECVTG"
     };
 
     NMEA_ASSERT(buff);
@@ -120,21 +125,31 @@ int nmea_pack_type(const char *buff, int buff_sz)
         return GPGGA;
     else if(0 == memcmp(buff, pheads[5], 5))
         return GPGGA;
+    else if(0 == memcmp(buff, pheads[10], 5))
+        return GPGGA;
     else if(0 == memcmp(buff, pheads[1], 5))
         return GPGSA;
     else if(0 == memcmp(buff, pheads[6], 5))
+        return GPGSA;
+    else if(0 == memcmp(buff, pheads[11], 5))
         return GPGSA;
     else if(0 == memcmp(buff, pheads[2], 5))
         return GPGSV;
     else if(0 == memcmp(buff, pheads[7], 5))
         return GPGSV;
+    else if(0 == memcmp(buff, pheads[12], 5))
+        return GPGSV;
     else if(0 == memcmp(buff, pheads[3], 5))
         return GPRMC;
     else if(0 == memcmp(buff, pheads[8], 5))
         return GPRMC;
+    else if(0 == memcmp(buff, pheads[13], 5))
+        return GPRMC;
     else if(0 == memcmp(buff, pheads[4], 5))
         return GPVTG;
     else if(0 == memcmp(buff, pheads[9], 5))
+        return GPVTG;
+    else if(0 == memcmp(buff, pheads[14], 5))
         return GPVTG;
 
     return GPNON;
@@ -222,8 +237,16 @@ int nmea_parse_GPGGA(const char *buff, int buff_sz, nmeaGPGGA *pack)
             &(pack->sig), &(pack->satinuse), &(pack->HDOP), &(pack->elv), &(pack->elv_units),
             &(pack->diff), &(pack->diff_units), &(pack->dgps_age), &(pack->dgps_sid)))
         {
-            nmea_error("GPGGA parse error!");
-            return 0;
+            if(14 != nmea_scanf(buff, buff_sz,
+                "$ECGGA,%s,%f,%C,%f,%C,%d,%d,%f,%f,%C,%f,%C,%f,%d*",
+                &(time_buff[0]),
+                &(pack->lat), &(pack->ns), &(pack->lon), &(pack->ew),
+                &(pack->sig), &(pack->satinuse), &(pack->HDOP), &(pack->elv), &(pack->elv_units),
+                &(pack->diff), &(pack->diff_units), &(pack->dgps_age), &(pack->dgps_sid)))
+            {
+                nmea_error("GPGGA parse error!");
+                return 0;
+            }
         }
     }
 
@@ -265,8 +288,16 @@ int nmea_parse_GPGSA(const char *buff, int buff_sz, nmeaGPGSA *pack)
             &(pack->sat_prn[6]), &(pack->sat_prn[7]), &(pack->sat_prn[8]), &(pack->sat_prn[9]), &(pack->sat_prn[10]), &(pack->sat_prn[11]),
             &(pack->PDOP), &(pack->HDOP), &(pack->VDOP)))
         {
-            nmea_error("GPGSA parse error!");
-            return 0;
+            if(17 != nmea_scanf(buff, buff_sz,
+                "$ECGSA,%C,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%f,%f,%f*",
+                &(pack->fix_mode), &(pack->fix_type),
+                &(pack->sat_prn[0]), &(pack->sat_prn[1]), &(pack->sat_prn[2]), &(pack->sat_prn[3]), &(pack->sat_prn[4]), &(pack->sat_prn[5]),
+                &(pack->sat_prn[6]), &(pack->sat_prn[7]), &(pack->sat_prn[8]), &(pack->sat_prn[9]), &(pack->sat_prn[10]), &(pack->sat_prn[11]),
+                &(pack->PDOP), &(pack->HDOP), &(pack->VDOP)))
+            {
+                nmea_error("GPGSA parse error!");
+                return 0;
+            }
         }
     }
 
@@ -302,6 +333,7 @@ int nmea_parse_GPGSV(const char *buff, int buff_sz, nmeaGPGSV *pack)
         &(pack->sat_data[2].id), &(pack->sat_data[2].elv), &(pack->sat_data[2].azimuth), &(pack->sat_data[2].sig),
         &(pack->sat_data[3].id), &(pack->sat_data[3].elv), &(pack->sat_data[3].azimuth), &(pack->sat_data[3].sig));
     if(nsen==0)
+    {
         nsen = nmea_scanf(buff, buff_sz,
             "$IIGSV,%d,%d,%d,"
             "%d,%d,%d,%d,"
@@ -313,6 +345,21 @@ int nmea_parse_GPGSV(const char *buff, int buff_sz, nmeaGPGSV *pack)
             &(pack->sat_data[1].id), &(pack->sat_data[1].elv), &(pack->sat_data[1].azimuth), &(pack->sat_data[1].sig),
             &(pack->sat_data[2].id), &(pack->sat_data[2].elv), &(pack->sat_data[2].azimuth), &(pack->sat_data[2].sig),
             &(pack->sat_data[3].id), &(pack->sat_data[3].elv), &(pack->sat_data[3].azimuth), &(pack->sat_data[3].sig));
+        if(nsen==0)
+        {
+            nsen = nmea_scanf(buff, buff_sz,
+                "$ECGSV,%d,%d,%d,"
+                "%d,%d,%d,%d,"
+                "%d,%d,%d,%d,"
+                "%d,%d,%d,%d,"
+                "%d,%d,%d,%d*",
+                &(pack->pack_count), &(pack->pack_index), &(pack->sat_count),
+                &(pack->sat_data[0].id), &(pack->sat_data[0].elv), &(pack->sat_data[0].azimuth), &(pack->sat_data[0].sig),
+                &(pack->sat_data[1].id), &(pack->sat_data[1].elv), &(pack->sat_data[1].azimuth), &(pack->sat_data[1].sig),
+                &(pack->sat_data[2].id), &(pack->sat_data[2].elv), &(pack->sat_data[2].azimuth), &(pack->sat_data[2].sig),
+                &(pack->sat_data[3].id), &(pack->sat_data[3].elv), &(pack->sat_data[3].azimuth), &(pack->sat_data[3].sig));
+        }
+    }
     nsat = (pack->pack_index - 1) * NMEA_SATINPACK;
     nsat = (nsat + NMEA_SATINPACK > pack->sat_count)?pack->sat_count - nsat:NMEA_SATINPACK;
     nsat = nsat * 4 + 3 /* first three sentence`s */;
@@ -344,7 +391,6 @@ int nmea_parse_GPRMC(const char *buff, int buff_sz, nmeaGPRMC *pack)
     nmea_trace_buff(buff, buff_sz);
 
     nsen = nmea_scanf(buff, buff_sz,
-//      "$GPRMC,%s,%C,%lf,%C,%lf,%C,%f,%lf,%2d%2d%2d,%lf,%C,%C*",
         "$GPRMC,%s,%C,%f,%C,%f,%C,%f,%f,%2d%2d%2d,%f,%C,%C*",
         &(time_buff[0]),
         &(pack->status), &(pack->lat), &(pack->ns), &(pack->lon), &(pack->ew),
@@ -352,14 +398,25 @@ int nmea_parse_GPRMC(const char *buff, int buff_sz, nmeaGPRMC *pack)
         &(pack->utc.day), &(pack->utc.mon), &(pack->utc.year),
         &(pack->declination), &(pack->declin_ew), &(pack->mode));
     if(nsen==0)
+    {
         nsen = nmea_scanf(buff, buff_sz,
-    //      "$GPRMC,%s,%C,%lf,%C,%lf,%C,%f,%lf,%2d%2d%2d,%lf,%C,%C*",
             "$IIRMC,%s,%C,%f,%C,%f,%C,%f,%f,%2d%2d%2d,%f,%C,%C*",
             &(time_buff[0]),
             &(pack->status), &(pack->lat), &(pack->ns), &(pack->lon), &(pack->ew),
             &(pack->speed), &(pack->direction),
             &(pack->utc.day), &(pack->utc.mon), &(pack->utc.year),
             &(pack->declination), &(pack->declin_ew), &(pack->mode));
+        if(nsen==0)
+        {
+            nsen = nmea_scanf(buff, buff_sz,
+                "$ECRMC,%s,%C,%f,%C,%f,%C,%f,%f,%2d%2d%2d,%f,%C,%C*",
+                &(time_buff[0]),
+                &(pack->status), &(pack->lat), &(pack->ns), &(pack->lon), &(pack->ew),
+                &(pack->speed), &(pack->direction),
+                &(pack->utc.day), &(pack->utc.mon), &(pack->utc.year),
+                &(pack->declination), &(pack->declin_ew), &(pack->mode));
+        }
+    }
     if(nsen != 13 && nsen != 14)
     {
         char error[50];
@@ -410,8 +467,16 @@ int nmea_parse_GPVTG(const char *buff, int buff_sz, nmeaGPVTG *pack)
             &(pack->spn), &(pack->spn_n),
             &(pack->spk), &(pack->spk_k)))
         {
-            nmea_error("GPVTG parse error!");
-            return 0;
+            if(8 != nmea_scanf(buff, buff_sz,
+                "$ECVTG,%f,%C,%f,%C,%f,%C,%f,%C*",
+                &(pack->dir), &(pack->dir_t),
+                &(pack->dec), &(pack->dec_m),
+                &(pack->spn), &(pack->spn_n),
+                &(pack->spk), &(pack->spk_k)))
+            {
+                nmea_error("GPVTG parse error!");
+                return 0;
+            }
         }
     }
 
