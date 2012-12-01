@@ -30,6 +30,22 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 extern QMap<QString,QString> appFolder;
 
+/* usefull template to store pointer in userData field of widgets */
+#include <QVariant>
+template <class T> class VPtr
+{
+public:
+    static T* asPtr(QVariant v)
+    {
+        return  (T *) v.value<void *>();
+    }
+
+    static QVariant asQVariant(T* ptr)
+    {
+        return qVariantFromValue((void *) ptr);
+    }
+};
+
 /* some constant */
 
 #define PI     M_PI

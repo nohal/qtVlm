@@ -126,7 +126,8 @@ class MainWindow: public QMainWindow
         void slotPilototo(void);
         void slotShowPolar(void);
 
-        void slot_newPOI(void);        
+        void slot_newPOI(void);
+        void slot_removePOI(void);
         void slotCreatePOI();
         void slotpastePOI();
         //void slotMovePOI(POI *);

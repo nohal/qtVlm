@@ -197,6 +197,8 @@ class myCentralWidget : public QWidget
         void treatRoute(ROUTE* route);
         loadImg * getKap(){return kap;}
 
+        void removePOI(void);
+
     public slots :
         /* Zoom & position */
         void slot_Zoom_All();

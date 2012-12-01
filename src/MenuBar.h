@@ -95,6 +95,7 @@ public:
     QAction *ac_notSimpSelPOIs;
     QAction *ac_simpSelPOIs;
     QAction *acPOIAdd;
+    QAction *acPOIRemove;
     QAction *ac_twaLine;
     QAction *ac_compassLine;
     QAction *ac_compassCenterBoat;

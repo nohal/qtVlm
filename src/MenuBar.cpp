@@ -366,6 +366,7 @@ MenuBar::MenuBar(QWidget *parent)
         acPOIgeoData = addAction(menuImportPoi,tr("Importer un fichier GeoData"),"","","");
         menuPOI->addMenu(menuImportPoi);
         acPOIAdd = addAction(menuPOI,tr("Ajouter une marque"),"","","");
+        acPOIRemove = addAction(menuPOI,tr("Supprimer des marques"),"","","");
     addMenu(menuPOI);
 
 

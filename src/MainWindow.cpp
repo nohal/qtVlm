@@ -155,6 +155,7 @@ void MainWindow::connectSignals()
     connect(mb->acVLMSync, SIGNAL(triggered()), this, SLOT(slotVLM_Sync()));
 
     connect(mb->acPOIAdd, SIGNAL(triggered()), this, SLOT(slot_newPOI()));
+    connect(mb->acPOIRemove, SIGNAL(triggered()), this, SLOT(slot_removePOI()));
     connect(mb->ac_twaLine,SIGNAL(triggered()), my_centralWidget, SLOT(slot_twaLine()));
     connect(mb->ac_compassLine,SIGNAL(triggered()), this, SLOT(slotCompassLine()));
     connect(mb->ac_compassCenterBoat,SIGNAL(triggered()), this, SLOT(slotCompassCenterBoat()));
@@ -916,6 +917,10 @@ void MainWindow::slotCreatePOI()
 void MainWindow::slot_newPOI(void)
 {
     emit newPOI(0.0,0.0,proj,selectedBoat);
+}
+
+void MainWindow::slot_removePOI(void) {
+    my_centralWidget->removePOI();
 }
 
 void MainWindow::slot_centerBoat()

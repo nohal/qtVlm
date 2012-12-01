@@ -28,6 +28,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <QXmlSchemaValidator>
 #include <QXmlQuery>
 #include <QGesture>
+#include <QVariantMap>
+#include <QVariant>
+#include <QClipboard>
+
+
 #include "mycentralwidget.h"
 
 #include "settings.h"
@@ -78,9 +83,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "dialogFaxMeteo.h"
 #include "dialogLoadImg.h"
 #include "parser.h"
-#include <QVariantMap>
-#include <QVariant>
-#include <QClipboard>
+#include "DialogRemovePoi.h"
 
 /*******************/
 /*    myScene      */
@@ -1337,6 +1340,11 @@ POI * myCentralWidget::slot_addPOI(QString name,int type,double lat,double lon, 
     slot_addPOI_list(poi);
     //poi->show();
     return poi;
+}
+
+void myCentralWidget::removePOI(void) {
+    DialogRemovePoi dialogRemovePoi(mainW,this);
+    dialogRemovePoi.exec();
 }
 
 void myCentralWidget::slot_addPOI_list(POI * poi)
