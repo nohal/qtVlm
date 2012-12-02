@@ -3266,9 +3266,21 @@ void ROUTAGE::createPopupMenu()
     popup->addAction(ac_pivot);
     ac_pivotM = new QAction(tr("Creer un pivot en changeant les options"),popup);
     popup->addAction(ac_pivotM);
+    popup->addSeparator();
+    ac_edit = new QAction(tr("Editer le routage"),popup);
+    popup->addAction(ac_edit);
+    ac_remove = new QAction(tr("Supprimer le routage"),popup);
+    popup->addAction(ac_remove);
     connect(ac_pivot,SIGNAL(triggered()),this,SLOT(slot_createPivot()));
     connect(ac_pivotM,SIGNAL(triggered()),this,SLOT(slot_createPivotM()));
+    connect(ac_edit,SIGNAL(triggered()),this,SLOT(slot_edit()));
+    connect(ac_remove,SIGNAL(triggered()),this,SLOT(slot_deleteRoutage()));
 }
+
+void ROUTAGE::slot_deleteRoutage(void) {
+    parent->deleteRoutage(this);
+}
+
 double ROUTAGE::getTimeStep() const
 {
     if(timeStepLess24==timeStepMore24) return timeStepLess24; //cover also the case of i_iso
