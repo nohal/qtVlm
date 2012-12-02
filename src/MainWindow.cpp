@@ -1581,11 +1581,21 @@ void MainWindow::slotShowContextualMenu(QGraphicsSceneContextMenuEvent * e)
     }
     if(my_centralWidget->getRouteToClipboard()!=NULL)
     {
+        QString routeName=my_centralWidget->getRouteToClipboard()->getName();
+        QPixmap iconI(20,10);
+        iconI.fill(my_centralWidget->getRouteToClipboard()->getColor());
+        QIcon icon(iconI);
         menuBar->ac_copyRoute->setVisible(true);
+        menuBar->ac_copyRoute->setText(tr("Copier la route")+" "+routeName);
+        menuBar->ac_copyRoute->setIcon(icon);
         menuBar->ac_copyRoute->setData(my_centralWidget->getRouteToClipboard()->getName());
         menuBar->ac_deleteRoute->setVisible(true);
+        menuBar->ac_deleteRoute->setText(tr("Supprimer la route")+" "+routeName);
+        menuBar->ac_deleteRoute->setIcon(icon);
         menuBar->ac_deleteRoute->setData(my_centralWidget->getRouteToClipboard()->getName());
         menuBar->ac_editRoute->setVisible(true);
+        menuBar->ac_editRoute->setText(tr("Editer la route")+" "+routeName);
+        menuBar->ac_editRoute->setIcon(icon);
         menuBar->ac_editRoute->setData(my_centralWidget->getRouteToClipboard()->getName());
     }
     else

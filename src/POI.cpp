@@ -490,14 +490,21 @@ void POI::contextMenuEvent(QGraphicsSceneContextMenuEvent * e)
         }
         else
         {
+            QPixmap iconI(20,10);
+            iconI.fill(route->getColor());
+            QIcon icon(iconI);
             ac_delRoute->setText(tr("Supprimer la route ")+route->getName());
             ac_delRoute->setEnabled(true);
+            ac_delRoute->setIcon(icon);
             ac_editRoute->setText(tr("Editer la route ")+route->getName());
             ac_editRoute->setEnabled(true);
+            ac_editRoute->setIcon(icon);
             ac_copyRoute->setText(tr("Copier la route ")+route->getName());
             ac_copyRoute->setEnabled(true);
+            ac_copyRoute->setIcon(icon);
             ac_zoomRoute->setText(tr("Zoom sur la route ")+route->getName());
             ac_zoomRoute->setEnabled(true);
+            ac_zoomRoute->setIcon(icon);
         }
         /*clear current actions */
         ac_routeList->clear();
@@ -515,19 +522,28 @@ void POI::contextMenuEvent(QGraphicsSceneContextMenuEvent * e)
             ptr->setChecked(true);
         else
             ptr->setChecked(false);
+        QPixmap iconI(20,10);
         while(j.hasNext())
         {
             ROUTE * ptr_route = j.next();
-            ptr=new QAction(ptr_route->getName(),ac_routeList);            
+            iconI.fill(ptr_route->getColor());
+            QIcon icon(iconI);
+            ptr=new QAction(ptr_route->getName(),ac_routeList);
+            ptr->setIcon(icon);
             ptr->setCheckable  (true);
             ptr->setData(-1);
             ac_routeList->addAction(ptr);
             if(ptr_route == route)
+            {
+                QFont font=ptr->font();
+                font.setBold(true);
+                ptr->setFont(font);
                 ptr->setChecked(true);
+            }
             else
                 ptr->setChecked(false);
             ptr->setData(qVariantFromValue((void *) ptr_route));
-            k++;
+            ++k;
         }
 
     }

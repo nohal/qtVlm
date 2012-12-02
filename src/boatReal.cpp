@@ -499,7 +499,7 @@ void ReceiverThread::run()
     QFile fakeGPS("fakeGPS.data");
     if(!fakeGPS.open(QIODevice::ReadOnly | QIODevice::Text))
     {
-        qWarning()<<"failed o open fakeGPS.data";
+        qWarning()<<"failed to open fakeGPS.data";
         return;
     }
 #endif
