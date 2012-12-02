@@ -152,6 +152,7 @@ class POI : public QGraphicsWidget
         void slot_relier();
         void slot_pilote();
         void slot_notSimplificable(bool b){this->notSimplificable=b;}
+        void slot_routage(void) { ROUTAGE * routage=parent->addRoutage(); parent->slot_editRoutage(routage,true,this); }
 
     signals:
         void chgWP(double,double,double);
@@ -226,6 +227,7 @@ class POI : public QGraphicsWidget
         QAction * ac_modeList3;
         QAction * ac_connect;
         QAction * ac_pilot;
+        QAction * ac_routage;
         QAction * ac_simplifiable;
         void createPopUpMenu(void);
 

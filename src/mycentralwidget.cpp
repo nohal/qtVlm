@@ -3687,9 +3687,9 @@ void myCentralWidget::setPilototo(QList<POI *> poiList)
     }
 }
 
-void myCentralWidget::slot_editRoutage(ROUTAGE * routage,bool createMode)
+void myCentralWidget::slot_editRoutage(ROUTAGE * routage,bool createMode,POI *endPOI)
 {
-    DialogRoutage *routage_editor=new DialogRoutage(routage,this);
+    DialogRoutage *routage_editor=new DialogRoutage(routage,this,endPOI);
     if(routage_editor->exec()!=QDialog::Accepted)
     {
         delete routage_editor;

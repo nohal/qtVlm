@@ -283,6 +283,11 @@ void POI::createPopUpMenu(void)
     popup->addAction(ac_pilot);
 
     popup->addSeparator();
+    ac_routage=new QAction(tr("Routage vers ce POI"),popup);
+    connect(ac_routage,SIGNAL(triggered()),this,SLOT(slot_routage()));
+    popup->addAction(ac_routage);
+
+    popup->addSeparator();
     ac_connect=new QAction(tr("Tracer/Editer une ligne avec un autre POI"),popup);
     connect(ac_connect,SIGNAL(triggered()),this,SLOT(slot_relier()));
     popup->addAction(ac_connect);

@@ -44,12 +44,15 @@ Copyright (C) 2008 - Jacques Zaninetti - http://zygrib.free.fr
 //-------------------------------------------------------
 // ROUTAGE_Editor: Constructor for edit an existing ROUTAGE
 //-------------------------------------------------------
-DialogRoutage::DialogRoutage(ROUTAGE *routage,myCentralWidget *parent)
+DialogRoutage::DialogRoutage(ROUTAGE *routage,myCentralWidget *parent, POI *endPOI)
     : QDialog(parent)
 {
     QString m;
     this->routage=routage;
     this->parent=parent;
+
+    if(endPOI)
+        routage->setToPOI(endPOI);
     setupUi(this);
     Util::setFontDialog(this);
     connect(this->Default,SIGNAL(clicked()),this,SLOT(slot_default()));

@@ -251,7 +251,7 @@ class myCentralWidget : public QWidget
 
         /*Routages */
         void slot_addRoutageFromMenu();
-        void slot_editRoutage(ROUTAGE * routage,bool createMode=false);
+        void slot_editRoutage(ROUTAGE * routage,bool createMode=false,POI * endPOI=NULL);
         void slot_deleteRoutage();
 
         /* Players */

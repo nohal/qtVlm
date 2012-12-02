@@ -32,7 +32,7 @@ Copyright (C) 2008 - Jacques Zaninetti - http://zygrib.free.fr
 class DialogRoutage : public QDialog, public Ui::ROUTAGE_Editor_ui
 { Q_OBJECT
     public:
-        DialogRoutage(ROUTAGE *route, myCentralWidget *parent);
+        DialogRoutage(ROUTAGE *route, myCentralWidget *parent,POI *endPOI=NULL);
         ~DialogRoutage();
         void done(int result);
 
