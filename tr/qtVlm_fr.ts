@@ -921,6 +921,44 @@ Etes-vous sur ?</source>
     </message>
 </context>
 <context>
+    <name>DialogRemovePoi</name>
+    <message>
+        <source>Removing POI</source>
+        <translation>Suppression de POIs</translation>
+    </message>
+    <message>
+        <source>selected POI</source>
+        <translation>POIs sélectionnés</translation>
+    </message>
+    <message>
+        <source>Are you sure to remove %1 POI?</source>
+        <translation>Etes-vous sur de vouloir supprimer %1 POIs?</translation>
+    </message>
+</context>
+<context>
+    <name>DialogRemovePoi_ui</name>
+    <message>
+        <source>All</source>
+        <translation>Tous</translation>
+    </message>
+    <message>
+        <source>None</source>
+        <translation>Aucun</translation>
+    </message>
+    <message>
+        <source>Remove</source>
+        <translation>Suppression</translation>
+    </message>
+    <message>
+        <source>Cancel</source>
+        <translation>Annuler</translation>
+    </message>
+    <message>
+        <source>Remove POI</source>
+        <translation>Suppression de POIs</translation>
+    </message>
+</context>
+<context>
     <name>DialogRoutage</name>
     <message>
         <source>Calculer en parallele (</source>
@@ -1729,6 +1767,18 @@ Etes-vous sur ?</source>
     <message>
         <source>File &apos;benchmark.grb&apos; cannot be find in img directory</source>
         <translation>Le fichier &apos;benchmark.grb&apos; n&apos;existe pas dans le répertoire &apos;img&apos;</translation>
+    </message>
+    <message>
+        <source>Copier la route</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Supprimer la route</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Editer la route</source>
+        <translation></translation>
     </message>
 </context>
 <context>
@@ -2621,6 +2671,10 @@ Etes-vous sur ?</source>
         <source>Editer la route</source>
         <translation></translation>
     </message>
+    <message>
+        <source>Supprimer des marques</source>
+        <translation></translation>
+    </message>
 </context>
 <context>
     <name>POI</name>
@@ -2850,6 +2904,10 @@ Etes-vous sur de vouloir supprimer</translation>
     <message>
         <source>Destruction d&apos;une marque</source>
         <translation>Destruction d&apos;une marque</translation>
+    </message>
+    <message>
+        <source>Routage vers ce POI</source>
+        <translation></translation>
     </message>
 </context>
 <context>
@@ -3602,6 +3660,14 @@ VMG %.2f nds</translation>
     </message>
     <message>
         <source>Simplifier/Optimiser automatiquement</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Editer le routage</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Supprimer le routage</source>
         <translation></translation>
     </message>
 </context>
