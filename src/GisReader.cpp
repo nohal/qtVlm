@@ -145,10 +145,13 @@ void GisReader::drawCountriesNames(QPainter &pnt, Projection *proj)
 {
     pnt.setPen(QColor(120,100,60));
     pnt.setFont(Font::getFont(FONT_MapCountry));
+    pnt.setBackgroundMode(Qt::OpaqueMode);
+    pnt.setBackground(QBrush(Qt::white));
     std::list<GisPoint*>::iterator itp;
     for (itp=lsCountries.begin(); itp != lsCountries.end(); ++itp) {
         (*itp)->draw(&pnt, proj);
     }
+    pnt.setBackgroundMode(Qt::TransparentMode);
 }
 
 //-----------------------------------------------------------------------

@@ -34,6 +34,7 @@ Copyright (C) 2008 - Jacques Zaninetti - http://zygrib.free.fr
 #include "settings.h"
 #include "Projection.h"
 #include "Version.h"
+#include "Orthodromie.h"
 
 
 //======================================================================
@@ -616,4 +617,78 @@ bool Util::lineIsCrossingRect(const QLineF line, const QRectF rect)
     if(line.y1()>rect.topRight().y() && line.y2()>rect.topRight().y()) return false;
     if(line.y1()<rect.bottomLeft().y() && line.y2()<rect.bottomLeft().y()) return false;
     return true;
+}
+#define __distance(a,b) (sqrt(a*a+b*b))
+#define latToY(lat) (log(tan(PI_4+(lat/2.0))))
+#define yToLat(y) ((2.0*atan(exp(y))-PI_2))
+double Util::distance_to_line_dichotomy_xing(const double &lat, const double &lon,
+                                             const double &lat_a, const double &lon_a,
+                                             const double &lat_b, const double &lon_b,
+                                             double *x_latitude, double *x_longitude)
+{
+    double latitude=degToRad(lat);
+    double longitude=degToRad(lon);
+    double latitude_a=degToRad(lat_a);
+    double longitude_a=degToRad(lon_a);
+    double latitude_b=degToRad(lat_b);
+    double longitude_b=degToRad(lon_b);
+    double p1_latitude, p1_longitude, p2_latitude, p2_longitude;
+    double ortho_p1, ortho_p2;
+    double limit;
+    limit = PI/(180*60*1852); // 1m precision
+
+    if (qAbs(longitude_a - longitude_b) > PI)
+    {
+        if (longitude_a > longitude_b)
+        {
+            if (longitude_a > 0.0)
+                longitude_a -= TWO_PI;
+            else
+                longitude_b += TWO_PI;
+        }
+        else
+        {
+            if (longitude_b > 0.0)
+                longitude_b -= TWO_PI;
+            else
+                longitude_a += TWO_PI;
+        }
+    }
+    p1_latitude = latitude_a;
+    p1_longitude = longitude_a;
+    p2_latitude = latitude_b;
+    p2_longitude = longitude_b;
+    Orthodromie oo(radToDeg(longitude),radToDeg(latitude), radToDeg(p1_longitude), radToDeg(p1_latitude));
+    ortho_p1 = oo.getDistance();
+    oo.setEndPoint(radToDeg(p2_longitude), radToDeg(p2_latitude));
+    ortho_p2 = oo.getDistance();
+
+// ending test on distance between two points.
+
+    while (__distance((p1_latitude-p2_latitude), (p1_longitude-p2_longitude)) > limit)
+    {
+        if (ortho_p1 < ortho_p2)
+        {
+            p2_longitude = (p1_longitude+p2_longitude)/2;
+            p2_latitude = yToLat((latToY(p1_latitude)+latToY(p2_latitude))/2);
+        }
+        else
+        {
+            p1_longitude = (p1_longitude+p2_longitude)/2;
+            p1_latitude = yToLat((latToY(p1_latitude)+latToY(p2_latitude))/2);
+        }
+        oo.setEndPoint(radToDeg(p1_longitude),radToDeg(p1_latitude));
+        ortho_p1 = oo.getDistance();
+        oo.setEndPoint(radToDeg(p2_longitude),radToDeg(p2_latitude));
+        ortho_p2 = oo.getDistance();
+    }
+    if (ortho_p1 < ortho_p2)
+    {
+        *x_latitude = radToDeg(p1_latitude);
+        *x_longitude = radToDeg(p1_longitude);
+        return ortho_p1;
+    }
+    *x_latitude = radToDeg(p2_latitude);
+    *x_longitude = radToDeg(p2_longitude);
+    return ortho_p2;
 }

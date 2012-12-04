@@ -402,7 +402,7 @@ MenuBar::MenuBar(QWidget *parent)
         acMap_Rivers = addActionCheck(menuMap, tr("Rivieres"), tr(""), tr("Afficher les rivieres"));
         acMap_Rivers->setChecked(Settings::getSetting("showRivers", false).toBool());
         acMap_CountriesNames = addActionCheck(menuMap, tr("Noms des pays"), tr(""), tr("Afficher les noms des pays"));
-        acMap_CountriesNames->setChecked(Settings::getSetting("showCountriesNames", true).toBool());
+        acMap_CountriesNames->setChecked(Settings::getSetting("showCountriesNames", false).toBool());
 
 
         QMenu *menuCitiesNames = new QMenu(tr("Nom des villes"));

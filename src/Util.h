@@ -100,6 +100,10 @@ class Util
     static double cLFA(const double lon, const double xW);
     static double myDiffAngle(double a1,double a2);
     static double A360(double hdg);
+    static double distance_to_line_dichotomy_xing(const double &lat, const double &lon,
+                                                 const double &lat_a, const double &lon_a,
+                                                 const double &lat_b, const double &lon_b,
+                                                 double *x_latitude, double *x_longitude);
 
     //-------------------------------------------------
     template <typename T>

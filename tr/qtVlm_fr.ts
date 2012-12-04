@@ -5532,6 +5532,10 @@ sans simplifier</translation>
         <source> est introuvable sur le site VLM</source>
         <translation></translation>
     </message>
+    <message>
+        <source>kts</source>
+        <translation>nds</translation>
+    </message>
 </context>
 <context>
     <name>dialogFaxMeteo</name>
