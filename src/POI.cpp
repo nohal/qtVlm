@@ -355,10 +355,7 @@ bool POI::tryMoving(int x, int y)
             setLongitude(newlon);
             setLatitude(newlat);
             Util::computePos(proj,lat, lon, &pi, &pj);
-            lineBetweenPois->deleteAll();
-            lineBetweenPois->addVlmPoint(vlmPoint(this->lon,this->lat));
-            lineBetweenPois->addVlmPoint(vlmPoint(this->connectedPoi->lon,this->connectedPoi->lat));
-            lineBetweenPois->slot_showMe();
+            manageLineBetweenPois();
         }
         return true;
     }
@@ -395,13 +392,7 @@ void POI::mouseReleaseEvent(QGraphicsSceneMouseEvent * e)
             route->setFastVmgCalc(false);
             route->slot_recalculate();
         }
-        if(lineBetweenPois!=NULL)
-        {
-            lineBetweenPois->deleteAll();
-            lineBetweenPois->addVlmPoint(vlmPoint(this->lon,this->lat));
-            lineBetweenPois->addVlmPoint(vlmPoint(this->connectedPoi->lon,this->connectedPoi->lat));
-            lineBetweenPois->slot_showMe();
-        }
+        manageLineBetweenPois();
         return;
     }
 
@@ -785,15 +776,20 @@ void POI::slot_relier()
             if(lineBetweenPois!=NULL)
                 delete lineBetweenPois;
             lineBetweenPois=new vlmLine(proj,parent->getScene(),Z_VALUE_POI);
-            lineBetweenPois->addVlmPoint(vlmPoint(this->lon,this->lat));
-            lineBetweenPois->addVlmPoint(vlmPoint(this->connectedPoi->lon,this->connectedPoi->lat));
-            connectedPoi->setLineBetweenPois(lineBetweenPois);
             QPen pen(lineColor);
             pen.setWidthF(lineWidth);
             lineBetweenPois->setLinePen(pen);
-            lineBetweenPois->slot_showMe();
+            manageLineBetweenPois();
         }
     }
+}
+void POI::manageLineBetweenPois()
+{
+    if(lineBetweenPois==NULL) return;
+    lineBetweenPois->deleteAll();
+    lineBetweenPois->addVlmPoint(vlmPoint(this->lon,this->lat));
+    lineBetweenPois->addVlmPoint(vlmPoint(this->connectedPoi->lon,this->connectedPoi->lat));
+    lineBetweenPois->slot_showMe();
 }
 
 void POI::slot_editRoute()

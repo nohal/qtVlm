@@ -182,6 +182,7 @@ void DialogPoi::done(int result)
 
         poi->setLongitude(getValue(POI_EDT_LON));
         poi->setLatitude (getValue(POI_EDT_LAT));
+        poi->manageLineBetweenPois();
  //       int oldtype=poi->getType();
         poi->setType(POI_type_liste->currentIndex());
         poi->setName((editName->text()).trimmed() );
@@ -204,8 +205,6 @@ void DialogPoi::done(int result)
         else
             poi->setRoute(NULL);
         if(poi->getIsWp()) emit doChgWP(poi->getLatitude(),poi->getLongitude(),poi->getWph());
-
-
     }
 
     if(result == QDialog::Rejected)

@@ -123,8 +123,8 @@ class POI : public QGraphicsWidget
         void setPartOfTwa(bool b){this->partOfTwa=b;}
         void setSequence(int i){this->sequence=i;}
         int getSequence(){return this->sequence;}
-
-    public slots:
+        void manageLineBetweenPois();
+public slots:
         void slot_updateProjection();
         void slot_editPOI();
         void slot_setWP();
