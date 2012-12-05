@@ -452,6 +452,15 @@ void Terrain::draw_GSHHSandGRIB()
     Util::getCoordFromDistanceLoxo(lat1,lon1,distance,90.0,&lat2,&lon2);
     int a,b;
     proj->map2screen(Util::cLFA(lon2,proj->getXmin()),lat2,&a,&b);
+    int sX=scalePos.x();
+    int sY=scalePos.y();
+    if(a<0)
+    {
+        double adj=lon2*(proj->getXmin());
+        while (adj<0)
+            adj+=360.0;
+        a=qRound (proj->getScale() * adj);
+    }
     pnt.setBackgroundMode(Qt::OpaqueMode);
     pnt.setBackground(QBrush(QColor(255,255,255,100)));
     QString scaleText;
@@ -464,9 +473,8 @@ void Terrain::draw_GSHHSandGRIB()
     if(proj->getScale()>3.99e8)
         scaleText+=" "+tr("(Max zoom reached)");
     QSize Ssize=fm.size(Qt::TextSingleLine,scaleText);
-    int sX=scalePos.x();
-    int sY=scalePos.y();
-    int screenDist=(a-sX)+Ssize.width()+10;
+    int screenDist=qAbs(a-sX)+Ssize.width()+10;
+    qWarning()<<width<<screenDist<<sX<<a<<distance<<proj->getScale()<<proj->getXmin();
     if(sX+screenDist>width)
         sX=width-screenDist;
     if(sY-(7+Ssize.height()+10)<0)

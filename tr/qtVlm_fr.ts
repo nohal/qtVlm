@@ -2675,6 +2675,10 @@ Etes-vous sur ?</source>
         <source>Supprimer des marques</source>
         <translation></translation>
     </message>
+    <message>
+        <source>Positionner l&apos;echelle ici</source>
+        <translation>Positionner l&apos;échelle de la carte ici</translation>
+    </message>
 </context>
 <context>
     <name>POI</name>
@@ -4311,6 +4315,22 @@ sans simplifier</translation>
     <message>
         <source>Niveau de detail des cotes: </source>
         <translation>Niveau de détail des côtes: </translation>
+    </message>
+    <message>
+        <source>m</source>
+        <translation>m</translation>
+    </message>
+    <message>
+        <source>cm</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>NM</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>(Max zoom reached)</source>
+        <translation>(Zoom max atteint)</translation>
     </message>
 </context>
 <context>
