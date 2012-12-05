@@ -137,9 +137,10 @@ POI::~POI()
     if(route!=NULL) this->setRoute(NULL);
     if(lineBetweenPois!=NULL && !parent->getAboutToQuit())
     {
-        delete lineBetweenPois;
-        this->connectedPoi->setConnectedPoi(NULL);
         this->connectedPoi->setLineBetweenPois(NULL);
+        this->connectedPoi->setConnectedPoi(NULL);
+        delete lineBetweenPois;
+        lineBetweenPois=NULL;
     }
     if(isWp)
     {
@@ -776,6 +777,7 @@ void POI::slot_relier()
             if(lineBetweenPois!=NULL)
                 delete lineBetweenPois;
             lineBetweenPois=new vlmLine(proj,parent->getScene(),Z_VALUE_POI);
+            connectedPoi->setLineBetweenPois(lineBetweenPois);
             QPen pen(lineColor);
             pen.setWidthF(lineWidth);
             lineBetweenPois->setLinePen(pen);
