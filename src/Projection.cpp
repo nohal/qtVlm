@@ -38,7 +38,7 @@ Projection::Projection(int w, int h, double cx, double cy):
     PX (0), PY (0)
 {
     frozen=false;
-        scalemax = 10e20;
+        scalemax = 4e8;
     scale = -1;
     my_setScreenSize(w, h);
     my_setCenterInMap(cx,cy);

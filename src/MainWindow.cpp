@@ -161,6 +161,7 @@ void MainWindow::connectSignals()
     connect(mb->ac_compassCenterBoat,SIGNAL(triggered()), this, SLOT(slotCompassCenterBoat()));
     connect(mb->ac_compassCenterWp,SIGNAL(triggered()), this, SLOT(slotCompassCenterWp()));
     connect(mb->ac_centerMap,SIGNAL(triggered()), this, SLOT(slot_centerMap()));
+    connect(mb->ac_positScale,SIGNAL(triggered()), this, SLOT(slot_positScale()));
 
     connect(mb->ac_copyRoute,SIGNAL(triggered()), this, SLOT(slot_copyRoute()));
     connect(mb->ac_deleteRoute,SIGNAL(triggered()), this, SLOT(slot_deleteRoute()));
@@ -1666,6 +1667,13 @@ void MainWindow::slotInetUpdated(void)
     //qWarning() << "Inet Updated";
     emit updateInet();
     slotVLM_Sync();
+}
+void MainWindow::slot_positScale()
+{
+    Settings::setSetting("scalePosX",this->mouseClicX);
+    Settings::setSetting("scalePosY",this->mouseClicY);
+    my_centralWidget->getTerre()->setScalePos(this->mouseClicX,this->mouseClicY);
+    my_centralWidget->getTerre()->redrawGrib();
 }
 
 void MainWindow::slot_centerMap()

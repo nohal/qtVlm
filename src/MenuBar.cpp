@@ -539,6 +539,7 @@ QMenu * MenuBar::createPopupBtRight(QWidget *parent)
     popup->addMenu(mnCompassCenterRoute);
     popup->addSeparator();
     ac_centerMap = addAction(popup, tr("Centrer la carte ici"),tr(""),tr(""),"");
+    ac_positScale = addAction(popup, tr("Positionner l'echelle ici"),tr(""),tr(""),"");
 
     ac_moveBoatSep = popup->addSeparator();
     ac_moveBoat = addAction(popup, tr("Deplacer le bateau ici"),tr(""),tr(""),"");

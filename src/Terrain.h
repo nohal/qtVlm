@@ -51,6 +51,7 @@ public:
     QPainterPath shape() const;
     ROUTAGE * getRoutageGrib();
     void setRoutageGrib(ROUTAGE * routage);
+    void setScalePos(const int &a, const int &b){this->scalePos=QPoint(a,b);}
 
     enum DrawGribPlainDataMode {
              drawNone,
@@ -159,7 +160,7 @@ private:
 
 
     //-----------------------------------------------
-    // Flags indiquant les éléments �  dessiner
+    // Flags indiquant les elements a dessiner
     //-----------------------------------------------
     bool  showCountriesBorders;
     bool  showRivers;
@@ -184,6 +185,7 @@ private:
     bool toBeRestarted;
     ROUTAGE * routageGrib;
     QMutex mutex;
+    QPoint scalePos;
 };
 Q_DECLARE_TYPEINFO(Terrain,Q_MOVABLE_TYPE);
 

@@ -102,6 +102,7 @@ public:
     QAction *ac_compassCenterWp;
     QMenu   *mnCompassCenterRoute;
     QAction *ac_centerMap;
+    QAction *ac_positScale;
 
     QAction * ac_moveBoat;
     QAction * ac_moveBoatSep;

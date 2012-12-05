@@ -153,6 +153,7 @@ class MainWindow: public QMainWindow
         void slot_ParamVLMchanged(void);
         void slot_deleteProgress(void);
         void slot_centerMap();
+        void slot_positScale();
         void slot_boatHasUpdated(void);
         void slot_updPlayerFinished(bool res_ok, Player * player);
         void slot_copyRoute();
