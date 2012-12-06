@@ -68,7 +68,7 @@ void Util::setFontDialog(QWidget * o)
     setFontDialog(object);
 }
 
-QString Util::formatTemperature(double tempKelvin)
+QString Util::formatTemperature(const double &tempKelvin)
 {
     QString tunit = Settings::getSetting("unitsTemp", "").toString();
     QString unit = (tunit=="") ? "degC" : tunit;
@@ -86,7 +86,7 @@ QString Util::formatTemperature(double tempKelvin)
     return r+unit;
 }
 //-------------------------------------------------------
-QString Util::formatTemperature_short(double tempKelvin)
+QString Util::formatTemperature_short(const double &tempKelvin)
 {
     QString tunit = Settings::getSetting("unitsTemp", "").toString();
     QString unit = (tunit=="") ? "degC" : tunit;
@@ -104,14 +104,14 @@ QString Util::formatTemperature_short(double tempKelvin)
     return r; //+unit;
 }
 //----------------------------------------------------------------
-QString Util::formatSpeed(double meterspersecond)
+QString Util::formatSpeed(const double &meterspersecond)
 {
     QString r;
     r.sprintf("%.1f ", meterspersecond*3.6/1.852)+QObject::tr("nds");
     return r;
 }
 //----------------------------------------------------------------
-QString Util::formatDistance(double mille)
+QString Util::formatDistance(const double &mille)
 {
     QString tunit = Settings::getSetting("unitsDistance", "NM").toString();
     QString unit = (tunit=="") ? "km" : tunit;
@@ -134,7 +134,7 @@ QString Util::formatDistance(double mille)
     return r;
 }
 //----------------------------------------------------------------
-QString Util::formatDegres(double x)
+QString Util::formatDegres(const double &x)
 {
     QString tunit = Settings::getSetting("unitsPosition", "").toString();
     QString unit = (tunit=="") ? "dddegmm'ss" : tunit;
@@ -167,7 +167,7 @@ QString Util::formatDegres(double x)
     return r;
 }
 //---------------------------------------------------------------------
-QString Util::formatPosition(double x, double y)  // 123°24.00'W 45°67.89'N
+QString Util::formatPosition(const double &x, const double &y)  // 123°24.00'W 45°67.89'N
 {
     return formatLongitude(x)+" "+formatLatitude(y);
 }
@@ -205,7 +205,7 @@ QString Util::formatLongitude(double x)
     }
 }
 //---------------------------------------------------------------------
-QString Util::formatLatitude(double y)
+QString Util::formatLatitude(const double &y)
 {
     QString dir = Settings::getSetting("latitudeDirection", "").toString();
     if (dir == "Sud positive")
@@ -232,7 +232,7 @@ QString Util::formatPercentValue(double v)
     return r;
 }
 //======================================================================
-QString Util::formatDateLong(time_t t)
+QString Util::formatDateLong(const time_t &t)
 {
     QDateTime dt;
     dt.setTimeSpec(Qt::UTC);
@@ -245,7 +245,7 @@ QString Util::formatDateLong(time_t t)
         return loc.toString(dt.date(), "ddd yyyy-MM-dd");
 }
 //---------------------------------------------------------------------
-QString Util::formatDateTimeLong(time_t t)
+QString Util::formatDateTimeLong(const time_t &t)
 {
     QDateTime dt;
     dt.setTimeSpec(Qt::UTC);
@@ -257,7 +257,7 @@ QString Util::formatDateTimeLong(time_t t)
         return loc.toString(dt.date(), "ddd yyyy-MM-dd ") + dt.toString("HH:mm UTC");
 }
 //---------------------------------------------------------------------
-QString Util::formatDateTimeShort(time_t t)
+QString Util::formatDateTimeShort(const time_t &t)
 {
     QDateTime dt;
     dt.setTimeSpec(Qt::UTC);
@@ -269,7 +269,7 @@ QString Util::formatDateTimeShort(time_t t)
         return dt.toString("yyyy-MM-dd hh:mm UTC");
 }
 //---------------------------------------------------------------------
-QString Util::formatDateTime_date(time_t t)
+QString Util::formatDateTime_date(const time_t &t)
 {
     QDateTime dt;
     dt.setTimeSpec(Qt::UTC);
@@ -281,7 +281,7 @@ QString Util::formatDateTime_date(time_t t)
         return dt.toString("yyyy-MM-dd");
 }
 //---------------------------------------------------------------------
-QString Util::formatDateTime_hour(time_t t)
+QString Util::formatDateTime_hour(const time_t &t)
 {
     QDateTime dt;
     dt.setTimeSpec(Qt::UTC);
@@ -424,8 +424,8 @@ void Util::setWPClipboard(double lat,double lon, double wph)
         QApplication::clipboard()->setText(QString("%1,%2@%3").arg(lat).arg(lon).arg(wph));
 }
 
-void Util::getCoordFromDistanceAngle2(double latitude, double longitude,
-             double distance,double heading, double * res_lat,double * res_lon)
+void Util::getCoordFromDistanceAngle2(const double &latitude, const double &longitude,
+             const double &distance,const double &heading, double * res_lat,double * res_lon)
 {
     *res_lat = latitude + degToRad( (cos(heading)*distance)/60.0 );
     if (fabs(*res_lat - latitude) > degToRad(0.001))
@@ -441,8 +441,8 @@ void Util::getCoordFromDistanceAngle2(double latitude, double longitude,
     }
 }
 
-void Util::getCoordFromDistanceLoxo(double latitude, double longitude,
-             double distance,double heading, double * res_lat,double * res_lon)
+void Util::getCoordFromDistanceLoxo(const double &latitude, const double &longitude,
+             const double &distance, const double &heading, double * res_lat,double * res_lon)
 {
 #if 0
     double l=(distance*cos(degToRad(heading)))/60.0;
@@ -503,7 +503,7 @@ void Util::getCoordFromDistanceAngle(double latitude, double longitude,
 
 }
 
-QString Util::pos2String(int type,double value)
+QString Util::pos2String(const int &type, const double &value)
 {
     QString str;
 //    int d,m,s;
@@ -554,7 +554,7 @@ QString Util::getHost()
 #endif
 }
 
-void Util::computePos(Projection * proj, double lat, double lon, int * x, int * y)
+void Util::computePos(Projection * proj, const double &lat, const double &lon, int * x, int * y)
 {
     if (proj->isPointVisible(lon, lat)) {      // tour du monde ?
         proj->map2screen(lon, lat, x, y);
@@ -570,7 +570,7 @@ void Util::computePos(Projection * proj, double lat, double lon, int * x, int * 
         proj->map2screen(lon, lat, x, y);
     }
 }
-void Util::computePosDouble(Projection * proj, double lat, double lon, double * x, double * y)
+void Util::computePosDouble(Projection * proj, const double &lat, const double &lon, double * x, double * y)
 {
     if (proj->isPointVisible(lon, lat)) {      // tour du monde ?
         proj->map2screenDouble(lon, lat, x, y);
@@ -599,7 +599,7 @@ void Util::addAgent(QNetworkRequest & request)
         request.setRawHeader("User-Agent",QString("qtVlm/"+Version::getVersion()+" ("+QTVLM_OS+")").toAscii());
 
 }
-bool Util::lineIsCrossingRect(const QLineF line, const QRectF rect)
+bool Util::lineIsCrossingRect(const QLineF &line, const QRectF &rect)
 {
     double A=(line.y2()-line.y1())*rect.topLeft().x() +
              (line.x1()-line.x2())*rect.topLeft().y() +

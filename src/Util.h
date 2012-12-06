@@ -57,28 +57,28 @@ class Util
     //-------------------------------------------------
     static void setFontDialog(QObject * o);
     static void setFontDialog(QWidget * o);
-    static QString formatDegres(double x);           // 123.4 -> 123°24.00'
-    static QString formatPosition(double x, double y);    // 123°24.00'W 45°67.89'N
+    static QString formatDegres(const double &x);           // 123.4 -> 123°24.00'
+    static QString formatPosition(const double &x, const double &y);    // 123°24.00'W 45°67.89'N
     static QString formatLongitude(double x);
-    static QString formatLatitude(double y);
+    static QString formatLatitude(const double &y);
 
-    static QString formatDateLong(time_t t);
+    static QString formatDateLong(const time_t &t);
 
-    static QString formatDateTimeLong(time_t t);
-    static QString formatDateTimeShort(time_t t);
-    static QString formatDateTime_date(time_t t);
-    static QString formatDateTime_hour(time_t t);
+    static QString formatDateTimeLong(const time_t &t);
+    static QString formatDateTimeShort(const time_t &t);
+    static QString formatDateTime_date(const time_t &t);
+    static QString formatDateTime_hour(const time_t &t);
 
-    static QString formatSpeed(double meterspersecond);
-    static QString formatDistance(double mille);
-    static QString formatTemperature(double tempKelvin);
-    static QString formatTemperature_short(double tempKelvin);
+    static QString formatSpeed(const double &meterspersecond);
+    static QString formatDistance(const double &mille);
+    static QString formatTemperature(const double &tempKelvin);
+    static QString formatTemperature_short(const double &tempKelvin);
     static QString formatPercentValue(double v);
 
-    static int    kmhToBeaufort(double v);
-    static double  kmhToBeaufort_F(double v);
-    static double  BeaufortToKmh_F(double bf);
-    static QPointF calculateSumVect(double angle1,double length1,double angle2,double length2);
+    static int    kmhToBeaufort(const double &v);
+    static double  kmhToBeaufort_F(const double &v);
+    static double  BeaufortToKmh_F(const double &bf);
+    static QPointF calculateSumVect(const double &angle1, const double &length1, const double &angle2, const double &length2);
 
     static void paramProxy(QNetworkAccessManager *inetManager,QString host);
     static bool getWPClipboard(QString *,double * lat,double * lon, double * wph, int * tStamp);
@@ -86,20 +86,20 @@ class Util
     static bool convertPOI(const QString & str,QString * name,double * lat,double * lon,double * wph,int * tstamp,
                            int type);
     static void getCoordFromDistanceAngle(double latitude, double longitude,
-             double distance,double heading, double * res_lat,double * res_lon);
-    static void getCoordFromDistanceLoxo(double latitude, double longitude,
-             double distance,double heading, double * res_lat,double * res_lon);
-    static void getCoordFromDistanceAngle2(double latitude, double longitude,
-                                           double distance,double heading, double * res_lat,double * res_lon);
-    static QString pos2String(int type,double value);
+             double distance, double heading, double * res_lat, double * res_lon);
+    static void getCoordFromDistanceLoxo(const double &latitude, const double &longitude,
+             const double &distance,const double &heading, double * res_lat,double * res_lon);
+    static void getCoordFromDistanceAngle2(const double &latitude, const double &longitude,
+                                           const double &distance, const double &heading, double * res_lat,double * res_lon);
+    static QString pos2String(const int &type,const double &value);
     static QString getHost();
-    static void computePos(Projection * proj, double lat, double lon, int * x, int * y);
-    static void computePosDouble(Projection * proj, double lat, double lon, double * x, double * y);
+    static void computePos(Projection * proj, const double &lat, const double &lon, int * x, int * y);
+    static void computePosDouble(Projection * proj, const double &lat, const double &lon, double * x, double * y);
     static void addAgent(QNetworkRequest & request);
-    static bool lineIsCrossingRect(const QLineF line, const QRectF rect);
-    static double cLFA(const double lon, const double xW);
-    static double myDiffAngle(double a1,double a2);
-    static double A360(double hdg);
+    static bool lineIsCrossingRect(const QLineF &line, const QRectF &rect);
+    static double cLFA(const double &lon, const double &xW);
+    static double myDiffAngle(const double &a1, const double &a2);
+    static double A360(const double &hdg);
     static double distance_to_line_dichotomy_xing(const double &lat, const double &lon,
                                                  const double &lat_a, const double &lon_a,
                                                  const double &lat_b, const double &lon_b,
@@ -134,7 +134,7 @@ class Util
 };
 
 //======================================================================
-inline double Util::cLFA(double lon, double xW)
+inline double Util::cLFA(const double &lon, const double &xW)
 //convertLonForAntiMeridian
 {
     if(xW>=0 && lon>=0) return lon;
@@ -152,22 +152,23 @@ inline double Util::cLFA(double lon, double xW)
             return xW-myDiffAngle(A360(xW),lon);
     }
 }
-inline double Util::A360(double hdg)
+inline double Util::A360(const double &hdg)
 {
-    while (hdg>=360.0) hdg=hdg-360.0;
-    while (hdg<0.0) hdg=hdg+360.0;
-    return hdg;
+    double newhdg=hdg;
+    while (newhdg>=360.0) newhdg-=360.0;
+    while (newhdg<0.0) newhdg+=360.0;
+    return newhdg;
 }
-inline double Util::myDiffAngle(double a1,double a2)
+inline double Util::myDiffAngle(const double &a1,const double &a2)
 {
     return qAbs(A360(qAbs(a1)+ 180.0 -qAbs(a2)) -180.0);
 }
 
-inline int Util::kmhToBeaufort(double v) {
+inline int Util::kmhToBeaufort(const double &v) {
     return (int)(kmhToBeaufort_F(v)+0.5);
 }
 //-----------------------------------------------------------------------------
-inline double Util::kmhToBeaufort_F(double v) {
+inline double Util::kmhToBeaufort_F(const double &v) {
     double bf = pow( v*v/9.0 , 0.33333);
     if (bf > 12.0)
         bf = 12.0;
@@ -176,11 +177,11 @@ inline double Util::kmhToBeaufort_F(double v) {
     return bf;
 }
 //-----------------------------------------------------------------------------
-inline double Util::BeaufortToKmh_F(double bf) {
+inline double Util::BeaufortToKmh_F(const double &bf) {
     double v = sqrt(bf*bf*bf*9.0);
     return v;
 }
-inline QPointF Util::calculateSumVect(double angle1,double length1,double angle2,double length2)
+inline QPointF Util::calculateSumVect(const double &angle1,const double &length1,const double &angle2,const double &length2)
 {
     QLineF line1(0,0,1,1);
     line1.setLength(length1);
