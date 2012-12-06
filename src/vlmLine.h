@@ -56,8 +56,10 @@ class vlmLine : public QGraphicsWidget
         void setLineMode();
         void setPointMode(const QColor &pt_color);
         void setGateMode(const QString &desc);
+        QString getDesc() const {return desc;}
         void setIceGate(const int &i){iceGate=i;}
-        int  isIceGate() const {return iceGate;}
+        bool isIceGate() const {return iceGate!=0;}
+        int  getIceGate() const {return iceGate;}
         void setTip(QString tip);
         void setNbVacPerHour(const int &nbVacPerHour) {this->nbVacPerHour=nbVacPerHour;}
         void setPorteOnePoint(void){this->onePoint=true;}

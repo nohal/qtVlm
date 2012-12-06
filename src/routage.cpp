@@ -189,6 +189,13 @@ inline vlmPoint findPointThreaded(const vlmPoint &point)
             return pt;
         }
     }
+#if 0
+    if(!pt.routage->checkIceGate(pt))
+    {
+        pt.isDead=true;
+        return pt;
+    }
+#endif
     if(pt.origin->isStart)
         pt.distIso=pt.distStart;
     else
@@ -1050,7 +1057,26 @@ void ROUTAGE::slot_calculate()
             barrieres.append(QLineF(x1,y1,x2,y2));
         }
     }
-    //qWarning()<<"barrieres has"<<barrieres.count()<<"line(s)";
+#if 0
+    QList<vlmLine*> gates=myBoat->getGates();
+    for (int n=myBoat->getNWP()-1;n<gates.count();++n)
+    {
+        if(!gates.at(n)->isIceGate()) continue;
+        const vlmPoint p1=gates.at(n)->getPoints()->first();
+        const vlmPoint p2=gates.at(n)->getPoints()->last();
+        double x1,y1,x2,y2;
+        proj->map2screenDouble(Util::cLFA(p1.lon,proj->getXmin()),p1.lat,&x1,&y1);
+        proj->map2screenDouble(Util::cLFA(p2.lon,proj->getXmin()),p2.lat,&x2,&y2);
+        if(!proj->isInBounderies(x1,y1)) continue;
+        if(!proj->isInBounderies(x2,y2)) continue;
+        QPointF P1(x1,y1);
+        QPointF P2(x2,y2);
+        if(x1>x2)
+            swap(P1,P2);
+        qWarning()<<"inserting iceGate"<<gates.at(n)->getDesc();
+        iceGates.append(QLineF(P1,P2));
+    }
+#endif
     msecsD1=0;
     msecsD2=0;
     debugCross0=0;
@@ -4094,4 +4120,41 @@ void ROUTAGE::calculateAlternative()
     }
     QApplication::processEvents();
     delete waitBox;
+}
+bool ROUTAGE::checkIceGate(const vlmPoint &p) const
+{
+    bool westToEast=xs<xa;
+    foreach (const QLineF &iceGate,iceGates)
+    {
+        vlmPoint pp=p;
+        bool ok=false;
+        bool hasPassed=false;
+        if(westToEast)
+        {
+            if(pp.x<iceGate.x2())
+                break;
+        }
+        else
+        {
+            if(pp.x>iceGate.x1())
+                break;
+        }
+        while(true)
+        {
+            if(pp.x>=iceGate.x1() && pp.x<=iceGate.x2())
+            {
+                hasPassed=true;
+                if(pp.y<=iceGate.y1())
+                {
+                    ok=true;
+                    break;
+                }
+            }
+            if(pp.isStart) break;
+            pp=*pp.origin;
+        }
+        if(hasPassed && !ok)
+            return false;
+    }
+    return true;
 }

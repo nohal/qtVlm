@@ -122,7 +122,7 @@ int main(int argc, char *argv[])
     QDir dirCheck;
     for(int i=0;i<folderList.count();i++) {
         dirCheck=QDir(folderList.value(i));
-        qWarning() << "Checking: " << folderList.value(i);
+        //qWarning() << "Checking: " << folderList.value(i);
         if (!dirCheck.exists()) {
             dirCheck.mkpath(folderList.value(i));
             qWarning() << "Creating folder";

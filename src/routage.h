@@ -195,6 +195,7 @@ class ROUTAGE : public QObject
         void setColorGrib(const bool &b){this->colorGrib=b;}
         bool getColorGrib(){return this->colorGrib;}
         bool getArrived() const {return this->arrived;}
+        bool checkIceGate(const vlmPoint &p) const;
     public slots:
         void slot_edit();
         void slot_abort(){this->aborted=true;}
@@ -341,6 +342,7 @@ class ROUTAGE : public QObject
         QList<vlmLine*> isoRoutes;
         QList<vlmLine*> alternateRoutes;
         QList<QLineF> barrieres;
+        QList<QLineF> iceGates;
         void countDebug(int nbIso, QString s);
         bool colorGrib;
     };
