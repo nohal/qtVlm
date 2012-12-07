@@ -43,6 +43,7 @@ DialogRemovePoi::DialogRemovePoi(QWidget * parent,myCentralWidget * centralWidge
     ls_poiList->clear();
 
     for(int i=0;i<poiList.count();++i) {
+        if(poiList.at(i)->getRoute()!=NULL) continue;
         QListWidgetItem * item = new QListWidgetItem(poiList.at(i)->getName());
         item->setData(Qt::UserRole,VPtr<POI>::asQVariant(poiList.at(i)));
         ls_poiList->addItem(item);
