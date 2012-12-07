@@ -48,6 +48,9 @@ Original code: virtual-winds.com
 //#include "Terrain.h"
 //#define debugCount
 //#define traceTime;
+
+//#define HAS_ICEGATE
+
 inline vlmPoint findPointThreaded(const vlmPoint &point)
 {
     vlmPoint pt=point;
@@ -189,7 +192,7 @@ inline vlmPoint findPointThreaded(const vlmPoint &point)
             return pt;
         }
     }
-#if 0
+#ifdef HAS_ICEGATE
     if(!pt.routage->checkIceGate(pt))
     {
         pt.isDead=true;
@@ -1057,7 +1060,7 @@ void ROUTAGE::slot_calculate()
             barrieres.append(QLineF(x1,y1,x2,y2));
         }
     }
-#if 0
+#ifdef HAS_ICEGATE
     QList<vlmLine*> gates=myBoat->getGates();
     for (int n=myBoat->getNWP()-1;n<gates.count();++n)
     {

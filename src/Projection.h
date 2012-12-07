@@ -131,7 +131,7 @@ inline void Projection::map2screenDouble(const double &x, const double &y, doubl
     double y1=y;
     if(y1<=-90) y1=-89.9999999999999999999999999999999999999999999999999999999;
     if(y1>=90) y1=89.999999999999999999999999999999999999999999999999999999999;
-    const double diff=x-xW;
+    const double diff=qAbs(x-xW);
     *i = scale * diff;
     const double trick=PY-radToDeg(log(tan(degToRad(y1)/(double)2.0 + M_PI_4)));
     *j = ((double)H/2.0 + (scale * trick));

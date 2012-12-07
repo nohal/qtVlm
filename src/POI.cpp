@@ -429,10 +429,15 @@ void POI::contextMenuEvent(QGraphicsSceneContextMenuEvent * e)
     {
         this->ac_finePosit->setEnabled(true);
     }
-    if(route==NULL)
+
+    if(route==NULL) {
         this->ac_setHorn->setEnabled(false);
-    else
+        this->ac_routage->setEnabled(true);
+    }
+    else {
         this->ac_setHorn->setEnabled(true);
+        this->ac_routage->setEnabled(false);
+    }
 
 
     switch(parent->getCompassMode(e->scenePos().x(),e->scenePos().y()))
