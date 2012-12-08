@@ -239,7 +239,7 @@ void Terrain::draw_GSHHSandGRIB()
             for(int i=0;i<borders.count();++i)
             {
                 int X,Y;
-                proj->map2screen(borders.at(i).x(),borders.at(i).y(),&X,&Y);
+                proj->map2screen(Util::cLFA(borders.at(i).x(),proj->getXmin()),borders.at(i).y(),&X,&Y);
                 bordersXY.append(QPoint(X,Y));
             }
             QRectF br=bordersXY.boundingRect();
@@ -451,7 +451,7 @@ void Terrain::draw_GSHHSandGRIB()
     else distance=qRound(distance/1000.0)*1000;
     Util::getCoordFromDistanceLoxo(lat1,lon1,distance,90.0,&lat2,&lon2);
     int a,b;
-    proj->map2screen(lon2,lat2,&a,&b);
+    proj->map2screen(Util::cLFA(lon2,proj->getXmin()),lat2,&a,&b);
     int sX=scalePos.x();
     int sY=scalePos.y();
     if(a<sX)
