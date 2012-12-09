@@ -1420,7 +1420,7 @@ void myCentralWidget::slot_delAllPOIs(void)
     {
         double x0,y0,x1,y1;
 
-        qWarning() << "Min X" << proj->getXmin() << ", cLFA " << Util::cLFA(lon0,proj->getXmin());
+        //qWarning() << "Min X" << proj->getXmin() << proj->getXmax()<<", cLFA " << Util::cLFA(lon0,proj->getXmin())<< Util::cLFA(lon1,proj->getXmin());
 
         proj->map2screenDouble(Util::cLFA(lon0,proj->getXmin()),lat0,&x0,&y0);
         proj->map2screenDouble(Util::cLFA(lon1,proj->getXmin()),lat1,&x1,&y1);
@@ -1453,7 +1453,7 @@ void myCentralWidget::slot_delAllPOIs(void)
 
             if(selRect.contains(x,y))
             {
-                qWarning()<<"poi inside"<<poi->getName()<<x<<y;
+                //qWarning()<<"poi inside"<<poi->getName()<<x<<y;
                 if(poi->getRoute()!=NULL)
                 {
                     if(poi->getRoute()->getFrozen()||poi->getRoute()->getHidden()||poi->getRoute()->isBusy()) continue;
