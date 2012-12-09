@@ -25,7 +25,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "vlmLine.h"
 #include "settings.h"
 #include "Util.h"
-#include "mycentralwidget.h"
 
 vlmLine::vlmLine(Projection * proj, QGraphicsScene * myScene,double z_level) :
    QGraphicsWidget(),
@@ -57,7 +56,7 @@ vlmLine::vlmLine(Projection * proj, QGraphicsScene * myScene,double z_level) :
     this->replayStep=0;
     this->coastDetected=false;
     this->coastDetection=false;
-    map=NULL;
+    this->mcp=NULL;
     if(myZvalue==Z_VALUE_ROUTE || myZvalue==Z_VALUE_BOAT || myZvalue==Z_VALUE_OPP)
         this->setAcceptHoverEvents(true);
     show();
@@ -168,10 +167,13 @@ void vlmLine::calculatePoly(void)
     poly=new QPolygon();
     polyList.append(poly);
     poly->resize(0);
-    vlmPoint worldPoint(0,0),previousWorldPoint(0,0);
+    vlmPoint previousWorldPoint(0,0);
     bool coasted=false;
     coastDetected=false;
     int cc=-1;
+    GshhsReader * map=NULL;
+    if(mcp)
+        map=mcp->get_gshhsReader();
     if(line.count()>1)
     {
         QList<vlmPoint>::const_iterator i;

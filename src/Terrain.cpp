@@ -42,6 +42,7 @@ Copyright (C) 2008 - Jacques Zaninetti - http://zygrib.free.fr
 #include "GshhsReader.h"
 #include "Grib.h"
 #include "loadImg.h"
+#include "Orthodromie.h"
 
 //---------------------------------------------------------
 // Constructeur
@@ -65,7 +66,6 @@ Terrain::Terrain(myCentralWidget *parent, Projection *proj_) : QGraphicsWidget()
     height=50;
     setPos(0,0);
     //qWarning() << "Terre is at " << x() << "," << y() << ", size: " << size().width() << "," << size().height();
-    quality = 0;
 
     //---------------------------------------------------------------------
     showCountriesBorders  = Settings::getSetting("showCountriesBorders", true).toBool();
@@ -107,7 +107,9 @@ Terrain::Terrain(myCentralWidget *parent, Projection *proj_) : QGraphicsWidget()
     gisReader = NULL;
 
     setPalette(QPalette(backgroundColor));
-
+    int sX=Settings::getSetting("scalePosX",5).toInt();
+    int sY=Settings::getSetting("scalePosY",height-5).toInt();
+    scalePos=QPoint(sX,sY);
     updateGraphicsParameters();    
 }
 
@@ -152,7 +154,13 @@ void Terrain::setGSHHS_map(GshhsReader *map)
 {
     gshhsReader = map;
     /* new gshhs => reload gis */
-    if(gisReader) delete gisReader;
+    if(gisReader)
+    {
+        delete gisReader;
+        gisReader=NULL;
+    }
+    if(!gshhsReader)
+        return;
     gisReader=new GisReader();
     isEarthMapValid = false;
     redrawAll();
@@ -231,7 +239,7 @@ void Terrain::draw_GSHHSandGRIB()
             for(int i=0;i<borders.count();++i)
             {
                 int X,Y;
-                proj->map2screen(borders.at(i).x(),borders.at(i).y(),&X,&Y);
+                proj->map2screen(Util::cLFA(borders.at(i).x(),proj->getXmin()),borders.at(i).y(),&X,&Y);
                 bordersXY.append(QPoint(X,Y));
             }
             QRectF br=bordersXY.boundingRect();
@@ -388,6 +396,94 @@ void Terrain::draw_GSHHSandGRIB()
 
     pnt.drawText(5, 8+Fsize.height()/2, cartouche);// forecast validity date
 
+    /*echelle*/
+    double w=width/8.0;
+    double lon1,lat1,lon2,lat2;
+    proj->screen2map(scalePos.x(),scalePos.y(),&lon1,&lat1);
+    proj->screen2map(w+scalePos.x(),scalePos.y(),&lon2,&lat2);
+    Orthodromie oo(lon1,lat1,lon2,lat2);
+    double distance=oo.getLoxoDistance();
+    bool meters=false;
+    bool centimeters=false;
+    double distanceMeters=distance*1852.0;
+    if(distanceMeters<1)
+    {
+        centimeters=true;
+        distanceMeters=distanceMeters*100.0;
+        if(distanceMeters>10)
+        {
+            distanceMeters=qRound(distanceMeters);
+            distanceMeters=qRound(distanceMeters/10.0)*10;
+        }
+        else if(distanceMeters>1)
+        {
+            distanceMeters=qRound(distanceMeters);
+        }
+        distance=distanceMeters/(100*1852);
+    }
+    else if(distanceMeters<10)
+    {
+        meters=true;
+        distanceMeters=qRound(distanceMeters);
+        distance=distanceMeters/1852;
+    }
+    else if(distanceMeters<100)
+    {
+        meters=true;
+        distanceMeters=qRound(distanceMeters);
+        distanceMeters=qRound(distanceMeters/10.0)*10;
+        distance=distanceMeters/1852;
+    }
+    else if(distanceMeters<1000)
+    {
+        meters=true;
+        distanceMeters=qRound(distanceMeters);
+        distanceMeters=qRound(distanceMeters/100.0)*100;
+        distance=distanceMeters/1852;
+    }
+    else if(distance<10) distance=qRound(distance);
+    else if(distance<25) distance=20;
+    else if(distance<50) distance=25;
+    else if(distance<75) distance=50;
+    else if(distance<100) distance=75;
+    else if(distance<150) distance=100;
+    else if(distance<1100) distance=qRound(distance/100.0)*100;
+    else distance=qRound(distance/1000.0)*1000;
+    Util::getCoordFromDistanceLoxo(lat1,lon1,distance,90.0,&lat2,&lon2);
+    int a,b;
+    proj->map2screen(Util::cLFA(lon2,proj->getXmin()),lat2,&a,&b);
+    int sX=scalePos.x();
+    int sY=scalePos.y();
+    if(a<sX)
+    {
+        a += proj->getScale()*360.0;
+    }
+    pnt.setBackgroundMode(Qt::OpaqueMode);
+    pnt.setBackground(QBrush(QColor(255,255,255,100)));
+    QString scaleText;
+    if(meters)
+        scaleText=QString().setNum(distanceMeters)+tr("m");
+    else if(centimeters)
+        scaleText=QString().setNum(distanceMeters)+tr("cm");
+    else
+        scaleText=QString().setNum(distance)+tr("NM");
+    if(proj->getScale()>3.99e8)
+        scaleText+=" "+tr("(Max zoom reached)");
+    QSize Ssize=fm.size(Qt::TextSingleLine,scaleText);
+    int screenDist=qAbs(a-sX)+Ssize.width()+10;
+    if(sX+screenDist>width)
+        sX=width-screenDist;
+    if(sY-(7+Ssize.height()+10)<0)
+        sY=17+Ssize.height();
+    screenDist-=(Ssize.width()+10);
+    QPoint correctedScalePos(sX,sY);
+    pnt.drawText(sX+screenDist,correctedScalePos.y()-7,scaleText);
+    QPen p(Qt::black);
+    p.setWidth(3);
+    pnt.setPen(p);
+    pnt.drawLine(correctedScalePos,QPoint(sX+screenDist,correctedScalePos.y()));
+    pnt.drawLine(correctedScalePos,QPoint(correctedScalePos.x(),correctedScalePos.y()-4));
+    pnt.drawLine(QPoint(sX+screenDist,correctedScalePos.y()),QPoint(sX+screenDist,correctedScalePos.y()-4));
     setCursor(oldcursor);
 }
 
@@ -533,16 +629,6 @@ void Terrain::setCitiesNamesLevel  (int level) {
 }
 
 //-------------------------------------------------------
-void Terrain::slot_setMapQuality(int q) {
-    if (quality != q) {
-        if (gshhsReader == NULL)
-            return;
-        quality = q;        
-        gshhsReader->setUserPreferredQuality(q);
-        isEarthMapValid = false;
-        indicateWaitingMap();
-    }
-}
 
 //-------------------------------------------------------
 void Terrain::switchGribDisplay(bool windArrowOnly)

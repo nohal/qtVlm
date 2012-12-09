@@ -38,7 +38,7 @@ Projection::Projection(int w, int h, double cx, double cy):
     PX (0), PY (0)
 {
     frozen=false;
-        scalemax = 10e20;
+        scalemax = 4e8;
     scale = -1;
     my_setScreenSize(w, h);
     my_setCenterInMap(cx,cy);
@@ -56,21 +56,21 @@ void Projection::setScreenSize(int w, int h)
 }
 
 /* zoom and scale */
-void Projection::zoomOnZone(double x0, double y0, double x1, double y1)
+void Projection::zoomOnZone(const double &x0, const double &y0, const double &x1, const double &y1)
 {
     double coef;
 
     if(frozen) return;
-    // security
-    if (x1 == x0)
-        x1 = x0+0.1;
-    if (y1 == y0)
-        y1 = y0+0.1;
 
     xW=x0;
     xE=x1;
     yN=y0;
     yS=y1;
+    // security
+    if (xE == xW)
+        xE = xW+0.1;
+    if (yS == yN)
+        yS = yN+0.1;
 
     //qWarning() << "init border : (" << xW << " " << xE << ") (" << yN << " " << yS << ")";
 
@@ -91,6 +91,8 @@ void Projection::zoomOnZone(double x0, double y0, double x1, double y1)
 
     if (scale > scalemax)
         scale = scalemax;
+    if (scale<scaleall)
+        scale = scaleall;
     //qWarning() << "final scale: " << scale;
 
     // Nouvelle position du centre
@@ -127,13 +129,13 @@ void Projection::zoomOnZone(double x0, double y0, double x1, double y1)
     emit_projectionUpdated();
 }
 
-void Projection::zoom(double k)
+void Projection::zoom(const double &k)
 {
     if(frozen) return;
     my_setScale(scale*k);
     emit_projectionUpdated();
 }
-void Projection::zoomKeep(double lon, double lat, double k)
+void Projection::zoomKeep(const double &lon, const double &lat, const double &k)
 {    
     if(frozen) return;
     int xx,yy;
@@ -163,7 +165,7 @@ void Projection::zoomAll(void)
     emit_projectionUpdated();
 }
 
-void Projection::setScale(double sc)
+void Projection::setScale(const double &sc)
 {
     if(frozen) return;
     my_setScale(sc);
@@ -174,14 +176,14 @@ void Projection::setScale(double sc)
 /* Move & center position */
 /**************************/
 
-void Projection::move(double dx, double dy)
+void Projection::move(const double &dx, const double &dy)
 {
     if(frozen) return;
     my_setCenterInMap(CX - dx*(xE-xW),CY - dy*(yN-yS));
     emit_projectionUpdated();
 }
 
-void Projection::setCentralPixel(int i, int j)
+void Projection::setCentralPixel(const int &i, const int &j)
 {
     if(frozen) return;
     double x, y;
@@ -190,14 +192,14 @@ void Projection::setCentralPixel(int i, int j)
     emit_projectionUpdated();
 }
 
-void Projection::setCenterInMap(double x, double y)
+void Projection::setCenterInMap(const double &x, const double &y)
 {
     if(frozen) return;
     my_setCenterInMap(x,y);
     emit_projectionUpdated();
 }
 
-void Projection::setScaleAndCenterInMap(double sc,double x, double y)
+void Projection::setScaleAndCenterInMap(const double &sc, const double &x, const double &y)
 {
     if(frozen) return;
     bool mod=false;
@@ -258,27 +260,11 @@ void Projection::my_setScreenSize(int w, int h)
     /* conpute scaleall */
     //qWarning() << "new MAP size: " << w << "," << h;
     double sx, sy,sy1,sy2;
-    sx = W/360.0;
+    sx = W/359.9999;
     sy1=log(tan(degToRad(84)/2 + M_PI_4));
     sy2=log(tan(degToRad(-80)/2 + M_PI_4));
     sy = H/fabs(radToDeg(sy1-sy2));
-    scaleall = (sy<sx) ? sy : sx;
-
-    //qWarning() << "ScaleALL: " << sx << "," << sy1 << "," << sy2 << "," << sy;
-
-//    double  sX,sY,sYN,sYS;
-//    sX=W/fabs(xE-xW);
-//    sYN=log(tan(degToRad(yN)/2 + M_PI_4));
-//    sYS=log(tan(degToRad(yS)/2 + M_PI_4));
-//    sY=H/fabs(radToDeg(sYN-sYS));
-
-    //qWarning() << "scale: X=" << sX << " Y=" << sY;
-#if 0
-    scale=sX<sY?sY:sX;
-#else
-    //scale=sX>sY?sY:sX;
-#endif
-
+    scaleall=qMax(sx,sy);
     if (scale < scaleall)
     {
         scale = scaleall;

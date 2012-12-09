@@ -142,7 +142,7 @@ GshhsPolygon::~GshhsPolygon() {
 //==========================================================
 //==========================================================
 //==========================================================
-GshhsReader::GshhsReader(std::string fpath_, int quality):
+GshhsReader::GshhsReader(std::string fpath_):
    quality (-1),
    fpath (fpath_)
 {
@@ -152,8 +152,7 @@ GshhsReader::GshhsReader(std::string fpath_, int quality):
         lsPoly_boundaries[qual] = new std::list<GshhsPolygon*>;
         lsPoly_rivers[qual] = new std::list<GshhsPolygon*>;
     }
-    userPreferredQuality = quality;
-    setQuality(userPreferredQuality);
+    setQuality(4);
 }
 int GshhsReader::getPolyVersion()
 {
@@ -161,26 +160,13 @@ int GshhsReader::getPolyVersion()
 }
 
 //-------------------------------------------------------
-// Recopie
-GshhsReader::GshhsReader(const GshhsReader &model):
-   quality (-1),
-   fpath (model.fpath)
-{
-    gshhsPoly_reader = new GshhsPolyReader(fpath);
-    // reuse lists of polygons
-    for (int qual=0; qual<5; qual++)
-    {
-        lsPoly_boundaries[qual] = model.lsPoly_boundaries[qual];
-        lsPoly_rivers[qual] = model.lsPoly_rivers[qual];
-    }
-    userPreferredQuality = model.userPreferredQuality;
-    setQuality(model.quality);
-}
 
 //-------------------------------------------------------
 // Destructeur
 GshhsReader::~GshhsReader() {
     clearLists();
+    if(gshhsPoly_reader)
+        delete gshhsPoly_reader;
 }
 
 //-----------------------------------------------------------------------
@@ -202,7 +188,7 @@ void GshhsReader::clearLists() {
     }
 }
 //-----------------------------------------------------------------------
-// extension du nom de fichier gshhs selon la qualité
+// extension du nom de fichier gshhs selon la qualite
 std::string GshhsReader::getNameExtension(int quality)
 {
     std::string ext;
@@ -247,15 +233,11 @@ bool GshhsReader::gshhsFilesExists(int quality)
 
 
 //-----------------------------------------------------------------------
-void GshhsReader::setUserPreferredQuality(int quality_) // 5 levels: 0=low ... 4=full
-{
-	userPreferredQuality = quality_;
-}
 
 //-----------------------------------------------------------------------
 void GshhsReader::setQuality(int quality_) // 5 levels: 0=low ... 4=full
 {
-    if(quality==quality_) return;
+    if(quality==quality_ && gshhsPoly_reader->currentQuality==quality_) return;
     std::string fname;
     ZUFILE *file;
     bool   ok;
@@ -299,9 +281,12 @@ void GshhsReader::setQuality(int quality_) // 5 levels: 0=low ... 4=full
             while (ok) {
                 GshhsPolygon *poly = new GshhsPolygon_WDB(file);
                 ok = poly->isOk();
-                if (ok) {
+                if (ok)
+                {
                     lsPoly_rivers[quality]->push_back(poly);
                 }
+                else
+                    delete poly;
 
             }
             zu_close(file);
@@ -350,9 +335,9 @@ int GshhsReader::GSHHS_scaledPoints(
     {
         x = (*itp)->lon+decx;
         y = (*itp)->lat;
-        // Ajustement d'échelle
+        // Ajustement d'echelle
         proj->map2screen(x, y, &xx, &yy);
-        if (j==0 || (oxx!=xx || oyy!=yy))  // élimine les ponts trop proches
+        if (j==0 || (oxx!=xx || oyy!=yy))  // elimine les ponts trop proches
         {
             oxx = xx;
             oyy = yy;
@@ -394,8 +379,8 @@ void GshhsReader::GsshDrawLines(QPainter &pnt, std::list<GshhsPolygon*> &lst,
         nbp = GSHHS_scaledPoints(pol, pts, 0, proj);
 		if (nbp > 1) {
 			if (pol->isAntarctic()) {
-				// Ne pas tracer les bords artificiels qui rejoignent le pôle
-				// ajoutés lors de la création des polygones (2 au début, 1 �  la fin).
+                // Ne pas tracer les bords artificiels qui rejoignent le pole
+                // ajoutes lors de la creation des polygones (2 au debut, 1 a la fin).
 				pts ++;
 				nbp -= 2;
 				pnt.drawPolyline(pts, nbp);
@@ -412,8 +397,8 @@ void GshhsReader::GsshDrawLines(QPainter &pnt, std::list<GshhsPolygon*> &lst,
         nbp = GSHHS_scaledPoints(pol, pts, -360, proj);
 		if (nbp > 1) {
 			if (pol->isAntarctic()) {
-				// Ne pas tracer les bords artificiels qui rejoignent le pôle
-				// ajoutés lors de la création des polygones (2 au début, 1 �  la fin).
+                // Ne pas tracer les bords artificiels qui rejoignent le pole
+                // ajoutes lors de la creation des polygones (2 au debut, 1 a  la fin).
 				pts ++;
 				nbp -= 2;
 				pnt.drawPolyline(pts, nbp);
@@ -476,53 +461,31 @@ void GshhsReader::drawSeaBorders( QPainter &pnt, Projection *proj)
 //-----------------------------------------------------------------------
 void GshhsReader::drawBoundaries( QPainter &pnt, Projection *proj)
 {
-    // Frontières
+    // Frontieres
     GsshDrawLines(pnt, getList_boundaries(), proj, false);
 }
 
 //-----------------------------------------------------------------------
 void GshhsReader::drawRivers( QPainter &pnt, Projection *proj)
 {
-    // Rivières
+    // Rivieres
     GsshDrawLines(pnt, getList_rivers(), proj, false);
 }
 
 //-----------------------------------------------------------------------
 void GshhsReader::selectBestQuality(Projection *proj)
 {
-    //qWarning()<<proj->getCoefremp();
     int bestQuality = 0;
-#if 1
-    if (proj->getCoefremp() > 120)       /*50*/
+    if (proj->getCoefremp() > 120)
         bestQuality = 0;
-    else if (proj->getCoefremp() > 50)    /*5*/
+    else if (proj->getCoefremp() > 50)
         bestQuality = 1;
-    else if (proj->getCoefremp() > 12)    /*2*/
+    else if (proj->getCoefremp() > 12)
         bestQuality = 2;
-    else if (proj->getCoefremp() > 2)  /*0.8*/
+    else if (proj->getCoefremp() > 2)
         bestQuality = 3;
     else
         bestQuality = 4;
-#else
-    if (proj->getCoefremp() > 50)       /*50*/
-        bestQuality = 0;
-    else if (proj->getCoefremp() > 5)    /*5*/
-        bestQuality = 1;
-    else if (proj->getCoefremp() > 2)    /*2*/
-        bestQuality = 2;
-    else if (proj->getCoefremp() > 0.8)  /*0.8*/
-        bestQuality = 3;
-    else
-        bestQuality = 4;
-#endif
-#if 1
-    if (bestQuality > userPreferredQuality)
-        setQuality(userPreferredQuality);
-    else
-        setQuality(bestQuality);
-#else
-    setQuality(userPreferredQuality);
-#endif
-    //printf("coefremp=%.2f usingRangs=%d qual=%d\n", proj->getCoefremp(),(int)isUsingRangsReader,getQuality());
+    setQuality(bestQuality);
 }
 

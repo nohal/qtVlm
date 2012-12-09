@@ -103,7 +103,7 @@ class myCentralWidget : public QWidget
         ~myCentralWidget();
 
         /* access to pointer & data */
-        Grib * getGrib(void);
+        Grib * getGrib(bool calibrate=false);
         Grib * getGribCurrent(void);
         QGraphicsScene * getScene(void) { return scene; }
         bool compassHasLine(void);
@@ -148,13 +148,14 @@ class myCentralWidget : public QWidget
         void simpAllPOIs(bool b);
         void setRouteToClipboard(ROUTE * route){this->routeClipboard=route;}
         ROUTE * getRouteToClipboard(){return this->routeClipboard;}
+        void myDeleteRoute(ROUTE * route);
 /* routage */
         QList<ROUTAGE*> & getRoutageList(){ return this->routage_list;}
         bool freeRoutageName(QString name, ROUTAGE * routage);
         ROUTAGE * addRoutage();
         int getNbRoutage(){return nbRoutage;}
         void addPivot(ROUTAGE * fromRoutage,bool editOptions=false);
-        void deleteRoutage(ROUTAGE * routage);
+        void deleteRoutage(ROUTAGE * routage, ROUTE * route=NULL);
 /*Other*/
         Projection * getProj(void){return proj;}
         void update_menuRoutage();
@@ -195,6 +196,8 @@ class myCentralWidget : public QWidget
         void setPilototo(QList<POI*> poiList);
         void treatRoute(ROUTE* route);
         loadImg * getKap(){return kap;}
+
+        void removePOI(void);
 
     public slots :
         /* Zoom & position */
@@ -244,10 +247,11 @@ class myCentralWidget : public QWidget
         void slot_releaseCompassFollow(){this->compassRoute=NULL;}
         void slot_deleteRoute();
         void withdrawRouteFromBank(QString routeName,QList<QVariant> details);
+        void slot_routeTimer();
 
         /*Routages */
         void slot_addRoutageFromMenu();
-        void slot_editRoutage(ROUTAGE * routage,bool createMode=false);
+        void slot_editRoutage(ROUTAGE * routage,bool createMode=false,POI * endPOI=NULL);
         void slot_deleteRoutage();
 
         /* Players */
@@ -275,6 +279,7 @@ class myCentralWidget : public QWidget
         void slotFax_close();
         void slotImg_open();
         void slotImg_close();
+        void zoomOnGrib(Grib * gr=NULL);
 
         /* Dialogs */
         void slot_boatDialog(void);
@@ -361,7 +366,6 @@ class myCentralWidget : public QWidget
         /* Grib */
         Grib *grib;
         Grib *gribCurrent;
-        void zoomOnGrib(void);
         QString  dataPresentInGrib(Grib* grib,
                                    int dataType,int levelType,int levelValue,
                                    bool *ok=NULL);
@@ -419,13 +423,14 @@ class myCentralWidget : public QWidget
         int nbRoutage;
         bool keepPos;
         void deleteRoute(ROUTE * route);
-        void myDeleteRoute(ROUTE * route);
         int replayStep;
         QTimer *replayTimer;
         void doSimplifyRoute(ROUTE * route, bool fast=false);
         bool abortRequest;
         faxMeteo * fax;
         loadImg * kap;
+        QTimer * routeTimer;
+        ROUTE * routeSimplify;
 };
 
 #endif // MYCENTRALWIDGET_H

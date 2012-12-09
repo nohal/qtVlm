@@ -137,9 +137,10 @@ POI::~POI()
     if(route!=NULL) this->setRoute(NULL);
     if(lineBetweenPois!=NULL && !parent->getAboutToQuit())
     {
-        delete lineBetweenPois;
-        this->connectedPoi->setConnectedPoi(NULL);
         this->connectedPoi->setLineBetweenPois(NULL);
+        this->connectedPoi->setConnectedPoi(NULL);
+        delete lineBetweenPois;
+        lineBetweenPois=NULL;
     }
     if(isWp)
     {
@@ -283,6 +284,11 @@ void POI::createPopUpMenu(void)
     popup->addAction(ac_pilot);
 
     popup->addSeparator();
+    ac_routage=new QAction(tr("Routage vers ce POI"),popup);
+    connect(ac_routage,SIGNAL(triggered()),this,SLOT(slot_routage()));
+    popup->addAction(ac_routage);
+
+    popup->addSeparator();
     ac_connect=new QAction(tr("Tracer/Editer une ligne avec un autre POI"),popup);
     connect(ac_connect,SIGNAL(triggered()),this,SLOT(slot_relier()));
     popup->addAction(ac_connect);
@@ -350,10 +356,7 @@ bool POI::tryMoving(int x, int y)
             setLongitude(newlon);
             setLatitude(newlat);
             Util::computePos(proj,lat, lon, &pi, &pj);
-            lineBetweenPois->deleteAll();
-            lineBetweenPois->addVlmPoint(vlmPoint(this->lon,this->lat));
-            lineBetweenPois->addVlmPoint(vlmPoint(this->connectedPoi->lon,this->connectedPoi->lat));
-            lineBetweenPois->slot_showMe();
+            manageLineBetweenPois();
         }
         return true;
     }
@@ -390,13 +393,7 @@ void POI::mouseReleaseEvent(QGraphicsSceneMouseEvent * e)
             route->setFastVmgCalc(false);
             route->slot_recalculate();
         }
-        if(lineBetweenPois!=NULL)
-        {
-            lineBetweenPois->deleteAll();
-            lineBetweenPois->addVlmPoint(vlmPoint(this->lon,this->lat));
-            lineBetweenPois->addVlmPoint(vlmPoint(this->connectedPoi->lon,this->connectedPoi->lat));
-            lineBetweenPois->slot_showMe();
-        }
+        manageLineBetweenPois();
         return;
     }
 
@@ -432,10 +429,15 @@ void POI::contextMenuEvent(QGraphicsSceneContextMenuEvent * e)
     {
         this->ac_finePosit->setEnabled(true);
     }
-    if(route==NULL)
+
+    if(route==NULL) {
         this->ac_setHorn->setEnabled(false);
-    else
+        this->ac_routage->setEnabled(true);
+    }
+    else {
         this->ac_setHorn->setEnabled(true);
+        this->ac_routage->setEnabled(false);
+    }
 
 
     switch(parent->getCompassMode(e->scenePos().x(),e->scenePos().y()))
@@ -490,14 +492,21 @@ void POI::contextMenuEvent(QGraphicsSceneContextMenuEvent * e)
         }
         else
         {
+            QPixmap iconI(20,10);
+            iconI.fill(route->getColor());
+            QIcon icon(iconI);
             ac_delRoute->setText(tr("Supprimer la route ")+route->getName());
             ac_delRoute->setEnabled(true);
+            ac_delRoute->setIcon(icon);
             ac_editRoute->setText(tr("Editer la route ")+route->getName());
             ac_editRoute->setEnabled(true);
+            ac_editRoute->setIcon(icon);
             ac_copyRoute->setText(tr("Copier la route ")+route->getName());
             ac_copyRoute->setEnabled(true);
+            ac_copyRoute->setIcon(icon);
             ac_zoomRoute->setText(tr("Zoom sur la route ")+route->getName());
             ac_zoomRoute->setEnabled(true);
+            ac_zoomRoute->setIcon(icon);
         }
         /*clear current actions */
         ac_routeList->clear();
@@ -515,19 +524,28 @@ void POI::contextMenuEvent(QGraphicsSceneContextMenuEvent * e)
             ptr->setChecked(true);
         else
             ptr->setChecked(false);
+        QPixmap iconI(20,10);
         while(j.hasNext())
         {
             ROUTE * ptr_route = j.next();
-            ptr=new QAction(ptr_route->getName(),ac_routeList);            
+            iconI.fill(ptr_route->getColor());
+            QIcon icon(iconI);
+            ptr=new QAction(ptr_route->getName(),ac_routeList);
+            ptr->setIcon(icon);
             ptr->setCheckable  (true);
             ptr->setData(-1);
             ac_routeList->addAction(ptr);
             if(ptr_route == route)
+            {
+                QFont font=ptr->font();
+                font.setBold(true);
+                ptr->setFont(font);
                 ptr->setChecked(true);
+            }
             else
                 ptr->setChecked(false);
             ptr->setData(qVariantFromValue((void *) ptr_route));
-            k++;
+            ++k;
         }
 
     }
@@ -764,15 +782,21 @@ void POI::slot_relier()
             if(lineBetweenPois!=NULL)
                 delete lineBetweenPois;
             lineBetweenPois=new vlmLine(proj,parent->getScene(),Z_VALUE_POI);
-            lineBetweenPois->addVlmPoint(vlmPoint(this->lon,this->lat));
-            lineBetweenPois->addVlmPoint(vlmPoint(this->connectedPoi->lon,this->connectedPoi->lat));
             connectedPoi->setLineBetweenPois(lineBetweenPois);
             QPen pen(lineColor);
             pen.setWidthF(lineWidth);
             lineBetweenPois->setLinePen(pen);
-            lineBetweenPois->slot_showMe();
+            manageLineBetweenPois();
         }
     }
+}
+void POI::manageLineBetweenPois()
+{
+    if(lineBetweenPois==NULL) return;
+    lineBetweenPois->deleteAll();
+    lineBetweenPois->addVlmPoint(vlmPoint(this->lon,this->lat));
+    lineBetweenPois->addVlmPoint(vlmPoint(this->connectedPoi->lon,this->connectedPoi->lat));
+    lineBetweenPois->slot_showMe();
 }
 
 void POI::slot_editRoute()
@@ -906,8 +930,8 @@ void POI::slot_delPoi()
     if(route!=NULL)
         if(route->getFrozen()) return;
     int rep = QMessageBox::question (parent,
-            tr("Detruire la marque"),
-            tr("La destruction d'une marque est definitive.\n\nEtes-vous sur ?"),
+                                     tr("Detruire la marque")+" - "+this->getName(),
+                                     tr("La destruction d'une marque est definitive.\n\nEtes-vous sur de vouloir supprimer")+" "+getName()+"?",
             QMessageBox::Yes | QMessageBox::No);
     if (rep == QMessageBox::Yes) {
 
@@ -915,7 +939,7 @@ void POI::slot_delPoi()
         {
             if(route->isBusy())
             {
-                QMessageBox::critical(0,tr("Destruction d'un marque"),tr("Le calcul de la route n'est pas fini, impossible de supprimer ce POI"));
+                QMessageBox::critical(0,tr("Destruction d'une marque")+" - "+this->getName(),tr("Le calcul de la route n'est pas fini, impossible de supprimer ce POI"));
                 return;
             }
             setRoute(NULL);

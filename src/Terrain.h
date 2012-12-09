@@ -51,6 +51,7 @@ public:
     QPainterPath shape() const;
     ROUTAGE * getRoutageGrib();
     void setRoutageGrib(ROUTAGE * routage);
+    void setScalePos(const int &a, const int &b){this->scalePos=QPoint(a,b);}
 
     enum DrawGribPlainDataMode {
              drawNone,
@@ -71,13 +72,13 @@ public:
              drawDeltaDewpoint
     };
     void switchGribDisplay(bool windArrowOnly);
+    QSize getSize() const {return QSize(width,height);}
 
 public slots :
     // Map
     void setDrawRivers(bool);
     void setDrawCountriesBorders(bool);
     void setCountriesNames(bool);
-    void slot_setMapQuality(int q);    
 
     void updateGraphicsParameters();
 
@@ -157,10 +158,9 @@ private:
     QPen    isobarsPen;
     QPen    isotherms0Pen;
 
-    int     quality;
 
     //-----------------------------------------------
-    // Flags indiquant les éléments �  dessiner
+    // Flags indiquant les elements a dessiner
     //-----------------------------------------------
     bool  showCountriesBorders;
     bool  showRivers;
@@ -185,6 +185,7 @@ private:
     bool toBeRestarted;
     ROUTAGE * routageGrib;
     QMutex mutex;
+    QPoint scalePos;
 };
 Q_DECLARE_TYPEINFO(Terrain,Q_MOVABLE_TYPE);
 

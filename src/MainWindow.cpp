@@ -155,13 +155,17 @@ void MainWindow::connectSignals()
     connect(mb->acVLMSync, SIGNAL(triggered()), this, SLOT(slotVLM_Sync()));
 
     connect(mb->acPOIAdd, SIGNAL(triggered()), this, SLOT(slot_newPOI()));
+    connect(mb->acPOIRemove, SIGNAL(triggered()), this, SLOT(slot_removePOI()));
     connect(mb->ac_twaLine,SIGNAL(triggered()), my_centralWidget, SLOT(slot_twaLine()));
     connect(mb->ac_compassLine,SIGNAL(triggered()), this, SLOT(slotCompassLine()));
     connect(mb->ac_compassCenterBoat,SIGNAL(triggered()), this, SLOT(slotCompassCenterBoat()));
     connect(mb->ac_compassCenterWp,SIGNAL(triggered()), this, SLOT(slotCompassCenterWp()));
     connect(mb->ac_centerMap,SIGNAL(triggered()), this, SLOT(slot_centerMap()));
+    connect(mb->ac_positScale,SIGNAL(triggered()), this, SLOT(slot_positScale()));
 
     connect(mb->ac_copyRoute,SIGNAL(triggered()), this, SLOT(slot_copyRoute()));
+    connect(mb->ac_deleteRoute,SIGNAL(triggered()), this, SLOT(slot_deleteRoute()));
+    connect(mb->ac_editRoute,SIGNAL(triggered()), this, SLOT(slot_editRoute()));
     connect(mb->ac_pasteRoute,SIGNAL(triggered()), this, SLOT(slot_pasteRoute()));
     connect(mb->acRoute_paste,SIGNAL(triggered()), this, SLOT(slot_pasteRoute()));
 #ifdef __QTVLM_WITH_TEST
@@ -308,10 +312,10 @@ void MainWindow::continueSetup()
         my_centralWidget->setAboutToQuit();
         QApplication::quit();
     }
-    if(!QFile(appFolder.value("img")+"unlock.png").exists())
+    if(!QFile(appFolder.value("img")+"benchmark.grb").exists())
         QMessageBox::critical (this,
            tr("Erreur"),
-           tr("Icon 'unlock.png' cannot be find in img directory")+"<br>"+tr("Please check your installation"));
+           tr("File 'benchmark.grb' cannot be find in img directory")+"<br>"+tr("Please check your installation"));
 
 
     dialogProxy = new DialogProxy();
@@ -432,7 +436,6 @@ void MainWindow::continueSetup()
     setStatusBar(statusBar);
 
     this->slotParamChanged();
-
     progress->setLabelText(tr("Opening grib"));
     progress->setValue(progress->value()+10);
     gribFilePath = Settings::getSetting("gribFilePath", appFolder.value("grib")).toString();
@@ -501,9 +504,6 @@ void MainWindow::continueSetup()
     //---------------------------------------------------------
     connectSignals();
 
-    /* initialisation du niveau de qualité */
-    int quality=4;
-    emit signalMapQuality(quality);
 
     progress->setLabelText(tr("Drawing all"));
     progress->setValue(progress->value()+10);
@@ -692,6 +692,49 @@ void MainWindow::keyPressEvent ( QKeyEvent  * /* event */ )
 }
 void MainWindow::slot_deleteProgress (void)
 {
+    progress->setValue(99);
+    if(QThread::idealThreadCount()>1 && QFile(appFolder.value("img")+"benchmark.grb").exists())
+    {
+        progress->setLabelText(tr("Calibrating grib display"));
+        QApplication::processEvents();
+        Grib * grib=new Grib();
+        grib->loadGribFile(appFolder.value("img")+"benchmark.grb");
+        if(grib && grib->isOk())
+        {
+            grib->setCurrentDate(grib->getMinDate()+3650); //not to be on a gribrecord;
+            proj->blockSignals(true);
+            double xW=proj->getXmin();
+            double xE=proj->getXmax();
+            double yS=proj->getYmin();
+            double yN=proj->getYmax();
+            my_centralWidget->zoomOnGrib(grib);
+            QPixmap * imgAll = new QPixmap(my_centralWidget->getTerre()->getSize());
+            imgAll->fill(Qt::transparent);
+            QPainter pnt(imgAll);
+            pnt.setRenderHint(QPainter::Antialiasing, true);
+            pnt.setRenderHint(QPainter::SmoothPixmapTransform, true);
+            QTime calibration;
+            calibration.start();
+            grib->draw_WIND_Color(pnt,proj,true,true,true);
+            int cal1=calibration.elapsed();
+            pnt.end();
+            //imgAll->save("calib1.jpg");
+            imgAll->fill(Qt::transparent);
+            pnt.begin(imgAll);
+            calibration.start();
+            grib->draw_WIND_Color_old(pnt,proj,true,true,true);
+            int cal2=calibration.elapsed();
+            pnt.end();
+            //imgAll->save("calib2.jpg");
+            delete imgAll;
+            proj->zoomOnZone(xW,yN, xE,yS);
+            proj->blockSignals(false);
+            qWarning()<<"result of benchmark: multiThread="<<cal1<<"monoThread="<<cal2;
+            Settings::setSetting("gribBench1",cal1);
+            Settings::setSetting("gribBench2",cal2);
+        }
+        delete grib;
+    }
     //qWarning() << "Removing progress";
     progress->close();
     delete progress;
@@ -877,6 +920,10 @@ void MainWindow::slot_newPOI(void)
     emit newPOI(0.0,0.0,proj,selectedBoat);
 }
 
+void MainWindow::slot_removePOI(void) {
+    my_centralWidget->removePOI();
+}
+
 void MainWindow::slot_centerBoat()
 {
     if(selectedBoat)
@@ -920,7 +967,16 @@ void MainWindow::slotOptions_Language()
         Settings::setSetting("appLanguage", lang);
         QMessageBox::information (this,
             QString("Application Language"),
-            QString("Language : English\n\n")
+            QString("Language : Czech\n\n")
+              + QString("Please reload application to activate language.\n")
+        );
+    }
+    else if (act == mb->acOptions_Lang_es) {
+        lang = "es";
+        Settings::setSetting("appLanguage", lang);
+        QMessageBox::information (this,
+            QString("Application Language"),
+            QString("Language : Spanish\n\n")
               + QString("Please reload application to activate language.\n")
         );
     }
@@ -1526,13 +1582,31 @@ void MainWindow::slotShowContextualMenu(QGraphicsSceneContextMenuEvent * e)
     }
     if(my_centralWidget->getRouteToClipboard()!=NULL)
     {
-        menuBar->ac_copyRoute->setEnabled(true);
+        QString routeName=my_centralWidget->getRouteToClipboard()->getName();
+        QPixmap iconI(20,10);
+        iconI.fill(my_centralWidget->getRouteToClipboard()->getColor());
+        QIcon icon(iconI);
+        menuBar->ac_copyRoute->setVisible(true);
+        menuBar->ac_copyRoute->setText(tr("Copier la route")+" "+routeName);
+        menuBar->ac_copyRoute->setIcon(icon);
         menuBar->ac_copyRoute->setData(my_centralWidget->getRouteToClipboard()->getName());
+        menuBar->ac_deleteRoute->setVisible(true);
+        menuBar->ac_deleteRoute->setText(tr("Supprimer la route")+" "+routeName);
+        menuBar->ac_deleteRoute->setIcon(icon);
+        menuBar->ac_deleteRoute->setData(my_centralWidget->getRouteToClipboard()->getName());
+        menuBar->ac_editRoute->setVisible(true);
+        menuBar->ac_editRoute->setText(tr("Editer la route")+" "+routeName);
+        menuBar->ac_editRoute->setIcon(icon);
+        menuBar->ac_editRoute->setData(my_centralWidget->getRouteToClipboard()->getName());
     }
     else
     {
-        menuBar->ac_copyRoute->setEnabled(false);
+        menuBar->ac_copyRoute->setVisible(false);
         menuBar->ac_copyRoute->setData(QString());
+        menuBar->ac_deleteRoute->setVisible(false);
+        menuBar->ac_deleteRoute->setData(QString());
+        menuBar->ac_editRoute->setVisible(false);
+        menuBar->ac_editRoute->setData(QString());
     }
     QString clipboard=QApplication::clipboard()->text();
     if(clipboard.isEmpty() || !clipboard.contains("<kml") || !clipboard.contains("Placemark"))
@@ -1556,6 +1630,34 @@ void MainWindow::slot_copyRoute()
     if(route!=NULL)
         my_centralWidget->exportRouteFromMenuKML(route,"",true);
 }
+void MainWindow::slot_deleteRoute()
+{
+    ROUTE *route=NULL;
+    for (int n=0;n<my_centralWidget->getRouteList().count();++n)
+    {
+        if(my_centralWidget->getRouteList().at(n)->getName()==menuBar->ac_copyRoute->data().toString())
+        {
+            route=my_centralWidget->getRouteList().at(n);
+            break;
+        }
+    }
+    if(route!=NULL)
+        my_centralWidget->myDeleteRoute(route);
+}
+void MainWindow::slot_editRoute()
+{
+    ROUTE *route=NULL;
+    for (int n=0;n<my_centralWidget->getRouteList().count();++n)
+    {
+        if(my_centralWidget->getRouteList().at(n)->getName()==menuBar->ac_copyRoute->data().toString())
+        {
+            route=my_centralWidget->getRouteList().at(n);
+            break;
+        }
+    }
+    if(route!=NULL)
+        route->slot_edit();
+}
 void MainWindow::slot_pasteRoute()
 {
     my_centralWidget->importRouteFromMenuKML("",true);
@@ -1565,6 +1667,13 @@ void MainWindow::slotInetUpdated(void)
     //qWarning() << "Inet Updated";
     emit updateInet();
     slotVLM_Sync();
+}
+void MainWindow::slot_positScale()
+{
+    Settings::setSetting("scalePosX",this->mouseClicX);
+    Settings::setSetting("scalePosY",this->mouseClicY);
+    my_centralWidget->getTerre()->setScalePos(this->mouseClicX,this->mouseClicY);
+    my_centralWidget->getTerre()->redrawGrib();
 }
 
 void MainWindow::slot_centerMap()
@@ -2453,6 +2562,13 @@ void MainWindow::slot_ParamVLMchanged()
             menuBar->estime->setValue(0);
     }
     if(my_centralWidget->getGrib() && my_centralWidget->getGrib()->isOk())
-        my_centralWidget->getGrib()->setGribMonoCpu(Settings::getSetting("gribMonoCpu",0).toInt()==1);
+    {
+        bool gribMulti=false;
+        if(Settings::getSetting("gribDrawingMethod",0).toInt()==0)
+            gribMulti=Settings::getSetting("gribBench1",-1).toInt()<Settings::getSetting("gribBench2",-1).toInt();
+        else
+            gribMulti=Settings::getSetting("gribDrawingMethod",0).toInt()==2;
+        my_centralWidget->getGrib()->setGribMonoCpu(!gribMulti);
+    }
 
 }

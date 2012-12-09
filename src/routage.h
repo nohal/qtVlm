@@ -195,6 +195,7 @@ class ROUTAGE : public QObject
         void setColorGrib(const bool &b){this->colorGrib=b;}
         bool getColorGrib(){return this->colorGrib;}
         bool getArrived() const {return this->arrived;}
+        bool checkIceGate(const vlmPoint &p) const;
     public slots:
         void slot_edit();
         void slot_abort(){this->aborted=true;}
@@ -205,6 +206,7 @@ class ROUTAGE : public QObject
         void slot_calculate_with_tempo();
         void eraseWay();
         void slot_gribDateChanged();
+        void slot_deleteRoutage(void);
     signals:
         void editMe(ROUTAGE *);
         void updateVgTip(int,int,QString);
@@ -301,6 +303,9 @@ class ROUTAGE : public QObject
         QMenu * popup;
         QAction * ac_pivot;
         QAction * ac_pivotM;
+
+        QAction * ac_edit;
+        QAction * ac_remove;
         void createPopupMenu();
         bool useMultiThreading;
         bool isNewPivot;
@@ -337,6 +342,7 @@ class ROUTAGE : public QObject
         QList<vlmLine*> isoRoutes;
         QList<vlmLine*> alternateRoutes;
         QList<QLineF> barrieres;
+        QList<QLineF> iceGates;
         void countDebug(int nbIso, QString s);
         bool colorGrib;
     };

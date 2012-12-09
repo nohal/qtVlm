@@ -34,7 +34,8 @@ CODECFORTR = UTF-8
 CODECFORSRC = UTF-8
 TRANSLATIONS = ../tr/qtVlm_en.ts \
     ../tr/qtVlm_fr.ts \
-    ../tr/qtVlm_cz.ts
+    ../tr/qtVlm_cz.ts \
+    ../tr/qtVlm_es.ts
 RC_FILE = qtVlm.rc
 HEADERS += Dialogs/DialogGraphicsParams.h \
     Dialogs/DialogLoadGrib.h \
@@ -121,7 +122,8 @@ HEADERS += Dialogs/DialogGraphicsParams.h \
     Dialogs/dialogFaxMeteo.h \
     Dialogs/dialogLoadImg.h \
     Dialogs/routeInfo.h \
-    GshhsDwnload.h
+    GshhsDwnload.h \
+    Dialogs/DialogRemovePoi.h
 
 FORMS += Ui/boatAccount_dialog.ui \
     Ui/BoardVLM.ui \
@@ -156,7 +158,8 @@ FORMS += Ui/boatAccount_dialog.ui \
     Ui/DialogDownloadTracks.ui \
     Ui/dialogFaxMeteo.ui \
     Ui/dialogLoadImg.ui \
-    Ui/routeInfo.ui
+    Ui/routeInfo.ui \
+    Ui/DialogRemovePoi.ui
 
 SOURCES += Dialogs/DialogGraphicsParams.cpp \
     Dialogs/DialogLoadGrib.cpp \
@@ -240,7 +243,8 @@ SOURCES += Dialogs/DialogGraphicsParams.cpp \
     Dialogs/dialogFaxMeteo.cpp \
     Dialogs/dialogLoadImg.cpp \
     Dialogs/routeInfo.cpp \
-    GshhsDwnload.cpp
+    GshhsDwnload.cpp \
+    Dialogs/DialogRemovePoi.cpp
 
 unix:!macx: DEFINES += _TTY_POSIX_ __TERRAIN_QIMAGE __UNIX_QTVLM
 win32:DEFINES += _TTY_WIN_ \

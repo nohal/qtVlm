@@ -28,6 +28,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <QXmlSchemaValidator>
 #include <QXmlQuery>
 #include <QGesture>
+#include <QVariantMap>
+#include <QVariant>
+#include <QClipboard>
+
+
 #include "mycentralwidget.h"
 
 #include "settings.h"
@@ -78,9 +83,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "dialogFaxMeteo.h"
 #include "dialogLoadImg.h"
 #include "parser.h"
-#include <QVariantMap>
-#include <QVariant>
-#include <QClipboard>
+#include "DialogRemovePoi.h"
 
 /*******************/
 /*    myScene      */
@@ -356,7 +359,6 @@ myCentralWidget::myCentralWidget(Projection * proj,MainWindow * parent,MenuBar *
 //voir s'il faut mettre le slot ds centralWidget ou utiliser myScene
     connect(terre,SIGNAL(showContextualMenu(QGraphicsSceneContextMenuEvent *)),
             parent, SLOT(slotShowContextualMenu(QGraphicsSceneContextMenuEvent *)));
-    connect(parent, SIGNAL(signalMapQuality(int)), terre, SLOT(slot_setMapQuality(int)));
     connect(menuBar->acView_GroupColorMap, SIGNAL(triggered(QAction *)), this, SLOT(slot_setColorMapMode(QAction *)));
     connect(menuBar->acMap_Rivers, SIGNAL(triggered(bool)), terre,  SLOT(setDrawRivers(bool)));
     connect(menuBar->acMap_CountriesBorders, SIGNAL(triggered(bool)), terre,  SLOT(setDrawCountriesBorders(bool)));
@@ -417,6 +419,10 @@ myCentralWidget::myCentralWidget(Projection * proj,MainWindow * parent,MenuBar *
     this->hornDate=QDateTime::currentDateTime().toUTC();
     this->hornDate.setTimeSpec(Qt::UTC);
     this->hornActivated=false;
+    routeTimer=new QTimer(this);
+    routeTimer->setInterval(300);
+    routeTimer->setSingleShot(true);
+    connect(routeTimer, SIGNAL(timeout()),this,SLOT(slot_routeTimer()));
 
     // Compass
     compass = new mapCompass(proj,parent,this);
@@ -536,7 +542,7 @@ void myCentralWidget::loadGshhs(void) {
 
     qWarning() << "Searching for maps in " << mapDir;
 
-    gshhsReader = new GshhsReader((mapDir+"/gshhs").toAscii().data(), 0);
+    gshhsReader = new GshhsReader((mapDir+"/gshhs").toAscii().data());
     gshhsReader->setProj(proj);
 
     int polyVersion = gshhsReader->getPolyVersion();
@@ -544,7 +550,7 @@ void myCentralWidget::loadGshhs(void) {
     {
         mapDir=".";
         delete gshhsReader;
-        gshhsReader = new GshhsReader((mapDir+"/gshhs").toAscii().data(), 0);
+        gshhsReader = new GshhsReader((mapDir+"/gshhs").toAscii().data());
         gshhsReader->setProj(proj);
         polyVersion = gshhsReader->getPolyVersion();
     }
@@ -574,7 +580,8 @@ void myCentralWidget::loadGshhs(void) {
         mapDir=appDir.absoluteFilePath(mapDir);
     qWarning() << "Setting map folder to " << mapDir;
     Settings::setSetting("mapsFolder",mapDir);
-    if(!gshhsOk) {
+    if(!gshhsOk)
+    {
         msgBox.exec();
 
         if(msgBox.clickedButton() == downloadMapBtn) {
@@ -621,10 +628,11 @@ void myCentralWidget::loadGshhs(void) {
         progress->setValue(progress->value()+5);
     }
 
-    if(gshhsOk) {
-        if(terre) {
+    if(gshhsOk)
+    {
+        if(terre)
+        {
             terre->setGSHHS_map(gshhsReader);
-            terre->slot_setMapQuality(4);
         }
     }
 
@@ -724,8 +732,9 @@ int myCentralWidget::getCompassMode(int m_x,int m_y)
     return COMPASS_NOTHING;
 }
 
-Grib * myCentralWidget::getGrib(void)
+Grib * myCentralWidget::getGrib(bool calibrate)
 {
+    if(calibrate) return grib;
     if(grib && grib->isOk())
         return grib;
     else
@@ -1021,13 +1030,18 @@ void myCentralWidget::slot_mouseRelease(QGraphicsSceneMouseEvent* e)
 /* Grib                   */
 /**************************/
 
-void myCentralWidget::zoomOnGrib(void)
+void myCentralWidget::zoomOnGrib(Grib * gr)
 {
     Grib * myGrib;
-    if(menuBar->acView_CurrentColors->isChecked() && grib->getNumberOfGribRecords(GRB_CURRENT_VX,LV_MSL,0) == 0)
-        myGrib=gribCurrent;
+    if(gr!=NULL)
+        myGrib=gr;
     else
-        myGrib=grib;
+    {
+        if(menuBar->acView_CurrentColors->isChecked() && grib->getNumberOfGribRecords(GRB_CURRENT_VX,LV_MSL,0) == 0)
+            myGrib=gribCurrent;
+        else
+            myGrib=grib;
+    }
     double x0,y0, x1,y1;
     if (myGrib->getZoneExtension(&x0,&y0, &x1,&y1))
     {
@@ -1104,12 +1118,13 @@ void myCentralWidget::setCurrentDate(time_t t, bool uRoute)
     {
         grib->setCurrentDate(t);
         gribCurrent->setCurrentDate(t);
-        emit redrawGrib();
+        //emit redrawGrib();
         if(uRoute)
         {
             emit updateRoute(NULL);
             emit updateRoutage();
         }
+        emit redrawGrib();
     }
 }
 
@@ -1179,7 +1194,7 @@ void myCentralWidget::slotLoadSailsDocGrib(void)
             QDesktopServices::openUrl(QUrl(queryStr));
         else
         {
-            DialogSailDocs * sailDocs_diag = new DialogSailDocs("send GFS:" + param + "|0.5,0.5|0,3,6..384|WIND",this);
+            DialogSailDocs * sailDocs_diag = new DialogSailDocs("GFS:" + param + "|0.5,0.5|0,3,6..384|WIND",this);
             sailDocs_diag->exec();
             delete sailDocs_diag;
         }
@@ -1328,6 +1343,11 @@ POI * myCentralWidget::slot_addPOI(QString name,int type,double lat,double lon, 
     return poi;
 }
 
+void myCentralWidget::removePOI(void) {
+    DialogRemovePoi dialogRemovePoi(mainW,this);
+    dialogRemovePoi.exec();
+}
+
 void myCentralWidget::slot_addPOI_list(POI * poi)
 {
     poi_list.append(poi);
@@ -1399,10 +1419,13 @@ void myCentralWidget::slot_delAllPOIs(void)
     if(selection->getZone(&lon0,&lat0,&lon1,&lat1))
     {
         double x0,y0,x1,y1;
+
+        //qWarning() << "Min X" << proj->getXmin() << proj->getXmax()<<", cLFA " << Util::cLFA(lon0,proj->getXmin())<< Util::cLFA(lon1,proj->getXmin());
+
         proj->map2screenDouble(Util::cLFA(lon0,proj->getXmin()),lat0,&x0,&y0);
         proj->map2screenDouble(Util::cLFA(lon1,proj->getXmin()),lat1,&x1,&y1);
         QRectF selRect=QRectF(QPointF(x0,y0),QPointF(x1,y1)).normalized();
-        //qWarning()<<"selRect="<<x0<<y0<<x1<<y1;
+        qWarning()<<"selRect="<<x0<<y0<<x1<<y1;
         QListIterator<POI*> i (poi_list);
 
         int rep = QMessageBox::question (this,
@@ -1425,6 +1448,8 @@ void myCentralWidget::slot_delAllPOIs(void)
             const double lon=poi->getLongitude();
             double x,y;
             proj->map2screenDouble(Util::cLFA(lon,proj->getXmin()),lat,&x,&y);
+
+            qWarning() << "POI: " << poi->getName();
 
             if(selRect.contains(x,y))
             {
@@ -1480,7 +1505,7 @@ void myCentralWidget::slot_delSelPOIs(void)
             POI * poi = i.next();
             if(!(poi->getTypeMask() & res_mask))
                 continue;
-            //qWarning() << "POI: " << poi->getName() << " mask=" << poi->getTypeMask();
+            qWarning() << "POI: " << poi->getName() << " mask=" << poi->getTypeMask();
             const double lat=poi->getLatitude();
             const double lon=poi->getLongitude();
             double x,y;
@@ -3668,9 +3693,9 @@ void myCentralWidget::setPilototo(QList<POI *> poiList)
     }
 }
 
-void myCentralWidget::slot_editRoutage(ROUTAGE * routage,bool createMode)
+void myCentralWidget::slot_editRoutage(ROUTAGE * routage,bool createMode,POI *endPOI)
 {
-    DialogRoutage *routage_editor=new DialogRoutage(routage,this);
+    DialogRoutage *routage_editor=new DialogRoutage(routage,this,endPOI);
     if(routage_editor->exec()!=QDialog::Accepted)
     {
         delete routage_editor;
@@ -3752,7 +3777,7 @@ void myCentralWidget::slot_deleteRoutage()
     deleteRoutage(routage);
 }
 
-void myCentralWidget::deleteRoutage(ROUTAGE * routage)
+void myCentralWidget::deleteRoutage(ROUTAGE * routage, ROUTE * route)
 {
     if(routage)
     {
@@ -3760,8 +3785,19 @@ void myCentralWidget::deleteRoutage(ROUTAGE * routage)
         update_menuRoutage();
         routage->deleteLater();
         routage=NULL;
+        if(route!=NULL)
+        {
+            routeSimplify=route;
+            routeTimer->start();
+        }
     }
 }
+void myCentralWidget::slot_routeTimer()
+{
+    routeSimplify->setSimplify(true);
+    treatRoute(routeSimplify);
+}
+
 void myCentralWidget::assignPois()
 {
     //qWarning() << "AssignPOI "  << route_list.count() << " routes, " << poi_list.count() << " pois";
@@ -3821,17 +3857,30 @@ void myCentralWidget::update_menuRoute()
     menuBar->mnCompassCenterRoute->clear();
     QAction * a=menuBar->addReleaseCompass();
     connect(a, SIGNAL(triggered()), this, SLOT(slot_releaseCompassFollow()));
+    bool hasRoute=!route_list.isEmpty();
+    menuBar->mnRoute_edit->setEnabled(hasRoute);
+    menuBar->mnRoute_delete->setEnabled(hasRoute);
+    menuBar->mnRoute_export->setEnabled(hasRoute);
+    menuBar->mnCompassCenterRoute->setEnabled(hasRoute);
+
     QListIterator<ROUTE*> i (route_list);
     while(i.hasNext())
     {
         menuBar->addMenuRoute(i.next());
     }
+
 }
 void myCentralWidget::update_menuRoutage()
 {
     qSort(routage_list.begin(),routage_list.end(),ROUTAGE::myLessThan);
+
     menuBar->mnRoutage_edit->clear();
     menuBar->mnRoutage_delete->clear();
+
+    bool hasRoutage=!routage_list.isEmpty();
+    menuBar->mnRoutage_edit->setEnabled(hasRoutage);
+    menuBar->mnRoutage_delete->setEnabled(hasRoutage);
+
     QListIterator<ROUTAGE*> i (routage_list);
     while(i.hasNext())
         menuBar->addMenuRoutage(i.next());

@@ -68,6 +68,7 @@ DialogPlayerAccount::DialogPlayerAccount(Projection * proj, MainWindow * main,
         connect(fr,SIGNAL(toggled(bool)),this,SLOT(slot_langChanged(bool)));
         connect(en,SIGNAL(toggled(bool)),this,SLOT(slot_langChanged(bool)));
         connect(cz,SIGNAL(toggled(bool)),this,SLOT(slot_langChanged(bool)));
+        connect(es,SIGNAL(toggled(bool)),this,SLOT(slot_langChanged(bool)));
     }
 }
 
@@ -132,6 +133,11 @@ void DialogPlayerAccount::slot_langChanged(bool)
         Settings::setSetting("appLanguage", "cz");
         la="cz";
     }
+    else if (es->isChecked())
+    {
+        Settings::setSetting("appLanguage", "es");
+        la="cz";
+    }
 
     if(la=="fr")
     {
@@ -164,6 +170,22 @@ void DialogPlayerAccount::slot_langChanged(bool)
         accDialog.vlmBoat->setText("VLM boat");
         accDialog.realBoat->setText("Real boat");
         accDialog.setWindowTitle("Account details");
+    }
+    else if (la=="es")
+    {
+        this->btn_playerAdd->setText("Nuevo");
+        this->btn_playerChg->setText("Modificar");
+        this->btn_playerUpd->setText("Actualizar");
+        this->btn_playerDel->setText("Borrar");
+        this->pl_data_name->setText("Nombre");
+        this->pl_data_nbboat->setText("Num. barcos");
+        this->setWindowTitle("Gestión de cuentas");
+        accDialog.labelBoatName->setText("Login");
+        accDialog.labelPass->setText("Password");
+        accDialog.groupBox->setTitle("Tipo de barco");
+        accDialog.vlmBoat->setText("Barco VLM");
+        accDialog.realBoat->setText("Barco real");
+        accDialog.setWindowTitle("Detalles de la cuenta");
     }
     else if (la=="cz")
     {
@@ -678,6 +700,16 @@ bool DialogParamAccount::initDialog(player_data * data)
         s1="Login";
         s2="Boat name";
     }
+    else if(Settings::getSetting("appLanguage", "en").toString()=="cz")
+    {
+        s1="Jmeno";
+        s2="Lod jmeno";
+    }
+    else if(Settings::getSetting("appLanguage", "en").toString()=="es")
+    {
+        s1="Login";
+        s2="Nombre del barco";
+    }
     labelBoatName->setText(vlmBoat->isChecked()?s1:s2);
     labelPass->setHidden(realBoat->isChecked());
     slot_loginPassChanged(QString());
@@ -709,8 +741,13 @@ void DialogParamAccount::slot_typeChanged(bool)
     }
     else if(Settings::getSetting("appLanguage", "en").toString()=="cz")
     {
-        s1=tr("Jmeno");
-        s2=tr("Lod jmeno");
+        s1="Jmeno";
+        s2="Lod jmeno";
+    }
+    else if(Settings::getSetting("appLanguage", "en").toString()=="es")
+    {
+        s1="Login";
+        s2="Nombre del barco";
     }
     labelBoatName->setText(vlmBoat->isChecked()?s1:s2);
     edit_pass->setHidden(realBoat->isChecked());

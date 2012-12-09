@@ -34,6 +34,7 @@ Copyright (C) 2008 - Jacques Zaninetti - http://zygrib.free.fr
 #include "settings.h"
 #include "Projection.h"
 #include "Version.h"
+#include "Orthodromie.h"
 
 
 //======================================================================
@@ -67,7 +68,7 @@ void Util::setFontDialog(QWidget * o)
     setFontDialog(object);
 }
 
-QString Util::formatTemperature(double tempKelvin)
+QString Util::formatTemperature(const double &tempKelvin)
 {
     QString tunit = Settings::getSetting("unitsTemp", "").toString();
     QString unit = (tunit=="") ? "degC" : tunit;
@@ -85,7 +86,7 @@ QString Util::formatTemperature(double tempKelvin)
     return r+unit;
 }
 //-------------------------------------------------------
-QString Util::formatTemperature_short(double tempKelvin)
+QString Util::formatTemperature_short(const double &tempKelvin)
 {
     QString tunit = Settings::getSetting("unitsTemp", "").toString();
     QString unit = (tunit=="") ? "degC" : tunit;
@@ -103,14 +104,14 @@ QString Util::formatTemperature_short(double tempKelvin)
     return r; //+unit;
 }
 //----------------------------------------------------------------
-QString Util::formatSpeed(double meterspersecond)
+QString Util::formatSpeed(const double &meterspersecond)
 {
     QString r;
     r.sprintf("%.1f ", meterspersecond*3.6/1.852)+QObject::tr("nds");
     return r;
 }
 //----------------------------------------------------------------
-QString Util::formatDistance(double mille)
+QString Util::formatDistance(const double &mille)
 {
     QString tunit = Settings::getSetting("unitsDistance", "NM").toString();
     QString unit = (tunit=="") ? "km" : tunit;
@@ -133,7 +134,7 @@ QString Util::formatDistance(double mille)
     return r;
 }
 //----------------------------------------------------------------
-QString Util::formatDegres(double x)
+QString Util::formatDegres(const double &x)
 {
     QString tunit = Settings::getSetting("unitsPosition", "").toString();
     QString unit = (tunit=="") ? "dddegmm'ss" : tunit;
@@ -166,7 +167,7 @@ QString Util::formatDegres(double x)
     return r;
 }
 //---------------------------------------------------------------------
-QString Util::formatPosition(double x, double y)  // 123°24.00'W 45°67.89'N
+QString Util::formatPosition(const double &x, const double &y)  // 123°24.00'W 45°67.89'N
 {
     return formatLongitude(x)+" "+formatLatitude(y);
 }
@@ -204,7 +205,7 @@ QString Util::formatLongitude(double x)
     }
 }
 //---------------------------------------------------------------------
-QString Util::formatLatitude(double y)
+QString Util::formatLatitude(const double &y)
 {
     QString dir = Settings::getSetting("latitudeDirection", "").toString();
     if (dir == "Sud positive")
@@ -231,7 +232,7 @@ QString Util::formatPercentValue(double v)
     return r;
 }
 //======================================================================
-QString Util::formatDateLong(time_t t)
+QString Util::formatDateLong(const time_t &t)
 {
     QDateTime dt;
     dt.setTimeSpec(Qt::UTC);
@@ -244,7 +245,7 @@ QString Util::formatDateLong(time_t t)
         return loc.toString(dt.date(), "ddd yyyy-MM-dd");
 }
 //---------------------------------------------------------------------
-QString Util::formatDateTimeLong(time_t t)
+QString Util::formatDateTimeLong(const time_t &t)
 {
     QDateTime dt;
     dt.setTimeSpec(Qt::UTC);
@@ -256,7 +257,7 @@ QString Util::formatDateTimeLong(time_t t)
         return loc.toString(dt.date(), "ddd yyyy-MM-dd ") + dt.toString("HH:mm UTC");
 }
 //---------------------------------------------------------------------
-QString Util::formatDateTimeShort(time_t t)
+QString Util::formatDateTimeShort(const time_t &t)
 {
     QDateTime dt;
     dt.setTimeSpec(Qt::UTC);
@@ -268,7 +269,7 @@ QString Util::formatDateTimeShort(time_t t)
         return dt.toString("yyyy-MM-dd hh:mm UTC");
 }
 //---------------------------------------------------------------------
-QString Util::formatDateTime_date(time_t t)
+QString Util::formatDateTime_date(const time_t &t)
 {
     QDateTime dt;
     dt.setTimeSpec(Qt::UTC);
@@ -280,7 +281,7 @@ QString Util::formatDateTime_date(time_t t)
         return dt.toString("yyyy-MM-dd");
 }
 //---------------------------------------------------------------------
-QString Util::formatDateTime_hour(time_t t)
+QString Util::formatDateTime_hour(const time_t &t)
 {
     QDateTime dt;
     dt.setTimeSpec(Qt::UTC);
@@ -423,8 +424,8 @@ void Util::setWPClipboard(double lat,double lon, double wph)
         QApplication::clipboard()->setText(QString("%1,%2@%3").arg(lat).arg(lon).arg(wph));
 }
 
-void Util::getCoordFromDistanceAngle2(double latitude, double longitude,
-             double distance,double heading, double * res_lat,double * res_lon)
+void Util::getCoordFromDistanceAngle2(const double &latitude, const double &longitude,
+             const double &distance,const double &heading, double * res_lat,double * res_lon)
 {
     *res_lat = latitude + degToRad( (cos(heading)*distance)/60.0 );
     if (fabs(*res_lat - latitude) > degToRad(0.001))
@@ -440,24 +441,27 @@ void Util::getCoordFromDistanceAngle2(double latitude, double longitude,
     }
 }
 
-void Util::getCoordFromDistanceLoxo(double latitude, double longitude,
-             double distance,double heading, double * res_lat,double * res_lon)
+void Util::getCoordFromDistanceLoxo(const double &latitude, const double &longitude,
+             const double &distance, const double &heading, double * res_lat,double * res_lon)
 {
 #if 0
-    double dL=distance*cos(degToRad(heading));
-    double lat=latitude+dL;
-    double dLc=10800/PI * log(tan(degToRad(45+lat/2.0)))/tan(degToRad((45+latitude/2.0)));
-    double dG=tan(degToRad(heading))*dLc;
-    *res_lon=longitude+dG;
-    *res_lat=lat;
-#else
     double l=(distance*cos(degToRad(heading)))/60.0;
     *res_lat=latitude+l;
     double La=180.0/PI*log(tan(degToRad(45+*res_lat/2.0)));
     double Ld=180.0/PI*log(tan(degToRad(45+latitude/2.0)));
     double g=(La-Ld)*tan(degToRad(heading));
     *res_lon=longitude+g;
-
+#else
+    double vac_l=degToRad(distance/60.0);
+    double lat=degToRad(latitude) + vac_l*cos(degToRad(heading));
+    double t_lat=(lat+degToRad(latitude))/2.0;
+    double new_longitude=degToRad(longitude)+(vac_l*sin(degToRad(heading)))/cos(t_lat);
+    if(new_longitude > PI)
+        new_longitude-=TWO_PI;
+    else if (new_longitude < -PI)
+        new_longitude+=TWO_PI;
+    *res_lat=radToDeg(lat);
+    *res_lon=radToDeg(new_longitude);
 #endif
 }
 void Util::getCoordFromDistanceAngle(double latitude, double longitude,
@@ -499,7 +503,7 @@ void Util::getCoordFromDistanceAngle(double latitude, double longitude,
 
 }
 
-QString Util::pos2String(int type,double value)
+QString Util::pos2String(const int &type, const double &value)
 {
     QString str;
 //    int d,m,s;
@@ -550,7 +554,7 @@ QString Util::getHost()
 #endif
 }
 
-void Util::computePos(Projection * proj, double lat, double lon, int * x, int * y)
+void Util::computePos(Projection * proj, const double &lat, const double &lon, int * x, int * y)
 {
     if (proj->isPointVisible(lon, lat)) {      // tour du monde ?
         proj->map2screen(lon, lat, x, y);
@@ -566,7 +570,7 @@ void Util::computePos(Projection * proj, double lat, double lon, int * x, int * 
         proj->map2screen(lon, lat, x, y);
     }
 }
-void Util::computePosDouble(Projection * proj, double lat, double lon, double * x, double * y)
+void Util::computePosDouble(Projection * proj, const double &lat, const double &lon, double * x, double * y)
 {
     if (proj->isPointVisible(lon, lat)) {      // tour du monde ?
         proj->map2screenDouble(lon, lat, x, y);
@@ -595,7 +599,7 @@ void Util::addAgent(QNetworkRequest & request)
         request.setRawHeader("User-Agent",QString("qtVlm/"+Version::getVersion()+" ("+QTVLM_OS+")").toAscii());
 
 }
-bool Util::lineIsCrossingRect(const QLineF line, const QRectF rect)
+bool Util::lineIsCrossingRect(const QLineF &line, const QRectF &rect)
 {
     double A=(line.y2()-line.y1())*rect.topLeft().x() +
              (line.x1()-line.x2())*rect.topLeft().y() +
@@ -616,4 +620,78 @@ bool Util::lineIsCrossingRect(const QLineF line, const QRectF rect)
     if(line.y1()>rect.topRight().y() && line.y2()>rect.topRight().y()) return false;
     if(line.y1()<rect.bottomLeft().y() && line.y2()<rect.bottomLeft().y()) return false;
     return true;
+}
+#define __distance(a,b) (sqrt(a*a+b*b))
+#define latToY(lat) (log(tan(PI_4+(lat/2.0))))
+#define yToLat(y) ((2.0*atan(exp(y))-PI_2))
+double Util::distance_to_line_dichotomy_xing(const double &lat, const double &lon,
+                                             const double &lat_a, const double &lon_a,
+                                             const double &lat_b, const double &lon_b,
+                                             double *x_latitude, double *x_longitude)
+{
+    double latitude=degToRad(lat);
+    double longitude=degToRad(lon);
+    double latitude_a=degToRad(lat_a);
+    double longitude_a=degToRad(lon_a);
+    double latitude_b=degToRad(lat_b);
+    double longitude_b=degToRad(lon_b);
+    double p1_latitude, p1_longitude, p2_latitude, p2_longitude;
+    double ortho_p1, ortho_p2;
+    double limit;
+    limit = PI/(180*60*1852); // 1m precision
+
+    if (qAbs(longitude_a - longitude_b) > PI)
+    {
+        if (longitude_a > longitude_b)
+        {
+            if (longitude_a > 0.0)
+                longitude_a -= TWO_PI;
+            else
+                longitude_b += TWO_PI;
+        }
+        else
+        {
+            if (longitude_b > 0.0)
+                longitude_b -= TWO_PI;
+            else
+                longitude_a += TWO_PI;
+        }
+    }
+    p1_latitude = latitude_a;
+    p1_longitude = longitude_a;
+    p2_latitude = latitude_b;
+    p2_longitude = longitude_b;
+    Orthodromie oo(radToDeg(longitude),radToDeg(latitude), radToDeg(p1_longitude), radToDeg(p1_latitude));
+    ortho_p1 = oo.getDistance();
+    oo.setEndPoint(radToDeg(p2_longitude), radToDeg(p2_latitude));
+    ortho_p2 = oo.getDistance();
+
+// ending test on distance between two points.
+
+    while (__distance((p1_latitude-p2_latitude), (p1_longitude-p2_longitude)) > limit)
+    {
+        if (ortho_p1 < ortho_p2)
+        {
+            p2_longitude = (p1_longitude+p2_longitude)/2;
+            p2_latitude = yToLat((latToY(p1_latitude)+latToY(p2_latitude))/2);
+        }
+        else
+        {
+            p1_longitude = (p1_longitude+p2_longitude)/2;
+            p1_latitude = yToLat((latToY(p1_latitude)+latToY(p2_latitude))/2);
+        }
+        oo.setEndPoint(radToDeg(p1_longitude),radToDeg(p1_latitude));
+        ortho_p1 = oo.getDistance();
+        oo.setEndPoint(radToDeg(p2_longitude),radToDeg(p2_latitude));
+        ortho_p2 = oo.getDistance();
+    }
+    if (ortho_p1 < ortho_p2)
+    {
+        *x_latitude = radToDeg(p1_latitude);
+        *x_longitude = radToDeg(p1_longitude);
+        return ortho_p1;
+    }
+    *x_latitude = radToDeg(p2_latitude);
+    *x_longitude = radToDeg(p2_longitude);
+    return ortho_p2;
 }

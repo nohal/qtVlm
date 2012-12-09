@@ -126,7 +126,8 @@ class MainWindow: public QMainWindow
         void slotPilototo(void);
         void slotShowPolar(void);
 
-        void slot_newPOI(void);        
+        void slot_newPOI(void);
+        void slot_removePOI(void);
         void slotCreatePOI();
         void slotpastePOI();
         //void slotMovePOI(POI *);
@@ -152,13 +153,15 @@ class MainWindow: public QMainWindow
         void slot_ParamVLMchanged(void);
         void slot_deleteProgress(void);
         void slot_centerMap();
+        void slot_positScale();
         void slot_boatHasUpdated(void);
         void slot_updPlayerFinished(bool res_ok, Player * player);
         void slot_copyRoute();
+        void slot_deleteRoute();
+        void slot_editRoute();
         void slot_pasteRoute();
 
     signals:
-        void signalMapQuality(int quality);
         void setChangeStatus(bool);
         void editPOI(POI *);
         void newPOI(double,double,Projection *, boat *);

@@ -518,11 +518,11 @@ La boîte à cocher trace partielle s&apos;active apres l&apos;entree d&apos;un 
     </message>
     <message>
         <source>Jmeno</source>
-        <translation>Jméno</translation>
+        <translation type="obsolete">Jméno</translation>
     </message>
     <message>
         <source>Lod jmeno</source>
-        <translation>Loď jméno</translation>
+        <translation type="obsolete">Loď jméno</translation>
     </message>
 </context>
 <context>
@@ -558,6 +558,34 @@ La boîte à cocher trace partielle s&apos;active apres l&apos;entree d&apos;un 
     <message>
         <source>Selected folder contains maps with wrong version</source>
         <translation>Le répértoire selectionné contient une mauvaise version des cartes</translation>
+    </message>
+    <message>
+        <source>If checked, let qtVlm choose the fastest way for your computer</source>
+        <translation>Si coché, qtVlm choisit automatiquement la facon la plus rapide</translation>
+    </message>
+    <message>
+        <source>to display the Grib.</source>
+        <translation>pour afficher le Grib.</translation>
+    </message>
+    <message>
+        <source>The result of the benchmark gives </source>
+        <translation>Le résultat du test donne </translation>
+    </message>
+    <message>
+        <source> ms for multithread against</source>
+        <translation> ms pour le mode multithread contre</translation>
+    </message>
+    <message>
+        <source> ms for monothread.</source>
+        <translation> ms pour le monothread.</translation>
+    </message>
+    <message>
+        <source>Therefore the automatic choice will be multithread</source>
+        <translation>Le choix automatique sera donc multithread</translation>
+    </message>
+    <message>
+        <source>Therefore the automatic choice will be monothread</source>
+        <translation>Le choix automatique sera donc monothread</translation>
     </message>
 </context>
 <context>
@@ -890,6 +918,44 @@ Etes-vous sur ?</source>
     <message>
         <source>&lt;Aucun&gt;</source>
         <translation></translation>
+    </message>
+</context>
+<context>
+    <name>DialogRemovePoi</name>
+    <message>
+        <source>Removing POI</source>
+        <translation>Suppression de POIs</translation>
+    </message>
+    <message>
+        <source>selected POI</source>
+        <translation>POIs sélectionnés</translation>
+    </message>
+    <message>
+        <source>Are you sure to remove %1 POI?</source>
+        <translation>Etes-vous sur de vouloir supprimer %1 POIs?</translation>
+    </message>
+</context>
+<context>
+    <name>DialogRemovePoi_ui</name>
+    <message>
+        <source>All</source>
+        <translation>Tous</translation>
+    </message>
+    <message>
+        <source>None</source>
+        <translation>Aucun</translation>
+    </message>
+    <message>
+        <source>Remove</source>
+        <translation>Suppression</translation>
+    </message>
+    <message>
+        <source>Cancel</source>
+        <translation>Annuler</translation>
+    </message>
+    <message>
+        <source>Remove POI</source>
+        <translation>Suppression de POIs</translation>
     </message>
 </context>
 <context>
@@ -1688,11 +1754,31 @@ Etes-vous sur ?</source>
     </message>
     <message>
         <source>Icon &apos;unlock.png&apos; cannot be find in img directory</source>
-        <translation>Le fichier icone &apos;unlock.png&apos; n&apos;existe pas dans votre répertoire &apos;img&apos;</translation>
+        <translation type="obsolete">Le fichier icone &apos;unlock.png&apos; n&apos;existe pas dans votre répertoire &apos;img&apos;</translation>
     </message>
     <message>
         <source>Please check your installation</source>
         <translation>Veuillez vérifier votre installation</translation>
+    </message>
+    <message>
+        <source>Calibrating grib display</source>
+        <translation>Calibrage de l&apos;affichage du grib</translation>
+    </message>
+    <message>
+        <source>File &apos;benchmark.grb&apos; cannot be find in img directory</source>
+        <translation>Le fichier &apos;benchmark.grb&apos; n&apos;existe pas dans le répertoire &apos;img&apos;</translation>
+    </message>
+    <message>
+        <source>Copier la route</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Supprimer la route</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Editer la route</source>
+        <translation></translation>
     </message>
 </context>
 <context>
@@ -2571,7 +2657,27 @@ Etes-vous sur ?</source>
     </message>
     <message>
         <source>Recharger le fichier GRIB actuel</source>
-        <translation>Recharger le fichier GRIB actuel.</translation>
+        <translation>Recharger le fichier GRIB actuel</translation>
+    </message>
+    <message>
+        <source>Spanish</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Supprimer la route</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Editer la route</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Supprimer des marques</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Positionner l&apos;echelle ici</source>
+        <translation>Positionner l&apos;échelle de la carte ici</translation>
     </message>
 </context>
 <context>
@@ -2676,7 +2782,7 @@ Etes-vous sur ?</source>
         <source>La destruction d&apos;une marque est definitive.
 
 Etes-vous sur ?</source>
-        <translation>La destruction d&apos;une marque est définitive.  Etes-vous sur?</translation>
+        <translation type="obsolete">La destruction d&apos;une marque est définitive.  Etes-vous sur?</translation>
     </message>
     <message>
         <source>Meilleure ETA: </source>
@@ -2740,7 +2846,7 @@ Etes-vous sur ?</source>
     </message>
     <message>
         <source>Destruction d&apos;un marque</source>
-        <translation>Destruction d&apos;une marque</translation>
+        <translation type="obsolete">Destruction d&apos;une marque</translation>
     </message>
     <message>
         <source>Le calcul de la route n&apos;est pas fini, impossible de supprimer ce POI</source>
@@ -2790,6 +2896,22 @@ Etes-vous sûr?</translation>
     <message>
         <source>Zoom sur la route </source>
         <translation>Zoom sur la route </translation>
+    </message>
+    <message>
+        <source>La destruction d&apos;une marque est definitive.
+
+Etes-vous sur de vouloir supprimer</source>
+        <translation>La suppression d&apos;une marque est définitive.
+
+Etes-vous sur de vouloir supprimer</translation>
+    </message>
+    <message>
+        <source>Destruction d&apos;une marque</source>
+        <translation>Destruction d&apos;une marque</translation>
+    </message>
+    <message>
+        <source>Routage vers ce POI</source>
+        <translation></translation>
     </message>
 </context>
 <context>
@@ -3510,7 +3632,7 @@ VMG %.2f nds</translation>
     </message>
     <message>
         <source>Convertion d&apos;un routage en route</source>
-        <translation>Conversion d&apos;un routage en route</translation>
+        <translation type="obsolete">Conversion d&apos;un routage en route</translation>
     </message>
     <message>
         <source>Voulez-vous que la route parte du bateau a la prochaine vacation?</source>
@@ -3539,6 +3661,18 @@ VMG %.2f nds</translation>
     <message>
         <source>Voulez-vous que le point de depart de la route suive le bateau maintenant?</source>
         <translation>Voulez-vous que le point de départ de la route suive le bateau maintenant?</translation>
+    </message>
+    <message>
+        <source>Simplifier/Optimiser automatiquement</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Editer le routage</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Supprimer le routage</source>
+        <translation></translation>
     </message>
 </context>
 <context>
@@ -3650,10 +3784,6 @@ VMG %.2f nds</translation>
     <message>
         <source>Les previsions du grib sont decalees de</source>
         <translation>Les prévisions du grib sont décalées de</translation>
-    </message>
-    <message>
-        <source>Utiliser ce scenario</source>
-        <translation></translation>
     </message>
     <message>
         <source>Options supplementaires</source>
@@ -4186,6 +4316,22 @@ sans simplifier</translation>
         <source>Niveau de detail des cotes: </source>
         <translation>Niveau de détail des côtes: </translation>
     </message>
+    <message>
+        <source>m</source>
+        <translation>m</translation>
+    </message>
+    <message>
+        <source>cm</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>NM</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>(Max zoom reached)</source>
+        <translation>(Zoom max atteint)</translation>
+    </message>
 </context>
 <context>
     <name>VLM_param_ui</name>
@@ -4207,10 +4353,6 @@ sans simplifier</translation>
     </message>
     <message>
         <source>Label</source>
-        <translation></translation>
-    </message>
-    <message>
-        <source>Grib horodate</source>
         <translation></translation>
     </message>
     <message>
@@ -4399,7 +4541,7 @@ sans simplifier</translation>
     </message>
     <message>
         <source>Date automatique a chaque synchro VLM</source>
-        <translation>Date automatique à chaque synchro VLM</translation>
+        <translation type="obsolete">Date automatique à chaque synchro VLM</translation>
     </message>
     <message>
         <source>Delais d&apos;envoi (sec)</source>
@@ -4511,7 +4653,23 @@ sans simplifier</translation>
     </message>
     <message>
         <source>Do not use multi-threading for drawing grib</source>
-        <translation>Ne pas utiliser le mode multiThreading pour afficher le grib</translation>
+        <translation type="obsolete">Ne pas utiliser le mode multiThreading pour afficher le grib</translation>
+    </message>
+    <message>
+        <source>Mode d&apos;affichage du grib</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>MultiThread</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>MonoThread</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Automatique</source>
+        <translation></translation>
     </message>
 </context>
 <context>
@@ -5393,6 +5551,10 @@ sans simplifier</translation>
     <message>
         <source> est introuvable sur le site VLM</source>
         <translation></translation>
+    </message>
+    <message>
+        <source>kts</source>
+        <translation>nds</translation>
     </message>
 </context>
 <context>
@@ -6654,7 +6816,7 @@ Que voulez vous faire?</translation>
     </message>
     <message>
         <source>Language/Langage</source>
-        <translation>Language/Langage/Jazyk</translation>
+        <translation type="obsolete">Language/Langage/Jazyk</translation>
     </message>
     <message>
         <source>Francais</source>
@@ -6667,6 +6829,14 @@ Que voulez vous faire?</translation>
     <message>
         <source>Czech</source>
         <translation>Čeština</translation>
+    </message>
+    <message>
+        <source>Language/Langage/Idioma</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Spanish</source>
+        <translation></translation>
     </message>
 </context>
 <context>

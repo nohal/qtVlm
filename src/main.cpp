@@ -122,7 +122,7 @@ int main(int argc, char *argv[])
     QDir dirCheck;
     for(int i=0;i<folderList.count();i++) {
         dirCheck=QDir(folderList.value(i));
-        qWarning() << "Checking: " << folderList.value(i);
+        //qWarning() << "Checking: " << folderList.value(i);
         if (!dirCheck.exists()) {
             dirCheck.mkpath(folderList.value(i));
             qWarning() << "Creating folder";
@@ -169,6 +169,14 @@ int main(int argc, char *argv[])
         qWarning() << "Loading cz";
         QLocale::setDefault(QLocale("cs_CZ"));
         translatorQt.load( QString("qt_cs"),appFolder.value("tr"));
+        app.installTranslator(&translatorQt);
+        translator.load( appFolder.value("tr")+"qtVlm_" + lang);
+        app.installTranslator(&translator);
+    }
+    else if (lang == "es") {
+        qWarning() << "Loading es";
+        QLocale::setDefault(QLocale("es_ES"));
+        translatorQt.load( QString("qt_es"),appFolder.value("tr"));
         app.installTranslator(&translatorQt);
         translator.load( appFolder.value("tr")+"qtVlm_" + lang);
         app.installTranslator(&translator);

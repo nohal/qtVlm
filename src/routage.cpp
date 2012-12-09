@@ -48,6 +48,9 @@ Original code: virtual-winds.com
 //#include "Terrain.h"
 //#define debugCount
 //#define traceTime;
+
+//#define HAS_ICEGATE
+
 inline vlmPoint findPointThreaded(const vlmPoint &point)
 {
     vlmPoint pt=point;
@@ -189,6 +192,13 @@ inline vlmPoint findPointThreaded(const vlmPoint &point)
             return pt;
         }
     }
+#ifdef HAS_ICEGATE
+    if(!pt.routage->checkIceGate(pt))
+    {
+        pt.isDead=true;
+        return pt;
+    }
+#endif
     if(pt.origin->isStart)
         pt.distIso=pt.distStart;
     else
@@ -1050,7 +1060,26 @@ void ROUTAGE::slot_calculate()
             barrieres.append(QLineF(x1,y1,x2,y2));
         }
     }
-    //qWarning()<<"barrieres has"<<barrieres.count()<<"line(s)";
+#ifdef HAS_ICEGATE
+    QList<vlmLine*> gates=myBoat->getGates();
+    for (int n=myBoat->getNWP()-1;n<gates.count();++n)
+    {
+        if(!gates.at(n)->isIceGate()) continue;
+        const vlmPoint p1=gates.at(n)->getPoints()->first();
+        const vlmPoint p2=gates.at(n)->getPoints()->last();
+        double x1,y1,x2,y2;
+        proj->map2screenDouble(Util::cLFA(p1.lon,proj->getXmin()),p1.lat,&x1,&y1);
+        proj->map2screenDouble(Util::cLFA(p2.lon,proj->getXmin()),p2.lat,&x2,&y2);
+        if(!proj->isInBounderies(x1,y1)) continue;
+        if(!proj->isInBounderies(x2,y2)) continue;
+        QPointF P1(x1,y1);
+        QPointF P2(x2,y2);
+        if(x1>x2)
+            swap(P1,P2);
+        qWarning()<<"inserting iceGate"<<gates.at(n)->getDesc();
+        iceGates.append(QLineF(P1,P2));
+    }
+#endif
     msecsD1=0;
     msecsD2=0;
     debugCross0=0;
@@ -2733,12 +2762,20 @@ void ROUTAGE::convertToRoute()
             break;
     }
     this->converted=false;
+    bool simp=false;
     if(parentRoutage->getRouteFromBoat())
     {
-        int answ=QMessageBox::question(0,tr("Convertion d'un routage en route"),
-                                         tr("Voulez-vous que le point de depart de la route suive le bateau maintenant?"),
-                                              QMessageBox::Yes|QMessageBox::No|QMessageBox::Cancel);
+        QMessageBox msgBox(QMessageBox::Question,tr("Conversion d'un routage en route"),
+                           tr("Voulez-vous que le point de depart de la route suive le bateau maintenant?"));
+        QCheckBox simplify(tr("Simplifier/Optimiser automatiquement"),0);
+        simplify.blockSignals(true);
+        simplify.setChecked(Settings::getSetting("convertAndSimplify",1).toInt()==1);
+        msgBox.addButton(&simplify,QMessageBox::ActionRole);
+        msgBox.setStandardButtons(QMessageBox::Yes|QMessageBox::No|QMessageBox::Cancel);
+        int answ=msgBox.exec();
         if(answ==QMessageBox::Cancel) return;
+        simp=simplify.isChecked();
+        Settings::setSetting("convertAndSimplify",simp?1:0);
         routeStartBoat=answ==QMessageBox::Yes;
     }
     this->converted=true;
@@ -2794,7 +2831,7 @@ void ROUTAGE::convertToRoute()
             }
         }
     }
-    parent->deleteRoutage(this);
+    parent->deleteRoutage(this,simp?route:NULL);
 }
 void ROUTAGE::checkIsoCrossingPreviousSegments()
 {
@@ -3258,9 +3295,21 @@ void ROUTAGE::createPopupMenu()
     popup->addAction(ac_pivot);
     ac_pivotM = new QAction(tr("Creer un pivot en changeant les options"),popup);
     popup->addAction(ac_pivotM);
+    popup->addSeparator();
+    ac_edit = new QAction(tr("Editer le routage"),popup);
+    popup->addAction(ac_edit);
+    ac_remove = new QAction(tr("Supprimer le routage"),popup);
+    popup->addAction(ac_remove);
     connect(ac_pivot,SIGNAL(triggered()),this,SLOT(slot_createPivot()));
     connect(ac_pivotM,SIGNAL(triggered()),this,SLOT(slot_createPivotM()));
+    connect(ac_edit,SIGNAL(triggered()),this,SLOT(slot_edit()));
+    connect(ac_remove,SIGNAL(triggered()),this,SLOT(slot_deleteRoutage()));
 }
+
+void ROUTAGE::slot_deleteRoutage(void) {
+    parent->deleteRoutage(this);
+}
+
 double ROUTAGE::getTimeStep() const
 {
     if(timeStepLess24==timeStepMore24) return timeStepLess24; //cover also the case of i_iso
@@ -4074,4 +4123,41 @@ void ROUTAGE::calculateAlternative()
     }
     QApplication::processEvents();
     delete waitBox;
+}
+bool ROUTAGE::checkIceGate(const vlmPoint &p) const
+{
+    bool westToEast=xs<xa;
+    foreach (const QLineF &iceGate,iceGates)
+    {
+        vlmPoint pp=p;
+        bool ok=false;
+        bool hasPassed=false;
+        if(westToEast)
+        {
+            if(pp.x<iceGate.x2())
+                break;
+        }
+        else
+        {
+            if(pp.x>iceGate.x1())
+                break;
+        }
+        while(true)
+        {
+            if(pp.x>=iceGate.x1() && pp.x<=iceGate.x2())
+            {
+                hasPassed=true;
+                if(pp.y<=iceGate.y1())
+                {
+                    ok=true;
+                    break;
+                }
+            }
+            if(pp.isStart) break;
+            pp=*pp.origin;
+        }
+        if(hasPassed && !ok)
+            return false;
+    }
+    return true;
 }

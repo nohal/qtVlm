@@ -183,7 +183,7 @@
    <item>
     <widget class="QGroupBox" name="lang">
      <property name="title">
-      <string>Language/Langage</string>
+      <string>Language/Langage/Idioma</string>
      </property>
      <layout class="QHBoxLayout" name="horizontalLayout_2">
       <item>
@@ -200,6 +200,13 @@
        <widget class="QRadioButton" name="en">
         <property name="text">
          <string>English</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QRadioButton" name="es">
+        <property name="text">
+         <string>Spanish</string>
         </property>
        </widget>
       </item>
@@ -225,6 +232,18 @@
    </item>
   </layout>
  </widget>
+ <tabstops>
+  <tabstop>buttonBox</tabstop>
+  <tabstop>fr</tabstop>
+  <tabstop>en</tabstop>
+  <tabstop>es</tabstop>
+  <tabstop>cz</tabstop>
+  <tabstop>list_player</tabstop>
+  <tabstop>btn_playerAdd</tabstop>
+  <tabstop>btn_playerChg</tabstop>
+  <tabstop>btn_playerUpd</tabstop>
+  <tabstop>btn_playerDel</tabstop>
+ </tabstops>
  <resources/>
  <connections>
   <connection>

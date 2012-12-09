@@ -33,6 +33,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "Projection.h"
 #include "vlmPoint.h"
 #include "GshhsReader.h"
+#include "mycentralwidget.h"
 
 
 #define VLMLINE_LINE_MODE   0
@@ -55,8 +56,10 @@ class vlmLine : public QGraphicsWidget
         void setLineMode();
         void setPointMode(const QColor &pt_color);
         void setGateMode(const QString &desc);
+        QString getDesc() const {return desc;}
         void setIceGate(const int &i){iceGate=i;}
-        int  isIceGate() const {return iceGate;}
+        bool isIceGate() const {return iceGate!=0;}
+        int  getIceGate() const {return iceGate;}
         void setTip(QString tip);
         void setNbVacPerHour(const int &nbVacPerHour) {this->nbVacPerHour=nbVacPerHour;}
         void setPorteOnePoint(void){this->onePoint=true;}
@@ -84,7 +87,7 @@ class vlmLine : public QGraphicsWidget
         void setRoundedEnd(const bool &b){this->roundedEnd=b;}
         void setCoastDetection(const bool &b){this->coastDetection=b;}
         bool getCoastDetected(){return this->coastDetected;}
-        void setMap(GshhsReader * map){this->map=map;}
+        void setMcp(myCentralWidget * mcp){this->mcp=mcp;}
         ~vlmLine();
 
     protected:
@@ -135,6 +138,7 @@ class vlmLine : public QGraphicsWidget
         double lineWidth;
         QPainterPath myPath;
         double myZvalue;
+        myCentralWidget * mcp;
 };
 Q_DECLARE_TYPEINFO(vlmLine,Q_MOVABLE_TYPE);
 

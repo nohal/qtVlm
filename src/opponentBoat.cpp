@@ -1151,7 +1151,7 @@ bool opponentList::isBoatVLM(QString id)
     QList<boatVLM*> * listBoats=parent->getBoats();
     for (int n=0;n<listBoats->count();++n)
     {
-        if(listBoats->at(n)->getId()==id.toInt() && listBoats->at(n)->isActive())
+        if(listBoats->at(n)->getId()==id.toInt() && listBoats->at(n)->getStatus())
             return true;
     }
     return false;

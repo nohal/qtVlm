@@ -95,17 +95,21 @@ public:
     QAction *ac_notSimpSelPOIs;
     QAction *ac_simpSelPOIs;
     QAction *acPOIAdd;
+    QAction *acPOIRemove;
     QAction *ac_twaLine;
     QAction *ac_compassLine;
     QAction *ac_compassCenterBoat;
     QAction *ac_compassCenterWp;
     QMenu   *mnCompassCenterRoute;
     QAction *ac_centerMap;
+    QAction *ac_positScale;
 
     QAction * ac_moveBoat;
     QAction * ac_moveBoatSep;
 
     QAction * ac_copyRoute;
+    QAction * ac_deleteRoute;
+    QAction * ac_editRoute;
     QAction * ac_pasteRoute;
 
     QAction *acFile_Open;
@@ -258,6 +262,7 @@ public:
     QActionGroup *acOptions_GroupLanguage;
     QAction *acOptions_Lang_fr;
     QAction *acOptions_Lang_en;
+    QAction *acOptions_Lang_es;
     QAction *acOptions_Lang_cz;
 
 

@@ -46,18 +46,18 @@ Q_OBJECT
         ~Projection() {}
 
         /* zoom */
-        void zoom (double k);
-        void zoomKeep (double lon,double lat, double k);
+        void zoom (const double &k);
+        void zoomKeep (const double &lon, const double &lat, const double &k);
         void zoomAll(void);
-        void zoomOnZone(double x0, double y0, double x1, double y1);
-        void setScale(double sc);
+        void zoomOnZone(const double &x0, const double &y0, const double &x1, const double &y1);
+        void setScale(const double &sc);
 
 
         /* move */
-        void move(double dx, double dy);
-        void setCentralPixel(int i, int j);
-        void setCenterInMap(double x, double y);
-        void setScaleAndCenterInMap(double sc,double x, double y);
+        void move(const double &dx, const double &dy);
+        void setCentralPixel(const int &i, const int &j);
+        void setCenterInMap(const double &x, const double &y);
+        void setScaleAndCenterInMap(const double &sc,const double &x, const double &y);
 
         /* get internal data */
         int   getW()        const   {return W;}    // taille de l'ecran
@@ -72,19 +72,19 @@ Q_OBJECT
         double getYmax()    const   {return yN;}
 
         /* coord conversion */
-        void screen2map(int i, int j, double *x, double *y) const;
-        void screen2mapDouble(double i, double j, double *x, double *y) const;
-        void map2screen(double x, double y, int *i, int *j) const;
-        void map2screenDouble(double x, double y, double *i, double *j) const;
+        void screen2map(const int &i, const int &j, double *x, double *y) const;
+        void screen2mapDouble(const double &i, const double &j, double *x, double *y) const;
+        void map2screen(const double &x, const double &y, int *i, int *j) const;
+        void map2screenDouble(const double &x, const double &y, double *i, double *j) const;
 
         /* position / region validation*/
-        bool intersect(double w,double e,double s,double n)  const;
-        bool isPointVisible (double x,double y) const;
-        bool isInBounderies (int x,int y) const;
-        bool isInBounderies_strict (int x,int y) const;
-        void setFrozen(bool b){this->frozen=b;}
-        bool getFrozen(void){return this->frozen;}
-        void setUseTempo(bool b){this->useTempo=b;}
+        bool intersect(const double &w,const double &e,const double &s,const double &n)  const;
+        bool isPointVisible (const double &x,const double &y) const;
+        bool isInBounderies (const int &x,const int &y) const;
+        bool isInBounderies_strict (const int &x,const int &y) const;
+        void setFrozen(const bool &b){this->frozen=b;}
+        bool getFrozen(void) const {return this->frozen;}
+        void setUseTempo(const bool &b){this->useTempo=b;}
     signals:
         void newZoom(double);
         void projectionUpdated(void);
@@ -113,58 +113,60 @@ Q_OBJECT
 Q_DECLARE_TYPEINFO(Projection,Q_MOVABLE_TYPE);
 
 //===============================================================================
-inline void Projection::map2screen(double x, double y, int *i, int *j) const
+inline void Projection::map2screen(const double &x, const double &y, int *i, int *j) const
 {
-    if(y<=-90) y=-89.9;
-    if(y>=90) y=89.9;
+    double y1=y;
+    if(y1<=-90) y1=-89.9;
+    if(y1>=90) y1=89.9;
 
 //    if(xW>0 && x<0)
 //        x=360+x;
 //    if(xW<0 && x>0)
 //        x=x-360;
     *i = qRound (scale * (x-xW));
-    *j = H/2 + qRound (scale * (PY-radToDeg(log(tan(degToRad(y)/2 + M_PI_4)))));
+    *j = H/2 + qRound (scale * (PY-radToDeg(log(tan(degToRad(y1)/2 + M_PI_4)))));
 }
-inline void Projection::map2screenDouble(double x, double y, double *i, double *j) const
+inline void Projection::map2screenDouble(const double &x, const double &y, double *i, double *j) const
 {
-    if(y<=-90) y=-89.9999999999999999999999999999999999999999999999999999999;
-    if(y>=90) y=89.999999999999999999999999999999999999999999999999999999999;
-    double diff=x-xW;
+    double y1=y;
+    if(y1<=-90) y1=-89.9999999999999999999999999999999999999999999999999999999;
+    if(y1>=90) y1=89.999999999999999999999999999999999999999999999999999999999;
+    const double diff=x-xW;
     *i = scale * diff;
-    double trick=PY-radToDeg(log(tan(degToRad(y)/(double)2.0 + M_PI_4)));
-    *j = ((double)H/(double)2.0 + (scale * trick));
+    const double trick=PY-radToDeg(log(tan(degToRad(y1)/(double)2.0 + M_PI_4)));
+    *j = ((double)H/2.0 + (scale * trick));
 }
 
 //-------------------------------------------------------------------------------
-inline void Projection::screen2map(int i, int j, double *x, double *y) const
+inline void Projection::screen2map(const int &i, const int &j, double *x, double *y) const
 {
     *x = (double)(i/scale+xW);
     *y = radToDeg((2*atan(exp((double)(degToRad(PY-(j-H/2)/scale)))))-M_PI_2);
 }
-inline void Projection::screen2mapDouble(double i, double j, double *x, double *y) const
+inline void Projection::screen2mapDouble(const double &i, const double &j, double *x, double *y) const
 {
     *x = (double)(i/scale+xW);
     *y = radToDeg((2*atan(exp((double)(degToRad(PY-(j-H/2)/scale)))))-M_PI_2);
 }
 
 //-------------------------------------------------------------------------------
-inline bool Projection::intersect (double w,double e,double s,double n) const
+inline bool Projection::intersect (const double &w, const double &e, const double &s, const double &n) const
 {
     return ! (w>xE || e<xW || s>yN || n<yS);
 }
 
 //-------------------------------------------------------------------------------
-inline bool Projection::isPointVisible (double x,double y) const
+inline bool Projection::isPointVisible (const double &x, const double &y) const
 {
     return (x<=xE && x>=xW && y<=yN && y>=yS);
 }
 
 //-------------------------------------------------------------------------------
-inline bool Projection::isInBounderies (int x,int y) const
+inline bool Projection::isInBounderies (const int &x, const int &y) const
 {
     return (x>=0 && y>=0 && x<=W && y<=H);
 }
-inline bool Projection::isInBounderies_strict (int x,int y) const
+inline bool Projection::isInBounderies_strict (const int &x, const int &y) const
 {
     return (x>0 && y>0 && x<W && y<H);
 }

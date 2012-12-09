@@ -34,6 +34,7 @@ Copyright (C) 2008 - Jacques Zaninetti - http://zygrib.free.fr
 #include "routage.h"
 #include "Terrain.h"
 #include "settings.h"
+#include <QIcon>
 
 //===================================================================================
 MenuBar::MenuBar(QWidget *parent)
@@ -347,6 +348,8 @@ MenuBar::MenuBar(QWidget *parent)
                     tr("Creer un routage"),"", "", "");
         mnRoutage_delete = new QMenu(tr("Supprimer un routage"));
         mnRoutage_edit = new QMenu(tr("Editer un routage"));
+        mnRoutage_edit->setEnabled(false);
+        mnRoutage_delete->setEnabled(false);
         menuRoutage->addMenu(mnRoutage_edit);
         menuRoutage->addSeparator();
         menuRoutage->addMenu(mnRoutage_delete);
@@ -363,6 +366,7 @@ MenuBar::MenuBar(QWidget *parent)
         acPOIgeoData = addAction(menuImportPoi,tr("Importer un fichier GeoData"),"","","");
         menuPOI->addMenu(menuImportPoi);
         acPOIAdd = addAction(menuPOI,tr("Ajouter une marque"),"","","");
+        acPOIRemove = addAction(menuPOI,tr("Supprimer des marques"),"","","");
     addMenu(menuPOI);
 
 
@@ -398,6 +402,7 @@ MenuBar::MenuBar(QWidget *parent)
         acMap_Rivers = addActionCheck(menuMap, tr("Rivieres"), tr(""), tr("Afficher les rivieres"));
         acMap_Rivers->setChecked(Settings::getSetting("showRivers", false).toBool());
         acMap_CountriesNames = addActionCheck(menuMap, tr("Noms des pays"), tr(""), tr("Afficher les noms des pays"));
+        acMap_CountriesNames->setChecked(Settings::getSetting("showCountriesNames", false).toBool());
 
 
         QMenu *menuCitiesNames = new QMenu(tr("Nom des villes"));
@@ -420,9 +425,11 @@ MenuBar::MenuBar(QWidget *parent)
             acOptions_GroupLanguage = new QActionGroup(menuLanguage);
                 acOptions_Lang_fr = addActionCheck(menuLanguage, tr("Francais"), tr(""), tr(""));
                 acOptions_Lang_en = addActionCheck(menuLanguage, tr("English"), tr(""), tr(""));
+                acOptions_Lang_es = addActionCheck(menuLanguage, tr("Spanish"), tr(""), tr(""));
                 acOptions_Lang_cz = addActionCheck(menuLanguage, tr("Czech"), tr(""), tr(""));
                 acOptions_GroupLanguage->addAction(acOptions_Lang_fr);
                 acOptions_GroupLanguage->addAction(acOptions_Lang_en);
+                acOptions_GroupLanguage->addAction(acOptions_Lang_es);
                 acOptions_GroupLanguage->addAction(acOptions_Lang_cz);
         menuOptions->addMenu(menuLanguage);
         QString lang = Settings::getSetting("appLanguage", "none").toString();
@@ -532,12 +539,15 @@ QMenu * MenuBar::createPopupBtRight(QWidget *parent)
     popup->addMenu(mnCompassCenterRoute);
     popup->addSeparator();
     ac_centerMap = addAction(popup, tr("Centrer la carte ici"),tr(""),tr(""),"");
+    ac_positScale = addAction(popup, tr("Positionner l'echelle ici"),tr(""),tr(""),"");
 
     ac_moveBoatSep = popup->addSeparator();
     ac_moveBoat = addAction(popup, tr("Deplacer le bateau ici"),tr(""),tr(""),"");
 
     popup->addSeparator();
     ac_copyRoute=addAction(popup,tr("Copier la route au format kml"),"","","");
+    ac_deleteRoute=addAction(popup,tr("Supprimer la route"),"","","");
+    ac_editRoute=addAction(popup,tr("Editer la route"),"","","");
     ac_pasteRoute=addAction(popup,tr("Coller une route"),"","","");
     return popup;
 }
@@ -585,6 +595,9 @@ void MenuBar::addMenuRoute(ROUTE* route)
     QAction *action2;
     QAction *action3;
     QAction *action4;
+    QPixmap iconI(20,10);
+    iconI.fill(route->getColor());
+    QIcon icon(iconI);
     action1=addAction(mnRoute_edit,route->getName(),"","","");
     connect(action1, SIGNAL(triggered()), route, SLOT(slot_edit()));
     action2=addAction(mnRoute_delete,route->getName(),"","","");
@@ -594,6 +607,10 @@ void MenuBar::addMenuRoute(ROUTE* route)
     connect(action3, SIGNAL(triggered()), route, SLOT(slot_export()));
     action4=addAction(mnCompassCenterRoute,route->getName(),"","","");
     connect(action4, SIGNAL(triggered()), route, SLOT(slot_compassFollow()));
+    action1->setIcon(icon);
+    action2->setIcon(icon);
+    action3->setIcon(icon);
+    action4->setIcon(icon);
 }
 QAction * MenuBar::addReleaseCompass()
 {
