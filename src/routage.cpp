@@ -3993,10 +3993,10 @@ bool ROUTAGE::newtownRaphson(double * root, double goal,double precision,QPolygo
     //qWarning()<<"not found after"<<iterations<<"loops. (Best find:"<<bestY<<goal+bestY<<"instead of"<<goal<<")";
     return false;
 }
-bool ROUTAGE::crossBarriere(const QLineF &line)
+bool ROUTAGE::crossBarriere(const QLineF &line) const
 {
     QPointF dummy;
-    foreach (QLineF barriere,barrieres)
+    foreach (const QLineF &barriere,barrieres)
     {
         if(barriere.intersect(line,&dummy)==QLineF::BoundedIntersection)
             return true;

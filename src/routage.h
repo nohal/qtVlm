@@ -183,7 +183,7 @@ class ROUTAGE : public QObject
         void showIsoRoute();
         int getIsoRouteValue() const {return isoRouteValue;}
         void setIsoRouteValue(const int &i){this->isoRouteValue=i;}
-        bool crossBarriere(const QLineF &line);
+        bool crossBarriere(const QLineF &line) const;
         void setThresholdAlternative(const int &i){this->thresholdAlternative=i;}
         int getThresholdAlternative() const {return this->thresholdAlternative;}
         void setNbAlternative(const int &i){this->nbAlternative=i;}
