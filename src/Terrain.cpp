@@ -239,7 +239,7 @@ void Terrain::draw_GSHHSandGRIB()
             for(int i=0;i<borders.count();++i)
             {
                 int X,Y;
-                proj->map2screen(Util::cLFA(borders.at(i).x(),proj->getXmin()),borders.at(i).y(),&X,&Y);
+                proj->map2screen(borders.at(i).x(),borders.at(i).y(),&X,&Y);
                 bordersXY.append(QPoint(X,Y));
             }
             QRectF br=bordersXY.boundingRect();
@@ -265,22 +265,22 @@ void Terrain::draw_GSHHSandGRIB()
 
                     vlmPoint ip=*(iso->at(p).origin);
                     windAverage+=ip.wind_speed;
-                    proj->map2screenDouble(Util::cLFA(ip.lon,proj->getXmin()),ip.lat,&x,&y);
+                    proj->map2screenDouble(ip.lon,ip.lat,&x,&y);
                     poly.append(QPointF(x,y));
 
                     ip=iso->at(p);
                     windAverage+=ip.wind_speed;
-                    proj->map2screenDouble(Util::cLFA(ip.lon,proj->getXmin()),ip.lat,&x,&y);
+                    proj->map2screenDouble(ip.lon,ip.lat,&x,&y);
                     poly.append(QPointF(x,y));
 
                     ip=iso->at(p+1);
                     windAverage+=ip.wind_speed;
-                    proj->map2screenDouble(Util::cLFA(ip.lon,proj->getXmin()),ip.lat,&x,&y);
+                    proj->map2screenDouble(ip.lon,ip.lat,&x,&y);
                     poly.append(QPointF(x,y));
 
                     ip=*(iso->at(p+1).origin);
                     windAverage+=ip.wind_speed;
-                    proj->map2screenDouble(Util::cLFA(ip.lon,proj->getXmin()),ip.lat,&x,&y);
+                    proj->map2screenDouble(ip.lon,ip.lat,&x,&y);
                     poly.append(QPointF(x,y));
 
 
@@ -294,7 +294,7 @@ void Terrain::draw_GSHHSandGRIB()
                         --o2;
                         ip=previousIso->at(o2);
                         windAverage+=ip.wind_speed;
-                        proj->map2screenDouble(Util::cLFA(ip.lon,proj->getXmin()),ip.lat,&x,&y);
+                        proj->map2screenDouble(ip.lon,ip.lat,&x,&y);
                         poly.append(QPointF(x,y));
                     }
 
@@ -451,7 +451,7 @@ void Terrain::draw_GSHHSandGRIB()
     else distance=qRound(distance/1000.0)*1000;
     Util::getCoordFromDistanceLoxo(lat1,lon1,distance,90.0,&lat2,&lon2);
     int a,b;
-    proj->map2screen(Util::cLFA(lon2,proj->getXmin()),lat2,&a,&b);
+    proj->map2screen(lon2,lat2,&a,&b);
     int sX=scalePos.x();
     int sY=scalePos.y();
     if(a<sX)

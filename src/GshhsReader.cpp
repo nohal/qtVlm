@@ -45,7 +45,7 @@ GshhsPolygon::GshhsPolygon(ZUFILE *file_)
     {
         double x, y=-90;
 
-        for (int i=0; i<n; i++) {
+        for (int i=0; i<n; ++i) {
             x = readInt4() * 1e-6;
             if (greenwich && x > 270)
                 x -= 360;
@@ -92,7 +92,7 @@ GshhsPolygon_WDB::GshhsPolygon_WDB(ZUFILE *file_)
         antarctic = (west==0 && east==360);
         if (ok) {
             double x=0, y=0;
-            for (int i=0; i<n; i++) {
+            for (int i=0; i<n; ++i) {
                 x = readInt4() * 1e-6;
                 if (greenwich && x > 270)
                     x -= 360;
@@ -110,7 +110,7 @@ GshhsPolygon_WDB::GshhsPolygon_WDB(ZUFILE *file_)
         greenwich = ( flag >> 16) & 1;
         antarctic = (west==0 && east==360);
         if (ok) {
-            for (int i=0; i<n; i++) {
+            for (int i=0; i<n; ++i) {
                 double x=0, y=0;
                 x = readInt4() * 1e-6;
                 if (greenwich && x > 270)
@@ -147,7 +147,7 @@ GshhsReader::GshhsReader(std::string fpath_):
    fpath (fpath_)
 {
     gshhsPoly_reader = new GshhsPolyReader(fpath);
-    for (int qual=0; qual<5; qual++)
+    for (int qual=0; qual<5; ++qual)
     {
         lsPoly_boundaries[qual] = new std::list<GshhsPolygon*>;
         lsPoly_rivers[qual] = new std::list<GshhsPolygon*>;
@@ -172,7 +172,7 @@ GshhsReader::~GshhsReader() {
 //-----------------------------------------------------------------------
 void GshhsReader::clearLists() {
     std::list<GshhsPolygon*>::iterator itp;
-    for (int qual=0; qual<5; qual++)
+    for (int qual=0; qual<5; ++qual)
     {
         for (itp=lsPoly_boundaries[qual]->begin(); itp != lsPoly_boundaries[qual]->end(); ++itp) {
             delete *itp;
@@ -307,7 +307,7 @@ std::list<GshhsPolygon*> & GshhsReader::getList_rivers() {
 // Dessin de la carte
 //=====================================================================
 int GshhsReader::GSHHS_scaledPoints(
-            GshhsPolygon *pol, QPoint *pts, double decx,
+            GshhsPolygon *pol, QPointF *pts, double decx,
             Projection *proj
         )
 {
@@ -326,24 +326,30 @@ int GshhsReader::GSHHS_scaledPoints(
         return 0;
     }
 
-    double x, y;
+    double x, y, previousX=0;
     std::list<GshhsPoint *>::iterator itp;
-    int xx, yy, oxx=0, oyy=0;
+    double xx, previousXX=0, yy, oxx=0, oyy=0;
     int j = 0;
-
+    int loop=0;
     for  (itp=(pol->lsPoints).begin(); itp!=(pol->lsPoints).end(); ++itp)
     {
         x = (*itp)->lon+decx;
         y = (*itp)->lat;
         // Ajustement d'echelle
-        proj->map2screen(x, y, &xx, &yy);
-        if (j==0 || (oxx!=xx || oyy!=yy))  // elimine les ponts trop proches
+        if(loop==0)
+            proj->map2screenDouble(x, y, &xx, &yy);
+        else
+            proj->map2screenByReference(previousX, previousXX, x, y, &xx, &yy);
+        previousX=x;
+        previousXX=xx;
+        ++loop;
+        if (j==0 || (qRound(oxx)!=qRound(xx) || qRound(oyy)!=qRound(yy)))  // elimine les ponts trop proches
         {
             oxx = xx;
             oyy = yy;
             pts[j].setX(xx);
             pts[j].setY(yy);
-            j ++;
+            ++j;
         }
     }
 	//if (j>1000)printf("%d\n", j);
@@ -357,20 +363,22 @@ void GshhsReader::GsshDrawLines(QPainter &pnt, std::list<GshhsPolygon*> &lst,
 {
     std::list<GshhsPolygon*>::iterator iter;
     GshhsPolygon *pol;
-    QPoint *pts = NULL;
+    QPointF *pts = NULL;
     int i;
     int nbp;
 
     int nbmax = 10000;
-    pts = new QPoint[nbmax];
+    pts = new QPointF[nbmax];
     assert(pts);
 
-    for  (i=0, iter=lst.begin(); iter!=lst.end(); ++iter,++i) {
+    for  (i=0, iter=lst.begin(); iter!=lst.end(); ++iter,++i)
+    {
         pol = *iter;
 
         if (nbmax < pol->n+2) {
             nbmax = pol->n+2;
-            pts = new QPoint[nbmax];
+            delete [] pts;
+            pts = new QPointF[nbmax];
             assert(pts);
         }
 
@@ -381,10 +389,10 @@ void GshhsReader::GsshDrawLines(QPainter &pnt, std::list<GshhsPolygon*> &lst,
 			if (pol->isAntarctic()) {
                 // Ne pas tracer les bords artificiels qui rejoignent le pole
                 // ajoutes lors de la creation des polygones (2 au debut, 1 a la fin).
-				pts ++;
+                ++pts ;
 				nbp -= 2;
 				pnt.drawPolyline(pts, nbp);
-				pts --;
+                --pts ;
 			}
 			else {
 				pnt.drawPolyline(pts, nbp);
@@ -399,10 +407,10 @@ void GshhsReader::GsshDrawLines(QPainter &pnt, std::list<GshhsPolygon*> &lst,
 			if (pol->isAntarctic()) {
                 // Ne pas tracer les bords artificiels qui rejoignent le pole
                 // ajoutes lors de la creation des polygones (2 au debut, 1 a  la fin).
-				pts ++;
+                ++pts ;
 				nbp -= 2;
 				pnt.drawPolyline(pts, nbp);
-				pts --;
+                --pts ;
 			}
 			else {
 				pnt.drawPolyline(pts, nbp);

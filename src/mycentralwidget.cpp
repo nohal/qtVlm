@@ -1378,8 +1378,8 @@ void myCentralWidget::simpAllPOIs(bool simp)
     if(selection->getZone(&lon0,&lat0,&lon1,&lat1))
     {
         double x0,y0,x1,y1;
-        proj->map2screenDouble(Util::cLFA(lon0,proj->getXmin()),lat0,&x0,&y0);
-        proj->map2screenDouble(Util::cLFA(lon1,proj->getXmin()),lat1,&x1,&y1);
+        proj->map2screenDouble(lon0,lat0,&x0,&y0);
+        proj->map2screenDouble(lon1,lat1,&x1,&y1);
         QRectF selRect=QRectF(QPointF(x0,y0),QPointF(x1,y1)).normalized();
         QListIterator<POI*> i (poi_list);
 
@@ -1390,7 +1390,7 @@ void myCentralWidget::simpAllPOIs(bool simp)
             const double lat=poi->getLatitude();
             const double lon=poi->getLongitude();
             double x,y;
-            proj->map2screenDouble(Util::cLFA(lon,proj->getXmin()),lat,&x,&y);
+            proj->map2screenDouble(lon,lat,&x,&y);
 
             if(selRect.contains(x,y))
             {
@@ -1420,12 +1420,10 @@ void myCentralWidget::slot_delAllPOIs(void)
     {
         double x0,y0,x1,y1;
 
-        //qWarning() << "Min X" << proj->getXmin() << proj->getXmax()<<", cLFA " << Util::cLFA(lon0,proj->getXmin())<< Util::cLFA(lon1,proj->getXmin());
 
-        proj->map2screenDouble(Util::cLFA(lon0,proj->getXmin()),lat0,&x0,&y0);
-        proj->map2screenDouble(Util::cLFA(lon1,proj->getXmin()),lat1,&x1,&y1);
+        proj->map2screenDouble(lon0,lat0,&x0,&y0);
+        proj->map2screenDouble(lon1,lat1,&x1,&y1);
         QRectF selRect=QRectF(QPointF(x0,y0),QPointF(x1,y1)).normalized();
-        qWarning()<<"selRect="<<x0<<y0<<x1<<y1;
         QListIterator<POI*> i (poi_list);
 
         int rep = QMessageBox::question (this,
@@ -1447,13 +1445,11 @@ void myCentralWidget::slot_delAllPOIs(void)
             const double lat=poi->getLatitude();
             const double lon=poi->getLongitude();
             double x,y;
-            proj->map2screenDouble(Util::cLFA(lon,proj->getXmin()),lat,&x,&y);
+            proj->map2screenDouble(lon,lat,&x,&y);
 
-            qWarning() << "POI: " << poi->getName();
 
             if(selRect.contains(x,y))
             {
-                //qWarning()<<"poi inside"<<poi->getName()<<x<<y;
                 if(poi->getRoute()!=NULL)
                 {
                     if(poi->getRoute()->getFrozen()||poi->getRoute()->getHidden()||poi->getRoute()->isBusy()) continue;
@@ -1483,8 +1479,8 @@ void myCentralWidget::slot_delSelPOIs(void)
     if(selection->getZone(&lon0,&lat0,&lon1,&lat1))
     {
         double x0,y0,x1,y1;
-        proj->map2screenDouble(Util::cLFA(lon0,proj->getXmin()),lat0,&x0,&y0);
-        proj->map2screenDouble(Util::cLFA(lon1,proj->getXmin()),lat1,&x1,&y1);
+        proj->map2screenDouble(lon0,lat0,&x0,&y0);
+        proj->map2screenDouble(lon1,lat1,&x1,&y1);
         QRectF selRect=QRectF(QPointF(x0,y0),QPointF(x1,y1)).normalized();
         int res_mask;
         DialogPoiDelete * dialog_sel = new DialogPoiDelete();
@@ -1505,11 +1501,10 @@ void myCentralWidget::slot_delSelPOIs(void)
             POI * poi = i.next();
             if(!(poi->getTypeMask() & res_mask))
                 continue;
-            qWarning() << "POI: " << poi->getName() << " mask=" << poi->getTypeMask();
             const double lat=poi->getLatitude();
             const double lon=poi->getLongitude();
             double x,y;
-            proj->map2screenDouble(Util::cLFA(lon,proj->getXmin()),lat,&x,&y);
+            proj->map2screenDouble(lon,lat,&x,&y);
 
             if(selRect.contains(x,y))
             {

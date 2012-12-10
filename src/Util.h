@@ -97,7 +97,6 @@ class Util
     static void computePosDouble(Projection * proj, const double &lat, const double &lon, double * x, double * y);
     static void addAgent(QNetworkRequest & request);
     static bool lineIsCrossingRect(const QLineF &line, const QRectF &rect);
-    static double cLFA(const double &lon, const double &xW);
     static double myDiffAngle(const double &a1, const double &a2);
     static double A360(const double &hdg);
     static double distance_to_line_dichotomy_xing(const double &lat, const double &lon,
@@ -134,24 +133,6 @@ class Util
 };
 
 //======================================================================
-inline double Util::cLFA(const double &lon, const double &xW)
-//convertLonForAntiMeridian
-{
-    if(xW>=0 && lon>=0) return lon;
-    if(xW<=0 && lon<=0) return lon;
-    if(qAbs(qRound(qAbs(lon-xW))-qRound(myDiffAngle(A360(lon),A360(xW))))<=2) return lon;
-    if(xW>=0)
-    {
-        return xW+myDiffAngle(xW,lon+360.0);
-    }
-    else
-    {
-        if(xW<-180)
-            return lon-360;
-        else
-            return xW-myDiffAngle(A360(xW),lon);
-    }
-}
 inline double Util::A360(const double &hdg)
 {
     double newhdg=hdg;

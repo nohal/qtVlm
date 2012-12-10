@@ -162,7 +162,7 @@ inline vlmPoint findPointThreaded(const vlmPoint &point)
         return pt;
     }
     double x,y;
-    pt.routage->getProj()->map2screenDouble(Util::cLFA(pt.lon,pt.routage->getProj()->getXmin()),pt.lat,&x,&y);
+    pt.routage->getProj()->map2screenDouble(pt.lon,pt.lat,&x,&y);
     pt.x=x;
     pt.y=y;
     if(pt.routage->getVisibleOnly() && !pt.routage->getProj()->isInBounderies_strict(pt.x,pt.y))
@@ -1055,8 +1055,8 @@ void ROUTAGE::slot_calculate()
             POI * poi2=poiList.at(p)->getConnectedPoi();
             poiList.removeOne(poi2);
             double x1,y1,x2,y2;
-            proj->map2screenDouble(Util::cLFA(poi1->getLongitude(),proj->getXmin()),poi1->getLatitude(),&x1,&y1);
-            proj->map2screenDouble(Util::cLFA(poi2->getLongitude(),proj->getXmin()),poi2->getLatitude(),&x2,&y2);
+            proj->map2screenDouble(poi1->getLongitude(),poi1->getLatitude(),&x1,&y1);
+            proj->map2screenDouble(poi2->getLongitude(),poi2->getLatitude(),&x2,&y2);
             barrieres.append(QLineF(x1,y1,x2,y2));
         }
     }
@@ -1068,8 +1068,8 @@ void ROUTAGE::slot_calculate()
         const vlmPoint p1=gates.at(n)->getPoints()->first();
         const vlmPoint p2=gates.at(n)->getPoints()->last();
         double x1,y1,x2,y2;
-        proj->map2screenDouble(Util::cLFA(p1.lon,proj->getXmin()),p1.lat,&x1,&y1);
-        proj->map2screenDouble(Util::cLFA(p2.lon,proj->getXmin()),p2.lat,&x2,&y2);
+        proj->map2screenDouble(p1.lon,p1.lat,&x1,&y1);
+        proj->map2screenDouble(p2.lon,p2.lat,&x2,&y2);
         if(!proj->isInBounderies(x1,y1)) continue;
         if(!proj->isInBounderies(x2,y2)) continue;
         QPointF P1(x1,y1);
@@ -1117,8 +1117,8 @@ void ROUTAGE::slot_calculate()
     point.convertionLat=point.lat;
     point.convertionLon=point.lon;
     point.isStart=true;
-    proj->map2screenDouble(Util::cLFA(start.x(),proj->getXmin()),start.y(),&xs,&ys);
-    proj->map2screenDouble(Util::cLFA(arrival.x(),proj->getXmin()),arrival.y(),&xa,&ya);
+    proj->map2screenDouble(start.x(),start.y(),&xs,&ys);
+    proj->map2screenDouble(arrival.x(),arrival.y(),&xa,&ya);
     point.x=xs;
     point.y=ys;
 #if 0
@@ -1745,7 +1745,7 @@ void ROUTAGE::slot_calculate()
                         }
                     }
                     double x,y;
-                    proj->map2screenDouble(Util::cLFA(newPoint.lon,proj->getXmin()),newPoint.lat,&x,&y);
+                    proj->map2screenDouble(newPoint.lon,newPoint.lat,&x,&y);
                     newPoint.x=x;
                     newPoint.y=y;
 #if 1 /*check again if crossing with coast*/
@@ -3386,7 +3386,7 @@ void ROUTAGE::showIsoRoute()
             vlmPoint Cross;
             double lon,lat,X,Y;
             Cross=result->getPoints()->at(n);
-            proj->map2screenDouble(Util::cLFA(Cross.lon,proj->getXmin()),Cross.lat,&X,&Y);
+            proj->map2screenDouble(Cross.lon,Cross.lat,&X,&Y);
             int js=0;
             double minDist=10e10;
             for(int s=indice;s<isochrone->getPoints()->count()-1;++s)
@@ -3394,8 +3394,8 @@ void ROUTAGE::showIsoRoute()
                 vlmPoint p1=isochrone->getPoints()->at(s);
                 vlmPoint p2=isochrone->getPoints()->at(s+1);
                 double x1,y1,x2,y2; /*recalculation necessary because zoom has changed*/
-                proj->map2screenDouble(Util::cLFA(p1.lon,proj->getXmin()),p1.lat,&x1,&y1);
-                proj->map2screenDouble(Util::cLFA(p2.lon,proj->getXmin()),p2.lat,&x2,&y2);
+                proj->map2screenDouble(p1.lon,p1.lat,&x1,&y1);
+                proj->map2screenDouble(p2.lon,p2.lat,&x2,&y2);
                 QLineF line1(x1,y1,x2,y2);
                 for(int is=0;is<i_isochrone->getPoints()->count()-1;++is)
                 {
@@ -3431,7 +3431,7 @@ void ROUTAGE::showIsoRoute()
                 for(int s=indice;s<isochrone->getPoints()->count();++s)
                 {
                     vlmPoint p1=isochrone->getPoints()->at(s);
-                    proj->map2screenDouble(Util::cLFA(p1.lon,proj->getXmin()),p1.lat,&x1,&y1);
+                    proj->map2screenDouble(p1.lon,p1.lat,&x1,&y1);
                     poly.append(QPointF(x1,y1));
                 }
                 int indicePrev=prev_isochrone->getPoints()->indexOf(result->getPoints()->at(n+1));
@@ -3443,7 +3443,7 @@ void ROUTAGE::showIsoRoute()
                 for(int s=indicePrev;s<prev_isochrone->getPoints()->count();++s)
                 {
                     vlmPoint p1=prev_isochrone->getPoints()->at(s);
-                    proj->map2screenDouble(Util::cLFA(p1.lon,proj->getXmin()),p1.lat,&x1,&y1);
+                    proj->map2screenDouble(p1.lon,p1.lat,&x1,&y1);
                     prev_poly.append(QPointF(x1,y1));
                 }
                 for(int s=js;s<i_isochrone->count();++s)
@@ -3451,7 +3451,7 @@ void ROUTAGE::showIsoRoute()
                     vlmPoint p1=i_isochrone->getPoints()->at(s);
                     if(p1.isBroken) break;
                     double x1,y1; /*recalculation necessary because zoom has changed*/
-                    proj->map2screenDouble(Util::cLFA(p1.lon,proj->getXmin()),p1.lat,&x1,&y1);
+                    proj->map2screenDouble(p1.lon,p1.lat,&x1,&y1);
                     i_poly.append(QPointF(x1,y1));
                 }
 #if 1
@@ -3460,8 +3460,8 @@ void ROUTAGE::showIsoRoute()
                     double x2,y2;
                     vlmPoint p1=result->getPoints()->at(rrr);
                     vlmPoint p2=result->getPoints()->at(rrr+1);
-                    proj->map2screenDouble(Util::cLFA(p1.lon,proj->getXmin()),p1.lat,&x1,&y1);
-                    proj->map2screenDouble(Util::cLFA(p2.lon,proj->getXmin()),p2.lat,&x2,&y2);
+                    proj->map2screenDouble(p1.lon,p1.lat,&x1,&y1);
+                    proj->map2screenDouble(p2.lon,p2.lat,&x2,&y2);
                     QLineF rLine(x1,y1,x2,y2);
                     found=false;
                     for(int pp=0;pp<i_poly.count()-1;++pp)
@@ -3534,7 +3534,7 @@ void ROUTAGE::showIsoRoute()
                 left.append(Cross);
             js=i_isochrone->getPoints()->count()-1;
             Cross=result->getPoints()->at(n);
-            proj->map2screenDouble(Util::cLFA(Cross.lon,proj->getXmin()),Cross.lat,&X,&Y);
+            proj->map2screenDouble(Cross.lon,Cross.lat,&X,&Y);
             found=false;
             minDist=10e10;
             for(int s=indice;s>0;--s)
@@ -3542,8 +3542,8 @@ void ROUTAGE::showIsoRoute()
                 vlmPoint p1=isochrone->getPoints()->at(s);
                 vlmPoint p2=isochrone->getPoints()->at(s-1);
                 double x1,y1,x2,y2; /*recalculation necessary because zoom has changed*/
-                proj->map2screenDouble(Util::cLFA(p1.lon,proj->getXmin()),p1.lat,&x1,&y1);
-                proj->map2screenDouble(Util::cLFA(p2.lon,proj->getXmin()),p2.lat,&x2,&y2);
+                proj->map2screenDouble(p1.lon,p1.lat,&x1,&y1);
+                proj->map2screenDouble(p2.lon,p2.lat,&x2,&y2);
                 QLineF line1(x1,y1,x2,y2);
                 for(int is=i_isochrone->getPoints()->count()-1;is>0;--is)
                 {
@@ -3579,7 +3579,7 @@ void ROUTAGE::showIsoRoute()
                 for(int s=indice;s>=0;--s)
                 {
                     vlmPoint p1=isochrone->getPoints()->at(s);
-                    proj->map2screenDouble(Util::cLFA(p1.lon,proj->getXmin()),p1.lat,&x1,&y1);
+                    proj->map2screenDouble(p1.lon,p1.lat,&x1,&y1);
                     poly.append(QPointF(x1,y1));
                 }
                 int indicePrev=prev_isochrone->getPoints()->indexOf(result->getPoints()->at(n+1));
@@ -3591,7 +3591,7 @@ void ROUTAGE::showIsoRoute()
                 for(int s=indicePrev;s>=0;--s)
                 {
                     vlmPoint p1=prev_isochrone->getPoints()->at(s);
-                    proj->map2screenDouble(Util::cLFA(p1.lon,proj->getXmin()),p1.lat,&x1,&y1);
+                    proj->map2screenDouble(p1.lon,p1.lat,&x1,&y1);
                     prev_poly.append(QPointF(x1,y1));
                 }
 #if 1
@@ -3601,8 +3601,8 @@ void ROUTAGE::showIsoRoute()
                     double x2,y2;
                     vlmPoint p1=result->getPoints()->at(rrr);
                     vlmPoint p2=result->getPoints()->at(rrr+1);
-                    proj->map2screenDouble(Util::cLFA(p1.lon,proj->getXmin()),p1.lat,&x1,&y1);
-                    proj->map2screenDouble(Util::cLFA(p2.lon,proj->getXmin()),p2.lat,&x2,&y2);
+                    proj->map2screenDouble(p1.lon,p1.lat,&x1,&y1);
+                    proj->map2screenDouble(p2.lon,p2.lat,&x2,&y2);
                     QLineF rLine(x1,y1,x2,y2);
                     found=false;
                     for(int pp=0;pp<i_isochrone->getPoints()->count()-1;++pp)
@@ -3610,8 +3610,8 @@ void ROUTAGE::showIsoRoute()
                         QPointF dummy;
                         p1=i_isochrone->getPoints()->at(pp);
                         p2=i_isochrone->getPoints()->at(pp+1);
-                        proj->map2screenDouble(Util::cLFA(p1.lon,proj->getXmin()),p1.lat,&x1,&y1);
-                        proj->map2screenDouble(Util::cLFA(p2.lon,proj->getXmin()),p2.lat,&x2,&y2);
+                        proj->map2screenDouble(p1.lon,p1.lat,&x1,&y1);
+                        proj->map2screenDouble(p2.lon,p2.lat,&x2,&y2);
                         QLineF iLine(x1,y1,x2,y2);
                         if(rLine.intersect(iLine,&dummy)==QLineF::BoundedIntersection)
                         {
@@ -3634,7 +3634,7 @@ void ROUTAGE::showIsoRoute()
                         i_poly.clear();
                     }
                     double x1,y1; /*recalculation necessary because zoom has changed*/
-                    proj->map2screenDouble(Util::cLFA(p1.lon,proj->getXmin()),p1.lat,&x1,&y1);
+                    proj->map2screenDouble(p1.lon,p1.lat,&x1,&y1);
                     i_poly.append(QPointF(x1,y1));
                 }
                 QPen pendebug(Qt::blue);

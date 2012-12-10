@@ -159,11 +159,11 @@ void GisCity::draw(QPainter *pnt, Projection *proj, int popmin)
 {
     if (population < popmin)
         return;
-    int x0, y0;
+    double x0, y0;
 	if (proj->isPointVisible(x,y)) {
-        proj->map2screen(x, y, &x0, &y0);
+        proj->map2screenDouble(x, y, &x0, &y0);
         pnt->drawEllipse(x0-2,y0-2, 5,5);
-        pnt->drawText(QRect(x0,y0-7,1,1), Qt::AlignCenter|Qt::TextDontClip, name);
+        pnt->drawText(QRectF(x0,y0-7,1,1), Qt::AlignCenter|Qt::TextDontClip, name);
     }
 }
 //-----------------------------------------------------------------------

@@ -297,3 +297,4 @@ void Projection::emit_projectionUpdated()
     else
         emit projectionUpdated();
 }
+

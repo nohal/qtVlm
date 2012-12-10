@@ -93,18 +93,20 @@ void GshhsPolyCell::ReadPolygonFile (FILE *polyfile,
 
 void  GshhsPolyCell::DrawPolygonFilled(QPainter &pnt,contour_list * p,double dx,Projection *proj,QColor color)
 {
-    int x, y;
-    int c, v;
-    QPolygon poly_pt;
+    double x, y;
+    double c, v;
+    QPolygonF poly_pt;
 
     QPen myPen(Qt::NoPen);
     pnt.setPen(myPen);
     pnt.setBrush(color);
 
-    int x_old=0;
-    int y_old=0;
+    double x_old=0;
+    double y_old=0;
+    double previousX=0;
+    double previousLon=0;
 
-
+    bool first=true;
     for (c= 0; c < p->count(); ++c)
     {
         if(!p->at(c).count())
@@ -112,7 +114,13 @@ void  GshhsPolyCell::DrawPolygonFilled(QPainter &pnt,contour_list * p,double dx,
 
         for (v= 0; v < p->at(c).count(); ++v)
         {
-            proj->map2screen(p->at(c).at(v).x()+dx, p->at(c).at(v).y(), &x, &y);
+            if(first)
+                proj->map2screenDouble(p->at(c).at(v).x()+dx, p->at(c).at(v).y(), &x, &y);
+            else
+                proj->map2screenByReference(previousLon,previousX,p->at(c).at(v).x()+dx, p->at(c).at(v).y(), &x, &y);
+            first=false;
+            previousLon=p->at(c).at(v).x()+dx;
+            previousX=x;
             /*if(c==0 && v==0)
             {
                 qWarning() << "Cell " << x0cell << "," << y0cell
@@ -174,17 +182,14 @@ void GshhsPolyCell::DrawPolygonContour(QPainter &pnt,contour_list * p, double dx
             // Elimination des traits verticaux et horizontaux
             if ((((x1==x2) && ((x1==long_min) || (x1==long_max))) || ((y1==y2) && ((y1==lat_min) || (y1==lat_max))))==0)
             {
-                int a,b,c,d;
                 double A,B,C,D;
-                proj->map2screen(x1+dx,y1, &a, &b);
-                proj->map2screen(x2+dx,y2, &c, &d);
                 proj->map2screenDouble(x1+dx,y1, &A, &B);
-                proj->map2screenDouble(x2+dx,y2, &C, &D);
-                if(a!=c || b!=d)
-                    pnt.drawLine(a,b,c,d);
+                proj->map2screenByReference(x1+dx,qRound(A),x2+dx,y2, &C, &D);
+                if(qRound(A)!=qRound(C) || qRound(B)!=qRound(D))
+                    pnt.drawLine(QPointF(A,B).toPoint(),QPointF(C,D).toPoint());
                 if(A!=C || B!=D)
                 {
-                    if(proj->isInBounderies(a,b) || proj->isInBounderies(c,d))
+                    if(proj->isInBounderies(qRound(A),qRound(B)) || proj->isInBounderies(qRound(C),qRound(D)))
                         coasts.append(QLineF(A,B,C,D));
                 }
             }
@@ -197,17 +202,14 @@ void GshhsPolyCell::DrawPolygonContour(QPainter &pnt,contour_list * p, double dx
 
         if ((((x1==x2) && ((x1==long_min) || (x1==long_max))) || ((y1==y2) && ((y1==lat_min) || (y1==lat_max))))==0)
         {
-            int a,b,c,d;
             double A,B,C,D;
-            proj->map2screen(x1+dx,y1, &a, &b);
-            proj->map2screen(x2+dx,y2, &c, &d);
             proj->map2screenDouble(x1+dx,y1, &A, &B);
-            proj->map2screenDouble(x2+dx,y2, &C, &D);
-            if(a!=c || b!=d)
-                pnt.drawLine(a,b,c,d);
+            proj->map2screenByReference(x1+dx, qRound(A), x2+dx,y2, &C, &D);
+            if(qRound(A)!=qRound(C) || qRound(B)!=qRound(D))
+                pnt.drawLine(QPointF(A,B).toPoint(),QPointF(C,D).toPoint());
             if(A!=C || B!=D)
             {
-                if(proj->isInBounderies(a,b) || proj->isInBounderies(c,d))
+                if(proj->isInBounderies(qRound(A),qRound(B)) || proj->isInBounderies(qRound(C),qRound(D)))
                     coasts.append(QLineF(A,B,C,D));
             }
         }
