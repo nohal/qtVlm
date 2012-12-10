@@ -857,7 +857,7 @@ void ROUTAGE::setColor(const QColor &color)
 }
 void ROUTAGE::calculate()
 {
-    if(!i_iso)
+    if(!i_iso && !isPivot)
     {
         Settings::setSetting("angleRange",this->angleRange);
         Settings::setSetting("angleStep",this->angleStep);
@@ -3231,7 +3231,7 @@ void ROUTAGE::setFromRoutage(ROUTAGE *fromRoutage, bool editOptions)
     this->checkLine=fromRoutage->getCheckLine();
     this->useConverge=fromRoutage->useConverge;
     this->pruneWakeAngle=fromRoutage->pruneWakeAngle;
-    this->colorGrib=fromRoutage->colorGrib;
+    this->colorGrib=fromRoutage->getColorGrib();
     this->routeFromBoat=false;
     this->fromPOI=fromRoutage->getFromPOI();
     this->toPOI=fromRoutage->getToPOI();
