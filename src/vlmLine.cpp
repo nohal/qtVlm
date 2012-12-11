@@ -148,16 +148,11 @@ void vlmLine::calculatePoly(void)
     collision.clear();
     QRectF tempBound;
     tempBound.setRect(0,0,0,0);
-    QPolygon * poly;
-    while(polyList.count()>0)
-    {
-        poly=polyList.first();
-        polyList.removeFirst();
-        delete poly;
-    }
-    poly=new QPolygon();
+
+    qDeleteAll(polyList);
+    polyList.clear();
+    QPolygon * poly=new QPolygon();
     polyList.append(poly);
-    poly->resize(0);
     vlmPoint previousWorldPoint(0,0);
     bool coasted=false;
     coastDetected=false;
@@ -165,7 +160,7 @@ void vlmLine::calculatePoly(void)
     GshhsReader * map=NULL;
     if(mcp)
         map=mcp->get_gshhsReader();
-    if(line.count()>1)
+    if(line.count()>1 && this->isVisible())
     {
         QList<vlmPoint>::const_iterator i;
         for (i = line.constBegin(); i != line.constEnd(); ++i)
@@ -240,6 +235,11 @@ void vlmLine::calculatePoly(void)
             ++n;
         }
         tempBound=tempBound.united(poly->boundingRect());
+    }
+    else
+    {
+        qDeleteAll(polyList);
+        polyList.clear();
     }
     collision.append(coasted);
     if(!polyList.isEmpty())

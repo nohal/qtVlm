@@ -3279,6 +3279,7 @@ void ROUTAGE::setFromRoutage(ROUTAGE *fromRoutage, bool editOptions)
     fromRoutage->setShowIso(false);
     fromRoutage->getResult()->hide();
     fromRoutage->getWay()->hide();
+    QApplication::processEvents();
     if(editOptions)
     {
         isNewPivot=true;
