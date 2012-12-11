@@ -65,13 +65,8 @@ vlmLine::vlmLine(Projection * proj, QGraphicsScene * myScene,double z_level) :
 vlmLine::~vlmLine()
 {
 //    myScene->removeItem(this);
-    QPolygon * poly;
-    while(!polyList.isEmpty())
-    {
-        poly=polyList.first();
-        delete poly;
-        polyList.removeFirst();
-    }
+    qDeleteAll(polyList);
+    polyList.clear();
 }
 void vlmLine::slot_replay(int i)
 {
@@ -187,14 +182,33 @@ void vlmLine::calculatePoly(void)
                 proj->map2screenDouble(worldPoint.lon,worldPoint.lat,&X,&Y);
             else
                 proj->map2screenByReference(previousWorldPoint.lon,previousX,worldPoint.lon,worldPoint.lat,&X,&Y);
-            X=X-x();
-            Y=Y-y();
-            poly->putPoints(n,1,X,Y);
+            bool reverseWorld=!proj->isInBounderies(X,Y) && proj->isPointVisible(worldPoint.lon,worldPoint.lat) && n!=0;
+            poly->putPoints(n,1,X-x(),Y-y());
             if(this->coastDetection && n!=0 && !coasted && map && map->crossing(QLineF(previousX,previousY,X,Y),
                QLineF(previousWorldPoint.lon,previousWorldPoint.lat,worldPoint.lon,worldPoint.lat)))
             {
                 coasted=true;
                 coastDetected=true;
+            }
+            if(reverseWorld)
+            {
+                qWarning()<<"reverseWorld detected";
+                collision.append(coasted);
+                tempBound=tempBound.united(poly->boundingRect());
+                poly=new QPolygon();
+                polyList.append(poly);
+                proj->map2screenDouble(worldPoint.lon,worldPoint.lat,&X,&Y);
+                previousX=X;
+                poly->putPoints(0,1,X-x(),Y-y());
+                proj->map2screenByReference(worldPoint.lon,previousX,previousWorldPoint.lon,previousWorldPoint.lat,&X,&Y);
+                poly->putPoints(1,1,X-x(),Y-y());
+                n=0;
+                collision.append(coasted);
+                tempBound=tempBound.united(poly->boundingRect());
+                poly=new QPolygon();
+                polyList.append(poly);
+                coasted=false;
+                continue;
             }
             previousWorldPoint=worldPoint;
             previousX=X;
@@ -209,6 +223,9 @@ void vlmLine::calculatePoly(void)
                 coasted=false;
                 continue;
             }
+
+
+
 
             if(worldPoint.isPOI && cc!=0 && cc!=line.count()-1)
             {

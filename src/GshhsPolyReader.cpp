@@ -186,7 +186,7 @@ void GshhsPolyCell::DrawPolygonContour(QPainter &pnt,contour_list * p, double dx
                 proj->map2screenDouble(x1+dx,y1, &A, &B);
                 proj->map2screenByReference(x1+dx,A,x2+dx,y2, &C, &D);
                 if(qRound(A)!=qRound(C) || qRound(B)!=qRound(D))
-                    pnt.drawLine(QPointF(A,B).toPoint(),QPointF(C,D).toPoint());
+                    pnt.drawLine(QPointF(A,B),QPointF(C,D));
                 if(A!=C || B!=D)
                 {
                     if(proj->isInBounderies(qRound(A),qRound(B)) || proj->isInBounderies(qRound(C),qRound(D)))
@@ -206,7 +206,7 @@ void GshhsPolyCell::DrawPolygonContour(QPainter &pnt,contour_list * p, double dx
             proj->map2screenDouble(x1+dx,y1, &A, &B);
             proj->map2screenByReference(x1+dx, A, x2+dx,y2, &C, &D);
             if(qRound(A)!=qRound(C) || qRound(B)!=qRound(D))
-                pnt.drawLine(QPointF(A,B).toPoint(),QPointF(C,D).toPoint());
+                pnt.drawLine(QPointF(A,B),QPointF(C,D));
             if(A!=C || B!=D)
             {
                 if(proj->isInBounderies(qRound(A),qRound(B)) || proj->isInBounderies(qRound(C),qRound(D)))

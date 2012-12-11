@@ -857,7 +857,7 @@ void ROUTAGE::setColor(const QColor &color)
 }
 void ROUTAGE::calculate()
 {
-    if(!i_iso && !isPivot)
+    if(!i_iso && !isNewPivot)
     {
         Settings::setSetting("angleRange",this->angleRange);
         Settings::setSetting("angleStep",this->angleStep);
@@ -2782,7 +2782,6 @@ void ROUTAGE::convertToRoute()
     ROUTE * route=parent->addRoute();
     route->setName(name);
     route->setUseVbVmgVlm(false);
-    parent->update_menuRoute();
     route->setBoat(this->myBoat);
     route->setDetectCoasts(this->checkCoast);
     route->setStartTime(parentRoutage->getStartTime());
@@ -2800,6 +2799,7 @@ void ROUTAGE::convertToRoute()
     route->setSpeedLossOnTack(this->speedLossOnTack);
     //route->setWidth(this->width);
     route->setFrozen(true);
+    parent->update_menuRoute();
     QList<vlmPoint> * list=result->getPoints();
     for (int n=0;n<list->count();++n)
     {
