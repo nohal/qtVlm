@@ -187,7 +187,7 @@ void vlmLine::calculatePoly(void)
             }
             if(reverseWorld)
             {
-                qWarning()<<"reverseWorld detected";
+                //qWarning()<<"reverseWorld detected";
                 collision.append(coasted);
                 tempBound=tempBound.united(poly->boundingRect());
                 poly=new QPolygon();
