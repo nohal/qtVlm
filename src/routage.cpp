@@ -964,32 +964,44 @@ void ROUTAGE::calculate()
         Util::getCoordFromDistanceAngle (start.y(), start.x(), ratio*distance/2, angle+90, &yTmp, &xTmp);
         xW = xE = xTmp;
         yN = yS = yTmp;
+        //qWarning()<<"1"<<xW<<xE<<xTmp;
         Util::getCoordFromDistanceAngle (start.y(), start.x(), ratio*distance/2, angle-90, &yTmp, &xTmp);
-        if (xTmp < xW) xW = xTmp;
-        if (xTmp > xE) xE = xTmp;
+        if(mySignedDiffAngle(Util::A360(xW),Util::A360(xTmp))<0) xW=xTmp;
+        if(mySignedDiffAngle(Util::A360(xTmp),Util::A360(xE))<0) xE=xTmp;
+//        if (xTmp < xW) xW = xTmp;
+//        if (xTmp > xE) xE = xTmp;
         if (yTmp < yS) yS = yTmp;
         if (yTmp > yN) yN = yTmp;
+        //qWarning()<<"2"<<xW<<xE<<xTmp;
         Util::getCoordFromDistanceAngle (arrival.y(), arrival.x(), ratio*distance/2, angle+90, &yTmp, &xTmp);
-        if (xTmp < xW) xW = xTmp;
-        if (xTmp > xE) xE = xTmp;
+        if(mySignedDiffAngle(Util::A360(xW),Util::A360(xTmp))<0) xW=xTmp;
+        if(mySignedDiffAngle(Util::A360(xTmp),Util::A360(xE))<0) xE=xTmp;
+//        if (xTmp < xW) xW = xTmp;
+//        if (xTmp > xE) xE = xTmp;
         if (yTmp < yS) yS = yTmp;
         if (yTmp > yN) yN = yTmp;
+        //qWarning()<<"3"<<xW<<xE<<xTmp;
         Util::getCoordFromDistanceAngle (arrival.y(), arrival.x(), ratio*distance/2, angle-90, &yTmp, &xTmp);
-        if (xTmp < xW) xW = xTmp;
-        if (xTmp > xE) xE = xTmp;
+        if(mySignedDiffAngle(Util::A360(xW),Util::A360(xTmp))<0) xW=xTmp;
+        if(mySignedDiffAngle(Util::A360(xTmp),Util::A360(xE))<0) xE=xTmp;
+//        if (xTmp < xW) xW = xTmp;
+//        if (xTmp > xE) xE = xTmp;
         if (yTmp < yS) yS = yTmp;
         if (yTmp > yN) yN = yTmp;
+        //qWarning()<<"5"<<xW<<xE<<xTmp;
 
         if((xW>0 && xE<0) || (xW<0 && xE>0))
         {
+            qWarning()<<"6"<<xW<<xE<<xTmp;
             if(qAbs(xW-xE)>180)
             {
                 swap(xW,xE);
+                //qWarning()<<"7"<<xW<<xE<<xTmp;
                 if(xW>0)
                     xW-=360;
                 else
                     xE-=360;
-
+                //qWarning()<<"8"<<xW<<xE<<xTmp;
             }
         }
 
