@@ -168,6 +168,7 @@ void MainWindow::connectSignals()
     connect(mb->ac_editRoute,SIGNAL(triggered()), this, SLOT(slot_editRoute()));
     connect(mb->ac_pasteRoute,SIGNAL(triggered()), this, SLOT(slot_pasteRoute()));
     connect(mb->acRoute_paste,SIGNAL(triggered()), this, SLOT(slot_pasteRoute()));
+    connect(mb->ac_zoomRoute,SIGNAL(triggered()), this, SLOT(slot_zoomRoute()));
 #ifdef __QTVLM_WITH_TEST
     if(mb->acVLMTest)
         connect(mb->acVLMTest, SIGNAL(triggered()), this, SLOT(slotVLM_Test()));
@@ -1586,27 +1587,32 @@ void MainWindow::slotShowContextualMenu(QGraphicsSceneContextMenuEvent * e)
         QPixmap iconI(20,10);
         iconI.fill(my_centralWidget->getRouteToClipboard()->getColor());
         QIcon icon(iconI);
+        menuBar->ac_editRoute->setText(tr("Editer la route")+" "+routeName);
+        menuBar->ac_editRoute->setIcon(icon);
+        menuBar->ac_editRoute->setData(my_centralWidget->getRouteToClipboard()->getName());
         menuBar->ac_copyRoute->setVisible(true);
         menuBar->ac_copyRoute->setText(tr("Copier la route")+" "+routeName);
         menuBar->ac_copyRoute->setIcon(icon);
         menuBar->ac_copyRoute->setData(my_centralWidget->getRouteToClipboard()->getName());
+        menuBar->ac_zoomRoute->setVisible(true);
+        menuBar->ac_zoomRoute->setText(tr("Zoom sur la route ")+" "+routeName);
+        menuBar->ac_zoomRoute->setIcon(icon);
         menuBar->ac_deleteRoute->setVisible(true);
         menuBar->ac_deleteRoute->setText(tr("Supprimer la route")+" "+routeName);
         menuBar->ac_deleteRoute->setIcon(icon);
         menuBar->ac_deleteRoute->setData(my_centralWidget->getRouteToClipboard()->getName());
         menuBar->ac_editRoute->setVisible(true);
-        menuBar->ac_editRoute->setText(tr("Editer la route")+" "+routeName);
-        menuBar->ac_editRoute->setIcon(icon);
-        menuBar->ac_editRoute->setData(my_centralWidget->getRouteToClipboard()->getName());
     }
     else
     {
-        menuBar->ac_copyRoute->setVisible(false);
-        menuBar->ac_copyRoute->setData(QString());
-        menuBar->ac_deleteRoute->setVisible(false);
-        menuBar->ac_deleteRoute->setData(QString());
         menuBar->ac_editRoute->setVisible(false);
         menuBar->ac_editRoute->setData(QString());
+        menuBar->ac_copyRoute->setVisible(false);
+        menuBar->ac_copyRoute->setData(QString());
+        menuBar->ac_zoomRoute->setVisible(false);
+        menuBar->ac_zoomRoute->setData(QString());
+        menuBar->ac_deleteRoute->setVisible(false);
+        menuBar->ac_deleteRoute->setData(QString());
     }
     QString clipboard=QApplication::clipboard()->text();
     if(clipboard.isEmpty() || !clipboard.contains("<kml") || !clipboard.contains("Placemark"))
@@ -1657,6 +1663,20 @@ void MainWindow::slot_editRoute()
     }
     if(route!=NULL)
         route->slot_edit();
+}
+void MainWindow::slot_zoomRoute()
+{
+    ROUTE *route=NULL;
+    for (int n=0;n<my_centralWidget->getRouteList().count();++n)
+    {
+        if(my_centralWidget->getRouteList().at(n)->getName()==menuBar->ac_copyRoute->data().toString())
+        {
+            route=my_centralWidget->getRouteList().at(n);
+            break;
+        }
+    }
+    if(route!=NULL)
+        route->zoom();
 }
 void MainWindow::slot_pasteRoute()
 {

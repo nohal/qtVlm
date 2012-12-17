@@ -545,9 +545,10 @@ QMenu * MenuBar::createPopupBtRight(QWidget *parent)
     ac_moveBoat = addAction(popup, tr("Deplacer le bateau ici"),tr(""),tr(""),"");
 
     popup->addSeparator();
-    ac_copyRoute=addAction(popup,tr("Copier la route au format kml"),"","","");
-    ac_deleteRoute=addAction(popup,tr("Supprimer la route"),"","","");
     ac_editRoute=addAction(popup,tr("Editer la route"),"","","");
+    ac_copyRoute=addAction(popup,tr("Copier la route au format kml"),"","","");
+    ac_zoomRoute=addAction(popup,tr("Zoom sur la route "),"","","");
+    ac_deleteRoute=addAction(popup,tr("Supprimer la route"),"","","");
     ac_pasteRoute=addAction(popup,tr("Coller une route"),"","","");
     return popup;
 }

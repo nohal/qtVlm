@@ -160,6 +160,7 @@ class MainWindow: public QMainWindow
         void slot_deleteRoute();
         void slot_editRoute();
         void slot_pasteRoute();
+        void slot_zoomRoute();
 
     signals:
         void setChangeStatus(bool);

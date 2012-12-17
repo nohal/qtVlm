@@ -111,6 +111,7 @@ public:
     QAction * ac_deleteRoute;
     QAction * ac_editRoute;
     QAction * ac_pasteRoute;
+    QAction * ac_zoomRoute;
 
     QAction *acFile_Open;
     QAction *acFile_Reopen;

@@ -807,43 +807,7 @@ void POI::slot_editRoute()
 void POI::slot_zoomRoute()
 {
    if (this->route == NULL) return;
-
-   double   xW, xE, yN, yS;
-
-   QList<POI*>&                 route = this->route->getPoiList();
-   QList<POI*>::const_iterator  poi   = route.begin();
-   if (poi == route.end()) return;
-
-   if (this->route->getStartFromBoat()) {
-      xW = xE = this->route->getBoat()->getLon();
-      yN = yS = this->route->getBoat()->getLat();
-   } else {
-      xW = xE = (*poi)->getLongitude();
-      yN = yS = (*poi)->getLatitude();
-      ++poi;
-   }
-
-   for (; poi != route.end(); ++poi) {
-      const double  lon = (*poi)->getLongitude();
-      if (lon < xW) {
-         if (xW-lon < 180)
-            xW = lon;
-         else if (lon+360 > xE)
-            xE = lon+360;
-      } else if (lon > xE) {
-         if (lon-xE < 180)
-            xE = lon;
-         else if (lon-360 < xW)
-            xW = lon-360;
-      }
-      const double  lat = (*poi)->getLatitude();
-      if (lat < yS) yS  = lat;
-      if (lat > yN) yN  = lat;
-   }
-
-   qWarning() << "Zooming to" << xW << "-" << xE << "by" << yS << "-" << yN;
-   proj->zoomOnZone (xW,yN,xE,yS);
-   proj->setScale (proj->getScale()*.9);
+   route->zoom();
 }
 void POI::slotCompassLine()
 {
