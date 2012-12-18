@@ -35,7 +35,7 @@ void vlmPointGraphic::slot_showMe()
 }
 QRectF vlmPointGraphic::boundingRect() const
 {
-    return QRectF(-5,-5,10,10);
+    return QRectF(-10,-10,20,20);
 }
 void vlmPointGraphic::setEta(time_t eta)
 {

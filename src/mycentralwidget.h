@@ -39,7 +39,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #define Z_VALUE_LOADIMG    0.4
 #define Z_VALUE_FAXMETEO   0.5
 #define Z_VALUE_ROUTAGE    1
-#define Z_VALUE_ISOPOINT   2
 #define Z_VALUE_OPP        3
 #define Z_VALUE_ESTIME     4
 #define Z_VALUE_ROUTE      5
@@ -48,6 +47,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #define Z_VALUE_NEXT_GATE  9
 #define Z_VALUE_BOAT       10
 #define Z_VALUE_COMPASS    11
+#define Z_VALUE_ISOPOINT   12
 
 #define Z_VALUE_SELECTION  15
 
