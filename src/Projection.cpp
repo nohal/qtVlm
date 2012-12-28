@@ -96,10 +96,12 @@ void Projection::zoomOnZone(const double &x0, const double &y0, const double &x1
     //qWarning() << "final scale: " << scale;
 
     // Nouvelle position du centre
-    CX=(xE+xW)/2;
-    CY=(yN+yS)/2;
-    PX=CX;
-    PY=radToDeg(log(tan(degToRad(CY)/2 + M_PI_4)));
+    PX = (xE+xW)/2;
+    PY = ((radToDeg (log (tan (degToRad (yN)/2 + M_PI_4)))
+           + radToDeg (log (tan (degToRad (yS)/2 + M_PI_4))))
+          / 2);
+    CX = PX;
+    CY = radToDeg (2 * (atan (exp (degToRad (PY))) - M_PI_4));
 
     //qWarning() << "New center (" << CX << "," << CY << ") proj: (" << PX << "," << PY << ")";
 
@@ -282,6 +284,9 @@ void Projection::updateBoundaries() {
     /* lon */
     xW=PX-W/(2*scale);
     xE=PX+W/(2*scale);
+
+    //qWarning() << "Updated longitude range:" << xW << "-" << xE;
+    //qWarning() << "Updated latitude range :" << yN << "-" << yS;
 
     /* xW and yN => upper corner */
 
