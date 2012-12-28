@@ -333,7 +333,8 @@ myCentralWidget::myCentralWidget(Projection * proj,MainWindow * parent,MenuBar *
     view->setGeometry(0,0,width(),height());
     view->viewport()->grabGesture(Qt::PanGesture);
     view->viewport()->grabGesture(Qt::PinchGesture);
-
+    view->setHorizontalScrollBarPolicy (Qt::ScrollBarAlwaysOff);
+    view->setVerticalScrollBarPolicy (Qt::ScrollBarAlwaysOff);
 
     /* other child */
     inetManager = new inetConnexion(mainW);
