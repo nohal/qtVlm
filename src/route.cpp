@@ -255,7 +255,7 @@ void ROUTE::zoom()
       if (lat > yN) yN  = lat;
    }
 
-   qWarning() << "Zooming to" << xW << "-" << xE << "by" << yS << "-" << yN;
+   //qWarning() << "Zooming to" << xW << "-" << xE << "by" << yS << "-" << yN;
    proj->zoomOnZone (xW,yN,xE,yS);
    proj->setScale (proj->getScale()*.9);
 }

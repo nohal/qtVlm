@@ -93,7 +93,7 @@ class POI : public QGraphicsWidget
         void setOptimizing     (bool b) {this->optimizing=b;}
         void setMyLabelHidden  (bool b) {if(route==NULL) this->myLabelHidden=false; else this->myLabelHidden=b;}
         bool getMyLabelHidden  (void) {return this->myLabelHidden;}
-        void setNotSimplificable(bool b) {this->notSimplificable=b;this->ac_simplifiable->setChecked(b);}
+        void setNotSimplificable(bool b) {this->notSimplificable=b;this->ac_simplifiable->setChecked(b);update();}
         bool getNotSimplificable(){return this->notSimplificable;}
         QColor getLineColor(){return lineColor;}
         void setLineColor(QColor c){lineColor=c;}
@@ -151,7 +151,7 @@ public slots:
         void slot_zoomRoute();
         void slot_relier();
         void slot_pilote();
-        void slot_notSimplificable(bool b){this->notSimplificable=b;}
+        void slot_notSimplificable(bool b){this->notSimplificable=b;update();}
         void slot_routage(void) { ROUTAGE * routage=parent->addRoutage(); parent->slot_editRoutage(routage,true,this); }
 
     signals:

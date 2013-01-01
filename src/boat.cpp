@@ -592,7 +592,7 @@ void boat::updatePosition(void)
     //qWarning() << "upd position: " << x() << "," << y() << " -> " << boat_i << "," << boat_j;
     setPos(boat_i, boat_j);
     drawEstime();
-    if(WPLat != 0 && WPLon != 0)
+    if(selected && WPLat != 0 && WPLon != 0)
     {
         double I2,J2;
         proj->map2screenDouble(WPLon,WPLat,&I2,&J2);

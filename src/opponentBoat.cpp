@@ -344,7 +344,8 @@ void opponent::updateName()
             if(parentWindow->getSelectedBoat())
             {
                 Orthodromie oo(parentWindow->getSelectedBoat()->getLon(),parentWindow->getSelectedBoat()->getLat(),this->lon,this->lat);
-                if(oo.getDistance()<=25.0)
+                double distanceFromBoat=oo.getDistance();
+                if(distanceFromBoat<=25.0 /*|| true*/)
                 {
                     str2=str2+"<tr><td>"+tr("Vitesse estimee: ")+"</td><td>"+
                          QString().sprintf("%.2f ",estimatedSpeed)+
@@ -357,6 +358,9 @@ void opponent::updateName()
                 {
                     str2+=tr("Trop loin pour estimer le cap et la vitesse");
                 }
+                str2=str2+"<tr><td>"+tr("Distance: ")+"</td><td>"+
+                     QString().sprintf("%.2f ",distanceFromBoat)+
+                     tr(" NM")+"</td></tr>";
             }
         }
         str2.replace(" ","&nbsp;");

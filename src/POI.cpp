@@ -1373,6 +1373,12 @@ void POI::paint(QPainter * pnt, const QStyleOptionGraphicsItem * , QWidget * )
             }
         }
         pnt->setFont(font());
+        if(this->notSimplificable)
+        {
+            QPen pe=pnt->pen();
+            pe.setColor(Qt::red);
+            pnt->setPen(pe);
+        }
         pnt->drawText(10,fm.height()-2,my_str);
     }
     QColor myColor;

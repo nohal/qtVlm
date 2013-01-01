@@ -3471,6 +3471,7 @@ void myCentralWidget::doSimplifyRoute(ROUTE * route, bool fast)
     QList<POI*> pois=route->getPoiList();
     int ref_nbPois=pois.count();
     time_t ref_eta=route->getEta();
+    double ref_remain=route->getRemain();
     int nbDel=0;
     int phase=1;
     QProgressDialog p("","",1,ref_nbPois-2);
@@ -3489,6 +3490,7 @@ void myCentralWidget::doSimplifyRoute(ROUTE * route, bool fast)
         p.close();
     bool notFinished=true;
     time_t bestEta=ref_eta;
+    double bestRemain=ref_remain;
 
     while(notFinished && !abortRequest)
     {
@@ -3508,9 +3510,10 @@ void myCentralWidget::doSimplifyRoute(ROUTE * route, bool fast)
             QApplication::processEvents();
             if(!route->getHas_eta())
                 poi->setRoute(route);
-            else if(route->getEta()<=bestEta)
+            else if (route->getEta()<bestEta || (route->getEta()==bestEta && route->getRemain()<=bestRemain))
             {
                 bestEta=route->getEta();
+                bestRemain=route->getRemain();
                 notFinished=true;
                 slot_delPOI_list(poi);
                 delete poi;
@@ -3542,9 +3545,10 @@ void myCentralWidget::doSimplifyRoute(ROUTE * route, bool fast)
             QApplication::processEvents();
             if(!route->getHas_eta())
                 poi->setRoute(route);
-            else if(route->getEta()<=bestEta)
+            else if (route->getEta()<bestEta || (route->getEta()==bestEta && route->getRemain()<=bestRemain))
             {
                 bestEta=route->getEta();
+                bestRemain=route->getRemain();
                 notFinished=true;
                 slot_delPOI_list(poi);
                 poi->deleteLater();
@@ -3589,9 +3593,10 @@ void myCentralWidget::doSimplifyRoute(ROUTE * route, bool fast)
                 route->setTemp(false);
                 poi2->setRoute(route);
             }
-            else if(route->getEta()<=bestEta)
+            else if (route->getEta()<bestEta || (route->getEta()==bestEta && route->getRemain()<=bestRemain))
             {
                 bestEta=route->getEta();
+                bestRemain=route->getRemain();
                 notFinished=true;
                 slot_delPOI_list(poi1);
                 poi1->deleteLater();
@@ -3644,9 +3649,10 @@ void myCentralWidget::doSimplifyRoute(ROUTE * route, bool fast)
                 route->setTemp(false);
                 poi3->setRoute(route);
             }
-            else if(route->getEta()<=bestEta)
+            else if (route->getEta()<bestEta || (route->getEta()==bestEta && route->getRemain()<=bestRemain))
             {
                 bestEta=route->getEta();
+                bestRemain=route->getRemain();
                 notFinished=true;
                 slot_delPOI_list(poi1);
                 poi1->deleteLater();
