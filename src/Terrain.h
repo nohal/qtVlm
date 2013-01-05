@@ -108,6 +108,7 @@ signals:
     void mousePress(QGraphicsSceneMouseEvent* e);
     void mouseRelease(QGraphicsSceneMouseEvent* e);
     int  getRaceVacLen(boatVLM *,int*);
+    void terrainUpdated();
 
 protected:
     void paint(QPainter * pnt, const QStyleOptionGraphicsItem * , QWidget * );
@@ -186,6 +187,7 @@ private:
     ROUTAGE * routageGrib;
     QMutex mutex;
     QPoint scalePos;
+    QTimer * timerUpdated;
 };
 Q_DECLARE_TYPEINFO(Terrain,Q_MOVABLE_TYPE);
 

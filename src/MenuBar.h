@@ -314,6 +314,7 @@ public:
     QSpinBox *estime;
     QAction *acDatesGrib_prev;
     QAction *acDatesGrib_next;
+    QAction *acDatesGrib_play;
     QPushButton * datesGrib_now;
     QPushButton * datesGrib_sel;
 

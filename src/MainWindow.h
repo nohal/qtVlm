@@ -97,6 +97,7 @@ class MainWindow: public QMainWindow
 
         void slotDateStepChanged(int);
         void slotDateGribChanged_next();
+        void slotDateGribPlay();
         void slotDateGribChanged_prev();
         void slotDateGribChanged_now(bool b=true);
         void slotDateGribChanged_sel();

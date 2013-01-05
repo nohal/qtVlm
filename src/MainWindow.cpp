@@ -198,6 +198,8 @@ void MainWindow::connectSignals()
             this, SLOT(slotDateGribChanged_sel()));
     connect(mb->acDatesGrib_next, SIGNAL(triggered()),
             this, SLOT(slotDateGribChanged_next()));
+    connect(mb->acDatesGrib_play, SIGNAL(triggered()),
+            this, SLOT(slotDateGribPlay()));
     connect(mb->acDatesGrib_prev, SIGNAL(triggered()),
             this, SLOT(slotDateGribChanged_prev()));
     connect(mb->boatList, SIGNAL(activated(int)),
@@ -388,6 +390,8 @@ void MainWindow::continueSetup()
     toolBar->addAction(menuBar->acDatesGrib_prev);
     toolBar->addWidget(menuBar->cbGribStep);
     toolBar->addAction(menuBar->acDatesGrib_next);
+    toolBar->addAction(menuBar->acDatesGrib_play);
+    menuBar->acDatesGrib_play->setData(0);
     toolBar->addSeparator();
     toolBar->addAction(menuBar->acMap_Zoom_In);
     toolBar->addAction(menuBar->acMap_Zoom_Out);
@@ -397,6 +401,7 @@ void MainWindow::continueSetup()
     menuBar->cbGribStep->setEnabled(false);
     menuBar->acDatesGrib_prev->setEnabled(false);
     menuBar->acDatesGrib_next->setEnabled(false);
+    menuBar->acDatesGrib_play->setEnabled(false);
     menuBar->datesGrib_sel->setEnabled(false);
     menuBar->datesGrib_now->setEnabled(false);
 
@@ -827,6 +832,7 @@ void MainWindow::openGribFile(QString fileName, bool zoom, bool current)
         menuBar->cbGribStep->setEnabled(false);
         menuBar->acDatesGrib_prev->setEnabled(false);
         menuBar->acDatesGrib_next->setEnabled(false);
+        menuBar->acDatesGrib_play->setEnabled(false);
         menuBar->datesGrib_sel->setEnabled(false);
         menuBar->datesGrib_now->setEnabled(false);
     }
@@ -835,6 +841,7 @@ void MainWindow::openGribFile(QString fileName, bool zoom, bool current)
         menuBar->cbGribStep->setEnabled(true);
         menuBar->acDatesGrib_prev->setEnabled(true);
         menuBar->acDatesGrib_next->setEnabled(true);
+        menuBar->acDatesGrib_play->setEnabled(true);
         menuBar->datesGrib_sel->setEnabled(true);
         menuBar->datesGrib_now->setEnabled(true);
     }
@@ -1128,6 +1135,7 @@ void MainWindow::slotFile_Close_Current() {
     {
         menuBar->acDatesGrib_prev->setEnabled(false);
         menuBar->acDatesGrib_next->setEnabled(false);
+        menuBar->acDatesGrib_play->setEnabled(false);
         menuBar->cbGribStep->setEnabled(false);
         menuBar->datesGrib_sel->setEnabled(false);
         menuBar->datesGrib_now->setEnabled(false);
@@ -1145,6 +1153,7 @@ void MainWindow::slotFile_Close()
     {
         menuBar->acDatesGrib_prev->setEnabled(false);
         menuBar->acDatesGrib_next->setEnabled(false);
+        menuBar->acDatesGrib_play->setEnabled(false);
         menuBar->cbGribStep->setEnabled(false);
         menuBar->datesGrib_sel->setEnabled(false);
         menuBar->datesGrib_now->setEnabled(false);
@@ -1178,6 +1187,7 @@ void MainWindow::updatePrevNext(void)
         int step=getGribStep();
         menuBar->acDatesGrib_prev->setEnabled( ((tps-step)>=min) );
         menuBar->acDatesGrib_next->setEnabled( ((tps+step)<=max) );
+        menuBar->acDatesGrib_play->setEnabled( ((tps+step)<=max) );
         menuBar->cbGribStep->setEnabled(true);
         menuBar->datesGrib_sel->setEnabled(true);
         menuBar->datesGrib_now->setEnabled(true);
@@ -1187,6 +1197,7 @@ void MainWindow::updatePrevNext(void)
         menuBar->cbGribStep->setEnabled(false);
         menuBar->acDatesGrib_prev->setEnabled(false);
         menuBar->acDatesGrib_next->setEnabled(false);
+        menuBar->acDatesGrib_play->setEnabled(false);
         menuBar->datesGrib_sel->setEnabled(false);
         menuBar->datesGrib_now->setEnabled(false);
     }
@@ -1218,6 +1229,7 @@ void MainWindow::slotDateGribChanged_sel()
 //-------------------------------------------------
 void MainWindow::slotDateGribChanged_next()
 {
+    QApplication::processEvents();
     Grib * grib = my_centralWidget->getGrib();
     if(grib)
     {
@@ -1225,9 +1237,43 @@ void MainWindow::slotDateGribChanged_next()
         time_t max=grib->getMaxDate();
         int step=getGribStep();
         if((tps+step)<=max)
+        {
             my_centralWidget->setCurrentDate(tps+step);
+            updatePrevNext();
+        }
+        else if(menuBar->acDatesGrib_play->data().toInt()==1)
+        {
+            menuBar->acDatesGrib_play->setIcon(QIcon(appFolder.value("img")+"player_play.png"));
+            menuBar->acDatesGrib_play->setData(0);
+            disconnect(my_centralWidget->getTerre(),SIGNAL(terrainUpdated()),this,SLOT(slotDateGribChanged_next()));
+        }
     }
-    updatePrevNext();
+}
+void MainWindow::slotDateGribPlay()
+{
+    if(menuBar->acDatesGrib_play->data().toInt()==0)
+    {
+        Grib * grib = my_centralWidget->getGrib();
+        if(grib)
+        {
+            time_t tps=my_centralWidget->getCurrentDate();
+            time_t max=grib->getMaxDate();
+            int step=getGribStep();
+            if((tps+step)<=max)
+            {
+                menuBar->acDatesGrib_play->setIcon(QIcon(appFolder.value("img")+"player_end.png"));
+                menuBar->acDatesGrib_play->setData(1);
+                connect(my_centralWidget->getTerre(),SIGNAL(terrainUpdated()),this,SLOT(slotDateGribChanged_next()));
+                slotDateGribChanged_next();
+            }
+        }
+    }
+    else
+    {
+        menuBar->acDatesGrib_play->setIcon(QIcon(appFolder.value("img")+"player_play.png"));
+        menuBar->acDatesGrib_play->setData(0);
+        disconnect(my_centralWidget->getTerre(),SIGNAL(terrainUpdated()),this,SLOT(slotDateGribChanged_next()));
+    }
 }
 //-------------------------------------------------
 void MainWindow::slotDateGribChanged_prev()

@@ -43,6 +43,7 @@ Copyright (C) 2008 - Jacques Zaninetti - http://zygrib.free.fr
 #include "Grib.h"
 #include "loadImg.h"
 #include "Orthodromie.h"
+#include <QTimer>
 
 //---------------------------------------------------------
 // Constructeur
@@ -58,7 +59,10 @@ Terrain::Terrain(myCentralWidget *parent, Projection *proj_) : QGraphicsWidget()
     connect(parent,SIGNAL(redrawGrib()),this,SLOT(redrawGrib()));
     connect(this,SIGNAL(mousePress(QGraphicsSceneMouseEvent*)),parent,SLOT(slot_mousePress(QGraphicsSceneMouseEvent*)));
     connect(this,SIGNAL(mouseRelease(QGraphicsSceneMouseEvent*)),parent,SLOT(slot_mouseRelease(QGraphicsSceneMouseEvent*)));
-
+    timerUpdated=new QTimer(this);
+    timerUpdated->setSingleShot(true);
+    timerUpdated->setInterval(200);
+    connect(timerUpdated,SIGNAL(timeout()),this,SIGNAL(terrainUpdated()));
     setZValue(Z_VALUE_TERRE);
     setData(0,TERRE_WTYPE);
 
@@ -857,8 +861,8 @@ void Terrain::paint(QPainter * pnt, const QStyleOptionGraphicsItem * , QWidget *
 {
     pnt->setRenderHint(QPainter::Antialiasing,true);
     pnt->drawPixmap(0,0, *imgAll);
+    timerUpdated->start();
 }
-
 void Terrain::indicateWaitingMap()
 {
     if(imgAll!=NULL && imgAll->paintingActive())

@@ -477,6 +477,8 @@ MenuBar::MenuBar(QWidget *parent)
             tr("Prevision precedente [page prec]"),tr("PgUp"),tr(""),appFolder.value("img")+"1leftarrow.png");
     acDatesGrib_next = addAction( NULL,
             tr("Prevision suivante [page suiv]"),tr("PgDown"),tr(""),appFolder.value("img")+"1rightarrow.png");
+    acDatesGrib_play = addAction( NULL,
+            tr("Animation du grib"),tr(""),tr(""),appFolder.value("img")+"player_play.png");
 
     datesGrib_now = new QPushButton(tr("Now"));
     datesGrib_sel = new QPushButton(tr("Select"));
