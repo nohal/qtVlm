@@ -22,6 +22,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <QDebug>
 #include <QStringList>
 #include <QGraphicsSceneEvent>
+#include <QMessageBox>
+#include <QListWidget>
+#include <QPushButton>
+#include <QApplication>
+#include <QClipboard>
 
 #include "DialogRealBoatPosition.h"
 
@@ -33,11 +38,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "Orthodromie.h"
 #include "Polar.h"
 #include "orthoSegment.h"
-#include <QMessageBox>
-#include <QListWidget>
-#include <QPushButton>
-#include <QApplication>
-#include <QClipboard>
+
+
 //#define GPS_FILE
 
 boatReal::boatReal(QString pseudo, bool activated, Projection * proj,MainWindow * main,

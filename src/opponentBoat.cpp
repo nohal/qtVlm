@@ -516,8 +516,6 @@ opponentList::opponentList(Projection * proj,MainWindow * main,myCentralWidget *
 {
     inetClient::setName("OpponentList");
 
-    needAuth=true;
-
     this->parent=parent;
     connect(parent,SIGNAL(resetTraceCache()),this,SLOT(slot_resetTraceCache()));
     this->main=main;
@@ -684,7 +682,7 @@ void opponentList::getGenData()
         QTextStream(&page)<<"&limit=10";
     //qWarning() << "OPP, clearReq 2";
     clearCurrentRequest();
-    inetGet(OPP_BOAT_DATA,page);
+    inetGet(OPP_BOAT_DATA,page,true);
 }
 
 void opponentList::getNxtOppData()
@@ -766,7 +764,7 @@ void opponentList::getNxtOppData()
             << "&starttime="
             << starttime;
     }
-    inetGet(OPP_BOAT_TRJ,page);
+    inetGet(OPP_BOAT_TRJ,page,true);
 }
 
 void opponentList::authFailed(void)
@@ -1034,7 +1032,7 @@ void opponentList::requestFinished (QByteArray res_byte)
                                             << "/ws/raceinfo/reals.php?idr="
                                             << currentRace;
                         clearCurrentRequest();
-                        inetGet(OPP_BOAT_REAL,page);
+                        inetGet(OPP_BOAT_REAL,page,true);
                     }
                     else if(opponent_list.count()>0)
                     {
@@ -1122,7 +1120,7 @@ void opponentList::requestFinished (QByteArray res_byte)
                     << opp->getIduser()
                     <<"&idr="
                     <<opp->getRace();
-                inetGet(OPP_INFO_REAL,page);
+                inetGet(OPP_INFO_REAL,page,true);
             }
             else
                 getNxtOppData();
@@ -1209,20 +1207,14 @@ void opponentList::getTrace(QByteArray buff, QList<vlmPoint> * trace)
     if(checkWSResult(buff,"OppList_getTrack",main))
     {
         int nbPoints= result["nb_tracks"].toInt();
-        //qWarning() << "Nb point in track: " << nbPoints;
         if(nbPoints > 0)
         {
-            //int i=0;
 #if 0
             qWarning()<<"trace last timestamp=   "<<QDateTime().fromTime_t(trace->last().timeStamp);
-#endif
             QVariant pos_list0 = result["tracks"].toList();
             QList<QVariant> pos_list1=pos_list0.toList()[0].toList();
-#if 0
             qWarning()<<"received trace starts at"<<QDateTime().fromTime_t(pos_list1[0].toInt());
-#endif
             pos_list1=pos_list0.toList().last().toList();
-#if 0
             qWarning()<<"received trace ends at  "<<QDateTime().fromTime_t(pos_list1[0].toInt());
 #endif
             foreach (QVariant pos, result["tracks"].toList())
@@ -1232,11 +1224,9 @@ void opponentList::getTrace(QByteArray buff, QList<vlmPoint> * trace)
                     continue;
                 double lon = pos_list[1].toDouble()/1000;
                 double lat = pos_list[2].toDouble()/1000;
-                //qWarning() << i << ": " << QDateTime::fromTime_t(pos_list[0].toInt()) << " - " << lon << "," << lat;
                 vlmPoint pt(lon,lat);
                 pt.timeStamp=pos_list[0].toInt();
                 trace->append(pt);
-                //++i;
             }
         }
     }

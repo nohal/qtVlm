@@ -43,8 +43,6 @@ GshhsDwnload::GshhsDwnload(myCentralWidget * centralWidget, inetConnexion *inet)
   inetClient(inet)
 {
     this->centralWidget=centralWidget;
-
-    needAuth=false;
 }
 
 #define MAP_FNAME  "qtVlmMaps.zip" //"win_exe-3.1-1.zip"
@@ -96,7 +94,7 @@ void GshhsDwnload::getMaps(void) {
     connect (this->getInet()->getProgressDialog(),SIGNAL(rejected()),this,SLOT(slot_abort()));
     finished=false;
     filename="";
-    inetGetProgress(1,page,"http://www.virtual-winds.com");
+    inetGetProgress(1,page,"http://www.virtual-winds.com",false);
     while(!finished) {
         QCoreApplication::processEvents(QEventLoop::AllEvents, 10);
     }

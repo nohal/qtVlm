@@ -43,8 +43,6 @@ Player::Player(QString login, QString pass,int type, int id, QString name,
 
     inetClient::setName(login);
 
-    needAuth=true;
-
     this->parent=parent;
     this->main=main;
     this->proj=proj;
@@ -130,7 +128,7 @@ void Player::doRequest(int requestCmd)
                 return;
         }
 
-        inetGet(requestCmd,page);
+        inetGet(requestCmd,page,true);
     }
 }
 

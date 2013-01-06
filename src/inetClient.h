@@ -47,31 +47,32 @@ class inetClient
         int  getCurrentRequest(void) { return currentRequest; }
         QString getName(){return this->name;}
         void setName(QString name){this->name=name;}
-        bool getNeedAuth(void) {return needAuth;}
+        bool get_currentNeedAuth(void) { return currentNeedAuth; }
+        void set_currentNeedAuth(bool val) { this->currentNeedAuth = val; }
 
         inetConnexion * getInet(void) { return inet; }
 
         int nbAuth;
 
     protected:
-       void inetGet(int currentRequest,QString url);
-       void inetGetProgress(int currentRequest,QString requestUrl);
-       void inetPost(int currentRequest,QString requestUrl,QString data);
+       void inetGet(int currentRequest,QString url,bool needAuth);
+       void inetGetProgress(int currentRequest,QString requestUrl, bool needAuth);
+       void inetPost(int currentRequest,QString requestUrl,QString data, bool needAuth);
 
-       void inetGet(int currentRequest,QString url,QString host);
-       void inetGetProgress(int currentRequest,QString requestUrl,QString host);
-       void inetPost(int currentRequest,QString requestUrl,QString data,QString host);
+       void inetGet(int currentRequest,QString url,QString host, bool needAuth);
+       void inetGetProgress(int currentRequest,QString requestUrl,QString host, bool needAuth);
+       void inetPost(int currentRequest,QString requestUrl,QString data,QString host, bool needAuth);
 
        bool hasRequest(void) { return (myReply!=NULL); }
        bool hasInet(void) {return (inet!=NULL); }
 
        bool checkWSResult(QByteArray res,QString caller,QWidget * parent,QString order=QString());
 
-       bool needAuth;
        void inetAbort(){myReply->abort();delete myReply;myReply=NULL;}
 
     private:
        int currentRequest;
+       bool currentNeedAuth;
        bool hasProgress;
        inetConnexion * inet;
        QNetworkReply * myReply;

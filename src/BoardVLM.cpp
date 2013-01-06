@@ -48,9 +48,6 @@ boardVLM::boardVLM(MainWindow * mainWin, inetConnexion * inet, board * parent) :
     this->mainWin = mainWin;
     this->parent=parent;
 
-    needAuth=true;
-
-
     connect(this,SIGNAL(VLM_Sync()),mainWin,SLOT(slotVLM_Sync()));    
     connect(this,SIGNAL(POI_selectAborted(POI*)),mainWin,SLOT(slot_POIselected(POI*)));
     connect(this->ClearPilot,SIGNAL(clicked()),this,SLOT(clearPilototo()));
@@ -978,7 +975,7 @@ void boardVLM::sendCmd(int cmdNum,double  val1,double val2, double val3)
     QTextStream(&data) << "parms=" << json;
     QTextStream(&data) << "&select_idu=" << currentBoat()->getId();
     //qWarning()<<"sending:"<<url<<data;
-    inetPost(VLM_DO_REQUEST,url,data);
+    inetPost(VLM_DO_REQUEST,url,data,true);
 }
 
 void boardVLM::requestFinished (QByteArray res)

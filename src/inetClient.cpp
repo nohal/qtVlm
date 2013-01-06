@@ -31,58 +31,57 @@ inetClient::inetClient(inetConnexion * inet)
     myReply = NULL;
     currentRequest=-1;
     hasProgress=false;
-    needAuth=false;
     this->inet=inet;
     this->nbAuth=0;
     this->name="Unknown";
 }
 
-void inetClient::inetGet(int currentRequest,QString requestUrl)
+void inetClient::inetGet(int currentRequest,QString requestUrl, bool needAuth)
 {
-    inetGet(currentRequest,requestUrl,QString());
+    inetGet(currentRequest,requestUrl,QString(),needAuth);
 }
 
-void inetClient::inetGetProgress(int currentRequest,QString requestUrl)
+void inetClient::inetGetProgress(int currentRequest,QString requestUrl, bool needAuth)
 {
-    inetGetProgress(currentRequest,requestUrl,QString());
+    inetGetProgress(currentRequest,requestUrl,QString(),needAuth);
 }
 
-void inetClient::inetPost(int currentRequest,QString requestUrl,QString data)
+void inetClient::inetPost(int currentRequest,QString requestUrl,QString data, bool needAuth)
 {
-    inetPost(currentRequest,requestUrl,data,QString());
+    inetPost(currentRequest,requestUrl,data,QString(),needAuth);
 }
 
-void inetClient::inetGet(int currentRequest,QString requestUrl,QString host)
+void inetClient::inetGet(int currentRequest,QString requestUrl,QString host, bool needAuth)
 {
     if(inet)
     {
         this->currentRequest=currentRequest;
         this->nbAuth=0;
-        inet->doRequestGet(this,requestUrl,host);
+        inet->doRequestGet(this,requestUrl,host,needAuth);
     }
     else
         qWarning() << "Doing inetGet with no inet available";
 }
 
-void inetClient::inetGetProgress(int currentRequest,QString requestUrl,QString host)
+void inetClient::inetGetProgress(int currentRequest,QString requestUrl,QString host, bool needAuth)
 {
     if(inet)
     {
         this->currentRequest=currentRequest;
         this->nbAuth=0;
-        inet->doRequestGetProgress(this,requestUrl,host);
+        inet->doRequestGetProgress(this,requestUrl,host,needAuth);
     }
     else
         qWarning() << "Doing inetGetProgress with no inet available";
 }
 
-void inetClient::inetPost(int currentRequest,QString requestUrl,QString data,QString host)
+void inetClient::inetPost(int currentRequest,QString requestUrl,QString data,QString host, bool needAuth)
 {
     if(inet)
     {
         this->currentRequest=currentRequest;
         this->nbAuth=0;
-        inet->doRequestPost(this,requestUrl,data,host);
+        inet->doRequestPost(this,requestUrl,data,host,needAuth);
     }
     else
         qWarning() << "Doing inetPost with no inet available";

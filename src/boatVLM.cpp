@@ -67,7 +67,6 @@ boatVLM::boatVLM(QString        pseudo, bool activated, int boatId, int playerId
     firstSynch=false;
     race_name="";
     playerName=player->getName();
-    needAuth=true;
     this->rank=1;
     connect(parent, SIGNAL(shPor(bool)),this,SLOT(slot_shPor()));
     connect(parent,SIGNAL(resetTraceCache()),this,SLOT(slot_resetTraceCache()));
@@ -211,7 +210,7 @@ void boatVLM::doRequest(int requestCmd)
                 qWarning() << "[boatVLM-doRequest] error: unknown request: " << requestCmd;
                 break;
         }
-        inetGet(requestCmd,page);
+        inetGet(requestCmd,page,true);
     }
     else
     {

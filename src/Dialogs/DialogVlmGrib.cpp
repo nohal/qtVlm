@@ -182,7 +182,7 @@ bool DialogVlmGrib::doRequest(int reqType)
     switch(reqType)
     {
         case VLM_REQUEST_GET_FOLDER:
-            inetGet(VLM_REQUEST_GET_FOLDER,"/","http://grib.virtual-loup-de-mer.org");
+            inetGet(VLM_REQUEST_GET_FOLDER,"/","http://grib.virtual-loup-de-mer.org",false);
             break;
         case VLM_REQUEST_GET_FILE:
             /*search selected file*/
@@ -198,7 +198,7 @@ bool DialogVlmGrib::doRequest(int reqType)
                 filename=filename.mid(0,23);
             page="/"+filename;
             connect (this->getInet()->getProgressDialog(),SIGNAL(rejected()),this,SLOT(slot_abort()));
-            inetGetProgress(VLM_REQUEST_GET_FILE,page,"http://grib.virtual-loup-de-mer.org");
+            inetGetProgress(VLM_REQUEST_GET_FILE,page,"http://grib.virtual-loup-de-mer.org",false);
             break;
     }
     return true;

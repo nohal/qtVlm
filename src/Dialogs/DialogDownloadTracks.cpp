@@ -264,7 +264,7 @@ bool DialogDownloadTracks::doRequest(int reqType)
                << startTime;
 //               << "&endtime="
 //               << endTime;
-        inetGet(VLM_GET_TRACK,page);
+        inetGet(VLM_GET_TRACK,page,false);
         qWarning()<<"Sending Track Request: "<<page;
         break;
     case VLM_GET_PARTIAL_TRACK:
@@ -278,7 +278,7 @@ bool DialogDownloadTracks::doRequest(int reqType)
                << startTime
                << "&endtime="
                << endTime;
-        inetGet(VLM_GET_PARTIAL_TRACK,page);
+        inetGet(VLM_GET_PARTIAL_TRACK,page,false);
         qWarning()<<"Sending Track Request: "<<page;
         break;
     case VLM_RACE_INFO:
@@ -286,7 +286,7 @@ bool DialogDownloadTracks::doRequest(int reqType)
                << "/ws/raceinfo.php?"
                <<"idrace="
                << raceID;
-        inetGet(VLM_RACE_INFO,page);
+        inetGet(VLM_RACE_INFO,page,false);
         qWarning()<<"Sending Track Request: "<<page;
         break;
     case VLM_BOAT_INFO:
@@ -294,7 +294,7 @@ bool DialogDownloadTracks::doRequest(int reqType)
                << "/ws/boatinfo/profile.php?"
                <<"idu="
                << boatID;
-        inetGet(VLM_BOAT_INFO,page);
+        inetGet(VLM_BOAT_INFO,page,false);
         qWarning()<<"Sending Track Request: "<<page;
         break;
     }

@@ -763,7 +763,7 @@ void polarList::get_polarList(void)
     QString page;
     QTextStream(&page) << "/ws/polarlist.php";
 
-    inetGet(0,page);
+    inetGet(0,page,false);
 
 }
 
