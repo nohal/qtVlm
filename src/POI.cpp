@@ -80,6 +80,7 @@ POI::POI(QString name, int type, double lat, double lon,
     this->piloteDate=-1;
     this->piloteWph=-1;
     this->sequence=0;
+    this->autoRange = true;
     useRouteTstamp=false;
     routeTimeStamp=-1;
     route=NULL;
@@ -1156,7 +1157,7 @@ void POI::slot_finePosit(bool silent)
         }                                       \
     } while (0)
 
-    if (silent) {
+    if (autoRange || silent) {
         /* if 0 starts from boat, cannot be last*/
         const int    myRank = route->getPoiList().indexOf (this);
 

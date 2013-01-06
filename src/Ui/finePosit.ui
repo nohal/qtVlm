@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>279</width>
-    <height>163</height>
+    <height>188</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -119,6 +119,13 @@
      </property>
      <property name="checked">
       <bool>false</bool>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QCheckBox" name="autoRange">
+     <property name="text">
+      <string>Ecart automatique</string>
      </property>
     </widget>
    </item>

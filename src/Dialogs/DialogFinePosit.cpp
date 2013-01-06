@@ -40,6 +40,7 @@ DialogFinePosit::DialogFinePosit(POI * poi,myCentralWidget *parent)
     this->etendueLon->setFocus();
     this->etendueLon->selectAll();
     this->keepOldMe->setChecked(Settings::getSetting("KeepOldPoi","0").toInt()==1);
+    this->autoRange->setChecked(poi->getAutoRange());
     buttonBox->button(QDialogButtonBox::Ok)->setDefault(true);
     buttonBox->button(QDialogButtonBox::Cancel)->setDefault(false);
 }
@@ -58,6 +59,7 @@ void DialogFinePosit::done(int result)
         poi->setSearchStep(step->value());
         poi->setOptimizing(drawRoute->isChecked());
         Settings::setSetting("KeepOldPoi",keepOldMe->isChecked()?"1":"0");
+        poi->setAutoRange (autoRange->isChecked());
     }
     if(result == QDialog::Rejected)
     {

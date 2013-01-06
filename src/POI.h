@@ -73,6 +73,7 @@ class POI : public QGraphicsWidget
         bool    getHas_eta(void)        {return useRouteTstamp;}
         double getLonConnected(){return lonConnected;}
         double getLatConnected(){return latConnected;}
+        bool    getAutoRange(void)  { return autoRange; }
 
         /* modification des données */
         void setName           (QString name);
@@ -105,6 +106,7 @@ class POI : public QGraphicsWidget
         void setLineBetweenPois(vlmLine * line){this->lineBetweenPois=line;}
         bool getPiloteSelected(){return piloteSelected;}
         void setPiloteSelected(bool b){this->piloteSelected=b;this->ac_pilot->setChecked(b);}
+        void setAutoRange (bool b) { autoRange = b; }
         /* comparateur de classe pour le tri */
         static bool byName(POI * POI_1,POI* POI_2) {return POI_1->name < POI_2->name;}
         static bool bySequence(POI * POI_1,POI* POI_2) {return POI_1->sequence < POI_2->sequence;}
@@ -205,6 +207,7 @@ public slots:
         bool     isMoving;
         int      mouse_x,mouse_y;
         boat *   myBoat;
+        bool     autoRange;
 
         void update_myStr();
 
