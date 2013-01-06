@@ -45,19 +45,19 @@ class Orthodromie
         void  setStartPoint (double x,double y);
         void  setEndPoint   (double x,double y);
 
-        double getDistance()     {return distanceNM;}
-        double getAzimutDeg()    {return azimutDeg;}
-        double getAzimutRad()    {return azimut;}
-        double getLoxoCap();
-        double getLoxoDistance();
-        void  getMidPoint(double *x, double *y);
+        double getDistance()  const {return distanceNM;}
+        double getAzimutDeg() const {return azimutDeg;}
+        double getAzimutRad() const {return azimut;}
+        double getLoxoCap() const;
+        double getLoxoDistance() const;
+        void  getMidPoint(double *x, double *y) const;
         
         //// Reduce an angle to (-PI/2, PI/2), for latitudes.
-        double  reduceLat(double lat);
+        double  reduceLat(double lat) const;
         //// Reduce and angle to (-PI, PI), for longitudes.
-        double  reduceLng(double lng);
+        double  reduceLng(double lng) const;
         //// Reduce an angle to (0, 2*PI), for direction and azimuth.
-        double  reduceAzimut(double azimuth);
+        double  reduceAzimut(double azimuth) const;
 
         static void draw_OrthodromieSegment(Projection * proj, QPainter * pnt, double x0,double y0, double x1,double y1, int recurs=0);
 

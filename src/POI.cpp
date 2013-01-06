@@ -1071,30 +1071,6 @@ void POI::slot_finePosit(bool silent)
     }
     double rangeLon=searchRangeLon;
     double rangeLat=searchRangeLat;
-    if(silent)
-    {
-        int myRank=route->getPoiList().indexOf(this);/* if 0 starts from boat, cannot be last*/
-        double lonPrevious, latPrevious, lonNext, latNext;
-        if(myRank==0)
-        {
-            lonPrevious=route->getBoat()->getLon();
-            latPrevious=route->getBoat()->getLat();
-        }
-        else
-        {
-            lonPrevious=route->getPoiList().at(myRank-1)->getLongitude();
-            latPrevious=route->getPoiList().at(myRank-1)->getLatitude();
-        }
-        lonNext = route->getPoiList().at(myRank+1)->getLongitude();
-        latNext = route->getPoiList().at(myRank+1)->getLatitude();
-        rangeLon
-            = rangeLat
-            = qMin (3.0,
-                    qMax (0.1,
-                          qMax (qAbs (lonNext-lonPrevious) / 2,
-                                qAbs (latNext-latPrevious) / 2)));
-    }
-    //qWarning()<<"ranges:"<<rangeLon<<rangeLat;
     double step=searchStep;
     QString r;
     route->setOptimizing(!this->optimizing);
@@ -1180,12 +1156,51 @@ void POI::slot_finePosit(bool silent)
         }                                       \
     } while (0)
 
-    simplex[1].lon = lon-rangeLon;
-    simplex[1].lat = lat;
+    if (silent) {
+        /* if 0 starts from boat, cannot be last*/
+        const int    myRank = route->getPoiList().indexOf (this);
+
+        // Get the coordinates of the current POI
+        const double cLat = getLatitude();
+        const double cLon = getLongitude();
+
+        // Get the coordinates of the previous POI
+        const double pLat = ((myRank == 0)
+                             ? route->getBoat()->getLat()
+                             : route->getPoiList().at (myRank-1)->getLatitude());
+        const double pLon = ((myRank == 0)
+                             ? route->getBoat()->getLon()
+                             : route->getPoiList().at (myRank-1)->getLongitude());
+
+        // Get the coordinates of the next POI
+        const double nLat = route->getPoiList().at (myRank+1)->getLatitude();
+        const double nLon = route->getPoiList().at (myRank+1)->getLongitude();
+
+        // Select the neighbour that is furthest from the current POI
+        const Orthodromie  pOrth (cLon, cLat, pLon, pLat);
+        const Orthodromie  nOrth (cLon, cLat, nLon, nLat);
+
+        const bool useNext = (pOrth.getDistance() < nOrth.getDistance());
+
+        const double   rAzimuth
+            = useNext ? nOrth.getAzimutDeg() : pOrth.getAzimutDeg();
+        const double   distance
+            = (useNext ? nOrth.getDistance() : pOrth.getDistance()) / 2;
+
+        // Initialize the candidates
+        Util::getCoordFromDistanceAngle (cLat, cLon,
+                                         distance, rAzimuth + 30,
+                                         &simplex[1].lat, &simplex[1].lon);
+        Util::getCoordFromDistanceAngle (cLat, cLon,
+                                         distance, rAzimuth - 30,
+                                         &simplex[2].lat, &simplex[2].lon);
+    } else {
+       simplex[1].lon = lon-rangeLon;
+       simplex[1].lat = lat;
+       simplex[2].lon = lon;
+       simplex[2].lat = lat-rangeLat;
+    }
     TRYPOINT (simplex[1]);
-    
-    simplex[2].lon = lon;
-    simplex[2].lat = lat-rangeLat;
     TRYPOINT (simplex[2]);
 
     SORTSIMPLEX;

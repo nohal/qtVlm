@@ -82,7 +82,7 @@ void Orthodromie::setEndPoint   (double x,double y)
 }
 
 //------------------------------------------------------------------------------
-void Orthodromie::getMidPoint(double *x, double *y)
+void Orthodromie::getMidPoint(double *x, double *y) const
 {
     double Bx = cosEndLat*cosDeltaLng;
     double By = cosEndLat*sinDeltaLng;
@@ -95,23 +95,23 @@ void Orthodromie::getMidPoint(double *x, double *y)
 
 //------------------------------------------------------------------------------
 //// Reduce an angle to (-PI/2, PI/2), for latitudes.
-double Orthodromie::reduceLat(double lat)  // old name: fng(x)
+double Orthodromie::reduceLat(double lat) const // old name: fng(x)
 {
   return lat - M_PI * floor((lat + M_PI/2.0) / M_PI);
 }
 //// Reduce and angle to (-PI, PI), for longitudes.
-double Orthodromie::reduceLng(double lng)  // old name: fnl(x)
+double Orthodromie::reduceLng(double lng) const // old name: fnl(x)
 {
   return lng - 2.0*M_PI * floor((lng + M_PI ) / (2.0*M_PI));
 }
 //// Reduce an angle to (0, 2*PI), for direction and azimuth.
-double Orthodromie::reduceAzimut(double azimut)
+double Orthodromie::reduceAzimut(double azimut) const
 {
   return azimut - 2.0*M_PI * floor(azimut / (2.0*M_PI));
 }
 
 //-------------------------------------------------------
-// TracÃ© rÃ©cursif
+// Trace recursif
 void Orthodromie::draw_OrthodromieSegment(Projection * proj, QPainter * pnt,
                             double x0,double y0, double x1,double y1,
                             int recurs
@@ -166,14 +166,14 @@ void Orthodromie::draw_OrthodromieSegment(Projection * proj, QPainter * pnt,
         }
     }
 }
-double Orthodromie::getLoxoCap()
+double Orthodromie::getLoxoCap() const
 {
     double L0=log(tan(M_PI_4+lat0/2));
     double L1=log(tan(M_PI_4+lat1/2));
     double loxo=atan2((lon1-lon0),(L1-L0));
     return 180.0/M_PI*loxo;
 }
-double Orthodromie::getLoxoDistance()
+double Orthodromie::getLoxoDistance() const
 {
     double L0=log(tan(M_PI_4+lat0/2));
     double L1=log(tan(M_PI_4+lat1/2));
