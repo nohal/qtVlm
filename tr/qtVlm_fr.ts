@@ -1780,6 +1780,10 @@ Etes-vous sur ?</source>
         <source>Editer la route</source>
         <translation></translation>
     </message>
+    <message>
+        <source>Zoom sur la route </source>
+        <translation>Zoom sur la route </translation>
+    </message>
 </context>
 <context>
     <name>MenuBar</name>
@@ -2678,6 +2682,14 @@ Etes-vous sur ?</source>
     <message>
         <source>Positionner l&apos;echelle ici</source>
         <translation>Positionner l&apos;échelle de la carte ici</translation>
+    </message>
+    <message>
+        <source>Animation du grib</source>
+        <translation>Animer le grib</translation>
+    </message>
+    <message>
+        <source>Zoom sur la route </source>
+        <translation>Zoom sur la route </translation>
     </message>
 </context>
 <context>
@@ -4671,6 +4683,10 @@ sans simplifier</translation>
         <source>Automatique</source>
         <translation></translation>
     </message>
+    <message>
+        <source>Algorithme de simplification maximal</source>
+        <translation>Algorithme de simplification maximal</translation>
+    </message>
 </context>
 <context>
     <name>WP_dialog_ui</name>
@@ -5761,6 +5777,10 @@ p, li { white-space: pre-wrap; }
         <source>Ecart initial (latitude)</source>
         <translation></translation>
     </message>
+    <message>
+        <source>Ecart automatique</source>
+        <translation>Écart automatique</translation>
+    </message>
 </context>
 <context>
     <name>gribValidation</name>
@@ -6598,6 +6618,14 @@ Que voulez vous faire?</translation>
     <message>
         <source>Trop loin pour estimer le cap et la vitesse</source>
         <translation></translation>
+    </message>
+    <message>
+        <source>Distance: </source>
+        <translation>Distance : </translation>
+    </message>
+    <message>
+        <source> NM</source>
+        <translation> NM</translation>
     </message>
 </context>
 <context>
