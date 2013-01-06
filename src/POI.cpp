@@ -78,6 +78,7 @@ POI::POI(QString name, int type, double lat, double lon,
     this->colorPilototo=0;
     this->piloteSelected=false;
     this->piloteDate=-1;
+    this->piloteWph=-1;
     this->sequence=0;
     useRouteTstamp=false;
     routeTimeStamp=-1;
@@ -725,6 +726,7 @@ void POI::chkIsWP(void)
 }
 void POI::setWph(double wph)
 {
+    if(qRound(wph*10.0)==qRound(this->wph*10.0)) return;
     this->wph=qRound(wph*10.0)/10.0;
     if(this->isWp)
     {
@@ -949,7 +951,7 @@ void POI::slot_WPChanged(double tlat,double tlon)
         if(qRound(lon*1000)==qRound(wlon*1000) && qRound(lat*1000)==qRound(wlat*1000))
         {
             colorPilototo=n+1;
-            this->setWph(isi.at(4).split("@").at(1).toDouble());
+            //this->setWph(isi.at(4).split("@").at(1).toDouble());
             break;
         }
     }

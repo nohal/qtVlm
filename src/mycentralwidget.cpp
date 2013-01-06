@@ -3464,6 +3464,7 @@ void myCentralWidget::slot_abortRequest()
 
 void myCentralWidget::doSimplifyRoute(ROUTE * route, bool fast)
 {
+    bool strongSimplify=Settings::getSetting("strongSimplify",1).toInt()==1;
     route->setSimplify(true);
     int firstPOI=1;
     if(route->getStartFromBoat())
@@ -3510,7 +3511,7 @@ void myCentralWidget::doSimplifyRoute(ROUTE * route, bool fast)
             QApplication::processEvents();
             if(!route->getHas_eta())
                 poi->setRoute(route);
-            else if (route->getEta()<bestEta || (route->getEta()==bestEta && route->getRemain()<=bestRemain))
+            else if (route->getEta()<bestEta || (route->getEta()==bestEta && (strongSimplify || route->getRemain()<=bestRemain)))
             {
                 bestEta=route->getEta();
                 bestRemain=route->getRemain();
@@ -3545,7 +3546,7 @@ void myCentralWidget::doSimplifyRoute(ROUTE * route, bool fast)
             QApplication::processEvents();
             if(!route->getHas_eta())
                 poi->setRoute(route);
-            else if (route->getEta()<bestEta || (route->getEta()==bestEta && route->getRemain()<=bestRemain))
+            else if (route->getEta()<bestEta || (route->getEta()==bestEta && (strongSimplify || route->getRemain()<=bestRemain)))
             {
                 bestEta=route->getEta();
                 bestRemain=route->getRemain();
@@ -3593,7 +3594,7 @@ void myCentralWidget::doSimplifyRoute(ROUTE * route, bool fast)
                 route->setTemp(false);
                 poi2->setRoute(route);
             }
-            else if (route->getEta()<bestEta || (route->getEta()==bestEta && route->getRemain()<=bestRemain))
+            else if (route->getEta()<bestEta || (route->getEta()==bestEta && (strongSimplify || route->getRemain()<=bestRemain)))
             {
                 bestEta=route->getEta();
                 bestRemain=route->getRemain();
@@ -3649,7 +3650,7 @@ void myCentralWidget::doSimplifyRoute(ROUTE * route, bool fast)
                 route->setTemp(false);
                 poi3->setRoute(route);
             }
-            else if (route->getEta()<bestEta || (route->getEta()==bestEta && route->getRemain()<=bestRemain))
+            else if (route->getEta()<bestEta || (route->getEta()==bestEta && (strongSimplify || route->getRemain()<=bestRemain)))
             {
                 bestEta=route->getEta();
                 bestRemain=route->getRemain();
@@ -3810,6 +3811,7 @@ void myCentralWidget::assignPois()
         ROUTE * route=r.next();
         frozens.append(route->getFrozen());
         route->setFrozen(true);
+        route->setTemp(true);
     }
     QListIterator<POI*> i (poi_list);
     while(i.hasNext())
@@ -3839,12 +3841,13 @@ void myCentralWidget::assignPois()
     while(r.hasNext())
     {
         ROUTE * route=r.next();
+        route->setTemp(false);
         if(frozens.at(n))
         {
             route->setFrozen(false);
         }
         route->setFrozen(frozens.at(n));
-        n++;
+        ++n;
     }
     //qWarning()<<"finished assigning POIs to Routes";
 }

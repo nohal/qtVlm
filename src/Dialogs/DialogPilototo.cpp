@@ -621,12 +621,13 @@ void DialogPilototo::setInstructions(boat * pvBoat, QList<POI *> pois)
         pip.insert("targetlat",QString().sprintf("%.10f",poi->getLatitude()));
         pip.insert("targetlong",QString().sprintf("%.10f",poi->getLongitude()));
         if(poi->getWph()!=-1)
-            pip.insert("targetandhdg",QString().sprintf("%.2f",poi->getWph()));
+            pip.insert("targetandhdg",QString().sprintf("%.2f",poi->getPiloteWph()));
         cur_instruction.insert("pip",pip);
         cur_instruction.insert("idu",myBoat->getBoatId().toInt());
         instr_ptr->param=serializer.serialize(cur_instruction);
         instructions->append(instr_ptr);
         poi->setPiloteDate(-1);
+        poi->setPiloteWph(-1);
     }
     if(!pois.isEmpty())
     {

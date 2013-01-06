@@ -905,7 +905,7 @@ void DialogRoute::fillPilotView(bool def)
         items[1]->setEditable(false);
         items.append(new QStandardItem(QString().sprintf("%.2f",poi->getWph())));
         items[2]->setTextAlignment(Qt::AlignCenter| Qt::AlignVCenter);
-        items[2]->setEditable(false);
+        items[2]->setEditable(true);
         switch(poi->getNavMode())
         {
             case 0:
@@ -996,6 +996,7 @@ void DialogRoute::slotEnvoyer()
         tt.setTimeSpec(Qt::UTC);
         //qWarning()<<poi->getName()<<tt;
         poi->setPiloteDate(tt.toTime_t());
+        poi->setPiloteWph(model->item(n,2)->data(Qt::EditRole).toDouble());
         poiList.append(poi);
     }
     parent->setPilototo(poiList);
@@ -1009,30 +1010,65 @@ DateBoxDelegate::DateBoxDelegate(QObject *parent)
 }
 QWidget *DateBoxDelegate::createEditor(QWidget *parent,
     const QStyleOptionViewItem &/* option */,
-    const QModelIndex &/* index */) const
+    const QModelIndex & index ) const
 {
-    QDateTimeEdit *editor = new QDateTimeEdit(parent);
-    editor->setTimeSpec(Qt::UTC);
-    editor->setDisplayFormat("dd MMM yyyy-hh:mm:ss");
-    return editor;
+    if(index.column()==0)
+    {
+        QDateTimeEdit *editor = new QDateTimeEdit(parent);
+        editor->setTimeSpec(Qt::UTC);
+        editor->setDisplayFormat("dd MMM yyyy-hh:mm:ss");
+        return editor;
+    }
+    else
+    {
+        QDoubleSpinBox *editor = new QDoubleSpinBox(parent);
+        editor->setMinimum(-1);
+        editor->setMaximum(359.99);
+        editor->setDecimals(2);
+        editor->setAlignment(Qt::AlignRight);
+        return editor;
+    }
 }
 void DateBoxDelegate::setEditorData(QWidget *editor,
                                     const QModelIndex &index) const
 {
-    QDateTime value = QDateTime().fromString(index.model()->data(index, Qt::EditRole).toString(),"dd MMM yyyy-hh:mm:ss");
-    value.setTimeSpec(Qt::UTC);
-    //qWarning()<<"setEditorData"<<index<<value;
-    QDateTimeEdit *editBox = static_cast<QDateTimeEdit*>(editor);
-    editBox->setMinimumDateTime(QDateTime().currentDateTimeUtc());
-    editBox->setDateTime(value);
+    if(index.column()==0)
+    {
+        QDateTime value = QDateTime().fromString(index.model()->data(index, Qt::EditRole).toString(),"dd MMM yyyy-hh:mm:ss");
+        value.setTimeSpec(Qt::UTC);
+        //qWarning()<<"setEditorData"<<index<<value;
+        QDateTimeEdit *editBox = static_cast<QDateTimeEdit*>(editor);
+        editBox->setMinimumDateTime(QDateTime().currentDateTimeUtc());
+        editBox->setDateTime(value);
+    }
+    else
+    {
+        double value=index.model()->data(index,Qt::EditRole).toDouble();
+        QDoubleSpinBox *editBox=static_cast<QDoubleSpinBox*>(editor);
+        editBox->setValue(value);
+        editBox->setMinimum(-1);
+        editBox->setMaximum(359.99);
+        editBox->setDecimals(2);
+        editBox->setAlignment(Qt::AlignRight);
+    }
 }
 void DateBoxDelegate::setModelData(QWidget *editor, QAbstractItemModel *model,
                                    const QModelIndex &index) const
 {
-    QDateTimeEdit *editBox = static_cast<QDateTimeEdit*>(editor);
-    QDateTime value = editBox->dateTime().toUTC();
-    value.setTimeSpec(Qt::UTC);
-    model->setData(index,value.toString("dd MMM yyyy-hh:mm:ss"),Qt::EditRole);
+    if(index.column()==0)
+    {
+        QDateTimeEdit *editBox = static_cast<QDateTimeEdit*>(editor);
+        QDateTime value = editBox->dateTime().toUTC();
+        value.setTimeSpec(Qt::UTC);
+        model->setData(index,value.toString("dd MMM yyyy-hh:mm:ss"),Qt::EditRole);
+    }
+    else
+    {
+        QDoubleSpinBox *editBox = static_cast<QDoubleSpinBox*>(editor);
+        double value = editBox->value();
+        if(value<0) value=-1.0;
+        model->setData(index,QString().sprintf("%.2f",value),Qt::EditRole);
+    }
 }
 void DateBoxDelegate::updateEditorGeometry(QWidget *editor,
     const QStyleOptionViewItem &option, const QModelIndex &/* index */) const

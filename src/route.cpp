@@ -284,6 +284,7 @@ void ROUTE::slot_recalculate(boat * boat)
         return;
     }
     if(initialized && (frozen || superFrozen)) return;
+    //qWarning()<<"calculating"<<this->name<<"with"<<my_poiList.count()<<"POIs"<<"and autoAt="<<this->autoAt;
     line->deleteAll();
     line->setHasInterpolated(false);
     line->setLinePen(pen);

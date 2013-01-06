@@ -116,7 +116,9 @@ class POI : public QGraphicsWidget
         /* event propagé par la scene */
         bool tryMoving(int x, int y);
         time_t getPiloteDate(){return piloteDate;}
-        void setPiloteDate(time_t t){this->piloteDate=t;}
+        void setPiloteDate(const time_t &t){this->piloteDate=t;}
+        double getPiloteWph() {return piloteWph;}
+        void setPiloteWph(const double &d){this->piloteWph=d;}
         void setLabelTransp(bool b){this->labelTransp=b;}
         void chkIsWP(void);
         bool isPartOfTwa(){return partOfTwa;}
@@ -253,6 +255,7 @@ public slots:
         int colorPilototo;
         bool piloteSelected;
         time_t piloteDate;
+        double piloteWph;
         bool labelTransp;
         double lonConnected,latConnected;
         int sequence;
