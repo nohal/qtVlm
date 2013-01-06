@@ -23,6 +23,14 @@ LIBS += -Llibs/build \
     -lnmea \
     -lbsb \
     -lgps
+asan {
+    QMAKE_CC=clang
+    QMAKE_CXX=clang++
+    QMAKE_LINK=clang++
+    QMAKE_CFLAGS="-O1 -fsanitize=address -fno-omit-frame-pointer -g"
+    QMAKE_CXXFLAGS="-O1 -fsanitize=address -fno-omit-frame-pointer -g"
+    QMAKE_LFLAGS="-fsanitize=address -g -rdynamic"
+}
 
 MOC_DIR = objs
 OBJECTS_DIR = objs
