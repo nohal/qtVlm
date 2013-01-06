@@ -7,11 +7,13 @@ TARGET=gpsmm
 CONFIG+=staticlib
 INCLUDEPATH += .
 
+QT += network
+QT -= wekbit
 QT -= gui
 
 DESTDIR=../build
 
-#DEFINES += USE_QT
+DEFINES += USE_QT
 
 # Input
 HEADERS += gps_json.h \
@@ -23,16 +25,15 @@ HEADERS += gps_json.h \
            sockaddr.h
            
 SOURCES += ais_json.c \
-           daemon.c \
            gps_maskdump.c \
            gpsdclient.c \
-           gpsutils.c \
+           gpsutils.cpp \
            hex.c \
            json.c \           
            libgps_dbus.c \
            libgps_json.c \
            libgps_shm.c \
-           libgps_sock.c \
+           libgps_sock.cpp \
            netlib.c \
            rtcm2_json.c \
            shared_json.c \

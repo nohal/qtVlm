@@ -2571,6 +2571,7 @@ void MainWindow::slotLoadVLMGrib(void)
 
 void MainWindow::slotVLM_Test(void)
 {
+
     struct gps_data_t gps_data;
     memset(&gps_data,0,sizeof(struct gps_data_t));
 
