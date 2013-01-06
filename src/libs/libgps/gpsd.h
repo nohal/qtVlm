@@ -290,12 +290,14 @@ size_t strlcpy(/*@out@*/char *dst, /*@in@*/const char *src, size_t size);
  */
 #endif /* GPSD_CONFIG_H */
 
-#include <termios.h>
+
 #include <stdint.h>
 #include "gps.h"
 
 #ifdef _WIN32
 typedef unsigned int speed_t;
+#else
+#include <termios.h>
 #endif
 
 /*

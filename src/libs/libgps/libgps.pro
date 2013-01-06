@@ -3,7 +3,7 @@
 ######################################################################
 
 TEMPLATE=lib
-TARGET=gpsmm
+TARGET=gps
 CONFIG+=staticlib
 INCLUDEPATH += .
 
@@ -30,13 +30,10 @@ SOURCES += ais_json.c \
            gpsutils.cpp \
            hex.c \
            json.c \           
-           libgps_dbus.c \
            libgps_json.c \
-           libgps_shm.c \
            libgps_sock.cpp \
-           netlib.c \
            rtcm2_json.c \
            shared_json.c \
            strl.c \
-           libgps_core.c
+           libgps_core.cpp
 

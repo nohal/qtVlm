@@ -17,7 +17,7 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 #ifndef S_SPLINT_S
-#include <sys/socket.h>
+//#include <sys/socket.h>
 #include <unistd.h>
 #endif /* S_SPLINT_S */
 
