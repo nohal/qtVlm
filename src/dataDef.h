@@ -27,7 +27,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <QColor>
 #include <QMap>
 
-#define __QTVLM_WITH_TEST
+//#define __QTVLM_WITH_TEST
 
 extern QMap<QString,QString> appFolder;
 
