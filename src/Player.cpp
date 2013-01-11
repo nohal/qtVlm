@@ -159,7 +159,7 @@ void Player::requestFinished (QByteArray res_byte)
                 QVariantMap profile= result["profile"].toMap();
                 player_id=profile["idp"].toInt();
                 name=profile["playername"].toString();
-
+                qWarning()<<"Requesting fleet for"<<this->name;
                 doRequest(VLM_REQUEST_FLEET);
                 break;
             }

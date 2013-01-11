@@ -562,6 +562,7 @@ void MainWindow::continueSetup()
             progress->setLabelText(tr("Updating player"));
             progress->setValue(91);
             connect(players.at(0),SIGNAL(playerUpdated(bool,Player*)),this,SLOT(slot_updPlayerFinished(bool,Player*)));
+            //qWarning()<<"before maj player for"<<players.at(0)->getName();
             players.at(0)->updateData();
         }
         else
@@ -2195,15 +2196,17 @@ void MainWindow::slot_updPlayerFinished(bool res_ok, Player * player)
     }
 
     my_centralWidget->updatePlayer(player);
-
+    //qWarning()<<"before slot_playerSelected";
     my_centralWidget->slot_playerSelected(player);
+    //qWarning()<<"before loadPOI";
     my_centralWidget->loadPOI();
     nBoat=my_centralWidget->getBoats()->size();
     toBeCentered=-1;
+    //qWarning()<<"ready to update boats";
     if(nBoat>0)
     {
         progress->setLabelText(tr("Updating boats"));
-        progress->setValue(progress->value()+10);
+        progress->setValue(95);
         VLM_Sync_sync();
         timerprogress=new QTimer();
         timerprogress->setSingleShot(true);
@@ -2214,6 +2217,7 @@ void MainWindow::slot_updPlayerFinished(bool res_ok, Player * player)
     }
     else
     {
+        qWarning()<<"player has no boats";
         isStartingUp=false;
         updateTitle();
     }

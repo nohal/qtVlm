@@ -613,11 +613,14 @@ void boat::setStatus(bool activated)
      setVisible(activated);
 
 
-     if(activated) {
+     if(activated)
+     {
+         //qWarning()<<"before slot_paramChanged";
          slot_paramChanged();
+         //qWarning()<<"before updateBoatData";
          updateBoatData();
      }
-
+     //qWarning()<<"activated="<<activated;
 
      if(!activated)
      {

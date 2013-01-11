@@ -749,6 +749,7 @@ void boatVLM::updateBoatString()
 
 void boatVLM::updateHint(void)
 {
+    if(!initialized) return;
     QString str;
     /* adding score */
     str = getScore() + " - Spd: " + QString().setNum(getSpeed()) + " - ";
@@ -780,7 +781,6 @@ void boatVLM::updateHint(void)
         desc=desc+"<br>"+tr("Bateau echoue, pour encore ")+QString().setNum(secs)+" "+tr("secondes");
     }
     double windSpeed,windAngle;
-
     if(parent->getGrib() && parent->getGrib()->isOk() &&
        parent->getGrib()->getInterpolatedValue_byDates(this->lon,this->lat,
                            this->getPrevVac(),&windSpeed,&windAngle,INTERPOLATION_DEFAULT))

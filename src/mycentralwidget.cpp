@@ -3997,7 +3997,7 @@ void myCentralWidget::slot_playerSelected(Player * player)
 {
     if(currentPlayer && boat_list)
     {
-        //qWarning() << "Deactivate current player";
+        qWarning() << "Deactivate current player";
         if(boat_list && currentPlayer->getType()==BOAT_VLM)
         {
             QListIterator<boatVLM*> i(*boat_list);
@@ -4017,7 +4017,7 @@ void myCentralWidget::slot_playerSelected(Player * player)
         if(player->getType() == BOAT_VLM)
         {
             if(player->getWrong()) return;
-            //qWarning() << "Activate player: managing boats (VLM)";
+            qWarning() << "Activate player: managing boats (VLM)";
             menuBar->boatList->setVisible(true);
             menuBar->ac_moveBoat->setVisible(false);
             menuBar->ac_moveBoatSep->setVisible(false);
@@ -4034,7 +4034,8 @@ void myCentralWidget::slot_playerSelected(Player * player)
             while(i.hasNext())
             {
                 boatVLM * boat=i.next();
-                nn++;
+                qWarning()<<"activating"<<boat->getName();
+                ++nn;
                 if(boat->getPlayer()!=player) continue;
                 boat->playerActivated();
                 if(!reselected && boat->getStatus())
@@ -4045,15 +4046,18 @@ void myCentralWidget::slot_playerSelected(Player * player)
                 //boat->setStatus(boat->getStatus());
             }
             realBoat=NULL;
+            qWarning()<<"emitting accountListUpdated";
             emit accountListUpdated();
+            qWarning()<<"dealing with vlmBoard";
             mainW->getBoard()->playerChanged(player);
-            //qWarning()<<"reselected="<<reselected;
+            qWarning()<<"reselected="<<reselected;
             if(reselected)
             {
                 mainW->slotSelectBoat(boat_list->at(thisOne));
                 boat_list->at(thisOne)->setSelected(true);
                 mainW->getBoard()->boatUpdated(boat_list->at(thisOne));
             }
+            qWarning()<<"emitting shRouBis";
             emit shRouBis();
         }
         else
