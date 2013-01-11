@@ -41,6 +41,8 @@ DialogFinePosit::DialogFinePosit(POI * poi,myCentralWidget *parent)
     this->etendueLon->selectAll();
     this->keepOldMe->setChecked(Settings::getSetting("KeepOldPoi","0").toInt()==1);
     this->autoRange->setChecked(poi->getAutoRange());
+    etendueLon->setDisabled(poi->getAutoRange());
+    etendueLat->setDisabled(poi->getAutoRange());
     buttonBox->button(QDialogButtonBox::Ok)->setDefault(true);
     buttonBox->button(QDialogButtonBox::Cancel)->setDefault(false);
 }

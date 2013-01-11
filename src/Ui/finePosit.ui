@@ -182,5 +182,37 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>autoRange</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>etendueLat</receiver>
+   <slot>setDisabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>139</x>
+     <y>144</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>214</x>
+     <y>41</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>autoRange</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>etendueLon</receiver>
+   <slot>setDisabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>139</x>
+     <y>144</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>214</x>
+     <y>15</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
 </ui>
