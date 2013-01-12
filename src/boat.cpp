@@ -30,6 +30,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "Player.h"
 #include "GshhsReader.h"
 #include "boat.h"
+#include "boatVLM.h"
 #include "Grib.h"
 
 boat::boat(QString      pseudo, bool activated,
@@ -576,6 +577,11 @@ void boat::updateBoatData()
 {
     if(!activated)
         return;
+    if(this->getType()==BOAT_VLM && !((boatVLM*)this)->isInitialized())
+    {
+        //qWarning()<<"boat not initialized, skipping updateBoatData()";
+        return;
+    }
     updateBoatString();
     reloadPolar();
     updatePosition();

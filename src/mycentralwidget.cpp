@@ -541,7 +541,7 @@ void myCentralWidget::loadGshhs(void) {
 
     QString mapDir = Settings::getSetting("mapsFolder",appFolder.value("maps")).toString();
 
-    qWarning() << "Searching for maps in " << mapDir;
+    //qWarning() << "Searching for maps in " << mapDir;
 
     gshhsReader = new GshhsReader((mapDir+"/gshhs").toAscii().data());
     gshhsReader->setProj(proj);
@@ -2462,7 +2462,7 @@ void myCentralWidget::importRouteFromMenuKML(QString fileName,bool toClipboard, 
     }
     QDomElement kml = doc.documentElement();
     QDomElement root = kml.firstChildElement("Document");
-    qWarning()<<kml.tagName()<<root.tagName();
+    //qWarning()<<kml.tagName()<<root.tagName();
     QString name=root.firstChildElement("name").firstChild().toText().data();
     if (name.isEmpty())
     {
@@ -4017,7 +4017,7 @@ void myCentralWidget::slot_playerSelected(Player * player)
         if(player->getType() == BOAT_VLM)
         {
             if(player->getWrong()) return;
-            qWarning() << "Activate player: managing boats (VLM)";
+            //qWarning() << "Activate player: managing boats (VLM)";
             menuBar->boatList->setVisible(true);
             menuBar->ac_moveBoat->setVisible(false);
             menuBar->ac_moveBoatSep->setVisible(false);
@@ -4034,7 +4034,7 @@ void myCentralWidget::slot_playerSelected(Player * player)
             while(i.hasNext())
             {
                 boatVLM * boat=i.next();
-                qWarning()<<"activating"<<boat->getName();
+                //qWarning()<<"activating"<<boat->getName();
                 ++nn;
                 if(boat->getPlayer()!=player) continue;
                 boat->playerActivated();
@@ -4046,18 +4046,18 @@ void myCentralWidget::slot_playerSelected(Player * player)
                 //boat->setStatus(boat->getStatus());
             }
             realBoat=NULL;
-            qWarning()<<"emitting accountListUpdated";
+            //qWarning()<<"emitting accountListUpdated";
             emit accountListUpdated();
-            qWarning()<<"dealing with vlmBoard";
+            //qWarning()<<"dealing with vlmBoard";
             mainW->getBoard()->playerChanged(player);
-            qWarning()<<"reselected="<<reselected;
+            //qWarning()<<"reselected="<<reselected;
             if(reselected)
             {
                 mainW->slotSelectBoat(boat_list->at(thisOne));
                 boat_list->at(thisOne)->setSelected(true);
                 mainW->getBoard()->boatUpdated(boat_list->at(thisOne));
             }
-            qWarning()<<"emitting shRouBis";
+            //qWarning()<<"emitting shRouBis";
             emit shRouBis();
         }
         else

@@ -67,10 +67,10 @@ Player::~Player()
     /* cleaning boat list */
     if(type==BOAT_REAL && realBoat)
     {
-        qWarning()<<"before delete realBoat";
+        //qWarning()<<"before delete realBoat";
         parent->slot_delBoat(realBoat);
 //        delete realBoat;
-        qWarning()<<"after delete realBoat";
+        //qWarning()<<"after delete realBoat";
     }
     else
     {
@@ -159,7 +159,7 @@ void Player::requestFinished (QByteArray res_byte)
                 QVariantMap profile= result["profile"].toMap();
                 player_id=profile["idp"].toInt();
                 name=profile["playername"].toString();
-                qWarning()<<"Requesting fleet for"<<this->name;
+                //qWarning()<<"Requesting fleet for"<<this->name;
                 doRequest(VLM_REQUEST_FLEET);
                 break;
             }
@@ -193,7 +193,7 @@ void Player::requestFinished (QByteArray res_byte)
                     }
                 }
                 updating=false;
-                qWarning() << "emiting playerUpdated (nb boats= " <<boatsData.count()<<")";
+                //qWarning() << "emiting playerUpdated (nb boats= " <<boatsData.count()<<")";
                 emit playerUpdated(true,this);
                 break;
             }
