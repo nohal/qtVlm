@@ -315,10 +315,10 @@ void MainWindow::continueSetup()
         my_centralWidget->setAboutToQuit();
         QApplication::quit();
     }
-    if(!QFile(appFolder.value("img")+"benchmark.grb").exists())
+    if(!QFile(appFolder.value("img")+"player_play.png").exists())
         QMessageBox::critical (this,
            tr("Erreur"),
-           tr("File 'benchmark.grb' cannot be find in img directory")+"<br>"+tr("Please check your installation"));
+           tr("File 'player_play.png' cannot be find in img directory")+"<br>"+tr("Please check your installation"));
 
 
     dialogProxy = new DialogProxy();
