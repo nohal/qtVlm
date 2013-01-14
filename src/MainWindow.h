@@ -248,7 +248,6 @@ class MainWindow: public QMainWindow
         /* central widget */
         myCentralWidget * my_centralWidget;
         QProgressDialog *progress;
-        QTimer * timerprogress;
 
         DialogGribValidation * gribValidation_dialog;
         int nBoat;

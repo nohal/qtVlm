@@ -625,6 +625,7 @@ void boat::setStatus(bool activated)
          slot_paramChanged();
          //qWarning()<<"before updateBoatData";
          updateBoatData();
+         //qWarning()<<"after updateBoatData";
      }
      //qWarning()<<"activated="<<activated;
 

@@ -250,7 +250,6 @@ MainWindow::MainWindow(int w, int h, QWidget *parent)
     progress->setAutoClose(false);
     progress->setAutoReset(false);
     progress->show();
-    timerprogress=NULL;
 
     /* timer de gestion des VAC */
     timer = new QTimer(this);
@@ -330,12 +329,12 @@ void MainWindow::continueSetup()
     menuBar = new MenuBar(this);
     setMenuBar(menuBar);
     progress->setLabelText(tr("Initializing maps drawing"));
-    progress->setValue(progress->value()+10);
+    progress->setValue(15);
     my_centralWidget = new myCentralWidget(proj,this,menuBar);
     /* make sure it is still here */
     //progress->raise();
     progress->setLabelText(tr("Initializing toolbars"));
-    progress->setValue(progress->value()+10);
+    progress->setValue(20);
 
     menuBar->setMCW(this->my_centralWidget);
     this->setCentralWidget(my_centralWidget);
@@ -442,29 +441,12 @@ void MainWindow::continueSetup()
     setStatusBar(statusBar);
 
     this->slotParamChanged();
-    progress->setLabelText(tr("Opening grib"));
-    progress->setValue(progress->value()+10);
-    gribFilePath = Settings::getSetting("gribFilePath", appFolder.value("grib")).toString();
-    if(gribFilePath.isEmpty())
-        gribFilePath = appFolder.value("grib");
-    QString fname = Settings::getSetting("gribFileName", "").toString();
-    if (fname != "" && QFile::exists(fname))
-    {
-        openGribFile(fname, false);
-        gribFileName=fname;
-    }
-    fname = Settings::getSetting("gribFileNameCurrent", "").toString();
-    if (fname != "" && QFile::exists(fname))
-    {
-        openGribFile(fname, false,true);
-        gribFileNameCurrent=fname;
-    }
 
     //---------------------------------------------------------
     // Menu popup : bouton droit de la souris
     //---------------------------------------------------------
     progress->setLabelText(tr("Creating context menus"));
-    progress->setValue(progress->value()+10);
+    progress->setValue(25);
 
     menuPopupBtRight = menuBar->createPopupBtRight(this);
 
@@ -483,7 +465,7 @@ void MainWindow::continueSetup()
 
 
     progress->setLabelText(tr("Drawing some"));
-    progress->setValue(progress->value()+10);
+    progress->setValue(30);
 
     poi_input_dialog = new DialogPoiInput(my_centralWidget);
 
@@ -499,7 +481,7 @@ void MainWindow::continueSetup()
     connect(param,SIGNAL(paramVLMChanged()),this,SLOT(slot_ParamVLMchanged()));
 
     progress->setLabelText(tr("Preparing coffee"));
-    progress->setValue(progress->value()+10);
+    progress->setValue(35);
 
     pilototo = new DialogPilototo(this,my_centralWidget,my_centralWidget->getInet());
 
@@ -512,7 +494,7 @@ void MainWindow::continueSetup()
 
 
     progress->setLabelText(tr("Drawing all"));
-    progress->setValue(progress->value()+10);
+    progress->setValue(40);
 
      //--------------------------------------------------
     // get screen geometry
@@ -560,7 +542,7 @@ void MainWindow::continueSetup()
         if(players.at(0)->getType()==BOAT_VLM)
         {
             progress->setLabelText(tr("Updating player"));
-            progress->setValue(91);
+            progress->setValue(50);
             connect(players.at(0),SIGNAL(playerUpdated(bool,Player*)),this,SLOT(slot_updPlayerFinished(bool,Player*)));
             //qWarning()<<"before maj player for"<<players.at(0)->getName();
             players.at(0)->updateData();
@@ -581,7 +563,7 @@ void MainWindow::continueSetup()
 
     bool res;
     progress->setLabelText(tr("Calling player dialog"));
-    progress->setValue(progress->value()+10);
+    progress->setValue(55);
 
     my_centralWidget->manageAccount(&res);
     if(!res)
@@ -608,13 +590,8 @@ void MainWindow::continueSetup()
                 if(nBoat>0)
                 {
                     progress->setLabelText(tr("Updating boats"));
-                    progress->setValue(progress->value()+10);
+                    progress->setValue(60);
                     VLM_Sync_sync();
-                    timerprogress=new QTimer();
-                    timerprogress->setSingleShot(true);
-                    timerprogress->setInterval(5000);
-                    connect(timerprogress,SIGNAL(timeout()),this, SLOT(slot_deleteProgress()));
-                    timerprogress->start();
                     return;
                 }
                 else
@@ -699,7 +676,7 @@ void MainWindow::keyPressEvent ( QKeyEvent  * /* event */ )
 }
 void MainWindow::slot_deleteProgress (void)
 {
-    progress->setValue(99);
+    progress->setValue(80);
     if(QThread::idealThreadCount()>1 && QFile(appFolder.value("img")+"benchmark.grb").exists())
     {
         progress->setLabelText(tr("Calibrating grib display"));
@@ -743,13 +720,26 @@ void MainWindow::slot_deleteProgress (void)
         delete grib;
     }
     //qWarning() << "Removing progress";
+    progress->setLabelText(tr("Opening grib"));
+    progress->setValue(95);
+    gribFilePath = Settings::getSetting("gribFilePath", appFolder.value("grib")).toString();
+    if(gribFilePath.isEmpty())
+        gribFilePath = appFolder.value("grib");
+    QString fname = Settings::getSetting("gribFileName", "").toString();
+    if (fname != "" && QFile::exists(fname))
+    {
+        openGribFile(fname, false);
+        gribFileName=fname;
+    }
+    fname = Settings::getSetting("gribFileNameCurrent", "").toString();
+    if (fname != "" && QFile::exists(fname))
+    {
+        openGribFile(fname, false,true);
+        gribFileNameCurrent=fname;
+    }
     progress->close();
     delete progress;
     progress=NULL;
-    if(timerprogress) {
-        delete timerprogress;
-        timerprogress=NULL;
-    }
     if(restartNeeded)
         this->my_centralWidget->setAboutToQuit();
     else if(selectedBoat && selectedBoat->getType()==BOAT_REAL)
@@ -1814,6 +1804,7 @@ void MainWindow::VLM_Sync_sync(void)
     if(!my_centralWidget->getBoats())
     {
         qWarning() << "CRITICAL: VLM_Sync_sync - empty boatList";
+        slot_deleteProgress();
         return ;
     }
 
@@ -1823,6 +1814,8 @@ void MainWindow::VLM_Sync_sync(void)
     nBoat--;
     if(nBoat>=0)
     {
+        int p=listBoats.count()-nBoat;
+        progress->setValue(60+(19*p)/listBoats.count());
         acc = listBoats.at(nBoat);
         if(acc->getStatus() || !acc->isInitialized())
         {
@@ -1877,6 +1870,7 @@ void MainWindow::VLM_Sync_sync(void)
             }
         }
         menuBar->boatList->setEnabled(true);
+        slot_deleteProgress();
         slotDateGribChanged_now(false);
         isStartingUp=false;
         if(Settings::getSetting("centerOnBoatChange","1").toInt()==1)
@@ -2195,14 +2189,14 @@ void MainWindow::slot_updPlayerFinished(bool res_ok, Player * player)
         return;
     }
     progress->setLabelText(tr("Updating players"));
-    progress->setValue(92);
+    progress->setValue(55);
 
     my_centralWidget->updatePlayer(player);
     progress->setLabelText(tr("Selecting player"));
-    progress->setValue(93);
+    progress->setValue(56);
     my_centralWidget->slot_playerSelected(player);
     progress->setLabelText(tr("loading POIs"));
-    progress->setValue(94);
+    progress->setValue(57);
     my_centralWidget->loadPOI();
     nBoat=my_centralWidget->getBoats()->size();
     toBeCentered=-1;
@@ -2210,13 +2204,8 @@ void MainWindow::slot_updPlayerFinished(bool res_ok, Player * player)
     if(nBoat>0)
     {
         progress->setLabelText(tr("Updating boats"));
-        progress->setValue(95);
+        progress->setValue(60);
         VLM_Sync_sync();
-        timerprogress=new QTimer();
-        timerprogress->setSingleShot(true);
-        timerprogress->setInterval(5000);
-        connect(timerprogress,SIGNAL(timeout()),this, SLOT(slot_deleteProgress()));
-        timerprogress->start();
         return;
     }
     else

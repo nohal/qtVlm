@@ -1766,7 +1766,7 @@ Etes-vous sur ?</source>
     </message>
     <message>
         <source>File &apos;benchmark.grb&apos; cannot be find in img directory</source>
-        <translation>Le fichier &apos;benchmark.grb&apos; n&apos;existe pas dans le répertoire &apos;img&apos;</translation>
+        <translation type="obsolete">Le fichier &apos;benchmark.grb&apos; n&apos;existe pas dans le répertoire &apos;img&apos;</translation>
     </message>
     <message>
         <source>Copier la route</source>
@@ -1783,6 +1783,22 @@ Etes-vous sur ?</source>
     <message>
         <source>Zoom sur la route </source>
         <translation>Zoom sur la route </translation>
+    </message>
+    <message>
+        <source>File &apos;player_play.png&apos; cannot be find in img directory</source>
+        <translation>Le fichier &apos;player_play.png&apos; n&apos;existe pas dans le répertoire &apos;img&apos;</translation>
+    </message>
+    <message>
+        <source>Updating players</source>
+        <translation>Mise à jour des comptes</translation>
+    </message>
+    <message>
+        <source>Selecting player</source>
+        <translation>Sélection des comptes</translation>
+    </message>
+    <message>
+        <source>loading POIs</source>
+        <translation>Chargement des POIs</translation>
     </message>
 </context>
 <context>

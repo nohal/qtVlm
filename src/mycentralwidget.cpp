@@ -4089,7 +4089,7 @@ void myCentralWidget::slot_playerSelected(Player * player)
         realBoat=NULL;
         emit shRouBis();
     }
-
+    qWarning()<<"exit 1";
 }
 
 void myCentralWidget::slot_writeBoatData(void)
