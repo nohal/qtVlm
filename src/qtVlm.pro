@@ -21,8 +21,8 @@ LIBS += -Llibs/build \
     -lqextserialport \
     -lqjson \
     -lnmea \
-    -lbsb \
-    -lgps
+    -lbsb
+#    -lgps
 asan {
     QMAKE_CC=clang
     QMAKE_CXX=clang++

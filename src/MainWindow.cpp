@@ -2194,11 +2194,15 @@ void MainWindow::slot_updPlayerFinished(bool res_ok, Player * player)
         my_centralWidget->emitUpdateRoute(NULL);
         return;
     }
+    progress->setLabelText(tr("Updating players"));
+    progress->setValue(92);
 
     my_centralWidget->updatePlayer(player);
-    //qWarning()<<"before slot_playerSelected";
+    progress->setLabelText(tr("Selecting player"));
+    progress->setValue(93);
     my_centralWidget->slot_playerSelected(player);
-    //qWarning()<<"before loadPOI";
+    progress->setLabelText(tr("loading POIs"));
+    progress->setValue(94);
     my_centralWidget->loadPOI();
     nBoat=my_centralWidget->getBoats()->size();
     toBeCentered=-1;
