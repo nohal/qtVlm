@@ -1090,7 +1090,7 @@ void myCentralWidget::loadGribFile(QString fileName, bool zoom)
         proj->blockSignals(false);
     }
     //else
-        emit redrawAll();
+    //emit redrawAll();
 }
 void myCentralWidget::loadGribFileCurrent(QString fileName, bool zoom)
 {
