@@ -345,7 +345,7 @@ void opponent::updateName()
             {
                 Orthodromie oo(parentWindow->getSelectedBoat()->getLon(),parentWindow->getSelectedBoat()->getLat(),this->lon,this->lat);
                 double distanceFromBoat=oo.getDistance();
-                if(distanceFromBoat<=25.0 /*|| true*/)
+                if(distanceFromBoat<=25.0 || true)
                 {
                     str2=str2+"<tr><td>"+tr("Vitesse estimee: ")+"</td><td>"+
                          QString().sprintf("%.2f ",estimatedSpeed)+
