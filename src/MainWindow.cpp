@@ -2133,7 +2133,8 @@ void MainWindow::slotSelectBoat(boat* newSelect)
             if(newSelect->getType()==BOAT_VLM)
             {
                 //qWarning() << "getData from slot_selectBoat";
-                ((boatVLM*)newSelect)->slot_getData(false);
+                if(!this->isStartingUp)
+                    ((boatVLM*)newSelect)->slot_getData(false);
                 menuBar->acPilototo->setEnabled(true);
                 slotFile_Lock(true);
             }

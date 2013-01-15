@@ -169,6 +169,7 @@ void boatVLM::doRequest(int requestCmd)
             case VLM_REQUEST_BOAT:
                 QTextStream(&page) << "/ws/boatinfo.php?forcefmt=json"
                             << "&select_idu="<<this->boat_id;
+                qWarning()<<"requesting VLM_REQUEST_BOAT"<<pseudo;
                 break;
             case VLM_REQUEST_TRJ:
             {
@@ -200,13 +201,16 @@ void boatVLM::doRequest(int requestCmd)
                         << boat_id
                         << "&starttime="
                         << st;
+                qWarning()<<"requesting VLM_REQUEST_TRJ"<<pseudo;
                 break;
             }
             case VLM_REQUEST_GATE:
                 QTextStream(&page) << "/ws/raceinfo.php?idrace="<<race_id;
+                qWarning()<<"requesting VLM_REQUEST_GATE";
                 break;
             case VLM_REQUEST_POLAR:
                 QTextStream(&page) << "/Polaires/"+this->polarVlm+".csv";
+                qWarning()<<"requesting VLM_REQUEST_POLAR"<<pseudo;
                 break;
             default:
                 qWarning() << "[boatVLM-doRequest] error: unknown request: " << requestCmd;
@@ -238,7 +242,7 @@ void boatVLM::requestFinished (QByteArray res_byte)
 
     //QString res(res_byte);
 
-    //QWARN << "Request finished: " << getCurrentRequest() << " boat: " << this->boat_id;
+    qWarning() << "Request finished: " << getCurrentRequest() << " boat: " << this->boat_id<<this->pseudo<<name;
 
     switch(getCurrentRequest())
     {
