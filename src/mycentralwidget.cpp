@@ -692,6 +692,7 @@ void myCentralWidget::loadPOI(void)
             }
         }
     }
+    qWarning()<<"POIs loaded";
 }
 
 myCentralWidget::~myCentralWidget()

@@ -1840,9 +1840,13 @@ void MainWindow::VLM_Sync_sync(void)
     }
 
     QList<boatVLM*> listBoats = *my_centralWidget->getBoats();
-    if(listBoats.count()==0) return;
+    if(listBoats.isEmpty())
+    {
+        slot_deleteProgress();
+        return;
+    }
     menuBar->boatList->setEnabled(false);
-    nBoat--;
+    --nBoat;
     if(nBoat>=0)
     {
         int p=listBoats.count()-nBoat;
@@ -1852,7 +1856,7 @@ void MainWindow::VLM_Sync_sync(void)
         acc = listBoats.at(nBoat);
         if(acc->getStatus() || !acc->isInitialized())
         {
-            //qWarning() << "Doing a synch_synch with VLM: " << acc->getName();
+            qWarning() << "Doing a synch_synch with VLM: " << acc->getName();
             connect(acc,SIGNAL(hasFinishedUpdating(void)),this,SLOT(slot_boatHasUpdated()));
             //toBeCentered=nBoat;
 //            if(selectedBoat==NULL)
@@ -1868,6 +1872,7 @@ void MainWindow::VLM_Sync_sync(void)
     }
     else
     {
+        qWarning()<<"All boats updated";
         int lastBoatSelected=Settings::getSetting("LastBoatSelected","-10").toInt();
         if(lastBoatSelected!=-10)
         {
@@ -1907,8 +1912,11 @@ void MainWindow::VLM_Sync_sync(void)
         isStartingUp=false;
         if(Settings::getSetting("centerOnBoatChange","1").toInt()==1)
             this->slot_centerBoat();
+        qWarning()<<"updating routes";
         my_centralWidget->emitUpdateRoute(NULL);
+        qWarning()<<"updating title";
         updateTitle();
+        qWarning()<<"startup completed";
     }
 }
 void MainWindow::slot_boatHasUpdated()
@@ -2232,7 +2240,7 @@ void MainWindow::slot_updPlayerFinished(bool res_ok, Player * player)
     my_centralWidget->loadPOI();
     nBoat=my_centralWidget->getBoats()->size();
     toBeCentered=-1;
-    //qWarning()<<"ready to update boats";
+    qWarning()<<"ready to update boats";
     if(nBoat>0)
     {
         progress->setLabelText(tr("Updating boats"));
@@ -2248,6 +2256,7 @@ void MainWindow::slot_updPlayerFinished(bool res_ok, Player * player)
     }
     my_centralWidget->emitUpdateRoute(NULL);
     slot_deleteProgress();
+    qWarning()<<"Boat has finished updating";
 }
 
 void MainWindow::slotSelectPOI(DialogPilototoInstruction * instruction)
