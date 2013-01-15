@@ -250,6 +250,8 @@ MainWindow::MainWindow(int w, int h, QWidget *parent)
     progress->setAutoClose(false);
     progress->setAutoReset(false);
     progress->show();
+    progress->raise();
+    progress->activateWindow();
 
     /* timer de gestion des VAC */
     timer = new QTimer(this);
@@ -326,15 +328,20 @@ void MainWindow::continueSetup()
 
     progress->setValue(5);
     progress->setLabelText(tr("Initializing menus"));
+    progress->raise();
+    progress->activateWindow();
     menuBar = new MenuBar(this);
     setMenuBar(menuBar);
     progress->setLabelText(tr("Initializing maps drawing"));
     progress->setValue(15);
+    progress->raise();
+    progress->activateWindow();
     my_centralWidget = new myCentralWidget(proj,this,menuBar);
     /* make sure it is still here */
-    //progress->raise();
     progress->setLabelText(tr("Initializing toolbars"));
     progress->setValue(20);
+    progress->raise();
+    progress->activateWindow();
 
     menuBar->setMCW(this->my_centralWidget);
     this->setCentralWidget(my_centralWidget);
@@ -447,6 +454,8 @@ void MainWindow::continueSetup()
     //---------------------------------------------------------
     progress->setLabelText(tr("Creating context menus"));
     progress->setValue(25);
+    progress->raise();
+    progress->activateWindow();
 
     menuPopupBtRight = menuBar->createPopupBtRight(this);
 
@@ -457,15 +466,23 @@ void MainWindow::continueSetup()
     /* list of polar structure */
 
     progress->setLabelText(tr("Loading polars list"));
+    progress->setValue(26);
+    progress->raise();
+    progress->activateWindow();
 
     polar_list = new polarList(my_centralWidget->getInet(),this);
 
     progress->setLabelText(tr("Reading boats data"));
+    progress->setValue(28);
+    progress->raise();
+    progress->activateWindow();
     my_centralWidget->loadBoat();
 
 
     progress->setLabelText(tr("Drawing some"));
     progress->setValue(30);
+    progress->raise();
+    progress->activateWindow();
 
     poi_input_dialog = new DialogPoiInput(my_centralWidget);
 
@@ -482,6 +499,8 @@ void MainWindow::continueSetup()
 
     progress->setLabelText(tr("Preparing coffee"));
     progress->setValue(35);
+    progress->raise();
+    progress->activateWindow();
 
     pilototo = new DialogPilototo(this,my_centralWidget,my_centralWidget->getInet());
 
@@ -495,6 +514,8 @@ void MainWindow::continueSetup()
 
     progress->setLabelText(tr("Drawing all"));
     progress->setValue(40);
+    progress->raise();
+    progress->activateWindow();
 
      //--------------------------------------------------
     // get screen geometry
@@ -543,6 +564,8 @@ void MainWindow::continueSetup()
         {
             progress->setLabelText(tr("Updating player"));
             progress->setValue(50);
+            progress->raise();
+            progress->activateWindow();
             connect(players.at(0),SIGNAL(playerUpdated(bool,Player*)),this,SLOT(slot_updPlayerFinished(bool,Player*)));
             //qWarning()<<"before maj player for"<<players.at(0)->getName();
             players.at(0)->updateData();
@@ -564,6 +587,8 @@ void MainWindow::continueSetup()
     bool res;
     progress->setLabelText(tr("Calling player dialog"));
     progress->setValue(55);
+    progress->raise();
+    progress->activateWindow();
 
     my_centralWidget->manageAccount(&res);
     if(!res)
@@ -591,6 +616,8 @@ void MainWindow::continueSetup()
                 {
                     progress->setLabelText(tr("Updating boats"));
                     progress->setValue(60);
+                    progress->raise();
+                    progress->activateWindow();
                     VLM_Sync_sync();
                     return;
                 }
@@ -680,6 +707,8 @@ void MainWindow::slot_deleteProgress (void)
     if(QThread::idealThreadCount()>1 && QFile(appFolder.value("img")+"benchmark.grb").exists())
     {
         progress->setLabelText(tr("Calibrating grib display"));
+        progress->raise();
+        progress->activateWindow();
         QApplication::processEvents();
         Grib * grib=new Grib();
         grib->loadGribFile(appFolder.value("img")+"benchmark.grb");
@@ -722,6 +751,8 @@ void MainWindow::slot_deleteProgress (void)
     //qWarning() << "Removing progress";
     progress->setLabelText(tr("Opening grib"));
     progress->setValue(95);
+    progress->raise();
+    progress->activateWindow();
     gribFilePath = Settings::getSetting("gribFilePath", appFolder.value("grib")).toString();
     if(gribFilePath.isEmpty())
         gribFilePath = appFolder.value("grib");
@@ -1816,6 +1847,8 @@ void MainWindow::VLM_Sync_sync(void)
     {
         int p=listBoats.count()-nBoat;
         progress->setValue(60+(19*p)/listBoats.count());
+        progress->raise();
+        progress->activateWindow();
         acc = listBoats.at(nBoat);
         if(acc->getStatus() || !acc->isInitialized())
         {
@@ -1871,7 +1904,6 @@ void MainWindow::VLM_Sync_sync(void)
         }
         menuBar->boatList->setEnabled(true);
         slot_deleteProgress();
-        slotDateGribChanged_now(false);
         isStartingUp=false;
         if(Settings::getSetting("centerOnBoatChange","1").toInt()==1)
             this->slot_centerBoat();
