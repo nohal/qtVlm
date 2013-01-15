@@ -639,6 +639,7 @@ double Util::distance_to_line_dichotomy_xing(const double &lat, const double &lo
     double ortho_p1, ortho_p2;
     double limit;
     limit = PI/(180*60*1852); // 1m precision
+    int nbLoop=0;
 
     if (qAbs(longitude_a - longitude_b) > PI)
     {
@@ -670,6 +671,7 @@ double Util::distance_to_line_dichotomy_xing(const double &lat, const double &lo
 
     while (__distance((p1_latitude-p2_latitude), (p1_longitude-p2_longitude)) > limit)
     {
+        if(++nbLoop>1000) break; //safety
         if (ortho_p1 < ortho_p2)
         {
             p2_longitude = (p1_longitude+p2_longitude)/2;
@@ -693,5 +695,6 @@ double Util::distance_to_line_dichotomy_xing(const double &lat, const double &lo
     }
     *x_latitude = radToDeg(p2_latitude);
     *x_longitude = radToDeg(p2_longitude);
+    //qWarning()<<"nbLoop in distance_to_line_dichotomy_xing"<<nbLoop;
     return ortho_p2;
 }
