@@ -195,7 +195,7 @@ void LoadGribFile::requestFinished ( QNetworkReply* inetReply)
         vers.append(".");
         vers.append(QTVLM_SUB_VERSION_NUM);
         vers.remove("+");
-        if(vers!=strbuf)
+        if(vers.left(strbuf.size())!=strbuf)
         {
             QString m=tr("Vous n'utilisez pas la derniere version de qtVlm: ")+strbuf;
 #ifdef __WIN_QTVLM
