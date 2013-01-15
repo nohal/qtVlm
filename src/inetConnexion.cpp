@@ -201,6 +201,9 @@ void inetConnexion::slot_requestFinished(QNetworkReply * currentReply)
             if(currentReply->error()==3)
                 QMessageBox::warning(0,QObject::tr("Erreur internet"),
                               QObject::tr("Serveur VLM inaccessible"));
+            else if (currentReply->error()!=QNetworkReply::OperationCanceledError)
+                QMessageBox::warning(0,QObject::tr("Erreur internet"),
+                              currentReply->errorString());
             currentClient->inetError();
             currentClient->resetReply();
             currentClient->clearCurrentRequest();

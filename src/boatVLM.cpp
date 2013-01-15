@@ -650,7 +650,7 @@ void boatVLM::authFailed(void)
 void boatVLM::inetError()
 {
     updating=false;
-    //emit hasFinishedUpdating();
+    emit hasFinishedUpdating();
     //emit boatUpdated(this,newRace,doingSync);
 }
 
