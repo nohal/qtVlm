@@ -146,6 +146,7 @@ void boatVLM::doRequest(int requestCmd)
     {
         qWarning() << "Doing a synch on a non activated and initialized boat";
         updating=false;
+        emit hasFinishedUpdating();
         return;
     }
 
@@ -175,6 +176,7 @@ void boatVLM::doRequest(int requestCmd)
                 if(race_id==0)
                 {
                     qWarning() << "boat Acc no request TRJ for:" << pseudo << " id=" << boat_id;
+                    emit hasFinishedUpdating();
                     return;
                 }
                 time_t et=QDateTime::currentDateTime().toUTC().toTime_t();
@@ -224,6 +226,7 @@ void boatVLM::doRequest(int requestCmd)
          race_name = "Test race";
          updating=false;
          updateBoatData();
+         emit hasFinishedUpdating();
     }
 }
 
