@@ -406,6 +406,7 @@ void boatVLM::requestFinished (QByteArray res_byte)
         case VLM_REQUEST_TRJ:
         {
             emit getTrace(res_byte,trace_drawing->getPoints());
+            qWarning()<<"TRJ trace size="<<trace_drawing->getPoints()->count();
             if(!trace_drawing->getPoints()->isEmpty() &&
               (qRound(trace_drawing->getPoints()->last().lon*1000)!=qRound(this->lon*1000) ||
                qRound(trace_drawing->getPoints()->last().lat*1000)!=qRound(this->lat*1000)))
@@ -433,8 +434,11 @@ void boatVLM::requestFinished (QByteArray res_byte)
 #endif
             trace_drawing->slot_showMe();
             /* we can now update everything */
+            qWarning()<<"TRJ2";
             updateBoatData();
+            qWarning()<<"TRJ3";
             updateTraceColor();
+            qWarning()<<"TRJ4";
             //drawEstime();
 
             if(race_id!=0 && !gatesLoaded)
@@ -442,6 +446,7 @@ void boatVLM::requestFinished (QByteArray res_byte)
                 updating=false;
                 drawEstime();
                 updating=true;
+                qWarning()<<"TRJ5";
                 doRequest(VLM_REQUEST_GATE);
             }
             else
@@ -449,6 +454,7 @@ void boatVLM::requestFinished (QByteArray res_byte)
                 updating=false;
                 this->getDistHdgGate();
                 drawEstime();
+                qWarning()<<"TRJ6";
                 emit hasFinishedUpdating();
                 emit boatUpdated(this,newRace,doingSync);
             }
