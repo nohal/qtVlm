@@ -821,7 +821,7 @@ void xml_boatData::readRace(QDomNode node)
                 }
 
                 struct raceData * race_data = new raceData();
-                qWarning() << "Race info present => id " <<  race << " opp list " << opp_list;
+                //qWarning() << "Race info present => id " <<  race << " opp list " << opp_list;
                 race_data->idrace=race;
                 race_data->oppList=opp_list;
                 race_data->colorNSZ=colorNSZ;

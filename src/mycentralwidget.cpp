@@ -692,7 +692,7 @@ void myCentralWidget::loadPOI(void)
             }
         }
     }
-    qWarning()<<"POIs loaded";
+    //qWarning()<<"POIs loaded";
 }
 
 myCentralWidget::~myCentralWidget()
@@ -4090,7 +4090,6 @@ void myCentralWidget::slot_playerSelected(Player * player)
         realBoat=NULL;
         emit shRouBis();
     }
-    qWarning()<<"exit 1";
 }
 
 void myCentralWidget::slot_writeBoatData(void)

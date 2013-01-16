@@ -579,18 +579,13 @@ void boat::updateBoatData()
         return;
     if(this->getType()==BOAT_VLM && !((boatVLM*)this)->isInitialized())
     {
-        qWarning()<<"boat not initialized, skipping updateBoatData()";
+        //qWarning()<<"boat not initialized, skipping updateBoatData()";
         return;
     }
-    qWarning()<<"updateBoatData 1";
     updateBoatString();
-    qWarning()<<"updateBoatData 2";
     reloadPolar();
-    qWarning()<<"updateBoatData 3";
     updatePosition();
-    qWarning()<<"updateBoatData 4";
     updateHint();
-    qWarning()<<"updateBoatData 5";
 }
 
 void boat::updatePosition(void)

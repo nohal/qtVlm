@@ -144,7 +144,7 @@ void boatVLM::doRequest(int requestCmd)
     }
     if(!activated && initialized)
     {
-        qWarning() << "Doing a synch on a non activated and initialized boat";
+        //qWarning() << "Doing a synch on a non activated and initialized boat";
         updating=false;
         emit hasFinishedUpdating();
         return;
@@ -169,14 +169,14 @@ void boatVLM::doRequest(int requestCmd)
             case VLM_REQUEST_BOAT:
                 QTextStream(&page) << "/ws/boatinfo.php?forcefmt=json"
                             << "&select_idu="<<this->boat_id;
-                qWarning()<<"requesting VLM_REQUEST_BOAT"<<pseudo;
+                //qWarning()<<"requesting VLM_REQUEST_BOAT"<<pseudo;
                 break;
             case VLM_REQUEST_TRJ:
             {
                 //trace_drawing->deleteAll();
                 if(race_id==0)
                 {
-                    qWarning() << "boat Acc no request TRJ for:" << pseudo << " id=" << boat_id;
+                    //qWarning() << "boat Acc no request TRJ for:" << pseudo << " id=" << boat_id;
                     emit hasFinishedUpdating();
                     return;
                 }
@@ -201,16 +201,16 @@ void boatVLM::doRequest(int requestCmd)
                         << boat_id
                         << "&starttime="
                         << st;
-                qWarning()<<"requesting VLM_REQUEST_TRJ"<<pseudo;
+                //qWarning()<<"requesting VLM_REQUEST_TRJ"<<pseudo;
                 break;
             }
             case VLM_REQUEST_GATE:
                 QTextStream(&page) << "/ws/raceinfo.php?idrace="<<race_id;
-                qWarning()<<"requesting VLM_REQUEST_GATE";
+                //qWarning()<<"requesting VLM_REQUEST_GATE";
                 break;
             case VLM_REQUEST_POLAR:
                 QTextStream(&page) << "/Polaires/"+this->polarVlm+".csv";
-                qWarning()<<"requesting VLM_REQUEST_POLAR"<<pseudo;
+                //qWarning()<<"requesting VLM_REQUEST_POLAR"<<pseudo;
                 break;
             default:
                 qWarning() << "[boatVLM-doRequest] error: unknown request: " << requestCmd;
@@ -242,7 +242,7 @@ void boatVLM::requestFinished (QByteArray res_byte)
 
     //QString res(res_byte);
 
-    qWarning() << "Request finished: " << getCurrentRequest() << " boat: " << this->boat_id<<this->pseudo<<name;
+    //qWarning() << "Request finished: " << getCurrentRequest() << " boat: " << this->boat_id<<this->pseudo<<name;
 
     switch(getCurrentRequest())
     {
@@ -406,7 +406,7 @@ void boatVLM::requestFinished (QByteArray res_byte)
         case VLM_REQUEST_TRJ:
         {
             emit getTrace(res_byte,trace_drawing->getPoints());
-            qWarning()<<"TRJ trace size="<<trace_drawing->getPoints()->count();
+            //qWarning()<<"TRJ trace size="<<trace_drawing->getPoints()->count();
             if(!trace_drawing->getPoints()->isEmpty() &&
               (qRound(trace_drawing->getPoints()->last().lon*1000)!=qRound(this->lon*1000) ||
                qRound(trace_drawing->getPoints()->last().lat*1000)!=qRound(this->lat*1000)))
@@ -434,19 +434,14 @@ void boatVLM::requestFinished (QByteArray res_byte)
 #endif
             trace_drawing->slot_showMe();
             /* we can now update everything */
-            qWarning()<<"TRJ2";
             updateBoatData();
-            qWarning()<<"TRJ3";
             updateTraceColor();
-            qWarning()<<"TRJ4";
-            //drawEstime();
 
             if(race_id!=0 && !gatesLoaded)
             {
                 updating=false;
                 drawEstime();
                 updating=true;
-                qWarning()<<"TRJ5";
                 doRequest(VLM_REQUEST_GATE);
             }
             else
@@ -454,7 +449,6 @@ void boatVLM::requestFinished (QByteArray res_byte)
                 updating=false;
                 this->getDistHdgGate();
                 drawEstime();
-                qWarning()<<"TRJ6";
                 emit hasFinishedUpdating();
                 emit boatUpdated(this,newRace,doingSync);
             }
@@ -793,13 +787,11 @@ void boatVLM::updateHint(void)
         int secs=stopAndGo.toInt()-QDateTime().currentDateTimeUtc().toTime_t();
         desc=desc+"<br>"+tr("Bateau echoue, pour encore ")+QString().setNum(secs)+" "+tr("secondes");
     }
-    qWarning()<<"updateHint 1";
     double windSpeed,windAngle;
     if(parent->getGrib() && parent->getGrib()->isOk() &&
        parent->getGrib()->getInterpolatedValue_byDates(this->lon,this->lat,
                            this->getPrevVac(),&windSpeed,&windAngle,INTERPOLATION_DEFAULT))
     {
-        qWarning()<<"updateHint 2";
         windAngle=radToDeg(windAngle);
         desc=desc+"<br><b>"+tr("Donnees GRIB a la derniere vac:")+"</b><br>"+
              QString().sprintf("TWS: %.2f TWD: %.2f",windSpeed,windAngle)+tr("deg");
@@ -813,22 +805,18 @@ void boatVLM::updateHint(void)
         }
         if(this->getPolarData())
         {
-            qWarning()<<"updateHint 3";
             double bs=this->getPolarData()->getSpeed(windSpeed,twa);
             desc=desc+"<br>"+tr("BS polaire: ")+QString().sprintf("%.2f",bs)+tr(" nds");
         }
-        qWarning()<<"updateHint 4";
         double previousTWA=twa;
         double previousTWS=windSpeed;
         parent->getGrib()->getInterpolatedValue_byDates(this->lon,this->lat,
                             this->getPrevVac()+this->getVacLen(),&windSpeed,&windAngle,INTERPOLATION_DEFAULT);
-        qWarning()<<"updateHint 5";
         windAngle=radToDeg(windAngle);
         desc=desc+"<br><b>"+tr("Donnees GRIB a la prochaine vac:")+"</b><br>"+
              QString().sprintf("TWS: %.2f TWD: %.2f",windSpeed,windAngle)+tr("deg");
         if(this->getPolarData())
         {
-            qWarning()<<"updateHint 6";
             double twa=this->heading-windAngle;
             if(qAbs(twa)>180)
             {
@@ -876,10 +864,8 @@ void boatVLM::updateHint(void)
         }
 
     }
-    qWarning()<<"updateHint 7";
     if(gatesLoaded && qRound(closest.distArrival*100.0)!=0)
     {
-        qWarning()<<"updateHint 8"<<closest.distArrival;
         QString str2=tr("Prochaine porte: ")+QString().sprintf("%.2f",closest.capArrival)+tr("deg")+"/"+
                 QString().sprintf("%.2f NM<br>",closest.distArrival);
         double vvmg=this->speed*(cos(degToRad(Util::myDiffAngle(heading,closest.capArrival))));
@@ -889,7 +875,6 @@ void boatVLM::updateHint(void)
     str=str.replace(" ","&nbsp;");
     desc=desc.replace(" ","&nbsp;");
     setToolTip(desc+"<br>"+str);
-    qWarning()<<"updateHint 9";
 }
 
 void boatVLM::setStatus(bool activated)
