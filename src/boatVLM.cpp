@@ -877,7 +877,7 @@ void boatVLM::updateHint(void)
 
     }
     qWarning()<<"updateHint 7";
-    if(qRound(closest.distArrival*100.0)!=0)
+    if(gatesLoaded && qRound(closest.distArrival*100.0)!=0)
     {
         qWarning()<<"updateHint 8"<<closest.distArrival;
         QString str2=tr("Prochaine porte: ")+QString().sprintf("%.2f",closest.capArrival)+tr("deg")+"/"+
@@ -1053,7 +1053,7 @@ void boatVLM::exportBoatInfoLog(QString fileName)
 }
 void boatVLM::getDistHdgGate()
 {
-    if(gates.isEmpty() || nWP<=0 || nWP>gates.count())
+    if(!gatesLoaded || gates.isEmpty() || nWP<=0 || nWP>gates.count())
     {
         closest=vlmPoint(0,0);
         return;
