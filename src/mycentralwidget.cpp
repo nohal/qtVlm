@@ -420,10 +420,6 @@ myCentralWidget::myCentralWidget(Projection * proj,MainWindow * parent,MenuBar *
     this->hornDate=QDateTime::currentDateTime().toUTC();
     this->hornDate.setTimeSpec(Qt::UTC);
     this->hornActivated=false;
-    routeTimer=new QTimer(this);
-    routeTimer->setInterval(300);
-    routeTimer->setSingleShot(true);
-    connect(routeTimer, SIGNAL(timeout()),this,SLOT(slot_routeTimer()));
 
     // Compass
     compass = new mapCompass(proj,parent,this);
@@ -3787,17 +3783,18 @@ void myCentralWidget::deleteRoutage(ROUTAGE * routage, ROUTE * route)
     {
         routage_list.removeAll(routage);
         update_menuRoutage();
-        routage->deleteLater();
-        routage=NULL;
         if(route!=NULL)
         {
             routeSimplify=route;
-            routeTimer->start();
+            connect(routage,SIGNAL(destroyed()),this,SLOT(slot_routeTimer()));
         }
+        routage->deleteLater();
+        routage=NULL;
     }
 }
 void myCentralWidget::slot_routeTimer()
 {
+    QApplication::processEvents();
     routeSimplify->setSimplify(true);
     treatRoute(routeSimplify);
 }

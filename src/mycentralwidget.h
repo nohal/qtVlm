@@ -429,7 +429,6 @@ class myCentralWidget : public QWidget
         bool abortRequest;
         faxMeteo * fax;
         loadImg * kap;
-        QTimer * routeTimer;
         ROUTE * routeSimplify;
 };
 
