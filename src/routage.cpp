@@ -239,6 +239,22 @@ inline vlmPoint findPointThreaded(const vlmPoint &point)
     }
     pt.convertionLat=pt.lat;
     pt.convertionLon=pt.lon;
+#if 0
+    QLineF tempLine(newPoint.x,newPoint.y,xs,ys);
+    newPoint.distStart=tempLine.length();
+    newPoint.capStart=Util::A360(-tempLine.angle()+90);
+    tempLine.setP2(QPointF(xa,ya));
+    newPoint.distArrival=tempLine.length();
+    newPoint.capArrival=Util::A360(-tempLine.angle()+90);
+#else
+    Orthodromie orth(pt.routage->getStart().x(),pt.routage->getStart().y(),pt.lon,pt.lat);
+    pt.distStart=orth.getDistance();
+    orth.setPoints(pt.lon,pt.lat,pt.routage->getArrival().x(),pt.routage->getArrival().y());
+    pt.distArrival=orth.getDistance();
+    pt.capArrival=orth.getAzimutDeg();
+#endif
+    orth.setPoints(pt.origin->lon,pt.origin->lat,pt.lon,pt.lat);
+    pt.distOrigin=orth.getDistance();
     return pt;
 }
 
@@ -1133,11 +1149,11 @@ void ROUTAGE::slot_calculate()
     proj->map2screenDouble(arrival.x(),arrival.y(),&xa,&ya);
     point.x=xs;
     point.y=ys;
-#if 0
+#if 1
     point.distArrival=initialDist;
     point.distStart=0;
     point.capArrival=orth.getAzimutDeg();
-    point.capStart=A360(-orth.getAzimutDeg());
+    point.capStart=Util::A360(-orth.getAzimutDeg());
 #else
     QLineF tempLine(point.x,point.y,xa,ya);
     point.distStart=0;
@@ -1155,6 +1171,7 @@ void ROUTAGE::slot_calculate()
         point.eta=i_eta;
     else
         point.eta=eta;
+    pivotPoint=point;
     iso->addVlmPoint(point);
     if(i_iso)
     {
@@ -1480,14 +1497,6 @@ void ROUTAGE::slot_calculate()
 #ifdef traceTime
                     tfp.start();
 #endif
-                    QLineF tempLine(newPoint.x,newPoint.y,xs,ys);
-                    newPoint.distStart=tempLine.length();
-                    newPoint.capStart=Util::A360(-tempLine.angle()+90);
-                    tempLine.setP2(QPointF(xa,ya));
-                    newPoint.distArrival=tempLine.length();
-                    newPoint.capArrival=Util::A360(-tempLine.angle()+90);
-                    orth.setPoints(list->at(n).lon,list->at(n).lat,newPoint.lon,newPoint.lat);
-                    newPoint.distOrigin=orth.getDistance();
 #ifdef traceTime
                     msecs_21=msecs_21+tfp.elapsed();
 #endif
@@ -1988,6 +1997,7 @@ void ROUTAGE::slot_calculate()
 #ifdef traceTime
         time.restart();
 #endif
+        double newMinDist=initialDist*10;
         for (int n=0;n<list->count();++n)
         {
             if(list->at(n).isDead)
@@ -2001,6 +2011,11 @@ void ROUTAGE::slot_calculate()
             temp.isBroken=false;
             segment->addVlmPoint(temp);
             temp=list->at(n);
+            if(temp.distArrival<newMinDist)
+            {
+                pivotPoint=temp;
+                newMinDist=temp.distArrival;
+            }
             temp.isBroken=false;
             segment->addVlmPoint(temp);
 #if 0 //debug left-right balancing
@@ -2036,6 +2051,8 @@ void ROUTAGE::slot_calculate()
 #endif
         if(++refresh%4==0)
         {
+            if(!this->i_iso)
+                this->slot_drawWay();
             QCoreApplication::processEvents();
         }
 #ifdef traceTime
@@ -2666,6 +2683,7 @@ void ROUTAGE::setShowIso(const bool &b)
 }
 void ROUTAGE::drawResult(vlmPoint P)
 {
+    this->eraseWay();
     QList<vlmPoint> initialRoad;
     for (int n=0;n<result->getPoints()->count();++n)
     {
@@ -2699,6 +2717,8 @@ void ROUTAGE::drawResult(vlmPoint P)
     pen.setColor(color);
     pen.setBrush(color);
     pen.setWidthF(2);
+    foreach(vlmPointGraphic * vg,this->isoPointList)
+        vg->setAcceptHover();
 }
 void ROUTAGE::setPivotPoint(const int &isoNb,const int &pointNb)
 {
@@ -2742,8 +2762,8 @@ void ROUTAGE::slot_drawWay()
     pen.setColor(colorsList[ncolor]);
     pen.setBrush(colorsList[ncolor]);
     way->setLinePen(pen);
-    way->slot_showMe();
     way->show();
+    way->slot_showMe();
     pen.setColor(color);
     pen.setBrush(color);
     pen.setWidthF(2);

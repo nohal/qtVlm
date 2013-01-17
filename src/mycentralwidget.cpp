@@ -206,6 +206,7 @@ void  myScene::keyReleaseEvent (QKeyEvent *e)
 
 void myScene::mouseMoveEvent(QGraphicsSceneMouseEvent* e)
 {
+#if 0
     if(hasWay)
     {
         emit eraseWay();
@@ -223,6 +224,7 @@ void myScene::mouseMoveEvent(QGraphicsSceneMouseEvent* e)
             }
         }
     }
+#endif
     parent->mouseMove(e->scenePos().x(),e->scenePos().y(),itemAt(e->scenePos()));
     QGraphicsScene::mouseMoveEvent(e);
 }

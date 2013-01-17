@@ -196,6 +196,8 @@ class ROUTAGE : public QObject
         bool getColorGrib(){return this->colorGrib;}
         bool getArrived() const {return this->arrived;}
         bool checkIceGate(const vlmPoint &p) const;
+        QPointF getStart() const {return this->start;}
+        QPointF getArrival() const {return this->arrival;}
     public slots:
         void slot_edit();
         void slot_abort(){this->aborted=true;}

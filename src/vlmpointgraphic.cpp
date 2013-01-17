@@ -18,7 +18,6 @@ vlmPointGraphic::vlmPointGraphic(ROUTAGE * routage,int isoNb, int pointIsoNb,dou
     this->pointIsoNb=pointIsoNb;
     this->routage=routage;
     debug="";
-    //this->setAcceptHoverEvents(true);
     setData(0,7);
     show();
 }
@@ -60,18 +59,22 @@ void vlmPointGraphic::slot_updateTip(int i,int n, QString t)
     setToolTip(newtip);
 }
 
-void vlmPointGraphic::drawWay()
+void  vlmPointGraphic::setAcceptHover()
+{
+    this->setAcceptHoverEvents(true);
+}
+
+void  vlmPointGraphic::hoverLeaveEvent ( QGraphicsSceneHoverEvent * )
+{
+    routage->eraseWay();
+}
+void  vlmPointGraphic::hoverEnterEvent ( QGraphicsSceneHoverEvent * )
 {
     if(!routage->getShowIso())
         return;
     routage->setPivotPoint(this->isoNb,this->pointIsoNb);
     routage->slot_drawWay();
 }
-
-//void  vlmPointGraphic::hoverLeaveEvent ( QGraphicsSceneHoverEvent * event )
-//{
-//    routage->eraseWay();
-//}
 
 void vlmPointGraphic::contextMenuEvent(QGraphicsSceneContextMenuEvent *)
 {
