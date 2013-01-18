@@ -585,10 +585,24 @@ avec ce prefixe</string>
             </property>
            </widget>
           </item>
-          <item row="2" column="0" colspan="2">
+          <item row="3" column="0">
+           <widget class="QCheckBox" name="RoutageOrtho">
+            <property name="text">
+             <string>Routage Orthodromique</string>
+            </property>
+           </widget>
+          </item>
+          <item row="2" column="0">
            <widget class="QCheckBox" name="log">
             <property name="text">
              <string>Utiliser une convergence logarithmique vers l'arrivee</string>
+            </property>
+           </widget>
+          </item>
+          <item row="4" column="0">
+           <widget class="QCheckBox" name="showBestLive">
+            <property name="text">
+             <string>Afficher la meilleure route pendant le calcul</string>
             </property>
            </widget>
           </item>
@@ -601,6 +615,9 @@ avec ce prefixe</string>
           <string>Routes alternatives</string>
          </property>
          <layout class="QFormLayout" name="formLayout_2">
+          <property name="fieldGrowthPolicy">
+           <enum>QFormLayout::AllNonFixedFieldsGrow</enum>
+          </property>
           <item row="0" column="0">
            <widget class="QLabel" name="label_18">
             <property name="text">
@@ -1073,8 +1090,11 @@ La différence est surtout sensible lors d'un routage en diagonale.</string>
   <tabstop>pruneWakeAngle</tabstop>
   <tabstop>explo</tabstop>
   <tabstop>log</tabstop>
+  <tabstop>RoutageOrtho</tabstop>
+  <tabstop>showBestLive</tabstop>
   <tabstop>nbAlter</tabstop>
   <tabstop>diver</tabstop>
+  <tabstop>whatIfUse</tabstop>
   <tabstop>whatIfDate</tabstop>
   <tabstop>whatIfWind</tabstop>
   <tabstop>whatIfTime</tabstop>
@@ -1082,8 +1102,10 @@ La différence est surtout sensible lors d'un routage en diagonale.</string>
   <tabstop>minPortant</tabstop>
   <tabstop>maxPres</tabstop>
   <tabstop>maxPortant</tabstop>
+  <tabstop>windForced</tabstop>
   <tabstop>TWS</tabstop>
   <tabstop>TWD</tabstop>
+  <tabstop>autoZoom</tabstop>
   <tabstop>zoomLevel</tabstop>
   <tabstop>Default</tabstop>
  </tabstops>

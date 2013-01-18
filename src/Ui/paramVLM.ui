@@ -1021,6 +1021,13 @@
             </property>
            </widget>
           </item>
+          <item row="1" column="0">
+           <widget class="QCheckBox" name="sailsDocPress">
+            <property name="text">
+             <string>Demander egalement la pression atmospherique</string>
+            </property>
+           </widget>
+          </item>
          </layout>
         </widget>
        </item>
@@ -1343,6 +1350,7 @@
   <tabstop>btn_browseGrib</tabstop>
   <tabstop>chk_gribZoomOnLoad</tabstop>
   <tabstop>chk_externalMail</tabstop>
+  <tabstop>sailsDocPress</tabstop>
   <tabstop>serialName</tabstop>
   <tabstop>spn_gpsDelay</tabstop>
   <tabstop>chk_activateEmulation</tabstop>

@@ -239,22 +239,25 @@ inline vlmPoint findPointThreaded(const vlmPoint &point)
     }
     pt.convertionLat=pt.lat;
     pt.convertionLon=pt.lon;
-#if 0
-    QLineF tempLine(newPoint.x,newPoint.y,xs,ys);
-    newPoint.distStart=tempLine.length();
-    newPoint.capStart=Util::A360(-tempLine.angle()+90);
-    tempLine.setP2(QPointF(xa,ya));
-    newPoint.distArrival=tempLine.length();
-    newPoint.capArrival=Util::A360(-tempLine.angle()+90);
-#else
-    Orthodromie orth(pt.routage->getStart().x(),pt.routage->getStart().y(),pt.lon,pt.lat);
-    pt.distStart=orth.getDistance();
-    orth.setPoints(pt.lon,pt.lat,pt.routage->getArrival().x(),pt.routage->getArrival().y());
-    pt.distArrival=orth.getDistance();
-    pt.capArrival=orth.getAzimutDeg();
-#endif
-    orth.setPoints(pt.origin->lon,pt.origin->lat,pt.lon,pt.lat);
+    Orthodromie orth(pt.origin->lon,pt.origin->lat,pt.lon,pt.lat);
     pt.distOrigin=orth.getDistance();
+    if(pt.routage->getRoutageOrtho())
+    {
+        orth.setPoints(pt.routage->getStart().x(),pt.routage->getStart().y(),pt.lon,pt.lat);
+        pt.distStart=orth.getDistance();
+        orth.setPoints(pt.lon,pt.lat,pt.routage->getArrival().x(),pt.routage->getArrival().y());
+        pt.distArrival=orth.getDistance();
+        pt.capArrival=orth.getAzimutDeg();
+    }
+    else
+    {
+        QLineF tempLine(pt.x,pt.y,pt.routage->getXs(),pt.routage->getYs());
+        pt.distStart=tempLine.length();
+        pt.capStart=Util::A360(-tempLine.angle()+90);
+        tempLine.setP2(QPointF(pt.routage->getXa(),pt.routage->getYa()));
+        pt.distArrival=tempLine.length();
+        pt.capArrival=Util::A360(-tempLine.angle()+90);
+    }
     return pt;
 }
 
@@ -791,6 +794,8 @@ ROUTAGE::ROUTAGE(QString name, Projection *proj, Grib *grib, QGraphicsScene * my
     this->minPres=Settings::getSetting("routageMinPres",0).toDouble();
     this->minPortant=Settings::getSetting("routageMinPortant",0).toDouble();
     this->pruneWakeAngle=Settings::getSetting("routagePruneWake",30).toInt();
+    this->routageOrtho=Settings::getSetting("routageOrtho",1).toInt()==1;
+    this->showBestLive=Settings::getSetting("routageShowBestLive",1).toInt()==1;
     this->colorGrib=Settings::getSetting("routageColorGrib",0).toInt()==1;
     this->showIso=Settings::getSetting("routageShowIso",1).toInt()==1;
     this->wind_angle=0;
@@ -894,6 +899,8 @@ void ROUTAGE::calculate()
         Settings::setSetting("routageMinPres",minPres);
         Settings::setSetting("routageMinPortant",minPortant);
         Settings::setSetting("routagePruneWake",pruneWakeAngle);
+        Settings::setSetting("routageOrtho",routageOrtho?1:0);
+        Settings::setSetting("routageShowBestLive",showBestLive?1:0);
         Settings::setSetting("routageColorGrib",colorGrib?1:0);
         Settings::setSetting("routageShowIso",showIso?1:0);
     }
@@ -1149,20 +1156,23 @@ void ROUTAGE::slot_calculate()
     proj->map2screenDouble(arrival.x(),arrival.y(),&xa,&ya);
     point.x=xs;
     point.y=ys;
-#if 1
-    point.distArrival=initialDist;
-    point.distStart=0;
-    point.capArrival=orth.getAzimutDeg();
-    point.capStart=Util::A360(-orth.getAzimutDeg());
-#else
-    QLineF tempLine(point.x,point.y,xa,ya);
-    point.distStart=0;
-    point.capStart=0;
-    point.distArrival=tempLine.length();
-    point.capArrival=Util::A360(-tempLine.angle()+90);
-    point.distOrigin=0;
-    initialDist=tempLine.length();
-#endif
+    if(routageOrtho)
+    {
+        point.distArrival=initialDist;
+        point.distStart=0;
+        point.capArrival=orth.getAzimutDeg();
+        point.capStart=Util::A360(-orth.getAzimutDeg());
+    }
+    else
+    {
+        QLineF tempLine(point.x,point.y,xa,ya);
+        point.distStart=0;
+        point.capStart=0;
+        point.distArrival=tempLine.length();
+        point.capArrival=Util::A360(-tempLine.angle()+90);
+        point.distOrigin=0;
+        initialDist=tempLine.length();
+    }
     approaching=false;
     point.origin=NULL;
     point.routage=this;
@@ -2011,7 +2021,7 @@ void ROUTAGE::slot_calculate()
             temp.isBroken=false;
             segment->addVlmPoint(temp);
             temp=list->at(n);
-            if(temp.distArrival<newMinDist)
+            if(showBestLive && temp.distArrival<newMinDist)
             {
                 pivotPoint=temp;
                 newMinDist=temp.distArrival;
@@ -2051,7 +2061,7 @@ void ROUTAGE::slot_calculate()
 #endif
         if(++refresh%4==0)
         {
-            if(!this->i_iso)
+            if(showBestLive && !this->i_iso)
                 this->slot_drawWay();
             QCoreApplication::processEvents();
         }
@@ -3263,6 +3273,8 @@ void ROUTAGE::setFromRoutage(ROUTAGE *fromRoutage, bool editOptions)
     this->checkLine=fromRoutage->getCheckLine();
     this->useConverge=fromRoutage->useConverge;
     this->pruneWakeAngle=fromRoutage->pruneWakeAngle;
+    this->showBestLive=fromRoutage->getShowBestLive();
+    this->routageOrtho=fromRoutage->getRoutageOrtho();
     this->colorGrib=fromRoutage->getColorGrib();
     this->routeFromBoat=false;
     this->fromPOI=fromRoutage->getFromPOI();

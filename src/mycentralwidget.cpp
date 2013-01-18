@@ -1186,6 +1186,8 @@ void myCentralWidget::slotLoadSailsDocGrib(void)
                                << "&body=GFS:"
                                << param
                                << "|0.5,0.5|0,3,6..384|WIND";
+        if(Settings::getSetting("sailsDocPress",0).toInt()==1)
+            queryStr+=",PRESS";
 
         // Format: mailto:query@saildocs.com?subject=Give me a Grib&body=send GFS:56N,59S,33E,87W|0.5,0.5|0,3,6..384|WIND
 
@@ -1194,7 +1196,10 @@ void myCentralWidget::slotLoadSailsDocGrib(void)
             QDesktopServices::openUrl(QUrl(queryStr));
         else
         {
-            DialogSailDocs * sailDocs_diag = new DialogSailDocs("GFS:" + param + "|0.5,0.5|0,3,6..384|WIND",this);
+            QString opt="|0.5,0.5|0,3,6..384|WIND";
+            if(Settings::getSetting("sailsDocPress",0).toInt()==1)
+                opt+=",PRESS";
+            DialogSailDocs * sailDocs_diag = new DialogSailDocs("GFS:" + param + opt,this);
             sailDocs_diag->exec();
             delete sailDocs_diag;
         }

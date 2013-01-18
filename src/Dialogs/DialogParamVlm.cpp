@@ -155,6 +155,7 @@ DialogParamVlm::DialogParamVlm(MainWindow * main,myCentralWidget * parent) : QDi
     //chk_autoGribDate->setCheckState(Settings::getSetting("autoGribDate",0).toInt()==1?Qt::Checked:Qt::Unchecked);
 
     chk_externalMail->setCheckState(Settings::getSetting("sDocExternalMail",1).toInt()==1?Qt::Checked:Qt::Unchecked);
+    sailsDocPress->setCheckState(Settings::getSetting("sailsDocPress",0).toInt()==1?Qt::Checked:Qt::Unchecked);
 
     /* GPS */
     chk_activateEmulation->setCheckState(
@@ -292,6 +293,7 @@ void DialogParamVlm::done(int result)
         Settings::setSetting("gribZoomOnLoad",chk_gribZoomOnLoad->checkState()==Qt::Checked?"1":"0");
         //Settings::setSetting("autoGribDate",chk_autoGribDate->checkState()==Qt::Checked?"1":"0");
         Settings::setSetting("sDocExternalMail",chk_externalMail->checkState()==Qt::Checked?"1":"0");
+        Settings::setSetting("sailsDocPress",sailsDocPress->checkState()==Qt::Checked?"1":"0");
 
         /* advanced */
         Settings::setSetting("gpsEmulEnable",chk_activateEmulation->checkState()==Qt::Checked?"1":"0");

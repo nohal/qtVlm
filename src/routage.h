@@ -198,6 +198,14 @@ class ROUTAGE : public QObject
         bool checkIceGate(const vlmPoint &p) const;
         QPointF getStart() const {return this->start;}
         QPointF getArrival() const {return this->arrival;}
+        double getXa() const {return xa;}
+        double getYa() const {return ya;}
+        double getXs() const {return xs;}
+        double getYs() const {return ys;}
+        bool getRoutageOrtho() const {return routageOrtho;}
+        void setRoutageOrtho(const bool &b){routageOrtho=b;}
+        bool getShowBestLive() const {return showBestLive;}
+        void setShowBestLive(const bool &b){showBestLive=b;}
     public slots:
         void slot_edit();
         void slot_abort(){this->aborted=true;}
@@ -347,6 +355,8 @@ class ROUTAGE : public QObject
         QList<QLineF> iceGates;
         void countDebug(int nbIso, QString s);
         bool colorGrib;
+        bool routageOrtho;
+        bool showBestLive;
     };
 Q_DECLARE_TYPEINFO(ROUTAGE,Q_MOVABLE_TYPE);
 #endif // ROUTAGE_H

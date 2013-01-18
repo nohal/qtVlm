@@ -3979,6 +3979,14 @@ inversés</translation>
         <source>Colorer TWS entre isos</source>
         <translation></translation>
     </message>
+    <message>
+        <source>Routage Orthodromique</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Afficher la meilleure route pendant le calcul</source>
+        <translation></translation>
+    </message>
 </context>
 <context>
     <name>ROUTE</name>
@@ -4702,6 +4710,10 @@ sans simplifier</translation>
     <message>
         <source>Algorithme de simplification maximal</source>
         <translation>Algorithme de simplification maximal</translation>
+    </message>
+    <message>
+        <source>Demander egalement la pression atmospherique</source>
+        <translation>Demander également la Pression Atmosphérique</translation>
     </message>
 </context>
 <context>
