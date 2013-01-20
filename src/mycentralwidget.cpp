@@ -3270,7 +3270,11 @@ void myCentralWidget::slot_editRoute(ROUTE * route,bool createMode)
     else
     {
         delete route_editor;
-        this->treatRoute(route);
+        /* Simplifying may remove POIs, which may cause a crash if we
+         * got here from a POI context menu and that POI gets removed.
+         * therefore we delay the processing until Qt is idle. */
+        routeSimplify = route;
+        QTimer::singleShot (0, this, SLOT (slot_routeTimer()));
     }
     //route->slot_recalculate();
     if(route->getPilototo())
@@ -3793,6 +3797,7 @@ void myCentralWidget::deleteRoutage(ROUTAGE * routage, ROUTE * route)
         if(route!=NULL)
         {
             routeSimplify=route;
+            routeSimplify->setSimplify(true);
             connect(routage,SIGNAL(destroyed()),this,SLOT(slot_routeTimer()));
         }
         routage->deleteLater();
@@ -3802,7 +3807,6 @@ void myCentralWidget::deleteRoutage(ROUTAGE * routage, ROUTE * route)
 void myCentralWidget::slot_routeTimer()
 {
     QApplication::processEvents();
-    routeSimplify->setSimplify(true);
     treatRoute(routeSimplify);
 }
 
