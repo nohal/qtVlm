@@ -700,6 +700,31 @@ myCentralWidget::~myCentralWidget()
         xmlPOI->slot_writeData(route_list,poi_list,appFolder.value("userFiles")+"poi.dat");
         xmlData->slot_writeData(player_list,race_list,QString(appFolder.value("userFiles")+"boatAcc.dat"));
     }
+    // Delete POIs and routes
+    this->setCompassFollow(NULL);
+    while(!route_list.isEmpty())
+    {
+        ROUTE* route = route_list.takeFirst();
+
+        route->setTemp (true);
+        QListIterator<POI*> i (route->getPoiList());
+        while(i.hasNext())
+        {
+            POI * poi = i.next();
+            poi->setRoute (NULL);
+            poi->setMyLabelHidden (false);
+            slot_delPOI_list (poi);
+            delete poi;
+        }
+        delete route;
+    }
+    while (!poi_list.isEmpty())
+    {
+        POI * poi=poi_list.first();
+        slot_delPOI_list(poi);
+        delete poi;
+    }
+    // Delete GRIB data
     delete gribCurrent;
     gribCurrent=NULL;
     delete grib;
