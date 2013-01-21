@@ -453,6 +453,7 @@ MenuBar::MenuBar(QWidget *parent)
         acHelp_Help = addAction(menuHelp, tr("Aide"),tr("Ctrl+H"),tr(""),appFolder.value("img")+"help.png");
         acHelp_APropos = addAction(menuHelp, tr("A propos de qtVlm"),tr(""),tr(""),"");
         acHelp_AProposQT = addAction(menuHelp, tr("A propos de QT"),tr(""),tr(""),"");
+        acHelp_Forum = addAction(menuHelp, tr("QtVlm forum"),tr(""),tr(""),"");
     addMenu(menuHelp);
 
 
@@ -548,6 +549,9 @@ QMenu * MenuBar::createPopupBtRight(QWidget *parent)
 
     popup->addSeparator();
     ac_editRoute=addAction(popup,tr("Editer la route"),"","","");
+    ac_simplifyRoute=addAction(popup,tr("Simplifier la route"),"","","");
+    ac_optimizeRoute=addAction(popup,tr("Optimiser la route"),"","","");
+    //ac_pilototoRoute=addAction(popup,tr("Envoyer la route au pilototo"),"","","");
     ac_copyRoute=addAction(popup,tr("Copier la route au format kml"),"","","");
     ac_zoomRoute=addAction(popup,tr("Zoom sur la route "),"","","");
     ac_deleteRoute=addAction(popup,tr("Supprimer la route"),"","","");

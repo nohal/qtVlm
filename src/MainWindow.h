@@ -82,7 +82,7 @@ class MainWindow: public QMainWindow
         bool getRestartNeeded(){return this->restartNeeded;}
         void continueSetup();
 
-    public slots:
+public slots:
         void slotFile_Open();
         void slotFile_Reopen();
         void slotFile_Close();
@@ -107,6 +107,7 @@ class MainWindow: public QMainWindow
 
         void slotOptions_Language();
         void slotHelp_Help();
+        void slotHelp_Forum();
         void slotHelp_APropos();
         void slotHelp_AProposQT();
 
@@ -162,6 +163,8 @@ class MainWindow: public QMainWindow
         void slot_editRoute();
         void slot_pasteRoute();
         void slot_zoomRoute();
+        void slot_optimizeRoute();
+        void slot_simplifyRoute();
 
     signals:
         void setChangeStatus(bool);

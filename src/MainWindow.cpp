@@ -146,6 +146,7 @@ void MainWindow::connectSignals()
     connect(mb->acHelp_Help, SIGNAL(triggered()), this, SLOT(slotHelp_Help()));
     connect(mb->acHelp_APropos, SIGNAL(triggered()), this, SLOT(slotHelp_APropos()));
     connect(mb->acHelp_AProposQT, SIGNAL(triggered()), this, SLOT(slotHelp_AProposQT()));
+    connect(mb->acHelp_Forum,SIGNAL(triggered()),this,SLOT(slotHelp_Forum()));
 
     //-------------------------------------------------------
     connect(mb->acVLMParamBoat, SIGNAL(triggered()), my_centralWidget, SLOT(slot_boatDialog()));
@@ -166,6 +167,8 @@ void MainWindow::connectSignals()
     connect(mb->ac_copyRoute,SIGNAL(triggered()), this, SLOT(slot_copyRoute()));
     connect(mb->ac_deleteRoute,SIGNAL(triggered()), this, SLOT(slot_deleteRoute()));
     connect(mb->ac_editRoute,SIGNAL(triggered()), this, SLOT(slot_editRoute()));
+    connect(mb->ac_simplifyRoute,SIGNAL(triggered()), this, SLOT(slot_simplifyRoute()));
+    connect(mb->ac_optimizeRoute,SIGNAL(triggered()), this, SLOT(slot_optimizeRoute()));
     connect(mb->ac_pasteRoute,SIGNAL(triggered()), this, SLOT(slot_pasteRoute()));
     connect(mb->acRoute_paste,SIGNAL(triggered()), this, SLOT(slot_pasteRoute()));
     connect(mb->ac_zoomRoute,SIGNAL(triggered()), this, SLOT(slot_zoomRoute()));
@@ -1039,6 +1042,9 @@ void MainWindow::slotOptions_Language()
 void MainWindow::slotHelp_Help() {
     QDesktopServices::openUrl(QUrl("http://wiki.virtual-loup-de-mer.org/index.php/QtVlm#L.27interface_de_qtVlm"));
 }
+void MainWindow::slotHelp_Forum() {
+    QDesktopServices::openUrl(QUrl("http://www.virtual-winds.com/forum/index.php?showtopic=6638&view=getnewpost"));
+}
 
 //-------------------------------------------------
 void MainWindow::slotHelp_APropos() {
@@ -1655,9 +1661,18 @@ void MainWindow::slotShowContextualMenu(QGraphicsSceneContextMenuEvent * e)
         QPixmap iconI(20,10);
         iconI.fill(my_centralWidget->getRouteToClipboard()->getColor());
         QIcon icon(iconI);
+        menuBar->ac_editRoute->setVisible(true);
         menuBar->ac_editRoute->setText(tr("Editer la route")+" "+routeName);
         menuBar->ac_editRoute->setIcon(icon);
         menuBar->ac_editRoute->setData(my_centralWidget->getRouteToClipboard()->getName());
+        menuBar->ac_simplifyRoute->setVisible(true);
+        menuBar->ac_simplifyRoute->setText(tr("Simplifier la route")+" "+routeName);
+        menuBar->ac_simplifyRoute->setIcon(icon);
+        menuBar->ac_simplifyRoute->setData(my_centralWidget->getRouteToClipboard()->getName());
+        menuBar->ac_optimizeRoute->setVisible(true);
+        menuBar->ac_optimizeRoute->setText(tr("Optimiser la route")+" "+routeName);
+        menuBar->ac_optimizeRoute->setIcon(icon);
+        menuBar->ac_optimizeRoute->setData(my_centralWidget->getRouteToClipboard()->getName());
         menuBar->ac_copyRoute->setVisible(true);
         menuBar->ac_copyRoute->setText(tr("Copier la route")+" "+routeName);
         menuBar->ac_copyRoute->setIcon(icon);
@@ -1669,12 +1684,15 @@ void MainWindow::slotShowContextualMenu(QGraphicsSceneContextMenuEvent * e)
         menuBar->ac_deleteRoute->setText(tr("Supprimer la route")+" "+routeName);
         menuBar->ac_deleteRoute->setIcon(icon);
         menuBar->ac_deleteRoute->setData(my_centralWidget->getRouteToClipboard()->getName());
-        menuBar->ac_editRoute->setVisible(true);
     }
     else
     {
         menuBar->ac_editRoute->setVisible(false);
         menuBar->ac_editRoute->setData(QString());
+        menuBar->ac_simplifyRoute->setVisible(false);
+        menuBar->ac_simplifyRoute->setData(QString());
+        menuBar->ac_optimizeRoute->setVisible(false);
+        menuBar->ac_optimizeRoute->setData(QString());
         menuBar->ac_copyRoute->setVisible(false);
         menuBar->ac_copyRoute->setData(QString());
         menuBar->ac_zoomRoute->setVisible(false);
@@ -1731,6 +1749,40 @@ void MainWindow::slot_editRoute()
     }
     if(route!=NULL)
         route->slot_edit();
+}
+void MainWindow::slot_simplifyRoute()
+{
+    ROUTE *route=NULL;
+    for (int n=0;n<my_centralWidget->getRouteList().count();++n)
+    {
+        if(my_centralWidget->getRouteList().at(n)->getName()==menuBar->ac_copyRoute->data().toString())
+        {
+            route=my_centralWidget->getRouteList().at(n);
+            break;
+        }
+    }
+    if(route!=NULL)
+    {
+        route->setSimplify(true);
+        my_centralWidget->treatRoute(route);
+    }
+}
+void MainWindow::slot_optimizeRoute()
+{
+    ROUTE *route=NULL;
+    for (int n=0;n<my_centralWidget->getRouteList().count();++n)
+    {
+        if(my_centralWidget->getRouteList().at(n)->getName()==menuBar->ac_copyRoute->data().toString())
+        {
+            route=my_centralWidget->getRouteList().at(n);
+            break;
+        }
+    }
+    if(route!=NULL)
+    {
+        route->setOptimize(true);
+        my_centralWidget->treatRoute(route);
+    }
 }
 void MainWindow::slot_zoomRoute()
 {

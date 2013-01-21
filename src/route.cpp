@@ -329,7 +329,7 @@ void ROUTE::slot_recalculate(boat * boat)
     eta=0;
     has_eta=false;
     time_t now;
-    if(myBoat!=NULL && myBoat->getPolarData() && grib)
+    if(myBoat!=NULL && myBoat->getPolarData() && grib && grib->isOk())
     {
         initialized=true;
         switch(startTimeOption)

@@ -110,6 +110,8 @@ public:
     QAction * ac_copyRoute;
     QAction * ac_deleteRoute;
     QAction * ac_editRoute;
+    QAction * ac_simplifyRoute;
+    QAction * ac_optimizeRoute;
     QAction * ac_pasteRoute;
     QAction * ac_zoomRoute;
 
@@ -291,6 +293,7 @@ public:
     QAction *acHelp_Help;
     QAction *acHelp_APropos;
     QAction *acHelp_AProposQT;
+    QAction *acHelp_Forum;
 
     QAction *acVLMParam;
     QAction *acVLMParamBoat;

@@ -1800,6 +1800,14 @@ Etes-vous sur ?</source>
         <source>loading POIs</source>
         <translation>Chargement des POIs</translation>
     </message>
+    <message>
+        <source>Simplifier la route</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Optimiser la route</source>
+        <translation></translation>
+    </message>
 </context>
 <context>
     <name>MenuBar</name>
@@ -2706,6 +2714,18 @@ Etes-vous sur ?</source>
     <message>
         <source>Zoom sur la route </source>
         <translation>Zoom sur la route </translation>
+    </message>
+    <message>
+        <source>QtVlm forum</source>
+        <translation>Forum qtVlm</translation>
+    </message>
+    <message>
+        <source>Simplifier la route</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Optimiser la route</source>
+        <translation></translation>
     </message>
 </context>
 <context>
