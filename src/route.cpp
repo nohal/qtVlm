@@ -986,10 +986,18 @@ void ROUTE::interpolatePos()
     {
         if(lastEta<gribDate && list->at(n).eta>=gribDate)
         {
-            line->setInterpolated(list->at(n).lon,list->at(n).lat);
+            double x1,y1,x2,y2;
+            proj->map2screenDouble(list->at(n-1).lon,list->at(n-1).lat,&x1,&y1);
+            proj->map2screenDouble(list->at(n).lon,list->at(n).lat,&x2,&y2);
+            QLineF segment(x1,y1,x2,y2);
+            double ratio=segment.length()/(list->at(n).eta-lastEta);
+            QPointF p=segment.pointAt(ratio*(gribDate-lastEta));
+            double lon,lat;
+            proj->screen2mapDouble(p.x(),p.y(),&lon,&lat);
+            line->setInterpolated(lon,lat);
             line->setHasInterpolated(true);
             if(parent->getCompassFollow()==this)
-                parent->centerCompass(list->at(n).lon,list->at(n).lat);
+                parent->centerCompass(lon,lat);
             break;
         }
         lastEta=list->at(n).eta;

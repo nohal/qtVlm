@@ -3323,6 +3323,8 @@ void myCentralWidget::treatRoute(ROUTE* route)
         this->abortRequest=false;
         bool simplify=route->getSimplify();
         bool optimize=route->getOptimize();
+        bool poiShown=route->getHidePois();
+        route->setHidePois(false);
         bool detectCoast=route->getDetectCoasts();
         route->setDetectCoasts(false);
         route->setSimplify(false);
@@ -3488,6 +3490,7 @@ void myCentralWidget::treatRoute(ROUTE* route)
             if(detectCoast)
                 route->slot_recalculate();
         }
+        route->setHidePois(poiShown);
     }
 }
 void myCentralWidget::slot_abortRequest()

@@ -82,6 +82,7 @@ class DialogRoute : public QDialog, public Ui::ROUTE_Editor_ui
                     double si, double co, int di, int dj, int b);
         QList<QStandardItem*> items;
         QList<QStandardItem*> roadPoint;
+        bool keepModel;
 };
 class DateBoxDelegate : public QItemDelegate
 {

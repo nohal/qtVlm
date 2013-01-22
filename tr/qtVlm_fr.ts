@@ -1119,6 +1119,10 @@ Etes-vous sur ?</source>
         <source>La route a ete chargee depuis VLM.</source>
         <translation type="obsolete">La route a été chargée depuis VLM.</translation>
     </message>
+    <message>
+        <source>Pour utiliser cette action il faut que la route parte du bateau</source>
+        <translation></translation>
+    </message>
 </context>
 <context>
     <name>DialogTwaLine</name>
@@ -3721,6 +3725,14 @@ VMG %.2f nds</translation>
     <message>
         <source>Supprimer le routage</source>
         <translation></translation>
+    </message>
+    <message>
+        <source>Ok</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>La route partira du point de depart et a l&apos;heure de depart du routage</source>
+        <translation>La route partira du point de départ et à l&apos;heure de départ du routage</translation>
     </message>
 </context>
 <context>

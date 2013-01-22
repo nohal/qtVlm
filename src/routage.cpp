@@ -2805,21 +2805,24 @@ void ROUTAGE::convertToRoute()
     }
     this->converted=false;
     bool simp=false;
-    if(parentRoutage->getRouteFromBoat())
+    QMessageBox msgBox(QMessageBox::Question,tr("Conversion d'un routage en route"),
+                       tr("Voulez-vous que le point de depart de la route suive le bateau maintenant?"));
+    QCheckBox simplify(tr("Simplifier/Optimiser automatiquement"),0);
+    simplify.blockSignals(true);
+    simplify.setChecked(Settings::getSetting("convertAndSimplify",1).toInt()==1);
+    msgBox.addButton(&simplify,QMessageBox::ActionRole);
+    msgBox.setStandardButtons(QMessageBox::Yes|QMessageBox::No|QMessageBox::Cancel);
+    if(!parentRoutage->getRouteFromBoat())
     {
-        QMessageBox msgBox(QMessageBox::Question,tr("Conversion d'un routage en route"),
-                           tr("Voulez-vous que le point de depart de la route suive le bateau maintenant?"));
-        QCheckBox simplify(tr("Simplifier/Optimiser automatiquement"),0);
-        simplify.blockSignals(true);
-        simplify.setChecked(Settings::getSetting("convertAndSimplify",1).toInt()==1);
-        msgBox.addButton(&simplify,QMessageBox::ActionRole);
-        msgBox.setStandardButtons(QMessageBox::Yes|QMessageBox::No|QMessageBox::Cancel);
-        int answ=msgBox.exec();
-        if(answ==QMessageBox::Cancel) return;
-        simp=simplify.isChecked();
-        Settings::setSetting("convertAndSimplify",simp?1:0);
-        routeStartBoat=answ==QMessageBox::Yes;
+        msgBox.button(QMessageBox::Yes)->hide();
+        msgBox.button(QMessageBox::No)->setText(tr("Ok"));
+        msgBox.setText(tr("La route partira du point de depart et a l'heure de depart du routage"));
     }
+    int answ=msgBox.exec();
+    if(answ==QMessageBox::Cancel) return;
+    simp=simplify.isChecked();
+    Settings::setSetting("convertAndSimplify",simp?1:0);
+    routeStartBoat=answ==QMessageBox::Yes;
     this->converted=true;
     ROUTE * route=parent->addRoute();
     route->setName(name);

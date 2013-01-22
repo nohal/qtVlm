@@ -63,7 +63,7 @@ DialogRoute::DialogRoute(ROUTE *route,myCentralWidget *parent)
     editFrozen->setChecked(route->getFrozen());
     this->speedLossOnTack->setValue(qRound(route->getSpeedLossOnTack()*100.00));
 
-
+    keepModel=false;
     startFromBoat->setChecked(route->getStartFromBoat());
     startFromMark->setChecked(!route->getStartFromBoat());
 
@@ -786,8 +786,11 @@ void DialogRoute::done(int result)
         route->setTemp(false);
         if(result==99)
         {
-            model->removeRows(0,model->rowCount());
-            listPois.clear();
+            if(!keepModel)
+            {
+                model->removeRows(0,model->rowCount());
+                listPois.clear();
+            }
             parent->treatRoute(route);
             connect(this->tabWidget,SIGNAL(currentChanged(int)),this,SLOT(slotTabChanged(int)));
             return;
@@ -827,31 +830,83 @@ void DialogRoute::GybeTack(int i)
 }
 void DialogRoute::slotLoadPilototo()
 {
-    if(!(this->startFromBoat->isChecked() &&
-         this->useVbvmgVlm->isChecked()))
-    {
-        QMessageBox::critical(0,tr("Pilototo"),tr("Pour utiliser cette action il faut que:<br>- La route parte du bateau<br>- Le mode VBVMG-VLM soit actif"));
-        return;
-    }
     if(route->getPoiList().isEmpty())
     {
         return;
     }
+    if(!route->getStartFromBoat())
+    {
+        QMessageBox::critical(0,tr("Pilototo"),tr("Pour utiliser cette action il faut que la route parte du bateau"));
+        return;
+    }
+    bool forceVbvmg=false;
+    int state=0;
+    if(!route->getUseVbvmgVlm())
+    {
+        forceVbvmg=true;
+        state=useVbvmgVlm->checkState();
+        useVbvmgVlm->setChecked(true);
+        this->slotApply();
+    }
     this->fillPilotView(true);
+    if(forceVbvmg)
+    {
+        switch(state)
+        {
+            case Qt::PartiallyChecked:
+                useVbvmgVlm->setCheckState(Qt::PartiallyChecked);
+                break;
+            case Qt::Checked:
+                useVbvmgVlm->setCheckState(Qt::Checked);
+                break;
+            default:
+                useVbvmgVlm->setCheckState(Qt::Unchecked);
+                break;
+        }
+        keepModel=true;
+        this->slotApply();
+        keepModel=false;
+    }
 }
 void DialogRoute::slotLoadPilototoCustom()
 {
-    if(!(this->startFromBoat->isChecked() &&
-         this->useVbvmgVlm->isChecked()))
-    {
-        QMessageBox::critical(0,tr("Pilototo"),tr("Pour utiliser cette action il faut que:<br>- La route parte du bateau<br>- Le mode VBVMG-VLM soit actif"));
-        return;
-    }
     if(route->getPoiList().isEmpty())
     {
         return;
     }
+    if(!route->getStartFromBoat())
+    {
+        QMessageBox::critical(0,tr("Pilototo"),tr("Pour utiliser cette action il faut que la route parte du bateau"));
+        return;
+    }
+    bool forceVbvmg=false;
+    int state=0;
+    if(!route->getUseVbvmgVlm())
+    {
+        forceVbvmg=true;
+        state=useVbvmgVlm->checkState();
+        useVbvmgVlm->setChecked(true);
+        this->slotApply();
+    }
     this->fillPilotView(false);
+    if(forceVbvmg)
+    {
+        switch(state)
+        {
+            case Qt::PartiallyChecked:
+                useVbvmgVlm->setCheckState(Qt::PartiallyChecked);
+                break;
+            case Qt::Checked:
+                useVbvmgVlm->setCheckState(Qt::Checked);
+                break;
+            default:
+                useVbvmgVlm->setCheckState(Qt::Unchecked);
+                break;
+        }
+        keepModel=true;
+        this->slotApply();
+        keepModel=false;
+    }
 }
 void DialogRoute::fillPilotView(bool def)
 {
