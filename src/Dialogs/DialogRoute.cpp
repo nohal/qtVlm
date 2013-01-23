@@ -1100,7 +1100,7 @@ void DateBoxDelegate::setEditorData(QWidget *editor,
         editBox->setMinimumDateTime(QDateTime().currentDateTimeUtc());
         editBox->setDateTime(value);
         QAbstractItemModel *model=(const_cast<QAbstractItemModel*>(index.model()));
-        model->setData(index,QVariant(editBox->size()),Qt::SizeHintRole);
+        model->setData(index,QVariant(editBox->sizeHint()),Qt::SizeHintRole);
     }
     else
     {
@@ -1112,7 +1112,7 @@ void DateBoxDelegate::setEditorData(QWidget *editor,
         editBox->setDecimals(2);
         editBox->setAlignment(Qt::AlignRight);
         QAbstractItemModel *model=(const_cast<QAbstractItemModel*>(index.model()));
-        model->setData(index,QVariant(editBox->size()),Qt::SizeHintRole);
+        model->setData(index,QVariant(editBox->sizeHint()),Qt::SizeHintRole);
     }
 }
 void DateBoxDelegate::setModelData(QWidget *editor, QAbstractItemModel *model,
@@ -1124,6 +1124,7 @@ void DateBoxDelegate::setModelData(QWidget *editor, QAbstractItemModel *model,
         QDateTime value = editBox->dateTime().toUTC();
         value.setTimeSpec(Qt::UTC);
         model->setData(index,value.toString("dd MMM yyyy-hh:mm:ss"),Qt::EditRole);
+        model->setData(index,QVariant(editBox->sizeHint()),Qt::SizeHintRole);
     }
     else
     {
@@ -1131,6 +1132,7 @@ void DateBoxDelegate::setModelData(QWidget *editor, QAbstractItemModel *model,
         double value = editBox->value();
         if(value<0) value=-1.0;
         model->setData(index,QString().sprintf("%.2f",value),Qt::EditRole);
+        model->setData(index,QVariant(editBox->sizeHint()),Qt::SizeHintRole);
     }
 }
 void DateBoxDelegate::updateEditorGeometry(QWidget *editor,
