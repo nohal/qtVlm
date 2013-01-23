@@ -29,7 +29,7 @@ Copyright (C) 2008 - Jacques Zaninetti - http://zygrib.free.fr
 
 #include "ui_Route_Editor.h"
 #include <QStandardItemModel>
-#include <QItemDelegate>
+#include <QStyledItemDelegate>
 #include <QTimer>
 
 //===================================================================
@@ -84,7 +84,7 @@ class DialogRoute : public QDialog, public Ui::ROUTE_Editor_ui
         QList<QStandardItem*> roadPoint;
         bool keepModel;
 };
-class DateBoxDelegate : public QItemDelegate
+class DateBoxDelegate : public QStyledItemDelegate
 {
      Q_OBJECT
 

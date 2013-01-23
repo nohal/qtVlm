@@ -29,6 +29,7 @@ class DialogWp: public QDialog, public Ui::WP_dialog_ui
     public:
         DialogWp(QWidget * parent=0);
         void show_WPdialog(boatVLM * boat);
+        void setLocked(const bool &locked);
 
     public slots:
         void chgLat();

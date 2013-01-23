@@ -899,7 +899,7 @@ void boardVLM::setChangeStatus(bool status)
     goPilotOrtho->setEnabled(st);
     goVMG->setEnabled(st);
     goVBVMG->setEnabled(st);
-    btn_WP->setEnabled(st);
+    this->wpDialog->setLocked(st);
     btn_Synch->setEnabled(!((MainWindow*)mainWin)->get_selPOI_instruction());
 }
 

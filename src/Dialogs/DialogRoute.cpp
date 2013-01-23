@@ -1060,7 +1060,7 @@ void DialogRoute::slotEnvoyer()
 
 //---------------------------------------
 DateBoxDelegate::DateBoxDelegate(QObject *parent)
-    : QItemDelegate(parent)
+    : QStyledItemDelegate(parent)
 {
 }
 QWidget *DateBoxDelegate::createEditor(QWidget *parent,
