@@ -1072,6 +1072,8 @@ QWidget *DateBoxDelegate::createEditor(QWidget *parent,
         QDateTimeEdit *editor = new QDateTimeEdit(parent);
         editor->setTimeSpec(Qt::UTC);
         editor->setDisplayFormat("dd MMM yyyy-hh:mm:ss");
+        QAbstractItemModel *model=(const_cast<QAbstractItemModel*>(index.model()));
+        model->setData(index,QVariant(editor->sizeHint()),Qt::SizeHintRole);
         return editor;
     }
     else
@@ -1081,6 +1083,8 @@ QWidget *DateBoxDelegate::createEditor(QWidget *parent,
         editor->setMaximum(359.99);
         editor->setDecimals(2);
         editor->setAlignment(Qt::AlignRight);
+        QAbstractItemModel *model=(const_cast<QAbstractItemModel*>(index.model()));
+        model->setData(index,QVariant(editor->sizeHint()),Qt::SizeHintRole);
         return editor;
     }
 }
