@@ -1099,6 +1099,8 @@ void DateBoxDelegate::setEditorData(QWidget *editor,
         QDateTimeEdit *editBox = static_cast<QDateTimeEdit*>(editor);
         editBox->setMinimumDateTime(QDateTime().currentDateTimeUtc());
         editBox->setDateTime(value);
+        QAbstractItemModel *model=(const_cast<QAbstractItemModel*>(index.model()));
+        model->setData(index,QVariant(editBox->size()),Qt::SizeHintRole);
     }
     else
     {
@@ -1109,6 +1111,8 @@ void DateBoxDelegate::setEditorData(QWidget *editor,
         editBox->setMaximum(359.99);
         editBox->setDecimals(2);
         editBox->setAlignment(Qt::AlignRight);
+        QAbstractItemModel *model=(const_cast<QAbstractItemModel*>(index.model()));
+        model->setData(index,QVariant(editBox->size()),Qt::SizeHintRole);
     }
 }
 void DateBoxDelegate::setModelData(QWidget *editor, QAbstractItemModel *model,
