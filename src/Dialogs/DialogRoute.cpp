@@ -1135,8 +1135,8 @@ void DateBoxDelegate::setModelData(QWidget *editor, QAbstractItemModel *model,
         model->setData(index,QVariant(editBox->sizeHint()),Qt::SizeHintRole);
     }
 }
-void DateBoxDelegate::updateEditorGeometry(QWidget *editor,
-    const QStyleOptionViewItem &option, const QModelIndex &/* index */) const
-{
-    editor->setGeometry(option.rect);
-}
+//void DateBoxDelegate::updateEditorGeometry(QWidget *editor,
+//    const QStyleOptionViewItem &option, const QModelIndex &/* index */) const
+//{
+//    editor->setGeometry(option.rect);
+//}
