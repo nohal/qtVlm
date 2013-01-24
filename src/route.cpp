@@ -989,9 +989,10 @@ void ROUTE::interpolatePos()
             double x1,y1,x2,y2;
             proj->map2screenDouble(list->at(n-1).lon,list->at(n-1).lat,&x1,&y1);
             proj->map2screenDouble(list->at(n).lon,list->at(n).lat,&x2,&y2);
-            QLineF segment(x1,y1,x2,y2);
+            QLineF segment(x2,y2,x1,y1);
             double ratio=segment.length()/(list->at(n).eta-lastEta);
-            QPointF p=segment.pointAt(ratio*(gribDate-lastEta));
+            qWarning()<<"ratio="<<ratio<<(ratio*(list->at(n).eta-gribDate))/100.0;
+            QPointF p=segment.pointAt((ratio*(list->at(n).eta-gribDate))/100.0);
             double lon,lat;
             proj->screen2mapDouble(p.x(),p.y(),&lon,&lat);
             line->setInterpolated(lon,lat);
