@@ -150,7 +150,7 @@ bool Win_QextSerialPort::open(OpenMode mode) {
         return isOpen();
     if (!isOpen()) {
         /*open the port*/
-        Win_Handle=CreateFileA(port.toAscii(), GENERIC_READ|GENERIC_WRITE,
+        Win_Handle=CreateFileA(port.toLatin1(), GENERIC_READ|GENERIC_WRITE,
                               FILE_SHARE_READ|FILE_SHARE_WRITE, NULL, OPEN_EXISTING, 0, NULL);
         if (Win_Handle!=INVALID_HANDLE_VALUE) {
             /*set open mode*/

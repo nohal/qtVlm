@@ -21,7 +21,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #ifndef SAILDOCS_H
 #define SAILDOCS_H
 
-#include "QDialog"
+#include "QtWidgets/QDialog"
 #include "ui_sailDocs.h"
 
 

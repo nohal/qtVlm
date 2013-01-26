@@ -112,7 +112,7 @@ void GshhsDwnload::getMaps(void) {
         }
 
 
-        if(miniunzip(UZ_OVERWRITE,(const char*)filename.toAscii().data(),dir.toAscii().data(),NULL,NULL)!=UNZ_OK) {
+        if(miniunzip(UZ_OVERWRITE,(const char*)filename.toLatin1().data(),dir.toLatin1().data(),NULL,NULL)!=UNZ_OK) {
             QMessageBox::critical(centralWidget,
                                   tr("Saving maps"),
                                   tr("Zip file ") + filename + tr(" can't be unzip"));

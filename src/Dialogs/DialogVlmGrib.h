@@ -21,9 +21,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #ifndef DIALOGVLM_GRIB_H
 #define DIALOGVLM_GRIB_H
 
-#include <QDialog>
-#include <QMessageBox>
-#include <QRadioButton>
+#include <QtWidgets/QDialog>
+#include <QtWidgets/QMessageBox>
+#include <QtWidgets/QRadioButton>
 
 #include "ui_DialogVLM_grib.h"
 

@@ -25,17 +25,17 @@ Copyright (C) 2008 - Jacques Zaninetti - http://zygrib.free.fr
 #ifndef DIALOGLOADGRIB_H
 #define DIALOGLOADGRIB_H
 
-#include <QDialog>
-#include <QFrame>
-#include <QGridLayout>
-#include <QLabel>
-#include <QSpinBox>
-#include <QCheckBox>
-#include <QComboBox>
-#include <QPushButton>
-#include <QFileDialog>
+#include <QtWidgets/QDialog>
+#include <QtWidgets/QFrame>
+#include <QtWidgets/QGridLayout>
+#include <QtWidgets/QLabel>
+#include <QtWidgets/QSpinBox>
+#include <QtWidgets/QCheckBox>
+#include <QtWidgets/QComboBox>
+#include <QtWidgets/QPushButton>
+#include <QtWidgets/QFileDialog>
 #include <QTime>
-#include <QProgressBar>
+#include <QtWidgets/QProgressBar>
 #include "LoadGribFile.h"
 
 //#define HAS_TEMP

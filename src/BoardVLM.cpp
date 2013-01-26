@@ -18,8 +18,8 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ***********************************************************************/
 
-#include <QtGui>
-#include <QMessageBox>
+#include <QtWidgets/QtWidgets>
+#include <QtWidgets/QMessageBox>
 #include <QDebug>
 /* QJson */
 #include <serializer.h>
@@ -740,7 +740,7 @@ char boardVLM::chkSum(QString data)
 {
     char res=0;
     for(int i=0;i<data.length();i++)
-        res^=data.at(i).toAscii();
+        res^=data.at(i).toLatin1();
     return res;
 }
 
@@ -802,7 +802,7 @@ void boardVLM::synch_GPS()
             data="$"+data+"*"+QString().setNum(ch,16);
             //qWarning() << "GPS-GLL: " << data;
             data=data+"\x0D\x0A";
-            if(port->write(data.toAscii(),data.length())!=data.length())
+            if(port->write(data.toLatin1(),data.length())!=data.length())
             {
                 delete port;
                 chk_GPS->setCheckState(Qt::Unchecked);
@@ -817,7 +817,7 @@ void boardVLM::synch_GPS()
             //qWarning() << "GPS-RMC: " << data;
             data=data+"\x0D\x0A";
             //port->write(data.toAscii(),data.length());
-            if(port->write(data.toAscii(),data.length())!=data.length())
+            if(port->write(data.toLatin1(),data.length())!=data.length())
             {
                 delete port;
                 chk_GPS->setCheckState(Qt::Unchecked);
@@ -835,7 +835,7 @@ void boardVLM::synch_GPS()
         //qWarning() << "GPS-RMC: " << data;
         data=data+"\x0D\x0A";
         //port->write(data.toAscii(),data.length());
-        if(port->write(data.toAscii(),data.length())!=data.length())
+        if(port->write(data.toLatin1(),data.length())!=data.length())
         {
             delete port;
             chk_GPS->setCheckState(Qt::Unchecked);
@@ -856,7 +856,7 @@ void boardVLM::synch_GPS()
         //qWarning() << "GPS-RMC: " << data;
         data=data+"\x0D\x0A";
         //port->write(data.toAscii(),data.length());
-        if(port->write(data.toAscii(),data.length())!=data.length())
+        if(port->write(data.toLatin1(),data.length())!=data.length())
         {
             delete port;
             chk_GPS->setCheckState(Qt::Unchecked);
@@ -871,7 +871,7 @@ void boardVLM::synch_GPS()
         //qWarning() << "GPS-RMC: " << data;
         data=data+"\x0D\x0A";
         //port->write(data.toAscii(),data.length());
-        if(port->write(data.toAscii(),data.length())!=data.length())
+        if(port->write(data.toLatin1(),data.length())!=data.length())
         {
             delete port;
             chk_GPS->setCheckState(Qt::Unchecked);

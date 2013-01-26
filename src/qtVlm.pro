@@ -1,6 +1,7 @@
+QT+=core gui widgets multimedia concurrent
 CONFIG += qt
 TEMPLATE = app
-TARGET = 
+TARGET = qtVlm
 DEPENDPATH += .
 INCLUDEPATH += objs \
     Dialogs \
@@ -15,8 +16,8 @@ INCLUDEPATH += objs \
     .
 
 LIBS += -Llibs/build \
-    -lbz2 \
     -lminiunz \
+    -lbz2 \
     -lz \
     -lqextserialport \
     -lqjson \
@@ -118,7 +119,6 @@ HEADERS += Dialogs/DialogGraphicsParams.h \
     BoardReal.h \
     faxMeteo.h \
     loadImg.h \
-    Font.h \
     Player.h \
     interpolation.h \
     Dialogs/DialogRealBoatConfig.h \
@@ -221,7 +221,6 @@ SOURCES += Dialogs/DialogGraphicsParams.cpp \
     orthoSegment.cpp \
     selectionWidget.cpp \
     vlmLine.cpp \
-    Font.cpp \
     inetClient.cpp \
     route.cpp \
     routage.cpp \
@@ -261,7 +260,9 @@ win32:DEFINES += _TTY_WIN_ \
     QWT_DLL \
     QT_DLL \
     __TERRAIN_QPIXMAP __WIN_QTVLM \
-    _CRT_SECURE_NO_WARNINGS
+    _CRT_SECURE_NO_WARNINGS \
+    NOMINMAX
+
 
 macx: DEFINES += _TTY_POSIX_ __TERRAIN_QPIXMAP __MAC_QTVLM
 ICON = qtVlm.icns

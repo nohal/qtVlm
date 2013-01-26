@@ -722,7 +722,7 @@ void DialogRace::chgRace(int id)
         if(!items[0]->isEnabled())
         {
             for(int it=0;it<items.count();it++)
-                items[it]->setData(Qt::red,Qt::ForegroundRole);
+                items[it]->setData(QColor(Qt::red),Qt::ForegroundRole);
         }
 //        if(items[0]->checkState()==Qt::Checked)
 //        {

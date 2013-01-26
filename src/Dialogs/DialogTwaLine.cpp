@@ -16,7 +16,7 @@ DialogTwaLine::DialogTwaLine(QPointF start, myCentralWidget *parent, MainWindow 
     this->grib=parent->getGrib();
     this->myBoat=parent->getSelectedBoat();
 
-    color=Settings::getSetting("traceLineColor", Qt::yellow).value<QColor>();
+    color=Settings::getSetting("traceLineColor", QColor(Qt::yellow)).value<QColor>();
     pen.setColor(color);
     pen.setBrush(color);
     pen.setWidthF(Settings::getSetting("traceLineWidth", 2.0).toDouble());

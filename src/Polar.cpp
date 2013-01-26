@@ -210,21 +210,21 @@ void Polar::setPolarName(QString fname)
     }
 #endif
 
-    mid_twa=qRound(twa.count()/2);
-    mid_tws=qRound(tws.count()/2);
+    mid_twa=qRound(twa.count()/2.0);
+    mid_tws=qRound(tws.count()/2.0);
     /* polaire chargee */
 
 /* pre-calculate B-VMG for every tws at 0.1 precision with a twa step of 1 and then .1 */
 
-    double ws=qRound(0);
-    double wa=qRound(0);
+    double ws=0.0;
+    double wa=0.0;
     double bvmg,bvmg_d,bvmg_u,wa_u,wa_d,wa_limit;
-    maxSpeed=qRound(0);
+    maxSpeed=0.0;
     do
     {
-        wa_u=qRound(0);
-        wa_d=qRound(180);
-        bvmg_u=bvmg_d=qRound(0);
+        wa_u=0.0;
+        wa_d=180.0;
+        bvmg_u=bvmg_d=0;
         double speed;
         do
         {
@@ -245,10 +245,10 @@ void Polar::setPolarName(QString fname)
         } while(wa<181.00);
         wa=wa_u-1;
         wa_limit=wa_u+1;
-        if(wa<0) wa=qRound(0);
-        if(wa_limit<1) wa_limit=qRound(1);
-        if(wa_limit>180) wa_limit=qRound(180);
-        bvmg_u=qRound(0);
+        if(wa<0) wa=0.0;
+        if(wa_limit<1) wa_limit=1.0;
+        if(wa_limit>180) wa_limit=180.0;
+        bvmg_u=0.0;
         do
         {
             speed=myGetSpeed(ws,wa,true);
@@ -263,10 +263,10 @@ void Polar::setPolarName(QString fname)
         } while(wa<(wa_limit+0.1000));
         wa=wa_d-1;
         wa_limit=wa_d+1;
-        if(wa<0) wa=qRound(0);
-        if(wa_limit<1) wa_limit=qRound(1);
-        if(wa_limit>180) wa_limit=qRound(180);
-        bvmg_d=qRound(0);
+        if(wa<0) wa=0.0;
+        if(wa_limit<1) wa_limit=1.0;
+        if(wa_limit>180) wa_limit=180.0;
+        bvmg_d=0.0;
         do
         {
             speed=myGetSpeed(ws,wa,true);
@@ -281,7 +281,7 @@ void Polar::setPolarName(QString fname)
         }while(wa<wa_limit+0.1);
         best_vmg_up.append(wa_u);
         best_vmg_down.append(wa_d);
-        wa=qRound(0);
+        wa=0.0;
         ws=ws+.1;
     }while(ws<60.1);
     loaded=true;

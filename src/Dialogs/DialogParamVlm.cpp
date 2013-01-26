@@ -18,7 +18,7 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ***********************************************************************/
 
-#include <QtGui>
+#include <QtWidgets>
 #include <QMessageBox>
 
 #include "DialogParamVlm.h"
@@ -337,7 +337,7 @@ void DialogParamVlm::slot_chgMapFolder(void) {
             exitLoop=true;
         }
         else if(dir != mapsFolder->text()) {
-            GshhsReader * gshhsReaderPv = new GshhsReader((dir+"/gshhs").toAscii().data());
+            GshhsReader * gshhsReaderPv = new GshhsReader((dir+"/gshhs").toLatin1().data());
 
             int polyVersion = gshhsReaderPv->getPolyVersion();
             if(polyVersion == -1) {

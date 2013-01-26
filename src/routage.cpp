@@ -41,7 +41,7 @@ Original code: virtual-winds.com
 #include "Polygon.h"
 #include "route.h"
 #include <QDebug>
-#include <QtConcurrentMap>
+#include <QtConcurrent/QtConcurrentMap>
 #include "vlmpointgraphic.h"
 #include "settings.h"
 #include "Terrain.h"

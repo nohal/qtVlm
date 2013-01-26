@@ -592,11 +592,11 @@ void Util::addAgent(QNetworkRequest & request)
     if(Settings::getSetting("forceUserAgent",0).toInt()==1
         && !Settings::getSetting("userAgent", "").toString().isEmpty())
     {
-        request.setRawHeader("User-Agent",Settings::getSetting("userAgent", "").toString().toAscii());
-        request.setRawHeader("VLM_PROXY_AGENT",QString("qtVlm/"+Version::getVersion()+" ("+QTVLM_OS+")").toAscii());
+        request.setRawHeader("User-Agent",Settings::getSetting("userAgent", "").toString().toLatin1());
+        request.setRawHeader("VLM_PROXY_AGENT",QString("qtVlm/"+Version::getVersion()+" ("+QTVLM_OS+")").toLatin1());
     }
     else
-        request.setRawHeader("User-Agent",QString("qtVlm/"+Version::getVersion()+" ("+QTVLM_OS+")").toAscii());
+        request.setRawHeader("User-Agent",QString("qtVlm/"+Version::getVersion()+" ("+QTVLM_OS+")").toLatin1());
 
 }
 bool Util::lineIsCrossingRect(const QLineF &line, const QRectF &rect)

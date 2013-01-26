@@ -22,7 +22,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <QDebug>
 #include <QGraphicsSceneMouseEvent>
 #include <QInputDialog>
-#include <QSound>
+#include <QtMultimedia/QSound>
 #include <QDesktopServices>
 #include <QXmlSchema>
 #include <QXmlSchemaValidator>
@@ -206,6 +206,7 @@ void  myScene::keyReleaseEvent (QKeyEvent *e)
 
 void myScene::mouseMoveEvent(QGraphicsSceneMouseEvent* e)
 {
+    if(parent->getIsStartingUp()) return;
 #if 0
     if(hasWay)
     {
@@ -225,7 +226,7 @@ void myScene::mouseMoveEvent(QGraphicsSceneMouseEvent* e)
         }
     }
 #endif
-    parent->mouseMove(e->scenePos().x(),e->scenePos().y(),itemAt(e->scenePos()));
+    parent->mouseMove(e->scenePos().x(),e->scenePos().y(),itemAt(e->scenePos(),parent->getView()->transform()));
     QGraphicsScene::mouseMoveEvent(e);
 }
 
@@ -233,7 +234,7 @@ void myScene::mouseDoubleClickEvent(QGraphicsSceneMouseEvent* e)
 {
     if(e->button()==Qt::LeftButton)
     {
-        parent->mouseDoubleClick(e->scenePos().x(),e->scenePos().y(),itemAt(e->scenePos()));
+        parent->mouseDoubleClick(e->scenePos().x(),e->scenePos().y(),itemAt(e->scenePos(),parent->getView()->transform()));
     }
 }
 void myScene::wheelEvent(QGraphicsSceneWheelEvent* e)
@@ -541,7 +542,7 @@ void myCentralWidget::loadGshhs(void) {
 
     //qWarning() << "Searching for maps in " << mapDir;
 
-    gshhsReader = new GshhsReader((mapDir+"/gshhs").toAscii().data());
+    gshhsReader = new GshhsReader((mapDir+"/gshhs").toLatin1().data());
     gshhsReader->setProj(proj);
 
     int polyVersion = gshhsReader->getPolyVersion();
@@ -549,7 +550,7 @@ void myCentralWidget::loadGshhs(void) {
     {
         mapDir=".";
         delete gshhsReader;
-        gshhsReader = new GshhsReader((mapDir+"/gshhs").toAscii().data());
+        gshhsReader = new GshhsReader((mapDir+"/gshhs").toLatin1().data());
         gshhsReader->setProj(proj);
         polyVersion = gshhsReader->getPolyVersion();
     }
@@ -1930,7 +1931,7 @@ void myCentralWidget::slot_importRouteFromMenu(bool ortho)
         {
             format=MS_FORMAT;
             bool ok;
-            timeOffset=QInputDialog::getInteger(0,QString(QObject::tr("Importation de routage MaxSea")),QString(QObject::tr("Heures a ajouter/enlever pour obtenir UTC (par ex -2 pour la France)")),0,-24,24,1,&ok);
+            timeOffset=QInputDialog::getInt(0,QString(QObject::tr("Importation de routage MaxSea")),QString(QObject::tr("Heures a ajouter/enlever pour obtenir UTC (par ex -2 pour la France)")),0,-24,24,1,&ok);
             if(!ok) return;
         }
         else
@@ -3019,7 +3020,7 @@ void myCentralWidget::exportRouteFromMenuKML(ROUTE * route,QString fileName,bool
         {
             QDomElement qd4=doc.createElement("when");
             qd3.appendChild(qd4);
-            t=doc.createTextNode(QDateTime().fromTime_t(qRound(listPoint->at(i).eta)).toUTC().toString("yyyy-MM-ddThh:mm:ssZ"));
+            t=doc.createTextNode(QDateTime().fromTime_t(listPoint->at(i).eta).toUTC().toString("yyyy-MM-ddThh:mm:ssZ"));
             qd4.appendChild(t);
 
         }

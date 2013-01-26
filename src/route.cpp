@@ -53,7 +53,7 @@ ROUTE::ROUTE(QString name, Projection *proj, Grib *grib, QGraphicsScene * myScen
     this->myscene=myScene;
     this->grib=grib;
     this->parent=parentWindow;
-    this->color=Settings::getSetting("routeLineColor", Qt::yellow).value<QColor>();
+    this->color=Settings::getSetting("routeLineColor", QColor(Qt::yellow)).value<QColor>();
     this->width=Settings::getSetting("routeLineWidth", 2.0).toDouble();
     this->startFromBoat=true;
     this->startTimeOption=1;

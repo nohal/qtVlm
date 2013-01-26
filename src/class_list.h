@@ -74,9 +74,6 @@ class DialogVlmGrib;
 /*DialogFinePositt.h*/
 class DialogFinePosit;
 
-/* Font.h */
-class Font;
-
 /* GisReader.h */
 class GisReader;
 

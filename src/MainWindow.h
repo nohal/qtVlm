@@ -24,13 +24,13 @@ Copyright (C) 2008 - Jacques Zaninetti - http://zygrib.free.fr
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
-#include <QApplication>
-#include <QMainWindow>
+#include <QtWidgets/QApplication>
+#include <QtWidgets/QMainWindow>
 #include <QMouseEvent>
 #include <QTimer>
-#include <QProgressDialog>
-#include <QGraphicsSceneContextMenuEvent>
-#include <QCheckBox>
+#include <QtWidgets/QProgressDialog>
+#include <QtWidgets/QGraphicsSceneContextMenuEvent>
+#include <QtWidgets/QCheckBox>
 
 #include <QLibrary>
 

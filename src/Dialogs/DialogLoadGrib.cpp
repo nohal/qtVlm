@@ -22,7 +22,7 @@ Copyright (C) 2008 - Jacques Zaninetti - http://zygrib.free.fr
 
 ***********************************************************************/
 
-#include <QMessageBox>
+#include <QtWidgets/QMessageBox>
 #include <cmath>
 #include <cassert>
 

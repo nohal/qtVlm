@@ -37,7 +37,7 @@ Copyright (C) 2008 - Jacques Zaninetti - http://zygrib.free.fr
 #include "settings.h"
 
 #include "interpolation.h"
-#include <QtConcurrentMap>
+#include <QtConcurrent/QtConcurrentMap>
 #include <QVector>
 #ifdef __QTVLM_WITH_TEST
 int nbWarning;

@@ -21,7 +21,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #ifndef DIALOGREALBOATCONFIG_H
 #define DIALOGREALBOATCONFIG_H
 
-#include <QDialog>
+#include <QtWidgets/QDialog>
 
 #include "class_list.h"
 #include "ui_realBoatConfig.h"

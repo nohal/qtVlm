@@ -19,7 +19,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ***********************************************************************/
 
 #include <QDebug>
-#include <QFileDialog>
+#include <QtWidgets/QFileDialog>
 #include <cassert>
 
 #include "DialogVlmGrib.h"

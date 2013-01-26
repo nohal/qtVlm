@@ -22,15 +22,15 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #ifndef MYCENTRALWIDGET_H
 #define MYCENTRALWIDGET_H
 
-#include <QGraphicsScene>
-#include <QGraphicsView>
+#include <QtWidgets/QGraphicsScene>
+#include <QtWidgets/QGraphicsView>
 
 #include "class_list.h"
 
 #include "DialogUnits.h"
 #include "DialogGraphicsParams.h"
 #include "selectionWidget.h"
-#include <qsound.h>
+#include <QtMultimedia/qsound.h>
 #include <qdatetime.h>
 #include <MainWindow.h>
 
@@ -128,6 +128,7 @@ class myCentralWidget : public QWidget
         boatReal * getRealBoat(void) {return realBoat; }
         bool getIsStartingUp(void){return mainW->isStartingUp;}
         MainWindow * getMainWindow(void) { return mainW; }
+        QGraphicsView * getView() const {return this->view;}
 
         void loadGshhs(void);
 

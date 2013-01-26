@@ -25,16 +25,16 @@ Copyright (C) 2008 - Jacques Zaninetti - http://zygrib.free.fr
 #ifndef DIALOGUNITS_H
 #define DIALOGUNITS_H
 
-#include <QDialog>
-#include <QFrame>
-#include <QGridLayout>
-#include <QLabel>
-#include <QCheckBox>
-#include <QComboBox>
-#include <QPushButton>
-#include <QButtonGroup>
-#include <QRadioButton>
-#include <QLineEdit>
+#include <QtWidgets/QDialog>
+#include <QtWidgets/QFrame>
+#include <QtWidgets/QGridLayout>
+#include <QtWidgets/QLabel>
+#include <QtWidgets/QCheckBox>
+#include <QtWidgets/QComboBox>
+#include <QtWidgets/QPushButton>
+#include <QtWidgets/QButtonGroup>
+#include <QtWidgets/QRadioButton>
+#include <QtWidgets/QLineEdit>
 
 class DialogUnits : public QDialog
 { Q_OBJECT

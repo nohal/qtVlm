@@ -25,18 +25,18 @@ Copyright (C) 2008 - Jacques Zaninetti - http://zygrib.free.fr
 #ifndef DIALOGGRAPHICSPARAMS_H
 #define DIALOGGRAPHICSPARAMS_H
 
-#include <QDialog>
-#include <QFrame>
-#include <QGridLayout>
-#include <QLabel>
-#include <QCheckBox>
-#include <QComboBox>
-#include <QPushButton>
-#include <QButtonGroup>
-#include <QRadioButton>
-#include <QLineEdit>
-#include <QDoubleSpinBox>
-#include <QScrollArea>
+#include <QtWidgets/QDialog>
+#include <QtWidgets/QFrame>
+#include <QtWidgets/QGridLayout>
+#include <QtWidgets/QLabel>
+#include <QtWidgets/QCheckBox>
+#include <QtWidgets/QComboBox>
+#include <QtWidgets/QPushButton>
+#include <QtWidgets/QButtonGroup>
+#include <QtWidgets/QRadioButton>
+#include <QtWidgets/QLineEdit>
+#include <QtWidgets/QDoubleSpinBox>
+#include <QtWidgets/QScrollArea>
 
 //-------------------------------------------------------------------------------
 class InputLineParams_testZone : public QWidget

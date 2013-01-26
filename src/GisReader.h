@@ -27,8 +27,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "class_list.h"
 
-#include "Font.h"
-
 //==========================================================
 class GisPoint {
     public:
@@ -69,7 +67,6 @@ class GisCity : public GisPoint
         QString name;
         int     population;
 		int     level;
-		int     fontCode;
 
         GisCity (QString country_, QString name_, int pop, double lon, double lat)
             : GisPoint(lon, lat)
@@ -79,19 +76,15 @@ class GisCity : public GisPoint
                 population = pop;
 				if (population >= 1000000) {
 					level = 1;
-					fontCode = FONT_MapCity_1;
 				}
 				else if (population >= 200000) {
 					level = 2;
-					fontCode = FONT_MapCity_2;
 				}
 				else if (population >= 50000) {
 					level = 3;
-					fontCode = FONT_MapCity_3;
 				}
 				else {
 					level = 4;
-					fontCode = FONT_MapCity_4;
 				}
             }
 		~GisCity() {}

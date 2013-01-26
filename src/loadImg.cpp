@@ -180,7 +180,7 @@ bool loadImg::setMyImgFileName(QString s)
 void loadImg::convertBsb2Pixmap(BSBImage * b)
 {
     QImage i(b->width,b->height,QImage::Format_Indexed8);
-    i.setNumColors(b->num_colors);
+    i.setColorCount(b->num_colors);
     for(int col=0;col<b->num_colors;++col)
     {
         i.setColor(col,qRgb(b->red[col],b->green[col],b->blue[col]));

@@ -21,7 +21,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #ifndef GRIBVALIDATION_H
 #define GRIBVALIDATION_H
 
-#include <QDialog>
+#include <QtWidgets/QDialog>
 
 #include "ui_gribValidation.h"
 

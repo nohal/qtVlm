@@ -28,7 +28,7 @@ Copyright (C) 2008 - Jacques Zaninetti - http://zygrib.free.fr
 #include <cmath>
 #include <cassert>
 
-#include <QApplication>
+#include <QtWidgets/QApplication>
 #include <QObject>
 #include <QString>
 #include <QDir>

@@ -551,7 +551,7 @@ void boatVLM::requestFinished (QByteArray res_byte)
                         if(oneBuoy)
                         {
                             QString a;
-                            if(qRound(wp["laisser_au"].toDouble()==wp["laisser_au"].toDouble()))
+                            if(qRound(wp["laisser_au"].toDouble())==wp["laisser_au"].toDouble())
                                 tip=tip+tr("Une seule bouee a laisser au ")+a.sprintf("%.0f",wp["laisser_au"].toDouble());
                             else
                                 tip=tip+tr("Une seule bouee a laisser au ")+a.sprintf("%.2f",wp["laisser_au"].toDouble());
@@ -703,7 +703,7 @@ void boatVLM::showNextGates()
         else if (j==nWP)
         {
             porte->setZValue(Z_VALUE_NEXT_GATE);
-            QPen penLine(Settings::getSetting("nextGateLineColor", Qt::blue).value<QColor>(),1);
+            QPen penLine(Settings::getSetting("nextGateLineColor", QColor(Qt::blue)).value<QColor>(),1);
             penLine.setWidthF(Settings::getSetting("nextGateLineWidth", 3.0).toDouble());
             porte->setLinePen(penLine);
             porte->setHidden(false);
@@ -712,7 +712,7 @@ void boatVLM::showNextGates()
         else
         {
             porte->setZValue(Z_VALUE_GATE);
-            QPen penLine(Settings::getSetting("gateLineColor", Qt::magenta).value<QColor>(),1);
+            QPen penLine(Settings::getSetting("gateLineColor", QColor(Qt::magenta)).value<QColor>(),1);
             penLine.setWidthF(Settings::getSetting("gateLineWidth", 3.0).toDouble());
             porte->setLinePen(penLine);
             porte->setHidden(false);

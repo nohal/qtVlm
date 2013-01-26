@@ -23,7 +23,7 @@ Copyright (C) 2008 - Jacques Zaninetti - http://zygrib.free.fr
 ***********************************************************************/
 
 #include <cmath>
-#include <QMessageBox>
+#include <QtWidgets/QMessageBox>
 #include <QDebug>
 
 #include "DialogRoute.h"
@@ -297,7 +297,7 @@ void DialogRoute::slotInterval()
     this->useHDG->blockSignals(true);
     int val=roadMapInterval->value();
     int step=roadMapInterval->minimum();
-    val=qRound(val/step)*step;
+    val=qRound((double)val/(double)step)*step;
     if(useHDG->isChecked())
     {
         val=roadMapHDG->value();

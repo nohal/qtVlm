@@ -22,7 +22,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #ifndef SELECTIONWIDGET_H
 #define SELECTIONWIDGET_H
 
-#include <QGraphicsWidget>
+#include <QtWidgets/QGraphicsWidget>
 
 #include "class_list.h"
 

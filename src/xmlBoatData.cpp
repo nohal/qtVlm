@@ -144,7 +144,7 @@ void xml_boatData::slot_writeData(QList<Player*> & player_list,QList<raceData*> 
 
         tag = doc.createElement(PLAYER_PASS_NAME);
         group.appendChild(tag);
-        t = doc.createTextNode(player->getPass().toAscii().toBase64());
+        t = doc.createTextNode(player->getPass().toLatin1().toBase64());
         tag.appendChild(t);
 
         tag = doc.createElement(PLAYER_NAME_NAME);
@@ -503,7 +503,7 @@ void xml_boatData::readPlayer(QDomNode node,PlayerMap * pList)
                 {
                     dataNode = subNode.firstChild();
                     if(dataNode.nodeType() == QDomNode::TextNode)
-                        pass = QByteArray::fromBase64(dataNode.toText().data().toAscii());
+                        pass = QByteArray::fromBase64(dataNode.toText().data().toLatin1());
                 }                
                 if(subNode.toElement().tagName() == PLAYER_NAME_NAME)
                 {
