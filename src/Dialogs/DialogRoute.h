@@ -53,6 +53,7 @@ class DialogRoute : public QDialog, public Ui::ROUTE_Editor_ui
         void slotTabChanged(int);
         void slotCopy();
         void slotExportCSV();
+
     signals:
 
     private:
@@ -84,21 +85,27 @@ class DialogRoute : public QDialog, public Ui::ROUTE_Editor_ui
         QList<QStandardItem*> roadPoint;
         bool keepModel;
 };
+
 class DateBoxDelegate : public QStyledItemDelegate
 {
-     Q_OBJECT
+    Q_OBJECT
 
- public:
-     DateBoxDelegate(QObject *parent = 0);
+    public:
+        DateBoxDelegate(QObject *parent = 0);
 
-     QWidget *createEditor(QWidget *parent, const QStyleOptionViewItem &option,
-                           const QModelIndex &index) const;
+        QWidget *createEditor(QWidget *parent, const QStyleOptionViewItem &option,
+                          const QModelIndex &index) const;
 
-     void setEditorData(QWidget *editor, const QModelIndex &index) const;
-     void setModelData(QWidget *editor, QAbstractItemModel *model,
-                       const QModelIndex &index) const;
+        void setEditorData(QWidget *editor, const QModelIndex &index) const;
+        void setModelData(QWidget *editor, QAbstractItemModel *model,
+                      const QModelIndex &index) const;
 
-//     void updateEditorGeometry(QWidget *editor,
-//         const QStyleOptionViewItem &option, const QModelIndex &index) const;
+    public slots:
+        void captureSizeHint(const QModelIndex & index);
+
+    //     void updateEditorGeometry(QWidget *editor,
+    //         const QStyleOptionViewItem &option, const QModelIndex &index) const;
+
+
  };
 #endif

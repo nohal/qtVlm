@@ -171,6 +171,8 @@ DialogRoute::DialogRoute(ROUTE *route,myCentralWidget *parent)
     DateBoxDelegate * delegate=new DateBoxDelegate(this);
     pilotView->setModel(model);
     pilotView->setItemDelegate(delegate);
+    //pilotView->horizontalHeader()->setAlternatingRowColors(true);
+    //pilotView->horizontalHeader()->setDefaultAlignment(Qt::AlignCenter|Qt::AlignVCenter);
     pilotView->header()->setAlternatingRowColors(true);
     pilotView->header()->setDefaultAlignment(Qt::AlignCenter|Qt::AlignVCenter);
     connect(this->defaultOrders,SIGNAL(clicked()),this,SLOT(slotLoadPilototo()));
@@ -955,6 +957,7 @@ void DialogRoute::fillPilotView(bool def)
         }
         items[0]->setData(QVariant(QMetaType::VoidStar, &poi ),Qt::UserRole);
         items[0]->setTextAlignment(Qt::AlignCenter| Qt::AlignVCenter);
+
         items.append(new QStandardItem(poi->getName()));
         items[1]->setTextAlignment(Qt::AlignCenter| Qt::AlignVCenter);
         items[1]->setEditable(false);
@@ -975,6 +978,7 @@ void DialogRoute::fillPilotView(bool def)
         }
         items[3]->setTextAlignment(Qt::AlignCenter| Qt::AlignVCenter);
         items[3]->setEditable(false);
+
         model->appendRow(items);
     }
 
@@ -1049,7 +1053,6 @@ void DialogRoute::slotEnvoyer()
         POI * poi=reinterpret_cast<class POI *>(qvariant_cast<void*>(model->item(n,0)->data(Qt::UserRole)));
         QDateTime tt=QDateTime().fromString(model->item(n,0)->data(Qt::EditRole).toString(),"dd MMM yyyy-hh:mm:ss");
         tt.setTimeSpec(Qt::UTC);
-        //qWarning()<<poi->getName()<<tt;
         poi->setPiloteDate(tt.toTime_t());
         poi->setPiloteWph(model->item(n,2)->data(Qt::EditRole).toDouble());
         poiList.append(poi);
@@ -1072,8 +1075,19 @@ QWidget *DateBoxDelegate::createEditor(QWidget *parent,
         QDateTimeEdit *editor = new QDateTimeEdit(parent);
         editor->setTimeSpec(Qt::UTC);
         editor->setDisplayFormat("dd MMM yyyy-hh:mm:ss");
-//        QAbstractItemModel *model=(const_cast<QAbstractItemModel*>(index.model()));
-//        model->setData(index,QVariant(editor->sizeHint()),Qt::SizeHintRole);
+        editor->setDateTime(QDateTime(QDate(2012,01,01),QTime(22,22,00)));
+
+        QAbstractItemModel *model=(const_cast<QAbstractItemModel*>(index.model()));        
+        /* saving old size */
+        QSize curSize = model->data(index,Qt::SizeHintRole).toSize();
+        model->setData(index,QVariant(curSize),Qt::UserRole+1);
+        /* setting new one */
+        model->setData(index,QVariant(editor->sizeHint()),Qt::SizeHintRole);
+
+        DateBoxDelegate *obj = const_cast<DateBoxDelegate *>(this);
+        QMetaObject::invokeMethod(obj, "captureSizeHint", Qt::QueuedConnection,
+            Q_ARG(QModelIndex, index) );
+
         return editor;
     }
     else
@@ -1083,11 +1097,22 @@ QWidget *DateBoxDelegate::createEditor(QWidget *parent,
         editor->setMaximum(359.99);
         editor->setDecimals(2);
         editor->setAlignment(Qt::AlignRight);
-//        QAbstractItemModel *model=(const_cast<QAbstractItemModel*>(index.model()));
-//        model->setData(index,QVariant(editor->sizeHint()),Qt::SizeHintRole);
+        QAbstractItemModel *model=(const_cast<QAbstractItemModel*>(index.model()));
+        /* saving old size */
+        QSize curSize = model->data(index,Qt::SizeHintRole).toSize();
+        model->setData(index,QVariant(curSize),Qt::UserRole+1);
+        /* setting new one */
+        model->setData(index,QVariant(editor->sizeHint()),Qt::SizeHintRole);
+
+        /* tringer sizeHintChanged */
+        DateBoxDelegate *obj = const_cast<DateBoxDelegate *>(this);
+        QMetaObject::invokeMethod(obj, "captureSizeHint", Qt::QueuedConnection,
+            Q_ARG(QModelIndex, index) );
+
         return editor;
     }
 }
+
 void DateBoxDelegate::setEditorData(QWidget *editor,
                                     const QModelIndex &index) const
 {
@@ -1095,12 +1120,9 @@ void DateBoxDelegate::setEditorData(QWidget *editor,
     {
         QDateTime value = QDateTime().fromString(index.model()->data(index, Qt::EditRole).toString(),"dd MMM yyyy-hh:mm:ss");
         value.setTimeSpec(Qt::UTC);
-        //qWarning()<<"setEditorData"<<index<<value;
         QDateTimeEdit *editBox = static_cast<QDateTimeEdit*>(editor);
         editBox->setMinimumDateTime(QDateTime().currentDateTimeUtc());
         editBox->setDateTime(value);
-//        QAbstractItemModel *model=(const_cast<QAbstractItemModel*>(index.model()));
-//        model->setData(index,QVariant(editBox->sizeHint()),Qt::SizeHintRole);
     }
     else
     {
@@ -1111,8 +1133,6 @@ void DateBoxDelegate::setEditorData(QWidget *editor,
         editBox->setMaximum(359.99);
         editBox->setDecimals(2);
         editBox->setAlignment(Qt::AlignRight);
-//        QAbstractItemModel *model=(const_cast<QAbstractItemModel*>(index.model()));
-//        model->setData(index,QVariant(editBox->sizeHint()),Qt::SizeHintRole);
     }
 }
 void DateBoxDelegate::setModelData(QWidget *editor, QAbstractItemModel *model,
@@ -1124,7 +1144,9 @@ void DateBoxDelegate::setModelData(QWidget *editor, QAbstractItemModel *model,
         QDateTime value = editBox->dateTime().toUTC();
         value.setTimeSpec(Qt::UTC);
         model->setData(index,value.toString("dd MMM yyyy-hh:mm:ss"),Qt::EditRole);
-//        model->setData(index,QVariant(editBox->sizeHint()),Qt::SizeHintRole);
+        /* get old size */
+        QVariant oldSize = model->data(index,Qt::UserRole+1).toSize();
+        model->setData(index,oldSize,Qt::SizeHintRole);
     }
     else
     {
@@ -1132,11 +1154,18 @@ void DateBoxDelegate::setModelData(QWidget *editor, QAbstractItemModel *model,
         double value = editBox->value();
         if(value<0) value=-1.0;
         model->setData(index,QString().sprintf("%.2f",value),Qt::EditRole);
-//        model->setData(index,QVariant(editBox->sizeHint()),Qt::SizeHintRole);
+        /* get old size */
+        QVariant oldSize = model->data(index,Qt::UserRole+1).toSize();
+        model->setData(index,oldSize,Qt::SizeHintRole);
     }
+
+    DateBoxDelegate *obj = const_cast<DateBoxDelegate *>(this);
+    QMetaObject::invokeMethod(obj, "captureSizeHint", Qt::QueuedConnection,
+        Q_ARG(QModelIndex, index) );
+
 }
-//void DateBoxDelegate::updateEditorGeometry(QWidget *editor,
-//    const QStyleOptionViewItem &option, const QModelIndex &/* index */) const
-//{
-//    editor->setGeometry(option.rect);
-//}
+
+void DateBoxDelegate::captureSizeHint(const QModelIndex & index)
+{
+    emit sizeHintChanged(index);
+}
