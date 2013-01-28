@@ -3734,6 +3734,10 @@ VMG %.2f nds</translation>
         <source>La route partira du point de depart et a l&apos;heure de depart du routage</source>
         <translation>La route partira du point de départ et à l&apos;heure de départ du routage</translation>
     </message>
+    <message>
+        <source>Supprimer les autres routages</source>
+        <translation></translation>
+    </message>
 </context>
 <context>
     <name>ROUTAGE_Editor_ui</name>

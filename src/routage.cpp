@@ -44,6 +44,7 @@ Original code: virtual-winds.com
 #include <QtConcurrent/QtConcurrentMap>
 #include "vlmpointgraphic.h"
 #include "settings.h"
+#include <QtWidgets/QVBoxLayout>
 #include "Terrain.h"
 //#include "Terrain.h"
 //#define debugCount
@@ -2810,7 +2811,18 @@ void ROUTAGE::convertToRoute()
     QCheckBox simplify(tr("Simplifier/Optimiser automatiquement"),0);
     simplify.blockSignals(true);
     simplify.setChecked(Settings::getSetting("convertAndSimplify",1).toInt()==1);
+    QCheckBox deleteOther(tr("Supprimer les autres routages"),0);
+    deleteOther.blockSignals(true);
+    deleteOther.setChecked(false);
+//    QVBoxLayout vb;
+//    vb.addWidget(&simplify);
+//    vb.addWidget(&deleteOther);
+//    QGroupBox gb;
+//    gb.setLayout(&vb);
+//    gb.setTitle(tr("Options"));
+//    msgBox.setExtension(&gb);
     msgBox.addButton(&simplify,QMessageBox::ActionRole);
+    msgBox.addButton(&deleteOther,QMessageBox::ActionRole);
     msgBox.setStandardButtons(QMessageBox::Yes|QMessageBox::No|QMessageBox::Cancel);
     if(!parentRoutage->getRouteFromBoat())
     {
@@ -2820,6 +2832,15 @@ void ROUTAGE::convertToRoute()
     }
     int answ=msgBox.exec();
     if(answ==QMessageBox::Cancel) return;
+    if(deleteOther.isChecked())
+    {
+        QList<ROUTAGE *>rList=parent->getRoutageList();
+        for (int i=rList.count()-1;i>=0;--i)
+        {
+            if(rList.at(i)==this) continue;
+            parent->deleteRoutage(rList.at(i));
+        }
+    }
     simp=simplify.isChecked();
     Settings::setSetting("convertAndSimplify",simp?1:0);
     routeStartBoat=answ==QMessageBox::Yes;
