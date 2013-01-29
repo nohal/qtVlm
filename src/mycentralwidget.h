@@ -21,16 +21,20 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #ifndef MYCENTRALWIDGET_H
 #define MYCENTRALWIDGET_H
-
+#ifdef QT_V5
 #include <QtWidgets/QGraphicsScene>
 #include <QtWidgets/QGraphicsView>
-
+#include <QtMultimedia/qsound.h>
+#else
+#include <QGraphicsScene>
+#include <QGraphicsView>
+#include <qsound.h>
+#endif
 #include "class_list.h"
 
 #include "DialogUnits.h"
 #include "DialogGraphicsParams.h"
 #include "selectionWidget.h"
-#include <QtMultimedia/qsound.h>
 #include <qdatetime.h>
 #include <MainWindow.h>
 

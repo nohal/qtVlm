@@ -41,10 +41,15 @@ Original code: virtual-winds.com
 #include "Polygon.h"
 #include "route.h"
 #include <QDebug>
+#ifdef QT_V5
 #include <QtConcurrent/QtConcurrentMap>
+#include <QtWidgets/QVBoxLayout>
+#else
+#include <QtConcurrentMap>
+#include <QVBoxLayout>
+#endif
 #include "vlmpointgraphic.h"
 #include "settings.h"
-#include <QtWidgets/QVBoxLayout>
 #include "Terrain.h"
 //#include "Terrain.h"
 //#define debugCount

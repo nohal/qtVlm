@@ -23,9 +23,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <set>
 #include <vector>
-
+#ifdef QT_V5
 #include <QtWidgets/QDialog>
-
+#else
+#include <QDialog>
+#endif
 #include "ui_dialog_gribDate.h"
 
 class DialogGribDate : public QDialog, public Ui::dialog_gribDate_ui

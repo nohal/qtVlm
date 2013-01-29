@@ -24,7 +24,7 @@ Copyright (C) 2008 - Jacques Zaninetti - http://zygrib.free.fr
 
 #ifndef DIALOGUNITS_H
 #define DIALOGUNITS_H
-
+#ifdef QT_V5
 #include <QtWidgets/QDialog>
 #include <QtWidgets/QFrame>
 #include <QtWidgets/QGridLayout>
@@ -35,7 +35,18 @@ Copyright (C) 2008 - Jacques Zaninetti - http://zygrib.free.fr
 #include <QtWidgets/QButtonGroup>
 #include <QtWidgets/QRadioButton>
 #include <QtWidgets/QLineEdit>
-
+#else
+#include <QDialog>
+#include <QFrame>
+#include <QGridLayout>
+#include <QLabel>
+#include <QCheckBox>
+#include <QComboBox>
+#include <QPushButton>
+#include <QButtonGroup>
+#include <QRadioButton>
+#include <QLineEdit>
+#endif
 class DialogUnits : public QDialog
 { Q_OBJECT
     public:

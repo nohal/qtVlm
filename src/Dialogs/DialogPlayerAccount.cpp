@@ -17,8 +17,11 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ***********************************************************************/
-
-#include <QtWidgets/QtWidgets>
+#ifdef QT_V5
+#include <QtWidgets/QWidget>
+#else
+#include <QWidget>
+#endif
 #include <QDebug>
 
 

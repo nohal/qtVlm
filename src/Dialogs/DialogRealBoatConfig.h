@@ -20,9 +20,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #ifndef DIALOGREALBOATCONFIG_H
 #define DIALOGREALBOATCONFIG_H
-
+#ifdef QT_V5
 #include <QtWidgets/QDialog>
-
+#else
+#include <QDialog>
+#endif
 #include "class_list.h"
 #include "ui_realBoatConfig.h"
 

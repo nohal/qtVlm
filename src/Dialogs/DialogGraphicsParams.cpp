@@ -21,19 +21,24 @@ Original code: zyGrib: meteorological GRIB file viewer
 Copyright (C) 2008 - Jacques Zaninetti - http://zygrib.free.fr
 
 ***********************************************************************/
-
+#ifdef QT_V5
 #include <QtWidgets/QMessageBox>
+#include <QtWidgets/QColorDialog>
+#include <QtWidgets/QDesktopWidget>
+#else
+#include <QMessageBox>
+#include <QColorDialog>
+#include <QDesktopWidget>
+#endif
 #include <cmath>
 #include <cassert>
 
 #include <QPainter>
-#include <QtWidgets/QColorDialog>
 
 #include "DialogGraphicsParams.h"
 #include "settings.h"
 #include <QDebug>
 #include "Util.h"
-#include <QtWidgets/QDesktopWidget>
 
 
 //===========================================================================

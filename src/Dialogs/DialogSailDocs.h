@@ -20,8 +20,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #ifndef SAILDOCS_H
 #define SAILDOCS_H
-
-#include "QtWidgets/QDialog"
+#ifdef QT_V5
+#include <QtWidgets/QDialog>
+#else
+#include <QDialog>
+#endif
 #include "ui_sailDocs.h"
 
 

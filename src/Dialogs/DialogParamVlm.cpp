@@ -17,10 +17,19 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ***********************************************************************/
-
-#include <QtWidgets>
+#ifdef QT_V5
+#include <QtWidgets/QWidget>
+#include <QtWidgets/QMessageBox>
+#include <QtCore/QThread>
+#include <QtWidgets/QFileDialog>
+#include <QtWidgets/QColorDialog>
+#else
+#include <QWidget>
 #include <QMessageBox>
-
+#include <QThread>
+#include <QFileDialog>
+#include <QColorDialog>
+#endif
 #include "DialogParamVlm.h"
 #include "settings.h"
 #include "MainWindow.h"

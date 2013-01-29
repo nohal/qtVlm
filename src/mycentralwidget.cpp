@@ -22,7 +22,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <QDebug>
 #include <QGraphicsSceneMouseEvent>
 #include <QInputDialog>
+#ifdef QT_V5
 #include <QtMultimedia/QSound>
+#else
+#include <QSound>
+#endif
 #include <QDesktopServices>
 #include <QXmlSchema>
 #include <QXmlSchemaValidator>

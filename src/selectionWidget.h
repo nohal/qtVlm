@@ -21,9 +21,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #ifndef SELECTIONWIDGET_H
 #define SELECTIONWIDGET_H
-
+#ifdef QT_V5
 #include <QtWidgets/QGraphicsWidget>
-
+#else
+#include <QGraphicsWidget>
+#endif
 #include "class_list.h"
 
 class selectionWidget : public QGraphicsWidget

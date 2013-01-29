@@ -22,10 +22,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #ifndef RACE_DIALOG_H
 #define RACE_DIALOG_H
-
+#ifdef QT_V5
 #include <QtWidgets/QDialog>
 #include <QtWidgets/QMessageBox>
-
+#else
+#include <QDialog>
+#include <QMessageBox>
+#endif
 #include "ui_race_dialog.h"
 
 #include "class_list.h"

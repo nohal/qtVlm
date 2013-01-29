@@ -19,7 +19,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ***********************************************************************/
 
 #include <QDebug>
+#ifdef QT_V5
 #include <QtWidgets/QFileDialog>
+#else
+#include <QFileDialog>
+#endif
 #include <cassert>
 
 #include "DialogVlmGrib.h"

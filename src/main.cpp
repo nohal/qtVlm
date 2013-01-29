@@ -129,9 +129,10 @@ int main(int argc, char *argv[])
             qWarning() << "Creating folder";
         }
     }
-
-//    QTextCodec::setCodecForTr(QTextCodec::codecForName("utf8"));
-//    QTextCodec::setCodecForCStrings(QTextCodec::codecForName("utf8"));
+#ifndef QT_V5
+    QTextCodec::setCodecForTr(QTextCodec::codecForName("utf8"));
+    QTextCodec::setCodecForCStrings(QTextCodec::codecForName("utf8"));
+#endif
     Settings::initSettings();
     double fontInc=Settings::getSetting("defaultFontSizeInc",0).toDouble();
     if(fontInc<-3 || fontInc>5)

@@ -23,7 +23,11 @@ Copyright (C) 2008 - Jacques Zaninetti - http://zygrib.free.fr
 ***********************************************************************/
 
 #include <cmath>
+#ifdef QT_V5
 #include <QtWidgets/QMessageBox>
+#else
+#include <QMessageBox>
+#endif
 #include <QDebug>
 
 #include "DialogRoutage.h"
