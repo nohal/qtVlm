@@ -193,10 +193,6 @@ void POI::createPopUpMenu(void)
     popup->addAction(ac_copy);
     connect(ac_copy,SIGNAL(triggered()),this,SLOT(slot_copy()));
 
-    ac_setWp = new QAction(tr("Marque->WP"),popup);
-    popup->addAction(ac_setWp);
-    connect(ac_setWp,SIGNAL(triggered()),this,SLOT(slot_setWP_ask()));
-
     ac_setGribDate = new QAction(tr("Set Date"),popup);
     popup->addAction(ac_setGribDate);
     connect(ac_setGribDate,SIGNAL(triggered()),this,SLOT(slot_setGribDate()));
@@ -215,6 +211,12 @@ void POI::createPopUpMenu(void)
     connect(ac_twaLine,SIGNAL(triggered()),this,SLOT(slot_twaLine()));
 
     popup->addSeparator();
+    ac_setWp = new QAction(tr("Marque->WP"),popup);
+    ac_setWp->setCheckable(true);
+    popup->addAction(ac_setWp);
+    connect(ac_setWp,SIGNAL(triggered()),this,SLOT(slot_setWP_ask()));
+    popup->addSeparator();
+
     ac_routeList = new QMenu(tr("Routes"));
     connect(ac_routeList,SIGNAL(triggered(QAction*)),this,SLOT(slot_routeMenu(QAction*)));
     popup->addMenu(ac_routeList);
@@ -560,7 +562,10 @@ void POI::contextMenuEvent(QGraphicsSceneContextMenuEvent * e)
     }
     else
         ac_setWp->setEnabled(false);
-
+    if(this->isWp && ptr)
+        ac_setWp->setChecked(true);
+    else
+        ac_setWp->setChecked(false);
     popup->exec(QCursor::pos());
 }
 
