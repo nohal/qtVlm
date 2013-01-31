@@ -109,7 +109,7 @@ class myCentralWidget : public QWidget
         /* access to pointer & data */
         Grib * getGrib(bool calibrate=false);
         Grib * getGribCurrent(void);
-        QGraphicsScene * getScene(void) { return scene; }
+        myScene * getScene(void) { return scene; }
         bool compassHasLine(void);
         int getCompassMode(int m_x,int m_y);
         bool isSelecting(void);
@@ -132,7 +132,7 @@ class myCentralWidget : public QWidget
         boatReal * getRealBoat(void) {return realBoat; }
         bool getIsStartingUp(void){return mainW->isStartingUp;}
         MainWindow * getMainWindow(void) { return mainW; }
-        QGraphicsView * getView() const {return this->view;}
+        MyView * getView() const {return this->view;}
 
         void loadGshhs(void);
 
@@ -203,6 +203,7 @@ class myCentralWidget : public QWidget
         loadImg * getKap(){return kap;}
 
         void removePOI(void);
+        bool getKeepPos(){return keepPos;}
 
     public slots :
         /* Zoom & position */
@@ -380,8 +381,8 @@ class myCentralWidget : public QWidget
         inetConnexion * inetManager;
 
         /* Scene & view */
-        QGraphicsScene *scene;
-        QGraphicsView * view;
+        myScene *scene;
+        MyView * view;
 
         /* Dialogs */
         DialogGribDate * gribDateDialog;

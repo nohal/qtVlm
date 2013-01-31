@@ -88,6 +88,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "dialogLoadImg.h"
 #include "parser.h"
 #include "DialogRemovePoi.h"
+#include "class_list.h"
+#include "MyView.h"
 
 /*******************/
 /*    myScene      */
@@ -99,7 +101,7 @@ myScene::myScene(myCentralWidget * parent) : QGraphicsScene(parent)
     hasWay=false;
     wheelTimer=new QTimer();
     wheelTimer->setSingleShot(true);
-    wheelTimer->setInterval(5000);
+    wheelTimer->setInterval(2000);
     connect(wheelTimer,SIGNAL(timeout()),this, SLOT(wheelTimerElapsed()));
     wheelStrokes=0;
     QColor seaColor  = Settings::getSetting("seaColor", QColor(50,50,150)).value<QColor>();
@@ -244,16 +246,37 @@ void myScene::mouseDoubleClickEvent(QGraphicsSceneMouseEvent* e)
 void myScene::wheelEvent(QGraphicsSceneWheelEvent* e)
 {
     if(e->orientation()!=Qt::Vertical) return;
+    wheelTimer->stop();
     wheelPosX=e->scenePos().x();
     wheelPosY=e->scenePos().y();
+    double zoomDiff=0;
     if(e->delta()<0)
-        wheelStrokes--;
+        --wheelStrokes;
     else
-        wheelStrokes++;
+        ++wheelStrokes;
     if(e->modifiers()==Qt::ControlModifier)
         wheelCenter=true;
     else
         wheelCenter=false;
+    if(wheelStrokes>0)
+        zoomDiff=1.0+1.5*wheelStrokes/10.0;
+    else
+        zoomDiff=1.0/(1.0-1.5*wheelStrokes/10.0);
+    if(wheelCenter)
+    {
+        parent->getView()->myScale(zoomDiff,parent->getProj()->getCX(),parent->getProj()->getCY());
+    }
+    else
+    {
+        if(parent->getSelectedBoat() && parent->getProj()->isPointVisible(parent->getSelectedBoat()->getLon(),parent->getSelectedBoat()->getLat()))
+        {
+            parent->getView()->myScale(zoomDiff,parent->getSelectedBoat()->getLon(),parent->getSelectedBoat()->getLat());
+        }
+        else
+        {
+            parent->getView()->myScale(zoomDiff,parent->getProj()->getCX(),parent->getProj()->getCY());
+        }
+    }
     wheelTimer->start(500);
 }
 void myScene::wheelTimerElapsed()
@@ -336,12 +359,12 @@ myCentralWidget::myCentralWidget(Projection * proj,MainWindow * parent,MenuBar *
     scene->setItemIndexMethod(QGraphicsScene::NoIndex);
     scene->setSceneRect(QRect(0,0,width(),height()));
 
-    view = new QGraphicsView(scene, this);
+    view = new MyView(proj,scene,this);
     view->setGeometry(0,0,width(),height());
-    view->viewport()->grabGesture(Qt::PanGesture);
-    view->viewport()->grabGesture(Qt::PinchGesture);
-    view->setHorizontalScrollBarPolicy (Qt::ScrollBarAlwaysOff);
-    view->setVerticalScrollBarPolicy (Qt::ScrollBarAlwaysOff);
+//    view->viewport()->grabGesture(Qt::PanGesture);
+//    view->viewport()->grabGesture(Qt::PinchGesture);
+//    view->setHorizontalScrollBarPolicy (Qt::ScrollBarAlwaysOff);
+//    view->setVerticalScrollBarPolicy (Qt::ScrollBarAlwaysOff);
 
     /* other child */
     inetManager = new inetConnexion(mainW);

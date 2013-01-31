@@ -44,6 +44,7 @@ Copyright (C) 2008 - Jacques Zaninetti - http://zygrib.free.fr
 #include "loadImg.h"
 #include "Orthodromie.h"
 #include <QTimer>
+#include "MyView.h"
 
 //---------------------------------------------------------
 // Constructeur
@@ -489,6 +490,7 @@ void Terrain::draw_GSHHSandGRIB()
     pnt.drawLine(correctedScalePos,QPoint(correctedScalePos.x(),correctedScalePos.y()-4));
     pnt.drawLine(QPoint(sX+screenDist,correctedScalePos.y()),QPoint(sX+screenDist,correctedScalePos.y()-4));
     setCursor(oldcursor);
+    parent->getView()->resetTransform();
 }
 
 void Terrain::drawGrib(QPainter &pnt, Grib *gribPlot)

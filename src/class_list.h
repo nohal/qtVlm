@@ -112,6 +112,7 @@ class MenuBar;
 
 /* mycentralwidget.h */
 class myScene;
+class MyView;
 class myCentralWidget;
 
 /* opponnentBoat.h */
