@@ -27,15 +27,13 @@ void MyView::startPaning(QGraphicsSceneMouseEvent *e)
 {
     px=e->scenePos().x();
     py=e->scenePos().y();
-    QPixmap pix1(proj->getW(),proj->getH());
-    pix1.fill(Qt::blue);
-    backPix->setPixmap(pix1);
-    backPix->show();
-    QPixmap pix2(proj->getW(),proj->getH());
-    QPainter pnt(&pix2);
+    QPixmap pix(proj->getW(),proj->getH());
+    pix.fill(Qt::blue);
+    backPix->setPixmap(pix);
+    QPainter pnt(&pix);
     this->render(&pnt);
     pnt.end();
-    viewPix->setPixmap(pix2);
+    viewPix->setPixmap(pix);
     viewPix->setPos(0,0);
     viewPix->show();
     paning=true;
@@ -77,5 +75,4 @@ void MyView::myScale(double scale, double lon, double lat)
     this->setUpdatesEnabled(true);
     this->setViewportUpdateMode(QGraphicsView::MinimalViewportUpdate);
     this->translate(X2-X1,Y2-Y1);
-    return;
 }
