@@ -919,7 +919,7 @@ void POI::slot_delPoi()
         emit delPOI_list(this);
 //        rmSignal();
 //        close();
-        delete this;
+        this->deleteLater();
     }
 }
 
