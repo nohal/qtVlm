@@ -913,12 +913,7 @@ void myCentralWidget::slot_Zoom_Wheel(double quantity, int XX, int YY, bool cent
         newScale=newScale/(1.0-1.5*quantity/10.0);
     if(centerOnWheel)
     {
-        //qWarning()<<"scale:"<<proj->getScale()<<"quantity:"<<quantity<<"newScale:"<<newScale;
-        proj->setScaleAndCenterInMap(newScale,lon,lat);
-        proj->map2screen(proj->getCX(),proj->getCY(),&XX,&YY);
-        QPoint pointer(XX,YY);
-        pointer=this->mapToGlobal(pointer);
-        QCursor::setPos(pointer);
+        proj->zoomKeep(lon,lat,newScale/proj->getScale());
     }
     else
     {
