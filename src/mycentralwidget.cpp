@@ -276,7 +276,9 @@ void myScene::wheelEvent(QGraphicsSceneWheelEvent* e)
         }
         else
         {
-            parent->getView()->myScale(zoomDiff,parent->getProj()->getCX(),parent->getProj()->getCY());
+            double X,Y;
+            parent->getProj()->screen2map(e->scenePos().x(),e->scenePos().y(),&X,&Y);
+            parent->getView()->myScale(zoomDiff,X,Y);
         }
     }
     wheelTimer->start(500);
@@ -931,7 +933,7 @@ void myCentralWidget::slot_Zoom_Wheel(double quantity, int XX, int YY, bool cent
                }
             }
         }
-        proj->setScale(newScale);
+        proj->zoomKeep(lon,lat,newScale/proj->getScale());
     }
     UNBLOCK_SIG_BOAT()
 }
