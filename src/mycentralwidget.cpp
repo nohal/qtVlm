@@ -264,7 +264,9 @@ void myScene::wheelEvent(QGraphicsSceneWheelEvent* e)
         zoomDiff=1.0/(1.0-1.5*wheelStrokes/10.0);
     if(wheelCenter)
     {
-        parent->getView()->myScale(zoomDiff,parent->getProj()->getCX(),parent->getProj()->getCY());
+        double X,Y;
+        parent->getProj()->screen2map(e->scenePos().x(),e->scenePos().y(),&X,&Y);
+        parent->getView()->myScale(zoomDiff,X,Y);
     }
     else
     {
