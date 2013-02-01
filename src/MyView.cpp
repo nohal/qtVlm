@@ -47,9 +47,14 @@ void MyView::pane(int x, int y)
 }
 void MyView::stopPaning(int x, int y)
 {
-    QRectF r(QPointF(0,0),QSize(proj->getW(),proj->getH()));
-    r.translate(px-x,py-y);
-    proj->setCentralPixel(r.center());
+    if(px-x!=0 && py-y!=0)
+    {
+        QRectF r(QPointF(0,0),QSize(proj->getW(),proj->getH()));
+        r.translate(px-x,py-y);
+        proj->setCentralPixel(r.center());
+    }
+    else
+        viewPix->hide();
     paning=false;
 }
 void MyView::hideViewPix()
