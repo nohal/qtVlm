@@ -193,6 +193,10 @@ void Projection::setCentralPixel(const int &i, const int &j)
     my_setCenterInMap(x,y);
     emit_projectionUpdated();
 }
+void Projection::setCentralPixel(const QPointF &c)
+{
+    setCentralPixel(c.x(),c.y());
+}
 
 void Projection::setCenterInMap(const double &x, const double &y)
 {

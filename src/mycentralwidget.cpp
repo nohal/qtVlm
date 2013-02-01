@@ -363,8 +363,8 @@ myCentralWidget::myCentralWidget(Projection * proj,MainWindow * parent,MenuBar *
     view->setGeometry(0,0,width(),height());
 //    view->viewport()->grabGesture(Qt::PanGesture);
 //    view->viewport()->grabGesture(Qt::PinchGesture);
-//    view->setHorizontalScrollBarPolicy (Qt::ScrollBarAlwaysOff);
-//    view->setVerticalScrollBarPolicy (Qt::ScrollBarAlwaysOff);
+    view->setHorizontalScrollBarPolicy (Qt::ScrollBarAlwaysOff);
+    view->setVerticalScrollBarPolicy (Qt::ScrollBarAlwaysOff);
 
     /* other child */
     inetManager = new inetConnexion(mainW);
@@ -982,6 +982,8 @@ void myCentralWidget::mouseMove(int x, int y, QGraphicsItem * )
         selection->getZoneWithSens(&xa,&ya,&xb,&yb);
         mainW->statusBar_showSelectedZone(xa,ya,xb,yb);
     }
+    else if(view->isPaning())
+        view->pane(x,y);
     else
     {
         double xx, yy;
@@ -1058,8 +1060,10 @@ void myCentralWidget::slot_mousePress(QGraphicsSceneMouseEvent* e)
 {
     if(e->button()==Qt::MidButton)
         proj->setCentralPixel(e->scenePos().x(),e->scenePos().y());
-    else
+    else if (e->modifiers()!=Qt::NoModifier)
         selection->startSelection(e->scenePos().x(),e->scenePos().y());
+    else
+        view->startPaning(e);
 }
 void myCentralWidget::slot_mouseRelease(QGraphicsSceneMouseEvent* e)
 {
@@ -1077,6 +1081,8 @@ void myCentralWidget::slot_mouseRelease(QGraphicsSceneMouseEvent* e)
             }
         }
     }
+    if(view->isPaning())
+        view->stopPaning(e->scenePos().x(),e->scenePos().y());
 }
 
 /**************************/

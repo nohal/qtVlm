@@ -11,12 +11,21 @@ class MyView : public QGraphicsView
 public:
     explicit MyView(Projection * proj, myScene * scene,myCentralWidget * mcw);
     void myScale(double scale, double lon, double lat);
+    void startPaning(QGraphicsSceneMouseEvent *e);
+    void pane(int x,int y);
+    void stopPaning(int x, int y);
+    bool isPaning(){return paning;}
+    void hideViewPix();
 signals:
     
 public slots:
 private:
     Projection * proj;
     myScene * scene;
+    QGraphicsPixmapItem * viewPix;
+    QGraphicsPixmapItem * backPix;
+    bool paning;
+    int px,py;
 };
 
 #endif // MYVIEW_H

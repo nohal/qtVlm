@@ -11,7 +11,52 @@ MyView::MyView(Projection *proj, myScene *scene, myCentralWidget * mcp) :
     this->setRenderHints(QPainter::Antialiasing |
                          QPainter::SmoothPixmapTransform |
                          QPainter::HighQualityAntialiasing);
+    viewPix=new QGraphicsPixmapItem();
+    viewPix->hide();
+    viewPix->setZValue(100);
+    viewPix->setPos(0,0);
+    paning=false;
+    px=0;
+    py=0;
+    backPix=new QGraphicsPixmapItem(viewPix);
+    backPix->setPos(0,0);
+    backPix->setFlag(QGraphicsItem::ItemStacksBehindParent);
+    scene->addItem(viewPix);
 }
+void MyView::startPaning(QGraphicsSceneMouseEvent *e)
+{
+    px=e->scenePos().x();
+    py=e->scenePos().y();
+    QPixmap pix1(proj->getW(),proj->getH());
+    pix1.fill(Qt::blue);
+    backPix->setPixmap(pix1);
+    backPix->show();
+    QPixmap pix2(proj->getW(),proj->getH());
+    QPainter pnt(&pix2);
+    this->render(&pnt);
+    pnt.end();
+    viewPix->setPixmap(pix2);
+    viewPix->setPos(0,0);
+    viewPix->show();
+    paning=true;
+}
+void MyView::pane(int x, int y)
+{
+    viewPix->setPos(x-px,y-py);
+    backPix->setPos(px-x,py-y);
+}
+void MyView::stopPaning(int x, int y)
+{
+    QRectF r(QPointF(0,0),QSize(proj->getW(),proj->getH()));
+    r.translate(px-x,py-y);
+    proj->setCentralPixel(r.center());
+    paning=false;
+}
+void MyView::hideViewPix()
+{
+    viewPix->hide();
+}
+
 void MyView::myScale(double scale, double lon, double lat)
 {
     this->setUpdatesEnabled(false);

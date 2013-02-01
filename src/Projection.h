@@ -57,6 +57,7 @@ Q_OBJECT
         /* move */
         void move(const double &dx, const double &dy);
         void setCentralPixel(const int &i, const int &j);
+        void setCentralPixel(const QPointF &c);
         void setCenterInMap(const double &x, const double &y);
         void setScaleAndCenterInMap(const double &sc,const double &x, const double &y);
 
