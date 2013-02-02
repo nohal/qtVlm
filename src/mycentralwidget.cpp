@@ -366,7 +366,7 @@ myCentralWidget::myCentralWidget(Projection * proj,MainWindow * parent,MenuBar *
     view = new MyView(proj,scene,this);
     view->setGeometry(0,0,width(),height());
 //    view->viewport()->grabGesture(Qt::PanGesture);
-//    view->viewport()->grabGesture(Qt::PinchGesture);
+    view->viewport()->grabGesture(Qt::PinchGesture);
     view->setHorizontalScrollBarPolicy (Qt::ScrollBarAlwaysOff);
     view->setVerticalScrollBarPolicy (Qt::ScrollBarAlwaysOff);
 
