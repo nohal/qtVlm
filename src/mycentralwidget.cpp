@@ -256,8 +256,6 @@ void myScene::wheelEvent(QGraphicsSceneWheelEvent* e)
         ++wheelStrokes;
     if(e->modifiers()==Qt::ControlModifier)
         wheelCenter=true;
-    else
-        wheelCenter=false;
     if(wheelStrokes>0)
         zoomDiff=1.0+1.5*wheelStrokes/10.0;
     else
@@ -287,6 +285,7 @@ void myScene::wheelTimerElapsed()
 {
     parent->slot_Zoom_Wheel(wheelStrokes,wheelPosX,wheelPosY,wheelCenter);
     wheelStrokes=0;
+    wheelCenter=false;
 }
 bool myScene::event(QEvent * event)
 {
