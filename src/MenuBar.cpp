@@ -86,7 +86,7 @@ MenuBar::MenuBar(QWidget *parent)
                 acHorn=addAction(menuFile,tr("Configurer la corne de brume"),"","",tr(""));
                 acKeep=addAction(menuFile,tr("Conserver la position du bateau dans l'ecran lors de zoom +/-"),"Z","",tr(""));
                 acKeep->setCheckable(true);
-                acKeep->setChecked(true);
+                acKeep->setChecked(Settings::getSetting("keepBoatPosOnScreen",1).toInt()==1);
                 acReplay=addAction(menuFile,tr("Rejouer l'historique des traces"),"Y","",tr(""));
                 acScreenshot=addAction(menuFile,tr("Photo d'ecran"),"Ctrl+E","",tr(""));                
 

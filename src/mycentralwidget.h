@@ -216,7 +216,7 @@ class myCentralWidget : public QWidget
         void slot_Go_Up();
         void slot_Go_Down();
         void slot_Zoom_Sel();
-        void slot_keepPos(bool b){this->keepPos=b;}
+        void slot_keepPos(const bool &b);
         void slot_abortRequest();
 
         /* POI */

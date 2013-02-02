@@ -268,7 +268,7 @@ void myScene::wheelEvent(QGraphicsSceneWheelEvent* e)
     }
     else
     {
-        if(parent->getSelectedBoat() && parent->getProj()->isPointVisible(parent->getSelectedBoat()->getLon(),parent->getSelectedBoat()->getLat()))
+        if(parent->getKeepPos() && parent->getSelectedBoat() && parent->getProj()->isPointVisible(parent->getSelectedBoat()->getLon(),parent->getSelectedBoat()->getLat()))
         {
             parent->getView()->myScale(zoomDiff,parent->getSelectedBoat()->getLon(),parent->getSelectedBoat()->getLat());
         }
@@ -335,7 +335,7 @@ bool myScene::event(QEvent * event)
 myCentralWidget::myCentralWidget(Projection * proj,MainWindow * parent,MenuBar * menuBar) : QWidget(parent)
 {
     this-> proj=proj;
-    this->keepPos=true;
+    this->keepPos=Settings::getSetting("keepBoatPosOnScreen",1).toInt()==1;
     this->mainW=parent;
     this->menuBar=menuBar;
     this->aboutToQuit=false;
@@ -953,6 +953,11 @@ void myCentralWidget::slot_Zoom_Sel()
         zoomOnGrib();
     }
     UNBLOCK_SIG_BOAT()
+}
+void myCentralWidget::slot_keepPos(const bool &b)
+{
+    this->keepPos=b;
+    Settings::setSetting("keepBoatPosOnScreen",keepPos?1:0);
 }
 
 /**************************/
