@@ -258,6 +258,7 @@ public:
     QAction *acMap_Zoom_Out;
     QAction *acMap_Zoom_Sel;
     QAction *acMap_Zoom_All;
+    QAction *acMap_sel;
 
     QAction *acOptions_Proxy;
     QAction *acOptions_Units;

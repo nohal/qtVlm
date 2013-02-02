@@ -354,6 +354,7 @@ myCentralWidget::myCentralWidget(Projection * proj,MainWindow * parent,MenuBar *
     shRoute_st = false;
     shOpp_st = false;
     shPor_st = false;
+    selectionTool=false;
 
     gshhsReader = NULL;
 
@@ -505,6 +506,7 @@ myCentralWidget::myCentralWidget(Projection * proj,MainWindow * parent,MenuBar *
     connect(raceDialog,SIGNAL(writeBoat()),this,SLOT(slot_writeBoatData()));
 
     dialogLoadGrib = new DialogLoadGrib();
+    connect(dialogLoadGrib,SIGNAL(clearSelection()),this,SLOT(slot_clearSelection()));
     dialogLoadGrib->checkQtvlmVersion();
     connect(dialogLoadGrib, SIGNAL(signalGribFileReceived(QString)),
             parent,  SLOT(slot_gribFileReceived(QString)));
@@ -834,6 +836,13 @@ void myCentralWidget::slot_Zoom_All()
     proj->zoomAll();
     UNBLOCK_SIG_BOAT()
 }
+void myCentralWidget::slot_selectionTool()
+{
+    selectionTool=!selectionTool;
+    if(!selectionTool)
+        selection->clearSelection();
+    menuBar->acMap_sel->setChecked(selectionTool);
+}
 
 void myCentralWidget::slot_Go_Left()
 {
@@ -1063,7 +1072,7 @@ void myCentralWidget::slot_mousePress(QGraphicsSceneMouseEvent* e)
 {
     if(e->button()==Qt::MidButton)
         proj->setCentralPixel(e->scenePos().x(),e->scenePos().y());
-    else if (e->modifiers()!=Qt::NoModifier)
+    else if (e->modifiers()!=Qt::NoModifier || selectionTool)
         selection->startSelection(e->scenePos().x(),e->scenePos().y());
     else
         view->startPaning(e);

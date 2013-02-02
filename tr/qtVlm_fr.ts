@@ -1690,15 +1690,15 @@ Etes-vous sur ?</source>
     </message>
     <message>
         <source>Unable to write in qtVlm folder</source>
-        <translation>Impossible d&apos;écrire dans le répertoire de qtVlm</translation>
+        <translation type="obsolete">Impossible d&apos;écrire dans le répertoire de qtVlm</translation>
     </message>
     <message>
         <source>Please change the folder permission or</source>
-        <translation>Changez les permissions de ce répertoire ou</translation>
+        <translation type="obsolete">Changez les permissions de ce répertoire ou</translation>
     </message>
     <message>
         <source>reinstall qtVlm elsewhere</source>
-        <translation>réinstallew qtVlm autre part</translation>
+        <translation type="obsolete">réinstallew qtVlm autre part</translation>
     </message>
     <message>
         <source>Starting qtVLM</source>
@@ -1762,7 +1762,7 @@ Etes-vous sur ?</source>
     </message>
     <message>
         <source>Please check your installation</source>
-        <translation>Veuillez vérifier votre installation</translation>
+        <translation type="obsolete">Veuillez vérifier votre installation</translation>
     </message>
     <message>
         <source>Calibrating grib display</source>
@@ -1790,7 +1790,7 @@ Etes-vous sur ?</source>
     </message>
     <message>
         <source>File &apos;player_play.png&apos; cannot be find in img directory</source>
-        <translation>Le fichier &apos;player_play.png&apos; n&apos;existe pas dans le répertoire &apos;img&apos;</translation>
+        <translation type="obsolete">Le fichier &apos;player_play.png&apos; n&apos;existe pas dans le répertoire &apos;img&apos;</translation>
     </message>
     <message>
         <source>Updating players</source>
@@ -2729,6 +2729,10 @@ Etes-vous sur ?</source>
     </message>
     <message>
         <source>Optimiser la route</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Outil selection</source>
         <translation></translation>
     </message>
 </context>

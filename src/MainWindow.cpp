@@ -131,6 +131,7 @@ void MainWindow::connectSignals()
             my_centralWidget,  SLOT(slot_Zoom_Sel()));
     connect(mb->acMap_Zoom_All, SIGNAL(triggered()),
             my_centralWidget,  SLOT(slot_Zoom_All()));
+    connect(mb->acMap_sel,SIGNAL(triggered()),my_centralWidget,SLOT(slot_selectionTool()));
     //-------------------------------------------------------
     connect(mb->acView_WindArrow, SIGNAL(triggered(bool)),
             this,  SLOT(slotWindArrows(bool)));
@@ -313,18 +314,14 @@ void MainWindow::continueSetup()
     else
     {
         QMessageBox::critical (this,
-           tr("Erreur"),
-           tr("Unable to write in qtVlm folder")+"<br>"+tr("Please change the folder permission or")+"<br>"+
-           tr("reinstall qtVlm elsewhere"));
+           "Error",
+           "Unable to write in qtVlm folder<br>Please change the folder permissions or<br>try to reinstall qtVlm elsewhere");  /*pas traduit expres*/
         my_centralWidget->setAboutToQuit();
         QApplication::quit();
     }
-    if(!QFile(appFolder.value("img")+"player_play.png").exists())
+    if(!QFile(appFolder.value("img")+"selection.png").exists())
         QMessageBox::critical (this,
-           tr("Erreur"),
-           tr("File 'player_play.png' cannot be find in img directory")+"<br>"+tr("Please check your installation"));
-
-
+           "Error","File 'selection.png' cannot be find in img directory<br>Please check your installation"); /*untranslated on purpose*/
     dialogProxy = new DialogProxy();
 
     //--------------------------------------------------
@@ -406,6 +403,7 @@ void MainWindow::continueSetup()
     toolBar->addAction(menuBar->acMap_Zoom_Out);
     toolBar->addAction(menuBar->acMap_Zoom_Sel);
     toolBar->addAction(menuBar->acMap_Zoom_All);
+    toolBar->addAction(menuBar->acMap_sel);
 
     menuBar->cbGribStep->setEnabled(false);
     menuBar->acDatesGrib_prev->setEnabled(false);

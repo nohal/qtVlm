@@ -473,7 +473,9 @@ MenuBar::MenuBar(QWidget *parent)
                                appFolder.value("img")+"viewmagfit.png");
     acMap_Zoom_All = addAction(NULL, tr("Afficher la carte entiere"), tr(""),
                                tr("Afficher la carte entiere"), appFolder.value("img")+"viewmag1.png");
-
+    acMap_sel = addAction(NULL, tr("Outil selection"), tr(""),
+                               tr(""), appFolder.value("img")+"selection.png");
+    acMap_sel->setCheckable(true);
     acDatesGrib_prev = addAction( NULL,
             tr("Prevision precedente [page prec]"),tr("PgUp"),tr(""),appFolder.value("img")+"1leftarrow.png");
     acDatesGrib_next = addAction( NULL,

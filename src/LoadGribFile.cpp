@@ -299,6 +299,7 @@ gfs_run_hour:6
             //--------------------------------------------------
             emit signalGribDataReceived(&arrayContent, fileName.replace("%20",".grb"));
             emit signalGribSendMessage(tr("Termine"));
+            emit clearSelection();
         }
         else {
             emit signalGribLoadError(tr("Checksum incorrect."));

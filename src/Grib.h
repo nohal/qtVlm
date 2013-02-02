@@ -89,7 +89,7 @@ class Grib
 
         std::set<time_t>  * getListDates()   {return &setAllDates;}
 
-        int        getNumberOfDates()      {return setAllDates.size();}
+        int        getNumberOfDates()      {return (int)setAllDates.size();}
         time_t     getRefDate()            {return setAllDates.empty() ?
                                                        0 : *setAllDates.begin();}
         time_t     getMinDate()            {return ok?minDate:-1; }

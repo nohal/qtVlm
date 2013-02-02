@@ -77,6 +77,7 @@ class DialogLoadGrib : public QDialog
 
     signals:
         void signalGribFileReceived(QString fileName);
+        void clearSelection();
 
     private:
         LoadGribFile    *loadgrib;

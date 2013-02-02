@@ -41,6 +41,7 @@ DialogLoadGrib::DialogLoadGrib() : QDialog()
 {
     loadgrib = new LoadGribFile();
     connect (loadgrib,SIGNAL(ungrayButtons()),this,SLOT(slotUngrayButtons()));
+    connect (loadgrib,SIGNAL(clearSelection()),this,SIGNAL(clearSelection()));
     assert(loadgrib);
 
     setWindowTitle(tr("Telechargement"));

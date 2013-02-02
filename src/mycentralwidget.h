@@ -218,6 +218,7 @@ class myCentralWidget : public QWidget
         void slot_Zoom_Sel();
         void slot_keepPos(const bool &b);
         void slot_abortRequest();
+        void slot_selectionTool();
 
         /* POI */
         POI * slot_addPOI(QString name,int type,double lat,double lon, double wph,int timestamp,bool useTimeStamp, boat *boat);
@@ -436,6 +437,7 @@ class myCentralWidget : public QWidget
         faxMeteo * fax;
         loadImg * kap;
         ROUTE * routeSimplify;
+        bool selectionTool;
 };
 
 #endif // MYCENTRALWIDGET_H

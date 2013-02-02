@@ -93,6 +93,7 @@ class LoadGribFile : public QObject
         void signalGribLoadError(QString msg);
         void ungrayButtons();
         void progress(qint64,qint64);
+        void clearSelection();
 };
 Q_DECLARE_TYPEINFO(LoadGribFile,Q_MOVABLE_TYPE);
 
