@@ -10,10 +10,10 @@ class MyView : public QGraphicsView
     Q_OBJECT
 public:
     explicit MyView(Projection * proj, myScene * scene,myCentralWidget * mcw);
-    void myScale(double scale, double lon, double lat);
-    void startPaning(QGraphicsSceneMouseEvent *e);
-    void pane(int x,int y);
-    void stopPaning(int x, int y);
+    void myScale(const double &scale, const double &lon, const double &lat);
+    void startPaning(const QGraphicsSceneMouseEvent *e);
+    void pane(const int &x, const int &y);
+    void stopPaning(const int &x, const int &y);
     bool isPaning(){return paning;}
     void hideViewPix();
 signals:
