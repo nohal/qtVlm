@@ -1290,6 +1290,10 @@ Etes-vous sur ?</source>
         <source>Recharger la polaire</source>
         <translation></translation>
     </message>
+    <message>
+        <source>deg</source>
+        <translation>°</translation>
+    </message>
 </context>
 <context>
     <name>DialogVlmGrib</name>
@@ -3618,6 +3622,10 @@ VMG %.2f nds</translation>
     <message>
         <source>Export de tableau de marche</source>
         <translation></translation>
+    </message>
+    <message>
+        <source>deg</source>
+        <translation>°</translation>
     </message>
 </context>
 <context>

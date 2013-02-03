@@ -1777,9 +1777,15 @@ Etes-vous sur ?</source>
         <translation>Znovu nahraj polár</translation>
     </message>
     <message>
-        <location filename="../src/Dialogs/dialogviewpolar.cpp" line="72"/>
+        <location filename="../src/Dialogs/dialogviewpolar.cpp" line="70"/>
         <source>Analyse de la polaire: </source>
         <translation>Analýza poláru: </translation>
+    </message>
+    <message>
+        <location filename="../src/Dialogs/dialogviewpolar.cpp" line="127"/>
+        <location filename="../src/Dialogs/dialogviewpolar.cpp" line="129"/>
+        <source>deg</source>
+        <translation>°</translation>
     </message>
 </context>
 <context>
@@ -5202,6 +5208,11 @@ VMG %.2f kts</translation>
         <location filename="../src/Util.cpp" line="110"/>
         <source>nds</source>
         <translation>kts</translation>
+    </message>
+    <message>
+        <location filename="../src/Util.cpp" line="164"/>
+        <source>deg</source>
+        <translation>°</translation>
     </message>
 </context>
 <context>

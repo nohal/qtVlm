@@ -59,9 +59,7 @@ bool DialogViewPolar::eventFilter(QObject *, QEvent *event)
     double aws=sqrt(a*a+bb*bb);
     double awa=90-radToDeg(atan(bb/a));
     double vmg=polarValues.at(angle)*cos(degToRad(angle));
-    s=s.sprintf(QObject::tr("TWA %ddeg, BS %.2fnds\nAWA %.2fdeg, AWS %.2fnds\nVMG %.2fnds").toLatin1(),angle,polarValues.at(angle),awa,aws,vmg);
-    //QRect r(polarLine.at(angle).x(),polarLine.at(angle).y(),500,500);
-    //pp.drawText(r,s);
+    s=s.sprintf(QObject::tr("TWA %ddeg, BS %.2fnds\nAWA %.2fdeg, AWS %.2fnds\nVMG %.2fnds").toUtf8(),angle,polarValues.at(angle),awa,aws,vmg);
     imageContainer->setPixmap(i2);
     info->setText(s);
     return true;
@@ -126,9 +124,9 @@ void DialogViewPolar::drawIt()
         pnt.setPen(pen);
         if(!this->allSpeed->isChecked())
         {
-            s=s.sprintf("%.1f",bvmgUp);
+            s=s.sprintf("%.1f",bvmgUp)+tr("deg");
             this->BVMG_up->setText(s);
-            s=s.sprintf("%.1f",bvmgDown);
+            s=s.sprintf("%.1f",bvmgDown)+tr("deg");
             this->BVMG_down->setText(s);
         }
         for(int angle=0;angle<=180;++angle)
