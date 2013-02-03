@@ -62,6 +62,8 @@ Copyright (C) 2008 - Jacques Zaninetti - http://zygrib.free.fr
 #include "Terrain.h"
 #include "boatReal.h"
 #include "route.h"
+#include "ToolBar.h"
+#include "Progress.h"
 
 #include "DialogPoiDelete.h"
 #include "DialogGribValidation.h"
@@ -121,17 +123,17 @@ void MainWindow::connectSignals()
 //    connect(mb->acMap_GroupQuality, SIGNAL(triggered(QAction *)),
 //            this, SLOT(slotMap_Quality()));
 
-    connect(mb->acMap_Zoom_In, SIGNAL(triggered()),
+   /* connect(mb->acMap_Zoom_In, SIGNAL(triggered()),
             my_centralWidget,  SLOT(slot_Zoom_In()));
     connect(mb->acMap_Zoom_Out, SIGNAL(triggered()),
-            my_centralWidget,  SLOT(slot_Zoom_Out()));
+            my_centralWidget,  SLOT(slot_Zoom_Out()));*/
 //    menuBar->acMap_Zoom_In->installEventFilter(this);
 //    menuBar->acMap_Zoom_Out->installEventFilter(this);
-    connect(mb->acMap_Zoom_Sel, SIGNAL(triggered()),
+    /*connect(mb->acMap_Zoom_Sel, SIGNAL(triggered()),
             my_centralWidget,  SLOT(slot_Zoom_Sel()));
     connect(mb->acMap_Zoom_All, SIGNAL(triggered()),
             my_centralWidget,  SLOT(slot_Zoom_All()));
-    connect(mb->acMap_sel,SIGNAL(triggered()),my_centralWidget,SLOT(slot_selectionTool()));
+    connect(mb->acMap_sel,SIGNAL(triggered()),my_centralWidget,SLOT(slot_selectionTool()));*/
     //-------------------------------------------------------
     connect(mb->acView_WindArrow, SIGNAL(triggered(bool)),
             this,  SLOT(slotWindArrows(bool)));
@@ -194,7 +196,7 @@ void MainWindow::connectSignals()
     //-------------------------------------
     // Autres objets de l'interface
     //-------------------------------------
-    connect(mb->cbGribStep, SIGNAL(activated(int)),
+    /*connect(mb->cbGribStep, SIGNAL(activated(int)),
             this, SLOT(slotDateStepChanged(int)));
     connect(mb->datesGrib_now, SIGNAL(clicked()),
             this, SLOT(slotDateGribChanged_now()));
@@ -209,7 +211,7 @@ void MainWindow::connectSignals()
     connect(mb->boatList, SIGNAL(activated(int)),
             this, SLOT(slotChgBoat(int)));
     connect(mb->estime, SIGNAL(valueChanged(int)),
-            this, SLOT(slotEstime(int)));
+            this, SLOT(slotEstime(int)));*/
 
     //-------------------------------------
     // Autres signaux
@@ -295,18 +297,9 @@ void MainWindow::continueSetup()
 {
     this->show();
     this->activateWindow();
-    progress=new QProgressDialog(this,Qt::FramelessWindowHint/*Qt::SplashScreen*/);
-    progress->setLabelText(tr("Starting qtVLM"));
-    progress->setMaximum(100);
-    progress->setMinimum(0);
-    progress->setCancelButton(NULL);
-    progress->setMinimumDuration (0);
-    progress->setValue(1);
-    progress->setAutoClose(false);
-    progress->setAutoReset(false);
-    progress->show();
-    progress->raise();
-    progress->activateWindow();
+
+    progress=new Progress(this);
+
     QFile testWrite;
     testWrite.setFileName("testWrite.txt");
     if(testWrite.open(QIODevice::WriteOnly | QIODevice::Text ))
@@ -324,35 +317,18 @@ void MainWindow::continueSetup()
            "Error","File 'selection.png' cannot be find in img directory<br>Please check your installation"); /*untranslated on purpose*/
     dialogProxy = new DialogProxy();
 
-    //--------------------------------------------------
-
-    progress->setValue(5);
-    progress->setLabelText(tr("Initializing menus"));
-    progress->raise();
-    progress->activateWindow();
+//--------------------------------------------------
+    progress->newStep(5,tr("Initializing menus"));
     menuBar = new MenuBar(this);
     setMenuBar(menuBar);
-    progress->setLabelText(tr("Initializing maps drawing"));
-    progress->setValue(15);
-    progress->raise();
-    progress->activateWindow();
+
+//--------------------------------------------------
+    progress->newStep(10,tr("Initializing maps drawing"));
     my_centralWidget = new myCentralWidget(proj,this,menuBar);
-    /* make sure it is still here */
-    progress->setLabelText(tr("Initializing toolbars"));
-    progress->setValue(20);
-    progress->raise();
-    progress->activateWindow();
-
-    menuBar->setMCW(this->my_centralWidget);
     this->setCentralWidget(my_centralWidget);
-    connect(this,SIGNAL(addPOI_list(POI*)),my_centralWidget,SLOT(slot_addPOI_list(POI*)));
-    connect(this,SIGNAL(addPOI(QString,int,double,double,double,int,bool,boat*)),
-            my_centralWidget,SLOT(slot_addPOI(QString,int,double,double,double,int,bool,boat*)));
-    connect(my_centralWidget,SIGNAL(POI_selectAborted(POI*)),this,SLOT(slot_POIselected(POI*)));
-    connect(this,SIGNAL(moveBoat(double,double)),my_centralWidget,SLOT(slot_moveBoat(double,double)));
 
-    //--------------------------------------------------
-
+//--------------------------------------------------
+    progress->newStep(15,tr("Initializing status bar"));
     statusBar =new QStatusBar(this);
     QFontInfo finfo = statusBar->fontInfo();
     QFont font("", finfo.pointSize(), QFont::Normal, false);
@@ -378,7 +354,14 @@ void MainWindow::continueSetup()
     statusBar->addWidget(stBar_label_3);
     font.setFixedPitch(false);
 
-    //--------------------------------------------------
+    setStatusBar(statusBar);
+
+//--------------------------------------------------
+    progress->newStep(20,tr("Initializing tool bar"));
+    toolBar = new ToolBar(this);
+    my_centralWidget->set_toolBar(toolBar);
+
+    /*
     toolBar = addToolBar(tr("Outils"));
     toolBar->setFloatable(false);
     toolBar->setMovable(false);
@@ -405,16 +388,7 @@ void MainWindow::continueSetup()
     toolBar->addAction(menuBar->acMap_Zoom_All);
     toolBar->addAction(menuBar->acMap_sel);
 
-    menuBar->cbGribStep->setEnabled(false);
-    menuBar->acDatesGrib_prev->setEnabled(false);
-    menuBar->acDatesGrib_next->setEnabled(false);
-    menuBar->acDatesGrib_play->setEnabled(false);
-    menuBar->datesGrib_sel->setEnabled(false);
-    menuBar->datesGrib_now->setEnabled(false);
 
-    menuBar->cbGribStep->setCurrentIndex(Settings::getSetting("gribDateStep", 2).toInt());
-
-    menuBar->menuFile->addAction(toolBar->toggleViewAction());
 
     toolBar->addSeparator();
     toolBar->addWidget(menuBar->boatList);
@@ -433,7 +407,7 @@ void MainWindow::continueSetup()
     startEstime->setChecked(Settings::getSetting("startSpeedEstime", 1).toInt()==1);
     toolBar->addWidget(tool_ESTIMEUNIT);
     toolBar->addWidget(startEstime);
-    slot_ParamVLMchanged();
+
     toolBar->addSeparator();
 
     tool_ETA = new QLabel("", toolBar);
@@ -444,49 +418,41 @@ void MainWindow::continueSetup()
     Util::setFontDialog(tool_ETA);
     Util::setFontDialog(tool_ESTIME);
     Util::setFontDialog(tool_ESTIMEUNIT);
+
+
+    menuBar->cbGribStep->setEnabled(false);
+    menuBar->acDatesGrib_prev->setEnabled(false);
+    menuBar->acDatesGrib_next->setEnabled(false);
+    menuBar->acDatesGrib_play->setEnabled(false);
+    menuBar->datesGrib_sel->setEnabled(false);
+    menuBar->datesGrib_now->setEnabled(false);
+
+    menuBar->cbGribStep->setCurrentIndex(Settings::getSetting("gribDateStep", 2).toInt());
+*/
+    //menuBar->menuFile->addAction(toolBar->toggleViewAction());
+
     Util::setFontDialog(menuBar);
 
-    setStatusBar(statusBar);
+    //slot_ParamVLMchanged();
+    //this->slotParamChanged();
 
-    this->slotParamChanged();
-
-    //---------------------------------------------------------
-    // Menu popup : bouton droit de la souris
-    //---------------------------------------------------------
-    progress->setLabelText(tr("Creating context menus"));
-    progress->setValue(25);
-    progress->raise();
-    progress->activateWindow();
-
+    //--------------------------------------------------
+    progress->newStep(25,tr("Creating context menus"));
     menuPopupBtRight = menuBar->createPopupBtRight(this);
 
 
-    //---------------------------------------------------------
-    // VLM init
-    //---------------------------------------------------------
-    /* list of polar structure */
-
-    progress->setLabelText(tr("Loading polars list"));
-    progress->setValue(26);
-    progress->raise();
-    progress->activateWindow();
-
+//--------------------------------------------------
+    progress->newStep(26,tr("Loading polars list"));
     polar_list = new polarList(my_centralWidget->getInet(),this);
 
-    progress->setLabelText(tr("Reading boats data"));
-    progress->setValue(28);
-    progress->raise();
-    progress->activateWindow();
+//--------------------------------------------------
+    progress->newStep(28,tr("Reading boats data"));
     my_centralWidget->loadBoat();
 
-
-    progress->setLabelText(tr("Drawing some"));
-    progress->setValue(30);
-    progress->raise();
-    progress->activateWindow();
+//--------------------------------------------------
+    progress->newStep(30,tr("Creating board & dialogs"));
 
     poi_input_dialog = new DialogPoiInput(my_centralWidget);
-
     selPOI_instruction=NULL;
     isSelectingWP=false;
 
@@ -494,9 +460,11 @@ void MainWindow::continueSetup()
     connect(menuBar->acOptions_SH_ComBandeau,SIGNAL(triggered()),myBoard,SLOT(slot_hideShowCompass()));
 
     param = new DialogParamVlm(this,my_centralWidget);
-    connect(param,SIGNAL(paramVLMChanged()),myBoard,SLOT(paramChanged()));
     connect(this,SIGNAL(wpChanged()),myBoard->VLMBoard(),SLOT(update_btnWP()));
+    connect(param,SIGNAL(paramVLMChanged()),myBoard,SLOT(paramChanged()));    
     connect(param,SIGNAL(paramVLMChanged()),this,SLOT(slot_ParamVLMchanged()));
+    connect(param,SIGNAL(paramVLMChanged()),toolBar,SLOT(slot_loadEstimeParam()));
+    connect(toolBar,SIGNAL(estimeParamChanged()),this,SIGNAL(paramVLMChanged()));
 
     progress->setLabelText(tr("Preparing coffee"));
     progress->setValue(35);
@@ -507,16 +475,10 @@ void MainWindow::continueSetup()
 
     loadVLM_grib = new DialogVlmGrib(this,my_centralWidget,my_centralWidget->getInet());
 
-    //---------------------------------------------------------
-    // Active les actions
-    //---------------------------------------------------------
     connectSignals();
 
-
-    progress->setLabelText(tr("Drawing all"));
-    progress->setValue(40);
-    progress->raise();
-    progress->activateWindow();
+//---------------------------------------------------------
+    progress->newStep(35,tr("Preparing coffee"));
 
      //--------------------------------------------------
     // get screen geometry
@@ -535,16 +497,12 @@ void MainWindow::continueSetup()
     else
         myBoard->floatingBoard(false);
 
-
-
-
     /* init du dialog de validation de grib (present uniquement en mode debug)*/
 #ifdef __QTVLM_WITH_TEST
     gribValidation_dialog = new DialogGribValidation(my_centralWidget,this);
 #endif
-    //********************************************
 
-    //slot_deleteProgress();
+
 
     QList<Player*> players=my_centralWidget->getPlayers();
 
@@ -563,12 +521,9 @@ void MainWindow::continueSetup()
         myBoard->playerChanged(players.at(0));
         if(players.at(0)->getType()==BOAT_VLM)
         {
-            progress->setLabelText(tr("Updating player"));
-            progress->setValue(50);
-            progress->raise();
-            progress->activateWindow();
+ //************************************************************
+            progress->newStep(50,tr("Updating player"));
             connect(players.at(0),SIGNAL(playerUpdated(bool,Player*)),this,SLOT(slot_updPlayerFinished(bool,Player*)));
-            //qWarning()<<"before maj player for"<<players.at(0)->getName();
             players.at(0)->updateData();
         }
         else
@@ -577,20 +532,15 @@ void MainWindow::continueSetup()
             my_centralWidget->loadPOI();
             isStartingUp=false;
             updateTitle();
-            slot_deleteProgress();
+            closeProgress();
             my_centralWidget->emitUpdateRoute(NULL);
         }
-        //Util::setFontDialog(statusBar);
         Util::setFontDialog(menuBar);
         return;
     }
-
+//********************************************
+    progress->newStep(55,tr("Calling player dialog"));
     bool res;
-    progress->setLabelText(tr("Calling player dialog"));
-    progress->setValue(55);
-    progress->raise();
-    progress->activateWindow();
-
     my_centralWidget->manageAccount(&res);
     if(!res)
     {
@@ -609,16 +559,13 @@ void MainWindow::continueSetup()
             }
             else
             {
-
                 my_centralWidget->loadPOI();
                 nBoat=my_centralWidget->getBoats()->size();
                 toBeCentered=-1;
                 if(nBoat>0)
                 {
-                    progress->setLabelText(tr("Updating boats"));
-                    progress->setValue(60);
-                    progress->raise();
-                    progress->activateWindow();
+ //************************************************************
+                    progress->newStep(60,tr("Updating boats"));
                     VLM_Sync_sync();
                     return;
                 }
@@ -639,7 +586,7 @@ void MainWindow::continueSetup()
         }
     }
 
-    slot_deleteProgress();
+    closeProgress();
     Util::setFontDialog(menuBar);
 }
 
@@ -662,10 +609,6 @@ void MainWindow::listAllChildren(QObject * ptr,int depth=0)
     else
         qWarning() << QString().fill(QChar(' '),depth*2) << ptr ;
 }
-bool MainWindow::getStartEstimeSpeedFromGrib()
-{
-    return this->startEstime->isChecked();
-}
 
 //-----------------------------------------------
 MainWindow::~MainWindow()
@@ -687,29 +630,21 @@ MainWindow::~MainWindow()
     Settings::setSetting("projectionScale",  proj->getScale());
     Settings::setSetting("gribFileName",  gribFileName);
     Settings::setSetting("gribFileNameCurrent",  gribFileNameCurrent);
-    Settings::setSetting("gribFilePath",  gribFilePath);
-    Settings::setSetting("startSpeedEstime",startEstime->isChecked()?1:0);
+    Settings::setSetting("gribFilePath",  gribFilePath);   
     /*freeze all routes*/
-    //my_centralWidget->freezeRoutes(true);
     if(selectedBoat) /* save the zoom factor */
         selectedBoat->setZoom(proj->getScale());
-//    if(my_centralWidget)
-//        delete my_centralWidget;
-
 }
 
 void MainWindow::keyPressEvent ( QKeyEvent  * /* event */ )
 {
     //qWarning() << "Key pressed in main: " << event->key();
 }
-void MainWindow::slot_deleteProgress (void)
+void MainWindow::closeProgress(void)
 {
-    progress->setValue(80);
     if(QThread::idealThreadCount()>1 && QFile(appFolder.value("img")+"benchmark.grb").exists())
     {
-        progress->setLabelText(tr("Calibrating grib display"));
-        progress->raise();
-        progress->activateWindow();
+        progress->newStep(80,tr("Calibrating grib display"));
         QApplication::processEvents();
         Grib * grib=new Grib();
         grib->loadGribFile(appFolder.value("img")+"benchmark.grb");
@@ -749,11 +684,7 @@ void MainWindow::slot_deleteProgress (void)
         }
         delete grib;
     }
-    //qWarning() << "Removing progress";
-    progress->setLabelText(tr("Opening grib"));
-    progress->setValue(95);
-    progress->raise();
-    progress->activateWindow();
+    progress->newStep(95,tr("Opening grib"));
     gribFilePath = Settings::getSetting("gribFilePath", appFolder.value("grib")).toString();
     if(gribFilePath.isEmpty())
         gribFilePath = appFolder.value("grib");
@@ -788,7 +719,6 @@ void MainWindow::slot_deleteProgress (void)
         }
     }
     statusBar->show();
-    toolBar->show();
     menuBar->show();
 }
 
@@ -850,24 +780,9 @@ void MainWindow::openGribFile(QString fileName, bool zoom, bool current)
                 + tr("Ce fichier ne contient pas") + "\n"
                 + tr("de donnees Courants"));
     }
-    if(!my_centralWidget->getGrib() && !my_centralWidget->getGribCurrent())
-    {
-        menuBar->cbGribStep->setEnabled(false);
-        menuBar->acDatesGrib_prev->setEnabled(false);
-        menuBar->acDatesGrib_next->setEnabled(false);
-        menuBar->acDatesGrib_play->setEnabled(false);
-        menuBar->datesGrib_sel->setEnabled(false);
-        menuBar->datesGrib_now->setEnabled(false);
-    }
-    else
-    {
-        menuBar->cbGribStep->setEnabled(true);
-        menuBar->acDatesGrib_prev->setEnabled(true);
-        menuBar->acDatesGrib_next->setEnabled(true);
-        menuBar->acDatesGrib_play->setEnabled(true);
-        menuBar->datesGrib_sel->setEnabled(true);
-        menuBar->datesGrib_now->setEnabled(true);
-    }
+
+    toolBar->update_gribBtn();
+
     updateTitle();
 }
 void MainWindow::updateTitle()
@@ -1078,20 +993,18 @@ void MainWindow::slotFile_Lock(bool readOnly)
     else
         ic=QIcon(appFolder.value("img")+"unlock.png");
     menuBar->acFile_Lock->setIcon(ic);
+    toolBar->acLock->setIcon(ic);
 }
 
 void MainWindow::slotFile_Quit() {
     my_centralWidget->setAboutToQuit();
     QApplication::quit();
 }
+
 void MainWindow::slotFile_QuitNoSave() {
     my_centralWidget->setAboutToQuit();
     noSave=true;
     QApplication::quit();
-}
-void MainWindow::setBoardToggleAction(QAction * action)
-{
-    menuBar->menuFile->addAction(action);
 }
 
 //-------------------------------------------------
@@ -1157,16 +1070,7 @@ void MainWindow::slotFile_Open_Current()
 void MainWindow::slotFile_Close_Current() {
     gribFileNameCurrent = "";
     my_centralWidget->loadGribFileCurrent("", false);
-    if(!(my_centralWidget->getGrib() && my_centralWidget->getGrib()->isOk()))
-    {
-        menuBar->acDatesGrib_prev->setEnabled(false);
-        menuBar->acDatesGrib_next->setEnabled(false);
-        menuBar->acDatesGrib_play->setEnabled(false);
-        menuBar->cbGribStep->setEnabled(false);
-        menuBar->datesGrib_sel->setEnabled(false);
-        menuBar->datesGrib_now->setEnabled(false);
-
-    }
+    toolBar->update_gribBtn();
     updateTitle();
     my_centralWidget->emitUpdateRoute(NULL);
 }
@@ -1175,58 +1079,21 @@ void MainWindow::slotFile_Close()
 {
     gribFileName = "";
     my_centralWidget->loadGribFile("", false);
-    if(!(my_centralWidget->getGribCurrent() && my_centralWidget->getGribCurrent()->isOk()))
-    {
-        menuBar->acDatesGrib_prev->setEnabled(false);
-        menuBar->acDatesGrib_next->setEnabled(false);
-        menuBar->acDatesGrib_play->setEnabled(false);
-        menuBar->cbGribStep->setEnabled(false);
-        menuBar->datesGrib_sel->setEnabled(false);
-        menuBar->datesGrib_now->setEnabled(false);
-
-    }
+    toolBar->update_gribBtn();
     updateTitle();
     my_centralWidget->emitUpdateRoute(NULL);
 }
 
 //========================================================================
-void MainWindow::slotDateStepChanged(int id)
+void MainWindow::slotDateStepChanged(int step)
 {
-    Settings::setSetting("gribDateStep",id);
+    Settings::setSetting("gribDateStep",step);
     updatePrevNext();
-}
-
-int MainWindow::getGribStep()
-{
-    int stepTable[7]={900,1800,3600,7200,10800,21600,43200};
-    return stepTable[menuBar->cbGribStep->currentIndex()];
 }
 
 void MainWindow::updatePrevNext(void)
 {
-    Grib * grib = my_centralWidget->getGrib();
-    if(grib)
-    {
-        time_t tps=my_centralWidget->getCurrentDate();
-        time_t min=grib->getMinDate();
-        time_t max=grib->getMaxDate();
-        int step=getGribStep();
-        menuBar->acDatesGrib_prev->setEnabled( ((tps-step)>=min) );
-        menuBar->acDatesGrib_next->setEnabled( ((tps+step)<=max) );
-        menuBar->acDatesGrib_play->setEnabled( ((tps+step)<=max) );
-        menuBar->cbGribStep->setEnabled(true);
-        menuBar->datesGrib_sel->setEnabled(true);
-        menuBar->datesGrib_now->setEnabled(true);
-    }
-    else
-    {
-        menuBar->cbGribStep->setEnabled(false);
-        menuBar->acDatesGrib_prev->setEnabled(false);
-        menuBar->acDatesGrib_next->setEnabled(false);
-        menuBar->acDatesGrib_play->setEnabled(false);
-        menuBar->datesGrib_sel->setEnabled(false);
-        menuBar->datesGrib_now->setEnabled(false);
-    }
+    toolBar->update_gribBtn();
 }
 
 //-------------------------------------------------
@@ -1261,66 +1128,33 @@ void MainWindow::slotDateGribChanged_next()
     {
         time_t tps=my_centralWidget->getCurrentDate();
         time_t max=grib->getMaxDate();
-        int step=getGribStep();
+        int step=toolBar->get_gribStep();
         if((tps+step)<=max)
         {
             my_centralWidget->setCurrentDate(tps+step);
             updatePrevNext();
         }
-        else if(menuBar->acDatesGrib_play->data().toInt()==1)
-        {
-            menuBar->acDatesGrib_play->setIcon(QIcon(appFolder.value("img")+"player_play.png"));
-            menuBar->acDatesGrib_play->setData(0);
-            disconnect(my_centralWidget->getTerre(),SIGNAL(terrainUpdated()),this,SLOT(slotDateGribChanged_next()));
-        }
+        else if(toolBar->isPlaying())
+            toolBar->stopPlaying();
     }
 }
-void MainWindow::slotDateGribPlay()
-{
-    if(menuBar->acDatesGrib_play->data().toInt()==0)
-    {
-        Grib * grib = my_centralWidget->getGrib();
-        if(grib)
-        {
-            time_t tps=my_centralWidget->getCurrentDate();
-            time_t max=grib->getMaxDate();
-            int step=getGribStep();
-            if((tps+step)<=max)
-            {
-                menuBar->acDatesGrib_play->setIcon(QIcon(appFolder.value("img")+"player_end.png"));
-                menuBar->acDatesGrib_play->setData(1);
-                connect(my_centralWidget->getTerre(),SIGNAL(terrainUpdated()),this,SLOT(slotDateGribChanged_next()));
-                slotDateGribChanged_next();
-            }
-        }
-    }
-    else
-    {
-        menuBar->acDatesGrib_play->setIcon(QIcon(appFolder.value("img")+"player_play.png"));
-        menuBar->acDatesGrib_play->setData(0);
-        disconnect(my_centralWidget->getTerre(),SIGNAL(terrainUpdated()),this,SLOT(slotDateGribChanged_next()));
-    }
-}
+
 //-------------------------------------------------
-void MainWindow::slotDateGribChanged_prev()
-{
+void MainWindow::slotDateGribChanged_prev() {
     Grib * grib = my_centralWidget->getGrib();
-    if(grib)
-    {
+    if(grib) {
         time_t tps=my_centralWidget->getCurrentDate();
         time_t min=grib->getMinDate();
-        int step=getGribStep();
+        int step=toolBar->get_gribStep();
         if((tps-step)>=min)
             my_centralWidget->setCurrentDate(tps-step);
     }
     updatePrevNext();
 }
 
-void MainWindow::slotSetGribDate(time_t tps)
-{
+void MainWindow::slotSetGribDate(time_t tps) {
     Grib * grib = my_centralWidget->getGrib();
-    if(grib)
-    {
+    if(grib) {
         time_t min=grib->getMinDate();
         time_t max=grib->getMaxDate();
         if(tps>=min && tps <=max)
@@ -1328,8 +1162,7 @@ void MainWindow::slotSetGribDate(time_t tps)
     }
 }
 //-------------------------------------------------
-Grib * MainWindow::getGrib()
-{
+Grib * MainWindow::getGrib() {
     return my_centralWidget->getGrib();
 }
 
@@ -1885,44 +1718,35 @@ void MainWindow::VLM_Sync_sync(void)
     if(!my_centralWidget->getBoats())
     {
         qWarning() << "CRITICAL: VLM_Sync_sync - empty boatList";
-        slot_deleteProgress();
+        closeProgress();;
         return ;
     }
 
     QList<boatVLM*> listBoats = *my_centralWidget->getBoats();
     if(listBoats.isEmpty())
     {
-        slot_deleteProgress();
+        closeProgress();;
         return;
     }
-    menuBar->boatList->setEnabled(false);
+    toolBar->boatList->setEnabled(false);
     --nBoat;
     if(nBoat>=0)
     {
         int p=listBoats.count()-nBoat;
-        progress->setValue(60+(19*p)/listBoats.count());
-        progress->raise();
-        progress->activateWindow();
+        progress->newStep(60+(19*p)/listBoats.count(),tr("Boats init"));
         acc = listBoats.at(nBoat);
         if(acc->getStatus() || !acc->isInitialized())
         {
-            //qWarning() << "Doing a synch_synch with VLM: " << acc->getName();
             connect(acc,SIGNAL(hasFinishedUpdating(void)),this,SLOT(slot_boatHasUpdated()));
-            //toBeCentered=nBoat;
-//            if(selectedBoat==NULL)
-//                acc->slot_selectBoat();
-//            else
-                acc->slot_getData(true);
+            acc->slot_getData(true);
         }
         else
         {
-            //qWarning() << "Calling again SyncSync with next boat";
             VLM_Sync_sync();
         }
     }
     else
     {
-        //qWarning()<<"All boats updated";
         int lastBoatSelected=Settings::getSetting("LastBoatSelected","-10").toInt();
         if(lastBoatSelected!=-10)
         {
@@ -1957,22 +1781,18 @@ void MainWindow::VLM_Sync_sync(void)
                 }
             }
         }
-        menuBar->boatList->setEnabled(true);
-        slot_deleteProgress();
+        toolBar->boatList->setEnabled(true);
+        closeProgress();
         isStartingUp=false;
         if(Settings::getSetting("centerOnBoatChange","1").toInt()==1)
             this->slot_centerBoat();
-        //qWarning()<<"updating routes";
         my_centralWidget->emitUpdateRoute(NULL);
-        //qWarning()<<"updating title";
         updateTitle();
-        //qWarning()<<"startup completed";
     }
 }
 void MainWindow::slot_boatHasUpdated()
 {
      disconnect(acc,SIGNAL(hasFinishedUpdating(void)),this,SLOT(slot_boatHasUpdated()));
-     //qWarning() << "slot_boatHasUpdated => syncSync";
      VLM_Sync_sync();
 }
 
@@ -2056,26 +1876,10 @@ void MainWindow::slotBoatUpdated(boat * upBoat,bool newRace,bool doingSync)
             drawVacInfo();
             timer->start(1000);
 
-            /* Updating ETA */
-            int nbS,j,h,m;
-            QString txt;
+            /* Updating ETA */            
             QString Eta = boat->getETA();
             QDateTime dtm =QDateTime::fromString(Eta,"yyyy-MM-ddTHH:mm:ssZ");
-            dtm.setTimeSpec(Qt::UTC);
-            QDateTime now = (QDateTime::currentDateTime()).toUTC();
-            nbS=now.secsTo(dtm);
-            j = nbS/(24*3600);
-            nbS-=j*24*3600;
-            h=nbS/3600;
-            nbS-=h*3600;
-            m=nbS/60;
-            nbS-=m*60;
-            txt.sprintf("(%dj %02dh%02dm%02ds)",j,h,m,nbS);
-            txt.replace("j",tr("j"));
-            txt.replace("h",tr("h"));
-            txt.replace("m",tr("m"));
-            txt.replace("s",tr("s"));
-            tool_ETA->setText(tr(" Arrivee WP")+": " +dtm.toString(tr("dd-MM-yyyy, HH:mm:ss"))+ " " +txt);
+            toolBar->update_eta(dtm);
 
             /* change data displayed in all pilototo buttons or menu entry: (nb of instructions passed / tot nb) */
             updatePilototo_Btn(boat);
@@ -2113,32 +1917,15 @@ void MainWindow::slotBoatUpdated(boat * upBoat,bool newRace,bool doingSync)
         /* Updating ETA */
         boatReal *boat=(boatReal *) upBoat;
         if((boat->getWPLat()==0 && boat->getWPLon()==0) ||boat->getEta()==-1)
-            tool_ETA->clear();
+            toolBar->clear_eta();
         else
         {
             QString txt;
             QDateTime dtm =QDateTime::fromTime_t(boat->getEta()).toUTC();
             if(!dtm.isValid())
-                tool_ETA->clear();
+                toolBar->clear_eta();
             else
-            {
-                int nbS,j,h,m;
-                dtm.setTimeSpec(Qt::UTC);
-                QDateTime now = (QDateTime::currentDateTime()).toUTC();
-                nbS=now.secsTo(dtm);
-                j = nbS/(24*3600);
-                nbS-=j*24*3600;
-                h=nbS/3600;
-                nbS-=h*3600;
-                m=nbS/60;
-                nbS-=m*60;
-                txt.sprintf("(%dj %02dh%02dm%02ds)",j,h,m,nbS);
-                txt.replace("j",tr("j"));
-                txt.replace("h",tr("h"));
-                txt.replace("m",tr("m"));
-                txt.replace("s",tr("s"));
-                tool_ETA->setText(tr(" Arrivee WP")+": " +dtm.toString(tr("dd-MM-yyyy, HH:mm:ss"))+ " " +txt);
-            }
+                toolBar->update_eta(dtm);
         }
         emit boatHasUpdated(upBoat);
         //emit WPChanged(upBoat->getWPLat(),upBoat->getWPLon());
@@ -2206,7 +1993,7 @@ void MainWindow::slotSelectBoat(boat* newSelect)
             {
                 if(my_centralWidget->getBoats()->at(i) == newSelect)
                 {
-                    menuBar->setSelectedBoatIndex(cnt);
+                    toolBar->setSelectedBoatIndex(cnt);
                     break;
                 }
                 if(my_centralWidget->getBoats()->at(i)->getStatus())
@@ -2275,7 +2062,7 @@ void MainWindow::slot_updPlayerFinished(bool res_ok, Player * player)
         updateTitle();
         my_centralWidget->slot_playerSelected(player);
         my_centralWidget->loadPOI();
-        slot_deleteProgress();
+        closeProgress();
         my_centralWidget->emitUpdateRoute(NULL);
         return;
     }
@@ -2306,14 +2093,14 @@ void MainWindow::slot_updPlayerFinished(bool res_ok, Player * player)
         updateTitle();
     }
     my_centralWidget->emitUpdateRoute(NULL);
-    slot_deleteProgress();
+    closeProgress();
     //qWarning()<<"Boat has finished updating";
 }
 
 void MainWindow::slotSelectPOI(DialogPilototoInstruction * instruction)
 {
     selPOI_instruction=instruction;
-    menuBar->boatList->setEnabled(false);
+    toolBar->boatList->setEnabled(false);
     updatePilototo_Btn((boatVLM*)selectedBoat);
     slotBoatLockStatusChanged(selectedBoat,selectedBoat->getLockStatus());
 }
@@ -2321,7 +2108,7 @@ void MainWindow::slotSelectPOI(DialogPilototoInstruction * instruction)
 void MainWindow::slotSelectWP_POI()
 {
     isSelectingWP=true;
-    menuBar->boatList->setEnabled(false);
+    toolBar->boatList->setEnabled(false);
     slotBoatLockStatusChanged(selectedBoat,selectedBoat->getLockStatus());
 }
 
@@ -2337,14 +2124,14 @@ void MainWindow::slot_POIselected(POI* poi)
         DialogPilototoInstruction * tmp=selPOI_instruction;
         selPOI_instruction=NULL;
         updatePilototo_Btn((boatVLM*)selectedBoat);
-        menuBar->boatList->setEnabled(true);
+        toolBar->boatList->setEnabled(true);
         slotBoatLockStatusChanged(selectedBoat,selectedBoat->getLockStatus());
         emit editInstructionsPOI(tmp,poi);
     }
     else if(isSelectingWP)
     {
         isSelectingWP=false;
-        menuBar->boatList->setEnabled(true);
+        toolBar->boatList->setEnabled(true);
         slotBoatLockStatusChanged(selectedBoat,selectedBoat->getLockStatus());
         emit editWP_POI(poi);
     }
@@ -2364,7 +2151,7 @@ void MainWindow::slotAccountListUpdated(void)
 
     //qWarning() << "Boat list updated: " << my_centralWidget->getBoats()->count() << " boats";
 
-    menuBar->updateBoatList(*my_centralWidget->getBoats());
+    toolBar->updateBoatList(*my_centralWidget->getBoats());
 
     slotVLM_Sync();
 }
@@ -2702,6 +2489,7 @@ void MainWindow::slotGribInterpolation(void)
 #endif
 }
 
+/*
 void MainWindow::slotEstime(int valeur)
 {
     switch(Settings::getSetting("estimeType","0").toInt())
@@ -2720,26 +2508,10 @@ void MainWindow::slotEstime(int valeur)
     }
     emit paramVLMChanged();
 }
+*/
+
 void MainWindow::slot_ParamVLMchanged()
 {
-    switch(Settings::getSetting("estimeType","0").toInt())
-    {
-        case 0:
-            tool_ESTIMEUNIT->setText(tr(" mins "));
-            menuBar->estime->setValue(Settings::getSetting("estimeTime","60").toInt());
-            break;
-        case 1:
-            tool_ESTIMEUNIT->setText(tr(" vacs "));
-            menuBar->estime->setValue(Settings::getSetting("estimeVac","12").toInt());
-            break;
-        case 2:
-            tool_ESTIMEUNIT->setText(tr(" NM "));
-            menuBar->estime->setValue(Settings::getSetting("estimeLen","50").toInt());
-            break;
-        default:
-            tool_ESTIMEUNIT->setText(tr(" mins "));
-            menuBar->estime->setValue(0);
-    }
     if(my_centralWidget->getGrib() && my_centralWidget->getGrib()->isOk())
     {
         bool gribMulti=false;

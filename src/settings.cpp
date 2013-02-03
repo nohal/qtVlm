@@ -31,6 +31,7 @@ QSettings *fileSettings;
 
 void Settings::initSettings(void)
 {
+#if 0
     if (! QFile::exists (appFolder.value("userFiles")+SETTINGS_FILE))
     {
         qWarning() << "No setting file found";
@@ -48,61 +49,39 @@ void Settings::initSettings(void)
             }
         }
     }
-
+#endif
     if(!fileSettings)
-    {
         fileSettings = new QSettings(appFolder.value("userFiles")+SETTINGS_FILE, QSettings::IniFormat);
-    }
 }
 
-void Settings::loadFromReg(void)
+void Settings::setSetting(const QString &key, const QVariant &value, const QString &group)
 {
-    if(!fileSettings)
-    {
-        fileSettings = new QSettings(appFolder.value("userFiles")+SETTINGS_FILE, QSettings::IniFormat);
-    }
-
-    QSettings loc_settings("qtVlm");
-    // Read All settings from global storage (childKeys)
-    // and write it to user directory
-    loc_settings.setFallbacksEnabled(false);
-    loc_settings.beginGroup("main");
-    fileSettings->beginGroup("main");
-    QStringList oldkeys = loc_settings.childKeys();
-    QStringListIterator it(oldkeys);
-    while (it.hasNext()) {
-        QString key = it.next();
-        QVariant val = loc_settings.value(key);
-
-        fileSettings->setValue(key, val);
-    }
-    loc_settings.endGroup();
-    //Pas de suppression pour l'instant
-    //loc_settings.clear();
-    fileSettings->endGroup();
-    fileSettings->sync();
-}
-
-void Settings::setSetting(const QString &key, const QVariant &value)
-{
-    if (fileSettings)
-    {
-        fileSettings->beginGroup("main");
+    if (fileSettings) {
+        fileSettings->beginGroup(group);
         fileSettings->setValue(key, value);
         fileSettings->endGroup();
         fileSettings->sync();
     }
 }
 
-QVariant Settings::getSetting(const QString &key, const QVariant &defaultValue)
+QVariant Settings::getSetting(const QString &key, const QVariant &defaultValue, const QString &group)
 {
     QVariant val=defaultValue;
-    if (fileSettings != NULL)
-    {
-        fileSettings->beginGroup ("main");
+    if (fileSettings != NULL) {
+        fileSettings->beginGroup (group);
         val = fileSettings->value (key, defaultValue);
         fileSettings->endGroup();
         fileSettings->sync();
     }
     return val;
+}
+
+void Settings::removeSetting(const QString &key, const QString &group)
+{
+    if(key.isEmpty()) return ; /* prevent from deleting all key */
+
+    fileSettings->beginGroup(group);
+    fileSettings->remove(key);
+    fileSettings->endGroup();
+    fileSettings->sync();
 }

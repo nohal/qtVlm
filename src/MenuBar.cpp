@@ -460,6 +460,7 @@ MenuBar::MenuBar(QWidget *parent)
     //-------------------------------------
     // Autres objets de l'interface
     //-------------------------------------
+    /*
     acMap_Zoom_In = addAction(NULL,  tr("Augmenter l'echelle de la carte"), tr(""),
                               tr("Augmenter l'echelle de la carte"), appFolder.value("img")+"viewmag+.png");
     acMap_Zoom_Out = addAction(NULL, tr("Diminuer l'echelle de la carte"), tr(""),
@@ -513,6 +514,7 @@ MenuBar::MenuBar(QWidget *parent)
     estime->setMaximum(9999999);
     estime->setMinimum(0);
     estime->setAlignment(Qt::AlignRight);
+    */
 }
 
 
@@ -675,46 +677,6 @@ void MenuBar::setIsotherms0Step(int step) {
 }
 
 //------------------------------------------------------------
-void MenuBar::insertBoatReal(QString name)
-{
-    boatList->clear();
-    boatList->addItem(name);
-    boatList->setCurrentIndex(0);
-}
-
-void MenuBar::updateBoatList(QList<boatVLM*> & boat_list)
-{
-    while(boatList->count())
-        boatList->removeItem(0);
-
-    QListIterator<boatVLM*> i (boat_list);
-
-    //bool separator=false;
-    while(i.hasNext())
-    {
-        boatVLM * acc = i.next();
-        //qWarning() << "updateBoatList - Boat: " << acc->getName() << " " << acc->getStatus() << " " << acc->getId();
-        if(acc->getStatus())
-        {
-//            if(!separator && !acc->getIsOwn())
-//            {
-//                boatList->insertSeparator(boatList->count()+1);
-//                separator=true;
-//            }
-            if(acc->getAliasState())
-                boatList->addItem(acc->getAlias() + "(" + acc->getBoatPseudo() + ")");
-            else
-                boatList->addItem(acc->getBoatPseudo());
-        }
-    }
-}
-
-void MenuBar::setSelectedBoatIndex(int index)
-{
-    boatList->setCurrentIndex(index);
-}
-
-
 void MenuBar::setMenubarColorMapMode(int colorMapMode)
 {
     QAction  *act = NULL;

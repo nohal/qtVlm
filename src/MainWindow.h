@@ -40,6 +40,8 @@ Copyright (C) 2008 - Jacques Zaninetti - http://zygrib.free.fr
 #include <QTimer>
 #include <QLibrary>
 
+#include "ToolBar.h"
+
 #include "class_list.h"
 
 class MainWindow: public QMainWindow
@@ -69,9 +71,8 @@ class MainWindow: public QMainWindow
         void statusBar_showSelectedZone(double x0, double y0, double x1, double y1);
         void drawVacInfo(void);
 
-        QProgressDialog * get_progress(void) { return progress; }
+        Progress * get_progress(void) { return progress; }
 
-        void setBoardToggleAction(QAction * action);
         void getXY(int *X,int *Y){*X=this->mouseClicX;*Y=this->mouseClicY;}
         bool isStartingUp;
 
@@ -81,7 +82,9 @@ class MainWindow: public QMainWindow
         bool getNoSave(){return noSave;}
         void setPilototoFromRoute(ROUTE * route);
         void setPilototoFromRoute(QList<POI*> poiList);
-        bool getStartEstimeSpeedFromGrib();
+
+        bool getStartEstimeSpeedFromGrib() { return toolBar->chkEstime->isChecked(); }
+
         void clearPilototo();
         myCentralWidget * getMy_centralWidget(){return this->my_centralWidget;}
         void setRestartNeeded(){this->restartNeeded=true;}
@@ -101,9 +104,8 @@ public slots:
 
         void slotShowContextualMenu(QGraphicsSceneContextMenuEvent *);
 
-        void slotDateStepChanged(int);
+        void slotDateStepChanged(int step);
         void slotDateGribChanged_next();
-        void slotDateGribPlay();
         void slotDateGribChanged_prev();
         void slotDateGribChanged_now(bool b=true);
         void slotDateGribChanged_sel();
@@ -138,7 +140,6 @@ public slots:
         void slot_removePOI(void);
         void slotCreatePOI();
         void slotpastePOI();
-        //void slotMovePOI(POI *);
 
         void slotParamChanged(void);
         void slotNewZoom(double zoom);
@@ -157,9 +158,7 @@ public slots:
         void slotCompassLineForced(double a,double b);
         void slotCompassCenterBoat(void);
         void slotCompassCenterWp(void);
-        void slotEstime(int);
-        void slot_ParamVLMchanged(void);
-        void slot_deleteProgress(void);
+        void slot_ParamVLMchanged(void);        
         void slot_centerMap();
         void slot_positScale();
         void slot_boatHasUpdated(void);
@@ -212,19 +211,23 @@ public slots:
         DialogProxy   * dialogProxy;
 
         void updatePrevNext(void);
-        int getGribStep(void);
 
         MenuBar      *menuBar;
+
+        /*
         QToolBar     *toolBar;
+        QLabel       * tool_ETA;
+        QLabel       * tool_ESTIME;
+        QLabel       * tool_ESTIMEUNIT;
+        QCheckBox    * startEstime;
+        */
+        ToolBar * toolBar;
+
         QStatusBar   *statusBar;
         QLabel       *stBar_label_1;
         QLabel       *stBar_label_2;
         QLabel       *stBar_label_3;
 
-        QLabel       * tool_ETA;
-        QLabel       * tool_ESTIME;
-        QLabel       * tool_ESTIMEUNIT;
-        QCheckBox    * startEstime;
 
         Settings * settings;
 
@@ -256,7 +259,9 @@ public slots:
 
         /* central widget */
         myCentralWidget * my_centralWidget;
-        QProgressDialog *progress;
+
+        Progress *progress;
+        void closeProgress(void);
 
         DialogGribValidation * gribValidation_dialog;
         int nBoat;

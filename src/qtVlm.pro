@@ -140,7 +140,9 @@ HEADERS += Dialogs/DialogGraphicsParams.h \
     Dialogs/routeInfo.h \
     GshhsDwnload.h \
     Dialogs/DialogRemovePoi.h \
-    MyView.h
+    MyView.h \
+    ToolBar.h \
+    Progress.h
 
 FORMS += Ui/boatAccount_dialog.ui \
     Ui/BoardVLM.ui \
@@ -261,7 +263,9 @@ SOURCES += Dialogs/DialogGraphicsParams.cpp \
     Dialogs/routeInfo.cpp \
     GshhsDwnload.cpp \
     Dialogs/DialogRemovePoi.cpp \
-    MyView.cpp
+    MyView.cpp \
+    ToolBar.cpp \
+    Progress.cpp
 
 unix:!macx: DEFINES += _TTY_POSIX_ __TERRAIN_QIMAGE __UNIX_QTVLM
 win32:DEFINES += _TTY_WIN_ \

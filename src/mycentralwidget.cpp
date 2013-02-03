@@ -90,6 +90,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "DialogRemovePoi.h"
 #include "class_list.h"
 #include "MyView.h"
+#include "Progress.h"
 
 /*******************/
 /*    myScene      */
@@ -558,6 +559,14 @@ myCentralWidget::myCentralWidget(Projection * proj,MainWindow * parent,MenuBar *
     mar->addPoint(17.582814750193,-61.915067613033);
     mar->slot_showMe();
 #endif
+
+    connect(mainW,SIGNAL(addPOI_list(POI*)),this,SLOT(slot_addPOI_list(POI*)));
+    connect(mainW,SIGNAL(addPOI(QString,int,double,double,double,int,bool,boat*)),
+            this,SLOT(slot_addPOI(QString,int,double,double,double,int,bool,boat*)));
+    connect(this,SIGNAL(POI_selectAborted(POI*)),mainW,SLOT(slot_POIselected(POI*)));
+    connect(mainW,SIGNAL(moveBoat(double,double)),this,SLOT(slot_moveBoat(double,double)));
+
+    menuBar->setMCW(this);
 }
 
 void myCentralWidget::loadGshhs(void) {
@@ -642,23 +651,17 @@ void myCentralWidget::loadGshhs(void) {
         gshhsReader=NULL;
     }
 
-    QProgressDialog * progress=mainW->get_progress();
+    Progress * progress=mainW->get_progress();
 
     if(dwnloadMaps) {
-        if(progress) {
-            progress->setLabelText(tr("Download and decompress maps"));
-            progress->setValue(progress->value()+5);
-        }
+        if(progress)
+            progress->newStep(progress->value()+5,tr("Download and decompress maps"));
         gshhsDwnload->getMaps();
 
     }
 
-
-
-    if(progress) {
-        progress->setLabelText(tr("Finishing map init"));
-        progress->setValue(progress->value()+5);
-    }
+    if(progress)
+        progress->newStep(progress->value()+5,tr("Finishing map init"));
 
     if(gshhsOk)
     {
@@ -841,7 +844,7 @@ void myCentralWidget::slot_selectionTool()
     selectionTool=!selectionTool;
     if(!selectionTool)
         selection->clearSelection();
-    menuBar->acMap_sel->setChecked(selectionTool);
+    toolBar->selectionMode->setChecked(selectionTool);
 }
 
 void myCentralWidget::slot_Go_Left()
@@ -4101,7 +4104,7 @@ void myCentralWidget::slot_playerSelected(Player * player)
         {
             if(player->getWrong()) return;
             //qWarning() << "Activate player: managing boats (VLM)";
-            menuBar->boatList->setVisible(true);
+            toolBar->boatList->setVisible(true);
             menuBar->ac_moveBoat->setVisible(false);
             menuBar->ac_moveBoatSep->setVisible(false);
             menuBar->acRace->setVisible(true);
@@ -4145,7 +4148,7 @@ void myCentralWidget::slot_playerSelected(Player * player)
         }
         else
         {
-            menuBar->boatList->setVisible(false);
+            toolBar->boatList->setVisible(false);
             menuBar->ac_moveBoat->setVisible(true);
             menuBar->ac_moveBoatSep->setVisible(true);
             menuBar->acRace->setVisible(false);
@@ -4161,12 +4164,12 @@ void myCentralWidget::slot_playerSelected(Player * player)
             mainW->getBoard()->boatUpdated(realBoat);
             mainW->slotBoatUpdated(realBoat,true,false);;
             emit shRouBis();
-            menuBar->insertBoatReal(realBoat->getplayerName());
+            toolBar->insertBoatReal(realBoat->getplayerName());
         }
     }
     else
     {
-        menuBar->boatList->setVisible(false);
+        toolBar->boatList->setVisible(false);
         //menuBar->acVLMParamBoat->setEnabled(false);
         boat_list=NULL;
         realBoat=NULL;

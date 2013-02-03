@@ -1,6 +1,6 @@
 /**********************************************************************
 qtVlm: Virtual Loup de mer GUI
-Copyright (C) 2010 - Christophe Thomas aka Oxygen77
+Copyright (C) 2013 - Christophe Thomas aka Oxygen77
 
 http://qtvlm.sf.net
 
@@ -16,26 +16,24 @@ GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
-
 ***********************************************************************/
 
+#ifndef PROGRESS_H
+#define PROGRESS_H
 
-#ifndef SETTINGS_H
-#define SETTINGS_H
+#include <QProgressDialog>
 
-#include <QSettings>
-#include <QObject>
+#include "class_list.h"
 
-#define SETTINGS_FILE "qtVlm.ini"
-
-class Settings : QObject
-{ Q_OBJECT
+class Progress: public QProgressDialog
+{
     public:
-        static void initSettings(void);
-        static void     setSetting(const QString &key, const QVariant &value, const QString &group="main");
-        static QVariant getSetting(const QString &key, const QVariant &defaultValue, const QString &group="main");
-        static void     removeSetting(const QString &key, const QString &group="main");
-};
-Q_DECLARE_TYPEINFO(Settings,Q_MOVABLE_TYPE);
+        Progress(MainWindow *mainWindow);
 
-#endif // SETTINGS_H
+        void newStep(int step,QString msg);
+
+    private:
+        MainWindow *mainWindow;
+};
+
+#endif // PROGRESS_H

@@ -1,6 +1,6 @@
 /**********************************************************************
 qtVlm: Virtual Loup de mer GUI
-Copyright (C) 2010 - Christophe Thomas aka Oxygen77
+Copyright (C) 2013 - Christophe Thomas aka Oxygen77
 
 http://qtvlm.sf.net
 
@@ -16,26 +16,31 @@ GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
-
 ***********************************************************************/
 
+#include "MainWindow.h"
+#include "Progress.h"
 
-#ifndef SETTINGS_H
-#define SETTINGS_H
+Progress::Progress(MainWindow * mainWindow): QProgressDialog(mainWindow,Qt::FramelessWindowHint/*Qt::SplashScreen*/)
+{
+    this->mainWindow=mainWindow;
 
-#include <QSettings>
-#include <QObject>
+    setLabelText(tr("Starting qtVLM"));
+    setMaximum(100);
+    setMinimum(0);
+    setCancelButton(NULL);
+    setMinimumDuration (0);
+    setValue(1);
+    setAutoClose(false);
+    setAutoReset(false);
+    show();
+    raise();
+    activateWindow();
+}
 
-#define SETTINGS_FILE "qtVlm.ini"
-
-class Settings : QObject
-{ Q_OBJECT
-    public:
-        static void initSettings(void);
-        static void     setSetting(const QString &key, const QVariant &value, const QString &group="main");
-        static QVariant getSetting(const QString &key, const QVariant &defaultValue, const QString &group="main");
-        static void     removeSetting(const QString &key, const QString &group="main");
-};
-Q_DECLARE_TYPEINFO(Settings,Q_MOVABLE_TYPE);
-
-#endif // SETTINGS_H
+void Progress::newStep(int step,QString msg) {
+    setValue(step);
+    setLabelText(msg);
+    raise();
+    activateWindow();
+}

@@ -35,6 +35,7 @@ Copyright (C) 2008 - Jacques Zaninetti - http://zygrib.free.fr
 #include "DialogInetProgess.h"
 #include "settings.h"
 #include "dataDef.h"
+#include "Progress.h"
 
 #include "GshhsDwnload.h"
 
@@ -102,12 +103,10 @@ void GshhsDwnload::getMaps(void) {
         /* asking for folder holding maps */
         QString dir = Settings::getSetting("mapsFolder",appFolder.value("maps")).toString();
 
-        QProgressDialog * progress=centralWidget->getMainWindow()->get_progress();
+        Progress * progress=centralWidget->getMainWindow()->get_progress();
 
         if(progress) {
-            qWarning() << "Updating progress";
-            progress->setLabelText(tr("Decompressing maps"));
-            progress->setValue(progress->value()+5);
+            progress->newStep(progress->value()+5,tr("Decompressing maps"));
             QCoreApplication::processEvents();
         }
 

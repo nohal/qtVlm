@@ -71,8 +71,8 @@ public:
     time_t  getDateGribById(int id);
     int  getNearestDateGrib(time_t tm);*/
 
-    void updateBoatList(QList<boatVLM*> & boat_list);
-    void insertBoatReal(QString name);
+    //void updateBoatList(QList<boatVLM*> & boat_list);
+    //void insertBoatReal(QString name);
     void clearListeDates(void);
     void setSelectedBoatIndex(int index);
     void addMenuRoute(ROUTE * route);
@@ -313,23 +313,23 @@ public:
     //-------------------------------------
     // Autres objets de l'interface
     //-------------------------------------
-    QComboBox *cbGribStep;
+   /* QComboBox *cbGribStep;
     QComboBox *boatList;
     QSpinBox *estime;
     QAction *acDatesGrib_prev;
     QAction *acDatesGrib_next;
     QAction *acDatesGrib_play;
     QPushButton * datesGrib_now;
-    QPushButton * datesGrib_sel;
+    QPushButton * datesGrib_sel;*/
 
-    QAction  *acVLMSync_menu;
+    //QAction  *acVLMSync_menu;
 
-    QMenu *menuFile;
     void setMCW(myCentralWidget * mcw){my_CentralWidget=mcw;}
 
 //------------------------------------------------------------------------
 private:
 
+    QMenu *menuFile;
     QMenu *menuView;
     QMenu *menuOptions;
     QMenu *menuBoat;

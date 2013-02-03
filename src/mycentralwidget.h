@@ -134,6 +134,8 @@ class myCentralWidget : public QWidget
         MainWindow * getMainWindow(void) { return mainW; }
         MyView * getView() const {return this->view;}
 
+        FCT_SETGET(ToolBar*,toolBar)
+
         void loadGshhs(void);
 
         void manageAccount(bool * res=NULL);
@@ -362,6 +364,7 @@ class myCentralWidget : public QWidget
         Projection * proj;
         MainWindow * mainW;
         MenuBar    *menuBar;
+        ToolBar    *toolBar;
 
         /* item child */
         Terrain * terre;        

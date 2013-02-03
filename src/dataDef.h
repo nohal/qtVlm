@@ -47,6 +47,25 @@ public:
     }
 };
 
+/* usefull defines to declare simple getter and setter */
+#define FCT_GET(TYPE,VARNAME) \
+TYPE get_ ## VARNAME (void) { return VARNAME; }
+#define FCT_SET(TYPE,VARNAME) \
+void set_ ## VARNAME( TYPE __var ) {this->VARNAME=__var;}
+#define FCT_SETGET(TYPE,VARNAME) \
+FCT_SET(TYPE,VARNAME) \
+FCT_GET(TYPE,VARNAME)
+
+#define FCT_GET_CST(TYPE,VARNAME) \
+TYPE get_##VARNAME(void) const { return VARNAME; }
+#define FCT_SET_CST(TYPE,VARNAME) \
+void set_ ## VARNAME( const TYPE & __var ) {this->VARNAME=__var;}
+#define FCT_SETGET_CST(TYPE,VARNAME) \
+FCT_SET_CST(TYPE,VARNAME) \
+FCT_GET_CST(TYPE,VARNAME)
+
+#define DELETE_PTR(PTR) {if(PTR) delete PTR;}
+
 /* some constant */
 
 #define PI     M_PI
@@ -59,6 +78,11 @@ public:
 
 #define msToKts(speed) (1.9438445*(speed))
 #define ktsToMs(speed) (0.51444444*(speed))
+
+/* Grib Donwld type */
+#define GRIB_DWNLD_ZYGRIB   0
+#define GRIB_DWNLD_VLM      1
+#define GRIB_DWNLD_SAILSDOC 2
 
 /* defines */
 #define TYPE_LON 1

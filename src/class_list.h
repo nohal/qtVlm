@@ -103,12 +103,14 @@ class LoadGribFile;
 
 /* MainWindow.h */
 class MainWindow;
+class Progress;
 
 /* mapCompass.h */
 class mapCompass;
 
-/* MenuBar.h */
+/* MenuBar.h / toolbar ...*/
 class MenuBar;
+class ToolBar;
 
 /* mycentralwidget.h */
 class myScene;
