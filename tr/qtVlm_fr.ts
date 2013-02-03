@@ -1085,39 +1085,39 @@ Etes-vous sur ?</source>
     </message>
     <message>
         <source>Attention!</source>
-        <translation type="obsolete">Attention!</translation>
+        <translation type="unfinished">Attention!</translation>
     </message>
     <message>
         <source>Le bateau courant n&apos;est pas un bateau VLM!</source>
-        <translation type="obsolete">Le bateau courant n&apos;est pas un bateau VLM!</translation>
+        <translation type="unfinished">Le bateau courant n&apos;est pas un bateau VLM!</translation>
     </message>
     <message>
         <source>La route ne doit pas etre vide pour pouvoir etre chargee depuis VLM.</source>
-        <translation type="obsolete">La route ne doit pas être vide pour pouvoir être chargée depuis VLM.</translation>
+        <translation type="unfinished">La route ne doit pas être vide pour pouvoir être chargée depuis VLM.</translation>
     </message>
     <message>
         <source>Le bateau ne navigue pas actuellement vers un POI</source>
-        <translation type="obsolete">Le bateau ne navigue pas actuellement vers un POI.</translation>
+        <translation type="unfinished">Le bateau ne navigue pas actuellement vers un POI.</translation>
     </message>
     <message>
         <source>L&apos;instruction #%1 n&apos;a pas de POI, elle sera ignoree.</source>
-        <translation type="obsolete">L&apos;instruction #%1 n&apos;a pas de POI, elle sera ignorée.</translation>
+        <translation type="unfinished">L&apos;instruction #%1 n&apos;a pas de POI, elle sera ignorée.</translation>
     </message>
     <message>
         <source>La route etait plus courte que le pilototo, seuls les premiers points ont ete charges.</source>
-        <translation type="obsolete">La route était plus courte que le pilototo, seuls les premiers points ont été chargés.</translation>
+        <translation type="unfinished">La route était plus courte que le pilototo, seuls les premiers points ont été chargés.</translation>
     </message>
     <message>
         <source>Information</source>
-        <translation type="obsolete">Information</translation>
+        <translation type="unfinished">Information</translation>
     </message>
     <message>
         <source>Les premiers points de la route ont ete charges depuis VLM.</source>
-        <translation type="obsolete">Les premiers points de la route ont été chargés depuis VLM.</translation>
+        <translation type="unfinished">Les premiers points de la route ont été chargés depuis VLM.</translation>
     </message>
     <message>
         <source>La route a ete chargee depuis VLM.</source>
-        <translation type="obsolete">La route a été chargée depuis VLM.</translation>
+        <translation type="unfinished">La route a été chargée depuis VLM.</translation>
     </message>
     <message>
         <source>Pour utiliser cette action il faut que la route parte du bateau</source>
@@ -1811,6 +1811,10 @@ Etes-vous sur ?</source>
     <message>
         <source>Optimiser la route</source>
         <translation></translation>
+    </message>
+    <message>
+        <source>Optimiser globalement la route</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -2735,6 +2739,10 @@ Etes-vous sur ?</source>
         <source>Outil selection</source>
         <translation></translation>
     </message>
+    <message>
+        <source>Optimiser globalement la route </source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>POI</name>
@@ -2853,14 +2861,6 @@ Etes-vous sur ?</source>
         <translation></translation>
     </message>
     <message>
-        <source>Optimisation du placement d&apos;un POI</source>
-        <translation></translation>
-    </message>
-    <message>
-        <source>Vous ne pouvez pas optimiser en mode VBVMG-VLM</source>
-        <translation></translation>
-    </message>
-    <message>
         <source>Supprimer la route </source>
         <translation></translation>
     </message>
@@ -2968,6 +2968,18 @@ Etes-vous sur de vouloir supprimer</translation>
     <message>
         <source>Routage vers ce POI</source>
         <translation></translation>
+    </message>
+    <message>
+        <source>Simplifier la route </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Optimiser la route </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Optimiser globalement la route </source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -3537,7 +3549,7 @@ VMG %.1f nds</translation>
     </message>
     <message>
         <source>Cette operation est impossible si le mode de calcul VBVMG est celui de VLM</source>
-        <translation>Cette opération est impossible si le mode de calcul VBVMG est celui de VLM</translation>
+        <translation type="obsolete">Cette opération est impossible si le mode de calcul VBVMG est celui de VLM</translation>
     </message>
     <message>
         <source>TWA %ddeg, BS %.2fnds
@@ -4096,6 +4108,38 @@ Voulez-vous egalement supprimer tous les POIs lui appartenant?</source>
         <source>Route: </source>
         <translation></translation>
     </message>
+    <message>
+        <source>Annuler</source>
+        <translation type="unfinished">Annuler</translation>
+    </message>
+    <message>
+        <source>Optimisation en cours</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Initialisation...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Cleaning up...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Optimisation terminée</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>ETA avant optimisation: </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>ETA après optimisation: </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Resultat de l&apos;optimisation</source>
+        <translation type="unfinished">Résultats de l&apos;optimisation</translation>
+    </message>
 </context>
 <context>
     <name>ROUTE_Editor_ui</name>
@@ -4326,7 +4370,7 @@ sans simplifier</translation>
     </message>
     <message>
         <source>Charger VLM</source>
-        <translation type="obsolete">Charger VLM</translation>
+        <translation type="unfinished">Charger VLM</translation>
     </message>
 </context>
 <context>
@@ -6681,10 +6725,6 @@ Que voulez vous faire?</translation>
     </message>
     <message>
         <source>Id: </source>
-        <translation></translation>
-    </message>
-    <message>
-        <source>Trop loin pour estimer le cap et la vitesse</source>
         <translation></translation>
     </message>
     <message>
