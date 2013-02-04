@@ -76,6 +76,7 @@ ToolBar::ToolBar(MainWindow *mainWindow)
     /* Grib toolBar */
     gribDwnld = new QToolButton(gribToolBar);
     gribDwnld->setIcon(QIcon(appFolder.value("img")+"wind.png"));
+    gribDwnld->setToolTip(tr("Hold to select download method"));
     gribSubMenu = new QMenu(gribDwnld);
     acWindZygrib = init_Action(tr("Telechargement zyGrib"),tr(""),tr(""),appFolder.value("img")+ "network.png",gribToolBar);
     acWindVlm = init_Action(tr("Telechargement VLM"),tr(""),tr(""), appFolder.value("img")+"VLM_mto.png",gribToolBar);
@@ -87,14 +88,16 @@ ToolBar::ToolBar(MainWindow *mainWindow)
     gribSubMenu->addAction(acOpenGrib);
     gribDwnld->setMenu(gribSubMenu);
 
+    update_gribDownloadBtn();
+
     acDatesGrib_prev = init_Action(tr("Prevision precedente [page prec]"),
                                    tr("PgUp"),tr(""),appFolder.value("img")+"1leftarrow.png",gribToolBar);
     acDatesGrib_next = init_Action(tr("Prevision suivante [page suiv]"),
                                    tr("PgDown"),tr(""),appFolder.value("img")+"1rightarrow.png",gribToolBar);
     acGrib_play = init_Action(tr("Animation du grib"),tr(""),tr(""),appFolder.value("img")+"player_play.png",gribToolBar);
 
-    datesGrib_now = new QPushButton(tr("Now"),gribToolBar);
-    datesGrib_sel = new QPushButton(tr("Select"),gribToolBar);
+    datesGrib_now = init_Action(tr("Now"),tr(""),tr(""),appFolder.value("img")+"now.png",gribToolBar);
+    datesGrib_sel = init_Action(tr("Select date"),tr(""),tr(""),appFolder.value("img")+"clock.png",gribToolBar);
 
     cbGribStep = new QComboBox(gribToolBar);
     cbGribStep->setSizeAdjustPolicy(QComboBox::AdjustToContents);
@@ -110,10 +113,12 @@ ToolBar::ToolBar(MainWindow *mainWindow)
     cbGribStep->setCurrentIndex(Settings::getSetting("gribDateStep", 2).toInt());
 
     gribToolBar->addWidget(gribDwnld);
-    gribToolBar->addWidget(datesGrib_sel);
-    gribToolBar->addWidget(datesGrib_now);
+    gribToolBar->addSeparator();
+    gribToolBar->addAction(datesGrib_sel);
+    gribToolBar->addAction(datesGrib_now);
+    gribToolBar->addSeparator();
     gribToolBar->addAction(acDatesGrib_prev);
-    gribToolBar->addWidget(cbGribStep);
+    gribToolBar->addWidget(cbGribStep);    
     gribToolBar->addAction(acDatesGrib_next);
     gribToolBar->addAction(acGrib_play);
 
@@ -135,6 +140,7 @@ ToolBar::ToolBar(MainWindow *mainWindow)
     mapToolBar->addAction(acMap_Zoom_Out);
     mapToolBar->addAction(acMap_Zoom_Sel);
     mapToolBar->addAction(acMap_Zoom_All);
+    mapToolBar->addSeparator();
     mapToolBar->addAction(selectionMode);
 
     /* Estime toolBar */
@@ -187,8 +193,8 @@ ToolBar::ToolBar(MainWindow *mainWindow)
     connect(this, SIGNAL(gribSailsDoc()), centralWidget, SLOT(slotLoadSailsDocGrib()));
 
     connect(cbGribStep, SIGNAL(activated(int)),mainWindow, SLOT(slotDateStepChanged(int)));
-    connect(datesGrib_now, SIGNAL(clicked()),mainWindow, SLOT(slotDateGribChanged_now()));
-    connect(datesGrib_sel, SIGNAL(clicked()),mainWindow, SLOT(slotDateGribChanged_sel()));
+    connect(datesGrib_now, SIGNAL(triggered()),mainWindow, SLOT(slotDateGribChanged_now()));
+    connect(datesGrib_sel, SIGNAL(triggered()),mainWindow, SLOT(slotDateGribChanged_sel()));
     connect(acDatesGrib_next, SIGNAL(triggered()),mainWindow, SLOT(slotDateGribChanged_next()));
     connect(acDatesGrib_prev, SIGNAL(triggered()),mainWindow, SLOT(slotDateGribChanged_prev()));
     connect(acGrib_play,SIGNAL(triggered()),this,SLOT(slot_gribPlay()));
@@ -432,17 +438,41 @@ void ToolBar::slot_gribDwnld(void) {
 
 void ToolBar::slot_gribZygrib(void) {
     Settings::setSetting("defaultGribDwnld",GRIB_DWNLD_ZYGRIB,"ToolBar");
+    update_gribDownloadBtn();
     emit gribZygrib();
 }
 
 void ToolBar::slot_gribVlm(void) {
     Settings::setSetting("defaultGribDwnld",GRIB_DWNLD_VLM,"ToolBar");
+    update_gribDownloadBtn();
     emit gribVlm();
 }
 
 void ToolBar::slot_gribSailsDoc(void) {
     Settings::setSetting("defaultGribDwnld",GRIB_DWNLD_SAILSDOC,"ToolBar");
+    update_gribDownloadBtn();
     emit gribSailsDoc();
+}
+
+void ToolBar::update_gribDownloadBtn(void) {
+    QString iconString;
+    switch(Settings::getSetting("defaultGribDwnld",GRIB_DWNLD_ZYGRIB,"ToolBar").toInt()) {
+        case GRIB_DWNLD_ZYGRIB:
+            iconString=appFolder.value("img")+ "network.png";
+            break;
+        case GRIB_DWNLD_VLM:
+            iconString=appFolder.value("img")+"VLM_mto.png";
+            break;
+        case GRIB_DWNLD_SAILSDOC:
+            iconString=appFolder.value("img")+ "kmail.png";
+            break;
+        default:
+            iconString=appFolder.value("img")+ "wind.png";
+            break;
+    }
+
+    if(!iconString.isEmpty())
+        gribDwnld->setIcon(QIcon(iconString));
 }
 
 /****************************************************/
@@ -454,6 +484,8 @@ MyToolBar::MyToolBar(QString name,QString title,ToolBar *toolBar, QWidget *paren
     this->toolBar=toolBar;
     displayed=true;
     this->canHide=canHide;
+    if(!canHide)
+        setFloatable(false);
     connect(this,SIGNAL(visibilityChanged(bool)),this,SLOT(slot_visibilityChanged(bool)));
 }
 

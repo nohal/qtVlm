@@ -40,8 +40,6 @@ Copyright (C) 2008 - Jacques Zaninetti - http://zygrib.free.fr
 #include <QTimer>
 #include <QLibrary>
 
-#include "ToolBar.h"
-
 #include "class_list.h"
 
 class MainWindow: public QMainWindow
@@ -83,7 +81,7 @@ class MainWindow: public QMainWindow
         void setPilototoFromRoute(ROUTE * route);
         void setPilototoFromRoute(QList<POI*> poiList);
 
-        bool getStartEstimeSpeedFromGrib() { return toolBar->chkEstime->isChecked(); }
+        bool getStartEstimeSpeedFromGrib(void);
 
         void clearPilototo();
         myCentralWidget * getMy_centralWidget(){return this->my_centralWidget;}

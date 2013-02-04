@@ -70,6 +70,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "loadImg.h"
 #include "GshhsDwnload.h"
 
+#include "ToolBar.h"
+
 #include "DialogSailDocs.h"
 #include "DialogHorn.h"
 #include "DialogPoiDelete.h"
@@ -482,7 +484,7 @@ myCentralWidget::myCentralWidget(Projection * proj,MainWindow * parent,MenuBar *
 //        compass->hide();
 
     // Selection zone
-    selection=new selectionWidget(proj,scene);
+    selection=new selectionWidget(this,proj,scene);
     connect(menuBar->acMap_Orthodromie, SIGNAL(triggered(bool)),
             selection,  SLOT(slot_setDrawOrthodromie(bool)));
     scene->addItem(selection);
@@ -839,6 +841,7 @@ void myCentralWidget::slot_Zoom_All()
     proj->zoomAll();
     UNBLOCK_SIG_BOAT()
 }
+
 void myCentralWidget::slot_selectionTool()
 {
     selectionTool=!selectionTool;

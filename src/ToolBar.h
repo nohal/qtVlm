@@ -62,9 +62,6 @@ class ToolBar : public QObject
     public:
         ToolBar(MainWindow * mainWindow);
 
-        /*void init_boatList(VlmPlayer * vlmPlayer);
-        void set_currentBoat(BoatVlm * boatVlm);*/
-
         /* Misc toolbar */
         QAction * acQuit;
 
@@ -79,12 +76,13 @@ class ToolBar : public QObject
         QAction * acDatesGrib_prev;
         QAction * acDatesGrib_next;
         QAction * acGrib_play;
-        QPushButton * datesGrib_now;
-        QPushButton * datesGrib_sel;
+        QAction * datesGrib_now;
+        QAction * datesGrib_sel;
         void update_gribBtn(void);
         int get_gribStep(void);
         bool isPlaying(void) { return acGrib_play->data().toInt()==1; }
         void stopPlaying(void);
+        void update_gribDownloadBtn(void);
 
         /* selection toolBar */
         QAction *acMap_Zoom_In;

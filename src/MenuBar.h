@@ -90,10 +90,10 @@ public:
     QAction *acHorn;
     QAction *ac_CreatePOI;
     QAction *ac_pastePOI;
-    QAction *ac_delAllPOIs;
+    /*QAction *ac_delAllPOIs;
     QAction *ac_delSelPOIs;
     QAction *ac_notSimpSelPOIs;
-    QAction *ac_simpSelPOIs;
+    QAction *ac_simpSelPOIs;*/
     QAction *acPOIAdd;
     QAction *acPOIRemove;
     QAction *ac_twaLine;

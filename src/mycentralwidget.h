@@ -30,7 +30,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <QGraphicsView>
 #include <qsound.h>
 #endif
+
 #include "class_list.h"
+#include "dataDef.h"
 
 #include "DialogUnits.h"
 #include "DialogGraphicsParams.h"

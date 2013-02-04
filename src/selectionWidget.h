@@ -31,7 +31,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 class selectionWidget : public QGraphicsWidget
 { Q_OBJECT
     public:
-        selectionWidget(Projection * proj, QGraphicsScene * myScene);
+        selectionWidget(myCentralWidget * centralWidget,Projection * proj, QGraphicsScene * myScene);
 
         QPainterPath shape() const;
         QRectF boundingRect() const;
@@ -50,6 +50,7 @@ class selectionWidget : public QGraphicsWidget
 
     protected:
         void paint(QPainter * pnt, const QStyleOptionGraphicsItem * , QWidget * );
+        void contextMenuEvent(QGraphicsSceneContextMenuEvent *e);
 
     private:
         int xa,xb,ya,yb;
@@ -57,8 +58,18 @@ class selectionWidget : public QGraphicsWidget
         bool selecting;
         bool showOrthodromie;
 
+        myCentralWidget * centralWidget;
         Projection * proj;
         orthoSegment * seg;
+
+        QAction *ac_delAllPOIs;
+        QAction *ac_delSelPOIs;
+        QAction *ac_notSimpSelPOIs;
+        QAction *ac_simpSelPOIs;
+        QAction *ac_dwnldZygrib;
+        QAction *ac_mailSailDoc;
+
+        QMenu *popup;
 
         void updateSize(void);
 };

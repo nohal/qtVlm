@@ -93,10 +93,10 @@ void MainWindow::connectSignals()
     connect(mb->acGetTrack, SIGNAL(triggered()), my_centralWidget, SLOT(slot_fetchVLMTrack()));
     connect(mb->ac_CreatePOI, SIGNAL(triggered()), this, SLOT(slotCreatePOI()));
     connect(mb->ac_pastePOI, SIGNAL(triggered()), this, SLOT(slotpastePOI()));
-    connect(mb->ac_delAllPOIs, SIGNAL(triggered()), my_centralWidget, SLOT(slot_delAllPOIs()));
+    /*connect(mb->ac_delAllPOIs, SIGNAL(triggered()), my_centralWidget, SLOT(slot_delAllPOIs()));
     connect(mb->ac_delSelPOIs, SIGNAL(triggered()), my_centralWidget, SLOT(slot_delSelPOIs()));
     connect(mb->ac_notSimpSelPOIs, SIGNAL(triggered()), my_centralWidget, SLOT(slot_notSimpAllPOIs()));
-    connect(mb->ac_simpSelPOIs, SIGNAL(triggered()), my_centralWidget, SLOT(slot_simpAllPOIs()));
+    connect(mb->ac_simpSelPOIs, SIGNAL(triggered()), my_centralWidget, SLOT(slot_simpAllPOIs()));*/
 
 
     connect(mb->ac_moveBoat, SIGNAL(triggered()), this,SLOT(slot_moveBoat()));
@@ -1453,7 +1453,7 @@ void MainWindow::slotShowContextualMenu(QGraphicsSceneContextMenuEvent * e)
     mouseClicY = e->scenePos().y();
     int compassMode = my_centralWidget->getCompassMode(mouseClicX,mouseClicY);
 
-    if(my_centralWidget->isSelecting() && compassMode==0)
+    /*if(my_centralWidget->isSelecting() && compassMode==0)
     {
         menuBar->ac_delAllPOIs->setEnabled(true);
         menuBar->ac_delSelPOIs->setEnabled(true);
@@ -1466,7 +1466,7 @@ void MainWindow::slotShowContextualMenu(QGraphicsSceneContextMenuEvent * e)
         menuBar->ac_delSelPOIs->setEnabled(false);
         menuBar->ac_simpSelPOIs->setEnabled(false);
         menuBar->ac_notSimpSelPOIs->setEnabled(false);
-    }
+    }*/
 
     switch(compassMode)
     {
@@ -2285,6 +2285,11 @@ void MainWindow::setPilototoFromRoute(ROUTE *route)
     route->setPilototo(false);
     emit setInstructions(route->getBoat(),pois);
 }
+
+bool MainWindow::getStartEstimeSpeedFromGrib() {
+    return toolBar->chkEstime->isChecked();
+}
+
 void MainWindow::setPilototoFromRoute(QList<POI*> poiList)
 {
     if(poiList.isEmpty()) return;

@@ -528,11 +528,11 @@ QMenu * MenuBar::createPopupBtRight(QWidget *parent)
 
     ac_CreatePOI = addAction(popup, tr("Positionner une nouvelle Marque"),tr(""),tr(""),"");
     ac_pastePOI = addAction(popup, tr("Coller une marque"),tr(""),tr(""),"");
-    ac_delAllPOIs = addAction(popup, tr("Effacer toutes les marques"),tr(""),tr(""),"");
+    /*ac_delAllPOIs = addAction(popup, tr("Effacer toutes les marques"),tr(""),tr(""),"");
     ac_delSelPOIs = addAction(popup, tr("Effacer les marques..."),tr(""),tr(""),"");
     popup->addSeparator();
     ac_notSimpSelPOIs = addAction(popup, tr("Rendre toutes les marques non-simplifiables"),tr(""),tr(""),"");
-    ac_simpSelPOIs = addAction(popup, tr("Rendre toutes les marques simplifiables"),tr(""),tr(""),"");
+    ac_simpSelPOIs = addAction(popup, tr("Rendre toutes les marques simplifiables"),tr(""),tr(""),"");*/
 
     popup->addSeparator();
     ac_twaLine=addAction(popup,tr("Tracer une estime TWA"),tr(""),tr(""),"");
