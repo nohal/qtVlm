@@ -158,7 +158,7 @@ public slots:
         void slotCompassLineForced(double a,double b);
         void slotCompassCenterBoat(void);
         void slotCompassCenterWp(void);
-        void slot_ParamVLMchanged(void);        
+        void slot_updateGribMono(void);
         void slot_centerMap();
         void slot_positScale();
         void slot_boatHasUpdated(void);

@@ -433,8 +433,6 @@ void MainWindow::continueSetup()
 
     Util::setFontDialog(menuBar);
 
-    //slot_ParamVLMchanged();
-    //this->slotParamChanged();
 
     //--------------------------------------------------
     progress->newStep(25,tr("Creating context menus"));
@@ -462,7 +460,7 @@ void MainWindow::continueSetup()
     param = new DialogParamVlm(this,my_centralWidget);
     connect(this,SIGNAL(wpChanged()),myBoard->VLMBoard(),SLOT(update_btnWP()));
     connect(param,SIGNAL(paramVLMChanged()),myBoard,SLOT(paramChanged()));    
-    connect(param,SIGNAL(paramVLMChanged()),this,SLOT(slot_ParamVLMchanged()));
+    connect(param,SIGNAL(paramVLMChanged()),this,SLOT(slot_updateGribMono()));
     connect(param,SIGNAL(paramVLMChanged()),toolBar,SLOT(slot_loadEstimeParam()));
     connect(toolBar,SIGNAL(estimeParamChanged()),this,SIGNAL(paramVLMChanged()));
 
@@ -700,23 +698,28 @@ void MainWindow::closeProgress(void)
         openGribFile(fname, false,true);
         gribFileNameCurrent=fname;
     }
+    slot_updateGribMono();
     progress->close();
     delete progress;
     progress=NULL;
     if(restartNeeded)
         this->my_centralWidget->setAboutToQuit();
-    else if(selectedBoat && selectedBoat->getType()==BOAT_REAL)
+    else if(selectedBoat)
     {
-        menuBar->acFile_Lock->setEnabled(false);
-        menuBar->acFile_Lock->setVisible(false);
-        menuBar->separator1->setVisible(false);
-        this->separator1->setVisible(false);
-        proj->setScaleAndCenterInMap(selectedBoat->getZoom(),selectedBoat->getLon(),selectedBoat->getLat());
-        if(Settings::getSetting("polarEfficiency",100).toInt()!=100)
+        if(selectedBoat->getType()==BOAT_REAL)
         {
-            selectedBoat->reloadPolar(true);
-            emit boatHasUpdated(selectedBoat);
+            menuBar->acFile_Lock->setEnabled(false);
+            menuBar->acFile_Lock->setVisible(false);
+            menuBar->separator1->setVisible(false);
+            this->separator1->setVisible(false);
+            proj->setScaleAndCenterInMap(selectedBoat->getZoom(),selectedBoat->getLon(),selectedBoat->getLat());
+            if(Settings::getSetting("polarEfficiency",100).toInt()!=100)
+            {
+                selectedBoat->reloadPolar(true);
+                emit boatHasUpdated(selectedBoat);
+            }
         }
+        myBoard->boatUpdated(selectedBoat);
     }
     statusBar->show();
     menuBar->show();
@@ -745,6 +748,7 @@ void MainWindow::openGribFile(QString fileName, bool zoom, bool current)
     }
     if (myGrib && !badCurrent)
     {
+        slot_updateGribMono();
         slotDateGribChanged_now();
         if(!current)
         {
@@ -2510,9 +2514,10 @@ void MainWindow::slotEstime(int valeur)
 }
 */
 
-void MainWindow::slot_ParamVLMchanged()
+void MainWindow::slot_updateGribMono()
 {
-    if(my_centralWidget->getGrib() && my_centralWidget->getGrib()->isOk())
+    //gribDrawingmethod (0=auto, 1=mono, 2=multi)
+    if(my_centralWidget->getGrib())
     {
         bool gribMulti=false;
         if(Settings::getSetting("gribDrawingMethod",0).toInt()==0)
@@ -2520,6 +2525,8 @@ void MainWindow::slot_ParamVLMchanged()
         else
             gribMulti=Settings::getSetting("gribDrawingMethod",0).toInt()==2;
         my_centralWidget->getGrib()->setGribMonoCpu(!gribMulti);
+        if(my_centralWidget->getGribCurrent())
+            my_centralWidget->getGribCurrent()->setGribMonoCpu(!gribMulti);
     }
 
 }
