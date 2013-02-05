@@ -101,27 +101,7 @@ DialogParamVlm::DialogParamVlm(MainWindow * main,myCentralWidget * parent) : QDi
     setColor(Settings::getSetting("Balise_Color",QColor(Qt::darkMagenta).name()).toString(),6);
 
     /* Bateau */
-    estimeVal_dist->setValue(Settings::getSetting("estimeLen",100).toInt());
-    estimeVal_time->setValue(Settings::getSetting("estimeTime",60).toInt());
-    estimeVal_vac->setValue(Settings::getSetting("estimeVac",12).toInt());
-
-
-    estimeVal_time->setEnabled(false);
-    estimeVal_vac->setEnabled(false);
-    estimeVal_dist->setEnabled(false);
-
-    switch(Settings::getSetting("estimeType",0).toInt())
-    {
-        case 0:
-            radioBtn_time->setChecked(true);
-            break;
-        case 1:
-            radioBtn_vac->setChecked(true);
-            break;
-        case 2:
-            radioBtn_dist->setChecked(true);
-            break;
-    }
+    initEstime();
 
     chk_centerOnSynch->setCheckState(Settings::getSetting("centerOnSynch","0").toInt()==1?Qt::Checked:Qt::Unchecked);
     chk_centerOnBoatChange->setCheckState(Settings::getSetting("centerOnBoatChange","1").toInt()==1?Qt::Checked:Qt::Unchecked);
@@ -144,8 +124,7 @@ DialogParamVlm::DialogParamVlm(MainWindow * main,myCentralWidget * parent) : QDi
     /* Compas */
     chk_showCompass->setCheckState(Settings::getSetting("showCompass",0).toInt()==1?Qt::Checked:Qt::Unchecked);
     chk_showPolar->setCheckState(Settings::getSetting("showPolar",0).toInt()==1?Qt::Checked:Qt::Unchecked);
-    this->radioBtn_time->setEnabled(true);
-    this->radioBtn_dist->setEnabled(true);
+
     if(Settings::getSetting("scalePolar",0).toInt()==1)
     {
         chk_scalePolarF->setChecked(true);
@@ -207,6 +186,40 @@ DialogParamVlm::DialogParamVlm(MainWindow * main,myCentralWidget * parent) : QDi
     for(int i=0;i<3;i++)
         interpol_list->addItem(interpol_name[i]);
     interpol_list->setCurrentIndex(Settings::getSetting("interpolation",INTERPOL_DEFAULT).toInt());*/
+
+}
+
+void DialogParamVlm::initEstime(void) {
+    estimeVal_dist->setValue(Settings::getSetting("estimeLen",100).toInt());
+    estimeVal_time->setValue(Settings::getSetting("estimeTime",60).toInt());
+    estimeVal_vac->setValue(Settings::getSetting("estimeVac",12).toInt());
+
+    estimeVal_time->setEnabled(false);
+    estimeVal_vac->setEnabled(false);
+    estimeVal_dist->setEnabled(false);
+
+    this->radioBtn_time->setEnabled(true);
+    this->radioBtn_dist->setEnabled(true);
+    radioBtn_vac->setEnabled(true);
+
+
+
+    switch(Settings::getSetting("estimeType",0).toInt())
+    {
+    case 0:
+        radioBtn_time->setChecked(true);
+        estimeVal_time->setEnabled(true);
+        break;
+    case 1:
+        radioBtn_vac->setChecked(true);
+        estimeVal_vac->setEnabled(true);
+        break;
+    case 2:
+        radioBtn_dist->setChecked(true);
+        estimeVal_dist->setEnabled(true);
+        break;
+    }
+
 
 }
 
@@ -492,8 +505,10 @@ void DialogParamVlm::doBtn_browseGrib(void)
      if(dir!="")
          edt_gribFolder->setText(dir);
 }
-void DialogParamVlm::changeParam()
+
+void DialogParamVlm::slot_changeParam()
 {
+    initEstime();
     chk_showCompass->setCheckState(Settings::getSetting("showCompass",0).toInt()==1?Qt::Checked:Qt::Unchecked);
 }
 

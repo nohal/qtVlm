@@ -361,76 +361,6 @@ void MainWindow::continueSetup()
     toolBar = new ToolBar(this);
     my_centralWidget->set_toolBar(toolBar);
 
-    /*
-    toolBar = addToolBar(tr("Outils"));
-    toolBar->setFloatable(false);
-    toolBar->setMovable(false);
-    toolBar->addAction(menuBar->acFile_Quit);
-    toolBar->addSeparator();
-    toolBar->addAction(menuBar->acFile_Lock);
-    this->separator1=toolBar->addSeparator();
-    toolBar->addAction(menuBar->acFile_Open);
-    toolBar->addAction(menuBar->acFile_Load_GRIB);
-    toolBar->addAction(menuBar->acFile_Load_VLM_GRIB);
-    toolBar->addAction(menuBar->acFile_Load_SAILSDOC_GRIB);
-    toolBar->addAction(menuBar->acFile_Close);
-    toolBar->addWidget(menuBar->datesGrib_sel);
-    toolBar->addWidget(menuBar->datesGrib_now);
-    toolBar->addAction(menuBar->acDatesGrib_prev);
-    toolBar->addWidget(menuBar->cbGribStep);
-    toolBar->addAction(menuBar->acDatesGrib_next);
-    toolBar->addAction(menuBar->acDatesGrib_play);
-    menuBar->acDatesGrib_play->setData(0);
-    toolBar->addSeparator();
-    toolBar->addAction(menuBar->acMap_Zoom_In);
-    toolBar->addAction(menuBar->acMap_Zoom_Out);
-    toolBar->addAction(menuBar->acMap_Zoom_Sel);
-    toolBar->addAction(menuBar->acMap_Zoom_All);
-    toolBar->addAction(menuBar->acMap_sel);
-
-
-
-    toolBar->addSeparator();
-    toolBar->addWidget(menuBar->boatList);
-    toolBar->addSeparator();
-    tool_ESTIME = new QLabel(tr(" Estime "), toolBar);
-    tool_ESTIME->setFont(font);
-    tool_ESTIME->setStyleSheet("color: rgb(0, 0, 255);");
-    toolBar->addWidget(tool_ESTIME);
-    toolBar->addWidget(menuBar->estime);
-    tool_ESTIMEUNIT = new QLabel("", toolBar);
-    tool_ESTIMEUNIT->setFont(font);
-    tool_ESTIMEUNIT->setStyleSheet("color: rgb(0, 0, 255);");
-    startEstime=new QCheckBox("", toolBar);
-    connect (startEstime,SIGNAL(toggled(bool)),this,SLOT(slotParamChanged()));
-    startEstime->setToolTip(tr("Si cette option est cochee<br>l'estime calcule la vitesse du bateau<br>a la prochaine vac.<br>Sinon elle utilise la vitesse du bateau<br>telle que donnee par VLM"));
-    startEstime->setChecked(Settings::getSetting("startSpeedEstime", 1).toInt()==1);
-    toolBar->addWidget(tool_ESTIMEUNIT);
-    toolBar->addWidget(startEstime);
-
-    toolBar->addSeparator();
-
-    tool_ETA = new QLabel("", toolBar);
-    tool_ETA->setFont(font);
-    tool_ETA->setStyleSheet("color: rgb(0, 0, 255);");
-    toolBar->addWidget(tool_ETA);
-
-    Util::setFontDialog(tool_ETA);
-    Util::setFontDialog(tool_ESTIME);
-    Util::setFontDialog(tool_ESTIMEUNIT);
-
-
-    menuBar->cbGribStep->setEnabled(false);
-    menuBar->acDatesGrib_prev->setEnabled(false);
-    menuBar->acDatesGrib_next->setEnabled(false);
-    menuBar->acDatesGrib_play->setEnabled(false);
-    menuBar->datesGrib_sel->setEnabled(false);
-    menuBar->datesGrib_now->setEnabled(false);
-
-    menuBar->cbGribStep->setCurrentIndex(Settings::getSetting("gribDateStep", 2).toInt());
-*/
-    //menuBar->menuFile->addAction(toolBar->toggleViewAction());
-
     Util::setFontDialog(menuBar);
 
 
@@ -462,7 +392,9 @@ void MainWindow::continueSetup()
     connect(param,SIGNAL(paramVLMChanged()),myBoard,SLOT(paramChanged()));    
     connect(param,SIGNAL(paramVLMChanged()),this,SLOT(slot_updateGribMono()));
     connect(param,SIGNAL(paramVLMChanged()),toolBar,SLOT(slot_loadEstimeParam()));
+
     connect(toolBar,SIGNAL(estimeParamChanged()),this,SIGNAL(paramVLMChanged()));
+    connect(toolBar,SIGNAL(estimeParamChanged()),param,SLOT(slot_changeParam()));
 
     progress->setLabelText(tr("Preparing coffee"));
     progress->setValue(35);
@@ -632,6 +564,13 @@ MainWindow::~MainWindow()
     /*freeze all routes*/
     if(selectedBoat) /* save the zoom factor */
         selectedBoat->setZoom(proj->getScale());
+}
+
+QMenu * MainWindow::createPopupMenu(void) {
+    if(toolBar)
+        return toolBar->showHideMenu();
+    else
+        return NULL;
 }
 
 void MainWindow::keyPressEvent ( QKeyEvent  * /* event */ )
@@ -1680,7 +1619,7 @@ void MainWindow::slotCompassCenterWp(void)
 
 void MainWindow::slotVLM_Param(void)
 {
-    param->changeParam();
+    param->slot_changeParam();
     param->exec();
 }
 
@@ -2499,24 +2438,26 @@ void MainWindow::slotGribInterpolation(void)
 }
 
 /*
-void MainWindow::slotEstime(int valeur)
+void MainWindow::slot_estimeParamChanged(int valeur)
 {
+    int valeur;
     switch(Settings::getSetting("estimeType","0").toInt())
     {
         case 0:
-            Settings::setSetting("estimeTime", valeur);
+            valeur=Settings::getSetting("estimeTime", valeur);
             param->estimeVal_time->setValue(valeur);
             break;
         case 1:
-            Settings::setSetting("estimeVac", valeur);
+            valeur=Settings::getSetting("estimeVac", valeur);
             param->estimeVal_vac->setValue(valeur);
             break;
         case 2:
-            Settings::setSetting("estimeLen", valeur);
+            valeur=Settings::getSetting("estimeLen", valeur);
             param->estimeVal_dist->setValue(valeur);
     }
     emit paramVLMChanged();
 }
+
 */
 
 void MainWindow::slot_updateGribMono()

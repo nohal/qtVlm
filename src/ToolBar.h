@@ -33,6 +33,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "dataDef.h"
 #include "class_list.h"
 
+
 class MyToolBar: public QToolBar {
     Q_OBJECT
     public:
@@ -57,10 +58,15 @@ class MyToolBar: public QToolBar {
         bool canHide;
 };
 
+
+
+
 class ToolBar : public QObject
 { Q_OBJECT
     public:
         ToolBar(MainWindow * mainWindow);
+
+        QMenu * showHideMenu(void);
 
         /* Misc toolbar */
         QAction * acQuit;
@@ -130,7 +136,6 @@ class ToolBar : public QObject
         void slot_gribPlay(void);
 
         void slot_loadEstimeParam(void);
-
 
     signals:
         void estimeParamChanged(void);

@@ -68,6 +68,7 @@ class selectionWidget : public QGraphicsWidget
         QAction *ac_simpSelPOIs;
         QAction *ac_dwnldZygrib;
         QAction *ac_mailSailDoc;
+        QAction * ac_zoomSelection;
 
         QMenu *popup;
 

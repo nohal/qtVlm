@@ -218,6 +218,25 @@ ToolBar::ToolBar(MainWindow *mainWindow)
     load_settings();
 }
 
+QMenu * ToolBar::showHideMenu(void) {    
+    QMenu * menu = new QMenu();
+    bool hasItem;
+    for(int i=0;i<toolBarList.count();++i) {
+        MyToolBar* tool = toolBarList.at(i);
+        if(tool->get_canHide()) {
+            menu->addAction(tool->toggleViewAction());
+            hasItem=true;
+        }
+    }
+    if(hasItem)
+        return menu;
+    else {
+        delete menu;
+        return NULL;
+    }
+
+}
+
 void ToolBar::clear_eta(void) {
     ETA->setText(tr("No WP"));
 }
@@ -296,24 +315,33 @@ void ToolBar::slot_loadEstimeParam(void) {
     spnEstime->blockSignals(true);
     cbEstime->blockSignals(true);
 
-    switch(Settings::getSetting("estimeType","0").toInt())
-    {
-        case 0:
-            cbEstime->setCurrentIndex(0);
-            spnEstime->setValue(Settings::getSetting("estimeTime","60").toInt());
-            break;
-        case 1:
-            cbEstime->setCurrentIndex(1);
-            spnEstime->setValue(Settings::getSetting("estimeVac","12").toInt());
-            break;
-        case 2:
-            cbEstime->setCurrentIndex(2);
-            spnEstime->setValue(Settings::getSetting("estimeLen","50").toInt());
-            break;
-        default:
-            Settings::setSetting("estimeType",0);
-            cbEstime->setCurrentIndex(0);
-            spnEstime->setValue(0);
+    cbEstime->setEnabled(true);
+
+    if(Settings::getSetting("scalePolar",0).toInt()==1) {
+        switch(Settings::getSetting("estimeType","0").toInt())
+        {
+            case 0:
+                cbEstime->setCurrentIndex(0);
+                spnEstime->setValue(Settings::getSetting("estimeTime","60").toInt());
+                break;
+            case 1:
+                cbEstime->setCurrentIndex(1);
+                spnEstime->setValue(Settings::getSetting("estimeVac","12").toInt());
+                break;
+            case 2:
+                cbEstime->setCurrentIndex(2);
+                spnEstime->setValue(Settings::getSetting("estimeLen","50").toInt());
+                break;
+            default:
+                Settings::setSetting("estimeType",0);
+                cbEstime->setCurrentIndex(0);
+                spnEstime->setValue(0);
+        }
+    }
+    else {
+        cbEstime->setCurrentIndex(1);
+        spnEstime->setValue(Settings::getSetting("estimeVac","12").toInt());
+        cbEstime->setEnabled(false);
     }
 
     spnEstime->blockSignals(false);
@@ -360,7 +388,7 @@ void ToolBar::update_gribBtn(void) {
         datesGrib_sel->setEnabled(true);
         datesGrib_now->setEnabled(true);
     }
-    else     {
+    else {
         acDatesGrib_prev->setEnabled(false);
         acDatesGrib_next->setEnabled(false);
         acGrib_play->setEnabled(false);
@@ -475,6 +503,7 @@ void ToolBar::update_gribDownloadBtn(void) {
         gribDwnld->setIcon(QIcon(iconString));
 }
 
+
 /****************************************************/
 /* MyToolBar                                        */
 /****************************************************/
@@ -484,8 +513,10 @@ MyToolBar::MyToolBar(QString name,QString title,ToolBar *toolBar, QWidget *paren
     this->toolBar=toolBar;
     displayed=true;
     this->canHide=canHide;
-    if(!canHide)
+    if(!canHide) {
         setFloatable(false);
+        setMovable(false);
+    }
     connect(this,SIGNAL(visibilityChanged(bool)),this,SLOT(slot_visibilityChanged(bool)));
 }
 

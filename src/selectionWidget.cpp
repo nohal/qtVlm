@@ -43,8 +43,9 @@ selectionWidget::selectionWidget(myCentralWidget *centralWidget, Projection * pr
     ac_delSelPOIs = new QAction(tr("Effacer les marques..."),popup);
     ac_notSimpSelPOIs = new QAction(tr("Rendre toutes les marques non-simplifiables"),popup);
     ac_simpSelPOIs = new QAction(tr("Rendre toutes les marques simplifiables"),popup);
-    ac_dwnldZygrib = new QAction(tr("Download with ZyGrib"),popup);;
-    ac_mailSailDoc = new QAction(tr("Mail SailsDoc"),popup);;
+    ac_dwnldZygrib = new QAction(tr("Download with ZyGrib"),popup);
+    ac_mailSailDoc = new QAction(tr("Mail SailsDoc"),popup);
+    ac_zoomSelection = new QAction(tr("Zoom on selection"),popup);
 
     popup->addAction(ac_delAllPOIs);
     popup->addAction(ac_delSelPOIs);
@@ -54,6 +55,8 @@ selectionWidget::selectionWidget(myCentralWidget *centralWidget, Projection * pr
     popup->addSeparator();
     popup->addAction(ac_dwnldZygrib);
     popup->addAction(ac_mailSailDoc);
+    popup->addSeparator();
+    popup->addAction(ac_zoomSelection);
 
     connect(ac_delAllPOIs, SIGNAL(triggered()), centralWidget, SLOT(slot_delAllPOIs()));
     connect(ac_delSelPOIs, SIGNAL(triggered()), centralWidget, SLOT(slot_delSelPOIs()));
@@ -61,6 +64,7 @@ selectionWidget::selectionWidget(myCentralWidget *centralWidget, Projection * pr
     connect(ac_simpSelPOIs, SIGNAL(triggered()), centralWidget, SLOT(slot_simpAllPOIs()));
     connect(ac_dwnldZygrib,SIGNAL(triggered()),centralWidget, SLOT(slot_fileLoad_GRIB()));
     connect(ac_mailSailDoc,SIGNAL(triggered()),centralWidget, SLOT(slotLoadSailsDocGrib()));
+    connect(ac_zoomSelection,SIGNAL(triggered()),centralWidget,  SLOT(slot_Zoom_Sel()));
 
     xa=xb=ya=yb=0;
     width=height=0;

@@ -842,6 +842,13 @@ void myCentralWidget::slot_Zoom_All()
     UNBLOCK_SIG_BOAT()
 }
 
+void myCentralWidget::slot_clearSelection(void)
+{
+    selectionTool=false;
+    selection->clearSelection();
+    toolBar->selectionMode->setChecked(selectionTool);
+}
+
 void myCentralWidget::slot_selectionTool()
 {
     selectionTool=!selectionTool;
@@ -960,7 +967,7 @@ void myCentralWidget::slot_Zoom_Sel()
     {
         //qWarning() << "zoom on " << x0 << "," << y0 << " " << x1 << "," << y1;
         proj->zoomOnZone(x0,y0,x1,y1);
-        selection->clearSelection();
+        slot_clearSelection();
 
     }
     else
@@ -1070,7 +1077,7 @@ void myCentralWidget::escapeKeyPressed(void)
 {
     emit stopCompassLine();
     emit POI_selectAborted(NULL);
-    selection->clearSelection();
+    slot_clearSelection();
     horn->stop();
     this->replayStep=10e6;
 }
@@ -1280,7 +1287,7 @@ void myCentralWidget::slotLoadSailsDocGrib(void)
             sailDocs_diag->exec();
             delete sailDocs_diag;
         }
-        selection->clearSelection();
+        slot_clearSelection();
     }
     else
     {
@@ -1543,7 +1550,7 @@ void myCentralWidget::slot_delAllPOIs(void)
 //            else
 //                qWarning()<<"poi outside"<<poi->getName()<<x<<y;
         }
-        selection->clearSelection();
+        slot_clearSelection();
         r.toFront();
         while(r.hasNext())
         {
@@ -1599,14 +1606,13 @@ void myCentralWidget::slot_delSelPOIs(void)
                 poi->deleteLater();
             }
         }
-        selection->clearSelection();
         r.toFront();
         while(r.hasNext())
         {
             ROUTE * route=r.next();
             route->setTemp(false);
         }
-        selection->clearSelection();
+        slot_clearSelection();
         emit updateRoute(NULL);
     }
 }
@@ -4226,10 +4232,6 @@ void myCentralWidget::slot_readRaceData(void)
 /**************************/
 /* Menu slot              */
 /**************************/
-void myCentralWidget::slot_clearSelection(void)
-{
-    selection->clearSelection();
-}
 
 void myCentralWidget::slot_map_CitiesNames()
 {

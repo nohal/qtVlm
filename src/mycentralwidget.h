@@ -37,8 +37,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "DialogUnits.h"
 #include "DialogGraphicsParams.h"
 #include "selectionWidget.h"
+#include "MainWindow.h"
+
 #include <qdatetime.h>
-#include <MainWindow.h>
+
 
 /* Z value according to type */
 #define Z_VALUE_TERRE      0
@@ -353,6 +355,7 @@ class myCentralWidget : public QWidget
         void shPol(bool);
         void shLab(bool);
         void shFla();
+
 
     protected:
         void resizeEvent (QResizeEvent * e);

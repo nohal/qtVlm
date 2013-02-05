@@ -89,6 +89,8 @@ class MainWindow: public QMainWindow
         bool getRestartNeeded(){return this->restartNeeded;}
         void continueSetup();
 
+        QMenu *createPopupMenu(void);
+
 public slots:
         void slotFile_Open();
         void slotFile_Reopen();
