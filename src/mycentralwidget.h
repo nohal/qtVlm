@@ -79,6 +79,8 @@ class myScene : public QGraphicsScene
 { Q_OBJECT
     public:
         myScene(myCentralWidget * parent = 0);
+        void setPinching(const bool &b){this->pinching=b;}
+        bool getPinching() const {return this->pinching;}
 
     protected:
         void keyPressEvent (QKeyEvent *e);
@@ -100,6 +102,7 @@ class myScene : public QGraphicsScene
         int wheelPosX;
         int wheelPosY;
         bool wheelCenter;
+        bool pinching;
 };
 
 class myCentralWidget : public QWidget
@@ -211,7 +214,8 @@ class myCentralWidget : public QWidget
         void removePOI(void);
         bool getKeepPos(){return keepPos;}
 
-    public slots :
+        void zoom_Pinch(double scale, int XX, int YY);
+public slots :
         /* Zoom & position */
         void slot_Zoom_All();
         void slot_Zoom_In(double quantity=1.3);

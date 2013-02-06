@@ -109,6 +109,9 @@ myScene::myScene(myCentralWidget * parent) : QGraphicsScene(parent)
     wheelStrokes=0;
     QColor seaColor  = Settings::getSetting("seaColor", QColor(50,50,150)).value<QColor>();
     this->setBackgroundBrush(seaColor);
+    this->pinching=false;
+    wheelPosX=0;
+    wheelPosY=0;
 }
 
 /* Events */
@@ -216,6 +219,7 @@ void  myScene::keyReleaseEvent (QKeyEvent *e)
 void myScene::mouseMoveEvent(QGraphicsSceneMouseEvent* e)
 {
     if(parent->getIsStartingUp()) return;
+    if(pinching) return;
 #if 0
     if(hasWay)
     {
@@ -241,6 +245,7 @@ void myScene::mouseMoveEvent(QGraphicsSceneMouseEvent* e)
 
 void myScene::mouseDoubleClickEvent(QGraphicsSceneMouseEvent* e)
 {
+    if(pinching) return;
     if(e->button()==Qt::LeftButton)
     {
         parent->mouseDoubleClick(e->scenePos().x(),e->scenePos().y(),itemAt(e->scenePos(),parent->getView()->transform()));
@@ -248,6 +253,7 @@ void myScene::mouseDoubleClickEvent(QGraphicsSceneMouseEvent* e)
 }
 void myScene::wheelEvent(QGraphicsSceneWheelEvent* e)
 {
+    if(pinching) return;
     if(e->orientation()!=Qt::Vertical) return;
     wheelTimer->stop();
     wheelPosX=e->scenePos().x();
@@ -287,46 +293,58 @@ void myScene::wheelEvent(QGraphicsSceneWheelEvent* e)
 void myScene::wheelTimerElapsed()
 {
     parent->slot_Zoom_Wheel(wheelStrokes,wheelPosX,wheelPosY,wheelCenter);
+    wheelPosX=0;
+    wheelPosY=0;
     wheelStrokes=0;
     wheelCenter=false;
 }
 bool myScene::event(QEvent * event)
 {
-#if 0
+#if 1
     if (event->type() == QEvent::Gesture)
     {
-        qWarning()<<"gesture detected";
+        wheelTimer->stop();
         QGestureEvent * gestureEvent=static_cast<QGestureEvent*>(event);
         wheelCenter=false;
-        if (QGesture *g = gestureEvent->gesture(Qt::PanGesture))
+        if (QGesture *p = gestureEvent->gesture(Qt::PinchGesture))
         {
-            if(g->state()!=Qt::GestureFinished) return false;
-            QMessageBox::warning (0,
-                tr("Gesture"),
-                tr("Pan gesture detected"));
-            //QPanGesture *pinch = static_cast<QPanGesture *>(g);
-            //parent->slot_Go_Left();
-        }
-        else if (QGesture *g = gestureEvent->gesture(Qt::PinchGesture))
-        {
-            if(g->state()!=Qt::GestureFinished) return false;
-            QMessageBox::warning (0,
-                tr("Gesture"),
-                tr("Pan gesture detected"));
-            QPinchGesture *pinch = static_cast<QPinchGesture *>(g);
-            if (pinch->property("scaleFactor").toReal()<0)
-                wheelStrokes--;
+            QPinchGesture *pinch = static_cast<QPinchGesture *>(p);
+            if(pinch->state()!=Qt::GestureFinished)
+            {
+                if(wheelPosX==0 && wheelPosY==0)
+                {
+                    QPointF scenePos=parent->getView()->viewport()->mapFromGlobal(pinch->centerPoint().toPoint());
+                    wheelPosX=scenePos.x();
+                    wheelPosY=scenePos.y();
+                }
+                pinching=true;
+                double zoomDiff=pinch->totalScaleFactor();
+                if(parent->getKeepPos() && parent->getSelectedBoat() && parent->getProj()->isPointVisible(parent->getSelectedBoat()->getLon(),parent->getSelectedBoat()->getLat()))
+                {
+                    parent->getView()->myScale(zoomDiff,parent->getSelectedBoat()->getLon(),parent->getSelectedBoat()->getLat());
+                }
+                else
+                {
+                    double X,Y;
+                    parent->getProj()->screen2map(wheelPosX,wheelPosY,&X,&Y);
+                    parent->getView()->myScale(zoomDiff,X,Y);
+                }
+            }
             else
-                wheelStrokes++;
+            {
+                double zoomDiff=pinch->totalScaleFactor();
+                parent->zoom_Pinch(zoomDiff,wheelPosX,wheelPosY);
+                wheelStrokes=0;
+                wheelCenter=false;
+                wheelPosX=0;
+                wheelPosY=0;
+            }
+            return true;
         }
         else
         {
-            QMessageBox::warning (0,
-                tr("Gesture"),
-                tr("Other gesture detected!!"));
+            qWarning()<<"other gesture detected";
         }
-        wheelTimer->start(500);
-        return true;
     }
 #endif
     return QGraphicsScene::event(event);}
@@ -368,7 +386,7 @@ myCentralWidget::myCentralWidget(Projection * proj,MainWindow * parent,MenuBar *
 
     view = new MyView(proj,scene,this);
     view->setGeometry(0,0,width(),height());
-//    view->viewport()->grabGesture(Qt::PanGesture);
+    view->viewport()->ungrabGesture(Qt::PanGesture);
     view->viewport()->grabGesture(Qt::PinchGesture);
     view->setHorizontalScrollBarPolicy (Qt::ScrollBarAlwaysOff);
     view->setVerticalScrollBarPolicy (Qt::ScrollBarAlwaysOff);
@@ -956,6 +974,28 @@ void myCentralWidget::slot_Zoom_Wheel(double quantity, int XX, int YY, bool cent
         }
         proj->zoomKeep(lon,lat,newScale/proj->getScale());
     }
+    UNBLOCK_SIG_BOAT()
+}
+void myCentralWidget::zoom_Pinch(double scale, int XX, int YY)
+{
+    BLOCK_SIG_BOAT()
+    if(keepPos)
+    {
+        if(mainW->getSelectedBoat())
+        {
+           if (proj->isPointVisible(mainW->getSelectedBoat()->getLon(),mainW->getSelectedBoat()->getLat()))
+           {
+               proj->zoomKeep(mainW->getSelectedBoat()->getLon(),
+                              mainW->getSelectedBoat()->getLat(),
+                              scale);
+               UNBLOCK_SIG_BOAT()
+               return;
+           }
+        }
+    }
+    double lat,lon;
+    proj->screen2map(XX,YY,&lon,&lat);
+    proj->zoomKeep(lon,lat,scale);
     UNBLOCK_SIG_BOAT()
 }
 

@@ -27,6 +27,7 @@ MyView::MyView(Projection *proj, myScene *scene, myCentralWidget * mcp) :
 }
 void MyView::startPaning(const QGraphicsSceneMouseEvent *e)
 {
+    if(scene->getPinching()) return;
     px=e->scenePos().x();
     py=e->scenePos().y();
     QPixmap pix(proj->getW(),proj->getH());
@@ -51,7 +52,12 @@ void MyView::pane(const int &x, const int &y)
 }
 void MyView::stopPaning(const int &x, const int &y)
 {
-    if(px-x!=0 && py-y!=0)
+    if(scene->getPinching())
+    {
+        paning=false;
+        return;
+    }
+    if(px-x!=0 && py-y!=0 && !scene->getPinching())
     {
         QRectF r(QPointF(0,0),QSize(proj->getW(),proj->getH()));
         r.translate(px-x,py-y);
@@ -85,6 +91,7 @@ void MyView::myScale(const double &scale, const double &lon, const double &lat)
                              QPainter::HighQualityAntialiasing);
         this->render(&pnt);
         pnt.end();
+        viewPix->resetTransform();
         viewPix->setPixmap(pix);
         viewPix->setPos(0,0);
         backPix->show();
@@ -92,6 +99,7 @@ void MyView::myScale(const double &scale, const double &lon, const double &lat)
     }
     double X1,Y1;
     proj->map2screenDouble(lon,lat,&X1,&Y1);
+    viewPix->resetTransform();
     viewPix->setTransformOriginPoint(X1,Y1);
     viewPix->setScale(scale);
 }

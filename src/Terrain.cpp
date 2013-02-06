@@ -492,6 +492,7 @@ void Terrain::draw_GSHHSandGRIB()
     setCursor(oldcursor);
     parent->getView()->resetTransform();
     parent->getView()->hideViewPix();
+    parent->getScene()->setPinching(false);
 }
 
 void Terrain::drawGrib(QPainter &pnt, Grib *gribPlot)
