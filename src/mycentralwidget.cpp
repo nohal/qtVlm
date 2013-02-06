@@ -554,31 +554,6 @@ myCentralWidget::myCentralWidget(Projection * proj,MainWindow * parent,MenuBar *
     xmlPOI = new xml_POIData(proj,parent,this);
     /*Races*/
     this->NSZ=NULL;
-#if 0 //test pb de marano (resolu)
-    QLineF marano(17.5895855642,-61.926110110422,17.582814750193,-61.915067613033);
-    QLineF gate(17.5840000000,-61.9170000000,17.5840000000,-61.8630000000);
-    QPointF cross;
-    if(marano.intersect(gate,&cross)==QLineF::BoundedIntersection)
-        qWarning()<<"Marano is crossing at"<<QString().sprintf("%.10f",cross.x())<<QString().sprintf("%.10f",cross.y());
-    else
-        qWarning()<<"Marano is NOT crossing"<<QString().sprintf("%.10f",cross.x())<<QString().sprintf("%.10f",cross.y());
-    QPen pen;
-    pen.setColor(Qt::black);
-    pen.setBrush(Qt::black);
-    pen.setWidthF(1.0);
-    vlmLine * mar=new vlmLine(proj,this->scene,10);
-    mar->setLinePen(pen);
-    vlmLine * gat=new vlmLine(proj,this->scene,10);
-    pen.setColor(Qt::red);
-    pen.setBrush(Qt::red);
-    gat->setLinePen(pen);
-    gat->addPoint(17.5840000000,-61.9170000000);
-    gat->addPoint(17.5840000000,-61.8630000000);
-    gat->slot_showMe();
-    mar->addPoint(17.5895855642,-61.926110110422);
-    mar->addPoint(17.582814750193,-61.915067613033);
-    mar->slot_showMe();
-#endif
 
     connect(mainW,SIGNAL(addPOI_list(POI*)),this,SLOT(slot_addPOI_list(POI*)));
     connect(mainW,SIGNAL(addPOI(QString,int,double,double,double,int,bool,boat*)),

@@ -356,7 +356,8 @@ void boat::updateTraceColor(void)
 
 void boat::drawEstime(void)
 {
-    if(mainWindow->getStartEstimeSpeedFromGrib() && parent->getGrib() && parent->getGrib()->isOk() && this->getPolarData())
+    bool getStartEstimeSpeedFromGrib = Settings::getSetting("startSpeedEstime", 1).toInt()==1;
+    if( getStartEstimeSpeedFromGrib && parent->getGrib() && parent->getGrib()->isOk() && this->getPolarData())
     {
         double wind_speed=0;
         double wind_angle=0;

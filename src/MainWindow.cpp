@@ -93,10 +93,6 @@ void MainWindow::connectSignals()
     connect(mb->acGetTrack, SIGNAL(triggered()), my_centralWidget, SLOT(slot_fetchVLMTrack()));
     connect(mb->ac_CreatePOI, SIGNAL(triggered()), this, SLOT(slotCreatePOI()));
     connect(mb->ac_pastePOI, SIGNAL(triggered()), this, SLOT(slotpastePOI()));
-    /*connect(mb->ac_delAllPOIs, SIGNAL(triggered()), my_centralWidget, SLOT(slot_delAllPOIs()));
-    connect(mb->ac_delSelPOIs, SIGNAL(triggered()), my_centralWidget, SLOT(slot_delSelPOIs()));
-    connect(mb->ac_notSimpSelPOIs, SIGNAL(triggered()), my_centralWidget, SLOT(slot_notSimpAllPOIs()));
-    connect(mb->ac_simpSelPOIs, SIGNAL(triggered()), my_centralWidget, SLOT(slot_simpAllPOIs()));*/
 
 
     connect(mb->ac_moveBoat, SIGNAL(triggered()), this,SLOT(slot_moveBoat()));
@@ -119,22 +115,7 @@ void MainWindow::connectSignals()
     connect(mb->acFax_Close, SIGNAL(triggered()), my_centralWidget, SLOT(slotFax_close()));
     connect(mb->acImg_Open, SIGNAL(triggered()), my_centralWidget, SLOT(slotImg_open()));
     connect(mb->acImg_Close, SIGNAL(triggered()), my_centralWidget, SLOT(slotImg_close()));
-    //-------------------------------------------------------
-//    connect(mb->acMap_GroupQuality, SIGNAL(triggered(QAction *)),
-//            this, SLOT(slotMap_Quality()));
 
-   /* connect(mb->acMap_Zoom_In, SIGNAL(triggered()),
-            my_centralWidget,  SLOT(slot_Zoom_In()));
-    connect(mb->acMap_Zoom_Out, SIGNAL(triggered()),
-            my_centralWidget,  SLOT(slot_Zoom_Out()));*/
-//    menuBar->acMap_Zoom_In->installEventFilter(this);
-//    menuBar->acMap_Zoom_Out->installEventFilter(this);
-    /*connect(mb->acMap_Zoom_Sel, SIGNAL(triggered()),
-            my_centralWidget,  SLOT(slot_Zoom_Sel()));
-    connect(mb->acMap_Zoom_All, SIGNAL(triggered()),
-            my_centralWidget,  SLOT(slot_Zoom_All()));
-    connect(mb->acMap_sel,SIGNAL(triggered()),my_centralWidget,SLOT(slot_selectionTool()));*/
-    //-------------------------------------------------------
     connect(mb->acView_WindArrow, SIGNAL(triggered(bool)),
             this,  SLOT(slotWindArrows(bool)));
 
@@ -192,26 +173,6 @@ void MainWindow::connectSignals()
 
     connect(mb->acPOISave, SIGNAL(triggered()), my_centralWidget, SLOT(slot_POISave()));
     connect(mb->acPOIRestore, SIGNAL(triggered()), my_centralWidget, SLOT(slot_POIRestore()));
-
-    //-------------------------------------
-    // Autres objets de l'interface
-    //-------------------------------------
-    /*connect(mb->cbGribStep, SIGNAL(activated(int)),
-            this, SLOT(slotDateStepChanged(int)));
-    connect(mb->datesGrib_now, SIGNAL(clicked()),
-            this, SLOT(slotDateGribChanged_now()));
-    connect(mb->datesGrib_sel, SIGNAL(clicked()),
-            this, SLOT(slotDateGribChanged_sel()));
-    connect(mb->acDatesGrib_next, SIGNAL(triggered()),
-            this, SLOT(slotDateGribChanged_next()));
-    connect(mb->acDatesGrib_play, SIGNAL(triggered()),
-            this, SLOT(slotDateGribPlay()));
-    connect(mb->acDatesGrib_prev, SIGNAL(triggered()),
-            this, SLOT(slotDateGribChanged_prev()));
-    connect(mb->boatList, SIGNAL(activated(int)),
-            this, SLOT(slotChgBoat(int)));
-    connect(mb->estime, SIGNAL(valueChanged(int)),
-            this, SLOT(slotEstime(int)));*/
 
     //-------------------------------------
     // Autres signaux
@@ -870,29 +831,6 @@ void MainWindow::slotOptions_Language()
         );
     }
 }
-//-------------------------------------------------
-//void MainWindow::slotMap_Quality()
-//{
-//    int quality = 0;
-//    MenuBar  *mb = menuBar;
-//    QAction *act = mb->acMap_GroupQuality->checkedAction();
-//    if (act == mb->acMap_Quality1)
-//        quality = 0;
-//    else if (act == mb->acMap_Quality2)
-//        quality = 1;
-//    else if (act == mb->acMap_Quality3)
-//        quality = 2;
-//    else if (act == mb->acMap_Quality4)
-//        quality = 3;
-//    else if (act == mb->acMap_Quality5)
-//        quality = 4;
-
-//    Settings::setSetting("gshhsMapQuality", quality);
-//    emit signalMapQuality(quality);
-//}
-//-------------------------------------------------
-
-
 
 //-------------------------------------------------
 void MainWindow::slotHelp_Help() {
@@ -1391,21 +1329,6 @@ void MainWindow::slotShowContextualMenu(QGraphicsSceneContextMenuEvent * e)
     mouseClicX = e->scenePos().x();
     mouseClicY = e->scenePos().y();
     int compassMode = my_centralWidget->getCompassMode(mouseClicX,mouseClicY);
-
-    /*if(my_centralWidget->isSelecting() && compassMode==0)
-    {
-        menuBar->ac_delAllPOIs->setEnabled(true);
-        menuBar->ac_delSelPOIs->setEnabled(true);
-        menuBar->ac_simpSelPOIs->setEnabled(true);
-        menuBar->ac_notSimpSelPOIs->setEnabled(true);
-    }
-    else
-    {
-        menuBar->ac_delAllPOIs->setEnabled(false);
-        menuBar->ac_delSelPOIs->setEnabled(false);
-        menuBar->ac_simpSelPOIs->setEnabled(false);
-        menuBar->ac_notSimpSelPOIs->setEnabled(false);
-    }*/
 
     switch(compassMode)
     {
@@ -2223,10 +2146,6 @@ void MainWindow::setPilototoFromRoute(ROUTE *route)
     }
     route->setPilototo(false);
     emit setInstructions(route->getBoat(),pois);
-}
-
-bool MainWindow::getStartEstimeSpeedFromGrib() {
-    return toolBar->chkEstime->isChecked();
 }
 
 void MainWindow::setPilototoFromRoute(QList<POI*> poiList)
