@@ -29,7 +29,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 class board : public QWidget
 { Q_OBJECT
     public:
-        board(MainWindow * mainWin, inetConnexion * inet, QStatusBar * statusBar);
+
+        board(MainWindow * mainWin, inetConnexion * inet);
 
         boat * currentBoat(void) { return curBoat; }
 

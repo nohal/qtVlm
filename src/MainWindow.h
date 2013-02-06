@@ -41,6 +41,7 @@ Copyright (C) 2008 - Jacques Zaninetti - http://zygrib.free.fr
 #include <QLibrary>
 
 #include "class_list.h"
+#include "dataDef.h"
 
 class MainWindow: public QMainWindow
 {
@@ -64,12 +65,11 @@ class MainWindow: public QMainWindow
         double getBoatPolarMaxSpeed();
         boat * getSelectedBoat(void) {if(selectedBoat) return selectedBoat;else return NULL;}
         polarList * getPolarList(void) {return polar_list;}
-        QList<POI *> * getPois();
-        void statusBar_showWindData(double x,double y);
-        void statusBar_showSelectedZone(double x0, double y0, double x1, double y1);
-        void drawVacInfo(void);
+        QList<POI *> * getPois();       
 
-        Progress * get_progress(void) { return progress; }
+        FCT_GET(Progress*,progress)
+        FCT_GET(StatusBar*,statusBar)
+        FCT_GET(int,nxtVac_cnt)
 
         void getXY(int *X,int *Y){*X=this->mouseClicX;*Y=this->mouseClicY;}
         bool isStartingUp;
@@ -221,11 +221,7 @@ public slots:
         */
         ToolBar * toolBar;
 
-        QStatusBar   *statusBar;
-        QLabel       *stBar_label_1;
-        QLabel       *stBar_label_2;
-        QLabel       *stBar_label_3;
-
+        StatusBar   *statusBar;
 
         Settings * settings;
 

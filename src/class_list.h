@@ -111,6 +111,8 @@ class mapCompass;
 /* MenuBar.h / toolbar ...*/
 class MenuBar;
 class ToolBar;
+class StatusBar;
+
 
 /* mycentralwidget.h */
 class myScene;

@@ -93,6 +93,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "class_list.h"
 #include "MyView.h"
 #include "Progress.h"
+#include "StatusBar.h"
 
 /*******************/
 /*    myScene      */
@@ -1016,11 +1017,12 @@ void myCentralWidget::resizeEvent (QResizeEvent * /*e*/)
 
 void myCentralWidget::mouseMove(int x, int y, QGraphicsItem * )
 {
+    StatusBar * statusBar = mainW->get_statusBar();
     if(selection->isSelecting())
     {
         double xa,xb,ya,yb;
         selection->getZoneWithSens(&xa,&ya,&xb,&yb);
-        mainW->statusBar_showSelectedZone(xa,ya,xb,yb);
+        statusBar->showSelectedZone(xa,ya,xb,yb);
     }
     else if(view->isPaning())
         view->pane(x,y);
@@ -1028,10 +1030,9 @@ void myCentralWidget::mouseMove(int x, int y, QGraphicsItem * )
     {
         double xx, yy;
         proj->screen2map(x,y, &xx, &yy);
-        mainW->statusBar_showWindData(xx, yy);
-        mainW->drawVacInfo();
+        statusBar->showWindData(xx, yy);
+        statusBar->drawVacInfo();
     }
-
     if(selection->tryMoving(x,y))
         return;
 

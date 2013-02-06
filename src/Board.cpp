@@ -30,10 +30,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "BoardVLM.h"
 #include "Player.h"
 #include "boatVLM.h"
+#include "StatusBar.h"
 
-board::board(MainWindow * mainWin, inetConnexion * inet,QStatusBar * statusBar)
+board::board(MainWindow * mainWin, inetConnexion * inet)
 {
     playerType = BOAT_NOBOAT;
+
+    StatusBar * statusBar=mainWin->get_statusBar();
 
     vlm_board=new boardVLM(mainWin,inet,this);
     connect(this,SIGNAL(sig_paramChanged()),vlm_board,SLOT(paramChanged()));
