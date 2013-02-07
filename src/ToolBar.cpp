@@ -70,7 +70,7 @@ ToolBar::ToolBar(MainWindow *mainWindow)
     /*********************/
 
     /* Misc toolBar */
-    acQuit = init_Action(tr("Quitter"), tr("Ctrl+Q"), tr("Bye"), appFolder.value("img")+"exit.png",miscToolBar);
+    acQuit = init_Action(tr("Quitter"), "", tr("Bye"), appFolder.value("img")+"exit.png",miscToolBar);
     miscToolBar->addAction(acQuit);
 
     /* Grib toolBar */
@@ -163,7 +163,7 @@ ToolBar::ToolBar(MainWindow *mainWindow)
     estimeToolBar->addWidget(chkEstime);
 
     /* Boat toolBar */
-    acLock=init_Action(tr("Verrouiller"), tr("Ctrl+L"), tr("Verrouiller l'envoi d'ordre a VLM"), appFolder.value("img")+"unlock.png",boatToolBar);
+    acLock=init_Action(tr("Verrouiller"), "", tr("Verrouiller l'envoi d'ordre a VLM"), appFolder.value("img")+"unlock.png",boatToolBar);
     boatList = new QComboBox();
     boatList->setSizeAdjustPolicy(QComboBox::AdjustToContents);
     boatToolBar->addAction(acLock);
