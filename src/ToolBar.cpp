@@ -85,7 +85,7 @@ ToolBar::ToolBar(MainWindow *mainWindow)
     gribSubMenu->addAction(acWindZygrib);
     gribSubMenu->addAction(acWindVlm);
     gribSubMenu->addAction(acWindSailsDoc);
-    gribSubMenu->addAction(acOpenGrib);
+    //gribSubMenu->addAction(acOpenGrib);
     gribDwnld->setMenu(gribSubMenu);
 
     update_gribDownloadBtn();
@@ -113,6 +113,7 @@ ToolBar::ToolBar(MainWindow *mainWindow)
     cbGribStep->setCurrentIndex(Settings::getSetting("gribDateStep", 2).toInt());
 
     gribToolBar->addWidget(gribDwnld);
+    gribToolBar->addAction(acOpenGrib);
     gribToolBar->addSeparator();
     gribToolBar->addAction(datesGrib_sel);
     gribToolBar->addAction(datesGrib_now);
