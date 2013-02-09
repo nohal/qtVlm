@@ -37,7 +37,7 @@ ToolBar::ToolBar(MainWindow *mainWindow)
     this->mainWindow=mainWindow;
     centralWidget = mainWindow->getMy_centralWidget();
 
-    miscToolBar=new MyToolBar("Misc",tr("Misc"),this,mainWindow,false);
+    miscToolBar=new MyToolBar("Misc",tr("Misc"),this,mainWindow);
     toolBarList.append(miscToolBar);
 
     gribToolBar=new MyToolBar("Grib",tr("Grib"),this,mainWindow);
@@ -511,6 +511,7 @@ void ToolBar::update_gribDownloadBtn(void) {
 
 MyToolBar::MyToolBar(QString name,QString title,ToolBar *toolBar, QWidget *parent,bool canHide): QToolBar(title,parent) {
     this->name=name;
+    setObjectName(name);
     this->toolBar=toolBar;
     displayed=true;
     this->canHide=canHide;

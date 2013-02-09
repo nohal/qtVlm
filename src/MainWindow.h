@@ -194,7 +194,7 @@ public slots:
 
 
     protected:
-        void closeEvent(QCloseEvent *) {QApplication::quit();}
+        void closeEvent(QCloseEvent *event);
         void keyPressEvent ( QKeyEvent * event );
 
     private:

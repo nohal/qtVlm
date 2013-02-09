@@ -303,6 +303,8 @@ void MainWindow::continueSetup()
     progress->newStep(25,tr("Creating context menus"));
     menuPopupBtRight = menuBar->createPopupBtRight(this);
 
+    /* restore state */
+    restoreState(Settings::getSetting("savedState","").toByteArray());
 
 //--------------------------------------------------
     progress->newStep(26,tr("Loading polars list"));
@@ -490,6 +492,9 @@ MainWindow::~MainWindow()
         Settings::setSetting("mainWindowPos", pos());
         Settings::setSetting("mainWindowMaximized",this->isMaximized()?"1":"0");
     }
+
+    Settings::setSetting("savedState",saveState());
+
     Settings::setSetting("projectionCX", proj->getCX());
     Settings::setSetting("projectionCY", proj->getCY());
     Settings::setSetting("projectionScale",  proj->getScale());
@@ -506,6 +511,13 @@ QMenu * MainWindow::createPopupMenu(void) {
         return toolBar->showHideMenu();
     else
         return NULL;
+}
+
+void MainWindow::closeEvent(QCloseEvent * /*event*/) {
+   // Settings::setSetting("toolBarState", saveState());
+    //qWarning() << saveState();
+    //QMainWindow::closeEvent(event);
+    QApplication::quit();
 }
 
 void MainWindow::keyPressEvent ( QKeyEvent  * /* event */ )
