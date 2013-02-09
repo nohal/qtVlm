@@ -585,7 +585,7 @@ void myCentralWidget::loadGshhs(void) {
     int polyVersion = gshhsReader->getPolyVersion();
     if(polyVersion==-1 || polyVersion!=220)
     {
-        mapDir=".";
+        mapDir=appFolder.value("maps");
         delete gshhsReader;
         gshhsReader = new GshhsReader((mapDir+"/gshhs").toLatin1().data());
         gshhsReader->setProj(proj);
