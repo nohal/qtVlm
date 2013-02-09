@@ -597,7 +597,7 @@ void MainWindow::closeProgress(void)
             menuBar->acFile_Lock->setEnabled(false);
             menuBar->acFile_Lock->setVisible(false);
             menuBar->separator1->setVisible(false);
-            this->separator1->setVisible(false);
+            toolBar->acLock->setVisible(false);
             proj->setScaleAndCenterInMap(selectedBoat->getZoom(),selectedBoat->getLon(),selectedBoat->getLat());
             if(Settings::getSetting("polarEfficiency",100).toInt()!=100)
             {

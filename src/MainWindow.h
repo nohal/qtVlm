@@ -266,8 +266,7 @@ public slots:
         void listAllChildren(QObject * ptr,int);
         bool noSave;
         bool restartNeeded;
-        void updateTitle();
-        QAction *separator1;
+        void updateTitle();       
 };
 
 #endif
