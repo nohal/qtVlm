@@ -139,8 +139,13 @@ void DialogVlmLog::slot_updateData(void)
 void DialogVlmLog::on_saveLogButton_clicked()
 {
     QString logsPath=Settings::getSetting("logsFolder","").toString();
+#ifdef __WIN_QTVLM
+    QString fileName = QFileDialog::getSaveFileName(this,
+                         tr("Sauvegarde Logs"), logsPath, "LogsDump (*.txt)",0,QFileDialog::DontUseNativeDialog);
+#else
     QString fileName = QFileDialog::getSaveFileName(this,
                          tr("Sauvegarde Logs"), logsPath, "LogsDump (*.txt)");
+#endif
     if(fileName.isEmpty() || fileName.isNull()) return;
     QFile::remove(fileName);
     QFile screenshotFile(fileName);
