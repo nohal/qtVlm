@@ -611,6 +611,11 @@ void MainWindow::closeProgress(void)
     }
     statusBar->show();
     menuBar->show();
+    QString filename="C:/Users/Philippe/Downloads/gfs_NOAA-2013021000.grb";
+    qWarning()<<"filename="<<filename;
+    //QString filter="Grib (*.grb)";
+    filename = QFileDialog::getSaveFileName(this,
+                     tr("Sauvegarde du fichier GRIB"), filename, "Grib (*.grb)",0,QFileDialog::DontUseNativeDialog);
 }
 
 //-------------------------------------------------

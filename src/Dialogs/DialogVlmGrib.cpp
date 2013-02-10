@@ -140,8 +140,12 @@ bool DialogVlmGrib::gribFileReceived(QByteArray * content)
         Settings::setSetting("edtGribFolder",gribPath);
     }
     filename=gribPath+"/"+filename;
+#ifdef __WIN_QTVLM
+    filename.replace("/","\\");
+#endif
     if(Settings::getSetting("askGribFolder",1)==1)
     {
+        qWarning()<<"filename="<<filename;
         filename = QFileDialog::getSaveFileName(this,
                          tr("Sauvegarde du fichier GRIB"), filename, "Grib (*.grb)");
     }
