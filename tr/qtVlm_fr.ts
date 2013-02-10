@@ -1515,10 +1515,6 @@ Etes-vous sur ?</source>
         <translation></translation>
     </message>
     <message>
-        <source>(dist.orthodromique:</source>
-        <translation></translation>
-    </message>
-    <message>
         <source>Pilototo</source>
         <translation></translation>
     </message>
@@ -1529,10 +1525,6 @@ Etes-vous sur ?</source>
     <message>
         <source>Selection d&apos;une marque</source>
         <translation>Sélection d&apos;une marque</translation>
-    </message>
-    <message>
-        <source>Prochaine vac dans</source>
-        <translation></translation>
     </message>
     <message>
         <source>Cartes non trouvees.</source>
@@ -1552,7 +1544,7 @@ Etes-vous sur ?</source>
     </message>
     <message>
         <source>deg</source>
-        <translation>°</translation>
+        <translation type="obsolete">°</translation>
     </message>
     <message>
         <source>Selection:</source>
@@ -1610,11 +1602,11 @@ Etes-vous sur ?</source>
     </message>
     <message>
         <source>Selection: </source>
-        <translation>Sélection:</translation>
+        <translation type="obsolete">Sélection:</translation>
     </message>
     <message>
         <source>  init.dir: %1deg</source>
-        <translation>  init.dir: %1°</translation>
+        <translation type="obsolete">  init.dir: %1°</translation>
     </message>
     <message>
         <source> Arrivee WP</source>
@@ -1622,11 +1614,7 @@ Etes-vous sur ?</source>
     </message>
     <message>
         <source> kts</source>
-        <translation>nds</translation>
-    </message>
-    <message>
-        <source>dd-MM-yyyy, HH:mm:ss</source>
-        <translation></translation>
+        <translation type="obsolete">nds</translation>
     </message>
     <message>
         <source> (du </source>
@@ -1646,11 +1634,7 @@ Etes-vous sur ?</source>
     </message>
     <message>
         <source>Derniere synchro</source>
-        <translation>Dernière synchro</translation>
-    </message>
-    <message>
-        <source> Courant</source>
-        <translation></translation>
+        <translation type="obsolete">Dernière synchro</translation>
     </message>
     <message>
         <source>dd/MM/yyyy hh:mm</source>
@@ -1667,10 +1651,6 @@ Etes-vous sur ?</source>
     <message>
         <source>de donnees Courants</source>
         <translation>de données Courants</translation>
-    </message>
-    <message>
-        <source> Vent</source>
-        <translation></translation>
     </message>
     <message>
         <source>Unable to write in qtVlm folder</source>
@@ -4346,6 +4326,49 @@ sans simplifier</translation>
     </message>
 </context>
 <context>
+    <name>StatusBar</name>
+    <message>
+        <source>deg</source>
+        <translation>°</translation>
+    </message>
+    <message>
+        <source> Vent</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source> kts</source>
+        <translation>nds</translation>
+    </message>
+    <message>
+        <source> Courant</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Selection: </source>
+        <translation>Sélection:</translation>
+    </message>
+    <message>
+        <source>(dist.orthodromique:</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>  init.dir: %1deg</source>
+        <translation>  init.dir: %1°</translation>
+    </message>
+    <message>
+        <source>Derniere synchro</source>
+        <translation>Dernière synchro</translation>
+    </message>
+    <message>
+        <source>dd-MM-yyyy, HH:mm:ss</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Prochaine vac dans</source>
+        <translation></translation>
+    </message>
+</context>
+<context>
     <name>Terrain</name>
     <message>
         <source>Calculs en cours...</source>
@@ -4400,10 +4423,6 @@ sans simplifier</translation>
     </message>
     <message>
         <source>Quitter</source>
-        <translation></translation>
-    </message>
-    <message>
-        <source>Ctrl+Q</source>
         <translation></translation>
     </message>
     <message>
@@ -4525,10 +4544,6 @@ sans simplifier</translation>
     <message>
         <source>Verrouiller</source>
         <translation>Verrouiller/déverrouiller l&apos;envoi d&apos;ordres à VLM</translation>
-    </message>
-    <message>
-        <source>Ctrl+L</source>
-        <translation></translation>
     </message>
     <message>
         <source>Verrouiller l&apos;envoi d&apos;ordre a VLM</source>
@@ -6757,21 +6772,6 @@ Que voulez vous faire?</translation>
     </message>
 </context>
 <context>
-    <name>myScene</name>
-    <message>
-        <source>Gesture</source>
-        <translation></translation>
-    </message>
-    <message>
-        <source>Pan gesture detected</source>
-        <translation></translation>
-    </message>
-    <message>
-        <source>Other gesture detected!!</source>
-        <translation></translation>
-    </message>
-</context>
-<context>
     <name>opponent</name>
     <message>
         <source>Status VLM:</source>
@@ -7570,6 +7570,10 @@ Que voulez vous faire?</translation>
     <message>
         <source>Mail SailsDoc</source>
         <translation>eMail à Sailsdoc</translation>
+    </message>
+    <message>
+        <source>Zoom on selection</source>
+        <translation>Zoomer sur la sélection</translation>
     </message>
 </context>
 <context>
