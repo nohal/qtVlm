@@ -605,6 +605,8 @@ void MainWindow::closeProgress(void)
                 emit boatHasUpdated(selectedBoat);
             }
         }
+        else
+            updatePilototo_Btn((boatVLM*)selectedBoat);
         myBoard->boatUpdated(selectedBoat);
     }
     statusBar->show();
