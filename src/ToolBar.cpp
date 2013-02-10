@@ -273,6 +273,7 @@ void ToolBar::load_settings(void) {
         toolBar->setVisible(Settings::getSetting(key,true,"ToolBar").toBool());
         toolBar->setEnabled(toolBar->isVisible());
         toolBar->set_displayed(toolBar->isVisible());
+        toolBar->initCanHide();
     }
 }
 
@@ -583,4 +584,9 @@ void MyToolBar::chgVisibilty(bool visibility) {
 
    blockSignals(false);
 
+}
+
+void MyToolBar::initCanHide(void) {
+    setFloatable(canHide);
+    setMovable(canHide);
 }

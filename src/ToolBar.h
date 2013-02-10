@@ -44,6 +44,8 @@ class MyToolBar: public QToolBar {
 
         void chgVisibilty(bool visibility);
 
+        void initCanHide(void);
+
     public slots:
         void slot_visibilityChanged(bool visibility);
 
