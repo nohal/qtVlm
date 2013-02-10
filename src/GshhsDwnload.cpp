@@ -46,7 +46,8 @@ GshhsDwnload::GshhsDwnload(myCentralWidget * centralWidget, inetConnexion *inet)
     this->centralWidget=centralWidget;
 }
 
-#define MAP_FNAME  "qtVlmMaps.zip" //"win_exe-3.1-1.zip"
+#define MAP_FNAME  "qtVlmMaps.zip"
+//"win_exe-3.1-1.zip"
 //"qtVlmMaps.zip"
 
 void GshhsDwnload::requestFinished(QByteArray res) {
@@ -110,11 +111,12 @@ void GshhsDwnload::getMaps(void) {
             QCoreApplication::processEvents();
         }
 
+        int res = miniunzip(UZ_OVERWRITE,(const char*)filename.toLatin1().data(),dir.toLatin1().data(),NULL,NULL);
 
-        if(miniunzip(UZ_OVERWRITE,(const char*)filename.toLatin1().data(),dir.toLatin1().data(),NULL,NULL)!=UNZ_OK) {
+        if(res!=UNZ_OK) {
             QMessageBox::critical(centralWidget,
                                   tr("Saving maps"),
-                                  tr("Zip file ") + filename + tr(" can't be unzip"));
+                                  tr("Zip file ") + filename + tr(" can't be unzip")+" (error="+QString().setNum(res)+")");
         }
         else {
             centralWidget->loadGshhs();

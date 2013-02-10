@@ -26,7 +26,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "class_list.h"
 
 class Progress: public QProgressDialog
-{   Q_OBJECT
+{
     public:
         Progress(MainWindow *mainWindow);
 

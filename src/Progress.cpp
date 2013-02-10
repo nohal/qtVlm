@@ -18,6 +18,8 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ***********************************************************************/
 
+#include <QObject>
+
 #include "MainWindow.h"
 #include "Progress.h"
 
@@ -25,7 +27,7 @@ Progress::Progress(MainWindow * mainWindow): QProgressDialog(mainWindow,Qt::Fram
 {
     this->mainWindow=mainWindow;
 
-    setLabelText(tr("Starting qtVLM"));
+    setLabelText(QObject::tr("Starting qtVLM"));
     setMaximum(100);
     setMinimum(0);
     setCancelButton(NULL);
