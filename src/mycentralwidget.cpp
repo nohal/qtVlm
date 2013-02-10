@@ -4129,24 +4129,27 @@ void myCentralWidget::slot_playerSelected(Player * player)
         }
         else
             realBoat->playerDeActivated();
-        //qWarning() << "Deactivate current player ==> done";
     }
 
     currentPlayer = player;
+
+
+
     if(player)
     {
+        toolBar->chgBoatType(player->getType());
         if(player->getType() == BOAT_VLM)
         {
             if(player->getWrong()) return;
-            //qWarning() << "Activate player: managing boats (VLM)";
-            toolBar->boatList->setVisible(true);
             menuBar->ac_moveBoat->setVisible(false);
             menuBar->ac_moveBoatSep->setVisible(false);
             menuBar->acRace->setVisible(true);
             menuBar->acVLMSync->setVisible(true);
             menuBar->acPilototo->setVisible(true);
             menuBar->acShowPolar->setVisible(true);
-            //menuBar->acVLMParamBoat->setEnabled(true);
+            menuBar->acFile_Lock->setEnabled(true);
+            menuBar->acFile_Lock->setVisible(true);
+            menuBar->separator1->setVisible(true);
             boat_list=player->getBoats();
             QListIterator<boatVLM*> i(*boat_list);
             bool reselected=false;
@@ -4155,7 +4158,6 @@ void myCentralWidget::slot_playerSelected(Player * player)
             while(i.hasNext())
             {
                 boatVLM * boat=i.next();
-                //qWarning()<<"activating"<<boat->getName();
                 ++nn;
                 if(boat->getPlayer()!=player) continue;
                 boat->playerActivated();
@@ -4164,33 +4166,29 @@ void myCentralWidget::slot_playerSelected(Player * player)
                     thisOne=nn;
                     reselected=true;
                 }
-                //boat->setStatus(boat->getStatus());
             }
             realBoat=NULL;
-            //qWarning()<<"emitting accountListUpdated";
             emit accountListUpdated();
-            //qWarning()<<"dealing with vlmBoard";
             mainW->getBoard()->playerChanged(player);
-            //qWarning()<<"reselected="<<reselected;
             if(reselected)
             {
                 mainW->slotSelectBoat(boat_list->at(thisOne));
                 boat_list->at(thisOne)->setSelected(true);
                 mainW->getBoard()->boatUpdated(boat_list->at(thisOne));
             }
-            //qWarning()<<"emitting shRouBis";
             emit shRouBis();
         }
         else
-        {
-            toolBar->boatList->setVisible(false);
+        {            
             menuBar->ac_moveBoat->setVisible(true);
             menuBar->ac_moveBoatSep->setVisible(true);
             menuBar->acRace->setVisible(false);
             menuBar->acVLMSync->setVisible(false);
             menuBar->acPilototo->setVisible(false);
             menuBar->acShowPolar->setVisible(true);
-            //menuBar->acVLMParamBoat->setEnabled(false);
+            menuBar->acFile_Lock->setEnabled(false);
+            menuBar->acFile_Lock->setVisible(false);
+            menuBar->separator1->setVisible(false);
             realBoat=player->getRealBoat();
             realBoat->reloadPolar();
             mainW->slotSelectBoat(realBoat);
@@ -4199,13 +4197,11 @@ void myCentralWidget::slot_playerSelected(Player * player)
             mainW->getBoard()->boatUpdated(realBoat);
             mainW->slotBoatUpdated(realBoat,true,false);;
             emit shRouBis();
-            toolBar->insertBoatReal(realBoat->getplayerName());
         }
     }
     else
     {
-        toolBar->boatList->setVisible(false);
-        //menuBar->acVLMParamBoat->setEnabled(false);
+        toolBar->chgBoatType(BOAT_NOBOAT);
         boat_list=NULL;
         realBoat=NULL;
         emit shRouBis();

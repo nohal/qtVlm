@@ -40,7 +40,9 @@ class MyToolBar: public QToolBar {
         MyToolBar(QString name,QString title,ToolBar * toolBar,QWidget * parent,bool canHide=true);
         FCT_GET(QString,name)
         FCT_SETGET(bool,displayed)
-        FCT_GET(bool,canHide)
+        bool get_canHide(void) { return (canHide && !forceMenuHide); }
+
+        void chgVisibilty(bool visibility);
 
     public slots:
         void slot_visibilityChanged(bool visibility);
@@ -49,13 +51,14 @@ class MyToolBar: public QToolBar {
         void visibility_changed(MyToolBar *,bool);
 
     protected:
-        void closeEvent ( QCloseEvent * event );
+        //void closeEvent ( QCloseEvent * event );
 
     private:
         ToolBar * toolBar;
         QString name;
         bool displayed;
         bool canHide;
+        bool forceMenuHide;
 };
 
 
@@ -109,7 +112,6 @@ class ToolBar : public QObject
         QComboBox *boatList;
         void updateBoatList(QList<boatVLM*> & boat_list);
         void setSelectedBoatIndex(int index);
-        void insertBoatReal(QString name);
 
         /* ETA toolBar */
         QLabel * ETA;
@@ -122,6 +124,8 @@ class ToolBar : public QObject
 
         void load_settings(void);
         void save_settings(void);
+
+        void chgBoatType(int boatType);
 
     public slots:
         void slot_estimeValueChanged(int);

@@ -29,6 +29,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "Terrain.h"
 #include "boatVLM.h"
 
+/**********************************************************************/
+/*                         Gen fct                                    */
+/**********************************************************************/
+
 ToolBar::ToolBar(MainWindow *mainWindow)
 {
     /*********************/
@@ -216,7 +220,7 @@ ToolBar::ToolBar(MainWindow *mainWindow)
     connect(acLock, SIGNAL(triggered()), mainWindow, SLOT(slotFile_Lock()));
     connect(boatList, SIGNAL(activated(int)),mainWindow, SLOT(slotChgBoat(int)));
 
-    load_settings();
+    //load_settings();
 }
 
 QMenu * ToolBar::showHideMenu(void) {    
@@ -238,8 +242,16 @@ QMenu * ToolBar::showHideMenu(void) {
 
 }
 
-void ToolBar::clear_eta(void) {
-    ETA->setText(tr("No WP"));
+void ToolBar::chgBoatType(int boatType) {
+    switch(boatType) {
+        case BOAT_VLM:
+            boatToolBar->chgVisibilty(true);
+            break;
+        case BOAT_REAL:
+        case BOAT_NOBOAT:
+            boatToolBar->chgVisibilty(false);
+            break;
+    }
 }
 
 QAction* ToolBar::init_Action(QString title, QString shortcut, QString statustip,QString iconFileName,QToolBar * toolBar)
@@ -252,6 +264,32 @@ QAction* ToolBar::init_Action(QString title, QString shortcut, QString statustip
     if (iconFileName != "")
         action->setIcon(QIcon(iconFileName));
     return action;
+}
+
+void ToolBar::load_settings(void) {
+    for(int i=0;i<toolBarList.count();++i) {
+        MyToolBar * toolBar = toolBarList.at(i);
+        QString key = "TB_" + toolBar->get_name();
+        toolBar->setVisible(Settings::getSetting(key,true,"ToolBar").toBool());
+        toolBar->setEnabled(toolBar->isVisible());
+        toolBar->set_displayed(toolBar->isVisible());
+    }
+}
+
+void ToolBar::save_settings(void) {
+    for(int i=0;i<toolBarList.count();++i) {
+        MyToolBar * toolBar = toolBarList.at(i);
+        QString key = "TB_" + toolBar->get_name();
+        Settings::setSetting(key,toolBar->get_displayed(),"ToolBar");
+    }
+}
+
+/**********************************************************************/
+/*                         ETA                                        */
+/**********************************************************************/
+
+void ToolBar::clear_eta(void) {
+    ETA->setText(tr("No WP"));
 }
 
 void ToolBar::update_eta(QDateTime eta_dtm) {
@@ -273,6 +311,10 @@ void ToolBar::update_eta(QDateTime eta_dtm) {
     txt.replace("s",tr("s"));
     ETA->setText(tr(" Arrivee WP")+": " +eta_dtm.toString(tr("dd-MM-yyyy, HH:mm:ss"))+ " " +txt);
 }
+
+/**********************************************************************/
+/*                         Estime                                     */
+/**********************************************************************/
 
 void ToolBar::slot_estimeValueChanged(int value) {
     switch(Settings::getSetting("estimeType","0").toInt())
@@ -355,22 +397,9 @@ void ToolBar::slot_estimeStartChanged(int state) {
     emit estimeParamChanged();
 }
 
-void ToolBar::load_settings(void) {
-    for(int i=0;i<toolBarList.count();++i) {
-        MyToolBar * toolBar = toolBarList.at(i);
-        QString key = "TB_" + toolBar->get_name();
-        toolBar->setVisible(Settings::getSetting(key,true,"ToolBar").toBool());
-        toolBar->set_displayed(toolBar->isVisible());
-    }
-}
-
-void ToolBar::save_settings(void) {
-    for(int i=0;i<toolBarList.count();++i) {
-        MyToolBar * toolBar = toolBarList.at(i);
-        QString key = "TB_" + toolBar->get_name();
-        Settings::setSetting(key,toolBar->get_displayed(),"ToolBar");
-    }
-}
+/**********************************************************************/
+/*                         Grib                                       */
+/**********************************************************************/
 
 void ToolBar::update_gribBtn(void) {
     Grib * grib = centralWidget->getGrib();
@@ -432,31 +461,6 @@ void ToolBar::stopPlaying(void) {
     disconnect(centralWidget->getTerre(),SIGNAL(terrainUpdated()),mainWindow,SLOT(slotDateGribChanged_next()));
 }
 
-void ToolBar::updateBoatList(QList<boatVLM*> & boat_list) {
-    while(boatList->count())
-        boatList->removeItem(0);
-    QListIterator<boatVLM*> i (boat_list);
-    while(i.hasNext()) {
-        boatVLM * acc = i.next();
-        if(acc->getStatus()) {
-            if(acc->getAliasState())
-                boatList->addItem(acc->getAlias() + "(" + acc->getBoatPseudo() + ")");
-            else
-                boatList->addItem(acc->getBoatPseudo());
-        }
-    }
-}
-
-void ToolBar::setSelectedBoatIndex(int index) {
-    boatList->setCurrentIndex(index);
-}
-
-void ToolBar::insertBoatReal(QString name) {
-    boatList->clear();
-    boatList->addItem(name);
-    boatList->setCurrentIndex(0);
-}
-
 void ToolBar::slot_gribDwnld(void) {
     switch(Settings::getSetting("defaultGribDwnld",GRIB_DWNLD_ZYGRIB,"ToolBar").toInt()) {
         case GRIB_DWNLD_ZYGRIB: slot_gribZygrib(); break;
@@ -504,6 +508,28 @@ void ToolBar::update_gribDownloadBtn(void) {
         gribDwnld->setIcon(QIcon(iconString));
 }
 
+/**********************************************************************/
+/*                         Boat                                       */
+/**********************************************************************/
+
+void ToolBar::updateBoatList(QList<boatVLM*> & boat_list) {
+    while(boatList->count())
+        boatList->removeItem(0);
+    QListIterator<boatVLM*> i (boat_list);
+    while(i.hasNext()) {
+        boatVLM * acc = i.next();
+        if(acc->getStatus()) {
+            if(acc->getAliasState())
+                boatList->addItem(acc->getAlias() + "(" + acc->getBoatPseudo() + ")");
+            else
+                boatList->addItem(acc->getBoatPseudo());
+        }
+    }
+}
+
+void ToolBar::setSelectedBoatIndex(int index) {
+    boatList->setCurrentIndex(index);
+}
 
 /****************************************************/
 /* MyToolBar                                        */
@@ -514,21 +540,47 @@ MyToolBar::MyToolBar(QString name,QString title,ToolBar *toolBar, QWidget *paren
     setObjectName(name);
     this->toolBar=toolBar;
     displayed=true;
+    forceMenuHide=false;
     this->canHide=canHide;
     if(!canHide) {
         setFloatable(false);
         setMovable(false);
     }
+    hide();
     connect(this,SIGNAL(visibilityChanged(bool)),this,SLOT(slot_visibilityChanged(bool)));
 }
 
+/*
 void MyToolBar::closeEvent ( QCloseEvent * event ) {
     qWarning() << "Closing tool " << name;
     displayed=false;
     QToolBar::closeEvent(event);
 }
+*/
 
+/* we follow here visibility status */
 void MyToolBar::slot_visibilityChanged(bool visibility) {
-    if(visibility)
-        set_displayed(true);
+    //qWarning() << "visibilty of " << name << " : " << visibility;
+    set_displayed(visibility);
+    setEnabled(visibility);
+}
+
+/* manage visibilty without signals, so we can keep displayed status
+ * visibilty = false => keep current status in displayed var and hide
+ * toolBar entry in menu by setting forceMenuHide to TRUE
+ * visibility = true => restore toolBar state using displayed var and
+ * set forceMenuHide to FALSE in order to use only canHide var to hide/show
+ * menu entry
+ */
+void MyToolBar::chgVisibilty(bool visibility) {
+   blockSignals(true);
+   forceMenuHide=!visibility;
+   if(visibility && !displayed)
+           visibility=false;
+
+   setEnabled(visibility);
+   setVisible(visibility);
+
+   blockSignals(false);
+
 }

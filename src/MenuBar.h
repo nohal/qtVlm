@@ -61,18 +61,11 @@ class MenuBar : public QMenuBar
 public:
     MenuBar(QWidget *parent);
 
-    //void setQuality(int q);
     void setCitiesNamesLevel(int level);
     void setMenubarColorMapMode(int colorMapMode);
     void setIsobarsStep(int step);
     void setIsotherms0Step(int step);
 
-    /*void updateListeDates(std::set<time_t> *setDates);
-    time_t  getDateGribById(int id);
-    int  getNearestDateGrib(time_t tm);*/
-
-    //void updateBoatList(QList<boatVLM*> & boat_list);
-    //void insertBoatReal(QString name);
     void clearListeDates(void);
     void setSelectedBoatIndex(int index);
     void addMenuRoute(ROUTE * route);

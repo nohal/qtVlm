@@ -305,6 +305,7 @@ void MainWindow::continueSetup()
 
     /* restore state */
     restoreState(Settings::getSetting("savedState","").toByteArray());
+    toolBar->load_settings();
 
 //--------------------------------------------------
     progress->newStep(26,tr("Loading polars list"));
@@ -493,6 +494,7 @@ MainWindow::~MainWindow()
         Settings::setSetting("mainWindowMaximized",this->isMaximized()?"1":"0");
     }
 
+    toolBar->save_settings();
     Settings::setSetting("savedState",saveState());
 
     Settings::setSetting("projectionCX", proj->getCX());
@@ -593,11 +595,7 @@ void MainWindow::closeProgress(void)
     else if(selectedBoat)
     {
         if(selectedBoat->getType()==BOAT_REAL)
-        {
-            menuBar->acFile_Lock->setEnabled(false);
-            menuBar->acFile_Lock->setVisible(false);
-            menuBar->separator1->setVisible(false);
-            toolBar->acLock->setVisible(false);
+        {                        
             proj->setScaleAndCenterInMap(selectedBoat->getZoom(),selectedBoat->getLon(),selectedBoat->getLat());
             if(Settings::getSetting("polarEfficiency",100).toInt()!=100)
             {
