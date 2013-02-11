@@ -604,7 +604,10 @@ void MainWindow::closeProgress(void)
             }
         }
         else
+        {
             updatePilototo_Btn((boatVLM*)selectedBoat);
+            this->slotUpdateOpponent();
+        }
         myBoard->boatUpdated(selectedBoat);
         emit WPChanged(selectedBoat->getWPLat(),selectedBoat->getWPLon());
     }
