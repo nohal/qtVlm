@@ -1502,7 +1502,7 @@ Etes-vous sur ?</source>
         <location filename="../src/Dialogs/DialogRoute.cpp" line="845"/>
         <location filename="../src/Dialogs/DialogRoute.cpp" line="885"/>
         <source>Pour utiliser cette action il faut que la route parte du bateau</source>
-        <translation type="unfinished">To use this action route must be starting from boat&apos;s position</translation>
+        <translation>Para utilizar esta acción la ruta ha de comenzar en el barco</translation>
     </message>
     <message>
         <location filename="../src/Dialogs/DialogRoute.cpp" line="922"/>
@@ -2233,17 +2233,17 @@ Etes-vous sur ?</source>
     <message>
         <location filename="../src/MainWindow.cpp" line="292"/>
         <source>Initializing status bar</source>
-        <translation type="unfinished"></translation>
+        <translation>Iniciando la barra de estado</translation>
     </message>
     <message>
         <location filename="../src/MainWindow.cpp" line="296"/>
         <source>Initializing tool bar</source>
-        <translation type="unfinished"></translation>
+        <translation>Iniciando la barra de herramientas</translation>
     </message>
     <message>
         <location filename="../src/MainWindow.cpp" line="319"/>
         <source>Creating board &amp; dialogs</source>
-        <translation type="unfinished"></translation>
+        <translation>Creando pantalla y diálogos</translation>
     </message>
     <message>
         <location filename="../src/MainWindow.cpp" line="671"/>
@@ -2388,12 +2388,12 @@ Etes-vous sur ?</source>
     <message>
         <location filename="../src/MainWindow.cpp" line="1171"/>
         <source>Simplifier la route</source>
-        <translation type="unfinished">Simplify route</translation>
+        <translation>Simplificar ruta</translation>
     </message>
     <message>
         <location filename="../src/MainWindow.cpp" line="1175"/>
         <source>Optimiser la route</source>
-        <translation type="unfinished">Optimize route</translation>
+        <translation>Optimizar ruta</translation>
     </message>
     <message>
         <location filename="../src/MainWindow.cpp" line="1179"/>
@@ -2403,7 +2403,7 @@ Etes-vous sur ?</source>
     <message>
         <location filename="../src/MainWindow.cpp" line="1183"/>
         <source>Zoom sur la route </source>
-        <translation type="unfinished">Zoom  sobre la ruta</translation>
+        <translation>Zoom  sobre la ruta</translation>
     </message>
     <message>
         <location filename="../src/MainWindow.cpp" line="1186"/>
@@ -2413,7 +2413,7 @@ Etes-vous sur ?</source>
     <message>
         <location filename="../src/MainWindow.cpp" line="1407"/>
         <source>Boats init</source>
-        <translation type="unfinished"></translation>
+        <translation>Inic. barcos</translation>
     </message>
     <message>
         <location filename="../src/MainWindow.cpp" line="1167"/>
@@ -2432,17 +2432,17 @@ Etes-vous sur ?</source>
     <message>
         <location filename="../src/MainWindow.cpp" line="1741"/>
         <source>Updating players</source>
-        <translation type="unfinished"></translation>
+        <translation>Actualizando jugadores</translation>
     </message>
     <message>
         <location filename="../src/MainWindow.cpp" line="1745"/>
         <source>Selecting player</source>
-        <translation type="unfinished"></translation>
+        <translation>Seleccionando jugador</translation>
     </message>
     <message>
         <location filename="../src/MainWindow.cpp" line="1748"/>
         <source>loading POIs</source>
-        <translation type="unfinished"></translation>
+        <translation>Cargando PDIs</translation>
     </message>
     <message>
         <source> vacs </source>
@@ -3224,7 +3224,7 @@ Etes-vous sur ?</source>
     <message>
         <location filename="../src/MenuBar.cpp" line="442"/>
         <source>QtVlm forum</source>
-        <translation type="unfinished"></translation>
+        <translation>Foro QtVlm</translation>
     </message>
     <message>
         <source>Augmenter l&apos;echelle de la carte</source>
@@ -3806,12 +3806,12 @@ Etes-vous sur ?</source>
     <message>
         <location filename="../src/MenuBar.cpp" line="479"/>
         <source>Simplifier la route</source>
-        <translation type="unfinished">Simplify route</translation>
+        <translation>Simplificar la ruta</translation>
     </message>
     <message>
         <location filename="../src/MenuBar.cpp" line="480"/>
         <source>Optimiser la route</source>
-        <translation type="unfinished">Optimize route</translation>
+        <translation>Optimizar la ruta</translation>
     </message>
     <message>
         <location filename="../src/MenuBar.cpp" line="481"/>
@@ -3853,7 +3853,7 @@ Etes-vous sur ?</source>
     <message>
         <location filename="../src/MenuBar.cpp" line="482"/>
         <source>Zoom sur la route </source>
-        <translation type="unfinished">Zoom  sobre la ruta</translation>
+        <translation>Zoom  sobre la ruta</translation>
     </message>
     <message>
         <location filename="../src/MenuBar.cpp" line="483"/>
@@ -3942,13 +3942,13 @@ Etes-vous sur ?</source>
         <location filename="../src/POI.cpp" line="236"/>
         <location filename="../src/POI.cpp" line="523"/>
         <source>Simplifier la route </source>
-        <translation type="unfinished"></translation>
+        <translation>Simplificar la ruta</translation>
     </message>
     <message>
         <location filename="../src/POI.cpp" line="240"/>
         <location filename="../src/POI.cpp" line="526"/>
         <source>Optimiser la route </source>
-        <translation type="unfinished"></translation>
+        <translation>Optimizar la ruta</translation>
     </message>
     <message>
         <location filename="../src/POI.cpp" line="244"/>
@@ -4098,12 +4098,12 @@ Etes-vous sur ?</source>
     <message>
         <location filename="../src/POI.cpp" line="1085"/>
         <source>Optimisation du placement d&apos;un POI</source>
-        <translation type="unfinished">Optimización de la situación de un PDI</translation>
+        <translation>Optimizar la posición de un PDI</translation>
     </message>
     <message>
         <location filename="../src/POI.cpp" line="1086"/>
         <source>Vous ne pouvez pas optimiser en mode VBVMG-VLM</source>
-        <translation type="unfinished">No puedes optimizar en VBVMG-VLM</translation>
+        <translation>No puedes optimizar en VBVMG-VLM</translation>
     </message>
     <message>
         <location filename="../src/POI.cpp" line="1130"/>
@@ -4453,7 +4453,7 @@ Etes-vous sur ?</source>
     <message>
         <location filename="../src/Progress.cpp" line="28"/>
         <source>Starting qtVLM</source>
-        <translation type="unfinished">Iniciando qtVLM</translation>
+        <translation>Iniciando qtVLM</translation>
     </message>
 </context>
 <context>
@@ -4856,7 +4856,7 @@ Etes-vous sur ?</source>
     <message>
         <location filename="../src/mycentralwidget.cpp" line="3419"/>
         <source>Cette operation est impossible si le mode de calcul VBVMG est celui de VLM</source>
-        <translation type="unfinished">Esta operación no está permitida si el modo de cálculo VB-VMG es de VLM</translation>
+        <translation>Esta operación no está permitida si el modo de cálculo VB-VMG es de VLM</translation>
     </message>
     <message>
         <location filename="../src/mycentralwidget.cpp" line="3571"/>
@@ -5201,7 +5201,7 @@ VMG %.2f kts</translation>
     <message>
         <location filename="../src/routage.cpp" line="2819"/>
         <source>Supprimer les autres routages</source>
-        <translation type="unfinished"></translation>
+        <translation>Borrar los otros enrutamientos</translation>
     </message>
     <message>
         <location filename="../src/routage.cpp" line="2835"/>
@@ -5211,7 +5211,7 @@ VMG %.2f kts</translation>
     <message>
         <location filename="../src/routage.cpp" line="2836"/>
         <source>La route partira du point de depart et a l&apos;heure de depart du routage</source>
-        <translation type="unfinished">Route will be starting from routing&apos;s starting point and date</translation>
+        <translation>La ruta comenzará desde el punto inicial y fecha del enrutamiento</translation>
     </message>
     <message>
         <location filename="../src/routage.cpp" line="3373"/>
@@ -5579,12 +5579,12 @@ nds</extracomment>
     <message>
         <location filename="../src/Ui/Routage_Editor.ui" line="591"/>
         <source>Routage Orthodromique</source>
-        <translation type="unfinished">Orthodromic routing</translation>
+        <translation>Enrutamiento ortodrómico</translation>
     </message>
     <message>
         <location filename="../src/Ui/Routage_Editor.ui" line="605"/>
         <source>Afficher la meilleure route pendant le calcul</source>
-        <translation type="unfinished">Show best route during calculation</translation>
+        <translation>Mostrar la mejor ruta durante el cálculo</translation>
     </message>
     <message>
         <location filename="../src/Ui/Routage_Editor.ui" line="676"/>
@@ -6275,39 +6275,39 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../src/ToolBar.cpp" line="44"/>
         <source>Misc</source>
-        <translation type="unfinished"></translation>
+        <translation>Misc</translation>
     </message>
     <message>
         <location filename="../src/ToolBar.cpp" line="47"/>
         <source>Grib</source>
-        <translation type="unfinished">Grib</translation>
+        <translation>Grib</translation>
     </message>
     <message>
         <location filename="../src/ToolBar.cpp" line="50"/>
         <location filename="../src/ToolBar.cpp" line="142"/>
         <source>Selection</source>
-        <translation type="unfinished"></translation>
+        <translation>Selección</translation>
     </message>
     <message>
         <location filename="../src/ToolBar.cpp" line="53"/>
         <location filename="../src/ToolBar.cpp" line="152"/>
         <source>Estime</source>
-        <translation type="unfinished"></translation>
+        <translation>Estima</translation>
     </message>
     <message>
         <location filename="../src/ToolBar.cpp" line="56"/>
         <source>Boat</source>
-        <translation type="unfinished"></translation>
+        <translation>Barco</translation>
     </message>
     <message>
         <location filename="../src/ToolBar.cpp" line="59"/>
         <source>ETA</source>
-        <translation type="unfinished"></translation>
+        <translation>ETA</translation>
     </message>
     <message>
         <location filename="../src/ToolBar.cpp" line="77"/>
         <source>Quitter</source>
-        <translation type="unfinished">Salir</translation>
+        <translation>Salir</translation>
     </message>
     <message>
         <source>Ctrl+Q</source>
@@ -6316,201 +6316,201 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../src/ToolBar.cpp" line="77"/>
         <source>Bye</source>
-        <translation type="unfinished">Adiós</translation>
+        <translation>Adiós</translation>
     </message>
     <message>
         <location filename="../src/ToolBar.cpp" line="83"/>
         <source>Hold to select download method</source>
-        <translation type="unfinished"></translation>
+        <translation>Espera para seleccionar método de descarga</translation>
     </message>
     <message>
         <location filename="../src/ToolBar.cpp" line="85"/>
         <source>Telechargement zyGrib</source>
-        <translation type="unfinished"></translation>
+        <translation>Descarga de zyGrib</translation>
     </message>
     <message>
         <location filename="../src/ToolBar.cpp" line="86"/>
         <source>Telechargement VLM</source>
-        <translation type="unfinished">Descargar de VLM</translation>
+        <translation>Descargar de VLM</translation>
     </message>
     <message>
         <location filename="../src/ToolBar.cpp" line="87"/>
         <source>Telechargement SailsDoc</source>
-        <translation type="unfinished">Descargar de SailDocs</translation>
+        <translation>Descargar de SailDocs</translation>
     </message>
     <message>
         <location filename="../src/ToolBar.cpp" line="88"/>
         <source>Open a grib</source>
-        <translation type="unfinished"></translation>
+        <translation>Abrir un grib</translation>
     </message>
     <message>
         <location filename="../src/ToolBar.cpp" line="97"/>
         <source>Prevision precedente [page prec]</source>
-        <translation type="unfinished">Predicción anterior [página ante.]</translation>
+        <translation>Predicción anterior [página ante.]</translation>
     </message>
     <message>
         <location filename="../src/ToolBar.cpp" line="98"/>
         <source>PgUp</source>
-        <translation type="unfinished">PgUp</translation>
+        <translation>PgUp</translation>
     </message>
     <message>
         <location filename="../src/ToolBar.cpp" line="99"/>
         <source>Prevision suivante [page suiv]</source>
-        <translation type="unfinished">Predicción siguiente [página sig.]</translation>
+        <translation>Predicción siguiente [página sig.]</translation>
     </message>
     <message>
         <location filename="../src/ToolBar.cpp" line="100"/>
         <source>PgDown</source>
-        <translation type="unfinished">PgDown</translation>
+        <translation>PgDown</translation>
     </message>
     <message>
         <location filename="../src/ToolBar.cpp" line="101"/>
         <source>Animation du grib</source>
-        <translation type="unfinished"></translation>
+        <translation>Animación de un grib</translation>
     </message>
     <message>
         <location filename="../src/ToolBar.cpp" line="103"/>
         <source>Now</source>
-        <translation type="unfinished">Ahora</translation>
+        <translation>Ahora</translation>
     </message>
     <message>
         <location filename="../src/ToolBar.cpp" line="104"/>
         <source>Select date</source>
-        <translation type="unfinished"></translation>
+        <translation>Selecciona una fecha</translation>
     </message>
     <message>
         <location filename="../src/ToolBar.cpp" line="109"/>
         <source>15 m</source>
-        <translation type="unfinished">15 m</translation>
+        <translation>15 m</translation>
     </message>
     <message>
         <location filename="../src/ToolBar.cpp" line="110"/>
         <source>30 m</source>
-        <translation type="unfinished">30 m</translation>
+        <translation>30 m</translation>
     </message>
     <message>
         <location filename="../src/ToolBar.cpp" line="111"/>
         <source>1 h</source>
-        <translation type="unfinished">1 h</translation>
+        <translation>1 h</translation>
     </message>
     <message>
         <location filename="../src/ToolBar.cpp" line="112"/>
         <source>2 h</source>
-        <translation type="unfinished">2 h</translation>
+        <translation>2 h</translation>
     </message>
     <message>
         <location filename="../src/ToolBar.cpp" line="113"/>
         <source>3 h</source>
-        <translation type="unfinished">3 h</translation>
+        <translation>3 h</translation>
     </message>
     <message>
         <location filename="../src/ToolBar.cpp" line="114"/>
         <source>6 h</source>
-        <translation type="unfinished">6 h</translation>
+        <translation>6 h</translation>
     </message>
     <message>
         <location filename="../src/ToolBar.cpp" line="115"/>
         <source>12 h</source>
-        <translation type="unfinished">12 h</translation>
+        <translation>12 h</translation>
     </message>
     <message>
         <location filename="../src/ToolBar.cpp" line="132"/>
         <location filename="../src/ToolBar.cpp" line="133"/>
         <source>Augmenter l&apos;echelle de la carte</source>
-        <translation type="unfinished">Aumentar la escala de la carta</translation>
+        <translation>Aumentar la escala de la carta</translation>
     </message>
     <message>
         <location filename="../src/ToolBar.cpp" line="134"/>
         <location filename="../src/ToolBar.cpp" line="135"/>
         <source>Diminuer l&apos;echelle de la carte</source>
-        <translation type="unfinished">Disminuir la escla de la carta</translation>
+        <translation>Disminuir la escla de la carta</translation>
     </message>
     <message>
         <location filename="../src/ToolBar.cpp" line="136"/>
         <source>Zoom (selection ou fichier Grib)</source>
-        <translation type="unfinished">Zoom (selección o archivo Grib)</translation>
+        <translation>Zoom (selección o archivo Grib)</translation>
     </message>
     <message>
         <location filename="../src/ToolBar.cpp" line="137"/>
         <source>Ctrl+Z</source>
-        <translation type="unfinished">Ctrl+Z</translation>
+        <translation>Ctrl+Z</translation>
     </message>
     <message>
         <location filename="../src/ToolBar.cpp" line="137"/>
         <source>Zoomer sur la zone selectionnee ou sur la surface du fichier Grib</source>
-        <translation type="unfinished">Zoom sobre la zona seleccionada o sobre el área del archivo Grib</translation>
+        <translation>Zoom sobre la zona seleccionada o sobre el área del archivo Grib</translation>
     </message>
     <message>
         <location filename="../src/ToolBar.cpp" line="139"/>
         <location filename="../src/ToolBar.cpp" line="140"/>
         <source>Afficher la carte entiere</source>
-        <translation type="unfinished">Mostrar toda la carta</translation>
+        <translation>Mostrar toda la carta</translation>
     </message>
     <message>
         <location filename="../src/ToolBar.cpp" line="157"/>
         <source>mins</source>
-        <translation type="unfinished"></translation>
+        <translation>mins</translation>
     </message>
     <message>
         <location filename="../src/ToolBar.cpp" line="158"/>
         <source>vacs</source>
-        <translation type="unfinished">cranks</translation>
+        <translation>turnos</translation>
     </message>
     <message>
         <location filename="../src/ToolBar.cpp" line="159"/>
         <source>NM</source>
-        <translation type="unfinished"></translation>
+        <translation>MN</translation>
     </message>
     <message>
         <location filename="../src/ToolBar.cpp" line="162"/>
         <source>Si cette option est cochee&lt;br&gt;l&apos;estime calcule la vitesse du bateau&lt;br&gt;a la prochaine vac.&lt;br&gt;Sinon elle utilise la vitesse du bateau&lt;br&gt;telle que donnee par VLM</source>
-        <translation type="unfinished">Si marcas esta opción&lt;br&gt;la velicidad del barco se calcula por estima&lt;br&gt;en el próximo turno.&lt;br&gt;De lo contrario se usa la velocidad proporcionada por VLM</translation>
+        <translation>Si marcas esta opción&lt;br&gt;la velicidad del barco se calcula por estima&lt;br&gt;en el próximo turno.&lt;br&gt;De lo contrario se usa la velocidad proporcionada por VLM</translation>
     </message>
     <message>
         <location filename="../src/ToolBar.cpp" line="171"/>
         <source>Verrouiller</source>
-        <translation type="unfinished">Bloquear</translation>
+        <translation>Bloquear</translation>
     </message>
     <message>
         <location filename="../src/ToolBar.cpp" line="171"/>
         <source>Verrouiller l&apos;envoi d&apos;ordre a VLM</source>
-        <translation type="unfinished">Bloquee el envío de orden a VLM</translation>
+        <translation>Bloquee el envío de orden a VLM</translation>
     </message>
     <message>
         <location filename="../src/ToolBar.cpp" line="178"/>
         <location filename="../src/ToolBar.cpp" line="293"/>
         <source>No WP</source>
-        <translation type="unfinished"></translation>
+        <translation>No WP</translation>
     </message>
     <message>
         <location filename="../src/ToolBar.cpp" line="309"/>
         <source>j</source>
-        <translation type="unfinished">d</translation>
+        <translation>d</translation>
     </message>
     <message>
         <location filename="../src/ToolBar.cpp" line="310"/>
         <source>h</source>
-        <translation type="unfinished">h</translation>
+        <translation>h</translation>
     </message>
     <message>
         <location filename="../src/ToolBar.cpp" line="311"/>
         <source>m</source>
-        <translation type="unfinished">m</translation>
+        <translation>m</translation>
     </message>
     <message>
         <location filename="../src/ToolBar.cpp" line="312"/>
         <source>s</source>
-        <translation type="unfinished">s</translation>
+        <translation>s</translation>
     </message>
     <message>
         <location filename="../src/ToolBar.cpp" line="313"/>
         <source> Arrivee WP</source>
-        <translation type="unfinished">Llegada a WP</translation>
+        <translation>Llegada a WP</translation>
     </message>
     <message>
         <location filename="../src/ToolBar.cpp" line="313"/>
         <source>dd-MM-yyyy, HH:mm:ss</source>
-        <translation type="unfinished">dd-MM-yyyy, HH:mm:ss</translation>
+        <translation>dd-MM-yyyy, HH:mm:ss</translation>
     </message>
 </context>
 <context>
@@ -6711,12 +6711,12 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../src/Ui/paramVLM.ui" line="736"/>
         <source>Algorithme de simplification maximal</source>
-        <translation type="unfinished"></translation>
+        <translation>Algoritmo de simplificación máxima</translation>
     </message>
     <message>
         <location filename="../src/Ui/paramVLM.ui" line="1027"/>
         <source>Demander egalement la pression atmospherique</source>
-        <translation type="unfinished">Also ask for Air Pressure</translation>
+        <translation>Solicitar también presión atmosférica</translation>
     </message>
     <message>
         <location filename="../src/Ui/paramVLM.ui" line="1235"/>
@@ -8624,7 +8624,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../src/Ui/finePosit.ui" line="128"/>
         <source>Ecart automatique</source>
-        <translation type="unfinished"></translation>
+        <translation>Diferencia automática</translation>
     </message>
     <message>
         <location filename="../src/Ui/finePosit.ui" line="51"/>
@@ -9901,17 +9901,17 @@ Voulez-vous egalement supprimer tous les POIs lui appartenant?</source>
     <message>
         <location filename="../src/opponentBoat.cpp" line="359"/>
         <source>Trop loin pour estimer le cap et la vitesse</source>
-        <translation type="unfinished">Demasiado lejos para estimar rumbo y velocidad</translation>
+        <translation>Demasiado lejos para estimar rumbo y velocidad</translation>
     </message>
     <message>
         <location filename="../src/opponentBoat.cpp" line="361"/>
         <source>Distance: </source>
-        <translation type="unfinished"></translation>
+        <translation>Distancia: </translation>
     </message>
     <message>
         <location filename="../src/opponentBoat.cpp" line="363"/>
         <source> NM</source>
-        <translation type="unfinished"></translation>
+        <translation>MN</translation>
     </message>
     <message>
         <location filename="../src/opponentBoat.cpp" line="377"/>
@@ -10847,37 +10847,37 @@ Voulez-vous egalement supprimer tous les POIs lui appartenant?</source>
     <message>
         <location filename="../src/selectionWidget.cpp" line="42"/>
         <source>Effacer toutes les marques</source>
-        <translation type="unfinished">Borrar todas las marcas</translation>
+        <translation>Borrar todas las marcas</translation>
     </message>
     <message>
         <location filename="../src/selectionWidget.cpp" line="43"/>
         <source>Effacer les marques...</source>
-        <translation type="unfinished">Borrar marcas...</translation>
+        <translation>Borrar marcas...</translation>
     </message>
     <message>
         <location filename="../src/selectionWidget.cpp" line="44"/>
         <source>Rendre toutes les marques non-simplifiables</source>
-        <translation type="unfinished">Hacer todas las marcas no simplificables</translation>
+        <translation>Hacer todas las marcas no simplificables</translation>
     </message>
     <message>
         <location filename="../src/selectionWidget.cpp" line="45"/>
         <source>Rendre toutes les marques simplifiables</source>
-        <translation type="unfinished">Hacer todas las marcas simplificables</translation>
+        <translation>Hacer todas las marcas simplificables</translation>
     </message>
     <message>
         <location filename="../src/selectionWidget.cpp" line="46"/>
         <source>Download with ZyGrib</source>
-        <translation type="unfinished"></translation>
+        <translation>Descargar con zyGrib</translation>
     </message>
     <message>
         <location filename="../src/selectionWidget.cpp" line="47"/>
         <source>Mail SailsDoc</source>
-        <translation type="unfinished"></translation>
+        <translation>Mail Saildocs</translation>
     </message>
     <message>
         <location filename="../src/selectionWidget.cpp" line="48"/>
         <source>Zoom on selection</source>
-        <translation type="unfinished"></translation>
+        <translation>Zoom sobre selección</translation>
     </message>
 </context>
 <context>
