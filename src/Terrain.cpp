@@ -180,6 +180,8 @@ void Terrain::draw_GSHHSandGRIB()
 //        gshhsReader->drawSeaBorders(pnt, proj);
 //        return;
 //    }
+    if(parent->getKap())
+        parent->getKap()->slot_updateProjection();
     QCursor oldcursor = cursor();
     setCursor(Qt::WaitCursor);
     if (imgAll != NULL) {

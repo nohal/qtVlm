@@ -55,7 +55,7 @@ loadImg::loadImg(Projection *proj, myCentralWidget *parent)
     //gribKap->setFlag(QGraphicsItem::ItemIgnoresParentOpacity,true);
     gribKap->setOpacity(1);
     gribKap->setPos(0,0);
-    connect (proj,SIGNAL(projectionUpdated()),this,SLOT(slot_updateProjection()));
+    //connect (proj,SIGNAL(projectionUpdated()),this,SLOT(slot_updateProjection()));
     this->parent->getScene()->addItem(this);
     this->alpha=Settings::getSetting("kapAlpha",1.0).toDouble();
     this->gribAlpha=Settings::getSetting("kapGribAlpha",1.0).toDouble();
@@ -156,7 +156,10 @@ bool loadImg::setMyImgFileName(QString s)
         for(int i=0;i<borders.count();++i)
         {
             int X,Y;
-            proj->map2screen(borders.at(i).x(),borders.at(i).y(),&X,&Y);
+            if(i==0)
+                proj->map2screen(borders.at(i).x(),borders.at(i).y(),&X,&Y);
+            else
+                proj->map2screenByReference(borders.at(i-1).x(),bordersXY.last().x(),borders.at(i).x(),borders.at(i).y(),&X,&Y);
             bordersXY.append(QPoint(X,Y));
         }
         QRectF br=bordersXY.boundingRect();
@@ -210,7 +213,10 @@ void loadImg::slot_updateProjection()
     for(int i=0;i<borders.count();++i)
     {
         int X,Y;
-        proj->map2screen(borders.at(i).x(),borders.at(i).y(),&X,&Y);
+        if(i==0)
+            proj->map2screen(borders.at(i).x(),borders.at(i).y(),&X,&Y);
+        else
+            proj->map2screenByReference(borders.at(i-1).x(),bordersXY.last().x(),borders.at(i).x(),borders.at(i).y(),&X,&Y);
         bordersXY.append(QPoint(X,Y));
     }
     QRectF br=bordersXY.boundingRect();
