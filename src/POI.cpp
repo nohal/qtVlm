@@ -108,6 +108,9 @@ POI::POI(QString name, int type, double lat, double lon,
 
     createPopUpMenu();
     slot_paramChanged();
+    timerSimp=new QTimer(this);
+    timerSimp->setInterval(200);
+    timerSimp->setSingleShot(true);
 
     connect(this,SIGNAL(addPOI_list(POI*)),parent,SLOT(slot_addPOI_list(POI*)));
     connect(this,SIGNAL(delPOI_list(POI*)),parent,SLOT(slot_delPOI_list(POI*)));
@@ -150,7 +153,7 @@ POI::~POI()
         emit wpChanged();
     }
     if(popup && !parent->getAboutToQuit())
-        delete popup;
+        popup->deleteLater();
 }
 void POI::setLongitude(double lon)
 {
@@ -839,13 +842,26 @@ void POI::slot_simplifyRoute()
 {
     if (this->route==NULL) return;
     route->setSimplify (true);
-    parent->treatRoute (route);
+    connect(timerSimp,SIGNAL(timeout()),this,SLOT(slot_timerSimp()));
+    timerSimp->start();
 }
+void POI::slot_timerSimp()
+{
+    disconnect(timerSimp,SIGNAL(timeout()),this,SLOT(slot_timerSimp()));
+    parent->treatRoute(route);
+}
+
 void POI::slot_optimizeRoute()
 {
     if (this->route==NULL) return;
     route->setOptimize (true);
-    parent->treatRoute (route);
+    connect(timerSimp,SIGNAL(timeout()),this,SLOT(slot_timerOpt()));
+    timerSimp->start();
+}
+void POI::slot_timerOpt()
+{
+    disconnect(timerSimp,SIGNAL(timeout()),this,SLOT(slot_timerOpt()));
+    parent->treatRoute(route);
 }
 void POI::slotCompassLine()
 {

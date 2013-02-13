@@ -195,7 +195,6 @@ void LoadGribFile::requestFinished ( QNetworkReply* inetReply)
         vers.append(".");
         vers.append(QTVLM_SUB_VERSION_NUM);
         vers.remove("+");
-        qWarning()<<strbuf;
         if(vers.contains("beta") && strbuf=="3.3.5") return;
         if(vers.left(strbuf.size())!=strbuf)
         {

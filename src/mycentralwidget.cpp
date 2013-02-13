@@ -3637,7 +3637,7 @@ void myCentralWidget::doSimplifyRoute(ROUTE * route, bool fast)
                 bestRemain=route->getRemain();
                 notFinished=true;
                 slot_delPOI_list(poi);
-                delete poi;
+                poi->deleteLater();
                 ++nbDel;
             }
             else
