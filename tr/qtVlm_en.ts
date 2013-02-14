@@ -5094,7 +5094,7 @@ VMG %.2f kts</translation>
     <message>
         <location filename="../src/Progress.cpp" line="30"/>
         <source>Starting qtVLM</source>
-        <translation type="unfinished">Starting qtVLM</translation>
+        <translation>Starting qtVLM</translation>
     </message>
 </context>
 <context>
@@ -6471,7 +6471,7 @@ without simplication</translation>
     <message>
         <location filename="../src/ToolBar.cpp" line="229"/>
         <source>Tableau de bord</source>
-        <translation type="unfinished">Dashboard</translation>
+        <translation>Dashboard</translation>
     </message>
     <message>
         <location filename="../src/ToolBar.cpp" line="312"/>

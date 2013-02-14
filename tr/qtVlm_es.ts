@@ -5119,7 +5119,7 @@ VMG %.2f kts</translation>
     <message>
         <location filename="../src/Progress.cpp" line="30"/>
         <source>Starting qtVLM</source>
-        <translation type="unfinished">Iniciando qtVLM</translation>
+        <translation>Iniciando qtVLM</translation>
     </message>
 </context>
 <context>
@@ -6489,7 +6489,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../src/ToolBar.cpp" line="229"/>
         <source>Tableau de bord</source>
-        <translation type="unfinished">Panel</translation>
+        <translation>Panel</translation>
     </message>
     <message>
         <location filename="../src/ToolBar.cpp" line="312"/>

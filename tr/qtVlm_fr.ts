@@ -3548,7 +3548,7 @@ VMG %.2f nds</translation>
     </message>
     <message>
         <source>Starting qtVLM</source>
-        <translation type="unfinished">Démarrage de qtVlm</translation>
+        <translation>Démarrage de qtVlm</translation>
     </message>
 </context>
 <context>
@@ -4403,7 +4403,7 @@ sans simplifier</translation>
     <name>ToolBar</name>
     <message>
         <source>Misc</source>
-        <translation type="unfinished">Divers</translation>
+        <translation>Divers</translation>
     </message>
     <message>
         <source>Grib</source>
@@ -4587,7 +4587,7 @@ sans simplifier</translation>
     </message>
     <message>
         <source>Tableau de bord</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
 </context>
 <context>

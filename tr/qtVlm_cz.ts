@@ -5174,7 +5174,7 @@ VMG %.2f kts</translation>
     <message>
         <location filename="../src/Progress.cpp" line="30"/>
         <source>Starting qtVLM</source>
-        <translation type="unfinished">Startuji qtVLM</translation>
+        <translation>Startuji qtVLM</translation>
     </message>
 </context>
 <context>
@@ -6547,7 +6547,7 @@ bez zjednodušení</translation>
     <message>
         <location filename="../src/ToolBar.cpp" line="229"/>
         <source>Tableau de bord</source>
-        <translation type="unfinished">Palubní deska</translation>
+        <translation>Palubní deska</translation>
     </message>
     <message>
         <location filename="../src/ToolBar.cpp" line="312"/>
