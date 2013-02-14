@@ -4399,7 +4399,7 @@ sans simplifier</translation>
     <name>ToolBar</name>
     <message>
         <source>Misc</source>
-        <translation>Misc</translation>
+        <translation type="unfinished">Divers</translation>
     </message>
     <message>
         <source>Grib</source>
