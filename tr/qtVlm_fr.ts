@@ -3102,7 +3102,7 @@ Etes-vous sur de vouloir supprimer</translation>
     <name>Progress</name>
     <message>
         <source>Starting qtVLM</source>
-        <translation>Démarrage de qtVlm</translation>
+        <translation type="obsolete">Démarrage de qtVlm</translation>
     </message>
 </context>
 <context>
@@ -3545,6 +3545,10 @@ VMG %.2f nds</translation>
     <message>
         <source>deg</source>
         <translation>°</translation>
+    </message>
+    <message>
+        <source>Starting qtVLM</source>
+        <translation type="unfinished">Démarrage de qtVlm</translation>
     </message>
 </context>
 <context>
@@ -4580,6 +4584,10 @@ sans simplifier</translation>
     <message>
         <source>Hold to select download method</source>
         <translation>Maintenir appuyé pour sélectionner le mode de téléchargement</translation>
+    </message>
+    <message>
+        <source>Tableau de bord</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>

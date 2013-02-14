@@ -42,8 +42,10 @@ class board : public QWidget
         int currentBoardType(void);
         void floatingBoard(bool status);
         void outdatedVLM(void);
+        void showCurrentBoard(const bool &b);
 
-    public slots:
+        bool currentBoardIsVisibe();
+public slots:
         void boatUpdated(boat * boat);
         void setChangeStatus(bool);
         void paramChanged(void);

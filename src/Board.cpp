@@ -165,3 +165,49 @@ void board::outdatedVLM()
         if (!(vlm_board->btn_Synch->styleSheet()).contains(QColor(255, 0, 0).name())) //if red stays red
             vlm_board->set_style(vlm_board->btn_Synch,QColor(255, 191, 21));
 }
+void board::showCurrentBoard(const bool &b)
+{
+    if(playerType!=BOAT_NOBOAT)
+    {
+        if(b)
+        {
+            if(playerType == BOAT_VLM)
+            {
+                mainWin->addDockWidget(Qt::LeftDockWidgetArea,VLMDock);
+                floatingBoard(isFloatingBoard);
+                VLMDock->show();
+                vlm_board->show();
+            }
+            else
+            {
+                mainWin->addDockWidget(Qt::LeftDockWidgetArea,realDock);
+                floatingBoard(isFloatingBoard);
+                realDock->show();
+                real_board->show();
+            }
+        }
+        else
+        {
+            if(playerType == BOAT_VLM)
+                mainWin->removeDockWidget(VLMDock);
+            else
+                mainWin->removeDockWidget(realDock);
+        }
+    }
+}
+bool board::currentBoardIsVisibe()
+{
+    if(playerType!=BOAT_NOBOAT)
+    {
+        if(playerType == BOAT_VLM)
+        {
+            return vlm_board->isVisible();
+        }
+        else
+        {
+            return real_board->isVisible();
+        }
+    }
+    else
+        return false;
+}

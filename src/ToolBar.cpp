@@ -28,6 +28,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "settings.h"
 #include "Terrain.h"
 #include "boatVLM.h"
+#include "Board.h"
 
 /**********************************************************************/
 /*                         Gen fct                                    */
@@ -223,23 +224,25 @@ ToolBar::ToolBar(MainWindow *mainWindow)
     //load_settings();
 }
 
-QMenu * ToolBar::showHideMenu(void) {    
+QMenu * ToolBar::showHideMenu(void) {
     QMenu * menu = new QMenu();
-    bool hasItem;
+    QAction * boardAction=new QAction(tr("Tableau de bord"),menu);
+    boardAction->setCheckable(true);
+    boardAction->setChecked(this->mainWindow->getBoard()->currentBoardIsVisibe());
+    connect (boardAction,SIGNAL(triggered(bool)),this,SLOT(slot_showHideDashBoard(bool)));
+    menu->addAction(boardAction);
     for(int i=0;i<toolBarList.count();++i) {
         MyToolBar* tool = toolBarList.at(i);
         if(tool->get_canHide()) {
             menu->addAction(tool->toggleViewAction());
-            hasItem=true;
         }
     }
-    if(hasItem)
-        return menu;
-    else {
-        delete menu;
-        return NULL;
-    }
+    return menu;
 
+}
+void ToolBar::slot_showHideDashBoard(const bool &b)
+{
+    mainWindow->getBoard()->showCurrentBoard(b);
 }
 
 void ToolBar::chgBoatType(int boatType) {

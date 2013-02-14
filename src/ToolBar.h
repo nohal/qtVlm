@@ -129,7 +129,7 @@ class ToolBar : public QObject
 
         void chgBoatType(int boatType);
 
-    public slots:
+public slots:
         void slot_estimeValueChanged(int);
         void slot_estimeTypeChanged(int);
         void slot_estimeStartChanged(int);
@@ -142,6 +142,7 @@ class ToolBar : public QObject
         void slot_gribPlay(void);
 
         void slot_loadEstimeParam(void);
+        void slot_showHideDashBoard(const bool &b);
 
     signals:
         void estimeParamChanged(void);
