@@ -30,7 +30,7 @@ class Progress: public QProgressDialog
     public:
         Progress(MainWindow *mainWindow);
 
-        void newStep(int step,QString msg);
+        void newStep(const int &step, const QString &msg);
 
     private:
         MainWindow *mainWindow;

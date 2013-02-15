@@ -336,7 +336,9 @@ void MainWindow::continueSetup()
 
     progress->setLabelText(tr("Preparing coffee"));
     progress->setValue(35);
+#ifdef __MAC_QTVLM
     progress->raise();
+#endif
     progress->activateWindow();
 
     pilototo = new DialogPilototo(this,my_centralWidget,my_centralWidget->getInet());

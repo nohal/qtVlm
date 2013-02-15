@@ -40,9 +40,11 @@ Progress::Progress(MainWindow * mainWindow): QProgressDialog(mainWindow,Qt::Fram
     activateWindow();
 }
 
-void Progress::newStep(int step,QString msg) {
+void Progress::newStep(const int &step,const QString &msg) {
     setValue(step);
     setLabelText(msg);
+#ifdef __MAC_QTVLM
     raise();
     activateWindow();
+#endif
 }
