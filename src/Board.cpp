@@ -66,6 +66,17 @@ board::board(MainWindow * mainWin, inetConnexion * inet)
     isFloatingBoard=false;
 }
 
+int board::build_showHideMenu(QMenu * menu) {
+    if(!menu) return 0;
+
+    QAction * boardAction=new QAction(tr("Tableau de bord"),menu);
+    boardAction->setCheckable(true);
+    boardAction->setChecked(currentBoardIsVisibe());
+    connect (boardAction,SIGNAL(triggered(bool)),this,SLOT(showCurrentBoard(bool)));
+    menu->addAction(boardAction);
+    return 1;
+}
+
 void board::floatingBoard(bool status)
 {
     isFloatingBoard=status;

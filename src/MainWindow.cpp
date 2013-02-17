@@ -511,16 +511,30 @@ MainWindow::~MainWindow()
 }
 
 QMenu * MainWindow::createPopupMenu(void) {
+
+    QMenu * menu = new QMenu;
+    int entry=0;
+
+    if(myBoard)
+        entry=myBoard->build_showHideMenu(menu);
+
+    if(entry)
+        menu->addSeparator();
+
     if(toolBar)
-        return toolBar->showHideMenu();
-    else
+        entry+=toolBar->build_showHideMenu(menu);
+
+
+    if(entry)
+        return menu;
+    else {
+        delete menu;
         return NULL;
+    }
 }
 
 void MainWindow::closeEvent(QCloseEvent * /*event*/) {
-   // Settings::setSetting("toolBarState", saveState());
-    //qWarning() << saveState();
-    //QMainWindow::closeEvent(event);
+
     QApplication::quit();
 }
 

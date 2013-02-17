@@ -224,25 +224,18 @@ ToolBar::ToolBar(MainWindow *mainWindow)
     //load_settings();
 }
 
-QMenu * ToolBar::showHideMenu(void) {
-    QMenu * menu = new QMenu();
-    QAction * boardAction=new QAction(tr("Tableau de bord"),menu);
-    boardAction->setCheckable(true);
-    boardAction->setChecked(this->mainWindow->getBoard()->currentBoardIsVisibe());
-    connect (boardAction,SIGNAL(triggered(bool)),this,SLOT(slot_showHideDashBoard(bool)));
-    menu->addAction(boardAction);
+int ToolBar::build_showHideMenu(QMenu *menu) {
+    if(!menu) return 0;
+    int nbEntry=0;
+
     for(int i=0;i<toolBarList.count();++i) {
         MyToolBar* tool = toolBarList.at(i);
         if(tool->get_canHide()) {
+            ++nbEntry;
             menu->addAction(tool->toggleViewAction());
         }
     }
-    return menu;
-
-}
-void ToolBar::slot_showHideDashBoard(const bool &b)
-{
-    mainWindow->getBoard()->showCurrentBoard(b);
+    return nbEntry;
 }
 
 void ToolBar::chgBoatType(int boatType) {

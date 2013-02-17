@@ -29,59 +29,71 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 QSettings *fileSettings;
 
-void Settings::initSettings(void)
-{
-#if 0
-    if (! QFile::exists (appFolder.value("userFiles")+SETTINGS_FILE))
-    {
-        qWarning() << "No setting file found";
-        QSettings loc_settings("qtVlm");
-        loc_settings.beginGroup("main");
-        if(loc_settings.childKeys().count() > 0)
-        {
-            /* Il y a des settings à transferer*/
-            if( QMessageBox::question(NULL,tr("Ouverture des paramètres"),
-                tr("Il existe des parametres locaux, les importer dans qtvlm.ini?"),
-                QMessageBox::Yes | QMessageBox::No
-                ) == QMessageBox::Yes)
-            {
-                Settings::loadFromReg();
-            }
-        }
-    }
-#endif
+void Settings::initSettings(void) {
     if(!fileSettings)
         fileSettings = new QSettings(appFolder.value("userFiles")+SETTINGS_FILE, QSettings::IniFormat);
 }
 
-void Settings::setSetting(const QString &key, const QVariant &value, const QString &group)
-{
+void Settings::setSetting(const QString &key, const QVariant &value, const QString &group,int boatType) {
     if (fileSettings) {
-        fileSettings->beginGroup(group);
+        fileSettings->beginGroup(Settings::computeGroupe(group,boatType));
         fileSettings->setValue(key, value);
         fileSettings->endGroup();
         fileSettings->sync();
     }
 }
 
-QVariant Settings::getSetting(const QString &key, const QVariant &defaultValue, const QString &group)
-{
+QVariant Settings::getSetting(const QString &key, const QVariant &defaultValue, const QString &group,int boatType) {
     QVariant val=defaultValue;
     if (fileSettings != NULL) {
-        fileSettings->beginGroup (group);
-        val = fileSettings->value (key, defaultValue);
-        fileSettings->endGroup();
+        /* avons nous la clé avec boatType */
+        fileSettings->beginGroup (Settings::computeGroupe(group,boatType));
+        if(!fileSettings->contains(key)) {
+            if(boatType!=BOAT_ANY && boatType!=BOAT_NOBOAT) {
+                fileSettings->endGroup(); /* can't find key/value with a defined boatType */
+                fileSettings->beginGroup(Settings::computeGroupe(group,BOAT_ANY));
+                if(fileSettings->contains(key)) { /* searching for key using boatType=ANY */
+                    val = fileSettings->value (key, defaultValue);
+                    fileSettings->endGroup();
+                    /* key found => remove the ANY key and create 1 specific key for each boat type
+    /* this is only for transition purpose */
+                    Settings::removeSetting(key,group,BOAT_ANY);
+                    Settings::setSetting(key,val,group,BOAT_VLM);
+                    Settings::setSetting(key,val,group,BOAT_REAL);
+                }
+                else {
+                    /* key not found for ANY => return default */
+                    fileSettings->endGroup();
+                }
+            }
+            else {
+                /* key not found and boatType == ANY => return default */
+                fileSettings->endGroup();
+            }
+        }
+        else {
+            /* get val */
+            val = fileSettings->value (key, defaultValue);
+            fileSettings->endGroup();
+        }
         fileSettings->sync();
     }
     return val;
 }
 
-void Settings::removeSetting(const QString &key, const QString &group)
-{
+void Settings::removeSetting(const QString &key, const QString &group,int boatType) {
     if(key.isEmpty()) return ; /* prevent from deleting all key */
 
-    fileSettings->beginGroup(group);
+    fileSettings->beginGroup(Settings::computeGroupe(group,boatType));
     fileSettings->remove(key);
     fileSettings->endGroup();
     fileSettings->sync();
+}
+
+QString Settings::computeGroupe(const QString &group,int boatType) {
+    if(boatType==BOAT_NOBOAT) boatType=BOAT_ANY;
+    if(boatType==BOAT_ANY)
+        return group;
+    else
+        return group+"_"+boatTypes[boatType];
 }

@@ -94,6 +94,7 @@ FCT_GET_CST(TYPE,VARNAME)
 
 #define BOAT_REAL 0
 #define BOAT_VLM  1
+#define BOAT_ANY  2
 #define BOAT_NOBOAT -1
 
 /* request type */

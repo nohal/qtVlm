@@ -42,14 +42,17 @@ class board : public QWidget
         int currentBoardType(void);
         void floatingBoard(bool status);
         void outdatedVLM(void);
-        void showCurrentBoard(const bool &b);
 
         bool currentBoardIsVisibe();
+
+        int build_showHideMenu(QMenu * menu);
+
 public slots:
         void boatUpdated(boat * boat);
         void setChangeStatus(bool);
         void paramChanged(void);
         void slot_hideShowCompass();
+        void showCurrentBoard(const bool &b);
 
     signals:
         void sig_paramChanged();

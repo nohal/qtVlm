@@ -71,7 +71,7 @@ class ToolBar : public QObject
     public:
         ToolBar(MainWindow * mainWindow);
 
-        QMenu * showHideMenu(void);
+        int build_showHideMenu(QMenu * menu);
 
         /* Misc toolbar */
         QAction * acQuit;
@@ -142,7 +142,6 @@ public slots:
         void slot_gribPlay(void);
 
         void slot_loadEstimeParam(void);
-        void slot_showHideDashBoard(const bool &b);
 
     signals:
         void estimeParamChanged(void);
