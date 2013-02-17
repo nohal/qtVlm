@@ -111,6 +111,7 @@ POI::POI(QString name, int type, double lat, double lon,
     timerSimp=new QTimer(this);
     timerSimp->setInterval(200);
     timerSimp->setSingleShot(true);
+    connect(timerSimp,SIGNAL(timeout()),this,SLOT(slot_timerSimp()));
 
     connect(this,SIGNAL(addPOI_list(POI*)),parent,SLOT(slot_addPOI_list(POI*)));
     connect(this,SIGNAL(delPOI_list(POI*)),parent,SLOT(slot_delPOI_list(POI*)));
@@ -154,6 +155,7 @@ POI::~POI()
     }
     if(popup && !parent->getAboutToQuit())
         popup->deleteLater();
+    delete timerSimp;
 }
 void POI::setLongitude(double lon)
 {
@@ -842,12 +844,10 @@ void POI::slot_simplifyRoute()
 {
     if (this->route==NULL) return;
     route->setSimplify (true);
-    connect(timerSimp,SIGNAL(timeout()),this,SLOT(slot_timerSimp()));
     timerSimp->start();
 }
 void POI::slot_timerSimp()
 {
-    disconnect(timerSimp,SIGNAL(timeout()),this,SLOT(slot_timerSimp()));
     parent->treatRoute(route);
 }
 
@@ -855,13 +855,7 @@ void POI::slot_optimizeRoute()
 {
     if (this->route==NULL) return;
     route->setOptimize (true);
-    connect(timerSimp,SIGNAL(timeout()),this,SLOT(slot_timerOpt()));
     timerSimp->start();
-}
-void POI::slot_timerOpt()
-{
-    disconnect(timerSimp,SIGNAL(timeout()),this,SLOT(slot_timerOpt()));
-    parent->treatRoute(route);
 }
 void POI::slotCompassLine()
 {
@@ -1332,9 +1326,12 @@ void POI::slot_finePosit(bool silent)
         int rep = QMessageBox::question (parent,tr("Abandon du positionnement automatique"), tr("Souhaitez vous conserver la meilleure position deja trouvee?"), QMessageBox::Yes | QMessageBox::No);
         if (rep == QMessageBox::Yes)
         {
-            parent->slot_delPOI_list(best);
-            delete best;
-            if(Settings::getSetting("keepOldPoi","0").toInt()==0)
+            if(best!=NULL)
+            {
+                parent->slot_delPOI_list(best);
+                delete best;
+            }
+            if(Settings::getSetting("keepOldPoi","0").toInt()==0 && previousMe!=NULL)
             {
                 parent->slot_delPOI_list(previousMe);
                 delete previousMe;
@@ -1352,15 +1349,21 @@ void POI::slot_finePosit(bool silent)
                 parent->slot_delPOI_list(best);
                 delete best;
             }
-            parent->slot_delPOI_list(previousMe);
-            delete previousMe;
+            if(previousMe!=NULL)
+            {
+                parent->slot_delPOI_list(previousMe);
+                delete previousMe;
+            }
         }
     }
     else
     {
-        parent->slot_delPOI_list(best);
-        delete best;
-        if(Settings::getSetting("keepOldPoi","0").toInt()==0 && !silent)
+        if (best != NULL)
+        {
+            parent->slot_delPOI_list(best);
+            delete best;
+        }
+        if(Settings::getSetting("keepOldPoi","0").toInt()==0 && !silent && previousMe!=NULL)
         {
             parent->slot_delPOI_list(previousMe);
             delete previousMe;

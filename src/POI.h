@@ -160,7 +160,6 @@ public slots:
         void slot_notSimplificable(bool b){this->notSimplificable=b;update();}
         void slot_routage(void) { ROUTAGE * routage=parent->addRoutage(); parent->slot_editRoutage(routage,true,this); }
         void slot_timerSimp();
-        void slot_timerOpt();
 
     signals:
         void chgWP(double,double,double);

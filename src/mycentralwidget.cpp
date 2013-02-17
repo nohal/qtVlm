@@ -3367,7 +3367,7 @@ void myCentralWidget::slot_editRoute(ROUTE * route,bool createMode)
     DialogRoute *route_editor=new DialogRoute(route,this);
     if(route_editor->exec()!=QDialog::Accepted)
     {
-        delete route_editor;
+        route_editor->deleteLater();
         if(createMode)
         {
             route_list.removeAll(route);
@@ -3376,26 +3376,21 @@ void myCentralWidget::slot_editRoute(ROUTE * route,bool createMode)
         }
         return;
     }
-    else
-    {
-        delete route_editor;
-        /* Simplifying may remove POIs, which may cause a crash if we
-         * got here from a POI context menu and that POI gets removed.
-         * therefore we delay the processing until Qt is idle. */
-        routeSimplify = route;
-        QTimer::singleShot (0, this, SLOT (slot_routeTimer()));
-    }
-    //route->slot_recalculate();
     if(route->getPilototo())
     {
         if(!route->getStartFromBoat() || route->getStartTimeOption()!=1 || !route->getUseVbvmgVlm())
         {
             QMessageBox::critical(0,tr("Envoyer la route au pilototo"),tr("Pour pouvoir envoyer la route au pilototo if faut que:<br>-La route demarre du bateau et de la prochaine vac<br>et que le mode VbVmg-Vlm soit active"));
+            route_editor->deleteLater();
             return;
         }
         mainW->setPilototoFromRoute(route);
-
+        route_editor->deleteLater();
+        return;
     }
+    routeSimplify = route;
+    connect(route_editor,SIGNAL(destroyed()),this,SLOT(slot_routeTimer()));
+    route_editor->deleteLater();
 }
 void myCentralWidget::treatRoute(ROUTE* route)
 {
