@@ -573,10 +573,10 @@ void boatVLM::requestFinished (QByteArray res_byte)
                     gates.append(porte);
 
                 }
-                int ngate=gates.count();
+                double ngate=gates.count();
                 foreach(vlmLine * gate,gates)
                 {
-                    gate->setZValue(Z_VALUE_GATE+ngate/100.0);
+                    gate->set_zValue((double)Z_VALUE_GATE+ngate/100.0);
                     --ngate;
                 }
 

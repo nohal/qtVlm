@@ -61,6 +61,11 @@ vlmLine::vlmLine(Projection * proj, QGraphicsScene * myScene,double z_level) :
         this->setAcceptHoverEvents(true);
     show();
 }
+void vlmLine::set_zValue(const double &z)
+{
+    this->myZvalue=z;
+    this->setZValue(z);
+}
 
 vlmLine::~vlmLine()
 {
