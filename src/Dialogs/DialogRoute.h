@@ -36,12 +36,12 @@ Copyright (C) 2008 - Jacques Zaninetti - http://zygrib.free.fr
 class DialogRoute : public QDialog, public Ui::ROUTE_Editor_ui
 { Q_OBJECT
     public:
-        DialogRoute(ROUTE *route, myCentralWidget *parent);
+        DialogRoute(ROUTE *route, myCentralWidget *parent, bool createMode=false);
         ~DialogRoute();
         void done(int result);
         void fillPilotView(bool f=false);
 
-    public slots:
+public slots:
         void GybeTack(int i);
         void slotLoadPilototo();
         void slotLoadPilototoCustom();

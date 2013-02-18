@@ -573,6 +573,13 @@ void boatVLM::requestFinished (QByteArray res_byte)
                     gates.append(porte);
 
                 }
+                int ngate=gates.count();
+                foreach(vlmLine * gate,gates)
+                {
+                    gate->setZValue(Z_VALUE_GATE+ngate/100.0);
+                    --ngate;
+                }
+
                 gatesLoaded=true;
                 this->getDistHdgGate();
                 updating=false;

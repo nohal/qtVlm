@@ -845,10 +845,8 @@ void myCentralWidget::slot_clearSelection(void)
 
 void myCentralWidget::slot_selectionTool()
 {
-    selectionTool=!selectionTool;
-    if(!selectionTool)
-        selection->clearSelection();
-    toolBar->selectionMode->setChecked(selectionTool);
+    selectionTool=toolBar->selectionMode->isChecked();
+    selection->clearSelection();
 }
 
 void myCentralWidget::slot_Go_Left()
@@ -1102,7 +1100,10 @@ void myCentralWidget::slot_mousePress(QGraphicsSceneMouseEvent* e)
     if(e->button()==Qt::MidButton)
         proj->setCentralPixel(e->scenePos().x(),e->scenePos().y());
     else if (e->modifiers()!=Qt::NoModifier || selectionTool)
+    {
         selection->startSelection(e->scenePos().x(),e->scenePos().y());
+        toolBar->selectionMode->setChecked(true);
+    }
     else
         view->startPaning(e);
 }
@@ -1110,6 +1111,8 @@ void myCentralWidget::slot_mouseRelease(QGraphicsSceneMouseEvent* e)
 {
     if(selection->isSelecting())
     {
+        if(!selectionTool)
+            toolBar->selectionMode->setChecked(false);
         selection->stopSelection();
         if(e->modifiers() == Qt::ControlModifier)
         {
@@ -3364,8 +3367,16 @@ ROUTAGE * myCentralWidget::addRoutage()
 }
 void myCentralWidget::slot_editRoute(ROUTE * route,bool createMode)
 {
-    DialogRoute *route_editor=new DialogRoute(route,this);
-    if(route_editor->exec()!=QDialog::Accepted)
+    DialogRoute *route_editor=new DialogRoute(route,this,createMode);
+    int result=route_editor->exec();
+    qWarning()<<"result="<<result;
+    if(result==99)
+    {
+        route_editor->deleteLater();
+        slot_editRoute(route,  createMode);
+        return;
+    }
+    if(result!=QDialog::Accepted)
     {
         route_editor->deleteLater();
         if(createMode)

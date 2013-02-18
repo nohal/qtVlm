@@ -52,7 +52,7 @@ Copyright (C) 2008 - Jacques Zaninetti - http://zygrib.free.fr
 //-------------------------------------------------------
 // ROUTE_Editor: Constructor for edit an existing ROUTE
 //-------------------------------------------------------
-DialogRoute::DialogRoute(ROUTE *route,myCentralWidget *parent)
+DialogRoute::DialogRoute(ROUTE *route, myCentralWidget *parent, bool createMode)
     : QDialog(parent)
 {
     this->route=route;
@@ -83,7 +83,10 @@ DialogRoute::DialogRoute(ROUTE *route,myCentralWidget *parent)
     this->sortByName->setChecked(route->getSortPoisByName());
     connect(this->btOk,SIGNAL(clicked()),this,SLOT(accept()));
     connect(this->btCancel,SIGNAL(clicked()),this,SLOT(reject()));
-    connect(this->btAppliquer,SIGNAL(clicked()),this,SLOT(slotApply()));
+    if(!createMode)
+        connect(this->btAppliquer,SIGNAL(clicked()),this,SLOT(slotApply()));
+    else
+        btAppliquer->setDisabled(true);
     connect(this->Envoyer,SIGNAL(clicked()),this,SLOT(slotEnvoyer()));
     connect(this->btCopy,SIGNAL(clicked()),this,SLOT(slotCopy()));
     connect(this->exportCSV,SIGNAL(clicked()),this,SLOT(slotExportCSV()));
@@ -266,6 +269,7 @@ DialogRoute::DialogRoute(ROUTE *route,myCentralWidget *parent)
 }
 DialogRoute::~DialogRoute()
 {
+    //qWarning()<<"deleting dialogRoute";
     delete model;
     delete rmModel;
 }
@@ -799,7 +803,7 @@ void DialogRoute::done(int result)
             }
             parent->treatRoute(route);
             connect(this->tabWidget,SIGNAL(currentChanged(int)),this,SLOT(slotTabChanged(int)));
-            return;
+            //return;
         }
     }
     if(result == QDialog::Rejected)
@@ -816,13 +820,15 @@ void DialogRoute::slotApply()
     if(this->Simplifier->isChecked() || this->Optimiser->isChecked())
         this->hide();
     this->done(99);
-    this->btAppliquer->setEnabled(true);
-    this->btCancel->setEnabled(true);
-    this->btOk->setEnabled(true);
-    this->tabWidget->setEnabled(true);
-    this->Simplifier->setChecked(false);
-    this->Optimiser->setChecked(false);
-    this->show();
+//    qWarning()<<"here3";
+//    this->btAppliquer->setEnabled(true);
+//    this->btCancel->setEnabled(true);
+//    this->btOk->setEnabled(true);
+//    this->tabWidget->setEnabled(true);
+//    this->Simplifier->setChecked(false);
+//    this->Optimiser->setChecked(false);
+//    qWarning()<<"here4";
+//    this->show();
 }
 
 void DialogRoute::GybeTack(int i)
