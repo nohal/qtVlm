@@ -59,7 +59,7 @@ bool DialogViewPolar::eventFilter(QObject *, QEvent *event)
     double aws=sqrt(a*a+bb*bb);
     double awa=90-radToDeg(atan(bb/a));
     double vmg=polarValues.at(angle)*cos(degToRad(angle));
-    s=s.sprintf(QObject::tr("TWA %ddeg, BS %.2fnds\nAWA %.2fdeg, AWS %.2fnds\nVMG %.2fnds").toUtf8(),angle,polarValues.at(angle),awa,aws,vmg);
+    s=s.sprintf(QObject::tr("TWA %ddeg, BS %.2fnds\nAWA %.2fdeg, AWS %.2fnds\nVMG %.2fnds").toLatin1(),angle,polarValues.at(angle),awa,aws,vmg);
     imageContainer->setPixmap(i2);
     info->setText(s);
     return true;
