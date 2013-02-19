@@ -3213,7 +3213,7 @@ void myCentralWidget::exportRouteFromMenuGPX(ROUTE * route,QString fileName,bool
             QString longitude=QString::number(poi->getLongitude());
             list.append("<rtept lat=\""+latitude+"\" lon=\""+longitude+"\">");
             QDateTime time;
-            time.setTime_t(route->getStartDate());
+            time.setTime_t(poi->getRouteTimeStamp());
             time=time.toUTC();
             time.setTimeSpec(Qt::UTC);
             list.append( "<time>"+time.toString("yyyy-MM-ddThh:mm:ssZ")+"</time>");
@@ -3233,7 +3233,7 @@ void myCentralWidget::exportRouteFromMenuGPX(ROUTE * route,QString fileName,bool
             QString longitude=QString::number(poi.lon);
             list.append("<rtept lat=\""+latitude+"\" lon=\""+longitude+"\">");
             QDateTime time;
-            time.setTime_t(route->getStartDate());
+            time.setTime_t(poi.eta);
             time=time.toUTC();
             time.setTimeSpec(Qt::UTC);
             list.append( "<time>"+time.toString("yyyy-MM-ddThh:mm:ssZ")+"</time>");
