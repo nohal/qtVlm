@@ -71,6 +71,8 @@ boatVLM::boatVLM(QString        pseudo, bool activated, int boatId, int playerId
     connect(parent, SIGNAL(shPor(bool)),this,SLOT(slot_shPor()));
     connect(parent,SIGNAL(resetTraceCache()),this,SLOT(slot_resetTraceCache()));
     myCreatePopUpMenu();
+    connect(this->popup,SIGNAL(aboutToShow()),parent,SLOT(slot_resetGestures()));
+    connect(this->popup,SIGNAL(aboutToHide()),parent,SLOT(slot_resetGestures()));
     this->initialized=false;
     own=QString();
     npd=QString();

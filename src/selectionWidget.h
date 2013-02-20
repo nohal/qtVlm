@@ -47,6 +47,8 @@ class selectionWidget : public QGraphicsWidget
 
     public slots:
         void slot_setDrawOrthodromie(bool b);
+        void slot_protect();
+        void slot_unprotect();
 
     protected:
         void paint(QPainter * pnt, const QStyleOptionGraphicsItem * , QWidget * );
@@ -54,6 +56,7 @@ class selectionWidget : public QGraphicsWidget
 
     private:
         int xa,xb,ya,yb;
+        int old_xa,old_xb,old_ya,old_yb;
         int width,height;
         bool selecting;
         bool showOrthodromie;
@@ -73,6 +76,7 @@ class selectionWidget : public QGraphicsWidget
         QMenu *popup;
 
         void updateSize(void);
+        bool isProtected;
 };
 Q_DECLARE_TYPEINFO(selectionWidget,Q_MOVABLE_TYPE);
 

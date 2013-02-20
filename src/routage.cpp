@@ -3364,6 +3364,8 @@ void ROUTAGE::setFromRoutage(ROUTAGE *fromRoutage, bool editOptions)
 void ROUTAGE::createPopupMenu()
 {
     popup = new QMenu(parent);
+    connect(this->popup,SIGNAL(aboutToShow()),parent,SLOT(slot_resetGestures()));
+    connect(this->popup,SIGNAL(aboutToHide()),parent,SLOT(slot_resetGestures()));
 
     ac_pivot = new QAction(tr("Creer un pivot"),popup);
     popup->addAction(ac_pivot);

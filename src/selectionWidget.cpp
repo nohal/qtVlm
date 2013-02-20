@@ -38,6 +38,11 @@ selectionWidget::selectionWidget(myCentralWidget *centralWidget, Projection * pr
     setData(0,SELECTION_WTYPE);
 
     popup = new QMenu(centralWidget->getMainWindow());
+    connect(this->popup,SIGNAL(aboutToShow()),centralWidget,SLOT(slot_resetGestures()));
+    connect(this->popup,SIGNAL(aboutToHide()),centralWidget,SLOT(slot_resetGestures()));
+    connect(this->popup,SIGNAL(aboutToShow()),this,SLOT(slot_protect()));
+    connect(this->popup,SIGNAL(aboutToHide()),this,SLOT(slot_unprotect()));
+    isProtected=false;
 
     ac_delAllPOIs = new QAction(tr("Effacer toutes les marques"),popup);
     ac_delSelPOIs = new QAction(tr("Effacer les marques..."),popup);
@@ -93,9 +98,30 @@ void selectionWidget::contextMenuEvent(QGraphicsSceneContextMenuEvent * e) {
 
     popup->exec(QCursor::pos());
 }
+void selectionWidget::slot_protect()
+{
+    this->isProtected=true;
+    xa=old_xa;
+    ya=old_ya;
+    xb=old_xb;
+    yb=old_yb;
+    updateSize();
+    update();
+    show();
+    if(showOrthodromie)
+    {
+        seg->initSegment(xa,ya,xb,yb);
+        seg->show();
+    }
+}
+void selectionWidget::slot_unprotect()
+{
+    this->isProtected=false;
+}
 
 void selectionWidget::startSelection(int start_x,int start_y)
 {
+    if(isProtected) return;
     selecting=true;
     show();
     xa=xb=start_x;
@@ -173,12 +199,16 @@ void selectionWidget::slot_setDrawOrthodromie(bool b)
 
 void selectionWidget::stopSelection(void)
 {
+    old_xa=xa;
+    old_ya=ya;
+    old_xb=xb;
+    old_yb=yb;
     selecting=false;
-
 }
 
 void selectionWidget::clearSelection(void)
 {
+    if(isProtected) return;
     stopSelection();
     hide();
     if(showOrthodromie)

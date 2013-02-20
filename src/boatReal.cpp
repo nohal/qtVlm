@@ -87,6 +87,8 @@ boatReal::boatReal(QString pseudo, bool activated, Projection * proj,MainWindow 
     this->speedWithEngine=Settings::getSetting("speedWithEngine",4).toDouble();
 
     myCreatePopUpMenu();
+    connect(this->popup,SIGNAL(aboutToShow()),parent,SLOT(slot_resetGestures()));
+    connect(this->popup,SIGNAL(aboutToHide()),parent,SLOT(slot_resetGestures()));
     this->lastUpdateTime=QDateTime().currentDateTimeUtc().toTime_t();
 }
 

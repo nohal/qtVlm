@@ -185,6 +185,8 @@ void POI::rmSignal(void)
 void POI::createPopUpMenu(void)
 {
     popup = new QMenu(parent);
+    connect(this->popup,SIGNAL(aboutToShow()),parent,SLOT(slot_resetGestures()));
+    connect(this->popup,SIGNAL(aboutToHide()),parent,SLOT(slot_resetGestures()));
 
     ac_edit = new QAction(tr("Editer"),popup);
     popup->addAction(ac_edit);
@@ -436,7 +438,6 @@ void POI::mouseReleaseEvent(QGraphicsSceneMouseEvent * e)
 
 void POI::contextMenuEvent(QGraphicsSceneContextMenuEvent * e)
 {
-
     bool onlyLineOff = false;
     if(route==NULL || route->getLastPoi()==this || route->getFrozen())
     {

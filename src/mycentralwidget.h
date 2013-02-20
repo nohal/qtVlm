@@ -320,6 +320,7 @@ public slots :
         void slot_takeScreenshot();
         void slot_showVlmLog();
         void slot_fetchVLMTrack();
+        void slot_resetGestures();
 
     signals:
         /* drawing */

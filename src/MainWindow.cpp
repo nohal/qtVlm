@@ -302,6 +302,9 @@ void MainWindow::continueSetup()
     //--------------------------------------------------
     progress->newStep(25,tr("Creating context menus"));
     menuPopupBtRight = menuBar->createPopupBtRight(this);
+    connect(this->menuPopupBtRight,SIGNAL(triggered(QAction*)),this,SLOT(slot_disablePopupMenu()));
+    connect(this->menuPopupBtRight,SIGNAL(aboutToShow()),my_centralWidget,SLOT(slot_resetGestures()));
+    connect(this->menuPopupBtRight,SIGNAL(aboutToHide()),my_centralWidget,SLOT(slot_resetGestures()));
 
     /* restore state */
     restoreState(Settings::getSetting("savedState","").toByteArray());
@@ -1227,7 +1230,7 @@ void MainWindow::slotShowContextualMenu(QGraphicsSceneContextMenuEvent * e)
         menuBar->ac_pasteRoute->setEnabled(false);
     else
         menuBar->ac_pasteRoute->setEnabled(true);
-
+    menuPopupBtRight->setEnabled(true);
     menuPopupBtRight->exec(QCursor::pos());
 }
 void MainWindow::slot_copyRoute()
@@ -1345,12 +1348,11 @@ void MainWindow::slot_centerMap()
 
 void MainWindow::slotCompassLine(void)
 {
-//    QPoint cursor_pos=my_centralWidget->mapFromGlobal(cursor().pos());
+    menuBar->ac_compassLine->setDisabled(true);
     emit showCompassLine((double)mouseClicX,(double)mouseClicY);
 }
 void MainWindow::slotCompassLineForced(double a, double b)
 {
-//    QPoint cursor_pos=my_centralWidget->mapFromGlobal(cursor().pos());
     emit showCompassLine(a,b);
 }
 void MainWindow::slotCompassCenterBoat(void)
@@ -2220,4 +2222,8 @@ void MainWindow::slot_updateGribMono()
             my_centralWidget->getGribCurrent()->setGribMonoCpu(!gribMulti);
     }
 
+}
+void MainWindow::slot_disablePopupMenu()
+{
+    this->menuPopupBtRight->setDisabled(true);
 }

@@ -391,7 +391,7 @@ myCentralWidget::myCentralWidget(Projection * proj,MainWindow * parent,MenuBar *
     view->viewport()->grabGesture(Qt::PinchGesture);
     view->setHorizontalScrollBarPolicy (Qt::ScrollBarAlwaysOff);
     view->setVerticalScrollBarPolicy (Qt::ScrollBarAlwaysOff);
-
+    this->setAccessibleName("centralWidget");
     /* other child */
     inetManager = new inetConnexion(mainW);
 
@@ -1099,12 +1099,13 @@ void myCentralWidget::slot_mousePress(QGraphicsSceneMouseEvent* e)
 {
     if(e->button()==Qt::MidButton)
         proj->setCentralPixel(e->scenePos().x(),e->scenePos().y());
-    else if (e->modifiers()!=Qt::NoModifier || selectionTool)
+    else if ((e->modifiers()!=Qt::NoModifier || selectionTool)
+             && e->button()==Qt::LeftButton)
     {
         selection->startSelection(e->scenePos().x(),e->scenePos().y());
         toolBar->selectionMode->setChecked(true);
     }
-    else
+    else if(!compass->hasCompassLine())
         view->startPaning(e);
 }
 void myCentralWidget::slot_mouseRelease(QGraphicsSceneMouseEvent* e)
@@ -4511,4 +4512,8 @@ void myCentralWidget::slotImg_close()
     if (kap)
         delete kap;
     kap=NULL;
+}
+void myCentralWidget::slot_resetGestures()
+{
+    view->hideViewPix();
 }

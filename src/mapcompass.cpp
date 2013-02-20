@@ -533,6 +533,7 @@ void mapCompass::slot_projectionUpdated()
     new_x=new_x-size/2;
     new_y=new_y-size/2;
     prepareGeometryChange();
+    isMoving=false;
     setPos(new_x, new_y);
 }
 void mapCompass::slot_compassCenterBoat()
@@ -550,6 +551,7 @@ void mapCompass::slot_compassCenterBoat()
     new_x=new_x-size/2;
     new_y=new_y-size/2;
     prepareGeometryChange();
+    isMoving=false;
     setPos(new_x, new_y);
 }
 void mapCompass::compassCenter(double lon, double lat)
@@ -562,6 +564,7 @@ void mapCompass::compassCenter(double lon, double lat)
     new_x=new_x-size/2;
     new_y=new_y-size/2;
     prepareGeometryChange();
+    isMoving=false;
     setPos(new_x, new_y);
 }
 void mapCompass::slot_compassCenterWp()
@@ -578,6 +581,7 @@ void mapCompass::slot_compassCenterWp()
         new_x=new_x-size/2;
         new_y=new_y-size/2;
         prepareGeometryChange();
+        isMoving=false;
         setPos(new_x, new_y);
 }
 void  mapCompass::mouseReleaseEvent(QGraphicsSceneMouseEvent *e)
@@ -810,14 +814,20 @@ void mapCompass::updateCompassLineLabels(int x, int y)
 
 void mapCompass::slot_stopCompassLine(void)
 {
-    if(drawCompassLine) /* toggle compass line only if it is ON */
-        slot_compassLine(0,0);
+    qWarning()<<"slot_stopCompassLine";
+    parent->slot_resetGestures();
+    drawCompassLine=false;
+    windAngle_label->hide();
+    hdg_label->hide();
+    compassLine->hideSegment();
 }
 
 
 void mapCompass::slot_compassLine(double click_x, double click_y)
 {
+    parent->slot_resetGestures();
     drawCompassLine=!drawCompassLine;
+    qWarning()<<"slot_compassLine with"<<drawCompassLine;
     if(drawCompassLine)
     {
         windAngle_label->show();

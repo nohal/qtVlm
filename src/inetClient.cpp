@@ -86,7 +86,15 @@ void inetClient::inetPost(int currentRequest,QString requestUrl,QString data,QSt
     else
         qWarning() << "Doing inetPost with no inet available";
 }
+void inetClient::inetAbort()
+{
+    if(myReply)
+    {
+        myReply->abort();
+        resetReply();
 
+    }
+}
 void inetClient::resetReply()
 {
     if(myReply)

@@ -90,6 +90,7 @@ class MainWindow: public QMainWindow
         QMenu *createPopupMenu(void);
 
 public slots:
+        void slot_disablePopupMenu();
         void slotFile_Open();
         void slotFile_Reopen();
         void slotFile_Close();

@@ -115,6 +115,7 @@ void DialogPoi::newPOI(double lon, double lat,Projection *proj, boat *boat)
 
 void DialogPoi::initPOI(void)
 {
+    this->setEnabled(true);
     QString tunit = Settings::getSetting("unitsPosition", "").toString();
     QString unit = (tunit=="") ? "dddegmm'ss" : tunit;
     formatWithSeconds=unit=="dddegmm'ss";
@@ -172,6 +173,7 @@ void DialogPoi::initPOI(void)
 //---------------------------------------
 void DialogPoi::done(int result)
 {
+    this->setDisabled(true);
     Settings::setSetting(this->objectName()+".height",this->height());
     Settings::setSetting(this->objectName()+".width",this->width());
     if(result == QDialog::Accepted)
@@ -213,6 +215,7 @@ void DialogPoi::done(int result)
 
     if(result == QDialog::Rejected)
     {
+        qWarning()<<"rejected->delete poi";
         if (modeCreation)
                 delete poi;
     }

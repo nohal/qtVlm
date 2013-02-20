@@ -68,7 +68,7 @@ class inetClient
 
        bool checkWSResult(QByteArray res,QString caller,QWidget * parent,QString order=QString());
 
-       void inetAbort(){myReply->abort();delete myReply;myReply=NULL;}
+       void inetAbort();
 
     private:
        int currentRequest;

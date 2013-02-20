@@ -166,7 +166,7 @@ void inetConnexion::doRequest(int type,inetClient* client,QString requestUrl,QSt
 
 void inetConnexion::slot_requestFinished(QNetworkReply * currentReply)
 {
-    /* Recherche du client correspondant � currentReply */
+    /* Recherche du client correspondant a currentReply */
     bool found=false;
     inetClient * currentClient;
     QListIterator<inetClient*> i (replyList);

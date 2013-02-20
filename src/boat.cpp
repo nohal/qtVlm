@@ -153,6 +153,8 @@ boat::~boat()
 void boat::createPopUpMenu(void)
 {
     popup = new QMenu(parent);
+    connect(this->popup,SIGNAL(aboutToShow()),parent,SLOT(slot_resetGestures()));
+    connect(this->popup,SIGNAL(aboutToHide()),parent,SLOT(slot_resetGestures()));
 
     ac_select = new QAction("Selectionner",popup);
     popup->addAction(ac_select);
@@ -551,6 +553,7 @@ void boat::slot_estimeFlashing()
 
 void boat::slotCompassLine()
 {
+    ac_compassLine->setDisabled(true);
     double i1,j1;
     proj->map2screenDouble(this->lon,this->lat,&i1,&j1);
     emit compassLine(i1,j1);

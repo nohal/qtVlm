@@ -216,6 +216,7 @@ void DialogVlmGrib::slot_abort()
 {
     qWarning()<<"aborting VLM grib donwload";
     this->inetAbort();
+    filename.clear();
 }
 
 void DialogVlmGrib::requestFinished (QByteArray data)

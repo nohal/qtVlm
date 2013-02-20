@@ -40,6 +40,7 @@ Copyright (C) 2008 - Jacques Zaninetti - http://zygrib.free.fr
 MenuBar::MenuBar(QWidget *parent)
     : QMenuBar(parent)
 {
+    this->setAccessibleName("mainMenuQtvlm");
     //-------------------------------------
     // Menu + Actions
     //-------------------------------------
