@@ -802,8 +802,9 @@ void DialogRoute::done(int result)
                 listPois.clear();
             }
             parent->treatRoute(route);
+            if(keepModel)
+                return;
             connect(this->tabWidget,SIGNAL(currentChanged(int)),this,SLOT(slotTabChanged(int)));
-            //return;
         }
     }
     if(result == QDialog::Rejected)
@@ -858,7 +859,9 @@ void DialogRoute::slotLoadPilototo()
         forceVbvmg=true;
         state=useVbvmgVlm->checkState();
         useVbvmgVlm->setChecked(true);
+        keepModel=true;
         this->slotApply();
+        keepModel=false;
     }
     this->fillPilotView(true);
     if(forceVbvmg)
@@ -879,6 +882,13 @@ void DialogRoute::slotLoadPilototo()
         this->slotApply();
         keepModel=false;
     }
+    this->setEnabled(true);
+    this->btAppliquer->setEnabled(true);
+    this->btCancel->setEnabled(true);
+    this->btOk->setEnabled(true);
+    this->tabWidget->setEnabled(true);
+    this->Simplifier->setChecked(false);
+    this->Optimiser->setChecked(false);
 }
 void DialogRoute::slotLoadPilototoCustom()
 {
