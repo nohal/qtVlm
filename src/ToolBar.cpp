@@ -42,8 +42,8 @@ ToolBar::ToolBar(MainWindow *mainWindow)
     this->mainWindow=mainWindow;
     centralWidget = mainWindow->getMy_centralWidget();
 
-    miscToolBar=new MyToolBar("Misc",tr("Misc"),this,mainWindow);
-    toolBarList.append(miscToolBar);
+//    miscToolBar=new MyToolBar("Misc",tr("Misc"),this,mainWindow);
+//    toolBarList.append(miscToolBar);
 
     gribToolBar=new MyToolBar("Grib",tr("Grib"),this,mainWindow);
     toolBarList.append(gribToolBar);
@@ -75,8 +75,8 @@ ToolBar::ToolBar(MainWindow *mainWindow)
     /*********************/
 
     /* Misc toolBar */
-    acQuit = init_Action(tr("Quitter"), "", tr("Bye"), appFolder.value("img")+"exit.png",miscToolBar);
-    miscToolBar->addAction(acQuit);
+//    acQuit = init_Action(tr("Quitter"), "", tr("Bye"), appFolder.value("img")+"exit.png",miscToolBar);
+//    miscToolBar->addAction(acQuit);
 
     /* Grib toolBar */
     gribDwnld = new QToolButton(gribToolBar);
@@ -185,7 +185,7 @@ ToolBar::ToolBar(MainWindow *mainWindow)
     /*********************/
 
     /* Misc toolBar */
-    connect(acQuit, SIGNAL(triggered()), mainWindow, SLOT(slotFile_Quit()));
+    //connect(acQuit, SIGNAL(triggered()), mainWindow, SLOT(slotFile_Quit()));
 
     /* Grib ToolBar */
     connect(gribDwnld,SIGNAL(clicked()),this,SLOT(slot_gribDwnld()));

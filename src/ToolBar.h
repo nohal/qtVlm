@@ -74,7 +74,7 @@ class ToolBar : public QObject
         int build_showHideMenu(QMenu * menu);
 
         /* Misc toolbar */
-        QAction * acQuit;
+        //QAction * acQuit;
 
         /* Grib toolbar */
         QToolButton * gribDwnld;
@@ -154,7 +154,7 @@ public slots:
         myCentralWidget * centralWidget;
 
         MyToolBar * gribToolBar;
-        MyToolBar * miscToolBar;
+//        MyToolBar * miscToolBar;
         MyToolBar * mapToolBar;
         MyToolBar * estimeToolBar;
         MyToolBar * boatToolBar;
