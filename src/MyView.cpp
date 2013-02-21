@@ -14,6 +14,7 @@ MyView::MyView(Projection *proj, myScene *scene, myCentralWidget * mcp) :
     viewPix=new QGraphicsPixmapItem();
     viewPix->setZValue(100);
     viewPix->setPos(0,0);
+    viewPix->setTransformationMode(Qt::SmoothTransformation);
     paning=false;
     px=0;
     py=0;
