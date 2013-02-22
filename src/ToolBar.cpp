@@ -142,12 +142,16 @@ ToolBar::ToolBar(MainWindow *mainWindow)
 
     selectionMode = init_Action(tr("Selection"),tr(""),tr(""),appFolder.value("img")+"selection.png",mapToolBar);
     selectionMode->setCheckable(true);
+    magnify = init_Action(tr("Loupe"),tr(""),tr(""),appFolder.value("img")+"magnify.png",mapToolBar);
+    magnify->setCheckable(true);
     mapToolBar->addAction(acMap_Zoom_In);
     mapToolBar->addAction(acMap_Zoom_Out);
     mapToolBar->addAction(acMap_Zoom_Sel);
     mapToolBar->addAction(acMap_Zoom_All);
     mapToolBar->addSeparator();
     mapToolBar->addAction(selectionMode);
+    mapToolBar->addSeparator();
+    mapToolBar->addAction(magnify);
 
     /* Estime toolBar */
     lbEstime=new QLabel(tr("Estime"));
@@ -211,6 +215,7 @@ ToolBar::ToolBar(MainWindow *mainWindow)
     connect(acMap_Zoom_Sel, SIGNAL(triggered()),centralWidget,  SLOT(slot_Zoom_Sel()));
     connect(acMap_Zoom_All, SIGNAL(triggered()),centralWidget,  SLOT(slot_Zoom_All()));
     connect(selectionMode,SIGNAL(triggered()),centralWidget,SLOT(slot_selectionTool()));
+    connect(magnify,SIGNAL(triggered()),centralWidget,SLOT(slot_magnify()));
 
     /* Estime ToolBar */
     connect(spnEstime, SIGNAL(valueChanged(int)),this, SLOT(slot_estimeValueChanged(int)));

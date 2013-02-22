@@ -45,6 +45,7 @@ Copyright (C) 2008 - Jacques Zaninetti - http://zygrib.free.fr
 #include "Orthodromie.h"
 #include <QTimer>
 #include "MyView.h"
+#include "ToolBar.h"
 
 //---------------------------------------------------------
 // Constructeur
@@ -871,6 +872,12 @@ void Terrain::paint(QPainter * pnt, const QStyleOptionGraphicsItem * , QWidget *
 }
 void Terrain::indicateWaitingMap()
 {
+    if(parent->getMagnifier()!=NULL)
+    {
+        delete parent->getMagnifier();
+        parent->setMagnifier(NULL);
+        parent->get_toolBar()->magnify->setChecked(false);
+    }
     if(imgAll!=NULL && imgAll->paintingActive())
     {
         qWarning()<<"painting active in indicateWaitingMap()(1)";

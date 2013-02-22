@@ -229,4 +229,7 @@ class dialogFaxMeteo;
 /* loadImg.h */
 class loadImg;
 class dialogLoadImg;
+
+/*magnifier*/
+class Magnifier;
 #endif // CLASS_LIST_H

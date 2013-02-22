@@ -38,6 +38,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "DialogGraphicsParams.h"
 #include "selectionWidget.h"
 #include "MainWindow.h"
+#include "Magnifier.h"
 
 #include <qdatetime.h>
 
@@ -58,6 +59,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #define Z_VALUE_ISOPOINT   12
 
 #define Z_VALUE_SELECTION  15
+#define Z_VALUE_MAGNIFIER  80
 
 /* graphicsWidget type */
 #define TERRE_WTYPE       1
@@ -215,6 +217,8 @@ class myCentralWidget : public QWidget
         bool getKeepPos(){return keepPos;}
 
         void zoom_Pinch(double scale, int XX, int YY);
+        void setMagnifier(Magnifier * m){this->magnifier=m;}
+        Magnifier * getMagnifier(){return this->magnifier;}
 public slots :
         /* Zoom & position */
         void slot_Zoom_All();
@@ -229,6 +233,7 @@ public slots :
         void slot_keepPos(const bool &b);
         void slot_abortRequest();
         void slot_selectionTool();
+        void slot_magnify();
 
         /* POI */
         POI * slot_addPOI(QString name,int type,double lat,double lon, double wph,int timestamp,bool useTimeStamp, boat *boat);
@@ -451,6 +456,7 @@ public slots :
         loadImg * kap;
         ROUTE * routeSimplify;
         bool selectionTool;
+        Magnifier * magnifier;
 };
 
 #endif // MYCENTRALWIDGET_H

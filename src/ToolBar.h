@@ -100,7 +100,8 @@ class ToolBar : public QObject
         QAction *acMap_Zoom_Out;
         QAction *acMap_Zoom_Sel;
         QAction *acMap_Zoom_All;
-        QAction * selectionMode;
+        QAction *selectionMode;
+        QAction *magnify;
 
         /* estime toolBar */
         QLabel * lbEstime;

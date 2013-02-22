@@ -377,6 +377,7 @@ myCentralWidget::myCentralWidget(Projection * proj,MainWindow * parent,MenuBar *
     shOpp_st = false;
     shPor_st = false;
     selectionTool=false;
+    magnifier=NULL;
 
     gshhsReader = NULL;
 
@@ -848,7 +849,21 @@ void myCentralWidget::slot_selectionTool()
     selectionTool=toolBar->selectionMode->isChecked();
     selection->clearSelection();
 }
+void myCentralWidget::slot_magnify()
+{
+    if(toolBar->magnify->isChecked())
+    {
+        if(magnifier!=NULL)
+            delete magnifier;
+        magnifier=new Magnifier(this);
 
+    }
+    else if (magnifier!=NULL)
+    {
+        magnifier->deleteLater();
+        magnifier=NULL;
+    }
+}
 void myCentralWidget::slot_Go_Left()
 {
     BLOCK_SIG_BOAT()
