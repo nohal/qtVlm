@@ -55,7 +55,7 @@ QVariant Settings::getSetting(const QString &key, const QVariant &defaultValue, 
                 if(fileSettings->contains(key)) { /* searching for key using boatType=ANY */
                     val = fileSettings->value (key, defaultValue);
                     fileSettings->endGroup();
-                    /* key found => remove the ANY key and create 1 specific key for each boat type
+                    /* key found => remove the ANY key and create 1 specific key for each boat type */
     /* this is only for transition purpose */
                     Settings::removeSetting(key,group,BOAT_ANY);
                     Settings::setSetting(key,val,group,BOAT_VLM);
