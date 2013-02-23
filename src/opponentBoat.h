@@ -86,7 +86,8 @@ class opponent : public QGraphicsWidget
         void setUpdateRequired(bool b){this->updateRequired=b;}
         bool getUpdateRequired(){return this->updateRequired;}
 
-    public slots:
+        void drawOnMagnifier(Projection *myProj, QPainter *pnt);
+public slots:
         void updateProjection();
         void paramChanged();
         void slot_shShow();

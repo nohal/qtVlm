@@ -591,6 +591,87 @@ void boat::updateBoatData()
     updatePosition();
     updateHint();
 }
+void boat::drawOnMagnifier(Projection * mProj, QPainter * pnt)
+{
+    double I1,J1;
+    mProj->map2screenDouble(lon,lat,&I1,&J1);
+    int boat_i,boat_j;
+    boat_i=qRound(I1)-3;
+    boat_j=qRound(J1)-(height/2);
+    int dy = height/2;
+    QPen pen(selected?Qt::darkRed:Qt::darkBlue);
+    pnt->setFont(QApplication::font());
+    if(!labelHidden)
+    {
+        if(Settings::getSetting("showFlag",0).toInt()==1 && this->getType()==BOAT_VLM)
+        {
+            if(flag.isNull())
+            {
+                if(flag.load(appFolder.value("flags")+this->country+".png"))
+                {
+                    flag=flag.scaled(30,20,Qt::KeepAspectRatio);
+                    drawFlag=true;
+                }
+                else
+                    drawFlag=false;
+            }
+            else
+            {
+                drawFlag=true;
+            }
+        }
+        else
+        {
+            drawFlag=false;
+        }
+        if(this->getType()==BOAT_VLM)
+        {
+            if(this->stopAndGo!="0")
+                bgcolor=QColor(239,48,36,150);
+            else
+                bgcolor = QColor(255,255,255,150);
+        }
+        QColor bgcolor_m=bgcolor;
+        bgcolor_m.setAlpha(255);
+        pnt->setBrush(QBrush(bgcolor_m));
+        if(!drawFlag)
+            pnt->drawRoundRect(boat_i+9,boat_j+0, width,height, 50,50);
+        else
+            pnt->drawRoundRect(boat_i+21,boat_j+0, width,height, 50,50);
+        pnt->setBrush(Qt::NoBrush);
+        pnt->setPen(pen);
+        QFontMetrics fm(QApplication::font());
+        int w = fm.width("_")+1;
+        if(!drawFlag)
+            pnt->drawText(boat_i+w+9,boat_j+height-height/4,my_str);
+        else
+            pnt->drawText(boat_i+w+21,boat_j+height-height/4,my_str);
+    }
+    QColor selColor_m=selColor;
+    selColor_m.setAlpha(255);
+    QColor myColor_m=myColor;
+    myColor_m.setAlpha(255);
+    pen.setColor(selected?selColor_m:myColor_m);
+    pen.setWidth(4);
+    pnt->setPen(pen);
+    if(!drawFlag)
+        pnt->fillRect(boat_i+0,boat_j+dy-3,7,7, QBrush(selected?selColor_m:myColor_m));
+    else
+        pnt->drawImage(boat_i+-11,boat_j+dy-9,flag);
+    int g = 60;
+    pen = QPen(QColor(g,g,g));
+    pen.setWidth(1);
+    pnt->setPen(pen);
+    if(!labelHidden)
+    {
+        if(!drawFlag)
+            pnt->drawRoundRect(boat_i+9,boat_j+0, width,height, 50,50);
+        else
+            pnt->drawRoundRect(boat_i+21,boat_j+0, width,height, 50,50);
+    }
+
+    //drawEstime();
+}
 
 void boat::updatePosition(void)
 {

@@ -3,6 +3,8 @@
 #include <QGraphicsDropShadowEffect>
 #include "ToolBar.h"
 #include <QInputDialog>
+#include "boat.h"
+#include "opponentBoat.h"
 
 
 Magnifier::Magnifier(myCentralWidget *parent)
@@ -55,6 +57,21 @@ Magnifier::Magnifier(myCentralWidget *parent)
     seaBordersPen.setWidthF(Settings::getSetting("seaBordersLineWidth", 1.8).toDouble());
     pnt1.setPen(seaBordersPen);
     reader->drawSeaBorders(pnt1, myProj);
+    if(parent->getSelectedBoat())
+    {
+        if(parent->getSelectedBoat()->getType()==BOAT_VLM)
+        {
+            if(!parent->get_shOpp_st())
+            {
+                opponentList * oppList=parent->getOppList();
+                for (int n=0;n<oppList->getList()->count();++n)
+                {
+                    oppList->getList()->at(n)->drawOnMagnifier(myProj,&pnt1);
+                }
+            }
+        }
+        parent->getSelectedBoat()->drawOnMagnifier(myProj,&pnt1);
+    }
     pnt1.end();
     reader->setProj(proj);
     this->setPos(proj->getW()/2.0-sizeMagnifier.width()/2.0,proj->getH()/2.0-sizeMagnifier.height()/2.0);
@@ -74,7 +91,14 @@ void Magnifier::contextMenuEvent(QGraphicsSceneContextMenuEvent *)
 QVariant Magnifier::itemChange(GraphicsItemChange change, const QVariant &value)
 {
     if(change==QGraphicsItem::ItemPositionHasChanged)
+    {
+        double X=this->pos().x();
+        double Y=this->pos().y();
+        X=qBound(0.0-sizeMagnifier.width()/2.0,X,(double)parent->getProj()->getW()-sizeMagnifier.width()/2.0);
+        Y=qBound(0.0-sizeMagnifier.height()/2.0,Y,(double)parent->getProj()->getH()-sizeMagnifier.height()/2.0);
+        setPos(X,Y);
         drawMe();
+    }
     return value;
 }
 void Magnifier::drawMask()
