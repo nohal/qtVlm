@@ -18,7 +18,7 @@ INCLUDEPATH += objs \
     libs/nmealib/src/nmea \
     libs/libbsb \
     libs/miniunz \
-    libs/libgps \
+#    libs/libgps \
     .
 
 LIBS += -Llibs/build \

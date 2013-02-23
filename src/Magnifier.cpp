@@ -40,7 +40,9 @@ Magnifier::Magnifier(myCentralWidget *parent)
     GshhsReader * reader = parent->get_gshhsReader();
     reader->setProj(myProj);
     imgEarth= QPixmap(width,height);
-    imgEarth.fill(Qt::blue);
+    QColor b=Qt::blue;
+    b=b.lighter();
+    imgEarth.fill(b);
 
     QPainter pnt1(&imgEarth);
     pnt1.setRenderHint(QPainter::Antialiasing, true);

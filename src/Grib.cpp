@@ -1213,8 +1213,10 @@ QRgb Grib::getWindColor(double v, bool smooth)
     else {
         // Interpolation de couleur
         double fbeauf = Util::kmhToBeaufort_F(v);
-        QColor c1 = windColor[ (int) fbeauf ];
-        QColor c2 = windColor[ (int) fbeauf +1 ];
+        int f1=qBound(0,(int)(fbeauf),12);
+        int f2=qBound(0,(int)(fbeauf+1),12);
+        QColor c1 = windColor[f1];
+        QColor c2 = windColor[f2];
         double dcol = fbeauf-floor(fbeauf);
         rgb = qRgba(
                 (int)( c1.red()  *(1.0-dcol) + dcol*c2.red()   +0.5),
