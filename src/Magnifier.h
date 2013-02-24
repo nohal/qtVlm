@@ -26,7 +26,7 @@ private:
     myCentralWidget * parent;
     Projection * myProj;
     QPixmap imgEarth;
-    QPixmap mask;
+    QPixmap imgMask;
     void drawMe();
     void drawMask();
     int width,height;

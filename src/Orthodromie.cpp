@@ -126,7 +126,7 @@ void Orthodromie::draw_OrthodromieSegment(Projection * proj, QPainter * pnt,
     if (y1 > 90-eps) y1 = 90-eps;
     if (y1 <-90+eps) y1 =-90+eps;
 
-    if (fabs(x0-x1)>180)  // il faut faire le tour du monde par derriÃ¨re
+    if (fabs(x0-x1)>180)  // il faut faire le tour du monde par derriere
     {
         if (x0 < x1) {
             Orthodromie::draw_OrthodromieSegment(proj,pnt, x1-360,y1, x0,y0, recurs+1);

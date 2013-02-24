@@ -479,7 +479,9 @@ void Util::getCoordFromDistanceAngle(double latitude, double longitude,
     if (fabs(lat) > degToRad(80.0))
     {
         const double ratio = (degToRad(80.0)-fabs(latitude)) / (fabs(lat)-fabs(latitude));
+//        double oldDistance=distance;
         distance *= ratio;
+//        qWarning()<<oldDistance<<distance<<ratio<<radToDeg(latitude)-80.0;
         getCoordFromDistanceAngle2(latitude,longitude,distance,heading,&lat,&lon);
     }
 

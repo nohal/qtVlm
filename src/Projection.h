@@ -37,6 +37,7 @@ Copyright (C) 2008 - Jacques Zaninetti - http://zygrib.free.fr
 #ifndef M_PI_4
 #define M_PI_4     0.785398163397448309616
 #endif
+#define scalemax 4e8
 class Projection : public QObject
 {
 Q_OBJECT
@@ -100,7 +101,6 @@ signals:
         double xW, xE, yN, yS;  // fenetre visible (repere longitude/latitude)
         double PX,PY;       // center in mercator projection
         double scale;       // Echelle courante
-        double scalemax;    // Echelle maxi
         double scaleall;    // Echelle pour afficher le monde entier
         double coefremp;	   // Coefficient de remplissage (surface_visible/pixels)
 

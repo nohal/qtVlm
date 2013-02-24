@@ -653,18 +653,22 @@ void POI::setTip(QString tip)
     QString at;
     if(wph!=-1)
         at=QString().sprintf(" @%.1f",this->wph)+tr("deg");
+    QString tt;
     if(w_boat)
     {
         Orthodromie orth2boat(w_boat->getLon(), w_boat->getLat(), lon, lat);
         double   distance=orth2boat.getDistance();
-        QString tt=tr("Ortho a partir de ")+w_boat->getBoatPseudo()+": "+
+        tt=tr("Ortho a partir de ")+w_boat->getBoatPseudo()+": "+
                    Util::formatDistance(distance)+
                    "/"+QString().sprintf("%.2f",Util::A360(orth2boat.getAzimutDeg()-w_boat->getDeclinaison()))+tr("deg");
-        tt=tt.replace(" ","&nbsp;");
-        setToolTip(getTypeStr() + " : " + my_str +at+pilot+ "<br>"+tt+tip);
+        tt=getTypeStr() + " : " + my_str +at+pilot+ "<br>"+tt+tip;
     }
     else
-        setToolTip(getTypeStr() + " : "+my_str+at+pilot+"<br>"+tip);
+    {
+        tt=getTypeStr() + " : "+my_str+at+pilot+"<br>"+tip;
+    }
+    tt=tt.replace(" ","&nbsp;");
+    setToolTip(tt);
 }
 void POI::update_myStr(void)
 {

@@ -35,6 +35,8 @@ Magnifier::Magnifier(myCentralWidget *parent)
 
 
     int zoom=Settings::getSetting("magnifierZoom","3").toInt();
+    if(zoom*proj->getScale()>scalemax)
+        zoom=floor((double)scalemax/proj->getScale());
     width=proj->getW()*zoom;
     height=proj->getH()*zoom;
     myProj=new Projection(width,height,proj->getCX(),proj->getCY());
@@ -49,7 +51,7 @@ Magnifier::Magnifier(myCentralWidget *parent)
     QPainter pnt1(&imgEarth);
     pnt1.setRenderHint(QPainter::Antialiasing, true);
     pnt1.setRenderHint(QPainter::SmoothPixmapTransform, true);
-    pnt1.setCompositionMode(QPainter::CompositionMode_Source);
+    pnt1.setCompositionMode(QPainter::CompositionMode_SourceOver);
     QColor landColor = Settings::getSetting("landColor", QColor(200,200,120)).value<QColor>();
     reader->drawContinents(pnt1, myProj, Qt::transparent, landColor);
     QPen seaBordersPen;
@@ -106,22 +108,24 @@ void Magnifier::drawMask()
     int c=12-Settings::getSetting("magnifierSize","5").toInt();
 
     sizeMagnifier=QSize(parent->getProj()->getW()/c,parent->getProj()->getW()/c);
-    mask=QPixmap(sizeMagnifier);
-    mask.fill(Qt::transparent);
-    QPainter pnt(&mask);
+    imgMask=QPixmap(sizeMagnifier);
+    imgMask.fill(Qt::transparent);
+    QPainter pnt(&imgMask);
     pnt.setRenderHint(QPainter::Antialiasing);
     QPainterPath path;
     path.addEllipse(QRectF(QPointF(0,0),sizeMagnifier));
     QColor color=QColor(179,206,246);
     QRadialGradient radialGrad(QPointF(sizeMagnifier.width()/2.0,
                                        sizeMagnifier.height()/2.0),
-                                       sizeMagnifier.width());
+                                       sizeMagnifier.width()/2.0);
+    //radialGrad.setSpread(QGradient::ReflectSpread);
     radialGrad.setColorAt(0, Qt::transparent);
-    radialGrad.setColorAt(0.3, Qt::transparent);
-    color.setAlpha(170);
-    radialGrad.setColorAt(0.55, color);
-    color.setAlpha(255);
-    radialGrad.setColorAt(1, color);
+    radialGrad.setColorAt(0.7, Qt::transparent);
+    color.setAlpha(150);
+    radialGrad.setColorAt(0.9, color);
+    color.setAlpha(200);
+    radialGrad.setColorAt(0.95, color);
+    radialGrad.setColorAt(1.0,Qt::white);
     pnt.setCompositionMode(QPainter::CompositionMode_Source);
     pnt.fillPath(path,QBrush(radialGrad));
     pnt.end();
@@ -147,7 +151,8 @@ void Magnifier::drawMe()
     path.addEllipse(QRectF(QPointF(0,0),sizeMagnifier));
     pnt.drawPixmap(QPoint(0,0),imgEarth,r);
     pnt.setCompositionMode(QPainter::CompositionMode_SourceOver);
-    pnt.drawPixmap(QPoint(0,0),mask);
+    //pnt.setCompositionMode(QPainter::CompositionMode_DestinationOut);
+    pnt.drawPixmap(QPoint(0,0),imgMask);
     pnt.setCompositionMode(QPainter::CompositionMode_Source);
     path.addRect(-1,-1,sizeMagnifier.width()+2,sizeMagnifier.height()+2);
     path.setFillRule(Qt::OddEvenFill);

@@ -626,6 +626,9 @@ void MainWindow::closeProgress(void)
         {
             updatePilototo_Btn((boatVLM*)selectedBoat);
             this->slotUpdateOpponent();
+            nxtVac_cnt=((boatVLM*)selectedBoat)->getNextVac();
+            statusBar->drawVacInfo();
+            timer->start(1000);
         }
         myBoard->boatUpdated(selectedBoat);
         emit WPChanged(selectedBoat->getWPLat(),selectedBoat->getWPLon());
