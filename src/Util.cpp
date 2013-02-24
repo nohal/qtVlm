@@ -462,6 +462,7 @@ void Util::getCoordFromDistanceLoxo(const double &latitude, const double &longit
     *res_lon=radToDeg(new_longitude);
 #endif
 }
+#if 0
 void Util::getCoordFromDistanceAngle(double latitude, double longitude,
              double distance,double heading, double * res_lat,double * res_lon)
 {
@@ -502,7 +503,7 @@ void Util::getCoordFromDistanceAngle(double latitude, double longitude,
     *res_lon=lon;
 
 }
-
+#endif
 QString Util::pos2String(const int &type, const double &value)
 {
     QString str;

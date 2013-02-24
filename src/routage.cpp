@@ -162,7 +162,7 @@ inline vlmPoint findPointThreaded(const vlmPoint &point)
             }
         }
     }
-    if(qAbs(pt.lat)>84.0)
+    if(qAbs(pt.lat)>=89.9)
     {
         pt.isDead=true;
         return pt;

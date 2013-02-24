@@ -1465,6 +1465,37 @@ Etes-vous sur ?</source>
     </message>
 </context>
 <context>
+    <name>Magnifier</name>
+    <message>
+        <source>Change magnifier size</source>
+        <translation>Changer la taille de la loupe</translation>
+    </message>
+    <message>
+        <source>Change magnifier zoom</source>
+        <translation>Changer le zoom de la loupe</translation>
+    </message>
+    <message>
+        <source>Close magnifier</source>
+        <translation>Fermer la loupe</translation>
+    </message>
+    <message>
+        <source>New magnifier size</source>
+        <translation>Nouvelle taille de la loupe</translation>
+    </message>
+    <message>
+        <source>magnifier size</source>
+        <translation>Taille de la loupe</translation>
+    </message>
+    <message>
+        <source>New magnifier zoom</source>
+        <translation>Nouveau zoom de la loupe</translation>
+    </message>
+    <message>
+        <source>magnifier zoom</source>
+        <translation>Zoom de la loupe</translation>
+    </message>
+</context>
+<context>
     <name>MainWindow</name>
     <message>
         <source>Erreur</source>
@@ -4322,11 +4353,11 @@ sans simplifier</translation>
     <name>Settings</name>
     <message>
         <source>Ouverture des param�tres</source>
-        <translation>Ouverture des paramètres</translation>
+        <translation type="obsolete">Ouverture des paramètres</translation>
     </message>
     <message>
         <source>Il existe des parametres locaux, les importer dans qtvlm.ini?</source>
-        <translation>Il existe des paramètres locaux, les importer?</translation>
+        <translation type="obsolete">Il existe des paramètres locaux, les importer?</translation>
     </message>
 </context>
 <context>
@@ -4403,7 +4434,7 @@ sans simplifier</translation>
     <name>ToolBar</name>
     <message>
         <source>Misc</source>
-        <translation>Divers</translation>
+        <translation type="obsolete">Divers</translation>
     </message>
     <message>
         <source>Grib</source>
@@ -4424,14 +4455,6 @@ sans simplifier</translation>
     <message>
         <source>ETA</source>
         <translation>ETA</translation>
-    </message>
-    <message>
-        <source>Quitter</source>
-        <translation></translation>
-    </message>
-    <message>
-        <source>Bye</source>
-        <translation></translation>
     </message>
     <message>
         <source>Telechargement zyGrib</source>
@@ -4586,8 +4609,8 @@ sans simplifier</translation>
         <translation>Maintenir appuyé pour sélectionner le mode de téléchargement</translation>
     </message>
     <message>
-        <source>Tableau de bord</source>
-        <translation></translation>
+        <source>Loupe</source>
+        <translation>Loupe</translation>
     </message>
 </context>
 <context>
@@ -7694,24 +7717,16 @@ Que voulez vous faire?</translation>
 <context>
     <name>xml_POIData</name>
     <message>
-        <source>%1 POI de zyGrib trouve</source>
-        <translation></translation>
-    </message>
-    <message>
         <source>Supprimer les POI de zyGrib apres importation?</source>
-        <translation>Supprimer les POI de zyGrib après importation?</translation>
-    </message>
-    <message>
-        <source>POI de zyGrib</source>
-        <translation></translation>
+        <translation type="obsolete">Supprimer les POI de zyGrib après importation?</translation>
     </message>
     <message>
         <source>POI importes, pensez a sauvegarder les POI</source>
-        <translation>POIs importés, pensez à sauvegarder les POIs</translation>
+        <translation type="obsolete">POIs importés, pensez à sauvegarder les POIs</translation>
     </message>
     <message>
         <source>Pas de POI de zyGrib trouves</source>
-        <translation>Pas de POIs trouvés dans zyGrib</translation>
+        <translation type="obsolete">Pas de POIs trouvés dans zyGrib</translation>
     </message>
     <message>
         <source>Erreur ligne %1, colonne %2:

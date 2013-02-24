@@ -177,5 +177,33 @@ inline QPointF Util::calculateSumVect(const double &angle1,const double &length1
     QPointF pointF(temp.length(),A360(temp.angle()));
     return pointF;
 }
+inline void Util::getCoordFromDistanceAngle(double latitude, double longitude,
+             double distance,double heading, double * res_lat,double * res_lon)
+{
+    if(qAbs(latitude)>=89.9)
+    {
+        *res_lat=latitude;
+        *res_lon=longitude;
+        return;
+    }
+    double d, new_lat, t_lat, new_lon;
+    latitude = degToRad(latitude);
+    longitude = fmod(degToRad(longitude), TWO_PI);
+    heading=degToRad(heading);
+    d = degToRad(distance/60.0);
+    new_lat = latitude + d*cos(heading);
+    t_lat = (latitude + new_lat) / 2.0;
+    new_lon =  longitude + (d*sin(heading))/cos(t_lat);
+    if (new_lon > PI)
+    {
+        new_lon -= TWO_PI;
+    }
+    else if (new_lon < -PI)
+    {
+        new_lon += TWO_PI;
+    }
+    *res_lat = radToDeg(new_lat);
+    *res_lon = radToDeg(new_lon);
+}
 
 #endif
