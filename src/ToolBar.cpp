@@ -150,8 +150,8 @@ ToolBar::ToolBar(MainWindow *mainWindow)
     mapToolBar->addAction(acMap_Zoom_All);
     mapToolBar->addSeparator();
     mapToolBar->addAction(selectionMode);
-    mapToolBar->addSeparator();
-    mapToolBar->addAction(magnify);
+    //mapToolBar->addSeparator();
+    //mapToolBar->addAction(magnify);
 
     /* Estime toolBar */
     lbEstime=new QLabel(tr("Estime"));
