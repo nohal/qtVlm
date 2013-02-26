@@ -96,7 +96,7 @@ GribRecord::GribRecord(ZUFILE* file, int id_)
 void  GribRecord::translateDataType()
 {
         this->knownData = true;
-
+    //qWarning()<<idCenter<<idModel<<idGrid<<dataType<<levelType<<levelValue;
         //------------------------
         // NOAA GFS
         //------------------------
@@ -185,7 +185,11 @@ void  GribRecord::translateDataType()
         //---------------
         else if (idCenter==255 && idModel==1 && idGrid==255)
         {
-
+            if(this->dataType==GRB_CURRENT_VX || this->dataType==GRB_CURRENT_VY)
+            {
+                this->levelType=LV_MSL;
+                this->levelValue=0;
+            }
         }
         //---------------
         //Theyr.com
@@ -227,7 +231,7 @@ void  GribRecord::translateDataType()
         //---------------
         else if (idCenter==85 && idModel==10 && idGrid==255)
         {
-            qWarning()<<"dataType="<<dataType;
+            //qWarning()<<"dataType="<<dataType;
             if(this->dataType==GRB_CURRENT_VX || this->dataType==GRB_CURRENT_VY)
             {
                 this->levelType=LV_MSL;
