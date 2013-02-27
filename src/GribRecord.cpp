@@ -96,6 +96,11 @@ GribRecord::GribRecord(ZUFILE* file, int id_)
 void  GribRecord::translateDataType()
 {
         this->knownData = true;
+    if(this->dataType==GRB_CURRENT_VX || this->dataType==GRB_CURRENT_VY)
+    {
+        this->levelType=LV_MSL;
+        this->levelValue=0;
+    }
     //qWarning()<<idCenter<<idModel<<idGrid<<dataType<<levelType<<levelValue;
         //------------------------
         // NOAA GFS
@@ -185,11 +190,6 @@ void  GribRecord::translateDataType()
         //---------------
         else if (idCenter==255 && idModel==1 && idGrid==255)
         {
-            if(this->dataType==GRB_CURRENT_VX || this->dataType==GRB_CURRENT_VY)
-            {
-                this->levelType=LV_MSL;
-                this->levelValue=0;
-            }
         }
         //---------------
         //Theyr.com
@@ -209,34 +209,18 @@ void  GribRecord::translateDataType()
         //---------------
         else if (idCenter==0 && idModel==0 && idGrid==255)
         {
-            if(this->dataType==GRB_CURRENT_VX || this->dataType==GRB_CURRENT_VY)
-            {
-                this->levelType=LV_MSL;
-                this->levelValue=0;
-            }
         }
         //---------------
         //Actimar: courants bretagne, contient les vagues aussi (exclues pour le moment)
         //---------------
         else if (idCenter==255 && idModel==220 && idGrid==255)
         {
-            if(this->dataType==GRB_CURRENT_VX || this->dataType==GRB_CURRENT_VY)
-            {
-                this->levelType=LV_MSL;
-                this->levelValue=0;
-            }
         }
         //---------------
         //Navimail-Mercator
         //---------------
         else if (idCenter==85 && idModel==10 && idGrid==255)
         {
-            //qWarning()<<"dataType="<<dataType;
-            if(this->dataType==GRB_CURRENT_VX || this->dataType==GRB_CURRENT_VY)
-            {
-                this->levelType=LV_MSL;
-                this->levelValue=0;
-            }
         }
         //------------------------
         // Unknown center

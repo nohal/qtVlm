@@ -207,7 +207,6 @@ public slots:
         QString      gribFileNameCurrent;
         QString      gribFilePath;
 
-        DialogProxy   * dialogProxy;
 
         void updatePrevNext(void);
 
@@ -240,17 +239,17 @@ public slots:
 
         board * myBoard;
         boat* selectedBoat;
+        DialogProxy   * dialogProxy;
         DialogParamVlm * param;
         DialogPoiInput * poi_input_dialog;
-
         DialogPilototo * pilototo;
-
         DialogPilototoInstruction * selPOI_instruction;
+        DialogVlmGrib * loadVLM_grib;
+        DialogGribValidation * gribValidation_dialog;
         bool isSelectingWP;
 
         polarList * polar_list;
 
-        DialogVlmGrib * loadVLM_grib;
 
         /* central widget */
         myCentralWidget * my_centralWidget;
@@ -258,7 +257,6 @@ public slots:
         Progress *progress;
         void closeProgress(void);
 
-        DialogGribValidation * gribValidation_dialog;
         int nBoat;
         int toBeCentered;
         boatVLM *acc;

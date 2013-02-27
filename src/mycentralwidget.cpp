@@ -1741,13 +1741,8 @@ void myCentralWidget::slot_takeScreenshot()
     scene->render(p);
     p->end();
     QString screenshotPath=Settings::getSetting("screenShotFolder","").toString();
-#ifdef __WIN_QTVLM
-    QString fileName = QFileDialog::getSaveFileName(this,
-                         tr("Photo Ecran"), screenshotPath, "Screenshot (*.png)",0,QFileDialog::DontUseNativeDialog);
-#else
     QString fileName = QFileDialog::getSaveFileName(this,
                          tr("Photo Ecran"), screenshotPath, "Screenshot (*.png)");
-#endif
     if(fileName.isEmpty() || fileName.isNull()) return;
     QFile::remove(fileName);
     QFile screenshotFile(fileName);
@@ -2348,13 +2343,8 @@ void myCentralWidget::exportRouteFromMenu(ROUTE * route)
         routePath=QDir::currentPath();
         Settings::setSetting("importRouteFolder",routePath);
     }
-#ifdef __WIN_QTVLM
-    QString fileName = QFileDialog::getSaveFileName(this,
-                         tr("Exporter une Route"), routePath, "Routes (*.json *.csv *.txt *.CSV *.gpx *.kml)",0,QFileDialog::DontUseNativeDialog);
-#else
     QString fileName = QFileDialog::getSaveFileName(this,
                          tr("Exporter une Route"), routePath, "Routes (*.json *.csv *.txt *.CSV *.gpx *.kml)");
-#endif
     if(fileName.isEmpty() || fileName.isNull()) return;
 
     QFile::remove(fileName);

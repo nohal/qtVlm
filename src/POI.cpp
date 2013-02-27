@@ -619,6 +619,7 @@ void POI::setNavMode(int mode)
 }
 void POI::setName(QString name)
 {
+    if(name.length()>100) name=name.left(100);
     this->name=name;
     update_myStr();
     setTip("");

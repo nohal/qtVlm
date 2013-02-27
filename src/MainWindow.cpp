@@ -621,6 +621,11 @@ void MainWindow::closeProgress(void)
                 selectedBoat->reloadPolar(true);
                 emit boatHasUpdated(selectedBoat);
             }
+            QDateTime dtm =QDateTime::fromTime_t(((boatReal*)selectedBoat)->getEta()).toUTC();
+            if(!dtm.isValid() || ((boatReal*)selectedBoat)->getEta()<=0)
+                toolBar->clear_eta();
+            else
+                toolBar->update_eta(dtm);
         }
         else
         {
@@ -628,6 +633,11 @@ void MainWindow::closeProgress(void)
             this->slotUpdateOpponent();
             nxtVac_cnt=((boatVLM*)selectedBoat)->getNextVac();
             statusBar->drawVacInfo();
+            QDateTime dtm =QDateTime::fromString(((boatVLM*)selectedBoat)->getETA(),"yyyy-MM-ddTHH:mm:ssZ");
+            if(!dtm.isValid())
+                toolBar->clear_eta();
+            else
+                toolBar->update_eta(dtm);
             timer->start(1000);
         }
         myBoard->boatUpdated(selectedBoat);
@@ -1574,9 +1584,11 @@ void MainWindow::slotBoatUpdated(boat * upBoat,bool newRace,bool doingSync)
 
 
             /* Updating ETA */            
-            QString Eta = boat->getETA();
-            QDateTime dtm =QDateTime::fromString(Eta,"yyyy-MM-ddTHH:mm:ssZ");
-            toolBar->update_eta(dtm);
+            QDateTime dtm =QDateTime::fromString(boat->getETA(),"yyyy-MM-ddTHH:mm:ssZ");
+            if(!dtm.isValid())
+                toolBar->clear_eta();
+            else
+                toolBar->update_eta(dtm);
 
             /* change data displayed in all pilototo buttons or menu entry: (nb of instructions passed / tot nb) */
             updatePilototo_Btn(boat);
@@ -1617,9 +1629,8 @@ void MainWindow::slotBoatUpdated(boat * upBoat,bool newRace,bool doingSync)
             toolBar->clear_eta();
         else
         {
-            QString txt;
             QDateTime dtm =QDateTime::fromTime_t(boat->getEta()).toUTC();
-            if(!dtm.isValid())
+            if(!dtm.isValid() || boat->getEta()<=0)
                 toolBar->clear_eta();
             else
                 toolBar->update_eta(dtm);
