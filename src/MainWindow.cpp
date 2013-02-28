@@ -66,6 +66,7 @@ Copyright (C) 2008 - Jacques Zaninetti - http://zygrib.free.fr
 #include "StatusBar.h"
 
 #include "DialogPoiDelete.h"
+#include "DialogPoi.h"
 #include "DialogGribValidation.h"
 #include "DialogPoiInput.h"
 #include "DialogProxy.h"
@@ -162,7 +163,7 @@ void MainWindow::connectSignals()
     if(mb->acGribInterpolation)
         connect(mb->acGribInterpolation, SIGNAL(triggered()), this, SLOT(slotGribInterpolation()));
 #endif
-    connect(mb->acPOIinput, SIGNAL(triggered()), poi_input_dialog, SLOT(slot_showPOI_input()));
+    connect(mb->acPOIinput, SIGNAL(triggered()), this, SLOT(slot_showPOI_input()));
     connect(mb->acPilototo, SIGNAL(triggered()), this, SLOT(slotPilototo()));
     connect(mb->acShowPolar, SIGNAL(triggered()),this,SLOT(slotShowPolar()));
 
@@ -321,7 +322,7 @@ void MainWindow::continueSetup()
 //--------------------------------------------------
     progress->newStep(30,tr("Creating board & dialogs"));
 
-    poi_input_dialog = new DialogPoiInput(my_centralWidget);
+    //poi_input_dialog = new DialogPoiInput(my_centralWidget);
     selPOI_instruction=NULL;
     isSelectingWP=false;
 
@@ -782,14 +783,12 @@ void MainWindow::slotUpdateOpponent(void)
 
 void MainWindow::slotCreatePOI()
 {
-    double lon, lat;
-    proj->screen2map(mouseClicX,mouseClicY, &lon, &lat);
-    emit newPOI(lon,lat,proj,selectedBoat);
+    this->slot_showPOI_input();
 }
 
 void MainWindow::slot_newPOI(void)
 {
-    emit newPOI(0.0,0.0,proj,selectedBoat);
+    this->slot_showPOI_input(NULL,true);
 }
 
 void MainWindow::slot_removePOI(void) {
@@ -2240,4 +2239,25 @@ void MainWindow::slot_updateGribMono()
 void MainWindow::slot_disablePopupMenu()
 {
     this->menuPopupBtRight->setDisabled(true);
+}
+void MainWindow::slot_showPOI_input(POI* poi, const bool &fromMenu)
+{
+    bool creationMode=false;
+    if(poi==NULL)
+    {
+        creationMode=true;
+        double lon, lat;
+        if(fromMenu)
+        {
+            lon=0;
+            lat=0;
+        }
+        else
+            proj->screen2map(mouseClicX,mouseClicY, &lon, &lat);
+        poi=new POI(tr("POI"), POI_TYPE_POI,lat, lon, proj, this,
+                    my_centralWidget, -1,-1,false, this->selectedBoat);
+    }
+    DialogPoi dp(this,my_centralWidget);
+    dp.initPOI(poi,creationMode);
+    dp.exec();
 }

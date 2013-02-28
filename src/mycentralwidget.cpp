@@ -1476,7 +1476,7 @@ void myCentralWidget::slot_addPOI_list(POI * poi)
 {
     poi_list.append(poi);
     scene->addItem(poi);
-    connect(poi, SIGNAL(editPOI(POI*)),poi_editor, SLOT(editPOI(POI*)));
+    connect(poi, SIGNAL(editPOI(POI*)),mainW, SLOT(slot_showPOI_input(POI*)));
     connect(proj, SIGNAL(projectionUpdated()), poi, SLOT(slot_updateProjection()));
     connect(poi, SIGNAL(clearSelection()),this,SLOT(slot_clearSelection()));
 
@@ -1530,9 +1530,6 @@ void myCentralWidget::slot_delPOI_list(POI * poi)
 {
     poi_list.removeAll(poi);
     scene->removeItem(poi);
-    disconnect(poi, SIGNAL(editPOI(POI*)),poi_editor, SLOT(editPOI(POI*)));
-    disconnect(proj, SIGNAL(projectionUpdated()), poi, SLOT(slot_updateProjection()));
-    disconnect(poi, SIGNAL(clearSelection()),this,SLOT(slot_clearSelection()));
     emit twaDelPoi(poi);
 }
 

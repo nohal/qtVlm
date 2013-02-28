@@ -90,6 +90,7 @@ class MainWindow: public QMainWindow
         QMenu *createPopupMenu(void);
 
 public slots:
+        void slot_showPOI_input(POI *poi=NULL, const bool &fromMenu=false);
         void slot_disablePopupMenu();
         void slotFile_Open();
         void slotFile_Reopen();
@@ -241,7 +242,7 @@ public slots:
         boat* selectedBoat;
         DialogProxy   * dialogProxy;
         DialogParamVlm * param;
-        DialogPoiInput * poi_input_dialog;
+        //DialogPoiInput * poi_input_dialog;
         DialogPilototo * pilototo;
         DialogPilototoInstruction * selPOI_instruction;
         DialogVlmGrib * loadVLM_grib;
