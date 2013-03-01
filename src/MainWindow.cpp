@@ -274,9 +274,9 @@ void MainWindow::continueSetup()
         my_centralWidget->setAboutToQuit();
         QApplication::quit();
     }
-    if(!QFile(appFolder.value("img")+"magnify.png").exists())
+    if(!QFile(appFolder.value("img")+"warning.png").exists())
         QMessageBox::critical (this,
-           "Error","File 'magnify.png' cannot be find in img directory<br>Please check your installation"); /*untranslated on purpose*/
+           "Error","File 'warning.png' cannot be find in img directory<br>Please check your installation"); /*untranslated on purpose*/
     dialogProxy = new DialogProxy();
 
 //--------------------------------------------------

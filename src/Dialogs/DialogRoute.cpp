@@ -48,6 +48,7 @@ Copyright (C) 2008 - Jacques Zaninetti - http://zygrib.free.fr
 #include <QRadialGradient>
 #include <QTime>
 #include <QFileDialog>
+#include <QPixmap>
 
 //-------------------------------------------------------
 // ROUTE_Editor: Constructor for edit an existing ROUTE
@@ -59,6 +60,8 @@ DialogRoute::DialogRoute(ROUTE *route, myCentralWidget *parent, bool createMode)
     this->parent=parent;
     tabWidthRatio=-1;
     setupUi(this);
+    this->warning_icon->setPixmap(QPixmap(appFolder.value("img")+"warning.png"));
+    connect(this->useVbvmgVlm,SIGNAL(stateChanged(int)),this,SLOT(slot_hideShowWarning()));
     Util::setFontDialog(this);
     inputTraceColor =new InputLineParams(route->getWidth(),route->getColor(),1.6,  QColor(Qt::red),this,0.1,5);
     colorBox->layout()->addWidget( inputTraceColor);
@@ -267,6 +270,12 @@ DialogRoute::DialogRoute(ROUTE *route, myCentralWidget *parent, bool createMode)
     if(route->getBoat()->getLockStatus())
         this->Envoyer->setDisabled(true);
 }
+void DialogRoute::slot_hideShowWarning()
+{
+    this->warning_icon->setHidden(this->useVbvmgVlm->checkState()!=Qt::Unchecked);
+    this->warning_text->setHidden(this->useVbvmgVlm->checkState()!=Qt::Unchecked);
+}
+
 DialogRoute::~DialogRoute()
 {
     //qWarning()<<"deleting dialogRoute";

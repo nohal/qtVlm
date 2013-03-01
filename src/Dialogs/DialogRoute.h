@@ -42,6 +42,7 @@ class DialogRoute : public QDialog, public Ui::ROUTE_Editor_ui
         void fillPilotView(bool f=false);
 
 public slots:
+        void slot_hideShowWarning();
         void GybeTack(int i);
         void slotLoadPilototo();
         void slotLoadPilototoCustom();
