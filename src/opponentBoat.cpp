@@ -244,6 +244,104 @@ void opponent::updateProjection()
     updatePosition();
     update();
 }
+void opponent::drawOnMagnifier(Projection * myProj,QPainter * pnt)
+{
+    int boat_i,boat_j;
+
+    Util::computePos(myProj,lat,lon,&boat_i,&boat_j);
+
+    boat_i-=3;
+    boat_j-=(height/2);
+    if(isQtBoat || parentWindow->get_shOpp_st())
+    {
+        return;
+    }
+    if(name.isEmpty())
+        return;
+
+    if(Settings::getSetting("showFlag",0).toInt()==1)
+    {
+        if(flag.isNull())
+        {
+            if(flag.load(appFolder.value("flags")+this->pavillon+".png"))
+            {
+                flag=flag.scaled(30,20,Qt::KeepAspectRatio);
+                drawFlag=true;
+            }
+            else
+                drawFlag=false;
+        }
+        else
+        {
+            drawFlag=true;
+        }
+    }
+    else
+    {
+        drawFlag=false;
+    }
+    int dy = height/2;
+
+    QFontMetrics fm(font());
+    QColor myColor_m=myColor;
+    myColor_m.setAlpha(255);
+    QPen pen(Qt::black);
+    pen.setWidth(1);
+    pnt->setPen(pen);
+    if(!labelHidden)
+    {
+        if(this->isReal)
+        {
+            if(myColor.name()=="#000000")
+                bgcolor=QColor(128,126,219);
+            else
+                bgcolor=myColor;
+            bgcolor.setAlpha(150);
+        }
+        else if(this->statusVLM.toLower()=="on_coast" || this->statusVLM.toLower()=="locked")
+            bgcolor=QColor(239,48,36,150);
+        else
+            bgcolor = QColor(255,255,255,150);
+        QColor bgcolor_m=bgcolor;
+        bgcolor_m.setAlpha(255);
+        pnt->setBrush(QBrush(bgcolor_m));
+        if(!drawFlag)
+        {
+            pnt->fillRect(boat_i+9,boat_j+0, width-10,height-1,bgcolor_m);
+            pnt->setFont(font());
+            pnt->setBrush(Qt::NoBrush);
+            pnt->drawText(boat_i+10,boat_j+fm.height()-2,my_str);
+        }
+        else
+        {
+            pnt->fillRect(boat_i+21,boat_j+0, width-10,height-1,bgcolor_m);
+            pnt->setFont(font());
+            pnt->setBrush(Qt::NoBrush);
+            pnt->drawText(boat_i+22,boat_j+fm.height()-2,my_str);
+        }
+    }
+    if(!drawFlag)
+    {
+        pen.setWidth(4);
+        pnt->setPen(pen);
+        pnt->fillRect(boat_i+0,boat_j+dy-3,7,7, QBrush(myColor_m));
+    }
+    else
+    {
+        pnt->drawImage(boat_i-11,boat_j+dy-9,flag);
+    }
+    int g = 60;
+    pen = QPen(QColor(g,g,g));
+    pen.setWidth(1);
+    pnt->setPen(pen);
+    if(!labelHidden)
+    {
+        if(!drawFlag)
+            pnt->drawRect(boat_i+9,boat_j+0,width-10,height-1);
+        else
+            pnt->drawRect(boat_i+21,boat_j+0,width-10,height-1);
+    }
+}
 
 void opponent::updatePosition()
 {
@@ -344,7 +442,8 @@ void opponent::updateName()
             if(parentWindow->getSelectedBoat())
             {
                 Orthodromie oo(parentWindow->getSelectedBoat()->getLon(),parentWindow->getSelectedBoat()->getLat(),this->lon,this->lat);
-                if(oo.getDistance()<=25.0)
+                double distanceFromBoat=oo.getDistance();
+                if(distanceFromBoat<=25.0 /*|| true*/)
                 {
                     str2=str2+"<tr><td>"+tr("Vitesse estimee: ")+"</td><td>"+
                          QString().sprintf("%.2f ",estimatedSpeed)+
@@ -357,6 +456,9 @@ void opponent::updateName()
                 {
                     str2+=tr("Trop loin pour estimer le cap et la vitesse");
                 }
+                str2=str2+"<tr><td>"+tr("Distance: ")+"</td><td>"+
+                     QString().sprintf("%.2f ",distanceFromBoat)+
+                     tr(" NM")+"</td></tr>";
             }
         }
         str2.replace(" ","&nbsp;");
@@ -511,8 +613,6 @@ opponentList::opponentList(Projection * proj,MainWindow * main,myCentralWidget *
         inetClient(inet)
 {
     inetClient::setName("OpponentList");
-
-    needAuth=true;
 
     this->parent=parent;
     connect(parent,SIGNAL(resetTraceCache()),this,SLOT(slot_resetTraceCache()));
@@ -680,7 +780,7 @@ void opponentList::getGenData()
         QTextStream(&page)<<"&limit=10";
     //qWarning() << "OPP, clearReq 2";
     clearCurrentRequest();
-    inetGet(OPP_BOAT_DATA,page);
+    inetGet(OPP_BOAT_DATA,page,true);
 }
 
 void opponentList::getNxtOppData()
@@ -762,7 +862,7 @@ void opponentList::getNxtOppData()
             << "&starttime="
             << starttime;
     }
-    inetGet(OPP_BOAT_TRJ,page);
+    inetGet(OPP_BOAT_TRJ,page,true);
 }
 
 void opponentList::authFailed(void)
@@ -1030,7 +1130,7 @@ void opponentList::requestFinished (QByteArray res_byte)
                                             << "/ws/raceinfo/reals.php?idr="
                                             << currentRace;
                         clearCurrentRequest();
-                        inetGet(OPP_BOAT_REAL,page);
+                        inetGet(OPP_BOAT_REAL,page,true);
                     }
                     else if(opponent_list.count()>0)
                     {
@@ -1118,7 +1218,7 @@ void opponentList::requestFinished (QByteArray res_byte)
                     << opp->getIduser()
                     <<"&idr="
                     <<opp->getRace();
-                inetGet(OPP_INFO_REAL,page);
+                inetGet(OPP_INFO_REAL,page,true);
             }
             else
                 getNxtOppData();
@@ -1205,20 +1305,14 @@ void opponentList::getTrace(QByteArray buff, QList<vlmPoint> * trace)
     if(checkWSResult(buff,"OppList_getTrack",main))
     {
         int nbPoints= result["nb_tracks"].toInt();
-        //qWarning() << "Nb point in track: " << nbPoints;
         if(nbPoints > 0)
         {
-            //int i=0;
 #if 0
             qWarning()<<"trace last timestamp=   "<<QDateTime().fromTime_t(trace->last().timeStamp);
-#endif
             QVariant pos_list0 = result["tracks"].toList();
             QList<QVariant> pos_list1=pos_list0.toList()[0].toList();
-#if 0
             qWarning()<<"received trace starts at"<<QDateTime().fromTime_t(pos_list1[0].toInt());
-#endif
             pos_list1=pos_list0.toList().last().toList();
-#if 0
             qWarning()<<"received trace ends at  "<<QDateTime().fromTime_t(pos_list1[0].toInt());
 #endif
             foreach (QVariant pos, result["tracks"].toList())
@@ -1228,11 +1322,9 @@ void opponentList::getTrace(QByteArray buff, QList<vlmPoint> * trace)
                     continue;
                 double lon = pos_list[1].toDouble()/1000;
                 double lat = pos_list[2].toDouble()/1000;
-                //qWarning() << i << ": " << QDateTime::fromTime_t(pos_list[0].toInt()) << " - " << lon << "," << lat;
                 vlmPoint pt(lon,lat);
                 pt.timeStamp=pos_list[0].toInt();
                 trace->append(pt);
-                //++i;
             }
         }
     }

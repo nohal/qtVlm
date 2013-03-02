@@ -74,9 +74,6 @@ class DialogVlmGrib;
 /*DialogFinePositt.h*/
 class DialogFinePosit;
 
-/* Font.h */
-class Font;
-
 /* GisReader.h */
 class GisReader;
 
@@ -106,15 +103,20 @@ class LoadGribFile;
 
 /* MainWindow.h */
 class MainWindow;
+class Progress;
 
 /* mapCompass.h */
 class mapCompass;
 
-/* MenuBar.h */
+/* MenuBar.h / toolbar ...*/
 class MenuBar;
+class ToolBar;
+class StatusBar;
+
 
 /* mycentralwidget.h */
 class myScene;
+class MyView;
 class myCentralWidget;
 
 /* opponnentBoat.h */
@@ -227,4 +229,7 @@ class dialogFaxMeteo;
 /* loadImg.h */
 class loadImg;
 class dialogLoadImg;
+
+/*magnifier*/
+class Magnifier;
 #endif // CLASS_LIST_H

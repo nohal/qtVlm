@@ -90,7 +90,8 @@ class vlmLine : public QGraphicsWidget
         void setMcp(myCentralWidget * mcp){this->mcp=mcp;}
         ~vlmLine();
 
-    protected:
+        void set_zValue(const double &z);
+protected:
         void paint(QPainter * pnt, const QStyleOptionGraphicsItem * , QWidget * );
         QRectF boundingRect() const;
         QPainterPath shape() const;

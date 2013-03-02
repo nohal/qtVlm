@@ -20,11 +20,15 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #ifndef DIALOGVLM_GRIB_H
 #define DIALOGVLM_GRIB_H
-
+#ifdef QT_V5
+#include <QtWidgets/QDialog>
+#include <QtWidgets/QMessageBox>
+#include <QtWidgets/QRadioButton>
+#else
 #include <QDialog>
 #include <QMessageBox>
 #include <QRadioButton>
-
+#endif
 #include "ui_DialogVLM_grib.h"
 
 #include "class_list.h"

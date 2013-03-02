@@ -24,6 +24,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "POI.h"
 #include "Util.h"
 #include "settings.h"
+#include <QMessageBox>
 
 
 /************************/
@@ -37,6 +38,16 @@ DialogWp::DialogWp(QWidget * parent) : QDialog(parent)
 
     WP_conv_lat->setText("");
     WP_conv_lon->setText("");
+}
+void DialogWp::setLocked(const bool &locked)
+{
+    this->WP_lat->setEnabled(locked);
+    this->WP_lon->setEnabled(locked);
+    this->btn_clear->setEnabled(locked);
+    this->btn_paste->setEnabled(locked);
+    this->btn_selectPOI->setEnabled(locked);
+    this->btn_selectPOI->setEnabled(locked);
+    this->buttonBox->button(QDialogButtonBox::Ok)->setEnabled(locked);
 }
 
 void DialogWp::show_WPdialog(boatVLM * boat)

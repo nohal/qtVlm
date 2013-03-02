@@ -805,10 +805,6 @@ Continuer la sauvegarde?</source>
 <context>
     <name>DialogPoi</name>
     <message>
-        <source>POI</source>
-        <translation></translation>
-    </message>
-    <message>
         <source>Nouvelle marque</source>
         <translation></translation>
     </message>
@@ -1119,6 +1115,10 @@ Etes-vous sur ?</source>
         <source>La route a ete chargee depuis VLM.</source>
         <translation type="obsolete">La route a été chargée depuis VLM.</translation>
     </message>
+    <message>
+        <source>Pour utiliser cette action il faut que la route parte du bateau</source>
+        <translation></translation>
+    </message>
 </context>
 <context>
     <name>DialogTwaLine</name>
@@ -1285,6 +1285,10 @@ Etes-vous sur ?</source>
     <message>
         <source>Recharger la polaire</source>
         <translation></translation>
+    </message>
+    <message>
+        <source>deg</source>
+        <translation>°</translation>
     </message>
 </context>
 <context>
@@ -1457,14 +1461,41 @@ Etes-vous sur ?</source>
     </message>
 </context>
 <context>
+    <name>Magnifier</name>
+    <message>
+        <source>Change magnifier size</source>
+        <translation>Changer la taille de la loupe</translation>
+    </message>
+    <message>
+        <source>Change magnifier zoom</source>
+        <translation>Changer le zoom de la loupe</translation>
+    </message>
+    <message>
+        <source>Close magnifier</source>
+        <translation>Fermer la loupe</translation>
+    </message>
+    <message>
+        <source>New magnifier size</source>
+        <translation>Nouvelle taille de la loupe</translation>
+    </message>
+    <message>
+        <source>magnifier size</source>
+        <translation>Taille de la loupe</translation>
+    </message>
+    <message>
+        <source>New magnifier zoom</source>
+        <translation>Nouveau zoom de la loupe</translation>
+    </message>
+    <message>
+        <source>magnifier zoom</source>
+        <translation>Zoom de la loupe</translation>
+    </message>
+</context>
+<context>
     <name>MainWindow</name>
     <message>
         <source>Erreur</source>
         <translation>Erreur</translation>
-    </message>
-    <message>
-        <source>Outils</source>
-        <translation></translation>
     </message>
     <message>
         <source>Echec lors de l&apos;ouverture.</source>
@@ -1511,10 +1542,6 @@ Etes-vous sur ?</source>
         <translation></translation>
     </message>
     <message>
-        <source>(dist.orthodromique:</source>
-        <translation></translation>
-    </message>
-    <message>
         <source>Pilototo</source>
         <translation></translation>
     </message>
@@ -1525,10 +1552,6 @@ Etes-vous sur ?</source>
     <message>
         <source>Selection d&apos;une marque</source>
         <translation>Sélection d&apos;une marque</translation>
-    </message>
-    <message>
-        <source>Prochaine vac dans</source>
-        <translation></translation>
     </message>
     <message>
         <source>Cartes non trouvees.</source>
@@ -1548,7 +1571,7 @@ Etes-vous sur ?</source>
     </message>
     <message>
         <source>deg</source>
-        <translation>°</translation>
+        <translation type="obsolete">°</translation>
     </message>
     <message>
         <source>Selection:</source>
@@ -1564,19 +1587,19 @@ Etes-vous sur ?</source>
     </message>
     <message>
         <source>j</source>
-        <translation>j</translation>
+        <translation type="obsolete">j</translation>
     </message>
     <message>
         <source>h</source>
-        <translation>h</translation>
+        <translation type="obsolete">h</translation>
     </message>
     <message>
         <source>m</source>
-        <translation>m</translation>
+        <translation type="obsolete">m</translation>
     </message>
     <message>
         <source>s</source>
-        <translation>s</translation>
+        <translation type="obsolete">s</translation>
     </message>
     <message>
         <source>Arrivee WP</source>
@@ -1588,10 +1611,6 @@ Etes-vous sur ?</source>
     </message>
     <message>
         <source>Arret du cap</source>
-        <translation></translation>
-    </message>
-    <message>
-        <source> Estime </source>
         <translation></translation>
     </message>
     <message>
@@ -1610,23 +1629,19 @@ Etes-vous sur ?</source>
     </message>
     <message>
         <source>Selection: </source>
-        <translation>Sélection:</translation>
+        <translation type="obsolete">Sélection:</translation>
     </message>
     <message>
         <source>  init.dir: %1deg</source>
-        <translation>  init.dir: %1°</translation>
+        <translation type="obsolete">  init.dir: %1°</translation>
     </message>
     <message>
         <source> Arrivee WP</source>
-        <translation>Arrivée WP</translation>
+        <translation type="obsolete">Arrivée WP</translation>
     </message>
     <message>
         <source> kts</source>
-        <translation>nds</translation>
-    </message>
-    <message>
-        <source>dd-MM-yyyy, HH:mm:ss</source>
-        <translation></translation>
+        <translation type="obsolete">nds</translation>
     </message>
     <message>
         <source> (du </source>
@@ -1642,27 +1657,11 @@ Etes-vous sur ?</source>
     </message>
     <message>
         <source>Si cette option est cochee&lt;br&gt;l&apos;estime calcule la vitesse du bateau&lt;br&gt;a la prochaine vac.&lt;br&gt;Sinon elle utilise la vitesse du bateau&lt;br&gt;telle que donnee par VLM</source>
-        <translation>Si cette option est cochée&lt;br&gt;l&apos;estime calcule la vitesse du bateau à la prochaine vacation.&lt;br&gt;Sinon elle utilise la vitesse du bateau&lt;br&gt;telle que donnée par VLM</translation>
-    </message>
-    <message>
-        <source> mins </source>
-        <translation></translation>
-    </message>
-    <message>
-        <source> vacs </source>
-        <translation></translation>
-    </message>
-    <message>
-        <source> NM </source>
-        <translation></translation>
+        <translation type="obsolete">Si cette option est cochée&lt;br&gt;l&apos;estime calcule la vitesse du bateau à la prochaine vacation.&lt;br&gt;Sinon elle utilise la vitesse du bateau&lt;br&gt;telle que donnée par VLM</translation>
     </message>
     <message>
         <source>Derniere synchro</source>
-        <translation>Dernière synchro</translation>
-    </message>
-    <message>
-        <source> Courant</source>
-        <translation></translation>
+        <translation type="obsolete">Dernière synchro</translation>
     </message>
     <message>
         <source>dd/MM/yyyy hh:mm</source>
@@ -1681,24 +1680,20 @@ Etes-vous sur ?</source>
         <translation>de données Courants</translation>
     </message>
     <message>
-        <source> Vent</source>
-        <translation></translation>
-    </message>
-    <message>
         <source>Unable to write in qtVlm folder</source>
-        <translation>Impossible d&apos;écrire dans le répertoire de qtVlm</translation>
+        <translation type="obsolete">Impossible d&apos;écrire dans le répertoire de qtVlm</translation>
     </message>
     <message>
         <source>Please change the folder permission or</source>
-        <translation>Changez les permissions de ce répertoire ou</translation>
+        <translation type="obsolete">Changez les permissions de ce répertoire ou</translation>
     </message>
     <message>
         <source>reinstall qtVlm elsewhere</source>
-        <translation>réinstallew qtVlm autre part</translation>
+        <translation type="obsolete">réinstallew qtVlm autre part</translation>
     </message>
     <message>
         <source>Starting qtVLM</source>
-        <translation>Démarrage de qtVlm</translation>
+        <translation type="obsolete">Démarrage de qtVlm</translation>
     </message>
     <message>
         <source>Initializing menus</source>
@@ -1710,7 +1705,7 @@ Etes-vous sur ?</source>
     </message>
     <message>
         <source>Initializing toolbars</source>
-        <translation>Initialisation des barres d&apos;outils</translation>
+        <translation type="obsolete">Initialisation des barres d&apos;outils</translation>
     </message>
     <message>
         <source>Opening grib</source>
@@ -1730,7 +1725,7 @@ Etes-vous sur ?</source>
     </message>
     <message>
         <source>Drawing some</source>
-        <translation>Dessin des côtes</translation>
+        <translation type="obsolete">Dessin des côtes</translation>
     </message>
     <message>
         <source>Preparing coffee</source>
@@ -1738,7 +1733,7 @@ Etes-vous sur ?</source>
     </message>
     <message>
         <source>Drawing all</source>
-        <translation>Finalisation du dessin des côtes</translation>
+        <translation type="obsolete">Finalisation du dessin des côtes</translation>
     </message>
     <message>
         <source>Updating player</source>
@@ -1758,7 +1753,7 @@ Etes-vous sur ?</source>
     </message>
     <message>
         <source>Please check your installation</source>
-        <translation>Veuillez vérifier votre installation</translation>
+        <translation type="obsolete">Veuillez vérifier votre installation</translation>
     </message>
     <message>
         <source>Calibrating grib display</source>
@@ -1766,7 +1761,7 @@ Etes-vous sur ?</source>
     </message>
     <message>
         <source>File &apos;benchmark.grb&apos; cannot be find in img directory</source>
-        <translation>Le fichier &apos;benchmark.grb&apos; n&apos;existe pas dans le répertoire &apos;img&apos;</translation>
+        <translation type="obsolete">Le fichier &apos;benchmark.grb&apos; n&apos;existe pas dans le répertoire &apos;img&apos;</translation>
     </message>
     <message>
         <source>Copier la route</source>
@@ -1778,6 +1773,54 @@ Etes-vous sur ?</source>
     </message>
     <message>
         <source>Editer la route</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Zoom sur la route </source>
+        <translation>Zoom sur la route </translation>
+    </message>
+    <message>
+        <source>File &apos;player_play.png&apos; cannot be find in img directory</source>
+        <translation type="obsolete">Le fichier &apos;player_play.png&apos; n&apos;existe pas dans le répertoire &apos;img&apos;</translation>
+    </message>
+    <message>
+        <source>Updating players</source>
+        <translation>Mise à jour des comptes</translation>
+    </message>
+    <message>
+        <source>Selecting player</source>
+        <translation>Sélection des comptes</translation>
+    </message>
+    <message>
+        <source>loading POIs</source>
+        <translation>Chargement des POIs</translation>
+    </message>
+    <message>
+        <source>Simplifier la route</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Optimiser la route</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Initializing status bar</source>
+        <translation>Initialisation de la barre de status</translation>
+    </message>
+    <message>
+        <source>Initializing tool bar</source>
+        <translation>Initialisation de la barre d&apos;outils</translation>
+    </message>
+    <message>
+        <source>Creating board &amp; dialogs</source>
+        <translation>Création des bords et dialogues</translation>
+    </message>
+    <message>
+        <source>Boats init</source>
+        <translation>Initialisation des bateaux</translation>
+    </message>
+    <message>
+        <source>POI</source>
         <translation></translation>
     </message>
 </context>
@@ -1960,52 +2003,8 @@ Etes-vous sur ?</source>
         <translation></translation>
     </message>
     <message>
-        <source>Ctrl+Z</source>
-        <translation></translation>
-    </message>
-    <message>
-        <source>PgUp</source>
-        <translation></translation>
-    </message>
-    <message>
-        <source>PgDown</source>
-        <translation></translation>
-    </message>
-    <message>
         <source>Now</source>
-        <translation>Maintenant</translation>
-    </message>
-    <message>
-        <source>Select</source>
-        <translation></translation>
-    </message>
-    <message>
-        <source>15 m</source>
-        <translation></translation>
-    </message>
-    <message>
-        <source>30 m</source>
-        <translation></translation>
-    </message>
-    <message>
-        <source>1 h</source>
-        <translation></translation>
-    </message>
-    <message>
-        <source>2 h</source>
-        <translation></translation>
-    </message>
-    <message>
-        <source>3 h</source>
-        <translation></translation>
-    </message>
-    <message>
-        <source>6 h</source>
-        <translation></translation>
-    </message>
-    <message>
-        <source>12 h</source>
-        <translation></translation>
+        <translation type="obsolete">Maintenant</translation>
     </message>
     <message>
         <source>Positionner une nouvelle Marque</source>
@@ -2013,14 +2012,6 @@ Etes-vous sur ?</source>
     </message>
     <message>
         <source>Coller une marque</source>
-        <translation></translation>
-    </message>
-    <message>
-        <source>Effacer toutes les marques</source>
-        <translation></translation>
-    </message>
-    <message>
-        <source>Effacer les marques...</source>
         <translation></translation>
     </message>
     <message>
@@ -2489,31 +2480,31 @@ Etes-vous sur ?</source>
     </message>
     <message>
         <source>Augmenter l&apos;echelle de la carte</source>
-        <translation>Augmenter l&apos;échelle de la carte</translation>
+        <translation type="obsolete">Augmenter l&apos;échelle de la carte</translation>
     </message>
     <message>
         <source>Diminuer l&apos;echelle de la carte</source>
-        <translation>Diminuer l&apos;échelle de la carte</translation>
+        <translation type="obsolete">Diminuer l&apos;échelle de la carte</translation>
     </message>
     <message>
         <source>Zoom (selection ou fichier Grib)</source>
-        <translation>Zoom (sélection ou fichier Grib)</translation>
+        <translation type="obsolete">Zoom (sélection ou fichier Grib)</translation>
     </message>
     <message>
         <source>Zoomer sur la zone selectionnee ou sur la surface du fichier Grib</source>
-        <translation>Zoomer sur la zone sélectionnée ou sur la surface du fichier Grib</translation>
+        <translation type="obsolete">Zoomer sur la zone sélectionnée ou sur la surface du fichier Grib</translation>
     </message>
     <message>
         <source>Afficher la carte entiere</source>
-        <translation>Afficher la carte entière</translation>
+        <translation type="obsolete">Afficher la carte entière</translation>
     </message>
     <message>
         <source>Prevision precedente [page prec]</source>
-        <translation>Prévision précédente [page préc]</translation>
+        <translation type="obsolete">Prévision précédente [page préc]</translation>
     </message>
     <message>
         <source>Prevision suivante [page suiv]</source>
-        <translation>Prévision suivante [page suiv]</translation>
+        <translation type="obsolete">Prévision suivante [page suiv]</translation>
     </message>
     <message>
         <source>Deplacer le bateau ici</source>
@@ -2582,14 +2573,6 @@ Etes-vous sur ?</source>
     <message>
         <source>Fermer le fax meteo</source>
         <translation>Fermer le météo fax</translation>
-    </message>
-    <message>
-        <source>Rendre toutes les marques non-simplifiables</source>
-        <translation></translation>
-    </message>
-    <message>
-        <source>Rendre toutes les marques simplifiables</source>
-        <translation></translation>
     </message>
     <message>
         <source>Importer un fichier GeoData</source>
@@ -2678,6 +2661,26 @@ Etes-vous sur ?</source>
     <message>
         <source>Positionner l&apos;echelle ici</source>
         <translation>Positionner l&apos;échelle de la carte ici</translation>
+    </message>
+    <message>
+        <source>Animation du grib</source>
+        <translation type="obsolete">Animer le grib</translation>
+    </message>
+    <message>
+        <source>Zoom sur la route </source>
+        <translation>Zoom sur la route </translation>
+    </message>
+    <message>
+        <source>QtVlm forum</source>
+        <translation>Forum qtVlm</translation>
+    </message>
+    <message>
+        <source>Simplifier la route</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Optimiser la route</source>
+        <translation></translation>
     </message>
 </context>
 <context>
@@ -2797,14 +2800,6 @@ Etes-vous sur ?</source>
         <translation></translation>
     </message>
     <message>
-        <source>Optimisation du placement d&apos;un POI</source>
-        <translation></translation>
-    </message>
-    <message>
-        <source>Vous ne pouvez pas optimiser en mode VBVMG-VLM</source>
-        <translation></translation>
-    </message>
-    <message>
         <source>Supprimer la route </source>
         <translation></translation>
     </message>
@@ -2912,6 +2907,22 @@ Etes-vous sur de vouloir supprimer</translation>
     <message>
         <source>Routage vers ce POI</source>
         <translation></translation>
+    </message>
+    <message>
+        <source>Simplifier la route </source>
+        <translation>Simplifier la route </translation>
+    </message>
+    <message>
+        <source>Optimiser la route </source>
+        <translation>Optimiser la route </translation>
+    </message>
+    <message>
+        <source>Optimisation du placement d&apos;un POI</source>
+        <translation>Optimisation du placement d&apos;un POI</translation>
+    </message>
+    <message>
+        <source>Vous ne pouvez pas optimiser en mode VBVMG-VLM</source>
+        <translation>Vous ne pouvez pas optimiser en mode VBVMG-VLM</translation>
     </message>
 </context>
 <context>
@@ -3116,6 +3127,13 @@ Etes-vous sur de vouloir supprimer</translation>
     <message>
         <source>Pre-calcul des valeurs de VMG pour </source>
         <translation>Précalcul des valeurs de VMG pour </translation>
+    </message>
+</context>
+<context>
+    <name>Progress</name>
+    <message>
+        <source>Starting qtVLM</source>
+        <translation type="obsolete">Démarrage de qtVlm</translation>
     </message>
 </context>
 <context>
@@ -3555,6 +3573,14 @@ VMG %.2f nds</translation>
         <source>Export de tableau de marche</source>
         <translation></translation>
     </message>
+    <message>
+        <source>deg</source>
+        <translation>°</translation>
+    </message>
+    <message>
+        <source>Starting qtVLM</source>
+        <translation>Démarrage de qtVlm</translation>
+    </message>
 </context>
 <context>
     <name>ROUTAGE</name>
@@ -3672,6 +3698,18 @@ VMG %.2f nds</translation>
     </message>
     <message>
         <source>Supprimer le routage</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Ok</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>La route partira du point de depart et a l&apos;heure de depart du routage</source>
+        <translation>La route partira du point de départ et à l&apos;heure de départ du routage</translation>
+    </message>
+    <message>
+        <source>Supprimer les autres routages</source>
         <translation></translation>
     </message>
 </context>
@@ -3951,6 +3989,14 @@ inversés</translation>
         <source>Colorer TWS entre isos</source>
         <translation></translation>
     </message>
+    <message>
+        <source>Routage Orthodromique</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Afficher la meilleure route pendant le calcul</source>
+        <translation></translation>
+    </message>
 </context>
 <context>
     <name>ROUTE</name>
@@ -4019,6 +4065,14 @@ Voulez-vous egalement supprimer tous les POIs lui appartenant?</source>
     <message>
         <source>Route: </source>
         <translation></translation>
+    </message>
+    <message>
+        <source>Annuler</source>
+        <translation type="obsolete">Annuler</translation>
+    </message>
+    <message>
+        <source>Resultat de l&apos;optimisation</source>
+        <translation type="obsolete">Résultats de l&apos;optimisation</translation>
     </message>
 </context>
 <context>
@@ -4252,6 +4306,22 @@ sans simplifier</translation>
         <source>Charger VLM</source>
         <translation type="obsolete">Charger VLM</translation>
     </message>
+    <message>
+        <source>TextLabel</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p align=&quot;justify&quot; style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; color:#ff0000;&quot;&gt;This route is not in BVMG-VLM mode so pilots orders timestamps and even route&apos;s way and trajectory might not be the same. &lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p align=&quot;justify&quot; style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; color:#ff0000;&quot;&gt;Cette route n&apos;est pas en mode VBVMG-VLM mode. Les horodatages des ordres du pilototo et même la trajectoire de la route peuvent être différents. &lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+    </message>
 </context>
 <context>
     <name>ReceiverThread</name>
@@ -4299,11 +4369,54 @@ sans simplifier</translation>
     <name>Settings</name>
     <message>
         <source>Ouverture des param�tres</source>
-        <translation>Ouverture des paramètres</translation>
+        <translation type="obsolete">Ouverture des paramètres</translation>
     </message>
     <message>
         <source>Il existe des parametres locaux, les importer dans qtvlm.ini?</source>
-        <translation>Il existe des paramètres locaux, les importer?</translation>
+        <translation type="obsolete">Il existe des paramètres locaux, les importer?</translation>
+    </message>
+</context>
+<context>
+    <name>StatusBar</name>
+    <message>
+        <source>deg</source>
+        <translation>°</translation>
+    </message>
+    <message>
+        <source> Vent</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source> kts</source>
+        <translation>nds</translation>
+    </message>
+    <message>
+        <source> Courant</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Selection: </source>
+        <translation>Sélection:</translation>
+    </message>
+    <message>
+        <source>(dist.orthodromique:</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>  init.dir: %1deg</source>
+        <translation>  init.dir: %1°</translation>
+    </message>
+    <message>
+        <source>Derniere synchro</source>
+        <translation>Dernière synchro</translation>
+    </message>
+    <message>
+        <source>dd-MM-yyyy, HH:mm:ss</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Prochaine vac dans</source>
+        <translation></translation>
     </message>
 </context>
 <context>
@@ -4331,6 +4444,189 @@ sans simplifier</translation>
     <message>
         <source>(Max zoom reached)</source>
         <translation>(Zoom max atteint)</translation>
+    </message>
+</context>
+<context>
+    <name>ToolBar</name>
+    <message>
+        <source>Misc</source>
+        <translation type="obsolete">Divers</translation>
+    </message>
+    <message>
+        <source>Grib</source>
+        <translation>Grib</translation>
+    </message>
+    <message>
+        <source>Selection</source>
+        <translation>Sélection</translation>
+    </message>
+    <message>
+        <source>Estime</source>
+        <translation>Estime</translation>
+    </message>
+    <message>
+        <source>Boat</source>
+        <translation>Bateau</translation>
+    </message>
+    <message>
+        <source>ETA</source>
+        <translation>ETA</translation>
+    </message>
+    <message>
+        <source>Telechargement zyGrib</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Telechargement VLM</source>
+        <translation>Téléchargement VLM</translation>
+    </message>
+    <message>
+        <source>Telechargement SailsDoc</source>
+        <translation>Téléchargement SailDocs</translation>
+    </message>
+    <message>
+        <source>Open a grib</source>
+        <translation>Ouverture d&apos;un grib</translation>
+    </message>
+    <message>
+        <source>Prevision precedente [page prec]</source>
+        <translation>Prévision précédente [page préc]</translation>
+    </message>
+    <message>
+        <source>PgUp</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Prevision suivante [page suiv]</source>
+        <translation>Prévision suivante [page suiv]</translation>
+    </message>
+    <message>
+        <source>PgDown</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Animation du grib</source>
+        <translation>Animer le grib</translation>
+    </message>
+    <message>
+        <source>Now</source>
+        <translation>Maintenant</translation>
+    </message>
+    <message>
+        <source>Select date</source>
+        <translation>Selection de la date</translation>
+    </message>
+    <message>
+        <source>15 m</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>30 m</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>1 h</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>2 h</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>3 h</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>6 h</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>12 h</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Augmenter l&apos;echelle de la carte</source>
+        <translation>Augmenter l&apos;échelle de la carte</translation>
+    </message>
+    <message>
+        <source>Diminuer l&apos;echelle de la carte</source>
+        <translation>Diminuer l&apos;échelle de la carte</translation>
+    </message>
+    <message>
+        <source>Zoom (selection ou fichier Grib)</source>
+        <translation>Zoom (sélection ou fichier Grib)</translation>
+    </message>
+    <message>
+        <source>Ctrl+Z</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Zoomer sur la zone selectionnee ou sur la surface du fichier Grib</source>
+        <translation>Zoomer sur la zone sélectionnée ou sur la surface du fichier Grib</translation>
+    </message>
+    <message>
+        <source>Afficher la carte entiere</source>
+        <translation>Afficher la carte entière</translation>
+    </message>
+    <message>
+        <source>mins</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>vacs</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>NM</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Si cette option est cochee&lt;br&gt;l&apos;estime calcule la vitesse du bateau&lt;br&gt;a la prochaine vac.&lt;br&gt;Sinon elle utilise la vitesse du bateau&lt;br&gt;telle que donnee par VLM</source>
+        <translation>Si cette option est cochée&lt;br&gt;l&apos;estime calcule la vitesse du bateau à la prochaine vacation.&lt;br&gt;Sinon elle utilise la vitesse du bateau&lt;br&gt;telle que donnée par VLM</translation>
+    </message>
+    <message>
+        <source>Verrouiller</source>
+        <translation>Verrouiller/déverrouiller l&apos;envoi d&apos;ordres à VLM</translation>
+    </message>
+    <message>
+        <source>Verrouiller l&apos;envoi d&apos;ordre a VLM</source>
+        <translation>Verrouiller/déverrouiller l&apos;envoi d&apos;ordres à VLM</translation>
+    </message>
+    <message>
+        <source>No WP</source>
+        <translation>Pas de WP</translation>
+    </message>
+    <message>
+        <source>j</source>
+        <translation>j</translation>
+    </message>
+    <message>
+        <source>h</source>
+        <translation>h</translation>
+    </message>
+    <message>
+        <source>m</source>
+        <translation>m</translation>
+    </message>
+    <message>
+        <source>s</source>
+        <translation>s</translation>
+    </message>
+    <message>
+        <source> Arrivee WP</source>
+        <translation>Arrivée WP</translation>
+    </message>
+    <message>
+        <source>dd-MM-yyyy, HH:mm:ss</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Hold to select download method</source>
+        <translation>Maintenir appuyé pour sélectionner le mode de téléchargement</translation>
+    </message>
+    <message>
+        <source>Loupe</source>
+        <translation>Loupe</translation>
     </message>
 </context>
 <context>
@@ -4670,6 +4966,14 @@ sans simplifier</translation>
     <message>
         <source>Automatique</source>
         <translation></translation>
+    </message>
+    <message>
+        <source>Algorithme de simplification maximal</source>
+        <translation>Algorithme de simplification maximal</translation>
+    </message>
+    <message>
+        <source>Demander egalement la pression atmospherique</source>
+        <translation>Demander également la Pression Atmosphérique</translation>
     </message>
 </context>
 <context>
@@ -5761,6 +6065,10 @@ p, li { white-space: pre-wrap; }
         <source>Ecart initial (latitude)</source>
         <translation></translation>
     </message>
+    <message>
+        <source>Ecart automatique</source>
+        <translation>Écart automatique</translation>
+    </message>
 </context>
 <context>
     <name>gribValidation</name>
@@ -6511,21 +6819,6 @@ Que voulez vous faire?</translation>
     </message>
 </context>
 <context>
-    <name>myScene</name>
-    <message>
-        <source>Gesture</source>
-        <translation></translation>
-    </message>
-    <message>
-        <source>Pan gesture detected</source>
-        <translation></translation>
-    </message>
-    <message>
-        <source>Other gesture detected!!</source>
-        <translation></translation>
-    </message>
-</context>
-<context>
     <name>opponent</name>
     <message>
         <source>Status VLM:</source>
@@ -6596,8 +6889,16 @@ Que voulez vous faire?</translation>
         <translation></translation>
     </message>
     <message>
+        <source>Distance: </source>
+        <translation>Distance : </translation>
+    </message>
+    <message>
+        <source> NM</source>
+        <translation> NM</translation>
+    </message>
+    <message>
         <source>Trop loin pour estimer le cap et la vitesse</source>
-        <translation></translation>
+        <translation>Trop loin pour estimer le cap et la vitesse</translation>
     </message>
 </context>
 <context>
@@ -7288,6 +7589,41 @@ Que voulez vous faire?</translation>
     </message>
 </context>
 <context>
+    <name>selectionWidget</name>
+    <message>
+        <source>Effacer toutes les marques</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Effacer les marques...</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Rendre toutes les marques non-simplifiables</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Rendre toutes les marques simplifiables</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Download with ZyGrib</source>
+        <translation>Téléchargement ZyGrib</translation>
+    </message>
+    <message>
+        <source>Mail SailDocs</source>
+        <translation type="obsolete">eMail à Sailsdoc</translation>
+    </message>
+    <message>
+        <source>Mail SailsDoc</source>
+        <translation>eMail à Sailsdoc</translation>
+    </message>
+    <message>
+        <source>Zoom on selection</source>
+        <translation>Zoomer sur la sélection</translation>
+    </message>
+</context>
+<context>
     <name>twaLine</name>
     <message>
         <source>Outil twa</source>
@@ -7397,24 +7733,16 @@ Que voulez vous faire?</translation>
 <context>
     <name>xml_POIData</name>
     <message>
-        <source>%1 POI de zyGrib trouve</source>
-        <translation></translation>
-    </message>
-    <message>
         <source>Supprimer les POI de zyGrib apres importation?</source>
-        <translation>Supprimer les POI de zyGrib après importation?</translation>
-    </message>
-    <message>
-        <source>POI de zyGrib</source>
-        <translation></translation>
+        <translation type="obsolete">Supprimer les POI de zyGrib après importation?</translation>
     </message>
     <message>
         <source>POI importes, pensez a sauvegarder les POI</source>
-        <translation>POIs importés, pensez à sauvegarder les POIs</translation>
+        <translation type="obsolete">POIs importés, pensez à sauvegarder les POIs</translation>
     </message>
     <message>
         <source>Pas de POI de zyGrib trouves</source>
-        <translation>Pas de POIs trouvés dans zyGrib</translation>
+        <translation type="obsolete">Pas de POIs trouvés dans zyGrib</translation>
     </message>
     <message>
         <source>Erreur ligne %1, colonne %2:

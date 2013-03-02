@@ -24,9 +24,11 @@ Copyright (C) 2008 - Jacques Zaninetti - http://zygrib.free.fr
 
 #ifndef DIALOGPROXY_H
 #define DIALOGPROXY_H
-
+#ifdef QT_V5
+#include <QtWidgets/QDialog>
+#else
 #include <QDialog>
-
+#endif
 #include "class_list.h"
 #include "ui_paramProxy.h"
 

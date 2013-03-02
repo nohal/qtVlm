@@ -40,6 +40,7 @@ Copyright (C) 2008 - Jacques Zaninetti - http://zygrib.free.fr
 MenuBar::MenuBar(QWidget *parent)
     : QMenuBar(parent)
 {
+    this->setAccessibleName("mainMenuQtvlm");
     //-------------------------------------
     // Menu + Actions
     //-------------------------------------
@@ -86,7 +87,7 @@ MenuBar::MenuBar(QWidget *parent)
                 acHorn=addAction(menuFile,tr("Configurer la corne de brume"),"","",tr(""));
                 acKeep=addAction(menuFile,tr("Conserver la position du bateau dans l'ecran lors de zoom +/-"),"Z","",tr(""));
                 acKeep->setCheckable(true);
-                acKeep->setChecked(true);
+                acKeep->setChecked(Settings::getSetting("keepBoatPosOnScreen",1).toInt()==1);
                 acReplay=addAction(menuFile,tr("Rejouer l'historique des traces"),"Y","",tr(""));
                 acScreenshot=addAction(menuFile,tr("Photo d'ecran"),"Ctrl+E","",tr(""));                
 
@@ -321,7 +322,6 @@ MenuBar::MenuBar(QWidget *parent)
 
     //-------------------------------------
     //Porte
-    //menuPOI = new QMenu(tr("POI / Portes"));
     menuRoute = new QMenu(tr("Routes"));
 
         acRoute_add = addAction(menuRoute,
@@ -356,7 +356,6 @@ MenuBar::MenuBar(QWidget *parent)
     addMenu(menuRoutage);
 
     menuPOI = new QMenu(tr("Marques"));
-        //acPOIinput = addAction(menuPOI,tr("POI / porte en masse"),"","","");
         acPOIinput = addAction(menuPOI,tr("Ajout en masse"),"","","");
         acPOISave = addAction(menuPOI,tr("Sauvegarder POIs et routes"),"Ctrl+S","","");
         acPOIRestore = addAction(menuPOI,tr("Recharger POIs et routes"),"Ctrl+R","","");
@@ -381,18 +380,6 @@ MenuBar::MenuBar(QWidget *parent)
 
 
         QMenu *menuMap = new QMenu(tr("Planisphere"));
-//        acMap_GroupQuality = new QActionGroup(menuMap);
-//            acMap_Quality1 = addActionCheck(menuMap, tr("Qualite 1"), tr(""), tr("Niveau de detail de la carte"));
-//            acMap_Quality2 = addActionCheck(menuMap, tr("Qualite 2"), tr(""), tr("Niveau de detail de la carte"));
-//            acMap_Quality3 = addActionCheck(menuMap, tr("Qualite 3"), tr(""), tr("Niveau de detail de la carte"));
-//            acMap_Quality4 = addActionCheck(menuMap, tr("Qualite 4"), tr(""), tr("Niveau de detail de la carte"));
-//            acMap_Quality5 = addActionCheck(menuMap, tr("Qualite 5"), tr(""), tr("Niveau de detail de la carte"));
-//            acMap_GroupQuality->addAction(acMap_Quality1);
-//            acMap_GroupQuality->addAction(acMap_Quality2);
-//            acMap_GroupQuality->addAction(acMap_Quality3);
-//            acMap_GroupQuality->addAction(acMap_Quality4);
-//            acMap_GroupQuality->addAction(acMap_Quality5);
-//        menuMap->addSeparator();
         acMap_Orthodromie = addActionCheck(menuMap, tr("Distance orthodromique"), tr(""), tr(""));
         acMap_Orthodromie->setChecked(Settings::getSetting("showOrthodromie", false).toBool());
 
@@ -453,61 +440,11 @@ MenuBar::MenuBar(QWidget *parent)
         acHelp_Help = addAction(menuHelp, tr("Aide"),tr("Ctrl+H"),tr(""),appFolder.value("img")+"help.png");
         acHelp_APropos = addAction(menuHelp, tr("A propos de qtVlm"),tr(""),tr(""),"");
         acHelp_AProposQT = addAction(menuHelp, tr("A propos de QT"),tr(""),tr(""),"");
+        acHelp_Forum = addAction(menuHelp, tr("QtVlm forum"),tr(""),tr(""),"");
     addMenu(menuHelp);
 
 
-    //-------------------------------------
-    // Autres objets de l'interface
-    //-------------------------------------
-    acMap_Zoom_In = addAction(NULL,  tr("Augmenter l'echelle de la carte"), tr(""),
-                              tr("Augmenter l'echelle de la carte"), appFolder.value("img")+"viewmag+.png");
-    acMap_Zoom_Out = addAction(NULL, tr("Diminuer l'echelle de la carte"), tr(""),
-                               tr("Diminuer l'echelle de la carte"), appFolder.value("img")+"viewmag-.png");
-    acMap_Zoom_In->setData("zoomIn");
-    acMap_Zoom_Out->setData("zoomOut");
-    acMap_Zoom_Sel = addAction(NULL,
-                               tr("Zoom (selection ou fichier Grib)"),
-                               tr("Ctrl+Z"),
-                               tr("Zoomer sur la zone selectionnee ou sur la surface du fichier Grib"),
-                               appFolder.value("img")+"viewmagfit.png");
-    acMap_Zoom_All = addAction(NULL, tr("Afficher la carte entiere"), tr(""),
-                               tr("Afficher la carte entiere"), appFolder.value("img")+"viewmag1.png");
 
-    acDatesGrib_prev = addAction( NULL,
-            tr("Prevision precedente [page prec]"),tr("PgUp"),tr(""),appFolder.value("img")+"1leftarrow.png");
-    acDatesGrib_next = addAction( NULL,
-            tr("Prevision suivante [page suiv]"),tr("PgDown"),tr(""),appFolder.value("img")+"1rightarrow.png");
-
-    datesGrib_now = new QPushButton(tr("Now"));
-    datesGrib_sel = new QPushButton(tr("Select"));
-
-    cbGribStep = new QComboBox();
-
-    QFontInfo finfo = cbGribStep->fontInfo();
-    QFont font("", finfo.pointSize(), QFont::Normal, false);
-    font.setStyleHint(QFont::TypeWriter);
-    font.setStretch(QFont::SemiCondensed);
-
-    cbGribStep->setSizeAdjustPolicy(QComboBox::AdjustToContents);
-    cbGribStep->setFont(font);
-    cbGribStep->addItem(tr("15 m"));
-    cbGribStep->addItem(tr("30 m"));
-    cbGribStep->addItem(tr("1 h"));
-    cbGribStep->addItem(tr("2 h"));
-    cbGribStep->addItem(tr("3 h"));
-    cbGribStep->addItem(tr("6 h"));
-    cbGribStep->addItem(tr("12 h"));
-    Util::setFontDialog(cbGribStep);
-
-
-    boatList = new QComboBox();
-    boatList->setSizeAdjustPolicy(QComboBox::AdjustToContents);
-    boatList->setFont(font);
-    Util::setFontDialog(boatList);
-    estime = new QSpinBox();
-    estime->setMaximum(9999999);
-    estime->setMinimum(0);
-    estime->setAlignment(Qt::AlignRight);
 }
 
 
@@ -521,12 +458,6 @@ QMenu * MenuBar::createPopupBtRight(QWidget *parent)
 
     ac_CreatePOI = addAction(popup, tr("Positionner une nouvelle Marque"),tr(""),tr(""),"");
     ac_pastePOI = addAction(popup, tr("Coller une marque"),tr(""),tr(""),"");
-    ac_delAllPOIs = addAction(popup, tr("Effacer toutes les marques"),tr(""),tr(""),"");
-    ac_delSelPOIs = addAction(popup, tr("Effacer les marques..."),tr(""),tr(""),"");
-    popup->addSeparator();
-    ac_notSimpSelPOIs = addAction(popup, tr("Rendre toutes les marques non-simplifiables"),tr(""),tr(""),"");
-    ac_simpSelPOIs = addAction(popup, tr("Rendre toutes les marques simplifiables"),tr(""),tr(""),"");
-
     popup->addSeparator();
     ac_twaLine=addAction(popup,tr("Tracer une estime TWA"),tr(""),tr(""),"");
     ac_compassLine = addAction(popup, tr("Tirer un cap"),tr(""),tr(""),"");
@@ -545,9 +476,12 @@ QMenu * MenuBar::createPopupBtRight(QWidget *parent)
     ac_moveBoat = addAction(popup, tr("Deplacer le bateau ici"),tr(""),tr(""),"");
 
     popup->addSeparator();
-    ac_copyRoute=addAction(popup,tr("Copier la route au format kml"),"","","");
-    ac_deleteRoute=addAction(popup,tr("Supprimer la route"),"","","");
     ac_editRoute=addAction(popup,tr("Editer la route"),"","","");
+    ac_simplifyRoute=addAction(popup,tr("Simplifier la route"),"","","");
+    ac_optimizeRoute=addAction(popup,tr("Optimiser la route"),"","","");
+    ac_copyRoute=addAction(popup,tr("Copier la route au format kml"),"","","");
+    ac_zoomRoute=addAction(popup,tr("Zoom sur la route "),"","","");
+    ac_deleteRoute=addAction(popup,tr("Supprimer la route"),"","","");
     ac_pasteRoute=addAction(popup,tr("Coller une route"),"","","");
     return popup;
 }
@@ -579,16 +513,6 @@ QAction* MenuBar::addActionCheck(QWidget *menu,
     return action;
 }
 
-//-------------------------------------------------
-//void MenuBar::setQuality(int q) {
-//    switch (q) {
-//        case 0: acMap_Quality1->setChecked(true); break;
-//        case 1: acMap_Quality2->setChecked(true); break;
-//        case 2: acMap_Quality3->setChecked(true); break;
-//        case 3: acMap_Quality4->setChecked(true); break;
-//        case 4: acMap_Quality5->setChecked(true); break;
-//    }
-//}
 void MenuBar::addMenuRoute(ROUTE* route)
 {
     QAction *action1;
@@ -666,46 +590,6 @@ void MenuBar::setIsotherms0Step(int step) {
 }
 
 //------------------------------------------------------------
-void MenuBar::insertBoatReal(QString name)
-{
-    boatList->clear();
-    boatList->addItem(name);
-    boatList->setCurrentIndex(0);
-}
-
-void MenuBar::updateBoatList(QList<boatVLM*> & boat_list)
-{
-    while(boatList->count())
-        boatList->removeItem(0);
-
-    QListIterator<boatVLM*> i (boat_list);
-
-    //bool separator=false;
-    while(i.hasNext())
-    {
-        boatVLM * acc = i.next();
-        //qWarning() << "updateBoatList - Boat: " << acc->getName() << " " << acc->getStatus() << " " << acc->getId();
-        if(acc->getStatus())
-        {
-//            if(!separator && !acc->getIsOwn())
-//            {
-//                boatList->insertSeparator(boatList->count()+1);
-//                separator=true;
-//            }
-            if(acc->getAliasState())
-                boatList->addItem(acc->getAlias() + "(" + acc->getBoatPseudo() + ")");
-            else
-                boatList->addItem(acc->getBoatPseudo());
-        }
-    }
-}
-
-void MenuBar::setSelectedBoatIndex(int index)
-{
-    boatList->setCurrentIndex(index);
-}
-
-
 void MenuBar::setMenubarColorMapMode(int colorMapMode)
 {
     QAction  *act = NULL;

@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>489</width>
-    <height>537</height>
+    <height>562</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -731,6 +731,13 @@
            </widget>
           </item>
           <item>
+           <widget class="QCheckBox" name="strongSimplify">
+            <property name="text">
+             <string>Algorithme de simplification maximal</string>
+            </property>
+           </widget>
+          </item>
+          <item>
            <widget class="QRadioButton" name="routeSortByName">
             <property name="text">
              <string>Trier les POIs par nom</string>
@@ -1011,6 +1018,13 @@
            <widget class="QCheckBox" name="chk_externalMail">
             <property name="text">
              <string>Utilisation d'un client mail externe</string>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="0">
+           <widget class="QCheckBox" name="sailsDocPress">
+            <property name="text">
+             <string>Demander egalement la pression atmospherique</string>
             </property>
            </widget>
           </item>
@@ -1321,6 +1335,7 @@
   <tabstop>chkHideRoute</tabstop>
   <tabstop>autoRemove</tabstop>
   <tabstop>autoAt</tabstop>
+  <tabstop>strongSimplify</tabstop>
   <tabstop>routeSortByName</tabstop>
   <tabstop>routeSortBySequence</tabstop>
   <tabstop>trace_length</tabstop>
@@ -1335,6 +1350,7 @@
   <tabstop>btn_browseGrib</tabstop>
   <tabstop>chk_gribZoomOnLoad</tabstop>
   <tabstop>chk_externalMail</tabstop>
+  <tabstop>sailsDocPress</tabstop>
   <tabstop>serialName</tabstop>
   <tabstop>spn_gpsDelay</tabstop>
   <tabstop>chk_activateEmulation</tabstop>
@@ -1346,6 +1362,9 @@
   <tabstop>interpolTWSA</tabstop>
   <tabstop>interpolSelect</tabstop>
   <tabstop>tabWidget</tabstop>
+  <tabstop>gribMulti</tabstop>
+  <tabstop>gribMono</tabstop>
+  <tabstop>gribAuto</tabstop>
  </tabstops>
  <resources/>
  <connections>

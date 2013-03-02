@@ -41,7 +41,13 @@ Original code: virtual-winds.com
 #include "Polygon.h"
 #include "route.h"
 #include <QDebug>
+#ifdef QT_V5
+#include <QtConcurrent/QtConcurrentMap>
+#include <QtWidgets/QVBoxLayout>
+#else
 #include <QtConcurrentMap>
+#include <QVBoxLayout>
+#endif
 #include "vlmpointgraphic.h"
 #include "settings.h"
 #include "Terrain.h"
@@ -156,13 +162,13 @@ inline vlmPoint findPointThreaded(const vlmPoint &point)
             }
         }
     }
-    if(qAbs(pt.lat)>84.0)
+    if(qAbs(pt.lat)>=89.9)
     {
         pt.isDead=true;
         return pt;
     }
     double x,y;
-    pt.routage->getProj()->map2screenDouble(Util::cLFA(pt.lon,pt.routage->getProj()->getXmin()),pt.lat,&x,&y);
+    pt.routage->getProj()->map2screenDouble(pt.lon,pt.lat,&x,&y);
     pt.x=x;
     pt.y=y;
     if(pt.routage->getVisibleOnly() && !pt.routage->getProj()->isInBounderies_strict(pt.x,pt.y))
@@ -239,6 +245,25 @@ inline vlmPoint findPointThreaded(const vlmPoint &point)
     }
     pt.convertionLat=pt.lat;
     pt.convertionLon=pt.lon;
+    Orthodromie orth(pt.origin->lon,pt.origin->lat,pt.lon,pt.lat);
+    pt.distOrigin=orth.getDistance();
+    if(pt.routage->getRoutageOrtho())
+    {
+        orth.setPoints(pt.routage->getStart().x(),pt.routage->getStart().y(),pt.lon,pt.lat);
+        pt.distStart=orth.getDistance();
+        orth.setPoints(pt.lon,pt.lat,pt.routage->getArrival().x(),pt.routage->getArrival().y());
+        pt.distArrival=orth.getDistance();
+        pt.capArrival=orth.getAzimutDeg();
+    }
+    else
+    {
+        QLineF tempLine(pt.x,pt.y,pt.routage->getXs(),pt.routage->getYs());
+        pt.distStart=tempLine.length();
+        pt.capStart=Util::A360(-tempLine.angle()+90);
+        tempLine.setP2(QPointF(pt.routage->getXa(),pt.routage->getYa()));
+        pt.distArrival=tempLine.length();
+        pt.capArrival=Util::A360(-tempLine.angle()+90);
+    }
     return pt;
 }
 
@@ -775,6 +800,8 @@ ROUTAGE::ROUTAGE(QString name, Projection *proj, Grib *grib, QGraphicsScene * my
     this->minPres=Settings::getSetting("routageMinPres",0).toDouble();
     this->minPortant=Settings::getSetting("routageMinPortant",0).toDouble();
     this->pruneWakeAngle=Settings::getSetting("routagePruneWake",30).toInt();
+    this->routageOrtho=Settings::getSetting("routageOrtho",1).toInt()==1;
+    this->showBestLive=Settings::getSetting("routageShowBestLive",1).toInt()==1;
     this->colorGrib=Settings::getSetting("routageColorGrib",0).toInt()==1;
     this->showIso=Settings::getSetting("routageShowIso",1).toInt()==1;
     this->wind_angle=0;
@@ -857,7 +884,7 @@ void ROUTAGE::setColor(const QColor &color)
 }
 void ROUTAGE::calculate()
 {
-    if(!i_iso)
+    if(!i_iso && !isNewPivot)
     {
         Settings::setSetting("angleRange",this->angleRange);
         Settings::setSetting("angleStep",this->angleStep);
@@ -878,6 +905,8 @@ void ROUTAGE::calculate()
         Settings::setSetting("routageMinPres",minPres);
         Settings::setSetting("routageMinPortant",minPortant);
         Settings::setSetting("routagePruneWake",pruneWakeAngle);
+        Settings::setSetting("routageOrtho",routageOrtho?1:0);
+        Settings::setSetting("routageShowBestLive",showBestLive?1:0);
         Settings::setSetting("routageColorGrib",colorGrib?1:0);
         Settings::setSetting("routageShowIso",showIso?1:0);
     }
@@ -964,32 +993,44 @@ void ROUTAGE::calculate()
         Util::getCoordFromDistanceAngle (start.y(), start.x(), ratio*distance/2, angle+90, &yTmp, &xTmp);
         xW = xE = xTmp;
         yN = yS = yTmp;
+        //qWarning()<<"1"<<xW<<xE<<xTmp;
         Util::getCoordFromDistanceAngle (start.y(), start.x(), ratio*distance/2, angle-90, &yTmp, &xTmp);
-        if (xTmp < xW) xW = xTmp;
-        if (xTmp > xE) xE = xTmp;
+        if(mySignedDiffAngle(Util::A360(xW),Util::A360(xTmp))<0) xW=xTmp;
+        if(mySignedDiffAngle(Util::A360(xTmp),Util::A360(xE))<0) xE=xTmp;
+//        if (xTmp < xW) xW = xTmp;
+//        if (xTmp > xE) xE = xTmp;
         if (yTmp < yS) yS = yTmp;
         if (yTmp > yN) yN = yTmp;
+        //qWarning()<<"2"<<xW<<xE<<xTmp;
         Util::getCoordFromDistanceAngle (arrival.y(), arrival.x(), ratio*distance/2, angle+90, &yTmp, &xTmp);
-        if (xTmp < xW) xW = xTmp;
-        if (xTmp > xE) xE = xTmp;
+        if(mySignedDiffAngle(Util::A360(xW),Util::A360(xTmp))<0) xW=xTmp;
+        if(mySignedDiffAngle(Util::A360(xTmp),Util::A360(xE))<0) xE=xTmp;
+//        if (xTmp < xW) xW = xTmp;
+//        if (xTmp > xE) xE = xTmp;
         if (yTmp < yS) yS = yTmp;
         if (yTmp > yN) yN = yTmp;
+        //qWarning()<<"3"<<xW<<xE<<xTmp;
         Util::getCoordFromDistanceAngle (arrival.y(), arrival.x(), ratio*distance/2, angle-90, &yTmp, &xTmp);
-        if (xTmp < xW) xW = xTmp;
-        if (xTmp > xE) xE = xTmp;
+        if(mySignedDiffAngle(Util::A360(xW),Util::A360(xTmp))<0) xW=xTmp;
+        if(mySignedDiffAngle(Util::A360(xTmp),Util::A360(xE))<0) xE=xTmp;
+//        if (xTmp < xW) xW = xTmp;
+//        if (xTmp > xE) xE = xTmp;
         if (yTmp < yS) yS = yTmp;
         if (yTmp > yN) yN = yTmp;
+        //qWarning()<<"5"<<xW<<xE<<xTmp;
 
         if((xW>0 && xE<0) || (xW<0 && xE>0))
         {
+            qWarning()<<"6"<<xW<<xE<<xTmp;
             if(qAbs(xW-xE)>180)
             {
                 swap(xW,xE);
+                //qWarning()<<"7"<<xW<<xE<<xTmp;
                 if(xW>0)
                     xW-=360;
                 else
                     xE-=360;
-
+                //qWarning()<<"8"<<xW<<xE<<xTmp;
             }
         }
 
@@ -1055,8 +1096,8 @@ void ROUTAGE::slot_calculate()
             POI * poi2=poiList.at(p)->getConnectedPoi();
             poiList.removeOne(poi2);
             double x1,y1,x2,y2;
-            proj->map2screenDouble(Util::cLFA(poi1->getLongitude(),proj->getXmin()),poi1->getLatitude(),&x1,&y1);
-            proj->map2screenDouble(Util::cLFA(poi2->getLongitude(),proj->getXmin()),poi2->getLatitude(),&x2,&y2);
+            proj->map2screenDouble(poi1->getLongitude(),poi1->getLatitude(),&x1,&y1);
+            proj->map2screenDouble(poi2->getLongitude(),poi2->getLatitude(),&x2,&y2);
             barrieres.append(QLineF(x1,y1,x2,y2));
         }
     }
@@ -1068,8 +1109,8 @@ void ROUTAGE::slot_calculate()
         const vlmPoint p1=gates.at(n)->getPoints()->first();
         const vlmPoint p2=gates.at(n)->getPoints()->last();
         double x1,y1,x2,y2;
-        proj->map2screenDouble(Util::cLFA(p1.lon,proj->getXmin()),p1.lat,&x1,&y1);
-        proj->map2screenDouble(Util::cLFA(p2.lon,proj->getXmin()),p2.lat,&x2,&y2);
+        proj->map2screenDouble(p1.lon,p1.lat,&x1,&y1);
+        proj->map2screenDouble(p2.lon,p2.lat,&x2,&y2);
         if(!proj->isInBounderies(x1,y1)) continue;
         if(!proj->isInBounderies(x2,y2)) continue;
         QPointF P1(x1,y1);
@@ -1117,24 +1158,27 @@ void ROUTAGE::slot_calculate()
     point.convertionLat=point.lat;
     point.convertionLon=point.lon;
     point.isStart=true;
-    proj->map2screenDouble(Util::cLFA(start.x(),proj->getXmin()),start.y(),&xs,&ys);
-    proj->map2screenDouble(Util::cLFA(arrival.x(),proj->getXmin()),arrival.y(),&xa,&ya);
+    proj->map2screenDouble(start.x(),start.y(),&xs,&ys);
+    proj->map2screenDouble(arrival.x(),arrival.y(),&xa,&ya);
     point.x=xs;
     point.y=ys;
-#if 0
-    point.distArrival=initialDist;
-    point.distStart=0;
-    point.capArrival=orth.getAzimutDeg();
-    point.capStart=A360(-orth.getAzimutDeg());
-#else
-    QLineF tempLine(point.x,point.y,xa,ya);
-    point.distStart=0;
-    point.capStart=0;
-    point.distArrival=tempLine.length();
-    point.capArrival=Util::A360(-tempLine.angle()+90);
-    point.distOrigin=0;
-    initialDist=tempLine.length();
-#endif
+    if(routageOrtho)
+    {
+        point.distArrival=initialDist;
+        point.distStart=0;
+        point.capArrival=orth.getAzimutDeg();
+        point.capStart=Util::A360(-orth.getAzimutDeg());
+    }
+    else
+    {
+        QLineF tempLine(point.x,point.y,xa,ya);
+        point.distStart=0;
+        point.capStart=0;
+        point.distArrival=tempLine.length();
+        point.capArrival=Util::A360(-tempLine.angle()+90);
+        point.distOrigin=0;
+        initialDist=tempLine.length();
+    }
     approaching=false;
     point.origin=NULL;
     point.routage=this;
@@ -1143,6 +1187,7 @@ void ROUTAGE::slot_calculate()
         point.eta=i_eta;
     else
         point.eta=eta;
+    pivotPoint=point;
     iso->addVlmPoint(point);
     if(i_iso)
     {
@@ -1468,14 +1513,6 @@ void ROUTAGE::slot_calculate()
 #ifdef traceTime
                     tfp.start();
 #endif
-                    QLineF tempLine(newPoint.x,newPoint.y,xs,ys);
-                    newPoint.distStart=tempLine.length();
-                    newPoint.capStart=Util::A360(-tempLine.angle()+90);
-                    tempLine.setP2(QPointF(xa,ya));
-                    newPoint.distArrival=tempLine.length();
-                    newPoint.capArrival=Util::A360(-tempLine.angle()+90);
-                    orth.setPoints(list->at(n).lon,list->at(n).lat,newPoint.lon,newPoint.lat);
-                    newPoint.distOrigin=orth.getDistance();
 #ifdef traceTime
                     msecs_21=msecs_21+tfp.elapsed();
 #endif
@@ -1745,7 +1782,7 @@ void ROUTAGE::slot_calculate()
                         }
                     }
                     double x,y;
-                    proj->map2screenDouble(Util::cLFA(newPoint.lon,proj->getXmin()),newPoint.lat,&x,&y);
+                    proj->map2screenDouble(newPoint.lon,newPoint.lat,&x,&y);
                     newPoint.x=x;
                     newPoint.y=y;
 #if 1 /*check again if crossing with coast*/
@@ -1976,6 +2013,7 @@ void ROUTAGE::slot_calculate()
 #ifdef traceTime
         time.restart();
 #endif
+        double newMinDist=initialDist*10;
         for (int n=0;n<list->count();++n)
         {
             if(list->at(n).isDead)
@@ -1989,6 +2027,11 @@ void ROUTAGE::slot_calculate()
             temp.isBroken=false;
             segment->addVlmPoint(temp);
             temp=list->at(n);
+            if(showBestLive && temp.distArrival<newMinDist)
+            {
+                pivotPoint=temp;
+                newMinDist=temp.distArrival;
+            }
             temp.isBroken=false;
             segment->addVlmPoint(temp);
 #if 0 //debug left-right balancing
@@ -2024,6 +2067,8 @@ void ROUTAGE::slot_calculate()
 #endif
         if(++refresh%4==0)
         {
+            if(showBestLive && !this->i_iso)
+                this->slot_drawWay();
             QCoreApplication::processEvents();
         }
 #ifdef traceTime
@@ -2654,6 +2699,7 @@ void ROUTAGE::setShowIso(const bool &b)
 }
 void ROUTAGE::drawResult(vlmPoint P)
 {
+    this->eraseWay();
     QList<vlmPoint> initialRoad;
     for (int n=0;n<result->getPoints()->count();++n)
     {
@@ -2687,6 +2733,8 @@ void ROUTAGE::drawResult(vlmPoint P)
     pen.setColor(color);
     pen.setBrush(color);
     pen.setWidthF(2);
+    foreach(vlmPointGraphic * vg,this->isoPointList)
+        vg->setAcceptHover();
 }
 void ROUTAGE::setPivotPoint(const int &isoNb,const int &pointNb)
 {
@@ -2730,8 +2778,8 @@ void ROUTAGE::slot_drawWay()
     pen.setColor(colorsList[ncolor]);
     pen.setBrush(colorsList[ncolor]);
     way->setLinePen(pen);
-    way->slot_showMe();
     way->show();
+    way->slot_showMe();
     pen.setColor(color);
     pen.setBrush(color);
     pen.setWidthF(2);
@@ -2763,26 +2811,48 @@ void ROUTAGE::convertToRoute()
     }
     this->converted=false;
     bool simp=false;
-    if(parentRoutage->getRouteFromBoat())
+    QMessageBox msgBox(QMessageBox::Question,tr("Conversion d'un routage en route"),
+                       tr("Voulez-vous que le point de depart de la route suive le bateau maintenant?"));
+    QCheckBox simplify(tr("Simplifier/Optimiser automatiquement"),0);
+    simplify.blockSignals(true);
+    simplify.setChecked(Settings::getSetting("convertAndSimplify",1).toInt()==1);
+    QCheckBox deleteOther(tr("Supprimer les autres routages"),0);
+    deleteOther.blockSignals(true);
+    deleteOther.setChecked(false);
+//    QVBoxLayout vb;
+//    vb.addWidget(&simplify);
+//    vb.addWidget(&deleteOther);
+//    QGroupBox gb;
+//    gb.setLayout(&vb);
+//    gb.setTitle(tr("Options"));
+//    msgBox.setExtension(&gb);
+    msgBox.addButton(&simplify,QMessageBox::ActionRole);
+    msgBox.addButton(&deleteOther,QMessageBox::ActionRole);
+    msgBox.setStandardButtons(QMessageBox::Yes|QMessageBox::No|QMessageBox::Cancel);
+    if(!parentRoutage->getRouteFromBoat())
     {
-        QMessageBox msgBox(QMessageBox::Question,tr("Conversion d'un routage en route"),
-                           tr("Voulez-vous que le point de depart de la route suive le bateau maintenant?"));
-        QCheckBox simplify(tr("Simplifier/Optimiser automatiquement"),0);
-        simplify.blockSignals(true);
-        simplify.setChecked(Settings::getSetting("convertAndSimplify",1).toInt()==1);
-        msgBox.addButton(&simplify,QMessageBox::ActionRole);
-        msgBox.setStandardButtons(QMessageBox::Yes|QMessageBox::No|QMessageBox::Cancel);
-        int answ=msgBox.exec();
-        if(answ==QMessageBox::Cancel) return;
-        simp=simplify.isChecked();
-        Settings::setSetting("convertAndSimplify",simp?1:0);
-        routeStartBoat=answ==QMessageBox::Yes;
+        msgBox.button(QMessageBox::Yes)->hide();
+        msgBox.button(QMessageBox::No)->setText(tr("Ok"));
+        msgBox.setText(tr("La route partira du point de depart et a l'heure de depart du routage"));
     }
+    int answ=msgBox.exec();
+    if(answ==QMessageBox::Cancel) return;
+    if(deleteOther.isChecked())
+    {
+        QList<ROUTAGE *>rList=parent->getRoutageList();
+        for (int i=rList.count()-1;i>=0;--i)
+        {
+            if(rList.at(i)==this) continue;
+            parent->deleteRoutage(rList.at(i));
+        }
+    }
+    simp=simplify.isChecked();
+    Settings::setSetting("convertAndSimplify",simp?1:0);
+    routeStartBoat=answ==QMessageBox::Yes;
     this->converted=true;
     ROUTE * route=parent->addRoute();
     route->setName(name);
     route->setUseVbVmgVlm(false);
-    parent->update_menuRoute();
     route->setBoat(this->myBoat);
     route->setDetectCoasts(this->checkCoast);
     route->setStartTime(parentRoutage->getStartTime());
@@ -2800,6 +2870,7 @@ void ROUTAGE::convertToRoute()
     route->setSpeedLossOnTack(this->speedLossOnTack);
     //route->setWidth(this->width);
     route->setFrozen(true);
+    parent->update_menuRoute();
     QList<vlmPoint> * list=result->getPoints();
     for (int n=0;n<list->count();++n)
     {
@@ -3231,7 +3302,9 @@ void ROUTAGE::setFromRoutage(ROUTAGE *fromRoutage, bool editOptions)
     this->checkLine=fromRoutage->getCheckLine();
     this->useConverge=fromRoutage->useConverge;
     this->pruneWakeAngle=fromRoutage->pruneWakeAngle;
-    this->colorGrib=fromRoutage->colorGrib;
+    this->showBestLive=fromRoutage->getShowBestLive();
+    this->routageOrtho=fromRoutage->getRoutageOrtho();
+    this->colorGrib=fromRoutage->getColorGrib();
     this->routeFromBoat=false;
     this->fromPOI=fromRoutage->getFromPOI();
     this->toPOI=fromRoutage->getToPOI();
@@ -3279,6 +3352,7 @@ void ROUTAGE::setFromRoutage(ROUTAGE *fromRoutage, bool editOptions)
     fromRoutage->setShowIso(false);
     fromRoutage->getResult()->hide();
     fromRoutage->getWay()->hide();
+    QApplication::processEvents();
     if(editOptions)
     {
         isNewPivot=true;
@@ -3290,6 +3364,8 @@ void ROUTAGE::setFromRoutage(ROUTAGE *fromRoutage, bool editOptions)
 void ROUTAGE::createPopupMenu()
 {
     popup = new QMenu(parent);
+    connect(this->popup,SIGNAL(aboutToShow()),parent,SLOT(slot_resetGestures()));
+    connect(this->popup,SIGNAL(aboutToHide()),parent,SLOT(slot_resetGestures()));
 
     ac_pivot = new QAction(tr("Creer un pivot"),popup);
     popup->addAction(ac_pivot);
@@ -3386,7 +3462,7 @@ void ROUTAGE::showIsoRoute()
             vlmPoint Cross;
             double lon,lat,X,Y;
             Cross=result->getPoints()->at(n);
-            proj->map2screenDouble(Util::cLFA(Cross.lon,proj->getXmin()),Cross.lat,&X,&Y);
+            proj->map2screenDouble(Cross.lon,Cross.lat,&X,&Y);
             int js=0;
             double minDist=10e10;
             for(int s=indice;s<isochrone->getPoints()->count()-1;++s)
@@ -3394,8 +3470,8 @@ void ROUTAGE::showIsoRoute()
                 vlmPoint p1=isochrone->getPoints()->at(s);
                 vlmPoint p2=isochrone->getPoints()->at(s+1);
                 double x1,y1,x2,y2; /*recalculation necessary because zoom has changed*/
-                proj->map2screenDouble(Util::cLFA(p1.lon,proj->getXmin()),p1.lat,&x1,&y1);
-                proj->map2screenDouble(Util::cLFA(p2.lon,proj->getXmin()),p2.lat,&x2,&y2);
+                proj->map2screenDouble(p1.lon,p1.lat,&x1,&y1);
+                proj->map2screenDouble(p2.lon,p2.lat,&x2,&y2);
                 QLineF line1(x1,y1,x2,y2);
                 for(int is=0;is<i_isochrone->getPoints()->count()-1;++is)
                 {
@@ -3431,7 +3507,7 @@ void ROUTAGE::showIsoRoute()
                 for(int s=indice;s<isochrone->getPoints()->count();++s)
                 {
                     vlmPoint p1=isochrone->getPoints()->at(s);
-                    proj->map2screenDouble(Util::cLFA(p1.lon,proj->getXmin()),p1.lat,&x1,&y1);
+                    proj->map2screenDouble(p1.lon,p1.lat,&x1,&y1);
                     poly.append(QPointF(x1,y1));
                 }
                 int indicePrev=prev_isochrone->getPoints()->indexOf(result->getPoints()->at(n+1));
@@ -3443,7 +3519,7 @@ void ROUTAGE::showIsoRoute()
                 for(int s=indicePrev;s<prev_isochrone->getPoints()->count();++s)
                 {
                     vlmPoint p1=prev_isochrone->getPoints()->at(s);
-                    proj->map2screenDouble(Util::cLFA(p1.lon,proj->getXmin()),p1.lat,&x1,&y1);
+                    proj->map2screenDouble(p1.lon,p1.lat,&x1,&y1);
                     prev_poly.append(QPointF(x1,y1));
                 }
                 for(int s=js;s<i_isochrone->count();++s)
@@ -3451,7 +3527,7 @@ void ROUTAGE::showIsoRoute()
                     vlmPoint p1=i_isochrone->getPoints()->at(s);
                     if(p1.isBroken) break;
                     double x1,y1; /*recalculation necessary because zoom has changed*/
-                    proj->map2screenDouble(Util::cLFA(p1.lon,proj->getXmin()),p1.lat,&x1,&y1);
+                    proj->map2screenDouble(p1.lon,p1.lat,&x1,&y1);
                     i_poly.append(QPointF(x1,y1));
                 }
 #if 1
@@ -3460,8 +3536,8 @@ void ROUTAGE::showIsoRoute()
                     double x2,y2;
                     vlmPoint p1=result->getPoints()->at(rrr);
                     vlmPoint p2=result->getPoints()->at(rrr+1);
-                    proj->map2screenDouble(Util::cLFA(p1.lon,proj->getXmin()),p1.lat,&x1,&y1);
-                    proj->map2screenDouble(Util::cLFA(p2.lon,proj->getXmin()),p2.lat,&x2,&y2);
+                    proj->map2screenDouble(p1.lon,p1.lat,&x1,&y1);
+                    proj->map2screenDouble(p2.lon,p2.lat,&x2,&y2);
                     QLineF rLine(x1,y1,x2,y2);
                     found=false;
                     for(int pp=0;pp<i_poly.count()-1;++pp)
@@ -3534,7 +3610,7 @@ void ROUTAGE::showIsoRoute()
                 left.append(Cross);
             js=i_isochrone->getPoints()->count()-1;
             Cross=result->getPoints()->at(n);
-            proj->map2screenDouble(Util::cLFA(Cross.lon,proj->getXmin()),Cross.lat,&X,&Y);
+            proj->map2screenDouble(Cross.lon,Cross.lat,&X,&Y);
             found=false;
             minDist=10e10;
             for(int s=indice;s>0;--s)
@@ -3542,8 +3618,8 @@ void ROUTAGE::showIsoRoute()
                 vlmPoint p1=isochrone->getPoints()->at(s);
                 vlmPoint p2=isochrone->getPoints()->at(s-1);
                 double x1,y1,x2,y2; /*recalculation necessary because zoom has changed*/
-                proj->map2screenDouble(Util::cLFA(p1.lon,proj->getXmin()),p1.lat,&x1,&y1);
-                proj->map2screenDouble(Util::cLFA(p2.lon,proj->getXmin()),p2.lat,&x2,&y2);
+                proj->map2screenDouble(p1.lon,p1.lat,&x1,&y1);
+                proj->map2screenDouble(p2.lon,p2.lat,&x2,&y2);
                 QLineF line1(x1,y1,x2,y2);
                 for(int is=i_isochrone->getPoints()->count()-1;is>0;--is)
                 {
@@ -3579,7 +3655,7 @@ void ROUTAGE::showIsoRoute()
                 for(int s=indice;s>=0;--s)
                 {
                     vlmPoint p1=isochrone->getPoints()->at(s);
-                    proj->map2screenDouble(Util::cLFA(p1.lon,proj->getXmin()),p1.lat,&x1,&y1);
+                    proj->map2screenDouble(p1.lon,p1.lat,&x1,&y1);
                     poly.append(QPointF(x1,y1));
                 }
                 int indicePrev=prev_isochrone->getPoints()->indexOf(result->getPoints()->at(n+1));
@@ -3591,7 +3667,7 @@ void ROUTAGE::showIsoRoute()
                 for(int s=indicePrev;s>=0;--s)
                 {
                     vlmPoint p1=prev_isochrone->getPoints()->at(s);
-                    proj->map2screenDouble(Util::cLFA(p1.lon,proj->getXmin()),p1.lat,&x1,&y1);
+                    proj->map2screenDouble(p1.lon,p1.lat,&x1,&y1);
                     prev_poly.append(QPointF(x1,y1));
                 }
 #if 1
@@ -3601,8 +3677,8 @@ void ROUTAGE::showIsoRoute()
                     double x2,y2;
                     vlmPoint p1=result->getPoints()->at(rrr);
                     vlmPoint p2=result->getPoints()->at(rrr+1);
-                    proj->map2screenDouble(Util::cLFA(p1.lon,proj->getXmin()),p1.lat,&x1,&y1);
-                    proj->map2screenDouble(Util::cLFA(p2.lon,proj->getXmin()),p2.lat,&x2,&y2);
+                    proj->map2screenDouble(p1.lon,p1.lat,&x1,&y1);
+                    proj->map2screenDouble(p2.lon,p2.lat,&x2,&y2);
                     QLineF rLine(x1,y1,x2,y2);
                     found=false;
                     for(int pp=0;pp<i_isochrone->getPoints()->count()-1;++pp)
@@ -3610,8 +3686,8 @@ void ROUTAGE::showIsoRoute()
                         QPointF dummy;
                         p1=i_isochrone->getPoints()->at(pp);
                         p2=i_isochrone->getPoints()->at(pp+1);
-                        proj->map2screenDouble(Util::cLFA(p1.lon,proj->getXmin()),p1.lat,&x1,&y1);
-                        proj->map2screenDouble(Util::cLFA(p2.lon,proj->getXmin()),p2.lat,&x2,&y2);
+                        proj->map2screenDouble(p1.lon,p1.lat,&x1,&y1);
+                        proj->map2screenDouble(p2.lon,p2.lat,&x2,&y2);
                         QLineF iLine(x1,y1,x2,y2);
                         if(rLine.intersect(iLine,&dummy)==QLineF::BoundedIntersection)
                         {
@@ -3634,7 +3710,7 @@ void ROUTAGE::showIsoRoute()
                         i_poly.clear();
                     }
                     double x1,y1; /*recalculation necessary because zoom has changed*/
-                    proj->map2screenDouble(Util::cLFA(p1.lon,proj->getXmin()),p1.lat,&x1,&y1);
+                    proj->map2screenDouble(p1.lon,p1.lat,&x1,&y1);
                     i_poly.append(QPointF(x1,y1));
                 }
                 QPen pendebug(Qt::blue);
@@ -3993,10 +4069,10 @@ bool ROUTAGE::newtownRaphson(double * root, double goal,double precision,QPolygo
     //qWarning()<<"not found after"<<iterations<<"loops. (Best find:"<<bestY<<goal+bestY<<"instead of"<<goal<<")";
     return false;
 }
-bool ROUTAGE::crossBarriere(const QLineF &line)
+bool ROUTAGE::crossBarriere(const QLineF &line) const
 {
     QPointF dummy;
-    foreach (QLineF barriere,barrieres)
+    foreach (const QLineF &barriere,barrieres)
     {
         if(barriere.intersect(line,&dummy)==QLineF::BoundedIntersection)
             return true;

@@ -1,7 +1,10 @@
 #ifndef DIALOGVIEWPOLAR_H
 #define DIALOGVIEWPOLAR_H
-
+#ifdef QT_V5
+#include <QtWidgets/QDialog>
+#else
 #include <QDialog>
+#endif
 #include <QPainter>
 #include "class_list.h"
 #include "ui_dialogviewpolar.h"

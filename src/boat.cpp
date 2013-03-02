@@ -30,6 +30,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "Player.h"
 #include "GshhsReader.h"
 #include "boat.h"
+#include "boatVLM.h"
 #include "Grib.h"
 
 boat::boat(QString      pseudo, bool activated,
@@ -152,6 +153,8 @@ boat::~boat()
 void boat::createPopUpMenu(void)
 {
     popup = new QMenu(parent);
+    connect(this->popup,SIGNAL(aboutToShow()),parent,SLOT(slot_resetGestures()));
+    connect(this->popup,SIGNAL(aboutToHide()),parent,SLOT(slot_resetGestures()));
 
     ac_select = new QAction("Selectionner",popup);
     popup->addAction(ac_select);
@@ -355,7 +358,8 @@ void boat::updateTraceColor(void)
 
 void boat::drawEstime(void)
 {
-    if(mainWindow->getStartEstimeSpeedFromGrib() && parent->getGrib() && parent->getGrib()->isOk() && this->getPolarData())
+    bool getStartEstimeSpeedFromGrib = Settings::getSetting("startSpeedEstime", 1).toInt()==1;
+    if( getStartEstimeSpeedFromGrib && parent->getGrib() && parent->getGrib()->isOk() && this->getPolarData())
     {
         double wind_speed=0;
         double wind_angle=0;
@@ -452,8 +456,8 @@ void boat::drawEstime(double myHeading, double mySpeed)
             windEstimeSpeed=-1;
         GshhsReader *map=parent->get_gshhsReader();
         double I1,J1,I2,J2;
-        proj->map2screenDouble(Util::cLFA(lon,proj->getXmin()),lat,&I1,&J1);
-        proj->map2screenDouble(Util::cLFA(tmp_lon,proj->getXmin()),tmp_lat,&I2,&J2);
+        proj->map2screenDouble(lon,lat,&I1,&J1);
+        proj->map2screenDouble(tmp_lon,tmp_lat,&I2,&J2);
         bool coastDetected=false;
         if(map && map->getQuality()>=2)
         {
@@ -477,10 +481,10 @@ void boat::drawEstime(double myHeading, double mySpeed)
                     double LonTmp=getGates().at(n)->getPoints()->first().lon;
                     double LatTmp=getGates().at(n)->getPoints()->first().lat;
                     double Gx1,Gy1,Gx2,Gy2;
-                    proj->map2screenDouble(Util::cLFA(LonTmp,proj->getXmin()),LatTmp,&Gx1,&Gy1);
+                    proj->map2screenDouble(LonTmp,LatTmp,&Gx1,&Gy1);
                     LonTmp=getGates().at(n)->getPoints()->last().lon;
                     LatTmp=getGates().at(n)->getPoints()->last().lat;
-                    proj->map2screenDouble(Util::cLFA(LonTmp,proj->getXmin()),LatTmp,&Gx2,&Gy2);
+                    proj->map2screenDouble(LonTmp,LatTmp,&Gx2,&Gy2);
                     if(estime>0.0001 && my_intersects(QLineF(I1,J1,I2,J2),QLineF(Gx1,Gy1,Gx2,Gy2)))
                     {
                         penLine1.setColor(Qt::darkGreen);
@@ -499,7 +503,7 @@ void boat::drawEstime(double myHeading, double mySpeed)
         if(WPLat != 0 && WPLon != 0)
         {
             WPLine->setLinePen(penLine2);
-            proj->map2screenDouble(Util::cLFA(WPLon,proj->getXmin()),WPLat,&I2,&J2);
+            proj->map2screenDouble(WPLon,WPLat,&I2,&J2);
             WPLine->initSegment(I1,J1,I2,J2);
         }
         this->updateHint();
@@ -549,8 +553,9 @@ void boat::slot_estimeFlashing()
 
 void boat::slotCompassLine()
 {
+    ac_compassLine->setDisabled(true);
     double i1,j1;
-    proj->map2screenDouble(Util::cLFA(this->lon,proj->getXmin()),this->lat,&i1,&j1);
+    proj->map2screenDouble(this->lon,this->lat,&i1,&j1);
     emit compassLine(i1,j1);
 }
 QPainterPath boat::shape() const
@@ -576,26 +581,112 @@ void boat::updateBoatData()
 {
     if(!activated)
         return;
+    if(this->getType()==BOAT_VLM && !((boatVLM*)this)->isInitialized())
+    {
+        //qWarning()<<"boat not initialized, skipping updateBoatData()";
+        return;
+    }
     updateBoatString();
     reloadPolar();
     updatePosition();
     updateHint();
 }
+void boat::drawOnMagnifier(Projection * mProj, QPainter * pnt)
+{
+    double I1,J1;
+    mProj->map2screenDouble(lon,lat,&I1,&J1);
+    int boat_i,boat_j;
+    boat_i=qRound(I1)-3;
+    boat_j=qRound(J1)-(height/2);
+    int dy = height/2;
+    QPen pen(selected?Qt::darkRed:Qt::darkBlue);
+    pnt->setFont(QApplication::font());
+    if(!labelHidden)
+    {
+        if(Settings::getSetting("showFlag",0).toInt()==1 && this->getType()==BOAT_VLM)
+        {
+            if(flag.isNull())
+            {
+                if(flag.load(appFolder.value("flags")+this->country+".png"))
+                {
+                    flag=flag.scaled(30,20,Qt::KeepAspectRatio);
+                    drawFlag=true;
+                }
+                else
+                    drawFlag=false;
+            }
+            else
+            {
+                drawFlag=true;
+            }
+        }
+        else
+        {
+            drawFlag=false;
+        }
+        if(this->getType()==BOAT_VLM)
+        {
+            if(this->stopAndGo!="0")
+                bgcolor=QColor(239,48,36,150);
+            else
+                bgcolor = QColor(255,255,255,150);
+        }
+        QColor bgcolor_m=bgcolor;
+        bgcolor_m.setAlpha(255);
+        pnt->setBrush(QBrush(bgcolor_m));
+        if(!drawFlag)
+            pnt->drawRoundRect(boat_i+9,boat_j+0, width,height, 50,50);
+        else
+            pnt->drawRoundRect(boat_i+21,boat_j+0, width,height, 50,50);
+        pnt->setBrush(Qt::NoBrush);
+        pnt->setPen(pen);
+        QFontMetrics fm(QApplication::font());
+        int w = fm.width("_")+1;
+        if(!drawFlag)
+            pnt->drawText(boat_i+w+9,boat_j+height-height/4,my_str);
+        else
+            pnt->drawText(boat_i+w+21,boat_j+height-height/4,my_str);
+    }
+    QColor selColor_m=selColor;
+    selColor_m.setAlpha(255);
+    QColor myColor_m=myColor;
+    myColor_m.setAlpha(255);
+    pen.setColor(selected?selColor_m:myColor_m);
+    pen.setWidth(4);
+    pnt->setPen(pen);
+    if(!drawFlag)
+        pnt->fillRect(boat_i+0,boat_j+dy-3,7,7, QBrush(selected?selColor_m:myColor_m));
+    else
+        pnt->drawImage(boat_i+-11,boat_j+dy-9,flag);
+    int g = 60;
+    pen = QPen(QColor(g,g,g));
+    pen.setWidth(1);
+    pnt->setPen(pen);
+    if(!labelHidden)
+    {
+        if(!drawFlag)
+            pnt->drawRoundRect(boat_i+9,boat_j+0, width,height, 50,50);
+        else
+            pnt->drawRoundRect(boat_i+21,boat_j+0, width,height, 50,50);
+    }
+
+    //drawEstime();
+}
 
 void boat::updatePosition(void)
 {
     double I1,J1;
-    proj->map2screenDouble(Util::cLFA(lon,proj->getXmin()),lat,&I1,&J1);
+    proj->map2screenDouble(lon,lat,&I1,&J1);
     int boat_i,boat_j;
     boat_i=qRound(I1)-3;
     boat_j=qRound(J1)-(height/2);
     //qWarning() << "upd position: " << x() << "," << y() << " -> " << boat_i << "," << boat_j;
     setPos(boat_i, boat_j);
     drawEstime();
-    if(WPLat != 0 && WPLon != 0)
+    if(selected && WPLat != 0 && WPLon != 0)
     {
         double I2,J2;
-        proj->map2screenDouble(Util::cLFA(WPLon,proj->getXmin()),WPLat,&I2,&J2);
+        proj->map2screenDouble(WPLon,WPLat,&I2,&J2);
         WPLine->initSegment(I1,J1,I2,J2);
     }
 }
@@ -613,11 +704,15 @@ void boat::setStatus(bool activated)
      setVisible(activated);
 
 
-     if(activated) {
+     if(activated)
+     {
+         //qWarning()<<"before slot_paramChanged";
          slot_paramChanged();
+         //qWarning()<<"before updateBoatData";
          updateBoatData();
+         //qWarning()<<"after updateBoatData";
      }
-
+     //qWarning()<<"activated="<<activated;
 
      if(!activated)
      {

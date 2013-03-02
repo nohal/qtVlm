@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>279</width>
-    <height>163</height>
+    <height>188</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -123,6 +123,13 @@
     </widget>
    </item>
    <item>
+    <widget class="QCheckBox" name="autoRange">
+     <property name="text">
+      <string>Ecart automatique</string>
+     </property>
+    </widget>
+   </item>
+   <item>
     <widget class="QDialogButtonBox" name="buttonBox">
      <property name="orientation">
       <enum>Qt::Horizontal</enum>
@@ -172,6 +179,38 @@
     <hint type="destinationlabel">
      <x>286</x>
      <y>274</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>autoRange</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>etendueLat</receiver>
+   <slot>setDisabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>139</x>
+     <y>144</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>214</x>
+     <y>41</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>autoRange</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>etendueLon</receiver>
+   <slot>setDisabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>139</x>
+     <y>144</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>214</x>
+     <y>15</y>
     </hint>
    </hints>
   </connection>

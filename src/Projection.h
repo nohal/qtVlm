@@ -30,12 +30,14 @@ Copyright (C) 2008 - Jacques Zaninetti - http://zygrib.free.fr
 #include <QObject>
 #include "dataDef.h"
 #include <QDebug>
+#include "Util.h"
 #ifndef M_PI_2
 #define M_PI_2     1.57079632679489661923
 #endif
 #ifndef M_PI_4
 #define M_PI_4     0.785398163397448309616
 #endif
+#define scalemax 4e8
 class Projection : public QObject
 {
 Q_OBJECT
@@ -56,6 +58,7 @@ Q_OBJECT
         /* move */
         void move(const double &dx, const double &dy);
         void setCentralPixel(const int &i, const int &j);
+        void setCentralPixel(const QPointF &c);
         void setCenterInMap(const double &x, const double &y);
         void setScaleAndCenterInMap(const double &sc,const double &x, const double &y);
 
@@ -76,6 +79,8 @@ Q_OBJECT
         void screen2mapDouble(const double &i, const double &j, double *x, double *y) const;
         void map2screen(const double &x, const double &y, int *i, int *j) const;
         void map2screenDouble(const double &x, const double &y, double *i, double *j) const;
+        void map2screenByReference(const double &ref, const double &refX, const double &x, const double &y, double *i, double *j) const;
+        void map2screenByReference(const double &ref, const double &refX, const double &x, const double &y, int *i, int *j) const;
 
         /* position / region validation*/
         bool intersect(const double &w,const double &e,const double &s,const double &n)  const;
@@ -85,17 +90,17 @@ Q_OBJECT
         void setFrozen(const bool &b){this->frozen=b;}
         bool getFrozen(void) const {return this->frozen;}
         void setUseTempo(const bool &b){this->useTempo=b;}
-    signals:
+signals:
         void newZoom(double);
         void projectionUpdated(void);
 
     private:
+        double mySignedDiffAngle(const double &a1, const double &a2) const;
         int W, H;     // taille de la fenetre (pixels)
         double CX, CY;                  // centre de la vue (longitude/latitude)
         double xW, xE, yN, yS;  // fenetre visible (repere longitude/latitude)
         double PX,PY;       // center in mercator projection
         double scale;       // Echelle courante
-        double scalemax;    // Echelle maxi
         double scaleall;    // Echelle pour afficher le monde entier
         double coefremp;	   // Coefficient de remplissage (surface_visible/pixels)
 
@@ -113,6 +118,7 @@ Q_OBJECT
 Q_DECLARE_TYPEINFO(Projection,Q_MOVABLE_TYPE);
 
 //===============================================================================
+#if 0
 inline void Projection::map2screen(const double &x, const double &y, int *i, int *j) const
 {
     double y1=y;
@@ -136,7 +142,7 @@ inline void Projection::map2screenDouble(const double &x, const double &y, doubl
     const double trick=PY-radToDeg(log(tan(degToRad(y1)/(double)2.0 + M_PI_4)));
     *j = ((double)H/2.0 + (scale * trick));
 }
-
+#endif
 //-------------------------------------------------------------------------------
 inline void Projection::screen2map(const int &i, const int &j, double *x, double *y) const
 {
@@ -158,7 +164,13 @@ inline bool Projection::intersect (const double &w, const double &e, const doubl
 //-------------------------------------------------------------------------------
 inline bool Projection::isPointVisible (const double &x, const double &y) const
 {
-    return (x<=xE && x>=xW && y<=yN && y>=yS);
+    if(y>yN || y<yS) return false;
+    if(x<=xE && x>=xW) return true;
+    if(xW<=x && xE>=180 && x>=0) return true;
+    if(xW<=-180 && xE>=0 && x<=0) return true;
+    double A,B;
+    this->map2screenDouble(x,y,&A,&B);
+    return this->isInBounderies(A,B);
 }
 
 //-------------------------------------------------------------------------------
@@ -169,6 +181,63 @@ inline bool Projection::isInBounderies (const int &x, const int &y) const
 inline bool Projection::isInBounderies_strict (const int &x, const int &y) const
 {
     return (x>0 && y>0 && x<W && y<H);
+}
+inline void Projection::map2screen(const double &x, const double &y, int *i, int *j) const
+{
+    double x1=x;
+    double y1=y;
+    double i1,j1;
+    map2screenDouble(x1,y1,&i1,&j1);
+    *i=qRound(i1);
+    *j=qRound(j1);
+}
+inline void Projection::map2screenDouble(const double &x, const double &y, double *i, double *j) const
+{
+    double y1=y;
+    if(y1<=-90) y1=-89.9999999999999999999999999999999999999999999999999999999;
+    if(y1>=90) y1=89.999999999999999999999999999999999999999999999999999999999;
+
+    double diff=mySignedDiffAngle(Util::A360(x),Util::A360(CX));
+    if(diff>0)
+    {
+        if(360.0-diff<diff) diff-=360.0;
+    }
+    else
+    {
+        if(360.0+diff<qAbs(diff)) diff+=360.0;
+    }
+    *i = W/2+ scale * diff;
+    const double trick=PY-radToDeg(log(tan(degToRad(y1)/(double)2.0 + M_PI_4)));
+    *j = ((double)H/2.0 + (scale * trick));
+}
+inline void Projection::map2screenByReference(const double &ref, const double &refX, const double &x, const double &y, int *i, int *j) const
+{
+    double I,J;
+    map2screenByReference(ref,refX,x,y,&I,&J);
+    *i=qRound(I);
+    *j=qRound(J);
+}
+inline void Projection::map2screenByReference(const double &ref, const double &refX, const double &x, const double &y, double *i, double *j) const
+{
+    double y1=y;
+    if(y1<=-90) y1=-89.9999999999999999999999999999999999999999999999999999999;
+    if(y1>=90) y1=89.999999999999999999999999999999999999999999999999999999999;
+    double diff=mySignedDiffAngle(Util::A360(x),Util::A360(ref));
+    if(diff>0)
+    {
+        if(360.0-diff<diff) diff-=360.0;
+    }
+    else
+    {
+        if(360.0+diff<qAbs(diff)) diff+=360.0;
+    }
+    *i = refX + scale * diff;
+    const double trick=PY-radToDeg(log(tan(degToRad(y1)/(double)2.0 + M_PI_4)));
+    *j = ((double)H/2.0 + (scale * trick));
+}
+inline double Projection::mySignedDiffAngle(const double &a1,const double &a2) const
+{
+    return (Util::A360(qAbs(a1)+ 180 -qAbs(a2)) -180);
 }
 
 #endif

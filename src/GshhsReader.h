@@ -153,7 +153,7 @@ class GshhsReader
         std::list<GshhsPolygon*> & getList_rivers();
         //-----------------------------------------------------
                 
-        int GSHHS_scaledPoints(GshhsPolygon *pol, QPoint *pts, double decx,
+        int GSHHS_scaledPoints(GshhsPolygon *pol, QPointF *pts, double decx,
                                 Projection *proj
         );
 

@@ -67,11 +67,12 @@ boatVLM::boatVLM(QString        pseudo, bool activated, int boatId, int playerId
     firstSynch=false;
     race_name="";
     playerName=player->getName();
-    needAuth=true;
     this->rank=1;
     connect(parent, SIGNAL(shPor(bool)),this,SLOT(slot_shPor()));
     connect(parent,SIGNAL(resetTraceCache()),this,SLOT(slot_resetTraceCache()));
     myCreatePopUpMenu();
+    connect(this->popup,SIGNAL(aboutToShow()),parent,SLOT(slot_resetGestures()));
+    connect(this->popup,SIGNAL(aboutToHide()),parent,SLOT(slot_resetGestures()));
     this->initialized=false;
     own=QString();
     npd=QString();
@@ -145,8 +146,9 @@ void boatVLM::doRequest(int requestCmd)
     }
     if(!activated && initialized)
     {
-        qWarning() << "Doing a synch on a non activated and initialized boat";
+        //qWarning() << "Doing a synch on a non activated and initialized boat";
         updating=false;
+        emit hasFinishedUpdating();
         return;
     }
 
@@ -169,13 +171,15 @@ void boatVLM::doRequest(int requestCmd)
             case VLM_REQUEST_BOAT:
                 QTextStream(&page) << "/ws/boatinfo.php?forcefmt=json"
                             << "&select_idu="<<this->boat_id;
+                //qWarning()<<"requesting VLM_REQUEST_BOAT"<<pseudo;
                 break;
             case VLM_REQUEST_TRJ:
             {
                 //trace_drawing->deleteAll();
                 if(race_id==0)
                 {
-                    qWarning() << "boat Acc no request TRJ for:" << pseudo << " id=" << boat_id;
+                    //qWarning() << "boat Acc no request TRJ for:" << pseudo << " id=" << boat_id;
+                    emit hasFinishedUpdating();
                     return;
                 }
                 time_t et=QDateTime::currentDateTime().toUTC().toTime_t();
@@ -199,19 +203,22 @@ void boatVLM::doRequest(int requestCmd)
                         << boat_id
                         << "&starttime="
                         << st;
+                //qWarning()<<"requesting VLM_REQUEST_TRJ"<<pseudo;
                 break;
             }
             case VLM_REQUEST_GATE:
                 QTextStream(&page) << "/ws/raceinfo.php?idrace="<<race_id;
+                //qWarning()<<"requesting VLM_REQUEST_GATE";
                 break;
             case VLM_REQUEST_POLAR:
                 QTextStream(&page) << "/Polaires/"+this->polarVlm+".csv";
+                //qWarning()<<"requesting VLM_REQUEST_POLAR"<<pseudo;
                 break;
             default:
                 qWarning() << "[boatVLM-doRequest] error: unknown request: " << requestCmd;
                 break;
         }
-        inetGet(requestCmd,page);
+        inetGet(requestCmd,page,true);
     }
     else
     {
@@ -225,6 +232,7 @@ void boatVLM::doRequest(int requestCmd)
          race_name = "Test race";
          updating=false;
          updateBoatData();
+         emit hasFinishedUpdating();
     }
 }
 
@@ -236,7 +244,7 @@ void boatVLM::requestFinished (QByteArray res_byte)
 
     //QString res(res_byte);
 
-    //QWARN << "Request finished: " << getCurrentRequest() << " boat: " << this->boat_id;
+    //qWarning() << "Request finished: " << getCurrentRequest() << " boat: " << this->boat_id<<this->pseudo<<name;
 
     switch(getCurrentRequest())
     {
@@ -400,6 +408,7 @@ void boatVLM::requestFinished (QByteArray res_byte)
         case VLM_REQUEST_TRJ:
         {
             emit getTrace(res_byte,trace_drawing->getPoints());
+            //qWarning()<<"TRJ trace size="<<trace_drawing->getPoints()->count();
             if(!trace_drawing->getPoints()->isEmpty() &&
               (qRound(trace_drawing->getPoints()->last().lon*1000)!=qRound(this->lon*1000) ||
                qRound(trace_drawing->getPoints()->last().lat*1000)!=qRound(this->lat*1000)))
@@ -429,7 +438,6 @@ void boatVLM::requestFinished (QByteArray res_byte)
             /* we can now update everything */
             updateBoatData();
             updateTraceColor();
-            //drawEstime();
 
             if(race_id!=0 && !gatesLoaded)
             {
@@ -545,7 +553,7 @@ void boatVLM::requestFinished (QByteArray res_byte)
                         if(oneBuoy)
                         {
                             QString a;
-                            if(qRound(wp["laisser_au"].toDouble()==wp["laisser_au"].toDouble()))
+                            if(qRound(wp["laisser_au"].toDouble())==wp["laisser_au"].toDouble())
                                 tip=tip+tr("Une seule bouee a laisser au ")+a.sprintf("%.0f",wp["laisser_au"].toDouble());
                             else
                                 tip=tip+tr("Une seule bouee a laisser au ")+a.sprintf("%.2f",wp["laisser_au"].toDouble());
@@ -567,6 +575,13 @@ void boatVLM::requestFinished (QByteArray res_byte)
                     gates.append(porte);
 
                 }
+                double ngate=gates.count();
+                foreach(vlmLine * gate,gates)
+                {
+                    gate->set_zValue((double)Z_VALUE_GATE+ngate/100.0);
+                    --ngate;
+                }
+
                 gatesLoaded=true;
                 this->getDistHdgGate();
                 updating=false;
@@ -648,7 +663,7 @@ void boatVLM::authFailed(void)
 void boatVLM::inetError()
 {
     updating=false;
-    //emit hasFinishedUpdating();
+    emit hasFinishedUpdating();
     //emit boatUpdated(this,newRace,doingSync);
 }
 
@@ -697,7 +712,7 @@ void boatVLM::showNextGates()
         else if (j==nWP)
         {
             porte->setZValue(Z_VALUE_NEXT_GATE);
-            QPen penLine(Settings::getSetting("nextGateLineColor", Qt::blue).value<QColor>(),1);
+            QPen penLine(Settings::getSetting("nextGateLineColor", QColor(Qt::blue)).value<QColor>(),1);
             penLine.setWidthF(Settings::getSetting("nextGateLineWidth", 3.0).toDouble());
             porte->setLinePen(penLine);
             porte->setHidden(false);
@@ -706,7 +721,7 @@ void boatVLM::showNextGates()
         else
         {
             porte->setZValue(Z_VALUE_GATE);
-            QPen penLine(Settings::getSetting("gateLineColor", Qt::magenta).value<QColor>(),1);
+            QPen penLine(Settings::getSetting("gateLineColor", QColor(Qt::magenta)).value<QColor>(),1);
             penLine.setWidthF(Settings::getSetting("gateLineWidth", 3.0).toDouble());
             porte->setLinePen(penLine);
             porte->setHidden(false);
@@ -750,6 +765,7 @@ void boatVLM::updateBoatString()
 
 void boatVLM::updateHint(void)
 {
+    if(!initialized) return;
     QString str;
     /* adding score */
     str = getScore() + " - Spd: " + QString().setNum(getSpeed()) + " - ";
@@ -781,7 +797,6 @@ void boatVLM::updateHint(void)
         desc=desc+"<br>"+tr("Bateau echoue, pour encore ")+QString().setNum(secs)+" "+tr("secondes");
     }
     double windSpeed,windAngle;
-
     if(parent->getGrib() && parent->getGrib()->isOk() &&
        parent->getGrib()->getInterpolatedValue_byDates(this->lon,this->lat,
                            this->getPrevVac(),&windSpeed,&windAngle,INTERPOLATION_DEFAULT))
@@ -858,7 +873,7 @@ void boatVLM::updateHint(void)
         }
 
     }
-    if(qRound(closest.distArrival*100.0)!=0)
+    if(gatesLoaded && qRound(closest.distArrival*100.0)!=0)
     {
         QString str2=tr("Prochaine porte: ")+QString().sprintf("%.2f",closest.capArrival)+tr("deg")+"/"+
                 QString().sprintf("%.2f NM<br>",closest.distArrival);
@@ -1032,7 +1047,7 @@ void boatVLM::exportBoatInfoLog(QString fileName)
 }
 void boatVLM::getDistHdgGate()
 {
-    if(gates.isEmpty() || nWP<=0 || nWP>gates.count())
+    if(!gatesLoaded || gates.isEmpty() || nWP<=0 || nWP>gates.count())
     {
         closest=vlmPoint(0,0);
         return;

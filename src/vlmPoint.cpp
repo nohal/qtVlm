@@ -13,6 +13,8 @@ vlmPoint::vlmPoint(double lon,double lat)
     this->originNb=0;
     this->isStart=false;
     this->startCap=-1;
+    this->capArrival=0;
+    this->distArrival=0;
     this->isDead=false;
     this->eta=0;
     this->distIso=-1;

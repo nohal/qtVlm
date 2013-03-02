@@ -35,7 +35,8 @@ class DialogParamVlm : public QDialog, public Ui::VLM_param_ui
     public:
         DialogParamVlm(MainWindow * main,myCentralWidget * parent);
         void done(int result);
-        void changeParam();
+
+        void initEstime(void);
 
     public slots:
         void forceUserAgent_changed(int newVal);
@@ -52,6 +53,9 @@ class DialogParamVlm : public QDialog, public Ui::VLM_param_ui
         void doBtn_browseGrib(void);
 
         void slot_chgMapFolder(void);
+
+        void slot_changeParam();
+
 
     signals:
         void paramVLMChanged(void);

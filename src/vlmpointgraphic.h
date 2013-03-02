@@ -19,15 +19,15 @@ public:
     void setDebug(QString f){this->debug=f;}
     void createPopupMenu();
     ROUTAGE * getRoutage(){return routage;}
+    void setAcceptHover();
 protected:
     void paint(QPainter * pnt, const QStyleOptionGraphicsItem * , QWidget * );
     QRectF boundingRect() const;
-//    void  hoverEnterEvent ( QGraphicsSceneHoverEvent * event );
-//    void  hoverLeaveEvent ( QGraphicsSceneHoverEvent * event );
     void contextMenuEvent(QGraphicsSceneContextMenuEvent * e);
+    void hoverEnterEvent(QGraphicsSceneHoverEvent *event);
+    void hoverLeaveEvent(QGraphicsSceneHoverEvent *event);
 
 public slots:
-    void drawWay(void);
     void slot_showMe(void);
     void slot_updateTip(int i,int n, QString t);
 private:

@@ -29,80 +29,71 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 QSettings *fileSettings;
 
-void Settings::initSettings(void)
-{
-    if (! QFile::exists (appFolder.value("userFiles")+SETTINGS_FILE))
-    {
-        qWarning() << "No setting file found";
-        QSettings loc_settings("qtVlm");
-        loc_settings.beginGroup("main");
-        if(loc_settings.childKeys().count() > 0)
-        {
-            /* Il y a des settings à transferer*/
-            if( QMessageBox::question(NULL,tr("Ouverture des paramètres"),
-                tr("Il existe des parametres locaux, les importer dans qtvlm.ini?"),
-                QMessageBox::Yes | QMessageBox::No
-                ) == QMessageBox::Yes)
-            {
-                Settings::loadFromReg();
-            }
-        }
-    }
-
+void Settings::initSettings(void) {
     if(!fileSettings)
-    {
         fileSettings = new QSettings(appFolder.value("userFiles")+SETTINGS_FILE, QSettings::IniFormat);
-    }
 }
 
-void Settings::loadFromReg(void)
-{
-    if(!fileSettings)
-    {
-        fileSettings = new QSettings(appFolder.value("userFiles")+SETTINGS_FILE, QSettings::IniFormat);
-    }
-
-    QSettings loc_settings("qtVlm");
-    // Read All settings from global storage (childKeys)
-    // and write it to user directory
-    loc_settings.setFallbacksEnabled(false);
-    loc_settings.beginGroup("main");
-    fileSettings->beginGroup("main");
-    QStringList oldkeys = loc_settings.childKeys();
-    QStringListIterator it(oldkeys);
-    while (it.hasNext()) {
-        QString key = it.next();
-        QVariant val = loc_settings.value(key);
-
-        fileSettings->setValue(key, val);
-    }
-    loc_settings.endGroup();
-    //Pas de suppression pour l'instant
-    //loc_settings.clear();
-    fileSettings->endGroup();
-    fileSettings->sync();
-}
-
-void Settings::setSetting(const QString &key, const QVariant &value)
-{
-    if (fileSettings)
-    {
-        fileSettings->beginGroup("main");
+void Settings::setSetting(const QString &key, const QVariant &value, const QString &group,int boatType) {
+    if (fileSettings) {
+        fileSettings->beginGroup(Settings::computeGroupe(group,boatType));
         fileSettings->setValue(key, value);
         fileSettings->endGroup();
         fileSettings->sync();
     }
 }
 
-QVariant Settings::getSetting(const QString &key, const QVariant &defaultValue)
-{
+QVariant Settings::getSetting(const QString &key, const QVariant &defaultValue, const QString &group,int boatType) {
     QVariant val=defaultValue;
-    if (fileSettings != NULL)
-    {
-        fileSettings->beginGroup ("main");
-        val = fileSettings->value (key, defaultValue);
-        fileSettings->endGroup();
+    if (fileSettings != NULL) {
+        /* avons nous la clé avec boatType */
+        fileSettings->beginGroup (Settings::computeGroupe(group,boatType));
+        if(!fileSettings->contains(key)) {
+            if(boatType!=BOAT_ANY && boatType!=BOAT_NOBOAT) {
+                fileSettings->endGroup(); /* can't find key/value with a defined boatType */
+                fileSettings->beginGroup(Settings::computeGroupe(group,BOAT_ANY));
+                if(fileSettings->contains(key)) { /* searching for key using boatType=ANY */
+                    val = fileSettings->value (key, defaultValue);
+                    fileSettings->endGroup();
+                    /* key found => remove the ANY key and create 1 specific key for each boat type */
+    /* this is only for transition purpose */
+                    Settings::removeSetting(key,group,BOAT_ANY);
+                    Settings::setSetting(key,val,group,BOAT_VLM);
+                    Settings::setSetting(key,val,group,BOAT_REAL);
+                }
+                else {
+                    /* key not found for ANY => return default */
+                    fileSettings->endGroup();
+                }
+            }
+            else {
+                /* key not found and boatType == ANY => return default */
+                fileSettings->endGroup();
+            }
+        }
+        else {
+            /* get val */
+            val = fileSettings->value (key, defaultValue);
+            fileSettings->endGroup();
+        }
         fileSettings->sync();
     }
     return val;
+}
+
+void Settings::removeSetting(const QString &key, const QString &group,int boatType) {
+    if(key.isEmpty()) return ; /* prevent from deleting all key */
+
+    fileSettings->beginGroup(Settings::computeGroupe(group,boatType));
+    fileSettings->remove(key);
+    fileSettings->endGroup();
+    fileSettings->sync();
+}
+
+QString Settings::computeGroupe(const QString &group,int boatType) {
+    if(boatType==BOAT_NOBOAT) boatType=BOAT_ANY;
+    if(boatType==BOAT_ANY)
+        return group;
+    else
+        return group+"_"+boatTypes[boatType];
 }

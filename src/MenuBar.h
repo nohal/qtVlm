@@ -61,18 +61,11 @@ class MenuBar : public QMenuBar
 public:
     MenuBar(QWidget *parent);
 
-    //void setQuality(int q);
     void setCitiesNamesLevel(int level);
     void setMenubarColorMapMode(int colorMapMode);
     void setIsobarsStep(int step);
     void setIsotherms0Step(int step);
 
-    /*void updateListeDates(std::set<time_t> *setDates);
-    time_t  getDateGribById(int id);
-    int  getNearestDateGrib(time_t tm);*/
-
-    void updateBoatList(QList<boatVLM*> & boat_list);
-    void insertBoatReal(QString name);
     void clearListeDates(void);
     void setSelectedBoatIndex(int index);
     void addMenuRoute(ROUTE * route);
@@ -90,10 +83,7 @@ public:
     QAction *acHorn;
     QAction *ac_CreatePOI;
     QAction *ac_pastePOI;
-    QAction *ac_delAllPOIs;
-    QAction *ac_delSelPOIs;
-    QAction *ac_notSimpSelPOIs;
-    QAction *ac_simpSelPOIs;
+
     QAction *acPOIAdd;
     QAction *acPOIRemove;
     QAction *ac_twaLine;
@@ -110,7 +100,10 @@ public:
     QAction * ac_copyRoute;
     QAction * ac_deleteRoute;
     QAction * ac_editRoute;
+    QAction * ac_simplifyRoute;
+    QAction * ac_optimizeRoute;
     QAction * ac_pasteRoute;
+    QAction * ac_zoomRoute;
 
     QAction *acFile_Open;
     QAction *acFile_Reopen;
@@ -245,16 +238,11 @@ public:
         QAction *acMap_CitiesNames3;
         QAction *acMap_CitiesNames4;
 
-//    QActionGroup *acMap_GroupQuality;
-//        QAction *acMap_Quality1;
-//        QAction *acMap_Quality2;
-//        QAction *acMap_Quality3;
-//        QAction *acMap_Quality4;
-//        QAction *acMap_Quality5;
     QAction *acMap_Zoom_In;
     QAction *acMap_Zoom_Out;
     QAction *acMap_Zoom_Sel;
     QAction *acMap_Zoom_All;
+    QAction *acMap_sel;
 
     QAction *acOptions_Proxy;
     QAction *acOptions_Units;
@@ -290,6 +278,7 @@ public:
     QAction *acHelp_Help;
     QAction *acHelp_APropos;
     QAction *acHelp_AProposQT;
+    QAction *acHelp_Forum;
 
     QAction *acVLMParam;
     QAction *acVLMParamBoat;
@@ -308,22 +297,14 @@ public:
     //-------------------------------------
     // Autres objets de l'interface
     //-------------------------------------
-    QComboBox *cbGribStep;
-    QComboBox *boatList;
-    QSpinBox *estime;
-    QAction *acDatesGrib_prev;
-    QAction *acDatesGrib_next;
-    QPushButton * datesGrib_now;
-    QPushButton * datesGrib_sel;
 
-    QAction  *acVLMSync_menu;
 
-    QMenu *menuFile;
     void setMCW(myCentralWidget * mcw){my_CentralWidget=mcw;}
 
 //------------------------------------------------------------------------
 private:
 
+    QMenu *menuFile;
     QMenu *menuView;
     QMenu *menuOptions;
     QMenu *menuBoat;

@@ -264,7 +264,7 @@ bool DialogDownloadTracks::doRequest(int reqType)
                << startTime;
 //               << "&endtime="
 //               << endTime;
-        inetGet(VLM_GET_TRACK,page);
+        inetGet(VLM_GET_TRACK,page,false);
         qWarning()<<"Sending Track Request: "<<page;
         break;
     case VLM_GET_PARTIAL_TRACK:
@@ -278,7 +278,7 @@ bool DialogDownloadTracks::doRequest(int reqType)
                << startTime
                << "&endtime="
                << endTime;
-        inetGet(VLM_GET_PARTIAL_TRACK,page);
+        inetGet(VLM_GET_PARTIAL_TRACK,page,false);
         qWarning()<<"Sending Track Request: "<<page;
         break;
     case VLM_RACE_INFO:
@@ -286,7 +286,7 @@ bool DialogDownloadTracks::doRequest(int reqType)
                << "/ws/raceinfo.php?"
                <<"idrace="
                << raceID;
-        inetGet(VLM_RACE_INFO,page);
+        inetGet(VLM_RACE_INFO,page,false);
         qWarning()<<"Sending Track Request: "<<page;
         break;
     case VLM_BOAT_INFO:
@@ -294,7 +294,7 @@ bool DialogDownloadTracks::doRequest(int reqType)
                << "/ws/boatinfo/profile.php?"
                <<"idu="
                << boatID;
-        inetGet(VLM_BOAT_INFO,page);
+        inetGet(VLM_BOAT_INFO,page,false);
         qWarning()<<"Sending Track Request: "<<page;
         break;
     }
@@ -357,8 +357,8 @@ void DialogDownloadTracks::requestFinished (QByteArray data)
                 QString errMsg;
                 QStringList errMsgList;
                 errMsgList<< tr("Trace cachee pour:");
-                errMsgList<< tr(QString("Course: %1").arg(raceID).toAscii());
-                errMsgList<< tr(QString("Bateau: %1").arg(boatID).toAscii());
+                errMsgList<< tr(QString("Course: %1").arg(raceID).toLatin1());
+                errMsgList<< tr(QString("Bateau: %1").arg(boatID).toLatin1());
                 errMsg=errMsgList.join("\n");
                 QMessageBox::warning(this,
                                      tr("Pas de trace"),
@@ -369,9 +369,9 @@ void DialogDownloadTracks::requestFinished (QByteArray data)
                 QString errMsg;
                 QStringList errMsgList;
                 errMsgList<< tr("Pas de trace correspondant a la requete:");
-                errMsgList<< tr(QString("Course: %1").arg(raceID).toAscii());
-                errMsgList<< tr(QString("Bateau: %1").arg(boatID).toAscii());
-                errMsgList<< tr(QString("Heure debut: %1").arg(startTime).toAscii());
+                errMsgList<< tr(QString("Course: %1").arg(raceID).toLatin1());
+                errMsgList<< tr(QString("Bateau: %1").arg(boatID).toLatin1());
+                errMsgList<< tr(QString("Heure debut: %1").arg(startTime).toLatin1());
                 errMsg=errMsgList.join("\n");
                 QMessageBox::warning(this,
                                      tr("Requete incorrecte"),
@@ -432,10 +432,10 @@ void DialogDownloadTracks::requestFinished (QByteArray data)
                 QString errMsg;
                 QStringList errMsgList;
                 errMsgList<< tr("Trace cachee pour:");
-                errMsgList<< tr(QString("Course: %1").arg(raceID).toAscii());
-                errMsgList<< tr(QString("Bateau: %1").arg(boatID).toAscii());
-                errMsgList<< tr(QString("Heure debut: %1").arg(qStartTime.toString("yyyy/MM/dd hh:mm:ss UTC")).toAscii());
-                errMsgList<< tr(QString("Heure fin: %1").arg(qEndTime.toString("yyyy/MM/dd hh:mm:ss UTC")).toAscii());
+                errMsgList<< tr(QString("Course: %1").arg(raceID).toLatin1());
+                errMsgList<< tr(QString("Bateau: %1").arg(boatID).toLatin1());
+                errMsgList<< tr(QString("Heure debut: %1").arg(qStartTime.toString("yyyy/MM/dd hh:mm:ss UTC")).toLatin1());
+                errMsgList<< tr(QString("Heure fin: %1").arg(qEndTime.toString("yyyy/MM/dd hh:mm:ss UTC")).toLatin1());
                 errMsg=errMsgList.join("\n");
                 QMessageBox::warning(this,
                                      tr("Pas de trace"),
@@ -444,10 +444,10 @@ void DialogDownloadTracks::requestFinished (QByteArray data)
             QString errMsg;
             QStringList errMsgList;
             errMsgList<< tr("Pas de trace correspondant a la requete:");
-            errMsgList<< tr(QString("Course: %1").arg(raceID).toAscii());
-            errMsgList<< tr(QString("Bateau: %1").arg(boatID).toAscii());
-            errMsgList<< tr(QString("Heure debut: %1").arg(qStartTime.toString("yyyy/MM/dd hh:mm:ss UTC")).toAscii());
-            errMsgList<< tr(QString("Heure fin: %1").arg(qEndTime.toString("yyyy/MM/dd hh:mm:ss UTC")).toAscii());
+            errMsgList<< tr(QString("Course: %1").arg(raceID).toLatin1());
+            errMsgList<< tr(QString("Bateau: %1").arg(boatID).toLatin1());
+            errMsgList<< tr(QString("Heure debut: %1").arg(qStartTime.toString("yyyy/MM/dd hh:mm:ss UTC")).toLatin1());
+            errMsgList<< tr(QString("Heure fin: %1").arg(qEndTime.toString("yyyy/MM/dd hh:mm:ss UTC")).toLatin1());
             errMsg=errMsgList.join("\n");
             QMessageBox::warning(this,
                                  tr("Requete incorrecte"),

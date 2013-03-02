@@ -23,7 +23,11 @@ Copyright (C) 2008 - Jacques Zaninetti - http://zygrib.free.fr
 ***********************************************************************/
 
 #include <cmath>
+#ifdef QT_V5
+#include <QtWidgets/QMessageBox>
+#else
 #include <QMessageBox>
+#endif
 #include <QDebug>
 
 #include "DialogRoutage.h"
@@ -171,6 +175,8 @@ DialogRoutage::DialogRoutage(ROUTAGE *routage,myCentralWidget *parent, POI *endP
     this->log->setChecked(routage->useConverge);
     this->pruneWakeAngle->setValue(routage->pruneWakeAngle);
     this->colorIso->setChecked(routage->getColorGrib());
+    this->RoutageOrtho->setChecked(routage->getRoutageOrtho());
+    this->showBestLive->setChecked(routage->getShowBestLive());
     if(routage->getWindIsForced())
     {
         this->TWD->setValue(routage->getWindAngle());
@@ -203,6 +209,8 @@ DialogRoutage::DialogRoutage(ROUTAGE *routage,myCentralWidget *parent, POI *endP
         this->useVac->setDisabled(true);
         this->log->setDisabled(true);
         this->pruneWakeAngle->setDisabled(true);
+        this->RoutageOrtho->setDisabled(true);
+        this->showBestLive->setDisabled(true);
         this->checkCoast->setDisabled(true);
         this->checkLines->setDisabled(true);
         //this->diver->setDisabled(true);
@@ -236,6 +244,8 @@ DialogRoutage::DialogRoutage(ROUTAGE *routage,myCentralWidget *parent, POI *endP
         this->toPOI->setDisabled(false);
         this->log->setDisabled(false);
         this->pruneWakeAngle->setDisabled(false);
+        this->RoutageOrtho->setDisabled(false);
+        this->showBestLive->setDisabled(false);
         this->checkCoast->setDisabled(false);
         this->checkLines->setDisabled(false);
         this->diver->setDisabled(false);
@@ -279,6 +289,8 @@ void DialogRoutage::slot_default()
     this->autoZoom->setChecked(true);
     this->zoomLevel->setValue(2);
     this->pruneWakeAngle->setValue(30);
+    this->showBestLive->setChecked(true);
+    this->RoutageOrtho->setChecked(false);
     this->colorIso->setChecked(false);
     this->explo->setValue(40);
     this->log->setChecked(true);
@@ -327,6 +339,8 @@ void DialogRoutage::done(int result)
         routage->useConverge=log->isChecked();
         routage->pruneWakeAngle=pruneWakeAngle->value();
         routage->setColorGrib(this->colorIso->isChecked());
+        routage->setRoutageOrtho(this->RoutageOrtho->isChecked());
+        routage->setShowBestLive(this->showBestLive->isChecked());
         routage->setAutoZoom(autoZoom->isChecked());
         routage->setZoomLevel(this->zoomLevel->value());
         routage->setVisibleOnly(visibleOnly->isChecked());

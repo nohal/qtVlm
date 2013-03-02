@@ -51,11 +51,11 @@ faxMeteo::faxMeteo(Projection *proj, myCentralWidget *parent)
 
     int x1Fax,y1Fax,x2Fax,y2Fax;
     this->proj->map2screen(this->lon,this->lat,&x1Fax,&y1Fax);
-    this->proj->map2screen(this->lon,this->lat-latRange,&x2Fax,&y2Fax);
+    this->proj->map2screenByReference(lon,x1Fax,this->lon,this->lat-latRange,&x2Fax,&y2Fax);
     double newHeight=QLineF(x1Fax,y1Fax,x2Fax,y2Fax).length();
     double lonRight=this->lon-lonRange;
     if(lonRight>180) lonRight=360-lonRight;
-    this->proj->map2screen(lonRight,lat,&x2Fax,&y2Fax);
+    this->proj->map2screenByReference(lon,x1Fax,lonRight,lat,&x2Fax,&y2Fax);
     double newWidth=QLineF(x1Fax,y1Fax,x2Fax,y2Fax).length();
     this->br=QRectF(0,0,newWidth,newHeight);
     connect (proj,SIGNAL(projectionUpdated()),this,SLOT(slot_updateProjection()));
@@ -91,11 +91,11 @@ void faxMeteo::loadPreset()
     this->setOpacity(alpha);
     int x1Fax,y1Fax,x2Fax,y2Fax;
     this->proj->map2screen(this->lon,this->lat,&x1Fax,&y1Fax);
-    this->proj->map2screen(this->lon,this->lat-latRange,&x2Fax,&y2Fax);
+    this->proj->map2screenByReference(lon,x1Fax,this->lon,this->lat-latRange,&x2Fax,&y2Fax);
     double newHeight=QLineF(x1Fax,y1Fax,x2Fax,y2Fax).length();
     double lonRight=this->lon-lonRange;
     if(lonRight>180) lonRight=360-lonRight;
-    this->proj->map2screen(lonRight,lat,&x2Fax,&y2Fax);
+    this->proj->map2screenByReference(lon,x1Fax,lonRight,lat,&x2Fax,&y2Fax);
     double newWidth=QLineF(x1Fax,y1Fax,x2Fax,y2Fax).length();
     prepareGeometryChange();
     this->br=QRectF(0,0,newWidth,newHeight);
@@ -218,13 +218,14 @@ void faxMeteo::paint(QPainter * pnt, const QStyleOptionGraphicsItem * , QWidget 
     pnt->setRenderHint(QPainter::SmoothPixmapTransform, true);
     int x1Fax,y1Fax,x2Fax,y2Fax;
     this->proj->map2screen(this->lon,this->lat,&x1Fax,&y1Fax);
-    this->proj->map2screen(this->lon,this->lat-latRange,&x2Fax,&y2Fax);
+    this->proj->map2screenByReference(lon,x1Fax,this->lon,this->lat-latRange,&x2Fax,&y2Fax);
     double newHeight=QLineF(x1Fax,y1Fax,x2Fax,y2Fax).length();
     double lonRight=this->lon-lonRange;
     if(lonRight>180) lonRight=360-lonRight;
-    this->proj->map2screen(lonRight,lat,&x2Fax,&y2Fax);
+    this->proj->map2screenByReference(lon,x1Fax,lonRight,lat,&x2Fax,&y2Fax);
     double newWidth=QLineF(x1Fax,y1Fax,x2Fax,y2Fax).length();
     QPixmap faxResized;
+    qWarning()<<"faxmeteo:"<<x1Fax<<y1Fax<<x2Fax<<y2Fax<<newWidth<<newHeight<<proj->getXmax()<<proj->getW();
     if(newHeight<3000)
     {
         faxResized=faxImg.scaled(newWidth,newHeight,Qt::IgnoreAspectRatio,Qt::SmoothTransformation);

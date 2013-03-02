@@ -26,16 +26,25 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <QSettings>
 #include <QObject>
 
+#include "dataDef.h"
+
 #define SETTINGS_FILE "qtVlm.ini"
+
+static const QString boatTypes[]={"BOAT_VLM","BOAT_REAL",""};
 
 class Settings : QObject
 { Q_OBJECT
     public:
+        static void     initSettings(void);
+        static void     setSetting(const QString &key, const QVariant &value,
+                                   const QString &group="main",int boatType=BOAT_ANY);
+        static QVariant getSetting(const QString &key, const QVariant &defaultValue,
+                                   const QString &group="main",int boatType=BOAT_ANY);
+        static void     removeSetting(const QString &key,
+                                   const QString &group="main",int boatType=BOAT_ANY);
 
-        static void loadFromReg(void);
-        static void initSettings(void);
-        static void     setSetting(const QString &key, const QVariant &value);
-        static QVariant getSetting(const QString &key, const QVariant &defaultValue);
+   private:
+        static QString computeGroupe(const QString &group,int boatType);
 };
 Q_DECLARE_TYPEINFO(Settings,Q_MOVABLE_TYPE);
 

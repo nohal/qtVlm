@@ -21,19 +21,24 @@ Original code: zyGrib: meteorological GRIB file viewer
 Copyright (C) 2008 - Jacques Zaninetti - http://zygrib.free.fr
 
 ***********************************************************************/
-
+#ifdef QT_V5
+#include <QtWidgets/QMessageBox>
+#include <QtWidgets/QColorDialog>
+#include <QtWidgets/QDesktopWidget>
+#else
 #include <QMessageBox>
+#include <QColorDialog>
+#include <QDesktopWidget>
+#endif
 #include <cmath>
 #include <cassert>
 
 #include <QPainter>
-#include <QColorDialog>
 
 #include "DialogGraphicsParams.h"
 #include "settings.h"
 #include <QDebug>
 #include "Util.h"
-#include <QDesktopWidget>
 
 
 //===========================================================================
@@ -374,7 +379,7 @@ QFrame *DialogGraphicsParams::createFrameGui(QWidget *parent)
         inputNextGateLine =
                 new InputLineParams(
                                 Settings::getSetting("nextGateLineWidth", 3.0).toDouble(),
-                                Settings::getSetting("nextGateLineColor", Qt::blue).value<QColor>(),
+                                Settings::getSetting("nextGateLineColor", QColor(Qt::blue)).value<QColor>(),
                                 2.0,  Qt::blue,
                                 this);
     lay->addWidget( inputNextGateLine, lig,1, Qt::AlignLeft);
@@ -382,10 +387,11 @@ QFrame *DialogGraphicsParams::createFrameGui(QWidget *parent)
     lig ++;
     label = new QLabel(tr("Portes suivantes :"), frm);
     lay->addWidget( label,    lig,0, Qt::AlignRight);
+    QVariant v;
         inputGateLine =
                 new InputLineParams(
                                 Settings::getSetting("gateLineWidth", 3.0).toDouble(),
-                                Settings::getSetting("gateLineColor", Qt::magenta).value<QColor>(),
+                    Settings::getSetting("gateLineColor", QColor(Qt::magenta)).value<QColor>(),
                                 2.0,  Qt::magenta,
                                 this);
     lay->addWidget( inputGateLine, lig,1, Qt::AlignLeft);
@@ -396,7 +402,7 @@ QFrame *DialogGraphicsParams::createFrameGui(QWidget *parent)
         inputRouteLine =
                 new InputLineParams(
                                 Settings::getSetting("routeLineWidth", 2.0).toDouble(),
-                                Settings::getSetting("routeLineColor", Qt::yellow).value<QColor>(),
+                                Settings::getSetting("routeLineColor", QColor(Qt::yellow)).value<QColor>(),
                                 2.0,  Qt::yellow,
                                 this);
     lay->addWidget( inputRouteLine, lig,1, Qt::AlignLeft);
@@ -408,7 +414,7 @@ QFrame *DialogGraphicsParams::createFrameGui(QWidget *parent)
         inputTraceLine =
                 new InputLineParams(
                                 Settings::getSetting("traceLineWidth", 2.0).toDouble(),
-                                Settings::getSetting("traceLineColor", Qt::yellow).value<QColor>(),
+                                Settings::getSetting("traceLineColor", QColor(Qt::yellow)).value<QColor>(),
                                 2.0,  Qt::yellow,
                                 this);
     lay->addWidget( inputTraceLine, lig,1, Qt::AlignLeft);

@@ -23,7 +23,11 @@
        </property>
        <layout class="QHBoxLayout" name="horizontalLayout">
         <item>
-         <widget class="QLineEdit" name="editName"/>
+         <widget class="QLineEdit" name="editName">
+          <property name="maxLength">
+           <number>100</number>
+          </property>
+         </widget>
         </item>
         <item>
          <widget class="QComboBox" name="POI_type_liste">

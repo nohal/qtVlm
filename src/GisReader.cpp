@@ -144,7 +144,7 @@ void GisCountry::draw(QPainter *pnt, Projection *proj)
 void GisReader::drawCountriesNames(QPainter &pnt, Projection *proj)
 {
     pnt.setPen(QColor(120,100,60));
-    pnt.setFont(Font::getFont(FONT_MapCountry));
+    pnt.setFont(QFont());
     pnt.setBackgroundMode(Qt::OpaqueMode);
     pnt.setBackground(QBrush(QColor(255,255,255,120)));
     std::list<GisPoint*>::iterator itp;
@@ -159,11 +159,11 @@ void GisCity::draw(QPainter *pnt, Projection *proj, int popmin)
 {
     if (population < popmin)
         return;
-    int x0, y0;
+    double x0, y0;
 	if (proj->isPointVisible(x,y)) {
-        proj->map2screen(x, y, &x0, &y0);
+        proj->map2screenDouble(x, y, &x0, &y0);
         pnt->drawEllipse(x0-2,y0-2, 5,5);
-        pnt->drawText(QRect(x0,y0-7,1,1), Qt::AlignCenter|Qt::TextDontClip, name);
+        pnt->drawText(QRectF(x0,y0-7,1,1), Qt::AlignCenter|Qt::TextDontClip, name);
     }
 }
 //-----------------------------------------------------------------------
@@ -177,7 +177,7 @@ void GisCity::drawCityName (QPainter *pnt, QRect *rectName)
 void GisCity::getRectName (QPainter *pnt, Projection *proj, QRect *rectName)
 {
 	proj->map2screen(x, y, &x0, &y0);
-	QFont font = Font::getFont(fontCode);
+    QFont font;
 	pnt->setFont(font);
 	QRect prect = QFontMetrics(font).boundingRect(name);
 	int x1 = x0-prect.width()/2;

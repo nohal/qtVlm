@@ -23,7 +23,11 @@ Copyright (C) 2008 - Jacques Zaninetti - http://zygrib.free.fr
 ***********************************************************************/
 
 #include <cmath>
+#ifdef QT_V5
+#include <QtWidgets/QMessageBox>
+#else
 #include <QMessageBox>
+#endif
 #include <QDebug>
 
 class POI_Editor;
@@ -59,8 +63,6 @@ DialogPoi::DialogPoi(MainWindow * main,myCentralWidget * parent)
     connect(this,SIGNAL(addPOI_list(POI*)),parent,SLOT(slot_addPOI_list(POI*)));
     connect(this,SIGNAL(delPOI_list(POI*)),parent,SLOT(slot_delPOI_list(POI*)));
 
-    connect(main, SIGNAL(newPOI(double,double,Projection *, boat *)),
-            this, SLOT(newPOI(double,double,Projection *, boat*)));
     connect(this,SIGNAL(doChgWP(double,double,double)),main,SLOT(slotChgWP(double,double,double)));
     QString tunit = Settings::getSetting("unitsPosition", "").toString();
     QString unit = (tunit=="") ? "dddegmm'ss" : tunit;
@@ -86,31 +88,20 @@ void DialogPoi::formatLatLon()
     lon_sec->setValue(0);
 }
 
-void DialogPoi::editPOI(POI * poi_)
+void DialogPoi::initPOI(POI * poi,const bool &creationMode)
 {
-    //=> set name
-    modeCreation = false;
-    this->poi = poi_;
-    initPOI();
-    setWindowTitle(tr("Marque : ")+poi->getName());
-    btDelete->setEnabled(true);
-    exec();
-}
-
-void DialogPoi::newPOI(double lon, double lat,Projection *proj, boat *boat)
-{
-    //=> set name
-    modeCreation = true;
-    this->poi = new POI(tr("POI"), POI_TYPE_POI,lat, lon, proj, main,
-                        parent, -1,-1,false, boat);
-    initPOI();
-    setWindowTitle(tr("Nouvelle marque"));
-    btDelete->setEnabled(false);
-    exec();
-}
-
-void DialogPoi::initPOI(void)
-{
+    this->poi=poi;
+    this->modeCreation=creationMode;
+    if(modeCreation)
+    {
+        setWindowTitle(tr("Nouvelle marque"));
+        btDelete->setEnabled(false);
+    }
+    else
+    {
+        setWindowTitle(tr("Marque : ")+poi->getName());
+    }
+    //this->setEnabled(true);
     QString tunit = Settings::getSetting("unitsPosition", "").toString();
     QString unit = (tunit=="") ? "dddegmm'ss" : tunit;
     formatWithSeconds=unit=="dddegmm'ss";
@@ -163,11 +154,14 @@ void DialogPoi::initPOI(void)
     }
     else
         btSaveWP->setEnabled(false);
+    editName->setSelection(0,editName->text().length());
+    editName->setFocus();
 }
 
 //---------------------------------------
 void DialogPoi::done(int result)
 {
+    this->setEnabled(false);
     Settings::setSetting(this->objectName()+".height",this->height());
     Settings::setSetting(this->objectName()+".width",this->width());
     if(result == QDialog::Accepted)
@@ -210,7 +204,7 @@ void DialogPoi::done(int result)
     if(result == QDialog::Rejected)
     {
         if (modeCreation)
-                delete poi;
+                poi->deleteLater();
     }
     QDialog::done(result);
 }
@@ -218,6 +212,7 @@ void DialogPoi::done(int result)
 //---------------------------------------
 void DialogPoi::btDeleteClicked()
 {
+    this->btCancel->setEnabled(false);
     if (! modeCreation) {
         int rep = QMessageBox::question (this,
             tr("Detruire la marque : %1").arg(poi->getName()),
@@ -226,9 +221,11 @@ void DialogPoi::btDeleteClicked()
         if (rep == QMessageBox::Yes)
         {
             emit delPOI_list(poi);
-            poi->close();
+            poi->deleteLater();
             QDialog::done(QDialog::Accepted);
         }
+        else
+            this->btCancel->setEnabled(true);
     }
 }
 

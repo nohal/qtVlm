@@ -51,7 +51,6 @@ DialogRace::DialogRace(MainWindow * main,myCentralWidget * parent, inetConnexion
     this->parent=parent;
     this->somethingChanged=false;
     inetClient::setName("RaceDialog");
-    needAuth=true;
     setupUi(this);
     Util::setFontDialog(this);
 
@@ -357,7 +356,7 @@ void DialogRace::getNextRace()
             << "/ws/raceinfo/ranking.php?idr="
             << param_list[currentRace]->id;
     clearCurrentRequest();
-    inetGet(RACE_LIST_BOAT,page);
+    inetGet(RACE_LIST_BOAT,page,true);
 }
 
 void DialogRace::requestFinished (QByteArray res_byte)
@@ -432,7 +431,7 @@ void DialogRace::requestFinished (QByteArray res_byte)
                     << "/ws/raceinfo/results.php?idr="
                     << param_list[currentRace]->id;
             clearCurrentRequest();
-            inetGet(RESULT_LIST_BOAT,page);
+            inetGet(RESULT_LIST_BOAT,page,true);
             break;
         }
         case RESULT_LIST_BOAT:
@@ -465,7 +464,7 @@ void DialogRace::requestFinished (QByteArray res_byte)
                     << "/ws/raceinfo/reals.php?idr="
                     << param_list[currentRace]->id;
             clearCurrentRequest();
-            inetGet(RACE_LIST_REAL,page);
+            inetGet(RACE_LIST_REAL,page,true);
             break;
         }
         case RACE_LIST_REAL:
@@ -512,7 +511,7 @@ void DialogRace::getMissingFlags()
                     << "/cache/flags/"
                     <<imgFileName;
             clearCurrentRequest();
-            inetGet(FLAG_REQUEST,page);
+            inetGet(FLAG_REQUEST,page,true);
             return;
         }
     }
@@ -723,7 +722,7 @@ void DialogRace::chgRace(int id)
         if(!items[0]->isEnabled())
         {
             for(int it=0;it<items.count();it++)
-                items[it]->setData(Qt::red,Qt::ForegroundRole);
+                items[it]->setData(QColor(Qt::red),Qt::ForegroundRole);
         }
 //        if(items[0]->checkState()==Qt::Checked)
 //        {

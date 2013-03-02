@@ -21,8 +21,11 @@ Original code: zyGrib: meteorological GRIB file viewer
 Copyright (C) 2008 - Jacques Zaninetti - http://zygrib.free.fr
 
 ***********************************************************************/
-
+#ifdef QT_V5
+#include <QtWidgets/QMessageBox>
+#else
 #include <QMessageBox>
+#endif
 #include <cmath>
 #include <cassert>
 

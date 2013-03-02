@@ -73,6 +73,7 @@ class POI : public QGraphicsWidget
         bool    getHas_eta(void)        {return useRouteTstamp;}
         double getLonConnected(){return lonConnected;}
         double getLatConnected(){return latConnected;}
+        bool    getAutoRange(void)  { return autoRange; }
 
         /* modification des données */
         void setName           (QString name);
@@ -93,7 +94,7 @@ class POI : public QGraphicsWidget
         void setOptimizing     (bool b) {this->optimizing=b;}
         void setMyLabelHidden  (bool b) {if(route==NULL) this->myLabelHidden=false; else this->myLabelHidden=b;}
         bool getMyLabelHidden  (void) {return this->myLabelHidden;}
-        void setNotSimplificable(bool b) {this->notSimplificable=b;this->ac_simplifiable->setChecked(b);}
+        void setNotSimplificable(bool b) {this->notSimplificable=b;this->ac_simplifiable->setChecked(b);update();}
         bool getNotSimplificable(){return this->notSimplificable;}
         QColor getLineColor(){return lineColor;}
         void setLineColor(QColor c){lineColor=c;}
@@ -105,6 +106,7 @@ class POI : public QGraphicsWidget
         void setLineBetweenPois(vlmLine * line){this->lineBetweenPois=line;}
         bool getPiloteSelected(){return piloteSelected;}
         void setPiloteSelected(bool b){this->piloteSelected=b;this->ac_pilot->setChecked(b);}
+        void setAutoRange (bool b) { autoRange = b; }
         /* comparateur de classe pour le tri */
         static bool byName(POI * POI_1,POI* POI_2) {return POI_1->name < POI_2->name;}
         static bool bySequence(POI * POI_1,POI* POI_2) {return POI_1->sequence < POI_2->sequence;}
@@ -116,7 +118,9 @@ class POI : public QGraphicsWidget
         /* event propagé par la scene */
         bool tryMoving(int x, int y);
         time_t getPiloteDate(){return piloteDate;}
-        void setPiloteDate(time_t t){this->piloteDate=t;}
+        void setPiloteDate(const time_t &t){this->piloteDate=t;}
+        double getPiloteWph() {return piloteWph;}
+        void setPiloteWph(const double &d){this->piloteWph=d;}
         void setLabelTransp(bool b){this->labelTransp=b;}
         void chkIsWP(void);
         bool isPartOfTwa(){return partOfTwa;}
@@ -147,12 +151,15 @@ public slots:
         void slot_twaLine(){parent->twaDraw(lon,lat);}
         void slotCompassLine();
         void slot_editRoute();
+        void slot_optimizeRoute();
+        void slot_simplifyRoute();
         void slot_copyRoute();
         void slot_zoomRoute();
         void slot_relier();
         void slot_pilote();
-        void slot_notSimplificable(bool b){this->notSimplificable=b;}
+        void slot_notSimplificable(bool b){this->notSimplificable=b;update();}
         void slot_routage(void) { ROUTAGE * routage=parent->addRoutage(); parent->slot_editRoutage(routage,true,this); }
+        void slot_timerSimp();
 
     signals:
         void chgWP(double,double,double);
@@ -203,6 +210,7 @@ public slots:
         bool     isMoving;
         int      mouse_x,mouse_y;
         boat *   myBoat;
+        bool     autoRange;
 
         void update_myStr();
 
@@ -213,6 +221,8 @@ public slots:
         QAction * ac_delPoi;
         QAction * ac_delRoute;
         QAction * ac_editRoute;
+        QAction * ac_simplifyRoute;
+        QAction * ac_optimizeRoute;
         QAction * ac_copyRoute;
         QAction * ac_zoomRoute;
         QAction * ac_copy;
@@ -253,9 +263,11 @@ public slots:
         int colorPilototo;
         bool piloteSelected;
         time_t piloteDate;
+        double piloteWph;
         bool labelTransp;
         double lonConnected,latConnected;
         int sequence;
+        QTimer * timerSimp;
 };
 Q_DECLARE_TYPEINFO(POI,Q_MOVABLE_TYPE);
 

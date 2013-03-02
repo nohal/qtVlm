@@ -53,7 +53,7 @@ ROUTE::ROUTE(QString name, Projection *proj, Grib *grib, QGraphicsScene * myScen
     this->myscene=myScene;
     this->grib=grib;
     this->parent=parentWindow;
-    this->color=Settings::getSetting("routeLineColor", Qt::yellow).value<QColor>();
+    this->color=Settings::getSetting("routeLineColor", QColor(Qt::yellow)).value<QColor>();
     this->width=Settings::getSetting("routeLineWidth", 2.0).toDouble();
     this->startFromBoat=true;
     this->startTimeOption=1;
@@ -220,6 +220,46 @@ void ROUTE::unHovered()
     parent->setRouteToClipboard(NULL);
 }
 
+void ROUTE::zoom()
+{
+   double   xW, xE, yN, yS;
+
+   QList<POI*>&                 route = this->getPoiList();
+   QList<POI*>::const_iterator  poi   = route.begin();
+   if (poi == route.end()) return;
+
+   if (this->getStartFromBoat()) {
+      xW = xE = this->getBoat()->getLon();
+      yN = yS = this->getBoat()->getLat();
+   } else {
+      xW = xE = (*poi)->getLongitude();
+      yN = yS = (*poi)->getLatitude();
+      ++poi;
+   }
+
+   for (; poi != route.end(); ++poi) {
+      const double  lon = (*poi)->getLongitude();
+      if (lon < xW) {
+         if (xW-lon < 180)
+            xW = lon;
+         else if (lon+360 > xE)
+            xE = lon+360;
+      } else if (lon > xE) {
+         if (lon-xE < 180)
+            xE = lon;
+         else if (lon-360 < xW)
+            xW = lon-360;
+      }
+      const double  lat = (*poi)->getLatitude();
+      if (lat < yS) yS  = lat;
+      if (lat > yN) yN  = lat;
+   }
+
+   //qWarning() << "Zooming to" << xW << "-" << xE << "by" << yS << "-" << yN;
+   proj->zoomOnZone (xW,yN,xE,yS);
+   proj->setScale (proj->getScale()*.9);
+}
+
 void ROUTE::slot_recalculate(boat * boat)
 {
     if(temp) return;
@@ -244,6 +284,7 @@ void ROUTE::slot_recalculate(boat * boat)
         return;
     }
     if(initialized && (frozen || superFrozen)) return;
+    //qWarning()<<"calculating"<<this->name<<"with"<<my_poiList.count()<<"POIs"<<"and autoAt="<<this->autoAt;
     line->deleteAll();
     line->setHasInterpolated(false);
     line->setLinePen(pen);
@@ -288,7 +329,7 @@ void ROUTE::slot_recalculate(boat * boat)
     eta=0;
     has_eta=false;
     time_t now;
-    if(myBoat!=NULL && myBoat->getPolarData() && grib)
+    if(myBoat!=NULL && myBoat->getPolarData() && grib && grib->isOk())
     {
         initialized=true;
         switch(startTimeOption)
@@ -945,10 +986,19 @@ void ROUTE::interpolatePos()
     {
         if(lastEta<gribDate && list->at(n).eta>=gribDate)
         {
-            line->setInterpolated(list->at(n).lon,list->at(n).lat);
+            double x1,y1,x2,y2;
+            proj->map2screenDouble(list->at(n-1).lon,list->at(n-1).lat,&x1,&y1);
+            proj->map2screenDouble(list->at(n).lon,list->at(n).lat,&x2,&y2);
+            QLineF segment(x2,y2,x1,y1);
+            double ratio=segment.length()/(list->at(n).eta-lastEta);
+            //qWarning()<<"ratio="<<ratio<<(ratio*(list->at(n).eta-gribDate))/100.0;
+            QPointF p=segment.pointAt((ratio*(list->at(n).eta-gribDate))/100.0);
+            double lon,lat;
+            proj->screen2mapDouble(p.x(),p.y(),&lon,&lat);
+            line->setInterpolated(lon,lat);
             line->setHasInterpolated(true);
             if(parent->getCompassFollow()==this)
-                parent->centerCompass(list->at(n).lon,list->at(n).lat);
+                parent->centerCompass(lon,lat);
             break;
         }
         lastEta=list->at(n).eta;

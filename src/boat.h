@@ -108,7 +108,8 @@ class boat: public QGraphicsWidget
         double getSpeedWithEngine(){return this->speedWithEngine;}
         void setSpeedWithEngine(double d){this->speedWithEngine=d;}
 
-    public slots:
+        void drawOnMagnifier(Projection *mProj, QPainter *pnt);
+public slots:
         void slot_projectionUpdated();
         void slot_paramChanged();
         virtual void slot_selectBoat();

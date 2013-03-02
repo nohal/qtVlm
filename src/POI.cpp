@@ -78,7 +78,9 @@ POI::POI(QString name, int type, double lat, double lon,
     this->colorPilototo=0;
     this->piloteSelected=false;
     this->piloteDate=-1;
+    this->piloteWph=-1;
     this->sequence=0;
+    this->autoRange = true;
     useRouteTstamp=false;
     routeTimeStamp=-1;
     route=NULL;
@@ -106,6 +108,10 @@ POI::POI(QString name, int type, double lat, double lon,
 
     createPopUpMenu();
     slot_paramChanged();
+    timerSimp=new QTimer(this);
+    timerSimp->setInterval(200);
+    timerSimp->setSingleShot(true);
+    connect(timerSimp,SIGNAL(timeout()),this,SLOT(slot_timerSimp()));
 
     connect(this,SIGNAL(addPOI_list(POI*)),parent,SLOT(slot_addPOI_list(POI*)));
     connect(this,SIGNAL(delPOI_list(POI*)),parent,SLOT(slot_delPOI_list(POI*)));
@@ -148,7 +154,8 @@ POI::~POI()
         emit wpChanged();
     }
     if(popup && !parent->getAboutToQuit())
-        delete popup;
+        popup->deleteLater();
+    delete timerSimp;
 }
 void POI::setLongitude(double lon)
 {
@@ -178,6 +185,8 @@ void POI::rmSignal(void)
 void POI::createPopUpMenu(void)
 {
     popup = new QMenu(parent);
+    connect(this->popup,SIGNAL(aboutToShow()),parent,SLOT(slot_resetGestures()));
+    connect(this->popup,SIGNAL(aboutToHide()),parent,SLOT(slot_resetGestures()));
 
     ac_edit = new QAction(tr("Editer"),popup);
     popup->addAction(ac_edit);
@@ -190,10 +199,6 @@ void POI::createPopUpMenu(void)
     ac_copy = new QAction(tr("Copier"),popup);
     popup->addAction(ac_copy);
     connect(ac_copy,SIGNAL(triggered()),this,SLOT(slot_copy()));
-
-    ac_setWp = new QAction(tr("Marque->WP"),popup);
-    popup->addAction(ac_setWp);
-    connect(ac_setWp,SIGNAL(triggered()),this,SLOT(slot_setWP_ask()));
 
     ac_setGribDate = new QAction(tr("Set Date"),popup);
     popup->addAction(ac_setGribDate);
@@ -213,6 +218,12 @@ void POI::createPopUpMenu(void)
     connect(ac_twaLine,SIGNAL(triggered()),this,SLOT(slot_twaLine()));
 
     popup->addSeparator();
+    ac_setWp = new QAction(tr("Marque->WP"),popup);
+    ac_setWp->setCheckable(true);
+    popup->addAction(ac_setWp);
+    connect(ac_setWp,SIGNAL(triggered()),this,SLOT(slot_setWP_ask()));
+    popup->addSeparator();
+
     ac_routeList = new QMenu(tr("Routes"));
     connect(ac_routeList,SIGNAL(triggered(QAction*)),this,SLOT(slot_routeMenu(QAction*)));
     popup->addMenu(ac_routeList);
@@ -229,6 +240,14 @@ void POI::createPopUpMenu(void)
     ac_copyRoute->setEnabled(false);;
     connect(ac_copyRoute,SIGNAL(triggered()),this,SLOT(slot_copyRoute()));
 
+    ac_simplifyRoute = new QAction(tr("Simplifier la route "),popup);
+    popup->addAction(ac_simplifyRoute);
+    ac_simplifyRoute->setEnabled(false);;
+    connect(ac_simplifyRoute,SIGNAL(triggered()),this,SLOT(slot_simplifyRoute()));
+    ac_optimizeRoute = new QAction(tr("Optimiser la route "),popup);
+    popup->addAction(ac_optimizeRoute);
+    ac_optimizeRoute->setEnabled(false);;
+    connect(ac_optimizeRoute,SIGNAL(triggered()),this,SLOT(slot_optimizeRoute()));
     ac_zoomRoute = new QAction(tr("Zoom sur la route "),popup);
     ac_zoomRoute->setEnabled(false);
     popup->addAction(ac_zoomRoute);
@@ -419,7 +438,6 @@ void POI::mouseReleaseEvent(QGraphicsSceneMouseEvent * e)
 
 void POI::contextMenuEvent(QGraphicsSceneContextMenuEvent * e)
 {
-
     bool onlyLineOff = false;
     if(route==NULL || route->getLastPoi()==this || route->getFrozen())
     {
@@ -472,6 +490,8 @@ void POI::contextMenuEvent(QGraphicsSceneContextMenuEvent * e)
         ac_delRoute->setData(QVariant(QMetaType::VoidStar, &route));
         ac_editRoute->setEnabled(false);
         ac_copyRoute->setEnabled(false);
+        ac_simplifyRoute->setEnabled(false);
+        ac_optimizeRoute->setEnabled(false);
         ac_zoomRoute->setEnabled(false);
     }
     else
@@ -488,6 +508,8 @@ void POI::contextMenuEvent(QGraphicsSceneContextMenuEvent * e)
             ac_delRoute->setEnabled(false);
             ac_editRoute->setEnabled(false);
             ac_copyRoute->setEnabled(false);
+            ac_simplifyRoute->setEnabled(false);
+            ac_optimizeRoute->setEnabled(false);
             ac_zoomRoute->setEnabled(false);
         }
         else
@@ -504,6 +526,12 @@ void POI::contextMenuEvent(QGraphicsSceneContextMenuEvent * e)
             ac_copyRoute->setText(tr("Copier la route ")+route->getName());
             ac_copyRoute->setEnabled(true);
             ac_copyRoute->setIcon(icon);
+            ac_simplifyRoute->setText(tr("Simplifier la route ")+route->getName());
+            ac_simplifyRoute->setEnabled(true);
+            ac_simplifyRoute->setIcon(icon);
+            ac_optimizeRoute->setText(tr("Optimiser la route ")+route->getName());
+            ac_optimizeRoute->setEnabled(true);
+            ac_optimizeRoute->setIcon(icon);
             ac_zoomRoute->setText(tr("Zoom sur la route ")+route->getName());
             ac_zoomRoute->setEnabled(true);
             ac_zoomRoute->setIcon(icon);
@@ -558,7 +586,10 @@ void POI::contextMenuEvent(QGraphicsSceneContextMenuEvent * e)
     }
     else
         ac_setWp->setEnabled(false);
-
+    if(this->isWp && ptr)
+        ac_setWp->setChecked(true);
+    else
+        ac_setWp->setChecked(false);
     popup->exec(QCursor::pos());
 }
 
@@ -588,6 +619,7 @@ void POI::setNavMode(int mode)
 }
 void POI::setName(QString name)
 {
+    if(name.length()>100) name=name.left(100);
     this->name=name;
     update_myStr();
     setTip("");
@@ -622,18 +654,22 @@ void POI::setTip(QString tip)
     QString at;
     if(wph!=-1)
         at=QString().sprintf(" @%.1f",this->wph)+tr("deg");
+    QString tt;
     if(w_boat)
     {
         Orthodromie orth2boat(w_boat->getLon(), w_boat->getLat(), lon, lat);
         double   distance=orth2boat.getDistance();
-        QString tt=tr("Ortho a partir de ")+w_boat->getBoatPseudo()+": "+
+        tt=tr("Ortho a partir de ")+w_boat->getBoatPseudo()+": "+
                    Util::formatDistance(distance)+
                    "/"+QString().sprintf("%.2f",Util::A360(orth2boat.getAzimutDeg()-w_boat->getDeclinaison()))+tr("deg");
-        tt=tt.replace(" ","&nbsp;");
-        setToolTip(getTypeStr() + " : " + my_str +at+pilot+ "<br>"+tt+tip);
+        tt=getTypeStr() + " : " + my_str +at+pilot+ "<br>"+tt+tip;
     }
     else
-        setToolTip(getTypeStr() + " : "+my_str+at+pilot+"<br>"+tip);
+    {
+        tt=getTypeStr() + " : "+my_str+at+pilot+"<br>"+tip;
+    }
+    tt=tt.replace(" ","&nbsp;");
+    setToolTip(tt);
 }
 void POI::update_myStr(void)
 {
@@ -725,6 +761,7 @@ void POI::chkIsWP(void)
 }
 void POI::setWph(double wph)
 {
+    if(qRound(wph*10.0)==qRound(this->wph*10.0)) return;
     this->wph=qRound(wph*10.0)/10.0;
     if(this->isWp)
     {
@@ -807,48 +844,29 @@ void POI::slot_editRoute()
 void POI::slot_zoomRoute()
 {
    if (this->route == NULL) return;
+   route->zoom();
+}
+void POI::slot_simplifyRoute()
+{
+    if (this->route==NULL) return;
+    route->setSimplify (true);
+    timerSimp->start();
+}
+void POI::slot_timerSimp()
+{
+    parent->treatRoute(route);
+}
 
-   double   xW, xE, yN, yS;
-
-   QList<POI*>&                 route = this->route->getPoiList();
-   QList<POI*>::const_iterator  poi   = route.begin();
-   if (poi == route.end()) return;
-
-   if (this->route->getStartFromBoat()) {
-      xW = xE = this->route->getBoat()->getLon();
-      yN = yS = this->route->getBoat()->getLat();
-   } else {
-      xW = xE = (*poi)->getLongitude();
-      yN = yS = (*poi)->getLatitude();
-      ++poi;
-   }
-
-   for (; poi != route.end(); ++poi) {
-      const double  lon = (*poi)->getLongitude();
-      if (lon < xW) {
-         if (xW-lon < 180)
-            xW = lon;
-         else if (lon+360 > xE)
-            xE = lon+360;
-      } else if (lon > xE) {
-         if (lon-xE < 180)
-            xE = lon;
-         else if (lon-360 < xW)
-            xW = lon-360;
-      }
-      const double  lat = (*poi)->getLatitude();
-      if (lat < yS) yS  = lat;
-      if (lat > yN) yN  = lat;
-   }
-
-   qWarning() << "Zooming to" << xW << "-" << xE << "by" << yS << "-" << yN;
-   proj->zoomOnZone (xW,yN,xE,yS);
-   proj->setScale (proj->getScale()*.9);
+void POI::slot_optimizeRoute()
+{
+    if (this->route==NULL) return;
+    route->setOptimize (true);
+    timerSimp->start();
 }
 void POI::slotCompassLine()
 {
     double i1,j1;
-    proj->map2screenDouble(Util::cLFA(this->lon,proj->getXmin()),this->lat,&i1,&j1);
+    proj->map2screenDouble(lon,this->lat,&i1,&j1);
     emit compassLine(i1,j1);
 }
 void POI::slot_setHorn()
@@ -947,7 +965,7 @@ void POI::slot_delPoi()
         emit delPOI_list(this);
 //        rmSignal();
 //        close();
-        delete this;
+        this->deleteLater();
     }
 }
 
@@ -985,7 +1003,7 @@ void POI::slot_WPChanged(double tlat,double tlon)
         if(qRound(lon*1000)==qRound(wlon*1000) && qRound(lat*1000)==qRound(wlat*1000))
         {
             colorPilototo=n+1;
-            this->setWph(isi.at(4).split("@").at(1).toDouble());
+            //this->setWph(isi.at(4).split("@").at(1).toDouble());
             break;
         }
     }
@@ -1105,30 +1123,6 @@ void POI::slot_finePosit(bool silent)
     }
     double rangeLon=searchRangeLon;
     double rangeLat=searchRangeLat;
-    if(silent)
-    {
-        int myRank=route->getPoiList().indexOf(this);/* if 0 starts from boat, cannot be last*/
-        double lonPrevious, latPrevious, lonNext, latNext;
-        if(myRank==0)
-        {
-            lonPrevious=route->getBoat()->getLon();
-            latPrevious=route->getBoat()->getLat();
-        }
-        else
-        {
-            lonPrevious=route->getPoiList().at(myRank-1)->getLongitude();
-            latPrevious=route->getPoiList().at(myRank-1)->getLatitude();
-        }
-        lonNext = route->getPoiList().at(myRank+1)->getLongitude();
-        latNext = route->getPoiList().at(myRank+1)->getLatitude();
-        rangeLon
-            = rangeLat
-            = qMin (3.0,
-                    qMax (0.1,
-                          qMax (qAbs (lonNext-lonPrevious) / 2,
-                                qAbs (latNext-latPrevious) / 2)));
-    }
-    //qWarning()<<"ranges:"<<rangeLon<<rangeLat;
     double step=searchStep;
     QString r;
     route->setOptimizing(!this->optimizing);
@@ -1214,12 +1208,51 @@ void POI::slot_finePosit(bool silent)
         }                                       \
     } while (0)
 
-    simplex[1].lon = lon-rangeLon;
-    simplex[1].lat = lat;
+    if (autoRange || silent) {
+        /* if 0 starts from boat, cannot be last*/
+        const int    myRank = route->getPoiList().indexOf (this);
+
+        // Get the coordinates of the current POI
+        const double cLat = getLatitude();
+        const double cLon = getLongitude();
+
+        // Get the coordinates of the previous POI
+        const double pLat = ((myRank == 0)
+                             ? route->getBoat()->getLat()
+                             : route->getPoiList().at (myRank-1)->getLatitude());
+        const double pLon = ((myRank == 0)
+                             ? route->getBoat()->getLon()
+                             : route->getPoiList().at (myRank-1)->getLongitude());
+
+        // Get the coordinates of the next POI
+        const double nLat = route->getPoiList().at (myRank+1)->getLatitude();
+        const double nLon = route->getPoiList().at (myRank+1)->getLongitude();
+
+        // Select the neighbour that is furthest from the current POI
+        const Orthodromie  pOrth (cLon, cLat, pLon, pLat);
+        const Orthodromie  nOrth (cLon, cLat, nLon, nLat);
+
+        const bool useNext = (pOrth.getDistance() < nOrth.getDistance());
+
+        const double   rAzimuth
+            = useNext ? nOrth.getAzimutDeg() : pOrth.getAzimutDeg();
+        const double   distance
+            = (useNext ? nOrth.getDistance() : pOrth.getDistance()) / 2;
+
+        // Initialize the candidates
+        Util::getCoordFromDistanceAngle (cLat, cLon,
+                                         distance, rAzimuth + 30,
+                                         &simplex[1].lat, &simplex[1].lon);
+        Util::getCoordFromDistanceAngle (cLat, cLon,
+                                         distance, rAzimuth - 30,
+                                         &simplex[2].lat, &simplex[2].lon);
+    } else {
+       simplex[1].lon = lon-rangeLon;
+       simplex[1].lat = lat;
+       simplex[2].lon = lon;
+       simplex[2].lat = lat-rangeLat;
+    }
     TRYPOINT (simplex[1]);
-    
-    simplex[2].lon = lon;
-    simplex[2].lat = lat-rangeLat;
     TRYPOINT (simplex[2]);
 
     SORTSIMPLEX;
@@ -1299,9 +1332,12 @@ void POI::slot_finePosit(bool silent)
         int rep = QMessageBox::question (parent,tr("Abandon du positionnement automatique"), tr("Souhaitez vous conserver la meilleure position deja trouvee?"), QMessageBox::Yes | QMessageBox::No);
         if (rep == QMessageBox::Yes)
         {
-            parent->slot_delPOI_list(best);
-            delete best;
-            if(Settings::getSetting("keepOldPoi","0").toInt()==0)
+            if(best!=NULL)
+            {
+                parent->slot_delPOI_list(best);
+                delete best;
+            }
+            if(Settings::getSetting("keepOldPoi","0").toInt()==0 && previousMe!=NULL)
             {
                 parent->slot_delPOI_list(previousMe);
                 delete previousMe;
@@ -1319,15 +1355,21 @@ void POI::slot_finePosit(bool silent)
                 parent->slot_delPOI_list(best);
                 delete best;
             }
-            parent->slot_delPOI_list(previousMe);
-            delete previousMe;
+            if(previousMe!=NULL)
+            {
+                parent->slot_delPOI_list(previousMe);
+                delete previousMe;
+            }
         }
     }
     else
     {
-        parent->slot_delPOI_list(best);
-        delete best;
-        if(Settings::getSetting("keepOldPoi","0").toInt()==0 && !silent)
+        if (best != NULL)
+        {
+            parent->slot_delPOI_list(best);
+            delete best;
+        }
+        if(Settings::getSetting("keepOldPoi","0").toInt()==0 && !silent && previousMe!=NULL)
         {
             parent->slot_delPOI_list(previousMe);
             delete previousMe;
@@ -1409,6 +1451,12 @@ void POI::paint(QPainter * pnt, const QStyleOptionGraphicsItem * , QWidget * )
             }
         }
         pnt->setFont(font());
+        if(this->notSimplificable)
+        {
+            QPen pe=pnt->pen();
+            pe.setColor(Qt::red);
+            pnt->setPen(pe);
+        }
         pnt->drawText(10,fm.height()-2,my_str);
     }
     QColor myColor;

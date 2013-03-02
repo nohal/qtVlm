@@ -40,6 +40,7 @@ class DialogPoi : public QDialog, public Ui::POI_editor_ui
     public:
         DialogPoi(MainWindow * main,myCentralWidget * parent);
         void done(int result);
+        void initPOI(POI *poi, const bool &creationMode);
 
     public slots:
         void btDeleteClicked();
@@ -48,8 +49,6 @@ class DialogPoi : public QDialog, public Ui::POI_editor_ui
         void btSaveWPClicked();
         void chkTStamp_chg(int);
         void nameHasChanged(QString);
-        void editPOI(POI *);
-        void newPOI(double lon, double lat,Projection *proj, boat *);
         void latLonChg(double);
         void latLonSignChg(int);
         void type_chg(int);
@@ -69,7 +68,6 @@ class DialogPoi : public QDialog, public Ui::POI_editor_ui
         MainWindow * main;
         myCentralWidget * parent;
 
-        void initPOI(void);
         double getValue(int type);
         void setValue(int type,double val);
         void data_chg(int type);

@@ -1,6 +1,13 @@
+message($$[QT_VERSION])
+
+contains ( QT_VERSION, "^5.*"){
+    warning("qt5 detected")
+    DEFINES += QT_V5
+    QT+=core gui widgets multimedia concurrent
+}
 CONFIG += qt
 TEMPLATE = app
-TARGET = 
+TARGET = qtVlm
 DEPENDPATH += .
 INCLUDEPATH += objs \
     Dialogs \
@@ -11,16 +18,26 @@ INCLUDEPATH += objs \
     libs/nmealib/src/nmea \
     libs/libbsb \
     libs/miniunz \
+#    libs/libgps \
     .
+
 LIBS += -Llibs/build \
-    -lbz2 \
     -lminiunz \
+    -lbz2 \
     -lz \
     -lqextserialport \
     -lqjson \
     -lnmea \
     -lbsb
-
+#    -lgps
+asan {
+    QMAKE_CC=clang
+    QMAKE_CXX=clang++
+    QMAKE_LINK=clang++
+    QMAKE_CFLAGS="-O1 -fsanitize=address -fno-omit-frame-pointer -g"
+    QMAKE_CXXFLAGS="-O1 -fsanitize=address -fno-omit-frame-pointer -g"
+    QMAKE_LFLAGS="-fsanitize=address -g -rdynamic"
+}
 
 MOC_DIR = objs
 OBJECTS_DIR = objs
@@ -108,7 +125,6 @@ HEADERS += Dialogs/DialogGraphicsParams.h \
     BoardReal.h \
     faxMeteo.h \
     loadImg.h \
-    Font.h \
     Player.h \
     interpolation.h \
     Dialogs/DialogRealBoatConfig.h \
@@ -123,7 +139,12 @@ HEADERS += Dialogs/DialogGraphicsParams.h \
     Dialogs/dialogLoadImg.h \
     Dialogs/routeInfo.h \
     GshhsDwnload.h \
-    Dialogs/DialogRemovePoi.h
+    Dialogs/DialogRemovePoi.h \
+    MyView.h \
+    ToolBar.h \
+    Progress.h \
+    StatusBar.h \
+    Magnifier.h
 
 FORMS += Ui/boatAccount_dialog.ui \
     Ui/BoardVLM.ui \
@@ -211,7 +232,6 @@ SOURCES += Dialogs/DialogGraphicsParams.cpp \
     orthoSegment.cpp \
     selectionWidget.cpp \
     vlmLine.cpp \
-    Font.cpp \
     inetClient.cpp \
     route.cpp \
     routage.cpp \
@@ -244,14 +264,21 @@ SOURCES += Dialogs/DialogGraphicsParams.cpp \
     Dialogs/dialogLoadImg.cpp \
     Dialogs/routeInfo.cpp \
     GshhsDwnload.cpp \
-    Dialogs/DialogRemovePoi.cpp
+    Dialogs/DialogRemovePoi.cpp \
+    MyView.cpp \
+    ToolBar.cpp \
+    Progress.cpp \
+    StatusBar.cpp \
+    Magnifier.cpp
 
 unix:!macx: DEFINES += _TTY_POSIX_ __TERRAIN_QIMAGE __UNIX_QTVLM
 win32:DEFINES += _TTY_WIN_ \
     QWT_DLL \
     QT_DLL \
     __TERRAIN_QPIXMAP __WIN_QTVLM \
-    _CRT_SECURE_NO_WARNINGS
+    _CRT_SECURE_NO_WARNINGS \
+    NOMINMAX
+
 
 macx: DEFINES += _TTY_POSIX_ __TERRAIN_QPIXMAP __MAC_QTVLM
 ICON = qtVlm.icns

@@ -43,6 +43,9 @@ Copyright (C) 2008 - Jacques Zaninetti - http://zygrib.free.fr
 #include "Grib.h"
 #include "loadImg.h"
 #include "Orthodromie.h"
+#include <QTimer>
+#include "MyView.h"
+#include "ToolBar.h"
 
 //---------------------------------------------------------
 // Constructeur
@@ -58,7 +61,10 @@ Terrain::Terrain(myCentralWidget *parent, Projection *proj_) : QGraphicsWidget()
     connect(parent,SIGNAL(redrawGrib()),this,SLOT(redrawGrib()));
     connect(this,SIGNAL(mousePress(QGraphicsSceneMouseEvent*)),parent,SLOT(slot_mousePress(QGraphicsSceneMouseEvent*)));
     connect(this,SIGNAL(mouseRelease(QGraphicsSceneMouseEvent*)),parent,SLOT(slot_mouseRelease(QGraphicsSceneMouseEvent*)));
-
+    timerUpdated=new QTimer(this);
+    timerUpdated->setSingleShot(true);
+    timerUpdated->setInterval(200);
+    connect(timerUpdated,SIGNAL(timeout()),this,SIGNAL(terrainUpdated()));
     setZValue(Z_VALUE_TERRE);
     setData(0,TERRE_WTYPE);
 
@@ -175,6 +181,8 @@ void Terrain::draw_GSHHSandGRIB()
 //        gshhsReader->drawSeaBorders(pnt, proj);
 //        return;
 //    }
+    if(parent->getKap())
+        parent->getKap()->slot_updateProjection();
     QCursor oldcursor = cursor();
     setCursor(Qt::WaitCursor);
     if (imgAll != NULL) {
@@ -239,7 +247,7 @@ void Terrain::draw_GSHHSandGRIB()
             for(int i=0;i<borders.count();++i)
             {
                 int X,Y;
-                proj->map2screen(Util::cLFA(borders.at(i).x(),proj->getXmin()),borders.at(i).y(),&X,&Y);
+                proj->map2screen(borders.at(i).x(),borders.at(i).y(),&X,&Y);
                 bordersXY.append(QPoint(X,Y));
             }
             QRectF br=bordersXY.boundingRect();
@@ -265,22 +273,22 @@ void Terrain::draw_GSHHSandGRIB()
 
                     vlmPoint ip=*(iso->at(p).origin);
                     windAverage+=ip.wind_speed;
-                    proj->map2screenDouble(Util::cLFA(ip.lon,proj->getXmin()),ip.lat,&x,&y);
+                    proj->map2screenDouble(ip.lon,ip.lat,&x,&y);
                     poly.append(QPointF(x,y));
 
                     ip=iso->at(p);
                     windAverage+=ip.wind_speed;
-                    proj->map2screenDouble(Util::cLFA(ip.lon,proj->getXmin()),ip.lat,&x,&y);
+                    proj->map2screenDouble(ip.lon,ip.lat,&x,&y);
                     poly.append(QPointF(x,y));
 
                     ip=iso->at(p+1);
                     windAverage+=ip.wind_speed;
-                    proj->map2screenDouble(Util::cLFA(ip.lon,proj->getXmin()),ip.lat,&x,&y);
+                    proj->map2screenDouble(ip.lon,ip.lat,&x,&y);
                     poly.append(QPointF(x,y));
 
                     ip=*(iso->at(p+1).origin);
                     windAverage+=ip.wind_speed;
-                    proj->map2screenDouble(Util::cLFA(ip.lon,proj->getXmin()),ip.lat,&x,&y);
+                    proj->map2screenDouble(ip.lon,ip.lat,&x,&y);
                     poly.append(QPointF(x,y));
 
 
@@ -294,7 +302,7 @@ void Terrain::draw_GSHHSandGRIB()
                         --o2;
                         ip=previousIso->at(o2);
                         windAverage+=ip.wind_speed;
-                        proj->map2screenDouble(Util::cLFA(ip.lon,proj->getXmin()),ip.lat,&x,&y);
+                        proj->map2screenDouble(ip.lon,ip.lat,&x,&y);
                         poly.append(QPointF(x,y));
                     }
 
@@ -451,7 +459,7 @@ void Terrain::draw_GSHHSandGRIB()
     else distance=qRound(distance/1000.0)*1000;
     Util::getCoordFromDistanceLoxo(lat1,lon1,distance,90.0,&lat2,&lon2);
     int a,b;
-    proj->map2screen(Util::cLFA(lon2,proj->getXmin()),lat2,&a,&b);
+    proj->map2screen(lon2,lat2,&a,&b);
     int sX=scalePos.x();
     int sY=scalePos.y();
     if(a<sX)
@@ -485,6 +493,9 @@ void Terrain::draw_GSHHSandGRIB()
     pnt.drawLine(correctedScalePos,QPoint(correctedScalePos.x(),correctedScalePos.y()-4));
     pnt.drawLine(QPoint(sX+screenDist,correctedScalePos.y()),QPoint(sX+screenDist,correctedScalePos.y()-4));
     setCursor(oldcursor);
+    parent->getView()->resetTransform();
+    parent->getView()->hideViewPix();
+    parent->getScene()->setPinching(false);
 }
 
 void Terrain::drawGrib(QPainter &pnt, Grib *gribPlot)
@@ -857,10 +868,16 @@ void Terrain::paint(QPainter * pnt, const QStyleOptionGraphicsItem * , QWidget *
 {
     pnt->setRenderHint(QPainter::Antialiasing,true);
     pnt->drawPixmap(0,0, *imgAll);
+    timerUpdated->start();
 }
-
 void Terrain::indicateWaitingMap()
 {
+    if(parent->getMagnifier()!=NULL)
+    {
+        delete parent->getMagnifier();
+        parent->setMagnifier(NULL);
+        parent->get_toolBar()->magnify->setChecked(false);
+    }
     if(imgAll!=NULL && imgAll->paintingActive())
     {
         qWarning()<<"painting active in indicateWaitingMap()(1)";

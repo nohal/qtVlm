@@ -19,7 +19,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ***********************************************************************/
 
 #include <QDebug>
+#ifdef QT_V5
+#include <QtWidgets/QFileDialog>
+#else
 #include <QFileDialog>
+#endif
 #include <cassert>
 
 #include "DialogVlmGrib.h"
@@ -182,7 +186,7 @@ bool DialogVlmGrib::doRequest(int reqType)
     switch(reqType)
     {
         case VLM_REQUEST_GET_FOLDER:
-            inetGet(VLM_REQUEST_GET_FOLDER,"/","http://grib.virtual-loup-de-mer.org");
+            inetGet(VLM_REQUEST_GET_FOLDER,"/","http://grib.virtual-loup-de-mer.org",false);
             break;
         case VLM_REQUEST_GET_FILE:
             /*search selected file*/
@@ -198,7 +202,7 @@ bool DialogVlmGrib::doRequest(int reqType)
                 filename=filename.mid(0,23);
             page="/"+filename;
             connect (this->getInet()->getProgressDialog(),SIGNAL(rejected()),this,SLOT(slot_abort()));
-            inetGetProgress(VLM_REQUEST_GET_FILE,page,"http://grib.virtual-loup-de-mer.org");
+            inetGetProgress(VLM_REQUEST_GET_FILE,page,"http://grib.virtual-loup-de-mer.org",false);
             break;
     }
     return true;
@@ -207,6 +211,7 @@ void DialogVlmGrib::slot_abort()
 {
     qWarning()<<"aborting VLM grib donwload";
     this->inetAbort();
+    filename.clear();
 }
 
 void DialogVlmGrib::requestFinished (QByteArray data)

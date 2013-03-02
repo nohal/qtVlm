@@ -70,6 +70,8 @@ class ROUTE : public QObject
         void setStartFromBoat(bool startFromBoat){this->startFromBoat=startFromBoat;}
         bool getStartFromBoat() {return this->startFromBoat;}
 
+        void zoom();
+
         void setStartTimeOption(int startTimeOption){this->startTimeOption=startTimeOption;}
         int getStartTimeOption() {return this->startTimeOption;}
 

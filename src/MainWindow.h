@@ -23,18 +23,25 @@ Copyright (C) 2008 - Jacques Zaninetti - http://zygrib.free.fr
 
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
-
+#ifdef QT_V5
+#include <QtWidgets/QApplication>
+#include <QtWidgets/QMainWindow>
+#include <QtWidgets/QProgressDialog>
+#include <QtWidgets/QGraphicsSceneContextMenuEvent>
+#include <QtWidgets/QCheckBox>
+#else
 #include <QApplication>
 #include <QMainWindow>
-#include <QMouseEvent>
-#include <QTimer>
 #include <QProgressDialog>
 #include <QGraphicsSceneContextMenuEvent>
 #include <QCheckBox>
-
+#endif
+#include <QMouseEvent>
+#include <QTimer>
 #include <QLibrary>
 
 #include "class_list.h"
+#include "dataDef.h"
 
 class MainWindow: public QMainWindow
 {
@@ -58,14 +65,12 @@ class MainWindow: public QMainWindow
         double getBoatPolarMaxSpeed();
         boat * getSelectedBoat(void) {if(selectedBoat) return selectedBoat;else return NULL;}
         polarList * getPolarList(void) {return polar_list;}
-        QList<POI *> * getPois();
-        void statusBar_showWindData(double x,double y);
-        void statusBar_showSelectedZone(double x0, double y0, double x1, double y1);
-        void drawVacInfo(void);
+        QList<POI *> * getPois();       
 
-        QProgressDialog * get_progress(void) { return progress; }
+        FCT_GET(Progress*,progress)
+        FCT_GET(StatusBar*,statusBar)
+        FCT_GET(int,nxtVac_cnt)
 
-        void setBoardToggleAction(QAction * action);
         void getXY(int *X,int *Y){*X=this->mouseClicX;*Y=this->mouseClicY;}
         bool isStartingUp;
 
@@ -75,14 +80,18 @@ class MainWindow: public QMainWindow
         bool getNoSave(){return noSave;}
         void setPilototoFromRoute(ROUTE * route);
         void setPilototoFromRoute(QList<POI*> poiList);
-        bool getStartEstimeSpeedFromGrib();
+
         void clearPilototo();
         myCentralWidget * getMy_centralWidget(){return this->my_centralWidget;}
         void setRestartNeeded(){this->restartNeeded=true;}
         bool getRestartNeeded(){return this->restartNeeded;}
         void continueSetup();
 
-    public slots:
+        QMenu *createPopupMenu(void);
+
+public slots:
+        void slot_showPOI_input(POI *poi=NULL, const bool &fromMenu=false);
+        void slot_disablePopupMenu();
         void slotFile_Open();
         void slotFile_Reopen();
         void slotFile_Close();
@@ -95,7 +104,7 @@ class MainWindow: public QMainWindow
 
         void slotShowContextualMenu(QGraphicsSceneContextMenuEvent *);
 
-        void slotDateStepChanged(int);
+        void slotDateStepChanged(int step);
         void slotDateGribChanged_next();
         void slotDateGribChanged_prev();
         void slotDateGribChanged_now(bool b=true);
@@ -106,6 +115,7 @@ class MainWindow: public QMainWindow
 
         void slotOptions_Language();
         void slotHelp_Help();
+        void slotHelp_Forum();
         void slotHelp_APropos();
         void slotHelp_AProposQT();
 
@@ -130,7 +140,6 @@ class MainWindow: public QMainWindow
         void slot_removePOI(void);
         void slotCreatePOI();
         void slotpastePOI();
-        //void slotMovePOI(POI *);
 
         void slotParamChanged(void);
         void slotNewZoom(double zoom);
@@ -149,9 +158,7 @@ class MainWindow: public QMainWindow
         void slotCompassLineForced(double a,double b);
         void slotCompassCenterBoat(void);
         void slotCompassCenterWp(void);
-        void slotEstime(int);
-        void slot_ParamVLMchanged(void);
-        void slot_deleteProgress(void);
+        void slot_updateGribMono(void);
         void slot_centerMap();
         void slot_positScale();
         void slot_boatHasUpdated(void);
@@ -160,6 +167,9 @@ class MainWindow: public QMainWindow
         void slot_deleteRoute();
         void slot_editRoute();
         void slot_pasteRoute();
+        void slot_zoomRoute();
+        void slot_optimizeRoute();
+        void slot_simplifyRoute();
 
     signals:
         void setChangeStatus(bool);
@@ -186,7 +196,7 @@ class MainWindow: public QMainWindow
 
 
     protected:
-        void closeEvent(QCloseEvent *) {QApplication::quit();}
+        void closeEvent(QCloseEvent *event);
         void keyPressEvent ( QKeyEvent * event );
 
     private:
@@ -198,22 +208,21 @@ class MainWindow: public QMainWindow
         QString      gribFileNameCurrent;
         QString      gribFilePath;
 
-        DialogProxy   * dialogProxy;
 
         void updatePrevNext(void);
-        int getGribStep(void);
 
         MenuBar      *menuBar;
-        QToolBar     *toolBar;
-        QStatusBar   *statusBar;
-        QLabel       *stBar_label_1;
-        QLabel       *stBar_label_2;
-        QLabel       *stBar_label_3;
 
+        /*
+        QToolBar     *toolBar;
         QLabel       * tool_ETA;
         QLabel       * tool_ESTIME;
         QLabel       * tool_ESTIMEUNIT;
         QCheckBox    * startEstime;
+        */
+        ToolBar * toolBar;
+
+        StatusBar   *statusBar;
 
         Settings * settings;
 
@@ -231,24 +240,24 @@ class MainWindow: public QMainWindow
 
         board * myBoard;
         boat* selectedBoat;
+        DialogProxy   * dialogProxy;
         DialogParamVlm * param;
-        DialogPoiInput * poi_input_dialog;
-
+        //DialogPoiInput * poi_input_dialog;
         DialogPilototo * pilototo;
-
         DialogPilototoInstruction * selPOI_instruction;
+        DialogVlmGrib * loadVLM_grib;
+        DialogGribValidation * gribValidation_dialog;
         bool isSelectingWP;
 
         polarList * polar_list;
 
-        DialogVlmGrib * loadVLM_grib;
 
         /* central widget */
         myCentralWidget * my_centralWidget;
-        QProgressDialog *progress;
-        QTimer * timerprogress;
 
-        DialogGribValidation * gribValidation_dialog;
+        Progress *progress;
+        void closeProgress(void);
+
         int nBoat;
         int toBeCentered;
         boatVLM *acc;
@@ -257,8 +266,7 @@ class MainWindow: public QMainWindow
         void listAllChildren(QObject * ptr,int);
         bool noSave;
         bool restartNeeded;
-        void updateTitle();
-        QAction *separator1;
+        void updateTitle();       
 };
 
 #endif

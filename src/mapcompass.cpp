@@ -319,8 +319,8 @@ void  mapCompass::paint(QPainter * pnt, const QStyleOptionGraphicsItem * , QWidg
         double lon1,lat1;
         int X,Y,X1,Y1;
         Util::getCoordFromDistanceAngle(lat,lon,10,90,&lat1,&lon1);
-        Util::computePos(proj,lat,Util::cLFA(lon,proj->getXmin()), &Y, &X);
-        Util::computePos(proj,lat1,Util::cLFA(lon1,proj->getXmin()), &Y1, &X1);
+        Util::computePos(proj,lat,lon, &Y, &X);
+        Util::computePos(proj,lat1,lon1, &Y1, &X1);
 
         double oneMile=QLineF(X,Y,X1,Y1).length()/10.0;
         double vacLen=parent->getSelectedBoat()->getVacLen()/60.0;
@@ -529,10 +529,11 @@ void mapCompass::slot_projectionUpdated()
         main->get_selectedBoatPos(&myLat,&myLon);
         if((myLon==-1 && myLat==-1)||(myLon==0 && myLat==0)) return;
     }
-    Util::computePos(proj,myLat, Util::cLFA(myLon,proj->getXmin()), &new_x, &new_y);
+    Util::computePos(proj,myLat, myLon, &new_x, &new_y);
     new_x=new_x-size/2;
     new_y=new_y-size/2;
     prepareGeometryChange();
+    isMoving=false;
     setPos(new_x, new_y);
 }
 void mapCompass::slot_compassCenterBoat()
@@ -546,10 +547,11 @@ void mapCompass::slot_compassCenterBoat()
     myLat=lat;
     int new_x=0;
     int new_y=0;
-    Util::computePos(proj,lat, Util::cLFA(lon,proj->getXmin()), &new_x, &new_y);
+    Util::computePos(proj,lat, lon, &new_x, &new_y);
     new_x=new_x-size/2;
     new_y=new_y-size/2;
     prepareGeometryChange();
+    isMoving=false;
     setPos(new_x, new_y);
 }
 void mapCompass::compassCenter(double lon, double lat)
@@ -558,10 +560,11 @@ void mapCompass::compassCenter(double lon, double lat)
     myLat=lat;
     int new_x=0;
     int new_y=0;
-    Util::computePos(proj,lat, Util::cLFA(lon,proj->getXmin()), &new_x, &new_y);
+    Util::computePos(proj,lat, lon, &new_x, &new_y);
     new_x=new_x-size/2;
     new_y=new_y-size/2;
     prepareGeometryChange();
+    isMoving=false;
     setPos(new_x, new_y);
 }
 void mapCompass::slot_compassCenterWp()
@@ -574,10 +577,11 @@ void mapCompass::slot_compassCenterWp()
         myLat=lat;
         int new_x=0;
         int new_y=0;
-        Util::computePos(proj,lat, Util::cLFA(lon,proj->getXmin()), &new_x, &new_y);
+        Util::computePos(proj,lat, lon, &new_x, &new_y);
         new_x=new_x-size/2;
         new_y=new_y-size/2;
         prepareGeometryChange();
+        isMoving=false;
         setPos(new_x, new_y);
 }
 void  mapCompass::mouseReleaseEvent(QGraphicsSceneMouseEvent *e)
@@ -662,7 +666,7 @@ void mapCompass::updateCompassLineLabels(int x, int y)
         loxo_angle=qRound(loxo_angle*100.0)/100.0;
         Util::getCoordFromDistanceLoxo(ya,xa,loxo_dist,loxo_angle,&yb,&xb);
         double X,Y;
-        proj->map2screenDouble(Util::cLFA(xb,proj->getXmin()),yb,&X,&Y);
+        proj->map2screenDouble(xb,yb,&X,&Y);
         orth.setEndPoint(xb,yb);
         pos_angle=orth.getAzimutDeg();
         pos_distance=orth.getDistance();
@@ -810,14 +814,20 @@ void mapCompass::updateCompassLineLabels(int x, int y)
 
 void mapCompass::slot_stopCompassLine(void)
 {
-    if(drawCompassLine) /* toggle compass line only if it is ON */
-        slot_compassLine(0,0);
+    qWarning()<<"slot_stopCompassLine";
+    parent->slot_resetGestures();
+    drawCompassLine=false;
+    windAngle_label->hide();
+    hdg_label->hide();
+    compassLine->hideSegment();
 }
 
 
 void mapCompass::slot_compassLine(double click_x, double click_y)
 {
+    parent->slot_resetGestures();
     drawCompassLine=!drawCompassLine;
+    qWarning()<<"slot_compassLine with"<<drawCompassLine;
     if(drawCompassLine)
     {
         windAngle_label->show();

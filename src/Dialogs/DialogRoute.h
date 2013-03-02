@@ -29,19 +29,20 @@ Copyright (C) 2008 - Jacques Zaninetti - http://zygrib.free.fr
 
 #include "ui_Route_Editor.h"
 #include <QStandardItemModel>
-#include <QItemDelegate>
+#include <QStyledItemDelegate>
 #include <QTimer>
 
 //===================================================================
 class DialogRoute : public QDialog, public Ui::ROUTE_Editor_ui
 { Q_OBJECT
     public:
-        DialogRoute(ROUTE *route, myCentralWidget *parent);
+        DialogRoute(ROUTE *route, myCentralWidget *parent, bool createMode=false);
         ~DialogRoute();
         void done(int result);
         void fillPilotView(bool f=false);
 
-    public slots:
+public slots:
+        void slot_hideShowWarning();
         void GybeTack(int i);
         void slotLoadPilototo();
         void slotLoadPilototoCustom();
@@ -53,6 +54,7 @@ class DialogRoute : public QDialog, public Ui::ROUTE_Editor_ui
         void slotTabChanged(int);
         void slotCopy();
         void slotExportCSV();
+
     signals:
 
     private:
@@ -82,22 +84,29 @@ class DialogRoute : public QDialog, public Ui::ROUTE_Editor_ui
                     double si, double co, int di, int dj, int b);
         QList<QStandardItem*> items;
         QList<QStandardItem*> roadPoint;
+        bool keepModel;
 };
-class DateBoxDelegate : public QItemDelegate
+
+class DateBoxDelegate : public QStyledItemDelegate
 {
-     Q_OBJECT
+    Q_OBJECT
 
- public:
-     DateBoxDelegate(QObject *parent = 0);
+    public:
+        DateBoxDelegate(QObject *parent = 0);
 
-     QWidget *createEditor(QWidget *parent, const QStyleOptionViewItem &option,
-                           const QModelIndex &index) const;
+        QWidget *createEditor(QWidget *parent, const QStyleOptionViewItem &option,
+                          const QModelIndex &index) const;
 
-     void setEditorData(QWidget *editor, const QModelIndex &index) const;
-     void setModelData(QWidget *editor, QAbstractItemModel *model,
-                       const QModelIndex &index) const;
+        void setEditorData(QWidget *editor, const QModelIndex &index) const;
+        void setModelData(QWidget *editor, QAbstractItemModel *model,
+                      const QModelIndex &index) const;
 
-     void updateEditorGeometry(QWidget *editor,
-         const QStyleOptionViewItem &option, const QModelIndex &index) const;
+    public slots:
+        void captureSizeHint(const QModelIndex & index);
+
+    //     void updateEditorGeometry(QWidget *editor,
+    //         const QStyleOptionViewItem &option, const QModelIndex &index) const;
+
+
  };
 #endif

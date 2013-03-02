@@ -61,17 +61,17 @@ vlmLine::vlmLine(Projection * proj, QGraphicsScene * myScene,double z_level) :
         this->setAcceptHoverEvents(true);
     show();
 }
+void vlmLine::set_zValue(const double &z)
+{
+    this->myZvalue=z;
+    this->setZValue(z);
+}
 
 vlmLine::~vlmLine()
 {
 //    myScene->removeItem(this);
-    QPolygon * poly;
-    while(!polyList.isEmpty())
-    {
-        poly=polyList.first();
-        delete poly;
-        polyList.removeFirst();
-    }
+    qDeleteAll(polyList);
+    polyList.clear();
 }
 void vlmLine::slot_replay(int i)
 {
@@ -148,25 +148,16 @@ void vlmLine::setTip(QString tip)
 void vlmLine::calculatePoly(void)
 {
     int n=0;
-    double X,Y,previousX=0,previousY=0,Xbis,Ybis;
-//    int debug;
-//    if(this->desc=="WP2: Arrivee Bayonne") //for debug point
-//        debug=0;
+    double X,Y,previousX=0,previousY=0;
     QPainterPath myPath2;
     collision.clear();
     QRectF tempBound;
     tempBound.setRect(0,0,0,0);
-    Orthodromie orth(0,0,0,0);
-    QPolygon * poly;
-    while(polyList.count()>0)
-    {
-        poly=polyList.first();
-        polyList.removeFirst();
-        delete poly;
-    }
-    poly=new QPolygon();
+
+    qDeleteAll(polyList);
+    polyList.clear();
+    QPolygon * poly=new QPolygon();
     polyList.append(poly);
-    poly->resize(0);
     vlmPoint previousWorldPoint(0,0);
     bool coasted=false;
     coastDetected=false;
@@ -174,7 +165,7 @@ void vlmLine::calculatePoly(void)
     GshhsReader * map=NULL;
     if(mcp)
         map=mcp->get_gshhsReader();
-    if(line.count()>1)
+    if(line.count()>1 && this->isVisible())
     {
         QList<vlmPoint>::const_iterator i;
         for (i = line.constBegin(); i != line.constEnd(); ++i)
@@ -187,46 +178,37 @@ void vlmLine::calculatePoly(void)
             }
             if(worldPoint.isDead) continue;
             if(worldPoint.isBroken && n==0) continue;
-            //Util::computePos(proj,worldPoint.lat, worldPoint.lon, &X, &Y);
-            proj->map2screenDouble(Util::cLFA(worldPoint.lon,proj->getXmin()),worldPoint.lat,&X,&Y);
-            X=X-x();
-            Y=Y-y();
-            if(n>0)
-            {
-                orth.setPoints(previousWorldPoint.lon,previousWorldPoint.lat,worldPoint.lon,worldPoint.lat);
-                int azimut=qRound(orth.getAzimutDeg());
-                int wrongEW=0;
-                if(azimut>180 && X>previousX+10)
-                    wrongEW=1; // on devrait etre a l'ouest et on est a droite
-                else if(azimut<180 && X<previousX-10)
-                    wrongEW=-1; // on devrait etre a l'est et on est a gauche
-// case not in place
-//               int wrongNS=0;
-//               if((azimut<90 || azimut>270)  && previousY<Y)
-//                    wrongNS=1; // on devrait etre au nord et on est au dessus
-//                else if((azimut>90 && azimut<270)  && previousY>Y)
-//                    wrongNS=-1; // on devrait etre au sud et on est en dessous
-                if(wrongEW!=0 && mode==VLMLINE_GATE_MODE)
-                {
-                    proj->map2screenDouble(worldPoint.lon-wrongEW*360, worldPoint.lat, &Xbis, &Ybis);
-                    poly->putPoints(n,1,Xbis,Ybis);
-                    tempBound=tempBound.united(poly->boundingRect());
-                    proj->map2screenDouble(previousWorldPoint.lon+wrongEW*360, previousWorldPoint.lat, &Xbis, &Ybis);
-                    collision.append(coasted);
-                    poly=new QPolygon();
-                    poly->resize(0);
-                    polyList.append(poly);
-                    n=0;
-                    poly->putPoints(n,1,Xbis,Ybis);
-                    n++;
-                }
-            }
-            poly->putPoints(n,1,X,Y);
+            if(n==0)
+                proj->map2screenDouble(worldPoint.lon,worldPoint.lat,&X,&Y);
+            else
+                proj->map2screenByReference(previousWorldPoint.lon,previousX,worldPoint.lon,worldPoint.lat,&X,&Y);
+            bool reverseWorld=!proj->isInBounderies(X,Y) && proj->isPointVisible(worldPoint.lon,worldPoint.lat) && n!=0;
+            poly->putPoints(n,1,X-x(),Y-y());
             if(this->coastDetection && n!=0 && !coasted && map && map->crossing(QLineF(previousX,previousY,X,Y),
                QLineF(previousWorldPoint.lon,previousWorldPoint.lat,worldPoint.lon,worldPoint.lat)))
             {
                 coasted=true;
                 coastDetected=true;
+            }
+            if(reverseWorld)
+            {
+                //qWarning()<<"reverseWorld detected";
+                collision.append(coasted);
+                tempBound=tempBound.united(poly->boundingRect());
+                poly=new QPolygon();
+                polyList.append(poly);
+                proj->map2screenDouble(worldPoint.lon,worldPoint.lat,&X,&Y);
+                previousX=X;
+                poly->putPoints(0,1,X-x(),Y-y());
+                proj->map2screenByReference(worldPoint.lon,previousX,previousWorldPoint.lon,previousWorldPoint.lat,&X,&Y);
+                poly->putPoints(1,1,X-x(),Y-y());
+                n=0;
+                collision.append(coasted);
+                tempBound=tempBound.united(poly->boundingRect());
+                poly=new QPolygon();
+                polyList.append(poly);
+                coasted=false;
+                continue;
             }
             previousWorldPoint=worldPoint;
             previousX=X;
@@ -242,6 +224,9 @@ void vlmLine::calculatePoly(void)
                 continue;
             }
 
+
+
+
             if(worldPoint.isPOI && cc!=0 && cc!=line.count()-1)
             {
                 collision.append(coasted);
@@ -252,9 +237,14 @@ void vlmLine::calculatePoly(void)
                 poly->putPoints(n,1,X,Y);
                 coasted=false;
             }
-            n++;
+            ++n;
         }
         tempBound=tempBound.united(poly->boundingRect());
+    }
+    else
+    {
+        qDeleteAll(polyList);
+        polyList.clear();
     }
     collision.append(coasted);
     if(!polyList.isEmpty())
@@ -319,6 +309,7 @@ void vlmLine::paint(QPainter * pnt, const QStyleOptionGraphicsItem * , QWidget *
 //    int debug;
 //    if(this->desc=="WP1: Latitude Cap Vert") //for debug point
 //        debug=0;
+    if(!this->isVisible()) return;
     pnt->setRenderHint(QPainter::Antialiasing);
     pnt->setPen(linePen);
     QPen coastedPen=linePen;
@@ -364,7 +355,7 @@ void vlmLine::paint(QPainter * pnt, const QStyleOptionGraphicsItem * , QWidget *
                 int nbVac=nbVacPerHour*Settings::getSetting("trace_length",12).toInt()+1;
                 int x0=poly->point(0).x();
                 int y0=poly->point(0).y();
-                for(int i=1;i<poly->count() && i<nbVac;i++)
+                for(int i=1;i<poly->count() && i<nbVac;++i)
                 {
                     int x,y;
                     x=poly->point(i).x();

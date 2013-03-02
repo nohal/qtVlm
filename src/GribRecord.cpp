@@ -96,7 +96,12 @@ GribRecord::GribRecord(ZUFILE* file, int id_)
 void  GribRecord::translateDataType()
 {
         this->knownData = true;
-
+    if(this->dataType==GRB_CURRENT_VX || this->dataType==GRB_CURRENT_VY)
+    {
+        this->levelType=LV_MSL;
+        this->levelValue=0;
+    }
+    //qWarning()<<idCenter<<idModel<<idGrid<<dataType<<levelType<<levelValue;
         //------------------------
         // NOAA GFS
         //------------------------
@@ -185,7 +190,6 @@ void  GribRecord::translateDataType()
         //---------------
         else if (idCenter==255 && idModel==1 && idGrid==255)
         {
-
         }
         //---------------
         //Theyr.com
@@ -205,34 +209,18 @@ void  GribRecord::translateDataType()
         //---------------
         else if (idCenter==0 && idModel==0 && idGrid==255)
         {
-            if(this->dataType==GRB_CURRENT_VX || this->dataType==GRB_CURRENT_VY)
-            {
-                this->levelType=LV_MSL;
-                this->levelValue=0;
-            }
         }
         //---------------
         //Actimar: courants bretagne, contient les vagues aussi (exclues pour le moment)
         //---------------
         else if (idCenter==255 && idModel==220 && idGrid==255)
         {
-            if(this->dataType==GRB_CURRENT_VX || this->dataType==GRB_CURRENT_VY)
-            {
-                this->levelType=LV_MSL;
-                this->levelValue=0;
-            }
         }
         //---------------
         //Navimail-Mercator
         //---------------
         else if (idCenter==85 && idModel==10 && idGrid==255)
         {
-            qWarning()<<"dataType="<<dataType;
-            if(this->dataType==GRB_CURRENT_VX || this->dataType==GRB_CURRENT_VY)
-            {
-                this->levelType=LV_MSL;
-                this->levelValue=0;
-            }
         }
         //------------------------
         // Unknown center
@@ -932,7 +920,7 @@ bool GribRecord::getValue_TWSA(double px, double py,double * a00,double * a01,do
 }
 
 //===============================================================================================
-// Interpolation pour donn�es 1D
+// Interpolation pour donnees 1D
 //
 
 double GribRecord::getInterpolatedValue(double px, double py, bool numericalInterpolation)
@@ -942,9 +930,9 @@ double GribRecord::getInterpolatedValue(double px, double py, bool numericalInte
         return GRIB_NOTDEF;
     }
     if (!isPointInMap(px,py)) {
-        px += 360.0;               // tour du monde �  droite ?
+        px += 360.0;               // tour du monde a droite ?
         if (!isPointInMap(px,py)) {
-            px -= 2*360.0;              // tour du monde �  gauche ?
+            px -= 2*360.0;              // tour du monde a gauche ?
             if (!isPointInMap(px,py)) {
                 return GRIB_NOTDEF;
             }

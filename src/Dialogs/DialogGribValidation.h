@@ -20,9 +20,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #ifndef GRIBVALIDATION_H
 #define GRIBVALIDATION_H
-
+#ifdef QT_V5
+#include <QtWidgets/QDialog>
+#else
 #include <QDialog>
-
+#endif
 #include "ui_gribValidation.h"
 
 #include "class_list.h"

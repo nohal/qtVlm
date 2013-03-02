@@ -29,7 +29,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 class board : public QWidget
 { Q_OBJECT
     public:
-        board(MainWindow * mainWin, inetConnexion * inet, QStatusBar * statusBar);
+
+        board(MainWindow * mainWin, inetConnexion * inet);
 
         boat * currentBoat(void) { return curBoat; }
 
@@ -42,11 +43,16 @@ class board : public QWidget
         void floatingBoard(bool status);
         void outdatedVLM(void);
 
-    public slots:
+        bool currentBoardIsVisibe();
+
+        int build_showHideMenu(QMenu * menu);
+
+public slots:
         void boatUpdated(boat * boat);
         void setChangeStatus(bool);
         void paramChanged(void);
         void slot_hideShowCompass();
+        void showCurrentBoard(const bool &b);
 
     signals:
         void sig_paramChanged();

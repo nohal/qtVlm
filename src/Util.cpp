@@ -145,8 +145,7 @@ QString Util::formatDegres(const double &x)
         int deg = (int) fabs(x);
         double min = (fabs(x) - deg)*60.0;
         char sign = (x<0) ? '-' : ' ';
-        const char *cdeg = "°";
-        r.sprintf("%c%03d%s%05.2f'", sign,deg,cdeg, min);
+        r.sprintf("%c%03ddeg%05.2f'", sign,deg,min);
     }
     else if (unit == "dddegmm'ss")
     {
@@ -156,14 +155,13 @@ QString Util::formatDegres(const double &x)
         min = min % 60;                  // reste en minutes
         sec = sec % 60;                  // reste en secondes
         char sign = (x<0) ? '-' : ' ';
-        const char *cdeg = "°";
-        r.sprintf("%c%03d%s%02d'%02d\"", sign,deg,cdeg, min,sec);
+        r.sprintf("%c%03ddeg%02d'%02d\"", sign,deg,min,sec);
     }
     else // if (unit == "dd,dddeg")
     {
-        const char *cdeg = "°";
-        r.sprintf("%06.2f%s",x,cdeg);
+        r.sprintf("%06.2fdeg",x);
     }
+    r=r.replace("deg",QObject::tr("deg"));
     return r;
 }
 //---------------------------------------------------------------------
@@ -464,6 +462,7 @@ void Util::getCoordFromDistanceLoxo(const double &latitude, const double &longit
     *res_lon=radToDeg(new_longitude);
 #endif
 }
+#if 0
 void Util::getCoordFromDistanceAngle(double latitude, double longitude,
              double distance,double heading, double * res_lat,double * res_lon)
 {
@@ -481,7 +480,9 @@ void Util::getCoordFromDistanceAngle(double latitude, double longitude,
     if (fabs(lat) > degToRad(80.0))
     {
         const double ratio = (degToRad(80.0)-fabs(latitude)) / (fabs(lat)-fabs(latitude));
+//        double oldDistance=distance;
         distance *= ratio;
+//        qWarning()<<oldDistance<<distance<<ratio<<radToDeg(latitude)-80.0;
         getCoordFromDistanceAngle2(latitude,longitude,distance,heading,&lat,&lon);
     }
 
@@ -502,7 +503,7 @@ void Util::getCoordFromDistanceAngle(double latitude, double longitude,
     *res_lon=lon;
 
 }
-
+#endif
 QString Util::pos2String(const int &type, const double &value)
 {
     QString str;
@@ -592,11 +593,11 @@ void Util::addAgent(QNetworkRequest & request)
     if(Settings::getSetting("forceUserAgent",0).toInt()==1
         && !Settings::getSetting("userAgent", "").toString().isEmpty())
     {
-        request.setRawHeader("User-Agent",Settings::getSetting("userAgent", "").toString().toAscii());
-        request.setRawHeader("VLM_PROXY_AGENT",QString("qtVlm/"+Version::getVersion()+" ("+QTVLM_OS+")").toAscii());
+        request.setRawHeader("User-Agent",Settings::getSetting("userAgent", "").toString().toLatin1());
+        request.setRawHeader("VLM_PROXY_AGENT",QString("qtVlm/"+Version::getVersion()+" ("+QTVLM_OS+")").toLatin1());
     }
     else
-        request.setRawHeader("User-Agent",QString("qtVlm/"+Version::getVersion()+" ("+QTVLM_OS+")").toAscii());
+        request.setRawHeader("User-Agent",QString("qtVlm/"+Version::getVersion()+" ("+QTVLM_OS+")").toLatin1());
 
 }
 bool Util::lineIsCrossingRect(const QLineF &line, const QRectF &rect)
@@ -639,6 +640,7 @@ double Util::distance_to_line_dichotomy_xing(const double &lat, const double &lo
     double ortho_p1, ortho_p2;
     double limit;
     limit = PI/(180*60*1852); // 1m precision
+    int nbLoop=0;
 
     if (qAbs(longitude_a - longitude_b) > PI)
     {
@@ -670,6 +672,7 @@ double Util::distance_to_line_dichotomy_xing(const double &lat, const double &lo
 
     while (__distance((p1_latitude-p2_latitude), (p1_longitude-p2_longitude)) > limit)
     {
+        if(++nbLoop>1000) break; //safety
         if (ortho_p1 < ortho_p2)
         {
             p2_longitude = (p1_longitude+p2_longitude)/2;
@@ -693,5 +696,6 @@ double Util::distance_to_line_dichotomy_xing(const double &lat, const double &lo
     }
     *x_latitude = radToDeg(p2_latitude);
     *x_longitude = radToDeg(p2_longitude);
+    //qWarning()<<"nbLoop in distance_to_line_dichotomy_xing"<<nbLoop;
     return ortho_p2;
 }

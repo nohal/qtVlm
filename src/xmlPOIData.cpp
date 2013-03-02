@@ -449,59 +449,7 @@ void xml_POIData::slot_importZyGrib(void)
 
     file.close();
 
-#if 0
-    /* let's see if we have some zyGrib POI here */
-     QSettings settings("zyGrib");
-     settings.beginGroup("poi");
-     QString key;
-     QStringList slist = settings.childKeys();
-     if(slist.size()>0)
-     {
-        int rep = QMessageBox::question (this,
-            tr("%1 POI de zyGrib trouve").arg(slist.size()),
-            tr("Supprimer les POI de zyGrib apres importation?"),
-            QMessageBox::Yes | QMessageBox::No | QMessageBox::Cancel);
-        QString key;
-        QString serialized;
-        if (rep == QMessageBox::Yes || rep == QMessageBox::No)
-        {
-            for (int i=0; i<slist.size(); ++i)
-            {
-                key = slist.at(i);
-                serialized=settings.value(key, "").toString();
-                if(serialized.isEmpty())
-                    continue;
-                QStringList  lst = serialized.split(";");
-                if(lst.size()<5)
-                {
-                    serialized+=";0;-1";
-                                    }
-                else if(lst.size()<6)
-                {
-                    serialized+=";-1";
-                                    }
-                lst = serialized.split(";");
-                POI * poi = new POI(QString(QByteArray::fromBase64(lst[1].toUtf8())), POI_TYPE_POI,
-                                    lst[3].toFloat(),lst[2].toFloat(),proj,main,parent,lst[5].toInt(),-1,false,NULL);
 
-                emit addPOI_list(poi);
-                /*removing zyGrib POI*/
-                if (rep == QMessageBox::Yes)
-                    settings.remove(key);
-            }
-            QMessageBox::information (this,
-            tr("POI de zyGrib").arg(slist.size()),
-            tr("POI importes, pensez a sauvegarder les POI"));
-        }
-     }
-     else
-     {
-         QMessageBox::information (this,
-            tr("POI de zyGrib").arg(slist.size()),
-            tr("Pas de POI de zyGrib trouves"));
-     }
-     settings.endGroup();
-#endif
 }
 void xml_POIData::importGeoData(void)
 {

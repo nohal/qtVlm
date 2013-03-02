@@ -27,8 +27,11 @@ Copyright (C) 2008 - Jacques Zaninetti - http://zygrib.free.fr
 
 #include <cmath>
 #include <cassert>
-
+#ifdef QT_V5
+#include <QtWidgets/QApplication>
+#else
 #include <QApplication>
+#endif
 #include <QObject>
 #include <QString>
 #include <QDir>
@@ -97,7 +100,6 @@ class Util
     static void computePosDouble(Projection * proj, const double &lat, const double &lon, double * x, double * y);
     static void addAgent(QNetworkRequest & request);
     static bool lineIsCrossingRect(const QLineF &line, const QRectF &rect);
-    static double cLFA(const double &lon, const double &xW);
     static double myDiffAngle(const double &a1, const double &a2);
     static double A360(const double &hdg);
     static double distance_to_line_dichotomy_xing(const double &lat, const double &lon,
@@ -134,24 +136,6 @@ class Util
 };
 
 //======================================================================
-inline double Util::cLFA(const double &lon, const double &xW)
-//convertLonForAntiMeridian
-{
-    if(xW>=0 && lon>=0) return lon;
-    if(xW<=0 && lon<=0) return lon;
-    if(qAbs(qRound(qAbs(lon-xW))-qRound(myDiffAngle(A360(lon),A360(xW))))<=2) return lon;
-    if(xW>=0)
-    {
-        return xW+myDiffAngle(xW,lon+360.0);
-    }
-    else
-    {
-        if(xW<-180)
-            return lon-360;
-        else
-            return xW-myDiffAngle(A360(xW),lon);
-    }
-}
 inline double Util::A360(const double &hdg)
 {
     double newhdg=hdg;
@@ -192,6 +176,34 @@ inline QPointF Util::calculateSumVect(const double &angle1,const double &length1
     QLineF temp(0,0,line2.p2().x(),line2.p2().y());
     QPointF pointF(temp.length(),A360(temp.angle()));
     return pointF;
+}
+inline void Util::getCoordFromDistanceAngle(double latitude, double longitude,
+             double distance,double heading, double * res_lat,double * res_lon)
+{
+    if(qAbs(latitude)>=89.9)
+    {
+        *res_lat=latitude;
+        *res_lon=longitude;
+        return;
+    }
+    double d, new_lat, t_lat, new_lon;
+    latitude = degToRad(latitude);
+    longitude = fmod(degToRad(longitude), TWO_PI);
+    heading=degToRad(heading);
+    d = degToRad(distance/60.0);
+    new_lat = latitude + d*cos(heading);
+    t_lat = (latitude + new_lat) / 2.0;
+    new_lon =  longitude + (d*sin(heading))/cos(t_lat);
+    if (new_lon > PI)
+    {
+        new_lon -= TWO_PI;
+    }
+    else if (new_lon < -PI)
+    {
+        new_lon += TWO_PI;
+    }
+    *res_lat = radToDeg(new_lat);
+    *res_lon = radToDeg(new_lon);
 }
 
 #endif

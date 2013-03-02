@@ -21,6 +21,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <QDebug>
 #include <QPainter>
+#include <QMenu>
 
 #include "selectionWidget.h"
 #include "settings.h"
@@ -28,13 +29,47 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "mycentralwidget.h"
 #include "orthoSegment.h"
 
-selectionWidget::selectionWidget(Projection * proj, QGraphicsScene * myScene) : QGraphicsWidget()
-{
+selectionWidget::selectionWidget(myCentralWidget *centralWidget, Projection * proj, QGraphicsScene * myScene) : QGraphicsWidget() {
+    this->centralWidget=centralWidget;
     this->proj=proj;
     seg=new orthoSegment(proj,myScene,Z_VALUE_SELECTION);
 
     setZValue(Z_VALUE_SELECTION);
     setData(0,SELECTION_WTYPE);
+
+    popup = new QMenu(centralWidget->getMainWindow());
+    connect(this->popup,SIGNAL(aboutToShow()),centralWidget,SLOT(slot_resetGestures()));
+    connect(this->popup,SIGNAL(aboutToHide()),centralWidget,SLOT(slot_resetGestures()));
+    connect(this->popup,SIGNAL(aboutToShow()),this,SLOT(slot_protect()));
+    connect(this->popup,SIGNAL(aboutToHide()),this,SLOT(slot_unprotect()));
+    isProtected=false;
+
+    ac_delAllPOIs = new QAction(tr("Effacer toutes les marques"),popup);
+    ac_delSelPOIs = new QAction(tr("Effacer les marques..."),popup);
+    ac_notSimpSelPOIs = new QAction(tr("Rendre toutes les marques non-simplifiables"),popup);
+    ac_simpSelPOIs = new QAction(tr("Rendre toutes les marques simplifiables"),popup);
+    ac_dwnldZygrib = new QAction(tr("Download with ZyGrib"),popup);
+    ac_mailSailDoc = new QAction(tr("Mail SailsDoc"),popup);
+    ac_zoomSelection = new QAction(tr("Zoom on selection"),popup);
+
+    popup->addAction(ac_delAllPOIs);
+    popup->addAction(ac_delSelPOIs);
+    popup->addSeparator();
+    popup->addAction(ac_notSimpSelPOIs);
+    popup->addAction(ac_simpSelPOIs);
+    popup->addSeparator();
+    popup->addAction(ac_dwnldZygrib);
+    popup->addAction(ac_mailSailDoc);
+    popup->addSeparator();
+    popup->addAction(ac_zoomSelection);
+
+    connect(ac_delAllPOIs, SIGNAL(triggered()), centralWidget, SLOT(slot_delAllPOIs()));
+    connect(ac_delSelPOIs, SIGNAL(triggered()), centralWidget, SLOT(slot_delSelPOIs()));
+    connect(ac_notSimpSelPOIs, SIGNAL(triggered()), centralWidget, SLOT(slot_notSimpAllPOIs()));
+    connect(ac_simpSelPOIs, SIGNAL(triggered()), centralWidget, SLOT(slot_simpAllPOIs()));
+    connect(ac_dwnldZygrib,SIGNAL(triggered()),centralWidget, SLOT(slot_fileLoad_GRIB()));
+    connect(ac_mailSailDoc,SIGNAL(triggered()),centralWidget, SLOT(slotLoadSailsDocGrib()));
+    connect(ac_zoomSelection,SIGNAL(triggered()),centralWidget,  SLOT(slot_Zoom_Sel()));
 
     xa=xb=ya=yb=0;
     width=height=0;
@@ -43,8 +78,50 @@ selectionWidget::selectionWidget(Projection * proj, QGraphicsScene * myScene) : 
     hide();
 }
 
+void selectionWidget::contextMenuEvent(QGraphicsSceneContextMenuEvent * e) {
+    int compassMode = centralWidget->getCompassMode(e->scenePos().x(),e->scenePos().y());
+
+    if(compassMode==0)
+    {
+        ac_delAllPOIs->setEnabled(true);
+        ac_delSelPOIs->setEnabled(true);
+        ac_simpSelPOIs->setEnabled(true);
+        ac_notSimpSelPOIs->setEnabled(true);
+    }
+    else
+    {
+        ac_delAllPOIs->setEnabled(false);
+        ac_delSelPOIs->setEnabled(false);
+        ac_simpSelPOIs->setEnabled(false);
+        ac_notSimpSelPOIs->setEnabled(false);
+    }
+
+    popup->exec(QCursor::pos());
+}
+void selectionWidget::slot_protect()
+{
+    this->isProtected=true;
+    xa=old_xa;
+    ya=old_ya;
+    xb=old_xb;
+    yb=old_yb;
+    updateSize();
+    update();
+    show();
+    if(showOrthodromie)
+    {
+        seg->initSegment(xa,ya,xb,yb);
+        seg->show();
+    }
+}
+void selectionWidget::slot_unprotect()
+{
+    this->isProtected=false;
+}
+
 void selectionWidget::startSelection(int start_x,int start_y)
 {
+    if(isProtected) return;
     selecting=true;
     show();
     xa=xb=start_x;
@@ -122,12 +199,16 @@ void selectionWidget::slot_setDrawOrthodromie(bool b)
 
 void selectionWidget::stopSelection(void)
 {
+    old_xa=xa;
+    old_ya=ya;
+    old_xb=xb;
+    old_yb=yb;
     selecting=false;
-
 }
 
 void selectionWidget::clearSelection(void)
 {
+    if(isProtected) return;
     stopSelection();
     hide();
     if(showOrthodromie)

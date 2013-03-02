@@ -21,25 +21,33 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #ifndef MYCENTRALWIDGET_H
 #define MYCENTRALWIDGET_H
-
+#ifdef QT_V5
+#include <QtWidgets/QGraphicsScene>
+#include <QtWidgets/QGraphicsView>
+#include <QtMultimedia/qsound.h>
+#else
 #include <QGraphicsScene>
 #include <QGraphicsView>
+#include <qsound.h>
+#endif
 
 #include "class_list.h"
+#include "dataDef.h"
 
 #include "DialogUnits.h"
 #include "DialogGraphicsParams.h"
 #include "selectionWidget.h"
-#include <qsound.h>
+#include "MainWindow.h"
+#include "Magnifier.h"
+
 #include <qdatetime.h>
-#include <MainWindow.h>
+
 
 /* Z value according to type */
 #define Z_VALUE_TERRE      0
 #define Z_VALUE_LOADIMG    0.4
 #define Z_VALUE_FAXMETEO   0.5
 #define Z_VALUE_ROUTAGE    1
-#define Z_VALUE_ISOPOINT   2
 #define Z_VALUE_OPP        3
 #define Z_VALUE_ESTIME     4
 #define Z_VALUE_ROUTE      5
@@ -48,8 +56,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #define Z_VALUE_NEXT_GATE  9
 #define Z_VALUE_BOAT       10
 #define Z_VALUE_COMPASS    11
+#define Z_VALUE_ISOPOINT   12
 
 #define Z_VALUE_SELECTION  15
+#define Z_VALUE_MAGNIFIER  80
 
 /* graphicsWidget type */
 #define TERRE_WTYPE       1
@@ -71,6 +81,8 @@ class myScene : public QGraphicsScene
 { Q_OBJECT
     public:
         myScene(myCentralWidget * parent = 0);
+        void setPinching(const bool &b){this->pinching=b;}
+        bool getPinching() const {return this->pinching;}
 
     protected:
         void keyPressEvent (QKeyEvent *e);
@@ -92,6 +104,7 @@ class myScene : public QGraphicsScene
         int wheelPosX;
         int wheelPosY;
         bool wheelCenter;
+        bool pinching;
 };
 
 class myCentralWidget : public QWidget
@@ -105,7 +118,7 @@ class myCentralWidget : public QWidget
         /* access to pointer & data */
         Grib * getGrib(bool calibrate=false);
         Grib * getGribCurrent(void);
-        QGraphicsScene * getScene(void) { return scene; }
+        myScene * getScene(void) { return scene; }
         bool compassHasLine(void);
         int getCompassMode(int m_x,int m_y);
         bool isSelecting(void);
@@ -128,6 +141,9 @@ class myCentralWidget : public QWidget
         boatReal * getRealBoat(void) {return realBoat; }
         bool getIsStartingUp(void){return mainW->isStartingUp;}
         MainWindow * getMainWindow(void) { return mainW; }
+        MyView * getView() const {return this->view;}
+
+        FCT_SETGET(ToolBar*,toolBar)
 
         void loadGshhs(void);
 
@@ -198,8 +214,12 @@ class myCentralWidget : public QWidget
         loadImg * getKap(){return kap;}
 
         void removePOI(void);
+        bool getKeepPos(){return keepPos;}
 
-    public slots :
+        void zoom_Pinch(double scale, int XX, int YY);
+        void setMagnifier(Magnifier * m){this->magnifier=m;}
+        Magnifier * getMagnifier(){return this->magnifier;}
+public slots :
         /* Zoom & position */
         void slot_Zoom_All();
         void slot_Zoom_In(double quantity=1.3);
@@ -210,8 +230,10 @@ class myCentralWidget : public QWidget
         void slot_Go_Up();
         void slot_Go_Down();
         void slot_Zoom_Sel();
-        void slot_keepPos(bool b){this->keepPos=b;}
+        void slot_keepPos(const bool &b);
         void slot_abortRequest();
+        void slot_selectionTool();
+        void slot_magnify();
 
         /* POI */
         POI * slot_addPOI(QString name,int type,double lat,double lon, double wph,int timestamp,bool useTimeStamp, boat *boat);
@@ -303,6 +325,7 @@ class myCentralWidget : public QWidget
         void slot_takeScreenshot();
         void slot_showVlmLog();
         void slot_fetchVLMTrack();
+        void slot_resetGestures();
 
     signals:
         /* drawing */
@@ -343,6 +366,7 @@ class myCentralWidget : public QWidget
         void shLab(bool);
         void shFla();
 
+
     protected:
         void resizeEvent (QResizeEvent * e);
 
@@ -355,6 +379,7 @@ class myCentralWidget : public QWidget
         Projection * proj;
         MainWindow * mainW;
         MenuBar    *menuBar;
+        ToolBar    *toolBar;
 
         /* item child */
         Terrain * terre;        
@@ -375,8 +400,8 @@ class myCentralWidget : public QWidget
         inetConnexion * inetManager;
 
         /* Scene & view */
-        QGraphicsScene *scene;
-        QGraphicsView * view;
+        myScene *scene;
+        MyView * view;
 
         /* Dialogs */
         DialogGribDate * gribDateDialog;
@@ -429,8 +454,9 @@ class myCentralWidget : public QWidget
         bool abortRequest;
         faxMeteo * fax;
         loadImg * kap;
-        QTimer * routeTimer;
         ROUTE * routeSimplify;
+        bool selectionTool;
+        Magnifier * magnifier;
 };
 
 #endif // MYCENTRALWIDGET_H

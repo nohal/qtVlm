@@ -35,6 +35,7 @@ Copyright (C) 2008 - Jacques Zaninetti - http://zygrib.free.fr
 #include "DialogInetProgess.h"
 #include "settings.h"
 #include "dataDef.h"
+#include "Progress.h"
 
 #include "GshhsDwnload.h"
 
@@ -43,11 +44,10 @@ GshhsDwnload::GshhsDwnload(myCentralWidget * centralWidget, inetConnexion *inet)
   inetClient(inet)
 {
     this->centralWidget=centralWidget;
-
-    needAuth=false;
 }
 
-#define MAP_FNAME  "qtVlmMaps.zip" //"win_exe-3.1-1.zip"
+#define MAP_FNAME  "qtVlmMaps.zip"
+//"win_exe-3.1-1.zip"
 //"qtVlmMaps.zip"
 
 void GshhsDwnload::requestFinished(QByteArray res) {
@@ -96,7 +96,7 @@ void GshhsDwnload::getMaps(void) {
     connect (this->getInet()->getProgressDialog(),SIGNAL(rejected()),this,SLOT(slot_abort()));
     finished=false;
     filename="";
-    inetGetProgress(1,page,"http://www.virtual-winds.com");
+    inetGetProgress(1,page,"http://www.virtual-winds.com",false);
     while(!finished) {
         QCoreApplication::processEvents(QEventLoop::AllEvents, 10);
     }
@@ -104,20 +104,19 @@ void GshhsDwnload::getMaps(void) {
         /* asking for folder holding maps */
         QString dir = Settings::getSetting("mapsFolder",appFolder.value("maps")).toString();
 
-        QProgressDialog * progress=centralWidget->getMainWindow()->get_progress();
+        Progress * progress=centralWidget->getMainWindow()->get_progress();
 
         if(progress) {
-            qWarning() << "Updating progress";
-            progress->setLabelText(tr("Decompressing maps"));
-            progress->setValue(progress->value()+5);
+            progress->newStep(progress->value()+5,tr("Decompressing maps"));
             QCoreApplication::processEvents();
         }
 
+        int res = miniunzip(UZ_OVERWRITE,(const char*)filename.toLatin1().data(),dir.toLatin1().data(),NULL,NULL);
 
-        if(miniunzip(UZ_OVERWRITE,(const char*)filename.toAscii().data(),dir.toAscii().data(),NULL,NULL)!=UNZ_OK) {
+        if(res!=UNZ_OK) {
             QMessageBox::critical(centralWidget,
                                   tr("Saving maps"),
-                                  tr("Zip file ") + filename + tr(" can't be unzip"));
+                                  tr("Zip file ") + filename + tr(" can't be unzip")+" (error="+QString().setNum(res)+")");
         }
         else {
             centralWidget->loadGshhs();

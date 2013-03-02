@@ -30,10 +30,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "BoardVLM.h"
 #include "Player.h"
 #include "boatVLM.h"
+#include "StatusBar.h"
 
-board::board(MainWindow * mainWin, inetConnexion * inet,QStatusBar * statusBar)
+board::board(MainWindow * mainWin, inetConnexion * inet)
 {
     playerType = BOAT_NOBOAT;
+
+    StatusBar * statusBar=mainWin->get_statusBar();
 
     vlm_board=new boardVLM(mainWin,inet,this);
     connect(this,SIGNAL(sig_paramChanged()),vlm_board,SLOT(paramChanged()));
@@ -61,6 +64,17 @@ board::board(MainWindow * mainWin, inetConnexion * inet,QStatusBar * statusBar)
             this,SLOT(boatUpdated(boat*)));
 
     isFloatingBoard=false;
+}
+
+int board::build_showHideMenu(QMenu * menu) {
+    if(!menu) return 0;
+
+    QAction * boardAction=new QAction(tr("Tableau de bord"),menu);
+    boardAction->setCheckable(true);
+    boardAction->setChecked(currentBoardIsVisibe());
+    connect (boardAction,SIGNAL(triggered(bool)),this,SLOT(showCurrentBoard(bool)));
+    menu->addAction(boardAction);
+    return 1;
 }
 
 void board::floatingBoard(bool status)
@@ -161,4 +175,50 @@ void board::outdatedVLM()
     if (vlm_board)
         if (!(vlm_board->btn_Synch->styleSheet()).contains(QColor(255, 0, 0).name())) //if red stays red
             vlm_board->set_style(vlm_board->btn_Synch,QColor(255, 191, 21));
+}
+void board::showCurrentBoard(const bool &b)
+{
+    if(playerType!=BOAT_NOBOAT)
+    {
+        if(b)
+        {
+            if(playerType == BOAT_VLM)
+            {
+                mainWin->addDockWidget(Qt::LeftDockWidgetArea,VLMDock);
+                floatingBoard(isFloatingBoard);
+                VLMDock->show();
+                vlm_board->show();
+            }
+            else
+            {
+                mainWin->addDockWidget(Qt::LeftDockWidgetArea,realDock);
+                floatingBoard(isFloatingBoard);
+                realDock->show();
+                real_board->show();
+            }
+        }
+        else
+        {
+            if(playerType == BOAT_VLM)
+                mainWin->removeDockWidget(VLMDock);
+            else
+                mainWin->removeDockWidget(realDock);
+        }
+    }
+}
+bool board::currentBoardIsVisibe()
+{
+    if(playerType!=BOAT_NOBOAT)
+    {
+        if(playerType == BOAT_VLM)
+        {
+            return vlm_board->isVisible();
+        }
+        else
+        {
+            return real_board->isVisible();
+        }
+    }
+    else
+        return false;
 }

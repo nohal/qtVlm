@@ -17,8 +17,12 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ***********************************************************************/
-
-#include <QtGui>
+#ifdef QT_V5
+#include <QtWidgets/QWidget>
+#else
+#include <QtGui/QWidget>
+#endif
+#include <QDebug>
 #include <QBuffer>
 #include <QDialog>
 
@@ -85,7 +89,7 @@ bool DialogBoatAccount::initList( QList<boatVLM*> * boat_list, Player * player)
             item = new QListWidgetItem(list_boatSit);
         if(boat->getStatus())
         {
-            item->setData(Qt::ForegroundRole,Qt::darkRed);
+            item->setData(Qt::ForegroundRole,QColor(Qt::darkRed));
         }
         setBoatItemName(item,boat);
         item->setData(ROLE_IDX,boat_idx);
@@ -384,9 +388,9 @@ void DialogBoatAccount::setItem(QListWidgetItem * item)
 void DialogBoatAccount::slot_enableChanged(bool b)
 {
     if(b)
-        this->currentItem->setData(Qt::ForegroundRole,Qt::darkRed);
+        this->currentItem->setData(Qt::ForegroundRole,QColor(Qt::darkRed));
     else
-        this->currentItem->setData(Qt::ForegroundRole,Qt::black);
+        this->currentItem->setData(Qt::ForegroundRole,QColor(Qt::black));
 }
 
 void  DialogBoatAccount::chkAlias_changed(int state)

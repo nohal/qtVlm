@@ -24,7 +24,18 @@ Copyright (C) 2008 - Jacques Zaninetti - http://zygrib.free.fr
 
 #ifndef DIALOGLOADGRIB_H
 #define DIALOGLOADGRIB_H
-
+#ifdef QT_V5
+#include <QtWidgets/QDialog>
+#include <QtWidgets/QFrame>
+#include <QtWidgets/QGridLayout>
+#include <QtWidgets/QLabel>
+#include <QtWidgets/QSpinBox>
+#include <QtWidgets/QCheckBox>
+#include <QtWidgets/QComboBox>
+#include <QtWidgets/QPushButton>
+#include <QtWidgets/QFileDialog>
+#include <QtWidgets/QProgressBar>
+#else
 #include <QDialog>
 #include <QFrame>
 #include <QGridLayout>
@@ -34,9 +45,10 @@ Copyright (C) 2008 - Jacques Zaninetti - http://zygrib.free.fr
 #include <QComboBox>
 #include <QPushButton>
 #include <QFileDialog>
-#include <QTime>
 #include <QProgressBar>
+#endif
 #include "LoadGribFile.h"
+#include <QTime>
 
 //#define HAS_TEMP
 
@@ -65,6 +77,7 @@ class DialogLoadGrib : public QDialog
 
     signals:
         void signalGribFileReceived(QString fileName);
+        void clearSelection();
 
     private:
         LoadGribFile    *loadgrib;

@@ -22,6 +22,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <QDebug>
 #include <QStringList>
 #include <QGraphicsSceneEvent>
+#include <QMessageBox>
+#include <QListWidget>
+#include <QPushButton>
+#include <QApplication>
+#include <QClipboard>
 
 #include "DialogRealBoatPosition.h"
 
@@ -33,11 +38,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "Orthodromie.h"
 #include "Polar.h"
 #include "orthoSegment.h"
-#include <QMessageBox>
-#include <QListWidget>
-#include <QPushButton>
-#include <QApplication>
-#include <QClipboard>
+
+
 //#define GPS_FILE
 
 boatReal::boatReal(QString pseudo, bool activated, Projection * proj,MainWindow * main,
@@ -85,6 +87,8 @@ boatReal::boatReal(QString pseudo, bool activated, Projection * proj,MainWindow 
     this->speedWithEngine=Settings::getSetting("speedWithEngine",4).toDouble();
 
     myCreatePopUpMenu();
+    connect(this->popup,SIGNAL(aboutToShow()),parent,SLOT(slot_resetGestures()));
+    connect(this->popup,SIGNAL(aboutToHide()),parent,SLOT(slot_resetGestures()));
     this->lastUpdateTime=QDateTime().currentDateTimeUtc().toTime_t();
 }
 

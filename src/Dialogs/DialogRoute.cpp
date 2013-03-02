@@ -23,7 +23,11 @@ Copyright (C) 2008 - Jacques Zaninetti - http://zygrib.free.fr
 ***********************************************************************/
 
 #include <cmath>
+#ifdef QT_V5
+#include <QtWidgets/QMessageBox>
+#else
 #include <QMessageBox>
+#endif
 #include <QDebug>
 
 #include "DialogRoute.h"
@@ -44,17 +48,20 @@ Copyright (C) 2008 - Jacques Zaninetti - http://zygrib.free.fr
 #include <QRadialGradient>
 #include <QTime>
 #include <QFileDialog>
+#include <QPixmap>
 
 //-------------------------------------------------------
 // ROUTE_Editor: Constructor for edit an existing ROUTE
 //-------------------------------------------------------
-DialogRoute::DialogRoute(ROUTE *route,myCentralWidget *parent)
+DialogRoute::DialogRoute(ROUTE *route, myCentralWidget *parent, bool createMode)
     : QDialog(parent)
 {
     this->route=route;
     this->parent=parent;
     tabWidthRatio=-1;
     setupUi(this);
+    this->warning_icon->setPixmap(QPixmap(appFolder.value("img")+"warning.png"));
+    connect(this->useVbvmgVlm,SIGNAL(stateChanged(int)),this,SLOT(slot_hideShowWarning()));
     Util::setFontDialog(this);
     inputTraceColor =new InputLineParams(route->getWidth(),route->getColor(),1.6,  QColor(Qt::red),this,0.1,5);
     colorBox->layout()->addWidget( inputTraceColor);
@@ -63,7 +70,7 @@ DialogRoute::DialogRoute(ROUTE *route,myCentralWidget *parent)
     editFrozen->setChecked(route->getFrozen());
     this->speedLossOnTack->setValue(qRound(route->getSpeedLossOnTack()*100.00));
 
-
+    keepModel=false;
     startFromBoat->setChecked(route->getStartFromBoat());
     startFromMark->setChecked(!route->getStartFromBoat());
 
@@ -79,7 +86,10 @@ DialogRoute::DialogRoute(ROUTE *route,myCentralWidget *parent)
     this->sortByName->setChecked(route->getSortPoisByName());
     connect(this->btOk,SIGNAL(clicked()),this,SLOT(accept()));
     connect(this->btCancel,SIGNAL(clicked()),this,SLOT(reject()));
-    connect(this->btAppliquer,SIGNAL(clicked()),this,SLOT(slotApply()));
+    if(!createMode)
+        connect(this->btAppliquer,SIGNAL(clicked()),this,SLOT(slotApply()));
+    else
+        btAppliquer->setDisabled(true);
     connect(this->Envoyer,SIGNAL(clicked()),this,SLOT(slotEnvoyer()));
     connect(this->btCopy,SIGNAL(clicked()),this,SLOT(slotCopy()));
     connect(this->exportCSV,SIGNAL(clicked()),this,SLOT(slotExportCSV()));
@@ -171,6 +181,8 @@ DialogRoute::DialogRoute(ROUTE *route,myCentralWidget *parent)
     DateBoxDelegate * delegate=new DateBoxDelegate(this);
     pilotView->setModel(model);
     pilotView->setItemDelegate(delegate);
+    //pilotView->horizontalHeader()->setAlternatingRowColors(true);
+    //pilotView->horizontalHeader()->setDefaultAlignment(Qt::AlignCenter|Qt::AlignVCenter);
     pilotView->header()->setAlternatingRowColors(true);
     pilotView->header()->setDefaultAlignment(Qt::AlignCenter|Qt::AlignVCenter);
     connect(this->defaultOrders,SIGNAL(clicked()),this,SLOT(slotLoadPilototo()));
@@ -258,8 +270,15 @@ DialogRoute::DialogRoute(ROUTE *route,myCentralWidget *parent)
     if(route->getBoat()->getLockStatus())
         this->Envoyer->setDisabled(true);
 }
+void DialogRoute::slot_hideShowWarning()
+{
+    this->warning_icon->setHidden(this->useVbvmgVlm->checkState()!=Qt::Unchecked);
+    this->warning_text->setHidden(this->useVbvmgVlm->checkState()!=Qt::Unchecked);
+}
+
 DialogRoute::~DialogRoute()
 {
+    //qWarning()<<"deleting dialogRoute";
     delete model;
     delete rmModel;
 }
@@ -297,7 +316,7 @@ void DialogRoute::slotInterval()
     this->useHDG->blockSignals(true);
     int val=roadMapInterval->value();
     int step=roadMapInterval->minimum();
-    val=qRound(val/step)*step;
+    val=qRound((double)val/(double)step)*step;
     if(useHDG->isChecked())
     {
         val=roadMapHDG->value();
@@ -786,11 +805,15 @@ void DialogRoute::done(int result)
         route->setTemp(false);
         if(result==99)
         {
-            model->removeRows(0,model->rowCount());
-            listPois.clear();
+            if(!keepModel)
+            {
+                model->removeRows(0,model->rowCount());
+                listPois.clear();
+            }
             parent->treatRoute(route);
+            if(keepModel)
+                return;
             connect(this->tabWidget,SIGNAL(currentChanged(int)),this,SLOT(slotTabChanged(int)));
-            return;
         }
     }
     if(result == QDialog::Rejected)
@@ -807,13 +830,15 @@ void DialogRoute::slotApply()
     if(this->Simplifier->isChecked() || this->Optimiser->isChecked())
         this->hide();
     this->done(99);
-    this->btAppliquer->setEnabled(true);
-    this->btCancel->setEnabled(true);
-    this->btOk->setEnabled(true);
-    this->tabWidget->setEnabled(true);
-    this->Simplifier->setChecked(false);
-    this->Optimiser->setChecked(false);
-    this->show();
+//    qWarning()<<"here3";
+//    this->btAppliquer->setEnabled(true);
+//    this->btCancel->setEnabled(true);
+//    this->btOk->setEnabled(true);
+//    this->tabWidget->setEnabled(true);
+//    this->Simplifier->setChecked(false);
+//    this->Optimiser->setChecked(false);
+//    qWarning()<<"here4";
+//    this->show();
 }
 
 void DialogRoute::GybeTack(int i)
@@ -827,31 +852,92 @@ void DialogRoute::GybeTack(int i)
 }
 void DialogRoute::slotLoadPilototo()
 {
-    if(!(this->startFromBoat->isChecked() &&
-         this->useVbvmgVlm->isChecked()))
-    {
-        QMessageBox::critical(0,tr("Pilototo"),tr("Pour utiliser cette action il faut que:<br>- La route parte du bateau<br>- Le mode VBVMG-VLM soit actif"));
-        return;
-    }
     if(route->getPoiList().isEmpty())
     {
         return;
     }
+    if(!route->getStartFromBoat())
+    {
+        QMessageBox::critical(0,tr("Pilototo"),tr("Pour utiliser cette action il faut que la route parte du bateau"));
+        return;
+    }
+    bool forceVbvmg=false;
+    int state=0;
+    if(!route->getUseVbvmgVlm())
+    {
+        forceVbvmg=true;
+        state=useVbvmgVlm->checkState();
+        useVbvmgVlm->setChecked(true);
+        keepModel=true;
+        this->slotApply();
+        keepModel=false;
+    }
     this->fillPilotView(true);
+    if(forceVbvmg)
+    {
+        switch(state)
+        {
+            case Qt::PartiallyChecked:
+                useVbvmgVlm->setCheckState(Qt::PartiallyChecked);
+                break;
+            case Qt::Checked:
+                useVbvmgVlm->setCheckState(Qt::Checked);
+                break;
+            default:
+                useVbvmgVlm->setCheckState(Qt::Unchecked);
+                break;
+        }
+        keepModel=true;
+        this->slotApply();
+        keepModel=false;
+    }
+    this->setEnabled(true);
+    this->btAppliquer->setEnabled(true);
+    this->btCancel->setEnabled(true);
+    this->btOk->setEnabled(true);
+    this->tabWidget->setEnabled(true);
+    this->Simplifier->setChecked(false);
+    this->Optimiser->setChecked(false);
 }
 void DialogRoute::slotLoadPilototoCustom()
 {
-    if(!(this->startFromBoat->isChecked() &&
-         this->useVbvmgVlm->isChecked()))
-    {
-        QMessageBox::critical(0,tr("Pilototo"),tr("Pour utiliser cette action il faut que:<br>- La route parte du bateau<br>- Le mode VBVMG-VLM soit actif"));
-        return;
-    }
     if(route->getPoiList().isEmpty())
     {
         return;
     }
+    if(!route->getStartFromBoat())
+    {
+        QMessageBox::critical(0,tr("Pilototo"),tr("Pour utiliser cette action il faut que la route parte du bateau"));
+        return;
+    }
+    bool forceVbvmg=false;
+    int state=0;
+    if(!route->getUseVbvmgVlm())
+    {
+        forceVbvmg=true;
+        state=useVbvmgVlm->checkState();
+        useVbvmgVlm->setChecked(true);
+        this->slotApply();
+    }
     this->fillPilotView(false);
+    if(forceVbvmg)
+    {
+        switch(state)
+        {
+            case Qt::PartiallyChecked:
+                useVbvmgVlm->setCheckState(Qt::PartiallyChecked);
+                break;
+            case Qt::Checked:
+                useVbvmgVlm->setCheckState(Qt::Checked);
+                break;
+            default:
+                useVbvmgVlm->setCheckState(Qt::Unchecked);
+                break;
+        }
+        keepModel=true;
+        this->slotApply();
+        keepModel=false;
+    }
 }
 void DialogRoute::fillPilotView(bool def)
 {
@@ -900,12 +986,13 @@ void DialogRoute::fillPilotView(bool def)
         }
         items[0]->setData(QVariant(QMetaType::VoidStar, &poi ),Qt::UserRole);
         items[0]->setTextAlignment(Qt::AlignCenter| Qt::AlignVCenter);
+
         items.append(new QStandardItem(poi->getName()));
         items[1]->setTextAlignment(Qt::AlignCenter| Qt::AlignVCenter);
         items[1]->setEditable(false);
         items.append(new QStandardItem(QString().sprintf("%.2f",poi->getWph())));
         items[2]->setTextAlignment(Qt::AlignCenter| Qt::AlignVCenter);
-        items[2]->setEditable(false);
+        items[2]->setEditable(true);
         switch(poi->getNavMode())
         {
             case 0:
@@ -920,6 +1007,7 @@ void DialogRoute::fillPilotView(bool def)
         }
         items[3]->setTextAlignment(Qt::AlignCenter| Qt::AlignVCenter);
         items[3]->setEditable(false);
+
         model->appendRow(items);
     }
 
@@ -938,8 +1026,13 @@ void DialogRoute::slotExportCSV()
         routePath=QDir::currentPath();
         Settings::setSetting("exportRouteCSVFolder",routePath);
     }
+#ifdef __WIN_QTVLM
+    QString fileName = QFileDialog::getSaveFileName(this,
+                         tr("Exporter un tableau de marche"), routePath, "CSV  (*.csv)",0,QFileDialog::DontUseNativeDialog);
+#else
     QString fileName = QFileDialog::getSaveFileName(this,
                          tr("Exporter un tableau de marche"), routePath, "CSV  (*.csv)");
+#endif
     if(fileName.isEmpty() || fileName.isNull()) return;
     QFile::remove(fileName);
     QFile routeFile(fileName);
@@ -994,8 +1087,8 @@ void DialogRoute::slotEnvoyer()
         POI * poi=reinterpret_cast<class POI *>(qvariant_cast<void*>(model->item(n,0)->data(Qt::UserRole)));
         QDateTime tt=QDateTime().fromString(model->item(n,0)->data(Qt::EditRole).toString(),"dd MMM yyyy-hh:mm:ss");
         tt.setTimeSpec(Qt::UTC);
-        //qWarning()<<poi->getName()<<tt;
         poi->setPiloteDate(tt.toTime_t());
+        poi->setPiloteWph(model->item(n,2)->data(Qt::EditRole).toDouble());
         poiList.append(poi);
     }
     parent->setPilototo(poiList);
@@ -1004,38 +1097,109 @@ void DialogRoute::slotEnvoyer()
 
 //---------------------------------------
 DateBoxDelegate::DateBoxDelegate(QObject *parent)
-    : QItemDelegate(parent)
+    : QStyledItemDelegate(parent)
 {
 }
 QWidget *DateBoxDelegate::createEditor(QWidget *parent,
     const QStyleOptionViewItem &/* option */,
-    const QModelIndex &/* index */) const
+    const QModelIndex & index ) const
 {
-    QDateTimeEdit *editor = new QDateTimeEdit(parent);
-    editor->setTimeSpec(Qt::UTC);
-    editor->setDisplayFormat("dd MMM yyyy-hh:mm:ss");
-    return editor;
+    if(index.column()==0)
+    {
+        QDateTimeEdit *editor = new QDateTimeEdit(parent);
+        editor->setTimeSpec(Qt::UTC);
+        editor->setDisplayFormat("dd MMM yyyy-hh:mm:ss");
+        editor->setDateTime(QDateTime(QDate(2012,01,01),QTime(22,22,00)));
+
+        QAbstractItemModel *model=(const_cast<QAbstractItemModel*>(index.model()));        
+        /* saving old size */
+        QSize curSize = model->data(index,Qt::SizeHintRole).toSize();
+        model->setData(index,QVariant(curSize),Qt::UserRole+1);
+        /* setting new one */
+        model->setData(index,QVariant(editor->sizeHint()),Qt::SizeHintRole);
+
+        DateBoxDelegate *obj = const_cast<DateBoxDelegate *>(this);
+        QMetaObject::invokeMethod(obj, "captureSizeHint", Qt::QueuedConnection,
+            Q_ARG(QModelIndex, index) );
+
+        return editor;
+    }
+    else
+    {
+        QDoubleSpinBox *editor = new QDoubleSpinBox(parent);
+        editor->setMinimum(-1);
+        editor->setMaximum(359.99);
+        editor->setDecimals(2);
+        editor->setAlignment(Qt::AlignRight);
+        QAbstractItemModel *model=(const_cast<QAbstractItemModel*>(index.model()));
+        /* saving old size */
+        QSize curSize = model->data(index,Qt::SizeHintRole).toSize();
+        model->setData(index,QVariant(curSize),Qt::UserRole+1);
+        /* setting new one */
+        model->setData(index,QVariant(editor->sizeHint()),Qt::SizeHintRole);
+
+        /* tringer sizeHintChanged */
+        DateBoxDelegate *obj = const_cast<DateBoxDelegate *>(this);
+        QMetaObject::invokeMethod(obj, "captureSizeHint", Qt::QueuedConnection,
+            Q_ARG(QModelIndex, index) );
+
+        return editor;
+    }
 }
+
 void DateBoxDelegate::setEditorData(QWidget *editor,
                                     const QModelIndex &index) const
 {
-    QDateTime value = QDateTime().fromString(index.model()->data(index, Qt::EditRole).toString(),"dd MMM yyyy-hh:mm:ss");
-    value.setTimeSpec(Qt::UTC);
-    //qWarning()<<"setEditorData"<<index<<value;
-    QDateTimeEdit *editBox = static_cast<QDateTimeEdit*>(editor);
-    editBox->setMinimumDateTime(QDateTime().currentDateTimeUtc());
-    editBox->setDateTime(value);
+    if(index.column()==0)
+    {
+        QDateTime value = QDateTime().fromString(index.model()->data(index, Qt::EditRole).toString(),"dd MMM yyyy-hh:mm:ss");
+        value.setTimeSpec(Qt::UTC);
+        QDateTimeEdit *editBox = static_cast<QDateTimeEdit*>(editor);
+        editBox->setMinimumDateTime(QDateTime().currentDateTimeUtc());
+        editBox->setDateTime(value);
+    }
+    else
+    {
+        double value=index.model()->data(index,Qt::EditRole).toDouble();
+        QDoubleSpinBox *editBox=static_cast<QDoubleSpinBox*>(editor);
+        editBox->setValue(value);
+        editBox->setMinimum(-1);
+        editBox->setMaximum(359.99);
+        editBox->setDecimals(2);
+        editBox->setAlignment(Qt::AlignRight);
+    }
 }
 void DateBoxDelegate::setModelData(QWidget *editor, QAbstractItemModel *model,
                                    const QModelIndex &index) const
 {
-    QDateTimeEdit *editBox = static_cast<QDateTimeEdit*>(editor);
-    QDateTime value = editBox->dateTime().toUTC();
-    value.setTimeSpec(Qt::UTC);
-    model->setData(index,value.toString("dd MMM yyyy-hh:mm:ss"),Qt::EditRole);
+    if(index.column()==0)
+    {
+        QDateTimeEdit *editBox = static_cast<QDateTimeEdit*>(editor);
+        QDateTime value = editBox->dateTime().toUTC();
+        value.setTimeSpec(Qt::UTC);
+        model->setData(index,value.toString("dd MMM yyyy-hh:mm:ss"),Qt::EditRole);
+        /* get old size */
+        QVariant oldSize = model->data(index,Qt::UserRole+1).toSize();
+        model->setData(index,oldSize,Qt::SizeHintRole);
+    }
+    else
+    {
+        QDoubleSpinBox *editBox = static_cast<QDoubleSpinBox*>(editor);
+        double value = editBox->value();
+        if(value<0) value=-1.0;
+        model->setData(index,QString().sprintf("%.2f",value),Qt::EditRole);
+        /* get old size */
+        QVariant oldSize = model->data(index,Qt::UserRole+1).toSize();
+        model->setData(index,oldSize,Qt::SizeHintRole);
+    }
+
+    DateBoxDelegate *obj = const_cast<DateBoxDelegate *>(this);
+    QMetaObject::invokeMethod(obj, "captureSizeHint", Qt::QueuedConnection,
+        Q_ARG(QModelIndex, index) );
+
 }
-void DateBoxDelegate::updateEditorGeometry(QWidget *editor,
-    const QStyleOptionViewItem &option, const QModelIndex &/* index */) const
+
+void DateBoxDelegate::captureSizeHint(const QModelIndex & index)
 {
-    editor->setGeometry(option.rect);
+    emit sizeHintChanged(index);
 }

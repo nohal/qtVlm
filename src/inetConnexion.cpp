@@ -75,33 +75,33 @@ void inetConnexion::resetInet(void)
     replyList.clear();
 }
 
-void inetConnexion::doRequestGet(inetClient* client,QString requestUrl,QString host)
+void inetConnexion::doRequestGet(inetClient* client,QString requestUrl,QString host,bool needAuth)
 {
     hasProgress=false;
-    doRequest(REQUEST_GET,client,requestUrl,QString(),host);
+    doRequest(REQUEST_GET,client,requestUrl,QString(),host,needAuth);
 }
 
-void inetConnexion::doRequestGetProgress(inetClient* client,QString requestUrl,QString host)
+void inetConnexion::doRequestGetProgress(inetClient* client,QString requestUrl,QString host,bool needAuth)
 {
     if(hasProgress)
     {
         qWarning() << "Already running request with progress";
-        doRequest(REQUEST_GET,client,requestUrl,QString(),host);
+        doRequest(REQUEST_GET,client,requestUrl,QString(),host,needAuth);
     }
     else
     {
         hasProgress=true;
         progressDialog->showDialog(host+requestUrl);
-        doRequest(REQUEST_GET,client,requestUrl,QString(),host);
+        doRequest(REQUEST_GET,client,requestUrl,QString(),host,needAuth);
     }
 }
 
-void inetConnexion::doRequestPost(inetClient* client,QString requestUrl,QString data,QString host)
+void inetConnexion::doRequestPost(inetClient* client,QString requestUrl,QString data,QString host,bool needAuth)
 {
-    doRequest(REQUEST_POST,client,requestUrl,data,host);
+    doRequest(REQUEST_POST,client,requestUrl,data,host,needAuth);
 }
 
-void inetConnexion::doRequest(int type,inetClient* client,QString requestUrl,QString data,QString host)
+void inetConnexion::doRequest(int type,inetClient* client,QString requestUrl,QString data,QString host,bool needAuth)
 {
     QString page;
     QNetworkReply * currentReply;
@@ -121,7 +121,9 @@ void inetConnexion::doRequest(int type,inetClient* client,QString requestUrl,QSt
     request.setUrl(QUrl(page));
     Util::addAgent(request);
 
-    if(client->getNeedAuth())
+    client->set_currentNeedAuth(needAuth);
+
+    if(needAuth)
     {         
         QString concatenated = client->getAuthLogin() + ":" + client->getAuthPass();
         //qWarning() << "Adding auth data: " <<concatenated ;
@@ -133,6 +135,7 @@ void inetConnexion::doRequest(int type,inetClient* client,QString requestUrl,QSt
 //            delete inetManager->cookieJar();
         inetManager->setCookieJar(new QNetworkCookieJar());
         //inetManager->cookieJar()->setParent(0);
+
     }
 
     if(type==REQUEST_POST)
@@ -163,7 +166,7 @@ void inetConnexion::doRequest(int type,inetClient* client,QString requestUrl,QSt
 
 void inetConnexion::slot_requestFinished(QNetworkReply * currentReply)
 {
-    /* Recherche du client correspondant � currentReply */
+    /* Recherche du client correspondant a currentReply */
     bool found=false;
     inetClient * currentClient;
     QListIterator<inetClient*> i (replyList);
@@ -198,6 +201,9 @@ void inetConnexion::slot_requestFinished(QNetworkReply * currentReply)
             if(currentReply->error()==3)
                 QMessageBox::warning(0,QObject::tr("Erreur internet"),
                               QObject::tr("Serveur VLM inaccessible"));
+            else if (currentReply->error()!=QNetworkReply::OperationCanceledError)
+                QMessageBox::warning(0,QObject::tr("Erreur internet"),
+                              currentReply->errorString());
             currentClient->inetError();
             currentClient->resetReply();
             currentClient->clearCurrentRequest();
@@ -240,7 +246,7 @@ void inetConnexion::slot_authRequired(QNetworkReply* currentReply,QAuthenticator
 
     if(found)
     {
-        if(currentClient->getNeedAuth())
+        if(currentClient->get_currentNeedAuth())
         {
             qWarning() << "Auth failed for " << currentClient->getAuthLogin() << " " << currentClient->getAuthPass() <<
                     " reqType=" << currentClient->getCurrentRequest();

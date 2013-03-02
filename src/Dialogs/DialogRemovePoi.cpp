@@ -45,7 +45,7 @@ DialogRemovePoi::DialogRemovePoi(QWidget * parent,myCentralWidget * centralWidge
     for(int i=0;i<poiList.count();++i) {
         if(poiList.at(i)->getRoute()!=NULL) continue;
         QListWidgetItem * item = new QListWidgetItem(poiList.at(i)->getName());
-        item->setData(Qt::UserRole,VPtr<POI>::asQVariant(poiList.at(i)));
+        item->setData(Qt::UserRole,qVariantFromValue((void*)poiList.at(i)));
         ls_poiList->addItem(item);
     }
 
@@ -72,12 +72,14 @@ void DialogRemovePoi::slot_none(void) {
 void DialogRemovePoi::slot_remove(void) {
     QList<QListWidgetItem*> selectedItems=ls_poiList->selectedItems();
     if(selectedItems.count()==0) return ;
-    if(QMessageBox::question(this,tr("Removing POI"),
-                          QString(tr("Are you sure to remove %1 POI?")).arg(selectedItems.count())
-                             ) == QMessageBox::Ok)
+    int rep=QMessageBox::question(this,tr("Removing POI"),
+                          QString(tr("Are you sure to remove %1 POI?")).arg(selectedItems.count()),QMessageBox::Yes | QMessageBox::No);
+    if(rep==QMessageBox::Yes)
+
     {
+        qWarning()<<"selected items"<<selectedItems.count();
         for(int i=0;i<selectedItems.count();++i) {
-            POI * poi = VPtr<POI>::asPtr(selectedItems.at(i)->data(Qt::UserRole));
+            POI * poi = (POI*) selectedItems.at(i)->data(Qt::UserRole).value<void*>();
             if(poi)
             {
                 if(poi->getRoute()!=NULL)
@@ -89,10 +91,10 @@ void DialogRemovePoi::slot_remove(void) {
                 poi->deleteLater();
             }
         }
+        Settings::setSetting(this->objectName()+".height",this->height());
+        Settings::setSetting(this->objectName()+".width",this->width());
         accept();
     }
-    Settings::setSetting(this->objectName()+".height",this->height());
-    Settings::setSetting(this->objectName()+".width",this->width());
 }
 
 void DialogRemovePoi::slot_itemSelectionChange(void) {

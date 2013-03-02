@@ -45,8 +45,6 @@ DialogPilototo::DialogPilototo(MainWindow *main,myCentralWidget * parent,inetCon
     Util::setFontDialog(this);
     selectPOI_mode=1;
 
-    needAuth=true;
-
     instructionEditor = new DialogPilototoParam(this);
     connect(instructionEditor,SIGNAL(doSelectPOI(DialogPilototoInstruction *,int)),
             this,SLOT(doSelectPOI(DialogPilototoInstruction *,int)));
@@ -431,7 +429,7 @@ void DialogPilototo::sendPilototo(void)
         //qWarning() << "Sending: " << data->script << "(" << scriptList[data->script] << ") - " << data->param;
         lastOrder="/ws/boatsetup/" + scriptList[data->script] + " | " + "parms="+data->param+"&select_idu="+QString().setNum(myBoat->getId());
         inetPost(VLM_DO_REQUEST,"/ws/boatsetup/" + scriptList[data->script],
-                 "parms="+data->param+"&select_idu="+QString().setNum(myBoat->getId()));
+                 "parms="+data->param+"&select_idu="+QString().setNum(myBoat->getId()),true);
         delete data;
     }
 }
@@ -476,7 +474,7 @@ void DialogPilototo::requestFinished (QByteArray res)
                 inetPost(999,"/ws/boatsetup/pilot_set.php",
                          "parms={ \"idu\" : "+QString().setNum(myBoat->getId())+
                          ", \"pim\" : 5}&select_idu="+
-                         QString().setNum(myBoat->getId()));
+                         QString().setNum(myBoat->getId()),true);
                 return;
             }
             else if(poiToWp->getNavMode()==1 && this->myBoat->getPilotType()!=4) //VMG
@@ -485,7 +483,7 @@ void DialogPilototo::requestFinished (QByteArray res)
                 inetPost(999,"/ws/boatsetup/pilot_set.php",
                          "parms={ \"idu\" : "+QString().setNum(myBoat->getId())+
                          ", \"pim\" : 4}&select_idu="+
-                         QString().setNum(myBoat->getId()));
+                         QString().setNum(myBoat->getId()),true);
                 return;
             }
             else if(poiToWp->getNavMode()==2 && this->myBoat->getPilotType()!=3) //ORTHO
@@ -494,7 +492,7 @@ void DialogPilototo::requestFinished (QByteArray res)
                 inetPost(999,"/ws/boatsetup/pilot_set.php",
                          "parms={ \"idu\" : "+QString().setNum(myBoat->getId())+
                          ", \"pim\" : 3}&select_idu="+
-                         QString().setNum(myBoat->getId()));
+                         QString().setNum(myBoat->getId()),true);
                 return;
             }
         }
@@ -621,12 +619,13 @@ void DialogPilototo::setInstructions(boat * pvBoat, QList<POI *> pois)
         pip.insert("targetlat",QString().sprintf("%.10f",poi->getLatitude()));
         pip.insert("targetlong",QString().sprintf("%.10f",poi->getLongitude()));
         if(poi->getWph()!=-1)
-            pip.insert("targetandhdg",QString().sprintf("%.2f",poi->getWph()));
+            pip.insert("targetandhdg",QString().sprintf("%.2f",poi->getPiloteWph()));
         cur_instruction.insert("pip",pip);
         cur_instruction.insert("idu",myBoat->getBoatId().toInt());
         instr_ptr->param=serializer.serialize(cur_instruction);
         instructions->append(instr_ptr);
         poi->setPiloteDate(-1);
+        poi->setPiloteWph(-1);
     }
     if(!pois.isEmpty())
     {

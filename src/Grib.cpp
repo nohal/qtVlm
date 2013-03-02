@@ -37,7 +37,11 @@ Copyright (C) 2008 - Jacques Zaninetti - http://zygrib.free.fr
 #include "settings.h"
 
 #include "interpolation.h"
+#ifdef QT_V5
+#include <QtConcurrent/QtConcurrentMap>
+#else
 #include <QtConcurrentMap>
+#endif
 #include <QVector>
 #ifdef __QTVLM_WITH_TEST
 int nbWarning;
@@ -1209,8 +1213,10 @@ QRgb Grib::getWindColor(double v, bool smooth)
     else {
         // Interpolation de couleur
         double fbeauf = Util::kmhToBeaufort_F(v);
-        QColor c1 = windColor[ (int) fbeauf ];
-        QColor c2 = windColor[ (int) fbeauf +1 ];
+        int f1=qBound(0,(int)(fbeauf),12);
+        int f2=qBound(0,(int)(fbeauf+1),12);
+        QColor c1 = windColor[f1];
+        QColor c2 = windColor[f2];
         double dcol = fbeauf-floor(fbeauf);
         rgb = qRgba(
                 (int)( c1.red()  *(1.0-dcol) + dcol*c2.red()   +0.5),
@@ -2100,7 +2106,7 @@ void Grib::draw_TEMPERATURE_Labels(QPainter &pnt, const Projection *proj)
                     if (v1!= GRIB_NOTDEF)
                         v = v + ((v1-v)/((double)(tNxt-tPrev)))*((double)(currentDate-tPrev));
                 }
-                QString strtemp = Util::formatTemperature_short(v-273.15);
+                QString strtemp = Util::formatTemperature_short(v);
                 pnt.drawText(i-fmet.width("XXX")/2, j+fmet.ascent()/2, strtemp);
             }
 

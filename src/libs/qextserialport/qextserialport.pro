@@ -1,4 +1,3 @@
-
 PROJECT                 = qextserialport
 TEMPLATE                = lib
 

@@ -21,8 +21,11 @@ Original code: zyGrib: meteorological GRIB file viewer
 Copyright (C) 2008 - Jacques Zaninetti - http://zygrib.free.fr
 
 ***********************************************************************/
-
+#ifdef QT_V5
+#include <QtWidgets/QMessageBox>
+#else
 #include <QMessageBox>
+#endif
 #include <cmath>
 #include <cassert>
 
@@ -38,6 +41,7 @@ DialogLoadGrib::DialogLoadGrib() : QDialog()
 {
     loadgrib = new LoadGribFile();
     connect (loadgrib,SIGNAL(ungrayButtons()),this,SLOT(slotUngrayButtons()));
+    connect (loadgrib,SIGNAL(clearSelection()),this,SIGNAL(clearSelection()));
     assert(loadgrib);
 
     setWindowTitle(tr("Telechargement"));

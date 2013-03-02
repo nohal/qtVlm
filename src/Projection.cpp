@@ -38,7 +38,6 @@ Projection::Projection(int w, int h, double cx, double cy):
     PX (0), PY (0)
 {
     frozen=false;
-        scalemax = 4e8;
     scale = -1;
     my_setScreenSize(w, h);
     my_setCenterInMap(cx,cy);
@@ -96,10 +95,12 @@ void Projection::zoomOnZone(const double &x0, const double &y0, const double &x1
     //qWarning() << "final scale: " << scale;
 
     // Nouvelle position du centre
-    CX=(xE+xW)/2;
-    CY=(yN+yS)/2;
-    PX=CX;
-    PY=radToDeg(log(tan(degToRad(CY)/2 + M_PI_4)));
+    PX = (xE+xW)/2;
+    PY = ((radToDeg (log (tan (degToRad (yN)/2 + M_PI_4)))
+           + radToDeg (log (tan (degToRad (yS)/2 + M_PI_4))))
+          / 2);
+    CX = PX;
+    CY = radToDeg (2 * (atan (exp (degToRad (PY))) - M_PI_4));
 
     //qWarning() << "New center (" << CX << "," << CY << ") proj: (" << PX << "," << PY << ")";
 
@@ -190,6 +191,10 @@ void Projection::setCentralPixel(const int &i, const int &j)
     screen2map(i, j, &x, &y);
     my_setCenterInMap(x,y);
     emit_projectionUpdated();
+}
+void Projection::setCentralPixel(const QPointF &c)
+{
+    setCentralPixel(c.x(),c.y());
 }
 
 void Projection::setCenterInMap(const double &x, const double &y)
@@ -283,6 +288,9 @@ void Projection::updateBoundaries() {
     xW=PX-W/(2*scale);
     xE=PX+W/(2*scale);
 
+    //qWarning() << "Updated longitude range:" << xW << "-" << xE;
+    //qWarning() << "Updated latitude range :" << yN << "-" << yS;
+
     /* xW and yN => upper corner */
 
     if((getW()*getH())!=0)
@@ -297,3 +305,4 @@ void Projection::emit_projectionUpdated()
     else
         emit projectionUpdated();
 }
+

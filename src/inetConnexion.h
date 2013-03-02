@@ -36,15 +36,15 @@ class inetConnexion : public QObject
     public:
         inetConnexion(QWidget * main);
         DialogInetProgess * getProgressDialog() {return progressDialog;}
-    ~inetConnexion(void);
+        ~inetConnexion(void);
 
-        void doRequestGet(inetClient* client,QString requestUrl);
-        void doRequestGetProgress(inetClient* client,QString requestUrl);
-        void doRequestPost(inetClient* client,QString requestUrl,QString data);
+        void doRequestGet(inetClient* client,QString requestUrl,bool needAuth);
+        void doRequestGetProgress(inetClient* client,QString requestUrl,bool needAuth);
+        void doRequestPost(inetClient* client,QString requestUrl,QString data,bool needAuth);
 
-        void doRequestGet(inetClient* client,QString requestUrl, QString host);
-        void doRequestGetProgress(inetClient* client,QString requestUrl, QString host);
-        void doRequestPost(inetClient* client,QString requestUrl,QString data, QString host);
+        void doRequestGet(inetClient* client,QString requestUrl, QString host,bool needAuth);
+        void doRequestGetProgress(inetClient* client,QString requestUrl, QString host,bool needAuth);
+        void doRequestPost(inetClient* client,QString requestUrl,QString data, QString host,bool needAuth);
 
         bool isAvailable(void);
 
@@ -63,7 +63,7 @@ class inetConnexion : public QObject
         DialogInetProgess * progressDialog;
 
 	void resetInet(void);
-        void doRequest(int type,inetClient* client,QString requestUrl,QString data, QString host);
+        void doRequest(int type,inetClient* client,QString requestUrl,QString data, QString host, bool needAuth);
 
         QList<inetClient*> replyList;
 };
