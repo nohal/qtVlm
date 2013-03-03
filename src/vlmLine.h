@@ -91,6 +91,7 @@ class vlmLine : public QGraphicsWidget
         ~vlmLine();
 
         void set_zValue(const double &z);
+        void drawInMagnifier(QPainter *pnt, Projection *tempProj);
 protected:
         void paint(QPainter * pnt, const QStyleOptionGraphicsItem * , QWidget * );
         QRectF boundingRect() const;
@@ -140,6 +141,7 @@ protected:
         QPainterPath myPath;
         double myZvalue;
         myCentralWidget * mcp;
+        bool drawingInMagnifier;
 };
 Q_DECLARE_TYPEINFO(vlmLine,Q_MOVABLE_TYPE);
 

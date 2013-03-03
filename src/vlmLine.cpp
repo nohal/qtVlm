@@ -33,6 +33,7 @@ vlmLine::vlmLine(Projection * proj, QGraphicsScene * myScene,double z_level) :
     this->myZvalue=z_level;
     this->proj=proj;
     this->myScene=myScene;
+    drawingInMagnifier=false;
     connect(proj,SIGNAL(projectionUpdated()),this,SLOT(slot_showMe()));
     myScene->addItem(this);
     this->setZValue(z_level);
@@ -275,10 +276,24 @@ void vlmLine::calculatePoly(void)
         foreach(const QPolygon * pol,polyList)
             myPath2.addPolygon(*pol);
     }
+    if(drawingInMagnifier) return;
     prepareGeometryChange();
     boundingR=tempBound;
     myPath=myPath2;
 }
+void vlmLine::drawInMagnifier(QPainter * pnt, Projection * tempProj)
+{
+    if(!this->isVisible()) return;
+    drawingInMagnifier=true;
+    Projection * myProj=proj;
+    proj=tempProj;
+    calculatePoly();
+    paint(pnt,NULL,NULL);
+    proj=myProj;
+    drawingInMagnifier=false;
+    calculatePoly();
+}
+
 void vlmLine::hoverEnterEvent(QGraphicsSceneHoverEvent *)
 {
     //qWarning()<<"entering hoverEnter event";
