@@ -362,7 +362,7 @@ void ToolBar::slot_loadEstimeParam(void) {
 
     cbEstime->setEnabled(true);
 
-    if(Settings::getSetting("scalePolar",0).toInt()==1) {
+    if(Settings::getSetting("scalePolar",0).toInt()!=1) {
         switch(Settings::getSetting("estimeType","0").toInt())
         {
             case 0:
