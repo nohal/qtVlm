@@ -395,6 +395,7 @@ void ToolBar::slot_loadEstimeParam(void) {
 }
 
 void ToolBar::slot_estimeStartChanged(int state) {
+    if(state>1) state=1;
     Settings::setSetting("startSpeedEstime", state);
     emit estimeParamChanged();
 }
