@@ -11,7 +11,8 @@ class vlmPoint
         QPointF getPointF() {return QPointF(lon,lat);}
         double  lon;
         double  lat;
-        const  vlmPoint *origin;
+        vlmPoint *origin;
+        QList<vlmPoint *> myChildren;
         bool   isStart;
         double  startCap;
         bool   isDead;
@@ -39,8 +40,11 @@ class vlmPoint
         double  capVmg;
         bool   notSimplificable;
         bool   operator==(const vlmPoint &other) const
-               {return this->lon==other.lon &&
-                       this->lat==other.lat;}
+               {return qRound(this->lon*10e6)==qRound(other.lon*10e6) &&
+                       qRound(this->lat*10e6)==qRound(other.lat*10e6);}
+        bool   operator!=(const vlmPoint &other) const
+               {return qRound(this->lon*10e6)!=qRound(other.lon*10e6) ||
+                       qRound(this->lat*10e6)!=qRound(other.lat*10e6);}
         double  maxDistIso;
         ROUTAGE * routage;
         bool    isPOI;

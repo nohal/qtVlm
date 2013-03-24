@@ -79,8 +79,8 @@ class vlmLine : public QGraphicsWidget
         void setPointCoordProj(const int &n,const double &x,const double &y){this->line[n].lonProj=x;this->line[n].latProj=y;}
         void setNotSimplificable(const int &n){this->line[n].notSimplificable=true;}
         void setLastPointIsPoi(){this->line[line.count()-1].isPOI=true;}
-        const vlmPoint * getOrigin(const int &n) {return this->line.at(n).origin;}
-        const vlmPoint * getPoint(const int &n) {return & line.at(n);}
+        vlmPoint * getOrigin(const int &n) {return this->line[n].origin;}
+        vlmPoint * getPoint(const int &n) {return & line[n];}
         void setInterpolated(const double &lon,const double &lat){this->interpolatedLon=lon;this->interpolatedLat=lat;update();}
         void setHasInterpolated(const bool &b){this->hasInterpolated=b;update();}
         vlmPoint * getLastPoint() {return & line.last();}

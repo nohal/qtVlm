@@ -36,7 +36,7 @@ Magnifier::Magnifier(myCentralWidget *parent)
 
 
 
-    int zoom=Settings::getSetting("magnifierZoom","3").toInt();
+    int zoom=qMin(10,Settings::getSetting("magnifierZoom","3").toInt());
     if(zoom*proj->getScale()>scalemax)
         zoom=floor((double)scalemax/proj->getScale());
     width=proj->getW()*zoom;
@@ -89,6 +89,7 @@ Magnifier::Magnifier(myCentralWidget *parent)
                 gate->drawInMagnifier(&pnt1,myProj);
             }
         }
+        parent->getSelectedBoat()->getTraceDrawing()->drawInMagnifier(&pnt1,myProj);
     }
     pnt1.end();
     reader->setProj(proj);

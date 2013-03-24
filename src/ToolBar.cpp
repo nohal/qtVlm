@@ -271,7 +271,7 @@ void ToolBar::load_settings(void) {
     for(int i=0;i<toolBarList.count();++i) {
         MyToolBar * toolBar = toolBarList.at(i);
         QString key = "TB_" + toolBar->get_name();
-        toolBar->setVisible(Settings::getSetting(key,true,"ToolBar").toBool());
+        toolBar->setVisible(Settings::getSetting(key,"true","ToolBar").toString()=="true");
         toolBar->setEnabled(toolBar->isVisible());
         toolBar->set_displayed(toolBar->isVisible());
         toolBar->initCanHide();
@@ -282,7 +282,7 @@ void ToolBar::save_settings(void) {
     for(int i=0;i<toolBarList.count();++i) {
         MyToolBar * toolBar = toolBarList.at(i);
         QString key = "TB_" + toolBar->get_name();
-        Settings::setSetting(key,toolBar->get_displayed(),"ToolBar");
+        Settings::setSetting(key,toolBar->get_displayed()?"true":"false","ToolBar");
     }
 }
 

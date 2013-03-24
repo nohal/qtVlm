@@ -206,7 +206,10 @@ class ROUTAGE : public QObject
         void setRoutageOrtho(const bool &b){routageOrtho=b;}
         bool getShowBestLive() const {return showBestLive;}
         void setShowBestLive(const bool &b){showBestLive=b;}
-    public slots:
+        QList<bool> * getPreviousIsoLand(){return &previousIsoLand;}
+        QList<QLineF> * getForbidZone(){return &forbidZone;}
+        QPolygonF * getShapeIso(){return &shapeIso;}
+public slots:
         void slot_edit();
         void slot_abort(){this->aborted=true;}
         void slot_createPivot();
@@ -286,7 +289,9 @@ class ROUTAGE : public QObject
         int msecsD2;
         QList<vlmPoint> tempPoints;
         QPolygonF previousIso;
+        QList<bool> previousIsoLand;
         QList<QLineF> previousSegments;
+        QList<QLineF> forbidZone;
         bool somethingHasChanged;
         void checkIsoCrossingPreviousSegments();
         void epuration(int toBeRemoved);
@@ -357,6 +362,8 @@ class ROUTAGE : public QObject
         bool colorGrib;
         bool routageOrtho;
         bool showBestLive;
+        QPolygonF shapeIso;
+        void calculateShapeIso();
     };
 Q_DECLARE_TYPEINFO(ROUTAGE,Q_MOVABLE_TYPE);
 #endif // ROUTAGE_H
