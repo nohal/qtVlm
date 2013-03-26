@@ -363,7 +363,7 @@ public slots:
         bool routageOrtho;
         bool showBestLive;
         QPolygonF shapeIso;
-        void calculateShapeIso();
+        void calculateShapeIso(bool drawIt=false);
     };
 Q_DECLARE_TYPEINFO(ROUTAGE,Q_MOVABLE_TYPE);
 #endif // ROUTAGE_H

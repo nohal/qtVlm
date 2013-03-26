@@ -40,4 +40,5 @@ vlmPoint::vlmPoint(double lon,double lat)
     current_angle=0;
     this->debug=0;
     this->foundByNewtonRaphson=false;
+    this->isoIndex=-1;
 }

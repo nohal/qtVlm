@@ -12,7 +12,7 @@ class vlmPoint
         double  lon;
         double  lat;
         vlmPoint *origin;
-        QList<vlmPoint *> myChildren;
+        QList<vlmPoint> myChildren;
         bool   isStart;
         double  startCap;
         bool   isDead;
@@ -21,7 +21,7 @@ class vlmPoint
         time_t eta;
         double distIso;
         double capOrigin;
-	double distOrigin;
+        double distOrigin;
         int    internal_1;
         double internal_2;
         int    debugInt;
@@ -56,6 +56,7 @@ class vlmPoint
         bool foundByNewtonRaphson;
         double convertionLon;
         double convertionLat;
+        int isoIndex;
         int debug;
 };
 Q_DECLARE_TYPEINFO(vlmPoint,Q_MOVABLE_TYPE);

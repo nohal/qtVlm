@@ -38,27 +38,27 @@ Copyright (C) 2008 - Jacques Zaninetti - http://zygrib.free.fr
 QMap<QString,QString> appFolder;
 
 #if 0 /*put 1 to force crash on assert, useful for debugging*/
-void crashingMessageHandler(QtMsgType type, const char *msg)
-{
+void crashingMessageHandler(QtMsgType type, const QMessageLogContext &context, const QString &msg){
+    QByteArray localMsg = msg.toLocal8Bit();
     switch(type){
     case QtDebugMsg:
-        fprintf(stderr,"Debug: %s\n", msg);
+        fprintf(stderr,"Debug: %s\n", localMsg.constData());
         break;
     case QtWarningMsg:
-        fprintf(stderr,"Warning: %s\n", msg);
+        fprintf(stderr,"Warning: %s\n", localMsg.constData());
         break;
     case QtCriticalMsg:
-        fprintf(stderr,"Critical: %s\n", msg);
+        fprintf(stderr,"Critical: %s\n", localMsg.constData());
         break;
     case QtFatalMsg:
-        fprintf(stderr,"Fatal: %s\n", msg);
+        fprintf(stderr,"Fatal: %s\n", localMsg.constData());
         __asm("int3");
         abort();
     }
 }
 int main(int argc, char *argv[])
 {
-    qInstallMsgHandler(crashingMessageHandler);
+    qInstallMessageHandler(crashingMessageHandler);
 #else
 int main(int argc, char *argv[])
 {

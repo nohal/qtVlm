@@ -56,6 +56,7 @@ Original code: virtual-winds.com
 //#define traceTime;
 
 //#define HAS_ICEGATE
+#define USE_SHAPEISO
 
 inline vlmPoint findPointThreaded(const vlmPoint &point)
 {
@@ -214,7 +215,7 @@ inline vlmPoint findPointThreaded(const vlmPoint &point)
 
 
     bool bad=false;
-#if 1
+#ifndef USE_SHAPEISO
     QPolygonF * previousIso=pt.routage->getPreviousIso();
     QList<QLineF> * previousSegments=pt.routage->getPreviousSegments();
     if(!pt.origin->isStart && previousIso->count()>1)
@@ -227,7 +228,7 @@ inline vlmPoint findPointThreaded(const vlmPoint &point)
             if(pt.originNb!=i && pt.originNb!=i+1)
             {
                 //if(temp1.intersect(s,&dummy)==QLineF::BoundedIntersection)
-                if(!pt.routage->getPreviousIsoLand()->at(i) && temp1.intersect(s,&dummy)==QLineF::BoundedIntersection)
+                if(temp1.intersect(s,&dummy)==QLineF::BoundedIntersection)
                 {
                     bad=true;
                     break;
@@ -1191,6 +1192,7 @@ void ROUTAGE::slot_calculate()
         point.eta=i_eta;
     else
         point.eta=eta;
+    point.isoIndex=0;
     pivotPoint=point;
     iso->addVlmPoint(point);
     if(i_iso)
@@ -1380,6 +1382,8 @@ void ROUTAGE::slot_calculate()
                 limitLeft.setLength(list->at(n+2).distIso);
             }
 #endif
+//            int nbHitsLand=0;
+//            bool reverseCap=false;
             while(true)
             {
                 QList<vlmPoint> findPoints;
@@ -1516,6 +1520,25 @@ void ROUTAGE::slot_calculate()
                                 iso->setNotSimplificable(n);
                                 break;
                             }
+#if 0
+                            if(!reverseCap && fp==findPoints.size()-1 && polarPoints.isEmpty() && nbHitsLand>findPoints.size()*.9)
+                            {
+                                reverseCap=true;
+                                toBeRestarted=true;
+                                tryingToFindHole=true;
+                                hasTouchCoast=true;
+                                polarPoints.clear();
+                                caps.clear();
+                                caps.reserve(180);
+                                vlmPoint pt=list->at(n);
+                                pt.capArrival=Util::A360(pt.capArrival+180.0);
+                                qWarning()<<"inside lastTrick with"<<pt.capArrival;
+                                calculateCaps(&caps,pt,1,179);
+                                iso->setNotSimplificable(n);
+                                break;
+                            }
+                            ++nbHitsLand;
+#endif
                             continue;
                         }
 #ifdef traceTime
@@ -1911,7 +1934,6 @@ void ROUTAGE::slot_calculate()
         msecs_6=msecs_6+time.elapsed();
 #endif
         previousIso.clear();
-        previousIsoLand.clear();
 #ifdef traceTime
         QTime t2;
 #endif
@@ -1940,46 +1962,55 @@ void ROUTAGE::slot_calculate()
                     if((checkCoast && map && map->crossing(QLineF(x1,y1,x2,y2),QLineF(tempPoints.at(n).lon,tempPoints.at(n).lat,tempPoints.at(n+1).lon,tempPoints.at(n+1).lat)))
                         || (checkLine && crossBarriere(QLineF(x1,y1,x2,y2))))
                     {
-                        vlmPoint temp=tempPoints.at(n);
-                        temp.isBroken=true;
-                        tempPoints.replace(n,temp);
+                        tempPoints[n].isBroken=true;
+                    }
+                    else
+                    {
+#if 1
+                        QPolygonF pf;
+                        pf.append(QPointF(x1,y1));
+                        pf.append(QPointF(x2,y2));
+                        pf.append(QPointF(x2+.1,y2+.1));
+                        pf.append(QPointF(x1,y1));
+                        if(!shapeIso.intersected(pf).isEmpty())
+                        {
+                            if(tempPoints.at(n).distIso<tempPoints.at(n+1).distIso)
+                                tempPoints.removeAt(n);
+                            else
+                                tempPoints.removeAt(n+1);
+                            --n;
+                            continue;
+                        }
+#endif
+                        tempPoints[n].isBroken=false;
                     }
 #ifdef traceTime
                     msecs_14=msecs_14+t2.elapsed();
 #endif
-
-
                 }
                 if(i_iso)
                     tempPoints[n].eta=i_eta-(int)this->getTimeStep()*60.00;
                 else
                     tempPoints[n].eta=eta+(int)this->getTimeStep()*60.00;
+                tempPoints[n].isoIndex=n;
+                tempPoints.at(n).origin->myChildren.append(tempPoints.at(n));
                 currentIso->addVlmPoint(tempPoints[n]);
-#if 0
                 if(n>0)
                 {
                     if(qAbs(Util::myDiffAngle(tempPoints.at(n).capArrival,
                                                             tempPoints.at(n-1).capArrival)) < 60)
                     {
                         previousIso.append(QPointF(tempPoints.at(n).x,tempPoints.at(n).y));
-                        previousIsoLand.append(tempPoints.at(n).isBroken);
                     }
                     else //insert same point not to loose increment
                     {
                         previousIso.append(previousIso.last());
-                        previousIsoLand.append(tempPoints.at(n-1).isBroken);
                     }
                 }
                 else
                 {
                     previousIso.append(QPointF(tempPoints.at(n).x,tempPoints.at(n).y));
-                    previousIsoLand.append(tempPoints.at(n).isBroken);
                 }
-#else
-                previousIso.append(QPointF(tempPoints.at(n).x,tempPoints.at(n).y));
-                previousIsoLand.append(tempPoints.at(n).isBroken);
-#endif
-                tempPoints.at(n).origin->myChildren.append(&tempPoints[n]);
                 if(!i_iso)
                 {
                     vlmPointGraphic * vg=new vlmPointGraphic(this,nbIso+1,mmm,
@@ -2053,7 +2084,7 @@ void ROUTAGE::slot_calculate()
         double newMinDist=initialDist*10;
         for (int n=0;n<list->count();++n)
         {
-            previousSegments.append(QLineF(list->at(n).origin->x,list->at(n).origin->y,list->at(n).x,list->at(n).y));
+            //previousSegments.append(QLineF(list->at(n).origin->x,list->at(n).origin->y,list->at(n).x,list->at(n).y));
 #if 0
             if(!list->at(n).isStart)
             {
@@ -2132,7 +2163,7 @@ void ROUTAGE::slot_calculate()
             i_isochrones.append(iso);
         else
             isochrones.append(iso);
-        //calculateShapeIso();
+        calculateShapeIso();
         vlmPoint to(arrival.x(),arrival.y());
 #ifdef traceTime
         time.restart();
@@ -2375,7 +2406,7 @@ void ROUTAGE::slot_calculate()
         eLapsed=eLapsed.addSecs(elapsed);
         QString jour;
         jour=jour.sprintf("%d",qRound(jours));
-        //calculateShapeIso();
+        calculateShapeIso(true);
         if(arrived)
         {
             msgBox.setText(tr("Date et heure d'arrivee: ")+finalEta.toString("dd MMM-hh:mm")+
@@ -2477,7 +2508,6 @@ double ROUTAGE::findDistancePreviousIso(const vlmPoint &P, const QPolygonF * pol
 
     for(int i=0;i<poly->count()-1;++i)
     {
-        if(P.routage->getPreviousIsoLand()->at(i)) continue;
         double ax=poly->at(i).x();
         double ay=poly->at(i).y();
         double bx=poly->at(i+1).x();
@@ -2955,6 +2985,22 @@ void ROUTAGE::convertToRoute()
 }
 void ROUTAGE::checkIsoCrossingPreviousSegments()
 {
+#ifdef USE_SHAPEISO
+    for(int nn=0;nn<tempPoints.count();++nn)
+    {
+//        if(tempPoints.at(nn).notSimplificable)
+//            continue;
+//        if(tempPoints.at(nn).origin->notSimplificable)
+//            continue;
+        if(shapeIso.containsPoint(QPointF(tempPoints.at(nn).x,tempPoints.at(nn).y),Qt::OddEvenFill))
+        {
+            somethingHasChanged=true;
+            tempPoints.removeAt(nn);
+            --nn;
+        }
+    }
+    return;
+#endif
     QPointF dummy;
     for(int nn=0;nn<tempPoints.count()-1;++nn)
     {
@@ -2991,7 +3037,6 @@ void ROUTAGE::checkIsoCrossingPreviousSegments()
 #if 1
         for(int mm=0;mm<previousIso.count()-1;++mm) /*also check that new Iso does not cross previous iso*/
         {
-            if(previousIsoLand.at(mm)) continue;
             QLineF S2(previousIso.at(mm),previousIso.at(mm+1));
             if(S1.intersect(S2,&dummy)==QLineF::BoundedIntersection)
 //                    if(fastIntersects(S1,S2))
@@ -4287,84 +4332,130 @@ bool ROUTAGE::checkIceGate(const vlmPoint &p) const
     }
     return true;
 }
-void ROUTAGE::calculateShapeIso()
+void ROUTAGE::calculateShapeIso(bool drawIt)
 {
-    shapeIso.clear();
-    //left side
-    for (int n=0;n<isochrones.count();++n)
-    {
-        vlmPoint p=isochrones.at(n)->getPoints()->first();
-        shapeIso.append(QPointF(p.x,p.y));
-    }
-    shapeIso.remove(shapeIso.count()-1);
-    //middle
-    int current=isochrones.count()-1;
-    qWarning()<<"entering shapeIso with"<<current;
-    QList<vlmPoint> * iso=isochrones.last()->getPoints();
+#ifndef USE_SHAPEISO
+    return;
+#endif
+    QPolygonF newShape;
+    int isoNb=isochrones.size()-1;
+    QList<vlmPoint> * iso;
+    vlmPoint p;
     int n=0;
-    //int nbroken=0;
+//left side
     while(true)
     {
-        qWarning()<<"1"<<current<<n;
-        vlmPoint p=iso->at(n);
-        while(p.isBroken)
+        iso=isochrones.at(isoNb)->getPoints();
+        p=iso->at(n);
+        newShape.prepend(QPointF(p.x,p.y));
+        if(p.isStart) break;
+        p=*(p.origin);
+        --isoNb;
+        n=p.isoIndex;
+        iso=isochrones.at(isoNb)->getPoints();
+        while(n>0)
         {
-            iso=isochrones.at(current)->getPoints();
-            n=iso->indexOf(p);
-            shapeIso.append(QPointF(p.x,p.y));
-            --current;
-            p=*p.origin;
-            if (p.isStart) break;
+            p=iso->at(--n);
+            if(p.isBroken) break;
         }
-        qWarning()<<"2"<<current<<n;
-        shapeIso.append(QPointF(p.x,p.y));
-        if(n<iso->size()-1 && iso->at(n+1).originNb==p.originNb)
+    }
+    newShape.remove(newShape.size()-1);
+//middle
+    isoNb=isochrones.size()-1;
+    n=0;
+    while(true)
+    {
+        iso=isochrones.at(isoNb)->getPoints();
+        p=iso->at(n);
+        while(!p.isBroken && p.myChildren.isEmpty() && n<iso->size()-1)
         {
-            if(n<iso->size()-1)
-                p=iso->at(++n);
-            else
-                break;
-            qWarning()<<"3"<<current<<n;
+            newShape.append(QPointF(p.x,p.y));
+            p=iso->at(++n);
         }
-        else
+        newShape.append(QPointF(p.x,p.y));
+        if (n>=iso->size()-1) break;
+        if(p.isBroken)
         {
-            iso=isochrones.at(current)->getPoints();
-            n=iso->indexOf(p);
-            if(n<iso->size()-1)
-                p=iso->at(++n);
-            else
-                break;
-            qWarning()<<"4"<<current<<n;
+            bool sameOrigin=false;
+            while(p.isBroken)
+            {
+                int i=p.isoIndex;
+                p=*p.origin;
+                --isoNb;
+                newShape.append(QPointF(p.x,p.y));
+                if(!p.myChildren.isEmpty() && p.myChildren.last().isoIndex>i)
+                {
+                    sameOrigin=true;
+                    ++isoNb;
+                    iso=isochrones.at(isoNb)->getPoints();
+                    p=iso->at(i+1);
+                    break;
+                }
+                if (p.isStart) break;
+            }
+            n=p.isoIndex;
+            iso=isochrones.at(isoNb)->getPoints();
+            if(!sameOrigin)
+            {
+                while(!p.isBroken && n<iso->size()-1)
+                {
+                    p=iso->at(++n);
+                    newShape.append(QPointF(p.x,p.y));
+                    if(!p.myChildren.isEmpty())
+                    {
+                        ++isoNb;
+                        p=p.myChildren.first();
+                        break;
+                    }
+                }
+            }
         }
-        while(!p.myChildren.isEmpty())
+        if(!p.myChildren.isEmpty())
         {
-            shapeIso.append(QPointF(p.x,p.y));
-            ++current;
-            p=*(p.myChildren.first());
+            newShape.append(QPointF(p.x,p.y));
+            while(!p.myChildren.isEmpty())
+            {
+                p=p.myChildren.first();
+                ++isoNb;
+                newShape.append(QPointF(p.x,p.y));
+            }
         }
-        iso=isochrones.at(current)->getPoints();
-        n=iso->indexOf(p);
-        qWarning()<<"5"<<current<<n;
+        iso=isochrones.at(isoNb)->getPoints();
+        n=p.isoIndex;
         if(n>=iso->size()-1) break;
     }
-    shapeIso.remove(shapeIso.count()-1);
-    //right side
-    for (n=isochrones.count()-1;n>=0;--n)
+    newShape.remove(newShape.size()-1);
+//right side
+    isoNb=isochrones.size()-1;
+    n=isochrones.at(isoNb)->getPoints()->size()-1;
+    while(true)
     {
-        vlmPoint p=isochrones.at(n)->getPoints()->last();
-        shapeIso.append(QPointF(p.x,p.y));
+        iso=isochrones.at(isoNb)->getPoints();
+        p=iso->at(n);
+        newShape.append(QPointF(p.x,p.y));
+        if(p.isStart) break;
+        p=*(p.origin);
+        --isoNb;
+        n=p.isoIndex;
+        iso=isochrones.at(isoNb)->getPoints();
+        while(n<iso->size()-1)
+        {
+            if(p.isBroken) break;
+            p=iso->at(++n);
+        }
     }
-#if 1
-    QPixmap img(proj->getW(),proj->getH());
-    img.fill(Qt::white);
-    QPen pen;
-    pen.setWidthF(2);
-    pen.setColor(Qt::red);
-    QPainter pnt(&img);
-    pnt.setPen(pen);
-    pnt.drawPolyline(shapeIso);
-    pnt.end();
-    img.save("isoShape.png");
-#endif
-    qWarning()<<"end of shapeIso";
+    shapeIso=newShape;
+    if(drawIt)
+    {
+        QPixmap img(proj->getW(),proj->getH());
+        img.fill(Qt::white);
+        QPen pen;
+        pen.setWidthF(2);
+        pen.setColor(Qt::red);
+        QPainter pnt(&img);
+        pnt.setPen(pen);
+        pnt.drawPolyline(shapeIso);
+        pnt.end();
+        img.save("isoShape.png");
+    }
 }
