@@ -71,6 +71,7 @@ Magnifier::Magnifier(myCentralWidget *parent)
                 for (int n=0;n<oppList->getList()->count();++n)
                 {
                     oppList->getList()->at(n)->drawOnMagnifier(myProj,&pnt1);
+                    oppList->getList()->at(n)->getTraceDrawing()->drawInMagnifier(&pnt1,myProj);
                 }
             }
         }

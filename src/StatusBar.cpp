@@ -161,12 +161,12 @@ void StatusBar::showWindData(double x,double y)
     if(!currentMessage().isEmpty())
         return;
 
-    QString label1= Util::pos2String(TYPE_LAT,y) + ", " + Util::pos2String(TYPE_LON,x);
+    QString label1= Util::pos2String(TYPE_LAT,y) + " " + Util::pos2String(TYPE_LON,x);
     if(mainWindow->getSelectedBoat())
     {
         Orthodromie oo(mainWindow->getSelectedBoat()->getLon(),mainWindow->getSelectedBoat()->getLat(),x,y);
         label1=label1+QString().sprintf(" - %6.2f",oo.getAzimutDeg())+tr("deg")+
-                QString().sprintf("/%7.2fNM",oo.getDistance());
+                QString().sprintf(" %7.2fNM",oo.getDistance());
     }
     stBar_label_1->setText(label1);
 
@@ -178,7 +178,7 @@ void StatusBar::showWindData(double x,double y)
     {
         res = "- " + tr(" Vent") + ": ";
         s.sprintf("%6.2f", radToDeg(b));
-        res += s+tr("deg")+", ";
+        res += s+tr("deg")+" ";
         s.sprintf("%6.2f",a);
         res += s+tr(" kts");
     }

@@ -61,6 +61,7 @@ class opponent : public QGraphicsWidget
         QString getIduser(void)  { return idu; }
         bool    getIsQtBoat()    { return isQtBoat; }
         QList<vlmPoint> * getTrace() { return trace_drawing->getPoints(); }
+        vlmLine * getTraceDrawing(){return trace_drawing;}
         QColor getColor() { return myColor; }
 
         void setNewData(double lat, double lon,QString name);
