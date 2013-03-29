@@ -152,7 +152,8 @@ void MainWindow::connectSignals()
     connect(mb->ac_copyRoute,SIGNAL(triggered()), this, SLOT(slot_copyRoute()));
     connect(mb->ac_deleteRoute,SIGNAL(triggered()), this, SLOT(slot_deleteRoute()));
     connect(mb->ac_editRoute,SIGNAL(triggered()), this, SLOT(slot_editRoute()));
-    connect(mb->ac_simplifyRoute,SIGNAL(triggered()), this, SLOT(slot_simplifyRoute()));
+    connect(mb->ac_simplifyRouteMax,SIGNAL(triggered()), this, SLOT(slot_simplifyRouteMax()));
+    connect(mb->ac_simplifyRouteMin,SIGNAL(triggered()), this, SLOT(slot_simplifyRouteMin()));
     connect(mb->ac_optimizeRoute,SIGNAL(triggered()), this, SLOT(slot_optimizeRoute()));
     connect(mb->ac_pasteRoute,SIGNAL(triggered()), this, SLOT(slot_pasteRoute()));
     connect(mb->acRoute_paste,SIGNAL(triggered()), this, SLOT(slot_pasteRoute()));
@@ -1202,10 +1203,11 @@ void MainWindow::slotShowContextualMenu(QGraphicsSceneContextMenuEvent * e)
         menuBar->ac_editRoute->setText(tr("Editer la route")+" "+routeName);
         menuBar->ac_editRoute->setIcon(icon);
         menuBar->ac_editRoute->setData(my_centralWidget->getRouteToClipboard()->getName());
-        menuBar->ac_simplifyRoute->setVisible(true);
-        menuBar->ac_simplifyRoute->setText(tr("Simplifier la route")+" "+routeName);
-        menuBar->ac_simplifyRoute->setIcon(icon);
-        menuBar->ac_simplifyRoute->setData(my_centralWidget->getRouteToClipboard()->getName());
+        menuBar->mn_simplifyRoute->menuAction()->setVisible(true);
+        menuBar->mn_simplifyRoute->setTitle(tr("Simplifier la route")+" "+routeName);
+        menuBar->mn_simplifyRoute->setIcon(icon);
+        menuBar->ac_simplifyRouteMax->setData(my_centralWidget->getRouteToClipboard()->getName());
+        menuBar->ac_simplifyRouteMin->setData(my_centralWidget->getRouteToClipboard()->getName());
         menuBar->ac_optimizeRoute->setVisible(true);
         menuBar->ac_optimizeRoute->setText(tr("Optimiser la route")+" "+routeName);
         menuBar->ac_optimizeRoute->setIcon(icon);
@@ -1226,8 +1228,9 @@ void MainWindow::slotShowContextualMenu(QGraphicsSceneContextMenuEvent * e)
     {
         menuBar->ac_editRoute->setVisible(false);
         menuBar->ac_editRoute->setData(QString());
-        menuBar->ac_simplifyRoute->setVisible(false);
-        menuBar->ac_simplifyRoute->setData(QString());
+        menuBar->mn_simplifyRoute->menuAction()->setVisible(false);
+        menuBar->ac_simplifyRouteMax->setData(QString());
+        menuBar->ac_simplifyRouteMin->setData(QString());
         menuBar->ac_optimizeRoute->setVisible(false);
         menuBar->ac_optimizeRoute->setData(QString());
         menuBar->ac_copyRoute->setVisible(false);
@@ -1287,7 +1290,7 @@ void MainWindow::slot_editRoute()
     if(route!=NULL)
         route->slot_edit();
 }
-void MainWindow::slot_simplifyRoute()
+void MainWindow::slot_simplifyRouteMax()
 {
     ROUTE *route=NULL;
     for (int n=0;n<my_centralWidget->getRouteList().count();++n)
@@ -1301,6 +1304,25 @@ void MainWindow::slot_simplifyRoute()
     if(route!=NULL)
     {
         route->setSimplify(true);
+        route->set_strongSimplify(true);
+        my_centralWidget->treatRoute(route);
+    }
+}
+void MainWindow::slot_simplifyRouteMin()
+{
+    ROUTE *route=NULL;
+    for (int n=0;n<my_centralWidget->getRouteList().count();++n)
+    {
+        if(my_centralWidget->getRouteList().at(n)->getName()==menuBar->ac_copyRoute->data().toString())
+        {
+            route=my_centralWidget->getRouteList().at(n);
+            break;
+        }
+    }
+    if(route!=NULL)
+    {
+        route->setSimplify(true);
+        route->set_strongSimplify(false);
         my_centralWidget->treatRoute(route);
     }
 }

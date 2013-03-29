@@ -115,6 +115,7 @@ ROUTE::ROUTE(QString name, Projection *proj, Grib *grib, QGraphicsScene * myScen
     routeDelay->setInterval(5);
     routeDelay->setSingleShot(true);
     connect(routeDelay,SIGNAL(timeout()),this,SLOT(slot_recalculate()));
+    this->strongSimplify=false;
     delay=10;
     showInterpolData=false;
 }

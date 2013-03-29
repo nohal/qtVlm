@@ -114,7 +114,6 @@ DialogParamVlm::DialogParamVlm(MainWindow * main,myCentralWidget * parent) : QDi
     this->autoRemove->setCheckState(Settings::getSetting("autoRemovePoiFromRoute",0).toInt()==1?Qt::Checked:Qt::Unchecked);
     this->autoAt->setCheckState(Settings::getSetting("autoFillPoiHeading",0).toInt()==1?Qt::Checked:Qt::Unchecked);
     this->routeSortByName->setChecked(Settings::getSetting("routeSortByName",1).toInt()==1);
-    this->strongSimplify->setChecked(Settings::getSetting("strongSimplify",1).toInt()==1);
 
     /* Trace */
     trace_length->setValue(Settings::getSetting("trace_length",12).toInt());
@@ -306,7 +305,6 @@ void DialogParamVlm::done(int result)
         Settings::setSetting("autoRemovePoiFromRoute",this->autoRemove->isChecked()?"1":"0");
         Settings::setSetting("autoFillPoiHeading",this->autoAt->isChecked()?"1":"0");
         Settings::setSetting("routeSortByName",this->routeSortByName->isChecked()?"1":"0");
-        Settings::setSetting("strongSimplify",this->strongSimplify->isChecked()?"1":"0");
 
         /* Grib */
 

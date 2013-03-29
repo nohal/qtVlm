@@ -139,6 +139,7 @@ class ROUTE : public QObject
         void setShowInterpolData(bool b);
         void setSortPoisByName(bool b){this->sortPoisbyName=b;}
         bool getSortPoisByName(){return this->sortPoisbyName;}
+        FCT_SETGET_CST(bool,strongSimplify)
     public slots:
         void slot_recalculate(boat * boat=NULL);
         void slot_edit();
@@ -236,6 +237,7 @@ class ROUTE : public QObject
         routeInfo * roadInfo;
         bool showInterpolData;
         bool sortPoisbyName;
+        bool strongSimplify;
 };
 Q_DECLARE_TYPEINFO(ROUTE,Q_MOVABLE_TYPE);
 #endif // ROUTE_H

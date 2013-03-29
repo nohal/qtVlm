@@ -3593,7 +3593,7 @@ void myCentralWidget::slot_abortRequest()
 
 void myCentralWidget::doSimplifyRoute(ROUTE * route, bool fast)
 {
-    bool strongSimplify=Settings::getSetting("strongSimplify",1).toInt()==1;
+    bool strongSimplify=route->get_strongSimplify();
     route->setSimplify(true);
     int firstPOI=1;
     if(route->getStartFromBoat())
@@ -3607,7 +3607,8 @@ void myCentralWidget::doSimplifyRoute(ROUTE * route, bool fast)
     QProgressDialog p("","",1,ref_nbPois-2);
     if(!fast)
     {
-        p.setWindowTitle(tr("Simplification en cours"));
+        QString stringMaxMin=strongSimplify?tr(" (maximum)"):tr(" (minimum)");
+        p.setWindowTitle(tr("Simplification en cours")+stringMaxMin);
         p.setAutoClose(false);
         this->abortRequest=false;
         p.setCancelButtonText(tr("Abandonner"));

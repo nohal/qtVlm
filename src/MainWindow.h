@@ -169,7 +169,8 @@ public slots:
         void slot_pasteRoute();
         void slot_zoomRoute();
         void slot_optimizeRoute();
-        void slot_simplifyRoute();
+        void slot_simplifyRouteMax();
+        void slot_simplifyRouteMin();
 
     signals:
         void setChangeStatus(bool);

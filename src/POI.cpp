@@ -240,10 +240,15 @@ void POI::createPopUpMenu(void)
     ac_copyRoute->setEnabled(false);;
     connect(ac_copyRoute,SIGNAL(triggered()),this,SLOT(slot_copyRoute()));
 
-    ac_simplifyRoute = new QAction(tr("Simplifier la route "),popup);
-    popup->addAction(ac_simplifyRoute);
-    ac_simplifyRoute->setEnabled(false);;
-    connect(ac_simplifyRoute,SIGNAL(triggered()),this,SLOT(slot_simplifyRoute()));
+    menuSimplify=new QMenu(tr("Simplifier la route "),popup);
+    ac_simplifyRouteMax = new QAction(tr("Maximum"),menuSimplify);
+    ac_simplifyRouteMin = new QAction(tr("Minimum"),menuSimplify);
+    menuSimplify->addAction(ac_simplifyRouteMax);
+    menuSimplify->addAction(ac_simplifyRouteMin);
+    menuSimplify->setEnabled(false);
+    connect(ac_simplifyRouteMax,SIGNAL(triggered()),this,SLOT(slot_simplifyRouteMax()));
+    connect(ac_simplifyRouteMin,SIGNAL(triggered()),this,SLOT(slot_simplifyRouteMin()));
+    popup->addMenu(menuSimplify);
     ac_optimizeRoute = new QAction(tr("Optimiser la route "),popup);
     popup->addAction(ac_optimizeRoute);
     ac_optimizeRoute->setEnabled(false);;
@@ -490,7 +495,7 @@ void POI::contextMenuEvent(QGraphicsSceneContextMenuEvent * e)
         ac_delRoute->setData(QVariant(QMetaType::VoidStar, &route));
         ac_editRoute->setEnabled(false);
         ac_copyRoute->setEnabled(false);
-        ac_simplifyRoute->setEnabled(false);
+        menuSimplify->setEnabled(false);
         ac_optimizeRoute->setEnabled(false);
         ac_zoomRoute->setEnabled(false);
     }
@@ -508,7 +513,7 @@ void POI::contextMenuEvent(QGraphicsSceneContextMenuEvent * e)
             ac_delRoute->setEnabled(false);
             ac_editRoute->setEnabled(false);
             ac_copyRoute->setEnabled(false);
-            ac_simplifyRoute->setEnabled(false);
+            menuSimplify->setEnabled(false);
             ac_optimizeRoute->setEnabled(false);
             ac_zoomRoute->setEnabled(false);
         }
@@ -526,9 +531,9 @@ void POI::contextMenuEvent(QGraphicsSceneContextMenuEvent * e)
             ac_copyRoute->setText(tr("Copier la route ")+route->getName());
             ac_copyRoute->setEnabled(true);
             ac_copyRoute->setIcon(icon);
-            ac_simplifyRoute->setText(tr("Simplifier la route ")+route->getName());
-            ac_simplifyRoute->setEnabled(true);
-            ac_simplifyRoute->setIcon(icon);
+            menuSimplify->setTitle(tr("Simplifier la route ")+route->getName());
+            menuSimplify->setEnabled(true);
+            menuSimplify->setIcon(icon);
             ac_optimizeRoute->setText(tr("Optimiser la route ")+route->getName());
             ac_optimizeRoute->setEnabled(true);
             ac_optimizeRoute->setIcon(icon);
@@ -846,10 +851,18 @@ void POI::slot_zoomRoute()
    if (this->route == NULL) return;
    route->zoom();
 }
-void POI::slot_simplifyRoute()
+void POI::slot_simplifyRouteMax()
 {
     if (this->route==NULL) return;
     route->setSimplify (true);
+    route->set_strongSimplify(true);
+    timerSimp->start();
+}
+void POI::slot_simplifyRouteMin()
+{
+    if (this->route==NULL) return;
+    route->setSimplify (true);
+    route->set_strongSimplify(false);
     timerSimp->start();
 }
 void POI::slot_timerSimp()

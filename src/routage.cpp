@@ -2894,8 +2894,10 @@ void ROUTAGE::convertToRoute()
     QMessageBox msgBox(QMessageBox::Question,tr("Conversion d'un routage en route"),
                        tr("Voulez-vous que le point de depart de la route suive le bateau maintenant?"));
     QCheckBox simplify(tr("Simplifier/Optimiser automatiquement"),0);
+    simplify.setTristate(true);
     simplify.blockSignals(true);
-    simplify.setChecked(Settings::getSetting("convertAndSimplify",1).toInt()==1);
+    int i=Settings::getSetting("convertAndSimplify",Qt::Checked).toInt();
+    simplify.setCheckState(i==0?Qt::Unchecked:i==1?Qt::PartiallyChecked:Qt::Checked);
     QCheckBox deleteOther(tr("Supprimer les autres routages"),0);
     deleteOther.blockSignals(true);
     deleteOther.setChecked(false);
@@ -2926,8 +2928,8 @@ void ROUTAGE::convertToRoute()
             parent->deleteRoutage(rList.at(i));
         }
     }
-    simp=simplify.isChecked();
-    Settings::setSetting("convertAndSimplify",simp?1:0);
+    simp=simplify.checkState()!=Qt::Unchecked;
+    Settings::setSetting("convertAndSimplify",simplify.checkState());
     routeStartBoat=answ==QMessageBox::Yes;
     this->converted=true;
     ROUTE * route=parent->addRoute();
@@ -2936,6 +2938,10 @@ void ROUTAGE::convertToRoute()
     route->setBoat(this->myBoat);
     route->setDetectCoasts(this->checkCoast);
     route->setStartTime(parentRoutage->getStartTime());
+    if(simplify.checkState()==Qt::PartiallyChecked)
+        route->set_strongSimplify(false);
+    else if (simplify.checkState()==Qt::Checked)
+        route->set_strongSimplify(true);
     if(routeStartBoat)
     {
         route->setStartFromBoat(true);

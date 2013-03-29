@@ -731,13 +731,6 @@
            </widget>
           </item>
           <item>
-           <widget class="QCheckBox" name="strongSimplify">
-            <property name="text">
-             <string>Algorithme de simplification maximal</string>
-            </property>
-           </widget>
-          </item>
-          <item>
            <widget class="QRadioButton" name="routeSortByName">
             <property name="text">
              <string>Trier les POIs par nom</string>
@@ -1335,7 +1328,6 @@
   <tabstop>chkHideRoute</tabstop>
   <tabstop>autoRemove</tabstop>
   <tabstop>autoAt</tabstop>
-  <tabstop>strongSimplify</tabstop>
   <tabstop>routeSortByName</tabstop>
   <tabstop>routeSortBySequence</tabstop>
   <tabstop>trace_length</tabstop>

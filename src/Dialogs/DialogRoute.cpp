@@ -794,8 +794,11 @@ void DialogRoute::done(int result)
         route->getLine()->setCoastDetection(editCoasts->isChecked());
         if(hidePois->isChecked()!=route->getHidePois())
             route->setHidePois(hidePois->isChecked());
-        if(this->Simplifier->isChecked())
+        if(this->Simplifier->checkState()!=Qt::Unchecked)
+        {
             route->setSimplify(true);
+            route->set_strongSimplify(Simplifier->checkState()!=Qt::PartiallyChecked);
+        }
         else
         {
             route->setSimplify(false);

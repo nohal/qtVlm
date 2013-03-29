@@ -477,7 +477,10 @@ QMenu * MenuBar::createPopupBtRight(QWidget *parent)
 
     popup->addSeparator();
     ac_editRoute=addAction(popup,tr("Editer la route"),"","","");
-    ac_simplifyRoute=addAction(popup,tr("Simplifier la route"),"","","");
+    mn_simplifyRoute=new QMenu(tr("Simplifier la route"),popup);
+    ac_simplifyRouteMax=addAction(mn_simplifyRoute,tr("Maximum"),"","","");
+    ac_simplifyRouteMin=addAction(mn_simplifyRoute,tr("Minimum"),"","","");
+    popup->addMenu(mn_simplifyRoute);
     ac_optimizeRoute=addAction(popup,tr("Optimiser la route"),"","","");
     ac_copyRoute=addAction(popup,tr("Copier la route au format kml"),"","","");
     ac_zoomRoute=addAction(popup,tr("Zoom sur la route "),"","","");

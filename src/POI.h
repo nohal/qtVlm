@@ -152,7 +152,8 @@ public slots:
         void slotCompassLine();
         void slot_editRoute();
         void slot_optimizeRoute();
-        void slot_simplifyRoute();
+        void slot_simplifyRouteMax();
+        void slot_simplifyRouteMin();
         void slot_copyRoute();
         void slot_zoomRoute();
         void slot_relier();
@@ -221,7 +222,9 @@ public slots:
         QAction * ac_delPoi;
         QAction * ac_delRoute;
         QAction * ac_editRoute;
-        QAction * ac_simplifyRoute;
+        QMenu   * menuSimplify;
+        QAction * ac_simplifyRouteMax;
+        QAction * ac_simplifyRouteMin;
         QAction * ac_optimizeRoute;
         QAction * ac_copyRoute;
         QAction * ac_zoomRoute;
