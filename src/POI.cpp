@@ -232,8 +232,14 @@ void POI::createPopUpMenu(void)
     ac_editRoute = new QAction(tr("Editer la route "),popup);
     ac_editRoute->setData(QVariant(QMetaType::VoidStar, &route));
     popup->addAction(ac_editRoute);
-    ac_editRoute->setEnabled(false);;
+    ac_editRoute->setEnabled(false);
     connect(ac_editRoute,SIGNAL(triggered()),this,SLOT(slot_editRoute()));
+    ac_poiRoute = new QAction(tr("Montrer les pois intermediaires de la route "),popup);
+    ac_poiRoute->setCheckable(true);
+    ac_poiRoute->setData(QVariant(QMetaType::VoidStar, &route));
+    popup->addAction(ac_poiRoute);
+    ac_poiRoute->setEnabled(false);;
+    connect(ac_poiRoute,SIGNAL(triggered()),this,SLOT(slot_poiRoute()));
     ac_copyRoute = new QAction(tr("Copier la route "),popup);
     ac_copyRoute->setData(QVariant(QMetaType::VoidStar, &route));
     popup->addAction(ac_copyRoute);
@@ -494,6 +500,7 @@ void POI::contextMenuEvent(QGraphicsSceneContextMenuEvent * e)
         ac_delRoute->setEnabled(false);
         ac_delRoute->setData(QVariant(QMetaType::VoidStar, &route));
         ac_editRoute->setEnabled(false);
+        ac_poiRoute->setEnabled(false);
         ac_copyRoute->setEnabled(false);
         menuSimplify->setEnabled(false);
         ac_optimizeRoute->setEnabled(false);
@@ -512,6 +519,7 @@ void POI::contextMenuEvent(QGraphicsSceneContextMenuEvent * e)
         {
             ac_delRoute->setEnabled(false);
             ac_editRoute->setEnabled(false);
+            ac_poiRoute->setEnabled(false);
             ac_copyRoute->setEnabled(false);
             menuSimplify->setEnabled(false);
             ac_optimizeRoute->setEnabled(false);
@@ -528,6 +536,10 @@ void POI::contextMenuEvent(QGraphicsSceneContextMenuEvent * e)
             ac_editRoute->setText(tr("Editer la route ")+route->getName());
             ac_editRoute->setEnabled(true);
             ac_editRoute->setIcon(icon);
+            ac_poiRoute->setText(tr("Montrer les POIs intermediaires de la route ")+route->getName());
+            ac_poiRoute->setChecked(!route->getHidePois());
+            ac_poiRoute->setEnabled(true);
+            ac_poiRoute->setIcon(icon);
             ac_copyRoute->setText(tr("Copier la route ")+route->getName());
             ac_copyRoute->setEnabled(true);
             ac_copyRoute->setIcon(icon);
@@ -839,6 +851,12 @@ void POI::manageLineBetweenPois()
     lineBetweenPois->addVlmPoint(vlmPoint(this->lon,this->lat));
     lineBetweenPois->addVlmPoint(vlmPoint(this->connectedPoi->lon,this->connectedPoi->lat));
     lineBetweenPois->slot_showMe();
+}
+void POI::slot_poiRoute()
+{
+    if(route==NULL) return;
+    route->setHidePois(!route->getHidePois());
+    ac_poiRoute->setChecked(!route->getHidePois());
 }
 
 void POI::slot_editRoute()

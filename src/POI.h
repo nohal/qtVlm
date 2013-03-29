@@ -92,7 +92,7 @@ class POI : public QGraphicsWidget
         void setSearchStep     (double value){this->searchStep=value;}
         void setNavMode        (int mode);
         void setOptimizing     (bool b) {this->optimizing=b;}
-        void setMyLabelHidden  (bool b) {if(route==NULL) this->myLabelHidden=false; else this->myLabelHidden=b;}
+        void setMyLabelHidden  (bool b) {if(route==NULL) this->myLabelHidden=false; else this->myLabelHidden=b;prepareGeometryChange();update();}
         bool getMyLabelHidden  (void) {return this->myLabelHidden;}
         void setNotSimplificable(bool b) {this->notSimplificable=b;this->ac_simplifiable->setChecked(b);update();}
         bool getNotSimplificable(){return this->notSimplificable;}
@@ -151,6 +151,7 @@ public slots:
         void slot_twaLine(){parent->twaDraw(lon,lat);}
         void slotCompassLine();
         void slot_editRoute();
+        void slot_poiRoute();
         void slot_optimizeRoute();
         void slot_simplifyRouteMax();
         void slot_simplifyRouteMin();
@@ -222,6 +223,7 @@ public slots:
         QAction * ac_delPoi;
         QAction * ac_delRoute;
         QAction * ac_editRoute;
+        QAction * ac_poiRoute;
         QMenu   * menuSimplify;
         QAction * ac_simplifyRouteMax;
         QAction * ac_simplifyRouteMin;

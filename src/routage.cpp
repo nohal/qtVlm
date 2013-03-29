@@ -2933,6 +2933,8 @@ void ROUTAGE::convertToRoute()
     routeStartBoat=answ==QMessageBox::Yes;
     this->converted=true;
     ROUTE * route=parent->addRoute();
+    if(simp)
+        route->setHidePois(false);
     route->setName(name);
     route->setUseVbVmgVlm(false);
     route->setBoat(this->myBoat);

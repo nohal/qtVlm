@@ -152,6 +152,7 @@ void MainWindow::connectSignals()
     connect(mb->ac_copyRoute,SIGNAL(triggered()), this, SLOT(slot_copyRoute()));
     connect(mb->ac_deleteRoute,SIGNAL(triggered()), this, SLOT(slot_deleteRoute()));
     connect(mb->ac_editRoute,SIGNAL(triggered()), this, SLOT(slot_editRoute()));
+    connect(mb->ac_poiRoute,SIGNAL(triggered()), this, SLOT(slot_poiRoute()));
     connect(mb->ac_simplifyRouteMax,SIGNAL(triggered()), this, SLOT(slot_simplifyRouteMax()));
     connect(mb->ac_simplifyRouteMin,SIGNAL(triggered()), this, SLOT(slot_simplifyRouteMin()));
     connect(mb->ac_optimizeRoute,SIGNAL(triggered()), this, SLOT(slot_optimizeRoute()));
@@ -1203,6 +1204,11 @@ void MainWindow::slotShowContextualMenu(QGraphicsSceneContextMenuEvent * e)
         menuBar->ac_editRoute->setText(tr("Editer la route")+" "+routeName);
         menuBar->ac_editRoute->setIcon(icon);
         menuBar->ac_editRoute->setData(my_centralWidget->getRouteToClipboard()->getName());
+        menuBar->ac_poiRoute->setVisible(true);
+        menuBar->ac_poiRoute->setText(tr("Montrer les POIs intermediaires de la route")+" "+routeName);
+        menuBar->ac_poiRoute->setIcon(icon);
+        menuBar->ac_poiRoute->setChecked(!my_centralWidget->getRouteToClipboard()->getHidePois());
+        menuBar->ac_poiRoute->setData(my_centralWidget->getRouteToClipboard()->getName());
         menuBar->mn_simplifyRoute->menuAction()->setVisible(true);
         menuBar->mn_simplifyRoute->setTitle(tr("Simplifier la route")+" "+routeName);
         menuBar->mn_simplifyRoute->setIcon(icon);
@@ -1228,6 +1234,8 @@ void MainWindow::slotShowContextualMenu(QGraphicsSceneContextMenuEvent * e)
     {
         menuBar->ac_editRoute->setVisible(false);
         menuBar->ac_editRoute->setData(QString());
+        menuBar->ac_poiRoute->setVisible(false);
+        menuBar->ac_poiRoute->setData(QString());
         menuBar->mn_simplifyRoute->menuAction()->setVisible(false);
         menuBar->ac_simplifyRouteMax->setData(QString());
         menuBar->ac_simplifyRouteMin->setData(QString());
@@ -1290,6 +1298,24 @@ void MainWindow::slot_editRoute()
     if(route!=NULL)
         route->slot_edit();
 }
+void MainWindow::slot_poiRoute()
+{
+    ROUTE *route=NULL;
+    for (int n=0;n<my_centralWidget->getRouteList().count();++n)
+    {
+        if(my_centralWidget->getRouteList().at(n)->getName()==menuBar->ac_copyRoute->data().toString())
+        {
+            route=my_centralWidget->getRouteList().at(n);
+            break;
+        }
+    }
+    if(route!=NULL)
+    {
+        route->setHidePois(!route->getHidePois());
+        menuBar->ac_poiRoute->setChecked(!route->getHidePois());
+    }
+}
+
 void MainWindow::slot_simplifyRouteMax()
 {
     ROUTE *route=NULL;

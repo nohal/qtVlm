@@ -100,6 +100,7 @@ public:
     QAction * ac_copyRoute;
     QAction * ac_deleteRoute;
     QAction * ac_editRoute;
+    QAction * ac_poiRoute;
     QAction * ac_simplifyRouteMax;
     QAction * ac_simplifyRouteMin;
     QMenu   * mn_simplifyRoute;

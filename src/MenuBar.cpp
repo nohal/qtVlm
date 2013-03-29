@@ -477,6 +477,7 @@ QMenu * MenuBar::createPopupBtRight(QWidget *parent)
 
     popup->addSeparator();
     ac_editRoute=addAction(popup,tr("Editer la route"),"","","");
+    ac_poiRoute=addActionCheck(popup,tr("Montrer les POIs intermediaires de la route"),"","","");
     mn_simplifyRoute=new QMenu(tr("Simplifier la route"),popup);
     ac_simplifyRouteMax=addAction(mn_simplifyRoute,tr("Maximum"),"","","");
     ac_simplifyRouteMin=addAction(mn_simplifyRoute,tr("Minimum"),"","","");

@@ -166,6 +166,7 @@ public slots:
         void slot_copyRoute();
         void slot_deleteRoute();
         void slot_editRoute();
+        void slot_poiRoute();
         void slot_pasteRoute();
         void slot_zoomRoute();
         void slot_optimizeRoute();
