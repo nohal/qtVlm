@@ -1522,6 +1522,7 @@ void myCentralWidget::simpAllPOIs(bool simp)
             }
 
         }
+        slot_clearSelection();
     }
 }
 
