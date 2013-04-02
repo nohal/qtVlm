@@ -168,7 +168,6 @@ DialogRoutage::DialogRoutage(ROUTAGE *routage,myCentralWidget *parent, POI *endP
     this->step->setValue(routage->getAngleStep());
     this->dureeLess24->setValue(routage->getTimeStepLess24());
     this->dureeMore24->setValue(routage->getTimeStepMore24());
-    this->windForced->setChecked(routage->getWindIsForced());
     this->showIso->setChecked(routage->getShowIso());
     this->explo->setValue(routage->getExplo());
     this->useVac->setChecked(routage->getUseRouteModule());
@@ -177,11 +176,6 @@ DialogRoutage::DialogRoutage(ROUTAGE *routage,myCentralWidget *parent, POI *endP
     this->colorIso->setChecked(routage->getColorGrib());
     this->RoutageOrtho->setChecked(routage->getRoutageOrtho());
     this->showBestLive->setChecked(routage->getShowBestLive());
-    if(routage->getWindIsForced())
-    {
-        this->TWD->setValue(routage->getWindAngle());
-        this->TWS->setValue(routage->getWindSpeed());
-    }
     this->checkCoast->setChecked(routage->getCheckCoast());
     this->checkLines->setChecked(routage->getCheckLine());
     this->nbAlter->setValue(routage->getNbAlternative());
@@ -203,9 +197,6 @@ DialogRoutage::DialogRoutage(ROUTAGE *routage,myCentralWidget *parent, POI *endP
         this->range->setDisabled(true);
         this->step->setDisabled(true);
         this->explo->setDisabled(true);
-        this->windForced->setDisabled(true);
-        this->TWD->setDisabled(true);
-        this->TWS->setDisabled(true);
         this->useVac->setDisabled(true);
         this->log->setDisabled(true);
         this->pruneWakeAngle->setDisabled(true);
@@ -295,7 +286,6 @@ void DialogRoutage::slot_default()
     this->explo->setValue(40);
     this->log->setChecked(true);
     this->whatIfUse->setChecked(false);
-    this->windForced->setChecked(false);
     this->checkCoast->setChecked(true);
     this->checkLines->setChecked(true);
     this->nbAlter->setValue(3);
@@ -435,8 +425,6 @@ void DialogRoutage::done(int result)
         routage->setWhatIfDate(whatIfDate->dateTime());
         routage->setWhatIfWind(whatIfWind->value());
         routage->setWhatIfTime(whatIfTime->value());
-        routage->setWindIsForced(windForced->isChecked());
-        routage->setWind(TWD->value(),TWS->value());
         routage->setAngleRange(this->range->value());
         routage->setAngleStep(this->step->value());
         routage->setTimeStepMore24(this->dureeMore24->value());
@@ -510,11 +498,6 @@ void DialogRoutage::done(int result)
 
 //---------------------------------------
 
-void DialogRoutage::on_windForced_toggled(bool checked)
-{
-   TWD->setEnabled(checked);
-   TWS->setEnabled(checked);
-}
 void DialogRoutage::GybeTack(int i)
 {
     QFont font=this->labelTackGybe->font();

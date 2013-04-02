@@ -48,11 +48,8 @@ struct datathread
     Grib *GriB;
     bool whatIfUsed;
     time_t whatIfJour;
-    bool windIsForced;
     int whatIfTime;
     double whatIfWind;
-    double windSpeed;
-    double windAngle;
     boat *Boat;
     int timeStep;
     double speedLossOnTack;
@@ -80,10 +77,6 @@ class ROUTAGE : public QObject
         void setWidth(const double &width);
         double getWidth() const {return this->width;}
 
-        void setWindIsForced(const bool &b){this->windIsForced=b;}
-        void setWind(const double &twd, const double &tws){this->wind_angle=twd;this->wind_speed=tws;}
-        double getWindAngle(void) const {return this->wind_angle;}
-        double getWindSpeed(void) const {return this->wind_speed;}
         void setAngleRange(const double &a) {this->angleRange=a;}
         double getAngleRange(void) const {return this->angleRange;}
         void setAngleStep(const double &a) {this->angleStep=a;}
@@ -93,7 +86,6 @@ class ROUTAGE : public QObject
         double getTimeStepMore24(void) const {return this->timeStepMore24;}
         void setTimeStepLess24(const double &t) {this->timeStepLess24=t;}
         double getTimeStepLess24(void) const {return this->timeStepLess24;}
-        bool getWindIsForced(void) const {return this->windIsForced;}
         bool getShowIso(void) const {return this->showIso;}
         void setShowIso(const bool &b);
         void setExplo(const double &e){this->explo=e;}
@@ -263,9 +255,6 @@ public slots:
 
 
 
-        bool windIsForced;
-        double wind_speed;
-        double wind_angle;
 
         vlmLine * result;
         vlmLine * way;

@@ -161,6 +161,7 @@ class Grib
         void setGribCurrent(Grib * g){this->gribCurrent=g;}
         void setGribMonoCpu(const bool &b){this->gribMonoCpu=b;}
 
+        void forceParam();
 private:
         bool   ok;
         bool   isCurrentGrib;
@@ -272,6 +273,12 @@ private:
         Grib * gribCurrent;
         bool findCompression();
         bool gribMonoCpu;
+        bool forceWind;
+        double forcedTWS;
+        double forcedTWD;
+        bool forceCurrents;
+        double forcedCS;
+        double forcedCD;
 };
 Q_DECLARE_TYPEINFO(Grib,Q_MOVABLE_TYPE);
 

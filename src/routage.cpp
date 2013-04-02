@@ -116,36 +116,28 @@ inline vlmPoint findPointThreaded(const vlmPoint &point)
         if(a==0)
         {
             double newWindAngle,newWindSpeed;
-            if(!pt.routage->getWindIsForced())
+            workEta=pt.eta;
+            if(pt.routage->getWhatIfUsed() && pt.routage->getWhatIfJour()<=pt.eta)
+                workEta=workEta+pt.routage->getWhatIfTime()*3600;
+            if(!pt.routage->getGrib()->getInterpolatedValue_byDates(res_lon,res_lat,
+                   workEta+pt.routage->getTimeStep()*60,&newWindSpeed,&newWindAngle,INTERPOLATION_DEFAULT)||workEta+pt.routage->getTimeStep()*60>pt.routage->getGrib()->getMaxDate())
             {
-                workEta=pt.eta;
-                if(pt.routage->getWhatIfUsed() && pt.routage->getWhatIfJour()<=pt.eta)
-                    workEta=workEta+pt.routage->getWhatIfTime()*3600;
-                if(!pt.routage->getGrib()->getInterpolatedValue_byDates(res_lon,res_lat,
-                       workEta+pt.routage->getTimeStep()*60,&newWindSpeed,&newWindAngle,INTERPOLATION_DEFAULT)||workEta+pt.routage->getTimeStep()*60>pt.routage->getGrib()->getMaxDate())
-                {
-                    pt.isDead=true;
-                    return pt;
-                }
-                newWindAngle=radToDeg(newWindAngle);
-                if(pt.routage->getGrib()->getInterpolatedValueCurrent_byDates(res_lon,res_lat,
-                       workEta+pt.routage->getTimeStep()*60,&current_speed,&current_angle,INTERPOLATION_DEFAULT))
-                {
-                    current_angle=radToDeg(current_angle);
-                    QPointF p=Util::calculateSumVect(newWindAngle,newWindSpeed,current_angle,current_speed);
-                    newWindSpeed=p.x();
-                    newWindAngle=p.y();
-                }
-                else
-                {
-                    current_speed=-1;
-                    current_angle=0;
-                }
+                pt.isDead=true;
+                return pt;
+            }
+            newWindAngle=radToDeg(newWindAngle);
+            if(pt.routage->getGrib()->getInterpolatedValueCurrent_byDates(res_lon,res_lat,
+                   workEta+pt.routage->getTimeStep()*60,&current_speed,&current_angle,INTERPOLATION_DEFAULT))
+            {
+                current_angle=radToDeg(current_angle);
+                QPointF p=Util::calculateSumVect(newWindAngle,newWindSpeed,current_angle,current_speed);
+                newWindSpeed=p.x();
+                newWindAngle=p.y();
             }
             else
             {
-                newWindAngle=pt.routage->getWindAngle();
-                newWindSpeed=pt.routage->getWindSpeed();
+                current_speed=-1;
+                current_angle=0;
             }
             if(pt.routage->getI_iso())
             {
@@ -453,10 +445,7 @@ inline QList<vlmPoint> findRoute(const QList<vlmPoint> & pointList)
     dataThread.GriB=routage->getGrib();
     dataThread.whatIfJour=routage->getWhatIfJour();
     dataThread.whatIfUsed=routage->getWhatIfUsed();
-    dataThread.windIsForced=routage->getWindIsForced();
     dataThread.whatIfTime=routage->getWhatIfTime();
-    dataThread.windAngle=routage->getWindAngle();
-    dataThread.windSpeed=routage->getWindSpeed();
     dataThread.whatIfWind=routage->getWhatIfWind();
     dataThread.timeStep=routage->getTimeStep();
     dataThread.speedLossOnTack=routage->getSpeedLossOnTack();
@@ -616,28 +605,20 @@ inline int ROUTAGE::calculateTimeRoute(const vlmPoint &routeFrom,const vlmPoint 
         workEta=etaRoute;
         if(dataThread->whatIfUsed && dataThread->whatIfJour<=dataThread->Eta)
             workEta=workEta+dataThread->whatIfTime*3600;
-        if(dataThread->windIsForced || (dataThread->GriB->getInterpolatedValue_byDates(lon, lat, workEta,&windSpeed,&windAngle,INTERPOLATION_DEFAULT) && workEta<=maxDate && (!hasLimit || etaRoute<=etaLimit)))
+        if(dataThread->GriB->getInterpolatedValue_byDates(lon, lat, workEta,&windSpeed,&windAngle,INTERPOLATION_DEFAULT && workEta<=maxDate && (!hasLimit || etaRoute<=etaLimit)))
         {
-            if(dataThread->windIsForced)
+            windAngle=radToDeg(windAngle);
+            if (dataThread->GriB->getInterpolatedValueCurrent_byDates(lon, lat, workEta,&current_speed,&current_angle,INTERPOLATION_DEFAULT))
             {
-                windSpeed=dataThread->windSpeed;
-                windAngle=dataThread->windAngle;
+                current_angle=radToDeg(current_angle);
+                QPointF p=Util::calculateSumVect(windAngle,windSpeed,current_angle,current_speed);
+                windSpeed=p.x();
+                windAngle=p.y();
             }
             else
             {
-                windAngle=radToDeg(windAngle);
-                if (dataThread->GriB->getInterpolatedValueCurrent_byDates(lon, lat, workEta,&current_speed,&current_angle,INTERPOLATION_DEFAULT))
-                {
-                    current_angle=radToDeg(current_angle);
-                    QPointF p=Util::calculateSumVect(windAngle,windSpeed,current_angle,current_speed);
-                    windSpeed=p.x();
-                    windAngle=p.y();
-                }
-                else
-                {
-                    current_speed=-1;
-                    current_angle=0;
-                }
+                current_speed=-1;
+                current_angle=0;
             }
             if(dataThread->i_iso)
                 windAngle=Util::A360(windAngle+180.0);
@@ -809,9 +790,6 @@ ROUTAGE::ROUTAGE(QString name, Projection *proj, Grib *grib, QGraphicsScene * my
     this->showBestLive=Settings::getSetting("routageShowBestLive",1).toInt()==1;
     this->colorGrib=Settings::getSetting("routageColorGrib",0).toInt()==1;
     this->showIso=Settings::getSetting("routageShowIso",1).toInt()==1;
-    this->wind_angle=0;
-    this->wind_speed=20;
-    this->windIsForced=false;
     this->done=false;
     this->i_done=false;
     this->i_iso=false;
@@ -1257,39 +1235,31 @@ void ROUTAGE::slot_calculate()
             double windSpeed,windAngle;
             double current_speed=-1;
             double current_angle=0;
-            if(!windIsForced)
+            if(i_iso)
+                workEta = i_eta;
+            else
+                workEta = eta;
+            if(whatIfUsed && whatIfJour<=workEta)
+                workEta=workEta+whatIfTime*3600;
+            if(!grib->getInterpolatedValue_byDates((double) list->at(n).lon,(double) list->at(n).lat,
+                   workEta,&windSpeed,&windAngle,INTERPOLATION_DEFAULT)||workEta+this->getTimeStep()*60>maxDate)
             {
-                if(i_iso)
-                    workEta = i_eta;
-                else
-                    workEta = eta;
-                if(whatIfUsed && whatIfJour<=workEta)
-                    workEta=workEta+whatIfTime*3600;
-                if(!grib->getInterpolatedValue_byDates((double) list->at(n).lon,(double) list->at(n).lat,
-                       workEta,&windSpeed,&windAngle,INTERPOLATION_DEFAULT)||workEta+this->getTimeStep()*60>maxDate)
-                {
-                    iso->setPointDead(n);
-                    continue;
-                }
-                windAngle=radToDeg(windAngle);
-                if(grib->getInterpolatedValueCurrent_byDates((double) list->at(n).lon,(double) list->at(n).lat,
-                       workEta,&current_speed,&current_angle,INTERPOLATION_DEFAULT))
-                {
-                    current_angle=radToDeg(current_angle);
-                    QPointF p=Util::calculateSumVect(windAngle,windSpeed,current_angle,current_speed);
-                    windSpeed=p.x();
-                    windAngle=p.y();
-                }
-                else
-                {
-                    current_speed=-1;
-                    current_angle=0;
-                }
+                iso->setPointDead(n);
+                continue;
+            }
+            windAngle=radToDeg(windAngle);
+            if(grib->getInterpolatedValueCurrent_byDates((double) list->at(n).lon,(double) list->at(n).lat,
+                   workEta,&current_speed,&current_angle,INTERPOLATION_DEFAULT))
+            {
+                current_angle=radToDeg(current_angle);
+                QPointF p=Util::calculateSumVect(windAngle,windSpeed,current_angle,current_speed);
+                windSpeed=p.x();
+                windAngle=p.y();
             }
             else
             {
-                windAngle=this->wind_angle;
-                windSpeed=this->wind_speed;
+                current_speed=-1;
+                current_angle=0;
             }
             if((!i_iso && whatIfUsed && whatIfJour<=eta) || (i_iso && whatIfUsed && whatIfJour<=i_eta))
                 windSpeed=windSpeed*whatIfWind/100.00;
@@ -1425,7 +1395,7 @@ void ROUTAGE::slot_calculate()
     #endif
                     vlmPoint newPoint(0,0);
                     cap=caps.at(ccc);
-                    double twa_x=qAbs(cap-wind_angle);
+                    double twa_x=qAbs(cap-windAngle);
                     if(qAbs(twa_x)>180)
                     {
                         if(twa_x<0)
@@ -2037,10 +2007,7 @@ void ROUTAGE::slot_calculate()
                     dataThread.GriB=this->getGrib();
                     dataThread.whatIfJour=this->getWhatIfJour();
                     dataThread.whatIfUsed=this->getWhatIfUsed();
-                    dataThread.windIsForced=this->getWindIsForced();
                     dataThread.whatIfTime=this->getWhatIfTime();
-                    dataThread.windAngle=this->getWindAngle();
-                    dataThread.windSpeed=this->getWindSpeed();
                     dataThread.whatIfWind=this->getWhatIfWind();
                     dataThread.timeStep=this->getTimeStep();
                     dataThread.speedLossOnTack=this->getSpeedLossOnTack();
@@ -2178,10 +2145,7 @@ void ROUTAGE::slot_calculate()
         dataThread.GriB=this->getGrib();
         dataThread.whatIfJour=this->getWhatIfJour();
         dataThread.whatIfUsed=this->getWhatIfUsed();
-        dataThread.windIsForced=this->getWindIsForced();
         dataThread.whatIfTime=this->getWhatIfTime();
-        dataThread.windAngle=this->getWindAngle();
-        dataThread.windSpeed=this->getWindSpeed();
         dataThread.whatIfWind=this->getWhatIfWind();
         dataThread.timeStep=this->getTimeStep();
         dataThread.speedLossOnTack=this->getSpeedLossOnTack();
@@ -2221,10 +2185,7 @@ void ROUTAGE::slot_calculate()
             dataThread.GriB=this->getGrib();
             dataThread.whatIfJour=this->getWhatIfJour();
             dataThread.whatIfUsed=this->getWhatIfUsed();
-            dataThread.windIsForced=this->getWindIsForced();
             dataThread.whatIfTime=this->getWhatIfTime();
-            dataThread.windAngle=this->getWindAngle();
-            dataThread.windSpeed=this->getWindSpeed();
             dataThread.whatIfWind=this->getWhatIfWind();
             dataThread.timeStep=this->getTimeStep();
             dataThread.speedLossOnTack=this->getSpeedLossOnTack();
@@ -3414,9 +3375,6 @@ void ROUTAGE::setFromRoutage(ROUTAGE *fromRoutage, bool editOptions)
     this->timeStepMore24=fromRoutage->getTimeStepMore24();
     this->timeStepLess24=fromRoutage->getTimeStepLess24();
     this->explo=fromRoutage->getExplo();
-    this->wind_angle=fromRoutage->getWindAngle();
-    this->wind_speed=fromRoutage->getWindSpeed();
-    this->windIsForced=fromRoutage->getWindIsForced();
     this->useRouteModule=fromRoutage->getUseRouteModule();
     this->checkCoast=fromRoutage->getCheckCoast();
     this->checkLine=fromRoutage->getCheckLine();
@@ -4219,10 +4177,7 @@ void ROUTAGE::calculateAlternative()
     dataThread.GriB=this->getGrib();
     dataThread.whatIfJour=this->getWhatIfJour();
     dataThread.whatIfUsed=this->getWhatIfUsed();
-    dataThread.windIsForced=this->getWindIsForced();
     dataThread.whatIfTime=this->getWhatIfTime();
-    dataThread.windAngle=this->getWindAngle();
-    dataThread.windSpeed=this->getWindSpeed();
     dataThread.whatIfWind=this->getWhatIfWind();
     dataThread.timeStep=this->getTimeStep();
     dataThread.speedLossOnTack=this->getSpeedLossOnTack();

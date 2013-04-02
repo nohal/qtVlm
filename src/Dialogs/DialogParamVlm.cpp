@@ -36,6 +36,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "mycentralwidget.h"
 #include "GshhsReader.h"
 #include "Util.h"
+#include "Grib.h"
 
 DialogParamVlm::DialogParamVlm(MainWindow * main,myCentralWidget * parent) : QDialog(parent)
 {
@@ -45,6 +46,7 @@ DialogParamVlm::DialogParamVlm(MainWindow * main,myCentralWidget * parent) : QDi
     connect(this,SIGNAL(resetTraceCache()),parent,SIGNAL(resetTraceCache()));
     connect(this,SIGNAL(paramVLMChanged()),main,SLOT(slotParamChanged()));
     connect(this, SIGNAL(inetUpdated()), main, SLOT(slotInetUpdated()));
+    connect(this,SIGNAL(redrawGrib()),centralWidget,SIGNAL(redrawGrib()));
 
     /* Drawing / affichage */
     opp_labelType->addItem(tr("Pseudo"));
@@ -143,6 +145,12 @@ DialogParamVlm::DialogParamVlm(MainWindow * main,myCentralWidget * parent) : QDi
 
     chk_externalMail->setCheckState(Settings::getSetting("sDocExternalMail",1).toInt()==1?Qt::Checked:Qt::Unchecked);
     sailsDocPress->setCheckState(Settings::getSetting("sailsDocPress",0).toInt()==1?Qt::Checked:Qt::Unchecked);
+    forceWind->setChecked(Settings::getSetting("forceWind",0).toInt()==1);
+    forcedTWS->setValue(Settings::getSetting("forcedTWS",0.0).toDouble());
+    forcedTWD->setValue(Settings::getSetting("forcedTWD",0.0).toDouble());
+    forceCurrents->setChecked(Settings::getSetting("forceCurrents",0).toInt()==1);
+    forcedCS->setValue(Settings::getSetting("forcedCS",0.0).toDouble());
+    forcedCD->setValue(Settings::getSetting("forcedCD",0.0).toDouble());
 
     /* GPS */
     chk_activateEmulation->setCheckState(
@@ -314,6 +322,14 @@ void DialogParamVlm::done(int result)
         //Settings::setSetting("autoGribDate",chk_autoGribDate->checkState()==Qt::Checked?"1":"0");
         Settings::setSetting("sDocExternalMail",chk_externalMail->checkState()==Qt::Checked?"1":"0");
         Settings::setSetting("sailsDocPress",sailsDocPress->checkState()==Qt::Checked?"1":"0");
+        Settings::setSetting("forceWind",forceWind->isChecked()?1:0);
+        Settings::setSetting("forcedTWS",forcedTWS->value());
+        Settings::setSetting("forcedTWD",forcedTWD->value());
+        Settings::setSetting("forceCurrents",forceCurrents->isChecked()?1:0);
+        Settings::setSetting("forcedCS",forcedCS->value());
+        Settings::setSetting("forcedCD",forcedCD->value());
+        if(centralWidget->getGrib()) centralWidget->getGrib()->forceParam();
+        if(centralWidget->getGribCurrent()) centralWidget->getGribCurrent()->forceParam();
 
         /* advanced */
         Settings::setSetting("gpsEmulEnable",chk_activateEmulation->checkState()==Qt::Checked?"1":"0");
@@ -340,6 +356,7 @@ void DialogParamVlm::done(int result)
         Settings::setSetting("saveMainWindowGeometry",saveWinGeometry->checkState()==Qt::Checked?"1":"0");
 
         emit paramVLMChanged();
+        emit redrawGrib();
     }
     QDialog::done(result);
 }

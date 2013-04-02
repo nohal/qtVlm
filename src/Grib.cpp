@@ -144,6 +144,16 @@ void Grib::initNewGrib()
     rainColor[15].setRgba(qRgba(100,  0,100,  mapColorTransp));
     rainColor[16].setRgba(qRgba( 50,  0,50,  mapColorTransp));
     file=NULL;
+    forceParam();
+}
+void Grib::forceParam()
+{
+    forceWind=Settings::getSetting("forceWind",0).toInt()==1;
+    forcedTWS=Settings::getSetting("forcedTWS",0.0).toDouble();
+    forcedTWD=Settings::getSetting("forcedTWD",0.0).toDouble();
+    forceCurrents=Settings::getSetting("forceCurrents",0).toInt()==1;
+    forcedCS=Settings::getSetting("forcedCS",0.0).toDouble();
+    forcedCD=Settings::getSetting("forcedCD",0.0).toDouble();
 }
 
 //-------------------------------------------------------------------------------
@@ -712,6 +722,12 @@ bool Grib::getInterpolatedValueCurrent_byDates(double d_long, double d_lat, time
                                         int interpolation_type,bool debug)
 {
 
+    if(forceCurrents)
+    {
+        *u=forcedCS;
+        *v=degToRad(forcedCD);
+        return true;
+    }
     GribRecord *recU1,*recV1,*recU2,*recV2;
     time_t t1,t2;
 
@@ -810,6 +826,12 @@ bool Grib::getInterpolatedValue_byDates(double d_long, double d_lat, time_t now,
                                               GribRecord *recU1,GribRecord *recV1,GribRecord *recU2,GribRecord *recV2,
                                               double * u, double * v,int interpolation_type,bool debug)
 {
+    if(forceWind)
+    {
+        *u=forcedTWS;
+        *v=degToRad(forcedTWD);
+        return true;
+    }
     windData wData_prev;
     windData wData_nxt;
     double gridOriginLat,gridOriginLon;
