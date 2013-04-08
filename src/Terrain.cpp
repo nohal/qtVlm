@@ -493,6 +493,7 @@ void Terrain::draw_GSHHSandGRIB()
     pnt.drawLine(correctedScalePos,QPoint(correctedScalePos.x(),correctedScalePos.y()-4));
     pnt.drawLine(QPoint(sX+screenDist,correctedScalePos.y()),QPoint(sX+screenDist,correctedScalePos.y()-4));
     setCursor(oldcursor);
+    daylight(&pnt);
     parent->getView()->resetTransform();
     parent->getView()->hideViewPix();
     parent->getScene()->setPinching(false);
@@ -943,4 +944,72 @@ void Terrain::setRoutageGrib(ROUTAGE * routage)
 ROUTAGE * Terrain::getRoutageGrib()
 {
     return routageGrib;
+}
+void Terrain::daylight(QPainter *pnt)
+{
+    if(Settings::getSetting("showNight",1).toInt()!=1) return;
+    QDateTime date=QDateTime().currentDateTimeUtc();
+    Grib * grib = this->parent->getGrib();
+    if(grib)
+        date=QDateTime().fromTime_t(grib->getCurrentDate()).toUTC();
+    int nbDays=date.date().dayOfYear();
+    double hour=date.time().hour()+date.time().minute()/60.0+date.time().second()/3600.0;
+    double M=-3.6 + 0.9856*nbDays;
+    double v= M+1.9*sin(degToRad(M));
+    double L= v+102.9;
+    double sinL=sin(degToRad(L));
+    double d= 22.8*sinL+0.6*sinL*sinL*sinL;
+    double latSun=d;
+    double lonSun=-15.0*hour;
+    double b=degToRad(latSun);
+    double l=degToRad(lonSun);
+    QPolygonF terminator;
+    double X=0;
+    double Y=0;
+    double XS=0;
+    double YS=0;
+    proj->map2screenDouble(lonSun,latSun,&XS,&YS);
+    for (int dist=360;dist>=0;--dist)
+    {
+        double f=degToRad(dist);
+        double lat=radToDeg(asin(cos(b)*sin(f)));
+        double x= -cos(l)*sin(b)*sin(f) - sin(l)*cos(f);
+        double y= -sin(l)*sin(b)*sin(f) + cos(l)*cos(f);
+        double lon=radToDeg(atan2(y,x));
+        proj->map2screenByReference(lonSun,XS,lon,lat,&X,&Y);
+        terminator.append(QPointF(X,Y));
+    }
+#ifdef __TERRAIN_QIMAGE
+    QImage mask = QImage(width,height,QImage::Format_ARGB32_Premultiplied);
+#else
+    QPixmap mask = QPixmap(width,height);
+#endif
+    QColor night=Qt::black;
+    night.setAlpha(Settings::getSetting("nightOpacity",120).toInt());
+    QColor day=Qt::transparent;
+    proj->map2screenDouble(lonSun,latSun,&X,&Y);
+//    if(terminator.containsPoint(QPointF(X,Y),Qt::OddEvenFill))
+//        qSwap(night,day);
+    mask.fill(day);
+    QBrush brush(night);
+    QPainter p(&mask);
+    p.setCompositionMode(QPainter::CompositionMode_Source);
+    p.setBrush(brush);
+    p.setPen(Qt::NoPen);
+    p.drawPolygon(terminator.toPolygon());
+    double reflect=terminator.boundingRect().center().x();
+    if(qRound(reflect)!=qRound(width/2.0))
+    {
+        double project=proj->getScale()*360.0;
+        if(reflect>width/2.0)
+            project=-project;
+        terminator.translate(project,0.0);
+        p.drawPolygon(terminator.toPolygon());
+    }
+    pnt->setCompositionMode(QPainter::CompositionMode_SourceOver);
+#ifdef __TERRAIN_QIMAGE
+    pnt->drawImage(QPoint(0,0),mask);
+#else
+    pnt->drawPixmap(0,0,mask);
+#endif
 }

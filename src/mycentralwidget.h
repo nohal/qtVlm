@@ -258,7 +258,7 @@ public slots :
         void slot_shOpp(bool);
         void slot_shPor(bool);
         void slot_shFla(bool);
-
+        void slot_shNig(bool);
 
         /*Routes */
         void slot_addRouteFromMenu();

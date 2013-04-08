@@ -3159,7 +3159,7 @@ void ROUTAGE::epuration(int toBeRemoved)
         rightFromLoxo[0].internal_1=toBeRemovedRight;
         rightFromLoxo[0].internal_2=initialDist;
     }
-    qWarning()<<"tp"<<tempPoints.size()<<"tbr"<<toBeRemoved<<"lc"<<leftFromLoxo.size()<<"tbr_l"<<toBeRemovedLeft<<"rc"<<rightFromLoxo.size()<<"tbr_r"<<toBeRemovedRight;
+    //qWarning()<<"tp"<<tempPoints.size()<<"tbr"<<toBeRemoved<<"lc"<<leftFromLoxo.size()<<"tbr_l"<<toBeRemovedLeft<<"rc"<<rightFromLoxo.size()<<"tbr_r"<<toBeRemovedRight;
     if(this->useMultiThreading)
     {
         QList<QList<vlmPoint> > listList;

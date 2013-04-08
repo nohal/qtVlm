@@ -8398,12 +8398,12 @@ projetá trasa a trajektorie se nemusí shodovat.&lt;/span&gt;&lt;/p&gt;&lt;/bod
     <message>
         <location filename="../src/boatVLM.cpp" line="841"/>
         <source>BVMG vent (pres): </source>
-        <translation>BVMG vítr (proti větru):</translation>
+        <translation>BVMG vítr (proti větru): </translation>
     </message>
     <message>
         <location filename="../src/boatVLM.cpp" line="842"/>
         <source>BVMG vent (portant): </source>
-        <translation>BVMG vítr (po větru):</translation>
+        <translation>BVMG vítr (po větru): </translation>
     </message>
     <message>
         <location filename="../src/boatVLM.cpp" line="845"/>

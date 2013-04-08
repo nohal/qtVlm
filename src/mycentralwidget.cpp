@@ -463,6 +463,7 @@ myCentralWidget::myCentralWidget(Projection * proj,MainWindow * parent,MenuBar *
 
     connect(menuBar->acOptions_SH_Pol, SIGNAL(triggered(bool)), this,  SIGNAL(shPol(bool)));
     connect(menuBar->acOptions_SH_Fla, SIGNAL(triggered(bool)), this,  SLOT(slot_shFla(bool)));
+    connect(menuBar->acOptions_SH_Nig, SIGNAL(triggered(bool)), this,  SLOT(slot_shNig(bool)));
 
     connect(menuBar->acOptions_SH_Boa, SIGNAL(triggered(bool)), parent, SLOT(slot_centerBoat()));
 
@@ -3373,7 +3374,6 @@ void myCentralWidget::slot_editRoute(ROUTE * route,bool createMode)
 {
     DialogRoute *route_editor=new DialogRoute(route,this,createMode);
     int result=route_editor->exec();
-    qWarning()<<"result="<<result;
     if(result==99)
     {
         route_editor->deleteLater();
@@ -3425,7 +3425,7 @@ void myCentralWidget::treatRoute(ROUTE* route)
         route->setOptimize(false);
         if(route->getFrozen() || (simplify && !route->getHas_eta()))
             QMessageBox::critical(0,QString(QObject::tr("Simplification/Optimisation de route")),QString(QObject::tr("Cette operation est impossible pour une route figee ou une route sans ETA")));
-        else if(route->getUseVbvmgVlm())
+        else if(route->getUseVbvmgVlm() && !route->getNewVbvmgVlm())
             QMessageBox::critical(0,QString(QObject::tr("Simplification/Optimisation de route")),QString(QObject::tr("Cette operation est impossible si le mode de calcul VBVMG est celui de VLM")));
         else
         {
@@ -4463,6 +4463,13 @@ void myCentralWidget::slot_shFla(bool)
     Settings::setSetting("showFlag",f);
     emit shFla();
 }
+void myCentralWidget::slot_shNig(bool)
+{
+    bool shNight=Settings::getSetting("showNight",1).toInt()==1;
+    Settings::setSetting("showNight",!shNight?1:0);
+    emit this->redrawGrib();
+}
+
 void myCentralWidget::slotFax_open()
 {
     bool newFax=false;

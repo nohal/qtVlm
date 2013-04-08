@@ -272,6 +272,7 @@ public:
      QAction *acOptions_SH_Pol;
      QAction *acOptions_SH_Boa;
      QAction *acOptions_SH_Fla;
+     QAction *acOptions_SH_Nig;
      QAction *acKeep;
      QAction *acReplay;
     QAction *acScreenshot;

@@ -78,6 +78,7 @@ MenuBar::MenuBar(QWidget *parent)
                 acOptions_SH_Pol = addAction(menuShowHide, tr("Cacher/Montrer la polaire"), "L", tr(""));
                 menuShowHide->addSeparator();
                 acOptions_SH_Fla = addAction(menuShowHide, tr("Cacher/Montrer les pavillons sur la carte"), "F", tr(""));
+                acOptions_SH_Nig = addAction(menuShowHide, tr("Cacher/Montrer les zones de jour et nuit"), "N", tr(""));
                 menuShowHide->addSeparator();
                 acOptions_SH_Boa = addAction(menuShowHide, tr("Centrer sur le bateau actif"), "B", tr(""));
 

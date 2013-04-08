@@ -338,13 +338,17 @@ void boardVLM::boatUpdated(void)
     avg->setText(QString().sprintf("%.2f",myBoat->getAvg()));
     windAngle->setClosest(myBoat->getClosest());
     windAngle->setValues(myBoat->getHeading(),myBoat->getWindDir(),myBoat->getWindSpeed(), computeWPdir(myBoat), -1);
-    bvmgU->setText(QString().sprintf("%.1f",myBoat->getBvmgUp(myBoat->getWindSpeed())));
-    bvmgD->setText(QString().sprintf("%.1f",myBoat->getBvmgDown(myBoat->getWindSpeed())));
-
+    double bvmgUp=myBoat->getBvmgUp(myBoat->getWindSpeed());
+    double bvmgDw=myBoat->getBvmgDown(myBoat->getWindSpeed());
+    if(qAbs(qRound(bvmgUp*10.0))>qAbs(qRound(angle_val*10)))
+        bvmgU->setText("<font color=\"red\">"+QString().sprintf("%.1f",bvmgUp)+"</font>");
+    else
+        bvmgU->setText("<font color=\"black\">"+QString().sprintf("%.1f",bvmgUp)+"</font>");
+    if(qAbs(qRound(bvmgDw*10.0))<qAbs(qRound(angle_val*10.0)))
+        bvmgD->setText("<font color=\"red\">"+QString().sprintf("%.1f",bvmgDw)+"</font>");
+    else
+        bvmgD->setText("<font color=\"black\">"+QString().sprintf("%.1f",bvmgDw)+"</font>");
     boatName->setText(myBoat->getBoatPseudo());
-
-    //boatName->setText(myBoat->getDispName());
-
     QString tt;
     boatScore->setText(myBoat->getScore()+" ("+tt.sprintf("%d",myBoat->getRank())+")");
 

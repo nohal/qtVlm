@@ -8316,12 +8316,12 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../src/boatVLM.cpp" line="841"/>
         <source>BVMG vent (pres): </source>
-        <translation>BVMG wind (upwind):</translation>
+        <translation>BVMG wind (upwind): </translation>
     </message>
     <message>
         <location filename="../src/boatVLM.cpp" line="842"/>
         <source>BVMG vent (portant): </source>
-        <translation>BVMG wind (downwind):</translation>
+        <translation>BVMG wind (downwind): </translation>
     </message>
     <message>
         <location filename="../src/boatVLM.cpp" line="845"/>

@@ -5842,7 +5842,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>BVMG vent (pres): </source>
-        <translation>BVMG vent (près):</translation>
+        <translation>BVMG vent (près): </translation>
     </message>
     <message>
         <source>BVMG vent (portant): </source>

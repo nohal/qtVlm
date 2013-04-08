@@ -8343,12 +8343,12 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../src/boatVLM.cpp" line="841"/>
         <source>BVMG vent (pres): </source>
-        <translation>BVMG viento (ceñida):</translation>
+        <translation>BVMG viento (ceñida): </translation>
     </message>
     <message>
         <location filename="../src/boatVLM.cpp" line="842"/>
         <source>BVMG vent (portant): </source>
-        <translation>BVMG viento (portante):</translation>
+        <translation>BVMG viento (portante): </translation>
     </message>
     <message>
         <location filename="../src/boatVLM.cpp" line="845"/>

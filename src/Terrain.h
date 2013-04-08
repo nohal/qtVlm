@@ -188,6 +188,7 @@ private:
     QMutex mutex;
     QPoint scalePos;
     QTimer * timerUpdated;
+    void daylight(QPainter * pnt);
 };
 Q_DECLARE_TYPEINFO(Terrain,Q_MOVABLE_TYPE);
 

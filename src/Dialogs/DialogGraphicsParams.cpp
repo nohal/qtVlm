@@ -251,6 +251,7 @@ void DialogGraphicsParams::slotBtOK()
         Settings::setSetting("gateLineWidth",  inputGateLine->getLineWidth());
         Settings::setSetting("gateLineColor",  inputGateLine->getLineColor());
         Settings::setSetting("landOpacity",  inputOpacity->getLineWidth());
+        Settings::setSetting("nightOpacity",  inputOpacityNuit->getLineWidth());
         Settings::setSetting("estimeLineWidth",  inputEstimeLine->getLineWidth());
         Settings::setSetting("estimeLineColor",  inputEstimeLine->getLineColor());
         Settings::setSetting("routeLineWidth",  inputRouteLine->getLineWidth());
@@ -317,6 +318,18 @@ QFrame *DialogGraphicsParams::createFrameGui(QWidget *parent)
                                 this,0,255,0,false);
 
     lay->addWidget( inputOpacity, lig,1, Qt::AlignLeft);
+    //-------------------------------------------------
+    lig ++;
+    label = new QLabel(tr("Opacite des zones de nuit :"), frm);
+    lay->addWidget( label,    lig,0, Qt::AlignRight);
+        inputOpacityNuit =
+                new InputLineParams(
+                                Settings::getSetting("nightOpacity", 120).toDouble(),
+                                QColor(Qt::black).value(),
+                                120,  QColor(Qt::black),
+                                this,0,255,0,false);
+
+    lay->addWidget( inputOpacityNuit, lig,1, Qt::AlignLeft);
     //-------------------------------------------------
     lig ++;
     label = new QLabel(tr("Estime :"), frm);
