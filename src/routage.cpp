@@ -2368,7 +2368,7 @@ void ROUTAGE::slot_calculate()
         eLapsed=eLapsed.addSecs(elapsed);
         QString jour;
         jour=jour.sprintf("%d",qRound(jours));
-        calculateShapeIso(true);
+        //calculateShapeIso(true);
         if(arrived)
         {
             msgBox.setText(tr("Date et heure d'arrivee: ")+finalEta.toString("dd MMM-hh:mm")+
