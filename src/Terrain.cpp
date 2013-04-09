@@ -993,6 +993,7 @@ void Terrain::daylight(QPainter *pnt)
     mask.fill(day);
     QBrush brush(night);
     QPainter p(&mask);
+    p.setRenderHint(QPainter::Antialiasing,true);
     p.setCompositionMode(QPainter::CompositionMode_Source);
     p.setBrush(brush);
     p.setPen(Qt::NoPen);

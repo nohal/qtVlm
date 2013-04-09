@@ -243,6 +243,10 @@ La boîte à cocher trace partielle s&apos;active apres l&apos;entree d&apos;un 
         <source>Trace TWA :</source>
         <translation>Tracé TWA :</translation>
     </message>
+    <message>
+        <source>Opacite des zones de nuit :</source>
+        <translation>Opacité des zones de nuit :</translation>
+    </message>
 </context>
 <context>
     <name>DialogHorn</name>
@@ -1823,6 +1827,10 @@ Etes-vous sur ?</source>
         <source>POI</source>
         <translation></translation>
     </message>
+    <message>
+        <source>Montrer les POIs intermediaires de la route</source>
+        <translation>Montrer les pois intermédiaires de la route </translation>
+    </message>
 </context>
 <context>
     <name>MenuBar</name>
@@ -2682,6 +2690,22 @@ Etes-vous sur ?</source>
         <source>Optimiser la route</source>
         <translation></translation>
     </message>
+    <message>
+        <source>Cacher/Montrer les zones de jour et nuit</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Montrer les POIs intermediaires de la route</source>
+        <translation>Montrer les pois intermédiaires de la route </translation>
+    </message>
+    <message>
+        <source>Maximum</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Minimum</source>
+        <translation></translation>
+    </message>
 </context>
 <context>
     <name>POI</name>
@@ -2923,6 +2947,22 @@ Etes-vous sur de vouloir supprimer</translation>
     <message>
         <source>Vous ne pouvez pas optimiser en mode VBVMG-VLM</source>
         <translation>Vous ne pouvez pas optimiser en mode VBVMG-VLM</translation>
+    </message>
+    <message>
+        <source>Montrer les pois intermediaires de la route </source>
+        <translation>Montrer les pois intermédiaires de la route </translation>
+    </message>
+    <message>
+        <source>Maximum</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Minimum</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Montrer les POIs intermediaires de la route </source>
+        <translation>Montrer les pois intermédiaires de la route </translation>
     </message>
 </context>
 <context>
@@ -3752,18 +3792,6 @@ VMG %.2f nds</translation>
         <translation></translation>
     </message>
     <message>
-        <source>Forcer le vent</source>
-        <translation></translation>
-    </message>
-    <message>
-        <source>TWS</source>
-        <translation></translation>
-    </message>
-    <message>
-        <source>TWD</source>
-        <translation></translation>
-    </message>
-    <message>
         <source>Coeff Exploration</source>
         <translation></translation>
     </message>
@@ -3844,16 +3872,12 @@ min</extracomment>
     </message>
     <message>
         <source> deg</source>
-        <extracomment>deg
-----------
-deg</extracomment>
+        <extracomment>deg</extracomment>
         <translation>°</translation>
     </message>
     <message>
         <source> nds</source>
         <extracomment>nds
-----------
-nds
 ----------
 nds
 ----------
@@ -3875,10 +3899,6 @@ nds</extracomment>
 avec ce prefixe</source>
         <translation>Convertir en Route
 avec ce préfixe</translation>
-    </message>
-    <message>
-        <source>A; </source>
-        <translation></translation>
     </message>
     <message>
         <source>R</source>
@@ -3995,6 +4015,10 @@ inversés</translation>
     </message>
     <message>
         <source>Afficher la meilleure route pendant le calcul</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>A</source>
         <translation></translation>
     </message>
 </context>
@@ -4969,11 +4993,43 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Algorithme de simplification maximal</source>
-        <translation>Algorithme de simplification maximal</translation>
+        <translation type="obsolete">Algorithme de simplification maximal</translation>
     </message>
     <message>
         <source>Demander egalement la pression atmospherique</source>
         <translation>Demander également la Pression Atmosphérique</translation>
+    </message>
+    <message>
+        <source>Forcer le vent</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>TWS</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source> nds</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>TWD</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source> deg</source>
+        <translation>°</translation>
+    </message>
+    <message>
+        <source>Forcer le courant</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>CS</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>CD</source>
+        <translation></translation>
     </message>
 </context>
 <context>
@@ -6816,6 +6872,14 @@ Que voulez vous faire?</translation>
 What do you want to do?</source>
         <translation>Les cartes sontd&apos;une mauvaise version
 Que voulez vous faire?</translation>
+    </message>
+    <message>
+        <source> (maximum)</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source> (minimum)</source>
+        <translation></translation>
     </message>
 </context>
 <context>
