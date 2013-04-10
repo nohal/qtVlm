@@ -90,6 +90,7 @@ class MainWindow: public QMainWindow
         QMenu *createPopupMenu(void);
 
 public slots:
+        void slot_POI_input();
         void slot_showPOI_input(POI *poi=NULL, const bool &fromMenu=false);
         void slot_disablePopupMenu();
         void slotFile_Open();

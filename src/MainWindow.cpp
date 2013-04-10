@@ -165,7 +165,7 @@ void MainWindow::connectSignals()
     if(mb->acGribInterpolation)
         connect(mb->acGribInterpolation, SIGNAL(triggered()), this, SLOT(slotGribInterpolation()));
 #endif
-    connect(mb->acPOIinput, SIGNAL(triggered()), this, SLOT(slot_showPOI_input()));
+    connect(mb->acPOIinput, SIGNAL(triggered()), this, SLOT(slot_POI_input()));
     connect(mb->acPilototo, SIGNAL(triggered()), this, SLOT(slotPilototo()));
     connect(mb->acShowPolar, SIGNAL(triggered()),this,SLOT(slotShowPolar()));
 
@@ -2308,4 +2308,10 @@ void MainWindow::slot_showPOI_input(POI* poi, const bool &fromMenu)
     DialogPoi dp(this,my_centralWidget);
     dp.initPOI(poi,creationMode);
     dp.exec();
+}
+void MainWindow::slot_POI_input()
+{
+    DialogPoiInput * d=new DialogPoiInput(my_centralWidget);
+    d->exec();
+    d->deleteLater();
 }
