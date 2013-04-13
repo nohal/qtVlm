@@ -52,6 +52,7 @@ public:
     ROUTAGE * getRoutageGrib();
     void setRoutageGrib(ROUTAGE * routage);
     void setScalePos(const int &a, const int &b){this->scalePos=QPoint(a,b);}
+    bool daylight(QPainter * pnt, vlmPoint *coords=NULL);
 
     enum DrawGribPlainDataMode {
              drawNone,
@@ -188,7 +189,6 @@ private:
     QMutex mutex;
     QPoint scalePos;
     QTimer * timerUpdated;
-    void daylight(QPainter * pnt);
 };
 Q_DECLARE_TYPEINFO(Terrain,Q_MOVABLE_TYPE);
 

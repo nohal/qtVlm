@@ -222,6 +222,13 @@ void  GribRecord::translateDataType()
         else if (idCenter==85 && idModel==10 && idGrid==255)
         {
         }
+        //---------------
+        //Sarana
+        //---------------
+        else if (idCenter==161 && idModel==45 && idGrid==255)
+        {
+            this->print();
+        }
         //------------------------
         // Unknown center
         //------------------------

@@ -1991,11 +1991,11 @@ void ROUTAGE::slot_calculate()
                                                            Z_VALUE_ISOPOINT);
                     vg->setParent(this);
                     ++mmm;
-#if 0
-                    if(tempPoints.at(n).notSimplificable)
-                        vg->setDebug("Not Simplicable");
+#if 0 //display debug info in tooltip
+                    if(tempPoints.at(n).isBroken)
+                        vg->setDebug("Broken "+QString().setNum(isochrones.size()+1));
                     else
-                        vg->setDebug("Simplicable");
+                        vg->setDebug("Not Broken "+QString().setNum(isochrones.size()+1));
 #endif
                     vg->setEta(eta+(int)this->getTimeStep()*60.00);
                     connect(this,SIGNAL(updateVgTip(int,int,QString)),vg,SLOT(slot_updateTip(int,int,QString)));
@@ -2052,7 +2052,9 @@ void ROUTAGE::slot_calculate()
         double newMinDist=initialDist*10;
         for (int n=0;n<list->size();++n)
         {
-            //previousSegments.append(QLineF(list->at(n).origin->x,list->at(n).origin->y,list->at(n).x,list->at(n).y));
+#ifndef USE_SHAPEISO
+            previousSegments.append(QLineF(list->at(n).origin->x,list->at(n).origin->y,list->at(n).x,list->at(n).y));
+#endif
 #if 0
             if(!list->at(n).isStart)
             {
@@ -2434,15 +2436,15 @@ void ROUTAGE::slot_calculate()
 }
 void ROUTAGE::countDebug(int nbIso, QString s)
 {
-    if(nbIso!=0) return;
+    if (nbIso!=189) return;
     int count=0;
     int nDead=0;
     for (int n=0;n<tempPoints.size();++n)
     {
-        if(tempPoints.at(n).originNb==0)
+        if(tempPoints.at(n).originNb<110)
         {
             ++count;
-            if(s.contains("initial"))
+            if(s.contains("initial") && false)
             {
                 QPen pendebug(Qt::blue);
                 pendebug.setWidthF(1);
@@ -3159,7 +3161,7 @@ void ROUTAGE::epuration(int toBeRemoved)
         rightFromLoxo[0].internal_1=toBeRemovedRight;
         rightFromLoxo[0].internal_2=initialDist;
     }
-    //qWarning()<<"tp"<<tempPoints.size()<<"tbr"<<toBeRemoved<<"lc"<<leftFromLoxo.size()<<"tbr_l"<<toBeRemovedLeft<<"rc"<<rightFromLoxo.size()<<"tbr_r"<<toBeRemovedRight;
+    //qWarning()<<isochrones.size()<<"tp"<<tempPoints.size()<<"tbr"<<toBeRemoved<<"lc"<<leftFromLoxo.size()<<"tbr_l"<<toBeRemovedLeft<<"rc"<<rightFromLoxo.size()<<"tbr_r"<<toBeRemovedRight;
     if(this->useMultiThreading)
     {
         QList<QList<vlmPoint> > listList;
@@ -3192,7 +3194,10 @@ void ROUTAGE::removeCrossedSegments()
     for(int n=0;n<tempPoints.size()-1;++n)
     {
         bool differentDirection=false;
-        if(Util::myDiffAngle(tempPoints.at(n).capArrival,tempPoints.at(n+1).capArrival)>60)
+        if(tempPoints.at(n).originNb!=tempPoints.at(n+1).originNb && (tempPoints.at(n).origin->isBroken) /*|| tempPoints.at(n+1).origin->isBroken)*/)
+            differentDirection=true;
+        else if(Util::myDiffAngle(tempPoints.at(n).capArrival,tempPoints.at(n+1).capArrival)>60 ||
+                Util::myDiffAngle(tempPoints.at(n).capStart,tempPoints.at(n+1).capStart)>60)
         {
             if(tempPoints.at(n).originNb!=tempPoints.at(n+1).originNb)
             {
@@ -3255,7 +3260,10 @@ void ROUTAGE::removeCrossedSegments()
 
 
             bool differentDirection=false;
-            if(Util::myDiffAngle(tempPoints.at(previous).capArrival,tempPoints.at(next).capArrival)>60)
+            if(tempPoints.at(previous).originNb!=tempPoints.at(next).originNb && (tempPoints.at(previous).origin->isBroken)/* || tempPoints.at(next).origin->isBroken)*/)
+                differentDirection=true;
+            else if(Util::myDiffAngle(tempPoints.at(previous).capArrival,tempPoints.at(next).capArrival)>60 ||
+                    Util::myDiffAngle(tempPoints.at(previous).capStart,tempPoints.at(next).capStart)>60)
             {
                 if(tempPoints.at(previous).originNb!=tempPoints.at(next).originNb)
                 {
@@ -4437,6 +4445,6 @@ void ROUTAGE::calculateShapeIso(bool drawIt)
         pnt.setPen(pen);
         pnt.drawPolyline(shapeIso);
         pnt.end();
-        img.save("isoShape.png");
+        img.save("isoShape"+QString().sprintf("%03d",isochrones.size())+".png");
     }
 }

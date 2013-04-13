@@ -34,6 +34,24 @@ Copyright (C) 2008 - Jacques Zaninetti - http://zygrib.free.fr
 #include "routeInfo.h"
 #include "class_list.h"
 
+struct routeStats
+{
+    int totalTime;
+    double totalDistance;
+    double averageBS;
+    double maxBS;
+    double minBS;
+    double averageTWS;
+    double maxTWS;
+    double minTWS;
+    int rainTime;
+    int engineTime;
+    double reachingPercent;
+    double beatingPercent;
+    int nbTacks;
+    int nbGybes;
+    int nightTime;
+};
 
 //===================================================================
 class ROUTE : public QObject
@@ -140,7 +158,8 @@ class ROUTE : public QObject
         void setSortPoisByName(bool b){this->sortPoisbyName=b;}
         bool getSortPoisByName(){return this->sortPoisbyName;}
         FCT_SETGET_CST(bool,strongSimplify)
-    public slots:
+        routeStats getStats();
+public slots:
         void slot_recalculate(boat * boat=NULL);
         void slot_edit();
         void slot_shShow();

@@ -1617,3 +1617,66 @@ void ROUTE::setAutoAt(bool b)
     }
     autoAt=b;
 }
+routeStats ROUTE::getStats()
+{
+    routeStats stats;
+    stats.maxBS=-10e6;
+    stats.minBS=10e6;
+    stats.maxTWS=-10e6;
+    stats.minTWS=10e6;
+    stats.averageTWS=0;
+    stats.averageBS=0;
+    stats.totalTime=0;
+    stats.totalDistance=0;
+    stats.beatingPercent=0;
+    stats.nbTacks=0;
+    stats.engineTime=0;
+    if(!grib) return stats;
+    QList<vlmPoint> * points=this->getLine()->getPoints();
+    vlmPoint prevPoint=points->first();
+    double lon=prevPoint.lon;
+    double lat=prevPoint.lat;
+    time_t date=prevPoint.eta;
+    double bs=0;
+    double tws,twd,twa,hdg;
+    if(!grib->getInterpolatedValue_byDates(lon, lat,date,&tws,&twd,INTERPOLATION_DEFAULT))
+            return stats;
+    twd=radToDeg(twd);
+    Orthodromie oo(0,0,0,0);
+    for(int n=1;n<points->size();++n)
+    {
+        double prevLon=lon;
+        double prevLat=lat;
+        double prevTwa=twa;
+        time_t prevDate=date;
+        date=points->at(n).eta;
+        if(!grib->getInterpolatedValue_byDates(lon, lat,date,&tws,&twd,INTERPOLATION_DEFAULT))
+                return stats;
+        twd=radToDeg(twd);
+        stats.totalTime+=date-prevDate;
+        oo.setPoints(prevLon,prevLat,lon,lat);
+        stats.totalDistance+=oo.getDistance();
+        stats.averageTWS+=tws;
+        stats.maxTWS=qMax(stats.maxTWS,tws);
+        stats.minTWS=qMin(stats.minTWS,tws);
+        if(n!=points->size()-1)
+        {
+            oo.setPoints(lon,lat,points->at(n+1).lon,points->at(n+1).lat);
+            hdg=oo.getLoxoCap();
+            twa=Util::A360(hdg-twd);
+            if(twa<90.0 || twa>270.0)
+                stats.beatingPercent+=date-prevDate;
+            if((prevTwa<180.0 && twa>180.0) || (prevTwa>180.0 && twa<180.0))
+                ++stats.nbTacks;
+            bool engineUsed=false;
+            bs=myBoat->getPolarData()->getSpeed(tws,twa,true,&engineUsed);
+            stats.averageBS+=bs;
+            stats.maxBS=qMax(stats.maxBS,bs);
+            stats.minBS=qMin(stats.minBS,bs);
+            if(engineUsed)
+                stats.engineTime+=date-prevDate;
+        }
+    }
+    return stats;
+
+}
