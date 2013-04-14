@@ -76,6 +76,7 @@ class vlmLine : public QGraphicsWidget
         void setPointDistIso(const int &n, const double &d){this->line[n].distIso=d;}
         void setPointCapVmg(const int &n, const double &d){this->line[n].capVmg=d;}
         void setPointcapOrigin(const int &n,const double &d){this->line[n].capOrigin=d;}
+        void setPointIsoIndex(const int &n, const int &i){this->line[n].isoIndex=i;}
         void setPointCoordProj(const int &n,const double &x,const double &y){this->line[n].lonProj=x;this->line[n].latProj=y;}
         void setNotSimplificable(const int &n){this->line[n].notSimplificable=true;}
         void setLastPointIsPoi(){this->line[line.count()-1].isPOI=true;}

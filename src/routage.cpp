@@ -1167,7 +1167,7 @@ void ROUTAGE::slot_calculate()
         initialDist=tempLine.length();
     }
     approaching=false;
-    point.origin=NULL;
+    point.origin=&point;
     point.routage=this;
     point.capOrigin=Util::A360(loxoCap);
     if(i_iso)
@@ -2139,6 +2139,11 @@ void ROUTAGE::slot_calculate()
         }
         else
             eta=eta+(int)this->getTimeStep()*60.00;
+//        for(int ii=0;ii<iso->getPoints()->size();++ii)
+//        {
+//            iso->setPointIsoIndex(ii,ii);
+//            iso->getPoints()->at(ii).origin->myChildren.append(iso->getPoints()->at(ii));
+//        }
         if(i_iso)
             i_isochrones.append(iso);
         else
@@ -4422,7 +4427,7 @@ void ROUTAGE::calculateShapeIso(bool drawIt)
             p=iso->at(++n);
         }
         newShape.append(QPointF(p.x,p.y));
-        if (n>=iso->size()-1) break;
+        if (n>=iso->size()-1 || p.isStart) break;
         if(p.isBroken)
         {
             bool sameOrigin=false;
@@ -4432,7 +4437,8 @@ void ROUTAGE::calculateShapeIso(bool drawIt)
                 p=*p.origin;
                 --isoNb;
                 newShape.append(QPointF(p.x,p.y));
-                if(!p.myChildren.isEmpty() && p.myChildren.last().isoIndex>i)
+                if (p.isStart) break;
+                if(!p.myChildren.isEmpty() && p.myChildren.at(p.myChildren.size()-1).isoIndex>i)
                 {
                     sameOrigin=true;
                     ++isoNb;
@@ -4453,7 +4459,7 @@ void ROUTAGE::calculateShapeIso(bool drawIt)
                     if(!p.myChildren.isEmpty())
                     {
                         ++isoNb;
-                        p=p.myChildren.first();
+                        p=p.myChildren.at(0);
                         break;
                     }
                 }
@@ -4464,7 +4470,7 @@ void ROUTAGE::calculateShapeIso(bool drawIt)
             newShape.append(QPointF(p.x,p.y));
             while(!p.myChildren.isEmpty())
             {
-                p=p.myChildren.first();
+                p=p.myChildren.at(0);
                 ++isoNb;
                 newShape.append(QPointF(p.x,p.y));
             }
