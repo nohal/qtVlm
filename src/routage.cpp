@@ -300,7 +300,9 @@ inline QList<vlmPoint> finalEpuration(const QList<vlmPoint> &listPoints)
     double critere=0;
     for(int n=0;n<listPoints.size()-1;++n)
     {
-        if(qAbs(Util::myDiffAngle(listPoints.at(n).capArrival,
+        if(listPoints.at(n).originNb!=listPoints.at(n+1).originNb && listPoints.at(n).origin->isBroken && !listPoints.at(n+1).origin->isBroken)
+            critere=179;
+        else if(qAbs(Util::myDiffAngle(listPoints.at(n).capArrival,
                                 listPoints.at(n+1).capArrival)) > 90)
             critere=179;
         else
@@ -404,6 +406,8 @@ inline QList<vlmPoint> finalEpuration(const QList<vlmPoint> &listPoints)
             {
                 critere=360-critere;
             }
+            if(listPoints.at(previous).originNb!=listPoints.at(next).originNb && listPoints.at(previous).origin->isBroken && !listPoints.at(next).origin->isBroken)
+                critere=179;
             byCriteres.insert(critere,QPoint(previous,next));
             s=previous*10e6+next;
             byIndices.insert(s,critere);
@@ -1871,7 +1875,13 @@ void ROUTAGE::slot_calculate()
                     t1.start();
 #endif
                     removeCrossedSegments();
+#ifdef debugCount
+                    this->countDebug(nbIso,"after removeCrossedSegment in end of final loop");
+#endif
                     checkIsoCrossingPreviousSegments();
+#ifdef debugCount
+                    this->countDebug(nbIso,"after checkIsoCrossingPreviousSegments in end of final loop");
+#endif
 #ifdef traceTime
                     msecs_13=msecs_13+t1.elapsed();
 #endif
@@ -1991,7 +2001,7 @@ void ROUTAGE::slot_calculate()
                                                            Z_VALUE_ISOPOINT);
                     vg->setParent(this);
                     ++mmm;
-#if 0 //display debug info in tooltip
+#if 0
                     if(tempPoints.at(n).isBroken)
                         vg->setDebug("Broken "+QString().setNum(isochrones.size()+1));
                     else
@@ -2436,12 +2446,12 @@ void ROUTAGE::slot_calculate()
 }
 void ROUTAGE::countDebug(int nbIso, QString s)
 {
-    if (nbIso!=189) return;
+    if (nbIso!=168) return;
     int count=0;
     int nDead=0;
     for (int n=0;n<tempPoints.size();++n)
     {
-        if(tempPoints.at(n).originNb<110)
+        if(tempPoints.at(n).originNb==117 || tempPoints.at(n).originNb==118)
         {
             ++count;
             if(s.contains("initial") && false)
@@ -3186,18 +3196,45 @@ void ROUTAGE::epuration(int toBeRemoved)
 void ROUTAGE::removeCrossedSegments()
 {
     if(tempPoints.isEmpty()) return;
+    QPointF dummy;
     QMultiMap<double,QPoint> byCriteres;
     QHash<quint32,double> byIndices;
     QList<bool> deadStatus;
     quint32 s;
     double critere=0;
+    QList<vlmLine *> isos=i_iso?i_isochrones:isochrones;
     for(int n=0;n<tempPoints.size()-1;++n)
     {
         bool differentDirection=false;
-        if(tempPoints.at(n).originNb!=tempPoints.at(n+1).originNb && (tempPoints.at(n).origin->isBroken) /*|| tempPoints.at(n+1).origin->isBroken)*/)
-            differentDirection=true;
-        else if(Util::myDiffAngle(tempPoints.at(n).capArrival,tempPoints.at(n+1).capArrival)>60 ||
-                Util::myDiffAngle(tempPoints.at(n).capStart,tempPoints.at(n+1).capStart)>60)
+        if(tempPoints.at(n).originNb!=tempPoints.at(n+1).originNb)
+        {
+            QLineF a1(tempPoints.at(n).origin->x,tempPoints.at(n).origin->y,tempPoints.at(n).x,tempPoints.at(n).y);
+            QLineF a2(tempPoints.at(n+1).origin->x,tempPoints.at(n+1).origin->y,tempPoints.at(n+1).x,tempPoints.at(n+1).y);
+            if(a1.intersect(a2,&dummy)!=QLineF::BoundedIntersection)
+            {
+                if(tempPoints.at(n).origin->isBroken)
+                {
+                    if(!tempPoints.at(n+1).origin->isBroken)
+                        differentDirection=true;
+                }
+                else if(tempPoints.at(n).originNb!=tempPoints.at(n+1).originNb+1)
+                {
+                    QList<vlmPoint> * iso=isos.last()->getPoints();
+                    int o=tempPoints.at(n).originNb+1;
+                    while(o<tempPoints.at(n+1).originNb && o<iso->count())
+                    {
+                        if(iso->at(o).isBroken)
+                        {
+                            differentDirection=true;
+                            break;
+                        }
+                        ++o;
+                    }
+                }
+            }
+        }
+        if(!differentDirection && (Util::myDiffAngle(tempPoints.at(n).capArrival,tempPoints.at(n+1).capArrival)>60.0 ||
+                Util::myDiffAngle(tempPoints.at(n).capStart,tempPoints.at(n+1).capStart)>60.0))
         {
             if(tempPoints.at(n).originNb!=tempPoints.at(n+1).originNb)
             {
@@ -3205,7 +3242,6 @@ void ROUTAGE::removeCrossedSegments()
                              tempPoints.at(n).x,tempPoints.at(n).y);
                 QLineF temp2(tempPoints.at(n+1).origin->x,tempPoints.at(n+1).origin->y,
                              tempPoints.at(n+1).x,tempPoints.at(n+1).y);
-                QPointF dummy;
                 if(temp1.intersect(temp2,&dummy)!=QLineF::BoundedIntersection)
                     differentDirection=true;
             }
@@ -3260,10 +3296,35 @@ void ROUTAGE::removeCrossedSegments()
 
 
             bool differentDirection=false;
-            if(tempPoints.at(previous).originNb!=tempPoints.at(next).originNb && (tempPoints.at(previous).origin->isBroken)/* || tempPoints.at(next).origin->isBroken)*/)
-                differentDirection=true;
-            else if(Util::myDiffAngle(tempPoints.at(previous).capArrival,tempPoints.at(next).capArrival)>60 ||
-                    Util::myDiffAngle(tempPoints.at(previous).capStart,tempPoints.at(next).capStart)>60)
+            if(tempPoints.at(previous).originNb!=tempPoints.at(next).originNb)
+            {
+                QLineF a1(tempPoints.at(previous).origin->x,tempPoints.at(previous).origin->y,tempPoints.at(previous).x,tempPoints.at(previous).y);
+                QLineF a2(tempPoints.at(next).origin->x,tempPoints.at(next).origin->y,tempPoints.at(next).x,tempPoints.at(next).y);
+                if(a1.intersect(a2,&dummy)!=QLineF::BoundedIntersection)
+                {
+                    if(tempPoints.at(previous).origin->isBroken)
+                    {
+                        if(!tempPoints.at(next).origin->isBroken)
+                            differentDirection=true;
+                    }
+                    else if(tempPoints.at(previous).originNb!=tempPoints.at(next).originNb+1)
+                    {
+                        QList<vlmPoint> * iso=isos.last()->getPoints();
+                        int o=tempPoints.at(previous).originNb+1;
+                        while(o<tempPoints.at(next).originNb && o<iso->count())
+                        {
+                            if(iso->at(o).isBroken)
+                            {
+                                differentDirection=true;
+                                break;
+                            }
+                            ++o;
+                        }
+                    }
+                }
+            }
+            if(!differentDirection && (Util::myDiffAngle(tempPoints.at(previous).capArrival,tempPoints.at(next).capArrival)>60.0 ||
+                    Util::myDiffAngle(tempPoints.at(previous).capStart,tempPoints.at(next).capStart)>60.0))
             {
                 if(tempPoints.at(previous).originNb!=tempPoints.at(next).originNb)
                 {
@@ -3271,7 +3332,6 @@ void ROUTAGE::removeCrossedSegments()
                                  tempPoints.at(previous).x,tempPoints.at(previous).y);
                     QLineF temp2(tempPoints.at(next).origin->x,tempPoints.at(next).origin->y,
                                  tempPoints.at(next).x,tempPoints.at(next).y);
-                    QPointF dummy;
                     if(temp1.intersect(temp2,&dummy)!=QLineF::BoundedIntersection)
                         differentDirection=true;
                 }
@@ -4439,7 +4499,7 @@ void ROUTAGE::calculateShapeIso(bool drawIt)
         QPixmap img(proj->getW(),proj->getH());
         img.fill(Qt::white);
         QPen pen;
-        pen.setWidthF(2);
+        pen.setWidthF(0.5);
         pen.setColor(Qt::red);
         QPainter pnt(&img);
         pnt.setPen(pen);
