@@ -227,7 +227,12 @@ void  GribRecord::translateDataType()
         //---------------
         else if (idCenter==161 && idModel==45 && idGrid==255)
         {
-            this->print();
+        }
+        //---------------
+        //RTOFS saildocs gulfstream data
+        //---------------
+        else if (idCenter==7 && idModel==45 && idGrid==255)
+        {
         }
         //------------------------
         // Unknown center
