@@ -1167,7 +1167,7 @@ void ROUTAGE::slot_calculate()
         initialDist=tempLine.length();
     }
     approaching=false;
-    point.origin=&point;
+    point.origin=NULL;
     point.routage=this;
     point.capOrigin=Util::A360(loxoCap);
     if(i_iso)
@@ -4427,7 +4427,7 @@ void ROUTAGE::calculateShapeIso(bool drawIt)
             p=iso->at(++n);
         }
         newShape.append(QPointF(p.x,p.y));
-        if (n>=iso->size()-1 || p.isStart) break;
+        if (n>=iso->size()-1) break;
         if(p.isBroken)
         {
             bool sameOrigin=false;
@@ -4437,7 +4437,6 @@ void ROUTAGE::calculateShapeIso(bool drawIt)
                 p=*p.origin;
                 --isoNb;
                 newShape.append(QPointF(p.x,p.y));
-                if (p.isStart) break;
                 if(!p.myChildren.isEmpty() && p.myChildren.at(p.myChildren.size()-1).isoIndex>i)
                 {
                     sameOrigin=true;
