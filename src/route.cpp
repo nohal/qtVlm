@@ -1638,7 +1638,7 @@ routeStats ROUTE::getStats()
     double lat=prevPoint.lat;
     time_t date=prevPoint.eta;
     double bs=0;
-    double tws,twd,twa,hdg;
+    double tws,twd,twa=0,hdg;
     if(!grib->getInterpolatedValue_byDates(lon, lat,date,&tws,&twd,INTERPOLATION_DEFAULT))
             return stats;
     twd=radToDeg(twd);

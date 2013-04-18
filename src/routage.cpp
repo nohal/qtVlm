@@ -1190,7 +1190,6 @@ void ROUTAGE::slot_calculate()
         arrived=false;
     QList<vlmPoint> * list;
     //QList<vlmPoint> * previousList;
-    vlmLine * currentIso;
     vlmLine * segment;
     QPen penSegment;
     QColor gray=Qt::gray;
@@ -1214,8 +1213,6 @@ void ROUTAGE::slot_calculate()
 #ifdef traceTime
         tDebug.start();
 #endif
-        currentIso=new vlmLine(proj,myscene,Z_VALUE_ROUTAGE);
-        currentIso->setParent(this);
         list = iso->getPoints();
         int nbNotDead=0;
         double minDist=initialDist*10;
@@ -1286,7 +1283,8 @@ void ROUTAGE::slot_calculate()
             arrivalIsClosest=true;
         else
             arrivalIsClosest=false;
-        if(nbNotDead==0) break;
+        if(nbNotDead==0)
+            break;
         double workAngleStep=0;
         double workAngleRange=0;
         tempPoints.clear();
@@ -1546,7 +1544,8 @@ void ROUTAGE::slot_calculate()
                 if(!toBeRestarted || aborted) break;
                 polarPoints.clear();
             }
-            if(aborted) break;
+            if(aborted)
+                break;
 #if 1 /* keep only max 80% of initial number of points per polar, based on distIso*/
             if(!tryingToFindHole && !list->at(n).isStart && !list->at(n).notSimplificable)
             {
@@ -1582,7 +1581,8 @@ void ROUTAGE::slot_calculate()
         msecs_1=msecs_1+time.elapsed();
 #endif
 /*1eme epuration: on supprime les segments qui se croisent */
-        if(aborted) break;
+        if(aborted)
+            break;
 #ifdef traceTime
         time.restart();
 #endif
@@ -1922,6 +1922,8 @@ void ROUTAGE::slot_calculate()
         if(tempPoints.size()>0)
         {
             int mmm=0;
+            iso=new vlmLine(this->proj,this->myscene,Z_VALUE_ROUTAGE);
+            iso->setParent(this);
             for (int n=0;n<tempPoints.size();++n)
             {
                 if(tempPoints.at(n).isDead)
@@ -1975,7 +1977,7 @@ void ROUTAGE::slot_calculate()
                     tempPoints[n].eta=eta+(int)this->getTimeStep()*60.00;
                 tempPoints[n].isoIndex=n;
                 tempPoints.at(n).origin->myChildren.append(tempPoints.at(n));
-                currentIso->addVlmPoint(tempPoints[n]);
+                iso->addVlmPoint(tempPoints.at(n));
                 if(n>0)
                 {
                     if(qAbs(Util::myDiffAngle(tempPoints.at(n).capArrival,
@@ -2041,10 +2043,7 @@ void ROUTAGE::slot_calculate()
         }
         else
             break;
-        list = currentIso->getPoints();
-//        if(nbIso==0)
-//            qWarning()<<"iso 0 contains"<<list->size()<<"points";
-        iso=currentIso;
+        list = iso->getPoints();
         if(ncolor>=colorsList.size()) ncolor=0;
         QColor col=colorsList[ncolor];
         if(i_iso)
@@ -2135,15 +2134,9 @@ void ROUTAGE::slot_calculate()
         if(i_iso)
         {
             i_eta=i_eta-(int)this->getTimeStep()*60.00;
-            //qWarning()<<nbIso<<QDateTime().fromTime_t(i_eta).toUTC().toString("dd MMM-hh:mm");
         }
         else
             eta=eta+(int)this->getTimeStep()*60.00;
-//        for(int ii=0;ii<iso->getPoints()->size();++ii)
-//        {
-//            iso->setPointIsoIndex(ii,ii);
-//            iso->getPoints()->at(ii).origin->myChildren.append(iso->getPoints()->at(ii));
-//        }
         if(i_iso)
             i_isochrones.append(iso);
         else
@@ -2238,13 +2231,13 @@ void ROUTAGE::slot_calculate()
         if(!arrived)
         {
             eta=realEta;
-            list=iso->getPoints();
+            list=isochrones.last()->getPoints();
             int nBest=0;
             int minDist=10e5;
             Orthodromie oo(0,0,arrival.x(),arrival.y());
             for(int n=0;n<list->size();++n)
             {
-                oo.setStartPoint(list->at(n).lon,list->at(n).lat);
+                oo.setPoints(list->at(n).lon,list->at(n).lat,arrival.x(),arrival.y());
                 if(oo.getDistance()<minDist)
                 {
                     nBest=n;
@@ -2984,10 +2977,22 @@ void ROUTAGE::checkIsoCrossingPreviousSegments()
             somethingHasChanged=true;
             tempPoints.removeAt(nn);
             --nn;
+            continue;
+        }
+        if(!tempPoints.at(nn).notSimplificable && nn<tempPoints.size()-1)
+        {
+            if(shapeIso.containsPoint(QLineF(tempPoints.at(nn).x,tempPoints.at(nn).y,tempPoints.at(nn+1).x,tempPoints.at(nn+1).y).pointAt(0.5),Qt::OddEvenFill))
+            {
+                if(tempPoints.at(nn).distArrival>tempPoints.at(nn+1).distArrival)
+                    tempPoints.removeAt(nn);
+                else
+                    tempPoints.removeAt(nn+1);
+                --nn;
+            }
         }
     }
     return;
-#endif
+#else
     QPointF dummy;
     for(int nn=0;nn<tempPoints.size()-1;++nn)
     {
@@ -3038,6 +3043,7 @@ void ROUTAGE::checkIsoCrossingPreviousSegments()
         }
 #endif
     }
+#endif
 }
 void ROUTAGE::epuration(int toBeRemoved)
 {

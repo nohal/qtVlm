@@ -177,7 +177,7 @@ void vlmLine::calculatePoly(void)
             {
                 if(worldPoint.timeStamp>replayStep) break;
             }
-            if(worldPoint.isDead) continue;
+            //if(worldPoint.isDead) continue;
             if(worldPoint.isBroken && n==0) continue;
             if(n==0)
                 proj->map2screenDouble(worldPoint.lon,worldPoint.lat,&X,&Y);
