@@ -30,7 +30,7 @@ DialogTwaLine::DialogTwaLine(QPointF start, myCentralWidget *parent, MainWindow 
     this->doubleSpinBox->selectAll();
     this->main=main;
     this->position=this->pos();
-    if(myBoat->getType()!=BOAT_VLM)
+    if(myBoat->get_boatType()!=BOAT_VLM)
     {
         this->startVac->setDisabled(true);
         this->startVac->setChecked(false);
@@ -220,7 +220,7 @@ void DialogTwaLine::traceIt()
     if(!grib->isOk()) return;
     if(!myBoat->getPolarData()) return;
     time_t eta;
-    if(this->startGrib->isChecked() || myBoat->getType()!=BOAT_VLM)
+    if(this->startGrib->isChecked() || myBoat->get_boatType()!=BOAT_VLM)
         eta=grib->getCurrentDate();
     else
         eta=((boatVLM*)myBoat)->getPrevVac()+myBoat->getVacLen();

@@ -68,7 +68,7 @@ void DialogViewPolar::setBoat(boat *myboat)
 {
     this->myBoat=myboat;
     this->setWindowTitle(tr("Analyse de la polaire: ")+myBoat->getPolarName());
-    if(myBoat->getType()==BOAT_VLM)
+    if(myBoat->get_boatType()==BOAT_VLM)
         this->doubleSpinBox->setValue(myBoat->getWindSpeed());
     this->drawIt();
 }

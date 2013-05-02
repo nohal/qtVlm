@@ -614,7 +614,7 @@ void xml_POIData::slot_readData(QString fname)
                            }
                            if(invalidRoute)
                            {
-                               if(parent->getSelectedBoat()!=NULL && parent->getSelectedBoat()->getType()==BOAT_REAL)
+                               if(parent->getSelectedBoat()!=NULL && parent->getSelectedBoat()->get_boatType()==BOAT_REAL)
                                {
                                    route->setBoat(parent->getSelectedBoat());
                                    invalidRoute=false;

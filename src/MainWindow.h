@@ -71,17 +71,19 @@ class MainWindow: public QMainWindow
         FCT_GET(StatusBar*,statusBar)
         FCT_GET(int,nxtVac_cnt)
 
+        int get_boatType(void);
+
+
         void getXY(int *X,int *Y){*X=this->mouseClicX;*Y=this->mouseClicY;}
         bool isStartingUp;
 
         bool getFinishStart(void) { return finishStart; }
 
-        board * getBoard(void) { return myBoard; }
+        Board * getBoard(void) { return board; }
         bool getNoSave(){return noSave;}
         void setPilototoFromRoute(ROUTE * route);
         void setPilototoFromRoute(QList<POI*> poiList);
 
-        void clearPilototo();
         myCentralWidget * getMy_centralWidget(){return this->my_centralWidget;}
         void setRestartNeeded(){this->restartNeeded=true;}
         bool getRestartNeeded(){return this->restartNeeded;}
@@ -102,6 +104,8 @@ public slots:
         void slotFile_Lock(bool readOnly=false);
         void slotFile_QuitNoSave();
         void slot_gribFileReceived(QString fileName);
+
+        void slot_clearPilototo();
 
         void slotShowContextualMenu(QGraphicsSceneContextMenuEvent *);
 
@@ -196,6 +200,8 @@ public slots:
         void moveBoat(double lat, double lon);
         void setInstructions(boat * boat,QList<POI *>);
         void wpChanged();
+        void boatSelected(boat*);
+        void accountListUpdated(Player*);
 
 
     protected:
@@ -241,7 +247,7 @@ public slots:
         int nxtVac_cnt;
         bool showingSelectionMessage;
 
-        board * myBoard;
+        Board * board;
         boat* selectedBoat;
         DialogProxy   * dialogProxy;
         DialogParamVlm * param;
@@ -251,6 +257,8 @@ public slots:
         DialogVlmGrib * loadVLM_grib;
         DialogGribValidation * gribValidation_dialog;
         bool isSelectingWP;
+
+        int boatType;
 
         polarList * polar_list;
 

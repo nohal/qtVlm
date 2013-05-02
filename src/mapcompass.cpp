@@ -684,7 +684,7 @@ void mapCompass::updateCompassLineLabels(int x, int y)
             meters=QString().sprintf("<br>%.2f ",loxo_dist*1852)+tr("Metres");
         if(map && map->crossing(QLineF(XX,YY,X,Y),QLineF(xa,ya,xb,yb)))
         {
-            if(main->getSelectedBoat() && main->getSelectedBoat()->getType()!=BOAT_VLM)
+            if(main->getSelectedBoat() && main->getSelectedBoat()->get_boatType()!=BOAT_VLM)
             {
                 double cap1=Util::A360(pos_angle-main->getSelectedBoat()->getDeclinaison());
                 double cap2=Util::A360(loxo_angle-main->getSelectedBoat()->getDeclinaison());
@@ -701,7 +701,7 @@ void mapCompass::updateCompassLineLabels(int x, int y)
         }
         else
         {
-            if(main->getSelectedBoat() && main->getSelectedBoat()->getType()!=BOAT_VLM)
+            if(main->getSelectedBoat() && main->getSelectedBoat()->get_boatType()!=BOAT_VLM)
             {
                 double cap1=Util::A360(pos_angle-main->getSelectedBoat()->getDeclinaison());
                 double cap2=Util::A360(loxo_angle-main->getSelectedBoat()->getDeclinaison());

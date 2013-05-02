@@ -20,6 +20,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <QMessageBox>
 #include <QDebug>
+#include <parser.h>
+#include <serializer.h>
 
 #include "boatVLM.h"
 
@@ -42,7 +44,7 @@ boatVLM::boatVLM(QString        pseudo, bool activated, int boatId, int playerId
    inetClient(inet),
    pilotType (0)
 {
-    this->boat_type=BOAT_VLM;
+    set_boatType(BOAT_VLM);
     setFont(QApplication::font());
 
     this->isOwn=isOwn;
@@ -79,7 +81,6 @@ boatVLM::boatVLM(QString        pseudo, bool activated, int boatId, int playerId
     showNpd=false;
     this->logIndexLimit=12; //number of boatinfo records we keep
     loadBoatInfolog();
-
     //setStatus(activated);
 }
 
@@ -134,6 +135,111 @@ void boatVLM::slot_getDataTrue()
 {
     slot_getData(true);
 }
+
+void boatVLM::set_pilotHeading(double heading) {
+    QVariantMap instruction;
+    if(confirmChange(tr("Pilotage au cap ?"),tr("Mode de pilotage change en 'Cap'"))) {
+        instruction.insert("pim",1);
+        instruction.insert("pip",heading);
+        sendPilotMode("pilot_set.php",instruction);
+    }
+}
+
+void boatVLM::set_pilotAngle(double angle) {
+    QVariantMap instruction;
+    if(confirmChange(tr("Pilotage à angle constant par rapport au vent ?"),tr("Mode de pilotage change en 'Angle'"))) {
+        instruction.insert("pim",2);
+        instruction.insert("pip",angle);
+        sendPilotMode("pilot_set.php",instruction);
+    }
+}
+
+void boatVLM::set_pilotOrtho(void) {
+    QVariantMap instruction;
+    if(confirmChange(tr("Pilotage orthodromique ?"),tr("Mode de pilotage change en 'Pilot Ortho'"))) {
+        instruction.insert("pim",3);
+        sendPilotMode("pilot_set.php",instruction);
+    }
+}
+
+void boatVLM::set_pilotVmg(void) {
+    QVariantMap instruction;
+    if(confirmChange(tr("Pilotage en VMG ?"),tr("Mode de pilotage change en 'VMG'"))) {
+        instruction.insert("pim",4);
+        sendPilotMode("pilot_set.php",instruction);
+    }
+}
+
+void boatVLM::set_pilotVbvmg(void) {
+    QVariantMap instruction;
+    if(confirmChange(tr("Pilotage en VBVMG ?"),tr("Mode de pilotage change en 'VBVMG'"))) {
+        instruction.insert("pim",5);
+        sendPilotMode("pilot_set.php",instruction);
+    }
+}
+
+void boatVLM::setWP(QPointF WP,double WPHd) {
+    if(getLockStatus()) return;
+
+    if(confirmChange(tr("Confirmer le changement du WP"),tr("WP change"))) {
+        QVariantMap instruction;
+        QVariantMap pip;
+        pip.insert("targetlat",WP.y());
+        pip.insert("targetlong",WP.x());
+        pip.insert("targetandhdg",WPHd);
+        instruction.insert("pip",pip);
+        sendPilotMode("target_set.php",instruction);
+    }
+}
+
+double boatVLM::getWPangle(void) {
+    return Util::A360(getOrtho()-getWindDir());
+}
+
+
+bool boatVLM::confirmChange(QString question, QString info)
+{
+    if(Settings::getSetting("askConfirmation","0").toInt()==0)
+        return true;
+
+    if(QMessageBox::question(mainWindow,tr("Instruction pour ")+getBoatPseudo(),
+                             getBoatPseudo()+": " + question,QMessageBox::Yes|QMessageBox::No,
+                             QMessageBox::Yes)==QMessageBox::Yes) {
+        emit showMessage(getBoatPseudo()+": " + info,2000);
+        return true;
+    }
+    return false;
+}
+
+void boatVLM::sendPilotMode(QString phpScript,QVariantMap instruction) {
+
+    //qWarning() << "sendPilotMode: " << phpScript << " - " << instruction;
+
+    if(hasInet()) {
+        if(hasRequest()) {
+            qWarning() << "request already running for " << getBoatPseudo();
+            return;
+        }
+
+        QString url;
+        QString data;
+
+        instruction.insert("idu",getId());
+
+        QJson::Serializer serializer;
+        QByteArray json = serializer.serialize(instruction);
+
+        QTextStream(&url) << "/ws/boatsetup/" << phpScript;
+
+
+
+        QTextStream(&data) << "parms=" << json;
+        QTextStream(&data) << "&select_idu=" << getId();
+
+        inetPost(VLM_REQUEST_SENDPILOT,url,data,QString(),true);
+    }
+}
+
 
 void boatVLM::doRequest(int requestCmd)
 {
@@ -311,8 +417,8 @@ void boatVLM::requestFinished (QByteArray res_byte)
                 windDir     = result["TWD"].toDouble();
                 country     = result["CNT"].toString();
                 windSpeed   = result["TWS"].toDouble();
-                WPLat       = result["WPLAT"].toDouble();
-                WPLon       = result["WPLON"].toDouble();
+                WP.setY(      result["WPLAT"].toDouble());
+                WP.setX(      result["WPLON"].toDouble());
                 WPHd        = result["H@WP"].toDouble();
 //                    QString debug;
 //                    debug=debug.sprintf("receiving WPLon %.10f WPLat %.10f @WP %.10f",WPLon,WPLat,WPHd);
@@ -589,6 +695,11 @@ void boatVLM::requestFinished (QByteArray res_byte)
                 emit boatUpdated(this,newRace,doingSync);
                 showNextGates();
             }
+            break;
+        case VLM_REQUEST_SENDPILOT:
+            /* pilot data send => updating boat*/
+            qWarning() << "Pilot data send, result= " << res_byte;
+            slot_getDataTrue();
             break;
         default:
             qWarning() << "[boatVLM-requestFinished] error: unknown request: " << getCurrentRequest();

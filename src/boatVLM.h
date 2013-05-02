@@ -87,6 +87,16 @@ class boatVLM : public boat, public inetClient
 
         bool getPolarState(void)        {    return forcePolar; }
 
+        /* Changing pilot mode/param */
+        void set_pilotHeading(double heading);
+        void set_pilotAngle(double angle);
+        void set_pilotOrtho(void);
+        void set_pilotVmg(void);
+        void set_pilotVbvmg(void);
+        void setWP(QPointF WP,double WPh);
+
+        double getWPangle(void);
+
         QString getRaceId(void)         {    return QString().setNum(race_id); }
         QString getRaceName(void)       {    return race_name; }
 
@@ -121,7 +131,7 @@ class boatVLM : public boat, public inetClient
 
     signals:
         void getTrace(QByteArray,QList<vlmPoint> *);
-        void hasFinishedUpdating(void);
+        void hasFinishedUpdating(void);        
 
     private:
         /* VLM boat data */
@@ -171,6 +181,8 @@ class boatVLM : public boat, public inetClient
 
         /* VLM link*/
         void doRequest(int request);
+        bool confirmChange(QString question,QString info);
+        void sendPilotMode(QString phpScript,QVariantMap instruction);
 
         void my_unSelectBoat(bool needUpdate);
         void my_selectBoat(void);

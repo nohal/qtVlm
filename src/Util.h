@@ -102,6 +102,7 @@ class Util
     static bool lineIsCrossingRect(const QLineF &line, const QRectF &rect);
     static double myDiffAngle(const double &a1, const double &a2);
     static double A360(const double &hdg);
+    static double A180(double angle);
     static double distance_to_line_dichotomy_xing(const double &lat, const double &lon,
                                                  const double &lat_a, const double &lon_a,
                                                  const double &lat_b, const double &lon_b,

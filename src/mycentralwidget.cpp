@@ -56,7 +56,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "xmlBoatData.h"
 #include "xmlPOIData.h"
 #include "routage.h"
-#include "BoardVLM.h"
 #include "vlmLine.h"
 #include "dataDef.h"
 #include "Util.h"
@@ -813,7 +812,7 @@ boat * myCentralWidget::getSelectedBoat(void)
 }
 time_t myCentralWidget::getNextVac(void)
 {
-    if(mainW->getSelectedBoat() && mainW->getSelectedBoat()->getType()==BOAT_VLM)
+    if(mainW->getSelectedBoat() && mainW->getSelectedBoat()->get_boatType()==BOAT_VLM)
     {
         if(mainW->getSelectedBoat()->getLoch()<0.01)
             return QDateTime::currentDateTime().toTime_t();
@@ -1760,13 +1759,13 @@ void myCentralWidget::slot_takeScreenshot()
     Settings::setSetting("screenShotFolder",info.absoluteDir().path());
     // Save it..
     image->save(fileName, "PNG", -1);
-//    if (mainW->getSelectedBoat()->getType()==BOAT_VLM)
+//    if (mainW->getSelectedBoat()->get_boatType()==BOAT_VLM)
 //        ((boatVLM*)mainW->getSelectedBoat())->exportBoatInfoLog(fileName);
 }
 
 void myCentralWidget::slot_showVlmLog()
 {
-    if (mainW->getSelectedBoat()->getType()==BOAT_VLM)
+    if (mainW->getSelectedBoat()->get_boatType()==BOAT_VLM)
         vlmLogViewer->initWithBoat( (boatVLM*)mainW->getSelectedBoat() );
     else {
         QMessageBox::warning(0,QObject::tr("Voir Vlm Logs"),
@@ -2745,7 +2744,7 @@ void myCentralWidget::importRouteFromMenuKML(QString fileName,bool toClipboard, 
                     name=routeOption.firstChild().toText().data();
                     route->setHidePois(name=="true");
                 }
-                if(mainW->getSelectedBoat() && mainW->getSelectedBoat()->getType()==BOAT_REAL)
+                if(mainW->getSelectedBoat() && mainW->getSelectedBoat()->get_boatType()==BOAT_REAL)
                 {
                     if(!((boatReal *)mainW->getSelectedBoat())->gpsIsRunning())
                     {
@@ -4180,12 +4179,12 @@ void myCentralWidget::slot_playerSelected(Player * player)
             }
             realBoat=NULL;
             emit accountListUpdated();
-            mainW->getBoard()->playerChanged(player);
+            mainW->getBoard()->set_newType(BOAT_VLM);
             if(reselected)
             {
                 mainW->slotSelectBoat(boat_list->at(thisOne));
                 boat_list->at(thisOne)->setSelected(true);
-                mainW->getBoard()->boatUpdated(boat_list->at(thisOne));
+                //mainW->getBoard()->boatUpdated(boat_list->at(thisOne));
             }
             emit shRouBis();
         }
@@ -4204,8 +4203,8 @@ void myCentralWidget::slot_playerSelected(Player * player)
             realBoat->reloadPolar();
             mainW->slotSelectBoat(realBoat);
             realBoat->playerActivated();
-            mainW->getBoard()->playerChanged(player);
-            mainW->getBoard()->boatUpdated(realBoat);
+            mainW->getBoard()->set_newType(BOAT_REAL);
+            //mainW->getBoard()->boatUpdated(realBoat);
             mainW->slotBoatUpdated(realBoat,true,false);;
             emit shRouBis();
         }

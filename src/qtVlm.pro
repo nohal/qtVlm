@@ -78,8 +78,6 @@ HEADERS += Dialogs/DialogGraphicsParams.h \
     Dialogs/DialogTwaLine.h \
     Dialogs/DialogWp.h \
     Dialogs/DialogInetProgess.h \
-    BoardVLM.h \
-    BoardVLM_tools.h \
     GshhsReader.h \
     GisReader.h \
     Grib.h \
@@ -121,8 +119,6 @@ HEADERS += Dialogs/DialogGraphicsParams.h \
     boatReal.h \
     boat.h \
     boatVLM.h \
-    Board.h \
-    BoardReal.h \
     faxMeteo.h \
     loadImg.h \
     Player.h \
@@ -144,11 +140,15 @@ HEADERS += Dialogs/DialogGraphicsParams.h \
     ToolBar.h \
     Progress.h \
     StatusBar.h \
-    Magnifier.h
+    Magnifier.h \
+    Dialogs/BoardComponent.h \
+    Dialogs/Board.h \
+    Dialogs/BoardTools.h \
+    Dialogs/BoardVlm.h \
+    Dialogs/BoardReal.h
+
 
 FORMS += Ui/boatAccount_dialog.ui \
-    Ui/BoardVLM.ui \
-    Ui/BoardReal.ui \
     Ui/paramVLM.ui \
     Ui/POI_input.ui \
     Ui/POI_editor.ui \
@@ -180,7 +180,18 @@ FORMS += Ui/boatAccount_dialog.ui \
     Ui/dialogFaxMeteo.ui \
     Ui/dialogLoadImg.ui \
     Ui/routeInfo.ui \
-    Ui/DialogRemovePoi.ui
+    Ui/DialogRemovePoi.ui \
+    Ui/BoardPilotVLMBoat.ui \
+    Ui/BoardPosition.ui \
+    Ui/BoardRealBoatWP.ui \
+    Ui/BoardSpeedHeading.ui \
+    Ui/BoardSpeed.ui \
+    Ui/BoardVlm.ui \
+    Ui/BoardReal.ui \
+    Ui/BoardWindTool.ui \
+    Ui/BoardWind.ui \
+    Ui/BoardWP.ui
+
 
 SOURCES += Dialogs/DialogGraphicsParams.cpp \
     Dialogs/DialogLoadGrib.cpp \
@@ -206,7 +217,6 @@ SOURCES += Dialogs/DialogGraphicsParams.cpp \
     Dialogs/DialogTwaLine.cpp \
     Dialogs/DialogWp.cpp \
     Dialogs/DialogInetProgess.cpp \
-    BoardVLM.cpp \
     GshhsReader.cpp \
     GisReader.cpp \
     Grib.cpp \
@@ -246,8 +256,6 @@ SOURCES += Dialogs/DialogGraphicsParams.cpp \
     boatReal.cpp \
     boat.cpp \
     boatVLM.cpp \
-    Board.cpp \
-    BoardReal.cpp \
     faxMeteo.cpp \
     loadImg.cpp \
     Player.cpp \
@@ -269,7 +277,11 @@ SOURCES += Dialogs/DialogGraphicsParams.cpp \
     ToolBar.cpp \
     Progress.cpp \
     StatusBar.cpp \
-    Magnifier.cpp
+    Magnifier.cpp \
+    Dialogs/BoardComponent.cpp \
+    Dialogs/Board.cpp \
+    Dialogs/BoardVlm.cpp \
+    Dialogs/BoardReal.cpp
 
 unix:!macx: DEFINES += _TTY_POSIX_ __TERRAIN_QIMAGE __UNIX_QTVLM
 win32:DEFINES += _TTY_WIN_ \

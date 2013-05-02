@@ -162,11 +162,11 @@ void ROUTE::slot_calculateWithDelay()
 void ROUTE::setBoat(boat *curBoat)
 {
     this->myBoat=curBoat;
-    if(myBoat!=NULL && myBoat->getType()==BOAT_VLM)
+    if(myBoat!=NULL && myBoat->get_boatType()==BOAT_VLM)
         this->boatLogin=((boatVLM*)myBoat)->getBoatPseudo();
     else
         this->boatLogin="";
-    if(myBoat!=NULL && myBoat->getType()==BOAT_REAL)
+    if(myBoat!=NULL && myBoat->get_boatType()==BOAT_REAL)
     {
         this->autoAt=false;
         this->autoRemove=false;
@@ -336,15 +336,15 @@ void ROUTE::slot_recalculate(boat * boat)
         switch(startTimeOption)
         {
             case 1:
-                if(myBoat->getType()!=BOAT_VLM)
+                if(myBoat->get_boatType()!=BOAT_VLM)
                     eta=((boatReal*)myBoat)->getLastUpdateTime();
                 else
                     eta=((boatVLM*)myBoat)->getPrevVac()/*+((boatVLM*)myBoat)->getVacLen()*/;
                 now = (QDateTime::currentDateTime()).toUTC().toTime_t();
 //#warning find a better way to identify a boat that has not yet started
 /*cas du boat inscrit depuis longtemps mais pas encore parti*/
-                //if(eta < now - 2*myBoat->getVacLen() && myBoat->getType()==BOAT_VLM)
-                if(myBoat->getLoch()<0.01 && myBoat->getType()==BOAT_VLM)
+                //if(eta < now - 2*myBoat->getVacLen() && myBoat->get_boatType()==BOAT_VLM)
+                if(myBoat->getLoch()<0.01 && myBoat->get_boatType()==BOAT_VLM)
                     eta=now;
                 break;
             case 2:
@@ -597,7 +597,7 @@ void ROUTE::slot_recalculate(boat * boat)
                                 }
 
                                 case 1: //BVMG
-                                    if(fastVmgCalc || myBoat->getType()==BOAT_REAL)
+                                    if(fastVmgCalc || myBoat->get_boatType()==BOAT_REAL)
                                         myBoat->getPolarData()->getBvmg((cap-wind_angle),wind_speed,&angle);
                                     else
                                         myBoat->getPolarData()->bvmgWind((cap-wind_angle),wind_speed,&angle);
@@ -819,7 +819,7 @@ void ROUTE::slot_recalculate(boat * boat)
             }
             else
             {
-                if(myBoat->getType()==BOAT_VLM)
+                if(myBoat->get_boatType()==BOAT_VLM)
                     tip=tip+"<br>"+tr("Note: la date indiquee correspond a la desactivation du WP");
                 time_t Start=start;
                 if(startTimeOption==1)
@@ -856,7 +856,7 @@ void ROUTE::slot_recalculate(boat * boat)
                 tip=tip+tt+QString::number((int)days)+" "+tr("jours")+" "+QString::number((int)hours)+" "+tr("heures")+" "+
                     QString::number((int)mins)+" "+tr("minutes");
 #if 0
-                if(myBoat->getType()==BOAT_REAL)
+                if(myBoat->get_boatType()==BOAT_REAL)
                     poi->setRouteTimeStamp(Eta+myBoat->getVacLen());
                 else
                     poi->setRouteTimeStamp(Eta);
@@ -933,7 +933,7 @@ void ROUTE::slot_recalculate(boat * boat)
                     tip=tip+QString::number((int)days)+" "+tr("jours")+" "+QString::number((int)hours)+" "+tr("heures")+" "+
                         QString::number((int)mins)+" "+tr("minutes");
 #if 0
-                    if(myBoat->getType()==BOAT_REAL)
+                    if(myBoat->get_boatType()==BOAT_REAL)
                         poi->setRouteTimeStamp(Eta+myBoat->getVacLen());
                     else
                         poi->setRouteTimeStamp(Eta);
@@ -1056,14 +1056,14 @@ void ROUTE::slot_shHidden()
 }
 void ROUTE::slot_boatPointerHasChanged(boat * acc)
 {
-    if(acc->getType()==BOAT_VLM)
+    if(acc->get_boatType()==BOAT_VLM)
     {
         if(((boatVLM*)acc)->getBoatPseudo()==this->boatLogin)
             this->setBoat(acc);
     }
     else
     {
-        if(myBoat->getType()!=BOAT_VLM)
+        if(myBoat->get_boatType()!=BOAT_VLM)
             this->setBoat(acc);
     }
 }

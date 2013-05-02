@@ -40,6 +40,7 @@ class Orthodromie
 {
     public:
         Orthodromie(double x0,double y0, double x1,double y1);
+        Orthodromie(QPointF p1, QPointF p2);
         
         void  setPoints(double x0,double y0, double x1,double y1);
         void  setStartPoint (double x,double y);

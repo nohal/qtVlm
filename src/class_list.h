@@ -28,9 +28,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 /*****************************/
 
 /* BoardVLM.h */
-class board;
-class boardVLM;
-class boardReal;
+class Board;
+class BoardComponent;
+class MyDockWidget;
 
 /* horn */
 class DialogHorn;
@@ -45,6 +45,7 @@ class Player;
 class DialogBoatAccount;
 class DialogPlayerAccount;
 class DialogParamAccount;
+class DialogRealBoatPosition;
 
 /* inetClient.h */
 class inetClient;

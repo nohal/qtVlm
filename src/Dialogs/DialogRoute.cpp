@@ -208,7 +208,7 @@ DialogRoute::DialogRoute(ROUTE *route, myCentralWidget *parent, bool createMode)
     if(route->getBoat() && route->getBoat()!=NULL)
     {
         min=route->getBoat()->getVacLen()/60;
-        if(route->getBoat()->getType()==BOAT_REAL)
+        if(route->getBoat()->get_boatType()==BOAT_REAL)
         {
             roadMapInterval->setValue(Settings::getSetting("roadMapInterval",5).toInt());
             roadMapHDG->setValue(Settings::getSetting("roadMapHDG",0).toInt());

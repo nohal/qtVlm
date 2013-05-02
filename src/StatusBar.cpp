@@ -232,7 +232,7 @@ void StatusBar::showSelectedZone(double x0, double y0, double x1, double y1)
 void StatusBar::drawVacInfo(void)
 {
     boat * selBoat = mainWindow->getSelectedBoat();
-    if(selBoat && selBoat->getType()==BOAT_VLM
+    if(selBoat && selBoat->get_boatType()==BOAT_VLM
             && currentMessage().isEmpty())
     {
         QDateTime lastVac_date;

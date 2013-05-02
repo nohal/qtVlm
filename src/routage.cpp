@@ -2960,7 +2960,7 @@ void ROUTAGE::convertToRoute()
     {
         if (!route->getPoiList().isEmpty() && route->getPoiList().at(0)->getRouteTimeStamp()!=-1)
         {
-            if(qAbs(route->getPoiList().at(0)->getRouteTimeStamp()-myBoat->getPrevVac())<myBoat->getVacLen()*2.0 || (myBoat->getType()==BOAT_VLM && myBoat->getLoch()<0.1))
+            if(qAbs(route->getPoiList().at(0)->getRouteTimeStamp()-myBoat->getPrevVac())<myBoat->getVacLen()*2.0 || (myBoat->get_boatType()==BOAT_VLM && myBoat->getLoch()<0.1))
             {
                 POI * poi = route->getPoiList().at(0);
                 poi->setRoute(NULL);

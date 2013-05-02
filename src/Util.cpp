@@ -36,6 +36,17 @@ Copyright (C) 2008 - Jacques Zaninetti - http://zygrib.free.fr
 #include "Version.h"
 #include "Orthodromie.h"
 
+double Util::A180(double angle)
+{
+    if(qAbs(angle)>180)
+    {
+        if(angle<0)
+            angle=360+angle;
+        else
+            angle=angle-360;
+    }
+    return angle;
+}
 
 //======================================================================
 void Util::setFontDialog(QObject * o)

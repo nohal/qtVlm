@@ -311,7 +311,7 @@ void DialogRoutage::done(int result)
         routage->setWidth(inputTraceColor->getLineWidth());
         routage->setColor(inputTraceColor->getLineColor());
         QDateTime dd=editDateBox->dateTime();
-        if(routage->getBoat()->getType()==BOAT_VLM)
+        if(routage->getBoat()->get_boatType()==BOAT_VLM)
         {
             time_t ddd=dd.toTime_t();
             ddd=floor((double)ddd/(double)routage->getBoat()->getVacLen())*routage->getBoat()->getVacLen();

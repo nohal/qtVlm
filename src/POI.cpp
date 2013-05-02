@@ -126,7 +126,7 @@ POI::POI(QString name, int type, double lat, double lon,
     connect(main,SIGNAL(WPChanged(double,double)),this,SLOT(slot_WPChanged(double,double)));
     connect(main,SIGNAL(boatHasUpdated(boat*)),this,SLOT(slot_updateTip(boat*)));
     connect(parent,SIGNAL(stopCompassLine()),this,SLOT(slot_abort()));
-    if (main->getSelectedBoat() && main->getSelectedBoat()!=NULL && !parent->getPlayer()->getWrong() && main->getSelectedBoat()->getType()==BOAT_VLM)
+    if (main->getSelectedBoat() && main->getSelectedBoat()!=NULL && !parent->getPlayer()->getWrong() && main->getSelectedBoat()->get_boatType()==BOAT_VLM)
         connect(this,SIGNAL(wpChanged()),main,SIGNAL(wpChanged()));
 
     ((MainWindow*)main)->getBoatWP(&WPlat,&WPlon);
@@ -938,7 +938,7 @@ void POI::slot_copy()
 }
 void POI::slot_setWP_ask()
 {
-    if (parent->getSelectedBoat() && parent->getSelectedBoat()->getType()==BOAT_VLM &&
+    if (parent->getSelectedBoat() && parent->getSelectedBoat()->get_boatType()==BOAT_VLM &&
        ((boatVLM *)parent->getSelectedBoat())->getPilotType()<=2)
     {
         QString mes;
@@ -1018,7 +1018,7 @@ void POI::slot_WPChanged(double tlat,double tlon)
     VLMBoardIsBusy=false;
     if (this->isWp)
         this->setWph(parent->getSelectedBoat()->getWPHd());
-    if(parent->getSelectedBoat()->getType()!=BOAT_VLM) return;
+    if(parent->getSelectedBoat()->get_boatType()!=BOAT_VLM) return;
     boatVLM * b=(boatVLM *)parent->getSelectedBoat();
     if(!b->getHasPilototo()) return;
     QStringList is=b->getPilototo();

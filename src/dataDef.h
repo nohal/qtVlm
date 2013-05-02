@@ -110,14 +110,14 @@ FCT_GET_CST(TYPE,VARNAME)
 #define VLM_REQUEST_PROFILE 8
 #define VLM_REQUEST_FLEET   9
 #define VLM_REQUEST_POLAR 10
+#define VLM_REQUEST_SENDPILOT 11
 
 /* VLM CMD type */
-#define VLM_CMD_HD     1
-#define VLM_CMD_ANG    2
-#define VLM_CMD_WP     3
-#define VLM_CMD_ORTHO  4
-#define VLM_CMD_VMG    5
-#define VLM_CMD_VBVMG  6
+#define VLM_PILOT_HEADING     0
+#define VLM_PILOT_ANGLE    1
+#define VLM_PILOT_VMG    3
+#define VLM_PILOT_ORTHO  2
+#define VLM_PILOT_VBVMG  4
 
 #define PILOT_ADD      0
 #define PILOT_UPD      1

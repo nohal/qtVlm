@@ -34,6 +34,12 @@ Orthodromie::Orthodromie(double x0,double y0, double x1,double y1)
 {
     setPoints(x0,y0, x1,y1);
 }
+
+Orthodromie::Orthodromie(QPointF p1, QPointF p2)
+{
+    setPoints(p1.x(),p1.y(),p2.x(),p2.y());
+}
+
 //------------------------------------------------------------------------------
 void Orthodromie::setPoints(double x0,double y0, double x1,double y1)
 {

@@ -28,7 +28,7 @@ class DialogWp: public QDialog, public Ui::WP_dialog_ui
 { Q_OBJECT
     public:
         DialogWp(QWidget * parent=0);
-        void show_WPdialog(boatVLM * boat);
+        void show_WPdialog(boat * boat);
         void setLocked(const bool &locked);
 
     public slots:
@@ -42,11 +42,10 @@ class DialogWp: public QDialog, public Ui::WP_dialog_ui
         void show_WPdialog(POI * poi);
 
     signals:
-        void confirmAndSendCmd(QString,QString,int cmdNum,double,double,double);
         void selectPOI(void);
 
     private:
-        boatVLM * currentBoat;
+        boat * currentBoat;
         void initDialog(double WPLat,double WPLon,double WPHd);
 };
 

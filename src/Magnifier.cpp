@@ -63,7 +63,7 @@ Magnifier::Magnifier(myCentralWidget *parent)
     reader->drawSeaBorders(pnt1, myProj);
     if(parent->getSelectedBoat())
     {
-        if(parent->getSelectedBoat()->getType()==BOAT_VLM)
+        if(parent->getSelectedBoat()->get_boatType()==BOAT_VLM)
         {
             if(!parent->get_shOpp_st())
             {
@@ -82,7 +82,7 @@ Magnifier::Magnifier(myCentralWidget *parent)
             route->getLine()->drawInMagnifier(&pnt1,myProj);
         }
 
-        if(parent->getSelectedBoat()->getType()==BOAT_VLM)
+        if(parent->getSelectedBoat()->get_boatType()==BOAT_VLM)
         {
             QList<vlmLine *>gates=((boatVLM *)parent->getSelectedBoat())->getGates();
             foreach(vlmLine * gate,gates)
