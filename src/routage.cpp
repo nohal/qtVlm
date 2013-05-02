@@ -53,7 +53,7 @@ Original code: virtual-winds.com
 #include "Terrain.h"
 //#include "Terrain.h"
 //#define debugCount
-//#define traceTime;
+#define traceTime
 
 //#define HAS_ICEGATE
 #define USE_SHAPEISO
@@ -300,10 +300,9 @@ inline QList<vlmPoint> finalEpuration(const QList<vlmPoint> &listPoints)
     double critere=0;
     for(int n=0;n<listPoints.size()-1;++n)
     {
-        if(listPoints.at(n).originNb!=listPoints.at(n+1).originNb && listPoints.at(n).origin->isBroken && !listPoints.at(n+1).origin->isBroken)
+        if(listPoints.at(n).originNb!=listPoints.at(n+1).originNb && (listPoints.at(n).origin->isBroken || listPoints.at(n+1).origin->isBroken))
             critere=179;
-        else if(qAbs(Util::myDiffAngle(listPoints.at(n).capArrival,
-                                listPoints.at(n+1).capArrival)) > 90)
+        else if(Util::myDiffAngle(listPoints.at(n).capArrival,listPoints.at(n+1).capArrival) > 60)
             critere=179;
         else
         {
@@ -331,11 +330,6 @@ inline QList<vlmPoint> finalEpuration(const QList<vlmPoint> &listPoints)
             {
                 critere=360-critere;
             }
-            if(listPoints.at(n).notSimplificable ||
-               listPoints.at(n+1).notSimplificable ||
-               listPoints.at(n).origin->notSimplificable ||
-               listPoints.at(n+1).origin->notSimplificable)
-                    critere=critere*2.0;
         }
         byCriteres.insert(critere,QPoint(n,n+1));
         s=n*10e6+n+1;
@@ -351,18 +345,12 @@ inline QList<vlmPoint> finalEpuration(const QList<vlmPoint> &listPoints)
         if(!d.hasNext()) break;
         QPoint couple=d.next().value();
         int badOne=0;
-        if(!listPoints.at(couple.x()).notSimplificable &&
-           listPoints.at(couple.y()).notSimplificable)
+        if(!listPoints.at(couple.x()).origin->isBroken &&
+           listPoints.at(couple.y()).origin->isBroken)
             badOne=couple.x();
-        else if(listPoints.at(couple.x()).notSimplificable &&
-           !listPoints.at(couple.y()).notSimplificable)
+        else if(listPoints.at(couple.x()).origin->isBroken &&
+           !listPoints.at(couple.y()).origin->isBroken)
             badOne=couple.y();
-        else if(listPoints.at(couple.x()).origin->notSimplificable &&
-           !listPoints.at(couple.y()).origin->notSimplificable)
-            badOne=couple.y();
-        else if(!listPoints.at(couple.x()).origin->notSimplificable &&
-           listPoints.at(couple.y()).origin->notSimplificable)
-            badOne=couple.x();
         else if(listPoints.at(couple.x()).distIso<listPoints.at(couple.y()).distIso)
             badOne=couple.x();
         else
@@ -406,7 +394,9 @@ inline QList<vlmPoint> finalEpuration(const QList<vlmPoint> &listPoints)
             {
                 critere=360-critere;
             }
-            if(listPoints.at(previous).originNb!=listPoints.at(next).originNb && listPoints.at(previous).origin->isBroken && !listPoints.at(next).origin->isBroken)
+            if(listPoints.at(previous).originNb!=listPoints.at(next).originNb && (listPoints.at(previous).origin->isBroken || listPoints.at(next).origin->isBroken))
+                critere=179;
+            else if(Util::myDiffAngle(listPoints.at(previous).capArrival,listPoints.at(next).capArrival) > 60)
                 critere=179;
             byCriteres.insert(critere,QPoint(previous,next));
             s=previous*10e6+next;
@@ -1008,7 +998,7 @@ void ROUTAGE::calculate()
 
         if((xW>0 && xE<0) || (xW<0 && xE>0))
         {
-            qWarning()<<"6"<<xW<<xE<<xTmp;
+            //qWarning()<<"6"<<xW<<xE<<xTmp;
             if(qAbs(xW-xE)>180)
             {
                 swap(xW,xE);
@@ -1070,6 +1060,7 @@ void ROUTAGE::slot_calculate()
     int msecs_13=0;
     int msecs_14=0;
     int msecs_15=0;
+    int msecs_16=0;
 #endif
     int maxLoop=0;
     int nbCaps=0;
@@ -1546,7 +1537,7 @@ void ROUTAGE::slot_calculate()
             }
             if(aborted)
                 break;
-#if 1 /* keep only max 80% of initial number of points per polar, based on distIso*/
+#if 0 /* keep only max 80% of initial number of points per polar, based on distIso*/
             if(!tryingToFindHole && !list->at(n).isStart && !list->at(n).notSimplificable)
             {
                 int max=(angleRange/angleStep)*0.8;
@@ -1924,6 +1915,8 @@ void ROUTAGE::slot_calculate()
             int mmm=0;
             iso=new vlmLine(this->proj,this->myscene,Z_VALUE_ROUTAGE);
             iso->setParent(this);
+            double averageGap=0;
+            int averageN=0;
             for (int n=0;n<tempPoints.size();++n)
             {
                 if(tempPoints.at(n).isDead)
@@ -1942,34 +1935,38 @@ void ROUTAGE::slot_calculate()
                     y1=tempPoints.at(n).y;
                     x2=tempPoints.at(n+1).x;
                     y2=tempPoints.at(n+1).y;
-                    if((checkCoast && map && map->crossing(QLineF(x1,y1,x2,y2),QLineF(tempPoints.at(n).lon,tempPoints.at(n).lat,tempPoints.at(n+1).lon,tempPoints.at(n+1).lat)))
-                        || (checkLine && crossBarriere(QLineF(x1,y1,x2,y2))))
+                    QLineF qf(x1,y1,x2,y2);
+//                    if(qf.length()>lastGap*20.0 || qAbs(Util::myDiffAngle(tempPoints.at(n).capArrival,tempPoints.at(n+1).capArrival))>30.0)
+//                        tempPoints[n].isBroken=true;
+                    if((checkCoast && map && map->crossing(qf,QLineF(tempPoints.at(n).lon,tempPoints.at(n).lat,tempPoints.at(n+1).lon,tempPoints.at(n+1).lat)))
+                        || (checkLine && crossBarriere(qf)))
                     {
                         tempPoints[n].isBroken=true;
                     }
                     else
                     {
-#if 0
-                        QPolygonF pf;
-                        pf.append(QPointF(x1,y1));
-                        pf.append(QPointF(x2,y2));
-                        pf.append(QPointF(x2+.1,y2+.1));
-                        pf.append(QPointF(x1,y1));
-                        if(!shapeIso.intersected(pf).isEmpty())
-                        {
-                            if(tempPoints.at(n).distIso<tempPoints.at(n+1).distIso)
-                                tempPoints.removeAt(n);
-                            else
-                                tempPoints.removeAt(n+1);
-                            --n;
-                            continue;
-                        }
-#endif
                         tempPoints[n].isBroken=false;
+                        averageGap+=qf.length();
+                        ++averageN;
                     }
 #ifdef traceTime
                     msecs_14=msecs_14+t2.elapsed();
 #endif
+                }
+            }
+            averageN=qMax(1,averageN);
+            averageGap=10.0*averageGap/averageN;
+            for (int n=0;n<tempPoints.size();++n)
+            {
+                if(n!=tempPoints.size()-1 && !tempPoints.at(n).isBroken)
+                {
+                    x1=tempPoints.at(n).x;
+                    y1=tempPoints.at(n).y;
+                    x2=tempPoints.at(n+1).x;
+                    y2=tempPoints.at(n+1).y;
+                    QLineF qf(x1,y1,x2,y2);
+                    if(qf.length()>averageGap || Util::myDiffAngle(tempPoints.at(n).capArrival,tempPoints.at(n+1).capArrival)>30.0)
+                        tempPoints[n].isBroken=true;
                 }
                 if(i_iso)
                     tempPoints[n].eta=i_eta-(int)this->getTimeStep()*60.00;
@@ -1980,8 +1977,7 @@ void ROUTAGE::slot_calculate()
                 iso->addVlmPoint(tempPoints.at(n));
                 if(n>0)
                 {
-                    if(qAbs(Util::myDiffAngle(tempPoints.at(n).capArrival,
-                                                            tempPoints.at(n-1).capArrival)) < 60)
+                    if(Util::myDiffAngle(tempPoints.at(n).capArrival,tempPoints.at(n-1).capArrival) < 60)
                     {
                         previousIso.append(QPointF(tempPoints.at(n).x,tempPoints.at(n).y));
                     }
@@ -2141,7 +2137,15 @@ void ROUTAGE::slot_calculate()
             i_isochrones.append(iso);
         else
             isochrones.append(iso);
+#ifdef traceTime
+        time.restart();
+#endif
+#ifdef USE_SHAPEISO
         calculateShapeIso();
+#endif
+#ifdef traceTime
+        msecs_16=msecs_16+time.elapsed();
+#endif
         vlmPoint to(arrival.x(),arrival.y());
 #ifdef traceTime
         time.restart();
@@ -2328,7 +2332,11 @@ void ROUTAGE::slot_calculate()
         qWarning()<<"...processing events"<<tt.toString("hh'h'mm'min'ss.zzz'secs'");
         info=info+"\n...processing events: "+tt.toString("hh'h'mm'min'ss.zzz'secs'");
         tt.setHMS(0,0,0,0);
-        tt=tt.addMSecs(msecs-(msecs_1+msecs_2+msecs_4+msecs_5+msecs_6+msecs_7+msecs_8+msecs_9+msecs_10+msecs_11+msecs_15));
+        tt=tt.addMSecs(msecs_16);
+        qWarning()<<"...calculating shapeIso:"<<tt.toString("hh'h'mm'min'ss.zzz'secs'");
+        info=info+"\n...calculating shapeIso: "+tt.toString("hh'h'mm'min'ss.zzz'secs'");
+        tt.setHMS(0,0,0,0);
+        tt=tt.addMSecs(msecs-(msecs_1+msecs_2+msecs_4+msecs_5+msecs_6+msecs_7+msecs_8+msecs_9+msecs_10+msecs_11+msecs_15+msecs_16));
         qWarning()<<"...sum of other calculations:"<<tt.toString("hh'h'mm'min'ss.zzz'secs'");
         info=info+"\n...sum of other calculations: "+tt.toString("hh'h'mm'min'ss.zzz'secs'");
         if(msecsD1!=0)
@@ -2444,15 +2452,15 @@ void ROUTAGE::slot_calculate()
 }
 void ROUTAGE::countDebug(int nbIso, QString s)
 {
-    if (nbIso!=168) return;
+    if (nbIso!=65) return;
     int count=0;
     int nDead=0;
     for (int n=0;n<tempPoints.size();++n)
     {
-        if(tempPoints.at(n).originNb==117 || tempPoints.at(n).originNb==118)
+        if(tempPoints.at(n).originNb==74)
         {
             ++count;
-            if(s.contains("initial") && false)
+            if(s.contains("initial"))
             {
                 QPen pendebug(Qt::blue);
                 pendebug.setWidthF(1);
@@ -3073,7 +3081,7 @@ void ROUTAGE::epuration(int toBeRemoved)
             leftFromLoxo.append(tempPoints.at(n));
     }
 #else
-#if 1
+#if 0
     QPolygonF isoShape;
     for(int n=0;n<tempPoints.size();++n)
     {
@@ -3230,7 +3238,7 @@ void ROUTAGE::removeCrossedSegments()
                 }
                 else if(tempPoints.at(n).originNb!=tempPoints.at(n+1).originNb+1)
                 {
-                    QList<vlmPoint> * iso=isos.last()->getPoints();
+                    QList<vlmPoint> * iso=isos.at(isos.size()-1)->getPoints();
                     int o=tempPoints.at(n).originNb+1;
                     while(o<tempPoints.at(n+1).originNb && o<iso->count())
                     {
@@ -3320,7 +3328,7 @@ void ROUTAGE::removeCrossedSegments()
                     }
                     else if(tempPoints.at(previous).originNb!=tempPoints.at(next).originNb+1)
                     {
-                        QList<vlmPoint> * iso=isos.last()->getPoints();
+                        QList<vlmPoint> * iso=isos.at(isos.size()-1)->getPoints();
                         int o=tempPoints.at(previous).originNb+1;
                         while(o<tempPoints.at(next).originNb && o<iso->count())
                         {
@@ -4402,7 +4410,21 @@ void ROUTAGE::calculateShapeIso(bool drawIt)
     QList<vlmPoint> * iso;
     vlmPoint p;
     int n=0;
+    double minDistFromStart=10e6;
+    iso=isos.at(isoNb)->getPoints();
+    for(n=0;n<iso->size();++n)
+    {
+        QLineF line(xs,ys,iso->at(n).x,iso->at(n).y);
+        minDistFromStart=qMin(minDistFromStart,line.length());
+    }
+    double maxSpeedLength=myBoat->getPolarData()->getMaxSpeed()*1.2*this->getTimeStep()/60.0;
+    maxSpeedLength=maxSpeedLength/proj->getScale();
+    if(minDistFromStart>maxSpeedLength)
+        minDistFromStart-=maxSpeedLength;
+    else
+        minDistFromStart=-1.0;
 //left side
+    n=0;
     while(true)
     {
         iso=isos.at(isoNb)->getPoints();
@@ -4504,13 +4526,22 @@ void ROUTAGE::calculateShapeIso(bool drawIt)
             p=iso->at(++n);
         }
     }
-    shapeIso=newShape;
+    shapeIso.clear();
+    for(n=0;n<newShape.size();++n)
+    {
+        QLineF line(xs,ys,newShape.at(n).x(),newShape.at(n).y());
+        if(line.length()>minDistFromStart)
+            shapeIso.append(newShape.at(n));
+    }
+    if(!shapeIso.isClosed() && !shapeIso.isEmpty())
+        shapeIso.append(shapeIso.at(0));
+    //shapeIso=newShape;
     if(drawIt)
     {
         QPixmap img(proj->getW(),proj->getH());
         img.fill(Qt::white);
         QPen pen;
-        pen.setWidthF(0.5);
+        pen.setWidthF(1.0);
         pen.setColor(Qt::red);
         QPainter pnt(&img);
         pnt.setPen(pen);

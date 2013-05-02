@@ -101,14 +101,14 @@ void Grib::initNewGrib()
 //    mapColorTransp = 210;
     mapColorTransp = 255;
 
-    windArrowSpace = 28;      // distance mini entre flèches
-    windBarbuleSpace = 34;    // distance mini entre flèches
+    windArrowSpace = 28;      // distance mini entre fleches
+    windBarbuleSpace = 34;    // distance mini entre fleches
 
-    windArrowSpaceOnGrid = 20;      // distance mini entre flèches
-    windBarbuleSpaceOnGrid = 28;    // distance mini entre flèches
+    windArrowSpaceOnGrid = 20;      // distance mini entre fleches
+    windBarbuleSpaceOnGrid = 28;    // distance mini entre fleches
 
-    windArrowSize = 14;       // longueur des flèches
-    windBarbuleSize = 26;     // longueur des flèches avec barbules
+    windArrowSize = 14;       // longueur des fleches
+    windBarbuleSize = 26;     // longueur des fleches avec barbules
 
     // Color scale for wind in beaufort
     windColor[ 0].setRgba(qRgba(   0,  80, 255,  mapColorTransp));
@@ -1302,6 +1302,7 @@ void Grib::drawColorMapGeneric_1D (
 
 void Grib::show_CoverZone(QPainter &pnt, Projection * proj)
 {
+    return; // this routine is completely false, and useless.
     if (!ok) {
         return;
     }
@@ -1318,7 +1319,7 @@ void Grib::show_CoverZone(QPainter &pnt, Projection * proj)
         pnt.drawRect(i, j, k-i, l-j);
         proj->map2screen(x0-360.0,y0, &i, &j);
         proj->map2screen(x1-360.0,y1, &k, &l);
-         pnt.drawRect(i, j, k-i, l-j);
+        pnt.drawRect(i, j, k-i, l-j);
     }
 }
 
@@ -1336,7 +1337,7 @@ void Grib::draw_WIND_Color_old(QPainter &pnt, const Projection *proj, bool smoot
     int space=0;
     int W_s=0,H_s=0;
     QRgb   rgb;
-    QImage image(W,H,QImage::Format_ARGB32);
+    QImage image(W,H,QImage::Format_ARGB32_Premultiplied);
 
     GribRecord *recU1,*recV1,*recU2,*recV2;
     time_t t1,t2;
@@ -1519,7 +1520,6 @@ void Grib::draw_WIND_Color(QPainter &pnt, const Projection *proj, bool smooth,
             }
         }
     }
-
     pnt.drawImage(0,0,image);
 
     if(showWindArrows)

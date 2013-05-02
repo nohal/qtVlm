@@ -46,7 +46,6 @@ Copyright (C) 2008 - Jacques Zaninetti - http://zygrib.free.fr
 #include <QTimer>
 #include "MyView.h"
 #include "ToolBar.h"
-
 //---------------------------------------------------------
 // Constructeur
 //---------------------------------------------------------
@@ -240,6 +239,7 @@ void Terrain::draw_GSHHSandGRIB()
     if(grib && grib->isOk())
     {
         drawGrib(pnt,grib);
+        //imgAll->save("testGrib_terrain1.png");
         if(parent->getKap()!=NULL /*&& parent->getKap()->getDrawGribOverKap()*/)
         {
             QPolygon bordersXY;
@@ -319,6 +319,7 @@ void Terrain::draw_GSHHSandGRIB()
         }
     }
 
+    //imgAll->save("testGrib_terrain2.png");
 #ifdef __TERRAIN_QIMAGE
     pnt.drawImage(0,0, *imgEarth);
 #else

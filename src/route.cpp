@@ -1664,9 +1664,10 @@ routeStats ROUTE::getStats()
             oo.setPoints(lon,lat,points->at(n+1).lon,points->at(n+1).lat);
             hdg=oo.getLoxoCap();
             twa=Util::A360(hdg-twd);
-            if(twa<90.0 || twa>270.0)
+            if(twa>180) twa-=360;
+            if(qAbs(twa)<90.0)
                 stats.beatingPercent+=date-prevDate;
-            if((prevTwa<180.0 && twa>180.0) || (prevTwa>180.0 && twa<180.0))
+            if(prevTwa*twa<0)
                 ++stats.nbTacks;
             bool engineUsed=false;
             bs=myBoat->getPolarData()->getSpeed(tws,twa,true,&engineUsed);

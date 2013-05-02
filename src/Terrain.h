@@ -34,7 +34,6 @@ Copyright (C) 2008 - Jacques Zaninetti - http://zygrib.free.fr
 #include "routage.h"
 
 #include "class_list.h"
-
 class Terrain : public QGraphicsWidget
 {
     Q_OBJECT
