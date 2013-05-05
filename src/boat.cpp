@@ -707,7 +707,7 @@ double boat::getWPdir(void)
     return dirAngle;
 }
 
-void boat::setWP(QPointF point,double w) {
+void boat::setWP(QPointF ,double ) {
     qWarning() << "setWp call => from boat!!! not doing anything";
 }
 

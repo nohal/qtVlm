@@ -56,7 +56,7 @@ BoardVlmUi::BoardVlmUi(MainWindow * mainWindow,Board * board): BoardComponent(ma
     connect(board,SIGNAL(sig_updateData()),this,SLOT(slot_updateData()));
 
     connect(mainWindow,SIGNAL(accountListUpdated(Player*)),this,SLOT(slot_initBoatList(Player*)));
-    connect(mainWindow,SIGNAL(boatSelected(boat*)),this,SLOT(slot_setCurrentBoat(boat*)));
+    connect(board,SIGNAL(sig_setCurrentBoat(boat*)),this,SLOT(slot_setCurrentBoat(boat*)));
     connect(btn_races,SIGNAL(clicked()),mainWindow->getMy_centralWidget(),SLOT(slot_raceDialog()));
     connect(this,SIGNAL(VLM_Sync()),mainWindow,SLOT(slotVLM_Sync()));
     connect(this,SIGNAL(selectBoat(boat*)),mainWindow,SLOT(slotSelectBoat(boat*)));
@@ -199,10 +199,18 @@ BoardPilotVLMBoat::BoardPilotVLMBoat(MainWindow * mainWindow,Board * board): Boa
     connect(editAngle,SIGNAL(hasEvent()),this,SLOT(slot_hasEvent()));
     connect(btn_Pilototo,SIGNAL(clicked()),mainWindow,SLOT(slotPilototo()));
     connect(btn_clearPilototo,SIGNAL(clicked()),this,SLOT(slot_clearPilototo()));
+    connect(mainWindow,SIGNAL(selectPOI(bool)),this,SLOT(slot_selectPOI(bool)));
 }
 
 BoardPilotVLMBoat::~BoardPilotVLMBoat() {
     //disconnect(boardVlm,SIGNAL(sig_updateData()),this,SLOT(slot_updateData()));
+}
+
+void BoardPilotVLMBoat::slot_selectPOI(bool doSelect) {
+    if(doSelect)
+        btn_Pilototo->setText(tr("Select WP - click to cancel"));
+    else
+        updatePilototBtn();
 }
 
 void BoardPilotVLMBoat::slot_hasEvent()
@@ -254,6 +262,11 @@ void BoardPilotVLMBoat::slot_updateData(void) {
 
     blocking=false;
 
+    updatePilototBtn();
+}
+
+void BoardPilotVLMBoat::updatePilototBtn(void) {
+    INIT_BOAT;
     /* Pilototo btn */
     QStringList lst = boat->getPilototo();
     QString pilototo_txt=tr("Pilototo");

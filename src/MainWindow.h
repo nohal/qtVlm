@@ -202,6 +202,7 @@ public slots:
         void wpChanged();
         void boatSelected(boat*);
         void accountListUpdated(Player*);
+        void selectPOI(bool);
 
 
     protected:

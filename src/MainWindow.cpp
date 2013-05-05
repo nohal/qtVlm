@@ -1104,14 +1104,11 @@ void MainWindow::updatePilototo_Btn(boatVLM * boat)
 {
     if(!selPOI_instruction)
     {
+        emit selectPOI(false);
         /* compute nb Pilototo instructions */
         QStringList lst = boat->getPilototo();
         QString pilototo_txt=tr("Pilototo");
         QString pilototo_toolTip="";
-#warning MOD_BOARD
-#if 0
-        myBoard->VLMBoard()->set_style(myBoard->VLMBoard()->btn_Pilototo,QColor(255, 255, 127));
-#endif
         if(boat->getHasPilototo())
         {
             int nbPending=0;
@@ -1129,37 +1126,21 @@ void MainWindow::updatePilototo_Btn(boatVLM * boat)
                 ++nb;
             }
             if(nb!=0)
-            {
                 pilototo_txt=pilototo_txt+" ("+QString().setNum(nbPending)+"/"+QString().setNum(nb)+")";
-                if(nbPending!=0)
-                {
-#warning MOD_BOARD
-#if 0
-                    myBoard->VLMBoard()->set_style(myBoard->VLMBoard()->btn_Pilototo,QColor(14,184,63),QColor(255, 255, 127));
-#endif
-                }
-            }
         }
         else
         {
+
             pilototo_toolTip=tr("Imp. de lire le pilototo de VLM");
             pilototo_txt=pilototo_txt+" (!)";
         }
         menuBar->acPilototo->setText(pilototo_txt);
         menuBar->acPilototo->setToolTip(pilototo_toolTip);
-#warning MOD_BOARD
-#if 0
-        myBoard->VLMBoard()->btn_Pilototo->setText(pilototo_txt);
-        myBoard->VLMBoard()->btn_Pilototo->setToolTip(pilototo_toolTip);
-#endif
     }
     else
     {
+        emit selectPOI(true);
         menuBar->acPilototo->setText(tr("Selection d'une marque"));
-#warning MOD_BOARD
-#if 0
-        myBoard->VLMBoard()->btn_Pilototo->setText(tr("Selection d'une marque"));
-#endif
     }
 }
 

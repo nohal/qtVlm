@@ -78,6 +78,7 @@ class BoardPilotVLMBoat : public BoardComponent, public Ui::BoardPilotVLMBoat {
         void slot_setHeading(void);
         void slot_hasEvent(void);
         void slot_clearPilototo(void);
+        void slot_selectPOI(bool);
 
     signals:
         void chg_speed(double value,int mode);
@@ -88,6 +89,8 @@ class BoardPilotVLMBoat : public BoardComponent, public Ui::BoardPilotVLMBoat {
         bool blocking;
         QList<QRadioButton*> rdList;
         QString rdStyleSheet;
+
+        void updatePilototBtn(void);
 
         double computeAngle(void);        
 };

@@ -56,9 +56,12 @@ class Board : public QObject {
         void show_boards(QList<BoardComponent*> boardList);
         void hide_boards(QList<BoardComponent*> boardList);
 
+    public slots:
+        void slot_setCurrentBoat(boat*upBoat);
+
     signals:
-        void sig_setBoat(boatVLM * boatVlm);
         void sig_updateData(void);
+        void sig_setCurrentBoat(boat*);
 
     private:
         MainWindow * mainWindow;

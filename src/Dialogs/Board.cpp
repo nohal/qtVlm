@@ -58,10 +58,16 @@ Board::Board(MainWindow * mainWindow)
     connect(boardPilotVLMBoat,SIGNAL(chg_speed(double,int)),boardSpeed,SLOT(slot_chgSpeed(double,int)));
     connect(boardPilotVLMBoat,SIGNAL(set_newHeading(double)),boardWindTool,SLOT(slot_setNewHeading(double)));
     connect(mainWindow,SIGNAL(boatHasUpdated(boat*)),this,SIGNAL(sig_updateData()));
+    connect(mainWindow,SIGNAL(boatSelected(boat*)),this,SLOT(slot_setCurrentBoat(boat*)));
 }
 
 Board::~Board(void) {
 
+}
+
+void Board::slot_setCurrentBoat(boat* upBoat) {
+    emit sig_setCurrentBoat(upBoat);
+    emit sig_updateData();
 }
 
 /*
