@@ -180,6 +180,7 @@ public slots:
 
     signals:
         void setChangeStatus(bool status,bool pilototo,bool syncBtn);
+        void outDatedVlmData(void);
         void editPOI(POI *);
         void newPOI(double,double,Projection *, boat *);
         void editInstructions(void);

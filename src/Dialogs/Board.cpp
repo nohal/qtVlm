@@ -19,6 +19,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ***********************************************************************/
 
 #include <QKeyEvent>
+#include <QDebug>
 
 #include "Board.h"
 #include "MainWindow.h"
@@ -113,6 +114,34 @@ QList<BoardComponent*> * Board::get_boardList(void) {
         default:
             return NULL;
     }
+}
+
+int Board::build_showHideMenu(QMenu *menu) {
+    int boatType=mainWindow->get_boatType();
+
+    QList<BoardComponent*> * curBoard;
+    switch(boatType) {
+        case BOAT_VLM:
+            curBoard=&boardList_VLM;
+            break;
+        case BOAT_REAL:
+            curBoard=&boardList_Real;
+            break;
+        case BOAT_NOBOAT:
+        default:
+            curBoard=NULL;
+            break;
+    }
+
+    if(curBoard) {
+        int i;
+        for(i=0;i<curBoard->count();++i)
+            menu->addAction(curBoard->at(i)->get_toggleViewAction());
+        return i;
+    }
+
+    else
+        return 0;
 }
 
 void Board::set_newType(int type) {

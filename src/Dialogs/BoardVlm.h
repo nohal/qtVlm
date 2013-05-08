@@ -55,6 +55,7 @@ class BoardVlmUi : public BoardComponent, public Ui::BoardVlmUi {
         void slot_toggleGps(bool);
         void slot_updateLockIcon(QIcon ic);
         void slot_setChangeStatus(bool status,bool pilototo,bool btnSync);
+        void slot_outDatedVlmData(void);
 
     signals:
         void VLM_Sync(void);

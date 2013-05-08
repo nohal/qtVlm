@@ -527,11 +527,8 @@ QMenu * MainWindow::createPopupMenu(void) {
     QMenu * menu = new QMenu;
     int entry=0;
 
-#warning MOD_BOARD
-#if 0
-    if(myBoard)
-        entry=myBoard->build_showHideMenu(menu);
-#endif
+    if(board)
+        entry=board->build_showHideMenu(menu);
 
     if(entry)
         menu->addSeparator();
@@ -1159,10 +1156,7 @@ void MainWindow::updateNxtVac(void)
         nxtVac_cnt--;
         if(nxtVac_cnt<0) {
             nxtVac_cnt=selectedBoat->getVacLen();
-#warning MOD_BOARD
-#if 0
-            myBoard->outdatedVLM();
-#endif
+            emit outDatedVlmData();
         }
     }
     statusBar->drawVacInfo();

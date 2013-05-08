@@ -70,6 +70,9 @@ class BoardComponent : public QWidget {
         void apply_displayed(bool displayed);
         void set_visible(bool visible);
 
+        QAction * get_toggleViewAction(void) { return dockWidget->toggleViewAction(); }
+
+
     public slots:
         virtual void slot_updateData(void)=0;
         void slot_visibilityChanged(bool);

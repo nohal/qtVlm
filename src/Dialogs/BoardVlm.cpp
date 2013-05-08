@@ -63,6 +63,7 @@ BoardVlmUi::BoardVlmUi(MainWindow * mainWindow,Board * board): BoardComponent(ma
     connect(mainWindow,SIGNAL(updateLockIcon(QIcon)),this,SLOT(slot_updateLockIcon(QIcon)));
     connect(btnLock, SIGNAL(clicked()), mainWindow, SLOT(slotFile_Lock()));
     connect(mainWindow,SIGNAL(setChangeStatus(bool,bool,bool)),this,SLOT(slot_setChangeStatus(bool,bool,bool)));
+    connect(mainWindow,SIGNAL(outDatedVlmData()),this,SLOT(slot_outDatedVlmData()));
 }
 
 BoardVlmUi::~BoardVlmUi() {
@@ -174,6 +175,10 @@ void BoardVlmUi::slot_updateLockIcon(QIcon ic) {
 
 void BoardVlmUi::slot_setChangeStatus(bool ,bool ,bool btnSync) {
     btn_Synch->setEnabled(btnSync);
+}
+
+void BoardVlmUi::slot_outDatedVlmData(void) {
+    btn_Synch->setStyleSheet(QString::fromUtf8("background-color: rgb(255, 191, 21);"));
 }
 
 /************************************************************/

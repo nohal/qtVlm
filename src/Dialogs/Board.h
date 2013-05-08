@@ -22,6 +22,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #define BOARD_H
 
 #include <QObject>
+#include <QMenu>
 
 #include "dataDef.h"
 #include "class_list.h"
@@ -44,7 +45,6 @@ class Board : public QObject {
         Board(MainWindow * mainWindow);
         ~Board(void);
 
-        //void update_data(void);
         void set_boat(boatVLM * boatVlm);
 
         QList<BoardComponent*> * get_boardList(void);
@@ -55,6 +55,8 @@ class Board : public QObject {
         void set_newType(int type);
         void show_boards(QList<BoardComponent*> boardList);
         void hide_boards(QList<BoardComponent*> boardList);
+
+        int build_showHideMenu(QMenu *menu);
 
     public slots:
         void slot_setCurrentBoat(boat*upBoat);
