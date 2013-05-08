@@ -60,6 +60,9 @@ BoardVlmUi::BoardVlmUi(MainWindow * mainWindow,Board * board): BoardComponent(ma
     connect(btn_races,SIGNAL(clicked()),mainWindow->getMy_centralWidget(),SLOT(slot_raceDialog()));
     connect(this,SIGNAL(VLM_Sync()),mainWindow,SLOT(slotVLM_Sync()));
     connect(this,SIGNAL(selectBoat(boat*)),mainWindow,SLOT(slotSelectBoat(boat*)));
+    connect(mainWindow,SIGNAL(updateLockIcon(QIcon)),this,SLOT(slot_updateLockIcon(QIcon)));
+    connect(btnLock, SIGNAL(clicked()), mainWindow, SLOT(slotFile_Lock()));
+    connect(mainWindow,SIGNAL(setChangeStatus(bool,bool,bool)),this,SLOT(slot_setChangeStatus(bool,bool,bool)));
 }
 
 BoardVlmUi::~BoardVlmUi() {
@@ -165,6 +168,14 @@ void BoardVlmUi::slot_toggleGps(bool /*toggleState*/) {
 
 }
 
+void BoardVlmUi::slot_updateLockIcon(QIcon ic) {
+    btnLock->setIcon(ic);
+}
+
+void BoardVlmUi::slot_setChangeStatus(bool ,bool ,bool btnSync) {
+    btn_Synch->setEnabled(btnSync);
+}
+
 /************************************************************/
 /*   BoardPilotVLMBoat                                      */
 /************************************************************/
@@ -200,6 +211,7 @@ BoardPilotVLMBoat::BoardPilotVLMBoat(MainWindow * mainWindow,Board * board): Boa
     connect(btn_Pilototo,SIGNAL(clicked()),mainWindow,SLOT(slotPilototo()));
     connect(btn_clearPilototo,SIGNAL(clicked()),this,SLOT(slot_clearPilototo()));
     connect(mainWindow,SIGNAL(selectPOI(bool)),this,SLOT(slot_selectPOI(bool)));
+    connect(mainWindow,SIGNAL(setChangeStatus(bool,bool,bool)),this,SLOT(slot_setChangeStatus(bool,bool,bool)));
 }
 
 BoardPilotVLMBoat::~BoardPilotVLMBoat() {
@@ -211,6 +223,19 @@ void BoardPilotVLMBoat::slot_selectPOI(bool doSelect) {
         btn_Pilototo->setText(tr("Select WP - click to cancel"));
     else
         updatePilototBtn();
+}
+
+void BoardPilotVLMBoat::slot_setChangeStatus(bool status,bool pilototo,bool ) {
+    slot_updateData(); // make sure to put data back to boat values
+    bool st=!status;
+    for(int i=0;i<rdList.count();++i)
+        rdList.at(i)->setEnabled(st);
+
+    btn_angleFlip->setEnabled(st);
+    btn_clearPilototo->setEnabled(st);
+    editAngle->setEnabled(st);
+    editHeading->setEnabled(st);
+    btn_Pilototo->setEnabled(pilototo);
 }
 
 void BoardPilotVLMBoat::slot_hasEvent()
@@ -461,6 +486,7 @@ BoardWP::BoardWP(MainWindow * mainWindow,Board * board): BoardComponent(mainWind
     deg_unit_2->setText(str);
 
     connect(board,SIGNAL(sig_updateData()),this,SLOT(slot_updateData()));
+    connect(mainWindow,SIGNAL(setChangeStatus(bool,bool,bool)),this,SLOT(slot_setChangeStatus(bool,bool,bool)));
 
     /* wpDialog */
     dialogWp = new DialogWp();
@@ -516,6 +542,10 @@ void BoardWP::slot_btnWP(void) {
     dialogWp->show_WPdialog(boat);
 }
 
+void BoardWP::slot_setChangeStatus(bool status,bool,bool) {
+    btn_WP->setEnabled(!status);
+}
+
 /************************************************************/
 /*   BoardSpeedHeading                                      */
 /************************************************************/
@@ -525,6 +555,7 @@ BoardSpeed::BoardSpeed(MainWindow * mainWindow,Board * board): BoardComponent(ma
     init_dock(tr("Speed"),BOARD_TYPE_SPEED);
 
     connect(board,SIGNAL(sig_updateData()),this,SLOT(slot_updateData()));
+    connect(mainWindow,SIGNAL(setChangeStatus(bool,bool,bool)),this,SLOT(slot_setChangeStatus(bool,bool,bool)));
 }
 
 BoardSpeed::~BoardSpeed() {
@@ -561,6 +592,10 @@ void BoardSpeed::slot_chgSpeed(double value,int mode) {
             unit_kts_1->setStyleSheet(QString::fromUtf8(SPEED_COLOR_VLM));
             break;
     }
+}
+
+void BoardSpeed::slot_setChangeStatus(bool,bool,bool) {
+    slot_updateData();
 }
 
 /************************************************************/
@@ -602,6 +637,7 @@ BoardWindTool::BoardWindTool(MainWindow * mainWindow,Board * board): BoardCompon
     init_dock(tr("Wind tool"),BOARD_TYPE_WINDTOOL);
 
     connect(board,SIGNAL(sig_updateData()),this,SLOT(slot_updateData()));
+    connect(mainWindow,SIGNAL(setChangeStatus(bool,bool,bool)),this,SLOT(slot_setChangeStatus(bool,bool,bool)));
 }
 
 BoardWindTool::~BoardWindTool() {
@@ -621,7 +657,9 @@ void BoardWindTool::slot_setNewHeading(double heading) {
     windAngle->setValues(boat->getHeading(),boat->getWindDir(),boat->getWindSpeed(), boat->getWPdir(), heading);
 }
 
-
+void BoardWindTool::slot_setChangeStatus(bool,bool,bool) {
+    slot_updateData();
+}
 
 /*********************/
 /* VLM20 windAngle  */
@@ -669,7 +707,7 @@ void tool_windAngle::draw(QPainter * painter)
     /* compas */
     int compas_size=194;
 
-    QPen pen(Qt::white);
+    QPen pen(Qt::black);
     pen.setWidth(3);
     painter->setPen(pen);
 

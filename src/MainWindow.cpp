@@ -107,6 +107,7 @@ void MainWindow::connectSignals()
     connect(mb->acFile_Info_GRIB, SIGNAL(triggered()), my_centralWidget, SLOT(slot_fileInfo_GRIB()));
     connect(mb->acFile_Quit, SIGNAL(triggered()), this, SLOT(slotFile_Quit()));
     connect(mb->acFile_Lock, SIGNAL(triggered()), this, SLOT(slotFile_Lock()));
+    connect(this,SIGNAL(updateLockIcon(QIcon)),mb,SLOT(slot_updateLockIcon(QIcon)));
     connect(mb->acFile_QuitNoSave, SIGNAL(triggered()), this, SLOT(slotFile_QuitNoSave()));
 
 
@@ -180,6 +181,8 @@ void MainWindow::connectSignals()
     //-------------------------------------
     connect(loadVLM_grib, SIGNAL(signalGribFileReceived(QString)),
             this,  SLOT(slot_gribFileReceived(QString)));
+
+    connect(this,SIGNAL(setChangeStatus(bool,bool,bool)),mb,SLOT(slot_setChangeStatus(bool,bool,bool)));
 }
 
 //----------------------------------------------------
@@ -897,13 +900,14 @@ void MainWindow::slotFile_Lock(bool readOnly)
 
     if(!readOnly)
         selectedBoat->setLockStatus(!selectedBoat->getLockStatus());
+
     QIcon ic;
     if(selectedBoat->getLockStatus())
         ic=QIcon(appFolder.value("img")+"lock.png");
     else
         ic=QIcon(appFolder.value("img")+"unlock.png");
-    menuBar->acFile_Lock->setIcon(ic);
-    toolBar->acLock->setIcon(ic);
+
+    emit updateLockIcon(ic);
 }
 
 void MainWindow::slotFile_Quit() {
@@ -1959,33 +1963,15 @@ void MainWindow::slotBoatLockStatusChanged(boat* boat,bool status)
     {
         if(selPOI_instruction)
         {
-            emit setChangeStatus(true);
-            menuBar->acPilototo->setEnabled(true);
-            menuBar->acVLMSync->setEnabled(false);
-#warning MOD_BOARD
-#if 0
-            myBoard->VLMBoard()->btn_Pilototo->setEnabled(true);
-#endif
+            emit setChangeStatus(true,true,false);
         }
         else if(isSelectingWP)
         {
-            emit setChangeStatus(true);
-            menuBar->acPilototo->setEnabled(false);
-            menuBar->acVLMSync->setEnabled(false);
-#warning MOD_BOARD
-#if 0
-            myBoard->VLMBoard()->btn_Pilototo->setEnabled(false);
-#endif
+            emit setChangeStatus(true,false,false);
         }
         else
         {
-            emit setChangeStatus(status);
-            menuBar->acPilototo->setEnabled(!status);
-            menuBar->acVLMSync->setEnabled(true);
-#warning MOD_BOARD
-#if 0
-            myBoard->VLMBoard()->btn_Pilototo->setEnabled(true);
-#endif
+            emit setChangeStatus(status,!status,true);
         }
     }
 }

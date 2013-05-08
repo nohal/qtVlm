@@ -53,6 +53,8 @@ class BoardVlmUi : public BoardComponent, public Ui::BoardVlmUi {
         void slot_showBoatInfo(void);
         void slot_vlmSynch(void);
         void slot_toggleGps(bool);
+        void slot_updateLockIcon(QIcon ic);
+        void slot_setChangeStatus(bool status,bool pilototo,bool btnSync);
 
     signals:
         void VLM_Sync(void);
@@ -79,6 +81,7 @@ class BoardPilotVLMBoat : public BoardComponent, public Ui::BoardPilotVLMBoat {
         void slot_hasEvent(void);
         void slot_clearPilototo(void);
         void slot_selectPOI(bool);
+        void slot_setChangeStatus(bool status,bool pilototo,bool btnSync);
 
     signals:
         void chg_speed(double value,int mode);
@@ -122,6 +125,7 @@ class BoardWP : public BoardComponent, public Ui::BoardWP {
     public slots:
         void slot_updateData(void);
         void slot_btnWP(void);
+        void slot_setChangeStatus(bool status,bool pilototo,bool btnSync);
 
     private:
         DialogWp * dialogWp;
@@ -139,6 +143,7 @@ class BoardSpeed : public BoardComponent, public Ui::BoardSpeed {
     public slots:
         void slot_updateData(void);
         void slot_chgSpeed(double value,int mode);
+        void slot_setChangeStatus(bool status,bool pilototo,bool btnSync);
 };
 
 /************************************************************/
@@ -166,6 +171,7 @@ class BoardWindTool : public BoardComponent, public Ui::BoardWindTool {
     public slots:
         void slot_updateData(void);
         void slot_setNewHeading(double heading);
+        void slot_setChangeStatus(bool status,bool pilototo,bool btnSync);
 };
 
 #endif // BOARDVLM_H

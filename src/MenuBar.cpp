@@ -594,6 +594,15 @@ void MenuBar::setIsotherms0Step(int step) {
     }
 }
 
+void MenuBar::slot_updateLockIcon(QIcon ic) {
+    acFile_Lock->setIcon(ic);
+}
+
+void MenuBar::slot_setChangeStatus(bool ,bool pilototo,bool syncBtn) {
+    acPilototo->setEnabled(pilototo);
+    acVLMSync->setEnabled(syncBtn);
+}
+
 //------------------------------------------------------------
 void MenuBar::setMenubarColorMapMode(int colorMapMode)
 {
@@ -670,3 +679,5 @@ void ZeroOneActionGroup::setCheckedAction(QAction *act, bool b)
         else
                 emit triggered( NULL );
 }
+
+

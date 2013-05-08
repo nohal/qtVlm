@@ -224,6 +224,7 @@ ToolBar::ToolBar(MainWindow *mainWindow)
 
     /* Boat ToolBar */
     connect(acLock, SIGNAL(triggered()), mainWindow, SLOT(slotFile_Lock()));
+    connect(mainWindow,SIGNAL(updateLockIcon(QIcon)),this,SLOT(slot_updateLockIcon(QIcon)));
     connect(boatList, SIGNAL(activated(int)),mainWindow, SLOT(slotChgBoat(int)));
 
     //load_settings();
@@ -253,6 +254,10 @@ void ToolBar::chgBoatType(int boatType) {
             boatToolBar->chgVisibilty(false);
             break;
     }
+}
+
+void ToolBar::slot_updateLockIcon(QIcon ic) {
+    acLock->setIcon(ic);
 }
 
 QAction* ToolBar::init_Action(QString title, QString shortcut, QString statustip,QString iconFileName,QToolBar * toolBar)

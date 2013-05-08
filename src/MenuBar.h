@@ -297,6 +297,10 @@ public:
     QAction *acShowPolar;
     QAction *acRace;
 
+public slots:
+    void slot_updateLockIcon(QIcon ic);
+    void slot_setChangeStatus(bool status,bool pilototo,bool syncBtn);
+
 
     //-------------------------------------
     // Autres objets de l'interface

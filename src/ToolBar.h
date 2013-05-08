@@ -144,6 +144,8 @@ public slots:
 
         void slot_loadEstimeParam(void);
 
+        void slot_updateLockIcon(QIcon ic);
+
     signals:
         void estimeParamChanged(void);
         void gribZygrib(void);

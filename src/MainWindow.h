@@ -179,7 +179,7 @@ public slots:
         void slot_simplifyRouteMin();
 
     signals:
-        void setChangeStatus(bool);
+        void setChangeStatus(bool status,bool pilototo,bool syncBtn);
         void editPOI(POI *);
         void newPOI(double,double,Projection *, boat *);
         void editInstructions(void);
@@ -203,6 +203,7 @@ public slots:
         void boatSelected(boat*);
         void accountListUpdated(Player*);
         void selectPOI(bool);
+        void updateLockIcon(QIcon ic);
 
 
     protected:
