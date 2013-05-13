@@ -272,7 +272,7 @@ void boat::paint(QPainter * pnt, const QStyleOptionGraphicsItem * , QWidget * )
     pnt->setFont(QApplication::font());
     if(!labelHidden)
     {
-        if(Settings::getSetting("showFlag",0).toInt()==1 && this->get_boatType()==BOAT_VLM)
+        if(Settings::getSetting("showFlag",0,"showHideItem").toInt()==1 && this->get_boatType()==BOAT_VLM)
         {
             if(flag.isNull())
             {
@@ -607,7 +607,7 @@ void boat::drawOnMagnifier(Projection * mProj, QPainter * pnt)
     pnt->setFont(QApplication::font());
     if(!labelHidden)
     {
-        if(Settings::getSetting("showFlag",0).toInt()==1 && this->get_boatType()==BOAT_VLM)
+        if(Settings::getSetting("showFlag",0,"showHideItem").toInt()==1 && this->get_boatType()==BOAT_VLM)
         {
             if(flag.isNull())
             {

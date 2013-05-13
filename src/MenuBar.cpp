@@ -34,12 +34,15 @@ Copyright (C) 2008 - Jacques Zaninetti - http://zygrib.free.fr
 #include "routage.h"
 #include "Terrain.h"
 #include "settings.h"
+#include "ToolBar.h"
+#include "Board.h"
 #include <QIcon>
 
 //===================================================================================
-MenuBar::MenuBar(QWidget *parent)
+MenuBar::MenuBar(MainWindow *parent)
     : QMenuBar(parent)
 {
+    mainWindow=parent;
     this->setAccessibleName("mainMenuQtvlm");
     //-------------------------------------
     // Menu + Actions
@@ -62,70 +65,90 @@ MenuBar::MenuBar(QWidget *parent)
         menuFile->addMenu(mn_img);
         menuFile->addSeparator();
 
-        QMenu *menuShowHide = new QMenu(tr("Montrer/cacher"));
-           acOptions_GroupShowHide = new QActionGroup(menuShowHide);
-                acOptions_SH_sAll = addAction(menuShowHide, tr("Tout montrer"), "S", tr(""));
-                acOptions_SH_hAll = addAction(menuShowHide, tr("Tout cacher sauf les bateaux actifs"), "H", tr(""));
-                menuShowHide->addSeparator();
-                acOptions_SH_Opp = addAction(menuShowHide, tr("Cacher/Montrer les bateaux opposants"), "O", tr(""));
-                acOptions_SH_Por = addAction(menuShowHide, tr("Cacher/Montrer les portes et WPs"), "W", tr(""));
-                acOptions_SH_Poi = addAction(menuShowHide, tr("Cacher/Montrer les POIs"), "P", tr(""));
-                acOptions_SH_Rou = addAction(menuShowHide, tr("Cacher/Montrer les routes"), "R", tr(""));
-                acOptions_SH_Lab = addAction(menuShowHide, tr("Cacher/Montrer les etiquettes"), "E", tr(""));
-                menuShowHide->addSeparator();
-                acOptions_SH_Com = addAction(menuShowHide, tr("Cacher/Montrer le compas"), "C", tr(""));
-                acOptions_SH_ComBandeau = addAction(menuShowHide, tr("Cacher/Montrer le compas du bandeau"), "V", tr(""));
-                acOptions_SH_Pol = addAction(menuShowHide, tr("Cacher/Montrer la polaire"), "L", tr(""));
-                menuShowHide->addSeparator();
-                acOptions_SH_Fla = addAction(menuShowHide, tr("Cacher/Montrer les pavillons sur la carte"), "F", tr(""));
-                acOptions_SH_Nig = addAction(menuShowHide, tr("Cacher/Montrer les zones de jour et nuit"), "N", tr(""));
-                menuShowHide->addSeparator();
-                acOptions_SH_Boa = addAction(menuShowHide, tr("Centrer sur le bateau actif"), "B", tr(""));
 
-        //menuOptions->addMenu(menuShowHide);
-                menuFile->addMenu(menuShowHide);
-                menuFile->addSeparator();
-                acHorn=addAction(menuFile,tr("Configurer la corne de brume"),"","",tr(""));
-                acKeep=addAction(menuFile,tr("Conserver la position du bateau dans l'ecran lors de zoom +/-"),"Z","",tr(""));
-                acKeep->setCheckable(true);
-                acKeep->setChecked(Settings::getSetting("keepBoatPosOnScreen",1).toInt()==1);
-                acReplay=addAction(menuFile,tr("Rejouer l'historique des traces"),"Y","",tr(""));
-                acScreenshot=addAction(menuFile,tr("Photo d'ecran"),"Ctrl+E","",tr(""));                
+
+        acHorn=addAction(menuFile,tr("Configurer la corne de brume"),"","",tr(""));
+        acReplay=addAction(menuFile,tr("Rejouer l'historique des traces"),"Y","",tr(""));
+        acScreenshot=addAction(menuFile,tr("Photo d'ecran"),"Ctrl+E","",tr(""));
 
     addMenu(menuFile);
 
+    menuView = new QMenu(tr("View"));
+    connect(menuView,SIGNAL(aboutToShow()),this,SLOT(slot_showViewMenu()));
+    boardMenu = new QMenu(tr("Board"));
+    menuView->addMenu(boardMenu);
+    toolBarMenu = new QMenu(tr("ToolBar"));
+    menuView->addMenu(toolBarMenu);
+    menuView->addSeparator();
+    acOptions_SH_sAll = addAction(menuView, tr("Tout montrer"), "S", tr(""));
+    acOptions_SH_hAll = addAction(menuView, tr("Tout cacher sauf les bateaux actifs"), "H", tr(""));
+    menuView->addSeparator();
+    QMenu * boatPoiSH = new QMenu(tr("Show/Hide boat and POI"));
+        acOptions_SH_Boa = addAction(boatPoiSH, tr("Centrer sur le bateau actif"), "B", tr(""));
+        acKeep=addAction(boatPoiSH,tr("Conserver la position du bateau dans l'ecran lors de zoom +/-"),"Z","",tr(""));
+        acKeep->setCheckable(true);
+        boatPoiSH->addSeparator();
+        acOptions_SH_Fla = addAction(boatPoiSH, tr("Montrer les pavillons sur la carte"), "F", tr(""));
+        acOptions_SH_Fla->setCheckable(true);
+        boatPoiSH->addSeparator();
+        acOptions_SH_Opp = addAction(boatPoiSH, tr("Cacher/Montrer les bateaux opposants"), "O", tr(""));
+        acOptions_SH_Opp->setCheckable(true);
+        acOptions_SH_Por = addAction(boatPoiSH, tr("Cacher/Montrer les portes et WPs"), "W", tr(""));
+        acOptions_SH_Por->setCheckable(true);
+        acOptions_SH_Poi = addAction(boatPoiSH, tr("Cacher/Montrer les POIs"), "P", tr(""));
+        acOptions_SH_Poi->setCheckable(true);
+        acOptions_SH_Rou = addAction(boatPoiSH, tr("Cacher/Montrer les routes"), "R", tr(""));
+        acOptions_SH_Rou->setCheckable(true);
+        acOptions_SH_Lab = addAction(boatPoiSH, tr("Cacher/Montrer les etiquettes"), "E", tr(""));
+        acOptions_SH_Lab->setCheckable(true);
+    menuView->addMenu(boatPoiSH);
+    QMenu * compasSH = new QMenu(tr("Show/Hide compas"));
+    acOptions_SH_Com = addAction(compasSH, tr("Cacher/Montrer le compas"), "C", tr(""));
+    acOptions_SH_Com->setCheckable(true);
+    acOptions_SH_Pol = addAction(compasSH, tr("Cacher/Montrer la polaire"), "L", tr(""));
+    acOptions_SH_Pol->setCheckable(true);
+
+    menuView->addMenu(compasSH);
+
+    menuView->addSeparator();
+
+    acOptions_SH_Nig = addAction(menuView, tr("Montrer les zones de jour et nuit"), "N", tr(""));
+    acOptions_SH_Nig->setCheckable(true);
+
+    addMenu(menuView);
+
     //-------------------------------------
-    menuView = new QMenu(tr("Fichier GRIB"));
-        acFile_Open = addAction(menuView, tr("Ouvrir"),
+    menuGrib = new QMenu(tr("Fichier GRIB"));
+        acFile_Open = addAction(menuGrib, tr("Ouvrir"),
                     tr("Ctrl+O"),
                     tr("Ouvrir un fichier GRIB"), appFolder.value("img")+"fileopen.png");
-        acFile_Reopen = addAction(menuView, tr("Recharcher"),
+        acFile_Reopen = addAction(menuGrib, tr("Recharcher"),
                     "",
                     tr("Recharger le fichier GRIB actuel"), appFolder.value("img")+"fileopen.png");
-        acFile_Close = addAction(menuView, tr("Fermer"),
+        acFile_Close = addAction(menuGrib, tr("Fermer"),
                     tr("Ctrl+W"),
                     tr("Fermer"), appFolder.value("img")+"fileclose.png");
-        acFile_Load_GRIB = addAction(menuView, tr("Telechargement"),
+        acFile_Load_GRIB = addAction(menuGrib, tr("Telechargement"),
                     tr("Ctrl+D"),
                     tr("Telechargement"), appFolder.value("img")+"network.png");
-        acFile_Load_VLM_GRIB = addAction(menuView, tr("Telechargement VLM"),
+        acFile_Load_VLM_GRIB = addAction(menuGrib, tr("Telechargement VLM"),
                     tr(""),
                     tr("Telechargement VLM"), appFolder.value("img")+"VLM_mto.png");
-        acFile_Load_SAILSDOC_GRIB = addAction(menuView, tr("Telechargement SailsDoc"),
+        acFile_Load_SAILSDOC_GRIB = addAction(menuGrib, tr("Telechargement SailsDoc"),
                                                 tr(""),
                                                 tr("Telechargement SailsDoc"), appFolder.value("img")+"kmail.png");
-        menuView->addSeparator();
-        acFile_Open_Current = addAction(menuView, tr("Ouvrir un GRIB Courants"),
+        menuGrib->addSeparator();
+        acFile_Open_Current = addAction(menuGrib, tr("Ouvrir un GRIB Courants"),
                     tr(""),
                     tr("Ouvrir un fichier GRIB Courants"), appFolder.value("img")+"fileopen.png");
-        acFile_Close_Current = addAction(menuView, tr("Fermer le GRIB Courants"),
+        acFile_Close_Current = addAction(menuGrib, tr("Fermer le GRIB Courants"),
                     tr(""),
                     tr("Fermer le GRIB Courants"), appFolder.value("img")+"fileclose.png");
-        menuView->addSeparator();
-        acFile_Info_GRIB = addAction(menuView, tr("Informations sur le fichier"),
+        menuGrib->addSeparator();
+        acFile_Info_GRIB = addAction(menuGrib, tr("Informations sur le fichier"),
                     tr("Ctrl+I"),
                     tr("Informations sur le fichier GRIB"), appFolder.value("img")+"info.png");
-        menuView->addSeparator();
+        menuGrib->addSeparator();
 
         menuGroupColorMap = new QMenu(tr("Type de carte"));
         acView_GroupColorMap = new ZeroOneActionGroup (menuGroupColorMap);
@@ -153,8 +176,8 @@ MenuBar::MenuBar(QWidget *parent)
                 acView_GroupColorMap->addAction(acView_SnowDepth);
                 acView_GroupColorMap->addAction(acView_FrzRainCateg);
                 acView_GroupColorMap->addAction(acView_CAPEsfc);
-        menuView->addMenu(menuGroupColorMap);
-        menuView->addSeparator();
+        menuGrib->addMenu(menuGroupColorMap);
+        menuGrib->addSeparator();
 
         setMenubarColorMapMode(Settings::getSetting("colorMapMode", Terrain::drawWind).toInt());
 
@@ -219,25 +242,25 @@ MenuBar::MenuBar(QWidget *parent)
                 menuAltitude->addMenu(menuGeopotStep);
                 acAlt_GeopotLabels = addActionCheck(menuAltitude, tr("Geopotentials labels"), "","");
 
-                //menuView->addMenu(menuAltitude);
-                //menuView->addSeparator();
+                //menuGrib->addMenu(menuAltitude);
+                //menuGrib->addSeparator();
 
-        acView_ColorMapSmooth = addActionCheck(menuView, tr("Degrades de couleurs"), tr(""),
+        acView_ColorMapSmooth = addActionCheck(menuGrib, tr("Degrades de couleurs"), tr(""),
                     tr(""));
         acView_ColorMapSmooth->setChecked(Settings::getSetting("colorMapSmooth", true).toBool());
-        acView_WindArrow = addActionCheck(menuView, tr("Fleches du vent"), tr(""),
+        acView_WindArrow = addActionCheck(menuGrib, tr("Fleches du vent"), tr(""),
                     tr("Afficher les fleches de direction du vent"));
         acView_WindArrow->setChecked(Settings::getSetting("showWindArrows", true).toBool());
-        acView_Barbules = addActionCheck(menuView, tr("Barbules"), tr(""),
+        acView_Barbules = addActionCheck(menuGrib, tr("Barbules"), tr(""),
                     tr("Afficher les barbules sur les fleches de vent"));
         acView_Barbules->setChecked(Settings::getSetting("showBarbules", true).toBool());
-        menuView->addSeparator();
-        acView_TemperatureLabels = addActionCheck(menuView,
+        menuGrib->addSeparator();
+        acView_TemperatureLabels = addActionCheck(menuGrib,
                                 tr("Temperature"), tr("Ctrl+T"),
                     "");
         acView_TemperatureLabels->setChecked(Settings::getSetting("showTemperatureLabels", false).toBool());
         //--------------------------------
-        menuView->addSeparator();
+        menuGrib->addSeparator();
                 menuIsobars = new QMenu(tr("Isobares"));
                 acView_Isobars = addActionCheck(menuIsobars, tr("Afficher les isobares"), "","");
                 acView_Isobars->setChecked(Settings::getSetting("showIsobars", true).toBool());
@@ -266,7 +289,7 @@ MenuBar::MenuBar(QWidget *parent)
         acView_PressureMinMax = addActionCheck(menuIsobars, tr("Pression Mini(L) Maxi(H)"), "",
                             tr("Afficher les points de pression mini et maxi"));
         acView_PressureMinMax->setChecked(Settings::getSetting("showPressureMinMax", false).toBool());
-                menuView->addMenu(menuIsobars);
+                menuGrib->addMenu(menuIsobars);
         setIsobarsStep(Settings::getSetting("isobarsStep", 2).toInt());
         //--------------------------------
                 menuIsotherms0 = new QMenu(tr("Isothermes 0degC"));
@@ -295,16 +318,16 @@ MenuBar::MenuBar(QWidget *parent)
                                                 tr("Etiquettes des isothermes 0degC"), "",
                             tr("Afficher les étiquettes des isothermes 0degC"));
         acView_Isotherms0Labels->setChecked(Settings::getSetting("showIsotherms0Labels", false).toBool());
-                menuView->addMenu(menuIsotherms0);
-        menuView->addSeparator();
+                menuGrib->addMenu(menuIsotherms0);
+        menuGrib->addSeparator();
         mn_fax=new QMenu(tr("Fax meteo"));
         acFax_Open = addAction(mn_fax, tr("Ouvrir un fax meteo"), "", tr(""));
         mn_fax->addAction(acFax_Open);
         acFax_Close = addAction(mn_fax, tr("Fermer le fax meteo"), "", tr(""));
         mn_fax->addAction(acFax_Close);
-        menuView->addMenu(mn_fax);
+        menuGrib->addMenu(mn_fax);
 
-    addMenu(menuView);
+    addMenu(menuGrib);
 
     //-------------------------------------
     menuBoat = new QMenu(tr("Bateau"));
@@ -602,6 +625,28 @@ void MenuBar::slot_setChangeStatus(bool ,bool pilototo,bool syncBtn) {
     acPilototo->setEnabled(pilototo);
     acVLMSync->setEnabled(syncBtn);
 }
+
+void MenuBar::slot_showViewMenu(void) {
+    boardMenu->clear();
+    mainWindow->get_board()->build_showHideMenu(boardMenu);
+
+    toolBarMenu->clear();
+    mainWindow->get_toolBar()->build_showHideMenu(toolBarMenu);
+
+    acKeep->setChecked(Settings::getSetting("keepBoatPosOnScreen",1).toInt()==1);    
+    acOptions_SH_Nig->setChecked(Settings::getSetting("showNight",1).toInt()==1);
+
+    acOptions_SH_Fla->setChecked(Settings::getSetting("showFlag",0,"showHideItem").toInt()==1);
+    acOptions_SH_Pol->setChecked(Settings::getSetting("showPolar",0,"showHideItem").toInt()==1);
+    acOptions_SH_Com->setChecked(Settings::getSetting("showCompass",0,"showHideItem").toInt()==1);
+
+    acOptions_SH_Opp->setChecked(Settings::getSetting("hideOpponent",0,"showHideItem").toInt()==0);
+    acOptions_SH_Por->setChecked(Settings::getSetting("hidePorte",0,"showHideItem").toInt()==0);
+    acOptions_SH_Poi->setChecked(Settings::getSetting("hidePoi",0,"showHideItem").toInt()==0);
+    acOptions_SH_Rou->setChecked(Settings::getSetting("hideRoute",0,"showHideItem").toInt()==0);
+    acOptions_SH_Lab->setChecked(Settings::getSetting("hideLabel",0,"showHideItem").toInt()==0);
+}
+
 
 //------------------------------------------------------------
 void MenuBar::setMenubarColorMapMode(int colorMapMode)

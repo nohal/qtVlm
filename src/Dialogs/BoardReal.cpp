@@ -41,7 +41,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 BoardRealUi::BoardRealUi(MainWindow * mainWindow,Board * board): BoardComponent(mainWindow) {
     setupUi(this);
 
-    init_dock(tr("Boat"),BOARD_TYPE_REAL);
+    init_dock("BoatReal",tr("Boat"),BOARD_TYPE_REAL);
 
     connect(board,SIGNAL(sig_updateData()),this,SLOT(slot_updateData()));
 
@@ -84,7 +84,7 @@ void BoardRealUi::slot_moveBoat(void) {
 /************************************************************/
 BoardRealPosition::BoardRealPosition(MainWindow * mainWindow,Board * board): BoardComponent(mainWindow) {
     setupUi(this);
-    init_dock(tr("Position"),BOARD_TYPE_POSITION_REAL);
+    init_dock("PositionReal",tr("Position"),BOARD_TYPE_POSITION_REAL);
 
     connect(board,SIGNAL(sig_updateData()),this,SLOT(slot_updateData()));
 }
@@ -106,7 +106,7 @@ void BoardRealPosition::slot_updateData(void) {
 /************************************************************/
 BoardSpeedHeading::BoardSpeedHeading(MainWindow * mainWindow,Board * board): BoardComponent(mainWindow) {
     setupUi(this);
-    init_dock(tr("Speed & heading"),BOARD_TYPE_SPEEDHEADING);
+    init_dock("SpdReal",tr("Speed & heading"),BOARD_TYPE_SPEEDHEADING);
 
     connect(board,SIGNAL(sig_updateData()),this,SLOT(slot_updateData()));
 }
@@ -127,7 +127,7 @@ void BoardSpeedHeading::slot_updateData(void) {
 /************************************************************/
 BoardWP_Real::BoardWP_Real(MainWindow * mainWindow,Board * board): BoardComponent(mainWindow) {
     setupUi(this);
-    init_dock(tr("WayPoint"),BOARD_TYPE_WP);
+    init_dock("WP_real",tr("WayPoint"),BOARD_TYPE_WP);
 
     QString str;
     str.sprintf("%c",176);

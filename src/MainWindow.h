@@ -69,6 +69,9 @@ class MainWindow: public QMainWindow
 
         FCT_GET(Progress*,progress)
         FCT_GET(StatusBar*,statusBar)
+        FCT_GET(ToolBar*,toolBar)
+        FCT_GET(Board*,board)
+
         FCT_GET(int,nxtVac_cnt)
 
         int get_boatType(void);
@@ -79,7 +82,7 @@ class MainWindow: public QMainWindow
 
         bool getFinishStart(void) { return finishStart; }
 
-        Board * getBoard(void) { return board; }
+
         bool getNoSave(){return noSave;}
         void setPilototoFromRoute(ROUTE * route);
         void setPilototoFromRoute(QList<POI*> poiList);

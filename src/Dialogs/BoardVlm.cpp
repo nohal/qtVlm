@@ -51,7 +51,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 BoardVlmUi::BoardVlmUi(MainWindow * mainWindow,Board * board): BoardComponent(mainWindow) {
     setupUi(this);
 
-    init_dock(tr("Vlm"),BOARD_TYPE_VLM);
+    init_dock("Vlm",tr("Vlm"),BOARD_TYPE_VLM);
 
     connect(board,SIGNAL(sig_updateData()),this,SLOT(slot_updateData()));
 
@@ -187,7 +187,7 @@ void BoardVlmUi::slot_outDatedVlmData(void) {
 BoardPilotVLMBoat::BoardPilotVLMBoat(MainWindow * mainWindow,Board * board): BoardComponent(mainWindow) {
     setupUi(this);
 
-    init_dock(tr("Boat control"),BOARD_TYPE_PILOT);
+    init_dock("BoatControl",tr("Boat control"),BOARD_TYPE_PILOT);
 
     btn_angleFlip->setIcon(QIcon("img/board_angleFlip.png"));
     btn_setAngle->setIcon(QIcon("img/apply.png"));
@@ -462,7 +462,7 @@ void BoardPilotVLMBoat::slot_clearPilototo(void) {
 /************************************************************/
 BoardPosition::BoardPosition(MainWindow * mainWindow,Board * board): BoardComponent(mainWindow) {
     setupUi(this);
-    init_dock(tr("Position"),BOARD_TYPE_POSITION);
+    init_dock("Position",tr("Position"),BOARD_TYPE_POSITION);
 
     connect(board,SIGNAL(sig_updateData()),this,SLOT(slot_updateData()));
 }
@@ -483,7 +483,7 @@ void BoardPosition::slot_updateData(void) {
 /************************************************************/
 BoardWP::BoardWP(MainWindow * mainWindow,Board * board): BoardComponent(mainWindow) {
     setupUi(this);
-    init_dock(tr("WayPoint"),BOARD_TYPE_WP);
+    init_dock("WP",tr("WayPoint"),BOARD_TYPE_WP);
 
     QString str;
     str.sprintf("%c",176);
@@ -557,7 +557,7 @@ void BoardWP::slot_setChangeStatus(bool status,bool,bool) {
 
 BoardSpeed::BoardSpeed(MainWindow * mainWindow,Board * board): BoardComponent(mainWindow) {
     setupUi(this);
-    init_dock(tr("Speed"),BOARD_TYPE_SPEED);
+    init_dock("Spd",tr("Speed"),BOARD_TYPE_SPEED);
 
     connect(board,SIGNAL(sig_updateData()),this,SLOT(slot_updateData()));
     connect(mainWindow,SIGNAL(setChangeStatus(bool,bool,bool)),this,SLOT(slot_setChangeStatus(bool,bool,bool)));
@@ -609,7 +609,7 @@ void BoardSpeed::slot_setChangeStatus(bool,bool,bool) {
 
 BoardWind::BoardWind(MainWindow * mainWindow,Board * board): BoardComponent(mainWindow) {
     setupUi(this);
-    init_dock(tr("Wind"),BOARD_TYPE_WIND);
+    init_dock("Wind",tr("Wind"),BOARD_TYPE_WIND);
 
     QString str;
     str.sprintf("%c",176);
@@ -639,7 +639,7 @@ void BoardWind::slot_updateData(void) {
 
 BoardWindTool::BoardWindTool(MainWindow * mainWindow,Board * board): BoardComponent(mainWindow) {
     setupUi(this);
-    init_dock(tr("Wind tool"),BOARD_TYPE_WINDTOOL);
+    init_dock("WindTool",tr("Wind tool"),BOARD_TYPE_WINDTOOL);
 
     connect(board,SIGNAL(sig_updateData()),this,SLOT(slot_updateData()));
     connect(mainWindow,SIGNAL(setChangeStatus(bool,bool,bool)),this,SLOT(slot_setChangeStatus(bool,bool,bool)));

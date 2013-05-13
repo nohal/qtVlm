@@ -52,7 +52,6 @@ Board::Board(MainWindow * mainWindow)
     boardList_Real.append(new BoardWP_Real(mainWindow,this));
 
 
-    load_settings();
     set_newType(mainWindow->get_boatType());
 
     /* inter board signals */

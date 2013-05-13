@@ -64,7 +64,6 @@ class BoardComponent : public QWidget {
 
         FCT_GET(bool,displayed)
         void set_displayed(bool displayed) { if(!chgingVisibility) this->displayed=displayed; }
-        FCT_GET(QString,name)
         FCT_GET(int,typeNum)
 
         void apply_displayed(bool displayed);
@@ -82,12 +81,11 @@ class BoardComponent : public QWidget {
         MainWindow * mainWindow;
 
         bool displayed;
-        QString name;
         int typeNum;
 
         bool chgingVisibility;
 
-        void init_dock(QString title,int typeNum);
+        void init_dock(QString name, QString title, int typeNum);
 };
 
 #endif // BOARDCOMPONENT_H

@@ -30,11 +30,12 @@ BoardComponent::~BoardComponent() {
 
 }
 
-void BoardComponent::init_dock(QString title,int typeNum) {
-    name=title;
+void BoardComponent::init_dock(QString objName,QString title,int typeNum) {
     this->typeNum=typeNum;
     displayed=true;
     dockWidget=new MyDockWidget(this,title);
+    dockWidget->setObjectName(objName);;
+
     dockWidget->setWidget(this);
     dockWidget->setContentsMargins(QMargins(0,0,0,0));
 

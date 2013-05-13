@@ -310,9 +310,7 @@ void MainWindow::continueSetup()
     connect(this->menuPopupBtRight,SIGNAL(aboutToShow()),my_centralWidget,SLOT(slot_resetGestures()));
     connect(this->menuPopupBtRight,SIGNAL(aboutToHide()),my_centralWidget,SLOT(slot_resetGestures()));
 
-    /* restore state */
-    restoreState(Settings::getSetting("savedState","").toByteArray());
-    toolBar->load_settings();
+
 
 //--------------------------------------------------
     progress->newStep(26,tr("Loading polars list"));
@@ -330,11 +328,16 @@ void MainWindow::continueSetup()
     isSelectingWP=false;
 
     board = new Board(this);
-#warning MOD_BOARD
-    //connect(menuBar->acOptions_SH_ComBandeau,SIGNAL(triggered()),myBoard,SLOT(slot_hideShowCompass()));
 
+    /* restore state */
+    //qWarning() << "Tool/Board settings: " << Settings::getSetting("savedState","").toByteArray();
+    restoreState(Settings::getSetting("savedState","").toByteArray());
+    toolBar->load_settings();
+    board->load_settings();
+
+
+#warning MOD_BOARD
     param = new DialogParamVlm(this,my_centralWidget);
-    //connect(this,SIGNAL(wpChanged()),myBoard->VLMBoard(),SLOT(update_btnWP()));
     //connect(param,SIGNAL(paramVLMChanged()),myBoard,SLOT(paramChanged()));
     connect(param,SIGNAL(paramVLMChanged()),this,SLOT(slot_updateGribMono()));
     connect(param,SIGNAL(paramVLMChanged()),toolBar,SLOT(slot_loadEstimeParam()));
@@ -509,7 +512,9 @@ MainWindow::~MainWindow()
     }
 
     toolBar->save_settings();
+    board->save_settings();
     Settings::setSetting("savedState",saveState());
+    //qWarning() << "saving state: " <<  Settings::getSetting("savedState","").toByteArray();
 
     Settings::setSetting("projectionCX", proj->getCX());
     Settings::setSetting("projectionCY", proj->getCY());
@@ -649,7 +654,6 @@ void MainWindow::closeProgress(void)
                 toolBar->update_eta(dtm);
             timer->start(1000);
         }
-        //board->update_data();
         emit WPChanged(selectedBoat->getWPLat(),selectedBoat->getWPLon());
     }
     statusBar->show();
@@ -1664,12 +1668,6 @@ void MainWindow::slotBoatUpdated(boat * upBoat,bool newRace,bool doingSync)
     }
     else
     {
-//        qWarning() << "Real boat has updated";
-        /*if(my_centralWidget->getOppList())
-        {
-            my_centralWidget->getOppList()->clear();
-            my_centralWidget->getOppList()->refreshData();
-        }*/
         /* Updating ETA */
         boatReal *boat=(boatReal *) upBoat;
         if((boat->getWPLat()==0 && boat->getWPLon()==0) ||boat->getEta()==-1)
@@ -1690,7 +1688,7 @@ void MainWindow::slotBoatUpdated(boat * upBoat,bool newRace,bool doingSync)
 
 void MainWindow::slotSelectBoat(boat* newSelect)
 {
-    if(!newSelect->getStatus()) return;
+    if(!newSelect || !newSelect->getStatus()) return;
     if(!my_centralWidget->getBoats() && newSelect->get_boatType() == BOAT_VLM)
     {
         qWarning() << "CRITICAL: slotSelectBoat - empty boatList";
@@ -1915,28 +1913,10 @@ void MainWindow::slotAccountListUpdated(void)
 
 void MainWindow::slotChgWP(double lat,double lon, double wph)
 {
-    if(selectedBoat->getLockStatus()) return;
-#warning MOD_BOARD
-    qWarning() << "Calling empty slotChgWp in MainWindow";
-#if 0
-    if(this->selectedBoat->get_boatType()==BOAT_VLM)
-    {
+    if(!selectedBoat || selectedBoat->getLockStatus()) return;
 
-        if(myBoard->VLMBoard())
-        {
-            ((boatVLM*)selectedBoat)->setWph(wph);
-            myBoard->VLMBoard()->setWP(lat,lon,wph);
-        }
-    }
-    else
-    {
-        if(myBoard->realBoard())
-        {
-            myBoard->realBoard()->setWP(lat,lon,wph);
-            emit this->WPChanged(lat,lon);
-        }
-    }
-#endif
+    selectedBoat->setWP(QPointF(lat,lon),wph);
+    emit WPChanged(lat,lon);
 }
 
 void MainWindow::slotpastePOI()

@@ -54,7 +54,7 @@ DialogParamVlm::DialogParamVlm(MainWindow * main,myCentralWidget * parent) : QDi
     opp_labelType->addItem(tr("Numero"));
     opp_labelType->setCurrentIndex(Settings::getSetting("opp_labelType",0).toInt());
 
-    this->chkPavillon->setCheckState(Settings::getSetting("showFlag",0).toInt()==1?Qt::Checked:Qt::Unchecked);
+    this->chkPavillon->setCheckState(Settings::getSetting("showFlag",0,"showHideItem").toInt()==1?Qt::Checked:Qt::Unchecked);
     this->classicalButtons->setChecked(Settings::getSetting("classicalButtons",0).toInt()==1);
 
     QString mapsFolderString = Settings::getSetting("mapsFolder",appFolder.value("maps")).toString();
@@ -238,7 +238,7 @@ void DialogParamVlm::done(int result)
     {
         /*drawing*/
         Settings::setSetting("opp_labelType",QString().setNum(opp_labelType->currentIndex()));
-        Settings::setSetting("showFlag",this->chkPavillon->checkState()==Qt::Checked?"1":"0");
+        Settings::setSetting("showFlag",this->chkPavillon->checkState()==Qt::Checked?"1":"0","showHideItem");
         Settings::setSetting("classicalButtons",this->classicalButtons->checkState()==Qt::Checked?"1":"0");
         int gdm=2;
         if(this->gribAuto->isChecked())

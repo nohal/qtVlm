@@ -59,7 +59,7 @@ class MenuBar : public QMenuBar
 {
     Q_OBJECT
 public:
-    MenuBar(QWidget *parent);
+    MenuBar(MainWindow *parent);
 
     void setCitiesNamesLevel(int level);
     void setMenubarColorMapMode(int colorMapMode);
@@ -300,6 +300,7 @@ public:
 public slots:
     void slot_updateLockIcon(QIcon ic);
     void slot_setChangeStatus(bool status,bool pilototo,bool syncBtn);
+    void slot_showViewMenu(void);
 
 
     //-------------------------------------
@@ -312,14 +313,20 @@ public slots:
 //------------------------------------------------------------------------
 private:
 
+    MainWindow * mainWindow;
+
     QMenu *menuFile;
     QMenu *menuView;
+    QMenu *menuGrib;
     QMenu *menuOptions;
     QMenu *menuBoat;
     QMenu *menuRoute;
     QMenu *menuRoutage;
     QMenu *menuPOI;
     QMenu *menuHelp;
+
+    QMenu * boardMenu;
+    QMenu * toolBarMenu;
 
     //std::vector<time_t> listGribDates;
 

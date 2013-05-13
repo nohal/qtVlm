@@ -439,6 +439,12 @@ public slots :
         bool shOpp_st;
         bool shPor_st;
 
+        void do_shLab(bool val);
+        void do_shPoi(bool val);
+        void do_shRoute(bool val);
+        void do_shOpp(bool val);
+        void do_shPor(bool val);
+
         QSound  *horn;
         bool    hornActivated;
         QDateTime  hornDate;

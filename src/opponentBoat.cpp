@@ -160,7 +160,7 @@ void opponent::paint(QPainter * pnt, const QStyleOptionGraphicsItem * , QWidget 
     if(name.isEmpty())
         return;
 
-    if(Settings::getSetting("showFlag",0).toInt()==1)
+    if(Settings::getSetting("showFlag",0,"showHideItem").toInt()==1)
     {
         if(flag.isNull())
         {
@@ -259,7 +259,7 @@ void opponent::drawOnMagnifier(Projection * myProj,QPainter * pnt)
     if(name.isEmpty())
         return;
 
-    if(Settings::getSetting("showFlag",0).toInt()==1)
+    if(Settings::getSetting("showFlag",0,"showHideItem").toInt()==1)
     {
         if(flag.isNull())
         {

@@ -370,11 +370,12 @@ myCentralWidget::myCentralWidget(Projection * proj,MainWindow * parent,MenuBar *
     resizing=false;
     this->twaTrace=NULL;
     /* item state */
-    shLab_st = false;
-    shPoi_st = false;
-    shRoute_st = false;
-    shOpp_st = false;
-    shPor_st = false;
+    shLab_st = Settings::getSetting("hideLabel",0,"showHideItem").toInt()==1;
+    shPoi_st = Settings::getSetting("hidePoi",0,"showHideItem").toInt()==1;
+    shRoute_st = Settings::getSetting("hideRoute",0,"showHideItem").toInt()==1;
+    shOpp_st = Settings::getSetting("hideOpponent",0,"showHideItem").toInt()==1;
+    shPor_st = Settings::getSetting("hidePorte",0,"showHideItem").toInt()==1;
+
     selectionTool=false;
     magnifier=NULL;
 
@@ -455,7 +456,6 @@ myCentralWidget::myCentralWidget(Projection * proj,MainWindow * parent,MenuBar *
     connect(menuBar->acOptions_SH_Por, SIGNAL(triggered(bool)), this,  SLOT(slot_shPor(bool)));
 
     // removing direct forward of signal
-    //connect(menuBar->acOptions_SH_Lab, SIGNAL(triggered(bool)), this,  SIGNAL(shLab(bool)));
     connect(menuBar->acOptions_SH_Lab, SIGNAL(triggered(bool)), this,  SLOT(slot_shLab(bool)));
 
     connect(menuBar->acOptions_SH_Com, SIGNAL(triggered(bool)), this,  SIGNAL(shCom(bool)));
@@ -1652,49 +1652,68 @@ void myCentralWidget::slot_delSelPOIs(void)
 
 void myCentralWidget::slot_showALL(bool)
 {
-    shLab_st=false;
-    emit shLab(shLab_st);
-    shPoi_st=false;
-    shRoute_st=false;
-    shOpp_st=false;
-    shPor_st=false;
+    do_shLab(false);
+    do_shPoi(false);
+    do_shRoute(false);
+    do_shOpp(false);
+    do_shPor(false);
 }
 
 void myCentralWidget::slot_hideALL(bool)
 {
-    shLab_st=true;
-    emit shLab(shLab_st);
-    shPoi_st=true;
-    shRoute_st=true;
-    shOpp_st=true;
-    shPor_st=true;
+    do_shLab(true);
+    do_shPoi(true);
+    do_shRoute(true);
+    do_shOpp(true);
+    do_shPor(true);
 }
 
-void myCentralWidget::slot_shLab(bool)
-{
-       shLab_st=!shLab_st;
-       emit shLab(shLab_st);
+void myCentralWidget::slot_shLab(bool){
+    do_shLab(!shLab_st);
 }
 
-void myCentralWidget::slot_shPoi(bool)
-{
-       shPoi_st=!shPoi_st;
+void myCentralWidget::do_shLab(bool val) {
+    shLab_st=val;
+    Settings::setSetting("hideLabel",val?1:0,"showHideItem");
+    emit shLab(val);
 }
 
-void myCentralWidget::slot_shRoute(bool)
-{
-       shRoute_st=!shRoute_st;
+void myCentralWidget::slot_shPoi(bool){
+    do_shPoi(!shPoi_st);
 }
 
-void myCentralWidget::slot_shOpp(bool)
-{
-       shOpp_st=!shOpp_st;
+void myCentralWidget::do_shPoi(bool val) {
+    shPoi_st=val;
+    Settings::setSetting("hidePoi",val?1:0,"showHideItem");
 }
 
-void myCentralWidget::slot_shPor(bool)
-{
-    shPor_st=!shPor_st;
+void myCentralWidget::slot_shRoute(bool){
+    do_shRoute(!shRoute_st);
 }
+
+void myCentralWidget::do_shRoute(bool val) {
+    shRoute_st=val;
+    Settings::setSetting("hideRoute",val?1:0,"showHideItem");
+}
+
+void myCentralWidget::slot_shOpp(bool){
+    do_shOpp(!shOpp_st);
+}
+
+void myCentralWidget::do_shOpp(bool val) {
+    shOpp_st=val;
+    Settings::setSetting("hideOpponent",val?1:0,"showHideItem");
+}
+
+void myCentralWidget::slot_shPor(bool) {
+    do_shPor(!shPor_st);
+}
+
+void myCentralWidget::do_shPor(bool val) {
+    shPor_st=val;
+    Settings::setSetting("hidePorte",val?1:0,"showHideItem");
+}
+
 void myCentralWidget::slot_editHorn()
 {
     DialogHorn *dh=new DialogHorn(this);
@@ -4179,12 +4198,11 @@ void myCentralWidget::slot_playerSelected(Player * player)
             }
             realBoat=NULL;
             emit accountListUpdated();
-            mainW->getBoard()->set_newType(BOAT_VLM);
+            mainW->get_board()->set_newType(BOAT_VLM);
             if(reselected)
             {
                 mainW->slotSelectBoat(boat_list->at(thisOne));
                 boat_list->at(thisOne)->setSelected(true);
-                //mainW->getBoard()->boatUpdated(boat_list->at(thisOne));
             }
             emit shRouBis();
         }
@@ -4203,8 +4221,7 @@ void myCentralWidget::slot_playerSelected(Player * player)
             realBoat->reloadPolar();
             mainW->slotSelectBoat(realBoat);
             realBoat->playerActivated();
-            mainW->getBoard()->set_newType(BOAT_REAL);
-            //mainW->getBoard()->boatUpdated(realBoat);
+            mainW->get_board()->set_newType(BOAT_REAL);
             mainW->slotBoatUpdated(realBoat,true,false);;
             emit shRouBis();
         }
@@ -4456,10 +4473,12 @@ void myCentralWidget::removeOpponent(QString oppId, QString raceId)
 void myCentralWidget::slot_shFla(bool)
 {
     //qWarning()<<"key F pressed";
-    int f=Settings::getSetting("showFlag",0).toInt();
-    if(f==0) f=1;
-    else f=0;
-    Settings::setSetting("showFlag",f);
+    int f=Settings::getSetting("showFlag",0,"showHideItem").toInt();
+
+    f=f==0?1:0;
+
+    Settings::setSetting("showFlag",f,"showHideItem");
+
     emit shFla();
 }
 void myCentralWidget::slot_shNig(bool)
