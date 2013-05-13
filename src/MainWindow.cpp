@@ -336,7 +336,7 @@ void MainWindow::continueSetup()
     board->load_settings();
 
 
-#warning MOD_BOARD
+//#warning MOD_BOARD
     param = new DialogParamVlm(this,my_centralWidget);
     //connect(param,SIGNAL(paramVLMChanged()),myBoard,SLOT(paramChanged()));
     connect(param,SIGNAL(paramVLMChanged()),this,SLOT(slot_updateGribMono()));
@@ -364,7 +364,7 @@ void MainWindow::continueSetup()
      //--------------------------------------------------
     // get screen geometry
 
-#warning MOD_BOARD
+//#warning MOD_BOARD
 #if 0
     QDesktopWidget * desktopWidget = QApplication::desktop ();
 

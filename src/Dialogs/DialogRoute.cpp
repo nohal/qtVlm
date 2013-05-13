@@ -539,32 +539,28 @@ void DialogRoute::slotInterval()
     if(route->getRoadMap()->count()>=2)
     {
         int elapsed=route->getRoadMap()->last().at(0)-route->getRoadMap()->first().at(0);
-        QTime eLapsed(0,0,0,0);
-        double jours=elapsed/(24*60*60);
-        if (qRound(jours)>jours)
-            --jours;
-        jours=qRound(jours);
-        elapsed=elapsed-jours*24*60*60;
-        eLapsed=eLapsed.addSecs(elapsed);
-        QString jour;
-        jour=jour.sprintf("%d",qRound(jours));
-        this->navTime->setText(jour+tr(" jours ")+eLapsed.toString("H'h 'mm'min '"));
+        this->navTime->setText(Util::formatElapsedTime(elapsed));
     }
     if(totalTimeMoteur>=0)
     {
         int elapsed=totalTimeMoteur;
-        QTime eLapsed(0,0,0,0);
-        double jours=elapsed/(24*60*60);
-        if (qRound(jours)>jours)
-            --jours;
-        jours=qRound(jours);
-        elapsed=elapsed-jours*24*60*60;
-        eLapsed=eLapsed.addSecs(elapsed);
-        QString jour;
-        jour=jour.sprintf("%d",qRound(jours));
-        this->engineTime->setText(jour+tr(" jours ")+eLapsed.toString("H'h 'mm'min '"));
+        this->engineTime->setText(Util::formatElapsedTime(elapsed));
     }
     delete waitBox;
+    routeStats stats=route->getStats();
+    qWarning()<<"total time"<<Util::formatElapsedTime(stats.totalTime);
+    qWarning()<<"total time beating"<<Util::formatElapsedTime(stats.beatingTime);
+    qWarning()<<"total time largue"<<Util::formatElapsedTime(stats.largueTime);
+    qWarning()<<"total time reaching"<<Util::formatElapsedTime(stats.reachingTime);
+    qWarning()<<"total time at night"<<Util::formatElapsedTime(stats.nightTime);
+    qWarning()<<"total distance"<<stats.totalDistance;
+    qWarning()<<"average tws"<<stats.averageTWS;
+    qWarning()<<"max tws"<<stats.maxTWS;
+    qWarning()<<"min tws"<<stats.minTWS;
+    qWarning()<<"average bs"<<stats.averageBS;
+    qWarning()<<"max bs"<<stats.maxBS;
+    qWarning()<<"min bs"<<stats.minBS;
+    qWarning()<<"nb gybes/tacks"<<stats.nbTacksGybes;
 }
 void DialogRoute::drawTransformedLine( QPainter &pnt,
         double si, double co,int di, int dj, int i,int j, int k,int l)

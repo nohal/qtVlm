@@ -46,10 +46,10 @@ struct routeStats
     double minTWS;
     int rainTime;
     int engineTime;
-    double reachingPercent;
-    double beatingPercent;
-    int nbTacks;
-    int nbGybes;
+    int reachingTime;
+    int beatingTime;
+    int largueTime;
+    int nbTacksGybes;
     int nightTime;
 };
 

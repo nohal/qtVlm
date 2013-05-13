@@ -108,6 +108,7 @@ class Util
                                                  const double &lat_b, const double &lon_b,
                                                  double *x_latitude, double *x_longitude);
 
+    static QString formatElapsedTime(int elapsed);
     //-------------------------------------------------
     template <typename T>
         static bool isInRange(T v, T min, T max)

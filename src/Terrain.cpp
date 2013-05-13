@@ -494,7 +494,7 @@ void Terrain::draw_GSHHSandGRIB()
     pnt.drawLine(correctedScalePos,QPoint(correctedScalePos.x(),correctedScalePos.y()-4));
     pnt.drawLine(QPoint(sX+screenDist,correctedScalePos.y()),QPoint(sX+screenDist,correctedScalePos.y()-4));
     setCursor(oldcursor);
-    daylight(&pnt);
+    daylight(&pnt,vlmPoint(0,0));
     parent->getView()->resetTransform();
     parent->getView()->hideViewPix();
     parent->getScene()->setPinching(false);
@@ -946,13 +946,13 @@ ROUTAGE * Terrain::getRoutageGrib()
 {
     return routageGrib;
 }
-bool Terrain::daylight(QPainter *pnt, vlmPoint *coords) //called with pnt!=NULL will draw night zone, called with coords!=NULL will return false if point if not under sun
+bool Terrain::daylight(QPainter *pnt, const vlmPoint &coords) //called with pnt!=NULL will draw night zone, called with coords!=NULL will return false if point if not under sun at point's eta
 {
-    if(coords==NULL && Settings::getSetting("showNight",1).toInt()!=1) return false;
+    if(pnt!=NULL && Settings::getSetting("showNight",1).toInt()!=1) return false;
     QDateTime date=QDateTime().currentDateTimeUtc();
     Grib * grib = this->parent->getGrib();
-    if(coords!=NULL)
-        date=QDateTime().fromTime_t(coords->eta).toUTC();
+    if(pnt==NULL)
+        date=QDateTime().fromTime_t(coords.eta).toUTC();
     else if(grib)
         date=QDateTime().fromTime_t(grib->getCurrentDate()).toUTC();
     int nbDays=date.date().dayOfYear();
@@ -991,9 +991,9 @@ bool Terrain::daylight(QPainter *pnt, vlmPoint *coords) //called with pnt!=NULL 
             project=-project;
         terminator2=terminator1.translated(project,0.0);
     }
-    if(coords!=NULL)
+    if(pnt==NULL)
     {
-        proj->map2screenDouble(coords->lon,coords->lat,&X,&Y);
+        proj->map2screenDouble(coords.lon,coords.lat,&X,&Y);
         return terminator1.containsPoint(QPointF(X,Y),Qt::OddEvenFill)||terminator2.containsPoint(QPointF(X,Y),Qt::OddEvenFill);
     }
 #ifdef __TERRAIN_QIMAGE

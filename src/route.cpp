@@ -42,6 +42,7 @@ Copyright (C) 2008 - Jacques Zaninetti - http://zygrib.free.fr
 #include "Util.h"
 #include "settings.h"
 #include <QCache>
+#include "Terrain.h"
 #define USE_VBVMG_VLM
 
 ROUTE::ROUTE(QString name, Projection *proj, Grib *grib, QGraphicsScene * myScene, myCentralWidget *parentWindow)
@@ -1628,56 +1629,57 @@ routeStats ROUTE::getStats()
     stats.averageBS=0;
     stats.totalTime=0;
     stats.totalDistance=0;
-    stats.beatingPercent=0;
-    stats.nbTacks=0;
+    stats.beatingTime=0;
+    stats.reachingTime=0;
+    stats.largueTime=0;
+    stats.nbTacksGybes=0;
     stats.engineTime=0;
+    stats.nightTime=0;
     if(!grib) return stats;
     QList<vlmPoint> * points=this->getLine()->getPoints();
-    vlmPoint prevPoint=points->first();
-    double lon=prevPoint.lon;
-    double lat=prevPoint.lat;
-    time_t date=prevPoint.eta;
+    if(points->size()<=1) return stats;
     double bs=0;
-    double tws,twd,twa=0,hdg;
-    if(!grib->getInterpolatedValue_byDates(lon, lat,date,&tws,&twd,INTERPOLATION_DEFAULT))
-            return stats;
-    twd=radToDeg(twd);
+    double tws=0,twd=0,twa=0,hdg=0;
+    double prevTwa=0;
     Orthodromie oo(0,0,0,0);
     for(int n=1;n<points->size();++n)
     {
-        double prevLon=lon;
-        double prevLat=lat;
-        double prevTwa=twa;
-        time_t prevDate=date;
-        date=points->at(n).eta;
-        if(!grib->getInterpolatedValue_byDates(lon, lat,date,&tws,&twd,INTERPOLATION_DEFAULT))
+        double lon=points->at(n).lon;
+        double lat=points->at(n).lat;
+        time_t date=points->at(n).eta;
+        time_t prevDate=points->at(n-1).eta;
+        if(!grib->getInterpolatedValue_byDates(lon, lat,prevDate,&tws,&twd,INTERPOLATION_DEFAULT))
                 return stats;
         twd=radToDeg(twd);
         stats.totalTime+=date-prevDate;
-        oo.setPoints(prevLon,prevLat,lon,lat);
-        stats.totalDistance+=oo.getDistance();
+        oo.setPoints(points->at(n-1).lon,points->at(n-1).lat,lon,lat);
+        stats.totalDistance+=oo.getLoxoDistance();
         stats.averageTWS+=tws;
         stats.maxTWS=qMax(stats.maxTWS,tws);
         stats.minTWS=qMin(stats.minTWS,tws);
-        if(n!=points->size()-1)
-        {
-            oo.setPoints(lon,lat,points->at(n+1).lon,points->at(n+1).lat);
-            hdg=oo.getLoxoCap();
-            twa=Util::A360(hdg-twd);
-            if(twa>180) twa-=360;
-            if(qAbs(twa)<90.0)
-                stats.beatingPercent+=date-prevDate;
-            if(prevTwa*twa<0)
-                ++stats.nbTacks;
-            bool engineUsed=false;
-            bs=myBoat->getPolarData()->getSpeed(tws,twa,true,&engineUsed);
-            stats.averageBS+=bs;
-            stats.maxBS=qMax(stats.maxBS,bs);
-            stats.minBS=qMin(stats.minBS,bs);
-            if(engineUsed)
-                stats.engineTime+=date-prevDate;
-        }
+        hdg=oo.getLoxoCap();
+        twa=Util::A360(hdg-twd);
+        if(twa>180) twa-=360;
+        if(qAbs(twa)<70.0)
+            stats.beatingTime+=date-prevDate;
+        else if (qAbs(twa)<130)
+            stats.largueTime+=date-prevDate;
+        else
+            stats.reachingTime+=date-prevDate;
+        if(n!=1 && prevTwa*twa<0)
+            ++stats.nbTacksGybes;
+        prevTwa=twa;
+        bool engineUsed=false;
+        bs=myBoat->getPolarData()->getSpeed(tws,twa,true,&engineUsed);
+        stats.averageBS+=bs;
+        stats.maxBS=qMax(stats.maxBS,bs);
+        stats.minBS=qMin(stats.minBS,bs);
+        if(engineUsed)
+            stats.engineTime+=date-prevDate;
+        if(parent->getTerre()->daylight(NULL,points->at(n)))
+            stats.nightTime+=date-prevDate;
     }
+    stats.averageBS=stats.averageBS/(points->size()-1);
+    stats.averageTWS=stats.averageTWS/(points->size()-1);
     return stats;
-
 }

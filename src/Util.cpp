@@ -710,3 +710,16 @@ double Util::distance_to_line_dichotomy_xing(const double &lat, const double &lo
     //qWarning()<<"nbLoop in distance_to_line_dichotomy_xing"<<nbLoop;
     return ortho_p2;
 }
+QString Util::formatElapsedTime(int elapsed)
+{
+    QTime eLapsed(0,0,0,0);
+    double jours=elapsed/(24.0*60.0*60.0);
+    if (qRound(jours)>jours)
+        --jours;
+    jours=qRound(jours);
+    elapsed=elapsed-jours*24.0*60.0*60.0;
+    eLapsed=eLapsed.addSecs(elapsed);
+    QString jour;
+    jour=jour.sprintf("%d",qRound(jours));
+    return jour+" "+QObject::tr("jours")+" "+eLapsed.toString("H'h 'mm'min '");
+}
