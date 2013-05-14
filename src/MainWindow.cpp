@@ -1915,7 +1915,7 @@ void MainWindow::slotChgWP(double lat,double lon, double wph)
 {
     if(!selectedBoat || selectedBoat->getLockStatus()) return;
 
-    selectedBoat->setWP(QPointF(lat,lon),wph);
+    selectedBoat->setWP(QPointF(lon,lat),wph);
     emit WPChanged(lat,lon);
 }
 
