@@ -277,9 +277,9 @@ void MainWindow::continueSetup()
         my_centralWidget->setAboutToQuit();
         QApplication::quit();
     }
-    if(!QFile(appFolder.value("img")+"warning.png").exists())
+    if(!QFile(appFolder.value("img")+"skin_compas.png").exists())
         QMessageBox::critical (this,
-           "Error","File 'warning.png' cannot be find in img directory<br>Please check your installation"); /*untranslated on purpose*/
+           "Error","File 'skin_compas.png' cannot be find in img directory<br>Please check your installation"); /*untranslated on purpose*/
     dialogProxy = new DialogProxy();
 
 //--------------------------------------------------

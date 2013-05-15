@@ -652,14 +652,14 @@ BoardWindTool::~BoardWindTool() {
 void BoardWindTool::slot_updateData(void) {
     INIT_BOAT;
 
-    windAngle->setValues(boat->getHeading(),boat->getWindDir(),boat->getWindSpeed(), boat->getWPdir(), -1);
+    windAngle->setValues(boat->getHeading(),boat->getWindDir(),boat->getWindSpeed(), boat->getWPdir(), boat->getClosest().capArrival, -1);
 }
 
 void BoardWindTool::slot_setNewHeading(double heading) {
     INIT_BOAT;
 
     if(heading<0) heading = -1;
-    windAngle->setValues(boat->getHeading(),boat->getWindDir(),boat->getWindSpeed(), boat->getWPdir(), heading);
+    windAngle->setValues(boat->getHeading(),boat->getWindDir(),boat->getWindSpeed(), boat->getWPdir(), boat->getClosest().capArrival, heading);
 }
 
 void BoardWindTool::slot_setChangeStatus(bool,bool,bool) {
@@ -677,19 +677,40 @@ tool_windAngle::tool_windAngle(QWidget * parent):QWidget(parent)
     //h=img_fond->height();
     //setFixedSize(w,h);
 
-    img_fond=img_compas=img_boat2=img_boat=NULL;
-
-    img_boat = new QImage("img/boat_compas.png");
-    img_boat2 = new QImage("img/boat_compas_mvt.png");
-
     w=200;
     h=200;
     setFixedSize(w,h);
-
-    /*img_boat = new QImage("img/tool_boat.png");
-    img_boat2 = new QImage("img/tool_boat_2.png");*/
-
+    QPixmap skin;
+    skin.load("img/skin_compas.png");
+    img_fond=QPixmap(w,h);
+    img_fond.fill(Qt::transparent);
+    QPainter pnt(&img_fond);
+    pnt.setCompositionMode(QPainter::CompositionMode_SourceOver);
+    pnt.setRenderHint(QPainter::Antialiasing,true);
+    pnt.drawPixmap(0,0,skin,0,0,w,h);
+    pnt.drawPixmap(0,0,skin,w+w/2,0,w,h);
+    pnt.end();
+    img_boat=QPixmap(w,h);
+    img_boat.fill(Qt::transparent);
+    pnt.begin(&img_boat);
+    pnt.drawPixmap(0,0,skin,0,h+h/2,w,h);
+    pnt.end();
     heading =windDir=windSpeed=0;
+    img_arrow_wp=QPixmap(w,h);
+    img_arrow_wp.fill(Qt::transparent);
+    pnt.begin(&img_arrow_wp);
+    pnt.drawPixmap(0,0,skin,w+w/2,h+h/2,w,h);
+    pnt.end();
+    img_arrow_gate=QPixmap(w,h);
+    img_arrow_gate.fill(Qt::transparent);
+    pnt.begin(&img_arrow_gate);
+    pnt.drawPixmap(0,0,skin,3*w,h+h/2,w,h);
+    pnt.end();
+    img_arrow_wind=QPixmap(w,h);
+    img_arrow_wind.fill(Qt::transparent);
+    pnt.begin(&img_arrow_wind);
+    pnt.drawPixmap(0,0,skin,0,3*h,w,h);
+    pnt.end();
     WPdir = -1;
     newHeading=-1;
 }
@@ -697,6 +718,8 @@ tool_windAngle::tool_windAngle(QWidget * parent):QWidget(parent)
 void tool_windAngle::paintEvent(QPaintEvent * /*event*/)
 {
     QPainter painter(this);
+    painter.setRenderHint(QPainter::Antialiasing,true);
+    painter.setCompositionMode(QPainter::CompositionMode_SourceOver);
 
     painter.setViewport(0,0,w,h);
 
@@ -705,6 +728,38 @@ void tool_windAngle::paintEvent(QPaintEvent * /*event*/)
 
 void tool_windAngle::draw(QPainter * painter)
 {
+#if 1
+    painter->drawPixmap(0,0,img_fond);
+    painter->save();
+    painter->translate(w/2,h/2);
+    painter->rotate(heading);
+    painter->drawPixmap(-w/2,-h/2,img_boat);
+    painter->restore();
+    if(WPdir!=-1)
+    {
+        painter->save();
+        painter->translate(w/2,h/2);
+        painter->rotate(WPdir);
+        painter->drawPixmap(-w/2,-h/2,img_arrow_wp);
+        painter->restore();
+    }
+    painter->save();
+    painter->translate(w/2,h/2);
+    painter->rotate(gateDir);
+    painter->drawPixmap(-w/2,-h/2,img_arrow_gate);
+    painter->restore();
+    QPixmap tempWind=img_arrow_wind;
+    QPainter pnt(&tempWind);
+    pnt.setRenderHint(QPainter::Antialiasing,true);
+    pnt.setCompositionMode(QPainter::CompositionMode_SourceAtop);
+    pnt.fillRect(0,0,200,200,QBrush(windSpeed_toColor()));
+    pnt.end();
+    painter->save();
+    painter->translate(w/2,h/2);
+    painter->rotate(windDir);
+    painter->drawPixmap(-w/2,-h/2,tempWind);
+    painter->restore();
+#else
     QFontMetrics fm(painter->font());
 
     painter->translate(w/2,h/2);
@@ -840,6 +895,7 @@ void tool_windAngle::draw(QPainter * painter)
 
     }
 #endif
+#endif
 }
 
 QColor tool_windAngle::windSpeed_toColor()
@@ -874,7 +930,7 @@ QColor tool_windAngle::windSpeed_toColor()
 
 }
 
-void tool_windAngle::setValues(double heading,double windDir, double windSpeed, double WPdir,double newHeading)
+void tool_windAngle::setValues(const double &heading, const double &windDir, const double &windSpeed, const double &WPdir, const double &gateDir, const double &newHeading)
 {
     //qWarning() << "windAngle set: heading=" << heading << " windDir=" << windDir << " windSpeed=" << windSpeed << " WPdir=" << WPdir << " " << newHeading;
     this->heading=heading;
@@ -882,5 +938,6 @@ void tool_windAngle::setValues(double heading,double windDir, double windSpeed, 
     this->windSpeed=windSpeed;
     this->WPdir=WPdir;
     this->newHeading=newHeading;
+    this->gateDir=gateDir;
     update();
 }
