@@ -735,6 +735,20 @@ void tool_windAngle::draw(QPainter * painter)
     painter->rotate(heading);
     painter->drawPixmap(-w/2,-h/2,img_boat);
     painter->restore();
+    if(newHeading!=heading && newHeading!=-1)
+    {
+        QPixmap tempBoat=img_boat;
+        QPainter pnt(&tempBoat);
+        pnt.setRenderHint(QPainter::Antialiasing,true);
+        pnt.setCompositionMode(QPainter::CompositionMode_DestinationIn);
+        pnt.fillRect(0,0,200,200,QBrush(QColor(0,0,0,100)));
+        pnt.end();
+        painter->save();
+        painter->translate(w/2,h/2);
+        painter->rotate(newHeading);
+        painter->drawPixmap(-w/2,-h/2,tempBoat);
+        painter->restore();
+    }
     if(WPdir!=-1)
     {
         painter->save();
