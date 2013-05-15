@@ -122,10 +122,8 @@ class boatVLM : public boat, public inetClient
     public slots:
         void slot_getData(bool doingSync);
         void slot_getDataTrue();
-        void slot_shPor(){this->porteHidden=!this->porteHidden;showNextGates();}
+        void slot_shPor(bool isHidden){this->porteHidden=isHidden;showNextGates();}
         void slot_selectBoat();
-        void slot_shSall() { this->porteHidden=false; showNextGates();}
-        void slot_shHall() { this->porteHidden=true; showNextGates();}
         void slot_errorDuringGet();
         void slot_resetTraceCache();
 

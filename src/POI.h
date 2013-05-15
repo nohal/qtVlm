@@ -139,9 +139,7 @@ public slots:
         void slot_paramChanged();
         void slot_WPChanged(double tlat,double tlon);
         void slot_updateTip(boat *);
-        void slot_shShow(){show();}
-        void slot_shHidden(){hide();}
-        void slot_shPoi(){this->isVisible()?hide():show();}
+        void slot_shPoi(bool isHidden){if(isHidden) hide(); else show();}
         void slot_shLab(bool state){this->labelHidden=state;update();}
         void slot_routeMenu(QAction* ptr_action);
         void slot_finePosit(bool silent=false);

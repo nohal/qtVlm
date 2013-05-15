@@ -437,24 +437,13 @@ myCentralWidget::myCentralWidget(Projection * proj,MainWindow * parent,MenuBar *
 
     connect(menuBar->acView_Isotherms0Labels, SIGNAL(triggered(bool)), terre,  SLOT(setDrawIsotherms0Labels(bool)));
 
-    connect(menuBar->acOptions_SH_sAll, SIGNAL(triggered(bool)), this,  SIGNAL(showALL(bool)));
     connect(menuBar->acOptions_SH_sAll, SIGNAL(triggered(bool)), this,  SLOT(slot_showALL(bool)));
-
-    connect(menuBar->acOptions_SH_hAll, SIGNAL(triggered(bool)), this,  SIGNAL(hideALL(bool)));
     connect(menuBar->acOptions_SH_hAll, SIGNAL(triggered(bool)), this,  SLOT(slot_hideALL(bool)));
 
-    connect(menuBar->acOptions_SH_Opp, SIGNAL(triggered(bool)), this,  SIGNAL(shOpp(bool)));
     connect(menuBar->acOptions_SH_Opp, SIGNAL(triggered(bool)), this,  SLOT(slot_shOpp(bool)));
-
-    connect(menuBar->acOptions_SH_Poi, SIGNAL(triggered(bool)), this,  SIGNAL(shPoi(bool)));
     connect(menuBar->acOptions_SH_Poi, SIGNAL(triggered(bool)), this,  SLOT(slot_shPoi(bool)));
-
-    connect(menuBar->acOptions_SH_Rou, SIGNAL(triggered(bool)), this,  SIGNAL(shRou(bool)));
     connect(menuBar->acOptions_SH_Rou, SIGNAL(triggered(bool)), this,  SLOT(slot_shRoute(bool)));
-
-    connect(menuBar->acOptions_SH_Por, SIGNAL(triggered(bool)), this,  SIGNAL(shPor(bool)));
     connect(menuBar->acOptions_SH_Por, SIGNAL(triggered(bool)), this,  SLOT(slot_shPor(bool)));
-
     // removing direct forward of signal
     connect(menuBar->acOptions_SH_Lab, SIGNAL(triggered(bool)), this,  SLOT(slot_shLab(bool)));
 
@@ -1479,10 +1468,7 @@ void myCentralWidget::slot_addPOI_list(POI * poi)
     connect(poi, SIGNAL(editPOI(POI*)),mainW, SLOT(slot_showPOI_input(POI*)));
     connect(proj, SIGNAL(projectionUpdated()), poi, SLOT(slot_updateProjection()));
     connect(poi, SIGNAL(clearSelection()),this,SLOT(slot_clearSelection()));
-
-    connect(this, SIGNAL(showALL(bool)),poi,SLOT(slot_shShow()));
-    connect(this, SIGNAL(hideALL(bool)),poi,SLOT(slot_shHidden()));
-    connect(this, SIGNAL(shPoi(bool)),poi,SLOT(slot_shPoi()));
+    connect(this, SIGNAL(shPoi(bool)),poi,SLOT(slot_shPoi(bool)));
     connect(this, SIGNAL(shLab(bool)),poi,SLOT(slot_shLab(bool)));
     poi->chkIsWP();
 }
@@ -1685,6 +1671,7 @@ void myCentralWidget::slot_shPoi(bool){
 void myCentralWidget::do_shPoi(bool val) {
     shPoi_st=val;
     Settings::setSetting("hidePoi",val?1:0,"showHideItem");
+    emit shPoi(shPoi_st);
 }
 
 void myCentralWidget::slot_shRoute(bool){
@@ -1694,6 +1681,7 @@ void myCentralWidget::slot_shRoute(bool){
 void myCentralWidget::do_shRoute(bool val) {
     shRoute_st=val;
     Settings::setSetting("hideRoute",val?1:0,"showHideItem");
+    emit shRou(shRoute_st);
 }
 
 void myCentralWidget::slot_shOpp(bool){
@@ -1703,6 +1691,7 @@ void myCentralWidget::slot_shOpp(bool){
 void myCentralWidget::do_shOpp(bool val) {
     shOpp_st=val;
     Settings::setSetting("hideOpponent",val?1:0,"showHideItem");
+    emit shOpp(shOpp_st);
 }
 
 void myCentralWidget::slot_shPor(bool) {
@@ -1712,6 +1701,7 @@ void myCentralWidget::slot_shPor(bool) {
 void myCentralWidget::do_shPor(bool val) {
     shPor_st=val;
     Settings::setSetting("hidePorte",val?1:0,"showHideItem");
+    emit shPor(shPor_st);
 }
 
 void myCentralWidget::slot_editHorn()
@@ -3356,9 +3346,6 @@ ROUTE * myCentralWidget::addRoute()
     connect(mainW,SIGNAL(updateRoute(boat *)),route,SLOT(slot_recalculate(boat *)));
     connect(route,SIGNAL(editMe(ROUTE *)),this,SLOT(slot_editRoute(ROUTE *)));
 
-
-    connect(this, SIGNAL(showALL(bool)),route,SLOT(slot_shShow()));
-    connect(this, SIGNAL(hideALL(bool)),route,SLOT(slot_shHidden()));
     connect(this, SIGNAL(shRou(bool)),route,SLOT(slot_shRou()));
     connect(this, SIGNAL(shRouBis()),route,SLOT(slot_shShow()));
 
@@ -3378,13 +3365,6 @@ ROUTAGE * myCentralWidget::addRoutage()
     ROUTAGE * routage=new ROUTAGE(rName.sprintf(tr("Routage%d").toLocal8Bit(),nbRoutage), proj, grib, scene, this);
     routage->setBoat(mainW->getSelectedBoat());
     connect(routage,SIGNAL(editMe(ROUTAGE *)),this,SLOT(slot_editRoutage(ROUTAGE *)));
-
-
-//    connect(this, SIGNAL(showALL(bool)),routage,SLOT(slot_shShow()));
-//    connect(this, SIGNAL(hideALL(bool)),routage,SLOT(slot_shHidden()));
-//    connect(this, SIGNAL(shRoutage(bool)),routage,SLOT(slot_shRou()));
-
-
     routage_list.append(routage);
     return routage;
 }

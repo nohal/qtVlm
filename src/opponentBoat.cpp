@@ -77,9 +77,7 @@ void opponent::init(QColor color,bool isQtBoat,QString idu,QString race, double 
 
     this->opp_trace=1;
     this->labelHidden=parentWindow->get_shLab_st();
-    connect(parentWindow, SIGNAL(showALL(bool)),this,SLOT(slot_shShow()));
-    connect(parentWindow, SIGNAL(hideALL(bool)),this,SLOT(slot_shHidden()));
-    connect(parentWindow, SIGNAL(shOpp(bool)),this,SLOT(slot_shOpp()));
+    connect(parentWindow, SIGNAL(shOpp(bool)),this,SLOT(slot_shOpp(bool)));
     connect(parentWindow, SIGNAL(shLab(bool)),this,SLOT(slot_shLab(bool)));
     width=height=0;
 
@@ -573,22 +571,19 @@ void opponent::paramChanged()
         update();
 }
 
-void opponent::slot_shShow()
-{
-    show();
-    if(trace_drawing)
-    {
-        drawTrace();
-        trace_drawing->show();
+void opponent::slot_shOpp(bool isHidden) {
+    if(isHidden) {
+        hide();
+        if(trace_drawing)
+            trace_drawing->hide();
     }
-}
-
-void opponent::slot_shHidden()
-{
-    hide();
-    if(trace_drawing)
-    {
-        trace_drawing->hide();
+    else {
+        show();
+        if(trace_drawing)
+        {
+            drawTrace();
+            trace_drawing->show();
+        }
     }
 }
 

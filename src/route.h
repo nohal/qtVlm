@@ -162,9 +162,8 @@ class ROUTE : public QObject
 public slots:
         void slot_recalculate(boat * boat=NULL);
         void slot_edit();
-        void slot_shShow();
-        void slot_shHidden();
-        void slot_shRou(){if(this->line->isVisible()) slot_shHidden();else slot_shShow();}
+        void slot_shShow() { slot_shRou(false); }
+        void slot_shRou(bool isHidden);
         void slot_export(){parent->exportRouteFromMenu(this);}
         void slot_boatPointerHasChanged(boat * acc);
         void slot_compassFollow(){parent->setCompassFollow(this);}

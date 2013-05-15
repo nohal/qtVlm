@@ -70,7 +70,7 @@ boatVLM::boatVLM(QString        pseudo, bool activated, int boatId, int playerId
     race_name="";
     playerName=player->getName();
     this->rank=1;
-    connect(parent, SIGNAL(shPor(bool)),this,SLOT(slot_shPor()));
+    connect(parent, SIGNAL(shPor(bool)),this,SLOT(slot_shPor(bool)));
     connect(parent,SIGNAL(resetTraceCache()),this,SLOT(slot_resetTraceCache()));
     myCreatePopUpMenu();
     connect(this->popup,SIGNAL(aboutToShow()),parent,SLOT(slot_resetGestures()));

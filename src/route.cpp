@@ -98,10 +98,7 @@ ROUTE::ROUTE(QString name, Projection *proj, Grib *grib, QGraphicsScene * myScen
     this->lastKnownSpeed=10e-4;
     this->hidden=false;
     this->temp=false;
-    if(!parentWindow->get_shRoute_st())
-        slot_shShow();
-    else
-        slot_shHidden();
+    slot_shRou(parentWindow->get_shRoute_st());
     this->speedLossOnTack=1;
     this->autoRemove=Settings::getSetting("autoRemovePoiFromRoute",0).toInt()==1;
     this->autoAt=Settings::getSetting("autoFillPoiHeading",0).toInt()==1;
@@ -1030,31 +1027,23 @@ void ROUTE::slot_edit()
     emit editMe(this);
 }
 
-void ROUTE::slot_shShow()
-{
+void ROUTE::slot_shRou(bool isHidden) {
     bool toBeHidden=this->hidden || (Settings::getSetting("autoHideRoute",1).toInt()==1 && (this->myBoat==NULL || !this->myBoat->getIsSelected()));
-    if(toBeHidden)
-    {
-        slot_shHidden();
-        return;
+    if(isHidden || toBeHidden) {
+        if(line)
+            line->hide();
+        roadInfo->hide();
+        if(toBeHidden)
+            setHidePois(hidePois);
     }
-    if(line)
-    {
-        line->show();
+    else {
+        if(line)
+            line->show();
+        if(showInterpolData)
+            roadInfo->show();
     }
-    if(showInterpolData)
-        roadInfo->show();
 }
 
-void ROUTE::slot_shHidden()
-{
-    bool toBeHidden=this->hidden || (Settings::getSetting("autoHideRoute",1).toInt()==1 && (this->myBoat==NULL || !this->myBoat->getIsSelected()));
-    if(line)
-        line->hide();
-    roadInfo->hide();
-    if(toBeHidden)
-        setHidePois(hidePois);
-}
 void ROUTE::slot_boatPointerHasChanged(boat * acc)
 {
     if(acc->get_boatType()==BOAT_VLM)
