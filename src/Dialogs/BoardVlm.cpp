@@ -32,6 +32,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "Util.h"
 #include "DialogWp.h"
 #include "Polar.h"
+#include <QBitmap>
+#include <QGraphicsDropShadowEffect>
+#include <QSignalMapper>
 
 
 #define POLAR_SPEED_MODE   1
@@ -643,6 +646,88 @@ BoardWindTool::BoardWindTool(MainWindow * mainWindow,Board * board): BoardCompon
 
     connect(board,SIGNAL(sig_updateData()),this,SLOT(slot_updateData()));
     connect(mainWindow,SIGNAL(setChangeStatus(bool,bool,bool)),this,SLOT(slot_setChangeStatus(bool,bool,bool)));
+    QPixmap skin;
+    skin.load("img/skin_compas.png");
+    QPixmap buttonShape(45,45);
+    buttonShape.fill(Qt::transparent);
+    QPainter pnt(&buttonShape);
+    pnt.setCompositionMode(QPainter::CompositionMode_SourceOver);
+    pnt.setRenderHint(QPainter::Antialiasing,true);
+    pnt.begin(&buttonShape);
+    pnt.drawPixmap(0,0,skin,300,600,45,45);
+    pnt.end();
+    QPixmap bg(270,280);
+    pnt.begin(&bg);
+    pnt.drawPixmap(0,0,skin,600,0,270,280);
+    pnt.end();
+    my_background->setPixmap(bg);
+    buttonHDG->setMask(buttonShape.createMaskFromColor(Qt::transparent,Qt::MaskInColor));
+    buttonTWA->setMask(buttonShape.createMaskFromColor(Qt::transparent,Qt::MaskInColor));
+    buttonORTHO->setMask(buttonShape.createMaskFromColor(Qt::transparent,Qt::MaskInColor));
+    buttonVMG->setMask(buttonShape.createMaskFromColor(Qt::transparent,Qt::MaskInColor));
+    buttonVBVMG->setMask(buttonShape.createMaskFromColor(Qt::transparent,Qt::MaskInColor));
+    QColor shadow=Qt::lightGray;
+    shadow.setAlpha(128);
+    QGraphicsDropShadowEffect * effect=new QGraphicsDropShadowEffect(this);
+    effect->setBlurRadius(3);
+    effect->setColor(shadow);
+    effect->setOffset(4);
+    buttonHDG->setGraphicsEffect(effect);
+    effect=new QGraphicsDropShadowEffect(this);
+    effect->setBlurRadius(3);
+    effect->setColor(shadow);
+    effect->setOffset(4);
+    buttonTWA->setGraphicsEffect(effect);
+    effect=new QGraphicsDropShadowEffect(this);
+    effect->setBlurRadius(3);
+    effect->setColor(shadow);
+    effect->setOffset(4);
+    buttonORTHO->setGraphicsEffect(effect);
+    effect=new QGraphicsDropShadowEffect(this);
+    effect->setBlurRadius(3);
+    effect->setColor(shadow);
+    effect->setOffset(4);
+    buttonVMG->setGraphicsEffect(effect);
+    effect=new QGraphicsDropShadowEffect(this);
+    effect->setBlurRadius(3);
+    effect->setColor(shadow);
+    effect->setOffset(4);
+    buttonVBVMG->setGraphicsEffect(effect);
+    my_background->lower();
+    slot_updateData();
+    QSignalMapper * signalMapper=new QSignalMapper(this);
+    connect(this->buttonHDG,SIGNAL(clicked()),signalMapper,SLOT(map()));
+    signalMapper->setMapping(buttonHDG,0);
+    connect(this->buttonTWA,SIGNAL(clicked()),signalMapper,SLOT(map()));
+    signalMapper->setMapping(buttonTWA,1);
+    connect(this->buttonORTHO,SIGNAL(clicked()),signalMapper,SLOT(map()));
+    signalMapper->setMapping(buttonORTHO,2);
+    connect(this->buttonVMG,SIGNAL(clicked()),signalMapper,SLOT(map()));
+    signalMapper->setMapping(buttonVMG,3);
+    connect(this->buttonVBVMG,SIGNAL(clicked()),signalMapper,SLOT(map()));
+    signalMapper->setMapping(buttonVBVMG,4);
+    connect(signalMapper,SIGNAL(mapped(int)),this,SLOT(buttonClicked(int)));
+}
+void BoardWindTool::buttonClicked(int pilotMode)
+{
+    INIT_BOAT;
+    switch(pilotMode) {
+        case VLM_PILOT_HEADING:
+            boat->set_pilotHeading(this->boardPilotVLMBoat->editHeading->value());
+            break;
+        case VLM_PILOT_ANGLE:
+            boat->set_pilotAngle(this->boardPilotVLMBoat->editAngle->value());
+            break;
+        case VLM_PILOT_ORTHO:
+            boat->set_pilotOrtho();
+            break;
+        case VLM_PILOT_VMG:
+            boat->set_pilotVmg();
+            break;
+        case VLM_PILOT_VBVMG:
+            boat->set_pilotVbvmg();
+            break;
+    }
 }
 
 BoardWindTool::~BoardWindTool() {
@@ -653,6 +738,34 @@ void BoardWindTool::slot_updateData(void) {
     INIT_BOAT;
 
     windAngle->setValues(boat->getHeading(),boat->getWindDir(),boat->getWindSpeed(), boat->getWPdir(), boat->getClosest().capArrival, -1);
+    QString s;
+    QColor color=Qt::darkYellow;
+    s = "background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 #dadbde, stop: 1 ";
+    buttonHDG->setStyleSheet(s +color.name() + ")");
+    buttonTWA->setStyleSheet(s +color.name() + ")");
+    buttonORTHO->setStyleSheet(s +color.name() + ")");
+    buttonVMG->setStyleSheet(s +color.name() + ")");
+    buttonVBVMG->setStyleSheet(s +color.name() + ")");
+    color=Qt::green;
+    s = "background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 #dadbde, stop: 1 ";
+    switch (boat->getPilotType())
+    {
+    case 1:
+        buttonHDG->setStyleSheet(s +color.name() + ")");
+        break;
+    case 2:
+        buttonTWA->setStyleSheet(s +color.name() + ")");
+        break;
+    case 3:
+        buttonORTHO->setStyleSheet(s +color.name() + ")");
+        break;
+    case 4:
+        buttonVMG->setStyleSheet(s +color.name() + ")");
+        break;
+    case 5:
+        buttonVBVMG->setStyleSheet(s +color.name() + ")");
+        break;
+    }
 }
 
 void BoardWindTool::slot_setNewHeading(double heading) {

@@ -167,12 +167,16 @@ class BoardWindTool : public BoardComponent, public Ui::BoardWindTool {
     Q_OBJECT
     public:
         BoardWindTool(MainWindow * mainWindow,Board * board);
+        void setBoardPilot(BoardPilotVLMBoat * bo){this->boardPilotVLMBoat=bo;}
         ~BoardWindTool(void);
 
-    public slots:
+public slots:
+        void buttonClicked(int pilotMode);
         void slot_updateData(void);
         void slot_setNewHeading(double heading);
         void slot_setChangeStatus(bool status,bool pilototo,bool btnSync);
+private:
+        BoardPilotVLMBoat * boardPilotVLMBoat;
 };
 
 #endif // BOARDVLM_H
