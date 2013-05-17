@@ -366,11 +366,7 @@ void DialogRoute::slotInterval()
         pnt.drawPath(this->drawBoat);
         pnt.setMatrixEnabled(false);
         QColor rgb=Qt::white;
-        if(parent->getGrib() && parent->getGrib()->isOk())
-        {
-            rgb=QColor(parent->getGrib()->getWindColor(roadItems.at(7),true));
-            rgb.setAlpha(255);
-        }
+        rgb=Grib::getWindColorStatic(roadItems.at(7),true);
         pen.setColor(rgb);
         pen.setWidth(2);
         pnt.setPen(pen);

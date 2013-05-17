@@ -162,6 +162,7 @@ class Grib
         void setGribMonoCpu(const bool &b){this->gribMonoCpu=b;}
 
         void forceParam();
+        static QColor getWindColorStatic(const double &v, const bool &smooth=true);
 private:
         bool   ok;
         bool   isCurrentGrib;
