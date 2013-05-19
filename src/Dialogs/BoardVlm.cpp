@@ -54,7 +54,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 BoardVlmUi::BoardVlmUi(MainWindow * mainWindow,Board * board): BoardComponent(mainWindow) {
     setupUi(this);
 
-    init_dock("Vlm",tr("Vlm"),BOARD_TYPE_VLM);
+    init_dock("Vlm",tr("Vlm"),BOARD_TYPE_WINDTOOL);
 
     connect(board,SIGNAL(sig_updateData()),this,SLOT(slot_updateData()));
 
@@ -660,6 +660,7 @@ BoardWindTool::BoardWindTool(MainWindow * mainWindow,Board * board): BoardCompon
     pnt.begin(&bg);
     pnt.drawPixmap(0,0,skin,600,0,270,280);
     pnt.end();
+#if 0
     my_background->setPixmap(bg);
     buttonHDG->setMask(buttonShape.createMaskFromColor(Qt::transparent,Qt::MaskInColor));
     buttonTWA->setMask(buttonShape.createMaskFromColor(Qt::transparent,Qt::MaskInColor));
@@ -707,6 +708,7 @@ BoardWindTool::BoardWindTool(MainWindow * mainWindow,Board * board): BoardCompon
     connect(this->buttonVBVMG,SIGNAL(clicked()),signalMapper,SLOT(map()));
     signalMapper->setMapping(buttonVBVMG,4);
     connect(signalMapper,SIGNAL(mapped(int)),this,SLOT(buttonClicked(int)));
+#endif
 }
 void BoardWindTool::buttonClicked(int pilotMode)
 {
@@ -738,6 +740,10 @@ void BoardWindTool::slot_updateData(void) {
     INIT_BOAT;
 
     windAngle->setValues(boat->getHeading(),boat->getWindDir(),boat->getWindSpeed(), boat->getWPdir(), boat->getClosest().capArrival, -1);
+    btn_angleFlip->setIcon(QIcon("img/board_angleFlip.png"));
+    btn_clearPilototo->setIcon(QIcon("img/del.png"));
+    btn_clearWP->setIcon(QIcon("img/del.png"));
+#if 0
     QString s;
     QColor color=Qt::darkYellow;
     s = "background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 #dadbde, stop: 1 ";
@@ -766,6 +772,7 @@ void BoardWindTool::slot_updateData(void) {
         buttonVBVMG->setStyleSheet(s +color.name() + ")");
         break;
     }
+#endif
 }
 
 void BoardWindTool::slot_setNewHeading(double heading) {

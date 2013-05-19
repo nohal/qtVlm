@@ -30,6 +30,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 /* BoardVLM.h */
 class Board;
 class BoardComponent;
+class BoardVlmNew;
 class MyDockWidget;
 
 /* horn */

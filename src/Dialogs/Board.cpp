@@ -34,14 +34,6 @@ Board::Board(MainWindow * mainWindow)
     boardList_VLM.clear();
     boardList_Real.clear();
     /* init all VLM boards */
-    boardList_VLM.append(new BoardVlmUi(mainWindow,this));
-    BoardPilotVLMBoat * boardPilotVLMBoat = new BoardPilotVLMBoat(mainWindow,this);
-    boardList_VLM.append(boardPilotVLMBoat);
-    boardList_VLM.append(new BoardPosition(mainWindow,this));
-    boardList_VLM.append(new BoardWP(mainWindow,this));
-    BoardSpeed * boardSpeed = new BoardSpeed(mainWindow,this);
-    boardList_VLM.append(boardSpeed);
-    boardList_VLM.append(new BoardWind(mainWindow,this));
     BoardWindTool * boardWindTool = new BoardWindTool(mainWindow,this);
     boardList_VLM.append(boardWindTool);
 
@@ -55,9 +47,6 @@ Board::Board(MainWindow * mainWindow)
     set_newType(mainWindow->get_boatType());
 
     /* inter board signals */
-    connect(boardPilotVLMBoat,SIGNAL(chg_speed(double,int)),boardSpeed,SLOT(slot_chgSpeed(double,int)));
-    connect(boardPilotVLMBoat,SIGNAL(set_newHeading(double)),boardWindTool,SLOT(slot_setNewHeading(double)));
-    boardWindTool->setBoardPilot(boardPilotVLMBoat);
     connect(mainWindow,SIGNAL(boatHasUpdated(boat*)),this,SIGNAL(sig_updateData()));
     connect(mainWindow,SIGNAL(boatSelected(boat*)),this,SLOT(slot_setCurrentBoat(boat*)));
 }

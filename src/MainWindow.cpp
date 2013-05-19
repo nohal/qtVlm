@@ -72,6 +72,7 @@ Copyright (C) 2008 - Jacques Zaninetti - http://zygrib.free.fr
 #include "DialogParamVlm.h"
 #include "DialogPilototo.h"
 #include "dialogviewpolar.h"
+#include "BoardVlmNew.h"
 int INTERPOLATION_DEFAULT=INTERPOLATION_HYBRID;
 
 //-----------------------------------------------------------
@@ -327,13 +328,14 @@ void MainWindow::continueSetup()
     selPOI_instruction=NULL;
     isSelectingWP=false;
 
-    board = new Board(this);
+    //board = new Board(this);
+    newBoard = new BoardVlmNew(this);
 
     /* restore state */
     //qWarning() << "Tool/Board settings: " << Settings::getSetting("savedState","").toByteArray();
     restoreState(Settings::getSetting("savedState","").toByteArray());
     toolBar->load_settings();
-    board->load_settings();
+    //board->load_settings();
 
 
 //#warning MOD_BOARD
@@ -405,14 +407,14 @@ void MainWindow::continueSetup()
         if(players.at(0)->getType()==BOAT_VLM)
         {
  //************************************************************
-            board->set_newType(BOAT_VLM);
+            //board->set_newType(BOAT_VLM);
             progress->newStep(50,tr("Updating player"));
             connect(players.at(0),SIGNAL(playerUpdated(bool,Player*)),this,SLOT(slot_updPlayerFinished(bool,Player*)));
             players.at(0)->updateData();
         }
         else
         {
-            board->set_newType(BOAT_REAL);
+            //board->set_newType(BOAT_REAL);
             my_centralWidget->slot_playerSelected(players.at(0));
             my_centralWidget->loadPOI();
             isStartingUp=false;
@@ -512,7 +514,7 @@ MainWindow::~MainWindow()
     }
 
     toolBar->save_settings();
-    board->save_settings();
+    //board->save_settings();
     Settings::setSetting("savedState",saveState());
     //qWarning() << "saving state: " <<  Settings::getSetting("savedState","").toByteArray();
 
@@ -532,8 +534,8 @@ QMenu * MainWindow::createPopupMenu(void) {
     QMenu * menu = new QMenu;
     int entry=0;
 
-    if(board)
-        entry=board->build_showHideMenu(menu);
+//    if(board)
+//        entry=board->build_showHideMenu(menu);
 
     if(entry)
         menu->addSeparator();

@@ -147,7 +147,7 @@ void boatVLM::set_pilotHeading(double heading) {
 
 void boatVLM::set_pilotAngle(double angle) {
     QVariantMap instruction;
-    if(confirmChange(tr("Pilotage à angle constant par rapport au vent ?"),tr("Mode de pilotage change en 'Angle'"))) {
+    if(confirmChange(tr("Pilotage a angle constant par rapport au vent ?"),tr("Mode de pilotage change en 'Angle'"))) {
         instruction.insert("pim",2);
         instruction.insert("pip",angle);
         sendPilotMode("pilot_set.php",instruction);

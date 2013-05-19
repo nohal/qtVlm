@@ -42,6 +42,7 @@ Copyright (C) 2008 - Jacques Zaninetti - http://zygrib.free.fr
 
 #include "class_list.h"
 #include "dataDef.h"
+#include "BoardVlmNew.h"
 
 class MainWindow: public QMainWindow
 {
@@ -70,7 +71,7 @@ class MainWindow: public QMainWindow
         FCT_GET(Progress*,progress)
         FCT_GET(StatusBar*,statusBar)
         FCT_GET(ToolBar*,toolBar)
-        FCT_GET(Board*,board)
+        //FCT_GET(Board*,board)
 
         FCT_GET(int,nxtVac_cnt)
 
@@ -253,7 +254,7 @@ public slots:
         int nxtVac_cnt;
         bool showingSelectionMessage;
 
-        Board * board;
+        //Board * board;
         boat* selectedBoat;
         DialogProxy   * dialogProxy;
         DialogParamVlm * param;
@@ -283,7 +284,8 @@ public slots:
         void listAllChildren(QObject * ptr,int);
         bool noSave;
         bool restartNeeded;
-        void updateTitle();       
+        void updateTitle();
+        BoardVlmNew * newBoard;
 };
 
 #endif

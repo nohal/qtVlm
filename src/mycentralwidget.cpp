@@ -4178,7 +4178,7 @@ void myCentralWidget::slot_playerSelected(Player * player)
             }
             realBoat=NULL;
             emit accountListUpdated();
-            mainW->get_board()->set_newType(BOAT_VLM);
+            //mainW->get_board()->set_newType(BOAT_VLM);
             if(reselected)
             {
                 mainW->slotSelectBoat(boat_list->at(thisOne));
@@ -4201,7 +4201,7 @@ void myCentralWidget::slot_playerSelected(Player * player)
             realBoat->reloadPolar();
             mainW->slotSelectBoat(realBoat);
             realBoat->playerActivated();
-            mainW->get_board()->set_newType(BOAT_REAL);
+            //mainW->get_board()->set_newType(BOAT_REAL);
             mainW->slotBoatUpdated(realBoat,true,false);;
             emit shRouBis();
         }

@@ -628,7 +628,7 @@ void MenuBar::slot_setChangeStatus(bool ,bool pilototo,bool syncBtn) {
 
 void MenuBar::slot_showViewMenu(void) {
     boardMenu->clear();
-    mainWindow->get_board()->build_showHideMenu(boardMenu);
+    //mainWindow->get_board()->build_showHideMenu(boardMenu);
 
     toolBarMenu->clear();
     mainWindow->get_toolBar()->build_showHideMenu(toolBarMenu);

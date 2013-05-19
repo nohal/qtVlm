@@ -145,7 +145,8 @@ HEADERS += Dialogs/DialogGraphicsParams.h \
     Dialogs/Board.h \
     Dialogs/BoardTools.h \
     Dialogs/BoardVlm.h \
-    Dialogs/BoardReal.h
+    Dialogs/BoardReal.h \
+    Dialogs/BoardVlmNew.h
 
 
 FORMS += Ui/boatAccount_dialog.ui \
@@ -190,7 +191,8 @@ FORMS += Ui/boatAccount_dialog.ui \
     Ui/BoardReal.ui \
     Ui/BoardWindTool.ui \
     Ui/BoardWind.ui \
-    Ui/BoardWP.ui
+    Ui/BoardWP.ui \
+    Ui/BoardVlmNew.ui
 
 
 SOURCES += Dialogs/DialogGraphicsParams.cpp \
@@ -281,7 +283,8 @@ SOURCES += Dialogs/DialogGraphicsParams.cpp \
     Dialogs/BoardComponent.cpp \
     Dialogs/Board.cpp \
     Dialogs/BoardVlm.cpp \
-    Dialogs/BoardReal.cpp
+    Dialogs/BoardReal.cpp \
+    Dialogs/BoardVlmNew.cpp
 
 unix:!macx: DEFINES += _TTY_POSIX_ __TERRAIN_QIMAGE __UNIX_QTVLM
 win32:DEFINES += _TTY_WIN_ \
