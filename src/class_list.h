@@ -145,6 +145,13 @@ class DialogPilototoParam;
 /* POI.h */
 class POI;
 
+/* Barrier.h & BarrierSet.h */
+class BarrierSet;
+class Barrier;
+class BarrierPoint;
+class DialogEditBarrier;
+class DialogChooseMultipleBarrierSet;
+
 /* DialogPoiInput.h */
 class DialogPoiInput;
 

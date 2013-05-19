@@ -123,6 +123,7 @@ class myCentralWidget : public QWidget
         int getCompassMode(int m_x,int m_y);
         bool isSelecting(void);
         QList<boatVLM*> * getBoats() { return this->boat_list; }
+        QList<boat*> get_boatList(void);
         QList<Player*> &  getPlayers() { return this->player_list; }
         QList<raceData*> & getRaces() { return this->race_list; }
         QList<POI*> & getPois() { return this->poi_list; }
@@ -219,6 +220,10 @@ class myCentralWidget : public QWidget
         void zoom_Pinch(double scale, int XX, int YY);
         void setMagnifier(Magnifier * m){this->magnifier=m;}
         Magnifier * getMagnifier(){return this->magnifier;}
+
+        /*** Barrier ***/
+        void insert_barrierPointAfterPoint(BarrierPoint * point);
+
 public slots :
         /* Zoom & position */
         void slot_Zoom_All();

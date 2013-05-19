@@ -80,6 +80,11 @@ void BoardComponent::slot_visibilityChanged(bool displayed) {
 
 MyDockWidget::MyDockWidget(BoardComponent * boardComponent,QString title) : QDockWidget(title) {
     this->boardComponent=boardComponent;
+    // to hide the title bar completely must replace the default widget with a generic one
+#if 0
+    QWidget* titleWidget = new QWidget(this); /* where this a QMainWindow object */
+    this->setTitleBarWidget( titleWidget );
+#endif
 }
 
 void MyDockWidget::closeEvent(QCloseEvent *event) {

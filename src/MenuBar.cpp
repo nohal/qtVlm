@@ -390,6 +390,20 @@ MenuBar::MenuBar(MainWindow *parent)
         menuPOI->addMenu(menuImportPoi);
         acPOIAdd = addAction(menuPOI,tr("Ajouter une marque"),"","","");
         acPOIRemove = addAction(menuPOI,tr("Supprimer des marques"),"","","");
+        menuPOI->addSeparator();
+
+        subMenuBarrier= new QMenu(tr("Barrier set"));
+        menuPOI->addMenu(subMenuBarrier);
+        ac_addBarrierSet= addAction(subMenuBarrier,tr("Add barrier set"), tr(""), tr(""), "");
+        ac_barrierTool = addActionCheck(subMenuBarrier,tr("Enable editting"),"","");
+        subMenuBarrier->addSeparator();
+        ac_addBarrier= addAction(subMenuBarrier,tr("Add barrier"), tr(""), tr(""), "");
+        ac_addBarrier->setEnabled(false);
+        subSubMenuEditBarrierSet= new QMenu(tr("Parameters"));
+        subMenuBarrier->addMenu(subSubMenuEditBarrierSet);
+        subSubMenuDelBarrierSet= new QMenu(tr("Delete"));
+        subMenuBarrier->addMenu(subSubMenuDelBarrierSet);
+
     addMenu(menuPOI);
 
 

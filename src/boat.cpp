@@ -34,6 +34,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "boatVLM.h"
 #include "Grib.h"
 #include "Orthodromie.h"
+#include "DialogChooseMultipleBarrierSet.h"
+#include "BarrierSet.h"
 
 boat::boat(QString      pseudo, bool activated,
            Projection * proj,MainWindow * main,myCentralWidget * parent):
@@ -176,6 +178,10 @@ void boat::createPopUpMenu(void)
     ac_twaLine = new QAction(tr("Tracer une estime TWA"),popup);
     popup->addAction(ac_twaLine);
     connect(ac_twaLine,SIGNAL(triggered()),this,SLOT(slotTwaLine()));
+
+    ac_chooseBarrierSet = new QAction(tr("Activate barrier sets"),popup);
+    popup->addAction(ac_chooseBarrierSet);
+    connect(ac_chooseBarrierSet,SIGNAL(triggered()),this,SLOT(slot_chooseBarrierSet()));
 }
 
 void boat::slot_paramChanged()
@@ -837,6 +843,22 @@ void boat::slot_updateGraphicsParameters()
     }
 }
 
+/********************************************************
+ *  Barrier
+ *******************************************************/
+
+void boat::slot_chooseBarrierSet(void) {
+    DialogChooseMultipleBarrierSet::chooseBarrierSet(mainWindow,&barrierSets);
+}
+
+bool boat::cross(QLineF line) {
+    QList<BarrierSet*>::const_iterator i;
+    for(i=barrierSets.constBegin();i<barrierSets.constEnd();++i)
+        if((*i)->cross(line))
+            return true;
+    return false;
+}
+
 /**************************/
 /* Events                 */
 /**************************/
@@ -901,6 +923,8 @@ void boat::contextMenuEvent(QGraphicsSceneContextMenuEvent * e)
         ac_select->setEnabled(!mainWindow->get_selPOI_instruction());
         ac_estime->setEnabled(!selected);
     }
+
+
 
     popup->exec(QCursor::pos());
 }

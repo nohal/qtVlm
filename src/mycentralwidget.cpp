@@ -799,6 +799,17 @@ boat * myCentralWidget::getSelectedBoat(void)
 {
     return mainW->getSelectedBoat();
 }
+
+QList<boat*> myCentralWidget::get_boatList(void) {
+    if(mainW->get_boatType()==BOAT_VLM)
+        return *((QList<boat*>*)boat_list);
+    else {
+        QList<boat*> bList;
+        bList.append(realBoat);
+        return bList;
+    }
+}
+
 time_t myCentralWidget::getNextVac(void)
 {
     if(mainW->getSelectedBoat() && mainW->getSelectedBoat()->get_boatType()==BOAT_VLM)
@@ -1634,6 +1645,14 @@ void myCentralWidget::slot_delSelPOIs(void)
         slot_clearSelection();
         emit updateRoute(NULL);
     }
+}
+
+/************************************************************************
+ *  Barriers
+ ***********************************************************************/
+
+void myCentralWidget::insert_barrierPointAfterPoint(BarrierPoint * point) {
+ // MOD BARRIER
 }
 
 void myCentralWidget::slot_showALL(bool)

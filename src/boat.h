@@ -116,6 +116,13 @@ class boat: public QGraphicsWidget
         void setSpeedWithEngine(double d){this->speedWithEngine=d;}
 
         void drawOnMagnifier(Projection *mProj, QPainter *pnt);
+
+        /*** Barrier ***/
+        QList<BarrierSet *>* get_barrierSets(void) { return &barrierSets; }
+        void add_barrierSet(BarrierSet* set) { if(set && !barrierSets.contains(set)) barrierSets.append(set); }
+        void clear_barrierSet(void) { barrierSets.clear(); }
+        bool cross(QLineF line);
+
 public slots:
         void slot_projectionUpdated();
         void slot_paramChanged();
@@ -129,6 +136,9 @@ public slots:
         void slotCompassLine(void);
         void slot_estimeFlashing(void);
         void polarLoaded(QString,Polar *);
+
+        /*** Barrier ***/
+        void slot_chooseBarrierSet(void);
 
     signals:
         void boatSelected(boat*);
@@ -175,7 +185,8 @@ public slots:
         int   vacLen;
         int rank;
 
-
+        /*** Barrier ***/
+        QList<BarrierSet *> barrierSets;
 
         double zoom;
 
@@ -216,6 +227,7 @@ public slots:
         QAction * ac_estime;
         QAction * ac_compassLine;
         QAction * ac_twaLine;
+        QAction * ac_chooseBarrierSet;
         void createPopUpMenu();        
 
         void updateBoatData(void);        

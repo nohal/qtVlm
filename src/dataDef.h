@@ -97,6 +97,15 @@ FCT_GET_CST(TYPE,VARNAME)
 #define BOAT_ANY  2
 #define BOAT_NOBOAT -1
 
+/* barrier edit mode */
+#define BARRIER_EDIT_NO_EDIT      0
+#define BARRIER_EDIT_ADD_BARRIER  1
+#define BARRIER_EDIT_ADD_POINT    2
+
+#define BARRIER_NO_POINT   -1
+#define BARRIER_FIRST_POINT 0
+#define BARRIER_LAST_POINT  1
+
 /* request type */
 #define VLM_NO_REQUEST     -1
 #define VLM_REQUEST_LOGIN  0

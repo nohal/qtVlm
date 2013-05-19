@@ -77,6 +77,9 @@ class MainWindow: public QMainWindow
 
         int get_boatType(void);
 
+        /*** Barrier ***/
+        bool get_barrierIsEditing(void);
+
 
         void getXY(int *X,int *Y){*X=this->mouseClicX;*Y=this->mouseClicY;}
         bool isStartingUp;

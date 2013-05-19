@@ -146,7 +146,11 @@ HEADERS += Dialogs/DialogGraphicsParams.h \
     Dialogs/BoardTools.h \
     Dialogs/BoardVlm.h \
     Dialogs/BoardReal.h \
-    Dialogs/BoardVlmNew.h
+    Dialogs/BoardVlmNew.h \
+    BarrierSet.h \
+    Barrier.h \
+    Dialogs/DialogEditBarrier.h \
+    Dialogs/DialogChooseMultipleBarrierSet.h
 
 
 FORMS += Ui/boatAccount_dialog.ui \
@@ -192,8 +196,9 @@ FORMS += Ui/boatAccount_dialog.ui \
     Ui/BoardWindTool.ui \
     Ui/BoardWind.ui \
     Ui/BoardWP.ui \
-    Ui/BoardVlmNew.ui
-
+    Ui/BoardVlmNew.ui \
+    Ui/DialogEditBarrier.ui \
+    Ui/DialogChooseMultipleBarrierSet.ui
 
 SOURCES += Dialogs/DialogGraphicsParams.cpp \
     Dialogs/DialogLoadGrib.cpp \
@@ -284,7 +289,11 @@ SOURCES += Dialogs/DialogGraphicsParams.cpp \
     Dialogs/Board.cpp \
     Dialogs/BoardVlm.cpp \
     Dialogs/BoardReal.cpp \
-    Dialogs/BoardVlmNew.cpp
+    Dialogs/BoardVlmNew.cpp \
+    BarrierSet.cpp \
+    Barrier.cpp \
+    Dialogs/DialogEditBarrier.cpp \
+    Dialogs/DialogChooseMultipleBarrierSet.cpp
 
 unix:!macx: DEFINES += _TTY_POSIX_ __TERRAIN_QIMAGE __UNIX_QTVLM
 win32:DEFINES += _TTY_WIN_ \
@@ -296,6 +305,7 @@ win32:DEFINES += _TTY_WIN_ \
 
 
 macx: DEFINES += _TTY_POSIX_ __TERRAIN_QPIXMAP __MAC_QTVLM
+
 ICON = qtVlm.icns
 
 #DEFINES += __REAL_BOAT_ONLY

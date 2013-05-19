@@ -86,6 +86,14 @@ public:
 
     QAction *acPOIAdd;
     QAction *acPOIRemove;
+
+    QMenu * subMenuBarrier;
+    QMenu * subSubMenuDelBarrierSet;
+    QMenu * subSubMenuEditBarrierSet;
+    QAction * ac_addBarrierSet;
+    QAction * ac_barrierTool;
+    QAction * ac_addBarrier;
+
     QAction *ac_twaLine;
     QAction *ac_compassLine;
     QAction *ac_compassCenterBoat;

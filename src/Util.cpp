@@ -566,6 +566,13 @@ QString Util::getHost()
 #endif
 }
 
+void Util::computePos(Projection * proj, const QPointF & position, QPoint * screenCoord) {
+    int i,j;
+    computePos(proj,position.y(),position.x(),&i,&j);
+    screenCoord->setX(i);
+    screenCoord->setY(j);
+}
+
 void Util::computePos(Projection * proj, const double &lat, const double &lon, int * x, int * y)
 {
     if (proj->isPointVisible(lon, lat)) {      // tour du monde ?
@@ -582,6 +589,14 @@ void Util::computePos(Projection * proj, const double &lat, const double &lon, i
         proj->map2screen(lon, lat, x, y);
     }
 }
+
+void Util::computePosDouble(Projection * proj, const QPointF & position, QPointF * screenCoord) {
+    double x,y;
+    computePosDouble(proj,position.y(),position.x(),&x,&y);
+    screenCoord->setX(x);
+    screenCoord->setY(y);
+}
+
 void Util::computePosDouble(Projection * proj, const double &lat, const double &lon, double * x, double * y)
 {
     if (proj->isPointVisible(lon, lat)) {      // tour du monde ?
@@ -722,4 +737,20 @@ QString Util::formatElapsedTime(int elapsed)
     QString jour;
     jour=jour.sprintf("%d",qRound(jours));
     return jour+" "+QObject::tr("jours")+" "+eLapsed.toString("H'h 'mm'min '");
+}
+
+#define SQ(VAL) ((VAL)*(VAL))
+#define DIST(P1,P2) ((P1.x()-P2.x())*(P1.x()-P2.x())+(P1.y()-P2.y())*(P1.y()-P2.y()))
+
+double Util::distToSegment(const QPointF point,const QLineF line) {
+    double d1 = DIST(line.p1(),line.p2());
+    if(d1==0) return sqrt(DIST(point,line.p1()));
+    double t=((point.x()-line.p1().x())*(line.p2().x()-line.p1().x())
+              +(point.y()-line.p1().y())*(line.p2().y()-line.p1().y()))/d1;
+    if(t<0) return sqrt(DIST(point,line.p1()));
+    if(t>1) return sqrt(DIST(point,line.p2()));
+    return sqrt(DIST(point,QPointF(line.p1().x()+t*(line.p2().x()-line.p1().x()),
+                                   line.p1().y()+t*(line.p2().y()-line.p1().y()))
+                     ));
+
 }

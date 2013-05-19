@@ -96,8 +96,10 @@ class Util
                                            const double &distance, const double &heading, double * res_lat,double * res_lon);
     static QString pos2String(const int &type,const double &value);
     static QString getHost();
+    static void computePos(Projection * proj, const QPointF &position, QPoint * screenCoord);
     static void computePos(Projection * proj, const double &lat, const double &lon, int * x, int * y);
     static void computePosDouble(Projection * proj, const double &lat, const double &lon, double * x, double * y);
+    static void computePosDouble(Projection * proj, const QPointF &position, QPointF * screenCoord);
     static void addAgent(QNetworkRequest & request);
     static bool lineIsCrossingRect(const QLineF &line, const QRectF &rect);
     static double myDiffAngle(const double &a1, const double &a2);
@@ -107,6 +109,7 @@ class Util
                                                  const double &lat_a, const double &lon_a,
                                                  const double &lat_b, const double &lon_b,
                                                  double *x_latitude, double *x_longitude);
+    static double distToSegment(const QPointF point,const QLineF line);
 
     static QString formatElapsedTime(int elapsed);
     //-------------------------------------------------

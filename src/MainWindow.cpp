@@ -62,6 +62,7 @@ Copyright (C) 2008 - Jacques Zaninetti - http://zygrib.free.fr
 #include "ToolBar.h"
 #include "Progress.h"
 #include "StatusBar.h"
+#include "BarrierSet.h"
 
 #include "DialogPoiDelete.h"
 #include "DialogPoi.h"
@@ -72,7 +73,9 @@ Copyright (C) 2008 - Jacques Zaninetti - http://zygrib.free.fr
 #include "DialogParamVlm.h"
 #include "DialogPilototo.h"
 #include "dialogviewpolar.h"
+#include "DialogEditBarrier.h"
 #include "BoardVlmNew.h"
+
 int INTERPOLATION_DEFAULT=INTERPOLATION_HYBRID;
 
 //-----------------------------------------------------------
@@ -1167,6 +1170,18 @@ void MainWindow::updateNxtVac(void)
     }
     statusBar->drawVacInfo();
 }
+
+/************************************************************************
+ *  Barriers
+ ***********************************************************************/
+
+bool MainWindow::get_barrierIsEditing(void) {
+    return false;
+}
+
+
+
+
 QList<POI*> * MainWindow::getPois()
 {
     return my_centralWidget->getPoisList();
