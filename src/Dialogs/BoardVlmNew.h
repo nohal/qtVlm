@@ -35,6 +35,7 @@ private:
     QLabel * currentRB;
     void timerStop();
     bool blocking;
+    double computeAngle();
 };
 
 #endif // BOARDVLMNEW_H

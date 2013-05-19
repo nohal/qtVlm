@@ -70,7 +70,7 @@ void BoardVlmNew::slot_HDGChanged()
     spin_HDG->blockSignals(true);
     spin_TWA->blockSignals(true);
     double heading=spin_HDG->value();
-    double angle=Util::A180(myBoat->getWindDir()-heading);
+    double angle=Util::A180(heading-myBoat->getWindDir());
     this->spin_TWA->setValue(angle);
     this->windAngle->setValues(myBoat->getHeading(),myBoat->getWindDir(),myBoat->getWindSpeed(),myBoat->getWPdir(),myBoat->getClosest().capArrival,heading);
     spin_HDG->blockSignals(false);
@@ -158,7 +158,7 @@ void BoardVlmNew::slot_updateData()
     btn_sync->setStyleSheet(QString::fromUtf8("background-color: rgb(255, 255, 127);"));
     updateLcds();
     this->spin_HDG->setValue(myBoat->getHeading());
-    this->spin_TWA->setValue(myBoat->getTWA());
+    this->spin_TWA->setValue(computeAngle());
     this->lab_TWA->setStyleSheet(defaultStyleSheet.toUtf8());
     this->lab_HDG->setStyleSheet(defaultStyleSheet.toUtf8());
     this->lab_ORTHO->setStyleSheet(defaultStyleSheet.toUtf8());
@@ -227,4 +227,16 @@ void BoardVlmNew::timerStop()
     currentRB=NULL;
     lab_TWA->show();
     lab_HDG->show();
+}
+double BoardVlmNew::computeAngle(void) { /* we assume a boat exists => should be tested by caller */
+    double angle_val;
+    double val=myBoat->getHeading()-myBoat->getWindDir();
+    if(myBoat->getPilotType()==2)
+        angle_val = myBoat->getPilotString().toDouble();
+    else
+    {
+        angle_val = myBoat->getTWA();
+        calcAngleSign(val,angle_val)
+    }
+    return angle_val;
 }
