@@ -885,7 +885,7 @@ void tool_windAngle::draw(QPainter * painter)
     QPixmap tempWind=img_arrow_wind;
     QPainter pnt(&tempWind);
     pnt.setRenderHint(QPainter::Antialiasing,true);
-    pnt.setCompositionMode(QPainter::CompositionMode_DestinationIn);
+    pnt.setCompositionMode(QPainter::CompositionMode_SourceAtop);
     pnt.fillRect(0,0,200,200,QBrush(windSpeed_toColor()));
     pnt.end();
     painter->save();
