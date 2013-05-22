@@ -58,9 +58,9 @@ BoardVlmNew::BoardVlmNew(MainWindow *main)
     blocking=false;
     set_style(btn_sync);
     set_style(btn_pilototo);
-    //set_style(btn_clearPilototo);
     set_style(btn_wp);
-    //set_style(btn_clearWP);
+    this->spin_HDG->installEventFilter(this);
+    this->spin_TWA->installEventFilter(this);
 }
 
 BoardVlmNew::~BoardVlmNew()
@@ -495,4 +495,34 @@ void BoardVlmNew::set_enabled(const bool &b)
     this->rd_VMG->setEnabled(b);
     this->spin_HDG->setEnabled(b);
     this->spin_TWA->setEnabled(b);
+}
+bool BoardVlmNew::eventFilter(QObject *obj, QEvent *event)
+{
+    if(obj!=spin_HDG && obj!=spin_TWA) return false;
+    QDoubleSpinBox * spinBox=static_cast<QDoubleSpinBox *>(obj);
+    if(event->type()==QEvent::KeyPress)
+    {
+        QKeyEvent *keyEvent = static_cast<QKeyEvent*>(event);
+        if(keyEvent->key()==Qt::Key_Shift)
+            spinBox->setSingleStep(0.1);
+        else if(keyEvent->key()==Qt::Key_Control)
+            spinBox->setSingleStep(10.0);
+        else if(keyEvent->key()==Qt::Key_Alt)
+            spinBox->setSingleStep(0.01);
+    }
+    else if (event->type()==QEvent::KeyRelease)
+    {
+        QKeyEvent *keyEvent = static_cast<QKeyEvent*>(event);
+        if(keyEvent->key()==Qt::Key_Shift || keyEvent->key()==Qt::Key_Control || keyEvent->key()==Qt::Key_Alt)
+            spinBox->setSingleStep(1.0);
+    }
+    if(event->type()==QEvent::Wheel)
+    {
+        /*by default wheeling with ctrl already multiply singleStep by 10
+          so to get 10 you need to put 1...*/
+        QWheelEvent *wheelEvent = static_cast<QWheelEvent*>(event);
+        if(wheelEvent->modifiers()==Qt::ControlModifier)
+            spinBox->setSingleStep(1);
+    }
+    return false;
 }

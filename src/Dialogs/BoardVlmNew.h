@@ -29,6 +29,8 @@ private slots:
     void slot_clearPilototo();
     void slot_editWP();
     void slot_clearWP();
+protected:
+    bool eventFilter(QObject *obj, QEvent *event);
 public slots:
     void slot_updateBtnWP();
     void slot_selectPOI(bool doSelect);
