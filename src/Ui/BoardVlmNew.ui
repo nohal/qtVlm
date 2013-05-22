@@ -446,9 +446,9 @@
    <widget class="QPushButton" name="btn_wp">
     <property name="geometry">
      <rect>
-      <x>125</x>
+      <x>132</x>
       <y>140</y>
-      <width>101</width>
+      <width>91</width>
       <height>23</height>
      </rect>
     </property>
@@ -459,7 +459,7 @@
    <widget class="QPushButton" name="btn_pilototo">
     <property name="geometry">
      <rect>
-      <x>3</x>
+      <x>5</x>
       <y>140</y>
       <width>91</width>
       <height>23</height>
@@ -473,7 +473,7 @@
     <property name="geometry">
      <rect>
       <x>7</x>
-      <y>58</y>
+      <y>61</y>
       <width>18</width>
       <height>18</height>
      </rect>
@@ -506,7 +506,7 @@
    <widget class="QPushButton" name="btn_clearPilototo">
     <property name="geometry">
      <rect>
-      <x>99</x>
+      <x>100</x>
       <y>140</y>
       <width>18</width>
       <height>18</height>
@@ -540,7 +540,7 @@
    <widget class="QPushButton" name="btn_clearWP">
     <property name="geometry">
      <rect>
-      <x>229</x>
+      <x>227</x>
       <y>140</y>
       <width>18</width>
       <height>18</height>

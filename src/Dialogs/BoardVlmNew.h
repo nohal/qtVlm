@@ -26,6 +26,14 @@ private slots:
     void slot_TWAChanged();
     void slot_HDGChanged();
     void slot_timerElapsed();
+    void slot_clearPilototo();
+    void slot_editWP();
+    void slot_clearWP();
+public slots:
+    void slot_updateBtnWP();
+    void slot_selectPOI(bool doSelect);
+    void slot_selectPOI(POI *);
+    void slot_selectWP_POI();
 private:
     MainWindow * main;
     boatVLM * myBoat;
@@ -35,7 +43,11 @@ private:
     QLabel * currentRB;
     void timerStop();
     bool blocking;
+    DialogWp * wpDialog;
     double computeAngle();
+    void update_btnPilototo();
+    void set_style(QPushButton * button, QColor color=QColor(230,230,230), QColor color2=Qt::white);
+    void set_enabled(const bool &b);
 };
 
 #endif // BOARDVLMNEW_H
