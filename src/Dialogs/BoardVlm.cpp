@@ -1034,7 +1034,7 @@ void tool_windAngle::draw(QPainter * painter)
 
 QColor tool_windAngle::windSpeed_toColor()
 {
-    return Grib::getWindColorStatic(windSpeed);
+    return Grib::getWindColorStatic(windSpeed,Settings::getSetting("colorMapSmooth", true).toBool());
    //color from VLM code: http://www.virtual-loup-de-mer.org
    // <=F0 : blanc
    if (windSpeed <= 1) return QColor(255, 255, 255);

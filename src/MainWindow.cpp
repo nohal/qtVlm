@@ -63,6 +63,7 @@ Copyright (C) 2008 - Jacques Zaninetti - http://zygrib.free.fr
 #include "Progress.h"
 #include "StatusBar.h"
 #include "BarrierSet.h"
+#include "BoardVlmNew.h"
 
 #include "DialogPoiDelete.h"
 #include "DialogPoi.h"
@@ -660,6 +661,7 @@ void MainWindow::closeProgress(void)
             timer->start(1000);
         }
         emit WPChanged(selectedBoat->getWPLat(),selectedBoat->getWPLon());
+        emit boatChanged(selectedBoat);
     }
     statusBar->show();
     menuBar->show();

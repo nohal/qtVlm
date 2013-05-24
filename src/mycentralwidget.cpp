@@ -423,6 +423,7 @@ myCentralWidget::myCentralWidget(Projection * proj,MainWindow * parent,MenuBar *
     connect(menuBar->acMap_CountriesNames, SIGNAL(triggered(bool)), terre,  SLOT(setCountriesNames(bool)));
     connect(menuBar->acView_WindColors, SIGNAL(triggered(bool)), terre,  SLOT(slot_setDrawWindColors(bool)));
     connect(menuBar->acView_ColorMapSmooth, SIGNAL(triggered(bool)), terre,  SLOT(setColorMapSmooth(bool)));
+    connect(menuBar->acView_ColorMapSmooth, SIGNAL(triggered(bool)), this->mainW,  SLOT(slotParamChanged()));
     connect(menuBar->acView_WindArrow, SIGNAL(triggered(bool)), terre,  SLOT(setDrawWindArrows(bool)));
     connect(menuBar->acView_Barbules, SIGNAL(triggered(bool)), terre,  SLOT(setBarbules(bool)));
     connect(menuBar->acView_TemperatureLabels, SIGNAL(triggered(bool)),terre,  SLOT(slotTemperatureLabels(bool)));

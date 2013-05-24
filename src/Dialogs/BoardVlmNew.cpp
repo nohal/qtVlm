@@ -4,6 +4,7 @@
 #include "POI.h"
 #include "DialogWp.h"
 #include "Polar.h"
+#include "settings.h"
 #include <QBitmap>
 BoardVlmNew::BoardVlmNew(MainWindow *main)
     : QDialog(main)
@@ -28,6 +29,7 @@ BoardVlmNew::BoardVlmNew(MainWindow *main)
     defaultStyleSheet=this->lab_TWA->styleSheet();
     connect(this->btn_sync,SIGNAL(clicked()),this,SLOT(slot_vlmSync()));
     connect(main,SIGNAL(boatHasUpdated(boat*)),this,SLOT(slot_updateData()));
+    connect(main,SIGNAL(boatChanged(boat*)),this,SLOT(slot_updateData()));
     connect(main,SIGNAL(WPChanged(double,double)),this,SLOT(slot_wpChanged()));
     connect(main,SIGNAL(outDatedVlmData()),this,SLOT(slot_outDatedVlmData()));
     connect(this->rd_HDG,SIGNAL(clicked()),this,SLOT(slot_sendOrder()));
@@ -44,6 +46,7 @@ BoardVlmNew::BoardVlmNew(MainWindow *main)
     connect(btn_clearWP,SIGNAL(clicked()),this,SLOT(slot_clearWP()));
     connect(main,SIGNAL(selectPOI(bool)),this,SLOT(slot_selectPOI(bool)));
     connect(main,SIGNAL(wpChanged()),this,SLOT(slot_updateBtnWP()));
+    connect(main,SIGNAL(paramVLMChanged()),this,SLOT(slot_updateData()));
     wpDialog = new DialogWp();
     connect(wpDialog,SIGNAL(selectPOI()),this,SLOT(slot_selectWP_POI()));
     connect(wpDialog,SIGNAL(selectPOI()),main,SLOT(slotSelectWP_POI()));
@@ -62,6 +65,17 @@ BoardVlmNew::BoardVlmNew(MainWindow *main)
     set_style(btn_wp);
     this->spin_HDG->installEventFilter(this);
     this->spin_TWA->installEventFilter(this);
+    QPixmap skin;
+    skin.load("img/skin_compas.png");
+    QPixmap bg(270,510);
+    bg.fill(Qt::transparent);
+    QPainter pnt(&bg);
+    pnt.setCompositionMode(QPainter::CompositionMode_SourceOver);
+    pnt.setRenderHint(QPainter::Antialiasing,true);
+    pnt.drawPixmap(0,0,skin,600,500,270,510);
+    pnt.end();
+    this->lab_back->setPixmap(bg);
+    this->lab_backTab1->setPixmap(bg);
 }
 
 BoardVlmNew::~BoardVlmNew()
@@ -89,6 +103,11 @@ void BoardVlmNew::slot_TWAChanged()
     this->windAngle->setValues(myBoat->getHeading(),myBoat->getWindDir(),myBoat->getWindSpeed(),myBoat->getWPdir(),myBoat->getClosest().capArrival,heading);
     if(!timer->isActive())
         timer->start();
+    /* update estime */
+    double newSpeed=myBoat->getSpeed();
+    if(myBoat->getPolarData())
+        newSpeed=myBoat->getPolarData()->getSpeed(myBoat->getWindSpeed(),qAbs(spin_TWA->value()));
+    myBoat->drawEstime(spin_HDG->value(),newSpeed);
     blocking=false;
 }
 void BoardVlmNew::slot_HDGChanged()
@@ -112,6 +131,11 @@ void BoardVlmNew::slot_HDGChanged()
     spin_TWA->blockSignals(false);
     if(!timer->isActive())
         timer->start();
+    /* update estime */
+    double newSpeed=myBoat->getSpeed();
+    if(myBoat->getPolarData())
+        newSpeed=myBoat->getPolarData()->getSpeed(myBoat->getWindSpeed(),qAbs(spin_TWA->value()));
+    myBoat->drawEstime(spin_HDG->value(),newSpeed);
     blocking=false;
 }
 
@@ -193,6 +217,7 @@ void BoardVlmNew::slot_updateData()
     this->blockSignals(true);
     set_style(this->btn_sync,QColor(255,255,127));
     updateLcds();
+    this->lab_RANK->setText(myBoat->getName()+" "+myBoat->getScore()+" ("+QString().sprintf("%d",myBoat->getRank())+")");
     this->spin_HDG->setValue(myBoat->getHeading());
     this->spin_TWA->setValue(computeAngle());
     if(qAbs(spin_TWA->value())<myBoat->getPolarData()->getBvmgUp(myBoat->getWindSpeed()) ||
@@ -258,6 +283,11 @@ void BoardVlmNew::updateLcds()
     s.sprintf("%.2f",(double)qRound(myBoat->getWindDir()*100.0)/100.0);
     lcd_TWD->setDigitCount(s.count());
     this->lcd_TWD->display(s);
+    QColor color=Grib::getWindColorStatic(myBoat->getWindSpeed(),Settings::getSetting("colorMapSmooth", true).toBool());
+    this->lcd_TWS->setStyleSheet((QString().sprintf("background-color: rgb(%d, %d, %d);",color.red(),color.green(),color.blue())));
+    color=Qt::white;
+    this->lcd_TWD->setStyleSheet((QString().sprintf("background-color: rgba(%d, %d, %d,%d);",color.red(),color.green(),color.blue(),180)));
+    this->lcd_BS->setStyleSheet((QString().sprintf("background-color: rgba(%d, %d, %d, %d);",color.red(),color.green(),color.blue(),180)));
 }
 void BoardVlmNew::slot_timerElapsed()
 {

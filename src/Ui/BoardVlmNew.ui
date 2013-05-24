@@ -10,7 +10,7 @@
     <x>0</x>
     <y>0</y>
     <width>270</width>
-    <height>504</height>
+    <height>509</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -183,6 +183,27 @@
       <string>TWD</string>
      </property>
     </widget>
+    <widget class="QLabel" name="lab_backTab1">
+     <property name="geometry">
+      <rect>
+       <x>0</x>
+       <y>0</y>
+       <width>250</width>
+       <height>341</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string/>
+     </property>
+    </widget>
+    <zorder>lab_backTab1</zorder>
+    <zorder>lcd_BS</zorder>
+    <zorder>lab_BS</zorder>
+    <zorder>windAngle</zorder>
+    <zorder>lcd_TWS</zorder>
+    <zorder>lab_TWS</zorder>
+    <zorder>lcd_TWD</zorder>
+    <zorder>lab_TWD</zorder>
    </widget>
    <widget class="QWidget" name="tab_2">
     <attribute name="title">
@@ -199,13 +220,13 @@
    <property name="geometry">
     <rect>
      <x>0</x>
-     <y>330</y>
+     <y>338</y>
      <width>252</width>
      <height>171</height>
     </rect>
    </property>
    <property name="autoFillBackground">
-    <bool>true</bool>
+    <bool>false</bool>
    </property>
    <property name="frameShape">
     <enum>QFrame::Box</enum>
@@ -574,8 +595,8 @@
    <widget class="QPushButton" name="btn_sync">
     <property name="geometry">
      <rect>
-      <x>28</x>
-      <y>23</y>
+      <x>9</x>
+      <y>29</y>
       <width>71</width>
       <height>23</height>
      </rect>
@@ -584,7 +605,37 @@
      <string>VLM Sync</string>
     </property>
    </widget>
+   <widget class="QLabel" name="lab_RANK">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>10</y>
+      <width>161</width>
+      <height>16</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string/>
+    </property>
+    <property name="alignment">
+     <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
+    </property>
+   </widget>
   </widget>
+  <widget class="QLabel" name="lab_back">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>250</width>
+     <height>509</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>TextLabel</string>
+   </property>
+  </widget>
+  <zorder>lab_back</zorder>
   <zorder>frame</zorder>
   <zorder>tabWidget</zorder>
  </widget>
