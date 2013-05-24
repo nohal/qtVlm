@@ -3,6 +3,7 @@
 #include "boatVLM.h"
 #include "POI.h"
 #include "DialogWp.h"
+#include "Polar.h"
 #include <QBitmap>
 BoardVlmNew::BoardVlmNew(MainWindow *main)
     : QDialog(main)
@@ -76,6 +77,11 @@ void BoardVlmNew::slot_TWAChanged()
     if(blocking) return;
     blocking=true;
     currentRB=this->lab_TWA;
+    if(qAbs(spin_TWA->value())<myBoat->getPolarData()->getBvmgUp(myBoat->getWindSpeed()) ||
+       qAbs(spin_TWA->value())>myBoat->getPolarData()->getBvmgDown(myBoat->getWindSpeed()))
+        spin_TWA->setStyleSheet("QDoubleSpinBox {color: red;} QDoubleSpinBox QWidget {color:black;}");
+    else
+        spin_TWA->setStyleSheet("color: black;");
     double heading = myBoat->getWindDir() + spin_TWA->value();
     if(heading<0) heading+=360;
     else if(heading>360) heading-=360;
@@ -96,6 +102,11 @@ void BoardVlmNew::slot_HDGChanged()
     double heading=spin_HDG->value();
     double angle=Util::A180(heading-myBoat->getWindDir());
     this->spin_TWA->setValue(angle);
+    if(qAbs(spin_TWA->value())<myBoat->getPolarData()->getBvmgUp(myBoat->getWindSpeed()) ||
+       qAbs(spin_TWA->value())>myBoat->getPolarData()->getBvmgDown(myBoat->getWindSpeed()))
+        spin_TWA->setStyleSheet("QDoubleSpinBox {color: red;} QDoubleSpinBox QWidget {color:black;}");
+    else
+        spin_TWA->setStyleSheet("color: black;");
     this->windAngle->setValues(myBoat->getHeading(),myBoat->getWindDir(),myBoat->getWindSpeed(),myBoat->getWPdir(),myBoat->getClosest().capArrival,heading);
     spin_HDG->blockSignals(false);
     spin_TWA->blockSignals(false);
@@ -184,6 +195,14 @@ void BoardVlmNew::slot_updateData()
     updateLcds();
     this->spin_HDG->setValue(myBoat->getHeading());
     this->spin_TWA->setValue(computeAngle());
+    if(qAbs(spin_TWA->value())<myBoat->getPolarData()->getBvmgUp(myBoat->getWindSpeed()) ||
+       qAbs(spin_TWA->value())>myBoat->getPolarData()->getBvmgDown(myBoat->getWindSpeed()))
+        spin_TWA->setStyleSheet("QDoubleSpinBox {color: red;} QDoubleSpinBox QWidget {color:black;}");
+    else
+        spin_TWA->setStyleSheet("color: black;");
+    QString tipTWA=tr("Meilleurs angles au pres/portant:")+" "+QString().sprintf("%.2f",myBoat->getPolarData()->getBvmgUp(myBoat->getWindSpeed()))+tr("deg")+"/"
+            +QString().sprintf("%.2f",myBoat->getPolarData()->getBvmgDown(myBoat->getWindSpeed()))+tr("deg");
+    spin_TWA->setToolTip("<p style='white-space:pre'>"+tipTWA+"</p>");
     this->lab_TWA->setStyleSheet(defaultStyleSheet.toUtf8());
     this->lab_HDG->setStyleSheet(defaultStyleSheet.toUtf8());
     this->lab_ORTHO->setStyleSheet(defaultStyleSheet.toUtf8());
