@@ -351,7 +351,7 @@ void opponent::updatePosition()
     boat_j-=(height/2);
 
     setPos(boat_i, boat_j);
-    if(!parentWindow->get_shOpp_st())
+    //if(!parentWindow->get_shOpp_st())
         drawTrace();
 }
 void opponent::drawTrace()
@@ -375,7 +375,7 @@ void opponent::drawTrace()
             }
         }
     }
-    if(opp_trace==1)
+    if(opp_trace==1 && !parentWindow->get_shOpp_st())
     {
         trace_drawing->slot_showMe();
     }
@@ -581,8 +581,9 @@ void opponent::slot_shOpp(bool isHidden) {
         show();
         if(trace_drawing)
         {
-            drawTrace();
             trace_drawing->show();
+            drawTrace();
+            trace_drawing->slot_showMe();
         }
     }
 }
@@ -1173,7 +1174,7 @@ void opponentList::requestFinished (QByteArray res_byte)
                     else
                         qWarning()<<"trace is empty??";
                 }
-                if(!parent->get_shOpp_st())
+                //if(!parent->get_shOpp_st())
                     opp->drawTrace();
             }
             else
@@ -1190,7 +1191,7 @@ void opponentList::requestFinished (QByteArray res_byte)
                                             opp->getTrace()->last().lon,
                                             QString());
                     }
-                    if(!parent->get_shOpp_st())
+                    //if(!parent->get_shOpp_st())
                         opp->drawTrace();
                 }
             }

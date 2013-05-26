@@ -31,6 +31,7 @@ BoardVlmNew::BoardVlmNew(MainWindow *main)
     connect(main,SIGNAL(boatHasUpdated(boat*)),this,SLOT(slot_updateData()));
     connect(main,SIGNAL(boatChanged(boat*)),this,SLOT(slot_updateData()));
     connect(main,SIGNAL(WPChanged(double,double)),this,SLOT(slot_wpChanged()));
+    connect(main,SIGNAL(WPChanged()),this,SLOT(slot_wpChanged()));
     connect(main,SIGNAL(outDatedVlmData()),this,SLOT(slot_outDatedVlmData()));
     connect(this->rd_HDG,SIGNAL(clicked()),this,SLOT(slot_sendOrder()));
     connect(this->rd_TWA,SIGNAL(clicked()),this,SLOT(slot_sendOrder()));
@@ -143,7 +144,7 @@ void BoardVlmNew::slot_wpChanged()
 {
     timerStop();
     if(!myBoat) return;
-    //btn_sync->setStyleSheet(QString::fromUtf8("background-color: rgb(255, 0, 0);"));
+    this->slot_updateBtnWP();
 }
 
 void BoardVlmNew::slot_sendOrder()
@@ -436,7 +437,7 @@ void BoardVlmNew::slot_updateBtnWP(void)
             {
                 foundWP=true;
                 wpName=main->getPois()->at(n)->getName();
-                if(main->getPois()->at(n)->getWph()==WPHd)
+                if(qRound(main->getPois()->at(n)->getWph()*100.0)==qRound(WPHd*100.0))
                     correctWPH=true;
                 break;
             }
