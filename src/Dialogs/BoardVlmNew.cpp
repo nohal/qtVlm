@@ -5,6 +5,7 @@
 #include "DialogWp.h"
 #include "Polar.h"
 #include "settings.h"
+#include "vlmLine.h"
 #include <QBitmap>
 BoardVlmNew::BoardVlmNew(MainWindow *main)
     : QDialog(main)
@@ -77,6 +78,7 @@ BoardVlmNew::BoardVlmNew(MainWindow *main)
     pnt.end();
     this->lab_back->setPixmap(bg);
     this->lab_backTab1->setPixmap(bg);
+    this->lab_backTab2->setPixmap(bg);
 }
 
 BoardVlmNew::~BoardVlmNew()
@@ -218,7 +220,26 @@ void BoardVlmNew::slot_updateData()
     this->blockSignals(true);
     set_style(this->btn_sync,QColor(255,255,127));
     updateLcds();
+    QPointF position=myBoat->getPosition();
+    det_POS->setText(Util::formatLongitude(position.x())+" - "+Util::formatLatitude(position.y()));
+    det_DNM->setText(QString().sprintf("%.2f",myBoat->getDnm())+tr("nm"));
+    det_ORT->setText(QString().sprintf("%.2f",myBoat->getOrtho())+tr("deg"));
+    det_VMG->setText(QString().sprintf("%.2f",myBoat->getVmg())+tr("kts"));
+    det_ANGLE->setText(QString().sprintf("%.2f",myBoat->getWPangle())+tr("deg"));
+    det_TWS->setText(QString().sprintf("%.2f",myBoat->getWindSpeed())+tr("kts"));
+    det_TWD->setText(QString().sprintf("%.2f",myBoat->getWindDir())+tr("deg"));
+    det_UPWind->setText(QString().sprintf("%.2f",myBoat->getPolarData()->getBvmgUp(myBoat->getWindSpeed()))+tr("deg"));
+    det_DwWind->setText(QString().sprintf("%.2f",myBoat->getPolarData()->getBvmgDown(myBoat->getWindSpeed()))+tr("deg"));
+    det_LOCH->setText(QString().sprintf("%.2f",myBoat->getLoch())+tr("nm"));
+    this->det_BS->setText(QString().sprintf("%.2f",myBoat->getSpeed())+tr("kts"));
+    this->det_HDG->setText(QString().sprintf("%.2f",myBoat->getHeading())+tr("deg"));
+    this->det_AVG->setText(QString().sprintf("%.2f",myBoat->getAvg())+tr("kts"));
     this->lab_RANK->setText(myBoat->getName()+" "+myBoat->getScore()+" ("+QString().sprintf("%d",myBoat->getRank())+")");
+    this->det_boatBox->setTitle(lab_RANK->text());
+    this->det_raceBox->setTitle(myBoat->getRaceName());
+    this->det_GATE_ORT->setText(QString().sprintf("%.2f",myBoat->getClosest().capArrival)+tr("deg"));
+    this->det_GATE_DIST->setText(QString().sprintf("%.2f",myBoat->getClosest().distArrival)+tr("nm"));
+    this->det_GATE->setText(myBoat->getGates().at(myBoat->getNWP()-1)->getDesc());
     this->spin_HDG->setValue(myBoat->getHeading());
     this->spin_TWA->setValue(computeAngle());
     if(qAbs(spin_TWA->value())<myBoat->getPolarData()->getBvmgUp(myBoat->getWindSpeed()) ||
