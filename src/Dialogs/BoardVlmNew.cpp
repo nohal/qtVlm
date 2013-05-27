@@ -59,6 +59,10 @@ BoardVlmNew::BoardVlmNew(MainWindow *main)
     timer->setInterval(600);
     timer->setSingleShot(false);
     connect(timer,SIGNAL(timeout()),this,SLOT(slot_timerElapsed()));
+    timerDial=new QTimer(this);
+    timerDial->setInterval(500);
+    timerDial->setSingleShot(true);
+    connect(timerDial,SIGNAL(timeout()),this,SLOT(slot_timerDialElapsed()));
     currentRB=NULL;
     myBoat=NULL;
     blocking=false;
@@ -79,6 +83,13 @@ BoardVlmNew::BoardVlmNew(MainWindow *main)
     this->lab_back->setPixmap(bg);
     this->lab_backTab1->setPixmap(bg);
     this->lab_backTab2->setPixmap(bg);
+    polarImg=QPixmap(this->lab_polar->size());
+    polarImg.fill(Qt::red);
+    polarPnt.setRenderHint(QPainter::Antialiasing);
+    this->lab_polar->setPixmap(polarImg);
+    connect(this->spin_PolarTWS,SIGNAL(valueChanged(double)),this,SLOT(slot_drawPolar()));
+    lab_polar->installEventFilter(this);
+    lab_polarData->clear();
 }
 
 BoardVlmNew::~BoardVlmNew()
@@ -182,10 +193,15 @@ void BoardVlmNew::slot_sendOrder()
     }
     this->blockSignals(false);
 }
-void BoardVlmNew::slot_dialChanged(int value)
+void BoardVlmNew::slot_dialChanged(int)
 {
+    if(blocking) return;
     timerStop();
-    switch(value)
+    timerDial->start();
+}
+void BoardVlmNew::slot_timerDialElapsed()
+{
+    switch(dial->value())
     {
     case 1:
         rd_HDG->setChecked(true);
@@ -218,7 +234,7 @@ void BoardVlmNew::slot_updateData()
     myBoat=(boatVLM*)main->getSelectedBoat();
     if(!myBoat) return;
     this->blockSignals(true);
-    set_style(this->btn_sync,QColor(255,255,127));
+    this->blocking=true;
     updateLcds();
     QPointF position=myBoat->getPosition();
     det_POS->setText(Util::formatLongitude(position.x())+" - "+Util::formatLatitude(position.y()));
@@ -296,7 +312,120 @@ void BoardVlmNew::slot_updateData()
     update_btnPilototo();
     slot_updateBtnWP();
     this->blockSignals(false);
-
+    spin_PolarTWS->setValue(myBoat->getWindSpeed());
+    this->blocking=false;
+    set_style(this->btn_sync,QColor(255,255,127));
+}
+void BoardVlmNew::slot_drawPolar()
+{
+    lab_polarData->clear();
+    Polar * polar=myBoat->getPolarData();
+    if(!polar) return;
+    lab_polarName->setText(polar->getName());
+    polarImg.fill(Qt::white);
+    polarPnt.begin(&polarImg);
+    double maxSpeed=-1;
+//    if(this->allSpeed->isChecked())
+//        maxSpeed=polar->getMaxSpeed();
+    QPen pen;
+    pen.setBrush(Qt::red);
+    double maxSize=(polarImg.height()/2)*0.85;
+    double ws=spin_PolarTWS->value();
+    double wsMin=ws;
+    double wsMax=ws;
+//    if(this->allSpeed->isChecked())
+//    {
+//        wsMin=5;
+//        wsMax=50;
+//    }
+    QString s;
+//    if(this->allSpeed->isChecked())
+//    {
+//        this->BVMG_down->clear();
+//        this->BVMG_up->clear();
+//    }
+    QPointF center(0,polarImg.height()/2.0);
+    int step=5;
+    int nn=0;
+    QPolygonF polarGreen;
+    for(ws=wsMin;ws<=wsMax;ws+=step)
+    {
+        ++nn;
+        polarValues.clear();
+        polarLine.clear();
+        polarGreen.clear();
+        double bvmgUp=polar->getBvmgUp(ws,false);
+        double bvmgDown=polar->getBvmgDown(ws,false);
+        pen.setColor(Qt::red);
+        pen.setWidth(2);
+        polarPnt.setPen(pen);
+        s="("+QString().sprintf("%.1f",bvmgUp)+tr("deg")+"/"+QString().sprintf("%.1f",bvmgDown)+tr("deg")+")";
+        this->lab_polarUpDw->setText(s);
+        for(int angle=0;angle<=180;++angle)
+        {
+            double speed=polar->getSpeed(ws,angle,false);
+            polarValues.append(speed);
+            if(speed>maxSpeed /*&& !this->allSpeed->isChecked()*/) maxSpeed=speed;
+        }
+        maxSpeed=ceil(maxSpeed);
+        for (int angle=0;angle<=180;++angle)
+        {
+            QLineF line(center,QPointF(polarImg.width(),polarImg.height()/2.0));
+            line.setAngle(90-angle);
+            line.setLength(polarValues.at(angle)*maxSize/maxSpeed);
+            polarLine.append(line.p2());
+            if(angle>bvmgUp && angle < bvmgDown)
+                polarGreen.append(line.p2());
+        }
+        polarPnt.drawPolyline(polarLine.toPolygon());
+        pen.setColor(Qt::green);
+        polarPnt.setPen(pen);
+        polarPnt.drawPolyline(polarGreen.toPolygon());
+//        if(this->allSpeed->isChecked())
+//        {
+//            pen.setColor(Qt::blue);
+//            pen.setWidthF(0.5);
+//            pnt.setPen(pen);
+//            s=s.sprintf("tws %.0f",ws);
+//            pnt.drawText(polarLine.at(qMin(180,nn*15+40)),s);
+//        }
+    }
+    pen.setColor(Qt::black);
+    pen.setWidthF(0.5);
+    polarPnt.setPen(pen);
+    QPolygonF lines;
+    bool flip=true;
+    for (int bs=0;bs<=maxSpeed+1;bs+=2)
+    {
+        lines.clear();
+        for (int angle=0;angle<=180;++angle)
+        {
+            QLineF line(center,QPointF(polarImg.width(),polarImg.height()/2.0));
+            line.setAngle(90-angle);
+            line.setLength(bs*maxSize/maxSpeed);
+            lines.append(line.p2());
+        }
+        polarPnt.drawPolyline(lines.toPolygon());
+        if(flip)
+        {
+            s=s.sprintf("%d",bs);
+            polarPnt.drawText(lines.first(),s);
+        }
+        flip=!flip;
+    }
+    for (int angle=0;angle<=180;angle+=15)
+    {
+        QLineF line(center,QPointF(polarImg.width(),polarImg.height()/2.0));
+        line.setAngle(90-angle);
+        line.setLength((maxSpeed+1)*maxSize/maxSpeed);
+        polarPnt.drawLine(line);
+        if(angle==0) continue;
+        line.setLength(line.length()*1.03);
+        s=s.sprintf("%d",angle);
+        polarPnt.drawText(line.p2(),s);
+    }
+    polarPnt.end();
+    this->lab_polar->setPixmap(polarImg);
 }
 void BoardVlmNew::slot_outDatedVlmData()
 {
@@ -578,6 +707,56 @@ void BoardVlmNew::set_enabled(const bool &b)
 }
 bool BoardVlmNew::eventFilter(QObject *obj, QEvent *event)
 {
+    if(obj==lab_polar)
+    {
+        if(event->type()==QEvent::MouseButtonRelease)
+        {
+            lab_polar->setPixmap(polarImg);
+            lab_polarData->clear();
+            return true;
+        }
+        if(event->type()!=QEvent::MouseMove)
+            return false;
+        QMouseEvent * mouseEvent=static_cast<QMouseEvent*>(event);
+        QPixmap i2=polarImg;
+        QPen pe(Qt::blue);
+        pe.setWidthF(3);
+        QPainter pp(&i2);
+        pp.setRenderHint(QPainter::Antialiasing);
+        pp.setPen(pe);
+        QPointF center(0,polarImg.height()/2.0);
+        QLineF line(center,mouseEvent->pos());
+        int angle=qRound(line.angle());
+        if(angle>180)
+            angle=angle-360;
+        angle=90-angle;
+        if(angle<0 || angle>180)
+            return true;
+        pp.drawLine(center,polarLine.at(angle));
+        pe.setWidthF(1);
+        pp.setPen(pe);
+        QString s;
+        double Y=90-angle;
+        double a=this->spin_PolarTWS->value()*cos(degToRad(Y));
+        double b=this->spin_PolarTWS->value()*sin(degToRad(Y));
+        double bb=b+polarValues.at(angle);
+        double aws=sqrt(a*a+bb*bb);
+        double awa=90-radToDeg(atan(bb/a));
+        double vmg=polarValues.at(angle)*cos(degToRad(angle));
+        s=tr("TWA")+"<br>";
+        s+=QString().sprintf("%d",angle)+tr("deg")+"<br>";
+        s+=tr("BS")+"<br>";
+        s+=QString().sprintf("%.2f",polarValues.at(angle))+tr("kts")+"<br>";
+        s+=tr("AWA")+"<br>";
+        s+=QString().sprintf("%.2f",awa)+tr("deg")+"<br>";
+        s+=tr("AWS")+"<br>";
+        s+=QString().sprintf("%.2f",aws)+tr("kts")+"<br>";
+        s+=tr("VMG")+"<br>";
+        s+=QString().sprintf("%.2f",vmg)+tr("kts");
+        lab_polar->setPixmap(i2);
+        lab_polarData->setText(s);
+        return true;
+    }
     if(obj!=spin_HDG && obj!=spin_TWA) return false;
     QDoubleSpinBox * spinBox=static_cast<QDoubleSpinBox *>(obj);
     if(event->type()==QEvent::KeyPress)

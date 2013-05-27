@@ -5,6 +5,7 @@
 
 #include "ui_BoardVlmNew.h"
 #include "MainWindow.h"
+#include <QPainter>
 #include <QDialog>
 
 
@@ -26,9 +27,11 @@ private slots:
     void slot_TWAChanged();
     void slot_HDGChanged();
     void slot_timerElapsed();
+    void slot_timerDialElapsed();
     void slot_clearPilototo();
     void slot_editWP();
     void slot_clearWP();
+    void slot_drawPolar();
 protected:
     bool eventFilter(QObject *obj, QEvent *event);
 public slots:
@@ -42,6 +45,7 @@ private:
     void updateLcds();
     QString defaultStyleSheet;
     QTimer * timer;
+    QTimer * timerDial;
     QLabel * currentRB;
     void timerStop();
     bool blocking;
@@ -50,6 +54,10 @@ private:
     void update_btnPilototo();
     void set_style(QPushButton * button, QColor color=QColor(230,230,230), QColor color2=Qt::white);
     void set_enabled(const bool &b);
+    QPainter polarPnt;
+    QPixmap polarImg;
+    QPolygonF polarLine;
+    QList<double> polarValues;
 };
 
 #endif // BOARDVLMNEW_H
