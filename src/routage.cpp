@@ -2950,6 +2950,7 @@ void ROUTAGE::convertToRoute()
        poiName=poiPrefix+poiName;
        POI * poi = parent->slot_addPOI(poiName,0,list->at(n).convertionLat,list->at(n).convertionLon,-1,false,false,myBoat);
        poi->setRoute(route);
+       poi->setSequence(n*10);
        poi->setNotSimplificable(list->at(n).notSimplificable);
     }
     delete result;
