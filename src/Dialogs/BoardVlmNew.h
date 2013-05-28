@@ -16,6 +16,7 @@ class BoardVlmNew : public QDialog, public Ui::BoardVlmNew
 public:
     explicit BoardVlmNew(MainWindow *main);
     ~BoardVlmNew();
+    static bool confirmChange();
 private slots:
     void slot_vlmSync();
     void slot_updateData();
@@ -39,6 +40,7 @@ public slots:
     void slot_selectPOI(bool doSelect);
     void slot_selectPOI(POI *);
     void slot_selectWP_POI();
+    void slot_lock();
 private:
     MainWindow * main;
     boatVLM * myBoat;

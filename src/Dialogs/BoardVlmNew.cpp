@@ -7,6 +7,7 @@
 #include "settings.h"
 #include "vlmLine.h"
 #include <QBitmap>
+#include <QMessageBox>
 BoardVlmNew::BoardVlmNew(MainWindow *main)
     : QDialog(main)
 
@@ -32,7 +33,6 @@ BoardVlmNew::BoardVlmNew(MainWindow *main)
     connect(main,SIGNAL(boatHasUpdated(boat*)),this,SLOT(slot_updateData()));
     connect(main,SIGNAL(boatChanged(boat*)),this,SLOT(slot_updateData()));
     connect(main,SIGNAL(WPChanged(double,double)),this,SLOT(slot_wpChanged()));
-    connect(main,SIGNAL(WPChanged()),this,SLOT(slot_wpChanged()));
     connect(main,SIGNAL(outDatedVlmData()),this,SLOT(slot_outDatedVlmData()));
     connect(this->rd_HDG,SIGNAL(clicked()),this,SLOT(slot_sendOrder()));
     connect(this->rd_TWA,SIGNAL(clicked()),this,SLOT(slot_sendOrder()));
@@ -49,6 +49,7 @@ BoardVlmNew::BoardVlmNew(MainWindow *main)
     connect(main,SIGNAL(selectPOI(bool)),this,SLOT(slot_selectPOI(bool)));
     connect(main,SIGNAL(wpChanged()),this,SLOT(slot_updateBtnWP()));
     connect(main,SIGNAL(paramVLMChanged()),this,SLOT(slot_updateData()));
+    connect(main,SIGNAL(updateLockIcon(QIcon)),this,SLOT(slot_lock()));
     wpDialog = new DialogWp();
     connect(wpDialog,SIGNAL(selectPOI()),this,SLOT(slot_selectWP_POI()));
     connect(wpDialog,SIGNAL(selectPOI()),main,SLOT(slotSelectWP_POI()));
@@ -105,11 +106,15 @@ void BoardVlmNew::slot_TWAChanged()
     if(blocking) return;
     blocking=true;
     currentRB=this->lab_TWA;
-    if(qAbs(spin_TWA->value())<myBoat->getPolarData()->getBvmgUp(myBoat->getWindSpeed()) ||
-       qAbs(spin_TWA->value())>myBoat->getPolarData()->getBvmgDown(myBoat->getWindSpeed()))
-        spin_TWA->setStyleSheet("QDoubleSpinBox {color: red;} QDoubleSpinBox QWidget {color:black;}");
-    else
-        spin_TWA->setStyleSheet("color: black;");
+    if(myBoat->getPolarData())
+    {
+        double twa=qAbs(qRound(spin_TWA->value()*10.0));
+        if(twa<qRound(myBoat->getPolarData()->getBvmgUp(myBoat->getWindSpeed())*10.0) ||
+           twa>qRound(myBoat->getPolarData()->getBvmgDown(myBoat->getWindSpeed())*10.0))
+            spin_TWA->setStyleSheet("QDoubleSpinBox {color: red;} QDoubleSpinBox QWidget {color:black;}");
+        else
+            spin_TWA->setStyleSheet(spin_HDG->styleSheet());
+    }
     double heading = myBoat->getWindDir() + spin_TWA->value();
     if(heading<0) heading+=360;
     else if(heading>360) heading-=360;
@@ -135,11 +140,15 @@ void BoardVlmNew::slot_HDGChanged()
     double heading=spin_HDG->value();
     double angle=Util::A180(heading-myBoat->getWindDir());
     this->spin_TWA->setValue(angle);
-    if(qAbs(spin_TWA->value())<myBoat->getPolarData()->getBvmgUp(myBoat->getWindSpeed()) ||
-       qAbs(spin_TWA->value())>myBoat->getPolarData()->getBvmgDown(myBoat->getWindSpeed()))
-        spin_TWA->setStyleSheet("QDoubleSpinBox {color: red;} QDoubleSpinBox QWidget {color:black;}");
-    else
-        spin_TWA->setStyleSheet("color: black;");
+    if(myBoat->getPolarData())
+    {
+        double twa=qAbs(qRound(spin_TWA->value()*10.0));
+        if(twa<qRound(myBoat->getPolarData()->getBvmgUp(myBoat->getWindSpeed())*10.0) ||
+           twa>qRound(myBoat->getPolarData()->getBvmgDown(myBoat->getWindSpeed())*10.0))
+            spin_TWA->setStyleSheet("QDoubleSpinBox {color: red;} QDoubleSpinBox QWidget {color:black;}");
+        else
+            spin_TWA->setStyleSheet(spin_HDG->styleSheet());
+    }
     this->windAngle->setValues(myBoat->getHeading(),myBoat->getWindDir(),myBoat->getWindSpeed(),myBoat->getWPdir(),myBoat->getClosest().capArrival,heading);
     spin_HDG->blockSignals(false);
     spin_TWA->blockSignals(false);
@@ -152,6 +161,24 @@ void BoardVlmNew::slot_HDGChanged()
     myBoat->drawEstime(spin_HDG->value(),newSpeed);
     blocking=false;
 }
+void BoardVlmNew::slot_lock()
+{
+    bool lock=true;
+    if(myBoat)
+        lock=myBoat->getLockStatus();
+    this->spin_HDG->setDisabled(lock);
+    this->spin_TWA->setDisabled(lock);
+    this->rd_HDG->setDisabled(lock);
+    this->rd_ORTHO->setDisabled(lock);
+    this->rd_TWA->setDisabled(lock);
+    this->rd_VBVMG->setDisabled(lock);
+    this->rd_VMG->setDisabled(lock);
+    this->dial->setDisabled(lock);
+    this->btn_angleFlip->setDisabled(lock);
+    wpDialog->setLocked(!lock);
+    this->btn_clearPilototo->setDisabled(lock);
+    this->btn_clearWP->setDisabled(lock);
+}
 
 void BoardVlmNew::slot_wpChanged()
 {
@@ -163,8 +190,9 @@ void BoardVlmNew::slot_wpChanged()
 void BoardVlmNew::slot_sendOrder()
 {
     timerStop();
-    if(!myBoat) return;
+    if(!myBoat || myBoat->getLockStatus()) return;
     this->blockSignals(true);
+    dial->blockSignals(true);
     set_style(this->btn_sync,QColor(255,0,0));
     if(rd_HDG->isChecked())
     {
@@ -191,6 +219,7 @@ void BoardVlmNew::slot_sendOrder()
         myBoat->set_pilotVbvmg();
         dial->setValue(3);
     }
+    dial->blockSignals(false);
     this->blockSignals(false);
 }
 void BoardVlmNew::slot_dialChanged(int)
@@ -232,6 +261,7 @@ void BoardVlmNew::slot_updateData()
 {
     timerStop();
     myBoat=(boatVLM*)main->getSelectedBoat();
+    slot_lock();
     if(!myBoat) return;
     this->blockSignals(true);
     this->blocking=true;
@@ -247,8 +277,11 @@ void BoardVlmNew::slot_updateData()
     det_ANGLE->setText(QString().sprintf("%.2f",myBoat->getWPangle())+tr("deg"));
     det_TWS->setText(QString().sprintf("%.2f",myBoat->getWindSpeed())+tr("kts"));
     det_TWD->setText(QString().sprintf("%.2f",myBoat->getWindDir())+tr("deg"));
-    det_UPWind->setText(QString().sprintf("%.2f",myBoat->getPolarData()->getBvmgUp(myBoat->getWindSpeed()))+tr("deg"));
-    det_DwWind->setText(QString().sprintf("%.2f",myBoat->getPolarData()->getBvmgDown(myBoat->getWindSpeed()))+tr("deg"));
+    if(myBoat->getPolarData())
+    {
+        det_UPWind->setText(QString().sprintf("%.2f",myBoat->getPolarData()->getBvmgUp(myBoat->getWindSpeed()))+tr("deg"));
+        det_DwWind->setText(QString().sprintf("%.2f",myBoat->getPolarData()->getBvmgDown(myBoat->getWindSpeed()))+tr("deg"));
+    }
     if(qRound(myBoat->getLoch())<1000)
         det_LOCH->setText(QString().sprintf("%.2f",myBoat->getLoch())+tr("nm"));
     else
@@ -267,14 +300,18 @@ void BoardVlmNew::slot_updateData()
     this->det_GATE->setText(myBoat->getGates().at(myBoat->getNWP()-1)->getDesc());
     this->spin_HDG->setValue(myBoat->getHeading());
     this->spin_TWA->setValue(computeAngle());
-    if(qAbs(spin_TWA->value())<myBoat->getPolarData()->getBvmgUp(myBoat->getWindSpeed()) ||
-       qAbs(spin_TWA->value())>myBoat->getPolarData()->getBvmgDown(myBoat->getWindSpeed()))
-        spin_TWA->setStyleSheet("QDoubleSpinBox {color: red;} QDoubleSpinBox QWidget {color:black;}");
-    else
-        spin_TWA->setStyleSheet("color: black;");
-    QString tipTWA=tr("Meilleurs angles au pres/portant:")+" "+QString().sprintf("%.2f",myBoat->getPolarData()->getBvmgUp(myBoat->getWindSpeed()))+tr("deg")+"/"
-            +QString().sprintf("%.2f",myBoat->getPolarData()->getBvmgDown(myBoat->getWindSpeed()))+tr("deg");
-    spin_TWA->setToolTip("<p style='white-space:pre'>"+tipTWA+"</p>");
+    if(myBoat->getPolarData())
+    {
+        double twa=qAbs(qRound(spin_TWA->value()*10.0));
+        if(twa<qRound(myBoat->getPolarData()->getBvmgUp(myBoat->getWindSpeed())*10.0) ||
+           twa>qRound(myBoat->getPolarData()->getBvmgDown(myBoat->getWindSpeed())*10.0))
+            spin_TWA->setStyleSheet("QDoubleSpinBox {color: red;} QDoubleSpinBox QWidget {color:black;}");
+        else
+            spin_TWA->setStyleSheet(spin_HDG->styleSheet());
+        QString tipTWA=tr("Meilleurs angles au pres/portant:")+" "+QString().sprintf("%.2f",myBoat->getPolarData()->getBvmgUp(myBoat->getWindSpeed()))+tr("deg")+"/"
+                +QString().sprintf("%.2f",myBoat->getPolarData()->getBvmgDown(myBoat->getWindSpeed()))+tr("deg");
+        spin_TWA->setToolTip("<p style='white-space:pre'>"+tipTWA+"</p>");
+    }
     this->lab_TWA->setStyleSheet(defaultStyleSheet.toUtf8());
     this->lab_HDG->setStyleSheet(defaultStyleSheet.toUtf8());
     this->lab_ORTHO->setStyleSheet(defaultStyleSheet.toUtf8());
@@ -319,10 +356,15 @@ void BoardVlmNew::slot_updateData()
 void BoardVlmNew::slot_drawPolar()
 {
     lab_polarData->clear();
-    Polar * polar=myBoat->getPolarData();
-    if(!polar) return;
-    lab_polarName->setText(polar->getName());
     polarImg.fill(Qt::white);
+    Polar * polar=myBoat->getPolarData();
+    if(!polar)
+    {
+        lab_polarName->setText(tr("pas de polaire chargee"));
+        lab_polar->setPixmap(polarImg);
+        return;
+    }
+    lab_polarName->setText(polar->getName());
     polarPnt.begin(&polarImg);
     double maxSpeed=-1;
 //    if(this->allSpeed->isChecked())
@@ -478,7 +520,7 @@ double BoardVlmNew::computeAngle(void) { /* we assume a boat exists => should be
 }
 void BoardVlmNew::slot_clearPilototo(void)
 {
-    //btn_clearPilototo->setStyleSheet(QString::fromUtf8("background-color: rgb(255, 0, 0);"));
+    if(!myBoat) return;
     main->slot_clearPilototo();
 }
 void BoardVlmNew::update_btnPilototo()
@@ -715,7 +757,7 @@ bool BoardVlmNew::eventFilter(QObject *obj, QEvent *event)
             lab_polarData->clear();
             return true;
         }
-        if(event->type()!=QEvent::MouseMove)
+        if(event->type()!=QEvent::MouseMove || polarLine.isEmpty())
             return false;
         QMouseEvent * mouseEvent=static_cast<QMouseEvent*>(event);
         QPixmap i2=polarImg;
@@ -784,4 +826,13 @@ bool BoardVlmNew::eventFilter(QObject *obj, QEvent *event)
             spinBox->setSingleStep(1);
     }
     return false;
+}
+bool BoardVlmNew::confirmChange()
+{
+    if(Settings::getSetting("askConfirmation","0").toInt()==0)
+        return true;
+
+    return QMessageBox::question(0,tr("Confirmation a chaque ordre vers VLM"),
+                                 tr("Confirmez-vous cet ordre?"),QMessageBox::Yes|QMessageBox::No,
+                             QMessageBox::Yes)==QMessageBox::Yes;
 }

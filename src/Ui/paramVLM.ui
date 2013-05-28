@@ -118,22 +118,6 @@
         </widget>
        </item>
        <item>
-        <widget class="QGroupBox" name="groupBox_12">
-         <property name="title">
-          <string>Divers</string>
-         </property>
-         <layout class="QVBoxLayout" name="verticalLayout_3">
-          <item>
-           <widget class="QCheckBox" name="classicalButtons">
-            <property name="text">
-             <string>Boutons VLM classiques</string>
-            </property>
-           </widget>
-          </item>
-         </layout>
-        </widget>
-       </item>
-       <item>
         <widget class="QGroupBox" name="groupBox_15">
          <property name="title">
           <string>Repertoire des cartes</string>
@@ -1423,7 +1407,6 @@
   <tabstop>chkPavillon</tabstop>
   <tabstop>defFontName</tabstop>
   <tabstop>defFontSize</tabstop>
-  <tabstop>classicalButtons</tabstop>
   <tabstop>pushButton_7</tabstop>
   <tabstop>pushButton</tabstop>
   <tabstop>pushButton_3</tabstop>
