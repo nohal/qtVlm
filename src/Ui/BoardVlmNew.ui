@@ -32,7 +32,7 @@
     <enum>QTabWidget::East</enum>
    </property>
    <property name="currentIndex">
-    <number>0</number>
+    <number>2</number>
    </property>
    <widget class="QWidget" name="tab">
     <attribute name="title">
@@ -959,6 +959,26 @@
       <set>Qt::AlignCenter</set>
      </property>
     </widget>
+    <widget class="QLabel" name="lab_backTab3">
+     <property name="geometry">
+      <rect>
+       <x>0</x>
+       <y>0</y>
+       <width>250</width>
+       <height>350</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string/>
+     </property>
+    </widget>
+    <zorder>lab_backTab3</zorder>
+    <zorder>lab_polar</zorder>
+    <zorder>spin_PolarTWS</zorder>
+    <zorder>label</zorder>
+    <zorder>lab_polarUpDw</zorder>
+    <zorder>lab_polarData</zorder>
+    <zorder>lab_polarName</zorder>
    </widget>
   </widget>
   <widget class="QFrame" name="frame">

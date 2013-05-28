@@ -787,49 +787,42 @@ void BoardWindTool::slot_setChangeStatus(bool,bool,bool) {
 }
 
 /*********************/
-/* VLM20 windAngle  */
+/* VLM20 windAngle   */
+/*********************/
 
 tool_windAngle::tool_windAngle(QWidget * parent):QWidget(parent)
 {
-    /* load image */
-    //img_fond = new QImage("img/tool_1zone_2.png");
-    //w=img_fond->width();
-    //h=img_fond->height();
-    //setFixedSize(w,h);
-
-    w=200;
-    h=200;
-    setFixedSize(w,h);
+    setFixedSize(200,200);
     QPixmap skin;
     skin.load("img/skin_compas.png");
-    img_fond=QPixmap(w,h);
+    img_fond=QPixmap(200,200);
     img_fond.fill(Qt::transparent);
     QPainter pnt(&img_fond);
     pnt.setCompositionMode(QPainter::CompositionMode_SourceOver);
     pnt.setRenderHint(QPainter::Antialiasing,true);
-    pnt.drawPixmap(0,0,skin,0,0,w,h);
-    pnt.drawPixmap(0,0,skin,w+w/2,0,w,h);
+    pnt.drawPixmap(0,0,skin,0,0,200,200);
+    pnt.drawPixmap(0,0,skin,300,0,200,200);
     pnt.end();
-    img_boat=QPixmap(w,h);
+    img_boat=QPixmap(200,200);
     img_boat.fill(Qt::transparent);
     pnt.begin(&img_boat);
-    pnt.drawPixmap(0,0,skin,0,h+h/2,w,h);
+    pnt.drawPixmap(0,0,skin,0,300,200,200);
     pnt.end();
     heading =windDir=windSpeed=0;
-    img_arrow_wp=QPixmap(w,h);
+    img_arrow_wp=QPixmap(200,200);
     img_arrow_wp.fill(Qt::transparent);
     pnt.begin(&img_arrow_wp);
-    pnt.drawPixmap(0,0,skin,w+w/2,h+h/2,w,h);
+    pnt.drawPixmap(0,0,skin,300,300,200,200);
     pnt.end();
-    img_arrow_gate=QPixmap(w,h);
+    img_arrow_gate=QPixmap(200,200);
     img_arrow_gate.fill(Qt::transparent);
     pnt.begin(&img_arrow_gate);
-    pnt.drawPixmap(0,0,skin,3*w,h+h/2,w,h);
+    pnt.drawPixmap(0,0,skin,600,300,200,200);
     pnt.end();
-    img_arrow_wind=QPixmap(w,h);
+    img_arrow_wind=QPixmap(200,200);
     img_arrow_wind.fill(Qt::transparent);
     pnt.begin(&img_arrow_wind);
-    pnt.drawPixmap(0,0,skin,0,3*h,w,h);
+    pnt.drawPixmap(0,0,skin,600,0,200,200);
     pnt.end();
     WPdir = -1;
     newHeading=-1;
@@ -841,19 +834,18 @@ void tool_windAngle::paintEvent(QPaintEvent * /*event*/)
     painter.setRenderHint(QPainter::Antialiasing,true);
     painter.setCompositionMode(QPainter::CompositionMode_SourceOver);
 
-    painter.setViewport(0,0,w,h);
+    painter.setViewport(0,0,200,200);
 
     draw(&painter);
 }
 
 void tool_windAngle::draw(QPainter * painter)
 {
-#if 1
     painter->drawPixmap(0,0,img_fond);
     painter->save();
-    painter->translate(w/2,h/2);
+    painter->translate(100,100);
     painter->rotate(heading);
-    painter->drawPixmap(-w/2,-h/2,img_boat);
+    painter->drawPixmap(-100,-100,img_boat);
     painter->restore();
     if(newHeading!=heading && newHeading!=-1)
     {
@@ -864,23 +856,23 @@ void tool_windAngle::draw(QPainter * painter)
         pnt.fillRect(0,0,200,200,QBrush(QColor(0,0,0,100)));
         pnt.end();
         painter->save();
-        painter->translate(w/2,h/2);
+        painter->translate(100,100);
         painter->rotate(newHeading);
-        painter->drawPixmap(-w/2,-h/2,tempBoat);
+        painter->drawPixmap(-100,-100,tempBoat);
         painter->restore();
     }
     if(WPdir!=-1)
     {
         painter->save();
-        painter->translate(w/2,h/2);
+        painter->translate(100,100);
         painter->rotate(WPdir);
-        painter->drawPixmap(-w/2,-h/2,img_arrow_wp);
+        painter->drawPixmap(-100,-100,img_arrow_wp);
         painter->restore();
     }
     painter->save();
-    painter->translate(w/2,h/2);
+    painter->translate(100,100);
     painter->rotate(gateDir);
-    painter->drawPixmap(-w/2,-h/2,img_arrow_gate);
+    painter->drawPixmap(-100,-100,img_arrow_gate);
     painter->restore();
     QPixmap tempWind=img_arrow_wind;
     QPainter pnt(&tempWind);
@@ -889,180 +881,15 @@ void tool_windAngle::draw(QPainter * painter)
     pnt.fillRect(0,0,200,200,QBrush(windSpeed_toColor()));
     pnt.end();
     painter->save();
-    painter->translate(w/2,h/2);
+    painter->translate(100,100);
     painter->rotate(windDir);
-    painter->drawPixmap(-w/2,-h/2,tempWind);
+    painter->drawPixmap(-100,-100,tempWind);
     painter->restore();
-#else
-    QFontMetrics fm(painter->font());
-
-    painter->translate(w/2,h/2);
-
-    /* compas */
-    int compas_size=194;
-
-    QPen pen(Qt::black);
-    pen.setWidth(3);
-    painter->setPen(pen);
-
-    painter->drawEllipse(-compas_size/2,-compas_size/2,compas_size,compas_size);
-
-    pen.setWidth(2);
-    painter->setPen(pen);
-
-    for(int i=0;i<360;i+=10) {
-        painter->drawLine(0,-(compas_size/2),0,-(compas_size/2)+10);
-        if(i%30==0) {
-            QString txt = QString().setNum(i);
-            int h=fm.height();
-            int w=fm.width(txt);
-            painter->drawText(-w/2,-(compas_size/2)+10+2,w,h,Qt::AlignCenter,txt);
-        }
-        painter->rotate(10);
-    }
-
-    /* restore transform */
-    painter->resetTransform();
-    painter->translate(w/2,h/2);
-
-
-    /* rotate + boat */
-    if(img_boat && !img_boat->isNull()) {
-        painter->rotate(heading);
-        painter->drawImage(-img_boat->width()/2,-img_boat->height()/2,*img_boat);
-        painter->rotate(-heading);
-    }
-
-    /* newHeading boat */
-    if(img_boat2 && !img_boat2->isNull() && newHeading!=-1) {
-        painter->rotate(newHeading);
-        painter->drawImage(-img_boat2->width()/2,-img_boat2->height()/2,*img_boat2);
-        painter->rotate(-newHeading);
-    }
-
-    /* rotate + wind dir */
-    if(windSpeed!=-1)
-    {
-        painter->rotate(windDir);
-        QPen curPen = painter->pen();
-        painter->setPen(windSpeed_toColor());
-        painter->fillRect(-2,-(compas_size/2),4,40,QBrush(windSpeed_toColor()));
-        painter->setPen(curPen);
-        painter->rotate(-windDir);
-    }
-
-    /* rotate + WP dir */
-    if(WPdir != -1)
-    {
-        painter->rotate(WPdir);
-        QPen curPen = painter->pen();
-        painter->setPen(QColor(0,0,0));
-        painter->fillRect(-2,-(compas_size/2),4,20,QColor(0,0,0));
-        painter->setPen(curPen);
-        painter->rotate(-WPdir);
-    }
-
-#if 0
-    if(!img_fond->isNull() && !img_compas->isNull() && !img_boat->isNull())
-    {
-        int x,y;
-        //painter->drawImage(0,0,*img_fond);
-
-        x=23+((w-23)-img_compas->width())/2;
-        y=23; /*not centering */
-        painter->drawImage(x,y,*img_compas);
-
-        /* center */
-        x=45+(203-45)/2;
-        y=24+(163-24)/2;
-        int h=163-24;
-        painter->translate(x, y) ;
-
-        /* rotate + boat */
-        painter->rotate(heading);
-        painter->drawImage(-img_boat->width()/2,-img_boat->height()/2,*img_boat);
-        painter->rotate(-heading);
-
-        /* rotate + new heading boat */
-        if(newHeading!=-1 && !img_boat->isNull())
-        {
-            painter->rotate(newHeading);
-            painter->drawImage(-img_boat2->width()/2,-img_boat2->height()/2,*img_boat2);
-            painter->rotate(-newHeading);
-        }
-
-        /* rotate + wind dir */
-        if(windSpeed!=-1)
-        {
-            painter->rotate(windDir);
-            QPen curPen = painter->pen();
-            painter->setPen(windSpeed_toColor());
-            painter->fillRect(-2,-h/2,4,40,QBrush(windSpeed_toColor()));
-            painter->setPen(curPen);
-            painter->rotate(-windDir);
-        }
-
-        /* rotate + WP dir */
-        if(WPdir != -1)
-        {
-            painter->rotate(WPdir);
-            QPen curPen = painter->pen();
-            painter->setPen(QColor(0,0,0));
-            painter->fillRect(-2,-h/2,4,20,QColor(0,0,0));
-            painter->setPen(curPen);
-            painter->rotate(-WPdir);
-        }
-
-        painter->translate(-x, -y) ;
-        /* title */
-        /*
-        painter->setPen(QColor(220, 200, 140));
-        QFont font = painter->font();
-        font.setBold(true);
-        font.setPointSize(11);
-        painter->setFont(font);
-        painter->translate(11, 176) ;
-        painter->rotate(-90);
-        painter->drawText(QRect(0,0,162,23),Qt::AlignCenter,"Wind-Angle");
-        painter->rotate(90);
-        painter->translate(-11, -176) ;*/
-
-    }
-#endif
-#endif
 }
 
 QColor tool_windAngle::windSpeed_toColor()
 {
     return Grib::getWindColorStatic(windSpeed,Settings::getSetting("colorMapSmooth", true).toBool());
-   //color from VLM code: http://www.virtual-loup-de-mer.org
-   // <=F0 : blanc
-   if (windSpeed <= 1) return QColor(255, 255, 255);
-   // <=F1 : bleu clair legerement gris
-   else if (windSpeed <= 3) return QColor(150, 150, 225 );
-   // <=F2 : bleu un peu plus soutenu
-   else if (windSpeed <= 6) return QColor(80, 140, 205);
-   // <=F3 : bleu plus fonce
-   else if (windSpeed <= 10) return QColor(60, 100, 180);
-   // <=F4 : vert
-   else if (windSpeed <= 15) return QColor(65, 180, 100);
-   // <=F5 : jaune legerement vert
-   else if (windSpeed <= 21) return QColor(180, 205, 10);
-   // <=F6 : jaune orange
-   else if (windSpeed <= 26) return QColor(210, 210, 22);
-   // <=F7 : jaune orange un peu plus rougeatre
-   else if (windSpeed <= 33) return QColor(225, 210, 32);
-   // <=F8 : orange fonce
-   else if (windSpeed <= 40) return QColor(255, 179, 0);
-   // <=F9 : rouge
-   else if (windSpeed <= 47) return QColor(255, 111, 0);
-   // <=F10 rouge / marron
-   else if (windSpeed <= 55) return QColor(255, 43, 0);
-   // <=F11 marron
-   else if (windSpeed <= 63) return QColor(230, 0, 0);
-   // F12  rouge/noir
-   else return QColor(127, 0, 0);
-
 }
 
 void tool_windAngle::setValues(const double &heading, const double &windDir, const double &windSpeed, const double &WPdir, const double &gateDir, const double &newHeading)

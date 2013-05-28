@@ -79,13 +79,18 @@ BoardVlmNew::BoardVlmNew(MainWindow *main)
     QPainter pnt(&bg);
     pnt.setCompositionMode(QPainter::CompositionMode_SourceOver);
     pnt.setRenderHint(QPainter::Antialiasing,true);
-    pnt.drawPixmap(0,0,skin,600,500,270,510);
-    pnt.end();
+    pnt.drawPixmap(0,0,skin,0,510,270,510);
     this->lab_back->setPixmap(bg);
     this->lab_backTab1->setPixmap(bg);
+    bg.fill(Qt::transparent);
+    pnt.drawPixmap(0,0,skin,300,510,270,510);
     this->lab_backTab2->setPixmap(bg);
+    bg.fill(Qt::transparent);
+    pnt.drawPixmap(0,0,skin,600,510,270,510);
+    this->lab_backTab3->setPixmap(bg);
+    pnt.end();
     polarImg=QPixmap(this->lab_polar->size());
-    polarImg.fill(Qt::red);
+    polarImg.fill(Qt::transparent);
     polarPnt.setRenderHint(QPainter::Antialiasing);
     this->lab_polar->setPixmap(polarImg);
     connect(this->spin_PolarTWS,SIGNAL(valueChanged(double)),this,SLOT(slot_drawPolar()));
@@ -356,7 +361,7 @@ void BoardVlmNew::slot_updateData()
 void BoardVlmNew::slot_drawPolar()
 {
     lab_polarData->clear();
-    polarImg.fill(Qt::white);
+    polarImg.fill(Qt::transparent);
     Polar * polar=myBoat->getPolarData();
     if(!polar)
     {
