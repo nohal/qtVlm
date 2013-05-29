@@ -181,6 +181,12 @@ void MainWindow::connectSignals()
     connect(mb->acPOISave, SIGNAL(triggered()), my_centralWidget, SLOT(slot_POISave()));
     connect(mb->acPOIRestore, SIGNAL(triggered()), my_centralWidget, SLOT(slot_POIRestore()));
 
+    /*** Barrier ***/
+    connect(mb->ac_addBarrierSet,SIGNAL(triggered()),this,SLOT(slot_newBarrierSet()));
+    connect(mb->ac_barrierTool,SIGNAL(toggled(bool)),this,SLOT(set_barrierIsEdited(bool)));
+    connect(mb->ac_addBarrier,SIGNAL(triggered()),my_centralWidget,SLOT(slot_newBarrier()));
+    connect(mb->ac_insertBarrier,SIGNAL(triggered()),my_centralWidget,SLOT(slot_newBarrier()));
+
     //-------------------------------------
     // Autres signaux
     //-------------------------------------
@@ -1173,17 +1179,6 @@ void MainWindow::updateNxtVac(void)
     statusBar->drawVacInfo();
 }
 
-/************************************************************************
- *  Barriers
- ***********************************************************************/
-
-bool MainWindow::get_barrierIsEditing(void) {
-    return false;
-}
-
-
-
-
 QList<POI*> * MainWindow::getPois()
 {
     return my_centralWidget->getPoisList();
@@ -1194,6 +1189,10 @@ void MainWindow::slotShowContextualMenu(QGraphicsSceneContextMenuEvent * e)
     mouseClicX = e->scenePos().x();
     mouseClicY = e->scenePos().y();
     int compassMode = my_centralWidget->getCompassMode(mouseClicX,mouseClicY);
+    my_centralWidget->set_cursorPositionOnPopup(QPoint(mouseClicX,mouseClicY));
+
+    /*** Barrier ***/
+    menuBar->ac_insertBarrier->setEnabled(get_barrierIsEditing());
 
     switch(compassMode)
     {
@@ -2311,9 +2310,39 @@ void MainWindow::slot_showPOI_input(POI* poi, const bool &fromMenu)
     dp.initPOI(poi,creationMode);
     dp.exec();
 }
-void MainWindow::slot_POI_input()
-{
+
+void MainWindow::slot_POI_input() {
     DialogPoiInput * d=new DialogPoiInput(my_centralWidget);
     d->exec();
     d->deleteLater();
+}
+
+/****************************************************************
+ * Barrier
+ ***************************************************************/
+
+void MainWindow::slot_newBarrierSet() {
+    BarrierSet * barrierSet = new BarrierSet(this);
+    barrierSet->set_name(tr("New set"));
+    DialogEditBarrier dialogEditBarrier(this);
+    dialogEditBarrier.initDialog(barrierSet);
+    if(dialogEditBarrier.exec() == QDialog::Rejected)
+        delete barrierSet;
+    else {
+        ::barrierSetList.append(barrierSet);
+        menuBar->ac_barrierTool->setChecked(true);
+    }
+}
+
+bool MainWindow::get_barrierIsEditing(void) {
+    //qWarning() << "Barrier isEditing: " << menuBar->ac_barrierTool->isChecked();
+    return menuBar->ac_barrierTool->isChecked();
+}
+
+void MainWindow::set_barrierIsEdited(bool state) {
+    //qWarning() << "Update barrier editing " << state;
+    menuBar->ac_addBarrier->setEnabled(state);
+    for(int i=0;i<(::barrierSetList.count());++i) {
+        ::barrierSetList.at(i)->set_barrierIsEdited(state);
+    }
 }

@@ -146,6 +146,15 @@ class myCentralWidget : public QWidget
 
         FCT_SETGET(ToolBar*,toolBar)
 
+        /*** Barrier ***/
+        FCT_GET(int,barrierEditMode)
+        void escKey_barrier(void);
+
+        void insert_barrierPointAfterPoint(BarrierPoint * point);
+        void insert_barrier(void);
+        void new_barrier(QPointF position);
+        FCT_SETGET(QPoint,cursorPositionOnPopup)
+
         void loadGshhs(void);
 
         void manageAccount(bool * res=NULL);
@@ -219,10 +228,7 @@ class myCentralWidget : public QWidget
 
         void zoom_Pinch(double scale, int XX, int YY);
         void setMagnifier(Magnifier * m){this->magnifier=m;}
-        Magnifier * getMagnifier(){return this->magnifier;}
-
-        /*** Barrier ***/
-        void insert_barrierPointAfterPoint(BarrierPoint * point);
+        Magnifier * getMagnifier(){return this->magnifier;}        
 
 public slots :
         /* Zoom & position */
@@ -252,6 +258,9 @@ public slots :
         void slot_delSelPOIs(void);
         void slot_notSimpAllPOIs(void);
         void slot_simpAllPOIs(void);
+
+        /*** Barrier ***/
+        void slot_newBarrier(void);
 
         /* item state */
         void slot_showALL(bool);
@@ -348,6 +357,8 @@ public slots :
         void updateRoutage();
         void twaDelPoi(POI*);
 
+
+
         /* Boats */
         void writeBoatData(QList<Player*> & player_list,QList<raceData*> & race_list,QString fname);
         void readBoatData(QString fname, bool readAll);
@@ -431,6 +442,15 @@ public slots :
         Player * currentPlayer;
         boatReal * realBoat;
         ROUTE * routeClipboard;
+
+        /*** Barrier ***/
+        int barrierEditMode;
+        BarrierSet * currentSet;
+        BarrierPoint * basePoint;
+        QGraphicsLineItem * barrierEditLine;
+        void move_barrierEditLine(QPoint evtPos);
+        void manage_barrier(void);
+        QPoint cursorPositionOnPopup;
 
         /* Data file */
         xml_POIData * xmlPOI;

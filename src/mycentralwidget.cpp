@@ -93,6 +93,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "MyView.h"
 #include "Progress.h"
 #include "StatusBar.h"
+#include "BarrierSet.h"
+#include "DialogChooseBarrierSet.h"
 
 /*******************/
 /*    myScene      */
@@ -554,6 +556,13 @@ myCentralWidget::myCentralWidget(Projection * proj,MainWindow * parent,MenuBar *
     connect(mainW,SIGNAL(moveBoat(double,double)),this,SLOT(slot_moveBoat(double,double)));
 
     menuBar->setMCW(this);
+
+    /* init barrier part */
+    barrierEditMode=BARRIER_EDIT_NO_EDIT;
+    barrierEditLine = new QGraphicsLineItem();
+    scene->addItem(barrierEditLine);
+    barrierEditLine->setZValue(Z_VALUE_SELECTION);
+    barrierEditLine->hide();
 }
 
 void myCentralWidget::loadGshhs(void) {
@@ -1050,6 +1059,8 @@ void myCentralWidget::mouseMove(int x, int y, QGraphicsItem * )
     if(selection->tryMoving(x,y))
         return;
 
+    move_barrierEditLine(QPoint(x,y));
+
     QListIterator<QGraphicsItem *> it (scene->items());
 
     while(it.hasNext())
@@ -1110,6 +1121,7 @@ void myCentralWidget::escapeKeyPressed(void)
     slot_clearSelection();
     horn->stop();
     this->replayStep=10e6;
+    escKey_barrier();
 }
 void myCentralWidget::slot_mousePress(QGraphicsSceneMouseEvent* e)
 {
@@ -1126,6 +1138,10 @@ void myCentralWidget::slot_mousePress(QGraphicsSceneMouseEvent* e)
 }
 void myCentralWidget::slot_mouseRelease(QGraphicsSceneMouseEvent* e)
 {
+    if(barrierEditMode!=BARRIER_EDIT_NO_EDIT) {
+        manage_barrier();
+    }
+
     if(selection->isSelecting())
     {
         if(!selectionTool)
@@ -1651,9 +1667,139 @@ void myCentralWidget::slot_delSelPOIs(void)
 /************************************************************************
  *  Barriers
  ***********************************************************************/
+void myCentralWidget::escKey_barrier(void) {
+    if(barrierEditMode != BARRIER_EDIT_NO_EDIT) {
+        basePoint=NULL;
+        barrierEditMode = BARRIER_EDIT_NO_EDIT;
+        if(currentSet)
+            currentSet->set_editMode(false);
+        barrierEditLine->hide();
+    }
+}
 
 void myCentralWidget::insert_barrierPointAfterPoint(BarrierPoint * point) {
- // MOD BARRIER
+    if(!point) return;
+    if(currentSet)
+        currentSet->set_editMode(false);
+    currentSet=point->get_barrier()->get_barrierSet();
+    basePoint=point;
+
+    barrierEditLine->setLine(QLineF(point->scenePos(),view->mapFromGlobal(QCursor::pos())));
+    barrierEditLine->setPen(QPen(currentSet->get_color()));
+    barrierEditLine->show();
+
+    currentSet->set_editMode(true);
+    barrierEditMode=BARRIER_EDIT_ADD_POINT;
+}
+
+/****************************************************************************/
+/* create a new barrier using point where context menu was oppened          */
+/* no need to check that point is inside map as it is done in contextMenu   */
+/* event handler                                                            */
+/****************************************************************************/
+void myCentralWidget::slot_newBarrier(void) {
+    BarrierSet * set=DialogChooseBarrierSet::chooseBarrierSet(mainW);
+
+    if(set) {
+        Barrier * newBarrier = new Barrier(mainW,set);
+        set->add_barrier(newBarrier);
+        QPointF earthPos;
+        proj->screen2map(cursorPositionOnPopup, &earthPos);
+        basePoint=newBarrier->appendPoint(earthPos);  //newBarrier->appendPoint(mapViewToEarth(mapFromGlobal(cursorPositionOnPopup)));
+        currentSet=set;
+        currentSet->set_editMode(true);
+        barrierEditMode = BARRIER_EDIT_ADD_POINT;
+        /* show line */
+        QPointF pos=cursorPositionOnPopup;//mapToScene(mapFromGlobal(cursorPositionOnPopup));
+        barrierEditLine->setLine(QLineF(pos,pos));
+        barrierEditLine->setPen(QPen(currentSet->get_color()));
+        barrierEditLine->show();
+    }
+}
+
+/****************************************************************************/
+/* Create a new barrier from menu:                                          */
+/* first ask for a set, then go in ADD_BARRIER mode expecting for user to   */
+/* point a position on map                                                  */
+/****************************************************************************/
+void myCentralWidget::insert_barrier(void) {
+    BarrierSet * set=DialogChooseBarrierSet::chooseBarrierSet(mainW);
+
+    if(set) {
+        currentSet=set;
+        currentSet->set_editMode(true);
+        basePoint=NULL;
+        barrierEditMode = BARRIER_EDIT_ADD_BARRIER;
+    }
+}
+
+void myCentralWidget::move_barrierEditLine(QPoint evtPos) {
+    if(barrierEditMode == BARRIER_EDIT_ADD_POINT) {
+        //QPointF pos = mapToScene(evtPos);
+        QPoint pos = evtPos;
+        QRect rect = QRect(0,0,proj->getW(),proj->getH());
+
+        if(!rect.contains(pos)) {
+            pos.setX(qMin(rect.right(), qMax(pos.x(), rect.left())));
+            pos.setY(qMin(rect.bottom(), qMax(pos.y(),rect.top())));
+        }
+        QLineF line = barrierEditLine->line();
+        line.setP2(pos);
+        barrierEditLine->setLine(line);
+    }
+}
+
+void myCentralWidget::manage_barrier(void) {
+    switch(barrierEditMode) {
+        case BARRIER_EDIT_ADD_BARRIER:
+            if(currentSet) {
+                /* check if cursor is inside map */
+                QRect rect = QRect(0,0,proj->getW(),proj->getH());
+                if(!rect.contains(view->mapFromGlobal(QCursor::pos()))) {
+                    QMessageBox::warning(mainW,tr("Creating a new barrier"),
+                                         tr("Point must be inside map\nPlease select another point or press esc to exit barrier creation mode"));
+                }
+                else {
+                    Barrier * baseBarrier = new Barrier(mainW,currentSet);
+                    baseBarrier->set_editMode(true);
+                    basePoint=baseBarrier->appendPoint(view->mapFromGlobal(QCursor::pos()));
+                    currentSet->add_barrier(baseBarrier);
+                    barrierEditMode = BARRIER_EDIT_ADD_POINT;
+                    /* show line */
+                    QPointF pos=view->mapFromGlobal(QCursor::pos());
+                    barrierEditLine->setLine(QLineF(pos,pos));
+                    barrierEditLine->setPen(QPen(currentSet->get_color()));
+                    barrierEditLine->show();
+                }
+            }
+            else {
+                basePoint=NULL;
+                barrierEditMode = BARRIER_EDIT_NO_EDIT;
+            }
+            break;
+        case BARRIER_EDIT_ADD_POINT: {
+            QPointF pos=view->mapFromGlobal(QCursor::pos());
+            QRectF rect = QRect(0,0,proj->getW(),proj->getH());
+            if(!rect.contains(pos)) {
+                pos.setX(qMin(rect.right(), qMax(pos.x(), rect.left())));
+                pos.setY(qMin(rect.bottom(), qMax(pos.y(),rect.top())));
+            }
+            if(basePoint) {
+                QPointF earthCoord;
+                proj->screen2mapDouble(pos,&earthCoord);
+                basePoint=basePoint->get_barrier()->add_pointAfter(basePoint,earthCoord);
+                barrierEditLine->setLine(QLineF(pos,pos));
+            }
+            else {
+                basePoint=NULL;
+                barrierEditMode = BARRIER_EDIT_NO_EDIT;
+                barrierEditLine->hide();
+                if(currentSet)
+                    currentSet->set_editMode(false);
+            }
+        }
+        break;
+    }
 }
 
 void myCentralWidget::slot_showALL(bool)

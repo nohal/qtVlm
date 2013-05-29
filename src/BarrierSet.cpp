@@ -42,9 +42,6 @@ BarrierSet::BarrierSet(MainWindow * mainWindow)
     name= "";
     barrierList.clear();
     color=Qt::black;
-
-    connect (this,SIGNAL(destroyed()),mainWindow,SLOT(slot_updateMenuBarrierSet()));
-    connect (this,SIGNAL(barrierSetEdited()),mainWindow,SLOT(slot_updateMenuBarrierSet()));
 }
 
 BarrierSet::~BarrierSet(void) {

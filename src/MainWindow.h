@@ -79,7 +79,6 @@ class MainWindow: public QMainWindow
         /*** Barrier ***/
         bool get_barrierIsEditing(void);
 
-
         void getXY(int *X,int *Y){*X=this->mouseClicX;*Y=this->mouseClicY;}
         bool isStartingUp;
 
@@ -99,7 +98,7 @@ class MainWindow: public QMainWindow
 
 public slots:
         void slot_POI_input();
-        void slot_showPOI_input(POI *poi=NULL, const bool &fromMenu=false);
+        void slot_showPOI_input(POI *poi=NULL, const bool &fromMenu=false);        
         void slot_disablePopupMenu();
         void slotFile_Open();
         void slotFile_Reopen();
@@ -183,6 +182,10 @@ public slots:
         void slot_optimizeRoute();
         void slot_simplifyRouteMax();
         void slot_simplifyRouteMin();
+
+        /*** Barrier ***/
+        void slot_newBarrierSet();
+        void set_barrierIsEdited(bool state);
 
     signals:
         void setChangeStatus(bool status,bool pilototo,bool syncBtn);

@@ -25,6 +25,7 @@ Copyright (C) 2008 - Jacques Zaninetti - http://zygrib.free.fr
 #include <QPushButton>
 #include <QLabel>
 #include <QDebug>
+#include <QIcon>
 
 
 #include "MenuBar.h"
@@ -36,7 +37,8 @@ Copyright (C) 2008 - Jacques Zaninetti - http://zygrib.free.fr
 #include "settings.h"
 #include "ToolBar.h"
 #include "Board.h"
-#include <QIcon>
+#include "BarrierSet.h"
+
 
 //===================================================================================
 MenuBar::MenuBar(MainWindow *parent)
@@ -393,6 +395,7 @@ MenuBar::MenuBar(MainWindow *parent)
         menuPOI->addSeparator();
 
         subMenuBarrier= new QMenu(tr("Barrier set"));
+        connect(subMenuBarrier,SIGNAL(aboutToShow()),this,SLOT(slot_showBarrierMenu()));
         menuPOI->addMenu(subMenuBarrier);
         ac_addBarrierSet= addAction(subMenuBarrier,tr("Add barrier set"), tr(""), tr(""), "");
         ac_barrierTool = addActionCheck(subMenuBarrier,tr("Enable editting"),"","");
@@ -496,6 +499,10 @@ QMenu * MenuBar::createPopupBtRight(QWidget *parent)
 
     ac_CreatePOI = addAction(popup, tr("Positionner une nouvelle Marque"),tr(""),tr(""),"");
     ac_pastePOI = addAction(popup, tr("Coller une marque"),tr(""),tr(""),"");
+    popup->addSeparator();
+    ac_insertBarrier = new QAction(tr("Create new barrier"),popup);
+    popup->addAction(ac_insertBarrier);
+
     popup->addSeparator();
     ac_twaLine=addAction(popup,tr("Tracer une estime TWA"),tr(""),tr(""),"");
     ac_compassLine = addAction(popup, tr("Tirer un cap"),tr(""),tr(""),"");
@@ -660,6 +667,37 @@ void MenuBar::slot_showViewMenu(void) {
     acOptions_SH_Rou->setChecked(Settings::getSetting("hideRoute",0,"showHideItem").toInt()==0);
     acOptions_SH_Lab->setChecked(Settings::getSetting("hideLabel",0,"showHideItem").toInt()==0);
 }
+
+void MenuBar::slot_showBarrierMenu(void) {
+    subSubMenuDelBarrierSet->clear();
+    subSubMenuEditBarrierSet->clear();
+    if(::barrierSetList.isEmpty()) {
+        subSubMenuDelBarrierSet->setEnabled(false);
+        subSubMenuEditBarrierSet->setEnabled(false);
+        ac_barrierTool->setChecked(false);
+        ac_barrierTool->setEnabled(false);
+    }
+    else {
+        qSort(::barrierSetList.begin(),::barrierSetList.end(),BarrierSet::myLessThan);
+
+        subSubMenuDelBarrierSet->setEnabled(true);
+        subSubMenuEditBarrierSet->setEnabled(true);
+        ac_barrierTool->setEnabled(true);
+
+        QListIterator<BarrierSet*> i (::barrierSetList);
+        while(i.hasNext()) {
+            BarrierSet * barrierSet=i.next();
+            QAction * action;
+            action = addAction(subSubMenuEditBarrierSet,barrierSet->get_name(),"","","");
+            connect(action,SIGNAL(triggered()),barrierSet,SLOT(slot_editBarrierSet()));
+            action = addAction(subSubMenuDelBarrierSet,barrierSet->get_name(),"","","");
+            connect(action,SIGNAL(triggered()),barrierSet,SLOT(slot_delBarrierSet()));
+        }
+    }
+
+}
+
+
 
 
 //------------------------------------------------------------

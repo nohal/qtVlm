@@ -255,8 +255,8 @@ void Barrier::slot_adjustWidthF(void)
 /* called by barrier contextual menu  */
 
 void Barrier::slot_insertPoint(void) {
-    QPointF newPos;
-    Util::computePosDouble(projection,cursorPosition,&newPos);
+    //QPointF newPos;
+    //Util::computePosDouble(projection,cursorPosition,&newPos);
 
     /* find which line we belong to */
     QPointF P1,P2;
@@ -267,7 +267,7 @@ void Barrier::slot_insertPoint(void) {
         P1=points.at(i)->get_scenePosition();
         P2=points.at(i+1)->get_scenePosition();
 
-        double dist=Util::distToSegment(newPos,QLineF(P1,P2));
+        double dist=Util::distToSegment(cursorPosition,QLineF(P1,P2));
         if(dist<dist_min) {
             dist_min=dist;
             index_min=i;
@@ -280,7 +280,7 @@ void Barrier::slot_insertPoint(void) {
             BarrierPoint * newPoint = new BarrierPoint(mainWindow,this,color);
             points.insert(index_min+1,newPoint);
             QPointF p;
-            projection->screen2mapDouble(newPos,&p);
+            projection->screen2mapDouble(cursorPosition,&p);
             newPoint->set_position(p);
             slot_pointPositionChanged();
     }

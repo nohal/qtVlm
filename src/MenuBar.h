@@ -83,10 +83,11 @@ public:
     QAction *acHorn;
     QAction *ac_CreatePOI;
     QAction *ac_pastePOI;
-
     QAction *acPOIAdd;
     QAction *acPOIRemove;
 
+    /*** Barrier ***/
+    QAction * ac_insertBarrier; // popup
     QMenu * subMenuBarrier;
     QMenu * subSubMenuDelBarrierSet;
     QMenu * subSubMenuEditBarrierSet;
@@ -309,6 +310,7 @@ public slots:
     void slot_updateLockIcon(QIcon ic);
     void slot_setChangeStatus(bool status,bool pilototo,bool syncBtn);
     void slot_showViewMenu(void);
+    void slot_showBarrierMenu(void);
 
 
     //-------------------------------------
