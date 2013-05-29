@@ -1665,7 +1665,7 @@ routeStats ROUTE::getStats()
         stats.minBS=qMin(stats.minBS,bs);
         if(engineUsed)
             stats.engineTime+=date-prevDate;
-        if(parent->getTerre()->daylight(NULL,points->at(n)))
+        if(!parent->getTerre()->daylight(NULL,points->at(n)))
             stats.nightTime+=date-prevDate;
     }
     stats.averageBS=stats.averageBS/(points->size()-1);

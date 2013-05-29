@@ -994,7 +994,7 @@ bool Terrain::daylight(QPainter *pnt, const vlmPoint &coords) //called with pnt!
     if(pnt==NULL)
     {
         proj->map2screenDouble(coords.lon,coords.lat,&X,&Y);
-        return terminator1.containsPoint(QPointF(X,Y),Qt::OddEvenFill)||terminator2.containsPoint(QPointF(X,Y),Qt::OddEvenFill);
+        return !terminator1.containsPoint(QPointF(X,Y),Qt::OddEvenFill) && !terminator2.containsPoint(QPointF(X,Y),Qt::OddEvenFill);
     }
 #ifdef __TERRAIN_QIMAGE
     QImage mask = QImage(width,height,QImage::Format_ARGB32_Premultiplied);

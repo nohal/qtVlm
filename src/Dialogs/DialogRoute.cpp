@@ -49,6 +49,7 @@ Copyright (C) 2008 - Jacques Zaninetti - http://zygrib.free.fr
 #include <QTime>
 #include <QFileDialog>
 #include <QPixmap>
+#include <Terrain.h>
 
 //-------------------------------------------------------
 // ROUTE_Editor: Constructor for edit an existing ROUTE
@@ -355,7 +356,14 @@ void DialogRoute::slotInterval()
                 totalTimeMoteur+=roadItems.at(0)-route->getRoadMap()->at(i-1).at(0);
         }
         else
-            img.fill(Qt::white);
+        {
+            vlmPoint p(roadItems.at(1),roadItems.at(2));
+            p.eta=roadItems.at(0);
+            if(parent->getTerre()->daylight(NULL,p))
+                img.fill(QColor(238,241,125));
+            else
+                img.fill(QColor(105,109,124));
+        }
         QPainter pnt(&img);
         pnt.setRenderHint(QPainter::Antialiasing);
         pen.setColor(Qt::gray);
