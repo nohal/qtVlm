@@ -31,6 +31,7 @@ Copyright (C) 2008 - Jacques Zaninetti - http://zygrib.free.fr
 #include <QDebug>
 #include <QDir>
 #include <QMap>
+#include <QStyleFactory>
 
 #include "MainWindow.h"
 #include "settings.h"
@@ -83,6 +84,7 @@ int main(int argc, char *argv[])
     qWarning()<<"Current app path"<<appExeFolder;
     // home folder
     QString homeDir="";
+    //app.setStyle(QStyleFactory::create("fusion"));
 #ifdef Q_WS_WIN
     qWarning() << "Home path: " << QDir::homePath();
     QSettings settings(QSettings::UserScope, "Microsoft", "Windows");

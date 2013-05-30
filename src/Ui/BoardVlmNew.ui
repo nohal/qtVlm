@@ -34,7 +34,7 @@
    <property name="currentIndex">
     <number>0</number>
    </property>
-   <widget class="QWidget" name="tab">
+   <widget class="QWidget" name="tab_compass">
     <attribute name="title">
      <string>Compas</string>
     </attribute>
@@ -195,6 +195,15 @@
      <property name="text">
       <string/>
      </property>
+     <property name="scaledContents">
+      <bool>false</bool>
+     </property>
+     <property name="alignment">
+      <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
+     </property>
+     <property name="indent">
+      <number>0</number>
+     </property>
     </widget>
     <zorder>lab_backTab1</zorder>
     <zorder>lcd_BS</zorder>
@@ -205,7 +214,7 @@
     <zorder>lcd_TWD</zorder>
     <zorder>lab_TWD</zorder>
    </widget>
-   <widget class="QWidget" name="tab_2">
+   <widget class="QWidget" name="tab_details">
     <attribute name="title">
      <string>Details</string>
     </attribute>
@@ -922,6 +931,12 @@
      <property name="text">
       <string/>
      </property>
+     <property name="alignment">
+      <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
+     </property>
+     <property name="indent">
+      <number>0</number>
+     </property>
     </widget>
     <zorder>lab_backTab2</zorder>
     <zorder>det_boatBox</zorder>
@@ -929,7 +944,7 @@
     <zorder>det_windBox</zorder>
     <zorder>det_raceBox</zorder>
    </widget>
-   <widget class="QWidget" name="tab_3">
+   <widget class="QWidget" name="tab_polar">
     <attribute name="title">
      <string>Polaire</string>
     </attribute>
@@ -1040,6 +1055,12 @@
      </property>
      <property name="text">
       <string/>
+     </property>
+     <property name="alignment">
+      <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
+     </property>
+     <property name="indent">
+      <number>0</number>
      </property>
     </widget>
     <zorder>lab_backTab3</zorder>
@@ -1476,6 +1497,15 @@
    </property>
    <property name="text">
     <string>TextLabel</string>
+   </property>
+   <property name="scaledContents">
+    <bool>false</bool>
+   </property>
+   <property name="alignment">
+    <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
+   </property>
+   <property name="indent">
+    <number>0</number>
    </property>
   </widget>
   <zorder>lab_back</zorder>

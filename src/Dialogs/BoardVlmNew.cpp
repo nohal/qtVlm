@@ -8,6 +8,7 @@
 #include "vlmLine.h"
 #include <QBitmap>
 #include <QMessageBox>
+#include <QStyleFactory>
 BoardVlmNew::BoardVlmNew(MainWindow *main)
     : QDialog(main)
 
@@ -96,6 +97,11 @@ BoardVlmNew::BoardVlmNew(MainWindow *main)
     connect(this->spin_PolarTWS,SIGNAL(valueChanged(double)),this,SLOT(slot_drawPolar()));
     lab_polar->installEventFilter(this);
     lab_polarData->clear();
+     tabWidget->setStyleSheet(
+//           "QTabBar::tab { background: gray; color: white; padding: 10px; } "
+//           "QTabBar::tab:selected { background: lightgray; } "
+           "QTabWidget::pane { border: 0; } "
+           "QTabWidget { background: transparent; } ");
 }
 
 BoardVlmNew::~BoardVlmNew()
