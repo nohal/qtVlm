@@ -25,9 +25,9 @@ BoardVlmNew::BoardVlmNew(MainWindow *main)
     btn_clearPilototo->setMask(del.createMaskFromColor(Qt::transparent,Qt::MaskInColor));
     btn_clearPilototo->setIcon(QIcon(del));
     btn_clearWP->setIcon(QIcon(del));
-    del.load("img/board_angleFlip.png");
-    btn_angleFlip->setIcon(QIcon(del));
-    btn_angleFlip->setMask(del.createMaskFromColor(Qt::transparent,Qt::MaskInColor));
+    QPixmap angleFlip("img/board_angleFlip.png");
+    btn_angleFlip->setIcon(QIcon(angleFlip));
+    btn_angleFlip->setMask(angleFlip.createMaskFromColor(Qt::transparent,Qt::MaskInColor));
     defaultStyleSheet=this->lab_TWA->styleSheet();
     connect(this->btn_sync,SIGNAL(clicked()),this,SLOT(slot_vlmSync()));
     connect(main,SIGNAL(boatHasUpdated(boat*)),this,SLOT(slot_updateData()));
@@ -272,8 +272,8 @@ void BoardVlmNew::slot_updateData()
     this->blocking=true;
     updateLcds();
     QPointF position=myBoat->getPosition();
-    det_POS->setText(Util::formatLongitude(position.x())+" - "+Util::formatLatitude(position.y()));
-    if(qRound(myBoat->getDnm())<1000)
+    det_POS->setText(Util::formatLongitude(position.x())+"-"+Util::formatLatitude(position.y()));
+    if(qRound(myBoat->getDnm())<100)
         det_DNM->setText(QString().sprintf("%.2f",myBoat->getDnm())+tr("nm"));
     else
         det_DNM->setText(QString().sprintf("%d",qRound(myBoat->getDnm()))+tr("nm"));
@@ -287,7 +287,7 @@ void BoardVlmNew::slot_updateData()
         det_UPWind->setText(QString().sprintf("%.2f",myBoat->getPolarData()->getBvmgUp(myBoat->getWindSpeed()))+tr("deg"));
         det_DwWind->setText(QString().sprintf("%.2f",myBoat->getPolarData()->getBvmgDown(myBoat->getWindSpeed()))+tr("deg"));
     }
-    if(qRound(myBoat->getLoch())<1000)
+    if(qRound(myBoat->getLoch())<100)
         det_LOCH->setText(QString().sprintf("%.2f",myBoat->getLoch())+tr("nm"));
     else
         det_LOCH->setText(QString().sprintf("%d",qRound(myBoat->getLoch()))+tr("nm"));
@@ -298,7 +298,7 @@ void BoardVlmNew::slot_updateData()
     this->det_boatBox->setTitle(lab_RANK->text());
     this->det_raceBox->setTitle(myBoat->getRaceName());
     this->det_GATE_ORT->setText(QString().sprintf("%.2f",myBoat->getClosest().capArrival)+tr("deg"));
-    if(qRound(myBoat->getClosest().distArrival)<1000)
+    if(qRound(myBoat->getClosest().distArrival)<100)
         this->det_GATE_DIST->setText(QString().sprintf("%.2f",myBoat->getClosest().distArrival)+tr("nm"));
     else
         this->det_GATE_DIST->setText(QString().sprintf("%d",qRound(myBoat->getClosest().distArrival))+tr("nm"));

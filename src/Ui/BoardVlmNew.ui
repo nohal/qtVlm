@@ -233,8 +233,14 @@
       <bool>false</bool>
      </property>
      <layout class="QVBoxLayout" name="verticalLayout">
+      <property name="leftMargin">
+       <number>5</number>
+      </property>
       <property name="topMargin">
        <number>1</number>
+      </property>
+      <property name="rightMargin">
+       <number>5</number>
       </property>
       <property name="bottomMargin">
        <number>5</number>
@@ -243,13 +249,16 @@
        <widget class="QLabel" name="det_POS">
         <property name="font">
          <font>
-          <pointsize>10</pointsize>
+          <pointsize>9</pointsize>
           <weight>75</weight>
           <bold>true</bold>
          </font>
         </property>
         <property name="text">
          <string>Position</string>
+        </property>
+        <property name="scaledContents">
+         <bool>true</bool>
         </property>
         <property name="alignment">
          <set>Qt::AlignHCenter|Qt::AlignTop</set>
@@ -258,6 +267,9 @@
       </item>
       <item>
        <layout class="QHBoxLayout" name="horizontalLayout">
+        <property name="spacing">
+         <number>3</number>
+        </property>
         <item>
          <widget class="QLabel" name="label_2">
           <property name="font">
@@ -266,10 +278,10 @@
            </font>
           </property>
           <property name="text">
-           <string>Vitesse:</string>
+           <string>BS:</string>
           </property>
           <property name="alignment">
-           <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+           <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
           </property>
          </widget>
         </item>
@@ -277,6 +289,7 @@
          <widget class="QLabel" name="det_BS">
           <property name="font">
            <font>
+            <pointsize>8</pointsize>
             <weight>75</weight>
             <bold>true</bold>
            </font>
@@ -297,7 +310,7 @@
            </font>
           </property>
           <property name="text">
-           <string>Cap:</string>
+           <string>HDG:</string>
           </property>
           <property name="alignment">
            <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
@@ -308,6 +321,7 @@
          <widget class="QLabel" name="det_HDG">
           <property name="font">
            <font>
+            <pointsize>8</pointsize>
             <weight>75</weight>
             <bold>true</bold>
            </font>
@@ -324,6 +338,9 @@
       </item>
       <item>
        <layout class="QHBoxLayout" name="horizontalLayout_2">
+        <property name="spacing">
+         <number>3</number>
+        </property>
         <item>
          <widget class="QLabel" name="label_6">
           <property name="font">
@@ -332,10 +349,10 @@
            </font>
           </property>
           <property name="text">
-           <string>Moyenne:</string>
+           <string>Moy:</string>
           </property>
           <property name="alignment">
-           <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+           <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
           </property>
          </widget>
         </item>
@@ -343,6 +360,7 @@
          <widget class="QLabel" name="det_AVG">
           <property name="font">
            <font>
+            <pointsize>8</pointsize>
             <weight>75</weight>
             <bold>true</bold>
            </font>
@@ -374,6 +392,7 @@
          <widget class="QLabel" name="det_LOCH">
           <property name="font">
            <font>
+            <pointsize>8</pointsize>
             <weight>75</weight>
             <bold>true</bold>
            </font>
@@ -408,14 +427,23 @@
       <string>WP</string>
      </property>
      <layout class="QVBoxLayout" name="verticalLayout_2">
+      <property name="leftMargin">
+       <number>5</number>
+      </property>
       <property name="topMargin">
        <number>1</number>
+      </property>
+      <property name="rightMargin">
+       <number>5</number>
       </property>
       <property name="bottomMargin">
        <number>5</number>
       </property>
       <item>
        <layout class="QHBoxLayout" name="horizontalLayout_3">
+        <property name="spacing">
+         <number>3</number>
+        </property>
         <item>
          <widget class="QLabel" name="label_3">
           <property name="font">
@@ -427,7 +455,7 @@
            <string>Ortho:</string>
           </property>
           <property name="alignment">
-           <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+           <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
           </property>
          </widget>
         </item>
@@ -435,6 +463,7 @@
          <widget class="QLabel" name="det_ORT">
           <property name="font">
            <font>
+            <pointsize>8</pointsize>
             <weight>75</weight>
             <bold>true</bold>
            </font>
@@ -466,6 +495,7 @@
          <widget class="QLabel" name="det_DNM">
           <property name="font">
            <font>
+            <pointsize>8</pointsize>
             <weight>75</weight>
             <bold>true</bold>
            </font>
@@ -482,6 +512,9 @@
       </item>
       <item>
        <layout class="QHBoxLayout" name="horizontalLayout_4">
+        <property name="spacing">
+         <number>3</number>
+        </property>
         <item>
          <widget class="QLabel" name="label_7">
           <property name="font">
@@ -493,7 +526,7 @@
            <string>Angle:</string>
           </property>
           <property name="alignment">
-           <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+           <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
           </property>
          </widget>
         </item>
@@ -501,6 +534,7 @@
          <widget class="QLabel" name="det_ANGLE">
           <property name="font">
            <font>
+            <pointsize>8</pointsize>
             <weight>75</weight>
             <bold>true</bold>
            </font>
@@ -532,6 +566,7 @@
          <widget class="QLabel" name="det_VMG">
           <property name="font">
            <font>
+            <pointsize>8</pointsize>
             <weight>75</weight>
             <bold>true</bold>
            </font>
@@ -566,14 +601,23 @@
       <string>Wind</string>
      </property>
      <layout class="QVBoxLayout" name="verticalLayout_3">
+      <property name="leftMargin">
+       <number>5</number>
+      </property>
       <property name="topMargin">
        <number>1</number>
+      </property>
+      <property name="rightMargin">
+       <number>5</number>
       </property>
       <property name="bottomMargin">
        <number>5</number>
       </property>
       <item>
        <layout class="QHBoxLayout" name="horizontalLayout_5">
+        <property name="spacing">
+         <number>3</number>
+        </property>
         <item>
          <widget class="QLabel" name="label_11">
           <property name="font">
@@ -585,7 +629,7 @@
            <string>TWS:</string>
           </property>
           <property name="alignment">
-           <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+           <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
           </property>
          </widget>
         </item>
@@ -593,6 +637,7 @@
          <widget class="QLabel" name="det_TWS">
           <property name="font">
            <font>
+            <pointsize>8</pointsize>
             <weight>75</weight>
             <bold>true</bold>
            </font>
@@ -624,6 +669,7 @@
          <widget class="QLabel" name="det_TWD">
           <property name="font">
            <font>
+            <pointsize>8</pointsize>
             <weight>75</weight>
             <bold>true</bold>
            </font>
@@ -640,6 +686,9 @@
       </item>
       <item>
        <layout class="QHBoxLayout" name="horizontalLayout_6">
+        <property name="spacing">
+         <number>3</number>
+        </property>
         <item>
          <widget class="QLabel" name="label_13">
           <property name="font">
@@ -651,7 +700,7 @@
            <string>Pres:</string>
           </property>
           <property name="alignment">
-           <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+           <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
           </property>
          </widget>
         </item>
@@ -659,6 +708,7 @@
          <widget class="QLabel" name="det_UPWind">
           <property name="font">
            <font>
+            <pointsize>8</pointsize>
             <weight>75</weight>
             <bold>true</bold>
            </font>
@@ -679,7 +729,7 @@
            </font>
           </property>
           <property name="text">
-           <string>Portant:</string>
+           <string>Port.:</string>
           </property>
           <property name="alignment">
            <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
@@ -690,6 +740,7 @@
          <widget class="QLabel" name="det_DwWind">
           <property name="font">
            <font>
+            <pointsize>8</pointsize>
             <weight>75</weight>
             <bold>true</bold>
            </font>
@@ -724,14 +775,23 @@
       <string>Race</string>
      </property>
      <layout class="QVBoxLayout" name="verticalLayout_4">
+      <property name="leftMargin">
+       <number>5</number>
+      </property>
       <property name="topMargin">
        <number>1</number>
+      </property>
+      <property name="rightMargin">
+       <number>5</number>
       </property>
       <property name="bottomMargin">
        <number>5</number>
       </property>
       <item>
        <layout class="QHBoxLayout" name="horizontalLayout_7">
+        <property name="spacing">
+         <number>3</number>
+        </property>
         <item>
          <widget class="QLabel" name="det_arrow">
           <property name="font">
@@ -749,6 +809,11 @@
         </item>
         <item>
          <widget class="QLabel" name="det_GATE">
+          <property name="font">
+           <font>
+            <pointsize>8</pointsize>
+           </font>
+          </property>
           <property name="text">
            <string>Fasnet gate</string>
           </property>
@@ -774,6 +839,9 @@
       </item>
       <item>
        <layout class="QHBoxLayout" name="horizontalLayout_8">
+        <property name="spacing">
+         <number>3</number>
+        </property>
         <item>
          <widget class="QLabel" name="label_17">
           <property name="font">
@@ -785,7 +853,7 @@
            <string>Ortho:</string>
           </property>
           <property name="alignment">
-           <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+           <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
           </property>
          </widget>
         </item>
@@ -793,6 +861,7 @@
          <widget class="QLabel" name="det_GATE_ORT">
           <property name="font">
            <font>
+            <pointsize>8</pointsize>
             <weight>75</weight>
             <bold>true</bold>
            </font>
@@ -813,7 +882,7 @@
            </font>
           </property>
           <property name="text">
-           <string>Distance:</string>
+           <string>Dist:</string>
           </property>
           <property name="alignment">
            <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
@@ -824,6 +893,7 @@
          <widget class="QLabel" name="det_GATE_DIST">
           <property name="font">
            <font>
+            <pointsize>8</pointsize>
             <weight>75</weight>
             <bold>true</bold>
            </font>
@@ -879,9 +949,9 @@
     <widget class="QDoubleSpinBox" name="spin_PolarTWS">
      <property name="geometry">
       <rect>
-       <x>50</x>
+       <x>40</x>
        <y>310</y>
-       <width>71</width>
+       <width>81</width>
        <height>22</height>
       </rect>
      </property>
@@ -895,17 +965,17 @@
     <widget class="QLabel" name="label">
      <property name="geometry">
       <rect>
-       <x>0</x>
-       <y>312</y>
-       <width>46</width>
-       <height>13</height>
+       <x>-2</x>
+       <y>309</y>
+       <width>41</width>
+       <height>20</height>
       </rect>
      </property>
      <property name="text">
       <string>TWS</string>
      </property>
      <property name="alignment">
-      <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+      <set>Qt::AlignCenter</set>
      </property>
     </widget>
     <widget class="QLabel" name="lab_polarUpDw">
@@ -928,9 +998,9 @@
      <property name="geometry">
       <rect>
        <x>170</x>
-       <y>90</y>
+       <y>60</y>
        <width>71</width>
-       <height>141</height>
+       <height>201</height>
       </rect>
      </property>
      <property name="text">
@@ -986,7 +1056,7 @@
     <rect>
      <x>0</x>
      <y>338</y>
-     <width>252</width>
+     <width>250</width>
      <height>171</height>
     </rect>
    </property>
@@ -994,7 +1064,7 @@
     <bool>false</bool>
    </property>
    <property name="frameShape">
-    <enum>QFrame::Box</enum>
+    <enum>QFrame::NoFrame</enum>
    </property>
    <property name="lineWidth">
     <number>2</number>
@@ -1002,15 +1072,15 @@
    <widget class="QDoubleSpinBox" name="spin_HDG">
     <property name="geometry">
      <rect>
-      <x>46</x>
+      <x>36</x>
       <y>110</y>
-      <width>71</width>
+      <width>81</width>
       <height>22</height>
      </rect>
     </property>
     <property name="font">
      <font>
-      <pointsize>10</pointsize>
+      <pointsize>9</pointsize>
      </font>
     </property>
     <property name="alignment">
@@ -1045,10 +1115,10 @@
    <widget class="QDial" name="dial">
     <property name="geometry">
      <rect>
-      <x>144</x>
-      <y>50</y>
-      <width>64</width>
-      <height>64</height>
+      <x>150</x>
+      <y>56</y>
+      <width>50</width>
+      <height>50</height>
      </rect>
     </property>
     <property name="minimum">
@@ -1073,8 +1143,8 @@
    <widget class="QRadioButton" name="rd_VBVMG">
     <property name="geometry">
      <rect>
-      <x>170</x>
-      <y>39</y>
+      <x>167</x>
+      <y>40</y>
       <width>16</width>
       <height>17</height>
      </rect>
@@ -1102,7 +1172,7 @@
    <widget class="QRadioButton" name="rd_ORTHO">
     <property name="geometry">
      <rect>
-      <x>192</x>
+      <x>191</x>
       <y>102</y>
       <width>16</width>
       <height>17</height>
@@ -1131,7 +1201,7 @@
    <widget class="QRadioButton" name="rd_VMG">
     <property name="geometry">
      <rect>
-      <x>203</x>
+      <x>200</x>
       <y>61</y>
       <width>16</width>
       <height>17</height>
@@ -1160,15 +1230,15 @@
    <widget class="QDoubleSpinBox" name="spin_TWA">
     <property name="geometry">
      <rect>
-      <x>28</x>
+      <x>24</x>
       <y>59</y>
-      <width>71</width>
+      <width>78</width>
       <height>22</height>
      </rect>
     </property>
     <property name="font">
      <font>
-      <pointsize>10</pointsize>
+      <pointsize>9</pointsize>
      </font>
     </property>
     <property name="alignment">
@@ -1203,23 +1273,23 @@
    <widget class="QLabel" name="lab_ORTHO">
     <property name="geometry">
      <rect>
-      <x>208</x>
+      <x>212</x>
       <y>110</y>
-      <width>41</width>
-      <height>13</height>
+      <width>31</width>
+      <height>16</height>
      </rect>
     </property>
     <property name="text">
-     <string>ORTHO</string>
+     <string>ORT</string>
     </property>
     <property name="alignment">
-     <set>Qt::AlignCenter</set>
+     <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
     </property>
    </widget>
    <widget class="QRadioButton" name="rd_HDG">
     <property name="geometry">
      <rect>
-      <x>149</x>
+      <x>147</x>
       <y>102</y>
       <width>16</width>
       <height>17</height>
@@ -1258,7 +1328,7 @@
    <widget class="QPushButton" name="btn_angleFlip">
     <property name="geometry">
      <rect>
-      <x>7</x>
+      <x>1</x>
       <y>61</y>
       <width>18</width>
       <height>18</height>
@@ -1360,9 +1430,9 @@
    <widget class="QPushButton" name="btn_sync">
     <property name="geometry">
      <rect>
-      <x>9</x>
+      <x>1</x>
       <y>29</y>
-      <width>71</width>
+      <width>101</width>
       <height>23</height>
      </rect>
     </property>
@@ -1374,18 +1444,21 @@
     <property name="geometry">
      <rect>
       <x>10</x>
-      <y>10</y>
-      <width>161</width>
+      <y>5</y>
+      <width>171</width>
       <height>16</height>
      </rect>
     </property>
     <property name="font">
      <font>
-      <pointsize>9</pointsize>
+      <pointsize>8</pointsize>
      </font>
     </property>
     <property name="text">
      <string/>
+    </property>
+    <property name="scaledContents">
+     <bool>true</bool>
     </property>
     <property name="alignment">
      <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
