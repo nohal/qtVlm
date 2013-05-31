@@ -55,6 +55,13 @@ DialogParamVlm::DialogParamVlm(MainWindow * main,myCentralWidget * parent) : QDi
     opp_labelType->setCurrentIndex(Settings::getSetting("opp_labelType",0).toInt());
 
     this->chkPavillon->setCheckState(Settings::getSetting("showFlag",0,"showHideItem").toInt()==1?Qt::Checked:Qt::Unchecked);
+    this->chkFusion->setChecked(Settings::getSetting("fusionStyle",0).toInt()==1);
+    QString skinName=Settings::getSetting("defaultSkin",QFileInfo("img/skin_compas.png").absoluteFilePath()).toString();
+    if(!QFile(skinName).exists())
+        skinName=QFileInfo("img/skin_compas.png").absoluteFilePath();
+    this->edt_skinFile->setText(skinName);
+    connect(this->btn_browseSkin,SIGNAL(clicked()),this,SLOT(doBtn_browseSkin()));
+
 
     QString mapsFolderString = Settings::getSetting("mapsFolder",appFolder.value("maps")).toString();
     mapsFolder->setText(mapsFolderString);
@@ -238,6 +245,11 @@ void DialogParamVlm::done(int result)
         /*drawing*/
         Settings::setSetting("opp_labelType",QString().setNum(opp_labelType->currentIndex()));
         Settings::setSetting("showFlag",this->chkPavillon->checkState()==Qt::Checked?"1":"0","showHideItem");
+        Settings::setSetting("fusionStyle",this->chkFusion->isChecked()?1:0);
+        QString skinName=edt_skinFile->text();
+        if(!QFile(skinName).exists())
+            skinName=QFileInfo("img/skin_compas.png").absoluteFilePath();
+        Settings::setSetting("defaultSkin",skinName);
         int gdm=2;
         if(this->gribAuto->isChecked())
             gdm=0;
@@ -517,6 +529,14 @@ void DialogParamVlm::doBtn_browseGrib(void)
                                                  edt_gribFolder->text());
      if(dir!="")
          edt_gribFolder->setText(dir);
+}
+void DialogParamVlm::doBtn_browseSkin(void)
+{
+    QString skinPath=QFileInfo(edt_skinFile->text()).absolutePath();
+    QString fileName = QFileDialog::getOpenFileName(this,
+                         tr("Selectionner un skin tableau de bord VLM"), skinPath, "png (*.png)");
+     if(fileName!="")
+         edt_skinFile->setText(QFileInfo(fileName).absoluteFilePath());
 }
 
 void DialogParamVlm::slot_changeParam()

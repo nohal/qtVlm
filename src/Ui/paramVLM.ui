@@ -118,6 +118,68 @@
         </widget>
        </item>
        <item>
+        <widget class="QGroupBox" name="groupBox_12">
+         <property name="title">
+          <string>Apparence</string>
+         </property>
+         <layout class="QVBoxLayout" name="verticalLayout_3">
+          <item>
+           <widget class="QCheckBox" name="chkFusion">
+            <property name="toolTip">
+             <string>Redemarrage de qtVlm necessaire</string>
+            </property>
+            <property name="text">
+             <string>Style Fusion</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <layout class="QHBoxLayout" name="horizontalLayout_14">
+            <item>
+             <widget class="QLabel" name="label_26">
+              <property name="text">
+               <string>Skin par defaut</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QLineEdit" name="edt_skinFile"/>
+            </item>
+           </layout>
+          </item>
+          <item>
+           <layout class="QHBoxLayout" name="horizontalLayout_15">
+            <item>
+             <spacer name="horizontalSpacer_4">
+              <property name="orientation">
+               <enum>Qt::Horizontal</enum>
+              </property>
+              <property name="sizeHint" stdset="0">
+               <size>
+                <width>40</width>
+                <height>20</height>
+               </size>
+              </property>
+             </spacer>
+            </item>
+            <item>
+             <widget class="QPushButton" name="btn_browseSkin">
+              <property name="text">
+               <string>Parcourir</string>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </item>
+         </layout>
+         <zorder>chkFusion</zorder>
+         <zorder>edt_gribFolder_2</zorder>
+         <zorder>label_25</zorder>
+         <zorder>layoutWidget</zorder>
+         <zorder>layoutWidget_2</zorder>
+        </widget>
+       </item>
+       <item>
         <widget class="QGroupBox" name="groupBox_15">
          <property name="title">
           <string>Repertoire des cartes</string>
@@ -1407,6 +1469,9 @@
   <tabstop>chkPavillon</tabstop>
   <tabstop>defFontName</tabstop>
   <tabstop>defFontSize</tabstop>
+  <tabstop>chkFusion</tabstop>
+  <tabstop>edt_skinFile</tabstop>
+  <tabstop>btn_browseSkin</tabstop>
   <tabstop>pushButton_7</tabstop>
   <tabstop>pushButton</tabstop>
   <tabstop>pushButton_3</tabstop>
@@ -1463,6 +1528,8 @@
   <tabstop>gribMulti</tabstop>
   <tabstop>gribMono</tabstop>
   <tabstop>gribAuto</tabstop>
+  <tabstop>btn_browseGrib_2</tabstop>
+  <tabstop>edt_gribFolder_2</tabstop>
  </tabstops>
  <resources/>
  <connections>

@@ -84,7 +84,6 @@ int main(int argc, char *argv[])
     qWarning()<<"Current app path"<<appExeFolder;
     // home folder
     QString homeDir="";
-    //app.setStyle(QStyleFactory::create("fusion"));
 #ifdef Q_WS_WIN
     qWarning() << "Home path: " << QDir::homePath();
     QSettings settings(QSettings::UserScope, "Microsoft", "Windows");
@@ -136,6 +135,8 @@ int main(int argc, char *argv[])
     QTextCodec::setCodecForCStrings(QTextCodec::codecForName("utf8"));
 #endif
     Settings::initSettings();
+    if(Settings::getSetting("fusionStyle",0).toInt()==1)
+        app.setStyle(QStyleFactory::create("fusion"));
     double fontInc=Settings::getSetting("defaultFontSizeInc",0).toDouble();
     if(fontInc<-3 || fontInc>5)
     {

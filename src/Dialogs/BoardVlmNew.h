@@ -33,6 +33,7 @@ private slots:
     void slot_editWP();
     void slot_clearWP();
     void slot_drawPolar();
+    void slot_tabChanged(int tabNb);
 protected:
     bool eventFilter(QObject *obj, QEvent *event);
 public slots:
@@ -41,6 +42,7 @@ public slots:
     void slot_selectPOI(POI *);
     void slot_selectWP_POI();
     void slot_lock();
+    void slot_reloadSkin();
 private:
     MainWindow * main;
     boatVLM * myBoat;
@@ -60,6 +62,7 @@ private:
     QPixmap polarImg;
     QPolygonF polarLine;
     QList<double> polarValues;
+    QPixmap imgBack0,imgBack1,imgBack2;
 };
 
 #endif // BOARDVLMNEW_H

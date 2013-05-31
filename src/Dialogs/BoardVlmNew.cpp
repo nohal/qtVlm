@@ -22,11 +22,14 @@ BoardVlmNew::BoardVlmNew(MainWindow *main)
     this->move(1,qRound((main->height()-this->height())/2.0));
     this->show();
     QPixmap del("img/delete.png");
+    btn_clearPilototo->setIcon(QIcon(del));
+    btn_clearPilototo->setStyleSheet("QPushButton {border: none; margin: 0px;padding: 0px;}");
+    btn_clearWP->setStyleSheet("QPushButton {border: none; margin: 0px;padding: 0px;}");
+    btn_clearWP->setIcon(QIcon(del));
     btn_clearWP->setMask(del.createMaskFromColor(Qt::transparent,Qt::MaskInColor));
     btn_clearPilototo->setMask(del.createMaskFromColor(Qt::transparent,Qt::MaskInColor));
-    btn_clearPilototo->setIcon(QIcon(del));
-    btn_clearWP->setIcon(QIcon(del));
     QPixmap angleFlip("img/board_angleFlip.png");
+    btn_angleFlip->setStyleSheet("QPushButton {border: none; margin: 0px;padding: 0px;}");
     btn_angleFlip->setIcon(QIcon(angleFlip));
     btn_angleFlip->setMask(angleFlip.createMaskFromColor(Qt::transparent,Qt::MaskInColor));
     defaultStyleSheet=this->lab_TWA->styleSheet();
@@ -49,13 +52,14 @@ BoardVlmNew::BoardVlmNew(MainWindow *main)
     connect(btn_clearWP,SIGNAL(clicked()),this,SLOT(slot_clearWP()));
     connect(main,SIGNAL(selectPOI(bool)),this,SLOT(slot_selectPOI(bool)));
     connect(main,SIGNAL(wpChanged()),this,SLOT(slot_updateBtnWP()));
-    connect(main,SIGNAL(paramVLMChanged()),this,SLOT(slot_updateData()));
+    connect(main,SIGNAL(paramVLMChanged()),this,SLOT(slot_reloadSkin()));
     connect(main,SIGNAL(updateLockIcon(QIcon)),this,SLOT(slot_lock()));
     wpDialog = new DialogWp();
     connect(wpDialog,SIGNAL(selectPOI()),this,SLOT(slot_selectWP_POI()));
     connect(wpDialog,SIGNAL(selectPOI()),main,SLOT(slotSelectWP_POI()));
     connect(main,SIGNAL(editWP_POI(POI*)),this,SLOT(slot_selectPOI(POI*)));
     connect(main,SIGNAL(editWP_POI(POI*)),wpDialog,SLOT(show_WPdialog(POI *)));
+    connect(tabWidget,SIGNAL(currentChanged(int)),this,SLOT(slot_tabChanged(int)));
     connect(btn_wp,SIGNAL(clicked()),this,SLOT(slot_editWP()));
     timer=new QTimer(this);
     timer->setInterval(600);
@@ -73,23 +77,7 @@ BoardVlmNew::BoardVlmNew(MainWindow *main)
     set_style(btn_wp);
     this->spin_HDG->installEventFilter(this);
     this->spin_TWA->installEventFilter(this);
-    QPixmap skin;
-    skin.load("img/skin_compas.png");
-    QPixmap bg(270,510);
-    bg.fill(Qt::transparent);
-    QPainter pnt(&bg);
-    pnt.setCompositionMode(QPainter::CompositionMode_SourceOver);
-    pnt.setRenderHint(QPainter::Antialiasing,true);
-    pnt.drawPixmap(0,0,skin,0,510,270,510);
-    this->lab_back->setPixmap(bg);
-    this->lab_backTab1->setPixmap(bg);
-    bg.fill(Qt::transparent);
-    pnt.drawPixmap(0,0,skin,300,510,270,510);
-    this->lab_backTab2->setPixmap(bg);
-    bg.fill(Qt::transparent);
-    pnt.drawPixmap(0,0,skin,600,510,270,510);
-    this->lab_backTab3->setPixmap(bg);
-    pnt.end();
+    slot_reloadSkin();
     polarImg=QPixmap(this->lab_polar->size());
     polarImg.fill(Qt::transparent);
     polarPnt.setRenderHint(QPainter::Antialiasing);
@@ -97,13 +85,57 @@ BoardVlmNew::BoardVlmNew(MainWindow *main)
     connect(this->spin_PolarTWS,SIGNAL(valueChanged(double)),this,SLOT(slot_drawPolar()));
     lab_polar->installEventFilter(this);
     lab_polarData->clear();
-     tabWidget->setStyleSheet(
-//           "QTabBar::tab { background: gray; color: white; padding: 10px; } "
-//           "QTabBar::tab:selected { background: lightgray; } "
+    tabWidget->setStyleSheet(
            "QTabWidget::pane { border: 0; } "
            "QTabWidget { background: transparent; } ");
 }
+void BoardVlmNew::slot_tabChanged(int tabNb)
+{
+    switch(tabNb)
+    {
+    case 0:
+        lab_back->setPixmap(imgBack0);
+        break;
+    case 1:
+        lab_back->setPixmap(imgBack1);
+        break;
+    case 2:
+        lab_back->setPixmap(imgBack2);
+        break;
+    }
+}
 
+void BoardVlmNew::slot_reloadSkin()
+{
+    QPixmap skin;
+    QString skinName=Settings::getSetting("defaultSkin",QFileInfo("img/skin_compas.png").absoluteFilePath()).toString();
+    if(!QFile(skinName).exists())
+        skinName=QFileInfo("img/skin_compas.png").absoluteFilePath();
+    skin.load(skinName);
+    imgBack0=QPixmap (270,510);
+    imgBack0.fill(Qt::transparent);
+    QPainter pnt(&imgBack0);
+    pnt.setCompositionMode(QPainter::CompositionMode_SourceOver);
+    pnt.setRenderHint(QPainter::Antialiasing,true);
+    pnt.drawPixmap(0,0,skin,0,510,270,510);
+    this->lab_backTab1->setPixmap(imgBack0);
+    pnt.end();
+    imgBack1=QPixmap (270,510);
+    imgBack1.fill(Qt::transparent);
+    pnt.begin(&imgBack1);
+    pnt.drawPixmap(0,0,skin,300,510,270,510);
+    this->lab_backTab2->setPixmap(imgBack1);
+    pnt.end();
+    imgBack2=QPixmap (270,510);
+    imgBack2.fill(Qt::transparent);
+    pnt.begin(&imgBack2);
+    pnt.drawPixmap(0,0,skin,600,510,270,510);
+    this->lab_backTab3->setPixmap(imgBack2);
+    pnt.end();
+    slot_tabChanged(tabWidget->currentIndex());
+    this->windAngle->loadSkin();
+    this->slot_updateData();
+}
 BoardVlmNew::~BoardVlmNew()
 {
 }

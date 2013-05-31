@@ -646,6 +646,10 @@ BoardWindTool::BoardWindTool(MainWindow * mainWindow,Board * board): BoardCompon
 
     connect(board,SIGNAL(sig_updateData()),this,SLOT(slot_updateData()));
     connect(mainWindow,SIGNAL(setChangeStatus(bool,bool,bool)),this,SLOT(slot_setChangeStatus(bool,bool,bool)));
+    loadSkin();
+}
+void BoardWindTool::loadSkin()
+{
     QPixmap skin;
     skin.load("img/skin_compas.png");
     QPixmap buttonShape(45,45);
@@ -660,56 +664,8 @@ BoardWindTool::BoardWindTool(MainWindow * mainWindow,Board * board): BoardCompon
     pnt.begin(&bg);
     pnt.drawPixmap(0,0,skin,600,0,270,280);
     pnt.end();
-#if 0
-    my_background->setPixmap(bg);
-    buttonHDG->setMask(buttonShape.createMaskFromColor(Qt::transparent,Qt::MaskInColor));
-    buttonTWA->setMask(buttonShape.createMaskFromColor(Qt::transparent,Qt::MaskInColor));
-    buttonORTHO->setMask(buttonShape.createMaskFromColor(Qt::transparent,Qt::MaskInColor));
-    buttonVMG->setMask(buttonShape.createMaskFromColor(Qt::transparent,Qt::MaskInColor));
-    buttonVBVMG->setMask(buttonShape.createMaskFromColor(Qt::transparent,Qt::MaskInColor));
-    QColor shadow=Qt::lightGray;
-    shadow.setAlpha(128);
-    QGraphicsDropShadowEffect * effect=new QGraphicsDropShadowEffect(this);
-    effect->setBlurRadius(3);
-    effect->setColor(shadow);
-    effect->setOffset(4);
-    buttonHDG->setGraphicsEffect(effect);
-    effect=new QGraphicsDropShadowEffect(this);
-    effect->setBlurRadius(3);
-    effect->setColor(shadow);
-    effect->setOffset(4);
-    buttonTWA->setGraphicsEffect(effect);
-    effect=new QGraphicsDropShadowEffect(this);
-    effect->setBlurRadius(3);
-    effect->setColor(shadow);
-    effect->setOffset(4);
-    buttonORTHO->setGraphicsEffect(effect);
-    effect=new QGraphicsDropShadowEffect(this);
-    effect->setBlurRadius(3);
-    effect->setColor(shadow);
-    effect->setOffset(4);
-    buttonVMG->setGraphicsEffect(effect);
-    effect=new QGraphicsDropShadowEffect(this);
-    effect->setBlurRadius(3);
-    effect->setColor(shadow);
-    effect->setOffset(4);
-    buttonVBVMG->setGraphicsEffect(effect);
-    my_background->lower();
-    slot_updateData();
-    QSignalMapper * signalMapper=new QSignalMapper(this);
-    connect(this->buttonHDG,SIGNAL(clicked()),signalMapper,SLOT(map()));
-    signalMapper->setMapping(buttonHDG,0);
-    connect(this->buttonTWA,SIGNAL(clicked()),signalMapper,SLOT(map()));
-    signalMapper->setMapping(buttonTWA,1);
-    connect(this->buttonORTHO,SIGNAL(clicked()),signalMapper,SLOT(map()));
-    signalMapper->setMapping(buttonORTHO,2);
-    connect(this->buttonVMG,SIGNAL(clicked()),signalMapper,SLOT(map()));
-    signalMapper->setMapping(buttonVMG,3);
-    connect(this->buttonVBVMG,SIGNAL(clicked()),signalMapper,SLOT(map()));
-    signalMapper->setMapping(buttonVBVMG,4);
-    connect(signalMapper,SIGNAL(mapped(int)),this,SLOT(buttonClicked(int)));
-#endif
 }
+
 void BoardWindTool::buttonClicked(int pilotMode)
 {
     INIT_BOAT;
@@ -793,8 +749,17 @@ void BoardWindTool::slot_setChangeStatus(bool,bool,bool) {
 tool_windAngle::tool_windAngle(QWidget * parent):QWidget(parent)
 {
     setFixedSize(200,200);
+    loadSkin();
+    WPdir = -1;
+    newHeading=-1;
+}
+void tool_windAngle::loadSkin()
+{
     QPixmap skin;
-    skin.load("img/skin_compas.png");
+    QString skinName=Settings::getSetting("defaultSkin",QFileInfo("img/skin_compas.png").absoluteFilePath()).toString();
+    if(!QFile(skinName).exists())
+        skinName=QFileInfo("img/skin_compas.png").absoluteFilePath();
+    skin.load(skinName);
     img_fond=QPixmap(200,200);
     img_fond.fill(Qt::transparent);
     QPainter pnt(&img_fond);
@@ -824,8 +789,6 @@ tool_windAngle::tool_windAngle(QWidget * parent):QWidget(parent)
     pnt.begin(&img_arrow_wind);
     pnt.drawPixmap(0,0,skin,600,0,200,200);
     pnt.end();
-    WPdir = -1;
-    newHeading=-1;
 }
 
 void tool_windAngle::paintEvent(QPaintEvent * /*event*/)

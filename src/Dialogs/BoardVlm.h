@@ -170,6 +170,7 @@ class BoardWindTool : public BoardComponent, public Ui::BoardWindTool {
         void setBoardPilot(BoardPilotVLMBoat * bo){this->boardPilotVLMBoat=bo;}
         ~BoardWindTool(void);
 
+        void loadSkin();
 public slots:
         void buttonClicked(int pilotMode);
         void slot_updateData(void);

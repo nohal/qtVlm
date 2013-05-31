@@ -49,7 +49,8 @@ class tool_windAngle: public QWidget
         void draw(QPainter * painter);
         void setValues(const double &heading, const double &windDir, const double &windSpeed, const double &WPdir, const double &gateDir, const double &newHeading);
 
-    protected:
+        void loadSkin();
+protected:
         void paintEvent(QPaintEvent * event);
 
     private:
