@@ -80,7 +80,6 @@ BoardVlmNew::BoardVlmNew(MainWindow *main)
     slot_reloadSkin();
     polarImg=QPixmap(this->lab_polar->size());
     polarImg.fill(Qt::transparent);
-    polarPnt.setRenderHint(QPainter::Antialiasing);
     this->lab_polar->setPixmap(polarImg);
     connect(this->spin_PolarTWS,SIGNAL(valueChanged(double)),this,SLOT(slot_drawPolar()));
     lab_polar->installEventFilter(this);
@@ -409,6 +408,7 @@ void BoardVlmNew::slot_drawPolar()
     }
     lab_polarName->setText(polar->getName());
     polarPnt.begin(&polarImg);
+    polarPnt.setRenderHint(QPainter::Antialiasing);
     double maxSpeed=-1;
 //    if(this->allSpeed->isChecked())
 //        maxSpeed=polar->getMaxSpeed();
@@ -509,6 +509,13 @@ void BoardVlmNew::slot_drawPolar()
         s=s.sprintf("%d",angle);
         polarPnt.drawText(line.p2(),s);
     }
+    pen.setColor(Grib::getWindColorStatic(myBoat->getWindSpeed(),Settings::getSetting("colorMapSmooth", true).toBool()));
+    pen.setWidthF(2.0);
+    polarPnt.setPen(pen);
+    QLineF line(center,QPointF(polarImg.width(),polarImg.height()/2.0));
+    line.setAngle(90-(qAbs(spin_TWA->value())));
+    line.setLength((maxSpeed+1)*maxSize/maxSpeed);
+    polarPnt.drawLine(line);
     polarPnt.end();
     this->lab_polar->setPixmap(polarImg);
 }
