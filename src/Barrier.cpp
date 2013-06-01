@@ -28,6 +28,7 @@ Copyright (C) 2008 - Jacques Zaninetti - http://zygrib.free.fr
 #include "Projection.h"
 #include "BarrierSet.h"
 #include "Util.h"
+#include "MyView.h"
 
 Barrier::Barrier(MainWindow *mainWindow,BarrierSet * barrierSet) {
     this->mainWindow=mainWindow;
@@ -60,9 +61,6 @@ Barrier::Barrier(MainWindow *mainWindow,BarrierSet * barrierSet) {
     ac_delete = new QAction(tr("Delete barrier"),popUpMenu);
     popUpMenu->addAction(ac_delete);
     connect(ac_delete,SIGNAL(triggered()),this,SLOT(slot_deleteBarrier()));
-
-    // MOD_BARRIER
-    //connect(myView,SIGNAL(scaled()),this,SLOT(slot_adjustWidthF()));
 }
 
 Barrier::~Barrier(void) {
@@ -345,9 +343,10 @@ BarrierPoint::BarrierPoint(MainWindow * mainWindow, Barrier *barrier, QColor col
     setBrush(color);
     setPen(color);
 
+
+    setFlag(QGraphicsItem::ItemIsMovable,mainWindow->get_barrierIsEditing());
     // MOD BARRIER
-    //setFlag(QGraphicsItem::ItemIsMovable,mainWindow->get_barrierIsEditing());
-    //setFlag(QGraphicsItem::ItemSendsGeometryChanges);
+    setFlag(QGraphicsItem::ItemSendsGeometryChanges);
     //setFlag(QGraphicsItem::ItemIgnoresTransformations);
 
     set_editMode(barrier->get_editMode());
@@ -393,22 +392,19 @@ void BarrierPoint::set_position(QPointF position) {
 }
 
 QVariant BarrierPoint::itemChange(QGraphicsItem::GraphicsItemChange change, const QVariant &value) {
-    //MOD BARRIER
-#if 0
     if (change == ItemPositionChange && scene()) {
-        QPointF newPos = myView->mapToScene(myView->mapFromGlobal(QCursor::pos())-QPoint(pointSize/2,pointSize/2));
-        QRectF rect = scene()->sceneRect();
+        QPointF newPos = centralWidget->getView()->mapFromGlobal(QCursor::pos())-QPoint(pointSize/2,pointSize/2);
+        QRectF rect = QRect(0,0,projection->getW(),projection->getH());
         if (!rect.contains(newPos)) {
             // Keep the item inside the scene rect.
             newPos.setX(qMin(rect.right(), qMax(newPos.x(), rect.left())));
             newPos.setY(qMin(rect.bottom(), qMax(newPos.y(), rect.top())));
         }
-        position = myView->mapSceneToEarth(newPos);
+        projection->screen2mapDouble(newPos,&position);
         emit positionChanged();
         return newPos;
     }
     else
-#endif
         return QGraphicsItem::itemChange(change, value);
 
 }
