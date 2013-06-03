@@ -65,5 +65,28 @@ protected:
         QColor windSpeed_toColor(void);
 
 };
+class VlmCompass: public QWidget
+{ Q_OBJECT
+    public:
+        VlmCompass(QWidget * parent=0);
+        void draw(QPainter * painter);
+        void setValues(const double &heading, const double &windDir, const double &windSpeed, const double &WPdir, const double &gateDir, const double &newHeading);
+
+        void loadSkin();
+protected:
+        void paintEvent(QPaintEvent * event);
+
+    private:
+        QPixmap img_fond;
+        QPixmap img_boat;
+        QPixmap img_arrow_wp;
+        QPixmap img_arrow_gate;
+        QPixmap img_arrow_wind;
+        int w,h;
+        double heading,windDir,windSpeed,WPdir,newHeading,gateDir;
+
+        QColor windSpeed_toColor(void);
+
+};
 
 #endif // BOARDTOOLS_H

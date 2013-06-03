@@ -1,6 +1,5 @@
 #include "BoardVlmNew.h"
 #include "ui_BoardVlmNew.h"
-#include "boatVLM.h"
 #include "POI.h"
 #include "DialogWp.h"
 #include "Polar.h"
@@ -9,6 +8,7 @@
 #include <QBitmap>
 #include <QMessageBox>
 #include <QStyleFactory>
+#include "boatVLM.h"
 BoardVlmNew::BoardVlmNew(MainWindow *main)
     : QDialog(main)
 
@@ -885,4 +885,128 @@ bool BoardVlmNew::confirmChange()
     return QMessageBox::question(0,tr("Confirmation a chaque ordre vers VLM"),
                                  tr("Confirmez-vous cet ordre?"),QMessageBox::Yes|QMessageBox::No,
                              QMessageBox::Yes)==QMessageBox::Yes;
+}
+/*********************/
+/* VLM20 windAngle   */
+/*********************/
+
+VlmCompass::VlmCompass(QWidget * parent):QWidget(parent)
+{
+    setFixedSize(200,200);
+    loadSkin();
+    WPdir = -1;
+    newHeading=-1;
+}
+void VlmCompass::loadSkin()
+{
+    QPixmap skin;
+    QString skinName=Settings::getSetting("defaultSkin",QFileInfo("img/skin_compas.png").absoluteFilePath()).toString();
+    if(!QFile(skinName).exists())
+        skinName=QFileInfo("img/skin_compas.png").absoluteFilePath();
+    skin.load(skinName);
+    img_fond=QPixmap(200,200);
+    img_fond.fill(Qt::transparent);
+    QPainter pnt(&img_fond);
+    pnt.setCompositionMode(QPainter::CompositionMode_SourceOver);
+    pnt.setRenderHint(QPainter::Antialiasing,true);
+    pnt.drawPixmap(0,0,skin,0,0,200,200);
+    pnt.drawPixmap(0,0,skin,300,0,200,200);
+    pnt.end();
+    img_boat=QPixmap(200,200);
+    img_boat.fill(Qt::transparent);
+    pnt.begin(&img_boat);
+    pnt.drawPixmap(0,0,skin,0,300,200,200);
+    pnt.end();
+    heading =windDir=windSpeed=0;
+    img_arrow_wp=QPixmap(200,200);
+    img_arrow_wp.fill(Qt::transparent);
+    pnt.begin(&img_arrow_wp);
+    pnt.drawPixmap(0,0,skin,300,300,200,200);
+    pnt.end();
+    img_arrow_gate=QPixmap(200,200);
+    img_arrow_gate.fill(Qt::transparent);
+    pnt.begin(&img_arrow_gate);
+    pnt.drawPixmap(0,0,skin,600,300,200,200);
+    pnt.end();
+    img_arrow_wind=QPixmap(200,200);
+    img_arrow_wind.fill(Qt::transparent);
+    pnt.begin(&img_arrow_wind);
+    pnt.drawPixmap(0,0,skin,600,0,200,200);
+    pnt.end();
+}
+
+void VlmCompass::paintEvent(QPaintEvent * /*event*/)
+{
+    QPainter painter(this);
+    painter.setRenderHint(QPainter::Antialiasing,true);
+    painter.setCompositionMode(QPainter::CompositionMode_SourceOver);
+
+    painter.setViewport(0,0,200,200);
+
+    draw(&painter);
+}
+
+void VlmCompass::draw(QPainter * painter)
+{
+    painter->drawPixmap(0,0,img_fond);
+    painter->save();
+    painter->translate(100,100);
+    painter->rotate(heading);
+    painter->drawPixmap(-100,-100,img_boat);
+    painter->restore();
+    if(newHeading!=heading && newHeading!=-1)
+    {
+        QPixmap tempBoat=img_boat;
+        QPainter pnt(&tempBoat);
+        pnt.setRenderHint(QPainter::Antialiasing,true);
+        pnt.setCompositionMode(QPainter::CompositionMode_DestinationIn);
+        pnt.fillRect(0,0,200,200,QBrush(QColor(0,0,0,100)));
+        pnt.end();
+        painter->save();
+        painter->translate(100,100);
+        painter->rotate(newHeading);
+        painter->drawPixmap(-100,-100,tempBoat);
+        painter->restore();
+    }
+    if(WPdir!=-1)
+    {
+        painter->save();
+        painter->translate(100,100);
+        painter->rotate(WPdir);
+        painter->drawPixmap(-100,-100,img_arrow_wp);
+        painter->restore();
+    }
+    painter->save();
+    painter->translate(100,100);
+    painter->rotate(gateDir);
+    painter->drawPixmap(-100,-100,img_arrow_gate);
+    painter->restore();
+    QPixmap tempWind=img_arrow_wind;
+    QPainter pnt(&tempWind);
+    pnt.setRenderHint(QPainter::Antialiasing,true);
+    pnt.setCompositionMode(QPainter::CompositionMode_SourceAtop);
+    pnt.fillRect(0,0,200,200,QBrush(windSpeed_toColor()));
+    pnt.end();
+    painter->save();
+    painter->translate(100,100);
+    painter->rotate(windDir);
+    painter->drawPixmap(-100,-100,tempWind);
+    painter->restore();
+}
+
+QColor VlmCompass::windSpeed_toColor()
+{
+    return Grib::getWindColorStatic(windSpeed,Settings::getSetting("colorMapSmooth", true).toBool());
+}
+
+void VlmCompass::setValues(const double &heading, const double &windDir, const double &windSpeed, const double &WPdir, const double &gateDir, const double &newHeading)
+{
+    //qWarning() << "windAngle set: heading=" << heading << " windDir=" << windDir << " windSpeed=" << windSpeed << " WPdir=" << WPdir << " " << newHeading;
+    this->heading=heading;
+    this->windDir=windDir;
+    this->windSpeed=windSpeed;
+    this->WPdir=WPdir;
+    this->newHeading=newHeading;
+    this->gateDir=gateDir;
+    update();
 }

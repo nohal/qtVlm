@@ -2,7 +2,7 @@
 #define BOARDVLMNEW_H
 
 #include "class_list.h"
-
+#include "BoardTools.h"
 #include "ui_BoardVlmNew.h"
 #include "MainWindow.h"
 #include <QPainter>

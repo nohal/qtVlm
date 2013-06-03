@@ -74,7 +74,7 @@
       <string>BS</string>
      </property>
     </widget>
-    <widget class="tool_windAngle" name="windAngle" native="true">
+    <widget class="VlmCompass" name="windAngle" native="true">
      <property name="geometry">
       <rect>
        <x>20</x>
@@ -1149,10 +1149,10 @@
      <number>5</number>
     </property>
     <property name="value">
-     <number>1</number>
+     <number>3</number>
     </property>
     <property name="sliderPosition">
-     <number>1</number>
+     <number>3</number>
     </property>
     <property name="invertedAppearance">
      <bool>false</bool>
@@ -1164,8 +1164,8 @@
    <widget class="QRadioButton" name="rd_VBVMG">
     <property name="geometry">
      <rect>
-      <x>167</x>
-      <y>40</y>
+      <x>169</x>
+      <y>42</y>
       <width>16</width>
       <height>17</height>
      </rect>
@@ -1514,7 +1514,7 @@
  </widget>
  <customwidgets>
   <customwidget>
-   <class>tool_windAngle</class>
+   <class>VlmCompass</class>
    <extends>QWidget</extends>
    <header>BoardTools.h</header>
    <container>1</container>
