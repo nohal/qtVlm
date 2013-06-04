@@ -61,7 +61,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "Util.h"
 #include "DialogTwaLine.h"
 #include "Player.h"
-#include "Board.h"
+//#include "Board.h"
 #include "boat.h"
 #include "boatReal.h"
 #include "boatVLM.h"

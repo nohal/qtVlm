@@ -28,7 +28,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "settings.h"
 #include "Terrain.h"
 #include "boatVLM.h"
-#include "Board.h"
+//#include "Board.h"
 
 /**********************************************************************/
 /*                         Gen fct                                    */

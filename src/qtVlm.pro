@@ -141,11 +141,11 @@ HEADERS += Dialogs/DialogGraphicsParams.h \
     Progress.h \
     StatusBar.h \
     Magnifier.h \
-    Dialogs/BoardComponent.h \
-    Dialogs/Board.h \
+    Board.h \
+    BoardReal.h \
+    BoardVLM.h \
+    BoardVLM_tools.h \
     Dialogs/BoardTools.h \
-    Dialogs/BoardVlm.h \
-    Dialogs/BoardReal.h \
     Dialogs/BoardVlmNew.h \
     BarrierSet.h \
     Barrier.h \
@@ -155,6 +155,8 @@ HEADERS += Dialogs/DialogGraphicsParams.h \
 
 
 FORMS += Ui/boatAccount_dialog.ui \
+    Ui/BoardVLM.ui \
+    Ui/BoardReal.ui \
     Ui/paramVLM.ui \
     Ui/POI_input.ui \
     Ui/POI_editor.ui \
@@ -187,16 +189,6 @@ FORMS += Ui/boatAccount_dialog.ui \
     Ui/dialogLoadImg.ui \
     Ui/routeInfo.ui \
     Ui/DialogRemovePoi.ui \
-    Ui/BoardPilotVLMBoat.ui \
-    Ui/BoardPosition.ui \
-    Ui/BoardRealBoatWP.ui \
-    Ui/BoardSpeedHeading.ui \
-    Ui/BoardSpeed.ui \
-    Ui/BoardVlm.ui \
-    Ui/BoardReal.ui \
-    Ui/BoardWindTool.ui \
-    Ui/BoardWind.ui \
-    Ui/BoardWP.ui \
     Ui/BoardVlmNew.ui \
     Ui/DialogEditBarrier.ui \
     Ui/DialogChooseMultipleBarrierSet.ui \
@@ -226,6 +218,9 @@ SOURCES += Dialogs/DialogGraphicsParams.cpp \
     Dialogs/DialogTwaLine.cpp \
     Dialogs/DialogWp.cpp \
     Dialogs/DialogInetProgess.cpp \
+    Board.cpp \
+    BoardVLM.cpp \
+    BoardReal.cpp \
     GshhsReader.cpp \
     GisReader.cpp \
     Grib.cpp \
@@ -287,10 +282,6 @@ SOURCES += Dialogs/DialogGraphicsParams.cpp \
     Progress.cpp \
     StatusBar.cpp \
     Magnifier.cpp \
-    Dialogs/BoardComponent.cpp \
-    Dialogs/Board.cpp \
-    Dialogs/BoardVlm.cpp \
-    Dialogs/BoardReal.cpp \
     Dialogs/BoardVlmNew.cpp \
     BarrierSet.cpp \
     Barrier.cpp \

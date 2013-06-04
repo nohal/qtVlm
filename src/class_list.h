@@ -28,10 +28,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 /*****************************/
 
 /* BoardVLM.h */
-class Board;
-class BoardComponent;
+class board;
+class boardVLM;
+class boardReal;
 class BoardVlmNew;
-class MyDockWidget;
 
 /* horn */
 class DialogHorn;

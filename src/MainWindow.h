@@ -291,6 +291,8 @@ public slots:
         bool restartNeeded;
         void updateTitle();
         BoardVlmNew * newBoard;
+        board * myBoard;
+        bool use_old_board;
 };
 
 #endif

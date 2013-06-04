@@ -21,50 +21,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #ifndef BOARDTOOLS_H
 #define BOARDTOOLS_H
 
-#include <QDoubleSpinBox>
-
-/************************************************************/
-/*   tool_edtSpinBox                                        */
-/************************************************************/
-class tool_edtSpinBox: public QDoubleSpinBox
-{ Q_OBJECT
-    public:
-        tool_edtSpinBox(QWidget * parent=0);
-
-    signals:
-        void hasEvent(void);
-
-    protected:
-        void keyPressEvent ( QKeyEvent * event );
-        void keyReleaseEvent ( QKeyEvent * event );
-
-    private:
-        QWidget * parent;
-};
-
-class tool_windAngle: public QWidget
-{ Q_OBJECT
-    public:
-        tool_windAngle(QWidget * parent=0);
-        void draw(QPainter * painter);
-        void setValues(const double &heading, const double &windDir, const double &windSpeed, const double &WPdir, const double &gateDir, const double &newHeading);
-
-        void loadSkin();
-protected:
-        void paintEvent(QPaintEvent * event);
-
-    private:
-        QPixmap img_fond;
-        QPixmap img_boat;
-        QPixmap img_arrow_wp;
-        QPixmap img_arrow_gate;
-        QPixmap img_arrow_wind;
-        int w,h;
-        double heading,windDir,windSpeed,WPdir,newHeading,gateDir;
-
-        QColor windSpeed_toColor(void);
-
-};
+#include <QWidget>
 class VlmCompass: public QWidget
 { Q_OBJECT
     public:

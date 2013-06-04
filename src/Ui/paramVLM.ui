@@ -134,6 +134,16 @@
            </widget>
           </item>
           <item>
+           <widget class="QCheckBox" name="classicalBoard">
+            <property name="toolTip">
+             <string>Redemarrage de qtVlm necessaire</string>
+            </property>
+            <property name="text">
+             <string>Tableau de bord VLM classique</string>
+            </property>
+           </widget>
+          </item>
+          <item>
            <layout class="QHBoxLayout" name="horizontalLayout_14">
             <item>
              <widget class="QLabel" name="label_26">
@@ -172,11 +182,6 @@
            </layout>
           </item>
          </layout>
-         <zorder>chkFusion</zorder>
-         <zorder>edt_gribFolder_2</zorder>
-         <zorder>label_25</zorder>
-         <zorder>layoutWidget</zorder>
-         <zorder>layoutWidget_2</zorder>
         </widget>
        </item>
        <item>
@@ -1470,6 +1475,7 @@
   <tabstop>defFontName</tabstop>
   <tabstop>defFontSize</tabstop>
   <tabstop>chkFusion</tabstop>
+  <tabstop>classicalBoard</tabstop>
   <tabstop>edt_skinFile</tabstop>
   <tabstop>btn_browseSkin</tabstop>
   <tabstop>pushButton_7</tabstop>
@@ -1528,8 +1534,6 @@
   <tabstop>gribMulti</tabstop>
   <tabstop>gribMono</tabstop>
   <tabstop>gribAuto</tabstop>
-  <tabstop>btn_browseGrib_2</tabstop>
-  <tabstop>edt_gribFolder_2</tabstop>
  </tabstops>
  <resources/>
  <connections>

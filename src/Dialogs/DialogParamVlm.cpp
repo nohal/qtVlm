@@ -56,6 +56,7 @@ DialogParamVlm::DialogParamVlm(MainWindow * main,myCentralWidget * parent) : QDi
 
     this->chkPavillon->setCheckState(Settings::getSetting("showFlag",0,"showHideItem").toInt()==1?Qt::Checked:Qt::Unchecked);
     this->chkFusion->setChecked(Settings::getSetting("fusionStyle",0).toInt()==1);
+    this->classicalBoard->setChecked(Settings::getSetting("classicalVlmBoard",0).toInt()==1);
     QString skinName=Settings::getSetting("defaultSkin",QFileInfo("img/skin_compas.png").absoluteFilePath()).toString();
     if(!QFile(skinName).exists())
         skinName=QFileInfo("img/skin_compas.png").absoluteFilePath();
@@ -246,6 +247,7 @@ void DialogParamVlm::done(int result)
         Settings::setSetting("opp_labelType",QString().setNum(opp_labelType->currentIndex()));
         Settings::setSetting("showFlag",this->chkPavillon->checkState()==Qt::Checked?"1":"0","showHideItem");
         Settings::setSetting("fusionStyle",this->chkFusion->isChecked()?1:0);
+        Settings::setSetting("classicalVlmBoard",this->classicalBoard->isChecked()?1:0);
         QString skinName=edt_skinFile->text();
         if(!QFile(skinName).exists())
             skinName=QFileInfo("img/skin_compas.png").absoluteFilePath();

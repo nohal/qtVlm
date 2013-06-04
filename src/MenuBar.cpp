@@ -36,7 +36,7 @@ Copyright (C) 2008 - Jacques Zaninetti - http://zygrib.free.fr
 #include "Terrain.h"
 #include "settings.h"
 #include "ToolBar.h"
-#include "Board.h"
+//#include "Board.h"
 #include "BarrierSet.h"
 
 

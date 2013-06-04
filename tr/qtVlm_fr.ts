@@ -39,214 +39,45 @@
 <context>
     <name>BoardPilotVLMBoat</name>
     <message>
-        <source>Form</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Heading</source>
-        <translation type="unfinished">Cap</translation>
-    </message>
-    <message>
-        <source>background-color: rgb(239, 243, 247);</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Angle vent</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source> °</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Ortho</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>VMG</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>VBVMG</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Pilototo (x/x)</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Effacer</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Boat control</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Select WP - click to cancel</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Pilototo</source>
-        <translation type="unfinished"></translation>
-    </message>
-</context>
-<context>
-    <name>BoardPosition</name>
-    <message>
-        <source>Form</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>000a00&apos;00&apos;&apos; W</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Position</source>
-        <translation type="unfinished"></translation>
+        <translation type="obsolete">Cap</translation>
     </message>
 </context>
 <context>
     <name>BoardRealBoatWP</name>
     <message>
-        <source>Form</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Ortho</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>999.99</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>a</source>
-        <translation type="unfinished">°</translation>
-    </message>
-    <message>
-        <source>Loxo</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Angle</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>DNM</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>nm</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>VMG</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>99.99</source>
-        <translation type="unfinished"></translation>
+        <translation type="obsolete">°</translation>
     </message>
     <message>
         <source>kts</source>
-        <translation type="unfinished">nds</translation>
-    </message>
-    <message>
-        <source>PushButton</source>
-        <translation type="unfinished"></translation>
-    </message>
-</context>
-<context>
-    <name>BoardRealPosition</name>
-    <message>
-        <source>Position</source>
-        <translation type="unfinished"></translation>
+        <translation type="obsolete">nds</translation>
     </message>
 </context>
 <context>
     <name>BoardRealUi</name>
     <message>
-        <source>Form</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Nom bateau</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>?</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Définir position</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Boat</source>
-        <translation type="unfinished">Bateau</translation>
-    </message>
-    <message>
-        <source>No Polar</source>
-        <translation type="unfinished"></translation>
+        <translation type="obsolete">Bateau</translation>
     </message>
     <message>
         <source>Information</source>
-        <translation type="unfinished">Information</translation>
-    </message>
-    <message>
-        <source>Boat: </source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Polar: </source>
-        <translation type="unfinished"></translation>
+        <translation type="obsolete">Information</translation>
     </message>
 </context>
 <context>
     <name>BoardSpeed</name>
     <message>
-        <source>Form</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Speed</source>
-        <translation type="unfinished">Vitesse</translation>
-    </message>
-    <message>
-        <source>99.99</source>
-        <translation type="unfinished"></translation>
+        <translation type="obsolete">Vitesse</translation>
     </message>
     <message>
         <source>kts</source>
-        <translation type="unfinished">nds</translation>
-    </message>
-    <message>
-        <source>Loch</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>9999.99</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>nm</source>
-        <translation type="unfinished"></translation>
+        <translation type="obsolete">nds</translation>
     </message>
     <message>
         <source>Avg</source>
-        <translation type="unfinished">Moy</translation>
-    </message>
-</context>
-<context>
-    <name>BoardSpeedHeading</name>
-    <message>
-        <source>Form</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Speed &amp; heading</source>
-        <translation type="unfinished"></translation>
+        <translation type="obsolete">Moy</translation>
     </message>
 </context>
 <context>
@@ -297,10 +128,6 @@
     </message>
     <message>
         <source>VBVMG</source>
-        <translation></translation>
-    </message>
-    <message>
-        <source>ORTHO</source>
         <translation></translation>
     </message>
     <message>
@@ -367,110 +194,108 @@
         <source>Annuler</source>
         <translation>Annuler</translation>
     </message>
-</context>
-<context>
-    <name>BoardVlmUi</name>
     <message>
-        <source>Form</source>
+        <source>Bateau</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Score</source>
+        <source>Position</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>?</source>
+        <source>BS:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>GPS emulation</source>
+        <source>14.32kts</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Races</source>
+        <source>HDG:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>VLM Sync</source>
+        <source>132.23d</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>F5</source>
+        <source>Moy:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Vlm</source>
+        <source>Loch:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>forcee</source>
-        <translation type="unfinished">forcé</translation>
-    </message>
-    <message>
-        <source>erreur chargement</source>
+        <source>Ortho:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Information sur</source>
+        <source>DNM:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Alias:</source>
+        <source>Angle:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>ID:</source>
+        <source>VMG:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Pseudo:</source>
+        <source>25.25kts</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Nom:</source>
+        <source>Wind</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Email:</source>
+        <source>TWS:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Course:</source>
+        <source>25.35kts</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Score:</source>
+        <source>TWD:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Polaire:</source>
-        <translation type="unfinished"></translation>
-    </message>
-</context>
-<context>
-    <name>BoardWP</name>
-    <message>
-        <source>Form</source>
+        <source>Pres:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Ortho</source>
+        <source>Port.:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>999.99</source>
+        <source>Race</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>a</source>
-        <translation type="unfinished">°</translation>
-    </message>
-    <message>
-        <source>Angle</source>
+        <source>-&gt;</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>DNM</source>
+        <source>Fasnet gate</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Dist:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>TextLabel</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>kts</source>
+        <translation type="unfinished">nds</translation>
+    </message>
+    <message>
+        <source>ORT</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -478,177 +303,79 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>VMG</source>
+        <source>pas de polaire chargee</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>99.99</source>
+        <source>AWA</source>
         <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>AWS</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Confirmation a chaque ordre vers VLM</source>
+        <translation type="unfinished">Confirmation à chaque ordre vers VLM</translation>
+    </message>
+    <message>
+        <source>Confirmez-vous cet ordre?</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>BoardVlmUi</name>
+    <message>
+        <source>forcee</source>
+        <translation type="obsolete">forcé</translation>
+    </message>
+</context>
+<context>
+    <name>BoardWP</name>
+    <message>
+        <source>a</source>
+        <translation type="obsolete">°</translation>
     </message>
     <message>
         <source>kts</source>
-        <translation type="unfinished">nds</translation>
-    </message>
-    <message>
-        <source>PushButton</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>WayPoint</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Prochaine balise (0 WP)</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>WP: </source>
-        <translation type="unfinished"></translation>
+        <translation type="obsolete">nds</translation>
     </message>
     <message>
         <source>deg</source>
-        <translation type="unfinished">°</translation>
+        <translation type="obsolete">°</translation>
     </message>
 </context>
 <context>
     <name>BoardWP_Real</name>
     <message>
-        <source>WayPoint</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Prochaine balise (0 WP)</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>WP: </source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>deg</source>
-        <translation type="unfinished">°</translation>
+        <translation type="obsolete">°</translation>
     </message>
 </context>
 <context>
     <name>BoardWind</name>
     <message>
-        <source>Form</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Dir</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>a</source>
-        <translation type="unfinished">°</translation>
-    </message>
-    <message>
-        <source>999.99</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>99.99</source>
-        <translation type="unfinished"></translation>
+        <translation type="obsolete">°</translation>
     </message>
     <message>
         <source>kts</source>
-        <translation type="unfinished">nds</translation>
+        <translation type="obsolete">nds</translation>
     </message>
     <message>
         <source>Speed</source>
-        <translation type="unfinished">Vitesse</translation>
-    </message>
-    <message>
-        <source>VMG Vent</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Portant</source>
-        <translation type="unfinished"></translation>
+        <translation type="obsolete">Vitesse</translation>
     </message>
     <message>
         <source>Pres</source>
-        <translation type="unfinished">Près</translation>
-    </message>
-    <message>
-        <source>Wind</source>
-        <translation type="unfinished"></translation>
+        <translation type="obsolete">Près</translation>
     </message>
 </context>
 <context>
     <name>BoardWindTool</name>
     <message>
-        <source>Form</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Compas</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>BS</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>TWS</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>TWD</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Details</source>
-        <translation type="unfinished">Détails</translation>
-    </message>
-    <message>
-        <source>Polaire</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>°</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>TWA</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>VMG</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>HDG</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>VBVMG</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>ORTHO</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>WP</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Pilototo</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>background-color: rgb(239, 243, 247);</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>VLM Sync</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Wind tool</source>
-        <translation type="unfinished"></translation>
+        <translation type="obsolete">Détails</translation>
     </message>
 </context>
 <context>
@@ -668,6 +395,28 @@
     <message>
         <source>Liste des bateaux pour </source>
         <translation></translation>
+    </message>
+</context>
+<context>
+    <name>DialogChooseBarrierSet</name>
+    <message>
+        <source>Barrier set choice</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>No barrier set define, create one before doing this action</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>DialogChooseBarrierSet_ui</name>
+    <message>
+        <source>Dialog</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Barrier set:</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -1265,6 +1014,10 @@ La boîte à cocher trace partielle s&apos;active apres l&apos;entree d&apos;un 
     <message>
         <source>Therefore the automatic choice will be monothread</source>
         <translation>Le choix automatique sera donc monothread</translation>
+    </message>
+    <message>
+        <source>Selectionner un skin tableau de bord VLM</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -2491,6 +2244,10 @@ Etes-vous sur ?</source>
         <source>Montrer les POIs intermediaires de la route</source>
         <translation>Montrer les pois intermédiaires de la route </translation>
     </message>
+    <message>
+        <source>New set</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>MenuBar</name>
@@ -3404,6 +3161,10 @@ Etes-vous sur ?</source>
     </message>
     <message>
         <source>Delete</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Create new barrier</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -5636,14 +5397,6 @@ p, li { white-space: pre-wrap; }
         <translation></translation>
     </message>
     <message>
-        <source>Divers</source>
-        <translation></translation>
-    </message>
-    <message>
-        <source>Boutons VLM classiques</source>
-        <translation></translation>
-    </message>
-    <message>
         <source>Interpolation des donnees GRIB</source>
         <translation>Interpolqtion des données Grib</translation>
     </message>
@@ -5735,6 +5488,22 @@ p, li { white-space: pre-wrap; }
         <source>CD</source>
         <translation></translation>
     </message>
+    <message>
+        <source>Apparence</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Redemarrage de qtVlm necessaire</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Style Fusion</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Skin par defaut</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>WP_dialog_ui</name>
@@ -5784,75 +5553,110 @@ p, li { white-space: pre-wrap; }
     </message>
 </context>
 <context>
+    <name>board</name>
+    <message>
+        <source>Tableau de bord VLM</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Tableau de bord</source>
+        <translation></translation>
+    </message>
+</context>
+<context>
     <name>boardReal</name>
     <message>
         <source>nds</source>
-        <translation type="obsolete">nds</translation>
+        <translation>nds</translation>
     </message>
     <message>
         <source>deg</source>
-        <translation type="obsolete">°</translation>
+        <translation>°</translation>
     </message>
     <message>
         <source>Running</source>
-        <translation type="obsolete">En marche</translation>
+        <translation>En marche</translation>
     </message>
     <message>
         <source>no signal</source>
-        <translation type="obsolete">pas de signal</translation>
+        <translation>pas de signal</translation>
     </message>
     <message>
         <source>Fix quality</source>
-        <translation type="obsolete">Qualité fixe</translation>
+        <translation>Qualité fixe</translation>
     </message>
     <message>
         <source>Sensitive quality</source>
-        <translation type="obsolete">Qualité maximum</translation>
+        <translation>Qualité maximum</translation>
     </message>
     <message>
         <source>no position</source>
-        <translation type="obsolete">Pas de position</translation>
+        <translation>Pas de position</translation>
     </message>
     <message>
         <source>2D position</source>
-        <translation type="obsolete">Position 2D</translation>
+        <translation>Position 2D</translation>
     </message>
     <message>
         <source>3D position</source>
-        <translation type="obsolete">position 3D</translation>
+        <translation>position 3D</translation>
     </message>
     <message>
         <source>Ideal accuracy</source>
-        <translation type="obsolete">Précision idéale</translation>
+        <translation>Précision idéale</translation>
     </message>
     <message>
         <source>Excellent accuracy</source>
-        <translation type="obsolete">Précision excellente</translation>
+        <translation>Précision excellente</translation>
     </message>
     <message>
         <source>Good accuracy</source>
-        <translation type="obsolete">Précision bonne</translation>
+        <translation>Précision bonne</translation>
     </message>
     <message>
         <source>Moderate accuracy</source>
-        <translation type="obsolete">Précision moyenne</translation>
+        <translation>Précision moyenne</translation>
     </message>
     <message>
         <source>Not so good accuracy</source>
-        <translation type="obsolete">Précision mauvaise</translation>
+        <translation>Précision mauvaise</translation>
     </message>
     <message>
         <source>Very bad accuracy</source>
-        <translation type="obsolete">Précision très mauvaise</translation>
+        <translation>Précision très mauvaise</translation>
     </message>
     <message>
         <source>Pres</source>
-        <translation type="obsolete">Près</translation>
+        <translation>Près</translation>
     </message>
     <message>
         <source>Inclure la declinaison (</source>
         <translatorcomment>Inclure la déclinaison (</translatorcomment>
-        <translation type="obsolete">Inclure la déclinaison (</translation>
+        <translation>Inclure la déclinaison (</translation>
+    </message>
+    <message>
+        <source>Cacher compas</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Portant</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Differential quality</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Information</source>
+        <translation>Information</translation>
+    </message>
+    <message>
+        <source>Start GPS</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Stop GPS</source>
+        <translation></translation>
     </message>
 </context>
 <context>
@@ -5863,66 +5667,130 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Deplacer le bateau</source>
-        <translation type="obsolete">Déplacer le bateau</translation>
+        <translation>Déplacer le bateau</translation>
     </message>
     <message>
         <source>a</source>
-        <translation type="obsolete">°</translation>
+        <translation>°</translation>
     </message>
     <message>
         <source>kts</source>
-        <translation type="obsolete">nds</translation>
+        <translation>nds</translation>
     </message>
     <message>
         <source>GPS Status</source>
-        <translation type="obsolete">Statut GPS</translation>
+        <translation>Statut GPS</translation>
     </message>
     <message>
         <source>Wind information (from grib)</source>
-        <translation type="obsolete">Information Vent (Grib)</translation>
+        <translation>Information Vent (Grib)</translation>
     </message>
     <message>
         <source>Declinaison</source>
-        <translation type="obsolete">Déclinaison</translation>
+        <translation>Déclinaison</translation>
     </message>
     <message>
         <source>Inclure la declinaison</source>
-        <translation type="obsolete">Inclure la déclinaison</translation>
+        <translation>Inclure la déclinaison</translation>
+    </message>
+    <message>
+        <source>Board</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>00a00&apos;00&apos;&apos; W</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>000a00&apos;00&apos;&apos; W</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>?</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Vitesse et Cap</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>WP</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Ortho</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>999.99</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Loxo</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>DNM</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>nm</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>VMG</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>99.99</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Reset</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Start GPS</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>GPS status loading</source>
+        <translation></translation>
     </message>
 </context>
 <context>
     <name>boardVLM</name>
     <message>
         <source>Impossible d&apos;envoyer les donnees sur le port serie</source>
-        <translation type="obsolete">Impossible d&apos;envoyer les données sur le port série</translation>
+        <translation>Impossible d&apos;envoyer les données sur le port série</translation>
     </message>
     <message>
         <source>Erreur</source>
-        <translation type="obsolete">Erreur</translation>
+        <translation>Erreur</translation>
     </message>
     <message>
         <source>Mode de pilotage change en &apos;Cap&apos;</source>
-        <translation type="obsolete">Mode de pilotage changé en &apos;Cap&apos;</translation>
+        <translation>Mode de pilotage changé en &apos;Cap&apos;</translation>
     </message>
     <message>
         <source>Mode de pilotage change en &apos;Angle&apos;</source>
-        <translation type="obsolete">Mode de pilotage changé en &apos;Angle&apos;</translation>
+        <translation>Mode de pilotage changé en &apos;Angle&apos;</translation>
     </message>
     <message>
         <source>Mode de pilotage change en &apos;Pilot Ortho&apos;</source>
-        <translation type="obsolete">Mode de pilotage changé en &apos;Pilot Ortho&apos;</translation>
+        <translation>Mode de pilotage changé en &apos;Pilot Ortho&apos;</translation>
     </message>
     <message>
         <source>Mode de pilotage change en &apos;VMG&apos;</source>
-        <translation type="obsolete">Mode de pilotage changé en &apos;VMG&apos;</translation>
+        <translation>Mode de pilotage changé en &apos;VMG&apos;</translation>
     </message>
     <message>
         <source>Mode de pilotage change en &apos;VBVMG&apos;</source>
-        <translation type="obsolete">Mode de pilotage changé en &apos;VBVMG&apos;</translation>
+        <translation>Mode de pilotage changé en &apos;VBVMG&apos;</translation>
     </message>
     <message>
         <source>Pas de bateau selectionne</source>
-        <translation type="obsolete">Pas de bateau sélectionné</translation>
+        <translation>Pas de bateau sélectionné</translation>
     </message>
     <message>
         <source>Name:</source>
@@ -5930,11 +5798,11 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>deg</source>
-        <translation type="obsolete">°</translation>
+        <translation>°</translation>
     </message>
     <message>
         <source>forcee</source>
-        <translation type="obsolete">forcé</translation>
+        <translation>forcé</translation>
     </message>
     <message>
         <source>Angles au degre</source>
@@ -5950,54 +5818,278 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>WP defini dans VLM (pas de POI correspondant)</source>
-        <translation type="obsolete">WP défini dans VLM (pas de WP correspondant dans qtVLM)</translation>
+        <translation>WP défini dans VLM (pas de WP correspondant dans qtVLM)</translation>
     </message>
     <message>
         <source>WP defini dans VLM (</source>
-        <translation type="obsolete">WP défini dans VLM (</translation>
+        <translation>WP défini dans VLM (</translation>
     </message>
     <message>
         <source>Le cap a suivre n&apos;est pas le meme</source>
-        <translation type="obsolete">Attention: le cap à suivre est différent</translation>
+        <translation>Attention: le cap à suivre est différent</translation>
     </message>
     <message>
         <source>WP defini dans VLM mais le mode de navigation n&apos;est pas coherent</source>
-        <translation type="obsolete">WP défini dans VLM mais le mode de navigation n&apos;est pas compatible</translation>
+        <translation>WP défini dans VLM mais le mode de navigation n&apos;est pas compatible</translation>
+    </message>
+    <message>
+        <source>Prochaine balise (0 WP)</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Cacher compas</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Instruction pour </source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Confirmer le changement du WP</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>WP change</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Confirmer le mode pilotage &apos;Cap&apos;</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Pas de WP actif</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source> dans qtVlm)</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Confirmer le mode pilotage &apos;Angle&apos;</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Confirmer le mode &apos;Pilot Ortho&apos;</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Confirmer le mode &apos;VMG&apos;</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Confirmer le mode &apos;VBVMG&apos;</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>erreur chargement</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Information sur</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Alias:</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>ID:</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Pseudo:</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Nom:</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Email:</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Course:</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Score:</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Polaire:</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>GPS synchronisation</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Cacher le compas</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Afficher le compas</source>
+        <translation></translation>
     </message>
 </context>
 <context>
     <name>boardVLM_ui</name>
     <message>
         <source>Speed</source>
-        <translation type="obsolete">Vitesse</translation>
+        <translation>Vitesse</translation>
     </message>
     <message>
         <source>kts</source>
-        <translation type="obsolete">nds</translation>
+        <translation>nds</translation>
     </message>
     <message>
         <source>Heading</source>
-        <translation type="obsolete">Cap</translation>
+        <translation>Cap</translation>
     </message>
     <message>
         <source>Avg</source>
-        <translation type="obsolete">Moy</translation>
+        <translation>Moy</translation>
     </message>
     <message>
         <source>Pres</source>
-        <translation type="obsolete">Près</translation>
+        <translation>Près</translation>
     </message>
     <message>
         <source>deg</source>
-        <translation type="obsolete">°</translation>
+        <translation>°</translation>
     </message>
     <message>
         <source>&lt;shift&gt;,&lt;control&gt; et &lt;tab&gt; pour changer la precision de l&apos;increment</source>
-        <translation type="obsolete">&lt;shift&gt;,&lt;control&gt; et &lt;tab&gt; pour changer la précision de l&apos;increment</translation>
+        <translation>&lt;shift&gt;,&lt;control&gt; et &lt;tab&gt; pour changer la précision de l&apos;increment</translation>
     </message>
     <message>
         <source>Clear</source>
-        <translation type="obsolete">Effacer</translation>
+        <translation>Effacer</translation>
+    </message>
+    <message>
+        <source>Form</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Nom bateau</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Score</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>?</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>000a00&apos;00&apos;&apos; W</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>GPS</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>VLM Sync</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>F5</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Pilototo (x/x)</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source> Vitesse et Cap</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>background-color: rgb(239, 243, 247);</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>9999.99</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Bateau</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>99.99</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Loch</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>nm</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>WP direction</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Ortho</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>999.99</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>a</source>
+        <translation>°</translation>
+    </message>
+    <message>
+        <source>Angle</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>DNM</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>VMG</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>PushButton</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>VBVMG</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Vent</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Dir</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>background-color: rgb(170, 170, 255);</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>+/-</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Meilleur VMG vent</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Portant</source>
+        <translation></translation>
     </message>
 </context>
 <context>
@@ -7315,6 +7407,15 @@ Que voulez vous faire?</translation>
     <message>
         <source> (minimum)</source>
         <translation></translation>
+    </message>
+    <message>
+        <source>Creating a new barrier</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Point must be inside map
+Please select another point or press esc to exit barrier creation mode</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
