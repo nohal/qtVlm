@@ -2388,12 +2388,14 @@ void MainWindow::slot_POI_input() {
 void MainWindow::slot_newBarrierSet() {
     BarrierSet * barrierSet = new BarrierSet(this);
     barrierSet->set_name(tr("New set"));
+
     DialogEditBarrier dialogEditBarrier(this);
     dialogEditBarrier.initDialog(barrierSet);
     if(dialogEditBarrier.exec() == QDialog::Rejected)
         delete barrierSet;
     else {
         ::barrierSetList.append(barrierSet);
+        barrierSet->set_key(barrierSet->get_name().toUtf8().toBase64()+Util::generateKey(10));
         menuBar->ac_barrierTool->setChecked(true);
     }
 }

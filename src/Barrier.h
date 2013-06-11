@@ -46,13 +46,19 @@ class BarrierPoint: public QObject, public QGraphicsRectItem {
 
         FCT_GET(Barrier*,barrier)
 
+        FCT_SETGET(bool,isMovable)
+
         void set_editMode(bool mode);        
 
         bool is_same(QPointF position);
 
+        bool tryMoving(QPoint pos);
+
+
     public slots:
         void slot_removePoint(void);
         void slot_insertAfter(void);
+        void slot_projectionUpdated();
 
     signals:
         void positionChanged(void);
@@ -74,7 +80,15 @@ class BarrierPoint: public QObject, public QGraphicsRectItem {
 
         Barrier * barrier;
 
-        QVariant itemChange(QGraphicsItem::GraphicsItemChange change, const QVariant &value);
+        //QVariant itemChange(QGraphicsItem::GraphicsItemChange change, const QVariant &value);
+
+        /*** move management **/
+        bool isMoving;
+        bool isMovable;
+        QPointF previousPos;
+        QPointF mousePos;
+        void mousePressEvent(QGraphicsSceneMouseEvent * e);
+        void mouseReleaseEvent(QGraphicsSceneMouseEvent * e);
 
 };
 
@@ -105,6 +119,8 @@ class Barrier: public QObject, QGraphicsPathItem {
         int is_firstLast(QPointF screenPosition);
 
         bool cross(QLineF line);
+
+        void printBarrier(void);
 
     public slots:
         void slot_pointPositionChanged(void);

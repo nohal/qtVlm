@@ -848,7 +848,19 @@ void boat::slot_updateGraphicsParameters()
  *******************************************************/
 
 void boat::slot_chooseBarrierSet(void) {
+    cleanBarrierList();
     DialogChooseMultipleBarrierSet::chooseBarrierSet(mainWindow,&barrierSets);
+    barrierKeys.clear();
+    for(int i=0;i<barrierSets.count();i++)
+        barrierKeys.append(barrierSets.at(i)->get_key());
+}
+
+void boat::cleanBarrierList(void) {
+    BarrierSet::get_barrierSetListFromKeys(barrierKeys,&barrierSets);
+    /*qWarning() << "nb keys: " << barrierKeys.count();
+    qWarning() << "key list: \n" << barrierKeys;
+    qWarning() << "nb in barrierSets: " <<barrierSets.count();
+    barrierSets.at(0)->printSet();*/
 }
 
 bool boat::cross(QLineF line) {

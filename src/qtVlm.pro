@@ -96,7 +96,6 @@ HEADERS += Dialogs/DialogGraphicsParams.h \
     Util.h \
     Version.h \
     xmlBoatData.h \
-    xmlPOIData.h \
     zuFile.h \
     mapcompass.h \
     mycentralwidget.h \
@@ -151,7 +150,8 @@ HEADERS += Dialogs/DialogGraphicsParams.h \
     Barrier.h \
     Dialogs/DialogEditBarrier.h \
     Dialogs/DialogChooseMultipleBarrierSet.h \
-    Dialogs/DialogChooseBarrierSet.h
+    Dialogs/DialogChooseBarrierSet.h \
+    XmlFile.h
 
 
 FORMS += Ui/boatAccount_dialog.ui \
@@ -239,7 +239,6 @@ SOURCES += Dialogs/DialogGraphicsParams.cpp \
     Terrain.cpp \
     Util.cpp \
     xmlBoatData.cpp \
-    xmlPOIData.cpp \
     zuFile.cpp \
     mapcompass.cpp \
     mycentralwidget.cpp \
@@ -287,7 +286,8 @@ SOURCES += Dialogs/DialogGraphicsParams.cpp \
     Barrier.cpp \
     Dialogs/DialogEditBarrier.cpp \
     Dialogs/DialogChooseMultipleBarrierSet.cpp \
-    Dialogs/DialogChooseBarrierSet.cpp
+    Dialogs/DialogChooseBarrierSet.cpp \
+    XmlFile.cpp
 
 unix:!macx: DEFINES += _TTY_POSIX_ __TERRAIN_QIMAGE __UNIX_QTVLM
 win32:DEFINES += _TTY_WIN_ \

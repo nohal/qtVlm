@@ -27,6 +27,7 @@ Copyright (C) 2008 - Jacques Zaninetti - http://zygrib.free.fr
 #include <QNetworkRequest>
 #include <QUrl>
 #include <QClipboard>
+#include <cstdlib>
 
 #include "Util.h"
 
@@ -46,6 +47,14 @@ double Util::A180(double angle)
             angle=angle-360;
     }
     return angle;
+}
+
+QString Util::generateKey(int size) {
+    QString s;
+    for(int i=0;i<size;i++) {
+        s.append('a'+rand()%26);
+    }
+    return s;
 }
 
 //======================================================================

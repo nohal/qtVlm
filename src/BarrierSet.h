@@ -38,21 +38,28 @@ class BarrierSet: public QObject
     public:
         BarrierSet(MainWindow *mainWindow);
         ~BarrierSet(void);
+
         bool cross(QLineF line);
 
-        static void readBarriersFromDisk(MainWindow * mainWindow, QString fileName, bool import=false);
-        static void saveBarriersToDisk(QString fileName);
+        static void readBarriersFromDisk(MainWindow * mainWindow);
+        static void saveBarriersToDisk(void);
 
         static void clear_barrierSetList(void);
         static void init_barrierSetList(void) { barrierSetList.clear(); }
 
+        static bool validateName(BarrierSet * set,QString name);
+
         static bool myLessThan(const BarrierSet * set_1,const BarrierSet* set_2) {return set_1->name < set_2->name;}
+
+        static void get_barrierSetListFromKeys(QList<QString> keyList,QList<BarrierSet*>* mySetList);
 
         FCT_GET(QString,name)
         void set_name(QString name);
         QList<Barrier*> * get_barriers(void) { return &barrierList; }
         FCT_GET(QColor,color)
         void set_color(QColor color);
+
+        FCT_SETGET(QString,key)
 
         void add_barrier(Barrier * barrier) { if(barrier) barrierList.append(barrier); }
         void remove_barrier(Barrier * barrier) { if(barrier) barrierList.removeAll(barrier); }
@@ -61,6 +68,8 @@ class BarrierSet: public QObject
         void set_barrierIsEdited(bool state);
 
         bool is_firstLast(QPointF screenPosition,Barrier ** barrierPtr,int * num);
+
+        void printSet(void);
 
     public slots:
         void slot_editBarrierSet(void);
@@ -74,6 +83,7 @@ class BarrierSet: public QObject
 
         QColor color;
         QString name;
+        QString key;
 
         MainWindow * mainWindow;
 

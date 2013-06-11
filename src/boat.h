@@ -119,8 +119,12 @@ class boat: public QGraphicsWidget
 
         /*** Barrier ***/
         QList<BarrierSet *>* get_barrierSets(void) { return &barrierSets; }
+        QList<QString> * get_barrierKeys(void) {return &barrierKeys; }
         void add_barrierSet(BarrierSet* set) { if(set && !barrierSets.contains(set)) barrierSets.append(set); }
         void clear_barrierSet(void) { barrierSets.clear(); }
+        void clear_barrierKeys(void) { barrierKeys.clear(); }
+        void setSetKeys(QList<QString> keys) { barrierKeys = keys; }
+        void cleanBarrierList(void);
         bool cross(QLineF line);
 
 public slots:
@@ -187,6 +191,7 @@ public slots:
 
         /*** Barrier ***/
         QList<BarrierSet *> barrierSets;
+        QList<QString> barrierKeys;
 
         double zoom;
 

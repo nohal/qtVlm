@@ -58,6 +58,8 @@ class xml_boatData: public QWidget
             void readRace(QDomNode node);
             void readBoat(QDomNode node,PlayerMap * pList);
             void readPlayer(QDomNode node,PlayerMap * pList);
+
+            void add_setKeys(QDomDocument *doc, QDomElement * group, boat * myBoat);
 };
 
 #endif

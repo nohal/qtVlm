@@ -54,7 +54,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "POI.h"
 #include "boatVLM.h"
 #include "xmlBoatData.h"
-#include "xmlPOIData.h"
 #include "routage.h"
 #include "vlmLine.h"
 #include "dataDef.h"
@@ -545,7 +544,6 @@ myCentralWidget::myCentralWidget(Projection * proj,MainWindow * parent,MenuBar *
     while (!poi_list.isEmpty())
         delete poi_list.takeFirst();
 
-    xmlPOI = new xml_POIData(proj,parent,this);
     /*Races*/
     this->NSZ=NULL;
 
@@ -689,9 +687,15 @@ void myCentralWidget::loadBoat(void)
     emit readBoatData(appFolder.value("userFiles")+"boatAcc.dat",true);
 }
 
-void myCentralWidget::loadPOI(void)
-{
-    emit readPOIData(appFolder.value("userFiles")+"poi.dat");
+void myCentralWidget::loadPOI(void) {
+    POI::read_POIData(this);
+    ROUTE::read_routeData(this);
+    assignPois();
+    connectPois();
+    BarrierSet::readBarriersFromDisk(mainW);
+}
+
+void myCentralWidget::connectPois(void) {
     foreach(POI * poi1,this->poi_list)
     {
         if(poi1->getLonConnected()!=-1)
@@ -727,9 +731,11 @@ void myCentralWidget::loadPOI(void)
 
 myCentralWidget::~myCentralWidget()
 {
-    if(!mainW->getNoSave() && xmlPOI && xmlData)
+    if(!mainW->getNoSave() && xmlData)
     {
-        xmlPOI->slot_writeData(route_list,poi_list,appFolder.value("userFiles")+"poi.dat");
+        POI::write_POIData(poi_list,this);
+        ROUTE::write_routeData(route_list,this);
+        BarrierSet::saveBarriersToDisk();
         xmlData->slot_writeData(player_list,race_list,QString(appFolder.value("userFiles")+"boatAcc.dat"));
     }
     // Delete POIs and routes
@@ -1080,6 +1086,10 @@ void myCentralWidget::mouseMove(int x, int y, QGraphicsItem * )
             break ;
         }
         if(item->data(0) == FAXMETEO_WTYPE && ((faxMeteo*)item)->tryMoving(x,y))
+        {
+            break ;
+        }
+        if(item->data(0) == BARRIERPOINT_WTYPE && ((BarrierPoint*)item)->tryMoving(QPoint(x,y)))
         {
             break ;
         }
@@ -3512,7 +3522,7 @@ ROUTE * myCentralWidget::addRoute()
     connect(mainW,SIGNAL(updateRoute(boat *)),route,SLOT(slot_recalculate(boat *)));
     connect(route,SIGNAL(editMe(ROUTE *)),this,SLOT(slot_editRoute(ROUTE *)));
 
-    connect(this, SIGNAL(shRou(bool)),route,SLOT(slot_shRou()));
+    connect(this, SIGNAL(shRou(bool)),route,SLOT(slot_shRou(bool)));
     connect(this, SIGNAL(shRouBis()),route,SLOT(slot_shShow()));
 
 
@@ -4534,9 +4544,11 @@ void myCentralWidget::slot_setColorMapMode(QAction* act)
 
 void myCentralWidget::slot_POISave(void)
 {
-    emit writePOIData(route_list,poi_list,appFolder.value("userFiles")+"poi.dat");
+    POI::write_POIData(poi_list,this);
+    ROUTE::write_routeData(route_list,this);
     QMessageBox::information(this,tr("Sauvegarde des POIs et des routes"),tr("Sauvegarde reussie"));
 }
+
 void myCentralWidget::slot_POIRestore(void)
 {
     while(!route_list.isEmpty())
@@ -4563,13 +4575,12 @@ void myCentralWidget::slot_POIRestore(void)
     QMessageBox::information(this,tr("Chargement des POIs et des routes"),tr("Chargement reussi"));
 }
 
-void myCentralWidget::slot_POIimport(void)
-{
-    emit importZyGrib();
+void myCentralWidget::slot_POIimport(void) {
+    POI::importZyGrib(this);
 }
-void myCentralWidget::slot_POIimportGeoData(void)
-{
-    xmlPOI->importGeoData();
+
+void myCentralWidget::slot_POIimportGeoData(void) {
+    POI::importGeoData(this);
 }
 
 /**************************/

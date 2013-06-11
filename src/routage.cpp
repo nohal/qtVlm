@@ -894,6 +894,9 @@ void ROUTAGE::calculate()
         QMessageBox::critical(0,tr("Routage"),tr("Pas de polaire chargee"));
         return;
     }
+    /**** update boat barriers ***/
+    myBoat->cleanBarrierList();
+
     if(!grib)
     {
         QMessageBox::critical(0,tr("Routage"),tr("Pas de grib charge"));
@@ -1065,6 +1068,7 @@ void ROUTAGE::slot_calculate()
     int maxLoop=0;
     int nbCaps=0;
     int nbCapsPruned=0;
+#ifdef OLD_BARRIER
     QList<POI *> poiList=parent->getPois();
     for(int p=0;p<poiList.size();++p)
     {
@@ -1079,6 +1083,7 @@ void ROUTAGE::slot_calculate()
             barrieres.append(QLineF(x1,y1,x2,y2));
         }
     }
+#endif
 #ifdef HAS_ICEGATE
     QList<vlmLine*> gates=myBoat->getGates();
     for (int n=myBoat->getNWP()-1;n<gates.size();++n)
@@ -4237,6 +4242,7 @@ bool ROUTAGE::newtownRaphson(double * root, double goal,double precision,QPolygo
 }
 bool ROUTAGE::crossBarriere(const QLineF &line) const
 {
+#ifdef OLD_BARRIER
     QPointF dummy;
     foreach (const QLineF &barriere,barrieres)
     {
@@ -4244,6 +4250,10 @@ bool ROUTAGE::crossBarriere(const QLineF &line) const
             return true;
     }
     return false;
+#else
+    return myBoat->cross(line);
+    //return false;
+#endif
 }
 void ROUTAGE::calculateAlternative()
 {

@@ -209,7 +209,8 @@ void Barrier::set_editMode(bool mode) {
 
 void Barrier::set_barrierIsEdited(bool state) {
     for(int i=0;i<points.count();++i) {
-        points.at(i)->setFlag(QGraphicsItem::ItemIsMovable,state);
+        points.at(i)->set_isMovable(state);
+        //points.at(i)->setFlag(QGraphicsItem::ItemIsMovable,state);
     }
 }
 
@@ -310,12 +311,18 @@ void Barrier::contextMenuEvent (QGraphicsSceneContextMenuEvent * e) {
 bool Barrier::cross(QLineF line) {
     for(int i=0;i<(points.count()-1);++i) {
         QLineF l1(points.at(i)->get_scenePosition(),points.at(i+1)->get_scenePosition());
+        //QLineF l1(points.at(i)->get_position(),points.at(i+1)->get_position());
         if(l1.intersect(line,NULL)==QLineF::BoundedIntersection)
             return true;
     }
     return false;
 }
 
+void Barrier::printBarrier(void) {
+    for(int i=0;i<(points.count()-1);++i) {
+        qWarning() << "P" << i << ": " << points.at(i)->get_position();
+    }
+}
 
 /*****************************************************************************************/
 /*                              BarrierPoint                                             */
@@ -336,20 +343,25 @@ BarrierPoint::BarrierPoint(MainWindow * mainWindow, Barrier *barrier, QColor col
     centralWidget->getScene()->addItem(this);
 
     setZValue(Z_VALUE_POI);
+    setData(0,BARRIERPOINT_WTYPE);
 
-    // MOD BARRIER
-    //resetTransform();
+
+    /*** move management **/
+    isMoving=false;
+    isMovable=mainWindow->get_barrierIsEditing();
 
     setBrush(color);
     setPen(color);
 
 
-    setFlag(QGraphicsItem::ItemIsMovable,mainWindow->get_barrierIsEditing());
+    //setFlag(QGraphicsItem::ItemIsMovable,mainWindow->get_barrierIsEditing());
     // MOD BARRIER
-    setFlag(QGraphicsItem::ItemSendsGeometryChanges);
+    //setFlag(QGraphicsItem::ItemSendsGeometryChanges);
     //setFlag(QGraphicsItem::ItemIgnoresTransformations);
 
     set_editMode(barrier->get_editMode());
+
+    connect(projection,SIGNAL(projectionUpdated()),this,SLOT(slot_projectionUpdated()));
 
     popUpMenu = new QMenu();
 
@@ -383,14 +395,83 @@ bool BarrierPoint::is_same(QPointF screenPosition) {
 }
 
 void BarrierPoint::set_position(QPointF position) {
-    setFlag(QGraphicsItem::ItemSendsGeometryChanges,false);
+    //setFlag(QGraphicsItem::ItemSendsGeometryChanges,false);
     QPointF pointPosition;
     Util::computePosDouble(projection,position,&pointPosition);
     this->position=position;
     setPos(pointPosition);
-    setFlag(QGraphicsItem::ItemSendsGeometryChanges);
+    //setFlag(QGraphicsItem::ItemSendsGeometryChanges);
 }
 
+void BarrierPoint::mousePressEvent(QGraphicsSceneMouseEvent * e)
+{
+    if (e->button() == Qt::LeftButton && e->modifiers()==Qt::ShiftModifier)
+    {
+        previousPos=position;
+        isMoving=true;
+        mousePos=e->scenePos();
+        setPos(mousePos);
+        setCursor(Qt::BlankCursor);
+        // is this needed ?
+        //update();
+    }
+}
+
+bool BarrierPoint::tryMoving(QPoint pos)
+{
+    if(isMoving)
+    {
+        mousePos=pos;
+        QPointF newPos;
+        // need to move point a bit
+        projection->screen2mapDouble(mousePos,&newPos);
+        set_position(newPos);
+        emit positionChanged();
+        return true;
+    }
+    return false;
+}
+
+void BarrierPoint::mouseReleaseEvent(QGraphicsSceneMouseEvent * e)
+{
+    if(isMoving)
+    {
+        QPointF newPos;
+        if(e->modifiers()==Qt::ShiftModifier)
+        {
+            projection->screen2mapDouble(mousePos,&newPos);
+        }
+        else
+        {
+            newPos=previousPos;
+        }
+        set_position(newPos);
+        isMoving=false;
+        setCursor(Qt::PointingHandCursor);
+        emit positionChanged();
+        return;
+    }
+
+    if(e->pos().x() < 0 || e->pos().x()>pointSize || e->pos().y() < 0 || e->pos().y() > pointSize)
+    {
+        e->ignore();
+        return;
+    }
+    /*
+    if (e->button() == Qt::LeftButton)
+    {
+        emit clearSelection();
+    }
+    */
+}
+
+void BarrierPoint:: slot_projectionUpdated(void) {
+    set_position(position);
+    emit positionChanged();
+}
+
+
+#if 0
 QVariant BarrierPoint::itemChange(QGraphicsItem::GraphicsItemChange change, const QVariant &value) {
     if (change == ItemPositionChange && scene()) {
         QPointF newPos = centralWidget->getView()->mapFromGlobal(QCursor::pos())-QPoint(pointSize/2,pointSize/2);
@@ -408,6 +489,7 @@ QVariant BarrierPoint::itemChange(QGraphicsItem::GraphicsItemChange change, cons
         return QGraphicsItem::itemChange(change, value);
 
 }
+#endif
 
 void BarrierPoint::slot_removePoint(void) {
     barrier->removePoint(this);
@@ -437,7 +519,8 @@ void BarrierPoint::contextMenuEvent (QGraphicsSceneContextMenuEvent *) {
 }
 
 QPointF BarrierPoint::get_scenePosition(void) {
-    QPointF p;
+    /*QPointF p;
     Util::computePosDouble(projection,position,&p);
-    return p;
+    return p;*/
+    return pos();
 }

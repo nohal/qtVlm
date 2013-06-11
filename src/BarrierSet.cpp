@@ -31,6 +31,7 @@ Copyright (C) 2008 - Jacques Zaninetti - http://zygrib.free.fr
 #include "mycentralwidget.h"
 #include "boat.h"
 #include "DialogEditBarrier.h"
+#include "XmlFile.h"
 
 #include "BarrierSet.h"
 
@@ -116,31 +117,24 @@ void BarrierSet::slot_delBarrierSet(void) {
 
 
 /* Barriers */
-#define VERSION_NUMBER    0
-#define DOM_FILE_TYPE     "foo_config"
 #define ROOT_NAME         "BarrierSetList"
-#define VERSION_NAME      "Version"
 
 #define BARRIERSET_GROUP_NAME "BarrierSet"
-#define BARRIERSET_BOAT_GROUP "Boats"
 #define BARRIER_NAME          "Name"
 #define BARRIER_GROUP_NAME "Barrier"
 #define BARRIER_POINT_NAME "Point"
 #define BARRIER_COLOR_NAME "Color"
+#define BARRIER_KEY_NAME   "Key"
 
 /* global variable */
 QList<BarrierSet*> barrierSetList;
 
-void BarrierSet::readBarriersFromDisk(MainWindow * mainWindow, QString fileName,bool import) {
-#if 0
-    if(fileName.isEmpty()) {
-        QWARNING << "Not loading barriers : boat has no fileName";
-        return;
-    }
+void BarrierSet::readBarriersFromDisk(MainWindow * mainWindow) {
+    QString fname = appFolder.value("userFiles")+"poi.dat";
 
-    QDomNode * rootNode=Boat::get_dataNodeFromDisk(fileName,ROOT_NAME);
+    QDomNode * rootNode=XmlFile::get_dataNodeFromDisk(fname,ROOT_NAME);
     if(!rootNode) {
-        QWARNING << "Error reading barriers from " << fileName;
+        qWarning() << "Error reading barriers from " << fname;
         return ;
     }
 
@@ -184,31 +178,11 @@ void BarrierSet::readBarriersFromDisk(MainWindow * mainWindow, QString fileName,
                     }
                 }
 
-                if(barrierSetNode.toElement().tagName() == BARRIERSET_BOAT_GROUP)
+                if(barrierSetNode.toElement().tagName() == BARRIER_KEY_NAME)
                 {
                     QDomNode dataNode = barrierSetNode.firstChild();
                     if(dataNode.nodeType() == QDomNode::TextNode)
-                    {
-                        QStringList boatList_str= dataNode.toText().data().split(";");
-                        if(!boatList_str.isEmpty() && !::boatList.isEmpty()) {
-                            //qWarning() << "Barrier set associated with boats";
-                            if((::boatList).first()->get_boatType()==BOAT_REAL) {
-                                //qWarning() << "We have a real boat";
-                                ::activeBoat->add_barrierSet(barrierSet);
-                            }
-                            else if((::boatList).first()->get_boatType()==BOAT_VLM) {
-                                //qWarning() << "We have a VLM boat";
-                                for(int i=0;i<(::boatList.count());++i) {
-                                    //qWarning() << "Checking boat: " <<(::boatList).at(i)->get_id();
-                                    if(boatList_str.contains(QString().setNum((::boatList).at(i)->get_id()))) {
-                                        //qWarning() << "Boat in list";
-                                        ::boatList.at(i)->add_barrierSet(barrierSet);
-                                    }
-                                }
-
-                            }
-                        }
-                    }
+                        barrierSet->set_key(dataNode.toText().data());
                 }
 
                 if(barrierSetNode.toElement().tagName() == BARRIER_GROUP_NAME)
@@ -275,18 +249,13 @@ void BarrierSet::readBarriersFromDisk(MainWindow * mainWindow, QString fileName,
         }
         node = node.nextSibling();
     }
-    mainWindow->slot_updateMenuBarrierSet();
-#endif
 }
 
-void BarrierSet::saveBarriersToDisk(QString fileName) {
-#if 0
+void BarrierSet::saveBarriersToDisk(void) {
+    QString fname = appFolder.value("userFiles")+"poi.dat";
+
     int nbSet=0;
     int nbBarriers=0;
-    if(fileName.isEmpty()) {
-        QWARNING << "Not saving barrierSet : empty no fileName";
-        return;
-    }
 
     QDomDocument doc(DOM_FILE_TYPE);
     QDomElement root = doc.createElement(ROOT_NAME);
@@ -296,11 +265,6 @@ void BarrierSet::saveBarriersToDisk(QString fileName) {
     QDomElement barrierGroup;
     QDomElement tag;
     QDomText t;
-
-    barrierSetsGroup = doc.createElement(VERSION_NAME);
-    root.appendChild(barrierSetsGroup);
-    t = doc.createTextNode(QString().setNum(VERSION_NUMBER));
-    barrierSetsGroup.appendChild(t);
 
     BarrierSet * barrierSet;
 
@@ -325,38 +289,10 @@ void BarrierSet::saveBarriersToDisk(QString fileName) {
                                QString().setNum(color.blue()) );
         tag.appendChild(t);
 
-        /* saving boat that activate this set */
-        /* 2 cases: real / vlm boat */
-
-
-        QStringList boatList_str;
-
-        //qWarning() << "Saving barrierSet <-> boat link:" << barrierSet->get_name() ;
-
-        if(::activeBoat->get_boatType() == BOAT_VLM) {
-            //qWarning() << "VLM boat";
-            for(int i=0;i<(::boatList.count());++i) {
-                //qWarning() << "Boat: " << boatList.at(i)->get_id();
-                if(boatList.at(i)->get_barrierSets()->contains(barrierSet)) {
-                    //qWarning() <<  "barrier set for it";
-                    boatList_str.append(QString().setNum(boatList.at(i)->get_id()));
-                }
-            }
-        }
-        else if(::activeBoat->get_boatType() == BOAT_REAL) {
-            //qWarning() << "Real boat";
-            if(::activeBoat->get_barrierSets()->contains(barrierSet))
-                boatList_str.append("1");
-        }
-
-        if(!boatList_str.isEmpty()) {
-            //qWarning() << "Creating BOAT tag: " << boatList_str.join(";");
-
-            tag=doc.createElement(BARRIERSET_BOAT_GROUP);
-            barrierSetsGroup.appendChild(tag);
-            t = doc.createTextNode(boatList_str.join(";"));
-            tag.appendChild(t);
-        }
+        tag = doc.createElement(BARRIER_KEY_NAME);
+        barrierSetsGroup.appendChild(tag);
+        t = doc.createTextNode(barrierSet->get_key());
+        tag.appendChild(t);
 
         /* if we have barriers, create a group */
         QList<Barrier*> * barrierList = barrierSet->get_barriers();
@@ -387,27 +323,46 @@ void BarrierSet::saveBarriersToDisk(QString fileName) {
         }
     }
 
-    if(!Boat::set_dataNodeOnDisk(fileName,ROOT_NAME,&root)) {
+    if(!XmlFile::set_dataNodeOnDisk(fname,ROOT_NAME,&root,DOM_FILE_TYPE)) {
         /* error in file  => blanking filename in settings */
-        QWARNING << "Error saving barriers in " << fileName;
+        qWarning() << "Error saving Barriers in " << fname;
         return ;
     }
     qWarning() << nbSet << " sets, with " << nbBarriers << " barriers saved";
-#endif
+
+}
+
+void BarrierSet::get_barrierSetListFromKeys(QList<QString> keyList, QList<BarrierSet*>* mySetList) {
+    if(!mySetList) return;
+    mySetList->clear();
+    for(int i=0;i<keyList.count();i++)
+        for(int j=0;j<barrierSetList.count();j++)
+            if(barrierSetList.at(j)->get_key()==keyList.at(i)) {
+                mySetList->append(barrierSetList.at(j));
+                break;
+            }
+}
+
+bool BarrierSet::validateName(BarrierSet * set,QString name) {
+    for(int i=0;i<barrierSetList.count();++i) {
+        BarrierSet * curSet = barrierSetList.at(i);
+        if(curSet!=set && curSet->get_name() == name)
+            return false;
+    }
+    return true;
 }
 
 void BarrierSet::clear_barrierSetList(void) {
-    /* remove link in boat */
-#if 0
-    QList<boat*> bList = mainWindow->getMy_centralWidget()->get_boatList();
-    for(int i=0;i<bList.count();++i) {
-        bList.at(i)->clear_barrierSet();
-    }
-#endif
-
     /* delete sets + barrier + point */
     while(!barrierSetList.isEmpty()) {
         delete barrierSetList.takeFirst();
     }
     barrierSetList.clear();
+}
+
+void BarrierSet::printSet(void) {
+    QList<Barrier*>::const_iterator i;
+    for(i=barrierList.begin();i<barrierList.end();++i) {
+        (*i)->printBarrier();
+    }
 }

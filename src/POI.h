@@ -128,6 +128,13 @@ class POI : public QGraphicsWidget
         void setSequence(int i){this->sequence=i;}
         int getSequence(){return this->sequence;}
         void manageLineBetweenPois();
+
+        static void importZyGrib(myCentralWidget * centralWidget);
+        static void importGeoData(myCentralWidget * centralWidget);
+        static void read_POIData(myCentralWidget * centralWidget);
+        static void write_POIData(QList<POI*> & poi_list,myCentralWidget * centralWidget);
+        static void cleanFile(QString fname);
+
 public slots:
         void slot_updateProjection();
         void slot_editPOI();

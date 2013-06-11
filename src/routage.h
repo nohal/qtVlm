@@ -42,6 +42,9 @@ Copyright (C) 2008 - Jacques Zaninetti - http://zygrib.free.fr
 #define BOUNDED_CROSS 2
 #define L1_CROSS 3
 #define L2_CROSS 4
+
+//#define OLD_BARRIER
+
 struct datathread
 {
     time_t Eta;
@@ -345,7 +348,9 @@ public slots:
         int isoRouteValue;
         QList<vlmLine*> isoRoutes;
         QList<vlmLine*> alternateRoutes;
+#ifdef OLD_BARRIER
         QList<QLineF> barrieres;
+#endif
         QList<QLineF> iceGates;
         void countDebug(int nbIso, QString s);
         bool colorGrib;

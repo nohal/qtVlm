@@ -159,6 +159,11 @@ class ROUTE : public QObject
         bool getSortPoisByName(){return this->sortPoisbyName;}
         FCT_SETGET_CST(bool,strongSimplify)
         routeStats getStats();
+
+        static void read_routeData(myCentralWidget * centralWidget);
+        static void write_routeData(QList<ROUTE*>& route_list,myCentralWidget * centralWidget);
+        static void cleanFile(QString fname);
+
 public slots:
         void slot_recalculate(boat * boat=NULL);
         void slot_edit();

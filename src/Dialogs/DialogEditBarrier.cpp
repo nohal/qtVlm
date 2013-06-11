@@ -19,6 +19,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ***********************************************************************/
 
 #include <QColorDialog>
+#include <QMessageBox>
 
 #include "DialogEditBarrier.h"
 #include "BarrierSet.h"
@@ -48,8 +49,12 @@ void DialogEditBarrier::initDialog(BarrierSet * barrierSet) {
 }
 
 void DialogEditBarrier::done(int result) {
-    if(result == QDialog::Accepted) {
+    if(result == QDialog::Accepted) {        
         if(barrierSet) {
+            if(!BarrierSet::validateName(barrierSet,name->text())) {
+                QMessageBox::warning(this,tr("Barrier set edit"),tr("Barrier with same name already exists, choose a different name"));
+                return;
+            }
             barrierSet->set_name(name->text());
             barrierSet->set_color(color);
         }

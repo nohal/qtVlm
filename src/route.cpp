@@ -26,6 +26,8 @@ Copyright (C) 2008 - Jacques Zaninetti - http://zygrib.free.fr
 #include <QDateTime>
 #include <QMessageBox>
 #include <QDebug>
+#include <QDomDocument>
+#include <QFileDialog>
 
 #include "route.h"
 
@@ -43,6 +45,8 @@ Copyright (C) 2008 - Jacques Zaninetti - http://zygrib.free.fr
 #include "settings.h"
 #include <QCache>
 #include "Terrain.h"
+#include "XmlFile.h"
+
 #define USE_VBVMG_VLM
 
 ROUTE::ROUTE(QString name, Projection *proj, Grib *grib, QGraphicsScene * myScene, myCentralWidget *parentWindow)
@@ -1671,4 +1675,441 @@ routeStats ROUTE::getStats()
     stats.averageBS=stats.averageBS/(points->size()-1);
     stats.averageTWS=stats.averageTWS/(points->size()-1);
     return stats;
+}
+
+/*****************************************************
+ * read POI from file
+ *****************************************************/
+
+#define ROOT_NAME             "qtVLM_Route"
+
+/* ROUTE */
+#define ROUTE_GROUP_NAME  "ROUTE"
+#define ROUTE_NAME        "name"
+#define ROUTE_BOAT        "boat"
+#define ROUTE_START       "startFromBoat"
+#define ROUTE_DATEOPTION  "startTimeOption"
+#define ROUTE_DATE        "startTime"
+#define ROUTE_WIDTH       "width"
+#define ROUTE_COLOR_R     "color_red"
+#define ROUTE_COLOR_G     "color_green"
+#define ROUTE_COLOR_B     "color_blue"
+#define ROUTE_COASTS      "detectCoasts"
+#define ROUTE_FROZEN      "frozen"
+#define ROUTE_HIDEPOIS    "hidePois"
+#define ROUTE_MULTVAC     "vacStep"
+#define ROUTE_HIDDEN      "hidden"
+#define ROUTE_VBVMG_VLM   "vbvmg-vlm"
+#define ROUTE_NEW_VBVMG   "newVbvmg-vlm"
+#define ROUTE_SPEED_TACK  "speedTack"
+#define ROUTE_REMOVE      "autoRemovePoi"
+#define ROUTE_AUTO_AT      "autoAt"
+#define ROUTE_SORT_BY_NAME "routeSortByName"
+#define ROUTE_ROADMAPINT   "roadMapInterval"
+#define ROUTE_ROADMAPHDG   "roadMapHDG"
+#define ROUTE_ROADUSEINT   "roadUseInt"
+
+
+void ROUTE::read_routeData(myCentralWidget * centralWidget) {
+    QDomNode node;
+    QDomNode subNode;
+    QDomNode dataNode;
+    bool hasOldSystem=false;
+
+    QString fname = appFolder.value("userFiles")+"poi.dat";
+
+    QDomNode * root=XmlFile::get_dataNodeFromDisk(fname,ROOT_NAME);
+    if(!root) {
+        qWarning() << "Error reading Route from " << fname <<", try to use alt root name";
+        QDomElement * root2=XmlFile::get_fisrtDataNodeFromDisk(fname);
+
+        if(!root2) {
+            qWarning() << "Error reading POI from " << fname;
+            return ;
+        }
+        hasOldSystem=true;
+        node=root2->firstChild();
+    }
+    else
+        node = root->firstChild();
+
+    while(!node.isNull()) {
+        if(node.toElement().tagName() == ROUTE_GROUP_NAME)
+        {
+            ROUTE * route = centralWidget->addRoute();
+            route->setFrozen(true);
+            route->setBoat(NULL);
+            QColor routeColor=Qt::red;
+            bool toBeFreezed=false;
+            subNode = node.firstChild();
+            bool invalidRoute=true;
+            while(!subNode.isNull())
+            {
+                if(subNode.toElement().tagName() == ROUTE_NAME)
+                {
+                    dataNode = subNode.firstChild();
+                    if(dataNode.nodeType() == QDomNode::TextNode)
+                        route->setName(QString(QByteArray::fromBase64(dataNode.toText().data().toUtf8())));
+                }
+                if(subNode.toElement().tagName() == ROUTE_BOAT)
+                {
+                    dataNode = subNode.firstChild();
+                    if(dataNode.nodeType() == QDomNode::TextNode)
+                    {
+                        if(centralWidget->getBoats())
+                        {
+                            QListIterator<boatVLM*> b (*centralWidget->getBoats());
+
+                            while(b.hasNext())
+                            {
+                                boatVLM * boat = b.next();
+                                if(boat->getStatus())
+                                {
+                                    if(boat->getId()==dataNode.toText().data().toInt())
+                                    {
+                                        route->setBoat(boat);
+                                        invalidRoute=false;
+                                        break;
+                                    }
+                                }
+                            }
+                        }
+                        if(invalidRoute)
+                        {
+                            if(centralWidget->getSelectedBoat()!=NULL && centralWidget->getSelectedBoat()->get_boatType()==BOAT_REAL)
+                            {
+                                route->setBoat(centralWidget->getSelectedBoat());
+                                invalidRoute=false;
+                            }
+                        }
+                    }
+                }
+                if(subNode.toElement().tagName() == ROUTE_START)
+                {
+                    dataNode = subNode.firstChild();
+                    if(dataNode.nodeType() == QDomNode::TextNode)
+                        route->setStartFromBoat(dataNode.toText().data().toInt()==1);
+                }
+                if(subNode.toElement().tagName() == ROUTE_SPEED_TACK)
+                {
+                    dataNode = subNode.firstChild();
+                    if(dataNode.nodeType() == QDomNode::TextNode)
+                        route->setSpeedLossOnTack((double)dataNode.toText().data().toInt()/100.00);
+                }
+                if(subNode.toElement().tagName() == ROUTE_DATEOPTION)
+                {
+                    dataNode = subNode.firstChild();
+                    if(dataNode.nodeType() == QDomNode::TextNode)
+                        route->setStartTimeOption(dataNode.toText().data().toInt());
+                }
+                if(subNode.toElement().tagName() == ROUTE_MULTVAC)
+                {
+                    dataNode = subNode.firstChild();
+                    if(dataNode.nodeType() == QDomNode::TextNode)
+                        route->setMultVac(dataNode.toText().data().toInt());
+                }
+                if(subNode.toElement().tagName() == ROUTE_DATE)
+                {
+                    dataNode = subNode.firstChild();
+                    if(dataNode.nodeType() == QDomNode::TextNode)
+                    {
+                        QDateTime date;
+                        date.setTime_t(dataNode.toText().data().toInt());
+                        route->setStartTime(date);
+                    }
+                }
+                if(subNode.toElement().tagName() == ROUTE_WIDTH)
+                {
+                    dataNode = subNode.firstChild();
+                    if(dataNode.nodeType() == QDomNode::TextNode)
+                        route->setWidth(dataNode.toText().data().toFloat());
+                }
+                if(subNode.toElement().tagName() == ROUTE_ROADMAPINT)
+                {
+                    dataNode = subNode.firstChild();
+                    if(dataNode.nodeType() == QDomNode::TextNode)
+                        route->setRoadMapInterval(dataNode.toText().data().toFloat());
+                }
+                if(subNode.toElement().tagName() == ROUTE_ROADMAPHDG)
+                {
+                    dataNode = subNode.firstChild();
+                    if(dataNode.nodeType() == QDomNode::TextNode)
+                        route->setRoadMapHDG(dataNode.toText().data().toFloat());
+                }
+                if(subNode.toElement().tagName() == ROUTE_ROADUSEINT)
+                {
+                    dataNode = subNode.firstChild();
+                    if(dataNode.nodeType() == QDomNode::TextNode)
+                        route->setUseInterval(dataNode.toText().data().toInt()==1);
+                }
+                if(subNode.toElement().tagName() == ROUTE_COLOR_R)
+                {
+                    dataNode = subNode.firstChild();
+                    if(dataNode.nodeType() == QDomNode::TextNode)
+                    {
+                        routeColor.setRed(dataNode.toText().data().toInt());
+                        route->setColor(routeColor);
+                    }
+                }
+                if(subNode.toElement().tagName() == ROUTE_COLOR_G)
+                {
+                    dataNode = subNode.firstChild();
+                    if(dataNode.nodeType() == QDomNode::TextNode)
+                    {
+                        routeColor.setGreen(dataNode.toText().data().toInt());
+                        route->setColor(routeColor);
+                    }
+                }
+                if(subNode.toElement().tagName() == ROUTE_COLOR_B)
+                {
+                    dataNode = subNode.firstChild();
+                    if(dataNode.nodeType() == QDomNode::TextNode)
+                    {
+                        routeColor.setBlue(dataNode.toText().data().toInt());
+                        route->setColor(routeColor);
+                    }
+                }
+
+                if(subNode.toElement().tagName() == ROUTE_COASTS)
+                {
+                    dataNode = subNode.firstChild();
+                    if(dataNode.nodeType() == QDomNode::TextNode)
+                        route->setDetectCoasts(dataNode.toText().data().toInt()==1);
+                }
+                if(subNode.toElement().tagName() == ROUTE_FROZEN)
+                {
+                    dataNode = subNode.firstChild();
+                    if(dataNode.nodeType() == QDomNode::TextNode)
+                        toBeFreezed=(dataNode.toText().data().toInt()==1);
+                }
+
+
+                if(subNode.toElement().tagName() == ROUTE_HIDEPOIS)
+                {
+                    dataNode = subNode.firstChild();
+                    if(dataNode.nodeType() == QDomNode::TextNode)
+                        route->setHidePois(dataNode.toText().data().toInt()==1);
+                }
+
+                if(subNode.toElement().tagName() == ROUTE_HIDDEN)
+                {
+                    dataNode = subNode.firstChild();
+                    if(dataNode.nodeType() == QDomNode::TextNode)
+                        route->setHidden(dataNode.toText().data().toInt()==1);
+                }
+                if(subNode.toElement().tagName() == ROUTE_VBVMG_VLM)
+                {
+                    dataNode = subNode.firstChild();
+                    if(dataNode.nodeType() == QDomNode::TextNode)
+                        route->setUseVbVmgVlm(dataNode.toText().data().toInt()==1);
+                }
+
+                if(subNode.toElement().tagName() == ROUTE_NEW_VBVMG)
+                {
+                    dataNode = subNode.firstChild();
+                    if(dataNode.nodeType() == QDomNode::TextNode)
+                        route->setNewVbvmgVlm(dataNode.toText().data().toInt()==1);
+                }
+
+                if(subNode.toElement().tagName() == ROUTE_REMOVE)
+                {
+                    dataNode = subNode.firstChild();
+                    if(dataNode.nodeType() == QDomNode::TextNode)
+                        route->setAutoRemove(dataNode.toText().data().toInt()==1);
+                }
+
+                if(subNode.toElement().tagName() == ROUTE_AUTO_AT)
+                {
+                    dataNode = subNode.firstChild();
+                    if(dataNode.nodeType() == QDomNode::TextNode)
+                        route->setAutoAt(dataNode.toText().data().toInt()==1);
+                }
+
+                if(subNode.toElement().tagName() == ROUTE_SORT_BY_NAME)
+                {
+                    dataNode = subNode.firstChild();
+                    if(dataNode.nodeType() == QDomNode::TextNode)
+                        route->setSortPoisByName(dataNode.toText().data().toInt()==1);
+                }
+
+                subNode = subNode.nextSibling();
+            }
+            if(invalidRoute) /*route->boat does not exist anymore*/
+            {
+                route->setBoat(NULL);
+            }
+            if(!toBeFreezed)
+                route->setFrozen(false);
+        }
+        node=node.nextSibling();
+    }
+    if(hasOldSystem)
+       cleanFile(fname);
+}
+
+void ROUTE::cleanFile(QString fname) {
+    QDomElement * root=XmlFile::get_fisrtDataNodeFromDisk(fname);
+    QDomNode node;
+
+    if(!root) {
+        qWarning() << "Error reading route from " << fname << " during clean";
+        return ;
+    }
+
+    node=root->firstChild();
+    while(!node.isNull()) {
+        //qWarning() << "Cleaning: " << node.toElement().tagName();
+        QDomNode nxtNode=node.nextSibling();
+        if(node.toElement().tagName() == ROUTE_GROUP_NAME)
+            root->removeChild(node);
+        if(node.toElement().tagName() == "Version")
+            root->removeChild(node);
+        node = nxtNode;
+    }
+    XmlFile::saveRoot(root,fname);
+}
+
+void ROUTE::write_routeData(QList<ROUTE*>& route_list,myCentralWidget * /*centralWidget*/) {
+    QString fname = appFolder.value("userFiles")+"poi.dat";
+
+    QDomDocument doc(DOM_FILE_TYPE);
+    QDomElement root = doc.createElement(ROOT_NAME);
+    doc.appendChild(root);
+
+    QDomElement group;
+    QDomElement tag;
+    QDomText t;
+
+    QListIterator<ROUTE*> h (route_list);
+    while(h.hasNext())
+    {
+         ROUTE * route=h.next();
+         if(route->isImported()) continue;
+         if(!route->getBoat() || !route->getBoat()->getStatus()) continue; //if boat has been deactivated do not save route
+         group = doc.createElement(ROUTE_GROUP_NAME);
+         root.appendChild(group);
+
+         tag = doc.createElement(ROUTE_NAME);
+         group.appendChild(tag);
+         t = doc.createTextNode(route->getName().toUtf8().toBase64());
+         tag.appendChild(t);
+
+         if(route->getBoat()!=NULL)
+         {
+             tag = doc.createElement(ROUTE_BOAT);
+             group.appendChild(tag);
+             t = doc.createTextNode(QString().setNum(route->getBoat()->getId()));
+             tag.appendChild(t);
+         }
+
+         tag = doc.createElement(ROUTE_START);
+         group.appendChild(tag);
+         t = doc.createTextNode(QString().setNum(route->getStartFromBoat()?1:0));
+         tag.appendChild(t);
+
+         tag = doc.createElement(ROUTE_DATEOPTION);
+         group.appendChild(tag);
+         t = doc.createTextNode(QString().setNum(route->getStartTimeOption()));
+         tag.appendChild(t);
+
+         tag = doc.createElement(ROUTE_MULTVAC);
+         group.appendChild(tag);
+         t = doc.createTextNode(QString().setNum(route->getMultVac()));
+         tag.appendChild(t);
+
+         tag = doc.createElement(ROUTE_SPEED_TACK);
+         group.appendChild(tag);
+         t = doc.createTextNode(QString().setNum(qRound(route->getSpeedLossOnTack()*100)));
+         tag.appendChild(t);
+
+         tag = doc.createElement(ROUTE_DATE);
+         group.appendChild(tag);
+         t = doc.createTextNode(QString().setNum(route->getStartTime().toUTC().toTime_t()));
+         tag.appendChild(t);
+
+         tag = doc.createElement(ROUTE_WIDTH);
+         group.appendChild(tag);
+         t = doc.createTextNode(QString().setNum(route->getWidth()));
+         tag.appendChild(t);
+
+         tag = doc.createElement(ROUTE_ROADMAPINT);
+         group.appendChild(tag);
+         t = doc.createTextNode(QString().setNum(route->getRoadMapInterval()));
+         tag.appendChild(t);
+
+         tag = doc.createElement(ROUTE_ROADMAPHDG);
+         group.appendChild(tag);
+         t = doc.createTextNode(QString().setNum(route->getRoadMapHDG()));
+         tag.appendChild(t);
+
+         tag = doc.createElement(ROUTE_ROADUSEINT);
+         group.appendChild(tag);
+         t = doc.createTextNode(QString().setNum(route->getUseInterval()?1:0));
+         tag.appendChild(t);
+
+         tag = doc.createElement(ROUTE_COLOR_R);
+         group.appendChild(tag);
+         t = doc.createTextNode(QString().setNum(route->getColor().red()));
+         tag.appendChild(t);
+         tag = doc.createElement(ROUTE_COLOR_G);
+         group.appendChild(tag);
+         t = doc.createTextNode(QString().setNum(route->getColor().green()));
+         tag.appendChild(t);
+         tag = doc.createElement(ROUTE_COLOR_B);
+         group.appendChild(tag);
+         t = doc.createTextNode(QString().setNum(route->getColor().blue()));
+         tag.appendChild(t);
+
+         tag = doc.createElement(ROUTE_COASTS);
+         group.appendChild(tag);
+         t = doc.createTextNode(QString().setNum(route->getDetectCoasts()?1:0));
+         tag.appendChild(t);
+
+
+         tag = doc.createElement(ROUTE_FROZEN);
+         group.appendChild(tag);
+         t = doc.createTextNode(QString().setNum(route->getFrozen()?1:0));
+         tag.appendChild(t);
+
+         tag = doc.createElement(ROUTE_HIDEPOIS);
+         group.appendChild(tag);
+         t = doc.createTextNode(QString().setNum(route->getHidePois()?1:0));
+         tag.appendChild(t);
+
+         tag = doc.createElement(ROUTE_HIDDEN);
+         group.appendChild(tag);
+         t = doc.createTextNode(QString().setNum(route->getHidden()?1:0));
+         tag.appendChild(t);
+
+         tag = doc.createElement(ROUTE_VBVMG_VLM);
+         group.appendChild(tag);
+         t = doc.createTextNode(QString().setNum(route->getUseVbvmgVlm()?1:0));
+         tag.appendChild(t);
+
+         tag = doc.createElement(ROUTE_NEW_VBVMG);
+         group.appendChild(tag);
+         t = doc.createTextNode(QString().setNum(route->getNewVbvmgVlm()?1:0));
+         tag.appendChild(t);
+
+         tag = doc.createElement(ROUTE_REMOVE);
+         group.appendChild(tag);
+         t = doc.createTextNode(QString().setNum(route->getAutoRemove()?1:0));
+         tag.appendChild(t);
+
+         tag = doc.createElement(ROUTE_AUTO_AT);
+         group.appendChild(tag);
+         t = doc.createTextNode(QString().setNum(route->getAutoAt()?1:0));
+         tag.appendChild(t);
+
+         tag = doc.createElement(ROUTE_SORT_BY_NAME);
+         group.appendChild(tag);
+         t = doc.createTextNode(QString().setNum(route->getSortPoisByName()?1:0));
+         tag.appendChild(t);
+    }
+
+    if(!XmlFile::set_dataNodeOnDisk(fname,ROOT_NAME,&root,DOM_FILE_TYPE)) {
+        /* error in file  => blanking filename in settings */
+        qWarning() << "Error saving Route in " << fname;
+        return ;
+    }
 }

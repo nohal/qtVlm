@@ -97,6 +97,9 @@ FCT_GET_CST(TYPE,VARNAME)
 #define BOAT_ANY  2
 #define BOAT_NOBOAT -1
 
+/* XML file type */
+#define DOM_FILE_TYPE     "qtVLM_config"
+
 /* barrier edit mode */
 #define BARRIER_EDIT_NO_EDIT      0
 #define BARRIER_EDIT_ADD_BARRIER  1

@@ -71,6 +71,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #define ISOPOINT          7
 #define BOATREAL_WTYPE    8
 #define FAXMETEO_WTYPE    9
+#define BARRIERPOINT_WTYPE 10
 
 /* compass mode */
 #define COMPASS_NOTHING  0
@@ -349,9 +350,7 @@ public slots :
         void replay(int);
 
         /* POI */
-        void readPOIData(QString);
         void writePOIData(QList<ROUTE*> &,QList<POI*> &,QString);
-        void importZyGrib(void);
         void POI_selectAborted(POI*);
         void updateRoute(boat *);
         void updateRoutage();
@@ -442,6 +441,7 @@ public slots :
         Player * currentPlayer;
         boatReal * realBoat;
         ROUTE * routeClipboard;
+        void connectPois(void);
 
         /*** Barrier ***/
         int barrierEditMode;
