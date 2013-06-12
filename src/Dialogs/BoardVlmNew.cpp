@@ -15,6 +15,7 @@ BoardVlmNew::BoardVlmNew(MainWindow *main)
 {
     this->setParent(main);
     this->setupUi(this);
+    tryMoving=false;
     Util::setFontDialog(this);
     this->main=main;
     setWindowFlags(Qt::FramelessWindowHint|Qt::WindowStaysOnTopHint);
@@ -84,22 +85,17 @@ BoardVlmNew::BoardVlmNew(MainWindow *main)
     connect(this->spin_PolarTWS,SIGNAL(valueChanged(double)),this,SLOT(slot_drawPolar()));
     lab_polar->installEventFilter(this);
     lab_polarData->clear();
-    //tabWidget->setTabShape(QTabWidget::Triangular);
     QString tabStyle;
     tabStyle+="QTabWidget::pane { border: 0; } ";
     tabStyle+="QTabWidget { background: transparent; } ";
     tabStyle+="QTabBar::tab { border: 0px solid #000000;border-bottom-right-radius: 8px;border-top-right-radius: 8px;padding: 2px;margin-left: 4px;margin-right: 4px;margin-bottom:3px;}";
     tabStyle+="QTabBar::tab:selected { background: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #CC9900, stop: 0.8 #FFE085);margin-left:0;}";
     tabStyle+="QTabBar::tab:!selected { background: #C2C7CB;margin-right: 4px;}";
-//    tabStyle+="QTabBar::tab:first:selected { margin-left: 0;}";
-//    tabStyle+="QTabBar::tab:last:selected { margin-right: 0;}";
-
-
     tabWidget->setStyleSheet(tabStyle);
-//           "QTabWidget::pane { border: 0; } "
-//           "QTabWidget { background: transparent; } "
-//           "QTabBar::tab { border-top-left-radius: 4px;border-top-right-radius: 4px;}"
-//                "QTabBar::tab:selected ");
+    this->lab_backTab1->installEventFilter(this);
+    this->lab_backTab2->installEventFilter(this);
+    this->lab_backTab3->installEventFilter(this);
+    this->lab_back->installEventFilter(this);
 }
 void BoardVlmNew::slot_tabChanged(int tabNb)
 {
@@ -861,6 +857,27 @@ bool BoardVlmNew::eventFilter(QObject *obj, QEvent *event)
         lab_polar->setPixmap(i2);
         lab_polarData->setText(s);
         return true;
+    }
+    if(obj==lab_backTab1 || obj==lab_backTab2 || obj==lab_backTab3 || obj==lab_back)
+    {
+        if(event->type()==QEvent::MouseButtonPress)
+        {
+            tryMoving=true;
+            QMouseEvent *m=static_cast<QMouseEvent *>(event);
+            startMove=mapToGlobal(m->pos());
+            initialPos=this->pos();
+        }
+        else if(event->type()==QEvent::MouseButtonRelease)
+            tryMoving=false;
+        else if(tryMoving && event->type()==QEvent::MouseMove)
+        {
+            QMouseEvent *m=static_cast<QMouseEvent *>(event);
+            QPoint mousePos=mapToGlobal(m->pos());
+            int x=qBound(qRound(-this->width()/2.0),initialPos.x()+mousePos.x()-startMove.x(),qRound(main->width()-this->width()/2.0));
+            int y=qBound(qRound(-this->height()/2.0),initialPos.y()+mousePos.y()-startMove.y(),qRound(main->height()-this->height()/2.0));
+            this->move(x,y);
+        }
+        return false;
     }
     if(obj!=spin_HDG && obj!=spin_TWA) return false;
     QDoubleSpinBox * spinBox=static_cast<QDoubleSpinBox *>(obj);

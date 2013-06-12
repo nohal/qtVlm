@@ -63,6 +63,8 @@ private:
     QPolygonF polarLine;
     QList<double> polarValues;
     QPixmap imgBack0,imgBack1,imgBack2;
+    bool tryMoving;
+    QPoint startMove,initialPos;
 };
 
 #endif // BOARDVLMNEW_H
