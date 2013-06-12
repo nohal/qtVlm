@@ -529,38 +529,8 @@ avec ce prefixe</string>
          <property name="title">
           <string>Options supplementaires</string>
          </property>
-         <layout class="QFormLayout" name="formLayout">
-          <property name="formAlignment">
-           <set>Qt::AlignHCenter|Qt::AlignTop</set>
-          </property>
-          <item row="0" column="0">
-           <widget class="QLabel" name="label_7">
-            <property name="text">
-             <string>Angle d'epuration par sillage</string>
-            </property>
-           </widget>
-          </item>
-          <item row="0" column="1">
-           <widget class="QSpinBox" name="pruneWakeAngle">
-            <property name="toolTip">
-             <string/>
-            </property>
-            <property name="alignment">
-             <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-            </property>
-            <property name="maximum">
-             <number>60</number>
-            </property>
-           </widget>
-          </item>
-          <item row="1" column="0">
-           <widget class="QLabel" name="label_13">
-            <property name="text">
-             <string>Coeff Exploration</string>
-            </property>
-           </widget>
-          </item>
-          <item row="1" column="1">
+         <layout class="QGridLayout" name="gridLayout_5">
+          <item row="1" column="2">
            <widget class="QSpinBox" name="explo">
             <property name="alignment">
              <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
@@ -585,6 +555,85 @@ avec ce prefixe</string>
             </property>
            </widget>
           </item>
+          <item row="0" column="2">
+           <widget class="QSpinBox" name="pruneWakeAngle">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="minimumSize">
+             <size>
+              <width>50</width>
+              <height>0</height>
+             </size>
+            </property>
+            <property name="toolTip">
+             <string/>
+            </property>
+            <property name="alignment">
+             <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+            </property>
+            <property name="maximum">
+             <number>60</number>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="4">
+           <spacer name="horizontalSpacer_3">
+            <property name="orientation">
+             <enum>Qt::Horizontal</enum>
+            </property>
+            <property name="sizeHint" stdset="0">
+             <size>
+              <width>125</width>
+              <height>20</height>
+             </size>
+            </property>
+           </spacer>
+          </item>
+          <item row="0" column="4">
+           <spacer name="horizontalSpacer_2">
+            <property name="orientation">
+             <enum>Qt::Horizontal</enum>
+            </property>
+            <property name="sizeHint" stdset="0">
+             <size>
+              <width>301</width>
+              <height>20</height>
+             </size>
+            </property>
+           </spacer>
+          </item>
+          <item row="0" column="0">
+           <widget class="QLabel" name="label_7">
+            <property name="text">
+             <string>Angle d'epuration par sillage</string>
+            </property>
+           </widget>
+          </item>
+          <item row="2" column="0" colspan="3">
+           <widget class="QCheckBox" name="log">
+            <property name="text">
+             <string>Utiliser une convergence logarithmique vers l'arrivee</string>
+            </property>
+           </widget>
+          </item>
+          <item row="4" column="0" colspan="3">
+           <widget class="QCheckBox" name="showBestLive">
+            <property name="text">
+             <string>Afficher la meilleure route pendant le calcul</string>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="0">
+           <widget class="QLabel" name="label_13">
+            <property name="text">
+             <string>Coeff Exploration</string>
+            </property>
+           </widget>
+          </item>
           <item row="3" column="0">
            <widget class="QCheckBox" name="RoutageOrtho">
             <property name="text">
@@ -592,19 +641,18 @@ avec ce prefixe</string>
             </property>
            </widget>
           </item>
-          <item row="2" column="0">
-           <widget class="QCheckBox" name="log">
-            <property name="text">
-             <string>Utiliser une convergence logarithmique vers l'arrivee</string>
+          <item row="0" column="1">
+           <spacer name="horizontalSpacer_6">
+            <property name="orientation">
+             <enum>Qt::Horizontal</enum>
             </property>
-           </widget>
-          </item>
-          <item row="4" column="0">
-           <widget class="QCheckBox" name="showBestLive">
-            <property name="text">
-             <string>Afficher la meilleure route pendant le calcul</string>
+            <property name="sizeHint" stdset="0">
+             <size>
+              <width>40</width>
+              <height>20</height>
+             </size>
             </property>
-           </widget>
+           </spacer>
           </item>
          </layout>
         </widget>
@@ -614,10 +662,7 @@ avec ce prefixe</string>
          <property name="title">
           <string>Routes alternatives</string>
          </property>
-         <layout class="QFormLayout" name="formLayout_2">
-          <property name="fieldGrowthPolicy">
-           <enum>QFormLayout::AllNonFixedFieldsGrow</enum>
-          </property>
+         <layout class="QGridLayout" name="gridLayout_6">
           <item row="0" column="0">
            <widget class="QLabel" name="label_18">
             <property name="text">
@@ -627,6 +672,12 @@ avec ce prefixe</string>
           </item>
           <item row="0" column="1">
            <widget class="QSpinBox" name="nbAlter">
+            <property name="minimumSize">
+             <size>
+              <width>70</width>
+              <height>0</height>
+             </size>
+            </property>
             <property name="alignment">
              <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
             </property>
@@ -640,6 +691,19 @@ avec ce prefixe</string>
              <number>0</number>
             </property>
            </widget>
+          </item>
+          <item row="0" column="2">
+           <spacer name="horizontalSpacer_4">
+            <property name="orientation">
+             <enum>Qt::Horizontal</enum>
+            </property>
+            <property name="sizeHint" stdset="0">
+             <size>
+              <width>213</width>
+              <height>20</height>
+             </size>
+            </property>
+           </spacer>
           </item>
           <item row="1" column="0">
            <widget class="QLabel" name="label_19">
@@ -666,6 +730,19 @@ avec ce prefixe</string>
              <number>75</number>
             </property>
            </widget>
+          </item>
+          <item row="1" column="2">
+           <spacer name="horizontalSpacer_5">
+            <property name="orientation">
+             <enum>Qt::Horizontal</enum>
+            </property>
+            <property name="sizeHint" stdset="0">
+             <size>
+              <width>213</width>
+              <height>20</height>
+             </size>
+            </property>
+           </spacer>
           </item>
          </layout>
         </widget>
@@ -722,6 +799,12 @@ avec ce prefixe</string>
               <property name="enabled">
                <bool>true</bool>
               </property>
+              <property name="minimumSize">
+               <size>
+                <width>60</width>
+                <height>0</height>
+               </size>
+              </property>
               <property name="alignment">
                <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
               </property>
@@ -759,6 +842,12 @@ avec ce prefixe</string>
            <widget class="QSpinBox" name="whatIfTime">
             <property name="enabled">
              <bool>true</bool>
+            </property>
+            <property name="minimumSize">
+             <size>
+              <width>100</width>
+              <height>0</height>
+             </size>
             </property>
             <property name="alignment">
              <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
@@ -837,6 +926,12 @@ avec ce prefixe</string>
               <property name="enabled">
                <bool>true</bool>
               </property>
+              <property name="minimumSize">
+               <size>
+                <width>80</width>
+                <height>0</height>
+               </size>
+              </property>
               <property name="alignment">
                <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
               </property>
@@ -898,6 +993,12 @@ avec ce prefixe</string>
              <widget class="QDoubleSpinBox" name="maxPres">
               <property name="enabled">
                <bool>true</bool>
+              </property>
+              <property name="minimumSize">
+               <size>
+                <width>80</width>
+                <height>0</height>
+               </size>
               </property>
               <property name="alignment">
                <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
@@ -976,11 +1077,28 @@ La différence est surtout sensible lors d'un routage en diagonale.</string>
         </spacer>
        </item>
        <item>
-        <widget class="QPushButton" name="Default">
-         <property name="text">
-          <string>Options par defaut</string>
-         </property>
-        </widget>
+        <layout class="QHBoxLayout" name="horizontalLayout_7">
+         <item>
+          <widget class="QPushButton" name="Default">
+           <property name="text">
+            <string>Options par defaut</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <spacer name="horizontalSpacer">
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>40</width>
+             <height>20</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+        </layout>
        </item>
       </layout>
      </widget>
@@ -1014,8 +1132,6 @@ La différence est surtout sensible lors d'un routage en diagonale.</string>
   <tabstop>colorIso</tabstop>
   <tabstop>i_iso</tabstop>
   <tabstop>isoRoute</tabstop>
-  <tabstop>pruneWakeAngle</tabstop>
-  <tabstop>explo</tabstop>
   <tabstop>log</tabstop>
   <tabstop>RoutageOrtho</tabstop>
   <tabstop>showBestLive</tabstop>
