@@ -392,6 +392,7 @@ MenuBar::MenuBar(MainWindow *parent)
         menuPOI->addMenu(menuImportPoi);
         acPOIAdd = addAction(menuPOI,tr("Ajouter une marque"),"","","");
         acPOIRemove = addAction(menuPOI,tr("Supprimer des marques"),"","","");
+        acPOIRemoveByType = addAction(menuPOI,tr("Remove marks by type..."),"","","");
         menuPOI->addSeparator();
 
         subMenuBarrier= new QMenu(tr("Barrier set"));

@@ -148,6 +148,7 @@ void MainWindow::connectSignals()
 
     connect(mb->acPOIAdd, SIGNAL(triggered()), this, SLOT(slot_newPOI()));
     connect(mb->acPOIRemove, SIGNAL(triggered()), this, SLOT(slot_removePOI()));
+    connect(mb->acPOIRemoveByType, SIGNAL(triggered()), my_centralWidget, SLOT(slot_removePOIType()));
     connect(mb->ac_twaLine,SIGNAL(triggered()), my_centralWidget, SLOT(slot_twaLine()));
     connect(mb->ac_compassLine,SIGNAL(triggered()), this, SLOT(slotCompassLine()));
     connect(mb->ac_compassCenterBoat,SIGNAL(triggered()), this, SLOT(slotCompassCenterBoat()));
@@ -837,11 +838,12 @@ void MainWindow::slot_removePOI(void) {
     my_centralWidget->removePOI();
 }
 
-void MainWindow::slot_centerBoat()
+void MainWindow::slot_centerSelectedBoat()
 {
     if(selectedBoat)
-        proj->setCenterInMap(selectedBoat->getLon(),selectedBoat->getLat());
+        selectedBoat->slot_centerOnBoat();
 }
+
 
 void MainWindow::slot_moveBoat(void)
 {
@@ -1597,7 +1599,7 @@ void MainWindow::VLM_Sync_sync(void)
         closeProgress();
         isStartingUp=false;
         if(Settings::getSetting("centerOnBoatChange","1").toInt()==1)
-            this->slot_centerBoat();
+            this->slot_centerSelectedBoat();
         my_centralWidget->emitUpdateRoute(NULL);
         updateTitle();
     }

@@ -167,6 +167,7 @@ public slots:
         void slot_notSimplificable(bool b){this->notSimplificable=b;update();}
         void slot_routage(void) { ROUTAGE * routage=parent->addRoutage(); parent->slot_editRoutage(routage,true,this); }
         void slot_timerSimp();
+        void slot_centerOnBoat(void);
 
     signals:
         void chgWP(double,double,double);
@@ -238,6 +239,7 @@ public slots:
         QAction * ac_copy;
         QAction * ac_compassLine;
         QAction * ac_twaLine;
+        QAction * ac_centerOnPOI;
         QAction * ac_setHorn;
         QMenu * ac_routeList;
         QAction * ac_finePosit;

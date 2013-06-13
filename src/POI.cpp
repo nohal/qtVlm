@@ -220,6 +220,10 @@ void POI::createPopUpMenu(void)
     popup->addAction(ac_twaLine);
     connect(ac_twaLine,SIGNAL(triggered()),this,SLOT(slot_twaLine()));
 
+    ac_centerOnPOI = new QAction(tr("Center on POI"),popup);
+    popup->addAction(ac_centerOnPOI);
+    connect(ac_centerOnPOI,SIGNAL(triggered()),this,SLOT(slot_centerOnBoat()));
+
     popup->addSeparator();
     ac_setWp = new QAction(tr("Marque->WP"),popup);
     ac_setWp->setCheckable(true);
@@ -933,6 +937,10 @@ void POI::slot_editPOI()
     if(route!=NULL)
         if(route->getFrozen()) return;
     emit editPOI(this);
+}
+
+void POI::slot_centerOnBoat(void) {
+    proj->setCenterInMap(getLongitude(),getLatitude());
 }
 
 void POI::slot_copy()

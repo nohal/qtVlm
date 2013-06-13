@@ -138,16 +138,15 @@ public slots:
         void slotChgBoat(int);
         void slotAccountListUpdated(void);
         void slotBoatUpdated(boat * boat,bool newRace,bool doingSync);
-        void slot_centerBoat();
+        void slot_centerSelectedBoat();
         void slot_moveBoat(void);
 
         void slotChgWP(double lat,double lon, double wph);
         void slotBoatLockStatusChanged(boat*,bool);
         void slotPilototo(void);
         void slotShowPolar(void);
-
-        void slot_newPOI(void);
         void slot_removePOI(void);
+        void slot_newPOI(void);
         void slotCreatePOI();
         void slotpastePOI();
 

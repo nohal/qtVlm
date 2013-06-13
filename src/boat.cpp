@@ -166,6 +166,12 @@ void boat::createPopUpMenu(void)
     popup->addAction(ac_select);
     connect(ac_select,SIGNAL(triggered()),this,SLOT(slot_selectBoat()));
 
+    ac_centerOnboat = new QAction(tr("Center on boat"),popup);
+    popup->addAction(ac_centerOnboat);
+    connect(ac_centerOnboat,SIGNAL(triggered()),this,SLOT(slot_centerOnBoat()));
+
+    popup->addSeparator();
+
     ac_estime = new QAction("Afficher estime",popup);
     popup->addAction(ac_estime);
     connect(ac_estime,SIGNAL(triggered()),this,SLOT(slot_toggleEstime()));
@@ -241,6 +247,10 @@ void boat::unSelectBoat(bool needUpdate)
     }
     if(boatType==BOAT_REAL)
         this->stopRead();
+}
+
+void boat::slot_centerOnBoat(void) {
+    proj->setCenterInMap(getLon(),getLat());
 }
 
 /**************************/

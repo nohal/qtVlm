@@ -455,7 +455,7 @@ myCentralWidget::myCentralWidget(Projection * proj,MainWindow * parent,MenuBar *
     connect(menuBar->acOptions_SH_Fla, SIGNAL(triggered(bool)), this,  SLOT(slot_shFla(bool)));
     connect(menuBar->acOptions_SH_Nig, SIGNAL(triggered(bool)), this,  SLOT(slot_shNig(bool)));
 
-    connect(menuBar->acOptions_SH_Boa, SIGNAL(triggered(bool)), parent, SLOT(slot_centerBoat()));
+    connect(menuBar->acOptions_SH_Boa, SIGNAL(triggered(bool)), parent, SLOT(slot_centerSelectedBoat()));
 
     connect(this,SIGNAL(accountListUpdated()), parent, SLOT(slotAccountListUpdated()));
 
@@ -1556,6 +1556,46 @@ void myCentralWidget::slot_delPOI_list(POI * poi)
     poi_list.removeAll(poi);
     scene->removeItem(poi);
     emit twaDelPoi(poi);
+}
+
+void myCentralWidget::slot_removePOIType(void) {
+    int res_mask;
+    DialogPoiDelete * dialog_sel = new DialogPoiDelete();
+    dialog_sel->exec();
+    if((res_mask=dialog_sel->getResult())<0)
+        return;
+    QListIterator<ROUTE*> r (route_list);
+    while(r.hasNext())
+    {
+        ROUTE * route=r.next();
+        route->setTemp(true);
+    }
+
+    QListIterator<POI*> i (poi_list);
+
+    while(i.hasNext())
+    {
+        POI * poi = i.next();
+        if(!(poi->getTypeMask() & res_mask))
+            continue;
+
+        if(poi->getRoute()!=NULL)
+        {
+            if(poi->getRoute()->getFrozen()||poi->getRoute()->getHidden()||poi->getRoute()->isBusy()) continue;
+            poi->setRoute(NULL);
+        }
+        slot_delPOI_list(poi);
+        poi->deleteLater();
+
+    }
+
+    r.toFront();
+    while(r.hasNext())
+    {
+        ROUTE * route=r.next();
+        route->setTemp(false);
+    }
+    emit updateRoute(NULL);
 }
 
 void myCentralWidget::slot_delAllPOIs(void)

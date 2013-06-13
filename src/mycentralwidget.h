@@ -256,6 +256,7 @@ public slots :
         void slot_POIimport(void); // import data from zyGrib
         void slot_POIimportGeoData(void);
         void slot_delAllPOIs(void);
+        void slot_removePOIType(void);
         void slot_delSelPOIs(void);
         void slot_notSimpAllPOIs(void);
         void slot_simpAllPOIs(void);

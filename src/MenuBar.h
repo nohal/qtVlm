@@ -85,6 +85,7 @@ public:
     QAction *ac_pastePOI;
     QAction *acPOIAdd;
     QAction *acPOIRemove;
+    QAction *acPOIRemoveByType;
 
     /*** Barrier ***/
     QAction * ac_insertBarrier; // popup

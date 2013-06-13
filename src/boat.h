@@ -144,6 +144,8 @@ public slots:
         /*** Barrier ***/
         void slot_chooseBarrierSet(void);
 
+        void slot_centerOnBoat();
+
     signals:
         void boatSelected(boat*);
         void boatUpdated(boat*,bool,bool);
@@ -233,6 +235,7 @@ public slots:
         QAction * ac_compassLine;
         QAction * ac_twaLine;
         QAction * ac_chooseBarrierSet;
+        QAction * ac_centerOnboat;
         void createPopUpMenu();        
 
         void updateBoatData(void);        
