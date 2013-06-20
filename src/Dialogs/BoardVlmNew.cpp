@@ -97,6 +97,11 @@ BoardVlmNew::BoardVlmNew(MainWindow *main)
     this->lab_backTab3->installEventFilter(this);
     this->lab_back->installEventFilter(this);
 }
+BoardVlmNew::~BoardVlmNew()
+{
+    delete wpDialog;
+}
+
 void BoardVlmNew::slot_tabChanged(int tabNb)
 {
     switch(tabNb)
@@ -143,9 +148,6 @@ void BoardVlmNew::slot_reloadSkin()
     slot_tabChanged(tabWidget->currentIndex());
     this->windAngle->loadSkin();
     this->slot_updateData();
-}
-BoardVlmNew::~BoardVlmNew()
-{
 }
 void BoardVlmNew::slot_flipAngle()
 {
@@ -311,9 +313,14 @@ void BoardVlmNew::slot_vlmSync()
 void BoardVlmNew::slot_updateData()
 {
     timerStop();
+    if(!main->getSelectedBoat() || main->getSelectedBoat()->get_boatType()!=BOAT_VLM)
+    {
+        myBoat=NULL;
+        return;
+    }
     myBoat=(boatVLM*)main->getSelectedBoat();
-    slot_lock();
     if(!myBoat) return;
+    slot_lock();
     this->blockSignals(true);
     this->blocking=true;
     updateLcds();
@@ -348,7 +355,8 @@ void BoardVlmNew::slot_updateData()
         this->det_GATE_DIST->setText(QString().sprintf("%.2f",myBoat->getClosest().distArrival)+tr("nm"));
     else
         this->det_GATE_DIST->setText(QString().sprintf("%d",qRound(myBoat->getClosest().distArrival))+tr("nm"));
-    this->det_GATE->setText(myBoat->getGates().at(myBoat->getNWP()-1)->getDesc());
+    if(!myBoat->getGates().isEmpty())
+        this->det_GATE->setText(myBoat->getGates().at(myBoat->getNWP()-1)->getDesc());
     this->spin_HDG->setValue(myBoat->getHeading());
     this->spin_TWA->setValue(computeAngle());
     if(myBoat->getPolarData())

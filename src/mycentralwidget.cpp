@@ -4331,7 +4331,6 @@ void myCentralWidget::manageAccount(bool * res)
     int tmp_res= playerAcc->exec();
     if(res)
         *res=(tmp_res == QDialog::Accepted);
-
 }
 
 void myCentralWidget::updatePlayer(Player * player)
@@ -4429,6 +4428,7 @@ void myCentralWidget::slot_playerSelected(Player * player)
         realBoat=NULL;
         emit shRouBis();
     }
+    mainW->loadBoard();
 }
 
 void myCentralWidget::slot_writeBoatData(void)

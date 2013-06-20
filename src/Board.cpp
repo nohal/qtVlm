@@ -64,6 +64,26 @@ board::board(MainWindow * mainWin, inetConnexion * inet)
             this,SLOT(boatUpdated(boat*)));
 
     isFloatingBoard=false;
+    this->playerChanged(mainWin->getMy_centralWidget()->getPlayer());
+    this->boatUpdated(mainWin->getSelectedBoat());
+}
+board::~board()
+{
+    if(playerType!=BOAT_NOBOAT)
+    {
+        if(playerType == BOAT_VLM)
+        {
+            mainWin->removeDockWidget(VLMDock);
+        }
+        else
+        {
+            mainWin->removeDockWidget(realDock);
+        }
+    }
+    delete real_board;
+    delete vlm_board;
+    delete VLMDock;
+    delete realDock;
 }
 
 int board::build_showHideMenu(QMenu * menu) {
@@ -120,6 +140,7 @@ void board::playerChanged(Player * player)
 {
     if(!player)
         return;
+    qWarning()<<"inside playerChanged";
 
     if(playerType!=BOAT_NOBOAT)
     {

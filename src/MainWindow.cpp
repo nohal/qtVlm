@@ -340,38 +340,9 @@ void MainWindow::continueSetup()
     //poi_input_dialog = new DialogPoiInput(my_centralWidget);
     selPOI_instruction=NULL;
     isSelectingWP=false;
-    QList<Player*> players=my_centralWidget->getPlayers();
-    if(players.isEmpty() || players.at(0)->getType()==BOAT_REAL || Settings::getSetting("classicalVlmBoard",0).toInt()==1)
-        use_old_board=true;
-    else
-        use_old_board=false;
-    if(use_old_board)
-    {
-        myBoard = new board(this,my_centralWidget->getInet());
-        //connect(menuBar->acOptions_SH_ComBandeau,SIGNAL(triggered()),myBoard,SLOT(slot_hideShowCompass()));
-        connect(this,SIGNAL(wpChanged()),myBoard->VLMBoard(),SLOT(update_btnWP()));
-        // get screen geometry
-        QDesktopWidget * desktopWidget = QApplication::desktop ();
-
-        QRect screenRect = desktopWidget->screenGeometry(desktopWidget->primaryScreen());
-
-        if(screenRect.height()<=600)
-        {
-            /* small screen height */
-            qWarning() << "Small screen => no compas and floating panel";
-            myBoard->VLMBoard()->setCompassVisible(false);
-            myBoard->realBoard()->setCompassVisible(false);
-            myBoard->floatingBoard(true);
-        }
-        else
-        {
-            myBoard->floatingBoard(false);
-        }
-    }
-    else
-    {
-        newBoard = new BoardVlmNew(this);
-    }
+    myBoard=NULL;
+    newBoard=NULL;
+    loadBoard();
     /* restore state */
     //qWarning() << "Tool/Board settings: " << Settings::getSetting("savedState","").toByteArray();
     restoreState(Settings::getSetting("savedState","").toByteArray());
@@ -427,6 +398,7 @@ void MainWindow::continueSetup()
 #endif
 
 
+    QList<Player*> players=my_centralWidget->getPlayers();
     if(players.count()==1)
     {
         if(use_old_board)
@@ -499,6 +471,53 @@ void MainWindow::continueSetup()
 
     closeProgress();
     Util::setFontDialog(menuBar);
+}
+void MainWindow::loadBoard()
+{
+    qWarning()<<"loading board";
+    use_old_board=true;
+    if(my_centralWidget->getPlayer() && my_centralWidget->getPlayer()->getType()==BOAT_VLM && Settings::getSetting("classicalVlmBoard",0).toInt()==0)
+        use_old_board=false;
+    if(use_old_board && myBoard)
+    {
+        myBoard->playerChanged(my_centralWidget->getPlayer());
+        return;
+    }
+    if(!use_old_board && newBoard) return;
+    if(newBoard)delete newBoard;
+    if(myBoard){
+        delete myBoard;
+    }
+    newBoard=NULL;
+    myBoard=NULL;
+    if(use_old_board)
+    {
+        myBoard = new board(this,my_centralWidget->getInet());
+        //connect(menuBar->acOptions_SH_ComBandeau,SIGNAL(triggered()),myBoard,SLOT(slot_hideShowCompass()));
+        connect(this,SIGNAL(wpChanged()),myBoard->VLMBoard(),SLOT(update_btnWP()));
+        // get screen geometry
+        QDesktopWidget * desktopWidget = QApplication::desktop ();
+
+        QRect screenRect = desktopWidget->screenGeometry(desktopWidget->primaryScreen());
+
+        if(screenRect.height()<=600)
+        {
+            /* small screen height */
+            qWarning() << "Small screen => no compas and floating panel";
+            myBoard->VLMBoard()->setCompassVisible(false);
+            myBoard->realBoard()->setCompassVisible(false);
+            myBoard->floatingBoard(true);
+        }
+        else
+        {
+            myBoard->floatingBoard(false);
+        }
+        myBoard->playerChanged(my_centralWidget->getPlayer());
+    }
+    else
+    {
+        newBoard = new BoardVlmNew(this);
+    }
 }
 
 //-----------------------------------------------

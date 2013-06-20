@@ -247,7 +247,10 @@ void DialogParamVlm::done(int result)
         Settings::setSetting("opp_labelType",QString().setNum(opp_labelType->currentIndex()));
         Settings::setSetting("showFlag",this->chkPavillon->checkState()==Qt::Checked?"1":"0","showHideItem");
         Settings::setSetting("fusionStyle",this->chkFusion->isChecked()?1:0);
+        bool previousBoardSetting=Settings::getSetting("classicalVlmBoard",0).toInt()==1;
         Settings::setSetting("classicalVlmBoard",this->classicalBoard->isChecked()?1:0);
+        if(previousBoardSetting!=classicalBoard->isChecked())
+            centralWidget->getMainWindow()->loadBoard();
         QString skinName=edt_skinFile->text();
         if(!QFile(skinName).exists())
             skinName=QFileInfo("img/skin_compas.png").absoluteFilePath();
