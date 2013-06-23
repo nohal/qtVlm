@@ -45,6 +45,7 @@ void DialogRealBoatConfig::launch(boatReal * boat)
     serialName->setText(Settings::getSetting("gpsPortName","COM1").toString());
     int idx = baudRate->findText(Settings::getSetting("gpsBaudRate",BAUD4800).toString(),Qt::MatchExactly);
     //qWarning() << "idx=" << idx << ", string= " << Settings::getSetting("gpsBaudRate",BAUD4800).toString();
+    if(idx==-1) idx=baudRate->findText("4800",Qt::MatchExactly);
     if(idx==-1) idx=0;
     baudRate->setCurrentIndex(idx);
     polarEfficiency->setValue(Settings::getSetting("polarEfficiency",100).toInt());
