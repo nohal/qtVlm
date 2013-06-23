@@ -9,6 +9,8 @@ INCLUDEPATH += .
 
 CONFIG+=staticlib
 
+DEFINES += USE_JPEG2000
+
 DESTDIR=../build
 
 # Input
