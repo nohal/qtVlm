@@ -13,7 +13,7 @@ INCLUDEPATH += objs \
     Dialogs \
     libs/bzip2 \
     libs/zlib-1.2.7 \
-    libs/qextserialport \
+    libs/qextserialport12/src \
     libs/qjson \
     libs/nmealib/src/nmea \
     libs/libbsb \
@@ -25,7 +25,7 @@ LIBS += -Llibs/build \
     -lminiunz \
     -lbz2 \
     -lz \
-    -lqextserialport \
+    -lQt5ExtSerialPort \
     -lqjson \
     -lnmea \
     -lbsb

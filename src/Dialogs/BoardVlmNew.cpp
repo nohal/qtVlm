@@ -165,6 +165,9 @@ void BoardVlmNew::slot_TWAChanged()
         if(twa<qRound(myBoat->getPolarData()->getBvmgUp(myBoat->getWindSpeed())*10.0) ||
            twa>qRound(myBoat->getPolarData()->getBvmgDown(myBoat->getWindSpeed())*10.0))
             spin_TWA->setStyleSheet("QDoubleSpinBox {color: red;} QDoubleSpinBox QWidget {color:black;}");
+        else if(twa==qRound(myBoat->getPolarData()->getBvmgUp(myBoat->getWindSpeed())*10.0) ||
+           twa==qRound(myBoat->getPolarData()->getBvmgDown(myBoat->getWindSpeed())*10.0))
+            spin_TWA->setStyleSheet("QDoubleSpinBox {color: green;} QDoubleSpinBox QWidget {color:black;}");
         else
             spin_TWA->setStyleSheet(spin_HDG->styleSheet());
     }
@@ -199,6 +202,9 @@ void BoardVlmNew::slot_HDGChanged()
         if(twa<qRound(myBoat->getPolarData()->getBvmgUp(myBoat->getWindSpeed())*10.0) ||
            twa>qRound(myBoat->getPolarData()->getBvmgDown(myBoat->getWindSpeed())*10.0))
             spin_TWA->setStyleSheet("QDoubleSpinBox {color: red;} QDoubleSpinBox QWidget {color:black;}");
+        else if(twa==qRound(myBoat->getPolarData()->getBvmgUp(myBoat->getWindSpeed())*10.0) ||
+           twa==qRound(myBoat->getPolarData()->getBvmgDown(myBoat->getWindSpeed())*10.0))
+            spin_TWA->setStyleSheet("QDoubleSpinBox {color: green;} QDoubleSpinBox QWidget {color:black;}");
         else
             spin_TWA->setStyleSheet(spin_HDG->styleSheet());
     }
@@ -365,6 +371,9 @@ void BoardVlmNew::slot_updateData()
         if(twa<qRound(myBoat->getPolarData()->getBvmgUp(myBoat->getWindSpeed())*10.0) ||
            twa>qRound(myBoat->getPolarData()->getBvmgDown(myBoat->getWindSpeed())*10.0))
             spin_TWA->setStyleSheet("QDoubleSpinBox {color: red;} QDoubleSpinBox QWidget {color:black;}");
+        else if(twa==qRound(myBoat->getPolarData()->getBvmgUp(myBoat->getWindSpeed())*10.0) ||
+           twa==qRound(myBoat->getPolarData()->getBvmgDown(myBoat->getWindSpeed())*10.0))
+            spin_TWA->setStyleSheet("QDoubleSpinBox {color: green;} QDoubleSpinBox QWidget {color:black;}");
         else
             spin_TWA->setStyleSheet(spin_HDG->styleSheet());
         QString tipTWA=tr("Meilleurs angles au pres/portant:")+" "+QString().sprintf("%.2f",myBoat->getPolarData()->getBvmgUp(myBoat->getWindSpeed()))+tr("deg")+"/"

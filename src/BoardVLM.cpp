@@ -779,7 +779,7 @@ void boardVLM::synch_GPS()
             return;
         }
 
-        port->setTimeout(0,100);
+        port->setTimeout(100);
 
         QString data;
         QString data1;
