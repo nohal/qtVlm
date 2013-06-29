@@ -9,6 +9,7 @@
 #include <QMessageBox>
 #include <QStyleFactory>
 #include "boatVLM.h"
+#include <QGraphicsDropShadowEffect>
 BoardVlmNew::BoardVlmNew(MainWindow *main)
     : QDialog(main)
 
@@ -96,6 +97,8 @@ BoardVlmNew::BoardVlmNew(MainWindow *main)
     this->lab_backTab2->installEventFilter(this);
     this->lab_backTab3->installEventFilter(this);
     this->lab_back->installEventFilter(this);
+    QGraphicsDropShadowEffect *shadow=new QGraphicsDropShadowEffect(this);
+    this->setGraphicsEffect(shadow);
 }
 BoardVlmNew::~BoardVlmNew()
 {
