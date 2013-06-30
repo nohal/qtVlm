@@ -934,6 +934,7 @@ bool BoardVlmNew::eventFilter(QObject *obj, QEvent *event)
         {
             tryMoving=false;
             nbVib=5;
+            windAngle->setRotation(0);
             vibration->start(50);
         }
         else if(tryMoving && event->type()==QEvent::MouseMove)
@@ -943,6 +944,7 @@ bool BoardVlmNew::eventFilter(QObject *obj, QEvent *event)
             int x=qBound(qRound(-this->width()/2.0),initialPos.x()+mousePos.x()-startMove.x(),qRound(main->width()-this->width()/2.0));
             int y=qBound(qRound(-this->height()/2.0),initialPos.y()+mousePos.y()-startMove.y(),qRound(main->height()-this->height()/2.0));
             this->move(x,y);
+            windAngle->setRotation(windAngle->getRotation()+10.0);
         }
         return false;
     }
