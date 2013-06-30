@@ -37,6 +37,7 @@ private slots:
 protected:
     bool eventFilter(QObject *obj, QEvent *event);
 public slots:
+    void slot_vibrate();
     void slot_updateBtnWP();
     void slot_selectPOI(bool doSelect);
     void slot_selectPOI(POI *);
@@ -50,6 +51,7 @@ private:
     QString defaultStyleSheet;
     QTimer * timer;
     QTimer * timerDial;
+    QTimer * vibration;
     QLabel * currentRB;
     void timerStop();
     bool blocking;
@@ -65,6 +67,8 @@ private:
     QPixmap imgBack0,imgBack1,imgBack2;
     bool tryMoving;
     QPoint startMove,initialPos;
+    int nbVib;
+    QList<int>vibStates;
 };
 
 #endif // BOARDVLMNEW_H

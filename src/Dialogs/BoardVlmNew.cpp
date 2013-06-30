@@ -79,6 +79,11 @@ BoardVlmNew::BoardVlmNew(MainWindow *main)
     set_style(btn_wp);
     this->spin_HDG->installEventFilter(this);
     this->spin_TWA->installEventFilter(this);
+    vibration=new QTimer(this);
+    vibration->setSingleShot(false);
+    nbVib=-1;
+    vibration->setInterval(100);
+    connect(vibration,SIGNAL(timeout()),this,SLOT(slot_vibrate()));
     slot_reloadSkin();
     polarImg=QPixmap(this->lab_polar->size());
     polarImg.fill(Qt::transparent);
@@ -99,6 +104,27 @@ BoardVlmNew::BoardVlmNew(MainWindow *main)
     this->lab_back->installEventFilter(this);
     QGraphicsDropShadowEffect *shadow=new QGraphicsDropShadowEffect(this);
     this->setGraphicsEffect(shadow);
+    vibStates.append(10);
+    vibStates.append(-10);
+    vibStates.append(9);
+    vibStates.append(-9);
+    vibStates.append(8);
+    vibStates.append(-8);
+    vibStates.append(7);
+    vibStates.append(-7);
+    vibStates.append(6);
+    vibStates.append(-6);
+    vibStates.append(5);
+    vibStates.append(-5);
+    vibStates.append(4);
+    vibStates.append(-4);
+    vibStates.append(3);
+    vibStates.append(-3);
+    vibStates.append(2);
+    vibStates.append(-2);
+    vibStates.append(1);
+    vibStates.append(-1);
+    vibStates.append(0);
 }
 BoardVlmNew::~BoardVlmNew()
 {
@@ -322,6 +348,9 @@ void BoardVlmNew::slot_vlmSync()
 void BoardVlmNew::slot_updateData()
 {
     timerStop();
+    vibration->stop();
+    windAngle->setRotation(0.0);
+    nbVib=0;
     if(!main->getSelectedBoat() || main->getSelectedBoat()->get_boatType()!=BOAT_VLM)
     {
         myBoat=NULL;
@@ -423,6 +452,20 @@ void BoardVlmNew::slot_updateData()
     spin_PolarTWS->setValue(myBoat->getWindSpeed());
     this->blocking=false;
     set_style(this->btn_sync,QColor(255,255,127));
+    if(!vibration->isActive())
+        vibration->start(80);
+}
+void BoardVlmNew::slot_vibrate()
+{
+    ++nbVib;
+    if(nbVib>=vibStates.size())
+    {
+        vibration->stop();
+        windAngle->setRotation(0);
+        nbVib=-1;
+        return;
+    }
+    windAngle->setRotation(vibStates.at(nbVib));
 }
 void BoardVlmNew::slot_drawPolar()
 {
@@ -888,7 +931,11 @@ bool BoardVlmNew::eventFilter(QObject *obj, QEvent *event)
             initialPos=this->pos();
         }
         else if(event->type()==QEvent::MouseButtonRelease)
+        {
             tryMoving=false;
+            nbVib=5;
+            vibration->start(50);
+        }
         else if(tryMoving && event->type()==QEvent::MouseMove)
         {
             QMouseEvent *m=static_cast<QMouseEvent *>(event);
@@ -946,6 +993,7 @@ VlmCompass::VlmCompass(QWidget * parent):QWidget(parent)
     loadSkin();
     WPdir = -1;
     newHeading=-1;
+    rotation=0;
 }
 void VlmCompass::loadSkin()
 {
@@ -995,13 +1043,18 @@ void VlmCompass::paintEvent(QPaintEvent * /*event*/)
 
     draw(&painter);
 }
+void VlmCompass::setRotation(const double r)
+{
+    rotation=r;
+    update();
+}
 
 void VlmCompass::draw(QPainter * painter)
 {
     painter->drawPixmap(0,0,img_fond);
     painter->save();
     painter->translate(100,100);
-    painter->rotate(heading);
+    painter->rotate(heading+rotation);
     painter->drawPixmap(-100,-100,img_boat);
     painter->restore();
     if(newHeading!=heading && newHeading!=-1)
@@ -1014,7 +1067,7 @@ void VlmCompass::draw(QPainter * painter)
         pnt.end();
         painter->save();
         painter->translate(100,100);
-        painter->rotate(newHeading);
+        painter->rotate(newHeading+rotation);
         painter->drawPixmap(-100,-100,tempBoat);
         painter->restore();
     }

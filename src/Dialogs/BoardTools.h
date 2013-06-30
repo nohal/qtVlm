@@ -30,6 +30,8 @@ class VlmCompass: public QWidget
         void setValues(const double &heading, const double &windDir, const double &windSpeed, const double &WPdir, const double &gateDir, const double &newHeading);
 
         void loadSkin();
+        void setRotation(const double r);
+        double getRotation() const {return rotation;}
 protected:
         void paintEvent(QPaintEvent * event);
 
@@ -41,7 +43,7 @@ protected:
         QPixmap img_arrow_wind;
         int w,h;
         double heading,windDir,windSpeed,WPdir,newHeading,gateDir;
-
+        double rotation;
         QColor windSpeed_toColor(void);
 
 };
