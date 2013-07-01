@@ -1244,7 +1244,7 @@ void myCentralWidget::loadGribFile(QString fileName, bool zoom)
         QFileInfoList list=inf.absoluteDir().entryInfoList(f);
         foreach(const QFileInfo &i,list)
         {
-            if(i.lastModified()<QDateTime::currentDateTime().addDays(-3))
+            if(i.lastModified()<QDateTime::currentDateTime().addDays(-3) && i.filePath()!=inf.filePath())
                 QFile::remove(i.filePath());
         }
     }
