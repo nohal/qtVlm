@@ -148,6 +148,7 @@ DialogParamVlm::DialogParamVlm(MainWindow * main,myCentralWidget * parent) : QDi
     edt_gribFolder->setText(Settings::getSetting("edtGribFolder",appFolder.value("grib")).toString());
 
     chk_gribZoomOnLoad->setCheckState(Settings::getSetting("gribZoomOnLoad",0).toInt()==1?Qt::Checked:Qt::Unchecked);
+    chk_gribDelete->setChecked(Settings::getSetting("gribDelete",0).toInt()==1);
     //chk_autoGribDate->setCheckState(Settings::getSetting("autoGribDate",0).toInt()==1?Qt::Checked:Qt::Unchecked);
 
     chk_externalMail->setCheckState(Settings::getSetting("sDocExternalMail",1).toInt()==1?Qt::Checked:Qt::Unchecked);
@@ -334,6 +335,7 @@ void DialogParamVlm::done(int result)
         Settings::setSetting("askGribFolder",chk_askGribFolder->checkState()==Qt::Checked?"1":"0");
         Settings::setSetting("edtGribFolder",edt_gribFolder->text());
         Settings::setSetting("gribZoomOnLoad",chk_gribZoomOnLoad->checkState()==Qt::Checked?"1":"0");
+        Settings::setSetting("gribDelete",chk_gribDelete->checkState()==Qt::Checked?"1":"0");
         //Settings::setSetting("autoGribDate",chk_autoGribDate->checkState()==Qt::Checked?"1":"0");
         Settings::setSetting("sDocExternalMail",chk_externalMail->checkState()==Qt::Checked?"1":"0");
         Settings::setSetting("sailsDocPress",sailsDocPress->checkState()==Qt::Checked?"1":"0");

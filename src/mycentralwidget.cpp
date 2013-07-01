@@ -1234,6 +1234,20 @@ void myCentralWidget::loadGribFile(QString fileName, bool zoom)
         zoomOnGrib();
         proj->blockSignals(false);
     }
+    if(Settings::getSetting("gribDelete",0)==1)
+    {
+        QFileInfo inf(fileName);
+        QStringList f;
+        f.append("*.grb");
+        f.append("*.GRB");
+
+        QFileInfoList list=inf.absoluteDir().entryInfoList(f);
+        foreach(const QFileInfo &i,list)
+        {
+            if(i.lastModified()<QDateTime::currentDateTime().addDays(-3))
+                QFile::remove(i.filePath());
+        }
+    }
     //else
     //emit redrawAll();
 }
