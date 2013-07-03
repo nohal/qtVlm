@@ -90,6 +90,7 @@ ROUTE::ROUTE(QString name, Projection *proj, Grib *grib, QGraphicsScene * myScen
     this->multVac=1;
     this->useVbvmgVlm=false;
     this->setNewVbvmgVlm(false);
+    showInterpolData=false;
     roadInfo=new routeInfo(parent,this);
     roadInfo->hide();
     pen.setColor(color);
@@ -119,7 +120,6 @@ ROUTE::ROUTE(QString name, Projection *proj, Grib *grib, QGraphicsScene * myScen
     connect(routeDelay,SIGNAL(timeout()),this,SLOT(slot_recalculate()));
     this->strongSimplify=false;
     delay=10;
-    showInterpolData=false;
 }
 
 ROUTE::~ROUTE()
@@ -144,7 +144,8 @@ ROUTE::~ROUTE()
 void ROUTE::setShowInterpolData(bool b)
 {
     this->showInterpolData=b;
-    if(!this->hidden && b)
+    if(!this->initialized) showInterpolData=false;
+    if(!this->hidden && showInterpolData)
         roadInfo->show();
     else
         roadInfo->hide();
@@ -723,7 +724,7 @@ void ROUTE::slot_recalculate(boat * boat)
                             }
                             if(lastEta<gribDate && Eta>=gribDate)
                             {
-                                if(!this->getSimplify() && roadInfo->isVisible())
+                                if(!this->getSimplify() && this->showInterpolData)
                                 {
                                     QList<double> roadPoint=roadMap.last();
                                     roadInfo->setValues(roadPoint.at(6),roadPoint.at(7),roadPoint.at(8),

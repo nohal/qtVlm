@@ -425,7 +425,7 @@
          <enum>QAbstractSpinBox::NoButtons</enum>
         </property>
         <property name="suffix">
-         <string> NM</string>
+         <string> nds</string>
         </property>
         <property name="decimals">
          <number>1</number>
