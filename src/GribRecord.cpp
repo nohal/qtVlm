@@ -235,6 +235,12 @@ void  GribRecord::translateDataType()
         {
         }
         //------------------------
+        // COAMPS from saildocs
+        //------------------------
+        else if (idCenter==58 && idModel==27 && idGrid==255)
+        {
+        }
+        //------------------------
         // Unknown center
         //------------------------
         else
