@@ -267,9 +267,13 @@ void vlmLine::calculatePoly(void)
                 y+=10;
             QRectF r;
             r.setRect(x,y, width-10,height-1);
+#ifdef __ANDROID__
+            float x1,y1,x2,y2;
+#else
             double x1,y1,x2,y2;
+#endif
             tempBound=tempBound.united(r);
-            tempBound.normalized();
+            tempBound=tempBound.normalized();
             tempBound.getCoords(&x1,&y1,&x2,&y2);
             tempBound.setCoords(x1-linePen.widthF()*2,y1-linePen.widthF()*2,x2+linePen.widthF()*2,y2+linePen.widthF()*2);
         }
