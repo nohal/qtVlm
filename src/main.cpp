@@ -70,7 +70,9 @@ int main(int argc, char *argv[])
     QApplication app(argc, argv);
     qsrand(QTime::currentTime().msec());
     QString appExeFolder=QApplication::applicationDirPath();
-#ifdef __UNIX_QTVLM
+#ifdef __ANDROID__
+    QDir::setCurrent("/storage/emulated/0/qtVlm");
+#elif defined (__UNIX_QTVLM)
     QString curDir=QDir::currentPath();
     qWarning() << "currentPath returns: " << curDir << "applicationDirPath returns: " << appExeFolder;
     if ( QString::compare(curDir,appExeFolder,Qt::CaseSensitive)!=0 )
@@ -127,7 +129,7 @@ int main(int argc, char *argv[])
         //qWarning() << "Checking: " << folderList.value(i);
         if (!dirCheck.exists()) {
             dirCheck.mkpath(folderList.value(i));
-            qWarning() << "Creating folder";
+            qWarning() << "Creating folder"<<folderList.at(i);
         }
     }
 #ifndef QT_V5
@@ -135,8 +137,10 @@ int main(int argc, char *argv[])
     QTextCodec::setCodecForCStrings(QTextCodec::codecForName("utf8"));
 #endif
     Settings::initSettings();
+#ifndef __ANDROID__
     if(Settings::getSetting("fusionStyle",0).toInt()==1)
         app.setStyle(QStyleFactory::create("fusion"));
+#endif
     double fontInc=Settings::getSetting("defaultFontSizeInc",0).toDouble();
     if(fontInc<-3 || fontInc>5)
     {
@@ -146,7 +150,6 @@ int main(int argc, char *argv[])
     QFont def(Settings::getSetting("defaultFontName",QApplication::font().family()).toString());
     def.setPointSizeF(8.25+fontInc);
     QApplication::setFont(def);
-
     QTranslator translator;
     QTranslator translatorQt;
     QString lang = Settings::getSetting("appLanguage", "none").toString();

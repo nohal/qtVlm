@@ -287,7 +287,7 @@ void MainWindow::continueSetup()
     {
         QMessageBox::critical (this,
            "Error",
-           "Unable to write in qtVlm folder<br>Please change the folder permissions or<br>try to reinstall qtVlm elsewhere");  /*pas traduit expres*/
+           "Unable to write in qtVlm folder<br>"+QFileInfo(testWrite).absoluteFilePath()+"<br>Please change the folder permissions or<br>try to reinstall qtVlm elsewhere");  /*pas traduit expres*/
         my_centralWidget->setAboutToQuit();
         QApplication::quit();
     }
