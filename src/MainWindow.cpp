@@ -187,7 +187,7 @@ void MainWindow::connectSignals()
     /*** Barrier ***/
     connect(mb->ac_addBarrierSet,SIGNAL(triggered()),this,SLOT(slot_newBarrierSet()));
     connect(mb->ac_barrierTool,SIGNAL(toggled(bool)),this,SLOT(set_barrierIsEdited(bool)));
-    connect(mb->ac_addBarrier,SIGNAL(triggered()),my_centralWidget,SLOT(slot_newBarrier()));
+    connect(mb->ac_addBarrier,SIGNAL(triggered()),my_centralWidget,SLOT(slot_addBarrier()));
     connect(mb->ac_insertBarrier,SIGNAL(triggered()),my_centralWidget,SLOT(slot_newBarrier()));
 
     //-------------------------------------

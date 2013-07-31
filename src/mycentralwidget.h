@@ -152,8 +152,6 @@ class myCentralWidget : public QWidget
         void escKey_barrier(void);
 
         void insert_barrierPointAfterPoint(BarrierPoint * point);
-        void insert_barrier(void);
-        void new_barrier(QPointF position);
         FCT_SETGET(QPoint,cursorPositionOnPopup)
 
         void loadGshhs(void);
@@ -263,6 +261,7 @@ public slots :
 
         /*** Barrier ***/
         void slot_newBarrier(void);
+        void slot_addBarrier(void);
 
         /* item state */
         void slot_showALL(bool);

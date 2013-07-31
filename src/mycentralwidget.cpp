@@ -1809,7 +1809,7 @@ void myCentralWidget::slot_newBarrier(void) {
 /* first ask for a set, then go in ADD_BARRIER mode expecting for user to   */
 /* point a position on map                                                  */
 /****************************************************************************/
-void myCentralWidget::insert_barrier(void) {
+void myCentralWidget::slot_addBarrier(void) {
     BarrierSet * set=DialogChooseBarrierSet::chooseBarrierSet(mainW);
 
     if(set) {
@@ -1849,11 +1849,11 @@ void myCentralWidget::manage_barrier(void) {
                 else {
                     Barrier * baseBarrier = new Barrier(mainW,currentSet);
                     baseBarrier->set_editMode(true);
-                    basePoint=baseBarrier->appendPoint(view->mapFromGlobal(QCursor::pos()));
+                    QPointF pos=view->mapFromGlobal(QCursor::pos());
+                    basePoint=baseBarrier->appendPoint(proj->screen2mapDouble(pos));
                     currentSet->add_barrier(baseBarrier);
                     barrierEditMode = BARRIER_EDIT_ADD_POINT;
                     /* show line */
-                    QPointF pos=view->mapFromGlobal(QCursor::pos());
                     barrierEditLine->setLine(QLineF(pos,pos));
                     barrierEditLine->setPen(QPen(currentSet->get_color()));
                     barrierEditLine->show();
