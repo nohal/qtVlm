@@ -185,6 +185,8 @@ void boat::createPopUpMenu(void)
     popup->addAction(ac_twaLine);
     connect(ac_twaLine,SIGNAL(triggered()),this,SLOT(slotTwaLine()));
 
+    popup->addSeparator();
+
     ac_chooseBarrierSet = new QAction(tr("Activate barrier sets"),popup);
     popup->addAction(ac_chooseBarrierSet);
     connect(ac_chooseBarrierSet,SIGNAL(triggered()),this,SLOT(slot_chooseBarrierSet()));

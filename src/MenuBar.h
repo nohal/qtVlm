@@ -88,7 +88,7 @@ public:
     QAction *acPOIRemoveByType;
 
     /*** Barrier ***/
-    QAction * ac_insertBarrier; // popup
+    QAction * ac_popupBarrier; // popup
     QMenu * subMenuBarrier;
     QMenu * subSubMenuDelBarrierSet;
     QMenu * subSubMenuEditBarrierSet;

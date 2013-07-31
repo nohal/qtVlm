@@ -501,8 +501,8 @@ QMenu * MenuBar::createPopupBtRight(QWidget *parent)
     ac_CreatePOI = addAction(popup, tr("Positionner une nouvelle Marque"),tr(""),tr(""),"");
     ac_pastePOI = addAction(popup, tr("Coller une marque"),tr(""),tr(""),"");
     popup->addSeparator();
-    ac_insertBarrier = new QAction(tr("Create new barrier"),popup);
-    popup->addAction(ac_insertBarrier);
+    ac_popupBarrier = new QAction(tr("Barrier not in edit mode"),popup);
+    popup->addAction(ac_popupBarrier);
 
     popup->addSeparator();
     ac_twaLine=addAction(popup,tr("Tracer une estime TWA"),tr(""),tr(""),"");

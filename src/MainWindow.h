@@ -186,6 +186,7 @@ public slots:
         /*** Barrier ***/
         void slot_newBarrierSet();
         void set_barrierIsEdited(bool state);
+        void slot_barrierPopup(void);
 
     signals:
         void setChangeStatus(bool status,bool pilototo,bool syncBtn);

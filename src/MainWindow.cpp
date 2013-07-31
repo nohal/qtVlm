@@ -188,7 +188,7 @@ void MainWindow::connectSignals()
     connect(mb->ac_addBarrierSet,SIGNAL(triggered()),this,SLOT(slot_newBarrierSet()));
     connect(mb->ac_barrierTool,SIGNAL(toggled(bool)),this,SLOT(set_barrierIsEdited(bool)));
     connect(mb->ac_addBarrier,SIGNAL(triggered()),my_centralWidget,SLOT(slot_addBarrier()));
-    connect(mb->ac_insertBarrier,SIGNAL(triggered()),my_centralWidget,SLOT(slot_newBarrier()));
+    connect(mb->ac_popupBarrier,SIGNAL(triggered()),this,SLOT(slot_barrierPopup()));
 
     //-------------------------------------
     // Autres signaux
@@ -1250,7 +1250,17 @@ void MainWindow::slotShowContextualMenu(QGraphicsSceneContextMenuEvent * e)
     my_centralWidget->set_cursorPositionOnPopup(QPoint(mouseClicX,mouseClicY));
 
     /*** Barrier ***/
-    menuBar->ac_insertBarrier->setEnabled(get_barrierIsEditing());
+    if(get_barrierIsEditing()) {
+        menuBar->ac_popupBarrier->setEnabled(true);
+        if(my_centralWidget->get_barrierEditMode()==BARRIER_EDIT_NO_EDIT)
+            menuBar->ac_popupBarrier->setText(tr("Create new barrier"));
+        else
+            menuBar->ac_popupBarrier->setText(tr("Stop barrier create"));
+    }
+    else {
+        menuBar->ac_popupBarrier->setEnabled(false);
+        menuBar->ac_popupBarrier->setText(tr("Barrier not in edit mode"));
+    }
 
     switch(compassMode)
     {
@@ -2432,4 +2442,13 @@ void MainWindow::set_barrierIsEdited(bool state) {
     for(int i=0;i<(::barrierSetList.count());++i) {
         ::barrierSetList.at(i)->set_barrierIsEdited(state);
     }
+}
+
+void MainWindow::slot_barrierPopup(void) {
+    if(!get_barrierIsEditing())
+        return;
+    if(my_centralWidget->get_barrierEditMode()==BARRIER_EDIT_NO_EDIT)
+        my_centralWidget->slot_newBarrier();
+    else
+        my_centralWidget->escKey_barrier();
 }
