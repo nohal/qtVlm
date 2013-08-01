@@ -188,7 +188,7 @@ void MainWindow::connectSignals()
     connect(mb->ac_addBarrierSet,SIGNAL(triggered()),this,SLOT(slot_newBarrierSet()));
     connect(mb->ac_barrierTool,SIGNAL(toggled(bool)),this,SLOT(set_barrierIsEdited(bool)));
     connect(mb->ac_addBarrier,SIGNAL(triggered()),my_centralWidget,SLOT(slot_addBarrier()));
-    connect(mb->ac_popupBarrier,SIGNAL(triggered()),this,SLOT(slot_barrierPopup()));
+    connect(mb->ac_popupBarrier,SIGNAL(triggered()),this,SLOT(slot_barrierAddPopup()));
 
     //-------------------------------------
     // Autres signaux
@@ -2439,16 +2439,27 @@ bool MainWindow::get_barrierIsEditing(void) {
 void MainWindow::set_barrierIsEdited(bool state) {
     //qWarning() << "Update barrier editing " << state;
     menuBar->ac_addBarrier->setEnabled(state);
+    toolBar->barrierAdd->setEnabled(state);
+    toolBar->barrierAdd->setChecked(false);
     for(int i=0;i<(::barrierSetList.count());++i) {
         ::barrierSetList.at(i)->set_barrierIsEdited(state);
     }
 }
 
-void MainWindow::slot_barrierPopup(void) {
+void MainWindow::slot_barrierAddPopup(void) {
     if(!get_barrierIsEditing())
         return;
     if(my_centralWidget->get_barrierEditMode()==BARRIER_EDIT_NO_EDIT)
         my_centralWidget->slot_newBarrier();
+    else
+        my_centralWidget->escKey_barrier();
+}
+
+void MainWindow::slot_barrierAddMenu(void) {
+    if(!get_barrierIsEditing())
+        return;
+    if(my_centralWidget->get_barrierEditMode()==BARRIER_EDIT_NO_EDIT)
+        my_centralWidget->slot_addBarrier();
     else
         my_centralWidget->escKey_barrier();
 }

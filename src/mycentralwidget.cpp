@@ -869,27 +869,24 @@ time_t myCentralWidget::getNextVac(void)
 #define BLOCK_SIG_BOAT() { if(mainW->getSelectedBoat()) mainW->getSelectedBoat()->blockSignals(true); }
 #define UNBLOCK_SIG_BOAT() { if(mainW->getSelectedBoat()) mainW->getSelectedBoat()->blockSignals(false); }
 
-void myCentralWidget::slot_Zoom_All()
-{
+void myCentralWidget::slot_Zoom_All() {
     BLOCK_SIG_BOAT()
     proj->zoomAll();
     UNBLOCK_SIG_BOAT()
 }
 
-void myCentralWidget::slot_clearSelection(void)
-{
+void myCentralWidget::slot_clearSelection(void) {
     selectionTool=false;
     selection->clearSelection();
     toolBar->selectionMode->setChecked(selectionTool);
 }
 
-void myCentralWidget::slot_selectionTool()
-{
+void myCentralWidget::slot_selectionTool() {
     selectionTool=toolBar->selectionMode->isChecked();
     selection->clearSelection();
 }
-void myCentralWidget::slot_magnify()
-{
+
+void myCentralWidget::slot_magnify() {
     if(toolBar->magnify->isChecked())
     {
         if(magnifier!=NULL)
@@ -903,15 +900,14 @@ void myCentralWidget::slot_magnify()
         magnifier=NULL;
     }
 }
-void myCentralWidget::slot_Go_Left()
-{
+
+void myCentralWidget::slot_Go_Left() {
     BLOCK_SIG_BOAT()
     proj->move( 0.2, 0);
     UNBLOCK_SIG_BOAT()
 }
 
-void myCentralWidget::slot_Go_Right()
-{
+void myCentralWidget::slot_Go_Right() {
 
     BLOCK_SIG_BOAT()
     proj->move(-0.2, 0);
@@ -1756,11 +1752,14 @@ void myCentralWidget::slot_delSelPOIs(void)
  ***********************************************************************/
 void myCentralWidget::escKey_barrier(void) {
     if(barrierEditMode != BARRIER_EDIT_NO_EDIT) {
+        if(basePoint)
+            currentSet->cleanEmptyBarrier(basePoint->get_barrier());
         basePoint=NULL;
         barrierEditMode = BARRIER_EDIT_NO_EDIT;
         if(currentSet)
             currentSet->set_editMode(false);
         barrierEditLine->hide();
+        toolBar->chg_barrierAddState(false);
     }
 }
 
@@ -1801,6 +1800,8 @@ void myCentralWidget::slot_newBarrier(void) {
         barrierEditLine->setLine(QLineF(pos,pos));
         barrierEditLine->setPen(QPen(currentSet->get_color()));
         barrierEditLine->show();
+
+        toolBar->chg_barrierAddState(true);
     }
 }
 
@@ -1817,6 +1818,7 @@ void myCentralWidget::slot_addBarrier(void) {
         currentSet->set_editMode(true);
         basePoint=NULL;
         barrierEditMode = BARRIER_EDIT_ADD_BARRIER;
+        toolBar->chg_barrierAddState(true);
     }
 }
 

@@ -60,6 +60,9 @@ ToolBar::ToolBar(MainWindow *mainWindow)
     etaToolBar=new MyToolBar("ETA",tr("ETA"),this,mainWindow);
     toolBarList.append(etaToolBar);
 
+    barrierToolBar=new MyToolBar("BarrierSet",tr("Barrier Set"),this,mainWindow);
+    toolBarList.append(barrierToolBar);
+
     /* adding all toolBar to mainWindow dock */
     for(int i=0;i<toolBarList.count();++i)
         mainWindow->addToolBar(toolBarList.at(i));
@@ -184,6 +187,12 @@ ToolBar::ToolBar(MainWindow *mainWindow)
     ETA->setStyleSheet("color: rgb(0, 0, 255);");
     etaToolBar->addWidget(ETA);
 
+    /* BarrierSet toolBar */
+    barrierAdd = init_Action(tr("Add Barrier"),tr(""),tr(""),appFolder.value("img")+"add_barrier.png",barrierToolBar);
+    barrierAdd->setCheckable(true);
+
+    barrierToolBar->addAction(barrierAdd);
+
     /*********************/
     /* init signal/slots */
     /*********************/
@@ -226,6 +235,9 @@ ToolBar::ToolBar(MainWindow *mainWindow)
     connect(acLock, SIGNAL(triggered()), mainWindow, SLOT(slotFile_Lock()));
     connect(mainWindow,SIGNAL(updateLockIcon(QIcon)),this,SLOT(slot_updateLockIcon(QIcon)));
     connect(boatList, SIGNAL(activated(int)),mainWindow, SLOT(slotChgBoat(int)));
+
+    /* BarrierSet ToolBar */
+    connect(barrierAdd,SIGNAL(triggered()),mainWindow,SLOT(slot_barrierAddMenu()));
 
     //load_settings();
 }
@@ -537,6 +549,16 @@ void ToolBar::updateBoatList(QList<boatVLM*> & boat_list) {
 
 void ToolBar::setSelectedBoatIndex(int index) {
     boatList->setCurrentIndex(index);
+}
+
+/**********************************************************************/
+/*                         BarrierSet                                 */
+/**********************************************************************/
+
+void ToolBar::chg_barrierAddState(bool state) {
+    barrierAdd->blockSignals(true);
+    barrierAdd->setChecked(state);
+    barrierAdd->blockSignals(false);
 }
 
 /****************************************************/

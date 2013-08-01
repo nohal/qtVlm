@@ -115,6 +115,7 @@ BarrierPoint * Barrier::appendPoint(QPointF point) {
 void Barrier::removePoint(BarrierPoint * point) {
     points.removeAll(point);
     slot_pointPositionChanged();
+    barrierSet->cleanEmptyBarrier(this,true);
 }
 
 BarrierPoint * Barrier::add_pointAfter(BarrierPoint * basePoint,QPointF position) {

@@ -25,6 +25,8 @@ Copyright (C) 2008 - Jacques Zaninetti - http://zygrib.free.fr
 
 #include <QDomDocument>
 #include <QFile>
+#include <QDebug>
+#include <QMessageBox>
 
 #include "dataDef.h"
 #include "MainWindow.h"
@@ -82,6 +84,20 @@ void BarrierSet::set_editMode(bool mode) {
 void BarrierSet::set_barrierIsEdited(bool state) {
     for(int i=0;i<barrierList.count();++i) {
         barrierList.at(i)->set_barrierIsEdited(state);
+    }
+}
+
+void BarrierSet::cleanEmptyBarrier(Barrier * barrier, bool withMsgBox) {
+    if(!barrier) return;
+    QList<BarrierPoint*> * points = barrier->get_points();
+    if(points && points->count()<=1) {
+        if(points->count()==1 && withMsgBox &&
+                QMessageBox::question(mainWindow,tr("Edit barrier"),
+                    tr("The barrier you are editting has only one point,\n remove barrier?"))
+                !=QMessageBox::Yes)
+            return;
+        barrierList.removeAll(barrier);
+        barrier->deleteLater();
     }
 }
 

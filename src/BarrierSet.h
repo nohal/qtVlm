@@ -53,6 +53,8 @@ class BarrierSet: public QObject
 
         static void get_barrierSetListFromKeys(QList<QString> keyList,QList<BarrierSet*>* mySetList);
 
+        void cleanEmptyBarrier(Barrier * barrier, bool withMsgBox=false);
+
         FCT_GET(QString,name)
         void set_name(QString name);
         QList<Barrier*> * get_barriers(void) { return &barrierList; }
