@@ -954,7 +954,7 @@ double Grib::computeHoursBeetweenGribRecords()
 {
         double res = 1;
     std::vector<GribRecord *> *ls = getFirstNonEmptyList();
-    if (ls != NULL) {
+    if (ls != NULL && ls->size()>1) {
         time_t t0 = (*ls)[0]->getRecordCurrentDate();
         time_t t1 = (*ls)[1]->getRecordCurrentDate();
         res = qAbs(t1-t0) / 3600.0;
