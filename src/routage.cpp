@@ -805,6 +805,11 @@ ROUTAGE::ROUTAGE(QString name, Projection *proj, Grib *grib, QGraphicsScene * my
     highlightedIso=0;
     isoRouteValue=10e6;
     this->running=false;
+    this->multiRoutage=false;
+    this->multiNb=-1;
+    this->multiDays=0;
+    this->multiHours=0;
+    this->multiMin=0;
 }
 ROUTAGE::~ROUTAGE()
 {
@@ -892,6 +897,7 @@ void ROUTAGE::calculate()
     if (!(myBoat && myBoat->getPolarData() && myBoat!=NULL))
     {
         QMessageBox::critical(0,tr("Routage"),tr("Pas de polaire chargee"));
+        parent->deleteRoutage(this);
         return;
     }
     /**** update boat barriers ***/
@@ -900,6 +906,7 @@ void ROUTAGE::calculate()
     if(!grib)
     {
         QMessageBox::critical(0,tr("Routage"),tr("Pas de grib charge"));
+        parent->deleteRoutage(this);
         return;
     }
     if(!i_iso)
@@ -914,6 +921,7 @@ void ROUTAGE::calculate()
     if ( eta>grib->getMaxDate() || eta<grib->getMinDate() )
     {
         QMessageBox::critical(0,tr("Routage"),tr("Date de depart choisie incoherente avec le grib"));
+        parent->deleteRoutage(this);
         return;
     }
     running=true;
@@ -2406,11 +2414,14 @@ void ROUTAGE::slot_calculate()
                 msgBox.setText(tr("Routage arrete par l'utilisateur"));
             else
                 msgBox.setText(tr("Impossible de rejoindre l'arrivee, desole"));
+            multiRoutage=false;
+            multiNb=-1;
         }
         QSpacerItem * hs=new QSpacerItem(0,0,QSizePolicy::Minimum,QSizePolicy::Expanding);
         QGridLayout * layout =(QGridLayout*)msgBox.layout();
         layout->addItem(hs,layout->rowCount(),0,1,layout->columnCount());
-        msgBox.exec();
+        if(!multiRoutage)
+            msgBox.exec();
 //        if(this->useRouteModule)
 //        {
 //            qWarning()<<"---Route module statistics---";
@@ -2426,14 +2437,14 @@ void ROUTAGE::slot_calculate()
         if (!this->showIso)
             setShowIso(false);
         this->done=true;
-        if(this->colorGrib)
+        if(this->colorGrib && !multiRoutage)
             parent->getTerre()->setRoutageGrib(this);
     }
     proj->setFrozen(false);
-    if(isConverted() && !i_iso)
+    if((multiRoutage || isConverted()) && !i_iso)
     {
         int rep=QMessageBox::Yes;
-        if(whatIfUsed && (whatIfTime!=0 || whatIfWind!=100))
+        if(!multiRoutage && whatIfUsed && (whatIfTime!=0 || whatIfWind!=100))
         {
             rep = QMessageBox::question (0,
                     tr("Convertir en route"),
@@ -2903,34 +2914,47 @@ void ROUTAGE::convertToRoute()
         msgBox.button(QMessageBox::No)->setText(tr("Ok"));
         msgBox.setText(tr("La route partira du point de depart et a l'heure de depart du routage"));
     }
-    int answ=msgBox.exec();
-    if(answ==QMessageBox::Cancel) return;
-    if(deleteOther.isChecked())
+    if(!multiRoutage)
     {
-        QList<ROUTAGE *>rList=parent->getRoutageList();
-        for (int i=rList.size()-1;i>=0;--i)
+        int answ=msgBox.exec();
+        if(answ==QMessageBox::Cancel) return;
+        if(deleteOther.isChecked())
         {
-            if(rList.at(i)==this) continue;
-            parent->deleteRoutage(rList.at(i));
+            QList<ROUTAGE *>rList=parent->getRoutageList();
+            for (int i=rList.size()-1;i>=0;--i)
+            {
+                if(rList.at(i)==this) continue;
+                parent->deleteRoutage(rList.at(i));
+            }
         }
+        simp=simplify.checkState()!=Qt::Unchecked;
+        Settings::setSetting("convertAndSimplify",simplify.checkState());
+        routeStartBoat=answ==QMessageBox::Yes;
     }
-    simp=simplify.checkState()!=Qt::Unchecked;
-    Settings::setSetting("convertAndSimplify",simplify.checkState());
-    routeStartBoat=answ==QMessageBox::Yes;
+    else
+    {
+        simp=false;
+    }
     this->converted=true;
     ROUTE * route=parent->addRoute();
     if(simp)
         route->setHidePois(false);
-    route->setName(name);
+    if(multiRoutage)
+        route->setName(name+" "+this->getStartTime().toString("dd MMM-hh:mm"));
+    else
+        route->setName(name);
     route->setUseVbVmgVlm(false);
     route->setBoat(this->myBoat);
     route->setDetectCoasts(this->checkCoast);
     route->setStartTime(parentRoutage->getStartTime());
-    if(simplify.checkState()==Qt::PartiallyChecked)
-        route->set_strongSimplify(false);
-    else if (simplify.checkState()==Qt::Checked)
-        route->set_strongSimplify(true);
-    if(routeStartBoat)
+    if(!multiRoutage)
+    {
+        if(simplify.checkState()==Qt::PartiallyChecked)
+            route->set_strongSimplify(false);
+        else if (simplify.checkState()==Qt::Checked)
+            route->set_strongSimplify(true);
+    }
+    if(!multiRoutage && routeStartBoat)
     {
         route->setStartFromBoat(true);
         route->setStartTimeOption(1);
@@ -2964,7 +2988,7 @@ void ROUTAGE::convertToRoute()
     result=NULL;
     route->setHidePois(true);
     route->setFrozen(false);
-    if(routeStartBoat)
+    if(!multiRoutage && routeStartBoat)
     {
         if (!route->getPoiList().isEmpty() && route->getPoiList().at(0)->getRouteTimeStamp()!=-1)
         {
@@ -2977,7 +3001,13 @@ void ROUTAGE::convertToRoute()
             }
         }
     }
-    parent->deleteRoutage(this,simp?route:NULL);
+    if(!multiRoutage || multiNb<=0)
+    {
+        parent->deleteRoutage(this,simp?route:NULL);
+        return;
+    }
+    else if (multiNb>0)
+        parent->addPivot(this,false);
 }
 void ROUTAGE::checkIsoCrossingPreviousSegments()
 {
@@ -3658,46 +3688,62 @@ void ROUTAGE::setFromRoutage(ROUTAGE *fromRoutage, bool editOptions)
     this->minPres=fromRoutage->getMinPres();
     this->maxPres=fromRoutage->getMaxPres();
     this->maxPortant=fromRoutage->getMaxPortant();
+    this->multiRoutage=fromRoutage->get_multiRoutage();
+    this->multiNb=qMax(-1,fromRoutage->get_multiNb()-1);
+    this->multiDays=fromRoutage->get_multiDays();
+    this->multiHours=fromRoutage->get_multiHours();
+    this->multiMin=fromRoutage->get_multiMin();
     isPivot=true;
     ROUTAGE *parentRoutage=this;
     result->deleteAll();
-    QList<vlmPoint> initialRoad;
-    while(true)
+    if(!multiRoutage)
     {
-        QList<vlmPoint> parentWay=*parentRoutage->getFromRoutage()->getWay()->getPoints();
-        for(int n=1;n<parentWay.size();++n)
+        QList<vlmPoint> initialRoad;
+        while(true)
         {
-            vlmPoint p=parentWay.at(n);
-            if(n==parentWay.size()-1)
-                p.notSimplificable=true;
-            initialRoad.append(p);
+            QList<vlmPoint> parentWay=*parentRoutage->getFromRoutage()->getWay()->getPoints();
+            for(int n=1;n<parentWay.size();++n)
+            {
+                vlmPoint p=parentWay.at(n);
+                if(n==parentWay.size()-1)
+                    p.notSimplificable=true;
+                initialRoad.append(p);
+            }
+            if(!parentRoutage->getFromRoutage() || !parentRoutage->getFromRoutage()->getIsPivot())
+            {
+                break;
+            }
+            parentRoutage=parentRoutage->getFromRoutage();
         }
-        if(!parentRoutage->getFromRoutage() || !parentRoutage->getFromRoutage()->getIsPivot())
+        pivotPoint.notSimplificable=true;
+        initialRoad.prepend(pivotPoint);
+        for(int n=0;n<initialRoad.size();++n)
         {
-            break;
+            vlmPoint p=initialRoad.at(n);
+            p.isBroken=false;
+            result->addVlmPoint(p);;
         }
-        parentRoutage=parentRoutage->getFromRoutage();
+        QPen penResult;
+        penResult.setColor(color);
+        penResult.setBrush(color);
+        penResult.setWidthF(this->width);
+        result->setLinePen(penResult);
+        result->slot_showMe();
+        fromRoutage->setShowIso(false);
+        fromRoutage->getResult()->hide();
+        fromRoutage->getWay()->hide();
     }
-    pivotPoint.notSimplificable=true;
-    initialRoad.prepend(pivotPoint);
-    for(int n=0;n<initialRoad.size();++n)
+    else
     {
-        vlmPoint p=initialRoad.at(n);
-        p.isBroken=false;
-        result->addVlmPoint(p);;
+        this->setName(fromRoutage->getName());
+        this->setFromPOI(fromRoutage->getFromPOI());
+        this->setStartTime(fromRoutage->getStartTime().addDays(multiDays).addSecs(multiHours*3600).addSecs(multiMin*60));
+        isPivot=false;
+        parent->deleteRoutage(fromRoutage);
+        this->fromRoutage=NULL;
     }
-//    result->addVlmPoint(pivotPoint);
-    QPen penResult;
-    penResult.setColor(color);
-    penResult.setBrush(color);
-    penResult.setWidthF(this->width);
-    result->setLinePen(penResult);
-    result->slot_showMe();
-    fromRoutage->setShowIso(false);
-    fromRoutage->getResult()->hide();
-    fromRoutage->getWay()->hide();
     QApplication::processEvents();
-    if(editOptions)
+    if(!multiRoutage && editOptions)
     {
         isNewPivot=true;
         emit editMe(this);

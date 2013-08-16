@@ -1064,6 +1064,108 @@ La différence est surtout sensible lors d'un routage en diagonale.</string>
         </layout>
        </item>
        <item>
+        <widget class="QGroupBox" name="multi_routage">
+         <property name="minimumSize">
+          <size>
+           <width>0</width>
+           <height>53</height>
+          </size>
+         </property>
+         <property name="title">
+          <string>Multi-routage</string>
+         </property>
+         <property name="checkable">
+          <bool>true</bool>
+         </property>
+         <property name="checked">
+          <bool>false</bool>
+         </property>
+         <layout class="QHBoxLayout" name="horizontalLayout_6">
+          <item>
+           <widget class="QLabel" name="label_4">
+            <property name="text">
+             <string>Generer </string>
+            </property>
+            <property name="alignment">
+             <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QSpinBox" name="multi_nb">
+            <property name="alignment">
+             <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+            </property>
+            <property name="suffix">
+             <string> routes</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QLabel" name="label_5">
+            <property name="text">
+             <string>a interval de </string>
+            </property>
+            <property name="alignment">
+             <set>Qt::AlignCenter</set>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QSpinBox" name="multi_days">
+            <property name="alignment">
+             <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+            </property>
+            <property name="suffix">
+             <string> jours</string>
+            </property>
+            <property name="maximum">
+             <number>20</number>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QSpinBox" name="multi_hours">
+            <property name="alignment">
+             <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+            </property>
+            <property name="suffix">
+             <string> heures</string>
+            </property>
+            <property name="prefix">
+             <string/>
+            </property>
+            <property name="maximum">
+             <number>23</number>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QSpinBox" name="multi_min">
+            <property name="alignment">
+             <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+            </property>
+            <property name="suffix">
+             <string> minutes</string>
+            </property>
+            <property name="minimum">
+             <number>0</number>
+            </property>
+            <property name="maximum">
+             <number>59</number>
+            </property>
+            <property name="singleStep">
+             <number>1</number>
+            </property>
+            <property name="value">
+             <number>0</number>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item>
         <spacer name="verticalSpacer_5">
          <property name="orientation">
           <enum>Qt::Vertical</enum>
@@ -1132,6 +1234,8 @@ La différence est surtout sensible lors d'un routage en diagonale.</string>
   <tabstop>colorIso</tabstop>
   <tabstop>i_iso</tabstop>
   <tabstop>isoRoute</tabstop>
+  <tabstop>pruneWakeAngle</tabstop>
+  <tabstop>explo</tabstop>
   <tabstop>log</tabstop>
   <tabstop>RoutageOrtho</tabstop>
   <tabstop>showBestLive</tabstop>
@@ -1141,12 +1245,17 @@ La différence est surtout sensible lors d'un routage en diagonale.</string>
   <tabstop>whatIfDate</tabstop>
   <tabstop>whatIfWind</tabstop>
   <tabstop>whatIfTime</tabstop>
-  <tabstop>minPres</tabstop>
-  <tabstop>minPortant</tabstop>
-  <tabstop>maxPres</tabstop>
-  <tabstop>maxPortant</tabstop>
   <tabstop>autoZoom</tabstop>
+  <tabstop>minPres</tabstop>
+  <tabstop>maxPres</tabstop>
+  <tabstop>minPortant</tabstop>
+  <tabstop>maxPortant</tabstop>
   <tabstop>zoomLevel</tabstop>
+  <tabstop>multi_routage</tabstop>
+  <tabstop>multi_nb</tabstop>
+  <tabstop>multi_days</tabstop>
+  <tabstop>multi_hours</tabstop>
+  <tabstop>multi_min</tabstop>
   <tabstop>Default</tabstop>
  </tabstops>
  <resources/>

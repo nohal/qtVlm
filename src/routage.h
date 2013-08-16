@@ -204,6 +204,11 @@ class ROUTAGE : public QObject
         QList<bool> * getPreviousIsoLand(){return &previousIsoLand;}
         QList<QLineF> * getForbidZone(){return &forbidZone;}
         QPolygonF * getShapeIso(){return &shapeIso;}
+        FCT_SETGET(bool,multiRoutage)
+        FCT_SETGET(int,multiDays)
+        FCT_SETGET(int,multiHours)
+        FCT_SETGET(int,multiMin)
+        FCT_SETGET(int,multiNb)
 public slots:
         void slot_edit();
         void slot_abort(){this->aborted=true;}
@@ -358,6 +363,11 @@ public slots:
         bool showBestLive;
         QPolygonF shapeIso;
         void calculateShapeIso(bool drawIt=false);
+        bool multiRoutage;
+        int multiNb;
+        int multiDays;
+        int multiHours;
+        int multiMin;
     };
 Q_DECLARE_TYPEINFO(ROUTAGE,Q_MOVABLE_TYPE);
 #endif // ROUTAGE_H

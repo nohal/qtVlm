@@ -220,6 +220,7 @@ DialogRoutage::DialogRoutage(ROUTAGE *routage,myCentralWidget *parent, POI *endP
         this->minPortant->setDisabled(true);
         this->minPres->setDisabled(true);
         this->Default->setDisabled(true);
+        this->multi_routage->setDisabled(true);
     }
     if(routage->getIsNewPivot() && !routage->isDone())
     {
@@ -251,10 +252,15 @@ DialogRoutage::DialogRoutage(ROUTAGE *routage,myCentralWidget *parent, POI *endP
         this->minPres->setDisabled(false);
         this->minPortant->setDisabled(false);
         this->Default->setDisabled(false);
+        this->multi_routage->setDisabled(true);
     }
     if(routage->isDone() && !routage->getArrived())
         i_iso->setEnabled(false);
-
+    this->multi_routage->setChecked(routage->get_multiRoutage());
+    this->multi_nb->setValue(routage->get_multiNb()+1);
+    this->multi_days->setValue(routage->get_multiDays());
+    this->multi_hours->setValue(routage->get_multiHours());
+    this->multi_min->setValue(routage->get_multiMin());
 }
 DialogRoutage::~DialogRoutage()
 {
@@ -340,6 +346,11 @@ void DialogRoutage::done(int result)
         routage->setMaxPres(this->maxPres->value());
         routage->setMinPortant(this->minPortant->value());
         routage->setMinPres(this->minPres->value());
+        routage->set_multiRoutage(this->multi_routage->isChecked());
+        routage->set_multiNb(this->multi_nb->value()-1);
+        routage->set_multiDays(this->multi_days->value());
+        routage->set_multiHours(this->multi_hours->value());
+        routage->set_multiMin(this->multi_min->value());
         if(parent->getPlayer()->getType()!=BOAT_REAL)
         {
             if(parent->getBoats())
@@ -420,6 +431,14 @@ void DialogRoutage::done(int result)
                     }
                 }
             }
+            else
+            {
+                if(this->multi_routage->isChecked())
+                {
+                    QMessageBox::critical(0,QString(QObject::tr("Routage")),QString(QObject::tr("Le routage ne peut pas partir du bateau si la fonction<br>multi-routage est utilisee")));
+                    return;
+                }
+            }
         }
         routage->setWhatIfUsed(whatIfUse->isChecked());
         routage->setWhatIfDate(whatIfDate->dateTime());
@@ -434,7 +453,7 @@ void DialogRoutage::done(int result)
         routage->setUseRouteModule(this->useVac->isChecked());
         if(!routage->isDone())
             Settings::setSetting("autoConvertToRoute",convRoute->isChecked()?1:0);
-        if(this->convRoute->isChecked())
+        if(this->convRoute->isChecked() || this->multi_routage->isChecked())
         {
             if(!routage->isConverted())
             {
