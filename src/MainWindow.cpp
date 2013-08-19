@@ -77,6 +77,7 @@ Copyright (C) 2008 - Jacques Zaninetti - http://zygrib.free.fr
 #include "DialogPilototo.h"
 #include "dialogviewpolar.h"
 #include "DialogEditBarrier.h"
+#include "DialogRouteComparator.h"
 
 int INTERPOLATION_DEFAULT=INTERPOLATION_HYBRID;
 
@@ -165,6 +166,7 @@ void MainWindow::connectSignals()
     connect(mb->ac_optimizeRoute,SIGNAL(triggered()), this, SLOT(slot_optimizeRoute()));
     connect(mb->ac_pasteRoute,SIGNAL(triggered()), this, SLOT(slot_pasteRoute()));
     connect(mb->acRoute_paste,SIGNAL(triggered()), this, SLOT(slot_pasteRoute()));
+    connect(mb->acRoute_comparator,SIGNAL(triggered()), this, SLOT(slot_routeComparator()));
     connect(mb->ac_zoomRoute,SIGNAL(triggered()), this, SLOT(slot_zoomRoute()));
 #ifdef __QTVLM_WITH_TEST
     if(mb->acVLMTest)
@@ -1476,6 +1478,12 @@ void MainWindow::slot_zoomRoute()
 void MainWindow::slot_pasteRoute()
 {
     my_centralWidget->importRouteFromMenuKML("",true);
+}
+void MainWindow::slot_routeComparator()
+{
+    DialogRouteComparator * drc=new DialogRouteComparator(my_centralWidget);
+    drc->exec();
+    delete drc;
 }
 void MainWindow::slotInetUpdated(void)
 {

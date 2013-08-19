@@ -2940,7 +2940,10 @@ void ROUTAGE::convertToRoute()
     if(simp)
         route->setHidePois(false);
     if(multiRoutage)
+    {
         route->setName(name+" "+this->getStartTime().toString("dd MMM-hh:mm"));
+        route->set_forceComparator(true);
+    }
     else
         route->setName(name);
     route->setUseVbVmgVlm(false);
@@ -3739,6 +3742,7 @@ void ROUTAGE::setFromRoutage(ROUTAGE *fromRoutage, bool editOptions)
         this->setFromPOI(fromRoutage->getFromPOI());
         this->setStartTime(fromRoutage->getStartTime().addDays(multiDays).addSecs(multiHours*3600).addSecs(multiMin*60));
         isPivot=false;
+        connect(fromRoutage,SIGNAL(destroyed()),this,SLOT(calculate()));
         parent->deleteRoutage(fromRoutage);
         this->fromRoutage=NULL;
     }
@@ -3748,7 +3752,7 @@ void ROUTAGE::setFromRoutage(ROUTAGE *fromRoutage, bool editOptions)
         isNewPivot=true;
         emit editMe(this);
     }
-    else
+    else if (isPivot)
         this->calculate();
 }
 void ROUTAGE::createPopupMenu()

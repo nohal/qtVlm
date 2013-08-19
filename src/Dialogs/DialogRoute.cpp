@@ -555,7 +555,7 @@ void DialogRoute::slotInterval()
     qWarning()<<"total time"<<Util::formatElapsedTime(stats.totalTime);
     qWarning()<<"total time beating"<<Util::formatElapsedTime(stats.beatingTime);
     qWarning()<<"total time largue"<<Util::formatElapsedTime(stats.largueTime);
-    qWarning()<<"total time reaching"<<Util::formatElapsedTime(stats.reachingTime);
+    qWarning()<<"total time downwind"<<Util::formatElapsedTime(stats.reachingTime);
     qWarning()<<"total time at night"<<Util::formatElapsedTime(stats.nightTime);
     qWarning()<<"total distance"<<stats.totalDistance;
     qWarning()<<"average tws"<<stats.averageTWS;

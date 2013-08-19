@@ -178,6 +178,7 @@ public slots:
         void slot_editRoute();
         void slot_poiRoute();
         void slot_pasteRoute();
+        void slot_routeComparator();
         void slot_zoomRoute();
         void slot_optimizeRoute();
         void slot_simplifyRouteMax();

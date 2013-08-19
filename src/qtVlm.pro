@@ -151,7 +151,8 @@ HEADERS += Dialogs/DialogGraphicsParams.h \
     Dialogs/DialogEditBarrier.h \
     Dialogs/DialogChooseMultipleBarrierSet.h \
     Dialogs/DialogChooseBarrierSet.h \
-    XmlFile.h
+    XmlFile.h \
+    Dialogs/DialogRouteComparator.h
 
 
 FORMS += Ui/boatAccount_dialog.ui \
@@ -192,7 +193,8 @@ FORMS += Ui/boatAccount_dialog.ui \
     Ui/BoardVlmNew.ui \
     Ui/DialogEditBarrier.ui \
     Ui/DialogChooseMultipleBarrierSet.ui \
-    Ui/DialogChooseBarrierSet.ui
+    Ui/DialogChooseBarrierSet.ui \
+    Ui/RouteComparator.ui
 
 SOURCES += Dialogs/DialogGraphicsParams.cpp \
     Dialogs/DialogLoadGrib.cpp \
@@ -287,7 +289,8 @@ SOURCES += Dialogs/DialogGraphicsParams.cpp \
     Dialogs/DialogEditBarrier.cpp \
     Dialogs/DialogChooseMultipleBarrierSet.cpp \
     Dialogs/DialogChooseBarrierSet.cpp \
-    XmlFile.cpp
+    XmlFile.cpp \
+    Dialogs/DialogRouteComparator.cpp
 
 unix:!macx: DEFINES += _TTY_POSIX_ __TERRAIN_QIMAGE __UNIX_QTVLM
 win32:DEFINES += _TTY_WIN_ \

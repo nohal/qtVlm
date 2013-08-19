@@ -189,6 +189,7 @@ class ROUTE;
 
 /* DialogRoute.h */
 class DialogRoute;
+class DialogRouteComparator;
 
 /* selectionWidget.h */
 class selectionWidget;

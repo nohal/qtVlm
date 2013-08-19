@@ -173,7 +173,7 @@ class myCentralWidget : public QWidget
         void simpAllPOIs(bool b);
         void setRouteToClipboard(ROUTE * route){this->routeClipboard=route;}
         ROUTE * getRouteToClipboard(){return this->routeClipboard;}
-        void myDeleteRoute(ROUTE * route);
+        bool myDeleteRoute(ROUTE * route);
 /* routage */
         QList<ROUTAGE*> & getRoutageList(){ return this->routage_list;}
         bool freeRoutageName(QString name, ROUTAGE * routage);

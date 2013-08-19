@@ -120,6 +120,7 @@ ROUTE::ROUTE(QString name, Projection *proj, Grib *grib, QGraphicsScene * myScen
     connect(routeDelay,SIGNAL(timeout()),this,SLOT(slot_recalculate()));
     this->strongSimplify=false;
     delay=10;
+    forceComparator=false;
 }
 
 ROUTE::~ROUTE()

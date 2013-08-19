@@ -158,6 +158,7 @@ class ROUTE : public QObject
         void setSortPoisByName(bool b){this->sortPoisbyName=b;}
         bool getSortPoisByName(){return this->sortPoisbyName;}
         FCT_SETGET_CST(bool,strongSimplify)
+        FCT_SETGET_CST(bool,forceComparator)
         routeStats getStats();
 
         static void read_routeData(myCentralWidget * centralWidget);
@@ -261,6 +262,7 @@ public slots:
         bool showInterpolData;
         bool sortPoisbyName;
         bool strongSimplify;
+        bool forceComparator;
 };
 Q_DECLARE_TYPEINFO(ROUTE,Q_MOVABLE_TYPE);
 #endif // ROUTE_H

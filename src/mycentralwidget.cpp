@@ -4124,14 +4124,14 @@ void myCentralWidget::slot_deleteRoute()
     if(route==NULL) return;
     myDeleteRoute(route);
 }
-void myCentralWidget::myDeleteRoute(ROUTE * route)
+bool myCentralWidget::myDeleteRoute(ROUTE * route)
 {
-    if(route->isBusy()) return ;
+    if(route->isBusy()) return false ;
     int rep = QMessageBox::question (0,
             tr("Detruire la route : %1").arg(route->getName()),
             tr("La destruction d'une route est definitive.\n\nVoulez-vous egalement supprimer tous les POIs lui appartenant?"),
             QMessageBox::Yes | QMessageBox::No | QMessageBox::Cancel);
-    if (rep == QMessageBox::Cancel) return ;
+    if (rep == QMessageBox::Cancel) return false ;
     route->setTemp(true);
 //    route->setHidden(false);
 //    QCoreApplication::sendPostedEvents(scene,0);
@@ -4149,6 +4149,7 @@ void myCentralWidget::myDeleteRoute(ROUTE * route)
         }
     }
     deleteRoute(route);
+    return true;
 }
 void myCentralWidget::slot_deleteRoutage()
 {
@@ -4168,6 +4169,7 @@ void myCentralWidget::deleteRoutage(ROUTAGE * routage, ROUTE * route)
 {
     if(routage)
     {
+        bool runComparator=routage->get_multiRoutage() && routage->get_multiNb()<=0;
         routage_list.removeAll(routage);
         update_menuRoutage();
         if(route!=NULL)
@@ -4176,6 +4178,8 @@ void myCentralWidget::deleteRoutage(ROUTAGE * routage, ROUTE * route)
             routeSimplify->setSimplify(true);
             connect(routage,SIGNAL(destroyed()),this,SLOT(slot_routeTimer()));
         }
+        if(runComparator)
+            connect(routage,SIGNAL(destroyed()),mainW,SLOT(slot_routeComparator()));
         routage->deleteLater();
         routage=NULL;
     }

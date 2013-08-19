@@ -365,6 +365,8 @@ MenuBar::MenuBar(MainWindow *parent)
         acRoute_paste = addAction(menuRoute,
                     tr("Coller une route"),"Ctrl+V", "", "");
         menuRoute->addMenu(mnRoute_import);
+        acRoute_comparator= addAction(menuRoute,
+                                    tr("Routes comparator"),"", "", "");
         menuRoute->addSeparator();
         menuRoute->addMenu(mnRoute_delete);
     addMenu(menuRoute);

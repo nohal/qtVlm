@@ -116,7 +116,6 @@ class ROUTAGE : public QObject
         POI * getFromPOI() const {return this->fromPOI;}
         void setToPOI(POI *poi){this->toPOI=poi;}
         POI * getToPOI() const {return this->toPOI;}
-        void calculate();
         bool isDone(void) const {return this->done;}
         bool isConverted(void) const {return this->converted;}
         void setConverted(void) {this->converted=true;}
@@ -210,6 +209,7 @@ class ROUTAGE : public QObject
         FCT_SETGET(int,multiMin)
         FCT_SETGET(int,multiNb)
 public slots:
+        void calculate();
         void slot_edit();
         void slot_abort(){this->aborted=true;}
         void slot_createPivot();
