@@ -2414,13 +2414,12 @@ void ROUTAGE::slot_calculate()
                 msgBox.setText(tr("Routage arrete par l'utilisateur"));
             else
                 msgBox.setText(tr("Impossible de rejoindre l'arrivee, desole"));
-            multiRoutage=false;
             multiNb=-1;
         }
         QSpacerItem * hs=new QSpacerItem(0,0,QSizePolicy::Minimum,QSizePolicy::Expanding);
         QGridLayout * layout =(QGridLayout*)msgBox.layout();
         layout->addItem(hs,layout->rowCount(),0,1,layout->columnCount());
-        if(!multiRoutage)
+        if(!multiRoutage || !arrived)
             msgBox.exec();
 //        if(this->useRouteModule)
 //        {
@@ -3006,6 +3005,10 @@ void ROUTAGE::convertToRoute()
     }
     if(!multiRoutage || multiNb<=0)
     {
+        if(multiRoutage)
+        {
+            parent->myDeleteRoute(route,true);
+        }
         parent->deleteRoutage(this,simp?route:NULL);
         return;
     }

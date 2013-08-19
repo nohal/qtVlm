@@ -4124,10 +4124,12 @@ void myCentralWidget::slot_deleteRoute()
     if(route==NULL) return;
     myDeleteRoute(route);
 }
-bool myCentralWidget::myDeleteRoute(ROUTE * route)
+bool myCentralWidget::myDeleteRoute(ROUTE * route, bool silent)
 {
     if(route->isBusy()) return false ;
-    int rep = QMessageBox::question (0,
+    int rep=QMessageBox::Yes;
+    if(!silent)
+        rep = QMessageBox::question (0,
             tr("Detruire la route : %1").arg(route->getName()),
             tr("La destruction d'une route est definitive.\n\nVoulez-vous egalement supprimer tous les POIs lui appartenant?"),
             QMessageBox::Yes | QMessageBox::No | QMessageBox::Cancel);
