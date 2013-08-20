@@ -3005,7 +3005,7 @@ void ROUTAGE::convertToRoute()
     }
     if(!multiRoutage || multiNb<=0)
     {
-        if(multiRoutage)
+        if(multiRoutage && (aborted || !arrived))
         {
             parent->myDeleteRoute(route,true);
         }

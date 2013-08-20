@@ -43,7 +43,7 @@ Copyright (C) 2008 - Jacques Zaninetti - http://zygrib.free.fr
 #define L1_CROSS 3
 #define L2_CROSS 4
 
-#define OLD_BARRIER
+//#define OLD_BARRIER
 
 struct datathread
 {
