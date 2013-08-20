@@ -1,39 +1,50 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE TS>
 <TS version="2.0" language="fr_FR" sourcelanguage="fr_FR">
-<defaultcodec>UTF-8</defaultcodec>
 <context>
     <name>Barrier</name>
     <message>
         <source>Insert a point</source>
-        <translation type="unfinished"></translation>
+        <translation>Insérer un point</translation>
     </message>
     <message>
         <source>Edit</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <source>Delete barrier</source>
-        <translation type="unfinished"></translation>
+        <translation>Supprimer la barrière</translation>
     </message>
 </context>
 <context>
     <name>BarrierPoint</name>
     <message>
         <source>Remove point</source>
-        <translation type="unfinished"></translation>
+        <translation>Retirer le point</translation>
     </message>
     <message>
         <source>Insert a point</source>
-        <translation type="unfinished"></translation>
+        <translation>Insérer un point</translation>
     </message>
     <message>
         <source>Edit</source>
-        <translation type="unfinished"></translation>
+        <translation>Editer</translation>
     </message>
     <message>
         <source>Delete barrier</source>
-        <translation type="unfinished"></translation>
+        <translation>Supprimer la barrière</translation>
+    </message>
+</context>
+<context>
+    <name>BarrierSet</name>
+    <message>
+        <source>Edit barrier</source>
+        <translation>Editer la barrière</translation>
+    </message>
+    <message>
+        <source>The barrier you are editting has only one point,
+ remove barrier?</source>
+        <translation>La barrière que vous éditez a seulement un point.\nVoulez-vous la supprimer?</translation>
     </message>
 </context>
 <context>
@@ -196,131 +207,131 @@
     </message>
     <message>
         <source>Bateau</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <source>Position</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <source>BS:</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <source>14.32kts</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <source>HDG:</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <source>132.23d</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <source>Moy:</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <source>Loch:</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <source>Ortho:</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <source>DNM:</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <source>Angle:</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <source>VMG:</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <source>25.25kts</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <source>Wind</source>
-        <translation type="unfinished"></translation>
+        <translation>Vent</translation>
     </message>
     <message>
         <source>TWS:</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <source>25.35kts</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <source>TWD:</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <source>Pres:</source>
-        <translation type="unfinished"></translation>
+        <translation>Près:</translation>
     </message>
     <message>
         <source>Port.:</source>
-        <translation type="unfinished"></translation>
+        <translation>Portant:</translation>
     </message>
     <message>
         <source>Race</source>
-        <translation type="unfinished"></translation>
+        <translation>Course</translation>
     </message>
     <message>
         <source>-&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <source>Fasnet gate</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <source>Dist:</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <source>TextLabel</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <source>kts</source>
-        <translation type="unfinished">nds</translation>
+        <translation>nds</translation>
     </message>
     <message>
         <source>ORT</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <source>nm</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <source>pas de polaire chargee</source>
-        <translation type="unfinished"></translation>
+        <translation>Pas de polaire chargée</translation>
     </message>
     <message>
         <source>AWA</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <source>AWS</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <source>Confirmation a chaque ordre vers VLM</source>
-        <translation type="unfinished">Confirmation à chaque ordre vers VLM</translation>
+        <translation>Confirmation à chaque ordre vers VLM</translation>
     </message>
     <message>
         <source>Confirmez-vous cet ordre?</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
 </context>
 <context>
@@ -401,33 +412,33 @@
     <name>DialogChooseBarrierSet</name>
     <message>
         <source>Barrier set choice</source>
-        <translation type="unfinished"></translation>
+        <translation>Choix de l&apos;ensemble de barrières</translation>
     </message>
     <message>
         <source>No barrier set define, create one before doing this action</source>
-        <translation type="unfinished"></translation>
+        <translation>Pas d&apos;ensemble de barrières défini, veuillez en créer un avant de faire cette action</translation>
     </message>
 </context>
 <context>
     <name>DialogChooseBarrierSet_ui</name>
     <message>
         <source>Dialog</source>
-        <translation type="unfinished"></translation>
+        <translation>Ensemble de barrières</translation>
     </message>
     <message>
         <source>Barrier set:</source>
-        <translation type="unfinished"></translation>
+        <translation>Ensemble de barrières:</translation>
     </message>
 </context>
 <context>
     <name>DialogChooseMultipleBarrierSet_ui</name>
     <message>
         <source>Dialog</source>
-        <translation type="unfinished"></translation>
+        <translation>Sélection d&apos;un ensemble de barrières</translation>
     </message>
     <message>
         <source>Available sets</source>
-        <translation type="unfinished"></translation>
+        <translation>Ensembles disponibles</translation>
     </message>
 </context>
 <context>
@@ -580,18 +591,29 @@ La boîte à cocher trace partielle s&apos;active apres l&apos;entree d&apos;un 
     </message>
 </context>
 <context>
+    <name>DialogEditBarrier</name>
+    <message>
+        <source>Barrier set edit</source>
+        <translation>Edition d&apos;un ensemble de barrières</translation>
+    </message>
+    <message>
+        <source>Barrier with same name already exists, choose a different name</source>
+        <translation>Un ensemble de barrières possède déjà le même nom, veuillez en choisir un autre</translation>
+    </message>
+</context>
+<context>
     <name>DialogEditBarrier_ui</name>
     <message>
         <source>Dialog</source>
-        <translation type="unfinished"></translation>
+        <translation>Editer une barrière</translation>
     </message>
     <message>
         <source>Name</source>
-        <translation type="unfinished">Nom</translation>
+        <translation>Nom</translation>
     </message>
     <message>
         <source>Color</source>
-        <translation type="unfinished"></translation>
+        <translation>Couleur</translation>
     </message>
 </context>
 <context>
@@ -1017,7 +1039,7 @@ La boîte à cocher trace partielle s&apos;active apres l&apos;entree d&apos;un 
     </message>
     <message>
         <source>Selectionner un skin tableau de bord VLM</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
 </context>
 <context>
@@ -1546,6 +1568,53 @@ Etes-vous sur ?</source>
     <message>
         <source>Pour utiliser cette action il faut que la route parte du bateau</source>
         <translation></translation>
+    </message>
+</context>
+<context>
+    <name>DialogRouteComparator</name>
+    <message>
+        <source>Routes Comparator</source>
+        <translation>Comparateur de routes</translation>
+    </message>
+    <message>
+        <source>Close</source>
+        <translation>Quitter</translation>
+    </message>
+    <message>
+        <source>Add a route to comparator</source>
+        <translation>Ajouter une route dans le comparateur</translation>
+    </message>
+    <message>
+        <source>Remove route</source>
+        <translation>Retirer la route</translation>
+    </message>
+    <message>
+        <source>from comparator</source>
+        <translation>du comparateur</translation>
+    </message>
+    <message>
+        <source>Delete route</source>
+        <translation>Supprimer la route</translation>
+    </message>
+    <message>
+        <source>jours</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>heures</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>minutes</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source> NM</source>
+        <translation> NM</translation>
+    </message>
+    <message>
+        <source> kts</source>
+        <translation> nds</translation>
     </message>
 </context>
 <context>
@@ -2246,7 +2315,19 @@ Etes-vous sur ?</source>
     </message>
     <message>
         <source>New set</source>
-        <translation type="unfinished"></translation>
+        <translation>Nouvel ensemble de barrières</translation>
+    </message>
+    <message>
+        <source>Create new barrier</source>
+        <translation>Créer une nouvelle barrière</translation>
+    </message>
+    <message>
+        <source>Stop barrier create</source>
+        <translation>Arréter la création de barrière</translation>
+    </message>
+    <message>
+        <source>Barrier not in edit mode</source>
+        <translation>La barrière n&apos;est pas en mode édition</translation>
     </message>
 </context>
 <context>
@@ -3093,79 +3174,87 @@ Etes-vous sur ?</source>
     </message>
     <message>
         <source>View</source>
-        <translation type="unfinished"></translation>
+        <translation>Affichage</translation>
     </message>
     <message>
         <source>Board</source>
-        <translation type="unfinished"></translation>
+        <translation>Tableau de bord</translation>
     </message>
     <message>
         <source>ToolBar</source>
-        <translation type="unfinished"></translation>
+        <translation>Barre d&apos;outils</translation>
     </message>
     <message>
         <source>Show/Hide boat and POI</source>
-        <translation type="unfinished"></translation>
+        <translation>Montrer/cacher le bateau et les POIs</translation>
     </message>
     <message>
         <source>Montrer les pavillons sur la carte</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <source>Montrer les bateaux opposants</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <source>Montrer les portes et WPs</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <source>Montrer les POIs</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <source>Montrer les routes</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <source>Montrer les etiquettes</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <source>Show/Hide compas</source>
-        <translation type="unfinished"></translation>
+        <translation>Montrer/cacher le compas</translation>
     </message>
     <message>
         <source>Montrer les zones de jour et nuit</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <source>Barrier set</source>
-        <translation type="unfinished"></translation>
+        <translation>Ensemble de barrières</translation>
     </message>
     <message>
         <source>Add barrier set</source>
-        <translation type="unfinished"></translation>
+        <translation>Ajouter un ensemble de barrières</translation>
     </message>
     <message>
         <source>Enable editting</source>
-        <translation type="unfinished"></translation>
+        <translation>Autoriser l&apos;édition</translation>
     </message>
     <message>
         <source>Add barrier</source>
-        <translation type="unfinished"></translation>
+        <translation>Ajouter une barrière</translation>
     </message>
     <message>
         <source>Parameters</source>
-        <translation type="unfinished"></translation>
+        <translation>Paramètres</translation>
     </message>
     <message>
         <source>Delete</source>
-        <translation type="unfinished"></translation>
+        <translation>Supprimer</translation>
     </message>
     <message>
-        <source>Create new barrier</source>
-        <translation type="unfinished"></translation>
+        <source>Routes comparator</source>
+        <translation>Comparateur de routes</translation>
+    </message>
+    <message>
+        <source>Remove marks by type...</source>
+        <translation>Supprimer des marques par type...</translation>
+    </message>
+    <message>
+        <source>Barrier not in edit mode</source>
+        <translation>La barrière n&apos;est pas en mode édition</translation>
     </message>
 </context>
 <context>
@@ -3424,6 +3513,50 @@ Etes-vous sur de vouloir supprimer</translation>
     <message>
         <source>Montrer les POIs intermediaires de la route </source>
         <translation>Montrer les pois intermédiaires de la route </translation>
+    </message>
+    <message>
+        <source>Center on POI</source>
+        <translation>Centrer sur le POI</translation>
+    </message>
+    <message>
+        <source>Fichiers ini (*.ini)</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>;;Autres fichiers (*)</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Choisir un fichier ini</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Zygrib POI import</source>
+        <translation>Import de POI Zygrib</translation>
+    </message>
+    <message>
+        <source>POI imported from zyGrib</source>
+        <translation>POI importé(s) de zyGrib</translation>
+    </message>
+    <message>
+        <source>Fichiers textes (*.txt)</source>
+        <translation>Fichiers texte</translation>
+    </message>
+    <message>
+        <source>Choisir un fichier GeoData</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Classement </source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>GeoData POI import</source>
+        <translation>Import de POIs GeoData</translation>
+    </message>
+    <message>
+        <source>POI imported from GeoData</source>
+        <translation>POIs importés de geoData</translation>
     </message>
 </context>
 <context>
@@ -4084,7 +4217,96 @@ VMG %.2f nds</translation>
     </message>
     <message>
         <source>jours</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Le routage ne peut pas partir du bateau si la fonction&lt;br&gt;multi-routage est utilisee</source>
+        <translation>Le routage ne peut pas partir du bateau si la fonction&lt;br&gt;multi-routage est utilisée</translation>
+    </message>
+    <message>
+        <source>Color</source>
+        <translation>Couleur</translation>
+    </message>
+    <message>
+        <source>Name</source>
+        <translation>Nom</translation>
+    </message>
+    <message>
+        <source>Start Date</source>
+        <translation>Date départ</translation>
+    </message>
+    <message>
+        <source>ETA</source>
+        <translation>ETA</translation>
+    </message>
+    <message>
+        <source>Duration</source>
+        <translation>Durée</translation>
+    </message>
+    <message>
+        <source>Ortho Distance</source>
+        <translation>Distance ortho</translation>
+    </message>
+    <message>
+        <source>Sailed Distance</source>
+        <translation>Distance parcourue</translation>
+    </message>
+    <message>
+        <source>Avg BS</source>
+        <translation>Moy BS</translation>
+    </message>
+    <message>
+        <source>Max BS</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Min BS</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Avg TWS</source>
+        <translation>Moy TWS</translation>
+    </message>
+    <message>
+        <source>Max TWS</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Min TWS</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Nb Tacks/Gybes</source>
+        <translation>Nb de virements/empannages</translation>
+    </message>
+    <message>
+        <source>Beating time</source>
+        <translation>Temps au près</translation>
+    </message>
+    <message>
+        <source>Downwind time</source>
+        <translation>Temps au portant</translation>
+    </message>
+    <message>
+        <source>Reaching time</source>
+        <translation>Temps vent de travers</translation>
+    </message>
+    <message>
+        <source>Motor time</source>
+        <translation>Temps au moteur</translation>
+    </message>
+    <message>
+        <source>Night navigation</source>
+        <translation>Navigation de nuit</translation>
+    </message>
+    <message>
+        <source>Reading XML file %1</source>
+        <translation>Lecture du fichier XML %1</translation>
+    </message>
+    <message>
+        <source>Error line %1, column %2:
+%3</source>
+        <translation>Erreur ligne %1, colonne %2:\n%3</translation>
     </message>
 </context>
 <context>
@@ -4484,6 +4706,30 @@ inversés</translation>
     </message>
     <message>
         <source>A</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Multi-routage</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Generer </source>
+        <translation>Générer</translation>
+    </message>
+    <message>
+        <source> routes</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>a interval de </source>
+        <translation>à interval de</translation>
+    </message>
+    <message>
+        <source> jours</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source> minutes</source>
         <translation></translation>
     </message>
 </context>
@@ -5117,6 +5363,14 @@ p, li { white-space: pre-wrap; }
         <source>Loupe</source>
         <translation>Loupe</translation>
     </message>
+    <message>
+        <source>Barrier Set</source>
+        <translation>Ensemble de barrières</translation>
+    </message>
+    <message>
+        <source>Add Barrier</source>
+        <translation>Ajouter une barrière</translation>
+    </message>
 </context>
 <context>
     <name>VLM_param_ui</name>
@@ -5490,19 +5744,27 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Apparence</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <source>Redemarrage de qtVlm necessaire</source>
-        <translation type="unfinished"></translation>
+        <translation>Redémarrage de qtVlm nécessaire</translation>
     </message>
     <message>
         <source>Style Fusion</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <source>Skin par defaut</source>
-        <translation type="unfinished"></translation>
+        <translation>Skin par défaut</translation>
+    </message>
+    <message>
+        <source>Tableau de bord VLM classique</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Supprimer automatiquement les gribs de plus de 3 jours</source>
+        <translation></translation>
     </message>
 </context>
 <context>
@@ -6116,7 +6378,11 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Activate barrier sets</source>
-        <translation type="unfinished"></translation>
+        <translation>Activer un ensemble de barrières</translation>
+    </message>
+    <message>
+        <source>Center on boat</source>
+        <translation>Centrer sur le bateau</translation>
     </message>
 </context>
 <context>
@@ -6393,55 +6659,55 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Pilotage au cap ?</source>
-        <translation type="unfinished"></translation>
+        <translation>Pilotage en mode cap?</translation>
     </message>
     <message>
         <source>Mode de pilotage change en &apos;Cap&apos;</source>
-        <translation type="unfinished">Mode de pilotage changé en &apos;Cap&apos;</translation>
+        <translation>Mode de pilotage changé en &apos;Cap&apos;</translation>
     </message>
     <message>
         <source>Pilotage a angle constant par rapport au vent ?</source>
-        <translation type="unfinished"></translation>
+        <translation>Pilotage à angle constant par rapport au vent?</translation>
     </message>
     <message>
         <source>Mode de pilotage change en &apos;Angle&apos;</source>
-        <translation type="unfinished">Mode de pilotage changé en &apos;Angle&apos;</translation>
+        <translation>Mode de pilotage changé en &apos;Angle&apos;</translation>
     </message>
     <message>
         <source>Pilotage orthodromique ?</source>
-        <translation type="unfinished"></translation>
+        <translation>Pilotage orthodromique?</translation>
     </message>
     <message>
         <source>Mode de pilotage change en &apos;Pilot Ortho&apos;</source>
-        <translation type="unfinished">Mode de pilotage changé en &apos;Pilot Ortho&apos;</translation>
+        <translation>Mode de pilotage changé en &apos;Pilot Ortho&apos;</translation>
     </message>
     <message>
         <source>Pilotage en VMG ?</source>
-        <translation type="unfinished"></translation>
+        <translation>Pilotage en mode VMG?</translation>
     </message>
     <message>
         <source>Mode de pilotage change en &apos;VMG&apos;</source>
-        <translation type="unfinished">Mode de pilotage changé en &apos;VMG&apos;</translation>
+        <translation>Mode de pilotage changé en &apos;VMG&apos;</translation>
     </message>
     <message>
         <source>Pilotage en VBVMG ?</source>
-        <translation type="unfinished"></translation>
+        <translation>Pilotage en mode VBVMG?</translation>
     </message>
     <message>
         <source>Mode de pilotage change en &apos;VBVMG&apos;</source>
-        <translation type="unfinished">Mode de pilotage changé en &apos;VBVMG&apos;</translation>
+        <translation>Mode de pilotage changé en &apos;VBVMG&apos;</translation>
     </message>
     <message>
         <source>Confirmer le changement du WP</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <source>WP change</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <source>Instruction pour </source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
 </context>
 <context>
@@ -7410,12 +7676,12 @@ Que voulez vous faire?</translation>
     </message>
     <message>
         <source>Creating a new barrier</source>
-        <translation type="unfinished"></translation>
+        <translation>Créer une nouvelle barrière</translation>
     </message>
     <message>
         <source>Point must be inside map
 Please select another point or press esc to exit barrier creation mode</source>
-        <translation type="unfinished"></translation>
+        <translation>Le point doit être sur la carte\nVeuillez choisir un autre point ou &lt;echap&gt; pour sortir du mode création</translation>
     </message>
 </context>
 <context>
@@ -8345,49 +8611,24 @@ Please select another point or press esc to exit barrier creation mode</source>
         <translation type="obsolete">Pas de POIs trouvés dans zyGrib</translation>
     </message>
     <message>
-        <source>Erreur ligne %1, colonne %2:
-%3</source>
-        <translation></translation>
-    </message>
-    <message>
-        <source>Fichiers ini (*.ini)</source>
-        <translation></translation>
-    </message>
-    <message>
-        <source>;;Autres fichiers (*)</source>
-        <translation></translation>
-    </message>
-    <message>
-        <source>Choisir un fichier ini</source>
-        <translation></translation>
-    </message>
-    <message>
         <source>Zygrib POI import</source>
-        <translation>Import de POI Zygrib</translation>
+        <translation type="obsolete">Import de POI Zygrib</translation>
     </message>
     <message>
         <source>POI imported from zyGrib</source>
-        <translation>POI importé(s) de zyGrib</translation>
+        <translation type="obsolete">POI importé(s) de zyGrib</translation>
     </message>
     <message>
         <source>Fichiers textes (*.txt)</source>
-        <translation>Fichiers texte</translation>
-    </message>
-    <message>
-        <source>Choisir un fichier GeoData</source>
-        <translation></translation>
-    </message>
-    <message>
-        <source>Classement </source>
-        <translation></translation>
+        <translation type="obsolete">Fichiers texte</translation>
     </message>
     <message>
         <source>GeoData POI import</source>
-        <translation>Import de POIs GeoData</translation>
+        <translation type="obsolete">Import de POIs GeoData</translation>
     </message>
     <message>
         <source>POI imported from GeoData</source>
-        <translation>POIs importés de geoData</translation>
+        <translation type="obsolete">POIs importés de geoData</translation>
     </message>
 </context>
 <context>
