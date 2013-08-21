@@ -923,7 +923,7 @@ void MainWindow::slotHelp_Help() {
     QDesktopServices::openUrl(QUrl("http://wiki.virtual-loup-de-mer.org/index.php/QtVlm#L.27interface_de_qtVlm"));
 }
 void MainWindow::slotHelp_Forum() {
-    QDesktopServices::openUrl(QUrl("http://www.virtual-winds.com/forum/index.php?showtopic=6638&view=getnewpost"));
+    QDesktopServices::openUrl(QUrl("http://www.virtual-winds.org/forum/index.php?showtopic=6638&view=getnewpost"));
 }
 
 //-------------------------------------------------

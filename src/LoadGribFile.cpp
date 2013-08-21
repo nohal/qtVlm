@@ -200,10 +200,10 @@ void LoadGribFile::requestFinished ( QNetworkReply* inetReply)
         {
             QString m=tr("Vous n'utilisez pas la derniere version de qtVlm: ")+strbuf;
 #ifdef __WIN_QTVLM
-            m+="<br>"+tr("Emplacement:")+" <a href='http://www.virtual-winds.com/~oxygen'>"+tr("qtVlm downloads")+"</a>";
+            m+="<br>"+tr("Emplacement:")+" <a href='http://www.virtual-winds.org/oxygen'>"+tr("qtVlm downloads")+"</a>";
 #endif
 #ifdef __MAC_QTVLM
-            m+="<br>"+tr("Emplacement:")+" <a href='http://www.virtual-winds.com/~oxygen/mac'>"+tr("qtVlm downloads")+"</a>";
+            m+="<br>"+tr("Emplacement:")+" <a href='http://www.virtual-winds.org/oxygen/mac'>"+tr("qtVlm downloads")+"</a>";
 #endif
             QMessageBox::warning (0,
                 tr("qtVlm version"),
@@ -329,7 +329,7 @@ void LoadGribFile::checkQtvlmVersion()
 {
     Util::paramProxy(inetManager,host);
     QNetworkRequest request;
-    request.setUrl(QUrl("http://www.virtual-winds.com/~oxygen/getLastVersion.php"));
+    request.setUrl(QUrl("http://www.virtual-winds.org/oxygen/getLastVersion.php"));
     request.setAttribute(QNetworkRequest::CacheLoadControlAttribute,QNetworkRequest::AlwaysNetwork);
     Util::addAgent(request);
     step_checkVersion=inetManager->get(request);

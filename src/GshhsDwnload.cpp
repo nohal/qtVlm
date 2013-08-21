@@ -96,7 +96,7 @@ void GshhsDwnload::getMaps(void) {
     connect (this->getInet()->getProgressDialog(),SIGNAL(rejected()),this,SLOT(slot_abort()));
     finished=false;
     filename="";
-    inetGetProgress(1,page,"http://www.virtual-winds.com",false);
+    inetGetProgress(1,page,"http://www.virtual-winds.org",false);
     while(!finished) {
         QCoreApplication::processEvents(QEventLoop::AllEvents, 10);
     }
