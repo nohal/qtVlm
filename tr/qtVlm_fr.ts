@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE TS>
 <TS version="2.0" language="fr_FR" sourcelanguage="fr_FR">
+<defaultcodec>UTF-8</defaultcodec>
 <context>
     <name>Barrier</name>
     <message>
@@ -14,6 +15,10 @@
     <message>
         <source>Delete barrier</source>
         <translation>Supprimer la barrière</translation>
+    </message>
+    <message>
+        <source>Closed barrier</source>
+        <translation>Barrière fermée</translation>
     </message>
 </context>
 <context>
@@ -33,6 +38,10 @@
     <message>
         <source>Delete barrier</source>
         <translation>Supprimer la barrière</translation>
+    </message>
+    <message>
+        <source>Closed barrier</source>
+        <translation>Barrière fermée</translation>
     </message>
 </context>
 <context>

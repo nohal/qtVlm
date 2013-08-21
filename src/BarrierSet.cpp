@@ -101,25 +101,6 @@ void BarrierSet::cleanEmptyBarrier(Barrier * barrier, bool withMsgBox) {
     }
 }
 
-bool BarrierSet::is_firstLast(QPointF screenPosition,Barrier ** barrierPtr,int * num) {
-    Barrier * barrier;
-    int res;
-
-    for(int i=0;i<barrierList.count();++i) {
-        barrier = barrierList.at(i);
-        res=barrier->is_firstLast(screenPosition);
-        if(res!=-1) {
-            if(barrierPtr && num) {
-                *num=res;
-                *barrierPtr=barrier;
-                return true;
-            }
-        }
-    }
-
-    return false;
-}
-
 void BarrierSet::slot_editBarrierSet(void) {
     DialogEditBarrier dialogEditBarrier(mainWindow);
     dialogEditBarrier.initDialog(this);
@@ -141,6 +122,7 @@ void BarrierSet::slot_delBarrierSet(void) {
 #define BARRIER_POINT_NAME "Point"
 #define BARRIER_COLOR_NAME "Color"
 #define BARRIER_KEY_NAME   "Key"
+#define BARRIER_ISCLOSED_NAME "IsClosed"
 
 /* global variable */
 QList<BarrierSet*> barrierSetList;
@@ -219,6 +201,13 @@ void BarrierSet::readBarriersFromDisk(MainWindow * mainWindow) {
                                 if(!name.isEmpty())
                                     barrier->set_name(name);
                             }
+                        }
+
+                        if(barrierNode.toElement().tagName() == BARRIER_ISCLOSED_NAME)
+                        {
+                            QDomNode dataNode = barrierNode.firstChild();
+                            if(dataNode.nodeType() == QDomNode::TextNode)
+                                barrier->set_isClosed(dataNode.toText().data() == "1");
                         }
 
                         if(barrierNode.toElement().tagName() == BARRIER_POINT_NAME)
@@ -324,6 +313,12 @@ void BarrierSet::saveBarriersToDisk(void) {
                 tag = doc.createElement(BARRIER_NAME);
                 barrierGroup.appendChild(tag);
                 t = doc.createTextNode(barrier->get_name().toUtf8().toBase64());
+                tag.appendChild(t);
+
+
+                tag = doc.createElement(BARRIER_ISCLOSED_NAME);
+                barrierGroup.appendChild(tag);
+                t = doc.createTextNode(barrier->get_isClosed()?"1":"0");
                 tag.appendChild(t);
 
                 /* save all points */

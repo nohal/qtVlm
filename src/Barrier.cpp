@@ -39,6 +39,7 @@ Barrier::Barrier(MainWindow *mainWindow,BarrierSet * barrierSet) {
 
     width=1;
     editMode=false;
+    isClosed=false;
 
     setZValue(Z_VALUE_POI-1);
     setPos(0,0);
@@ -54,6 +55,12 @@ Barrier::Barrier(MainWindow *mainWindow,BarrierSet * barrierSet) {
     popUpMenu->addAction(ac_insert);
     connect(ac_insert,SIGNAL(triggered()),this,SLOT(slot_insertPoint()));
 
+    chk_closeBarrier = new QCheckBox(tr("Closed barrier"),popUpMenu);
+    ac_closeBarrier = new QWidgetAction(popUpMenu);
+    ac_closeBarrier->setDefaultWidget(chk_closeBarrier);
+    popUpMenu->addAction(ac_closeBarrier);
+    connect(chk_closeBarrier,SIGNAL(toggled(bool)),this,SLOT(slot_closeBarrierChg(bool)));
+
     ac_edit = new QAction(tr("Edit"),popUpMenu);
     popUpMenu->addAction(ac_edit);
     connect(ac_edit,SIGNAL(triggered()),barrierSet,SLOT(slot_editBarrierSet()));
@@ -67,41 +74,16 @@ Barrier::~Barrier(void) {
     clearBarrier();
 }
 
+void Barrier::set_isClosed(bool val) {
+    if(val!=isClosed) {
+        isClosed=val;
+        slot_pointPositionChanged();
+    }
+}
+
 void Barrier::clearBarrier(void) {
     while(!points.isEmpty())
         delete points.takeFirst();
-}
-
-void Barrier::initBarrier(QList<QPointF> pointList) {
-    if(pointList.isEmpty()) return;
-
-    clearBarrier();
-
-    BarrierPoint * point;
-    QPainterPath linesPath;
-    QPointF pointPosition;
-
-
-    for(int i=0;i<pointList.count();++i) {
-        // MOD BARRIER
-        //pointPosition=myView->mapEarthToScene(pointList.at(i));
-        Util::computePosDouble(projection,pointList.at(i),&pointPosition);
-
-        point = new BarrierPoint(mainWindow,this,color);
-        point->set_position(pointList.at(i));
-        points.append(point);
-
-        if(i!=0)
-           linesPath.lineTo(pointPosition);
-        linesPath.moveTo(pointPosition);
-    }
-
-    QPainterPathStroker stroker;
-    stroker.setWidth(8);
-    shapePath=stroker.createStroke(linesPath);
-
-    setPath(linesPath);
-
 }
 
 BarrierPoint * Barrier::appendPoint(QPointF point) {
@@ -112,13 +94,29 @@ BarrierPoint * Barrier::appendPoint(QPointF point) {
     return barrierPoint;
 }
 
-void Barrier::removePoint(BarrierPoint * point) {
+void Barrier::removePoint(BarrierPoint * point) {    
     points.removeAll(point);
+    if(points.count()<3) isClosed=false;
     slot_pointPositionChanged();
     barrierSet->cleanEmptyBarrier(this,true);
 }
 
 BarrierPoint * Barrier::add_pointAfter(BarrierPoint * basePoint,QPointF position) {
+    QPointF screenPos;
+    Util::computePosDouble(projection,position,&screenPos);
+    int firstLast=is_firstLast(screenPos);
+    qWarning() << "firstLast=" << firstLast;
+    if(firstLast!=BARRIER_NO_POINT) {
+        qWarning() << "basePoint: " << (basePoint==points.first()?"oui":"non") << "," << (basePoint==points.last()?"oui":"non");
+        if((basePoint==points.first() && firstLast==BARRIER_LAST_POINT)
+                || (basePoint==points.last() && firstLast==BARRIER_FIRST_POINT)) {
+            set_isClosed(true);
+            return NULL;
+        }
+        else
+            return basePoint;
+
+    }
     BarrierPoint * barrierPoint = new BarrierPoint(mainWindow,this,color);
     barrierPoint->set_position(position);
     if(points.first() == basePoint)
@@ -128,53 +126,6 @@ BarrierPoint * Barrier::add_pointAfter(BarrierPoint * basePoint,QPointF position
     slot_pointPositionChanged();
     return barrierPoint;
 }
-
-
-#if 0
-/* insert a new Point starting from given point */
-/* point should only be the first or last point */
-
-void Barrier::insertNewPoint(BarrierPoint * point) {
-    double len = 20/myView->transform().m11();
-    if(points.count() == 1) {
-        /* only one point => add it at a given distance */
-        BarrierPoint * newPoint = new BarrierPoint(mainWindow,this,color);
-        points.append(newPoint);
-        newPoint->set_position(myView->mapSceneToEarth(
-                                   points.at(0)->get_scenePosition()
-                                   +QPointF(len,len)));
-        slot_pointPositionChanged();
-    }
-    else if(point == points.first()) {
-        BarrierPoint * firstPoint = points.first();
-        BarrierPoint * secPoint = points.at(1);
-        /* compute position keeping prev segment direction, moving a bit in this direction */
-        QPointF newPointPosition = QLineF(secPoint->get_scenePosition(),firstPoint->get_scenePosition()).pointAt(1.5);
-        QLineF line= QLineF(firstPoint->get_scenePosition(),newPointPosition);
-        line.setLength(len);
-        newPointPosition = line.p2();
-        /* create point */
-        BarrierPoint * newPoint = new BarrierPoint(mainWindow,this,color);
-        points.prepend(newPoint);
-        newPoint->set_position(myView->mapSceneToEarth(newPointPosition));
-        slot_pointPositionChanged();
-    }
-    else if(point == points.last()) {
-        BarrierPoint * lastPoint = points.last();
-        BarrierPoint * prevPoint = points.at(points.count()-2);
-        /* compute position keeping prev segment direction, moving a bit in this direction */
-        QPointF newPointPosition = QLineF(prevPoint->get_scenePosition(),lastPoint->get_scenePosition()).pointAt(1.5);
-        QLineF line= QLineF(lastPoint->get_scenePosition(),newPointPosition);
-        line.setLength(len);
-        newPointPosition = line.p2();
-        /* create point */
-        BarrierPoint * newPoint = new BarrierPoint(mainWindow,this,color);
-        points.append(newPoint);
-        newPoint->set_position(myView->mapSceneToEarth(newPointPosition));
-        slot_pointPositionChanged();
-    }
-}
-#endif
 
 void Barrier::set_color(QColor color) {
     this->color=color;
@@ -198,8 +149,6 @@ void Barrier::set_editMode(bool mode) {
     else
         width=1;
 
-    //MOD BARRIER
-    //pen.setWidthF(width/myView->transform().m11());
     pen.setWidthF(width);
     setPen(pen);
 
@@ -211,7 +160,6 @@ void Barrier::set_editMode(bool mode) {
 void Barrier::set_barrierIsEdited(bool state) {
     for(int i=0;i<points.count();++i) {
         points.at(i)->set_isMovable(state);
-        //points.at(i)->setFlag(QGraphicsItem::ItemIsMovable,state);
     }
 }
 
@@ -219,12 +167,16 @@ void Barrier::slot_pointPositionChanged(void) {
     QPointF pointPosition;
     QPainterPath linesPath;
 
-    for(int i=0;i<points.count();++i) {        
-        // MOD BARRIER
-        //pointPosition=myView->mapEarthToScene(points.at(i)->get_position());
+    for(int i=0;i<points.count();++i) {
         Util::computePosDouble(projection,points.at(i)->get_position(),&pointPosition);
         if(i!=0)
            linesPath.lineTo(pointPosition);
+        linesPath.moveTo(pointPosition);
+    }
+
+    if(isClosed && points.count()>=3) {
+        Util::computePosDouble(projection,points.at(0)->get_position(),&pointPosition);
+        linesPath.lineTo(pointPosition);
         linesPath.moveTo(pointPosition);
     }
 
@@ -304,15 +256,42 @@ void Barrier::slot_deleteBarrier(void) {
 
 void Barrier::contextMenuEvent (QGraphicsSceneContextMenuEvent * e) {
     if(popUpMenu && mainWindow->get_barrierIsEditing()) {
+        chk_closeBarrier->blockSignals(true);
+        if(points.count()<3) {
+            chk_closeBarrier->setEnabled(false);
+            chk_closeBarrier->setChecked(false);
+        }
+        else {
+            chk_closeBarrier->setEnabled(true);
+            chk_closeBarrier->setChecked(isClosed);
+        }
+        chk_closeBarrier->blockSignals(false);
+
         cursorPosition = e->scenePos();
         popUpMenu->exec(QCursor::pos());
     }
 }
 
+void Barrier::slot_closeBarrierChg(bool status) {
+    QObject * senderObj = QObject::sender();
+    if(senderObj) {
+        ((QMenu *)(senderObj->parent()))->close();
+    }
+
+    if(points.count()<3)
+        set_isClosed(false);
+    else
+        set_isClosed(status);
+}
+
 bool Barrier::cross(QLineF line) {
     for(int i=0;i<(points.count()-1);++i) {
         QLineF l1(points.at(i)->get_scenePosition(),points.at(i+1)->get_scenePosition());
-        //QLineF l1(points.at(i)->get_position(),points.at(i+1)->get_position());
+        if(l1.intersect(line,NULL)==QLineF::BoundedIntersection)
+            return true;
+    }
+    if(isClosed) {
+        QLineF l1(points.at(0)->get_scenePosition(),points.at(points.count()-1)->get_scenePosition());
         if(l1.intersect(line,NULL)==QLineF::BoundedIntersection)
             return true;
     }
@@ -346,19 +325,12 @@ BarrierPoint::BarrierPoint(MainWindow * mainWindow, Barrier *barrier, QColor col
     setZValue(Z_VALUE_POI);
     setData(0,BARRIERPOINT_WTYPE);
 
-
     /*** move management **/
     isMoving=false;
     isMovable=mainWindow->get_barrierIsEditing();
 
     setBrush(color);
     setPen(color);
-
-
-    //setFlag(QGraphicsItem::ItemIsMovable,mainWindow->get_barrierIsEditing());
-    // MOD BARRIER
-    //setFlag(QGraphicsItem::ItemSendsGeometryChanges);
-    //setFlag(QGraphicsItem::ItemIgnoresTransformations);
 
     set_editMode(barrier->get_editMode());
 
@@ -378,6 +350,12 @@ BarrierPoint::BarrierPoint(MainWindow * mainWindow, Barrier *barrier, QColor col
     popUpMenu->addAction(ac_edit);
     connect(ac_edit,SIGNAL(triggered()),barrier->get_barrierSet(),SLOT(slot_editBarrierSet()));
 
+    chk_closeBarrier = new QCheckBox(tr("Closed barrier"),popUpMenu);
+    ac_closeBarrier = new QWidgetAction(popUpMenu);
+    ac_closeBarrier->setDefaultWidget(chk_closeBarrier);
+    popUpMenu->addAction(ac_closeBarrier);
+    connect(chk_closeBarrier,SIGNAL(toggled(bool)),barrier,SLOT(slot_closeBarrierChg(bool)));
+
     ac_deleteBarrier = new QAction(tr("Delete barrier"),popUpMenu);
     popUpMenu->addAction(ac_deleteBarrier);
     connect(ac_deleteBarrier,SIGNAL(triggered()),barrier,SLOT(slot_deleteBarrier()));
@@ -396,12 +374,10 @@ bool BarrierPoint::is_same(QPointF screenPosition) {
 }
 
 void BarrierPoint::set_position(QPointF position) {
-    //setFlag(QGraphicsItem::ItemSendsGeometryChanges,false);
     QPointF pointPosition;
     Util::computePosDouble(projection,position,&pointPosition);
     this->position=position;
     setPos(pointPosition);
-    //setFlag(QGraphicsItem::ItemSendsGeometryChanges);
 }
 
 void BarrierPoint::mousePressEvent(QGraphicsSceneMouseEvent * e)
@@ -416,6 +392,9 @@ void BarrierPoint::mousePressEvent(QGraphicsSceneMouseEvent * e)
         // is this needed ?
         //update();
     }
+    else
+        e->ignore();
+
 }
 
 bool BarrierPoint::tryMoving(QPoint pos)
@@ -458,39 +437,12 @@ void BarrierPoint::mouseReleaseEvent(QGraphicsSceneMouseEvent * e)
         e->ignore();
         return;
     }
-    /*
-    if (e->button() == Qt::LeftButton)
-    {
-        emit clearSelection();
-    }
-    */
 }
 
 void BarrierPoint:: slot_projectionUpdated(void) {
     set_position(position);
     emit positionChanged();
 }
-
-
-#if 0
-QVariant BarrierPoint::itemChange(QGraphicsItem::GraphicsItemChange change, const QVariant &value) {
-    if (change == ItemPositionChange && scene()) {
-        QPointF newPos = centralWidget->getView()->mapFromGlobal(QCursor::pos())-QPoint(pointSize/2,pointSize/2);
-        QRectF rect = QRect(0,0,projection->getW(),projection->getH());
-        if (!rect.contains(newPos)) {
-            // Keep the item inside the scene rect.
-            newPos.setX(qMin(rect.right(), qMax(newPos.x(), rect.left())));
-            newPos.setY(qMin(rect.bottom(), qMax(newPos.y(), rect.top())));
-        }
-        projection->screen2mapDouble(newPos,&position);
-        emit positionChanged();
-        return newPos;
-    }
-    else
-        return QGraphicsItem::itemChange(change, value);
-
-}
-#endif
 
 void BarrierPoint::slot_removePoint(void) {
     barrier->removePoint(this);
@@ -515,6 +467,18 @@ void BarrierPoint::contextMenuEvent (QGraphicsSceneContextMenuEvent *) {
                 }
             }
         }
+
+        chk_closeBarrier->blockSignals(true);
+        if(barrier->get_points()->count()<3) {
+            chk_closeBarrier->setEnabled(false);
+            chk_closeBarrier->setChecked(false);
+        }
+        else {
+            chk_closeBarrier->setEnabled(true);
+            chk_closeBarrier->setChecked(barrier->get_isClosed());
+        }
+        chk_closeBarrier->blockSignals(false);
+
         popUpMenu->exec(QCursor::pos());
     }
 }

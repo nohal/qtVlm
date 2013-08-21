@@ -69,8 +69,6 @@ class BarrierSet: public QObject
         void set_editMode(bool mode);
         void set_barrierIsEdited(bool state);
 
-        bool is_firstLast(QPointF screenPosition,Barrier ** barrierPtr,int * num);
-
         void printSet(void);
 
     public slots:

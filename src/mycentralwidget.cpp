@@ -1877,6 +1877,8 @@ void myCentralWidget::manage_barrier(void) {
                 QPointF earthCoord;
                 proj->screen2mapDouble(pos,&earthCoord);
                 basePoint=basePoint->get_barrier()->add_pointAfter(basePoint,earthCoord);
+                if(basePoint==NULL)
+                    escKey_barrier();
                 barrierEditLine->setLine(QLineF(pos,pos));
             }
             else {

@@ -130,7 +130,7 @@ void DialogRouteComparator::insertRoute(const int &n)
     if(route->getHas_eta())
     {
         items.append(new QStandardItem(QDateTime().fromTime_t(route->getEta()).toUTC().toString("dd MMM-hh:mm")));
-        items[x]->setData(route->getEta(),Qt::UserRole);
+        items[x]->setData((int)(route->getEta()),Qt::UserRole);
         items[x]->setData(n,Qt::UserRole+1);
         if(x%2!=0) items[x]->setData(QColor(240,240,240),Qt::BackgroundRole);
         items[x++]->setTextAlignment(Qt::AlignCenter| Qt::AlignVCenter);
@@ -147,7 +147,7 @@ void DialogRouteComparator::insertRoute(const int &n)
         double mins=qRound((route->getEta()-route->getStartDate()-days*86400-hours*3600)/60.0000);
         items.append(new QStandardItem(QString::number((int)days)+" "+tr("jours")+" "+QString::number((int)hours)+" "+tr("heures")+" "+
                                        QString::number((int)mins)+" "+tr("minutes")));
-        items[x]->setData(route->getEta()-route->getStartDate(),Qt::UserRole);
+        items[x]->setData((int)(route->getEta()-route->getStartDate()),Qt::UserRole);
         items[x]->setData(n,Qt::UserRole+1);
         if(x%2!=0) items[x]->setData(QColor(240,240,240),Qt::BackgroundRole);
         items[x++]->setTextAlignment(Qt::AlignCenter| Qt::AlignVCenter);

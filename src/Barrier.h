@@ -30,7 +30,8 @@ Copyright (C) 2008 - Jacques Zaninetti - http://zygrib.free.fr
 #include <QList>
 #include <QMenu>
 #include <QColor>
-
+#include <QCheckBox>
+#include <QWidgetAction>
 
 #include "dataDef.h"
 #include "class_list.h"
@@ -76,6 +77,8 @@ class BarrierPoint: public QObject, public QGraphicsRectItem {
         QAction * ac_insertAfter;
         QAction * ac_edit;
         QAction * ac_deleteBarrier;
+        QCheckBox * chk_closeBarrier;
+        QWidgetAction * ac_closeBarrier;
         void contextMenuEvent (QGraphicsSceneContextMenuEvent *);
 
         Barrier * barrier;
@@ -98,8 +101,6 @@ class Barrier: public QObject, QGraphicsPathItem {
         Barrier(MainWindow * mainWindow,BarrierSet * barrierSet);
         ~Barrier(void);
 
-        void initBarrier(QList<QPointF> pointList);
-
         void removePoint(BarrierPoint * point);
         BarrierPoint *appendPoint(QPointF point);
 
@@ -110,6 +111,8 @@ class Barrier: public QObject, QGraphicsPathItem {
         void set_barrierIsEdited(bool state);
 
         FCT_SETGET(QString,name)
+        FCT_GET(bool,isClosed)
+        void set_isClosed(bool val);
         FCT_GET(BarrierSet *,barrierSet)
         QList<BarrierPoint*> * get_points(void) { return &points; }
 
@@ -127,6 +130,7 @@ class Barrier: public QObject, QGraphicsPathItem {
         void slot_insertPoint(void);
         void slot_deleteBarrier(void);
         void slot_adjustWidthF(void);
+        void slot_closeBarrierChg(bool);
 
     private:
         MainWindow * mainWindow;
@@ -149,12 +153,16 @@ class Barrier: public QObject, QGraphicsPathItem {
         QAction * ac_insert;
         QAction * ac_edit;
         QAction * ac_delete;
+        QCheckBox * chk_closeBarrier;
+        QWidgetAction * ac_closeBarrier;
         void contextMenuEvent (QGraphicsSceneContextMenuEvent *);
         QPointF cursorPosition;
 
         QString name;
         QColor color;
         bool editMode;
+
+        bool isClosed;
 };
 
 #endif // BARRIER_H
