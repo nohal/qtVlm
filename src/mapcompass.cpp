@@ -56,6 +56,7 @@ mapCompass::mapCompass(Projection * proj,MainWindow * main,myCentralWidget *pare
     /* compassLine */
     compassLine = new orthoSegment(proj,parent->getScene(),Z_VALUE_COMPASS);
     connect(parent,SIGNAL(stopCompassLine()),this,SLOT(slot_stopCompassLine()));
+    connect(this,SIGNAL(compassLineToggle(bool)),parent,SIGNAL(compassLineToggle(bool)));
     connect(proj,SIGNAL(projectionUpdated()),this,SLOT(slot_projectionUpdated()));
     penLine.setColor(QColor(Qt::white));
     penLine.setWidthF(1.6);
@@ -814,12 +815,13 @@ void mapCompass::updateCompassLineLabels(int x, int y)
 
 void mapCompass::slot_stopCompassLine(void)
 {
-    qWarning()<<"slot_stopCompassLine";
+    //qWarning()<<"slot_stopCompassLine";
     parent->slot_resetGestures();
     drawCompassLine=false;
     windAngle_label->hide();
     hdg_label->hide();
     compassLine->hideSegment();
+    emit compassLineToggle(drawCompassLine);
 }
 
 
@@ -827,7 +829,7 @@ void mapCompass::slot_compassLine(double click_x, double click_y)
 {
     parent->slot_resetGestures();
     drawCompassLine=!drawCompassLine;
-    qWarning()<<"slot_compassLine with"<<drawCompassLine;
+    //qWarning()<<"slot_compassLine with"<<drawCompassLine;
     if(drawCompassLine)
     {
         windAngle_label->show();
@@ -852,4 +854,5 @@ void mapCompass::slot_compassLine(double click_x, double click_y)
         hdg_label->hide();
         compassLine->hideSegment();
     }
+    emit compassLineToggle(drawCompassLine);
 }

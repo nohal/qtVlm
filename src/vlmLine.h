@@ -88,9 +88,8 @@ class vlmLine : public QGraphicsWidget
         void setRoundedEnd(const bool &b){this->roundedEnd=b;}
         void setCoastDetection(const bool &b){this->coastDetection=b;}
         bool getCoastDetected(){return this->coastDetected;}
-        void setMcp(myCentralWidget * mcp){this->mcp=mcp;}
         ~vlmLine();
-
+        void setMcp(myCentralWidget * mcp);
         void set_zValue(const double &z);
         void drawInMagnifier(QPainter *pnt, Projection *tempProj);
 protected:
@@ -103,6 +102,7 @@ protected:
 //        void  mousePressEvent(QGraphicsSceneMouseEvent * e);
 //        void  mouseReleaseEvent(QGraphicsSceneMouseEvent * e);
     public slots:
+        void slot_compassLineToggle(bool b);
         void slot_showMe(void);
         void slot_shLab(bool state){this->labelHidden=state;update();}
         void slot_startReplay(bool b){this->replayMode=b;slot_showMe();}
@@ -143,6 +143,7 @@ protected:
         double myZvalue;
         myCentralWidget * mcp;
         bool drawingInMagnifier;
+        QString myToolTip;
 };
 Q_DECLARE_TYPEINFO(vlmLine,Q_MOVABLE_TYPE);
 

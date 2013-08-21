@@ -62,6 +62,19 @@ vlmLine::vlmLine(Projection * proj, QGraphicsScene * myScene,double z_level) :
         this->setAcceptHoverEvents(true);
     show();
 }
+void vlmLine::setMcp(myCentralWidget * mcp)
+{
+    this->mcp=mcp;
+    connect(mcp,SIGNAL(compassLineToggle(bool)),this,SLOT(slot_compassLineToggle(bool)));
+}
+void vlmLine::slot_compassLineToggle(bool b)
+{
+    if(!b)
+        this->setToolTip(myToolTip);
+    else
+        this->setToolTip("");
+}
+
 void vlmLine::set_zValue(const double &z)
 {
     this->myZvalue=z;
@@ -144,6 +157,7 @@ void vlmLine::setTip(QString tip)
     tip=tip.replace(" ","&nbsp;");
     tip="<qt>"+tip+"</qt>";
     setToolTip(tip);
+    myToolTip=tip;
 }
 
 void vlmLine::calculatePoly(void)

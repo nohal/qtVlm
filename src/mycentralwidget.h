@@ -367,6 +367,7 @@ public slots :
 
         /* compass */
         void stopCompassLine(void);
+        void compassLineToggle(bool);
 
         /*show-hide*/
         void hideALL(bool);
