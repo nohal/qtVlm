@@ -804,6 +804,19 @@
     </message>
 </context>
 <context>
+    <name>DialogChooseMultipleBoat_ui</name>
+    <message>
+        <location filename="../src/Ui/DialogChooseMultipleBoat.ui" line="14"/>
+        <source>Dialog</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/Ui/DialogChooseMultipleBoat.ui" line="20"/>
+        <source>Available boats</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>DialogDownloadTracks</name>
     <message>
         <source>Permet de telecharger manuellement une trace pour une course VLM.
@@ -3633,9 +3646,8 @@ Etes-vous sur ?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/MenuBar.cpp" line="80"/>
         <source>Board</source>
-        <translation type="unfinished">Bordo</translation>
+        <translation type="obsolete">Bordo</translation>
     </message>
     <message>
         <location filename="../src/MenuBar.cpp" line="82"/>
@@ -9840,17 +9852,17 @@ p, li { white-space: pre-wrap; }
         <translation type="obsolete">Fax files (*.png *.jpg *.tiff *.bmp)</translation>
     </message>
     <message>
-        <location filename="../src/Dialogs/dialogFaxMeteo.cpp" line="111"/>
+        <location filename="../src/Dialogs/dialogFaxMeteo.cpp" line="143"/>
         <source>Fichiers Fax (*.png *.jpg *.tiff *.gif *.bmp)</source>
         <translation>Archivos Fax (*.png *.jpg *.tiff *.gif *.bmp)</translation>
     </message>
     <message>
-        <location filename="../src/Dialogs/dialogFaxMeteo.cpp" line="112"/>
+        <location filename="../src/Dialogs/dialogFaxMeteo.cpp" line="144"/>
         <source>;;Autres fichiers (*)</source>
         <translation>;;Otros archivos (*)</translation>
     </message>
     <message>
-        <location filename="../src/Dialogs/dialogFaxMeteo.cpp" line="122"/>
+        <location filename="../src/Dialogs/dialogFaxMeteo.cpp" line="154"/>
         <source>Choisir un fichier FAX METEO</source>
         <translation>Elige un archivo meteo fax</translation>
     </message>
@@ -9938,7 +9950,27 @@ p, li { white-space: pre-wrap; }
         <translation>Transparencia</translation>
     </message>
     <message>
-        <location filename="../src/Ui/dialogFaxMeteo.ui" line="315"/>
+        <location filename="../src/Ui/dialogFaxMeteo.ui" line="306"/>
+        <source>5</source>
+        <translation type="unfinished">5</translation>
+    </message>
+    <message>
+        <location filename="../src/Ui/dialogFaxMeteo.ui" line="313"/>
+        <source>6</source>
+        <translation type="unfinished">6</translation>
+    </message>
+    <message>
+        <location filename="../src/Ui/dialogFaxMeteo.ui" line="320"/>
+        <source>7</source>
+        <translation type="unfinished">7</translation>
+    </message>
+    <message>
+        <location filename="../src/Ui/dialogFaxMeteo.ui" line="327"/>
+        <source>8</source>
+        <translation type="unfinished">8</translation>
+    </message>
+    <message>
+        <location filename="../src/Ui/dialogFaxMeteo.ui" line="343"/>
         <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
@@ -10309,14 +10341,14 @@ p, li { white-space: pre-wrap; }
         <translation type="obsolete"> </translation>
     </message>
     <message>
-        <location filename="../src/mapcompass.cpp" line="395"/>
+        <location filename="../src/mapcompass.cpp" line="396"/>
         <source>nds</source>
         <translation>kts</translation>
     </message>
     <message>
-        <location filename="../src/mapcompass.cpp" line="395"/>
-        <location filename="../src/mapcompass.cpp" line="415"/>
-        <location filename="../src/mapcompass.cpp" line="420"/>
+        <location filename="../src/mapcompass.cpp" line="396"/>
+        <location filename="../src/mapcompass.cpp" line="416"/>
+        <location filename="../src/mapcompass.cpp" line="421"/>
         <source>deg</source>
         <translation>°</translation>
     </message>
@@ -10333,59 +10365,59 @@ p, li { white-space: pre-wrap; }
         <translation type="obsolete">nm</translation>
     </message>
     <message>
-        <location filename="../src/mapcompass.cpp" line="395"/>
+        <location filename="../src/mapcompass.cpp" line="396"/>
         <source>Vent: </source>
         <translation>Viento:</translation>
     </message>
     <message>
-        <location filename="../src/mapcompass.cpp" line="415"/>
-        <location filename="../src/mapcompass.cpp" line="425"/>
+        <location filename="../src/mapcompass.cpp" line="416"/>
+        <location filename="../src/mapcompass.cpp" line="426"/>
         <source>WP: </source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../src/mapcompass.cpp" line="420"/>
+        <location filename="../src/mapcompass.cpp" line="421"/>
         <source>WP%vent: </source>
         <translation>WP%viento:</translation>
     </message>
     <message>
-        <location filename="../src/mapcompass.cpp" line="425"/>
+        <location filename="../src/mapcompass.cpp" line="426"/>
         <source> nm</source>
         <translation>mi</translation>
     </message>
     <message>
-        <location filename="../src/mapcompass.cpp" line="682"/>
+        <location filename="../src/mapcompass.cpp" line="683"/>
         <source>Centimetres</source>
         <translation>Centímetros</translation>
     </message>
     <message>
-        <location filename="../src/mapcompass.cpp" line="684"/>
+        <location filename="../src/mapcompass.cpp" line="685"/>
         <source>Metres</source>
         <translation>Metros</translation>
     </message>
     <message>
-        <location filename="../src/mapcompass.cpp" line="693"/>
-        <location filename="../src/mapcompass.cpp" line="698"/>
+        <location filename="../src/mapcompass.cpp" line="694"/>
+        <location filename="../src/mapcompass.cpp" line="699"/>
         <source>Collision avec les terres detectee</source>
         <translation>Detectada colisión con tierra</translation>
     </message>
     <message>
-        <location filename="../src/mapcompass.cpp" line="762"/>
+        <location filename="../src/mapcompass.cpp" line="763"/>
         <source>jours</source>
         <translation>días</translation>
     </message>
     <message>
-        <location filename="../src/mapcompass.cpp" line="762"/>
+        <location filename="../src/mapcompass.cpp" line="763"/>
         <source>heures</source>
         <translation>horas</translation>
     </message>
     <message>
-        <location filename="../src/mapcompass.cpp" line="763"/>
+        <location filename="../src/mapcompass.cpp" line="764"/>
         <source>minutes</source>
         <translation>minutos</translation>
     </message>
     <message>
-        <location filename="../src/mapcompass.cpp" line="764"/>
+        <location filename="../src/mapcompass.cpp" line="765"/>
         <source>secondes</source>
         <translation>segundos</translation>
     </message>

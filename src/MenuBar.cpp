@@ -77,8 +77,8 @@ MenuBar::MenuBar(MainWindow *parent)
 
     menuView = new QMenu(tr("View"));
     connect(menuView,SIGNAL(aboutToShow()),this,SLOT(slot_showViewMenu()));
-    boardMenu = new QMenu(tr("Board"));
-    menuView->addMenu(boardMenu);
+    /*boardMenu = new QMenu(tr("Board"));
+    menuView->addMenu(boardMenu);*/
     toolBarMenu = new QMenu(tr("ToolBar"));
     menuView->addMenu(toolBarMenu);
     menuView->addSeparator();
@@ -651,7 +651,7 @@ void MenuBar::slot_setChangeStatus(bool ,bool pilototo,bool syncBtn) {
 }
 
 void MenuBar::slot_showViewMenu(void) {
-    boardMenu->clear();
+    //boardMenu->clear();
     //mainWindow->get_board()->build_showHideMenu(boardMenu);
 
     toolBarMenu->clear();

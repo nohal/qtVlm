@@ -134,6 +134,7 @@ class Barrier: public QObject, QGraphicsPathItem {
 
     private:
         MainWindow * mainWindow;
+        myCentralWidget * centralWidget;
         Projection * projection;
         //MyView * myView;
         //QGraphicsScene * myScene;

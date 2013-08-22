@@ -451,6 +451,17 @@
     </message>
 </context>
 <context>
+    <name>DialogChooseMultipleBoat_ui</name>
+    <message>
+        <source>Dialog</source>
+        <translation>Dialogue</translation>
+    </message>
+    <message>
+        <source>Available boats</source>
+        <translation>Bateaux disponibles</translation>
+    </message>
+</context>
+<context>
     <name>DialogDownloadTracks</name>
     <message>
         <source>Numero de la course
@@ -2324,7 +2335,7 @@ Etes-vous sur ?</source>
     </message>
     <message>
         <source>New set</source>
-        <translation>Nouvel ensemble de barrières</translation>
+        <translation>Ens barrières</translation>
     </message>
     <message>
         <source>Create new barrier</source>
@@ -3187,7 +3198,7 @@ Etes-vous sur ?</source>
     </message>
     <message>
         <source>Board</source>
-        <translation>Tableau de bord</translation>
+        <translation type="obsolete">Tableau de bord</translation>
     </message>
     <message>
         <source>ToolBar</source>
@@ -6827,6 +6838,22 @@ p, li { white-space: pre-wrap; }
     <message>
         <source>4</source>
         <translation></translation>
+    </message>
+    <message>
+        <source>5</source>
+        <translation>5</translation>
+    </message>
+    <message>
+        <source>6</source>
+        <translation>6</translation>
+    </message>
+    <message>
+        <source>7</source>
+        <translation>7</translation>
+    </message>
+    <message>
+        <source>8</source>
+        <translation>8</translation>
     </message>
 </context>
 <context>

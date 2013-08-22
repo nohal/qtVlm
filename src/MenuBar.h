@@ -337,7 +337,7 @@ private:
     QMenu *menuPOI;
     QMenu *menuHelp;
 
-    QMenu * boardMenu;
+    //QMenu * boardMenu;
     QMenu * toolBarMenu;
 
     //std::vector<time_t> listGribDates;

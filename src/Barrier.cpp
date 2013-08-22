@@ -32,7 +32,7 @@ Copyright (C) 2008 - Jacques Zaninetti - http://zygrib.free.fr
 
 Barrier::Barrier(MainWindow *mainWindow,BarrierSet * barrierSet) {
     this->mainWindow=mainWindow;
-    myCentralWidget * centralWidget = mainWindow->getMy_centralWidget();
+    centralWidget = mainWindow->getMy_centralWidget();
     projection=centralWidget->getProj();
 
     this->barrierSet=barrierSet;
@@ -255,7 +255,7 @@ void Barrier::slot_deleteBarrier(void) {
 }
 
 void Barrier::contextMenuEvent (QGraphicsSceneContextMenuEvent * e) {
-    if(popUpMenu && mainWindow->get_barrierIsEditing()) {
+    if(popUpMenu && mainWindow->get_barrierIsEditing() && centralWidget->get_barrierEditMode()==BARRIER_EDIT_NO_EDIT) {
         chk_closeBarrier->blockSignals(true);
         if(points.count()<3) {
             chk_closeBarrier->setEnabled(false);
@@ -454,7 +454,7 @@ void BarrierPoint::slot_insertAfter(void) {
 }
 
 void BarrierPoint::contextMenuEvent (QGraphicsSceneContextMenuEvent *) {
-    if(popUpMenu && mainWindow->get_barrierIsEditing()) {
+    if(popUpMenu && mainWindow->get_barrierIsEditing() && centralWidget->get_barrierEditMode()==BARRIER_EDIT_NO_EDIT) {
         /* should we display the 'insert point' entry ? */
         ac_insertAfter->setEnabled(true);
         QList<BarrierPoint * > * points = barrier->get_points();
