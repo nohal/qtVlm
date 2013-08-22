@@ -122,6 +122,7 @@ void GshhsDwnload::getMaps(void) {
             centralWidget->loadGshhs();
         }
         QDir::temp().remove(MAP_FNAME);
+        QDir::setCurrent(appFolder.value("home"));
 
     }
 }

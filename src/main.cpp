@@ -108,6 +108,7 @@ int main(int argc, char *argv[])
     QString dataDir = appExeFolder;
 
 
+    appFolder.insert("home",appExeFolder);
     appFolder.insert("img",appExeFolder+"/img/");
     appFolder.insert("flags",dataDir+"/img/flags/");
     appFolder.insert("boatsImg",dataDir+"/img/boats/");
