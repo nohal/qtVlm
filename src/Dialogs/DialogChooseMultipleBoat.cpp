@@ -30,27 +30,35 @@ DialogChooseMultipleBoat::DialogChooseMultipleBoat(QWidget *parent): QDialog(par
 void DialogChooseMultipleBoat::init_dialog(BarrierSet *barrierSet,QList<boat*> boatList) {
 
     lst_barrierSet->clear();
-
-
-
+    this->barrierSet=barrierSet;
     /* list init */
     for(int i=0;i<boatList.count();++i) {
         boat * boatPtr = boatList.at(i);
-        QListWidgetItem * item = new QListWidgetItem(boatPtr->getBoatPseudo(),lst_barrierSet);
-        /* add barrierSet pointer as first UserRole */
-        item->setData(Qt::UserRole,VPtr<boat>::asQVariant(boatPtr));
-        item->setSelected(boatPtr->get_barrierSets()->contains(barrierSet));
+        if(boatPtr->getStatus()) {
+            QListWidgetItem * item = new QListWidgetItem(boatPtr->getBoatPseudo(),lst_barrierSet);
+            /* add barrierSet pointer as first UserRole */
+            item->setData(Qt::UserRole,VPtr<boat>::asQVariant(boatPtr));
+            item->setSelected(boatPtr->get_barrierSets()->contains(barrierSet));
+        }
     }
 }
 
 void DialogChooseMultipleBoat::done(int result) {
     if(result == QDialog::Accepted) {
+        for(int i=0;i<lst_barrierSet->count();++i) {
+            QListWidgetItem * item = lst_barrierSet->item(i);
+            boat * boatPtr = VPtr<boat>::asPtr(item->data(Qt::UserRole));
+            if(item->isSelected())
+                boatPtr->add_barrierSet(barrierSet);
+            else
+                boatPtr->rm_barrierSet(barrierSet);
 
+        }
     }
     QDialog::done(result);
 }
 
-void DialogChooseMultipleBoat::chooseBarrierSet(QWidget *parent,BarrierSet * barrierSet,QList<boat*> boatList) {
+void DialogChooseMultipleBoat::chooseBoat(QWidget *parent, BarrierSet * barrierSet, QList<boat *> boatList) {
     if(!barrierSet) return;
     DialogChooseMultipleBoat dialog(parent);
     dialog.init_dialog(barrierSet,boatList);

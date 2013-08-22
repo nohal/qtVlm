@@ -862,6 +862,10 @@ void boat::slot_updateGraphicsParameters()
 void boat::slot_chooseBarrierSet(void) {
     cleanBarrierList();
     DialogChooseMultipleBarrierSet::chooseBarrierSet(mainWindow,&barrierSets);
+    updateBarrierKeys();
+}
+
+void boat::updateBarrierKeys(void) {
     barrierKeys.clear();
     for(int i=0;i<barrierSets.count();i++)
         barrierKeys.append(barrierSets.at(i)->get_key());

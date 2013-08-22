@@ -33,9 +33,12 @@ class DialogChooseMultipleBoat: public QDialog, Ui::DialogChooseMultipleBoat_ui
     public:
         DialogChooseMultipleBoat(QWidget *parent);
         void done(int result);
-        void init_dialog(BarrierSet * barrierSet,QList<boat*> boatList);
+        void init_dialog(BarrierSet * barrierSet, QList<boat *> boatList);
 
-        static void chooseBarrierSet(QWidget *parent,BarrierSet * barrierSet,QList<boat*> boatList);
+        static void chooseBoat(QWidget *parent,BarrierSet * barrierSet,QList<boat*> boatList);
+
+    private:
+        BarrierSet *barrierSet;
 };
 
 #endif // DIALOGCHOOSEMULTIPLEBOAT_H

@@ -73,10 +73,12 @@ class BarrierPoint: public QObject, public QGraphicsRectItem {
         int pointSize;
 
         QMenu *popUpMenu;
+        QMenu *popUpMenu2;
         QAction * ac_remove;
         QAction * ac_insertAfter;
         QAction * ac_edit;
         QAction * ac_deleteBarrier;
+        QAction * ac_assBoats;
         QCheckBox * chk_closeBarrier;
         QWidgetAction * ac_closeBarrier;
         void contextMenuEvent (QGraphicsSceneContextMenuEvent *);
@@ -131,6 +133,7 @@ class Barrier: public QObject, QGraphicsPathItem {
         void slot_deleteBarrier(void);
         void slot_adjustWidthF(void);
         void slot_closeBarrierChg(bool);
+        void slot_associateBoats(void);
 
     private:
         MainWindow * mainWindow;
@@ -151,9 +154,11 @@ class Barrier: public QObject, QGraphicsPathItem {
         void clearBarrier(void);
 
         QMenu *popUpMenu;
+        QMenu *popUpMenu2;
         QAction * ac_insert;
         QAction * ac_edit;
         QAction * ac_delete;
+        QAction * ac_assBoats;
         QCheckBox * chk_closeBarrier;
         QWidgetAction * ac_closeBarrier;
         void contextMenuEvent (QGraphicsSceneContextMenuEvent *);

@@ -29,6 +29,7 @@ Copyright (C) 2008 - Jacques Zaninetti - http://zygrib.free.fr
 #include "BarrierSet.h"
 #include "Util.h"
 #include "MyView.h"
+#include "DialogChooseMultipleBoat.h"
 
 Barrier::Barrier(MainWindow *mainWindow,BarrierSet * barrierSet) {
     this->mainWindow=mainWindow;
@@ -50,6 +51,7 @@ Barrier::Barrier(MainWindow *mainWindow,BarrierSet * barrierSet) {
     set_color(barrierSet->get_color());
 
     popUpMenu = new QMenu();
+    popUpMenu2 = new QMenu();
 
     ac_insert = new QAction(tr("Insert a point"),popUpMenu);
     popUpMenu->addAction(ac_insert);
@@ -68,6 +70,10 @@ Barrier::Barrier(MainWindow *mainWindow,BarrierSet * barrierSet) {
     ac_delete = new QAction(tr("Delete barrier"),popUpMenu);
     popUpMenu->addAction(ac_delete);
     connect(ac_delete,SIGNAL(triggered()),this,SLOT(slot_deleteBarrier()));
+
+    ac_assBoats = new QAction(tr("Associate boats"),popUpMenu2);
+    popUpMenu2->addAction(ac_assBoats);
+    connect(ac_assBoats,SIGNAL(triggered()),this,SLOT(slot_associateBoats()));
 }
 
 Barrier::~Barrier(void) {
@@ -270,6 +276,9 @@ void Barrier::contextMenuEvent (QGraphicsSceneContextMenuEvent * e) {
         cursorPosition = e->scenePos();
         popUpMenu->exec(QCursor::pos());
     }
+    else if(popUpMenu2 && !mainWindow->get_barrierIsEditing()) {
+        popUpMenu2->exec(QCursor::pos());
+    }
 }
 
 void Barrier::slot_closeBarrierChg(bool status) {
@@ -282,6 +291,10 @@ void Barrier::slot_closeBarrierChg(bool status) {
         set_isClosed(false);
     else
         set_isClosed(status);
+}
+
+void Barrier::slot_associateBoats(void) {
+    DialogChooseMultipleBoat::chooseBoat(mainWindow,barrierSet,centralWidget->get_boatList());
 }
 
 bool Barrier::cross(QLineF line) {
@@ -337,6 +350,7 @@ BarrierPoint::BarrierPoint(MainWindow * mainWindow, Barrier *barrier, QColor col
     connect(projection,SIGNAL(projectionUpdated()),this,SLOT(slot_projectionUpdated()));
 
     popUpMenu = new QMenu();
+    popUpMenu2 = new QMenu();
 
     ac_remove = new QAction(tr("Remove point"),popUpMenu);
     popUpMenu->addAction(ac_remove);
@@ -359,6 +373,10 @@ BarrierPoint::BarrierPoint(MainWindow * mainWindow, Barrier *barrier, QColor col
     ac_deleteBarrier = new QAction(tr("Delete barrier"),popUpMenu);
     popUpMenu->addAction(ac_deleteBarrier);
     connect(ac_deleteBarrier,SIGNAL(triggered()),barrier,SLOT(slot_deleteBarrier()));
+
+    ac_assBoats = new QAction(tr("Associate boats"),popUpMenu2);
+    popUpMenu2->addAction(ac_assBoats);
+    connect(ac_assBoats,SIGNAL(triggered()),barrier,SLOT(slot_associateBoats()));
 }
 
 void BarrierPoint::set_editMode(bool mode) {
@@ -480,6 +498,9 @@ void BarrierPoint::contextMenuEvent (QGraphicsSceneContextMenuEvent *) {
         chk_closeBarrier->blockSignals(false);
 
         popUpMenu->exec(QCursor::pos());
+    }
+    else if(popUpMenu2 && !mainWindow->get_barrierIsEditing()) {
+        popUpMenu2->exec(QCursor::pos());
     }
 }
 
