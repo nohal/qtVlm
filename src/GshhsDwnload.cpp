@@ -87,9 +87,9 @@ void GshhsDwnload::requestFinished(QByteArray res) {
 
 
 void GshhsDwnload::getMaps(void) {
-    QString page="/~oxygen/qtvlmMaps/";
+    QString page="/oxygen/qtvlmMaps/";
 
-    //QString page = "/~oxygen/";
+    //QString page = "/oxygen/";
 
     page+= MAP_FNAME;
 
