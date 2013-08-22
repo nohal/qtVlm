@@ -707,6 +707,7 @@ void MainWindow::closeProgress(void)
             myBoard->boatUpdated(selectedBoat);
         emit WPChanged(selectedBoat->getWPLat(),selectedBoat->getWPLon());
         emit boatChanged(selectedBoat);
+        emit paramVLMChanged();
     }
     statusBar->show();
     menuBar->show();
@@ -1851,6 +1852,7 @@ void MainWindow::slotSelectBoat(boat* newSelect)
         }
 
     }
+    emit paramVLMChanged();
 }
 
 /***********************************

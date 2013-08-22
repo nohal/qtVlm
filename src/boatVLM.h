@@ -118,6 +118,8 @@ class boatVLM : public boat, public inetClient
         QList<vlmLine*> getGates(){return gates;}
         void setWph(double w){this->WPHd=w;}
         vlmPoint getClosest(){return closest;}
+        FCT_SETGET_CST(bool,useSkin)
+        FCT_SETGET_CST(QString,boardSkin)
 
     public slots:
         void slot_getData(bool doingSync);
@@ -195,6 +197,8 @@ class boatVLM : public boat, public inetClient
         vlmPoint closest;
         void getDistHdgGate();
         void endOfUpdating();
+        bool useSkin;
+        QString boardSkin;
 
 };
 Q_DECLARE_TYPEINFO(boatVLM,Q_MOVABLE_TYPE);

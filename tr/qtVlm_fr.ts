@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE TS>
 <TS version="2.0" language="fr_FR" sourcelanguage="fr_FR">
-<defaultcodec>UTF-8</defaultcodec>
 <context>
     <name>Barrier</name>
     <message>
@@ -415,6 +414,10 @@
     <message>
         <source>Liste des bateaux pour </source>
         <translation></translation>
+    </message>
+    <message>
+        <source>Selectionner un skin tableau de bord VLM</source>
+        <translation>Sélectionner un skin tableau de bord VLM</translation>
     </message>
 </context>
 <context>
@@ -6428,14 +6431,6 @@ p, li { white-space: pre-wrap; }
         <translation></translation>
     </message>
     <message>
-        <source>Activer l&apos;alias</source>
-        <translation></translation>
-    </message>
-    <message>
-        <source>Polaire</source>
-        <translation></translation>
-    </message>
-    <message>
         <source>Forcer la polaire</source>
         <translation></translation>
     </message>
@@ -6462,6 +6457,14 @@ p, li { white-space: pre-wrap; }
     <message>
         <source>Note: La mise a jour de la liste des bateaux disponibles se fait dans l&apos;ecran &quot;compte&quot;</source>
         <translation>Note: La mise à jour des bateaux disponibles se fait dans l&apos;écran &quot;compte&quot;</translation>
+    </message>
+    <message>
+        <source>Utiliser un skin specifique</source>
+        <translation>Utiliser un skin spécifique</translation>
+    </message>
+    <message>
+        <source>Parcourir</source>
+        <translation></translation>
     </message>
 </context>
 <context>

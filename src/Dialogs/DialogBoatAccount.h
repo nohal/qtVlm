@@ -43,6 +43,8 @@ class boatSetup
         QString polar;
         bool activated;
         bool blocked;
+        bool useSkin;
+        QString boardSkin;
 
         boatVLM * boat;
 };
@@ -67,6 +69,7 @@ class DialogBoatAccount : public QDialog, public Ui::boatAccount_dialog
         void slot_boatSitUp(void);
         void slot_boatSitDown(void);
         void slot_enableChanged(bool);
+        void slot_browseSkin();
 
     signals:
         void accountListUpdated(void);

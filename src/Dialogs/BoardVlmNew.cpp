@@ -153,6 +153,12 @@ void BoardVlmNew::slot_reloadSkin()
     QString skinName=Settings::getSetting("defaultSkin",QFileInfo("img/skin_compas.png").absoluteFilePath()).toString();
     if(!QFile(skinName).exists())
         skinName=QFileInfo("img/skin_compas.png").absoluteFilePath();
+    if(myBoat && myBoat->get_useSkin())
+    {
+        QString specificSkin=myBoat->get_boardSkin();
+        if(QFile(specificSkin).exists())
+            skinName=specificSkin;
+    }
     skin.load(skinName);
     imgBack0=QPixmap (270,510);
     imgBack0.fill(Qt::transparent);

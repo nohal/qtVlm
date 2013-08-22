@@ -68,6 +68,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #define BOAT_NPD            "NotePad"
 #define BOAT_GROUP_SET_NAME "BarrierSetKey"
 #define BOAT_KEY_NAME       "BarrierSetKey"
+#define BOAT_USE_SKIN       "UseSkin"
+#define BOAT_BOARD_SKIN     "BoardSkin"
 
 /* RACE DATA */
 #define RACE_GROUP_NAME   "Race"
@@ -235,6 +237,17 @@ void xml_boatData::slot_writeData(QList<Player*> & player_list,QList<raceData*> 
                 tag = doc.createElement(BOAT_ALIAS_CHK_NAME);
                 group.appendChild(tag);
                 status = boat->getAliasState();
+                t = doc.createTextNode(status?"1":"0");
+                tag.appendChild(t);
+
+                tag = doc.createElement(BOAT_BOARD_SKIN);
+                group.appendChild(tag);
+                t = doc.createTextNode(boat->get_boardSkin());
+                tag.appendChild(t);
+
+                tag = doc.createElement(BOAT_USE_SKIN);
+                group.appendChild(tag);
+                status = boat->get_useSkin();
                 t = doc.createTextNode(status?"1":"0");
                 tag.appendChild(t);
 
@@ -588,6 +601,8 @@ void xml_boatData::readBoat(QDomNode node,PlayerMap * pList)
             double lat=0,lon=0;
             QString npd="";
             QList<QString> setKeys;
+            bool useSkin;
+            QString boardSkin;
 
             while(!subNode.isNull())
             {
@@ -654,6 +669,19 @@ void xml_boatData::readBoat(QDomNode node,PlayerMap * pList)
                     dataNode = subNode.firstChild();
                     if(dataNode.nodeType() == QDomNode::TextNode)
                         alias = dataNode.toText().data();
+                }
+                if(subNode.toElement().tagName() == BOAT_USE_SKIN)
+                {
+                    dataNode = subNode.firstChild();
+                    if(dataNode.nodeType() == QDomNode::TextNode)
+                        useSkin = dataNode.toText().data() == "1";
+                }
+
+                if(subNode.toElement().tagName() == BOAT_BOARD_SKIN)
+                {
+                    dataNode = subNode.firstChild();
+                    if(dataNode.nodeType() == QDomNode::TextNode)
+                        boardSkin = dataNode.toText().data();
                 }
                 if(subNode.toElement().tagName() == BOAT_LOCK_NAME)
                 {
@@ -728,6 +756,8 @@ void xml_boatData::readBoat(QDomNode node,PlayerMap * pList)
                                                  proj,main,parent,inet);
                     boat->setPolar(chk_polar,polar);
                     boat->setAlias(chk_alias,alias);
+                    boat->set_boardSkin(boardSkin);
+                    boat->set_useSkin(useSkin);
                     boat->setLockStatus(locked);
                     boat->setZoom(zoom);
                     boat->setForceEstime(force_estime);
