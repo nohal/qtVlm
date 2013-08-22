@@ -195,7 +195,7 @@ void LoadGribFile::requestFinished ( QNetworkReply* inetReply)
         vers.append(".");
         vers.append(QTVLM_SUB_VERSION_NUM);
         vers.remove("+");
-        if(vers.contains("beta") && strbuf=="3.3.5") return;
+        if(vers.contains("beta") && strbuf=="3.4.0") return;
         if(vers.left(strbuf.size())!=strbuf)
         {
             QString m=tr("Vous n'utilisez pas la derniere version de qtVlm: ")+strbuf;
