@@ -601,7 +601,7 @@ void xml_boatData::readBoat(QDomNode node,PlayerMap * pList)
             double lat=0,lon=0;
             QString npd="";
             QList<QString> setKeys;
-            bool useSkin;
+            bool useSkin=false;
             QString boardSkin;
 
             while(!subNode.isNull())
