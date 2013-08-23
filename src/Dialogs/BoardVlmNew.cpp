@@ -949,7 +949,10 @@ bool BoardVlmNew::eventFilter(QObject *obj, QEvent *event)
             QPoint mousePos=mapToGlobal(m->pos());
             int x=qBound(qRound(-this->width()/2.0),initialPos.x()+mousePos.x()-startMove.x(),qRound(main->width()-this->width()/2.0));
             int y=qBound(qRound(-this->height()/2.0),initialPos.y()+mousePos.y()-startMove.y(),qRound(main->height()-this->height()/2.0));
-            int i=this->x()>x?-10:10;
+            QLineF L=QLine(x,y,this->x(),this->y());
+            int i=qRound(2000.0/(double)main->width())*L.length();
+            if (this->x()>x)
+                i=-i;
             this->move(x,y);
             windAngle->setRotation(windAngle->getRotation()+i);
         }
