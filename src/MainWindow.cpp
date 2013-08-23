@@ -314,6 +314,7 @@ void MainWindow::continueSetup()
 
 //--------------------------------------------------
     progress->newStep(20,tr("Initializing tool bar"));
+
     toolBar = new ToolBar(this);
     my_centralWidget->set_toolBar(toolBar);
 

@@ -119,10 +119,6 @@ myScene::myScene(myCentralWidget * parent) : QGraphicsScene(parent)
 
 void  myScene::keyPressEvent (QKeyEvent *e)
 {
-#ifdef __ANDROID__
-    QGraphicsScene::keyPressEvent(e);
-    return;
-#endif
     QString position;
     QStringList positions;
     switch(e->key())
@@ -218,19 +214,11 @@ void  myScene::keyPressEvent (QKeyEvent *e)
 
 void  myScene::keyReleaseEvent (QKeyEvent *e)
 {
-#ifdef __ANDROID__
-    QGraphicsScene::keyReleaseEvent(e);
-    return;
-#endif
     parent->keyModif(e);
 }
 
 void myScene::mouseMoveEvent(QGraphicsSceneMouseEvent* e)
 {
-#ifdef __ANDROID__
-    QGraphicsScene::mouseMoveEvent(e);
-    return;
-#endif
     if(parent->getIsStartingUp()) return;
     if(pinching) return;
 #if 0
@@ -258,10 +246,6 @@ void myScene::mouseMoveEvent(QGraphicsSceneMouseEvent* e)
 
 void myScene::mouseDoubleClickEvent(QGraphicsSceneMouseEvent* e)
 {
-#ifdef __ANDROID__
-    QGraphicsScene::mouseDoubleClickEvent(e);
-    return;
-#endif
     if(pinching) return;
     if(e->button()==Qt::LeftButton)
     {
@@ -270,10 +254,6 @@ void myScene::mouseDoubleClickEvent(QGraphicsSceneMouseEvent* e)
 }
 void myScene::wheelEvent(QGraphicsSceneWheelEvent* e)
 {
-#ifdef __ANDROID__
-    QGraphicsScene::wheelEvent(e);
-    return;
-#endif
     if(pinching) return;
     if(e->orientation()!=Qt::Vertical) return;
     wheelTimer->stop();
@@ -321,9 +301,6 @@ void myScene::wheelTimerElapsed()
 }
 bool myScene::event(QEvent * event)
 {
-#ifdef __ANDROID__
-    return QGraphicsScene::event(event);
-#endif
 #if 1
     if (event->type() == QEvent::Gesture)
     {
