@@ -605,6 +605,34 @@ bool Grib::getGribRecordArroundDates(int dataType,int levelType,int levelValue,
     return false;
 }
 
+double Grib::getInterpolatedValue_byDates(int dataType,int levelType,int levelValue,double d_long, double d_lat, time_t now) {
+    time_t tPrev,tNxt;
+    GribRecord * recPrev;
+    GribRecord * recNxt;
+    if(getGribRecordArroundDates(dataType,levelType,levelValue,now,&tPrev,&tNxt,&recPrev,&recNxt)) {
+        return getInterpolatedValue_byDates(d_long,d_lat,now,tPrev,tNxt,recPrev,recNxt);
+    }
+    else
+        return 0;
+
+}
+
+double Grib::getInterpolatedValue_byDates(double d_long, double d_lat, time_t now,time_t tPrev,time_t tNxt,
+                                    GribRecord * recPrev,GribRecord * recNxt) {
+    double v = recPrev->getInterpolatedValue(d_long, d_lat, MUST_INTERPOLATE_VALUE);
+    double v_2;
+    if(v != GRIB_NOTDEF && tPrev!=tNxt)
+    {
+        v_2=recNxt->getInterpolatedValue(d_long, d_lat, MUST_INTERPOLATE_VALUE);
+        if(v_2 != GRIB_NOTDEF)
+            return v+((v_2-v)/((double)(tNxt-tPrev)))*((double)(now-tPrev));
+        else
+            return 0;
+    }
+    else
+        return 0;
+}
+
 int Grib::getDewpointDataStatus(int /*levelType*/,int /*levelValue*/) {
         return dewpointDataStatus;
 }

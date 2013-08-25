@@ -105,6 +105,9 @@ class Grib
         bool getGribRecordArroundDates(int dataType,int levelType,int levelValue,
                                         time_t now,time_t * tPrev,time_t * tNxt,
                                         GribRecord ** recPrev,GribRecord ** recNxt);
+        double getInterpolatedValue_byDates(int dataType,int levelType,int levelValue,double d_long, double d_lat, time_t now);
+        double getInterpolatedValue_byDates(double d_long, double d_lat, time_t now,time_t tPrev,time_t tNxt,
+                                            GribRecord * recPrev,GribRecord * recNxt);
         // Rectangle de la zone couverte par les donnees
         bool getZoneExtension (double *x0,double *y0, double *x1,double *y1);
 
