@@ -1,3 +1,28 @@
+/**********************************************************************
+qtVlm: Virtual Loup de mer GUI
+Copyright (C) 2013 - Christophe Thomas aka Oxygen77
+
+http://qtvlm.sf.net
+
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program.  If not, see <http://www.gnu.org/licenses/>.
+***********************************************************************/
+
+#include <QBitmap>
+#include <QMessageBox>
+#include <QStyleFactory>
+#include <QGraphicsDropShadowEffect>
+
 #include "BoardVlmNew.h"
 #include "ui_BoardVlmNew.h"
 #include "POI.h"
@@ -5,11 +30,9 @@
 #include "Polar.h"
 #include "settings.h"
 #include "vlmLine.h"
-#include <QBitmap>
-#include <QMessageBox>
-#include <QStyleFactory>
 #include "boatVLM.h"
-#include <QGraphicsDropShadowEffect>
+#include "MapDataDrawer.h"
+
 BoardVlmNew::BoardVlmNew(MainWindow *main)
     : QDialog(main)
 
@@ -587,7 +610,7 @@ void BoardVlmNew::slot_drawPolar()
         s=s.sprintf("%d",angle);
         polarPnt.drawText(line.p2(),s);
     }
-    pen.setColor(Grib::getWindColorStatic(myBoat->getWindSpeed(),Settings::getSetting("colorMapSmooth", true).toBool()));
+    pen.setColor(MapDataDrawer::getWindColorStatic(myBoat->getWindSpeed(),Settings::getSetting("colorMapSmooth", true).toBool()));
     pen.setWidthF(2.0);
     polarPnt.setPen(pen);
     QLineF line(center,QPointF(polarImg.width(),polarImg.height()/2.0));
@@ -613,7 +636,7 @@ void BoardVlmNew::updateLcds()
     s.sprintf("%.2f",(double)qRound(myBoat->getWindDir()*100.0)/100.0);
     lcd_TWD->setDigitCount(s.count());
     this->lcd_TWD->display(s);
-    QColor color=Grib::getWindColorStatic(myBoat->getWindSpeed(),Settings::getSetting("colorMapSmooth", true).toBool());
+    QColor color=MapDataDrawer::getWindColorStatic(myBoat->getWindSpeed(),Settings::getSetting("colorMapSmooth", true).toBool());
     this->lcd_TWS->setStyleSheet((QString().sprintf("background-color: rgb(%d, %d, %d);",color.red(),color.green(),color.blue())));
     color=Qt::white;
     this->lcd_TWD->setStyleSheet((QString().sprintf("background-color: rgba(%d, %d, %d,%d);",color.red(),color.green(),color.blue(),180)));
@@ -1111,7 +1134,7 @@ void VlmCompass::draw(QPainter * painter)
 
 QColor VlmCompass::windSpeed_toColor()
 {
-    return Grib::getWindColorStatic(windSpeed,Settings::getSetting("colorMapSmooth", true).toBool());
+    return MapDataDrawer::getWindColorStatic(windSpeed,Settings::getSetting("colorMapSmooth", true).toBool());
 }
 
 void VlmCompass::setValues(const double &heading, const double &windDir, const double &windSpeed, const double &WPdir, const double &gateDir, const double &newHeading)

@@ -153,7 +153,8 @@ HEADERS += Dialogs/DialogGraphicsParams.h \
     Dialogs/DialogChooseBarrierSet.h \
     XmlFile.h \
     Dialogs/DialogRouteComparator.h \
-    Dialogs/DialogChooseMultipleBoat.h
+    Dialogs/DialogChooseMultipleBoat.h \
+    MapDataDrawer.h
 
 
 FORMS += Ui/boatAccount_dialog.ui \
@@ -293,7 +294,8 @@ SOURCES += Dialogs/DialogGraphicsParams.cpp \
     Dialogs/DialogChooseBarrierSet.cpp \
     XmlFile.cpp \
     Dialogs/DialogRouteComparator.cpp \
-    Dialogs/DialogChooseMultipleBoat.cpp
+    Dialogs/DialogChooseMultipleBoat.cpp \
+    MapDataDrawer.cpp
 
 unix:!macx: DEFINES += _TTY_POSIX_ __TERRAIN_QIMAGE __UNIX_QTVLM
 win32:DEFINES += _TTY_WIN_ \

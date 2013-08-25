@@ -50,6 +50,7 @@ Copyright (C) 2008 - Jacques Zaninetti - http://zygrib.free.fr
 #include <QFileDialog>
 #include <QPixmap>
 #include <Terrain.h>
+#include <MapDataDrawer.h>
 
 //-------------------------------------------------------
 // ROUTE_Editor: Constructor for edit an existing ROUTE
@@ -374,7 +375,7 @@ void DialogRoute::slotInterval()
         pnt.drawPath(this->drawBoat);
         pnt.setMatrixEnabled(false);
         QColor rgb=Qt::white;
-        rgb=Grib::getWindColorStatic(roadItems.at(7),true);
+        rgb=MapDataDrawer::getWindColorStatic(roadItems.at(7),true);
         pen.setColor(rgb);
         pen.setWidth(2);
         pnt.setPen(pen);

@@ -81,6 +81,7 @@ class GisReader;
 
 /* Grib.h */
 class Grib;
+class MapDataDrawer;
 
 /* GribRecord.h */
 class GribRecord;

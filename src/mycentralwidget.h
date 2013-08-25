@@ -193,6 +193,7 @@ class myCentralWidget : public QWidget
         void showGribDate_dialog(void);
         void loadGribFile(QString fileName, bool zoom);
         void loadGribFileCurrent(QString fileName, bool zoom);
+        FCT_GET(MapDataDrawer*,mapDataDrawer)
 
         /* events */
         void mouseMove(int x, int y, QGraphicsItem * item);
@@ -410,6 +411,8 @@ public slots :
         QString  dataPresentInGrib(Grib* grib,
                                    int dataType,int levelType,int levelValue,
                                    bool *ok=NULL);
+        MapDataDrawer * mapDataDrawer;
+
         /* other child */        
         GshhsReader *gshhsReader;
         GshhsDwnload * gshhsDwnload;

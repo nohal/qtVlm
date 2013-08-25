@@ -345,8 +345,8 @@ void DialogParamVlm::done(int result)
         Settings::setSetting("forceCurrents",forceCurrents->isChecked()?1:0);
         Settings::setSetting("forcedCS",forcedCS->value());
         Settings::setSetting("forcedCD",forcedCD->value());
-        if(centralWidget->getGrib()) centralWidget->getGrib()->forceParam();
-        if(centralWidget->getGribCurrent()) centralWidget->getGribCurrent()->forceParam();
+        if(centralWidget->getGrib()) centralWidget->getGrib()->load_forcedParam();
+        if(centralWidget->getGribCurrent()) centralWidget->getGribCurrent()->load_forcedParam();
 
         /* advanced */
         Settings::setSetting("gpsEmulEnable",chk_activateEmulation->checkState()==Qt::Checked?"1":"0");

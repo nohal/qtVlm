@@ -67,6 +67,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "faxMeteo.h"
 #include "loadImg.h"
 #include "GshhsDwnload.h"
+#include "MapDataDrawer.h"
 
 #include "ToolBar.h"
 
@@ -431,6 +432,7 @@ myCentralWidget::myCentralWidget(Projection * proj,MainWindow * parent,MenuBar *
     gribCurrent = new Grib();
     gribCurrent->setIsCurrentGrib();
     grib->setGribCurrent(gribCurrent);
+    mapDataDrawer = new MapDataDrawer(this);
 
     replayTimer=new QTimer(this);
     replayTimer->setSingleShot(true);
@@ -1301,7 +1303,6 @@ void myCentralWidget::setCurrentDate(time_t t, bool uRoute)
     {
         grib->setCurrentDate(t);
         gribCurrent->setCurrentDate(t);
-        //emit redrawGrib();
         if(uRoute)
         {
             emit updateRoute(NULL);

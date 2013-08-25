@@ -66,6 +66,7 @@ Copyright (C) 2008 - Jacques Zaninetti - http://zygrib.free.fr
 #include "Board.h"
 #include "BoardVLM.h"
 #include "BoardReal.h"
+#include "MapDataDrawer.h"
 
 #include "DialogPoiDelete.h"
 #include "DialogPoi.h"
@@ -617,7 +618,8 @@ void MainWindow::closeProgress(void)
         QApplication::processEvents();
         Grib * grib=new Grib();
         grib->loadGribFile(appFolder.value("img")+"benchmark.grb");
-        if(grib && grib->isOk())
+        MapDataDrawer * mapDataDrawer=my_centralWidget->get_mapDataDrawer();
+        if(grib && grib->isOk() && mapDataDrawer)
         {
             grib->setCurrentDate(grib->getMinDate()+3650); //not to be on a gribrecord;
             proj->blockSignals(true);
@@ -633,14 +635,14 @@ void MainWindow::closeProgress(void)
             pnt.setRenderHint(QPainter::SmoothPixmapTransform, true);
             QTime calibration;
             calibration.start();
-            grib->draw_WIND_Color(pnt,proj,true,true,true);
+            mapDataDrawer->draw_WIND_Color(grib,pnt,proj,true,true,true);
             int cal1=calibration.elapsed();
             pnt.end();
             //imgAll->save("calib1.jpg");
             imgAll->fill(Qt::transparent);
             pnt.begin(imgAll);
             calibration.start();
-            grib->draw_WIND_Color_old(pnt,proj,true,true,true);
+            mapDataDrawer->draw_WIND_Color_old(grib,pnt,proj,true,true,true);
             int cal2=calibration.elapsed();
             pnt.end();
             //imgAll->save("calib2.jpg");
@@ -2382,16 +2384,14 @@ void MainWindow::slot_estimeParamChanged(int valeur)
 void MainWindow::slot_updateGribMono()
 {
     //gribDrawingmethod (0=auto, 1=mono, 2=multi)
-    if(my_centralWidget->getGrib())
+    if(my_centralWidget->get_mapDataDrawer())
     {
         bool gribMulti=false;
         if(Settings::getSetting("gribDrawingMethod",0).toInt()==0)
             gribMulti=Settings::getSetting("gribBench1",-1).toInt()<Settings::getSetting("gribBench2",-1).toInt();
         else
             gribMulti=Settings::getSetting("gribDrawingMethod",0).toInt()==2;
-        my_centralWidget->getGrib()->setGribMonoCpu(!gribMulti);
-        if(my_centralWidget->getGribCurrent())
-            my_centralWidget->getGribCurrent()->setGribMonoCpu(!gribMulti);
+        my_centralWidget->get_mapDataDrawer()->set_gribMonoCpu(!gribMulti);
     }
 
 }
