@@ -82,9 +82,9 @@ class GisReader;
 /* Grib.h */
 class Grib;
 class MapDataDrawer;
-
-/* GribRecord.h */
 class GribRecord;
+class DataColors;
+class ColorElement;
 
 /* GshhsReader.h */
 class GshhsReader;

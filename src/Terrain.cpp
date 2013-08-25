@@ -308,7 +308,7 @@ void Terrain::draw_GSHHSandGRIB()
                         poly.append(QPointF(x,y));
                     }
 
-                    QColor color_r= parent->get_mapDataDrawer()->getWindColor(windAverage/poly.count(),true);
+                    QColor color_r= MapDataDrawer::getWindColorStatic(windAverage/poly.count(),true);
                     color_r.setAlpha(255);
                     penRoutage.setColor(color_r);
                     penRoutage.setBrush(QBrush(color_r));

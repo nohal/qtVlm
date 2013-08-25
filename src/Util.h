@@ -81,6 +81,11 @@ class Util
     static int    kmhToBeaufort(const double &v);
     static double  kmhToBeaufort_F(const double &v);
     static double  BeaufortToKmh_F(const double &bf);
+
+    static int    msToBeaufort   (float v);
+    static float  msToBeaufort_F (float v);
+    static float  BeaufortToMs_F (float bf);
+
     static QPointF calculateSumVect(const double &angle1, const double &length1, const double &angle2, const double &length2);
 
     static void paramProxy(QNetworkAccessManager *inetManager,QString host);
@@ -185,6 +190,20 @@ inline QPointF Util::calculateSumVect(const double &angle1,const double &length1
     QPointF pointF(temp.length(),A360(temp.angle()));
     return pointF;
 }
+//-----------------------------------------------------------------------------
+inline int Util::msToBeaufort (float v) {
+    return (int)(msToBeaufort_F(v)+0.5);
+}
+inline float Util::msToBeaufort_F (float v) {
+    float bf = pow (v*v*1.44 , 0.33333);
+    if (bf > 12.0)
+        bf = 12.0;
+    return bf;
+}
+inline float Util::BeaufortToMs_F (float bf) {
+    return sqrt (bf*bf*bf/1.44);
+}
+//-----------------------------------------------------------------------------
 inline void Util::getCoordFromDistanceAngle(double latitude, double longitude,
              double distance,double heading, double * res_lat,double * res_lon)
 {

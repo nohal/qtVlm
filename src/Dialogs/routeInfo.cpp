@@ -106,7 +106,7 @@ void routeInfo::setValues(double twd, double tws, double twa, double bs, double 
     QColor rgb=Qt::white;
     if(parent->get_mapDataDrawer())
     {
-        rgb=QColor(parent->get_mapDataDrawer()->getWindColor(tws,true));
+        rgb=QColor(MapDataDrawer::getWindColorStatic(tws,true));
         rgb.setAlpha(255);
     }
     pen.setColor(rgb);

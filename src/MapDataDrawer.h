@@ -87,8 +87,9 @@ class MapDataDrawer
         // Temperature (labels repartis sur la carte)
         void draw_TEMPERATURE_Labels(Grib *grib,QPainter &pnt, const Projection *proj);
 
-        QRgb   getWindColor     (const double v, const bool smooth);
+
         static QColor getWindColorStatic(const double &v, const bool &smooth=true);
+        static QColor getCurrentColorStatic(const double &v, const bool &smooth=true);
 
         FCT_SETGET_CST(bool,gribMonoCpu)
 
@@ -140,17 +141,20 @@ class MapDataDrawer
         void drawTriangle(QPainter &pnt, bool south,
                     double si, double co, int di, int dj, int b);
 
-        QRgb   getAltitudeColor (double m, bool smooth);
-        QRgb   getRainColor     (double mm, bool smooth);
-        QRgb   getSnowDepthColor(double mm, bool smooth);
-        QRgb   getHumidColor    (double v, bool smooth);
-        QRgb   getTemperatureColor (double v, bool smooth);
-        QRgb   getPressureColor    (double v, bool smooth);
-        QRgb   getDeltaTemperaturesColor (double v, bool smooth);
 
+        QRgb   getWindColor        (const double v, const bool smooth);
+        QRgb   getCurrentColor     (const double v, const bool smooth);
+        QRgb   getTemperatureColor (double v, bool smooth);
+        QRgb   getRainColor        (double v, bool smooth);
+        QRgb   getSnowDepthColor   (double v, bool smooth);
+        QRgb   getCloudColor       (double v, bool smooth);
         QRgb   getCAPEColor  (double v, bool smooth);
-        QRgb   getCloudColor (double v, bool smooth);
-        QRgb   getCloudColor (double v, bool smooth, int colorModeUser);
+        QRgb   getDeltaTemperaturesColor (double v, bool smooth);
+        QRgb   getHumidColor       (double v, bool smooth);
+        QRgb   getPressureColor    (double v, bool smooth);
+        QRgb   getBinaryColor    (double v, bool smooth);
+
+
 
 
 

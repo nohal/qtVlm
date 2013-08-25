@@ -30,6 +30,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "Projection.h"
 #include "GribRecord.h"
 #include "IsoLine.h"
+#include "DataColors.h"
 
 #include "MapDataDrawer.h"
 
@@ -47,6 +48,8 @@ MapDataDrawer::MapDataDrawer(myCentralWidget *centralWidget) {
     windBarbuleSpaceOnGrid = 28;    // distance mini entre fleches
     windArrowSize = 14;       // longueur des fleches
     windBarbuleSize = 26;     // longueur des fleches avec barbules
+
+    DataColors::load_colors(mapColorTransp);
 
     // Color scale for wind in beaufort
     windColor[ 0].setRgba(qRgba(   0,  80, 255,  mapColorTransp));
@@ -87,199 +90,66 @@ MapDataDrawer::~MapDataDrawer() {
 
 }
 
-/* Plot */
-//--------------------------------------------------------------------------
-QRgb  MapDataDrawer::getRainColor(double v, bool smooth)
-{
-    QRgb rgb = 0;
-    int  ind;
+/****************************************************************************
+ * color getter
+ ***************************************************************************/
 
-    double indf = pow(67.5*v,1.0/3.0);        // TODO better color map!!!!
-        if (v > 0)
-                indf += 0.2;
-
-    ind = (int) floor(Util::inRange(indf, 0.0, 15.0));
-
-    if (smooth && ind<16) {
-        // Interpolation de couleur
-        QColor c1 = rainColor[ind];
-        QColor c2 = rainColor[ind+1];
-        double dcol = indf-ind;
-        rgb = qRgba(
-            (int)( (double) c1.red()  *(1.0-dcol) + dcol*c2.red()   +0.5),
-            (int)( (double) c1.green()*(1.0-dcol) + dcol*c2.green() +0.5),
-            (int)( (double) c1.blue() *(1.0-dcol) + dcol*c2.blue()  +0.5),
-            mapColorTransp
-            );
-    }
-    else {
-                ind = (int) (indf + 0.5);
-                ind = Util::inRange(ind, 0, 15);
-        rgb = rainColor[ind].rgba();
-    }
-    return rgb;
+QRgb  MapDataDrawer::getRainColor(double v, bool smooth) {
+    return DataColors::get_color("rain_mmh",v,smooth);
 }
-//--------------------------------------------------------------------------
-QRgb  MapDataDrawer::getSnowDepthColor(double mm, bool smooth)
-{
-    QRgb rgb = 0;
-    int  ind;
-    double v = mm / 3.0;
-    double indf = pow(900*v,1.0/3.0);        // TODO better color map!!!!
-        if (v > 0)
-                indf += 0.2;
-    ind = (int) floor(Util::inRange(indf, 0.0, 15.0));
 
-    if (smooth && ind<16) {
-        // Interpolation de couleur
-        QColor c1 = rainColor[ind];
-        QColor c2 = rainColor[ind+1];
-        double dcol = indf-ind;
-        rgb = qRgba(
-            (int)( (double) c1.red()  *(1.0-dcol) + dcol*c2.red()   +0.5),
-            (int)( (double) c1.green()*(1.0-dcol) + dcol*c2.green() +0.5),
-            (int)( (double) c1.blue() *(1.0-dcol) + dcol*c2.blue()  +0.5),
-            mapColorTransp
-            );
-    }
-    else {
-                ind = (int) (indf + 0.5);
-                ind = Util::inRange(ind, 0, 15);
-        rgb = rainColor[ind].rgba();
-    }
-    return rgb;
+QRgb  MapDataDrawer::getSnowDepthColor(double v, bool smooth) {
+    return DataColors::get_color("snowdepth_m",v,smooth);
 }
-//--------------------------------------------------------------------------
-QRgb  MapDataDrawer::getCloudColor(double v, bool smooth)
-{
-        return getCloudColor(v, smooth, -1);
-}
-//--------------------------------------------------------------------------
-QRgb  MapDataDrawer::getCloudColor(double v, bool smooth, int colorModeUser) {
-    QRgb rgb = 0;
-    if (!smooth) {
-        v = 10.0*floor(v/10.0);
-    }
-        v = v*v*v/10000;
-    int r,g,b;
+
+QRgb  MapDataDrawer::getCloudColor(double v, bool smooth) {
+    QRgb rgb;
     int tr;
-    if (  colorModeUser==1 ||
-                 (colorModeUser<0 && isCloudsColorModeWhite) )
-    {
-                double k = 2.55;
-                r = (int)(k*v);
-                g = (int)(k*v);
-                b = (int)(k*v);
-                tr = (int)(2.5*v);
-        }
-        else {
-                r = 255 - (int)(1.6*v);
-                g = 255 - (int)(1.6*v);
-                b = 255 - (int)(2.0*v);
-                tr = mapColorTransp;
-        }
-    rgb = qRgba(r,g,b,  tr);
-    return rgb;
+    if (isCloudsColorModeWhite) {
+        rgb = DataColors::get_color("clouds_white_pc",v, smooth);
+        tr = (int)(2.5*v);
+    }
+    else {
+        rgb = DataColors::get_color("clouds_black_pc",v, smooth);
+        tr = mapColorTransp;
+    }
+    return qRgba (qRed(rgb), qGreen(rgb), qBlue(rgb), tr);
 }
-//--------------------------------------------------------------------------
+
 QRgb  MapDataDrawer::getDeltaTemperaturesColor(double v, bool smooth) {
-        v = 100.0 - Util::inRange(20.0*v, 0.0, 100.0);
-    QRgb rgb = 0;
-    if (!smooth) {
-        v = 10.0*floor(v/10.0);
-    }
-    int r,g,b;
-    int tr;
-                r = 255 - (int)(1.5*v);
-                g = 255 - (int)(1.5*v);
-                b = 255 - (int)(2.2*v);
-                tr = mapColorTransp;
-    rgb = qRgba(r,g,b,  tr);
-    return rgb;
+    return DataColors::get_color("deltatemp_celcius",v,smooth);
 }
-//--------------------------------------------------------------------------
-QRgb  MapDataDrawer::getAltitudeColor(double v, bool smooth) {
-    QRgb rgb = 0;
-    if (!smooth) {
-        v = 100*floor(v/100);
-    }
-    if (v<0)
-        v = 0;
-    if (v>6000)
-        v = 6000;
-        v = pow(v/6000, 1.0/2.0);
-    int r = 255 - (int)(255*v);
-    int g = 255;
-    int b = 255 - (int)(255*v);
-    rgb = qRgba(r,g,b,  mapColorTransp);
-    return rgb;
-}
-//--------------------------------------------------------------------------
+
 QRgb  MapDataDrawer::getHumidColor(double v, bool smooth) {
-    QRgb rgb = 0;
-    if (!smooth) {
-        v = 10.0*floor(v/10.0);
-    }
+    return DataColors::get_color("humidrel_pc",v,smooth);
+}
 
-    //v = v*v*v/10000;
-    v = v*v/100;
+QRgb  MapDataDrawer::getCAPEColor(double v, bool smooth) {
+    return DataColors::get_color("cape_jkg",v,smooth);
+}
 
-    int r = 255 - (int)(2.4*v);
-    int g = 255 - (int)(2.4*v);
-    int b = 255 - (int)(1.2*v);
-    rgb = qRgba(r,g,b,  mapColorTransp);
-    return rgb;
+QRgb  MapDataDrawer::getTemperatureColor(double v, bool smooth) {
+    return DataColors::get_color("temp_celcius",v,smooth);
 }
-//--------------------------------------------------------------------------
-QRgb  MapDataDrawer::getCAPEColor(double v, bool smooth)
-{
-        double x = sqrt(v)*70.71;
-        double t0 = 0;  // valeur mini de l'echelle
-        double t1 = 3000;  // valeur maxi de l'echelle
-        double b0 = 0;    // min beauforts
-        double b1 = 12;   // max beauforts
-        double eqbeauf = b0 + (x-t0)*(b1-b0)/(t1-t0);
-        if (eqbeauf < 0)
-                eqbeauf = 0;
-        else if (eqbeauf > 12)
-                eqbeauf = 12;
-        return getWindColor(Util::BeaufortToKmh_F(eqbeauf), smooth);
+
+QRgb  MapDataDrawer::getPressureColor(double v, bool smooth) {
+    // Même échelle colorée que pour le vent
+    double x = v/100.0;	// Pa->hPa
+    double t0 = 960;  // valeur mini de l'échelle
+    double t1 = 1050;  // valeur maxi de l'échelle
+    return DataColors::get_color_windColorScale(x, t0, t1, smooth);
 }
-//--------------------------------------------------------------------------
-QRgb  MapDataDrawer::getTemperatureColor(double v, bool smooth)
-{
-        // Meme echelle coloree que pour le vent
-        double x = v-273.15;
-        double t0 = -30;  // valeur mini de l'echelle
-        double t1 =  40;  // valeur maxi de l'echelle
-        double b0 = 0;    // min beauforts
-        double b1 = 12;   // max beauforts
-        double eqbeauf = b0 + (x-t0)*(b1-b0)/(t1-t0);
-        if (eqbeauf < 0)
-                eqbeauf = 0;
-        else if (eqbeauf > 12)
-                eqbeauf = 12;
-        return getWindColor(Util::BeaufortToKmh_F(eqbeauf), smooth);
+
+#if 1
+QRgb MapDataDrawer::getWindColor(double v, bool smooth) {
+    return DataColors::get_color("wind_kts",v,smooth);
 }
-//--------------------------------------------------------------------------
-QRgb  MapDataDrawer::getPressureColor(double v, bool smooth)
-{
-        // Meme echelle coloree que pour le vent
-        double x = v;
-        double t0 = 960;  // valeur mini de l'echelle
-        double t1 = 1050;  // valeur maxi de l'echelle
-        double b0 = 0;    // min beauforts
-        double b1 = 12;   // max beauforts
-        double eqbeauf = b0 + (x-t0)*(b1-b0)/(t1-t0);
-        if (eqbeauf < 0)
-                eqbeauf = 0;
-        else if (eqbeauf > 12)
-                eqbeauf = 12;
-        return getWindColor(Util::BeaufortToKmh_F(eqbeauf), smooth);
+
+QColor MapDataDrawer::getWindColorStatic(const double &v, const bool &smooth) {
+    return QColor(DataColors::get_color("wind_kts",v,smooth));
 }
-//--------------------------------------------------------------------------
-QRgb MapDataDrawer::getWindColor(double v, bool smooth)
-{
+#else
+QRgb MapDataDrawer::getWindColor(double v, bool smooth) {
     QRgb rgb = 0;
     if (! smooth) {
         const int beauf = Util::kmhToBeaufort(v);
@@ -294,52 +164,65 @@ QRgb MapDataDrawer::getWindColor(double v, bool smooth)
         QColor c2 = windColor[f2];
         double dcol = fbeauf-floor(fbeauf);
         rgb = qRgba(
-                (int)( c1.red()  *(1.0-dcol) + dcol*c2.red()   +0.5),
-                (int)( c1.green()*(1.0-dcol) + dcol*c2.green() +0.5),
-                (int)( c1.blue() *(1.0-dcol) + dcol*c2.blue()  +0.5),
-                mapColorTransp
-                );
+                    (int)( c1.red() *(1.0-dcol) + dcol*c2.red() +0.5),
+                    (int)( c1.green()*(1.0-dcol) + dcol*c2.green() +0.5),
+                    (int)( c1.blue() *(1.0-dcol) + dcol*c2.blue() +0.5),
+                    mapColorTransp
+                    );
     }
     return rgb;
 }
-QColor MapDataDrawer::getWindColorStatic(const double &v, const bool &smooth)
-{
-    QColor windColorTemp[14];        // couleur selon la force du vent en beauforts
-    windColorTemp[ 0].setRgba(qRgba(   0,  80, 255,  255));
-    windColorTemp[ 1].setRgba(qRgba(   0, 150, 255,  255));
-    windColorTemp[ 2].setRgba(qRgba(   0, 200, 255,  255));
-    windColorTemp[ 3].setRgba(qRgba(   0, 250, 180,  255));
-    windColorTemp[ 4].setRgba(qRgba(   0, 230, 150,  255));
-    windColorTemp[ 5].setRgba(qRgba( 255, 255,   0,  255));
-    windColorTemp[ 6].setRgba(qRgba( 255, 220,   0,  255));
-    windColorTemp[ 7].setRgba(qRgba( 255, 180,   0,  255));
-    windColorTemp[ 8].setRgba(qRgba( 255, 120,   0,  255));
-    windColorTemp[ 9].setRgba(qRgba( 230, 120,   0,  255));
-    windColorTemp[10].setRgba(qRgba( 220,  80,   0,  255));
-    windColorTemp[11].setRgba(qRgba( 200,  50,  30,  255));
-    windColorTemp[12].setRgba(qRgba( 170,   0,  50,  255));
-    windColorTemp[13].setRgba(qRgba( 150,   0,  30,  255));
-    QRgb rgb = 0;
-    if (! smooth) {
-        const int beauf = Util::kmhToBeaufort(v);
-        rgb = windColorTemp[beauf].rgba();
-    }
-    else {
-        // Interpolation de couleur
-        double fbeauf = Util::kmhToBeaufort_F(v);
-        int f1=qBound(0,(int)(fbeauf),12);
-        int f2=qBound(0,(int)(fbeauf+1),12);
-        QColor c1 = windColorTemp[f1];
-        QColor c2 = windColorTemp[f2];
-        double dcol = fbeauf-floor(fbeauf);
-        rgb = qRgba(
-                (int)( c1.red()  *(1.0-dcol) + dcol*c2.red()   +0.5),
-                (int)( c1.green()*(1.0-dcol) + dcol*c2.green() +0.5),
-                (int)( c1.blue() *(1.0-dcol) + dcol*c2.blue()  +0.5),
-                255
-                );
-    }
-    return QColor(rgb);
+
+QColor MapDataDrawer::getWindColorStatic(const double &v, const bool &smooth) {
+    QColor windColorTemp[14]; // couleur selon la force du vent en beauforts
+   windColorTemp[ 0].setRgba(qRgba( 0, 80, 255, 255));
+   windColorTemp[ 1].setRgba(qRgba( 0, 150, 255, 255));
+   windColorTemp[ 2].setRgba(qRgba( 0, 200, 255, 255));
+   windColorTemp[ 3].setRgba(qRgba( 0, 250, 180, 255));
+   windColorTemp[ 4].setRgba(qRgba( 0, 230, 150, 255));
+   windColorTemp[ 5].setRgba(qRgba( 255, 255, 0, 255));
+   windColorTemp[ 6].setRgba(qRgba( 255, 220, 0, 255));
+   windColorTemp[ 7].setRgba(qRgba( 255, 180, 0, 255));
+   windColorTemp[ 8].setRgba(qRgba( 255, 120, 0, 255));
+   windColorTemp[ 9].setRgba(qRgba( 230, 120, 0, 255));
+   windColorTemp[10].setRgba(qRgba( 220, 80, 0, 255));
+   windColorTemp[11].setRgba(qRgba( 200, 50, 30, 255));
+   windColorTemp[12].setRgba(qRgba( 170, 0, 50, 255));
+   windColorTemp[13].setRgba(qRgba( 150, 0, 30, 255));
+   QRgb rgb = 0;
+   if (! smooth) {
+   const int beauf = Util::kmhToBeaufort(v);
+   rgb = windColorTemp[beauf].rgba();
+   }
+   else {
+   // Interpolation de couleur
+   double fbeauf = Util::kmhToBeaufort_F(v);
+   int f1=qBound(0,(int)(fbeauf),12);
+   int f2=qBound(0,(int)(fbeauf+1),12);
+   QColor c1 = windColorTemp[f1];
+   QColor c2 = windColorTemp[f2];
+   double dcol = fbeauf-floor(fbeauf);
+   rgb = qRgba(
+   (int)( c1.red() *(1.0-dcol) + dcol*c2.red() +0.5),
+   (int)( c1.green()*(1.0-dcol) + dcol*c2.green() +0.5),
+   (int)( c1.blue() *(1.0-dcol) + dcol*c2.blue() +0.5),
+   255
+   );
+   }
+   return QColor(rgb);
+}
+#endif
+
+QRgb MapDataDrawer::getCurrentColor(double v, bool smooth) {
+    return DataColors::get_color("current_kts",v,smooth);
+}
+
+QColor MapDataDrawer::getCurrentColorStatic(const double &v, const bool &smooth) {
+    return QColor(DataColors::get_color("current_kts",v,smooth));
+}
+
+QRgb MapDataDrawer::getBinaryColor(double v, bool smooth) {
+    return DataColors::get_color("binary",v,smooth);
 }
 
 //--------------------------------------------------------------------------
@@ -414,6 +297,10 @@ void MapDataDrawer::draw_WIND_Color_old(Grib * grib, QPainter &pnt, const Projec
 
     time_t currentDate=grib->getCurrentDate();
 
+#if 0
+    ColorElement * colorElement=DataColors::get_colorElement("wind_kts");
+    if(!colorElement) return;
+#endif
 
     if(!grib->getInterpolationParam(currentDate,&t1,&t2,&recU1,&recV1,&recU2,&recV2))
         return;
@@ -451,8 +338,11 @@ void MapDataDrawer::draw_WIND_Color_old(Grib * grib, QPainter &pnt, const Projec
                     v_tab[indice]=v;
                     y_tab[indice]=(y<0);
                 }
-
+#if 1
                 rgb=getWindColor(u, smooth);
+#else
+                rgb=colorElement->get_color(u,smooth);
+#endif
                 image.setPixel(i,  j,rgb);
                 image.setPixel(i+1,j,rgb);
                 image.setPixel(i,  j+1,rgb);
@@ -490,8 +380,12 @@ void MapDataDrawer::draw_WIND_Color(Grib * grib,QPainter &pnt, const Projection 
                                bool showWindArrows,bool barbules)
 {
     if(!grib || !grib->isOk()) return ;
+    QTime calibration;
+    calibration.start();
+
     if(gribMonoCpu || QThread::idealThreadCount()<=1) {
         draw_WIND_Color_old(grib,pnt,proj,smooth,showWindArrows,barbules);
+        qWarning() << "Finished mono: " << calibration.elapsed();
         return;
     }
 
@@ -601,6 +495,7 @@ void MapDataDrawer::draw_WIND_Color(Grib * grib,QPainter &pnt, const Projection 
             }
         }
     }
+    qWarning() << "Finished multi: " << calibration.elapsed();
 }
 //--------------------------------------------------------------------------
 // Carte de couleurs du courant
@@ -773,11 +668,11 @@ void  MapDataDrawer::drawColorMapGeneric_Abs_Delta_Data (
     delete image;
 }
 
-//--------------------------------------------------------------------------
-// Carte de couleurs des precipitations
-//--------------------------------------------------------------------------
-void MapDataDrawer::draw_RAIN_Color(Grib * grib,QPainter &pnt, const Projection *proj, bool smooth)
-{
+/****************************************************************************
+ * Data map drawing (calls generic fct for real drawing operations)
+ ***************************************************************************/
+
+void MapDataDrawer::draw_RAIN_Color(Grib * grib,QPainter &pnt, const Projection *proj, bool smooth) {
     if(!grib || !grib->isOk()) return;
     GribRecord *rec_prev,*rec_nxt;
     time_t tPrev,tNxt;
@@ -787,11 +682,7 @@ void MapDataDrawer::draw_RAIN_Color(Grib * grib,QPainter &pnt, const Projection 
         drawColorMapGeneric_1D(pnt,proj,smooth, currentDate,tPrev,tNxt,rec_prev,rec_nxt, &MapDataDrawer::getRainColor);
 }
 
-//--------------------------------------------------------------------------
-// Carte de couleurs de la hauteur de neige
-//--------------------------------------------------------------------------
-void MapDataDrawer::draw_SNOW_DEPTH_Color(Grib * grib,QPainter &pnt, const Projection *proj, bool smooth)
-{
+void MapDataDrawer::draw_SNOW_DEPTH_Color(Grib * grib,QPainter &pnt, const Projection *proj, bool smooth) {
     if(!grib || !grib->isOk()) return;
     GribRecord *rec_prev,*rec_nxt;
     time_t tPrev,tNxt;
@@ -800,32 +691,28 @@ void MapDataDrawer::draw_SNOW_DEPTH_Color(Grib * grib,QPainter &pnt, const Proje
                                  &tPrev,&tNxt,&rec_prev,&rec_nxt))
         drawColorMapGeneric_1D(pnt,proj,smooth, currentDate,tPrev,tNxt,rec_prev,rec_nxt, &MapDataDrawer::getSnowDepthColor);
 }
-void MapDataDrawer::draw_SNOW_CATEG_Color(Grib * grib,QPainter &pnt, const Projection *proj, bool smooth)
-{
+
+void MapDataDrawer::draw_SNOW_CATEG_Color(Grib * grib,QPainter &pnt, const Projection *proj, bool smooth) {
     if(!grib || !grib->isOk()) return;
     GribRecord *rec_prev,*rec_nxt;
     time_t tPrev,tNxt;
     time_t currentDate=grib->getCurrentDate();
     if(grib->getGribRecordArroundDates(GRB_SNOW_CATEG,LV_GND_SURF,0,currentDate,
                                  &tPrev,&tNxt,&rec_prev,&rec_nxt))
-        drawColorMapGeneric_1D(pnt,proj,smooth, currentDate,tPrev,tNxt,rec_prev,rec_nxt, &MapDataDrawer::getSnowDepthColor);
+        drawColorMapGeneric_1D(pnt,proj,smooth, currentDate,tPrev,tNxt,rec_prev,rec_nxt, &MapDataDrawer::getBinaryColor);
 }
-void MapDataDrawer::draw_FRZRAIN_CATEG_Color(Grib * grib,QPainter &pnt, const Projection *proj, bool smooth)
-{
+
+void MapDataDrawer::draw_FRZRAIN_CATEG_Color(Grib * grib,QPainter &pnt, const Projection *proj, bool smooth) {
     if(!grib || !grib->isOk()) return;
     GribRecord *rec_prev,*rec_nxt;
     time_t tPrev,tNxt;
     time_t currentDate=grib->getCurrentDate();
     if(grib->getGribRecordArroundDates(GRB_FRZRAIN_CATEG,LV_GND_SURF,0,currentDate,
                                  &tPrev,&tNxt,&rec_prev,&rec_nxt))
-        drawColorMapGeneric_1D(pnt,proj,smooth, currentDate,tPrev,tNxt,rec_prev,rec_nxt, &MapDataDrawer::getSnowDepthColor);
+        drawColorMapGeneric_1D(pnt,proj,smooth, currentDate,tPrev,tNxt,rec_prev,rec_nxt, &MapDataDrawer::getBinaryColor);
 }
 
-//--------------------------------------------------------------------------
-// Carte de couleurs de la nebulosite
-//--------------------------------------------------------------------------
-void MapDataDrawer::draw_CLOUD_Color(Grib * grib,QPainter &pnt, const Projection *proj, bool smooth)
-{
+void MapDataDrawer::draw_CLOUD_Color(Grib * grib,QPainter &pnt, const Projection *proj, bool smooth) {
     if(!grib || !grib->isOk()) return;
     isCloudsColorModeWhite = Settings::getSetting("cloudsColorMode", "white").toString() == "white";
 
@@ -836,11 +723,8 @@ void MapDataDrawer::draw_CLOUD_Color(Grib * grib,QPainter &pnt, const Projection
                                  &tPrev,&tNxt,&rec_prev,&rec_nxt))
         drawColorMapGeneric_1D(pnt,proj,smooth, currentDate,tPrev,tNxt,rec_prev,rec_nxt, &MapDataDrawer::getCloudColor);
 }
-//--------------------------------------------------------------------------
-// Carte de couleurs de l'humidite relative
-//--------------------------------------------------------------------------
-void MapDataDrawer::draw_HUMID_Color(Grib * grib,QPainter &pnt, const Projection *proj, bool smooth)
-{
+
+void MapDataDrawer::draw_HUMID_Color(Grib * grib,QPainter &pnt, const Projection *proj, bool smooth) {
     if(!grib || !grib->isOk()) return;
     GribRecord *rec_prev,*rec_nxt;
     time_t tPrev,tNxt;
@@ -850,9 +734,7 @@ void MapDataDrawer::draw_HUMID_Color(Grib * grib,QPainter &pnt, const Projection
         drawColorMapGeneric_1D(pnt,proj,smooth, currentDate,tPrev,tNxt,rec_prev,rec_nxt, &MapDataDrawer::getHumidColor);
 }
 
-//--------------------------------------------------------------------------
-void MapDataDrawer::draw_Temp_Color(Grib * grib,QPainter &pnt, const Projection *proj, bool smooth)
-{
+void MapDataDrawer::draw_Temp_Color(Grib * grib,QPainter &pnt, const Projection *proj, bool smooth) {
     if(!grib || !grib->isOk()) return;
     GribRecord *rec_prev,*rec_nxt;
     time_t tPrev,tNxt;
@@ -861,9 +743,8 @@ void MapDataDrawer::draw_Temp_Color(Grib * grib,QPainter &pnt, const Projection 
                                  &tPrev,&tNxt,&rec_prev,&rec_nxt))
         drawColorMapGeneric_1D(pnt,proj,smooth, currentDate,tPrev,tNxt,rec_prev,rec_nxt, &MapDataDrawer::getTemperatureColor);
 }
-//--------------------------------------------------------------------------
-void MapDataDrawer::draw_TempPot_Color(Grib * grib,QPainter &pnt, const Projection *proj, bool smooth)
-{
+
+void MapDataDrawer::draw_TempPot_Color(Grib * grib,QPainter &pnt, const Projection *proj, bool smooth) {
     if(!grib || !grib->isOk()) return;
     GribRecord *rec_prev,*rec_nxt;
     time_t tPrev,tNxt;
@@ -872,9 +753,8 @@ void MapDataDrawer::draw_TempPot_Color(Grib * grib,QPainter &pnt, const Projecti
                                  &tPrev,&tNxt,&rec_prev,&rec_nxt))
         drawColorMapGeneric_1D(pnt,proj,smooth, currentDate,tPrev,tNxt,rec_prev,rec_nxt, &MapDataDrawer::getTemperatureColor);
 }
-//--------------------------------------------------------------------------
-void MapDataDrawer::draw_Dewpoint_Color(Grib * grib,QPainter &pnt, const Projection *proj, bool smooth)
-{
+
+void MapDataDrawer::draw_Dewpoint_Color(Grib * grib,QPainter &pnt, const Projection *proj, bool smooth) {
     if(!grib || !grib->isOk()) return;
     GribRecord *rec_prev,*rec_nxt;
     time_t tPrev,tNxt;
@@ -883,9 +763,8 @@ void MapDataDrawer::draw_Dewpoint_Color(Grib * grib,QPainter &pnt, const Project
                                  &tPrev,&tNxt,&rec_prev,&rec_nxt))
         drawColorMapGeneric_1D(pnt,proj,smooth, currentDate,tPrev,tNxt,rec_prev,rec_nxt, &MapDataDrawer::getTemperatureColor);
 }
-//--------------------------------------------------------------------------
-void MapDataDrawer::draw_CAPEsfc(Grib * grib,QPainter &pnt, const Projection *proj, bool smooth)
-{
+
+void MapDataDrawer::draw_CAPEsfc(Grib * grib,QPainter &pnt, const Projection *proj, bool smooth) {
     if(!grib || !grib->isOk()) return;
     GribRecord *rec_prev,*rec_nxt;
     time_t tPrev,tNxt;
@@ -894,11 +773,8 @@ void MapDataDrawer::draw_CAPEsfc(Grib * grib,QPainter &pnt, const Projection *pr
                                  &tPrev,&tNxt,&rec_prev,&rec_nxt))
         drawColorMapGeneric_1D(pnt,proj,smooth, currentDate,tPrev,tNxt,rec_prev,rec_nxt, &MapDataDrawer::getCAPEColor);
 }
-//--------------------------------------------------------------------------
-// Carte de l'ecart temperature-point de rosee
-//--------------------------------------------------------------------------
-void MapDataDrawer::draw_DeltaDewpoint_Color(Grib * grib,QPainter &pnt, const Projection *proj, bool smooth)
-{
+
+void MapDataDrawer::draw_DeltaDewpoint_Color(Grib * grib,QPainter &pnt, const Projection *proj, bool smooth) {
     if(!grib || !grib->isOk()) return;
 
     GribRecord *rec_prevTemp,*rec_nxtTemp;
@@ -916,8 +792,11 @@ void MapDataDrawer::draw_DeltaDewpoint_Color(Grib * grib,QPainter &pnt, const Pr
                                                         &MapDataDrawer::getDeltaTemperaturesColor );
 }
 
-void MapDataDrawer::draw_Isobars(Grib * grib,QPainter &pnt, const Projection *proj)
-{
+/****************************************************************************
+ * Isobar / Isotherm0 drawing
+ ***************************************************************************/
+
+void MapDataDrawer::draw_Isobars(Grib * grib,QPainter &pnt, const Projection *proj) {
     if(!grib || !grib->isOk()) return;
     std::list<IsoLine *>::iterator it;
     std::list<IsoLine *> * listPtr=grib->get_isobars();
@@ -927,9 +806,7 @@ void MapDataDrawer::draw_Isobars(Grib * grib,QPainter &pnt, const Projection *pr
     }
 }
 
-//--------------------------------------------------------------------------
-void MapDataDrawer::draw_Isotherms0(Grib * grib,QPainter &pnt, const Projection *proj)
-{
+void MapDataDrawer::draw_Isotherms0(Grib * grib,QPainter &pnt, const Projection *proj) {
     if(!grib || !grib->isOk()) return;
     std::list<IsoLine *>::iterator it;
     std::list<IsoLine *> * listPtr=grib->get_isobars();
@@ -938,10 +815,9 @@ void MapDataDrawer::draw_Isotherms0(Grib * grib,QPainter &pnt, const Projection 
         (*it)->drawIsoLine(pnt, proj);
     }
 }
-//--------------------------------------------------------------------------
+
 void MapDataDrawer::draw_IsoLinesLabels(QPainter &pnt, QColor &couleur, const Projection *proj,
-                                                std::list<IsoLine *>*liste, double coef)
-{
+                                                std::list<IsoLine *>*liste, double coef) {
     std::list<IsoLine *>::iterator it;
     int nbseg = 0;
     for(it=liste->begin(); it!=liste->end(); ++it)
@@ -964,24 +840,26 @@ void MapDataDrawer::draw_IsoLinesLabels(QPainter &pnt, QColor &couleur, const Pr
         (*it)->drawIsoLineLabels(pnt, couleur, proj, density, first, coef);
     }
 }
-//--------------------------------------------------------------------------
-void MapDataDrawer::draw_Isotherms0Labels(Grib * grib,QPainter &pnt, const Projection *proj)
-{
+
+void MapDataDrawer::draw_Isotherms0Labels(Grib * grib,QPainter &pnt, const Projection *proj) {
     if(!grib || !grib->isOk()) return;
     QColor couleur(200,80,80);
     std::list<IsoLine *> * listPtr=grib->get_isobars();
     draw_IsoLinesLabels(pnt, couleur, proj, listPtr, 1.0);
 }
-//--------------------------------------------------------------------------
-void MapDataDrawer::draw_IsobarsLabels(Grib * grib,QPainter &pnt, const Projection *proj)
-{
+
+void MapDataDrawer::draw_IsobarsLabels(Grib * grib,QPainter &pnt, const Projection *proj) {
     if(!grib || !grib->isOk()) return;
     QColor couleur(40,40,40);
     std::list<IsoLine *> * listPtr=grib->get_isotherms0();
     draw_IsoLinesLabels(pnt, couleur, proj, listPtr, 0.01);
 }
 
-//--------------------------------------------------------------------------
+/****************************************************************************
+ * Min(L) / Max(H) drawing
+ ***************************************************************************/
+
+
 void MapDataDrawer::draw_PRESSURE_MinMax(Grib * grib,QPainter &pnt, const Projection *proj)
 {
     if(!grib || !grib->isOk()) return;
@@ -1076,10 +954,11 @@ void MapDataDrawer::draw_PRESSURE_MinMax(Grib * grib,QPainter &pnt, const Projec
     }
 }
 
+/****************************************************************************
+ * Temperature label drawing
+ ***************************************************************************/
 
-//--------------------------------------------------------------------------
-void MapDataDrawer::draw_TEMPERATURE_Labels(Grib * grib,QPainter &pnt, const Projection *proj)
-{
+void MapDataDrawer::draw_TEMPERATURE_Labels(Grib * grib,QPainter &pnt, const Projection *proj) {
     if(!grib || !grib->isOk()) return;
     GribRecord *rec_prev,*rec_nxt;
     time_t tPrev,tNxt;
@@ -1284,7 +1163,7 @@ GribThreadResult interpolateThreaded(const GribThreadData &g) {
     if(g.grib->getInterpolatedValue_byDates(g.p.x(),g.p.y(),g.cD,g.tP,g.tN,
                                                    g.recU1,g.recV1,g.recU2,g.recV2,&tws,&twd,
                                                    g.interpolMode))
-        r.rgb=g.mapDataDrawer->getWindColor(tws, g.smooth);
+        r.rgb=MapDataDrawer::getWindColorStatic(tws, g.smooth).rgba();
     else
         tws=-1;
     r.tws=tws;
