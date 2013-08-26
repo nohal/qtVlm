@@ -139,6 +139,7 @@ POI::POI(QString name, int type, double lat, double lon,
         show();
     else
         hide();
+    this->setAcceptTouchEvents(true);
 }
 
 POI::~POI()

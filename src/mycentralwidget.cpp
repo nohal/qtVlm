@@ -347,9 +347,20 @@ bool myScene::event(QEvent * event)
         {
             qWarning()<<"TapGesture detected";
         }
-        else if (gestureEvent->gesture(Qt::TapAndHoldGesture))
+        else if (QGesture *pg=gestureEvent->gesture(Qt::TapAndHoldGesture))
         {
             qWarning()<<"TapAndHoldGesture detected";
+            parent->slot_resetGestures();
+#if 0
+            QTapAndHoldGesture *p=static_cast<QTapAndHoldGesture*>(pg);
+            QGraphicsSceneContextMenuEvent ce(QEvent::GraphicsSceneContextMenu);
+            QPointF scenePos=parent->getView()->mapToScene(parent->getView()->mapFromGlobal(p->position().toPoint()));
+            ce.setScenePos(scenePos);
+            ce.setReason(QGraphicsSceneContextMenuEvent::Other);
+            QGraphicsItem * item=parent->getScene()->itemAt(scenePos,parent->getView()->transform());
+            bool a =parent->getScene()->sendEvent(item,&ce);
+            return true;
+#endif
         }
         else if (gestureEvent->gesture(Qt::PanGesture))
         {
