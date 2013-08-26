@@ -67,6 +67,7 @@ Copyright (C) 2008 - Jacques Zaninetti - http://zygrib.free.fr
 #include "BoardVLM.h"
 #include "BoardReal.h"
 #include "MapDataDrawer.h"
+#include "DataColors.h"
 
 #include "DialogPoiDelete.h"
 #include "DialogPoi.h"
@@ -610,6 +611,7 @@ void MainWindow::keyPressEvent ( QKeyEvent  * /* event */ )
 {
     //qWarning() << "Key pressed in main: " << event->key();
 }
+
 void MainWindow::closeProgress(void)
 {
     if(QThread::idealThreadCount()>1 && QFile(appFolder.value("img")+"benchmark.grb").exists())
@@ -652,6 +654,44 @@ void MainWindow::closeProgress(void)
             qWarning()<<"result of benchmark: multiThread="<<cal1<<"monoThread="<<cal2;
             Settings::setSetting("gribBench1",cal1);
             Settings::setSetting("gribBench2",cal2);
+
+            /** **/
+#if 0
+            GribRecord *recU1,*recV1,*recU2,*recV2;
+            time_t t1,t2;
+            time_t tps=grib->getCurrentDate();
+            double u,v;
+            if(grib->getInterpolationParam(tps,&t1,&t2,&recU1,&recV1,&recU2,&recV2)) {
+                calibration.start();
+                for(double i=0;i<360;i+=0.1)
+                    for(double j=-89;j<90;j+=0.1) {
+                        if(grib->getInterpolatedValue_byDates(i,j,tps,t1,t2,recU1,recV1,recU2,recV2,&u,&v))
+                        {
+                            MapDataDrawer::getWindColorStaticOLD(u,true);
+                        }
+                    }
+                qWarning() << "old code: " << calibration.elapsed();
+                ColorElement * colorElement=DataColors::get_colorElement("wind_kts");
+                calibration.start();
+                for(double i=0;i<360;i+=0.1)
+                    for(double j=-89;j<90;j+=0.1) {
+                        if(grib->getInterpolatedValue_byDates(i,j,tps,t1,t2,recU1,recV1,recU2,recV2,&u,&v))
+                        {
+                            colorElement->get_color(u,true);
+                        }
+                    }
+                qWarning() << "new code: " << calibration.elapsed();
+                calibration.start();
+                for(double i=0;i<360;i+=0.1)
+                    for(double j=-89;j<90;j+=0.1) {
+                        if(grib->getInterpolatedValue_byDates(i,j,tps,t1,t2,recU1,recV1,recU2,recV2,&u,&v))
+                        {
+                            colorElement->get_colorCached(u,true);
+                        }
+                    }
+                qWarning() << "new code with cache: " << calibration.elapsed();
+            }
+#endif
         }
         delete grib;
     }

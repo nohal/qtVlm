@@ -216,6 +216,45 @@ QColor MapDataDrawer::getWindColorStatic(const double &v, const bool &smooth) {
 }
 #endif
 
+QColor MapDataDrawer::getWindColorStaticOLD(const double &v, const bool &smooth) {
+    QColor windColorTemp[14]; // couleur selon la force du vent en beauforts
+   windColorTemp[ 0].setRgba(qRgba( 0, 80, 255, 255));
+   windColorTemp[ 1].setRgba(qRgba( 0, 150, 255, 255));
+   windColorTemp[ 2].setRgba(qRgba( 0, 200, 255, 255));
+   windColorTemp[ 3].setRgba(qRgba( 0, 250, 180, 255));
+   windColorTemp[ 4].setRgba(qRgba( 0, 230, 150, 255));
+   windColorTemp[ 5].setRgba(qRgba( 255, 255, 0, 255));
+   windColorTemp[ 6].setRgba(qRgba( 255, 220, 0, 255));
+   windColorTemp[ 7].setRgba(qRgba( 255, 180, 0, 255));
+   windColorTemp[ 8].setRgba(qRgba( 255, 120, 0, 255));
+   windColorTemp[ 9].setRgba(qRgba( 230, 120, 0, 255));
+   windColorTemp[10].setRgba(qRgba( 220, 80, 0, 255));
+   windColorTemp[11].setRgba(qRgba( 200, 50, 30, 255));
+   windColorTemp[12].setRgba(qRgba( 170, 0, 50, 255));
+   windColorTemp[13].setRgba(qRgba( 150, 0, 30, 255));
+   QRgb rgb = 0;
+   if (! smooth) {
+   const int beauf = Util::kmhToBeaufort(v);
+   rgb = windColorTemp[beauf].rgba();
+   }
+   else {
+   // Interpolation de couleur
+   double fbeauf = Util::kmhToBeaufort_F(v);
+   int f1=qBound(0,(int)(fbeauf),12);
+   int f2=qBound(0,(int)(fbeauf+1),12);
+   QColor c1 = windColorTemp[f1];
+   QColor c2 = windColorTemp[f2];
+   double dcol = fbeauf-floor(fbeauf);
+   rgb = qRgba(
+   (int)( c1.red() *(1.0-dcol) + dcol*c2.red() +0.5),
+   (int)( c1.green()*(1.0-dcol) + dcol*c2.green() +0.5),
+   (int)( c1.blue() *(1.0-dcol) + dcol*c2.blue() +0.5),
+   255
+   );
+   }
+   return QColor(rgb);
+}
+
 QRgb MapDataDrawer::getCurrentColor(double v, bool smooth) {
     return DataColors::get_color("current_kts",v,smooth);
 }

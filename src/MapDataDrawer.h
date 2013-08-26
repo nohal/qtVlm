@@ -97,6 +97,8 @@ class MapDataDrawer
         static QColor getWindColorStatic(const double &v, const bool &smooth=true);
         static QColor getCurrentColorStatic(const double &v, const bool &smooth=true);
 
+        static QColor getWindColorStaticOLD(const double &v, const bool &smooth);
+
         FCT_SETGET_CST(bool,gribMonoCpu)
 
     private:
