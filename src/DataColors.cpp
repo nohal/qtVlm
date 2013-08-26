@@ -205,6 +205,17 @@ QRgb ColorElement::get_color(double v, bool smooth) {
 
 }
 
+QRgb ColorElement::get_colorCached(double v, bool smooth) {
+    int key=(int)(v*100);
+
+    if(colorCache.contains(key))
+        return colorCache.value(key);
+
+    QRgb res = get_color(v,smooth);
+    colorCache.insert(key,res);
+    return res;
+}
+
 void ColorElement::add_color(double value,QRgb color) {
     value=value*coef+offset;
     if(!colorMap.contains(value)) {

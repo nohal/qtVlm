@@ -23,6 +23,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <QColor>
 #include <QMap>
+#include <QHash>
 
 #include "class_list.h"
 #include "dataDef.h"
@@ -32,6 +33,8 @@ class ColorElement {
         ColorElement(int transparence);
 
         QRgb get_color(double v, bool smooth);
+
+        QRgb get_colorCached(double v, bool smooth);
 
         void add_color(double value,QRgb color);
         void set_param(double coef,double offset) {this->coef=coef; this->offset=offset;}
@@ -44,6 +47,7 @@ class ColorElement {
 
     private:
         QMap<double,QRgb> colorMap;
+        QMap<int,QRgb> colorCache;
 
         double minVal;
         double maxVal;

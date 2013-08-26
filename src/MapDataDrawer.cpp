@@ -342,7 +342,11 @@ void MapDataDrawer::draw_WIND_Color_old(Grib * grib, QPainter &pnt, const Projec
                     y_tab[indice]=(y<0);
                 }
 #ifdef NEW_COLOR_CLASS
+    #ifdef WITH_CACHE
+                rgb=colorElement->get_colorCached(u,smooth);
+    #else
                 rgb=colorElement->get_color(u,smooth);
+    #endif
 #else
                 rgb=getWindColor(u, smooth);
 #endif
@@ -1172,7 +1176,11 @@ GribThreadResult interpolateThreaded(const GribThreadData &g) {
                                                    g.recU1,g.recV1,g.recU2,g.recV2,&tws,&twd,
                                                    g.interpolMode))
 #ifdef NEW_COLOR_CLASS
-        r.rgb=g.colorElement->get_color(tws, g.smooth);
+    #ifdef WITH_CACHE
+            r.rgb=g.colorElement->get_colorCached(tws, g.smooth);
+    #else
+            r.rgb=g.colorElement->get_color(tws, g.smooth);
+    #endif
 #else
         r.rgb=MapDataDrawer::getWindColorStatic(tws, g.smooth).rgba();
 #endif
