@@ -26,6 +26,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "class_list.h"
 #include "dataDef.h"
 
+#define NEW_COLOR_CLASS
+
 struct GribThreadData
 {
     QPointF p;
@@ -35,6 +37,9 @@ struct GribThreadData
     bool smooth;
     Grib * grib;
     MapDataDrawer * mapDataDrawer;
+#ifdef NEW_COLOR_CLASS
+    ColorElement * colorElement;
+#endif
 };
 Q_DECLARE_TYPEINFO(GribThreadData,Q_PRIMITIVE_TYPE);
 struct GribThreadResult

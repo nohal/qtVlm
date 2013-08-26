@@ -174,7 +174,7 @@ ColorElement::ColorElement(int transparence) {
 
 QRgb ColorElement::get_color(double v, bool smooth) {
     /* exact match */
-    if(colorMap.contains(v)) return colorMap.value(v);
+    //if(colorMap.contains(v)) return colorMap.value(v);
 
     /* out of bounderies */
     if(v<=minVal) return colorMap.begin().value();
@@ -185,12 +185,13 @@ QRgb ColorElement::get_color(double v, bool smooth) {
 
     if(smooth) {
         double fact=(v-(it-1).key())/((it).key()-(it-1).key());
+        double fact2=1-fact;
         QRgb minVal=(it-1).value();
         QRgb maxVal=(it).value();
         int r,g,b;
-        r=(int)((1-fact)*qRed(minVal)+fact*qRed(maxVal)+0.5);
-        g=(int)((1-fact)*qGreen(minVal)+fact*qGreen(maxVal)+0.5);
-        b=(int)((1-fact)*qBlue(minVal)+fact*qBlue(maxVal)+0.5);
+        r=(int)(fact2*qRed(minVal)+fact*qRed(maxVal)+0.5);
+        g=(int)(fact2*qGreen(minVal)+fact*qGreen(maxVal)+0.5);
+        b=(int)(fact2*qBlue(minVal)+fact*qBlue(maxVal)+0.5);
 
         return qRgba(r,g,b,transparence);
 

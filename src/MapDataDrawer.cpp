@@ -140,7 +140,8 @@ QRgb  MapDataDrawer::getPressureColor(double v, bool smooth) {
     return DataColors::get_color_windColorScale(x, t0, t1, smooth);
 }
 
-#if 1
+#ifdef NEW_COLOR_CLASS
+// using new color class
 QRgb MapDataDrawer::getWindColor(double v, bool smooth) {
     return DataColors::get_color("wind_kts",v,smooth);
 }
@@ -149,8 +150,10 @@ QColor MapDataDrawer::getWindColorStatic(const double &v, const bool &smooth) {
     return QColor(DataColors::get_color("wind_kts",v,smooth));
 }
 #else
+// using old color system
 QRgb MapDataDrawer::getWindColor(double v, bool smooth) {
     QRgb rgb = 0;
+
     if (! smooth) {
         const int beauf = Util::kmhToBeaufort(v);
         rgb = windColor[beauf].rgba();
@@ -297,7 +300,7 @@ void MapDataDrawer::draw_WIND_Color_old(Grib * grib, QPainter &pnt, const Projec
 
     time_t currentDate=grib->getCurrentDate();
 
-#if 0
+#ifdef NEW_COLOR_CLASS
     ColorElement * colorElement=DataColors::get_colorElement("wind_kts");
     if(!colorElement) return;
 #endif
@@ -338,11 +341,12 @@ void MapDataDrawer::draw_WIND_Color_old(Grib * grib, QPainter &pnt, const Projec
                     v_tab[indice]=v;
                     y_tab[indice]=(y<0);
                 }
-#if 1
-                rgb=getWindColor(u, smooth);
-#else
+#ifdef NEW_COLOR_CLASS
                 rgb=colorElement->get_color(u,smooth);
+#else
+                rgb=getWindColor(u, smooth);
 #endif
+
                 image.setPixel(i,  j,rgb);
                 image.setPixel(i+1,j,rgb);
                 image.setPixel(i,  j+1,rgb);
@@ -434,6 +438,10 @@ void MapDataDrawer::draw_WIND_Color(Grib * grib,QPainter &pnt, const Projection 
     g.smooth=smooth;
     g.grib=grib;
     g.mapDataDrawer=this;
+#ifdef NEW_COLOR_CLASS
+    g.colorElement=DataColors::get_colorElement("wind_kts");
+    if(!g.colorElement) return;
+#endif
     QList<GribThreadData> windData;
     windData.reserve(W*H);
     for (i=0; i<W-2; i+=2)
@@ -1163,7 +1171,11 @@ GribThreadResult interpolateThreaded(const GribThreadData &g) {
     if(g.grib->getInterpolatedValue_byDates(g.p.x(),g.p.y(),g.cD,g.tP,g.tN,
                                                    g.recU1,g.recV1,g.recU2,g.recV2,&tws,&twd,
                                                    g.interpolMode))
+#ifdef NEW_COLOR_CLASS
+        r.rgb=g.colorElement->get_color(tws, g.smooth);
+#else
         r.rgb=MapDataDrawer::getWindColorStatic(tws, g.smooth).rgba();
+#endif
     else
         tws=-1;
     r.tws=tws;

@@ -2,7 +2,7 @@
 	<colorDataConfig>
 		<colorData>
 			<name>wind_kts</name>
-			<param>0.514444;0</param>
+			<param>1;0</param>
 			<color>0;40;140;255</color>
 			<color>3;0;175;255</color>
 			<color>6;0;220;225</color>
