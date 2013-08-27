@@ -27,7 +27,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "dataDef.h"
 
 #define NEW_COLOR_CLASS
-#define WITH_CACHE
+//#define WITH_CACHE
 
 struct GribThreadData
 {

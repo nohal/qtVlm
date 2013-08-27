@@ -656,11 +656,25 @@ void MainWindow::closeProgress(void)
             Settings::setSetting("gribBench2",cal2);
 
             /** **/
-#if 0
+        }
+        delete grib;
+    }
+    progress->newStep(95,tr("Opening grib"));
+    gribFilePath = Settings::getSetting("gribFilePath", appFolder.value("grib")).toString();
+    if(gribFilePath.isEmpty())
+        gribFilePath = appFolder.value("grib");
+    QString fname = Settings::getSetting("gribFileName", "").toString();
+    if (fname != "" && QFile::exists(fname))
+    {
+        openGribFile(fname, false);
+        gribFileName=fname;
+#if 1
+            Grib * grib=my_centralWidget->getGrib();
             GribRecord *recU1,*recV1,*recU2,*recV2;
             time_t t1,t2;
             time_t tps=grib->getCurrentDate();
             double u,v;
+            QTime calibration;
             if(grib->getInterpolationParam(tps,&t1,&t2,&recU1,&recV1,&recU2,&recV2)) {
                 calibration.start();
                 for(double i=0;i<360;i+=0.1)
@@ -682,6 +696,9 @@ void MainWindow::closeProgress(void)
                     }
                 qWarning() << "new code: " << calibration.elapsed();
                 calibration.start();
+                colorElement->loadCache(true);
+                qWarning()<<"time to preload cache:"<<calibration.elapsed();
+                calibration.start();
                 for(double i=0;i<360;i+=0.1)
                     for(double j=-89;j<90;j+=0.1) {
                         if(grib->getInterpolatedValue_byDates(i,j,tps,t1,t2,recU1,recV1,recU2,recV2,&u,&v))
@@ -692,18 +709,6 @@ void MainWindow::closeProgress(void)
                 qWarning() << "new code with cache: " << calibration.elapsed();
             }
 #endif
-        }
-        delete grib;
-    }
-    progress->newStep(95,tr("Opening grib"));
-    gribFilePath = Settings::getSetting("gribFilePath", appFolder.value("grib")).toString();
-    if(gribFilePath.isEmpty())
-        gribFilePath = appFolder.value("grib");
-    QString fname = Settings::getSetting("gribFileName", "").toString();
-    if (fname != "" && QFile::exists(fname))
-    {
-        openGribFile(fname, false);
-        gribFileName=fname;
     }
     fname = Settings::getSetting("gribFileNameCurrent", "").toString();
     if (fname != "" && QFile::exists(fname))

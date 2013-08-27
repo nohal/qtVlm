@@ -204,16 +204,17 @@ QRgb ColorElement::get_color(double v, bool smooth) {
     }
 
 }
+void ColorElement::loadCache(const bool &smooth)
+{
+    //colorCache.clear();
+    for (double i=0;i<10000;++i)
+        colorCache[qRound(i)]=get_color(i/100.0,smooth);
+    //qWarning()<<"colorCache contains"<<colorCache.count()<<"elements";
+}
 
 QRgb ColorElement::get_colorCached(double v, bool smooth) {
-    int key=(int)(v*100);
-
-    if(colorCache.contains(key))
-        return colorCache.value(key);
-
-    QRgb res = get_color(v,smooth);
-    colorCache.insert(key,res);
-    return res;
+    int key=qRound(v*100.0);
+    return colorCache[key];
 }
 
 void ColorElement::add_color(double value,QRgb color) {

@@ -45,9 +45,10 @@ class ColorElement {
 
         void print_data(void);
 
-    private:
+        void loadCache(const bool &smooth);
+private:
         QMap<double,QRgb> colorMap;
-        QMap<int,QRgb> colorCache;
+        QRgb colorCache[10000];
 
         double minVal;
         double maxVal;
