@@ -965,7 +965,7 @@ double GribRecord::getInterpolatedValue(double px, double py, bool numericalInte
     pj = (py-La1)/Dj;
 
     int i1;
-    int sigDj;
+    int sigDj=1;
 
 
 
@@ -974,11 +974,15 @@ double GribRecord::getInterpolatedValue(double px, double py, bool numericalInte
     else
         i1=i0+1;
 
+    // distances to 00
+    double dx = pi-i0;
+    double dy = pj-j0;
+
     if(((py-La1)/Dj)-j0==0.0)
     {
         sigDj=0;
     }
-    else
+/*    else
     {
         if(Dj<0)
         {
@@ -987,11 +991,7 @@ double GribRecord::getInterpolatedValue(double px, double py, bool numericalInte
         }
         else
             sigDj=1;
-    }
-
-    // distances to 00
-    double dx = pi-i0;
-    double dy = pj-j0;
+    }*/
 
     bool h00,h01,h10,h11;
     int nbval = 0;     // how many values in grid ?
