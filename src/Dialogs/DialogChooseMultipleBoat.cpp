@@ -38,7 +38,9 @@ void DialogChooseMultipleBoat::init_dialog(BarrierSet *barrierSet,QList<boat*> b
             QListWidgetItem * item = new QListWidgetItem(boatPtr->getBoatPseudo(),lst_barrierSet);
             /* add barrierSet pointer as first UserRole */
             item->setData(Qt::UserRole,VPtr<boat>::asQVariant(boatPtr));
-            item->setSelected(boatPtr->get_barrierSets()->contains(barrierSet));
+            item->setFlags(item->flags() | Qt::ItemIsUserCheckable);
+            item->setCheckState(boatPtr->get_barrierSets()->contains(barrierSet)?Qt::Checked:Qt::Unchecked);
+           // item->setSelected(boatPtr->get_barrierSets()->contains(barrierSet));
         }
     }
 }
@@ -48,7 +50,7 @@ void DialogChooseMultipleBoat::done(int result) {
         for(int i=0;i<lst_barrierSet->count();++i) {
             QListWidgetItem * item = lst_barrierSet->item(i);
             boat * boatPtr = VPtr<boat>::asPtr(item->data(Qt::UserRole));
-            if(item->isSelected())
+            if(item->checkState()==Qt::Checked)
                 boatPtr->add_barrierSet(barrierSet);
             else
                 boatPtr->rm_barrierSet(barrierSet);

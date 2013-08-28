@@ -72,6 +72,7 @@ Barrier::Barrier(MainWindow *mainWindow,BarrierSet * barrierSet) {
     connect(ac_delete,SIGNAL(triggered()),this,SLOT(slot_deleteBarrier()));
 
     ac_assBoats = new QAction(tr("Associate boats"),popUpMenu2);
+    popUpMenu->addAction(ac_assBoats);
     popUpMenu2->addAction(ac_assBoats);
     connect(ac_assBoats,SIGNAL(triggered()),this,SLOT(slot_associateBoats()));
 }
@@ -375,6 +376,7 @@ BarrierPoint::BarrierPoint(MainWindow * mainWindow, Barrier *barrier, QColor col
     connect(ac_deleteBarrier,SIGNAL(triggered()),barrier,SLOT(slot_deleteBarrier()));
 
     ac_assBoats = new QAction(tr("Associate boats"),popUpMenu2);
+    popUpMenu->addAction(ac_assBoats);
     popUpMenu2->addAction(ac_assBoats);
     connect(ac_assBoats,SIGNAL(triggered()),barrier,SLOT(slot_associateBoats()));
 }

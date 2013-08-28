@@ -39,8 +39,10 @@ void DialogChooseMultipleBarrierSet::init_dialog(QList<BarrierSet*> * activeSets
         QListWidgetItem * item = new QListWidgetItem(barrierSet->get_name(),lst_barrierSet);
         /* add barrierSet pointer as first UserRole */
         item->setData(Qt::UserRole,VPtr<BarrierSet>::asQVariant(barrierSet));
-        qWarning() << i << ": " << item->text() << ", selected: " << activeSets->contains(barrierSet);
-        item->setSelected(activeSets->contains(barrierSet));
+        item->setFlags(item->flags() | Qt::ItemIsUserCheckable);
+        item->setCheckState(activeSets->contains(barrierSet)?Qt::Checked:Qt::Unchecked);
+        //qWarning() << i << ": " << item->text() << ", selected: " << activeSets->contains(barrierSet);
+        //item->setSelected(activeSets->contains(barrierSet));
     }
 }
 
@@ -48,9 +50,9 @@ void DialogChooseMultipleBarrierSet::done(int result) {
     if(result == QDialog::Accepted) {
         /* update list */
         activeSets->clear();
-        QList<QListWidgetItem *> selectedItems = lst_barrierSet->selectedItems();
-        for(int i=0;i<selectedItems.count();++i)
-            activeSets->append(VPtr<BarrierSet>::asPtr(selectedItems.at(i)->data(Qt::UserRole)));
+        for(int i=0;i<lst_barrierSet->count();++i)
+            if(lst_barrierSet->item(i)->checkState()==Qt::Checked)
+                activeSets->append(VPtr<BarrierSet>::asPtr(lst_barrierSet->item(i)->data(Qt::UserRole)));
     }
     QDialog::done(result);
 }
