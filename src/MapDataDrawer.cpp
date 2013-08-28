@@ -342,6 +342,9 @@ void MapDataDrawer::draw_WIND_Color_old(Grib * grib, QPainter &pnt, const Projec
 #ifdef NEW_COLOR_CLASS
     ColorElement * colorElement=DataColors::get_colorElement("wind_kts");
     if(!colorElement) return;
+#ifdef WITH_CACHE
+    colorElement->loadCache(smooth);
+#endif
 #endif
 
     if(!grib->getInterpolationParam(currentDate,&t1,&t2,&recU1,&recV1,&recU2,&recV2))
@@ -382,7 +385,7 @@ void MapDataDrawer::draw_WIND_Color_old(Grib * grib, QPainter &pnt, const Projec
                 }
 #ifdef NEW_COLOR_CLASS
     #ifdef WITH_CACHE
-                rgb=colorElement->get_colorCached(u,smooth);
+                rgb=colorElement->get_colorCached(u);
     #else
                 rgb=colorElement->get_color(u,smooth);
     #endif
@@ -422,17 +425,18 @@ void MapDataDrawer::draw_WIND_Color_old(Grib * grib, QPainter &pnt, const Projec
             }
         }
     }
+    colorElement->clearCache();
 }
 void MapDataDrawer::draw_WIND_Color(Grib * grib,QPainter &pnt, const Projection *proj, bool smooth,
                                bool showWindArrows,bool barbules)
 {
     if(!grib || !grib->isOk()) return ;
-    QTime calibration;
-    calibration.start();
+//    QTime calibration;
+//    calibration.start();
 
     if(gribMonoCpu || QThread::idealThreadCount()<=1) {
         draw_WIND_Color_old(grib,pnt,proj,smooth,showWindArrows,barbules);
-        qWarning() << "Finished mono: " << calibration.elapsed();
+        //qWarning() << "Finished mono: " << calibration.elapsed();
         return;
     }
 
@@ -484,6 +488,9 @@ void MapDataDrawer::draw_WIND_Color(Grib * grib,QPainter &pnt, const Projection 
 #ifdef NEW_COLOR_CLASS
     g.colorElement=DataColors::get_colorElement("wind_kts");
     if(!g.colorElement) return;
+#ifdef WITH_CACHE
+    g.colorElement->loadCache(smooth);
+#endif
 #endif
     QList<GribThreadData> windData;
     windData.reserve(W*H);
@@ -546,7 +553,8 @@ void MapDataDrawer::draw_WIND_Color(Grib * grib,QPainter &pnt, const Projection 
             }
         }
     }
-    qWarning() << "Finished multi: " << calibration.elapsed();
+    g.colorElement->clearCache();
+    //qWarning() << "Finished multi: " << calibration.elapsed();
 }
 //--------------------------------------------------------------------------
 // Carte de couleurs du courant
@@ -1216,7 +1224,7 @@ GribThreadResult interpolateThreaded(const GribThreadData &g) {
                                                    g.interpolMode))
 #ifdef NEW_COLOR_CLASS
     #ifdef WITH_CACHE
-            r.rgb=g.colorElement->get_colorCached(tws, g.smooth);
+            r.rgb=g.colorElement->get_colorCached(tws);
     #else
             r.rgb=g.colorElement->get_color(tws, g.smooth);
     #endif

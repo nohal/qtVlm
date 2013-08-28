@@ -34,7 +34,7 @@ class ColorElement {
 
         QRgb get_color(double v, bool smooth);
 
-        QRgb get_colorCached(double v, bool smooth);
+        QRgb get_colorCached(const double &v) const;
 
         void add_color(double value,QRgb color);
         void set_param(double coef,double offset) {this->coef=coef; this->offset=offset;}
@@ -46,9 +46,10 @@ class ColorElement {
         void print_data(void);
 
         void loadCache(const bool &smooth);
+        void clearCache();
 private:
         QMap<double,QRgb> colorMap;
-        QRgb colorCache[10000];
+        QRgb * colorCache;
 
         double minVal;
         double maxVal;
