@@ -19,6 +19,10 @@
         <source>Closed barrier</source>
         <translation>Barrière fermée</translation>
     </message>
+    <message>
+        <source>Associate boats</source>
+        <translation>Αssocier des bateaux</translation>
+    </message>
 </context>
 <context>
     <name>BarrierPoint</name>
@@ -41,6 +45,10 @@
     <message>
         <source>Closed barrier</source>
         <translation>Barrière fermée</translation>
+    </message>
+    <message>
+        <source>Associate boats</source>
+        <translation>Αssocier des bateaux</translation>
     </message>
 </context>
 <context>
@@ -4330,6 +4338,22 @@ VMG %.2f nds</translation>
         <source>Error line %1, column %2:
 %3</source>
         <translation>Erreur ligne %1, colonne %2:\n%3</translation>
+    </message>
+    <message>
+        <source>Reading color file</source>
+        <translation>Lecture du fichier couleur</translation>
+    </message>
+    <message>
+        <source>File %1 can&apos;t be opened</source>
+        <translation>Le fichier %1 ne peut être ouvert</translation>
+    </message>
+    <message>
+        <source>Reading color file %1</source>
+        <translation>Lecture du fichier couleur %1</translation>
+    </message>
+    <message>
+        <source>Under rain navigation</source>
+        <translation>Navigation sous la pluie</translation>
     </message>
 </context>
 <context>

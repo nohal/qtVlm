@@ -1630,6 +1630,7 @@ routeStats ROUTE::getStats()
     stats.nbTacksGybes=0;
     stats.engineTime=0;
     stats.nightTime=0;
+    stats.rainTime=0;
     if(!grib) return stats;
     QList<vlmPoint> * points=this->getLine()->getPoints();
     if(points->size()<=1) return stats;
@@ -1673,6 +1674,7 @@ routeStats ROUTE::getStats()
             stats.engineTime+=date-prevDate;
         if(!parent->getTerre()->daylight(NULL,points->at(n)))
             stats.nightTime+=date-prevDate;
+        stats.rainTime+=grib->getInterpolatedValue_byDates(GRB_PRECIP_TOT,LV_GND_SURF,0,lon, lat, prevDate)>0.0?date-prevDate:0;
     }
     stats.averageBS=stats.averageBS/(points->size()-1);
     stats.averageTWS=stats.averageTWS/(points->size()-1);

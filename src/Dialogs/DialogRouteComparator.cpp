@@ -14,7 +14,7 @@ DialogRouteComparator::DialogRouteComparator(myCentralWidget *parent) : QDialog(
     this->mcw=parent;
     connect(this->closeButton,SIGNAL(clicked()),this,SLOT(close()));
     model= new QStandardItemModel(this);
-    model->setColumnCount(19);
+    model->setColumnCount(20);
     int c=0;
     model->setHeaderData(c++,Qt::Horizontal,QObject::tr("Color"));
     model->setHeaderData(c++,Qt::Horizontal,QObject::tr("Name"));
@@ -35,6 +35,7 @@ DialogRouteComparator::DialogRouteComparator(myCentralWidget *parent) : QDialog(
     model->setHeaderData(c++,Qt::Horizontal,QObject::tr("Reaching time"));
     model->setHeaderData(c++,Qt::Horizontal,QObject::tr("Motor time"));
     model->setHeaderData(c++,Qt::Horizontal,QObject::tr("Night navigation"));
+    model->setHeaderData(c++,Qt::Horizontal,QObject::tr("Under rain navigation"));
     model->setSortRole(Qt::UserRole);
     routesTable->header()->setAlternatingRowColors(true);
     routesTable->header()->setDefaultAlignment(Qt::AlignCenter|Qt::AlignVCenter);
@@ -296,8 +297,25 @@ void DialogRouteComparator::insertRoute(const int &n)
     items[x]->setData(n,Qt::UserRole+1);
     if(x%2!=0) items[x]->setData(QColor(240,240,240),Qt::BackgroundRole);
     items[x++]->setTextAlignment(Qt::AlignRight| Qt::AlignVCenter);
+    days=stats.rainTime/86400.0000;
+    if(qRound(days)>days)
+        days=qRound(days)-1;
+    else
+        days=qRound(days);
+    hours=(stats.rainTime-days*86400)/3600.0000;
+    if(qRound(hours)>hours)
+        hours=qRound(hours)-1;
+    else
+        hours=qRound(hours);
+    mins=qRound((stats.rainTime-days*86400-hours*3600)/60.0000);
+    items.append(new QStandardItem(QString::number((int)days)+" "+tr("jours")+" "+QString::number((int)hours)+" "+tr("heures")+" "+
+                                   QString::number((int)mins)+" "+tr("minutes")));
+    items[x]->setData(stats.rainTime,Qt::UserRole);
+    items[x]->setData(n,Qt::UserRole+1);
+    if(x%2!=0) items[x]->setData(QColor(240,240,240),Qt::BackgroundRole);
+    items[x++]->setTextAlignment(Qt::AlignRight| Qt::AlignVCenter);
     model->appendRow(items);
-    for(x=0;x<19;++x)
+    for(x=0;x<20;++x)
         routesTable->resizeColumnToContents(x);
 }
 
