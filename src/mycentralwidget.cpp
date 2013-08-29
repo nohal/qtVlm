@@ -486,8 +486,8 @@ myCentralWidget::myCentralWidget(Projection * proj,MainWindow * parent,MenuBar *
     connect(menuBar->acOptions_SH_Poi, SIGNAL(triggered(bool)), this,  SLOT(slot_shPoi(bool)));
     connect(menuBar->acOptions_SH_Rou, SIGNAL(triggered(bool)), this,  SLOT(slot_shRoute(bool)));
     connect(menuBar->acOptions_SH_Por, SIGNAL(triggered(bool)), this,  SLOT(slot_shPor(bool)));
-    // removing direct forward of signal
     connect(menuBar->acOptions_SH_Lab, SIGNAL(triggered(bool)), this,  SLOT(slot_shLab(bool)));
+    connect(menuBar->acOptions_SH_barSet, SIGNAL(triggered(bool)), this,  SLOT(slot_shBarSet(bool)));
 
     connect(menuBar->acOptions_SH_Com, SIGNAL(triggered(bool)), this,  SIGNAL(shCom(bool)));
 
@@ -1916,6 +1916,7 @@ void myCentralWidget::slot_showALL(bool)
     do_shRoute(false);
     do_shOpp(false);
     do_shPor(false);
+    do_shBarSet(false);
 }
 
 void myCentralWidget::slot_hideALL(bool)
@@ -1925,6 +1926,7 @@ void myCentralWidget::slot_hideALL(bool)
     do_shRoute(true);
     do_shOpp(true);
     do_shPor(true);
+    do_shBarSet(true);
 }
 
 void myCentralWidget::slot_shLab(bool){
@@ -1975,6 +1977,16 @@ void myCentralWidget::do_shPor(bool val) {
     shPor_st=val;
     Settings::setSetting("hidePorte",val?1:0,"showHideItem");
     emit shPor(shPor_st);
+}
+
+void myCentralWidget::slot_shBarSet(bool){
+    do_shBarSet(!shBarSet_st);
+}
+
+void myCentralWidget::do_shBarSet(bool val) {
+    shBarSet_st=val;
+    Settings::setSetting("hideBarrierSet",val?1:0,"showHideItem");
+    emit shBarSet(shBarSet_st);
 }
 
 void myCentralWidget::slot_editHorn()

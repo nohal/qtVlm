@@ -49,7 +49,7 @@ class BarrierPoint: public QObject, public QGraphicsRectItem {
 
         FCT_SETGET(bool,isMovable)
 
-        void set_editMode(bool mode);        
+        void set_editMode(bool mode);
 
         bool is_same(QPointF position);
 
@@ -109,6 +109,7 @@ class Barrier: public QObject, QGraphicsPathItem {
         BarrierPoint * add_pointAfter(BarrierPoint *basePoint,QPointF position);
 
         void set_editMode(bool mode);
+        void set_sh(bool state);
         FCT_GET(bool,editMode)
         void set_barrierIsEdited(bool state);
 

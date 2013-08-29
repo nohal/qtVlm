@@ -209,6 +209,7 @@ class myCentralWidget : public QWidget
         bool get_shRoute_st(void) { return shRoute_st; }
         bool get_shOpp_st(void) { return shOpp_st; }
         bool get_shPor_st(void) { return shPor_st; }
+        FCT_GET(bool,shBarSet_st)
         void exportRouteFromMenu(ROUTE * route);
         void exportRouteFromMenuGPX(ROUTE * route,QString fileName,bool POIonly);
         void exportRouteFromMenuKML(ROUTE * route,QString fileName,bool toClipboard);
@@ -275,6 +276,7 @@ public slots :
         void slot_shPor(bool);
         void slot_shFla(bool);
         void slot_shNig(bool);
+        void slot_shBarSet(bool);
 
         /*Routes */
         void slot_addRouteFromMenu();
@@ -381,6 +383,7 @@ public slots :
         void shPor(bool);
         void shPol(bool);
         void shLab(bool);
+        void shBarSet(bool);
         void shFla();
 
 
@@ -467,12 +470,14 @@ public slots :
         bool shRoute_st;
         bool shOpp_st;
         bool shPor_st;
+        bool shBarSet_st;
 
         void do_shLab(bool val);
         void do_shPoi(bool val);
         void do_shRoute(bool val);
         void do_shOpp(bool val);
         void do_shPor(bool val);
+        void do_shBarSet(bool val);
 
         QSound  *horn;
         bool    hornActivated;

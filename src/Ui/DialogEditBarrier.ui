@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>164</width>
-    <height>117</height>
+    <width>179</width>
+    <height>119</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -76,6 +76,13 @@
       </spacer>
      </item>
     </layout>
+   </item>
+   <item>
+    <widget class="QCheckBox" name="chk_hideSet">
+     <property name="text">
+      <string>hide set</string>
+     </property>
+    </widget>
    </item>
    <item>
     <widget class="QDialogButtonBox" name="buttonBox">

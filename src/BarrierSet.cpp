@@ -45,6 +45,10 @@ BarrierSet::BarrierSet(MainWindow * mainWindow)
     name= "";
     barrierList.clear();
     color=Qt::black;
+    masterShState=mainWindow->getMy_centralWidget()->get_shBarSet_st();
+    setShState=false; // not hidden
+
+    connect(mainWindow->getMy_centralWidget(),SIGNAL(shBarSet(bool)),SLOT(slot_sh(bool)));
 }
 
 BarrierSet::~BarrierSet(void) {
@@ -53,6 +57,7 @@ BarrierSet::~BarrierSet(void) {
         delete barrierList.at(i);
     }
     barrierList.clear();
+    disconnect(mainWindow->getMy_centralWidget(),SIGNAL(shBarSet(bool)),this,SLOT(slot_sh(bool)));
 }
 
 bool BarrierSet::cross(QLineF line) {
@@ -112,6 +117,25 @@ void BarrierSet::slot_delBarrierSet(void) {
     deleteLater();
 }
 
+void BarrierSet::slot_sh(bool state) {
+    masterShState=state;
+    processShState();
+}
+
+void BarrierSet::set_shState(bool val) {
+    setShState=val;
+    processShState();
+}
+
+void BarrierSet::processShState(void) {
+    bool doHide=true;
+    if(!setShState) // if set state = show => use master state else doHide=true ie hide;
+        doHide=masterShState;
+    for(int i=0;i<barrierList.count();++i) {
+        barrierList.at(i)->set_sh(doHide);
+    }
+}
+
 
 /* Barriers */
 #define ROOT_NAME         "BarrierSetList"
@@ -123,6 +147,7 @@ void BarrierSet::slot_delBarrierSet(void) {
 #define BARRIER_COLOR_NAME "Color"
 #define BARRIER_KEY_NAME   "Key"
 #define BARRIER_ISCLOSED_NAME "IsClosed"
+#define BARRIER_ISHIDDEN_NAME "IsHidden"
 
 /* global variable */
 QList<BarrierSet*> barrierSetList;
@@ -183,6 +208,13 @@ void BarrierSet::readBarriersFromDisk(MainWindow * mainWindow) {
                         barrierSet->set_key(dataNode.toText().data());
                 }
 
+                if(barrierSetNode.toElement().tagName() == BARRIER_ISHIDDEN_NAME)
+                {
+                    QDomNode dataNode = barrierSetNode.firstChild();
+                    if(dataNode.nodeType() == QDomNode::TextNode)
+                        barrierSet->set_shState(dataNode.toText().data()== "1");
+                }
+
                 if(barrierSetNode.toElement().tagName() == BARRIER_GROUP_NAME)
                 {
                     /* creating a new barrier */
@@ -209,6 +241,8 @@ void BarrierSet::readBarriersFromDisk(MainWindow * mainWindow) {
                             if(dataNode.nodeType() == QDomNode::TextNode)
                                 barrier->set_isClosed(dataNode.toText().data() == "1");
                         }
+
+
 
                         if(barrierNode.toElement().tagName() == BARRIER_POINT_NAME)
                         {
@@ -298,6 +332,12 @@ void BarrierSet::saveBarriersToDisk(void) {
         barrierSetsGroup.appendChild(tag);
         t = doc.createTextNode(barrierSet->get_key());
         tag.appendChild(t);
+
+        tag = doc.createElement(BARRIER_ISHIDDEN_NAME);
+        barrierSetsGroup.appendChild(tag);
+        t = doc.createTextNode(barrierSet->get_setShState()?"1":"0");
+        tag.appendChild(t);
+
 
         /* if we have barriers, create a group */
         QList<Barrier*> * barrierList = barrierSet->get_barriers();

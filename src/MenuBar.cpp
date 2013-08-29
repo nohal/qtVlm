@@ -103,6 +103,8 @@ MenuBar::MenuBar(MainWindow *parent)
         acOptions_SH_Rou->setCheckable(true);
         acOptions_SH_Lab = addAction(boatPoiSH, tr("Montrer les etiquettes"), "E", tr(""));
         acOptions_SH_Lab->setCheckable(true);
+        acOptions_SH_barSet = addAction(boatPoiSH, tr("Montrer les barrieres"), "D", tr(""));
+        acOptions_SH_barSet->setCheckable(true);
     menuView->addMenu(boatPoiSH);
     QMenu * compasSH = new QMenu(tr("Show/Hide compas"));
     acOptions_SH_Com = addAction(compasSH, tr("Cacher/Montrer le compas"), "C", tr(""));
@@ -669,6 +671,7 @@ void MenuBar::slot_showViewMenu(void) {
     acOptions_SH_Poi->setChecked(Settings::getSetting("hidePoi",0,"showHideItem").toInt()==0);
     acOptions_SH_Rou->setChecked(Settings::getSetting("hideRoute",0,"showHideItem").toInt()==0);
     acOptions_SH_Lab->setChecked(Settings::getSetting("hideLabel",0,"showHideItem").toInt()==0);
+    acOptions_SH_barSet->setChecked(Settings::getSetting("hideBarrierSet",0,"showHideItem").toInt()==0);
 }
 
 void MenuBar::slot_showBarrierMenu(void) {

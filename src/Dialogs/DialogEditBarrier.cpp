@@ -38,6 +38,7 @@ void DialogEditBarrier::initDialog(BarrierSet * barrierSet) {
         this->barrierSet = NULL;
         name->setText("");
         color=Qt::black;
+        chk_hideSet->setChecked(false);
         updateBtnColor();
     }
     else {
@@ -45,6 +46,7 @@ void DialogEditBarrier::initDialog(BarrierSet * barrierSet) {
         color=barrierSet->get_color();
         updateBtnColor();
         this->barrierSet = barrierSet;
+        chk_hideSet->setChecked(barrierSet->get_setShState());
     }
 }
 
@@ -57,6 +59,7 @@ void DialogEditBarrier::done(int result) {
             }
             barrierSet->set_name(name->text());
             barrierSet->set_color(color);
+            barrierSet->set_shState(chk_hideSet->isChecked());
         }
     }
     QDialog::done(result);

@@ -57,6 +57,7 @@ class BarrierSet: public QObject
 
         FCT_GET(QString,name)
         void set_name(QString name);
+
         QList<Barrier*> * get_barriers(void) { return &barrierList; }
         FCT_GET(QColor,color)
         void set_color(QColor color);
@@ -71,9 +72,13 @@ class BarrierSet: public QObject
 
         void printSet(void);
 
+        void set_shState(bool val);
+        FCT_GET(bool,setShState)
+
     public slots:
         void slot_editBarrierSet(void);
         void slot_delBarrierSet(void);
+        void slot_sh(bool state);
 
     signals:
         void barrierSetEdited(void);
@@ -84,6 +89,10 @@ class BarrierSet: public QObject
         QColor color;
         QString name;
         QString key;
+
+        bool masterShState;
+        bool setShState;
+        void processShState(void);
 
         MainWindow * mainWindow;
 

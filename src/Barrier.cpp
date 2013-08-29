@@ -164,6 +164,13 @@ void Barrier::set_editMode(bool mode) {
     }
 }
 
+void Barrier::set_sh(bool state) { // state = true => hide
+    this->setVisible(!state);
+    for(int i=0;i<points.count();++i) {
+        points.at(i)->setVisible(!state);
+    }
+}
+
 void Barrier::set_barrierIsEdited(bool state) {
     for(int i=0;i<points.count();++i) {
         points.at(i)->set_isMovable(state);
