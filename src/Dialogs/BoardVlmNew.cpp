@@ -148,6 +148,7 @@ BoardVlmNew::BoardVlmNew(MainWindow *main)
     vibStates.append(1);
     vibStates.append(-1);
     vibStates.append(0);
+    flipBS=false;
 }
 BoardVlmNew::~BoardVlmNew()
 {
@@ -649,6 +650,20 @@ void BoardVlmNew::slot_timerElapsed()
     else
         lab_TWA->show();
     currentRB->setVisible(!currentRB->isVisible());
+    flipBS=!flipBS;
+    double speed=myBoat->getSpeed();
+    QColor color=Qt::white;
+    if(myBoat && flipBS && myBoat->getPolarData())
+    {
+        speed=myBoat->getPolarData()->getSpeed(myBoat->getWindSpeed(),qAbs(spin_TWA->value()));
+        color=Qt::green;
+        color=color.lighter();
+    }
+    QString s;
+    s.sprintf("%.2f",(double)qRound(speed*100.0)/100.0);
+    lcd_BS->setDigitCount(s.count());
+    this->lcd_BS->display(s);
+    this->lcd_BS->setStyleSheet((QString().sprintf("background-color: rgba(%d, %d, %d, %d);",color.red(),color.green(),color.blue(),180)));
 }
 void BoardVlmNew::timerStop()
 {

@@ -89,6 +89,7 @@ private:
     QPoint startMove,initialPos;
     int nbVib;
     QList<int>vibStates;
+    bool flipBS;
 };
 
 #endif // BOARDVLMNEW_H
