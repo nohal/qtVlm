@@ -120,9 +120,9 @@ class boat: public QGraphicsWidget
         /*** Barrier ***/
         QList<BarrierSet *>* get_barrierSets(void) { return &barrierSets; }
         QList<QString> * get_barrierKeys(void) {return &barrierKeys; }
-        void add_barrierSet(BarrierSet* set) { if(set && !barrierSets.contains(set)) { barrierSets.append(set); updateBarrierKeys(); } }
-        void rm_barrierSet(BarrierSet* set) { if(set && barrierSets.contains(set)) { barrierSets.removeAll(set); updateBarrierKeys(); } }
-        void clear_barrierSet(void) { barrierSets.clear(); }
+        void add_barrierSet(BarrierSet* set);
+        void rm_barrierSet(BarrierSet* set);
+        void clear_barrierSet(void);
         void clear_barrierKeys(void) { barrierKeys.clear(); }
         void updateBarrierKeys(void);
         void setSetKeys(QList<QString> keys) { barrierKeys = keys; }

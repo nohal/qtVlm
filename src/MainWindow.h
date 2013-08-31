@@ -77,7 +77,6 @@ class MainWindow: public QMainWindow
         int get_boatType(void);
 
         /*** Barrier ***/
-        bool get_barrierIsEditing(void);
 
         void getXY(int *X,int *Y){*X=this->mouseClicX;*Y=this->mouseClicY;}
         bool isStartingUp;
@@ -186,7 +185,6 @@ public slots:
 
         /*** Barrier ***/
         void slot_newBarrierSet();
-        void set_barrierIsEdited(bool state);
         void slot_barrierAddPopup(void);
         void slot_barrierAddMenu(void);
 

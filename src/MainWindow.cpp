@@ -190,7 +190,6 @@ void MainWindow::connectSignals()
 
     /*** Barrier ***/
     connect(mb->ac_addBarrierSet,SIGNAL(triggered()),this,SLOT(slot_newBarrierSet()));
-    connect(mb->ac_barrierTool,SIGNAL(toggled(bool)),this,SLOT(set_barrierIsEdited(bool)));
     connect(mb->ac_addBarrier,SIGNAL(triggered()),my_centralWidget,SLOT(slot_addBarrier()));
     connect(mb->ac_popupBarrier,SIGNAL(triggered()),this,SLOT(slot_barrierAddPopup()));
 
@@ -725,6 +724,7 @@ void MainWindow::closeProgress(void)
         this->my_centralWidget->setAboutToQuit();
     else if(selectedBoat)
     {
+        selectedBoat->cleanBarrierList();
         if(selectedBoat->get_boatType()==BOAT_REAL)
         {                        
             proj->setScaleAndCenterInMap(selectedBoat->getZoom(),selectedBoat->getLon(),selectedBoat->getLat());
@@ -1306,17 +1306,13 @@ void MainWindow::slotShowContextualMenu(QGraphicsSceneContextMenuEvent * e)
     my_centralWidget->set_cursorPositionOnPopup(QPoint(mouseClicX,mouseClicY));
 
     /*** Barrier ***/
-    if(get_barrierIsEditing()) {
-        menuBar->ac_popupBarrier->setEnabled(true);
-        if(my_centralWidget->get_barrierEditMode()==BARRIER_EDIT_NO_EDIT)
-            menuBar->ac_popupBarrier->setText(tr("Create new barrier"));
-        else
-            menuBar->ac_popupBarrier->setText(tr("Stop barrier create"));
-    }
-    else {
-        menuBar->ac_popupBarrier->setEnabled(false);
-        menuBar->ac_popupBarrier->setText(tr("Barrier not in edit mode"));
-    }
+
+    menuBar->ac_popupBarrier->setEnabled(true);
+    if(my_centralWidget->get_barrierEditMode()==BARRIER_EDIT_NO_EDIT)
+        menuBar->ac_popupBarrier->setText(tr("Create new barrier"));
+    else
+        menuBar->ac_popupBarrier->setText(tr("Stop barrier create"));
+
 
     switch(compassMode)
     {
@@ -2482,34 +2478,25 @@ void MainWindow::slot_newBarrierSet() {
     barrierSet->set_name(tr("New set"));
 
     DialogEditBarrier dialogEditBarrier(this);
-    dialogEditBarrier.initDialog(barrierSet);
-    if(dialogEditBarrier.exec() == QDialog::Rejected)
+
+    // auto add set to selected boat
+    if(selectedBoat) {
+        selectedBoat->add_barrierSet(barrierSet);
+    }
+
+    dialogEditBarrier.initDialog(barrierSet,my_centralWidget->get_boatList());
+
+    if(dialogEditBarrier.exec() == QDialog::Rejected) {
+        if(selectedBoat) selectedBoat->rm_barrierSet(barrierSet);
         delete barrierSet;
+    }
     else {
         ::barrierSetList.append(barrierSet);
         barrierSet->set_key(barrierSet->get_name().toUtf8().toBase64()+Util::generateKey(10));
-        menuBar->ac_barrierTool->setChecked(true);
-    }
-}
-
-bool MainWindow::get_barrierIsEditing(void) {
-    //qWarning() << "Barrier isEditing: " << menuBar->ac_barrierTool->isChecked();
-    return menuBar->ac_barrierTool->isChecked();
-}
-
-void MainWindow::set_barrierIsEdited(bool state) {
-    //qWarning() << "Update barrier editing " << state;
-    menuBar->ac_addBarrier->setEnabled(state);
-    toolBar->barrierAdd->setEnabled(state);
-    toolBar->barrierAdd->setChecked(false);
-    for(int i=0;i<(::barrierSetList.count());++i) {
-        ::barrierSetList.at(i)->set_barrierIsEdited(state);
     }
 }
 
 void MainWindow::slot_barrierAddPopup(void) {
-    if(!get_barrierIsEditing())
-        return;
     if(my_centralWidget->get_barrierEditMode()==BARRIER_EDIT_NO_EDIT)
         my_centralWidget->slot_newBarrier();
     else
@@ -2517,8 +2504,6 @@ void MainWindow::slot_barrierAddPopup(void) {
 }
 
 void MainWindow::slot_barrierAddMenu(void) {
-    if(!get_barrierIsEditing())
-        return;
     if(my_centralWidget->get_barrierEditMode()==BARRIER_EDIT_NO_EDIT)
         my_centralWidget->slot_addBarrier();
     else

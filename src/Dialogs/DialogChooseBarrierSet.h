@@ -38,7 +38,7 @@ class DialogChooseBarrierSet: public QDialog, public Ui::DialogChooseBarrierSet_
         FCT_GET(BarrierSet*,choice)
 
         void done(int result);
-        void init_dialog(void);
+        int init_dialog(void);
 
     private:
         BarrierSet * choice;

@@ -23,22 +23,23 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "DialogEditBarrier.h"
 #include "BarrierSet.h"
+#include "boat.h"
 
 DialogEditBarrier::DialogEditBarrier(QWidget * parent): QDialog(parent) {
     setupUi(this);
-    initDialog(NULL);
+    QList<boat *> lst;
+    initDialog(NULL,lst);
 }
 
 DialogEditBarrier::~DialogEditBarrier(void) {
 
 }
 
-void DialogEditBarrier::initDialog(BarrierSet * barrierSet) {
+void DialogEditBarrier::initDialog(BarrierSet * barrierSet,QList<boat *> boatList) {
     if(!barrierSet) {
         this->barrierSet = NULL;
         name->setText("");
         color=Qt::black;
-        chk_hideSet->setChecked(false);
         updateBtnColor();
     }
     else {
@@ -46,7 +47,17 @@ void DialogEditBarrier::initDialog(BarrierSet * barrierSet) {
         color=barrierSet->get_color();
         updateBtnColor();
         this->barrierSet = barrierSet;
-        chk_hideSet->setChecked(barrierSet->get_setShState());
+    }
+
+    for(int i=0;i<boatList.count();++i) {
+        boat * boatPtr = boatList.at(i);
+        if(boatPtr->getStatus()) {
+            QListWidgetItem * item = new QListWidgetItem(boatPtr->getBoatPseudo(),lst_boat);
+            /* add barrierSet pointer as first UserRole */
+            item->setData(Qt::UserRole,VPtr<boat>::asQVariant(boatPtr));
+            item->setFlags(item->flags() | Qt::ItemIsUserCheckable);
+            item->setCheckState(boatPtr->get_barrierSets()->contains(barrierSet)?Qt::Checked:Qt::Unchecked);
+        }
     }
 }
 
@@ -59,7 +70,15 @@ void DialogEditBarrier::done(int result) {
             }
             barrierSet->set_name(name->text());
             barrierSet->set_color(color);
-            barrierSet->set_shState(chk_hideSet->isChecked());
+            for(int i=0;i<lst_boat->count();++i) {
+                QListWidgetItem * item = lst_boat->item(i);
+                boat * boatPtr = VPtr<boat>::asPtr(item->data(Qt::UserRole));
+                if(item->checkState()==Qt::Checked)
+                    boatPtr->add_barrierSet(barrierSet);
+                else
+                    boatPtr->rm_barrierSet(barrierSet);
+
+            }
         }
     }
     QDialog::done(result);

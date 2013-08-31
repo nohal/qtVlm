@@ -39,7 +39,19 @@ BarrierSet * DialogChooseBarrierSet::chooseBarrierSet(QWidget *parent) {
 
     /* more than one set => use dialog to get dialog */
     DialogChooseBarrierSet dialogChooseBarrierSet(parent);
-    dialogChooseBarrierSet.init_dialog();
+    int res= dialogChooseBarrierSet.init_dialog();
+    if(res==0) return NULL;
+    if(res==1) {
+        // search first none hidden set
+        for(int i=0;i<(::barrierSetList.count());++i) {
+            BarrierSet * set = ::barrierSetList.at(i);
+            if(!set->get_isHidden())
+                return set;
+        }
+    }
+
+
+
     if(dialogChooseBarrierSet.exec() == QDialog::Accepted)
         return dialogChooseBarrierSet.get_choice();
     else
@@ -47,15 +59,19 @@ BarrierSet * DialogChooseBarrierSet::chooseBarrierSet(QWidget *parent) {
 
 }
 
-void DialogChooseBarrierSet::init_dialog(void) {
+int DialogChooseBarrierSet::init_dialog(void) {
+    int nbSet=0;
     cb_barrierSets->clear();
     qSort(::barrierSetList.begin(),::barrierSetList.end(),BarrierSet::myLessThan);
     for(int i=0;i<(::barrierSetList.count());++i) {
         BarrierSet * set = ::barrierSetList.at(i);
-        QVariant data = VPtr<BarrierSet>::asQVariant(set);
-        cb_barrierSets->addItem(set->get_name(),data);
+        if(!set->get_isHidden()) {
+            nbSet++;
+            QVariant data = VPtr<BarrierSet>::asQVariant(set);
+            cb_barrierSets->addItem(set->get_name(),data);
+        }
     }
-
+    return nbSet;
 }
 
 void DialogChooseBarrierSet::done(int result) {

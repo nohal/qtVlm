@@ -36,6 +36,8 @@ Barrier::Barrier(MainWindow *mainWindow,BarrierSet * barrierSet) {
     centralWidget = mainWindow->getMy_centralWidget();
     projection=centralWidget->getProj();
 
+    connect(barrierSet,SIGNAL(barrierSetEdited()),this,SLOT(slot_setEdited()));
+
     this->barrierSet=barrierSet;
 
     width=1;
@@ -75,10 +77,15 @@ Barrier::Barrier(MainWindow *mainWindow,BarrierSet * barrierSet) {
     popUpMenu->addAction(ac_assBoats);
     popUpMenu2->addAction(ac_assBoats);
     connect(ac_assBoats,SIGNAL(triggered()),this,SLOT(slot_associateBoats()));
+
+    setToolTip(barrierSet->get_name());
+
+    //setVisible(false);
 }
 
 Barrier::~Barrier(void) {
     clearBarrier();
+    disconnect(barrierSet,SIGNAL(barrierSetEdited()),this,SLOT(slot_setEdited()));
 }
 
 void Barrier::set_isClosed(bool val) {
@@ -168,12 +175,6 @@ void Barrier::set_sh(bool state) { // state = true => hide
     this->setVisible(!state);
     for(int i=0;i<points.count();++i) {
         points.at(i)->setVisible(!state);
-    }
-}
-
-void Barrier::set_barrierIsEdited(bool state) {
-    for(int i=0;i<points.count();++i) {
-        points.at(i)->set_isMovable(state);
     }
 }
 
@@ -269,7 +270,7 @@ void Barrier::slot_deleteBarrier(void) {
 }
 
 void Barrier::contextMenuEvent (QGraphicsSceneContextMenuEvent * e) {
-    if(popUpMenu && mainWindow->get_barrierIsEditing() && centralWidget->get_barrierEditMode()==BARRIER_EDIT_NO_EDIT) {
+    if(popUpMenu && centralWidget->get_barrierEditMode()==BARRIER_EDIT_NO_EDIT) {
         chk_closeBarrier->blockSignals(true);
         if(points.count()<3) {
             chk_closeBarrier->setEnabled(false);
@@ -284,7 +285,7 @@ void Barrier::contextMenuEvent (QGraphicsSceneContextMenuEvent * e) {
         cursorPosition = e->scenePos();
         popUpMenu->exec(QCursor::pos());
     }
-    else if(popUpMenu2 && !mainWindow->get_barrierIsEditing()) {
+    else if(popUpMenu2) {
         popUpMenu2->exec(QCursor::pos());
     }
 }
@@ -303,6 +304,13 @@ void Barrier::slot_closeBarrierChg(bool status) {
 
 void Barrier::slot_associateBoats(void) {
     DialogChooseMultipleBoat::chooseBoat(mainWindow,barrierSet,centralWidget->get_boatList());
+}
+
+void Barrier::slot_setEdited(void) {
+    QString name=barrierSet->get_name();
+    this->setToolTip(name);
+    for(int i=0;i<points.count();++i)
+        points.at(i)->setToolTip(name);
 }
 
 bool Barrier::cross(QLineF line) {
@@ -337,6 +345,8 @@ BarrierPoint::BarrierPoint(MainWindow * mainWindow, Barrier *barrier, QColor col
     projection=centralWidget->getProj();
     this->barrier=barrier;
 
+    setToolTip(barrier->get_barrierSet()->get_name());
+
     pointSize=POINT_WIDTH;
 
     connect(this,SIGNAL(positionChanged()),barrier,SLOT(slot_pointPositionChanged()));
@@ -348,7 +358,7 @@ BarrierPoint::BarrierPoint(MainWindow * mainWindow, Barrier *barrier, QColor col
 
     /*** move management **/
     isMoving=false;
-    isMovable=mainWindow->get_barrierIsEditing();
+    isMovable=true;
 
     setBrush(color);
     setPen(color);
@@ -386,6 +396,8 @@ BarrierPoint::BarrierPoint(MainWindow * mainWindow, Barrier *barrier, QColor col
     popUpMenu->addAction(ac_assBoats);
     popUpMenu2->addAction(ac_assBoats);
     connect(ac_assBoats,SIGNAL(triggered()),barrier,SLOT(slot_associateBoats()));
+
+    //setVisible(false);
 }
 
 void BarrierPoint::set_editMode(bool mode) {
@@ -481,7 +493,7 @@ void BarrierPoint::slot_insertAfter(void) {
 }
 
 void BarrierPoint::contextMenuEvent (QGraphicsSceneContextMenuEvent *) {
-    if(popUpMenu && mainWindow->get_barrierIsEditing() && centralWidget->get_barrierEditMode()==BARRIER_EDIT_NO_EDIT) {
+    if(popUpMenu && centralWidget->get_barrierEditMode()==BARRIER_EDIT_NO_EDIT) {
         /* should we display the 'insert point' entry ? */
         ac_insertAfter->setEnabled(true);
         QList<BarrierPoint * > * points = barrier->get_points();
@@ -508,7 +520,7 @@ void BarrierPoint::contextMenuEvent (QGraphicsSceneContextMenuEvent *) {
 
         popUpMenu->exec(QCursor::pos());
     }
-    else if(popUpMenu2 && !mainWindow->get_barrierIsEditing()) {
+    else if(popUpMenu2) {
         popUpMenu2->exec(QCursor::pos());
     }
 }

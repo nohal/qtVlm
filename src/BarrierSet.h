@@ -68,12 +68,12 @@ class BarrierSet: public QObject
         void remove_barrier(Barrier * barrier) { if(barrier) barrierList.removeAll(barrier); }
 
         void set_editMode(bool mode);
-        void set_barrierIsEdited(bool state);
 
         void printSet(void);
 
-        void set_shState(bool val);
-        FCT_GET(bool,setShState)
+        void set_isHidden(bool val);
+        FCT_GET(bool,isHidden)
+        static void releaseState(void);
 
     public slots:
         void slot_editBarrierSet(void);
@@ -91,7 +91,7 @@ class BarrierSet: public QObject
         QString key;
 
         bool masterShState;
-        bool setShState;
+        bool isHidden;
         void processShState(void);
 
         MainWindow * mainWindow;

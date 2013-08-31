@@ -403,10 +403,8 @@ MenuBar::MenuBar(MainWindow *parent)
         connect(subMenuBarrier,SIGNAL(aboutToShow()),this,SLOT(slot_showBarrierMenu()));
         menuPOI->addMenu(subMenuBarrier);
         ac_addBarrierSet= addAction(subMenuBarrier,tr("Add barrier set"), tr(""), tr(""), "");
-        ac_barrierTool = addActionCheck(subMenuBarrier,tr("Enable editting"),"","");
         subMenuBarrier->addSeparator();
-        ac_addBarrier= addAction(subMenuBarrier,tr("Add barrier"), tr(""), tr(""), "");
-        ac_addBarrier->setEnabled(false);
+        ac_addBarrier= addAction(subMenuBarrier,tr("Add barrier"), tr(""), tr(""), "");        
         subSubMenuEditBarrierSet= new QMenu(tr("Parameters"));
         subMenuBarrier->addMenu(subSubMenuEditBarrierSet);
         subSubMenuDelBarrierSet= new QMenu(tr("Delete"));
@@ -680,15 +678,14 @@ void MenuBar::slot_showBarrierMenu(void) {
     if(::barrierSetList.isEmpty()) {
         subSubMenuDelBarrierSet->setEnabled(false);
         subSubMenuEditBarrierSet->setEnabled(false);
-        ac_barrierTool->setChecked(false);
-        ac_barrierTool->setEnabled(false);
+        ac_addBarrier->setEnabled(false);
     }
     else {
         qSort(::barrierSetList.begin(),::barrierSetList.end(),BarrierSet::myLessThan);
 
         subSubMenuDelBarrierSet->setEnabled(true);
         subSubMenuEditBarrierSet->setEnabled(true);
-        ac_barrierTool->setEnabled(true);
+        ac_addBarrier->setEnabled(true);
 
         QListIterator<BarrierSet*> i (::barrierSetList);
         while(i.hasNext()) {

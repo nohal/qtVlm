@@ -111,7 +111,6 @@ class Barrier: public QObject, QGraphicsPathItem {
         void set_editMode(bool mode);
         void set_sh(bool state);
         FCT_GET(bool,editMode)
-        void set_barrierIsEdited(bool state);
 
         FCT_SETGET(QString,name)
         FCT_GET(bool,isClosed)
@@ -135,6 +134,7 @@ class Barrier: public QObject, QGraphicsPathItem {
         void slot_adjustWidthF(void);
         void slot_closeBarrierChg(bool);
         void slot_associateBoats(void);
+        void slot_setEdited(void);
 
     private:
         MainWindow * mainWindow;

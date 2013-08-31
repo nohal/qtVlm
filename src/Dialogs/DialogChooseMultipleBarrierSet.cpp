@@ -50,9 +50,13 @@ void DialogChooseMultipleBarrierSet::done(int result) {
     if(result == QDialog::Accepted) {
         /* update list */
         activeSets->clear();
+        BarrierSet::releaseState();
         for(int i=0;i<lst_barrierSet->count();++i)
-            if(lst_barrierSet->item(i)->checkState()==Qt::Checked)
-                activeSets->append(VPtr<BarrierSet>::asPtr(lst_barrierSet->item(i)->data(Qt::UserRole)));
+            if(lst_barrierSet->item(i)->checkState()==Qt::Checked) {
+                BarrierSet * barrierSet=VPtr<BarrierSet>::asPtr(lst_barrierSet->item(i)->data(Qt::UserRole));
+                barrierSet->set_isHidden(false);
+                activeSets->append(barrierSet);
+            }
     }
     QDialog::done(result);
 }

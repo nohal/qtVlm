@@ -21,7 +21,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #ifndef DIALOGEDITBARRIER_H
 #define DIALOGEDITBARRIER_H
 
-#include "QDialog"
+#include <QDialog>
+#include <QList>
 
 #include "class_list.h"
 #include "ui_DialogEditBarrier.h"
@@ -32,7 +33,7 @@ class DialogEditBarrier: public QDialog, public Ui::DialogEditBarrier_ui
         DialogEditBarrier(QWidget * parent);
         ~DialogEditBarrier(void);
 
-        void initDialog(BarrierSet *barrierSet);
+        void initDialog(BarrierSet *barrierSet, QList<boat *> boatList);
 
         void done(int result);
 

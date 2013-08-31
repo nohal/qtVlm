@@ -234,6 +234,7 @@ void boat::slot_selectBoat()
     drawEstime();
     if(boatType==BOAT_REAL) return;
     updateTraceColor();
+    cleanBarrierList();
     emit boatSelected(this);
 }
 
@@ -859,6 +860,23 @@ void boat::slot_updateGraphicsParameters()
  *  Barrier
  *******************************************************/
 
+void boat::add_barrierSet(BarrierSet* set) {
+    if(set && !barrierSets.contains(set)) {
+        barrierSets.append(set);
+        updateBarrierKeys();
+    }
+
+    if(selected) set->set_isHidden(false);
+}
+
+void boat::rm_barrierSet(BarrierSet* set) {
+    if(set && barrierSets.contains(set)) {
+        barrierSets.removeAll(set);
+        updateBarrierKeys();
+    }
+    if(selected) set->set_isHidden(true);
+}
+
 void boat::slot_chooseBarrierSet(void) {
     cleanBarrierList();
     DialogChooseMultipleBarrierSet::chooseBarrierSet(mainWindow,&barrierSets);
@@ -871,8 +889,20 @@ void boat::updateBarrierKeys(void) {
         barrierKeys.append(barrierSets.at(i)->get_key());
 }
 
+void boat::clear_barrierSet(void) {
+    barrierSets.clear();
+    if(selected) BarrierSet::releaseState();
+}
+
 void boat::cleanBarrierList(void) {
     BarrierSet::get_barrierSetListFromKeys(barrierKeys,&barrierSets);
+
+    if(selected) {
+        BarrierSet::releaseState();
+        for(int i=0;i<barrierSets.count();++i)
+            barrierSets.at(i)->set_isHidden(false);
+    }
+
     /*qWarning() << "nb keys: " << barrierKeys.count();
     qWarning() << "key list: \n" << barrierKeys;
     qWarning() << "nb in barrierSets: " <<barrierSets.count();
