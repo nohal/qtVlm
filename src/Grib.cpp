@@ -368,6 +368,8 @@ void Grib::readAllGribRecords()
                         //-----------------------------------------
                         || (rec->getDataType()==GRB_CAPE
                             && rec->getLevelType()==LV_GND_SURF && rec->getLevelValue()==0)
+                        || (rec->getDataType()==GRB_CIN
+                                && rec->getLevelType()==LV_GND_SURF && rec->getLevelValue()==0)
                         )
                 {
                     if(!isCurrentGrib || (rec->getDataType()==GRB_CURRENT_VX || rec->getDataType()==GRB_CURRENT_VY)) {

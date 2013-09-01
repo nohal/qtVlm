@@ -60,6 +60,7 @@ DialogLoadGrib::DialogLoadGrib() : QDialog()
     tempMax = true;    
     snowCateg = true;
     CAPEsfc = true;
+    CINsfc = true;
 
     QGridLayout  *lay = new QGridLayout(this);
     assert(lay);
@@ -110,6 +111,7 @@ DialogLoadGrib::DialogLoadGrib() : QDialog()
     connect(chkSnowCateg, SIGNAL(stateChanged(int)), 	this,  SLOT(slotParameterUpdated()));
     connect(chkFrzRainCateg, SIGNAL(stateChanged(int)), 	this,  SLOT(slotParameterUpdated()));
     connect(chkCAPEsfc, SIGNAL(stateChanged(int)), 	this,  SLOT(slotParameterUpdated()));
+    connect(chkCINsfc,  SIGNAL(stateChanged(int)), 	this,  SLOT(slotParameterUpdated()));
 
     connect(chkAltitude200, SIGNAL(stateChanged(int)), 	this,  SLOT(slotParameterUpdated()));
     connect(chkAltitude300, SIGNAL(stateChanged(int)), 	this,  SLOT(slotParameterUpdated()));
@@ -269,6 +271,7 @@ void DialogLoadGrib::updateParameters()
     snowCateg   = chkSnowCateg->isChecked();
     frzRainCateg = chkFrzRainCateg->isChecked();
     CAPEsfc      = chkCAPEsfc->isChecked();
+    CINsfc      = chkCINsfc->isChecked();
 
     Settings::setSetting("downloadGribResolution", cbResolution->currentIndex());
     Settings::setSetting("downloadGribInterval",  cbInterval->currentIndex());
@@ -288,6 +291,7 @@ void DialogLoadGrib::updateParameters()
     Settings::setSetting("downloadSnowCateg", snowCateg);
     Settings::setSetting("downloadFrzRainCateg", frzRainCateg);
     Settings::setSetting("downloadCAPEsfc", CAPEsfc);
+    Settings::setSetting("downloadCINsfc", CINsfc);
 
     Settings::setSetting("downloadAltitudeData200",  chkAltitude200->isChecked());
     Settings::setSetting("downloadAltitudeData300",  chkAltitude300->isChecked());
@@ -320,6 +324,7 @@ void DialogLoadGrib::slotParameterUpdated()
     int nbSnowCateg  = snowCateg ?  nbrec-1  : 0;
     int nbFrzRainCateg = frzRainCateg ?  nbrec-1  : 0;
     int nbCAPEsfc  = CAPEsfc ?  nbrec : 0;
+    int nbCINsfc  = CINsfc ?  nbrec : 0;
 
     int head = 84;
     int estime = 0;
@@ -348,6 +353,7 @@ void DialogLoadGrib::slotParameterUpdated()
     estime += nbIsotherm0*(head+(nbits*npts)/8+2 );
     nbits = 5;
     estime += nbCAPEsfc*(head+(nbits*npts)/8+2 );
+    estime += nbCINsfc*(head+(nbits*npts)/8+2 );
 
     int nbalt = 0;
     if (chkAltitude200->isChecked()) nbalt++;
@@ -390,7 +396,7 @@ void DialogLoadGrib::slotBtOK()
                           resolution, interval, days,
                           wind, pressure, rain, cloud, temp, humid, isotherm0,
                           tempPot, tempMin, tempMax, snowCateg, frzRainCateg,
-                          CAPEsfc,
+                          CAPEsfc,CINsfc,
                           chkAltitude200->isChecked(),
                           chkAltitude300->isChecked(),
                           chkAltitude500->isChecked(),
@@ -496,7 +502,7 @@ void DialogLoadGrib::setZone(double x0, double y0, double x1, double y1)
 //-------------------------------------------------------------------------------
 QFrame *DialogLoadGrib::createFrameButtonsZone(QWidget *parent)
 {
-    QFrame * ftmp;
+    QFrame * ftmp, *ftmp2;
     QFrame * frm = new QFrame(parent);
     assert(frm);
     QVBoxLayout  *lay = new QVBoxLayout(frm);
@@ -598,6 +604,8 @@ QFrame *DialogLoadGrib::createFrameButtonsZone(QWidget *parent)
     assert(chkFrzRainCateg);
     chkCAPEsfc     = new QCheckBox(tr("CAPE (surface)"));
     assert(chkCAPEsfc);
+    chkCINsfc     = new QCheckBox(tr("CIN")+" ("+tr("surface")+")");
+    assert(chkCINsfc);
 
 
     //--------------------------------------------------------------------------------
@@ -616,6 +624,7 @@ QFrame *DialogLoadGrib::createFrameButtonsZone(QWidget *parent)
     chkTempMax->setChecked    (Settings::getSetting("downloadTempMax", false).toBool());
     chkSnowCateg->setChecked  (Settings::getSetting("downloadSnowCateg", true).toBool());
     chkCAPEsfc->setChecked  (Settings::getSetting("downloadCAPEsfc", true).toBool());
+    chkCINsfc->setChecked  (Settings::getSetting("downloadCINsfc", true).toBool());
     chkFrzRainCateg->setChecked  (Settings::getSetting("downloadFrzRainCateg", true).toBool());
 
         //----------------------------------------------------------------
@@ -722,7 +731,15 @@ QFrame *DialogLoadGrib::createFrameButtonsZone(QWidget *parent)
                 tgrid->addWidget( chkTempMax ,   lig++, col, Qt::AlignLeft);
                 tgrid->addWidget( chkTempPot , lig++, col, Qt::AlignLeft);
                 tgrid->addWidget( chkIsotherm0 , lig++, col, Qt::AlignLeft);
-                tgrid->addWidget( chkCAPEsfc ,  lig++, col, Qt::AlignLeft);
+
+                ftmp2 = new QFrame(this);
+                assert (ftmp2);
+                tlay = new QHBoxLayout (ftmp2);
+                assert (tlay);
+                tlay->setContentsMargins (0,0,0,0);
+                    tlay->addWidget( chkCAPEsfc );
+                    tlay->addWidget( chkCINsfc );
+                tgrid->addWidget( ftmp2,  lig++, col, Qt::AlignLeft);
         //-----------------------------
         // Colonne 2
         //-----------------------------

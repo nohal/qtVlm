@@ -562,6 +562,10 @@ void Terrain::drawGrib(QPainter &pnt, Grib *gribPlot)
                         windArrowsColor.setRgb(100, 80, 80);
                         mapDataDrawer->draw_CAPEsfc(gribPlot,pnt, proj, colorMapSmooth);
                         break;
+                case MapDataDrawer::drawCINsfc :
+                        windArrowsColor.setRgb(100, 80, 80);
+                        mapDataDrawer->draw_CINsfc(gribPlot,pnt, proj, colorMapSmooth);
+                        break;
         }
         //printf("time show ColorMap = %d ms\n", t1.elapsed());
 

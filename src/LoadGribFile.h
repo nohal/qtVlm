@@ -52,7 +52,7 @@ class LoadGribFile : public QObject
                     bool cloud, bool temp, bool humid, bool isotherm0,
                     bool tempPot, bool tempMin, bool tempMax,
                     bool snowCateg, bool frzRainCateg,
-                    bool CAPEsfc,
+                    bool CAPEsfc, bool CINsfc,
                     bool altitudeData200,
                     bool altitudeData300,
                     bool altitudeData500,

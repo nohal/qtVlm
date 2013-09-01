@@ -80,7 +80,7 @@ void LoadGribFile::getGribFile(
         bool cloud, bool temp, bool humid, bool isotherm0,
                 bool tempPot, bool tempMin, bool tempMax,
                 bool snowCateg, bool frzRainCateg,
-                bool CAPEsfc,
+                bool CAPEsfc,bool CINsfc,
                 bool altitudeData200,
                 bool altitudeData300,
                 bool altitudeData500,
@@ -133,6 +133,8 @@ void LoadGribFile::getGribFile(
     if (CAPEsfc) {
         parameters += "c";
     }
+    if (CINsfc)
+        parameters += "i";
 
     if (altitudeData200) parameters += "2";
     if (altitudeData300) parameters += "3";

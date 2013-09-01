@@ -68,6 +68,7 @@ class MapDataDrawer
         //void draw_SNOW_DEPTH_Color(Grib *grib,QPainter &pnt, const Projection *proj, bool smooth);
         void draw_SNOW_CATEG_Color(Grib *grib,QPainter &pnt, const Projection *proj, bool smooth);
         void draw_CAPEsfc(Grib *grib,QPainter &pnt, const Projection *proj, bool smooth);
+        void draw_CINsfc(Grib *grib,QPainter &pnt, const Projection *proj, bool smooth);
         void draw_FRZRAIN_CATEG_Color(Grib *grib,QPainter &pnt, const Projection *proj, bool smooth);
         // Carte de couleurs de nebulosite
         void draw_CLOUD_Color(Grib *grib,QPainter &pnt, const Projection *proj, bool smooth);
@@ -112,7 +113,8 @@ class MapDataDrawer
                  drawTempMin,
                  drawTempMax,
                  drawDewpoint,
-                 drawDeltaDewpoint
+                 drawDeltaDewpoint,
+                 drawCINsfc
         };
 
     private:
@@ -171,6 +173,7 @@ class MapDataDrawer
         QRgb   getSnowDepthColor   (double v, bool smooth);
         QRgb   getCloudColor       (double v, bool smooth);
         QRgb   getCAPEColor  (double v, bool smooth);
+        QRgb   getCINColor  (double v, bool smooth);
         QRgb   getDeltaTemperaturesColor (double v, bool smooth);
         QRgb   getHumidColor       (double v, bool smooth);
         QRgb   getPressureColor    (double v, bool smooth);

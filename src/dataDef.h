@@ -281,6 +281,7 @@ Q_DECLARE_TYPEINFO(windData,Q_PRIMITIVE_TYPE);
 #define GRB_CLOUD_TOT      71   /* %      */
 #define GRB_FRZRAIN_CATEG 141   /* 1=yes 0=no */
 #define GRB_SNOW_CATEG    143   /* 1=yes 0=no */
+#define GRB_CIN 		  156   /* J/kg   */
 #define GRB_CAPE 		  157   /* J/kg   */
 
 #define GRB_WIND_DIR       249   /* private: wind direction in degrees */

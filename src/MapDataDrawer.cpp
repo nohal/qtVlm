@@ -73,6 +73,7 @@ void MapDataDrawer::initDataCodes(void) {
     //dataCodeMap.insert(drawTempMax,DataCode());
     dataCodeMap.insert(drawDewpoint,DataCode(GRB_DEWPOINT,LV_ABOV_GND,2));
     dataCodeMap.insert(drawDeltaDewpoint,DataCode(GRB_DEWPOINT,LV_ABOV_GND,2));
+    dataCodeMap.insert(drawCINsfc,DataCode(GRB_CIN,LV_GND_SURF,0));
 }
 
 
@@ -108,6 +109,10 @@ QRgb  MapDataDrawer::getDeltaTemperaturesColor(double v, bool smooth) {
 
 QRgb  MapDataDrawer::getHumidColor(double v, bool smooth) {
     return DataColors::get_color("humidrel_pc",v,smooth);
+}
+
+QRgb  MapDataDrawer::getCINColor(double v, bool smooth) {
+    return DataColors::get_color("cin_jkg",v,smooth);
 }
 
 QRgb  MapDataDrawer::getCAPEColor(double v, bool smooth) {
@@ -698,6 +703,16 @@ void MapDataDrawer::draw_CAPEsfc(Grib * grib,QPainter &pnt, const Projection *pr
     if(grib->getGribRecordArroundDates(GRB_CAPE,LV_GND_SURF,0,currentDate,
                                  &tPrev,&tNxt,&rec_prev,&rec_nxt))
         drawColorMapGeneric_1D(pnt,proj,smooth, currentDate,tPrev,tNxt,rec_prev,rec_nxt, &MapDataDrawer::getCAPEColor);
+}
+
+void MapDataDrawer::draw_CINsfc(Grib * grib,QPainter &pnt, const Projection *proj, bool smooth) {
+    if(!grib || !grib->isOk()) return;
+    GribRecord *rec_prev,*rec_nxt;
+    time_t tPrev,tNxt;
+    time_t currentDate=grib->getCurrentDate();
+    if(grib->getGribRecordArroundDates(GRB_CIN,LV_GND_SURF,0,currentDate,
+                                 &tPrev,&tNxt,&rec_prev,&rec_nxt))
+        drawColorMapGeneric_1D(pnt,proj,smooth, currentDate,tPrev,tNxt,rec_prev,rec_nxt, &MapDataDrawer::getCINColor);
 }
 
 void MapDataDrawer::draw_DeltaDewpoint_Color(Grib * grib,QPainter &pnt, const Projection *proj, bool smooth) {

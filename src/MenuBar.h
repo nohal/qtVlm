@@ -165,6 +165,7 @@ public:
     //QAction *acView_SnowDepth;
     QAction *acView_FrzRainCateg;
     QAction *acView_CAPEsfc;
+    QAction *acView_CINsfc;
 
     QMap<int,QAction*> gribDataActionMap;
 
