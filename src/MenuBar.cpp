@@ -54,7 +54,7 @@ MenuBar::MenuBar(MainWindow *parent)
         acFile_Quit = addAction(menuFile,
                     tr("Quitter"), tr("Ctrl+Q"), tr("Bye"), appFolder.value("img")+"exit.png");
         acFile_QuitNoSave = addAction(menuFile,
-                    tr("Quitter sans sauver"), tr("Ctrl+Shift+Q"), tr("Bye"), appFolder.value("img")+"exit2.png");
+                                      tr("Quitter sans sauver"), "", "", appFolder.value("img")+"exit2.png");
         menuFile->addSeparator();
         acFile_Lock = addAction(menuFile,
                     tr("Verrouiller"), tr("Ctrl+L"), tr("Verrouiller l'envoi d'ordre a VLM"), appFolder.value("img")+"unlock.png");
