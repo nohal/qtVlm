@@ -40,7 +40,7 @@ BoardVlmNew::BoardVlmNew(MainWindow *main)
     this->setParent(main);
     this->setupUi(this);
     tryMoving=false;
-    Util::setFontDialog(this);
+    this->setFontDialog(this);
     this->main=main;
     setWindowFlags(Qt::FramelessWindowHint|Qt::WindowStaysOnTopHint);
     this->setModal(false);
@@ -154,6 +154,24 @@ BoardVlmNew::BoardVlmNew(MainWindow *main)
 BoardVlmNew::~BoardVlmNew()
 {
     delete wpDialog;
+}
+void BoardVlmNew::setFontDialog(QObject * o)
+{
+
+    QFont myFont(Settings::getSetting("defaultFontName",QApplication::font().family()).toString());
+    if(o->isWidgetType())
+    {
+        QWidget * widget=qobject_cast<QWidget*> (o);
+        myFont.setPointSizeF(9.0);
+        myFont.setStyle(widget->font().style());
+        myFont.setBold(widget->font().bold());
+        widget->setFont(myFont);
+        widget->setLocale(QLocale::system());
+    }
+    foreach(QObject * object,o->children())
+    {
+        Util::setFontDialog(object); /*recursion*/
+    }
 }
 
 void BoardVlmNew::slot_tabChanged(int tabNb)
@@ -511,6 +529,9 @@ void BoardVlmNew::slot_drawPolar()
     }
     lab_polarName->setText(polar->getName());
     polarPnt.begin(&polarImg);
+    QFont myFont(Settings::getSetting("defaultFontName",QApplication::font().family()).toString());
+    myFont.setPointSizeF(8.0);
+    polarPnt.setFont(myFont);
     polarPnt.setRenderHint(QPainter::Antialiasing);
     double maxSpeed=-1;
 //    if(this->allSpeed->isChecked())

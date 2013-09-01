@@ -90,6 +90,7 @@ private:
     int nbVib;
     QList<int>vibStates;
     bool flipBS;
+    void setFontDialog(QObject *o);
 };
 
 #endif // BOARDVLMNEW_H
