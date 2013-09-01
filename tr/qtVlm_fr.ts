@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE TS>
 <TS version="2.0" language="fr_FR" sourcelanguage="fr_FR">
+<defaultcodec>UTF-8</defaultcodec>
 <context>
     <name>Barrier</name>
     <message>
@@ -652,7 +653,11 @@ La boîte à cocher trace partielle s&apos;active apres l&apos;entree d&apos;un 
     </message>
     <message>
         <source>hide set</source>
-        <translation>Cacher le set</translation>
+        <translation type="obsolete">Cacher le set</translation>
+    </message>
+    <message>
+        <source>Boat association</source>
+        <translation>Association aux bateaux</translation>
     </message>
 </context>
 <context>
@@ -2366,7 +2371,7 @@ Etes-vous sur ?</source>
     </message>
     <message>
         <source>Barrier not in edit mode</source>
-        <translation>La barrière n&apos;est pas en mode édition</translation>
+        <translation type="obsolete">La barrière n&apos;est pas en mode édition</translation>
     </message>
 </context>
 <context>
@@ -3269,7 +3274,7 @@ Etes-vous sur ?</source>
     </message>
     <message>
         <source>Enable editting</source>
-        <translation>Autoriser l&apos;édition</translation>
+        <translation type="obsolete">Autoriser l&apos;édition</translation>
     </message>
     <message>
         <source>Add barrier</source>
@@ -4182,7 +4187,7 @@ VMG %.1f nds</translation>
         <source>TWA %ddeg, BS %.2fnds
 AWA %.2fdeg, AWS %.2fnds
 VMG %.2fnds</source>
-        <translation>TWA %d°, BS %.2f nds
+        <translation type="obsolete">TWA %d°, BS %.2f nds
 AWA %.2f°, AWS %.2f nds
 VMG %.2f nds</translation>
     </message>

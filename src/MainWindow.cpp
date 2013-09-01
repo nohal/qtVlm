@@ -328,8 +328,6 @@ void MainWindow::continueSetup()
     connect(this->menuPopupBtRight,SIGNAL(aboutToShow()),my_centralWidget,SLOT(slot_resetGestures()));
     connect(this->menuPopupBtRight,SIGNAL(aboutToHide()),my_centralWidget,SLOT(slot_resetGestures()));
 
-
-
 //--------------------------------------------------
     progress->newStep(26,tr("Loading polars list"));
     polar_list = new polarList(my_centralWidget->getInet(),this);
@@ -340,21 +338,17 @@ void MainWindow::continueSetup()
 
 //--------------------------------------------------
     progress->newStep(30,tr("Creating board & dialogs"));
-
-    //poi_input_dialog = new DialogPoiInput(my_centralWidget);
     selPOI_instruction=NULL;
     isSelectingWP=false;
     myBoard=NULL;
     newBoard=NULL;
     loadBoard();
+
     /* restore state */
-    //qWarning() << "Tool/Board settings: " << Settings::getSetting("savedState","").toByteArray();
     restoreState(Settings::getSetting("savedState","").toByteArray());
     toolBar->load_settings();
-    //board->load_settings();
 
 
-//#warning MOD_BOARD
     param = new DialogParamVlm(this,my_centralWidget);
     if(use_old_board)
         connect(param,SIGNAL(paramVLMChanged()),myBoard,SLOT(paramChanged()));
@@ -468,6 +462,7 @@ void MainWindow::continueSetup()
         else
         {
             isStartingUp=false;
+            my_centralWidget->loadPOI();
             updateTitle();
             my_centralWidget->emitUpdateRoute(NULL);
         }
