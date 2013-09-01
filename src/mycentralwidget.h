@@ -193,6 +193,7 @@ class myCentralWidget : public QWidget
         void showGribDate_dialog(void);
         void loadGribFile(QString fileName, bool zoom);
         void loadGribFileCurrent(QString fileName, bool zoom);
+        void updateGribMenu(void);
         FCT_GET(MapDataDrawer*,mapDataDrawer)
 
         /* events */

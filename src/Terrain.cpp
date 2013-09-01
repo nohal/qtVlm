@@ -97,7 +97,7 @@ Terrain::Terrain(myCentralWidget *parent, Projection *proj_) : QGraphicsWidget()
     isotherms0Step = Settings::getSetting("isotherms0Step", 50).toDouble();
     //setIsotherms0Step(Settings::getSetting("isotherms0Step", 50).toDouble());
 
-    colorMapMode = Settings::getSetting("colorMapMode", Terrain::drawWind).toInt();
+    colorMapMode = Settings::getSetting("colorMapMode", MapDataDrawer::drawWind).toInt();
 
     showTemperatureLabels = Settings::getSetting("showTemperatureLabels", false).toBool();
     //showGribGrid = Settings::getSetting("showGribGrid", false).toBool();
@@ -232,7 +232,7 @@ void Terrain::draw_GSHHSandGRIB()
     // Dessin des donnees GRIB
     //===================================================
     Grib * grib=parent->getGrib();
-    if(colorMapMode==Terrain::drawCurrent)
+    if(colorMapMode==MapDataDrawer::drawCurrent)
     {
         if (!grib || !grib->isOk() || grib->getNumberOfGribRecords(GRB_CURRENT_VX,LV_MSL,0) == 0)
             grib=parent->getGribCurrent();
@@ -506,59 +506,59 @@ void Terrain::drawGrib(QPainter &pnt, Grib *gribPlot)
 {
     MapDataDrawer * mapDataDrawer=parent->get_mapDataDrawer();
         //QTime t1 = QTime::currentTime();
-        //qWarning() << "Grib mode: " << colorMapMode << " (grib=" << Terrain::drawWind << ")";
+        //qWarning() << "Grib mode: " << colorMapMode << " (grib=" << MapDataDrawer::drawWind << ")";
         // grib->draw_WIND_Color(pnt, proj, colorMapSmooth,showWindColorMap,showWindArrows,showBarbules);
         switch (colorMapMode)
         {
-                case Terrain::drawWind :
+                case MapDataDrawer::drawWind :
                         windArrowsColor.setRgb(255, 255, 255);                        
                         mapDataDrawer->draw_WIND_Color(gribPlot,pnt, proj, colorMapSmooth,showWindArrows,showBarbules);
                         break;
-                case Terrain::drawCurrent :
+                case MapDataDrawer::drawCurrent :
                         windArrowsColor.setRgb(255, 255, 255);
                         mapDataDrawer->draw_CURRENT_Color(gribPlot,pnt, proj, colorMapSmooth,showWindArrows,false);
                         break;
-                case Terrain::drawRain :
+                case MapDataDrawer::drawRain :
                         windArrowsColor.setRgb(140, 120, 100);
                         mapDataDrawer->draw_RAIN_Color(gribPlot,pnt, proj, colorMapSmooth);
                         break;
-                case Terrain::drawCloud :
+                case MapDataDrawer::drawCloud :
                         windArrowsColor.setRgb(180, 180, 80);
                         mapDataDrawer->draw_CLOUD_Color(gribPlot,pnt, proj, colorMapSmooth);
                         break;
-                case Terrain::drawHumid :
+                case MapDataDrawer::drawHumid :
                         windArrowsColor.setRgb(180, 180, 80);
                         mapDataDrawer->draw_HUMID_Color(gribPlot,pnt, proj, colorMapSmooth);
                         break;
-                case Terrain::drawTemp :
+                case MapDataDrawer::drawTemp :
                         windArrowsColor.setRgb(255, 255, 255);
                         mapDataDrawer->draw_Temp_Color(gribPlot,pnt, proj, colorMapSmooth);
                         break;
-                case Terrain::drawTempPot :
+                case MapDataDrawer::drawTempPot :
                         windArrowsColor.setRgb(255, 255, 255);
                         mapDataDrawer->draw_TempPot_Color(gribPlot,pnt, proj, colorMapSmooth);
                         break;
-                case Terrain::drawDewpoint :
+                case MapDataDrawer::drawDewpoint :
                         windArrowsColor.setRgb(255, 255, 255);
                         mapDataDrawer->draw_Dewpoint_Color(gribPlot,pnt, proj, colorMapSmooth);
                         break;
-                case Terrain::drawDeltaDewpoint :
+                case MapDataDrawer::drawDeltaDewpoint :
                         windArrowsColor.setRgb(180, 180, 80);
                         mapDataDrawer->draw_DeltaDewpoint_Color(gribPlot,pnt, proj, colorMapSmooth);
                         break;
-                case Terrain::drawSnowDepth :
+                /*case MapDataDrawer::drawSnowDepth :
                         windArrowsColor.setRgb(140, 120, 100);
                         mapDataDrawer->draw_SNOW_DEPTH_Color(gribPlot,pnt, proj, colorMapSmooth);
-                        break;
-                case Terrain::drawSnowCateg :
+                        break;*/
+                case MapDataDrawer::drawSnowCateg :
                         windArrowsColor.setRgb(140, 120, 100);
                         mapDataDrawer->draw_SNOW_CATEG_Color(gribPlot,pnt, proj, colorMapSmooth);
                         break;
-                case Terrain::drawFrzRainCateg :
+                case MapDataDrawer::drawFrzRainCateg :
                         windArrowsColor.setRgb(140, 120, 100);
                         mapDataDrawer->draw_FRZRAIN_CATEG_Color(gribPlot,pnt, proj, colorMapSmooth);
                         break;
-                case Terrain::drawCAPEsfc :
+                case MapDataDrawer::drawCAPEsfc :
                         windArrowsColor.setRgb(100, 80, 80);
                         mapDataDrawer->draw_CAPEsfc(gribPlot,pnt, proj, colorMapSmooth);
                         break;
@@ -568,21 +568,21 @@ void Terrain::drawGrib(QPainter &pnt, Grib *gribPlot)
         //send gfs:40N,60N,140W,120W|2,2|24,48,72|PRESS,WIND,SEATMP,AIRTMP,WAVES
 
         if (showIsobars) {
-                pnt.setPen(isobarsPen);
-                mapDataDrawer->draw_Isobars(gribPlot,pnt, proj);
+            pnt.setPen(isobarsPen);
+            mapDataDrawer->draw_Isobars(gribPlot,pnt, proj);
+            if (showIsobarsLabels) {
+                mapDataDrawer->draw_IsobarsLabels(gribPlot,pnt, proj);
+            }
         }
 
         if (showIsotherms0) {
-                pnt.setPen(isotherms0Pen);
-                mapDataDrawer->draw_Isotherms0(gribPlot,pnt, proj);
+            pnt.setPen(isotherms0Pen);
+            mapDataDrawer->draw_Isotherms0(gribPlot,pnt, proj);
+            if (showIsotherms0Labels) {
+                mapDataDrawer->draw_Isotherms0Labels(gribPlot,pnt, proj);
+            }
         }
 
-        if (showIsobarsLabels) {
-                mapDataDrawer->draw_IsobarsLabels(gribPlot,pnt, proj);
-        }
-        if (showIsotherms0Labels) {
-                mapDataDrawer->draw_Isotherms0Labels(gribPlot,pnt, proj);
-        }
         if (showPressureMinMax) {
                 mapDataDrawer->draw_PRESSURE_MinMax (gribPlot,pnt, proj);
         }
@@ -638,7 +638,7 @@ void Terrain::switchGribDisplay(bool windArrowOnly)
 {
     if(windArrowOnly)
     {
-        colorMapMode=drawWind;
+        colorMapMode=MapDataDrawer::drawWind;
         colorMapSmooth=false;
         showWindArrows=true;
         showBarbules=true;

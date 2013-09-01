@@ -138,7 +138,7 @@ void DataColors::load_colors(int transparence) {
         mainNode = mainNode.nextSibling();
     }
 
-    //DataColors::print_data();
+    DataColors::print_data();
 }
 
 QRgb DataColors::get_color_windColorScale(double v, double min, double max, bool smooth) {

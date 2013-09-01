@@ -62,7 +62,7 @@ public:
     MenuBar(MainWindow *parent);
 
     void setCitiesNamesLevel(int level);
-    void setMenubarColorMapMode(int colorMapMode);
+    void setMenubarColorMapMode(int colorMapMode, bool withoutEvent=false);
     void setIsobarsStep(int step);
     void setIsotherms0Step(int step);
 
@@ -162,9 +162,11 @@ public:
     QAction *acView_TempPotColors;
     QAction *acView_DeltaDewpointColors;
     QAction *acView_SnowCateg;
-    QAction *acView_SnowDepth;
+    //QAction *acView_SnowDepth;
     QAction *acView_FrzRainCateg;
     QAction *acView_CAPEsfc;
+
+    QMap<int,QAction*> gribDataActionMap;
 
     QAction *acView_Isobars;
     QMenu   *menuIsobars;

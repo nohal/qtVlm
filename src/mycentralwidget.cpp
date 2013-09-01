@@ -1253,12 +1253,83 @@ void myCentralWidget::zoomOnGrib(Grib * gr)
     }
 }
 
+
+void myCentralWidget::updateGribMenu(void) {
+    /* Main grib */
+    bool res;
+    QMap<int,DataCode> *dataMap=mapDataDrawer->get_dataCodeMap();
+
+    /* is curent drawing mode still present ? */
+    int curMode = terre->getColorMapMode();
+    DataCode dataCode = dataMap->value(curMode,DataCode(0,0,0));
+    bool needNewMode=false;
+    bool hasNewMode=false;
+    int newMode=MapDataDrawer::drawNone;
+
+    switch(curMode) {
+        case MapDataDrawer::drawNone:
+            needNewMode=true;
+            break;
+        case MapDataDrawer::drawCurrent:
+            dataPresentInGrib(gribCurrent,dataCode.dataType,dataCode.levelType,dataCode.levelValue,&res);
+            needNewMode=!res;
+            break;
+        default:
+            dataPresentInGrib(grib,dataCode.dataType,dataCode.levelType,dataCode.levelValue,&res);
+            needNewMode=!res;
+            break;
+    }
+
+    QMapIterator<int,DataCode> i(*dataMap);
+    while (i.hasNext()) {
+        i.next();
+        if(i.key() != MapDataDrawer::drawNone) {
+            QAction * act = menuBar->gribDataActionMap.value(i.key());
+            if(act) {
+                if(i.key() == MapDataDrawer::drawCurrent) {
+                    if(gribCurrent && gribCurrent->isOk()) {
+                       dataPresentInGrib(gribCurrent,i.value().dataType,i.value().levelType,i.value().levelValue,&res);
+                       act->setEnabled(res);
+                       if(res && needNewMode && !hasNewMode) {
+                           newMode=i.key();
+                           hasNewMode=true;
+                       }
+                    }
+                    else
+                        menuBar->acView_CurrentColors->setEnabled(false);
+                }
+                else {
+                    if(grib && grib->isOk()) {
+                        dataPresentInGrib(grib,i.value().dataType,i.value().levelType,i.value().levelValue,&res);
+                        act->setEnabled(res);
+                        if(res && needNewMode && !hasNewMode) {
+                            newMode=i.key();
+                            hasNewMode=true;
+                        }
+                    }
+                    else
+                        act->setEnabled(false);
+                }
+            }
+        }
+    }
+
+    if(hasNewMode) {
+        terre->setColorMapMode(newMode);
+        menuBar->setMenubarColorMapMode(newMode,true);
+    }
+
+}
+
 void myCentralWidget::loadGribFile(QString fileName, bool zoom)
 {
     if (!grib)
         return;
 
     grib->loadGribFile(fileName);
+
+    updateGribMenu();
+
     if(!grib->isOk())
     {
         emit redrawAll();
@@ -1293,6 +1364,9 @@ void myCentralWidget::loadGribFileCurrent(QString fileName, bool zoom)
         return;
 
     gribCurrent->loadGribFile(fileName);
+
+    updateGribMenu();
+
     if(!gribCurrent->isOk())
     {
         emit redrawAll();
@@ -1492,7 +1566,7 @@ void myCentralWidget::slot_fileInfo_GRIB()
         msg += tr("    Temperature (max) : %1\n").arg(dataPresentInGrib(grib,GRB_TMAX,LV_ABOV_GND,2));
         msg += tr("    Temperature (pot) : %1\n").arg(dataPresentInGrib(grib,GRB_TEMP_POT,LV_SIGMA,9950));
 	msg += tr("    Neige (risque) : %1\n").arg(dataPresentInGrib(grib,GRB_SNOW_CATEG,LV_GND_SURF,0));
-        msg += tr("    Neige (epaisseur) : %1\n").arg(dataPresentInGrib(grib,GRB_SNOW_DEPTH,LV_GND_SURF,0));
+        //msg += tr("    Neige (epaisseur) : %1\n").arg(dataPresentInGrib(grib,GRB_SNOW_DEPTH,LV_GND_SURF,0));
         msg += tr("    Humidite specifique :\n");
         msg += tr("        - 200: %1\n").arg(dataPresentInGrib(grib,GRB_HUMID_SPEC,LV_ISOBARIC,200));
         msg += tr("        - 300: %1\n").arg(dataPresentInGrib(grib,GRB_HUMID_SPEC,LV_ISOBARIC,300));
@@ -4619,36 +4693,10 @@ void myCentralWidget::slotIsotherms0Step()
 
 void myCentralWidget::slot_setColorMapMode(QAction* act)
 {
-    MenuBar  *mb = menuBar;
     int mode;
-    if (act == mb->acView_WindColors)
-        mode = Terrain::drawWind;
-    else if (act == mb->acView_CurrentColors)
-        mode = Terrain::drawCurrent;
-    else if (act == mb->acView_RainColors)
-        mode = Terrain::drawRain;
-    else if (act == mb->acView_CloudColors)
-        mode = Terrain::drawCloud;
-    else if (act == mb->acView_HumidColors)
-        mode = Terrain::drawHumid;
-    else if (act == mb->acView_TempColors)
-        mode = Terrain::drawTemp;
-    else if (act == mb->acView_TempPotColors)
-        mode = Terrain::drawTempPot;
-    else if (act == mb->acView_DeltaDewpointColors)
-        mode = Terrain::drawDeltaDewpoint;
-    else if (act == mb->acView_SnowCateg)
-        mode = Terrain::drawSnowCateg;
-    else if (act == mb->acView_FrzRainCateg)
-        mode = Terrain::drawFrzRainCateg;
-    else if (act == mb->acView_SnowDepth)
-        mode = Terrain::drawSnowDepth;
-    else if (act == mb->acView_CAPEsfc)
-        mode = Terrain::drawCAPEsfc;
-    else
-        mode = Terrain::drawNone;
 
-    //qWarning() << "New mode " << mode;
+    if(!act) mode = MapDataDrawer::drawNone;
+    else mode = menuBar->gribDataActionMap.key(act,MapDataDrawer::drawNone);
 
     terre->setColorMapMode(mode);
 }

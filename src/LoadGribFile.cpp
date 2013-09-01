@@ -78,7 +78,7 @@ void LoadGribFile::getGribFile(
         double resolution, int interval, int days,
         bool wind, bool pressure, bool rain,
         bool cloud, bool temp, bool humid, bool isotherm0,
-                bool tempPot, bool tempMin, bool tempMax, bool snowDepth,
+                bool tempPot, bool tempMin, bool tempMax,
                 bool snowCateg, bool frzRainCateg,
                 bool CAPEsfc,
                 bool altitudeData200,
@@ -123,10 +123,7 @@ void LoadGribFile::getGribFile(
     }
     if (tempMax) {
         parameters += "M";
-    }
-    if (snowDepth) {
-        parameters += "S";
-    }
+    }    
     if (snowCateg) {
         parameters += "s";
     }

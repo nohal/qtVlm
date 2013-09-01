@@ -22,12 +22,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #define MAPDATADRAWER_H
 
 #include <QPainter>
+#include <QMap>
 
 #include "class_list.h"
 #include "dataDef.h"
-
-#define NEW_COLOR_CLASS
-#define WITH_CACHE
+#include "Grib.h"
 
 struct GribThreadData
 {
@@ -38,9 +37,7 @@ struct GribThreadData
     bool smooth;
     Grib * grib;
     MapDataDrawer * mapDataDrawer;
-#ifdef NEW_COLOR_CLASS
     ColorElement * colorElement;
-#endif
 };
 Q_DECLARE_TYPEINFO(GribThreadData,Q_PRIMITIVE_TYPE);
 struct GribThreadResult
@@ -68,7 +65,7 @@ class MapDataDrawer
 
         // Carte de couleurs des precipitations
         void draw_RAIN_Color(Grib *grib,QPainter &pnt, const Projection *proj, bool smooth);
-        void draw_SNOW_DEPTH_Color(Grib *grib,QPainter &pnt, const Projection *proj, bool smooth);
+        //void draw_SNOW_DEPTH_Color(Grib *grib,QPainter &pnt, const Projection *proj, bool smooth);
         void draw_SNOW_CATEG_Color(Grib *grib,QPainter &pnt, const Projection *proj, bool smooth);
         void draw_CAPEsfc(Grib *grib,QPainter &pnt, const Projection *proj, bool smooth);
         void draw_FRZRAIN_CATEG_Color(Grib *grib,QPainter &pnt, const Projection *proj, bool smooth);
@@ -97,15 +94,30 @@ class MapDataDrawer
         static QColor getWindColorStatic(const double &v, const bool &smooth=true);
         static QColor getCurrentColorStatic(const double &v, const bool &smooth=true);
 
-        static QColor getWindColorStaticOLD(const double &v, const bool &smooth);
-
         FCT_SETGET_CST(bool,gribMonoCpu)
+        QMap<int,DataCode> * get_dataCodeMap(void) { return &dataCodeMap; }
+
+        enum DrawGribPlainDataMode {
+                 drawNone=0,
+                 drawWind,
+                 drawCurrent,
+                 drawCloud,
+                 drawRain,
+                 drawCAPEsfc,
+                 drawSnowCateg,
+                 drawFrzRainCateg,
+                 drawHumid,
+                 drawTemp,
+                 drawTempPot,
+                 drawTempMin,
+                 drawTempMax,
+                 drawDewpoint,
+                 drawDeltaDewpoint
+        };
 
     private:
         myCentralWidget *centralWidget;
 
-        QColor windColor[14];        // couleur selon la force du vent en beauforts
-        QColor rainColor[17];
         int    mapColorTransp;
 
         int    windArrowSpace;        // distance mini entre fleches (pixels)
@@ -117,6 +129,8 @@ class MapDataDrawer
         int    windBarbuleSize;       // longueur des fleches
 
         bool	isCloudsColorModeWhite;
+
+        void initDataCodes(void);
 
         void drawWindArrow(QPainter &pnt, int i, int j, double ang);
         void drawWindArrowWithBarbs(
@@ -163,8 +177,7 @@ class MapDataDrawer
         QRgb   getBinaryColor    (double v, bool smooth);
 
 
-
-
+        QMap<int,DataCode> dataCodeMap;
 
         bool gribMonoCpu;
 

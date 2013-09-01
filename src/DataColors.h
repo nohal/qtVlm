@@ -69,6 +69,7 @@ class DataColors
         static QRgb get_color_windColorScale(double v, double min, double max, bool smooth);
 
         static ColorElement * get_colorElement(QString type);
+        static ColorElement * get_colorElement(int type);
 
         static void load_colors(int transparence);
 

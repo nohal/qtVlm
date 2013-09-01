@@ -662,48 +662,6 @@ void MainWindow::closeProgress(void)
     {
         openGribFile(fname, false);
         gribFileName=fname;
-#if 0
-            Grib * grib=my_centralWidget->getGrib();
-            GribRecord *recU1,*recV1,*recU2,*recV2;
-            time_t t1,t2;
-            time_t tps=grib->getCurrentDate();
-            double u,v;
-            QTime calibration;
-            if(grib->getInterpolationParam(tps,&t1,&t2,&recU1,&recV1,&recU2,&recV2)) {
-                calibration.start();
-                for(double i=0;i<360;i+=0.1)
-                    for(double j=-89;j<90;j+=0.1) {
-                        if(grib->getInterpolatedValue_byDates(i,j,tps,t1,t2,recU1,recV1,recU2,recV2,&u,&v))
-                        {
-                            MapDataDrawer::getWindColorStaticOLD(u,true);
-                        }
-                    }
-                qWarning() << "old code: " << calibration.elapsed();
-                ColorElement * colorElement=DataColors::get_colorElement("wind_kts");
-                calibration.start();
-                for(double i=0;i<360;i+=0.1)
-                    for(double j=-89;j<90;j+=0.1) {
-                        if(grib->getInterpolatedValue_byDates(i,j,tps,t1,t2,recU1,recV1,recU2,recV2,&u,&v))
-                        {
-                            colorElement->get_color(u,true);
-                        }
-                    }
-                qWarning() << "new code: " << calibration.elapsed();
-                calibration.start();
-                colorElement->loadCache(true);
-                qWarning()<<"time to preload cache:"<<calibration.elapsed();
-                calibration.start();
-                for(double i=0;i<360;i+=0.1)
-                    for(double j=-89;j<90;j+=0.1) {
-                        if(grib->getInterpolatedValue_byDates(i,j,tps,t1,t2,recU1,recV1,recU2,recV2,&u,&v))
-                        {
-                            colorElement->get_colorCached(u);
-                        }
-                    }
-                qWarning() << "new code with cache: " << calibration.elapsed();
-                colorElement->clearCache();
-            }
-#endif
     }
     fname = Settings::getSetting("gribFileNameCurrent", "").toString();
     if (fname != "" && QFile::exists(fname))

@@ -38,6 +38,7 @@ Copyright (C) 2008 - Jacques Zaninetti - http://zygrib.free.fr
 #include "ToolBar.h"
 //#include "Board.h"
 #include "BarrierSet.h"
+#include "MapDataDrawer.h"
 
 
 //===================================================================================
@@ -157,17 +158,28 @@ MenuBar::MenuBar(MainWindow *parent)
         menuGroupColorMap = new QMenu(tr("Type de carte"));
         acView_GroupColorMap = new ZeroOneActionGroup (menuGroupColorMap);
                 acView_WindColors = addActionCheck(menuGroupColorMap, tr("Carte du vent"), "", "");
+                gribDataActionMap.insert(MapDataDrawer::drawWind,acView_WindColors);
                 acView_CurrentColors = addActionCheck(menuGroupColorMap, tr("Carte du courant"), "", "");
+                gribDataActionMap.insert(MapDataDrawer::drawCurrent,acView_CurrentColors);
                 acView_RainColors = addActionCheck(menuGroupColorMap, tr("Carte des preecipitations"),"","");
+                gribDataActionMap.insert(MapDataDrawer::drawRain,acView_RainColors);
                 acView_CloudColors = addActionCheck(menuGroupColorMap, tr("Couverture nuageuse"), "","");
+                gribDataActionMap.insert(MapDataDrawer::drawCloud,acView_CloudColors);
                 acView_HumidColors = addActionCheck(menuGroupColorMap, tr("Carte de l'humidite relative"),"","");
+                gribDataActionMap.insert(MapDataDrawer::drawHumid,acView_HumidColors);
                 acView_TempColors = addActionCheck(menuGroupColorMap, tr("Carte de la temperature"),"","");
+                gribDataActionMap.insert(MapDataDrawer::drawTemp,acView_TempColors);
                 acView_TempPotColors = addActionCheck(menuGroupColorMap, tr("Carte de la temperature potentielle"),"","");
+                gribDataActionMap.insert(MapDataDrawer::drawTempPot,acView_TempPotColors);
                 acView_DeltaDewpointColors = addActionCheck(menuGroupColorMap, tr("Ecart temperature-point de rosee"), "", "");
+                gribDataActionMap.insert(MapDataDrawer::drawDeltaDewpoint,acView_DeltaDewpointColors);
                 acView_SnowCateg = addActionCheck(menuGroupColorMap, tr("Neige (chute possible)"), "", "");
-                acView_SnowDepth = addActionCheck(menuGroupColorMap, tr("Neige (Epaisseur)"), "", "");
+                gribDataActionMap.insert(MapDataDrawer::drawSnowCateg,acView_SnowCateg);
+                //acView_SnowDepth = addActionCheck(menuGroupColorMap, tr("Neige (Epaisseur)"), "", "");
                 acView_FrzRainCateg = addActionCheck(menuGroupColorMap, tr("Pluie verglacante (chute possible)"), "", "");
+                gribDataActionMap.insert(MapDataDrawer::drawFrzRainCateg,acView_FrzRainCateg);
                 acView_CAPEsfc = addActionCheck(menuGroupColorMap, tr("CAPE (surface)"), "", "");
+                gribDataActionMap.insert(MapDataDrawer::drawCAPEsfc,acView_CAPEsfc);
                 acView_GroupColorMap->addAction(acView_WindColors);
                 acView_GroupColorMap->addAction(acView_CurrentColors);
                 acView_GroupColorMap->addAction(acView_RainColors);
@@ -177,13 +189,13 @@ MenuBar::MenuBar(MainWindow *parent)
                 acView_GroupColorMap->addAction(acView_TempPotColors);
                 acView_GroupColorMap->addAction(acView_DeltaDewpointColors);
                 acView_GroupColorMap->addAction(acView_SnowCateg);
-                acView_GroupColorMap->addAction(acView_SnowDepth);
+                //acView_GroupColorMap->addAction(acView_SnowDepth);
                 acView_GroupColorMap->addAction(acView_FrzRainCateg);
                 acView_GroupColorMap->addAction(acView_CAPEsfc);
         menuGrib->addMenu(menuGroupColorMap);
         menuGrib->addSeparator();
 
-        setMenubarColorMapMode(Settings::getSetting("colorMapMode", Terrain::drawWind).toInt());
+        setMenubarColorMapMode(Settings::getSetting("colorMapMode", MapDataDrawer::drawWind).toInt());
 
         //-------------------------------------
         menuAltitude = new QMenu(tr("Altitude"));
@@ -317,7 +329,7 @@ MenuBar::MenuBar(MainWindow *parent)
                 acView_GroupIsotherms0Step->addAction(acView_Isotherms0Step500);
                 acView_GroupIsotherms0Step->addAction(acView_Isotherms0Step1000);
             menuIsotherms0->addMenu(menuIsotherms0Step);
-            setIsotherms0Step(Settings::getSetting("isotherms0Step", 100).toInt());
+            setIsotherms0Step(Settings::getSetting("isotherms0Step", 50).toInt());
         acView_Isotherms0Labels = addActionCheck(menuIsotherms0,
                                                 tr("Etiquettes des isothermes 0degC"), "",
                             tr("Afficher les étiquettes des isothermes 0degC"));
@@ -704,50 +716,18 @@ void MenuBar::slot_showBarrierMenu(void) {
 
 
 //------------------------------------------------------------
-void MenuBar::setMenubarColorMapMode(int colorMapMode)
-{
-    QAction  *act = NULL;
-    switch (colorMapMode)
-    {
-        case Terrain::drawWind :
-            act = acView_WindColors;
-            break;
-        case Terrain::drawCurrent :
-            act = acView_CurrentColors;
-            break;
-        case Terrain::drawRain :
-            act = acView_RainColors;
-            break;
-        case Terrain::drawCloud :
-            act = acView_CloudColors;
-            break;
-        case Terrain::drawHumid :
-            act = acView_HumidColors;
-            break;
-        case Terrain::drawTemp :
-            act = acView_TempColors;
-            break;
-        case Terrain::drawTempPot :
-            act = acView_TempPotColors;
-            break;
-        case Terrain::drawDeltaDewpoint :
-            act = acView_DeltaDewpointColors;
-            break;
-        case Terrain::drawSnowCateg :
-            act = acView_SnowCateg;
-            break;
-        case Terrain::drawFrzRainCateg :
-            act = acView_FrzRainCateg;
-            break;
-        case Terrain::drawSnowDepth :
-            act = acView_SnowDepth;
-            break;
-        case Terrain::drawCAPEsfc :
-            act = acView_CAPEsfc;
-            break;
+void MenuBar::setMenubarColorMapMode(int colorMapMode,bool withoutEvent)
+{    
+    QMapIterator<int,QAction *> i(gribDataActionMap);
+    while(i.hasNext()) {
+        i.next();
+        QAction * ptr=i.value();
+        if(withoutEvent)
+            ptr->blockSignals(true);
+        ptr->setChecked(colorMapMode == i.key());
+        if(withoutEvent)
+            ptr->blockSignals(false);
     }
-    if(act)
-        act->setChecked(true);
 }
 
 //===================================================================================

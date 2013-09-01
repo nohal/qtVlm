@@ -43,6 +43,7 @@ public:
 
     void  setGSHHS_map(GshhsReader *map);
     void setColorMapMode(int mode);
+    int  getColorMapMode(void) { return colorMapMode; }
 
     void updateSize(int width, int height);
 
@@ -53,24 +54,6 @@ public:
     void setScalePos(const int &a, const int &b){this->scalePos=QPoint(a,b);}
     bool daylight(QPainter * pnt, const vlmPoint &coords);
 
-    enum DrawGribPlainDataMode {
-             drawNone,
-             drawWind,
-             drawCurrent,
-             drawCloud,
-             drawRain,
-             drawCAPEsfc,
-             drawSnowDepth,
-             drawSnowCateg,
-             drawFrzRainCateg,
-             drawHumid,
-             drawTemp,
-             drawTempPot,
-             drawTempMin,
-             drawTempMax,
-             drawDewpoint,
-             drawDeltaDewpoint
-    };
     void switchGribDisplay(bool windArrowOnly);
     QSize getSize() const {return QSize(width,height);}
 

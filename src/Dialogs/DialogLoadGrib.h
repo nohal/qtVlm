@@ -105,7 +105,6 @@ class DialogLoadGrib : public QDialog
         QCheckBox *chkTempMax;
         QCheckBox *chkSnowCateg;
         QCheckBox *chkFrzRainCateg;
-        QCheckBox *chkSnowDepth;
         QCheckBox *chkCAPEsfc;
 
         QCheckBox *chkAltitudeAll;
@@ -128,7 +127,7 @@ class DialogLoadGrib : public QDialog
         double   xmin,ymin,xmax,ymax,resolution;
         int     interval,days;
         bool    rain, cloud, pressure, wind, temp, humid, isotherm0;
-        bool	tempPot, tempMin, tempMax, snowDepth, snowCateg, frzRainCateg;
+        bool	tempPot, tempMin, tempMax, snowCateg, frzRainCateg;
         bool 	CAPEsfc;
 
         void    updateParameters();

@@ -221,7 +221,7 @@
 		</colorData>
 		<colorData>
 			<name>temp_celcius</name>
-			<param>1;0</param>
+			<param>1;273.15</param>
 			<color>-50;40;50;130</color>
 			<color>-45;39;60;140</color>
 			<color>-40;38;70;150</color>

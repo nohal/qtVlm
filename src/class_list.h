@@ -85,6 +85,7 @@ class MapDataDrawer;
 class GribRecord;
 class DataColors;
 class ColorElement;
+class DataCode;
 
 /* GshhsReader.h */
 class GshhsReader;

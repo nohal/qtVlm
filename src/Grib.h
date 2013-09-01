@@ -46,6 +46,7 @@ Lecture mise en memoire d'un fichier GRIB
 
 #define MUST_INTERPOLATE_VALUE true
 
+
 //===============================================================
 class Grib
 {

@@ -53,7 +53,7 @@ Grib::Grib() {
 #endif
 
     isobarsStep = Settings::getSetting("isobarsStep", 2).toDouble();
-    isotherms0Step = 50;
+    isotherms0Step = Settings::getSetting("isoTherms0Step", 50).toInt();;
 
     QString interpol_name[4] = { "UKN", "TWSA", "selecive TWSA", "Hybride" };
     interpolation_param = INTERPOLATION_DEFAULT;
@@ -102,6 +102,7 @@ void Grib::setIsobarsStep(double step)
 void Grib::setIsotherms0Step(double step)
 {
     isotherms0Step = step;
+    qWarning() << "New isoTherms0 step: " << step;
     initIsotherms0();
 }
 

@@ -51,44 +51,30 @@ MapDataDrawer::MapDataDrawer(myCentralWidget *centralWidget) {
 
     DataColors::load_colors(mapColorTransp);
 
-    // Color scale for wind in beaufort
-    windColor[ 0].setRgba(qRgba(   0,  80, 255,  mapColorTransp));
-    windColor[ 1].setRgba(qRgba(   0, 150, 255,  mapColorTransp));
-    windColor[ 2].setRgba(qRgba(   0, 200, 255,  mapColorTransp));
-    windColor[ 3].setRgba(qRgba(   0, 250, 180,  mapColorTransp));
-    windColor[ 4].setRgba(qRgba(   0, 230, 150,  mapColorTransp));
-    windColor[ 5].setRgba(qRgba( 255, 255,   0,  mapColorTransp));
-    windColor[ 6].setRgba(qRgba( 255, 220,   0,  mapColorTransp));
-    windColor[ 7].setRgba(qRgba( 255, 180,   0,  mapColorTransp));
-    windColor[ 8].setRgba(qRgba( 255, 120,   0,  mapColorTransp));
-    windColor[ 9].setRgba(qRgba( 230, 120,   0,  mapColorTransp));
-    windColor[10].setRgba(qRgba( 220,  80,   0,  mapColorTransp));
-    windColor[11].setRgba(qRgba( 200,  50,  30,  mapColorTransp));
-    windColor[12].setRgba(qRgba( 170,   0,  50,  mapColorTransp));
-    windColor[13].setRgba(qRgba( 150,   0,  30,  mapColorTransp));
-    // Color scale for rain in mm/h
-    rainColor[ 0].setRgba(qRgba(255,255,255,  mapColorTransp));
-    rainColor[ 1].setRgba(qRgba(200,240,255,  mapColorTransp));
-    rainColor[ 2].setRgba(qRgba(150,240,255,  mapColorTransp));
-    rainColor[ 3].setRgba(qRgba(100,200,255,  mapColorTransp));
-    rainColor[ 4].setRgba(qRgba( 50,200,255,  mapColorTransp));
-    rainColor[ 5].setRgba(qRgba(  0,150,255,  mapColorTransp));
-    rainColor[ 6].setRgba(qRgba(  0,100,255,  mapColorTransp));
-    rainColor[ 7].setRgba(qRgba(  0, 50,255,  mapColorTransp));
-    rainColor[ 8].setRgba(qRgba( 50,  0,255,  mapColorTransp));
-    rainColor[ 9].setRgba(qRgba(100,  0,255,  mapColorTransp));
-    rainColor[10].setRgba(qRgba(150,  0,255,  mapColorTransp));
-    rainColor[11].setRgba(qRgba(200,  0,255,  mapColorTransp));
-    rainColor[12].setRgba(qRgba(250,  0,255,  mapColorTransp));
-    rainColor[13].setRgba(qRgba(200,  0,200,  mapColorTransp));
-    rainColor[14].setRgba(qRgba(150,  0,150,  mapColorTransp));
-    rainColor[15].setRgba(qRgba(100,  0,100,  mapColorTransp));
-    rainColor[16].setRgba(qRgba( 50,  0,50,  mapColorTransp));
+    initDataCodes();
 }
 
 MapDataDrawer::~MapDataDrawer() {
 
 }
+
+void MapDataDrawer::initDataCodes(void) {
+    dataCodeMap.insert(drawWind,DataCode(GRB_WIND_VX,LV_ABOV_GND,10));
+    dataCodeMap.insert(drawCurrent,DataCode());
+    dataCodeMap.insert(drawCloud,DataCode(GRB_CLOUD_TOT,LV_ATMOS_ALL,0));
+    dataCodeMap.insert(drawRain,DataCode(GRB_PRECIP_TOT,LV_GND_SURF,0));
+    dataCodeMap.insert(drawCAPEsfc,DataCode(GRB_CAPE,LV_GND_SURF,0));
+    dataCodeMap.insert(drawSnowCateg,DataCode(GRB_SNOW_CATEG,LV_GND_SURF,0));
+    dataCodeMap.insert(drawFrzRainCateg,DataCode(GRB_FRZRAIN_CATEG,LV_GND_SURF,0));
+    dataCodeMap.insert(drawHumid,DataCode(GRB_HUMID_REL,LV_ABOV_GND,2));
+    dataCodeMap.insert(drawTemp,DataCode(GRB_TEMP,LV_ABOV_GND,2));
+    dataCodeMap.insert(drawTempPot,DataCode(GRB_TEMP_POT,LV_SIGMA,9950));
+    //dataCodeMap.insert(drawTempMin,DataCode());
+    //dataCodeMap.insert(drawTempMax,DataCode());
+    dataCodeMap.insert(drawDewpoint,DataCode(GRB_DEWPOINT,LV_ABOV_GND,2));
+    dataCodeMap.insert(drawDeltaDewpoint,DataCode(GRB_DEWPOINT,LV_ABOV_GND,2));
+}
+
 
 /****************************************************************************
  * color getter
@@ -140,7 +126,6 @@ QRgb  MapDataDrawer::getPressureColor(double v, bool smooth) {
     return DataColors::get_color_windColorScale(x, t0, t1, smooth);
 }
 
-#ifdef NEW_COLOR_CLASS
 // using new color class
 QRgb MapDataDrawer::getWindColor(double v, bool smooth) {
     return DataColors::get_color("wind_kts",v,smooth);
@@ -148,111 +133,6 @@ QRgb MapDataDrawer::getWindColor(double v, bool smooth) {
 
 QColor MapDataDrawer::getWindColorStatic(const double &v, const bool &smooth) {
     return QColor(DataColors::get_color("wind_kts",v,smooth));
-}
-#else
-// using old color system
-QRgb MapDataDrawer::getWindColor(double v, bool smooth) {
-    QRgb rgb = 0;
-
-    if (! smooth) {
-        const int beauf = Util::kmhToBeaufort(v);
-        rgb = windColor[beauf].rgba();
-    }
-    else {
-        // Interpolation de couleur
-        double fbeauf = Util::kmhToBeaufort_F(v);
-        int f1=qBound(0,(int)(fbeauf),12);
-        int f2=qBound(0,(int)(fbeauf+1),12);
-        QColor c1 = windColor[f1];
-        QColor c2 = windColor[f2];
-        double dcol = fbeauf-floor(fbeauf);
-        rgb = qRgba(
-                    (int)( c1.red() *(1.0-dcol) + dcol*c2.red() +0.5),
-                    (int)( c1.green()*(1.0-dcol) + dcol*c2.green() +0.5),
-                    (int)( c1.blue() *(1.0-dcol) + dcol*c2.blue() +0.5),
-                    mapColorTransp
-                    );
-    }
-    return rgb;
-}
-
-QColor MapDataDrawer::getWindColorStatic(const double &v, const bool &smooth) {
-    QColor windColorTemp[14]; // couleur selon la force du vent en beauforts
-   windColorTemp[ 0].setRgba(qRgba( 0, 80, 255, 255));
-   windColorTemp[ 1].setRgba(qRgba( 0, 150, 255, 255));
-   windColorTemp[ 2].setRgba(qRgba( 0, 200, 255, 255));
-   windColorTemp[ 3].setRgba(qRgba( 0, 250, 180, 255));
-   windColorTemp[ 4].setRgba(qRgba( 0, 230, 150, 255));
-   windColorTemp[ 5].setRgba(qRgba( 255, 255, 0, 255));
-   windColorTemp[ 6].setRgba(qRgba( 255, 220, 0, 255));
-   windColorTemp[ 7].setRgba(qRgba( 255, 180, 0, 255));
-   windColorTemp[ 8].setRgba(qRgba( 255, 120, 0, 255));
-   windColorTemp[ 9].setRgba(qRgba( 230, 120, 0, 255));
-   windColorTemp[10].setRgba(qRgba( 220, 80, 0, 255));
-   windColorTemp[11].setRgba(qRgba( 200, 50, 30, 255));
-   windColorTemp[12].setRgba(qRgba( 170, 0, 50, 255));
-   windColorTemp[13].setRgba(qRgba( 150, 0, 30, 255));
-   QRgb rgb = 0;
-   if (! smooth) {
-   const int beauf = Util::kmhToBeaufort(v);
-   rgb = windColorTemp[beauf].rgba();
-   }
-   else {
-   // Interpolation de couleur
-   double fbeauf = Util::kmhToBeaufort_F(v);
-   int f1=qBound(0,(int)(fbeauf),12);
-   int f2=qBound(0,(int)(fbeauf+1),12);
-   QColor c1 = windColorTemp[f1];
-   QColor c2 = windColorTemp[f2];
-   double dcol = fbeauf-floor(fbeauf);
-   rgb = qRgba(
-   (int)( c1.red() *(1.0-dcol) + dcol*c2.red() +0.5),
-   (int)( c1.green()*(1.0-dcol) + dcol*c2.green() +0.5),
-   (int)( c1.blue() *(1.0-dcol) + dcol*c2.blue() +0.5),
-   255
-   );
-   }
-   return QColor(rgb);
-}
-#endif
-
-QColor MapDataDrawer::getWindColorStaticOLD(const double &v, const bool &smooth) {
-    QColor windColorTemp[14]; // couleur selon la force du vent en beauforts
-   windColorTemp[ 0].setRgba(qRgba( 0, 80, 255, 255));
-   windColorTemp[ 1].setRgba(qRgba( 0, 150, 255, 255));
-   windColorTemp[ 2].setRgba(qRgba( 0, 200, 255, 255));
-   windColorTemp[ 3].setRgba(qRgba( 0, 250, 180, 255));
-   windColorTemp[ 4].setRgba(qRgba( 0, 230, 150, 255));
-   windColorTemp[ 5].setRgba(qRgba( 255, 255, 0, 255));
-   windColorTemp[ 6].setRgba(qRgba( 255, 220, 0, 255));
-   windColorTemp[ 7].setRgba(qRgba( 255, 180, 0, 255));
-   windColorTemp[ 8].setRgba(qRgba( 255, 120, 0, 255));
-   windColorTemp[ 9].setRgba(qRgba( 230, 120, 0, 255));
-   windColorTemp[10].setRgba(qRgba( 220, 80, 0, 255));
-   windColorTemp[11].setRgba(qRgba( 200, 50, 30, 255));
-   windColorTemp[12].setRgba(qRgba( 170, 0, 50, 255));
-   windColorTemp[13].setRgba(qRgba( 150, 0, 30, 255));
-   QRgb rgb = 0;
-   if (! smooth) {
-   const int beauf = Util::kmhToBeaufort(v);
-   rgb = windColorTemp[beauf].rgba();
-   }
-   else {
-   // Interpolation de couleur
-   double fbeauf = Util::kmhToBeaufort_F(v);
-   int f1=qBound(0,(int)(fbeauf),12);
-   int f2=qBound(0,(int)(fbeauf+1),12);
-   QColor c1 = windColorTemp[f1];
-   QColor c2 = windColorTemp[f2];
-   double dcol = fbeauf-floor(fbeauf);
-   rgb = qRgba(
-   (int)( c1.red() *(1.0-dcol) + dcol*c2.red() +0.5),
-   (int)( c1.green()*(1.0-dcol) + dcol*c2.green() +0.5),
-   (int)( c1.blue() *(1.0-dcol) + dcol*c2.blue() +0.5),
-   255
-   );
-   }
-   return QColor(rgb);
 }
 
 QRgb MapDataDrawer::getCurrentColor(double v, bool smooth) {
@@ -339,13 +219,9 @@ void MapDataDrawer::draw_WIND_Color_old(Grib * grib, QPainter &pnt, const Projec
 
     time_t currentDate=grib->getCurrentDate();
 
-#ifdef NEW_COLOR_CLASS
     ColorElement * colorElement=DataColors::get_colorElement("wind_kts");
     if(!colorElement) return;
-#ifdef WITH_CACHE
     colorElement->loadCache(smooth);
-#endif
-#endif
 
     if(!grib->getInterpolationParam(currentDate,&t1,&t2,&recU1,&recV1,&recU2,&recV2))
         return;
@@ -383,15 +259,8 @@ void MapDataDrawer::draw_WIND_Color_old(Grib * grib, QPainter &pnt, const Projec
                     v_tab[indice]=v;
                     y_tab[indice]=(y<0);
                 }
-#ifdef NEW_COLOR_CLASS
-    #ifdef WITH_CACHE
+
                 rgb=colorElement->get_colorCached(u);
-    #else
-                rgb=colorElement->get_color(u,smooth);
-    #endif
-#else
-                rgb=getWindColor(u, smooth);
-#endif
 
                 image.setPixel(i,  j,rgb);
                 image.setPixel(i+1,j,rgb);
@@ -485,13 +354,9 @@ void MapDataDrawer::draw_WIND_Color(Grib * grib,QPainter &pnt, const Projection 
     g.smooth=smooth;
     g.grib=grib;
     g.mapDataDrawer=this;
-#ifdef NEW_COLOR_CLASS
     g.colorElement=DataColors::get_colorElement("wind_kts");
     if(!g.colorElement) return;
-#ifdef WITH_CACHE
     g.colorElement->loadCache(smooth);
-#endif
-#endif
     QList<GribThreadData> windData;
     windData.reserve(W*H);
     for (i=0; i<W-2; i+=2)
@@ -741,6 +606,7 @@ void MapDataDrawer::draw_RAIN_Color(Grib * grib,QPainter &pnt, const Projection 
         drawColorMapGeneric_1D(pnt,proj,smooth, currentDate,tPrev,tNxt,rec_prev,rec_nxt, &MapDataDrawer::getRainColor);
 }
 
+/*
 void MapDataDrawer::draw_SNOW_DEPTH_Color(Grib * grib,QPainter &pnt, const Projection *proj, bool smooth) {
     if(!grib || !grib->isOk()) return;
     GribRecord *rec_prev,*rec_nxt;
@@ -750,6 +616,7 @@ void MapDataDrawer::draw_SNOW_DEPTH_Color(Grib * grib,QPainter &pnt, const Proje
                                  &tPrev,&tNxt,&rec_prev,&rec_nxt))
         drawColorMapGeneric_1D(pnt,proj,smooth, currentDate,tPrev,tNxt,rec_prev,rec_nxt, &MapDataDrawer::getSnowDepthColor);
 }
+*/
 
 void MapDataDrawer::draw_SNOW_CATEG_Color(Grib * grib,QPainter &pnt, const Projection *proj, bool smooth) {
     if(!grib || !grib->isOk()) return;
@@ -868,7 +735,7 @@ void MapDataDrawer::draw_Isobars(Grib * grib,QPainter &pnt, const Projection *pr
 void MapDataDrawer::draw_Isotherms0(Grib * grib,QPainter &pnt, const Projection *proj) {
     if(!grib || !grib->isOk()) return;
     std::list<IsoLine *>::iterator it;
-    std::list<IsoLine *> * listPtr=grib->get_isobars();
+    std::list<IsoLine *> * listPtr=grib->get_isotherms0();
     for(it=listPtr->begin(); it!=listPtr->end(); ++it)
     {
         (*it)->drawIsoLine(pnt, proj);
@@ -903,14 +770,14 @@ void MapDataDrawer::draw_IsoLinesLabels(QPainter &pnt, QColor &couleur, const Pr
 void MapDataDrawer::draw_Isotherms0Labels(Grib * grib,QPainter &pnt, const Projection *proj) {
     if(!grib || !grib->isOk()) return;
     QColor couleur(200,80,80);
-    std::list<IsoLine *> * listPtr=grib->get_isobars();
+    std::list<IsoLine *> * listPtr=grib->get_isotherms0();
     draw_IsoLinesLabels(pnt, couleur, proj, listPtr, 1.0);
 }
 
 void MapDataDrawer::draw_IsobarsLabels(Grib * grib,QPainter &pnt, const Projection *proj) {
     if(!grib || !grib->isOk()) return;
     QColor couleur(40,40,40);
-    std::list<IsoLine *> * listPtr=grib->get_isotherms0();
+    std::list<IsoLine *> * listPtr=grib->get_isobars();
     draw_IsoLinesLabels(pnt, couleur, proj, listPtr, 0.01);
 }
 
@@ -1222,15 +1089,7 @@ GribThreadResult interpolateThreaded(const GribThreadData &g) {
     if(g.grib->getInterpolatedValue_byDates(g.p.x(),g.p.y(),g.cD,g.tP,g.tN,
                                                    g.recU1,g.recV1,g.recU2,g.recV2,&tws,&twd,
                                                    g.interpolMode))
-#ifdef NEW_COLOR_CLASS
-    #ifdef WITH_CACHE
             r.rgb=g.colorElement->get_colorCached(tws);
-    #else
-            r.rgb=g.colorElement->get_color(tws, g.smooth);
-    #endif
-#else
-        r.rgb=MapDataDrawer::getWindColorStatic(tws, g.smooth).rgba();
-#endif
     else
         tws=-1;
     r.tws=tws;
