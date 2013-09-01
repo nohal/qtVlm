@@ -14,6 +14,9 @@ DialogViewPolar::DialogViewPolar(QWidget *parent) :
     image=QPixmap(this->imageContainer->size());
     image.fill(Qt::red);
     pnt.begin(&image);
+    QFont myFont(Settings::getSetting("defaultFontName",QApplication::font().family()).toString());
+    myFont.setPointSizeF(8.0);
+    pnt.setFont(myFont);
     pnt.setRenderHint(QPainter::Antialiasing);
     this->imageContainer->setPixmap(image);
     connect(this->doubleSpinBox,SIGNAL(valueChanged(double)),this,SLOT(drawIt()));
@@ -88,7 +91,8 @@ bool DialogViewPolar::eventFilter(QObject *obj, QEvent *event)
     double aws=sqrt(a*a+bb*bb);
     double awa=90-radToDeg(atan(bb/a));
     double vmg=polarValues.at(angle)*cos(degToRad(angle));
-    s=s.sprintf(QObject::tr("TWA %ddeg, BS %.2fnds\nAWA %.2fdeg, AWS %.2fnds\nVMG %.2fnds").toLatin1(),angle,polarValues.at(angle),awa,aws,vmg);
+    s=s.sprintf("TWA %ddeg, BS %.2fnds\nAWA %.2fdeg, AWS %.2fnds\nVMG %.2fnds",angle,polarValues.at(angle),awa,aws,vmg);
+    s=s.replace("deg",tr("deg"));
     imageContainer->setPixmap(i2);
     info->setText(s);
     return true;
