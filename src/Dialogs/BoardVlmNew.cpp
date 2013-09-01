@@ -102,6 +102,7 @@ BoardVlmNew::BoardVlmNew(MainWindow *main)
     set_style(btn_wp);
     this->spin_HDG->installEventFilter(this);
     this->spin_TWA->installEventFilter(this);
+    this->spin_PolarTWS->installEventFilter(this);
     vibration=new QTimer(this);
     vibration->setSingleShot(false);
     nbVib=-1;
@@ -996,7 +997,7 @@ bool BoardVlmNew::eventFilter(QObject *obj, QEvent *event)
         }
         return false;
     }
-    if(obj!=spin_HDG && obj!=spin_TWA) return false;
+    if(obj!=spin_HDG && obj!=spin_TWA && obj!=spin_PolarTWS) return false;
     QDoubleSpinBox * spinBox=static_cast<QDoubleSpinBox *>(obj);
     if(event->type()==QEvent::KeyPress)
     {

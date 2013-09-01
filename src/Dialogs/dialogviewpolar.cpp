@@ -20,10 +20,39 @@ DialogViewPolar::DialogViewPolar(QWidget *parent) :
     connect(this->allSpeed,SIGNAL(clicked()),this,SLOT(drawIt()));
     imageContainer->installEventFilter(this);
     connect(this->closeButton,SIGNAL(clicked()),this,SLOT(close()));
+    this->doubleSpinBox->installEventFilter(this);
 }
 
-bool DialogViewPolar::eventFilter(QObject *, QEvent *event)
+bool DialogViewPolar::eventFilter(QObject *obj, QEvent *event)
 {
+    if(obj==doubleSpinBox)
+    {
+        if(event->type()==QEvent::KeyPress)
+        {
+            QKeyEvent *keyEvent = static_cast<QKeyEvent*>(event);
+            if(keyEvent->key()==Qt::Key_Shift)
+                doubleSpinBox->setSingleStep(0.1);
+            else if(keyEvent->key()==Qt::Key_Control)
+                doubleSpinBox->setSingleStep(10.0);
+            else if(keyEvent->key()==Qt::Key_Alt)
+                doubleSpinBox->setSingleStep(0.01);
+        }
+        else if (event->type()==QEvent::KeyRelease)
+        {
+            QKeyEvent *keyEvent = static_cast<QKeyEvent*>(event);
+            if(keyEvent->key()==Qt::Key_Shift || keyEvent->key()==Qt::Key_Control || keyEvent->key()==Qt::Key_Alt)
+                doubleSpinBox->setSingleStep(1.0);
+        }
+        if(event->type()==QEvent::Wheel)
+        {
+            /*by default wheeling with ctrl already multiply singleStep by 10
+              so to get 10 you need to put 1...*/
+            QWheelEvent *wheelEvent = static_cast<QWheelEvent*>(event);
+            if(wheelEvent->modifiers()==Qt::ControlModifier)
+                doubleSpinBox->setSingleStep(1);
+        }
+        return false;
+    }
     if(this->allSpeed->isChecked()) return false;
     if(event->type()==QEvent::MouseButtonRelease)
     {

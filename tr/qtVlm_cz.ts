@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE TS>
 <TS version="2.0" language="cs">
-<defaultcodec>UTF-8</defaultcodec>
 <context>
     <name>Barrier</name>
     <message>
@@ -233,7 +232,7 @@
     </message>
     <message>
         <location filename="../src/Ui/BoardVlmNew.ui" line="74"/>
-        <location filename="../src/Dialogs/BoardVlmNew.cpp" line="941"/>
+        <location filename="../src/Dialogs/BoardVlmNew.cpp" line="956"/>
         <source>BS</source>
         <translation>BS</translation>
     </message>
@@ -394,14 +393,13 @@
         <translation></translation>
     </message>
     <message>
-        <location filename="../src/Ui/BoardVlmNew.ui" line="977"/>
-        <location filename="../src/Dialogs/BoardVlmNew.cpp" line="401"/>
-        <location filename="../src/Dialogs/BoardVlmNew.cpp" line="403"/>
-        <location filename="../src/Dialogs/BoardVlmNew.cpp" line="414"/>
-        <location filename="../src/Dialogs/BoardVlmNew.cpp" line="416"/>
-        <location filename="../src/Dialogs/BoardVlmNew.cpp" line="942"/>
-        <location filename="../src/Dialogs/BoardVlmNew.cpp" line="946"/>
-        <location filename="../src/Dialogs/BoardVlmNew.cpp" line="948"/>
+        <location filename="../src/Dialogs/BoardVlmNew.cpp" line="402"/>
+        <location filename="../src/Dialogs/BoardVlmNew.cpp" line="404"/>
+        <location filename="../src/Dialogs/BoardVlmNew.cpp" line="415"/>
+        <location filename="../src/Dialogs/BoardVlmNew.cpp" line="417"/>
+        <location filename="../src/Dialogs/BoardVlmNew.cpp" line="957"/>
+        <location filename="../src/Dialogs/BoardVlmNew.cpp" line="961"/>
+        <location filename="../src/Dialogs/BoardVlmNew.cpp" line="963"/>
         <source>kts</source>
         <translation> kts</translation>
     </message>
@@ -413,13 +411,13 @@
     </message>
     <message>
         <location filename="../src/Ui/BoardVlmNew.ui" line="1130"/>
-        <location filename="../src/Dialogs/BoardVlmNew.cpp" line="939"/>
+        <location filename="../src/Dialogs/BoardVlmNew.cpp" line="954"/>
         <source>TWA</source>
         <translation>TWA</translation>
     </message>
     <message>
         <location filename="../src/Ui/BoardVlmNew.ui" line="1187"/>
-        <location filename="../src/Dialogs/BoardVlmNew.cpp" line="947"/>
+        <location filename="../src/Dialogs/BoardVlmNew.cpp" line="962"/>
         <source>VMG</source>
         <translation>VMG</translation>
     </message>
@@ -444,13 +442,18 @@
         <translation>WP</translation>
     </message>
     <message>
+        <location filename="../src/Ui/BoardVlmNew.ui" line="977"/>
+        <source> kts</source>
+        <translation> kts</translation>
+    </message>
+    <message>
         <location filename="../src/Ui/BoardVlmNew.ui" line="1304"/>
         <source>ORT</source>
         <translation></translation>
     </message>
     <message>
         <location filename="../src/Ui/BoardVlmNew.ui" line="1346"/>
-        <location filename="../src/Dialogs/BoardVlmNew.cpp" line="682"/>
+        <location filename="../src/Dialogs/BoardVlmNew.cpp" line="697"/>
         <source>Pilototo</source>
         <translation>Autopilot</translation>
     </message>
@@ -467,112 +470,112 @@
         <translation>VLM Sync</translation>
     </message>
     <message>
-        <location filename="../src/Dialogs/BoardVlmNew.cpp" line="440"/>
+        <location filename="../src/Dialogs/BoardVlmNew.cpp" line="441"/>
         <source>Meilleurs angles au pres/portant:</source>
         <translation type="unfinished">Best angles upwind/downwind:</translation>
     </message>
     <message>
-        <location filename="../src/Dialogs/BoardVlmNew.cpp" line="400"/>
-        <location filename="../src/Dialogs/BoardVlmNew.cpp" line="402"/>
-        <location filename="../src/Dialogs/BoardVlmNew.cpp" line="404"/>
-        <location filename="../src/Dialogs/BoardVlmNew.cpp" line="407"/>
+        <location filename="../src/Dialogs/BoardVlmNew.cpp" line="401"/>
+        <location filename="../src/Dialogs/BoardVlmNew.cpp" line="403"/>
+        <location filename="../src/Dialogs/BoardVlmNew.cpp" line="405"/>
         <location filename="../src/Dialogs/BoardVlmNew.cpp" line="408"/>
-        <location filename="../src/Dialogs/BoardVlmNew.cpp" line="415"/>
-        <location filename="../src/Dialogs/BoardVlmNew.cpp" line="420"/>
-        <location filename="../src/Dialogs/BoardVlmNew.cpp" line="440"/>
+        <location filename="../src/Dialogs/BoardVlmNew.cpp" line="409"/>
+        <location filename="../src/Dialogs/BoardVlmNew.cpp" line="416"/>
+        <location filename="../src/Dialogs/BoardVlmNew.cpp" line="421"/>
         <location filename="../src/Dialogs/BoardVlmNew.cpp" line="441"/>
-        <location filename="../src/Dialogs/BoardVlmNew.cpp" line="548"/>
-        <location filename="../src/Dialogs/BoardVlmNew.cpp" line="780"/>
-        <location filename="../src/Dialogs/BoardVlmNew.cpp" line="940"/>
-        <location filename="../src/Dialogs/BoardVlmNew.cpp" line="944"/>
+        <location filename="../src/Dialogs/BoardVlmNew.cpp" line="442"/>
+        <location filename="../src/Dialogs/BoardVlmNew.cpp" line="549"/>
+        <location filename="../src/Dialogs/BoardVlmNew.cpp" line="795"/>
+        <location filename="../src/Dialogs/BoardVlmNew.cpp" line="955"/>
+        <location filename="../src/Dialogs/BoardVlmNew.cpp" line="959"/>
         <source>deg</source>
         <translation>°</translation>
     </message>
     <message>
-        <location filename="../src/Dialogs/BoardVlmNew.cpp" line="397"/>
-        <location filename="../src/Dialogs/BoardVlmNew.cpp" line="399"/>
-        <location filename="../src/Dialogs/BoardVlmNew.cpp" line="411"/>
-        <location filename="../src/Dialogs/BoardVlmNew.cpp" line="413"/>
-        <location filename="../src/Dialogs/BoardVlmNew.cpp" line="422"/>
-        <location filename="../src/Dialogs/BoardVlmNew.cpp" line="424"/>
+        <location filename="../src/Dialogs/BoardVlmNew.cpp" line="398"/>
+        <location filename="../src/Dialogs/BoardVlmNew.cpp" line="400"/>
+        <location filename="../src/Dialogs/BoardVlmNew.cpp" line="412"/>
+        <location filename="../src/Dialogs/BoardVlmNew.cpp" line="414"/>
+        <location filename="../src/Dialogs/BoardVlmNew.cpp" line="423"/>
+        <location filename="../src/Dialogs/BoardVlmNew.cpp" line="425"/>
         <source>nm</source>
         <translation type="unfinished">nm</translation>
     </message>
     <message>
-        <location filename="../src/Dialogs/BoardVlmNew.cpp" line="506"/>
+        <location filename="../src/Dialogs/BoardVlmNew.cpp" line="507"/>
         <source>pas de polaire chargee</source>
         <translation>Není nahrán polár</translation>
     </message>
     <message>
-        <location filename="../src/Dialogs/BoardVlmNew.cpp" line="757"/>
+        <location filename="../src/Dialogs/BoardVlmNew.cpp" line="772"/>
         <source>Pas de WP</source>
         <translation>Žádný aktivní WP</translation>
     </message>
     <message>
-        <location filename="../src/Dialogs/BoardVlmNew.cpp" line="759"/>
+        <location filename="../src/Dialogs/BoardVlmNew.cpp" line="774"/>
         <source>Pas de WP actif</source>
         <translation>Žádný aktivní WP</translation>
     </message>
     <message>
-        <location filename="../src/Dialogs/BoardVlmNew.cpp" line="800"/>
+        <location filename="../src/Dialogs/BoardVlmNew.cpp" line="815"/>
         <source>WP defini dans VLM (pas de POI correspondant)</source>
         <translation>WP definován ve VLM (žádný korespondující POI v qtVlm)</translation>
     </message>
     <message>
-        <location filename="../src/Dialogs/BoardVlmNew.cpp" line="802"/>
+        <location filename="../src/Dialogs/BoardVlmNew.cpp" line="817"/>
         <source>WP VLM</source>
         <translation>WP-VLM</translation>
     </message>
     <message>
-        <location filename="../src/Dialogs/BoardVlmNew.cpp" line="806"/>
+        <location filename="../src/Dialogs/BoardVlmNew.cpp" line="821"/>
         <source>WP: </source>
         <translation>WP:</translation>
     </message>
     <message>
-        <location filename="../src/Dialogs/BoardVlmNew.cpp" line="810"/>
-        <location filename="../src/Dialogs/BoardVlmNew.cpp" line="816"/>
+        <location filename="../src/Dialogs/BoardVlmNew.cpp" line="825"/>
+        <location filename="../src/Dialogs/BoardVlmNew.cpp" line="831"/>
         <source>WP defini dans VLM (</source>
         <translation>WP definován ve VLM (</translation>
     </message>
     <message>
-        <location filename="../src/Dialogs/BoardVlmNew.cpp" line="810"/>
-        <location filename="../src/Dialogs/BoardVlmNew.cpp" line="816"/>
+        <location filename="../src/Dialogs/BoardVlmNew.cpp" line="825"/>
+        <location filename="../src/Dialogs/BoardVlmNew.cpp" line="831"/>
         <source> dans qtVlm)</source>
         <translation> v qtVlm)</translation>
     </message>
     <message>
-        <location filename="../src/Dialogs/BoardVlmNew.cpp" line="818"/>
+        <location filename="../src/Dialogs/BoardVlmNew.cpp" line="833"/>
         <source>Le cap a suivre n&apos;est pas le meme</source>
         <translation>Varování: kurs po WP je jiný</translation>
     </message>
     <message>
-        <location filename="../src/Dialogs/BoardVlmNew.cpp" line="824"/>
+        <location filename="../src/Dialogs/BoardVlmNew.cpp" line="839"/>
         <source>WP defini dans VLM mais le mode de navigation n&apos;est pas coherent</source>
         <translation>WP definován ve VLM, ale mód navigace není kompatibilní</translation>
     </message>
     <message>
-        <location filename="../src/Dialogs/BoardVlmNew.cpp" line="861"/>
-        <location filename="../src/Dialogs/BoardVlmNew.cpp" line="879"/>
+        <location filename="../src/Dialogs/BoardVlmNew.cpp" line="876"/>
+        <location filename="../src/Dialogs/BoardVlmNew.cpp" line="894"/>
         <source>Annuler</source>
         <translation>Zrušit</translation>
     </message>
     <message>
-        <location filename="../src/Dialogs/BoardVlmNew.cpp" line="943"/>
+        <location filename="../src/Dialogs/BoardVlmNew.cpp" line="958"/>
         <source>AWA</source>
         <translation>AWA</translation>
     </message>
     <message>
-        <location filename="../src/Dialogs/BoardVlmNew.cpp" line="945"/>
+        <location filename="../src/Dialogs/BoardVlmNew.cpp" line="960"/>
         <source>AWS</source>
         <translation>AWS</translation>
     </message>
     <message>
-        <location filename="../src/Dialogs/BoardVlmNew.cpp" line="1017"/>
+        <location filename="../src/Dialogs/BoardVlmNew.cpp" line="1032"/>
         <source>Confirmation a chaque ordre vers VLM</source>
         <translation>Potvrdit každý příkaz do VLM</translation>
     </message>
     <message>
-        <location filename="../src/Dialogs/BoardVlmNew.cpp" line="1018"/>
+        <location filename="../src/Dialogs/BoardVlmNew.cpp" line="1033"/>
         <source>Confirmez-vous cet ordre?</source>
         <translation type="unfinished"></translation>
     </message>
@@ -2714,13 +2717,13 @@ Etes-vous sur ?</source>
         <translation>Znovu nahraj polár</translation>
     </message>
     <message>
-        <location filename="../src/Dialogs/dialogviewpolar.cpp" line="70"/>
+        <location filename="../src/Dialogs/dialogviewpolar.cpp" line="99"/>
         <source>Analyse de la polaire: </source>
         <translation>Analýza poláru: </translation>
     </message>
     <message>
-        <location filename="../src/Dialogs/dialogviewpolar.cpp" line="127"/>
-        <location filename="../src/Dialogs/dialogviewpolar.cpp" line="129"/>
+        <location filename="../src/Dialogs/dialogviewpolar.cpp" line="156"/>
+        <location filename="../src/Dialogs/dialogviewpolar.cpp" line="158"/>
         <source>deg</source>
         <translation>°</translation>
     </message>
@@ -6347,7 +6350,7 @@ VMG %.1 kts</translation>
         <translation>Lat cílového POI</translation>
     </message>
     <message>
-        <location filename="../src/Dialogs/dialogviewpolar.cpp" line="62"/>
+        <location filename="../src/Dialogs/dialogviewpolar.cpp" line="91"/>
         <source>TWA %ddeg, BS %.2fnds
 AWA %.2fdeg, AWS %.2fnds
 VMG %.2fnds</source>
@@ -6606,12 +6609,12 @@ VMG %.2f kts</translation>
         <translation>Trasa bude začínat z výchozího bodu routingu a data</translation>
     </message>
     <message>
-        <location filename="../src/routage.cpp" line="3772"/>
+        <location filename="../src/routage.cpp" line="3777"/>
         <source>Editer le routage</source>
         <translation>Upravit routing</translation>
     </message>
     <message>
-        <location filename="../src/routage.cpp" line="3774"/>
+        <location filename="../src/routage.cpp" line="3779"/>
         <source>Supprimer le routage</source>
         <translation>Odsttranit routing</translation>
     </message>
@@ -6624,17 +6627,17 @@ VMG %.2f kts</translation>
         <translation type="obsolete">Chceš, aby nová trasa začínala od lodi v příští mezeře?</translation>
     </message>
     <message>
-        <location filename="../src/routage.cpp" line="4492"/>
+        <location filename="../src/routage.cpp" line="4497"/>
         <source>Calcul des routes alternatives</source>
         <translation>Výpočet alternativních tras</translation>
     </message>
     <message>
-        <location filename="../src/routage.cpp" line="4493"/>
+        <location filename="../src/routage.cpp" line="4498"/>
         <source>Veuillez patienter...</source>
         <translation>Čekej...</translation>
     </message>
     <message>
-        <location filename="../src/routage.cpp" line="4588"/>
+        <location filename="../src/routage.cpp" line="4593"/>
         <source>Arrivee (estimation): </source>
         <translation>Příjezd (odhad):</translation>
     </message>
@@ -6643,7 +6646,7 @@ VMG %.2f kts</translation>
         <translation type="obsolete">Delete routing: %1?</translation>
     </message>
     <message>
-        <location filename="../src/routage.cpp" line="3769"/>
+        <location filename="../src/routage.cpp" line="3774"/>
         <source>Creer un pivot en changeant les options</source>
         <translation>Vytvoř pivot, který mění nastavení routingu</translation>
     </message>
@@ -6681,7 +6684,7 @@ VMG %.2f kts</translation>
         <translation>Autoaticky zjednodušit/optimalizovat</translation>
     </message>
     <message>
-        <location filename="../src/routage.cpp" line="3767"/>
+        <location filename="../src/routage.cpp" line="3772"/>
         <source>Creer un pivot</source>
         <translation>Vytvořit pivot</translation>
     </message>

@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE TS>
 <TS version="2.0" language="fr_FR" sourcelanguage="fr_FR">
-<defaultcodec>UTF-8</defaultcodec>
 <context>
     <name>Barrier</name>
     <message>
@@ -349,6 +348,10 @@
     <message>
         <source>Confirmez-vous cet ordre?</source>
         <translation></translation>
+    </message>
+    <message>
+        <source> kts</source>
+        <translation> nds</translation>
     </message>
 </context>
 <context>
