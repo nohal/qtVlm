@@ -146,6 +146,8 @@ bool XmlFile::set_dataNodeOnDisk(QString fileName,QString nodeName,QDomNode * ne
     }
 
     /* write back data in file */
+    if (file.isOpen())
+        file.close();
     if (!file.open(QIODevice::ReadWrite | QIODevice::Text | QIODevice::Truncate)) {
         return false;
     }
