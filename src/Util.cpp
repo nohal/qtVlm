@@ -68,6 +68,7 @@ void Util::setFontDialog(QObject * o)
         myFont.setPointSizeF(widget->font().pointSizeF()+Settings::getSetting("defaultFontSizeInc",0).toInt());
         myFont.setStyle(widget->font().style());
         myFont.setBold(widget->font().bold());
+        myFont.setItalic(widget->font().italic());
         widget->setFont(myFont);
         widget->setLocale(QLocale::system());
     }
