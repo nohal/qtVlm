@@ -144,6 +144,7 @@ class myCentralWidget : public QWidget
         bool getIsStartingUp(void){return mainW->isStartingUp;}
         MainWindow * getMainWindow(void) { return mainW; }
         MyView * getView() const {return this->view;}
+        void removeRoute();
 
         FCT_SETGET(ToolBar*,toolBar)
 

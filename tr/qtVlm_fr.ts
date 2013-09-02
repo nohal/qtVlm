@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE TS>
 <TS version="2.0" language="fr_FR" sourcelanguage="fr_FR">
-<defaultcodec>UTF-8</defaultcodec>
 <context>
     <name>Barrier</name>
     <message>
@@ -869,7 +868,7 @@ La boîte à cocher trace partielle s&apos;active apres l&apos;entree d&apos;un 
     </message>
     <message>
         <source>Snow (depth)</source>
-        <translation>Neige (hauteur)</translation>
+        <translation type="obsolete">Neige (hauteur)</translation>
     </message>
     <message>
         <source>CAPE (surface)</source>
@@ -998,6 +997,14 @@ La boîte à cocher trace partielle s&apos;active apres l&apos;entree d&apos;un 
     <message>
         <source>File size max: </source>
         <translation>Taille max du fichier:</translation>
+    </message>
+    <message>
+        <source>CIN</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>surface</source>
+        <translation></translation>
     </message>
 </context>
 <context>
@@ -1450,6 +1457,25 @@ Etes-vous sur ?</source>
     <message>
         <source>Remove POI</source>
         <translation>Suppression de POIs</translation>
+    </message>
+</context>
+<context>
+    <name>DialogRemoveRoute</name>
+    <message>
+        <source>Supprimer des routes</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>selected Route</source>
+        <translation>routes sélectionnées</translation>
+    </message>
+    <message>
+        <source>Removing Routes</source>
+        <translation>Suppression de routes</translation>
+    </message>
+    <message>
+        <source>Are you sure to remove %1 routes?</source>
+        <translation>Etes-vous sur de vouloir supprimer %1 routes?</translation>
     </message>
 </context>
 <context>
@@ -2781,10 +2807,6 @@ Etes-vous sur ?</source>
         <translation>Ecart température-point de rosée</translation>
     </message>
     <message>
-        <source>Neige (Epaisseur)</source>
-        <translation></translation>
-    </message>
-    <message>
         <source>Pluie verglacante (chute possible)</source>
         <translation>Pluie verglaçante (chute possible)</translation>
     </message>
@@ -3045,10 +3067,6 @@ Etes-vous sur ?</source>
         <translation></translation>
     </message>
     <message>
-        <source>Ctrl+Shift+Q</source>
-        <translation></translation>
-    </message>
-    <message>
         <source>Sauvegarder POIs et routes</source>
         <translation></translation>
     </message>
@@ -3303,6 +3321,14 @@ Etes-vous sur ?</source>
     <message>
         <source>Montrer les barrieres</source>
         <translation>Montrer les barrières</translation>
+    </message>
+    <message>
+        <source>CIN (surface)</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Supprimer des routes</source>
+        <translation></translation>
     </message>
 </context>
 <context>
@@ -7421,13 +7447,13 @@ p, li { white-space: pre-wrap; }
     <message>
         <source>    Temperature (min) : %1
 </source>
-        <translation>    Température (min): %1
+        <translation type="obsolete">    Température (min): %1
 </translation>
     </message>
     <message>
         <source>    Temperature (max) : %1
 </source>
-        <translation>    Température (max): %1
+        <translation type="obsolete">    Température (max): %1
 </translation>
     </message>
     <message>
@@ -7444,7 +7470,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <source>    Neige (epaisseur) : %1
 </source>
-        <translation>    Neige (épaisseur) : %1
+        <translation type="obsolete">    Neige (épaisseur) : %1
 </translation>
     </message>
     <message>
@@ -7762,6 +7788,16 @@ Que voulez vous faire?</translation>
         <source>Point must be inside map
 Please select another point or press esc to exit barrier creation mode</source>
         <translation>Le point doit être sur la carte\nVeuillez choisir un autre point ou &lt;echap&gt; pour sortir du mode création</translation>
+    </message>
+    <message>
+        <source>    CAPE (surface) : %1
+</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>    CIN (surface) : %1
+</source>
+        <translation></translation>
     </message>
 </context>
 <context>

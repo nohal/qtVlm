@@ -155,7 +155,8 @@ HEADERS += Dialogs/DialogGraphicsParams.h \
     Dialogs/DialogRouteComparator.h \
     Dialogs/DialogChooseMultipleBoat.h \
     MapDataDrawer.h \
-    DataColors.h
+    DataColors.h \
+    Dialogs/DialogRemoveRoute.h
 
 
 FORMS += Ui/boatAccount_dialog.ui \
@@ -297,7 +298,8 @@ SOURCES += Dialogs/DialogGraphicsParams.cpp \
     Dialogs/DialogRouteComparator.cpp \
     Dialogs/DialogChooseMultipleBoat.cpp \
     MapDataDrawer.cpp \
-    DataColors.cpp
+    DataColors.cpp \
+    Dialogs/DialogRemoveRoute.cpp
 
 unix:!macx: DEFINES += _TTY_POSIX_ __TERRAIN_QIMAGE __UNIX_QTVLM
 win32:DEFINES += _TTY_WIN_ \

@@ -386,6 +386,7 @@ MenuBar::MenuBar(MainWindow *parent)
                                     tr("Routes comparator"),"", "", "");
         menuRoute->addSeparator();
         menuRoute->addMenu(mnRoute_delete);
+        acRouteRemove = addAction(menuRoute,tr("Supprimer des routes"),"","","");
     addMenu(menuRoute);
 
     menuRoutage = new QMenu(tr("Routages"));

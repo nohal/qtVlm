@@ -188,7 +188,8 @@ public slots:
         void slot_barrierAddMenu(void);
 
 
-    signals:
+        void slot_removeRoute();
+signals:
         void setChangeStatus(bool status,bool pilototo,bool syncBtn);
         void outDatedVlmData(void);
         void editPOI(POI *);

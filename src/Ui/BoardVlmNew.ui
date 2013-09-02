@@ -1164,7 +1164,7 @@
    <widget class="QRadioButton" name="rd_VBVMG">
     <property name="geometry">
      <rect>
-      <x>167</x>
+      <x>170</x>
       <y>42</y>
       <width>16</width>
       <height>17</height>

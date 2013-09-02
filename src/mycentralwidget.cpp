@@ -89,6 +89,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "dialogLoadImg.h"
 #include "parser.h"
 #include "DialogRemovePoi.h"
+#include "DialogRemoveRoute.h"
 #include "class_list.h"
 #include "MyView.h"
 #include "Progress.h"
@@ -1622,6 +1623,10 @@ POI * myCentralWidget::slot_addPOI(QString name,int type,double lat,double lon, 
 void myCentralWidget::removePOI(void) {
     DialogRemovePoi dialogRemovePoi(mainW,this);
     dialogRemovePoi.exec();
+}
+void myCentralWidget::removeRoute(void) {
+    DialogRemoveRoute dialogRemoveRoute(mainW,this);
+    dialogRemoveRoute.exec();
 }
 
 void myCentralWidget::slot_addPOI_list(POI * poi)

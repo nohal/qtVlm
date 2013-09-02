@@ -169,6 +169,7 @@ void MainWindow::connectSignals()
     connect(mb->ac_pasteRoute,SIGNAL(triggered()), this, SLOT(slot_pasteRoute()));
     connect(mb->acRoute_paste,SIGNAL(triggered()), this, SLOT(slot_pasteRoute()));
     connect(mb->acRoute_comparator,SIGNAL(triggered()), this, SLOT(slot_routeComparator()));
+    connect(mb->acRouteRemove, SIGNAL(triggered()), this, SLOT(slot_removeRoute()));
     connect(mb->ac_zoomRoute,SIGNAL(triggered()), this, SLOT(slot_zoomRoute()));
 #ifdef __QTVLM_WITH_TEST
     if(mb->acVLMTest)
@@ -864,6 +865,9 @@ void MainWindow::slot_newPOI(void)
 
 void MainWindow::slot_removePOI(void) {
     my_centralWidget->removePOI();
+}
+void MainWindow::slot_removeRoute(void) {
+    my_centralWidget->removeRoute();
 }
 
 void MainWindow::slot_centerSelectedBoat()
