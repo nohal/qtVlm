@@ -546,6 +546,7 @@ MainWindow::~MainWindow()
     //--------------------------------------------------
     // Save global settings
     //--------------------------------------------------
+    //qWarning()<<"mainwindow destructor";
     my_centralWidget->setAboutToQuit();
     if(noSave) return;
     if(Settings::getSetting("saveMainWindowGeometry","1").toInt())
@@ -979,13 +980,16 @@ void MainWindow::slotFile_Lock(bool readOnly)
 }
 
 void MainWindow::slotFile_Quit() {
+    noSave=false;
+    my_centralWidget->set_noSave(false);
     my_centralWidget->setAboutToQuit();
     QApplication::quit();
 }
 
 void MainWindow::slotFile_QuitNoSave() {
-    my_centralWidget->setAboutToQuit();
     noSave=true;
+    my_centralWidget->set_noSave(true);
+    my_centralWidget->setAboutToQuit();
     QApplication::quit();
 }
 

@@ -147,6 +147,7 @@ class myCentralWidget : public QWidget
         void removeRoute();
 
         FCT_SETGET(ToolBar*,toolBar)
+        FCT_SETGET_CST(bool, noSave)
 
         /*** Barrier ***/
         FCT_GET(int,barrierEditMode)
@@ -499,6 +500,7 @@ public slots :
         ROUTE * routeSimplify;
         bool selectionTool;
         Magnifier * magnifier;
+        bool noSave;
 };
 
 #endif // MYCENTRALWIDGET_H

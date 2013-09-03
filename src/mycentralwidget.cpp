@@ -398,6 +398,7 @@ myCentralWidget::myCentralWidget(Projection * proj,MainWindow * parent,MenuBar *
     this->fax=NULL;
     this->kap=NULL;
     this->routeClipboard=NULL;
+    noSave=false;
 
     currentPlayer=NULL;
 
@@ -772,7 +773,7 @@ void myCentralWidget::connectPois(void) {
 
 myCentralWidget::~myCentralWidget()
 {
-    if(!mainW->getNoSave() && xmlData)
+    if(!noSave && xmlData)
     {
         POI::write_POIData(poi_list,this);
         ROUTE::write_routeData(route_list,this);
