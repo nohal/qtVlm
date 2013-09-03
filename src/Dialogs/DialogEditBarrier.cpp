@@ -27,6 +27,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 DialogEditBarrier::DialogEditBarrier(QWidget * parent): QDialog(parent) {
     setupUi(this);
+    Util::setFontDialog(this);
     QList<boat *> lst;
     initDialog(NULL,lst);
 }
