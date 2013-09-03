@@ -436,11 +436,11 @@
     <name>DialogChooseBarrierSet</name>
     <message>
         <source>Barrier set choice</source>
-        <translation>Choix de l&apos;ensemble de barrières</translation>
+        <translation type="obsolete">Choix de l&apos;ensemble de barrières</translation>
     </message>
     <message>
         <source>No barrier set define, create one before doing this action</source>
-        <translation>Pas d&apos;ensemble de barrières défini, veuillez en créer un avant de faire cette action</translation>
+        <translation type="obsolete">Pas d&apos;ensemble de barrières défini, veuillez en créer un avant de faire cette action</translation>
     </message>
 </context>
 <context>
@@ -4397,6 +4397,14 @@ VMG %.2f nds</translation>
     <message>
         <source>Under rain navigation</source>
         <translation>Navigation sous la pluie</translation>
+    </message>
+    <message>
+        <source>Barrier set choice</source>
+        <translation>Choix de l&apos;ensemble de barrières</translation>
+    </message>
+    <message>
+        <source>No barrier set define, create one before doing this action</source>
+        <translation>Pas d&apos;ensemble de barrières défini, veuillez en créer un avant de faire cette action</translation>
     </message>
 </context>
 <context>

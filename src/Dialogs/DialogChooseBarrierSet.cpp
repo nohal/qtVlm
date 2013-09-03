@@ -32,7 +32,7 @@ DialogChooseBarrierSet::DialogChooseBarrierSet(QWidget * parent): QDialog(parent
 BarrierSet * DialogChooseBarrierSet::chooseBarrierSet(QWidget *parent) {
     /* no set => return NULL */
     if(::barrierSetList.isEmpty()) {
-        QMessageBox::warning(parent,tr("Barrier set choice"),tr("No barrier set define, create one before doing this action"));
+        QMessageBox::warning(parent,QObject::tr("Barrier set choice"),QObject::tr("No barrier set define, create one before doing this action"));
         return NULL;
     }
 
