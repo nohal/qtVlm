@@ -1883,7 +1883,8 @@ void myCentralWidget::insert_barrierPointAfterPoint(BarrierPoint * point) {
 void myCentralWidget::slot_newBarrier(void) {
     BarrierSet * set=DialogChooseBarrierSet::chooseBarrierSet(mainW);
 
-    if(set) {
+    if(set)
+    {
         Barrier * newBarrier = new Barrier(mainW,set);
         set->add_barrier(newBarrier);
         QPointF earthPos;
@@ -1899,6 +1900,10 @@ void myCentralWidget::slot_newBarrier(void) {
         barrierEditLine->show();
 
         toolBar->chg_barrierAddState(true);
+    }
+    else
+    {
+        toolBar->chg_barrierAddState(false);
     }
 }
 
@@ -1916,6 +1921,10 @@ void myCentralWidget::slot_addBarrier(void) {
         basePoint=NULL;
         barrierEditMode = BARRIER_EDIT_ADD_BARRIER;
         toolBar->chg_barrierAddState(true);
+    }
+    else
+    {
+        toolBar->chg_barrierAddState(false);
     }
 }
 
