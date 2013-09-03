@@ -25,11 +25,16 @@ LIBS += -Llibs/build \
     -lminiunz \
     -lbz2 \
     -lz \
-    -lQt5ExtSerialPort \
     -lqjson \
     -lnmea \
     -lbsb
 #    -lgps
+QT_V5{
+LIBS += -lQt5ExtSerialPort
+} else {
+LIBS += -lqextserialport
+}
+
 asan {
     QMAKE_CC=clang
     QMAKE_CXX=clang++
