@@ -3,6 +3,7 @@ message($$[QT_VERSION])
 contains ( QT_VERSION, "^5.*"){
     warning("qt5 detected")
     DEFINES += QT_V5
+    CONFIG += QT_V5
     QT+=core gui widgets multimedia concurrent
 }
 CONFIG += qt
