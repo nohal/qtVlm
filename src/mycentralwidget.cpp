@@ -773,6 +773,10 @@ void myCentralWidget::connectPois(void) {
 
 myCentralWidget::~myCentralWidget()
 {
+    bool test=false;
+    if(xmlData)
+        test=true;
+    qWarning()<<"inside ~myCentralWidget with noSave="<<noSave<<"and xmlData"<<test;
     if(!noSave && xmlData)
     {
         POI::write_POIData(poi_list,this);

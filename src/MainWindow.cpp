@@ -980,6 +980,7 @@ void MainWindow::slotFile_Lock(bool readOnly)
 }
 
 void MainWindow::slotFile_Quit() {
+    qWarning()<<"slotFile_Quit called";
     noSave=false;
     my_centralWidget->set_noSave(false);
     my_centralWidget->setAboutToQuit();
@@ -987,6 +988,7 @@ void MainWindow::slotFile_Quit() {
 }
 
 void MainWindow::slotFile_QuitNoSave() {
+    qWarning()<<"slotFile_QuitNoSave called";
     noSave=true;
     my_centralWidget->set_noSave(true);
     my_centralWidget->setAboutToQuit();
