@@ -1255,71 +1255,45 @@ void myCentralWidget::zoomOnGrib(Grib * gr)
 }
 
 
-void myCentralWidget::updateGribMenu(void) {
+void myCentralWidget::updateGribMenu(void)
+{
     /* Main grib */
-    bool res;
+    bool res=false;
+    bool hasNewMode=false;
     QMap<int,DataCode> *dataMap=mapDataDrawer->get_dataCodeMap();
 
-    /* is curent drawing mode still present ? */
+    /* is current drawing mode still present ? */
     int curMode = terre->getColorMapMode();
-    DataCode dataCode = dataMap->value(curMode,DataCode(0,0,0));
-    bool needNewMode=false;
-    bool hasNewMode=false;
-    int newMode=MapDataDrawer::drawNone;
-
-    switch(curMode) {
-        case MapDataDrawer::drawNone:
-            needNewMode=true;
-            break;
-        case MapDataDrawer::drawCurrent:
-            dataPresentInGrib(gribCurrent,dataCode.dataType,dataCode.levelType,dataCode.levelValue,&res);
-            needNewMode=!res;
-            break;
-        default:
-            dataPresentInGrib(grib,dataCode.dataType,dataCode.levelType,dataCode.levelValue,&res);
-            needNewMode=!res;
-            break;
-    }
+    if(menuBar->gribDataActionMap.contains(curMode))
+        menuBar->gribDataActionMap.value(curMode)->setChecked(false);
 
     QMapIterator<int,DataCode> i(*dataMap);
-    while (i.hasNext()) {
+    while (i.hasNext())
+    {
         i.next();
-        if(i.key() != MapDataDrawer::drawNone) {
+        if(i.key() != MapDataDrawer::drawNone)
+        {
             QAction * act = menuBar->gribDataActionMap.value(i.key());
-            if(act) {
-                if(i.key() == MapDataDrawer::drawCurrent) {
-                    if(gribCurrent && gribCurrent->isOk()) {
-                       dataPresentInGrib(gribCurrent,i.value().dataType,i.value().levelType,i.value().levelValue,&res);
-                       act->setEnabled(res);
-                       if(res && needNewMode && !hasNewMode) {
-                           newMode=i.key();
-                           hasNewMode=true;
-                       }
+            if(act)
+            {
+                if(grib && grib->isOk())
+                {
+                    dataPresentInGrib(grib,i.value().dataType,i.value().levelType,i.value().levelValue,&res);
+                    act->setEnabled(res);
+                    if(i.key()==curMode && res)
+                    {
+                        act->setChecked(true);
+                        hasNewMode=true;
                     }
-                    else
-                        menuBar->acView_CurrentColors->setEnabled(false);
-                }
-                else {
-                    if(grib && grib->isOk()) {
-                        dataPresentInGrib(grib,i.value().dataType,i.value().levelType,i.value().levelValue,&res);
-                        act->setEnabled(res);
-                        if(res && needNewMode && !hasNewMode) {
-                            newMode=i.key();
-                            hasNewMode=true;
-                        }
-                    }
-                    else
-                        act->setEnabled(false);
                 }
             }
         }
     }
-
-    if(hasNewMode) {
-        terre->setColorMapMode(newMode);
-        menuBar->setMenubarColorMapMode(newMode,true);
-    }
-
+    int newMode=MapDataDrawer::drawNone;
+    if(hasNewMode)
+        newMode=curMode;
+    terre->setColorMapMode(newMode);
+    menuBar->setMenubarColorMapMode(newMode,true);
 }
 
 void myCentralWidget::loadGribFile(QString fileName, bool zoom)

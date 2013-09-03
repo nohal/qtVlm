@@ -659,6 +659,7 @@ void MainWindow::closeProgress(void)
     if(gribFilePath.isEmpty())
         gribFilePath = appFolder.value("grib");
     QString fname = Settings::getSetting("gribFileName", "").toString();
+    int curMode = my_centralWidget->getTerre()->getColorMapMode();
     if (fname != "" && QFile::exists(fname))
     {
         openGribFile(fname, false);
@@ -671,6 +672,8 @@ void MainWindow::closeProgress(void)
         gribFileNameCurrent=fname;
     }
     slot_updateGribMono();
+    my_centralWidget->getTerre()->setColorMapMode(curMode);
+    my_centralWidget->updateGribMenu();
     progress->close();
     delete progress;
     progress=NULL;

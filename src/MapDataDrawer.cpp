@@ -60,7 +60,7 @@ MapDataDrawer::~MapDataDrawer() {
 
 void MapDataDrawer::initDataCodes(void) {
     dataCodeMap.insert(drawWind,DataCode(GRB_WIND_VX,LV_ABOV_GND,10));
-    dataCodeMap.insert(drawCurrent,DataCode());
+    dataCodeMap.insert(drawCurrent,DataCode(GRB_CURRENT_VX,LV_MSL,0));
     dataCodeMap.insert(drawCloud,DataCode(GRB_CLOUD_TOT,LV_ATMOS_ALL,0));
     dataCodeMap.insert(drawRain,DataCode(GRB_PRECIP_TOT,LV_GND_SURF,0));
     dataCodeMap.insert(drawCAPEsfc,DataCode(GRB_CAPE,LV_GND_SURF,0));
