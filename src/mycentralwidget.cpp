@@ -425,7 +425,7 @@ myCentralWidget::myCentralWidget(Projection * proj,MainWindow * parent,MenuBar *
     view->setGeometry(0,0,width(),height());
     view->viewport()->ungrabGesture(Qt::PanGesture);
     view->viewport()->grabGesture(Qt::PinchGesture);
-#ifdef __ANDROID__
+#ifdef __ANDROIDD__
     view->viewport()->grabGesture(Qt::PanGesture);
     view->viewport()->grabGesture(Qt::TapGesture);
     view->viewport()->grabGesture(Qt::TapAndHoldGesture);

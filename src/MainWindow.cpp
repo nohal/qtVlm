@@ -718,7 +718,7 @@ void MainWindow::closeProgress(void)
     }
     statusBar->show();
     menuBar->show();
-#ifdef __ANDROID__
+#ifdef __ANDROIDD__
     menuBar->setNativeMenuBar(true);
     menuBar->hide();
 #endif

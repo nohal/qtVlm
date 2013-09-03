@@ -281,7 +281,7 @@ void vlmLine::calculatePoly(void)
                 y+=10;
             QRectF r;
             r.setRect(x,y, width-10,height-1);
-#ifdef __ANDROID__
+#ifdef __ANDROIDD__
             float x1,y1,x2,y2;
 #else
             double x1,y1,x2,y2;

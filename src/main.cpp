@@ -70,7 +70,7 @@ int main(int argc, char *argv[])
     QApplication app(argc, argv);
     qsrand(QTime::currentTime().msec());
     QString appExeFolder=QApplication::applicationDirPath();
-#ifdef __ANDROID__
+#ifdef __ANDROIDD__
     QDir::setCurrent("/storage/emulated/0/qtVlm");
 #elif defined (__UNIX_QTVLM)
     QString curDir=QDir::currentPath();
@@ -138,7 +138,7 @@ int main(int argc, char *argv[])
     QTextCodec::setCodecForCStrings(QTextCodec::codecForName("utf8"));
 #endif
     Settings::initSettings();
-#ifndef __ANDROID__
+#ifndef __ANDROIDD__
     if(Settings::getSetting("fusionStyle",0).toInt()==1)
         app.setStyle(QStyleFactory::create("fusion"));
 #endif
