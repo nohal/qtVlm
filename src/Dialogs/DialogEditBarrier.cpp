@@ -24,6 +24,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "DialogEditBarrier.h"
 #include "BarrierSet.h"
 #include "boat.h"
+#include "settings.h"
 
 DialogEditBarrier::DialogEditBarrier(QWidget * parent): QDialog(parent) {
     setupUi(this);
@@ -33,7 +34,8 @@ DialogEditBarrier::DialogEditBarrier(QWidget * parent): QDialog(parent) {
 }
 
 DialogEditBarrier::~DialogEditBarrier(void) {
-
+    Settings::setSetting(this->objectName()+".height",this->height());
+    Settings::setSetting(this->objectName()+".width",this->width());
 }
 
 void DialogEditBarrier::initDialog(BarrierSet * barrierSet,QList<boat *> boatList) {

@@ -20,12 +20,18 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "BarrierSet.h"
 #include "boat.h"
+#include "settings.h"
 
 #include "DialogChooseMultipleBoat.h"
 
 DialogChooseMultipleBoat::DialogChooseMultipleBoat(QWidget *parent): QDialog(parent) {
     setupUi(this);
     Util::setFontDialog(this);
+}
+
+DialogChooseMultipleBoat::~DialogChooseMultipleBoat() {
+    Settings::setSetting(this->objectName()+".height",this->height());
+    Settings::setSetting(this->objectName()+".width",this->width());
 }
 
 void DialogChooseMultipleBoat::init_dialog(BarrierSet *barrierSet,QList<boat*> boatList) {

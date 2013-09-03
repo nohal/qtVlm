@@ -2459,6 +2459,8 @@ void MainWindow::slot_newBarrierSet() {
     else {
         ::barrierSetList.append(barrierSet);
         barrierSet->set_key(barrierSet->get_name().toUtf8().toBase64()+Util::generateKey(10));
+        for(int i=0;i<my_centralWidget->get_boatList().count();++i)
+            my_centralWidget->get_boatList().at(i)->update_barrierKey(barrierSet);
     }
 }
 

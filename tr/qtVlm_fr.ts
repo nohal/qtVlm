@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE TS>
 <TS version="2.0" language="fr_FR" sourcelanguage="fr_FR">
+<defaultcodec>UTF-8</defaultcodec>
 <context>
     <name>Barrier</name>
     <message>
@@ -2407,10 +2408,6 @@ Etes-vous sur ?</source>
         <translation></translation>
     </message>
     <message>
-        <source>Quitter</source>
-        <translation></translation>
-    </message>
-    <message>
         <source>Ctrl+Q</source>
         <translation></translation>
     </message>
@@ -3329,6 +3326,10 @@ Etes-vous sur ?</source>
     <message>
         <source>Supprimer des routes</source>
         <translation></translation>
+    </message>
+    <message>
+        <source>Quit</source>
+        <translation>Quitter</translation>
     </message>
 </context>
 <context>

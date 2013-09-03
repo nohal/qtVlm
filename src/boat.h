@@ -122,6 +122,7 @@ class boat: public QGraphicsWidget
         QList<QString> * get_barrierKeys(void) {return &barrierKeys; }
         void add_barrierSet(BarrierSet* set);
         void rm_barrierSet(BarrierSet* set);
+        void update_barrierKey(BarrierSet* set);
         void clear_barrierSet(void);
         void clear_barrierKeys(void) { barrierKeys.clear(); }
         void updateBarrierKeys(void);

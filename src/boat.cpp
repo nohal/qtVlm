@@ -877,9 +877,15 @@ void boat::rm_barrierSet(BarrierSet* set) {
     if(selected) set->set_isHidden(true);
 }
 
+void boat::update_barrierKey(BarrierSet* set) {
+    if(set && barrierSets.contains(set)) {
+        updateBarrierKeys();
+    }
+}
+
 void boat::slot_chooseBarrierSet(void) {
     cleanBarrierList();
-    DialogChooseMultipleBarrierSet::chooseBarrierSet(mainWindow,&barrierSets);
+    DialogChooseMultipleBarrierSet::chooseBarrierSet(mainWindow,&barrierSets,this);
     updateBarrierKeys();
 }
 

@@ -1264,13 +1264,11 @@ void myCentralWidget::updateGribMenu(void)
 {
     /* Main grib */
     bool res=false;
-    bool hasNewMode=false;
+    bool keepCurMode=false;
     QMap<int,DataCode> *dataMap=mapDataDrawer->get_dataCodeMap();
 
     /* is current drawing mode still present ? */
     int curMode = terre->getColorMapMode();
-    if(menuBar->gribDataActionMap.contains(curMode))
-        menuBar->gribDataActionMap.value(curMode)->setChecked(false);
 
     QMapIterator<int,DataCode> i(*dataMap);
     while (i.hasNext())
@@ -1288,14 +1286,14 @@ void myCentralWidget::updateGribMenu(void)
                     if(i.key()==curMode && res)
                     {
                         act->setChecked(true);
-                        hasNewMode=true;
+                        keepCurMode=true;
                     }
                 }
             }
         }
     }
     int newMode=MapDataDrawer::drawNone;
-    if(hasNewMode)
+    if(keepCurMode)
         newMode=curMode;
     terre->setColorMapMode(newMode);
     menuBar->setMenubarColorMapMode(newMode,true);
@@ -4704,6 +4702,7 @@ void myCentralWidget::slot_POISave(void)
 {
     POI::write_POIData(poi_list,this);
     ROUTE::write_routeData(route_list,this);
+    BarrierSet::saveBarriersToDisk();
     QMessageBox::information(this,tr("Sauvegarde des POIs et des routes"),tr("Sauvegarde reussie"));
 }
 

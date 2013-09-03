@@ -23,10 +23,16 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "BarrierSet.h"
 #include "DialogChooseBarrierSet.h"
 #include "Util.h"
+#include "settings.h"
 
 DialogChooseBarrierSet::DialogChooseBarrierSet(QWidget * parent): QDialog(parent) {
     setupUi(this);
     Util::setFontDialog(this);
+}
+
+DialogChooseBarrierSet::~DialogChooseBarrierSet() {
+    Settings::setSetting(this->objectName()+".height",this->height());
+    Settings::setSetting(this->objectName()+".width",this->width());
 }
 
 BarrierSet * DialogChooseBarrierSet::chooseBarrierSet(QWidget *parent) {

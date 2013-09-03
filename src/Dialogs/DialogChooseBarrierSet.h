@@ -32,6 +32,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 class DialogChooseBarrierSet: public QDialog, public Ui::DialogChooseBarrierSet_ui {
     public:
         DialogChooseBarrierSet(QWidget *parent);
+        ~DialogChooseBarrierSet();
 
         static BarrierSet * chooseBarrierSet(QWidget *parent);
 

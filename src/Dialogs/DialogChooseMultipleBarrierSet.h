@@ -31,14 +31,16 @@ class DialogChooseMultipleBarrierSet: public QDialog, Ui::DialogChooseMultipleBa
 {
     public:
         DialogChooseMultipleBarrierSet(QWidget *parent);
+        ~DialogChooseMultipleBarrierSet();
 
         void done(int result);
-        void init_dialog(QList<BarrierSet *> *activeSets);
+        void init_dialog(QList<BarrierSet *> *activeSets, boat *myBoat);
 
-        static void chooseBarrierSet(QWidget *parent,QList<BarrierSet *> *activeSets);
+        static void chooseBarrierSet(QWidget *parent, QList<BarrierSet *> *activeSets, boat *myBoat);
 
    private:
         QList<BarrierSet*> * activeSets;
+        boat *myBoat;
 };
 
 #endif // DIALOGCHOOSEMULTIPLEBARRIERSET_H

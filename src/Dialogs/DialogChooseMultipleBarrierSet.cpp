@@ -20,6 +20,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "BarrierSet.h"
 #include "boat.h"
+#include "settings.h"
 
 #include "DialogChooseMultipleBarrierSet.h"
 
@@ -28,9 +29,14 @@ DialogChooseMultipleBarrierSet::DialogChooseMultipleBarrierSet(QWidget *parent):
     Util::setFontDialog(this);
     activeSets=NULL;
 }
+DialogChooseMultipleBarrierSet::~DialogChooseMultipleBarrierSet() {
+    Settings::setSetting(this->objectName()+".height",this->height());
+    Settings::setSetting(this->objectName()+".width",this->width());
+}
 
-void DialogChooseMultipleBarrierSet::init_dialog(QList<BarrierSet*> * activeSets) {
+void DialogChooseMultipleBarrierSet::init_dialog(QList<BarrierSet*> * activeSets, boat* myBoat) {
     this->activeSets = activeSets;
+    this->myBoat = myBoat;
 
     lst_barrierSet->clear();
 
@@ -51,20 +57,27 @@ void DialogChooseMultipleBarrierSet::done(int result) {
     if(result == QDialog::Accepted) {
         /* update list */
         activeSets->clear();
-        BarrierSet::releaseState();
-        for(int i=0;i<lst_barrierSet->count();++i)
-            if(lst_barrierSet->item(i)->checkState()==Qt::Checked) {
-                BarrierSet * barrierSet=VPtr<BarrierSet>::asPtr(lst_barrierSet->item(i)->data(Qt::UserRole));
-                barrierSet->set_isHidden(false);
+        if(myBoat->getIsSelected())
+            BarrierSet::releaseState();
+        for(int i=0;i<lst_barrierSet->count();++i) {
+            BarrierSet * barrierSet=VPtr<BarrierSet>::asPtr(lst_barrierSet->item(i)->data(Qt::UserRole));
+            if(lst_barrierSet->item(i)->checkState()==Qt::Checked) {                               
                 activeSets->append(barrierSet);
+                if(myBoat->getIsSelected())
+                    barrierSet->set_isHidden(false);
             }
+            else {
+                if(myBoat->getIsSelected())
+                    barrierSet->set_isHidden(true);
+            }
+        }
     }
     QDialog::done(result);
 }
 
-void DialogChooseMultipleBarrierSet::chooseBarrierSet(QWidget *parent, QList<BarrierSet *> * activeSets) {
-    if(!activeSets) return;
+void DialogChooseMultipleBarrierSet::chooseBarrierSet(QWidget *parent, QList<BarrierSet *> * activeSets, boat* myBoat) {
+    if(!activeSets || !myBoat) return;
     DialogChooseMultipleBarrierSet dialog(parent);
-    dialog.init_dialog(activeSets);
+    dialog.init_dialog(activeSets,myBoat);
     dialog.exec();
 }
