@@ -57,7 +57,7 @@ MenuBar::MenuBar(MainWindow *parent)
 
         acFile_QuitNoSave = addAction(menuFile,
                                       tr("Quitter sans sauver"), "", "", appFolder.value("img")+"exit2.png");
-        acFile_QuitNoSave->setMenuRole(QAction::ApplicationSpecificRole);
+        //acFile_QuitNoSave->setMenuRole(QAction::ApplicationSpecificRole);
         menuFile->addSeparator();
         acFile_Lock = addAction(menuFile,
                     tr("Verrouiller"), tr("Ctrl+L"), tr("Verrouiller l'envoi d'ordre a VLM"), appFolder.value("img")+"unlock.png");
@@ -73,7 +73,7 @@ MenuBar::MenuBar(MainWindow *parent)
 
 
         acHorn=addAction(menuFile,tr("Configurer la corne de brume"),"","",tr(""));
-        acHorn->setMenuRole(QAction::ApplicationSpecificRole);
+        //acHorn->setMenuRole(QAction::ApplicationSpecificRole);
         acReplay=addAction(menuFile,tr("Rejouer l'historique des traces"),"Y","",tr(""));
         acScreenshot=addAction(menuFile,tr("Photo d'ecran"),"Ctrl+E","",tr(""));
 
