@@ -22,7 +22,7 @@ DialogDownloadTracks::DialogDownloadTracks(MainWindow * ,myCentralWidget * paren
     ui->setupUi(this);
     Util::setFontDialog(this);
     this->raceIsValid=false;
-    this->setWhatsThis(tr("Permet de telecharger manuellement une trace pour une course VLM.\nLa boîte à cocher trace partielle s'active apres l'entree d'un numero de course valide, et permet de requérir une trace tronquée."));
+    this->setWhatsThis(tr("Permet de telecharger manuellement une trace pour une course VLM.\nLa boÃ®te Ã  cocher trace partielle s'active apres l'entree d'un numero de course valide, et permet de requÃ©rir une trace tronquÃ©e."));
     ui->raceIDEdit->setToolTip(tr("Numero de la course\n http://www.virtual-loup-de-mer.org/races.php?fulllist=1"));
     ui->boatIDEdit->setToolTip(tr("Numero du bateau"));
     ui->startTimeEdit->setToolTip(tr("Debut de la trace"));

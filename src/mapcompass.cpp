@@ -463,7 +463,7 @@ void  mapCompass::mousePressEvent(QGraphicsSceneMouseEvent * e)
 //-------------------------------------------------------------------------------
 void mapCompass::slot_shCom()
 {
-    /* si non visible à l'ecran => on le rend visible et show() */
+    /* si non visible Ã  l'ecran => on le rend visible et show() */
     bool shCom;
     if(!proj->isPointVisible(myLon,myLat))
     {

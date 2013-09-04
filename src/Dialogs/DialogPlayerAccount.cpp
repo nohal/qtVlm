@@ -182,7 +182,7 @@ void DialogPlayerAccount::slot_langChanged(bool)
         this->btn_playerDel->setText("Borrar");
         this->pl_data_name->setText("Nombre");
         this->pl_data_nbboat->setText("Num. barcos");
-        this->setWindowTitle("Gestión de cuentas");
+        this->setWindowTitle("GestiÃ³n de cuentas");
         accDialog.labelBoatName->setText("Login");
         accDialog.labelPass->setText("Password");
         accDialog.groupBox->setTitle("Tipo de barco");
@@ -380,7 +380,7 @@ void DialogPlayerAccount::slot_modPlayer(void)
     }
     else
     {
-        qWarning() << "Modification annulée";
+        qWarning() << "Modification annulÃ©e";
     }
     delete data;
 }
