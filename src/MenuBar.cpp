@@ -53,7 +53,7 @@ MenuBar::MenuBar(MainWindow *parent)
     menuFile = new QMenu(tr("QtVlm"));
 
         acFile_Quit = addAction(menuFile,
-                    tr("Quit"), tr("Ctrl+Q"), tr("Bye"), appFolder.value("img")+"exit.png");
+                    tr("Quitter"), tr("Ctrl+Q"), tr("Bye"), appFolder.value("img")+"exit.png");
 
         acFile_QuitNoSave = addAction(menuFile,
                                       tr("Quitter sans sauver"), "", "", appFolder.value("img")+"exit2.png");
@@ -507,6 +507,7 @@ MenuBar::MenuBar(MainWindow *parent)
     addMenu(menuHelp);
     foreach (QAction * act, this->actions())
         setRules(act);
+    acFile_Quit->setMenuRole(QAction::QuitRole);
 
 }
 
