@@ -356,6 +356,7 @@ private:
     myCentralWidget * my_CentralWidget;
 
 
+    void setRules(QAction *act);
 };
 Q_DECLARE_TYPEINFO(MenuBar,Q_MOVABLE_TYPE);
 

@@ -505,12 +505,25 @@ MenuBar::MenuBar(MainWindow *parent)
         acHelp_AProposQT = addAction(menuHelp, tr("A propos de QT"),tr(""),tr(""),"");
         acHelp_Forum = addAction(menuHelp, tr("QtVlm forum"),tr(""),tr(""),"");
     addMenu(menuHelp);
-
-
+    foreach (QAction * act, this->actions())
+        setRules(act);
 
 }
 
-
+void MenuBar::setRules(QAction * act)
+{
+    QMenu *menu=act->menu();
+    if(menu)
+    {
+        foreach(QAction * subAct,menu->actions())
+            setRules(subAct); //recursion
+    }
+    else
+    {
+        //qWarning()<<act->text();
+        act->setMenuRole(QAction::NoRole);
+    }
+}
 
 //---------------------------------------------------------
 // Menu popup : bouton droit de la souris
