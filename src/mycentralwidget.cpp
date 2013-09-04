@@ -496,6 +496,7 @@ myCentralWidget::myCentralWidget(Projection * proj,MainWindow * parent,MenuBar *
     connect(menuBar->acOptions_SH_Pol, SIGNAL(triggered(bool)), this,  SIGNAL(shPol(bool)));
     connect(menuBar->acOptions_SH_Fla, SIGNAL(triggered(bool)), this,  SLOT(slot_shFla(bool)));
     connect(menuBar->acOptions_SH_Nig, SIGNAL(triggered(bool)), this,  SLOT(slot_shNig(bool)));
+    connect(menuBar->acOptions_SH_Tdb, SIGNAL(triggered(bool)), this,  SLOT(slot_shTdb(bool)));
 
     connect(menuBar->acOptions_SH_Boa, SIGNAL(triggered(bool)), parent, SLOT(slot_centerSelectedBoat()));
 
@@ -4800,6 +4801,12 @@ void myCentralWidget::slot_shNig(bool)
     bool shNight=Settings::getSetting("showNight",1).toInt()==1;
     Settings::setSetting("showNight",!shNight?1:0);
     emit this->redrawGrib();
+}
+void myCentralWidget::slot_shTdb(bool)
+{
+    bool shTdb=!Settings::getSetting("showDashBoard",1).toInt()==1;
+    Settings::setSetting("showDashBoard",shTdb?1:0);
+    mainW->showDashBoard();
 }
 
 void myCentralWidget::slotFax_open()

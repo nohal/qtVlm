@@ -288,6 +288,7 @@ public:
      QAction *acOptions_SH_Boa;
      QAction *acOptions_SH_Fla;
      QAction *acOptions_SH_Nig;
+     QAction *acOptions_SH_Tdb;
      QAction *acKeep;
      QAction *acReplay;
     QAction *acScreenshot;

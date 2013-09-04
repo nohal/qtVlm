@@ -518,6 +518,8 @@ void MainWindow::loadBoard()
     {
         newBoard = new BoardVlmNew(this);
     }
+    Settings::setSetting("showDashBoard",1);
+    this->showDashBoard();
 }
 
 //-----------------------------------------------
@@ -1178,6 +1180,19 @@ int MainWindow::get_selectedBoatVacLen()
     else
         return 1;
 }
+void MainWindow::showDashBoard()
+{
+    bool shTdb=Settings::getSetting("showDashBoard",1).toInt()==1;
+    if(use_old_board)
+        menuBar->acOptions_SH_Tdb->setVisible(false);
+    else
+    {
+        newBoard->setVisible(shTdb);
+        menuBar->acOptions_SH_Tdb->setVisible(true);
+        menuBar->acOptions_SH_Tdb->setChecked(shTdb);
+    }
+}
+
 void MainWindow::updatePilototo_Btn(boatVLM * boat)
 {
     if(!selPOI_instruction)

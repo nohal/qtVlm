@@ -348,7 +348,8 @@ public slots :
         void slot_fetchVLMTrack();
         void slot_resetGestures();
 
-    signals:
+        void slot_shTdb(bool);
+signals:
         /* drawing */
         void redrawAll(void);
         void redrawGrib(void);

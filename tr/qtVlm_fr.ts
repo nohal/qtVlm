@@ -3334,6 +3334,10 @@ Etes-vous sur ?</source>
         <source>Quitter</source>
         <translation></translation>
     </message>
+    <message>
+        <source>Montrer le tableau de bord</source>
+        <translation>Montrer le tableau de bord</translation>
+    </message>
 </context>
 <context>
     <name>POI</name>

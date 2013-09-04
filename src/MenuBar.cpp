@@ -123,6 +123,9 @@ MenuBar::MenuBar(MainWindow *parent)
     acOptions_SH_Nig = addAction(menuView, tr("Montrer les zones de jour et nuit"), "N", tr(""));
     acOptions_SH_Nig->setCheckable(true);
 
+    acOptions_SH_Tdb = addAction(menuView, tr("Montrer le tableau de bord"), "T", tr(""));
+    acOptions_SH_Tdb->setCheckable(true);
+
     addMenu(menuView);
 
     //-------------------------------------
