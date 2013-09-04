@@ -80,7 +80,7 @@ class boatReal : public boat
 
         void setPosition(double lat, double lon);
 
-        /* event propagé par la scene */
+        /* event propagÃ© par la scene */
         bool tryMoving(int x, int y);
         time_t getLastUpdateTime(){return this->lastUpdateTime;}
         int getFix(){return fix;}

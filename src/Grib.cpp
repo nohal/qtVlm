@@ -429,7 +429,7 @@ void Grib::readGribFileContent()
                 GribRecord *recModel = getGribRecord(GRB_TEMP,LV_ABOV_GND,2,date);
                 if (recModel != NULL)
                 {
-                    // Crée un GribRecord avec les dewpoints calcules
+                    // CrÃ©e un GribRecord avec les dewpoints calcules
                     GribRecord *recDewpoint = new GribRecord(*recModel);
                     if (recDewpoint != NULL)
                     {

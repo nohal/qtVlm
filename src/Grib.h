@@ -59,8 +59,6 @@ class Grib
         long  getFileSize()          {return fileSize;}
         std::string getFileName()    {return fname;}
 
-        FCT_GET(bool,mustInterpolateValues)
-
 
         int          getNumberOfGribRecords(int dataType,int levelType,int levelValue);
         int          getTotalNumberOfGribRecords();
