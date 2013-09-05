@@ -151,6 +151,13 @@ int main(int argc, char *argv[])
     QFont def(Settings::getSetting("defaultFontName",QApplication::font().family()).toString());
     def.setPointSizeF(8.25+fontInc);
     QApplication::setFont(def);
+#ifdef __MAC_QTVLM
+    double fontSize=8.25+fontInc;
+    QString style=QString().sprintf("QPushButton { font: %.2fpx} QLabel { font: %.2fpx} QLineEdit { font: %.2fpx}  QCheckBox { font: %.2fpx} QGroupBox { font: %.2fpx} QComboBox { font: %.2fpx} QListWidget { font: %.2fpx} QRadioButton { font: %.2fpx}",
+                                    fontSize,fontSize,fontSize,fontSize,fontSize,fontSize,fontSize,fontSize);
+    qApp->setStyleSheet(style);
+
+#endif
     QTranslator translator;
     QTranslator translatorQt;
     QString lang = Settings::getSetting("appLanguage", "none").toString();

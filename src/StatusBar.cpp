@@ -56,7 +56,7 @@ StatusBar::StatusBar(MainWindow * mainWindow) : QStatusBar(mainWindow) {
 
     showingSelectionMessage=false;
 
-    Util::setFontDialog(this);
+    //Util::setFontDialog(this);
     mainWindow->setStatusBar(this);
 }
 
