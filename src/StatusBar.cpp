@@ -30,7 +30,6 @@ StatusBar::StatusBar(MainWindow * mainWindow) : QStatusBar(mainWindow) {
     this->mainWindow=mainWindow;
     my_centralWidget = mainWindow->getMy_centralWidget();
 
-    Util::setFontDialog(this);
     QFontInfo finfo = fontInfo();
     QFont font("", finfo.pointSize(), QFont::Normal, false);
     font.setStyleHint(QFont::TypeWriter);
@@ -57,6 +56,7 @@ StatusBar::StatusBar(MainWindow * mainWindow) : QStatusBar(mainWindow) {
 
     showingSelectionMessage=false;
 
+    Util::setFontDialog(this);
     mainWindow->setStatusBar(this);
 }
 

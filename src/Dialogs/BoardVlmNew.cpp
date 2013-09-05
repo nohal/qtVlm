@@ -40,7 +40,6 @@ BoardVlmNew::BoardVlmNew(MainWindow *main)
     this->setParent(main);
     this->setupUi(this);
     tryMoving=false;
-    this->setFontDialog(this);
     this->main=main;
     setWindowFlags(Qt::FramelessWindowHint|Qt::WindowStaysOnTopHint);
     this->setModal(false);
@@ -150,6 +149,7 @@ BoardVlmNew::BoardVlmNew(MainWindow *main)
     vibStates.append(-1);
     vibStates.append(0);
     flipBS=false;
+    this->setFontDialog(this);
 }
 BoardVlmNew::~BoardVlmNew()
 {
