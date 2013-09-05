@@ -393,6 +393,7 @@ void Terrain::draw_GSHHSandGRIB()
     if(this->gshhsReader)
         cartouche=cartouche+tr("Niveau de detail des cotes: ")+QString().setNum(this->gshhsReader->getQuality()+1);
     QFont fontbig("TypeWriter", 12, QFont::Bold, false);
+    fontbig.setPointSizeF(12.0+Settings::getSetting("defaultFontSizeInc",0).toDouble());
     fontbig.setStyleHint(QFont::TypeWriter);
     fontbig.setStretch(QFont::Condensed);
     QColor   transpcolor(255,255,255,120);

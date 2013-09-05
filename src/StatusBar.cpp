@@ -25,7 +25,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "Util.h"
 #include "boat.h"
 #include "boatVLM.h"
-
+#include "settings.h"
 StatusBar::StatusBar(MainWindow * mainWindow) : QStatusBar(mainWindow) {
     this->mainWindow=mainWindow;
     my_centralWidget = mainWindow->getMy_centralWidget();
@@ -35,6 +35,7 @@ StatusBar::StatusBar(MainWindow * mainWindow) : QStatusBar(mainWindow) {
     font.setStyleHint(QFont::TypeWriter);
     font.setFamily("Courier");
     font.setFixedPitch(true);
+    font.setPointSizeF(Settings::getSetting("applicationFontSize",8.25).toDouble());
     setFont(font);
     setStyleSheet("QStatusBar::item {border: 0px;}");
 

@@ -166,7 +166,7 @@ void BoardVlmNew::setFontDialog(QObject * o)
         if(widget==lab_VBVMG || widget==lab_VMG || widget==lab_HDG || widget==lab_TWA || widget==lab_ORTHO)
             myFont.setPointSizeF(8.0);
         else
-            myFont.setPointSizeF(8.5);
+            myFont.setPointSizeF(9.0);
         myFont.setStyle(widget->font().style());
         myFont.setBold(widget->font().bold());
         myFont.setItalic(widget->font().italic());

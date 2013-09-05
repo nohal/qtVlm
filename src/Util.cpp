@@ -65,7 +65,8 @@ void Util::setFontDialog(QObject * o)
     if(o->isWidgetType())
     {
         QWidget * widget=qobject_cast<QWidget*> (o);
-        myFont.setPointSizeF(widget->font().pointSizeF()+Settings::getSetting("defaultFontSizeInc",0).toInt());
+        double designedFontSize=widget->font().pointSizeF()-Settings::getSetting("defaultFontSizeInc",0).toDouble();
+        myFont.setPointSizeF(designedFontSize-8.25+Settings::getSetting("applicationFontSize",8.25).toDouble());
         myFont.setStyle(widget->font().style());
         myFont.setBold(widget->font().bold());
         myFont.setItalic(widget->font().italic());
