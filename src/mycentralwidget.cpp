@@ -1270,8 +1270,7 @@ void myCentralWidget::updateGribMenu(void)
 
     /* is current drawing mode still present ? */
     int curMode = terre->getColorMapMode();
-    int nbData=0;
-    int uniqueMode=MapDataDrawer::drawNone;
+    bool containsWind=false;
     QMapIterator<int,DataCode> i(*dataMap);
     while (i.hasNext())
     {
@@ -1285,11 +1284,8 @@ void myCentralWidget::updateGribMenu(void)
                 {
                     dataPresentInGrib(grib,i.value().dataType,i.value().levelType,i.value().levelValue,&res);
                     act->setEnabled(res);
-                    if(res && nbData==0)
-                    {
-                        uniqueMode=i.key();
-                        ++nbData;
-                    }
+                    if(res && i.key()==MapDataDrawer::drawWind)
+                        containsWind=true;
                     if(i.key()==curMode && res)
                     {
                         act->setChecked(true);
@@ -1302,8 +1298,8 @@ void myCentralWidget::updateGribMenu(void)
     int newMode=MapDataDrawer::drawNone;
     if(keepCurMode)
         newMode=curMode;
-    else if(nbData==1)
-        newMode=uniqueMode;
+    else if(containsWind)
+        newMode=MapDataDrawer::drawWind;
     terre->setColorMapMode(newMode);
     menuBar->setMenubarColorMapMode(newMode,true);
 }
