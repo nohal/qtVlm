@@ -118,7 +118,7 @@ BoardVlmNew::BoardVlmNew(MainWindow *main)
     QString tabStyle;
     tabStyle+="QTabWidget::pane { border: 0; } ";
     tabStyle+="QTabWidget { background: transparent; } ";
-    tabStyle+="QTabBar::tab { border: 0px solid #000000;border-bottom-right-radius: 8px;border-top-right-radius: 8px;padding: 2px;margin-left: 4px;margin-right: 4px;margin-bottom:3px;}";
+    tabStyle+="QTabBar::tab { font-size: 8.5;border: 0px solid #000000;border-bottom-right-radius: 8px;border-top-right-radius: 8px;padding: 2px;margin-left: 4px;margin-right: 4px;margin-bottom:3px;}";
     tabStyle+="QTabBar::tab:selected { background: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #CC9900, stop: 0.8 #FFE085);margin-left:0;}";
     tabStyle+="QTabBar::tab:!selected { background: #C2C7CB;margin-right: 4px;}";
     tabWidget->setStyleSheet(tabStyle);

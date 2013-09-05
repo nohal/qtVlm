@@ -240,6 +240,7 @@ ToolBar::ToolBar(MainWindow *mainWindow)
     connect(barrierAdd,SIGNAL(triggered()),mainWindow,SLOT(slot_barrierAddMenu()));
 
     //load_settings();
+    Util::setFontDialog(this);
 }
 
 int ToolBar::build_showHideMenu(QMenu *menu) {

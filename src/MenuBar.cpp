@@ -516,6 +516,7 @@ MenuBar::MenuBar(MainWindow *parent)
 
 void MenuBar::setRules(QAction * act)
 {
+    Util::setFontDialog(act);
     QMenu *menu=act->menu();
     if(menu)
     {
