@@ -90,6 +90,9 @@ ToolBar::ToolBar(MainWindow *mainWindow)
     acWindVlm = init_Action(tr("Telechargement VLM"),tr(""),tr(""), appFolder.value("img")+"VLM_mto.png",gribToolBar);
     acWindSailsDoc = init_Action(tr("Telechargement SailsDoc"),tr(""),tr(""),appFolder.value("img")+ "kmail.png",gribToolBar);
     acOpenGrib = init_Action(tr("Open a grib"),tr(""),tr(""),appFolder.value("img")+ "fileopen.png",gribToolBar);
+    acWindZygrib->setMenuRole(QAction::NoRole);
+    acWindVlm->setMenuRole(QAction::NoRole);
+    acWindSailsDoc->setMenuRole(QAction::NoRole);
     gribSubMenu->addAction(acWindZygrib);
     gribSubMenu->addAction(acWindVlm);
     gribSubMenu->addAction(acWindSailsDoc);
@@ -251,6 +254,7 @@ int ToolBar::build_showHideMenu(QMenu *menu) {
         MyToolBar* tool = toolBarList.at(i);
         if(tool->get_canHide()) {
             ++nbEntry;
+            tool->toggleViewAction()->setMenuRole(QAction::NoRole);
             menu->addAction(tool->toggleViewAction());
         }
     }
