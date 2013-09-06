@@ -29,24 +29,24 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 StatusBar::StatusBar(MainWindow * mainWindow) : QStatusBar(mainWindow) {
     this->mainWindow=mainWindow;
     my_centralWidget = mainWindow->getMy_centralWidget();
-
+    Util::setFontDialog(this);
     QFontInfo finfo = fontInfo();
     QFont font("", finfo.pointSize(), QFont::Normal, false);
     font.setStyleHint(QFont::TypeWriter);
     font.setFamily("Courier");
+    font.setPointSizeF(Settings::getSetting("applicationFontSize",8.0).toDouble());
     font.setFixedPitch(true);
-    font.setPointSizeF(Settings::getSetting("applicationFontSize",8.25).toDouble());
-    setFont(font);
     setStyleSheet("QStatusBar::item {border: 0px;}");
+    setFont(font);
 
     stBar_label_1 = new QLabel("Welcome in QtVlm", this);
-    stBar_label_1->setFont(font);
     stBar_label_1->setStyleSheet("color: rgb(0, 0, 255);");
+    stBar_label_1->setFont(font);
     this->addWidget(stBar_label_1);
     font.setBold(true);
     stBar_label_2 = new QLabel("", this);
-    stBar_label_2->setFont(font);
     stBar_label_2->setStyleSheet("color: rgb(255, 0, 0);");
+    stBar_label_2->setFont(font);
     this->addWidget(stBar_label_2);
 
     font.setBold(false);

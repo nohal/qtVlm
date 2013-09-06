@@ -29,6 +29,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 DialogEditBarrier::DialogEditBarrier(QWidget * parent): QDialog(parent) {
     setupUi(this);
     Util::setFontDialog(this);
+    QMap<QWidget *,QFont> exceptions;
+    QFont wfont=QApplication::font();
+    wfont.setPointSizeF(9.0);
+    exceptions.insert(lst_boat,wfont);
+    Util::setSpecificFont(exceptions);
     QList<boat *> lst;
     initDialog(NULL,lst);
 }

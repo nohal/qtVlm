@@ -58,6 +58,21 @@ QString Util::generateKey(int size) {
 }
 
 //======================================================================
+void Util::setSpecificFont(QMap<QWidget *,QFont> widgets)
+{
+    QFont myFont(Settings::getSetting("defaultFontName",QApplication::font().family()).toString());
+    double fontSize=Settings::getSetting("applicationFontSize",8.0).toDouble();
+    QMapIterator<QWidget *,QFont> it(widgets);
+    while(it.hasNext())
+    {
+        it.next();
+        QFont font=it.value();
+        myFont.setStyle(font.style());
+        myFont.setPointSizeF(fontSize+font.pointSizeF()-8.0);
+        it.key()->setFont(myFont);
+    }
+}
+
 void Util::setFontDialog(QObject * o)
 {
 
@@ -65,8 +80,7 @@ void Util::setFontDialog(QObject * o)
     if(o->isWidgetType())
     {
         QWidget * widget=qobject_cast<QWidget*> (o);
-        double designedFontSize=widget->font().pointSizeF()-Settings::getSetting("defaultFontSizeInc",0).toDouble();
-        myFont.setPointSizeF(designedFontSize-8.25+Settings::getSetting("applicationFontSize",8.25).toDouble());
+        myFont.setPointSizeF(Settings::getSetting("applicationFontSize",8.0).toDouble());
         myFont.setStyle(widget->font().style());
         myFont.setBold(widget->font().bold());
         myFont.setItalic(widget->font().italic());

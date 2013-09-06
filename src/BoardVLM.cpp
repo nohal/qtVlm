@@ -55,6 +55,52 @@ boardVLM::boardVLM(MainWindow * mainWin, inetConnexion * inet, board * parent) :
 {
     setupUi(this);
     Util::setFontDialog(this);
+    QMap<QWidget *,QFont> exceptions;
+    QFont font=QApplication::font();
+    font.setBold(true);
+    font.setPointSizeF(12.0);
+    exceptions.insert(latitude,font);
+    exceptions.insert(longitude,font);
+
+    font=QApplication::font();
+    font.setPointSizeF(9.0);
+    exceptions.insert(boatName,font);
+    exceptions.insert(boatScore,font);
+    exceptions.insert(btn_Synch,font);
+    exceptions.insert(btn_Pilototo,font);
+    exceptions.insert(ClearPilot,font);
+    exceptions.insert(groupBox_4,font);
+    exceptions.insert(speed,font);
+    exceptions.insert(btn_chgHeading,font);
+    exceptions.insert(editHeading,font);
+    exceptions.insert(groupBox_3,font);
+    exceptions.insert(ortho,font);
+    exceptions.insert(angle,font);
+    exceptions.insert(dnm,font);
+    exceptions.insert(vmg,font);
+    exceptions.insert(goVMG,font);
+    exceptions.insert(goPilotOrtho,font);
+    exceptions.insert(goVBVMG,font);
+    exceptions.insert(groupBox,font);
+    exceptions.insert(boatName_10,font);
+    exceptions.insert(w_speed,font);
+    exceptions.insert(label_9,font);
+    exceptions.insert(boatName_12,font);
+    exceptions.insert(w_dir,font);
+    exceptions.insert(deg_unit_1,font);
+    exceptions.insert(btn_chgAngle,font);
+    exceptions.insert(btn_virer,font);
+    exceptions.insert(editAngle,font);
+    exceptions.insert(groupBox_2,font);
+    exceptions.insert(boatName_8,font);
+    exceptions.insert(bvmgU,font);
+    exceptions.insert(deg_unit_3,font);
+    exceptions.insert(boatName_13,font);
+    exceptions.insert(bvmgD,font);
+    exceptions.insert(deg_unit_6,font);
+
+    Util::setSpecificFont(exceptions);
+
     isComputing = false;
     this->mainWin = mainWin;
     this->parent=parent;

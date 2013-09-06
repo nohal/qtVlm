@@ -27,6 +27,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 DialogChooseMultipleBarrierSet::DialogChooseMultipleBarrierSet(QWidget *parent): QDialog(parent) {
     setupUi(this);
     Util::setFontDialog(this);
+    QMap<QWidget *,QFont> exceptions;
+    QFont wfont=QApplication::font();
+    wfont.setPointSizeF(9.0);
+    exceptions.insert(lst_barrierSet,wfont);
+    Util::setSpecificFont(exceptions);
     activeSets=NULL;
 }
 DialogChooseMultipleBarrierSet::~DialogChooseMultipleBarrierSet() {

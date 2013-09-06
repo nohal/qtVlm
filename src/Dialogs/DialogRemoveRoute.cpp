@@ -35,6 +35,11 @@ Copyright (C) 2008 - Jacques Zaninetti - http://zygrib.free.fr
 DialogRemoveRoute::DialogRemoveRoute(QWidget * parent,myCentralWidget * centralWidget): QDialog(parent) {
     setupUi(this);
     Util::setFontDialog(this);
+    QMap<QWidget *,QFont> exceptions;
+    QFont wfont=QApplication::font();
+    wfont.setPointSizeF(9.0);
+    exceptions.insert(ls_poiList,wfont);
+    Util::setSpecificFont(exceptions);
     this->setWindowTitle(tr("Supprimer des routes"));
     this->centralWidget=centralWidget;
     routeList=centralWidget->getRouteList();

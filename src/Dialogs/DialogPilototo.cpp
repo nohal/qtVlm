@@ -44,6 +44,11 @@ DialogPilototo::DialogPilototo(MainWindow *main,myCentralWidget * parent,inetCon
     this->move(250,100);
     setupUi(this);
     Util::setFontDialog(this);
+    QMap<QWidget *,QFont> exceptions;
+    QFont wfont=QApplication::font();
+    wfont.setPointSizeF(10.0);
+    exceptions.insert(titreBateau,wfont);
+    Util::setSpecificFont(exceptions);
     selectPOI_mode=1;
 
     instructionEditor = new DialogPilototoParam(this);

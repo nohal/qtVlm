@@ -40,6 +40,19 @@ boardReal::boardReal(MainWindow * mainWin, board * parent) : QWidget(mainWin)
 {
     setupUi(this);
     Util::setFontDialog(this);
+    QMap<QWidget *,QFont> exceptions;
+    QFont wfont=QApplication::font();
+    wfont.setBold(true);
+    wfont.setPointSizeF(14.0);
+    exceptions.insert(latitude,wfont);
+    exceptions.insert(longitude,wfont);
+    wfont=QApplication::font();
+    wfont.setPointSizeF(9.0);
+    exceptions.insert(ortho,wfont);
+    exceptions.insert(dnm_2,wfont);
+    exceptions.insert(angle,wfont);
+    exceptions.insert(vmg_2,wfont);
+    Util::setSpecificFont(exceptions);
     this->mainWin=mainWin;
     this->parent=parent;
 

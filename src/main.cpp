@@ -149,7 +149,7 @@ int main(int argc, char *argv[])
         Settings::setSetting("defaultFontSizeInc",0);
     }
     QFont def(Settings::getSetting("defaultFontName",QApplication::font().family()).toString());
-    double fontSize=8.25+fontInc;
+    double fontSize=8.0+fontInc;
     def.setPointSizeF(fontSize);
     QApplication::setFont(def);
     Settings::setSetting("applicationFontSize",fontSize);

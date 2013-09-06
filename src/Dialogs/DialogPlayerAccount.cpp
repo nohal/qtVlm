@@ -45,6 +45,11 @@ DialogPlayerAccount::DialogPlayerAccount(Projection * proj, MainWindow * main,
 {
     setupUi(this);
     Util::setFontDialog(this);
+    QMap<QWidget *,QFont> exceptions;
+    QFont wfont=QApplication::font();
+    wfont.setPointSizeF(9.0);
+    exceptions.insert(list_player,wfont);
+    Util::setSpecificFont(exceptions);
     this->proj = proj;
     this->main=main;
     this->parent=parent;

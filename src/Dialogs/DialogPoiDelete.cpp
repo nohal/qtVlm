@@ -30,6 +30,15 @@ DialogPoiDelete::DialogPoiDelete(QWidget * parent) : QDialog(parent)
 {
     setupUi(this);
     Util::setFontDialog(this);
+    QMap<QWidget *,QFont> exceptions;
+    QFont wfont=QApplication::font();
+    wfont.setBold(true);
+    exceptions.insert(label,wfont);
+    wfont=QApplication::font();
+    wfont.setUnderline(true);
+    exceptions.insert(lnk_all,wfont);
+    exceptions.insert(lnk_none,wfont);
+    Util::setSpecificFont(exceptions);
     mask=-1;
 }
 

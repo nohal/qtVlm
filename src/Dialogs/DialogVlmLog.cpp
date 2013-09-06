@@ -15,6 +15,12 @@ DialogVlmLog::DialogVlmLog(myCentralWidget *parent) :
 {
     ui->setupUi(this);
     Util::setFontDialog(this);
+    // for some reason QTableView::setFont crashed.
+//    QMap<QWidget *,QFont> exceptions;
+//    QFont wfont=QApplication::font();
+//    wfont.setPointSizeF(12.0);
+//    exceptions.insert(vlmLogView,wfont);
+//    Util::setSpecificFont(exceptions);
     this->model = new QStandardItemModel();
     this->vlmBoat = NULL;
     this->setModal(false);

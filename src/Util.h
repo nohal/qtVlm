@@ -60,6 +60,7 @@ class Util
     //-------------------------------------------------
     static void setFontDialog(QObject * o);
     static void setFontDialog(QWidget * o);
+    static void setSpecificFont(QMap<QWidget *, QFont> widgets);
     static QString formatDegres(const double &x);           // 123.4 -> 123°24.00'
     static QString formatPosition(const double &x, const double &y);    // 123°24.00'W 45°67.89'N
     static QString formatLongitude(double x);

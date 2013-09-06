@@ -254,7 +254,7 @@
          <property name="font">
           <font>
            <family>MS Shell Dlg 2</family>
-           <pointsize>8</pointsize>
+           <pointsize>9</pointsize>
           </font>
          </property>
          <property name="styleSheet">
@@ -317,6 +317,11 @@
          <width>67</width>
          <height>16777215</height>
         </size>
+       </property>
+       <property name="font">
+        <font>
+         <pointsize>9</pointsize>
+        </font>
        </property>
        <property name="text">
         <string>Clear</string>

@@ -11,6 +11,13 @@ DialogViewPolar::DialogViewPolar(QWidget *parent) :
 {
     setupUi(this);
     Util::setFontDialog(this);
+    QMap<QWidget *,QFont> exceptions;
+    QFont wfont=QApplication::font();
+    wfont.setPointSizeF(12.0);
+    exceptions.insert(doubleSpinBox,wfont);
+    exceptions.insert(BVMG_up,wfont);
+    exceptions.insert(BVMG_down,wfont);
+    Util::setSpecificFont(exceptions);
     image=QPixmap(this->imageContainer->size());
     image.fill(Qt::red);
     pnt.begin(&image);

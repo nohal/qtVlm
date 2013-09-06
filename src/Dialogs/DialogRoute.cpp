@@ -65,6 +65,15 @@ DialogRoute::DialogRoute(ROUTE *route, myCentralWidget *parent, bool createMode)
     this->warning_icon->setPixmap(QPixmap(appFolder.value("img")+"warning.png"));
     connect(this->useVbvmgVlm,SIGNAL(stateChanged(int)),this,SLOT(slot_hideShowWarning()));
     Util::setFontDialog(this);
+
+    QMap<QWidget *,QFont> exceptions;
+    QFont wfont=QApplication::font();
+    wfont.setPointSizeF(8.0);
+    exceptions.insert(warning_text,wfont);
+    Util::setSpecificFont(exceptions);
+    qWarning()<<"warning size="<<warning_text->font().pointSizeF();
+
+
     inputTraceColor =new InputLineParams(route->getWidth(),route->getColor(),1.6,  QColor(Qt::red),this,0.1,5);
     colorBox->layout()->addWidget( inputTraceColor);
     setWindowTitle(tr("Parametres Route"));

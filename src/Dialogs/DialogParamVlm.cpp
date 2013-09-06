@@ -172,7 +172,7 @@ DialogParamVlm::DialogParamVlm(MainWindow * main,myCentralWidget * parent) : QDi
     userAgent->setText(Settings::getSetting("userAgent", "").toString());
     userAgent->setEnabled(Settings::getSetting("forceUserAgent",0).toInt()==1);
     defFontName->findText(Settings::getSetting("defaultFontName",QApplication::font().family()).toString());
-    defFontSize->setValue(8.25+Settings::getSetting("defaultFontSizeInc",0).toFloat());
+    defFontSize->setValue(8.0+Settings::getSetting("defaultFontSizeInc",0).toFloat());
 
     for(int i=0;i<NB_URL;i++)
         url_list->addItem(url_name[i]+": "+url_str[i]);
@@ -263,7 +263,7 @@ void DialogParamVlm::done(int result)
             gdm=1;
         Settings::setSetting("gribDrawingMethod",gdm);
         Settings::setSetting("defaultFontName",this->defFontName->currentText());
-        Settings::setSetting("defaultFontSizeInc",QString().setNum(this->defFontSize->value()-8.25));
+        Settings::setSetting("defaultFontSizeInc",QString().setNum(this->defFontSize->value()-8.0));
 
         if(Settings::getSetting("mapsFolder",appFolder.value("maps")).toString() != mapsFolder->text())
         {
