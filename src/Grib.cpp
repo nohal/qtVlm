@@ -110,7 +110,6 @@ void Grib::loadGribFile(QString fileName)
 {
 //    QTime td;
 //    td.start();
-    this->fileName = fileName;
     file=NULL;
     Util::cleanListPointers(listIsobars);
     Util::cleanListPointers(listIsotherms0);
@@ -408,7 +407,6 @@ void Grib::readGribFileContent()
     readAllGribRecords();
 
     createListDates();
-    hoursBetweenRecords = computeHoursBeetweenGribRecords();
 
     //-----------------------------------------------------
     // Are dewpoint data in file ?
@@ -893,22 +891,7 @@ GribRecord * Grib::getFirstGribRecord()
         return NULL;
     }
 }
-//---------------------------------------------------
-// Delai en heures entre 2 records
-// On suppose qu'il est fixe pour tout le fichier !!!
-double Grib::computeHoursBeetweenGribRecords()
-{
-        double res = 1;
-    std::vector<GribRecord *> *ls = getFirstNonEmptyList();
-    if (ls != NULL && ls->size()>1) {
-        time_t t0 = (*ls)[0]->getRecordCurrentDate();
-        time_t t1 = (*ls)[1]->getRecordCurrentDate();
-        res = qAbs(t1-t0) / 3600.0;
-        if (res < 1)
-                res = 1;
-    }
-    return res;
-}
+
 
 //-------------------------------------------------------
 // Genere la liste des dates pour lesquelles des previsions existent

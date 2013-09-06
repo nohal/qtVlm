@@ -54,29 +54,30 @@ class Grib
         Grib();
         ~Grib();
 
-        void  loadGribFile(QString fileName);
-        bool  isOk()                 {return ok;}
+        /*used in slot_fileInfo_GRIB only */
         long  getFileSize()          {return fileSize;}
         std::string getFileName()    {return fname;}
-
-
-        int          getNumberOfGribRecords(int dataType,int levelType,int levelValue);
+        GribRecord * getFirstGribRecord();
         int          getTotalNumberOfGribRecords();
+        int        getNumberOfDates()      {return (int)setAllDates.size();}
+
+
+        void  loadGribFile(QString fileName);
+        bool  isOk()                 {return ok;}
+
+
+
+
+        int          getNumberOfGribRecords(int dataType,int levelType,int levelValue);        
         QString      get_cartoucheData(void);
 
-        GribRecord * getFirstGribRecord();
 
-        std::vector<GribRecord *> * getListOfGribRecords(int dataType,int levelType,int levelValue);
-
-        double		 getHoursBeetweenGribRecords()  {return hoursBetweenRecords;}
         GribRecord * getGribRecord(int dataType,int levelType,int levelValue, time_t date);
         int getDewpointDataStatus(int /*levelType*/,int /*levelValue*/);
 
         std::set<time_t>  * getListDates()   {return &setAllDates;}
 
-        int        getNumberOfDates()      {return (int)setAllDates.size();}
-        time_t     getRefDate()            {return setAllDates.empty() ?
-                                                       0 : *setAllDates.begin();}
+
         time_t     getMinDate()            {return ok?minDate:-1; }
         time_t     getMaxDate()            {return ok?maxDate:-1; }
 
@@ -120,6 +121,7 @@ class Grib
 
         void load_forcedParam();
 
+        /* gestion des iso */
         void    setIsobarsStep(double step);
         double  getIsobarsStep() const {return isobarsStep;}
         void    setIsotherms0Step(double step);
@@ -133,26 +135,23 @@ private:
         std::string fname;
         ZUFILE *file;
         long    fileSize;
-        double  hoursBetweenRecords;
         int	dewpointDataStatus;
 
         std::map <long int,std::vector<GribRecord *>* >  mapGribRecords;
 
         void storeRecordInMap(GribRecord *rec);
 
+        std::vector<GribRecord *> * getListOfGribRecords(int dataType,int levelType,int levelValue);
+
         void   readGribFileContent();
         void   readAllGribRecords();
         void   createListDates();
-        double computeHoursBeetweenGribRecords();
         double computeDewPoint(double lon, double lat, time_t now);
         std::set<time_t> setAllDates;
 
         void clean_vector(std::vector<GribRecord *> &ls);
         void clean_all_vectors();
         std::vector<GribRecord *> * getFirstNonEmptyList();
-
-
-        QString 	fileName;
 
         time_t  	currentDate;
         time_t          minDate;
@@ -164,8 +163,6 @@ private:
         std::list<IsoLine *> listIsotherms0;   // liste d'isothermes 0C precalculees
         double  isobarsStep;          // Ecart entre isobares
         double  isotherms0Step;          // Ecart entre isothermes 0C
-
-        bool	mustDuplicateFirstCumulativeRecord;
 
         int interpolation_param;
         bool mustInterpolateValues;
