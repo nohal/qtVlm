@@ -2965,11 +2965,15 @@ void ROUTAGE::convertToRoute()
     {
         route->setStartTimeOption(3);
         route->setStartFromBoat(false);
-        int l=multiNb;
-        while (l>26)
-            l-=27;
-        QString alphabet="ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-        poiPrefix=alphabet.at(l);
+        if(multiRoutage)
+        {
+            int l=multiNb;
+            while (l>26)
+                l-=27;
+            if(l<0)l=0; //security
+            QString alphabet="ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+            poiPrefix=alphabet.at(l);
+        }
     }
     route->setColor(this->color);
     route->setSpeedLossOnTack(this->speedLossOnTack);

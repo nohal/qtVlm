@@ -38,7 +38,7 @@ QRgb DataColors::get_color(QString type,double v, bool smooth) {
     if(elem)
         return elem->get_color(v,smooth);
     else {
-        qWarning() << "Missing data: " << type;
+        //qWarning() << "Missing data: " << type;
         return qRgb(120,120,120);
     }
 }
@@ -153,13 +153,13 @@ QRgb DataColors::get_color_windColorScale(double v, double min, double max, bool
 }
 
 void DataColors::print_data(void) {
-    qWarning() << "Nb Types: " << colorMap.count();
+    //qWarning() << "Nb Types: " << colorMap.count();
 
     QMapIterator<QString,ColorElement*> it(colorMap);
     int i=0;
     while(it.hasNext()) {
         it.next();
-        qWarning() << i++ << ":         " << it.key();
+        //qWarning() << i++ << ":         " << it.key();
         it.value()->print_data();
     }
 }
@@ -232,11 +232,11 @@ void ColorElement::add_color(double value,QRgb color) {
 }
 
 void ColorElement::print_data(void) {
-    qWarning() << "Nb colors: " << colorMap.count() << "  -   Params: " << coef << ", " << offset;
+    //qWarning() << "Nb colors: " << colorMap.count() << "  -   Params: " << coef << ", " << offset;
     QMapIterator<double,QRgb> it(colorMap);
     int i=0;
     while(it.hasNext()) {
         it.next();
-        qWarning() << i++ << ": " << it.key() << ", " << qRed(it.value()) << " " << qGreen(it.value()) << " " << qBlue(it.value());
+        //qWarning() << i++ << ": " << it.key() << ", " << qRed(it.value()) << " " << qGreen(it.value()) << " " << qBlue(it.value());
     }
 }
