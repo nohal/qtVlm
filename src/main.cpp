@@ -143,11 +143,6 @@ int main(int argc, char *argv[])
         app.setStyle(QStyleFactory::create("fusion"));
 #endif
     double fontInc=Settings::getSetting("defaultFontSizeInc",0).toDouble();
-    if(fontInc<-3 || fontInc>5)
-    {
-        fontInc=0;
-        Settings::setSetting("defaultFontSizeInc",0);
-    }
     QFont def(Settings::getSetting("defaultFontName",QApplication::font().family()).toString());
     double fontSize=8.0+fontInc;
     def.setPointSizeF(fontSize);

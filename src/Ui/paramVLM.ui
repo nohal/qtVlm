@@ -104,10 +104,10 @@
              <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
             </property>
             <property name="minimum">
-             <double>5.250000000000000</double>
+             <double>3.000000000000000</double>
             </property>
             <property name="maximum">
-             <double>13.250000000000000</double>
+             <double>50.000000000000000</double>
             </property>
             <property name="value">
              <double>8.250000000000000</double>
