@@ -44,7 +44,7 @@ DialogRouteComparator::DialogRouteComparator(myCentralWidget *parent) : QDialog(
     for (int n=0;n<parent->getRouteList().size();++n)
     {
         ROUTE * route=parent->getRouteList().at(n);
-        if(route->getBoat()==parent->getSelectedBoat())
+        if(route->getBoat()==parent->getSelectedBoat() && !route->getPoiList().isEmpty())
         {
             if(route->get_forceComparator())
             {

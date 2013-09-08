@@ -1632,6 +1632,7 @@ routeStats ROUTE::getStats()
     stats.nightTime=0;
     stats.rainTime=0;
     if(!grib) return stats;
+    if(this->my_poiList.isEmpty()) return stats;
     QList<vlmPoint> * points=this->getLine()->getPoints();
     if(points->size()<=1) return stats;
     double bs=0;
