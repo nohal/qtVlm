@@ -30,6 +30,11 @@ StatusBar::StatusBar(MainWindow * mainWindow) : QStatusBar(mainWindow) {
     this->mainWindow=mainWindow;
     my_centralWidget = mainWindow->getMy_centralWidget();
     Util::setFontDialog(this);
+#ifdef __MAC_QTVLM
+    QFont font(Settings::getSetting("defaultFontName",QApplication::font().family()).toString());
+    double fontSize=Settings::getSetting("applicationFontSize",8.0).toDouble();
+    font.setPointSizeF(fontSize);
+#else
     QFontInfo finfo = fontInfo();
     QFont font("", finfo.pointSize(), QFont::Normal, false);
     font.setStyleHint(QFont::TypeWriter);
@@ -37,6 +42,8 @@ StatusBar::StatusBar(MainWindow * mainWindow) : QStatusBar(mainWindow) {
     font.setPointSizeF(Settings::getSetting("applicationFontSize",8.0).toDouble());
     font.setFixedPitch(true);
     setStyleSheet("QStatusBar::item {border: 0px;}");
+#endif
+
     setFont(font);
 
     stBar_label_1 = new QLabel("Welcome in QtVlm", this);

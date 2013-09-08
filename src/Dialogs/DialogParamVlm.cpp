@@ -172,7 +172,7 @@ DialogParamVlm::DialogParamVlm(MainWindow * main,myCentralWidget * parent) : QDi
     userAgent->setText(Settings::getSetting("userAgent", "").toString());
     userAgent->setEnabled(Settings::getSetting("forceUserAgent",0).toInt()==1);
     defFontName->findText(Settings::getSetting("defaultFontName",QApplication::font().family()).toString());
-    defFontSize->setValue(8.0+Settings::getSetting("defaultFontSizeInc",0).toFloat());
+    defFontSize->setValue(8.0+Settings::getSetting("defaultFontSizeInc",0).toDouble());
 
     for(int i=0;i<NB_URL;i++)
         url_list->addItem(url_name[i]+": "+url_str[i]);
