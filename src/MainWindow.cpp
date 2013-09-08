@@ -44,9 +44,6 @@ Copyright (C) 2008 - Jacques Zaninetti - http://zygrib.free.fr
 #include "Util.h"
 #include "Orthodromie.h"
 #include "Version.h"
-#include "Board.h"
-#include "BoardVLM.h"
-#include "BoardReal.h"
 #include "settings.h"
 #include "opponentBoat.h"
 #include "mycentralwidget.h"
@@ -64,6 +61,13 @@ Copyright (C) 2008 - Jacques Zaninetti - http://zygrib.free.fr
 #include "ToolBar.h"
 #include "Progress.h"
 #include "StatusBar.h"
+#include "BarrierSet.h"
+#include "BoardVlmNew.h"
+#include "Board.h"
+#include "BoardVLM.h"
+#include "BoardReal.h"
+#include "MapDataDrawer.h"
+#include "DataColors.h"
 
 #include "DialogPoiDelete.h"
 #include "DialogPoi.h"
@@ -74,7 +78,11 @@ Copyright (C) 2008 - Jacques Zaninetti - http://zygrib.free.fr
 #include "DialogParamVlm.h"
 #include "DialogPilototo.h"
 #include "dialogviewpolar.h"
+#include "DialogEditBarrier.h"
+#include "DialogRouteComparator.h"
+
 int INTERPOLATION_DEFAULT=INTERPOLATION_HYBRID;
+
 
 //-----------------------------------------------------------
 // Connexions des signaux
@@ -109,6 +117,7 @@ void MainWindow::connectSignals()
     connect(mb->acFile_Info_GRIB, SIGNAL(triggered()), my_centralWidget, SLOT(slot_fileInfo_GRIB()));
     connect(mb->acFile_Quit, SIGNAL(triggered()), this, SLOT(slotFile_Quit()));
     connect(mb->acFile_Lock, SIGNAL(triggered()), this, SLOT(slotFile_Lock()));
+    connect(this,SIGNAL(updateLockIcon(QIcon)),mb,SLOT(slot_updateLockIcon(QIcon)));
     connect(mb->acFile_QuitNoSave, SIGNAL(triggered()), this, SLOT(slotFile_QuitNoSave()));
 
 
@@ -142,6 +151,7 @@ void MainWindow::connectSignals()
 
     connect(mb->acPOIAdd, SIGNAL(triggered()), this, SLOT(slot_newPOI()));
     connect(mb->acPOIRemove, SIGNAL(triggered()), this, SLOT(slot_removePOI()));
+    connect(mb->acPOIRemoveByType, SIGNAL(triggered()), my_centralWidget, SLOT(slot_removePOIType()));
     connect(mb->ac_twaLine,SIGNAL(triggered()), my_centralWidget, SLOT(slot_twaLine()));
     connect(mb->ac_compassLine,SIGNAL(triggered()), this, SLOT(slotCompassLine()));
     connect(mb->ac_compassCenterBoat,SIGNAL(triggered()), this, SLOT(slotCompassCenterBoat()));
@@ -152,10 +162,14 @@ void MainWindow::connectSignals()
     connect(mb->ac_copyRoute,SIGNAL(triggered()), this, SLOT(slot_copyRoute()));
     connect(mb->ac_deleteRoute,SIGNAL(triggered()), this, SLOT(slot_deleteRoute()));
     connect(mb->ac_editRoute,SIGNAL(triggered()), this, SLOT(slot_editRoute()));
-    connect(mb->ac_simplifyRoute,SIGNAL(triggered()), this, SLOT(slot_simplifyRoute()));
+    connect(mb->ac_poiRoute,SIGNAL(triggered()), this, SLOT(slot_poiRoute()));
+    connect(mb->ac_simplifyRouteMax,SIGNAL(triggered()), this, SLOT(slot_simplifyRouteMax()));
+    connect(mb->ac_simplifyRouteMin,SIGNAL(triggered()), this, SLOT(slot_simplifyRouteMin()));
     connect(mb->ac_optimizeRoute,SIGNAL(triggered()), this, SLOT(slot_optimizeRoute()));
     connect(mb->ac_pasteRoute,SIGNAL(triggered()), this, SLOT(slot_pasteRoute()));
     connect(mb->acRoute_paste,SIGNAL(triggered()), this, SLOT(slot_pasteRoute()));
+    connect(mb->acRoute_comparator,SIGNAL(triggered()), this, SLOT(slot_routeComparator()));
+    connect(mb->acRouteRemove, SIGNAL(triggered()), this, SLOT(slot_removeRoute()));
     connect(mb->ac_zoomRoute,SIGNAL(triggered()), this, SLOT(slot_zoomRoute()));
 #ifdef __QTVLM_WITH_TEST
     if(mb->acVLMTest)
@@ -163,7 +177,7 @@ void MainWindow::connectSignals()
     if(mb->acGribInterpolation)
         connect(mb->acGribInterpolation, SIGNAL(triggered()), this, SLOT(slotGribInterpolation()));
 #endif
-    connect(mb->acPOIinput, SIGNAL(triggered()), this, SLOT(slot_showPOI_input()));
+    connect(mb->acPOIinput, SIGNAL(triggered()), this, SLOT(slot_POI_input()));
     connect(mb->acPilototo, SIGNAL(triggered()), this, SLOT(slotPilototo()));
     connect(mb->acShowPolar, SIGNAL(triggered()),this,SLOT(slotShowPolar()));
 
@@ -175,11 +189,18 @@ void MainWindow::connectSignals()
     connect(mb->acPOISave, SIGNAL(triggered()), my_centralWidget, SLOT(slot_POISave()));
     connect(mb->acPOIRestore, SIGNAL(triggered()), my_centralWidget, SLOT(slot_POIRestore()));
 
+    /*** Barrier ***/
+    connect(mb->ac_addBarrierSet,SIGNAL(triggered()),this,SLOT(slot_newBarrierSet()));
+    connect(mb->ac_addBarrier,SIGNAL(triggered()),my_centralWidget,SLOT(slot_addBarrier()));
+    connect(mb->ac_popupBarrier,SIGNAL(triggered()),this,SLOT(slot_barrierAddPopup()));
+
     //-------------------------------------
     // Autres signaux
     //-------------------------------------
     connect(loadVLM_grib, SIGNAL(signalGribFileReceived(QString)),
             this,  SLOT(slot_gribFileReceived(QString)));
+
+    connect(this,SIGNAL(setChangeStatus(bool,bool,bool)),mb,SLOT(slot_setChangeStatus(bool,bool,bool)));
 }
 
 //----------------------------------------------------
@@ -248,10 +269,106 @@ MainWindow::MainWindow(int w, int h, QWidget *parent)
     ver+=" (UNIX)";
 #endif
 #ifdef __WIN_QTVLM
-    ver+=" (WINDOWS)";
+    QString OS_versionName;
+    int windowsVersion=QSysInfo::windowsVersion();
+    switch(windowsVersion)
+    {
+        case QSysInfo::WV_32s:
+            OS_versionName="Windows 3.1 with Win 32s";
+            break;
+        case QSysInfo::WV_95:
+            OS_versionName="Windows 95";
+            break;
+        case QSysInfo::WV_98:
+            OS_versionName="Windows 98";
+            break;
+        case QSysInfo::WV_Me:
+            OS_versionName="Windows Me";
+            break;
+        case QSysInfo::WV_NT:
+            OS_versionName="Windows NT";
+            break;
+        case QSysInfo::WV_2000:
+            OS_versionName="Windows 2000";
+            break;
+        case QSysInfo::WV_XP:
+            OS_versionName="Windows XP";
+            break;
+        case QSysInfo::WV_2003:
+            OS_versionName="Windows Server 2003";
+            break;
+        case QSysInfo::WV_VISTA:
+            OS_versionName="Windows VISTA";
+            break;
+        case QSysInfo::WV_WINDOWS7:
+            OS_versionName="Windows 7";
+            break;
+        case QSysInfo::WV_WINDOWS8:
+            OS_versionName="Windows 8";
+            break;
+        case QSysInfo::WV_CE:
+            OS_versionName="Windows CE";
+            break;
+        case QSysInfo::WV_CENET:
+            OS_versionName="Windows CE .NET";
+            break;
+        case QSysInfo::WV_CE_5:
+            OS_versionName="Windows CE 5.x";
+            break;
+        case QSysInfo::WV_CE_6:
+            OS_versionName="Windows CE 6.x";
+            break;
+        default:
+            OS_versionName="Unknown Windows version";
+            break;
+    }
+    qWarning()<<"windows version:"<<OS_versionName;
+    ver+=" ("+OS_versionName+")";
 #endif
 #ifdef __MAC_QTVLM
-    ver+=" (MAC)";
+    QString OS_versionName;
+    int windowsVersion=QSysInfo::macVersion();
+    switch(windowsVersion)
+    {
+        case QSysInfo::MV_9:
+            OS_versionName="Mac OS 9 (unsupported)";
+            break;
+        case QSysInfo::MV_10_0:
+            OS_versionName="Mac OS X 10.0-CHEETAH (unsupported)";
+            break;
+        case QSysInfo::MV_10_1:
+            OS_versionName="Mac OS X 10.1-PUMA (unsupported)";
+            break;
+        case QSysInfo::MV_10_2:
+            OS_versionName="Mac OS X 10.2-JAGUAR (unsupported)";
+            break;
+        case QSysInfo::MV_10_3:
+            OS_versionName="Mac OS X 10.3-PANTHER (unsupported)";
+            break;
+        case QSysInfo::MV_10_4:
+            OS_versionName="Mac OS X 10.4-TIGER (unsupported)";
+            break;
+        case QSysInfo::MV_10_5:
+            OS_versionName="Mac OS X 10.5-LEOPARD (unsupported)";
+            break;
+        case QSysInfo::MV_10_6:
+            OS_versionName="Mac OS X 10.6-SNOWLEOPARD";
+            break;
+        case QSysInfo::MV_10_7:
+            OS_versionName="Mac OS X 10.7-LION";
+            break;
+        case QSysInfo::MV_10_8:
+            OS_versionName="Mac OS X 10.8-MONTAINLION";
+            break;
+        case QSysInfo::MV_10_9:
+            OS_versionName="Mac OS X 10.9-MAVERICKS";
+            break;
+        default:
+            OS_versionName="Unknown Macintosh version";
+            break;
+    }
+    qWarning()<<"mac version:"<<OS_versionName;
+    ver+=" ("+OS_versionName+")";
 #endif
     Settings::setSetting("qtVlm_version",ver);
 }
@@ -270,13 +387,13 @@ void MainWindow::continueSetup()
     {
         QMessageBox::critical (this,
            "Error",
-           "Unable to write in qtVlm folder<br>Please change the folder permissions or<br>try to reinstall qtVlm elsewhere");  /*pas traduit expres*/
+           "Unable to write in qtVlm folder<br>"+QFileInfo(testWrite).absoluteFilePath()+"<br>Please change the folder permissions or<br>try to reinstall qtVlm elsewhere");  /*pas traduit expres*/
         my_centralWidget->setAboutToQuit();
         QApplication::quit();
     }
-    if(!QFile(appFolder.value("img")+"warning.png").exists())
+    if(!QFile(appFolder.value("img")+"skin_compas.png").exists())
         QMessageBox::critical (this,
-           "Error","File 'warning.png' cannot be find in img directory<br>Please check your installation"); /*untranslated on purpose*/
+           "Error","File 'skin_compas.png' cannot be find in img directory<br>Please check your installation"); /*untranslated on purpose*/
     dialogProxy = new DialogProxy();
 
 //--------------------------------------------------
@@ -295,6 +412,7 @@ void MainWindow::continueSetup()
 
 //--------------------------------------------------
     progress->newStep(20,tr("Initializing tool bar"));
+
     toolBar = new ToolBar(this);
     my_centralWidget->set_toolBar(toolBar);
 
@@ -307,10 +425,6 @@ void MainWindow::continueSetup()
     connect(this->menuPopupBtRight,SIGNAL(aboutToShow()),my_centralWidget,SLOT(slot_resetGestures()));
     connect(this->menuPopupBtRight,SIGNAL(aboutToHide()),my_centralWidget,SLOT(slot_resetGestures()));
 
-    /* restore state */
-    restoreState(Settings::getSetting("savedState","").toByteArray());
-    toolBar->load_settings();
-
 //--------------------------------------------------
     progress->newStep(26,tr("Loading polars list"));
     polar_list = new polarList(my_centralWidget->getInet(),this);
@@ -321,17 +435,21 @@ void MainWindow::continueSetup()
 
 //--------------------------------------------------
     progress->newStep(30,tr("Creating board & dialogs"));
-
-    //poi_input_dialog = new DialogPoiInput(my_centralWidget);
     selPOI_instruction=NULL;
     isSelectingWP=false;
+    myBoard=NULL;
+    newBoard=NULL;
+    loadBoard();
 
-    myBoard = new board(this,my_centralWidget->getInet());
-    connect(menuBar->acOptions_SH_ComBandeau,SIGNAL(triggered()),myBoard,SLOT(slot_hideShowCompass()));
+    /* restore state */
+    restoreState(Settings::getSetting("savedState","").toByteArray());
+    toolBar->load_settings();
+
 
     param = new DialogParamVlm(this,my_centralWidget);
-    connect(this,SIGNAL(wpChanged()),myBoard->VLMBoard(),SLOT(update_btnWP()));
-    connect(param,SIGNAL(paramVLMChanged()),myBoard,SLOT(paramChanged()));    
+    if(use_old_board)
+        connect(param,SIGNAL(paramVLMChanged()),myBoard,SLOT(paramChanged()));
+
     connect(param,SIGNAL(paramVLMChanged()),this,SLOT(slot_updateGribMono()));
     connect(param,SIGNAL(paramVLMChanged()),toolBar,SLOT(slot_loadEstimeParam()));
 
@@ -356,20 +474,6 @@ void MainWindow::continueSetup()
 
      //--------------------------------------------------
     // get screen geometry
-    QDesktopWidget * desktopWidget = QApplication::desktop ();
-
-    QRect screenRect = desktopWidget->screenGeometry(desktopWidget->primaryScreen());
-
-    if(screenRect.height()<=600)
-    {
-        /* small screen height */
-        qWarning() << "Small screen => no compas and floating panel";
-        myBoard->VLMBoard()->setCompassVisible(false);
-        myBoard->realBoard()->setCompassVisible(false);
-        myBoard->floatingBoard(true);
-    }
-    else
-        myBoard->floatingBoard(false);
 
     /* init du dialog de validation de grib (present uniquement en mode debug)*/
 #ifdef __QTVLM_WITH_TEST
@@ -378,7 +482,6 @@ void MainWindow::continueSetup()
 
 
 
-    QList<Player*> players=my_centralWidget->getPlayers();
 
 #ifdef __REAL_BOAT_ONLY
     if(players.count()==0) {
@@ -390,12 +493,13 @@ void MainWindow::continueSetup()
 #endif
 
 
+    QList<Player*> players=my_centralWidget->getPlayers();
     if(players.count()==1)
     {
-        myBoard->playerChanged(players.at(0));
+        if(use_old_board)
+            myBoard->playerChanged(players.at(0));
         if(players.at(0)->getType()==BOAT_VLM)
         {
- //************************************************************
             progress->newStep(50,tr("Updating player"));
             connect(players.at(0),SIGNAL(playerUpdated(bool,Player*)),this,SLOT(slot_updPlayerFinished(bool,Player*)));
             players.at(0)->updateData();
@@ -455,6 +559,7 @@ void MainWindow::continueSetup()
         else
         {
             isStartingUp=false;
+            my_centralWidget->loadPOI();
             updateTitle();
             my_centralWidget->emitUpdateRoute(NULL);
         }
@@ -462,6 +567,55 @@ void MainWindow::continueSetup()
 
     closeProgress();
     Util::setFontDialog(menuBar);
+}
+void MainWindow::loadBoard()
+{
+    qWarning()<<"loading board";
+    use_old_board=true;
+    if(my_centralWidget->getPlayer() && my_centralWidget->getPlayer()->getType()==BOAT_VLM && Settings::getSetting("classicalVlmBoard",0).toInt()==0)
+        use_old_board=false;
+    if(use_old_board && myBoard)
+    {
+        myBoard->playerChanged(my_centralWidget->getPlayer());
+        return;
+    }
+    if(!use_old_board && newBoard) return;
+    if(newBoard)delete newBoard;
+    if(myBoard){
+        delete myBoard;
+    }
+    newBoard=NULL;
+    myBoard=NULL;
+    if(use_old_board)
+    {
+        myBoard = new board(this,my_centralWidget->getInet());
+        //connect(menuBar->acOptions_SH_ComBandeau,SIGNAL(triggered()),myBoard,SLOT(slot_hideShowCompass()));
+        connect(this,SIGNAL(wpChanged()),myBoard->VLMBoard(),SLOT(update_btnWP()));
+        // get screen geometry
+        QDesktopWidget * desktopWidget = QApplication::desktop ();
+
+        QRect screenRect = desktopWidget->screenGeometry(desktopWidget->primaryScreen());
+
+        if(screenRect.height()<=600)
+        {
+            /* small screen height */
+            qWarning() << "Small screen => no compas and floating panel";
+            myBoard->VLMBoard()->setCompassVisible(false);
+            myBoard->realBoard()->setCompassVisible(false);
+            myBoard->floatingBoard(true);
+        }
+        else
+        {
+            myBoard->floatingBoard(false);
+        }
+        myBoard->playerChanged(my_centralWidget->getPlayer());
+    }
+    else
+    {
+        newBoard = new BoardVlmNew(this);
+    }
+    Settings::setSetting("showDashBoard",1);
+    this->showDashBoard();
 }
 
 //-----------------------------------------------
@@ -490,6 +644,7 @@ MainWindow::~MainWindow()
     //--------------------------------------------------
     // Save global settings
     //--------------------------------------------------
+    //qWarning()<<"mainwindow destructor";
     my_centralWidget->setAboutToQuit();
     if(noSave) return;
     if(Settings::getSetting("saveMainWindowGeometry","1").toInt())
@@ -501,7 +656,9 @@ MainWindow::~MainWindow()
     }
 
     toolBar->save_settings();
+    //board->save_settings();
     Settings::setSetting("savedState",saveState());
+    //qWarning() << "saving state: " <<  Settings::getSetting("savedState","").toByteArray();
 
     Settings::setSetting("projectionCX", proj->getCX());
     Settings::setSetting("projectionCY", proj->getCY());
@@ -519,9 +676,11 @@ QMenu * MainWindow::createPopupMenu(void) {
     QMenu * menu = new QMenu;
     int entry=0;
 
-    if(myBoard)
-        entry=myBoard->build_showHideMenu(menu);
-
+    if(use_old_board)
+    {
+        if(myBoard)
+            entry=myBoard->build_showHideMenu(menu);
+    }
     if(entry)
         menu->addSeparator();
 
@@ -546,6 +705,7 @@ void MainWindow::keyPressEvent ( QKeyEvent  * /* event */ )
 {
     //qWarning() << "Key pressed in main: " << event->key();
 }
+
 void MainWindow::closeProgress(void)
 {
     if(QThread::idealThreadCount()>1 && QFile(appFolder.value("img")+"benchmark.grb").exists())
@@ -554,7 +714,8 @@ void MainWindow::closeProgress(void)
         QApplication::processEvents();
         Grib * grib=new Grib();
         grib->loadGribFile(appFolder.value("img")+"benchmark.grb");
-        if(grib && grib->isOk())
+        MapDataDrawer * mapDataDrawer=my_centralWidget->get_mapDataDrawer();
+        if(grib && grib->isOk() && mapDataDrawer)
         {
             grib->setCurrentDate(grib->getMinDate()+3650); //not to be on a gribrecord;
             proj->blockSignals(true);
@@ -570,14 +731,14 @@ void MainWindow::closeProgress(void)
             pnt.setRenderHint(QPainter::SmoothPixmapTransform, true);
             QTime calibration;
             calibration.start();
-            grib->draw_WIND_Color(pnt,proj,true,true,true);
+            mapDataDrawer->draw_WIND_Color(grib,pnt,proj,true,true,true);
             int cal1=calibration.elapsed();
             pnt.end();
             //imgAll->save("calib1.jpg");
             imgAll->fill(Qt::transparent);
             pnt.begin(imgAll);
             calibration.start();
-            grib->draw_WIND_Color_old(pnt,proj,true,true,true);
+            mapDataDrawer->draw_WIND_Color_old(grib,pnt,proj,true,true,true);
             int cal2=calibration.elapsed();
             pnt.end();
             //imgAll->save("calib2.jpg");
@@ -587,6 +748,8 @@ void MainWindow::closeProgress(void)
             qWarning()<<"result of benchmark: multiThread="<<cal1<<"monoThread="<<cal2;
             Settings::setSetting("gribBench1",cal1);
             Settings::setSetting("gribBench2",cal2);
+
+            /** **/
         }
         delete grib;
     }
@@ -595,6 +758,7 @@ void MainWindow::closeProgress(void)
     if(gribFilePath.isEmpty())
         gribFilePath = appFolder.value("grib");
     QString fname = Settings::getSetting("gribFileName", "").toString();
+    int curMode = my_centralWidget->getTerre()->getColorMapMode();
     if (fname != "" && QFile::exists(fname))
     {
         openGribFile(fname, false);
@@ -607,6 +771,8 @@ void MainWindow::closeProgress(void)
         gribFileNameCurrent=fname;
     }
     slot_updateGribMono();
+    my_centralWidget->getTerre()->setColorMapMode(curMode);
+    my_centralWidget->updateGribMenu();
     progress->close();
     delete progress;
     progress=NULL;
@@ -614,7 +780,8 @@ void MainWindow::closeProgress(void)
         this->my_centralWidget->setAboutToQuit();
     else if(selectedBoat)
     {
-        if(selectedBoat->getType()==BOAT_REAL)
+        selectedBoat->cleanBarrierList();
+        if(selectedBoat->get_boatType()==BOAT_REAL)
         {                        
             proj->setScaleAndCenterInMap(selectedBoat->getZoom(),selectedBoat->getLon(),selectedBoat->getLat());
             if(Settings::getSetting("polarEfficiency",100).toInt()!=100)
@@ -641,11 +808,18 @@ void MainWindow::closeProgress(void)
                 toolBar->update_eta(dtm);
             timer->start(1000);
         }
-        myBoard->boatUpdated(selectedBoat);
+        if(use_old_board)
+            myBoard->boatUpdated(selectedBoat);
         emit WPChanged(selectedBoat->getWPLat(),selectedBoat->getWPLon());
+        emit boatChanged(selectedBoat);
+        emit paramVLMChanged();
     }
     statusBar->show();
     menuBar->show();
+#ifdef __ANDROIDD__
+    menuBar->setNativeMenuBar(true);
+    menuBar->hide();
+#endif
 }
 
 //-------------------------------------------------
@@ -757,7 +931,7 @@ void MainWindow::updateTitle()
 void MainWindow::slotUpdateOpponent(void)
 {
     bool found=false;
-    if(!selectedBoat || selectedBoat->getType()!=BOAT_VLM)
+    if(!selectedBoat || selectedBoat->get_boatType()!=BOAT_VLM)
     {
         my_centralWidget->getOppList()->clear();
         return;
@@ -794,12 +968,16 @@ void MainWindow::slot_newPOI(void)
 void MainWindow::slot_removePOI(void) {
     my_centralWidget->removePOI();
 }
+void MainWindow::slot_removeRoute(void) {
+    my_centralWidget->removeRoute();
+}
 
-void MainWindow::slot_centerBoat()
+void MainWindow::slot_centerSelectedBoat()
 {
     if(selectedBoat)
-        proj->setCenterInMap(selectedBoat->getLon(),selectedBoat->getLat());
+        selectedBoat->slot_centerOnBoat();
 }
+
 
 void MainWindow::slot_moveBoat(void)
 {
@@ -858,7 +1036,7 @@ void MainWindow::slotHelp_Help() {
     QDesktopServices::openUrl(QUrl("http://wiki.virtual-loup-de-mer.org/index.php/QtVlm#L.27interface_de_qtVlm"));
 }
 void MainWindow::slotHelp_Forum() {
-    QDesktopServices::openUrl(QUrl("http://www.virtual-winds.com/forum/index.php?showtopic=6638&view=getnewpost"));
+    QDesktopServices::openUrl(QUrl("http://www.virtual-winds.org/forum/index.php?showtopic=6638&view=getnewpost"));
 }
 
 //-------------------------------------------------
@@ -889,23 +1067,29 @@ void MainWindow::slotFile_Lock(bool readOnly)
 
     if(!readOnly)
         selectedBoat->setLockStatus(!selectedBoat->getLockStatus());
+
     QIcon ic;
     if(selectedBoat->getLockStatus())
         ic=QIcon(appFolder.value("img")+"lock.png");
     else
         ic=QIcon(appFolder.value("img")+"unlock.png");
-    menuBar->acFile_Lock->setIcon(ic);
-    toolBar->acLock->setIcon(ic);
+
+    emit updateLockIcon(ic);
 }
 
 void MainWindow::slotFile_Quit() {
+    qWarning()<<"slotFile_Quit called";
+    noSave=false;
+    my_centralWidget->set_noSave(false);
     my_centralWidget->setAboutToQuit();
     QApplication::quit();
 }
 
 void MainWindow::slotFile_QuitNoSave() {
-    my_centralWidget->setAboutToQuit();
+    qWarning()<<"slotFile_QuitNoSave called";
     noSave=true;
+    my_centralWidget->set_noSave(true);
+    my_centralWidget->setAboutToQuit();
     QApplication::quit();
 }
 
@@ -1092,15 +1276,30 @@ int MainWindow::get_selectedBoatVacLen()
     else
         return 1;
 }
+void MainWindow::showDashBoard()
+{
+    bool shTdb=Settings::getSetting("showDashBoard",1).toInt()==1;
+    if(use_old_board)
+        menuBar->acOptions_SH_Tdb->setVisible(false);
+    else
+    {
+        newBoard->setVisible(shTdb);
+        menuBar->acOptions_SH_Tdb->setVisible(true);
+        menuBar->acOptions_SH_Tdb->setChecked(shTdb);
+    }
+}
+
 void MainWindow::updatePilototo_Btn(boatVLM * boat)
 {
     if(!selPOI_instruction)
     {
+        emit selectPOI(false);
         /* compute nb Pilototo instructions */
         QStringList lst = boat->getPilototo();
         QString pilototo_txt=tr("Pilototo");
         QString pilototo_toolTip="";
-        myBoard->VLMBoard()->set_style(myBoard->VLMBoard()->btn_Pilototo,QColor(255, 255, 127));
+        if(use_old_board)
+            myBoard->VLMBoard()->set_style(myBoard->VLMBoard()->btn_Pilototo,QColor(255, 255, 127));
         if(boat->getHasPilototo())
         {
             int nbPending=0;
@@ -1120,32 +1319,41 @@ void MainWindow::updatePilototo_Btn(boatVLM * boat)
             if(nb!=0)
             {
                 pilototo_txt=pilototo_txt+" ("+QString().setNum(nbPending)+"/"+QString().setNum(nb)+")";
-                if(nbPending!=0)
+                if(use_old_board)
                 {
-                    myBoard->VLMBoard()->set_style(myBoard->VLMBoard()->btn_Pilototo,QColor(14,184,63),QColor(255, 255, 127));
+                    if(nbPending!=0)
+                    {
+                        myBoard->VLMBoard()->set_style(myBoard->VLMBoard()->btn_Pilototo,QColor(14,184,63),QColor(255, 255, 127));
+                    }
                 }
             }
         }
         else
         {
+
             pilototo_toolTip=tr("Imp. de lire le pilototo de VLM");
             pilototo_txt=pilototo_txt+" (!)";
         }
         menuBar->acPilototo->setText(pilototo_txt);
         menuBar->acPilototo->setToolTip(pilototo_toolTip);
-        myBoard->VLMBoard()->btn_Pilototo->setText(pilototo_txt);
-        myBoard->VLMBoard()->btn_Pilototo->setToolTip(pilototo_toolTip);
+        if(use_old_board)
+        {
+            myBoard->VLMBoard()->btn_Pilototo->setText(pilototo_txt);
+            myBoard->VLMBoard()->btn_Pilototo->setToolTip(pilototo_toolTip);
+        }
     }
     else
     {
+        emit selectPOI(true);
         menuBar->acPilototo->setText(tr("Selection d'une marque"));
-        myBoard->VLMBoard()->btn_Pilototo->setText(tr("Selection d'une marque"));
+        if(use_old_board)
+            myBoard->VLMBoard()->btn_Pilototo->setText(tr("Selection d'une marque"));
     }
 }
 
 void MainWindow::updateNxtVac(void)
 {
-    if(!selectedBoat || selectedBoat->getType()!=BOAT_VLM)
+    if(!selectedBoat || selectedBoat->get_boatType()!=BOAT_VLM)
     {
         nxtVac_cnt=0;
     }
@@ -1154,11 +1362,14 @@ void MainWindow::updateNxtVac(void)
         nxtVac_cnt--;
         if(nxtVac_cnt<0) {
             nxtVac_cnt=selectedBoat->getVacLen();
-            myBoard->outdatedVLM();
+            emit outDatedVlmData();
+            if(use_old_board)
+                myBoard->outdatedVLM();
         }
     }
     statusBar->drawVacInfo();
 }
+
 QList<POI*> * MainWindow::getPois()
 {
     return my_centralWidget->getPoisList();
@@ -1169,6 +1380,16 @@ void MainWindow::slotShowContextualMenu(QGraphicsSceneContextMenuEvent * e)
     mouseClicX = e->scenePos().x();
     mouseClicY = e->scenePos().y();
     int compassMode = my_centralWidget->getCompassMode(mouseClicX,mouseClicY);
+    my_centralWidget->set_cursorPositionOnPopup(QPoint(mouseClicX,mouseClicY));
+
+    /*** Barrier ***/
+
+    menuBar->ac_popupBarrier->setEnabled(true);
+    if(my_centralWidget->get_barrierEditMode()==BARRIER_EDIT_NO_EDIT)
+        menuBar->ac_popupBarrier->setText(tr("Create new barrier"));
+    else
+        menuBar->ac_popupBarrier->setText(tr("Stop barrier create"));
+
 
     switch(compassMode)
     {
@@ -1202,10 +1423,16 @@ void MainWindow::slotShowContextualMenu(QGraphicsSceneContextMenuEvent * e)
         menuBar->ac_editRoute->setText(tr("Editer la route")+" "+routeName);
         menuBar->ac_editRoute->setIcon(icon);
         menuBar->ac_editRoute->setData(my_centralWidget->getRouteToClipboard()->getName());
-        menuBar->ac_simplifyRoute->setVisible(true);
-        menuBar->ac_simplifyRoute->setText(tr("Simplifier la route")+" "+routeName);
-        menuBar->ac_simplifyRoute->setIcon(icon);
-        menuBar->ac_simplifyRoute->setData(my_centralWidget->getRouteToClipboard()->getName());
+        menuBar->ac_poiRoute->setVisible(true);
+        menuBar->ac_poiRoute->setText(tr("Montrer les POIs intermediaires de la route")+" "+routeName);
+        menuBar->ac_poiRoute->setIcon(icon);
+        menuBar->ac_poiRoute->setChecked(!my_centralWidget->getRouteToClipboard()->getHidePois());
+        menuBar->ac_poiRoute->setData(my_centralWidget->getRouteToClipboard()->getName());
+        menuBar->mn_simplifyRoute->menuAction()->setVisible(true);
+        menuBar->mn_simplifyRoute->setTitle(tr("Simplifier la route")+" "+routeName);
+        menuBar->mn_simplifyRoute->setIcon(icon);
+        menuBar->ac_simplifyRouteMax->setData(my_centralWidget->getRouteToClipboard()->getName());
+        menuBar->ac_simplifyRouteMin->setData(my_centralWidget->getRouteToClipboard()->getName());
         menuBar->ac_optimizeRoute->setVisible(true);
         menuBar->ac_optimizeRoute->setText(tr("Optimiser la route")+" "+routeName);
         menuBar->ac_optimizeRoute->setIcon(icon);
@@ -1226,8 +1453,11 @@ void MainWindow::slotShowContextualMenu(QGraphicsSceneContextMenuEvent * e)
     {
         menuBar->ac_editRoute->setVisible(false);
         menuBar->ac_editRoute->setData(QString());
-        menuBar->ac_simplifyRoute->setVisible(false);
-        menuBar->ac_simplifyRoute->setData(QString());
+        menuBar->ac_poiRoute->setVisible(false);
+        menuBar->ac_poiRoute->setData(QString());
+        menuBar->mn_simplifyRoute->menuAction()->setVisible(false);
+        menuBar->ac_simplifyRouteMax->setData(QString());
+        menuBar->ac_simplifyRouteMin->setData(QString());
         menuBar->ac_optimizeRoute->setVisible(false);
         menuBar->ac_optimizeRoute->setData(QString());
         menuBar->ac_copyRoute->setVisible(false);
@@ -1287,7 +1517,25 @@ void MainWindow::slot_editRoute()
     if(route!=NULL)
         route->slot_edit();
 }
-void MainWindow::slot_simplifyRoute()
+void MainWindow::slot_poiRoute()
+{
+    ROUTE *route=NULL;
+    for (int n=0;n<my_centralWidget->getRouteList().count();++n)
+    {
+        if(my_centralWidget->getRouteList().at(n)->getName()==menuBar->ac_copyRoute->data().toString())
+        {
+            route=my_centralWidget->getRouteList().at(n);
+            break;
+        }
+    }
+    if(route!=NULL)
+    {
+        route->setHidePois(!route->getHidePois());
+        menuBar->ac_poiRoute->setChecked(!route->getHidePois());
+    }
+}
+
+void MainWindow::slot_simplifyRouteMax()
 {
     ROUTE *route=NULL;
     for (int n=0;n<my_centralWidget->getRouteList().count();++n)
@@ -1301,6 +1549,25 @@ void MainWindow::slot_simplifyRoute()
     if(route!=NULL)
     {
         route->setSimplify(true);
+        route->set_strongSimplify(true);
+        my_centralWidget->treatRoute(route);
+    }
+}
+void MainWindow::slot_simplifyRouteMin()
+{
+    ROUTE *route=NULL;
+    for (int n=0;n<my_centralWidget->getRouteList().count();++n)
+    {
+        if(my_centralWidget->getRouteList().at(n)->getName()==menuBar->ac_copyRoute->data().toString())
+        {
+            route=my_centralWidget->getRouteList().at(n);
+            break;
+        }
+    }
+    if(route!=NULL)
+    {
+        route->setSimplify(true);
+        route->set_strongSimplify(false);
         my_centralWidget->treatRoute(route);
     }
 }
@@ -1338,6 +1605,12 @@ void MainWindow::slot_zoomRoute()
 void MainWindow::slot_pasteRoute()
 {
     my_centralWidget->importRouteFromMenuKML("",true);
+}
+void MainWindow::slot_routeComparator()
+{
+    DialogRouteComparator * drc=new DialogRouteComparator(my_centralWidget);
+    drc->exec();
+    delete drc;
 }
 void MainWindow::slotInetUpdated(void)
 {
@@ -1490,7 +1763,7 @@ void MainWindow::VLM_Sync_sync(void)
         closeProgress();
         isStartingUp=false;
         if(Settings::getSetting("centerOnBoatChange","1").toInt()==1)
-            this->slot_centerBoat();
+            this->slot_centerSelectedBoat();
         my_centralWidget->emitUpdateRoute(NULL);
         updateTitle();
     }
@@ -1508,7 +1781,7 @@ void MainWindow::slotBoatUpdated(boat * upBoat,bool newRace,bool doingSync)
 {
     //qWarning() << "Boat updated " << boat->getBoatPseudo();
 
-    if(upBoat->getType()==BOAT_VLM)
+    if(upBoat->get_boatType()==BOAT_VLM)
     {
         boatVLM * boat = (boatVLM *)upBoat;
         if(!boat->getStatus())
@@ -1616,12 +1889,6 @@ void MainWindow::slotBoatUpdated(boat * upBoat,bool newRace,bool doingSync)
     }
     else
     {
-//        qWarning() << "Real boat has updated";
-        /*if(my_centralWidget->getOppList())
-        {
-            my_centralWidget->getOppList()->clear();
-            my_centralWidget->getOppList()->refreshData();
-        }*/
         /* Updating ETA */
         boatReal *boat=(boatReal *) upBoat;
         if((boat->getWPLat()==0 && boat->getWPLon()==0) ||boat->getEta()==-1)
@@ -1642,15 +1909,16 @@ void MainWindow::slotBoatUpdated(boat * upBoat,bool newRace,bool doingSync)
 
 void MainWindow::slotSelectBoat(boat* newSelect)
 {
-    if(!newSelect->getStatus()) return;
-    if(!my_centralWidget->getBoats() && newSelect->getType() == BOAT_VLM)
+    if(!newSelect || !newSelect->getStatus()) return;
+    if(!my_centralWidget->getBoats() && newSelect->get_boatType() == BOAT_VLM)
     {
         qWarning() << "CRITICAL: slotSelectBoat - empty boatList";
         return ;
     }
-    if(newSelect->getType()!=BOAT_VLM)
+    if(newSelect->get_boatType()!=BOAT_VLM)
     {
         selectedBoat=newSelect;
+        emit boatSelected(selectedBoat);
         selectedBoat->slot_selectBoat();
         selectedBoat->setZoom(proj->getScale());
         return;
@@ -1667,6 +1935,7 @@ void MainWindow::slotSelectBoat(boat* newSelect)
         }
 
         selectedBoat=newSelect;
+        emit boatSelected(selectedBoat);
         selectedBoat->slot_selectBoat();
 
         /* change the board ? */
@@ -1674,7 +1943,7 @@ void MainWindow::slotSelectBoat(boat* newSelect)
 
         if(newSelect->getStatus()) /* is selected boat activated ?*/
         {
-            if(newSelect->getType()==BOAT_VLM)
+            if(newSelect->get_boatType()==BOAT_VLM)
             {
                 //qWarning() << "getData from slot_selectBoat";
                 if(!this->isStartingUp)
@@ -1688,12 +1957,12 @@ void MainWindow::slotSelectBoat(boat* newSelect)
         }
         else
         {
-            if(newSelect->getType()==BOAT_VLM)
+            if(newSelect->get_boatType()==BOAT_VLM)
                 menuBar->acPilototo->setEnabled(false);
         }
 
         /* manage item of boat list */
-        if(newSelect->getType()==BOAT_VLM)
+        if(newSelect->get_boatType()==BOAT_VLM)
         {
             int cnt=0;
             for(int i=0;i<my_centralWidget->getBoats()->count();++i)
@@ -1709,6 +1978,7 @@ void MainWindow::slotSelectBoat(boat* newSelect)
         }
 
     }
+    emit paramVLMChanged();
 }
 
 /***********************************
@@ -1749,8 +2019,8 @@ void MainWindow::slotChgBoat(int num)
                     }
                 }
                 slotFile_Lock(true);
-                myBoard->VLMBoard()->setChangeStatus(!selectedBoat->getLockStatus());
-
+                if(use_old_board)
+                    myBoard->VLMBoard()->setChangeStatus(!selectedBoat->getLockStatus());
                 break;
             }
             ++cnt;
@@ -1860,26 +2130,34 @@ void MainWindow::slotAccountListUpdated(void)
 
     toolBar->updateBoatList(*my_centralWidget->getBoats());
 
+    emit accountListUpdated(my_centralWidget->getPlayer());
+
     slotVLM_Sync();
 }
 
 void MainWindow::slotChgWP(double lat,double lon, double wph)
 {
-    if(selectedBoat->getLockStatus()) return;
-    if(this->selectedBoat->getType()==BOAT_VLM)
+    if(!selectedBoat || selectedBoat->getLockStatus()) return;
+
+    selectedBoat->setWP(QPointF(lon,lat),wph);
+    emit WPChanged(lat,lon);
+    if(use_old_board)
     {
-        if(myBoard->VLMBoard())
+        if(this->selectedBoat->get_boatType()==BOAT_VLM)
         {
-            ((boatVLM*)selectedBoat)->setWph(wph);
-            myBoard->VLMBoard()->setWP(lat,lon,wph);
+            if(myBoard->VLMBoard())
+            {
+                ((boatVLM*)selectedBoat)->setWph(wph);
+                myBoard->VLMBoard()->setWP(lat,lon,wph);
+            }
         }
-    }
-    else
-    {
-        if(myBoard->realBoard())
+        else
         {
-            myBoard->realBoard()->setWp(lat,lon,wph);
-            emit this->WPChanged(lat,lon);
+            if(myBoard->realBoard())
+            {
+                myBoard->realBoard()->setWp(lat,lon,wph);
+                emit this->WPChanged(lat,lon);
+            }
         }
     }
 }
@@ -1902,24 +2180,21 @@ void MainWindow::slotBoatLockStatusChanged(boat* boat,bool status)
     {
         if(selPOI_instruction)
         {
-            emit setChangeStatus(true);
-            menuBar->acPilototo->setEnabled(true);
-            menuBar->acVLMSync->setEnabled(false);
-            myBoard->VLMBoard()->btn_Pilototo->setEnabled(true);
+            emit setChangeStatus(true,true,false);
+            if(use_old_board)
+                myBoard->VLMBoard()->btn_Pilototo->setEnabled(true);
         }
         else if(isSelectingWP)
         {
-            emit setChangeStatus(true);
-            menuBar->acPilototo->setEnabled(false);
-            menuBar->acVLMSync->setEnabled(false);
-            myBoard->VLMBoard()->btn_Pilototo->setEnabled(false);
+            emit setChangeStatus(true,false,false);
+            if(use_old_board)
+                myBoard->VLMBoard()->btn_Pilototo->setEnabled(false);
         }
         else
         {
-            emit setChangeStatus(status);
-            menuBar->acPilototo->setEnabled(!status);
-            menuBar->acVLMSync->setEnabled(true);
-            myBoard->VLMBoard()->btn_Pilototo->setEnabled(true);
+            emit setChangeStatus(status,!status,true);
+            if(use_old_board)
+                myBoard->VLMBoard()->btn_Pilototo->setEnabled(true);
         }
     }
 }
@@ -1944,7 +2219,7 @@ void MainWindow::slotShowPolar()
 
 void MainWindow::slotPilototo(void)
 {
-    if(!selectedBoat || selectedBoat->getType()!=BOAT_VLM) return;
+    if(!selectedBoat || selectedBoat->get_boatType()!=BOAT_VLM) return;
 
     if(selPOI_instruction)
     {
@@ -1958,7 +2233,7 @@ void MainWindow::slotPilototo(void)
 }
 void MainWindow::setPilototoFromRoute(ROUTE *route)
 {
-    if(!route->getBoat() || route->getBoat()->getType()!=BOAT_VLM)
+    if(!route->getBoat() || route->getBoat()->get_boatType()!=BOAT_VLM)
     {
         route->setPilototo(false);
         return;
@@ -1994,7 +2269,7 @@ void MainWindow::setPilototoFromRoute(QList<POI*> poiList)
     if(poiList.isEmpty()) return;
     if(poiList.at(0)->getRoute()==NULL) return;
     ROUTE * route=poiList.at(0)->getRoute();
-    if(!route->getBoat() || route->getBoat()->getType()!=BOAT_VLM)
+    if(!route->getBoat() || route->getBoat()->get_boatType()!=BOAT_VLM)
     {
         route->setPilototo(false);
         return;
@@ -2011,7 +2286,7 @@ void MainWindow::setPilototoFromRoute(QList<POI*> poiList)
     route->setPilototo(false);
     emit setInstructions(route->getBoat(),poiList);
 }
-void MainWindow::clearPilototo()
+void MainWindow::slot_clearPilototo()
 {
     QList<POI*> vide;
     if(this->selectedBoat)
@@ -2106,11 +2381,16 @@ double MainWindow::getBoatPolarMaxSpeed()
        }
 }
 
+int MainWindow::get_boatType(void) {
+    if(selectedBoat) return selectedBoat->get_boatType();
+    else return BOAT_NOBOAT;
+}
+
 void MainWindow::getBoatWP(double * lat,double * lon)
 {
    if(!lat || !lon)
        return;
-   if(!selectedBoat || selectedBoat->getType()!=BOAT_VLM)
+   if(!selectedBoat || selectedBoat->get_boatType()!=BOAT_VLM)
    {
        *lat=-1;
        *lon=-1;
@@ -2223,16 +2503,21 @@ void MainWindow::slot_estimeParamChanged(int valeur)
 void MainWindow::slot_updateGribMono()
 {
     //gribDrawingmethod (0=auto, 1=mono, 2=multi)
-    if(my_centralWidget->getGrib())
+    if(my_centralWidget->get_mapDataDrawer())
     {
+#ifdef __WIN_QTVLM
+        if (QSysInfo::windowsVersion()==QSysInfo::WV_XP)
+        {
+            my_centralWidget->get_mapDataDrawer()->set_gribMonoCpu(true);
+            return;
+        }
+#endif
         bool gribMulti=false;
         if(Settings::getSetting("gribDrawingMethod",0).toInt()==0)
             gribMulti=Settings::getSetting("gribBench1",-1).toInt()<Settings::getSetting("gribBench2",-1).toInt();
         else
             gribMulti=Settings::getSetting("gribDrawingMethod",0).toInt()==2;
-        my_centralWidget->getGrib()->setGribMonoCpu(!gribMulti);
-        if(my_centralWidget->getGribCurrent())
-            my_centralWidget->getGribCurrent()->setGribMonoCpu(!gribMulti);
+        my_centralWidget->get_mapDataDrawer()->set_gribMonoCpu(!gribMulti);
     }
 
 }
@@ -2260,4 +2545,53 @@ void MainWindow::slot_showPOI_input(POI* poi, const bool &fromMenu)
     DialogPoi dp(this,my_centralWidget);
     dp.initPOI(poi,creationMode);
     dp.exec();
+}
+
+void MainWindow::slot_POI_input() {
+    DialogPoiInput * d=new DialogPoiInput(my_centralWidget);
+    d->exec();
+    d->deleteLater();
+}
+
+/****************************************************************
+ * Barrier
+ ***************************************************************/
+
+void MainWindow::slot_newBarrierSet() {
+    BarrierSet * barrierSet = new BarrierSet(this);
+    barrierSet->set_name(tr("New set"));
+
+    DialogEditBarrier dialogEditBarrier(this);
+
+    // auto add set to selected boat
+    if(selectedBoat) {
+        selectedBoat->add_barrierSet(barrierSet);
+    }
+
+    dialogEditBarrier.initDialog(barrierSet,my_centralWidget->get_boatList());
+
+    if(dialogEditBarrier.exec() == QDialog::Rejected) {
+        if(selectedBoat) selectedBoat->rm_barrierSet(barrierSet);
+        delete barrierSet;
+    }
+    else {
+        ::barrierSetList.append(barrierSet);
+        barrierSet->set_key(barrierSet->get_name().toUtf8().toBase64()+Util::generateKey(10));
+        for(int i=0;i<my_centralWidget->get_boatList().count();++i)
+            my_centralWidget->get_boatList().at(i)->update_barrierKey(barrierSet);
+    }
+}
+
+void MainWindow::slot_barrierAddPopup(void) {
+    if(my_centralWidget->get_barrierEditMode()==BARRIER_EDIT_NO_EDIT)
+        my_centralWidget->slot_newBarrier();
+    else
+        my_centralWidget->escKey_barrier();
+}
+
+void MainWindow::slot_barrierAddMenu(void) {
+    if(my_centralWidget->get_barrierEditMode()==BARRIER_EDIT_NO_EDIT)
+        my_centralWidget->slot_addBarrier();
+    else
+        my_centralWidget->escKey_barrier();
 }

@@ -25,27 +25,35 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "Util.h"
 #include "boat.h"
 #include "boatVLM.h"
-
+#include "settings.h"
 StatusBar::StatusBar(MainWindow * mainWindow) : QStatusBar(mainWindow) {
     this->mainWindow=mainWindow;
     my_centralWidget = mainWindow->getMy_centralWidget();
-
+    Util::setFontDialog(this);
+#ifdef __MAC_QTVLM
+    QFont font(Settings::getSetting("defaultFontName",QApplication::font().family()).toString());
+    double fontSize=Settings::getSetting("applicationFontSize",8.0).toDouble();
+    font.setPointSizeF(fontSize);
+#else
     QFontInfo finfo = fontInfo();
     QFont font("", finfo.pointSize(), QFont::Normal, false);
     font.setStyleHint(QFont::TypeWriter);
     font.setFamily("Courier");
+    font.setPointSizeF(Settings::getSetting("applicationFontSize",8.0).toDouble());
     font.setFixedPitch(true);
-    setFont(font);
     setStyleSheet("QStatusBar::item {border: 0px;}");
+#endif
+
+    setFont(font);
 
     stBar_label_1 = new QLabel("Welcome in QtVlm", this);
-    stBar_label_1->setFont(font);
     stBar_label_1->setStyleSheet("color: rgb(0, 0, 255);");
+    stBar_label_1->setFont(font);
     this->addWidget(stBar_label_1);
     font.setBold(true);
     stBar_label_2 = new QLabel("", this);
-    stBar_label_2->setFont(font);
     stBar_label_2->setStyleSheet("color: rgb(255, 0, 0);");
+    stBar_label_2->setFont(font);
     this->addWidget(stBar_label_2);
 
     font.setBold(false);
@@ -56,6 +64,7 @@ StatusBar::StatusBar(MainWindow * mainWindow) : QStatusBar(mainWindow) {
 
     showingSelectionMessage=false;
 
+    //Util::setFontDialog(this);
     mainWindow->setStatusBar(this);
 }
 
@@ -161,12 +170,12 @@ void StatusBar::showWindData(double x,double y)
     if(!currentMessage().isEmpty())
         return;
 
-    QString label1= Util::pos2String(TYPE_LAT,y) + ", " + Util::pos2String(TYPE_LON,x);
+    QString label1= Util::pos2String(TYPE_LAT,y) + " " + Util::pos2String(TYPE_LON,x);
     if(mainWindow->getSelectedBoat())
     {
         Orthodromie oo(mainWindow->getSelectedBoat()->getLon(),mainWindow->getSelectedBoat()->getLat(),x,y);
         label1=label1+QString().sprintf(" - %6.2f",oo.getAzimutDeg())+tr("deg")+
-                QString().sprintf("/%7.2fNM",oo.getDistance());
+                QString().sprintf(" %7.2fNM",oo.getDistance());
     }
     stBar_label_1->setText(label1);
 
@@ -178,7 +187,7 @@ void StatusBar::showWindData(double x,double y)
     {
         res = "- " + tr(" Vent") + ": ";
         s.sprintf("%6.2f", radToDeg(b));
-        res += s+tr("deg")+", ";
+        res += s+tr("deg")+" ";
         s.sprintf("%6.2f",a);
         res += s+tr(" kts");
     }
@@ -232,7 +241,7 @@ void StatusBar::showSelectedZone(double x0, double y0, double x1, double y1)
 void StatusBar::drawVacInfo(void)
 {
     boat * selBoat = mainWindow->getSelectedBoat();
-    if(selBoat && selBoat->getType()==BOAT_VLM
+    if(selBoat && selBoat->get_boatType()==BOAT_VLM
             && currentMessage().isEmpty())
     {
         QDateTime lastVac_date;

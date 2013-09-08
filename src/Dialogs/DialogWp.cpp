@@ -21,9 +21,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "DialogWp.h"
 
 #include "boatVLM.h"
+#include "boatReal.h"
 #include "POI.h"
 #include "Util.h"
 #include "settings.h"
+#include "BoardVlmNew.h"
 #include <QMessageBox>
 
 
@@ -50,7 +52,7 @@ void DialogWp::setLocked(const bool &locked)
     this->buttonBox->button(QDialogButtonBox::Ok)->setEnabled(locked);
 }
 
-void DialogWp::show_WPdialog(boatVLM * boat)
+void DialogWp::show_WPdialog(boat * boat)
 {
     currentBoat=boat;
 
@@ -91,12 +93,31 @@ void DialogWp::done(int result)
     Settings::setSetting(this->objectName()+".width",this->width());
     if(result == QDialog::Accepted)
     {
-        if(WP_lat->text().isEmpty() && WP_lon->text().isEmpty())
-            confirmAndSendCmd(tr("Confirmer le changement du WP"),tr("WP change"),VLM_CMD_WP,0,0,-1);
-        else
-            confirmAndSendCmd(tr("Confirmer le changement du WP"),tr("WP change"),
-                              VLM_CMD_WP,WP_lat->text().toDouble(),WP_lon->text().toDouble(),
-                    WP_heading->text().isEmpty()?-1:WP_heading->text().toDouble());
+        QPointF pos;
+        double wphd;
+
+        if(WP_lat->text().isEmpty() && WP_lon->text().isEmpty()) {
+            pos = QPointF(0,0);
+            wphd=-1;
+        }
+        else {
+            pos=QPointF(WP_lon->text().toDouble(),WP_lat->text().toDouble());
+            wphd=WP_heading->text().isEmpty()?-1:WP_heading->text().toDouble();
+        }
+        switch(currentBoat->get_boatType()) {
+            case BOAT_VLM: {
+                boatVLM * ptr=(boatVLM*)currentBoat;
+                ptr->setWP(pos,wphd);
+                break;
+            }
+            case BOAT_REAL: {
+                boatReal * ptr=(boatReal*)currentBoat;
+                ptr->setWP(pos,wphd);
+                break;
+            }
+            default:
+                break;
+        }
     }
     QDialog::done(result);
 }

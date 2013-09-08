@@ -60,40 +60,47 @@ class boat: public QGraphicsWidget
         int getVacLen(void)             {    return vacLen; }
         double getLat(void)             {    return lat; }
         double getLon(void)             {    return lon; }
-        double getSpeed(void)            {    return speed; }
-        double getHeading(void)          {    return heading; }
-        double getAvg(void)              {    return avg; }
-        double getDnm(void)              {    return dnm; }
-        double getLoch(void)             {    return loch; }
-        double getOrtho(void)            {    return ortho; }
-        double getLoxo(void)             {    return loxo; }
-        double getVmg(void)              {    return vmg; }
-        double getWindDir(void)          {    return windDir; }
-        double getWindSpeed(void)        {    return windSpeed; }
-        double getTWA(void)              {    return TWA; }
-        double getWPHd(void)             {    return WPHd; }
-        int getNWP(){return nWP;}
+        QPointF getPosition(void)       {    return QPointF(lon,lat); }
+        double getSpeed(void)           {    return speed; }
+        double getHeading(void)         {    return heading; }
+        double getAvg(void)             {    return avg; }
+        double getDnm(void)             {    return dnm; }
+        double getLoch(void)            {    return loch; }
+        double getOrtho(void)           {    return ortho; }
+        double getLoxo(void)            {    return loxo; }
+        double getVmg(void)             {    return vmg; }
+        double getWindDir(void)         {    return windDir; }
+        double getWindSpeed(void)       {    return windSpeed; }
+        double getTWA(void)             {    return TWA; }
+        double getWPHd(void)            {    return WPHd; }
+        double getWPdir(void);
+        int getNWP(void)                {    return nWP; }
         QString getPolarName(void)      {    return polarName; }
         Polar * getPolarData(void)      {    return polarData; }
         bool getLockStatus(void)        {    return changeLocked;}
         bool getForceEstime(void)       {    return forceEstime; }
         int getEstimeType(void)         {    return estime_type; }
         bool getIsSelected(void)        {    return selected; }
-        double getZoom(void)             {    return zoom; }
+        double getZoom(void)            {    return zoom; }
         bool isUpdating()               {    return false; }
-        double getWPLat(void)           {    return WPLat; }
-        double getWPLon(void)           {    return WPLon; }
+        double getWPLat(void)           {    return WP.y(); }
+        double getWPLon(void)           {    return WP.x(); }
+        QPointF getWP(void)             {    return WP; }
         int getRank(void)               {    return rank; }
         QString getScore(void)          {    return score;}
         QString getBoatPseudo(void)     {    return pseudo; }
         QString getOwn(void)            {    return own; }
+
+        virtual void setWP(QPointF point,double w);
+
+        double getWPangle(void) { return 0; }
 
         double getBvmgUp(double ws);
         double getBvmgDown(double ws);
         int getX(){return x();}
         int getY(){return y();}
 
-        int getType(void) { return boat_type; }
+        FCT_SETGET_CST(int,boatType)
 
         void drawEstime(double myHeading, double mySpeed);
         double getDeclinaison(){return this->declinaison;}
@@ -109,6 +116,20 @@ class boat: public QGraphicsWidget
         void setSpeedWithEngine(double d){this->speedWithEngine=d;}
 
         void drawOnMagnifier(Projection *mProj, QPainter *pnt);
+
+        /*** Barrier ***/
+        QList<BarrierSet *>* get_barrierSets(void) { return &barrierSets; }
+        QList<QString> * get_barrierKeys(void) {return &barrierKeys; }
+        void add_barrierSet(BarrierSet* set);
+        void rm_barrierSet(BarrierSet* set);
+        void update_barrierKey(BarrierSet* set);
+        void clear_barrierSet(void);
+        void clear_barrierKeys(void) { barrierKeys.clear(); }
+        void updateBarrierKeys(void);
+        void setSetKeys(QList<QString> keys) { barrierKeys = keys; }
+        void cleanBarrierList(void);
+        bool cross(QLineF line);
+
 public slots:
         void slot_projectionUpdated();
         void slot_paramChanged();
@@ -123,6 +144,11 @@ public slots:
         void slot_estimeFlashing(void);
         void polarLoaded(QString,Polar *);
 
+        /*** Barrier ***/
+        void slot_chooseBarrierSet(void);
+
+        void slot_centerOnBoat();
+
     signals:
         void boatSelected(boat*);
         void boatUpdated(boat*,bool,bool);
@@ -132,13 +158,14 @@ public slots:
         void clearSelection(void);
         void compassLine(double,double);
         void getTrace(QByteArray,QList<vlmPoint> *);
+        void showMessage(QString,int);
 
     protected:
         void contextMenuEvent(QGraphicsSceneContextMenuEvent * event);
         void paint(QPainter * pnt, const QStyleOptionGraphicsItem * , QWidget * );
 
         /* DATA */
-        int boat_type;
+        int boatType;
 
         QString polarName;
         Polar * polarData;
@@ -148,7 +175,7 @@ public slots:
         bool changeLocked;
         bool selected;
         double lat,lon;
-        double WPLat,WPLon;
+        QPointF WP;
         double speed,heading;
 
 
@@ -167,7 +194,9 @@ public slots:
         int   vacLen;
         int rank;
 
-
+        /*** Barrier ***/
+        QList<BarrierSet *> barrierSets;
+        QList<QString> barrierKeys;
 
         double zoom;
 
@@ -208,6 +237,8 @@ public slots:
         QAction * ac_estime;
         QAction * ac_compassLine;
         QAction * ac_twaLine;
+        QAction * ac_chooseBarrierSet;
+        QAction * ac_centerOnboat;
         void createPopUpMenu();        
 
         void updateBoatData(void);        

@@ -50,7 +50,7 @@ boatReal::boatReal(QString pseudo, bool activated, Projection * proj,MainWindow 
     setData(0,BOATREAL_WTYPE);
     isMoving=false;
 
-    this->boat_type=BOAT_REAL;
+    set_boatType(BOAT_REAL);
     setFont(QApplication::font());
 
     /* init thread */
@@ -70,8 +70,7 @@ boatReal::boatReal(QString pseudo, bool activated, Projection * proj,MainWindow 
     trace->setLinePen(penTrace);
     trace->slot_showMe();
     gotPosition=false;
-    this->WPLat=0;
-    this->WPLon=0;
+    WP=QPointF(0,0);
     this->speed=0;
     this->heading=0;
     this->windSpeed=-1;
@@ -108,12 +107,16 @@ boatReal::~boatReal()
         }
     }
 }
-void boatReal::setWp(double la, double lo, double w)
+
+void boatReal::setWP(QPointF point,double w) {
+    setWP(point.y(),point.x(),w);
+}
+
+void boatReal::setWP(double la, double lo, double w)
 {
-    this->WPLat=la;
-    this->WPLon=lo;
+    WP=QPointF(lo,la);
     this->WPHd=w;
-    Orthodromie orth(this->lon,this->lat,WPLon,WPLat);
+    Orthodromie orth(this->lon,this->lat,lo,la);
     this->dnm=qRound(orth.getDistance()*100)/100.00;
     this->loxo=qRound(orth.getLoxoCap()*100)/100.00;
     this->ortho=qRound(orth.getAzimutDeg()*100)/100.00;
@@ -217,7 +220,7 @@ void boatReal::updateBoat(nmeaINFO info)
     gotPosition=true;
     previousLon=lon;
     previousLat=lat;
-    this->setWp(WPLat,WPLon,WPHd);
+    this->setWP(WP,WPHd);
     emit(boatUpdated(this,false,false));
 }
 
@@ -226,7 +229,7 @@ void boatReal::setPosition(double lat, double lon)
     this->lat=lat;
     this->lon=lon;
     this->lastUpdateTime=QDateTime().currentDateTimeUtc().toTime_t();
-    this->setWp(WPLat,WPLon,WPHd);
+    this->setWP(WP,WPHd);
     updateBoatData();
     this->parent->emitUpdateRoute(this);
 }

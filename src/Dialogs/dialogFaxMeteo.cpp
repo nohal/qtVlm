@@ -25,12 +25,24 @@ dialogFaxMeteo::dialogFaxMeteo(faxMeteo * fax, myCentralWidget *parent)
         this->preset3->setChecked(true);
     else if(presetNb=="4")
         this->preset4->setChecked(true);
+    else if(presetNb=="5")
+        this->preset5->setChecked(true);
+    else if(presetNb=="6")
+        this->preset6->setChecked(true);
+    else if(presetNb=="7")
+        this->preset7->setChecked(true);
+    else if(presetNb=="8")
+        this->preset8->setChecked(true);
     this->loadPreset();
     connect(this->Browse,SIGNAL(clicked()),this,SLOT(browseFile()));
     connect(this->preset1,SIGNAL(clicked()),this,SLOT(slotPreset1()));
     connect(this->preset2,SIGNAL(clicked()),this,SLOT(slotPreset2()));
     connect(this->preset3,SIGNAL(clicked()),this,SLOT(slotPreset3()));
     connect(this->preset4,SIGNAL(clicked()),this,SLOT(slotPreset4()));
+    connect(this->preset5,SIGNAL(clicked()),this,SLOT(slotPreset5()));
+    connect(this->preset6,SIGNAL(clicked()),this,SLOT(slotPreset6()));
+    connect(this->preset7,SIGNAL(clicked()),this,SLOT(slotPreset7()));
+    connect(this->preset8,SIGNAL(clicked()),this,SLOT(slotPreset8()));
 }
 
 dialogFaxMeteo::~dialogFaxMeteo()
@@ -56,6 +68,26 @@ void dialogFaxMeteo::slotPreset3()
 void dialogFaxMeteo::slotPreset4()
 {
     this->presetNb="4";
+    this->loadPreset();
+}
+void dialogFaxMeteo::slotPreset5()
+{
+    this->presetNb="5";
+    this->loadPreset();
+}
+void dialogFaxMeteo::slotPreset6()
+{
+    this->presetNb="6";
+    this->loadPreset();
+}
+void dialogFaxMeteo::slotPreset7()
+{
+    this->presetNb="7";
+    this->loadPreset();
+}
+void dialogFaxMeteo::slotPreset8()
+{
+    this->presetNb="8";
     this->loadPreset();
 }
 void dialogFaxMeteo::loadPreset()

@@ -31,9 +31,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "inetConnexion.h"
 #include "boatVLM.h"
 #include "boatReal.h"
+#include "dataDef.h"
+#include "BarrierSet.h"
 
 #define VERSION_NUMBER    2
-#define DOM_FILE_TYPE     "qtVLM_config"
 #define ROOT_NAME         "qtVLM_boat"
 #define VERSION_NAME      "Version"
 
@@ -65,6 +66,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #define BOAT_LAT_NAME       "Latitude"
 #define BOAT_LON_NAME       "Longitude"
 #define BOAT_NPD            "NotePad"
+#define BOAT_GROUP_SET_NAME "BarrierSetKey"
+#define BOAT_KEY_NAME       "BarrierSetKey"
+#define BOAT_USE_SKIN       "UseSkin"
+#define BOAT_BOARD_SKIN     "BoardSkin"
 
 /* RACE DATA */
 #define RACE_GROUP_NAME   "Race"
@@ -79,9 +84,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #define SHOWWHAT          "showWhat"
 #define SHOWREAL          "showReal"
 #define REALFILTER        "realFilter"
-
-#define OLD_DOM_FILE_TYPE "zygVLM_config"
-#define OLD_ROOT_NAME     "zygVLM_boat"
 
 xml_boatData::xml_boatData(Projection * proj,MainWindow * main, myCentralWidget * parent,inetConnexion * inet)
 : QWidget(parent)
@@ -238,6 +240,17 @@ void xml_boatData::slot_writeData(QList<Player*> & player_list,QList<raceData*> 
                 t = doc.createTextNode(status?"1":"0");
                 tag.appendChild(t);
 
+                tag = doc.createElement(BOAT_BOARD_SKIN);
+                group.appendChild(tag);
+                t = doc.createTextNode(boat->get_boardSkin());
+                tag.appendChild(t);
+
+                tag = doc.createElement(BOAT_USE_SKIN);
+                group.appendChild(tag);
+                status = boat->get_useSkin();
+                t = doc.createTextNode(status?"1":"0");
+                tag.appendChild(t);
+
                 tag = doc.createElement(BOAT_ZOOM_NAME);
                 group.appendChild(tag);
                 t = doc.createTextNode(QString().setNum(boat->getZoom()));
@@ -255,6 +268,8 @@ void xml_boatData::slot_writeData(QList<Player*> & player_list,QList<raceData*> 
                 temp=temp.replace(QString("\n"),QString("^!"));
                 t = doc.createTextNode(temp);
                 tag.appendChild(t);
+
+                add_setKeys(&doc,&group,boat);
 
             }
         }
@@ -303,6 +318,9 @@ void xml_boatData::slot_writeData(QList<Player*> & player_list,QList<raceData*> 
                 group.appendChild(tag);
                 t = doc.createTextNode(QString().setNum(boat->getZoom()));
                 tag.appendChild(t);
+
+                add_setKeys(&doc,&group,boat);
+
             }
         }
     }
@@ -388,6 +406,28 @@ void xml_boatData::slot_writeData(QList<Player*> & player_list,QList<raceData*> 
 
      file.close();
 
+}
+
+void xml_boatData::add_setKeys(QDomDocument * doc,QDomElement * group, boat *myBoat) {
+    QDomElement subGroup;
+    QDomElement tag;
+    QDomText t;
+
+    QList<QString>* set_keys = myBoat->get_barrierKeys();
+    if(set_keys->count() > 0) {
+
+        subGroup = doc->createElement(BOAT_GROUP_SET_NAME);
+        group->appendChild(subGroup);
+
+        QListIterator<QString> i (*set_keys);
+
+        while(i.hasNext()) {
+            tag = doc->createElement(BOAT_KEY_NAME);
+            subGroup.appendChild(tag);
+            t = doc->createTextNode(i.next());
+            tag.appendChild(t);
+        }
+    }
 }
 
 void xml_boatData::slot_readData(QString fname,bool readAll)
@@ -560,6 +600,9 @@ void xml_boatData::readBoat(QDomNode node,PlayerMap * pList)
             int isOwn=0;
             double lat=0,lon=0;
             QString npd="";
+            QList<QString> setKeys;
+            bool useSkin=false;
+            QString boardSkin;
 
             while(!subNode.isNull())
             {
@@ -627,6 +670,19 @@ void xml_boatData::readBoat(QDomNode node,PlayerMap * pList)
                     if(dataNode.nodeType() == QDomNode::TextNode)
                         alias = dataNode.toText().data();
                 }
+                if(subNode.toElement().tagName() == BOAT_USE_SKIN)
+                {
+                    dataNode = subNode.firstChild();
+                    if(dataNode.nodeType() == QDomNode::TextNode)
+                        useSkin = dataNode.toText().data() == "1";
+                }
+
+                if(subNode.toElement().tagName() == BOAT_BOARD_SKIN)
+                {
+                    dataNode = subNode.firstChild();
+                    if(dataNode.nodeType() == QDomNode::TextNode)
+                        boardSkin = dataNode.toText().data();
+                }
                 if(subNode.toElement().tagName() == BOAT_LOCK_NAME)
                 {
                     dataNode = subNode.firstChild();
@@ -665,7 +721,24 @@ void xml_boatData::readBoat(QDomNode node,PlayerMap * pList)
                         QString temp=dataNode.toText().data();
                         npd = temp.replace(QString("^!"),QString("\n"));
                     }
+                }               
+
+                if(subNode.toElement().tagName() == BOAT_GROUP_SET_NAME)
+                {
+                    QDomNode subSubNode= subNode.firstChild();
+
+                    while(!subSubNode.isNull())
+                    {
+                        if(subSubNode.toElement().tagName() == BOAT_KEY_NAME) {
+                            dataNode = subSubNode.firstChild();
+                            if(dataNode.nodeType() == QDomNode::TextNode)
+                                setKeys.append(dataNode.toText().data());
+                        }
+                        subSubNode = subSubNode.nextSibling();
+                    }
                 }
+
+
                 subNode = subNode.nextSibling();
             }
 
@@ -683,10 +756,13 @@ void xml_boatData::readBoat(QDomNode node,PlayerMap * pList)
                                                  proj,main,parent,inet);
                     boat->setPolar(chk_polar,polar);
                     boat->setAlias(chk_alias,alias);
+                    boat->set_boardSkin(boardSkin);
+                    boat->set_useSkin(useSkin);
                     boat->setLockStatus(locked);
                     boat->setZoom(zoom);
                     boat->setForceEstime(force_estime);
                     boat->setNpd(npd);
+                    boat->setSetKeys(setKeys);
                     emit addBoat(boat);
                     player->addBoat(boat);
                 }
@@ -702,6 +778,7 @@ void xml_boatData::readBoat(QDomNode node,PlayerMap * pList)
                         boat->setPosition(lat,lon);
                         boat->setPolar(polar);
                         boat->setZoom(zoom);
+                        boat->setSetKeys(setKeys);
                         //proj->setScaleAndCenterInMap(boat->getZoom(),boat->getLon(),boat->getLat());
                     }
 

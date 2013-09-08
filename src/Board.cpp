@@ -59,11 +59,31 @@ board::board(MainWindow * mainWin, inetConnexion * inet)
     this->mainWin = mainWin;
     curBoat = NULL;
 
-    connect(mainWin,SIGNAL(setChangeStatus(bool)),this,SLOT(setChangeStatus(bool)));
+    connect(mainWin,SIGNAL(setChangeStatus(bool,bool,bool)),this,SLOT(setChangeStatus(bool)));
     connect(mainWin,SIGNAL(boatHasUpdated(boat*)),
             this,SLOT(boatUpdated(boat*)));
 
     isFloatingBoard=false;
+    this->playerChanged(mainWin->getMy_centralWidget()->getPlayer());
+    this->boatUpdated(mainWin->getSelectedBoat());
+}
+board::~board()
+{
+    if(playerType!=BOAT_NOBOAT)
+    {
+        if(playerType == BOAT_VLM)
+        {
+            mainWin->removeDockWidget(VLMDock);
+        }
+        else
+        {
+            mainWin->removeDockWidget(realDock);
+        }
+    }
+    delete real_board;
+    delete vlm_board;
+    delete VLMDock;
+    delete realDock;
 }
 
 int board::build_showHideMenu(QMenu * menu) {
@@ -101,7 +121,7 @@ void board::slot_hideShowCompass(void)
 
 void board::boatUpdated(boat* myBoat)
 {
-    if(curBoat!=NULL && curBoat->getType()==BOAT_REAL && myBoat!=curBoat)
+    if(curBoat!=NULL && curBoat->get_boatType()==BOAT_REAL && myBoat!=curBoat)
         curBoat->setSelected(false);
     curBoat=myBoat;
     if(playerType!=BOAT_NOBOAT)
@@ -120,6 +140,7 @@ void board::playerChanged(Player * player)
 {
     if(!player)
         return;
+    qWarning()<<"inside playerChanged";
 
     if(playerType!=BOAT_NOBOAT)
     {

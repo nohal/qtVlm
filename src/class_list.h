@@ -31,6 +31,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 class board;
 class boardVLM;
 class boardReal;
+class BoardVlmNew;
 
 /* horn */
 class DialogHorn;
@@ -45,6 +46,7 @@ class Player;
 class DialogBoatAccount;
 class DialogPlayerAccount;
 class DialogParamAccount;
+class DialogRealBoatPosition;
 
 /* inetClient.h */
 class inetClient;
@@ -79,9 +81,11 @@ class GisReader;
 
 /* Grib.h */
 class Grib;
-
-/* GribRecord.h */
+class MapDataDrawer;
 class GribRecord;
+class DataColors;
+class ColorElement;
+class DataCode;
 
 /* GshhsReader.h */
 class GshhsReader;
@@ -143,6 +147,14 @@ class DialogPilototoParam;
 /* POI.h */
 class POI;
 
+/* Barrier.h & BarrierSet.h */
+class BarrierSet;
+class Barrier;
+class BarrierPoint;
+class DialogEditBarrier;
+class DialogChooseMultipleBarrierSet;
+class DialogChooseBarrierSet;
+
 /* DialogPoiInput.h */
 class DialogPoiInput;
 
@@ -179,6 +191,7 @@ class ROUTE;
 
 /* DialogRoute.h */
 class DialogRoute;
+class DialogRouteComparator;
 
 /* selectionWidget.h */
 class selectionWidget;

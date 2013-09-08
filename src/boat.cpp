@@ -23,6 +23,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "Util.h"
 
 #include "MainWindow.h"
+#include "StatusBar.h"
 #include "orthoSegment.h"
 #include "vlmLine.h"
 #include "Polar.h"
@@ -32,11 +33,14 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "boat.h"
 #include "boatVLM.h"
 #include "Grib.h"
+#include "Orthodromie.h"
+#include "DialogChooseMultipleBarrierSet.h"
+#include "BarrierSet.h"
 
 boat::boat(QString      pseudo, bool activated,
            Projection * proj,MainWindow * main,myCentralWidget * parent):
    QGraphicsWidget(),
-   boat_type (BOAT_NOBOAT),
+   boatType (BOAT_NOBOAT),
    prevVac (0),
    nextVac (0),
    minSpeedForEngine (0),
@@ -47,6 +51,7 @@ boat::boat(QString      pseudo, bool activated,
 
     polar_list = main->getPolarList();
     connect(this,SIGNAL(getPolar(QString)),polar_list,SLOT(getPolar(QString)));
+    connect(this,SIGNAL(showMessage(QString,int)),mainWindow->get_statusBar(),SLOT(showMessage(QString,int)));
 
     this->pseudo=pseudo;
     selected = false;
@@ -60,7 +65,8 @@ boat::boat(QString      pseudo, bool activated,
     avg=dnm=loch=ortho=loxo=vmg=0;
     windDir=windSpeed=TWA=0;
 
-    WPLat=WPLon=lat=lon=0;
+    lat=lon=0;
+    WP=QPointF(0,0);
 
     setZValue(Z_VALUE_BOAT);
     setFont(QFont(QApplication::font()));
@@ -160,6 +166,12 @@ void boat::createPopUpMenu(void)
     popup->addAction(ac_select);
     connect(ac_select,SIGNAL(triggered()),this,SLOT(slot_selectBoat()));
 
+    ac_centerOnboat = new QAction(tr("Center on boat"),popup);
+    popup->addAction(ac_centerOnboat);
+    connect(ac_centerOnboat,SIGNAL(triggered()),this,SLOT(slot_centerOnBoat()));
+
+    popup->addSeparator();
+
     ac_estime = new QAction("Afficher estime",popup);
     popup->addAction(ac_estime);
     connect(ac_estime,SIGNAL(triggered()),this,SLOT(slot_toggleEstime()));
@@ -172,6 +184,12 @@ void boat::createPopUpMenu(void)
     ac_twaLine = new QAction(tr("Tracer une estime TWA"),popup);
     popup->addAction(ac_twaLine);
     connect(ac_twaLine,SIGNAL(triggered()),this,SLOT(slotTwaLine()));
+
+    popup->addSeparator();
+
+    ac_chooseBarrierSet = new QAction(tr("Activate barrier sets"),popup);
+    popup->addAction(ac_chooseBarrierSet);
+    connect(ac_chooseBarrierSet,SIGNAL(triggered()),this,SLOT(slot_chooseBarrierSet()));
 }
 
 void boat::slot_paramChanged()
@@ -214,8 +232,9 @@ void boat::slot_selectBoat()
     trace_drawing->show();
     WPLine->show();
     drawEstime();
-    if(this->boat_type==BOAT_REAL) return;
+    if(boatType==BOAT_REAL) return;
     updateTraceColor();
+    cleanBarrierList();
     emit boatSelected(this);
 }
 
@@ -229,8 +248,12 @@ void boat::unSelectBoat(bool needUpdate)
         update();
         updateTraceColor();
     }
-    if(this->boat_type==BOAT_REAL)
+    if(boatType==BOAT_REAL)
         this->stopRead();
+}
+
+void boat::slot_centerOnBoat(void) {
+    proj->setCenterInMap(getLon(),getLat());
 }
 
 /**************************/
@@ -268,7 +291,7 @@ void boat::paint(QPainter * pnt, const QStyleOptionGraphicsItem * , QWidget * )
     pnt->setFont(QApplication::font());
     if(!labelHidden)
     {
-        if(Settings::getSetting("showFlag",0).toInt()==1 && this->getType()==BOAT_VLM)
+        if(Settings::getSetting("showFlag",0,"showHideItem").toInt()==1 && this->get_boatType()==BOAT_VLM)
         {
             if(flag.isNull())
             {
@@ -294,7 +317,7 @@ void boat::paint(QPainter * pnt, const QStyleOptionGraphicsItem * , QWidget * )
                 prepareGeometryChange();
             drawFlag=false;
         }
-        if(this->getType()==BOAT_VLM)
+        if(this->get_boatType()==BOAT_VLM)
         {
             if(this->stopAndGo!="0")
                 bgcolor=QColor(239,48,36,150);
@@ -366,7 +389,7 @@ void boat::drawEstime(void)
         double current_speed=-1;
         double current_angle=0;
         if(parent->getGrib()->getInterpolatedValue_byDates(lon,lat,this->getPrevVac()+this->getVacLen(),&wind_speed,&wind_angle) &&
-                !(this->getType()==BOAT_REAL && getSpeed()==0 && getHeading()==0))
+                !(this->get_boatType()==BOAT_REAL && getSpeed()==0 && getHeading()==0))
         {
             wind_angle=radToDeg(wind_angle);
             if(parent->getGrib()->getInterpolatedValueCurrent_byDates(lon,lat,this->getPrevVac()+this->getVacLen(),&current_speed,&current_angle))
@@ -473,7 +496,7 @@ void boat::drawEstime(double myHeading, double mySpeed)
         if(!coastDetected)
         {
             estimeTimer->stop();
-            if(this->getType()==BOAT_VLM)
+            if(this->get_boatType()==BOAT_VLM)
             {
                 for(int n=0;n<this->getGates().count();++n)
                 {
@@ -500,10 +523,10 @@ void boat::drawEstime(double myHeading, double mySpeed)
         estimeLine->slot_showMe();
         //estimeLine->initSegment(i1,j1,i2,j2);
         /* draw ortho to wp */
-        if(WPLat != 0 && WPLon != 0)
+        if(WP.x() != 0 && WP.y() != 0)
         {
             WPLine->setLinePen(penLine2);
-            proj->map2screenDouble(WPLon,WPLat,&I2,&J2);
+            proj->map2screenDouble(WP.x(),WP.y(),&I2,&J2);
             WPLine->initSegment(I1,J1,I2,J2);
         }
         this->updateHint();
@@ -581,7 +604,7 @@ void boat::updateBoatData()
 {
     if(!activated)
         return;
-    if(this->getType()==BOAT_VLM && !((boatVLM*)this)->isInitialized())
+    if(this->get_boatType()==BOAT_VLM && !((boatVLM*)this)->isInitialized())
     {
         //qWarning()<<"boat not initialized, skipping updateBoatData()";
         return;
@@ -603,7 +626,7 @@ void boat::drawOnMagnifier(Projection * mProj, QPainter * pnt)
     pnt->setFont(QApplication::font());
     if(!labelHidden)
     {
-        if(Settings::getSetting("showFlag",0).toInt()==1 && this->getType()==BOAT_VLM)
+        if(Settings::getSetting("showFlag",0,"showHideItem").toInt()==1 && this->get_boatType()==BOAT_VLM)
         {
             if(flag.isNull())
             {
@@ -624,7 +647,7 @@ void boat::drawOnMagnifier(Projection * mProj, QPainter * pnt)
         {
             drawFlag=false;
         }
-        if(this->getType()==BOAT_VLM)
+        if(this->get_boatType()==BOAT_VLM)
         {
             if(this->stopAndGo!="0")
                 bgcolor=QColor(239,48,36,150);
@@ -680,15 +703,31 @@ void boat::updatePosition(void)
     int boat_i,boat_j;
     boat_i=qRound(I1)-3;
     boat_j=qRound(J1)-(height/2);
-    //qWarning() << "upd position: " << x() << "," << y() << " -> " << boat_i << "," << boat_j;
     setPos(boat_i, boat_j);
     drawEstime();
-    if(selected && WPLat != 0 && WPLon != 0)
+    if(selected && WP.x() != 0 && WP.y() != 0)
     {
         double I2,J2;
-        proj->map2screenDouble(WPLon,WPLat,&I2,&J2);
+        proj->map2screenDouble(WP.x(),WP.y(),&I2,&J2);
         WPLine->initSegment(I1,J1,I2,J2);
     }
+}
+
+double boat::getWPdir(void)
+{
+    double dirAngle;
+    if(WP.x() != 0 && WP.y() != 0)
+    {
+        Orthodromie orth = Orthodromie(QPointF(lon,lat),WP);
+        dirAngle = orth.getAzimutDeg();
+    }
+    else
+        dirAngle=-1;
+    return dirAngle;
+}
+
+void boat::setWP(QPointF ,double ) {
+    qWarning() << "setWp call => from boat!!! not doing anything";
 }
 
 void boat::slot_projectionUpdated()
@@ -719,7 +758,7 @@ void boat::setStatus(bool activated)
         WPLine->hide();
         estimeTimer->stop();
         estimeLine->setHidden(true);;
-        if(this->boat_type==BOAT_REAL)
+        if(boatType==BOAT_REAL)
             this->stopRead();
      }
      else
@@ -737,7 +776,7 @@ void boat::playerDeActivated(void)
     WPLine->hide();
     estimeTimer->stop();
     estimeLine->setHidden(true);;
-    if(this->boat_type==BOAT_REAL)
+    if(boatType==BOAT_REAL)
         this->stopRead();
 }
 
@@ -817,6 +856,73 @@ void boat::slot_updateGraphicsParameters()
     }
 }
 
+/********************************************************
+ *  Barrier
+ *******************************************************/
+
+void boat::add_barrierSet(BarrierSet* set) {
+    if(set && !barrierSets.contains(set)) {
+        barrierSets.append(set);
+        updateBarrierKeys();
+    }
+
+    if(selected) set->set_isHidden(false);
+}
+
+void boat::rm_barrierSet(BarrierSet* set) {
+    if(set && barrierSets.contains(set)) {
+        barrierSets.removeAll(set);
+        updateBarrierKeys();
+    }
+    if(selected) set->set_isHidden(true);
+}
+
+void boat::update_barrierKey(BarrierSet* set) {
+    if(set && barrierSets.contains(set)) {
+        updateBarrierKeys();
+    }
+}
+
+void boat::slot_chooseBarrierSet(void) {
+    cleanBarrierList();
+    DialogChooseMultipleBarrierSet::chooseBarrierSet(mainWindow,&barrierSets,this);
+    updateBarrierKeys();
+}
+
+void boat::updateBarrierKeys(void) {
+    barrierKeys.clear();
+    for(int i=0;i<barrierSets.count();i++)
+        barrierKeys.append(barrierSets.at(i)->get_key());
+}
+
+void boat::clear_barrierSet(void) {
+    barrierSets.clear();
+    if(selected) BarrierSet::releaseState();
+}
+
+void boat::cleanBarrierList(void) {
+    BarrierSet::get_barrierSetListFromKeys(barrierKeys,&barrierSets);
+
+    if(selected) {
+        BarrierSet::releaseState();
+        for(int i=0;i<barrierSets.count();++i)
+            barrierSets.at(i)->set_isHidden(false);
+    }
+
+    /*qWarning() << "nb keys: " << barrierKeys.count();
+    qWarning() << "key list: \n" << barrierKeys;
+    qWarning() << "nb in barrierSets: " <<barrierSets.count();
+    barrierSets.at(0)->printSet();*/
+}
+
+bool boat::cross(QLineF line) {
+    QList<BarrierSet*>::const_iterator i;
+    for(i=barrierSets.constBegin();i<barrierSets.constEnd();++i)
+        if((*i)->cross(line))
+            return true;
+    return false;
+}
+
 /**************************/
 /* Events                 */
 /**************************/
@@ -881,6 +987,8 @@ void boat::contextMenuEvent(QGraphicsSceneContextMenuEvent * e)
         ac_select->setEnabled(!mainWindow->get_selPOI_instruction());
         ac_estime->setEnabled(!selected);
     }
+
+
 
     popup->exec(QCursor::pos());
 }

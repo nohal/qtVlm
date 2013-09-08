@@ -3,6 +3,7 @@ message($$[QT_VERSION])
 contains ( QT_VERSION, "^5.*"){
     warning("qt5 detected")
     DEFINES += QT_V5
+    CONFIG += QT_V5
     QT+=core gui widgets multimedia concurrent
 }
 CONFIG += qt
@@ -13,7 +14,7 @@ INCLUDEPATH += objs \
     Dialogs \
     libs/bzip2 \
     libs/zlib-1.2.7 \
-    libs/qextserialport \
+    libs/qextserialport12/src \
     libs/qjson \
     libs/nmealib/src/nmea \
     libs/libbsb \
@@ -25,11 +26,16 @@ LIBS += -Llibs/build \
     -lminiunz \
     -lbz2 \
     -lz \
-    -lqextserialport \
     -lqjson \
     -lnmea \
     -lbsb
 #    -lgps
+QT_V5{
+LIBS += -lQt5ExtSerialPort
+} else {
+LIBS += -lqextserialport
+}
+
 asan {
     QMAKE_CC=clang
     QMAKE_CXX=clang++
@@ -78,8 +84,6 @@ HEADERS += Dialogs/DialogGraphicsParams.h \
     Dialogs/DialogTwaLine.h \
     Dialogs/DialogWp.h \
     Dialogs/DialogInetProgess.h \
-    BoardVLM.h \
-    BoardVLM_tools.h \
     GshhsReader.h \
     GisReader.h \
     Grib.h \
@@ -98,7 +102,6 @@ HEADERS += Dialogs/DialogGraphicsParams.h \
     Util.h \
     Version.h \
     xmlBoatData.h \
-    xmlPOIData.h \
     zuFile.h \
     mapcompass.h \
     mycentralwidget.h \
@@ -121,8 +124,6 @@ HEADERS += Dialogs/DialogGraphicsParams.h \
     boatReal.h \
     boat.h \
     boatVLM.h \
-    Board.h \
-    BoardReal.h \
     faxMeteo.h \
     loadImg.h \
     Player.h \
@@ -144,7 +145,25 @@ HEADERS += Dialogs/DialogGraphicsParams.h \
     ToolBar.h \
     Progress.h \
     StatusBar.h \
-    Magnifier.h
+    Magnifier.h \
+    Board.h \
+    BoardReal.h \
+    BoardVLM.h \
+    BoardVLM_tools.h \
+    Dialogs/BoardTools.h \
+    Dialogs/BoardVlmNew.h \
+    BarrierSet.h \
+    Barrier.h \
+    Dialogs/DialogEditBarrier.h \
+    Dialogs/DialogChooseMultipleBarrierSet.h \
+    Dialogs/DialogChooseBarrierSet.h \
+    XmlFile.h \
+    Dialogs/DialogRouteComparator.h \
+    Dialogs/DialogChooseMultipleBoat.h \
+    MapDataDrawer.h \
+    DataColors.h \
+    Dialogs/DialogRemoveRoute.h
+
 
 FORMS += Ui/boatAccount_dialog.ui \
     Ui/BoardVLM.ui \
@@ -180,7 +199,13 @@ FORMS += Ui/boatAccount_dialog.ui \
     Ui/dialogFaxMeteo.ui \
     Ui/dialogLoadImg.ui \
     Ui/routeInfo.ui \
-    Ui/DialogRemovePoi.ui
+    Ui/DialogRemovePoi.ui \
+    Ui/BoardVlmNew.ui \
+    Ui/DialogEditBarrier.ui \
+    Ui/DialogChooseMultipleBarrierSet.ui \
+    Ui/DialogChooseMultipleBoat.ui \
+    Ui/DialogChooseBarrierSet.ui \
+    Ui/RouteComparator.ui
 
 SOURCES += Dialogs/DialogGraphicsParams.cpp \
     Dialogs/DialogLoadGrib.cpp \
@@ -206,7 +231,9 @@ SOURCES += Dialogs/DialogGraphicsParams.cpp \
     Dialogs/DialogTwaLine.cpp \
     Dialogs/DialogWp.cpp \
     Dialogs/DialogInetProgess.cpp \
+    Board.cpp \
     BoardVLM.cpp \
+    BoardReal.cpp \
     GshhsReader.cpp \
     GisReader.cpp \
     Grib.cpp \
@@ -225,7 +252,6 @@ SOURCES += Dialogs/DialogGraphicsParams.cpp \
     Terrain.cpp \
     Util.cpp \
     xmlBoatData.cpp \
-    xmlPOIData.cpp \
     zuFile.cpp \
     mapcompass.cpp \
     mycentralwidget.cpp \
@@ -246,8 +272,6 @@ SOURCES += Dialogs/DialogGraphicsParams.cpp \
     boatReal.cpp \
     boat.cpp \
     boatVLM.cpp \
-    Board.cpp \
-    BoardReal.cpp \
     faxMeteo.cpp \
     loadImg.cpp \
     Player.cpp \
@@ -269,7 +293,19 @@ SOURCES += Dialogs/DialogGraphicsParams.cpp \
     ToolBar.cpp \
     Progress.cpp \
     StatusBar.cpp \
-    Magnifier.cpp
+    Magnifier.cpp \
+    Dialogs/BoardVlmNew.cpp \
+    BarrierSet.cpp \
+    Barrier.cpp \
+    Dialogs/DialogEditBarrier.cpp \
+    Dialogs/DialogChooseMultipleBarrierSet.cpp \
+    Dialogs/DialogChooseBarrierSet.cpp \
+    XmlFile.cpp \
+    Dialogs/DialogRouteComparator.cpp \
+    Dialogs/DialogChooseMultipleBoat.cpp \
+    MapDataDrawer.cpp \
+    DataColors.cpp \
+    Dialogs/DialogRemoveRoute.cpp
 
 unix:!macx: DEFINES += _TTY_POSIX_ __TERRAIN_QIMAGE __UNIX_QTVLM
 win32:DEFINES += _TTY_WIN_ \
@@ -281,6 +317,37 @@ win32:DEFINES += _TTY_WIN_ \
 
 
 macx: DEFINES += _TTY_POSIX_ __TERRAIN_QPIXMAP __MAC_QTVLM
+
 ICON = qtVlm.icns
 
 #DEFINES += __REAL_BOAT_ONLY
+
+OTHER_FILES += \
+    android/AndroidManifest.xml \
+    android/res/layout/splash.xml \
+    android/res/values/libs.xml \
+    android/res/values/strings.xml \
+    android/res/values-de/strings.xml \
+    android/res/values-el/strings.xml \
+    android/res/values-es/strings.xml \
+    android/res/values-et/strings.xml \
+    android/res/values-fa/strings.xml \
+    android/res/values-fr/strings.xml \
+    android/res/values-id/strings.xml \
+    android/res/values-it/strings.xml \
+    android/res/values-ja/strings.xml \
+    android/res/values-ms/strings.xml \
+    android/res/values-nb/strings.xml \
+    android/res/values-nl/strings.xml \
+    android/res/values-pl/strings.xml \
+    android/res/values-pt-rBR/strings.xml \
+    android/res/values-ro/strings.xml \
+    android/res/values-rs/strings.xml \
+    android/res/values-ru/strings.xml \
+    android/res/values-zh-rCN/strings.xml \
+    android/res/values-zh-rTW/strings.xml \
+    android/src/org/kde/necessitas/ministro/IMinistro.aidl \
+    android/src/org/kde/necessitas/ministro/IMinistroCallback.aidl \
+    android/src/org/qtproject/qt5/android/bindings/QtActivity.java \
+    android/src/org/qtproject/qt5/android/bindings/QtApplication.java \
+    android/version.xml

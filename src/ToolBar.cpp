@@ -28,7 +28,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "settings.h"
 #include "Terrain.h"
 #include "boatVLM.h"
-#include "Board.h"
+//#include "Board.h"
 
 /**********************************************************************/
 /*                         Gen fct                                    */
@@ -60,6 +60,9 @@ ToolBar::ToolBar(MainWindow *mainWindow)
     etaToolBar=new MyToolBar("ETA",tr("ETA"),this,mainWindow);
     toolBarList.append(etaToolBar);
 
+    barrierToolBar=new MyToolBar("BarrierSet",tr("Barrier Set"),this,mainWindow);
+    toolBarList.append(barrierToolBar);
+
     /* adding all toolBar to mainWindow dock */
     for(int i=0;i<toolBarList.count();++i)
         mainWindow->addToolBar(toolBarList.at(i));
@@ -87,6 +90,9 @@ ToolBar::ToolBar(MainWindow *mainWindow)
     acWindVlm = init_Action(tr("Telechargement VLM"),tr(""),tr(""), appFolder.value("img")+"VLM_mto.png",gribToolBar);
     acWindSailsDoc = init_Action(tr("Telechargement SailsDoc"),tr(""),tr(""),appFolder.value("img")+ "kmail.png",gribToolBar);
     acOpenGrib = init_Action(tr("Open a grib"),tr(""),tr(""),appFolder.value("img")+ "fileopen.png",gribToolBar);
+    acWindZygrib->setMenuRole(QAction::NoRole);
+    acWindVlm->setMenuRole(QAction::NoRole);
+    acWindSailsDoc->setMenuRole(QAction::NoRole);
     gribSubMenu->addAction(acWindZygrib);
     gribSubMenu->addAction(acWindVlm);
     gribSubMenu->addAction(acWindSailsDoc);
@@ -184,6 +190,12 @@ ToolBar::ToolBar(MainWindow *mainWindow)
     ETA->setStyleSheet("color: rgb(0, 0, 255);");
     etaToolBar->addWidget(ETA);
 
+    /* BarrierSet toolBar */
+    barrierAdd = init_Action(tr("Add Barrier"),tr(""),tr(""),appFolder.value("img")+"add_barrier.png",barrierToolBar);
+    barrierAdd->setCheckable(true);
+
+    barrierToolBar->addAction(barrierAdd);
+
     /*********************/
     /* init signal/slots */
     /*********************/
@@ -224,9 +236,14 @@ ToolBar::ToolBar(MainWindow *mainWindow)
 
     /* Boat ToolBar */
     connect(acLock, SIGNAL(triggered()), mainWindow, SLOT(slotFile_Lock()));
+    connect(mainWindow,SIGNAL(updateLockIcon(QIcon)),this,SLOT(slot_updateLockIcon(QIcon)));
     connect(boatList, SIGNAL(activated(int)),mainWindow, SLOT(slotChgBoat(int)));
 
+    /* BarrierSet ToolBar */
+    connect(barrierAdd,SIGNAL(triggered()),mainWindow,SLOT(slot_barrierAddMenu()));
+
     //load_settings();
+    Util::setFontDialog(this);
 }
 
 int ToolBar::build_showHideMenu(QMenu *menu) {
@@ -237,6 +254,7 @@ int ToolBar::build_showHideMenu(QMenu *menu) {
         MyToolBar* tool = toolBarList.at(i);
         if(tool->get_canHide()) {
             ++nbEntry;
+            tool->toggleViewAction()->setMenuRole(QAction::NoRole);
             menu->addAction(tool->toggleViewAction());
         }
     }
@@ -255,6 +273,10 @@ void ToolBar::chgBoatType(int boatType) {
     }
 }
 
+void ToolBar::slot_updateLockIcon(QIcon ic) {
+    acLock->setIcon(ic);
+}
+
 QAction* ToolBar::init_Action(QString title, QString shortcut, QString statustip,QString iconFileName,QToolBar * toolBar)
 {
     QAction *action;
@@ -271,7 +293,7 @@ void ToolBar::load_settings(void) {
     for(int i=0;i<toolBarList.count();++i) {
         MyToolBar * toolBar = toolBarList.at(i);
         QString key = "TB_" + toolBar->get_name();
-        toolBar->setVisible(Settings::getSetting(key,true,"ToolBar").toBool());
+        toolBar->setVisible(Settings::getSetting(key,"true","ToolBar").toString()=="true");
         toolBar->setEnabled(toolBar->isVisible());
         toolBar->set_displayed(toolBar->isVisible());
         toolBar->initCanHide();
@@ -282,7 +304,7 @@ void ToolBar::save_settings(void) {
     for(int i=0;i<toolBarList.count();++i) {
         MyToolBar * toolBar = toolBarList.at(i);
         QString key = "TB_" + toolBar->get_name();
-        Settings::setSetting(key,toolBar->get_displayed(),"ToolBar");
+        Settings::setSetting(key,toolBar->get_displayed()?"true":"false","ToolBar");
     }
 }
 
@@ -362,7 +384,7 @@ void ToolBar::slot_loadEstimeParam(void) {
 
     cbEstime->setEnabled(true);
 
-    if(Settings::getSetting("scalePolar",0).toInt()==1) {
+    if(Settings::getSetting("scalePolar",0).toInt()!=1) {
         switch(Settings::getSetting("estimeType","0").toInt())
         {
             case 0:
@@ -395,6 +417,7 @@ void ToolBar::slot_loadEstimeParam(void) {
 }
 
 void ToolBar::slot_estimeStartChanged(int state) {
+    if(state>1) state=1;
     Settings::setSetting("startSpeedEstime", state);
     emit estimeParamChanged();
 }
@@ -531,6 +554,16 @@ void ToolBar::updateBoatList(QList<boatVLM*> & boat_list) {
 
 void ToolBar::setSelectedBoatIndex(int index) {
     boatList->setCurrentIndex(index);
+}
+
+/**********************************************************************/
+/*                         BarrierSet                                 */
+/**********************************************************************/
+
+void ToolBar::chg_barrierAddState(bool state) {
+    barrierAdd->blockSignals(true);
+    barrierAdd->setChecked(state);
+    barrierAdd->blockSignals(false);
 }
 
 /****************************************************/

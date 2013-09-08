@@ -25,6 +25,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <QDebug>
 #include <QBuffer>
 #include <QDialog>
+#include <QFileDialog>
 
 #include "DialogBoatAccount.h"
 
@@ -50,12 +51,22 @@ DialogBoatAccount::DialogBoatAccount(Projection * proj, MainWindow * main, myCen
     connect(this,SIGNAL(accountListUpdated()), main, SLOT(slotAccountListUpdated()));
 
     connect(this,SIGNAL(writeBoat()),parent,SLOT(slot_writeBoatData()));
+    connect(this,SIGNAL(writeBoat()),main,SIGNAL(paramVLMChanged()));
+    connect(this->btn_browseSkin,SIGNAL(clicked()),this,SLOT(slot_browseSkin()));
 }
 
 DialogBoatAccount::~DialogBoatAccount()
 {
     Settings::setSetting(this->objectName()+".height",this->height());
     Settings::setSetting(this->objectName()+".width",this->width());
+}
+void DialogBoatAccount::slot_browseSkin()
+{
+    QString skinPath=QFileInfo(boardSkin->text()).absolutePath();
+    QString fileName = QFileDialog::getOpenFileName(this,
+                         tr("Selectionner un skin tableau de bord VLM"), skinPath, "png (*.png)");
+     if(fileName!="")
+         boardSkin->setText(QFileInfo(fileName).absoluteFilePath());
 }
 
 bool DialogBoatAccount::initList( QList<boatVLM*> * boat_list, Player * player)
@@ -100,7 +111,6 @@ bool DialogBoatAccount::initList( QList<boatVLM*> * boat_list, Player * player)
 
 
 
-    polarList->setEnabled(false);
 
     /* browse polar folder */
     QDir polarDir = QDir(appFolder.value("polar"));
@@ -330,7 +340,7 @@ void DialogBoatAccount::saveItem(QListWidgetItem * item)
         qWarning() << "selectItem: OLD boat not found";
         return;
     }
-    if(chk_polar->checkState()==Qt::Unchecked || polarList->currentIndex()==0)
+    if(!chk_polar->isChecked() || polarList->currentIndex()==0)
     {
         boat->usePolar=false;
         boat->polar=QString();
@@ -341,10 +351,12 @@ void DialogBoatAccount::saveItem(QListWidgetItem * item)
         boat->usePolar=true;
         boat->polar=polarList->currentText();
     }
-    boat->useAlias=chk_alias->checkState()==Qt::Checked;
+    boat->useAlias=chk_alias->isChecked();
     boat->alias=edit_alias->text();
     boat->activated=enable_state->checkState()==Qt::Checked;
     boat->blocked=lockChange->checkState()==Qt::Checked;
+    boat->useSkin=chk_skin->isChecked();
+    boat->boardSkin=boardSkin->text();
 }
 
 void DialogBoatAccount::setItem(QListWidgetItem * item)
@@ -359,19 +371,19 @@ void DialogBoatAccount::setItem(QListWidgetItem * item)
     }
 
     QString polarStr=boat->polar;
-    chk_polar->setCheckState((boat->usePolar && !polarStr.isEmpty())?Qt::Checked:Qt::Unchecked);
+    chk_polar->setChecked(boat->usePolar && !polarStr.isEmpty());
     polarList->setCurrentIndex(polarStr.isEmpty()?0:polarList->findText(polarStr));
-    polarList->setEnabled(chk_polar->checkState()==Qt::Checked);
 
-    chk_alias->setCheckState(boat->useAlias?Qt::Checked:Qt::Unchecked);
+    chk_alias->setChecked(boat->useAlias);
     edit_alias->setText(boat->alias);
-    edit_alias->setEnabled(chk_alias->checkState()==Qt::Checked);
 
     disconnect (enable_state,SIGNAL(toggled(bool)),this,SLOT(slot_enableChanged(bool)));
     enable_state->setCheckState(boat->activated?Qt::Checked:Qt::Unchecked);
     currentItem=item;
     connect (enable_state,SIGNAL(toggled(bool)),this,SLOT(slot_enableChanged(bool)));
     lockChange->setCheckState(boat->blocked?Qt::Checked:Qt::Unchecked);
+    chk_skin->setChecked(boat->useSkin);
+    boardSkin->setText(boat->boardSkin);
 
     if(boat->boat)
     {
@@ -400,7 +412,6 @@ void  DialogBoatAccount::chkAlias_changed(int state)
 
 void  DialogBoatAccount::chkPolar_changed(int state)
 {
-    polarList->setEnabled(state==Qt::Checked);
     if(state!=Qt::Checked)
         polarList->setCurrentIndex(0);
 }
@@ -457,6 +468,7 @@ boatSetup::boatSetup(void)
     polar=QString();
     activated=false;
     blocked=false;
+    useSkin=false;
 }
 
 boatSetup::boatSetup(boatVLM * boat)
@@ -468,6 +480,14 @@ boatSetup::boatSetup(boatVLM * boat)
     polar=boat->getPolarName();
     activated=boat->getStatus();
     blocked=boat->getLockStatus();
+    useSkin=boat->get_useSkin();
+    boardSkin=boat->get_boardSkin();
+    if(boardSkin.isEmpty() || !(QFile(boardSkin).exists()))
+    {
+        boardSkin=Settings::getSetting("defaultSkin",QFileInfo("img/skin_compas.png").absoluteFilePath()).toString();
+        if(!QFile(boardSkin).exists())
+            boardSkin=QFileInfo("img/skin_compas.png").absoluteFilePath();
+    }
 }
 
 void boatSetup::updateBoat(void)
@@ -476,4 +496,6 @@ void boatSetup::updateBoat(void)
     boat->setPolar(usePolar,polar);
     boat->setLockStatus(blocked);
     boat->setStatus(activated);
+    boat->set_useSkin(useSkin);
+    boat->set_boardSkin(boardSkin);
 }

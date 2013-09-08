@@ -42,17 +42,17 @@ Copyright (C) 2008 - Jacques Zaninetti - http://zygrib.free.fr
 #define BOUNDED_CROSS 2
 #define L1_CROSS 3
 #define L2_CROSS 4
+
+//#define OLD_BARRIER
+
 struct datathread
 {
     time_t Eta;
     Grib *GriB;
     bool whatIfUsed;
     time_t whatIfJour;
-    bool windIsForced;
     int whatIfTime;
     double whatIfWind;
-    double windSpeed;
-    double windAngle;
     boat *Boat;
     int timeStep;
     double speedLossOnTack;
@@ -80,10 +80,6 @@ class ROUTAGE : public QObject
         void setWidth(const double &width);
         double getWidth() const {return this->width;}
 
-        void setWindIsForced(const bool &b){this->windIsForced=b;}
-        void setWind(const double &twd, const double &tws){this->wind_angle=twd;this->wind_speed=tws;}
-        double getWindAngle(void) const {return this->wind_angle;}
-        double getWindSpeed(void) const {return this->wind_speed;}
         void setAngleRange(const double &a) {this->angleRange=a;}
         double getAngleRange(void) const {return this->angleRange;}
         void setAngleStep(const double &a) {this->angleStep=a;}
@@ -93,7 +89,6 @@ class ROUTAGE : public QObject
         double getTimeStepMore24(void) const {return this->timeStepMore24;}
         void setTimeStepLess24(const double &t) {this->timeStepLess24=t;}
         double getTimeStepLess24(void) const {return this->timeStepLess24;}
-        bool getWindIsForced(void) const {return this->windIsForced;}
         bool getShowIso(void) const {return this->showIso;}
         void setShowIso(const bool &b);
         void setExplo(const double &e){this->explo=e;}
@@ -121,7 +116,6 @@ class ROUTAGE : public QObject
         POI * getFromPOI() const {return this->fromPOI;}
         void setToPOI(POI *poi){this->toPOI=poi;}
         POI * getToPOI() const {return this->toPOI;}
-        void calculate();
         bool isDone(void) const {return this->done;}
         bool isConverted(void) const {return this->converted;}
         void setConverted(void) {this->converted=true;}
@@ -206,7 +200,16 @@ class ROUTAGE : public QObject
         void setRoutageOrtho(const bool &b){routageOrtho=b;}
         bool getShowBestLive() const {return showBestLive;}
         void setShowBestLive(const bool &b){showBestLive=b;}
-    public slots:
+        QList<bool> * getPreviousIsoLand(){return &previousIsoLand;}
+        QList<QLineF> * getForbidZone(){return &forbidZone;}
+        QPolygonF * getShapeIso(){return &shapeIso;}
+        FCT_SETGET(bool,multiRoutage)
+        FCT_SETGET(int,multiDays)
+        FCT_SETGET(int,multiHours)
+        FCT_SETGET(int,multiMin)
+        FCT_SETGET(int,multiNb)
+public slots:
+        void calculate();
         void slot_edit();
         void slot_abort(){this->aborted=true;}
         void slot_createPivot();
@@ -260,9 +263,6 @@ class ROUTAGE : public QObject
 
 
 
-        bool windIsForced;
-        double wind_speed;
-        double wind_angle;
 
         vlmLine * result;
         vlmLine * way;
@@ -286,7 +286,9 @@ class ROUTAGE : public QObject
         int msecsD2;
         QList<vlmPoint> tempPoints;
         QPolygonF previousIso;
+        QList<bool> previousIsoLand;
         QList<QLineF> previousSegments;
+        QList<QLineF> forbidZone;
         bool somethingHasChanged;
         void checkIsoCrossingPreviousSegments();
         void epuration(int toBeRemoved);
@@ -351,12 +353,21 @@ class ROUTAGE : public QObject
         int isoRouteValue;
         QList<vlmLine*> isoRoutes;
         QList<vlmLine*> alternateRoutes;
+#ifdef OLD_BARRIER
         QList<QLineF> barrieres;
+#endif
         QList<QLineF> iceGates;
         void countDebug(int nbIso, QString s);
         bool colorGrib;
         bool routageOrtho;
         bool showBestLive;
+        QPolygonF shapeIso;
+        void calculateShapeIso(bool drawIt=false);
+        bool multiRoutage;
+        int multiNb;
+        int multiDays;
+        int multiHours;
+        int multiMin;
     };
 Q_DECLARE_TYPEINFO(ROUTAGE,Q_MOVABLE_TYPE);
 #endif // ROUTAGE_H

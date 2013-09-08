@@ -59,10 +59,10 @@ class MenuBar : public QMenuBar
 {
     Q_OBJECT
 public:
-    MenuBar(QWidget *parent);
+    MenuBar(MainWindow *parent);
 
     void setCitiesNamesLevel(int level);
-    void setMenubarColorMapMode(int colorMapMode);
+    void setMenubarColorMapMode(int colorMapMode, bool withoutEvent=false);
     void setIsobarsStep(int step);
     void setIsotherms0Step(int step);
 
@@ -83,9 +83,18 @@ public:
     QAction *acHorn;
     QAction *ac_CreatePOI;
     QAction *ac_pastePOI;
-
     QAction *acPOIAdd;
     QAction *acPOIRemove;
+    QAction *acPOIRemoveByType;
+
+    /*** Barrier ***/
+    QAction * ac_popupBarrier; // popup
+    QMenu * subMenuBarrier;
+    QMenu * subSubMenuDelBarrierSet;
+    QMenu * subSubMenuEditBarrierSet;
+    QAction * ac_addBarrierSet;
+    QAction * ac_addBarrier;
+
     QAction *ac_twaLine;
     QAction *ac_compassLine;
     QAction *ac_compassCenterBoat;
@@ -100,7 +109,11 @@ public:
     QAction * ac_copyRoute;
     QAction * ac_deleteRoute;
     QAction * ac_editRoute;
-    QAction * ac_simplifyRoute;
+    QAction * ac_poiRoute;
+    QAction * acRouteRemove;
+    QAction * ac_simplifyRouteMax;
+    QAction * ac_simplifyRouteMin;
+    QMenu   * mn_simplifyRoute;
     QAction * ac_optimizeRoute;
     QAction * ac_pasteRoute;
     QAction * ac_zoomRoute;
@@ -133,6 +146,7 @@ public:
     QAction   *acRoute_import2;
     QMenu   *mnRoute_export;
     QAction   *acRoute_paste;
+    QAction *acRoute_comparator;
 
     QAction *acRoutage_add;
     QMenu   *mnRoutage_edit;
@@ -149,9 +163,12 @@ public:
     QAction *acView_TempPotColors;
     QAction *acView_DeltaDewpointColors;
     QAction *acView_SnowCateg;
-    QAction *acView_SnowDepth;
+    //QAction *acView_SnowDepth;
     QAction *acView_FrzRainCateg;
     QAction *acView_CAPEsfc;
+    QAction *acView_CINsfc;
+
+    QMap<int,QAction*> gribDataActionMap;
 
     QAction *acView_Isobars;
     QMenu   *menuIsobars;
@@ -266,9 +283,12 @@ public:
      QAction *acOptions_SH_Routage;
      QAction *acOptions_SH_Por;
      QAction *acOptions_SH_Lab;
+     QAction *acOptions_SH_barSet;
      QAction *acOptions_SH_Pol;
      QAction *acOptions_SH_Boa;
      QAction *acOptions_SH_Fla;
+     QAction *acOptions_SH_Nig;
+     QAction *acOptions_SH_Tdb;
      QAction *acKeep;
      QAction *acReplay;
     QAction *acScreenshot;
@@ -293,6 +313,12 @@ public:
     QAction *acShowPolar;
     QAction *acRace;
 
+public slots:
+    void slot_updateLockIcon(QIcon ic);
+    void slot_setChangeStatus(bool status,bool pilototo,bool syncBtn);
+    void slot_showViewMenu(void);
+    void slot_showBarrierMenu(void);
+
 
     //-------------------------------------
     // Autres objets de l'interface
@@ -304,14 +330,20 @@ public:
 //------------------------------------------------------------------------
 private:
 
+    MainWindow * mainWindow;
+
     QMenu *menuFile;
     QMenu *menuView;
+    QMenu *menuGrib;
     QMenu *menuOptions;
     QMenu *menuBoat;
     QMenu *menuRoute;
     QMenu *menuRoutage;
     QMenu *menuPOI;
     QMenu *menuHelp;
+
+    //QMenu * boardMenu;
+    QMenu * toolBarMenu;
 
     //std::vector<time_t> listGribDates;
 
@@ -325,6 +357,7 @@ private:
     myCentralWidget * my_CentralWidget;
 
 
+    void setRules(QAction *act);
 };
 Q_DECLARE_TYPEINFO(MenuBar,Q_MOVABLE_TYPE);
 

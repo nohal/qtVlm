@@ -33,6 +33,7 @@ vlmLine::vlmLine(Projection * proj, QGraphicsScene * myScene,double z_level) :
     this->myZvalue=z_level;
     this->proj=proj;
     this->myScene=myScene;
+    drawingInMagnifier=false;
     connect(proj,SIGNAL(projectionUpdated()),this,SLOT(slot_showMe()));
     myScene->addItem(this);
     this->setZValue(z_level);
@@ -61,6 +62,19 @@ vlmLine::vlmLine(Projection * proj, QGraphicsScene * myScene,double z_level) :
         this->setAcceptHoverEvents(true);
     show();
 }
+void vlmLine::setMcp(myCentralWidget * mcp)
+{
+    this->mcp=mcp;
+    connect(mcp,SIGNAL(compassLineToggle(bool)),this,SLOT(slot_compassLineToggle(bool)));
+}
+void vlmLine::slot_compassLineToggle(bool b)
+{
+    if(!b)
+        this->setToolTip(myToolTip);
+    else
+        this->setToolTip("");
+}
+
 void vlmLine::set_zValue(const double &z)
 {
     this->myZvalue=z;
@@ -143,6 +157,7 @@ void vlmLine::setTip(QString tip)
     tip=tip.replace(" ","&nbsp;");
     tip="<qt>"+tip+"</qt>";
     setToolTip(tip);
+    myToolTip=tip;
 }
 
 void vlmLine::calculatePoly(void)
@@ -176,7 +191,7 @@ void vlmLine::calculatePoly(void)
             {
                 if(worldPoint.timeStamp>replayStep) break;
             }
-            if(worldPoint.isDead) continue;
+            //if(worldPoint.isDead) continue;
             if(worldPoint.isBroken && n==0) continue;
             if(n==0)
                 proj->map2screenDouble(worldPoint.lon,worldPoint.lat,&X,&Y);
@@ -266,19 +281,37 @@ void vlmLine::calculatePoly(void)
                 y+=10;
             QRectF r;
             r.setRect(x,y, width-10,height-1);
+#ifdef __ANDROIDD__
+            float x1,y1,x2,y2;
+#else
             double x1,y1,x2,y2;
+#endif
             tempBound=tempBound.united(r);
-            tempBound.normalized();
+            tempBound=tempBound.normalized();
             tempBound.getCoords(&x1,&y1,&x2,&y2);
             tempBound.setCoords(x1-linePen.widthF()*2,y1-linePen.widthF()*2,x2+linePen.widthF()*2,y2+linePen.widthF()*2);
         }
         foreach(const QPolygon * pol,polyList)
             myPath2.addPolygon(*pol);
     }
+    if(drawingInMagnifier) return;
     prepareGeometryChange();
     boundingR=tempBound;
     myPath=myPath2;
 }
+void vlmLine::drawInMagnifier(QPainter * pnt, Projection * tempProj)
+{
+    if(!this->isVisible()) return;
+    drawingInMagnifier=true;
+    Projection * myProj=proj;
+    proj=tempProj;
+    calculatePoly();
+    paint(pnt,NULL,NULL);
+    proj=myProj;
+    drawingInMagnifier=false;
+    calculatePoly();
+}
+
 void vlmLine::hoverEnterEvent(QGraphicsSceneHoverEvent *)
 {
     //qWarning()<<"entering hoverEnter event";

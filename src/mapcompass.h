@@ -41,7 +41,8 @@ class mapCompass : public QGraphicsWidget
         void compassCenter(double lon, double lat);
         ~mapCompass();
 
-
+    signals:
+        void compassLineToggle(bool);
     public slots:
         void slot_compassLine(double mouse_x, double mouse_y);
         void slot_compassCenterBoat();

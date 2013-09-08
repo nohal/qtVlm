@@ -40,6 +40,19 @@ boardReal::boardReal(MainWindow * mainWin, board * parent) : QWidget(mainWin)
 {
     setupUi(this);
     Util::setFontDialog(this);
+    QMap<QWidget *,QFont> exceptions;
+    QFont wfont=QApplication::font();
+    wfont.setBold(true);
+    wfont.setPointSizeF(14.0);
+    exceptions.insert(latitude,wfont);
+    exceptions.insert(longitude,wfont);
+    wfont=QApplication::font();
+    wfont.setPointSizeF(9.0);
+    exceptions.insert(ortho,wfont);
+    exceptions.insert(dnm_2,wfont);
+    exceptions.insert(angle,wfont);
+    exceptions.insert(vmg_2,wfont);
+    Util::setSpecificFont(exceptions);
     this->mainWin=mainWin;
     this->parent=parent;
 
@@ -70,7 +83,7 @@ boatReal * boardReal::currentBoat(void)
 {
     if(parent && parent->currentBoat())
     {
-        if(parent->currentBoat()->getType()==BOAT_REAL)
+        if(parent->currentBoat()->get_boatType()==BOAT_REAL)
             return (boatReal*)parent->currentBoat();
         else
             return NULL;
@@ -83,7 +96,7 @@ void boardReal::setWp(double lat,double lon,double wph)
 {
     boatReal * myBoat=currentBoat();
     if(myBoat)
-        myBoat->setWp(lat,lon,wph);
+        myBoat->setWP(lat,lon,wph);
     if(myBoat->getWPLat()!=0 && myBoat->getWPLat()!=0)
     {
         dnm_2->setText(QString().setNum(myBoat->getDnm()));

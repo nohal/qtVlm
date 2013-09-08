@@ -747,7 +747,7 @@ void DialogRace::chgRace(int id)
         ranking->resizeColumnToContents(c);
     }
     model->blockSignals(false);
-    ranking->sortByColumn(1,Qt::AscendingOrder);
+    model->sort(1);
     modelResult->blockSignals(true);
     modelResult->removeRows(0,modelResult->rowCount());
     QTime myTime;
@@ -823,7 +823,7 @@ void DialogRace::chgRace(int id)
         arrived->resizeColumnToContents(c);
     }
     modelResult->blockSignals(false);
-    arrived->sortByColumn(0,Qt::AscendingOrder);
+    modelResult->sort(0);
     this->boatSelect->setText(QString().setNum(nbSelected)+"/"+QString().setNum(RACE_MAX_BOAT));
     this->boatRacing->setText(QString().setNum(param_list[numRace]->boats.size()));
     displayNSZ->setChecked(param_list[numRace]->displayNSZ);

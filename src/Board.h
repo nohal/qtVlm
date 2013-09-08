@@ -47,6 +47,7 @@ class board : public QWidget
 
         int build_showHideMenu(QMenu * menu);
 
+        ~board();
 public slots:
         void boatUpdated(boat * boat);
         void setChangeStatus(bool);

@@ -1,5 +1,3 @@
-#ifndef FINEPOSIT_H
-#define FINEPOSIT_H
 /**********************************************************************
 qtVlm: Virtual Loup de mer GUI
 Copyright (C) 2008 - Christophe Thomas aka Oxygen77
@@ -24,6 +22,8 @@ Copyright (C) 2008 - Jacques Zaninetti - http://zygrib.free.fr
 
 ***********************************************************************/
 
+#ifndef FINEPOSIT_H
+#define FINEPOSIT_H
 
 #include "class_list.h"
 #include "ui_finePosit.h"

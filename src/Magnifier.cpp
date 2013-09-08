@@ -5,6 +5,8 @@
 #include <QInputDialog>
 #include "boat.h"
 #include "opponentBoat.h"
+#include "boatVLM.h"
+#include "route.h"
 
 
 Magnifier::Magnifier(myCentralWidget *parent)
@@ -34,7 +36,7 @@ Magnifier::Magnifier(myCentralWidget *parent)
 
 
 
-    int zoom=Settings::getSetting("magnifierZoom","3").toInt();
+    int zoom=qMin(10,Settings::getSetting("magnifierZoom","3").toInt());
     if(zoom*proj->getScale()>scalemax)
         zoom=floor((double)scalemax/proj->getScale());
     width=proj->getW()*zoom;
@@ -61,7 +63,7 @@ Magnifier::Magnifier(myCentralWidget *parent)
     reader->drawSeaBorders(pnt1, myProj);
     if(parent->getSelectedBoat())
     {
-        if(parent->getSelectedBoat()->getType()==BOAT_VLM)
+        if(parent->getSelectedBoat()->get_boatType()==BOAT_VLM)
         {
             if(!parent->get_shOpp_st())
             {
@@ -69,10 +71,26 @@ Magnifier::Magnifier(myCentralWidget *parent)
                 for (int n=0;n<oppList->getList()->count();++n)
                 {
                     oppList->getList()->at(n)->drawOnMagnifier(myProj,&pnt1);
+                    oppList->getList()->at(n)->getTraceDrawing()->drawInMagnifier(&pnt1,myProj);
                 }
             }
         }
         parent->getSelectedBoat()->drawOnMagnifier(myProj,&pnt1);
+        QList<ROUTE*> routeList=parent->getRouteList();
+        foreach(ROUTE * route,routeList)
+        {
+            route->getLine()->drawInMagnifier(&pnt1,myProj);
+        }
+
+        if(parent->getSelectedBoat()->get_boatType()==BOAT_VLM)
+        {
+            QList<vlmLine *>gates=((boatVLM *)parent->getSelectedBoat())->getGates();
+            foreach(vlmLine * gate,gates)
+            {
+                gate->drawInMagnifier(&pnt1,myProj);
+            }
+        }
+        parent->getSelectedBoat()->getTraceDrawing()->drawInMagnifier(&pnt1,myProj);
     }
     pnt1.end();
     reader->setProj(proj);

@@ -20,6 +20,10 @@ public slots:
     void slotPreset2();
     void slotPreset3();
     void slotPreset4();
+    void slotPreset5();
+    void slotPreset6();
+    void slotPreset7();
+    void slotPreset8();
 private:
     QString presetNb;
     void loadPreset();

@@ -10,6 +10,7 @@ vlmPoint::vlmPoint(double lon,double lat)
     this->lon=lon;
     this->lat=lat;
     this->origin=NULL;
+    this->myChildren.clear();
     this->originNb=0;
     this->isStart=false;
     this->startCap=-1;
@@ -39,4 +40,5 @@ vlmPoint::vlmPoint(double lon,double lat)
     current_angle=0;
     this->debug=0;
     this->foundByNewtonRaphson=false;
+    this->isoIndex=-1;
 }

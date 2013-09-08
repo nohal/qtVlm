@@ -54,21 +54,20 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "POI.h"
 #include "boatVLM.h"
 #include "xmlBoatData.h"
-#include "xmlPOIData.h"
 #include "routage.h"
-#include "BoardVLM.h"
 #include "vlmLine.h"
 #include "dataDef.h"
 #include "Util.h"
 #include "DialogTwaLine.h"
 #include "Player.h"
-#include "Board.h"
+//#include "Board.h"
 #include "boat.h"
 #include "boatReal.h"
 #include "boatVLM.h"
 #include "faxMeteo.h"
 #include "loadImg.h"
 #include "GshhsDwnload.h"
+#include "MapDataDrawer.h"
 
 #include "ToolBar.h"
 
@@ -90,10 +89,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "dialogLoadImg.h"
 #include "parser.h"
 #include "DialogRemovePoi.h"
+#include "DialogRemoveRoute.h"
 #include "class_list.h"
 #include "MyView.h"
 #include "Progress.h"
 #include "StatusBar.h"
+#include "BarrierSet.h"
+#include "DialogChooseBarrierSet.h"
 
 /*******************/
 /*    myScene      */
@@ -342,9 +344,40 @@ bool myScene::event(QEvent * event)
             }
             return true;
         }
+        else if (gestureEvent->gesture(Qt::TapGesture))
+        {
+            qWarning()<<"TapGesture detected";
+        }
+        else if (QGesture *pg=gestureEvent->gesture(Qt::TapAndHoldGesture))
+        {
+            qWarning()<<"TapAndHoldGesture detected";
+            parent->slot_resetGestures();
+#if 0
+            QTapAndHoldGesture *p=static_cast<QTapAndHoldGesture*>(pg);
+            QGraphicsSceneContextMenuEvent ce(QEvent::GraphicsSceneContextMenu);
+            QPointF scenePos=parent->getView()->mapToScene(parent->getView()->mapFromGlobal(p->position().toPoint()));
+            ce.setScenePos(scenePos);
+            ce.setReason(QGraphicsSceneContextMenuEvent::Other);
+            QGraphicsItem * item=parent->getScene()->itemAt(scenePos,parent->getView()->transform());
+            bool a =parent->getScene()->sendEvent(item,&ce);
+            return true;
+#endif
+        }
+        else if (gestureEvent->gesture(Qt::PanGesture))
+        {
+            qWarning()<<"PanGesture detected";
+        }
+        else if (gestureEvent->gesture(Qt::SwipeGesture))
+        {
+            qWarning()<<"SwipeGesture detected";
+        }
+        else if (gestureEvent->gesture(Qt::CustomGesture))
+        {
+            qWarning()<<"CustomGesture detected??";
+        }
         else
         {
-            qWarning()<<"other gesture detected";
+            qWarning()<<"Unknown gesture detected";
         }
     }
 #endif
@@ -365,17 +398,19 @@ myCentralWidget::myCentralWidget(Projection * proj,MainWindow * parent,MenuBar *
     this->fax=NULL;
     this->kap=NULL;
     this->routeClipboard=NULL;
+    noSave=false;
 
     currentPlayer=NULL;
 
     resizing=false;
     this->twaTrace=NULL;
     /* item state */
-    shLab_st = false;
-    shPoi_st = false;
-    shRoute_st = false;
-    shOpp_st = false;
-    shPor_st = false;
+    shLab_st = Settings::getSetting("hideLabel",0,"showHideItem").toInt()==1;
+    shPoi_st = Settings::getSetting("hidePoi",0,"showHideItem").toInt()==1;
+    shRoute_st = Settings::getSetting("hideRoute",0,"showHideItem").toInt()==1;
+    shOpp_st = Settings::getSetting("hideOpponent",0,"showHideItem").toInt()==1;
+    shPor_st = Settings::getSetting("hidePorte",0,"showHideItem").toInt()==1;
+
     selectionTool=false;
     magnifier=NULL;
 
@@ -390,6 +425,13 @@ myCentralWidget::myCentralWidget(Projection * proj,MainWindow * parent,MenuBar *
     view->setGeometry(0,0,width(),height());
     view->viewport()->ungrabGesture(Qt::PanGesture);
     view->viewport()->grabGesture(Qt::PinchGesture);
+#ifdef __ANDROIDD__
+    view->viewport()->grabGesture(Qt::PanGesture);
+    view->viewport()->grabGesture(Qt::TapGesture);
+    view->viewport()->grabGesture(Qt::TapAndHoldGesture);
+    view->viewport()->grabGesture(Qt::SwipeGesture);
+    view->viewport()->grabGesture(Qt::CustomGesture);
+#endif
     view->setHorizontalScrollBarPolicy (Qt::ScrollBarAlwaysOff);
     view->setVerticalScrollBarPolicy (Qt::ScrollBarAlwaysOff);
     this->setAccessibleName("centralWidget");
@@ -403,6 +445,7 @@ myCentralWidget::myCentralWidget(Projection * proj,MainWindow * parent,MenuBar *
     gribCurrent = new Grib();
     gribCurrent->setIsCurrentGrib();
     grib->setGribCurrent(gribCurrent);
+    mapDataDrawer = new MapDataDrawer(this);
 
     replayTimer=new QTimer(this);
     replayTimer->setSingleShot(true);
@@ -423,6 +466,7 @@ myCentralWidget::myCentralWidget(Projection * proj,MainWindow * parent,MenuBar *
     connect(menuBar->acMap_CountriesNames, SIGNAL(triggered(bool)), terre,  SLOT(setCountriesNames(bool)));
     connect(menuBar->acView_WindColors, SIGNAL(triggered(bool)), terre,  SLOT(slot_setDrawWindColors(bool)));
     connect(menuBar->acView_ColorMapSmooth, SIGNAL(triggered(bool)), terre,  SLOT(setColorMapSmooth(bool)));
+    connect(menuBar->acView_ColorMapSmooth, SIGNAL(triggered(bool)), this->mainW,  SLOT(slotParamChanged()));
     connect(menuBar->acView_WindArrow, SIGNAL(triggered(bool)), terre,  SLOT(setDrawWindArrows(bool)));
     connect(menuBar->acView_Barbules, SIGNAL(triggered(bool)), terre,  SLOT(setBarbules(bool)));
     connect(menuBar->acView_TemperatureLabels, SIGNAL(triggered(bool)),terre,  SLOT(slotTemperatureLabels(bool)));
@@ -437,34 +481,24 @@ myCentralWidget::myCentralWidget(Projection * proj,MainWindow * parent,MenuBar *
 
     connect(menuBar->acView_Isotherms0Labels, SIGNAL(triggered(bool)), terre,  SLOT(setDrawIsotherms0Labels(bool)));
 
-    connect(menuBar->acOptions_SH_sAll, SIGNAL(triggered(bool)), this,  SIGNAL(showALL(bool)));
     connect(menuBar->acOptions_SH_sAll, SIGNAL(triggered(bool)), this,  SLOT(slot_showALL(bool)));
-
-    connect(menuBar->acOptions_SH_hAll, SIGNAL(triggered(bool)), this,  SIGNAL(hideALL(bool)));
     connect(menuBar->acOptions_SH_hAll, SIGNAL(triggered(bool)), this,  SLOT(slot_hideALL(bool)));
 
-    connect(menuBar->acOptions_SH_Opp, SIGNAL(triggered(bool)), this,  SIGNAL(shOpp(bool)));
     connect(menuBar->acOptions_SH_Opp, SIGNAL(triggered(bool)), this,  SLOT(slot_shOpp(bool)));
-
-    connect(menuBar->acOptions_SH_Poi, SIGNAL(triggered(bool)), this,  SIGNAL(shPoi(bool)));
     connect(menuBar->acOptions_SH_Poi, SIGNAL(triggered(bool)), this,  SLOT(slot_shPoi(bool)));
-
-    connect(menuBar->acOptions_SH_Rou, SIGNAL(triggered(bool)), this,  SIGNAL(shRou(bool)));
     connect(menuBar->acOptions_SH_Rou, SIGNAL(triggered(bool)), this,  SLOT(slot_shRoute(bool)));
-
-    connect(menuBar->acOptions_SH_Por, SIGNAL(triggered(bool)), this,  SIGNAL(shPor(bool)));
     connect(menuBar->acOptions_SH_Por, SIGNAL(triggered(bool)), this,  SLOT(slot_shPor(bool)));
-
-    // removing direct forward of signal
-    //connect(menuBar->acOptions_SH_Lab, SIGNAL(triggered(bool)), this,  SIGNAL(shLab(bool)));
     connect(menuBar->acOptions_SH_Lab, SIGNAL(triggered(bool)), this,  SLOT(slot_shLab(bool)));
+    connect(menuBar->acOptions_SH_barSet, SIGNAL(triggered(bool)), this,  SLOT(slot_shBarSet(bool)));
 
     connect(menuBar->acOptions_SH_Com, SIGNAL(triggered(bool)), this,  SIGNAL(shCom(bool)));
 
     connect(menuBar->acOptions_SH_Pol, SIGNAL(triggered(bool)), this,  SIGNAL(shPol(bool)));
     connect(menuBar->acOptions_SH_Fla, SIGNAL(triggered(bool)), this,  SLOT(slot_shFla(bool)));
+    connect(menuBar->acOptions_SH_Nig, SIGNAL(triggered(bool)), this,  SLOT(slot_shNig(bool)));
+    connect(menuBar->acOptions_SH_Tdb, SIGNAL(triggered(bool)), this,  SLOT(slot_shTdb(bool)));
 
-    connect(menuBar->acOptions_SH_Boa, SIGNAL(triggered(bool)), parent, SLOT(slot_centerBoat()));
+    connect(menuBar->acOptions_SH_Boa, SIGNAL(triggered(bool)), parent, SLOT(slot_centerSelectedBoat()));
 
     connect(this,SIGNAL(accountListUpdated()), parent, SLOT(slotAccountListUpdated()));
 
@@ -553,7 +587,6 @@ myCentralWidget::myCentralWidget(Projection * proj,MainWindow * parent,MenuBar *
     while (!poi_list.isEmpty())
         delete poi_list.takeFirst();
 
-    xmlPOI = new xml_POIData(proj,parent,this);
     /*Races*/
     this->NSZ=NULL;
 
@@ -564,6 +597,13 @@ myCentralWidget::myCentralWidget(Projection * proj,MainWindow * parent,MenuBar *
     connect(mainW,SIGNAL(moveBoat(double,double)),this,SLOT(slot_moveBoat(double,double)));
 
     menuBar->setMCW(this);
+
+    /* init barrier part */
+    barrierEditMode=BARRIER_EDIT_NO_EDIT;
+    barrierEditLine = new QGraphicsLineItem();
+    scene->addItem(barrierEditLine);
+    barrierEditLine->setZValue(Z_VALUE_SELECTION);
+    barrierEditLine->hide();
 }
 
 void myCentralWidget::loadGshhs(void) {
@@ -690,9 +730,15 @@ void myCentralWidget::loadBoat(void)
     emit readBoatData(appFolder.value("userFiles")+"boatAcc.dat",true);
 }
 
-void myCentralWidget::loadPOI(void)
-{
-    emit readPOIData(appFolder.value("userFiles")+"poi.dat");
+void myCentralWidget::loadPOI(void) {
+    POI::read_POIData(this);
+    ROUTE::read_routeData(this);
+    assignPois();
+    connectPois();
+    BarrierSet::readBarriersFromDisk(mainW);
+}
+
+void myCentralWidget::connectPois(void) {
     foreach(POI * poi1,this->poi_list)
     {
         if(poi1->getLonConnected()!=-1)
@@ -728,9 +774,15 @@ void myCentralWidget::loadPOI(void)
 
 myCentralWidget::~myCentralWidget()
 {
-    if(!mainW->getNoSave() && xmlPOI && xmlData)
+    bool test=false;
+    if(xmlData)
+        test=true;
+    qWarning()<<"inside ~myCentralWidget with noSave="<<noSave<<"and xmlData"<<test;
+    if(!noSave && xmlData)
     {
-        xmlPOI->slot_writeData(route_list,poi_list,appFolder.value("userFiles")+"poi.dat");
+        POI::write_POIData(poi_list,this);
+        ROUTE::write_routeData(route_list,this);
+        BarrierSet::saveBarriersToDisk();
         xmlData->slot_writeData(player_list,race_list,QString(appFolder.value("userFiles")+"boatAcc.dat"));
     }
     // Delete POIs and routes
@@ -810,9 +862,20 @@ boat * myCentralWidget::getSelectedBoat(void)
 {
     return mainW->getSelectedBoat();
 }
+
+QList<boat*> myCentralWidget::get_boatList(void) {
+    if(mainW->get_boatType()==BOAT_VLM)
+        return *((QList<boat*>*)boat_list);
+    else {
+        QList<boat*> bList;
+        bList.append(realBoat);
+        return bList;
+    }
+}
+
 time_t myCentralWidget::getNextVac(void)
 {
-    if(mainW->getSelectedBoat() && mainW->getSelectedBoat()->getType()==BOAT_VLM)
+    if(mainW->getSelectedBoat() && mainW->getSelectedBoat()->get_boatType()==BOAT_VLM)
     {
         if(mainW->getSelectedBoat()->getLoch()<0.01)
             return QDateTime::currentDateTime().toTime_t();
@@ -830,27 +893,24 @@ time_t myCentralWidget::getNextVac(void)
 #define BLOCK_SIG_BOAT() { if(mainW->getSelectedBoat()) mainW->getSelectedBoat()->blockSignals(true); }
 #define UNBLOCK_SIG_BOAT() { if(mainW->getSelectedBoat()) mainW->getSelectedBoat()->blockSignals(false); }
 
-void myCentralWidget::slot_Zoom_All()
-{
+void myCentralWidget::slot_Zoom_All() {
     BLOCK_SIG_BOAT()
     proj->zoomAll();
     UNBLOCK_SIG_BOAT()
 }
 
-void myCentralWidget::slot_clearSelection(void)
-{
+void myCentralWidget::slot_clearSelection(void) {
     selectionTool=false;
     selection->clearSelection();
     toolBar->selectionMode->setChecked(selectionTool);
 }
 
-void myCentralWidget::slot_selectionTool()
-{
+void myCentralWidget::slot_selectionTool() {
     selectionTool=toolBar->selectionMode->isChecked();
     selection->clearSelection();
 }
-void myCentralWidget::slot_magnify()
-{
+
+void myCentralWidget::slot_magnify() {
     if(toolBar->magnify->isChecked())
     {
         if(magnifier!=NULL)
@@ -864,15 +924,14 @@ void myCentralWidget::slot_magnify()
         magnifier=NULL;
     }
 }
-void myCentralWidget::slot_Go_Left()
-{
+
+void myCentralWidget::slot_Go_Left() {
     BLOCK_SIG_BOAT()
     proj->move( 0.2, 0);
     UNBLOCK_SIG_BOAT()
 }
 
-void myCentralWidget::slot_Go_Right()
-{
+void myCentralWidget::slot_Go_Right() {
 
     BLOCK_SIG_BOAT()
     proj->move(-0.2, 0);
@@ -1049,6 +1108,8 @@ void myCentralWidget::mouseMove(int x, int y, QGraphicsItem * )
     if(selection->tryMoving(x,y))
         return;
 
+    move_barrierEditLine(QPoint(x,y));
+
     QListIterator<QGraphicsItem *> it (scene->items());
 
     while(it.hasNext())
@@ -1068,6 +1129,10 @@ void myCentralWidget::mouseMove(int x, int y, QGraphicsItem * )
             break ;
         }
         if(item->data(0) == FAXMETEO_WTYPE && ((faxMeteo*)item)->tryMoving(x,y))
+        {
+            break ;
+        }
+        if(item->data(0) == BARRIERPOINT_WTYPE && ((BarrierPoint*)item)->tryMoving(QPoint(x,y)))
         {
             break ;
         }
@@ -1109,6 +1174,7 @@ void myCentralWidget::escapeKeyPressed(void)
     slot_clearSelection();
     horn->stop();
     this->replayStep=10e6;
+    escKey_barrier();
 }
 void myCentralWidget::slot_mousePress(QGraphicsSceneMouseEvent* e)
 {
@@ -1125,6 +1191,10 @@ void myCentralWidget::slot_mousePress(QGraphicsSceneMouseEvent* e)
 }
 void myCentralWidget::slot_mouseRelease(QGraphicsSceneMouseEvent* e)
 {
+    if(barrierEditMode!=BARRIER_EDIT_NO_EDIT) {
+        manage_barrier();
+    }
+
     if(selection->isSelecting())
     {
         if(!selectionTool)
@@ -1190,12 +1260,59 @@ void myCentralWidget::zoomOnGrib(Grib * gr)
     }
 }
 
+
+void myCentralWidget::updateGribMenu(void)
+{
+    /* Main grib */
+    bool res=false;
+    bool keepCurMode=false;
+    QMap<int,DataCode> *dataMap=mapDataDrawer->get_dataCodeMap();
+
+    /* is current drawing mode still present ? */
+    int curMode = terre->getColorMapMode();
+    bool containsWind=false;
+    QMapIterator<int,DataCode> i(*dataMap);
+    while (i.hasNext())
+    {
+        i.next();
+        if(i.key() != MapDataDrawer::drawNone)
+        {
+            QAction * act = menuBar->gribDataActionMap.value(i.key());
+            if(act)
+            {
+                if(grib && grib->isOk())
+                {
+                    dataPresentInGrib(grib,i.value().dataType,i.value().levelType,i.value().levelValue,&res);
+                    act->setEnabled(res);
+                    if(res && i.key()==MapDataDrawer::drawWind)
+                        containsWind=true;
+                    if(i.key()==curMode && res)
+                    {
+                        act->setChecked(true);
+                        keepCurMode=true;
+                    }
+                }
+            }
+        }
+    }
+    int newMode=MapDataDrawer::drawNone;
+    if(keepCurMode)
+        newMode=curMode;
+    else if(containsWind)
+        newMode=MapDataDrawer::drawWind;
+    terre->setColorMapMode(newMode);
+    menuBar->setMenubarColorMapMode(newMode,true);
+}
+
 void myCentralWidget::loadGribFile(QString fileName, bool zoom)
 {
     if (!grib)
         return;
 
     grib->loadGribFile(fileName);
+
+    updateGribMenu();
+
     if(!grib->isOk())
     {
         emit redrawAll();
@@ -1207,6 +1324,20 @@ void myCentralWidget::loadGribFile(QString fileName, bool zoom)
         zoomOnGrib();
         proj->blockSignals(false);
     }
+    if(Settings::getSetting("gribDelete",0)==1)
+    {
+        QFileInfo inf(fileName);
+        QStringList f;
+        f.append("*.grb");
+        f.append("*.GRB");
+
+        QFileInfoList list=inf.absoluteDir().entryInfoList(f);
+        foreach(const QFileInfo &i,list)
+        {
+            if(i.lastModified()<QDateTime::currentDateTime().addDays(-3) && i.filePath()!=inf.filePath())
+                QFile::remove(i.filePath());
+        }
+    }
     //else
     //emit redrawAll();
 }
@@ -1216,6 +1347,9 @@ void myCentralWidget::loadGribFileCurrent(QString fileName, bool zoom)
         return;
 
     gribCurrent->loadGribFile(fileName);
+
+    updateGribMenu();
+
     if(!gribCurrent->isOk())
     {
         emit redrawAll();
@@ -1237,7 +1371,6 @@ void myCentralWidget::setCurrentDate(time_t t, bool uRoute)
     {
         grib->setCurrentDate(t);
         gribCurrent->setCurrentDate(t);
-        //emit redrawGrib();
         if(uRoute)
         {
             emit updateRoute(NULL);
@@ -1404,19 +1537,21 @@ void myCentralWidget::slot_fileInfo_GRIB()
         msg += tr("\n");
         msg += tr("Donnees disponibles :\n");
         msg += tr("    Temperature : %1\n").arg(dataPresentInGrib(grib,GRB_TEMP,LV_ABOV_GND,2));
-	msg += tr("    Pression : %1\n").arg(dataPresentInGrib(grib,GRB_PRESSURE,LV_MSL,0));
-	msg += tr("    Vent  : %1\n").arg(dataPresentInGrib(grib,GRB_WIND_VX,LV_ABOV_GND,10));
-    msg += tr("    Courant  : %1\n").arg(dataPresentInGrib(grib,GRB_CURRENT_VX,LV_MSL,0));
-    msg += tr("    Cumul de précipitations : %1\n").arg(dataPresentInGrib(grib,GRB_PRECIP_TOT,LV_GND_SURF,0));
+        msg += tr("    Pression : %1\n").arg(dataPresentInGrib(grib,GRB_PRESSURE,LV_MSL,0));
+        msg += tr("    Vent  : %1\n").arg(dataPresentInGrib(grib,GRB_WIND_VX,LV_ABOV_GND,10));
+        msg += tr("    Courant  : %1\n").arg(dataPresentInGrib(grib,GRB_CURRENT_VX,LV_MSL,0));
+        msg += tr("    Cumul de précipitations : %1\n").arg(dataPresentInGrib(grib,GRB_PRECIP_TOT,LV_GND_SURF,0));
         msg += tr("    Nebulosite : %1\n").arg(dataPresentInGrib(grib,GRB_CLOUD_TOT,LV_ATMOS_ALL,0));
         msg += tr("    Humidite relative : %1\n").arg(dataPresentInGrib(grib,GRB_HUMID_REL,LV_ABOV_GND,2));
         msg += tr("    Isotherme 0degC : %1\n").arg(dataPresentInGrib(grib,GRB_GEOPOT_HGT,LV_ISOTHERM0,0));
         msg += tr("    Point de rosee : %1\n").arg(dataPresentInGrib(grib,GRB_DEWPOINT,LV_ABOV_GND,2));
-        msg += tr("    Temperature (min) : %1\n").arg(dataPresentInGrib(grib,GRB_TMIN,LV_ABOV_GND,2));
-        msg += tr("    Temperature (max) : %1\n").arg(dataPresentInGrib(grib,GRB_TMAX,LV_ABOV_GND,2));
+        //msg += tr("    Temperature (min) : %1\n").arg(dataPresentInGrib(grib,GRB_TMIN,LV_ABOV_GND,2));
+        //msg += tr("    Temperature (max) : %1\n").arg(dataPresentInGrib(grib,GRB_TMAX,LV_ABOV_GND,2));
         msg += tr("    Temperature (pot) : %1\n").arg(dataPresentInGrib(grib,GRB_TEMP_POT,LV_SIGMA,9950));
-	msg += tr("    Neige (risque) : %1\n").arg(dataPresentInGrib(grib,GRB_SNOW_CATEG,LV_GND_SURF,0));
-        msg += tr("    Neige (epaisseur) : %1\n").arg(dataPresentInGrib(grib,GRB_SNOW_DEPTH,LV_GND_SURF,0));
+        msg += tr("    Neige (risque) : %1\n").arg(dataPresentInGrib(grib,GRB_SNOW_CATEG,LV_GND_SURF,0));
+        //msg += tr("    Neige (epaisseur) : %1\n").arg(dataPresentInGrib(grib,GRB_SNOW_DEPTH,LV_GND_SURF,0));
+        msg += tr("    CAPE (surface) : %1\n").arg(dataPresentInGrib(grib,GRB_CAPE,LV_GND_SURF,0));
+        msg += tr("    CIN (surface) : %1\n").arg(dataPresentInGrib(grib,GRB_CIN,LV_GND_SURF,0));
         msg += tr("    Humidite specifique :\n");
         msg += tr("        - 200: %1\n").arg(dataPresentInGrib(grib,GRB_HUMID_SPEC,LV_ISOBARIC,200));
         msg += tr("        - 300: %1\n").arg(dataPresentInGrib(grib,GRB_HUMID_SPEC,LV_ISOBARIC,300));
@@ -1471,6 +1606,10 @@ void myCentralWidget::removePOI(void) {
     DialogRemovePoi dialogRemovePoi(mainW,this);
     dialogRemovePoi.exec();
 }
+void myCentralWidget::removeRoute(void) {
+    DialogRemoveRoute dialogRemoveRoute(mainW,this);
+    dialogRemoveRoute.exec();
+}
 
 void myCentralWidget::slot_addPOI_list(POI * poi)
 {
@@ -1479,10 +1618,7 @@ void myCentralWidget::slot_addPOI_list(POI * poi)
     connect(poi, SIGNAL(editPOI(POI*)),mainW, SLOT(slot_showPOI_input(POI*)));
     connect(proj, SIGNAL(projectionUpdated()), poi, SLOT(slot_updateProjection()));
     connect(poi, SIGNAL(clearSelection()),this,SLOT(slot_clearSelection()));
-
-    connect(this, SIGNAL(showALL(bool)),poi,SLOT(slot_shShow()));
-    connect(this, SIGNAL(hideALL(bool)),poi,SLOT(slot_shHidden()));
-    connect(this, SIGNAL(shPoi(bool)),poi,SLOT(slot_shPoi()));
+    connect(this, SIGNAL(shPoi(bool)),poi,SLOT(slot_shPoi(bool)));
     connect(this, SIGNAL(shLab(bool)),poi,SLOT(slot_shLab(bool)));
     poi->chkIsWP();
 }
@@ -1522,6 +1658,7 @@ void myCentralWidget::simpAllPOIs(bool simp)
             }
 
         }
+        slot_clearSelection();
     }
 }
 
@@ -1531,6 +1668,46 @@ void myCentralWidget::slot_delPOI_list(POI * poi)
     poi_list.removeAll(poi);
     scene->removeItem(poi);
     emit twaDelPoi(poi);
+}
+
+void myCentralWidget::slot_removePOIType(void) {
+    int res_mask;
+    DialogPoiDelete * dialog_sel = new DialogPoiDelete();
+    dialog_sel->exec();
+    if((res_mask=dialog_sel->getResult())<0)
+        return;
+    QListIterator<ROUTE*> r (route_list);
+    while(r.hasNext())
+    {
+        ROUTE * route=r.next();
+        route->setTemp(true);
+    }
+
+    QListIterator<POI*> i (poi_list);
+
+    while(i.hasNext())
+    {
+        POI * poi = i.next();
+        if(!(poi->getTypeMask() & res_mask))
+            continue;
+
+        if(poi->getRoute()!=NULL)
+        {
+            if(poi->getRoute()->getFrozen()||poi->getRoute()->getHidden()||poi->getRoute()->isBusy()) continue;
+            poi->setRoute(NULL);
+        }
+        slot_delPOI_list(poi);
+        poi->deleteLater();
+
+    }
+
+    r.toFront();
+    while(r.hasNext())
+    {
+        ROUTE * route=r.next();
+        route->setTemp(false);
+    }
+    emit updateRoute(NULL);
 }
 
 void myCentralWidget::slot_delAllPOIs(void)
@@ -1649,51 +1826,241 @@ void myCentralWidget::slot_delSelPOIs(void)
     }
 }
 
+/************************************************************************
+ *  Barriers
+ ***********************************************************************/
+void myCentralWidget::escKey_barrier(void) {
+    if(barrierEditMode != BARRIER_EDIT_NO_EDIT) {
+        if(basePoint)
+            currentSet->cleanEmptyBarrier(basePoint->get_barrier());
+        basePoint=NULL;
+        barrierEditMode = BARRIER_EDIT_NO_EDIT;
+        if(currentSet)
+            currentSet->set_editMode(false);
+        barrierEditLine->hide();
+        toolBar->chg_barrierAddState(false);
+    }
+}
+
+void myCentralWidget::insert_barrierPointAfterPoint(BarrierPoint * point) {
+    if(!point) return;
+    if(currentSet)
+        currentSet->set_editMode(false);
+    currentSet=point->get_barrier()->get_barrierSet();
+    basePoint=point;
+
+    barrierEditLine->setLine(QLineF(point->scenePos(),view->mapFromGlobal(QCursor::pos())));
+    barrierEditLine->setPen(QPen(currentSet->get_color()));
+    barrierEditLine->show();
+
+    currentSet->set_editMode(true);
+    barrierEditMode=BARRIER_EDIT_ADD_POINT;
+}
+
+/****************************************************************************/
+/* create a new barrier using point where context menu was oppened          */
+/* no need to check that point is inside map as it is done in contextMenu   */
+/* event handler                                                            */
+/****************************************************************************/
+void myCentralWidget::slot_newBarrier(void) {
+    BarrierSet * set=DialogChooseBarrierSet::chooseBarrierSet(mainW);
+
+    if(set)
+    {
+        Barrier * newBarrier = new Barrier(mainW,set);
+        set->add_barrier(newBarrier);
+        QPointF earthPos;
+        proj->screen2map(cursorPositionOnPopup, &earthPos);
+        basePoint=newBarrier->appendPoint(earthPos);  //newBarrier->appendPoint(mapViewToEarth(mapFromGlobal(cursorPositionOnPopup)));
+        currentSet=set;
+        currentSet->set_editMode(true);
+        barrierEditMode = BARRIER_EDIT_ADD_POINT;
+        /* show line */
+        QPointF pos=cursorPositionOnPopup;//mapToScene(mapFromGlobal(cursorPositionOnPopup));
+        barrierEditLine->setLine(QLineF(pos,pos));
+        barrierEditLine->setPen(QPen(currentSet->get_color()));
+        barrierEditLine->show();
+
+        toolBar->chg_barrierAddState(true);
+    }
+    else
+    {
+        toolBar->chg_barrierAddState(false);
+    }
+}
+
+/****************************************************************************/
+/* Create a new barrier from menu:                                          */
+/* first ask for a set, then go in ADD_BARRIER mode expecting for user to   */
+/* point a position on map                                                  */
+/****************************************************************************/
+void myCentralWidget::slot_addBarrier(void) {
+    BarrierSet * set=DialogChooseBarrierSet::chooseBarrierSet(mainW);
+
+    if(set) {
+        currentSet=set;
+        currentSet->set_editMode(true);
+        basePoint=NULL;
+        barrierEditMode = BARRIER_EDIT_ADD_BARRIER;
+        toolBar->chg_barrierAddState(true);
+    }
+    else
+    {
+        toolBar->chg_barrierAddState(false);
+    }
+}
+
+void myCentralWidget::move_barrierEditLine(QPoint evtPos) {
+    if(barrierEditMode == BARRIER_EDIT_ADD_POINT) {
+        //QPointF pos = mapToScene(evtPos);
+        QPoint pos = evtPos;
+        QRect rect = QRect(0,0,proj->getW(),proj->getH());
+
+        if(!rect.contains(pos)) {
+            pos.setX(qMin(rect.right(), qMax(pos.x(), rect.left())));
+            pos.setY(qMin(rect.bottom(), qMax(pos.y(),rect.top())));
+        }
+        QLineF line = barrierEditLine->line();
+        line.setP2(pos);
+        barrierEditLine->setLine(line);
+    }
+}
+
+void myCentralWidget::manage_barrier(void) {
+    switch(barrierEditMode) {
+        case BARRIER_EDIT_ADD_BARRIER:
+            if(currentSet) {
+                /* check if cursor is inside map */
+                QRect rect = QRect(0,0,proj->getW(),proj->getH());
+                if(!rect.contains(view->mapFromGlobal(QCursor::pos()))) {
+                    QMessageBox::warning(mainW,tr("Creating a new barrier"),
+                                         tr("Point must be inside map\nPlease select another point or press esc to exit barrier creation mode"));
+                }
+                else {
+                    Barrier * baseBarrier = new Barrier(mainW,currentSet);
+                    baseBarrier->set_editMode(true);
+                    QPointF pos=view->mapFromGlobal(QCursor::pos());
+                    basePoint=baseBarrier->appendPoint(proj->screen2mapDouble(pos));
+                    currentSet->add_barrier(baseBarrier);
+                    barrierEditMode = BARRIER_EDIT_ADD_POINT;
+                    /* show line */
+                    barrierEditLine->setLine(QLineF(pos,pos));
+                    barrierEditLine->setPen(QPen(currentSet->get_color()));
+                    barrierEditLine->show();
+                }
+            }
+            else {
+                basePoint=NULL;
+                barrierEditMode = BARRIER_EDIT_NO_EDIT;
+            }
+            break;
+        case BARRIER_EDIT_ADD_POINT: {
+            QPointF pos=view->mapFromGlobal(QCursor::pos());
+            QRectF rect = QRect(0,0,proj->getW(),proj->getH());
+            if(!rect.contains(pos)) {
+                pos.setX(qMin(rect.right(), qMax(pos.x(), rect.left())));
+                pos.setY(qMin(rect.bottom(), qMax(pos.y(),rect.top())));
+            }
+            if(basePoint) {
+                QPointF earthCoord;
+                proj->screen2mapDouble(pos,&earthCoord);
+                basePoint=basePoint->get_barrier()->add_pointAfter(basePoint,earthCoord);
+                if(basePoint==NULL)
+                    escKey_barrier();
+                barrierEditLine->setLine(QLineF(pos,pos));
+            }
+            else {
+                basePoint=NULL;
+                barrierEditMode = BARRIER_EDIT_NO_EDIT;
+                barrierEditLine->hide();
+                if(currentSet)
+                    currentSet->set_editMode(false);
+            }
+        }
+        break;
+    }
+}
+
 void myCentralWidget::slot_showALL(bool)
 {
-    shLab_st=false;
-    emit shLab(shLab_st);
-    shPoi_st=false;
-    shRoute_st=false;
-    shOpp_st=false;
-    shPor_st=false;
+    do_shLab(false);
+    do_shPoi(false);
+    do_shRoute(false);
+    do_shOpp(false);
+    do_shPor(false);
+    do_shBarSet(false);
 }
 
 void myCentralWidget::slot_hideALL(bool)
 {
-    shLab_st=true;
-    emit shLab(shLab_st);
-    shPoi_st=true;
-    shRoute_st=true;
-    shOpp_st=true;
-    shPor_st=true;
+    do_shLab(true);
+    do_shPoi(true);
+    do_shRoute(true);
+    do_shOpp(true);
+    do_shPor(true);
+    do_shBarSet(true);
 }
 
-void myCentralWidget::slot_shLab(bool)
-{
-       shLab_st=!shLab_st;
-       emit shLab(shLab_st);
+void myCentralWidget::slot_shLab(bool){
+    do_shLab(!shLab_st);
 }
 
-void myCentralWidget::slot_shPoi(bool)
-{
-       shPoi_st=!shPoi_st;
+void myCentralWidget::do_shLab(bool val) {
+    shLab_st=val;
+    Settings::setSetting("hideLabel",val?1:0,"showHideItem");
+    emit shLab(val);
 }
 
-void myCentralWidget::slot_shRoute(bool)
-{
-       shRoute_st=!shRoute_st;
+void myCentralWidget::slot_shPoi(bool){
+    do_shPoi(!shPoi_st);
 }
 
-void myCentralWidget::slot_shOpp(bool)
-{
-       shOpp_st=!shOpp_st;
+void myCentralWidget::do_shPoi(bool val) {
+    shPoi_st=val;
+    Settings::setSetting("hidePoi",val?1:0,"showHideItem");
+    emit shPoi(shPoi_st);
 }
 
-void myCentralWidget::slot_shPor(bool)
-{
-    shPor_st=!shPor_st;
+void myCentralWidget::slot_shRoute(bool){
+    do_shRoute(!shRoute_st);
 }
+
+void myCentralWidget::do_shRoute(bool val) {
+    shRoute_st=val;
+    Settings::setSetting("hideRoute",val?1:0,"showHideItem");
+    emit shRou(shRoute_st);
+}
+
+void myCentralWidget::slot_shOpp(bool){
+    do_shOpp(!shOpp_st);
+}
+
+void myCentralWidget::do_shOpp(bool val) {
+    shOpp_st=val;
+    Settings::setSetting("hideOpponent",val?1:0,"showHideItem");
+    emit shOpp(shOpp_st);
+}
+
+void myCentralWidget::slot_shPor(bool) {
+    do_shPor(!shPor_st);
+}
+
+void myCentralWidget::do_shPor(bool val) {
+    shPor_st=val;
+    Settings::setSetting("hidePorte",val?1:0,"showHideItem");
+    emit shPor(shPor_st);
+}
+
+void myCentralWidget::slot_shBarSet(bool){
+    do_shBarSet(!shBarSet_st);
+}
+
+void myCentralWidget::do_shBarSet(bool val) {
+    shBarSet_st=val;
+    Settings::setSetting("hideBarrierSet",val?1:0,"showHideItem");
+    emit shBarSet(shBarSet_st);
+}
+
 void myCentralWidget::slot_editHorn()
 {
     DialogHorn *dh=new DialogHorn(this);
@@ -1758,13 +2125,13 @@ void myCentralWidget::slot_takeScreenshot()
     Settings::setSetting("screenShotFolder",info.absoluteDir().path());
     // Save it..
     image->save(fileName, "PNG", -1);
-//    if (mainW->getSelectedBoat()->getType()==BOAT_VLM)
+//    if (mainW->getSelectedBoat()->get_boatType()==BOAT_VLM)
 //        ((boatVLM*)mainW->getSelectedBoat())->exportBoatInfoLog(fileName);
 }
 
 void myCentralWidget::slot_showVlmLog()
 {
-    if (mainW->getSelectedBoat()->getType()==BOAT_VLM)
+    if (mainW->getSelectedBoat()->get_boatType()==BOAT_VLM)
         vlmLogViewer->initWithBoat( (boatVLM*)mainW->getSelectedBoat() );
     else {
         QMessageBox::warning(0,QObject::tr("Voir Vlm Logs"),
@@ -2743,7 +3110,7 @@ void myCentralWidget::importRouteFromMenuKML(QString fileName,bool toClipboard, 
                     name=routeOption.firstChild().toText().data();
                     route->setHidePois(name=="true");
                 }
-                if(mainW->getSelectedBoat() && mainW->getSelectedBoat()->getType()==BOAT_REAL)
+                if(mainW->getSelectedBoat() && mainW->getSelectedBoat()->get_boatType()==BOAT_REAL)
                 {
                     if(!((boatReal *)mainW->getSelectedBoat())->gpsIsRunning())
                     {
@@ -3336,10 +3703,7 @@ ROUTE * myCentralWidget::addRoute()
     connect(mainW,SIGNAL(updateRoute(boat *)),route,SLOT(slot_recalculate(boat *)));
     connect(route,SIGNAL(editMe(ROUTE *)),this,SLOT(slot_editRoute(ROUTE *)));
 
-
-    connect(this, SIGNAL(showALL(bool)),route,SLOT(slot_shShow()));
-    connect(this, SIGNAL(hideALL(bool)),route,SLOT(slot_shHidden()));
-    connect(this, SIGNAL(shRou(bool)),route,SLOT(slot_shRou()));
+    connect(this, SIGNAL(shRou(bool)),route,SLOT(slot_shRou(bool)));
     connect(this, SIGNAL(shRouBis()),route,SLOT(slot_shShow()));
 
 
@@ -3358,13 +3722,6 @@ ROUTAGE * myCentralWidget::addRoutage()
     ROUTAGE * routage=new ROUTAGE(rName.sprintf(tr("Routage%d").toLocal8Bit(),nbRoutage), proj, grib, scene, this);
     routage->setBoat(mainW->getSelectedBoat());
     connect(routage,SIGNAL(editMe(ROUTAGE *)),this,SLOT(slot_editRoutage(ROUTAGE *)));
-
-
-//    connect(this, SIGNAL(showALL(bool)),routage,SLOT(slot_shShow()));
-//    connect(this, SIGNAL(hideALL(bool)),routage,SLOT(slot_shHidden()));
-//    connect(this, SIGNAL(shRoutage(bool)),routage,SLOT(slot_shRou()));
-
-
     routage_list.append(routage);
     return routage;
 }
@@ -3372,7 +3729,6 @@ void myCentralWidget::slot_editRoute(ROUTE * route,bool createMode)
 {
     DialogRoute *route_editor=new DialogRoute(route,this,createMode);
     int result=route_editor->exec();
-    qWarning()<<"result="<<result;
     if(result==99)
     {
         route_editor->deleteLater();
@@ -3424,7 +3780,7 @@ void myCentralWidget::treatRoute(ROUTE* route)
         route->setOptimize(false);
         if(route->getFrozen() || (simplify && !route->getHas_eta()))
             QMessageBox::critical(0,QString(QObject::tr("Simplification/Optimisation de route")),QString(QObject::tr("Cette operation est impossible pour une route figee ou une route sans ETA")));
-        else if(route->getUseVbvmgVlm())
+        else if(route->getUseVbvmgVlm() && !route->getNewVbvmgVlm())
             QMessageBox::critical(0,QString(QObject::tr("Simplification/Optimisation de route")),QString(QObject::tr("Cette operation est impossible si le mode de calcul VBVMG est celui de VLM")));
         else
         {
@@ -3593,7 +3949,7 @@ void myCentralWidget::slot_abortRequest()
 
 void myCentralWidget::doSimplifyRoute(ROUTE * route, bool fast)
 {
-    bool strongSimplify=Settings::getSetting("strongSimplify",1).toInt()==1;
+    bool strongSimplify=route->get_strongSimplify();
     route->setSimplify(true);
     int firstPOI=1;
     if(route->getStartFromBoat())
@@ -3607,7 +3963,8 @@ void myCentralWidget::doSimplifyRoute(ROUTE * route, bool fast)
     QProgressDialog p("","",1,ref_nbPois-2);
     if(!fast)
     {
-        p.setWindowTitle(tr("Simplification en cours"));
+        QString stringMaxMin=strongSimplify?tr(" (maximum)"):tr(" (minimum)");
+        p.setWindowTitle(tr("Simplification en cours")+stringMaxMin);
         p.setAutoClose(false);
         this->abortRequest=false;
         p.setCancelButtonText(tr("Abandonner"));
@@ -3869,14 +4226,16 @@ void myCentralWidget::slot_deleteRoute()
     if(route==NULL) return;
     myDeleteRoute(route);
 }
-void myCentralWidget::myDeleteRoute(ROUTE * route)
+bool myCentralWidget::myDeleteRoute(ROUTE * route, bool silent)
 {
-    if(route->isBusy()) return ;
-    int rep = QMessageBox::question (0,
+    if(route->isBusy()) return false ;
+    int rep=QMessageBox::Yes;
+    if(!silent)
+        rep = QMessageBox::question (0,
             tr("Detruire la route : %1").arg(route->getName()),
             tr("La destruction d'une route est definitive.\n\nVoulez-vous egalement supprimer tous les POIs lui appartenant?"),
             QMessageBox::Yes | QMessageBox::No | QMessageBox::Cancel);
-    if (rep == QMessageBox::Cancel) return ;
+    if (rep == QMessageBox::Cancel) return false ;
     route->setTemp(true);
 //    route->setHidden(false);
 //    QCoreApplication::sendPostedEvents(scene,0);
@@ -3894,6 +4253,7 @@ void myCentralWidget::myDeleteRoute(ROUTE * route)
         }
     }
     deleteRoute(route);
+    return true;
 }
 void myCentralWidget::slot_deleteRoutage()
 {
@@ -3913,6 +4273,7 @@ void myCentralWidget::deleteRoutage(ROUTAGE * routage, ROUTE * route)
 {
     if(routage)
     {
+        bool runComparator=routage->get_multiRoutage() && routage->get_multiNb()<=0;
         routage_list.removeAll(routage);
         update_menuRoutage();
         if(route!=NULL)
@@ -3921,6 +4282,8 @@ void myCentralWidget::deleteRoutage(ROUTAGE * routage, ROUTE * route)
             routeSimplify->setSimplify(true);
             connect(routage,SIGNAL(destroyed()),this,SLOT(slot_routeTimer()));
         }
+        if(runComparator)
+            connect(routage,SIGNAL(destroyed()),mainW,SLOT(slot_routeComparator()));
         routage->deleteLater();
         routage=NULL;
     }
@@ -4115,7 +4478,6 @@ void myCentralWidget::manageAccount(bool * res)
     int tmp_res= playerAcc->exec();
     if(res)
         *res=(tmp_res == QDialog::Accepted);
-
 }
 
 void myCentralWidget::updatePlayer(Player * player)
@@ -4178,12 +4540,11 @@ void myCentralWidget::slot_playerSelected(Player * player)
             }
             realBoat=NULL;
             emit accountListUpdated();
-            mainW->getBoard()->playerChanged(player);
+            //mainW->get_board()->set_newType(BOAT_VLM);
             if(reselected)
             {
                 mainW->slotSelectBoat(boat_list->at(thisOne));
                 boat_list->at(thisOne)->setSelected(true);
-                mainW->getBoard()->boatUpdated(boat_list->at(thisOne));
             }
             emit shRouBis();
         }
@@ -4202,8 +4563,7 @@ void myCentralWidget::slot_playerSelected(Player * player)
             realBoat->reloadPolar();
             mainW->slotSelectBoat(realBoat);
             realBoat->playerActivated();
-            mainW->getBoard()->playerChanged(player);
-            mainW->getBoard()->boatUpdated(realBoat);
+            //mainW->get_board()->set_newType(BOAT_REAL);
             mainW->slotBoatUpdated(realBoat,true,false);;
             emit shRouBis();
         }
@@ -4215,6 +4575,7 @@ void myCentralWidget::slot_playerSelected(Player * player)
         realBoat=NULL;
         emit shRouBis();
     }
+    mainW->loadBoard();
 }
 
 void myCentralWidget::slot_writeBoatData(void)
@@ -4330,36 +4691,10 @@ void myCentralWidget::slotIsotherms0Step()
 
 void myCentralWidget::slot_setColorMapMode(QAction* act)
 {
-    MenuBar  *mb = menuBar;
     int mode;
-    if (act == mb->acView_WindColors)
-        mode = Terrain::drawWind;
-    else if (act == mb->acView_CurrentColors)
-        mode = Terrain::drawCurrent;
-    else if (act == mb->acView_RainColors)
-        mode = Terrain::drawRain;
-    else if (act == mb->acView_CloudColors)
-        mode = Terrain::drawCloud;
-    else if (act == mb->acView_HumidColors)
-        mode = Terrain::drawHumid;
-    else if (act == mb->acView_TempColors)
-        mode = Terrain::drawTemp;
-    else if (act == mb->acView_TempPotColors)
-        mode = Terrain::drawTempPot;
-    else if (act == mb->acView_DeltaDewpointColors)
-        mode = Terrain::drawDeltaDewpoint;
-    else if (act == mb->acView_SnowCateg)
-        mode = Terrain::drawSnowCateg;
-    else if (act == mb->acView_FrzRainCateg)
-        mode = Terrain::drawFrzRainCateg;
-    else if (act == mb->acView_SnowDepth)
-        mode = Terrain::drawSnowDepth;
-    else if (act == mb->acView_CAPEsfc)
-        mode = Terrain::drawCAPEsfc;
-    else
-        mode = Terrain::drawNone;
 
-    //qWarning() << "New mode " << mode;
+    if(!act) mode = MapDataDrawer::drawNone;
+    else mode = menuBar->gribDataActionMap.key(act,MapDataDrawer::drawNone);
 
     terre->setColorMapMode(mode);
 }
@@ -4370,9 +4705,12 @@ void myCentralWidget::slot_setColorMapMode(QAction* act)
 
 void myCentralWidget::slot_POISave(void)
 {
-    emit writePOIData(route_list,poi_list,appFolder.value("userFiles")+"poi.dat");
+    POI::write_POIData(poi_list,this);
+    ROUTE::write_routeData(route_list,this);
+    BarrierSet::saveBarriersToDisk();
     QMessageBox::information(this,tr("Sauvegarde des POIs et des routes"),tr("Sauvegarde reussie"));
 }
+
 void myCentralWidget::slot_POIRestore(void)
 {
     while(!route_list.isEmpty())
@@ -4399,13 +4737,12 @@ void myCentralWidget::slot_POIRestore(void)
     QMessageBox::information(this,tr("Chargement des POIs et des routes"),tr("Chargement reussi"));
 }
 
-void myCentralWidget::slot_POIimport(void)
-{
-    emit importZyGrib();
+void myCentralWidget::slot_POIimport(void) {
+    POI::importZyGrib(this);
 }
-void myCentralWidget::slot_POIimportGeoData(void)
-{
-    xmlPOI->importGeoData();
+
+void myCentralWidget::slot_POIimportGeoData(void) {
+    POI::importGeoData(this);
 }
 
 /**************************/
@@ -4455,12 +4792,27 @@ void myCentralWidget::removeOpponent(QString oppId, QString raceId)
 void myCentralWidget::slot_shFla(bool)
 {
     //qWarning()<<"key F pressed";
-    int f=Settings::getSetting("showFlag",0).toInt();
-    if(f==0) f=1;
-    else f=0;
-    Settings::setSetting("showFlag",f);
+    int f=Settings::getSetting("showFlag",0,"showHideItem").toInt();
+
+    f=f==0?1:0;
+
+    Settings::setSetting("showFlag",f,"showHideItem");
+
     emit shFla();
 }
+void myCentralWidget::slot_shNig(bool)
+{
+    bool shNight=Settings::getSetting("showNight",1).toInt()==1;
+    Settings::setSetting("showNight",!shNight?1:0);
+    emit this->redrawGrib();
+}
+void myCentralWidget::slot_shTdb(bool)
+{
+    bool shTdb=!Settings::getSetting("showDashBoard",1).toInt()==1;
+    Settings::setSetting("showDashBoard",shTdb?1:0);
+    mainW->showDashBoard();
+}
+
 void myCentralWidget::slotFax_open()
 {
     bool newFax=false;

@@ -168,7 +168,6 @@ DialogRoutage::DialogRoutage(ROUTAGE *routage,myCentralWidget *parent, POI *endP
     this->step->setValue(routage->getAngleStep());
     this->dureeLess24->setValue(routage->getTimeStepLess24());
     this->dureeMore24->setValue(routage->getTimeStepMore24());
-    this->windForced->setChecked(routage->getWindIsForced());
     this->showIso->setChecked(routage->getShowIso());
     this->explo->setValue(routage->getExplo());
     this->useVac->setChecked(routage->getUseRouteModule());
@@ -177,11 +176,6 @@ DialogRoutage::DialogRoutage(ROUTAGE *routage,myCentralWidget *parent, POI *endP
     this->colorIso->setChecked(routage->getColorGrib());
     this->RoutageOrtho->setChecked(routage->getRoutageOrtho());
     this->showBestLive->setChecked(routage->getShowBestLive());
-    if(routage->getWindIsForced())
-    {
-        this->TWD->setValue(routage->getWindAngle());
-        this->TWS->setValue(routage->getWindSpeed());
-    }
     this->checkCoast->setChecked(routage->getCheckCoast());
     this->checkLines->setChecked(routage->getCheckLine());
     this->nbAlter->setValue(routage->getNbAlternative());
@@ -203,9 +197,6 @@ DialogRoutage::DialogRoutage(ROUTAGE *routage,myCentralWidget *parent, POI *endP
         this->range->setDisabled(true);
         this->step->setDisabled(true);
         this->explo->setDisabled(true);
-        this->windForced->setDisabled(true);
-        this->TWD->setDisabled(true);
-        this->TWS->setDisabled(true);
         this->useVac->setDisabled(true);
         this->log->setDisabled(true);
         this->pruneWakeAngle->setDisabled(true);
@@ -229,6 +220,7 @@ DialogRoutage::DialogRoutage(ROUTAGE *routage,myCentralWidget *parent, POI *endP
         this->minPortant->setDisabled(true);
         this->minPres->setDisabled(true);
         this->Default->setDisabled(true);
+        this->multi_routage->setDisabled(true);
     }
     if(routage->getIsNewPivot() && !routage->isDone())
     {
@@ -260,10 +252,15 @@ DialogRoutage::DialogRoutage(ROUTAGE *routage,myCentralWidget *parent, POI *endP
         this->minPres->setDisabled(false);
         this->minPortant->setDisabled(false);
         this->Default->setDisabled(false);
+        this->multi_routage->setDisabled(true);
     }
     if(routage->isDone() && !routage->getArrived())
         i_iso->setEnabled(false);
-
+    this->multi_routage->setChecked(routage->get_multiRoutage());
+    this->multi_nb->setValue(routage->get_multiNb()+1);
+    this->multi_days->setValue(routage->get_multiDays());
+    this->multi_hours->setValue(routage->get_multiHours());
+    this->multi_min->setValue(routage->get_multiMin());
 }
 DialogRoutage::~DialogRoutage()
 {
@@ -295,7 +292,6 @@ void DialogRoutage::slot_default()
     this->explo->setValue(40);
     this->log->setChecked(true);
     this->whatIfUse->setChecked(false);
-    this->windForced->setChecked(false);
     this->checkCoast->setChecked(true);
     this->checkLines->setChecked(true);
     this->nbAlter->setValue(3);
@@ -321,7 +317,7 @@ void DialogRoutage::done(int result)
         routage->setWidth(inputTraceColor->getLineWidth());
         routage->setColor(inputTraceColor->getLineColor());
         QDateTime dd=editDateBox->dateTime();
-        if(routage->getBoat()->getType()==BOAT_VLM)
+        if(routage->getBoat()->get_boatType()==BOAT_VLM)
         {
             time_t ddd=dd.toTime_t();
             ddd=floor((double)ddd/(double)routage->getBoat()->getVacLen())*routage->getBoat()->getVacLen();
@@ -350,6 +346,11 @@ void DialogRoutage::done(int result)
         routage->setMaxPres(this->maxPres->value());
         routage->setMinPortant(this->minPortant->value());
         routage->setMinPres(this->minPres->value());
+        routage->set_multiRoutage(this->multi_routage->isChecked());
+        routage->set_multiNb(this->multi_nb->value()-1);
+        routage->set_multiDays(this->multi_days->value());
+        routage->set_multiHours(this->multi_hours->value());
+        routage->set_multiMin(this->multi_min->value());
         if(parent->getPlayer()->getType()!=BOAT_REAL)
         {
             if(parent->getBoats())
@@ -430,13 +431,19 @@ void DialogRoutage::done(int result)
                     }
                 }
             }
+            else
+            {
+                if(this->multi_routage->isChecked())
+                {
+                    QMessageBox::critical(0,QString(QObject::tr("Routage")),QString(QObject::tr("Le routage ne peut pas partir du bateau si la fonction<br>multi-routage est utilisee")));
+                    return;
+                }
+            }
         }
         routage->setWhatIfUsed(whatIfUse->isChecked());
         routage->setWhatIfDate(whatIfDate->dateTime());
         routage->setWhatIfWind(whatIfWind->value());
         routage->setWhatIfTime(whatIfTime->value());
-        routage->setWindIsForced(windForced->isChecked());
-        routage->setWind(TWD->value(),TWS->value());
         routage->setAngleRange(this->range->value());
         routage->setAngleStep(this->step->value());
         routage->setTimeStepMore24(this->dureeMore24->value());
@@ -446,7 +453,7 @@ void DialogRoutage::done(int result)
         routage->setUseRouteModule(this->useVac->isChecked());
         if(!routage->isDone())
             Settings::setSetting("autoConvertToRoute",convRoute->isChecked()?1:0);
-        if(this->convRoute->isChecked())
+        if(this->convRoute->isChecked() || this->multi_routage->isChecked())
         {
             if(!routage->isConverted())
             {
@@ -510,11 +517,6 @@ void DialogRoutage::done(int result)
 
 //---------------------------------------
 
-void DialogRoutage::on_windForced_toggled(bool checked)
-{
-   TWD->setEnabled(checked);
-   TWS->setEnabled(checked);
-}
 void DialogRoutage::GybeTack(int i)
 {
     QFont font=this->labelTackGybe->font();

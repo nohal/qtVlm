@@ -36,6 +36,11 @@ Copyright (C) 2008 - Jacques Zaninetti - http://zygrib.free.fr
 DialogRemovePoi::DialogRemovePoi(QWidget * parent,myCentralWidget * centralWidget): QDialog(parent) {
     setupUi(this);
     Util::setFontDialog(this);
+    QMap<QWidget *,QFont> exceptions;
+    QFont wfont=QApplication::font();
+    wfont.setPointSizeF(9.0);
+    exceptions.insert(ls_poiList,wfont);
+    Util::setSpecificFont(exceptions);
 
     this->centralWidget=centralWidget;
     poiList=centralWidget->getPois();

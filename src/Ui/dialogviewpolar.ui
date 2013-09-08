@@ -61,7 +61,7 @@
             <widget class="QDoubleSpinBox" name="doubleSpinBox">
              <property name="font">
               <font>
-               <pointsize>10</pointsize>
+               <pointsize>12</pointsize>
               </font>
              </property>
              <property name="alignment">
@@ -71,7 +71,7 @@
               <string> nds</string>
              </property>
              <property name="decimals">
-              <number>1</number>
+              <number>2</number>
              </property>
              <property name="minimum">
               <double>1.000000000000000</double>

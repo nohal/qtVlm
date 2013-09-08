@@ -97,6 +97,18 @@ FCT_GET_CST(TYPE,VARNAME)
 #define BOAT_ANY  2
 #define BOAT_NOBOAT -1
 
+/* XML file type */
+#define DOM_FILE_TYPE     "qtVLM_config"
+
+/* barrier edit mode */
+#define BARRIER_EDIT_NO_EDIT      0
+#define BARRIER_EDIT_ADD_BARRIER  1
+#define BARRIER_EDIT_ADD_POINT    2
+
+#define BARRIER_NO_POINT   -1
+#define BARRIER_FIRST_POINT 0
+#define BARRIER_LAST_POINT  1
+
 /* request type */
 #define VLM_NO_REQUEST     -1
 #define VLM_REQUEST_LOGIN  0
@@ -110,14 +122,14 @@ FCT_GET_CST(TYPE,VARNAME)
 #define VLM_REQUEST_PROFILE 8
 #define VLM_REQUEST_FLEET   9
 #define VLM_REQUEST_POLAR 10
+#define VLM_REQUEST_SENDPILOT 11
 
 /* VLM CMD type */
-#define VLM_CMD_HD     1
-#define VLM_CMD_ANG    2
-#define VLM_CMD_WP     3
-#define VLM_CMD_ORTHO  4
-#define VLM_CMD_VMG    5
-#define VLM_CMD_VBVMG  6
+#define VLM_PILOT_HEADING     0
+#define VLM_PILOT_ANGLE    1
+#define VLM_PILOT_VMG    3
+#define VLM_PILOT_ORTHO  2
+#define VLM_PILOT_VBVMG  4
 
 #define PILOT_ADD      0
 #define PILOT_UPD      1
@@ -269,6 +281,7 @@ Q_DECLARE_TYPEINFO(windData,Q_PRIMITIVE_TYPE);
 #define GRB_CLOUD_TOT      71   /* %      */
 #define GRB_FRZRAIN_CATEG 141   /* 1=yes 0=no */
 #define GRB_SNOW_CATEG    143   /* 1=yes 0=no */
+#define GRB_CIN 		  156   /* J/kg   */
 #define GRB_CAPE 		  157   /* J/kg   */
 
 #define GRB_WIND_DIR       249   /* private: wind direction in degrees */

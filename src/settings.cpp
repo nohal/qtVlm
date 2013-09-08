@@ -46,7 +46,7 @@ void Settings::setSetting(const QString &key, const QVariant &value, const QStri
 QVariant Settings::getSetting(const QString &key, const QVariant &defaultValue, const QString &group,int boatType) {
     QVariant val=defaultValue;
     if (fileSettings != NULL) {
-        /* avons nous la clé avec boatType */
+        /* avons nous la clÃ© avec boatType */
         fileSettings->beginGroup (Settings::computeGroupe(group,boatType));
         if(!fileSettings->contains(key)) {
             if(boatType!=BOAT_ANY && boatType!=BOAT_NOBOAT) {

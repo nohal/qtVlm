@@ -69,19 +69,24 @@ class MainWindow: public QMainWindow
 
         FCT_GET(Progress*,progress)
         FCT_GET(StatusBar*,statusBar)
+        FCT_GET(ToolBar*,toolBar)
+
         FCT_GET(int,nxtVac_cnt)
+
+        int get_boatType(void);
+
+        /*** Barrier ***/
 
         void getXY(int *X,int *Y){*X=this->mouseClicX;*Y=this->mouseClicY;}
         bool isStartingUp;
 
         bool getFinishStart(void) { return finishStart; }
 
-        board * getBoard(void) { return myBoard; }
+
         bool getNoSave(){return noSave;}
         void setPilototoFromRoute(ROUTE * route);
         void setPilototoFromRoute(QList<POI*> poiList);
 
-        void clearPilototo();
         myCentralWidget * getMy_centralWidget(){return this->my_centralWidget;}
         void setRestartNeeded(){this->restartNeeded=true;}
         bool getRestartNeeded(){return this->restartNeeded;}
@@ -89,8 +94,11 @@ class MainWindow: public QMainWindow
 
         QMenu *createPopupMenu(void);
 
+        void loadBoard();
+        void showDashBoard();
 public slots:
-        void slot_showPOI_input(POI *poi=NULL, const bool &fromMenu=false);
+        void slot_POI_input();
+        void slot_showPOI_input(POI *poi=NULL, const bool &fromMenu=false);        
         void slot_disablePopupMenu();
         void slotFile_Open();
         void slotFile_Reopen();
@@ -101,6 +109,8 @@ public slots:
         void slotFile_Lock(bool readOnly=false);
         void slotFile_QuitNoSave();
         void slot_gribFileReceived(QString fileName);
+
+        void slot_clearPilototo();
 
         void slotShowContextualMenu(QGraphicsSceneContextMenuEvent *);
 
@@ -128,16 +138,15 @@ public slots:
         void slotChgBoat(int);
         void slotAccountListUpdated(void);
         void slotBoatUpdated(boat * boat,bool newRace,bool doingSync);
-        void slot_centerBoat();
+        void slot_centerSelectedBoat();
         void slot_moveBoat(void);
 
         void slotChgWP(double lat,double lon, double wph);
         void slotBoatLockStatusChanged(boat*,bool);
         void slotPilototo(void);
         void slotShowPolar(void);
-
-        void slot_newPOI(void);
         void slot_removePOI(void);
+        void slot_newPOI(void);
         void slotCreatePOI();
         void slotpastePOI();
 
@@ -166,13 +175,24 @@ public slots:
         void slot_copyRoute();
         void slot_deleteRoute();
         void slot_editRoute();
+        void slot_poiRoute();
         void slot_pasteRoute();
+        void slot_routeComparator();
         void slot_zoomRoute();
         void slot_optimizeRoute();
-        void slot_simplifyRoute();
+        void slot_simplifyRouteMax();
+        void slot_simplifyRouteMin();
 
-    signals:
-        void setChangeStatus(bool);
+        /*** Barrier ***/
+        void slot_newBarrierSet();
+        void slot_barrierAddPopup(void);
+        void slot_barrierAddMenu(void);
+
+
+        void slot_removeRoute();
+signals:
+        void setChangeStatus(bool status,bool pilototo,bool syncBtn);
+        void outDatedVlmData(void);
         void editPOI(POI *);
         void newPOI(double,double,Projection *, boat *);
         void editInstructions(void);
@@ -193,6 +213,10 @@ public slots:
         void moveBoat(double lat, double lon);
         void setInstructions(boat * boat,QList<POI *>);
         void wpChanged();
+        void boatSelected(boat*);
+        void accountListUpdated(Player*);
+        void selectPOI(bool);
+        void updateLockIcon(QIcon ic);
 
 
     protected:
@@ -238,7 +262,7 @@ public slots:
         int nxtVac_cnt;
         bool showingSelectionMessage;
 
-        board * myBoard;
+        //Board * board;
         boat* selectedBoat;
         DialogProxy   * dialogProxy;
         DialogParamVlm * param;
@@ -248,6 +272,8 @@ public slots:
         DialogVlmGrib * loadVLM_grib;
         DialogGribValidation * gribValidation_dialog;
         bool isSelectingWP;
+
+        int boatType;
 
         polarList * polar_list;
 
@@ -266,7 +292,10 @@ public slots:
         void listAllChildren(QObject * ptr,int);
         bool noSave;
         bool restartNeeded;
-        void updateTitle();       
+        void updateTitle();
+        BoardVlmNew * newBoard;
+        board * myBoard;
+        bool use_old_board;
 };
 
 #endif

@@ -49,6 +49,8 @@ Copyright (C) 2008 - Jacques Zaninetti - http://zygrib.free.fr
 #include <QTime>
 #include <QFileDialog>
 #include <QPixmap>
+#include <Terrain.h>
+#include <MapDataDrawer.h>
 
 //-------------------------------------------------------
 // ROUTE_Editor: Constructor for edit an existing ROUTE
@@ -63,6 +65,15 @@ DialogRoute::DialogRoute(ROUTE *route, myCentralWidget *parent, bool createMode)
     this->warning_icon->setPixmap(QPixmap(appFolder.value("img")+"warning.png"));
     connect(this->useVbvmgVlm,SIGNAL(stateChanged(int)),this,SLOT(slot_hideShowWarning()));
     Util::setFontDialog(this);
+
+    QMap<QWidget *,QFont> exceptions;
+    QFont wfont=QApplication::font();
+    wfont.setPointSizeF(8.0);
+    exceptions.insert(warning_text,wfont);
+    Util::setSpecificFont(exceptions);
+    qWarning()<<"warning size="<<warning_text->font().pointSizeF();
+
+
     inputTraceColor =new InputLineParams(route->getWidth(),route->getColor(),1.6,  QColor(Qt::red),this,0.1,5);
     colorBox->layout()->addWidget( inputTraceColor);
     setWindowTitle(tr("Parametres Route"));
@@ -208,7 +219,7 @@ DialogRoute::DialogRoute(ROUTE *route, myCentralWidget *parent, bool createMode)
     if(route->getBoat() && route->getBoat()!=NULL)
     {
         min=route->getBoat()->getVacLen()/60;
-        if(route->getBoat()->getType()==BOAT_REAL)
+        if(route->getBoat()->get_boatType()==BOAT_REAL)
         {
             roadMapInterval->setValue(Settings::getSetting("roadMapInterval",5).toInt());
             roadMapHDG->setValue(Settings::getSetting("roadMapHDG",0).toInt());
@@ -355,7 +366,14 @@ void DialogRoute::slotInterval()
                 totalTimeMoteur+=roadItems.at(0)-route->getRoadMap()->at(i-1).at(0);
         }
         else
-            img.fill(Qt::white);
+        {
+            vlmPoint p(roadItems.at(1),roadItems.at(2));
+            p.eta=roadItems.at(0);
+            if(parent->getTerre()->daylight(NULL,p))
+                img.fill(QColor(238,241,125));
+            else
+                img.fill(QColor(105,109,124));
+        }
         QPainter pnt(&img);
         pnt.setRenderHint(QPainter::Antialiasing);
         pen.setColor(Qt::gray);
@@ -366,11 +384,7 @@ void DialogRoute::slotInterval()
         pnt.drawPath(this->drawBoat);
         pnt.setMatrixEnabled(false);
         QColor rgb=Qt::white;
-        if(parent->getGrib() && parent->getGrib()->isOk())
-        {
-            rgb=QColor(parent->getGrib()->getWindColor(roadItems.at(7),true));
-            rgb.setAlpha(255);
-        }
+        rgb=MapDataDrawer::getWindColorStatic(roadItems.at(7),true);
         pen.setColor(rgb);
         pen.setWidth(2);
         pnt.setPen(pen);
@@ -539,32 +553,28 @@ void DialogRoute::slotInterval()
     if(route->getRoadMap()->count()>=2)
     {
         int elapsed=route->getRoadMap()->last().at(0)-route->getRoadMap()->first().at(0);
-        QTime eLapsed(0,0,0,0);
-        double jours=elapsed/(24*60*60);
-        if (qRound(jours)>jours)
-            --jours;
-        jours=qRound(jours);
-        elapsed=elapsed-jours*24*60*60;
-        eLapsed=eLapsed.addSecs(elapsed);
-        QString jour;
-        jour=jour.sprintf("%d",qRound(jours));
-        this->navTime->setText(jour+tr(" jours ")+eLapsed.toString("H'h 'mm'min '"));
+        this->navTime->setText(Util::formatElapsedTime(elapsed));
     }
     if(totalTimeMoteur>=0)
     {
         int elapsed=totalTimeMoteur;
-        QTime eLapsed(0,0,0,0);
-        double jours=elapsed/(24*60*60);
-        if (qRound(jours)>jours)
-            --jours;
-        jours=qRound(jours);
-        elapsed=elapsed-jours*24*60*60;
-        eLapsed=eLapsed.addSecs(elapsed);
-        QString jour;
-        jour=jour.sprintf("%d",qRound(jours));
-        this->engineTime->setText(jour+tr(" jours ")+eLapsed.toString("H'h 'mm'min '"));
+        this->engineTime->setText(Util::formatElapsedTime(elapsed));
     }
     delete waitBox;
+    routeStats stats=route->getStats();
+    qWarning()<<"total time"<<Util::formatElapsedTime(stats.totalTime);
+    qWarning()<<"total time beating"<<Util::formatElapsedTime(stats.beatingTime);
+    qWarning()<<"total time largue"<<Util::formatElapsedTime(stats.largueTime);
+    qWarning()<<"total time downwind"<<Util::formatElapsedTime(stats.reachingTime);
+    qWarning()<<"total time at night"<<Util::formatElapsedTime(stats.nightTime);
+    qWarning()<<"total distance"<<stats.totalDistance;
+    qWarning()<<"average tws"<<stats.averageTWS;
+    qWarning()<<"max tws"<<stats.maxTWS;
+    qWarning()<<"min tws"<<stats.minTWS;
+    qWarning()<<"average bs"<<stats.averageBS;
+    qWarning()<<"max bs"<<stats.maxBS;
+    qWarning()<<"min bs"<<stats.minBS;
+    qWarning()<<"nb gybes/tacks"<<stats.nbTacksGybes;
 }
 void DialogRoute::drawTransformedLine( QPainter &pnt,
         double si, double co,int di, int dj, int i,int j, int k,int l)
@@ -794,8 +804,11 @@ void DialogRoute::done(int result)
         route->getLine()->setCoastDetection(editCoasts->isChecked());
         if(hidePois->isChecked()!=route->getHidePois())
             route->setHidePois(hidePois->isChecked());
-        if(this->Simplifier->isChecked())
+        if(this->Simplifier->checkState()!=Qt::Unchecked)
+        {
             route->setSimplify(true);
+            route->set_strongSimplify(Simplifier->checkState()!=Qt::PartiallyChecked);
+        }
         else
         {
             route->setSimplify(false);

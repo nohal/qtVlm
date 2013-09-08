@@ -34,6 +34,24 @@ Copyright (C) 2008 - Jacques Zaninetti - http://zygrib.free.fr
 #include "routeInfo.h"
 #include "class_list.h"
 
+struct routeStats
+{
+    int totalTime;
+    double totalDistance;
+    double averageBS;
+    double maxBS;
+    double minBS;
+    double averageTWS;
+    double maxTWS;
+    double minTWS;
+    int rainTime;
+    int engineTime;
+    int reachingTime;
+    int beatingTime;
+    int largueTime;
+    int nbTacksGybes;
+    int nightTime;
+};
 
 //===================================================================
 class ROUTE : public QObject
@@ -139,12 +157,19 @@ class ROUTE : public QObject
         void setShowInterpolData(bool b);
         void setSortPoisByName(bool b){this->sortPoisbyName=b;}
         bool getSortPoisByName(){return this->sortPoisbyName;}
-    public slots:
+        FCT_SETGET_CST(bool,strongSimplify)
+        FCT_SETGET_CST(bool,forceComparator)
+        routeStats getStats();
+
+        static void read_routeData(myCentralWidget * centralWidget);
+        static void write_routeData(QList<ROUTE*>& route_list,myCentralWidget * centralWidget);
+        static void cleanFile(QString fname);
+
+public slots:
         void slot_recalculate(boat * boat=NULL);
         void slot_edit();
-        void slot_shShow();
-        void slot_shHidden();
-        void slot_shRou(){if(this->line->isVisible()) slot_shHidden();else slot_shShow();}
+        void slot_shShow() { slot_shRou(false); }
+        void slot_shRou(bool isHidden);
         void slot_export(){parent->exportRouteFromMenu(this);}
         void slot_boatPointerHasChanged(boat * acc);
         void slot_compassFollow(){parent->setCompassFollow(this);}
@@ -236,6 +261,8 @@ class ROUTE : public QObject
         routeInfo * roadInfo;
         bool showInterpolData;
         bool sortPoisbyName;
+        bool strongSimplify;
+        bool forceComparator;
 };
 Q_DECLARE_TYPEINFO(ROUTE,Q_MOVABLE_TYPE);
 #endif // ROUTE_H

@@ -76,21 +76,22 @@ class vlmLine : public QGraphicsWidget
         void setPointDistIso(const int &n, const double &d){this->line[n].distIso=d;}
         void setPointCapVmg(const int &n, const double &d){this->line[n].capVmg=d;}
         void setPointcapOrigin(const int &n,const double &d){this->line[n].capOrigin=d;}
+        void setPointIsoIndex(const int &n, const int &i){this->line[n].isoIndex=i;}
         void setPointCoordProj(const int &n,const double &x,const double &y){this->line[n].lonProj=x;this->line[n].latProj=y;}
         void setNotSimplificable(const int &n){this->line[n].notSimplificable=true;}
         void setLastPointIsPoi(){this->line[line.count()-1].isPOI=true;}
-        const vlmPoint * getOrigin(const int &n) {return this->line.at(n).origin;}
-        const vlmPoint * getPoint(const int &n) {return & line.at(n);}
+        vlmPoint * getOrigin(const int &n) {return this->line[n].origin;}
+        vlmPoint * getPoint(const int &n) {return & line[n];}
         void setInterpolated(const double &lon,const double &lat){this->interpolatedLon=lon;this->interpolatedLat=lat;update();}
         void setHasInterpolated(const bool &b){this->hasInterpolated=b;update();}
         vlmPoint * getLastPoint() {return & line.last();}
         void setRoundedEnd(const bool &b){this->roundedEnd=b;}
         void setCoastDetection(const bool &b){this->coastDetection=b;}
         bool getCoastDetected(){return this->coastDetected;}
-        void setMcp(myCentralWidget * mcp){this->mcp=mcp;}
         ~vlmLine();
-
+        void setMcp(myCentralWidget * mcp);
         void set_zValue(const double &z);
+        void drawInMagnifier(QPainter *pnt, Projection *tempProj);
 protected:
         void paint(QPainter * pnt, const QStyleOptionGraphicsItem * , QWidget * );
         QRectF boundingRect() const;
@@ -101,6 +102,7 @@ protected:
 //        void  mousePressEvent(QGraphicsSceneMouseEvent * e);
 //        void  mouseReleaseEvent(QGraphicsSceneMouseEvent * e);
     public slots:
+        void slot_compassLineToggle(bool b);
         void slot_showMe(void);
         void slot_shLab(bool state){this->labelHidden=state;update();}
         void slot_startReplay(bool b){this->replayMode=b;slot_showMe();}
@@ -140,6 +142,8 @@ protected:
         QPainterPath myPath;
         double myZvalue;
         myCentralWidget * mcp;
+        bool drawingInMagnifier;
+        QString myToolTip;
 };
 Q_DECLARE_TYPEINFO(vlmLine,Q_MOVABLE_TYPE);
 

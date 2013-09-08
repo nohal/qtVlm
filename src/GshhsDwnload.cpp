@@ -87,16 +87,16 @@ void GshhsDwnload::requestFinished(QByteArray res) {
 
 
 void GshhsDwnload::getMaps(void) {
-    QString page="/~oxygen/qtvlmMaps/";
+    QString page="/oxygen/qtvlmMaps/";
 
-    //QString page = "/~oxygen/";
+    //QString page = "/oxygen/";
 
     page+= MAP_FNAME;
 
     connect (this->getInet()->getProgressDialog(),SIGNAL(rejected()),this,SLOT(slot_abort()));
     finished=false;
     filename="";
-    inetGetProgress(1,page,"http://www.virtual-winds.com",false);
+    inetGetProgress(1,page,"http://www.virtual-winds.org",false);
     while(!finished) {
         QCoreApplication::processEvents(QEventLoop::AllEvents, 10);
     }
@@ -122,6 +122,7 @@ void GshhsDwnload::getMaps(void) {
             centralWidget->loadGshhs();
         }
         QDir::temp().remove(MAP_FNAME);
+        QDir::setCurrent(appFolder.value("home"));
 
     }
 }

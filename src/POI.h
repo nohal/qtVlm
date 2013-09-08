@@ -92,7 +92,7 @@ class POI : public QGraphicsWidget
         void setSearchStep     (double value){this->searchStep=value;}
         void setNavMode        (int mode);
         void setOptimizing     (bool b) {this->optimizing=b;}
-        void setMyLabelHidden  (bool b) {if(route==NULL) this->myLabelHidden=false; else this->myLabelHidden=b;}
+        void setMyLabelHidden  (bool b) {if(route==NULL) this->myLabelHidden=false; else this->myLabelHidden=b;prepareGeometryChange();update();}
         bool getMyLabelHidden  (void) {return this->myLabelHidden;}
         void setNotSimplificable(bool b) {this->notSimplificable=b;this->ac_simplifiable->setChecked(b);update();}
         bool getNotSimplificable(){return this->notSimplificable;}
@@ -128,6 +128,13 @@ class POI : public QGraphicsWidget
         void setSequence(int i){this->sequence=i;}
         int getSequence(){return this->sequence;}
         void manageLineBetweenPois();
+
+        static void importZyGrib(myCentralWidget * centralWidget);
+        static void importGeoData(myCentralWidget * centralWidget);
+        static void read_POIData(myCentralWidget * centralWidget);
+        static void write_POIData(QList<POI*> & poi_list,myCentralWidget * centralWidget);
+        static void cleanFile(QString fname);
+
 public slots:
         void slot_updateProjection();
         void slot_editPOI();
@@ -139,9 +146,7 @@ public slots:
         void slot_paramChanged();
         void slot_WPChanged(double tlat,double tlon);
         void slot_updateTip(boat *);
-        void slot_shShow(){show();}
-        void slot_shHidden(){hide();}
-        void slot_shPoi(){this->isVisible()?hide():show();}
+        void slot_shPoi(bool isHidden){if(isHidden) hide(); else show();}
         void slot_shLab(bool state){this->labelHidden=state;update();}
         void slot_routeMenu(QAction* ptr_action);
         void slot_finePosit(bool silent=false);
@@ -151,8 +156,10 @@ public slots:
         void slot_twaLine(){parent->twaDraw(lon,lat);}
         void slotCompassLine();
         void slot_editRoute();
+        void slot_poiRoute();
         void slot_optimizeRoute();
-        void slot_simplifyRoute();
+        void slot_simplifyRouteMax();
+        void slot_simplifyRouteMin();
         void slot_copyRoute();
         void slot_zoomRoute();
         void slot_relier();
@@ -160,6 +167,7 @@ public slots:
         void slot_notSimplificable(bool b){this->notSimplificable=b;update();}
         void slot_routage(void) { ROUTAGE * routage=parent->addRoutage(); parent->slot_editRoutage(routage,true,this); }
         void slot_timerSimp();
+        void slot_centerOnBoat(void);
 
     signals:
         void chgWP(double,double,double);
@@ -221,13 +229,17 @@ public slots:
         QAction * ac_delPoi;
         QAction * ac_delRoute;
         QAction * ac_editRoute;
-        QAction * ac_simplifyRoute;
+        QAction * ac_poiRoute;
+        QMenu   * menuSimplify;
+        QAction * ac_simplifyRouteMax;
+        QAction * ac_simplifyRouteMin;
         QAction * ac_optimizeRoute;
         QAction * ac_copyRoute;
         QAction * ac_zoomRoute;
         QAction * ac_copy;
         QAction * ac_compassLine;
         QAction * ac_twaLine;
+        QAction * ac_centerOnPOI;
         QAction * ac_setHorn;
         QMenu * ac_routeList;
         QAction * ac_finePosit;

@@ -11,19 +11,58 @@ DialogViewPolar::DialogViewPolar(QWidget *parent) :
 {
     setupUi(this);
     Util::setFontDialog(this);
+    QMap<QWidget *,QFont> exceptions;
+    QFont wfont=QApplication::font();
+    wfont.setPointSizeF(12.0);
+    exceptions.insert(doubleSpinBox,wfont);
+    exceptions.insert(BVMG_up,wfont);
+    exceptions.insert(BVMG_down,wfont);
+    Util::setSpecificFont(exceptions);
     image=QPixmap(this->imageContainer->size());
     image.fill(Qt::red);
     pnt.begin(&image);
+    QFont myFont(Settings::getSetting("defaultFontName",QApplication::font().family()).toString());
+    myFont.setPointSizeF(8.0);
+    pnt.setFont(myFont);
     pnt.setRenderHint(QPainter::Antialiasing);
     this->imageContainer->setPixmap(image);
     connect(this->doubleSpinBox,SIGNAL(valueChanged(double)),this,SLOT(drawIt()));
     connect(this->allSpeed,SIGNAL(clicked()),this,SLOT(drawIt()));
     imageContainer->installEventFilter(this);
     connect(this->closeButton,SIGNAL(clicked()),this,SLOT(close()));
+    this->doubleSpinBox->installEventFilter(this);
 }
 
-bool DialogViewPolar::eventFilter(QObject *, QEvent *event)
+bool DialogViewPolar::eventFilter(QObject *obj, QEvent *event)
 {
+    if(obj==doubleSpinBox)
+    {
+        if(event->type()==QEvent::KeyPress)
+        {
+            QKeyEvent *keyEvent = static_cast<QKeyEvent*>(event);
+            if(keyEvent->key()==Qt::Key_Shift)
+                doubleSpinBox->setSingleStep(0.1);
+            else if(keyEvent->key()==Qt::Key_Control)
+                doubleSpinBox->setSingleStep(10.0);
+            else if(keyEvent->key()==Qt::Key_Alt)
+                doubleSpinBox->setSingleStep(0.01);
+        }
+        else if (event->type()==QEvent::KeyRelease)
+        {
+            QKeyEvent *keyEvent = static_cast<QKeyEvent*>(event);
+            if(keyEvent->key()==Qt::Key_Shift || keyEvent->key()==Qt::Key_Control || keyEvent->key()==Qt::Key_Alt)
+                doubleSpinBox->setSingleStep(1.0);
+        }
+        if(event->type()==QEvent::Wheel)
+        {
+            /*by default wheeling with ctrl already multiply singleStep by 10
+              so to get 10 you need to put 1...*/
+            QWheelEvent *wheelEvent = static_cast<QWheelEvent*>(event);
+            if(wheelEvent->modifiers()==Qt::ControlModifier)
+                doubleSpinBox->setSingleStep(1);
+        }
+        return false;
+    }
     if(this->allSpeed->isChecked()) return false;
     if(event->type()==QEvent::MouseButtonRelease)
     {
@@ -59,7 +98,8 @@ bool DialogViewPolar::eventFilter(QObject *, QEvent *event)
     double aws=sqrt(a*a+bb*bb);
     double awa=90-radToDeg(atan(bb/a));
     double vmg=polarValues.at(angle)*cos(degToRad(angle));
-    s=s.sprintf(QObject::tr("TWA %ddeg, BS %.2fnds\nAWA %.2fdeg, AWS %.2fnds\nVMG %.2fnds").toLatin1(),angle,polarValues.at(angle),awa,aws,vmg);
+    s=s.sprintf("TWA %ddeg, BS %.2fnds\nAWA %.2fdeg, AWS %.2fnds\nVMG %.2fnds",angle,polarValues.at(angle),awa,aws,vmg);
+    s=s.replace("deg",tr("deg"));
     imageContainer->setPixmap(i2);
     info->setText(s);
     return true;
@@ -68,7 +108,7 @@ void DialogViewPolar::setBoat(boat *myboat)
 {
     this->myBoat=myboat;
     this->setWindowTitle(tr("Analyse de la polaire: ")+myBoat->getPolarName());
-    if(myBoat->getType()==BOAT_VLM)
+    if(myBoat->get_boatType()==BOAT_VLM)
         this->doubleSpinBox->setValue(myBoat->getWindSpeed());
     this->drawIt();
 }

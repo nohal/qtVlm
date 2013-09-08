@@ -26,6 +26,8 @@ DialogSailDocs::DialogSailDocs(QString param, QWidget * parent) : QDialog(parent
     setupUi(this);
     Util::setFontDialog(this);
     this->param->setText(param);
+    this->param->setFocus();
+    this->param->selectAll();
 }
 DialogSailDocs::~DialogSailDocs()
 {

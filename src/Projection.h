@@ -76,7 +76,10 @@ Q_OBJECT
 
         /* coord conversion */
         void screen2map(const int &i, const int &j, double *x, double *y) const;
+        void screen2map(const QPoint & screenCoord,QPointF * position) const;
         void screen2mapDouble(const double &i, const double &j, double *x, double *y) const;
+        void screen2mapDouble(const QPointF & screenCoord,QPointF * position) const;
+        QPointF screen2mapDouble(const QPointF & screenCoord) const;
         void map2screen(const double &x, const double &y, int *i, int *j) const;
         void map2screenDouble(const double &x, const double &y, double *i, double *j) const;
         void map2screenByReference(const double &ref, const double &refX, const double &x, const double &y, double *i, double *j) const;
@@ -144,15 +147,34 @@ inline void Projection::map2screenDouble(const double &x, const double &y, doubl
 }
 #endif
 //-------------------------------------------------------------------------------
-inline void Projection::screen2map(const int &i, const int &j, double *x, double *y) const
-{
+inline void Projection::screen2map(const int &i, const int &j, double *x, double *y) const {
     *x = (double)(i/scale+xW);
     *y = radToDeg((2*atan(exp((double)(degToRad(PY-(j-H/2)/scale)))))-M_PI_2);
 }
+
+inline void Projection::screen2map(const QPoint & screenCoord,QPointF * position) const {
+    position->setX((double)(screenCoord.x()/scale+xW));
+    position->setY(radToDeg((2*atan(exp((double)(degToRad(PY-(screenCoord.y()-H/2)/scale)))))-M_PI_2));
+}
+
 inline void Projection::screen2mapDouble(const double &i, const double &j, double *x, double *y) const
 {
     *x = (double)(i/scale+xW);
     *y = radToDeg((2*atan(exp((double)(degToRad(PY-(j-H/2)/scale)))))-M_PI_2);
+}
+
+inline void Projection::screen2mapDouble(const QPointF & screenCoord, QPointF * position) const
+{
+    position->setX((double)(screenCoord.x()/scale+xW));
+    position->setY(radToDeg((2*atan(exp((double)(degToRad(PY-(screenCoord.y()-H/2)/scale)))))-M_PI_2));
+}
+
+inline QPointF Projection::screen2mapDouble(const QPointF & screenCoord) const
+{
+    QPointF position;
+    position.setX((double)(screenCoord.x()/scale+xW));
+    position.setY(radToDeg((2*atan(exp((double)(degToRad(PY-(screenCoord.y()-H/2)/scale)))))-M_PI_2));
+    return position;
 }
 
 //-------------------------------------------------------------------------------

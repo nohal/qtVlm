@@ -87,6 +87,16 @@ class boatVLM : public boat, public inetClient
 
         bool getPolarState(void)        {    return forcePolar; }
 
+        /* Changing pilot mode/param */
+        void set_pilotHeading(double heading);
+        void set_pilotAngle(double angle);
+        void set_pilotOrtho(void);
+        void set_pilotVmg(void);
+        void set_pilotVbvmg(void);
+        void setWP(QPointF WP,double WPh);
+
+        double getWPangle(void);
+
         QString getRaceId(void)         {    return QString().setNum(race_id); }
         QString getRaceName(void)       {    return race_name; }
 
@@ -108,20 +118,20 @@ class boatVLM : public boat, public inetClient
         QList<vlmLine*> getGates(){return gates;}
         void setWph(double w){this->WPHd=w;}
         vlmPoint getClosest(){return closest;}
+        FCT_SETGET_CST(bool,useSkin)
+        FCT_SETGET_CST(QString,boardSkin)
 
     public slots:
         void slot_getData(bool doingSync);
         void slot_getDataTrue();
-        void slot_shPor(){this->porteHidden=!this->porteHidden;showNextGates();}
+        void slot_shPor(bool isHidden){this->porteHidden=isHidden;showNextGates();}
         void slot_selectBoat();
-        void slot_shSall() { this->porteHidden=false; showNextGates();}
-        void slot_shHall() { this->porteHidden=true; showNextGates();}
         void slot_errorDuringGet();
         void slot_resetTraceCache();
 
     signals:
         void getTrace(QByteArray,QList<vlmPoint> *);
-        void hasFinishedUpdating(void);
+        void hasFinishedUpdating(void);        
 
     private:
         /* VLM boat data */
@@ -171,6 +181,8 @@ class boatVLM : public boat, public inetClient
 
         /* VLM link*/
         void doRequest(int request);
+        bool confirmChange(QString question,QString info);
+        void sendPilotMode(QString phpScript,QVariantMap instruction);
 
         void my_unSelectBoat(bool needUpdate);
         void my_selectBoat(void);
@@ -185,6 +197,8 @@ class boatVLM : public boat, public inetClient
         vlmPoint closest;
         void getDistHdgGate();
         void endOfUpdating();
+        bool useSkin;
+        QString boardSkin;
 
 };
 Q_DECLARE_TYPEINFO(boatVLM,Q_MOVABLE_TYPE);

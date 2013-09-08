@@ -25,6 +25,7 @@ Copyright (C) 2008 - Jacques Zaninetti - http://zygrib.free.fr
 #include <QPushButton>
 #include <QLabel>
 #include <QDebug>
+#include <QIcon>
 
 
 #include "MenuBar.h"
@@ -34,12 +35,17 @@ Copyright (C) 2008 - Jacques Zaninetti - http://zygrib.free.fr
 #include "routage.h"
 #include "Terrain.h"
 #include "settings.h"
-#include <QIcon>
+#include "ToolBar.h"
+//#include "Board.h"
+#include "BarrierSet.h"
+#include "MapDataDrawer.h"
+
 
 //===================================================================================
-MenuBar::MenuBar(QWidget *parent)
+MenuBar::MenuBar(MainWindow *parent)
     : QMenuBar(parent)
 {
+    mainWindow=parent;
     this->setAccessibleName("mainMenuQtvlm");
     //-------------------------------------
     // Menu + Actions
@@ -48,8 +54,10 @@ MenuBar::MenuBar(QWidget *parent)
 
         acFile_Quit = addAction(menuFile,
                     tr("Quitter"), tr("Ctrl+Q"), tr("Bye"), appFolder.value("img")+"exit.png");
+
         acFile_QuitNoSave = addAction(menuFile,
-                    tr("Quitter sans sauver"), tr("Ctrl+Shift+Q"), tr("Bye"), appFolder.value("img")+"exit2.png");
+                                      tr("Quitter sans sauver"), "", "", appFolder.value("img")+"exit2.png");
+        //acFile_QuitNoSave->setMenuRole(QAction::ApplicationSpecificRole);
         menuFile->addSeparator();
         acFile_Lock = addAction(menuFile,
                     tr("Verrouiller"), tr("Ctrl+L"), tr("Verrouiller l'envoi d'ordre a VLM"), appFolder.value("img")+"unlock.png");
@@ -62,84 +70,124 @@ MenuBar::MenuBar(QWidget *parent)
         menuFile->addMenu(mn_img);
         menuFile->addSeparator();
 
-        QMenu *menuShowHide = new QMenu(tr("Montrer/cacher"));
-           acOptions_GroupShowHide = new QActionGroup(menuShowHide);
-                acOptions_SH_sAll = addAction(menuShowHide, tr("Tout montrer"), "S", tr(""));
-                acOptions_SH_hAll = addAction(menuShowHide, tr("Tout cacher sauf les bateaux actifs"), "H", tr(""));
-                menuShowHide->addSeparator();
-                acOptions_SH_Opp = addAction(menuShowHide, tr("Cacher/Montrer les bateaux opposants"), "O", tr(""));
-                acOptions_SH_Por = addAction(menuShowHide, tr("Cacher/Montrer les portes et WPs"), "W", tr(""));
-                acOptions_SH_Poi = addAction(menuShowHide, tr("Cacher/Montrer les POIs"), "P", tr(""));
-                acOptions_SH_Rou = addAction(menuShowHide, tr("Cacher/Montrer les routes"), "R", tr(""));
-                acOptions_SH_Lab = addAction(menuShowHide, tr("Cacher/Montrer les etiquettes"), "E", tr(""));
-                menuShowHide->addSeparator();
-                acOptions_SH_Com = addAction(menuShowHide, tr("Cacher/Montrer le compas"), "C", tr(""));
-                acOptions_SH_ComBandeau = addAction(menuShowHide, tr("Cacher/Montrer le compas du bandeau"), "V", tr(""));
-                acOptions_SH_Pol = addAction(menuShowHide, tr("Cacher/Montrer la polaire"), "L", tr(""));
-                menuShowHide->addSeparator();
-                acOptions_SH_Fla = addAction(menuShowHide, tr("Cacher/Montrer les pavillons sur la carte"), "F", tr(""));
-                menuShowHide->addSeparator();
-                acOptions_SH_Boa = addAction(menuShowHide, tr("Centrer sur le bateau actif"), "B", tr(""));
 
-        //menuOptions->addMenu(menuShowHide);
-                menuFile->addMenu(menuShowHide);
-                menuFile->addSeparator();
-                acHorn=addAction(menuFile,tr("Configurer la corne de brume"),"","",tr(""));
-                acKeep=addAction(menuFile,tr("Conserver la position du bateau dans l'ecran lors de zoom +/-"),"Z","",tr(""));
-                acKeep->setCheckable(true);
-                acKeep->setChecked(Settings::getSetting("keepBoatPosOnScreen",1).toInt()==1);
-                acReplay=addAction(menuFile,tr("Rejouer l'historique des traces"),"Y","",tr(""));
-                acScreenshot=addAction(menuFile,tr("Photo d'ecran"),"Ctrl+E","",tr(""));                
+
+        acHorn=addAction(menuFile,tr("Configurer la corne de brume"),"","",tr(""));
+        //acHorn->setMenuRole(QAction::ApplicationSpecificRole);
+        acReplay=addAction(menuFile,tr("Rejouer l'historique des traces"),"Y","",tr(""));
+        acScreenshot=addAction(menuFile,tr("Photo d'ecran"),"Ctrl+E","",tr(""));
 
     addMenu(menuFile);
 
+    menuView = new QMenu(tr("View"));
+    connect(menuView,SIGNAL(aboutToShow()),this,SLOT(slot_showViewMenu()));
+    /*boardMenu = new QMenu(tr("Board"));
+    menuView->addMenu(boardMenu);*/
+    toolBarMenu = new QMenu(tr("ToolBar"));
+    menuView->addMenu(toolBarMenu);
+    menuView->addSeparator();
+    acOptions_SH_sAll = addAction(menuView, tr("Tout montrer"), "S", tr(""));
+    acOptions_SH_hAll = addAction(menuView, tr("Tout cacher sauf les bateaux actifs"), "H", tr(""));
+    menuView->addSeparator();
+    QMenu * boatPoiSH = new QMenu(tr("Show/Hide boat and POI"));
+        acOptions_SH_Boa = addAction(boatPoiSH, tr("Centrer sur le bateau actif"), "B", tr(""));
+        acKeep=addAction(boatPoiSH,tr("Conserver la position du bateau dans l'ecran lors de zoom +/-"),"Z","",tr(""));
+        acKeep->setCheckable(true);
+        boatPoiSH->addSeparator();
+        acOptions_SH_Fla = addAction(boatPoiSH, tr("Montrer les pavillons sur la carte"), "F", tr(""));
+        acOptions_SH_Fla->setCheckable(true);
+        boatPoiSH->addSeparator();
+        acOptions_SH_Opp = addAction(boatPoiSH, tr("Montrer les bateaux opposants"), "O", tr(""));
+        acOptions_SH_Opp->setCheckable(true);
+        acOptions_SH_Por = addAction(boatPoiSH, tr("Montrer les portes et WPs"), "W", tr(""));
+        acOptions_SH_Por->setCheckable(true);
+        acOptions_SH_Poi = addAction(boatPoiSH, tr("Montrer les POIs"), "P", tr(""));
+        acOptions_SH_Poi->setCheckable(true);
+        acOptions_SH_Rou = addAction(boatPoiSH, tr("Montrer les routes"), "R", tr(""));
+        acOptions_SH_Rou->setCheckable(true);
+        acOptions_SH_Lab = addAction(boatPoiSH, tr("Montrer les etiquettes"), "E", tr(""));
+        acOptions_SH_Lab->setCheckable(true);
+        acOptions_SH_barSet = addAction(boatPoiSH, tr("Montrer les barrieres"), "D", tr(""));
+        acOptions_SH_barSet->setCheckable(true);
+    menuView->addMenu(boatPoiSH);
+    QMenu * compasSH = new QMenu(tr("Show/Hide compas"));
+    acOptions_SH_Com = addAction(compasSH, tr("Cacher/Montrer le compas"), "C", tr(""));
+    acOptions_SH_Com->setCheckable(true);
+    acOptions_SH_Pol = addAction(compasSH, tr("Cacher/Montrer la polaire"), "L", tr(""));
+    acOptions_SH_Pol->setCheckable(true);
+
+    menuView->addMenu(compasSH);
+
+    menuView->addSeparator();
+
+    acOptions_SH_Nig = addAction(menuView, tr("Montrer les zones de jour et nuit"), "N", tr(""));
+    acOptions_SH_Nig->setCheckable(true);
+
+    acOptions_SH_Tdb = addAction(menuView, tr("Montrer le tableau de bord"), "T", tr(""));
+    acOptions_SH_Tdb->setCheckable(true);
+
+    addMenu(menuView);
+
     //-------------------------------------
-    menuView = new QMenu(tr("Fichier GRIB"));
-        acFile_Open = addAction(menuView, tr("Ouvrir"),
+    menuGrib = new QMenu(tr("Fichier GRIB"));
+        acFile_Open = addAction(menuGrib, tr("Ouvrir"),
                     tr("Ctrl+O"),
                     tr("Ouvrir un fichier GRIB"), appFolder.value("img")+"fileopen.png");
-        acFile_Reopen = addAction(menuView, tr("Recharcher"),
+        acFile_Reopen = addAction(menuGrib, tr("Recharcher"),
                     "",
                     tr("Recharger le fichier GRIB actuel"), appFolder.value("img")+"fileopen.png");
-        acFile_Close = addAction(menuView, tr("Fermer"),
+        acFile_Close = addAction(menuGrib, tr("Fermer"),
                     tr("Ctrl+W"),
                     tr("Fermer"), appFolder.value("img")+"fileclose.png");
-        acFile_Load_GRIB = addAction(menuView, tr("Telechargement"),
+        acFile_Load_GRIB = addAction(menuGrib, tr("Telechargement"),
                     tr("Ctrl+D"),
                     tr("Telechargement"), appFolder.value("img")+"network.png");
-        acFile_Load_VLM_GRIB = addAction(menuView, tr("Telechargement VLM"),
+        acFile_Load_VLM_GRIB = addAction(menuGrib, tr("Telechargement VLM"),
                     tr(""),
                     tr("Telechargement VLM"), appFolder.value("img")+"VLM_mto.png");
-        acFile_Load_SAILSDOC_GRIB = addAction(menuView, tr("Telechargement SailsDoc"),
+        acFile_Load_SAILSDOC_GRIB = addAction(menuGrib, tr("Telechargement SailsDoc"),
                                                 tr(""),
                                                 tr("Telechargement SailsDoc"), appFolder.value("img")+"kmail.png");
-        menuView->addSeparator();
-        acFile_Open_Current = addAction(menuView, tr("Ouvrir un GRIB Courants"),
+        menuGrib->addSeparator();
+        acFile_Open_Current = addAction(menuGrib, tr("Ouvrir un GRIB Courants"),
                     tr(""),
                     tr("Ouvrir un fichier GRIB Courants"), appFolder.value("img")+"fileopen.png");
-        acFile_Close_Current = addAction(menuView, tr("Fermer le GRIB Courants"),
+        acFile_Close_Current = addAction(menuGrib, tr("Fermer le GRIB Courants"),
                     tr(""),
                     tr("Fermer le GRIB Courants"), appFolder.value("img")+"fileclose.png");
-        menuView->addSeparator();
-        acFile_Info_GRIB = addAction(menuView, tr("Informations sur le fichier"),
+        menuGrib->addSeparator();
+        acFile_Info_GRIB = addAction(menuGrib, tr("Informations sur le fichier"),
                     tr("Ctrl+I"),
                     tr("Informations sur le fichier GRIB"), appFolder.value("img")+"info.png");
-        menuView->addSeparator();
+        menuGrib->addSeparator();
 
         menuGroupColorMap = new QMenu(tr("Type de carte"));
         acView_GroupColorMap = new ZeroOneActionGroup (menuGroupColorMap);
                 acView_WindColors = addActionCheck(menuGroupColorMap, tr("Carte du vent"), "", "");
+                gribDataActionMap.insert(MapDataDrawer::drawWind,acView_WindColors);
                 acView_CurrentColors = addActionCheck(menuGroupColorMap, tr("Carte du courant"), "", "");
+                gribDataActionMap.insert(MapDataDrawer::drawCurrent,acView_CurrentColors);
                 acView_RainColors = addActionCheck(menuGroupColorMap, tr("Carte des preecipitations"),"","");
+                gribDataActionMap.insert(MapDataDrawer::drawRain,acView_RainColors);
                 acView_CloudColors = addActionCheck(menuGroupColorMap, tr("Couverture nuageuse"), "","");
+                gribDataActionMap.insert(MapDataDrawer::drawCloud,acView_CloudColors);
                 acView_HumidColors = addActionCheck(menuGroupColorMap, tr("Carte de l'humidite relative"),"","");
+                gribDataActionMap.insert(MapDataDrawer::drawHumid,acView_HumidColors);
                 acView_TempColors = addActionCheck(menuGroupColorMap, tr("Carte de la temperature"),"","");
+                gribDataActionMap.insert(MapDataDrawer::drawTemp,acView_TempColors);
                 acView_TempPotColors = addActionCheck(menuGroupColorMap, tr("Carte de la temperature potentielle"),"","");
+                gribDataActionMap.insert(MapDataDrawer::drawTempPot,acView_TempPotColors);
                 acView_DeltaDewpointColors = addActionCheck(menuGroupColorMap, tr("Ecart temperature-point de rosee"), "", "");
+                gribDataActionMap.insert(MapDataDrawer::drawDeltaDewpoint,acView_DeltaDewpointColors);
                 acView_SnowCateg = addActionCheck(menuGroupColorMap, tr("Neige (chute possible)"), "", "");
-                acView_SnowDepth = addActionCheck(menuGroupColorMap, tr("Neige (Epaisseur)"), "", "");
+                gribDataActionMap.insert(MapDataDrawer::drawSnowCateg,acView_SnowCateg);
+                //acView_SnowDepth = addActionCheck(menuGroupColorMap, tr("Neige (Epaisseur)"), "", "");
                 acView_FrzRainCateg = addActionCheck(menuGroupColorMap, tr("Pluie verglacante (chute possible)"), "", "");
+                gribDataActionMap.insert(MapDataDrawer::drawFrzRainCateg,acView_FrzRainCateg);
                 acView_CAPEsfc = addActionCheck(menuGroupColorMap, tr("CAPE (surface)"), "", "");
+                gribDataActionMap.insert(MapDataDrawer::drawCAPEsfc,acView_CAPEsfc);
+                acView_CINsfc = addActionCheck(menuGroupColorMap, tr("CIN (surface)"), "", "");
+                gribDataActionMap.insert(MapDataDrawer::drawCINsfc,acView_CINsfc);
                 acView_GroupColorMap->addAction(acView_WindColors);
                 acView_GroupColorMap->addAction(acView_CurrentColors);
                 acView_GroupColorMap->addAction(acView_RainColors);
@@ -149,13 +197,14 @@ MenuBar::MenuBar(QWidget *parent)
                 acView_GroupColorMap->addAction(acView_TempPotColors);
                 acView_GroupColorMap->addAction(acView_DeltaDewpointColors);
                 acView_GroupColorMap->addAction(acView_SnowCateg);
-                acView_GroupColorMap->addAction(acView_SnowDepth);
+                //acView_GroupColorMap->addAction(acView_SnowDepth);
                 acView_GroupColorMap->addAction(acView_FrzRainCateg);
                 acView_GroupColorMap->addAction(acView_CAPEsfc);
-        menuView->addMenu(menuGroupColorMap);
-        menuView->addSeparator();
+                acView_GroupColorMap->addAction(acView_CINsfc);
+        menuGrib->addMenu(menuGroupColorMap);
+        menuGrib->addSeparator();
 
-        setMenubarColorMapMode(Settings::getSetting("colorMapMode", Terrain::drawWind).toInt());
+        setMenubarColorMapMode(Settings::getSetting("colorMapMode", MapDataDrawer::drawWind).toInt());
 
         //-------------------------------------
         menuAltitude = new QMenu(tr("Altitude"));
@@ -218,25 +267,25 @@ MenuBar::MenuBar(QWidget *parent)
                 menuAltitude->addMenu(menuGeopotStep);
                 acAlt_GeopotLabels = addActionCheck(menuAltitude, tr("Geopotentials labels"), "","");
 
-                //menuView->addMenu(menuAltitude);
-                //menuView->addSeparator();
+                //menuGrib->addMenu(menuAltitude);
+                //menuGrib->addSeparator();
 
-        acView_ColorMapSmooth = addActionCheck(menuView, tr("Degrades de couleurs"), tr(""),
+        acView_ColorMapSmooth = addActionCheck(menuGrib, tr("Degrades de couleurs"), tr(""),
                     tr(""));
         acView_ColorMapSmooth->setChecked(Settings::getSetting("colorMapSmooth", true).toBool());
-        acView_WindArrow = addActionCheck(menuView, tr("Fleches du vent"), tr(""),
+        acView_WindArrow = addActionCheck(menuGrib, tr("Fleches du vent"), tr(""),
                     tr("Afficher les fleches de direction du vent"));
         acView_WindArrow->setChecked(Settings::getSetting("showWindArrows", true).toBool());
-        acView_Barbules = addActionCheck(menuView, tr("Barbules"), tr(""),
+        acView_Barbules = addActionCheck(menuGrib, tr("Barbules"), tr(""),
                     tr("Afficher les barbules sur les fleches de vent"));
         acView_Barbules->setChecked(Settings::getSetting("showBarbules", true).toBool());
-        menuView->addSeparator();
-        acView_TemperatureLabels = addActionCheck(menuView,
+        menuGrib->addSeparator();
+        acView_TemperatureLabels = addActionCheck(menuGrib,
                                 tr("Temperature"), tr("Ctrl+T"),
                     "");
         acView_TemperatureLabels->setChecked(Settings::getSetting("showTemperatureLabels", false).toBool());
         //--------------------------------
-        menuView->addSeparator();
+        menuGrib->addSeparator();
                 menuIsobars = new QMenu(tr("Isobares"));
                 acView_Isobars = addActionCheck(menuIsobars, tr("Afficher les isobares"), "","");
                 acView_Isobars->setChecked(Settings::getSetting("showIsobars", true).toBool());
@@ -265,7 +314,7 @@ MenuBar::MenuBar(QWidget *parent)
         acView_PressureMinMax = addActionCheck(menuIsobars, tr("Pression Mini(L) Maxi(H)"), "",
                             tr("Afficher les points de pression mini et maxi"));
         acView_PressureMinMax->setChecked(Settings::getSetting("showPressureMinMax", false).toBool());
-                menuView->addMenu(menuIsobars);
+                menuGrib->addMenu(menuIsobars);
         setIsobarsStep(Settings::getSetting("isobarsStep", 2).toInt());
         //--------------------------------
                 menuIsotherms0 = new QMenu(tr("Isothermes 0degC"));
@@ -289,21 +338,21 @@ MenuBar::MenuBar(QWidget *parent)
                 acView_GroupIsotherms0Step->addAction(acView_Isotherms0Step500);
                 acView_GroupIsotherms0Step->addAction(acView_Isotherms0Step1000);
             menuIsotherms0->addMenu(menuIsotherms0Step);
-            setIsotherms0Step(Settings::getSetting("isotherms0Step", 100).toInt());
+            setIsotherms0Step(Settings::getSetting("isotherms0Step", 50).toInt());
         acView_Isotherms0Labels = addActionCheck(menuIsotherms0,
                                                 tr("Etiquettes des isothermes 0degC"), "",
                             tr("Afficher les étiquettes des isothermes 0degC"));
         acView_Isotherms0Labels->setChecked(Settings::getSetting("showIsotherms0Labels", false).toBool());
-                menuView->addMenu(menuIsotherms0);
-        menuView->addSeparator();
+                menuGrib->addMenu(menuIsotherms0);
+        menuGrib->addSeparator();
         mn_fax=new QMenu(tr("Fax meteo"));
         acFax_Open = addAction(mn_fax, tr("Ouvrir un fax meteo"), "", tr(""));
         mn_fax->addAction(acFax_Open);
         acFax_Close = addAction(mn_fax, tr("Fermer le fax meteo"), "", tr(""));
         mn_fax->addAction(acFax_Close);
-        menuView->addMenu(mn_fax);
+        menuGrib->addMenu(mn_fax);
 
-    addMenu(menuView);
+    addMenu(menuGrib);
 
     //-------------------------------------
     menuBoat = new QMenu(tr("Bateau"));
@@ -339,8 +388,11 @@ MenuBar::MenuBar(QWidget *parent)
         acRoute_paste = addAction(menuRoute,
                     tr("Coller une route"),"Ctrl+V", "", "");
         menuRoute->addMenu(mnRoute_import);
+        acRoute_comparator= addAction(menuRoute,
+                                    tr("Routes comparator"),"", "", "");
         menuRoute->addSeparator();
         menuRoute->addMenu(mnRoute_delete);
+        acRouteRemove = addAction(menuRoute,tr("Supprimer des routes"),"","","");
     addMenu(menuRoute);
 
     menuRoutage = new QMenu(tr("Routages"));
@@ -366,6 +418,20 @@ MenuBar::MenuBar(QWidget *parent)
         menuPOI->addMenu(menuImportPoi);
         acPOIAdd = addAction(menuPOI,tr("Ajouter une marque"),"","","");
         acPOIRemove = addAction(menuPOI,tr("Supprimer des marques"),"","","");
+        acPOIRemoveByType = addAction(menuPOI,tr("Remove marks by type..."),"","","");
+        menuPOI->addSeparator();
+
+        subMenuBarrier= new QMenu(tr("Barrier set"));
+        connect(subMenuBarrier,SIGNAL(aboutToShow()),this,SLOT(slot_showBarrierMenu()));
+        menuPOI->addMenu(subMenuBarrier);
+        ac_addBarrierSet= addAction(subMenuBarrier,tr("Add barrier set"), tr(""), tr(""), "");
+        subMenuBarrier->addSeparator();
+        ac_addBarrier= addAction(subMenuBarrier,tr("Add barrier"), tr(""), tr(""), "");        
+        subSubMenuEditBarrierSet= new QMenu(tr("Parameters"));
+        subMenuBarrier->addMenu(subSubMenuEditBarrierSet);
+        subSubMenuDelBarrierSet= new QMenu(tr("Delete"));
+        subMenuBarrier->addMenu(subSubMenuDelBarrierSet);
+
     addMenu(menuPOI);
 
 
@@ -442,12 +508,27 @@ MenuBar::MenuBar(QWidget *parent)
         acHelp_AProposQT = addAction(menuHelp, tr("A propos de QT"),tr(""),tr(""),"");
         acHelp_Forum = addAction(menuHelp, tr("QtVlm forum"),tr(""),tr(""),"");
     addMenu(menuHelp);
-
-
+    foreach (QAction * act, this->actions())
+        setRules(act);
+    acFile_Quit->setMenuRole(QAction::QuitRole);
 
 }
 
-
+void MenuBar::setRules(QAction * act)
+{
+    Util::setFontDialog(act);
+    QMenu *menu=act->menu();
+    if(menu)
+    {
+        foreach(QAction * subAct,menu->actions())
+            setRules(subAct); //recursion
+    }
+    else
+    {
+        //qWarning()<<act->text();
+        act->setMenuRole(QAction::NoRole);
+    }
+}
 
 //---------------------------------------------------------
 // Menu popup : bouton droit de la souris
@@ -458,6 +539,10 @@ QMenu * MenuBar::createPopupBtRight(QWidget *parent)
 
     ac_CreatePOI = addAction(popup, tr("Positionner une nouvelle Marque"),tr(""),tr(""),"");
     ac_pastePOI = addAction(popup, tr("Coller une marque"),tr(""),tr(""),"");
+    popup->addSeparator();
+    ac_popupBarrier = new QAction(tr("Barrier not in edit mode"),popup);
+    popup->addAction(ac_popupBarrier);
+
     popup->addSeparator();
     ac_twaLine=addAction(popup,tr("Tracer une estime TWA"),tr(""),tr(""),"");
     ac_compassLine = addAction(popup, tr("Tirer un cap"),tr(""),tr(""),"");
@@ -477,7 +562,11 @@ QMenu * MenuBar::createPopupBtRight(QWidget *parent)
 
     popup->addSeparator();
     ac_editRoute=addAction(popup,tr("Editer la route"),"","","");
-    ac_simplifyRoute=addAction(popup,tr("Simplifier la route"),"","","");
+    ac_poiRoute=addActionCheck(popup,tr("Montrer les POIs intermediaires de la route"),"","","");
+    mn_simplifyRoute=new QMenu(tr("Simplifier la route"),popup);
+    ac_simplifyRouteMax=addAction(mn_simplifyRoute,tr("Maximum"),"","","");
+    ac_simplifyRouteMin=addAction(mn_simplifyRoute,tr("Minimum"),"","","");
+    popup->addMenu(mn_simplifyRoute);
     ac_optimizeRoute=addAction(popup,tr("Optimiser la route"),"","","");
     ac_copyRoute=addAction(popup,tr("Copier la route au format kml"),"","","");
     ac_zoomRoute=addAction(popup,tr("Zoom sur la route "),"","","");
@@ -589,51 +678,81 @@ void MenuBar::setIsotherms0Step(int step) {
     }
 }
 
-//------------------------------------------------------------
-void MenuBar::setMenubarColorMapMode(int colorMapMode)
-{
-    QAction  *act = NULL;
-    switch (colorMapMode)
-    {
-        case Terrain::drawWind :
-            act = acView_WindColors;
-            break;
-        case Terrain::drawCurrent :
-            act = acView_CurrentColors;
-            break;
-        case Terrain::drawRain :
-            act = acView_RainColors;
-            break;
-        case Terrain::drawCloud :
-            act = acView_CloudColors;
-            break;
-        case Terrain::drawHumid :
-            act = acView_HumidColors;
-            break;
-        case Terrain::drawTemp :
-            act = acView_TempColors;
-            break;
-        case Terrain::drawTempPot :
-            act = acView_TempPotColors;
-            break;
-        case Terrain::drawDeltaDewpoint :
-            act = acView_DeltaDewpointColors;
-            break;
-        case Terrain::drawSnowCateg :
-            act = acView_SnowCateg;
-            break;
-        case Terrain::drawFrzRainCateg :
-            act = acView_FrzRainCateg;
-            break;
-        case Terrain::drawSnowDepth :
-            act = acView_SnowDepth;
-            break;
-        case Terrain::drawCAPEsfc :
-            act = acView_CAPEsfc;
-            break;
+void MenuBar::slot_updateLockIcon(QIcon ic) {
+    acFile_Lock->setIcon(ic);
+}
+
+void MenuBar::slot_setChangeStatus(bool ,bool pilototo,bool syncBtn) {
+    acPilototo->setEnabled(pilototo);
+    acVLMSync->setEnabled(syncBtn);
+}
+
+void MenuBar::slot_showViewMenu(void) {
+    //boardMenu->clear();
+    //mainWindow->get_board()->build_showHideMenu(boardMenu);
+
+    toolBarMenu->clear();
+    mainWindow->get_toolBar()->build_showHideMenu(toolBarMenu);
+
+    acKeep->setChecked(Settings::getSetting("keepBoatPosOnScreen",1).toInt()==1);    
+    acOptions_SH_Nig->setChecked(Settings::getSetting("showNight",1).toInt()==1);
+
+    acOptions_SH_Fla->setChecked(Settings::getSetting("showFlag",0,"showHideItem").toInt()==1);
+    acOptions_SH_Pol->setChecked(Settings::getSetting("showPolar",0,"showHideItem").toInt()==1);
+    acOptions_SH_Com->setChecked(Settings::getSetting("showCompass",0,"showHideItem").toInt()==1);
+
+    acOptions_SH_Opp->setChecked(Settings::getSetting("hideOpponent",0,"showHideItem").toInt()==0);
+    acOptions_SH_Por->setChecked(Settings::getSetting("hidePorte",0,"showHideItem").toInt()==0);
+    acOptions_SH_Poi->setChecked(Settings::getSetting("hidePoi",0,"showHideItem").toInt()==0);
+    acOptions_SH_Rou->setChecked(Settings::getSetting("hideRoute",0,"showHideItem").toInt()==0);
+    acOptions_SH_Lab->setChecked(Settings::getSetting("hideLabel",0,"showHideItem").toInt()==0);
+    acOptions_SH_barSet->setChecked(Settings::getSetting("hideBarrierSet",0,"showHideItem").toInt()==0);
+}
+
+void MenuBar::slot_showBarrierMenu(void) {
+    subSubMenuDelBarrierSet->clear();
+    subSubMenuEditBarrierSet->clear();
+    if(::barrierSetList.isEmpty()) {
+        subSubMenuDelBarrierSet->setEnabled(false);
+        subSubMenuEditBarrierSet->setEnabled(false);
+        ac_addBarrier->setEnabled(false);
     }
-    if(act)
-        act->setChecked(true);
+    else {
+        qSort(::barrierSetList.begin(),::barrierSetList.end(),BarrierSet::myLessThan);
+
+        subSubMenuDelBarrierSet->setEnabled(true);
+        subSubMenuEditBarrierSet->setEnabled(true);
+        ac_addBarrier->setEnabled(true);
+
+        QListIterator<BarrierSet*> i (::barrierSetList);
+        while(i.hasNext()) {
+            BarrierSet * barrierSet=i.next();
+            QAction * action;
+            action = addAction(subSubMenuEditBarrierSet,barrierSet->get_name(),"","","");
+            connect(action,SIGNAL(triggered()),barrierSet,SLOT(slot_editBarrierSet()));
+            action = addAction(subSubMenuDelBarrierSet,barrierSet->get_name(),"","","");
+            connect(action,SIGNAL(triggered()),barrierSet,SLOT(slot_delBarrierSet()));
+        }
+    }
+
+}
+
+
+
+
+//------------------------------------------------------------
+void MenuBar::setMenubarColorMapMode(int colorMapMode,bool withoutEvent)
+{    
+    QMapIterator<int,QAction *> i(gribDataActionMap);
+    while(i.hasNext()) {
+        i.next();
+        QAction * ptr=i.value();
+        if(withoutEvent)
+            ptr->blockSignals(true);
+        ptr->setChecked(colorMapMode == i.key());
+        if(withoutEvent)
+            ptr->blockSignals(false);
+    }
 }
 
 //===================================================================================
@@ -665,3 +784,5 @@ void ZeroOneActionGroup::setCheckedAction(QAction *act, bool b)
         else
                 emit triggered( NULL );
 }
+
+

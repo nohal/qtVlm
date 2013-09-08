@@ -45,6 +45,11 @@ DialogPlayerAccount::DialogPlayerAccount(Projection * proj, MainWindow * main,
 {
     setupUi(this);
     Util::setFontDialog(this);
+    QMap<QWidget *,QFont> exceptions;
+    QFont wfont=QApplication::font();
+    wfont.setPointSizeF(9.0);
+    exceptions.insert(list_player,wfont);
+    Util::setSpecificFont(exceptions);
     this->proj = proj;
     this->main=main;
     this->parent=parent;
@@ -182,7 +187,7 @@ void DialogPlayerAccount::slot_langChanged(bool)
         this->btn_playerDel->setText("Borrar");
         this->pl_data_name->setText("Nombre");
         this->pl_data_nbboat->setText("Num. barcos");
-        this->setWindowTitle("Gestión de cuentas");
+        this->setWindowTitle("GestiÃ³n de cuentas");
         accDialog.labelBoatName->setText("Login");
         accDialog.labelPass->setText("Password");
         accDialog.groupBox->setTitle("Tipo de barco");
@@ -380,7 +385,7 @@ void DialogPlayerAccount::slot_modPlayer(void)
     }
     else
     {
-        qWarning() << "Modification annulée";
+        qWarning() << "Modification annulÃ©e";
     }
     delete data;
 }

@@ -28,6 +28,8 @@ Copyright (C) 2008 - Jacques Zaninetti - http://zygrib.free.fr
 #include <QTimer>
 #include <QMessageBox>
 #include <QDebug>
+#include <QDomDocument>
+#include <QFileDialog>
 
 #include "POI.h"
 #include "Util.h"
@@ -40,6 +42,7 @@ Copyright (C) 2008 - Jacques Zaninetti - http://zygrib.free.fr
 #include "Projection.h"
 #include "DialogFinePosit.h"
 #include "dialogpoiconnect.h"
+#include "XmlFile.h"
 
 /**************************/
 /* Init & Clean           */
@@ -126,7 +129,7 @@ POI::POI(QString name, int type, double lat, double lon,
     connect(main,SIGNAL(WPChanged(double,double)),this,SLOT(slot_WPChanged(double,double)));
     connect(main,SIGNAL(boatHasUpdated(boat*)),this,SLOT(slot_updateTip(boat*)));
     connect(parent,SIGNAL(stopCompassLine()),this,SLOT(slot_abort()));
-    if (main->getSelectedBoat() && main->getSelectedBoat()!=NULL && !parent->getPlayer()->getWrong() && main->getSelectedBoat()->getType()==BOAT_VLM)
+    if (main->getSelectedBoat() && main->getSelectedBoat()!=NULL && !parent->getPlayer()->getWrong() && main->getSelectedBoat()->get_boatType()==BOAT_VLM)
         connect(this,SIGNAL(wpChanged()),main,SIGNAL(wpChanged()));
 
     ((MainWindow*)main)->getBoatWP(&WPlat,&WPlon);
@@ -136,6 +139,7 @@ POI::POI(QString name, int type, double lat, double lon,
         show();
     else
         hide();
+    this->setAcceptTouchEvents(true);
 }
 
 POI::~POI()
@@ -217,6 +221,10 @@ void POI::createPopUpMenu(void)
     popup->addAction(ac_twaLine);
     connect(ac_twaLine,SIGNAL(triggered()),this,SLOT(slot_twaLine()));
 
+    ac_centerOnPOI = new QAction(tr("Center on POI"),popup);
+    popup->addAction(ac_centerOnPOI);
+    connect(ac_centerOnPOI,SIGNAL(triggered()),this,SLOT(slot_centerOnBoat()));
+
     popup->addSeparator();
     ac_setWp = new QAction(tr("Marque->WP"),popup);
     ac_setWp->setCheckable(true);
@@ -232,18 +240,29 @@ void POI::createPopUpMenu(void)
     ac_editRoute = new QAction(tr("Editer la route "),popup);
     ac_editRoute->setData(QVariant(QMetaType::VoidStar, &route));
     popup->addAction(ac_editRoute);
-    ac_editRoute->setEnabled(false);;
+    ac_editRoute->setEnabled(false);
     connect(ac_editRoute,SIGNAL(triggered()),this,SLOT(slot_editRoute()));
+    ac_poiRoute = new QAction(tr("Montrer les pois intermediaires de la route "),popup);
+    ac_poiRoute->setCheckable(true);
+    ac_poiRoute->setData(QVariant(QMetaType::VoidStar, &route));
+    popup->addAction(ac_poiRoute);
+    ac_poiRoute->setEnabled(false);;
+    connect(ac_poiRoute,SIGNAL(triggered()),this,SLOT(slot_poiRoute()));
     ac_copyRoute = new QAction(tr("Copier la route "),popup);
     ac_copyRoute->setData(QVariant(QMetaType::VoidStar, &route));
     popup->addAction(ac_copyRoute);
     ac_copyRoute->setEnabled(false);;
     connect(ac_copyRoute,SIGNAL(triggered()),this,SLOT(slot_copyRoute()));
 
-    ac_simplifyRoute = new QAction(tr("Simplifier la route "),popup);
-    popup->addAction(ac_simplifyRoute);
-    ac_simplifyRoute->setEnabled(false);;
-    connect(ac_simplifyRoute,SIGNAL(triggered()),this,SLOT(slot_simplifyRoute()));
+    menuSimplify=new QMenu(tr("Simplifier la route "),popup);
+    ac_simplifyRouteMax = new QAction(tr("Maximum"),menuSimplify);
+    ac_simplifyRouteMin = new QAction(tr("Minimum"),menuSimplify);
+    menuSimplify->addAction(ac_simplifyRouteMax);
+    menuSimplify->addAction(ac_simplifyRouteMin);
+    menuSimplify->setEnabled(false);
+    connect(ac_simplifyRouteMax,SIGNAL(triggered()),this,SLOT(slot_simplifyRouteMax()));
+    connect(ac_simplifyRouteMin,SIGNAL(triggered()),this,SLOT(slot_simplifyRouteMin()));
+    popup->addMenu(menuSimplify);
     ac_optimizeRoute = new QAction(tr("Optimiser la route "),popup);
     popup->addAction(ac_optimizeRoute);
     ac_optimizeRoute->setEnabled(false);;
@@ -489,8 +508,9 @@ void POI::contextMenuEvent(QGraphicsSceneContextMenuEvent * e)
         ac_delRoute->setEnabled(false);
         ac_delRoute->setData(QVariant(QMetaType::VoidStar, &route));
         ac_editRoute->setEnabled(false);
+        ac_poiRoute->setEnabled(false);
         ac_copyRoute->setEnabled(false);
-        ac_simplifyRoute->setEnabled(false);
+        menuSimplify->setEnabled(false);
         ac_optimizeRoute->setEnabled(false);
         ac_zoomRoute->setEnabled(false);
     }
@@ -507,8 +527,9 @@ void POI::contextMenuEvent(QGraphicsSceneContextMenuEvent * e)
         {
             ac_delRoute->setEnabled(false);
             ac_editRoute->setEnabled(false);
+            ac_poiRoute->setEnabled(false);
             ac_copyRoute->setEnabled(false);
-            ac_simplifyRoute->setEnabled(false);
+            menuSimplify->setEnabled(false);
             ac_optimizeRoute->setEnabled(false);
             ac_zoomRoute->setEnabled(false);
         }
@@ -523,12 +544,16 @@ void POI::contextMenuEvent(QGraphicsSceneContextMenuEvent * e)
             ac_editRoute->setText(tr("Editer la route ")+route->getName());
             ac_editRoute->setEnabled(true);
             ac_editRoute->setIcon(icon);
+            ac_poiRoute->setText(tr("Montrer les POIs intermediaires de la route ")+route->getName());
+            ac_poiRoute->setChecked(!route->getHidePois());
+            ac_poiRoute->setEnabled(true);
+            ac_poiRoute->setIcon(icon);
             ac_copyRoute->setText(tr("Copier la route ")+route->getName());
             ac_copyRoute->setEnabled(true);
             ac_copyRoute->setIcon(icon);
-            ac_simplifyRoute->setText(tr("Simplifier la route ")+route->getName());
-            ac_simplifyRoute->setEnabled(true);
-            ac_simplifyRoute->setIcon(icon);
+            menuSimplify->setTitle(tr("Simplifier la route ")+route->getName());
+            menuSimplify->setEnabled(true);
+            menuSimplify->setIcon(icon);
             ac_optimizeRoute->setText(tr("Optimiser la route ")+route->getName());
             ac_optimizeRoute->setEnabled(true);
             ac_optimizeRoute->setIcon(icon);
@@ -835,6 +860,12 @@ void POI::manageLineBetweenPois()
     lineBetweenPois->addVlmPoint(vlmPoint(this->connectedPoi->lon,this->connectedPoi->lat));
     lineBetweenPois->slot_showMe();
 }
+void POI::slot_poiRoute()
+{
+    if(route==NULL) return;
+    route->setHidePois(!route->getHidePois());
+    ac_poiRoute->setChecked(!route->getHidePois());
+}
 
 void POI::slot_editRoute()
 {
@@ -846,10 +877,18 @@ void POI::slot_zoomRoute()
    if (this->route == NULL) return;
    route->zoom();
 }
-void POI::slot_simplifyRoute()
+void POI::slot_simplifyRouteMax()
 {
     if (this->route==NULL) return;
     route->setSimplify (true);
+    route->set_strongSimplify(true);
+    timerSimp->start();
+}
+void POI::slot_simplifyRouteMin()
+{
+    if (this->route==NULL) return;
+    route->setSimplify (true);
+    route->set_strongSimplify(false);
     timerSimp->start();
 }
 void POI::slot_timerSimp()
@@ -901,13 +940,17 @@ void POI::slot_editPOI()
     emit editPOI(this);
 }
 
+void POI::slot_centerOnBoat(void) {
+    proj->setCenterInMap(getLongitude(),getLatitude());
+}
+
 void POI::slot_copy()
 {
     Util::setWPClipboard(lat,lon,wph);
 }
 void POI::slot_setWP_ask()
 {
-    if (parent->getSelectedBoat() && parent->getSelectedBoat()->getType()==BOAT_VLM &&
+    if (parent->getSelectedBoat() && parent->getSelectedBoat()->get_boatType()==BOAT_VLM &&
        ((boatVLM *)parent->getSelectedBoat())->getPilotType()<=2)
     {
         QString mes;
@@ -987,7 +1030,7 @@ void POI::slot_WPChanged(double tlat,double tlon)
     VLMBoardIsBusy=false;
     if (this->isWp)
         this->setWph(parent->getSelectedBoat()->getWPHd());
-    if(parent->getSelectedBoat()->getType()!=BOAT_VLM) return;
+    if(parent->getSelectedBoat()->get_boatType()!=BOAT_VLM) return;
     boatVLM * b=(boatVLM *)parent->getSelectedBoat();
     if(!b->getHasPilototo()) return;
     QStringList is=b->getPilototo();
@@ -1095,7 +1138,7 @@ void POI::slot_finePosit(bool silent)
     if (route->getLastPoi()==this) return;
     if (route->isBusy()) return;
     if (route->getOptimizing()) return;
-    if (route->getUseVbvmgVlm())
+    if (route->getUseVbvmgVlm() && !route->getNewVbvmgVlm())
     {
         if(!silent)
             QMessageBox::critical(0,tr("Optimisation du placement d'un POI"),
@@ -1554,4 +1597,520 @@ void POI::slot_copyRoute()
 {
     if(this->route==NULL) return;
     parent->exportRouteFromMenuKML(this->route,"",true);
+}
+
+/*****************************************************
+ * import POI from zyGrib file
+ *****************************************************/
+
+void POI::importZyGrib(myCentralWidget * centralWidget) {
+    QString filter;
+    filter =  tr("Fichiers ini (*.ini)")
+            + tr(";;Autres fichiers (*)");
+    QString fileName = QFileDialog::getOpenFileName(0,
+                         tr("Choisir un fichier ini"),
+                         "./",
+                         filter);
+    QFile file(fileName);
+
+    if (!file.open(QIODevice::ReadOnly | QIODevice::Text))
+        return;
+
+    int nbPOI=0;
+
+    QTextStream stream(&file);
+
+    double lat=0,lon=0;
+    QString name;
+    bool foundName,foundLat,foundLon;
+    int curCode=-1;
+    foundName=foundLon=foundLat=false;
+
+
+    while(true) {
+        QString line = stream.readLine();
+        if(line.isNull())
+            break;
+
+        QStringList list1 = line.split('\\');
+        bool ok;
+        if(list1.count()<=1) {
+            qWarning() << "Wrong line (no code): " <<line << " - nb item:" << list1.count();
+            continue;
+        }
+
+        int code=list1.at(0).toInt(&ok);
+        if(!ok) {
+            qWarning() << "Wrong line (code not numeric): " <<line;
+            continue;
+        }
+
+        if(code!=curCode) {
+            qWarning() << "New code " << code;
+            curCode=code;
+            foundName=foundLon=foundLat=false;
+        }
+
+        QStringList list2 = list1.at(1).split('=');
+
+        if(list2.count()<=1) {
+            qWarning() << "Wrong line (no = in data part): " <<line << " - nb item:" << list2.count();
+            continue;
+        }
+
+        if(list2.at(0) == "name") {
+            name=list2.at(1);
+            foundName=true;
+        }
+
+        if(list2.at(0) == "lat") {
+            lat=list2.at(1).toDouble();
+            foundLat=true;
+        }
+
+        if(list2.at(0) == "lon") {
+            lon=list2.at(1).toDouble();
+            foundLon=true;
+        }
+
+        if(foundName && foundLat && foundLon) {
+            qWarning() << "All data ok: " << curCode << " - " << name << " - " << lat << "," << lon;
+            POI * poi = new POI(name, POI_TYPE_POI,lat,lon,centralWidget->getProj(),centralWidget->getMainWindow(),centralWidget,-1,-1,false,NULL);
+            centralWidget->slot_addPOI_list(poi);
+            foundName=foundLon=foundLat=false;
+            nbPOI++;
+        }
+
+    }
+
+    QMessageBox::information(0,tr("Zygrib POI import"),QString().setNum(nbPOI) +" " +tr("POI imported from zyGrib"));
+
+    file.close();
+}
+
+/*****************************************************
+ * import POI from geoData file
+ *****************************************************/
+void POI::importGeoData(myCentralWidget * centralWidget) {
+    QString filter;
+    filter =  tr("Fichiers textes (*.txt)")
+            + tr(";;Autres fichiers (*)");
+    QString fileName = QFileDialog::getOpenFileName(0,
+                         tr("Choisir un fichier GeoData"),
+                         "./",
+                         filter);
+    QFile file(fileName);
+
+    if (!file.open(QIODevice::ReadOnly | QIODevice::Text))
+        return;
+
+    int nbPOI=0;
+
+    QTextStream stream(&file);
+
+    while(true)
+    {
+        QString line = stream.readLine();
+        if(line.isNull())
+            break;
+
+        QStringList list1 = line.split(';');
+        bool ok;
+        if(list1.count()<5)
+        {
+            qWarning() << "Wrong line (no code): " <<line << " - nb item:" << list1.count();
+            continue;
+        }
+        QString pRank=list1[0];
+        QString pId=list1[1];
+        QString temp=list1[2];
+        QString letter=temp.at(temp.count()-1);
+        double  pLat=temp.remove(letter).toDouble(&ok);
+        if(!ok)
+        {
+            qWarning() << "Wrong line (code not numeric): " <<line;
+            continue;
+        }
+        if(letter=="S") pLat=-pLat;
+        temp=list1[3];
+        letter=temp.at(temp.count()-1);
+        double  pLon=temp.remove(letter).toDouble(&ok);
+        if(!ok)
+        {
+            qWarning() << "Wrong line (code not numeric): " <<line;
+            continue;
+        }
+        if(letter=="W") pLon=-pLon;
+        QString pTime=list1[4];
+        POI * poi = new POI(pId, POI_TYPE_BALISE,pLat,pLon,centralWidget->getProj(),centralWidget->getMainWindow(),centralWidget,-1,-1,false,NULL);
+        poi->setTip(tr("Classement ")+pRank+"<br>"+pTime);
+        centralWidget->slot_addPOI_list(poi);
+        nbPOI++;
+    }
+    QMessageBox::information(0,tr("GeoData POI import"),QString().setNum(nbPOI) +" " +tr("POI imported from GeoData"));
+    file.close();
+}
+
+/*****************************************************
+ * read POI from file
+ *****************************************************/
+
+#define ROOT_NAME         "POIs"
+
+/* POI */
+#define POI_GROUP_NAME    "POI"
+#define POI_NAME          "name"
+#define LAT_NAME          "Lat"
+#define LON_NAME          "Lon"
+#define LAT_NAME_CONNECTED "LatConnected"
+#define LON_NAME_CONNECTED "LonConnected"
+#define LINE_COLOR_R      "LineColorR"
+#define LINE_COLOR_G      "LineColorG"
+#define LINE_COLOR_B      "LineColorB"
+#define LINE_WIDTH        "lineWidth"
+#define LON_NAME_OLD      "Pass"
+#define WPH_NAME          "Wph"
+#define TYPE_NAME         "type"
+#define TSTAMP_NAME       "timeStamp"
+#define USETSTAMP_NAME    "useTimeStamp"
+#define POI_ROUTE         "route"
+#define POI_NAVMODE       "NavMode"
+#define POI_LABEL_HIDDEN  "LabelHidden"
+#define POI_NOT_SIMPLIFICABLE "IsSimplificable"
+#define POI_PILOTE         "Pilote"
+#define POI_SEQUENCE       "Sequence"
+
+void POI::read_POIData(myCentralWidget * centralWidget) {
+    QString fname = appFolder.value("userFiles")+"poi.dat";
+    QDomNode node;
+    QDomNode subNode;
+    QDomNode dataNode;
+
+    bool hasOldSystem=false;
+
+    QDomNode * root=XmlFile::get_dataNodeFromDisk(fname,ROOT_NAME);
+    if(!root) {
+        QDomElement * root2=XmlFile::get_fisrtDataNodeFromDisk(fname);
+
+        if(!root2) {
+            qWarning() << "Error reading POI from " << fname;
+            return ;
+        }
+        hasOldSystem=true;
+        node=root2->firstChild();
+    }
+    else
+        node = root->firstChild();
+
+    while(!node.isNull())
+    {         
+         if(node.toElement().tagName() == POI_GROUP_NAME)
+         {
+             subNode = node.firstChild();
+             QString name="";
+             QString routeName="";
+             double lon=-1, lat=-1,wph=-1;
+             double lonConnected=-1, latConnected=-1;
+             int type = -1;
+             int tstamp=-1;
+             bool useTstamp=false;
+             bool labelHidden=false;
+             int navMode=0;
+             bool notSimplificable=false;
+             bool pilote=false;
+             QColor lineColor=Qt::blue;
+             double lineWidth=2;
+             int sequence=0;
+
+             while(!subNode.isNull()) {
+                  if(subNode.toElement().tagName() == POI_NAME) {
+                     dataNode = subNode.firstChild();
+                     if(dataNode.nodeType() == QDomNode::TextNode)
+                         name = QString(QByteArray::fromBase64(dataNode.toText().data().toUtf8()));
+                  }
+
+                  if(subNode.toElement().tagName() == LAT_NAME) {
+                     dataNode = subNode.firstChild();
+                     if(dataNode.nodeType() == QDomNode::TextNode)
+                         lat = dataNode.toText().data().toDouble();
+                  }
+
+                  if(subNode.toElement().tagName() == LON_NAME) {
+                     dataNode = subNode.firstChild();
+                     if(dataNode.nodeType() == QDomNode::TextNode)
+                         lon = dataNode.toText().data().toDouble();
+                  }
+
+                  if(subNode.toElement().tagName() == LAT_NAME_CONNECTED) {
+                     dataNode = subNode.firstChild();
+                     if(dataNode.nodeType() == QDomNode::TextNode)
+                         latConnected = dataNode.toText().data().toDouble();
+                  }
+
+                  if(subNode.toElement().tagName() == LON_NAME_CONNECTED) {
+                     dataNode = subNode.firstChild();
+                     if(dataNode.nodeType() == QDomNode::TextNode)
+                         lonConnected = dataNode.toText().data().toDouble();
+                  }
+
+                  if(subNode.toElement().tagName() == LINE_COLOR_R) {
+                       dataNode = subNode.firstChild();
+                       if(dataNode.nodeType() == QDomNode::TextNode)
+                       {
+                           lineColor.setRed(dataNode.toText().data().toInt());
+                       }
+                  }
+
+                  if(subNode.toElement().tagName() == LINE_COLOR_G) {
+                       dataNode = subNode.firstChild();
+                       if(dataNode.nodeType() == QDomNode::TextNode)
+                       {
+                           lineColor.setGreen(dataNode.toText().data().toInt());
+                       }
+                  }
+
+                  if(subNode.toElement().tagName() == LINE_COLOR_B) {
+                       dataNode = subNode.firstChild();
+                       if(dataNode.nodeType() == QDomNode::TextNode)
+                       {
+                           lineColor.setBlue(dataNode.toText().data().toInt());
+                       }
+                  }
+
+                  if(subNode.toElement().tagName() == LINE_WIDTH) {
+                       dataNode = subNode.firstChild();
+                       if(dataNode.nodeType() == QDomNode::TextNode)
+                           lineWidth=dataNode.toText().data().toDouble();
+                  }
+
+                  if(subNode.toElement().tagName() == WPH_NAME) {
+                     dataNode = subNode.firstChild();
+                     if(dataNode.nodeType() == QDomNode::TextNode)
+                         wph = dataNode.toText().data().toFloat();
+                  }
+
+                  if(subNode.toElement().tagName() == TYPE_NAME) {
+                     dataNode = subNode.firstChild();
+                     if(dataNode.nodeType() == QDomNode::TextNode)
+                         type = dataNode.toText().data().toInt();
+                  }
+
+                  if(subNode.toElement().tagName() == POI_SEQUENCE) {
+                     dataNode = subNode.firstChild();
+                     if(dataNode.nodeType() == QDomNode::TextNode)
+                         sequence = dataNode.toText().data().toInt();
+                  }
+
+                  if(subNode.toElement().tagName() == TSTAMP_NAME) {
+                      dataNode = subNode.firstChild();
+                      if(dataNode.nodeType() == QDomNode::TextNode)
+                          tstamp = dataNode.toText().data().toInt();
+                  }
+                  if(subNode.toElement().tagName() == USETSTAMP_NAME) {
+                      dataNode = subNode.firstChild();
+                      if(dataNode.nodeType() == QDomNode::TextNode)
+                          useTstamp = dataNode.toText().data().toInt()==1;
+                  }
+
+                  if(subNode.toElement().tagName() == POI_LABEL_HIDDEN) {
+                      dataNode = subNode.firstChild();
+                      if(dataNode.nodeType() == QDomNode::TextNode)
+                          labelHidden = dataNode.toText().data().toInt()==1;
+                  }
+
+                  if(subNode.toElement().tagName() == POI_NOT_SIMPLIFICABLE) {
+                      dataNode = subNode.firstChild();
+                      if(dataNode.nodeType() == QDomNode::TextNode)
+                          notSimplificable = dataNode.toText().data().toInt()==1;
+                  }
+
+                  if(subNode.toElement().tagName() == POI_PILOTE) {
+                      dataNode = subNode.firstChild();
+                      if(dataNode.nodeType() == QDomNode::TextNode)
+                          pilote = dataNode.toText().data().toInt()==1;
+                  }
+
+                  if(subNode.toElement().tagName() == POI_ROUTE) {
+                      dataNode = subNode.firstChild();
+                      if(dataNode.nodeType() == QDomNode::TextNode)
+                         routeName = QString(QByteArray::fromBase64(dataNode.toText().data().toUtf8()));
+                  }
+
+                  if(subNode.toElement().tagName() == POI_NAVMODE) {
+                      dataNode = subNode.firstChild();
+                      if(dataNode.nodeType() == QDomNode::TextNode)
+                          navMode = dataNode.toText().data().toInt();
+                  }
+
+                  subNode = subNode.nextSibling();
+             }
+             if(!name.isEmpty() && lat!=-1 && lon != -1) {
+                  if(type==-1) type=POI_TYPE_POI;
+                  POI * poi = new POI(name,type,lat,lon,centralWidget->getProj(),centralWidget->getMainWindow(),centralWidget,wph,tstamp,useTstamp,NULL);
+                  poi->setRouteName(routeName);
+                  poi->setNavMode(navMode);
+                  poi->setMyLabelHidden(labelHidden);
+                  poi->setNotSimplificable(notSimplificable);
+                  poi->setPiloteSelected(pilote);
+                  poi->setPosConnected(lonConnected,latConnected);
+                  poi->setLineColor(lineColor);
+                  poi->setLineWidth(lineWidth);
+                  poi->setSequence(sequence);
+                  centralWidget->slot_addPOI_list(poi);
+             }
+             else
+                  qWarning() << "Incomplete POI info " << name << " "
+                       << lat << "," << lon << "@" << wph ;
+         }
+         node = node.nextSibling();
+    }
+
+    if(hasOldSystem)
+        POI::cleanFile(fname);
+}
+
+void POI::cleanFile(QString fname) {
+    QDomElement * root=XmlFile::get_fisrtDataNodeFromDisk(fname);
+    QDomNode node;
+
+    if(!root) {
+        qWarning() << "Error reading POI from " << fname << " during clean";
+        return ;
+    }
+
+    node=root->firstChild();
+    while(!node.isNull()) {
+        //qWarning() << "Cleaning: " << node.toElement().tagName();
+        QDomNode nxtNode=node.nextSibling();
+        if(node.toElement().tagName() == POI_GROUP_NAME)
+            root->removeChild(node);
+        if(node.toElement().tagName() == "Version")
+            root->removeChild(node);
+        node = nxtNode;
+    }
+    XmlFile::saveRoot(root,fname);
+}
+
+void POI::write_POIData(QList<POI*> & poi_list,myCentralWidget * /*centralWidget*/) {
+    QString fname = appFolder.value("userFiles")+"poi.dat";
+
+    QDomDocument doc(DOM_FILE_TYPE);
+    QDomElement root = doc.createElement(ROOT_NAME);
+    doc.appendChild(root);
+
+    QDomElement group;
+    QDomElement tag;
+    QDomText t;
+
+    QListIterator<POI*> i (poi_list);
+    while(i.hasNext())
+    {
+         POI * poi = i.next();
+         if(poi->getRoute()!=NULL && poi->getRoute()->isImported()) continue;
+         if(poi->isPartOfTwa()) continue;
+         group = doc.createElement(POI_GROUP_NAME);
+         root.appendChild(group);
+
+         tag = doc.createElement(POI_NAME);
+         group.appendChild(tag);
+         t = doc.createTextNode(poi->getName().toUtf8().toBase64());
+         tag.appendChild(t);
+
+         tag = doc.createElement(TYPE_NAME);
+         group.appendChild(tag);
+         t = doc.createTextNode(QString().setNum(poi->getType()));
+         tag.appendChild(t);
+
+         tag = doc.createElement(POI_SEQUENCE);
+         group.appendChild(tag);
+         t = doc.createTextNode(QString().setNum(poi->getSequence()));
+         tag.appendChild(t);
+
+         tag = doc.createElement(LAT_NAME);
+         group.appendChild(tag);
+         t = doc.createTextNode(QString().sprintf("%.10f",poi->getLatitude()));
+         tag.appendChild(t);
+
+         tag = doc.createElement(LON_NAME);
+         group.appendChild(tag);
+         t = doc.createTextNode(QString().sprintf("%.10f",poi->getLongitude()));
+         tag.appendChild(t);
+         if(poi->getConnectedPoi()!=NULL)
+         {
+             tag = doc.createElement(LON_NAME_CONNECTED);
+             group.appendChild(tag);
+             t = doc.createTextNode(QString().sprintf("%.10f",poi->getConnectedPoi()->getLongitude()));
+             tag.appendChild(t);
+
+             tag = doc.createElement(LAT_NAME_CONNECTED);
+             group.appendChild(tag);
+             t = doc.createTextNode(QString().sprintf("%.10f",poi->getConnectedPoi()->getLatitude()));
+             tag.appendChild(t);
+         }
+         tag = doc.createElement(LINE_COLOR_R);
+         group.appendChild(tag);
+         t = doc.createTextNode(QString().setNum(poi->getLineColor().red()));
+         tag.appendChild(t);
+         tag = doc.createElement(LINE_COLOR_G);
+         group.appendChild(tag);
+         t = doc.createTextNode(QString().setNum(poi->getLineColor().green()));
+         tag.appendChild(t);
+         tag = doc.createElement(LINE_COLOR_B);
+         group.appendChild(tag);
+         t = doc.createTextNode(QString().setNum(poi->getLineColor().blue()));
+         tag.appendChild(t);
+         tag = doc.createElement(LINE_WIDTH);
+         group.appendChild(tag);
+         t = doc.createTextNode(QString().setNum(poi->getLineWidth()));
+         tag.appendChild(t);
+
+         tag = doc.createElement(WPH_NAME);
+         group.appendChild(tag);
+         t = doc.createTextNode(QString().setNum(poi->getWph()));
+         tag.appendChild(t);
+
+         tag = doc.createElement(TSTAMP_NAME);
+         group.appendChild(tag);
+         t = doc.createTextNode(QString().setNum(poi->getTimeStamp()));
+         tag.appendChild(t);
+
+         tag = doc.createElement(USETSTAMP_NAME);
+         group.appendChild(tag);
+         t = doc.createTextNode(QString().setNum(poi->getUseTimeStamp()?1:0));
+         tag.appendChild(t);
+
+         tag = doc.createElement(POI_LABEL_HIDDEN);
+         group.appendChild(tag);
+         t = doc.createTextNode(QString().setNum(poi->getMyLabelHidden()?1:0));
+         tag.appendChild(t);
+
+         tag = doc.createElement(POI_NOT_SIMPLIFICABLE);
+         group.appendChild(tag);
+         t = doc.createTextNode(QString().setNum(poi->getNotSimplificable()?1:0));
+         tag.appendChild(t);
+
+         tag = doc.createElement(POI_PILOTE);
+         group.appendChild(tag);
+         t = doc.createTextNode(QString().setNum(poi->getPiloteSelected()?1:0));
+         tag.appendChild(t);
+
+         tag = doc.createElement(POI_ROUTE);
+         group.appendChild(tag);
+         if(poi->getRoute()!=NULL)
+           t = doc.createTextNode(poi->getRoute()->getName().toUtf8().toBase64()); //do not use poi->routeName since route->name might have changed */
+         else
+             t = doc.createTextNode(QString("").toUtf8().toBase64());
+         tag.appendChild(t);
+
+         tag = doc.createElement(POI_NAVMODE);
+         group.appendChild(tag);
+         t = doc.createTextNode(QString().setNum(poi->getNavMode()));
+         tag.appendChild(t);
+    }
+
+    if(!XmlFile::set_dataNodeOnDisk(fname,ROOT_NAME,&root,DOM_FILE_TYPE)) {
+        /* error in file  => blanking filename in settings */
+        qWarning() << "Error saving POI in " << fname;
+        return ;
+    }
 }

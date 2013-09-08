@@ -43,7 +43,11 @@ void DialogRealBoatConfig::launch(boatReal * boat)
         curBoat->stopRead();
     /* init dialog */
     serialName->setText(Settings::getSetting("gpsPortName","COM1").toString());
-    baudRate->setCurrentIndex(Settings::getSetting("gpsBaudRate",BAUD4800).toInt());
+    int idx = baudRate->findText(Settings::getSetting("gpsBaudRate",BAUD4800).toString(),Qt::MatchExactly);
+    //qWarning() << "idx=" << idx << ", string= " << Settings::getSetting("gpsBaudRate",BAUD4800).toString();
+    if(idx==-1) idx=baudRate->findText("4800",Qt::MatchExactly);
+    if(idx==-1) idx=0;
+    baudRate->setCurrentIndex(idx);
     polarEfficiency->setValue(Settings::getSetting("polarEfficiency",100).toInt());
     this->displayNMEA->setChecked(boat->getDisplayNMEA());
     QDir polarDir = QDir(appFolder.value("polar"));
@@ -87,7 +91,8 @@ void DialogRealBoatConfig::done(int result)
     if(result == QDialog::Accepted)
     {
         Settings::setSetting("gpsPortName",serialName->text());
-        Settings::setSetting("gpsBaudRate",QString().setNum(baudRate->currentIndex()));
+        //qWarning() << "Set rate=" << baudRate->currentText();
+        Settings::setSetting("gpsBaudRate",baudRate->currentText());
         Settings::setSetting("polarEfficiency",polarEfficiency->value());
         Settings::setSetting("minSpeedForEngine",minSpeedForEngine->value());
         Settings::setSetting("speedWithEngine",speedWithEngine->value());

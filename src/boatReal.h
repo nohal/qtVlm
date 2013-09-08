@@ -80,14 +80,15 @@ class boatReal : public boat
 
         void setPosition(double lat, double lon);
 
-        /* event propagé par la scene */
+        /* event propagÃ© par la scene */
         bool tryMoving(int x, int y);
         time_t getLastUpdateTime(){return this->lastUpdateTime;}
         int getFix(){return fix;}
         int getSig(){return sig;}
         double getPdop(){return pdop;}
         time_t getEta(){return eta;}
-        void setWp(double lat, double lon, double wph);
+        void setWP(QPointF point,double w);
+        void setWP(double lat, double lon, double wph);
         nmeaINFO getInfo(void){return info;}
         void emitMoveBoat(){emit boatUpdated(this,false,false);}
         bool getDisplayNMEA(){return this->displayNMEA;}

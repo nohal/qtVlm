@@ -27,6 +27,7 @@ Copyright (C) 2008 - Jacques Zaninetti - http://zygrib.free.fr
 #include <QNetworkRequest>
 #include <QUrl>
 #include <QClipboard>
+#include <cstdlib>
 
 #include "Util.h"
 
@@ -36,8 +37,42 @@ Copyright (C) 2008 - Jacques Zaninetti - http://zygrib.free.fr
 #include "Version.h"
 #include "Orthodromie.h"
 
+double Util::A180(double angle)
+{
+    if(qAbs(angle)>180)
+    {
+        if(angle<0)
+            angle=360+angle;
+        else
+            angle=angle-360;
+    }
+    return angle;
+}
+
+QString Util::generateKey(int size) {
+    QString s;
+    for(int i=0;i<size;i++) {
+        s.append('a'+rand()%26);
+    }
+    return s;
+}
 
 //======================================================================
+void Util::setSpecificFont(QMap<QWidget *,QFont> widgets)
+{
+    QFont myFont(Settings::getSetting("defaultFontName",QApplication::font().family()).toString());
+    double fontSize=Settings::getSetting("applicationFontSize",8.0).toDouble();
+    QMapIterator<QWidget *,QFont> it(widgets);
+    while(it.hasNext())
+    {
+        it.next();
+        QFont font=it.value();
+        myFont.setStyle(font.style());
+        myFont.setPointSizeF(fontSize+font.pointSizeF()-8.0);
+        it.key()->setFont(myFont);
+    }
+}
+
 void Util::setFontDialog(QObject * o)
 {
 
@@ -45,9 +80,10 @@ void Util::setFontDialog(QObject * o)
     if(o->isWidgetType())
     {
         QWidget * widget=qobject_cast<QWidget*> (o);
-        myFont.setPointSizeF(widget->font().pointSizeF()+Settings::getSetting("defaultFontSizeInc",0).toInt());
+        myFont.setPointSizeF(Settings::getSetting("applicationFontSize",8.0).toDouble());
         myFont.setStyle(widget->font().style());
         myFont.setBold(widget->font().bold());
+        myFont.setItalic(widget->font().italic());
         widget->setFont(myFont);
         widget->setLocale(QLocale::system());
     }
@@ -145,7 +181,7 @@ QString Util::formatDegres(const double &x)
         int deg = (int) fabs(x);
         double min = (fabs(x) - deg)*60.0;
         char sign = (x<0) ? '-' : ' ';
-        r.sprintf("%c%03ddeg%05.2f'", sign,deg,min);
+        r.sprintf("%c%ddeg%5.2f'", sign,deg,min);
     }
     else if (unit == "dddegmm'ss")
     {
@@ -155,11 +191,11 @@ QString Util::formatDegres(const double &x)
         min = min % 60;                  // reste en minutes
         sec = sec % 60;                  // reste en secondes
         char sign = (x<0) ? '-' : ' ';
-        r.sprintf("%c%03ddeg%02d'%02d\"", sign,deg,min,sec);
+        r.sprintf("%c%ddeg%02d'%02d\"", sign,deg,min,sec);
     }
     else // if (unit == "dd,dddeg")
     {
-        r.sprintf("%06.2fdeg",x);
+        r.sprintf("%.2fdeg",x);
     }
     r=r.replace("deg",QObject::tr("deg"));
     return r;
@@ -555,6 +591,13 @@ QString Util::getHost()
 #endif
 }
 
+void Util::computePos(Projection * proj, const QPointF & position, QPoint * screenCoord) {
+    int i,j;
+    computePos(proj,position.y(),position.x(),&i,&j);
+    screenCoord->setX(i);
+    screenCoord->setY(j);
+}
+
 void Util::computePos(Projection * proj, const double &lat, const double &lon, int * x, int * y)
 {
     if (proj->isPointVisible(lon, lat)) {      // tour du monde ?
@@ -571,6 +614,14 @@ void Util::computePos(Projection * proj, const double &lat, const double &lon, i
         proj->map2screen(lon, lat, x, y);
     }
 }
+
+void Util::computePosDouble(Projection * proj, const QPointF & position, QPointF * screenCoord) {
+    double x,y;
+    computePosDouble(proj,position.y(),position.x(),&x,&y);
+    screenCoord->setX(x);
+    screenCoord->setY(y);
+}
+
 void Util::computePosDouble(Projection * proj, const double &lat, const double &lon, double * x, double * y)
 {
     if (proj->isPointVisible(lon, lat)) {      // tour du monde ?
@@ -698,4 +749,33 @@ double Util::distance_to_line_dichotomy_xing(const double &lat, const double &lo
     *x_longitude = radToDeg(p2_longitude);
     //qWarning()<<"nbLoop in distance_to_line_dichotomy_xing"<<nbLoop;
     return ortho_p2;
+}
+QString Util::formatElapsedTime(int elapsed)
+{
+    QTime eLapsed(0,0,0,0);
+    double jours=elapsed/(24.0*60.0*60.0);
+    if (qRound(jours)>jours)
+        --jours;
+    jours=qRound(jours);
+    elapsed=elapsed-jours*24.0*60.0*60.0;
+    eLapsed=eLapsed.addSecs(elapsed);
+    QString jour;
+    jour=jour.sprintf("%d",qRound(jours));
+    return jour+" "+QObject::tr("jours")+" "+eLapsed.toString("H'h 'mm'min '");
+}
+
+#define SQ(VAL) ((VAL)*(VAL))
+#define DIST(P1,P2) ((P1.x()-P2.x())*(P1.x()-P2.x())+(P1.y()-P2.y())*(P1.y()-P2.y()))
+
+double Util::distToSegment(const QPointF point,const QLineF line) {
+    double d1 = DIST(line.p1(),line.p2());
+    if(d1==0) return sqrt(DIST(point,line.p1()));
+    double t=((point.x()-line.p1().x())*(line.p2().x()-line.p1().x())
+              +(point.y()-line.p1().y())*(line.p2().y()-line.p1().y()))/d1;
+    if(t<0) return sqrt(DIST(point,line.p1()));
+    if(t>1) return sqrt(DIST(point,line.p2()));
+    return sqrt(DIST(point,QPointF(line.p1().x()+t*(line.p2().x()-line.p1().x()),
+                                   line.p1().y()+t*(line.p2().y()-line.p1().y()))
+                     ));
+
 }

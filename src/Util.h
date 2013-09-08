@@ -60,6 +60,7 @@ class Util
     //-------------------------------------------------
     static void setFontDialog(QObject * o);
     static void setFontDialog(QWidget * o);
+    static void setSpecificFont(QMap<QWidget *, QFont> widgets);
     static QString formatDegres(const double &x);           // 123.4 -> 123°24.00'
     static QString formatPosition(const double &x, const double &y);    // 123°24.00'W 45°67.89'N
     static QString formatLongitude(double x);
@@ -81,6 +82,11 @@ class Util
     static int    kmhToBeaufort(const double &v);
     static double  kmhToBeaufort_F(const double &v);
     static double  BeaufortToKmh_F(const double &bf);
+
+    static int    msToBeaufort   (float v);
+    static float  msToBeaufort_F (float v);
+    static float  BeaufortToMs_F (float bf);
+
     static QPointF calculateSumVect(const double &angle1, const double &length1, const double &angle2, const double &length2);
 
     static void paramProxy(QNetworkAccessManager *inetManager,QString host);
@@ -96,17 +102,25 @@ class Util
                                            const double &distance, const double &heading, double * res_lat,double * res_lon);
     static QString pos2String(const int &type,const double &value);
     static QString getHost();
+    static void computePos(Projection * proj, const QPointF &position, QPoint * screenCoord);
     static void computePos(Projection * proj, const double &lat, const double &lon, int * x, int * y);
     static void computePosDouble(Projection * proj, const double &lat, const double &lon, double * x, double * y);
+    static void computePosDouble(Projection * proj, const QPointF &position, QPointF * screenCoord);
     static void addAgent(QNetworkRequest & request);
     static bool lineIsCrossingRect(const QLineF &line, const QRectF &rect);
     static double myDiffAngle(const double &a1, const double &a2);
     static double A360(const double &hdg);
+    static double A180(double angle);
+
+    static QString generateKey(int size);
+
     static double distance_to_line_dichotomy_xing(const double &lat, const double &lon,
                                                  const double &lat_a, const double &lon_a,
                                                  const double &lat_b, const double &lon_b,
                                                  double *x_latitude, double *x_longitude);
+    static double distToSegment(const QPointF point,const QLineF line);
 
+    static QString formatElapsedTime(int elapsed);
     //-------------------------------------------------
     template <typename T>
         static bool isInRange(T v, T min, T max)
@@ -177,6 +191,20 @@ inline QPointF Util::calculateSumVect(const double &angle1,const double &length1
     QPointF pointF(temp.length(),A360(temp.angle()));
     return pointF;
 }
+//-----------------------------------------------------------------------------
+inline int Util::msToBeaufort (float v) {
+    return (int)(msToBeaufort_F(v)+0.5);
+}
+inline float Util::msToBeaufort_F (float v) {
+    float bf = pow (v*v*1.44 , 0.33333);
+    if (bf > 12.0)
+        bf = 12.0;
+    return bf;
+}
+inline float Util::BeaufortToMs_F (float bf) {
+    return sqrt (bf*bf*bf/1.44);
+}
+//-----------------------------------------------------------------------------
 inline void Util::getCoordFromDistanceAngle(double latitude, double longitude,
              double distance,double heading, double * res_lat,double * res_lon)
 {

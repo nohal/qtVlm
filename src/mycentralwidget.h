@@ -48,12 +48,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #define Z_VALUE_LOADIMG    0.4
 #define Z_VALUE_FAXMETEO   0.5
 #define Z_VALUE_ROUTAGE    1
-#define Z_VALUE_OPP        3
+#define Z_VALUE_OPP        2
+#define Z_VALUE_GATE       3
+#define Z_VALUE_NEXT_GATE  3.5
 #define Z_VALUE_ESTIME     4
 #define Z_VALUE_ROUTE      5
 #define Z_VALUE_POI        7
-#define Z_VALUE_GATE       8
-#define Z_VALUE_NEXT_GATE  9
 #define Z_VALUE_BOAT       10
 #define Z_VALUE_COMPASS    11
 #define Z_VALUE_ISOPOINT   12
@@ -71,6 +71,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #define ISOPOINT          7
 #define BOATREAL_WTYPE    8
 #define FAXMETEO_WTYPE    9
+#define BARRIERPOINT_WTYPE 10
 
 /* compass mode */
 #define COMPASS_NOTHING  0
@@ -123,6 +124,7 @@ class myCentralWidget : public QWidget
         int getCompassMode(int m_x,int m_y);
         bool isSelecting(void);
         QList<boatVLM*> * getBoats() { return this->boat_list; }
+        QList<boat*> get_boatList(void);
         QList<Player*> &  getPlayers() { return this->player_list; }
         QList<raceData*> & getRaces() { return this->race_list; }
         QList<POI*> & getPois() { return this->poi_list; }
@@ -142,8 +144,17 @@ class myCentralWidget : public QWidget
         bool getIsStartingUp(void){return mainW->isStartingUp;}
         MainWindow * getMainWindow(void) { return mainW; }
         MyView * getView() const {return this->view;}
+        void removeRoute();
 
         FCT_SETGET(ToolBar*,toolBar)
+        FCT_SETGET_CST(bool, noSave)
+
+        /*** Barrier ***/
+        FCT_GET(int,barrierEditMode)
+        void escKey_barrier(void);
+
+        void insert_barrierPointAfterPoint(BarrierPoint * point);
+        FCT_SETGET(QPoint,cursorPositionOnPopup)
 
         void loadGshhs(void);
 
@@ -164,7 +175,7 @@ class myCentralWidget : public QWidget
         void simpAllPOIs(bool b);
         void setRouteToClipboard(ROUTE * route){this->routeClipboard=route;}
         ROUTE * getRouteToClipboard(){return this->routeClipboard;}
-        void myDeleteRoute(ROUTE * route);
+        bool myDeleteRoute(ROUTE * route, bool silent=false);
 /* routage */
         QList<ROUTAGE*> & getRoutageList(){ return this->routage_list;}
         bool freeRoutageName(QString name, ROUTAGE * routage);
@@ -184,6 +195,8 @@ class myCentralWidget : public QWidget
         void showGribDate_dialog(void);
         void loadGribFile(QString fileName, bool zoom);
         void loadGribFileCurrent(QString fileName, bool zoom);
+        void updateGribMenu(void);
+        FCT_GET(MapDataDrawer*,mapDataDrawer)
 
         /* events */
         void mouseMove(int x, int y, QGraphicsItem * item);
@@ -199,6 +212,7 @@ class myCentralWidget : public QWidget
         bool get_shRoute_st(void) { return shRoute_st; }
         bool get_shOpp_st(void) { return shOpp_st; }
         bool get_shPor_st(void) { return shPor_st; }
+        FCT_GET(bool,shBarSet_st)
         void exportRouteFromMenu(ROUTE * route);
         void exportRouteFromMenuGPX(ROUTE * route,QString fileName,bool POIonly);
         void exportRouteFromMenuKML(ROUTE * route,QString fileName,bool toClipboard);
@@ -218,7 +232,8 @@ class myCentralWidget : public QWidget
 
         void zoom_Pinch(double scale, int XX, int YY);
         void setMagnifier(Magnifier * m){this->magnifier=m;}
-        Magnifier * getMagnifier(){return this->magnifier;}
+        Magnifier * getMagnifier(){return this->magnifier;}        
+
 public slots :
         /* Zoom & position */
         void slot_Zoom_All();
@@ -244,9 +259,14 @@ public slots :
         void slot_POIimport(void); // import data from zyGrib
         void slot_POIimportGeoData(void);
         void slot_delAllPOIs(void);
+        void slot_removePOIType(void);
         void slot_delSelPOIs(void);
         void slot_notSimpAllPOIs(void);
         void slot_simpAllPOIs(void);
+
+        /*** Barrier ***/
+        void slot_newBarrier(void);
+        void slot_addBarrier(void);
 
         /* item state */
         void slot_showALL(bool);
@@ -258,7 +278,8 @@ public slots :
         void slot_shOpp(bool);
         void slot_shPor(bool);
         void slot_shFla(bool);
-
+        void slot_shNig(bool);
+        void slot_shBarSet(bool);
 
         /*Routes */
         void slot_addRouteFromMenu();
@@ -327,7 +348,8 @@ public slots :
         void slot_fetchVLMTrack();
         void slot_resetGestures();
 
-    signals:
+        void slot_shTdb(bool);
+signals:
         /* drawing */
         void redrawAll(void);
         void redrawGrib(void);
@@ -335,13 +357,13 @@ public slots :
         void replay(int);
 
         /* POI */
-        void readPOIData(QString);
         void writePOIData(QList<ROUTE*> &,QList<POI*> &,QString);
-        void importZyGrib(void);
         void POI_selectAborted(POI*);
         void updateRoute(boat *);
         void updateRoutage();
         void twaDelPoi(POI*);
+
+
 
         /* Boats */
         void writeBoatData(QList<Player*> & player_list,QList<raceData*> & race_list,QString fname);
@@ -352,6 +374,7 @@ public slots :
 
         /* compass */
         void stopCompassLine(void);
+        void compassLineToggle(bool);
 
         /*show-hide*/
         void hideALL(bool);
@@ -364,6 +387,7 @@ public slots :
         void shPor(bool);
         void shPol(bool);
         void shLab(bool);
+        void shBarSet(bool);
         void shFla();
 
 
@@ -394,6 +418,8 @@ public slots :
         QString  dataPresentInGrib(Grib* grib,
                                    int dataType,int levelType,int levelValue,
                                    bool *ok=NULL);
+        MapDataDrawer * mapDataDrawer;
+
         /* other child */        
         GshhsReader *gshhsReader;
         GshhsDwnload * gshhsDwnload;
@@ -426,6 +452,16 @@ public slots :
         Player * currentPlayer;
         boatReal * realBoat;
         ROUTE * routeClipboard;
+        void connectPois(void);
+
+        /*** Barrier ***/
+        int barrierEditMode;
+        BarrierSet * currentSet;
+        BarrierPoint * basePoint;
+        QGraphicsLineItem * barrierEditLine;
+        void move_barrierEditLine(QPoint evtPos);
+        void manage_barrier(void);
+        QPoint cursorPositionOnPopup;
 
         /* Data file */
         xml_POIData * xmlPOI;
@@ -438,6 +474,14 @@ public slots :
         bool shRoute_st;
         bool shOpp_st;
         bool shPor_st;
+        bool shBarSet_st;
+
+        void do_shLab(bool val);
+        void do_shPoi(bool val);
+        void do_shRoute(bool val);
+        void do_shOpp(bool val);
+        void do_shPor(bool val);
+        void do_shBarSet(bool val);
 
         QSound  *horn;
         bool    hornActivated;
@@ -457,6 +501,7 @@ public slots :
         ROUTE * routeSimplify;
         bool selectionTool;
         Magnifier * magnifier;
+        bool noSave;
 };
 
 #endif // MYCENTRALWIDGET_H

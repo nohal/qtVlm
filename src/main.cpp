@@ -31,6 +31,7 @@ Copyright (C) 2008 - Jacques Zaninetti - http://zygrib.free.fr
 #include <QDebug>
 #include <QDir>
 #include <QMap>
+#include <QStyleFactory>
 
 #include "MainWindow.h"
 #include "settings.h"
@@ -38,27 +39,27 @@ Copyright (C) 2008 - Jacques Zaninetti - http://zygrib.free.fr
 QMap<QString,QString> appFolder;
 
 #if 0 /*put 1 to force crash on assert, useful for debugging*/
-void crashingMessageHandler(QtMsgType type, const char *msg)
-{
+void crashingMessageHandler(QtMsgType type, const QMessageLogContext &context, const QString &msg){
+    QByteArray localMsg = msg.toLocal8Bit();
     switch(type){
     case QtDebugMsg:
-        fprintf(stderr,"Debug: %s\n", msg);
+        fprintf(stderr,"Debug: %s\n", localMsg.constData());
         break;
     case QtWarningMsg:
-        fprintf(stderr,"Warning: %s\n", msg);
+        fprintf(stderr,"Warning: %s\n", localMsg.constData());
         break;
     case QtCriticalMsg:
-        fprintf(stderr,"Critical: %s\n", msg);
+        fprintf(stderr,"Critical: %s\n", localMsg.constData());
         break;
     case QtFatalMsg:
-        fprintf(stderr,"Fatal: %s\n", msg);
+        fprintf(stderr,"Fatal: %s\n", localMsg.constData());
         __asm("int3");
         abort();
     }
 }
 int main(int argc, char *argv[])
 {
-    qInstallMsgHandler(crashingMessageHandler);
+    qInstallMessageHandler(crashingMessageHandler);
 #else
 int main(int argc, char *argv[])
 {
@@ -69,7 +70,9 @@ int main(int argc, char *argv[])
     QApplication app(argc, argv);
     qsrand(QTime::currentTime().msec());
     QString appExeFolder=QApplication::applicationDirPath();
-#ifdef __UNIX_QTVLM
+#ifdef __ANDROIDD__
+    QDir::setCurrent("/storage/emulated/0/qtVlm");
+#elif defined (__UNIX_QTVLM)
     QString curDir=QDir::currentPath();
     qWarning() << "currentPath returns: " << curDir << "applicationDirPath returns: " << appExeFolder;
     if ( QString::compare(curDir,appExeFolder,Qt::CaseSensitive)!=0 )
@@ -105,6 +108,7 @@ int main(int argc, char *argv[])
     QString dataDir = appExeFolder;
 
 
+    appFolder.insert("home",appExeFolder);
     appFolder.insert("img",appExeFolder+"/img/");
     appFolder.insert("flags",dataDir+"/img/flags/");
     appFolder.insert("boatsImg",dataDir+"/img/boats/");
@@ -126,7 +130,7 @@ int main(int argc, char *argv[])
         //qWarning() << "Checking: " << folderList.value(i);
         if (!dirCheck.exists()) {
             dirCheck.mkpath(folderList.value(i));
-            qWarning() << "Creating folder";
+            qWarning() << "Creating folder"<<folderList.at(i);
         }
     }
 #ifndef QT_V5
@@ -134,16 +138,22 @@ int main(int argc, char *argv[])
     QTextCodec::setCodecForCStrings(QTextCodec::codecForName("utf8"));
 #endif
     Settings::initSettings();
+#ifndef __ANDROIDD__
+    if(Settings::getSetting("fusionStyle",0).toInt()==1)
+        app.setStyle(QStyleFactory::create("fusion"));
+#endif
     double fontInc=Settings::getSetting("defaultFontSizeInc",0).toDouble();
-    if(fontInc<-3 || fontInc>5)
-    {
-        fontInc=0;
-        Settings::setSetting("defaultFontSizeInc",0);
-    }
     QFont def(Settings::getSetting("defaultFontName",QApplication::font().family()).toString());
-    def.setPointSizeF(8.25+fontInc);
+    double fontSize=8.0+fontInc;
+    def.setPointSizeF(fontSize);
     QApplication::setFont(def);
+    Settings::setSetting("applicationFontSize",fontSize);
+#ifdef __MAC_QTVLM
+    QString style=QString().sprintf("QPushButton { font: %.2fpx} QLabel { font: %.2fpx} QLineEdit { font: %.2fpx}  QCheckBox { font: %.2fpx} QGroupBox { font: %.2fpx} QComboBox { font: %.2fpx} QListWidget { font: %.2fpx} QRadioButton { font: %.2fpx} QTreeView { font: %.2fpx}",
+                                    fontSize,fontSize,fontSize,fontSize,fontSize,fontSize,fontSize,fontSize,fontSize);
+    qApp->setStyleSheet(style);
 
+#endif
     QTranslator translator;
     QTranslator translatorQt;
     QString lang = Settings::getSetting("appLanguage", "none").toString();

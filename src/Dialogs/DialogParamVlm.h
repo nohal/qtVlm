@@ -51,6 +51,7 @@ class DialogParamVlm : public QDialog, public Ui::VLM_param_ui
         void radioBtn_dist_toggle(bool);
 
         void doBtn_browseGrib(void);
+        void doBtn_browseSkin(void);
 
         void slot_chgMapFolder(void);
 
@@ -61,6 +62,7 @@ class DialogParamVlm : public QDialog, public Ui::VLM_param_ui
         void paramVLMChanged(void);
         void inetUpdated(void);
         void resetTraceCache();
+        void redrawGrib();
 
     private:
         void changeColor(int type);

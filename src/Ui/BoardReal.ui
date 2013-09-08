@@ -150,14 +150,14 @@
         <property name="smallDecimalPoint">
          <bool>true</bool>
         </property>
-        <property name="numDigits">
+        <property name="digitCount">
          <number>4</number>
         </property>
         <property name="segmentStyle">
          <enum>QLCDNumber::Filled</enum>
         </property>
         <property name="value" stdset="0">
-         <double>12.300000000000001</double>
+         <double>0.000000000000000</double>
         </property>
        </widget>
        <widget class="QLCDNumber" name="dir">

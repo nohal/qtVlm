@@ -78,9 +78,9 @@ void LoadGribFile::getGribFile(
         double resolution, int interval, int days,
         bool wind, bool pressure, bool rain,
         bool cloud, bool temp, bool humid, bool isotherm0,
-                bool tempPot, bool tempMin, bool tempMax, bool snowDepth,
+                bool tempPot, bool tempMin, bool tempMax,
                 bool snowCateg, bool frzRainCateg,
-                bool CAPEsfc,
+                bool CAPEsfc,bool CINsfc,
                 bool altitudeData200,
                 bool altitudeData300,
                 bool altitudeData500,
@@ -123,10 +123,7 @@ void LoadGribFile::getGribFile(
     }
     if (tempMax) {
         parameters += "M";
-    }
-    if (snowDepth) {
-        parameters += "S";
-    }
+    }    
     if (snowCateg) {
         parameters += "s";
     }
@@ -136,6 +133,8 @@ void LoadGribFile::getGribFile(
     if (CAPEsfc) {
         parameters += "c";
     }
+    if (CINsfc)
+        parameters += "i";
 
     if (altitudeData200) parameters += "2";
     if (altitudeData300) parameters += "3";
@@ -195,15 +194,15 @@ void LoadGribFile::requestFinished ( QNetworkReply* inetReply)
         vers.append(".");
         vers.append(QTVLM_SUB_VERSION_NUM);
         vers.remove("+");
-        if(vers.contains("beta") && strbuf=="3.3.5") return;
+        if(vers.contains("beta") && strbuf=="3.4.0") return;
         if(vers.left(strbuf.size())!=strbuf)
         {
             QString m=tr("Vous n'utilisez pas la derniere version de qtVlm: ")+strbuf;
 #ifdef __WIN_QTVLM
-            m+="<br>"+tr("Emplacement:")+" <a href='http://www.virtual-winds.com/~oxygen'>"+tr("qtVlm downloads")+"</a>";
+            m+="<br>"+tr("Emplacement:")+" <a href='http://www.virtual-winds.org/oxygen'>"+tr("qtVlm downloads")+"</a>";
 #endif
 #ifdef __MAC_QTVLM
-            m+="<br>"+tr("Emplacement:")+" <a href='http://www.virtual-winds.com/~oxygen/mac'>"+tr("qtVlm downloads")+"</a>";
+            m+="<br>"+tr("Emplacement:")+" <a href='http://www.virtual-winds.org/oxygen/mac'>"+tr("qtVlm downloads")+"</a>";
 #endif
             QMessageBox::warning (0,
                 tr("qtVlm version"),
@@ -329,7 +328,7 @@ void LoadGribFile::checkQtvlmVersion()
 {
     Util::paramProxy(inetManager,host);
     QNetworkRequest request;
-    request.setUrl(QUrl("http://www.virtual-winds.com/~oxygen/getLastVersion.php"));
+    request.setUrl(QUrl("http://www.virtual-winds.org/oxygen/getLastVersion.php"));
     request.setAttribute(QNetworkRequest::CacheLoadControlAttribute,QNetworkRequest::AlwaysNetwork);
     Util::addAgent(request);
     step_checkVersion=inetManager->get(request);

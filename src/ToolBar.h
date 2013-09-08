@@ -121,6 +121,9 @@ class ToolBar : public QObject
         void clear_eta(void);
         void update_eta(QDateTime eta_dtm);
 
+        /* BarrierSet toolBar */
+        QAction *barrierAdd;
+
         /* gen functions */
 
         FCT_GET(QList<MyToolBar*>,toolBarList)
@@ -129,6 +132,8 @@ class ToolBar : public QObject
         void save_settings(void);
 
         void chgBoatType(int boatType);
+
+        void chg_barrierAddState(bool state);
 
 public slots:
         void slot_estimeValueChanged(int);
@@ -143,6 +148,8 @@ public slots:
         void slot_gribPlay(void);
 
         void slot_loadEstimeParam(void);
+
+        void slot_updateLockIcon(QIcon ic);
 
     signals:
         void estimeParamChanged(void);
@@ -160,6 +167,7 @@ public slots:
         MyToolBar * estimeToolBar;
         MyToolBar * boatToolBar;
         MyToolBar * etaToolBar;
+        MyToolBar * barrierToolBar;
 
         QList<MyToolBar*> toolBarList;
 

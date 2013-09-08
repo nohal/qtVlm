@@ -36,6 +36,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "mycentralwidget.h"
 #include "GshhsReader.h"
 #include "Util.h"
+#include "Grib.h"
 
 DialogParamVlm::DialogParamVlm(MainWindow * main,myCentralWidget * parent) : QDialog(parent)
 {
@@ -45,6 +46,7 @@ DialogParamVlm::DialogParamVlm(MainWindow * main,myCentralWidget * parent) : QDi
     connect(this,SIGNAL(resetTraceCache()),parent,SIGNAL(resetTraceCache()));
     connect(this,SIGNAL(paramVLMChanged()),main,SLOT(slotParamChanged()));
     connect(this, SIGNAL(inetUpdated()), main, SLOT(slotInetUpdated()));
+    connect(this,SIGNAL(redrawGrib()),centralWidget,SIGNAL(redrawGrib()));
 
     /* Drawing / affichage */
     opp_labelType->addItem(tr("Pseudo"));
@@ -52,8 +54,15 @@ DialogParamVlm::DialogParamVlm(MainWindow * main,myCentralWidget * parent) : QDi
     opp_labelType->addItem(tr("Numero"));
     opp_labelType->setCurrentIndex(Settings::getSetting("opp_labelType",0).toInt());
 
-    this->chkPavillon->setCheckState(Settings::getSetting("showFlag",0).toInt()==1?Qt::Checked:Qt::Unchecked);
-    this->classicalButtons->setChecked(Settings::getSetting("classicalButtons",0).toInt()==1);
+    this->chkPavillon->setCheckState(Settings::getSetting("showFlag",0,"showHideItem").toInt()==1?Qt::Checked:Qt::Unchecked);
+    this->chkFusion->setChecked(Settings::getSetting("fusionStyle",0).toInt()==1);
+    this->classicalBoard->setChecked(Settings::getSetting("classicalVlmBoard",0).toInt()==1);
+    QString skinName=Settings::getSetting("defaultSkin",QFileInfo("img/skin_compas.png").absoluteFilePath()).toString();
+    if(!QFile(skinName).exists())
+        skinName=QFileInfo("img/skin_compas.png").absoluteFilePath();
+    this->edt_skinFile->setText(skinName);
+    connect(this->btn_browseSkin,SIGNAL(clicked()),this,SLOT(doBtn_browseSkin()));
+
 
     QString mapsFolderString = Settings::getSetting("mapsFolder",appFolder.value("maps")).toString();
     mapsFolder->setText(mapsFolderString);
@@ -114,7 +123,6 @@ DialogParamVlm::DialogParamVlm(MainWindow * main,myCentralWidget * parent) : QDi
     this->autoRemove->setCheckState(Settings::getSetting("autoRemovePoiFromRoute",0).toInt()==1?Qt::Checked:Qt::Unchecked);
     this->autoAt->setCheckState(Settings::getSetting("autoFillPoiHeading",0).toInt()==1?Qt::Checked:Qt::Unchecked);
     this->routeSortByName->setChecked(Settings::getSetting("routeSortByName",1).toInt()==1);
-    this->strongSimplify->setChecked(Settings::getSetting("strongSimplify",1).toInt()==1);
 
     /* Trace */
     trace_length->setValue(Settings::getSetting("trace_length",12).toInt());
@@ -140,10 +148,17 @@ DialogParamVlm::DialogParamVlm(MainWindow * main,myCentralWidget * parent) : QDi
     edt_gribFolder->setText(Settings::getSetting("edtGribFolder",appFolder.value("grib")).toString());
 
     chk_gribZoomOnLoad->setCheckState(Settings::getSetting("gribZoomOnLoad",0).toInt()==1?Qt::Checked:Qt::Unchecked);
+    chk_gribDelete->setChecked(Settings::getSetting("gribDelete",0).toInt()==1);
     //chk_autoGribDate->setCheckState(Settings::getSetting("autoGribDate",0).toInt()==1?Qt::Checked:Qt::Unchecked);
 
     chk_externalMail->setCheckState(Settings::getSetting("sDocExternalMail",1).toInt()==1?Qt::Checked:Qt::Unchecked);
     sailsDocPress->setCheckState(Settings::getSetting("sailsDocPress",0).toInt()==1?Qt::Checked:Qt::Unchecked);
+    forceWind->setChecked(Settings::getSetting("forceWind",0).toInt()==1);
+    forcedTWS->setValue(Settings::getSetting("forcedTWS",0.0).toDouble());
+    forcedTWD->setValue(Settings::getSetting("forcedTWD",0.0).toDouble());
+    forceCurrents->setChecked(Settings::getSetting("forceCurrents",0).toInt()==1);
+    forcedCS->setValue(Settings::getSetting("forcedCS",0.0).toDouble());
+    forcedCD->setValue(Settings::getSetting("forcedCD",0.0).toDouble());
 
     /* GPS */
     chk_activateEmulation->setCheckState(
@@ -157,7 +172,7 @@ DialogParamVlm::DialogParamVlm(MainWindow * main,myCentralWidget * parent) : QDi
     userAgent->setText(Settings::getSetting("userAgent", "").toString());
     userAgent->setEnabled(Settings::getSetting("forceUserAgent",0).toInt()==1);
     defFontName->findText(Settings::getSetting("defaultFontName",QApplication::font().family()).toString());
-    defFontSize->setValue(8.25+Settings::getSetting("defaultFontSizeInc",0).toFloat());
+    defFontSize->setValue(8.0+Settings::getSetting("defaultFontSizeInc",0).toDouble());
 
     for(int i=0;i<NB_URL;i++)
         url_list->addItem(url_name[i]+": "+url_str[i]);
@@ -231,8 +246,16 @@ void DialogParamVlm::done(int result)
     {
         /*drawing*/
         Settings::setSetting("opp_labelType",QString().setNum(opp_labelType->currentIndex()));
-        Settings::setSetting("showFlag",this->chkPavillon->checkState()==Qt::Checked?"1":"0");
-        Settings::setSetting("classicalButtons",this->classicalButtons->checkState()==Qt::Checked?"1":"0");
+        Settings::setSetting("showFlag",this->chkPavillon->checkState()==Qt::Checked?"1":"0","showHideItem");
+        Settings::setSetting("fusionStyle",this->chkFusion->isChecked()?1:0);
+        bool previousBoardSetting=Settings::getSetting("classicalVlmBoard",0).toInt()==1;
+        Settings::setSetting("classicalVlmBoard",this->classicalBoard->isChecked()?1:0);
+        if(previousBoardSetting!=classicalBoard->isChecked())
+            centralWidget->getMainWindow()->loadBoard();
+        QString skinName=edt_skinFile->text();
+        if(!QFile(skinName).exists())
+            skinName=QFileInfo("img/skin_compas.png").absoluteFilePath();
+        Settings::setSetting("defaultSkin",skinName);
         int gdm=2;
         if(this->gribAuto->isChecked())
             gdm=0;
@@ -240,7 +263,7 @@ void DialogParamVlm::done(int result)
             gdm=1;
         Settings::setSetting("gribDrawingMethod",gdm);
         Settings::setSetting("defaultFontName",this->defFontName->currentText());
-        Settings::setSetting("defaultFontSizeInc",QString().setNum(this->defFontSize->value()-8.25));
+        Settings::setSetting("defaultFontSizeInc",QString().setNum(this->defFontSize->value()-8.0));
 
         if(Settings::getSetting("mapsFolder",appFolder.value("maps")).toString() != mapsFolder->text())
         {
@@ -306,16 +329,24 @@ void DialogParamVlm::done(int result)
         Settings::setSetting("autoRemovePoiFromRoute",this->autoRemove->isChecked()?"1":"0");
         Settings::setSetting("autoFillPoiHeading",this->autoAt->isChecked()?"1":"0");
         Settings::setSetting("routeSortByName",this->routeSortByName->isChecked()?"1":"0");
-        Settings::setSetting("strongSimplify",this->strongSimplify->isChecked()?"1":"0");
 
         /* Grib */
 
         Settings::setSetting("askGribFolder",chk_askGribFolder->checkState()==Qt::Checked?"1":"0");
         Settings::setSetting("edtGribFolder",edt_gribFolder->text());
         Settings::setSetting("gribZoomOnLoad",chk_gribZoomOnLoad->checkState()==Qt::Checked?"1":"0");
+        Settings::setSetting("gribDelete",chk_gribDelete->checkState()==Qt::Checked?"1":"0");
         //Settings::setSetting("autoGribDate",chk_autoGribDate->checkState()==Qt::Checked?"1":"0");
         Settings::setSetting("sDocExternalMail",chk_externalMail->checkState()==Qt::Checked?"1":"0");
         Settings::setSetting("sailsDocPress",sailsDocPress->checkState()==Qt::Checked?"1":"0");
+        Settings::setSetting("forceWind",forceWind->isChecked()?1:0);
+        Settings::setSetting("forcedTWS",forcedTWS->value());
+        Settings::setSetting("forcedTWD",forcedTWD->value());
+        Settings::setSetting("forceCurrents",forceCurrents->isChecked()?1:0);
+        Settings::setSetting("forcedCS",forcedCS->value());
+        Settings::setSetting("forcedCD",forcedCD->value());
+        if(centralWidget->getGrib()) centralWidget->getGrib()->load_forcedParam();
+        if(centralWidget->getGribCurrent()) centralWidget->getGribCurrent()->load_forcedParam();
 
         /* advanced */
         Settings::setSetting("gpsEmulEnable",chk_activateEmulation->checkState()==Qt::Checked?"1":"0");
@@ -342,6 +373,7 @@ void DialogParamVlm::done(int result)
         Settings::setSetting("saveMainWindowGeometry",saveWinGeometry->checkState()==Qt::Checked?"1":"0");
 
         emit paramVLMChanged();
+        emit redrawGrib();
     }
     QDialog::done(result);
 }
@@ -504,6 +536,14 @@ void DialogParamVlm::doBtn_browseGrib(void)
                                                  edt_gribFolder->text());
      if(dir!="")
          edt_gribFolder->setText(dir);
+}
+void DialogParamVlm::doBtn_browseSkin(void)
+{
+    QString skinPath=QFileInfo(edt_skinFile->text()).absolutePath();
+    QString fileName = QFileDialog::getOpenFileName(this,
+                         tr("Selectionner un skin tableau de bord VLM"), skinPath, "png (*.png)");
+     if(fileName!="")
+         edt_skinFile->setText(QFileInfo(fileName).absoluteFilePath());
 }
 
 void DialogParamVlm::slot_changeParam()

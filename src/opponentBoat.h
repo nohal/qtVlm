@@ -61,6 +61,7 @@ class opponent : public QGraphicsWidget
         QString getIduser(void)  { return idu; }
         bool    getIsQtBoat()    { return isQtBoat; }
         QList<vlmPoint> * getTrace() { return trace_drawing->getPoints(); }
+        vlmLine * getTraceDrawing(){return trace_drawing;}
         QColor getColor() { return myColor; }
 
         void setNewData(double lat, double lon,QString name);
@@ -90,9 +91,7 @@ class opponent : public QGraphicsWidget
 public slots:
         void updateProjection();
         void paramChanged();
-        void slot_shShow();
-        void slot_shHidden();
-        void slot_shOpp(){if(this->isVisible())slot_shHidden();else slot_shShow();}
+        void slot_shOpp(bool isHidden);
         void slot_shLab(bool state){this->labelHidden=state;update();}
         void slot_resetTraceCache();
 

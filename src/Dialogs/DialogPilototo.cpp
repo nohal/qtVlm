@@ -34,6 +34,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "DialogPilototo.h"
 #include "DialogPilototoParam.h"
 #include "settings.h"
+#include "BoardVlmNew.h"
 
 DialogPilototo::DialogPilototo(MainWindow *main,myCentralWidget * parent,inetConnexion * inet):QDialog(parent), inetClient(inet)
 {
@@ -43,6 +44,11 @@ DialogPilototo::DialogPilototo(MainWindow *main,myCentralWidget * parent,inetCon
     this->move(250,100);
     setupUi(this);
     Util::setFontDialog(this);
+    QMap<QWidget *,QFont> exceptions;
+    QFont wfont=QApplication::font();
+    wfont.setPointSizeF(10.0);
+    exceptions.insert(titreBateau,wfont);
+    Util::setSpecificFont(exceptions);
     selectPOI_mode=1;
 
     instructionEditor = new DialogPilototoParam(this);
@@ -321,6 +327,7 @@ void DialogPilototo::done(int result)
 	    if (rep == QMessageBox::No)
 		return;
 	}
+    if(!BoardVlmNew::confirmChange()) return;
 	/* creating list of pilototo.php requests*/
         QList<struct instruction*> * instructions = new QList<struct instruction*>;
         QJson::Serializer serializer;
@@ -584,6 +591,7 @@ void DialogPilototo::setInstructions(boat * pvBoat, QList<POI *> pois)
             }
         }
     }
+    if(!BoardVlmNew::confirmChange()) return;
     QList<struct instruction*> * instructions = new QList<struct instruction*>;
     QJson::Serializer serializer;
     struct instruction * instr_ptr;
