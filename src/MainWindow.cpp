@@ -327,7 +327,7 @@ MainWindow::MainWindow(int w, int h, QWidget *parent)
 #endif
 #ifdef __MAC_QTVLM
     QString OS_versionName;
-    int windowsVersion=QSysInfo::windowsVersion();
+    int windowsVersion=QSysInfo::macVersion();
     switch(windowsVersion)
     {
         case QSysInfo::MV_9:
@@ -364,7 +364,7 @@ MainWindow::MainWindow(int w, int h, QWidget *parent)
             OS_versionName="Mac OS X 10.9-MAVERICKS";
             break;
         default:
-            OS_versionName="Unknown Windows version";
+            OS_versionName="Unknown Macintosh version";
             break;
     }
     qWarning()<<"mac version:"<<OS_versionName;
