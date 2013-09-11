@@ -201,7 +201,7 @@ void boatReal::updateBoat(nmeaINFO info)
         qWarning()<<"strange sig value:"<<sig;
     this->speed=info.speed/1.852;
     this->heading=info.direction;
-    if(info.fix==1 || info.sig==0)
+    if(info.fix==1)
     {
 //        qWarning()<<"bad gps signal, fix="<<info.fix<<",sig="<<info.sig;
         emit(boatUpdated(this,false,false));

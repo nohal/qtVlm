@@ -236,7 +236,7 @@ void boardReal::boatUpdated(void)
         gpsInfo->setPixmap(imgInfo);
         status=tr("Running")+"<br>";
         if(myBoat->getSig()==0)
-            status=status+tr("no signal")+"<br>";
+            status=status+tr("Bad signal")+"<br>";
         else if(myBoat->getSig()==1)
             status=status+tr("Fix quality")+"<br>";
         else if (myBoat->getSig()==2)
