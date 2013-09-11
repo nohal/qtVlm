@@ -593,7 +593,7 @@ Nécessite d&apos;entrer un numéro de bateau et un numéro de courses valides.<
     <message>
         <source>Permet de telecharger manuellement une trace pour une course VLM.
 La bo�te � cocher trace partielle s&apos;active apres l&apos;entree d&apos;un numero de course valide, et permet de requ�rir une trace tronqu�e.</source>
-        <translation>Permet de telecharger manuellement une trace pour une course VLM.
+        <translation type="obsolete">Permet de telecharger manuellement une trace pour une course VLM.
 La boîte à cocher trace partielle s&apos;active apres l&apos;entree d&apos;un numero de course valide, et permet de requérir une trace tronquée.</translation>
     </message>
     <message>
@@ -623,6 +623,12 @@ La boîte à cocher trace partielle s&apos;active apres l&apos;entree d&apos;un 
     <message>
         <source>En cache.</source>
         <translation>En cache.</translation>
+    </message>
+    <message>
+        <source>Permet de telecharger manuellement une trace pour une course VLM.
+La boîte à cocher trace partielle s&apos;active apres l&apos;entree d&apos;un numero de course valide, et permet de requérir une trace tronquée.</source>
+        <translation>Permet de telecharger manuellement une trace pour une course VLM.
+La boîte à cocher trace partielle s&apos;active apres l&apos;entree d&apos;un numero de course valide, et permet de requérir une trace tronquée.</translation>
     </message>
 </context>
 <context>
@@ -5947,7 +5953,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>no signal</source>
-        <translation>pas de signal</translation>
+        <translation type="obsolete">pas de signal</translation>
     </message>
     <message>
         <source>Fix quality</source>
@@ -6025,6 +6031,10 @@ p, li { white-space: pre-wrap; }
     <message>
         <source>Stop GPS</source>
         <translation></translation>
+    </message>
+    <message>
+        <source>Bad signal</source>
+        <translation>Mauvais signal</translation>
     </message>
 </context>
 <context>
