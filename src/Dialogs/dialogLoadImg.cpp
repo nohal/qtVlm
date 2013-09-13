@@ -44,10 +44,14 @@ void dialogLoadImg::done(int result)
                          !gribColored->isChecked());
         if(carte->getMyImgFileName()!=this->FileName->text())
         {
-            if(!carte->setMyImgFileName(this->FileName->text()))
+            int res=carte->setMyImgFileName(this->FileName->text());
+            if(res!=1)
             {
                 QMessageBox msgBox;
-                msgBox.setText(tr("Fichier Kap invalide"));
+                if(res==0)
+                    msgBox.setText(tr("Fichier Kap invalide"));
+                else
+                    msgBox.setText(tr("Fichier Kap ne contient pas de polynomiaux, desole"));
                 msgBox.setIcon(QMessageBox::Critical);
                 msgBox.exec();
                 return;

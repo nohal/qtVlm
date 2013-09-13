@@ -133,7 +133,7 @@ void loadImg::setImgGribKap(QPixmap imgGribKap)
     gribKap->show();
 }
 
-bool loadImg::setMyImgFileName(QString s)
+int loadImg::setMyImgFileName(QString s)
 {
     this->myImgFileName=s;
     delete[] bsbBuf;
@@ -147,6 +147,13 @@ bool loadImg::setMyImgFileName(QString s)
     bsb=new BSBImage();
     if(bsb_open_header(s.toLocal8Bit().data(), bsb))
     {
+        if(bsb->num_wpxs==0 || bsb->num_wpys==0)
+        {
+            bsb_close(bsb);
+            delete bsb;
+            bsb=NULL;
+            return 2;
+        }
         bsbBuf=new uint8_t[bsb->width];
         for(int i=0;i<bsb->num_plys;++i)
         {
@@ -170,14 +177,14 @@ bool loadImg::setMyImgFileName(QString s)
 #if 0
         this->convertBsb2Pixmap(bsb); //for debugging, just see if we can decode the image. Result in myKap.png
 #endif
-        return true;
+        return 1;
     }
     else
     {
         bsb_close(bsb);
         delete bsb;
         bsb=NULL;
-        return false;
+        return 0;
     }
 }
 void loadImg::convertBsb2Pixmap(BSBImage * b)
