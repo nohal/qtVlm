@@ -24,7 +24,10 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <math.h>
 #include <bsb.h>
+#include <QString>
+#include "georef.h"
 
 #ifdef _WIN32
     #define DIR_SEPARATOR '\\'
@@ -40,6 +43,13 @@
 /**
  *  bsb_ntohl - portable ntohl
  */
+typedef enum OcpnProjTypebra
+{
+      PROJECTION_UNKNOWN,
+      PROJECTION_MERCATOR,
+      PROJECTION_TRANSVERSE_MERCATOR,
+      PROJECTION_POLYCONIC
+}_OcpnProjType;
 static uint32_t bsb_ntohl(uint32_t netlong)
 {
     static const uint32_t testvalue = 0x12345678;
@@ -473,6 +483,9 @@ extern int bsb_open_header(char *filename, BSBImage *p)
        bsb_seek_to_row(p, 0);
     }
     setlocale( LC_ALL, "" );
+    int analyze_ret_val = AnalyzeRefpoints(p);
+    if(0 != analyze_ret_val)
+          return 0;
     return 1;
 }
 
@@ -514,16 +527,703 @@ static double polytrans( double* coeff, double lon, double lat )
  */
 extern int bsb_LLtoXY(BSBImage *p, double lon, double  lat, int* x, int* y)
 {
-    double xd,yd;
-    /* change longitude phase (CPH) */
-    lon = (lon < 0) ? lon + p->cph : lon - p->cph;
-    xd = polytrans( p->wpx, lon, lat );
-    yd = polytrans( p->wpy, lon, lat );
-    *x = (int)(xd + 0.5);
-    *y = (int)(yd + 0.5);
-    return 1;
-}
 
+    if(p->num_wpxs!=0 && p->num_wpys!=0) //has polynomials
+    {
+        double xd,yd;
+        /* change longitude phase (CPH) */
+        lon = (lon < 0) ? lon + p->cph : lon - p->cph;
+        xd = polytrans( p->wpx, lon, lat );
+        yd = polytrans( p->wpy, lon, lat );
+        *x = (int)(xd + 0.5);
+        *y = (int)(yd + 0.5);
+        return 1;
+    }
+#if 1
+    double easting, northing;
+    lon = (lon < 0) ? lon + p->cph : lon - p->cph;
+    double xlon = lon;
+    double alat, alon;
+
+    if(p->projection_type == PROJECTION_TRANSVERSE_MERCATOR)
+    {
+#if 1
+          //      Use Projected Polynomial algorithm
+
+          alon = lon /*+ m_lon_datum_adjust*/;
+          alat = lat /*+ m_lat_datum_adjust*/;
+
+          //      Get e/n from TM Projection
+          toTM(alat, alon, p->m_proj_lat, p->m_proj_lon, &easting, &northing);
+
+          //      Apply poly solution to target point
+          double xd = polytrans( p->cPoints.wpx, easting, northing );
+          double yd = polytrans( p->cPoints.wpy, easting, northing );
+          *x = (int)(xd + 0.5);
+          *y = (int)(yd + 0.5);
+          return 1;
+/*
+          //      Apply poly solution to vp center point
+          toTM(vp.clat + m_lat_datum_adjust, vp.clon + m_lon_datum_adjust, m_proj_lat, m_proj_lon, &easting, &northing);
+          double xc = polytrans( cPoints.wpx, easting, northing );
+          double yc = polytrans( cPoints.wpy, easting, northing );
+
+          //      Calculate target point relative to vp center
+          double raster_scale = GetPPM() / vp.view_scale_ppm;
+
+          int xs = (int)xc - (int)(vp.pix_width  * raster_scale / 2);
+          int ys = (int)yc - (int)(vp.pix_height * raster_scale / 2);
+
+          int pixx_p = (int)(((xd - xs) / raster_scale) + 0.5);
+          int pixy_p = (int)(((yd - ys) / raster_scale) + 0.5);
+
+//                printf("  %d  %d  %d  %d\n", pixx, pixx_p, pixy, pixy_p);
+
+          pixx = pixx_p;
+          pixy = pixy_p;
+*/
+#endif
+    }
+    else if(p->projection_type == PROJECTION_MERCATOR)
+    {
+#if 1
+          //      Use Projected Polynomial algorithm
+
+          alon = lon /*+ m_lon_datum_adjust*/;
+          alat = lat /*+ m_lat_datum_adjust*/;
+
+          //      Get e/n from  Projection
+          xlon = alon;
+          if(p->m_bIDLcross)
+          {
+                if(xlon < 0.)
+                      xlon += 360.;
+          }
+          toSM_ECC(alat, xlon, p->m_proj_lat, p->m_proj_lon, &easting, &northing);
+
+          //      Apply poly solution to target point
+          double xd = polytrans( p->cPoints.wpx, easting, northing );
+          double yd = polytrans( p->cPoints.wpy, easting, northing );
+          *x = (int)(xd + 0.5);
+          *y = (int)(yd + 0.5);
+          return 1;
+/*
+
+          //      Apply poly solution to vp center point
+          double xlonc = vp.clon;
+          if(p->m_bIDLcross)
+          {
+                if(xlonc < 0.)
+                      xlonc += 360.;
+          }
+
+          toSM_ECC(vp.clat + m_lat_datum_adjust, xlonc + m_lon_datum_adjust, p->m_proj_lat, p->m_proj_lon, &easting, &northing);
+          double xc = polytrans( p->cPoints.wpx, easting, northing );
+          double yc = polytrans( p->cPoints.wpy, easting, northing );
+          //      Calculate target point relative to vp center
+          double raster_scale = GetPPM() / vp.view_scale_ppm;
+
+          int xs = (int)xc - (int)(vp.pix_width  * raster_scale / 2);
+          int ys = (int)yc - (int)(vp.pix_height * raster_scale / 2);
+
+          int pixx_p = (int)(((xd - xs) / raster_scale) + 0.5);
+          int pixy_p = (int)(((yd - ys) / raster_scale) + 0.5);
+
+          pixx = pixx_p;
+          pixy = pixy_p;
+*/
+#endif
+    }
+    else if(p->projection_type == PROJECTION_POLYCONIC)
+    {
+#if 1
+          //      Use Projected Polynomial algorithm
+
+          alon = lon /*+ m_lon_datum_adjust*/;
+          alat = lat /*+ m_lat_datum_adjust*/;
+
+          //      Get e/n from  Projection
+          xlon = alon;
+          if(p->m_bIDLcross)
+          {
+                if(xlon < 0.)
+                      xlon += 360.;
+          }
+          toPOLY(alat, xlon, p->m_proj_lat, p->m_proj_lon, &easting, &northing);
+
+          //      Apply poly solution to target point
+          double xd = polytrans( p->cPoints.wpx, easting, northing );
+          double yd = polytrans( p->cPoints.wpy, easting, northing );
+          *x = (int)(xd + 0.5);
+          *y = (int)(yd + 0.5);
+          return 1;
+/*
+          //      Apply poly solution to vp center point
+          double xlonc = vp.clon;
+          if(m_bIDLcross)
+          {
+                if(xlonc < 0.)
+                      xlonc += 360.;
+          }
+
+          toPOLY(vp.clat + m_lat_datum_adjust, xlonc + m_lon_datum_adjust, m_proj_lat, m_proj_lon, &easting, &northing);
+          double xc = polytrans( cPoints.wpx, easting, northing );
+          double yc = polytrans( cPoints.wpy, easting, northing );
+
+          //      Calculate target point relative to vp center
+          double raster_scale = GetPPM() / vp.view_scale_ppm;
+
+          int xs = (int)xc - (int)(vp.pix_width  * raster_scale / 2);
+          int ys = (int)yc - (int)(vp.pix_height * raster_scale / 2);
+
+          int pixx_p = (int)(((xd - xs) / raster_scale) + 0.5);
+          int pixy_p = (int)(((yd - ys) / raster_scale) + 0.5);
+
+          pixx = pixx_p;
+          pixy = pixy_p;
+*/
+#endif
+    }
+    else
+    {
+#if 0
+          toSM_ECC(lat, xlon, vp.clat, vp.clon, &easting, &northing);
+
+          double epix = easting  * vp.view_scale_ppm;
+          double npix = northing * vp.view_scale_ppm;
+
+          double dx = epix * cos ( vp.skew ) + npix * sin ( vp.skew );
+          double dy = npix * cos ( vp.skew ) - epix * sin ( vp.skew );
+
+          pixx = ( int ) /*rint*/( ( vp.pix_width  / 2 ) + dx );
+          pixy = ( int ) /*rint*/( ( vp.pix_height / 2 ) - dy );
+#endif
+    }
+#endif
+          return 0;
+}
+int   AnalyzeRefpoints(BSBImage *p)
+{
+    int projection_type=PROJECTION_UNKNOWN;
+    QString pr=p->projection;
+    pr=pr.toUpper();
+    if(pr.contains("MERCATOR"))
+        projection_type=PROJECTION_MERCATOR;
+    if(pr.contains("TRANSVERSE"))
+        projection_type=PROJECTION_TRANSVERSE_MERCATOR;
+    if(pr.contains("POLYCONIC"))
+        projection_type=PROJECTION_POLYCONIC;
+    if(pr.contains("TM"))
+        projection_type=PROJECTION_TRANSVERSE_MERCATOR;
+    p->projection_type=projection_type;
+    p->m_proj_lat = 0.;
+    p->m_proj_lon = 0.;
+    //    Set up the projection point according to the projection parameter
+    if(projection_type == PROJECTION_MERCATOR)
+          p->m_proj_lat = p->projectionparam;
+    else if(projection_type == PROJECTION_TRANSVERSE_MERCATOR)
+          p->m_proj_lon = p->projectionparam;
+    else if(projection_type == PROJECTION_POLYCONIC)
+          p->m_proj_lon = p->projectionparam;
+      int i,n;
+      //double elt, elg;
+
+//    Calculate the max/min reference points
+
+      float lonmin = 1000;
+      float lonmax = -1000;
+      float latmin = 90.;
+      float latmax = -90.;
+
+      int plonmin = 100000;
+      int plonmax = 0;
+      int platmin = 100000;
+      int platmax = 0;
+      int nlonmin, nlonmax, nlatmax, nlatmin;
+      nlonmin =0; nlonmax=0; nlatmax=0; nlatmin=0;
+
+      if(0 == p->num_refs)                  // bad chart georef...
+            return (1);
+
+      for(n=0 ; n<p->num_refs ; n++)
+      {
+            //    Longitude
+          if(p->ref[n].lon > lonmax)
+            {
+                  lonmax = p->ref[n].lon;
+                  plonmax = (int)p->ref[n].x;
+                  nlonmax = n;
+            }
+            if(p->ref[n].lon < lonmin)
+            {
+                  lonmin = p->ref[n].lon;
+                  plonmin = (int)p->ref[n].x;
+                  nlonmin = n;
+            }
+
+            //    Latitude
+            if(p->ref[n].lat < latmin)
+            {
+                  latmin = p->ref[n].lat;
+                  platmin = (int)p->ref[n].y;
+                  nlatmin = n;
+            }
+            if(p->ref[n].lat > latmax)
+            {
+                  latmax = p->ref[n].lat;
+                  platmax = (int)p->ref[n].y;
+                  nlatmax = n;
+            }
+      }
+
+      p->m_bIDLcross = false;
+      //    Special case for charts which cross the IDL
+      if((lonmin * lonmax) < 0)
+      {
+            if(p->ref[nlonmin].x > p->ref[nlonmax].x)
+            {
+                  //    walk the reference table and add 360 to any longitude which is < 0
+                  for(n=0 ; n<p->num_refs ; n++)
+                  {
+                        if(p->ref[n].lon < 0.0)
+                              p->ref[n].lon += 360.;
+                  }
+
+                  //    And recalculate the  min/max
+                  lonmin = 1000;
+                  lonmax = -1000;
+
+                  for(n=0 ; n<p->num_refs ; n++)
+                  {
+            //    Longitude
+                        if(p->ref[n].lon > lonmax)
+                        {
+                              lonmax = p->ref[n].lon;
+                              plonmax = (int)p->ref[n].x;
+                              nlonmax = n;
+                        }
+                        if(p->ref[n].lon < lonmin)
+                        {
+                              lonmin = p->ref[n].lon;
+                              plonmin = (int)p->ref[n].x;
+                              nlonmin = n;
+                        }
+
+            //    Latitude
+                        if(p->ref[n].lat < latmin)
+                        {
+                              latmin = p->ref[n].lat;
+                              platmin = (int)p->ref[n].y;
+                              nlatmin = n;
+                        }
+                        if(p->ref[n].lat > latmax)
+                        {
+                              latmax = p->ref[n].lat;
+                              platmax = (int)p->ref[n].y;
+                              nlatmax = n;
+                        }
+                  }
+                  p->m_bIDLcross = true;
+            }
+      }
+
+
+//          Build the Control Point Structure, etc
+        p->cPoints.count = p->num_refs;
+
+        p->cPoints.tx  = (double *)malloc(p->num_refs * sizeof(double));
+        p->cPoints.ty  = (double *)malloc(p->num_refs * sizeof(double));
+        p->cPoints.lon = (double *)malloc(p->num_refs * sizeof(double));
+        p->cPoints.lat = (double *)malloc(p->num_refs * sizeof(double));
+
+        p->cPoints.pwx = (double *)malloc(12 * sizeof(double));
+        p->cPoints.wpx = (double *)malloc(12 * sizeof(double));
+        p->cPoints.pwy = (double *)malloc(12 * sizeof(double));
+        p->cPoints.wpy = (double *)malloc(12 * sizeof(double));
+
+
+        //  Find the two REF points that are farthest apart
+        double dist_max = 0.;
+        int imax = 0;
+        int jmax = 0;
+
+        for(i=0 ; i<p->num_refs ; i++)
+        {
+              for(int j=i+1 ; j < p->num_refs ; j++)
+              {
+                    double dx = p->ref[i].x - p->ref[j].x;
+                    double dy = p->ref[i].y - p->ref[j].y;
+                    double dist = (dx * dx) + (dy * dy);
+                    if(dist > dist_max)
+                    {
+                          dist_max = dist;
+                          imax = i;
+                          jmax = j;
+                    }
+              }
+        }
+
+        //  Georef solution depends on projection type
+
+        if(p->projection_type == PROJECTION_TRANSVERSE_MERCATOR)
+        {
+#if 1
+              double easting0, easting1, northing0, northing1;
+              //  Get the TMerc projection of the two REF points
+              toTM(p->ref[imax].lat, p->ref[imax].lon, p->m_proj_lat, p->m_proj_lon, &easting0, &northing0);
+              toTM(p->ref[jmax].lat, p->ref[jmax].lon, p->m_proj_lat, p->m_proj_lon, &easting1, &northing1);
+
+              //  Calculate the scale factor using exact REF point math
+              double dx2 =  (p->ref[jmax].x - p->ref[imax].x) *  (p->ref[jmax].x - p->ref[imax].x);
+              double dy2 =  (p->ref[jmax].y - p->ref[imax].y) *  (p->ref[jmax].y - p->ref[imax].y);
+              double dn2 =  (northing1 - northing0) * (northing1 - northing0);
+              double de2 =  (easting1 - easting0) * (easting1 - easting0);
+
+              p->m_ppm_avg = sqrt(dx2 + dy2) / sqrt(dn2 + de2);
+
+              //  Set up and solve polynomial solution for pix<->east/north as projected
+              // Fill the cpoints structure with pixel points and transformed lat/lon
+
+              for(int n=0 ; n<p->num_refs ; n++)
+              {
+                    double easting, northing;
+                    toTM(p->ref[n].lat, p->ref[n].lon, p->m_proj_lat, p->m_proj_lon, &easting, &northing);
+
+                    p->cPoints.tx[n] = p->ref[n].x;
+                    p->cPoints.ty[n] = p->ref[n].y;
+                    p->cPoints.lon[n] = easting;
+                    p->cPoints.lat[n] = northing;
+              }
+
+        //      Helper parameters
+              p->cPoints.txmax = plonmax;
+              p->cPoints.txmin = plonmin;
+              p->cPoints.tymax = platmax;
+              p->cPoints.tymin = platmin;
+              toTM(latmax, lonmax,p-> m_proj_lat, p->m_proj_lon, &p->cPoints.lonmax, &p->cPoints.latmax);
+              toTM(latmin, lonmin, p->m_proj_lat, p->m_proj_lon, &p->cPoints.lonmin, &p->cPoints.latmin);
+
+              p->cPoints.status = 1;
+
+              Georef_Calculate_Coefficients_Proj(&p->cPoints);
+#endif
+       }
+
+
+       else if(p->projection_type == PROJECTION_MERCATOR)
+       {
+#if 1
+
+
+             double easting0, easting1, northing0, northing1;
+              //  Get the Merc projection of the two REF points
+             toSM_ECC(p->ref[imax].lat, p->ref[imax].lon, p->m_proj_lat, p->m_proj_lon, &easting0, &northing0);
+             toSM_ECC(p->ref[jmax].lat, p->ref[jmax].lon, p->m_proj_lat, p->m_proj_lon, &easting1, &northing1);
+
+              //  Calculate the scale factor using exact REF point math
+//             double dx =  (pRefTable[jmax].xr - pRefTable[imax].xr);
+//             double de =  (easting1 - easting0);
+//             m_ppm_avg = fabs(dx / de);
+
+             double dx2 =  (p->ref[jmax].x - p->ref[imax].x) *  (p->ref[jmax].x - p->ref[imax].x);
+             double dy2 =  (p->ref[jmax].y - p->ref[imax].y) *  (p->ref[jmax].y - p->ref[imax].y);
+             double dn2 =  (northing1 - northing0) * (northing1 - northing0);
+             double de2 =  (easting1 - easting0) * (easting1 - easting0);
+
+             p->m_ppm_avg = sqrt(dx2 + dy2) / sqrt(dn2 + de2);
+
+
+              //  Set up and solve polynomial solution for pix<->east/north as projected
+              // Fill the cpoints structure with pixel points and transformed lat/lon
+
+             for(int n=0 ; n<p->num_refs ; n++)
+             {
+                   double easting, northing;
+                   toSM_ECC(p->ref[n].lat, p->ref[n].lon, p->m_proj_lat, p->m_proj_lon, &easting, &northing);
+
+                   p->cPoints.tx[n] = p->ref[n].x;
+                   p->cPoints.ty[n] = p->ref[n].y;
+                   p->cPoints.lon[n] = easting;
+                   p->cPoints.lat[n] = northing;
+//                   printf(" x: %g  y: %g  east: %g  north: %g\n",pRefTable[n].xr, pRefTable[n].yr, easting, northing);
+             }
+
+        //      Helper parameters
+             p->cPoints.txmax = plonmax;
+             p->cPoints.txmin = plonmin;
+             p->cPoints.tymax = platmax;
+             p->cPoints.tymin = platmin;
+             toSM_ECC(latmax, lonmax, p->m_proj_lat, p->m_proj_lon, &p->cPoints.lonmax, &p->cPoints.latmax);
+             toSM_ECC(latmin, lonmin, p->m_proj_lat, p->m_proj_lon, &p->cPoints.lonmin, &p->cPoints.latmin);
+
+             p->cPoints.status = 1;
+
+             Georef_Calculate_Coefficients_Proj(&p->cPoints);
+
+//              for(int h=0 ; h < 10 ; h++)
+//                    printf("pix to east %d  %g\n",  h, cPoints.pwx[h]);          // pix to lon
+ //             for(int h=0 ; h < 10 ; h++)
+//                    printf("east to pix %d  %g\n",  h, cPoints.wpx[h]);          // lon to pix
+
+/*
+             if ((0 != m_Chart_DU ) && (0 != m_Chart_Scale))
+             {
+                   double m_ppm_avg1 = m_Chart_DU * 39.37 / m_Chart_Scale;
+                   m_ppm_avg1 *= cos(m_proj_lat * PI / 180.);                    // correct to chart centroid
+
+                   printf("BSB chart ppm_avg:%g ppm_avg1:%g\n", m_ppm_avg, m_ppm_avg1);
+                   m_ppm_avg = m_ppm_avg1;
+             }
+*/
+#endif
+       }
+
+       else if(p->projection_type == PROJECTION_POLYCONIC)
+       {
+#if 1
+             //   This is interesting
+             //   On some BSB V 1.0 Polyconic charts (e.g. 14500_1, 1995), the projection parameter
+             //   Which is taken to be the central meridian of the projection is of the wrong sign....
+
+             //   We check for this case, and make a correction if necessary.....
+             //   Obviously, the projection meridian should be on the chart, i.e. between the min and max longitudes....
+             double proj_meridian = p->m_proj_lon;
+
+             if((p->ref[nlonmax].lon >= -proj_meridian) && (-proj_meridian >= p->ref[nlonmin].lon))
+                   p->m_proj_lon = -p->m_proj_lon;
+
+
+             double easting0, easting1, northing0, northing1;
+             //  Get the Poly projection of the two REF points
+             toPOLY(p->ref[imax].lat, p->ref[imax].lon, p->m_proj_lat, p->m_proj_lon, &easting0, &northing0);
+             toPOLY(p->ref[jmax].lat, p->ref[jmax].lon, p->m_proj_lat, p->m_proj_lon, &easting1, &northing1);
+
+              //  Calculate the scale factor using exact REF point math
+             double dx2 =  (p->ref[jmax].x - p->ref[imax].x) *  (p->ref[jmax].x - p->ref[imax].x);
+             double dy2 =  (p->ref[jmax].y - p->ref[imax].y) *  (p->ref[jmax].y - p->ref[imax].y);
+             double dn2 =  (northing1 - northing0) * (northing1 - northing0);
+             double de2 =  (easting1 - easting0) * (easting1 - easting0);
+
+             p->m_ppm_avg = sqrt(dx2 + dy2) / sqrt(dn2 + de2);
+
+             // Sanity check
+//             double ref_dist = DistGreatCircle(pRefTable[imax].latr, pRefTable[imax].lonr, pRefTable[jmax].latr, pRefTable[jmax].lonr);
+//             ref_dist *= 1852;                                    //To Meters
+//             double ref_dist_transform = sqrt(dn2 + de2);         //Also meters
+//             double error = (ref_dist - ref_dist_transform)/ref_dist;
+
+              //  Set up and solve polynomial solution for pix<->cartesian east/north as projected
+              // Fill the cpoints structure with pixel points and transformed lat/lon
+
+             for(int n=0 ; n<p->num_refs ; n++)
+             {
+                   double lata, lona;
+                   lata = p->ref[n].lat;
+                   lona = p->ref[n].lon;
+
+                   double easting, northing;
+                   toPOLY(p->ref[n].lat, p->ref[n].lon, p->m_proj_lat, p->m_proj_lon, &easting, &northing);
+
+                   //   Round trip check for debugging....
+//                   double lat, lon;
+//                   fromPOLY(easting, northing, m_proj_lat, m_proj_lon, &lat, &lon);
+
+                   p->cPoints.tx[n] = p->ref[n].x;
+                   p->cPoints.ty[n] = p->ref[n].y;
+                   p->cPoints.lon[n] = easting;
+                   p->cPoints.lat[n] = northing;
+//                   printf(" x: %g  y: %g  east: %g  north: %g\n",pRefTable[n].xr, pRefTable[n].yr, easting, northing);
+             }
+
+                     //      Helper parameters
+             p->cPoints.txmax = plonmax;
+             p->cPoints.txmin = plonmin;
+             p->cPoints.tymax = platmax;
+             p->cPoints.tymin = platmin;
+             toPOLY(latmax, lonmax, p->m_proj_lat, p->m_proj_lon, &p->cPoints.lonmax, &p->cPoints.latmax);
+             toPOLY(latmin, lonmin, p->m_proj_lat, p->m_proj_lon, &p->cPoints.lonmin, &p->cPoints.latmin);
+
+             p->cPoints.status = 1;
+
+             Georef_Calculate_Coefficients_Proj(&p->cPoints);
+
+//              for(int h=0 ; h < 10 ; h++)
+//                    printf("pix to east %d  %g\n",  h, cPoints.pwx[h]);          // pix to lon
+//              for(int h=0 ; h < 10 ; h++)
+//                    printf("east to pix %d  %g\n",  h, cPoints.wpx[h]);          // lon to pix
+#endif
+       }
+
+       //   Any other projection had better have embedded coefficients
+#if 0
+       else if(bHaveEmbeddedGeoref)
+       {
+             //   Use a Mercator Projection to get a rough ppm.
+             double easting0, easting1, northing0, northing1;
+              //  Get the Merc projection of the two REF points
+             toSM_ECC(pRefTable[imax].latr, pRefTable[imax].lonr, m_proj_lat, m_proj_lon, &easting0, &northing0);
+             toSM_ECC(pRefTable[jmax].latr, pRefTable[jmax].lonr, m_proj_lat, m_proj_lon, &easting1, &northing1);
+
+              //  Calculate the scale factor using exact REF point math in x(longitude) direction
+
+             double dx =  (pRefTable[jmax].xr - pRefTable[imax].xr);
+             double de =  (easting1 - easting0);
+
+             m_ppm_avg = fabs(dx / de);
+
+             m_ExtraInfo = _("---<<< Warning:  Chart georef accuracy may be poor. >>>---");
+       }
+#endif
+       else
+             p->m_ppm_avg = 1.0;                      // absolute fallback to prevent div-0 errors
+
+#if 0
+
+
+        // Do a last little test using a synthetic ViewPort of nominal size.....
+        ViewPort vp;
+        vp.clat = pRefTable[0].latr;
+        vp.clon = pRefTable[0].lonr;
+        vp.view_scale_ppm = m_ppm_avg;
+        vp.skew = 0.;
+        vp.pix_width = 1000;
+        vp.pix_height = 1000;
+//        vp.rv_rect = wxRect(0,0, vp.pix_width, vp.pix_height);
+        SetVPRasterParms(vp);
+
+
+        double xpl_err_max = 0;
+        double ypl_err_max = 0;
+        double xpl_err_max_meters, ypl_err_max_meters;
+        int px, py;
+
+        int pxref, pyref;
+        pxref = (int)pRefTable[0].xr;
+        pyref = (int)pRefTable[0].yr;
+
+        for(i=0 ; i<nRefpoint ; i++)
+        {
+              px = (int)(vp.pix_width/2 + pRefTable[i].xr) - pxref;
+              py = (int)(vp.pix_height/2 + pRefTable[i].yr) - pyref;
+
+              vp_pix_to_latlong(vp, px, py, &elt, &elg);
+
+              double lat_error  = elt - pRefTable[i].latr;
+              pRefTable[i].ypl_error = lat_error;
+
+              double lon_error = elg - pRefTable[i].lonr;
+
+                    //  Longitude errors could be compounded by prior adjustment to ref points
+              if(fabs(lon_error) > 180.)
+              {
+                    if(lon_error > 0.)
+                          lon_error -= 360.;
+                    else if(lon_error < 0.)
+                          lon_error += 360.;
+              }
+              pRefTable[i].xpl_error = lon_error;
+
+              if(fabs(pRefTable[i].ypl_error) > fabs(ypl_err_max))
+                    ypl_err_max = pRefTable[i].ypl_error;
+              if(fabs(pRefTable[i].xpl_error) > fabs(xpl_err_max))
+                    xpl_err_max = pRefTable[i].xpl_error;
+
+              xpl_err_max_meters = fabs(xpl_err_max * 60 * 1852.0);
+              ypl_err_max_meters = fabs(ypl_err_max * 60 * 1852.0);
+
+        }
+
+        Chart_Error_Factor = fmax(fabs(xpl_err_max/(lonmax - lonmin)), fabs(ypl_err_max/(latmax - latmin)));
+
+        //        Good enough for navigation?
+        if(Chart_Error_Factor > .02)
+        {
+                    wxString msg = _("   VP Final Check: Georeference Chart_Error_Factor on chart ");
+                    msg.Append(m_FullPath);
+                    wxString msg1;
+                    msg1.Printf(_T(" is %5g"), Chart_Error_Factor);
+                    msg.Append(msg1);
+
+                    wxLogMessage(msg);
+
+                    m_ExtraInfo = _("---<<< Warning:  Chart georef accuracy is poor. >>>---");
+        }
+
+        //  Try again with my calculated georef
+        //  This problem was found on NOAA 514_1.KAP.  The embedded coefficients are just wrong....
+        if((Chart_Error_Factor > .02) && bHaveEmbeddedGeoref)
+        {
+              wxString msg = _("   Trying again with internally calculated georef solution ");
+              wxLogMessage(msg);
+
+              bHaveEmbeddedGeoref = false;
+              SetVPRasterParms(vp);
+
+              xpl_err_max = 0;
+              ypl_err_max = 0;
+
+              pxref = (int)pRefTable[0].xr;
+              pyref = (int)pRefTable[0].yr;
+
+              for(i=0 ; i<nRefpoint ; i++)
+              {
+                    px = (int)(vp.pix_width/2 + pRefTable[i].xr) - pxref;
+                    py = (int)(vp.pix_height/2 + pRefTable[i].yr) - pyref;
+
+                    vp_pix_to_latlong(vp, px, py, &elt, &elg);
+
+                    double lat_error  = elt - pRefTable[i].latr;
+                    pRefTable[i].ypl_error = lat_error;
+
+                    double lon_error = elg - pRefTable[i].lonr;
+
+                    //  Longitude errors could be compounded by prior adjustment to ref points
+                    if(fabs(lon_error) > 180.)
+                    {
+                          if(lon_error > 0.)
+                                lon_error -= 360.;
+                          else if(lon_error < 0.)
+                                lon_error += 360.;
+                    }
+                    pRefTable[i].xpl_error = lon_error;
+
+                    if(fabs(pRefTable[i].ypl_error) > fabs(ypl_err_max))
+                          ypl_err_max = pRefTable[i].ypl_error;
+                    if(fabs(pRefTable[i].xpl_error) > fabs(xpl_err_max))
+                          xpl_err_max = pRefTable[i].xpl_error;
+
+                    xpl_err_max_meters = fabs(xpl_err_max * 60 * 1852.0);
+                    ypl_err_max_meters = fabs(ypl_err_max * 60 * 1852.0);
+
+              }
+
+              Chart_Error_Factor = fmax(fabs(xpl_err_max/(lonmax - lonmin)), fabs(ypl_err_max/(latmax - latmin)));
+
+        //        Good enough for navigation?
+              if(Chart_Error_Factor > .02)
+              {
+                    wxString msg = _("   VP Final Check with internal georef: Georeference Chart_Error_Factor on chart ");
+                    msg.Append(m_FullPath);
+                    wxString msg1;
+                    msg1.Printf(_(" is %5g"), Chart_Error_Factor);
+                    msg.Append(msg1);
+
+                    wxLogMessage(msg);
+
+                    m_ExtraInfo = _("---<<< Warning:  Chart georef accuracy is poor. >>>---");
+              }
+              else
+              {
+                    wxString msg = _("   Result: OK, Internal georef solution used.");
+
+                    wxLogMessage(msg);
+              }
+
+        }
+
+#endif
+      return(0);
+}
 /**
  * converts chart's X/Y to Lon/Lat
  *

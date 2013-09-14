@@ -2,13 +2,16 @@ DESTDIR=../build
 TEMPLATE=lib
 TARGET=bsb
 CONFIG+=qt staticlib
+QT = core
 DEPENDPATH += .
 INCLUDEPATH += .
 
 # Input
-HEADERS += bsb.h
+HEADERS += bsb.h georef.h cutil.h
 
-SOURCES += bsb_io.c
+SOURCES += \
+    bsb_io.cpp \
+    georef.c
 
 OTHER_FILES += \
     android/AndroidManifest.xml \

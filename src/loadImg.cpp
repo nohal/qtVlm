@@ -41,6 +41,7 @@ Copyright (C) 2008 - Jacques Zaninetti - http://zygrib.free.fr
 #include <QBitmap>
 
 
+
 loadImg::loadImg(Projection *proj, myCentralWidget *parent)
     : QGraphicsPixmapItem()
 
@@ -147,13 +148,11 @@ int loadImg::setMyImgFileName(QString s)
     bsb=new BSBImage();
     if(bsb_open_header(s.toLocal8Bit().data(), bsb))
     {
+        qWarning()<<"kap projection is"<<bsb->projection;
         if(bsb->num_wpxs==0 || bsb->num_wpys==0)
-        {
-            bsb_close(bsb);
-            delete bsb;
-            bsb=NULL;
-            return 2;
-        }
+            qWarning()<<"No polynomials found in kap file, will use internal solution";
+        else
+            qWarning()<<"polynomials found in kap file..";
         bsbBuf=new uint8_t[bsb->width];
         for(int i=0;i<bsb->num_plys;++i)
         {
