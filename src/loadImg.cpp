@@ -228,34 +228,45 @@ void loadImg::slot_updateProjection()
     QRectF br=bordersXY.boundingRect();
     QRectF view(QPointF(0,0),QPointF(proj->getW(),proj->getH()));
     QRectF portion=view.intersected(br).normalized();
-    if(portion.isEmpty() || portion.isEmpty())
+    if(portion.isEmpty())
     {
         this->setPixmap(QPixmap(0,0));
         this->hide();
         return;
     }
-    QPixmap img(portion.size().toSize());
+    uint8_t * row=0;
+    int imgX=-1;
+    int imgY=-1;
+    QPointF topLeft;
+    proj->screen2map(portion.topLeft().toPoint(),&topLeft);
+    QPointF bottomRight;
+    proj->screen2map(portion.bottomRight().toPoint(),&bottomRight);
+    int minX,minY;
+    bsb_LLtoXY(bsb,topLeft.x(),topLeft.y(),&minX,&minY);
+    int maxX,maxY;
+    bsb_LLtoXY(bsb,bottomRight.x(),bottomRight.y(),&maxX,&maxY);
+    QRect Portion(QPoint(minX,minY),QPoint(maxX,maxY));
+    QPixmap img(Portion.size());
     img.fill(Qt::transparent);
     QPainter pnt(&img);
     QPen pen;
     pen.setWidth(1);
     pnt.setRenderHint(QPainter::Antialiasing, true);
     pnt.setRenderHint(QPainter::SmoothPixmapTransform, true);
-    uint8_t * row=0;
-    int imgX=-1;
-    int imgY=-1;
-    for(int y=portion.topLeft().y();y<=portion.bottomRight().y();++y)
+    for(int y=Portion.topLeft().y();y<=Portion.bottomRight().y();++y)
     {
         ++imgY;
         row=0;
         imgX=-1;
-        for(int x=portion.topLeft().x();x<=portion.bottomRight().x();++x)
+        for(int x=Portion.topLeft().x();x<=Portion.bottomRight().x();++x)
         {
             ++imgX;
-            double lon,lat;
-            proj->screen2map(x,y,&lon,&lat);
+//            double lon,lat;
+//            proj->screen2map(x,y,&lon,&lat);
             int X,Y;
-            if(bsb_LLtoXY(bsb,lon,lat,&X,&Y))
+            X=x;
+            Y=y;
+//            if(bsb_LLtoXY(bsb,lon,lat,&X,&Y))
             {
                 if (Y<0||Y>=bsb->height)
                 {
@@ -280,6 +291,7 @@ void loadImg::slot_updateProjection()
         }
     }
     pnt.end();
+    img=img.scaled(portion.size().toSize(),Qt::IgnoreAspectRatio,Qt::SmoothTransformation);
     this->setPixmap(img);
     setPos(portion.topLeft());
     this->show();
