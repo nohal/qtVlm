@@ -251,14 +251,19 @@ void loadImg::slot_updateProjection()
         overZoomed=true; //if it takes more pixels at original size (Portion) than at projection size (portion)
     double quality=2.0;
     QPointF leftCorner=portion.topLeft();
-    QSize imgSize=QSizeF(portionSize.width()*quality,portionSize.height()*quality).toSize();
+    QSize imgSize;
     if(overZoomed)
     {
         quality=1.0;
         portion=Portion;
         imgSize=portion.size().toSize();
     }
-    qWarning()<<"overzoomed"<<overZoomed<<Portion.size()<<portionSize<<imgSize;
+    else
+    {
+        quality=qMin(2.0,Portion.width()/portion.width());
+        imgSize=QSizeF(portionSize.width()*quality,portionSize.height()*quality).toSize();
+    }
+    qWarning()<<"overzoomed"<<overZoomed<<Portion.size()<<portionSize<<imgSize<<quality;
     QPixmap img(imgSize);
     img.fill(Qt::transparent);
     QPainter pnt(&img);
