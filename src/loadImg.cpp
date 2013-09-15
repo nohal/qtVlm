@@ -264,7 +264,8 @@ void loadImg::slot_updateProjection()
         imgSize=QSizeF(portionSize.width()*quality,portionSize.height()*quality).toSize();
     }
     qWarning()<<"overzoomed"<<overZoomed<<Portion.size()<<portionSize<<imgSize<<quality;
-    QPixmap img(imgSize);
+    QImage img=QImage(imgSize,QImage::Format_ARGB32_Premultiplied);
+
     img.fill(Qt::transparent);
     QPainter pnt(&img);
     QPen pen;
@@ -318,7 +319,7 @@ void loadImg::slot_updateProjection()
     }
     pnt.end();
     img=img.scaled(portionSize.toSize(),Qt::IgnoreAspectRatio,Qt::SmoothTransformation);
-    this->setPixmap(img);
+    this->setPixmap(QPixmap::fromImage(img));
     setPos(leftCorner);
     this->show();
 }
