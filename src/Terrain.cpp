@@ -320,6 +320,9 @@ void Terrain::draw_GSHHSandGRIB()
             mutex.unlock();
         }
     }
+    else if(parent->getKap()!=NULL)
+        parent->getKap()->setImgGribKap(QPixmap(0,0));
+
 
     //imgAll->save("testGrib_terrain2.png");
 #ifdef __TERRAIN_QIMAGE
