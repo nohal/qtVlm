@@ -8906,12 +8906,12 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../src/Ui/BoardReal.ui" line="189"/>
         <source>Declinaison</source>
-        <translation></translation>
+        <translation>Declination</translation>
     </message>
     <message>
         <location filename="../src/Ui/BoardReal.ui" line="201"/>
         <source>Inclure la declinaison</source>
-        <translation>Include declinaison</translation>
+        <translation>Include declination</translation>
     </message>
     <message>
         <location filename="../src/Ui/BoardReal.ui" line="217"/>
@@ -12185,7 +12185,7 @@ Voulez-vous egalement supprimer tous les POIs lui appartenant?</source>
     <message>
         <location filename="../src/Ui/realBoatConfig.ui" line="170"/>
         <source>Declinaison</source>
-        <translation></translation>
+        <translation>Declination</translation>
     </message>
     <message>
         <location filename="../src/Ui/realBoatConfig.ui" line="178"/>
