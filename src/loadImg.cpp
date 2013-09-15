@@ -41,7 +41,6 @@ Copyright (C) 2008 - Jacques Zaninetti - http://zygrib.free.fr
 #include <QBitmap>
 
 
-
 loadImg::loadImg(Projection *proj, myCentralWidget *parent)
     : QGraphicsPixmapItem()
 
@@ -237,36 +236,58 @@ void loadImg::slot_updateProjection()
     uint8_t * row=0;
     int imgX=-1;
     int imgY=-1;
+    QSizeF portionSize=portion.size();
+    bool overZoomed=false;
     QPointF topLeft;
-    proj->screen2map(portion.topLeft().toPoint(),&topLeft);
+    proj->screen2mapDouble(portion.topLeft().toPoint(),&topLeft);
     QPointF bottomRight;
-    proj->screen2map(portion.bottomRight().toPoint(),&bottomRight);
+    proj->screen2mapDouble(portion.bottomRight().toPoint(),&bottomRight);
     int minX,minY;
     bsb_LLtoXY(bsb,topLeft.x(),topLeft.y(),&minX,&minY);
     int maxX,maxY;
     bsb_LLtoXY(bsb,bottomRight.x(),bottomRight.y(),&maxX,&maxY);
-    QRect Portion(QPoint(minX,minY),QPoint(maxX,maxY));
-    QPixmap img(Portion.size());
+    QRectF Portion(QPointF(minX,minY),QPointF(maxX,maxY));
+    if(portion.width()>=Portion.width() || portion.height()>=Portion.height())
+        overZoomed=true; //if it takes more pixels at original size (Portion) than at projection size (portion)
+    double quality=2.0;
+    QPointF leftCorner=portion.topLeft();
+    QSize imgSize=QSizeF(portionSize.width()*quality,portionSize.height()*quality).toSize();
+    if(overZoomed)
+    {
+        quality=1.0;
+        portion=Portion;
+        imgSize=portion.size().toSize();
+    }
+    qWarning()<<"overzoomed"<<overZoomed<<Portion.size()<<portionSize<<imgSize;
+    QPixmap img(imgSize);
     img.fill(Qt::transparent);
     QPainter pnt(&img);
     QPen pen;
-    pen.setWidth(1);
+    pen.setWidthF(1.0);
     pnt.setRenderHint(QPainter::Antialiasing, true);
     pnt.setRenderHint(QPainter::SmoothPixmapTransform, true);
-    for(int y=Portion.topLeft().y();y<=Portion.bottomRight().y();++y)
+    for(double y=portion.topLeft().y();y<=portion.bottomRight().y();y+=1.0/quality)
     {
         ++imgY;
         row=0;
         imgX=-1;
-        for(int x=Portion.topLeft().x();x<=Portion.bottomRight().x();++x)
+        for(double x=portion.topLeft().x();x<=portion.bottomRight().x();x+=1.0/quality)
         {
             ++imgX;
-//            double lon,lat;
-//            proj->screen2map(x,y,&lon,&lat);
             int X,Y;
-            X=x;
-            Y=y;
-//            if(bsb_LLtoXY(bsb,lon,lat,&X,&Y))
+            bool isOK=true;
+            if(!overZoomed)
+            {
+                double lon,lat;
+                proj->screen2mapDouble(x,y,&lon,&lat);
+                isOK=bsb_LLtoXY(bsb,lon,lat,&X,&Y);
+            }
+            else
+            {
+                X=qRound(x);
+                Y=qRound(y);
+            }
+            if(isOK)
             {
                 if (Y<0||Y>=bsb->height)
                 {
@@ -291,9 +312,9 @@ void loadImg::slot_updateProjection()
         }
     }
     pnt.end();
-    img=img.scaled(portion.size().toSize(),Qt::IgnoreAspectRatio,Qt::SmoothTransformation);
+    img=img.scaled(portionSize.toSize(),Qt::IgnoreAspectRatio,Qt::SmoothTransformation);
     this->setPixmap(img);
-    setPos(portion.topLeft());
+    setPos(leftCorner);
     this->show();
 }
 #if 0
