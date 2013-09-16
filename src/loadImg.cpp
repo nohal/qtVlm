@@ -234,8 +234,6 @@ void loadImg::slot_updateProjection()
         return;
     }
     uint8_t * row=0;
-    int imgX=-1;
-    int imgY=-1;
     QSizeF portionSize=portion.size();
     bool overZoomed=false;
     QPointF topLeft;
@@ -263,21 +261,19 @@ void loadImg::slot_updateProjection()
         //quality=qMin(2.0,Portion.width()/portion.width());
         imgSize=QSizeF(portionSize.width()*quality,portionSize.height()*quality).toSize();
     }
-    qWarning()<<"overzoomed"<<overZoomed<<Portion.size()<<portionSize<<imgSize<<quality;
-    QImage img=QImage(imgSize,QImage::Format_ARGB32_Premultiplied);
-
-    img.fill(Qt::transparent);
-    QPainter pnt(&img);
-    QPen pen;
-    pen.setWidthF(1.0);
-    pnt.setRenderHint(QPainter::Antialiasing, true);
-    pnt.setRenderHint(QPainter::SmoothPixmapTransform, true);
-    for(double y=portion.topLeft().y();y<=portion.bottomRight().y();y+=1.0/quality)
+    //qWarning()<<"overzoomed"<<overZoomed<<Portion.size()<<portionSize<<imgSize<<quality;
+    int imgWidth=imgSize.width();
+    int imgHeight=imgSize.height();
+    int bitsPerPixel=3;
+    uchar * buffer=new uchar [imgWidth*imgHeight*bitsPerPixel];
+    int imgX=-1;
+    int imgY=-1;
+    for(double y=portion.topLeft().y();y<portion.bottomRight().y();y+=1.0/quality)
     {
         ++imgY;
         row=0;
         imgX=-1;
-        for(double x=portion.topLeft().x();x<=portion.bottomRight().x();x+=1.0/quality)
+        for(double x=portion.topLeft().x();x<portion.bottomRight().x();x+=1.0/quality)
         {
             ++imgX;
             int X,Y;
@@ -310,16 +306,17 @@ void loadImg::slot_updateProjection()
                 const int r=bsb->red[row[X]];
                 const int g=bsb->green[row[X]];
                 const int b=bsb->blue[row[X]];
-                QColor color(r,g,b);
-                pen.setColor(color);
-                pnt.setPen(pen);
-                pnt.drawPoint(imgX,imgY);
+                const int index=(imgY*imgWidth*3)+(imgX*3);
+                buffer[index]=r;
+                buffer[index+1]=g;
+                buffer[index+2]=b;
             }
         }
     }
-    pnt.end();
+    QImage img(buffer,imgWidth,imgHeight, imgWidth*3, QImage::Format_RGB888);
     img=img.scaled(portionSize.toSize(),Qt::IgnoreAspectRatio,Qt::SmoothTransformation);
     this->setPixmap(QPixmap::fromImage(img));
+    delete[] buffer;
     setPos(leftCorner);
     this->show();
 }
