@@ -28,6 +28,7 @@
 #include <bsb.h>
 #include <QString>
 #include "georef.h"
+#include <QDebug>
 
 #ifdef _WIN32
     #define DIR_SEPARATOR '\\'
@@ -250,16 +251,14 @@ extern int bsb_open_header(char *filename, BSBImage *p)
 
         if (! (inputFile = fopen(filename, "rb")))
         {
-            perror(filename);
-            setlocale( LC_ALL, "" );
+            qWarning()<<"unable to open"<<filename<<"(1)";
             return 0;
         }
 
         /* Open temporary file to store unobfuscated file */
         if (! (p->pFile = tmpfile()))
         {
-            perror("tmpfile()");
-            setlocale( LC_ALL, "" );
+            qWarning()<<"unable to open tmpfile";
             return 0;
         }
 
@@ -277,14 +276,13 @@ extern int bsb_open_header(char *filename, BSBImage *p)
         /* Normal unobfuscated BSB/NOS files can be opened straight away */
         if (! (p->pFile = fopen(filename, "rb")))
         {
-            perror(filename);
-            setlocale( LC_ALL, "" );
+            qWarning()<<"unable to open"<<filename<<"(2)";
             return 0;
         }
     }
 
     if ((text_size = bsb_get_header_size(p->pFile)) == 0) {
-        setlocale( LC_ALL, "" );
+        qWarning()<<"header or file empty";
         return 0;
     }
 
@@ -292,16 +290,13 @@ extern int bsb_open_header(char *filename, BSBImage *p)
     text_buf = (char *)malloc(text_size + 1);
     if (text_buf == NULL)
     {
-        fprintf(stderr,
-                "malloc(%d) failed for text header - BSB file possibly corrupt",
-                text_size + 1);
-        setlocale( LC_ALL, "" );
+        qWarning()<<"malloc(%d) failed for text header - BSB file possibly corrupt"<<text_size + 1;
         return 0;
     }
 
     fseek(p->pFile, 0, SEEK_SET);
     if (fread(text_buf, text_size, 1, p->pFile) != 1) {
-        setlocale( LC_ALL, "" );
+        qWarning()<<"error reading file";
         return 0;
     }
     text_buf[text_size] = '\0';
@@ -348,7 +343,7 @@ extern int bsb_open_header(char *filename, BSBImage *p)
             }
             else
             {
-                printf("too many reference points (REF)\n");
+                qWarning()<<"too many reference points (REF)";
             }
         }
         if (sscanf(line, "PLY/%d,%lf,%lf",
@@ -362,7 +357,7 @@ extern int bsb_open_header(char *filename, BSBImage *p)
             }
             else
             {
-                printf("too many border points (PLY)\n");
+                qWarning()<<"too many border points (PLY)";
             }
 
         }
@@ -414,8 +409,7 @@ extern int bsb_open_header(char *filename, BSBImage *p)
             if ((sscanf(s,"RA=%d,%d,%d,%d",&x0,&y0,&p->width,&p->height)!=4) &&
                 (sscanf(s,"RA=%d,%d", &p->width, &p->height) != 2))
             {
-                fprintf(stderr, "failed to read width,height from RA=\n");
-                setlocale( LC_ALL, "" );
+                qWarning()<<"failed to read width,height from RA";
                 return 0;
             }
         }
@@ -423,8 +417,7 @@ extern int bsb_open_header(char *filename, BSBImage *p)
         {
             if ( sscanf(s, "DX=%lf", &p->xresolution) != 1 )
             {
-                fprintf(stderr, "failed to read xresolution\n");
-                setlocale( LC_ALL, "" );
+                qWarning()<<"failed to read x resolution";
                 return 0;
             }
         }
@@ -432,8 +425,7 @@ extern int bsb_open_header(char *filename, BSBImage *p)
         {
             if ( sscanf(s, "DY=%lf", &p->yresolution) != 1 )
             {
-                fprintf(stderr, "failed to read xresolution\n");
-                setlocale( LC_ALL, "" );
+                qWarning()<<"failed to read y resolution";
                 return 0;
             }
         }
@@ -451,8 +443,7 @@ extern int bsb_open_header(char *filename, BSBImage *p)
     }
     if (p->width == -1 || p->height == -1)
     {
-        printf("Error: Could not read RA=<width>,<height>\n");
-        setlocale( LC_ALL, "" );
+        qWarning()<<"Error: Could not read RA=<width>,<height>";
         return 0;
     }
     /* done with the header */

@@ -136,18 +136,18 @@ void loadImg::setImgGribKap(QPixmap imgGribKap)
 int loadImg::setMyImgFileName(QString s)
 {
     this->myImgFileName=s;
-    delete[] bsbBuf;
     borders.clear();
     if(bsb!=NULL)
     {
         bsb_close(bsb);
         delete bsb;
         bsb=NULL;
+        delete[] bsbBuf;
     }
     bsb=new BSBImage();
-    if(bsb_open_header(s.toLocal8Bit().data(), bsb))
+    if(bsb_open_header(s.toLocal8Bit().data(), bsb)!=0)
     {
-        qWarning()<<"kap projection is"<<bsb->projection;
+        qWarning()<<"kap projection is:"<<bsb->projection;
         if(bsb->num_wpxs==0 || bsb->num_wpys==0)
             qWarning()<<"No polynomials found in kap file, will use internal solution";
         else
@@ -245,6 +245,7 @@ void loadImg::slot_updateProjection()
     int maxX,maxY;
     bsb_LLtoXY(bsb,bottomRight.x(),bottomRight.y(),&maxX,&maxY);
     QRectF Portion(QPointF(minX,minY),QPointF(maxX,maxY));
+    Portion=Portion.normalized();
     if(Portion.width()/portion.width()<2.0 || Portion.height()/portion.height()<2.0)
         overZoomed=true; //meaning there is no space to take 2 pixels so we take them all anyway, no need to call screen2Map.
     double quality=2.0;
