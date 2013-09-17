@@ -31,6 +31,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "GribRecord.h"
 #include "IsoLine.h"
 #include "DataColors.h"
+#include <QRgb>
 
 #include "MapDataDrawer.h"
 
@@ -217,7 +218,6 @@ void MapDataDrawer::draw_WIND_Color_old(Grib * grib, QPainter &pnt, const Projec
     int space=0;
     int W_s=0,H_s=0;
     QRgb   rgb;
-    QImage image(W,H,QImage::Format_ARGB32_Premultiplied);
 
     GribRecord *recU1,*recV1,*recU2,*recV2;
     time_t t1,t2;
@@ -246,7 +246,7 @@ void MapDataDrawer::draw_WIND_Color_old(Grib * grib, QPainter &pnt, const Projec
     QVector<double> v_tab(sz);
     QVector<bool> y_tab(sz);
 
-    image.fill(Qt::transparent);
+    uchar * buffer=new uchar [W*H*4];
     int indice=0;
     for (i=0; i<W-2; i+=2)
     {
@@ -267,15 +267,60 @@ void MapDataDrawer::draw_WIND_Color_old(Grib * grib, QPainter &pnt, const Projec
 
                 rgb=colorElement->get_colorCached(u);
 
-                image.setPixel(i,  j,rgb);
-                image.setPixel(i+1,j,rgb);
-                image.setPixel(i,  j+1,rgb);
-                image.setPixel(i+1,j+1,rgb);
+//                image.setPixel(i,  j,rgb);
+//                image.setPixel(i+1,j,rgb);
+//                image.setPixel(i,  j+1,rgb);
+//                image.setPixel(i+1,j+1,rgb);
+                int index=(j*W*4)+(i*4);
+                buffer[index+3]=255;
+                buffer[index+2]=qRed(rgb);
+                buffer[index+1]=qGreen(rgb);
+                buffer[index]=qBlue(rgb);
+                index=(j*W*4)+((i+1)*4);
+                buffer[index+3]=255;
+                buffer[index+2]=qRed(rgb);
+                buffer[index+1]=qGreen(rgb);
+                buffer[index]=qBlue(rgb);
+                index=((j+1)*W*4)+(i*4);
+                buffer[index+3]=255;
+                buffer[index+2]=qRed(rgb);
+                buffer[index+1]=qGreen(rgb);
+                buffer[index]=qBlue(rgb);
+                index=((j+1)*W*4)+((i+1)*4);
+                buffer[index+3]=255;
+                buffer[index+2]=qRed(rgb);
+                buffer[index+1]=qGreen(rgb);
+                buffer[index]=qBlue(rgb);
+            }
+            else
+            {
+                int index=(j*W*4)+(i*4);
+                buffer[index+3]=0;
+                buffer[index+2]=0;
+                buffer[index+1]=0;
+                buffer[index]=0;
+                index=(j*W*4)+((i+1)*4);
+                buffer[index+3]=0;
+                buffer[index+2]=0;
+                buffer[index+1]=0;
+                buffer[index]=0;
+                index=((j+1)*W*4)+(i*4);
+                buffer[index+3]=0;
+                buffer[index+2]=0;
+                buffer[index+1]=0;
+                buffer[index]=0;
+                index=((j+1)*W*4)+((i+1)*4);
+                buffer[index+3]=0;
+                buffer[index+2]=0;
+                buffer[index+1]=0;
+                buffer[index]=0;
             }
         }
     }
 
+    QImage image(buffer,W,H, W*4, QImage::Format_ARGB32);
     pnt.drawImage(0,0,image);
+    delete[] buffer;
 
 
 
@@ -320,7 +365,6 @@ void MapDataDrawer::draw_WIND_Color(Grib * grib,QPainter &pnt, const Projection 
     int H = proj->getH();
     int space=0;
     int W_s=0,H_s=0;
-    QImage image(W,H,QImage::Format_ARGB32_Premultiplied);
     GribRecord *recU1,*recV1,*recU2,*recV2;
     time_t t1,t2;
 
@@ -344,7 +388,6 @@ void MapDataDrawer::draw_WIND_Color(Grib * grib,QPainter &pnt, const Projection 
     QVector<double> v_tab(sz);
     QVector<bool> y_tab(sz);
 
-    image.fill(Qt::transparent);
 
     int pass=-1;
     GribThreadData g;
@@ -376,6 +419,9 @@ void MapDataDrawer::draw_WIND_Color(Grib * grib,QPainter &pnt, const Projection 
 
     QList<GribThreadResult> windResults  = QtConcurrent::blockingMapped(windData, interpolateThreaded);
 
+//    QImage image(W,H,QImage::Format_ARGB32_Premultiplied);
+//    image.fill(Qt::transparent);
+    uchar * buffer=new uchar [W*H*4];
     int indice;
     for (i=0; i<W-2; i+=2)
     {
@@ -394,14 +440,36 @@ void MapDataDrawer::draw_WIND_Color(Grib * grib,QPainter &pnt, const Projection 
                     y_tab[indice]=windData.at(pass).p.y()<0;
                 }
                 const QRgb rg=windResults.at(pass).rgb;
-                image.setPixel(i,  j,rg);
-                image.setPixel(i+1,j,rg);
-                image.setPixel(i,  j+1,rg);
-                image.setPixel(i+1,j+1,rg);
+                //image.setPixel(i,  j,rg);
+                int index=(j*W*4)+(i*4);
+                buffer[index+3]=qAlpha(rg);
+                buffer[index+2]=qRed(rg);
+                buffer[index+1]=qGreen(rg);
+                buffer[index]=qBlue(rg);
+                //image.setPixel(i+1,j,rg);
+                index=(j*W*4)+((i+1)*4);
+                buffer[index+3]=qAlpha(rg);
+                buffer[index+2]=qRed(rg);
+                buffer[index+1]=qGreen(rg);
+                buffer[index]=qBlue(rg);
+                //image.setPixel(i,  j+1,rg);
+                index=((j+1)*W*4)+(i*4);
+                buffer[index+3]=qAlpha(rg);
+                buffer[index+2]=qRed(rg);
+                buffer[index+1]=qGreen(rg);
+                buffer[index]=qBlue(rg);
+                //image.setPixel(i+1,j+1,rg);
+                index=((j+1)*W*4)+((i+1)*4);
+                buffer[index+3]=qAlpha(rg);
+                buffer[index+2]=qRed(rg);
+                buffer[index+1]=qGreen(rg);
+                buffer[index]=qBlue(rg);
             }
         }
     }
+    QImage image(buffer,W,H, W*4, QImage::Format_ARGB32);
     pnt.drawImage(0,0,image);
+    delete[] buffer;
 
     if(showWindArrows)
     {
@@ -1106,7 +1174,10 @@ GribThreadResult interpolateThreaded(const GribThreadData &g) {
                                                    g.interpolMode))
             r.rgb=g.colorElement->get_colorCached(tws);
     else
+    {
         tws=-1;
+        r.rgb=qRgba(0,0,0,0);
+    }
     r.tws=tws;
     r.twd=twd;
     return r;
