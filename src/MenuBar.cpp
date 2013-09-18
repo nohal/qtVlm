@@ -63,7 +63,7 @@ MenuBar::MenuBar(MainWindow *parent)
                     tr("Verrouiller"), tr("Ctrl+L"), tr("Verrouiller l'envoi d'ordre a VLM"), appFolder.value("img")+"unlock.png");
         separator1=menuFile->addSeparator();
         mn_img=new QMenu(tr("Gestion des fichiers KAP"));
-        acImg_Open = addAction(mn_img, tr("Ouvrir un fichier KAP"), "", tr(""));
+        acImg_Open = addAction(mn_img, tr("Ouvrir un fichier KAP"), "K", tr(""));
         mn_img->addAction(acImg_Open);
         acImg_Close = addAction(mn_img, tr("Fermer le fichier KAP"), "", tr(""));
         mn_img->addAction(acImg_Close);

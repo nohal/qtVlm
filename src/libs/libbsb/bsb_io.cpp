@@ -698,7 +698,7 @@ int   AnalyzeRefpoints(BSBImage *p)
     int projection_type=PROJECTION_UNKNOWN;
     QString pr=p->projection;
     pr=pr.toUpper();
-    if(pr.contains("MERCATOR"))
+    if(pr.contains("MERCATOR") || pr.contains("UNKNOWN"))
         projection_type=PROJECTION_MERCATOR;
     if(pr.contains("TRANSVERSE"))
         projection_type=PROJECTION_TRANSVERSE_MERCATOR;
@@ -706,6 +706,8 @@ int   AnalyzeRefpoints(BSBImage *p)
         projection_type=PROJECTION_POLYCONIC;
     if(pr.contains("TM"))
         projection_type=PROJECTION_TRANSVERSE_MERCATOR;
+    if(projection_type==PROJECTION_UNKNOWN)
+        return 1;
     p->projection_type=projection_type;
     p->m_proj_lat = 0.;
     p->m_proj_lon = 0.;
