@@ -8906,12 +8906,12 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../src/Ui/BoardReal.ui" line="189"/>
         <source>Declinaison</source>
-        <translation></translation>
+        <translation>Declination</translation>
     </message>
     <message>
         <location filename="../src/Ui/BoardReal.ui" line="201"/>
         <source>Inclure la declinaison</source>
-        <translation>Include declinaison</translation>
+        <translation>Include declination</translation>
     </message>
     <message>
         <location filename="../src/Ui/BoardReal.ui" line="217"/>
@@ -10134,17 +10134,22 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>dialogLoadImg</name>
     <message>
-        <location filename="../src/Dialogs/dialogLoadImg.cpp" line="50"/>
+        <location filename="../src/Dialogs/dialogLoadImg.cpp" line="52"/>
         <source>Fichier Kap invalide</source>
         <translation>Invalid Kap file</translation>
     </message>
     <message>
-        <location filename="../src/Dialogs/dialogLoadImg.cpp" line="72"/>
+        <location filename="../src/Dialogs/dialogLoadImg.cpp" line="54"/>
+        <source>Fichier Kap ne contient pas de polynomiaux, desole</source>
+        <translation>Kap file does not contains polynomials, sorry</translation>
+    </message>
+    <message>
+        <location filename="../src/Dialogs/dialogLoadImg.cpp" line="76"/>
         <source>Fichiers kap (*.kap *.KAP)</source>
         <translation>Kap files (*.kap *.KAP)</translation>
     </message>
     <message>
-        <location filename="../src/Dialogs/dialogLoadImg.cpp" line="82"/>
+        <location filename="../src/Dialogs/dialogLoadImg.cpp" line="86"/>
         <source>Choisir un fichier kap</source>
         <translation>Choose a Kap file</translation>
     </message>
@@ -12180,7 +12185,7 @@ Voulez-vous egalement supprimer tous les POIs lui appartenant?</source>
     <message>
         <location filename="../src/Ui/realBoatConfig.ui" line="170"/>
         <source>Declinaison</source>
-        <translation></translation>
+        <translation>Declination</translation>
     </message>
     <message>
         <location filename="../src/Ui/realBoatConfig.ui" line="178"/>

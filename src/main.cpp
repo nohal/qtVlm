@@ -67,7 +67,7 @@ int main(int argc, char *argv[])
     qWarning()<<"Starting-up";
     int currentExitCode=0;
     do{
-    QApplication app(argc, argv);
+    QApplication * app=new QApplication(argc, argv);
     qsrand(QTime::currentTime().msec());
     QString appExeFolder=QApplication::applicationDirPath();
 #ifdef __ANDROIDD__
@@ -140,7 +140,7 @@ int main(int argc, char *argv[])
     Settings::initSettings();
 #ifndef __ANDROIDD__
     if(Settings::getSetting("fusionStyle",0).toInt()==1)
-        app.setStyle(QStyleFactory::create("fusion"));
+        app->setStyle(QStyleFactory::create("fusion"));
 #endif
     double fontInc=Settings::getSetting("defaultFontSizeInc",0).toDouble();
     QFont def(Settings::getSetting("defaultFontName",QApplication::font().family()).toString());
@@ -168,52 +168,52 @@ int main(int argc, char *argv[])
         QLocale::setDefault(QLocale("fr_FR"));
         translator.load( QString("qtVlm_") + lang,appFolder.value("tr"));
         translatorQt.load( QString("qt_fr"),appFolder.value("tr"));
-        app.installTranslator(&translatorQt);
-        app.installTranslator(&translator);
+        app->installTranslator(&translatorQt);
+        app->installTranslator(&translator);
     }
     else if (lang == "en") {
         qWarning() << "Loading en";
         QLocale::setDefault(QLocale("en_US"));
         translator.load( appFolder.value("tr")+"qtVlm_" + lang);
-        app.installTranslator(&translator);
+        app->installTranslator(&translator);
     }
     else if (lang == "cz") {
         qWarning() << "Loading cz";
         QLocale::setDefault(QLocale("cs_CZ"));
         translatorQt.load( QString("qt_cs"),appFolder.value("tr"));
-        app.installTranslator(&translatorQt);
+        app->installTranslator(&translatorQt);
         translator.load( appFolder.value("tr")+"qtVlm_" + lang);
-        app.installTranslator(&translator);
+        app->installTranslator(&translator);
     }
     else if (lang == "es") {
         qWarning() << "Loading es";
         QLocale::setDefault(QLocale("es_ES"));
         translatorQt.load( QString("qt_es"),appFolder.value("tr"));
-        app.installTranslator(&translatorQt);
+        app->installTranslator(&translatorQt);
         translator.load( appFolder.value("tr")+"qtVlm_" + lang);
-        app.installTranslator(&translator);
+        app->installTranslator(&translator);
     }
-    app.setQuitOnLastWindowClosed(true);
+    app->setQuitOnLastWindowClosed(true);
 
     MainWindow win(800, 600);
     win.continueSetup();
     if(win.getRestartNeeded())
     {
-        app.quit();
+        app->quit();
         continue;
     }
     if(win.getFinishStart())
     {
         win.show();
 
-        app.installTranslator(NULL);
+        app->installTranslator(NULL);
 
-        currentExitCode= app.exec();
+        currentExitCode= app->exec();
         break;
     }
     else
     {
-        app.quit();
+        app->quit();
         currentExitCode= 0;
         break;
     }

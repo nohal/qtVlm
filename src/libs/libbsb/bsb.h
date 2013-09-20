@@ -40,10 +40,14 @@ typedef quint32 uint32_t;
 #define BSB_MAX_PLYS 200
 #define BSB_MAX_AFTS 200
 
+#include "georef.h"
+
+
 typedef struct BSBImage
 {
     char    name[200];
     char    projection[50];
+    int     projection_type;
     char    datum[50];
     char    depth;
     float   version;
@@ -52,8 +56,13 @@ typedef struct BSBImage
     double  xresolution;
     double  yresolution;
     double  scale;
+    bool    m_bIDLcross;
+    double  m_proj_lat;
+    double  m_proj_lon;
+    double  m_ppm_avg;
     /* usually 'scale given at latitude' with mercator projection */
     double  projectionparam;
+    GeoRef  cPoints;
 
     uint8_t red[256];
     uint8_t green[256];
@@ -122,7 +131,7 @@ extern int bsb_XYtoLL(BSBImage *p, int x, int y, double* lon, double*  lat);
 extern int bsb_compress_row(BSBImage *p, int row, const uint8_t *pixel, uint8_t *buf);
 extern int bsb_write_index(FILE *fp, int height, int index[]);
 extern int bsb_close(BSBImage *p);
-
+int   AnalyzeRefpoints(BSBImage *p);
 #ifdef __cplusplus
 }
 #endif

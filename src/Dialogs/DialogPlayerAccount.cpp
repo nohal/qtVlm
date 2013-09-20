@@ -698,7 +698,10 @@ bool DialogParamAccount::initDialog(player_data * data)
     connect(this->edit_login,SIGNAL(textChanged(QString)),this,SLOT(slot_loginPassChanged(QString)));
     connect(this->edit_pass,SIGNAL(textChanged(QString)),this,SLOT(slot_loginPassChanged(QString)));
 #if 1
-    vlmBoat->setChecked(data->type==BOAT_VLM);
+    if(data->type==BOAT_VLM)
+        vlmBoat->setChecked(true);
+    else
+        realBoat->setChecked(true);
     edit_pass->setEnabled(data->type==BOAT_VLM);
     edit_pass->setHidden(realBoat->isChecked());
     QString s1="Identifiant";

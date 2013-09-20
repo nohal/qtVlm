@@ -44,15 +44,18 @@ void dialogLoadImg::done(int result)
                          !gribColored->isChecked());
         if(carte->getMyImgFileName()!=this->FileName->text())
         {
-            if(!carte->setMyImgFileName(this->FileName->text()))
+            int res=carte->setMyImgFileName(this->FileName->text());
+            if(res!=1)
             {
                 QMessageBox msgBox;
                 msgBox.setText(tr("Fichier Kap invalide"));
                 msgBox.setIcon(QMessageBox::Critical);
                 msgBox.exec();
+                Settings::setSetting("LastKap",QString());
                 return;
             }
         }
+        Settings::setSetting("LastKap",this->FileName->text());
     }
     else
     {

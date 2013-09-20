@@ -53,7 +53,7 @@ Original code: virtual-winds.com
 #include "Terrain.h"
 //#include "Terrain.h"
 //#define debugCount
-#define traceTime
+//#define traceTime
 
 //#define HAS_ICEGATE
 #define USE_SHAPEISO
@@ -169,6 +169,7 @@ inline vlmPoint findPointThreaded(const vlmPoint &point)
         pt.isDead=true;
         return pt;
     }
+#if 1
     if(pt.xM1<10e4)
     {
         Triangle t(Point(pt.origin->x,pt.origin->y),
@@ -191,6 +192,7 @@ inline vlmPoint findPointThreaded(const vlmPoint &point)
             return pt;
         }
     }
+#endif
 #ifdef HAS_ICEGATE
     if(!pt.routage->checkIceGate(pt))
     {
@@ -234,11 +236,14 @@ inline vlmPoint findPointThreaded(const vlmPoint &point)
         }
     }
 #else
-    QPolygonF * shape=pt.routage->getShapeIso();
-    QPointF p=QPointF(pt.x,pt.y);
-    if(shape->containsPoint(p,Qt::OddEvenFill))
+    if(!point.isStart)
     {
-        bad=true;
+        QPolygonF * shape=pt.routage->getShapeIso();
+        QPointF p=QPointF(pt.x,pt.y);
+        if(shape->containsPoint(p,Qt::OddEvenFill))
+        {
+            bad=true;
+        }
     }
 #endif
     if (bad)
@@ -1072,6 +1077,7 @@ void ROUTAGE::slot_calculate()
     int msecs_14=0;
     int msecs_15=0;
     int msecs_16=0;
+    int msecs_17=0;
 #endif
     int maxLoop=0;
     int nbCaps=0;
@@ -1873,6 +1879,29 @@ void ROUTAGE::slot_calculate()
 #ifdef debugCount
                 this->countDebug(nbIso,"epuration before end of final loop");
 #endif
+                //check that all point with same origin are correctly placed from right to left
+#ifdef traceTime
+                t1.start();
+#endif
+                for (int pp=tempPoints.size()-1;pp>0;--pp)
+                {
+                    vlmPoint pt1=tempPoints.at(pp-1);
+                    vlmPoint pt2=tempPoints.at(pp);
+                    if(pt1.originNb!=pt2.originNb) continue;
+                    Triangle t(Point(pt1.origin->x,pt1.origin->y),
+                               Point(pt1.x,pt1.y),
+                               Point(pt2.x,pt2.y));
+                    if (t.orientation()!=right_turn)
+                    {
+                        if(pt1.distIso>pt2.distIso)
+                            tempPoints.removeAt(pp);
+                        else
+                            tempPoints.removeAt(pp-1);
+                    }
+                }
+#ifdef traceTime
+                msecs_17+=t1.elapsed();
+#endif
                 if(tempPoints.size()>0 && !tempPoints.first().origin->isStart)
                 {
 #ifdef traceTime
@@ -2334,6 +2363,10 @@ void ROUTAGE::slot_calculate()
         tt=tt.addMSecs(msecs_13);
         qWarning()<<"........out of which removing crossed route segments:"<<tt.toString("hh'h'mm'min'ss.zzz'secs'");
         info=info+"\n........out of which removing crossed route segments: "+tt.toString("hh'h'mm'min'ss.zzz'secs'");
+        tt.setHMS(0,0,0,0);
+        tt=tt.addMSecs(msecs_17);
+        qWarning()<<"........out of which checking right-to-left order for same origin points:"<<tt.toString("hh'h'mm'min'ss.zzz'secs'");
+        info=info+"\n........out of which checking right-to-left order for same origin points: "+tt.toString("hh'h'mm'min'ss.zzz'secs'");
         tt.setHMS(0,0,0,0);
         tt=tt.addMSecs(msecs_8);
         qWarning()<<"...checking if arrived:"<<tt.toString("hh'h'mm'min'ss.zzz'secs'");

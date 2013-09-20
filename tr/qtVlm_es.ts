@@ -10112,17 +10112,22 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>dialogLoadImg</name>
     <message>
-        <location filename="../src/Dialogs/dialogLoadImg.cpp" line="50"/>
+        <location filename="../src/Dialogs/dialogLoadImg.cpp" line="52"/>
         <source>Fichier Kap invalide</source>
         <translation>Archivo KAP inválido</translation>
     </message>
     <message>
-        <location filename="../src/Dialogs/dialogLoadImg.cpp" line="72"/>
+        <location filename="../src/Dialogs/dialogLoadImg.cpp" line="54"/>
+        <source>Fichier Kap ne contient pas de polynomiaux, desole</source>
+        <translation type="unfinished">Kap file does not contains polynomials, sorry</translation>
+    </message>
+    <message>
+        <location filename="../src/Dialogs/dialogLoadImg.cpp" line="76"/>
         <source>Fichiers kap (*.kap *.KAP)</source>
         <translation>Archivos kap (*.kap *.KAP)</translation>
     </message>
     <message>
-        <location filename="../src/Dialogs/dialogLoadImg.cpp" line="82"/>
+        <location filename="../src/Dialogs/dialogLoadImg.cpp" line="86"/>
         <source>Choisir un fichier kap</source>
         <translation>Elige un archivo Kap</translation>
     </message>

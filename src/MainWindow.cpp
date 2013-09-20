@@ -708,7 +708,12 @@ void MainWindow::keyPressEvent ( QKeyEvent  * /* event */ )
 
 void MainWindow::closeProgress(void)
 {
-    if(QThread::idealThreadCount()>1 && QFile(appFolder.value("img")+"benchmark.grb").exists())
+    bool XP=false;
+#ifdef __WIN_QTVLM
+    if (QSysInfo::windowsVersion()==QSysInfo::WV_XP)
+        XP=true;
+#endif
+    if(!XP && QThread::idealThreadCount()>1 && QFile(appFolder.value("img")+"benchmark.grb").exists())
     {
         progress->newStep(80,tr("Calibrating grib display"));
         QApplication::processEvents();
@@ -753,7 +758,12 @@ void MainWindow::closeProgress(void)
         }
         delete grib;
     }
-    progress->newStep(95,tr("Opening grib"));
+    else
+    {
+        Settings::setSetting("gribBench1",10);
+        Settings::setSetting("gribBench2",0);
+    }
+    progress->newStep(90,tr("Opening grib"));
     gribFilePath = Settings::getSetting("gribFilePath", appFolder.value("grib")).toString();
     if(gribFilePath.isEmpty())
         gribFilePath = appFolder.value("grib");
@@ -773,7 +783,12 @@ void MainWindow::closeProgress(void)
     slot_updateGribMono();
     my_centralWidget->getTerre()->setColorMapMode(curMode);
     my_centralWidget->updateGribMenu();
-    progress->close();
+    progress->close();\
+    if(!Settings::getSetting("LastKap","").toString().isEmpty())
+    {
+        progress->newStep(95,tr("Opening kap"));
+        my_centralWidget->imgKap_open(Settings::getSetting("LastKap","").toString());
+    }
     delete progress;
     progress=NULL;
     if(restartNeeded)

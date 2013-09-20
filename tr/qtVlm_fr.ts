@@ -6966,6 +6966,10 @@ p, li { white-space: pre-wrap; }
         <source>Fichiers kap (*.kap *.KAP)</source>
         <translation></translation>
     </message>
+    <message>
+        <source>Fichier Kap ne contient pas de polynomiaux, desole</source>
+        <translation>Le fichier KAP ne contient pas de polynomiaux, désolé</translation>
+    </message>
 </context>
 <context>
     <name>dialogLoadImg_ui</name>

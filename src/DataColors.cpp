@@ -156,7 +156,7 @@ void DataColors::print_data(void) {
     //qWarning() << "Nb Types: " << colorMap.count();
 
     QMapIterator<QString,ColorElement*> it(colorMap);
-    int i=0;
+    //int i=0;
     while(it.hasNext()) {
         it.next();
         //qWarning() << i++ << ":         " << it.key();
@@ -234,7 +234,7 @@ void ColorElement::add_color(double value,QRgb color) {
 void ColorElement::print_data(void) {
     //qWarning() << "Nb colors: " << colorMap.count() << "  -   Params: " << coef << ", " << offset;
     QMapIterator<double,QRgb> it(colorMap);
-    int i=0;
+    //int i=0;
     while(it.hasNext()) {
         it.next();
         //qWarning() << i++ << ": " << it.key() << ", " << qRed(it.value()) << " " << qGreen(it.value()) << " " << qBlue(it.value());
