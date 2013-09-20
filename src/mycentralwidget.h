@@ -234,6 +234,7 @@ class myCentralWidget : public QWidget
         void setMagnifier(Magnifier * m){this->magnifier=m;}
         Magnifier * getMagnifier(){return this->magnifier;}        
 
+        void imgKap_open(const QString &kapname);
 public slots :
         /* Zoom & position */
         void slot_Zoom_All();

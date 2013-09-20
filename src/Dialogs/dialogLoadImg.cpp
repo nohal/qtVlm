@@ -48,15 +48,14 @@ void dialogLoadImg::done(int result)
             if(res!=1)
             {
                 QMessageBox msgBox;
-                if(res==0)
-                    msgBox.setText(tr("Fichier Kap invalide"));
-                else
-                    msgBox.setText(tr("Fichier Kap ne contient pas de polynomiaux, desole"));
+                msgBox.setText(tr("Fichier Kap invalide"));
                 msgBox.setIcon(QMessageBox::Critical);
                 msgBox.exec();
+                Settings::setSetting("LastKap",QString());
                 return;
             }
         }
+        Settings::setSetting("LastKap",this->FileName->text());
     }
     else
     {

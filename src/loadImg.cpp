@@ -133,7 +133,7 @@ void loadImg::setImgGribKap(QPixmap imgGribKap)
     gribKap->show();
 }
 
-int loadImg::setMyImgFileName(QString s)
+int loadImg::setMyImgFileName(QString s, bool zoom)
 {
     this->myImgFileName=s;
     borders.clear();
@@ -171,7 +171,8 @@ int loadImg::setMyImgFileName(QString s)
         double lo1,la1,lo2,la2;
         proj->screen2map(br.topLeft().x(),br.topLeft().y(),&lo1,&la1);
         proj->screen2map(br.bottomRight().x(),br.bottomRight().y(),&lo2,&la2);
-        proj->zoomOnZone(lo1,la1,lo2,la2);
+        if(zoom)
+            proj->zoomOnZone(lo1,la1,lo2,la2);
 #if 0
         this->convertBsb2Pixmap(bsb); //for debugging, just see if we can decode the image. Result in myKap.png
 #endif

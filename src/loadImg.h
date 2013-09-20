@@ -45,7 +45,7 @@ class loadImg : public QObject, public QGraphicsPixmapItem
         ~loadImg();
 
         /* acces aux donnees */
-        int setMyImgFileName(QString s);
+        int setMyImgFileName(QString s, bool zoom=true);
         QString getMyImgFileName(){return this->myImgFileName;}
         void setAlpha(double alpha){this->alpha=alpha;this->setOpacity(alpha);}
         void setGribOpacity(double d);

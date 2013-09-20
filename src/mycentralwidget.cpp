@@ -4861,11 +4861,31 @@ void myCentralWidget::slotImg_open()
     }
     delete dKap;
 }
+void myCentralWidget::imgKap_open(const QString &kapName)
+{
+    if(kap)
+    {
+        delete kap;
+        kap=NULL;
+    }
+    kap=new loadImg(proj,this);
+    if(kap->setMyImgFileName(kapName,false)!=1)
+    {
+        delete kap;
+        kap=NULL;
+    }
+    else if(kap->getMyImgFileName().isEmpty())
+    {
+        delete kap;
+        kap=NULL;
+    }
+}
 void myCentralWidget::slotImg_close()
 {
     if (kap)
         delete kap;
     kap=NULL;
+    Settings::setSetting("LastKap",QString());
 }
 void myCentralWidget::slot_resetGestures()
 {
