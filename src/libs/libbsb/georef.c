@@ -40,7 +40,7 @@
 #include "cutil.h"
 
 
-#ifdef __MSVC__
+#ifndef snprintf
 #define snprintf mysnprintf
 #endif
 
@@ -313,7 +313,7 @@ void todmm(int flag, double a, char *bufp, int bufplen)
       d = -d;
 
     if (!flag)
-      _snprintf(bufp, bufplen, "%d %02ld.%03ld'", d, m / 1000, m % 1000);
+      snprintf(bufp, bufplen, "%d %02ld.%03ld'", d, m / 1000, m % 1000);
     else {
       if (flag == 1) {
           char c = 'N';
@@ -322,7 +322,7 @@ void todmm(int flag, double a, char *bufp, int bufplen)
             d = -d;
             c = 'S';
           }
-          _snprintf(bufp, bufplen,
+          snprintf(bufp, bufplen,
                  "%02d %02ld.%03ld %c", d, m / 1000, (m % 1000), c);
       } else if (flag == 2) {
           char c = 'E';
@@ -331,7 +331,7 @@ void todmm(int flag, double a, char *bufp, int bufplen)
             d = -d;
             c = 'W';
           }
-          _snprintf(bufp, bufplen,
+          snprintf(bufp, bufplen,
                  "%03d %02ld.%03ld %c", d, m / 1000, (m % 1000), c);
       }
     }
