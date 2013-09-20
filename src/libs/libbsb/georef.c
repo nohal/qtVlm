@@ -41,7 +41,7 @@
 
 
 #ifndef snprintf
-#define snprintf mysnprintf
+#define snprintf _snprintf
 #endif
 
 
