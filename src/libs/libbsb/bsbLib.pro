@@ -1,3 +1,7 @@
+win32-msvc2008|win32_msvc2010|win32-msvc2012|win32-msvc2013{
+    warning("MSVC detected")
+    DEFINES += __MSVC__
+}
 DESTDIR=../build
 TEMPLATE=lib
 TARGET=bsb

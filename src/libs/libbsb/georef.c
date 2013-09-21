@@ -39,10 +39,8 @@
 #include "georef.h"
 #include "cutil.h"
 
-#ifndef __unix__
-#ifndef snprintf
+#ifdef __MSVC__
 #define snprintf _snprintf
-#endif
 #endif
 
 
