@@ -23,7 +23,7 @@ Copyright (C) 2008 - Jacques Zaninetti - http://zygrib.free.fr
 ***********************************************************************/
 
 /*************************************
-Dessin des données GRIB (avec QT)
+Dessin des donnÃ©es GRIB (avec QT)
 *************************************/
 
 #ifndef ISOLINE_H
@@ -37,18 +37,18 @@ Dessin des données GRIB (avec QT)
 
 #include <QApplication>
 #include <QPainter>
+#include "class_list.h"
 
-#include "Grib.h"
 #include "Projection.h"
-#include "Util.h"
+
 
 // TODO: join segments and draw a spline
 
 //===============================================================
-// Elément d'isobare qui passe dans un carré (ab-cd)de la grille.
+// ElÃ©ment d'isobare qui passe dans un carrÃ© (ab-cd)de la grille.
 // a  b
 // c  d
-// Rejoint l'arête (i,j)-(k,l) �  l'arête (m,n)-(o,p) (indices ds la grille GRIB)
+// Rejoint l'arÃªte (i,j)-(k,l) Ã  l'arÃªte (m,n)-(o,p) (indices ds la grille GRIB)
 class Segment
 {
     public:
@@ -56,10 +56,10 @@ class Segment
                 char c1, char c2, char c3, char c4,
                 time_t now, time_t tPrev, time_t tNxt,GribRecord *rec_prev,GribRecord *rec_nxt, double pressure);
 
-        int   i,j,  k,l;   // arête 1
-        double px1,  py1;   // Coordonées de l'intersection (i,j)-(k,l)
-        int m,n, o,p;      // arête 2
-        double px2,  py2;   // Coordonées de l'intersection (m,n)-(o,p)
+        int   i,j,  k,l;   // arÃªte 1
+        double px1,  py1;   // CoordonÃ©es de l'intersection (i,j)-(k,l)
+        int m,n, o,p;      // arÃªte 2
+        double px2,  py2;   // CoordonÃ©es de l'intersection (m,n)-(o,p)
 
     private:
         void traduitCode(int I, int J, char c1, int &i, int &j);
@@ -97,8 +97,8 @@ class IsoLine
                         const GribRecord *rec);
 
         //-----------------------------------------------------------------------
-        // Génère la liste des segments.
-        // Les coordonnées sont les indices dans la grille du GribRecord
+        // GÃ©nÃšre la liste des segments.
+        // Les coordonnÃ©es sont les indices dans la grille du GribRecord
         //---------------------------------------------------------
         void extractIsoLine(time_t now, time_t tPrev, time_t tNxt,GribRecord *rec_prev,GribRecord *rec_nxt);
 };

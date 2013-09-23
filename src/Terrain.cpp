@@ -40,28 +40,28 @@ Copyright (C) 2008 - Jacques Zaninetti - http://zygrib.free.fr
 #include "Projection.h"
 #include "mycentralwidget.h"
 #include "GshhsReader.h"
-#include "Grib.h"
 #include "loadImg.h"
 #include "Orthodromie.h"
 #include <QTimer>
 #include "MyView.h"
 #include "ToolBar.h"
 #include "MapDataDrawer.h"
+#include "DataManager.h"
 
 //---------------------------------------------------------
 // Constructeur
 //---------------------------------------------------------
-Terrain::Terrain(myCentralWidget *parent, Projection *proj_) : QGraphicsWidget()
+Terrain::Terrain(myCentralWidget *centralWidget, Projection *proj_) : QGraphicsWidget()
 {
     toBeRestarted=false;
-    this->parent=parent;
+    this->centralWidget=centralWidget;
     proj = proj_;
     this->routageGrib=NULL;
     connect(proj,SIGNAL(projectionUpdated()),this,SLOT(redrawAll()));
-    connect(parent,SIGNAL(redrawAll()),this,SLOT(redrawAll()));
-    connect(parent,SIGNAL(redrawGrib()),this,SLOT(redrawGrib()));
-    connect(this,SIGNAL(mousePress(QGraphicsSceneMouseEvent*)),parent,SLOT(slot_mousePress(QGraphicsSceneMouseEvent*)));
-    connect(this,SIGNAL(mouseRelease(QGraphicsSceneMouseEvent*)),parent,SLOT(slot_mouseRelease(QGraphicsSceneMouseEvent*)));
+    connect(centralWidget,SIGNAL(redrawAll()),this,SLOT(redrawAll()));
+    connect(centralWidget,SIGNAL(redrawGrib()),this,SLOT(redrawGrib()));
+    connect(this,SIGNAL(mousePress(QGraphicsSceneMouseEvent*)),centralWidget,SLOT(slot_mousePress(QGraphicsSceneMouseEvent*)));
+    connect(this,SIGNAL(mouseRelease(QGraphicsSceneMouseEvent*)),centralWidget,SLOT(slot_mouseRelease(QGraphicsSceneMouseEvent*)));
     timerUpdated=new QTimer(this);
     timerUpdated->setSingleShot(true);
     timerUpdated->setInterval(200);
@@ -89,13 +89,11 @@ Terrain::Terrain(myCentralWidget *parent, Projection *proj_) : QGraphicsWidget()
     showIsobars  = Settings::getSetting("showIsobars", true).toBool();
     showIsobarsLabels = Settings::getSetting("showIsobarsLabels", false).toBool();
     isobarsStep = Settings::getSetting("isobarsStep", 2).toDouble();
-    //setIsobarsStep(Settings::getSetting("isobarsStep", 2).toDouble());
     showPressureMinMax = Settings::getSetting("showPressureMinMax", false).toBool();
 
     showIsotherms0  = Settings::getSetting("showIsotherms0", false).toBool();
     showIsotherms0Labels  = Settings::getSetting("showIsotherms0Labels", false).toBool();
     isotherms0Step = Settings::getSetting("isotherms0Step", 50).toDouble();
-    //setIsotherms0Step(Settings::getSetting("isotherms0Step", 50).toDouble());
 
     colorMapMode = Settings::getSetting("colorMapMode", MapDataDrawer::drawWind).toInt();
 
@@ -127,7 +125,7 @@ void Terrain::updateGraphicsParameters()
     seaColor  = Settings::getSetting("seaColor", QColor(50,50,150)).value<QColor>();
     landColor = Settings::getSetting("landColor", QColor(200,200,120)).value<QColor>();
     landColor.setAlpha(Settings::getSetting("landOpacity","180").toInt());
-    tranparent=QColor(0,0,0,0);
+    transparentColor=QColor(0,0,0,0);
 
     seaBordersPen.setColor(Settings::getSetting("seaBordersLineColor", QColor(40,45,30)).value<QColor>());
     seaBordersPen.setWidthF(Settings::getSetting("seaBordersLineWidth", 1.8).toDouble());
@@ -150,7 +148,7 @@ void Terrain::updateGraphicsParameters()
 
     isEarthMapValid = false;
     mustRedraw = true;
-    parent->getScene()->setBackgroundBrush(seaColor);
+    centralWidget->getScene()->setBackgroundBrush(seaColor);
     indicateWaitingMap();
 }
 
@@ -182,8 +180,8 @@ void Terrain::draw_GSHHSandGRIB()
 //        gshhsReader->drawSeaBorders(pnt, proj);
 //        return;
 //    }
-    if(parent->getKap())
-        parent->getKap()->slot_updateProjection();
+    if(centralWidget->getKap())
+        centralWidget->getKap()->slot_updateProjection();
     QCursor oldcursor = cursor();
     setCursor(Qt::WaitCursor);
     if (imgAll != NULL) {
@@ -197,7 +195,7 @@ void Terrain::draw_GSHHSandGRIB()
     pnt.setRenderHint(QPainter::Antialiasing, true);
     pnt.setRenderHint(QPainter::SmoothPixmapTransform, true);
 
-    tranparent=Qt::transparent;
+    transparentColor=Qt::transparent;
 
     //===================================================
     // Dessin du fond de carte et des donnees GRIB
@@ -224,28 +222,22 @@ void Terrain::draw_GSHHSandGRIB()
             pnt1.setRenderHint(QPainter::Antialiasing, true);
             pnt1.setRenderHint(QPainter::SmoothPixmapTransform, true);
             pnt1.setCompositionMode(QPainter::CompositionMode_Source);
-            gshhsReader->drawContinents(pnt1, proj, tranparent, landColor);
+            gshhsReader->drawContinents(pnt1, proj, transparentColor, landColor);
         }
     }
 
     //===================================================
     // Dessin des donnees GRIB
     //===================================================
-    Grib * grib=parent->getGrib();
-    if(colorMapMode==MapDataDrawer::drawCurrent)
-    {
-        if (!grib || !grib->isOk() || grib->getNumberOfGribRecords(GRB_CURRENT_VX,LV_MSL,0) == 0)
-            grib=parent->getGribCurrent();
-    }
 
-    if(grib && grib->isOk())
+    if(centralWidget->get_dataManager()->isOk())
     {
-        drawGrib(pnt,grib);
+        drawGrib(pnt);
         //imgAll->save("testGrib_terrain1.png");
-        if(parent->getKap()!=NULL /*&& parent->getKap()->getDrawGribOverKap()*/)
+        if(centralWidget->getKap()!=NULL /*&& centralWidget->getKap()->getDrawGribOverKap()*/)
         {
             QPolygon bordersXY;
-            QPolygonF borders=parent->getKap()->getBorders();
+            QPolygonF borders=centralWidget->getKap()->getBorders();
             for(int i=0;i<borders.count();++i)
             {
                 int X,Y;
@@ -254,9 +246,9 @@ void Terrain::draw_GSHHSandGRIB()
             }
             QRectF br=bordersXY.boundingRect();
             if(!br.isNull() && !br.isEmpty())
-                parent->getKap()->setImgGribKap(imgAll->copy(br.toRect()));
+                centralWidget->getKap()->setImgGribKap(imgAll->copy(br.toRect()));
             else
-                parent->getKap()->setImgGribKap(QPixmap(0,0));
+                centralWidget->getKap()->setImgGribKap(QPixmap(0,0));
         }
         if(routageGrib!=NULL)
         {
@@ -320,8 +312,8 @@ void Terrain::draw_GSHHSandGRIB()
             mutex.unlock();
         }
     }
-    else if(parent->getKap()!=NULL)
-        parent->getKap()->setImgGribKap(QPixmap(0,0));
+    else if(centralWidget->getKap()!=NULL)
+        centralWidget->getKap()->setImgGribKap(QPixmap(0,0));
 
 
     //imgAll->save("testGrib_terrain2.png");
@@ -331,9 +323,9 @@ void Terrain::draw_GSHHSandGRIB()
     pnt.drawPixmap(0,0, *imgEarth);
 #endif
 #if 0
-    if(parent->getFax()!=NULL)
+    if(centralWidget->getFax()!=NULL)
     {
-        QPixmap * fax=parent->getFax();
+        QPixmap * fax=centralWidget->getFax();
 //        double scale=Settings::getSetting("faxScale",0).toDouble();
         double faxLatN=65;
         double faxLatS=10;
@@ -352,7 +344,7 @@ void Terrain::draw_GSHHSandGRIB()
             qWarning()<<proj->getYmax()<<proj->getYmin();
             qWarning()<<distFax<<distProj<<"fax height="<<fax->height()<<"new height="<<newHeight;
             qWarning()<<"xFax="<<xFax<<"yFax="<<yFax;
-            pnt.setBackgroundMode(Qt::TransparentMode);
+            pnt.setBackgroundMode(Qt::transparentMode);
             pnt.setCompositionMode(QPainter::CompositionMode_Source);
             pnt.drawPixmap(xFax,yFax,faxResized);
             pnt.setCompositionMode(QPainter::CompositionMode_SourceOver);
@@ -392,7 +384,8 @@ void Terrain::draw_GSHHSandGRIB()
     /*int save=0;
     if(save==1) imgEarth->save("test.jpg","JPG",100);*/
     QString cartouche="";
-    if(grib) cartouche=grib->get_cartoucheData()+". ";
+    DataManager * dataManager=centralWidget->get_dataManager();
+    if(dataManager) cartouche=dataManager->get_cartoucheData()+". ";
     if(this->gshhsReader)
         cartouche=cartouche+tr("Niveau de detail des cotes: ")+QString().setNum(this->gshhsReader->getQuality()+1);
     QFont fontbig("TypeWriter", 12, QFont::Bold, false);
@@ -501,14 +494,14 @@ void Terrain::draw_GSHHSandGRIB()
     pnt.drawLine(QPoint(sX+screenDist,correctedScalePos.y()),QPoint(sX+screenDist,correctedScalePos.y()-4));
     setCursor(oldcursor);
     daylight(&pnt,vlmPoint(0,0));
-    parent->getView()->resetTransform();
-    parent->getView()->hideViewPix();
-    parent->getScene()->setPinching(false);
+    centralWidget->getView()->resetTransform();
+    centralWidget->getView()->hideViewPix();
+    centralWidget->getScene()->setPinching(false);
 }
 
-void Terrain::drawGrib(QPainter &pnt, Grib *gribPlot)
+void Terrain::drawGrib(QPainter &pnt)
 {
-    MapDataDrawer * mapDataDrawer=parent->get_mapDataDrawer();
+    MapDataDrawer * mapDataDrawer=centralWidget->get_mapDataDrawer();
         //QTime t1 = QTime::currentTime();
         //qWarning() << "Grib mode: " << colorMapMode << " (grib=" << MapDataDrawer::drawWind << ")";
         // grib->draw_WIND_Color(pnt, proj, colorMapSmooth,showWindColorMap,showWindArrows,showBarbules);
@@ -516,59 +509,59 @@ void Terrain::drawGrib(QPainter &pnt, Grib *gribPlot)
         {
                 case MapDataDrawer::drawWind :
                         windArrowsColor.setRgb(255, 255, 255);                        
-                        mapDataDrawer->draw_WIND_Color(gribPlot,pnt, proj, colorMapSmooth,showWindArrows,showBarbules);
+                        mapDataDrawer->draw_WIND_Color(pnt, proj, colorMapSmooth,showWindArrows,showBarbules);
                         break;
                 case MapDataDrawer::drawCurrent :
                         windArrowsColor.setRgb(255, 255, 255);
-                        mapDataDrawer->draw_CURRENT_Color(gribPlot,pnt, proj, colorMapSmooth,showWindArrows,false);
+                        mapDataDrawer->draw_CURRENT_Color(pnt, proj, colorMapSmooth,showWindArrows,false);
                         break;
                 case MapDataDrawer::drawRain :
                         windArrowsColor.setRgb(140, 120, 100);
-                        mapDataDrawer->draw_RAIN_Color(gribPlot,pnt, proj, colorMapSmooth);
+                        mapDataDrawer->draw_RAIN_Color(pnt, proj, colorMapSmooth);
                         break;
                 case MapDataDrawer::drawCloud :
                         windArrowsColor.setRgb(180, 180, 80);
-                        mapDataDrawer->draw_CLOUD_Color(gribPlot,pnt, proj, colorMapSmooth);
+                        mapDataDrawer->draw_CLOUD_Color(pnt, proj, colorMapSmooth);
                         break;
                 case MapDataDrawer::drawHumid :
                         windArrowsColor.setRgb(180, 180, 80);
-                        mapDataDrawer->draw_HUMID_Color(gribPlot,pnt, proj, colorMapSmooth);
+                        mapDataDrawer->draw_HUMID_Color(pnt, proj, colorMapSmooth);
                         break;
                 case MapDataDrawer::drawTemp :
                         windArrowsColor.setRgb(255, 255, 255);
-                        mapDataDrawer->draw_Temp_Color(gribPlot,pnt, proj, colorMapSmooth);
+                        mapDataDrawer->draw_Temp_Color(pnt, proj, colorMapSmooth);
                         break;
                 case MapDataDrawer::drawTempPot :
                         windArrowsColor.setRgb(255, 255, 255);
-                        mapDataDrawer->draw_TempPot_Color(gribPlot,pnt, proj, colorMapSmooth);
+                        mapDataDrawer->draw_TempPot_Color(pnt, proj, colorMapSmooth);
                         break;
                 case MapDataDrawer::drawDewpoint :
                         windArrowsColor.setRgb(255, 255, 255);
-                        mapDataDrawer->draw_Dewpoint_Color(gribPlot,pnt, proj, colorMapSmooth);
+                        mapDataDrawer->draw_Dewpoint_Color(pnt, proj, colorMapSmooth);
                         break;
                 case MapDataDrawer::drawDeltaDewpoint :
                         windArrowsColor.setRgb(180, 180, 80);
-                        mapDataDrawer->draw_DeltaDewpoint_Color(gribPlot,pnt, proj, colorMapSmooth);
+                        mapDataDrawer->draw_DeltaDewpoint_Color(pnt, proj, colorMapSmooth);
                         break;
                 /*case MapDataDrawer::drawSnowDepth :
                         windArrowsColor.setRgb(140, 120, 100);
-                        mapDataDrawer->draw_SNOW_DEPTH_Color(gribPlot,pnt, proj, colorMapSmooth);
+                        mapDataDrawer->draw_SNOW_DEPTH_Color(pnt, proj, colorMapSmooth);
                         break;*/
                 case MapDataDrawer::drawSnowCateg :
                         windArrowsColor.setRgb(140, 120, 100);
-                        mapDataDrawer->draw_SNOW_CATEG_Color(gribPlot,pnt, proj, colorMapSmooth);
+                        mapDataDrawer->draw_SNOW_CATEG_Color(pnt, proj, colorMapSmooth);
                         break;
                 case MapDataDrawer::drawFrzRainCateg :
                         windArrowsColor.setRgb(140, 120, 100);
-                        mapDataDrawer->draw_FRZRAIN_CATEG_Color(gribPlot,pnt, proj, colorMapSmooth);
+                        mapDataDrawer->draw_FRZRAIN_CATEG_Color(pnt, proj, colorMapSmooth);
                         break;
                 case MapDataDrawer::drawCAPEsfc :
                         windArrowsColor.setRgb(100, 80, 80);
-                        mapDataDrawer->draw_CAPEsfc(gribPlot,pnt, proj, colorMapSmooth);
+                        mapDataDrawer->draw_CAPEsfc(pnt, proj, colorMapSmooth);
                         break;
                 case MapDataDrawer::drawCINsfc :
                         windArrowsColor.setRgb(100, 80, 80);
-                        mapDataDrawer->draw_CINsfc(gribPlot,pnt, proj, colorMapSmooth);
+                        mapDataDrawer->draw_CINsfc(pnt, proj, colorMapSmooth);
                         break;
         }
         //printf("time show ColorMap = %d ms\n", t1.elapsed());
@@ -577,25 +570,25 @@ void Terrain::drawGrib(QPainter &pnt, Grib *gribPlot)
 
         if (showIsobars) {
             pnt.setPen(isobarsPen);
-            mapDataDrawer->draw_Isobars(gribPlot,pnt, proj);
+            mapDataDrawer->draw_Isobars(pnt, proj);
             if (showIsobarsLabels) {
-                mapDataDrawer->draw_IsobarsLabels(gribPlot,pnt, proj);
+                mapDataDrawer->draw_IsobarsLabels(pnt, proj);
             }
         }
 
         if (showIsotherms0) {
             pnt.setPen(isotherms0Pen);
-            mapDataDrawer->draw_Isotherms0(gribPlot,pnt, proj);
+            mapDataDrawer->draw_Isotherms0(pnt, proj);
             if (showIsotherms0Labels) {
-                mapDataDrawer->draw_Isotherms0Labels(gribPlot,pnt, proj);
+                mapDataDrawer->draw_Isotherms0Labels(pnt, proj);
             }
         }
 
         if (showPressureMinMax) {
-                mapDataDrawer->draw_PRESSURE_MinMax (gribPlot,pnt, proj);
+                mapDataDrawer->draw_PRESSURE_MinMax (pnt, proj);
         }
         if (showTemperatureLabels) {
-                mapDataDrawer->draw_TEMPERATURE_Labels (gribPlot,pnt, proj);
+                mapDataDrawer->draw_TEMPERATURE_Labels (pnt, proj);
         }
 }
 
@@ -741,9 +734,10 @@ void Terrain::setDrawIsobars(bool b) {
 void Terrain::setIsobarsStep(double step)
 {
     if (isobarsStep != step) {
-        Grib * grib = parent->getGrib();
-        if(grib)
-            grib->setIsobarsStep(step);
+
+        DataManager * dataManager=centralWidget->get_dataManager();
+        if(dataManager)
+            dataManager->set_isoBarsStep(step);
         else
             qWarning() << "No grib present";
         Settings::setSetting("isobarsStep", step);
@@ -775,9 +769,9 @@ void Terrain::setDrawIsotherms0(bool b) {
 void Terrain::setIsotherms0Step(double step)
 {
     if (isotherms0Step!=step) {
-        Grib * grib = this->parent->getGrib();
-        if(grib)
-            grib->setIsotherms0Step(step);
+        DataManager * dataManager=centralWidget->get_dataManager();
+        if(dataManager)
+            dataManager->set_isoTherms0Step(step);
         Settings::setSetting("isotherms0Step", step);
         isotherms0Step = step;
         mustRedraw = true;
@@ -872,11 +866,11 @@ void Terrain::paint(QPainter * pnt, const QStyleOptionGraphicsItem * , QWidget *
 }
 void Terrain::indicateWaitingMap()
 {
-    if(parent->getMagnifier()!=NULL)
+    if(centralWidget->getMagnifier()!=NULL)
     {
-        delete parent->getMagnifier();
-        parent->setMagnifier(NULL);
-        parent->get_toolBar()->magnify->setChecked(false);
+        delete centralWidget->getMagnifier();
+        centralWidget->setMagnifier(NULL);
+        centralWidget->get_toolBar()->magnify->setChecked(false);
     }
     if(imgAll!=NULL && imgAll->paintingActive())
     {
@@ -944,15 +938,16 @@ ROUTAGE * Terrain::getRoutageGrib()
 {
     return routageGrib;
 }
+
 bool Terrain::daylight(QPainter *pnt, const vlmPoint &coords) //called with pnt!=NULL will draw night zone, called with coords!=NULL will return false if point if not under sun at point's eta
 {
     if(pnt!=NULL && Settings::getSetting("showNight",1).toInt()!=1) return false;
     QDateTime date=QDateTime().currentDateTimeUtc();
-    Grib * grib = this->parent->getGrib();
+     DataManager * dataManager=centralWidget->get_dataManager();
     if(pnt==NULL)
         date=QDateTime().fromTime_t(coords.eta).toUTC();
-    else if(grib)
-        date=QDateTime().fromTime_t(grib->getCurrentDate()).toUTC();
+    else if(dataManager)
+        date=QDateTime().fromTime_t(dataManager->get_currentDate()).toUTC();
     int nbDays=date.date().dayOfYear();
     double hour=date.time().hour()+date.time().minute()/60.0+date.time().second()/3600.0;
     double M=-3.6 + 0.9856*nbDays;

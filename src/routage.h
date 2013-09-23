@@ -48,7 +48,7 @@ Copyright (C) 2008 - Jacques Zaninetti - http://zygrib.free.fr
 struct datathread
 {
     time_t Eta;
-    Grib *GriB;
+    DataManager *dataManager;
     bool whatIfUsed;
     time_t whatIfJour;
     int whatIfTime;
@@ -65,7 +65,7 @@ class ROUTAGE : public QObject
 { Q_OBJECT
     public:
         /* constructeurs, destructeurs */
-        ROUTAGE(QString name, Projection *proj, Grib *grib, QGraphicsScene * myScene, myCentralWidget *parentWindow);
+        ROUTAGE(QString name, Projection *proj, DataManager * dataManager, QGraphicsScene * myScene, myCentralWidget *parentWindow);
 
         ~ROUTAGE();
         void setName(const QString &name){this->name=name;}
@@ -139,7 +139,7 @@ class ROUTAGE : public QObject
         int  pruneWakeAngle;
         bool useConverge;
         time_t getEta() const {return eta;}
-        Grib * getGrib() const {return grib;}
+        FCT_GET(DataManager*,dataManager)
         time_t getWhatIfJour() const {return whatIfJour;}
         static int calculateTimeRoute(const vlmPoint &RouteFrom,const vlmPoint &routeTo, const datathread *dataThread,double * lastLonFound=NULL, double * lastLatFound=NULL, const int &limit=-1);
         static int routeFunction(const double &x,const vlmPoint &from, double * lastLonFound, double * lastLatFound, const datathread *dataThread);
@@ -240,7 +240,7 @@ public slots:
         POI * fromPOI;
         POI * toPOI;
         boat *myBoat;
-        Grib *grib;
+        DataManager * dataManager;
         double angleRange;
         double angleStep;
         double timeStepMore24;

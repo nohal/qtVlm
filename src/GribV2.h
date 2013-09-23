@@ -1,6 +1,6 @@
 /**********************************************************************
 qtVlm: Virtual Loup de mer GUI
-Copyright (C) 2010 - Christophe Thomas aka Oxygen77
+Copyright (C) 2013 - Christophe Thomas aka Oxygen77
 
 http://qtvlm.sf.net
 
@@ -16,38 +16,42 @@ GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
 ***********************************************************************/
 
-#ifndef GRIBVALIDATION_H
-#define GRIBVALIDATION_H
-#ifdef QT_V5
-#include <QtWidgets/QDialog>
-#else
-#include <QDialog>
-#endif
-#include "ui_gribValidation.h"
 
+#ifndef GRIBV2_H
+#define GRIBV2_H
+
+#include "dataDef.h"
 #include "class_list.h"
+#include "Grib.h"
 
-class DialogGribValidation: public QDialog, public Ui::gribValidation
-{    Q_OBJECT
+/* switch 1/0 for g2_getfld */
+#define GRB2_UNPACK 1
+#define GRB2_EXPAND 1
+
+/*struct GrbType {
+    int cat;
+    int num;
+    bool undef;
+};*/
+
+class GribV2: public Grib
+{
     public:
-        DialogGribValidation(myCentralWidget * my_centralWidget,MainWindow * mainWindow);
-        ~DialogGribValidation();
-        void done(int result);
-        void setMode(int mode);
+        GribV2(DataManager *dataManager);
 
-    public slots:
-        void inputChanged(void);
-        void doNow(void);
-        void interpolationChanged(int);
+        virtual bool loadFile(QString fileName);
 
-private:
-        myCentralWidget * my_centralWidget;
-        MainWindow * mainWindow;
-        DataManager * dataManager;
-        int curMode;
+        static bool isGribV2(QString fileName);
+
+
+
+
+
+
 
 };
 
-#endif // GRIBVALIDATION_H
+#endif // GRIBV2_H

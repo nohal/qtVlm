@@ -1,6 +1,6 @@
 /**********************************************************************
 qtVlm: Virtual Loup de mer GUI
-Copyright (C) 2010 - Christophe Thomas aka Oxygen77
+Copyright (C) 2013 - Christophe Thomas aka Oxygen77
 
 http://qtvlm.sf.net
 
@@ -18,36 +18,34 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ***********************************************************************/
 
-#ifndef GRIBVALIDATION_H
-#define GRIBVALIDATION_H
-#ifdef QT_V5
-#include <QtWidgets/QDialog>
-#else
-#include <QDialog>
-#endif
-#include "ui_gribValidation.h"
+#ifndef GRIBV1_H
+#define GRIBV1_H
 
 #include "class_list.h"
+#include "dataDef.h"
 
-class DialogGribValidation: public QDialog, public Ui::gribValidation
-{    Q_OBJECT
+#include "Grib.h"
+
+#include "zuFile.h"
+
+#define COMPRESS_NO_GRIB -2
+
+class GribV1 : public Grib
+{
     public:
-        DialogGribValidation(myCentralWidget * my_centralWidget,MainWindow * mainWindow);
-        ~DialogGribValidation();
-        void done(int result);
-        void setMode(int mode);
+        GribV1(DataManager *dataManager);
 
-    public slots:
-        void inputChanged(void);
-        void doNow(void);
-        void interpolationChanged(int);
+        static bool isGribV1(QString fileName);
 
-private:
-        myCentralWidget * my_centralWidget;
-        MainWindow * mainWindow;
-        DataManager * dataManager;
-        int curMode;
+        virtual bool loadFile(QString fileName);
 
+        static void initCompressModes(void);
+
+    private:
+        bool readAllGribRecords(const char *fname, int compressMode);
+
+        static int findCompressMode(const char * fname);
+        static bool chkIsGrib(ZUFILE *fptr);
 };
 
-#endif // GRIBVALIDATION_H
+#endif // GRIBV1_H

@@ -33,10 +33,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "DialogParamVlm.h"
 #include "settings.h"
 #include "MainWindow.h"
+#include "DataManager.h"
 #include "mycentralwidget.h"
 #include "GshhsReader.h"
 #include "Util.h"
-#include "Grib.h"
 
 DialogParamVlm::DialogParamVlm(MainWindow * main,myCentralWidget * parent) : QDialog(parent)
 {
@@ -345,8 +345,8 @@ void DialogParamVlm::done(int result)
         Settings::setSetting("forceCurrents",forceCurrents->isChecked()?1:0);
         Settings::setSetting("forcedCS",forcedCS->value());
         Settings::setSetting("forcedCD",forcedCD->value());
-        if(centralWidget->getGrib()) centralWidget->getGrib()->load_forcedParam();
-        if(centralWidget->getGribCurrent()) centralWidget->getGribCurrent()->load_forcedParam();
+        DataManager * dataManager=centralWidget->get_dataManager();
+        if(dataManager) dataManager->load_forcedParam();
 
         /* advanced */
         Settings::setSetting("gpsEmulEnable",chk_activateEmulation->checkState()==Qt::Checked?"1":"0");

@@ -27,7 +27,6 @@ Original code: virtual-winds.com
 #include "Orthodromie.h"
 #include "Projection.h"
 #include "routage.h"
-#include "Grib.h"
 #include "mycentralwidget.h"
 #include "vlmLine.h"
 #include "POI.h"
@@ -40,6 +39,7 @@ Original code: virtual-winds.com
 #include "Util.h"
 #include "Polygon.h"
 #include "route.h"
+#include "DataManager.h"
 #include <QDebug>
 #ifdef QT_V5
 #include <QtConcurrent/QtConcurrentMap>
@@ -119,14 +119,14 @@ inline vlmPoint findPointThreaded(const vlmPoint &point)
             workEta=pt.eta;
             if(pt.routage->getWhatIfUsed() && pt.routage->getWhatIfJour()<=pt.eta)
                 workEta=workEta+pt.routage->getWhatIfTime()*3600;
-            if(!pt.routage->getGrib()->getInterpolatedValue_byDates(res_lon,res_lat,
-                   workEta+pt.routage->getTimeStep()*60,&newWindSpeed,&newWindAngle,INTERPOLATION_DEFAULT)||workEta+pt.routage->getTimeStep()*60>pt.routage->getGrib()->getMaxDate())
+            if(!pt.routage->get_dataManager()->getInterpolatedWind(res_lon,res_lat,
+                   workEta+pt.routage->getTimeStep()*60,&newWindSpeed,&newWindAngle,INTERPOLATION_DEFAULT)||workEta+pt.routage->getTimeStep()*60>pt.routage->get_dataManager()->get_maxDate())
             {
                 pt.isDead=true;
                 return pt;
             }
             newWindAngle=radToDeg(newWindAngle);
-            if(pt.routage->getGrib()->getInterpolatedValueCurrent_byDates(res_lon,res_lat,
+            if(pt.routage->get_dataManager()->getInterpolatedCurrent(res_lon,res_lat,
                    workEta+pt.routage->getTimeStep()*60,&current_speed,&current_angle,INTERPOLATION_DEFAULT))
             {
                 current_angle=radToDeg(current_angle);
@@ -441,7 +441,7 @@ inline QList<vlmPoint> findRoute(const QList<vlmPoint> & pointList)
     else
         dataThread.Eta=routage->getEta();
     dataThread.Eta=pointList.first().origin->eta;
-    dataThread.GriB=routage->getGrib();
+    dataThread.dataManager=routage->get_dataManager();
     dataThread.whatIfJour=routage->getWhatIfJour();
     dataThread.whatIfUsed=routage->getWhatIfUsed();
     dataThread.whatIfTime=routage->getWhatIfTime();
@@ -586,7 +586,7 @@ inline int ROUTAGE::calculateTimeRoute(const vlmPoint &routeFrom,const vlmPoint 
     int vacLen=dataThread->Boat->getVacLen();
     double newSpeed,distanceParcourue,remaining_distance,res_lon,res_lat,cap1,cap2,diff1,diff2;
     double windAngle,windSpeed,cap,angle;
-    time_t maxDate=dataThread->GriB->getMaxDate();
+    time_t maxDate=dataThread->dataManager->get_maxDate();
     newSpeed=0;
     distanceParcourue=0;
     res_lon=0;
@@ -604,10 +604,10 @@ inline int ROUTAGE::calculateTimeRoute(const vlmPoint &routeFrom,const vlmPoint 
         workEta=etaRoute;
         if(dataThread->whatIfUsed && dataThread->whatIfJour<=dataThread->Eta)
             workEta=workEta+dataThread->whatIfTime*3600;
-        if(dataThread->GriB->getInterpolatedValue_byDates(lon, lat, workEta,&windSpeed,&windAngle,INTERPOLATION_DEFAULT && workEta<=maxDate && (!hasLimit || etaRoute<=etaLimit)))
+        if(dataThread->dataManager->getInterpolatedWind(lon, lat, workEta,&windSpeed,&windAngle,INTERPOLATION_DEFAULT && workEta<=maxDate && (!hasLimit || etaRoute<=etaLimit)))
         {
             windAngle=radToDeg(windAngle);
-            if (dataThread->GriB->getInterpolatedValueCurrent_byDates(lon, lat, workEta,&current_speed,&current_angle,INTERPOLATION_DEFAULT))
+            if (dataThread->dataManager->getInterpolatedCurrent(lon, lat, workEta,&current_speed,&current_angle,INTERPOLATION_DEFAULT))
             {
                 current_angle=radToDeg(current_angle);
                 QPointF p=Util::calculateSumVect(windAngle,windSpeed,current_angle,current_speed);
@@ -716,7 +716,7 @@ inline int ROUTAGE::calculateTimeRoute(const vlmPoint &routeFrom,const vlmPoint 
     return qAbs(etaRoute-dataThread->Eta);
 }
 
-ROUTAGE::ROUTAGE(QString name, Projection *proj, Grib *grib, QGraphicsScene * myScene, myCentralWidget *parentWindow)
+ROUTAGE::ROUTAGE(QString name, Projection *proj, DataManager *dataManager, QGraphicsScene * myScene, myCentralWidget *parentWindow)
         : QObject()
 {
     timerTempo=new QTimer(this);
@@ -734,7 +734,7 @@ ROUTAGE::ROUTAGE(QString name, Projection *proj, Grib *grib, QGraphicsScene * my
     else
         this->useMultiThreading=true;
     connect(myScene,SIGNAL(eraseWay()),this,SLOT(eraseWay()));
-    this->grib=grib;
+    this->dataManager=dataManager;
     this->parent=parentWindow;
     map=parent->get_gshhsReader();
     QList<QColor> colorsList;
@@ -908,7 +908,7 @@ void ROUTAGE::calculate()
     /**** update boat barriers ***/
     myBoat->cleanBarrierList();
 
-    if(!grib)
+    if(!dataManager)
     {
         QMessageBox::critical(0,tr("Routage"),tr("Pas de grib charge"));
         parent->deleteRoutage(this);
@@ -923,7 +923,7 @@ void ROUTAGE::calculate()
     }
     else
         i_eta=eta;
-    if ( eta>grib->getMaxDate() || eta<grib->getMinDate() )
+    if ( eta>dataManager->get_maxDate() || eta<dataManager->get_minDate() )
     {
         QMessageBox::critical(0,tr("Routage"),tr("Date de depart choisie incoherente avec le grib"));
         parent->deleteRoutage(this);
@@ -1214,7 +1214,7 @@ void ROUTAGE::slot_calculate()
     time_t workEta=0;
     NR_n=0;
     NR_success=0;
-    time_t maxDate=grib->getMaxDate();
+    time_t maxDate=dataManager->get_maxDate();
     if(angleRange>=180) angleRange=179;
     arrivalIsClosest=false;
     time_t realEta=eta;
@@ -1252,14 +1252,14 @@ void ROUTAGE::slot_calculate()
                 workEta = eta;
             if(whatIfUsed && whatIfJour<=workEta)
                 workEta=workEta+whatIfTime*3600;
-            if(!grib->getInterpolatedValue_byDates((double) list->at(n).lon,(double) list->at(n).lat,
+            if(!dataManager->getInterpolatedWind((double) list->at(n).lon,(double) list->at(n).lat,
                    workEta,&windSpeed,&windAngle,INTERPOLATION_DEFAULT)||workEta+this->getTimeStep()*60>maxDate)
             {
                 iso->setPointDead(n);
                 continue;
             }
             windAngle=radToDeg(windAngle);
-            if(grib->getInterpolatedValueCurrent_byDates((double) list->at(n).lon,(double) list->at(n).lat,
+            if(dataManager->getInterpolatedCurrent((double) list->at(n).lon,(double) list->at(n).lat,
                    workEta,&current_speed,&current_angle,INTERPOLATION_DEFAULT))
             {
                 current_angle=radToDeg(current_angle);
@@ -2055,7 +2055,7 @@ void ROUTAGE::slot_calculate()
 #if 0
                     datathread dataThread;
                     dataThread.Boat=this->getBoat();
-                    dataThread.GriB=this->getGrib();
+                    dataThread.dataManager=get_dataManager();
                     dataThread.whatIfJour=this->getWhatIfJour();
                     dataThread.whatIfUsed=this->getWhatIfUsed();
                     dataThread.whatIfTime=this->getWhatIfTime();
@@ -2199,7 +2199,7 @@ void ROUTAGE::slot_calculate()
             dataThread.Eta=i_eta;
         else
             dataThread.Eta=eta;
-        dataThread.GriB=this->getGrib();
+        dataThread.dataManager=this->get_dataManager();
         dataThread.whatIfJour=this->getWhatIfJour();
         dataThread.whatIfUsed=this->getWhatIfUsed();
         dataThread.whatIfTime=this->getWhatIfTime();
@@ -2240,7 +2240,7 @@ void ROUTAGE::slot_calculate()
             datathread dataThread;
             dataThread.Boat=this->getBoat();
             dataThread.Eta=this->getEta();
-            dataThread.GriB=this->getGrib();
+            dataThread.dataManager=this->get_dataManager();
             dataThread.whatIfJour=this->getWhatIfJour();
             dataThread.whatIfUsed=this->getWhatIfUsed();
             dataThread.whatIfTime=this->getWhatIfTime();
@@ -2756,7 +2756,7 @@ void ROUTAGE::slot_gribDateChanged()
     bool found=false;
     for(int n=0;n<isochrones.size();++n)
     {
-        int time=qAbs(isochrones.at(n)->getPoint(0)->eta - grib->getCurrentDate());
+        int time=qAbs(isochrones.at(n)->getPoint(0)->eta - dataManager->get_currentDate());
         if (time<maxTime)
         {
             maxTime=time;
@@ -4540,7 +4540,7 @@ void ROUTAGE::calculateAlternative()
     datathread dataThread;
     dataThread.Boat=this->getBoat();
     dataThread.Eta=this->getEta();
-    dataThread.GriB=this->getGrib();
+    dataThread.dataManager=get_dataManager();
     dataThread.whatIfJour=this->getWhatIfJour();
     dataThread.whatIfUsed=this->getWhatIfUsed();
     dataThread.whatIfTime=this->getWhatIfTime();

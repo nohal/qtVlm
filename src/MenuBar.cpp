@@ -156,10 +156,10 @@ MenuBar::MenuBar(MainWindow *parent)
                     tr(""),
                     tr("Fermer le GRIB Courants"), appFolder.value("img")+"fileclose.png");
         menuGrib->addSeparator();
-        acFile_Info_GRIB = addAction(menuGrib, tr("Informations sur le fichier"),
+        /*acFile_Info_GRIB = addAction(menuGrib, tr("Informations sur le fichier"),
                     tr("Ctrl+I"),
                     tr("Informations sur le fichier GRIB"), appFolder.value("img")+"info.png");
-        menuGrib->addSeparator();
+        menuGrib->addSeparator();*/
 
         menuGroupColorMap = new QMenu(tr("Type de carte"));
         acView_GroupColorMap = new ZeroOneActionGroup (menuGroupColorMap);

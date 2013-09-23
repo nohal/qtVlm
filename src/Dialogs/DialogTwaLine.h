@@ -15,12 +15,12 @@ protected:
 private:
     vlmLine * line;
     myCentralWidget *parent;
+    DataManager * dataManager;
     QPointF start;
     double twa[5];
     int nbVac[5];
     bool mode[5];
     QList<POI*> list;
-    Grib * grib;
     boat * myBoat;
     void traceIt();
     double A360(double hdg);

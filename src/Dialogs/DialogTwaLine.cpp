@@ -1,6 +1,6 @@
 #include "DialogTwaLine.h"
 #include "mycentralwidget.h"
-#include "Grib.h"
+#include "DataManager.h"
 #include "boatVLM.h"
 #include "vlmLine.h"
 #include "Util.h"
@@ -13,7 +13,7 @@ DialogTwaLine::DialogTwaLine(QPointF start, myCentralWidget *parent, MainWindow 
 {
     this->parent=parent;
     this->start=start;
-    this->grib=parent->getGrib();
+    this->dataManager=parent->get_dataManager();
     this->myBoat=parent->getSelectedBoat();
 
     color=Settings::getSetting("traceLineColor", QColor(Qt::yellow)).value<QColor>();
@@ -217,11 +217,11 @@ void DialogTwaLine::traceIt()
     }
     this->myBoat=parent->getSelectedBoat();
     if(myBoat==NULL) return;
-    if(!grib->isOk()) return;
+    if(!dataManager->isOk()) return;
     if(!myBoat->getPolarData()) return;
     time_t eta;
     if(this->startGrib->isChecked() || myBoat->get_boatType()!=BOAT_VLM)
-        eta=grib->getCurrentDate();
+        eta=dataManager->get_currentDate();
     else
         eta=((boatVLM*)myBoat)->getPrevVac()+myBoat->getVacLen();
     nbVac[0]=this->spinBox->value();
@@ -244,7 +244,7 @@ void DialogTwaLine::traceIt()
     line->addVlmPoint(current);
     double wind_speed,wind_angle,cap;
     double lon,lat;
-    time_t maxDate=grib->getMaxDate();
+    time_t maxDate=dataManager->get_maxDate();
     bool crossing=false;
     //int i1,j1,i2,j2;
     GshhsReader *map=parent->get_gshhsReader();
@@ -256,11 +256,11 @@ void DialogTwaLine::traceIt()
         {
             double current_speed=-1;
             double current_angle=0;
-            if(!grib->getInterpolatedValue_byDates(current.lon, current.lat,
+            if(!dataManager->getInterpolatedWind(current.lon, current.lat,
                 eta,&wind_speed,&wind_angle,INTERPOLATION_DEFAULT) || eta>maxDate)
                 break;
             wind_angle=radToDeg(wind_angle);
-            if(grib->getInterpolatedValueCurrent_byDates(current.lon, current.lat,
+            if(dataManager->getInterpolatedCurrent(current.lon, current.lat,
                 eta,&current_speed,&current_angle,INTERPOLATION_DEFAULT))
             {
                 current_angle=radToDeg(current_angle);

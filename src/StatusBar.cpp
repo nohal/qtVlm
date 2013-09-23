@@ -21,11 +21,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "MainWindow.h"
 #include "StatusBar.h"
 #include "Orthodromie.h"
-#include "Grib.h"
 #include "Util.h"
 #include "boat.h"
 #include "boatVLM.h"
 #include "settings.h"
+#include "DataManager.h"
+
 StatusBar::StatusBar(MainWindow * mainWindow) : QStatusBar(mainWindow) {
     this->mainWindow=mainWindow;
     my_centralWidget = mainWindow->getMy_centralWidget();
@@ -179,10 +180,10 @@ void StatusBar::showWindData(double x,double y)
     }
     stBar_label_1->setText(label1);
 
-    Grib * grib = my_centralWidget->getGrib();
+    DataManager * dataManager=my_centralWidget->get_dataManager();
     bool bo=false;
     res.clear();
-    bo=(grib && grib->getInterpolatedValue_byDates(x,y,grib->getCurrentDate(),&a,&b));
+    bo=(dataManager && dataManager->getInterpolatedWind(x,y,dataManager->get_currentDate(),&a,&b));
     if(bo)
     {
         res = "- " + tr(" Vent") + ": ";
@@ -191,7 +192,7 @@ void StatusBar::showWindData(double x,double y)
         s.sprintf("%6.2f",a);
         res += s+tr(" kts");
     }
-    bo=(grib && grib->getInterpolatedValueCurrent_byDates(x,y,grib->getCurrentDate(),&a,&b));
+    bo=(dataManager && dataManager->getInterpolatedCurrent(x,y,dataManager->get_currentDate(),&a,&b));
     if(bo)
     {
         res += " - " + tr(" Courant") + ": ";
@@ -199,19 +200,6 @@ void StatusBar::showWindData(double x,double y)
         res += s+tr("deg")+", ";
         s.sprintf("%6.2f",a);
         res += s+tr(" kts");
-    }
-    else
-    {
-        grib=my_centralWidget->getGribCurrent();
-        bo=(grib && grib->getInterpolatedValueCurrent_byDates(x,y,grib->getCurrentDate(),&a,&b));
-        if(bo)
-        {
-            res += " - " + tr(" Courant") + ": ";
-            s.sprintf("%6.2f", Util::A360(radToDeg(b)+180.0));
-            res += s+tr("deg")+", ";
-            s.sprintf("%6.2f",a);
-            res += s+tr(" kts");
-        }
     }
     stBar_label_2->setText(res);
 }

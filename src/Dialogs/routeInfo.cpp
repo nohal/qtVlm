@@ -21,7 +21,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "routeInfo.h"
 #include "ui_routeInfo.h"
 #include "Util.h"
-#include "Grib.h"
 #include "settings.h"
 #include "MapDataDrawer.h"
 

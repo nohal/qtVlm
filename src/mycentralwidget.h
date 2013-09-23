@@ -39,6 +39,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "selectionWidget.h"
 #include "MainWindow.h"
 #include "Magnifier.h"
+#include "DataManager.h"
 
 #include <qdatetime.h>
 
@@ -117,8 +118,6 @@ class myCentralWidget : public QWidget
         ~myCentralWidget();
 
         /* access to pointer & data */
-        Grib * getGrib(bool calibrate=false);
-        Grib * getGribCurrent(void);
         myScene * getScene(void) { return scene; }
         bool compassHasLine(void);
         int getCompassMode(int m_x,int m_y);
@@ -195,8 +194,11 @@ class myCentralWidget : public QWidget
         void showGribDate_dialog(void);
         void loadGribFile(QString fileName, bool zoom);
         void loadGribFileCurrent(QString fileName, bool zoom);
+        void closeGribFile(void);
+        void closeGribFileCurrent(void);
         void updateGribMenu(void);
         FCT_GET(MapDataDrawer*,mapDataDrawer)
+        FCT_GET(DataManager*,dataManager)
 
         /* events */
         void mouseMove(int x, int y, QGraphicsItem * item);
@@ -317,13 +319,13 @@ public slots :
 
         /* Grib */
         void slot_fileLoad_GRIB(void);
-        void slot_fileInfo_GRIB(void);
+        //void slot_fileInfo_GRIB(void);
         void slotLoadSailsDocGrib(void);
         void slotFax_open();
         void slotFax_close();
         void slotImg_open();
         void slotImg_close();
-        void zoomOnGrib(Grib * gr=NULL);
+        void zoomOnGrib(int grbType=DataManager::GRIB_NONE);
 
         /* Dialogs */
         void slot_boatDialog(void);
@@ -414,12 +416,8 @@ signals:
         vlmLine * NSZ;
 
         /* Grib */
-        Grib *grib;
-        Grib *gribCurrent;
-        QString  dataPresentInGrib(Grib* grib,
-                                   int dataType,int levelType,int levelValue,
-                                   bool *ok=NULL);
         MapDataDrawer * mapDataDrawer;
+        DataManager * dataManager;
 
         /* other child */        
         GshhsReader *gshhsReader;

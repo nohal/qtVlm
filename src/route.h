@@ -58,7 +58,7 @@ class ROUTE : public QObject
 { Q_OBJECT
     public:
         /* constructeurs, destructeurs */
-        ROUTE(QString name, Projection *proj, Grib *grib, QGraphicsScene * myScene, myCentralWidget *parentWindow);
+        ROUTE(QString name, Projection *proj, DataManager *dataManager, QGraphicsScene * myScene, myCentralWidget *parentWindow);
 
         ~ROUTE();
 
@@ -195,7 +195,7 @@ public slots:
         QList<POI*> my_poiList;
         boat *myBoat;
         QString boatLogin;
-        Grib *grib;
+        DataManager *dataManager;
         bool startFromBoat;
         QDateTime startTime;
         int startTimeOption;

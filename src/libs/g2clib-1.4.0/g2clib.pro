@@ -6,6 +6,7 @@ TEMPLATE=lib
 TARGET = g2clib
 DEPENDPATH += .
 INCLUDEPATH += .
+INCLUDEPATH += ../jasper/include
 
 CONFIG+=staticlib
 

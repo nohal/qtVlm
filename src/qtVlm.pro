@@ -19,6 +19,8 @@ INCLUDEPATH += objs \
     libs/nmealib/src/nmea \
     libs/libbsb \
     libs/miniunz \
+    libs/g2clib-1.4.0 \
+    libs/jasper/include
 #    libs/libgps \
     .
 
@@ -28,7 +30,11 @@ LIBS += -Llibs/build \
     -lz \
     -lqjson \
     -lnmea \
-    -lbsb
+    -lbsb \
+    -lg2clib \
+    -ljpc \
+    -ljp2 \
+    -lbase
 #    -lgps
 QT_V5{
 LIBS += -lQt5ExtSerialPort
@@ -162,7 +168,12 @@ HEADERS += Dialogs/DialogGraphicsParams.h \
     Dialogs/DialogChooseMultipleBoat.h \
     MapDataDrawer.h \
     DataColors.h \
-    Dialogs/DialogRemoveRoute.h
+    Dialogs/DialogRemoveRoute.h \
+    GribV2.h \
+    GribV2Record.h \
+    GribV1Record.h \
+    GribV1.h \
+    DataManager.h
 
 
 FORMS += Ui/boatAccount_dialog.ui \
@@ -305,7 +316,12 @@ SOURCES += Dialogs/DialogGraphicsParams.cpp \
     Dialogs/DialogChooseMultipleBoat.cpp \
     MapDataDrawer.cpp \
     DataColors.cpp \
-    Dialogs/DialogRemoveRoute.cpp
+    Dialogs/DialogRemoveRoute.cpp \
+    GribV2.cpp \
+    GribV2Record.cpp \
+    GribV1Record.cpp \
+    GribV1.cpp \
+    DataManager.cpp
 
 unix:!macx: DEFINES += _TTY_POSIX_ __TERRAIN_QIMAGE __UNIX_QTVLM
 win32:DEFINES += _TTY_WIN_ \

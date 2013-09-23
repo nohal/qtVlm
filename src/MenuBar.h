@@ -126,7 +126,7 @@ public:
     QAction *acFile_Load_GRIB;
     QAction *acFile_Load_VLM_GRIB;
     QAction *acFile_Load_SAILSDOC_GRIB;
-    QAction *acFile_Info_GRIB;
+    //QAction *acFile_Info_GRIB;
     QAction *acFile_Quit;
     QAction *acFile_Lock;
     QAction *separator1;

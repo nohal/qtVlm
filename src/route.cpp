@@ -33,7 +33,6 @@ Copyright (C) 2008 - Jacques Zaninetti - http://zygrib.free.fr
 
 #include "Orthodromie.h"
 #include "Projection.h"
-#include "Grib.h"
 #include "mycentralwidget.h"
 #include "vlmLine.h"
 #include "POI.h"
@@ -49,14 +48,14 @@ Copyright (C) 2008 - Jacques Zaninetti - http://zygrib.free.fr
 
 #define USE_VBVMG_VLM
 
-ROUTE::ROUTE(QString name, Projection *proj, Grib *grib, QGraphicsScene * myScene, myCentralWidget *parentWindow)
+ROUTE::ROUTE(QString name, Projection *proj, DataManager *dataManager, QGraphicsScene * myScene, myCentralWidget *parentWindow)
             : QObject()
 
 {
     this->proj=proj;
     this->name=name;
     this->myscene=myScene;
-    this->grib=grib;
+    this->dataManager=dataManager;
     this->parent=parentWindow;
     this->color=Settings::getSetting("routeLineColor", QColor(Qt::yellow)).value<QColor>();
     this->width=Settings::getSetting("routeLineWidth", 2.0).toDouble();
@@ -334,7 +333,7 @@ void ROUTE::slot_recalculate(boat * boat)
     eta=0;
     has_eta=false;
     time_t now;
-    if(myBoat!=NULL && myBoat->getPolarData() && grib && grib->isOk())
+    if(myBoat!=NULL && myBoat->getPolarData() && dataManager && dataManager->isOk())
     {
         initialized=true;
         switch(startTimeOption)
@@ -352,7 +351,7 @@ void ROUTE::slot_recalculate(boat * boat)
                     eta=now;
                 break;
             case 2:
-                eta=grib->getCurrentDate();
+                eta=dataManager->get_currentDate();
                 break;
             case 3:
                 eta=startTime.toUTC().toTime_t();
@@ -415,11 +414,11 @@ void ROUTE::slot_recalculate(boat * boat)
         double wind_angle,wind_speed,cap,angle,capSaved;
         cap=-1;
         capSaved=cap;
-        time_t maxDate=grib->getMaxDate();
+        time_t maxDate=dataManager->get_maxDate();
         QString previousPoiName="";
         time_t previousEta=0;
         time_t lastEta=0;
-        time_t gribDate=grib->getCurrentDate();
+        time_t gribDate=dataManager->get_currentDate();
         if(this->my_poiList.isEmpty())
             initialDist=0;
         else
@@ -461,7 +460,7 @@ void ROUTE::slot_recalculate(boat * boat)
             }
             if(optimizingPOI)
                 orth2.setEndPoint(poi->getLongitude(),poi->getLatitude());
-            if(!grib->isOk() && !imported)
+            if(!dataManager->isOk() && !imported)
             {
                 tip=tr("<br>Route: ")+name;
                 tip=tip+"<br>Estimated ETA: No grib loaded" ;
@@ -492,7 +491,7 @@ void ROUTE::slot_recalculate(boat * boat)
                     else
                         eta= eta + myBoat->getVacLen()*multVac;
                     Eta=eta;
-                    if(((grib->getInterpolatedValue_byDates(lon, lat,
+                    if(((dataManager->getInterpolatedWind(lon, lat,
                                               eta,&wind_speed,&wind_angle,INTERPOLATION_DEFAULT)
                             && eta<=maxDate) || imported))
                     {
@@ -500,7 +499,7 @@ void ROUTE::slot_recalculate(boat * boat)
                         double current_speed=-1;
                         double current_angle=0;
                         //calculate surface wind if any current
-                        if(grib->getInterpolatedValueCurrent_byDates(lon, lat,
+                        if(dataManager->getInterpolatedCurrent(lon, lat,
                                                   eta,&current_speed,&current_angle,INTERPOLATION_DEFAULT))
                         {
                             current_angle=radToDeg(current_angle);
@@ -978,12 +977,12 @@ void ROUTE::slot_recalculate(boat * boat)
 void ROUTE::interpolatePos()
 {
     line->setHasInterpolated(false);
-    if(!grib || !grib->isOk())
+    if(!dataManager || !dataManager->isOk())
         return;
     QList<vlmPoint> *list=line->getPoints();
     if (list->count()==0) return;
     time_t lastEta=list->at(0).eta;
-    time_t gribDate=grib->getCurrentDate();
+    time_t gribDate=dataManager->get_currentDate();
     if(parent->getCompassFollow()==this)
         parent->centerCompass(list->at(0).lon,list->at(0).lat);
     if(gribDate<lastEta+1000) return;
@@ -1631,7 +1630,7 @@ routeStats ROUTE::getStats()
     stats.engineTime=0;
     stats.nightTime=0;
     stats.rainTime=0;
-    if(!grib) return stats;
+    if(!dataManager) return stats;
     if(this->my_poiList.isEmpty()) return stats;
     QList<vlmPoint> * points=this->getLine()->getPoints();
     if(points->size()<=1) return stats;
@@ -1645,7 +1644,7 @@ routeStats ROUTE::getStats()
         double lat=points->at(n).lat;
         time_t date=points->at(n).eta;
         time_t prevDate=points->at(n-1).eta;
-        if(!grib->getInterpolatedValue_byDates(lon, lat,prevDate,&tws,&twd,INTERPOLATION_DEFAULT))
+        if(!dataManager->getInterpolatedWind(lon, lat,prevDate,&tws,&twd,INTERPOLATION_DEFAULT))
                 return stats;
         twd=radToDeg(twd);
         stats.totalTime+=date-prevDate;
@@ -1675,7 +1674,7 @@ routeStats ROUTE::getStats()
             stats.engineTime+=date-prevDate;
         if(!parent->getTerre()->daylight(NULL,points->at(n)))
             stats.nightTime+=date-prevDate;
-        stats.rainTime+=grib->getInterpolatedValue_byDates(GRB_PRECIP_TOT,LV_GND_SURF,0,lon, lat, prevDate)>0.0?date-prevDate:0;
+        stats.rainTime+=dataManager->getInterpolatedValue_1D(DATA_PRECIP_TOT,DATA_LV_GND_SURF,0,lon, lat, prevDate)>0.0?date-prevDate:0;
     }
     stats.averageBS=stats.averageBS/(points->size()-1);
     stats.averageTWS=stats.averageTWS/(points->size()-1);

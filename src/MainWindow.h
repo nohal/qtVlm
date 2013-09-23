@@ -54,7 +54,6 @@ class MainWindow: public QMainWindow
         void openGribFile(QString fileName, bool zoom=true, bool current=false);
         bool getBoatLockStatus(void);
         bool isBoat(QString idu);
-        Grib * getGrib();
 
         void getBoatWP(double * lat,double * lon);
         bool get_selPOI_instruction();
@@ -296,6 +295,8 @@ signals:
         BoardVlmNew * newBoard;
         board * myBoard;
         bool use_old_board;
+
+        void loadGrib2();
 };
 
 #endif

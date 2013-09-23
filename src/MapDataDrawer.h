@@ -35,7 +35,7 @@ struct GribThreadData
     GribRecord *recU1, *recV1, *recU2, *recV2;
     int interpolMode;
     bool smooth;
-    Grib * grib;
+    DataManager * dataManager;
     MapDataDrawer * mapDataDrawer;
     ColorElement * colorElement;
 };
@@ -57,39 +57,47 @@ class MapDataDrawer
         ~MapDataDrawer();
 
         // Carte de couleurs du vent
-        void draw_WIND_Color_old(Grib * grib,QPainter &pnt, const Projection *proj, bool smooth, bool showWindArrows, bool barbules);
-        void draw_WIND_Color(Grib *grib, QPainter &pnt, const Projection *proj, bool smooth,
-                               bool showWindArrows, bool barbules);
-        void draw_CURRENT_Color(Grib *grib, QPainter &pnt, const Projection *proj, bool smooth,
-                               bool showWindArrows, bool barbules);
+        void drawColorMapGeneric_2D(QPainter &pnt, const Projection *proj, bool smooth,
+                                                       bool showWindArrows,bool barbules,
+                                                       time_t now,time_t t1,time_t t2,
+                                                       GribRecord * recU1,GribRecord * recV1,GribRecord * recU2,GribRecord * recV2,
+                                                       QString color_name);
+        void drawColorMapGeneric_2D_OLD(QPainter &pnt, const Projection *proj, bool smooth,
+                                                       bool showWindArrows,bool barbules,
+                                                       time_t now,time_t t1,time_t t2,
+                                                       GribRecord * recU1,GribRecord * recV1,GribRecord * recU2,GribRecord * recV2,
+                                                       QString color_name);
 
         // Carte de couleurs des precipitations
-        void draw_RAIN_Color(Grib *grib,QPainter &pnt, const Projection *proj, bool smooth);
-        //void draw_SNOW_DEPTH_Color(Grib *grib,QPainter &pnt, const Projection *proj, bool smooth);
-        void draw_SNOW_CATEG_Color(Grib *grib,QPainter &pnt, const Projection *proj, bool smooth);
-        void draw_CAPEsfc(Grib *grib,QPainter &pnt, const Projection *proj, bool smooth);
-        void draw_CINsfc(Grib *grib,QPainter &pnt, const Projection *proj, bool smooth);
-        void draw_FRZRAIN_CATEG_Color(Grib *grib,QPainter &pnt, const Projection *proj, bool smooth);
+        void draw_WIND_Color(QPainter &pnt, const Projection *proj, bool smooth,bool showWindArrows,bool barbules);
+        void draw_WIND_Color_OLD(QPainter &pnt, const Projection *proj, bool smooth,bool showWindArrows,bool barbules);
+        void draw_CURRENT_Color(QPainter &pnt, const Projection *proj, bool smooth,bool showWindArrows,bool barbules);
+        void draw_RAIN_Color(QPainter &pnt, const Projection *proj, bool smooth);
+        //void draw_SNOW_DEPTH_Color(QPainter &pnt, const Projection *proj, bool smooth);
+        void draw_SNOW_CATEG_Color(QPainter &pnt, const Projection *proj, bool smooth);
+        void draw_CAPEsfc(QPainter &pnt, const Projection *proj, bool smooth);
+        void draw_CINsfc(QPainter &pnt, const Projection *proj, bool smooth);
+        void draw_FRZRAIN_CATEG_Color(QPainter &pnt, const Projection *proj, bool smooth);
         // Carte de couleurs de nebulosite
-        void draw_CLOUD_Color(Grib *grib,QPainter &pnt, const Projection *proj, bool smooth);
+        void draw_CLOUD_Color(QPainter &pnt, const Projection *proj, bool smooth);
         // Carte de l'humidite relative en couleurs
-        void draw_HUMID_Color(Grib *grib,QPainter &pnt, const Projection *proj, bool smooth);
-        void draw_Temp_Color(Grib *grib,QPainter &pnt, const Projection *proj, bool smooth);
-        void draw_TempPot_Color(Grib *grib,QPainter &pnt, const Projection *proj, bool smooth);
-        void draw_Dewpoint_Color(Grib *grib,QPainter &pnt, const Projection *proj, bool smooth);
+        void draw_HUMID_Color(QPainter &pnt, const Projection *proj, bool smooth);
+        void draw_Temp_Color(QPainter &pnt, const Projection *proj, bool smooth);
+        void draw_TempPot_Color(QPainter &pnt, const Projection *proj, bool smooth);
+        void draw_Dewpoint_Color(QPainter &pnt, const Projection *proj, bool smooth);
         // Carte de l'ecart temperature-point de rosee
-        void draw_DeltaDewpoint_Color(Grib *grib,QPainter &pnt, const Projection *proj, bool smooth);
+        void draw_DeltaDewpoint_Color(QPainter &pnt, const Projection *proj, bool smooth);
 
-        void draw_PRESSURE_MinMax (Grib *grib,QPainter &pnt, const Projection *proj);
+        void draw_PRESSURE_MinMax (QPainter &pnt, const Projection *proj);
 
-        void  draw_Isobars (Grib *grib,QPainter &pnt, const Projection *proj);
-        void  draw_IsobarsLabels (Grib *grib,QPainter &pnt, const Projection *proj);
+        void  draw_Isobars (QPainter &pnt, const Projection *proj);
+        void  draw_IsobarsLabels (QPainter &pnt, const Projection *proj);
 
-        void  draw_Isotherms0 (Grib *grib,QPainter &pnt, const Projection *proj);
-        void  draw_Isotherms0Labels (Grib *grib,QPainter &pnt, const Projection *proj);
+        void  draw_Isotherms0 (QPainter &pnt, const Projection *proj);
+        void  draw_Isotherms0Labels (QPainter &pnt, const Projection *proj);
 
         // Temperature (labels repartis sur la carte)
-        void draw_TEMPERATURE_Labels(Grib *grib,QPainter &pnt, const Projection *proj);
+        void draw_TEMPERATURE_Labels(QPainter &pnt, const Projection *proj);
 
 
         static QColor getWindColorStatic(const double &v, const bool &smooth=true);
@@ -119,6 +127,7 @@ class MapDataDrawer
 
     private:
         myCentralWidget *centralWidget;
+        DataManager * dataManager;
 
         int    mapColorTransp;
 

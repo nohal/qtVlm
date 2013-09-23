@@ -30,8 +30,8 @@ Copyright (C) 2008 - Jacques Zaninetti - http://zygrib.free.fr
 IsoLine::IsoLine(double val, time_t now, time_t tPrev, time_t tNxt,GribRecord *rec_prev,GribRecord *rec_nxt)
 {
     value = val;
-    W = rec_prev->getNi();
-    H = rec_prev->getNj();
+    W = rec_prev->get_Ni();
+    H = rec_prev->get_Nj();
     int gr = 80;
     isoLineColor = QColor(gr,gr,gr);
     //---------------------------------------------------------
@@ -208,8 +208,8 @@ void IsoLine::extractIsoLine(time_t now, time_t tPrev, time_t tNxt,GribRecord *r
     int i, j, W, H;
     double a,b,c,d,a1,b1,c1,d1;
 //    double x,y;
-    W = rec_prev->getNi();
-    H = rec_prev->getNj();
+    W = rec_prev->get_Ni();
+    H = rec_prev->get_Nj();
 
     for (j=1; j<H; j++)     // !!!! 1 to end
     {

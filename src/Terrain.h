@@ -39,7 +39,7 @@ class Terrain : public QGraphicsWidget
     Q_OBJECT
 
 public:
-    Terrain(myCentralWidget *parent, Projection *proj);
+    Terrain(myCentralWidget *centralWidget, Projection *proj);
 
     void  setGSHHS_map(GshhsReader *map);
     void setColorMapMode(int mode);
@@ -106,7 +106,7 @@ private:
     GshhsReader *gshhsReader;
     GisReader   *gisReader;
     Projection  *proj;
-    myCentralWidget *parent;    
+    myCentralWidget *centralWidget;
 
 #ifdef __TERRAIN_QIMAGE
     QImage     *imgEarth;
@@ -121,7 +121,7 @@ private:
     bool        mustRedraw;
     QCursor     enterCursor;
 
-    QColor  seaColor, landColor, backgroundColor, tranparent;
+    QColor  seaColor, landColor, backgroundColor, transparentColor;
     QColor  selectColor;
     QColor  windArrowsColor;
 
@@ -163,7 +163,7 @@ private:
 
     //-----------------------------------------------
     void draw_GSHHSandGRIB(void);
-    void drawGrib(QPainter &pnt, Grib *gribPlot);
+    void drawGrib(QPainter &pnt);
     void indicateWaitingMap(void);
     void updateRoutine(void);
     bool toBeRestarted;

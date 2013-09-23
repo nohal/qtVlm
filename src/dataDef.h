@@ -259,66 +259,45 @@ Q_DECLARE_TYPEINFO(windData,Q_PRIMITIVE_TYPE);
 
 #define GRIB_NOTDEF -999999999
 
-//--------------------------------------------------------
-// dataTypes      cf. GribRecord::translateDataType()
-//--------------------------------------------------------
-#define GRB_PRESSURE        2   /* Pa     */
-#define GRB_GEOPOT_HGT      7   /* gpm    */
-#define GRB_TEMP           11   /* K      */
-#define GRB_TEMP_POT       13   /* K      */
-#define GRB_TMAX           15   /* K      */
-#define GRB_TMIN           16   /* K      */
-#define GRB_DEWPOINT       17   /* K      */
-#define GRB_WIND_VX        33   /* m/s    */
-#define GRB_WIND_VY        34   /* m/s    */
-#define GRB_CURRENT_VX     49   /* m/s    */
-#define GRB_CURRENT_VY     50   /* m/s    */
-#define GRB_HUMID_SPEC     51   /* kg/kg  */
-#define GRB_HUMID_REL      52   /* %      */
-#define GRB_PRECIP_RATE    59   /* l/m2/s */
-#define GRB_PRECIP_TOT     61   /* l/m2   */
-#define GRB_SNOW_DEPTH     66   /* m      */
-#define GRB_CLOUD_TOT      71   /* %      */
-#define GRB_FRZRAIN_CATEG 141   /* 1=yes 0=no */
-#define GRB_SNOW_CATEG    143   /* 1=yes 0=no */
-#define GRB_CIN 		  156   /* J/kg   */
-#define GRB_CAPE 		  157   /* J/kg   */
+#define DATA_NOTDEF -1
 
-#define GRB_WIND_DIR       249   /* private: wind direction in degrees */
-#define GRB_WIND_XY2D      250   /* private: GRB_WIND_VX+GRB_WIND_VX */
-#define GRB_DIFF_TEMPDEW   251   /* private: GRB_TEMP-GRB_DEWPOINT */
-#define GRB_THETA_E   	   252   /* K   */
-#define GRB_WIND_GUST 	   253   /* m/s */
-#define GRB_PRECIP_PROB	   254   /* %   */
+enum {
+    DATA_PRESSURE=0,        /* Pa     */
+    DATA_GEOPOT_HGT,       /* gpm    */
+    DATA_TEMP,             /* K      */
+    DATA_TEMP_POT,         /* K      */
+    DATA_TMAX,             /* K      */
+    DATA_TMIN,             /* K      */
+    DATA_DEWPOINT,         /* K      */
+    DATA_WIND_VX,          /* m/s    */
+    DATA_WIND_VY,          /* m/s    */
+    DATA_CURRENT_VX ,      /* m/s    */
+    DATA_CURRENT_VY,       /* m/s    */
+    DATA_HUMID_SPEC,       /* kg/kg  */
+    DATA_HUMID_REL,        /* %      */
+    DATA_PRECIP_RATE,      /* l/m2/s */
+    DATA_PRECIP_TOT,       /* l/m2   */
+    DATA_SNOW_DEPTH,       /* m      */
+    DATA_CLOUD_TOT,        /* %      */
+    DATA_FRZRAIN_CATEG,    /* 1=yes 0=no */
+    DATA_SNOW_CATEG,       /* 1=yes 0=no */
+    DATA_CIN, 		      /* J/kg   */
+    DATA_CAPE, 		      /* J/kg   */
+    DATA_MAX
+};
 
-#define GRB_TYPE_NOT_DEFINED 0   /* private */
+#define DATA_LV_NOTDEF     -1
 
-//--------------------------------------------------------
-// Levels types (altitude reference)
-//--------------------------------------------------------
-#define LV_GND_SURF    1
-#define LV_ISOTHERM0   4
-#define LV_ISOBARIC  100
-#define LV_MSL       102
-#define LV_ABOV_GND  105
-#define LV_SIGMA     107
-#define LV_ATMOS_ALL  200
-#define LV_ATMOS_LOW  214
-#define LV_ATMOS_MID  224
-#define LV_ATMOS_HIGH 234
-
-
-#define LV_TYPE_NOT_DEFINED 0   /* private */
-
-// altitude index in tables
-#define H850 0
-#define H700 1
-#define H500 2
-#define H300 3
-#define H200 4
-
-#define GEOPOTidx(h) ((h)==850?0:(h)==700?1:(h)==500?2:(h)==300?3:(h)==200?4:-1)
-#define GEOPOThgt(i) ((i)==0?850:(i)==1?700:(i)==2?500:(i)==3?300:(i)==4?200:-1)
+enum {
+    DATA_LV_GND_SURF=0,
+    DATA_LV_ISOTHERM0,
+    DATA_LV_ISOBARIC,
+    DATA_LV_MSL,
+    DATA_LV_ABOV_GND,
+    DATA_LV_SIGMA,
+    DATA_LV_ATMOS_ALL,
+    DATA_LV_MAX
+};
 
 #ifndef M_PI
 #define M_E        2.71828182845904523536
@@ -339,52 +318,15 @@ Q_DECLARE_TYPEINFO(windData,Q_PRIMITIVE_TYPE);
 //--------------------------------------------------------
 // Data definition
 //--------------------------------------------------------
-class Altitude
-{
-        public:
-                Altitude (int levelType=-1, int levelValue=-1)
-                        {  this->levelType  = levelType;
-                           this->levelValue = levelValue;  }
 
-                int levelType;
-                int levelValue;
-
-                void set (int levelType=-1, int levelValue=-1)
-                        {  this->levelType  = levelType;
-                           this->levelValue = levelValue;  }
-
-                int index () const  { if (levelType==LV_ISOBARIC)
-                                                                return GEOPOTidx(levelValue);
-                                                          else return -1; }
-
-                bool equals (int levelType, int levelValue) const
-                        {  return this->levelType==levelType &&
-                                          this->levelValue==levelValue;  }
-                bool operator== (const Altitude &alt) const
-                        { return alt.levelType==levelType
-                                                && alt.levelValue==levelValue; }
-                bool operator!= (const Altitude &alt) const
-                        { return alt.levelType!=levelType
-                                                || alt.levelValue!=levelValue; }
-                bool operator< (const Altitude &alt) const
-                        { return alt.levelType<levelType
-                                                ||
-                                        (alt.levelType==levelType && alt.levelValue<levelValue); }
-};
-Q_DECLARE_TYPEINFO(Altitude,Q_MOVABLE_TYPE);
 //--------------------------------------------------------
 class DataCode
 {
         public:
-                DataCode (int dataType=GRB_TYPE_NOT_DEFINED, int levelType=-1, int levelValue=-1)
+                DataCode (int dataType=DATA_NOTDEF, int levelType=-1, int levelValue=-1)
                         {  this->dataType   = dataType;
                            this->levelType  = levelType;
                            this->levelValue = levelValue;  }
-
-                DataCode (int dataType, const Altitude &alt)
-                        {  this->dataType   = dataType;
-                           this->levelType  = alt.levelType;
-                           this->levelValue = alt.levelValue;  }
 
                 DataCode (int v)   { fromInt32 (v); }
 
@@ -402,13 +344,10 @@ class DataCode
                         dataType   =  v     & 0xFF;
                 }
 
-                void set (int dataType=GRB_TYPE_NOT_DEFINED, int levelType=-1, int levelValue=-1)
+                void set (int dataType=DATA_NOTDEF, int levelType=-1, int levelValue=-1)
                         {  this->dataType   = dataType;
                            this->levelType  = levelType;
                            this->levelValue = levelValue;  }
-
-                Altitude getAltitude () const
-                        { return Altitude(levelType, levelValue); }
 
                 bool equals (int dataType, int levelType, int levelValue) const
                         {  return this->dataType==dataType &&
@@ -422,10 +361,6 @@ class DataCode
                         { return dtc.dataType!=dataType
                                                 || dtc.levelType!=levelType
                                                 || dtc.levelValue!=levelValue; }
-                bool operator< (const DataCode &dtc) const
-                        { return dataType<dtc.dataType
-                                                ||
-                                        (dtc.dataType==dataType && getAltitude()<dtc.getAltitude()); }
 };
 Q_DECLARE_TYPEINFO(DataCode,Q_MOVABLE_TYPE);
 

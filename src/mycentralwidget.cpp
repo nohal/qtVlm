@@ -44,8 +44,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "Projection.h"
 #include "MainWindow.h"
 #include "GshhsReader.h"
-#include "Grib.h"
-#include "GribRecord.h"
 #include "Terrain.h"
 #include "inetConnexion.h"
 #include "MenuBar.h"
@@ -68,6 +66,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "loadImg.h"
 #include "GshhsDwnload.h"
 #include "MapDataDrawer.h"
+#include "DataManager.h"
+#include "Grib.h"
 
 #include "ToolBar.h"
 
@@ -348,7 +348,7 @@ bool myScene::event(QEvent * event)
         {
             qWarning()<<"TapGesture detected";
         }
-        else if (QGesture *pg=gestureEvent->gesture(Qt::TapAndHoldGesture))
+        else if (/*QGesture *pg=*/gestureEvent->gesture(Qt::TapAndHoldGesture))
         {
             qWarning()<<"TapAndHoldGesture detected";
             parent->slot_resetGestures();
@@ -441,11 +441,10 @@ myCentralWidget::myCentralWidget(Projection * proj,MainWindow * parent,MenuBar *
     gshhsDwnload = new GshhsDwnload(this,inetManager);
     terre=NULL;
     loadGshhs();
-    grib = new Grib();
-    gribCurrent = new Grib();
-    gribCurrent->setIsCurrentGrib();
-    grib->setGribCurrent(gribCurrent);
+
+    dataManager=new DataManager();
     mapDataDrawer = new MapDataDrawer(this);
+
 
     replayTimer=new QTimer(this);
     replayTimer->setSingleShot(true);
@@ -809,11 +808,7 @@ myCentralWidget::~myCentralWidget()
         slot_delPOI_list(poi);
         delete poi;
     }
-    // Delete GRIB data
-    delete gribCurrent;
-    gribCurrent=NULL;
-    delete grib;
-    grib=NULL;
+
     delete currentPlayer;
 }
 
@@ -840,22 +835,6 @@ int myCentralWidget::getCompassMode(int m_x,int m_y)
         return COMPASS_UNDER;
 
     return COMPASS_NOTHING;
-}
-
-Grib * myCentralWidget::getGrib(bool calibrate)
-{
-    if(calibrate) return grib;
-    if(grib && grib->isOk())
-        return grib;
-    else
-        return NULL;
-}
-Grib * myCentralWidget::getGribCurrent(void)
-{
-    if(gribCurrent && gribCurrent->isOk())
-        return gribCurrent;
-    else
-        return NULL;
 }
 
 boat * myCentralWidget::getSelectedBoat(void)
@@ -1219,20 +1198,16 @@ void myCentralWidget::slot_mouseRelease(QGraphicsSceneMouseEvent* e)
 /* Grib                   */
 /**************************/
 
-void myCentralWidget::zoomOnGrib(Grib * gr)
+void myCentralWidget::zoomOnGrib(int grbType)
 {
-    Grib * myGrib;
-    if(gr!=NULL)
-        myGrib=gr;
-    else
+    if(grbType==DataManager::GRIB_NONE)
     {
-        if(menuBar->acView_CurrentColors->isChecked() && grib->getNumberOfGribRecords(GRB_CURRENT_VX,LV_MSL,0) == 0)
-            myGrib=gribCurrent;
-        else
-            myGrib=grib;
+        grbType=DataManager::GRIB_GRIB;
+        if(menuBar->acView_CurrentColors->isChecked())
+            grbType=dataManager->hasData(DATA_CURRENT_VX,DATA_LV_MSL,0);
     }
     double x0,y0, x1,y1;
-    if (myGrib->getZoneExtension(&x0,&y0, &x1,&y1))
+    if (dataManager->getZoneExtension(grbType,&x0,&y0, &x1,&y1))
     {
         if(x0 > 180.0 && x1 > 180.0)
         {
@@ -1264,7 +1239,6 @@ void myCentralWidget::zoomOnGrib(Grib * gr)
 void myCentralWidget::updateGribMenu(void)
 {
     /* Main grib */
-    bool res=false;
     bool keepCurMode=false;
     QMap<int,DataCode> *dataMap=mapDataDrawer->get_dataCodeMap();
 
@@ -1280,9 +1254,10 @@ void myCentralWidget::updateGribMenu(void)
             QAction * act = menuBar->gribDataActionMap.value(i.key());
             if(act)
             {
-                if(grib && grib->isOk())
+                if(dataManager && dataManager->isOk())
                 {
-                    dataPresentInGrib(grib,i.value().dataType,i.value().levelType,i.value().levelValue,&res);
+                    bool res = dataManager->hasData(i.value().dataType,
+                                                    i.value().levelType,i.value().levelValue)!= DataManager::GRIB_NONE;
                     act->setEnabled(res);
                     if(res && i.key()==MapDataDrawer::drawWind)
                         containsWind=true;
@@ -1304,53 +1279,61 @@ void myCentralWidget::updateGribMenu(void)
     menuBar->setMenubarColorMapMode(newMode,true);
 }
 
-void myCentralWidget::loadGribFile(QString fileName, bool zoom)
-{
-    if (!grib)
+void myCentralWidget::loadGribFile(QString fileName, bool zoom) {
+    if (!dataManager)
         return;
 
-    grib->loadGribFile(fileName);
+    dataManager->load_data(fileName,DataManager::GRIB_GRIB);
 
     updateGribMenu();
 
-    if(!grib->isOk())
-    {
+    if(!dataManager->isOk(DataManager::GRIB_GRIB)) {
         emit redrawAll();
         return;
     }
-    if (zoom)
-    {
+
+    if (zoom) {
         proj->blockSignals(true);
         zoomOnGrib();
         proj->blockSignals(false);
     }
-    if(Settings::getSetting("gribDelete",0)==1)
-    {
+    if(Settings::getSetting("gribDelete",0)==1) {
         QFileInfo inf(fileName);
         QStringList f;
         f.append("*.grb");
         f.append("*.GRB");
 
         QFileInfoList list=inf.absoluteDir().entryInfoList(f);
-        foreach(const QFileInfo &i,list)
-        {
+        foreach(const QFileInfo &i,list) {
             if(i.lastModified()<QDateTime::currentDateTime().addDays(-3) && i.filePath()!=inf.filePath())
                 QFile::remove(i.filePath());
         }
     }
-    //else
-    //emit redrawAll();
+
 }
-void myCentralWidget::loadGribFileCurrent(QString fileName, bool zoom)
+
+void myCentralWidget::closeGribFile(void)
 {
-    if (!gribCurrent)
+    if (!dataManager)
         return;
 
-    gribCurrent->loadGribFile(fileName);
+    dataManager->close_data(DataManager::GRIB_GRIB);
 
     updateGribMenu();
 
-    if(!gribCurrent->isOk())
+    emit redrawAll();
+}
+
+void myCentralWidget::loadGribFileCurrent(QString fileName, bool zoom)
+{
+    if (!dataManager)
+        return;
+
+    dataManager->load_data(fileName,DataManager::GRIB_CURRENT);
+
+    updateGribMenu();
+
+    if(!dataManager->isOk(DataManager::GRIB_CURRENT))
     {
         emit redrawAll();
         return;
@@ -1365,12 +1348,23 @@ void myCentralWidget::loadGribFileCurrent(QString fileName, bool zoom)
         emit redrawAll();
 }
 
+void myCentralWidget::closeGribFileCurrent(void)
+{
+    if (!dataManager)
+        return;
+
+    dataManager->close_data(DataManager::GRIB_CURRENT);
+
+    updateGribMenu();
+
+    emit redrawAll();
+}
+
 void myCentralWidget::setCurrentDate(time_t t, bool uRoute)
 {
-    if (grib->getCurrentDate() != t)
+    if (dataManager->isOk() && dataManager->get_currentDate() != t)
     {
-        grib->setCurrentDate(t);
-        gribCurrent->setCurrentDate(t);
+        dataManager->set_currentDate(t);
         if(uRoute)
         {
             emit updateRoute(NULL);
@@ -1382,41 +1376,36 @@ void myCentralWidget::setCurrentDate(time_t t, bool uRoute)
 
 time_t myCentralWidget::getCurrentDate(void)
 {
-    if(grib->isOk())
-        return grib->getCurrentDate();
+    if(dataManager->isOk())
+        return dataManager->get_currentDate();
     return 0;
 }
 
 void myCentralWidget::showGribDate_dialog(void)
 {
-    if(gribDateDialog && grib->isOk())
+    if(gribDateDialog && dataManager->isOk())
     {
         time_t res;
-        gribDateDialog->showDialog(grib->getCurrentDate(),grib->getListDates(),&res);
+        gribDateDialog->showDialog(dataManager->get_currentDate(),dataManager->get_dateList(),&res);
         setCurrentDate(res);
     }
 }
 
-void myCentralWidget::slot_fileLoad_GRIB()
-{
+void myCentralWidget::slot_fileLoad_GRIB() {
     double x0, y0, x1, y1;
 
-    if (selection->getZone(&x0,&y0, &x1,&y1))
-    {
+    if (selection->getZone(&x0,&y0, &x1,&y1)) {
         dialogLoadGrib->setZone(x0, y0, x1, y1);
         dialogLoadGrib->exec();
-        //emit updateRoute();
     }
-    else
-    {
+    else {
         QMessageBox::warning (this,
             tr("Telechargement d'un fichier GRIB"),
             tr("Vous devez selectionner une zone de la carte."));
     }
 }
 
-void myCentralWidget::slotLoadSailsDocGrib(void)
-{
+void myCentralWidget::slotLoadSailsDocGrib(void) {
     QString queryStr;
     QString param;
 
@@ -1465,123 +1454,6 @@ void myCentralWidget::slotLoadSailsDocGrib(void)
     }
 
 
-}
-
-QString myCentralWidget::dataPresentInGrib(Grib* grib,
-                                int dataType,int levelType,int levelValue,
-                                bool *ok)
-{
-        if (dataType == GRB_DEWPOINT) {
-                switch (grib->getDewpointDataStatus(levelType,levelValue)) {
-                        case Grib::DATA_IN_FILE :
-                                if (ok != NULL) *ok = true;
-                                return tr("oui");
-                                break;
-                        case Grib::NO_DATA_IN_FILE :
-                                if (ok != NULL) *ok = false;
-                                return tr("non");
-                                break;
-                        case Grib::COMPUTED_DATA :
-                        default :
-                                if (ok != NULL) *ok = true;
-                                return tr("oui (calcule par la formule de Magnus-Tetens)");
-                                break;
-                }
-        }
-        else
-        {
-            if (grib->getNumberOfGribRecords(dataType,levelType,levelValue) > 0) {
-                    if (ok != NULL) *ok = true;
-                    return tr("oui");
-            }
-            else
-            {
-                if(dataType==GRB_CURRENT_VX)
-                {
-                    if (gribCurrent && gribCurrent->isOk() && gribCurrent->getNumberOfGribRecords(dataType,levelType,levelValue) > 0)
-                    {
-                        if (ok != NULL) *ok = true;
-                        return tr("oui (GRIB Courants)");
-                    }
-                }
-                if (ok != NULL) *ok = false;
-                return tr("non");
-            }
-        }
-}
-
-void myCentralWidget::slot_fileInfo_GRIB()
-{
-
-    QString msg;
-    if (!grib ||  ! grib->isOk())
-    {
-        QMessageBox::information (this,
-            tr("Informations sur le fichier GRIB"),
-            tr("Aucun fichir GRIB n'est charge."));
-    }
-    else {
-        msg += tr("Fichier : %1\n") .arg(grib->getFileName().c_str());
-        msg += tr("Taille : %1 octets\n") .arg(grib->getFileSize());
-        msg += tr("\n");
-
-        msg += tr("%1 enregistrements, ").arg(grib->getTotalNumberOfGribRecords());
-        msg += tr("%1 dates :\n").arg(grib->getNumberOfDates());
-        if(grib->getNumberOfDates()!=0 && grib->getTotalNumberOfGribRecords()!=0)
-        {
-            std::set<time_t> * sdates = grib->getListDates();
-            msg += tr("    du %1\n").arg( Util::formatDateTimeLong(*(sdates->begin())) );
-            msg += tr("    au %1\n").arg( Util::formatDateTimeLong(*(sdates->rbegin())) );
-        }
-
-        msg += tr("\n");
-        msg += tr("Donnees disponibles :\n");
-        msg += tr("    Temperature : %1\n").arg(dataPresentInGrib(grib,GRB_TEMP,LV_ABOV_GND,2));
-        msg += tr("    Pression : %1\n").arg(dataPresentInGrib(grib,GRB_PRESSURE,LV_MSL,0));
-        msg += tr("    Vent  : %1\n").arg(dataPresentInGrib(grib,GRB_WIND_VX,LV_ABOV_GND,10));
-        msg += tr("    Courant  : %1\n").arg(dataPresentInGrib(grib,GRB_CURRENT_VX,LV_MSL,0));
-        msg += tr("    Cumul de précipitations : %1\n").arg(dataPresentInGrib(grib,GRB_PRECIP_TOT,LV_GND_SURF,0));
-        msg += tr("    Nebulosite : %1\n").arg(dataPresentInGrib(grib,GRB_CLOUD_TOT,LV_ATMOS_ALL,0));
-        msg += tr("    Humidite relative : %1\n").arg(dataPresentInGrib(grib,GRB_HUMID_REL,LV_ABOV_GND,2));
-        msg += tr("    Isotherme 0degC : %1\n").arg(dataPresentInGrib(grib,GRB_GEOPOT_HGT,LV_ISOTHERM0,0));
-        msg += tr("    Point de rosee : %1\n").arg(dataPresentInGrib(grib,GRB_DEWPOINT,LV_ABOV_GND,2));
-        //msg += tr("    Temperature (min) : %1\n").arg(dataPresentInGrib(grib,GRB_TMIN,LV_ABOV_GND,2));
-        //msg += tr("    Temperature (max) : %1\n").arg(dataPresentInGrib(grib,GRB_TMAX,LV_ABOV_GND,2));
-        msg += tr("    Temperature (pot) : %1\n").arg(dataPresentInGrib(grib,GRB_TEMP_POT,LV_SIGMA,9950));
-        msg += tr("    Neige (risque) : %1\n").arg(dataPresentInGrib(grib,GRB_SNOW_CATEG,LV_GND_SURF,0));
-        //msg += tr("    Neige (epaisseur) : %1\n").arg(dataPresentInGrib(grib,GRB_SNOW_DEPTH,LV_GND_SURF,0));
-        msg += tr("    CAPE (surface) : %1\n").arg(dataPresentInGrib(grib,GRB_CAPE,LV_GND_SURF,0));
-        msg += tr("    CIN (surface) : %1\n").arg(dataPresentInGrib(grib,GRB_CIN,LV_GND_SURF,0));
-        msg += tr("    Humidite specifique :\n");
-        msg += tr("        - 200: %1\n").arg(dataPresentInGrib(grib,GRB_HUMID_SPEC,LV_ISOBARIC,200));
-        msg += tr("        - 300: %1\n").arg(dataPresentInGrib(grib,GRB_HUMID_SPEC,LV_ISOBARIC,300));
-        msg += tr("        - 500: %1\n").arg(dataPresentInGrib(grib,GRB_HUMID_SPEC,LV_ISOBARIC,500));
-        msg += tr("        - 700: %1\n").arg(dataPresentInGrib(grib,GRB_HUMID_SPEC,LV_ISOBARIC,700));
-        msg += tr("        - 850: %1\n").arg(dataPresentInGrib(grib,GRB_HUMID_SPEC,LV_ISOBARIC,850));
-
-        if(grib->getNumberOfDates()!=0 && grib->getTotalNumberOfGribRecords()!=0)
-        {
-
-            GribRecord * gr = grib->getFirstGribRecord();
-            msg += tr("\n");
-            msg += tr("Grille : %1 points (%2x%3)\n")
-                            .arg(gr->getNi()*gr->getNj()).arg(gr->getNi()).arg(gr->getNj());
-            msg += tr("Resolution : %1x%2\n").arg(gr->getDi()).arg(gr->getDj());
-            msg += tr("\n");
-            msg += tr("Etendue :\n");
-            QString pos1, pos2;
-            pos1 = Util::formatPosition( gr->getX(0), gr->getY(0) );
-            pos2 = Util::formatPosition( gr->getX(gr->getNi()-1), gr->getY(gr->getNj()-1) );
-            msg += tr("%1  ->  %2\n").arg( pos1, pos2);
-
-            msg += tr("\n");
-            msg += tr("Date de reference : %1\n")
-                            .arg(Util::formatDateTimeLong(gr->getRecordRefDate()));
-        }
-        QMessageBox::information (this,
-            tr("Informations sur le fichier GRIB"),
-            msg );
-    }
 }
 
 /**************************/
@@ -2685,7 +2557,7 @@ void myCentralWidget::slot_twaLine()
 void myCentralWidget::twaDraw(double lon, double lat)
 {
     if (mainW->getSelectedBoat()==NULL) return;
-    if (!grib->isOk()) return;
+    if (!dataManager->isOk()) return;
     QPointF start(lon,lat);
     if(twaTrace==NULL)
         twaTrace=new DialogTwaLine(start,this, mainW);
@@ -3214,10 +3086,10 @@ void myCentralWidget::exportRouteFromMenuKML(ROUTE * route,QString fileName,bool
                 break;
         }
         qd4.appendChild(t);
-        if(grib && grib->isOk() && pList.at(i)->getRouteTimeStamp()!=-1)
+        if(dataManager && dataManager->isOk() && pList.at(i)->getRouteTimeStamp()!=-1)
         {
             double speed,angle;
-            if(grib->getInterpolatedValue_byDates(pList.at(i)->getLongitude(), pList.at(i)->getLatitude(),
+            if(dataManager->getInterpolatedWind(pList.at(i)->getLongitude(), pList.at(i)->getLatitude(),
                                                   pList.at(i)->getRouteTimeStamp(),&speed,&angle,INTERPOLATION_DEFAULT))
             {
                 angle=radToDeg(angle);
@@ -3236,7 +3108,7 @@ void myCentralWidget::exportRouteFromMenuKML(ROUTE * route,QString fileName,bool
                 qd4.appendChild(qd5);
                 t=doc.createTextNode(QString().sprintf("%.2f",angle)+tr("deg"));
                 qd5.appendChild(t);
-                if(grib->getInterpolatedValueCurrent_byDates(pList.at(i)->getLongitude(), pList.at(i)->getLatitude(),
+                if(dataManager->getInterpolatedCurrent(pList.at(i)->getLongitude(), pList.at(i)->getLatitude(),
                                                       pList.at(i)->getRouteTimeStamp(),&speed,&angle,INTERPOLATION_DEFAULT))
                 {
                     qd4=doc.createElement("Data");
@@ -3697,7 +3569,7 @@ void myCentralWidget::addPivot(ROUTAGE * fromRoutage,bool editOptions)
 }
 ROUTE * myCentralWidget::addRoute()
 {
-    ROUTE * route=new ROUTE("Route", proj, grib, scene, this);
+    ROUTE * route=new ROUTE("Route", proj, dataManager, scene, this);
     route->setBoat(mainW->getSelectedBoat());
     connect(this,SIGNAL(updateRoute(boat *)),route,SLOT(slot_recalculate(boat *)));
     connect(mainW,SIGNAL(updateRoute(boat *)),route,SLOT(slot_recalculate(boat *)));
@@ -3719,7 +3591,7 @@ ROUTAGE * myCentralWidget::addRoutage()
 {
     nbRoutage++;
     QString rName;
-    ROUTAGE * routage=new ROUTAGE(rName.sprintf(tr("Routage%d").toLocal8Bit(),nbRoutage), proj, grib, scene, this);
+    ROUTAGE * routage=new ROUTAGE(rName.sprintf(tr("Routage%d").toLocal8Bit(),nbRoutage), proj, dataManager, scene, this);
     routage->setBoat(mainW->getSelectedBoat());
     connect(routage,SIGNAL(editMe(ROUTAGE *)),this,SLOT(slot_editRoutage(ROUTAGE *)));
     routage_list.append(routage);

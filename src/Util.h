@@ -42,6 +42,7 @@ Copyright (C) 2008 - Jacques Zaninetti - http://zygrib.free.fr
 
 #include "class_list.h"
 #include "dataDef.h"
+
 #include <QLineF>
 
 #ifdef __QTVLM_WITH_TEST

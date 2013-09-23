@@ -22,12 +22,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <QDateTime>
 
 #include "DialogGribValidation.h"
-#include "Grib.h"
 #include "MainWindow.h"
 #include "mycentralwidget.h"
 #include "Util.h"
 #include "dataDef.h"
 #include "settings.h"
+#include "DataManager.h"
+
 #ifdef __QTVLM_WITH_TEST
 extern int nbWarning;
 #endif
@@ -37,8 +38,9 @@ DialogGribValidation::DialogGribValidation(myCentralWidget * my_centralWidget,Ma
     Util::setFontDialog(this);
     this->my_centralWidget=my_centralWidget;
     this->mainWindow=mainWindow;
-    if(my_centralWidget->getGrib() && my_centralWidget->getGrib()->isOk())
-        tstamp->setText(QString().setNum(my_centralWidget->getGrib()->getCurrentDate()));
+    dataManager=my_centralWidget->get_dataManager();
+    if(dataManager && dataManager->isOk())
+        tstamp->setText(QString().setNum(dataManager->get_currentDate()));
     else
         tstamp->setText(QString().setNum(QDateTime::currentDateTime().toTime_t()));
     this->label_date->setText(QDateTime().fromTime_t(tstamp->text().toInt()).toUTC().toString("dd MMM-hh:mm:ss"));
@@ -70,9 +72,9 @@ void DialogGribValidation::done(int result)
     else
         newMode=curMode;
 
-    if(this->my_centralWidget->getGrib())
+    if(dataManager)
     {
-        this->my_centralWidget->getGrib()->setInterpolationMode(newMode);
+        dataManager->set_interpolationMode(newMode);
         qWarning() << "Setting interpolation mode to " << newMode;
     }
 
@@ -88,10 +90,10 @@ void DialogGribValidation::doNow(void)
 
 void DialogGribValidation::interpolationChanged(int newMode)
 {
-    if(this->my_centralWidget->getGrib())
+    if(dataManager)
     {
         newMode++;
-        this->my_centralWidget->getGrib()->setInterpolationMode(newMode);
+        dataManager->set_interpolationMode(newMode);
         qWarning() << "Setting interpolation mode to " << newMode;
     }
 
@@ -132,13 +134,13 @@ void DialogGribValidation::inputChanged(void)
     this->label_date->setText(QDateTime().fromTime_t(this->tstamp->text().toInt()).toUTC().toString("dd MMM-hh:mm:ss"));
     //qWarning() << "Get new param: " << lat << "," << lon << " - " << tstamp;
 
-    if(!this->my_centralWidget->getGrib())
+    if(!dataManager || !dataManager->isOk())
     {
         this->vitesse->setText("No grib");
         return;
     }
 
-    ok=this->my_centralWidget->getGrib()->getInterpolatedValue_byDates(lon,lat,tstamp,&vit,&ang,
+    ok=dataManager->getInterpolatedValue_2D(DATA_WIND_VX,DATA_WIND_VY,DATA_LV_ABOV_GND,10,lon,lat,tstamp,&vit,&ang,
                                                       type->currentIndex()+1,this->chk_debug->checkState()==Qt::Checked);
     //qWarning() << "Interpolation: v=" << vit << ", ang=" << ang << "(ok=" << ok << ")";
 

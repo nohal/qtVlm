@@ -24,7 +24,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "MainWindow.h"
 #include "mycentralwidget.h"
 #include "ToolBar.h"
-#include "Grib.h"
 #include "settings.h"
 #include "Terrain.h"
 #include "boatVLM.h"
@@ -427,14 +426,12 @@ void ToolBar::slot_estimeStartChanged(int state) {
 /**********************************************************************/
 
 void ToolBar::update_gribBtn(void) {
-    Grib * grib = centralWidget->getGrib();
-    if(!grib || !grib->isOk()) /* no grib try with current grib */
-        grib = centralWidget->getGribCurrent();
+    DataManager * dataManager=centralWidget->get_dataManager();
 
-    if(grib && grib->isOk())     {
-        time_t tps=centralWidget->getCurrentDate();
-        time_t min=grib->getMinDate();
-        time_t max=grib->getMaxDate();
+    if(dataManager && dataManager->isOk())     {
+        time_t tps=dataManager->get_currentDate();
+        time_t min=dataManager->get_minDate();
+        time_t max=dataManager->get_maxDate();
         int step=get_gribStep();
         acDatesGrib_prev->setEnabled( ((tps-step)>=min) );
         acDatesGrib_next->setEnabled( ((tps+step)<=max) );
@@ -461,11 +458,11 @@ int ToolBar::get_gribStep(void) {
 void ToolBar::slot_gribPlay(void) {
     if(acGrib_play->data().toInt()==0)
     {
-        Grib * grib = centralWidget->getGrib();
-        if(grib)
+         DataManager * dataManager=centralWidget->get_dataManager();
+        if(dataManager && dataManager->isOk())
         {
-            time_t tps=centralWidget->getCurrentDate();
-            time_t max=grib->getMaxDate();
+            time_t tps=dataManager->get_currentDate();
+            time_t max=dataManager->get_maxDate();
             int step=get_gribStep();
             if((tps+step)<=max)
             {
