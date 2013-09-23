@@ -65,7 +65,7 @@ MenuBar::MenuBar(MainWindow *parent)
         mn_img=new QMenu(tr("Gestion des fichiers KAP"));
         acImg_Open = addAction(mn_img, tr("Ouvrir un fichier KAP"), "K", tr(""));
         mn_img->addAction(acImg_Open);
-        acImg_Close = addAction(mn_img, tr("Fermer le fichier KAP"), "", tr(""));
+        acImg_Close = addAction(mn_img, tr("Fermer le fichier KAP"), "Shift+K", tr(""));
         mn_img->addAction(acImg_Close);
         menuFile->addMenu(mn_img);
         menuFile->addSeparator();

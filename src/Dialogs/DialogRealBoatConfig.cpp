@@ -103,13 +103,14 @@ void DialogRealBoatConfig::done(int result)
             curBoat->setPolar(polarList->currentIndex()==0?QString():polarList->currentText());
         }
         Settings::setSetting("declinaison",QString().sprintf("%.1f",this->declinaison->value()));
+        curBoat->setDisplayNMEA(this->displayNMEA->isChecked());
+        curBoat->setDeclinaison(declinaison->value());
+        if(!curBoat->gpsIsRunning())
+            curBoat->emitMoveBoat();
+        curBoat->setMinSpeedForEngine(minSpeedForEngine->value());
+        curBoat->setSpeedWithEngine(speedWithEngine->value());
+        this->parent->emitUpdateRoute(curBoat);
     }
-    curBoat->setDisplayNMEA(this->displayNMEA->isChecked());
-    curBoat->setDeclinaison(declinaison->value());
-    curBoat->emitMoveBoat();
-    curBoat->setMinSpeedForEngine(minSpeedForEngine->value());
-    curBoat->setSpeedWithEngine(speedWithEngine->value());
-    this->parent->emitUpdateRoute(curBoat);
     QDialog::done(result);
 }
 
