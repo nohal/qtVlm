@@ -1,4 +1,4 @@
-win32-msvc2008|win32_msvc2010|win32-msvc2012|win32-msvc2013{
+win32-msvc2008|win32-msvc2010|win32-msvc2012|win32-msvc2013{
     warning("MSVC detected")
     DEFINES += __MSVC__
 }
