@@ -73,7 +73,7 @@ class GribRecord {
         inline double  getY(int j) const   { return ok ? La1+j*Dj : GRIB_NOTDEF;}
 
         // Valeur pour un point de la grille
-        inline virtual bool hasValue(int i, int j) const =0;
+        virtual bool hasValue(int i, int j) const =0;
         inline double getValue(int i, int j) const  { return ok ? data[j*Ni+i] : GRIB_NOTDEF;}
         void setValue(unsigned int i, unsigned int j, double v) { if (i<Ni && j<Nj) data[j*Ni+i] = v; }
 

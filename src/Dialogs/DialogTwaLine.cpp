@@ -243,7 +243,7 @@ void DialogTwaLine::traceIt()
     vlmPoint current(start.x(),start.y());
     line->addVlmPoint(current);
     double wind_speed,wind_angle,cap;
-    double lon,lat;
+    double lon=0,lat=0;
     time_t maxDate=dataManager->get_maxDate();
     bool crossing=false;
     //int i1,j1,i2,j2;

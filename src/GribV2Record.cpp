@@ -176,7 +176,8 @@ GribV2Record::GribV2Record(gribfield  *gfld, int msg, int field):GribRecord() {
 
     levelTypeV2=gfld->ipdtmpl[9];
     levelType=GRBV2_TO_DATA_LV[levelTypeV2];
-    levelValue=gfld->ipdtmpl[10]*pow(10,-gfld->ipdtmpl[11]);
+    levelValue=gfld->ipdtmpl[11]*pow(10,-gfld->ipdtmpl[10]);
+    //qWarning() << "levelVal: " << levelValue << " - fact=" << gfld->ipdtmpl[10] << ", val= " << gfld->ipdtmpl[11];
 
     /***********************************
      * Data representation - section 7 *

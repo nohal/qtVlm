@@ -74,6 +74,15 @@ bool GribV2::loadFile(QString fileName) {
 
     this->fileName=fileName;
 
+    QTime tLoad;
+    int m_sec_readCgrib=0;
+    int m_sec_ginfo=0;
+    int m_sec_g2_getfld=0;
+    int m_sec_grecConst=0;
+    int m_sec_endLoop=0;
+
+    qWarning() << "GV2 loading " << fileName;
+
     g2int lskip=0,lgrib=0,iseek=0;
     unsigned char *cgrib; // msg buffer
     g2int ierr,listsec0[3],listsec1[13],numfields,numlocal;
@@ -107,9 +116,10 @@ bool GribV2::loadFile(QString fileName) {
         cgrib=(unsigned char *)malloc(lgrib);
 
         fseek(fptr,lskip,SEEK_SET);
+        tLoad.start();
         fread(cgrib,sizeof(unsigned char),lgrib,fptr);
-
-        qWarning() << "Size of cgrib: " << lgrib << ", skip=" << lskip;
+        m_sec_readCgrib+=tLoad.elapsed();
+        //qWarning() << "Size of cgrib: " << lgrib << ", skip=" << lskip;
         //qWarning() << "Bytes read from file: " << bRead;
         //qWarning() << "EOF=" << feof(fptr) << ", ferror=" << ferror(fptr);
         //qWarning() << "File pos=" << ftell(fptr);
@@ -117,7 +127,9 @@ bool GribV2::loadFile(QString fileName) {
 
         iseek=lskip+lgrib;
 
+        tLoad.start();
         ierr=g2_info(cgrib,listsec0,listsec1,&numfields,&numlocal);
+        m_sec_ginfo+=tLoad.elapsed();
         if(ierr) {
             qWarning() << "msg " << msg << ": g2_info error num=" << ierr;
             return false;
@@ -137,19 +149,26 @@ bool GribV2::loadFile(QString fileName) {
         }
 
         /* loop on th fields => 1 field = 1 GribRecord */
-        qWarning() << "nb fields=" << numfields << ", nb locals=" << numlocal;
+        //qWarning() << "nb fields=" << numfields << ", nb locals=" << numlocal;
+
         for(int i=0;i<numfields;++i) {
+            tLoad.start();
             ierr=g2_getfld(cgrib,i+1,GRB2_UNPACK,GRB2_EXPAND,&gfld);
+            m_sec_g2_getfld+=tLoad.elapsed();
             if(ierr) {
                 qWarning() << "msg=" << msg << "- field=" << i << ": g2_getfld error num=" << ierr;
                 continue;
             }
+            tLoad.start();
             GribV2Record * record = new GribV2Record(gfld,msg,i);
+            m_sec_grecConst+=tLoad.elapsed();
+            tLoad.start();
             if(record && record->isOk() && record->isDataKnown())
                 addRecord(record);
             else
                 if(record) delete record;
             g2_free(gfld);
+            m_sec_endLoop+=tLoad.elapsed();
         }
         free(cgrib);
     }
@@ -163,6 +182,13 @@ bool GribV2::loadFile(QString fileName) {
         qWarning() << "key " << i << ": key= " << it->first << ", nb elem" << it->second->size();
         ++i;
     }
+
+    qWarning() << "Time stat:";
+    qWarning() << "\t read Cgrib: " << m_sec_readCgrib;
+    qWarning() << "\t call gInfo: " << m_sec_ginfo;
+    qWarning() << "\t call getFld: " << m_sec_g2_getfld;
+    qWarning() << "\t const GribRecordV2: " << m_sec_grecConst;
+    qWarning() << "\t End loop: " << m_sec_endLoop;
 
     createDewPointData();
 
