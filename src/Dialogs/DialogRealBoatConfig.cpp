@@ -39,8 +39,7 @@ DialogRealBoatConfig::DialogRealBoatConfig(myCentralWidget *parent) : QDialog(pa
 void DialogRealBoatConfig::launch(boatReal * boat)
 {
     curBoat=boat;
-    if(curBoat)
-        curBoat->stopRead();
+    if(!curBoat) return;
     /* init dialog */
     serialName->setText(Settings::getSetting("gpsPortName","COM1").toString());
     int idx = baudRate->findText(Settings::getSetting("gpsBaudRate",BAUD4800).toString(),Qt::MatchExactly);
