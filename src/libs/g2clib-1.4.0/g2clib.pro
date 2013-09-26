@@ -13,9 +13,12 @@ CONFIG+=staticlib
 DEFINES += USE_JPEG2000
 
 DESTDIR=../build
-
+win32-msvc2008|win32-msvc2010|win32-msvc2012|win32-msvc2013{
+    warning("MSVC detected")
+    DEFINES += __MSVC__
+}
 # Input
-HEADERS += drstemplates.h grib2.h gridtemplates.h pdstemplates.h
+HEADERS += drstemplates.h grib2.h gridtemplates.h pdstemplates.h jas_types.h
 SOURCES += cmplxpack.c \
            compack.c \
            comunpack.c \

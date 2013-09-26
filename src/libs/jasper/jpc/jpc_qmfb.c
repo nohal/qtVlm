@@ -306,6 +306,9 @@ void jpc_qmfb_split_row(jpc_fix_t *a, int numcols, int parity)
 {
 
 	int bufsize = JPC_CEILDIVPOW2(numcols, 1);
+#ifdef __MSVC__
+#undef HAVE_VLA
+#endif
 #if !defined(HAVE_VLA)
 	jpc_fix_t splitbuf[QMFB_SPLITBUFSIZE];
 #else

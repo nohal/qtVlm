@@ -64,6 +64,11 @@
 
 #include<time.h>
 #include <jasper/jas_config.h>
+#ifdef __MSVC__
+#undef HAVE_SYS_TIME_H
+#undef HAVE_GETTIMEOFDAY
+#undef HAVE_GETRUSAGE
+#endif
 #if defined(HAVE_SYS_TIME_H)
 #include <sys/time.h>
 #endif

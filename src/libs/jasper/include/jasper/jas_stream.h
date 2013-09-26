@@ -81,6 +81,9 @@
 #include <fcntl.h>
 #endif
 #include <string.h>
+#ifdef __MSVC__
+#undef HAVE_UNISTD_H
+#endif
 #if defined(HAVE_UNISTD_H)
 #include <unistd.h>
 #endif

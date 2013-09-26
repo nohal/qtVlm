@@ -105,6 +105,9 @@
 #endif
 
 #ifndef __cplusplus
+#ifdef __MSVC__
+#undef HAVE_STDBOOL_H
+#endif
 #if defined(HAVE_STDBOOL_H)
 /*
  * The C language implementation does correctly provide the standard header
