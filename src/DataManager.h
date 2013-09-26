@@ -40,6 +40,7 @@ class DataManager
         FCT_GET(time_t,maxDate)
 
         Grib * get_grib(int gribType);
+        Grib * get_grib(int dataType,int levelType, int levelValue);
 
         std::set<time_t> * get_dateList(void) { return &dateList; }
 

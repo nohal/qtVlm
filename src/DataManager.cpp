@@ -63,6 +63,18 @@ Grib * DataManager::get_grib(int gribType) {
     }
 }
 
+Grib * DataManager::get_grib(int dataType,int levelType, int levelValue) {
+    switch(hasData(dataType,levelType,levelValue)) {
+        case GRIB_GRIB:
+            return grib;
+        case GRIB_CURRENT:
+            return gribCurrent;
+        default:
+            return NULL;
+    }
+
+}
+
 Grib ** DataManager::get_gribPtr(int gribType) {
     switch(gribType) {
         case GRIB_GRIB:

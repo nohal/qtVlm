@@ -1126,7 +1126,7 @@ void MainWindow::slotFile_QuitNoSave() {
 void MainWindow::slotFile_Open()
 {
     QString filter;
-    filter =  tr("Fichiers GRIB (*.grb *.grib *.grb.bz2 *.grib.bz2 *.grb.gz *.grib.gz)")
+    filter =  tr("Fichiers GRIB (*.grb *.grib *.grb.bz2 *.grib.bz2 *.grb.gz *.grib.gz *.grb2)")
             + tr(";;Autres fichiers (*)");
     QDir dirGrib(gribFilePath);
     if(!dirGrib.exists())
@@ -1157,7 +1157,7 @@ void MainWindow::slotFile_Reopen()
 void MainWindow::slotFile_Open_Current()
 {
     QString filter;
-    filter =  tr("Fichiers GRIB (*.grb *.grib *.grb.bz2 *.grib.bz2 *.grb.gz *.grib.gz)")
+    filter =  tr("Fichiers GRIB (*.grb *.grib *.grb.bz2 *.grib.bz2 *.grb.gz *.grib.gz *.grb2)")
             + tr(";;Autres fichiers (*)");
     QDir dirGrib(gribFilePath);
     if(!dirGrib.exists())
