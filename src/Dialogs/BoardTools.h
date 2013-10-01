@@ -29,7 +29,7 @@ class VlmCompass: public QWidget
         void draw(QPainter * painter);
         void setValues(const double &heading, const double &windDir, const double &windSpeed, const double &WPdir, const double &gateDir, const double &newHeading);
 
-        void loadSkin();
+        void loadSkin(const QString &SkinName="");
         void setRotation(const double r);
         double getRotation() const {return rotation;}
 protected:

@@ -229,7 +229,7 @@ void BoardVlmNew::slot_reloadSkin()
     this->lab_backTab3->setPixmap(imgBack2);
     pnt.end();
     slot_tabChanged(tabWidget->currentIndex());
-    this->windAngle->loadSkin();
+    this->windAngle->loadSkin(skinName);
     this->slot_updateData();
 }
 void BoardVlmNew::slot_flipAngle()
@@ -1072,12 +1072,16 @@ VlmCompass::VlmCompass(QWidget * parent):QWidget(parent)
     newHeading=-1;
     rotation=0;
 }
-void VlmCompass::loadSkin()
+void VlmCompass::loadSkin(const QString &SkinName)
 {
     QPixmap skin;
-    QString skinName=Settings::getSetting("defaultSkin",QFileInfo("img/skin_compas.png").absoluteFilePath()).toString();
-    if(!QFile(skinName).exists())
-        skinName=QFileInfo("img/skin_compas.png").absoluteFilePath();
+    QString skinName=SkinName;
+    if(skinName.isEmpty())
+    {
+        skinName=Settings::getSetting("defaultSkin",QFileInfo("img/skin_compas.png").absoluteFilePath()).toString();
+        if(!QFile(skinName).exists())
+            skinName=QFileInfo("img/skin_compas.png").absoluteFilePath();
+    }
     skin.load(skinName);
     img_fond=QPixmap(200,200);
     img_fond.fill(Qt::transparent);
