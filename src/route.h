@@ -263,6 +263,7 @@ public slots:
         bool sortPoisbyName;
         bool strongSimplify;
         bool forceComparator;
+        QCache<int,double> * fastSpeed;
 };
 Q_DECLARE_TYPEINFO(ROUTE,Q_MOVABLE_TYPE);
 #endif // ROUTE_H

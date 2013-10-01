@@ -112,7 +112,7 @@ ROUTE::ROUTE(QString name, Projection *proj, DataManager *dataManager, QGraphics
     this->roadMapInterval=1;
     this->roadMapHDG=0;
     this->useInterval=true;
-    this->precalculateTan();
+    this->hypotPos=NULL;
     routeDelay=new QTimer(this);
     routeDelay->setInterval(5);
     routeDelay->setSingleShot(true);
@@ -120,6 +120,7 @@ ROUTE::ROUTE(QString name, Projection *proj, DataManager *dataManager, QGraphics
     this->strongSimplify=false;
     delay=10;
     forceComparator=false;
+    fastSpeed=NULL;
 }
 
 ROUTE::~ROUTE()
@@ -136,10 +137,15 @@ ROUTE::~ROUTE()
             line->deleteLater();
         }
     }
-    delete tanPos;
-    delete tanNeg;
-    delete hypotPos;
-    delete hypotNeg;
+    if(hypotPos!=NULL)
+    {
+        delete tanPos;
+        delete tanNeg;
+        delete hypotPos;
+        delete hypotNeg;
+    }
+    if(fastSpeed)
+        delete fastSpeed;
 }
 void ROUTE::setShowInterpolData(bool b)
 {
@@ -266,12 +272,17 @@ void ROUTE::zoom()
 
 void ROUTE::slot_recalculate(boat * boat)
 {
+    if(fastSpeed)
+    {
+        delete fastSpeed;
+        fastSpeed=NULL;
+    }
     if(temp) return;
     QTime timeTotal;
     timeTotal.start();
     line->setCoastDetection(false);
-    QTime timeDebug;
-    int timeD=0;
+    //QTime timeDebug;
+    //int timeD=0;
     int nbLoop=0;
     if(parent->getAboutToQuit()) return;
     if(busy)
@@ -555,9 +566,9 @@ void ROUTE::slot_recalculate(boat * boat)
                                         double w2Save=w2;
                                         double h1Save=h1;
 #endif
-                                        timeDebug.start();
+                                        //timeDebug.start();
                                         this->do_vbvmg_buffer(remaining_distance,cap,wind_speed,wind_angle,&h1,&h2,&w1,&w2,&t1,&t2,&d1,&d2);
-                                        timeD+=timeDebug.elapsed();
+                                        //timeD+=timeDebug.elapsed();
 #if 0
                                         if(qRound(w1*1000)!=qRound(w1Save*1000) || qRound(h1*1000)!=qRound(h1Save*1000))
                                         {
@@ -1317,10 +1328,15 @@ void ROUTE::do_vbvmg_buffer(double dist,double wanted_heading,
     int i,j, min_i, min_j, max_i, max_j;
 
     b_t1 = b_t2 = b_l1 = b_l2 = b_alpha = b_beta = beta = 0.0;
+    if(fastSpeed==NULL)
+    {
+        fastSpeed = new QCache<int,double>;
+        fastSpeed->setMaxCost(180);
+    }
 
-    QCache<int,double> fastSpeed;
-    fastSpeed.setMaxCost(180);
-
+    fastSpeed->clear();
+    if(hypotPos==NULL)
+        this->precalculateTan();
 
     /* first compute the time for the "ortho" heading */
     speed=myBoat->getPolarData()->getSpeed(w_speed,A180(radToDeg(w_angle-wanted_heading)));
@@ -1410,12 +1426,12 @@ void ROUTE::do_vbvmg_buffer(double dist,double wanted_heading,
             }
             d2 = dist - d1;
 #if 1
-            if(fastSpeed.contains(j))
-                speed_t2=*fastSpeed.object(j);
+            if(fastSpeed->contains(j))
+                speed_t2=*fastSpeed->object(j);
             else
             {
                 speed_t2=myBoat->getPolarData()->getSpeed(w_speed,A180(radToDeg(angle-beta)));
-                fastSpeed.insert(j,new double(speed_t2));
+                fastSpeed->insert(j,new double(speed_t2));
             }
 #else
             speed_t2=myBoat->getPolarData()->getSpeed(w_speed,A180(radToDeg(angle-beta)));
@@ -1471,12 +1487,12 @@ void ROUTE::do_vbvmg_buffer(double dist,double wanted_heading,
                 }
                 d2 = dist - d1;
 #if 1
-            if(fastSpeed.contains(j))
-                speed_t2=*fastSpeed.object(j);
+            if(fastSpeed->contains(j))
+                speed_t2=*fastSpeed->object(j);
             else
             {
                 speed_t2=myBoat->getPolarData()->getSpeed(w_speed,A180(radToDeg(angle-beta)));
-                fastSpeed.insert(j,new double(speed_t2));
+                fastSpeed->insert(j,new double(speed_t2));
             }
 #else
             speed_t2=myBoat->getPolarData()->getSpeed(w_speed,A180(radToDeg(angle-beta)));
@@ -1563,7 +1579,7 @@ void ROUTE::do_vbvmg_buffer(double dist,double wanted_heading,
     {
         *wangle2 += TWO_PI;
     }
-    fastSpeed.clear();
+    fastSpeed->clear();
     *heading1=radToDeg(*heading1);
     *heading2=radToDeg(*heading2);
     *wangle1=radToDeg(*wangle1);

@@ -362,12 +362,14 @@ public slots:
         bool routageOrtho;
         bool showBestLive;
         QPolygonF shapeIso;
-        void calculateShapeIso(bool drawIt=false);
+        void calculateShapeIso();
         bool multiRoutage;
         int multiNb;
         int multiDays;
         int multiHours;
         int multiMin;
-    };
+        double maxDist;
+        void calculateMaxDist();
+};
 Q_DECLARE_TYPEINFO(ROUTAGE,Q_MOVABLE_TYPE);
 #endif // ROUTAGE_H

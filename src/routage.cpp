@@ -1048,10 +1048,25 @@ void ROUTAGE::slot_calculate_with_tempo()
     disconnect(proj,SIGNAL(projectionUpdated()),this,SLOT(slot_calculate_with_tempo()));
     timerTempo->start();
 }
+void ROUTAGE::calculateMaxDist()
+{
+    int timeStep=qMax(timeStepLess24,timeStepMore24);
+    double maxSpeed=myBoat->getPolarData()->getMaxSpeed();
+    maxDist=maxSpeed*2.0*timeStep/60.0;
+    double X1=proj->getCX();
+    double Y1=proj->getCY();
+    double X2,Y2;
+    Util::getCoordFromDistanceAngle(Y1,X1,maxDist,0.0,&Y2,&X2);
+    double x1,y1,x2,y2;
+    proj->map2screenDouble(X1,Y1,&x1,&y1);
+    proj->map2screenDouble(X2,Y2,&x2,&y2);
+    maxDist=QLineF(x1,y1,x2,y2).length();
+}
 
 void ROUTAGE::slot_calculate()
 {
     disconnect(proj,SIGNAL(projectionUpdated()),this,SLOT(slot_calculate()));
+    calculateMaxDist();
     double   cap;
     QTime timeTotal;
 #ifdef traceTime
@@ -1594,7 +1609,7 @@ void ROUTAGE::slot_calculate()
         if(aborted)
             break;
 #ifdef traceTime
-        time.restart();
+        time.start();
 #endif
 #if 1
         if(tempPoints.size()>0 && !tempPoints.first().origin->isStart)
@@ -1611,7 +1626,7 @@ void ROUTAGE::slot_calculate()
             break;
 #if 1 /*check that the new iso itself does not cross previous segments or iso*/
 #ifdef traceTime
-        time.restart();
+        time.start();
 #endif
         if(!tempPoints.at(0).origin->isStart)
         {
@@ -1626,7 +1641,7 @@ void ROUTAGE::slot_calculate()
 #endif
 #if 1   /*eliminate points by wake pruning*/
 #ifdef traceTime
-        time.restart();
+        time.start();
 #endif
         if(!hasTouchCoast && !tempPoints.first().origin->isStart)
         {
@@ -1643,7 +1658,7 @@ void ROUTAGE::slot_calculate()
 /*elimination de 50% des points surnumeraires*/
         //qWarning()<<"before first epuration"<<tempPoints.size();
 #ifdef traceTime
-        time.restart();
+        time.start();
 #endif
         int limit=(this->angleRange/this->angleStep)+this->explo;
         if(hasTouchCoast) limit=limit*1.5;
@@ -1662,7 +1677,7 @@ void ROUTAGE::slot_calculate()
 #endif
 #if 1 /*smoothing iso*/
 #ifdef traceTime
-        time.restart();
+        time.start();
 #endif
         if(!tempPoints.isEmpty() && !tempPoints.first().origin->isStart)
         {
@@ -1709,7 +1724,7 @@ void ROUTAGE::slot_calculate()
             break;
         somethingHasChanged=true;
 #ifdef traceTime
-        time.restart();
+        time.start();
 #endif
         bool routeDone=false;
         int nbLoop=0;
@@ -1929,7 +1944,7 @@ void ROUTAGE::slot_calculate()
 #endif
         /*epuration finale final part*/
 #ifdef traceTime
-        time.restart();
+        time.start();
 #endif
         c=tempPoints.size();
         toBeRemoved=c-limit;
@@ -1947,7 +1962,7 @@ void ROUTAGE::slot_calculate()
 #ifdef traceTime
         msecs_6=msecs_6+time.elapsed();
 #endif
-        previousIso.clear();
+        //previousIso.clear();
 #ifdef traceTime
         QTime t2;
 #endif
@@ -2018,6 +2033,7 @@ void ROUTAGE::slot_calculate()
                 tempPoints[n].isoIndex=n;
                 tempPoints.at(n).origin->myChildren.append(tempPoints.at(n));
                 iso->addVlmPoint(tempPoints.at(n));
+#if 0
                 if(n>0)
                 {
                     if(Util::myDiffAngle(tempPoints.at(n).capArrival,tempPoints.at(n-1).capArrival) < 60)
@@ -2033,6 +2049,7 @@ void ROUTAGE::slot_calculate()
                 {
                     previousIso.append(QPointF(tempPoints.at(n).x,tempPoints.at(n).y));
                 }
+#endif
                 if(!i_iso)
                 {
                     vlmPointGraphic * vg=new vlmPointGraphic(this,nbIso+1,mmm,
@@ -2095,7 +2112,7 @@ void ROUTAGE::slot_calculate()
         previousSegments.clear();
         forbidZone.clear();
 #ifdef traceTime
-        time.restart();
+        time.start();
 #endif
         double newMinDist=initialDist*10;
         for (int n=0;n<list->size();++n)
@@ -2158,7 +2175,7 @@ void ROUTAGE::slot_calculate()
 #endif
         iso->slot_showMe();
 #ifdef traceTime
-        time.restart();
+        time.start();
 #endif
         if(++refresh%4==0)
         {
@@ -2181,7 +2198,7 @@ void ROUTAGE::slot_calculate()
         else
             isochrones.append(iso);
 #ifdef traceTime
-        time.restart();
+        time.start();
 #endif
 #ifdef USE_SHAPEISO
         calculateShapeIso();
@@ -2191,7 +2208,7 @@ void ROUTAGE::slot_calculate()
 #endif
         vlmPoint to(arrival.x(),arrival.y());
 #ifdef traceTime
-        time.restart();
+        time.start();
 #endif
         datathread dataThread;
         dataThread.Boat=this->getBoat();
@@ -4678,7 +4695,7 @@ bool ROUTAGE::checkIceGate(const vlmPoint &p) const
     }
     return true;
 }
-void ROUTAGE::calculateShapeIso(bool drawIt)
+void ROUTAGE::calculateShapeIso()
 {
 #ifndef USE_SHAPEISO
     return;
@@ -4800,24 +4817,31 @@ void ROUTAGE::calculateShapeIso(bool drawIt)
         }
     }
     shapeIso.clear();
+    QPointF depart=i_iso?QPointF(xa,ya):QPointF(xs,ys);
+    double minDist=10e6;
+    iso=isos.last()->getPoints();
+    for(n=0;n<iso->size();++n)
+        minDist=qMin(minDist,QLineF(QPointF(iso->at(n).x,iso->at(n).y),depart).length());
+    minDist=qMax(0.0,minDist-maxDist);
     for(n=0;n<newShape.size();++n)
     {
-        if(n==newShape.size()-1 || newShape.at(n)!=newShape.at(n+1))
-            shapeIso.append(newShape.at(n));
+        QPointF P=newShape.at(n);
+        if(QLineF(P,depart).length()<minDist) continue;
+        if(n>0 && newShape.at(n-1)!=P)
+            shapeIso.append(P);
     }
     if(!shapeIso.isClosed() && !shapeIso.isEmpty())
         shapeIso.append(shapeIso.at(0));
-    if(drawIt)
-    {
-        QPixmap img(proj->getW(),proj->getH());
-        img.fill(Qt::white);
-        QPen pen;
-        pen.setWidthF(1.0);
-        pen.setColor(Qt::red);
-        QPainter pnt(&img);
-        pnt.setPen(pen);
-        pnt.drawPolyline(shapeIso);
-        pnt.end();
-        img.save("isoShape"+QString().sprintf("%03d",isochrones.size())+".png");
-    }
+#if 0
+    QPixmap img(proj->getW(),proj->getH());
+    img.fill(Qt::white);
+    QPen pen;
+    pen.setWidthF(1.0);
+    pen.setColor(Qt::red);
+    QPainter pnt(&img);
+    pnt.setPen(pen);
+    pnt.drawPolyline(shapeIso);
+    pnt.end();
+    img.save("isoShape"+QString().sprintf("%03d",isochrones.size())+".png");
+#endif
 }
