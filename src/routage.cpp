@@ -4823,10 +4823,19 @@ void ROUTAGE::calculateShapeIso()
     for(n=0;n<iso->size();++n)
         minDist=qMin(minDist,QLineF(QPointF(iso->at(n).x,iso->at(n).y),depart).length());
     minDist=qMax(0.0,minDist-maxDist);
+    bool skipIt=true;
     for(n=0;n<newShape.size();++n)
     {
         QPointF P=newShape.at(n);
-        if(QLineF(P,depart).length()<minDist) continue;
+        if(QLineF(P,depart).length()<minDist)
+        {
+            if(!skipIt)
+                continue;
+            else
+                skipIt=false;
+        }
+        else
+            skipIt=true;
         if(n>0 && newShape.at(n-1)!=P)
             shapeIso.append(P);
     }
