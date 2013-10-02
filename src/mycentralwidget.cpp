@@ -257,6 +257,7 @@ void myScene::mouseDoubleClickEvent(QGraphicsSceneMouseEvent* e)
 void myScene::wheelEvent(QGraphicsSceneWheelEvent* e)
 {
     if(pinching) return;
+    if(parent->getProj()->getFrozen()) return;
     if(e->orientation()!=Qt::Vertical) return;
     wheelTimer->stop();
     wheelPosX=e->scenePos().x();
