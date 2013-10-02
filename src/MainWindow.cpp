@@ -662,9 +662,9 @@ MainWindow::~MainWindow()
     Settings::setSetting("projectionCX", proj->getCX());
     Settings::setSetting("projectionCY", proj->getCY());
     Settings::setSetting("projectionScale",  proj->getScale());
-    Settings::setSetting("gribFileName",  gribFileName);
-    Settings::setSetting("gribFileNameCurrent",  gribFileNameCurrent);
-    Settings::setSetting("gribFilePath",  gribFilePath);   
+    //Settings::setSetting("gribFileName",  gribFileName);
+    //Settings::setSetting("gribFileNameCurrent",  gribFileNameCurrent);
+    //Settings::setSetting("gribFilePath",  gribFilePath);
     /*freeze all routes*/
     if(selectedBoat) /* save the zoom factor */
         selectedBoat->setZoom(proj->getScale());
