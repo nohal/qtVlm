@@ -450,17 +450,18 @@ bool Grib::interpolateValue_2D(double d_long, double d_lat, time_t now, time_t t
     windData wData_prev;
     windData wData_nxt;
     double gridOriginLat_1,gridOriginLon_1,gridOriginLat_2,gridOriginLon_2;
-    gridOriginLat_1=recV1->get_latMin();
-    gridOriginLon_1=recV1->get_lonMin();
 
     bool hasNxt=false;
-    //int isHighRes_t1=false,isHighRes_t2=false;
     double gribStep_t1_lon=1,gribStep_t2_lon=1;
     double gribStep_t1_lat=1,gribStep_t2_lat=1;
 
     /*sanity check */
     if(!u || !v || !recU1 || !recV1)
         return false;
+
+
+    gridOriginLat_1=recV1->get_latMin();
+    gridOriginLon_1=recV1->get_lonMin();
 
     //isHighRes_t1=(recU1->get_Di()==0.5 || recU1->get_Di()==-0.5)?1:0;
     gribStep_t1_lon=recU1->get_Di()==0?1:recU1->get_Di();
