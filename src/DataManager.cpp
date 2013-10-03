@@ -332,6 +332,9 @@ void DataManager::load_forcedParam(void) {
 void DataManager::print_firstRecord_bmap(void) {
     if(grib) {
         GribRecord * rec = grib->getFirstRecord();
-        if(rec) rec->print_bitmap();
+        if(rec) {
+            rec->print_bitmap();
+            qWarning() << "bmapSize=" << rec->get_bmapSize() << ", dataSize=" << rec->get_dataSize();
+        }
     }
 }

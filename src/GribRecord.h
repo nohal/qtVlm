@@ -68,6 +68,9 @@ class GribRecord {
         FCT_GET_CST(double,lonMin)
         FCT_GET_CST(double,lonMax)
 
+        FCT_GET(int,dataSize)
+        FCT_GET(int,bmapSize)
+
         // coordonnees d'un point de la grille
         inline double  getX(int i) const   { return ok ? Lo1+i*Di : GRIB_NOTDEF;}
         inline double  getY(int j) const   { return ok ? La1+j*Dj : GRIB_NOTDEF;}
@@ -118,6 +121,8 @@ class GribRecord {
         bool knownData;
 
 
+        int dataSize;
+        int bmapSize;
 
         unsigned int refYear, refMonth, refDay, refHour, refMinute, refSecond;
         time_t refDate;      // C reference date

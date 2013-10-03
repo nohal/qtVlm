@@ -43,6 +43,8 @@ class GribV2Record: public GribRecord
         double get_data(int i) { if(ok) return data[i]; else return 0; }
         bool get_bmap(int i) { if(ok) return bmap[i]; else return 0; }
 
+
+
     private:
         int productTemplate;
         int productDiscipline;
@@ -50,9 +52,6 @@ class GribV2Record: public GribRecord
         int dataCat;
         int dataNum;
         int levelTypeV2;
-
-        int dataSize;
-        int bmapSize;
 
         bool * bmap;
 
