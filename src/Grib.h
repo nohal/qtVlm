@@ -68,6 +68,7 @@ class Grib
         bool hasData(int dataType, int levelType, int levelValue);
 
         GribRecord * getGribRecord(int dataType,int levelType,int levelValue, time_t date);
+        GribRecord * getFirstRecord(void);
         int getNumberOfGribRecords(int dataType,int levelType,int levelValue);
 
         /* iso management */

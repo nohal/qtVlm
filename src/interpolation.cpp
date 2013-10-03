@@ -535,17 +535,18 @@ void interpolation::get_wind_info_latlong_selective_TWSA_compute(double longitud
 void interpolation::get_wind_info_latlong_hybrid(double longitude,  double latitude, time_t now, time_t t1,time_t t2,
                                 windData * data_prev, windData * data_nxt,
                                 double lat_step_t1, double lon_step_t1, double lat_step_t2, double lon_step_t2,
-                                double * u_res, double * v_res,double gridOriginLat,double gridOriginLon,int debug)
+                                double * u_res, double * v_res,
+                                double gridOriginLat_1,double gridOriginLon_1,double gridOriginLat_2,double gridOriginLon_2,int debug)
 {
     double u1,u2,v1,v2,ro1,ro2;
     double angle;
     double ro;
 
-    get_wind_info_latlong_hybrid_compute(longitude,latitude,data_prev,lat_step_t1,lon_step_t1,&u1,&v1,&ro1,gridOriginLat,gridOriginLon,debug);
+    get_wind_info_latlong_hybrid_compute(longitude,latitude,data_prev,lat_step_t1,lon_step_t1,&u1,&v1,&ro1,gridOriginLat_1,gridOriginLon_1,debug);
 
     if(data_nxt != NULL)
     {
-        get_wind_info_latlong_hybrid_compute(longitude,latitude,data_nxt,lat_step_t2,lon_step_t2,&u2,&v2,&ro2,gridOriginLat,gridOriginLon,debug);
+        get_wind_info_latlong_hybrid_compute(longitude,latitude,data_nxt,lat_step_t2,lon_step_t2,&u2,&v2,&ro2,gridOriginLat_2,gridOriginLon_2,debug);
 
         const double t_ratio = ((double)(now - t1)) / ((double)(t2 - t1));
 

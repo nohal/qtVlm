@@ -138,7 +138,7 @@ bool GribV2::loadFile(QString fileName) {
 
 
         // accepting only GRIB2 with discipline=0 => Meteorological product (table 0.0)
-        if(listsec0[1]!=2 || listsec0[0]!=0) {
+        if(listsec0[1]!=2 || (listsec0[0]!=0 && listsec0[0]!=10)) {
             qWarning() << "msg " << msg << ": wrong version " << listsec0[1] << ", or discipline: " << listsec0[0];
             continue;
         }

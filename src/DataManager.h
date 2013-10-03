@@ -88,6 +88,8 @@ class DataManager
                GRIB_ANY
              };
 
+        void print_firstRecord_bmap(void);
+
     private:
 
         Grib * grib;

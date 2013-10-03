@@ -38,7 +38,7 @@ QRgb DataColors::get_color(QString type,double v, bool smooth) {
     if(elem)
         return elem->get_color(v,smooth);
     else {
-        //qWarning() << "Missing data: " << type;
+        qWarning() << "Missing data: " << type;
         return qRgb(120,120,120);
     }
 }

@@ -241,6 +241,12 @@ void  GribV1Record::translateDataType()
     {
     }
     //------------------------
+    // Current from ???
+    //------------------------
+    else if (idCenter==255 && idModel==2 && idGrid==255)
+    {
+    }
+    //------------------------
     // Unknown center
     //------------------------
     else
@@ -477,7 +483,7 @@ bool GribV1Record::readGribSection2_GDS(ZUFILE* file) {
     if(val==Lo1)
         isFull=true;
 
-    hasDiDj = (resolFlags&0x80) !=0;
+    hasDiDj =(resolFlags&0x80) !=0;
 
     scanFlags = readChar(file);			// byte 28
     isScanIpositive = (scanFlags&0x80) ==0;

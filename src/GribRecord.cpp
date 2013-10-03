@@ -279,3 +279,13 @@ double GribRecord::getInterpolatedValue(double px, double py, bool numericalInte
     }
     return val;
 }
+
+void GribRecord::print_bitmap(void) {
+    QString line;
+    for(int j=0; j<Nj;++j) {
+        line = "";
+        for(int i=0;i<Ni;++i)
+            line+=hasValue(i,j)?"1":"0";
+        qWarning() << line;
+    }
+}

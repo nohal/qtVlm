@@ -47,6 +47,7 @@ GribV2Record::GribV2Record(gribfield  *gfld, int msg, int field):GribRecord() {
     knownData=false;
     dataSize=0;
     bmapSize=0;
+    isFull = false;
 
     /*******************
      *Version & model *
@@ -110,6 +111,9 @@ GribV2Record::GribV2Record(gribfield  *gfld, int msg, int field):GribRecord() {
     Di  = gfld->igdtmpl[16]/1000000.0;
     Dj  = gfld->igdtmpl[17]/1000000.0;
 
+    for(int i=0;i<19;++i)
+        qWarning() << "igdtmpl " << i << ": " << gfld->igdtmpl[i];
+
     if (Lo1>=0 && Lo1<=180 && Lo2<0)
         Lo2 += 360.0;    // cross the 180 deg meridien,beetwen alaska and russia
 
@@ -122,7 +126,7 @@ GribV2Record::GribV2Record(gribfield  *gfld, int msg, int field):GribRecord() {
         isFull=true;
 
     resolFlags = gfld->igdtmpl[13];
-    hasDiDj = (resolFlags&0x80) !=0;
+    hasDiDj = ((resolFlags&0x20) !=0 && (resolFlags&0x10) !=0);
 
     scanFlags = gfld->igdtmpl[18];
     isScanIpositive = (scanFlags&0x80) ==0;
@@ -155,6 +159,8 @@ GribV2Record::GribV2Record(gribfield  *gfld, int msg, int field):GribRecord() {
         Di = (Lo2-Lo1) / (Ni-1);
         Dj = (La2-La1) / (Nj-1);
     }
+
+    qWarning() << "Nb point check:  ngrdpts=" << gfld->ngrdpts << ", ndpts=" << gfld->ndpts << ", Ni*Nj=" << Ni*Nj;
 
     /***********************************
      * Data type and level - section 4 *
@@ -212,18 +218,18 @@ GribV2Record::GribV2Record(gribfield  *gfld, int msg, int field):GribRecord() {
                      << ", while in bmap mode: " << gfld->ibmap;
             return;
         }
-
         bmap=new bool[gfld->ngrdpts];
         if(!bmap) {
-            qWarning() << "Msg " << msg << " - field " << field << ": unable to allocate mem for data array (size=" << gfld->ndpts << ")";
+            qWarning() << "Msg " << msg << " - field " << field << ": unable to allocate mem for data array (size=" << gfld->ngrdpts << ")";
             return;
         }
         bmapSize=gfld->ngrdpts;
         for(int i=0;i<gfld->ngrdpts;++i)
             bmap[i]=gfld->bmap[i]!=0;
+
     }
     else {
-        if(gfld->ibmap==255) // not bmap applies
+        if(gfld->ibmap==255) // no bmap applies
             bmap=NULL;
         else {
             qWarning() << "Msg " << msg << " - field " << field << ": unsupported bmap indicator: " << gfld->ibmap;
@@ -234,20 +240,72 @@ GribV2Record::GribV2Record(gribfield  *gfld, int msg, int field):GribRecord() {
     /********************
      * Data - section 7 *
      ********************/
+#if 1
     if(gfld->ndpts<=0) {
         qWarning() << "Msg " << msg << " - field " << field << ": empty data array (size=" << gfld->ndpts << ")";
         return;
     }
+#endif
 
+#if 1
     data=new double[gfld->ndpts];
+#else
+    data=new double[gfld->ngrdpts];
+#endif
     if(!data) {
         qWarning() << "Msg " << msg << " - field " << field << ": unable to allocate mem for data array (size=" << gfld->ndpts << ")";
         return;
     }
 
+
+#if 1
     dataSize=gfld->ndpts;
     for(int i=0;i<gfld->ndpts;++i) // not using std::copy as we do float => double conversion
         data[i]=gfld->fld[i];
+#else
+    dataSize=gfld->ngrdpts;
+        int i, j, k;
+        int ind;
+        k=0;
+        if (isAdjacentI) {
+            for (j=0; j<Nj; j++) {
+                for (i=0; i<Ni; i++) {
+                    if (!hasDiDj && !isScanJpositive) {
+                        ind = (Nj-1 -j)*Ni+i;
+                    }
+                    else {
+                        ind = j*Ni+i;
+                    }
+                    if (hasValue(i,j)) {
+                        data[ind] = gfld->fld[k];
+                        k++;
+                    }
+                    else {
+                        data[ind] = GRIB_NOTDEF;
+                    }
+                }
+            }
+        }
+        else {
+            for (i=0; i<Ni; i++) {
+                for (j=0; j<Nj; j++) {
+                    if (!hasDiDj && !isScanJpositive) {
+                        ind = (Nj-1 -j)*Ni+i;
+                    }
+                    else {
+                        ind = j*Ni+i;
+                    }
+                    if (hasValue(i,j)) {
+                        data[ind] = gfld->fld[k];
+                        k++;
+                    }
+                    else {
+                        data[ind] = GRIB_NOTDEF;
+                    }
+                }
+            }
+        }
+#endif
 
     ok=true;
 

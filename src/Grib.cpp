@@ -159,6 +159,14 @@ GribRecord * Grib::getGribRecord(int dataType,int levelType,int levelValue, time
     }
 }
 
+GribRecord * Grib::getFirstRecord(void) {
+    if(isOk()) {
+        return getFirstNonEmptyList()->at(0);
+    }
+    else
+        return NULL;
+}
+
 /****************************
  * Rectangular covering zone*
  ****************************/
@@ -441,9 +449,11 @@ bool Grib::interpolateValue_2D(double d_long, double d_lat, time_t now, time_t t
                                               double * u, double * v,int interpolation_type,bool debug) {
     windData wData_prev;
     windData wData_nxt;
-    double gridOriginLat,gridOriginLon;
-    gridOriginLat=recV1->get_latMin();
-    gridOriginLon=recV1->get_lonMin();
+    double gridOriginLat_1,gridOriginLon_1,gridOriginLat_2,gridOriginLon_2;
+    gridOriginLat_1=recV1->get_latMin();
+    gridOriginLon_1=recV1->get_lonMin();
+    gridOriginLat_2=recV2->get_latMin();
+    gridOriginLon_2=recV2->get_lonMin();
 
     bool hasNxt=false;
     //int isHighRes_t1=false,isHighRes_t2=false;
@@ -492,7 +502,8 @@ bool Grib::interpolateValue_2D(double d_long, double d_lat, time_t now, time_t t
         case INTERPOLATION_HYBRID:
             if(debug)
                 qWarning() << "Interpolation Hybrid";
-            interpolation::get_wind_info_latlong_hybrid(d_long,d_lat,now,t1,t2,&wData_prev,(hasNxt?(&wData_nxt):NULL),gribStep_t1_lat,gribStep_t1_lon,gribStep_t2_lat,gribStep_t2_lon,u,v,gridOriginLat,gridOriginLon,debug);
+            interpolation::get_wind_info_latlong_hybrid(d_long,d_lat,now,t1,t2,&wData_prev,(hasNxt?(&wData_nxt):NULL),gribStep_t1_lat,gribStep_t1_lon,
+                                                        gribStep_t2_lat,gribStep_t2_lon,u,v,gridOriginLat_1,gridOriginLon_1,gridOriginLat_2,gridOriginLon_2,debug);
             break;
          default:
             if(debug)

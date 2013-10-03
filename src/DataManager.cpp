@@ -120,6 +120,8 @@ bool DataManager::load_data(QString fileName,int gribType) {
             delete *gribPtr;
         *gribPtr=ptr;
         update_dateList();
+        //print_firstRecord_bmap();
+
         return true;
     }
     return false;
@@ -325,4 +327,11 @@ void DataManager::load_forcedParam(void) {
     forceCurrents=Settings::getSetting("forceCurrents",0).toInt()==1;
     forcedCS=Settings::getSetting("forcedCS",0.0).toDouble();
     forcedCD=Settings::getSetting("forcedCD",0.0).toDouble();
+}
+
+void DataManager::print_firstRecord_bmap(void) {
+    if(grib) {
+        GribRecord * rec = grib->getFirstRecord();
+        if(rec) rec->print_bitmap();
+    }
 }

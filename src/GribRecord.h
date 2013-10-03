@@ -87,6 +87,8 @@ class GribRecord {
         inline bool   isXInMap(double x) const;
         inline bool   isYInMap(double y) const;
 
+        void print_bitmap(void);
+
     protected:
         bool ok;
 
@@ -114,6 +116,8 @@ class GribRecord {
 
         double  *data;
         bool knownData;
+
+
 
         unsigned int refYear, refMonth, refDay, refHour, refMinute, refSecond;
         time_t refDate;      // C reference date
