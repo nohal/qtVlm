@@ -8,11 +8,13 @@
 #include <QDebug>
 #include "Util.h"
 #include <QMessageBox>
+#include "bsb.h"
 
 dialogLoadImg::dialogLoadImg(loadImg * carte, myCentralWidget *parent)
     : QDialog(parent)
 {
     this->carte=carte;
+    this->parent=parent;
     setupUi(this);
     Util::setFontDialog(this);
     this->alpha->setMaximum(100);
@@ -27,8 +29,55 @@ dialogLoadImg::dialogLoadImg(loadImg * carte, myCentralWidget *parent)
     connect(this->drawGribOverKap,SIGNAL(toggled(bool)),this,SLOT(slotGribKap()));
     connect(this->gribColored,SIGNAL(toggled(bool)),this,SLOT(slotGribKap()));
     connect(this->gribAlpha,SIGNAL(valueChanged(int)),this,SLOT(setGribOpacity(int)));
+    connect(this->zoom,SIGNAL(clicked()),this,SLOT(nominalZoom()));
+    timerResize=new QTimer(this);
+    timerResize->setSingleShot(true);
+    timerResize->setInterval(300);
+    connect(timerResize,SIGNAL(timeout()),this,SLOT(showSnapshot()));
+//    showSnapshot();
+}
+void dialogLoadImg::resizeEvent(QResizeEvent *)
+{
+    timerResize->start();
+}
+void dialogLoadImg::nominalZoom()
+{
+    this->done(3);
 }
 
+void dialogLoadImg::showSnapshot()
+{
+    if(!FileName->text().isEmpty())
+    {
+        loadImg * myCarte=new loadImg(parent->getProj(),parent);
+        int OK=myCarte->setMyImgFileName(FileName->text(),false);
+        if(OK!=0)
+        {
+            snapShot->setPixmap(myCarte->getSnapshot(snapShot->size()));
+            kapInfo->setText(tr("Name ")+myCarte->getBsb()->name);
+            kapInfo->append(tr("Projection: ")+myCarte->getBsb()->projection);
+            if(myCarte->getBsb()->num_wpxs==0 || myCarte->getBsb()->num_wpys==0)
+                kapInfo->append(tr("No polynomials found in kap file, using internal solution"));
+            else
+                kapInfo->append(tr("Polynomials found in kap file"));
+            kapInfo->append(tr("Pixel size: ")+QString().setNum(myCarte->getBsb()->width)+"x"+QString().setNum(myCarte->getBsb()->height));
+            zoom->setEnabled(true);
+        }
+        else
+        {
+            kapInfo->setText(tr("Error while loading")+" "+FileName->text()+"\n");
+            snapShot->clear();
+            zoom->setEnabled(false);
+        }
+        delete myCarte;
+    }
+    else
+    {
+        snapShot->clear();
+        kapInfo->clear();
+        zoom->setEnabled(false);
+    }
+}
 dialogLoadImg::~dialogLoadImg()
 {
     Settings::setSetting(this->objectName()+".height",this->height());
@@ -36,26 +85,28 @@ dialogLoadImg::~dialogLoadImg()
 }
 void dialogLoadImg::done(int result)
 {
-    if(result == QDialog::Accepted)
+    if(result == QDialog::Accepted || result==3)
     {
         carte->setParams(this->alpha->value()/100.0,
                          this->gribAlpha->value()/100.0,
                          drawGribOverKap->isChecked(),
                          !gribColored->isChecked());
-        if(carte->getMyImgFileName()!=this->FileName->text())
+        int res=carte->setMyImgFileName(this->FileName->text(),result!=3);
+        if(res!=1)
         {
-            int res=carte->setMyImgFileName(this->FileName->text());
-            if(res!=1)
-            {
-                QMessageBox msgBox;
-                msgBox.setText(tr("Fichier Kap invalide"));
-                msgBox.setIcon(QMessageBox::Critical);
-                msgBox.exec();
-                Settings::setSetting("LastKap",QString());
-                return;
-            }
+            QMessageBox msgBox;
+            msgBox.setText(tr("Fichier Kap invalide"));
+            msgBox.setIcon(QMessageBox::Critical);
+            msgBox.exec();
+            Settings::setSetting("LastKap",QString());
+            return;
         }
         Settings::setSetting("LastKap",this->FileName->text());
+        if(result==3)
+        {
+            carte->nominalZoom();
+            result=QDialog::Accepted;
+        }
     }
     else
     {
@@ -93,6 +144,7 @@ void dialogLoadImg::browseFile()
         this->FileName->setText(fileName);
         Settings::setSetting("cartePath",cartePath);
     }
+    showSnapshot();
 }
 void dialogLoadImg::setGribOpacity(int i)
 {

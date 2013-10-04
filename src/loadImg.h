@@ -57,7 +57,10 @@ class loadImg : public QObject, public QGraphicsPixmapItem
         bool getDrawGribOverKap(){return drawGribOverKap;}
         void setParams(double alpha,double gribAlpha,bool drawGribOverKap,bool gribColored);
         void redraw(bool b1, bool b2);
-    public slots:
+        QPixmap getSnapshot(QSize size);
+        BSBImage * getBsb(){return bsb;}
+        void nominalZoom();
+public slots:
         void slot_updateProjection();
 
 

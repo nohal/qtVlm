@@ -132,6 +132,34 @@ void loadImg::setImgGribKap(QPixmap imgGribKap)
     gribKap->setPixmap(imgGribKap);
     gribKap->show();
 }
+void loadImg::nominalZoom()
+{
+    if(bsb==NULL) return;
+    QPolygon bordersXY;
+    for(int i=0;i<borders.count();++i)
+    {
+        int X,Y;
+        if(i==0)
+            proj->map2screen(borders.at(i).x(),borders.at(i).y(),&X,&Y);
+        else
+            proj->map2screenByReference(borders.at(i-1).x(),bordersXY.last().x(),borders.at(i).x(),borders.at(i).y(),&X,&Y);
+        bordersXY.append(QPoint(X,Y));
+    }
+    QRectF br=bordersXY.boundingRect().normalized();
+    double lon1,lat1,lon2,lat2,centerLon, centerLat;
+    proj->screen2mapDouble(br.center().x(),br.center().y(),&centerLon,&centerLat);
+    proj->screen2mapDouble(br.topLeft().x(),br.topLeft().y(),&lon1,&lat1);
+    proj->screen2mapDouble(br.bottomRight().x(),br.bottomRight().y(),&lon2,&lat2);
+    // compute scale;
+    double sX,sY,sYN,sYS;
+    sX=bsb->width/fabs(lon1-lon2);
+    sYN=log(tan(degToRad(lat1)/2 + M_PI_4));
+    sYS=log(tan(degToRad(lat2)/2 + M_PI_4));
+    sY=bsb->height/fabs(radToDeg(sYN-sYS));
+
+    double scale=sX>sY?sY:sX;
+    proj->setScaleAndCenterInMap(scale,centerLon,centerLat);
+}
 
 int loadImg::setMyImgFileName(QString s, bool zoom)
 {
@@ -211,7 +239,132 @@ uint8_t * loadImg::getRow(int row)
     }
     return p;
 }
-
+QPixmap loadImg::getSnapshot(QSize size)
+{
+    QPixmap snapshot(0,0);
+    if(bsb==NULL) return snapshot;
+    QPolygon bordersXY;
+    for(int i=0;i<borders.count();++i)
+    {
+        int X,Y;
+        if(i==0)
+            proj->map2screen(borders.at(i).x(),borders.at(i).y(),&X,&Y);
+        else
+            proj->map2screenByReference(borders.at(i-1).x(),bordersXY.last().x(),borders.at(i).x(),borders.at(i).y(),&X,&Y);
+        bordersXY.append(QPoint(X,Y));
+    }
+    QRectF br=bordersXY.boundingRect().normalized();
+    QPointF centerMap=br.center();
+    double centerLon,centerLat;
+    proj->screen2mapDouble(centerMap.x(),centerMap.y(),&centerLon,&centerLat);
+    Projection myProj(size.width(),size.height(),centerLon,centerLat);
+    double lon1,lat1,lon2,lat2;
+    proj->screen2mapDouble(br.topLeft().x(),br.topLeft().y(),&lon1,&lat1);
+    proj->screen2mapDouble(br.bottomRight().x(),br.bottomRight().y(),&lon2,&lat2);
+    myProj.zoomOnZone(lon1,lat1,lon2,lat2);
+    myProj.setCenterInMap(centerLon,centerLat);
+    bordersXY.clear();
+    for(int i=0;i<borders.count();++i)
+    {
+        int X,Y;
+        if(i==0)
+            myProj.map2screen(borders.at(i).x(),borders.at(i).y(),&X,&Y);
+        else
+            myProj.map2screenByReference(borders.at(i-1).x(),bordersXY.last().x(),borders.at(i).x(),borders.at(i).y(),&X,&Y);
+        bordersXY.append(QPoint(X,Y));
+    }
+    QRectF portion=bordersXY.boundingRect().normalized();
+    if(portion.isEmpty())
+    {
+        return snapshot;
+    }
+    uint8_t * row=0;
+    QSizeF portionSize=portion.size();
+    bool overZoomed=false;
+    QPointF topLeft;
+    myProj.screen2mapDouble(portion.topLeft().toPoint(),&topLeft);
+    QPointF bottomRight;
+    myProj.screen2mapDouble(portion.bottomRight().toPoint(),&bottomRight);
+    int minX,minY;
+    bsb_LLtoXY(bsb,topLeft.x(),topLeft.y(),&minX,&minY);
+    int maxX,maxY;
+    bsb_LLtoXY(bsb,bottomRight.x(),bottomRight.y(),&maxX,&maxY);
+    QRectF Portion(QPointF(minX,minY),QPointF(maxX,maxY));
+    Portion=Portion.normalized();
+    if(Portion.width()/portion.width()<2.0 || Portion.height()/portion.height()<2.0)
+        overZoomed=true; //meaning there is no space to take 2 pixels so we take them all anyway, no need to call screen2Map.
+    double quality=2.0;
+    QSize imgSize;
+    if(overZoomed)
+    {
+        quality=1.0;
+        portion=Portion;
+        imgSize=portion.size().toSize();
+    }
+    else
+    {
+        //quality=qMin(2.0,Portion.width()/portion.width());
+        imgSize=QSizeF(portionSize.width()*quality,portionSize.height()*quality).toSize();
+    }
+    //qWarning()<<"overzoomed"<<overZoomed<<Portion.size()<<portionSize<<imgSize<<quality<<portion.topLeft()<<portion.bottomRight();
+    int imgWidth=imgSize.width();
+    int imgHeight=imgSize.height();
+    int bitsPerPixel=3;
+    uchar * buffer=new uchar [imgWidth*imgHeight*bitsPerPixel];
+    int imgX=-1;
+    int imgY=-1;
+    for(double y=portion.topLeft().y();y<portion.bottomRight().y();y+=1.0/quality)
+    {
+        ++imgY;
+        row=0;
+        imgX=-1;
+        for(double x=portion.topLeft().x();x<portion.bottomRight().x();x+=1.0/quality)
+        {
+            ++imgX;
+            int X,Y;
+            bool isOK=true;
+            if(!overZoomed)
+            {
+                double lon,lat;
+                myProj.screen2mapDouble(x,y,&lon,&lat);
+                isOK=bsb_LLtoXY(bsb,lon,lat,&X,&Y);
+            }
+            else
+            {
+                X=qRound(x);
+                Y=qRound(y);
+            }
+            if(isOK)
+            {
+                if (Y<0||Y>=bsb->height)
+                {
+                    row=0;
+                    break;
+                }
+                if(row==0)
+                    row=getRow(Y);
+                if(X<0)
+                    continue;
+                if(X>bsb->width)
+                    break;
+                if(row==0) continue;
+                const int r=bsb->red[row[X]];
+                const int g=bsb->green[row[X]];
+                const int b=bsb->blue[row[X]];
+                const int index=(imgY*imgWidth*3)+(imgX*3);
+                buffer[index]=r;
+                buffer[index+1]=g;
+                buffer[index+2]=b;
+            }
+        }
+    }
+    QImage img(buffer,imgWidth,imgHeight, imgWidth*3, QImage::Format_RGB888);
+    //img.save("snapshop.png");
+    img=img.scaled(portionSize.toSize(),Qt::IgnoreAspectRatio,Qt::SmoothTransformation);
+    snapshot=QPixmap::fromImage(img);
+    delete[] buffer;
+    return snapshot;
+}
 void loadImg::slot_updateProjection()
 {
     if(bsb==NULL) return;
