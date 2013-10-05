@@ -2092,10 +2092,6 @@ Etes-vous sur ?</source>
         <translation></translation>
     </message>
     <message>
-        <source>Fichiers GRIB (*.grb *.grib *.grb.bz2 *.grib.bz2 *.grb.gz *.grib.gz)</source>
-        <translation></translation>
-    </message>
-    <message>
         <source>;;Autres fichiers (*)</source>
         <translation></translation>
     </message>
@@ -2405,6 +2401,18 @@ Etes-vous sur ?</source>
         <source>Barrier not in edit mode</source>
         <translation type="obsolete">La barrière n&apos;est pas en mode édition</translation>
     </message>
+    <message>
+        <source>Opening kap</source>
+        <translation>Ouverture du KAP</translation>
+    </message>
+    <message>
+        <source> grib: </source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Fichiers GRIB (*.grb *.grib *.grb.bz2 *.grib.bz2 *.grb.gz *.grib.gz *.grb2)</source>
+        <translation></translation>
+    </message>
 </context>
 <context>
     <name>MenuBar</name>
@@ -2451,18 +2459,6 @@ Etes-vous sur ?</source>
     <message>
         <source>Telechargement VLM</source>
         <translation>Téléchargement VLM</translation>
-    </message>
-    <message>
-        <source>Informations sur le fichier</source>
-        <translation></translation>
-    </message>
-    <message>
-        <source>Ctrl+I</source>
-        <translation></translation>
-    </message>
-    <message>
-        <source>Informations sur le fichier GRIB</source>
-        <translation></translation>
     </message>
     <message>
         <source>Carte du vent</source>
@@ -6968,7 +6964,31 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Fichier Kap ne contient pas de polynomiaux, desole</source>
-        <translation>Le fichier KAP ne contient pas de polynomiaux, désolé</translation>
+        <translation type="obsolete">Le fichier KAP ne contient pas de polynomiaux, désolé</translation>
+    </message>
+    <message>
+        <source>Name </source>
+        <translation>Nom: </translation>
+    </message>
+    <message>
+        <source>Projection: </source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>No polynomials found in kap file, using internal solution</source>
+        <translation>Pas de polynomiaux, utilisation d&apos;une solution interne</translation>
+    </message>
+    <message>
+        <source>Polynomials found in kap file</source>
+        <translation>Polynomiaux présents</translation>
+    </message>
+    <message>
+        <source>Pixel size: </source>
+        <translation>Taille en pixels: </translation>
+    </message>
+    <message>
+        <source>Error while loading</source>
+        <translation>Erreur au chargement de </translation>
     </message>
 </context>
 <context>
@@ -7000,6 +7020,18 @@ p, li { white-space: pre-wrap; }
     <message>
         <source>Afficher au dessus du KAP</source>
         <translation></translation>
+    </message>
+    <message>
+        <source>Map information</source>
+        <translation>Informations carte</translation>
+    </message>
+    <message>
+        <source>TextLabel</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Show at nominal resolution</source>
+        <translation>Afficher à la résolution nominale</translation>
     </message>
 </context>
 <context>
@@ -7250,18 +7282,6 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>myCentralWidget</name>
     <message>
-        <source>oui</source>
-        <translation></translation>
-    </message>
-    <message>
-        <source>non</source>
-        <translation></translation>
-    </message>
-    <message>
-        <source>Informations sur le fichier GRIB</source>
-        <translation></translation>
-    </message>
-    <message>
         <source></source>
         <translation></translation>
     </message>
@@ -7335,11 +7355,11 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>oui (calcule par la formule de Magnus-Tetens)</source>
-        <translation>oui (calculé par la formule de Magnus-Tetens)</translation>
+        <translation type="obsolete">oui (calculé par la formule de Magnus-Tetens)</translation>
     </message>
     <message>
         <source>Aucun fichir GRIB n&apos;est charge.</source>
-        <translation>Aucun fichier GRIB n&apos;est chargé.</translation>
+        <translation type="obsolete">Aucun fichier GRIB n&apos;est chargé.</translation>
     </message>
     <message>
         <source>Donnees disponibles :</source>
@@ -7390,88 +7410,39 @@ p, li { white-space: pre-wrap; }
         <translation type="obsolete">Date de référence : %1</translation>
     </message>
     <message>
-        <source>Fichier : %1
-</source>
-        <translation></translation>
-    </message>
-    <message>
-        <source>Taille : %1 octets
-</source>
-        <translation></translation>
-    </message>
-    <message>
-        <source>
-</source>
-        <translation></translation>
-    </message>
-    <message>
-        <source>%1 enregistrements, </source>
-        <translation></translation>
-    </message>
-    <message>
-        <source>%1 dates :
-</source>
-        <translation></translation>
-    </message>
-    <message>
-        <source>    du %1
-</source>
-        <translation></translation>
-    </message>
-    <message>
-        <source>    au %1
-</source>
-        <translation></translation>
-    </message>
-    <message>
         <source>Donnees disponibles :
 </source>
-        <translation>Données disponibles:
+        <translation type="obsolete">Données disponibles:
 </translation>
     </message>
     <message>
         <source>    Temperature : %1
 </source>
-        <translation>   Température : %1
+        <translation type="obsolete">   Température : %1
 </translation>
-    </message>
-    <message>
-        <source>    Pression : %1
-</source>
-        <translation></translation>
-    </message>
-    <message>
-        <source>    Vent  : %1
-</source>
-        <translation></translation>
-    </message>
-    <message>
-        <source>    Cumul de précipitations : %1
-</source>
-        <translation></translation>
     </message>
     <message>
         <source>    Nebulosite : %1
 </source>
-        <translation>    Nébulosité: %1
+        <translation type="obsolete">    Nébulosité: %1
 </translation>
     </message>
     <message>
         <source>    Humidite relative : %1
 </source>
-        <translation>    Humidité relative: %1
+        <translation type="obsolete">    Humidité relative: %1
 </translation>
     </message>
     <message>
         <source>    Isotherme 0degC : %1
 </source>
-        <translation>    Isotherme 0°C : %1
+        <translation type="obsolete">    Isotherme 0°C : %1
 </translation>
     </message>
     <message>
         <source>    Point de rosee : %1
 </source>
-        <translation>    Point de rosée : %1
+        <translation type="obsolete">    Point de rosée : %1
 </translation>
     </message>
     <message>
@@ -7489,13 +7460,8 @@ p, li { white-space: pre-wrap; }
     <message>
         <source>    Temperature (pot) : %1
 </source>
-        <translation>    Température (pot): %1
+        <translation type="obsolete">    Température (pot): %1
 </translation>
-    </message>
-    <message>
-        <source>    Neige (risque) : %1
-</source>
-        <translation></translation>
     </message>
     <message>
         <source>    Neige (epaisseur) : %1
@@ -7506,53 +7472,13 @@ p, li { white-space: pre-wrap; }
     <message>
         <source>    Humidite specifique :
 </source>
-        <translation>    Humidité spécifique:
+        <translation type="obsolete">    Humidité spécifique:
 </translation>
-    </message>
-    <message>
-        <source>        - 200: %1
-</source>
-        <translation></translation>
-    </message>
-    <message>
-        <source>        - 300: %1
-</source>
-        <translation></translation>
-    </message>
-    <message>
-        <source>        - 500: %1
-</source>
-        <translation></translation>
-    </message>
-    <message>
-        <source>        - 700: %1
-</source>
-        <translation></translation>
-    </message>
-    <message>
-        <source>        - 850: %1
-</source>
-        <translation></translation>
-    </message>
-    <message>
-        <source>Grille : %1 points (%2x%3)
-</source>
-        <translation></translation>
-    </message>
-    <message>
-        <source>Etendue :
-</source>
-        <translation></translation>
-    </message>
-    <message>
-        <source>%1  -&gt;  %2
-</source>
-        <translation></translation>
     </message>
     <message>
         <source>Date de reference : %1
 </source>
-        <translation>Date de référence : %1
+        <translation type="obsolete">Date de référence : %1
 </translation>
     </message>
     <message>
@@ -7724,18 +7650,9 @@ Voulez-vous la remplacer?</source>
         <translation>Cette route existe déjà. Voulez-vous la remplacer?</translation>
     </message>
     <message>
-        <source>    Courant  : %1
-</source>
-        <translation></translation>
-    </message>
-    <message>
-        <source>oui (GRIB Courants)</source>
-        <translation></translation>
-    </message>
-    <message>
         <source>Resolution : %1x%2
 </source>
-        <translation>Résolution : %1x%2
+        <translation type="obsolete">Résolution : %1x%2
 </translation>
     </message>
     <message>
@@ -7818,16 +7735,6 @@ Que voulez vous faire?</translation>
         <source>Point must be inside map
 Please select another point or press esc to exit barrier creation mode</source>
         <translation>Le point doit être sur la carte\nVeuillez choisir un autre point ou &lt;echap&gt; pour sortir du mode création</translation>
-    </message>
-    <message>
-        <source>    CAPE (surface) : %1
-</source>
-        <translation></translation>
-    </message>
-    <message>
-        <source>    CIN (surface) : %1
-</source>
-        <translation></translation>
     </message>
 </context>
 <context>
