@@ -80,9 +80,7 @@ BoardVlmNew::BoardVlmNew(MainWindow *main)
     connect(main,SIGNAL(updateLockIcon(QIcon)),this,SLOT(slot_lock()));
     wpDialog = new DialogWp();
     connect(wpDialog,SIGNAL(selectPOI()),this,SLOT(slot_selectWP_POI()));
-    connect(wpDialog,SIGNAL(selectPOI()),main,SLOT(slotSelectWP_POI()));
     connect(main,SIGNAL(editWP_POI(POI*)),this,SLOT(slot_selectPOI(POI*)));
-    connect(main,SIGNAL(editWP_POI(POI*)),wpDialog,SLOT(show_WPdialog(POI *)));
     connect(tabWidget,SIGNAL(currentChanged(int)),this,SLOT(slot_tabChanged(int)));
     connect(btn_wp,SIGNAL(clicked()),this,SLOT(slot_editWP()));
     timer=new QTimer(this);
@@ -779,6 +777,7 @@ void BoardVlmNew::set_style(QPushButton * button, QColor color, QColor color2)
 }
 void BoardVlmNew::slot_editWP()
 {
+    if(!myBoat) return;
     if(main->get_selPOI_instruction())
         main->slot_POIselected(NULL);
     else
@@ -898,6 +897,7 @@ void BoardVlmNew::slot_clearWP()
 }
 void BoardVlmNew::slot_selectPOI(bool doSelect)
 {
+    qWarning()<<"inside slot_selectPOI with"<<doSelect;
     if(doSelect)
     {
         btn_pilototo->setText(tr("Annuler"));
@@ -910,18 +910,25 @@ void BoardVlmNew::slot_selectPOI(bool doSelect)
         update_btnPilototo();
         this->set_enabled(true);
     }
+    qWarning()<<"exit slot_selectPOI with"<<doSelect;
 }
-void BoardVlmNew::slot_selectPOI(POI *)
+void BoardVlmNew::slot_selectPOI(POI * poi)
 {
+    qWarning()<<"inside slot_selectPOI";
     this->set_enabled(true);
     slot_updateBtnWP();
+    wpDialog->show_WPdialog(poi, myBoat);
+    qWarning()<<"exit slot_selectPOI";
 }
 void BoardVlmNew::slot_selectWP_POI()
 {
+    qWarning()<<"inside slot_selectWP_POI";
     btn_wp->setText(tr("Annuler"));
     set_style(btn_wp,QColor(151,179,210));/*blue*/
     this->set_enabled(false);
     btn_wp->setEnabled(true);
+    main->slotSelectWP_POI();
+    qWarning()<<"exit slot_selectWP_POI";
 }
 void BoardVlmNew::set_enabled(const bool &b)
 {
