@@ -89,6 +89,7 @@ class DataManager
              };
 
         void print_firstRecord_bmap(void);
+        void print_firstRecord_info(void);
 
     private:
 

@@ -99,7 +99,6 @@ class Grib
                                                       GribRecord *recU1,GribRecord *recV1,GribRecord *recU2,GribRecord *recV2,
                                                       double * u, double * v,int interpolation_type,bool debug=false);
 
-
     protected:
         bool   ok;
         DataManager * dataManager;

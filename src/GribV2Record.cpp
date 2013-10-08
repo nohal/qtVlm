@@ -60,7 +60,7 @@ GribV2Record::GribV2Record(gribfield  *gfld, int msg, int field):GribRecord() {
     }
 
     idCenter=gfld->idsect[0];
-    idModel=gfld->ipdtmpl[3];
+    idModel=gfld->ipdtmpl[4];
     idGrid=gfld->griddef;
 
     /*************************
@@ -79,7 +79,10 @@ GribV2Record::GribV2Record(gribfield  *gfld, int msg, int field):GribRecord() {
     refSecond=gfld->idsect[10];
     refDate=makeDate(refYear,refMonth,refDay,refHour,refMinute,refSecond);
     // curdate computation
+
     int timeOffset=computeTimeOffset(gfld->ipdtmpl[7],gfld->ipdtmpl[8]);
+
+    //qWarning() << "T offset " << timeOffset;
     if(timeOffset==-1) {
         qWarning() << "Msg " << msg << " - field " << field << ": bad or unsupported time unit for offset: " << timeOffset;
         return;
@@ -111,8 +114,8 @@ GribV2Record::GribV2Record(gribfield  *gfld, int msg, int field):GribRecord() {
     Di  = gfld->igdtmpl[16]/1000000.0;
     Dj  = gfld->igdtmpl[17]/1000000.0;
 
-    for(int i=0;i<19;++i)
-        qWarning() << "igdtmpl " << i << ": " << gfld->igdtmpl[i];
+    //for(int i=0;i<19;++i)
+    //    qWarning() << "igdtmpl " << i << ": " << gfld->igdtmpl[i];
 
     if (Lo1>=0 && Lo1<=180 && Lo2<0)
         Lo2 += 360.0;    // cross the 180 deg meridien,beetwen alaska and russia
@@ -125,10 +128,30 @@ GribV2Record::GribV2Record(gribfield  *gfld, int msg, int field):GribRecord() {
     if(val==Lo1)
         isFull=true;
 
+    // Bit representation: 12345678
+    // => bit 8 set => value of 1
     resolFlags = gfld->igdtmpl[13];
+
+    // Bit 3: i inc given, Bit 4 same for j
+    // Bit 5:
+    // 0: Resolved u and v components of vector quantities relative to easterly and northerly directions
+    // 1: Resolved u and v components of vector quantities relative to the defined grid in the direction
+    //    of increasing x and y (or i and j) coordinates, respectively.
     hasDiDj = ((resolFlags&0x20) !=0 && (resolFlags&0x10) !=0);
 
     scanFlags = gfld->igdtmpl[18];
+    // Bit 1:
+    // 0: Points in the first row or column scan in the +i (+x) direction
+    // 1: Points in the first row or column scan in the -i (-x) direction
+    // Bit 2:
+    // 0: Points in the first row or column scan in the -j (-y) direction
+    // 1: Points in the first row or column scan in the +j (+y) direction
+    // Bit 3:
+    // 0: Adjacent points in the i (x) direction are consecutive
+    // 1: Adjacent points in the j (y) direction are consecutive
+    // Bit 4:
+    // 0: All rows scan in the same direction
+    // 1: Adjacent rows scan in the opposite direction
     isScanIpositive = (scanFlags&0x80) ==0;
     isScanJpositive = (scanFlags&0x40) !=0;
     isAdjacentI     = (scanFlags&0x20) ==0;
@@ -160,7 +183,7 @@ GribV2Record::GribV2Record(gribfield  *gfld, int msg, int field):GribRecord() {
         Dj = (La2-La1) / (Nj-1);
     }
 
-    qWarning() << "Nb point check:  ngrdpts=" << gfld->ngrdpts << ", ndpts=" << gfld->ndpts << ", Ni*Nj=" << Ni*Nj;
+    //qWarning() << "Nb point check:  ngrdpts=" << gfld->ngrdpts << ", ndpts=" << gfld->ndpts << ", Ni*Nj=" << Ni*Nj;
 
     /***********************************
      * Data type and level - section 4 *

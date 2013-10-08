@@ -421,6 +421,7 @@ bool GribV1Record::readGribSection1_PDS(ZUFILE* file) {
     periodP2  = data1[19];
     timeRange = data1[20];
     periodsec = periodSeconds(data1[17],data1[18],data1[19],timeRange);
+    //qWarning() << "Periodsec:" << periodP2-periodP1 << " - comp= " << periodsec;
     curDate = makeDate(refYear,refMonth,refDay,refHour,refMinute,periodsec);
 
 //if (dataType == GRB_PRECIP_TOT) printf("P1=%d p2=%d\n", periodP1,periodP2);

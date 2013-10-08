@@ -120,8 +120,7 @@ bool DataManager::load_data(QString fileName,int gribType) {
             delete *gribPtr;
         *gribPtr=ptr;
         update_dateList();
-        //print_firstRecord_bmap();
-
+        //print_firstRecord_info();
         return true;
     }
     return false;
@@ -335,6 +334,16 @@ void DataManager::print_firstRecord_bmap(void) {
         if(rec) {
             rec->print_bitmap();
             qWarning() << "bmapSize=" << rec->get_bmapSize() << ", dataSize=" << rec->get_dataSize();
+        }
+    }
+}
+
+void DataManager::print_firstRecord_info(void) {
+    if(grib) {
+        GribRecord * rec = grib->getFirstRecord();
+        if(rec) {
+            qWarning() << "edition=" << rec->get_editionNumber() << ", center=" << rec->get_idCenter()
+                          << ", model=" << rec->get_idModel() << ", grid=" << rec->get_idGrid();
         }
     }
 }
