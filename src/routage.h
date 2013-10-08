@@ -208,6 +208,7 @@ class ROUTAGE : public QObject
         FCT_SETGET(int,multiHours)
         FCT_SETGET(int,multiMin)
         FCT_SETGET(int,multiNb)
+        FCT_GET_CST(double,maxDist)
 public slots:
         void calculate();
         void slot_edit();
