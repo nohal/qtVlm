@@ -37,6 +37,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "mycentralwidget.h"
 #include "GshhsReader.h"
 #include "Util.h"
+#include "Player.h"
 
 DialogParamVlm::DialogParamVlm(MainWindow * main,myCentralWidget * parent) : QDialog(parent)
 {
@@ -550,6 +551,25 @@ void DialogParamVlm::slot_changeParam()
 {
     initEstime();
     chk_showCompass->setCheckState(Settings::getSetting("showCompass",0).toInt()==1?Qt::Checked:Qt::Unchecked);
+    bool real=centralWidget->getPlayer()->getType()!=BOAT_VLM;
+    concurrent_box->setVisible(!real);
+    classicalBoard->setVisible(!real);
+    label_skin->setVisible(!real);
+    edt_skinFile->setVisible(!real);
+    btn_browseSkin->setVisible(!real);
+    label_4->setVisible(!real);
+    pushButton_2->setVisible(!real);
+    label_6->setVisible(!real);
+    pushButton_4->setVisible(!real);
+    chk_centerOnSynch->setVisible(!real);
+    chk_centerOnBoatChange->setVisible(!real);
+    chk_askConfirm->setVisible(!real);
+    autoRemove->setVisible(!real);
+    chkHideRoute->setVisible(!real);
+    label_21->setVisible(!real);
+    speedLossOnTackVlm->setVisible(!real);
+    label_22->setVisible(!real);
+    chk_oppTrace->setVisible(!real);
 }
 
 void DialogParamVlm::on_chk_scaleEstime_toggled(bool checked)

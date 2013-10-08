@@ -44,7 +44,7 @@
       </attribute>
       <layout class="QVBoxLayout" name="verticalLayout_2">
        <item>
-        <widget class="QGroupBox" name="groupBox_5">
+        <widget class="QGroupBox" name="concurrent_box">
          <property name="sizePolicy">
           <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
            <horstretch>0</horstretch>
@@ -146,7 +146,7 @@
           <item>
            <layout class="QHBoxLayout" name="horizontalLayout_14">
             <item>
-             <widget class="QLabel" name="label_26">
+             <widget class="QLabel" name="label_skin">
               <property name="text">
                <string>Skin par defaut</string>
               </property>
@@ -160,7 +160,7 @@
           <item>
            <layout class="QHBoxLayout" name="horizontalLayout_15">
             <item>
-             <spacer name="horizontalSpacer_4">
+             <spacer name="spacerSkin">
               <property name="orientation">
                <enum>Qt::Horizontal</enum>
               </property>

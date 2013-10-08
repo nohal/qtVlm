@@ -93,12 +93,12 @@ MenuBar::MenuBar(MainWindow *parent)
         acOptions_SH_Boa = addAction(boatPoiSH, tr("Centrer sur le bateau actif"), "B", tr(""));
         acKeep=addAction(boatPoiSH,tr("Conserver la position du bateau dans l'ecran lors de zoom +/-"),"Z","",tr(""));
         acKeep->setCheckable(true);
-        boatPoiSH->addSeparator();
+        separator2=boatPoiSH->addSeparator();
         acOptions_SH_Fla = addAction(boatPoiSH, tr("Montrer les pavillons sur la carte"), "F", tr(""));
         acOptions_SH_Fla->setCheckable(true);
-        boatPoiSH->addSeparator();
         acOptions_SH_Opp = addAction(boatPoiSH, tr("Montrer les bateaux opposants"), "O", tr(""));
         acOptions_SH_Opp->setCheckable(true);
+        boatPoiSH->addSeparator();
         acOptions_SH_Por = addAction(boatPoiSH, tr("Montrer les portes et WPs"), "W", tr(""));
         acOptions_SH_Por->setCheckable(true);
         acOptions_SH_Poi = addAction(boatPoiSH, tr("Montrer les POIs"), "P", tr(""));
@@ -753,6 +753,25 @@ void MenuBar::setMenubarColorMapMode(int colorMapMode,bool withoutEvent)
         if(withoutEvent)
             ptr->blockSignals(false);
     }
+}
+void MenuBar::setPlayerType(const int &type)
+{
+    bool real=type!=BOAT_VLM;
+    ac_moveBoat->setVisible(real);
+    ac_moveBoatSep->setVisible(real);
+    acRace->setVisible(!real);
+    acVLMSync->setVisible(!real);
+    acPilototo->setVisible(!real);
+    acShowPolar->setVisible(!real);
+    acFile_Lock->setEnabled(!real);
+    acFile_Lock->setVisible(!real);
+    separator1->setVisible(!real);
+    separator2->setVisible(!real);
+    acOptions_SH_Opp->setVisible(!real);
+    acOptions_SH_Fla->setVisible(!real);
+    acOptions_SH_Por->setVisible(!real);
+    acShowLog->setVisible(!real);
+    acGetTrack->setVisible(!real);
 }
 
 //===================================================================================

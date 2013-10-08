@@ -130,6 +130,7 @@ public:
     QAction *acFile_Quit;
     QAction *acFile_Lock;
     QAction *separator1;
+    QAction *separator2;
     QAction *acFile_QuitNoSave;
     QMenu   *mn_img;
     QAction *acImg_Open;
@@ -313,6 +314,7 @@ public:
     QAction *acShowPolar;
     QAction *acRace;
 
+    void setPlayerType(const int &type);
 public slots:
     void slot_updateLockIcon(QIcon ic);
     void slot_setChangeStatus(bool status,bool pilototo,bool syncBtn);

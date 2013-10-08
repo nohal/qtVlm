@@ -4382,18 +4382,10 @@ void myCentralWidget::slot_playerSelected(Player * player)
     if(player)
     {
         toolBar->chgBoatType(player->getType());
+        menuBar->setPlayerType(player->getType());
         if(player->getType() == BOAT_VLM)
         {
             if(player->getWrong()) return;
-            menuBar->ac_moveBoat->setVisible(false);
-            menuBar->ac_moveBoatSep->setVisible(false);
-            menuBar->acRace->setVisible(true);
-            menuBar->acVLMSync->setVisible(true);
-            menuBar->acPilototo->setVisible(true);
-            menuBar->acShowPolar->setVisible(true);
-            menuBar->acFile_Lock->setEnabled(true);
-            menuBar->acFile_Lock->setVisible(true);
-            menuBar->separator1->setVisible(true);
             boat_list=player->getBoats();
             QListIterator<boatVLM*> i(*boat_list);
             bool reselected=false;
@@ -4423,15 +4415,6 @@ void myCentralWidget::slot_playerSelected(Player * player)
         }
         else
         {            
-            menuBar->ac_moveBoat->setVisible(true);
-            menuBar->ac_moveBoatSep->setVisible(true);
-            menuBar->acRace->setVisible(false);
-            menuBar->acVLMSync->setVisible(false);
-            menuBar->acPilototo->setVisible(false);
-            menuBar->acShowPolar->setVisible(true);
-            menuBar->acFile_Lock->setEnabled(false);
-            menuBar->acFile_Lock->setVisible(false);
-            menuBar->separator1->setVisible(false);
             realBoat=player->getRealBoat();
             realBoat->reloadPolar();
             mainW->slotSelectBoat(realBoat);
