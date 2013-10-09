@@ -4866,7 +4866,7 @@ void ROUTAGE::calculateShapeIso()
         if(shapeIso.isEmpty() || shapeIso.last()!=P)
         {
             if(shapeIso.size()>1 && P==shapeIso.at(shapeIso.size()-2))
-                shapeIso.removeLast();
+                shapeIso.remove(shapeIso.size()-1);
             else
                 shapeIso.append(P);
         }
