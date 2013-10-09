@@ -26,6 +26,11 @@ DialogVlmLog::DialogVlmLog(myCentralWidget *parent) :
     this->setModal(false);
     this->setWindowTitle(tr("Historique VLM"));
 }
+void DialogVlmLog::done(int result)
+{
+    QDialog::done(result);
+    this->deleteLater();
+}
 
 DialogVlmLog::~DialogVlmLog()
 {
@@ -33,6 +38,7 @@ DialogVlmLog::~DialogVlmLog()
     Settings::setSetting(this->objectName()+".width",this->width());
     if(ui)
         delete ui;
+    //qWarning()<<"delete DialogVlmLog finished";
 }
 
 void DialogVlmLog::initWithBoat(boatVLM* activeBoat)

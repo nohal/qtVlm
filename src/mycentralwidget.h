@@ -430,7 +430,6 @@ signals:
 
         /* Dialogs */
         DialogGribDate * gribDateDialog;
-        DialogPoi * poi_editor;
         DialogBoatAccount * boatAcc;
         DialogPlayerAccount * playerAcc;
         DialogRace * raceDialog;

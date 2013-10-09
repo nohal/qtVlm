@@ -15,6 +15,7 @@ class DialogVlmLog : public QDialog, public Ui::DialogVlmLog
 
 public:
     DialogVlmLog(myCentralWidget *parent);
+    void done(int result);
     void initWithBoat (boatVLM * activeBoat);
     ~DialogVlmLog();
 

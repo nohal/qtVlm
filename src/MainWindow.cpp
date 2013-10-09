@@ -131,7 +131,7 @@ void MainWindow::connectSignals()
 
     //-------------------------------------------------------
 
-    connect(mb->acOptions_Proxy, SIGNAL(triggered()), dialogProxy, SLOT(exec()));
+    connect(mb->acOptions_Proxy, SIGNAL(triggered()), this, SLOT(slot_execDialogProxy()));
 
     connect(mb->acOptions_GroupLanguage, SIGNAL(triggered(QAction *)),
             this, SLOT(slotOptions_Language()));
@@ -184,7 +184,6 @@ void MainWindow::connectSignals()
     connect(mb->acPOIimport, SIGNAL(triggered()), my_centralWidget, SLOT(slot_POIimport()));
     connect(mb->acPOIgeoData, SIGNAL(triggered()), my_centralWidget, SLOT(slot_POIimportGeoData()));
 
-    connect(dialogProxy, SIGNAL(proxyUpdated()), this, SLOT(slotInetUpdated()));
 
     connect(mb->acPOISave, SIGNAL(triggered()), my_centralWidget, SLOT(slot_POISave()));
     connect(mb->acPOIRestore, SIGNAL(triggered()), my_centralWidget, SLOT(slot_POIRestore()));
@@ -201,6 +200,13 @@ void MainWindow::connectSignals()
             this,  SLOT(slot_gribFileReceived(QString)));
 
     connect(this,SIGNAL(setChangeStatus(bool,bool,bool)),mb,SLOT(slot_setChangeStatus(bool,bool,bool)));
+}
+void MainWindow::slot_execDialogProxy()
+{
+    dialogProxy = new DialogProxy();
+    connect(dialogProxy, SIGNAL(proxyUpdated()), this, SLOT(slotInetUpdated()));
+    dialogProxy->exec();
+    delete dialogProxy;
 }
 
 //----------------------------------------------------
@@ -394,7 +400,6 @@ void MainWindow::continueSetup()
     if(!QFile(appFolder.value("img")+"skin_compas.png").exists())
         QMessageBox::critical (this,
            "Error","File 'skin_compas.png' cannot be find in img directory<br>Please check your installation"); /*untranslated on purpose*/
-    dialogProxy = new DialogProxy();
 
 //--------------------------------------------------
     progress->newStep(5,tr("Initializing menus"));
@@ -446,18 +451,9 @@ void MainWindow::continueSetup()
     toolBar->load_settings();
 
 
-    param = new DialogParamVlm(this,my_centralWidget);
-    if(use_old_board)
-        connect(param,SIGNAL(paramVLMChanged()),myBoard,SLOT(paramChanged()));
-
-    connect(param,SIGNAL(paramVLMChanged()),this,SLOT(slot_updateGribMono()));
-    connect(param,SIGNAL(paramVLMChanged()),toolBar,SLOT(slot_loadEstimeParam()));
 
     connect(toolBar,SIGNAL(estimeParamChanged()),this,SIGNAL(paramVLMChanged()));
-    connect(toolBar,SIGNAL(estimeParamChanged()),param,SLOT(slot_changeParam()));
 
-    progress->setLabelText(tr("Preparing coffee"));
-    progress->setValue(35);
 #ifdef __MAC_QTVLM
     progress->raise();
 #endif
@@ -1676,8 +1672,15 @@ void MainWindow::slotCompassCenterWp(void)
 
 void MainWindow::slotVLM_Param(void)
 {
+    param = new DialogParamVlm(this,my_centralWidget);
+    if(use_old_board)
+        connect(param,SIGNAL(paramVLMChanged()),myBoard,SLOT(paramChanged()));
+
+    connect(param,SIGNAL(paramVLMChanged()),this,SLOT(slot_updateGribMono()));
+    connect(param,SIGNAL(paramVLMChanged()),toolBar,SLOT(slot_loadEstimeParam()));
     param->slot_changeParam();
     param->exec();
+    delete param;
 }
 
 void MainWindow::slotVLM_Sync(void)

@@ -131,6 +131,7 @@ DialogRace::~DialogRace()
     if(modelResult)
         delete modelResult;
     delete waitBox;
+    //qWarning()<<"delete DialogRace completed";
 }
 QString DialogRace::getAuthLogin(bool * ok)
 {
@@ -544,6 +545,7 @@ void DialogRace::done(int result)
     }
 
     QDialog::done(result);
+    this->deleteLater();
 }
 
 void DialogRace::doSynch(void) /* apply only */

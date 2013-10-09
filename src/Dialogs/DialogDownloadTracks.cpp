@@ -35,6 +35,7 @@ DialogDownloadTracks::~DialogDownloadTracks()
     Settings::setSetting(this->objectName()+".height",this->height());
     Settings::setSetting(this->objectName()+".width",this->width());
     delete ui;
+    //qWarning()<<"delete DialogDownLoadTracks completed";
 }
 
 void DialogDownloadTracks::init()
@@ -133,7 +134,7 @@ void DialogDownloadTracks::accept()
                 }
             }
         }
-        QDialog::done(QDialog::Accepted);
+        done(QDialog::Accepted);
     }
     else
     {
@@ -141,8 +142,13 @@ void DialogDownloadTracks::accept()
         msgBox.setText(tr("Course ou bateau inconnu"));
         msgBox.setIcon(QMessageBox::Critical);
         msgBox.exec();
-        QDialog::done(QDialog::Rejected);
+        done(QDialog::Rejected);
     }
+}
+void DialogDownloadTracks::done(int result)
+{
+    QDialog::done(result);
+    this->deleteLater();
 }
 
 void DialogDownloadTracks::on_boatIDEdit_valueChanged(int)

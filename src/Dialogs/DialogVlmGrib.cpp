@@ -61,7 +61,7 @@ void DialogVlmGrib::done(int res)
     if(res == QDialog::Accepted)
     {        
         if(!doRequest(VLM_REQUEST_GET_FILE))
-            QDialog::done(QDialog::Rejected);
+            res=QDialog::Rejected;
     }
 
     QDialog::done(res);

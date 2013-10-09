@@ -551,27 +551,16 @@ myCentralWidget::myCentralWidget(Projection * proj,MainWindow * parent,MenuBar *
     opponents = new opponentList(proj,mainW,this,inetManager);
 
      /* Dialogs */
-    gribDateDialog = new DialogGribDate();
-    poi_editor=new DialogPoi(parent,this);
 
-    boatAcc = new DialogBoatAccount(proj,parent,this,inetManager);
-    realBoatConfig = new DialogRealBoatConfig(this);
-    playerAcc = new DialogPlayerAccount(proj,mainW,this,inetManager);
 
-    raceDialog = new DialogRace(parent,this,inetManager);
-    connect(raceDialog,SIGNAL(readRace()),this,SLOT(slot_readRaceData()));
-    connect(raceDialog,SIGNAL(writeBoat()),this,SLOT(slot_writeBoatData()));
 
     dialogLoadGrib = new DialogLoadGrib();
     connect(dialogLoadGrib,SIGNAL(clearSelection()),this,SLOT(slot_clearSelection()));
     dialogLoadGrib->checkQtvlmVersion();
-    connect(dialogLoadGrib, SIGNAL(signalGribFileReceived(QString)),
-            parent,  SLOT(slot_gribFileReceived(QString)));
+    connect(dialogLoadGrib, SIGNAL(signalGribFileReceived(QString)),parent,  SLOT(slot_gribFileReceived(QString)));
     connect(menuBar->acOptions_Units, SIGNAL(triggered()), &dialogUnits, SLOT(exec()));
     connect(menuBar->acOptions_GraphicsParams, SIGNAL(triggered()), &dialogGraphicsParams, SLOT(exec()));
 
-    vlmLogViewer = new DialogVlmLog(this);
-    vlmTrackRetriever = new DialogDownloadTracks(parent,this,this->getInet());
     /*Routes*/
     connect(menuBar->acRoute_add, SIGNAL(triggered()), this, SLOT(slot_addRouteFromMenu()));
     connect(menuBar->acRoute_import, SIGNAL(triggered()), this, SLOT(slot_importRouteFromMenu()));
@@ -1384,10 +1373,12 @@ time_t myCentralWidget::getCurrentDate(void)
 
 void myCentralWidget::showGribDate_dialog(void)
 {
-    if(gribDateDialog && dataManager->isOk())
+    if(dataManager->isOk())
     {
+        gribDateDialog = new DialogGribDate();
         time_t res;
         gribDateDialog->showDialog(dataManager->get_currentDate(),dataManager->get_dateList(),&res);
+        gribDateDialog->deleteLater();
         setCurrentDate(res);
     }
 }
@@ -2005,7 +1996,10 @@ void myCentralWidget::slot_takeScreenshot()
 void myCentralWidget::slot_showVlmLog()
 {
     if (mainW->getSelectedBoat()->get_boatType()==BOAT_VLM)
+    {
+        vlmLogViewer = new DialogVlmLog(this);
         vlmLogViewer->initWithBoat( (boatVLM*)mainW->getSelectedBoat() );
+    }
     else {
         QMessageBox::warning(0,QObject::tr("Voir Vlm Logs"),
              QString(QObject::tr("Pas de bateau VLM actif.")));
@@ -2018,7 +2012,10 @@ void myCentralWidget::slot_fetchVLMTrack()
 {
     Player * cur_player=this->getPlayer();
     if(cur_player)
+    {
+        vlmTrackRetriever = new DialogDownloadTracks(mainW,this,this->getInet());
         vlmTrackRetriever->init();
+    }
     else {
         QMessageBox::warning(0,QObject::tr("Telecharger traces VLM"),
              QString(QObject::tr("Pas de compte VLM actif.")));
@@ -4305,11 +4302,17 @@ void myCentralWidget::slot_boatDialog(void)
     {
         if(currentPlayer->getType()==BOAT_VLM)
         {
+            boatAcc = new DialogBoatAccount(proj,mainW,this,inetManager);
             if(boatAcc->initList(boat_list,currentPlayer))
                 boatAcc->exec();
+            delete boatAcc;
         }
         else
+        {
+            realBoatConfig = new DialogRealBoatConfig(this);
             realBoatConfig->launch(realBoat);
+            delete realBoatConfig;
+        }
     }
 
 }
@@ -4347,10 +4350,12 @@ void myCentralWidget::manageAccount(bool * res)
     else if(currentPlayer && currentPlayer->getType()!=BOAT_VLM)
         realBoat->playerDeActivated();
 
+    playerAcc = new DialogPlayerAccount(proj,mainW,this,inetManager);
     playerAcc->initList(&player_list);
     int tmp_res= playerAcc->exec();
     if(res)
         *res=(tmp_res == QDialog::Accepted);
+    delete playerAcc;
 }
 
 void myCentralWidget::updatePlayer(Player * player)
@@ -4462,7 +4467,11 @@ void myCentralWidget::slot_delRace_list(raceData* race)
 
 void myCentralWidget::slot_raceDialog(void)
 {
+    raceDialog = new DialogRace(mainW,this,inetManager);
+    connect(raceDialog,SIGNAL(readRace()),this,SLOT(slot_readRaceData()));
+    connect(raceDialog,SIGNAL(writeBoat()),this,SLOT(slot_writeBoatData()));
     raceDialog->initList(*boat_list,race_list);
+    //raceDialog->deleteLater();
 }
 
 void myCentralWidget::slot_readRaceData(void)

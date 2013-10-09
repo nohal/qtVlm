@@ -22,6 +22,7 @@ public:
     QString getAuthLogin(bool * ok=NULL);
     QString getAuthPass(bool * ok=NULL);
     void accept();
+    void done(int result);
 
     void authFailed(void);
     void inetError(void);

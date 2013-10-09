@@ -189,6 +189,7 @@ public slots:
 
 
         void slot_removeRoute();
+        void slot_execDialogProxy();
 signals:
         void setChangeStatus(bool status,bool pilototo,bool syncBtn);
         void outDatedVlmData(void);
