@@ -20,7 +20,7 @@ INCLUDEPATH += objs \
     libs/libbsb \
     libs/miniunz \
     libs/g2clib-1.4.0 \
-    libs/jasper/include
+    libs/jasper/include \
 #    libs/libgps \
     .
 
