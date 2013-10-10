@@ -168,6 +168,7 @@ public:
     QAction *acView_FrzRainCateg;
     QAction *acView_CAPEsfc;
     QAction *acView_CINsfc;
+    QAction * acView_Waves;
 
     QMap<int,QAction*> gribDataActionMap;
 

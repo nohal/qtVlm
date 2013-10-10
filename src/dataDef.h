@@ -281,9 +281,11 @@ enum {
     DATA_CLOUD_TOT,        /* %      */
     DATA_FRZRAIN_CATEG,    /* 1=yes 0=no */
     DATA_SNOW_CATEG,       /* 1=yes 0=no */
-    DATA_CIN, 		      /* J/kg   */
-    DATA_CAPE, 		      /* J/kg   */
+    DATA_CIN, 		       /* J/kg   */
+    DATA_CAPE, 		       /* J/kg   */
+    DATA_WAVES,            /* m */
     DATA_MAX
+
 };
 
 #define DATA_LV_NOTDEF     -1

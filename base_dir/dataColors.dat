@@ -30,6 +30,35 @@
 			<color>75;140;50;140</color>
 		</colorData>
 		<colorData>
+			<name>waves_m</name>
+			<param>1;0</param>
+			<color>0;40;140;255</color>
+			<color>0.2;0;175;255</color>
+			<color>0.4;0;220;225</color>
+			<color>0.6;0;247;176</color>
+			<color>0.8;0;234;156</color>
+			<color>1;130;240;89</color>
+			<color>1.2;240;245;3</color>
+			<color>1.4;255;237;0</color>
+			<color>1.6;255;219;0</color>
+			<color>1.8;255;199;0</color>
+			<color>2;255;180;0</color>
+			<color>2.2;255;152;0</color>
+			<color>2.4;255;126;0</color>
+			<color>2.6;247;120;0</color>
+			<color>2.8;236;120;20</color>
+			<color>3;228;113;30</color>
+			<color>3.5;224;97;40</color>
+			<color>4;220;81;50</color>
+			<color>4.5;213;69;60</color>
+			<color>5;205;58;70</color>
+			<color>6;190;44;80</color>
+			<color>7;180;26;90</color>
+			<color>8;170;20;100</color>
+			<color>9;150;40;120</color>
+			<color>10;140;50;140</color>
+		</colorData>
+		<colorData>
 			<name>binary</name>
 			<param>1;0</param>
 			<color>0;255;255;255</color>

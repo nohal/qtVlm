@@ -188,6 +188,8 @@ MenuBar::MenuBar(MainWindow *parent)
                 gribDataActionMap.insert(MapDataDrawer::drawCAPEsfc,acView_CAPEsfc);
                 acView_CINsfc = addActionCheck(menuGroupColorMap, tr("CIN (surface)"), "", "");
                 gribDataActionMap.insert(MapDataDrawer::drawCINsfc,acView_CINsfc);
+                acView_Waves = addActionCheck(menuGroupColorMap, tr("Waves"), "", "");
+                gribDataActionMap.insert(MapDataDrawer::drawWaves,acView_Waves);
                 acView_GroupColorMap->addAction(acView_WindColors);
                 acView_GroupColorMap->addAction(acView_CurrentColors);
                 acView_GroupColorMap->addAction(acView_RainColors);
@@ -201,6 +203,7 @@ MenuBar::MenuBar(MainWindow *parent)
                 acView_GroupColorMap->addAction(acView_FrzRainCateg);
                 acView_GroupColorMap->addAction(acView_CAPEsfc);
                 acView_GroupColorMap->addAction(acView_CINsfc);
+                acView_GroupColorMap->addAction(acView_Waves);
         menuGrib->addMenu(menuGroupColorMap);
         menuGrib->addSeparator();
 

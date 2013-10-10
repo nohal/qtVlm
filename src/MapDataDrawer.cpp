@@ -78,6 +78,7 @@ void MapDataDrawer::initDataCodes(void) {
     dataCodeMap.insert(drawDewpoint,DataCode(DATA_DEWPOINT,DATA_LV_ABOV_GND,2));
     dataCodeMap.insert(drawDeltaDewpoint,DataCode(DATA_DEWPOINT,DATA_LV_ABOV_GND,2));
     dataCodeMap.insert(drawCINsfc,DataCode(DATA_CIN,DATA_LV_GND_SURF,0));
+    dataCodeMap.insert(drawWaves,DataCode(DATA_WAVES,DATA_LV_GND_SURF,0));
 }
 
 
@@ -154,6 +155,10 @@ QColor MapDataDrawer::getCurrentColorStatic(const double &v, const bool &smooth)
 
 QRgb MapDataDrawer::getBinaryColor(double v, bool smooth) {
     return DataColors::get_color("binary",v,smooth);
+}
+
+QRgb MapDataDrawer::getWavesColor(double v, bool smooth) {
+    return DataColors::get_color("waves_m",v,smooth);
 }
 
 //--------------------------------------------------------------------------
@@ -552,6 +557,15 @@ void MapDataDrawer::draw_WIND_Color(QPainter &pnt, const Projection *proj, bool 
                                  &tPrev,&tNxt,&recU1,&recV1,&recU2,&recV2))
         drawColorMapGeneric_2D(pnt,proj,smooth, showWindArrows,barbules,currentDate,tPrev,tNxt,
                                recU1,recV1,recU2,recV2,"wind_kts");
+}
+
+void MapDataDrawer::draw_Waves_Color(QPainter &pnt, const Projection *proj, bool smooth) {
+    GribRecord *rec_prev,*rec_nxt;
+    time_t tPrev,tNxt;
+    time_t currentDate=dataManager->get_currentDate();
+    if(dataManager->get_data1D(DATA_WAVES,DATA_LV_GND_SURF,0,currentDate,
+                                 &tPrev,&tNxt,&rec_prev,&rec_nxt))
+        drawColorMapGeneric_1D(pnt,proj,smooth, currentDate,tPrev,tNxt,rec_prev,rec_nxt, &MapDataDrawer::getWavesColor);
 }
 
 void MapDataDrawer::draw_WIND_Color_OLD(QPainter &pnt, const Projection *proj, bool smooth,bool showWindArrows,bool barbules) {

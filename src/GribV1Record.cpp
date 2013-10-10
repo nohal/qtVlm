@@ -879,6 +879,7 @@ void GribV1Record::init_conversionMatrix(void) {
     DATA_TO_GRBV1[DATA_SNOW_CATEG] = 143;
     DATA_TO_GRBV1[DATA_CIN] = 156;
     DATA_TO_GRBV1[DATA_CAPE] = 157;
+    DATA_TO_GRBV1[DATA_WAVES] = 100;
 
     /* init LV DATA=>GRB */
     DATA_TO_GRBV1_LV[DATA_LV_GND_SURF]=1;

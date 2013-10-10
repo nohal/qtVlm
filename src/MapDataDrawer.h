@@ -88,6 +88,8 @@ class MapDataDrawer
         // Carte de l'ecart temperature-point de rosee
         void draw_DeltaDewpoint_Color(QPainter &pnt, const Projection *proj, bool smooth);
 
+        void draw_Waves_Color(QPainter &pnt, const Projection *proj, bool smooth);
+
         void draw_PRESSURE_MinMax (QPainter &pnt, const Projection *proj);
 
         void  draw_Isobars (QPainter &pnt, const Projection *proj);
@@ -122,7 +124,8 @@ class MapDataDrawer
                  drawTempMax,
                  drawDewpoint,
                  drawDeltaDewpoint,
-                 drawCINsfc
+                 drawCINsfc,
+                 drawWaves
         };
 
     private:
@@ -177,6 +180,7 @@ class MapDataDrawer
 
         QRgb   getWindColor        (const double v, const bool smooth);
         QRgb   getCurrentColor     (const double v, const bool smooth);
+        QRgb   getWavesColor     (const double v, const bool smooth);
         QRgb   getTemperatureColor (double v, bool smooth);
         QRgb   getRainColor        (double v, bool smooth);
         QRgb   getSnowDepthColor   (double v, bool smooth);

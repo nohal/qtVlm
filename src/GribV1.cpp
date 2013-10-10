@@ -294,6 +294,9 @@ bool GribV1::readAllGribRecords(const char * fname,int compressMode) {
                             && rec->get_levelType()==DATA_LV_GND_SURF && rec->get_levelValue()==0)
                         || (rec->get_dataType()==DATA_CIN
                                 && rec->get_levelType()==DATA_LV_GND_SURF && rec->get_levelValue()==0)
+                        //-----------------------------------------
+                        || (rec->get_dataType()==DATA_WAVES
+                            && rec->get_levelType()==DATA_LV_GND_SURF && rec->get_levelValue()==0)
                         )
                 {
                     recAdded=true;
