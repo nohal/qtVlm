@@ -3714,6 +3714,25 @@ void myCentralWidget::treatRoute(ROUTE* route)
                         break;
                     }
                 }
+                double lat0,lon0,lat1,lon1;
+                bool onlySelected=false;
+                QList<POI*> selectedPOIs;
+                if(selection->getZone(&lon0,&lat0,&lon1,&lat1))
+                {
+                    onlySelected=true;
+                    double x0,y0,x1,y1;
+                    proj->map2screenDouble(lon0,lat0,&x0,&y0);
+                    proj->map2screenDouble(lon1,lat1,&x1,&y1);
+                    QRectF selRect=QRectF(QPointF(x0,y0),QPointF(x1,y1)).normalized();
+                    for (int poiN=0;poiN<route->getPoiList().count()-1;++poiN)
+                    {
+                        POI * poi = route->getPoiList().at(poiN);
+                        double x,y;
+                        proj->map2screenDouble(poi->getLongitude(),poi->getLatitude(),&x,&y);
+                        if(selRect.contains(x,y))
+                            selectedPOIs.append(poi);
+                    }
+                }
                 for (int maxLoop=0;maxLoop<10;++maxLoop)
                 {
                     if(abortRequest) break;
@@ -3728,6 +3747,7 @@ void myCentralWidget::treatRoute(ROUTE* route)
                         POI*    poi = route->getPoiList().at(poiN);
                         if (!poi->getHas_eta()) break;
                         if(poi->getNotSimplificable()) continue;
+                        if(onlySelected && !selectedPOIs.contains(poi)) continue;
                         poi->slot_finePosit(true);
                     }
                     if(abortRequest) break;
@@ -3858,11 +3878,31 @@ void myCentralWidget::doSimplifyRoute(ROUTE * route, bool fast)
             p.setMaximum(pois.count()-2);
             p.setValue(0);
         }
+        double lat0,lon0,lat1,lon1;
+        bool onlySelected=false;
+        QList<POI*> selectedPOIs;
+        if(selection->getZone(&lon0,&lat0,&lon1,&lat1))
+        {
+            onlySelected=true;
+            double x0,y0,x1,y1;
+            proj->map2screenDouble(lon0,lat0,&x0,&y0);
+            proj->map2screenDouble(lon1,lat1,&x1,&y1);
+            QRectF selRect=QRectF(QPointF(x0,y0),QPointF(x1,y1)).normalized();
+            for (int n=firstPOI;n<pois.size()-2;++n)
+            {
+                POI * poi = pois.at(n);
+                double x,y;
+                proj->map2screenDouble(poi->getLongitude(),poi->getLatitude(),&x,&y);
+                if(selRect.contains(x,y))
+                    selectedPOIs.append(poi);
+            }
+        }
         for (int n=firstPOI;n<pois.count()-2;++n)
         {
             if(abortRequest) break;
             POI *poi=pois.at(n);
             if(poi->getNotSimplificable()) continue;
+            if(onlySelected && !selectedPOIs.contains(poi)) continue;
             poi->setRoute(NULL);
             QApplication::processEvents();
             if(!route->getHas_eta())
@@ -3898,6 +3938,7 @@ void myCentralWidget::doSimplifyRoute(ROUTE * route, bool fast)
             if(abortRequest) break;
             POI *poi=pois.at(n);
             if(poi->getNotSimplificable()) continue;
+            if(onlySelected && !selectedPOIs.contains(poi)) continue;
             poi->setRoute(NULL);
             QApplication::processEvents();
             if(!route->getHas_eta())
@@ -3936,8 +3977,10 @@ void myCentralWidget::doSimplifyRoute(ROUTE * route, bool fast)
             if(abortRequest) break;
             POI *poi1=pois.at(n);
             if(poi1->getNotSimplificable()) continue;
+            if(onlySelected && !selectedPOIs.contains(poi1)) continue;
             POI *poi2=pois.at(n+1);
             if(poi2->getNotSimplificable()) continue;
+            if(onlySelected && !selectedPOIs.contains(poi2)) continue;
             route->setTemp(true);
             poi1->setRoute(NULL);
             route->setTemp(false);
@@ -3988,10 +4031,13 @@ void myCentralWidget::doSimplifyRoute(ROUTE * route, bool fast)
             if(abortRequest) break;
             POI *poi1=pois.at(n);
             if(poi1->getNotSimplificable()) continue;
+            if(onlySelected && !selectedPOIs.contains(poi1)) continue;
             POI *poi2=pois.at(n+1);
             if(poi2->getNotSimplificable()) continue;
+            if(onlySelected && !selectedPOIs.contains(poi2)) continue;
             POI *poi3=pois.at(n+2);
             if(poi3->getNotSimplificable()) continue;
+            if(onlySelected && !selectedPOIs.contains(poi3)) continue;
             route->setTemp(true);
             poi1->setRoute(NULL);
             poi2->setRoute(NULL);
