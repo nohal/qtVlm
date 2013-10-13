@@ -408,6 +408,19 @@ void GribV2Record::init_conversionMatrix(void) {
     DATA_TO_GRBV2[DATA_SNOW_CATEG] = grb2DataType(0,1,195);
     DATA_TO_GRBV2[DATA_CIN] = grb2DataType(0,7,7);
     DATA_TO_GRBV2[DATA_CAPE] = grb2DataType(0,7,6);
+    // waves
+    DATA_TO_GRBV2[DATA_WAVES_SIG_HGT_COMB] = grb2DataType(10,0,3);
+    DATA_TO_GRBV2[DATA_WAVES_WND_DIR] = grb2DataType(10,0,4);
+    DATA_TO_GRBV2[DATA_WAVES_WND_HGT] = grb2DataType(10,0,5);
+    DATA_TO_GRBV2[DATA_WAVES_WND_PERIOD] = grb2DataType(10,0,6);
+    DATA_TO_GRBV2[DATA_WAVES_SWL_DIR] = grb2DataType(10,0,7);
+    DATA_TO_GRBV2[DATA_WAVES_SWL_HGT] = grb2DataType(10,0,8);
+    DATA_TO_GRBV2[DATA_WAVES_SWL_PERIOD] = grb2DataType(10,0,9);
+    DATA_TO_GRBV2[DATA_WAVES_PRIM_DIR] = grb2DataType(10,0,10);
+    DATA_TO_GRBV2[DATA_WAVES_PRIM_PERIOD] = grb2DataType(10,0,11);
+    DATA_TO_GRBV2[DATA_WAVES_SEC_DIR] = grb2DataType(10,0,12);
+    DATA_TO_GRBV2[DATA_WAVES_SEC_PERIOD] = grb2DataType(10,0,13);
+
 
     /* init LV DATA=>GRB */
     DATA_TO_GRBV2_LV[DATA_LV_GND_SURF]=1;
