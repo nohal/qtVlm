@@ -38,6 +38,7 @@ struct GribThreadData
     DataManager * dataManager;
     MapDataDrawer * mapDataDrawer;
     ColorElement * colorElement;
+    bool UV;
 };
 Q_DECLARE_TYPEINFO(GribThreadData,Q_PRIMITIVE_TYPE);
 struct GribThreadResult
@@ -61,12 +62,12 @@ class MapDataDrawer
                                                        bool showWindArrows,bool barbules,
                                                        time_t now,time_t t1,time_t t2,
                                                        GribRecord * recU1,GribRecord * recV1,GribRecord * recU2,GribRecord * recV2,
-                                                       QString color_name);
+                                                       QString color_name,bool UV,int interpolation_mode=INTERPOLATION_UKN);
         void drawColorMapGeneric_2D_OLD(QPainter &pnt, const Projection *proj, bool smooth,
-                                                       bool showWindArrows,bool barbules,
-                                                       time_t now,time_t t1,time_t t2,
-                                                       GribRecord * recU1,GribRecord * recV1,GribRecord * recU2,GribRecord * recV2,
-                                                       QString color_name);
+                                                       bool showWindArrows, bool barbules,
+                                                       time_t now, time_t t1, time_t t2,
+                                                       GribRecord * recU1, GribRecord * recV1, GribRecord * recU2, GribRecord * recV2,
+                                                       QString color_name, bool UV, int interpolation_mode=INTERPOLATION_UKN);
 
         // Carte de couleurs des precipitations
         void draw_WIND_Color(QPainter &pnt, const Projection *proj, bool smooth,bool showWindArrows,bool barbules);
@@ -88,7 +89,11 @@ class MapDataDrawer
         // Carte de l'ecart temperature-point de rosee
         void draw_DeltaDewpoint_Color(QPainter &pnt, const Projection *proj, bool smooth);
 
-        void draw_Waves_Color(QPainter &pnt, const Projection *proj, bool smooth);
+        void draw_wavesSigHgtComb(QPainter &pnt, const Projection *proj, bool smooth);
+        void draw_wavesWnd(QPainter &pnt, const Projection *proj, bool smooth,bool showArrows);
+        void draw_wavesSwl(QPainter &pnt, const Projection *proj, bool smooth,bool showArrows);
+        void draw_wavesMax(QPainter &pnt, const Projection *proj, bool smooth,bool showArrows);
+        void draw_wavesWhiteCap(QPainter &pnt, const Projection *proj, bool smooth);
 
         void draw_PRESSURE_MinMax (QPainter &pnt, const Projection *proj);
 
@@ -109,23 +114,30 @@ class MapDataDrawer
         QMap<int,DataCode> * get_dataCodeMap(void) { return &dataCodeMap; }
 
         enum DrawGribPlainDataMode {
-                 drawNone=0,
-                 drawWind,
-                 drawCurrent,
-                 drawCloud,
-                 drawRain,
-                 drawCAPEsfc,
-                 drawSnowCateg,
-                 drawFrzRainCateg,
-                 drawHumid,
-                 drawTemp,
-                 drawTempPot,
-                 drawTempMin,
-                 drawTempMax,
-                 drawDewpoint,
-                 drawDeltaDewpoint,
-                 drawCINsfc,
-                 drawWaves
+            drawNone=0,
+            drawWind,
+            drawCurrent,
+            drawCloud,
+            drawRain,
+            drawCAPEsfc,
+            drawSnowCateg,
+            drawFrzRainCateg,
+            drawHumid,
+            drawTemp,
+            drawTempPot,
+            drawTempMin,
+            drawTempMax,
+            drawDewpoint,
+            drawDeltaDewpoint,
+            drawCINsfc,
+            drawWavesSigHgtComb,
+            drawWavesWnd,
+            drawWavesSwl,
+            drawWavesPrimDir,
+            drawWavesSecDir,
+            drawWavesWhiteCap,
+            drawWavesMax,
+            MAX_DRAWGRIB_DATAMODE
         };
 
     private:
@@ -178,19 +190,20 @@ class MapDataDrawer
                     double si, double co, int di, int dj, int b);
 
 
-        QRgb   getWindColor        (const double v, const bool smooth);
-        QRgb   getCurrentColor     (const double v, const bool smooth);
-        QRgb   getWavesColor     (const double v, const bool smooth);
-        QRgb   getTemperatureColor (double v, bool smooth);
-        QRgb   getRainColor        (double v, bool smooth);
-        QRgb   getSnowDepthColor   (double v, bool smooth);
-        QRgb   getCloudColor       (double v, bool smooth);
-        QRgb   getCAPEColor  (double v, bool smooth);
-        QRgb   getCINColor  (double v, bool smooth);
+        QRgb   getWindColor              (const double v, const bool smooth);
+        QRgb   getCurrentColor           (const double v, const bool smooth);
+        QRgb   getWavesColor             (const double v, const bool smooth);
+        QRgb   getWavesWhiteCapColor     (double v, bool smooth);
+        QRgb   getTemperatureColor       (double v, bool smooth);
+        QRgb   getRainColor              (double v, bool smooth);
+        QRgb   getSnowDepthColor         (double v, bool smooth);
+        QRgb   getCloudColor             (double v, bool smooth);
+        QRgb   getCAPEColor              (double v, bool smooth);
+        QRgb   getCINColor               (double v, bool smooth);
         QRgb   getDeltaTemperaturesColor (double v, bool smooth);
-        QRgb   getHumidColor       (double v, bool smooth);
-        QRgb   getPressureColor    (double v, bool smooth);
-        QRgb   getBinaryColor    (double v, bool smooth);
+        QRgb   getHumidColor             (double v, bool smooth);
+        QRgb   getPressureColor          (double v, bool smooth);
+        QRgb   getBinaryColor            (double v, bool smooth);
 
 
         QMap<int,DataCode> dataCodeMap;

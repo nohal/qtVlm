@@ -29,6 +29,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 QMap<QString,ColorElement*> colorMap;
 
+#define MAX_CACHE 1000
+#define DEFAULT_CACHE_COEF 10
+
 /**********************************************************************
  * Datacolors
  *********************************************************************/
@@ -52,6 +55,7 @@ ColorElement * DataColors::get_colorElement(QString type) {
 #define COLOR_TYPENAME     "name"
 #define COLOR_DATAPARAM    "param"
 #define COLOR_DATA         "color"
+#define COLOR_CACHECOEF    "cacheCoef"
 
 
 void DataColors::load_colors(int transparence) {
@@ -98,7 +102,7 @@ void DataColors::load_colors(int transparence) {
                             {
                                 QString name = dataNode.toText().data();
                                 if(!colorMap.contains(name)) {
-                                    curElement = new ColorElement(transparence);
+                                    curElement = new ColorElement(name,transparence);
                                     colorMap.insert(name,curElement);
                                 }
                                 else {
@@ -127,6 +131,14 @@ void DataColors::load_colors(int transparence) {
                                     curElement->add_color(dataValues[0].toDouble(),
                                             qRgb(dataValues[1].toInt(),dataValues[2].toInt(),dataValues[3].toInt()));
                                 }
+                            }
+                        }
+                        if(node.toElement().tagName() == COLOR_CACHECOEF) {
+                            if(!curElement) continue;
+                            QDomNode dataNode = node.firstChild();
+                            if(dataNode.nodeType() == QDomNode::TextNode)
+                            {
+                                curElement->set_cacheCoef(dataNode.toText().data().toInt());
                             }
                         }
                         node=node.nextSibling();
@@ -168,8 +180,10 @@ void DataColors::print_data(void) {
  * Color Element
  *********************************************************************/
 
-ColorElement::ColorElement(int transparence) {
+ColorElement::ColorElement(QString name, int transparence) {
+    this->name=name;
     this->transparence=transparence;
+    cacheCoef=DEFAULT_CACHE_COEF;
 }
 
 QRgb ColorElement::get_color(double v, bool smooth) {
@@ -204,11 +218,26 @@ QRgb ColorElement::get_color(double v, bool smooth) {
     }
 
 }
+
 void ColorElement::loadCache(const bool &smooth)
 {
+#if 0
     colorCache=new QRgb[1000];
     for (double i=0;i<1000;++i)
         colorCache[qRound(i)]=get_color(i/10.0,smooth);
+#else
+    int nbVal = maxVal-minVal;
+    curCacheCoef=cacheCoef;
+    if(nbVal*cacheCoef>MAX_CACHE) {
+        curCacheCoef=(int)(MAX_CACHE/nbVal);
+        qWarning() << "Load cache: needed cache too small: color= " << name << ", size=" << nbVal*curCacheCoef << " (MAX=" << MAX_CACHE << ")";
+    }
+    colorCache=new QRgb[nbVal*(int)curCacheCoef+1];
+    for (double i=minVal;i<(nbVal*curCacheCoef+1);++i)
+        colorCache[qRound(i)]=get_color(i/((double)curCacheCoef),smooth);
+
+
+#endif
 }
 void ColorElement::clearCache()
 {
@@ -217,7 +246,7 @@ void ColorElement::clearCache()
 }
 
 QRgb ColorElement::get_colorCached(const double &v) const {
-    int key=qRound(v*10.0);
+    int key=qRound(v*curCacheCoef);
     return colorCache[key];
 }
 

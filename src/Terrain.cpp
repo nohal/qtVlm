@@ -84,6 +84,7 @@ Terrain::Terrain(myCentralWidget *centralWidget, Projection *proj_) : QGraphicsW
 
     colorMapSmooth = Settings::getSetting("colorMapSmooth", true).toBool();
     showWindArrows  = Settings::getSetting("showWindArrows", true).toBool();
+    showWavesArrows  = Settings::getSetting("showWavesArrows", true).toBool();
     showBarbules = Settings::getSetting("showBarbules", true).toBool();
 
     showIsobars  = Settings::getSetting("showIsobars", true).toBool();
@@ -503,8 +504,7 @@ void Terrain::drawGrib(QPainter &pnt)
 {
     MapDataDrawer * mapDataDrawer=centralWidget->get_mapDataDrawer();
         //QTime t1 = QTime::currentTime();
-        //qWarning() << "Grib mode: " << colorMapMode << " (grib=" << MapDataDrawer::drawWind << ")";
-        // grib->draw_WIND_Color(pnt, proj, colorMapSmooth,showWindColorMap,showWindArrows,showBarbules);
+        //qWarning() << "Grib mode: " << colorMapMode ;
         switch (colorMapMode)
         {
                 case MapDataDrawer::drawWind :
@@ -563,9 +563,25 @@ void Terrain::drawGrib(QPainter &pnt)
                         windArrowsColor.setRgb(100, 80, 80);
                         mapDataDrawer->draw_CINsfc(pnt, proj, colorMapSmooth);
                         break;
-                case MapDataDrawer::drawWaves :
+                case MapDataDrawer::drawWavesSigHgtComb :
                         windArrowsColor.setRgb(255, 255, 255);
-                        mapDataDrawer->draw_Waves_Color(pnt, proj, colorMapSmooth);
+                        mapDataDrawer->draw_wavesSigHgtComb(pnt, proj, colorMapSmooth);
+                        break;
+                case MapDataDrawer::drawWavesWnd :
+                        windArrowsColor.setRgb(255, 255, 255);
+                        mapDataDrawer->draw_wavesWnd(pnt, proj, colorMapSmooth,showWavesArrows);
+                        break;
+                case MapDataDrawer::drawWavesSwl :
+                        windArrowsColor.setRgb(255, 255, 255);
+                        mapDataDrawer->draw_wavesSwl(pnt, proj, colorMapSmooth,showWavesArrows);
+                        break;
+                case MapDataDrawer::drawWavesMax :
+                        windArrowsColor.setRgb(255, 255, 255);
+                        mapDataDrawer->draw_wavesMax(pnt, proj, colorMapSmooth,showWavesArrows);
+                        break;
+                case MapDataDrawer::drawWavesWhiteCap :
+                        windArrowsColor.setRgb(255, 255, 255);
+                        mapDataDrawer->draw_wavesWhiteCap(pnt, proj, colorMapSmooth);
                         break;
         }
         //printf("time show ColorMap = %d ms\n", t1.elapsed());
@@ -701,6 +717,15 @@ void Terrain::setDrawWindArrows (bool b) {
     if (showWindArrows != b) {
         showWindArrows = b;
         Settings::setSetting("showWindArrows", b);
+        mustRedraw = true;
+        indicateWaitingMap();
+    }
+}
+//-------------------------------------------------------
+void Terrain::setDrawWavesArrows (bool b) {
+    if (showWavesArrows != b) {
+        showWavesArrows = b;
+        Settings::setSetting("showWavesArrows", b);
         mustRedraw = true;
         indicateWaitingMap();
     }

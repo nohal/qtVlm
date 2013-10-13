@@ -30,7 +30,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 class ColorElement {
     public:
-        ColorElement(int transparence);
+        ColorElement(QString name,int transparence);
 
         QRgb get_color(double v, bool smooth);
 
@@ -42,6 +42,8 @@ class ColorElement {
         FCT_GET(double,coef)
         FCT_GET(double,offset)
 
+        FCT_SETGET(int,cacheCoef)
+
 
         void print_data(void);
 
@@ -49,7 +51,12 @@ class ColorElement {
         void clearCache();
 private:
         QMap<double,QRgb> colorMap;
+
         QRgb * colorCache;
+        int cacheCoef;
+        double curCacheCoef;
+
+        QString name;
 
         double minVal;
         double maxVal;

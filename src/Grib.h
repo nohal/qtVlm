@@ -94,10 +94,10 @@ class Grib
                                        double d_long, double d_lat, time_t now, double *res);
         bool getInterpolatedValue_2D(int dataType1,int dataType2,int levelType,int levelValue,
                                            double d_long, double d_lat, time_t now,double * u, double * v,
-                                           int interpolation_type,bool debug=false);
+                                           int interpolation_type,bool UV,bool debug=false);
         static bool interpolateValue_2D(double d_long, double d_lat, time_t now, time_t t1,time_t t2,
                                                       GribRecord *recU1,GribRecord *recV1,GribRecord *recU2,GribRecord *recV2,
-                                                      double * u, double * v,int interpolation_type,bool debug=false);
+                                                      double * u, double * v,int interpolation_type,bool UV,bool debug=false);
 
     protected:
         bool   ok;

@@ -168,7 +168,14 @@ public:
     QAction *acView_FrzRainCateg;
     QAction *acView_CAPEsfc;
     QAction *acView_CINsfc;
-    QAction * acView_Waves;
+    QMenu   *menuGroupWaves;
+    //ZeroOneActionGroup *acView_GroupWaves;
+    QAction * acView_WavesSigHgtComb;
+    QAction * acView_WavesWnd;
+    QAction * acView_WavesSwl;
+    QAction * acView_WavesMax;
+    QAction * acView_WavesWhiteCap;
+    QAction * acView_WavesArrow;
 
     QMap<int,QAction*> gribDataActionMap;
 

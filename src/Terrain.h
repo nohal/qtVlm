@@ -69,6 +69,7 @@ public slots :
 
     void setColorMapSmooth (bool);
     void setDrawWindArrows    (bool);
+    void setDrawWavesArrows (bool b);
     void setBarbules          (bool);
     void setCitiesNamesLevel  (int level);
     void setDrawIsobars       (bool);
@@ -155,6 +156,7 @@ private:
     bool  showWindColorMap;
     bool  colorMapSmooth;
     bool  showWindArrows;
+    bool  showWavesArrows;
     bool  showBarbules;
     int   showCitiesNamesLevel;
     bool  showCountriesNames;

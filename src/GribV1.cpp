@@ -295,7 +295,22 @@ bool GribV1::readAllGribRecords(const char * fname,int compressMode) {
                         || (rec->get_dataType()==DATA_CIN
                                 && rec->get_levelType()==DATA_LV_GND_SURF && rec->get_levelValue()==0)
                         //-----------------------------------------
-                        || (rec->get_dataType()==DATA_WAVES
+                        || ((rec->get_dataType()==DATA_WAVES_SIG_HGT_COMB
+                             || rec->get_dataType()==DATA_WAVES_WND_DIR
+                             || rec->get_dataType()==DATA_WAVES_WND_HGT
+                             || rec->get_dataType()==DATA_WAVES_WND_PERIOD
+                             || rec->get_dataType()==DATA_WAVES_SWL_DIR
+                             || rec->get_dataType()==DATA_WAVES_SWL_HGT
+                             || rec->get_dataType()==DATA_WAVES_SWL_PERIOD
+                             || rec->get_dataType()==DATA_WAVES_PRIM_DIR
+                             || rec->get_dataType()==DATA_WAVES_PRIM_PERIOD
+                             || rec->get_dataType()==DATA_WAVES_SEC_DIR
+                             || rec->get_dataType()==DATA_WAVES_SEC_PERIOD
+                             || rec->get_dataType()==DATA_WAVES_WHITE_CAP
+                             || rec->get_dataType()==DATA_WAVES_MAX_DIR
+                             || rec->get_dataType()==DATA_WAVES_MAX_HGT
+                             || rec->get_dataType()==DATA_WAVES_MAX_PERIOD
+                             )
                             && rec->get_levelType()==DATA_LV_GND_SURF && rec->get_levelValue()==0)
                         )
                 {

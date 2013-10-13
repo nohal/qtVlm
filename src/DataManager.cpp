@@ -252,7 +252,7 @@ double DataManager::getInterpolatedValue_1D(int dataType,int levelType,int level
 
 bool DataManager::getInterpolatedValue_2D(int dataType1,int dataType2,int levelType,int levelValue,
                                    double d_long, double d_lat, time_t now,double * u, double * v,
-                                   int interpolation_type,bool debug) {
+                                   int interpolation_type,bool UV,bool debug) {
     if(!u || !v) return false;
 
     if(forceWind && dataType1==DATA_WIND_VX) {
@@ -271,10 +271,10 @@ bool DataManager::getInterpolatedValue_2D(int dataType1,int dataType2,int levelT
         interpolation_type=interpolationMode;
 
     if(grib && grib->isOk()) {
-        if(grib->getInterpolatedValue_2D(dataType1,dataType2,levelType,levelValue,d_long,d_lat,now,u,v,interpolation_type,debug))
+        if(grib->getInterpolatedValue_2D(dataType1,dataType2,levelType,levelValue,d_long,d_lat,now,u,v,interpolation_type,UV,debug))
             return true;
         else if(gribCurrent && gribCurrent->isOk())
-            if(gribCurrent->getInterpolatedValue_2D(dataType1,dataType2,levelType,levelValue,d_long,d_lat,now,u,v,interpolation_type,debug))
+            if(gribCurrent->getInterpolatedValue_2D(dataType1,dataType2,levelType,levelValue,d_long,d_lat,now,u,v,interpolation_type,UV,debug))
                 return true;
     }
     return false;
@@ -292,7 +292,7 @@ bool DataManager::getInterpolatedWind(double d_long, double d_lat, time_t now,do
         interpolation_type=interpolationMode;
 
     return getInterpolatedValue_2D(DATA_WIND_VX,DATA_WIND_VY,DATA_LV_ABOV_GND,10,
-                                   d_long,d_lat,now,u,v,interpolation_type,debug);
+                                   d_long,d_lat,now,u,v,interpolation_type,true,debug);
 }
 
 bool DataManager::getInterpolatedCurrent(double d_long, double d_lat, time_t now,double * u, double * v,
@@ -307,7 +307,7 @@ bool DataManager::getInterpolatedCurrent(double d_long, double d_lat, time_t now
         interpolation_type=interpolationMode;
 
     return getInterpolatedValue_2D(DATA_CURRENT_VX,DATA_CURRENT_VY,DATA_LV_MSL,0,
-                                   d_long,d_lat,now,u,v,interpolation_type,debug);
+                                   d_long,d_lat,now,u,v,interpolation_type,true,debug);
 }
 
 bool DataManager::getZoneExtension (int gribType,double *x0,double *y0, double *x1,double *y1) {

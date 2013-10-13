@@ -60,9 +60,9 @@ class DataManager
 
         double getInterpolatedValue_1D(int dataType,int levelType,int levelValue,
                                        double d_long, double d_lat, time_t now);
-        bool getInterpolatedValue_2D(int dataType1,int dataType2,int levelType,int levelValue,
-                                           double d_long, double d_lat, time_t now,double * u, double * v,
-                                           int interpolation_type=INTERPOLATION_UKN,bool debug=false);
+        bool getInterpolatedValue_2D(int dataType1, int dataType2, int levelType, int levelValue,
+                                           double d_long, double d_lat, time_t now, double * u, double * v,
+                                           int interpolation_type=INTERPOLATION_UKN, bool UV=true, bool debug=false);
         bool getInterpolatedWind(double d_long, double d_lat, time_t now,double * u, double * v,
                                               int interpolation_type=INTERPOLATION_UKN,bool debug=false);
         bool getInterpolatedCurrent(double d_long, double d_lat, time_t now,double * u, double * v,

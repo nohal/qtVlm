@@ -141,7 +141,7 @@ void DialogGribValidation::inputChanged(void)
     }
 
     ok=dataManager->getInterpolatedValue_2D(DATA_WIND_VX,DATA_WIND_VY,DATA_LV_ABOV_GND,10,lon,lat,tstamp,&vit,&ang,
-                                                      type->currentIndex()+1,this->chk_debug->checkState()==Qt::Checked);
+                                                      type->currentIndex()+1,true,this->chk_debug->checkState()==Qt::Checked);
     //qWarning() << "Interpolation: v=" << vit << ", ang=" << ang << "(ok=" << ok << ")";
 
     vitesse->setText(QString().setNum(vit));

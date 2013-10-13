@@ -246,6 +246,17 @@ void  GribV1Record::translateDataType()
     else if (idCenter==255 && idModel==2 && idGrid==255)
     {
     }
+    // FNMOC WW3 mediterranean sea
+    //----------------------------------------------
+    else if (idCenter==58 && idModel==111 && idGrid==179)
+    {
+    }
+    //----------------------------------------------
+    // FNMOC WW3
+    //----------------------------------------------
+    else if (idCenter==58 && idModel==110 && idGrid==240)
+    {
+    }
     //------------------------
     // Unknown center
     //------------------------
@@ -879,7 +890,21 @@ void GribV1Record::init_conversionMatrix(void) {
     DATA_TO_GRBV1[DATA_SNOW_CATEG] = 143;
     DATA_TO_GRBV1[DATA_CIN] = 156;
     DATA_TO_GRBV1[DATA_CAPE] = 157;
-    DATA_TO_GRBV1[DATA_WAVES] = 100;
+    DATA_TO_GRBV1[DATA_WAVES_SIG_HGT_COMB] = 100;
+    DATA_TO_GRBV1[DATA_WAVES_WND_DIR] = 101;
+    DATA_TO_GRBV1[DATA_WAVES_WND_HGT] = 102;
+    DATA_TO_GRBV1[DATA_WAVES_WND_PERIOD] = 103;
+    DATA_TO_GRBV1[DATA_WAVES_SWL_DIR] = 104;
+    DATA_TO_GRBV1[DATA_WAVES_SWL_HGT] = 105;
+    DATA_TO_GRBV1[DATA_WAVES_SWL_PERIOD] = 106;
+    DATA_TO_GRBV1[DATA_WAVES_PRIM_DIR] = 107;
+    DATA_TO_GRBV1[DATA_WAVES_PRIM_PERIOD] = 108;
+    DATA_TO_GRBV1[DATA_WAVES_SEC_DIR] = 109;
+    DATA_TO_GRBV1[DATA_WAVES_SEC_PERIOD] = 110;
+    DATA_TO_GRBV1[DATA_WAVES_WHITE_CAP] = 155;
+    DATA_TO_GRBV1[DATA_WAVES_MAX_DIR] = 207;
+    DATA_TO_GRBV1[DATA_WAVES_MAX_HGT] = 220;
+    DATA_TO_GRBV1[DATA_WAVES_MAX_PERIOD] = 208;
 
     /* init LV DATA=>GRB */
     DATA_TO_GRBV1_LV[DATA_LV_GND_SURF]=1;

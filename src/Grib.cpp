@@ -421,9 +421,9 @@ bool Grib::interpolateValue_1D(double d_long, double d_lat, time_t now,time_t tP
         return false;
 }
 
-bool Grib::getInterpolatedValue_2D(int dataType1,int dataType2,int levelType,int levelValue,
-                                   double d_long, double d_lat, time_t now,double * u, double * v,
-                                   int interpolation_type,bool debug) {
+bool Grib::getInterpolatedValue_2D(int dataType1, int dataType2, int levelType, int levelValue,
+                                   double d_long, double d_lat, time_t now, double * u, double * v,
+                                   int interpolation_type, bool UV, bool debug) {
     GribRecord *recU1,*recV1,*recU2,*recV2;
     time_t t1,t2;
 
@@ -439,14 +439,14 @@ bool Grib::getInterpolatedValue_2D(int dataType1,int dataType2,int levelType,int
     if(get_recordsAndTime_2D(dataType1,dataType2,levelType,levelValue,now,&t1,&t2,&recU1,&recV1,&recU2,&recV2,debug)) {
         if(debug)
             qWarning() << "Param ok => go interpolation";
-        return interpolateValue_2D(d_long,d_lat,now,t1,t2,recU1,recV1,recU2,recV2,u,v,interpolation_type,debug);
+        return interpolateValue_2D(d_long,d_lat,now,t1,t2,recU1,recV1,recU2,recV2,u,v,interpolation_type,UV,debug);
     }
     return false;
 }
 
 bool Grib::interpolateValue_2D(double d_long, double d_lat, time_t now, time_t t1,time_t t2,
                                               GribRecord *recU1,GribRecord *recV1,GribRecord *recU2,GribRecord *recV2,
-                                              double * u, double * v,int interpolation_type,bool debug) {
+                                              double * u, double * v,int interpolation_type,bool UV,bool debug) {
     windData wData_prev;
     windData wData_nxt;
     double gridOriginLat_1,gridOriginLon_1,gridOriginLat_2,gridOriginLon_2;
@@ -496,7 +496,7 @@ bool Grib::interpolateValue_2D(double d_long, double d_lat, time_t now, time_t t
             interpolation::get_wind_info_latlong_TWSA(d_long,d_lat,now,t1,t2,
                                                       &wData_prev,(hasNxt?(&wData_nxt):NULL),
                                                       gribStep_t1_lat,gribStep_t1_lon,gribStep_t2_lat,gribStep_t2_lon,
-                                                      u,v,debug);
+                                                      u,v,UV,debug);
             break;
         case INTERPOLATION_SELECTIVE_TWSA:
             if(debug)
@@ -504,7 +504,7 @@ bool Grib::interpolateValue_2D(double d_long, double d_lat, time_t now, time_t t
             interpolation::get_wind_info_latlong_selective_TWSA(d_long,d_lat,now,t1,t2,
                                                                 &wData_prev,(hasNxt?(&wData_nxt):NULL),
                                                                 gribStep_t1_lat,gribStep_t1_lon,gribStep_t2_lat,gribStep_t2_lon,
-                                                                u,v,debug);
+                                                                u,v,UV,debug);
             break;
         case INTERPOLATION_HYBRID:
             if(debug)
@@ -512,7 +512,7 @@ bool Grib::interpolateValue_2D(double d_long, double d_lat, time_t now, time_t t
             interpolation::get_wind_info_latlong_hybrid(d_long,d_lat,now,t1,t2,
                                                         &wData_prev,(hasNxt?(&wData_nxt):NULL),
                                                         gribStep_t1_lat,gribStep_t1_lon,gribStep_t2_lat,gribStep_t2_lon,
-                                                        u,v,gridOriginLat_1,gridOriginLon_1,gridOriginLat_2,gridOriginLon_2,debug);
+                                                        u,v,gridOriginLat_1,gridOriginLon_1,gridOriginLat_2,gridOriginLon_2,UV,debug);
             break;
          default:
             if(debug)

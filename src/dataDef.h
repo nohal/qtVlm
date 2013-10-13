@@ -283,7 +283,21 @@ enum {
     DATA_SNOW_CATEG,       /* 1=yes 0=no */
     DATA_CIN, 		       /* J/kg   */
     DATA_CAPE, 		       /* J/kg   */
-    DATA_WAVES,            /* m */
+    DATA_WAVES_SIG_HGT_COMB,  /* m */
+    DATA_WAVES_WND_DIR,       /* deg */
+    DATA_WAVES_WND_HGT,       /* m */
+    DATA_WAVES_WND_PERIOD,    /* s */
+    DATA_WAVES_SWL_DIR,       /* deg */
+    DATA_WAVES_SWL_HGT,       /* m */
+    DATA_WAVES_SWL_PERIOD,    /* s */
+    DATA_WAVES_PRIM_DIR,      /* deg */
+    DATA_WAVES_PRIM_PERIOD,   /* s */
+    DATA_WAVES_SEC_DIR,       /* deg */
+    DATA_WAVES_SEC_PERIOD,    /* s */
+    DATA_WAVES_WHITE_CAP,     /* % */
+    DATA_WAVES_MAX_DIR,       /* deg */
+    DATA_WAVES_MAX_HGT,       /* m */
+    DATA_WAVES_MAX_PERIOD,    /* s */
     DATA_MAX
 
 };
