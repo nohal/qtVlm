@@ -262,42 +262,42 @@ Q_DECLARE_TYPEINFO(windData,Q_PRIMITIVE_TYPE);
 #define DATA_NOTDEF -1
 
 enum {
-    DATA_PRESSURE=0,        /* Pa     */
-    DATA_GEOPOT_HGT,       /* gpm    */
-    DATA_TEMP,             /* K      */
-    DATA_TEMP_POT,         /* K      */
-    DATA_TMAX,             /* K      */
-    DATA_TMIN,             /* K      */
-    DATA_DEWPOINT,         /* K      */
-    DATA_WIND_VX,          /* m/s    */
-    DATA_WIND_VY,          /* m/s    */
-    DATA_CURRENT_VX ,      /* m/s    */
-    DATA_CURRENT_VY,       /* m/s    */
-    DATA_HUMID_SPEC,       /* kg/kg  */
-    DATA_HUMID_REL,        /* %      */
-    DATA_PRECIP_RATE,      /* l/m2/s */
-    DATA_PRECIP_TOT,       /* l/m2   */
-    DATA_SNOW_DEPTH,       /* m      */
-    DATA_CLOUD_TOT,        /* %      */
-    DATA_FRZRAIN_CATEG,    /* 1=yes 0=no */
-    DATA_SNOW_CATEG,       /* 1=yes 0=no */
-    DATA_CIN, 		       /* J/kg   */
-    DATA_CAPE, 		       /* J/kg   */
-    DATA_WAVES_SIG_HGT_COMB,  /* m */
-    DATA_WAVES_WND_DIR,       /* deg */
-    DATA_WAVES_WND_HGT,       /* m */
-    DATA_WAVES_WND_PERIOD,    /* s */
-    DATA_WAVES_SWL_DIR,       /* deg */
-    DATA_WAVES_SWL_HGT,       /* m */
-    DATA_WAVES_SWL_PERIOD,    /* s */
-    DATA_WAVES_PRIM_DIR,      /* deg */
-    DATA_WAVES_PRIM_PERIOD,   /* s */
-    DATA_WAVES_SEC_DIR,       /* deg */
-    DATA_WAVES_SEC_PERIOD,    /* s */
-    DATA_WAVES_WHITE_CAP,     /* % */
-    DATA_WAVES_MAX_DIR,       /* deg */
-    DATA_WAVES_MAX_HGT,       /* m */
-    DATA_WAVES_MAX_PERIOD,    /* s */
+    DATA_PRESSURE=0,          /* 0:  Pa     */
+    DATA_GEOPOT_HGT,          /* 1:  gpm    */
+    DATA_TEMP,                /* 2:  K      */
+    DATA_TEMP_POT,            /* 3:  K      */
+    DATA_TMAX,                /* 4:  K      */
+    DATA_TMIN,                /* 5:  K      */
+    DATA_DEWPOINT,            /* 6:  K      */
+    DATA_WIND_VX,             /* 7:  m/s    */
+    DATA_WIND_VY,             /* 8:  m/s    */
+    DATA_CURRENT_VX ,         /* 9:  m/s    */
+    DATA_CURRENT_VY,          /* 10: m/s    */
+    DATA_HUMID_SPEC,          /* 11: kg/kg  */
+    DATA_HUMID_REL,           /* 12: %      */
+    DATA_PRECIP_RATE,         /* 13: l/m2/s */
+    DATA_PRECIP_TOT,          /* 14: l/m2   */
+    DATA_SNOW_DEPTH,          /* 15: m      */
+    DATA_CLOUD_TOT,           /* 16: %      */
+    DATA_FRZRAIN_CATEG,       /* 17: 1=yes 0=no */
+    DATA_SNOW_CATEG,          /* 18: 1=yes 0=no */
+    DATA_CIN, 		          /* 19: J/kg   */
+    DATA_CAPE, 		          /* 20: J/kg   */
+    DATA_WAVES_SIG_HGT_COMB,  /* 21: m */
+    DATA_WAVES_WND_DIR,       /* 22: deg */
+    DATA_WAVES_WND_HGT,       /* 23: m */
+    DATA_WAVES_WND_PERIOD,    /* 24: s */
+    DATA_WAVES_SWL_DIR,       /* 25: deg */
+    DATA_WAVES_SWL_HGT,       /* 26: m */
+    DATA_WAVES_SWL_PERIOD,    /* 27: s */
+    DATA_WAVES_PRIM_DIR,      /* 28: deg */
+    DATA_WAVES_PRIM_PERIOD,   /* 29: s */
+    DATA_WAVES_SEC_DIR,       /* 30: deg */
+    DATA_WAVES_SEC_PERIOD,    /* 31: s */
+    DATA_WAVES_WHITE_CAP,     /* 32: % */
+    DATA_WAVES_MAX_DIR,       /* 33: deg */
+    DATA_WAVES_MAX_HGT,       /* 34: m */
+    DATA_WAVES_MAX_PERIOD,    /* 35: s */
     DATA_MAX
 
 };
@@ -312,6 +312,7 @@ enum {
     DATA_LV_ABOV_GND,
     DATA_LV_SIGMA,
     DATA_LV_ATMOS_ALL,
+    DATA_LV_ORDERED_SEQUENCE_DATA,
     DATA_LV_MAX
 };
 

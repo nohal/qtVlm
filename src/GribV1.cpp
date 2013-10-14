@@ -324,6 +324,7 @@ bool GribV1::readAllGribRecords(const char * fname,int compressMode) {
                     qWarning()<<"dataType="<<rec->get_dataType()<< " - V1: " << rec->get_dataTypeV1();
                     qWarning()<<"levelType"<<rec->get_levelType()<< " - V1: " << rec->get_levelTypeV1();;
                     qWarning()<<"levelValue"<<rec->get_levelValue();
+                    qWarning()<<"center:"<<rec->get_idCenter()<<" - model:" << rec->get_idModel() << " - grid:" << rec->get_idGrid();
                 }
 #endif
             }

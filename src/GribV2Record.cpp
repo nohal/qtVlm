@@ -430,6 +430,7 @@ void GribV2Record::init_conversionMatrix(void) {
     DATA_TO_GRBV2_LV[DATA_LV_ABOV_GND]=103;
     DATA_TO_GRBV2_LV[DATA_LV_SIGMA]=104;
     DATA_TO_GRBV2_LV[DATA_LV_ATMOS_ALL]=200;
+    DATA_TO_GRBV2_LV[DATA_LV_ORDERED_SEQUENCE_DATA]=241;
 
     /* init GRB => Data matrix */
     for(int i=0;i<DATA_MAX;++i) {

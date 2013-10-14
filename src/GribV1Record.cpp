@@ -139,6 +139,21 @@ void  GribV1Record::translateDataType()
             levelType  = DATA_LV_ABOV_GND;
             levelValue = 10;
         }
+
+        if ( (get_dataType() == DATA_WAVES_SIG_HGT_COMB
+              || get_dataType()==DATA_WAVES_WND_DIR || get_dataType()==DATA_WAVES_WND_HGT || get_dataType()==DATA_WAVES_WND_PERIOD
+              || get_dataType()==DATA_WAVES_SWL_DIR || get_dataType()==DATA_WAVES_SWL_HGT || get_dataType()==DATA_WAVES_SWL_PERIOD
+              || get_dataType()==DATA_WAVES_MAX_DIR || get_dataType()==DATA_WAVES_MAX_HGT || get_dataType()==DATA_WAVES_MAX_PERIOD
+              || get_dataType()==DATA_WAVES_PRIM_DIR || get_dataType()==DATA_WAVES_PRIM_PERIOD
+              || get_dataType()==DATA_WAVES_SEC_DIR || get_dataType()==DATA_WAVES_SEC_PERIOD
+              || get_dataType()==DATA_WAVES_WHITE_CAP
+              )
+             && (get_levelType()==DATA_LV_ORDERED_SEQUENCE_DATA || get_levelType()==DATA_LV_GND_SURF)
+             && get_levelValue()==1)
+        {
+            levelType  = DATA_LV_GND_SURF;
+            levelValue = 0;
+        }
     }
     //------------------------
     // WRF NMM grib.meteorologic.net
@@ -914,6 +929,7 @@ void GribV1Record::init_conversionMatrix(void) {
     DATA_TO_GRBV1_LV[DATA_LV_ABOV_GND]=105;
     DATA_TO_GRBV1_LV[DATA_LV_SIGMA]=107;
     DATA_TO_GRBV1_LV[DATA_LV_ATMOS_ALL]=200;
+    DATA_TO_GRBV1_LV[DATA_LV_ORDERED_SEQUENCE_DATA]=241;
 
     for(int i=0;i<DATA_MAX;++i)
         if(DATA_TO_GRBV1[i]!=DATA_NOTDEF)
