@@ -3340,6 +3340,38 @@ Etes-vous sur ?</source>
         <source>Montrer le tableau de bord</source>
         <translation>Montrer le tableau de bord</translation>
     </message>
+    <message>
+        <source>Waves</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Waves combined</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Wind waves</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Swell waves</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Max waves</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>White cap prob</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Waves arrow</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Show arrox for wave direction</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>POI</name>
@@ -4838,6 +4870,18 @@ inversés</translation>
     </message>
     <message>
         <source> minutes</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Waves</source>
+        <translation>Vagues</translation>
+    </message>
+    <message>
+        <source>Waves max height</source>
+        <translation>Hauteur maximale des vagues</translation>
+    </message>
+    <message>
+        <source> m</source>
         <translation></translation>
     </message>
 </context>

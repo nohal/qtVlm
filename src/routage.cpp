@@ -785,6 +785,7 @@ ROUTAGE::ROUTAGE(QString name, Projection *proj, DataManager *dataManager, QGrap
     this->zoomLevel=Settings::getSetting("autoZoomLevel",2).toInt();
     this->maxPres=Settings::getSetting("routageMaxPres",70).toDouble();
     this->maxPortant=Settings::getSetting("routageMaxPortant",70).toDouble();
+    this->maxWaveHeight=Settings::getSetting("routageMaxWaveHeight",100).toDouble();
     this->minPres=Settings::getSetting("routageMinPres",0).toDouble();
     this->minPortant=Settings::getSetting("routageMinPortant",0).toDouble();
     this->pruneWakeAngle=Settings::getSetting("routagePruneWake",30).toInt();
@@ -894,6 +895,7 @@ void ROUTAGE::calculate()
         Settings::setSetting("routageMaxPortant",maxPortant);
         Settings::setSetting("routageMinPres",minPres);
         Settings::setSetting("routageMinPortant",minPortant);
+        Settings::setSetting("routageMaxWaveHeight",maxWaveHeight);
         Settings::setSetting("routagePruneWake",pruneWakeAngle);
         Settings::setSetting("routageOrtho",routageOrtho?1:0);
         Settings::setSetting("routageShowBestLive",showBestLive?1:0);
@@ -1321,6 +1323,7 @@ void ROUTAGE::slot_calculate()
         time.start();
 #endif
         bool hasTouchCoast=false;
+        int passe=0;
         for(int n=0;n<list->size();++n)
         {
             if(aborted) break;
@@ -1438,6 +1441,12 @@ void ROUTAGE::slot_calculate()
                     if(twa_x<=90 && windSpeed<this->minPres) continue;
                     if(twa_x>=90 && windSpeed>this->maxPortant) continue;
                     if(twa_x>=90 && windSpeed<this->minPortant) continue;
+                    if(++passe%100==0)
+                        qWarning()<<"wave height"<<dataManager->getInterpolatedValue_1D(DATA_WAVES_MAX_HGT,DATA_LV_GND_SURF,0,list->at(n).lon,list->at(n).lat,workEta);
+                    if(maxWaveHeight<100 && dataManager->getInterpolatedValue_1D(DATA_WAVES_MAX_HGT,DATA_LV_GND_SURF,0,list->at(n).lon,list->at(n).lat,workEta)>maxWaveHeight)
+                    {
+                        continue;
+                    }
                     newPoint.routage=this;
                     newPoint.origin=iso->getPoint(n);
                     newPoint.originNb=n;

@@ -1025,40 +1025,37 @@ avec ce prefixe</string>
           </widget>
          </item>
          <item>
-          <widget class="QGroupBox" name="autoZoom">
+          <widget class="QGroupBox" name="groupBox_3">
            <property name="title">
-            <string>Auto Zoom</string>
+            <string>Waves</string>
            </property>
-           <property name="checkable">
-            <bool>true</bool>
-           </property>
-           <layout class="QVBoxLayout" name="verticalLayout_11">
+           <layout class="QHBoxLayout" name="horizontalLayout_8">
             <item>
-             <widget class="QSlider" name="zoomLevel">
-              <property name="toolTip">
-               <string>Réglage du niveau de zoom (plus à droite = plus serré).
-La différence est surtout sensible lors d'un routage en diagonale.</string>
+             <widget class="QLabel" name="label_20">
+              <property name="text">
+               <string>Waves max height</string>
               </property>
-              <property name="minimum">
+             </widget>
+            </item>
+            <item>
+             <widget class="QDoubleSpinBox" name="maxWaveHeight">
+              <property name="alignment">
+               <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+              </property>
+              <property name="suffix">
+               <string> m</string>
+              </property>
+              <property name="decimals">
                <number>1</number>
               </property>
               <property name="maximum">
-               <number>3</number>
+               <double>100.000000000000000</double>
               </property>
-              <property name="pageStep">
-               <number>1</number>
+              <property name="singleStep">
+               <double>1.000000000000000</double>
               </property>
-              <property name="sliderPosition">
-               <number>2</number>
-              </property>
-              <property name="orientation">
-               <enum>Qt::Horizontal</enum>
-              </property>
-              <property name="tickPosition">
-               <enum>QSlider::NoTicks</enum>
-              </property>
-              <property name="tickInterval">
-               <number>1</number>
+              <property name="value">
+               <double>100.000000000000000</double>
               </property>
              </widget>
             </item>
@@ -1183,6 +1180,47 @@ La différence est surtout sensible lors d'un routage en diagonale.</string>
         </spacer>
        </item>
        <item>
+        <widget class="QGroupBox" name="autoZoom">
+         <property name="title">
+          <string>Auto Zoom</string>
+         </property>
+         <property name="checkable">
+          <bool>true</bool>
+         </property>
+         <layout class="QVBoxLayout" name="verticalLayout_11">
+          <item>
+           <widget class="QSlider" name="zoomLevel">
+            <property name="toolTip">
+             <string>Réglage du niveau de zoom (plus à droite = plus serré).
+La différence est surtout sensible lors d'un routage en diagonale.</string>
+            </property>
+            <property name="minimum">
+             <number>1</number>
+            </property>
+            <property name="maximum">
+             <number>3</number>
+            </property>
+            <property name="pageStep">
+             <number>1</number>
+            </property>
+            <property name="sliderPosition">
+             <number>2</number>
+            </property>
+            <property name="orientation">
+             <enum>Qt::Horizontal</enum>
+            </property>
+            <property name="tickPosition">
+             <enum>QSlider::NoTicks</enum>
+            </property>
+            <property name="tickInterval">
+             <number>1</number>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item>
         <layout class="QHBoxLayout" name="horizontalLayout_7">
          <item>
           <widget class="QPushButton" name="Default">
@@ -1249,17 +1287,18 @@ La différence est surtout sensible lors d'un routage en diagonale.</string>
   <tabstop>whatIfDate</tabstop>
   <tabstop>whatIfWind</tabstop>
   <tabstop>whatIfTime</tabstop>
-  <tabstop>autoZoom</tabstop>
   <tabstop>minPres</tabstop>
   <tabstop>maxPres</tabstop>
   <tabstop>minPortant</tabstop>
   <tabstop>maxPortant</tabstop>
-  <tabstop>zoomLevel</tabstop>
+  <tabstop>maxWaveHeight</tabstop>
   <tabstop>multi_routage</tabstop>
   <tabstop>multi_nb</tabstop>
   <tabstop>multi_days</tabstop>
   <tabstop>multi_hours</tabstop>
   <tabstop>multi_min</tabstop>
+  <tabstop>autoZoom</tabstop>
+  <tabstop>zoomLevel</tabstop>
   <tabstop>Default</tabstop>
  </tabstops>
  <resources/>

@@ -209,6 +209,7 @@ class ROUTAGE : public QObject
         FCT_SETGET(int,multiMin)
         FCT_SETGET(int,multiNb)
         FCT_GET_CST(double,maxDist)
+        FCT_SETGET_CST(double,maxWaveHeight)
 public slots:
         void calculate();
         void slot_edit();
@@ -329,6 +330,7 @@ public slots:
         int highlightedIso;
         double maxPres,maxPortant;
         double minPres,minPortant;
+        double maxWaveHeight;
         bool visibleOnly;
         QTimer * timerTempo;
         bool approaching;
