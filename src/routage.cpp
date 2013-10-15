@@ -1323,7 +1323,7 @@ void ROUTAGE::slot_calculate()
         time.start();
 #endif
         bool hasTouchCoast=false;
-        int passe=0;
+//        int passe=0;
         for(int n=0;n<list->size();++n)
         {
             if(aborted) break;
@@ -1441,8 +1441,8 @@ void ROUTAGE::slot_calculate()
                     if(twa_x<=90 && windSpeed<this->minPres) continue;
                     if(twa_x>=90 && windSpeed>this->maxPortant) continue;
                     if(twa_x>=90 && windSpeed<this->minPortant) continue;
-                    if(++passe%100==0)
-                        qWarning()<<"wave height"<<dataManager->getInterpolatedValue_1D(DATA_WAVES_MAX_HGT,DATA_LV_GND_SURF,0,list->at(n).lon,list->at(n).lat,workEta);
+//                    if(++passe%100==0)
+//                        qWarning()<<"wave height"<<dataManager->getInterpolatedValue_1D(DATA_WAVES_MAX_HGT,DATA_LV_GND_SURF,0,list->at(n).lon,list->at(n).lat,workEta);
                     if(maxWaveHeight<100 && dataManager->getInterpolatedValue_1D(DATA_WAVES_MAX_HGT,DATA_LV_GND_SURF,0,list->at(n).lon,list->at(n).lat,workEta)>maxWaveHeight)
                     {
                         continue;
