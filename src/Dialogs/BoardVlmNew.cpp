@@ -415,7 +415,7 @@ void BoardVlmNew::slot_updateData()
     this->blocking=true;
     updateLcds();
     QPointF position=myBoat->getPosition();
-    det_POS->setText(Util::formatLongitude(position.x())+"-"+Util::formatLatitude(position.y()));
+    det_POS->setText(Util::formatLatitude(position.y())+"-"+Util::formatLongitude(position.x()));
     if(qRound(myBoat->getDnm())<100)
         det_DNM->setText(QString().sprintf("%.2f",myBoat->getDnm())+tr("nm"));
     else
