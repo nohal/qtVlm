@@ -54,7 +54,7 @@ class GribV1Record: public GribRecord
 
         //-----------------------------------------
 
-        void    translateDataType();  // adapte les codes des differents centres meteo
+        //void    translateDataType();  // adapte les codes des differents centres meteo
 
         zuchar   getIdGrid() const    { return idGrid; }
 
@@ -137,7 +137,7 @@ class GribV1Record: public GribRecord
         zuint  periodSeconds(zuchar unit, zuchar P1, zuchar P2, zuchar range);
 
         void   print();
-        void   multiplyAllData(double k);
+
 
 
 };

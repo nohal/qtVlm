@@ -88,6 +88,7 @@ GribV2Record::GribV2Record(gribfield  *gfld, int msg, int field):GribRecord() {
         return;
     }
     curDate=makeDate(refYear,refMonth,refDay,refHour,refMinute,refSecond+timeOffset);
+    deltaPeriod=timeOffset/3600;
 
     /**************************
      * Coord data - section 3 *
@@ -332,9 +333,14 @@ GribV2Record::GribV2Record(gribfield  *gfld, int msg, int field):GribRecord() {
 
     ok=true;
 
-    // REM: should add some test here
-    knownData=true;
-    set_dataType();
+    if(dataType!=DATA_NOTDEF && levelType!=DATA_LV_NOTDEF) {
+        knownData = true;
+        unitConversion();
+    }
+    else
+        knownData = false;
+
+    computeKey();
 }
 
 GribV2Record::~GribV2Record(void) {

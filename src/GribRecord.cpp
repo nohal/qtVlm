@@ -32,6 +32,7 @@ GribRecord::GribRecord(void) {
     refHour=0;
     refMinute=0;
     refSecond=0;
+    deltaPeriod=0;
 }
 
 void  GribRecord::set_dataType(int t) {
@@ -46,6 +47,33 @@ time_t GribRecord::makeDate(unsigned int year,unsigned int month,unsigned int da
     QDateTime dt = QDateTime(QDate(year,month,day),QTime(hour,0,0),Qt::UTC);
     dt = dt.addSecs(min*60+sec);
     return dt.toTime_t();
+}
+
+void GribRecord::multiplyAllData(double k) {
+    for (unsigned int j=0; j<Nj; j++)
+        for (unsigned int i=0; i<Ni; i++)
+            if (hasValue(i,j))
+                data[j*Ni+i] *= k;
+}
+
+void GribRecord::unitConversion(void) {
+    switch(dataType) {
+        case DATA_PRECIP_RATE: // mm/s -> mm/h
+            multiplyAllData(3600);
+            break;
+        case DATA_PRECIP_TOT: // mm/period -> mm/h
+            if(deltaPeriod!=0)
+                multiplyAllData(1.0/(double)deltaPeriod);
+            break;
+        case DATA_WIND_VX: // msToKts
+        case DATA_WIND_VY:
+        case DATA_CURRENT_VX:
+        case DATA_CURRENT_VY:
+            multiplyAllData(msToKts_cst);
+            break;
+
+    }
+
 }
 
 //===============================================================================================
@@ -282,9 +310,9 @@ double GribRecord::getInterpolatedValue(double px, double py, bool numericalInte
 
 void GribRecord::print_bitmap(void) {
     QString line;
-    for(int j=0; j<Nj;++j) {
+    for(unsigned int j=0; j<Nj;++j) {
         line = "";
-        for(int i=0;i<Ni;++i)
+        for(unsigned int i=0;i<Ni;++i)
             line+=hasValue(i,j)?"1":"0";
         qWarning() << line;
     }

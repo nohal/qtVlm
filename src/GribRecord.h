@@ -53,7 +53,10 @@ class GribRecord {
 
 
         FCT_GET(long int,dataKey)
+        void computeKey(void) { this->dataKey=makeKey(dataType,levelType,levelValue); }
         static long int makeKey(int dataType,int levelType,int levelValue);
+
+        void unitConversion(void);
 
         // Nombre de points de la grille
         FCT_GET(int,Ni)
@@ -117,8 +120,11 @@ class GribRecord {
         bool isAdjacentI;
         bool isFull;
 
+        int deltaPeriod;
+
         double  *data;
         bool knownData;
+        void   multiplyAllData(double k);
 
 
         int dataSize;

@@ -237,6 +237,7 @@ void Grib::createDewPointData(void) {
                     }
 
                     if (recDewpoint != NULL) {
+
                         recDewpoint->set_dataType(DATA_DEWPOINT);
                         for (int i=0; i<(int)recModel->get_Ni(); i++)
                             for (int j=0; j<(int)recModel->get_Nj(); j++) {

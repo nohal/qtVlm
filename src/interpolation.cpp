@@ -87,11 +87,11 @@ typedef complex<double> dcmplx;
   if (a > 0.0) {                                \
     b = TWO_PI - b;                             \
   }                                             \
-  a = msToKts(t_speed);
+  a = t_speed;
 #else
 #  define _transform_u_v(a, b)			\
   c=dcmplx(-b,- a);			        \
-  a = msToKts(abs(c));				\
+  a = abs(c);				\
   b = arg(c);					\
   if (b < 0) {					\
     b += TWO_PI;				\
@@ -527,7 +527,7 @@ void interpolation::get_wind_info_latlong_selective_TWSA_compute(double longitud
 #ifdef OLD_C
 
 #define _speed_u_v(a, b, ro)	   \
-    ro = msToKts(sqrt(a*a+b*b));
+    ro = sqrt(a*a+b*b);
 
  #define _hybrid_comp(u,v,angle,ro) { \
     double t_speed;                \
@@ -545,7 +545,7 @@ void interpolation::get_wind_info_latlong_selective_TWSA_compute(double longitud
 #else
 
 #define _speed_u_v(a, b, ro)	  \
-    ro = msToKts(hypot(a, b));
+    ro = hypot(a, b);
 
 #define _hybrid_comp(u,v,angle,ro) { \
     dcmplx __c(- v, -u);     \
@@ -570,7 +570,7 @@ void interpolation::get_wind_info_latlong_selective_TWSA_compute(double longitud
     if(angle<0) {         \
         angle += TWO_PI;   \
     }                     \
-    ro=msToKts(cabs(c));               \
+    ro=cabs(c);               \
     */
 
 

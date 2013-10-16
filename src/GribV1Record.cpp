@@ -88,19 +88,29 @@ GribV1Record::GribV1Record(ZUFILE* file) : GribRecord()
     }
 
     if (ok) {
-        translateDataType();
-        set_dataType();
+        if(dataType!=DATA_NOTDEF && levelType!=DATA_LV_NOTDEF) {
+            knownData = true;
+            unitConversion();
+        }
+        else
+            knownData = false;
+
+        computeKey();
     }
 }
 
+#if 0
 void  GribV1Record::translateDataType()
 {
     this->knownData = true;
+
+
     if(this->dataType==DATA_CURRENT_VX || this->dataType==DATA_CURRENT_VY)
     {
         this->levelType=DATA_LV_MSL;
         this->levelValue=0;
     }
+
     //qWarning()<<idCenter<<idModel<<idGrid<<dataType<<levelType<<levelValue;
     //------------------------
     // NOAA GFS
@@ -283,7 +293,7 @@ void  GribV1Record::translateDataType()
     }
     //this->print();
 }
-
+#endif
 //-------------------------------------------------------------------------------
 void GribV1Record::print()
 {
@@ -299,17 +309,7 @@ void GribV1Record::print()
 //                        );
 }
 
-void  GribV1Record::multiplyAllData(double k)
-{
-        for (zuint j=0; j<Nj; j++) {
-                for (zuint i=0; i<Ni; i++)
-                {
-                        if (hasValue(i,j)) {
-                                data[j*Ni+i] *= k;
-                        }
-                }
-        }
-}
+
 //------------------------------------------------------------------------------
 
 //------------------------------------------------------------------------------
@@ -447,6 +447,8 @@ bool GribV1Record::readGribSection1_PDS(ZUFILE* file) {
     periodP2  = data1[19];
     timeRange = data1[20];
     periodsec = periodSeconds(data1[17],data1[18],data1[19],timeRange);
+    if(periodP2 > periodP1)
+        deltaPeriod=periodP2-periodP1;
     //qWarning() << "Periodsec:" << periodP2-periodP1 << " - comp= " << periodsec;
     curDate = makeDate(refYear,refMonth,refDay,refHour,refMinute,periodsec);
 

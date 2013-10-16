@@ -196,7 +196,7 @@ bool GribV1::readAllGribRecords(const char * fname,int compressMode) {
 
                 if (firstdate== -1)
                     firstdate = rec->get_curDate();
-
+#if 0
 
                 if (//-----------------------------------------
                         (rec->get_dataType()==DATA_PRESSURE
@@ -313,10 +313,12 @@ bool GribV1::readAllGribRecords(const char * fname,int compressMode) {
                              )
                             && rec->get_levelType()==DATA_LV_GND_SURF && rec->get_levelValue()==0)
                         )
+#endif
                 {
                     recAdded=true;
                     addRecord(rec);
                 }
+            }
 #if 1
                 else
                 {
@@ -327,7 +329,7 @@ bool GribV1::readAllGribRecords(const char * fname,int compressMode) {
                     qWarning()<<"center:"<<rec->get_idCenter()<<" - model:" << rec->get_idModel() << " - grid:" << rec->get_idGrid();
                 }
 #endif
-            }
+
         }
 
         if(!recAdded) {
@@ -345,6 +347,10 @@ bool GribV1::readAllGribRecords(const char * fname,int compressMode) {
     int i=0;
     for(it=mapGribRecords.begin();it!=mapGribRecords.end();++it) {
         qWarning() << "key " << i << ": key= " << it->first << ", nb elem" << it->second->size();
+        if(it->second->size()>0) {
+            GribV1Record* ptr = (GribV1Record*)it->second->at(0);
+            qWarning() << "G1 dataType=" << ptr->get_dataTypeV1() << " levelType=" << ptr->get_levelTypeV1();
+        }
         ++i;
     }
 

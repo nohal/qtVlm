@@ -76,7 +76,8 @@ FCT_GET_CST(TYPE,VARNAME)
 #define degToRad(angle) (((angle)/180.0) * PI)
 #define radToDeg(angle) (((angle)*180.0) / PI)
 
-#define msToKts(speed) (1.9438445*(speed))
+#define msToKts_cst     1.9438445
+#define msToKts(speed) (msToKts_cst*(speed))
 #define ktsToMs(speed) (0.51444444*(speed))
 
 /* Grib Donwld type */
@@ -275,8 +276,8 @@ enum {
     DATA_CURRENT_VY,          /* 10: m/s    */
     DATA_HUMID_SPEC,          /* 11: kg/kg  */
     DATA_HUMID_REL,           /* 12: %      */
-    DATA_PRECIP_RATE,         /* 13: l/m2/s */
-    DATA_PRECIP_TOT,          /* 14: l/m2   */
+    DATA_PRECIP_RATE,         /* 13: kg/m2/s */
+    DATA_PRECIP_TOT,          /* 14: kg/m2   */
     DATA_SNOW_DEPTH,          /* 15: m      */
     DATA_CLOUD_TOT,           /* 16: %      */
     DATA_FRZRAIN_CATEG,       /* 17: 1=yes 0=no */
