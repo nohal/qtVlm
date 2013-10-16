@@ -689,6 +689,7 @@ void ROUTE::slot_recalculate(boat * boat)
                                         roadPoint.append(-1); //19
                                         roadPoint.append(-1); //20
                                         roadPoint.append(-1); //21 waves
+                                        roadPoint.append(-1); //22 waves dir
                                         roadMap.append(roadPoint);
                                     }
                                     break;
@@ -736,6 +737,10 @@ void ROUTE::slot_recalculate(boat * boat)
                                     roadPoint.append(dataManager->getInterpolatedValue_1D(DATA_WAVES_MAX_HGT,DATA_LV_GND_SURF,0,p.lon,p.lat,roadPoint.at(0))); //21
                                 else
                                     roadPoint.append(-1);// 21
+                                if(dataManager->hasData(DATA_WAVES_MAX_DIR,DATA_LV_GND_SURF,0))
+                                    roadPoint.append(dataManager->getInterpolatedValue_1D(DATA_WAVES_MAX_DIR,DATA_LV_GND_SURF,0,p.lon,p.lat,roadPoint.at(0))); //21
+                                else
+                                    roadPoint.append(-1);// 22
                                 roadMap.append(roadPoint);
                             }
                             if(lastEta<gribDate && Eta>=gribDate)
@@ -743,10 +748,15 @@ void ROUTE::slot_recalculate(boat * boat)
                                 if(!this->getSimplify() && this->showInterpolData)
                                 {
                                     QList<double> roadPoint=roadMap.last();
+                                    vlmPoint p(roadPoint.at(1),roadPoint.at(2));
+                                    p.eta=roadPoint.at(0);
+                                    bool night=false;
+                                    if(parent->getTerre()->daylight(NULL,p))
+                                        night=true;
                                     roadInfo->setValues(roadPoint.at(6),roadPoint.at(7),roadPoint.at(8),
                                                         roadPoint.at(4),roadPoint.at(3),roadPoint.at(11),
                                                         roadPoint.at(10),engineUsed,lat<0,roadPoint.at(17),
-                                                        roadPoint.at(18),roadPoint.at(19),roadPoint.at(20));
+                                                        roadPoint.at(18),roadPoint.at(19),roadPoint.at(20),roadPoint.at(21),roadPoint.at(22),night);
                                 }
                                 if(gribDate>start+1000)
                                 {
@@ -793,7 +803,8 @@ void ROUTE::slot_recalculate(boat * boat)
                             roadPoint.append(-1); //18
                             roadPoint.append(-1); //19
                             roadPoint.append(-1); //20
-                            roadPoint.append(-1); //21 waves
+                            roadPoint.append(-1); //21 waves height
+                            roadPoint.append(-1); //22 waves dir
                             roadMap.append(roadPoint);
                         }
                         break;
