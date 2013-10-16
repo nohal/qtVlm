@@ -688,6 +688,7 @@ void ROUTE::slot_recalculate(boat * boat)
                                         roadPoint.append(-1); //18
                                         roadPoint.append(-1); //19
                                         roadPoint.append(-1); //20
+                                        roadPoint.append(-1); //21 waves
                                         roadMap.append(roadPoint);
                                     }
                                     break;
@@ -731,6 +732,10 @@ void ROUTE::slot_recalculate(boat * boat)
                                 roadPoint.append(sog); //18
                                 roadPoint.append(current_speed); //19
                                 roadPoint.append(Util::A360(current_angle+180.0)); //20
+                                if(dataManager->hasData(DATA_WAVES_MAX_HGT,DATA_LV_GND_SURF,0))
+                                    roadPoint.append(dataManager->getInterpolatedValue_1D(DATA_WAVES_MAX_HGT,DATA_LV_GND_SURF,0,p.lon,p.lat,roadPoint.at(0))); //21
+                                else
+                                    roadPoint.append(-1);// 21
                                 roadMap.append(roadPoint);
                             }
                             if(lastEta<gribDate && Eta>=gribDate)
@@ -788,6 +793,7 @@ void ROUTE::slot_recalculate(boat * boat)
                             roadPoint.append(-1); //18
                             roadPoint.append(-1); //19
                             roadPoint.append(-1); //20
+                            roadPoint.append(-1); //21 waves
                             roadMap.append(roadPoint);
                         }
                         break;
@@ -1646,6 +1652,7 @@ routeStats ROUTE::getStats()
     stats.engineTime=0;
     stats.nightTime=0;
     stats.rainTime=0;
+    stats.maxWaveHeight=0;
     if(!dataManager) return stats;
     if(this->my_poiList.isEmpty()) return stats;
     QList<vlmPoint> * points=this->getLine()->getPoints();
@@ -1691,6 +1698,7 @@ routeStats ROUTE::getStats()
         if(!parent->getTerre()->daylight(NULL,points->at(n)))
             stats.nightTime+=date-prevDate;
         stats.rainTime+=dataManager->getInterpolatedValue_1D(DATA_PRECIP_TOT,DATA_LV_GND_SURF,0,lon, lat, prevDate)>0.0?date-prevDate:0;
+        stats.maxWaveHeight=qMax(stats.maxWaveHeight,dataManager->getInterpolatedValue_1D(DATA_WAVES_MAX_HGT,DATA_LV_GND_SURF,0,lon,lat, prevDate));
     }
     stats.averageBS=stats.averageBS/(points->size()-1);
     stats.averageTWS=stats.averageTWS/(points->size()-1);

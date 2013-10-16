@@ -14,7 +14,7 @@ DialogRouteComparator::DialogRouteComparator(myCentralWidget *parent) : QDialog(
     this->mcw=parent;
     connect(this->closeButton,SIGNAL(clicked()),this,SLOT(close()));
     model= new QStandardItemModel(this);
-    model->setColumnCount(20);
+    model->setColumnCount(21);
     int c=0;
     model->setHeaderData(c++,Qt::Horizontal,QObject::tr("Color"));
     model->setHeaderData(c++,Qt::Horizontal,QObject::tr("Name"));
@@ -36,6 +36,7 @@ DialogRouteComparator::DialogRouteComparator(myCentralWidget *parent) : QDialog(
     model->setHeaderData(c++,Qt::Horizontal,QObject::tr("Motor time"));
     model->setHeaderData(c++,Qt::Horizontal,QObject::tr("Night navigation"));
     model->setHeaderData(c++,Qt::Horizontal,QObject::tr("Under rain navigation"));
+    model->setHeaderData(c++,Qt::Horizontal,QObject::tr("Max waves height"));
     model->setSortRole(Qt::UserRole);
     routesTable->header()->setAlternatingRowColors(true);
     routesTable->header()->setDefaultAlignment(Qt::AlignCenter|Qt::AlignVCenter);
@@ -314,8 +315,12 @@ void DialogRouteComparator::insertRoute(const int &n)
     items[x]->setData(n,Qt::UserRole+1);
     if(x%2!=0) items[x]->setData(QColor(240,240,240),Qt::BackgroundRole);
     items[x++]->setTextAlignment(Qt::AlignRight| Qt::AlignVCenter);
+    items.append(new QStandardItem(QString( "%L1" ).arg(qMax(0.0,stats.maxWaveHeight),0,'f',2)+tr(" m")));
+    items[x]->setData(qMax(0.0,stats.maxWaveHeight),Qt::UserRole);
+    items[x]->setData(n,Qt::UserRole+1);
+    items[x++]->setTextAlignment(Qt::AlignRight| Qt::AlignVCenter);
     model->appendRow(items);
-    for(x=0;x<20;++x)
+    for(x=0;x<21;++x)
         routesTable->resizeColumnToContents(x);
 }
 
