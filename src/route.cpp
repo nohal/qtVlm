@@ -690,6 +690,7 @@ void ROUTE::slot_recalculate(boat * boat)
                                         roadPoint.append(-1); //20
                                         roadPoint.append(-1); //21 waves
                                         roadPoint.append(-1); //22 waves dir
+                                        roadPoint.append(-1); //23 waves combined height
                                         roadMap.append(roadPoint);
                                     }
                                     break;
@@ -741,6 +742,10 @@ void ROUTE::slot_recalculate(boat * boat)
                                     roadPoint.append(dataManager->getInterpolatedValue_1D(DATA_WAVES_MAX_DIR,DATA_LV_GND_SURF,0,p.lon,p.lat,roadPoint.at(0))); //21
                                 else
                                     roadPoint.append(-1);// 22
+                                if(dataManager->hasData(DATA_WAVES_SIG_HGT_COMB,DATA_LV_GND_SURF,0))
+                                    roadPoint.append(dataManager->getInterpolatedValue_1D(DATA_WAVES_SIG_HGT_COMB,DATA_LV_GND_SURF,0,p.lon,p.lat,roadPoint.at(0))); //21
+                                else
+                                    roadPoint.append(-1);// 23
                                 roadMap.append(roadPoint);
                             }
                             if(lastEta<gribDate && Eta>=gribDate)
@@ -756,7 +761,7 @@ void ROUTE::slot_recalculate(boat * boat)
                                     roadInfo->setValues(roadPoint.at(6),roadPoint.at(7),roadPoint.at(8),
                                                         roadPoint.at(4),roadPoint.at(3),roadPoint.at(11),
                                                         roadPoint.at(10),engineUsed,lat<0,roadPoint.at(17),
-                                                        roadPoint.at(18),roadPoint.at(19),roadPoint.at(20),roadPoint.at(21),roadPoint.at(22),night);
+                                                        roadPoint.at(18),roadPoint.at(19),roadPoint.at(20),roadPoint.at(21),roadPoint.at(22),night,roadPoint.at(23));
                                 }
                                 if(gribDate>start+1000)
                                 {
@@ -805,6 +810,7 @@ void ROUTE::slot_recalculate(boat * boat)
                             roadPoint.append(-1); //20
                             roadPoint.append(-1); //21 waves height
                             roadPoint.append(-1); //22 waves dir
+                            roadPoint.append(-1); //23 waves combined height
                             roadMap.append(roadPoint);
                         }
                         break;
@@ -1710,6 +1716,7 @@ routeStats ROUTE::getStats()
             stats.nightTime+=date-prevDate;
         stats.rainTime+=dataManager->getInterpolatedValue_1D(DATA_PRECIP_TOT,DATA_LV_GND_SURF,0,lon, lat, prevDate)>0.0?date-prevDate:0;
         stats.maxWaveHeight=qMax(stats.maxWaveHeight,dataManager->getInterpolatedValue_1D(DATA_WAVES_MAX_HGT,DATA_LV_GND_SURF,0,lon,lat, prevDate));
+        stats.combWaveHeight=qMax(stats.combWaveHeight,dataManager->getInterpolatedValue_1D(DATA_WAVES_SIG_HGT_COMB,DATA_LV_GND_SURF,0,lon,lat, prevDate));
     }
     stats.averageBS=stats.averageBS/(points->size()-1);
     stats.averageTWS=stats.averageTWS/(points->size()-1);

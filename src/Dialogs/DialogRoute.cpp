@@ -247,7 +247,7 @@ DialogRoute::DialogRoute(ROUTE *route, myCentralWidget *parent, bool createMode)
     connect(this->roadMapHDG,SIGNAL(valueChanged(int)),this,SLOT(slotIntervalTimer(int)));
     connect(this->useInterval,SIGNAL(toggled(bool)),this,SLOT(slotIntervalTimerBool(bool)));
     rmModel = new QStandardItemModel(this);
-    rmModel->setColumnCount(19);
+    rmModel->setColumnCount(21);
     rmModel->setHeaderData(0,Qt::Horizontal,QObject::tr("Date heure"));
     rmModel->setHeaderData(1,Qt::Horizontal," ");
     rmModel->setHeaderData(2,Qt::Horizontal,QObject::tr("TWS"));
@@ -261,12 +261,14 @@ DialogRoute::DialogRoute(ROUTE *route, myCentralWidget *parent, bool createMode)
     rmModel->setHeaderData(10,Qt::Horizontal,QObject::tr("AWA"));
     rmModel->setHeaderData(11,Qt::Horizontal,QObject::tr("CS"));
     rmModel->setHeaderData(12,Qt::Horizontal,QObject::tr("CD"));
-    rmModel->setHeaderData(13,Qt::Horizontal,QObject::tr("MAX WAVES HGT"));
-    rmModel->setHeaderData(14,Qt::Horizontal,QObject::tr("POI cible"));
-    rmModel->setHeaderData(15,Qt::Horizontal,QObject::tr("DNM"));
-    rmModel->setHeaderData(16,Qt::Horizontal,QObject::tr("CNM"));
-    rmModel->setHeaderData(17,Qt::Horizontal,QObject::tr("Lon POI cible"));
-    rmModel->setHeaderData(18,Qt::Horizontal,QObject::tr("Lat POI cible"));
+    rmModel->setHeaderData(13,Qt::Horizontal,QObject::tr("COMB WAVES HGT"));
+    rmModel->setHeaderData(14,Qt::Horizontal,QObject::tr("MAX WAVES HGT"));
+    rmModel->setHeaderData(15,Qt::Horizontal,QObject::tr("MAX WAVES DIR"));
+    rmModel->setHeaderData(16,Qt::Horizontal,QObject::tr("POI cible"));
+    rmModel->setHeaderData(17,Qt::Horizontal,QObject::tr("DNM"));
+    rmModel->setHeaderData(18,Qt::Horizontal,QObject::tr("CNM"));
+    rmModel->setHeaderData(19,Qt::Horizontal,QObject::tr("Lon POI cible"));
+    rmModel->setHeaderData(20,Qt::Horizontal,QObject::tr("Lat POI cible"));
     rmModel->setSortRole(Qt::UserRole);
     roadMap->setModel(rmModel);
     connect(this->tabWidget,SIGNAL(currentChanged(int)),this,SLOT(slotTabChanged(int)));
@@ -463,26 +465,46 @@ void DialogRoute::slotInterval()
                     roadPoint.append(new QStandardItem(QString().sprintf("%.2f",roadItems.at(20))+tr("deg")));
                     roadPoint[12]->setData(roadItems.at(20),Qt::UserRole);
                 }
-                if(roadItems.at(21)==-1)
+                if(roadItems.at(23)==-1)
                 {
                     roadPoint.append(new QStandardItem("N/A"));
                     roadPoint[13]->setData(0,Qt::UserRole);
                 }
                 else
                 {
+                    roadPoint.append(new QStandardItem(QString().sprintf("%.2f",roadItems.at(23))+tr("m")));
+                    roadPoint[13]->setData(roadItems.at(23),Qt::UserRole);
+                }
+                if(roadItems.at(21)==-1)
+                {
+                    roadPoint.append(new QStandardItem("N/A"));
+                    roadPoint[14]->setData(0,Qt::UserRole);
+                }
+                else
+                {
                     roadPoint.append(new QStandardItem(QString().sprintf("%.2f",roadItems.at(21))+tr("m")));
-                    roadPoint[13]->setData(roadItems.at(21),Qt::UserRole);
+                    roadPoint[14]->setData(roadItems.at(21),Qt::UserRole);
+                }
+                if(roadItems.at(22)==-1)
+                {
+                    roadPoint.append(new QStandardItem("N/A"));
+                    roadPoint[15]->setData(0,Qt::UserRole);
+                }
+                else
+                {
+                    roadPoint.append(new QStandardItem(QString().sprintf("%.2f",roadItems.at(22))+tr("deg")));
+                    roadPoint[15]->setData(roadItems.at(22),Qt::UserRole);
                 }
                 roadPoint.append(new QStandardItem(route->getPoiList().at((int)roadItems.at(9))->getName()));
-                roadPoint[14]->setData(route->getPoiList().at((int)roadItems.at(9))->getName(),Qt::UserRole);
+                roadPoint[16]->setData(route->getPoiList().at((int)roadItems.at(9))->getName(),Qt::UserRole);
                 roadPoint.append(new QStandardItem(QString().sprintf("%.2f",roadItems.at(10))+tr(" NM")));
-                roadPoint[15]->setData(roadItems.at(0),Qt::UserRole);
+                roadPoint[17]->setData(roadItems.at(0),Qt::UserRole);
                 roadPoint.append(new QStandardItem(QString().sprintf("%.2f",roadItems.at(11))+tr("deg")));
-                roadPoint[16]->setData(roadItems.at(11),Qt::UserRole);
+                roadPoint[18]->setData(roadItems.at(11),Qt::UserRole);
                 roadPoint.append(new QStandardItem(Util::formatLongitude(roadItems.at(1))));
-                roadPoint[17]->setData(roadItems.at(1),Qt::UserRole);
+                roadPoint[19]->setData(roadItems.at(1),Qt::UserRole);
                 roadPoint.append(new QStandardItem(Util::formatLatitude(roadItems.at(2))));
-                roadPoint[18]->setData(roadItems.at(2),Qt::UserRole);
+                roadPoint[20]->setData(roadItems.at(2),Qt::UserRole);
                 if(roadItems.at(8)>0)
                     c=Qt::red;
                 else
@@ -528,15 +550,19 @@ void DialogRoute::slotInterval()
                 roadPoint[17]->setData(0,Qt::UserRole);
                 roadPoint.append(new QStandardItem("-"));
                 roadPoint[18]->setData(0,Qt::UserRole);
+                roadPoint.append(new QStandardItem("-"));
+                roadPoint[19]->setData(0,Qt::UserRole);
+                roadPoint.append(new QStandardItem("-"));
+                roadPoint[20]->setData(0,Qt::UserRole);
             }
-            for(int n=0;n<19;++n)
+            for(int n=0;n<rmModel->columnCount();++n)
             {
                 if(n%2==0 && n!=2)
                     roadPoint[n]->setData(QColor(240,240,240),Qt::BackgroundRole);
                 if(n==4)
                     roadPoint[n]->setData(c,Qt::BackgroundRole);
                 roadPoint[n]->setEditable(false);
-                if(n==0 || n==14 || n==17 || n==18 || roadItems.at(4)==-1 || roadPoint[n]->text()=="N/A")
+                if(n==0 || n==16 || n==19 || n==20 || roadItems.at(4)==-1 || roadPoint[n]->text()=="N/A")
                     roadPoint[n]->setTextAlignment(Qt::AlignCenter| Qt::AlignVCenter);
                 else
                     roadPoint[n]->setTextAlignment(Qt::AlignRight| Qt::AlignVCenter);
@@ -549,7 +575,7 @@ void DialogRoute::slotInterval()
         speedMoy=speedMoy/route->getRoadMap()->count();
         twsMoy=twsMoy/route->getRoadMap()->count();
     }
-    for (int n=0;n<18;++n)
+    for (int n=0;n<rmModel->columnCount();++n)
     {
         roadMap->resizeColumnToContents(n);
     }

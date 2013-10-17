@@ -52,6 +52,7 @@ struct routeStats
     int nbTacksGybes;
     int nightTime;
     double maxWaveHeight;
+    double combWaveHeight;
 };
 
 //===================================================================

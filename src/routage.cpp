@@ -1102,6 +1102,14 @@ void ROUTAGE::slot_calculate()
     int maxLoop=0;
     int nbCaps=0;
     int nbCapsPruned=0;
+    int dataWave=-1;
+    if(maxWaveHeight<100)
+    {
+        if(dataManager->hasData(DATA_WAVES_SIG_HGT_COMB,DATA_LV_GND_SURF,0))
+            dataWave=DATA_WAVES_SIG_HGT_COMB;
+        else if(dataManager->hasData(DATA_WAVES_MAX_HGT,DATA_LV_GND_SURF,0))
+            dataWave=DATA_WAVES_MAX_HGT;
+    }
 #ifdef OLD_BARRIER
     QList<POI *> poiList=parent->getPois();
     for(int p=0;p<poiList.size();++p)
@@ -1443,7 +1451,7 @@ void ROUTAGE::slot_calculate()
                     if(twa_x>=90 && windSpeed<this->minPortant) continue;
 //                    if(++passe%100==0)
 //                        qWarning()<<"wave height"<<dataManager->getInterpolatedValue_1D(DATA_WAVES_MAX_HGT,DATA_LV_GND_SURF,0,list->at(n).lon,list->at(n).lat,workEta);
-                    if(maxWaveHeight<100 && dataManager->getInterpolatedValue_1D(DATA_WAVES_MAX_HGT,DATA_LV_GND_SURF,0,list->at(n).lon,list->at(n).lat,workEta)>maxWaveHeight)
+                    if(dataWave>0 && dataManager->getInterpolatedValue_1D(dataWave,DATA_LV_GND_SURF,0,list->at(n).lon,list->at(n).lat,workEta)>maxWaveHeight)
                     {
                         continue;
                     }
