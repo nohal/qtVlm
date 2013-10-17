@@ -170,7 +170,6 @@ class myCentralWidget : public QWidget
         void setCompassFollow(ROUTE * route);
         ROUTE * getCompassFollow(){return this->compassRoute;}
         void centerCompass(double lon,double lat);
-        void update_menuRoute();
         void simpAllPOIs(bool b);
         void setRouteToClipboard(ROUTE * route){this->routeClipboard=route;}
         ROUTE * getRouteToClipboard(){return this->routeClipboard;}
@@ -184,7 +183,6 @@ class myCentralWidget : public QWidget
         void deleteRoutage(ROUTAGE * routage, ROUTE * route=NULL);
 /*Other*/
         Projection * getProj(void){return proj;}
-        void update_menuRoutage();
 
         void send_redrawAll() { emit redrawAll(); }
 
@@ -294,11 +292,13 @@ public slots :
         void slot_deleteRoute();
         void withdrawRouteFromBank(QString routeName,QList<QVariant> details);
         void slot_routeTimer();
+        void update_menuRoute();
 
         /*Routages */
         void slot_addRoutageFromMenu();
         void slot_editRoutage(ROUTAGE * routage,bool createMode=false,POI * endPOI=NULL);
         void slot_deleteRoutage();
+        void update_menuRoutage();
 
         /* Players */
         void slot_addPlayer_list(Player* player);

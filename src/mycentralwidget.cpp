@@ -520,6 +520,10 @@ myCentralWidget::myCentralWidget(Projection * proj,MainWindow * parent,MenuBar *
     connect(parent,SIGNAL(showCompassCenterWp()),compass,SLOT(slot_compassCenterWp()));
     connect(parent,SIGNAL(paramVLMChanged()),compass,SLOT(slot_paramChanged()));
     connect(parent,SIGNAL(selectedBoatChanged()),compass,SLOT(slot_paramChanged()));
+    connect(parent,SIGNAL(selectedBoatChanged()),this,SLOT(update_menuRoute()));
+    connect(parent,SIGNAL(selectedBoatChanged()),this,SLOT(update_menuRoutage()));
+    connect(scene,SIGNAL(paramVLMChanged()),this,SLOT(update_menuRoute()));
+    connect(scene,SIGNAL(paramVLMChanged()),this,SLOT(update_menuRoutage()));
     connect(scene,SIGNAL(paramVLMChanged()),compass,SLOT(slot_paramChanged()));
     connect(parent,SIGNAL(selectedBoatChanged()),this,SIGNAL(shRouBis()));
     connect(scene,SIGNAL(paramVLMChanged()),parent,SIGNAL(paramVLMChanged()));
@@ -4280,7 +4284,9 @@ void myCentralWidget::update_menuRoute()
     QListIterator<ROUTE*> i (route_list);
     while(i.hasNext())
     {
-        menuBar->addMenuRoute(i.next());
+        ROUTE * route=i.next();
+        if(Settings::getSetting("autoHideRoute",1).toInt()==0 || route->getBoat()==mainW->getSelectedBoat() || route->getBoat()==NULL || !route->getBoat()->isActive())
+            menuBar->addMenuRoute(route);
     }
 
 }
@@ -4297,7 +4303,11 @@ void myCentralWidget::update_menuRoutage()
 
     QListIterator<ROUTAGE*> i (routage_list);
     while(i.hasNext())
-        menuBar->addMenuRoutage(i.next());
+    {
+        ROUTAGE * routage=i.next();
+        if(Settings::getSetting("autoHideRoute",1).toInt()==0 || routage->getBoat()==mainW->getSelectedBoat() || routage->getBoat()==NULL || !routage->getBoat()->isActive())
+            menuBar->addMenuRoutage(routage);
+    }
 }
 
 /**************************/
