@@ -200,12 +200,6 @@ inline vlmPoint findPointThreaded(const vlmPoint &point)
         return pt;
     }
 #endif
-    if(pt.origin->isStart)
-        pt.distIso=pt.distStart;
-    else
-    {
-        pt.distIso=ROUTAGE::findDistancePreviousIso(pt, pt.routage->getShapeIso());
-    }
 
 
     bool bad=false;
@@ -272,6 +266,12 @@ inline vlmPoint findPointThreaded(const vlmPoint &point)
         tempLine.setP2(QPointF(pt.routage->getXa(),pt.routage->getYa()));
         pt.distArrival=tempLine.length();
         pt.capArrival=Util::A360(-tempLine.angle()+90);
+    }
+    if(pt.origin->isStart)
+        pt.distIso=pt.distStart;
+    else
+    {
+        pt.distIso=ROUTAGE::findDistancePreviousIso(pt, pt.routage->getShapeIso());
     }
     return pt;
 }
