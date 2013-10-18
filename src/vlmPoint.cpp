@@ -20,14 +20,12 @@ vlmPoint::vlmPoint(double lon,double lat)
     this->eta=0;
     this->distIso=-1;
     this->capOrigin=0;
-    this->needRoute=false;
     this->isBroken=false;
     this->debugInt=0;
     this->internal_1=0;
     this->internal_2=0;
     this->capVmg=0;
     this->notSimplificable=false;
-    this->maxDistIso=10e5;
     this->isPOI=false;
     this->xP1=10e5;
     this->yP1=10e5;

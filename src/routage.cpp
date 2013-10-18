@@ -1312,7 +1312,7 @@ void ROUTAGE::slot_calculate()
             iso->setPointCurrent(n,current_angle,current_speed);
             double vmg;
             myBoat->getPolarData()->getBvmg(Util::A360(list->at(n).capArrival-windAngle),windSpeed,&vmg);
-            iso->setPointCapVmg(n,Util::A360(vmg+windAngle));
+            //iso->setPointCapVmg(n,Util::A360(vmg+windAngle));
         }
 #ifdef traceTime
         msecs_5+=tfp.elapsed();
@@ -3431,7 +3431,15 @@ void ROUTAGE::removeCrossedSegments()
         if(d.key()<180) break;
         QPoint couple=d.value();
         int badOne=0;
-        if(tempPoints.at(couple.x()).distIso<tempPoints.at(couple.y()).distIso)
+        double crit1=tempPoints.at(couple.x()).distIso;
+        double crit2=tempPoints.at(couple.y()).distIso;
+        if(qAbs(crit1-crit2)<(crit1+crit2)/20.0)
+        {
+            crit1=tempPoints.at(couple.x()).distArrival;
+            crit2=tempPoints.at(couple.y()).distArrival;
+        }
+        //if(tempPoints.at(couple.x()).distIso<tempPoints.at(couple.y()).distIso)
+        if(crit1<crit2)
             badOne=couple.x();
         else
             badOne=couple.y();
@@ -3726,7 +3734,7 @@ void ROUTAGE::calculateCaps(QList<double> *caps, const vlmPoint &point, const do
             caps->prepend(Util::A360(point.capArrival+cc));
         if(cc>=workAngleRange/2.0) break;
     }
-#if 1
+#if 0
     if(point.capVmg==-1) return;
     Point vmg(cos(degToRad(point.capVmg)),sin(degToRad(point.capVmg)));
     Point O(0,0);
