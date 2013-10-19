@@ -9479,7 +9479,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../src/Ui/BoardVLM.ui" line="1707"/>
         <source>background-color: rgb(170, 170, 255);</source>
-        <translation>color de fondo: rgb(170, 170, 255);</translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="../src/Ui/BoardVLM.ui" line="1761"/>

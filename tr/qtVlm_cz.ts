@@ -9431,7 +9431,7 @@ projetá trasa a trajektorie se nemusí shodovat.&lt;/span&gt;&lt;/p&gt;&lt;/bod
         <location filename="../src/Ui/BoardVLM.ui" line="1730"/>
         <location filename="../src/Ui/BoardVLM.ui" line="1758"/>
         <source>background-color: rgb(239, 243, 247);</source>
-        <translation>barva pozadí: rgb(239, 243, 247);</translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="../src/Ui/BoardVLM.ui" line="550"/>
@@ -9562,7 +9562,7 @@ projetá trasa a trajektorie se nemusí shodovat.&lt;/span&gt;&lt;/p&gt;&lt;/bod
     <message>
         <location filename="../src/Ui/BoardVLM.ui" line="1707"/>
         <source>background-color: rgb(170, 170, 255);</source>
-        <translation>barva pozadí: rgb(170, 170, 255);</translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="../src/Ui/BoardVLM.ui" line="1761"/>

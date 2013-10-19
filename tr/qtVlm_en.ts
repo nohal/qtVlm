@@ -474,7 +474,7 @@
         <location filename="../src/Ui/BoardVlmNew.ui" line="1417"/>
         <location filename="../src/Ui/BoardVlmNew.ui" line="1451"/>
         <source>background-color: rgb(239, 243, 247);</source>
-        <translation>background-color: rgb(239, 243, 247);</translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="../src/Ui/BoardVlmNew.ui" line="1467"/>
@@ -9372,7 +9372,7 @@ p, li { white-space: pre-wrap; }
         <location filename="../src/Ui/BoardVLM.ui" line="1730"/>
         <location filename="../src/Ui/BoardVLM.ui" line="1758"/>
         <source>background-color: rgb(239, 243, 247);</source>
-        <translation>background-color: rgb(239, 243, 247);</translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="../src/Ui/BoardVLM.ui" line="550"/>
@@ -9503,7 +9503,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../src/Ui/BoardVLM.ui" line="1707"/>
         <source>background-color: rgb(170, 170, 255);</source>
-        <translation>background-colour: rgb(170, 170, 255);</translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="../src/Ui/BoardVLM.ui" line="1761"/>
