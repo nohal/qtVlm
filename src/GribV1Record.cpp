@@ -41,7 +41,7 @@ GribV1Record::GribV1Record(const GribV1Record &rec)
     // recopie les champs de bits
     if (rec.data != NULL) {
         int size = rec.Ni*rec.Nj;
-        this->data = new double[size];
+        this->data = new float[size];
         for (int i=0; i<size; i++)
             this->data[i] = rec.data[i];
     }
@@ -618,7 +618,7 @@ bool GribV1Record::readGribSection4_BDS(ZUFILE* file) {
     }
 
     // Allocate memory for the data
-    data = new double[Ni*Nj];
+    data = new float[Ni*Nj];
     if (!data) {
         //erreur("Record: out of memory");
         ok = false;
@@ -660,7 +660,7 @@ bool GribV1Record::readGribSection4_BDS(ZUFILE* file) {
                     startbit += nbBitsInPack;
                 }
                 else {
-                    data[ind] = GRIB_NOTDEF;
+                    data[ind] = (float) GRIB_NOTDEF;
                 }
             }
         }
@@ -680,7 +680,7 @@ bool GribV1Record::readGribSection4_BDS(ZUFILE* file) {
                     data[ind] = (refValue + x*scaleFactorEpow2)/decimalFactorD;
                 }
                 else {
-                    data[ind] = GRIB_NOTDEF;
+                    data[ind] = (float)GRIB_NOTDEF;
                 }
             }
         }

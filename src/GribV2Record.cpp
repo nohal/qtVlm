@@ -32,7 +32,7 @@ int DATA_TO_GRBV2_LV[256];
 GribV2Record::GribV2Record(GribV2Record &rec)
 {
     *this = rec;
-    data=new double[dataSize];
+    data=new float[dataSize];
     for(int i=0;i<dataSize;++i)
         data[i]=rec.get_data(i);
     bmap=new bool[bmapSize];
@@ -272,9 +272,9 @@ GribV2Record::GribV2Record(gribfield  *gfld, int msg, int field):GribRecord() {
 #endif
 
 #if 1
-    data=new double[gfld->ndpts];
+    data=new float[gfld->ndpts];
 #else
-    data=new double[gfld->ngrdpts];
+    data=new float[gfld->ngrdpts];
 #endif
     if(!data) {
         qWarning() << "Msg " << msg << " - field " << field << ": unable to allocate mem for data array (size=" << gfld->ndpts << ")";

@@ -5,7 +5,7 @@
 #include "Polar.h"
 #include <QLineF>
 
-vlmPoint::vlmPoint(double lon,double lat)
+vlmPoint::vlmPoint(const double  &lon, const double &lat)
 {
     this->lon=lon;
     this->lat=lat;

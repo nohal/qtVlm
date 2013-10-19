@@ -68,7 +68,6 @@ inline vlmPoint findPointThreaded(const vlmPoint &point)
     double lon=pt.origin->lon;
     cap=Util::A360(cap);
     double angle,newSpeed;
-    time_t workEta;
     double res_lon,res_lat;
     double distanceParcourue=0;
     double current_speed=pt.current_speed;
@@ -112,22 +111,27 @@ inline vlmPoint findPointThreaded(const vlmPoint &point)
         pt.lat=res_lat;
         pt.distOrigin=distanceParcourue;
         pt.capOrigin=cap;
+        time_t isoStep=pt.routage->getTimeStep()*60;
+        if(pt.routage->getI_iso())
+        {
+            isoStep=-isoStep;
+        }
+        pt.eta+=isoStep;
         //if(!pt.routage->getUseRouteModule()) break;
         if(a==0)
         {
             double newWindAngle,newWindSpeed;
-            workEta=pt.eta;
             if(pt.routage->getWhatIfUsed() && pt.routage->getWhatIfJour()<=pt.eta)
-                workEta=workEta+pt.routage->getWhatIfTime()*3600;
+                pt.eta+=pt.routage->getWhatIfTime()*3600;
             if(!pt.routage->get_dataManager()->getInterpolatedWind(res_lon,res_lat,
-                   workEta+pt.routage->getTimeStep()*60,&newWindSpeed,&newWindAngle,INTERPOLATION_DEFAULT)||workEta+pt.routage->getTimeStep()*60>pt.routage->get_dataManager()->get_maxDate())
+                   pt.eta,&newWindSpeed,&newWindAngle,INTERPOLATION_DEFAULT)||pt.eta>pt.routage->get_dataManager()->get_maxDate())
             {
                 pt.isDead=true;
                 return pt;
             }
             newWindAngle=radToDeg(newWindAngle);
             if(pt.routage->get_dataManager()->getInterpolatedCurrent(res_lon,res_lat,
-                   workEta+pt.routage->getTimeStep()*60,&current_speed,&current_angle,INTERPOLATION_DEFAULT))
+                   pt.eta,&current_speed,&current_angle,INTERPOLATION_DEFAULT))
             {
                 current_angle=radToDeg(current_angle);
                 QPointF p=Util::calculateSumVect(newWindAngle,newWindSpeed,current_angle,current_speed);
@@ -1436,25 +1440,6 @@ void ROUTAGE::slot_calculate()
     #endif
                     vlmPoint newPoint(0,0);
                     cap=caps.at(ccc);
-                    double twa_x=qAbs(cap-windAngle);
-                    if(qAbs(twa_x)>180)
-                    {
-                        if(twa_x<0)
-                            twa_x=360+twa_x;
-                        else
-                            twa_x=twa_x-360;
-                    }
-                    twa_x=qAbs(twa_x);
-                    if(twa_x<=90 && windSpeed>this->maxPres) continue;
-                    if(twa_x<=90 && windSpeed<this->minPres) continue;
-                    if(twa_x>=90 && windSpeed>this->maxPortant) continue;
-                    if(twa_x>=90 && windSpeed<this->minPortant) continue;
-//                    if(++passe%100==0)
-//                        qWarning()<<"wave height"<<dataManager->getInterpolatedValue_1D(DATA_WAVES_MAX_HGT,DATA_LV_GND_SURF,0,list->at(n).lon,list->at(n).lat,workEta);
-                    if(dataWave>0 && dataManager->getInterpolatedValue_1D(dataWave,DATA_LV_GND_SURF,0,list->at(n).lon,list->at(n).lat,workEta)>maxWaveHeight)
-                    {
-                        continue;
-                    }
                     newPoint.routage=this;
                     newPoint.origin=iso->getPoint(n);
                     newPoint.originNb=n;
@@ -1519,8 +1504,22 @@ void ROUTAGE::slot_calculate()
 #ifdef traceTime
                         tfp.start();
 #endif
+                        double twa_x=qAbs(newPoint.capOrigin-newPoint.wind_angle);
+                        if(qAbs(twa_x)>180)
+                        {
+                            if(twa_x<0)
+                                twa_x=360+twa_x;
+                            else
+                                twa_x=twa_x-360;
+                        }
+                        twa_x=qAbs(twa_x);
                         if((checkCoast && map && map->crossing(QLineF(list->at(n).x,list->at(n).y,newPoint.x,newPoint.y),QLineF(list->at(n).lon,list->at(n).lat,newPoint.lon,newPoint.lat)))
-                                || (checkLine && crossBarriere(QLineF(list->at(n).x,list->at(n).y,newPoint.x,newPoint.y))))
+                                || (checkLine && crossBarriere(QLineF(list->at(n).x,list->at(n).y,newPoint.x,newPoint.y))) ||
+                            (twa_x<=90 && newPoint.wind_speed>this->maxPres) ||
+                            (twa_x<=90 && newPoint.wind_speed<this->minPres) ||
+                            (twa_x>=90 && newPoint.wind_speed>this->maxPortant) ||
+                            (twa_x>=90 && newPoint.wind_speed<this->minPortant) ||
+                            (dataWave>0 && dataManager->getInterpolatedValue_1D(dataWave,DATA_LV_GND_SURF,0,newPoint.lon,newPoint.lat,newPoint.eta)>maxWaveHeight))
                         {
 #ifdef traceTime
                             msecs_14=msecs_14+tfp.elapsed();

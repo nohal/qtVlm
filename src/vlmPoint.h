@@ -6,7 +6,7 @@
 class vlmPoint
 {
     public:
-        vlmPoint(double lon,double lat);
+        vlmPoint(const double &lon, const double &lat);
         vlmPoint(){vlmPoint(0,0);}
         QPointF getPointF() {return QPointF(lon,lat);}
         double  lon;

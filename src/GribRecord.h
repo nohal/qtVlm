@@ -59,28 +59,28 @@ class GribRecord {
         void unitConversion(void);
 
         // Nombre de points de la grille
-        FCT_GET(int,Ni)
-        FCT_GET(int,Nj)
-        FCT_GET(double,Di)
-        FCT_GET(double,Dj)
+        FCT_GET_CST(int,Ni)
+        FCT_GET_CST(int,Nj)
+        FCT_GET_CST(float,Di)
+        FCT_GET_CST(float,Dj)
 
-        FCT_GET(bool,isFull)
+        FCT_GET_CST(bool,isFull)
 
-        FCT_GET_CST(double,latMin)
-        FCT_GET_CST(double,latMax)
-        FCT_GET_CST(double,lonMin)
-        FCT_GET_CST(double,lonMax)
+        FCT_GET_CST(float,latMin)
+        FCT_GET_CST(float,latMax)
+        FCT_GET_CST(float,lonMin)
+        FCT_GET_CST(float,lonMax)
 
-        FCT_GET(int,dataSize)
-        FCT_GET(int,bmapSize)
+        FCT_GET_CST(int,dataSize)
+        FCT_GET_CST(int,bmapSize)
 
         // coordonnees d'un point de la grille
-        inline double  getX(int i) const   { return ok ? Lo1+i*Di : GRIB_NOTDEF;}
-        inline double  getY(int j) const   { return ok ? La1+j*Dj : GRIB_NOTDEF;}
+        inline float  getX(const int &i) const   { return ok ? Lo1+i*Di : GRIB_NOTDEF;}
+        inline float  getY(const int &j) const   { return ok ? La1+j*Dj : GRIB_NOTDEF;}
 
         // Valeur pour un point de la grille
         virtual bool hasValue(int i, int j) const =0;
-        inline double getValue(int i, int j) const  { return ok ? data[j*Ni+i] : GRIB_NOTDEF;}
+        inline float getValue(const int &i, const int &j) const  { return ok ? data[j*Ni+i] : GRIB_NOTDEF;}
         void setValue(unsigned int i, unsigned int j, double v) { if (i<Ni && j<Nj) data[j*Ni+i] = v; }
 
         // interpolation:
@@ -89,9 +89,9 @@ class GribRecord {
                                        double * a00,double * a01,double * a10,double * a11,bool debug);
 
         // Le point est-il a  l'interieur de la grille ?
-        inline bool   isPointInMap(double x, double y) const;
-        inline bool   isXInMap(double x) const;
-        inline bool   isYInMap(double y) const;
+        inline bool   isPointInMap(const double &x, const double &y) const;
+        inline bool   isXInMap(const double &x) const;
+        inline bool   isYInMap(const double &y) const;
 
         void print_bitmap(void);
 
@@ -110,9 +110,9 @@ class GribRecord {
 
         int gridType;
         unsigned int Ni, Nj;
-        double La1, Lo1, La2, Lo2;
-        double latMin, lonMin, latMax, lonMax;
-        double Di, Dj;
+        float La1, Lo1, La2, Lo2;
+        float latMin, lonMin, latMax, lonMax;
+        float Di, Dj;
         unsigned char resolFlags, scanFlags;
         bool hasDiDj;
         bool isScanIpositive;
@@ -122,7 +122,7 @@ class GribRecord {
 
         int deltaPeriod;
 
-        double  *data;
+        float  *data;
         bool knownData;
         void   multiplyAllData(double k);
 
@@ -138,16 +138,17 @@ class GribRecord {
 
 
 };
+Q_DECLARE_TYPEINFO(GribRecord,Q_MOVABLE_TYPE);
 
 inline long int GribRecord::makeKey(int dataType,int levelType,int levelValue) {
     return levelValue*10e6+dataType*10e3+levelType;
 }
 
-inline bool GribRecord::isPointInMap(double x, double y) const {
+inline bool GribRecord::isPointInMap(const double &x, const double &y) const {
     return isXInMap(x) && isYInMap(y);
 }
 
-inline bool GribRecord::isXInMap(double x) const {
+inline bool GribRecord::isXInMap(const double &x) const {
     double a=0;
     if(isFull) a=Di;
 
@@ -155,7 +156,7 @@ inline bool GribRecord::isXInMap(double x) const {
     else        return x>=(Lo2+a) && x<=Lo1;
 }
 
-inline bool GribRecord::isYInMap(double y) const {
+inline bool GribRecord::isYInMap(const double &y) const {
     if (Dj < 0) return y<=La1 && y>=La2;
     else        return y>=La1 && y<=La2;
 }
