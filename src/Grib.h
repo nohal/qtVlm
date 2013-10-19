@@ -62,6 +62,7 @@ class Grib
         enum GribFileDataStatus { DATA_IN_FILE, NO_DATA_IN_FILE, COMPUTED_DATA };
 
         void update_dateList(std::set<time_t> * dateList);
+        void update_levelMap(QMap<int, QMap<int, QList<int> *> *> *levelMap);
 
         bool getZoneExtension (double *x0,double *y0, double *x1,double *y1);
 

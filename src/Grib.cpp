@@ -299,6 +299,30 @@ void Grib::update_dateList(std::set<time_t> * dateList) {
     }
 }
 
+/********************************************************
+ * Build map of all level associate to a given dataType *
+ ********************************************************/
+
+void Grib::update_levelMap(QMap<int,QMap<int,QList<int>*>*> * levelMap) {
+    if(!isOk()) return;
+    std::map <long int, std::vector<GribRecord *>* >::iterator it;
+    for (it=mapGribRecords.begin(); it!=mapGribRecords.end(); it++) {
+        std::vector<GribRecord *> *ls = (*it).second;
+
+        if(ls->size()>0) {
+            GribRecord * ptr=ls->at(0);
+            if(!levelMap->contains(ptr->get_dataType())) {
+                levelMap->insert(ptr->get_dataType(),new QMap<int,QList<int>*>());
+            }
+
+            if(!levelMap->value(ptr->get_dataType())->contains(ptr->get_levelType()))
+                levelMap->value(ptr->get_dataType())->insert(ptr->get_levelType(),new QList<int>());
+
+            levelMap->value(ptr->get_dataType())->value(ptr->get_levelType())->append(ptr->get_levelValue());
+        }
+    }
+}
+
 /*****************************
  * Get records arround date  *
  *****************************/

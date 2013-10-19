@@ -120,6 +120,7 @@ bool DataManager::load_data(QString fileName,int gribType) {
             delete *gribPtr;
         *gribPtr=ptr;
         update_dateList();
+        update_levelMap();
         //print_firstRecord_info();
         return true;
     }
@@ -132,6 +133,7 @@ void DataManager::close_data(int gribType) {
         delete *gribPtr;
         *gribPtr=NULL;
         update_dateList();
+        update_levelMap();
     }
 }
 
@@ -165,6 +167,33 @@ void DataManager::update_dateList(void) {
         }
     }
 
+}
+
+void DataManager::update_levelMap(void) {
+    clear_levelMap();
+    if(grib && grib->isOk()) grib->update_levelMap(&levelMap);
+    if(gribCurrent && gribCurrent->isOk()) gribCurrent->update_levelMap(&levelMap);
+}
+
+void DataManager::clear_levelMap(void) {
+    QMapIterator<int, QMap<int, QList<int>*> *> i(levelMap);
+    while (i.hasNext()) {
+        i.next();
+        if(i.value()) {
+            QMapIterator<int,QList<int>*> j(*i.value());
+            while (j.hasNext()) {
+                j.next();
+                if(j.value()) delete j.value();
+            }
+            delete i.value();
+        }
+    }
+    levelMap.clear();
+}
+
+QMap<int,QList<int>*> * DataManager::get_levelList(int dataType) {
+    if(levelMap.contains(dataType)) return levelMap.value(dataType);
+    else return NULL;
 }
 
 QString DataManager::get_fileName(int gribType) {

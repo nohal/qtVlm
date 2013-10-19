@@ -23,6 +23,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #ifndef GRIBRECORD_H
 #define GRIBRECORD_H
 
+#include <cmath>
+
 #include "class_list.h"
 #include "dataDef.h"
 
@@ -141,7 +143,9 @@ class GribRecord {
 Q_DECLARE_TYPEINFO(GribRecord,Q_MOVABLE_TYPE);
 
 inline long int GribRecord::makeKey(int dataType,int levelType,int levelValue) {
-    return levelValue*10e6+dataType*10e3+levelType;
+    long int res =((levelValue&0xFFFF)<<16)+((dataType&0xFF)<<8)+(levelType&0xFF);
+    if(res<0)  qWarning() << dataType << "," << levelType << "," << levelValue;
+    return res;
 }
 
 inline bool GribRecord::isPointInMap(const double &x, const double &y) const {
@@ -162,6 +166,7 @@ inline bool GribRecord::isYInMap(const double &y) const {
 }
 
 #endif
+
 
 
 

@@ -200,8 +200,6 @@ struct raceParam {
 };
 Q_DECLARE_TYPEINFO(raceParam,Q_PRIMITIVE_TYPE);
 
-
-
 struct windData
 {
         double u0;
@@ -346,21 +344,10 @@ class DataCode
                            this->levelType  = levelType;
                            this->levelValue = levelValue;  }
 
-                DataCode (int v)   { fromInt32 (v); }
-
                 int dataType;
                 int levelType;
                 int levelValue;
 
-                // int32 = #aabbccdd    aabb=levelValue cc=levelType dd=dataCode
-                int toInt32 () {
-                        return ((levelValue&0xFFFF)<<16)+((levelType&0xFF)<<8)+(dataType&0xFF);
-                }
-                void fromInt32 (int v) {
-                        levelValue = (v>>16) & 0xFFFF;
-                        levelType  = (v>>8) & 0xFF;
-                        dataType   =  v     & 0xFF;
-                }
 
                 void set (int dataType=DATA_NOTDEF, int levelType=-1, int levelValue=-1)
                         {  this->dataType   = dataType;

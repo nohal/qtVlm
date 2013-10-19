@@ -196,138 +196,18 @@ bool GribV1::readAllGribRecords(const char * fname,int compressMode) {
 
                 if (firstdate== -1)
                     firstdate = rec->get_curDate();
-#if 0
-
-                if (//-----------------------------------------
-                        (rec->get_dataType()==DATA_PRESSURE
-                         && rec->get_levelType()==DATA_LV_MSL && rec->get_levelValue()==0)
-                        //-----------------------------------------
-                        || ( (rec->get_dataType()==DATA_TMIN || rec->get_dataType()==DATA_TMAX)
-                             && rec->get_levelType()==DATA_LV_ABOV_GND && rec->get_levelValue()==2)
-                        //-----------------------------------------
-                        || (rec->get_dataType()==DATA_TEMP
-                            && rec->get_levelType()==DATA_LV_ABOV_GND && rec->get_levelValue()==2)
-                        || (rec->get_dataType()==DATA_TEMP
-                            && rec->get_levelType()==DATA_LV_ISOBARIC
-                            && (   rec->get_levelValue()==850
-                                   || rec->get_levelValue()==700
-                                   || rec->get_levelValue()==500
-                                   || rec->get_levelValue()==300
-                                   || rec->get_levelValue()==200 ) )
-                        //-----------------------------------------
-                        // Wind
-                        //-----------------------------------------
-                        || ( (rec->get_dataType()==DATA_WIND_VX || rec->get_dataType()==DATA_WIND_VY)
-                             && rec->get_levelType()==DATA_LV_ABOV_GND
-                             && (   rec->get_levelValue()==1
-                                    || rec->get_levelValue()==2
-                                    || rec->get_levelValue()==3
-                                    || rec->get_levelValue()==10 ) )
-                        || ( (rec->get_dataType()==DATA_WIND_VX || rec->get_dataType()==DATA_WIND_VY)
-                             && rec->get_levelType()==DATA_LV_MSL
-                             && rec->get_levelValue()==0 )
-                        || ( (rec->get_dataType()==DATA_WIND_VX || rec->get_dataType()==DATA_WIND_VY)
-                             && rec->get_levelType()==DATA_LV_GND_SURF
-                             && (rec->get_levelValue()==0 || rec->get_levelValue()==1))
-                        || ( (rec->get_dataType()==DATA_WIND_VX || rec->get_dataType()==DATA_WIND_VY)
-                             && rec->get_levelType()==DATA_LV_ISOBARIC
-                             && (   rec->get_levelValue()==850
-                                    || rec->get_levelValue()==700
-                                    || rec->get_levelValue()==500
-                                    || rec->get_levelValue()==300
-                                    || rec->get_levelValue()==200 ) )
-                        || ( (rec->get_dataType()==DATA_CURRENT_VX || rec->get_dataType()==DATA_CURRENT_VY)
-                             && rec->get_levelType()==DATA_LV_MSL
-                             && rec->get_levelValue()==0 )
-                        //-----------------------------------------
-                        //-----------------------------------------
-                        || (rec->get_dataType()==DATA_HUMID_SPEC
-                            && rec->get_levelType()==DATA_LV_ISOBARIC
-                            && (   rec->get_levelValue()==850
-                                   || rec->get_levelValue()==700
-                                   || rec->get_levelValue()==500
-                                   || rec->get_levelValue()==300
-                                   || rec->get_levelValue()==200 ) )
-                        //-----------------------------------------
-                        || (rec->get_dataType()==DATA_GEOPOT_HGT
-                            && rec->get_levelType()==DATA_LV_ISOTHERM0 && rec->get_levelValue()==0)
-                        || (rec->get_dataType()==DATA_GEOPOT_HGT
-                            && rec->get_levelType()==DATA_LV_ISOBARIC
-                            && (   rec->get_levelValue()==850
-                                   || rec->get_levelValue()==700
-                                   || rec->get_levelValue()==500
-                                   || rec->get_levelValue()==300
-                                   || rec->get_levelValue()==200 ) )
-                        //-----------------------------------------
-                        || (rec->get_dataType()==DATA_PRECIP_TOT
-                            && rec->get_levelType()==DATA_LV_GND_SURF && rec->get_levelValue()==0)
-                        //-----------------------------------------
-                        || (rec->get_dataType()==DATA_PRECIP_RATE
-                            && rec->get_levelType()==DATA_LV_GND_SURF && rec->get_levelValue()==0)
-                        //-----------------------------------------
-                        || (rec->get_dataType()==DATA_SNOW_DEPTH
-                            && rec->get_levelType()==DATA_LV_GND_SURF && rec->get_levelValue()==0)
-                        //-----------------------------------------
-                        || (rec->get_dataType()==DATA_SNOW_CATEG
-                            && rec->get_levelType()==DATA_LV_GND_SURF && rec->get_levelValue()==0)
-                        //-----------------------------------------
-                        || (rec->get_dataType()==DATA_FRZRAIN_CATEG
-                            && rec->get_levelType()==DATA_LV_GND_SURF && rec->get_levelValue()==0)
-                        //-----------------------------------------
-                        || (rec->get_dataType()==DATA_CLOUD_TOT
-                            && rec->get_levelType()==DATA_LV_ATMOS_ALL && rec->get_levelValue()==0)
-                        //-----------------------------------------
-                        || (rec->get_dataType()==DATA_HUMID_REL
-                            && rec->get_levelType()==DATA_LV_ABOV_GND && rec->get_levelValue()==2)
-                        || (rec->get_dataType()==DATA_HUMID_REL
-                            && rec->get_levelType()==DATA_LV_ISOBARIC
-                            && (   rec->get_levelValue()==850
-                                   || rec->get_levelValue()==700
-                                   || rec->get_levelValue()==500
-                                   || rec->get_levelValue()==300
-                                   || rec->get_levelValue()==200 ) )
-                        //-----------------------------------------
-                        || (rec->get_dataType()==DATA_TEMP_POT
-                            && rec->get_levelType()==DATA_LV_SIGMA && rec->get_levelValue()==9950)
-                        //-----------------------------------------
-                        || (rec->get_dataType()==DATA_CAPE
-                            && rec->get_levelType()==DATA_LV_GND_SURF && rec->get_levelValue()==0)
-                        || (rec->get_dataType()==DATA_CIN
-                                && rec->get_levelType()==DATA_LV_GND_SURF && rec->get_levelValue()==0)
-                        //-----------------------------------------
-                        || ((rec->get_dataType()==DATA_WAVES_SIG_HGT_COMB
-                             || rec->get_dataType()==DATA_WAVES_WND_DIR
-                             || rec->get_dataType()==DATA_WAVES_WND_HGT
-                             || rec->get_dataType()==DATA_WAVES_WND_PERIOD
-                             || rec->get_dataType()==DATA_WAVES_SWL_DIR
-                             || rec->get_dataType()==DATA_WAVES_SWL_HGT
-                             || rec->get_dataType()==DATA_WAVES_SWL_PERIOD
-                             || rec->get_dataType()==DATA_WAVES_PRIM_DIR
-                             || rec->get_dataType()==DATA_WAVES_PRIM_PERIOD
-                             || rec->get_dataType()==DATA_WAVES_SEC_DIR
-                             || rec->get_dataType()==DATA_WAVES_SEC_PERIOD
-                             || rec->get_dataType()==DATA_WAVES_WHITE_CAP
-                             || rec->get_dataType()==DATA_WAVES_MAX_DIR
-                             || rec->get_dataType()==DATA_WAVES_MAX_HGT
-                             || rec->get_dataType()==DATA_WAVES_MAX_PERIOD
-                             )
-                            && rec->get_levelType()==DATA_LV_GND_SURF && rec->get_levelValue()==0)
-                        )
-#endif
-                {
-                    recAdded=true;
-                    addRecord(rec);
-                }
+                recAdded=true;
+                addRecord(rec);
             }
 #if 1
-                else
-                {
-                    qWarning()<<"GribReader: unknown record type: key="<<(int)rec->get_dataKey();
-                    qWarning()<<"dataType="<<rec->get_dataType()<< " - V1: " << rec->get_dataTypeV1();
-                    qWarning()<<"levelType"<<rec->get_levelType()<< " - V1: " << rec->get_levelTypeV1();;
-                    qWarning()<<"levelValue"<<rec->get_levelValue();
-                    qWarning()<<"center:"<<rec->get_idCenter()<<" - model:" << rec->get_idModel() << " - grid:" << rec->get_idGrid();
-                }
+            else
+            {
+                qWarning()<<"GribReader: unknown record type: key="<<(int)rec->get_dataKey();
+                qWarning()<<"dataType="<<rec->get_dataType()<< " - V1: " << rec->get_dataTypeV1();
+                qWarning()<<"levelType"<<rec->get_levelType()<< " - V1: " << rec->get_levelTypeV1();;
+                qWarning()<<"levelValue"<<rec->get_levelValue();
+                qWarning()<<"center:"<<rec->get_idCenter()<<" - model:" << rec->get_idModel() << " - grid:" << rec->get_idGrid();
+            }
 #endif
 
         }
@@ -345,12 +225,15 @@ bool GribV1::readAllGribRecords(const char * fname,int compressMode) {
     qWarning() << "List:";
     std::map <long int, std::vector<GribRecord *>* >::iterator it;
     int i=0;
+    QString str;
     for(it=mapGribRecords.begin();it!=mapGribRecords.end();++it) {
-        qWarning() << "key " << i << ": key= " << it->first << ", nb elem" << it->second->size();
+        str =  "key " + QString().setNum(i) + ": key= " + QString().setNum(it->first) + ", nb elem=" + QString().setNum(it->second->size());
         if(it->second->size()>0) {
             GribV1Record* ptr = (GribV1Record*)it->second->at(0);
-            qWarning() << "G1 dataType=" << ptr->get_dataTypeV1() << " levelType=" << ptr->get_levelTypeV1();
+            str += " - G1 dataType=" + QString().setNum(ptr->get_dataTypeV1()) + " levelType=" + QString().setNum(ptr->get_levelTypeV1());
+            str += " level val=" +QString().setNum(ptr->get_levelValue());
         }
+        qWarning() << str;
         ++i;
     }
 

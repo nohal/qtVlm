@@ -47,6 +47,9 @@ MenuBar::MenuBar(MainWindow *parent)
 {
     mainWindow=parent;
     this->setAccessibleName("mainMenuQtvlm");
+
+     menuAltitude=NULL;
+     acAlt_GroupAltitude=NULL;
     //-------------------------------------
     // Menu + Actions
     //-------------------------------------
@@ -230,71 +233,44 @@ MenuBar::MenuBar(MainWindow *parent)
         menuGrib->addMenu(menuGroupColorMap);
         menuGrib->addSeparator();
 
-        setMenubarColorMapMode(Settings::getSetting("colorMapMode", MapDataDrawer::drawWind).toInt());
+        // init string list for levelTypes and units
+        /*
+        DATA_LV_GND_SURF=0,
+        DATA_LV_ISOTHERM0,
+        DATA_LV_ISOBARIC,
+        DATA_LV_MSL,
+        DATA_LV_ABOV_GND,
+        DATA_LV_SIGMA,
+        DATA_LV_ATMOS_ALL,
+        DATA_LV_ORDERED_SEQUENCE_DATA
+        */
+
+        levelTypes.append(tr("Surface"));
+        levelTypesUnit.append("unit ?");
+        levelTypes.append(tr("Isotherm 0C"));
+        levelTypesUnit.append("unit ?");
+        levelTypes.append(tr("Isobaric"));
+        levelTypesUnit.append("hPa");
+        levelTypes.append(tr("Mean Sea Level"));
+        levelTypesUnit.append("unit ?");
+        levelTypes.append(tr("Above ground"));
+        levelTypesUnit.append("m");
+        levelTypes.append(tr("Sigma"));
+        levelTypesUnit.append("?");
+        levelTypes.append(tr("Entire atmosphere"));
+        levelTypesUnit.append("unit ?");
+        levelTypes.append(tr("Ordered sequence"));
+        levelTypesUnit.append("?");
 
         //-------------------------------------
         menuAltitude = new QMenu(tr("Altitude"));
-                    acAlt_GroupAltitude = new QActionGroup (menuAltitude);
-                            acAlt_MSL = addActionCheck(menuAltitude, tr("Sea level"), "", "");
-                            acAlt_GND = addActionCheck(menuAltitude, tr("Surface"), "", "");
-                            acAlt_sigma995 = addActionCheck(menuAltitude, tr("Sigma 995"), "", "");
-                            acAlt_GND_1m = addActionCheck(menuAltitude, tr("1 m above ground"), "", "");
-                            acAlt_GND_2m = addActionCheck(menuAltitude, tr("2 m above ground"), "", "");
-                            acAlt_GND_3m = addActionCheck(menuAltitude, tr("3 m above ground"), "", "");
-                            acAlt_GND_10m = addActionCheck(menuAltitude, tr("10 m above ground"), "", "");
-                            acAlt_850hpa = addActionCheck(menuAltitude, tr("850 hPa (? 1460 m)"), "", "");
-                            acAlt_700hpa = addActionCheck(menuAltitude, tr("700 hPa (? 3000 m)"), "", "");
-                            acAlt_500hpa = addActionCheck(menuAltitude, tr("500 hPa (? 5600 m)"), "", "");
-                            acAlt_300hpa = addActionCheck(menuAltitude, tr("300 hPa (? 9200 m)"), "", "");
-                            acAlt_200hpa = addActionCheck(menuAltitude, tr("200 hPa (? 11800 m)"), "", "");
-                            acAlt_Atmosphere = addActionCheck(menuAltitude, tr("Atmosphere"), "", "");
-                            acAlt_GroupAltitude->addAction (acAlt_MSL);
-                            acAlt_GroupAltitude->addAction (acAlt_GND);
-                            acAlt_GroupAltitude->addAction (acAlt_sigma995);
-                            acAlt_GroupAltitude->addAction (acAlt_GND_1m);
-                            acAlt_GroupAltitude->addAction (acAlt_GND_2m);
-                            acAlt_GroupAltitude->addAction (acAlt_GND_3m);
-                            acAlt_GroupAltitude->addAction (acAlt_GND_10m);
-                            acAlt_GroupAltitude->addAction (acAlt_850hpa);
-                            acAlt_GroupAltitude->addAction (acAlt_700hpa);
-                            acAlt_GroupAltitude->addAction (acAlt_500hpa);
-                            acAlt_GroupAltitude->addAction (acAlt_300hpa);
-                            acAlt_GroupAltitude->addAction (acAlt_200hpa);
-                            acAlt_GroupAltitude->addAction (acAlt_Atmosphere);
-            menuAltitude->addSeparator();
-                    acAlt_GroupGeopotLine = new ZeroOneActionGroup (menuAltitude);
-                            acAlt_GeopotLine_850hpa = addActionCheck (menuAltitude, tr("Geopotential altitude 850 hpa"), "", "");
-                            acAlt_GeopotLine_700hpa = addActionCheck (menuAltitude, tr("Geopotential altitude 700 hpa"), "", "");
-                            acAlt_GeopotLine_500hpa = addActionCheck (menuAltitude, tr("Geopotential altitude 500 hpa"), "", "");
-                            acAlt_GeopotLine_300hpa = addActionCheck(menuAltitude, tr("Geopotential altitude 300 hpa"), "", "");
-                            acAlt_GeopotLine_200hpa = addActionCheck(menuAltitude, tr("Geopotential altitude 200 hpa"), "", "");
-                            acAlt_GroupGeopotLine->addAction (acAlt_GeopotLine_850hpa);
-                            acAlt_GroupGeopotLine->addAction (acAlt_GeopotLine_700hpa);
-                            acAlt_GroupGeopotLine->addAction (acAlt_GeopotLine_500hpa);
-                            acAlt_GroupGeopotLine->addAction (acAlt_GeopotLine_300hpa);
-                            acAlt_GroupGeopotLine->addAction (acAlt_GeopotLine_200hpa);
+        acAlt_GroupAltitude = new ZeroOneActionGroup (menuAltitude);
+        connect(menuAltitude,SIGNAL(aboutToShow()),this,SLOT(slot_showAltitudeMenu()));
 
-                menuGeopotStep = new QMenu(tr("Spacing (m)"));
-                acAlt_GroupGeopotStep = new QActionGroup (menuGeopotStep);
-                    acAlt_GeopotStep_1  = addActionCheck(menuGeopotStep, tr("1"), "", "");
-                    acAlt_GeopotStep_2  = addActionCheck(menuGeopotStep, tr("2"), "", "");
-                    acAlt_GeopotStep_5  = addActionCheck(menuGeopotStep, tr("5"), "", "");
-                    acAlt_GeopotStep_10 = addActionCheck(menuGeopotStep, tr("10"), "", "");
-                    acAlt_GeopotStep_20 = addActionCheck(menuGeopotStep, tr("20"), "", "");
-                    acAlt_GeopotStep_50 = addActionCheck(menuGeopotStep, tr("50"), "", "");
-                    acAlt_GeopotStep_100 = addActionCheck(menuGeopotStep, tr("100"), "", "");
-                    acAlt_GroupGeopotStep->addAction (acAlt_GeopotStep_1);
-                    acAlt_GroupGeopotStep->addAction (acAlt_GeopotStep_2);
-                    acAlt_GroupGeopotStep->addAction (acAlt_GeopotStep_5);
-                    acAlt_GroupGeopotStep->addAction (acAlt_GeopotStep_10);
-                    acAlt_GroupGeopotStep->addAction (acAlt_GeopotStep_20);
-                    acAlt_GroupGeopotStep->addAction (acAlt_GeopotStep_50);
-                    acAlt_GroupGeopotStep->addAction (acAlt_GeopotStep_100);
-                menuAltitude->addMenu(menuGeopotStep);
-                acAlt_GeopotLabels = addActionCheck(menuAltitude, tr("Geopotentials labels"), "","");
+       menuGrib->addMenu(menuAltitude);
+       menuGrib->addSeparator();
 
-                //menuGrib->addMenu(menuAltitude);
-                //menuGrib->addSeparator();
+       setMenubarColorMapMode(Settings::getSetting("colorMapMode", MapDataDrawer::drawWind).toInt());
 
         acView_ColorMapSmooth = addActionCheck(menuGrib, tr("Degrades de couleurs"), tr(""),
                     tr(""));
@@ -763,6 +739,41 @@ void MenuBar::slot_showBarrierMenu(void) {
 
 }
 
+void MenuBar::slot_showAltitudeMenu(void) {
+    int colorMapMode=Settings::getSetting("colorMapMode", MapDataDrawer::drawWind).toInt();
+
+    if(acAlt_GroupAltitude)
+        acAlt_GroupAltitude->clear();
+    if(menuAltitude)
+        menuAltitude->clear();
+
+    MapDataDrawer * mapDataDrawer = my_CentralWidget->get_mapDataDrawer();
+    DataManager * dataManager = my_CentralWidget->get_dataManager();
+    if(!dataManager || !mapDataDrawer) return;
+
+    QMap<int,DataCode> *dataMap=mapDataDrawer->get_dataCodeMap();
+    if(!dataMap) return;
+
+    int curType = dataMap->value(colorMapMode).dataType;
+    QMap<int,QList<int>*> * levelList = dataManager->get_levelList(curType);
+
+    if(levelList) {
+        QMapIterator<int,QList<int>*> j(*levelList);
+        while (j.hasNext()) {
+            j.next();
+            QList<int>* lst = j.value();
+            if(!lst) continue;
+
+            for(int i=0;i<lst->count();++i) {
+                QAction * act = addActionCheck(menuAltitude,
+                                               levelTypes[j.key()] + " - " +
+                        QString().setNum(lst->at(i)) + " " + levelTypesUnit[j.key()], "", "");
+                acAlt_GroupAltitude->addAction(act);
+            }
+        }
+    }
+
+}
 
 
 
@@ -798,6 +809,14 @@ void MenuBar::setPlayerType(const int &type)
     acOptions_SH_Por->setVisible(!real);
     acShowLog->setVisible(!real);
     acGetTrack->setVisible(!real);
+}
+
+void ZeroOneActionGroup::clear(void) {
+    while(!lsactions.isEmpty()) {
+        QAction * act = lsactions.takeFirst();
+        disconnect(act,SIGNAL(triggered(bool)),
+                   this,  SLOT(slot_actionTrigerred(bool)));
+    }
 }
 
 //===================================================================================

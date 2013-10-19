@@ -42,6 +42,8 @@ class DataManager
         Grib * get_grib(int gribType);
         Grib * get_grib(int dataType,int levelType, int levelValue);
 
+        QMap<int, QList<int> *> *get_levelList(int dataType);
+
         std::set<time_t> * get_dateList(void) { return &dateList; }
 
         QString get_cartoucheData(void);
@@ -103,6 +105,10 @@ class DataManager
         std::set<time_t> dateList;
         time_t minDate;
         time_t maxDate;
+
+        void update_levelMap(void);
+        void clear_levelMap(void);
+        QMap<int,QMap<int, QList<int>*> *> levelMap;
 
         double isoBarsStep;
         int isoTherms0Step;

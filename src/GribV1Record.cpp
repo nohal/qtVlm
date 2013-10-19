@@ -92,8 +92,10 @@ GribV1Record::GribV1Record(ZUFILE* file) : GribRecord()
             knownData = true;
             unitConversion();
         }
-        else
+        else {
             knownData = false;
+            qWarning() << "Unknown data: dataType=" << dataType << ", levelType=" << levelType << ", levelValue=" << levelValue;
+        }
 
         computeKey();
     }
@@ -877,12 +879,12 @@ void GribV1Record::init_conversionMatrix(void) {
     }
 
     for(int i=0;i<DATA_LV_MAX;++i) {
-        DATA_TO_GRBV1_LV[i]=DATA_NOTDEF;
+        DATA_TO_GRBV1_LV[i]=DATA_LV_NOTDEF;
     }
 
     for(int i=0;i<256;++i) {
         GRBV1_TO_DATA[i]=DATA_NOTDEF;
-        GRBV1_TO_DATA_LV[i]=DATA_NOTDEF;
+        GRBV1_TO_DATA_LV[i]=DATA_LV_NOTDEF;
     }
 
     /* init DATA => GRB */
@@ -938,7 +940,7 @@ void GribV1Record::init_conversionMatrix(void) {
             GRBV1_TO_DATA[DATA_TO_GRBV1[i]]=i;
 
     for(int i=0;i<DATA_LV_MAX;++i)
-        if(DATA_TO_GRBV1_LV[i]!=DATA_NOTDEF)
+        if(DATA_TO_GRBV1_LV[i]!=DATA_LV_NOTDEF)
             GRBV1_TO_DATA_LV[DATA_TO_GRBV1_LV[i]]=i;
 
 
