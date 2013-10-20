@@ -21,6 +21,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "GshhsPolyReader.h"
 #include "Projection.h"
 #include "dataDef.h"
+#include "zuFile.h"
+#include "Util.h"
 
 
 GshhsPolyCell::GshhsPolyCell(FILE *fpoly_, int x0_, int y0_,Projection *proj_,PolygonFileHeader *header_)

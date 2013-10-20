@@ -33,11 +33,10 @@ Copyright (C) 2008 - Jacques Zaninetti - http://zygrib.free.fr
 
 #include "class_list.h"
 
-#include "Polygon.h"
-#include "vlmpointgraphic.h"
 #include "vlmPoint.h"
-#include "GshhsReader.h"
+#include "DataManager.h"
 #include "vlmLine.h"
+
 #define NO_CROSS 1
 #define BOUNDED_CROSS 2
 #define L1_CROSS 3

@@ -2,10 +2,8 @@
 #define MAGNIFIER_H
 
 #include <QGraphicsPixmapItem>
-#include "mycentralwidget.h"
 #include "class_list.h"
-#include "Projection.h"
-#include "GshhsReader.h"
+
 #include <QMenu>
 
 class Magnifier : public QObject, public QGraphicsPixmapItem

@@ -8,6 +8,7 @@
 #include <QDebug>
 #include "settings.h"
 #include "GshhsReader.h"
+#include "Projection.h"
 
 DialogTwaLine::DialogTwaLine(QPointF start, myCentralWidget *parent, MainWindow *main) : QDialog(parent)
 {

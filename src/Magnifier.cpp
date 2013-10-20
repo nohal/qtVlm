@@ -1,12 +1,17 @@
+
+#include <QGraphicsDropShadowEffect>
+#include <QInputDialog>
+
 #include "Magnifier.h"
 #include "settings.h"
-#include <QGraphicsDropShadowEffect>
 #include "ToolBar.h"
-#include <QInputDialog>
 #include "boat.h"
 #include "opponentBoat.h"
 #include "boatVLM.h"
 #include "route.h"
+#include "Projection.h"
+#include "GshhsReader.h"
+#include "mycentralwidget.h"
 
 
 Magnifier::Magnifier(myCentralWidget *parent)

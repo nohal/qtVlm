@@ -49,7 +49,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //==========================================================
 class GshhsPoint {
     public:
-        float lon, lat;    // longitude, latitude
+       float lon, lat;    // longitude, latitude
         GshhsPoint(const float &lo, const float &la) {
             lon = lo;
             lat = la;

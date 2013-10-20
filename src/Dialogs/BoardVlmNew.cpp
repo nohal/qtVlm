@@ -22,6 +22,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <QMessageBox>
 #include <QStyleFactory>
 #include <QGraphicsDropShadowEffect>
+#include <QFile>
 
 #include "BoardVlmNew.h"
 #include "ui_BoardVlmNew.h"
@@ -32,6 +33,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "vlmLine.h"
 #include "boatVLM.h"
 #include "MapDataDrawer.h"
+#include "Util.h"
 
 BoardVlmNew::BoardVlmNew(MainWindow *main)
     : QDialog(main)

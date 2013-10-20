@@ -38,6 +38,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "Orthodromie.h"
 #include "Polar.h"
 #include "orthoSegment.h"
+#include "Projection.h"
 
 
 //#define GPS_FILE

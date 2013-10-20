@@ -39,7 +39,12 @@ Original code: virtual-winds.com
 #include "Util.h"
 #include "Polygon.h"
 #include "route.h"
-#include "DataManager.h"
+
+#include "Polygon.h"
+#include "vlmpointgraphic.h"
+#include "GshhsReader.h"
+
+
 #include <QDebug>
 #ifdef QT_V5
 #include <QtConcurrent/QtConcurrentMap>

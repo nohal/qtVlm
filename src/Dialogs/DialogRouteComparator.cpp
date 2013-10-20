@@ -1,11 +1,13 @@
+#include <QDateTime>
+
 #include "DialogRouteComparator.h"
 #include "settings.h"
 #include "mycentralwidget.h"
 #include "route.h"
 #include "boat.h"
-#include <QDateTime>
 #include "Orthodromie.h"
 #include "POI.h"
+#include "Util.h"
 
 DialogRouteComparator::DialogRouteComparator(myCentralWidget *parent) : QDialog(parent)
 {

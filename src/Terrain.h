@@ -24,14 +24,13 @@ Copyright (C) 2008 - Jacques Zaninetti - http://zygrib.free.fr
 
 #ifndef TERRAIN_H
 #define TERRAIN_H
-#include "GshhsReader.h"
+
 #include <QGraphicsWidget>
 #include <QGraphicsSceneMouseEvent>
 #include <QPainter>
 #include <QToolBar>
 #include <QBitmap>
 #include <QMutex>
-#include "routage.h"
 
 #include "class_list.h"
 class Terrain : public QGraphicsWidget

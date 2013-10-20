@@ -30,6 +30,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <QFileDialog>
 #include <QColorDialog>
 #endif
+#include <QDebug>
 #include "DialogParamVlm.h"
 #include "settings.h"
 #include "MainWindow.h"

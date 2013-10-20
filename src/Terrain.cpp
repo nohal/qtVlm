@@ -33,6 +33,7 @@ Copyright (C) 2008 - Jacques Zaninetti - http://zygrib.free.fr
 #include <QDebug>
 #include <QDateTime>
 #include <QGraphicsScene>
+#include <QTimer>
 
 #include "Terrain.h"
 #include "settings.h"
@@ -42,11 +43,12 @@ Copyright (C) 2008 - Jacques Zaninetti - http://zygrib.free.fr
 #include "GshhsReader.h"
 #include "loadImg.h"
 #include "Orthodromie.h"
-#include <QTimer>
 #include "MyView.h"
 #include "ToolBar.h"
 #include "MapDataDrawer.h"
 #include "DataManager.h"
+#include "routage.h"
+
 
 //---------------------------------------------------------
 // Constructeur

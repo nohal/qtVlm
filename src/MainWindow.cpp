@@ -48,7 +48,7 @@ Copyright (C) 2008 - Jacques Zaninetti - http://zygrib.free.fr
 #include "opponentBoat.h"
 #include "mycentralwidget.h"
 #include "MenuBar.h"
-#include "GshhsReader.h"
+//#include "GshhsReader.h"
 #include "Polar.h"
 #include "boatVLM.h"
 #include "GribRecord.h"
