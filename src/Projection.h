@@ -224,7 +224,7 @@ inline void Projection::map2screenDouble(const double &x, const double &y, doubl
     {
         if(360.0-diff<diff) diff-=360.0;
     }
-    else
+    else if (diff<0)
     {
         if(360.0+diff<qAbs(diff)) diff+=360.0;
     }
@@ -249,7 +249,7 @@ inline void Projection::map2screenByReference(const double &ref, const double &r
     {
         if(360.0-diff<diff) diff-=360.0;
     }
-    else
+    else if (diff<0)
     {
         if(360.0+diff<qAbs(diff)) diff+=360.0;
     }
