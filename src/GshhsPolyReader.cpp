@@ -133,7 +133,7 @@ void  GshhsPolyCell::DrawPolygonFilled(QPainter &pnt,contour_list * p,double dx,
 
             if(v==0 || x!=x_old || y!=y_old)
             {
-                poly_pt.append(QPoint(x,y));
+                poly_pt.append(QPointF(x,y).toPoint());
                 x_old=x;
                 y_old=y;
             }
