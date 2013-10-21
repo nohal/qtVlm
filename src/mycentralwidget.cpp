@@ -1316,6 +1316,7 @@ void myCentralWidget::closeGribFile(void)
     updateGribMenu();
 
     emit redrawAll();
+    Settings::setSetting("gribFileName","");
 }
 
 void myCentralWidget::loadGribFileCurrent(QString fileName, bool zoom)
@@ -1352,6 +1353,7 @@ void myCentralWidget::closeGribFileCurrent(void)
     updateGribMenu();
 
     emit redrawAll();
+    Settings::setSetting("gribFileNameCurrent","");
 }
 
 void myCentralWidget::setCurrentDate(time_t t, bool uRoute)

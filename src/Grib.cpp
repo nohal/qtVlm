@@ -331,10 +331,20 @@ void Grib::find_recordsAroundDate (int dataType,int levelType,int levelValue, ti
     *before = NULL;
     *after  = NULL;
 
-    if(ls==NULL)
+    if(ls==NULL || ls->isEmpty())
         return;
-    *before=ls->lowerBound(date).value();
-    *after=ls->upperBound(date).value();
+    QMap<time_t,GribRecord *>::Iterator it=ls->lowerBound(date);
+    if(it!=ls->end())
+    {
+        *after=it.value();
+        if(it.key()==date)
+        {
+            *before=*after;
+            return;
+        }
+    }
+    if(it!=ls->begin())
+        *before=(it-1).value();
 
 //    zuint nb = (int)ls->size();
 //    for (zuint i=0; i<nb && /**before==NULL &&*/ *after==NULL; i++) {
