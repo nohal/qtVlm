@@ -140,25 +140,16 @@ int Grib::getNumberOfGribRecords(int dataType,int levelType,int levelValue)
 GribRecord * Grib::getGribRecord(int dataType,int levelType,int levelValue, time_t date)
 {
     QMap<time_t,GribRecord *> *ls = getListOfGribRecords(dataType,levelType,levelValue);
-    if (ls != NULL) {
+    if (ls != NULL)
         // Cherche le premier enregistrement a la bonne date
-        GribRecord *res = NULL;
-        int nb = (int)ls->size();
-        for (int i=0; i<nb && res==NULL; i++) {
-            if ((*ls)[i]->get_curDate() == date)
-                res = (*ls)[i];
-        }
-        return res;
-    }
-    else {
+        return ls->value(date,NULL);
+    else
         return NULL;
-    }
 }
 
 GribRecord * Grib::getFirstRecord(void) {
-    if(isOk()) {
+    if(isOk())
         return getFirstNonEmptyList()->begin().value();
-    }
     else
         return NULL;
 }
@@ -338,28 +329,10 @@ void Grib::find_recordsAroundDate (int dataType,int levelType,int levelValue, ti
     {
         *after=it.value();
         if(it.key()==date)
-        {
             *before=*after;
-            return;
-        }
     }
-    if(it!=ls->begin())
+    if(*before==NULL && it!=ls->begin())
         *before=(it-1).value();
-
-//    zuint nb = (int)ls->size();
-//    for (zuint i=0; i<nb && /**before==NULL &&*/ *after==NULL; i++) {
-//        GribRecord *rec = (*ls)[i];
-//        if (rec->get_curDate() == date) {
-//            *before = rec;
-//            *after = rec;
-//        }
-//        else if (rec->get_curDate() < date) {
-//            *before = rec;
-//        }
-//        else if (rec->get_curDate() > date  &&  *before != NULL) {
-//            *after = rec;
-//        }
-//    }
 }
 
 bool Grib::get_recordsAndTime_2D(int dataType_1,int dataType_2,int levelType,int levelValue,
