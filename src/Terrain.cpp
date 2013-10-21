@@ -235,7 +235,10 @@ void Terrain::draw_GSHHSandGRIB()
 
     if(centralWidget->get_dataManager()->isOk())
     {
+        QTime timeG;
+        timeG.start();
         drawGrib(pnt);
+        qWarning()<<"time to draw grib"<<timeG.elapsed();
         //imgAll->save("testGrib_terrain1.png");
         if(centralWidget->getKap()!=NULL /*&& centralWidget->getKap()->getDrawGribOverKap()*/)
         {

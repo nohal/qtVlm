@@ -38,7 +38,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "GribV2.h"
 #include "GribV1Record.h"
 #include "GribV2Record.h"
-
+#include <QMap>
 
 #include "interpolation.h"
 
@@ -81,41 +81,37 @@ Grib * Grib::loadGrib(QString fileName,DataManager *dataManager) {
  **************************/
 
 void Grib::clean_all_vectors() {
-    std::map <long int, std::vector<GribRecord *>* >::iterator it;
+    std::map <long int, QMap<time_t,GribRecord *>* >::iterator it;
     for (it=mapGribRecords.begin(); it!=mapGribRecords.end(); it++) {
-        std::vector<GribRecord *> *ls = (*it).second;
-        clean_vector( *ls );
+        QMap<time_t,GribRecord *>  *ls = (*it).second;
+        clean_vector( ls );
         delete ls;
     }
     mapGribRecords.clear();
 }
 
-void Grib::clean_vector(std::vector<GribRecord *> &ls) {
-    std::vector<GribRecord *>::iterator it;
-    for (it=ls.begin(); it!=ls.end(); ++it) {
-        delete *it;
-        *it = NULL;
-    }
-    ls.clear();
+void Grib::clean_vector(QMap<time_t, GribRecord *> *ls) {
+    while(!ls->isEmpty())
+        delete ls->take(ls->begin().key());
 }
 
 void Grib::addRecord(GribRecord * rec) {
-    std::map <long int, std::vector<GribRecord *>* >::iterator it;
+    std::map <long int, QMap<time_t,GribRecord *>* >::iterator it;
     it = mapGribRecords.find(rec->get_dataKey());
     if (it == mapGribRecords.end()) { /* map doesn't contain this data type */
-            mapGribRecords[rec->get_dataKey()] = new std::vector<GribRecord *>;
+            mapGribRecords[rec->get_dataKey()] = new QMap<time_t,GribRecord *>;
     }
     /* adds the record to vector created for record's data type */
-    mapGribRecords[rec->get_dataKey()]->push_back(rec);
+    mapGribRecords[rec->get_dataKey()]->insert(rec->get_curDate(),rec);
 }
 
 bool Grib::hasData(int dataType,int levelType,int levelValue) {
     return getNumberOfGribRecords(dataType,levelType,levelValue)!=0;
 }
 
-std::vector<GribRecord *> * Grib::getFirstNonEmptyList() {
-    std::vector<GribRecord *> *ls = NULL;
-        std::map <long int, std::vector<GribRecord *>* >::iterator it;
+QMap<time_t,GribRecord *> * Grib::getFirstNonEmptyList() {
+        QMap<time_t,GribRecord *> *ls = NULL;
+        std::map <long int, QMap<time_t,GribRecord *>* >::iterator it;
         for (it=mapGribRecords.begin(); ls==NULL && it!=mapGribRecords.end(); it++)
         {
                 if ((*it).second->size()>0)
@@ -124,7 +120,7 @@ std::vector<GribRecord *> * Grib::getFirstNonEmptyList() {
         return ls;
 }
 
-std::vector<GribRecord *> * Grib::getListOfGribRecords(int dataType,int levelType,int levelValue) {
+QMap<time_t,GribRecord *> * Grib::getListOfGribRecords(int dataType,int levelType,int levelValue) {
         long int key = GribRecord::makeKey(dataType,levelType,levelValue);
         if (mapGribRecords.find(key) != mapGribRecords.end())
                 return mapGribRecords[key];
@@ -134,7 +130,7 @@ std::vector<GribRecord *> * Grib::getListOfGribRecords(int dataType,int levelTyp
 
 int Grib::getNumberOfGribRecords(int dataType,int levelType,int levelValue)
 {
-    std::vector<GribRecord *> *liste = getListOfGribRecords(dataType,levelType,levelValue);
+    QMap<time_t,GribRecord *> *liste = getListOfGribRecords(dataType,levelType,levelValue);
     if (liste != NULL)
         return (int)liste->size();
     else
@@ -143,7 +139,7 @@ int Grib::getNumberOfGribRecords(int dataType,int levelType,int levelValue)
 
 GribRecord * Grib::getGribRecord(int dataType,int levelType,int levelValue, time_t date)
 {
-    std::vector<GribRecord *> *ls = getListOfGribRecords(dataType,levelType,levelValue);
+    QMap<time_t,GribRecord *> *ls = getListOfGribRecords(dataType,levelType,levelValue);
     if (ls != NULL) {
         // Cherche le premier enregistrement a la bonne date
         GribRecord *res = NULL;
@@ -161,7 +157,7 @@ GribRecord * Grib::getGribRecord(int dataType,int levelType,int levelValue, time
 
 GribRecord * Grib::getFirstRecord(void) {
     if(isOk()) {
-        return getFirstNonEmptyList()->at(0);
+        return getFirstNonEmptyList()->begin().value();
     }
     else
         return NULL;
@@ -175,9 +171,9 @@ bool Grib::getZoneExtension(double *x0,double *y0, double *x1,double *y1)
     if(!isOk())
         return false;
 
-    std::vector<GribRecord *> *ls = getFirstNonEmptyList();
+    QMap<time_t,GribRecord *> *ls = getFirstNonEmptyList();
     if (ls != NULL) {
-        GribRecord *rec = ls->at(0);
+        GribRecord *rec = ls->begin().value();
         if (rec != NULL) {
             if(rec->get_isFull())
                 return false;
@@ -290,12 +286,11 @@ double Grib::computeDewPoint(double lon, double lat, time_t now)
 
 void Grib::update_dateList(std::set<time_t> * dateList) {
     if(!isOk()) return;
-    std::map <long int, std::vector<GribRecord *>* >::iterator it;
+    std::map <long int, QMap<time_t,GribRecord *>* >::iterator it;
     for (it=mapGribRecords.begin(); it!=mapGribRecords.end(); it++) {
-        std::vector<GribRecord *> *ls = (*it).second;
-        for (unsigned int i=0; i<ls->size(); i++) { // using a set insure uniquness of element
-            dateList->insert(ls->at(i)->get_curDate());
-        }
+        QMap<time_t,GribRecord *> *ls = (*it).second;
+        for(int i=0;i<ls->keys().size();++i)
+            dateList->insert(ls->keys().at(i));
     }
 }
 
@@ -305,12 +300,12 @@ void Grib::update_dateList(std::set<time_t> * dateList) {
 
 void Grib::update_levelMap(QMap<int,QMap<int,QList<int>*>*> * levelMap) {
     if(!isOk()) return;
-    std::map <long int, std::vector<GribRecord *>* >::iterator it;
+    std::map <long int, QMap<time_t,GribRecord *>* >::iterator it;
     for (it=mapGribRecords.begin(); it!=mapGribRecords.end(); it++) {
-        std::vector<GribRecord *> *ls = (*it).second;
+        QMap<time_t,GribRecord *> *ls = (*it).second;
 
         if(ls->size()>0) {
-            GribRecord * ptr=ls->at(0);
+            GribRecord * ptr=ls->begin().value();
             if(!levelMap->contains(ptr->get_dataType())) {
                 levelMap->insert(ptr->get_dataType(),new QMap<int,QList<int>*>());
             }
@@ -331,28 +326,30 @@ void Grib::find_recordsAroundDate (int dataType,int levelType,int levelValue, ti
                                                         GribRecord **before, GribRecord **after) {
     if(!before || !after)
         return;
-    std::vector<GribRecord *> *ls = getListOfGribRecords(dataType,levelType,levelValue);
+    QMap<time_t,GribRecord *> *ls = getListOfGribRecords(dataType,levelType,levelValue);
 
     *before = NULL;
     *after  = NULL;
 
     if(ls==NULL)
         return;
+    *before=ls->lowerBound(date).value();
+    *after=ls->upperBound(date).value();
 
-    zuint nb = (int)ls->size();
-    for (zuint i=0; i<nb && /**before==NULL &&*/ *after==NULL; i++) {
-        GribRecord *rec = (*ls)[i];
-        if (rec->get_curDate() == date) {
-            *before = rec;
-            *after = rec;
-        }
-        else if (rec->get_curDate() < date) {
-            *before = rec;
-        }
-        else if (rec->get_curDate() > date  &&  *before != NULL) {
-            *after = rec;
-        }
-    }
+//    zuint nb = (int)ls->size();
+//    for (zuint i=0; i<nb && /**before==NULL &&*/ *after==NULL; i++) {
+//        GribRecord *rec = (*ls)[i];
+//        if (rec->get_curDate() == date) {
+//            *before = rec;
+//            *after = rec;
+//        }
+//        else if (rec->get_curDate() < date) {
+//            *before = rec;
+//        }
+//        else if (rec->get_curDate() > date  &&  *before != NULL) {
+//            *after = rec;
+//        }
+//    }
 }
 
 bool Grib::get_recordsAndTime_2D(int dataType_1,int dataType_2,int levelType,int levelValue,

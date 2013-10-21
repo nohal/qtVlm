@@ -223,13 +223,13 @@ bool GribV1::readAllGribRecords(const char * fname,int compressMode) {
     qWarning() << "GRIBV1 load finished";
     qWarning() << "NB key: " << mapGribRecords.size();
     qWarning() << "List:";
-    std::map <long int, std::vector<GribRecord *>* >::iterator it;
+    std::map <long int, QMap<time_t,GribRecord *>* >::iterator it;
     int i=0;
     QString str;
     for(it=mapGribRecords.begin();it!=mapGribRecords.end();++it) {
         str =  "key " + QString().setNum(i) + ": key= " + QString().setNum(it->first) + ", nb elem=" + QString().setNum(it->second->size());
         if(it->second->size()>0) {
-            GribV1Record* ptr = (GribV1Record*)it->second->at(0);
+            GribV1Record* ptr = (GribV1Record*)it->second->begin().value();
             str += " - G1 dataType=" + QString().setNum(ptr->get_dataTypeV1()) + " levelType=" + QString().setNum(ptr->get_levelTypeV1());
             str += " level val=" +QString().setNum(ptr->get_levelValue());
         }

@@ -106,9 +106,9 @@ class Grib
         int version;
         QString fileName;
 
-        std::map <long int,std::vector<GribRecord *>* >  mapGribRecords;
+        std::map <long int,QMap<time_t,GribRecord *> *>  mapGribRecords;
         void addRecord(GribRecord * rec);
-        void clean_vector(std::vector<GribRecord *> &ls);
+        void clean_vector(QMap<time_t, GribRecord *> *ls);
         void clean_all_vectors();
 
 
@@ -119,8 +119,8 @@ class Grib
         int	dewpointDataStatus;
         double computeDewPoint(double lon, double lat, time_t now);
 
-        std::vector<GribRecord *> * getFirstNonEmptyList();
-        std::vector<GribRecord *> * getListOfGribRecords(int dataType,int levelType,int levelValue);
+        QMap<time_t, GribRecord *> *getFirstNonEmptyList();
+        QMap<time_t, GribRecord *> *getListOfGribRecords(int dataType,int levelType,int levelValue);
 };
 Q_DECLARE_TYPEINFO(Grib,Q_MOVABLE_TYPE);
 

@@ -176,7 +176,7 @@ bool GribV2::loadFile(QString fileName) {
     qWarning() << "GRIBV2 load finished";
     qWarning() << "NB key: " << mapGribRecords.size();
     qWarning() << "List:";
-    std::map <long int, std::vector<GribRecord *>* >::iterator it;
+    std::map <long int, QMap<time_t,GribRecord *>* >::iterator it;
     int i=0;
     for(it=mapGribRecords.begin();it!=mapGribRecords.end();++it) {
         qWarning() << "key " << i << ": key= " << it->first << ", nb elem" << it->second->size();
