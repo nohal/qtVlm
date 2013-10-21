@@ -201,7 +201,7 @@ QRgb ColorElement::get_color(double v, bool smooth) {
         double fact=(v-(it-1).key())/((it).key()-(it-1).key());
         double fact2=1-fact;
         QRgb minVal=(it-1).value();
-        QRgb maxVal=(it).value();
+        QRgb maxVal=it.value();
         int r,g,b;
         r=(int)(fact2*qRed(minVal)+fact*qRed(maxVal)+0.5);
         g=(int)(fact2*qGreen(minVal)+fact*qGreen(maxVal)+0.5);

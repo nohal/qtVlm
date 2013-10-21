@@ -192,8 +192,7 @@ void DataManager::clear_levelMap(void) {
 }
 
 QMap<int,QList<int>*> * DataManager::get_levelList(int dataType) {
-    if(levelMap.contains(dataType)) return levelMap.value(dataType);
-    else return NULL;
+    return levelMap.value(dataType,NULL);
 }
 
 QString DataManager::get_fileName(int gribType) {
