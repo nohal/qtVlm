@@ -49,6 +49,7 @@ class ColorElement {
 
         void loadCache(const bool &smooth);
         void clearCache();
+        bool isCacheLoaded(const bool &smooth){return smooth?cacheLoadedSmooth:cacheLoaded;}
 private:
         QMap<double,QRgb> colorMap;
 
@@ -65,6 +66,8 @@ private:
         double offset;
 
         int transparence;
+        bool cacheLoadedSmooth;
+        bool cacheLoaded;
 };
 
 extern QMap<QString,ColorElement*> colorMap;

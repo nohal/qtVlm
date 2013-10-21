@@ -232,15 +232,19 @@ void MapDataDrawer::drawColorMapGeneric_2D_OLD(QPainter &pnt, const Projection *
 {
     int i, j;
     double u,v,x,y;
-    int W = proj->getW();
-    int H = proj->getH();
+    const int W = proj->getW();
+    const int H = proj->getH();
     int space=0;
     int W_s=0,H_s=0;
     QRgb   rgb;
 
     ColorElement * colorElement=DataColors::get_colorElement(color_name);
     if(!colorElement) return;
-    colorElement->loadCache(smooth);
+    if(!colorElement->isCacheLoaded(smooth))
+    {
+        colorElement->clearCache();
+        colorElement->loadCache(smooth);
+    }
 
     int sz=1;
     if(showWindArrows)
@@ -260,6 +264,7 @@ void MapDataDrawer::drawColorMapGeneric_2D_OLD(QPainter &pnt, const Projection *
 
     uchar * buffer=new uchar [W*H*4];
     int indice=0;
+    const int W4=W*4;
     if(interpolation_mode==INTERPOLATION_UKN)
         interpolation_mode=dataManager->get_interpolationMode();
     for (i=0; i<W-2; i+=2)
@@ -280,46 +285,49 @@ void MapDataDrawer::drawColorMapGeneric_2D_OLD(QPainter &pnt, const Projection *
                 }
 
                 rgb=colorElement->get_colorCached(u);
-
-                int index=(j*W*4)+(i*4);
-                buffer[index+3]=255;
-                buffer[index+2]=qRed(rgb);
-                buffer[index+1]=qGreen(rgb);
-                buffer[index]=qBlue(rgb);
-                index=(j*W*4)+((i+1)*4);
-                buffer[index+3]=255;
-                buffer[index+2]=qRed(rgb);
-                buffer[index+1]=qGreen(rgb);
-                buffer[index]=qBlue(rgb);
-                index=((j+1)*W*4)+(i*4);
-                buffer[index+3]=255;
-                buffer[index+2]=qRed(rgb);
-                buffer[index+1]=qGreen(rgb);
-                buffer[index]=qBlue(rgb);
-                index=((j+1)*W*4)+((i+1)*4);
-                buffer[index+3]=255;
-                buffer[index+2]=qRed(rgb);
-                buffer[index+1]=qGreen(rgb);
-                buffer[index]=qBlue(rgb);
+                const int alpha=qAlpha(rgb);
+                const int red=qRed(rgb);
+                const int green=qGreen(rgb);
+                const int blue=qBlue(rgb);
+                int index=(j*W4)+(i*4);
+                buffer[index+3]=alpha;
+                buffer[index+2]=red;
+                buffer[index+1]=green;
+                buffer[index]=blue;
+                index=(j*W4)+((i+1)*4);
+                buffer[index+3]=alpha;
+                buffer[index+2]=red;
+                buffer[index+1]=green;
+                buffer[index]=blue;
+                index=((j+1)*W4)+(i*4);
+                buffer[index+3]=alpha;
+                buffer[index+2]=red;
+                buffer[index+1]=green;
+                buffer[index]=blue;
+                index=((j+1)*W4)+((i+1)*4);
+                buffer[index+3]=alpha;
+                buffer[index+2]=red;
+                buffer[index+1]=green;
+                buffer[index]=blue;
             }
             else
             {
-                int index=(j*W*4)+(i*4);
+                int index=(j*W4)+(i*4);
                 buffer[index+3]=0;
                 buffer[index+2]=0;
                 buffer[index+1]=0;
                 buffer[index]=0;
-                index=(j*W*4)+((i+1)*4);
+                index=(j*W4)+((i+1)*4);
                 buffer[index+3]=0;
                 buffer[index+2]=0;
                 buffer[index+1]=0;
                 buffer[index]=0;
-                index=((j+1)*W*4)+(i*4);
+                index=((j+1)*W4)+(i*4);
                 buffer[index+3]=0;
                 buffer[index+2]=0;
                 buffer[index+1]=0;
                 buffer[index]=0;
-                index=((j+1)*W*4)+((i+1)*4);
+                index=((j+1)*W4)+((i+1)*4);
                 buffer[index+3]=0;
                 buffer[index+2]=0;
                 buffer[index+1]=0;
@@ -328,7 +336,7 @@ void MapDataDrawer::drawColorMapGeneric_2D_OLD(QPainter &pnt, const Projection *
         }
     }
 
-    QImage image(buffer,W,H, W*4, QImage::Format_ARGB32);
+    QImage image(buffer,W,H, W4, QImage::Format_ARGB32);
     pnt.drawImage(0,0,image);
     delete[] buffer;
 
@@ -352,7 +360,7 @@ void MapDataDrawer::drawColorMapGeneric_2D_OLD(QPainter &pnt, const Projection *
             }
         }
     }
-    colorElement->clearCache();
+    //colorElement->clearCache();
 }
 void MapDataDrawer::drawColorMapGeneric_2D(QPainter &pnt, const Projection *proj, bool smooth,
                                                bool showWindArrows, bool barbules,
@@ -370,8 +378,8 @@ void MapDataDrawer::drawColorMapGeneric_2D(QPainter &pnt, const Projection *proj
 
     int i, j;
     double u,v,x,y;
-    int W = proj->getW();
-    int H = proj->getH();
+    const int W = proj->getW();
+    const int H = proj->getH();
     int space=0;
     int W_s=0,H_s=0;
 
@@ -410,7 +418,11 @@ void MapDataDrawer::drawColorMapGeneric_2D(QPainter &pnt, const Projection *proj
     g.colorElement=DataColors::get_colorElement(color_name);
     g.UV=UV;
     if(!g.colorElement) return;
-    g.colorElement->loadCache(smooth);
+    if(!g.colorElement->isCacheLoaded(smooth))
+    {
+        g.colorElement->clearCache();
+        g.colorElement->loadCache(smooth);
+    }
     QList<GribThreadData> windData;
     windData.reserve(W*H);
     for (i=0; i<W-2; i+=2)
@@ -429,6 +441,7 @@ void MapDataDrawer::drawColorMapGeneric_2D(QPainter &pnt, const Projection *proj
 //    image.fill(Qt::transparent);
     uchar * buffer=new uchar [W*H*4];
     int indice;
+    const int W4=W*4;
     for (i=0; i<W-2; i+=2)
     {
         for (j=0; j<H-2; j+=2)
@@ -445,35 +458,35 @@ void MapDataDrawer::drawColorMapGeneric_2D(QPainter &pnt, const Projection *proj
                     v_tab[indice]=windResults.at(pass).twd;
                     y_tab[indice]=windData.at(pass).p.y()<0;
                 }
-                const QRgb rg=windResults.at(pass).rgb;
+                GribThreadResult *tr=&windResults[pass];
                 //image.setPixel(i,  j,rg);
-                int index=(j*W*4)+(i*4);
-                buffer[index+3]=qAlpha(rg);
-                buffer[index+2]=qRed(rg);
-                buffer[index+1]=qGreen(rg);
-                buffer[index]=qBlue(rg);
+                int index=(j*W4)+(i*4);
+                buffer[index+3]=tr->alpha;
+                buffer[index+2]=tr->red;
+                buffer[index+1]=tr->green;
+                buffer[index]=tr->blue;
                 //image.setPixel(i+1,j,rg);
-                index=(j*W*4)+((i+1)*4);
-                buffer[index+3]=qAlpha(rg);
-                buffer[index+2]=qRed(rg);
-                buffer[index+1]=qGreen(rg);
-                buffer[index]=qBlue(rg);
+                index=(j*W4)+((i+1)*4);
+                buffer[index+3]=tr->alpha;
+                buffer[index+2]=tr->red;
+                buffer[index+1]=tr->green;
+                buffer[index]=tr->blue;
                 //image.setPixel(i,  j+1,rg);
-                index=((j+1)*W*4)+(i*4);
-                buffer[index+3]=qAlpha(rg);
-                buffer[index+2]=qRed(rg);
-                buffer[index+1]=qGreen(rg);
-                buffer[index]=qBlue(rg);
+                index=((j+1)*W4)+(i*4);
+                buffer[index+3]=tr->alpha;
+                buffer[index+2]=tr->red;
+                buffer[index+1]=tr->green;
+                buffer[index]=tr->blue;
                 //image.setPixel(i+1,j+1,rg);
-                index=((j+1)*W*4)+((i+1)*4);
-                buffer[index+3]=qAlpha(rg);
-                buffer[index+2]=qRed(rg);
-                buffer[index+1]=qGreen(rg);
-                buffer[index]=qBlue(rg);
+                index=((j+1)*W4)+((i+1)*4);
+                buffer[index+3]=tr->alpha;
+                buffer[index+2]=tr->red;
+                buffer[index+1]=tr->green;
+                buffer[index]=tr->blue;
             }
         }
     }
-    QImage image(buffer,W,H, W*4, QImage::Format_ARGB32);
+    QImage image(buffer,W,H, W4, QImage::Format_ARGB32);
     pnt.drawImage(0,0,image);
     delete[] buffer;
 
@@ -497,7 +510,7 @@ void MapDataDrawer::drawColorMapGeneric_2D(QPainter &pnt, const Projection *proj
             }
         }
     }
-    g.colorElement->clearCache();
+    //g.colorElement->clearCache();
     //qWarning() << "Finished multi: " << calibration.elapsed();
 }
 //--------------------------------------------------------------------------
@@ -1152,11 +1165,21 @@ GribThreadResult interpolateThreaded(const GribThreadData &g) {
     if(Grib::interpolateValue_2D(g.p.x(),g.p.y(),g.cD,g.tP,g.tN,
                                                    g.recU1,g.recV1,g.recU2,g.recV2,&tws,&twd,
                                                    g.interpolMode,g.UV))
-            r.rgb=g.colorElement->get_colorCached(tws);
+    {
+            const QRgb rgb=g.colorElement->get_colorCached(tws);
+            r.alpha=qAlpha(rgb);
+            r.red=qRed(rgb);
+            r.green=qGreen(rgb);
+            r.blue=qBlue(rgb);
+    }
+
     else
     {
         tws=-1;
-        r.rgb=qRgba(0,0,0,0);
+        r.alpha=0;
+        r.red=0;
+        r.green=0;
+        r.blue=0;
     }
     r.tws=tws;
     r.twd=twd;

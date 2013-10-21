@@ -184,6 +184,8 @@ ColorElement::ColorElement(QString name, int transparence) {
     this->name=name;
     this->transparence=transparence;
     cacheCoef=DEFAULT_CACHE_COEF;
+    cacheLoaded=false;
+    cacheLoadedSmooth=false;
 }
 
 QRgb ColorElement::get_color(double v, bool smooth) {
@@ -226,6 +228,7 @@ void ColorElement::loadCache(const bool &smooth)
     for (double i=0;i<1000;++i)
         colorCache[qRound(i)]=get_color(i/10.0,smooth);
 #else
+    //qWarning()<<"loading colorElement cache";
     int nbVal = maxVal-minVal;
     curCacheCoef=cacheCoef;
     if(nbVal*cacheCoef>MAX_CACHE) {
@@ -235,6 +238,12 @@ void ColorElement::loadCache(const bool &smooth)
     colorCache=new QRgb[nbVal*(int)curCacheCoef+1];
     for (double i=minVal;i<(nbVal*curCacheCoef+1);++i)
         colorCache[qRound(i)]=get_color(i/((double)curCacheCoef),smooth);
+    cacheLoadedSmooth=false;
+    cacheLoaded=false;
+    if(smooth)
+        cacheLoadedSmooth=true;
+    else
+        cacheLoaded=true;
 
 
 #endif
@@ -243,6 +252,8 @@ void ColorElement::clearCache()
 {
     delete[] colorCache;
     colorCache=NULL;
+    cacheLoaded=false;
+    cacheLoadedSmooth=false;
 }
 
 QRgb ColorElement::get_colorCached(const double &v) const {

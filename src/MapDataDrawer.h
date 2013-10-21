@@ -45,7 +45,10 @@ struct GribThreadResult
 {
     double tws;
     double twd;
-    QRgb rgb;
+    int alpha;
+    int red;
+    int blue;
+    int green;
 };
 Q_DECLARE_TYPEINFO(GribThreadResult,Q_PRIMITIVE_TYPE);
 
