@@ -184,6 +184,7 @@ ColorElement::ColorElement(QString name, int transparence) {
     this->name=name;
     this->transparence=transparence;
     cacheCoef=DEFAULT_CACHE_COEF;
+    colorCache=NULL;
     cacheLoaded=false;
     cacheLoadedSmooth=false;
 }
@@ -248,9 +249,11 @@ void ColorElement::loadCache(const bool &smooth)
 
 #endif
 }
+
 void ColorElement::clearCache()
 {
-    delete[] colorCache;
+    if(colorCache)
+        delete[] colorCache;
     colorCache=NULL;
     cacheLoaded=false;
     cacheLoadedSmooth=false;
