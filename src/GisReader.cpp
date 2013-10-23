@@ -28,10 +28,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //==========================================================
 GisReader::GisReader()
 {
+}
+void GisReader::loadCountries()
+{
     QString lang = Settings::getSetting("appLanguage", "none").toString();
 
     QString fname;
-    bool ok1, ok2, ok3;
+    bool ok1, ok2;
     char *buf;
     long szmax = 10000000;
     buf = new char[szmax];
@@ -41,6 +44,8 @@ GisReader::GisReader()
     //------------------------------------
     // Read countries file
     //------------------------------------
+    QTime t;
+    t.start();
     QString dir = Settings::getSetting("mapsFolder",appFolder.value("maps")).toString();
     fname = (lang == "fr") ?
             dir+"/gis/countries_fr.txt.gz" : dir+"/gis/countries_en.txt.gz";
@@ -55,7 +60,6 @@ GisReader::GisReader()
             QList<QByteArray> bwords = bline.split(';');
             if (bwords.size() == 4) {
                 GisCountry *country = new GisCountry(
-                            bwords.at(0),
                             bwords.at(1),
                             bwords.at(3).toFloat(&ok1),
                             bwords.at(2).toFloat(&ok2)
@@ -64,13 +68,32 @@ GisReader::GisReader()
                     assert(country);
                     lsCountries.push_back(country);
                 }
+                else
+                    delete country;
             }
         }
         zu_close(f);
+        qWarning()<<"time to load countries"<<t.elapsed();
     }
+    delete [] buf;
+}
+void GisReader::loadCities(const int &level)
+{
+    QTime t;
+    t.start();
+    QString fname;
+    bool ok1, ok2, ok3;
+    char *buf;
+    long szmax = 10000000;
+    buf = new char[szmax];
+    assert(buf);
+    ZUFILE *f;
+
     //------------------------------------
     // Read cities file
     //------------------------------------
+    t.start();
+    QString dir = Settings::getSetting("mapsFolder",appFolder.value("maps")).toString();
     fname = dir+"/gis/cities.txt.gz";
     f = zu_open(qPrintable(fname), "rb");
     if (f != NULL) {
@@ -84,21 +107,22 @@ GisReader::GisReader()
             QList<QByteArray> bwords = bline.split(';');
             if (bwords.size() == 5) {
                 GisCity *city = new GisCity(
-                            bwords.at(0),
                             bwords.at(1),
                             bwords.at(2).toInt(&ok3),
                             bwords.at(4).toFloat(&ok1),
                             bwords.at(3).toFloat(&ok2)
                         );
-                if (ok1 && ok2 && ok3) {
+                if (ok1 && ok2 && ok3 && (int)city->level<=level) {
                     assert(city);
                     lsCities.push_back(city);
                 }
+                else
+                    delete city;
             }
         }
         zu_close(f);
+        qWarning()<<"time to load cities"<<t.elapsed();
     }
-
     delete [] buf;
 }
 
@@ -143,6 +167,8 @@ void GisCountry::draw(QPainter *pnt, Projection *proj)
 //-----------------------------------------------------------------------
 void GisReader::drawCountriesNames(QPainter &pnt, Projection *proj)
 {
+    if(lsCountries.size()==0)
+        loadCountries();
     pnt.setPen(QColor(120,100,60));
     pnt.setFont(QFont());
     pnt.setBackgroundMode(Qt::OpaqueMode);
@@ -195,6 +221,8 @@ bool compareCities_sup(GisCity *a, GisCity *b)
 //-----------------------------------------------------------------------
 void GisReader::drawCitiesNames (QPainter &pnt, Projection *proj, int level)
 {
+    if(lsCities.size()==0)
+        loadCities(level);
     pnt.setPen(QColor(40,40,40));
     pnt.setBrush(QColor(0,0,0));
 
@@ -206,8 +234,7 @@ void GisReader::drawCitiesNames (QPainter &pnt, Projection *proj, int level)
 
 	for (itp=lsCities.begin(); itp != lsCities.end(); ++itp) {
 		GisCity *p = *itp;
-		if (  (p->level <= level)
-			&&  proj->isPointVisible(p->x, p->y) )
+        if (proj->isPointVisible(p->x, p->y))
 		{
 			lsVisibleCities.push_back(p);
 		}

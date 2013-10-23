@@ -127,10 +127,12 @@ class GshhsReader
         bool crossing(QLineF traject, QLineF trajectWorld) const;
         void setProj(Projection * p){this->gshhsPoly_reader->setProj(p);}
         int  getPolyVersion();
+        void clearCells(){this->gshhsPoly_reader->clearCells();}
 
     private:
+        void clearLists();
         int quality;  // 5 levels: 0=low ... 4=full
-        void setQuality(int quality);
+        void setQuality(const int &quality);
         void selectBestQuality(Projection *proj);
 
         std::string fpath;     // directory containing gshhs files
@@ -160,9 +162,12 @@ class GshhsReader
         void GsshDrawLines(QPainter &pnt, std::list<GshhsPolygon*> &lst,
                                 Projection *proj, bool isClosed
         );
-        void clearLists();
-    
 
+
+        void clearBoundaries();
+        void clearRivers();
+        void loadBoundaries();
+        void loadRivers();
 };
 Q_DECLARE_TYPEINFO(GshhsReader,Q_MOVABLE_TYPE);
 

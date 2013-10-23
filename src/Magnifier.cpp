@@ -104,6 +104,7 @@ Magnifier::Magnifier(myCentralWidget *parent)
     parent->getScene()->addItem(this);
     this->drawMe();
     show();
+//    reader->clearCells();
 }
 Magnifier::~Magnifier()
 {

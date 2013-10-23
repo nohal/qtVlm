@@ -107,7 +107,7 @@ myScene::myScene(myCentralWidget * parent) : QGraphicsScene(parent)
     hasWay=false;
     wheelTimer=new QTimer();
     wheelTimer->setSingleShot(true);
-    wheelTimer->setInterval(2000);
+    wheelTimer->setInterval(500);
     connect(wheelTimer,SIGNAL(timeout()),this, SLOT(wheelTimerElapsed()));
     wheelStrokes=0;
     QColor seaColor  = Settings::getSetting("seaColor", QColor(50,50,150)).value<QColor>();
@@ -292,7 +292,7 @@ void myScene::wheelEvent(QGraphicsSceneWheelEvent* e)
             parent->getView()->myScale(zoomDiff,X,Y);
         }
     }
-    wheelTimer->start(500);
+    wheelTimer->start();
 }
 void myScene::wheelTimerElapsed()
 {
@@ -1969,11 +1969,11 @@ void myCentralWidget::slot_takeScreenshot()
 {
     // Create the image and render it...
     int w=proj->getW(),h=proj->getH();
-    QImage * image = new QImage(w,h,QImage::Format_ARGB32_Premultiplied);
-    QPainter * p = new QPainter(image);
-    p->setRenderHint(QPainter::Antialiasing);
-    scene->render(p);
-    p->end();
+    QImage image(w,h,QImage::Format_ARGB32_Premultiplied);
+    QPainter p(&image);
+    p.setRenderHint(QPainter::Antialiasing);
+    scene->render(&p);
+    p.end();
     QString screenshotPath=Settings::getSetting("screenShotFolder","").toString();
     QString fileName = QFileDialog::getSaveFileName(this,
                          tr("Photo Ecran"), screenshotPath, "Screenshot (*.png)");
@@ -1994,7 +1994,7 @@ void myCentralWidget::slot_takeScreenshot()
     }
     Settings::setSetting("screenShotFolder",info.absoluteDir().path());
     // Save it..
-    image->save(fileName, "PNG", -1);
+    image.save(fileName, "PNG", -1);
 //    if (mainW->getSelectedBoat()->get_boatType()==BOAT_VLM)
 //        ((boatVLM*)mainW->getSelectedBoat())->exportBoatInfoLog(fileName);
 }

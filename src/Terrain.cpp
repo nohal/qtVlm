@@ -48,6 +48,7 @@ Copyright (C) 2008 - Jacques Zaninetti - http://zygrib.free.fr
 #include "MapDataDrawer.h"
 #include "DataManager.h"
 #include "routage.h"
+//#define traceTime
 
 
 //---------------------------------------------------------
@@ -187,12 +188,14 @@ void Terrain::draw_GSHHSandGRIB()
         centralWidget->getKap()->slot_updateProjection();
     QCursor oldcursor = cursor();
     setCursor(Qt::WaitCursor);
-    if (imgAll != NULL) {
-        delete imgAll;
-        imgAll = NULL;
+    if(imgAll==NULL || imgAll->width()!=width || imgAll->height()!=height)
+    {
+        if (imgAll != NULL) {
+            delete imgAll;
+            imgAll = NULL;
+        }
+        imgAll = new QPixmap(width,height);
     }
-    imgAll = new QPixmap(width,height);
-    assert(imgAll);
     imgAll->fill(Qt::transparent);
     QPainter pnt(imgAll);
     pnt.setRenderHint(QPainter::Antialiasing, true);
@@ -205,18 +208,18 @@ void Terrain::draw_GSHHSandGRIB()
     //===================================================
     if (!isEarthMapValid || mustRedraw)
     {
-        if (imgEarth != NULL) {
-            delete imgEarth;
-            imgEarth = NULL;
-        }
-
-
+        if(imgEarth==NULL || imgEarth->width()!=width || imgEarth->height()!=height)
+        {
+            if (imgEarth != NULL) {
+                delete imgEarth;
+                imgEarth = NULL;
+            }
 #ifdef __TERRAIN_QIMAGE
-        imgEarth = new QImage(width,height,QImage::Format_ARGB32_Premultiplied);
+            imgEarth = new QImage(width,height,QImage::Format_ARGB32_Premultiplied);
 #else
-        imgEarth= new QPixmap(width,height);
+            imgEarth= new QPixmap(width,height);
 #endif
-        assert(imgEarth);
+        }
         imgEarth->fill(Qt::transparent);
 
         if (gshhsReader != NULL)
@@ -225,7 +228,14 @@ void Terrain::draw_GSHHSandGRIB()
             pnt1.setRenderHint(QPainter::Antialiasing, true);
             pnt1.setRenderHint(QPainter::SmoothPixmapTransform, true);
             pnt1.setCompositionMode(QPainter::CompositionMode_Source);
+#ifdef traceTime
+            QTime t;
+            t.start();
+#endif
             gshhsReader->drawContinents(pnt1, proj, transparentColor, landColor);
+#ifdef traceTime
+        qWarning()<<"time to draw continents"<<t.elapsed();
+#endif
         }
     }
 
@@ -235,10 +245,14 @@ void Terrain::draw_GSHHSandGRIB()
 
     if(centralWidget->get_dataManager()->isOk())
     {
-        QTime timeG;
-        timeG.start();
+#ifdef traceTime
+            QTime t;
+            t.start();
+#endif
         drawGrib(pnt);
-        qWarning()<<"time to draw grib"<<timeG.elapsed();
+#ifdef traceTime
+        qWarning()<<"time to draw grib"<<t.elapsed();
+#endif
         //imgAll->save("testGrib_terrain1.png");
         if(centralWidget->getKap()!=NULL /*&& centralWidget->getKap()->getDrawGribOverKap()*/)
         {
@@ -366,24 +380,61 @@ void Terrain::draw_GSHHSandGRIB()
 
         if (showCountriesBorders) {
             pnt.setPen(boundariesPen);
+#ifdef traceTime
+            QTime t;
+            t.start();
+#endif
             gshhsReader->drawBoundaries(pnt, proj);
+#ifdef traceTime
+            qWarning()<<"time to draw boundaries"<<t.elapsed();
+#endif
         }
         if (showRivers) {
             pnt.setPen(riversPen);
+#ifdef traceTime
+            QTime t;
+            t.start();
+#endif
             gshhsReader->drawRivers(pnt, proj);
+#ifdef traceTime
+            qWarning()<<"time to draw rivers"<<t.elapsed();
+#endif
         }
     }
 
-    if (gisReader && showCountriesNames)
+    if (gshhsReader && gshhsReader->getQuality()>0 && gisReader && showCountriesNames){
+#ifdef traceTime
+        QTime t;
+        t.start();
+#endif
         gisReader->drawCountriesNames(pnt, proj);
-    if (gisReader && showCitiesNamesLevel > 0)
+#ifdef traceTime
+        qWarning()<<"time to draw countries"<<t.elapsed();
+#endif
+    }
+    if (gshhsReader && gshhsReader->getQuality()>1 && gisReader && showCitiesNamesLevel > 0){
+#ifdef traceTime
+        QTime t;
+        t.start();
+#endif
         gisReader->drawCitiesNames(pnt, proj, showCitiesNamesLevel);
+#ifdef traceTime
+        qWarning()<<"time to draw cities"<<t.elapsed();
+#endif
+    }
     //===================================================
 
     if (gshhsReader != NULL)
     {
         pnt.setPen(seaBordersPen);
+#ifdef traceTime
+        QTime t;
+        t.start();
+#endif
         gshhsReader->drawSeaBorders(pnt, proj);
+#ifdef traceTime
+        qWarning()<<"time to draw sea boarder"<<t.elapsed();
+#endif
     }
     //===================================================
 
@@ -503,6 +554,11 @@ void Terrain::draw_GSHHSandGRIB()
     centralWidget->getView()->resetTransform();
     centralWidget->getView()->hideViewPix();
     centralWidget->getScene()->setPinching(false);
+#ifdef traceTime
+        qWarning()<<"--------------------------------------";
+#endif
+//    if(gshhsReader)
+//        gshhsReader->clearCells();
 }
 
 void Terrain::drawGrib(QPainter &pnt)
@@ -640,6 +696,10 @@ void Terrain::setDrawCountriesBorders(bool b) {
 
 //-------------------------------------------------------
 void Terrain::setCountriesNames(bool b) {
+    if(gisReader)
+    {
+        gisReader->clearLists();
+    }
     if (showCountriesNames != b) {
         showCountriesNames = b;
         Settings::setSetting("showCountriesNames", b);
@@ -649,6 +709,10 @@ void Terrain::setCountriesNames(bool b) {
 }
 //-------------------------------------------------------
 void Terrain::setCitiesNamesLevel  (int level) {
+    if(gisReader)
+    {
+        gisReader->clearLists();
+    }
     if (showCitiesNamesLevel != level) {
         showCitiesNamesLevel = level;
         Settings::setSetting("showCitiesNamesLevel", level);
@@ -896,7 +960,10 @@ void Terrain::paint(QPainter * pnt, const QStyleOptionGraphicsItem * , QWidget *
 {
     pnt->setRenderHint(QPainter::Antialiasing,true);
     pnt->drawPixmap(0,0, *imgAll);
-    timerUpdated->start();
+    if(receivers(SIGNAL(terrainUpdated()))>0)
+    {
+        timerUpdated->start();
+    }
 }
 void Terrain::indicateWaitingMap()
 {

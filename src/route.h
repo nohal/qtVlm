@@ -29,6 +29,7 @@ Copyright (C) 2008 - Jacques Zaninetti - http://zygrib.free.fr
 #include <QGraphicsScene>
 #include <QMenu>
 #include <QDateTime>
+#include <QCache>
 #include "mycentralwidget.h"
 #include "vlmLine.h"
 #include "routeInfo.h"

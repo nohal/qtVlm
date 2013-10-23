@@ -26,13 +26,14 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <QPainter>
 
 #include "class_list.h"
+#include <QFile>
 
 //==========================================================
 class GisPoint {
     public:
-        double   x,y;    // longitude, latitude
+        float   x,y;    // longitude, latitude
         
-        GisPoint(double x_, double y_) {
+        GisPoint(const float &x_, const float &y_) {
             x = x_;
             y = y_;
         }
@@ -45,13 +46,11 @@ Q_DECLARE_TYPEINFO(GisPoint,Q_MOVABLE_TYPE);
 class GisCountry : public GisPoint
 {
     public:
-        QString code;
         QString name;
 
-        GisCountry (QString code_, QString name_, double lon, double lat)
+        GisCountry (QString name_, double lon, double lat)
             : GisPoint(lon, lat)
             {
-                code = code_;
                 name = name_;
             }
 		virtual ~GisCountry() {}
@@ -63,15 +62,13 @@ Q_DECLARE_TYPEINFO(GisCountry,Q_MOVABLE_TYPE);
 class GisCity : public GisPoint
 {
     public:
-        QString country;
         QString name;
         int     population;
-		int     level;
+        quint8 level;
 
-        GisCity (QString country_, QString name_, int pop, double lon, double lat)
+        GisCity (const QString &name_, const int &pop, const float &lon, const float &lat)
             : GisPoint(lon, lat)
             {
-                country = country_;
                 name = name_;
                 population = pop;
 				if (population >= 1000000) {
@@ -107,12 +104,15 @@ class GisReader
         
         void drawCountriesNames (QPainter &pnt, Projection *proj);
         void drawCitiesNames (QPainter &pnt, Projection *proj, int level);
-    
+        void clearLists();
+
     private:
         std::list<GisPoint*> lsCountries;
         std::list<GisCity*> lsCities;
         
-        void clearLists();
+        //QFile q_cities;
+        void loadCities(const int &level);
+        void loadCountries();
 };
 Q_DECLARE_TYPEINFO(GisReader,Q_MOVABLE_TYPE);
 

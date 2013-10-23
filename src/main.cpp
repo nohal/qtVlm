@@ -52,9 +52,12 @@ void crashingMessageHandler(QtMsgType type, const QMessageLogContext &context, c
         fprintf(stderr,"Critical: %s\n", localMsg.constData());
         break;
     case QtFatalMsg:
+    {
         fprintf(stderr,"Fatal: %s\n", localMsg.constData());
-        __asm("int3");
+        int a=0;
+        a=a/a;
         abort();
+    }
     }
 }
 int main(int argc, char *argv[])
