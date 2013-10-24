@@ -30,7 +30,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 struct GribThreadData
 {
-    QPointF p;
+    QPoint p;
     time_t  cD, tP, tN;
     GribRecord *recU1, *recV1, *recU2, *recV2;
     int interpolMode;
@@ -39,6 +39,7 @@ struct GribThreadData
     MapDataDrawer * mapDataDrawer;
     ColorElement * colorElement;
     bool UV;
+    Projection * proj;
 };
 Q_DECLARE_TYPEINFO(GribThreadData,Q_PRIMITIVE_TYPE);
 struct GribThreadResult
@@ -49,10 +50,11 @@ struct GribThreadResult
     int red;
     int blue;
     int green;
+    double y;
 };
 Q_DECLARE_TYPEINFO(GribThreadResult,Q_PRIMITIVE_TYPE);
 
-GribThreadResult interpolateThreaded(const GribThreadData &g);
+QList<GribThreadResult> interpolateThreaded(const QList<GribThreadData> * g_list);
 
 class MapDataDrawer
 {
@@ -61,21 +63,21 @@ class MapDataDrawer
         ~MapDataDrawer();
 
         // Carte de couleurs du vent
-        void drawColorMapGeneric_2D(QPainter &pnt, const Projection *proj, bool smooth,
-                                                       bool showWindArrows,bool barbules,
-                                                       time_t now,time_t t1,time_t t2,
-                                                       GribRecord * recU1,GribRecord * recV1,GribRecord * recU2,GribRecord * recV2,
-                                                       QString color_name,bool UV,int interpolation_mode=INTERPOLATION_UKN);
-        void drawColorMapGeneric_2D_OLD(QPainter &pnt, const Projection *proj, bool smooth,
-                                                       bool showWindArrows, bool barbules,
-                                                       time_t now, time_t t1, time_t t2,
+        void drawColorMapGeneric_2D(QPainter &pnt, Projection *proj, const bool &smooth,
+                                                       const bool &showWindArrows, const bool &barbules,
+                                                       const time_t &now, const time_t &t1, const time_t &t2,
                                                        GribRecord * recU1, GribRecord * recV1, GribRecord * recU2, GribRecord * recV2,
-                                                       QString color_name, bool UV, int interpolation_mode=INTERPOLATION_UKN);
+                                                       const QString &color_name, const bool &UV, int interpolation_mode=INTERPOLATION_UKN);
+        void drawColorMapGeneric_2D_OLD(QPainter &pnt, const Projection *proj, const bool &smooth,
+                                                       const bool &showWindArrows, const bool &barbules,
+                                                       const time_t &now, const time_t &t1, const time_t &t2,
+                                                       GribRecord * recU1, GribRecord * recV1, GribRecord * recU2, GribRecord * recV2,
+                                                       const QString &color_name, const bool &UV, int interpolation_mode=INTERPOLATION_UKN);
 
         // Carte de couleurs des precipitations
-        void draw_WIND_Color(QPainter &pnt, const Projection *proj, bool smooth,bool showWindArrows,bool barbules);
+        void draw_WIND_Color(QPainter &pnt, Projection *proj, bool smooth, bool showWindArrows, bool barbules);
         void draw_WIND_Color_OLD(QPainter &pnt, const Projection *proj, bool smooth,bool showWindArrows,bool barbules);
-        void draw_CURRENT_Color(QPainter &pnt, const Projection *proj, bool smooth,bool showWindArrows,bool barbules);
+        void draw_CURRENT_Color(QPainter &pnt, Projection *proj, bool smooth, bool showWindArrows, bool barbules);
         void draw_RAIN_Color(QPainter &pnt, const Projection *proj, bool smooth);
         //void draw_SNOW_DEPTH_Color(QPainter &pnt, const Projection *proj, bool smooth);
         void draw_SNOW_CATEG_Color(QPainter &pnt, const Projection *proj, bool smooth);
@@ -93,10 +95,10 @@ class MapDataDrawer
         void draw_DeltaDewpoint_Color(QPainter &pnt, const Projection *proj, bool smooth);
 
         void draw_wavesSigHgtComb(QPainter &pnt, const Projection *proj, bool smooth);
-        void draw_wavesWnd(QPainter &pnt, const Projection *proj, bool smooth,bool showArrows);
-        void draw_wavesSwl(QPainter &pnt, const Projection *proj, bool smooth,bool showArrows);
-        void draw_wavesMax(QPainter &pnt, const Projection *proj, bool smooth,bool showArrows);
-        void draw_wavesWhiteCap(QPainter &pnt, const Projection *proj, bool smooth);
+        void draw_wavesWnd(QPainter &pnt, Projection *proj, bool smooth, bool showArrows);
+        void draw_wavesSwl(QPainter &pnt, Projection *proj, bool smooth, bool showArrows);
+        void draw_wavesMax(QPainter &pnt, Projection *proj, bool smooth, bool showArrows);
+        void draw_wavesWhiteCap(QPainter &pnt, Projection *proj, bool smooth);
 
         void draw_PRESSURE_MinMax (QPainter &pnt, const Projection *proj);
 
