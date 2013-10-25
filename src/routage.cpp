@@ -1787,7 +1787,7 @@ void ROUTAGE::slot_calculate()
                     QList<vlmPoint> tempList;
                     int pp=0;
 #if 1
-                    int threadCount=qMax(1,QThread::idealThreadCount());
+                    int threadCount=qMax(1,QThread::idealThreadCount()*10);
                     for (int t=1;t<=threadCount;++t)
                     {
                         tempList.clear();

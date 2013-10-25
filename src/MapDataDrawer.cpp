@@ -225,6 +225,166 @@ void MapDataDrawer::drawColorMapGeneric_1D (
 //--------------------------------------------------------------------------
 // Carte de couleurs du vent
 //--------------------------------------------------------------------------
+
+bool drawColorMapGeneric_2D_Partial(const GribThreadData &g)
+    {
+    const Projection * proj=g.proj;
+    const bool showWindArrows=g.showWindArrows;
+    const bool barbules=g.barbules;
+    const time_t now=g.now;
+    const time_t t1=g.t1;
+    const time_t t2=g.t2;
+    GribRecord * recU1=g.recU1;
+    GribRecord * recV1=g.recV1;
+    GribRecord * recU2=g.recU2;
+    GribRecord * recV2=g.recV2;
+    const QPoint from=g.from;
+    const QPoint to=g.to;
+    const bool UV=g.UV;
+    ColorElement * colorElement=g.colorElement;
+    QRect paintZone(from,to);
+    int interpolation_mode=g.interpolMode;
+    int i, j;
+    double u,v,x,y;
+    int W = paintZone.width();
+    int H = paintZone.height();
+    if(W%2!=0)++W;
+    if(H%2!=0)++H;
+    int space=0;
+    int W_s=0,H_s=0;
+    QRgb   rgb;
+
+
+    int sz=1;
+    if(showWindArrows)
+    {
+        if (barbules)
+            space =  g.windBarbuleSpace;
+        else
+            space =  g.windArrowSpace;
+        W+=W%space;
+        H+=H%space;
+        W_s=W/space+2;
+        H_s=H/space+2;
+        sz=(W_s+2)*(H_s+2);
+    }
+    QVector<double> u_tab(sz,-1.0);
+    QVector<double> v_tab(sz);
+    QVector<bool> y_tab(sz);
+
+    uchar * buffer=new uchar [(W+2)*(H+2)*4];
+    int indice=0;
+    const int W4=(W+2)*4;
+    int offsetX=from.x()%space;
+    int offsetY=from.y()%space;
+    for (i=0; i<=W; i+=2)
+    {
+        for (j=0; j<=H; j+=2)
+        {
+            proj->screen2map(i+from.x(),j+from.y(), &x, &y);
+            if(Grib::interpolateValue_2D(x,y,now,t1,t2,recU1,recV1,recU2,recV2,&u,&v,interpolation_mode,UV))
+            {
+                if(showWindArrows && i%space==0 && j%space==0)
+                {
+                    int i_s=i/space;
+                    int j_s=j/space;
+                    indice=i_s*H_s+j_s;
+                    u_tab[indice]=u;
+                    v_tab[indice]=v;
+                    y_tab[indice]=(y<0);
+                }
+
+                rgb=colorElement->get_colorCached(u);
+                const int alpha=qAlpha(rgb);
+                const int red=qRed(rgb);
+                const int green=qGreen(rgb);
+                const int blue=qBlue(rgb);
+                int index=(j*W4)+(i*4);
+                buffer[index+3]=alpha;
+                buffer[index+2]=red;
+                buffer[index+1]=green;
+                buffer[index]=blue;
+                index=(j*W4)+((i+1)*4);
+                buffer[index+3]=alpha;
+                buffer[index+2]=red;
+                buffer[index+1]=green;
+                buffer[index]=blue;
+                index=((j+1)*W4)+(i*4);
+                buffer[index+3]=alpha;
+                buffer[index+2]=red;
+                buffer[index+1]=green;
+                buffer[index]=blue;
+                index=((j+1)*W4)+((i+1)*4);
+                buffer[index+3]=alpha;
+                buffer[index+2]=red;
+                buffer[index+1]=green;
+                buffer[index]=blue;
+            }
+            else
+            {
+                int index=(j*W4)+(i*4);
+                buffer[index+3]=0;
+                buffer[index+2]=0;
+                buffer[index+1]=0;
+                buffer[index]=0;
+                index=(j*W4)+((i+1)*4);
+                buffer[index+3]=0;
+                buffer[index+2]=0;
+                buffer[index+1]=0;
+                buffer[index]=0;
+                index=((j+1)*W4)+(i*4);
+                buffer[index+3]=0;
+                buffer[index+2]=0;
+                buffer[index+1]=0;
+                buffer[index]=0;
+                index=((j+1)*W4)+((i+1)*4);
+                buffer[index+3]=0;
+                buffer[index+2]=0;
+                buffer[index+1]=0;
+                buffer[index]=0;
+            }
+        }
+    }
+//    QImage buf(buffer,W+2,H+2, W4, QImage::Format_ARGB32);
+//    QImage image(W+2,H+2,QImage::Format_ARGB32);
+//    QPainter pnt(&image);
+//    pnt.setRenderHint(QPainter::Antialiasing, true);
+//    pnt.drawImage(0,0,buf); //ugly but only way to delete the buffer later.
+//    delete[] buffer;
+    QImage image(buffer,W+2,H+2, W4, QImage::Format_ARGB32);
+    QPainter pnt(&image);
+    pnt.setRenderHint(QPainter::Antialiasing, true);
+    if(showWindArrows)
+    {
+        for (i=0; i<=W_s+2; ++i)
+        {
+            for (j=0; j<=H_s+2; ++j)
+            {
+                indice=i*H_s+j;
+                u=u_tab.at(indice);
+                v=v_tab.at(indice);
+                if(u<0)
+                    continue;
+                if (barbules)
+                    g.mapDataDrawer->drawWindArrowWithBarbs(pnt, (i*space)-offsetX,(j*space)-offsetY, u,v, y_tab.at(indice));
+                else
+                    g.mapDataDrawer->drawWindArrow(pnt, i*space-offsetX,j*space-offsetY, v);
+
+            }
+        }
+    }
+    pnt.end();
+    g.mapDataDrawer->paintImage(&image,g.pntGrib,from);
+    delete[] buffer;
+    return true;
+}
+void MapDataDrawer::paintImage(QImage * image, QPainter * pnt, const QPoint &point)
+{
+    mutex.lock();
+    pnt->drawImage(point,*image);
+    mutex.unlock();
+}
+
 void MapDataDrawer::drawColorMapGeneric_2D_OLD(QPainter &pnt, const Projection *proj, const bool &smooth,
                                                const bool &showWindArrows, const bool &barbules,
                                                const time_t &now, const time_t &t1, const time_t &t2,
@@ -372,206 +532,97 @@ void MapDataDrawer::drawColorMapGeneric_2D(QPainter &pnt, Projection *proj, cons
                                                GribRecord * recU1, GribRecord * recV1, GribRecord * recU2, GribRecord * recV2,
                                                const QString &color_name, const bool &UV, int interpolation_mode)
 {
-
     if(gribMonoCpu || QThread::idealThreadCount()<=1) {
         drawColorMapGeneric_2D_OLD(pnt,proj,smooth,showWindArrows,barbules,now,t1,t2,recU1,recV1,recU2,recV2,
                                    color_name,UV,interpolation_mode);
         return;
     }
-//    QTime tot;
-//    tot.start();
-
-    int i, j;
-    double u,v;
-    const int W = proj->getW();
-    const int H = proj->getH();
-    int space=0;
-    int W_s=0,H_s=0;
-
-    int sz=1;
-    if(showWindArrows)
-    {
-        if (barbules)
-            space =  windBarbuleSpace;
-        else
-            space =  windArrowSpace;
-
-        W_s=W/space+1;
-        H_s=H/space+1;
-        sz=(W_s+2)*(H_s+2);
-    }
-    QVector<double> u_tab(sz,-1.0);
-    QVector<double> v_tab(sz);
-    QVector<bool> y_tab(sz);
-
-    if(interpolation_mode==INTERPOLATION_UKN)
-        interpolation_mode=dataManager->get_interpolationMode();
 
     GribThreadData g;
-    g.cD=now;
+    g.now=now;
     g.recU1=recU1;
     g.recU2=recU2;
     g.recV1=recV1;
     g.recV2=recV2;
-    g.tP=t1;
-    g.tN=t2;
+    g.t1=t1;
+    g.t2=t2;
+    g.showWindArrows=showWindArrows;
+    g.barbules=barbules;
+    if(interpolation_mode==INTERPOLATION_UKN)
+        interpolation_mode=dataManager->get_interpolationMode();
     g.interpolMode=interpolation_mode;
-    g.smooth=smooth;
     g.dataManager=dataManager;
     g.mapDataDrawer=this;
     g.proj=proj;
-    g.colorElement=DataColors::get_colorElement(color_name);
     g.UV=UV;
-    if(!g.colorElement) return;
-#ifdef timeStat
-    QTime t;
-    t.start();
-#endif
-    if(!g.colorElement->isCacheLoaded(smooth))
+    g.showWindArrows=showWindArrows;
+    g.barbules=barbules;
+    g.windArrowSpace=windArrowSpace;
+    g.windBarbuleSpace=windBarbuleSpace;
+    g.pntGrib=&pnt;
+    ColorElement * colorElement=DataColors::get_colorElement(color_name);
+    if(!colorElement) return;
+    if(!colorElement->isCacheLoaded(smooth))
     {
-        g.colorElement->clearCache();
-        g.colorElement->loadCache(smooth);
+        colorElement->clearCache();
+        colorElement->loadCache(smooth);
     }
-#ifdef timeStat
-    qWarning()<<"time to load cache"<<t.elapsed();
-    t.start();
-#endif
-    QList<QList<GribThreadData> * > windData;
-    int nPerThread=((W-1)*(H-1)/4.0)/QThread::idealThreadCount();
-    if(nPerThread<=0) nPerThread=10e6;
-    int nThread=0;
-    int nReached=0;
-    QList<GribThreadData> * g_list=new QList<GribThreadData>;
-    windData.append(g_list);
-    for (i=0; i<W-2; i+=2)
+    g.colorElement=colorElement;
+    QList<GribThreadData> data;
+#if 0
+    double nCpu=qMax(4,QThread::idealThreadCount()*2);
+    //nCpu=4;
+    int w=ceil((double)proj->getW()/(double)(nCpu/2.0));
+    int h=ceil((double)proj->getH()/2.0);
+    int space=0;
+    if (barbules)
+        space =  windBarbuleSpace;
+    else
+        space =  windArrowSpace;
+    if(space!=0)
     {
-        for (j=0; j<H-2; j+=2)
-        {
-//            proj->screen2map(i,j, &x, &y);
-//            g.p=QPointF(x,y);
-            g.p=QPoint(i,j);
-            windData[nThread]->append(g);
-            if(++nReached>nPerThread)
-            {
-                nReached=0;
-                QList<GribThreadData> * g_list=new QList<GribThreadData>;
-                windData.append(g_list);
-                ++nThread;
-            }
-        }
+        w+=space;
+        h+=space;
     }
-#ifdef timeStat
-    qWarning()<<"time to generate windData"<<windData.size()<<t.elapsed();
-    for(int n=0;n<windData.size();++n)
-        qWarning()<<n<<"->"<<windData.at(n)->size();
-    t.start();
-#endif
-    QList<QList<GribThreadResult>> listWindResults  = QtConcurrent::blockingMapped(windData, interpolateThreaded);
-#ifdef timeStat
-    qWarning()<<"time for threaded computation"<<t.elapsed();
-    t.start();
-#endif
-    for(int n=0;n<windData.size();++n)
+    if(w%2!=0)++w;
+    if(h%2!=0)++h;
+    for(int i=0;i<nCpu/2;++i)
     {
-        delete windData.at(n);
+        g.from=QPoint(i*w,0);
+        g.to=QPoint((i+1)*w,h);
+        data.append(g);
+        g.from=QPoint(i*w,h);
+        g.to=QPoint((i+1)*w,proj->getH());
+        data.append(g);
     }
-    windData.clear();
-#ifdef timeStat
-    qWarning()<<"time to build windResults"<<t.elapsed();
-    t.start();
+//    qWarning()<<nCpu<<data.size()<<w<<h;
+//    foreach(GribThreadData g,data)
+//        qWarning()<<g.from<<g.to<<QRect(g.from,g.to).size();
+#else
+    g.from=QPoint(0,0);
+    g.to=QPoint(proj->getW()/2,proj->getH()/2);
+    data.append(g);
+    g.from=QPoint(proj->getW()/2+1,0);
+    g.to=QPoint(proj->getW(),proj->getH()/2);
+    data.append(g);
+    g.from=QPoint(0,proj->getH()/2+1);
+    g.to=QPoint(proj->getW()/2,proj->getH());
+    data.append(g);
+    g.from=QPoint(proj->getW()/2+1,proj->getH()/2+1);
+    g.to=QPoint(proj->getW(),proj->getH());
+    data.append(g);
 #endif
-    uchar * buffer=new uchar [W*H*4];
-    int indice;
-    const int W4=W*4;
-    nThread=0;
-    nReached=0;
-    int pass=-1;
-    for (i=0; i<W-2; i+=2)
-    {
-        for (j=0; j<H-2; j+=2)
-        {
-            ++pass;
-            const GribThreadResult * tr=&(listWindResults[nThread][nReached]);
-            if(tr->tws!=-1)
-            {
-                if(showWindArrows && i%space==0 && j%space==0)
-                {
-                    int i_s=i/space;
-                    int j_s=j/space;
-                    indice=i_s*H_s+j_s;
-                    u_tab[indice]=tr->tws;
-                    v_tab[indice]=tr->twd;
-                    y_tab[indice]=tr->y<0;
-                }
-                //image.setPixel(i,  j,rg);
-                int index=(j*W4)+(i*4);
-                buffer[index+3]=tr->alpha;
-                buffer[index+2]=tr->red;
-                buffer[index+1]=tr->green;
-                buffer[index]=tr->blue;
-                //image.setPixel(i+1,j,rg);
-                index=(j*W4)+((i+1)*4);
-                buffer[index+3]=tr->alpha;
-                buffer[index+2]=tr->red;
-                buffer[index+1]=tr->green;
-                buffer[index]=tr->blue;
-                //image.setPixel(i,  j+1,rg);
-                index=((j+1)*W4)+(i*4);
-                buffer[index+3]=tr->alpha;
-                buffer[index+2]=tr->red;
-                buffer[index+1]=tr->green;
-                buffer[index]=tr->blue;
-                //image.setPixel(i+1,j+1,rg);
-                index=((j+1)*W4)+((i+1)*4);
-                buffer[index+3]=tr->alpha;
-                buffer[index+2]=tr->red;
-                buffer[index+1]=tr->green;
-                buffer[index]=tr->blue;
-            }
-            if(++nReached>nPerThread)
-            {
-                nReached=0;
-                ++nThread;
-            }
-        }
-    }
-#ifdef timeStat
-    qWarning()<<"time to build buffer"<<t.elapsed();
-    t.start();
+#if 0
+    for (int n=0;n<data.size();++n)
+        result.append(drawColorMapGeneric_2D_Partial(data.at(n)));
+#else
+    QtConcurrent::blockingMapped(data, drawColorMapGeneric_2D_Partial);
 #endif
-    QImage image(buffer,W,H, W4, QImage::Format_ARGB32);
-    pnt.drawImage(0,0,image);
-#ifdef timeStat
-    qWarning()<<"time to draw buffer"<<t.elapsed();
-#endif
-    delete[] buffer;
-#ifdef timeStat
-    t.start();
-#endif
-    if(showWindArrows)
-    {
-        for (i=0; i<W_s; ++i)
-        {
-            for (j=0; j<H_s; ++j)
-            {
-                indice=i*H_s+j;
-                u=u_tab.at(indice);
-
-                if(u<0)
-                    continue;
-                v=v_tab.at(indice);
-                if (barbules)
-                    drawWindArrowWithBarbs(pnt, i*space,j*space, u,v, y_tab.at(indice));
-                else
-                    drawWindArrow(pnt, i*space,j*space, v);
-
-            }
-        }
-    }
-#ifdef timeStat
-    qWarning()<<"time to draw arrows"<<t.elapsed();
-#endif
-    //qWarning()<<"time to draw multi-cpu"<<tot.elapsed();
+//    pnt.drawImage(data.at(0).from,result.at(0));
+//    pnt.drawImage(data.at(1).from,result.at(1));
+//    pnt.drawImage(data.at(2).from,result.at(2));
+//    pnt.drawImage(data.at(3).from,result.at(3));
+    return;
 }
 //--------------------------------------------------------------------------
 // Carte de couleurs generique de la difference entre 2 champs
@@ -1062,21 +1113,14 @@ void MapDataDrawer::draw_TEMPERATURE_Labels(QPainter &pnt, const Projection *pro
 
 //-----------------------------------------------------------------------------
 void MapDataDrawer::drawTransformedLine( QPainter &pnt,
-        double si, double co,int di, int dj, int i,int j, int k,int l)
+        const double &si, const double &co,const int &di, const int &dj, const int &i,const int &j, const int &k,const int &l)
 {
     int ii, jj, kk, ll;
     ii = (int) (i*co-j*si +0.5) + di;
     jj = (int) (i*si+j*co +0.5) + dj;
     kk = (int) (k*co-l*si +0.5) + di;
     ll = (int) (k*si+l*co +0.5) + dj;
-    // Clip force a cause d'un bug qpixmap sous windows
-    int w = pnt.device()->width();
-    int h = pnt.device()->height();
-    if (       Util::isInRange(ii, 0, w)
-            && Util::isInRange(kk, 0, w)
-            && Util::isInRange(jj, 0, h)
-            && Util::isInRange(ll, 0, h) )
-        pnt.drawLine(ii, jj, kk, ll);
+    pnt.drawLine(ii, jj, kk, ll);
 }
 //-----------------------------------------------------------------------------
 void MapDataDrawer::drawWindArrow(QPainter &pnt, int i, int j, double ang)
@@ -1104,7 +1148,6 @@ void MapDataDrawer::drawWindArrowWithBarbs(
     pen.setWidth(2);
     pnt.setPen(pen);
     pnt.setBrush(Qt::NoBrush);
-
     if (vkn < 1)
     {
         int r = 5;     // vent tres faible, dessine un cercle
@@ -1215,43 +1258,3 @@ void MapDataDrawer::drawTriangle(QPainter &pnt, bool south,
 }
 
 
-/************************************************************
- * multithread wind computation                             *
- ***********************************************************/
-
-QList<GribThreadResult> interpolateThreaded(const QList<GribThreadData>  * g_list)
-{
-    QList<GribThreadResult> result;
-    for(int n=0;n<g_list->size();++n)
-    {
-        double tws=-1, twd=-1;
-        GribThreadResult r;
-        const GribThreadData * g=&(g_list->at(n));
-        double x,y;
-        g->proj->screen2map(g->p.x(),g->p.y(), &x, &y);
-        r.y=y;
-        if(Grib::interpolateValue_2D(x,y,g->cD,g->tP,g->tN,
-                                                       g->recU1,g->recV1,g->recU2,g->recV2,&tws,&twd,
-                                                       g->interpolMode,g->UV))
-        {
-                const QRgb rgb=g->colorElement->get_colorCached(tws);
-                r.alpha=qAlpha(rgb);
-                r.red=qRed(rgb);
-                r.green=qGreen(rgb);
-                r.blue=qBlue(rgb);
-        }
-
-        else
-        {
-            tws=-1;
-            r.alpha=0;
-            r.red=0;
-            r.green=0;
-            r.blue=0;
-        }
-        r.tws=tws;
-        r.twd=twd;
-        result.append(r);
-    }
-    return result;
-}

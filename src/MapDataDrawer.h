@@ -30,31 +30,20 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 struct GribThreadData
 {
-    QPoint p;
-    time_t  cD, tP, tN;
+    time_t  now, t1, t2;
     GribRecord *recU1, *recV1, *recU2, *recV2;
-    int interpolMode;
-    bool smooth;
+    int interpolMode,windBarbuleSpace,windArrowSpace;
     DataManager * dataManager;
     MapDataDrawer * mapDataDrawer;
     ColorElement * colorElement;
-    bool UV;
+    bool UV, showWindArrows, barbules;
     Projection * proj;
+    QPoint from,to;
+    QPainter *pntGrib;
 };
 Q_DECLARE_TYPEINFO(GribThreadData,Q_PRIMITIVE_TYPE);
-struct GribThreadResult
-{
-    double tws;
-    double twd;
-    int alpha;
-    int red;
-    int blue;
-    int green;
-    double y;
-};
-Q_DECLARE_TYPEINFO(GribThreadResult,Q_PRIMITIVE_TYPE);
 
-QList<GribThreadResult> interpolateThreaded(const QList<GribThreadData> * g_list);
+bool drawColorMapGeneric_2D_Partial(const GribThreadData &g);
 
 class MapDataDrawer
 {
@@ -100,6 +89,11 @@ class MapDataDrawer
         void draw_wavesMax(QPainter &pnt, Projection *proj, bool smooth, bool showArrows);
         void draw_wavesWhiteCap(QPainter &pnt, Projection *proj, bool smooth);
 
+        void drawWindArrow(QPainter &pnt, int i, int j, double ang);
+        void drawWindArrowWithBarbs(
+                                QPainter &pnt, int i, int j,
+                                double vkn, double ang,
+                                bool south);
         void draw_PRESSURE_MinMax (QPainter &pnt, const Projection *proj);
 
         void  draw_Isobars (QPainter &pnt, const Projection *proj);
@@ -145,7 +139,9 @@ class MapDataDrawer
             MAX_DRAWGRIB_DATAMODE
         };
 
-    private:
+        void paintImage(QImage *image, QPainter *pnt, const QPoint &point);
+private:
+        QMutex mutex;
         myCentralWidget *centralWidget;
         DataManager * dataManager;
 
@@ -163,11 +159,6 @@ class MapDataDrawer
 
         void initDataCodes(void);
 
-        void drawWindArrow(QPainter &pnt, int i, int j, double ang);
-        void drawWindArrowWithBarbs(
-                                QPainter &pnt, int i, int j,
-                                double vkn, double ang,
-                                bool south);
 
         void drawColorMapGeneric_1D (
                 QPainter &pnt, const Projection *proj, bool smooth,
@@ -184,8 +175,8 @@ class MapDataDrawer
                 );
         void draw_IsoLinesLabels(QPainter &pnt, QColor &couleur, const Projection *proj,
                                                         std::list<IsoLine *> *liste, double coef);
-        void drawTransformedLine( QPainter &pnt,
-                double si, double co,int di, int dj, int i,int j, int k,int l);
+        void drawTransformedLine(QPainter &pnt,
+                const double &si, const double &co, const int &di, const int &dj, const int &i, const int &j, const int &k, const int &l);
 
         void drawPetiteBarbule(QPainter &pnt, bool south,
                     double si, double co, int di, int dj, int b);
