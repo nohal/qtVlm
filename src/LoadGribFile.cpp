@@ -165,11 +165,12 @@ void LoadGribFile::getGribFile(
                 << "&l=" << zygriblog
                 << "&m=" << zygribpwd
                 << "&runGFS=last"
-                << "&client=" << "zyGrib-3.9.2"
+                << "&client=" << "zyGrib-6.1.4"
+                   //Version::getName()
                 ;
         // missing param compared to zygrib: runGFS
 
-        //qWarning() << "zygrib request: " << page;
+        qWarning() << "zygrib request: " << page;
 
         step1_InetReply=step2_InetReply=step3_InetReply=step_checkVersion=NULL;
         QNetworkRequest request;

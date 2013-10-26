@@ -63,6 +63,9 @@ class Version {
         static QString getCompleteName() {
             return QString(QString(QTVLM_APP_NAME)+" - ver "+getVersion()+" ("+getDate()+") for "+get_OS());
         }
+        static QString getName() {
+            return QString(QString(QTVLM_APP_NAME)+"-"+QString(QTVLM_VERSION_NUM)+"."+QTVLM_SUB_VERSION_NUM);
+        }
 };
 
 
