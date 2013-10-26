@@ -246,8 +246,8 @@ bool drawColorMapGeneric_2D_Partial(const GribThreadData &g)
     double u,v,x,y;
     int W = paintZone.width();
     int H = paintZone.height();
-    if(W%2!=0)++W;
-    if(H%2!=0)++H;
+    W+=W%2;
+    H+=H%2;
     int space=0;
     int W_s=0,H_s=0;
     QRgb   rgb;
@@ -343,6 +343,27 @@ bool drawColorMapGeneric_2D_Partial(const GribThreadData &g)
             }
         }
     }
+    if(showWindArrows && (W%space!=0 || H%space!=0) )
+    {
+        int i=W+W%space;
+        for (int j=0;j<=H+H%space;j+=2)
+        {
+            if(j%space==0)
+            {
+                proj->screen2map(i+from.x(),j+from.y(), &x, &y);
+                if(Grib::interpolateValue_2D(x,y,now,t1,t2,recU1,recV1,recU2,recV2,&u,&v,interpolation_mode,UV))
+                {
+                    int i_s=i/space;
+                    int j_s=j/space;
+                    indice=i_s*H_s+j_s;
+                    u_tab[indice]=u;
+                    v_tab[indice]=v;
+                    y_tab[indice]=(y<0);
+                }
+            }
+        }
+    }
+
 //    QImage buf(buffer,W+2,H+2, W4, QImage::Format_ARGB32);
 //    QImage image(W+2,H+2,QImage::Format_ARGB32);
 //    QPainter pnt(&image);
@@ -371,6 +392,11 @@ bool drawColorMapGeneric_2D_Partial(const GribThreadData &g)
             }
         }
     }
+//    QPen pen;
+//    pen.setWidth(2);
+//    pen.setColor(Qt::black);
+//    pnt.setPen(pen);
+//    pnt.drawRect(image.rect());
     pnt.end();
     g.mapDataDrawer->paintImage(&image,g.pntGrib,from);
     delete[] buffer;
@@ -567,29 +593,24 @@ void MapDataDrawer::drawColorMapGeneric_2D(QPainter &pnt, Projection *proj, cons
     }
     g.colorElement=colorElement;
     QList<GribThreadData> data;
-#if 0
-    double nCpu=qMax(4,QThread::idealThreadCount()*2);
-    //nCpu=4;
-    int w=ceil((double)proj->getW()/(double)(nCpu/2.0));
-    int h=ceil((double)proj->getH()/2.0);
+#if 1
+    double nCpu=qMax(2,QThread::idealThreadCount());
+    int w=floor((double)proj->getW()/(double)(nCpu/2.0));
+    int h=floor((double)proj->getH()/2.0);
     int space=0;
     if (barbules)
         space =  windBarbuleSpace;
     else
         space =  windArrowSpace;
-    if(space!=0)
-    {
-        w+=space;
-        h+=space;
-    }
-    if(w%2!=0)++w;
-    if(h%2!=0)++h;
     for(int i=0;i<nCpu/2;++i)
     {
-        g.from=QPoint(i*w,0);
+        int decalw=0;
+        if(i>0)
+            decalw=1;
+        g.from=QPoint(i*w+decalw,0);
         g.to=QPoint((i+1)*w,h);
         data.append(g);
-        g.from=QPoint(i*w,h);
+        g.from=QPoint(i*w+decalw,h+1);
         g.to=QPoint((i+1)*w,proj->getH());
         data.append(g);
     }
