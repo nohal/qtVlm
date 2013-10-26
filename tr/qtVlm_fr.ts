@@ -744,6 +744,260 @@ La boîte à cocher trace partielle s&apos;active apres l&apos;entree d&apos;un 
     </message>
 </context>
 <context>
+    <name>DialogGribDrawing</name>
+    <message>
+        <source>Aucun</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Carte du vent</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Carte du courant</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Couverture nuageuse</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Carte des preecipitations</source>
+        <translation>Carte des précipitations</translation>
+    </message>
+    <message>
+        <source>Carte de l&apos;humidite relative</source>
+        <translation>Carte de l&apos;humidité relative</translation>
+    </message>
+    <message>
+        <source>Carte de la temperature</source>
+        <translation>Carte de la température</translation>
+    </message>
+    <message>
+        <source>Carte de la temperature potentielle</source>
+        <translation>Carte de la température potentielle</translation>
+    </message>
+    <message>
+        <source>Point de rosee</source>
+        <translation>Point de rosée</translation>
+    </message>
+    <message>
+        <source>Ecart temperature-point de rosee</source>
+        <translation>Ecart température-point de rosée</translation>
+    </message>
+    <message>
+        <source>Neige (chute possible)</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Pluie verglacante (chute possible)</source>
+        <translation>Pluie verglaçante (chute possible)</translation>
+    </message>
+    <message>
+        <source>CAPE (surface)</source>
+        <translation>CAPE (surface)</translation>
+    </message>
+    <message>
+        <source>CIN (surface)</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Waves combined</source>
+        <translation>Vagues combinées</translation>
+    </message>
+    <message>
+        <source>Wind waves</source>
+        <translation>Vagues du vent</translation>
+    </message>
+    <message>
+        <source>Swell waves</source>
+        <translation>Vagues de la houle</translation>
+    </message>
+    <message>
+        <source>Max waves</source>
+        <translation>Vagues max</translation>
+    </message>
+    <message>
+        <source>White cap prob</source>
+        <translation>Probabilité de déferlantes</translation>
+    </message>
+    <message>
+        <source>Vent</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Courant</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Primary waves</source>
+        <translation>Vagues primaires</translation>
+    </message>
+    <message>
+        <source>Secondary waves</source>
+        <translation>Vagues secondaires</translation>
+    </message>
+    <message>
+        <source>Surface</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Isotherm 0C</source>
+        <translation>Isotherme 0 C</translation>
+    </message>
+    <message>
+        <source>Isobaric</source>
+        <translation>Isobarique</translation>
+    </message>
+    <message>
+        <source>Mean Sea Level</source>
+        <translation>Pression au niveau de la mer</translation>
+    </message>
+    <message>
+        <source>Above ground</source>
+        <translation>Au dessus du sol</translation>
+    </message>
+    <message>
+        <source>Sigma</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Entire atmosphere</source>
+        <translation>Atmosphère entière</translation>
+    </message>
+    <message>
+        <source>Ordered sequence</source>
+        <translation>Sequence ordonnée</translation>
+    </message>
+</context>
+<context>
+    <name>DialogGribDrawing_ui</name>
+    <message>
+        <source>Dialog</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Affichage</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Fond de carte</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Température</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Dégradé de couleur</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Flèche principale</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Barbule</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Flèche secondaire</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Isobar /Isotherme</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Isobar</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Afficher</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Espacement (hPa)</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>1</source>
+        <translation>1</translation>
+    </message>
+    <message>
+        <source>2</source>
+        <translation>2</translation>
+    </message>
+    <message>
+        <source>3</source>
+        <translation>3</translation>
+    </message>
+    <message>
+        <source>4</source>
+        <translation>4</translation>
+    </message>
+    <message>
+        <source>5</source>
+        <translation>5</translation>
+    </message>
+    <message>
+        <source>6</source>
+        <translation>6</translation>
+    </message>
+    <message>
+        <source>8</source>
+        <translation>8</translation>
+    </message>
+    <message>
+        <source>10</source>
+        <translation>10</translation>
+    </message>
+    <message>
+        <source>Etiquettes</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Min/Max</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Isotherme 0°C</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Espacement (m)</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>20</source>
+        <translation>20</translation>
+    </message>
+    <message>
+        <source>50</source>
+        <translation>50</translation>
+    </message>
+    <message>
+        <source>100</source>
+        <translation>100</translation>
+    </message>
+    <message>
+        <source>200</source>
+        <translation>200</translation>
+    </message>
+    <message>
+        <source>500</source>
+        <translation>500</translation>
+    </message>
+    <message>
+        <source>1000</source>
+        <translation>1000</translation>
+    </message>
+    <message>
+        <source>Fermer</source>
+        <translation></translation>
+    </message>
+</context>
+<context>
     <name>DialogHorn</name>
     <message>
         <source>Parametres de la corne de brume</source>
@@ -1645,6 +1899,10 @@ Etes-vous sur ?</source>
         <source>Pour utiliser cette action il faut que la route parte du bateau</source>
         <translation></translation>
     </message>
+    <message>
+        <source>m</source>
+        <translation>m</translation>
+    </message>
 </context>
 <context>
     <name>DialogRouteComparator</name>
@@ -1691,6 +1949,10 @@ Etes-vous sur ?</source>
     <message>
         <source> kts</source>
         <translation> nds</translation>
+    </message>
+    <message>
+        <source> m</source>
+        <translation></translation>
     </message>
 </context>
 <context>
@@ -2814,83 +3076,19 @@ Etes-vous sur ?</source>
     </message>
     <message>
         <source>Sea level</source>
-        <translation>Niveau de la mer</translation>
+        <translation type="obsolete">Niveau de la mer</translation>
     </message>
     <message>
         <source>Surface</source>
         <translation></translation>
     </message>
     <message>
-        <source>Sigma 995</source>
-        <translation></translation>
-    </message>
-    <message>
-        <source>1 m above ground</source>
-        <translation></translation>
-    </message>
-    <message>
-        <source>2 m above ground</source>
-        <translation></translation>
-    </message>
-    <message>
-        <source>3 m above ground</source>
-        <translation></translation>
-    </message>
-    <message>
-        <source>10 m above ground</source>
-        <translation></translation>
-    </message>
-    <message>
-        <source>850 hPa (? 1460 m)</source>
-        <translation></translation>
-    </message>
-    <message>
-        <source>700 hPa (? 3000 m)</source>
-        <translation></translation>
-    </message>
-    <message>
-        <source>500 hPa (? 5600 m)</source>
-        <translation></translation>
-    </message>
-    <message>
-        <source>300 hPa (? 9200 m)</source>
-        <translation></translation>
-    </message>
-    <message>
-        <source>200 hPa (? 11800 m)</source>
-        <translation></translation>
-    </message>
-    <message>
         <source>Atmosphere</source>
-        <translation>Atmosphère</translation>
-    </message>
-    <message>
-        <source>Geopotential altitude 850 hpa</source>
-        <translation></translation>
-    </message>
-    <message>
-        <source>Geopotential altitude 700 hpa</source>
-        <translation></translation>
-    </message>
-    <message>
-        <source>Geopotential altitude 500 hpa</source>
-        <translation></translation>
-    </message>
-    <message>
-        <source>Geopotential altitude 300 hpa</source>
-        <translation></translation>
-    </message>
-    <message>
-        <source>Geopotential altitude 200 hpa</source>
-        <translation></translation>
+        <translation type="obsolete">Atmosphère</translation>
     </message>
     <message>
         <source>Spacing (m)</source>
-        <translation>Espacement (m)</translation>
-    </message>
-    <message>
-        <source>Geopotentials labels</source>
-        <translation></translation>
+        <translation type="obsolete">Espacement (m)</translation>
     </message>
     <message>
         <source>Gestion des comptes</source>
@@ -3342,35 +3540,63 @@ Etes-vous sur ?</source>
     </message>
     <message>
         <source>Waves</source>
-        <translation type="unfinished"></translation>
+        <translation>Vagues</translation>
     </message>
     <message>
         <source>Waves combined</source>
-        <translation type="unfinished"></translation>
+        <translation>Vagues combinées</translation>
     </message>
     <message>
         <source>Wind waves</source>
-        <translation type="unfinished"></translation>
+        <translation>Vagues du vent</translation>
     </message>
     <message>
         <source>Swell waves</source>
-        <translation type="unfinished"></translation>
+        <translation>Vagues de la houle</translation>
     </message>
     <message>
         <source>Max waves</source>
-        <translation type="unfinished"></translation>
+        <translation>Vagues max</translation>
     </message>
     <message>
         <source>White cap prob</source>
-        <translation type="unfinished"></translation>
+        <translation>Probabilité de déferlantes</translation>
     </message>
     <message>
         <source>Waves arrow</source>
-        <translation type="unfinished"></translation>
+        <translation>Flèches de la mer</translation>
     </message>
     <message>
         <source>Show arrox for wave direction</source>
-        <translation type="unfinished"></translation>
+        <translation>Montrer les flèches de direction des vagues</translation>
+    </message>
+    <message>
+        <source>Isotherm 0C</source>
+        <translation>Isotherme 0 C</translation>
+    </message>
+    <message>
+        <source>Isobaric</source>
+        <translation>Isobarique</translation>
+    </message>
+    <message>
+        <source>Mean Sea Level</source>
+        <translation>Pression au niveau de la mer</translation>
+    </message>
+    <message>
+        <source>Above ground</source>
+        <translation>Au dessus du sol</translation>
+    </message>
+    <message>
+        <source>Sigma</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Entire atmosphere</source>
+        <translation>Atmosphère entière</translation>
+    </message>
+    <message>
+        <source>Ordered sequence</source>
+        <translation>Sequence ordonnée</translation>
     </message>
 </context>
 <context>
@@ -4349,7 +4575,7 @@ VMG %.2f nds</translation>
     </message>
     <message>
         <source>Start Date</source>
-        <translation>Date départ</translation>
+        <translation type="obsolete">Date départ</translation>
     </message>
     <message>
         <source>ETA</source>
@@ -4361,11 +4587,11 @@ VMG %.2f nds</translation>
     </message>
     <message>
         <source>Ortho Distance</source>
-        <translation>Distance ortho</translation>
+        <translation type="obsolete">Distance ortho</translation>
     </message>
     <message>
         <source>Sailed Distance</source>
-        <translation>Distance parcourue</translation>
+        <translation type="obsolete">Distance parcourue</translation>
     </message>
     <message>
         <source>Avg BS</source>
@@ -4393,27 +4619,27 @@ VMG %.2f nds</translation>
     </message>
     <message>
         <source>Nb Tacks/Gybes</source>
-        <translation>Nb de virements/empannages</translation>
+        <translation type="obsolete">Nb de virements/empannages</translation>
     </message>
     <message>
         <source>Beating time</source>
-        <translation>Temps au près</translation>
+        <translation type="obsolete">Temps au près</translation>
     </message>
     <message>
         <source>Downwind time</source>
-        <translation>Temps au portant</translation>
+        <translation type="obsolete">Temps au portant</translation>
     </message>
     <message>
         <source>Reaching time</source>
-        <translation>Temps vent de travers</translation>
+        <translation type="obsolete">Temps vent de travers</translation>
     </message>
     <message>
         <source>Motor time</source>
-        <translation>Temps au moteur</translation>
+        <translation type="obsolete">Temps au moteur</translation>
     </message>
     <message>
         <source>Night navigation</source>
-        <translation>Navigation de nuit</translation>
+        <translation type="obsolete">Navigation de nuit</translation>
     </message>
     <message>
         <source>Reading XML file %1</source>
@@ -4438,7 +4664,7 @@ VMG %.2f nds</translation>
     </message>
     <message>
         <source>Under rain navigation</source>
-        <translation>Navigation sous la pluie</translation>
+        <translation type="obsolete">Navigation sous la pluie</translation>
     </message>
     <message>
         <source>Barrier set choice</source>
@@ -4447,6 +4673,78 @@ VMG %.2f nds</translation>
     <message>
         <source>No barrier set define, create one before doing this action</source>
         <translation>Pas d&apos;ensemble de barrières défini, veuillez en créer un avant de faire cette action</translation>
+    </message>
+    <message>
+        <source>COMB WAVES HGT</source>
+        <translation>HAUTEUR VAGUES COMBINEES</translation>
+    </message>
+    <message>
+        <source>MAX WAVES HGT</source>
+        <translation>HAUTEUR DES VAGUES MAX</translation>
+    </message>
+    <message>
+        <source>MAX WAVES DIR</source>
+        <translation>DIRECTION VAGUES MAX</translation>
+    </message>
+    <message>
+        <source>Start
+Date</source>
+        <translation>Date départ</translation>
+    </message>
+    <message>
+        <source>Ortho
+Distance</source>
+        <translation>Distance ortho</translation>
+    </message>
+    <message>
+        <source>Sailed
+Distance</source>
+        <translation>Loch</translation>
+    </message>
+    <message>
+        <source>Nb Tacks
+and Gybes</source>
+        <translation>Nb de virements/empannages</translation>
+    </message>
+    <message>
+        <source>Beating
+time</source>
+        <translation>Temps au près</translation>
+    </message>
+    <message>
+        <source>Downwind
+time</source>
+        <translation>Temps au portant</translation>
+    </message>
+    <message>
+        <source>Reaching
+time</source>
+        <translation>Temps vent de travers</translation>
+    </message>
+    <message>
+        <source>Motor
+time</source>
+        <translation>Temps au moteur</translation>
+    </message>
+    <message>
+        <source>Night
+navigation</source>
+        <translation>Navigation de nuit</translation>
+    </message>
+    <message>
+        <source>Under rain
+navigation</source>
+        <translation>Navigation sous la pluie</translation>
+    </message>
+    <message>
+        <source>Max waves
+height</source>
+        <translation>Hauteur maximale des vagues</translation>
+    </message>
+    <message>
+        <source>Max combined
+waves height</source>
+        <translation>Hauteur des vagues combinées</translation>
     </message>
 </context>
 <context>
@@ -8549,6 +8847,22 @@ Please select another point or press esc to exit barrier creation mode</source>
     <message>
         <source>SOG</source>
         <translation></translation>
+    </message>
+    <message>
+        <source>Max waves direction</source>
+        <translation>Direction des vagues maximales</translation>
+    </message>
+    <message>
+        <source>Max waves height</source>
+        <translation>Hauteur des vagues maximales</translation>
+    </message>
+    <message>
+        <source> m</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Significant waves height (combined)</source>
+        <translation>Hauteur des vagues combinées</translation>
     </message>
 </context>
 <context>

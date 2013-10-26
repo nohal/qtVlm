@@ -233,7 +233,7 @@ chceš ji odstranit?</translation>
     </message>
     <message>
         <location filename="../src/Ui/BoardVlmNew.ui" line="80"/>
-        <location filename="../src/Dialogs/BoardVlmNew.cpp" line="990"/>
+        <location filename="../src/Dialogs/BoardVlmNew.cpp" line="992"/>
         <source>BS</source>
         <translation>BS</translation>
     </message>
@@ -394,13 +394,13 @@ chceš ji odstranit?</translation>
         <translation></translation>
     </message>
     <message>
-        <location filename="../src/Dialogs/BoardVlmNew.cpp" line="424"/>
         <location filename="../src/Dialogs/BoardVlmNew.cpp" line="426"/>
-        <location filename="../src/Dialogs/BoardVlmNew.cpp" line="437"/>
+        <location filename="../src/Dialogs/BoardVlmNew.cpp" line="428"/>
         <location filename="../src/Dialogs/BoardVlmNew.cpp" line="439"/>
-        <location filename="../src/Dialogs/BoardVlmNew.cpp" line="991"/>
-        <location filename="../src/Dialogs/BoardVlmNew.cpp" line="995"/>
+        <location filename="../src/Dialogs/BoardVlmNew.cpp" line="441"/>
+        <location filename="../src/Dialogs/BoardVlmNew.cpp" line="993"/>
         <location filename="../src/Dialogs/BoardVlmNew.cpp" line="997"/>
+        <location filename="../src/Dialogs/BoardVlmNew.cpp" line="999"/>
         <source>kts</source>
         <translation> kts</translation>
     </message>
@@ -412,13 +412,13 @@ chceš ji odstranit?</translation>
     </message>
     <message>
         <location filename="../src/Ui/BoardVlmNew.ui" line="1136"/>
-        <location filename="../src/Dialogs/BoardVlmNew.cpp" line="988"/>
+        <location filename="../src/Dialogs/BoardVlmNew.cpp" line="990"/>
         <source>TWA</source>
         <translation>TWA</translation>
     </message>
     <message>
         <location filename="../src/Ui/BoardVlmNew.ui" line="1193"/>
-        <location filename="../src/Dialogs/BoardVlmNew.cpp" line="996"/>
+        <location filename="../src/Dialogs/BoardVlmNew.cpp" line="998"/>
         <source>VMG</source>
         <translation>VMG</translation>
     </message>
@@ -454,7 +454,7 @@ chceš ji odstranit?</translation>
     </message>
     <message>
         <location filename="../src/Ui/BoardVlmNew.ui" line="1352"/>
-        <location filename="../src/Dialogs/BoardVlmNew.cpp" line="722"/>
+        <location filename="../src/Dialogs/BoardVlmNew.cpp" line="724"/>
         <source>Pilototo</source>
         <translation>Autopilot</translation>
     </message>
@@ -471,112 +471,112 @@ chceš ji odstranit?</translation>
         <translation>VLM Sync</translation>
     </message>
     <message>
-        <location filename="../src/Dialogs/BoardVlmNew.cpp" line="463"/>
+        <location filename="../src/Dialogs/BoardVlmNew.cpp" line="465"/>
         <source>Meilleurs angles au pres/portant:</source>
         <translation>Nejlepší úhly proti/po větru:</translation>
     </message>
     <message>
-        <location filename="../src/Dialogs/BoardVlmNew.cpp" line="423"/>
         <location filename="../src/Dialogs/BoardVlmNew.cpp" line="425"/>
         <location filename="../src/Dialogs/BoardVlmNew.cpp" line="427"/>
-        <location filename="../src/Dialogs/BoardVlmNew.cpp" line="430"/>
-        <location filename="../src/Dialogs/BoardVlmNew.cpp" line="431"/>
-        <location filename="../src/Dialogs/BoardVlmNew.cpp" line="438"/>
-        <location filename="../src/Dialogs/BoardVlmNew.cpp" line="443"/>
-        <location filename="../src/Dialogs/BoardVlmNew.cpp" line="463"/>
-        <location filename="../src/Dialogs/BoardVlmNew.cpp" line="464"/>
-        <location filename="../src/Dialogs/BoardVlmNew.cpp" line="574"/>
-        <location filename="../src/Dialogs/BoardVlmNew.cpp" line="821"/>
-        <location filename="../src/Dialogs/BoardVlmNew.cpp" line="989"/>
-        <location filename="../src/Dialogs/BoardVlmNew.cpp" line="993"/>
+        <location filename="../src/Dialogs/BoardVlmNew.cpp" line="429"/>
+        <location filename="../src/Dialogs/BoardVlmNew.cpp" line="432"/>
+        <location filename="../src/Dialogs/BoardVlmNew.cpp" line="433"/>
+        <location filename="../src/Dialogs/BoardVlmNew.cpp" line="440"/>
+        <location filename="../src/Dialogs/BoardVlmNew.cpp" line="445"/>
+        <location filename="../src/Dialogs/BoardVlmNew.cpp" line="465"/>
+        <location filename="../src/Dialogs/BoardVlmNew.cpp" line="466"/>
+        <location filename="../src/Dialogs/BoardVlmNew.cpp" line="576"/>
+        <location filename="../src/Dialogs/BoardVlmNew.cpp" line="823"/>
+        <location filename="../src/Dialogs/BoardVlmNew.cpp" line="991"/>
+        <location filename="../src/Dialogs/BoardVlmNew.cpp" line="995"/>
         <source>deg</source>
         <translation>°</translation>
     </message>
     <message>
-        <location filename="../src/Dialogs/BoardVlmNew.cpp" line="420"/>
         <location filename="../src/Dialogs/BoardVlmNew.cpp" line="422"/>
-        <location filename="../src/Dialogs/BoardVlmNew.cpp" line="434"/>
+        <location filename="../src/Dialogs/BoardVlmNew.cpp" line="424"/>
         <location filename="../src/Dialogs/BoardVlmNew.cpp" line="436"/>
-        <location filename="../src/Dialogs/BoardVlmNew.cpp" line="445"/>
+        <location filename="../src/Dialogs/BoardVlmNew.cpp" line="438"/>
         <location filename="../src/Dialogs/BoardVlmNew.cpp" line="447"/>
+        <location filename="../src/Dialogs/BoardVlmNew.cpp" line="449"/>
         <source>nm</source>
         <translation>nm</translation>
     </message>
     <message>
-        <location filename="../src/Dialogs/BoardVlmNew.cpp" line="529"/>
+        <location filename="../src/Dialogs/BoardVlmNew.cpp" line="531"/>
         <source>pas de polaire chargee</source>
         <translation>Není nahrán polár</translation>
     </message>
     <message>
-        <location filename="../src/Dialogs/BoardVlmNew.cpp" line="798"/>
+        <location filename="../src/Dialogs/BoardVlmNew.cpp" line="800"/>
         <source>Pas de WP</source>
         <translation>Žádný aktivní WP</translation>
     </message>
     <message>
-        <location filename="../src/Dialogs/BoardVlmNew.cpp" line="800"/>
+        <location filename="../src/Dialogs/BoardVlmNew.cpp" line="802"/>
         <source>Pas de WP actif</source>
         <translation>Žádný aktivní WP</translation>
     </message>
     <message>
-        <location filename="../src/Dialogs/BoardVlmNew.cpp" line="841"/>
+        <location filename="../src/Dialogs/BoardVlmNew.cpp" line="843"/>
         <source>WP defini dans VLM (pas de POI correspondant)</source>
         <translation>WP definován ve VLM (žádný korespondující POI v qtVlm)</translation>
     </message>
     <message>
-        <location filename="../src/Dialogs/BoardVlmNew.cpp" line="843"/>
+        <location filename="../src/Dialogs/BoardVlmNew.cpp" line="845"/>
         <source>WP VLM</source>
         <translation>WP-VLM</translation>
     </message>
     <message>
-        <location filename="../src/Dialogs/BoardVlmNew.cpp" line="847"/>
+        <location filename="../src/Dialogs/BoardVlmNew.cpp" line="849"/>
         <source>WP: </source>
         <translation>WP:</translation>
     </message>
     <message>
-        <location filename="../src/Dialogs/BoardVlmNew.cpp" line="851"/>
-        <location filename="../src/Dialogs/BoardVlmNew.cpp" line="857"/>
+        <location filename="../src/Dialogs/BoardVlmNew.cpp" line="853"/>
+        <location filename="../src/Dialogs/BoardVlmNew.cpp" line="859"/>
         <source>WP defini dans VLM (</source>
         <translation>WP definován ve VLM (</translation>
     </message>
     <message>
-        <location filename="../src/Dialogs/BoardVlmNew.cpp" line="851"/>
-        <location filename="../src/Dialogs/BoardVlmNew.cpp" line="857"/>
+        <location filename="../src/Dialogs/BoardVlmNew.cpp" line="853"/>
+        <location filename="../src/Dialogs/BoardVlmNew.cpp" line="859"/>
         <source> dans qtVlm)</source>
         <translation> v qtVlm)</translation>
     </message>
     <message>
-        <location filename="../src/Dialogs/BoardVlmNew.cpp" line="859"/>
+        <location filename="../src/Dialogs/BoardVlmNew.cpp" line="861"/>
         <source>Le cap a suivre n&apos;est pas le meme</source>
         <translation>Varování: kurs po WP je jiný</translation>
     </message>
     <message>
-        <location filename="../src/Dialogs/BoardVlmNew.cpp" line="865"/>
+        <location filename="../src/Dialogs/BoardVlmNew.cpp" line="867"/>
         <source>WP defini dans VLM mais le mode de navigation n&apos;est pas coherent</source>
         <translation>WP definován ve VLM, ale mód navigace není kompatibilní</translation>
     </message>
     <message>
-        <location filename="../src/Dialogs/BoardVlmNew.cpp" line="903"/>
-        <location filename="../src/Dialogs/BoardVlmNew.cpp" line="926"/>
+        <location filename="../src/Dialogs/BoardVlmNew.cpp" line="905"/>
+        <location filename="../src/Dialogs/BoardVlmNew.cpp" line="928"/>
         <source>Annuler</source>
         <translation>Zrušit</translation>
     </message>
     <message>
-        <location filename="../src/Dialogs/BoardVlmNew.cpp" line="992"/>
+        <location filename="../src/Dialogs/BoardVlmNew.cpp" line="994"/>
         <source>AWA</source>
         <translation>AWA</translation>
     </message>
     <message>
-        <location filename="../src/Dialogs/BoardVlmNew.cpp" line="994"/>
+        <location filename="../src/Dialogs/BoardVlmNew.cpp" line="996"/>
         <source>AWS</source>
         <translation>AWS</translation>
     </message>
     <message>
-        <location filename="../src/Dialogs/BoardVlmNew.cpp" line="1066"/>
+        <location filename="../src/Dialogs/BoardVlmNew.cpp" line="1068"/>
         <source>Confirmation a chaque ordre vers VLM</source>
         <translation>Potvrdit každý příkaz do VLM</translation>
     </message>
     <message>
-        <location filename="../src/Dialogs/BoardVlmNew.cpp" line="1067"/>
+        <location filename="../src/Dialogs/BoardVlmNew.cpp" line="1069"/>
         <source>Confirmez-vous cet ordre?</source>
         <translation>Potvrzuješ tento příkaz?</translation>
     </message>
@@ -1041,12 +1041,12 @@ La bo�te � cocher trace partielle s&apos;active apres l&apos;entree d&apos;u
 <context>
     <name>DialogEditBarrier</name>
     <message>
-        <location filename="../src/Dialogs/DialogEditBarrier.cpp" line="76"/>
+        <location filename="../src/Dialogs/DialogEditBarrier.cpp" line="77"/>
         <source>Barrier set edit</source>
         <translation>Úprava sady bariér</translation>
     </message>
     <message>
-        <location filename="../src/Dialogs/DialogEditBarrier.cpp" line="76"/>
+        <location filename="../src/Dialogs/DialogEditBarrier.cpp" line="77"/>
         <source>Barrier with same name already exists, choose a different name</source>
         <translation>Bariéra stejného jména již existuje, zvol jiné jméno</translation>
     </message>
@@ -1189,6 +1189,331 @@ La bo�te � cocher trace partielle s&apos;active apres l&apos;entree d&apos;u
         <location filename="../src/Dialogs/DialogGraphicsParams.cpp" line="379"/>
         <source>Isobares :</source>
         <translation>Isobary :</translation>
+    </message>
+</context>
+<context>
+    <name>DialogGribDrawing</name>
+    <message>
+        <location filename="../src/Ui/DialogGribDrawing.cpp" line="119"/>
+        <location filename="../src/Ui/DialogGribDrawing.cpp" line="140"/>
+        <location filename="../src/Ui/DialogGribDrawing.cpp" line="144"/>
+        <source>Aucun</source>
+        <translation>Žádný</translation>
+    </message>
+    <message>
+        <location filename="../src/Ui/DialogGribDrawing.cpp" line="120"/>
+        <source>Carte du vent</source>
+        <translation>Mapa větru</translation>
+    </message>
+    <message>
+        <location filename="../src/Ui/DialogGribDrawing.cpp" line="121"/>
+        <source>Carte du courant</source>
+        <translation>Mapa proudů</translation>
+    </message>
+    <message>
+        <location filename="../src/Ui/DialogGribDrawing.cpp" line="122"/>
+        <source>Couverture nuageuse</source>
+        <translation>Oblačnost</translation>
+    </message>
+    <message>
+        <location filename="../src/Ui/DialogGribDrawing.cpp" line="123"/>
+        <source>Carte des preecipitations</source>
+        <translation>Mapa srážek</translation>
+    </message>
+    <message>
+        <location filename="../src/Ui/DialogGribDrawing.cpp" line="124"/>
+        <source>Carte de l&apos;humidite relative</source>
+        <translation>Mapa relativní vlhkosti</translation>
+    </message>
+    <message>
+        <location filename="../src/Ui/DialogGribDrawing.cpp" line="125"/>
+        <source>Carte de la temperature</source>
+        <translation>Mapa teploty</translation>
+    </message>
+    <message>
+        <location filename="../src/Ui/DialogGribDrawing.cpp" line="126"/>
+        <source>Carte de la temperature potentielle</source>
+        <translation>Map potenciální teploty</translation>
+    </message>
+    <message>
+        <location filename="../src/Ui/DialogGribDrawing.cpp" line="127"/>
+        <source>Point de rosee</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/Ui/DialogGribDrawing.cpp" line="128"/>
+        <source>Ecart temperature-point de rosee</source>
+        <translation>Deviace teplota-rosný bod</translation>
+    </message>
+    <message>
+        <location filename="../src/Ui/DialogGribDrawing.cpp" line="129"/>
+        <source>Neige (chute possible)</source>
+        <translation>Sníh (možné sněžení)</translation>
+    </message>
+    <message>
+        <location filename="../src/Ui/DialogGribDrawing.cpp" line="130"/>
+        <source>Pluie verglacante (chute possible)</source>
+        <translation>Mrznoucí déšŤ (možný)</translation>
+    </message>
+    <message>
+        <location filename="../src/Ui/DialogGribDrawing.cpp" line="131"/>
+        <source>CAPE (surface)</source>
+        <translation>CAPE (povrch)</translation>
+    </message>
+    <message>
+        <location filename="../src/Ui/DialogGribDrawing.cpp" line="132"/>
+        <source>CIN (surface)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/Ui/DialogGribDrawing.cpp" line="133"/>
+        <location filename="../src/Ui/DialogGribDrawing.cpp" line="146"/>
+        <source>Waves combined</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/Ui/DialogGribDrawing.cpp" line="134"/>
+        <source>Wind waves</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/Ui/DialogGribDrawing.cpp" line="135"/>
+        <location filename="../src/Ui/DialogGribDrawing.cpp" line="147"/>
+        <source>Swell waves</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/Ui/DialogGribDrawing.cpp" line="136"/>
+        <location filename="../src/Ui/DialogGribDrawing.cpp" line="148"/>
+        <source>Max waves</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/Ui/DialogGribDrawing.cpp" line="137"/>
+        <source>White cap prob</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/Ui/DialogGribDrawing.cpp" line="141"/>
+        <source>Vent</source>
+        <translation>Vítr</translation>
+    </message>
+    <message>
+        <location filename="../src/Ui/DialogGribDrawing.cpp" line="142"/>
+        <location filename="../src/Ui/DialogGribDrawing.cpp" line="145"/>
+        <source>Courant</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/Ui/DialogGribDrawing.cpp" line="149"/>
+        <source>Primary waves</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/Ui/DialogGribDrawing.cpp" line="150"/>
+        <source>Secondary waves</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/Ui/DialogGribDrawing.cpp" line="153"/>
+        <source>Surface</source>
+        <translation>Povrch</translation>
+    </message>
+    <message>
+        <location filename="../src/Ui/DialogGribDrawing.cpp" line="155"/>
+        <source>Isotherm 0C</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/Ui/DialogGribDrawing.cpp" line="157"/>
+        <source>Isobaric</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/Ui/DialogGribDrawing.cpp" line="159"/>
+        <source>Mean Sea Level</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/Ui/DialogGribDrawing.cpp" line="161"/>
+        <source>Above ground</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/Ui/DialogGribDrawing.cpp" line="163"/>
+        <source>Sigma</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/Ui/DialogGribDrawing.cpp" line="165"/>
+        <source>Entire atmosphere</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/Ui/DialogGribDrawing.cpp" line="167"/>
+        <source>Ordered sequence</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>DialogGribDrawing_ui</name>
+    <message>
+        <location filename="../src/Ui/DialogGribDrawing.ui" line="14"/>
+        <source>Dialog</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/Ui/DialogGribDrawing.ui" line="24"/>
+        <source>Affichage</source>
+        <translation type="unfinished">Zobrazení</translation>
+    </message>
+    <message>
+        <location filename="../src/Ui/DialogGribDrawing.ui" line="32"/>
+        <source>Fond de carte</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/Ui/DialogGribDrawing.ui" line="49"/>
+        <source>Température</source>
+        <translation type="unfinished">Temperature</translation>
+    </message>
+    <message>
+        <location filename="../src/Ui/DialogGribDrawing.ui" line="56"/>
+        <source>Dégradé de couleur</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/Ui/DialogGribDrawing.ui" line="87"/>
+        <source>Flèche principale</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/Ui/DialogGribDrawing.ui" line="104"/>
+        <source>Barbule</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/Ui/DialogGribDrawing.ui" line="135"/>
+        <source>Flèche secondaire</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/Ui/DialogGribDrawing.ui" line="164"/>
+        <source>Isobar /Isotherme</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/Ui/DialogGribDrawing.ui" line="170"/>
+        <source>Isobar</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/Ui/DialogGribDrawing.ui" line="182"/>
+        <location filename="../src/Ui/DialogGribDrawing.ui" line="322"/>
+        <source>Afficher</source>
+        <translation type="unfinished">Ukázat</translation>
+    </message>
+    <message>
+        <location filename="../src/Ui/DialogGribDrawing.ui" line="206"/>
+        <source>Espacement (hPa)</source>
+        <translation type="unfinished">Krok (hPa)</translation>
+    </message>
+    <message>
+        <location filename="../src/Ui/DialogGribDrawing.ui" line="214"/>
+        <source>1</source>
+        <translation>1</translation>
+    </message>
+    <message>
+        <location filename="../src/Ui/DialogGribDrawing.ui" line="219"/>
+        <source>2</source>
+        <translation>2</translation>
+    </message>
+    <message>
+        <location filename="../src/Ui/DialogGribDrawing.ui" line="224"/>
+        <source>3</source>
+        <translation>3</translation>
+    </message>
+    <message>
+        <location filename="../src/Ui/DialogGribDrawing.ui" line="229"/>
+        <source>4</source>
+        <translation>4</translation>
+    </message>
+    <message>
+        <location filename="../src/Ui/DialogGribDrawing.ui" line="234"/>
+        <source>5</source>
+        <translation>5</translation>
+    </message>
+    <message>
+        <location filename="../src/Ui/DialogGribDrawing.ui" line="239"/>
+        <source>6</source>
+        <translation>6</translation>
+    </message>
+    <message>
+        <location filename="../src/Ui/DialogGribDrawing.ui" line="244"/>
+        <source>8</source>
+        <translation>8</translation>
+    </message>
+    <message>
+        <location filename="../src/Ui/DialogGribDrawing.ui" line="249"/>
+        <location filename="../src/Ui/DialogGribDrawing.ui" line="354"/>
+        <source>10</source>
+        <translation>10</translation>
+    </message>
+    <message>
+        <location filename="../src/Ui/DialogGribDrawing.ui" line="274"/>
+        <location filename="../src/Ui/DialogGribDrawing.ui" line="409"/>
+        <source>Etiquettes</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/Ui/DialogGribDrawing.ui" line="294"/>
+        <source>Min/Max</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/Ui/DialogGribDrawing.ui" line="310"/>
+        <source>Isotherme 0°C</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/Ui/DialogGribDrawing.ui" line="346"/>
+        <source>Espacement (m)</source>
+        <translation type="unfinished">Krok (m)</translation>
+    </message>
+    <message>
+        <location filename="../src/Ui/DialogGribDrawing.ui" line="359"/>
+        <source>20</source>
+        <translation>20</translation>
+    </message>
+    <message>
+        <location filename="../src/Ui/DialogGribDrawing.ui" line="364"/>
+        <source>50</source>
+        <translation>50</translation>
+    </message>
+    <message>
+        <location filename="../src/Ui/DialogGribDrawing.ui" line="369"/>
+        <source>100</source>
+        <translation>100</translation>
+    </message>
+    <message>
+        <location filename="../src/Ui/DialogGribDrawing.ui" line="374"/>
+        <source>200</source>
+        <translation>200</translation>
+    </message>
+    <message>
+        <location filename="../src/Ui/DialogGribDrawing.ui" line="379"/>
+        <source>500</source>
+        <translation>500</translation>
+    </message>
+    <message>
+        <location filename="../src/Ui/DialogGribDrawing.ui" line="384"/>
+        <source>1000</source>
+        <translation>1000</translation>
+    </message>
+    <message>
+        <location filename="../src/Ui/DialogGribDrawing.ui" line="450"/>
+        <source>Fermer</source>
+        <translation type="unfinished">Zavřít</translation>
     </message>
 </context>
 <context>
@@ -1571,83 +1896,83 @@ La bo�te � cocher trace partielle s&apos;active apres l&apos;entree d&apos;u
         <translation type="obsolete">Pseudo</translation>
     </message>
     <message>
-        <location filename="../src/Dialogs/DialogParamVlm.cpp" line="53"/>
+        <location filename="../src/Dialogs/DialogParamVlm.cpp" line="54"/>
         <source>Pseudo</source>
         <translation>Pseudo</translation>
     </message>
     <message>
-        <location filename="../src/Dialogs/DialogParamVlm.cpp" line="54"/>
+        <location filename="../src/Dialogs/DialogParamVlm.cpp" line="55"/>
         <source>Nom</source>
         <translation>Jméno</translation>
     </message>
     <message>
-        <location filename="../src/Dialogs/DialogParamVlm.cpp" line="55"/>
+        <location filename="../src/Dialogs/DialogParamVlm.cpp" line="56"/>
         <source>Numero</source>
         <translation>Číslo</translation>
     </message>
     <message>
-        <location filename="../src/Dialogs/DialogParamVlm.cpp" line="91"/>
+        <location filename="../src/Dialogs/DialogParamVlm.cpp" line="92"/>
         <source>If checked, let qtVlm choose the fastest way for your computer</source>
         <translation>Vyber složku map</translation>
     </message>
     <message>
-        <location filename="../src/Dialogs/DialogParamVlm.cpp" line="92"/>
+        <location filename="../src/Dialogs/DialogParamVlm.cpp" line="93"/>
         <source>to display the Grib.</source>
         <translation>Měním složku map</translation>
     </message>
     <message>
-        <location filename="../src/Dialogs/DialogParamVlm.cpp" line="93"/>
+        <location filename="../src/Dialogs/DialogParamVlm.cpp" line="94"/>
         <source>The result of the benchmark gives </source>
         <translation>Vybraná složka neobsahuje mapy</translation>
     </message>
     <message>
-        <location filename="../src/Dialogs/DialogParamVlm.cpp" line="93"/>
+        <location filename="../src/Dialogs/DialogParamVlm.cpp" line="94"/>
         <source> ms for multithread against</source>
         <translation>Vybraná složka obsahuje špatnou verzi map</translation>
     </message>
     <message>
-        <location filename="../src/Dialogs/DialogParamVlm.cpp" line="94"/>
+        <location filename="../src/Dialogs/DialogParamVlm.cpp" line="95"/>
         <source> ms for monothread.</source>
         <translation> ms pro jednovlákno.</translation>
     </message>
     <message>
-        <location filename="../src/Dialogs/DialogParamVlm.cpp" line="96"/>
+        <location filename="../src/Dialogs/DialogParamVlm.cpp" line="97"/>
         <source>Therefore the automatic choice will be multithread</source>
         <translation>Proto automatiská volba bude vícevlákno</translation>
     </message>
     <message>
-        <location filename="../src/Dialogs/DialogParamVlm.cpp" line="98"/>
+        <location filename="../src/Dialogs/DialogParamVlm.cpp" line="99"/>
         <source>Therefore the automatic choice will be monothread</source>
         <translation>Proto automatická volba bude jednovlákno</translation>
     </message>
     <message>
-        <location filename="../src/Dialogs/DialogParamVlm.cpp" line="388"/>
+        <location filename="../src/Dialogs/DialogParamVlm.cpp" line="389"/>
         <source>Select maps folder</source>
         <translation>Vyber složku map</translation>
     </message>
     <message>
-        <location filename="../src/Dialogs/DialogParamVlm.cpp" line="399"/>
-        <location filename="../src/Dialogs/DialogParamVlm.cpp" line="402"/>
+        <location filename="../src/Dialogs/DialogParamVlm.cpp" line="400"/>
+        <location filename="../src/Dialogs/DialogParamVlm.cpp" line="403"/>
         <source>Changing maps folder</source>
         <translation>Měním složku map</translation>
     </message>
     <message>
-        <location filename="../src/Dialogs/DialogParamVlm.cpp" line="399"/>
+        <location filename="../src/Dialogs/DialogParamVlm.cpp" line="400"/>
         <source>Selected folder doesn&apos;t contain maps</source>
         <translation>Vybraná složka neobsahuje mapy</translation>
     </message>
     <message>
-        <location filename="../src/Dialogs/DialogParamVlm.cpp" line="402"/>
+        <location filename="../src/Dialogs/DialogParamVlm.cpp" line="403"/>
         <source>Selected folder contains maps with wrong version</source>
         <translation>Vybraná složka obsahuje špatnou verzi map</translation>
     </message>
     <message>
-        <location filename="../src/Dialogs/DialogParamVlm.cpp" line="536"/>
+        <location filename="../src/Dialogs/DialogParamVlm.cpp" line="537"/>
         <source>Repertoire Grib</source>
         <translation>Složka Grib</translation>
     </message>
     <message>
-        <location filename="../src/Dialogs/DialogParamVlm.cpp" line="545"/>
+        <location filename="../src/Dialogs/DialogParamVlm.cpp" line="546"/>
         <source>Selectionner un skin tableau de bord VLM</source>
         <translation>Vybrat skin přístrojové desky VLM</translation>
     </message>
@@ -2159,17 +2484,17 @@ Etes-vous sur ?</source>
 <context>
     <name>DialogRemovePoi</name>
     <message>
-        <location filename="../src/Dialogs/DialogRemovePoi.cpp" line="64"/>
+        <location filename="../src/Dialogs/DialogRemovePoi.cpp" line="66"/>
         <source>selected POI</source>
         <translation>vybraný POI</translation>
     </message>
     <message>
-        <location filename="../src/Dialogs/DialogRemovePoi.cpp" line="80"/>
+        <location filename="../src/Dialogs/DialogRemovePoi.cpp" line="82"/>
         <source>Removing POI</source>
         <translation>Odstraňuji POI</translation>
     </message>
     <message>
-        <location filename="../src/Dialogs/DialogRemovePoi.cpp" line="81"/>
+        <location filename="../src/Dialogs/DialogRemovePoi.cpp" line="83"/>
         <source>Are you sure to remove %1 POI?</source>
         <translation>Určitě chceš odstranit POI %1?</translation>
     </message>
@@ -2205,22 +2530,22 @@ Etes-vous sur ?</source>
 <context>
     <name>DialogRemoveRoute</name>
     <message>
-        <location filename="../src/Dialogs/DialogRemoveRoute.cpp" line="43"/>
+        <location filename="../src/Dialogs/DialogRemoveRoute.cpp" line="45"/>
         <source>Supprimer des routes</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/Dialogs/DialogRemoveRoute.cpp" line="66"/>
+        <location filename="../src/Dialogs/DialogRemoveRoute.cpp" line="68"/>
         <source>selected Route</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/Dialogs/DialogRemoveRoute.cpp" line="82"/>
+        <location filename="../src/Dialogs/DialogRemoveRoute.cpp" line="84"/>
         <source>Removing Routes</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/Dialogs/DialogRemoveRoute.cpp" line="83"/>
+        <location filename="../src/Dialogs/DialogRemoveRoute.cpp" line="85"/>
         <source>Are you sure to remove %1 routes?</source>
         <translation type="unfinished"></translation>
     </message>
@@ -2316,45 +2641,52 @@ Etes-vous sur ?</source>
         <translation>Poslední aktualizace pozice</translation>
     </message>
     <message>
-        <location filename="../src/Dialogs/DialogRoute.cpp" line="317"/>
+        <location filename="../src/Dialogs/DialogRoute.cpp" line="320"/>
         <source>Chargement du tableau de marche</source>
         <translation>Nahrávání cestovní tabulky</translation>
     </message>
     <message>
-        <location filename="../src/Dialogs/DialogRoute.cpp" line="318"/>
+        <location filename="../src/Dialogs/DialogRoute.cpp" line="321"/>
         <source>Veuillez patienter...</source>
         <translation>Prosím čekej...</translation>
     </message>
     <message>
-        <location filename="../src/Dialogs/DialogRoute.cpp" line="420"/>
-        <location filename="../src/Dialogs/DialogRoute.cpp" line="427"/>
-        <location filename="../src/Dialogs/DialogRoute.cpp" line="447"/>
-        <location filename="../src/Dialogs/DialogRoute.cpp" line="546"/>
-        <location filename="../src/Dialogs/DialogRoute.cpp" line="547"/>
+        <location filename="../src/Dialogs/DialogRoute.cpp" line="423"/>
+        <location filename="../src/Dialogs/DialogRoute.cpp" line="430"/>
+        <location filename="../src/Dialogs/DialogRoute.cpp" line="450"/>
+        <location filename="../src/Dialogs/DialogRoute.cpp" line="585"/>
+        <location filename="../src/Dialogs/DialogRoute.cpp" line="586"/>
         <source> nds</source>
         <translation> kts</translation>
     </message>
     <message>
-        <location filename="../src/Dialogs/DialogRoute.cpp" line="423"/>
-        <location filename="../src/Dialogs/DialogRoute.cpp" line="425"/>
-        <location filename="../src/Dialogs/DialogRoute.cpp" line="429"/>
-        <location filename="../src/Dialogs/DialogRoute.cpp" line="433"/>
-        <location filename="../src/Dialogs/DialogRoute.cpp" line="449"/>
-        <location filename="../src/Dialogs/DialogRoute.cpp" line="462"/>
-        <location filename="../src/Dialogs/DialogRoute.cpp" line="469"/>
+        <location filename="../src/Dialogs/DialogRoute.cpp" line="426"/>
+        <location filename="../src/Dialogs/DialogRoute.cpp" line="428"/>
+        <location filename="../src/Dialogs/DialogRoute.cpp" line="432"/>
+        <location filename="../src/Dialogs/DialogRoute.cpp" line="436"/>
+        <location filename="../src/Dialogs/DialogRoute.cpp" line="452"/>
+        <location filename="../src/Dialogs/DialogRoute.cpp" line="465"/>
+        <location filename="../src/Dialogs/DialogRoute.cpp" line="495"/>
+        <location filename="../src/Dialogs/DialogRoute.cpp" line="502"/>
         <source>deg</source>
         <translation>°</translation>
     </message>
     <message>
-        <location filename="../src/Dialogs/DialogRoute.cpp" line="431"/>
-        <location filename="../src/Dialogs/DialogRoute.cpp" line="460"/>
+        <location filename="../src/Dialogs/DialogRoute.cpp" line="434"/>
+        <location filename="../src/Dialogs/DialogRoute.cpp" line="463"/>
         <source>kts</source>
         <translation> kts</translation>
     </message>
     <message>
-        <location filename="../src/Dialogs/DialogRoute.cpp" line="467"/>
-        <location filename="../src/Dialogs/DialogRoute.cpp" line="544"/>
-        <location filename="../src/Dialogs/DialogRoute.cpp" line="545"/>
+        <location filename="../src/Dialogs/DialogRoute.cpp" line="475"/>
+        <location filename="../src/Dialogs/DialogRoute.cpp" line="485"/>
+        <source>m</source>
+        <translation>m</translation>
+    </message>
+    <message>
+        <location filename="../src/Dialogs/DialogRoute.cpp" line="500"/>
+        <location filename="../src/Dialogs/DialogRoute.cpp" line="583"/>
+        <location filename="../src/Dialogs/DialogRoute.cpp" line="584"/>
         <source> NM</source>
         <translation>NM</translation>
     </message>
@@ -2363,51 +2695,51 @@ Etes-vous sur ?</source>
         <translation type="obsolete"> dnů </translation>
     </message>
     <message>
-        <location filename="../src/Dialogs/DialogRoute.cpp" line="715"/>
+        <location filename="../src/Dialogs/DialogRoute.cpp" line="754"/>
         <source>Ce nom est deja utilise, choisissez en un autre</source>
         <translation>Jméno už je použito, vyber jiné</translation>
     </message>
     <message>
-        <location filename="../src/Dialogs/DialogRoute.cpp" line="723"/>
+        <location filename="../src/Dialogs/DialogRoute.cpp" line="762"/>
         <source>Vous ne pouvez figer une route que&lt;br&gt;si elle part d&apos;un POI et d&apos;une date fixe</source>
         <translation>Můžeš zmrazit pouze trasu&lt;br&gt; která začíná z POI ve fixním datu</translation>
     </message>
     <message>
-        <location filename="../src/Dialogs/DialogRoute.cpp" line="873"/>
-        <location filename="../src/Dialogs/DialogRoute.cpp" line="922"/>
-        <location filename="../src/Dialogs/DialogRoute.cpp" line="959"/>
+        <location filename="../src/Dialogs/DialogRoute.cpp" line="912"/>
+        <location filename="../src/Dialogs/DialogRoute.cpp" line="961"/>
+        <location filename="../src/Dialogs/DialogRoute.cpp" line="998"/>
         <source>Pilototo</source>
         <translation>Autopilot</translation>
     </message>
     <message>
-        <location filename="../src/Dialogs/DialogRoute.cpp" line="873"/>
-        <location filename="../src/Dialogs/DialogRoute.cpp" line="922"/>
+        <location filename="../src/Dialogs/DialogRoute.cpp" line="912"/>
+        <location filename="../src/Dialogs/DialogRoute.cpp" line="961"/>
         <source>Pour utiliser cette action il faut que la route parte du bateau</source>
         <translation>Pro použití této funkce musí trasa začínat na pozici lodě</translation>
     </message>
     <message>
-        <location filename="../src/Dialogs/DialogRoute.cpp" line="959"/>
+        <location filename="../src/Dialogs/DialogRoute.cpp" line="998"/>
         <source>Pour utiliser cette action il faut que:&lt;br&gt;- La route parte du bateau&lt;br&gt;- Le mode VBVMG-VLM soit actif</source>
         <translation>Pro použití této akce je třeba, aby&lt;br&gt;trasa začínala od lodi a VBVMG-VLM bylo aktivní</translation>
     </message>
     <message>
-        <location filename="../src/Dialogs/DialogRoute.cpp" line="1043"/>
-        <location filename="../src/Dialogs/DialogRoute.cpp" line="1046"/>
+        <location filename="../src/Dialogs/DialogRoute.cpp" line="1082"/>
+        <location filename="../src/Dialogs/DialogRoute.cpp" line="1085"/>
         <source>Exporter un tableau de marche</source>
         <translation>Exportovat tabulku stopy</translation>
     </message>
     <message>
-        <location filename="../src/Dialogs/DialogRoute.cpp" line="1066"/>
+        <location filename="../src/Dialogs/DialogRoute.cpp" line="1105"/>
         <source>Voile/Moteur</source>
         <translation>Plachty/Motor</translation>
     </message>
     <message>
-        <location filename="../src/Dialogs/DialogRoute.cpp" line="1082"/>
+        <location filename="../src/Dialogs/DialogRoute.cpp" line="1121"/>
         <source>Moteur</source>
         <translation>Motor</translation>
     </message>
     <message>
-        <location filename="../src/Dialogs/DialogRoute.cpp" line="1084"/>
+        <location filename="../src/Dialogs/DialogRoute.cpp" line="1123"/>
         <source>Voile</source>
         <translation>Plachty</translation>
     </message>
@@ -2424,7 +2756,7 @@ Etes-vous sur ?</source>
         <translation type="obsolete">To use this action it is needed that:&lt;br&gt;-Route starts from boat&lt;br&gt;-Route starts from next vacation&lt;br&gt;VBVMG-VLM is activated</translation>
     </message>
     <message>
-        <location filename="../src/Dialogs/DialogRoute.cpp" line="996"/>
+        <location filename="../src/Dialogs/DialogRoute.cpp" line="1035"/>
         <source>WP-VLM</source>
         <translation>WP-VLM</translation>
     </message>
@@ -2442,73 +2774,79 @@ Etes-vous sur ?</source>
         <translation>Zavřít</translation>
     </message>
     <message>
-        <location filename="../src/Dialogs/DialogRouteComparator.cpp" line="43"/>
+        <location filename="../src/Dialogs/DialogRouteComparator.cpp" line="48"/>
         <source>Add a route to comparator</source>
         <translation>Přidat trasu do srovnávače</translation>
     </message>
     <message>
-        <location filename="../src/Dialogs/DialogRouteComparator.cpp" line="74"/>
+        <location filename="../src/Dialogs/DialogRouteComparator.cpp" line="79"/>
         <source>Remove route</source>
         <translation>Odebrat trasu</translation>
     </message>
     <message>
-        <location filename="../src/Dialogs/DialogRouteComparator.cpp" line="74"/>
+        <location filename="../src/Dialogs/DialogRouteComparator.cpp" line="79"/>
         <source>from comparator</source>
         <translation>ze srovnávače</translation>
     </message>
     <message>
-        <location filename="../src/Dialogs/DialogRouteComparator.cpp" line="75"/>
+        <location filename="../src/Dialogs/DialogRouteComparator.cpp" line="80"/>
         <source>Delete route</source>
         <translation>Smazat trasu</translation>
     </message>
     <message>
-        <location filename="../src/Dialogs/DialogRouteComparator.cpp" line="149"/>
-        <location filename="../src/Dialogs/DialogRouteComparator.cpp" line="226"/>
-        <location filename="../src/Dialogs/DialogRouteComparator.cpp" line="243"/>
-        <location filename="../src/Dialogs/DialogRouteComparator.cpp" line="260"/>
-        <location filename="../src/Dialogs/DialogRouteComparator.cpp" line="277"/>
-        <location filename="../src/Dialogs/DialogRouteComparator.cpp" line="294"/>
-        <location filename="../src/Dialogs/DialogRouteComparator.cpp" line="311"/>
+        <location filename="../src/Dialogs/DialogRouteComparator.cpp" line="154"/>
+        <location filename="../src/Dialogs/DialogRouteComparator.cpp" line="231"/>
+        <location filename="../src/Dialogs/DialogRouteComparator.cpp" line="248"/>
+        <location filename="../src/Dialogs/DialogRouteComparator.cpp" line="265"/>
+        <location filename="../src/Dialogs/DialogRouteComparator.cpp" line="282"/>
+        <location filename="../src/Dialogs/DialogRouteComparator.cpp" line="299"/>
+        <location filename="../src/Dialogs/DialogRouteComparator.cpp" line="316"/>
         <source>jours</source>
         <translation>dnů</translation>
     </message>
     <message>
-        <location filename="../src/Dialogs/DialogRouteComparator.cpp" line="149"/>
-        <location filename="../src/Dialogs/DialogRouteComparator.cpp" line="226"/>
-        <location filename="../src/Dialogs/DialogRouteComparator.cpp" line="243"/>
-        <location filename="../src/Dialogs/DialogRouteComparator.cpp" line="260"/>
-        <location filename="../src/Dialogs/DialogRouteComparator.cpp" line="277"/>
-        <location filename="../src/Dialogs/DialogRouteComparator.cpp" line="294"/>
-        <location filename="../src/Dialogs/DialogRouteComparator.cpp" line="311"/>
+        <location filename="../src/Dialogs/DialogRouteComparator.cpp" line="154"/>
+        <location filename="../src/Dialogs/DialogRouteComparator.cpp" line="231"/>
+        <location filename="../src/Dialogs/DialogRouteComparator.cpp" line="248"/>
+        <location filename="../src/Dialogs/DialogRouteComparator.cpp" line="265"/>
+        <location filename="../src/Dialogs/DialogRouteComparator.cpp" line="282"/>
+        <location filename="../src/Dialogs/DialogRouteComparator.cpp" line="299"/>
+        <location filename="../src/Dialogs/DialogRouteComparator.cpp" line="316"/>
         <source>heures</source>
         <translation>hodin</translation>
     </message>
     <message>
-        <location filename="../src/Dialogs/DialogRouteComparator.cpp" line="150"/>
-        <location filename="../src/Dialogs/DialogRouteComparator.cpp" line="227"/>
-        <location filename="../src/Dialogs/DialogRouteComparator.cpp" line="244"/>
-        <location filename="../src/Dialogs/DialogRouteComparator.cpp" line="261"/>
-        <location filename="../src/Dialogs/DialogRouteComparator.cpp" line="278"/>
-        <location filename="../src/Dialogs/DialogRouteComparator.cpp" line="295"/>
-        <location filename="../src/Dialogs/DialogRouteComparator.cpp" line="312"/>
+        <location filename="../src/Dialogs/DialogRouteComparator.cpp" line="155"/>
+        <location filename="../src/Dialogs/DialogRouteComparator.cpp" line="232"/>
+        <location filename="../src/Dialogs/DialogRouteComparator.cpp" line="249"/>
+        <location filename="../src/Dialogs/DialogRouteComparator.cpp" line="266"/>
+        <location filename="../src/Dialogs/DialogRouteComparator.cpp" line="283"/>
+        <location filename="../src/Dialogs/DialogRouteComparator.cpp" line="300"/>
+        <location filename="../src/Dialogs/DialogRouteComparator.cpp" line="317"/>
         <source>minutes</source>
         <translation>minuty</translation>
     </message>
     <message>
-        <location filename="../src/Dialogs/DialogRouteComparator.cpp" line="170"/>
         <location filename="../src/Dialogs/DialogRouteComparator.cpp" line="175"/>
+        <location filename="../src/Dialogs/DialogRouteComparator.cpp" line="180"/>
         <source> NM</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../src/Dialogs/DialogRouteComparator.cpp" line="180"/>
         <location filename="../src/Dialogs/DialogRouteComparator.cpp" line="185"/>
         <location filename="../src/Dialogs/DialogRouteComparator.cpp" line="190"/>
         <location filename="../src/Dialogs/DialogRouteComparator.cpp" line="195"/>
         <location filename="../src/Dialogs/DialogRouteComparator.cpp" line="200"/>
         <location filename="../src/Dialogs/DialogRouteComparator.cpp" line="205"/>
+        <location filename="../src/Dialogs/DialogRouteComparator.cpp" line="210"/>
         <source> kts</source>
         <translation> kts</translation>
+    </message>
+    <message>
+        <location filename="../src/Dialogs/DialogRouteComparator.cpp" line="322"/>
+        <location filename="../src/Dialogs/DialogRouteComparator.cpp" line="326"/>
+        <source> m</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -2518,25 +2856,25 @@ Etes-vous sur ?</source>
         <translation type="obsolete">ETA:</translation>
     </message>
     <message>
-        <location filename="../src/Dialogs/DialogTwaLine.cpp" line="56"/>
-        <location filename="../src/Dialogs/DialogTwaLine.cpp" line="74"/>
-        <location filename="../src/Dialogs/DialogTwaLine.cpp" line="92"/>
-        <location filename="../src/Dialogs/DialogTwaLine.cpp" line="110"/>
-        <location filename="../src/Dialogs/DialogTwaLine.cpp" line="128"/>
+        <location filename="../src/Dialogs/DialogTwaLine.cpp" line="57"/>
+        <location filename="../src/Dialogs/DialogTwaLine.cpp" line="75"/>
+        <location filename="../src/Dialogs/DialogTwaLine.cpp" line="93"/>
+        <location filename="../src/Dialogs/DialogTwaLine.cpp" line="111"/>
+        <location filename="../src/Dialogs/DialogTwaLine.cpp" line="129"/>
         <source>Twa</source>
         <translation>Twa</translation>
     </message>
     <message>
-        <location filename="../src/Dialogs/DialogTwaLine.cpp" line="62"/>
-        <location filename="../src/Dialogs/DialogTwaLine.cpp" line="80"/>
-        <location filename="../src/Dialogs/DialogTwaLine.cpp" line="98"/>
-        <location filename="../src/Dialogs/DialogTwaLine.cpp" line="116"/>
-        <location filename="../src/Dialogs/DialogTwaLine.cpp" line="134"/>
+        <location filename="../src/Dialogs/DialogTwaLine.cpp" line="63"/>
+        <location filename="../src/Dialogs/DialogTwaLine.cpp" line="81"/>
+        <location filename="../src/Dialogs/DialogTwaLine.cpp" line="99"/>
+        <location filename="../src/Dialogs/DialogTwaLine.cpp" line="117"/>
+        <location filename="../src/Dialogs/DialogTwaLine.cpp" line="135"/>
         <source>Cap</source>
         <translation>Hdg</translation>
     </message>
     <message>
-        <location filename="../src/Dialogs/DialogTwaLine.cpp" line="324"/>
+        <location filename="../src/Dialogs/DialogTwaLine.cpp" line="325"/>
         <source>ETA: </source>
         <translation>ETA:</translation>
     </message>
@@ -2985,37 +3323,37 @@ Etes-vous sur ?</source>
 <context>
     <name>Magnifier</name>
     <message>
-        <location filename="../src/Magnifier.cpp" line="26"/>
+        <location filename="../src/Magnifier.cpp" line="31"/>
         <source>Change magnifier size</source>
         <translation>Změna velikosti lupou</translation>
     </message>
     <message>
-        <location filename="../src/Magnifier.cpp" line="29"/>
+        <location filename="../src/Magnifier.cpp" line="34"/>
         <source>Change magnifier zoom</source>
         <translation>Změna zoom lupou</translation>
     </message>
     <message>
-        <location filename="../src/Magnifier.cpp" line="32"/>
+        <location filename="../src/Magnifier.cpp" line="37"/>
         <source>Close magnifier</source>
         <translation>Zavřít</translation>
     </message>
     <message>
-        <location filename="../src/Magnifier.cpp" line="201"/>
+        <location filename="../src/Magnifier.cpp" line="207"/>
         <source>New magnifier size</source>
         <translation>Nová velikost lupy</translation>
     </message>
     <message>
-        <location filename="../src/Magnifier.cpp" line="201"/>
+        <location filename="../src/Magnifier.cpp" line="207"/>
         <source>magnifier size</source>
         <translation>Velikost lupou</translation>
     </message>
     <message>
-        <location filename="../src/Magnifier.cpp" line="213"/>
+        <location filename="../src/Magnifier.cpp" line="219"/>
         <source>New magnifier zoom</source>
         <translation>Nová zoom lupy</translation>
     </message>
     <message>
-        <location filename="../src/Magnifier.cpp" line="213"/>
+        <location filename="../src/Magnifier.cpp" line="219"/>
         <source>magnifier zoom</source>
         <translation>Zoom lupy</translation>
     </message>
@@ -3031,8 +3369,8 @@ Etes-vous sur ?</source>
         <translation type="obsolete">Reckoning</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="886"/>
-        <location filename="../src/MainWindow.cpp" line="898"/>
+        <location filename="../src/MainWindow.cpp" line="888"/>
+        <location filename="../src/MainWindow.cpp" line="900"/>
         <source>Erreur</source>
         <translation>Chyba</translation>
     </message>
@@ -3053,8 +3391,8 @@ Etes-vous sur ?</source>
         <translation type="obsolete">File :</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="888"/>
-        <location filename="../src/MainWindow.cpp" line="900"/>
+        <location filename="../src/MainWindow.cpp" line="890"/>
+        <location filename="../src/MainWindow.cpp" line="902"/>
         <source>Echec lors de l&apos;ouverture.</source>
         <translation>Chyba během otevírání.</translation>
     </message>
@@ -3063,12 +3401,12 @@ Etes-vous sur ?</source>
         <translation type="obsolete">File can&apos;t be opened,</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="890"/>
+        <location filename="../src/MainWindow.cpp" line="892"/>
         <source>ou ce n&apos;est pas un fichier GRIB,</source>
         <translation>nebo to není GRIB soubor,</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="891"/>
+        <location filename="../src/MainWindow.cpp" line="893"/>
         <source>ou le fichier est corrompu,</source>
         <translation>nebo je soubor poškozen,</translation>
     </message>
@@ -3085,17 +3423,17 @@ Etes-vous sur ?</source>
         <translation type="obsolete">Zkontroluj instalaci programu.</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="889"/>
+        <location filename="../src/MainWindow.cpp" line="891"/>
         <source>Le fichier ne peut pas etre ouvert,</source>
         <translation>Soubor nelze otevřít,</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="892"/>
+        <location filename="../src/MainWindow.cpp" line="894"/>
         <source>ou il contient des donnees non reconnues,</source>
         <translation>nebo obsahuje nerozeznatelná data,</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="893"/>
+        <location filename="../src/MainWindow.cpp" line="895"/>
         <source>ou...</source>
         <translation>nebo...</translation>
     </message>
@@ -3104,12 +3442,12 @@ Etes-vous sur ?</source>
         <translation type="obsolete">qtVlm</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="1069"/>
+        <location filename="../src/MainWindow.cpp" line="1071"/>
         <source>A propos</source>
         <translation>O programu</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="1070"/>
+        <location filename="../src/MainWindow.cpp" line="1072"/>
         <source>qtVlm : GUI pour Virtual loup de mer</source>
         <translation>qtVlm : GUI pro Virtual loup de mer</translation>
     </message>
@@ -3132,7 +3470,7 @@ Etes-vous sur ?</source>
         <translation type="obsolete">Mapy nenalezeny.</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="932"/>
+        <location filename="../src/MainWindow.cpp" line="934"/>
         <source> (du </source>
         <translation> (z </translation>
     </message>
@@ -3141,23 +3479,23 @@ Etes-vous sur ?</source>
         <translation type="obsolete">dd/MM/yyyy hh:mm:ss</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="933"/>
+        <location filename="../src/MainWindow.cpp" line="935"/>
         <source> au </source>
         <translation> do </translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="887"/>
-        <location filename="../src/MainWindow.cpp" line="899"/>
+        <location filename="../src/MainWindow.cpp" line="889"/>
+        <location filename="../src/MainWindow.cpp" line="901"/>
         <source>Fichier : </source>
         <translation>Soubor :</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="1073"/>
+        <location filename="../src/MainWindow.cpp" line="1075"/>
         <source>Version : </source>
         <translation>Verze : </translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="1075"/>
+        <location filename="../src/MainWindow.cpp" line="1077"/>
         <source>Licence : GNU GPL v3</source>
         <translation>Licence : GNU GPL v3</translation>
     </message>
@@ -3166,7 +3504,7 @@ Etes-vous sur ?</source>
         <translation type="obsolete">http://qtvlm.sf.net</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="1078"/>
+        <location filename="../src/MainWindow.cpp" line="1080"/>
         <source>Grib part is originaly from zygrib project</source>
         <translation>Část Grib je původně z projektu zygrib</translation>
     </message>
@@ -3179,14 +3517,14 @@ Etes-vous sur ?</source>
         <translation type="obsolete">Soubory GRIB (*.grb *.grib *.grb.bz2 *.grib.bz2 *.grb.gz *.grib.gz)</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="1126"/>
-        <location filename="../src/MainWindow.cpp" line="1157"/>
+        <location filename="../src/MainWindow.cpp" line="1128"/>
+        <location filename="../src/MainWindow.cpp" line="1159"/>
         <source>;;Autres fichiers (*)</source>
         <translation>;;Jiné soubory (*)</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="1135"/>
-        <location filename="../src/MainWindow.cpp" line="1166"/>
+        <location filename="../src/MainWindow.cpp" line="1137"/>
+        <location filename="../src/MainWindow.cpp" line="1168"/>
         <source>Choisir un fichier GRIB</source>
         <translation>Vyber GRIB soubor</translation>
     </message>
@@ -3195,18 +3533,18 @@ Etes-vous sur ?</source>
         <translation type="obsolete">qtVlm </translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="1317"/>
+        <location filename="../src/MainWindow.cpp" line="1319"/>
         <source>Pilototo</source>
         <translation>Autopilot</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="1352"/>
+        <location filename="../src/MainWindow.cpp" line="1354"/>
         <source>Imp. de lire le pilototo de VLM</source>
         <translation>Nemohu přečíst autopilota VLM</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="1366"/>
         <location filename="../src/MainWindow.cpp" line="1368"/>
+        <location filename="../src/MainWindow.cpp" line="1370"/>
         <source>Selection d&apos;une marque</source>
         <translation>Vyber značku</translation>
     </message>
@@ -3219,7 +3557,7 @@ Etes-vous sur ?</source>
         <translation type="obsolete">°</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="901"/>
+        <location filename="../src/MainWindow.cpp" line="903"/>
         <source>Ce fichier ne contient pas</source>
         <translation>Tento soubor neobsahuje</translation>
     </message>
@@ -3239,44 +3577,44 @@ Etes-vous sur ?</source>
         <translation>Vytvářím plochu a dialogy</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="785"/>
+        <location filename="../src/MainWindow.cpp" line="787"/>
         <source>Opening kap</source>
         <translation>Otevírání KAP</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="902"/>
+        <location filename="../src/MainWindow.cpp" line="904"/>
         <source>de donnees Courants</source>
         <translation>data proudů</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="933"/>
-        <location filename="../src/MainWindow.cpp" line="934"/>
+        <location filename="../src/MainWindow.cpp" line="935"/>
+        <location filename="../src/MainWindow.cpp" line="936"/>
         <source>dd/MM/yyyy hh:mm</source>
         <translation>dd/MM/yyyy hh:mm</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="941"/>
+        <location filename="../src/MainWindow.cpp" line="943"/>
         <source> grib: </source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="946"/>
+        <location filename="../src/MainWindow.cpp" line="948"/>
         <source> courant: </source>
         <translation> proud:</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="1125"/>
-        <location filename="../src/MainWindow.cpp" line="1156"/>
+        <location filename="../src/MainWindow.cpp" line="1127"/>
+        <location filename="../src/MainWindow.cpp" line="1158"/>
         <source>Fichiers GRIB (*.grb *.grib *.grb.bz2 *.grib.bz2 *.grb.gz *.grib.gz *.grb2)</source>
         <translation type="unfinished">GRIB files (*.grb *.grib *.grb.bz2 *.grib.bz2 *.grb.gz *.grib.gz *.grb2)</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="1407"/>
+        <location filename="../src/MainWindow.cpp" line="1409"/>
         <source>Create new barrier</source>
         <translation>Vytvořit novou bariéru</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="1409"/>
+        <location filename="../src/MainWindow.cpp" line="1411"/>
         <source>Stop barrier create</source>
         <translation>Ukončit vytvářeni bariéry</translation>
     </message>
@@ -3285,17 +3623,17 @@ Etes-vous sur ?</source>
         <translation type="obsolete">Bariéra není v módu úprav</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="1445"/>
+        <location filename="../src/MainWindow.cpp" line="1447"/>
         <source>Montrer les POIs intermediaires de la route</source>
         <translation>Zobrazit mezilehlé POIs na trase </translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="2567"/>
+        <location filename="../src/MainWindow.cpp" line="2569"/>
         <source>POI</source>
         <translation>POI</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="2587"/>
+        <location filename="../src/MainWindow.cpp" line="2589"/>
         <source>New set</source>
         <translation>Nová sada</translation>
     </message>
@@ -3346,7 +3684,7 @@ Etes-vous sur ?</source>
         <translation type="obsolete">Inicializace nástrojové lišty</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="762"/>
+        <location filename="../src/MainWindow.cpp" line="764"/>
         <source>Opening grib</source>
         <translation>Otevírání grib</translation>
     </message>
@@ -3390,7 +3728,7 @@ Etes-vous sur ?</source>
     </message>
     <message>
         <location filename="../src/MainWindow.cpp" line="539"/>
-        <location filename="../src/MainWindow.cpp" line="2086"/>
+        <location filename="../src/MainWindow.cpp" line="2088"/>
         <source>Updating boats</source>
         <translation>Aktualizace lodí</translation>
     </message>
@@ -3420,37 +3758,37 @@ Etes-vous sur ?</source>
         <translation type="obsolete">Poslední synchronizace</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="1450"/>
+        <location filename="../src/MainWindow.cpp" line="1452"/>
         <source>Simplifier la route</source>
         <translation>Zjednodušit trasu</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="1455"/>
+        <location filename="../src/MainWindow.cpp" line="1457"/>
         <source>Optimiser la route</source>
         <translation>Optimizovat trasu</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="1459"/>
+        <location filename="../src/MainWindow.cpp" line="1461"/>
         <source>Copier la route</source>
         <translation>Kopírovat trasu</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="1463"/>
+        <location filename="../src/MainWindow.cpp" line="1465"/>
         <source>Zoom sur la route </source>
         <translation>Zaměřit na trasu</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="1466"/>
+        <location filename="../src/MainWindow.cpp" line="1468"/>
         <source>Supprimer la route</source>
         <translation>Odstranit trasu</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="1739"/>
+        <location filename="../src/MainWindow.cpp" line="1741"/>
         <source>Boats init</source>
         <translation>Inicializace lodí</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="1441"/>
+        <location filename="../src/MainWindow.cpp" line="1443"/>
         <source>Editer la route</source>
         <translation>Upravit trasu</translation>
     </message>
@@ -3459,22 +3797,22 @@ Etes-vous sur ?</source>
         <translation type="obsolete">Dosažení WP</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="1910"/>
+        <location filename="../src/MainWindow.cpp" line="1912"/>
         <source>Votre blocnote a change!</source>
         <translation>Tvůj poznámkový blok se změnil!</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="2071"/>
+        <location filename="../src/MainWindow.cpp" line="2073"/>
         <source>Updating players</source>
         <translation>Aktualizuji hráče</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="2075"/>
+        <location filename="../src/MainWindow.cpp" line="2077"/>
         <source>Selecting player</source>
         <translation>Vybírám hráče</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="2078"/>
+        <location filename="../src/MainWindow.cpp" line="2080"/>
         <source>loading POIs</source>
         <translation>Nahrávám body zájmu</translation>
     </message>
@@ -3507,13 +3845,13 @@ Etes-vous sur ?</source>
         <translation type="obsolete">Last synchronization crank</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="1415"/>
-        <location filename="../src/MainWindow.cpp" line="1428"/>
+        <location filename="../src/MainWindow.cpp" line="1417"/>
+        <location filename="../src/MainWindow.cpp" line="1430"/>
         <source>Tirer un cap</source>
         <translation>Udat kurs</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="1422"/>
+        <location filename="../src/MainWindow.cpp" line="1424"/>
         <source>Arret du cap</source>
         <translation>Zastavit kurs</translation>
     </message>
@@ -3613,57 +3951,57 @@ Etes-vous sur ?</source>
 <context>
     <name>MenuBar</name>
     <message>
-        <location filename="../src/MenuBar.cpp" line="53"/>
+        <location filename="../src/MenuBar.cpp" line="56"/>
         <source>QtVlm</source>
         <translation>QtVlm</translation>
     </message>
     <message>
-        <location filename="../src/MenuBar.cpp" line="56"/>
+        <location filename="../src/MenuBar.cpp" line="59"/>
         <source>Quitter</source>
         <translation>Ukončit</translation>
     </message>
     <message>
-        <location filename="../src/MenuBar.cpp" line="56"/>
+        <location filename="../src/MenuBar.cpp" line="59"/>
         <source>Ctrl+Q</source>
         <translation>Ctrl+Q</translation>
     </message>
     <message>
-        <location filename="../src/MenuBar.cpp" line="56"/>
+        <location filename="../src/MenuBar.cpp" line="59"/>
         <source>Bye</source>
         <translation>Čau</translation>
     </message>
     <message>
-        <location filename="../src/MenuBar.cpp" line="59"/>
+        <location filename="../src/MenuBar.cpp" line="62"/>
         <source>Quitter sans sauver</source>
         <translation>Ukončit bez uložení</translation>
     </message>
     <message>
-        <location filename="../src/MenuBar.cpp" line="63"/>
+        <location filename="../src/MenuBar.cpp" line="66"/>
         <source>Verrouiller</source>
         <translation>Zámek</translation>
     </message>
     <message>
-        <location filename="../src/MenuBar.cpp" line="63"/>
+        <location filename="../src/MenuBar.cpp" line="66"/>
         <source>Ctrl+L</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../src/MenuBar.cpp" line="63"/>
+        <location filename="../src/MenuBar.cpp" line="66"/>
         <source>Verrouiller l&apos;envoi d&apos;ordre a VLM</source>
         <translation>Zamknout/Odemknout posílání příkazů do VLM</translation>
     </message>
     <message>
-        <location filename="../src/MenuBar.cpp" line="65"/>
+        <location filename="../src/MenuBar.cpp" line="68"/>
         <source>Gestion des fichiers KAP</source>
         <translation>Správa KAP souborů</translation>
     </message>
     <message>
-        <location filename="../src/MenuBar.cpp" line="66"/>
+        <location filename="../src/MenuBar.cpp" line="69"/>
         <source>Ouvrir un fichier KAP</source>
         <translation>Otevřít KAP soubor</translation>
     </message>
     <message>
-        <location filename="../src/MenuBar.cpp" line="68"/>
+        <location filename="../src/MenuBar.cpp" line="71"/>
         <source>Fermer le fichier KAP</source>
         <translation>Zavřít KAP soubor</translation>
     </message>
@@ -3672,12 +4010,12 @@ Etes-vous sur ?</source>
         <translation type="obsolete">Ukaž/Schovej</translation>
     </message>
     <message>
-        <location filename="../src/MenuBar.cpp" line="89"/>
+        <location filename="../src/MenuBar.cpp" line="92"/>
         <source>Tout montrer</source>
         <translation>Ukaž vše</translation>
     </message>
     <message>
-        <location filename="../src/MenuBar.cpp" line="90"/>
+        <location filename="../src/MenuBar.cpp" line="93"/>
         <source>Tout cacher sauf les bateaux actifs</source>
         <translation>Schovej vše kromě aktivních lodí</translation>
     </message>
@@ -3706,7 +4044,7 @@ Etes-vous sur ?</source>
         <translation type="obsolete">Ukaž/Schovej popisky</translation>
     </message>
     <message>
-        <location filename="../src/MenuBar.cpp" line="114"/>
+        <location filename="../src/MenuBar.cpp" line="117"/>
         <source>Cacher/Montrer le compas</source>
         <translation>Ukaž/Schovej kompas</translation>
     </message>
@@ -3715,7 +4053,7 @@ Etes-vous sur ?</source>
         <translation type="obsolete">Ukaž/Schovej kompas VLM</translation>
     </message>
     <message>
-        <location filename="../src/MenuBar.cpp" line="116"/>
+        <location filename="../src/MenuBar.cpp" line="119"/>
         <source>Cacher/Montrer la polaire</source>
         <translation>Ukaž/Schovej rychlostní polár</translation>
     </message>
@@ -3728,32 +4066,32 @@ Etes-vous sur ?</source>
         <translation type="obsolete">Zobrazit/Skrýt noc zóna</translation>
     </message>
     <message>
-        <location filename="../src/MenuBar.cpp" line="93"/>
+        <location filename="../src/MenuBar.cpp" line="96"/>
         <source>Centrer sur le bateau actif</source>
         <translation>Centruj na aktivní loď</translation>
     </message>
     <message>
-        <location filename="../src/MenuBar.cpp" line="75"/>
+        <location filename="../src/MenuBar.cpp" line="78"/>
         <source>Configurer la corne de brume</source>
         <translation>Konfiguruj mlžný roh</translation>
     </message>
     <message>
-        <location filename="../src/MenuBar.cpp" line="94"/>
+        <location filename="../src/MenuBar.cpp" line="97"/>
         <source>Conserver la position du bateau dans l&apos;ecran lors de zoom +/-</source>
         <translation>Zamkni pozici lodi na obrazovce během zoomování</translation>
     </message>
     <message>
-        <location filename="../src/MenuBar.cpp" line="77"/>
+        <location filename="../src/MenuBar.cpp" line="80"/>
         <source>Rejouer l&apos;historique des traces</source>
         <translation>Přehraj historii stop</translation>
     </message>
     <message>
-        <location filename="../src/MenuBar.cpp" line="78"/>
+        <location filename="../src/MenuBar.cpp" line="81"/>
         <source>Photo d&apos;ecran</source>
         <translation>Snímek obrazovky</translation>
     </message>
     <message>
-        <location filename="../src/MenuBar.cpp" line="82"/>
+        <location filename="../src/MenuBar.cpp" line="85"/>
         <source>View</source>
         <translation>Zobrazit</translation>
     </message>
@@ -3762,103 +4100,103 @@ Etes-vous sur ?</source>
         <translation type="obsolete">Deska</translation>
     </message>
     <message>
-        <location filename="../src/MenuBar.cpp" line="86"/>
+        <location filename="../src/MenuBar.cpp" line="89"/>
         <source>ToolBar</source>
         <translation>Nástrojová lišta</translation>
     </message>
     <message>
-        <location filename="../src/MenuBar.cpp" line="92"/>
+        <location filename="../src/MenuBar.cpp" line="95"/>
         <source>Show/Hide boat and POI</source>
         <translation>Ukaž/skryj loď a POI</translation>
     </message>
     <message>
-        <location filename="../src/MenuBar.cpp" line="97"/>
+        <location filename="../src/MenuBar.cpp" line="100"/>
         <source>Montrer les pavillons sur la carte</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/MenuBar.cpp" line="99"/>
+        <location filename="../src/MenuBar.cpp" line="102"/>
         <source>Montrer les bateaux opposants</source>
         <translation>Zobrazit soupeřící lodě</translation>
     </message>
     <message>
-        <location filename="../src/MenuBar.cpp" line="102"/>
+        <location filename="../src/MenuBar.cpp" line="105"/>
         <source>Montrer les portes et WPs</source>
         <translation>Zobrazit přístavy a WP</translation>
     </message>
     <message>
-        <location filename="../src/MenuBar.cpp" line="104"/>
+        <location filename="../src/MenuBar.cpp" line="107"/>
         <source>Montrer les POIs</source>
         <translation>Zorazit POI</translation>
     </message>
     <message>
-        <location filename="../src/MenuBar.cpp" line="106"/>
+        <location filename="../src/MenuBar.cpp" line="109"/>
         <source>Montrer les routes</source>
         <translation>Zobrazit trasy</translation>
     </message>
     <message>
-        <location filename="../src/MenuBar.cpp" line="108"/>
+        <location filename="../src/MenuBar.cpp" line="111"/>
         <source>Montrer les etiquettes</source>
         <translation>Zobrazit nálepky</translation>
     </message>
     <message>
-        <location filename="../src/MenuBar.cpp" line="110"/>
+        <location filename="../src/MenuBar.cpp" line="113"/>
         <source>Montrer les barrieres</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/MenuBar.cpp" line="113"/>
+        <location filename="../src/MenuBar.cpp" line="116"/>
         <source>Show/Hide compas</source>
         <translation>Zobrazit/skrýt kompas</translation>
     </message>
     <message>
-        <location filename="../src/MenuBar.cpp" line="123"/>
+        <location filename="../src/MenuBar.cpp" line="126"/>
         <source>Montrer les zones de jour et nuit</source>
         <translation>Zobrazit zóny dne a noci</translation>
     </message>
     <message>
-        <location filename="../src/MenuBar.cpp" line="126"/>
+        <location filename="../src/MenuBar.cpp" line="129"/>
         <source>Montrer le tableau de bord</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/MenuBar.cpp" line="132"/>
+        <location filename="../src/MenuBar.cpp" line="135"/>
         <source>Fichier GRIB</source>
         <translation>GRIB soubor</translation>
     </message>
     <message>
-        <location filename="../src/MenuBar.cpp" line="133"/>
+        <location filename="../src/MenuBar.cpp" line="136"/>
         <source>Ouvrir</source>
         <translation>Otevřít</translation>
     </message>
     <message>
-        <location filename="../src/MenuBar.cpp" line="134"/>
+        <location filename="../src/MenuBar.cpp" line="137"/>
         <source>Ctrl+O</source>
         <translation>Ctrl+O</translation>
     </message>
     <message>
-        <location filename="../src/MenuBar.cpp" line="135"/>
+        <location filename="../src/MenuBar.cpp" line="138"/>
         <source>Ouvrir un fichier GRIB</source>
         <translation>Otevřít GRIB soubor</translation>
     </message>
     <message>
-        <location filename="../src/MenuBar.cpp" line="136"/>
+        <location filename="../src/MenuBar.cpp" line="139"/>
         <source>Recharcher</source>
         <translation>Vyhledat</translation>
     </message>
     <message>
-        <location filename="../src/MenuBar.cpp" line="138"/>
+        <location filename="../src/MenuBar.cpp" line="141"/>
         <source>Recharger le fichier GRIB actuel</source>
         <translation>Znovu načíst současný GRIB soubor</translation>
     </message>
     <message>
-        <location filename="../src/MenuBar.cpp" line="139"/>
-        <location filename="../src/MenuBar.cpp" line="141"/>
+        <location filename="../src/MenuBar.cpp" line="142"/>
+        <location filename="../src/MenuBar.cpp" line="144"/>
         <source>Fermer</source>
         <translation>Zavřít</translation>
     </message>
     <message>
-        <location filename="../src/MenuBar.cpp" line="140"/>
+        <location filename="../src/MenuBar.cpp" line="143"/>
         <source>Ctrl+W</source>
         <translation>Ctrl+W</translation>
     </message>
@@ -3867,7 +4205,7 @@ Etes-vous sur ?</source>
         <translation type="obsolete">Download</translation>
     </message>
     <message>
-        <location filename="../src/MenuBar.cpp" line="143"/>
+        <location filename="../src/MenuBar.cpp" line="146"/>
         <source>Ctrl+D</source>
         <translation>Ctrl+D</translation>
     </message>
@@ -3892,12 +4230,12 @@ Etes-vous sur ?</source>
         <translation type="obsolete">Informace o GRIB souboru</translation>
     </message>
     <message>
-        <location filename="../src/MenuBar.cpp" line="164"/>
+        <location filename="../src/MenuBar.cpp" line="167"/>
         <source>Type de carte</source>
         <translation>Typ mapy</translation>
     </message>
     <message>
-        <location filename="../src/MenuBar.cpp" line="166"/>
+        <location filename="../src/MenuBar.cpp" line="169"/>
         <source>Carte du vent</source>
         <translation>Mapa větru</translation>
     </message>
@@ -3906,7 +4244,7 @@ Etes-vous sur ?</source>
         <translation type="obsolete">Precipitations map</translation>
     </message>
     <message>
-        <location filename="../src/MenuBar.cpp" line="175"/>
+        <location filename="../src/MenuBar.cpp" line="178"/>
         <source>Couverture nuageuse</source>
         <translation>Oblačnost</translation>
     </message>
@@ -3927,7 +4265,7 @@ Etes-vous sur ?</source>
         <translation type="obsolete">Deviation temperature-dew point</translation>
     </message>
     <message>
-        <location filename="../src/MenuBar.cpp" line="190"/>
+        <location filename="../src/MenuBar.cpp" line="193"/>
         <source>Neige (chute possible)</source>
         <translation>Sníh (možné sněžení)</translation>
     </message>
@@ -3940,20 +4278,20 @@ Etes-vous sur ?</source>
         <translation type="obsolete">Icy Rain (possible)</translation>
     </message>
     <message>
-        <location filename="../src/MenuBar.cpp" line="142"/>
-        <location filename="../src/MenuBar.cpp" line="144"/>
+        <location filename="../src/MenuBar.cpp" line="145"/>
+        <location filename="../src/MenuBar.cpp" line="147"/>
         <source>Telechargement</source>
         <translation>Stáhnout</translation>
     </message>
     <message>
-        <location filename="../src/MenuBar.cpp" line="145"/>
-        <location filename="../src/MenuBar.cpp" line="147"/>
+        <location filename="../src/MenuBar.cpp" line="148"/>
+        <location filename="../src/MenuBar.cpp" line="150"/>
         <source>Telechargement VLM</source>
         <translation>Stáhnout z VLM</translation>
     </message>
     <message>
-        <location filename="../src/MenuBar.cpp" line="148"/>
-        <location filename="../src/MenuBar.cpp" line="150"/>
+        <location filename="../src/MenuBar.cpp" line="151"/>
+        <location filename="../src/MenuBar.cpp" line="153"/>
         <source>Telechargement SailsDoc</source>
         <translation>Stáhnout ze SailDocs</translation>
     </message>
@@ -3962,27 +4300,27 @@ Etes-vous sur ?</source>
         <translation type="obsolete">Precipitations map</translation>
     </message>
     <message>
-        <location filename="../src/MenuBar.cpp" line="172"/>
+        <location filename="../src/MenuBar.cpp" line="175"/>
         <source>Carte des preecipitations</source>
         <translation>Mapa srážek</translation>
     </message>
     <message>
-        <location filename="../src/MenuBar.cpp" line="178"/>
+        <location filename="../src/MenuBar.cpp" line="181"/>
         <source>Carte de l&apos;humidite relative</source>
         <translation>Mapa relativní vlhkosti</translation>
     </message>
     <message>
-        <location filename="../src/MenuBar.cpp" line="181"/>
+        <location filename="../src/MenuBar.cpp" line="184"/>
         <source>Carte de la temperature</source>
         <translation>Mapa teploty</translation>
     </message>
     <message>
-        <location filename="../src/MenuBar.cpp" line="184"/>
+        <location filename="../src/MenuBar.cpp" line="187"/>
         <source>Carte de la temperature potentielle</source>
         <translation>Map potenciální teploty</translation>
     </message>
     <message>
-        <location filename="../src/MenuBar.cpp" line="187"/>
+        <location filename="../src/MenuBar.cpp" line="190"/>
         <source>Ecart temperature-point de rosee</source>
         <translation>Deviace teplota-rosný bod</translation>
     </message>
@@ -3991,225 +4329,234 @@ Etes-vous sur ?</source>
         <translation type="obsolete">Sníh (pokrývka)</translation>
     </message>
     <message>
-        <location filename="../src/MenuBar.cpp" line="195"/>
+        <location filename="../src/MenuBar.cpp" line="198"/>
         <source>Pluie verglacante (chute possible)</source>
         <translation>Mrznoucí déšŤ (možný)</translation>
     </message>
     <message>
-        <location filename="../src/MenuBar.cpp" line="198"/>
+        <location filename="../src/MenuBar.cpp" line="201"/>
         <source>CAPE (surface)</source>
         <translation>CAPE (povrch)</translation>
     </message>
     <message>
-        <location filename="../src/MenuBar.cpp" line="201"/>
+        <location filename="../src/MenuBar.cpp" line="204"/>
         <source>CIN (surface)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/MenuBar.cpp" line="205"/>
+        <location filename="../src/MenuBar.cpp" line="208"/>
         <source>Waves</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/MenuBar.cpp" line="207"/>
+        <location filename="../src/MenuBar.cpp" line="210"/>
         <source>Waves combined</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/MenuBar.cpp" line="210"/>
+        <location filename="../src/MenuBar.cpp" line="213"/>
         <source>Wind waves</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/MenuBar.cpp" line="213"/>
+        <location filename="../src/MenuBar.cpp" line="216"/>
         <source>Swell waves</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/MenuBar.cpp" line="216"/>
+        <location filename="../src/MenuBar.cpp" line="219"/>
         <source>Max waves</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/MenuBar.cpp" line="219"/>
+        <location filename="../src/MenuBar.cpp" line="222"/>
         <source>White cap prob</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/MenuBar.cpp" line="223"/>
+        <location filename="../src/MenuBar.cpp" line="226"/>
         <source>Waves arrow</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/MenuBar.cpp" line="224"/>
+        <location filename="../src/MenuBar.cpp" line="227"/>
         <source>Show arrox for wave direction</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/MenuBar.cpp" line="236"/>
+        <location filename="../src/MenuBar.cpp" line="250"/>
+        <source>Isotherm 0C</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/MenuBar.cpp" line="252"/>
+        <source>Isobaric</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/MenuBar.cpp" line="254"/>
+        <source>Mean Sea Level</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/MenuBar.cpp" line="256"/>
+        <source>Above ground</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/MenuBar.cpp" line="258"/>
+        <source>Sigma</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/MenuBar.cpp" line="260"/>
+        <source>Entire atmosphere</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/MenuBar.cpp" line="262"/>
+        <source>Ordered sequence</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/MenuBar.cpp" line="266"/>
         <source>Altitude</source>
         <translation>Nadm. výška</translation>
     </message>
     <message>
-        <location filename="../src/MenuBar.cpp" line="238"/>
         <source>Sea level</source>
-        <translation>Hladina moře</translation>
+        <translation type="obsolete">Hladina moře</translation>
     </message>
     <message>
-        <location filename="../src/MenuBar.cpp" line="239"/>
+        <location filename="../src/MenuBar.cpp" line="248"/>
         <source>Surface</source>
         <translation>Povrch</translation>
     </message>
     <message>
-        <location filename="../src/MenuBar.cpp" line="240"/>
         <source>Sigma 995</source>
-        <translation>Sigma 995</translation>
+        <translation type="obsolete">Sigma 995</translation>
     </message>
     <message>
-        <location filename="../src/MenuBar.cpp" line="241"/>
         <source>1 m above ground</source>
-        <translation>1 m nad zemí</translation>
+        <translation type="obsolete">1 m nad zemí</translation>
     </message>
     <message>
-        <location filename="../src/MenuBar.cpp" line="242"/>
         <source>2 m above ground</source>
-        <translation>2 m nad zemí</translation>
+        <translation type="obsolete">2 m nad zemí</translation>
     </message>
     <message>
-        <location filename="../src/MenuBar.cpp" line="243"/>
         <source>3 m above ground</source>
-        <translation>3 m nad zemí</translation>
+        <translation type="obsolete">3 m nad zemí</translation>
     </message>
     <message>
-        <location filename="../src/MenuBar.cpp" line="244"/>
         <source>10 m above ground</source>
-        <translation>10 m nad zemí</translation>
+        <translation type="obsolete">10 m nad zemí</translation>
     </message>
     <message>
-        <location filename="../src/MenuBar.cpp" line="245"/>
         <source>850 hPa (? 1460 m)</source>
-        <translation>850 hPa (? 1460 m)</translation>
+        <translation type="obsolete">850 hPa (? 1460 m)</translation>
     </message>
     <message>
-        <location filename="../src/MenuBar.cpp" line="246"/>
         <source>700 hPa (? 3000 m)</source>
-        <translation>700 hPa (? 3000 m)</translation>
+        <translation type="obsolete">700 hPa (? 3000 m)</translation>
     </message>
     <message>
-        <location filename="../src/MenuBar.cpp" line="247"/>
         <source>500 hPa (? 5600 m)</source>
-        <translation>500 hPa (? 5600 m)</translation>
+        <translation type="obsolete">500 hPa (? 5600 m)</translation>
     </message>
     <message>
-        <location filename="../src/MenuBar.cpp" line="248"/>
         <source>300 hPa (? 9200 m)</source>
-        <translation>300 hPa (? 9200 m</translation>
+        <translation type="obsolete">300 hPa (? 9200 m</translation>
     </message>
     <message>
-        <location filename="../src/MenuBar.cpp" line="249"/>
         <source>200 hPa (? 11800 m)</source>
-        <translation>200 hPa (? 11800 m)</translation>
+        <translation type="obsolete">200 hPa (? 11800 m)</translation>
     </message>
     <message>
-        <location filename="../src/MenuBar.cpp" line="250"/>
         <source>Atmosphere</source>
-        <translation>Atmosféra</translation>
+        <translation type="obsolete">Atmosféra</translation>
     </message>
     <message>
-        <location filename="../src/MenuBar.cpp" line="266"/>
         <source>Geopotential altitude 850 hpa</source>
-        <translation>Geopotenciální výška 850 hpa</translation>
+        <translation type="obsolete">Geopotenciální výška 850 hpa</translation>
     </message>
     <message>
-        <location filename="../src/MenuBar.cpp" line="267"/>
         <source>Geopotential altitude 700 hpa</source>
-        <translation>Geopotenciální výška 700 hpa</translation>
+        <translation type="obsolete">Geopotenciální výška 700 hpa</translation>
     </message>
     <message>
-        <location filename="../src/MenuBar.cpp" line="268"/>
         <source>Geopotential altitude 500 hpa</source>
-        <translation>Geopotenciální výška 500 hpa</translation>
+        <translation type="obsolete">Geopotenciální výška 500 hpa</translation>
     </message>
     <message>
-        <location filename="../src/MenuBar.cpp" line="269"/>
         <source>Geopotential altitude 300 hpa</source>
-        <translation>Geopotenciální výška 300 hpa</translation>
+        <translation type="obsolete">Geopotenciální výška 300 hpa</translation>
     </message>
     <message>
-        <location filename="../src/MenuBar.cpp" line="270"/>
         <source>Geopotential altitude 200 hpa</source>
-        <translation>Geopotenciální výška 200 hpa</translation>
+        <translation type="obsolete">Geopotenciální výška 200 hpa</translation>
     </message>
     <message>
-        <location filename="../src/MenuBar.cpp" line="277"/>
         <source>Spacing (m)</source>
-        <translation>Krok (m)</translation>
+        <translation type="obsolete">Krok (m)</translation>
     </message>
     <message>
-        <location filename="../src/MenuBar.cpp" line="279"/>
-        <location filename="../src/MenuBar.cpp" line="320"/>
+        <location filename="../src/MenuBar.cpp" line="296"/>
         <source>1</source>
         <translation>1</translation>
     </message>
     <message>
-        <location filename="../src/MenuBar.cpp" line="280"/>
-        <location filename="../src/MenuBar.cpp" line="321"/>
+        <location filename="../src/MenuBar.cpp" line="297"/>
         <source>2</source>
         <translation>2</translation>
     </message>
     <message>
-        <location filename="../src/MenuBar.cpp" line="281"/>
-        <location filename="../src/MenuBar.cpp" line="324"/>
+        <location filename="../src/MenuBar.cpp" line="300"/>
         <source>5</source>
         <translation>5</translation>
     </message>
     <message>
-        <location filename="../src/MenuBar.cpp" line="282"/>
-        <location filename="../src/MenuBar.cpp" line="327"/>
-        <location filename="../src/MenuBar.cpp" line="352"/>
+        <location filename="../src/MenuBar.cpp" line="303"/>
+        <location filename="../src/MenuBar.cpp" line="328"/>
         <source>10</source>
         <translation>10</translation>
     </message>
     <message>
-        <location filename="../src/MenuBar.cpp" line="283"/>
-        <location filename="../src/MenuBar.cpp" line="353"/>
+        <location filename="../src/MenuBar.cpp" line="329"/>
         <source>20</source>
         <translation>20</translation>
     </message>
     <message>
-        <location filename="../src/MenuBar.cpp" line="284"/>
-        <location filename="../src/MenuBar.cpp" line="354"/>
+        <location filename="../src/MenuBar.cpp" line="330"/>
         <source>50</source>
         <translation>50</translation>
     </message>
     <message>
-        <location filename="../src/MenuBar.cpp" line="285"/>
-        <location filename="../src/MenuBar.cpp" line="355"/>
+        <location filename="../src/MenuBar.cpp" line="331"/>
         <source>100</source>
         <translation>100</translation>
     </message>
     <message>
-        <location filename="../src/MenuBar.cpp" line="294"/>
         <source>Geopotentials labels</source>
-        <translation>Popisky geopotenciálů</translation>
+        <translation type="obsolete">Popisky geopotenciálů</translation>
     </message>
     <message>
-        <location filename="../src/MenuBar.cpp" line="299"/>
+        <location filename="../src/MenuBar.cpp" line="275"/>
         <source>Degrades de couleurs</source>
         <translation>Gradienty barev</translation>
     </message>
     <message>
-        <location filename="../src/MenuBar.cpp" line="302"/>
+        <location filename="../src/MenuBar.cpp" line="278"/>
         <source>Fleches du vent</source>
         <translation>Větrné šipky</translation>
     </message>
     <message>
-        <location filename="../src/MenuBar.cpp" line="303"/>
+        <location filename="../src/MenuBar.cpp" line="279"/>
         <source>Afficher les fleches de direction du vent</source>
         <translation>Ukaž větrné šipky</translation>
     </message>
     <message>
-        <location filename="../src/MenuBar.cpp" line="306"/>
+        <location filename="../src/MenuBar.cpp" line="282"/>
         <source>Afficher les barbules sur les fleches de vent</source>
         <translation>Ukaž &quot;opeření&quot; na větrných šipkách</translation>
     </message>
@@ -4218,139 +4565,139 @@ Etes-vous sur ?</source>
         <translation type="obsolete">Připojit popisky isobar</translation>
     </message>
     <message>
-        <location filename="../src/MenuBar.cpp" line="346"/>
-        <location filename="../src/MenuBar.cpp" line="347"/>
+        <location filename="../src/MenuBar.cpp" line="322"/>
+        <location filename="../src/MenuBar.cpp" line="323"/>
         <source>Isothermes 0degC</source>
         <translation>Isothermy 0°C</translation>
     </message>
     <message>
-        <location filename="../src/MenuBar.cpp" line="348"/>
+        <location filename="../src/MenuBar.cpp" line="324"/>
         <source>Afficher les isothermes 0degC</source>
         <translation>Ukaž isothermy 0°C </translation>
     </message>
     <message>
-        <location filename="../src/MenuBar.cpp" line="352"/>
-        <location filename="../src/MenuBar.cpp" line="353"/>
-        <location filename="../src/MenuBar.cpp" line="354"/>
-        <location filename="../src/MenuBar.cpp" line="355"/>
-        <location filename="../src/MenuBar.cpp" line="356"/>
-        <location filename="../src/MenuBar.cpp" line="357"/>
-        <location filename="../src/MenuBar.cpp" line="358"/>
+        <location filename="../src/MenuBar.cpp" line="328"/>
+        <location filename="../src/MenuBar.cpp" line="329"/>
+        <location filename="../src/MenuBar.cpp" line="330"/>
+        <location filename="../src/MenuBar.cpp" line="331"/>
+        <location filename="../src/MenuBar.cpp" line="332"/>
+        <location filename="../src/MenuBar.cpp" line="333"/>
+        <location filename="../src/MenuBar.cpp" line="334"/>
         <source>Espacement des isothermes 0degC</source>
         <translation>Krok isotherm 0°C</translation>
     </message>
     <message>
-        <location filename="../src/MenuBar.cpp" line="369"/>
+        <location filename="../src/MenuBar.cpp" line="345"/>
         <source>Etiquettes des isothermes 0degC</source>
         <translation>Poipisky isotherm 0°C</translation>
     </message>
     <message>
-        <location filename="../src/MenuBar.cpp" line="370"/>
+        <location filename="../src/MenuBar.cpp" line="346"/>
         <source>Afficher les étiquettes des isothermes 0degC</source>
         <translation>Ukázat popisky isotherm 0°C</translation>
     </message>
     <message>
-        <location filename="../src/MenuBar.cpp" line="374"/>
+        <location filename="../src/MenuBar.cpp" line="350"/>
         <source>Fax meteo</source>
         <translation>Meteo fax</translation>
     </message>
     <message>
-        <location filename="../src/MenuBar.cpp" line="375"/>
+        <location filename="../src/MenuBar.cpp" line="351"/>
         <source>Ouvrir un fax meteo</source>
         <translation>Otevřít meteo fax</translation>
     </message>
     <message>
-        <location filename="../src/MenuBar.cpp" line="377"/>
+        <location filename="../src/MenuBar.cpp" line="353"/>
         <source>Fermer le fax meteo</source>
         <translation>Zavřít meteo fax</translation>
     </message>
     <message>
-        <location filename="../src/MenuBar.cpp" line="389"/>
+        <location filename="../src/MenuBar.cpp" line="365"/>
         <source>Parametres du/des bateaux</source>
         <translation>Nastavení lodí</translation>
     </message>
     <message>
-        <location filename="../src/MenuBar.cpp" line="390"/>
+        <location filename="../src/MenuBar.cpp" line="366"/>
         <source>Parametres des courses</source>
         <translation>Nastavení závodů</translation>
     </message>
     <message>
-        <location filename="../src/MenuBar.cpp" line="393"/>
+        <location filename="../src/MenuBar.cpp" line="369"/>
         <source>Historique VLM</source>
         <translation>Historie VLM</translation>
     </message>
     <message>
-        <location filename="../src/MenuBar.cpp" line="394"/>
+        <location filename="../src/MenuBar.cpp" line="370"/>
         <source>Telecharger trace</source>
         <translation>Stáhni stopu</translation>
     </message>
     <message>
-        <location filename="../src/MenuBar.cpp" line="395"/>
+        <location filename="../src/MenuBar.cpp" line="371"/>
         <source>Etudier la polaire</source>
         <translation>Polární analýza</translation>
     </message>
     <message>
-        <location filename="../src/MenuBar.cpp" line="403"/>
+        <location filename="../src/MenuBar.cpp" line="379"/>
         <source>Creer une route</source>
         <translation>Vytvoř trasu</translation>
     </message>
     <message>
-        <location filename="../src/MenuBar.cpp" line="411"/>
+        <location filename="../src/MenuBar.cpp" line="387"/>
         <source>En mode VB-VMG</source>
         <translation>V módu VB-VMG</translation>
     </message>
     <message>
-        <location filename="../src/MenuBar.cpp" line="413"/>
+        <location filename="../src/MenuBar.cpp" line="389"/>
         <source>En mode Ortho</source>
         <translation>V módu Ortho</translation>
     </message>
     <message>
-        <location filename="../src/MenuBar.cpp" line="418"/>
+        <location filename="../src/MenuBar.cpp" line="394"/>
         <source>Routes comparator</source>
         <translation>Srovnávač tras</translation>
     </message>
     <message>
-        <location filename="../src/MenuBar.cpp" line="421"/>
+        <location filename="../src/MenuBar.cpp" line="397"/>
         <source>Supprimer des routes</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/MenuBar.cpp" line="426"/>
+        <location filename="../src/MenuBar.cpp" line="402"/>
         <source>Creer un routage</source>
         <translation>Vytvoř routing</translation>
     </message>
     <message>
-        <location filename="../src/MenuBar.cpp" line="438"/>
+        <location filename="../src/MenuBar.cpp" line="414"/>
         <source>Sauvegarder POIs et routes</source>
         <translation>Ulož POI a trasy</translation>
     </message>
     <message>
-        <location filename="../src/MenuBar.cpp" line="439"/>
+        <location filename="../src/MenuBar.cpp" line="415"/>
         <source>Recharger POIs et routes</source>
         <translation>Znovu načti POI a trasy</translation>
     </message>
     <message>
-        <location filename="../src/MenuBar.cpp" line="443"/>
+        <location filename="../src/MenuBar.cpp" line="419"/>
         <source>Importer un fichier GeoData</source>
         <translation>Importuj GeoData soubor</translation>
     </message>
     <message>
-        <location filename="../src/MenuBar.cpp" line="446"/>
+        <location filename="../src/MenuBar.cpp" line="422"/>
         <source>Supprimer des marques</source>
         <translation>Odstranit značky</translation>
     </message>
     <message>
-        <location filename="../src/MenuBar.cpp" line="447"/>
+        <location filename="../src/MenuBar.cpp" line="423"/>
         <source>Remove marks by type...</source>
         <translation>Odebrat značky podle typu</translation>
     </message>
     <message>
-        <location filename="../src/MenuBar.cpp" line="450"/>
+        <location filename="../src/MenuBar.cpp" line="426"/>
         <source>Barrier set</source>
         <translation>Sada bariér</translation>
     </message>
     <message>
-        <location filename="../src/MenuBar.cpp" line="453"/>
+        <location filename="../src/MenuBar.cpp" line="429"/>
         <source>Add barrier set</source>
         <translation>Přidat sadu bariér</translation>
     </message>
@@ -4359,27 +4706,27 @@ Etes-vous sur ?</source>
         <translation type="obsolete">POvolit úpravy</translation>
     </message>
     <message>
-        <location filename="../src/MenuBar.cpp" line="455"/>
+        <location filename="../src/MenuBar.cpp" line="431"/>
         <source>Add barrier</source>
         <translation>Přidat bariéru</translation>
     </message>
     <message>
-        <location filename="../src/MenuBar.cpp" line="456"/>
+        <location filename="../src/MenuBar.cpp" line="432"/>
         <source>Parameters</source>
         <translation>Parametry</translation>
     </message>
     <message>
-        <location filename="../src/MenuBar.cpp" line="458"/>
+        <location filename="../src/MenuBar.cpp" line="434"/>
         <source>Delete</source>
         <translation>Smazat</translation>
     </message>
     <message>
-        <location filename="../src/MenuBar.cpp" line="468"/>
+        <location filename="../src/MenuBar.cpp" line="444"/>
         <source>Unites</source>
         <translation>Jednotky</translation>
     </message>
     <message>
-        <location filename="../src/MenuBar.cpp" line="470"/>
+        <location filename="../src/MenuBar.cpp" line="446"/>
         <source>Parametres graphiques</source>
         <translation>Nastavení grafiky</translation>
     </message>
@@ -4388,7 +4735,7 @@ Etes-vous sur ?</source>
         <translation type="obsolete">VLM settings</translation>
     </message>
     <message>
-        <location filename="../src/MenuBar.cpp" line="474"/>
+        <location filename="../src/MenuBar.cpp" line="450"/>
         <source>Planisphere</source>
         <translation>Planisféra</translation>
     </message>
@@ -4417,42 +4764,42 @@ Etes-vous sur ?</source>
         <translation type="obsolete">Quality 5</translation>
     </message>
     <message>
-        <location filename="../src/MenuBar.cpp" line="479"/>
+        <location filename="../src/MenuBar.cpp" line="455"/>
         <source>Frontieres</source>
         <translation>Hranice</translation>
     </message>
     <message>
-        <location filename="../src/MenuBar.cpp" line="479"/>
+        <location filename="../src/MenuBar.cpp" line="455"/>
         <source>Afficher les frontieres</source>
         <translation>Zobraz hranice</translation>
     </message>
     <message>
-        <location filename="../src/MenuBar.cpp" line="481"/>
+        <location filename="../src/MenuBar.cpp" line="457"/>
         <source>Rivieres</source>
         <translation>Řeky</translation>
     </message>
     <message>
-        <location filename="../src/MenuBar.cpp" line="481"/>
+        <location filename="../src/MenuBar.cpp" line="457"/>
         <source>Afficher les rivieres</source>
         <translation>Zobraz řeky</translation>
     </message>
     <message>
-        <location filename="../src/MenuBar.cpp" line="505"/>
+        <location filename="../src/MenuBar.cpp" line="481"/>
         <source>Francais</source>
         <translation>Français</translation>
     </message>
     <message>
-        <location filename="../src/MenuBar.cpp" line="507"/>
+        <location filename="../src/MenuBar.cpp" line="483"/>
         <source>Spanish</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../src/MenuBar.cpp" line="508"/>
+        <location filename="../src/MenuBar.cpp" line="484"/>
         <source>Czech</source>
         <translation>Čeština</translation>
     </message>
     <message>
-        <location filename="../src/MenuBar.cpp" line="535"/>
+        <location filename="../src/MenuBar.cpp" line="511"/>
         <source>QtVlm forum</source>
         <translation>Fórum QtVlm</translation>
     </message>
@@ -4493,7 +4840,7 @@ Etes-vous sur ?</source>
         <translation type="obsolete">Show wind arrows</translation>
     </message>
     <message>
-        <location filename="../src/MenuBar.cpp" line="305"/>
+        <location filename="../src/MenuBar.cpp" line="281"/>
         <source>Barbules</source>
         <translation>Opeření</translation>
     </message>
@@ -4506,79 +4853,79 @@ Etes-vous sur ?</source>
         <translation type="obsolete">Temperature</translation>
     </message>
     <message>
-        <location filename="../src/MenuBar.cpp" line="310"/>
+        <location filename="../src/MenuBar.cpp" line="286"/>
         <source>Ctrl+T</source>
         <translation>Ctrl+T</translation>
     </message>
     <message>
-        <location filename="../src/MenuBar.cpp" line="310"/>
+        <location filename="../src/MenuBar.cpp" line="286"/>
         <source>Temperature</source>
         <translation>Teplota</translation>
     </message>
     <message>
-        <location filename="../src/MenuBar.cpp" line="315"/>
+        <location filename="../src/MenuBar.cpp" line="291"/>
         <source>Isobares</source>
         <translation>Isobary</translation>
     </message>
     <message>
-        <location filename="../src/MenuBar.cpp" line="316"/>
+        <location filename="../src/MenuBar.cpp" line="292"/>
         <source>Afficher les isobares</source>
         <translation>Zobraz isobary</translation>
     </message>
     <message>
-        <location filename="../src/MenuBar.cpp" line="318"/>
+        <location filename="../src/MenuBar.cpp" line="294"/>
         <source>Espacement (hPa)</source>
         <translation>Krok (hPa)</translation>
     </message>
     <message>
-        <location filename="../src/MenuBar.cpp" line="320"/>
-        <location filename="../src/MenuBar.cpp" line="321"/>
-        <location filename="../src/MenuBar.cpp" line="322"/>
-        <location filename="../src/MenuBar.cpp" line="323"/>
-        <location filename="../src/MenuBar.cpp" line="324"/>
-        <location filename="../src/MenuBar.cpp" line="325"/>
-        <location filename="../src/MenuBar.cpp" line="326"/>
-        <location filename="../src/MenuBar.cpp" line="327"/>
+        <location filename="../src/MenuBar.cpp" line="296"/>
+        <location filename="../src/MenuBar.cpp" line="297"/>
+        <location filename="../src/MenuBar.cpp" line="298"/>
+        <location filename="../src/MenuBar.cpp" line="299"/>
+        <location filename="../src/MenuBar.cpp" line="300"/>
+        <location filename="../src/MenuBar.cpp" line="301"/>
+        <location filename="../src/MenuBar.cpp" line="302"/>
+        <location filename="../src/MenuBar.cpp" line="303"/>
         <source>Espacement des isobares</source>
         <translation>Krok isobar</translation>
     </message>
     <message>
-        <location filename="../src/MenuBar.cpp" line="322"/>
+        <location filename="../src/MenuBar.cpp" line="298"/>
         <source>3</source>
         <translation>3</translation>
     </message>
     <message>
-        <location filename="../src/MenuBar.cpp" line="323"/>
+        <location filename="../src/MenuBar.cpp" line="299"/>
         <source>4</source>
         <translation>4</translation>
     </message>
     <message>
-        <location filename="../src/MenuBar.cpp" line="325"/>
+        <location filename="../src/MenuBar.cpp" line="301"/>
         <source>6</source>
         <translation>6</translation>
     </message>
     <message>
-        <location filename="../src/MenuBar.cpp" line="326"/>
+        <location filename="../src/MenuBar.cpp" line="302"/>
         <source>8</source>
         <translation>8</translation>
     </message>
     <message>
-        <location filename="../src/MenuBar.cpp" line="337"/>
+        <location filename="../src/MenuBar.cpp" line="313"/>
         <source>Etiquettes des isobares</source>
         <translation>Popisky isobar</translation>
     </message>
     <message>
-        <location filename="../src/MenuBar.cpp" line="338"/>
+        <location filename="../src/MenuBar.cpp" line="314"/>
         <source>Afficher les étiquettes des isobares</source>
         <translation>Zobrazit popisky isobar</translation>
     </message>
     <message>
-        <location filename="../src/MenuBar.cpp" line="340"/>
+        <location filename="../src/MenuBar.cpp" line="316"/>
         <source>Pression Mini(L) Maxi(H)</source>
         <translation>Tlak Mini(L) Maxi(H)</translation>
     </message>
     <message>
-        <location filename="../src/MenuBar.cpp" line="341"/>
+        <location filename="../src/MenuBar.cpp" line="317"/>
         <source>Afficher les points de pression mini et maxi</source>
         <translation>Zobraz body minimálního a maximálního tlaku</translation>
     </message>
@@ -4591,7 +4938,7 @@ Etes-vous sur ?</source>
         <translation type="obsolete">Show isotherms 0C </translation>
     </message>
     <message>
-        <location filename="../src/MenuBar.cpp" line="350"/>
+        <location filename="../src/MenuBar.cpp" line="326"/>
         <source>Espacement (m)</source>
         <translation>Krok (m)</translation>
     </message>
@@ -4600,17 +4947,17 @@ Etes-vous sur ?</source>
         <translation type="obsolete">Isotherm 0 C spacing</translation>
     </message>
     <message>
-        <location filename="../src/MenuBar.cpp" line="356"/>
+        <location filename="../src/MenuBar.cpp" line="332"/>
         <source>200</source>
         <translation>200</translation>
     </message>
     <message>
-        <location filename="../src/MenuBar.cpp" line="357"/>
+        <location filename="../src/MenuBar.cpp" line="333"/>
         <source>500</source>
         <translation>500</translation>
     </message>
     <message>
-        <location filename="../src/MenuBar.cpp" line="358"/>
+        <location filename="../src/MenuBar.cpp" line="334"/>
         <source>1000</source>
         <translation>1000</translation>
     </message>
@@ -4623,12 +4970,12 @@ Etes-vous sur ?</source>
         <translation type="obsolete">Show isotherm 0 C labels</translation>
     </message>
     <message>
-        <location filename="../src/MenuBar.cpp" line="384"/>
+        <location filename="../src/MenuBar.cpp" line="360"/>
         <source>Bateau</source>
         <translation>Loď</translation>
     </message>
     <message>
-        <location filename="../src/MenuBar.cpp" line="385"/>
+        <location filename="../src/MenuBar.cpp" line="361"/>
         <source>Gestion des comptes</source>
         <translation>Správa účtů</translation>
     </message>
@@ -4641,17 +4988,17 @@ Etes-vous sur ?</source>
         <translation type="obsolete">Race settings</translation>
     </message>
     <message>
-        <location filename="../src/MenuBar.cpp" line="391"/>
+        <location filename="../src/MenuBar.cpp" line="367"/>
         <source>VLM Sync</source>
         <translation>VLM Sync</translation>
     </message>
     <message>
-        <location filename="../src/MenuBar.cpp" line="392"/>
+        <location filename="../src/MenuBar.cpp" line="368"/>
         <source>Pilototo</source>
         <translation>Autopilot</translation>
     </message>
     <message>
-        <location filename="../src/MenuBar.cpp" line="400"/>
+        <location filename="../src/MenuBar.cpp" line="376"/>
         <source>Routes</source>
         <translation>Trasy</translation>
     </message>
@@ -4660,27 +5007,27 @@ Etes-vous sur ?</source>
         <translation type="obsolete">Create route</translation>
     </message>
     <message>
-        <location filename="../src/MenuBar.cpp" line="404"/>
+        <location filename="../src/MenuBar.cpp" line="380"/>
         <source>Supprimer une route</source>
         <translation>Smaž trasu</translation>
     </message>
     <message>
-        <location filename="../src/MenuBar.cpp" line="405"/>
+        <location filename="../src/MenuBar.cpp" line="381"/>
         <source>Editer une route</source>
         <translation>Uprav trasu</translation>
     </message>
     <message>
-        <location filename="../src/MenuBar.cpp" line="406"/>
+        <location filename="../src/MenuBar.cpp" line="382"/>
         <source>Exporter une route</source>
         <translation>Exportuj trasu</translation>
     </message>
     <message>
-        <location filename="../src/MenuBar.cpp" line="409"/>
+        <location filename="../src/MenuBar.cpp" line="385"/>
         <source>Importer une route</source>
         <translation>Importuj trasu</translation>
     </message>
     <message>
-        <location filename="../src/MenuBar.cpp" line="424"/>
+        <location filename="../src/MenuBar.cpp" line="400"/>
         <source>Routages</source>
         <translation>Routingy</translation>
     </message>
@@ -4689,22 +5036,22 @@ Etes-vous sur ?</source>
         <translation type="obsolete">Create a routing</translation>
     </message>
     <message>
-        <location filename="../src/MenuBar.cpp" line="427"/>
+        <location filename="../src/MenuBar.cpp" line="403"/>
         <source>Supprimer un routage</source>
         <translation>Smaž routing</translation>
     </message>
     <message>
-        <location filename="../src/MenuBar.cpp" line="428"/>
+        <location filename="../src/MenuBar.cpp" line="404"/>
         <source>Editer un routage</source>
         <translation>Uprav routing</translation>
     </message>
     <message>
-        <location filename="../src/MenuBar.cpp" line="436"/>
+        <location filename="../src/MenuBar.cpp" line="412"/>
         <source>Marques</source>
         <translation>Značky</translation>
     </message>
     <message>
-        <location filename="../src/MenuBar.cpp" line="437"/>
+        <location filename="../src/MenuBar.cpp" line="413"/>
         <source>Ajout en masse</source>
         <translation>Přidat najednou</translation>
     </message>
@@ -4713,27 +5060,27 @@ Etes-vous sur ?</source>
         <translation type="obsolete">Save</translation>
     </message>
     <message>
-        <location filename="../src/MenuBar.cpp" line="441"/>
+        <location filename="../src/MenuBar.cpp" line="417"/>
         <source>Importer</source>
         <translation>Importuj</translation>
     </message>
     <message>
-        <location filename="../src/MenuBar.cpp" line="442"/>
+        <location filename="../src/MenuBar.cpp" line="418"/>
         <source>Importer de zyGrib</source>
         <translation>Importuj ze zyGrib</translation>
     </message>
     <message>
-        <location filename="../src/MenuBar.cpp" line="445"/>
+        <location filename="../src/MenuBar.cpp" line="421"/>
         <source>Ajouter une marque</source>
         <translation>Přidat značku</translation>
     </message>
     <message>
-        <location filename="../src/MenuBar.cpp" line="466"/>
+        <location filename="../src/MenuBar.cpp" line="442"/>
         <source>Options</source>
         <translation>Možnosti</translation>
     </message>
     <message>
-        <location filename="../src/MenuBar.cpp" line="467"/>
+        <location filename="../src/MenuBar.cpp" line="443"/>
         <source>Proxy Internet</source>
         <translation>Internet proxy</translation>
     </message>
@@ -4742,7 +5089,7 @@ Etes-vous sur ?</source>
         <translation type="obsolete">Units</translation>
     </message>
     <message>
-        <location filename="../src/MenuBar.cpp" line="468"/>
+        <location filename="../src/MenuBar.cpp" line="444"/>
         <source>Ctrl+U</source>
         <translation>Ctrl+U</translation>
     </message>
@@ -4751,7 +5098,7 @@ Etes-vous sur ?</source>
         <translation type="obsolete">Graphical settings</translation>
     </message>
     <message>
-        <location filename="../src/MenuBar.cpp" line="470"/>
+        <location filename="../src/MenuBar.cpp" line="446"/>
         <source>Ctrl+G</source>
         <translation>Ctrl+G</translation>
     </message>
@@ -4792,7 +5139,7 @@ Etes-vous sur ?</source>
         <translation type="obsolete">Quality 5</translation>
     </message>
     <message>
-        <location filename="../src/MenuBar.cpp" line="475"/>
+        <location filename="../src/MenuBar.cpp" line="451"/>
         <source>Distance orthodromique</source>
         <translation>Orthodromická vzdálenost</translation>
     </message>
@@ -4813,47 +5160,47 @@ Etes-vous sur ?</source>
         <translation type="obsolete">Show rivers</translation>
     </message>
     <message>
-        <location filename="../src/MenuBar.cpp" line="483"/>
+        <location filename="../src/MenuBar.cpp" line="459"/>
         <source>Noms des pays</source>
         <translation>Názvy států</translation>
     </message>
     <message>
-        <location filename="../src/MenuBar.cpp" line="483"/>
+        <location filename="../src/MenuBar.cpp" line="459"/>
         <source>Afficher les noms des pays</source>
         <translation>Zobraz názvy států</translation>
     </message>
     <message>
-        <location filename="../src/MenuBar.cpp" line="487"/>
+        <location filename="../src/MenuBar.cpp" line="463"/>
         <source>Nom des villes</source>
         <translation>Názvy měst</translation>
     </message>
     <message>
-        <location filename="../src/MenuBar.cpp" line="489"/>
+        <location filename="../src/MenuBar.cpp" line="465"/>
         <source>Aucun</source>
         <translation>Žádný</translation>
     </message>
     <message>
-        <location filename="../src/MenuBar.cpp" line="490"/>
+        <location filename="../src/MenuBar.cpp" line="466"/>
         <source>Niveau 1</source>
         <translation>Úroveň 1</translation>
     </message>
     <message>
-        <location filename="../src/MenuBar.cpp" line="491"/>
+        <location filename="../src/MenuBar.cpp" line="467"/>
         <source>Niveau 2</source>
         <translation>Úroveň 2</translation>
     </message>
     <message>
-        <location filename="../src/MenuBar.cpp" line="492"/>
+        <location filename="../src/MenuBar.cpp" line="468"/>
         <source>Niveau 3</source>
         <translation>Úroveň 3</translation>
     </message>
     <message>
-        <location filename="../src/MenuBar.cpp" line="493"/>
+        <location filename="../src/MenuBar.cpp" line="469"/>
         <source>Niveau 4</source>
         <translation>Úroveň 4</translation>
     </message>
     <message>
-        <location filename="../src/MenuBar.cpp" line="503"/>
+        <location filename="../src/MenuBar.cpp" line="479"/>
         <source>Language</source>
         <translation>Jazyk</translation>
     </message>
@@ -4862,28 +5209,28 @@ Etes-vous sur ?</source>
         <translation type="obsolete">Français</translation>
     </message>
     <message>
-        <location filename="../src/MenuBar.cpp" line="506"/>
+        <location filename="../src/MenuBar.cpp" line="482"/>
         <source>English</source>
         <translation>English</translation>
     </message>
     <message>
-        <location filename="../src/MenuBar.cpp" line="531"/>
-        <location filename="../src/MenuBar.cpp" line="532"/>
+        <location filename="../src/MenuBar.cpp" line="507"/>
+        <location filename="../src/MenuBar.cpp" line="508"/>
         <source>Aide</source>
         <translation>Nápověda</translation>
     </message>
     <message>
-        <location filename="../src/MenuBar.cpp" line="532"/>
+        <location filename="../src/MenuBar.cpp" line="508"/>
         <source>Ctrl+H</source>
         <translation>Ctrl+H</translation>
     </message>
     <message>
-        <location filename="../src/MenuBar.cpp" line="533"/>
+        <location filename="../src/MenuBar.cpp" line="509"/>
         <source>A propos de qtVlm</source>
         <translation>O qtVlm</translation>
     </message>
     <message>
-        <location filename="../src/MenuBar.cpp" line="534"/>
+        <location filename="../src/MenuBar.cpp" line="510"/>
         <source>A propos de QT</source>
         <translation>O Qt</translation>
     </message>
@@ -4968,12 +5315,12 @@ Etes-vous sur ?</source>
         <translation type="obsolete">12 h</translation>
     </message>
     <message>
-        <location filename="../src/MenuBar.cpp" line="566"/>
+        <location filename="../src/MenuBar.cpp" line="542"/>
         <source>Positionner une nouvelle Marque</source>
         <translation>Umístit novou značku</translation>
     </message>
     <message>
-        <location filename="../src/MenuBar.cpp" line="567"/>
+        <location filename="../src/MenuBar.cpp" line="543"/>
         <source>Coller une marque</source>
         <translation>Vlepit značku</translation>
     </message>
@@ -4994,99 +5341,99 @@ Etes-vous sur ?</source>
         <translation type="obsolete">Udělat všechny značky zjednodušitelné</translation>
     </message>
     <message>
-        <location filename="../src/MenuBar.cpp" line="573"/>
+        <location filename="../src/MenuBar.cpp" line="549"/>
         <source>Tracer une estime TWA</source>
         <translation>Kreslit očekávaný TWA</translation>
     </message>
     <message>
-        <location filename="../src/MenuBar.cpp" line="574"/>
+        <location filename="../src/MenuBar.cpp" line="550"/>
         <source>Tirer un cap</source>
         <translation>Kreslit kurs</translation>
     </message>
     <message>
-        <location filename="../src/MenuBar.cpp" line="576"/>
+        <location filename="../src/MenuBar.cpp" line="552"/>
         <source>Centrer le compas sur le bateau actif</source>
         <translation>Vycentrovat kompas na aktivní loď</translation>
     </message>
     <message>
-        <location filename="../src/MenuBar.cpp" line="579"/>
+        <location filename="../src/MenuBar.cpp" line="555"/>
         <source>Centrer le compas sur le WP VLM</source>
         <translation>Vycentrovat kompas na VLM WP</translation>
     </message>
     <message>
-        <location filename="../src/MenuBar.cpp" line="580"/>
+        <location filename="../src/MenuBar.cpp" line="556"/>
         <source>Centrer le compass sur l&apos;interpolation de la route</source>
         <translation>Vycentrovat kompas na interpolaci trasy</translation>
     </message>
     <message>
-        <location filename="../src/MenuBar.cpp" line="583"/>
+        <location filename="../src/MenuBar.cpp" line="559"/>
         <source>Centrer la carte ici</source>
         <translation>Vycentrovat mapu zde</translation>
     </message>
     <message>
-        <location filename="../src/MenuBar.cpp" line="584"/>
+        <location filename="../src/MenuBar.cpp" line="560"/>
         <source>Positionner l&apos;echelle ici</source>
         <translation>Umístit měřítko sem</translation>
     </message>
     <message>
-        <location filename="../src/MenuBar.cpp" line="587"/>
+        <location filename="../src/MenuBar.cpp" line="563"/>
         <source>Deplacer le bateau ici</source>
         <translation>Přesunout sem loď</translation>
     </message>
     <message>
-        <location filename="../src/MenuBar.cpp" line="591"/>
+        <location filename="../src/MenuBar.cpp" line="567"/>
         <source>Montrer les POIs intermediaires de la route</source>
         <translation>Zobrazit mezilehlé POIs na trase </translation>
     </message>
     <message>
-        <location filename="../src/MenuBar.cpp" line="592"/>
+        <location filename="../src/MenuBar.cpp" line="568"/>
         <source>Simplifier la route</source>
         <translation>Zjednodušit trasu</translation>
     </message>
     <message>
-        <location filename="../src/MenuBar.cpp" line="593"/>
+        <location filename="../src/MenuBar.cpp" line="569"/>
         <source>Maximum</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../src/MenuBar.cpp" line="594"/>
+        <location filename="../src/MenuBar.cpp" line="570"/>
         <source>Minimum</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../src/MenuBar.cpp" line="596"/>
+        <location filename="../src/MenuBar.cpp" line="572"/>
         <source>Optimiser la route</source>
         <translation>Optimizovat trasu</translation>
     </message>
     <message>
-        <location filename="../src/MenuBar.cpp" line="597"/>
+        <location filename="../src/MenuBar.cpp" line="573"/>
         <source>Copier la route au format kml</source>
         <translation>Zkopírovat trasu v KML formátu</translation>
     </message>
     <message>
-        <location filename="../src/MenuBar.cpp" line="415"/>
-        <location filename="../src/MenuBar.cpp" line="600"/>
+        <location filename="../src/MenuBar.cpp" line="391"/>
+        <location filename="../src/MenuBar.cpp" line="576"/>
         <source>Coller une route</source>
         <translation>Vlepit trasu</translation>
     </message>
     <message>
-        <location filename="../src/MenuBar.cpp" line="152"/>
+        <location filename="../src/MenuBar.cpp" line="155"/>
         <source>Ouvrir un GRIB Courants</source>
         <translation>Otevřít GRIB s proudy</translation>
     </message>
     <message>
-        <location filename="../src/MenuBar.cpp" line="154"/>
+        <location filename="../src/MenuBar.cpp" line="157"/>
         <source>Ouvrir un fichier GRIB Courants</source>
         <translation>Otevřít soubor GRIB s proudy</translation>
     </message>
     <message>
-        <location filename="../src/MenuBar.cpp" line="155"/>
-        <location filename="../src/MenuBar.cpp" line="157"/>
+        <location filename="../src/MenuBar.cpp" line="158"/>
+        <location filename="../src/MenuBar.cpp" line="160"/>
         <source>Fermer le GRIB Courants</source>
         <translation>Zavřít GRIB s proudy</translation>
     </message>
     <message>
-        <location filename="../src/MenuBar.cpp" line="169"/>
+        <location filename="../src/MenuBar.cpp" line="172"/>
         <source>Carte du courant</source>
         <translation>Mapa proudů</translation>
     </message>
@@ -5095,32 +5442,32 @@ Etes-vous sur ?</source>
         <translation type="obsolete">Připojit popisky isotherm 0degC</translation>
     </message>
     <message>
-        <location filename="../src/MenuBar.cpp" line="471"/>
+        <location filename="../src/MenuBar.cpp" line="447"/>
         <source>Parametres</source>
         <translation>Nastavení</translation>
     </message>
     <message>
-        <location filename="../src/MenuBar.cpp" line="598"/>
+        <location filename="../src/MenuBar.cpp" line="574"/>
         <source>Zoom sur la route </source>
         <translation>Zaměřit na trasu</translation>
     </message>
     <message>
-        <location filename="../src/MenuBar.cpp" line="599"/>
+        <location filename="../src/MenuBar.cpp" line="575"/>
         <source>Supprimer la route</source>
         <translation>Smazat trasu</translation>
     </message>
     <message>
-        <location filename="../src/MenuBar.cpp" line="590"/>
+        <location filename="../src/MenuBar.cpp" line="566"/>
         <source>Editer la route</source>
         <translation>Uprav trasu</translation>
     </message>
     <message>
-        <location filename="../src/MenuBar.cpp" line="569"/>
+        <location filename="../src/MenuBar.cpp" line="545"/>
         <source>Barrier not in edit mode</source>
         <translation>Bariéra není v módu úprav</translation>
     </message>
     <message>
-        <location filename="../src/MenuBar.cpp" line="657"/>
+        <location filename="../src/MenuBar.cpp" line="633"/>
         <source>Aucune</source>
         <translation>Žádný</translation>
     </message>
@@ -5281,17 +5628,17 @@ Etes-vous sur ?</source>
         <translation>Zobrazit mezilehlé POIs na trase </translation>
     </message>
     <message>
-        <location filename="../src/POI.cpp" line="687"/>
+        <location filename="../src/POI.cpp" line="688"/>
         <source>Ortho a partir de </source>
         <translation>Ortho od </translation>
     </message>
     <message>
-        <location filename="../src/POI.cpp" line="963"/>
+        <location filename="../src/POI.cpp" line="964"/>
         <source>Etes-vous sur ?</source>
         <translation>Určitě?</translation>
     </message>
     <message>
-        <location filename="../src/POI.cpp" line="995"/>
+        <location filename="../src/POI.cpp" line="996"/>
         <source>La destruction d&apos;une marque est definitive.
 
 Etes-vous sur de vouloir supprimer</source>
@@ -5300,53 +5647,53 @@ Etes-vous sur de vouloir supprimer</source>
 Jsi si jist, že ji chceš smazat</translation>
     </message>
     <message>
-        <location filename="../src/POI.cpp" line="1608"/>
+        <location filename="../src/POI.cpp" line="1609"/>
         <source>Fichiers ini (*.ini)</source>
         <translation>ini soubory (*.ini)</translation>
     </message>
     <message>
-        <location filename="../src/POI.cpp" line="1609"/>
-        <location filename="../src/POI.cpp" line="1697"/>
+        <location filename="../src/POI.cpp" line="1610"/>
+        <location filename="../src/POI.cpp" line="1698"/>
         <source>;;Autres fichiers (*)</source>
         <translation>;;Jiné soubory (*)</translation>
     </message>
     <message>
-        <location filename="../src/POI.cpp" line="1611"/>
+        <location filename="../src/POI.cpp" line="1612"/>
         <source>Choisir un fichier ini</source>
         <translation>Vyber ini soubor</translation>
     </message>
     <message>
-        <location filename="../src/POI.cpp" line="1686"/>
+        <location filename="../src/POI.cpp" line="1687"/>
         <source>Zygrib POI import</source>
         <translation>Import Zygrib POI</translation>
     </message>
     <message>
-        <location filename="../src/POI.cpp" line="1686"/>
+        <location filename="../src/POI.cpp" line="1687"/>
         <source>POI imported from zyGrib</source>
         <translation>POI importován ze zyGrib</translation>
     </message>
     <message>
-        <location filename="../src/POI.cpp" line="1696"/>
+        <location filename="../src/POI.cpp" line="1697"/>
         <source>Fichiers textes (*.txt)</source>
         <translation>Textové soubory</translation>
     </message>
     <message>
-        <location filename="../src/POI.cpp" line="1699"/>
+        <location filename="../src/POI.cpp" line="1700"/>
         <source>Choisir un fichier GeoData</source>
         <translation>Vyber GeoData soubor</translation>
     </message>
     <message>
-        <location filename="../src/POI.cpp" line="1746"/>
+        <location filename="../src/POI.cpp" line="1747"/>
         <source>Classement </source>
         <translation>Pořadí</translation>
     </message>
     <message>
-        <location filename="../src/POI.cpp" line="1750"/>
+        <location filename="../src/POI.cpp" line="1751"/>
         <source>GeoData POI import</source>
         <translation>Import POI GeoData</translation>
     </message>
     <message>
-        <location filename="../src/POI.cpp" line="1750"/>
+        <location filename="../src/POI.cpp" line="1751"/>
         <source>POI imported from GeoData</source>
         <translation>POI importován z GeoData</translation>
     </message>
@@ -5365,38 +5712,38 @@ Jsi si jist, že ji chceš smazat</translation>
         <translation>Žádná trasa</translation>
     </message>
     <message>
-        <location filename="../src/POI.cpp" line="610"/>
+        <location filename="../src/POI.cpp" line="611"/>
         <source>Marque-&gt;WP : </source>
         <translation>Značka-&gt;WP :</translation>
     </message>
     <message>
-        <location filename="../src/POI.cpp" line="664"/>
+        <location filename="../src/POI.cpp" line="665"/>
         <source>1ere cible du pilototo</source>
         <translation>První cíl pro autopilota</translation>
     </message>
     <message>
-        <location filename="../src/POI.cpp" line="667"/>
+        <location filename="../src/POI.cpp" line="668"/>
         <source>2eme cible du pilototo</source>
         <translation>Druhý cíl pro autopilota</translation>
     </message>
     <message>
-        <location filename="../src/POI.cpp" line="670"/>
+        <location filename="../src/POI.cpp" line="671"/>
         <source>3eme cible du pilototo</source>
         <translation>Třetí cíl pro autopilota</translation>
     </message>
     <message>
-        <location filename="../src/POI.cpp" line="673"/>
+        <location filename="../src/POI.cpp" line="674"/>
         <source>4eme cible du pilototo</source>
         <translation>Čtvrtý cíl pro autopilota</translation>
     </message>
     <message>
-        <location filename="../src/POI.cpp" line="676"/>
+        <location filename="../src/POI.cpp" line="677"/>
         <source>5eme cible du pilototo</source>
         <translation>Pátý cíl pro autopilota</translation>
     </message>
     <message>
-        <location filename="../src/POI.cpp" line="681"/>
-        <location filename="../src/POI.cpp" line="689"/>
+        <location filename="../src/POI.cpp" line="682"/>
+        <location filename="../src/POI.cpp" line="690"/>
         <source>deg</source>
         <translation>°</translation>
     </message>
@@ -5417,37 +5764,37 @@ Určitě to chceš?</translation>
         <translation type="obsolete">Smazání značky</translation>
     </message>
     <message>
-        <location filename="../src/POI.cpp" line="1003"/>
+        <location filename="../src/POI.cpp" line="1004"/>
         <source>Le calcul de la route n&apos;est pas fini, impossible de supprimer ce POI</source>
         <translation>Trasa se počítá, nelze teď smazat tento POI</translation>
     </message>
     <message>
-        <location filename="../src/POI.cpp" line="1003"/>
+        <location filename="../src/POI.cpp" line="1004"/>
         <source>Destruction d&apos;une marque</source>
         <translation>Smazání značky</translation>
     </message>
     <message>
-        <location filename="../src/POI.cpp" line="1144"/>
+        <location filename="../src/POI.cpp" line="1145"/>
         <source>Optimisation du placement d&apos;un POI</source>
         <translation>Optimalizace pozice POI</translation>
     </message>
     <message>
-        <location filename="../src/POI.cpp" line="1145"/>
+        <location filename="../src/POI.cpp" line="1146"/>
         <source>Vous ne pouvez pas optimiser en mode VBVMG-VLM</source>
         <translation>Nemůžeš optimalizovat v módu VBVMG-VLM</translation>
     </message>
     <message>
-        <location filename="../src/POI.cpp" line="1189"/>
+        <location filename="../src/POI.cpp" line="1190"/>
         <source>ETA du prochain POI: </source>
         <translation>Předchozí ETA dalšího POI: </translation>
     </message>
     <message>
-        <location filename="../src/POI.cpp" line="1192"/>
+        <location filename="../src/POI.cpp" line="1193"/>
         <source>Dist. restante du prochain POI: </source>
         <translation>Zbývající vzdálenost k dalšímu POI: </translation>
     </message>
     <message>
-        <location filename="../src/POI.cpp" line="1229"/>
+        <location filename="../src/POI.cpp" line="1230"/>
         <source>Meilleure ETA: </source>
         <translation>Nejlepší ETA:</translation>
     </message>
@@ -5464,27 +5811,27 @@ Určitě to chceš?</translation>
         <translation type="obsolete">Orthodromic distance from</translation>
     </message>
     <message>
-        <location filename="../src/POI.cpp" line="709"/>
+        <location filename="../src/POI.cpp" line="710"/>
         <source>Non joignable avec ce Grib</source>
         <translation>Nelze dosáhnout s tímto Gribem</translation>
     </message>
     <message>
-        <location filename="../src/POI.cpp" line="958"/>
+        <location filename="../src/POI.cpp" line="959"/>
         <source>Attention: votre bateau est en mode cap fixe</source>
         <translation>Varování: tvá loď je v módu fixního kursu</translation>
     </message>
     <message>
-        <location filename="../src/POI.cpp" line="960"/>
+        <location filename="../src/POI.cpp" line="961"/>
         <source>Attention: votre bateau est en mode Regulateur d&apos;Allure (angle au vent fixe)</source>
         <translation>Varování: tvá loď je v módu fixního úhlu větru</translation>
     </message>
     <message>
-        <location filename="../src/POI.cpp" line="962"/>
+        <location filename="../src/POI.cpp" line="963"/>
         <source>Definition du WP-VLM</source>
         <translation>Nastavení WP-VLM</translation>
     </message>
     <message>
-        <location filename="../src/POI.cpp" line="994"/>
+        <location filename="../src/POI.cpp" line="995"/>
         <source>Detruire la marque</source>
         <translation>Smazat značku</translation>
     </message>
@@ -5505,12 +5852,12 @@ Určitě to chceš?</translation>
         <translation type="obsolete">Shortest remaining distance:</translation>
     </message>
     <message>
-        <location filename="../src/POI.cpp" line="1375"/>
+        <location filename="../src/POI.cpp" line="1376"/>
         <source>Abandon du positionnement automatique</source>
         <translation>Automatické poziciování bylo zastaveno</translation>
     </message>
     <message>
-        <location filename="../src/POI.cpp" line="1375"/>
+        <location filename="../src/POI.cpp" line="1376"/>
         <source>Souhaitez vous conserver la meilleure position deja trouvee?</source>
         <translation>Chceš zachovat nejlepší zatím nalezenou pozici?</translation>
     </message>
@@ -5858,7 +6205,7 @@ Určitě to chceš?</translation>
     </message>
     <message>
         <location filename="../src/Dialogs/DialogRace.cpp" line="78"/>
-        <location filename="../src/Dialogs/DialogRoute.cpp" line="265"/>
+        <location filename="../src/Dialogs/DialogRoute.cpp" line="268"/>
         <source>DNM</source>
         <translation>DNM</translation>
     </message>
@@ -5925,8 +6272,8 @@ Určitě to chceš?</translation>
     </message>
     <message>
         <location filename="../src/Polar.cpp" line="101"/>
-        <location filename="../src/mycentralwidget.cpp" line="2110"/>
-        <location filename="../src/mycentralwidget.cpp" line="2784"/>
+        <location filename="../src/mycentralwidget.cpp" line="2116"/>
+        <location filename="../src/mycentralwidget.cpp" line="2790"/>
         <source>Impossible d&apos;ouvrir le fichier %1</source>
         <translation>Nelze otevřít soubor %1</translation>
     </message>
@@ -5937,7 +6284,7 @@ Určitě to chceš?</translation>
     </message>
     <message>
         <location filename="../src/Polar.cpp" line="131"/>
-        <location filename="../src/mycentralwidget.cpp" line="2247"/>
+        <location filename="../src/mycentralwidget.cpp" line="2253"/>
         <source>Fichier %1 vide</source>
         <translation>Soubor %1 je prázdný</translation>
     </message>
@@ -6102,100 +6449,100 @@ Určitě to chceš?</translation>
         <translation>VLM server neodpovídá</translation>
     </message>
     <message>
-        <location filename="../src/mycentralwidget.cpp" line="1980"/>
+        <location filename="../src/mycentralwidget.cpp" line="1986"/>
         <source>Un nom de fichier valide portant l&apos;extension .png est requis</source>
         <translation>Je potřeba platný název souboru s příponou .png</translation>
     </message>
     <message>
-        <location filename="../src/mycentralwidget.cpp" line="2004"/>
+        <location filename="../src/mycentralwidget.cpp" line="2010"/>
         <source>Voir Vlm Logs</source>
         <translation>Zkontroluj logy Vlm</translation>
     </message>
     <message>
-        <location filename="../src/mycentralwidget.cpp" line="2005"/>
+        <location filename="../src/mycentralwidget.cpp" line="2011"/>
         <source>Pas de bateau VLM actif.</source>
         <translation>Žádná aktivní loď ve VLM.</translation>
     </message>
     <message>
-        <location filename="../src/mycentralwidget.cpp" line="2020"/>
+        <location filename="../src/mycentralwidget.cpp" line="2026"/>
         <source>Telecharger traces VLM</source>
         <translation>Stáhnout trasy z VLM</translation>
     </message>
     <message>
-        <location filename="../src/mycentralwidget.cpp" line="2021"/>
+        <location filename="../src/mycentralwidget.cpp" line="2027"/>
         <source>Pas de compte VLM actif.</source>
         <translation>Žádný aktivní uživatel VLM.</translation>
     </message>
     <message>
-        <location filename="../src/mycentralwidget.cpp" line="2052"/>
+        <location filename="../src/mycentralwidget.cpp" line="2058"/>
         <source>Corne de brume activee</source>
         <translation>Mlžný roh aktivován</translation>
     </message>
     <message>
-        <location filename="../src/mycentralwidget.cpp" line="2052"/>
+        <location filename="../src/mycentralwidget.cpp" line="2058"/>
         <source>Arreter la corne de brume</source>
         <translation>Zastav mlžný roh</translation>
     </message>
     <message>
-        <location filename="../src/mycentralwidget.cpp" line="2086"/>
+        <location filename="../src/mycentralwidget.cpp" line="2092"/>
         <source>Aucun Bateau</source>
         <translation>Není vybrána loď</translation>
     </message>
     <message>
-        <location filename="../src/mycentralwidget.cpp" line="2087"/>
+        <location filename="../src/mycentralwidget.cpp" line="2093"/>
         <source>L&apos;import de route necessite un bateau actif.</source>
         <translation>Importování trasy vyžaduje aktivní loď.</translation>
     </message>
     <message>
-        <location filename="../src/mycentralwidget.cpp" line="2109"/>
-        <location filename="../src/mycentralwidget.cpp" line="2246"/>
-        <location filename="../src/mycentralwidget.cpp" line="2274"/>
-        <location filename="../src/mycentralwidget.cpp" line="2469"/>
-        <location filename="../src/mycentralwidget.cpp" line="2783"/>
-        <location filename="../src/mycentralwidget.cpp" line="2791"/>
-        <location filename="../src/mycentralwidget.cpp" line="2811"/>
-        <location filename="../src/mycentralwidget.cpp" line="3414"/>
+        <location filename="../src/mycentralwidget.cpp" line="2115"/>
+        <location filename="../src/mycentralwidget.cpp" line="2252"/>
+        <location filename="../src/mycentralwidget.cpp" line="2280"/>
+        <location filename="../src/mycentralwidget.cpp" line="2475"/>
+        <location filename="../src/mycentralwidget.cpp" line="2789"/>
+        <location filename="../src/mycentralwidget.cpp" line="2797"/>
+        <location filename="../src/mycentralwidget.cpp" line="2817"/>
+        <location filename="../src/mycentralwidget.cpp" line="3420"/>
         <source>Lecture de route</source>
         <translation>Načítání trasy</translation>
     </message>
     <message>
-        <location filename="../src/mycentralwidget.cpp" line="2260"/>
+        <location filename="../src/mycentralwidget.cpp" line="2266"/>
         <source>Importation de routage MaxSea</source>
         <translation>Importuj trasu z MaxSea</translation>
     </message>
     <message>
-        <location filename="../src/mycentralwidget.cpp" line="2260"/>
+        <location filename="../src/mycentralwidget.cpp" line="2266"/>
         <source>Heures a ajouter/enlever pour obtenir UTC (par ex -2 pour la France)</source>
         <translation>Hodin přidat/ubrat k dosažení UTC (např. -2 pro Francii)</translation>
     </message>
     <message>
-        <location filename="../src/mycentralwidget.cpp" line="2275"/>
+        <location filename="../src/mycentralwidget.cpp" line="2281"/>
         <source>Fichier %1 invalide (doit commencer par POSITION et non &apos;%2&apos;), ou alors etre au format sbsRouteur</source>
         <translation>Soubor %1 neplatný (měl by začínat pozicí (POSITION) a ne&apos;%2&apos;), nebo by měl býtve formátu sbsRouteur</translation>
     </message>
     <message>
-        <location filename="../src/mycentralwidget.cpp" line="2589"/>
+        <location filename="../src/mycentralwidget.cpp" line="2595"/>
         <source>Export de route</source>
         <translation>Export trasy</translation>
     </message>
     <message>
-        <location filename="../src/mycentralwidget.cpp" line="3652"/>
-        <location filename="../src/mycentralwidget.cpp" line="3654"/>
+        <location filename="../src/mycentralwidget.cpp" line="3658"/>
+        <location filename="../src/mycentralwidget.cpp" line="3660"/>
         <source>Simplification/Optimisation de route</source>
         <translation>Zjednodušení/optimalizace trasy</translation>
     </message>
     <message>
-        <location filename="../src/mycentralwidget.cpp" line="3652"/>
+        <location filename="../src/mycentralwidget.cpp" line="3658"/>
         <source>Cette operation est impossible pour une route figee ou une route sans ETA</source>
         <translation>Tato operace je nemožná pro zmrazenou trasu nebo trasu bez ETA</translation>
     </message>
     <message>
-        <location filename="../src/mycentralwidget.cpp" line="3654"/>
+        <location filename="../src/mycentralwidget.cpp" line="3660"/>
         <source>Cette operation est impossible si le mode de calcul VBVMG est celui de VLM</source>
         <translation>Tato operace není povolena pokud mód VBVMG je nastaven na VLM</translation>
     </message>
     <message>
-        <location filename="../src/mycentralwidget.cpp" line="3826"/>
+        <location filename="../src/mycentralwidget.cpp" line="3832"/>
         <source>Resultat de l&apos;optimisation</source>
         <translation>Pravidla pro optimalizaci</translation>
     </message>
@@ -6210,20 +6557,20 @@ Určitě to chceš?</translation>
         <translation>Uložit logy VLM</translation>
     </message>
     <message>
-        <location filename="../src/Dialogs/DialogRoute.cpp" line="1055"/>
+        <location filename="../src/Dialogs/DialogRoute.cpp" line="1094"/>
         <location filename="../src/Dialogs/DialogVlmLog.cpp" line="173"/>
         <location filename="../src/boatVLM.cpp" line="1111"/>
         <location filename="../src/boatVLM.cpp" line="1117"/>
-        <location filename="../src/mycentralwidget.cpp" line="1986"/>
-        <location filename="../src/mycentralwidget.cpp" line="2590"/>
-        <location filename="../src/mycentralwidget.cpp" line="3415"/>
+        <location filename="../src/mycentralwidget.cpp" line="1992"/>
+        <location filename="../src/mycentralwidget.cpp" line="2596"/>
+        <location filename="../src/mycentralwidget.cpp" line="3421"/>
         <source>Impossible de creer le fichier %1</source>
         <translation>Nelze vytvořit soubor %1</translation>
     </message>
     <message>
         <location filename="../src/Dialogs/DialogVlmLog.cpp" line="166"/>
-        <location filename="../src/mycentralwidget.cpp" line="1979"/>
         <location filename="../src/mycentralwidget.cpp" line="1985"/>
+        <location filename="../src/mycentralwidget.cpp" line="1991"/>
         <source>Sauvegarde ecran</source>
         <translation>Snímek obrazovky</translation>
     </message>
@@ -6258,7 +6605,7 @@ Určitě to chceš?</translation>
         <translation type="obsolete">Maximum loss of time on final ETA (in minutes)</translation>
     </message>
     <message>
-        <location filename="../src/mycentralwidget.cpp" line="3682"/>
+        <location filename="../src/mycentralwidget.cpp" line="3688"/>
         <source>Resultat de la simplification</source>
         <translation>Výsledek zjednodušení</translation>
     </message>
@@ -6386,12 +6733,27 @@ VMG %.1 kts</translation>
         <translation></translation>
     </message>
     <message>
+        <location filename="../src/Dialogs/DialogRoute.cpp" line="264"/>
+        <source>COMB WAVES HGT</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/Dialogs/DialogRoute.cpp" line="265"/>
+        <source>MAX WAVES HGT</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <location filename="../src/Dialogs/DialogRoute.cpp" line="266"/>
+        <source>MAX WAVES DIR</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/Dialogs/DialogRoute.cpp" line="269"/>
         <source>CNM</source>
         <translation>CNM</translation>
     </message>
     <message>
-        <location filename="../src/Dialogs/DialogRoute.cpp" line="1054"/>
+        <location filename="../src/Dialogs/DialogRoute.cpp" line="1093"/>
         <source>Export de tableau de marche</source>
         <translation>Export záznamu trasy</translation>
     </message>
@@ -6419,17 +6781,17 @@ VMG %.1 kts</translation>
         <translation>AWA</translation>
     </message>
     <message>
-        <location filename="../src/Dialogs/DialogRoute.cpp" line="264"/>
+        <location filename="../src/Dialogs/DialogRoute.cpp" line="267"/>
         <source>POI cible</source>
         <translation>Cílový POI</translation>
     </message>
     <message>
-        <location filename="../src/Dialogs/DialogRoute.cpp" line="267"/>
+        <location filename="../src/Dialogs/DialogRoute.cpp" line="270"/>
         <source>Lon POI cible</source>
         <translation>Lon cílového POI</translation>
     </message>
     <message>
-        <location filename="../src/Dialogs/DialogRoute.cpp" line="268"/>
+        <location filename="../src/Dialogs/DialogRoute.cpp" line="271"/>
         <source>Lat POI cible</source>
         <translation>Lat cílového POI</translation>
     </message>
@@ -6442,7 +6804,7 @@ AWA %.2f°, AWS %.2f kts
 VMG %.2f kts</translation>
     </message>
     <message>
-        <location filename="../src/Dialogs/routeInfo.cpp" line="36"/>
+        <location filename="../src/Dialogs/routeInfo.cpp" line="37"/>
         <source>Information au point d&apos;interpolation pour </source>
         <translation>Data v interpolačním bodě pro  </translation>
     </message>
@@ -6467,104 +6829,162 @@ VMG %.2f kts</translation>
         <translation>Startuji qtVLM</translation>
     </message>
     <message>
-        <location filename="../src/Dialogs/DialogRouteComparator.cpp" line="19"/>
+        <location filename="../src/Dialogs/DialogRouteComparator.cpp" line="21"/>
         <source>Color</source>
         <translation>Barva</translation>
     </message>
     <message>
-        <location filename="../src/Dialogs/DialogRouteComparator.cpp" line="20"/>
+        <location filename="../src/Dialogs/DialogRouteComparator.cpp" line="22"/>
         <source>Name</source>
         <translation>Jméno</translation>
     </message>
     <message>
-        <location filename="../src/Dialogs/DialogRouteComparator.cpp" line="21"/>
         <source>Start Date</source>
-        <translation>Datum startu</translation>
+        <translation type="obsolete">Datum startu</translation>
     </message>
     <message>
-        <location filename="../src/Dialogs/DialogRouteComparator.cpp" line="22"/>
+        <location filename="../src/Dialogs/DialogRouteComparator.cpp" line="24"/>
         <source>ETA</source>
         <translation>ETA</translation>
     </message>
     <message>
-        <location filename="../src/Dialogs/DialogRouteComparator.cpp" line="23"/>
+        <location filename="../src/Dialogs/DialogRouteComparator.cpp" line="25"/>
         <source>Duration</source>
         <translation>Trvání</translation>
     </message>
     <message>
-        <location filename="../src/Dialogs/DialogRouteComparator.cpp" line="24"/>
         <source>Ortho Distance</source>
-        <translation>Ortho vzdálenost</translation>
+        <translation type="obsolete">Ortho vzdálenost</translation>
     </message>
     <message>
-        <location filename="../src/Dialogs/DialogRouteComparator.cpp" line="25"/>
         <source>Sailed Distance</source>
-        <translation>Uplutá vzdálenost</translation>
+        <translation type="obsolete">Uplutá vzdálenost</translation>
+    </message>
+    <message>
+        <location filename="../src/Dialogs/DialogRouteComparator.cpp" line="23"/>
+        <source>Start
+Date</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../src/Dialogs/DialogRouteComparator.cpp" line="26"/>
+        <source>Ortho
+Distance</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/Dialogs/DialogRouteComparator.cpp" line="27"/>
+        <source>Sailed
+Distance</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/Dialogs/DialogRouteComparator.cpp" line="28"/>
         <source>Avg BS</source>
         <translation>Prům. BS</translation>
     </message>
     <message>
-        <location filename="../src/Dialogs/DialogRouteComparator.cpp" line="27"/>
+        <location filename="../src/Dialogs/DialogRouteComparator.cpp" line="29"/>
         <source>Max BS</source>
         <translation>Max BS</translation>
     </message>
     <message>
-        <location filename="../src/Dialogs/DialogRouteComparator.cpp" line="28"/>
+        <location filename="../src/Dialogs/DialogRouteComparator.cpp" line="30"/>
         <source>Min BS</source>
         <translation>Min BS</translation>
     </message>
     <message>
-        <location filename="../src/Dialogs/DialogRouteComparator.cpp" line="29"/>
+        <location filename="../src/Dialogs/DialogRouteComparator.cpp" line="31"/>
         <source>Avg TWS</source>
         <translation>Prům. TWS</translation>
     </message>
     <message>
-        <location filename="../src/Dialogs/DialogRouteComparator.cpp" line="30"/>
+        <location filename="../src/Dialogs/DialogRouteComparator.cpp" line="32"/>
         <source>Max TWS</source>
         <translation>Max TWS</translation>
     </message>
     <message>
-        <location filename="../src/Dialogs/DialogRouteComparator.cpp" line="31"/>
+        <location filename="../src/Dialogs/DialogRouteComparator.cpp" line="33"/>
         <source>Min TWS</source>
         <translation>Min TWS</translation>
     </message>
     <message>
-        <location filename="../src/Dialogs/DialogRouteComparator.cpp" line="32"/>
-        <source>Nb Tacks/Gybes</source>
-        <translation>Počet Re/Halz</translation>
-    </message>
-    <message>
-        <location filename="../src/Dialogs/DialogRouteComparator.cpp" line="33"/>
-        <source>Beating time</source>
-        <translation>Čas proti větru</translation>
-    </message>
-    <message>
         <location filename="../src/Dialogs/DialogRouteComparator.cpp" line="34"/>
-        <source>Downwind time</source>
-        <translation>Čas po větru</translation>
+        <source>Nb Tacks
+and Gybes</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../src/Dialogs/DialogRouteComparator.cpp" line="35"/>
-        <source>Reaching time</source>
-        <translation>Čas na bočák</translation>
+        <source>Beating
+time</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../src/Dialogs/DialogRouteComparator.cpp" line="36"/>
-        <source>Motor time</source>
-        <translation>Čas na motor</translation>
+        <source>Downwind
+time</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../src/Dialogs/DialogRouteComparator.cpp" line="37"/>
-        <source>Night navigation</source>
-        <translation>Noční navigace</translation>
+        <source>Reaching
+time</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../src/Dialogs/DialogRouteComparator.cpp" line="38"/>
-        <source>Under rain navigation</source>
+        <source>Motor
+time</source>
         <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/Dialogs/DialogRouteComparator.cpp" line="39"/>
+        <source>Night
+navigation</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/Dialogs/DialogRouteComparator.cpp" line="40"/>
+        <source>Under rain
+navigation</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/Dialogs/DialogRouteComparator.cpp" line="41"/>
+        <source>Max waves
+height</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/Dialogs/DialogRouteComparator.cpp" line="42"/>
+        <source>Max combined
+waves height</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Nb Tacks/Gybes</source>
+        <translation type="obsolete">Počet Re/Halz</translation>
+    </message>
+    <message>
+        <source>Beating time</source>
+        <translation type="obsolete">Čas proti větru</translation>
+    </message>
+    <message>
+        <source>Downwind time</source>
+        <translation type="obsolete">Čas po větru</translation>
+    </message>
+    <message>
+        <source>Reaching time</source>
+        <translation type="obsolete">Čas na bočák</translation>
+    </message>
+    <message>
+        <source>Motor time</source>
+        <translation type="obsolete">Čas na motor</translation>
+    </message>
+    <message>
+        <source>Night navigation</source>
+        <translation type="obsolete">Noční navigace</translation>
     </message>
     <message>
         <location filename="../src/XmlFile.cpp" line="69"/>
@@ -6626,89 +7046,89 @@ VMG %.2f kts</translation>
         <translation type="obsolete">&lt;br&gt;&lt;br&gt;Calculation time:</translation>
     </message>
     <message>
-        <location filename="../src/routage.cpp" line="909"/>
         <location filename="../src/routage.cpp" line="918"/>
-        <location filename="../src/routage.cpp" line="933"/>
+        <location filename="../src/routage.cpp" line="927"/>
+        <location filename="../src/routage.cpp" line="942"/>
         <source>Routage</source>
         <translation>Routing</translation>
     </message>
     <message>
-        <location filename="../src/routage.cpp" line="909"/>
+        <location filename="../src/routage.cpp" line="918"/>
         <source>Pas de polaire chargee</source>
         <translation>Není nahrán polár</translation>
     </message>
     <message>
-        <location filename="../src/routage.cpp" line="918"/>
+        <location filename="../src/routage.cpp" line="927"/>
         <source>Pas de grib charge</source>
         <translation>Není nahrán grib</translation>
     </message>
     <message>
-        <location filename="../src/routage.cpp" line="933"/>
+        <location filename="../src/routage.cpp" line="942"/>
         <source>Date de depart choisie incoherente avec le grib</source>
         <translation>Výchozí datum není kompatibilní s daty v gribu</translation>
     </message>
     <message>
-        <location filename="../src/routage.cpp" line="2472"/>
+        <location filename="../src/routage.cpp" line="2484"/>
         <source>Date et heure d&apos;arrivee: </source>
         <translation>Datum a čas příjezdu: </translation>
     </message>
     <message>
-        <location filename="../src/routage.cpp" line="2473"/>
+        <location filename="../src/routage.cpp" line="2485"/>
         <source>&lt;br&gt;Arrivee en: </source>
         <translation>&lt;br&gt;Příjezd v: </translation>
     </message>
     <message>
-        <location filename="../src/routage.cpp" line="2473"/>
+        <location filename="../src/routage.cpp" line="2485"/>
         <source> jours </source>
         <translation> dnů </translation>
     </message>
     <message>
-        <location filename="../src/routage.cpp" line="2474"/>
+        <location filename="../src/routage.cpp" line="2486"/>
         <source>&lt;br&gt;&lt;br&gt;Temps de calcul: </source>
         <translation>&lt;br&gt;&lt;br&gt;Čas výpočtu: </translation>
     </message>
     <message>
-        <location filename="../src/routage.cpp" line="2479"/>
+        <location filename="../src/routage.cpp" line="2491"/>
         <source>Routage arrete par l&apos;utilisateur</source>
         <translation>Routing zastaven uživatelem</translation>
     </message>
     <message>
-        <location filename="../src/routage.cpp" line="2481"/>
+        <location filename="../src/routage.cpp" line="2493"/>
         <source>Impossible de rejoindre l&apos;arrivee, desole</source>
         <translation>Soráč, nelze dosáhnout WP&lt;br&gt;Zkus to s jiným gribem</translation>
     </message>
     <message>
-        <location filename="../src/routage.cpp" line="2514"/>
+        <location filename="../src/routage.cpp" line="2526"/>
         <source>Convertir en route</source>
         <translation>Konvertuj na trasu</translation>
     </message>
     <message>
-        <location filename="../src/routage.cpp" line="2515"/>
+        <location filename="../src/routage.cpp" line="2527"/>
         <source>Ce routage a ete calcule avec une hypothese modifiant les donnees du grib&lt;br&gt;La route ne prendra pas ce scenario en compte&lt;br&gt;Etes vous sur de vouloir le convertir en route?</source>
         <translation>Tento routing byl proveden s předpokladem zněny dat gribu&lt;br&gt;Trasa nebude brát tento scénář v úvahu&lt;br&gt;Určitě chceš konvertovat na trasu?</translation>
     </message>
     <message>
-        <location filename="../src/routage.cpp" line="2962"/>
+        <location filename="../src/routage.cpp" line="2974"/>
         <source>Supprimer les autres routages</source>
         <translation>Potlačit ostatní routingy</translation>
     </message>
     <message>
-        <location filename="../src/routage.cpp" line="2978"/>
+        <location filename="../src/routage.cpp" line="2990"/>
         <source>Ok</source>
         <translation>OK</translation>
     </message>
     <message>
-        <location filename="../src/routage.cpp" line="2979"/>
+        <location filename="../src/routage.cpp" line="2991"/>
         <source>La route partira du point de depart et a l&apos;heure de depart du routage</source>
         <translation>Trasa bude začínat z výchozího bodu routingu a data</translation>
     </message>
     <message>
-        <location filename="../src/routage.cpp" line="3871"/>
+        <location filename="../src/routage.cpp" line="3891"/>
         <source>Editer le routage</source>
         <translation>Upravit routing</translation>
     </message>
     <message>
-        <location filename="../src/routage.cpp" line="3873"/>
+        <location filename="../src/routage.cpp" line="3893"/>
         <source>Supprimer le routage</source>
         <translation>Odsttranit routing</translation>
     </message>
@@ -6721,17 +7141,17 @@ VMG %.2f kts</translation>
         <translation type="obsolete">Chceš, aby nová trasa začínala od lodi v příští mezeře?</translation>
     </message>
     <message>
-        <location filename="../src/routage.cpp" line="4591"/>
+        <location filename="../src/routage.cpp" line="4611"/>
         <source>Calcul des routes alternatives</source>
         <translation>Výpočet alternativních tras</translation>
     </message>
     <message>
-        <location filename="../src/routage.cpp" line="4592"/>
+        <location filename="../src/routage.cpp" line="4612"/>
         <source>Veuillez patienter...</source>
         <translation>Čekej...</translation>
     </message>
     <message>
-        <location filename="../src/routage.cpp" line="4687"/>
+        <location filename="../src/routage.cpp" line="4707"/>
         <source>Arrivee (estimation): </source>
         <translation>Příjezd (odhad):</translation>
     </message>
@@ -6740,7 +7160,7 @@ VMG %.2f kts</translation>
         <translation type="obsolete">Delete routing: %1?</translation>
     </message>
     <message>
-        <location filename="../src/routage.cpp" line="3868"/>
+        <location filename="../src/routage.cpp" line="3888"/>
         <source>Creer un pivot en changeant les options</source>
         <translation>Vytvoř pivot, který mění nastavení routingu</translation>
     </message>
@@ -6757,28 +7177,28 @@ VMG %.2f kts</translation>
         <translation type="obsolete">Routing:</translation>
     </message>
     <message>
-        <location filename="../src/routage.cpp" line="2945"/>
-        <location filename="../src/routage.cpp" line="2955"/>
+        <location filename="../src/routage.cpp" line="2957"/>
+        <location filename="../src/routage.cpp" line="2967"/>
         <source>Conversion d&apos;un routage en route</source>
         <translation>Konvertuji routing na trasu</translation>
     </message>
     <message>
-        <location filename="../src/routage.cpp" line="2946"/>
+        <location filename="../src/routage.cpp" line="2958"/>
         <source>Un des routages en amont a ete supprime,&lt;br&gt;la conversion est impossible</source>
         <translation>Jeden z nadřazených routingů byl smazán,&lt;br&gt;konverze není možná</translation>
     </message>
     <message>
-        <location filename="../src/routage.cpp" line="2956"/>
+        <location filename="../src/routage.cpp" line="2968"/>
         <source>Voulez-vous que le point de depart de la route suive le bateau maintenant?</source>
         <translation>Chceš aby bod odjezdu byl teď u lodi?</translation>
     </message>
     <message>
-        <location filename="../src/routage.cpp" line="2957"/>
+        <location filename="../src/routage.cpp" line="2969"/>
         <source>Simplifier/Optimiser automatiquement</source>
         <translation>Autoaticky zjednodušit/optimalizovat</translation>
     </message>
     <message>
-        <location filename="../src/routage.cpp" line="3866"/>
+        <location filename="../src/routage.cpp" line="3886"/>
         <source>Creer un pivot</source>
         <translation>Vytvořit pivot</translation>
     </message>
@@ -7233,24 +7653,24 @@ isochrony</translation>
     <name>ROUTE</name>
     <message>
         <location filename="../src/route.cpp" line="476"/>
-        <location filename="../src/route.cpp" line="822"/>
+        <location filename="../src/route.cpp" line="845"/>
         <source>&lt;br&gt;Route: </source>
         <translation>&lt;br&gt;Trasa: </translation>
     </message>
     <message>
-        <location filename="../src/route.cpp" line="826"/>
-        <location filename="../src/route.cpp" line="906"/>
+        <location filename="../src/route.cpp" line="849"/>
+        <location filename="../src/route.cpp" line="929"/>
         <source>&lt;br&gt;ETA: Non joignable avec ce fichier GRIB</source>
         <translation>&lt;br&gt;ETA: nelze dosáhnout s tímto souborem GRIB</translation>
     </message>
     <message>
-        <location filename="../src/route.cpp" line="831"/>
-        <location filename="../src/route.cpp" line="910"/>
+        <location filename="../src/route.cpp" line="854"/>
+        <location filename="../src/route.cpp" line="933"/>
         <source>&lt;br&gt;ETA: deja atteint</source>
         <translation>&lt;br&gt;ETA: již dosaženo</translation>
     </message>
     <message>
-        <location filename="../src/route.cpp" line="837"/>
+        <location filename="../src/route.cpp" line="860"/>
         <source>Note: la date indiquee correspond a la desactivation du WP</source>
         <translation>Poznámka: indikovaný ETA odpovídá deaktivaci WP</translation>
     </message>
@@ -7259,43 +7679,43 @@ isochrony</translation>
         <translation type="obsolete">ETA from last crank</translation>
     </message>
     <message>
-        <location filename="../src/route.cpp" line="861"/>
-        <location filename="../src/route.cpp" line="936"/>
+        <location filename="../src/route.cpp" line="884"/>
+        <location filename="../src/route.cpp" line="959"/>
         <source>ETA a partir de maintenant</source>
         <translation>ETA: od teď</translation>
     </message>
     <message>
-        <location filename="../src/route.cpp" line="864"/>
-        <location filename="../src/route.cpp" line="939"/>
+        <location filename="../src/route.cpp" line="887"/>
+        <location filename="../src/route.cpp" line="962"/>
         <source>ETA depuis la date Grib</source>
         <translation>ETA od data GRIB</translation>
     </message>
     <message>
-        <location filename="../src/route.cpp" line="867"/>
-        <location filename="../src/route.cpp" line="942"/>
+        <location filename="../src/route.cpp" line="890"/>
+        <location filename="../src/route.cpp" line="965"/>
         <source>ETA depuis la date fixe</source>
         <translation>ETA od fixního data</translation>
     </message>
     <message>
-        <location filename="../src/route.cpp" line="870"/>
-        <location filename="../src/route.cpp" line="947"/>
+        <location filename="../src/route.cpp" line="893"/>
+        <location filename="../src/route.cpp" line="970"/>
         <source>jours</source>
         <translation>dnů</translation>
     </message>
     <message>
-        <location filename="../src/route.cpp" line="870"/>
-        <location filename="../src/route.cpp" line="947"/>
+        <location filename="../src/route.cpp" line="893"/>
+        <location filename="../src/route.cpp" line="970"/>
         <source>heures</source>
         <translation>hodin</translation>
     </message>
     <message>
-        <location filename="../src/route.cpp" line="871"/>
-        <location filename="../src/route.cpp" line="948"/>
+        <location filename="../src/route.cpp" line="894"/>
+        <location filename="../src/route.cpp" line="971"/>
         <source>minutes</source>
         <translation>minut</translation>
     </message>
     <message>
-        <location filename="../src/route.cpp" line="903"/>
+        <location filename="../src/route.cpp" line="926"/>
         <source>Route: </source>
         <translation>Trasa: </translation>
     </message>
@@ -7657,22 +8077,22 @@ projetá trasa a trajektorie se nemusí shodovat.&lt;/span&gt;&lt;/p&gt;&lt;/bod
 <context>
     <name>ReceiverThread</name>
     <message>
-        <location filename="../src/boatReal.cpp" line="451"/>
+        <location filename="../src/boatReal.cpp" line="452"/>
         <source>Activation du GPS</source>
         <translation>Aktivace GPS</translation>
     </message>
     <message>
-        <location filename="../src/boatReal.cpp" line="452"/>
+        <location filename="../src/boatReal.cpp" line="453"/>
         <source>Impossible d&apos;ouvrir le port </source>
         <translation>Chyba při otevírání portu </translation>
     </message>
     <message>
-        <location filename="../src/boatReal.cpp" line="452"/>
+        <location filename="../src/boatReal.cpp" line="453"/>
         <source>Erreur: </source>
         <translation>Chyba: </translation>
     </message>
     <message>
-        <location filename="../src/boatReal.cpp" line="468"/>
+        <location filename="../src/boatReal.cpp" line="469"/>
         <source>Copier</source>
         <translation>Kopírovat do schránky</translation>
     </message>
@@ -7787,32 +8207,32 @@ projetá trasa a trajektorie se nemusí shodovat.&lt;/span&gt;&lt;/p&gt;&lt;/bod
 <context>
     <name>Terrain</name>
     <message>
-        <location filename="../src/Terrain.cpp" line="391"/>
+        <location filename="../src/Terrain.cpp" line="447"/>
         <source>Niveau de detail des cotes: </source>
         <translation>Úroveň podrobnosti pobřeží: </translation>
     </message>
     <message>
-        <location filename="../src/Terrain.cpp" line="474"/>
+        <location filename="../src/Terrain.cpp" line="530"/>
         <source>m</source>
         <translation>m</translation>
     </message>
     <message>
-        <location filename="../src/Terrain.cpp" line="476"/>
+        <location filename="../src/Terrain.cpp" line="532"/>
         <source>cm</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../src/Terrain.cpp" line="478"/>
+        <location filename="../src/Terrain.cpp" line="534"/>
         <source>NM</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../src/Terrain.cpp" line="480"/>
+        <location filename="../src/Terrain.cpp" line="536"/>
         <source>(Max zoom reached)</source>
         <translation>(Dosaženo max přiblížení)</translation>
     </message>
     <message>
-        <location filename="../src/Terrain.cpp" line="927"/>
+        <location filename="../src/Terrain.cpp" line="999"/>
         <source>Calculs en cours...</source>
         <translation>Počítám...</translation>
     </message>
@@ -7824,29 +8244,29 @@ projetá trasa a trajektorie se nemusí shodovat.&lt;/span&gt;&lt;/p&gt;&lt;/bod
         <translation type="obsolete">Různé</translation>
     </message>
     <message>
-        <location filename="../src/ToolBar.cpp" line="47"/>
+        <location filename="../src/ToolBar.cpp" line="48"/>
         <source>Grib</source>
         <translation>Grib</translation>
     </message>
     <message>
-        <location filename="../src/ToolBar.cpp" line="50"/>
-        <location filename="../src/ToolBar.cpp" line="148"/>
+        <location filename="../src/ToolBar.cpp" line="51"/>
+        <location filename="../src/ToolBar.cpp" line="149"/>
         <source>Selection</source>
         <translation>Výběr</translation>
     </message>
     <message>
-        <location filename="../src/ToolBar.cpp" line="53"/>
-        <location filename="../src/ToolBar.cpp" line="162"/>
+        <location filename="../src/ToolBar.cpp" line="54"/>
+        <location filename="../src/ToolBar.cpp" line="163"/>
         <source>Estime</source>
         <translation>Odhad</translation>
     </message>
     <message>
-        <location filename="../src/ToolBar.cpp" line="56"/>
+        <location filename="../src/ToolBar.cpp" line="57"/>
         <source>Boat</source>
         <translation>Loď</translation>
     </message>
     <message>
-        <location filename="../src/ToolBar.cpp" line="59"/>
+        <location filename="../src/ToolBar.cpp" line="60"/>
         <source>ETA</source>
         <translation>ETA</translation>
     </message>
@@ -7863,181 +8283,181 @@ projetá trasa a trajektorie se nemusí shodovat.&lt;/span&gt;&lt;/p&gt;&lt;/bod
         <translation type="obsolete">Čau</translation>
     </message>
     <message>
-        <location filename="../src/ToolBar.cpp" line="62"/>
+        <location filename="../src/ToolBar.cpp" line="63"/>
         <source>Barrier Set</source>
         <translation>Sada bariér</translation>
     </message>
     <message>
-        <location filename="../src/ToolBar.cpp" line="86"/>
+        <location filename="../src/ToolBar.cpp" line="87"/>
         <source>Hold to select download method</source>
         <translation>Drž pro výběr metody stahování</translation>
     </message>
     <message>
-        <location filename="../src/ToolBar.cpp" line="88"/>
+        <location filename="../src/ToolBar.cpp" line="89"/>
         <source>Telechargement zyGrib</source>
         <translation>Stáhnout zyGrib</translation>
     </message>
     <message>
-        <location filename="../src/ToolBar.cpp" line="89"/>
+        <location filename="../src/ToolBar.cpp" line="90"/>
         <source>Telechargement VLM</source>
         <translation>Stáhnout VLM</translation>
     </message>
     <message>
-        <location filename="../src/ToolBar.cpp" line="90"/>
+        <location filename="../src/ToolBar.cpp" line="91"/>
         <source>Telechargement SailsDoc</source>
         <translation>Stáhnout SailDocs</translation>
     </message>
     <message>
-        <location filename="../src/ToolBar.cpp" line="91"/>
+        <location filename="../src/ToolBar.cpp" line="92"/>
         <source>Open a grib</source>
         <translation>Otevřít grib</translation>
     </message>
     <message>
-        <location filename="../src/ToolBar.cpp" line="103"/>
+        <location filename="../src/ToolBar.cpp" line="104"/>
         <source>Prevision precedente [page prec]</source>
         <translation>Předchozí předpověď [minulá strana]</translation>
     </message>
     <message>
-        <location filename="../src/ToolBar.cpp" line="104"/>
+        <location filename="../src/ToolBar.cpp" line="105"/>
         <source>PgUp</source>
         <translation>PgUp</translation>
     </message>
     <message>
-        <location filename="../src/ToolBar.cpp" line="105"/>
+        <location filename="../src/ToolBar.cpp" line="106"/>
         <source>Prevision suivante [page suiv]</source>
         <translation>Příští předpověď [další strana]</translation>
     </message>
     <message>
-        <location filename="../src/ToolBar.cpp" line="106"/>
+        <location filename="../src/ToolBar.cpp" line="107"/>
         <source>PgDown</source>
         <translation>PgDown</translation>
     </message>
     <message>
-        <location filename="../src/ToolBar.cpp" line="107"/>
+        <location filename="../src/ToolBar.cpp" line="108"/>
         <source>Animation du grib</source>
         <translation>Animace gribu</translation>
     </message>
     <message>
-        <location filename="../src/ToolBar.cpp" line="109"/>
+        <location filename="../src/ToolBar.cpp" line="110"/>
         <source>Now</source>
         <translation>Teď</translation>
     </message>
     <message>
-        <location filename="../src/ToolBar.cpp" line="110"/>
+        <location filename="../src/ToolBar.cpp" line="111"/>
         <source>Select date</source>
         <translation>Vyber datum</translation>
     </message>
     <message>
-        <location filename="../src/ToolBar.cpp" line="115"/>
+        <location filename="../src/ToolBar.cpp" line="116"/>
         <source>15 m</source>
         <translation>15 m</translation>
     </message>
     <message>
-        <location filename="../src/ToolBar.cpp" line="116"/>
+        <location filename="../src/ToolBar.cpp" line="117"/>
         <source>30 m</source>
         <translation>30 m</translation>
     </message>
     <message>
-        <location filename="../src/ToolBar.cpp" line="117"/>
+        <location filename="../src/ToolBar.cpp" line="118"/>
         <source>1 h</source>
         <translation>1 h</translation>
     </message>
     <message>
-        <location filename="../src/ToolBar.cpp" line="118"/>
+        <location filename="../src/ToolBar.cpp" line="119"/>
         <source>2 h</source>
         <translation>2 h</translation>
     </message>
     <message>
-        <location filename="../src/ToolBar.cpp" line="119"/>
+        <location filename="../src/ToolBar.cpp" line="120"/>
         <source>3 h</source>
         <translation>3 h</translation>
     </message>
     <message>
-        <location filename="../src/ToolBar.cpp" line="120"/>
+        <location filename="../src/ToolBar.cpp" line="121"/>
         <source>6 h</source>
         <translation>6 h</translation>
     </message>
     <message>
-        <location filename="../src/ToolBar.cpp" line="121"/>
+        <location filename="../src/ToolBar.cpp" line="122"/>
         <source>12 h</source>
         <translation>12 h</translation>
     </message>
     <message>
-        <location filename="../src/ToolBar.cpp" line="138"/>
         <location filename="../src/ToolBar.cpp" line="139"/>
+        <location filename="../src/ToolBar.cpp" line="140"/>
         <source>Augmenter l&apos;echelle de la carte</source>
         <translation>Přibliž mapu</translation>
     </message>
     <message>
-        <location filename="../src/ToolBar.cpp" line="140"/>
         <location filename="../src/ToolBar.cpp" line="141"/>
+        <location filename="../src/ToolBar.cpp" line="142"/>
         <source>Diminuer l&apos;echelle de la carte</source>
         <translation>Oddal mapu</translation>
     </message>
     <message>
-        <location filename="../src/ToolBar.cpp" line="142"/>
+        <location filename="../src/ToolBar.cpp" line="143"/>
         <source>Zoom (selection ou fichier Grib)</source>
         <translation>Zoom (výběr nebo Grib soubor)</translation>
     </message>
     <message>
-        <location filename="../src/ToolBar.cpp" line="143"/>
+        <location filename="../src/ToolBar.cpp" line="144"/>
         <source>Ctrl+Z</source>
         <translation>Ctrl+Z</translation>
     </message>
     <message>
-        <location filename="../src/ToolBar.cpp" line="143"/>
+        <location filename="../src/ToolBar.cpp" line="144"/>
         <source>Zoomer sur la zone selectionnee ou sur la surface du fichier Grib</source>
         <translation>Přibliž na vybrané území nebo rozměr Grib souboru</translation>
     </message>
     <message>
-        <location filename="../src/ToolBar.cpp" line="145"/>
         <location filename="../src/ToolBar.cpp" line="146"/>
+        <location filename="../src/ToolBar.cpp" line="147"/>
         <source>Afficher la carte entiere</source>
         <translation>Ukaž celou mapu</translation>
     </message>
     <message>
-        <location filename="../src/ToolBar.cpp" line="150"/>
+        <location filename="../src/ToolBar.cpp" line="151"/>
         <source>Loupe</source>
         <translation>Lupou</translation>
     </message>
     <message>
-        <location filename="../src/ToolBar.cpp" line="167"/>
+        <location filename="../src/ToolBar.cpp" line="168"/>
         <source>mins</source>
         <translation>min</translation>
     </message>
     <message>
-        <location filename="../src/ToolBar.cpp" line="168"/>
+        <location filename="../src/ToolBar.cpp" line="169"/>
         <source>vacs</source>
         <translation>mezery</translation>
     </message>
     <message>
-        <location filename="../src/ToolBar.cpp" line="169"/>
+        <location filename="../src/ToolBar.cpp" line="170"/>
         <source>NM</source>
         <translation>NM</translation>
     </message>
     <message>
-        <location filename="../src/ToolBar.cpp" line="172"/>
+        <location filename="../src/ToolBar.cpp" line="173"/>
         <source>Si cette option est cochee&lt;br&gt;l&apos;estime calcule la vitesse du bateau&lt;br&gt;a la prochaine vac.&lt;br&gt;Sinon elle utilise la vitesse du bateau&lt;br&gt;telle que donnee par VLM</source>
         <translation>Pokud je tato volba zaškrtnuta&lt;br&gt;rychlost lodi je určena odhadem&lt;br&gt;v příští mezeře.&lt;br&gt;Jinak je použita rychlost dodaná VLM</translation>
     </message>
     <message>
-        <location filename="../src/ToolBar.cpp" line="181"/>
+        <location filename="../src/ToolBar.cpp" line="182"/>
         <source>Verrouiller</source>
         <translation>Zámek</translation>
     </message>
     <message>
-        <location filename="../src/ToolBar.cpp" line="181"/>
+        <location filename="../src/ToolBar.cpp" line="182"/>
         <source>Verrouiller l&apos;envoi d&apos;ordre a VLM</source>
         <translation>Zamknout/Odemknout posílání příkazů do VLM</translation>
     </message>
     <message>
-        <location filename="../src/ToolBar.cpp" line="188"/>
-        <location filename="../src/ToolBar.cpp" line="315"/>
+        <location filename="../src/ToolBar.cpp" line="189"/>
+        <location filename="../src/ToolBar.cpp" line="316"/>
         <source>No WP</source>
         <translation>Není WP</translation>
     </message>
     <message>
-        <location filename="../src/ToolBar.cpp" line="193"/>
+        <location filename="../src/ToolBar.cpp" line="194"/>
         <source>Add Barrier</source>
         <translation>Přidat bariéru</translation>
     </message>
@@ -8046,32 +8466,32 @@ projetá trasa a trajektorie se nemusí shodovat.&lt;/span&gt;&lt;/p&gt;&lt;/bod
         <translation type="obsolete">Palubní deska</translation>
     </message>
     <message>
-        <location filename="../src/ToolBar.cpp" line="331"/>
+        <location filename="../src/ToolBar.cpp" line="332"/>
         <source>j</source>
         <translation>d</translation>
     </message>
     <message>
-        <location filename="../src/ToolBar.cpp" line="332"/>
+        <location filename="../src/ToolBar.cpp" line="333"/>
         <source>h</source>
         <translation>h</translation>
     </message>
     <message>
-        <location filename="../src/ToolBar.cpp" line="333"/>
+        <location filename="../src/ToolBar.cpp" line="334"/>
         <source>m</source>
         <translation>m</translation>
     </message>
     <message>
-        <location filename="../src/ToolBar.cpp" line="334"/>
+        <location filename="../src/ToolBar.cpp" line="335"/>
         <source>s</source>
         <translation>s</translation>
     </message>
     <message>
-        <location filename="../src/ToolBar.cpp" line="335"/>
+        <location filename="../src/ToolBar.cpp" line="336"/>
         <source> Arrivee WP</source>
         <translation>Dosažení WP</translation>
     </message>
     <message>
-        <location filename="../src/ToolBar.cpp" line="335"/>
+        <location filename="../src/ToolBar.cpp" line="336"/>
         <source>dd-MM-yyyy, HH:mm:ss</source>
         <translation>dd-MM-yyyy, HH:mm:ss</translation>
     </message>
@@ -9598,39 +10018,39 @@ projetá trasa a trajektorie se nemusí shodovat.&lt;/span&gt;&lt;/p&gt;&lt;/bod
 <context>
     <name>boat</name>
     <message>
-        <location filename="../src/boat.cpp" line="168"/>
+        <location filename="../src/boat.cpp" line="169"/>
         <source>Center on boat</source>
         <translation>Centrovat na loď</translation>
     </message>
     <message>
-        <location filename="../src/boat.cpp" line="178"/>
-        <location filename="../src/boat.cpp" line="960"/>
-        <location filename="../src/boat.cpp" line="971"/>
+        <location filename="../src/boat.cpp" line="179"/>
+        <location filename="../src/boat.cpp" line="961"/>
+        <location filename="../src/boat.cpp" line="972"/>
         <source>Tirer un cap</source>
         <translation>Zakreslit kurs</translation>
     </message>
     <message>
-        <location filename="../src/boat.cpp" line="183"/>
+        <location filename="../src/boat.cpp" line="184"/>
         <source>Tracer une estime TWA</source>
         <translation>Zakreslit předpoklad gribu</translation>
     </message>
     <message>
-        <location filename="../src/boat.cpp" line="189"/>
+        <location filename="../src/boat.cpp" line="190"/>
         <source>Activate barrier sets</source>
         <translation>Aktivovat sady bariér</translation>
     </message>
     <message>
-        <location filename="../src/boat.cpp" line="965"/>
+        <location filename="../src/boat.cpp" line="966"/>
         <source>Arret du cap</source>
         <translation>Zastavit kurs</translation>
     </message>
     <message>
-        <location filename="../src/boat.cpp" line="977"/>
+        <location filename="../src/boat.cpp" line="978"/>
         <source>Cacher estime</source>
         <translation>Skrýt odhad</translation>
     </message>
     <message>
-        <location filename="../src/boat.cpp" line="979"/>
+        <location filename="../src/boat.cpp" line="980"/>
         <source>Afficher estime</source>
         <translation>Zobrazit odhad</translation>
     </message>
@@ -9716,7 +10136,7 @@ projetá trasa a trajektorie se nemusí shodovat.&lt;/span&gt;&lt;/p&gt;&lt;/bod
 <context>
     <name>boatReal</name>
     <message>
-        <location filename="../src/boatReal.cpp" line="348"/>
+        <location filename="../src/boatReal.cpp" line="349"/>
         <source>Hdg</source>
         <translation>Hdg</translation>
     </message>
@@ -9725,48 +10145,48 @@ projetá trasa a trajektorie se nemusí shodovat.&lt;/span&gt;&lt;/p&gt;&lt;/bod
         <translation type="obsolete"> </translation>
     </message>
     <message>
-        <location filename="../src/boatReal.cpp" line="142"/>
+        <location filename="../src/boatReal.cpp" line="143"/>
         <source>Definir la position</source>
         <translation>Nastavit pozici</translation>
     </message>
     <message>
-        <location filename="../src/boatReal.cpp" line="348"/>
-        <location filename="../src/boatReal.cpp" line="351"/>
+        <location filename="../src/boatReal.cpp" line="349"/>
+        <location filename="../src/boatReal.cpp" line="352"/>
         <source>deg</source>
         <translation>°</translation>
     </message>
     <message>
-        <location filename="../src/boatReal.cpp" line="351"/>
+        <location filename="../src/boatReal.cpp" line="352"/>
         <source>Angle</source>
         <translation>Úhel</translation>
     </message>
     <message>
-        <location filename="../src/boatReal.cpp" line="354"/>
+        <location filename="../src/boatReal.cpp" line="355"/>
         <source>Ortho</source>
         <translation>Ortho</translation>
     </message>
     <message>
-        <location filename="../src/boatReal.cpp" line="357"/>
+        <location filename="../src/boatReal.cpp" line="358"/>
         <source>BVMG</source>
         <translation>BestVMG</translation>
     </message>
     <message>
-        <location filename="../src/boatReal.cpp" line="360"/>
+        <location filename="../src/boatReal.cpp" line="361"/>
         <source>VBVMG</source>
         <translation>VBVMG</translation>
     </message>
     <message>
-        <location filename="../src/boatReal.cpp" line="364"/>
+        <location filename="../src/boatReal.cpp" line="365"/>
         <source> (pas de polaire chargee)</source>
         <translation>(není načten polár)</translation>
     </message>
     <message>
-        <location filename="../src/boatReal.cpp" line="365"/>
+        <location filename="../src/boatReal.cpp" line="366"/>
         <source> (format CSV)</source>
         <translation> (formát CSV)</translation>
     </message>
     <message>
-        <location filename="../src/boatReal.cpp" line="366"/>
+        <location filename="../src/boatReal.cpp" line="367"/>
         <source> (format POL)</source>
         <translation> (formát POL)</translation>
     </message>
@@ -10720,13 +11140,13 @@ p, li { white-space: pre-wrap; }
         <translation type="obsolete">You must select a zone on the map.</translation>
     </message>
     <message>
-        <location filename="../src/mycentralwidget.cpp" line="1444"/>
+        <location filename="../src/mycentralwidget.cpp" line="1450"/>
         <source>Demande d&apos;un fichier GRIB a sailsDoc</source>
         <translation>Vyžádat soubor GRIB u SailDocs</translation>
     </message>
     <message>
-        <location filename="../src/mycentralwidget.cpp" line="1396"/>
-        <location filename="../src/mycentralwidget.cpp" line="1445"/>
+        <location filename="../src/mycentralwidget.cpp" line="1402"/>
+        <location filename="../src/mycentralwidget.cpp" line="1451"/>
         <source>Vous devez selectionner une zone de la carte.</source>
         <translation>Musíš vybrat na mapě zónu.</translation>
     </message>
@@ -10739,12 +11159,12 @@ p, li { white-space: pre-wrap; }
         <translation type="obsolete">Nemáš správnou verzi map VLM</translation>
     </message>
     <message>
-        <location filename="../src/mycentralwidget.cpp" line="1395"/>
+        <location filename="../src/mycentralwidget.cpp" line="1401"/>
         <source>Telechargement d&apos;un fichier GRIB</source>
         <translation>Stáhnout GRIB soubor</translation>
     </message>
     <message>
-        <location filename="../src/mycentralwidget.cpp" line="1418"/>
+        <location filename="../src/mycentralwidget.cpp" line="1424"/>
         <source>dd/MM/yyyy hh:mm</source>
         <translation>dd/MM/yyyy hh:mm:ss</translation>
     </message>
@@ -10954,12 +11374,12 @@ p, li { white-space: pre-wrap; }
         <translation type="obsolete">Reference date : %1</translation>
     </message>
     <message>
-        <location filename="../src/mycentralwidget.cpp" line="1459"/>
+        <location filename="../src/mycentralwidget.cpp" line="1465"/>
         <source>POI</source>
         <translation>POI</translation>
     </message>
     <message>
-        <location filename="../src/mycentralwidget.cpp" line="1592"/>
+        <location filename="../src/mycentralwidget.cpp" line="1598"/>
         <source>Suppression de toutes les marques</source>
         <translation>Smazání všech značek</translation>
     </message>
@@ -11108,7 +11528,7 @@ p, li { white-space: pre-wrap; }
 </translation>
     </message>
     <message>
-        <location filename="../src/mycentralwidget.cpp" line="1593"/>
+        <location filename="../src/mycentralwidget.cpp" line="1599"/>
         <source>La destruction d&apos;une marque est definitive.
 
 Etes-vous sur ?</source>
@@ -11117,107 +11537,107 @@ Etes-vous sur ?</source>
 Jsi si jist?</translation>
     </message>
     <message>
-        <location filename="../src/mycentralwidget.cpp" line="1800"/>
+        <location filename="../src/mycentralwidget.cpp" line="1806"/>
         <source>Creating a new barrier</source>
         <translation>Vytvořit novou bariéru</translation>
     </message>
     <message>
-        <location filename="../src/mycentralwidget.cpp" line="1801"/>
+        <location filename="../src/mycentralwidget.cpp" line="1807"/>
         <source>Point must be inside map
 Please select another point or press esc to exit barrier creation mode</source>
         <translation>Bod musí být na mapě
 Vyber jiný bod nebo stiskni Esc pro opuštění módu vytváření bariér</translation>
     </message>
     <message>
-        <location filename="../src/mycentralwidget.cpp" line="1973"/>
+        <location filename="../src/mycentralwidget.cpp" line="1979"/>
         <source>Photo Ecran</source>
         <translation>Snímek obrazovky</translation>
     </message>
     <message>
-        <location filename="../src/mycentralwidget.cpp" line="2099"/>
-        <location filename="../src/mycentralwidget.cpp" line="2102"/>
+        <location filename="../src/mycentralwidget.cpp" line="2105"/>
+        <location filename="../src/mycentralwidget.cpp" line="2108"/>
         <source>Ouvrir un fichier Route</source>
         <translation>Otevřít soubor trasy</translation>
     </message>
     <message>
-        <location filename="../src/mycentralwidget.cpp" line="2171"/>
-        <location filename="../src/mycentralwidget.cpp" line="2283"/>
-        <location filename="../src/mycentralwidget.cpp" line="2483"/>
+        <location filename="../src/mycentralwidget.cpp" line="2177"/>
+        <location filename="../src/mycentralwidget.cpp" line="2289"/>
+        <location filename="../src/mycentralwidget.cpp" line="2489"/>
         <source>Nom de la route a importer</source>
         <translation>Jméno trasy pro import</translation>
     </message>
     <message>
-        <location filename="../src/mycentralwidget.cpp" line="2172"/>
-        <location filename="../src/mycentralwidget.cpp" line="2283"/>
-        <location filename="../src/mycentralwidget.cpp" line="2483"/>
+        <location filename="../src/mycentralwidget.cpp" line="2178"/>
+        <location filename="../src/mycentralwidget.cpp" line="2289"/>
+        <location filename="../src/mycentralwidget.cpp" line="2489"/>
         <source>Nom de la route</source>
         <translation>Jméno trasy</translation>
     </message>
     <message>
-        <location filename="../src/mycentralwidget.cpp" line="2182"/>
-        <location filename="../src/mycentralwidget.cpp" line="2293"/>
-        <location filename="../src/mycentralwidget.cpp" line="2492"/>
-        <location filename="../src/mycentralwidget.cpp" line="3496"/>
+        <location filename="../src/mycentralwidget.cpp" line="2188"/>
+        <location filename="../src/mycentralwidget.cpp" line="2299"/>
+        <location filename="../src/mycentralwidget.cpp" line="2498"/>
+        <location filename="../src/mycentralwidget.cpp" line="3502"/>
         <source>Ce nom est deja utilise ou invalide</source>
         <translation>Toto jméno už je použito nebo je neplatné</translation>
     </message>
     <message>
-        <location filename="../src/mycentralwidget.cpp" line="2188"/>
-        <location filename="../src/mycentralwidget.cpp" line="2612"/>
-        <location filename="../src/mycentralwidget.cpp" line="3009"/>
-        <location filename="../src/mycentralwidget.cpp" line="3502"/>
+        <location filename="../src/mycentralwidget.cpp" line="2194"/>
+        <location filename="../src/mycentralwidget.cpp" line="2618"/>
+        <location filename="../src/mycentralwidget.cpp" line="3015"/>
+        <location filename="../src/mycentralwidget.cpp" line="3508"/>
         <source>Import de routes</source>
         <translation>Import tras</translation>
     </message>
     <message>
-        <location filename="../src/mycentralwidget.cpp" line="2189"/>
-        <location filename="../src/mycentralwidget.cpp" line="3503"/>
+        <location filename="../src/mycentralwidget.cpp" line="2195"/>
+        <location filename="../src/mycentralwidget.cpp" line="3509"/>
         <source>Import en cours, veuillez patienter...</source>
         <translation>Probíhá import, prosím počkej...</translation>
     </message>
     <message>
-        <location filename="../src/mycentralwidget.cpp" line="2581"/>
+        <location filename="../src/mycentralwidget.cpp" line="2587"/>
         <source>Exporter une Route</source>
         <translation>Export trasy</translation>
     </message>
     <message>
-        <location filename="../src/mycentralwidget.cpp" line="2601"/>
+        <location filename="../src/mycentralwidget.cpp" line="2607"/>
         <source>Exporter seulement les POIs ou egalement tous les details?</source>
         <translation>Exportovat jen POIs nebo i detaily?</translation>
     </message>
     <message>
-        <location filename="../src/mycentralwidget.cpp" line="2602"/>
+        <location filename="../src/mycentralwidget.cpp" line="2608"/>
         <source>Exporter une route</source>
         <translation>Export trasy</translation>
     </message>
     <message>
-        <location filename="../src/mycentralwidget.cpp" line="2604"/>
+        <location filename="../src/mycentralwidget.cpp" line="2610"/>
         <source>POIs</source>
         <translation>POI</translation>
     </message>
     <message>
-        <location filename="../src/mycentralwidget.cpp" line="2605"/>
+        <location filename="../src/mycentralwidget.cpp" line="2611"/>
         <source>Details</source>
         <translation>Detaily</translation>
     </message>
     <message>
-        <location filename="../src/mycentralwidget.cpp" line="2613"/>
-        <location filename="../src/mycentralwidget.cpp" line="3010"/>
+        <location filename="../src/mycentralwidget.cpp" line="2619"/>
+        <location filename="../src/mycentralwidget.cpp" line="3016"/>
         <source>Export en cours, veuillez patienter...</source>
         <translation>Probíhá export, prosím počkej...</translation>
     </message>
     <message>
-        <location filename="../src/mycentralwidget.cpp" line="2826"/>
+        <location filename="../src/mycentralwidget.cpp" line="2832"/>
         <source>Le nom de la route est invalide</source>
         <translation>Jméno trasy je neplatné</translation>
     </message>
     <message>
-        <location filename="../src/mycentralwidget.cpp" line="2836"/>
+        <location filename="../src/mycentralwidget.cpp" line="2842"/>
         <source>Importer la route : %1</source>
         <translation>Import trasy: %1</translation>
     </message>
     <message>
-        <location filename="../src/mycentralwidget.cpp" line="2837"/>
+        <location filename="../src/mycentralwidget.cpp" line="2843"/>
         <source>Cette route existe deja.
 
 Voulez-vous la remplacer?</source>
@@ -11226,80 +11646,80 @@ Voulez-vous la remplacer?</source>
 Chceš ji nahradit?</translation>
     </message>
     <message>
-        <location filename="../src/mycentralwidget.cpp" line="3107"/>
-        <location filename="../src/mycentralwidget.cpp" line="3125"/>
-        <location filename="../src/mycentralwidget.cpp" line="3149"/>
-        <location filename="../src/mycentralwidget.cpp" line="3156"/>
+        <location filename="../src/mycentralwidget.cpp" line="3113"/>
+        <location filename="../src/mycentralwidget.cpp" line="3131"/>
+        <location filename="../src/mycentralwidget.cpp" line="3155"/>
+        <location filename="../src/mycentralwidget.cpp" line="3162"/>
         <source>deg</source>
         <translation>°</translation>
     </message>
     <message>
-        <location filename="../src/mycentralwidget.cpp" line="3592"/>
+        <location filename="../src/mycentralwidget.cpp" line="3598"/>
         <source>Routage%d</source>
         <translation>Routing%d</translation>
     </message>
     <message>
-        <location filename="../src/mycentralwidget.cpp" line="3694"/>
-        <location filename="../src/mycentralwidget.cpp" line="3821"/>
+        <location filename="../src/mycentralwidget.cpp" line="3700"/>
+        <location filename="../src/mycentralwidget.cpp" line="3827"/>
         <source>aucun</source>
         <translation>Žádný</translation>
     </message>
     <message>
-        <location filename="../src/mycentralwidget.cpp" line="3696"/>
+        <location filename="../src/mycentralwidget.cpp" line="3702"/>
         <source>Optimisation en cours</source>
         <translation>Optimizace probíhá</translation>
     </message>
     <message>
-        <location filename="../src/mycentralwidget.cpp" line="3697"/>
+        <location filename="../src/mycentralwidget.cpp" line="3703"/>
         <source>Veuillez patienter...</source>
         <translation>Prosím čekej...</translation>
     </message>
     <message>
-        <location filename="../src/mycentralwidget.cpp" line="3806"/>
+        <location filename="../src/mycentralwidget.cpp" line="3812"/>
         <source>Optimisation terminee</source>
         <translation>Optimizace dokončena</translation>
     </message>
     <message>
-        <location filename="../src/mycentralwidget.cpp" line="3810"/>
+        <location filename="../src/mycentralwidget.cpp" line="3816"/>
         <source>Dernier POI avant optimisation: %1 (ETA: %2)</source>
         <translation>Poslední POI před optimalizací: %1 (ETA: %2)</translation>
     </message>
     <message>
-        <location filename="../src/mycentralwidget.cpp" line="3817"/>
-        <location filename="../src/mycentralwidget.cpp" line="3820"/>
+        <location filename="../src/mycentralwidget.cpp" line="3823"/>
+        <location filename="../src/mycentralwidget.cpp" line="3826"/>
         <source>Dernier POI apres optimisation: %1 (ETA: %2)</source>
         <translation>Poslední POI po optimalizaci: %1 (ETA: %2)</translation>
     </message>
     <message>
-        <location filename="../src/mycentralwidget.cpp" line="3856"/>
+        <location filename="../src/mycentralwidget.cpp" line="3862"/>
         <source> (maximum)</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../src/mycentralwidget.cpp" line="3856"/>
+        <location filename="../src/mycentralwidget.cpp" line="3862"/>
         <source> (minimum)</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../src/mycentralwidget.cpp" line="3857"/>
+        <location filename="../src/mycentralwidget.cpp" line="3863"/>
         <source>Simplification en cours</source>
         <translation>Probíhá zjednodušení</translation>
     </message>
     <message>
-        <location filename="../src/mycentralwidget.cpp" line="3860"/>
+        <location filename="../src/mycentralwidget.cpp" line="3866"/>
         <source>Abandonner</source>
         <translation>Zastavit</translation>
     </message>
     <message>
-        <location filename="../src/mycentralwidget.cpp" line="3862"/>
-        <location filename="../src/mycentralwidget.cpp" line="3930"/>
-        <location filename="../src/mycentralwidget.cpp" line="3971"/>
-        <location filename="../src/mycentralwidget.cpp" line="4024"/>
+        <location filename="../src/mycentralwidget.cpp" line="3868"/>
+        <location filename="../src/mycentralwidget.cpp" line="3936"/>
+        <location filename="../src/mycentralwidget.cpp" line="3977"/>
+        <location filename="../src/mycentralwidget.cpp" line="4030"/>
         <source>Phase </source>
         <translation>Fáze </translation>
     </message>
     <message>
-        <location filename="../src/mycentralwidget.cpp" line="3684"/>
+        <location filename="../src/mycentralwidget.cpp" line="3690"/>
         <source>Optimiser</source>
         <translation>Optimalizovat</translation>
     </message>
@@ -11312,22 +11732,22 @@ Chceš ji nahradit?</translation>
         <translation type="obsolete">ano (GRIB proudů)</translation>
     </message>
     <message>
-        <location filename="../src/mycentralwidget.cpp" line="3793"/>
+        <location filename="../src/mycentralwidget.cpp" line="3799"/>
         <source> minutes perdues</source>
         <translation> minut ztraceno</translation>
     </message>
     <message>
-        <location filename="../src/mycentralwidget.cpp" line="3795"/>
+        <location filename="../src/mycentralwidget.cpp" line="3801"/>
         <source> minutes gagnees</source>
         <translation> minut ušetřeno</translation>
     </message>
     <message>
-        <location filename="../src/mycentralwidget.cpp" line="3803"/>
+        <location filename="../src/mycentralwidget.cpp" line="3809"/>
         <source>ETA avant optimisation: </source>
         <translation>ETA před optimalizací: </translation>
     </message>
     <message>
-        <location filename="../src/mycentralwidget.cpp" line="3804"/>
+        <location filename="../src/mycentralwidget.cpp" line="3810"/>
         <source>ETA apres optimisation: </source>
         <translation>ETA po optimalizaci: </translation>
     </message>
@@ -11340,18 +11760,18 @@ Chceš ji nahradit?</translation>
         <translation type="obsolete">Phase 2...</translation>
     </message>
     <message>
-        <location filename="../src/mycentralwidget.cpp" line="3666"/>
+        <location filename="../src/mycentralwidget.cpp" line="3672"/>
         <source> minutes perdues, </source>
         <translation> minut ztraceno, </translation>
     </message>
     <message>
-        <location filename="../src/mycentralwidget.cpp" line="3669"/>
-        <location filename="../src/mycentralwidget.cpp" line="3796"/>
+        <location filename="../src/mycentralwidget.cpp" line="3675"/>
+        <location filename="../src/mycentralwidget.cpp" line="3802"/>
         <source> POIs supprimes sur </source>
         <translation> POI vypuštěno z </translation>
     </message>
     <message>
-        <location filename="../src/mycentralwidget.cpp" line="3668"/>
+        <location filename="../src/mycentralwidget.cpp" line="3674"/>
         <source> minutes gagnees(!), </source>
         <translation> minut ušetřeno(!), </translation>
     </message>
@@ -11364,7 +11784,7 @@ Chceš ji nahradit?</translation>
         <translation type="obsolete">Stáhnout</translation>
     </message>
     <message>
-        <location filename="../src/mycentralwidget.cpp" line="630"/>
+        <location filename="../src/mycentralwidget.cpp" line="634"/>
         <source>Annuler</source>
         <translation>Zrušit</translation>
     </message>
@@ -11381,61 +11801,61 @@ Que voulez vous faire?</source>
 Co chceš dělat?</translation>
     </message>
     <message>
-        <location filename="../src/mycentralwidget.cpp" line="658"/>
+        <location filename="../src/mycentralwidget.cpp" line="662"/>
         <source>Select maps folder</source>
         <translation>Vyber složku map</translation>
     </message>
     <message>
-        <location filename="../src/mycentralwidget.cpp" line="3678"/>
+        <location filename="../src/mycentralwidget.cpp" line="3684"/>
         <source>ETA avant simplification: </source>
         <translation>ETA před zjednodušením: </translation>
     </message>
     <message>
-        <location filename="../src/mycentralwidget.cpp" line="3679"/>
+        <location filename="../src/mycentralwidget.cpp" line="3685"/>
         <source>ETA apres simplification: </source>
         <translation>ETA po zjednodušení: </translation>
     </message>
     <message>
-        <location filename="../src/mycentralwidget.cpp" line="3623"/>
+        <location filename="../src/mycentralwidget.cpp" line="3629"/>
         <source>Envoyer la route au pilototo</source>
         <translation>Pošli trasu do autopilota</translation>
     </message>
     <message>
-        <location filename="../src/mycentralwidget.cpp" line="627"/>
+        <location filename="../src/mycentralwidget.cpp" line="631"/>
         <source>Maps loading</source>
         <translation>Mapy se nahrávaji</translation>
     </message>
     <message>
-        <location filename="../src/mycentralwidget.cpp" line="628"/>
+        <location filename="../src/mycentralwidget.cpp" line="632"/>
         <source>Select existing maps folder</source>
         <translation>Vyber existující složku map</translation>
     </message>
     <message>
-        <location filename="../src/mycentralwidget.cpp" line="629"/>
+        <location filename="../src/mycentralwidget.cpp" line="633"/>
         <source>Downloading</source>
         <translation>Stahování</translation>
     </message>
     <message>
-        <location filename="../src/mycentralwidget.cpp" line="635"/>
+        <location filename="../src/mycentralwidget.cpp" line="639"/>
         <source>Maps are missing
 What do you want to do?</source>
         <translation>Mapy chybí
 Co chceš dělat?</translation>
     </message>
     <message>
-        <location filename="../src/mycentralwidget.cpp" line="640"/>
+        <location filename="../src/mycentralwidget.cpp" line="644"/>
         <source>An old version of maps has been detected
 What do you want to do?</source>
         <translation>Byla detekována stará verze map.
 Co chceš dělat?</translation>
     </message>
     <message>
-        <location filename="../src/mycentralwidget.cpp" line="684"/>
+        <location filename="../src/mycentralwidget.cpp" line="688"/>
         <source>Download and decompress maps</source>
         <translation>Stáhnout a rozbalit mapy</translation>
     </message>
     <message>
-        <location filename="../src/mycentralwidget.cpp" line="690"/>
+        <location filename="../src/mycentralwidget.cpp" line="694"/>
         <source>Finishing map init</source>
         <translation>Ukončit inicializaci map</translation>
     </message>
@@ -11445,7 +11865,7 @@ Co chceš dělat?</translation>
         <translation type="obsolete">    Úhrn srážek : %1</translation>
     </message>
     <message>
-        <location filename="../src/mycentralwidget.cpp" line="3623"/>
+        <location filename="../src/mycentralwidget.cpp" line="3629"/>
         <source>Pour pouvoir envoyer la route au pilototo if faut que:&lt;br&gt;-La route demarre du bateau et de la prochaine vac&lt;br&gt;et que le mode VbVmg-Vlm soit active</source>
         <translation>Abys mohl poslat trasu do autopilota, je třeba:&lt;br&gt;-Trasa musí začínat od lodi a příští mezery&lt;br&gt;-Musí být aktivován mód VbVmg ve Vlm</translation>
     </message>
@@ -11458,44 +11878,44 @@ Co chceš dělat?</translation>
         <translation type="obsolete">You cannot delete a frozen route</translation>
     </message>
     <message>
-        <location filename="../src/mycentralwidget.cpp" line="4151"/>
+        <location filename="../src/mycentralwidget.cpp" line="4157"/>
         <source>Detruire la route : %1</source>
         <translation>Smazat trasu : %1</translation>
     </message>
     <message>
-        <location filename="../src/mycentralwidget.cpp" line="4152"/>
+        <location filename="../src/mycentralwidget.cpp" line="4158"/>
         <source>La destruction d&apos;une route est definitive.
 
 Voulez-vous egalement supprimer tous les POIs lui appartenant?</source>
         <translation>Smazání trasy nelze zvrátit. Chceš také smazat POI této trasy?</translation>
     </message>
     <message>
-        <location filename="../src/mycentralwidget.cpp" line="4181"/>
+        <location filename="../src/mycentralwidget.cpp" line="4187"/>
         <source>Detruire le routage : %1?</source>
         <translation>Smazat routing: %1?</translation>
     </message>
     <message>
-        <location filename="../src/mycentralwidget.cpp" line="4182"/>
+        <location filename="../src/mycentralwidget.cpp" line="4188"/>
         <source>La destruction d&apos;un routage est definitive.</source>
         <translation>Smazání routingu nelze zvrátit.</translation>
     </message>
     <message>
-        <location filename="../src/mycentralwidget.cpp" line="4622"/>
+        <location filename="../src/mycentralwidget.cpp" line="4634"/>
         <source>Sauvegarde des POIs et des routes</source>
         <translation>Uložit POI a trasy</translation>
     </message>
     <message>
-        <location filename="../src/mycentralwidget.cpp" line="4622"/>
+        <location filename="../src/mycentralwidget.cpp" line="4634"/>
         <source>Sauvegarde reussie</source>
         <translation>Uložení proběhlo úspěšně</translation>
     </message>
     <message>
-        <location filename="../src/mycentralwidget.cpp" line="4648"/>
+        <location filename="../src/mycentralwidget.cpp" line="4660"/>
         <source>Chargement des POIs et des routes</source>
         <translation>Nahrát POI a trasy</translation>
     </message>
     <message>
-        <location filename="../src/mycentralwidget.cpp" line="4648"/>
+        <location filename="../src/mycentralwidget.cpp" line="4660"/>
         <source>Chargement reussi</source>
         <translation>Znovunačtení úspěšné</translation>
     </message>
@@ -12426,122 +12846,144 @@ Voulez-vous egalement supprimer tous les POIs lui appartenant?</source>
         <translation type="obsolete">Data větru</translation>
     </message>
     <message>
-        <location filename="../src/Ui/routeInfo.ui" line="88"/>
+        <location filename="../src/Ui/routeInfo.ui" line="224"/>
         <source>TWD</source>
         <translation>TWD</translation>
     </message>
     <message>
-        <location filename="../src/Ui/routeInfo.ui" line="55"/>
+        <location filename="../src/Ui/routeInfo.ui" line="256"/>
         <source>TWS</source>
         <translation>TWS</translation>
     </message>
     <message>
-        <location filename="../src/Ui/routeInfo.ui" line="81"/>
+        <location filename="../src/Ui/routeInfo.ui" line="285"/>
         <source>TWA</source>
         <translation>TWA</translation>
     </message>
     <message>
-        <location filename="../src/Ui/routeInfo.ui" line="155"/>
+        <location filename="../src/Ui/routeInfo.ui" line="317"/>
         <source>AWS</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../src/Ui/routeInfo.ui" line="48"/>
+        <location filename="../src/Ui/routeInfo.ui" line="346"/>
         <source>AWA</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../src/Ui/routeInfo.ui" line="254"/>
+        <location filename="../src/Ui/routeInfo.ui" line="375"/>
         <source>Amure</source>
         <translation></translation>
     </message>
     <message>
         <location filename="../src/Ui/routeInfo.ui" line="35"/>
-        <location filename="../src/Ui/routeInfo.ui" line="71"/>
-        <location filename="../src/Ui/routeInfo.ui" line="142"/>
-        <location filename="../src/Ui/routeInfo.ui" line="188"/>
-        <location filename="../src/Ui/routeInfo.ui" line="279"/>
-        <location filename="../src/Ui/routeInfo.ui" line="301"/>
-        <location filename="../src/Ui/routeInfo.ui" line="392"/>
+        <location filename="../src/Ui/routeInfo.ui" line="57"/>
+        <location filename="../src/Ui/routeInfo.ui" line="160"/>
+        <location filename="../src/Ui/routeInfo.ui" line="243"/>
+        <location filename="../src/Ui/routeInfo.ui" line="304"/>
+        <location filename="../src/Ui/routeInfo.ui" line="365"/>
+        <location filename="../src/Ui/routeInfo.ui" line="432"/>
+        <location filename="../src/Ui/routeInfo.ui" line="508"/>
         <source>deg</source>
         <translation>°</translation>
     </message>
     <message>
-        <location filename="../src/Ui/routeInfo.ui" line="20"/>
+        <location filename="../src/Ui/routeInfo.ui" line="218"/>
         <source>Informations Vent/Courant</source>
         <translation>Informace o větru/proudu</translation>
     </message>
     <message>
-        <location filename="../src/Ui/routeInfo.ui" line="104"/>
-        <location filename="../src/Ui/routeInfo.ui" line="123"/>
-        <location filename="../src/Ui/routeInfo.ui" line="216"/>
-        <location filename="../src/Ui/routeInfo.ui" line="352"/>
-        <location filename="../src/Ui/routeInfo.ui" line="428"/>
+        <location filename="../src/Ui/routeInfo.ui" line="111"/>
+        <location filename="../src/Ui/routeInfo.ui" line="202"/>
+        <location filename="../src/Ui/routeInfo.ui" line="275"/>
+        <location filename="../src/Ui/routeInfo.ui" line="336"/>
+        <location filename="../src/Ui/routeInfo.ui" line="470"/>
         <source> nds</source>
         <translation> kts</translation>
     </message>
     <message>
-        <location filename="../src/Ui/routeInfo.ui" line="162"/>
+        <location filename="../src/Ui/routeInfo.ui" line="448"/>
         <source>CS</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../src/Ui/routeInfo.ui" line="169"/>
+        <location filename="../src/Ui/routeInfo.ui" line="410"/>
         <source>CD</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../src/Ui/routeInfo.ui" line="264"/>
+        <location filename="../src/Ui/routeInfo.ui" line="20"/>
         <source>Informations Bateau et WPs</source>
         <translation>Data lodi a WP</translation>
     </message>
     <message>
-        <location filename="../src/Ui/routeInfo.ui" line="336"/>
+        <location filename="../src/Ui/routeInfo.ui" line="92"/>
         <source>BS</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../src/Ui/routeInfo.ui" line="369"/>
+        <location filename="../src/Ui/routeInfo.ui" line="131"/>
         <source>HDG</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../src/Ui/routeInfo.ui" line="376"/>
+        <location filename="../src/Ui/routeInfo.ui" line="141"/>
         <source>CNM</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../src/Ui/routeInfo.ui" line="405"/>
+        <location filename="../src/Ui/routeInfo.ui" line="173"/>
         <source>COG</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../src/Ui/routeInfo.ui" line="412"/>
+        <location filename="../src/Ui/routeInfo.ui" line="183"/>
         <source>SOG</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../src/Ui/routeInfo.ui" line="362"/>
+        <location filename="../src/Ui/routeInfo.ui" line="483"/>
+        <source>Max waves direction</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/Ui/routeInfo.ui" line="524"/>
+        <source>Max waves height</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/Ui/routeInfo.ui" line="549"/>
+        <location filename="../src/Ui/routeInfo.ui" line="587"/>
+        <source> m</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/Ui/routeInfo.ui" line="562"/>
+        <source>Significant waves height (combined)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/Ui/routeInfo.ui" line="121"/>
         <source>DNM</source>
         <translation>DNM</translation>
     </message>
     <message>
-        <location filename="../src/Ui/routeInfo.ui" line="323"/>
+        <location filename="../src/Ui/routeInfo.ui" line="79"/>
         <source> NM</source>
         <translation> NM</translation>
     </message>
     <message>
-        <location filename="../src/Dialogs/routeInfo.cpp" line="75"/>
+        <location filename="../src/Dialogs/routeInfo.cpp" line="80"/>
         <source>Au moteur</source>
         <translation>Na motor</translation>
     </message>
     <message>
-        <location filename="../src/Dialogs/routeInfo.cpp" line="80"/>
+        <location filename="../src/Dialogs/routeInfo.cpp" line="85"/>
         <source>Babord amure</source>
         <translation>Vítr zleva</translation>
     </message>
     <message>
-        <location filename="../src/Dialogs/routeInfo.cpp" line="82"/>
+        <location filename="../src/Dialogs/routeInfo.cpp" line="87"/>
         <source>Tribord amure</source>
         <translation>Vítr zprava</translation>
     </message>
