@@ -74,8 +74,6 @@ void MapDataDrawer::initDataCodes(void) {
     dataCodeMap.insert(drawHumid,DataCode(DATA_HUMID_REL,DATA_LV_ABOV_GND,2));
     dataCodeMap.insert(drawTemp,DataCode(DATA_TEMP,DATA_LV_ABOV_GND,2));
     dataCodeMap.insert(drawTempPot,DataCode(DATA_TEMP_POT,DATA_LV_SIGMA,9950));
-    //dataCodeMap.insert(drawTempMin,DataCode());
-    //dataCodeMap.insert(drawTempMax,DataCode());
     dataCodeMap.insert(drawDewpoint,DataCode(DATA_DEWPOINT,DATA_LV_ABOV_GND,2));
     dataCodeMap.insert(drawDeltaDewpoint,DataCode(DATA_DEWPOINT,DATA_LV_ABOV_GND,2));
     dataCodeMap.insert(drawCINsfc,DataCode(DATA_CIN,DATA_LV_GND_SURF,0));

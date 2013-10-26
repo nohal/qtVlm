@@ -173,7 +173,8 @@ HEADERS += Dialogs/DialogGraphicsParams.h \
     GribV2Record.h \
     GribV1Record.h \
     GribV1.h \
-    DataManager.h
+    DataManager.h \
+    Ui/DialogGribDrawing.h
 
 
 FORMS += Ui/boatAccount_dialog.ui \
@@ -216,7 +217,8 @@ FORMS += Ui/boatAccount_dialog.ui \
     Ui/DialogChooseMultipleBarrierSet.ui \
     Ui/DialogChooseMultipleBoat.ui \
     Ui/DialogChooseBarrierSet.ui \
-    Ui/RouteComparator.ui
+    Ui/RouteComparator.ui \
+    Ui/DialogGribDrawing.ui
 
 SOURCES += Dialogs/DialogGraphicsParams.cpp \
     Dialogs/DialogLoadGrib.cpp \
@@ -321,7 +323,8 @@ SOURCES += Dialogs/DialogGraphicsParams.cpp \
     GribV2Record.cpp \
     GribV1Record.cpp \
     GribV1.cpp \
-    DataManager.cpp
+    DataManager.cpp \
+    Ui/DialogGribDrawing.cpp
 
 unix:!macx: DEFINES += _TTY_POSIX_ __TERRAIN_QIMAGE __UNIX_QTVLM
 win32:DEFINES += _TTY_WIN_ \

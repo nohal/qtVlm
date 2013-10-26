@@ -23,6 +23,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <QPainter>
 #include <QMap>
+#include <QMutex>
 
 #include "class_list.h"
 #include "dataDef.h"
@@ -118,24 +119,22 @@ class MapDataDrawer
             drawCurrent,
             drawCloud,
             drawRain,
-            drawCAPEsfc,
-            drawSnowCateg,
-            drawFrzRainCateg,
             drawHumid,
             drawTemp,
             drawTempPot,
-            drawTempMin,
-            drawTempMax,
             drawDewpoint,
             drawDeltaDewpoint,
+            drawSnowCateg,
+            drawFrzRainCateg,
+            drawCAPEsfc,
             drawCINsfc,
             drawWavesSigHgtComb,
             drawWavesWnd,
             drawWavesSwl,
+            drawWavesMax,
+            drawWavesWhiteCap,
             drawWavesPrimDir,
             drawWavesSecDir,
-            drawWavesWhiteCap,
-            drawWavesMax,
             MAX_DRAWGRIB_DATAMODE
         };
 

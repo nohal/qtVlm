@@ -21,7 +21,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #ifndef DIALOGCHOOSEMULTIPLEBARRIERSET_H
 #define DIALOGCHOOSEMULTIPLEBARRIERSET_H
 
-#include "QDialog"
+#include <QDialog>
 
 #include "class_list.h"
 #include "dataDef.h"

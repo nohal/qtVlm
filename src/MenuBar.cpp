@@ -265,9 +265,9 @@ MenuBar::MenuBar(MainWindow *parent)
         //-------------------------------------
         menuAltitude = new QMenu(tr("Altitude"));
         acAlt_GroupAltitude = new ZeroOneActionGroup (menuAltitude);
-        connect(menuAltitude,SIGNAL(aboutToShow()),this,SLOT(slot_showAltitudeMenu()));
+        //connect(menuAltitude,SIGNAL(aboutToShow()),this,SLOT(slot_showAltitudeMenu()));
 
-       menuGrib->addMenu(menuAltitude);
+       //menuGrib->addMenu(menuAltitude);
        menuGrib->addSeparator();
 
        setMenubarColorMapMode(Settings::getSetting("colorMapMode", MapDataDrawer::drawWind).toInt());
