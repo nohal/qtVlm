@@ -73,7 +73,7 @@ void GisReader::loadCountries()
             }
         }
         zu_close(f);
-        qWarning()<<"time to load countries"<<t.elapsed();
+        //qWarning()<<"time to load countries"<<t.elapsed();
     }
     delete [] buf;
 }
@@ -121,7 +121,7 @@ void GisReader::loadCities(const int &level)
             }
         }
         zu_close(f);
-        qWarning()<<"time to load cities"<<t.elapsed();
+        //qWarning()<<"time to load cities"<<t.elapsed();
     }
     delete [] buf;
 }

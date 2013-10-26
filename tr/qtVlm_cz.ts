@@ -3251,39 +3251,39 @@ Etes-vous sur ?</source>
         <translation>Příprava souboru na serveru</translation>
     </message>
     <message>
-        <location filename="../src/LoadGribFile.cpp" line="202"/>
-        <location filename="../src/LoadGribFile.cpp" line="205"/>
+        <location filename="../src/LoadGribFile.cpp" line="206"/>
+        <location filename="../src/LoadGribFile.cpp" line="209"/>
         <source>Emplacement:</source>
         <translation>Umístění:</translation>
     </message>
     <message>
-        <location filename="../src/LoadGribFile.cpp" line="202"/>
-        <location filename="../src/LoadGribFile.cpp" line="205"/>
+        <location filename="../src/LoadGribFile.cpp" line="206"/>
+        <location filename="../src/LoadGribFile.cpp" line="209"/>
         <source>qtVlm downloads</source>
         <translation>qtVlm ke stažení</translation>
     </message>
     <message>
-        <location filename="../src/LoadGribFile.cpp" line="208"/>
+        <location filename="../src/LoadGribFile.cpp" line="212"/>
         <source>qtVlm version</source>
         <translation>qtVlm verze</translation>
     </message>
     <message>
-        <location filename="../src/LoadGribFile.cpp" line="200"/>
+        <location filename="../src/LoadGribFile.cpp" line="204"/>
         <source>Vous n&apos;utilisez pas la derniere version de qtVlm: </source>
         <translation>Nepoužíváš poslední verzi qtVlm: </translation>
     </message>
     <message>
-        <location filename="../src/LoadGribFile.cpp" line="252"/>
+        <location filename="../src/LoadGribFile.cpp" line="263"/>
         <source>GetFileContent</source>
         <translation>GetFileContent</translation>
     </message>
     <message>
-        <location filename="../src/LoadGribFile.cpp" line="254"/>
+        <location filename="../src/LoadGribFile.cpp" line="265"/>
         <source>Taille totale : </source>
         <translation>Celková velikost:</translation>
     </message>
     <message>
-        <location filename="../src/LoadGribFile.cpp" line="313"/>
+        <location filename="../src/LoadGribFile.cpp" line="324"/>
         <source>Informations sur le serveur zyGrib</source>
         <translation>Stav zyGrib serveru</translation>
     </message>
@@ -3292,12 +3292,12 @@ Etes-vous sur ?</source>
         <translation type="obsolete">Global size :</translation>
     </message>
     <message>
-        <location filename="../src/LoadGribFile.cpp" line="272"/>
+        <location filename="../src/LoadGribFile.cpp" line="283"/>
         <source>Pas de fichier cree sur le serveur:</source>
         <translation>Na serveru nebyl vytvořen soubor:</translation>
     </message>
     <message>
-        <location filename="../src/LoadGribFile.cpp" line="301"/>
+        <location filename="../src/LoadGribFile.cpp" line="312"/>
         <source>Termine</source>
         <translation>Hotovo</translation>
     </message>
@@ -3306,7 +3306,7 @@ Etes-vous sur ?</source>
         <translation type="obsolete">No file created on server:</translation>
     </message>
     <message>
-        <location filename="../src/LoadGribFile.cpp" line="284"/>
+        <location filename="../src/LoadGribFile.cpp" line="295"/>
         <source>CheckSum control</source>
         <translation>Kontrola CheckSum</translation>
     </message>
@@ -3315,7 +3315,7 @@ Etes-vous sur ?</source>
         <translation type="obsolete">Done</translation>
     </message>
     <message>
-        <location filename="../src/LoadGribFile.cpp" line="305"/>
+        <location filename="../src/LoadGribFile.cpp" line="316"/>
         <source>Checksum incorrect.</source>
         <translation>Checksum nesedí.</translation>
     </message>
