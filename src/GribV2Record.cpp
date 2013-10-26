@@ -140,6 +140,8 @@ GribV2Record::GribV2Record(gribfield  *gfld, int msg, int field):GribRecord() {
     //    of increasing x and y (or i and j) coordinates, respectively.
     hasDiDj = ((resolFlags&0x20) !=0 && (resolFlags&0x10) !=0);
 
+    //qWarning() << "hasDiDJ: " << hasDiDj;
+
     scanFlags = gfld->igdtmpl[18];
     // Bit 1:
     // 0: Points in the first row or column scan in the +i (+x) direction
@@ -156,6 +158,8 @@ GribV2Record::GribV2Record(gribfield  *gfld, int msg, int field):GribRecord() {
     isScanIpositive = (scanFlags&0x80) ==0;
     isScanJpositive = (scanFlags&0x40) !=0;
     isAdjacentI     = (scanFlags&0x20) ==0;
+
+    //qWarning() << "isScanIPos=" << isScanIpositive << ", isScanJPos=" << isScanJpositive << ", isAdjacentI=" << isAdjacentI;
 
     /* compute min/Max */
     if (Lo2 > Lo1) {
@@ -264,14 +268,14 @@ GribV2Record::GribV2Record(gribfield  *gfld, int msg, int field):GribRecord() {
     /********************
      * Data - section 7 *
      ********************/
-#if 1
+#if 0
     if(gfld->ndpts<=0) {
         qWarning() << "Msg " << msg << " - field " << field << ": empty data array (size=" << gfld->ndpts << ")";
         return;
     }
 #endif
 
-#if 1
+#if 0
     data=new float[gfld->ndpts];
 #else
     data=new float[gfld->ngrdpts];
@@ -281,14 +285,16 @@ GribV2Record::GribV2Record(gribfield  *gfld, int msg, int field):GribRecord() {
         return;
     }
 
+    ok=true;
 
-#if 1
+#if 0
+    qWarning() << "ndpts=" << gfld->ndpts << ", ngrdpts=" << gfld->ngrdpts << ", Ni*Nj=" << Ni*Nj;
     dataSize=gfld->ndpts;
     for(int i=0;i<gfld->ndpts;++i) // not using std::copy as we do float => double conversion
         data[i]=gfld->fld[i];
 #else
     dataSize=gfld->ngrdpts;
-        int i, j, k;
+        unsigned int i, j, k;
         int ind;
         k=0;
         if (isAdjacentI) {
@@ -305,6 +311,7 @@ GribV2Record::GribV2Record(gribfield  *gfld, int msg, int field):GribRecord() {
                         k++;
                     }
                     else {
+                        //qWarning() << ind << ": not def";
                         data[ind] = GRIB_NOTDEF;
                     }
                 }
@@ -324,6 +331,7 @@ GribV2Record::GribV2Record(gribfield  *gfld, int msg, int field):GribRecord() {
                         k++;
                     }
                     else {
+                        //qWarning() << ind << ": not def";
                         data[ind] = GRIB_NOTDEF;
                     }
                 }
@@ -331,7 +339,7 @@ GribV2Record::GribV2Record(gribfield  *gfld, int msg, int field):GribRecord() {
         }
 #endif
 
-    ok=true;
+   // ok=true;
 
     if(dataType!=DATA_NOTDEF && levelType!=DATA_LV_NOTDEF) {
         knownData = true;
