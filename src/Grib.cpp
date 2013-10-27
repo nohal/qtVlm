@@ -62,13 +62,13 @@ Grib::~Grib() {
 Grib * Grib::loadGrib(QString fileName,DataManager *dataManager) {
     Grib * grib=NULL;
     /* first try to find grib version */
-    if(GribV2::isGribV2(fileName)) {
+    if(GribV1::isGribV1(fileName)) {
+            GribV1 * ptr=new GribV1(dataManager);
+            ptr->loadFile(fileName);
+            grib=(Grib*)ptr;
+        }
+    else if(GribV2::isGribV2(fileName)) {
         GribV2 * ptr=new GribV2(dataManager);
-        ptr->loadFile(fileName);
-        grib=(Grib*)ptr;
-    }
-    else if(GribV1::isGribV1(fileName)) {
-        GribV1 * ptr=new GribV1(dataManager);
         ptr->loadFile(fileName);
         grib=(Grib*)ptr;
     }
