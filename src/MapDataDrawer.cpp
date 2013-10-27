@@ -345,10 +345,28 @@ bool drawColorMapGeneric_2D_Partial(const GribThreadData &g)
     }
     if(showWindArrows && (W%space!=0 || H%space!=0) )
     {
-        int i=W+W%space;
-        for (int j=0;j<=H+H%space;j+=2)
+        int i,j;
+        i=W+W%space;
+        for (j=0;j<=H+H%space;j+=2)
         {
             if(j%space==0)
+            {
+                proj->screen2map(i+from.x(),j+from.y(), &x, &y);
+                if(Grib::interpolateValue_2D(x,y,now,t1,t2,recU1,recV1,recU2,recV2,&u,&v,interpolation_mode,UV))
+                {
+                    int i_s=i/space;
+                    int j_s=j/space;
+                    indice=i_s*H_s+j_s;
+                    u_tab[indice]=u;
+                    v_tab[indice]=v;
+                    y_tab[indice]=(y<0);
+                }
+            }
+        }
+        j=H+H%space;
+        for (i=0;i<=W+W%space;i+=2)
+        {
+            if(i%space==0)
             {
                 proj->screen2map(i+from.x(),j+from.y(), &x, &y);
                 if(Grib::interpolateValue_2D(x,y,now,t1,t2,recU1,recV1,recU2,recV2,&u,&v,interpolation_mode,UV))
