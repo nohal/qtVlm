@@ -59,6 +59,7 @@ bool GribV2::isGribV2(QString fileName) {
     ierr=g2_info(cgrib,listsec0,listsec1,&numfields,&numlocal);
     if(ierr) {
         qWarning() << "(isGrib2) g2_info error num=" << ierr;
+        if(fptr) fclose(fptr);
         return false;
     }
 
@@ -174,7 +175,7 @@ bool GribV2::loadFile(QString fileName) {
         free(cgrib);
     }
 
-    fclose(fptr);
+    if(fptr) fclose(fptr);
 
     qWarning() << "GRIBV2 load finished";
     qWarning() << "NB key: " << mapGribRecords.size();
