@@ -176,7 +176,7 @@ void LoadGribFile::getGribFile(
         QNetworkRequest request;
         request.setUrl(QUrl(page));
         request.setAttribute(QNetworkRequest::CacheLoadControlAttribute,QNetworkRequest::AlwaysNetwork);
-        Util::addAgent(request);
+        Util::addAgent(request,true);
         step1_InetReply=inetManager->get(request);
     }
 
@@ -276,7 +276,7 @@ gfs_run_hour:6
             QNetworkRequest request;
             request.setUrl(QUrl(page));
             request.setAttribute(QNetworkRequest::CacheLoadControlAttribute,QNetworkRequest::AlwaysNetwork);
-            Util::addAgent(request);
+            Util::addAgent(request,true);
             step2_InetReply=inetManager->get(request);
             connect(step2_InetReply,SIGNAL(downloadProgress(qint64,qint64)),this,SIGNAL(progress(qint64,qint64)));
         }
@@ -333,7 +333,7 @@ void LoadGribFile::getServerStatus()
     QNetworkRequest request;
     request.setUrl(QUrl(host+"/noaa/getServerStatus.php"));
     request.setAttribute(QNetworkRequest::CacheLoadControlAttribute,QNetworkRequest::AlwaysNetwork);
-    Util::addAgent(request);
+    Util::addAgent(request,true);
     step3_InetReply=inetManager->get(request);
 }
 void LoadGribFile::checkQtvlmVersion()

@@ -107,7 +107,7 @@ class Util
     static void computePos(Projection * proj, const double &lat, const double &lon, int * x, int * y);
     static void computePosDouble(Projection * proj, const double &lat, const double &lon, double * x, double * y);
     static void computePosDouble(Projection * proj, const QPointF &position, QPointF * screenCoord);
-    static void addAgent(QNetworkRequest & request);
+    static void addAgent(QNetworkRequest & request, bool overrideForce=false);
     static bool lineIsCrossingRect(const QLineF &line, const QRectF &rect);
     static double myDiffAngle(const double &a1, const double &a2);
     static double A360(const double &hdg);

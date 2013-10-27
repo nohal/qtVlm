@@ -639,10 +639,10 @@ void Util::computePosDouble(Projection * proj, const double &lat, const double &
     }
 }
 
-void Util::addAgent(QNetworkRequest & request)
+void Util::addAgent(QNetworkRequest & request,bool overrideForce)
 {
     if(Settings::getSetting("forceUserAgent",0).toInt()==1
-        && !Settings::getSetting("userAgent", "").toString().isEmpty())
+        && !Settings::getSetting("userAgent", "").toString().isEmpty()&& !overrideForce)
     {
         request.setRawHeader("User-Agent",Settings::getSetting("userAgent", "").toString().toLatin1());
         request.setRawHeader("VLM_PROXY_AGENT",QString("qtVlm/"+Version::getVersion()+" ("+QTVLM_OS+")").toLatin1());
