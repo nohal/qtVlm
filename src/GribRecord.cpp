@@ -33,6 +33,12 @@ GribRecord::GribRecord(void) {
     refMinute=0;
     refSecond=0;
     deltaPeriod=0;
+    data=NULL;
+}
+GribRecord::~GribRecord()
+{
+    if(data)
+        delete[] data;
 }
 
 void  GribRecord::set_dataType(int t) {

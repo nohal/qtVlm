@@ -97,7 +97,8 @@ class GribRecord {
 
         void print_bitmap(void);
 
-    protected:
+        ~GribRecord();
+protected:
         bool ok;
 
         int editionNumber;
