@@ -178,7 +178,7 @@ inline vlmPoint findPointThreaded(const vlmPoint &point)
         pt.isDead=true;
         return pt;
     }
-#if 1
+#if 0
     if(pt.xM1<10e4)
     {
         Triangle t(Point(pt.origin->x,pt.origin->y),
@@ -239,6 +239,7 @@ inline vlmPoint findPointThreaded(const vlmPoint &point)
         }
     }
 #else
+#ifndef debugCount
     if(!point.isStart)
     {
         QPolygonF * shape=pt.routage->getShapeIso();
@@ -248,6 +249,7 @@ inline vlmPoint findPointThreaded(const vlmPoint &point)
             bad=true;
         }
     }
+#endif
 #endif
     if (bad)
     {
@@ -321,7 +323,7 @@ inline QList<vlmPoint> finalEpuration(const QList<vlmPoint> &listPoints)
         QLineF line2(xa,ya,listPoints.at(n+1).x,listPoints.at(n+1).y);
         if(listPoints.at(n).originNb!=listPoints.at(n+1).originNb && (listPoints.at(n).origin->isBroken || listPoints.at(n+1).origin->isBroken))
             critere=179;
-        else if(Util::A180(qAbs(line1.angleTo(line2))) > 60 ||
+        else if(qAbs(Util::A180(qAbs(line1.angleTo(line2)))) > 60 ||
                 qAbs(listPoints.at(n).distArrival-listPoints.at(n+1).distArrival)>maxDist)
             critere=179;
         else
@@ -418,7 +420,7 @@ inline QList<vlmPoint> finalEpuration(const QList<vlmPoint> &listPoints)
             QLineF line2(xa,ya,listPoints.at(next).x,listPoints.at(next).y);
             if(listPoints.at(previous).originNb!=listPoints.at(next).originNb && (listPoints.at(previous).origin->isBroken || listPoints.at(next).origin->isBroken))
                 critere=179;
-            else if(Util::A180(qAbs(line1.angleTo(line2))) > 60 ||
+            else if(qAbs(Util::A180(qAbs(line1.angleTo(line2)))) > 60 ||
                     qAbs(listPoints.at(previous).distArrival-listPoints.at(next).distArrival)>maxDist)
                 critere=179;
             byCriteres.insert(critere,QPoint(previous,next));
@@ -1631,6 +1633,20 @@ void ROUTAGE::slot_calculate()
         }
 #ifdef debugCount
         this->countDebug(nbIso,"initial count in tempPoints");
+        for(int deb=tempPoints.size()-1;deb>=0;--deb)
+        {
+            vlmPoint point=tempPoints.at(deb);
+            if(!point.origin->isStart)
+            {
+                QPolygonF * shape=this->getShapeIso();
+                QPointF p=QPointF(point.x,point.y);
+                if(shape->containsPoint(p,Qt::OddEvenFill))
+                {
+                    tempPoints.removeAt(deb);
+                }
+            }
+        }
+        this->countDebug(nbIso,"after shape contains removal");
 #endif
 #ifdef traceTime
         msecs_1=msecs_1+time.elapsed();
@@ -2552,12 +2568,12 @@ void ROUTAGE::slot_calculate()
 }
 void ROUTAGE::countDebug(int nbIso, QString s)
 {
-    if (nbIso!=174) return;
+    if (nbIso!=238) return;
     int count=0;
     int nDead=0;
     for (int n=0;n<tempPoints.size();++n)
     {
-        if(tempPoints.at(n).originNb==103)
+        if(tempPoints.at(n).originNb==56)
         {
             ++count;
             if(s.contains("initial"))
@@ -3385,7 +3401,9 @@ void ROUTAGE::removeCrossedSegments()
     for(int n=0;n<tempPoints.size()-1;++n)
     {
         bool differentDirection=false;
-        if(Util::myDiffAngle(tempPoints.at(n).capArrival,tempPoints.at(n+1).capArrival)>60.0 ||
+        QLineF line1(xa,ya,tempPoints.at(n).x,tempPoints.at(n).y);
+        QLineF line2(xa,ya,tempPoints.at(n+1).x,tempPoints.at(n+1).y);
+        if(qAbs(Util::A180(qAbs(line1.angleTo(line2))))>60.0 ||
                 qAbs(tempPoints.at(n).distArrival-tempPoints.at(n+1).distArrival)>maxDist)
         {
             if(tempPoints.at(n).originNb!=tempPoints.at(n+1).originNb)
@@ -3470,7 +3488,9 @@ void ROUTAGE::removeCrossedSegments()
 
 
             bool differentDirection=false;
-            if(Util::myDiffAngle(tempPoints.at(previous).capArrival,tempPoints.at(next).capArrival)>60 ||
+            QLineF line1(xa,ya,tempPoints.at(previous).x,tempPoints.at(previous).y);
+            QLineF line2(xa,ya,tempPoints.at(next).x,tempPoints.at(next).y);
+            if(qAbs(Util::A180(qAbs(line1.angleTo(line2))))>60.0 ||
                     qAbs(tempPoints.at(previous).distArrival-tempPoints.at(next).distArrival)>maxDist)
             {
                 if(tempPoints.at(previous).originNb!=tempPoints.at(next).originNb)
