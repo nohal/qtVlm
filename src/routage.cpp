@@ -178,27 +178,40 @@ inline vlmPoint findPointThreaded(const vlmPoint &point)
         pt.isDead=true;
         return pt;
     }
-#if 0
-    if(pt.xM1<10e4)
+#if 1
+    vlmPoint * O=pt.origin;
+    int nbCheck=0;
+    for (nbCheck=0;nbCheck<10;++nbCheck)
     {
-        Triangle t(Point(pt.origin->x,pt.origin->y),
-                   Point(pt.x,pt.y),
-                   Point(pt.xM1,pt.yM1));
-        if (t.orientation()==right_turn)
-        {
-            pt.isDead=true;
-            return pt;
-        }
+        if(O->isStart)
+            break;
+        if(!O->isBroken)
+            break;
+        O=O->origin;
     }
-    if(pt.xP1<10e4)
+    if(nbCheck<9)
     {
-        Triangle t(Point(pt.origin->x,pt.origin->y),
-                   Point(pt.x,pt.y),
-                   Point(pt.xP1,pt.yP1));
-        if (t.orientation()==left_turn)
+        if(pt.xM1<10e4)
         {
-            pt.isDead=true;
-            return pt;
+            Triangle t(Point(pt.origin->x,pt.origin->y),
+                       Point(pt.x,pt.y),
+                       Point(pt.xM1,pt.yM1));
+            if (t.orientation()==right_turn)
+            {
+                pt.isDead=true;
+                return pt;
+            }
+        }
+        if(pt.xP1<10e4)
+        {
+            Triangle t(Point(pt.origin->x,pt.origin->y),
+                       Point(pt.x,pt.y),
+                       Point(pt.xP1,pt.yP1));
+            if (t.orientation()==left_turn)
+            {
+                pt.isDead=true;
+                return pt;
+            }
         }
     }
 #endif
@@ -244,7 +257,7 @@ inline vlmPoint findPointThreaded(const vlmPoint &point)
     {
         QPolygonF * shape=pt.routage->getShapeIso();
         QPointF p=QPointF(pt.x,pt.y);
-        if(shape->containsPoint(p,Qt::OddEvenFill))
+        if(shape->containsPoint(p,Qt::WindingFill))
         {
             bad=true;
         }
@@ -1467,8 +1480,9 @@ void ROUTAGE::slot_calculate()
                         newPoint.eta=eta;
                     if(n!=list->size()-1)
                     {
-                        if(Util::myDiffAngle(newPoint.origin->capArrival,
-                                       list->at(n+1).capArrival)<60)
+                        QLineF line1(xa,ya,newPoint.origin->x,newPoint.origin->y);
+                        QLineF line2(xa,ya,list->at(n+1).x,list->at(n+1).y);
+                        if(qAbs(Util::A180(qAbs(line1.angleTo(line2))))<60)
                         {
                             newPoint.xP1=list->at(n+1).x;
                             newPoint.yP1=list->at(n+1).y;
@@ -1476,8 +1490,9 @@ void ROUTAGE::slot_calculate()
                     }
                     if(n!=0)
                     {
-                        if(Util::myDiffAngle(newPoint.origin->capArrival,
-                                       list->at(n-1).capArrival)<60)
+                        QLineF line1(xa,ya,newPoint.origin->x,newPoint.origin->y);
+                        QLineF line2(xa,ya,list->at(n-1).x,list->at(n-1).y);
+                        if(qAbs(Util::A180(qAbs(line1.angleTo(line2))))<60)
                         {
                             newPoint.xM1=list->at(n-1).x;
                             newPoint.yM1=list->at(n-1).y;
@@ -1689,7 +1704,7 @@ void ROUTAGE::slot_calculate()
 #ifdef traceTime
         time.start();
 #endif
-        if(!hasTouchCoast && !tempPoints.first().origin->isStart)
+        if(arrivalIsClosest && !tempPoints.first().origin->isStart)
         {
             pruneWake(pruneWakeAngle);
         }
@@ -2717,38 +2732,42 @@ void ROUTAGE::pruneWake(int wakeAngle)
     QList<vlmPoint> *pIso;
     double wakeDir=0;
     if(i_iso)
-        pIso=i_isochrones.last()->getPoints();
+        pIso=i_isochrones.at(i_isochrones.size()-1)->getPoints();
     else
-        pIso=isochrones.last()->getPoints();
+        pIso=isochrones.at(isochrones.size()-1)->getPoints();
+    //int before=tempPoints.size();
     for(int n=tempPoints.size()-1;n>=0;--n)
     {
         double x1,y1,x2,y2;
         x1=tempPoints.at(n).x;
         y1=tempPoints.at(n).y;
+        QLineF l2(xa,ya,x1,y1);
         for(int m=0;m<pIso->size();++m)
         {
-            if(pIso->at(m).distArrival>tempPoints.at(n).distArrival) continue;
-            if(pIso->at(m).isDead) continue;
-            double pc1=pIso->at(m).distArrival/initialDist;
-            double pc2=tempPoints.at(n).distArrival/initialDist;
-            if(pc2-pc1<0.30) continue;
-            if(Util::myDiffAngle(pIso->at(m).capArrival,tempPoints.at(n).capArrival)>60) continue;
-            QLineF toArrival(pIso->at(m).x,pIso->at(m).y,xa,ya);
-            QLineF toArrival2(tempPoints.at(n).x,tempPoints.at(n).y,xa,ya);
-            double a=toArrival.angleTo(toArrival2);
-            if(a>180) a=360-a;
-            if(a>90) continue;
             x2=pIso->at(m).x;
             y2=pIso->at(m).y;
+            QLineF l1(xa,ya,x2,y2);
+            if(l1.length()>=l2.length()) continue;
+            if(l1.length()/l2.length()<0.3) continue;
+            if(pIso->at(m).isDead) continue;
+//            double pc1=pIso->at(m).distArrival/initialDist;
+//            double pc2=tempPoints.at(n).distArrival/initialDist;
+//            if(pc2-pc1<0.30) continue;
+            //if(qAbs(Util::A180(qAbs(l1.angleTo(l2))))>60.0) continue;
+//            QLineF toArrival(pIso->at(m).x,pIso->at(m).y,xa,ya);
+//            QLineF toArrival2(tempPoints.at(n).x,tempPoints.at(n).y,xa,ya);
+//            double a=toArrival.angleTo(toArrival2);
+//            if(a>180) a=360-a;
+//            if(a>90) continue;
             QPolygonF wake;
             wake.append(QPointF(x2,y2));
-            QLineF temp(xa,ya,x1,y1);
-            wakeDir=temp.angle();
+            wakeDir=l1.angle();
             QLineF temp1(x2,y2,x1,y1);
-            temp1.setAngle(Util::A360(wakeDir+wakeAngle));
-            temp1.setLength(10e5);
+            double distWake=temp1.length()*2.0;
+            temp1.setLength(distWake);
+            temp1.setAngle(wakeDir+(wakeAngle/2.0));
             wake.append(temp1.p2());
-            temp1.setAngle(Util::A360(wakeDir-wakeAngle));
+            temp1.setAngle(wakeDir-wakeAngle);
             wake.append(temp1.p2());
             wake.append(QPointF(x2,y2));
             if(wake.containsPoint(QPointF(x1,y1),Qt::OddEvenFill))
@@ -2770,6 +2789,7 @@ void ROUTAGE::pruneWake(int wakeAngle)
             }
         }
     }
+    //qWarning()<<"prunewake"<<before<<"-->"<<tempPoints.size()<<"with"<<wakeAngle;
 }
 double ROUTAGE::findTime(const vlmPoint * pt, QPointF P, double * cap)
 {
@@ -3132,7 +3152,7 @@ void ROUTAGE::checkIsoCrossingPreviousSegments()
 //            continue;
 //        if(tempPoints.at(nn).origin->notSimplificable)
 //            continue;
-        if(shapeIso.containsPoint(QPointF(tempPoints.at(nn).x,tempPoints.at(nn).y),Qt::OddEvenFill))
+        if(shapeIso.containsPoint(QPointF(tempPoints.at(nn).x,tempPoints.at(nn).y),Qt::WindingFill))
         {
             somethingHasChanged=true;
             tempPoints.removeAt(nn);
@@ -3461,11 +3481,13 @@ void ROUTAGE::removeCrossedSegments()
         int badOne=0;
         double crit1=tempPoints.at(couple.x()).distIso;
         double crit2=tempPoints.at(couple.y()).distIso;
+#if 0
         if(qAbs(crit1-crit2)<(crit1+crit2)/20.0)
         {
             crit1=tempPoints.at(couple.x()).distArrival;
             crit2=tempPoints.at(couple.y()).distArrival;
         }
+#endif
         //if(tempPoints.at(couple.x()).distIso<tempPoints.at(couple.y()).distIso)
         if(crit1<crit2)
             badOne=couple.x();
