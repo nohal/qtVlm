@@ -36,8 +36,7 @@ GribRecord::GribRecord(void) {
     data=NULL;
 }
 GribRecord::~GribRecord()
-{
-    qWarning() << "Main destructor - gribrecord";
+{    
     if(data)
         delete[] data;
 }
