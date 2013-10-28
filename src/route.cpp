@@ -1603,6 +1603,8 @@ void ROUTE::do_vbvmg_buffer(double dist,double wanted_heading,
         *wangle2 += TWO_PI;
     }
     fastSpeed->clear();
+    delete fastSpeed;
+    fastSpeed=NULL;
     *heading1=radToDeg(*heading1);
     *heading2=radToDeg(*heading2);
     *wangle1=radToDeg(*wangle1);

@@ -313,11 +313,15 @@ inline QList<vlmPoint> finalEpuration(const QList<vlmPoint> &listPoints)
     QList<bool> deadStatus;
     quint32 s;
     double critere=0;
+    double xa=listPoints.at(0).routage->getXa();
+    double ya=listPoints.at(0).routage->getYa();
     for(int n=0;n<listPoints.size()-1;++n)
     {
+        QLineF line1(xa,ya,listPoints.at(n).x,listPoints.at(n).y);
+        QLineF line2(xa,ya,listPoints.at(n+1).x,listPoints.at(n+1).y);
         if(listPoints.at(n).originNb!=listPoints.at(n+1).originNb && (listPoints.at(n).origin->isBroken || listPoints.at(n+1).origin->isBroken))
             critere=179;
-        else if(Util::myDiffAngle(listPoints.at(n).capArrival,listPoints.at(n+1).capArrival) > 60 ||
+        else if(Util::A180(qAbs(line1.angleTo(line2))) > 60 ||
                 qAbs(listPoints.at(n).distArrival-listPoints.at(n+1).distArrival)>maxDist)
             critere=179;
         else
@@ -410,9 +414,11 @@ inline QList<vlmPoint> finalEpuration(const QList<vlmPoint> &listPoints)
             {
                 critere=360-critere;
             }
+            QLineF line1(xa,ya,listPoints.at(previous).x,listPoints.at(previous).y);
+            QLineF line2(xa,ya,listPoints.at(next).x,listPoints.at(next).y);
             if(listPoints.at(previous).originNb!=listPoints.at(next).originNb && (listPoints.at(previous).origin->isBroken || listPoints.at(next).origin->isBroken))
                 critere=179;
-            else if(Util::myDiffAngle(listPoints.at(previous).capArrival,listPoints.at(next).capArrival) > 60 ||
+            else if(Util::A180(qAbs(line1.angleTo(line2))) > 60 ||
                     qAbs(listPoints.at(previous).distArrival-listPoints.at(next).distArrival)>maxDist)
                 critere=179;
             byCriteres.insert(critere,QPoint(previous,next));
