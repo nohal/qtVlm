@@ -318,10 +318,6 @@ void GribV1Record::print()
 //-----------------------------------------
 GribV1Record::~GribV1Record()
 {
-    if (data) {
-        delete [] data;
-        data = NULL;
-    }
     if (BMSbits) {
         delete [] BMSbits;
         BMSbits = NULL;

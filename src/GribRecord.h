@@ -33,6 +33,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 class GribRecord {
     public:
         GribRecord();
+        virtual ~GribRecord();
 
         static void init_conversionMatrix(void) { }
 
@@ -97,7 +98,6 @@ class GribRecord {
 
         void print_bitmap(void);
 
-        ~GribRecord();
 protected:
         bool ok;
 

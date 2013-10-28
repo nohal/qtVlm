@@ -46,12 +46,6 @@ class GribV2: public Grib
 
         static bool isGribV2(QString fileName);
 
-
-
-
-
-
-
 };
 
 #endif // GRIBV2_H

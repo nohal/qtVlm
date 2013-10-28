@@ -35,7 +35,7 @@ class boat: public QGraphicsWidget
     public:
         boat(QString pseudo, bool activated,
             Projection * proj,MainWindow * main,myCentralWidget * parent);
-        ~boat();
+        virtual ~boat();
 
         virtual void setStatus(bool activated);
         virtual void showNextGates(){return;}

@@ -53,6 +53,7 @@ Grib::Grib(DataManager * dataManager) {
 }
 
 Grib::~Grib() {
+    qWarning() << "Main destructor - grib";
     if(ok)
         clean_all_vectors();
     Util::cleanListPointers(listIsobars);

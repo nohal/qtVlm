@@ -352,7 +352,10 @@ GribV2Record::GribV2Record(gribfield  *gfld, int msg, int field):GribRecord() {
 }
 
 GribV2Record::~GribV2Record(void) {
-    if(data) delete data;
+    if (bmap) {
+        delete [] bmap;
+        bmap = NULL;
+    }
 }
 
 int GribV2Record::computeTimeOffset(int type,int val) {
