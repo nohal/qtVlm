@@ -3831,8 +3831,9 @@ void myCentralWidget::treatRoute(ROUTE* route)
                 delete waitBox;
                 QMessageBox::information(0,QString(QObject::tr("Resultat de l'optimisation")),result);
             }
+            bool a=route->getDetectCoasts()!=detectCoast;
             route->setDetectCoasts(detectCoast);
-            if(detectCoast)
+            if(a)
                 route->slot_recalculate();
         }
         route->setHidePois(poiShown);

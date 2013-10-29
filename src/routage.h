@@ -202,6 +202,7 @@ class ROUTAGE : public QObject
         QList<bool> * getPreviousIsoLand(){return &previousIsoLand;}
         QList<QLineF> * getForbidZone(){return &forbidZone;}
         QPolygonF * getShapeIso(){return &shapeIso;}
+        QPolygonF * getShapeMiddle(){return &shapeMiddle;}
         FCT_SETGET(bool,multiRoutage)
         FCT_SETGET(int,multiDays)
         FCT_SETGET(int,multiHours)
@@ -364,6 +365,7 @@ public slots:
         bool routageOrtho;
         bool showBestLive;
         QPolygonF shapeIso;
+        QPolygonF shapeMiddle;
         void calculateShapeIso();
         bool multiRoutage;
         int multiNb;
