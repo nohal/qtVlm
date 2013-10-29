@@ -2169,6 +2169,56 @@ Etes-vous sur ?</source>
     </message>
 </context>
 <context>
+    <name>Grib</name>
+    <message>
+        <source>Fichier grib version %1
+</source>
+        <translation>Fichier grib version %1</translation>
+    </message>
+    <message>
+        <source>Taille : %1 octets
+</source>
+        <translation>Taille: %1 octets</translation>
+    </message>
+    <message>
+        <source>%1 types de données</source>
+        <translation>%1 types de données</translation>
+    </message>
+    <message>
+        <source> - %1 dates :
+</source>
+        <translation> - %1 dates:</translation>
+    </message>
+    <message>
+        <source>    du %1
+</source>
+        <translation>    du %1</translation>
+    </message>
+    <message>
+        <source>    au %1
+</source>
+        <translation>    au %1</translation>
+    </message>
+    <message>
+        <source>Grille : %1 points (%2x%3)
+</source>
+        <translation>Grille : %1 points (%2x%3)
+</translation>
+    </message>
+    <message>
+        <source>Resolution : %1x%2
+</source>
+        <translation>Résolution : %1x%2
+</translation>
+    </message>
+    <message>
+        <source>Zone de couverture :
+</source>
+        <translation>Zone de couverture:
+</translation>
+    </message>
+</context>
+<context>
     <name>GshhsDwnload</name>
     <message>
         <source>Sauvegarde des cartes</source>
@@ -3597,6 +3647,18 @@ Etes-vous sur ?</source>
     <message>
         <source>Ordered sequence</source>
         <translation>Sequence ordonnée</translation>
+    </message>
+    <message>
+        <source>Informations sur le fichier</source>
+        <translation>Informations sur le fichier</translation>
+    </message>
+    <message>
+        <source>Ctrl+I</source>
+        <translation>Ctrl+I</translation>
+    </message>
+    <message>
+        <source>Informations sur le fichier GRIB</source>
+        <translation>Informations sur le fichier GRIB</translation>
     </message>
 </context>
 <context>
@@ -8077,6 +8139,18 @@ Que voulez vous faire?</translation>
         <source>Point must be inside map
 Please select another point or press esc to exit barrier creation mode</source>
         <translation>Le point doit être sur la carte\nVeuillez choisir un autre point ou &lt;echap&gt; pour sortir du mode création</translation>
+    </message>
+    <message>
+        <source>Informations sur le fichier GRIB</source>
+        <translation>Informations sur le fichier GRIB</translation>
+    </message>
+    <message>
+        <source>Aucun fichier GRIB n&apos;est charge.</source>
+        <translation>Aucun fichier GRIB n&apos;est charge</translation>
+    </message>
+    <message>
+        <source>Informations sur le fichier GRIB courant</source>
+        <translation>Informations sur le fichier GRIB courant</translation>
     </message>
 </context>
 <context>

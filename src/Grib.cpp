@@ -86,7 +86,7 @@ QString Grib::get_info(void) {
 
     info += tr("Fichier grib version %1\n").arg(get_version());
     info += tr("Taille : %1 octets\n") .arg(get_fileSize());
-    info += tr("\n");
+    info += "\n";
 
     info += tr("%1 types de données").arg(mapGribRecords.size());
     info += tr(" - %1 dates :\n").arg(get_nbDate());
@@ -101,12 +101,12 @@ QString Grib::get_info(void) {
         info += tr("Grille : %1 points (%2x%3)\n")
                 .arg(gr->get_Ni()*gr->get_Nj()).arg(gr->get_Ni()).arg(gr->get_Nj());
         info += tr("Resolution : %1x%2\n").arg(gr->get_Di()).arg(gr->get_Dj());
-        info += tr("\n");
+        info += "\n";
         info += tr("Zone de couverture :\n");
         QString pos1, pos2;
         pos1 = Util::formatPosition( gr->getX(0), gr->getY(0) );
         pos2 = Util::formatPosition( gr->getX(gr->get_Ni()-1), gr->getY(gr->get_Nj()-1) );
-        info += tr("%1  ->  %2\n").arg( pos1, pos2);
+        info += QString("%1  ->  %2\n").arg( pos1, pos2);
     }
     return info;
 }
