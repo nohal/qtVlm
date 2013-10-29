@@ -170,6 +170,8 @@ bool GribV1::readAllGribRecords(const char * fname,int compressMode) {
     if(!fptr)
         return false;
 
+    fileSize = zu_filesize(fptr);
+
     //--------------------------------------------------------
     // Lecture de l'ensemble des GribRecord du fichier
     // et stockage dans les listes appropriees.

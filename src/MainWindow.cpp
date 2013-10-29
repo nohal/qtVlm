@@ -114,7 +114,8 @@ void MainWindow::connectSignals()
     connect(mb->acFile_Load_GRIB, SIGNAL(triggered()), my_centralWidget, SLOT(slot_fileLoad_GRIB()));
     connect(mb->acFile_Load_VLM_GRIB, SIGNAL(triggered()), this, SLOT(slotLoadVLMGrib()));
     connect(mb->acFile_Load_SAILSDOC_GRIB, SIGNAL(triggered()), my_centralWidget, SLOT(slotLoadSailsDocGrib()));
-    //connect(mb->acFile_Info_GRIB, SIGNAL(triggered()), my_centralWidget, SLOT(slot_fileInfo_GRIB()));
+    connect(mb->acFile_Info_GRIB_main, SIGNAL(triggered()), my_centralWidget, SLOT(slot_fileInfo_GRIB_main()));
+    connect(mb->acFile_Info_GRIB_current, SIGNAL(triggered()), my_centralWidget, SLOT(slot_fileInfo_GRIB_current()));
     connect(mb->acFile_Quit, SIGNAL(triggered()), this, SLOT(slotFile_Quit()));
     connect(mb->acFile_Lock, SIGNAL(triggered()), this, SLOT(slotFile_Lock()));
     connect(this,SIGNAL(updateLockIcon(QIcon)),mb,SLOT(slot_updateLockIcon(QIcon)));
@@ -871,6 +872,7 @@ void MainWindow::openGribFile(QString fileName, bool zoom, bool current)
     {
         slot_updateGribMono();
         slotDateGribChanged_now();
+
         if(!current)
         {
             Settings::setSetting("gribFileName",  fileName);
@@ -1144,6 +1146,13 @@ void MainWindow::slotFile_Open()
         gribFilePath = finfo.absolutePath();
         bool zoom =  (Settings::getSetting("gribZoomOnLoad",0).toInt()==1);
         openGribFile(fileName, zoom);
+        DataManager * dataManager = my_centralWidget->get_dataManager();
+        if(dataManager) {
+            Grib * grib=dataManager->get_grib(DataManager::GRIB_GRIB);
+            if(grib && grib->isOk())
+                my_centralWidget->fileInfo_GRIB(grib);
+
+        }
     }
     updateTitle();
 }
@@ -1175,6 +1184,12 @@ void MainWindow::slotFile_Open_Current()
         gribFilePath = finfo.absolutePath();
         bool zoom =  (Settings::getSetting("gribZoomOnLoad",0).toInt()==1);
         openGribFile(fileName, zoom, true);
+        DataManager * dataManager = my_centralWidget->get_dataManager();
+        if(dataManager) {
+            Grib * grib=dataManager->get_grib(DataManager::GRIB_CURRENT);
+            if(grib && grib->isOk())
+                my_centralWidget->fileInfo_GRIB(grib);
+        }
     }
     updateTitle();
 }

@@ -319,13 +319,16 @@ public slots :
 
         /* Grib */
         void slot_fileLoad_GRIB(void);
-        //void slot_fileInfo_GRIB(void);
+        void slot_fileInfo_GRIB_main(void);
+        void slot_fileInfo_GRIB_current(void);
         void slotLoadSailsDocGrib(void);
         void slotFax_open();
         void slotFax_close();
         void slotImg_open();
         void slotImg_close();
         void zoomOnGrib(int grbType=DataManager::GRIB_NONE);
+        void fileInfo_GRIB(Grib * grib);
+
 
         /* Dialogs */
         void slot_boatDialog(void);

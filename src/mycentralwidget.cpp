@@ -1403,6 +1403,43 @@ void myCentralWidget::slot_fileLoad_GRIB() {
     }
 }
 
+void myCentralWidget::slot_fileInfo_GRIB_main(void) {
+    if(!dataManager) return;
+    Grib * grib=dataManager->get_grib(DataManager::GRIB_GRIB);
+    if(!grib || !grib->isOk()) {
+        grib = dataManager->get_grib(DataManager::GRIB_CURRENT);
+        if(!grib || !grib->isOk()) {
+            QMessageBox::information (this,
+                        tr("Informations sur le fichier GRIB"),
+                        tr("Aucun fichier GRIB n'est charge."));
+            return;
+        }
+    }
+
+    fileInfo_GRIB(grib);
+}
+
+void myCentralWidget::slot_fileInfo_GRIB_current(void) {
+    if(!dataManager) return;
+    Grib * grib=dataManager->get_grib(DataManager::GRIB_CURRENT);
+    if(!grib || !grib->isOk()) {
+        QMessageBox::information (this,
+                    tr("Informations sur le fichier GRIB courant"),
+                    tr("Aucun fichier GRIB n'est charge."));
+        return;
+    }
+    fileInfo_GRIB(grib);
+}
+
+void myCentralWidget::fileInfo_GRIB(Grib * grib) {
+    if(grib && grib->isOk()) {
+        QString msg = grib->get_info();
+        QMessageBox::information (this,
+                    tr("Informations sur le fichier GRIB"),
+                    msg );
+    }
+}
+
 void myCentralWidget::slotLoadSailsDocGrib(void) {
     QString queryStr;
     QString param;

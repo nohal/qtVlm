@@ -48,12 +48,12 @@ Grib::Grib(DataManager * dataManager) {
 
     version=0;
     fileName="";
+    fileSize=0;
 
     dewpointDataStatus = NO_DATA_IN_FILE;
 }
 
 Grib::~Grib() {
-    qWarning() << "Main destructor - grib";
     if(ok)
         clean_all_vectors();
     Util::cleanListPointers(listIsobars);
@@ -75,6 +75,40 @@ Grib * Grib::loadGrib(QString fileName,DataManager *dataManager) {
     }
 
     return grib;
+}
+
+/**************************
+ * Info string            *
+ **************************/
+
+QString Grib::get_info(void) {
+    QString info="";
+
+    info += tr("Fichier grib version %1\n").arg(get_version());
+    info += tr("Taille : %1 octets\n") .arg(get_fileSize());
+    info += tr("\n");
+
+    info += tr("%1 types de données").arg(mapGribRecords.size());
+    info += tr(" - %1 dates :\n").arg(get_nbDate());
+    if(get_nbDate()!=0) {
+        info += tr("    du %1\n").arg( Util::formatDateTimeLong(*(tList.begin())) );
+        info += tr("    au %1\n").arg( Util::formatDateTimeLong(*(tList.rbegin())) );
+    }
+
+    if(get_nbDate()!=0 && mapGribRecords.size()!=0) {
+        GribRecord * gr =getFirstRecord();
+        info += "\n";
+        info += tr("Grille : %1 points (%2x%3)\n")
+                .arg(gr->get_Ni()*gr->get_Nj()).arg(gr->get_Ni()).arg(gr->get_Nj());
+        info += tr("Resolution : %1x%2\n").arg(gr->get_Di()).arg(gr->get_Dj());
+        info += tr("\n");
+        info += tr("Zone de couverture :\n");
+        QString pos1, pos2;
+        pos1 = Util::formatPosition( gr->getX(0), gr->getY(0) );
+        pos2 = Util::formatPosition( gr->getX(gr->get_Ni()-1), gr->getY(gr->get_Nj()-1) );
+        info += tr("%1  ->  %2\n").arg( pos1, pos2);
+    }
+    return info;
 }
 
 /**************************
@@ -277,12 +311,15 @@ double Grib::computeDewPoint(double lon, double lat, time_t now)
  **************************/
 
 void Grib::update_dateList(std::set<time_t> * dateList) {
+    tList.clear();
     if(!isOk()) return;
     std::map <long int, QMap<time_t,GribRecord *>* >::iterator it;
     for (it=mapGribRecords.begin(); it!=mapGribRecords.end(); it++) {
         QMap<time_t,GribRecord *> *ls = (*it).second;
-        for(int i=0;i<ls->keys().size();++i)
+        for(int i=0;i<ls->keys().size();++i) {
             dateList->insert(ls->keys().at(i));
+            tList.insert(ls->keys().at(i));
+        }
     }
 }
 

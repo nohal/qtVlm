@@ -26,14 +26,17 @@ Lecture mise en memoire d'un fichier GRIB
 #ifndef GRIB_H
 #define GRIB_H
 
+#include <QPainter>
+#include <QApplication>
+#include <QObject>
+
 #include <iostream>
 #include <cmath>
 #include <vector>
 #include <set>
 #include <map>
 
-#include <QPainter>
-#include <QApplication>
+
 
 #include "class_list.h"
 
@@ -41,7 +44,7 @@ Lecture mise en memoire d'un fichier GRIB
 
 
 //===============================================================
-class Grib
+class Grib: public QObject
 {
     public:
         Grib(DataManager * dataManager);
@@ -57,9 +60,14 @@ class Grib
 
         FCT_GET(int,version)
         FCT_GET(QString,fileName)
+        FCT_GET(long,fileSize)
+
+        int get_nbDate(void) { return tList.size(); }
 
         FCT_GET(int,dewpointDataStatus)
         enum GribFileDataStatus { DATA_IN_FILE, NO_DATA_IN_FILE, COMPUTED_DATA };
+
+        QString get_info(void);
 
         void update_dateList(std::set<time_t> * dateList);
         void update_levelMap(QMap<int, QMap<int, QList<int> *> *> *levelMap);
@@ -105,11 +113,14 @@ class Grib
         DataManager * dataManager;
         int version;
         QString fileName;
+        long fileSize;
 
         std::map <long int,QMap<time_t,GribRecord *> *>  mapGribRecords;
         void addRecord(GribRecord * rec);
         void clean_vector(QMap<time_t, GribRecord *> *ls);
         void clean_all_vectors();
+
+        std::set<time_t>  tList;
 
 
         std::list<IsoLine *> listIsobars;      // liste d'isobares precalculees

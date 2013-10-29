@@ -102,6 +102,10 @@ bool GribV2::loadFile(QString fileName) {
         return false;
     }
 
+    fseek(fptr,0,SEEK_END);
+    fileSize=ftell(fptr);
+    rewind(fptr);
+
     /* clean data structure + iso lines */
     clean_all_vectors();
     Util::cleanListPointers(listIsobars);

@@ -151,6 +151,9 @@ MenuBar::MenuBar(MainWindow *parent)
         acFile_Load_SAILSDOC_GRIB = addAction(menuGrib, tr("Telechargement SailsDoc"),
                                                 tr(""),
                                                 tr("Telechargement SailsDoc"), appFolder.value("img")+"kmail.png");
+        acFile_Info_GRIB_main = addAction(menuGrib, tr("Informations sur le fichier"),
+                    tr("Ctrl+I"),
+                    tr("Informations sur le fichier GRIB"), appFolder.value("img")+"info.png");
         menuGrib->addSeparator();
         acFile_Open_Current = addAction(menuGrib, tr("Ouvrir un GRIB Courants"),
                     tr(""),
@@ -158,11 +161,10 @@ MenuBar::MenuBar(MainWindow *parent)
         acFile_Close_Current = addAction(menuGrib, tr("Fermer le GRIB Courants"),
                     tr(""),
                     tr("Fermer le GRIB Courants"), appFolder.value("img")+"fileclose.png");
-        menuGrib->addSeparator();
-        /*acFile_Info_GRIB = addAction(menuGrib, tr("Informations sur le fichier"),
-                    tr("Ctrl+I"),
+        acFile_Info_GRIB_current = addAction(menuGrib, tr("Informations sur le fichier"),
+                    tr(""),
                     tr("Informations sur le fichier GRIB"), appFolder.value("img")+"info.png");
-        menuGrib->addSeparator();*/
+        menuGrib->addSeparator();
 
         menuGroupColorMap = new QMenu(tr("Type de carte"));
         acView_GroupColorMap = new ZeroOneActionGroup (menuGroupColorMap);

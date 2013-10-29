@@ -621,11 +621,11 @@ void MapDataDrawer::drawColorMapGeneric_2D(QPainter &pnt, Projection *proj, cons
     double nCpu=qMax(2,QThread::idealThreadCount());
     int w=floor((double)proj->getW()/(double)(nCpu/2.0));
     int h=floor((double)proj->getH()/2.0);
-    int space=0;
+    /*int space=0;
     if (barbules)
         space =  windBarbuleSpace;
     else
-        space =  windArrowSpace;
+        space =  windArrowSpace;*/
     for(int i=0;i<nCpu/2;++i)
     {
         int decalw=0;
