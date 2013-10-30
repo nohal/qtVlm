@@ -101,8 +101,11 @@ int main(int argc, char *argv[])
 #elif defined(Q_WS_MAC)
     homeDir = QDir::homePath();
 #endif
+    qWarning()<<"home dir"<<homeDir;
     //checks tree
-
+#ifdef __MAC_QTVLM
+    QDir::setCurrent(appExeFolder);
+#endif
     /* setting dataDir to app exe dir */
     QString dataDir = appExeFolder;
 
