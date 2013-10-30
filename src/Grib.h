@@ -62,7 +62,7 @@ class Grib: public QObject
         FCT_GET(QString,fileName)
         FCT_GET(long,fileSize)
 
-        int get_nbDate(void) { return tList.size(); }
+        int get_nbDate(void) { return (int) tList.size(); }
 
         FCT_GET(int,dewpointDataStatus)
         enum GribFileDataStatus { DATA_IN_FILE, NO_DATA_IN_FILE, COMPUTED_DATA };

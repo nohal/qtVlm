@@ -312,7 +312,7 @@ GribV2Record::GribV2Record(gribfield  *gfld, int msg, int field):GribRecord() {
                     }
                     else {
                         //qWarning() << ind << ": not def";
-                        data[ind] = GRIB_NOTDEF;
+                        data[ind] = (float)GRIB_NOTDEF;
                     }
                 }
             }
@@ -332,7 +332,7 @@ GribV2Record::GribV2Record(gribfield  *gfld, int msg, int field):GribRecord() {
                     }
                     else {
                         //qWarning() << ind << ": not def";
-                        data[ind] = GRIB_NOTDEF;
+                        data[ind] = (float)GRIB_NOTDEF;
                     }
                 }
             }

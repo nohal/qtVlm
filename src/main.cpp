@@ -101,16 +101,6 @@ int main(int argc, char *argv[])
 #elif defined(Q_WS_MAC)
     homeDir = QDir::homePath();
 #endif
-    QString test=QApplication::applicationDirPath();
-    QDir dir(test);
-    qWarning()<<"test="<<test;
-    dir.cdUp();
-    dir.cdUp();
-    dir.cdUp();
-    qWarning()<<"after:"<<dir.absolutePath();
-    homeDir += "/qtVlm";
-    qWarning() << "Home :" << homeDir;
-
     //checks tree
 
     /* setting dataDir to app exe dir */
