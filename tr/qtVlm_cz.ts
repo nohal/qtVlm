@@ -3164,16 +3164,19 @@ Etes-vous sur ?</source>
 <context>
     <name>Grib</name>
     <message>
-        <location filename="../src/Grib.cpp" line="87"/>
-        <source>Fichier grib version %1
+        <source>Taille : %1 octets
 </source>
+        <translation type="obsolete">Velikost : %1 bytů</translation>
+    </message>
+    <message>
+        <location filename="../src/Grib.cpp" line="87"/>
+        <source>Fichier grib version %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../src/Grib.cpp" line="88"/>
-        <source>Taille : %1 octets
-</source>
-        <translation type="unfinished">Velikost : %1 bytů</translation>
+        <source>Taille : %1 octets</source>
+        <translation type="unfinished">Size : %1 bytes</translation>
     </message>
     <message>
         <location filename="../src/Grib.cpp" line="91"/>
@@ -3182,40 +3185,54 @@ Etes-vous sur ?</source>
     </message>
     <message>
         <location filename="../src/Grib.cpp" line="92"/>
-        <source> - %1 dates :
-</source>
+        <source> - %1 dates :</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../src/Grib.cpp" line="94"/>
-        <source>    du %1
-</source>
-        <translation type="unfinished">   od %1</translation>
+        <source>    du %1</source>
+        <translation type="unfinished">   od %1 {1?}</translation>
     </message>
     <message>
         <location filename="../src/Grib.cpp" line="95"/>
-        <source>    au %1
-</source>
-        <translation type="unfinished">   do %1</translation>
+        <source>    au %1</source>
+        <translation type="unfinished">   do %1 {1?}</translation>
     </message>
     <message>
         <location filename="../src/Grib.cpp" line="101"/>
-        <source>Grille : %1 points (%2x%3)
-</source>
-        <translation type="unfinished">Grid : %1 body (%2x%3)
-</translation>
+        <source>Grille : %1 points (%2x%3)</source>
+        <translation type="unfinished">Grid : %1 points (%2x%3)</translation>
     </message>
     <message>
         <location filename="../src/Grib.cpp" line="103"/>
-        <source>Resolution : %1x%2
-</source>
-        <translation type="unfinished">Rozlišení : %1x%2</translation>
+        <source>Resolution : %1x%2</source>
+        <translation type="unfinished">Rozlišení : %1x%2 {1x?} {2?}</translation>
     </message>
     <message>
         <location filename="../src/Grib.cpp" line="105"/>
-        <source>Zone de couverture :
-</source>
+        <source>Zone de couverture :</source>
         <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>    du %1
+</source>
+        <translation type="obsolete">   od %1</translation>
+    </message>
+    <message>
+        <source>    au %1
+</source>
+        <translation type="obsolete">   do %1</translation>
+    </message>
+    <message>
+        <source>Grille : %1 points (%2x%3)
+</source>
+        <translation type="obsolete">Grid : %1 body (%2x%3)
+</translation>
+    </message>
+    <message>
+        <source>Resolution : %1x%2
+</source>
+        <translation type="obsolete">Rozlišení : %1x%2</translation>
     </message>
     <message>
         <source>%1  -&gt;  %2
@@ -6877,17 +6894,17 @@ VMG %.2f kts</translation>
         <translation>Data v interpolačním bodě pro  </translation>
     </message>
     <message>
-        <location filename="../src/Util.cpp" line="146"/>
+        <location filename="../src/Util.cpp" line="158"/>
         <source>nds</source>
         <translation>kts</translation>
     </message>
     <message>
-        <location filename="../src/Util.cpp" line="200"/>
+        <location filename="../src/Util.cpp" line="212"/>
         <source>deg</source>
         <translation>°</translation>
     </message>
     <message>
-        <location filename="../src/Util.cpp" line="764"/>
+        <location filename="../src/Util.cpp" line="776"/>
         <source>jours</source>
         <translation>dnů</translation>
     </message>

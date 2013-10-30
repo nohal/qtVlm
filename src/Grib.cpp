@@ -84,25 +84,25 @@ Grib * Grib::loadGrib(QString fileName,DataManager *dataManager) {
 QString Grib::get_info(void) {
     QString info="";
 
-    info += tr("Fichier grib version %1\n").arg(get_version());
-    info += tr("Taille : %1 octets\n") .arg(get_fileSize());
+    info += tr("Fichier grib version %1").arg(get_version())+"\n";
+    info += tr("Taille : %1 octets") .arg(get_fileSize())+"\n";
     info += "\n";
 
     info += tr("%1 types de données").arg(mapGribRecords.size());
-    info += tr(" - %1 dates :\n").arg(get_nbDate());
+    info += tr(" - %1 dates :").arg(get_nbDate())+"\n";
     if(get_nbDate()!=0) {
-        info += tr("    du %1\n").arg( Util::formatDateTimeLong(*(tList.begin())) );
-        info += tr("    au %1\n").arg( Util::formatDateTimeLong(*(tList.rbegin())) );
+        info += tr("    du %1").arg( Util::formatDateTimeLong(*(tList.begin())))+"\n";
+        info += tr("    au %1").arg( Util::formatDateTimeLong(*(tList.rbegin())))+"\n";
     }
 
     if(get_nbDate()!=0 && mapGribRecords.size()!=0) {
         GribRecord * gr =getFirstRecord();
         info += "\n";
-        info += tr("Grille : %1 points (%2x%3)\n")
-                .arg(gr->get_Ni()*gr->get_Nj()).arg(gr->get_Ni()).arg(gr->get_Nj());
-        info += tr("Resolution : %1x%2\n").arg(gr->get_Di()).arg(gr->get_Dj());
+        info += tr("Grille : %1 points (%2x%3)")
+                .arg(gr->get_Ni()*gr->get_Nj()).arg(gr->get_Ni()).arg(gr->get_Nj())+"\n";
+        info += tr("Resolution : %1x%2").arg(gr->get_Di()).arg(gr->get_Dj())+"\n";
         info += "\n";
-        info += tr("Zone de couverture :\n");
+        info += tr("Zone de couverture :")+"\n";
         QString pos1, pos2;
         pos1 = Util::formatPosition( gr->getX(0), gr->getY(0) );
         pos2 = Util::formatPosition( gr->getX(gr->get_Ni()-1), gr->getY(gr->get_Nj()-1) );

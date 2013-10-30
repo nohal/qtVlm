@@ -3227,15 +3227,23 @@ Etes-vous sur ?</source>
 <context>
     <name>Grib</name>
     <message>
-        <location filename="../src/Grib.cpp" line="87"/>
         <source>Fichier grib version %1
 </source>
+        <translation type="obsolete">Grib file version %1</translation>
+    </message>
+    <message>
+        <source>Taille : %1 octets
+</source>
+        <translation type="obsolete">Size : %1 bytes</translation>
+    </message>
+    <message>
+        <location filename="../src/Grib.cpp" line="87"/>
+        <source>Fichier grib version %1</source>
         <translation>Grib file version %1</translation>
     </message>
     <message>
         <location filename="../src/Grib.cpp" line="88"/>
-        <source>Taille : %1 octets
-</source>
+        <source>Taille : %1 octets</source>
         <translation>Size : %1 bytes</translation>
     </message>
     <message>
@@ -3245,41 +3253,65 @@ Etes-vous sur ?</source>
     </message>
     <message>
         <location filename="../src/Grib.cpp" line="92"/>
-        <source> - %1 dates :
-</source>
+        <source> - %1 dates :</source>
         <translation> - %1 dates:</translation>
     </message>
     <message>
         <location filename="../src/Grib.cpp" line="94"/>
-        <source>    du %1
-</source>
+        <source>    du %1</source>
         <translation>   from %1</translation>
     </message>
     <message>
         <location filename="../src/Grib.cpp" line="95"/>
-        <source>    au %1
-</source>
+        <source>    au %1</source>
         <translation>   to %1</translation>
     </message>
     <message>
         <location filename="../src/Grib.cpp" line="101"/>
-        <source>Grille : %1 points (%2x%3)
-</source>
-        <translation>Grid : %1 points (%2x%3)
-</translation>
+        <source>Grille : %1 points (%2x%3)</source>
+        <translation>Grid : %1 points (%2x%3)</translation>
     </message>
     <message>
         <location filename="../src/Grib.cpp" line="103"/>
-        <source>Resolution : %1x%2
-</source>
-        <translation>Resolution : %1x%2
-</translation>
+        <source>Resolution : %1x%2</source>
+        <translation>Resolution : %1x%2</translation>
     </message>
     <message>
         <location filename="../src/Grib.cpp" line="105"/>
+        <source>Zone de couverture :</source>
+        <translation>Covering zone:</translation>
+    </message>
+    <message>
+        <source> - %1 dates :
+</source>
+        <translation type="obsolete"> - %1 dates:</translation>
+    </message>
+    <message>
+        <source>    du %1
+</source>
+        <translation type="obsolete">   from %1</translation>
+    </message>
+    <message>
+        <source>    au %1
+</source>
+        <translation type="obsolete">   to %1</translation>
+    </message>
+    <message>
+        <source>Grille : %1 points (%2x%3)
+</source>
+        <translation type="obsolete">Grid : %1 points (%2x%3)
+</translation>
+    </message>
+    <message>
+        <source>Resolution : %1x%2
+</source>
+        <translation type="obsolete">Resolution : %1x%2
+</translation>
+    </message>
+    <message>
         <source>Zone de couverture :
 </source>
-        <translation>Covering zone:
+        <translation type="obsolete">Covering zone:
 </translation>
     </message>
     <message>
@@ -6832,17 +6864,17 @@ VMG %.2f kts</translation>
         <translation>Data at interpolation point for </translation>
     </message>
     <message>
-        <location filename="../src/Util.cpp" line="146"/>
+        <location filename="../src/Util.cpp" line="158"/>
         <source>nds</source>
         <translation>kts</translation>
     </message>
     <message>
-        <location filename="../src/Util.cpp" line="200"/>
+        <location filename="../src/Util.cpp" line="212"/>
         <source>deg</source>
         <translation>°</translation>
     </message>
     <message>
-        <location filename="../src/Util.cpp" line="764"/>
+        <location filename="../src/Util.cpp" line="776"/>
         <source>jours</source>
         <translation>days</translation>
     </message>

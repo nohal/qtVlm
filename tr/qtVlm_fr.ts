@@ -2173,12 +2173,12 @@ Etes-vous sur ?</source>
     <message>
         <source>Fichier grib version %1
 </source>
-        <translation>Fichier grib version %1</translation>
+        <translation type="obsolete">Fichier grib version %1</translation>
     </message>
     <message>
         <source>Taille : %1 octets
 </source>
-        <translation>Taille: %1 octets</translation>
+        <translation type="obsolete">Taille: %1 octets</translation>
     </message>
     <message>
         <source>%1 types de données</source>
@@ -2187,35 +2187,67 @@ Etes-vous sur ?</source>
     <message>
         <source> - %1 dates :
 </source>
-        <translation> - %1 dates:</translation>
+        <translation type="obsolete"> - %1 dates:</translation>
     </message>
     <message>
         <source>    du %1
 </source>
-        <translation>    du %1</translation>
+        <translation type="obsolete">    du %1</translation>
     </message>
     <message>
         <source>    au %1
 </source>
-        <translation>    au %1</translation>
+        <translation type="obsolete">    au %1</translation>
     </message>
     <message>
         <source>Grille : %1 points (%2x%3)
 </source>
-        <translation>Grille : %1 points (%2x%3)
+        <translation type="obsolete">Grille : %1 points (%2x%3)
 </translation>
     </message>
     <message>
         <source>Resolution : %1x%2
 </source>
-        <translation>Résolution : %1x%2
+        <translation type="obsolete">Résolution : %1x%2
 </translation>
     </message>
     <message>
         <source>Zone de couverture :
 </source>
-        <translation>Zone de couverture:
+        <translation type="obsolete">Zone de couverture:
 </translation>
+    </message>
+    <message>
+        <source>Fichier grib version %1</source>
+        <translation>Fichier grib version %1</translation>
+    </message>
+    <message>
+        <source>Taille : %1 octets</source>
+        <translation>Taille: %1 octets</translation>
+    </message>
+    <message>
+        <source> - %1 dates :</source>
+        <translation> - %1 dates:</translation>
+    </message>
+    <message>
+        <source>    du %1</source>
+        <translation>    du %1</translation>
+    </message>
+    <message>
+        <source>    au %1</source>
+        <translation>    au %1</translation>
+    </message>
+    <message>
+        <source>Grille : %1 points (%2x%3)</source>
+        <translation>Grille : %1 points (%2x%3)</translation>
+    </message>
+    <message>
+        <source>Resolution : %1x%2</source>
+        <translation>Résolution : %1x%2</translation>
+    </message>
+    <message>
+        <source>Zone de couverture :</source>
+        <translation>Zone de couverture:</translation>
     </message>
 </context>
 <context>

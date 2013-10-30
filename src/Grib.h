@@ -45,7 +45,7 @@ Lecture mise en memoire d'un fichier GRIB
 
 //===============================================================
 class Grib: public QObject
-{
+{ Q_OBJECT
     public:
         Grib(DataManager * dataManager);
         ~Grib();
