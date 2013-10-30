@@ -510,7 +510,7 @@ void ROUTE::slot_recalculate(boat * boat)
                         double current_speed=-1;
                         double current_angle=0;
                         //calculate surface wind if any current
-                        if(dataManager->getInterpolatedCurrent(lon, lat,
+                        if(dataManager->hasData(DATA_CURRENT_VX,DATA_LV_MSL,0) && dataManager->getInterpolatedCurrent(lon, lat,
                                                   eta,&current_speed,&current_angle,INTERPOLATION_DEFAULT))
                         {
                             current_angle=radToDeg(current_angle);

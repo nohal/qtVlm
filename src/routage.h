@@ -271,7 +271,7 @@ public slots:
         void drawResult(vlmPoint P);
         bool intersects(QList<vlmPoint> *iso,int nn,int mm,int * toBeKilled);
         bool converted;
-        void pruneWake(int wakeAngle);
+        void pruneWake(const int &wakeAngle);
         //int calculateTimeRoute(vlmPoint RouteFrom,vlmPoint routeTo,int limit=-1);
         //int routeFunction(double x,vlmPoint from);
         //int routeFunctionDeriv(double x,vlmPoint from);
