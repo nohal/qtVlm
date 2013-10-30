@@ -644,7 +644,7 @@ void myCentralWidget::loadGshhs(void) {
         msgBox.setText(tr("An old version of maps has been detected\nWhat do you want to do?"));
     }
     QDir dir(mapDir);
-    QDir appDir=QDir::currentPath();
+    QDir appDir=Util::currentPath();
     if(dir.rootPath()==appDir.rootPath())
         mapDir=appDir.relativeFilePath(mapDir);
     else
@@ -663,7 +663,7 @@ void myCentralWidget::loadGshhs(void) {
                                                             mapDir,
                                                             QFileDialog::ShowDirsOnly);
             QDir dir(mapDir);
-            QDir appDir=QDir::currentPath();
+            QDir appDir=Util::currentPath();
             if(dir.rootPath()==appDir.rootPath())
                 mapDir=appDir.relativeFilePath(mapDir);
             else
@@ -2134,7 +2134,7 @@ void myCentralWidget::slot_importRouteFromMenu(bool ortho)
     QDir dirRoute(routePath);
     if(!dirRoute.exists())
     {
-        routePath=QDir::currentPath();
+        routePath=Util::currentPath();
         Settings::setSetting("importRouteFolder",routePath);
     }
 #if 1
@@ -2617,7 +2617,7 @@ void myCentralWidget::exportRouteFromMenu(ROUTE * route)
     QDir dirRoute(routePath);
     if(!dirRoute.exists())
     {
-        routePath=QDir::currentPath();
+        routePath=Util::currentPath();
         Settings::setSetting("importRouteFolder",routePath);
     }
     QString fileName = QFileDialog::getSaveFileName(this,

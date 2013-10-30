@@ -56,6 +56,18 @@ QString Util::generateKey(int size) {
     }
     return s;
 }
+QString Util::currentPath()
+{
+#ifndef __MAC_QTVLM
+    return QDir::currentPath();
+#endif
+    QString stringDir=QApplication::applicationDirPath();
+    QDir dir(stringDir);
+    dir.cdUp();
+    dir.cdUp();
+    dir.cdUp();
+    return dir.absolutePath();
+}
 
 //======================================================================
 void Util::setSpecificFont(QMap<QWidget *,QFont> widgets)

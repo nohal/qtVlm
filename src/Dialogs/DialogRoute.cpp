@@ -1074,7 +1074,7 @@ void DialogRoute::slotExportCSV()
     QDir dirRoute(routePath);
     if(!dirRoute.exists())
     {
-        routePath=QDir::currentPath();
+        routePath=Util::currentPath();
         Settings::setSetting("exportRouteCSVFolder",routePath);
     }
 #ifdef __WIN_QTVLM

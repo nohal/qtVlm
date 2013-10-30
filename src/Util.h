@@ -122,6 +122,7 @@ class Util
     static double distToSegment(const QPointF point,const QLineF line);
 
     static QString formatElapsedTime(int elapsed);
+    static QString currentPath();
     //-------------------------------------------------
     template <typename T>
         static bool isInRange(T v, T min, T max)

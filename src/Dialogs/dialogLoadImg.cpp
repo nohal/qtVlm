@@ -125,11 +125,11 @@ void dialogLoadImg::browseFile()
     QString filter;
     filter =  tr("Fichiers kap (*.kap *.KAP)");
     QString cartePath=Settings::getSetting("cartePath",".").toString();
-    if(cartePath==".") cartePath=QDir::currentPath();
+    if(cartePath==".") cartePath=Util::currentPath();
     QDir dircarte(cartePath);
     if(!dircarte.exists())
     {
-        cartePath=QDir::currentPath();
+        cartePath=Util::currentPath();
         Settings::setSetting("cartePath",cartePath);
     }
     QString fileName = QFileDialog::getOpenFileName(this,

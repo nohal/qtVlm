@@ -32,7 +32,7 @@ Copyright (C) 2008 - Jacques Zaninetti - http://zygrib.free.fr
 #include <QDir>
 #include <QMap>
 #include <QStyleFactory>
-
+#include "Util.h"
 #include "MainWindow.h"
 #include "settings.h"
 
@@ -85,7 +85,7 @@ int main(int argc, char *argv[])
         qWarning() << "currentPath modified: " << curDir << "applicationDirPath returns: " << appExeFolder;
     }
 #endif
-    appExeFolder=QDir::currentPath();
+    appExeFolder=Util::currentPath();
     qWarning()<<"Current app path"<<appExeFolder;
     // home folder
     QString homeDir="";
@@ -101,7 +101,13 @@ int main(int argc, char *argv[])
 #elif defined(Q_WS_MAC)
     homeDir = QDir::homePath();
 #endif
-
+    QString test=QApplication::applicationDirPath();
+    QDir dir(test);
+    qWarning()<<"test="<<test;
+    dir.cdUp();
+    dir.cdUp();
+    dir.cdUp();
+    qWarning()<<"after:"<<dir.absolutePath();
     homeDir += "/qtVlm";
     qWarning() << "Home :" << homeDir;
 

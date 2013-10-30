@@ -271,7 +271,7 @@ void DialogParamVlm::done(int result)
         {
             QString mapDir = mapsFolder->text();
             QDir dir(mapDir);
-            QDir appDir=QDir::currentPath();
+            QDir appDir=Util::currentPath();
             if(dir.rootPath()==appDir.rootPath())
                 mapDir=appDir.relativeFilePath(mapDir);
             else
