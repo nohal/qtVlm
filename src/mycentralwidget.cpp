@@ -1296,7 +1296,18 @@ void myCentralWidget::loadGribFile(QString fileName, bool zoom) {
         QStringList f;
         f.append("*.grb");
         f.append("*.GRB");
-
+        f.append("*.grb.bz2");
+        f.append("*.GRB.BZ2");
+        f.append("*.grib");
+        f.append("*.GRIB");
+        f.append("*.grib.bz2");
+        f.append("*.GRIB.BZ2");
+        f.append("*.grb.gz");
+        f.append("*.GRB.GZ");
+        f.append("*.grib.gz");
+        f.append("*.GRIB.GZ");
+        f.append("*.grb2");
+        f.append("*.GRB2");
         QFileInfoList list=inf.absoluteDir().entryInfoList(f);
         foreach(const QFileInfo &i,list) {
             if(i.lastModified()<QDateTime::currentDateTime().addDays(-3) && i.filePath()!=inf.filePath())
