@@ -169,9 +169,7 @@ void DialogLoadGrib::slotGribDataReceived(QByteArray *content, QString fileName)
         ok = saveFile->open(QIODevice::WriteOnly);
         if (ok) {
             nb = saveFile->write(*content);
-            if (nb > 0) {
-                saveFile->close();
-            }
+            saveFile->close();
         }
         if (ok && nb>0) {
             emit signalGribFileReceived(fileName);
