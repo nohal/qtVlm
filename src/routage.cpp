@@ -3174,17 +3174,39 @@ void ROUTAGE::checkIsoCrossingPreviousSegments()
             --nn;
             continue;
         }
-        QLineF S(tempPoints.at(nn).origin->x,tempPoints.at(nn).origin->y,tempPoints.at(nn).x,tempPoints.at(nn).y);
-        QPointF P=S.pointAt(0.01);
-        S.setP1(P);
-        for (int i=0;i<shapeMiddle.size()-i;++i)
+        if(tempPoints.at(nn).origin->isBroken)
         {
-            if(S.intersect(QLineF(shapeMiddle.at(i),shapeMiddle.at(i+1)),&P)==QLineF::BoundedIntersection)
+            QLineF S(tempPoints.at(nn).origin->x,tempPoints.at(nn).origin->y,tempPoints.at(nn).x,tempPoints.at(nn).y);
+            QPointF P=S.pointAt(0.01);
+            S.setP1(P);
+            bool bad=false;
+            for (int i=0;i<shapeIso.size()-1;++i)
             {
-                somethingHasChanged=true;
-                tempPoints.removeAt(nn);
-                --nn;
-                break;
+                QLineF I(shapeIso.at(i),shapeIso.at(i+1));
+                if(S.intersect(I,&P)==QLineF::BoundedIntersection)
+                {
+                    somethingHasChanged=true;
+                    tempPoints.removeAt(nn);
+                    --nn;
+                    bad=true;
+                    break;
+                }
+            }
+            if (bad) continue;
+            if(nn!=tempPoints.size()-1 && !tempPoints.at(nn).isBroken)
+            {
+                QLineF S2=QLineF(tempPoints.at(nn).x,tempPoints.at(nn).y,tempPoints.at(nn+1).x,tempPoints.at(nn+1).y);
+                for (int i=0;i<shapeMiddle.size()-1;++i)
+                {
+                    QLineF I(shapeMiddle.at(i),shapeMiddle.at(i+1));
+                    if(S2.intersect(I,&P)==QLineF::BoundedIntersection)
+                    {
+                        somethingHasChanged=true;
+                        tempPoints.removeAt(nn);
+                        --nn;
+                        break;
+                    }
+                }
             }
         }
     }
@@ -3452,7 +3474,7 @@ void ROUTAGE::removeCrossedSegments()
                     differentDirection=true;
             }
         }
-        else if(tempPoints.at(n).origin->isBroken && !tempPoints.at(n+1).origin->isBroken)
+        else if(tempPoints.at(n).origin->isBroken /* && !tempPoints.at(n+1).origin->isBroken*/)
         {
             if(tempPoints.at(n).originNb!=tempPoints.at(n+1).originNb)
             {
@@ -3543,7 +3565,7 @@ void ROUTAGE::removeCrossedSegments()
                         differentDirection=true;
                 }
             }
-            else if(tempPoints.at(previous).origin->isBroken && !tempPoints.at(next).origin->isBroken)
+            else if(tempPoints.at(previous).origin->isBroken /* && !tempPoints.at(next).origin->isBroken*/)
             {
                 if(tempPoints.at(previous).originNb!=tempPoints.at(next).originNb)
                 {
