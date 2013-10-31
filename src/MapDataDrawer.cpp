@@ -224,7 +224,7 @@ void MapDataDrawer::drawColorMapGeneric_1D (
 // Carte de couleurs du vent
 //--------------------------------------------------------------------------
 
-bool drawColorMapGeneric_2D_Partial(const GribThreadData &g)
+bool MapDataDrawer::drawColorMapGeneric_2D_Partial(const GribThreadData &g)
     {
     const Projection * proj=g.proj;
     const bool showWindArrows=g.showWindArrows;
@@ -659,7 +659,7 @@ void MapDataDrawer::drawColorMapGeneric_2D(QPainter &pnt, Projection *proj, cons
     for (int n=0;n<data.size();++n)
         result.append(drawColorMapGeneric_2D_Partial(data.at(n)));
 #else
-    QtConcurrent::blockingMapped(data, drawColorMapGeneric_2D_Partial);
+    QtConcurrent::blockingMapped(data, MapDataDrawer::drawColorMapGeneric_2D_Partial);
 #endif
 //    pnt.drawImage(data.at(0).from,result.at(0));
 //    pnt.drawImage(data.at(1).from,result.at(1));

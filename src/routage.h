@@ -184,7 +184,8 @@ class ROUTAGE : public QObject
         void calculateAlternative();
         void deleteAlternative(){while(!alternateRoutes.isEmpty())
                 delete alternateRoutes.takeFirst();}
-        QList<vlmLine*> getIsochrones(){return isochrones;}
+        QList<vlmLine*>  * getIsochrones(){return &isochrones;}
+        QList<vlmLine*> * getI_Isochrones(){return &i_isochrones;}
         void setColorGrib(const bool &b){this->colorGrib=b;}
         bool getColorGrib(){return this->colorGrib;}
         bool getArrived() const {return this->arrived;}
@@ -210,6 +211,11 @@ class ROUTAGE : public QObject
         FCT_SETGET(int,multiNb)
         FCT_GET_CST(double,maxDist)
         FCT_SETGET_CST(double,maxWaveHeight)
+        static vlmPoint multiThreadedContains(const vlmPoint &p);
+        static QList<vlmPoint> finalEpuration(const QList<vlmPoint> &listPoints);
+        static QList<vlmPoint> findPointThreaded(const QList<vlmPoint> &list);
+        static QList<vlmPoint> findRoute(const QList<vlmPoint> &pointList);
+        static vlmPoint checkCoastCollision(const vlmPoint &point);
 public slots:
         void calculate();
         void slot_edit();

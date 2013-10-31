@@ -63,7 +63,7 @@ Original code: virtual-winds.com
 //#define HAS_ICEGATE
 #define USE_SHAPEISO
 
-inline QList<vlmPoint> findPointThreaded(const QList<vlmPoint> &list)
+QList<vlmPoint> ROUTAGE::findPointThreaded(const QList<vlmPoint> &list)
 {
     QList<vlmPoint> result;
     for(int g=0;g<list.size();++g)
@@ -301,7 +301,7 @@ inline QList<vlmPoint> findPointThreaded(const QList<vlmPoint> &list)
 
 /*threadable functions*/
 
-inline vlmPoint checkCoastCollision(const vlmPoint &point)
+vlmPoint ROUTAGE::checkCoastCollision(const vlmPoint &point)
 {
     vlmPoint newPoint=point;
     double x1,y1,x2,y2;
@@ -313,7 +313,7 @@ inline vlmPoint checkCoastCollision(const vlmPoint &point)
                  || (newPoint.routage->getCheckLine() && newPoint.routage->crossBarriere(QLineF(x1,y1,x2,y2)));
     return newPoint;
 }
-inline QList<vlmPoint> finalEpuration(const QList<vlmPoint> &listPoints)
+QList<vlmPoint> ROUTAGE::finalEpuration(const QList<vlmPoint> &listPoints)
 {
     if(listPoints.isEmpty()) return listPoints;
     if(listPoints.first().origin->isStart) return listPoints;
@@ -461,7 +461,7 @@ inline QList<vlmPoint> finalEpuration(const QList<vlmPoint> &listPoints)
     }
     return result;
 }
-inline QList<vlmPoint> findRoute(const QList<vlmPoint> & pointList)
+QList<vlmPoint> ROUTAGE::findRoute(const QList<vlmPoint> & pointList)
 {
     if(pointList.isEmpty()) return pointList;
     ROUTAGE * routage=pointList.at(0).routage;
@@ -1522,7 +1522,7 @@ void ROUTAGE::slot_calculate()
                     }
                     tempList.clear();
                     //qWarning()<<"1 listlist has"<<listList.size();
-                    listList = QtConcurrent::blockingMapped(listList, findPointThreaded);
+                    listList = QtConcurrent::blockingMapped(listList, ROUTAGE::findPointThreaded);
                     //qWarning()<<"2 listlist has"<<listList.size();
                     findPoints.clear();
                     for(int l=0;l<listList.size();++l)
@@ -1816,10 +1816,17 @@ void ROUTAGE::slot_calculate()
                 maxLoop=nbLoop;
             somethingHasChanged=false;
 /*recheck that the new iso itself does not cross previous segments*/
+#ifdef traceTime
+            QTime t1,t2;
+            t1.start();
+#endif
             if(!tempPoints.first().origin->isStart && nbLoop<=5)
             {
                 checkIsoCrossingPreviousSegments();
             }
+#ifdef traceTime
+            msecs_9+=t1.elapsed();
+#endif
 #ifdef debugCount
             this->countDebug(nbIso,"after checkIsoCrossingPreviousSegments() -2");
 #endif
@@ -1828,7 +1835,6 @@ void ROUTAGE::slot_calculate()
             if(this->useRouteModule && !routeDone)
             {
 #ifdef traceTime
-                QTime t1,t2;
                 t1.start();
 #endif
                 somethingHasChanged=true;
@@ -1858,7 +1864,7 @@ void ROUTAGE::slot_calculate()
                     }
 #endif
                     tempList.clear();
-                    listList = QtConcurrent::blockingMapped(listList, findRoute);
+                    listList = QtConcurrent::blockingMapped(listList, ROUTAGE::findRoute);
                     tempPoints.clear();
                     for(pp=0;pp<listList.size();++pp)
                         tempPoints.append(listList.at(pp));
@@ -1946,7 +1952,7 @@ void ROUTAGE::slot_calculate()
 #ifdef traceTime
                     t2.start();
 #endif
-                    tempPoints = QtConcurrent::blockingMapped(tempPoints, checkCoastCollision);
+                    tempPoints = QtConcurrent::blockingMapped(tempPoints, ROUTAGE::checkCoastCollision);
                     for (int np=0;np<tempPoints.size();++np)
                     {
                         if(tempPoints.at(np).isDead)
@@ -2004,8 +2010,14 @@ void ROUTAGE::slot_calculate()
                     t1.start();
 #endif
                     removeCrossedSegments();
+#ifdef traceTime
+                    msecs_13=msecs_13+t1.elapsed();
+#endif
 #ifdef debugCount
                     this->countDebug(nbIso,"after removeCrossedSegment in end of final loop");
+#endif
+#ifdef traceTime
+                    t1.start();
 #endif
                     checkIsoCrossingPreviousSegments();
 #ifdef debugCount
@@ -2745,7 +2757,7 @@ double ROUTAGE::findDistancePoly(const QPointF P, const QPolygonF * poly, QPoint
 }
 void ROUTAGE::pruneWake(const int &wakeAngle)
 {
-    if (wakeAngle<1) return;
+    if(wakeAngle<1) return;
     QList<vlmPoint> *pIso;
     double wakeDir=0;
     if(i_iso)
@@ -3158,21 +3170,41 @@ void ROUTAGE::convertToRoute()
     else if (multiNb>0)
         parent->addPivot(this,false);
 }
+vlmPoint ROUTAGE::multiThreadedContains(const vlmPoint &p)
+{
+    vlmPoint pt=p;
+    if(pt.routage->getShapeIso()->containsPoint(QPointF(pt.x,pt.y),Qt::OddEvenFill))
+        pt.isDead=true;
+    return pt;
+}
 void ROUTAGE::checkIsoCrossingPreviousSegments()
 {
 #ifdef USE_SHAPEISO
+    if(useMultiThreading)
+    {
+        tempPoints=QtConcurrent::blockingMapped(tempPoints,ROUTAGE::multiThreadedContains);
+    }
     for(int nn=0;nn<tempPoints.size();++nn)
     {
-//        if(tempPoints.at(nn).notSimplificable)
-//            continue;
-//        if(tempPoints.at(nn).origin->notSimplificable)
-//            continue;
-        if(shapeIso.containsPoint(QPointF(tempPoints.at(nn).x,tempPoints.at(nn).y),Qt::OddEvenFill))
+        if(!useMultiThreading)
         {
-            somethingHasChanged=true;
-            tempPoints.removeAt(nn);
-            --nn;
-            continue;
+            if(shapeIso.containsPoint(QPointF(tempPoints.at(nn).x,tempPoints.at(nn).y),Qt::OddEvenFill))
+            {
+                somethingHasChanged=true;
+                tempPoints.removeAt(nn);
+                --nn;
+                continue;
+            }
+        }
+        else
+        {
+            if(tempPoints.at(nn).isDead)
+            {
+                somethingHasChanged=true;
+                tempPoints.removeAt(nn);
+                --nn;
+                continue;
+            }
         }
         if(tempPoints.at(nn).origin->isBroken)
         {
@@ -3430,7 +3462,7 @@ void ROUTAGE::epuration(int toBeRemoved)
         QList<QList<vlmPoint> > listList;
         listList.append(rightFromLoxo);
         listList.append(leftFromLoxo);
-        listList = QtConcurrent::blockingMapped(listList, finalEpuration);
+        listList = QtConcurrent::blockingMapped(listList, ROUTAGE::finalEpuration);
         tempPoints.clear();
         tempPoints.reserve(listList.at(0).size()+listList.at(1).size());
         tempPoints.append(listList.at(0));

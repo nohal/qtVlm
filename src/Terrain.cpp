@@ -275,10 +275,10 @@ void Terrain::draw_GSHHSandGRIB()
             mutex.lock();
             QPen penRoutage;
             penRoutage.setWidth(1);
-            QList<vlmLine*> isochrones=routageGrib->getIsochrones();
-            for(int i=isochrones.count()-1;i>0;--i)
+            QList<vlmLine*> * isochrones=routageGrib->getIsochrones();
+            for(int i=isochrones->size()-1;i>0;--i)
             {
-                QList<vlmPoint> * iso=isochrones.at(i)->getPoints();
+                QList<vlmPoint> * iso=isochrones->at(i)->getPoints();
                 for(int p=0;p<iso->count()-1;++p)
                 {
                     double x,y;
@@ -308,7 +308,7 @@ void Terrain::draw_GSHHSandGRIB()
 
                     vlmPoint O1=*(iso->at(p).origin);
                     vlmPoint O2=*(iso->at(p+1).origin);
-                    QList<vlmPoint> * previousIso=isochrones.at(i-1)->getPoints();
+                    QList<vlmPoint> * previousIso=isochrones->at(i-1)->getPoints();
                     int o1=previousIso->indexOf(O1,0);
                     int o2=previousIso->indexOf(O2,0);
                     while(o2>o1)

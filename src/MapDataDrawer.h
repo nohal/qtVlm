@@ -139,6 +139,7 @@ class MapDataDrawer
         };
 
         void paintImage(QImage *image, QPainter *pnt, const QPoint &point);
+        static bool drawColorMapGeneric_2D_Partial(const GribThreadData &g);
 private:
         QMutex mutex;
         myCentralWidget *centralWidget;
