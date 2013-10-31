@@ -58,7 +58,7 @@ Original code: virtual-winds.com
 #include "Terrain.h"
 //#include "Terrain.h"
 //#define debugCount
-#define traceTime
+//#define traceTime
 
 //#define HAS_ICEGATE
 #define USE_SHAPEISO
