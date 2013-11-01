@@ -380,6 +380,9 @@ public slots:
         int multiMin;
         double maxDist;
         void calculateMaxDist();
+        QList<vlmPoint> findPointNotThreaded(const QList<vlmPoint> &list);
+        int fp_msec0,fp_msec1,fp_msec2,fp_msec3,fp_msec4,fp_msec5,fp_msec6,fp_msec7,fp_msec8;
+
 };
 Q_DECLARE_TYPEINFO(ROUTAGE,Q_MOVABLE_TYPE);
 #endif // ROUTAGE_H
