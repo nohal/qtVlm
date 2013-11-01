@@ -1442,12 +1442,38 @@ void myCentralWidget::slot_fileInfo_GRIB_current(void) {
     fileInfo_GRIB(grib);
 }
 
+void myCentralWidget::fileInfo_GRIB(int grbType) {
+    if(Settings::getSetting("showGribInfoAfterLoad","1")=="1") {
+        if(dataManager) {
+            Grib * grib=dataManager->get_grib(grbType);
+            if(grib && grib->isOk())
+                fileInfo_GRIB(grib);
+        }
+    }
+}
+
 void myCentralWidget::fileInfo_GRIB(Grib * grib) {
     if(grib && grib->isOk()) {
         QString msg = grib->get_info();
-        QMessageBox::information (this,
-                    tr("Informations sur le fichier GRIB"),
-                    msg );
+        QDialog * dia=new QDialog(this);
+        dia->setWindowTitle(tr("Informations sur le fichier GRIB"));
+        QVBoxLayout * verticalLayout=new QVBoxLayout(dia);
+        QLabel * lbl = new QLabel(dia);
+        lbl->setText(msg);
+        verticalLayout->addWidget(lbl);
+        QCheckBox * chk=new QCheckBox(dia);
+        chk->setText(tr("Show grib info after grib loading"));
+        chk->setChecked(Settings::getSetting("showGribInfoAfterLoad","1")=="1");
+        verticalLayout->addWidget(chk);
+        QDialogButtonBox *buttonBox = new QDialogButtonBox(dia);
+        verticalLayout->addWidget(buttonBox);
+        buttonBox->setStandardButtons(QDialogButtonBox::Ok);
+        connect(buttonBox,SIGNAL(accepted()),dia,SLOT(accept()));
+        if(dia->exec()==QDialog::Accepted) {
+            Settings::setSetting("showGribInfoAfterLoad",chk->checkState()?"1":"0");
+        }
+        disconnect(buttonBox,SIGNAL(accepted()),dia,SLOT(accept()));
+        delete dia;
     }
 }
 

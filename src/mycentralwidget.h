@@ -197,6 +197,8 @@ class myCentralWidget : public QWidget
         void updateGribMenu(void);
         FCT_GET(MapDataDrawer*,mapDataDrawer)
         FCT_GET(DataManager*,dataManager)
+        void fileInfo_GRIB(int grbType);
+        void fileInfo_GRIB(Grib * grib);
 
         /* events */
         void mouseMove(int x, int y, QGraphicsItem * item);
@@ -327,8 +329,6 @@ public slots :
         void slotImg_open();
         void slotImg_close();
         void zoomOnGrib(int grbType=DataManager::GRIB_NONE);
-        void fileInfo_GRIB(Grib * grib);
-
 
         /* Dialogs */
         void slot_boatDialog(void);

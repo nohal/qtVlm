@@ -8184,6 +8184,10 @@ Please select another point or press esc to exit barrier creation mode</source>
         <source>Informations sur le fichier GRIB courant</source>
         <translation>Informations sur le fichier GRIB courant</translation>
     </message>
+    <message>
+        <source>Show grib info after grib loading</source>
+        <translation>Afficher les infos grib après le chargement du grib</translation>
+    </message>
 </context>
 <context>
     <name>opponent</name>
