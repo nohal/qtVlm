@@ -215,6 +215,15 @@ void MainWindow::slot_gribFileReceived(QString fileName)
 {
     bool zoom =  (Settings::getSetting("gribZoomOnLoad",0).toInt()==1);
     openGribFile(fileName, zoom);
+    if(my_centralWidget) {
+        DataManager * dataManager = my_centralWidget->get_dataManager();
+        if(dataManager) {
+            Grib * grib=dataManager->get_grib(DataManager::GRIB_GRIB);
+            if(grib && grib->isOk())
+                my_centralWidget->fileInfo_GRIB(grib);
+
+        }
+    }
     updateTitle();
 }
 
