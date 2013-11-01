@@ -58,266 +58,10 @@ Original code: virtual-winds.com
 #include "Terrain.h"
 //#include "Terrain.h"
 //#define debugCount
-#define traceTime
+//#define traceTime
 
 //#define HAS_ICEGATE
 #define USE_SHAPEISO
-#if 0
-QList<vlmPoint> ROUTAGE::findPointNotThreaded(const QList<vlmPoint> &list)
-{
-    QTime t0;
-    t0.start();
-    QList<vlmPoint> result;
-    for(int g=0;g<list.size();++g)
-    {
-        vlmPoint pt=list.at(g);
-        double cap=pt.capOrigin;
-        double windAngle=pt.wind_angle;
-        double windSpeed=pt.wind_speed;
-        double lat=pt.origin->lat;
-        double lon=pt.origin->lon;
-        cap=Util::A360(cap);
-        double angle,newSpeed;
-        double res_lon,res_lat;
-        double distanceParcourue=0;
-        double current_speed=pt.current_speed;
-        double current_angle=pt.current_angle;
-        bool bad=false;
-        QTime t1,t2,t3,t4,t5;
-        t1.start();
-        for(int a=0;a<=1;++a)
-        {
-            angle=cap-(double)windAngle;
-            if(qAbs(angle)>180)
-            {
-                if(angle<0)
-                    angle=360+angle;
-                else
-                    angle=angle-360;
-            }
-            double limit=pt.routage->getBoat()->getPolarData()->getBvmgUp(windSpeed);
-            if(qAbs(angle)<limit && angle!=90) //if too close to wind then use VB-VMG technique
-            {
-                newSpeed=pt.routage->getBoat()->getPolarData()->getSpeed(windSpeed,limit);
-                newSpeed=newSpeed*qAbs(cos(degToRad(limit))/cos(degToRad(qAbs(angle))));
-            }
-            else
-            {
-                limit=pt.routage->getBoat()->getPolarData()->getBvmgDown(windSpeed);
-                if(qAbs(angle)>limit && angle!=90)
-                {
-                    newSpeed=pt.routage->getBoat()->getPolarData()->getSpeed(windSpeed,limit);
-                    newSpeed=newSpeed*qAbs(cos(degToRad(limit))/cos(degToRad(qAbs(angle))));
-                }
-                else
-                    newSpeed=pt.routage->getBoat()->getPolarData()->getSpeed(windSpeed,angle);
-            }
-            if(current_speed>0)
-            {
-                QPointF p=Util::calculateSumVect(cap,newSpeed,Util::A360(current_angle+180.0),current_speed);
-                newSpeed=p.x(); //in this case newSpeed is SOG
-                cap=p.y(); //in this case cap is COG
-            }
-            distanceParcourue=newSpeed*pt.routage->getTimeStep()/60.0;
-            Util::getCoordFromDistanceAngle(lat, lon, distanceParcourue, cap, &res_lat, &res_lon);
-            pt.lon=res_lon;
-            pt.lat=res_lat;
-            pt.distOrigin=distanceParcourue;
-            pt.capOrigin=cap;
-            time_t isoStep=pt.routage->getTimeStep()*60;
-            if(pt.routage->getI_iso())
-            {
-                isoStep=-isoStep;
-            }
-            pt.eta+=isoStep;
-            //if(!pt.routage->getUseRouteModule()) break;
-            if(a==0)
-            {
-                double newWindAngle,newWindSpeed;
-                if(pt.routage->getWhatIfUsed() && pt.routage->getWhatIfJour()<=pt.eta)
-                    pt.eta+=pt.routage->getWhatIfTime()*3600;
-                t2.start();
-                if(!pt.routage->get_dataManager()->getInterpolatedWind(res_lon,res_lat,
-                       pt.eta,&newWindSpeed,&newWindAngle,INTERPOLATION_DEFAULT)||pt.eta>pt.routage->get_dataManager()->get_maxDate())
-                {
-                    fp_msec2+=t2.elapsed();
-                    bad=true;
-                    break;
-                }
-                fp_msec2+=t2.elapsed();
-                newWindAngle=radToDeg(newWindAngle);
-                t2.start();
-                if(pt.routage->get_dataManager()->hasData(DATA_CURRENT_VX,DATA_LV_MSL,0) && pt.routage->get_dataManager()->getInterpolatedCurrent(res_lon,res_lat,
-                       pt.eta,&current_speed,&current_angle,INTERPOLATION_DEFAULT))
-                {
-                    fp_msec2+=t2.elapsed();
-                    current_angle=radToDeg(current_angle);
-                    QPointF p=Util::calculateSumVect(newWindAngle,newWindSpeed,current_angle,current_speed);
-                    newWindSpeed=p.x();
-                    newWindAngle=p.y();
-                }
-                else
-                {
-                    fp_msec2+=t2.elapsed();
-                    current_speed=-1;
-                    current_angle=0;
-                }
-                if(pt.routage->getI_iso())
-                {
-                    newWindAngle=Util::A360(newWindAngle+180.0);
-                    current_angle=Util::A360(current_angle+180.0);
-                }
-                if(pt.routage->getWhatIfUsed() && pt.routage->getWhatIfJour()<=pt.eta)
-                    windSpeed=windSpeed*pt.routage->getWhatIfWind()/100.00;
-                windAngle=Util::A360((windAngle+newWindAngle)/2.0);
-                windSpeed=(windSpeed+newWindSpeed)/2.0;
-                if(current_speed!=-1 && pt.current_speed!=-1)
-                {
-                    current_speed=(pt.current_speed+current_speed)/2.0;
-                    current_angle=Util::A360((current_angle+pt.current_angle)/2.0);
-                }
-            }
-        }
-        fp_msec1+=t1.elapsed();
-        if(bad) continue;
-        if(qAbs(pt.lat)>=89.9)
-        {
-            continue;
-        }
-        double x,y;
-        t3.start();
-        pt.routage->getProj()->map2screenDouble(pt.lon,pt.lat,&x,&y);
-        fp_msec3+=t3.elapsed();
-        pt.x=x;
-        pt.y=y;
-        if(pt.routage->getVisibleOnly() && !pt.routage->getProj()->isInBounderies_strict(pt.x,pt.y))
-        {
-            continue;
-        }
-    #if 1
-        vlmPoint * O=pt.origin;
-    //    int nbCheck=0;
-    //    for (nbCheck=0;nbCheck<10;++nbCheck)
-    //    {
-    //        if(O->isStart)
-    //            break;
-    //        if(!O->isBroken)
-    //            break;
-    //        O=O->origin;
-    //    }
-        t2.start();
-        if(!O->isBroken)
-        {
-            if(pt.xM1<10e4)
-            {
-                Triangle t(Point(pt.origin->x,pt.origin->y),
-                           Point(pt.x,pt.y),
-                           Point(pt.xM1,pt.yM1));
-                if (t.orientation()==right_turn)
-                {
-                    continue;
-                }
-            }
-            if(pt.xP1<10e4)
-            {
-                Triangle t(Point(pt.origin->x,pt.origin->y),
-                           Point(pt.x,pt.y),
-                           Point(pt.xP1,pt.yP1));
-                if (t.orientation()==left_turn)
-                {
-                    continue;
-                }
-            }
-        }
-        fp_msec4+=t2.elapsed();
-    #endif
-    #ifndef debugCount
-        t2.start();
-        if(!list.at(g).isStart)
-        {
-            QPolygonF * shape=pt.routage->getShapeIso();
-            QPointF p=QPointF(pt.x,pt.y);
-            if(shape->containsPoint(p,Qt::OddEvenFill))
-            {
-                bad=true;
-            }
-        }
-        fp_msec5+=t2.elapsed();
-    #endif
-        if (bad) continue;
-        t2.start();
-        pt.convertionLat=pt.lat;
-        pt.convertionLon=pt.lon;
-        Orthodromie orth(pt.origin->lon,pt.origin->lat,pt.lon,pt.lat);
-        pt.distOrigin=orth.getDistance();
-        if(pt.routage->getRoutageOrtho())
-        {
-            orth.setPoints(pt.routage->getStart().x(),pt.routage->getStart().y(),pt.lon,pt.lat);
-            pt.distStart=orth.getDistance();
-            pt.capStart=orth.getAzimutDeg();
-            orth.setPoints(pt.lon,pt.lat,pt.routage->getArrival().x(),pt.routage->getArrival().y());
-            pt.distArrival=orth.getDistance();
-            pt.capArrival=orth.getAzimutDeg();
-        }
-        else
-        {
-            QLineF tempLine(pt.x,pt.y,pt.routage->getXs(),pt.routage->getYs());
-            pt.distStart=tempLine.length();
-            pt.capStart=Util::A360(-tempLine.angle()+90.0+180.0);
-            tempLine.setP2(QPointF(pt.routage->getXa(),pt.routage->getYa()));
-            pt.distArrival=tempLine.length();
-            pt.capArrival=Util::A360(-tempLine.angle()+90);
-        }
-        fp_msec6+=t2.elapsed();
-        t2.start();
-        if(pt.origin->isStart)
-            pt.distIso=QLineF(pt.x,pt.y,pt.origin->x,pt.origin->y).length();
-        else
-        {
-            vlmPoint O=*(pt.origin);
-            QPolygonF isoProche;
-            QList<vlmPoint> *pIso;
-            if(i_iso)
-                pIso=i_isochrones.at(i_isochrones.size()-1)->getPoints();
-            else
-                pIso=isochrones.at(isochrones.size()-1)->getPoints();
-            isoProche.append(QPointF(O.x,O.y));
-            int pointNb=O.isoIndex;
-            while(!O.isBroken)
-            {
-                if(pointNb>=pIso->size()-1) break;
-                O=pIso->at(++pointNb);
-                isoProche.append(QPointF(O.x,O.y));
-                if (QLineF(pt.x,pt.y,O.x,O.y).length()>pt.routage->get_maxDist()) break;
-            }
-            if(!O.isBroken)
-            {
-                O=*(pt.origin);
-                pointNb=O.isoIndex;
-                --pointNb;
-                while(!O.isBroken)
-                {
-                    if(pointNb<=0) break;
-                    O=pIso->at(pointNb);
-                    if(O.isBroken) break;
-                    isoProche.prepend(QPointF(O.x,O.y));
-                    --pointNb;
-                    if (QLineF(pt.x,pt.y,O.x,O.y).length()>pt.routage->get_maxDist()) break;
-                }
-            }
-            if(!O.isBroken)
-                pt.distIso=ROUTAGE::findDistancePreviousIso(pt, &isoProche);
-            else
-                pt.distIso=ROUTAGE::findDistancePreviousIso(pt, &shapeMiddle);
-
-        }
-        fp_msec7+=t2.elapsed();
-        result.append(pt);
-    }
-    fp_msec0+=t0.elapsed();
-    return result;
-}
-#endif
 QList<vlmPoint> ROUTAGE::findPointThreaded(const QList<vlmPoint> &list)
 {
     QList<vlmPoint> result;
@@ -1441,15 +1185,6 @@ void ROUTAGE::slot_calculate()
 #endif
     timeTotal.start();
     int refresh=0;
-    fp_msec0=0;
-    fp_msec1=0;
-    fp_msec2=0;
-    fp_msec3=0;
-    fp_msec4=0;
-    fp_msec5=0;
-    fp_msec6=0;
-    fp_msec7=0;
-    fp_msec8=0;
 #ifdef traceTime
     int msecs_1=0;
     int msecs_2=0;
@@ -1845,10 +1580,7 @@ void ROUTAGE::slot_calculate()
                 tfp.start();
 #endif
                 if(!this->useMultiThreading)
-                {
                     findPoints=findPointThreaded(findPoints);
-                    //findPoints=findPointNotThreaded(findPoints);
-                }
                 else
                 {
                     QList<QList<vlmPoint> > listList;
@@ -2872,33 +2604,6 @@ void ROUTAGE::slot_calculate()
 //        }
 
 #ifdef traceTime
-        tt.setHMS(0,0,0,0);
-        tt=tt.addMSecs(fp_msec0);
-        qWarning()<<"...inside findPoint not threaded:"<<tt.toString("hh'h'mm'min'ss.zzz'secs'");
-        tt.setHMS(0,0,0,0);
-        tt=tt.addMSecs(fp_msec1);
-        qWarning()<<"........first loop:"<<tt.toString("hh'h'mm'min'ss.zzz'secs'");
-        tt.setHMS(0,0,0,0);
-        tt=tt.addMSecs(fp_msec2);
-        qWarning()<<"........grib access:"<<tt.toString("hh'h'mm'min'ss.zzz'secs'");
-        tt.setHMS(0,0,0,0);
-        tt=tt.addMSecs(fp_msec3);
-        qWarning()<<"........coordinates calc:"<<tt.toString("hh'h'mm'min'ss.zzz'secs'");
-        tt.setHMS(0,0,0,0);
-        tt=tt.addMSecs(fp_msec4);
-        qWarning()<<"........triangle orientation:"<<tt.toString("hh'h'mm'min'ss.zzz'secs'");
-        tt.setHMS(0,0,0,0);
-        tt=tt.addMSecs(fp_msec5);
-        qWarning()<<"........containsPoint:"<<tt.toString("hh'h'mm'min'ss.zzz'secs'");
-        tt.setHMS(0,0,0,0);
-        tt=tt.addMSecs(fp_msec6);
-        qWarning()<<"........calc distances:"<<tt.toString("hh'h'mm'min'ss.zzz'secs'");
-        tt.setHMS(0,0,0,0);
-        tt=tt.addMSecs(fp_msec7);
-        qWarning()<<"........calc distIso:"<<tt.toString("hh'h'mm'min'ss.zzz'secs'");
-        tt.setHMS(0,0,0,0);
-        tt=tt.addMSecs(fp_msec0-(fp_msec1+fp_msec2+fp_msec3+fp_msec4+fp_msec5+fp_msec6+fp_msec7+fp_msec8));
-        qWarning()<<"........other:"<<tt.toString("hh'h'mm'min'ss.zzz'secs'");
         msgBox.setDetailedText(info);
 #endif
         finalEta=QDateTime::fromTime_t(realEta).toUTC();
@@ -3124,60 +2829,86 @@ double ROUTAGE::findDistancePoly(const QPointF P, const QPolygonF * poly, QPoint
     }
     return minDistanceSegment;
 }
-vlmPoint ROUTAGE::pruneWakeThreaded(const vlmPoint &p)
+QList<vlmPoint> ROUTAGE::pruneWakeThreaded(const QList<vlmPoint> &list)
 {
+    QList<vlmPoint> listResult;
+    if(list.isEmpty()) return listResult;
+    vlmPoint p=list.at(0);
     QList<vlmPoint> *pIso;
-    vlmPoint result=p;
     double wakeDir=0;
     if(p.routage->getI_iso())
         pIso=p.routage->getI_Isochrones()->at(p.routage->getI_Isochrones()->size()-1)->getPoints();
     else
         pIso=p.routage->getIsochrones()->at(p.routage->getIsochrones()->size()-1)->getPoints();
-    if(p.origin->isBroken) return result;
-    const QLineF l2(p.routage->getXa(),p.routage->getYa(),p.x,p.y);
-    for(int m=0;m<pIso->size();++m)
+    for(int n=0;n<list.size();++n)
     {
-        const QLineF l1(p.routage->getXa(),p.routage->getYa(),pIso->at(m).x,pIso->at(m).y);
-        if(l1.length()>=l2.length()) continue;
-        if(pIso->at(m).isDead) continue;
-        if(l1.length()/l2.length()<0.3) continue;
-        QPolygonF wake;
-        wake.append(QPointF(pIso->at(m).x,pIso->at(m).y));
-        wakeDir=l1.angle();
-        QLineF temp1(pIso->at(m).x,pIso->at(m).y,p.x,p.y);
-        temp1.setLength(temp1.length()*2.0);
-        temp1.setAngle(wakeDir+(p.routage->pruneWakeAngle/2.0));
-        wake.append(temp1.p2());
-        temp1.setAngle(wakeDir-p.routage->pruneWakeAngle);
-        wake.append(temp1.p2());
-        wake.append(QPointF(pIso->at(m).x,pIso->at(m).y));
-        if(wake.containsPoint(QPointF(p.x,p.y),Qt::OddEvenFill))
+        p=list.at(n);
+        if(p.origin->isBroken)
         {
-            if(p.routage->getCheckCoast() || p.routage->getCheckLine())
-            {
-                if(!p.routage->checkCoastCollision2(p,pIso->at(m)))
-                    result.isDead=true;
-            }
-            else
-                result.isDead=true;
+            listResult.append(p);
+            continue;
         }
+        const QLineF l2(p.routage->getXa(),p.routage->getYa(),p.x,p.y);
+        bool bad=false;
+        for(int m=0;m<pIso->size();++m)
+        {
+            const QLineF l1(p.routage->getXa(),p.routage->getYa(),pIso->at(m).x,pIso->at(m).y);
+            if(l1.length()>=l2.length()) continue;
+            if(pIso->at(m).isDead) continue;
+            if(l1.length()/l2.length()<0.3) continue;
+            QPolygonF wake;
+            wake.append(QPointF(pIso->at(m).x,pIso->at(m).y));
+            wakeDir=l1.angle();
+            QLineF temp1(pIso->at(m).x,pIso->at(m).y,p.x,p.y);
+            temp1.setLength(temp1.length()*2.0);
+            temp1.setAngle(wakeDir+(p.routage->pruneWakeAngle/2.0));
+            wake.append(temp1.p2());
+            temp1.setAngle(wakeDir-p.routage->pruneWakeAngle);
+            wake.append(temp1.p2());
+            wake.append(QPointF(pIso->at(m).x,pIso->at(m).y));
+            if(wake.containsPoint(QPointF(p.x,p.y),Qt::OddEvenFill))
+            {
+                if(p.routage->getCheckCoast() || p.routage->getCheckLine())
+                {
+                    if(!p.routage->checkCoastCollision2(p,pIso->at(m)))
+                        bad=true;
+                }
+                else
+                    bad=true;
+            }
+        }
+        if(!bad)
+            listResult.append(p);
     }
-    return result;
+    return listResult;
 }
 void ROUTAGE::pruneWake(const int &wakeAngle)
 {
     if(wakeAngle<1) return;
     if(useMultiThreading)
-        tempPoints=QtConcurrent::blockingMapped(tempPoints,ROUTAGE::pruneWakeThreaded);
+    {
+        QList<QList<vlmPoint> > listList;
+        QList<vlmPoint> tempList;
+        int pp=0;
+        int threadCount=qMax(1,QThread::idealThreadCount()*2);
+        for (int t=1;t<=threadCount;++t)
+        {
+            tempList.clear();
+            for (;(double)pp<(double)tempPoints.size()*(double)t/(double)threadCount;++pp)
+            {
+                tempList.append(tempPoints.at(pp));
+            }
+            listList.append(tempList);
+        }
+        tempList.clear();
+        listList = QtConcurrent::blockingMapped(listList, ROUTAGE::pruneWakeThreaded);
+        tempPoints.clear();
+        for(int l=0;l<listList.size();++l)
+            tempPoints.append(listList.at(l));
+    }
     else
     {
-        for (int n=0;n<tempPoints.size();++n)
-            tempPoints.replace(n,pruneWakeThreaded(tempPoints.at(n)));
-    }
-    for (int n=tempPoints.size()-1;n>=0;--n)
-    {
-        if(tempPoints.at(n).isDead)
-            tempPoints.removeAt(n);
+        tempPoints=ROUTAGE::pruneWakeThreaded(tempPoints);
     }
 }
 double ROUTAGE::findTime(const vlmPoint * pt, QPointF P, double * cap)
