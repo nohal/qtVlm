@@ -1155,7 +1155,8 @@ void MainWindow::slotFile_Open()
 }
 void MainWindow::slotFile_Reopen()
 {
-   openGribFile (gribFileName, (Settings::getSetting("gribZoomOnLoad",0).toInt() == 1));
+   if(!my_centralWidget->get_dataManager()->get_grib(DataManager::GRIB_GRIB)) return;
+   openGribFile (my_centralWidget->get_dataManager()->get_grib(DataManager::GRIB_GRIB)->get_fileName(), (Settings::getSetting("gribZoomOnLoad",0).toInt() == 1));
    updateTitle();
 }
 void MainWindow::slotFile_Open_Current()
